@@ -1,0 +1,5 @@
+README for nautilus/libnautilus
+
+This library, libnautilus, is ALL you need to link with to create
+a nautilus component.
+
