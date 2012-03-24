@@ -6045,7 +6045,7 @@ create_job (GIOSchedulerJob *io_job,
 				new_filename = g_strdup (filename);
 			} else {
 				filename_base = eel_filename_strip_extension (filename);
-				offset = g_utf8_strlen (filename_base, -1);
+				offset = strlen (filename_base);
 				suffix = g_strdup (filename + offset);
 
 				filename2 = g_strdup_printf ("%s %d%s", filename_base, count, suffix);
@@ -6082,7 +6082,7 @@ create_job (GIOSchedulerJob *io_job,
 			g_object_unref (dest);
 			dest = NULL;
 			filename_base = eel_filename_strip_extension (filename);
-			offset = g_utf8_strlen (filename_base, -1);
+			offset = strlen (filename_base);
 			suffix = g_strdup (filename + offset);
 
 			filename2 = g_strdup_printf ("%s %d%s", filename_base, ++count, suffix);
