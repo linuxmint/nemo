@@ -1,0 +1,25 @@
+eel-canvas is a cut-and-pasted version of some parts foo-canvas.
+Please do not change the cut and pasted parts. If you need to
+upgrade to a new foo-canvas, use this:
+	
+FOODIR=../../foocanvas/libfoocanvas
+
+cp $FOODIR/foo-canvas.c eel-canvas.c
+cp $FOODIR/foo-canvas.h eel-canvas.h
+cp $FOODIR/foo-canvas-util.c eel-canvas-util.c
+cp $FOODIR/foo-canvas-util.h eel-canvas-util.h
+cp $FOODIR/foo-canvas-rect-ellipse.h eel-canvas-rect-ellipse.h
+cp $FOODIR/foo-canvas-rect-ellipse.c eel-canvas-rect-ellipse.c
+	
+perl -pi -e 's/foo_canvas_marshal_/eel_marshal_/s' eel-canvas.c
+perl -pi -e 's/foo-canvas-marshal\.h/eel-marshal\.h/s' eel-canvas.c
+perl -pi -e 's/#include\ \"foo-canvas-marshal\.c\"//s' eel-canvas.c
+perl -pi -e 's/foo-canvas-i18n\.h/eel-i18n\.h/s' eel-canvas.c
+
+perl -pi -e 's/foo_canvas_/eel_canvas_/g' eel-canvas*.[ch]
+perl -pi -e 's/FOO_CANVAS/EEL_CANVAS/g' eel-canvas*.[ch]
+perl -pi -e 's/FooCanvas/EelCanvas/g' eel-canvas*.[ch]
+perl -pi -e 's/foo-canvas/eel-canvas/g' eel-canvas*.[ch]
+perl -pi -e 's/libfoocanvas/eel/g' eel-canvas*.[ch]
+perl -pi -e 's/FOO_TYPE_/EEL_TYPE_/g' eel-canvas*.[ch]
+perl -pi -e 's/FOO_IS_/EEL_IS_/g' eel-canvas*.[ch]

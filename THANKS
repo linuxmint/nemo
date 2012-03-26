@@ -1,0 +1,621 @@
+The Nautilus team would like to thank the following contributors:
+
+Nautilus 2.12 - 2.22
+====================
+
+A. Walton  <awalton@svn.gnome.org>
+Abel Cheung  <abelcheung@gmail.com>
+Adi Attar  <aattar@cvs.gnome.org>
+Ahmad Riza H Nst  <rizahnst@eriagempita.co.id>
+Alastair McKinstry  <mckinstry@computer.org>
+Alexis Robert  <alexis@linuxcode.eu.org>
+Amitakhya Phukan  <amitakhya@svn.gnome.org>
+Anders Carlsson  <andersca@imendio.com>
+Andre Klapper  <a9016009@gmx.de>
+Andrea Cimitan  <andrea.cimitan@gmail.com>
+Ani Peter  <peter.ani@gmail.com>
+Ankit Patel  <ankit644@yahoo.com>
+Arangel Angov  <arangel@linux.net.mk>
+Artur Flinta  <aflinta@gmail.com>
+Benjamin Berg  <benjamin@sipsolutions.net>
+Benoît Dejean  <benoit@placenet.org>
+Brian Cameron  <brian.cameron@sun.com>
+Brian Pepple  <bdpepple@gmail.com>
+Chao-Hsiung Liao  <j_h_liau@yahoo.com.tw>
+Choe Hwanjin  <choe.hwanjin@gmail.com>
+Chris Lahey  <clahey@rigger.boston.ximian.com>
+Chris Lyttle  <chris@wilddev.net>
+Christian Kellner  <gicmo@gnome.org>
+Christian Kirbach  <Christian.Kirbach@googlemail.com>
+Christian Persch  <chpe@gnome.org>
+Christophe Fergeau  <teuf@users.sourceforge.net>
+Christophe Merlet  <christophe@merlet.net>
+Christopher Lahey  <clahey@ximian.com>
+Chrustian Neumair  <cneumair@gnome.org>
+Claude Paroz  <claude@2xlibre.net>
+Clytie Siddall  <clytie@riverland.net.au>
+Cosimo Cecchi  <cosimoc@gnome.org>
+Dafydd Harries  <daf@parnassus.ath.cx>
+Damien Carbery  <damien.carbery@sun.com>
+Damon Chaplin  <damon@ximian.com>
+Dan Winship  <danw@novell.com>
+Daniel Drake  <dsd@gentoo.org>
+Daniel Godas  <siro.san@gmail.com>
+Daniel Nylander  <po@danielnylander.se>
+Danilo Šegan  <danilo@gnome.org>
+Danishka Navin  <danishka@gmail.com>
+Dave Ahlswede  <mightyquinn@letterboxes.org>
+Dave Bordoley  <bordoley@msu.edu>
+Dave Camp  <dave@novell.com>
+David Bordoley  <borodley@msu.edu>
+David Emory Watson  <dwatson@cvs.gnome.org>
+David Sainty  <dsainty@redhat.com>
+David Zeuthen  <david@fubar.dk>
+Denis Jacquerye  <moyogo@gmail.com>
+Denis Washington  <denisw@svn.gnome.org>
+Diego Gonzalez  <diego@pemas.net>
+Djihed Afifi  <djihed@gmail.com>
+Dom Lachowicz  <cinamod@hotmail.com>
+Elizabeth Green  <nerdygirl_ellie@yahoo.com>
+Emmanuele Bassi  <ebassi@cvs.gnome.org>
+Erdal Ronahi  <erdal.ronahi@gmail.com>
+Eric Baudais  <baudais@okstate.edu>
+Fabio Bonelli  <fabiobonelli@libero.it>
+Farzaneh Sarafraz  <farzaneh@farsiweb.info>
+Federico Mena Quintero  <federico@novell.com>
+Florian Steinel  <fsteinel@flonet.net>
+Francisco Javier F. Serrador  <serrador@openshine.com>
+Frank Worsley  <fworsley@shaw.ca>
+Frederic Crozat  <fcrozat@mandriva.com>
+Funda Wang  <fundawang@gmail.com>
+Gabor Kelemen  <kelemeng@gnome.hu>
+Ganesan Sethuraman  <ganesan.sethuraman@wipro.com>
+Gaute Lindkvist  <lindkvis@stud.ntnu.no>
+Gautier Portet  <kassoulet@gmail.com>
+Gediminas Paulauskas  <menesis@delfi.lt>
+German Poo-Caaman~o  <gpoo@ubiobio.cl>
+Gil "Dolfin" Osher  <dolfin@rpg.org.il>
+Gil Forcada  <gforcada@gnome.org>
+Gintautas Miliauskas  <gintas@akl.lt>
+Glen Gray  <glen@antefacto.com>
+Glynn Foster  <glynn.foster@sun.com>
+Goran Rakić  <grakic@devbase.net>
+Gregory Leblanc  <gleblanc@linuxweasel.com>
+Gregory Merchan  <merchan@phys.lsu.edu>
+Guilherme de S. Pastore  <gpastore@gnome.org>
+Guillaume Desmottes  <cass@skynet.be>
+Guillaume Savaton  <llumeao@gmail.com>
+Gustavo Giráldez  <gustavo.giraldez@gmx.net>
+Gustavo Maciel Dias Vieira  <gdvieira@zaz.com.br>
+Hasbullah Bin Pit  <sebol@ikhlas.com>
+Hendrik Richter  <hendrikr@gnome.org>
+Hubert Figuiere  <hfiguiere@teaser.fr>
+I. Felix  <ifelix25@gmail.com>
+Iain  <iain@prettypeople.org>
+Ignacio Casal Quinteiro  <nacho.resa@gmail.com>
+Ihar Hrachyshka  <booxter@lacinka.org>
+Ilkka Tuohela  <hile@iki.fi>
+Inaki Larranaga Murgoitio  <dooteo@euskalgnu.org>
+Jacob Berkman  <jacob@ximian.com>
+Jakub Friedl  <jfriedl@suse.cz>
+James Henstridge  <james@daa.com.au>
+Jamie McCracken  <jamiemcc@blueyonder.co.uk>
+Jan Arne Petersen  <jpetersen@uni-bonn.de>
+Jan de Groot  <jan@jgc.homeip.net>
+Javier F. Serrador  <serrador@tecknolabs.com>
+Jens Finke  <jens@triq.net>
+Jens Granseuer  <jensgr@gmx.net>
+Jens Seidel  <jseidel@cvs.gnome.org>
+Jesse Stockall  <jesse@cleverone.org>
+Jody Goldberg  <jody@gnome.org>
+Joe Shaw  <joeshaw@novell.com>
+Johan Dahlin  <jdahlin@telia.com>
+John Harper  <jsh@unfactored.org>
+Jonh Wendell  <jwendell@gnome.org>
+Jordi Mas  <jmas@softcatala.org>
+Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+Jorn Baayen  <jorn@nl.linux.org>
+Josep Puigdemont Casamajó  <josep.puigdemont@gmail.com>
+Josh Barrow  <josh@whitecape.org>
+Jovan Naumovski  <jovan@lugola.net>
+Juerg Billeter  <j@bitron.ch>
+Justin Fitzsimmons  <jfitzsimmons@gmail.com>
+Jérémy Ar Floc'h  <jeremy.lefloch@gmail.com>
+Keith Conger  <kconger@navisite.com>
+Kenneth Nielsen  <k.nielsen81@gmail.com>
+Kenneth Rohde Christiansen  <kenneth@gnu.org>
+Kevin Kubasik  <kevin@kubasik.net>
+Kostas Papadimas  <pkst@gmx.net>
+Lasse Bang Mikkelsen  <lbm@fatalerror.dk>
+Laszlo Dvornik  <ldvornik@cvs.gnome.org>
+Laszlo Peter  <laca@sun.com>
+Lauris Kaplinski  <lauris@ximian.com>
+Leonardo Ferreira Fontenelle  <leonardof@svn.gnome.org>
+Louise Miller  <louise.miller@sun.com>
+Lucas Rocha  <lucasr@gnome.org>
+Luis Medinas  <lmedinas@svn.gnome.org>
+Lukas Novotny  <lukasnov@cvs.gnome.org>
+Lukasz Stelmach  <stlman@poczta.fm>
+MArk Finlay  <sisob@eircom.net>
+Marinus Schraal  <foser@gentoo.org>
+Mark Gordon  <mtgordon@ximian.com>
+Marten Ter Borgh  <marten-devel@terborgh.demon.nl>
+Matej Urbančič  <mateju@svn.gnome.org>
+Matic Žgur  <mr.zgur@gmail.com>
+Matthias Clasen  <mclasen@redhat.com>
+Maxim Dziumanenko  <dziumanenko@gmail.com>
+Michael Terry  <mike@mterry.name>
+Michiel Sikkes  <michiel@eyesopened.nl>
+Mohammad DAMT  <mdamt@gnome.org>
+Mugurel Tudor  <mugurelu@gnome.ro>
+Mətin Əmirov  <metin@karegen.com>
+Nate Nielsen  <nielsen@memberwebs.com>
+Nelson Benítez  <gnel@cenobioracing.com>
+Nguyễn Thái Ngọc Duy  <pclouds@gmail.com>
+Nickolay V. Shmyrev  <nshmyrev@yandex.ru>
+Nikos Charonitakis  <nikosx@gmail.com>
+Olav Vitters  <olav@bkor.dhs.org>
+Paisa Seeluangsawat  <paisa@colorado.edu>
+Pasupathi Duraisamy  <pasupathi.duraisamy@wipro.com>
+Pat Suwalski  <pat@suwalski.net>
+Paul Duffy  <dubhthach@frink.nuigalway.ie>
+Pawan Chitrakar  <chautari@gmail.com>
+Pema Geyleg  <pema.geyleg@gmail.com>
+Peteris Krisjanis  <pecisk@inbox.lv>
+Petr Kovar  <pknbe@volny.cz>
+Philip Withnall  <pwithnall@svn.gnome.org>
+Pramod Raghavendra  <pramodleo@yahoo.co.uk>
+Priit Laes  <plaes@svn.gnome.org>
+RUAUDEL Frédéric  <ruaudel@embl.fr>
+Rachel Hestilow  <hestilow@ximian.com>
+Raffaele Sandrini  <rasa@gmx.ch>
+Rahul Bhalerao  <b.rahul.pm@gmail.com>
+Raivis Dejus  <orvils@gmail.com>
+Raj  <ringuva@novell.com>
+Rajeev Karale  <rajeev.karale@wipro.com>
+Rajesh Ranjan  <rranjan@redhat.com>
+Raphael Higino  <raphaelh@svn.gnome.org>
+Reinout van Schouwen  <reinouts@gnome.org>
+Remi Cohen-Scali  <remi@cohen-scali.com>
+Richard Hoelscher  <rah@rahga.com>
+Rodney Dawes  <dobey@novell.com>
+Rodrigo Moya  <rodrigo@novell.com>
+Rodriguez Perez  <migras@atlas.uvigo.es>
+Rohit R  <rohit.raveendran@wipro.com>
+Roozbeh Pournader  <roozbeh@farsiweb.info>
+Runa Bhattacharjee  <runabh@gmail.com>
+Ryan Lortie  <desrt@desrt.ca>
+Samuel Jan Gunnarsson  <sammi@techattack.nu>
+Sanlig Badral  <Badral@openmn.org>
+Satoru SATOH  <ss@gnome.gr.jp>
+Satyajit Kanungo  <satyajit.kanungo@wipro.com>
+Sean Atkinson  <sean@cantab.net>
+Sebastian Dröge  <slomo@circular-chaos.org>
+Sebastien Bacher  <seb128@ubuntu.com>
+Sergey Udaltsov  <svu@gnome.org>
+Seán de Búrca  <sdeburca@svn.gnome.org>
+Shivram U  <shivaram.upadhyayula@wipro.com>
+Sigurd Gartmann  <sigurdga@europe.yahoo-inc.com>
+Simos Xenitellis  <simos@gnome.org>
+Siviah Nallagatla  <snallagatla@novell.com>
+Slobodan D. Sredojevic  <slobo@akrep.be>
+Soeren Sandmann  <sandmann@redhat.com>
+Stephen Browne  <stephen.browne@sun.com>
+Stephen Cook  <siti@orcon.net.nz>
+Steve Murphy  <murf@e-tools.com>
+Stuart MacLean  <stuart@cs.dal.ca>
+Stéphane Raimbault  <stephane.raimbault@gmail.com>
+Subhransu Behera  <arya_subhransu@yahoo.co.in>
+Sunil Mohan Adapa  <sunilmohan@fsf.org.in>
+Takeshi AIHANA  <takeshi.aihana@gmail.com>
+Taneem Ahmed  <taneem@eyetap.org>
+Terance Sola  <terance@lyse.net>
+Theppitak Karoonboonyanan  <thep@linux.thai.net>
+Thierry Randrianiriana  <thierryr@svn.gnome.org>
+Thomas Canty  <tommydal@optushome.com.au>
+Thomas Meeks  <thomas@imaginator.com>
+Thomas Vander Stichele  <thomas@apestaart.org>
+Tom Parker  <palfrey@tevp.net>
+Tomas Bzatek  <tbzatek@redhat.com>
+Tomasz Kloczko  <kloczek@pld.org.pl>
+Trevor Davenport  <trevor.davenport@gmail.com>
+Tõivo Leedjärv  <toivo@linux.ee>
+Urbančič Matej  <mateju@svn.gnome.org>
+Vasiliy Faronov  <qvvx@yandex.ru>
+Vinay M R  <vinay.mandyakoppal@wipro.com>
+Vincent Noel  <vnoel@cox.net>
+Vincent Untz  <vuntz@gnome.org>
+Vincent van Adrighem  <V.vanAdrighem@dirck.mine.nu>
+Vladimer Sichinava  <alinux@siena.linux.it>
+Wadim Dziedzic  <wadimd@svn.gnome.org>
+William Jon McCann  <mccann@jhu.edu>
+Willie Walker  <william.walker@sun.com>
+Wouter Bolsterlee  <wbolster@gnome.org>
+Xavier Claessens  <xclaesse@gmail.com>
+Yair Hershkovitz  <yairhr@gmail.com>
+Yang Hong  <yanghong@ccoss.com.cn>
+Yannig Marchegay  <yannig@marchegay.org>
+Yuriy Syrota  <rastaman@renome.rovno.ua>
+Zbigniew Chyla  <chyla@gnome.pl>
+christian neumair  <chris@gnome-de.org>
+jacob berkman  <jacob@ximian.com>
+marten ter borgh  <marten@terborgh.demon.nl>
+Åsmund Skjæveland  <aasmunds@fys.uio.no>
+Øivind Hoel  <ohoel@cvs.gnome.org>
+Žygimantas Beručka  <zygis@gnome.org>
+
+
+Nautilus 2.4 - 2.10
+===================
+
+Alan Swanson  <swanson@ukfsn.org>
+Alex Duggan  <aldug@gnome.org>
+Alex Graveley  <alex@ximian.com>
+Alexander Winston  <alexander.winston@comcast.net>
+Anders Carlsson  <andersca@gnome.org>
+Arjan van de Ven  <arjanv@redhat.com>
+Arvind Samptur  <arvind.samptur@wipro.com>
+Balamurali Viswanathan  <balamurali.viswanathan@wipro.com>
+Baris Cicek  <baris@teamforce.name.tr>
+Bastien Nocera  <hadess@hadess.net>
+Bradford Hovinen  <hovinen@ximian.com>
+Chris Lahey  <clahey@ximian.com>
+Christian Neumair  <chris@gnome-de.org>
+Christian Rose  <menthos@menthos.com>
+Christophe Fergeau  <teuf@gnome.org>
+Colin Leroy  <colin@colino.net>
+David Bordoley  <bordoley@msu.edu>
+David Malcolm  <david@davemalcolm.demon.co.uk>
+Dennis Cranston  <dennis_cranston@yahoo.com>
+Dinoop Thomas  <dinoop.thomas@wipro.com>
+Elijah Newren  <newren@gmail.com>
+Federico Mena Quintero  <federico@ximian.com>
+Fernando Herrera  <fherrera@onirica.com>
+Francisco Javier F. Serrador  <serrador@cvs.gnome.org>
+Grahame Bowland  <grahame@angrygoats.net>
+Gustavo Giraldez  <gustavo.giraldez@gmx.net>
+Hugo  <nautilus@starbreeze.knoware.nl>
+Iain  <iaingnome@gmail.com>
+Ian Wienand  <ianw@gelato.unsw.edu.au>
+J. Christopher Six  <j.christopher.six@gmail.com>
+Jaap Haitsma  <jaap@haitsma.org>
+James Henstridge  <james@jamesh.id.au>
+James Willcox  <james@ximian.com>
+Jamie  <jamiemcc@blueyonder.co.uk>
+Jason Leach  <leach@wam.umd.edu>
+Jimmy Do  <crispyleaves@gmail.com>
+Jonathan Blandford  <jrb@gnome.org>
+Jorn Baayen  <jbaayen@gnome.org>
+Jürg Billeter  <j@bitron.ch>
+Kaushal Kumar  <kaushal.kumar@wipro.com>
+Luca Ferretti  <elle.uca@libero.it>
+Magnus Damm  <magnus.damm@gmail.com>
+Marco Pesenti Gritti  <marco@gnome.org>
+Mark McLoughlin  <mark@skynet.ie>
+Matthew Gatto  <poobar@nycap.rr.com>
+Mattias Eriksson  <mattias.eriksson@simovits.com>
+Michael Gossard  <michael.gossard@free.fr>
+Michael Henson  <mike@axl.net>
+Murray Cumming  <murrayc@usa.net>
+Nickolay V. Shmyrev <nshmyrev@yandex.ru>
+Padraig O'Briain  <padraig.obriain@sun.com>
+Paolo Borelli  <pborelli@katamail.com>
+Rached Ben Mustapha  <rached@benmur.net>
+Richard Hoelscher <rah@rahga.com>
+Sebastien Bacher  <seb128@debian.org>
+Shaun McCance  <shaunm@gnome.org>
+Sivaiah Nallagatla  <snallagatla@novell.com>
+Soeren Sandmann <sandmann@daimi.au.dk>
+Srinivasa Ragavan  <sragavan@novell.com>
+Stephane Wirtel  <stephane.wirtel@belgacom.net>
+Sven Herzberg  <herzi@gnome-de.org>
+Takao Fujiwar  <takao.fujiwara@sun.com>
+Thierry Moisan <thierryn@videotron.ca>
+Thomas Cataldo  <thomas.cataldo@aliacom.fr>
+Tim Savannah  <opticcow@linux-militia.net>
+Victor I.  <lamer0@lamer0.com>
+Vijaykumar Patwari  <vijaykumar.patwari@wipro.com>
+Vincent Noel  <vincent.noel@gmail.com>
+Vincent Untz  <vincent@vuntz.net>
+William Lachance  <wlach@nit.ca>
+Xan Lopez  <xan@gnome.org>
+
+Nautilus 2.4
+============
+
+Alex Duggan  <aldug@astrolinux.com> - bug fixes
+Anders Carlsson <andersca@codefactory.se> - bug fixes, Made NautilusFileAttributes a bitmask
+Arvind Samptur <arvind.samptur@wipro.com> - multihead work
+Bastien Nocera  <hadess@hadess.net> - bug fixes
+Chris Altmann  <altmann@rcsis.com> - bug fixes
+Christian Neumair <chris@gnome-de.org> - HIG fixes
+Christian Rose <menthos@menthos.com> - string fixes
+Christophe Fergeau <teuf@users.sourceforge.net>  - bug fixes
+David Bordoley <bordoley@msu.edu> - UI and HIG work
+Dennis Cranston <dennis_cranston at yahoo com> - file management capplet icon
+Dom Lachowicz <cinamod@hotmail.com> - bug fixes
+Frank Worsley <fworsley@shaw.ca> - Use new gnome-vfs show_url API
+Frederic Crozat  <fcrozat@mandrakesoft.com> - bug fixes
+Fredrik Jösson  <fjo@nada.kth.se> - bug fixes
+Gaute Lindkvist <lindkvis@stud.ntnu.no> - bug fixes, Show volume name and free space
+George Lebl <jirka@5z.com> - handle non-writable gconf keys
+Glynn Foster <glynn.foster@sun.com> - nicer bookmarks dialog
+Greg Merchan  <merchan@phys.lsu.edu> - HIG fixes
+Hidetoshi Tajima <hidetoshi.tajima@sun.com> - bug fixes
+Iain Holmes <iain@prettypeople.org> - new zoom widget, don't use deprecated gtk+ API
+James Willcox  <jwillcox@gnome.org> - bug fixes
+Jody Goldberg <jody@gnome.org> - foocanvas fixes
+Johan Dahlin  <jdahlin@async.com.br> - total size and count for multi-file property dialogs
+Jordi Mallach  <jordi@sindominio.net> - bug fixes
+Keith Conger <kconger@navisite.com> - bug fixes
+Laurent Vivier  <Laurent.Vivier@bull.net> - AIX port
+Luca Ferretti <elle.uca@libero.it> - bug fixes
+Luca Ferretti <elle.uca@libero.it> - string fixes
+Marco Pesenti Gritti  <marco@it.gnome.org> - throbber theamable using icon theme
+Mark McLoughlin  <mark@skynet.ie> - bug fixes
+Marten ter Borgh <marten@terborgh.demon.nl> - bug fixes
+Masahiro Sakai  <sakai@tom.sfc.keio.ac.jp> - cygwin port
+Michael Meeks <michael@ximian.com> - bug fixes
+Miguel Ibarra  <mibarra@ximian.com> - build fix
+Morten Welinder  <terra@gnome.org> - foocanvas fixes
+Muktha Narayan <muktha.narayan@wipro.com> - bug fixes
+Padraig O'Briain  <padraig.obriain@sun.com> - a11y work
+Pasupathi Duraisamy <pasupathi.duraisamy@wipro.com> - bug fixes
+Reinout van Schouwen <reinout@cs.vu.nl> - string fixes
+Stephen Browne <stephen.browne@sun.com> - bug fixes
+Wolfgang Pichler <madmin@dialog-telekom.at> - initial work on multirooted tree
+
+Nautilus 2.0 and 2.2
+====================
+
+Alex Duggan <aldug@gnome.org> - bug fixes
+Anders Carlsson  <andersca@gnome.org> - bug fixes, porting work
+Arvind Samptur <arvind.samptur@wipro.com> - bug fixes
+Damon Chaplin <damon@ximian.com> - bug fixes
+Dave Bordoley <bordoley@msu.edu> - bug fixes, user interface improvement
+David Emory Watson  <dwatson@cs.ucr.edu> - hierarchical scripts menu, bug fixes
+Dennis M. Cranston  <dennis_cranston@yahoo.com> - bug fixes
+Diego González  <diego@pemas.net> - Code cleanups
+Federico Mena Quintero <federico@ximian.com>
+Frank Worsley <fworsley@shaw.ca> - Transfer dialog improvements.
+Havoc Pennington  <hp@redhat.com> - bug fixes, advice
+Jody Goldberg <jody@gnome.org> - porting work, bug fixes.
+John Fleck  <jfleck@inkstain.net> - help browser work, cleanups
+Jonathan Blandford  <jrb@redhat.com> - bug fixes, tree view help
+Kjartan Maraas <kmaraas@online.no> - bug fixes, i18n code
+Laszlo Peter <laca@ireland.sun.com> - build fixes
+Michael Meeks  <michael@ximian.com> - bonobo fixes, porting work
+Narayana Pattipati  <narayana.pattipati@wipro.com> - bug fixes
+Owen Taylor  <otaylor@redhat.com> - bug fixes
+Padraig O'Briain  <padraig.obriain@sun.com> - bug fixes
+
+The following people who helped manage the bug database:
+
+Alex Duggan <aldug@astrolinux.com>
+Aschwin van der Woude <aschwin.van.der.woude@creanor.com>
+Benedikt Roth <Benedikt.Roth@gmx.net>
+Christian Schaller <Uraeus@linuxrising.org>
+Dave Bordoley <bordoley@msu.edu>
+Dave Fallon <davef@tetsubo.com>
+David Kennedy <dkennedy@tinytoad.com>
+Elijah Newren <newren@math.utah.edu>
+Heath Harrelson <heath@pointedstick.net>
+John Fleck  <jfleck@inkstain.net>
+Luis Villa <louie@ximian.com>
+
+Nautilus 1.x
+============
+
+Alex Larsson  <alexl@redhat.com> - faster thumbnailing for JPEGs, bug fixes
+Anders Carlsson  <andersca@gnome.org> - background drawing optimizations
+Arik Devens  <arik@eazel.com> - bug fixes
+Bart Decrem  <bart@eazel.com> - fixes to default news channels, gathering feedback, founding Eazel :-)
+Brian Frank  <bfrank@eazel.com> - fixes to default bookmarks, product marketing
+Bud Tribble  <bud@eazel.com> - Management, moral support, design help
+Christopher Blizzard  <blizzard@redhat.com> - mozilla component fixes
+Christopher James Lahey  <clahey@ximian.com> - bug fixes
+Cody Russell  <bratsche@gnome.org> - bug fixes
+Dan Mueth  <d-mueth@uchicago.edu> - documentation, help system design
+David Emory Watson  <dwatson@cs.ucr.edu> - hierarchical scripts menu
+Don Melton  <don@eazel.com> - Management, moral support, design help 
+Eric Fischer  <eric@eazel.com> - bug fixes
+Fabrice Bellet  <fabrice@gnu.org> - eog image view component work
+Fatih Demir  <kabalak@kabalak.net> - bug fixes
+Frank Belew  <frb@ximian.com> - Mozilla component build fixes
+Gregory S. Hayes  <syncomm@icebreaker.net> - bug fixes
+Havoc Pennington  <hp@redhat.com> - desktop file support, start here menu, bug fixes, advice
+JP Rosevear  <jpr@arcavia.com> - bug fixes
+Jason Leach  <jasonleach@usa.net> - Solaris fix
+Jens Finke  <jens@gnome.org> - URL fix
+Jim Garrison  <garrison@users.sourceforge.net> - bug fixes
+Joe Shaw  <joe@ximian.com> - installer code, bug fixes
+John Fleck  <jfleck@inkstain.net> - help browser work
+John Gotts  <jgotts@linuxsavvy.com> - bug fix
+Jon K Hellan  <hellan@acm.org> - bug fixes
+Jonathan Blandford  <jrb@redhat.com> - desktop file support, help system, bug fixes
+Kenneth Christiansen  <kenneth@gnu.org> - icons, internationalization tools
+Kjartan Maraas <kmaraas@online.no> - bug fixes, i18n code
+Laszlo Kovacs  <laszlo.kovacs@sun.com> - help system hacking
+Martin Baulig  <martin@home-of-linux.org> - added PersistFile support
+Matt Bissiri  <bissiri@eecs.umich.edu> - list widget improvements
+Michael Meeks  <michael@ximian.com> - bonobo fixes
+Morten Welinder  <terra@diku.dk> - check-fixme suggestions
+Owen Taylor  <otaylor@redhat.com> - bug fixes
+Philip Langdale  <philipl@mail.utexas.edu> - help system galeon mode
+Richard Boulton  <richard@tartarus.org> - build fixes
+Richard Hult  <rhult@hem.passagen.se> - bug reporting
+Robert Brady  <rwb197@zepler.org> - bug fixes
+Shane Butlers  <sbutle@deakin.edu.au> - IDE in hardware view patch for showing IDE
+Stanislav Brabec  <utx@penguin.cz> - bug fixes
+Vera Horiuchi  <vera@eazel.com> - documentation
+Victor Lecha  <victor@eazel.com> - build fixes
+Yanko Kaneti  <yaneti@declera.com> - i18n fix
+Yoann Vandoorselaere  <yoann@mandrakesoft.com> - performance work
+
+The following people who did significant amounts of testing:
+
+Albert Wang  <albert@eazel.com>
+Brad Moore  <bmoore@home.com>
+Brett Neely  <brett@eazel.com>
+Christian Rose  <menthos@menthos.com>
+James Farwell  <sodorp@hotmail.com>
+John Fleck  <jfleck@inkstain.com>
+Jon Allen  <joncallen@hotmail.com>
+Kenneth Christiansen  <kenneth@gnu.org>
+Kenny Graunke  <kwg@teleport.com>
+Peter Foley  <peter.foley@sun.com>
+Tim Tan  <tim@eazel.com>
+Victor Lecha  <victor@eazel.com>
+Will LaShell  <will@lashell.net>
+
+As well as the following people who contributed translations:
+
+Abel Cheung  <maddog@linuxhall.org>
+Adam Weinberger  <adamw@gnome.org>
+Akagic Amila  <bono@linux.org.ba>
+Akira TAGOH  <tagoh@gnome.gr.jp>
+Alastair McKinstry  <mckinstry@debian.org>
+Ales Nyakhaychyk  <nab@mail.by>
+Alessio Frusciante  <algol@firenze.linux.it>
+Alexander Shopov  <ash@contact.bg>
+Alexander Winston  <alexander.winston@comcast.net>
+Almer S. Tigelaar  <almer@gnome.org>
+Andras Timar  <timar@gnome.hu>
+Andraz Tori  <andraz.tori1@guest.arnes.si>
+Andreas Hyden  <a.hyden@cyberpoint.se>
+Andrew V. Samoilov  <sav@bcs.zp.ua>
+Ankit Patel  <ankit@redhat.com>
+Arafat Medini  <lumina@silverpen.de>
+Artis Trops  <hornet@navigator.lv>
+Artur Flinta  <aflinta@cvs.gnome.org>
+Asmund Skjaeveland  <aasmunds@fys.uio.no>
+Baris Cicek  <baris@teamforce.name.tr>
+Benedikt Roth  <Benedikt.Roth@gmx.net>
+Carlos Perelló Marín  <carlos@hispalinux.es>
+Changwoo Ryu  <cwryu@debian.org>
+Christian Meyer  <chrisime@gnome.org>
+Christian Neumair  <chris@gnome-de.org>
+Christian Rose  <menthos@menthos.com>
+Christophe Merlet  <redfox@redfoxcenter.org>
+Christopher R. Gabriel  <cgabriel@cgabriel.org>
+Dafydd Harries  <daf@muse.19inch.net>
+Daniel Yacob  <locales@geez.org>
+Danilo Segan  <dsegan@gmx.net>
+David Lodge  <dave@cirt.net>
+Dennis Smit  <synap@area101.penguin.nl>
+Dirk-Jan C. Binnema  <dirkjan@gnome.org>
+Dmitry G. Mastrukov  <dmitry@taurussoft.org>
+Duarte Loreto  <happyguy_pt@hotmail.com>
+Dwayne Bailey  <dwayne@translate.org.za>
+Egle Girinaite  <eglyte@centras.lt>
+Emese Kovacs  <emese@gnome.hu>
+Eric Brayeur  <eb@ibelgique.com>
+Evandro Fernandes Giovanini  <evandrofg@ig.com.br>
+Fatih Demir  <kabalak@gmx.net>
+Francisco Javier F. Serrador  <serrador@cvs.gnome.org>
+Francisco Javier Fernandez  <cyphra@vir.tecknolabs.com>
+Frank Arnold  <farnold@cvs.gnome.org>
+Frederic Crozat  <fcrozat@mandrakesoft.com>
+Funda Wang  <fundawang@linux.net.cn>
+Gareth Owen  <gowen72@yahoo.com>
+Gaute Hvoslef Kvalnes  <ai98ghk@stud.hib.no>
+Gediminas Paulauskas  <menesis@chatsubo.lt>
+George Lebl  <jirka@5z.com>
+German Poo Caamano  <gpoo@ubiobio.cl>
+Gil Osher  <dolfin@rpg.org.il>
+Gong Yi LIAO  <granziliao@sinamail.com>
+Guntupalli Karunakar  <karunakar@freedomink.org>
+Gustavo Maciel Dias Vieira  <gustavo@sagui.org>
+Gustavo Noronha Silva  <kov@debian.org>
+Görkem Cetin  <gorkem@gelecek.com.tr>
+Hasbullah Bin Pit  <sebol@my-penguin.org>
+He Qiangqiang  <carton@linux.net.cn>
+Hendrik Richter  <hendrik@gnome-de.org>
+Inaki Larranaga  <dooteo@euskalgnu.org>
+Ivan Stojmirov  <stojmir@linux.net.mk>
+Jarkko Ranta  <jjranta@cc.joensuu.fi>
+Jayaradna  <njaya@redhat.com>
+Jean-Michel Ardantz  <jmardantz@ifrance.com>
+Jesús Bravo Álvarez  <jba@pobox.com>
+John C Barstow  <jbowtie@amathaine.com>
+Jordi Mallach  <jordi@sindominio.net> - bug fixes
+Jorge Carrasquilla Soares  <jorge@conectiva.com.br>
+KAMAGASAKO Masatoshi  <emerald@gnome.gr.jp>
+Kang Jeong-Hee  <Keizi@mail.co.kr>
+Keld Simonsen  <keld@dkuug.dk>
+Kenneth Christiansen  <kenneth@gnu.org>
+Kim Schulz  <kim@schulz.dk>
+Kjartan Maraas  <kmaraas@gnome.org>
+Kjenneth Christiansen  <kenneth@gnu.org>
+Kostas Papadimas  <pkst@gnome.org>
+Laszlo Dvornik  <dvornik@gnome.hu>
+Laurent Dhima  <laurenti@alblinux.net>
+Leonid Kanter  <leon@asplinux.ru>
+Luca Ferretti  <elle.uca@libero.it>
+Mantas Kriauciunas  <mantelis@centras.lt>
+Manuel Borchers  <webmaster@matronix.de>
+Manuel de Vega Barreiro  <barreiro@arrakis.es>
+Marcel Telka  <marcel@telka.sk>
+Marius Andreiana  <mandreiana@yahoo.com>
+Martin Norbäck  <d95mback@dtek.chalmers.se>
+Martin Willemoes Hansen  <mwh@sysrq.dk>
+Mathieu van Woerkom  <mathieu@brabants.org>
+Matthias Warkus  <mawarkus@gnome.org>
+Maxim Dziumanenko  <mvd@mylinux.com.ua>
+Meelad Zakaria  <meelad@bamdad.org>
+Mendel Mobach  <mendel@mobach.nl>
+Metin Amiroff  <metin@karegen.com>
+Michal Bukovjan  <bukm@centrum.cz>
+Miloslav Trmac  <mitr@volny.cz>
+Mohammad DAMT  <mdamt@bisnisweb.com>
+Mugurel Tudor  <mugurelu@go.ro>
+Naba Kumar  <naba@gnome.org>
+Nam SungHyun
+Nikos Charonitakis  <charosn@her.forthnet.gr>
+Ole Laursen  <olau@hardworking.dk>
+Pablo G. del Campo  <pablodc@bigfoot.com>
+Pablo Gonzalo del Campo  <pablodc@bigfoot.com>
+Pablo Saratxaga  <pablo@mandrakesoft.com>
+Paisa Seeluangsawat  <paisa@users.sf.net>
+Paul Duffy  <dubhthach@compsoc.nuigalway.ie>
+Pauli Virtanen  <pauli.virtanen@hut.fi>
+Pawan Chitrakar  <pawan@nplinux.org>
+Peteris Krisjanis  <peteris.krisjanis@os.lv>
+Priit Laes  <plaes@cvs.gnome.org>
+Raphael Higino  <raphaelh@cvs.gnome.org>
+Rhys Jones  <rhys@sucs.org>
+Richard Hult  <rhult@hem.passagen.se>
+Robert Brady  <robert@suse.co.uk>
+Robert Sedak  <robert.sedak@sk.htnet.hr>
+Roozbeh Pournader  <roozbeh@sharif.edu>
+Ross Golder  <ross@golder.org>
+Roy-Magne Mo  <rmo@sunnmore.net>
+Runa Bhattacharjee  <runab@redhat.com>
+Sami Pesonen  <spesonen@dlc.fi>
+Samuel Jon Gunnarsson  <sammi@techattack.nu>
+Sanlig Badral  <badral@openmn.org>
+Satoru Sato  <ss@gnome.gr.jp>
+Sayamindu Dasgupta  <sayamindu@clai.net>
+Sebastien Bacher  <seb128@debian.org>
+Simos Xenitellis  <simos@hellug.gr>
+Stanislav Brabec  <sbrabec@suse.cz>
+Stanislav Visnovsky  <visnovsky@nenya.ms.mff.cuni.cz>
+Szabolcs Ban  <shooby@gnome.hu>
+Takeshi AIHANA  <aihana@gnome.gr.jp>
+Takuo Kitame  <kitame@debian.org>
+Taneem Ahmed  <taneem@bengalinux.org>
+Telsa Gwynne  <hobbit@aloss.ukuu.org.uk>
+Tommi Vainikainen  <thv@iki.fi>
+Töivo Leedjärv  <toivo@linux.ee>
+Valek Filippov  <frob@df.ru>
+Valentín Trilles  <vtrilles@yahoo.es>
+Vasif Ismailoglu MD  <azerb_linux@hotmail.com>
+Veeravanallore Madhavan  <vbmadhu@hotmail.com>
+Vincent van Adrighem  <adrighem@gnome.org>
+Vlad Harchev  <hvv@hippo.ru>
+Wang Jian  <lark@linux.net.cn>
+Young-ho, Cha  <ganadist@dacome.co.kr>
+Yukihiro Nakai  <nakai@gnome.gr.jp>
+Yuri Syrota  <rasta@renome.rovno.ua>
+Zbigniew Chyla  <cyba@gnome.pl>
+Zygimantas Berucka  <uid0@akl.lt>

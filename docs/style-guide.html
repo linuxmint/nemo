@@ -1,0 +1,137 @@
+<html>
+
+<head>
+<title>Nautilus Coding Style Guide</title>
+</head>
+
+<body>
+
+<p>To make code written for Nautilus look and act in a predictable way,
+we follow a set of guidelines that specify some details of how we write code.
+To start, we follow all the guidelines outlined in the
+<a href="http://developer.gnome.org/doc/guides/programming-guidelines/">GNOME Programming Guidelines</a>.</p>
+
+<p>This document covers both things that are not mentioned in the GNOME
+Programming Guidelines and things that are mentioned there but need
+to be re-emphasized because people don't follow them often enough.</p>
+
+<p>I'm just getting started on this document. Feedback is welcome.
+Eventually I'd like better organization and tons of examples.</p>
+
+<blockquote>
+<p>- <a href="mailto:darin@bentspoon.com">Darin</a></p>
+</blockquote>
+
+<hr>
+
+<p><b>We use the most-recommended coding style from the GNOME Programming
+Guidelines.</b> This means that we use the Linux kernel brace style with
+8-character tabs (not the GNU brace style), we put spaces before
+the parentheses that introduce function argument lists, we put the
+braces that open the block for an if statement on the same line as the
+if statement (part of Linux kernel brace style).</p>
+
+<p><b>We prefer to use words rather than acronyms or abbreviations.</b> This means that
+we name classes with a prefix like Nautilus, not Ntl, for example. And we use variables
+named result rather than retval or rv.</p>
+
+<p><b>We strive to have a minimum number of local variables.</b> This makes it
+easier to move pieces of code around. For more on this, read
+<a href="recommended-books.html#Refactoring"><i>Refactoring</i></a>.</p>
+
+<p><b>We use type casts as little as possible.</b> There are many places in GTK programming
+where you have to cast to make the program work, but we do whatever we can
+to avoid this. Also, we prefer to cast data pointers, rather than casting
+function pointers, since there's so much more to get wrong with function
+pointer casts.</p>
+
+<p><b>We use typedefs from &lt;glib.h&gt; for things like guint, guchar and gpointer,
+but not gint, gchar, or gdouble.</b> Using these gives a false sense
+of portability. In all three cases, using system calls like printf requires
+knowing that these are the "real" int, char, and double, so there's no reason
+to use a typedef that's non-standard unless it's a shorter name or clearer
+in some way.</p>
+
+<p><b>We avoid in-band signaling.</b> This means that we avoid using special
+values to indicate errors, for example. This can lead to subtle bugs when a valid
+result is misinterpreted as an error, and can make it hard to tell if the code
+handles errors or not.</p>
+
+<p><b>We code for clarity first.</b> Other concerns like efficiency are secondary.
+Sometimes they become more important than clarity, but only once they are proven
+to be a problem.</p>
+
+<p><b>We use for loops when they make the code easier to read.</b> The alternative
+is usually to use a while loop. It's true that
+"easy to read" is a subjective thing.</p>
+
+<p><b>We declare local variables at the beginning of a block.</b> C99 allows you
+to declare variables anywhere in a function, but a lot of compilers still do not
+support C99.</p>
+
+<p><b>We do not initialize local variables in their declarations.</b> C allows you
+to initialize a local variable when declaring it. But no other code can run before
+this, because the other statements in a function must be after all the declarations.
+If there are lines of code initializing the variables in the declarations, it can
+be harder to change the function around, since code must move down from the declaration
+if other code needs to run after it. To avoid this, we just don't use the ability
+to initialize the variable when it's declared.</p>
+
+<p><b>We always use braces, even for one-statement "blocks".</b> Our consensus is
+to do things like this:</p>
+
+<blockquote>
+<pre>
+if (list != NULL) {
+        g_warning ("the list isn't empty");
+}
+</pre>
+</blockquote>
+
+<p>Instead of this:</p>
+
+<blockquote>
+<pre>
+if (list != NULL)
+        g_warning ("the list isn't empty");
+</pre>
+</blockquote>
+
+<p>This applies to all control structures: if, while, for, do.</p>
+
+<p><b>We make each header "stand alone".</b> Our concept with C header files is
+that each one must be written so it can be included without including another file
+first. To test that the header files we develop have this property, we always
+include the corresponding header file first in each C source file. The only exception
+is the include of &lt;config.h>, which goes first. Here's an example:</p>
+
+<blockquote>
+<pre>
+/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*-
+ *
+ * nautilus-icon-factory.c: Class for obtaining icons for files and other objects.
+ *
+ * Copyright (C) 1999, 2000 Red Hat Inc.
+ * Copyright (C) 1999, 2000 Eazel, Inc.
+ *
+ * <i>License agreement goes here.</i>
+ *
+ * Author: John Sullivan &lt;sullivan@eazel.com>
+ */
+
+#include &lt;config.h>
+#include "nautilus-icon-factory.h"
+
+#include &lt;string.h>
+#include &lt;stdio.h>
+<i>Include statements for other header files go here.</i>
+
+<i>Other declarations and code go here.</i>
+</pre>
+</blockquote>
+
+<hr>
+
+</body>
+
+</html>

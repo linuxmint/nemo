@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.gnome.Nautilus
+Exec=@bindir@/nautilus --no-default-window

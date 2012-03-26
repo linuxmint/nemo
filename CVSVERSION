@@ -1,0 +1,4 @@
+This file is here to detect the fact that we are building a CVS
+version and not a tarball. Do _not_ add it to any Makfile.am rules
+that would cause it to be distributed in release tarballs!
+

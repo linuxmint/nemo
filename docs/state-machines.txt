@@ -1,0 +1,77 @@
+
+Proposal for the loading state machines
+
+
+ViewFrame state machine
+
+States are:
+
+
+E: Empty (the initial state right after construction)
+A: Activating (waiting for component to be activated)
+N: No load_location request (a view component has been loaded, but no load_location request has been sent yet)
+W: Waiting (waiting for a response after a load request)
+U: Underway (the component has responded and the load is assumed underway)
+L: Loaded (the component has finished loading successfully)
+F: Failed (there was a fatal error somewhere)
+
+X: this stimulus is guaranteed impossible in this state
+
+
+Things I was unsure about:
+
+?2: Once a load has failed at some stage, should it be OK for Nautilus
+to try to make further calls of any kind?
+
+Missing:
+
+1) "Component stops responding" stimulus.
+2) Distinction of failure loading vs. crash of the component.
+
+Note:
+
+A "*" means that this is illegal but non-fatal, so we want to use g_warning.
+
+
+                                            State Transition Chart
+
+
+                                                             Initial State
+
+                                                  |  E  |  A  |  N  |  W  |  U  |  L  |  F  |
+          ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+          successful load_client call             |  A  |  X  |  X  |  X  |  X  |  X  | ?2  |
+          ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+          unsuccessful load_client call           |  F  |  X  |  X  |  X  |  X  |  X  | ?2  |
+          ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+	  successful activated_component call     |  X  |  N  |  X  |  X  |  X  |  X  | ?2  |
+	  ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+	  unsuccessful activated_component call   |  X  |  F  |  X  |  X  |  X  |  X  | ?2  |
+	  ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+	  stop activation                         |  E  |  E  |  X  |  X  |  X  |  X  | ?2  |
+	  ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+          nautilus_view_frame_load_location call  |  X  |  F  |  W  |  W  |  W  |  W  | ?2  |
+          ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+          open_location call from component       |  X  |  X  |  N* |  U  |  U  |  L  |  X  |
+          ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+          open_location_in_new_window             |  X  |  X  |  N* |  U  |  U  |  L  |  X  |
+          ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+          report_location_change                  |  X  |  X  |  N* |  U  |  U  |  U  |  X  |
+S         ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+t         report_selection_change                 |  X  |  X  |  N* |  U  |  U  |  L  |  X  |
+i         ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+m         report_status                           |  X  |  X  |  N* |  U  |  U  |  L  |  X  |
+u         ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+l         report_load_underway                    |  X  |  X  |  N* |  U  |  U  |  U  |  X  |
+u         ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+s         report_load_progress                    |  X  |  X  |  N* |  U  |  U  |  U  |  X  |
+          ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+          report_load_complete                    |  X  |  X  |  N* |  L  |  L  |  L  |  X  |
+          ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+          report_load_failed                      |  X  |  X  |  N* |  F  |  F  |  F  |  X  |
+          ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+          set_title                               |  X  |  X  |  N* |  U  |  U  |  L  |  X  |
+          ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+          user hits cancel on timer dialog        |  X  |  X  |  X  |  F  |  X  |  X  |  X  |
+          ----------------------------------------|-----|-----|-----|-----|-----|-----|-----|
+

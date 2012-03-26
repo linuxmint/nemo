@@ -1,0 +1,160 @@
+
+
+* Nautilus Architecture Block Diagram
+
+
++-----------------------------------------------------------------------+
+|                                                                       |
+|                            nautilus application                       |
+|                                                                       |
+|     +----------------------------------------------------------+      |
+|     |                                                          |      |
+|     |                                                          |      |
+|     |                      NautilusWindow                      |      |
+|     |                                                          |      |
+|     |                                                          |      |
+|     +----------------------------------------------------------+      |
+|                |                   |                     |            |
+|                |                   |                     |            |
+|               \|/                 \|/                   \|/           |
+| +---------------------+   +------------------+   +------------------+ |
+| |                     |   |                  |   |                  | |
+| | NautilusContentView |   | NautilusMetaView |   | NautilusMetaView | |
+| |                     |   |                  |   |                  | |
+| +---------------------+   +------------------+   +------------------+ |
+|         /||\                         /||\                      /||\   |
+|          ||                           ||                        ||    |
++----------||---------------------------||------------------------||----+
+           ||                           ||                        ||
+         CORBA                         CORBA                     CORBA
+           ||                           ||                        ||
++----------||------------------+ +------||-------------------+ +--||-----------------------+
+|         \||/                 | |     \||/                  | | \||/                      |
+| +--------------------------+ | | +-----------------------+ | | +-----------------------+ |
+| |                          | | | |                       | | | |                       | |
+| | NautilusContentViewFrame | | | | NautilusMetaViewFrame | | | | NautilusMetaViewFrame | |
+| |                          | | | |                       | | | |                       | | 
+| +--------------------------+ | | +-----------------------+ | | +-----------------------+ |
+|                              | |                           | |                           |
+|   nautilus view component    | |  nautilus view component  | |  nautilus view component  |
+|                              | |                           | |                           |
++------------------------------+ +---------------------------+ +---------------------------+
+
+
+
+* Nautilus Architecture Summary
+
+Nautilus is a general-purpose shell application for browsing arbitrary
+content. It is implemented as `nautilus', a container application
+which excercises overall control and provides chrome, and a number of
+nautilus view components. These view components may use the
+`libnautilus' library to ease implementation.
+
+There are two types of views, content views and meta-views. A nautilus
+window typically has one content view, which is displayed in the main
+area of the window, and several meta-views, which are displayed on the
+left, typically one at a time. The meta-views should be panels that
+display information about the content being displayed, or that provide
+navigation aids.
+
+However, ultimately multiple content views will be available and may
+be switched by using an option menu.
+
+The nautilus application has a NautilusWindow object for each window
+it displays. The NautilusWindow object provides various chrome and
+uses a number of NautilusView objects to communicate with view
+components. The relationship between NautilusWindow and the
+NautilusViews is mostly, but not completely one-way; primarily, the
+window calls the view's methods and connects to its signals. 
+
+The NautilusView object serves as a proxy for a view component. It
+provides a number of methods which correspond to the methods of the
+Nautilus:View IDL interface, and translates calls to these methods to
+CORBA calls to the view component. It also translates incoming calls
+from the view component into signal emissions for a set of signals
+that reflects that Nautilus:ViewFrame IDL interface.
+
+The NautilusViewFrame object serves the corresponding role in the view
+component. It provides methods that correspond to the
+Nautilus:ViewFrame IDL interface which it translates to CORBA calls to
+the app, and translates incoming CORBA calls from the app into signal
+emissions which reflect the Nautilus:View IDL interface.
+
+Thus, whenever the application calls a NautilusView method to
+communicate with the view, a CORBA message is sent, and a signal is
+emitted in the view component by NautilusViewFrame. And conversely,
+when the view component calls a NautilusViewFrame method to
+communicate with the app, a CORBA message is sent, and a signal is
+emitted by NautilusView.
+
+
+
+* Control Flow for a Location Change
+
+There are two possible cases. One case is when one of the views
+requests a location change. The other is when the framework itself
+initiates a location change. This may happen for various reasons, such
+as the user typing a URI into the location bar, the user pressing the
+Back or Forward buttons, or the user selecting a bookmark.
+
+** A view requests a location change
+
+For a view to initiate a location change, view-specific code in the
+component calls nautilus_view_frame_request_location_change with the
+appropriate arguments. This results in the "request_location_change"
+signal being emitted by the corresponding NautilusView object in the
+app, as described above. The NautilusWindow has connected to this
+signal, so it is made aware of the request. The app may decide to
+create a new window to display the new location, or to display it in
+the same window. Either way, control proceeds largely as below.
+
+
+** The framework carries out a location change
+
+When a NautilusWindow has determined that it should carry out a
+location change or load an initial location, it calls
+`nautilus_window_change_location'. This routine begins by stopping any
+previous in-progress loads. Then it determines the applicable content
+views and meta-views. It then enters a state machine which results in
+updating each view.
+
+When an individual view is being updated, one of two things may
+happen. First, if the same view component is still applicable but the
+location is different, `nautilus_view_notify_location_change' is
+called which causes the "notify_location_change" signal to be emitted
+in the view. If the same view component is no longer applicable, then
+a new NautilusView object is created, and the component for the proper
+iid is loaded. Then `nautilus_view_notify_location_change' is called
+to set it's initial location.
+
+
+** Other component types
+
+Nautilus also has built-in support for viewing locations via Bonobo
+subdocuments and Bonobo controls. This is implemented in the view and
+transparent to the nautilus application. However, the underlying
+architecture is different.
+
+
+
+* Other Communication
+
+The Nautilus:View and Nautilus:ViewFrame interfaces allow for other
+communication as well. 
+
+The view may request that the frame update the status message,
+indicate a certain level of progress during loading, or display a
+particular selection.
+
+The view frame may notify the view of a change in selection, tell it
+to stop a load in progress, ask it to load or save its state, or ask
+it to show its properties.
+
+Some conventions apply to the stop and progress operations. First,
+`stop_location_change' should be an idempotent operation - that is,
+performing it several times in a row should have the same effect as
+performing it once, and it should not cause a crash. Second, the view
+should send a `request_progress_change' message with a type of either
+PROGRESS_DONE_OK or PROGRESS_DONE_ERROR when it is done loading, as
+appropriate. This is necessary so that the stop button can be
+desensitized when loading is complete.

@@ -1,0 +1,31 @@
+This is Nautilus, the file manager for the GNOME desktop.
+
+Installation
+============
+
+See the 'INSTALL' file for installation instructions.  You will need a
+complete and up-to-date GNOME development environment to build nautilus.
+You can also find some building and installation tips at
+http://live.gnome.org/Nautilus/Development/Nautilus
+
+Hacking on Nautilus
+===================
+
+Please see the HACKING file for information about hacking on nautilus.
+
+Mailing List
+============
+
+The nautilus mailing list is nautilus-list@gnome.org.  Subscription
+information is available at
+http://mail.gnome.org/mailman/listinfo/nautilus-list
+
+How to report bugs
+==================
+
+Bugs should be reported to the GNOME bug tracking system
+(http://bugzilla.gnome.org), in the "nautilus" product.
+
+Please read the following page on how to prepare a useful bug report:
+http://bugzilla.gnome.org/bug-HOWTO.html
+

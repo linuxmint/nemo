@@ -1,0 +1,66 @@
+[org.gnome.nautilus.preferences]
+tabs-open-position = /desktop/gnome/file_views/tabs_open_position
+always-use-browser = /apps/nautilus/preferences/always_use_browser
+always-use-location-entry = /apps/nautilus/preferences/always_use_location_entry
+confirm-trash = /apps/nautilus/preferences/confirm_trash
+enable-delete = /apps/nautilus/preferences/enable_delete
+show-icon-text = /apps/nautilus/preferences/show_icon_text
+show-directory-item-counts = /apps/nautilus/preferences/show_directory_item_counts
+click-policy = /apps/nautilus/preferences/click_policy
+executable-text-activation = /apps/nautilus/preferences/executable_text_activation
+install-mime-activation = /apps/nautilus/preferences/install_mime_activation
+mouse-use-extra-buttons = /apps/nautilus/preferences/mouse_use_extra_buttons
+mouse-forward-button = /apps/nautilus/preferences/mouse_forward_button
+mouse-back-button = /apps/nautilus/preferences/mouse_back_button
+show-image-thumbnails = /apps/nautilus/preferences/show_image_thumbnails
+thumbnail-limit = /apps/nautilus/preferences/thumbnail_limit
+show-advanced-permissions = /apps/nautilus/preferences/show_advanced_permissions
+sort-directories-first = /apps/nautilus/preferences/sort_directories_first
+default-sort-order = /apps/nautilus/icon_view/default_sort_order
+default-sort-in-reverse-order = /apps/nautilus/icon_view/default_sort_in_reverse_order
+desktop-is-home-dir = /apps/nautilus/preferences/desktop_is_home_dir
+default-folder-viewer = /apps/nautilus/preferences/default_folder_viewer
+date-format = /apps/nautilus/preferences/date_format
+show-hidden-files = /desktop/gnome/file_views/show_hidden_files
+
+[org.gnome.nautilus.icon-view]
+captions = /apps/nautilus/icon_view/captions
+labels-beside-icons = /apps/nautilus/icon_view/labels_beside_icons
+default-zoom-level = /apps/nautilus/icon_view/default_zoom_level
+thumbnail-size = /apps/nautilus/icon_view/thumbnail_size
+text-ellipsis-limit = /apps/nautilus/icon_view/text_ellipsis_limit
+
+[org.gnome.nautilus.compact-view]
+default-zoom-level = /apps/nautilus/compact_view/default_zoom_level
+all-columns-have-same-width = /apps/nautilus/compact_view/all_columns_have_same_width
+
+[org.gnome.nautilus.list-view]
+default-zoom-level = /apps/nautilus/list_view/default_zoom_level
+default-visible-columns = /apps/nautilus/list_view/default_visible_columns
+default-column-order = /apps/nautilus/list_view/default_column_order
+
+[org.gnome.nautilus.sidebar-panels.tree]
+show-only-directories = /apps/nautilus/sidebar_panels/tree/show_only_directories
+
+[org.gnome.nautilus.desktop]
+font = /apps/nautilus/preferences/desktop_font
+home-icon-visible = /apps/nautilus/desktop/home_icon_visible
+computer-icon-visible = /apps/nautilus/desktop/computer_icon_visible
+trash-icon-visible = /apps/nautilus/desktop/trash_icon_visible
+volumes-visible = /apps/nautilus/desktop/volumes_visible
+network-icon-visible = /apps/nautilus/desktop/network_icon_visible
+computer-icon-name = /apps/nautilus/desktop/computer_icon_name
+home-icon-name = /apps/nautilus/desktop/home_icon_name
+trash-icon-name = /apps/nautilus/desktop/trash_icon_name
+network-icon-name = /apps/nautilus/desktop/network_icon_name
+text-ellipsis-limit = /apps/nautilus/desktop/text_ellipsis_limit
+
+[org.gnome.nautilus.window-state]
+geometry = /apps/nautilus/preferences/navigation_window_saved_geometry
+maximized = /apps/nautilus/preferences/navigation_window_saved_maximized
+sidebar-width = /apps/nautilus/preferences/sidebar_width
+start-with-toolbar = /apps/nautilus/preferences/start_with_toolbar
+start-with-location-bar = /apps/nautilus/preferences/start_with_location_bar
+start-with-status-bar = /apps/nautilus/preferences/start_with_status_bar
+start-with-sidebar = /apps/nautilus/preferences/start_with_sidebar
+side-pane-view = /apps/nautilus/preferences/side_pane_view

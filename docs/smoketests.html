@@ -1,0 +1,555 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice/5.1 (Linux)">
+	<META NAME="AUTHOR" CONTENT=" ">
+	<META NAME="CREATED" CONTENT="20000901;18303000">
+	<META NAME="CHANGEDBY" CONTENT="Josh Barrow">
+	<META NAME="CHANGED" CONTENT="20010216;14060700">
+	<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+	<STYLE>
+	<!--
+		A:link { color: #009999 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LINK="#009999" BGCOLOR="#ffffff">
+<P ALIGN=LEFT><FONT COLOR="#004252"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><FONT SIZE=6><B>Nautilus
+Smoke Tests</B></FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="font-weight: medium"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><FONT SIZE=4>The
+Nautilus Smoke Tests are a minimal set of tests, to determine whether
+a build is usable for testing, and to catch obvious regressions.</FONT></FONT></P>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><FONT COLOR="#004252"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><FONT SIZE=3><B>Views</B></FONT></FONT></FONT></P>
+<P ALIGN=LEFT><FONT SIZE=3><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Before
+beginning this section, open a folder which contains at least one
+MP3, image (GIF, JPEG or PNG), plain text, HTML, PDF, and RPM file.<B>
+(For those inside the Eazel firewall, these are in
+/h/public/QE/smoketests.)</B><BR><BR>Also be sure to be in
+single-click mode. (Preferences | Click Behavior | 'Active items with
+single click')<BR></FONT></FONT><BR><BR>
+</P>
+<TABLE WIDTH=100% BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<COL WIDTH=25*>
+	<COL WIDTH=60*>
+	<COL WIDTH=83*>
+	<COL WIDTH=87*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=10% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test
+				#</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=24% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=33% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test
+				Steps</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=34% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Expected
+				Results</SPAN></FONT></P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">V-1</FONT></P>
+			</TD>
+			<TD WIDTH=24%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">View
+				as Icon</FONT></P>
+			</TD>
+			<TD WIDTH=33%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Select &quot;View as Icons&quot; from pop-up menu.</FONT> 
+				</P>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">2.
+				Zoom in to 400% and out to 25%, both via the pop-up menu, and via
+				+/- icons.</FONT></P>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=34%>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">V-2</FONT></P>
+			</TD>
+			<TD WIDTH=24% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">View
+				as List</FONT></P>
+			</TD>
+			<TD WIDTH=33% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Select &quot;View as List&quot; from pop-up menu</FONT> 
+				</P>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">2.
+				Zoom in to 400% and out to 25%, and via +/- icons.</FONT></P>
+			</TD>
+			<TD WIDTH=34% BGCOLOR="#ffffcc">
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">V-3</FONT></P>
+			</TD>
+			<TD WIDTH=24%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">View
+				as Music</FONT></P>
+			</TD>
+			<TD WIDTH=33%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Select &quot;View as Music&quot; from pop-up menu.</FONT> 
+				</P>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">2.
+				Play an MP3.</FONT></P>
+			</TD>
+			<TD WIDTH=34%>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">V-4</FONT></P>
+			</TD>
+			<TD WIDTH=24% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">View
+				as Web Page</FONT></P>
+			</TD>
+			<TD WIDTH=33% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Click on a file of type &quot;HTML Document&quot;.</FONT></P>
+			</TD>
+			<TD WIDTH=34% BGCOLOR="#ffffcc">
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">V-5</FONT></P>
+			</TD>
+			<TD WIDTH=24%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">View
+				as Text</FONT></P>
+			</TD>
+			<TD WIDTH=33%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Click on a file of type &quot;plain text&quot;.</FONT></P>
+			</TD>
+			<TD WIDTH=34%>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">V-6</FONT></P>
+			</TD>
+			<TD WIDTH=24% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">View
+				as Image</FONT></P>
+			</TD>
+			<TD WIDTH=33% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Click on an image of type &quot;JPEG image&quot;, &quot;GIF
+				image&quot;, or &quot;PNG image&quot;. (confirm)</FONT></P>
+			</TD>
+			<TD WIDTH=34% BGCOLOR="#ffffcc">
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">V-7</FONT></P>
+			</TD>
+			<TD WIDTH=24%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">View
+				as Hardware</FONT></P>
+			</TD>
+			<TD WIDTH=33%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Type &quot;hardware:&quot; or &quot;hardware:overview&quot; into
+				the Location bar.</FONT></P>
+			</TD>
+			<TD WIDTH=34%>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">V-8</FONT></P>
+			</TD>
+			<TD WIDTH=24% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">View
+				as PDF Document</FONT></P>
+			</TD>
+			<TD WIDTH=33% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Click on a PDF file.</FONT></P>
+			</TD>
+			<TD WIDTH=34% BGCOLOR="#ffffcc">
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">V-9</FONT></P>
+			</TD>
+			<TD WIDTH=24%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">View
+				as Package</FONT></P>
+			</TD>
+			<TD WIDTH=33%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Click on any Red Hat Package Manager file.</FONT></P>
+			</TD>
+			<TD WIDTH=34%>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><FONT COLOR="#004252"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><FONT SIZE=3><B>File
+Operations</B></FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="font-weight: medium"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><FONT SIZE=3>Before
+beginning this section, change your Click Behavior (in Preferences)
+to 'Active items with a double click'.</FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<COL WIDTH=25*>
+	<COL WIDTH=60*>
+	<COL WIDTH=106*>
+	<COL WIDTH=64*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=10% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test
+				Number</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=24% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=42% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test
+				Steps</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=25% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Expected
+				Results</SPAN></FONT></P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">F-1</FONT></P>
+			</TD>
+			<TD WIDTH=24%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Rename
+				a file or folder</FONT></P>
+			</TD>
+			<TD WIDTH=42%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Click on a file, and choose &quot;Rename&quot; from the File or
+				context menu.</FONT> 
+				</P>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">2.
+				Type in a new name</FONT></P>
+			</TD>
+			<TD WIDTH=25%>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">F-2</FONT></P>
+			</TD>
+			<TD WIDTH=24% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Duplicate
+				a file or folder</FONT></P>
+			</TD>
+			<TD WIDTH=42% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Click on a file, and choose &quot;Duplicate&quot; from the File
+				or context menu.</FONT></P>
+			</TD>
+			<TD WIDTH=25% BGCOLOR="#ffffcc">
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">F-3</FONT></P>
+			</TD>
+			<TD WIDTH=24%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Create
+				a link to a file or folder</FONT></P>
+			</TD>
+			<TD WIDTH=42%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Click on a file, and choose &quot;Create Link&quot; from the File
+				or context menu.</FONT></P>
+			</TD>
+			<TD WIDTH=25%>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">F-4</FONT></P>
+			</TD>
+			<TD WIDTH=24% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Stretch
+				an icon</FONT></P>
+			</TD>
+			<TD WIDTH=42% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Click on a file, and choose &quot;Stretch Icon&quot; from the
+				File or context menu.</FONT> 
+				</P>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">2.
+				Drag the icon by a corner, and enlarge or shrink it.</FONT></P>
+			</TD>
+			<TD WIDTH=25% BGCOLOR="#ffffcc">
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><B><FONT SIZE=3><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><FONT COLOR="#004252">Desktop
+Operations</FONT></FONT></FONT></B></P>
+<TABLE WIDTH=100% BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<COL WIDTH=26*>
+	<COL WIDTH=61*>
+	<COL WIDTH=106*>
+	<COL WIDTH=64*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=10% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test
+				Number</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=24% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=41% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test
+				Steps</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=25% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Expected
+				Results</SPAN></FONT></P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">D-1</FONT></P>
+			</TD>
+			<TD WIDTH=24%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Empty
+				Trash</FONT></P>
+			</TD>
+			<TD WIDTH=41%>
+				<P STYLE="font-style: normal"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Drag files or folders onto the Trash icon.</FONT></P>
+				<P STYLE="font-style: normal"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">2.
+				Right-click on the Trash, and select &quot;Empty Trash&quot;
+				(alternatively, double-click on the trash can, and select &quot;Empty
+				Trash&quot; from the File menu.)</FONT></P>
+				<P STYLE="font-style: normal"><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">D-2</FONT></P>
+			</TD>
+			<TD WIDTH=24% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Drag
+				file to Desktop</FONT></P>
+			</TD>
+			<TD WIDTH=41% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Drag a file from a Nautilus view window to the Desktop</FONT></P>
+			</TD>
+			<TD WIDTH=25% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">File
+				should be moved to desktop.</FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P ALIGN=LEFT STYLE="font-weight: medium"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><BR><BR><B><FONT SIZE=3><FONT COLOR="#004252">Preferences/Customization</FONT></FONT></B></FONT></P>
+<TABLE WIDTH=100% BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<COL WIDTH=26*>
+	<COL WIDTH=61*>
+	<COL WIDTH=57*>
+	<COL WIDTH=112*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=10% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test
+				Number</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=24% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=22% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Test
+				Steps</SPAN></FONT></P>
+			</TH>
+			<TH WIDTH=44% BGCOLOR="#ffce39">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular"><SPAN STYLE="background: transparent">Expected
+				Results</SPAN></FONT></P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">P-1</FONT></P>
+			</TD>
+			<TD WIDTH=24%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Switch
+				Themes</FONT></P>
+			</TD>
+			<TD WIDTH=22%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				From a Nautilus window, choose &quot;Nautilus Themes&quot; from
+				the Edit menu.</FONT> 
+				</P>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">2.
+				Try each of the themes.</FONT></P>
+			</TD>
+			<TD WIDTH=44%>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">P-2</FONT></P>
+			</TD>
+			<TD WIDTH=24% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Switch
+				User Mode</FONT></P>
+			</TD>
+			<TD WIDTH=22% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				From a Nautilus window, try each of the three user modes.</FONT></P>
+			</TD>
+			<TD WIDTH=44% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">In
+				Beginner mode:</FONT> 
+				</P>
+				<OL>
+					<LI><P STYLE="margin-bottom: 0in"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">The
+					user mode menu's &quot;Edit Beginner User Level&quot; should
+					lead to a dialog with very minimal settings.</FONT></P>
+					<LI><P STYLE="margin-bottom: 0in"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Dot
+					files (e.g. .bashrc) should not be displayed.</FONT> 
+					</P>
+					<LI><P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">The
+					&quot;Special Flags&quot; portion of the Show Properties
+					dialog's &quot;Permissions&quot; pane should be omitted.</FONT> 
+					</P>
+				</OL>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">In
+				Intermediate mode:</FONT></P>
+				<OL>
+					<LI><P STYLE="margin-bottom: 0in"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Dot
+					files (e.g. .bashrc) should not be displayed.</FONT> 
+					</P>
+					<LI><P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">The
+					&quot;Special Flags&quot; portion of the Show Properties
+					dialog's &quot;Permissions&quot; pane should be omitted.</FONT> 
+					</P>
+				</OL>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">In
+				Expert mode, none of the above user experience simplification
+				should occur.</FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">P-3</FONT></P>
+			</TD>
+			<TD WIDTH=24%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Switch
+				Anti-aliasing mode</FONT></P>
+			</TD>
+			<TD WIDTH=22%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				While in Intermediate or Expert mode, choose &quot;Preferences...&quot;
+				From the user mode menu.</FONT> 
+				</P>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">2.
+				In the &quot;Appearance&quot; category, deselect the &quot;Use
+				smoother (but slower) graphics&quot; checkbox.</FONT></P>
+			</TD>
+			<TD WIDTH=44%>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Text
+				and icons should no longer be anti-aliased.</FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=10% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">P-4</FONT></P>
+			</TD>
+			<TD WIDTH=24% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Change
+				Background</FONT></P>
+			</TD>
+			<TD WIDTH=22% BGCOLOR="#ffffcc">
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">1.
+				Choose &quot;Backgrounds and Emblems&quot; from the Edit menu.</FONT>
+								</P>
+				<P><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">2.
+				Drag a few colors and backgrounds to the sidebar &amp; main
+				window pane.</FONT></P>
+			</TD>
+			<TD WIDTH=44% BGCOLOR="#ffffcc">
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=RIGHT STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 9pt"><FONT FACE="Arial, Helvetica, Geneva, Swiss, SunSans-Regular">Maintained
+by <A HREF="mailto:josh@eazel.com">Josh Barrow</A> for Nautilus
+Quality Engineering, originally written by <A HREF="mailto:eli@eazel.com">Eli
+Goldberg</A>; feedback welcome.<BR>Adaptation and reuse for other
+open source projects is freely permitted.<BR>Last Updated: 9/28/2000</FONT></FONT></P>
+</BODY>
+</HTML>

@@ -1,0 +1,10 @@
+# List of source files that should NOT be translated.
+# Please keep this file sorted alphabetically.
+libbackground/applier.c
+data/nautilus-autorun-software.desktop.in
+data/nautilus-computer.desktop.in
+data/nautilus-file-management-properties.desktop.in
+data/nautilus-folder-handler.desktop.in
+data/nautilus-home.desktop.in
+data/nautilus.desktop.in
+data/nautilus-browser.desktop.in

@@ -1,0 +1,6623 @@
+# Turkmen translation of epiphany
+# Copyright (C) 2004 Free Software Foundation
+# Copyright (C) 2004 Gurban Mühemmet Tewekgeli and
+#                                Kakilik - Turkmen free software developers community
+# This file is distributed under the terms of GNU General Public License (GPL)
+# Gurban Mühemmet Tewekgeli <gmtavakkoli@yahoo.com>, 2004.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nautilus VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-02-10 12:02+0100\n"
+"PO-Revision-Date: 2004-05-25 17:50+0330\n"
+"Last-Translator: Gurban Mühemmet Tewekgeli <gmtavakkoli@yahoo.com>\n"
+"Language-Team: Turkmen <kakilikgroup@yahoo.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: data/applications.desktop.in.h:1
+msgid "Applications"
+msgstr "Programler"
+
+#: data/applications.desktop.in.h:2
+msgid "Browse available software"
+msgstr "Nagt programlary ahtar"
+
+#: data/browser.xml.h:1
+msgid "Apparition"
+msgstr "Menzer"
+
+#: data/browser.xml.h:2
+msgid "Art"
+msgstr "Sungat"
+
+#: data/browser.xml.h:3
+msgid "Azul"
+msgstr "Azul"
+
+#: data/browser.xml.h:4
+msgid "Black"
+msgstr "Gara"
+
+#: data/browser.xml.h:5
+msgid "Blue Ridge"
+msgstr "Hat Hat Gök"
+
+#: data/browser.xml.h:6
+msgid "Blue Rough"
+msgstr "Zibir Gök"
+
+#: data/browser.xml.h:7
+msgid "Blue Type"
+msgstr "Tör Tör Gök"
+
+#: data/browser.xml.h:8
+msgid "Brushed Metal"
+msgstr "Firçelenen Metal"
+
+#: data/browser.xml.h:9
+msgid "Bubble Gum"
+msgstr "Sakyç"
+
+#: data/browser.xml.h:10
+msgid "Burlap"
+msgstr "Palas"
+
+#: data/browser.xml.h:11
+msgid "C_olors"
+msgstr "_Renkler"
+
+#: data/browser.xml.h:12
+msgid "Camera"
+msgstr "Fotograf"
+
+#: data/browser.xml.h:13
+msgid "Camouflage"
+msgstr "Gizgenç"
+
+#: data/browser.xml.h:14
+msgid "Certified"
+msgstr "Tasdykly"
+
+#: data/browser.xml.h:15
+msgid "Chalk"
+msgstr "Hek"
+
+#: data/browser.xml.h:16
+msgid "Charcoal"
+msgstr "Kömür"
+
+#: data/browser.xml.h:17
+msgid "Concrete"
+msgstr "Beton"
+
+#: data/browser.xml.h:18
+msgid "Cool"
+msgstr "Salkyn"
+
+#: data/browser.xml.h:19
+msgid "Cork"
+msgstr "Dyky"
+
+#: data/browser.xml.h:20
+msgid "Countertop"
+msgstr "Pyştahta"
+
+#: data/browser.xml.h:21
+msgid "Danger"
+msgstr "Hatar"
+
+#: data/browser.xml.h:22
+msgid "Danube"
+msgstr "Danub"
+
+#: data/browser.xml.h:23
+msgid "Dark Cork"
+msgstr "Garanky Dyky"
+
+#: data/browser.xml.h:24
+msgid "Dark GNOME"
+msgstr "Garanky GNOME"
+
+#: data/browser.xml.h:25
+msgid "Deep Teal"
+msgstr ""
+
+#: data/browser.xml.h:26
+msgid "Distinguished"
+msgstr "Aýry"
+
+#: data/browser.xml.h:27
+msgid "Documents"
+msgstr "Senedler"
+
+#: data/browser.xml.h:28
+msgid "Dots"
+msgstr "Nokatlar"
+
+#: data/browser.xml.h:29
+msgid "Draft"
+msgstr "Çyzgy"
+
+#: data/browser.xml.h:30
+msgid "Drag a color to an object to change it to that color"
+msgstr "Bir objektiň renkini ewez etmek üçin bir renki onyň üstine süýräň"
+
+#: data/browser.xml.h:31
+msgid "Drag a pattern tile to an object to change it"
+msgstr ""
+"Bir objektiň bejergisini ewez etmek üçin bir bejergini onyň üstine süýräň"
+
+#: data/browser.xml.h:32
+msgid "Drag an emblem to an object to add it to the object"
+msgstr "Bir objektiň alamatyny ewez etmek üçin bir alamaty onyň üstine süýräň"
+
+#: data/browser.xml.h:33
+msgid "Eclipse"
+msgstr "Gün Tutulmak"
+
+#: data/browser.xml.h:34
+msgid "Envy"
+msgstr "Bahyllyk"
+
+#: data/browser.xml.h:35 src/nautilus-emblem-sidebar.c:941
+#: src/nautilus-property-browser.c:1731
+msgid "Erase"
+msgstr "Boz"
+
+#: data/browser.xml.h:36
+msgid "Favorite"
+msgstr "Söýgüli"
+
+#: data/browser.xml.h:37
+msgid "Fibers"
+msgstr "Süýümler"
+
+#: data/browser.xml.h:38
+msgid "Fire Engine"
+msgstr "Matur"
+
+#: data/browser.xml.h:39
+msgid "Fleur De Lis"
+msgstr "Fleur De Lis"
+
+#: data/browser.xml.h:40
+msgid "Floral"
+msgstr "Güllik"
+
+#: data/browser.xml.h:41
+msgid "Fossil"
+msgstr "Fösil"
+
+#: data/browser.xml.h:42 icons/gnome/gnome.xml.h:2
+msgid "GNOME"
+msgstr "Fösil"
+
+#: data/browser.xml.h:43
+msgid "Granite"
+msgstr "Granyt"
+
+#: data/browser.xml.h:44
+msgid "Grapefruit"
+msgstr "Içi Gyzyl"
+
+#: data/browser.xml.h:45
+msgid "Green Weave"
+msgstr "Ýaşyl dokum"
+
+#: data/browser.xml.h:46
+msgid "Ice"
+msgstr "Buz"
+
+#: data/browser.xml.h:47
+msgid "Important"
+msgstr "Möhüm"
+
+#: data/browser.xml.h:48
+msgid "Indigo"
+msgstr "Nil"
+
+#: data/browser.xml.h:49
+msgid "Leaf"
+msgstr "Ýaprak"
+
+#: data/browser.xml.h:50
+msgid "Lemon"
+msgstr "Limon"
+
+#: data/browser.xml.h:51
+msgid "Mail"
+msgstr "Poçtu"
+
+#: data/browser.xml.h:52
+msgid "Mango"
+msgstr ""
+
+#: data/browser.xml.h:53
+msgid "Manila Paper"
+msgstr "Agaç Kagyzy"
+
+#: data/browser.xml.h:54
+msgid "Moss Ridge"
+msgstr "Zibir Haza"
+
+#: data/browser.xml.h:55
+msgid "Mud"
+msgstr "Palçyk"
+
+#: data/browser.xml.h:56
+msgid "Multimedia"
+msgstr "Moltymedýa"
+
+#: data/browser.xml.h:57
+msgid "New"
+msgstr "Täze"
+
+#: data/browser.xml.h:58
+msgid "Numbers"
+msgstr "Sanlar"
+
+#: data/browser.xml.h:59
+msgid "OK"
+msgstr "Bolýar"
+
+#: data/browser.xml.h:60
+msgid "Ocean Strips"
+msgstr "Deňiz Çylgymy"
+
+#: data/browser.xml.h:61
+msgid "Oh No"
+msgstr "Äý Waý"
+
+#: data/browser.xml.h:62
+msgid "Onyx"
+msgstr "Agyg"
+
+#: data/browser.xml.h:63
+msgid "Orange"
+msgstr "Pyrtykal"
+
+#: data/browser.xml.h:64
+msgid "Package"
+msgstr "Bugça"
+
+#: data/browser.xml.h:65
+msgid "Pale Blue"
+msgstr ""
+
+#: data/browser.xml.h:66
+msgid "Personal"
+msgstr "Şahsy"
+
+#: data/browser.xml.h:67
+msgid "Pictures"
+msgstr "Suratlar"
+
+#: data/browser.xml.h:68
+msgid "Purple Marble"
+msgstr ""
+
+#: data/browser.xml.h:69
+msgid "Ridged Paper"
+msgstr "Ulkemly Kagyz"
+
+#: data/browser.xml.h:70
+msgid "Rough Paper"
+msgstr "Gara Kagyz"
+
+#: data/browser.xml.h:71
+msgid "Ruby"
+msgstr "Ýýagut"
+
+#: data/browser.xml.h:72
+msgid "Sea Foam"
+msgstr "Deňiz Köpüky"
+
+#: data/browser.xml.h:73
+msgid "Shale"
+msgstr ""
+
+#: data/browser.xml.h:74
+msgid "Silver"
+msgstr "Kümüş"
+
+#: data/browser.xml.h:75
+msgid "Sky"
+msgstr "Göň"
+
+#: data/browser.xml.h:76
+msgid "Sky Ridge"
+msgstr "Göň Ulkemy"
+
+#: data/browser.xml.h:77
+msgid "Snow Ridge"
+msgstr "Gar Ulkemy"
+
+#: data/browser.xml.h:78
+msgid "Sound"
+msgstr "Ses"
+
+#: data/browser.xml.h:79
+msgid "Special"
+msgstr "Ýöryte"
+
+#: data/browser.xml.h:80
+msgid "Stucco"
+msgstr ""
+
+#: data/browser.xml.h:81
+msgid "Tangerine"
+msgstr ""
+
+#: data/browser.xml.h:82
+msgid "Terracotta"
+msgstr ""
+
+#: data/browser.xml.h:83
+msgid "Urgent"
+msgstr "Gyssagly"
+
+#: data/browser.xml.h:84
+msgid "Violet"
+msgstr "Badamjan"
+
+#: data/browser.xml.h:85
+msgid "Wavy White"
+msgstr ""
+
+#: data/browser.xml.h:86
+msgid "Web"
+msgstr "Web"
+
+#: data/browser.xml.h:87
+msgid "White"
+msgstr "Ag"
+
+#: data/browser.xml.h:88
+msgid "White Ribs"
+msgstr "Ag Gapyrga"
+
+#: data/browser.xml.h:89
+msgid "_Emblems"
+msgstr "_Alamatlar"
+
+#: data/browser.xml.h:90
+msgid "_Patterns"
+msgstr "_Bejergiler"
+
+#: data/favorites.desktop.in.h:1
+msgid "Favorite applications"
+msgstr "Söýgüli programler"
+
+#: data/favorites.desktop.in.h:2
+msgid "Favorites"
+msgstr "Söýgüliler"
+
+#: icons/crux_eggplant/crux_eggplant.xml.h:1
+msgid "An Eggplant variation of the Crux theme."
+msgstr "Crux temiň bir Eggplant inhirafi"
+
+#: icons/crux_eggplant/crux_eggplant.xml.h:2
+msgid "Crux-Eggplant"
+msgstr "Crux-Eggplant"
+
+#: icons/crux_teal/crux_teal.xml.h:1
+msgid "A Teal variation of the Crux theme."
+msgstr "Crux temiň bir teal inhirafi"
+
+#: icons/crux_teal/crux_teal.xml.h:2
+msgid "Crux-Teal"
+msgstr "Crux-Teal"
+
+#: icons/default/default.xml.h:1
+msgid "Eazel"
+msgstr "Eazel"
+
+#: icons/default/default.xml.h:2
+msgid "This is the default theme for Nautilus."
+msgstr "Bu nautilus üçin oň bellenen tem."
+
+#: icons/gnome/gnome.xml.h:1
+msgid "A theme designed to fit well with the classic GNOME environment."
+msgstr ""
+"Bu tem klasik GNOME töwereki bilen gowy jaýlaşmak üçin terhlenen tem dir."
+
+#: icons/sierra/sierra.xml.h:1
+msgid "Sierra"
+msgstr "Sierra"
+
+#: icons/sierra/sierra.xml.h:2
+msgid "Uses manila folders and gray-green backgrounds."
+msgstr "Bu tem manilla haltalardan we mele-ýaşyl arkaplan ullanýa"
+
+#: icons/tahoe/tahoe.xml.h:1
+msgid "Tahoe"
+msgstr "Tahoe"
+
+#: icons/tahoe/tahoe.xml.h:2
+msgid "This theme uses photo-realistic folders."
+msgstr "Bu tem foto-realistik halatalardan ullanýa"
+
+#: libnautilus-extension/nautilus-column.c:175
+#: libnautilus-extension/nautilus-menu-item.c:206
+#: libnautilus-extension/nautilus-property-page.c:176
+#: libnautilus-private/nautilus-column-utilities.c:43
+#: src/file-manager/fm-list-view.c:1107
+msgid "Name"
+msgstr "Ad"
+
+#: libnautilus-extension/nautilus-column.c:176
+msgid "Name of the column"
+msgstr "Sütüniň ady"
+
+#: libnautilus-extension/nautilus-column.c:182
+msgid "Attribute"
+msgstr "Sipet"
+
+#: libnautilus-extension/nautilus-column.c:183
+msgid "The attribute name to display"
+msgstr "Görkeziljek sipet ady"
+
+#: libnautilus-extension/nautilus-column.c:189
+#: libnautilus-extension/nautilus-menu-item.c:213
+#: libnautilus-extension/nautilus-property-page.c:183
+msgid "Label"
+msgstr "Etiket"
+
+#: libnautilus-extension/nautilus-column.c:190
+msgid "Label to display in the column"
+msgstr "Sütünda görkeziljek etiket"
+
+#: libnautilus-extension/nautilus-column.c:196
+#: src/file-manager/fm-ditem-page.c:343 src/file-manager/fm-ditem-page.c:354
+msgid "Description"
+msgstr "Wasp"
+
+#: libnautilus-extension/nautilus-column.c:197
+msgid "A user-visible description of the column"
+msgstr "Wasp"
+
+#: libnautilus-extension/nautilus-column.c:204
+msgid "xalign"
+msgstr "xalign"
+
+#: libnautilus-extension/nautilus-column.c:205
+msgid "The x-alignment of the column"
+msgstr "Sütüniň x-ýerlşiki"
+
+#: libnautilus-extension/nautilus-menu-item.c:207
+msgid "Name of the item"
+msgstr "Aýtemiň ady"
+
+#: libnautilus-extension/nautilus-menu-item.c:214
+msgid "Label to display to the user"
+msgstr "Ullançýa görkeziljek etiket"
+
+#: libnautilus-extension/nautilus-menu-item.c:220
+msgid "Tip"
+msgstr "Maslahat"
+
+#: libnautilus-extension/nautilus-menu-item.c:221
+msgid "Tooltip for the menu item"
+msgstr "Menü aýtemi üçin maslahat"
+
+#: libnautilus-extension/nautilus-menu-item.c:227
+msgid "Icon"
+msgstr "Tymsal"
+
+#: libnautilus-extension/nautilus-menu-item.c:228
+msgid "Name of the icon to display in the menu item"
+msgstr "Menü aýteminde görkeziljek tymsalyň ady"
+
+#: libnautilus-extension/nautilus-menu-item.c:235
+msgid "Sensitive"
+msgstr "Hessas"
+
+#: libnautilus-extension/nautilus-menu-item.c:236
+msgid "Whether the menu item is sensitive"
+msgstr "Menü aýteminiň hessas olmaky"
+
+#: libnautilus-extension/nautilus-menu-item.c:242
+msgid "Priority"
+msgstr "Biriňilik"
+
+#: libnautilus-extension/nautilus-menu-item.c:243
+msgid "Show priority text in toolbars"
+msgstr "Biriňilik metini  esbap zolakda görkezilsin"
+
+#: libnautilus-extension/nautilus-property-page.c:177
+msgid "Name of the page"
+msgstr "Sahypaniň ady"
+
+#: libnautilus-extension/nautilus-property-page.c:184
+msgid "Label widget to display in the notebook tab"
+msgstr "Depterçe tãbinde görkeziljek etiket widgeti"
+
+#: libnautilus-extension/nautilus-property-page.c:190
+msgid "Page"
+msgstr "sahypa"
+
+#: libnautilus-extension/nautilus-property-page.c:191
+msgid "Widget for the property page"
+msgstr "Häsiýet sahypasynyň widgeti"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:1
+msgid ""
+"A list of captions below an icon in the icon view and the desktop. The "
+"actual number of captions shown depends on the zoom level. Possible values "
+"are: \"size\", \"type\", \"date_modified\", \"date_changed\", \"date_accessed"
+"\", \"owner\", \"group\", \"permissions\", \"octal_permissions\" and "
+"\"mime_type\"."
+msgstr ""
+"Tymsal görnöşi we desktapda bir tymsalyň astyndaky ýazylar.  Görkezilen "
+"ýazylar sany ulaldyş derejesine bagly dir. Mümkin mykdarlar: \"size\", \"type"
+"\", \"date_modified\", \"date_changed\", \"date_accessed\", \"owner\", "
+"\"group\", \"permissions\", \"octal_permissions\" and \"mime_type\"."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:2
+msgid "Bring up a new window for every opened file"
+msgstr "Her bir açik faýl üçin bir ãpişge ýokarla"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:3
+msgid "Computer icon visible on desktop"
+msgstr "Kompýuter tymsaly desktapda görkezilsin"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:4
+msgid "Criteria for search bar searching"
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:5
+msgid ""
+"Criteria when matching files searched for in the search bar. If set to "
+"\"search_by_text\", then Nautilus will Search for files by file name only. "
+"If set to \"search_by_text_and_properties\", then Nautilus will search for "
+"files by file name and file properties."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:6
+msgid "Current Nautilus theme (deprecated)"
+msgstr "Hãzirki nautilus temi (ullanylmýar)"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:7
+msgid "Custom Background Set"
+msgstr "Şahsy Arkaplan"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:8
+msgid "Custom Side Pane Background Set"
+msgstr "Şahsy Böwür Jam Arkaplani"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:9
+#, fuzzy
+msgid "Date Format"
+msgstr "_Kadala"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:10
+msgid "Default Background Color"
+msgstr "Ön Bellenen Arkaplan Renki"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:11
+msgid "Default Background Filename"
+msgstr "Ön Bellenen Arkaplan Faýl ady"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:12
+msgid "Default Side Pane Background Color"
+msgstr "Ön Bellenen Böwür Jam Arkaplan Renki"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:13
+msgid "Default Side Pane Background Filename"
+msgstr "Ön Bellenen Böwür Jam Arkaplan Faýl ady"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:14
+msgid "Default column order in the list view"
+msgstr "List görnöşde ön bellenen sütün tertibi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:15
+msgid "Default column order in the list view."
+msgstr "List görnöşde ön bellenen sütün tertibi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:16
+msgid "Default folder viewer"
+msgstr "Ön Bellenen halta namaýyşçysy"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:17
+msgid "Default icon zoom level"
+msgstr "Ön bellenen tymsal ulaldyş derejesi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:18
+msgid "Default list of columns visible in the list view"
+msgstr "List görnöşinde ön bellenen görkezilýãn sütünler listi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:19
+msgid "Default list of columns visible in the list view."
+msgstr "List görnöşinde ön bellenen görkezilýãn sütünler listi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:20
+msgid "Default list zoom level"
+msgstr "Ön bellenen list ulaldyş derejesi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:21
+msgid "Default sort order"
+msgstr "Ön bellenen tertiblemek tertibi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:22
+msgid "Default zoom level used by the icon view."
+msgstr "Tymsal görnöşinde ön bellenen ulaldyş derejesi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:23
+msgid "Default zoom level used by the list view."
+msgstr "List görnöşinde ön bellenen ulaldyş derejesi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:24
+#, fuzzy
+msgid "Desktop computer icon name"
+msgstr "Desktap üstinde ýerleşen öý tymsalynyň ady"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:25
+msgid "Desktop font"
+msgstr "Desktap kalamy"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:26
+msgid "Desktop home icon name"
+msgstr "Desktap üstinde ýerleşen öý tymsalynyň ady"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:27
+msgid "Desktop trash icon name"
+msgstr "Desktap üstinde ýerleşen zibil tymsalynyň ady"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:28
+msgid "Enable 'special' flags in file preferences dialog"
+msgstr "Faýl seçenekler dýalogynda 'ýöryte' baýdaklarny etginleşdir"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:29
+msgid "Enables the classic Nautilus behavior, where all windows are browsers"
+msgstr "Ehli äpişgeler ahtaçy bolsalar klasik nautilus boluşyny etginleşdir"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:30
+msgid ""
+"Filename for the default folder background. Only used if background_set is "
+"true."
+msgstr ""
+"Ön bellenen halta arkaplaniň faýl ady. Eger kground_set true bolsa "
+"ullanylýar."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:31
+msgid ""
+"Filename for the default side pane background. Only used if "
+"side_pane_background_set is true."
+msgstr ""
+"Ön bellenen böwür jam arkaplaniň faýl ady. eger side_pane_background_set "
+"true bolsa ullanlýar"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:32
+msgid ""
+"Folders over this size will be truncated to around this size. The purpose of "
+"this is to avoid unintentionally blowing the heap and killing Nautilus on "
+"massive folders. A negative value denotes no limit. The limit is approximate "
+"due to the reading of folders chunk-wise."
+msgstr ""
+"Bu ululykdan ullakan ãpişgeler bu ululyka yakyn edilip kesiler. Ondan "
+"yzlanylýan maksat bu ki ullakan haltalarda nautilusi öldürip topbakiň beter "
+"ulalamakynyň ewine geçilsin. Menfy myjdar hiçbir hed "
+"goýmaýar. ???????????????????????????????"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:33
+msgid "Home icon visible on desktop"
+msgstr "Öý tymsaly desktapda görkezilsin"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:34
+msgid ""
+"If set to true, Nautilus will only show folders in the tree side pane. "
+"Otherwise it will show both folders and files."
+msgstr ""
+"Eger true bolsa, Nautilus böwür jamda diňe halatalary görkezer. Ýogsa hem "
+"faýllary  we hem haltalary görkezer."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:35
+msgid ""
+"If set to true, newly opened windows will have the location bar visible."
+msgstr "Eger true bolsa, tãze açylan ãpişgeleriň ýer zolaky görkezilsin."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:36
+msgid "If set to true, newly opened windows will have the side pane visible."
+msgstr "Eger true bolsa, tãze açylan ãpişgeleriň böwür jamy görkezilsin."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:37
+msgid "If set to true, newly opened windows will have the status bar visible."
+msgstr "Eger true bolsa, tãze açylan ãpişgeleriň durum zolaky görkezilsin."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:38
+msgid "If set to true, newly opened windows will have toolbars visible."
+msgstr "Eger true bolsa, tãze açylan ãpişgeleriň esbap zolaky görkezilsin."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:39
+msgid ""
+"If set to true, then Nautilus lets you edit some of the more esoteric "
+"options of a file in the file preferences dialog."
+msgstr ""
+"Eger true bolsa, Nautilus size bir faýlyň kop esoterik seçgilerni faýl "
+"seçenekler dýalogynda editlemek üçin ejeza berýar."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:40
+msgid ""
+"If set to true, then Nautilus shows folders prior to showing files in the "
+"icon and list views."
+msgstr ""
+"Eger true bolsa, Nautilus tymsal we list görnöşde haltalery faýllardan "
+"öňinçä görkezýãr"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:41
+msgid ""
+"If set to true, then Nautilus will ask for confirmation when you attempt to "
+"put files in the trash."
+msgstr ""
+"Eger true bolsa, siz faýllary zibilde goýjak bolsaňiz Nautilus bir tasdyk "
+"sizden alar."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:42
+msgid ""
+"If set to true, then Nautilus will bring up a new Nautilus window by default "
+"whenever an item is opened."
+msgstr ""
+"Eger true bolsa, Bir aýtem açylsa ön bellenme bilen Nautilus tãze bir "
+"Nautilus ãpişgesini ýokarlar."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:43
+msgid "If set to true, then Nautilus will draw the icons on the desktop."
+msgstr "Eger true bolsa, Nautilus tymsallary dekstapda çekip başarar."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:44
+msgid ""
+"If set to true, then Nautilus will have a feature allowing you to delete a "
+"file immediately and in-place, instead of moving it to the trash. This "
+"feature can be dangerous, so use caution."
+msgstr ""
+"Eger true bolsa, Nautilus size bir faýly zibile göçirmãni ony duran ýerinde "
+"pozmak ymkanyny berer. Bu ymkan hatarly. Öndan ãtýaç bilen ullanyň."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:45
+msgid ""
+"If set to true, then Nautilus will use the user's home folder as the "
+"desktop. If it is false, then it will use ~/Desktop as the desktop."
+msgstr ""
+"Eger true bolsa, Nautilus ullançy öýi haltasyndan desktap üçin ullanar. Eger "
+"false bolsa, ol ~/Desktop haltasyndan ullanar."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:46
+msgid ""
+"If set to true, then all Nautilus windows will be browser windows. This is "
+"how Nautilus used to behave before version 2.6, and some people prefer this "
+"behavior."
+msgstr ""
+"Eger true bolsa, ehli Nautilus äpişgeleri ahtarçy äpişgeleri bolar. Bu "
+"Nautilusiň 2.6 den oň boluşidi, we bireme halk bu boluşi halaýa."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:47
+msgid ""
+"If set to true, then backup files such as those created by Emacs are "
+"displayed. Currently, only files ending in a tilde (~) are considered backup "
+"files."
+msgstr ""
+"Eger true bolsa, Emacsiň nusga faýllary ýaly zapas faýllar görkeziler. "
+"häzirçe, diňe telpek (~) bilen gutarýan faýllar zapas faýl saýylýar."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:48
+msgid ""
+"If set to true, then hidden files are shown in the file manager. Hidden "
+"files are either dotfiles or are listed in the folder's .hidden file."
+msgstr ""
+"Eger true bolsa, faýl müdirinde gizlin faýllar görkeziler. Gizlin faýllar "
+"nokatly faýllar ýa haltalariň .hidden faýllary dir."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:49
+msgid ""
+"If this is set to true, an icon linking to the computer location will be put "
+"on the desktop."
+msgstr ""
+"Eger bu true bolsa, kompýuter ýeryne bir baglaýyş tymsal desktapda goýular."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:50
+msgid ""
+"If this is set to true, an icon linking to the home folder will be put on "
+"the desktop."
+msgstr ""
+"Eger bu true bolsa, öý halatasyna bir baglaýyş tymsal desktapda goýular."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:51
+msgid ""
+"If this is set to true, an icon linking to the trash will be put on the "
+"desktop."
+msgstr "Eger bu true bolsa, öý zibile bir baglaýyş tymsal desktapda goýular."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:52
+#, fuzzy
+msgid ""
+"If this is set to true, icons linking to mounted volumes will be put on the "
+"desktop."
+msgstr "Eger bu true bolsa, öý zibile bir baglaýyş tymsal desktapda goýular."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:53
+msgid ""
+"If true, files in new windows will be sorted in reverse order. ie, if sorted "
+"by name, then instead of sorting the files from \"a\" to \"z\", they will be "
+"sorted from \"z\" to \"a\"."
+msgstr ""
+"Eger true bolsa, täze äpişgeler içinde faýllar tersine tertiblener. meselen, "
+"eger ad hesibine tertiblenen bolsalar, \"a\" dan \"z\" ýerine \"z\" dan \"a"
+"\" eçenli tertiblenerler."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:54
+msgid ""
+"If true, files in new windows will be sorted in reverse order. ie, if sorted "
+"by name, then instead of sorting the files from \"a\" to \"z\", they will be "
+"sorted from \"z\" to \"a\"; if sorted by size, instead of being "
+"incrementally they will be sorted decrementally."
+msgstr ""
+"Eger true bolsa, täze äpişgeler içinde faýllar tersine tertiblener. meselen, "
+"eger ad hesibine tertiblenen bolsalar, \"a\" dan \"z\" ýerine \"z\" dan \"a"
+"\" eçenli tertiblenerler. eger ululyk hesibine tertiblenel bölsa ulalamak "
+"ýerine kiçilik hesibine tertiblenerler."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:55
+msgid "If true, icons will be laid out tighter by default in new windows."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:56
+msgid ""
+"If true, labels will be placed beside icons rather than underneath them."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:57
+msgid "If true, new windows will use manual layout by default."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:58
+msgid ""
+"Images over this size (in bytes) won't be thumbnailed. The purpose of this "
+"setting is to avoid thumbnailing large images that may take a long time to "
+"load or use lots of memory."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:59
+msgid "List of possible captions on icons"
+msgstr "Tymsallarýazyň mümkin ýazylar listi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:60
+msgid "Maximum handled files in a folder"
+msgstr "Bir halta içinde iň kop ellenen faýllar"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:61
+msgid "Maximum image size for thumbnailing"
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:62
+msgid ""
+"Name of the Nautilus theme to use. This has been deprecated as of Nautilus "
+"2.2. Please use the icon theme instead."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:63
+msgid "Nautilus handles drawing the desktop"
+msgstr "Nautilus desktapi çekmekini elleýär."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:64
+msgid "Nautilus uses the users home folder as the desktop"
+msgstr "Nautilus ullançylaryň öý haltasyndan desktapa ullanýar."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:65
+msgid "Only show folders in the tree sidebar"
+msgstr "Bag böwür zolakynda diňe haltalary görkez"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:66
+msgid ""
+"Possible values are \"single\" to launch files on a single click, or \"double"
+"\" to launch them on a double click."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:67
+msgid "Put labels beside icons"
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:68
+msgid "Reverse sort order in new windows"
+msgstr "Täze äpişgelerde tersine tertiblkemek"
+
+#. Translators: please note this can choose the default font and the size. e.g. "Monospace 8". Please do not translate "Sans". In most cases, this should be left alone.
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:70
+msgid "Sans 10"
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:71
+msgid "Show folders first in windows"
+msgstr "Äpişgelerde haltalry ilkinjde görkez"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:72
+msgid "Show location bar in new windows"
+msgstr "Ýer zolakyny täze äpişgelerde görkez"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:73
+#, fuzzy
+msgid "Show mounted volumes on the desktop"
+msgstr "Öý tymsaly desktapda görkezilsin"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:74
+msgid "Show side pane in new windows"
+msgstr "Böwür zolakyny täze äpişgelerde görkez"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:75
+msgid "Show status bar in new windows"
+msgstr "Durum zolakyny täze äpişgelerde görkez"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:76
+msgid "Show toolbar in new windows"
+msgstr "Esbap zolakyny täze äpişgelerde görkez"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:77
+msgid "Side pane view"
+msgstr "Böwür jamynyň görnöşi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:78
+msgid ""
+"Speed tradeoff for when to preview a sound file when mousing over a files "
+"icon. If set to \"always\" then always plays the sound, even if the file is "
+"on a remote server. If set to \"local_only\" then only plays previews on "
+"local filesystems. If set to \"never\" then it never previews sound."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:79
+msgid ""
+"Speed tradeoff for when to show a preview of text file contents in the "
+"file's icon. If set to \"always\" then always show previews, even if the "
+"folder is on a remote server. If set to \"local_only\" then only show "
+"previews for local filesystems. If set to \"never\" then never bother to "
+"read preview data."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:80
+msgid ""
+"Speed tradeoff for when to show an image file as a thumbnail. If set to "
+"\"always\" then always thumbnail, even if the folder is on a remote server. "
+"If set to \"local_only\" then only show thumbnails for local filesystems. If "
+"set to \"never\" then never bother to thumbnail images, just use a generic "
+"icon."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:81
+msgid ""
+"Speed tradeoff for when to show the number of items in a folder. If set to "
+"\"always\" then always show item counts, even if the folder is on a remote "
+"server. If set to \"local_only\" then only show counts for local "
+"filesystems. If set to \"never\" then never bother to compute item counts."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:82
+msgid ""
+"The default sort-order for items in the icon view. Possible values are \"name"
+"\", \"size\", \"type\", \"modification_date\", and \"emblems\"."
+msgstr ""
+"Täze äpişgelerde tymsal görnöşinde ön bellenen tertiblemek hesibi. Mümkin "
+"mykdarlar \"ad\", \"ululyk\", \"hil\", \"üýtgemek_tarihi\", we \"alamatlar\"."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:83
+msgid ""
+"The default sort-order for the items in the list view. Possible values are "
+"\"name\", \"size\", \"type\", and \"modification_date\"."
+msgstr ""
+"Täze äpişgelerde list görnöşinde ön bellenen tertiblemek hesibi. Mümkin "
+"mykdarlar \"ad\", \"ululyk\", \"hil\", \"üýtgemek_tarihi\", we \"alamatlar\"."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:84
+msgid "The default width of the side pane in new windows."
+msgstr "Täze äpişgelerde böwür jamiň ön bellenen giňliki"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:85
+msgid "The font description used for the icons on the desktop."
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:86
+#, fuzzy
+msgid ""
+"The format of file dates. Possible values are \"locale\", \"iso\", and "
+"\"informal\"."
+msgstr ""
+"Täze äpişgelerde list görnöşinde ön bellenen tertiblemek hesibi. Mümkin "
+"mykdarlar \"ad\", \"ululyk\", \"hil\", \"üýtgemek_tarihi\", we \"alamatlar\"."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:87
+msgid "The side pane view to show in newly opened windows."
+msgstr "Täze açylan äpişgelerde görkezmek üçin böwür jamiň görnöşi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:88
+#, fuzzy
+msgid ""
+"This name can be set if you want a custom name for the computer icon on the "
+"desktop."
+msgstr ""
+"Siz desktapda öý tymsaly üçin şahsy bir ad goýjak bolsaňiz bu ad düzümlenip "
+"biler."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:89
+msgid ""
+"This name can be set if you want a custom name for the home icon on the "
+"desktop."
+msgstr ""
+"Siz desktapda öý tymsaly üçin şahsy bir ad goýjak bolsaňiz bu ad düzümlenip "
+"biler."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:90
+msgid ""
+"This name can be set if you want a custom name for the trash icon on the "
+"desktop."
+msgstr ""
+"Siz desktapda zibil tymsaly üçin şahsy bir ad goýjak bolsaňiz bu ad "
+"düzümlenip biler."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:91
+msgid "Trash icon visible on desktop"
+msgstr "Zibil tymsaly desktapda görkezilsin"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:92
+msgid "Type of click used to launch/open files"
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:93
+msgid "Use manual layout in new windows"
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:94
+msgid "Use tighter layout in new windows"
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:95
+msgid "What to do with executable text files when activated"
+msgstr "Işeňger faýllar janlaşdyrylanda olar bilen näme edilmeli"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:96
+msgid ""
+"What to do with executable text files when they are activated (single or "
+"double clicked). Possible values are \"launch\" to launch them as programs, "
+"\"ask\" to ask what to do via a dialog, and \"display\" to display them as "
+"text files."
+msgstr ""
+"Işeňger faýllar janlaşdyrylanda olar bilen näme edilmeli (birje ya iki "
+"tiklenende). ??????????????????????????????????????????????????????????"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:97
+msgid ""
+"When a folder is visited this viewer is used unless you have selected "
+"another view for that particular folder. Possible values are \"list_view\" "
+"and \"icon_view\"."
+msgstr ""
+"Bir halta görilende bu has halta üçin başga bir namaýyşçy saýlanan bolmasa "
+"bu namaýyşçy ullanar."
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:98
+msgid "When to show number of items in a folder"
+msgstr "Haltaniň içinde aýtemleriň görközilşi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:99
+msgid "When to show preview text in icons"
+msgstr "Haltaniň içinde metinlön namaýyş ön namaýyş görközilşi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:100
+msgid "When to show thumbnails of image files"
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:101
+msgid "Whether a custom default folder background has been set."
+msgstr "Şahsy ön bellenen haltaniň arkaplani düzümlenşi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:102
+msgid "Whether a custom default side pane background has been set."
+msgstr "Şahsy ön bellenen böwür jamiň arkaplani düzümlenşi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:103
+msgid "Whether to ask for confirmation when moving files to trash"
+msgstr "Faýllari zibile göçirmek üçin sorag edilşi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:104
+msgid "Whether to enable immediate deletion"
+msgstr "Faýllary zöwwe pozmaki mümkin etmesi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:105
+msgid "Whether to preview sounds when mousing over an icon"
+msgstr ""
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:106
+msgid "Whether to show backup files"
+msgstr "Zapas faýllaryň görkezilişi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:107
+msgid "Whether to show hidden files"
+msgstr "Gizlin faýllaryň görkezilişi"
+
+#: libnautilus-private/apps_nautilus_preferences.schemas.in.h:108
+msgid "Width of the side pane"
+msgstr "Böwür jamiň giňliki"
+
+#. name, stock id
+#: libnautilus-private/nautilus-clipboard.c:386
+msgid "Cut _Text"
+msgstr "Metini _Kes"
+
+#. label, accelerator
+#: libnautilus-private/nautilus-clipboard.c:387
+msgid "Cut the selected text to the clipboard"
+msgstr ""
+
+#. name, stock id
+#: libnautilus-private/nautilus-clipboard.c:390
+msgid "_Copy Text"
+msgstr "_Metini Nusgala"
+
+#. label, accelerator
+#: libnautilus-private/nautilus-clipboard.c:391
+msgid "Copy the selected text to the clipboard"
+msgstr ""
+
+#. name, stock id
+#: libnautilus-private/nautilus-clipboard.c:394
+msgid "_Paste Text"
+msgstr "Metini _Ýabşir"
+
+#. label, accelerator
+#: libnautilus-private/nautilus-clipboard.c:395
+msgid "Paste the text stored on the clipboard"
+msgstr ""
+
+#. name, stock id
+#: libnautilus-private/nautilus-clipboard.c:398
+msgid "Select _All"
+msgstr "_Ehlini Saýla"
+
+#. label, accelerator
+#: libnautilus-private/nautilus-clipboard.c:399
+msgid "Select all the text in a text field"
+msgstr ""
+
+#: libnautilus-private/nautilus-column-chooser.c:394
+msgid "Move _Up"
+msgstr "_Ýokara göçir"
+
+#: libnautilus-private/nautilus-column-chooser.c:404
+msgid "Move _Down"
+msgstr "_Aşak göçir"
+
+#: libnautilus-private/nautilus-column-chooser.c:413
+msgid "_Show"
+msgstr "_Görkez"
+
+#: libnautilus-private/nautilus-column-chooser.c:423
+msgid "_Hide"
+msgstr "G_izle"
+
+#: libnautilus-private/nautilus-column-chooser.c:436
+msgid "_Use Default"
+msgstr "Ön belleneni ullan"
+
+#: libnautilus-private/nautilus-column-utilities.c:44
+msgid "The name and icon of the file."
+msgstr "Faýlyň ady we tymsaly"
+
+#: libnautilus-private/nautilus-column-utilities.c:50
+msgid "Size"
+msgstr "Ululyk"
+
+#: libnautilus-private/nautilus-column-utilities.c:51
+msgid "The size of the file."
+msgstr "Faýlyň Ululyky"
+
+#: libnautilus-private/nautilus-column-utilities.c:58
+msgid "Type"
+msgstr "Hil"
+
+#: libnautilus-private/nautilus-column-utilities.c:59
+msgid "The type of the file."
+msgstr "Faýlyň hili"
+
+#: libnautilus-private/nautilus-column-utilities.c:65
+msgid "Date Modified"
+msgstr "Üýtgemek Taryhy"
+
+#: libnautilus-private/nautilus-column-utilities.c:66
+msgid "The date the file was modified."
+msgstr "Faýlyň üýtgemek taryhy"
+
+#: libnautilus-private/nautilus-column-utilities.c:73
+msgid "Date Accessed"
+msgstr "El Ýetirmek Tarihi"
+
+#: libnautilus-private/nautilus-column-utilities.c:74
+msgid "The date the file was accessed."
+msgstr "Faýla el ýetirmek tarihi"
+
+#: libnautilus-private/nautilus-column-utilities.c:81
+msgid "Owner"
+msgstr "Eýe"
+
+#: libnautilus-private/nautilus-column-utilities.c:82
+msgid "The owner of the file."
+msgstr "Faýlyň eýesi"
+
+#: libnautilus-private/nautilus-column-utilities.c:89
+msgid "Group"
+msgstr "Topar"
+
+#: libnautilus-private/nautilus-column-utilities.c:90
+msgid "The group of the file."
+msgstr "Faýlyň topary"
+
+#: libnautilus-private/nautilus-column-utilities.c:97
+#: src/file-manager/fm-properties-window.c:2942
+msgid "Permissions"
+msgstr "Ejaza"
+
+#: libnautilus-private/nautilus-column-utilities.c:98
+msgid "The permissions of the file."
+msgstr "Faýlyň ejazalary"
+
+#: libnautilus-private/nautilus-column-utilities.c:105
+msgid "Octal Permissions"
+msgstr "Sekizlik ejazalar"
+
+#: libnautilus-private/nautilus-column-utilities.c:106
+msgid "The permissions of the file, in octal notation."
+msgstr "Faýlyň ejazalary, sekizlik ýazymda."
+
+#: libnautilus-private/nautilus-column-utilities.c:113
+msgid "MIME Type"
+msgstr "MIME hili"
+
+#: libnautilus-private/nautilus-column-utilities.c:114
+msgid "The mime type of the file."
+msgstr "Faýlyň MIME hili"
+
+#: libnautilus-private/nautilus-customization-data.c:406
+msgid "reset"
+msgstr "sifirle"
+
+#: libnautilus-private/nautilus-desktop-directory-file.c:442
+#: libnautilus-private/nautilus-desktop-icon-file.c:163
+#: libnautilus-private/nautilus-trash-file.c:690
+msgid "on the desktop"
+msgstr "Desktap üstinde"
+
+#: libnautilus-private/nautilus-desktop-link-monitor.c:105
+msgid "You cannot delete a volume icon."
+msgstr "Siz hejmiň tymsalyny pozyb başarmyýarsyňyz."
+
+#: libnautilus-private/nautilus-desktop-link-monitor.c:106
+msgid ""
+"If you want to eject the volume, please use Eject in the right-click menu of "
+"the volume."
+msgstr ""
+"Hejmi çykartmak bolsoňiz, lütfen hejmiň sag-tik menüsinden Çykart  dan "
+"ullanin."
+
+#: libnautilus-private/nautilus-desktop-link-monitor.c:108
+msgid "Can't Delete Volume"
+msgstr "Hejm pozylyb başarmady"
+
+#: libnautilus-private/nautilus-dnd.c:631
+msgid "_Move here"
+msgstr "_Bu ýere göçir"
+
+#: libnautilus-private/nautilus-dnd.c:636
+msgid "_Copy here"
+msgstr "_Bu ýere nusgala"
+
+#: libnautilus-private/nautilus-dnd.c:641
+msgid "_Link here"
+msgstr "Bu ýere _baglaýyş bejer"
+
+#: libnautilus-private/nautilus-dnd.c:646
+msgid "Set as _Background"
+msgstr "_Arkaplan olarak düz"
+
+#: libnautilus-private/nautilus-dnd.c:655
+#: libnautilus-private/nautilus-dnd.c:710
+msgid "Cancel"
+msgstr "Ybtal"
+
+#: libnautilus-private/nautilus-dnd.c:696
+msgid "Set as background for _all folders"
+msgstr "_Ehli haltalar üçin arkaplan olarak düz"
+
+#: libnautilus-private/nautilus-dnd.c:701
+msgid "Set as background for _this folder"
+msgstr "_Bu halta üçin arkaplan olarak düz"
+
+#: libnautilus-private/nautilus-emblem-utils.c:197
+#: libnautilus-private/nautilus-emblem-utils.c:202
+#: libnautilus-private/nautilus-emblem-utils.c:257
+#: libnautilus-private/nautilus-emblem-utils.c:274
+msgid "The emblem cannot be installed."
+msgstr "Bu alamat gurulyb bilmedi"
+
+#: libnautilus-private/nautilus-emblem-utils.c:198
+msgid "Sorry, but you must specify a non-blank keyword for the new emblem."
+msgstr "Bagyşlaň, siz täze alamat üçin bir boşdal açar keleme takyklamaly."
+
+#: libnautilus-private/nautilus-emblem-utils.c:199
+#: libnautilus-private/nautilus-emblem-utils.c:204
+#: libnautilus-private/nautilus-emblem-utils.c:259
+#: libnautilus-private/nautilus-emblem-utils.c:276
+msgid "Couldn't Install Emblem"
+msgstr "Alamat gurulyb başarmady"
+
+#: libnautilus-private/nautilus-emblem-utils.c:203
+msgid ""
+"Sorry, but emblem keywords can only contain letters, spaces and numbers."
+msgstr ""
+"Bagyşlaň, alamat açar kelemesi diňe harp, seleň we sanlary ekläp başarýar. "
+
+#. this really should never happen, as a user has no idea
+#. * what a keyword is, and people should be passing a unique
+#. * keyword to us anyway
+#.
+#: libnautilus-private/nautilus-emblem-utils.c:213
+#, c-format
+msgid "Sorry, but there is already an emblem named \"%s\"."
+msgstr "Bagyşlaň, bu ýerde \"%s\" adly alamat öňden bar."
+
+#: libnautilus-private/nautilus-emblem-utils.c:214
+msgid "Please choose a different emblem name."
+msgstr "Lütfen alamat üçin başa bir ad saýlaň."
+
+#: libnautilus-private/nautilus-emblem-utils.c:215
+msgid "Couldn't install emblem"
+msgstr "Alamat gurulyb başarmady"
+
+#: libnautilus-private/nautilus-emblem-utils.c:258
+msgid "Sorry, unable to save custom emblem."
+msgstr "Bagyşlaň, şahsy alamat gaýd etilip başaramdy."
+
+#: libnautilus-private/nautilus-emblem-utils.c:275
+msgid "Sorry, unable to save custom emblem name."
+msgstr "Bagyşlaň, şahsy alamat ady gaýd etilip başaramdy."
+
+#: libnautilus-private/nautilus-file-operations-progress.c:402
+#, c-format
+msgid "(%d:%02d:%d Remaining)"
+msgstr ""
+
+#: libnautilus-private/nautilus-file-operations-progress.c:407
+#, c-format
+msgid "(%d:%02d Remaining)"
+msgstr ""
+
+#: libnautilus-private/nautilus-file-operations-progress.c:520
+#, c-format
+msgid "%ld of %ld"
+msgstr "%ld / %ld"
+
+#. "From" dialog label, source path gets placed next to it in the dialog
+#: libnautilus-private/nautilus-file-operations.c:358
+msgid "From:"
+msgstr "Çeşme:"
+
+#. "To" dialog label, source path gets placed next to it in the dialog
+#: libnautilus-private/nautilus-file-operations.c:373
+msgid "To:"
+msgstr "Magsad:"
+
+#: libnautilus-private/nautilus-file-operations.c:559
+#: libnautilus-private/nautilus-file-operations.c:607
+#: libnautilus-private/nautilus-file-operations.c:612
+#: libnautilus-private/nautilus-file-operations.c:622
+msgid "Error while moving."
+msgstr "Göçirişde hata boldy."
+
+#: libnautilus-private/nautilus-file-operations.c:560
+#, c-format
+msgid "\"%s\" cannot be moved because it is on a read-only disk."
+msgstr "\"%s\" diňe-okalýan diskde bolansaň göçirilib bilmedi."
+
+#: libnautilus-private/nautilus-file-operations.c:570
+#: libnautilus-private/nautilus-file-operations.c:576
+msgid "Error while deleting."
+msgstr "Pozmakda hata boldy."
+
+#: libnautilus-private/nautilus-file-operations.c:571
+#, c-format
+msgid ""
+"\"%s\" cannot be deleted because you do not have permissions to modify its "
+"parent folder."
+msgstr "Siz ene haltany üýtgetmegne ejazaňiz bolmansaň \"%s\" pozilib bilmedi."
+
+#: libnautilus-private/nautilus-file-operations.c:577
+#, c-format
+msgid "\"%s\" cannot be deleted because it is on a read-only disk."
+msgstr "\"%s\" diňe-okalýan diskde bolansaň pozylyb bilmedi."
+
+#: libnautilus-private/nautilus-file-operations.c:608
+#, c-format
+msgid ""
+"\"%s\" cannot be moved because you do not have permissions to change it or "
+"its parent folder."
+msgstr ""
+"Siz ene haltany üýtgetmegne ejazaňiz bolmansaň \"%s\" göçirilib bilmedi."
+
+#: libnautilus-private/nautilus-file-operations.c:613
+#, c-format
+msgid ""
+"Cannot move \"%s\" because it or its parent folder are contained in the "
+"destination."
+msgstr ""
+"\"%s\" ýädä öniň ene haltasi maksad haltasinda bolansaň göçilip bilmedi."
+
+#: libnautilus-private/nautilus-file-operations.c:623
+#, c-format
+msgid ""
+"Cannot move \"%s\" to the trash because you do not have permissions to "
+"change it or its parent folder."
+msgstr ""
+"Siz ene haltany üýtgetmegne ejazaňiz bolmansaň \"%s\" zibile göçirilib "
+"bilmedi."
+
+#: libnautilus-private/nautilus-file-operations.c:645
+msgid "Error while copying."
+msgstr "Nusgalamakda hata boldy."
+
+#: libnautilus-private/nautilus-file-operations.c:646
+#, c-format
+msgid "\"%s\" cannot be copied because you do not have permissions to read it."
+msgstr ""
+"Siz ene haltany üýtgetmegne ejazaňiz bolmansaň \"%s\" nusgalanyp bilmedi"
+
+#: libnautilus-private/nautilus-file-operations.c:666
+#: libnautilus-private/nautilus-file-operations.c:687
+#: libnautilus-private/nautilus-file-operations.c:691
+#, c-format
+msgid "Error while copying to \"%s\"."
+msgstr "\"%s\" magsadyna nusgalamakda hata boldy."
+
+#: libnautilus-private/nautilus-file-operations.c:667
+#: libnautilus-private/nautilus-file-operations.c:672
+#: libnautilus-private/nautilus-file-operations.c:676
+msgid "There is not enough space on the destination."
+msgstr "Magsadda ýeterlik seleň tapylmady."
+
+#: libnautilus-private/nautilus-file-operations.c:671
+#, c-format
+msgid "Error while moving to \"%s\"."
+msgstr "\"%s\" magsadyna göçirmekde hata boldy."
+
+#: libnautilus-private/nautilus-file-operations.c:675
+#, c-format
+msgid "Error while creating link in \"%s\"."
+msgstr "\"%s\" içinde baglaýyş bejermede hata boldy."
+
+#: libnautilus-private/nautilus-file-operations.c:688
+#: libnautilus-private/nautilus-file-operations.c:699
+#: libnautilus-private/nautilus-file-operations.c:710
+msgid "You do not have permissions to write to this folder."
+msgstr "Siz bu halta ýazmana ejazaňiz ýök."
+
+#: libnautilus-private/nautilus-file-operations.c:692
+#: libnautilus-private/nautilus-file-operations.c:703
+#: libnautilus-private/nautilus-file-operations.c:714
+msgid "The destination disk is read-only."
+msgstr "Magsad diski diňe-okalýan disk."
+
+#: libnautilus-private/nautilus-file-operations.c:698
+#: libnautilus-private/nautilus-file-operations.c:702
+#, c-format
+msgid "Error while moving items to \"%s\"."
+msgstr "\"%s\" magsadyna aýtemleri göçirmekde hata boldy."
+
+#: libnautilus-private/nautilus-file-operations.c:709
+#: libnautilus-private/nautilus-file-operations.c:713
+#, c-format
+msgid "Error while creating links in \"%s\"."
+msgstr "\"%s\" içinde baglaýyşlary bejermede hata boldy."
+
+#: libnautilus-private/nautilus-file-operations.c:741
+#, c-format
+msgid "Error \"%s\" while copying \"%s\"."
+msgstr "\"%s\" hatasy \"%s\" nusgalanyp durka tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:742
+#: libnautilus-private/nautilus-file-operations.c:746
+#: libnautilus-private/nautilus-file-operations.c:750
+#: libnautilus-private/nautilus-file-operations.c:756
+#: libnautilus-private/nautilus-file-operations.c:771
+#: libnautilus-private/nautilus-file-operations.c:775
+#: libnautilus-private/nautilus-file-operations.c:779
+#: libnautilus-private/nautilus-file-operations.c:785
+msgid "Would you like to continue?"
+msgstr "Dowam edilsinmi?"
+
+#: libnautilus-private/nautilus-file-operations.c:745
+#, c-format
+msgid "Error \"%s\" while moving \"%s\"."
+msgstr "\"%s\" hatasy \"%s\" göçirlip durka tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:749
+#, c-format
+msgid "Error \"%s\" while creating a link to \"%s\"."
+msgstr "\"%s\" hatasy \"%s\" üçin baglaýyş bejerlip durka tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:755
+#, c-format
+msgid "Error \"%s\" while deleting \"%s\"."
+msgstr "\"%s\" hatasy \"%s\" pozilip durka tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:770
+#, c-format
+msgid "Error \"%s\" while copying."
+msgstr "Nusgalamakda \"%s\" hatasy tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:774
+#, c-format
+msgid "Error \"%s\" while moving."
+msgstr "Göçirmekde \"%s\" hatasy tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:778
+#, c-format
+msgid "Error \"%s\" while linking."
+msgstr "Baglaýyş bejermekde \"%s\" hatasy tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:784
+#, c-format
+msgid "Error \"%s\" while deleting."
+msgstr "Pozmokda \"%s\" hatasy tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:910
+msgid "Error While Copying"
+msgstr "Nusgalamakda hata tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:913
+msgid "Error While Moving"
+msgstr "Göçirmekde hata tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:916
+msgid "Error While Linking"
+msgstr "Baglaýyş bejermekde hata tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:921
+msgid "Error While Deleting"
+msgstr "Pozmokda hata tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:948
+#: libnautilus-private/nautilus-file-operations.c:969
+#: libnautilus-private/nautilus-file-operations.c:1118
+#: libnautilus-private/nautilus-file-operations.c:1137
+msgid "_Skip"
+msgstr "_Geç"
+
+#: libnautilus-private/nautilus-file-operations.c:969
+msgid "_Retry"
+msgstr "_Ýenede"
+
+#: libnautilus-private/nautilus-file-operations.c:1059
+#, c-format
+msgid "Could not move \"%s\" to the new location."
+msgstr "\"%s\" täze ýere göçirilmeki bolmaýar."
+
+#: libnautilus-private/nautilus-file-operations.c:1062
+msgid ""
+"The name is already used for a special item that cannot be removed or "
+"replaced.  If you still want to move the item, rename it and try again."
+msgstr ""
+"Bu ad bir ýöryte aýtem üçin ullanylsaň pozilip ýä ewez edilip başarmaýar. "
+"Eger henizde aýtemi göçirjek bolsaňiz öniň adyny ewez etip ýene bir synanyň."
+
+#: libnautilus-private/nautilus-file-operations.c:1066
+#, c-format
+msgid "Could not copy \"%s\" to the new location."
+msgstr "\"%s\" täze ýere nusgalamagy bolmaýar."
+
+#: libnautilus-private/nautilus-file-operations.c:1069
+msgid ""
+"The name is already used for a special item that cannot be removed or "
+"replaced.  If you still want to copy the item, rename it and try again."
+msgstr ""
+"Bu ad bir ýöryte aýtem üçin ullanylsaň pozilip ýä ewez edilip başarmaýar. "
+"Eger henizde aýtemi nusgaslajak bolsaňiz öniň adyny ewez etip ýene bir "
+"synanyň."
+
+#: libnautilus-private/nautilus-file-operations.c:1075
+msgid "Unable to Replace File"
+msgstr "Faýl ewez etilip bolmayar."
+
+#: libnautilus-private/nautilus-file-operations.c:1091
+#, fuzzy, c-format
+msgid "The folder \"%s\" already exists.  Would you like to replace it?"
+msgstr "\"%s\" oňden bar. Oni ewez etjek mi?"
+
+#: libnautilus-private/nautilus-file-operations.c:1094
+#, c-format
+msgid "The file \"%s\" already exists.  Would you like to replace it?"
+msgstr "\"%s\" oňden bar. Oni ewez etjek mi?"
+
+#: libnautilus-private/nautilus-file-operations.c:1102
+#, fuzzy
+msgid ""
+"If you replace the existing folder, any files in it that conflict with the "
+"files being copied will be overwritten."
+msgstr ""
+"Eger siz bir bar faýly ewez etseňiz, öniň mazmunlarnyň üstine ýazyljak."
+
+#: libnautilus-private/nautilus-file-operations.c:1104
+msgid "If you replace an existing file, its contents will be overwritten."
+msgstr ""
+"Eger siz bir bar faýly ewez etseňiz, öniň mazmunlarnyň üstine ýazyljak."
+
+#: libnautilus-private/nautilus-file-operations.c:1117
+#: libnautilus-private/nautilus-file-operations.c:1136
+msgid "Conflict While Copying"
+msgstr "Nusgalamagda dawa boldy."
+
+#: libnautilus-private/nautilus-file-operations.c:1118
+#: libnautilus-private/nautilus-file-operations.c:1137
+msgid "_Replace"
+msgstr "_Ewez et"
+
+#: libnautilus-private/nautilus-file-operations.c:1137
+msgid "Replace _All"
+msgstr "E_hlini Ewez Et"
+
+#. appended to new link file
+#. Note to localizers: convert file type string for file
+#. * (e.g. "folder", "plain text") to file type for symbolic link
+#. * to that kind of file (e.g. "link to folder").
+#.
+#: libnautilus-private/nautilus-file-operations.c:1195
+#: libnautilus-private/nautilus-file.c:4749
+#: src/file-manager/fm-directory-view.c:7905
+#, c-format
+msgid "link to %s"
+msgstr "%s üçin baglaýyş"
+
+#. appended to new link file
+#: libnautilus-private/nautilus-file-operations.c:1199
+#, c-format
+msgid "another link to %s"
+msgstr "%s üçin ýene bir baglaýyş"
+
+#. Localizers: Feel free to leave out the "st" suffix
+#. * if there's no way to do that nicely for a
+#. * particular language.
+#.
+#: libnautilus-private/nautilus-file-operations.c:1215
+#, c-format
+msgid "%dst link to %s"
+msgstr "%2$s üçin %1$d baglaýyşy"
+
+#. appended to new link file
+#: libnautilus-private/nautilus-file-operations.c:1219
+#, c-format
+msgid "%dnd link to %s"
+msgstr "%2$s üçin %1$d baglaýyşy"
+
+#. appended to new link file
+#: libnautilus-private/nautilus-file-operations.c:1223
+#, c-format
+msgid "%drd link to %s"
+msgstr "%2$s üçin %1$d baglaýyşy"
+
+#. appended to new link file
+#: libnautilus-private/nautilus-file-operations.c:1227
+#, c-format
+msgid "%dth link to %s"
+msgstr "%2$s üçin %1$d baglaýyşy"
+
+#. Localizers:
+#. * Feel free to leave out the st, nd, rd and th suffix or
+#. * make some or all of them match.
+#.
+#. localizers: tag used to detect the first copy of a file
+#: libnautilus-private/nautilus-file-operations.c:1248
+msgid " (copy)"
+msgstr " (nusgala)"
+
+#. localizers: tag used to detect the second copy of a file
+#: libnautilus-private/nautilus-file-operations.c:1250
+msgid " (another copy)"
+msgstr " (ýene bir nusga)"
+
+#. localizers: tag used to detect the x11th copy of a file
+#. localizers: tag used to detect the x12th copy of a file
+#. localizers: tag used to detect the x13th copy of a file
+#. localizers: tag used to detect the xxth copy of a file
+#: libnautilus-private/nautilus-file-operations.c:1253
+#: libnautilus-private/nautilus-file-operations.c:1255
+#: libnautilus-private/nautilus-file-operations.c:1257
+#: libnautilus-private/nautilus-file-operations.c:1267
+msgid "th copy)"
+msgstr " inji nusgasy)"
+
+#. localizers: tag used to detect the x1st copy of a file
+#: libnautilus-private/nautilus-file-operations.c:1260
+msgid "st copy)"
+msgstr " inji nusgasy)"
+
+#. localizers: tag used to detect the x2nd copy of a file
+#: libnautilus-private/nautilus-file-operations.c:1262
+msgid "nd copy)"
+msgstr " inji nusgasy)"
+
+#. localizers: tag used to detect the x3rd copy of a file
+#: libnautilus-private/nautilus-file-operations.c:1264
+msgid "rd copy)"
+msgstr " inji nusgasy)"
+
+#. localizers: appended to first file copy
+#: libnautilus-private/nautilus-file-operations.c:1281
+#, c-format
+msgid "%s (copy)%s"
+msgstr "%s (nusga)%s"
+
+#. localizers: appended to second file copy
+#: libnautilus-private/nautilus-file-operations.c:1283
+#, c-format
+msgid "%s (another copy)%s"
+msgstr "%s (ýene bir nusga)%s"
+
+#. localizers: appended to x11th file copy
+#. localizers: appended to x12th file copy
+#. localizers: appended to x13th file copy
+#. localizers: appended to xxth file copy
+#: libnautilus-private/nautilus-file-operations.c:1286
+#: libnautilus-private/nautilus-file-operations.c:1288
+#: libnautilus-private/nautilus-file-operations.c:1290
+#: libnautilus-private/nautilus-file-operations.c:1299
+#, c-format
+msgid "%s (%dth copy)%s"
+msgstr "%s (%d inji copy)%s"
+
+#. localizers: appended to x1st file copy
+#: libnautilus-private/nautilus-file-operations.c:1293
+#, c-format
+msgid "%s (%dst copy)%s"
+msgstr "%s (%d inji copy)%s"
+
+#. localizers: appended to x2nd file copy
+#: libnautilus-private/nautilus-file-operations.c:1295
+#, c-format
+msgid "%s (%dnd copy)%s"
+msgstr "%s (%d inji copy)%s"
+
+#. localizers: appended to x3rd file copy
+#: libnautilus-private/nautilus-file-operations.c:1297
+#, c-format
+msgid "%s (%drd copy)%s"
+msgstr "%s (%d inji copy)%s"
+
+#. localizers: opening parentheses to match the "th copy)" string
+#: libnautilus-private/nautilus-file-operations.c:1397
+msgid " ("
+msgstr " ("
+
+#. localizers: opening parentheses of the "th copy)" string
+#: libnautilus-private/nautilus-file-operations.c:1405
+#, c-format
+msgid " (%d"
+msgstr " (%d"
+
+#: libnautilus-private/nautilus-file-operations.c:1601
+#: libnautilus-private/nautilus-file-operations.c:2194
+#: libnautilus-private/nautilus-file-operations.c:2356
+#, c-format
+msgid "Unknown GnomeVFSXferProgressStatus %d"
+msgstr "Natanyş GnomeVFSXferProgressStatus %d"
+
+#. localizers: progress dialog title
+#: libnautilus-private/nautilus-file-operations.c:1931
+msgid "Moving files to the Trash"
+msgstr "Faýllar zibile göçirilýar"
+
+#. localizers: label prepended to the progress count
+#: libnautilus-private/nautilus-file-operations.c:1933
+#, fuzzy
+msgid "Throwing out file:"
+msgstr "Faýlyň eýesi"
+
+#. localizers: label prepended to the name of the current file moved
+#: libnautilus-private/nautilus-file-operations.c:1935
+#: libnautilus-private/nautilus-file-operations.c:1946
+msgid "Moving"
+msgstr "Göçiriliş"
+
+#: libnautilus-private/nautilus-file-operations.c:1936
+msgid "Preparing to Move to Trash..."
+msgstr "Zibile göçirmek üçin taýýarlanylýar..."
+
+#. localizers: progress dialog title
+#: libnautilus-private/nautilus-file-operations.c:1942
+msgid "Moving files"
+msgstr "Faýllariň göçirilişi"
+
+#. localizers: label prepended to the progress count
+#: libnautilus-private/nautilus-file-operations.c:1944
+#, fuzzy
+msgid "Moving file:"
+msgstr "Faýllariň göçirilişi"
+
+#: libnautilus-private/nautilus-file-operations.c:1947
+msgid "Preparing To Move..."
+msgstr "Göçirmek Üçin Taýýarlanylýar..."
+
+#: libnautilus-private/nautilus-file-operations.c:1948
+msgid "Finishing Move..."
+msgstr "Göçirmek Tamalanýar..."
+
+#. localizers: progress dialog title
+#: libnautilus-private/nautilus-file-operations.c:1956
+msgid "Creating links to files"
+msgstr "Faýllara baglaýyş bejerilýar"
+
+#. localizers: label prepended to the progress count
+#: libnautilus-private/nautilus-file-operations.c:1958
+#, fuzzy
+msgid "Linking file:"
+msgstr "Baglaýyş bejerilşi"
+
+#. localizers: label prepended to the name of the current file linked
+#: libnautilus-private/nautilus-file-operations.c:1960
+msgid "Linking"
+msgstr "Baglaýyş bejerilşi"
+
+#: libnautilus-private/nautilus-file-operations.c:1961
+msgid "Preparing to Create Links..."
+msgstr "Baglaýyş Bejeriliş Üçin Taýýarlanylýar..."
+
+#: libnautilus-private/nautilus-file-operations.c:1962
+msgid "Finishing Creating Links..."
+msgstr "Baglaýyş Bejeriliş Tamalanýar..."
+
+#. localizers: progress dialog title
+#: libnautilus-private/nautilus-file-operations.c:1968
+msgid "Copying files"
+msgstr "Faýllar Nusgalanýar"
+
+#. localizers: label prepended to the progress count
+#: libnautilus-private/nautilus-file-operations.c:1970
+#, fuzzy
+msgid "Copying file:"
+msgstr "Faýllar Nusgalanýar"
+
+#. localizers: label prepended to the name of the current file copied
+#: libnautilus-private/nautilus-file-operations.c:1972
+msgid "Copying"
+msgstr "Nusgalanmak"
+
+#: libnautilus-private/nautilus-file-operations.c:1973
+msgid "Preparing To Copy..."
+msgstr "Nusgalamak Üçin Taýýarlanylýar..."
+
+#: libnautilus-private/nautilus-file-operations.c:1991
+msgid "You cannot copy items into the trash."
+msgstr "Siz aýtemleri zibile nusgalap başarmaýarsiňiz."
+
+#: libnautilus-private/nautilus-file-operations.c:1992
+msgid "You cannot create links inside the trash."
+msgstr "Siz zibil içinde baglaýyş bejerip başarmaýarsiňiz."
+
+#: libnautilus-private/nautilus-file-operations.c:1993
+msgid "Files and folders can only be moved into the trash."
+msgstr "Faýllar we haltalar zibile diňe göçirilip bilýärler."
+
+#: libnautilus-private/nautilus-file-operations.c:2017
+msgid "You cannot move this trash folder."
+msgstr "Siz bu zibil haltany göçirip başarmaýarsiňiz."
+
+#: libnautilus-private/nautilus-file-operations.c:2018
+msgid "You cannot copy this trash folder."
+msgstr "Siz bu zibil haltany nusgalap başarmaýarsiňiz."
+
+#: libnautilus-private/nautilus-file-operations.c:2019
+msgid "A trash folder is used for storing items moved to the trash."
+msgstr "Zibil haltasy zibile göçirilen aýtemleri tertiplemek üçin ullanylýar."
+
+#: libnautilus-private/nautilus-file-operations.c:2021
+msgid "Can't Change Trash Location"
+msgstr "Zibil Ýerini Üýtgedip Bolmaýar."
+
+#: libnautilus-private/nautilus-file-operations.c:2022
+msgid "Can't Copy Trash"
+msgstr "Zibili Nusgalap Bolmaýar."
+
+#: libnautilus-private/nautilus-file-operations.c:2046
+msgid "You cannot move a folder into itself."
+msgstr "Siz bir haltany oz içine göçirip başaramaýarsňiz."
+
+#: libnautilus-private/nautilus-file-operations.c:2047
+msgid "You cannot copy a folder into itself."
+msgstr "Siz bir haltany oz içine nusgalap başaramaýarsňiz."
+
+#: libnautilus-private/nautilus-file-operations.c:2048
+msgid "The destination folder is inside the source folder."
+msgstr "Magsad haltasy çeşme haltasynyň içinde."
+
+#: libnautilus-private/nautilus-file-operations.c:2050
+msgid "Can't Move Into Self"
+msgstr "Oz Içine Göçirilip Başaramaýar."
+
+#: libnautilus-private/nautilus-file-operations.c:2051
+msgid "Can't Copy Into Self"
+msgstr "Oz Içine Nusgalanyp Başaramaýar."
+
+#: libnautilus-private/nautilus-file-operations.c:2064
+msgid "You cannot copy a file over itself."
+msgstr "Siz bir faýly oz üstine nusgalap başaramaýarsňiz."
+
+#: libnautilus-private/nautilus-file-operations.c:2065
+msgid "The destination and source are the same file."
+msgstr "Magsad we çeşme ikisi hem bir faýl."
+
+#: libnautilus-private/nautilus-file-operations.c:2066
+msgid "Can't Copy Over Self"
+msgstr "Oz Üstine Nusgalanyp Başaramaýar"
+
+#: libnautilus-private/nautilus-file-operations.c:2118
+#: libnautilus-private/nautilus-file-operations.c:2258
+msgid "You do not have permissions to write to the destination."
+msgstr "Siz magsada ýazmak üçin ejezaňiz ýök."
+
+#: libnautilus-private/nautilus-file-operations.c:2120
+#: libnautilus-private/nautilus-file-operations.c:2260
+msgid "There is no space on the destination."
+msgstr "Magsadda seleň tapylmady."
+
+#: libnautilus-private/nautilus-file-operations.c:2122
+#, c-format
+msgid "Error \"%s\" creating new folder."
+msgstr "Täze halta bejermekde \"%s\" hatasy tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:2127
+msgid "Error creating new folder."
+msgstr "Täze halta bejermekde hata tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:2127
+msgid "Error Creating New Folder"
+msgstr "Täze Halta Bejermekde Hata Tapyldy."
+
+#. localizers: the initial name of a new folder
+#: libnautilus-private/nautilus-file-operations.c:2222
+msgid "untitled folder"
+msgstr "adsyz halta"
+
+#: libnautilus-private/nautilus-file-operations.c:2262
+#, c-format
+msgid "Error \"%s\" creating new document."
+msgstr "Täze sened bejermekde \"%s\" hatasy tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:2267
+msgid "Error creating new document."
+msgstr "Täze sened bejermekde hata tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:2267
+msgid "Error Creating New Document"
+msgstr "Täze Sened Bejermekde Hata Tapyldy."
+
+#: libnautilus-private/nautilus-file-operations.c:2414
+msgid "new file"
+msgstr "täze faýl"
+
+#. localizers: progress dialog title
+#: libnautilus-private/nautilus-file-operations.c:2486
+msgid "Deleting files"
+msgstr "Faýllar pozylýar"
+
+#. localizers: label prepended to the progress count
+#: libnautilus-private/nautilus-file-operations.c:2488
+#: libnautilus-private/nautilus-file-operations.c:2523
+msgid "Files deleted:"
+msgstr "Pozylan faýllar:"
+
+#. localizers: label prepended to the name of the current file deleted
+#: libnautilus-private/nautilus-file-operations.c:2490
+#: libnautilus-private/nautilus-file-operations.c:2525
+msgid "Deleting"
+msgstr "Pozylyş"
+
+#: libnautilus-private/nautilus-file-operations.c:2491
+msgid "Preparing to Delete files..."
+msgstr "Faýllary Pozmak Üçin Taýýarlanylýar..."
+
+#. localizers: progress dialog title
+#: libnautilus-private/nautilus-file-operations.c:2521
+msgid "Emptying the Trash"
+msgstr "Zibil Boşolýar"
+
+#: libnautilus-private/nautilus-file-operations.c:2526
+msgid "Preparing to Empty the Trash..."
+msgstr "Zibili Boşotmak Üçin Taýýarlanylýar..."
+
+#: libnautilus-private/nautilus-file-operations.c:2562
+#, fuzzy
+msgid "Empty all of the items from the trash?"
+msgstr "Siz zibil içinde ehli aýtemleri boşotmakini hatyrjem miňiz?"
+
+#: libnautilus-private/nautilus-file-operations.c:2565
+#, fuzzy
+msgid ""
+"If you choose to empty the trash, all items in it will be permanently lost. "
+"Please note that you can also delete them separately."
+msgstr "Eger siz zibili boşotsaňiz, aýtemler hamişelikçe pozylar."
+
+#. name, stock id
+#: libnautilus-private/nautilus-file-operations.c:2587
+#: src/file-manager/fm-directory-view.c:5767
+#: src/file-manager/fm-directory-view.c:6314
+msgid "_Empty Trash"
+msgstr "Zibili _Boşot"
+
+#: libnautilus-private/nautilus-file-utilities.c:442
+#: libnautilus-private/nautilus-global-preferences.c:534
+#: nautilus-computer.desktop.in.h:1
+msgid "Computer"
+msgstr "_Kampýuter"
+
+#: libnautilus-private/nautilus-file-utilities.c:444
+msgid "Network"
+msgstr "Şebeke"
+
+#: libnautilus-private/nautilus-file-utilities.c:446
+msgid "Fonts"
+msgstr "Kalamlar"
+
+#: libnautilus-private/nautilus-file-utilities.c:448
+msgid "Themes"
+msgstr "Temler"
+
+#: libnautilus-private/nautilus-file-utilities.c:450
+#, fuzzy
+msgid "CD/DVD Creator"
+msgstr "CD Dörediji"
+
+#: libnautilus-private/nautilus-file-utilities.c:452
+msgid "Windows Network"
+msgstr "Windows şebekesi"
+
+#: libnautilus-private/nautilus-file-utilities.c:454
+#, fuzzy
+msgid "Services in"
+msgstr "Web Servisler"
+
+#. Today, use special word.
+#. * strftime patterns preceeded with the widest
+#. * possible resulting string for that pattern.
+#. *
+#. * Note to localizers: You can look at man strftime
+#. * for details on the format, but you should only use
+#. * the specifiers from the C standard, not extensions.
+#. * These include "%" followed by one of
+#. * "aAbBcdHIjmMpSUwWxXyYZ". There are two extensions
+#. * in the Nautilus version of strftime that can be
+#. * used (and match GNU extensions). Putting a "-"
+#. * between the "%" and any numeric directive will turn
+#. * off zero padding, and putting a "_" there will use
+#. * space padding instead of zero padding.
+#.
+#: libnautilus-private/nautilus-file.c:2965
+msgid "today at 00:00:00 PM"
+msgstr "bugün 00:00:00 PM da"
+
+#: libnautilus-private/nautilus-file.c:2966
+#: src/nautilus-file-management-properties.c:493
+msgid "today at %-I:%M:%S %p"
+msgstr "bugün %-I:%M %S %p da"
+
+#: libnautilus-private/nautilus-file.c:2968
+msgid "today at 00:00 PM"
+msgstr "bugün 00:00 PM da"
+
+#: libnautilus-private/nautilus-file.c:2969
+msgid "today at %-I:%M %p"
+msgstr "bugün %-I:%M %p da"
+
+#: libnautilus-private/nautilus-file.c:2971
+msgid "today, 00:00 PM"
+msgstr "bugün, 00:00 PM da"
+
+#: libnautilus-private/nautilus-file.c:2972
+msgid "today, %-I:%M %p"
+msgstr "bugün %-I:%M %p da"
+
+#: libnautilus-private/nautilus-file.c:2974
+#: libnautilus-private/nautilus-file.c:2975
+msgid "today"
+msgstr "bugün"
+
+#. Yesterday, use special word.
+#. * Note to localizers: Same issues as "today" string.
+#.
+#: libnautilus-private/nautilus-file.c:2984
+msgid "yesterday at 00:00:00 PM"
+msgstr "düýn 00:00:00 PM da"
+
+#: libnautilus-private/nautilus-file.c:2985
+msgid "yesterday at %-I:%M:%S %p"
+msgstr "düýn %-H:%M :%S %p da"
+
+#: libnautilus-private/nautilus-file.c:2987
+msgid "yesterday at 00:00 PM"
+msgstr "düýn 00:00 PM da"
+
+#: libnautilus-private/nautilus-file.c:2988
+msgid "yesterday at %-I:%M %p"
+msgstr "düýn %-H:%M %p da"
+
+#: libnautilus-private/nautilus-file.c:2990
+msgid "yesterday, 00:00 PM"
+msgstr "düýn, 00:00 PM da"
+
+#: libnautilus-private/nautilus-file.c:2991
+msgid "yesterday, %-I:%M %p"
+msgstr "düýn %-I:%M %p da"
+
+#: libnautilus-private/nautilus-file.c:2993
+#: libnautilus-private/nautilus-file.c:2994
+msgid "yesterday"
+msgstr "düýn"
+
+#. Current week, include day of week.
+#. * Note to localizers: Same issues as "today" string.
+#. * The width measurement templates correspond to
+#. * the day/month name with the most letters.
+#.
+#: libnautilus-private/nautilus-file.c:3005
+msgid "Wednesday, September 00 0000 at 00:00:00 PM"
+msgstr "Çarşenbe, Sentýabr 00 0000 00:00:00 PM da"
+
+#: libnautilus-private/nautilus-file.c:3006
+msgid "%A, %B %-d %Y at %-I:%M:%S %p"
+msgstr "%A, %B %-d %Y  %-I:%M:%S %p da"
+
+#: libnautilus-private/nautilus-file.c:3008
+msgid "Mon, Oct 00 0000 at 00:00:00 PM"
+msgstr "Dü., Okt 00 0000 00:00:00 PM da"
+
+#: libnautilus-private/nautilus-file.c:3009
+msgid "%a, %b %-d %Y at %-I:%M:%S %p"
+msgstr "%a, %b %-d %Y %-I:%M:%S %p da"
+
+#: libnautilus-private/nautilus-file.c:3011
+msgid "Mon, Oct 00 0000 at 00:00 PM"
+msgstr "Dü, Okt 00 0000 00:00 PM da"
+
+#: libnautilus-private/nautilus-file.c:3012
+msgid "%a, %b %-d %Y at %-I:%M %p"
+msgstr "%a, %b %-d %Y %-I:%M %p da"
+
+#: libnautilus-private/nautilus-file.c:3014
+msgid "Oct 00 0000 at 00:00 PM"
+msgstr "Okt 00 0000 00:00 da"
+
+#: libnautilus-private/nautilus-file.c:3015
+msgid "%b %-d %Y at %-I:%M %p"
+msgstr "%b %-d %Y %-I:%M %p da"
+
+#: libnautilus-private/nautilus-file.c:3017
+msgid "Oct 00 0000, 00:00 PM"
+msgstr "Okt 00 0000, 00:00 PM da"
+
+#: libnautilus-private/nautilus-file.c:3018
+msgid "%b %-d %Y, %-I:%M %p"
+msgstr "%b %-d %Y, %-I:%M %p da"
+
+#: libnautilus-private/nautilus-file.c:3020
+msgid "00/00/00, 00:00 PM"
+msgstr "00/00/00, 00:00 PM da"
+
+#: libnautilus-private/nautilus-file.c:3021
+msgid "%m/%-d/%y, %-I:%M %p"
+msgstr "%m/%-d/%y, %-I:%M %p da"
+
+#: libnautilus-private/nautilus-file.c:3023
+msgid "00/00/00"
+msgstr "00/00/00"
+
+#: libnautilus-private/nautilus-file.c:3024
+msgid "%m/%d/%y"
+msgstr "%m/%d/%y"
+
+#: libnautilus-private/nautilus-file.c:4315
+#: src/file-manager/fm-directory-view.c:1859
+#, c-format
+msgid "%u item"
+msgid_plural "%u items"
+msgstr[0] "%u aýtem"
+msgstr[1] "%u aýtem"
+
+#: libnautilus-private/nautilus-file.c:4316
+#, c-format
+msgid "%u folder"
+msgid_plural "%u folders"
+msgstr[0] "%u halta"
+msgstr[1] "%u halta"
+
+#: libnautilus-private/nautilus-file.c:4317
+#, c-format
+msgid "%u file"
+msgid_plural "%u files"
+msgstr[0] "%u faýl"
+msgstr[1] "%u faýl"
+
+#. This means no contents at all were readable
+#: libnautilus-private/nautilus-file.c:4642
+#: libnautilus-private/nautilus-file.c:4658
+msgid "? items"
+msgstr "? aýtem"
+
+#. This means no contents at all were readable
+#: libnautilus-private/nautilus-file.c:4648
+msgid "? bytes"
+msgstr "? baýt"
+
+#: libnautilus-private/nautilus-file.c:4663
+msgid "unknown type"
+msgstr "natanyş hil"
+
+#: libnautilus-private/nautilus-file.c:4666
+msgid "unknown MIME type"
+msgstr "natanyş MIME hil"
+
+#. Fallback, use for both unknown attributes and attributes
+#. * for which we have no more appropriate default.
+#.
+#: libnautilus-private/nautilus-file.c:4672
+#: src/file-manager/fm-properties-window.c:1218
+msgid "unknown"
+msgstr "natanyş"
+
+#: libnautilus-private/nautilus-file.c:4705
+msgid "program"
+msgstr "program"
+
+#: libnautilus-private/nautilus-file.c:4723
+msgid ""
+"Can't find description even for \"x-directory/normal\". This probably means "
+"that your gnome-vfs.keys file is in the wrong place or isn't being found for "
+"some other reason."
+msgstr ""
+
+#: libnautilus-private/nautilus-file.c:4727
+#, c-format
+msgid ""
+"No description found for mime type \"%s\" (file is \"%s\"), please tell the "
+"gnome-vfs mailing list."
+msgstr ""
+"\"%s\" (\"%s\" faýly) mime hil üçin wasp tapylmady, lütfen gnome-vfs poçtu-"
+"list'e habar beriň."
+
+#: libnautilus-private/nautilus-file.c:4743
+msgid "link"
+msgstr "baglaýyş"
+
+#: libnautilus-private/nautilus-file.c:4763
+msgid "link (broken)"
+msgstr "baglaýyş (döwük)"
+
+#: libnautilus-private/nautilus-file.c:6191
+#: libnautilus-private/nautilus-global-preferences.c:540
+#: libnautilus-private/nautilus-trash-directory.c:343
+msgid "Trash"
+msgstr "Zibil"
+
+#: libnautilus-private/nautilus-global-preferences.c:100
+msgid "_Always"
+msgstr "_Hemişe"
+
+#: libnautilus-private/nautilus-global-preferences.c:101
+msgid "_Local File Only"
+msgstr "_Diňe ýerli faýllar"
+
+#: libnautilus-private/nautilus-global-preferences.c:102
+msgid "_Never"
+msgstr "_Hergiz"
+
+#: libnautilus-private/nautilus-global-preferences.c:108
+#: src/nautilus-file-management-properties.glade.h:14
+#, no-c-format
+msgid "25%"
+msgstr "25%"
+
+#: libnautilus-private/nautilus-global-preferences.c:110
+#: src/nautilus-file-management-properties.glade.h:20
+#, no-c-format
+msgid "50%"
+msgstr ""
+
+#: libnautilus-private/nautilus-global-preferences.c:112
+#: src/nautilus-file-management-properties.glade.h:23
+#, no-c-format
+msgid "75%"
+msgstr "75%"
+
+#: libnautilus-private/nautilus-global-preferences.c:114
+#: src/nautilus-file-management-properties.glade.h:8
+#, no-c-format
+msgid "100%"
+msgstr "100%"
+
+#: libnautilus-private/nautilus-global-preferences.c:116
+#: src/nautilus-file-management-properties.glade.h:10
+#, no-c-format
+msgid "150%"
+msgstr "150%"
+
+#: libnautilus-private/nautilus-global-preferences.c:118
+#: src/nautilus-file-management-properties.glade.h:12
+#, no-c-format
+msgid "200%"
+msgstr "200%"
+
+#: libnautilus-private/nautilus-global-preferences.c:120
+#: src/nautilus-file-management-properties.glade.h:17
+#, no-c-format
+msgid "400%"
+msgstr "400%"
+
+#: libnautilus-private/nautilus-global-preferences.c:125
+msgid "100 K"
+msgstr "100 K"
+
+#: libnautilus-private/nautilus-global-preferences.c:126
+msgid "500 K"
+msgstr "500 K"
+
+#: libnautilus-private/nautilus-global-preferences.c:127
+#: src/nautilus-file-management-properties.glade.h:3
+msgid "1 MB"
+msgstr "1 MB"
+
+#: libnautilus-private/nautilus-global-preferences.c:128
+#: src/nautilus-file-management-properties.glade.h:15
+msgid "3 MB"
+msgstr "3 MB"
+
+#: libnautilus-private/nautilus-global-preferences.c:129
+#: src/nautilus-file-management-properties.glade.h:18
+msgid "5 MB"
+msgstr "5 MB"
+
+#: libnautilus-private/nautilus-global-preferences.c:130
+#: src/nautilus-file-management-properties.glade.h:4
+msgid "10 MB"
+msgstr "10 MB"
+
+#: libnautilus-private/nautilus-global-preferences.c:131
+#: src/nautilus-file-management-properties.glade.h:6
+msgid "100 MB"
+msgstr "100 MB"
+
+#: libnautilus-private/nautilus-global-preferences.c:137
+msgid "Activate items with a _single click"
+msgstr "Aýtemleri _birje-tik bilen janlaşdyr"
+
+#: libnautilus-private/nautilus-global-preferences.c:141
+msgid "Activate items with a _double click"
+msgstr "Aýtemleri _iki-tik bilen janlaşdyr"
+
+#: libnautilus-private/nautilus-global-preferences.c:149
+msgid "E_xecute files when they are clicked"
+msgstr "Faýllary birje-tik lenede işe sal"
+
+#: libnautilus-private/nautilus-global-preferences.c:153
+msgid "Display _files when they are clicked"
+msgstr "Faýllary birje-tik lenede görkez"
+
+#: libnautilus-private/nautilus-global-preferences.c:157
+#: src/nautilus-file-management-properties.glade.h:70
+msgid "_Ask each time"
+msgstr "_Her gezek sora"
+
+#: libnautilus-private/nautilus-global-preferences.c:165
+msgid "Search for files by file name only"
+msgstr "Faýllary diňe adlary bilen ahtar"
+
+#: libnautilus-private/nautilus-global-preferences.c:169
+msgid "Search for files by file name and file properties"
+msgstr "Faýllary adlary we häsiýetlery bilen ahtar"
+
+#: libnautilus-private/nautilus-global-preferences.c:176
+#: src/file-manager/fm-icon-container.c:499
+#: src/nautilus-file-management-properties.glade.h:54
+msgid "Icon View"
+msgstr "Tymsal Görnöşi"
+
+#: libnautilus-private/nautilus-global-preferences.c:177
+#: src/file-manager/fm-list-view.c:1160
+#: src/nautilus-file-management-properties.glade.h:56
+msgid "List View"
+msgstr "List Görnöşi"
+
+#: libnautilus-private/nautilus-global-preferences.c:182
+msgid "Manually"
+msgstr ""
+
+#: libnautilus-private/nautilus-global-preferences.c:184
+#: src/nautilus-file-management-properties.glade.h:44
+msgid "By Name"
+msgstr "Ada Görä"
+
+#: libnautilus-private/nautilus-global-preferences.c:185
+#: src/nautilus-file-management-properties.glade.h:45
+msgid "By Size"
+msgstr "Ululyka Görä"
+
+#: libnautilus-private/nautilus-global-preferences.c:186
+#: src/nautilus-file-management-properties.glade.h:46
+msgid "By Type"
+msgstr "Hile Görä"
+
+#: libnautilus-private/nautilus-global-preferences.c:187
+#: src/nautilus-file-management-properties.glade.h:43
+msgid "By Modification Date"
+msgstr "Üýgetmek Tariha Görä"
+
+#: libnautilus-private/nautilus-global-preferences.c:188
+#: src/nautilus-file-management-properties.glade.h:42
+msgid "By Emblems"
+msgstr "Alamatlara Görä"
+
+#: libnautilus-private/nautilus-global-preferences.c:193
+msgid "8"
+msgstr "8"
+
+#: libnautilus-private/nautilus-global-preferences.c:194
+msgid "10"
+msgstr "10"
+
+#: libnautilus-private/nautilus-global-preferences.c:195
+msgid "12"
+msgstr "12"
+
+#: libnautilus-private/nautilus-global-preferences.c:196
+msgid "14"
+msgstr "14"
+
+#: libnautilus-private/nautilus-global-preferences.c:197
+msgid "16"
+msgstr "16"
+
+#: libnautilus-private/nautilus-global-preferences.c:198
+msgid "18"
+msgstr "18"
+
+#: libnautilus-private/nautilus-global-preferences.c:199
+msgid "20"
+msgstr "20"
+
+#: libnautilus-private/nautilus-global-preferences.c:200
+msgid "22"
+msgstr "22"
+
+#: libnautilus-private/nautilus-global-preferences.c:201
+msgid "24"
+msgstr "24"
+
+#. Note to translators: If it's hard to compose a good home
+#. * icon name from the user name, you can use a string without
+#. * an "%s" here, in which case the home icon name will not
+#. * include the user's name, which should be fine. To avoid a
+#. * warning, put "%.0s" somewhere in the string, which will
+#. * match the user name string passed by the C code, but not
+#. * put the user name in the final string.
+#.
+#: libnautilus-private/nautilus-global-preferences.c:528
+#, c-format
+msgid "%s's Home"
+msgstr "%sniň Öýy"
+
+#: libnautilus-private/nautilus-icon-canvas-item.c:2892
+msgid "editable text"
+msgstr "editlenip biljek metin"
+
+#: libnautilus-private/nautilus-icon-canvas-item.c:2893
+msgid "the editable label"
+msgstr "editlenip biljek etiket"
+
+#: libnautilus-private/nautilus-icon-canvas-item.c:2900
+msgid "additional text"
+msgstr "goşulga metin"
+
+#: libnautilus-private/nautilus-icon-canvas-item.c:2901
+msgid "some more text"
+msgstr "bireme kop metin"
+
+#: libnautilus-private/nautilus-icon-canvas-item.c:2908
+msgid "highlighted for selection"
+msgstr "saýlaw üçin ýagtylandy"
+
+#: libnautilus-private/nautilus-icon-canvas-item.c:2909
+msgid "whether we are highlighted for a selection"
+msgstr "saýlaw üçin ýagtylanmagy"
+
+#: libnautilus-private/nautilus-icon-canvas-item.c:2916
+msgid "highlighted as keyboard focus"
+msgstr ""
+
+#: libnautilus-private/nautilus-icon-canvas-item.c:2917
+msgid "whether we are highlighted to render keyboard focus"
+msgstr ""
+
+#: libnautilus-private/nautilus-icon-canvas-item.c:2925
+msgid "highlighted for drop"
+msgstr "zyňmak üçin ýagtylandy"
+
+#: libnautilus-private/nautilus-icon-canvas-item.c:2926
+msgid "whether we are highlighted for a D&D drop"
+msgstr "S&Z üçin ýagtylanmagy"
+
+#: libnautilus-private/nautilus-icon-container.c:2107
+msgid "The selection rectangle"
+msgstr "Saýlaw dört-burçlisi"
+
+#: libnautilus-private/nautilus-icon-container.c:4254
+msgid "Frame Text"
+msgstr "Gap Metini"
+
+#: libnautilus-private/nautilus-icon-container.c:4255
+msgid "Draw a frame around unselected text"
+msgstr "Saýlanmadyk metiniň daşyna bir gap çek"
+
+#: libnautilus-private/nautilus-icon-container.c:4261
+msgid "Selection Box Color"
+msgstr "Saýlaw gapyrjak renki"
+
+#: libnautilus-private/nautilus-icon-container.c:4262
+msgid "Color of the selection box"
+msgstr "Saýlaw gapyrjak renki"
+
+#: libnautilus-private/nautilus-icon-container.c:4267
+msgid "Selection Box Alpha"
+msgstr "Saýlaw gapyrjak alfasy"
+
+#: libnautilus-private/nautilus-icon-container.c:4268
+msgid "Opacity of the selection box"
+msgstr "Saýlaw gapyrjak durlyky"
+
+#: libnautilus-private/nautilus-icon-container.c:4275
+msgid "Highlight Alpha"
+msgstr "Ýagtylanmak alfasy"
+
+#: libnautilus-private/nautilus-icon-container.c:4276
+msgid "Opacity of the highlight for selected icons"
+msgstr "Saýlanan tymsallariň ýagtylanmak durlyky"
+
+#: libnautilus-private/nautilus-icon-container.c:4282
+msgid "Light Info Color"
+msgstr "Ýagty Bilgi Renki"
+
+#: libnautilus-private/nautilus-icon-container.c:4283
+msgid "Color used for information text against a dark background"
+msgstr "Garaňky arkaplana garşy bilgi metin üçin ullanan renk"
+
+#: libnautilus-private/nautilus-icon-container.c:4288
+msgid "Dark Info Color"
+msgstr "Garaňky Bilgi Renki"
+
+#: libnautilus-private/nautilus-icon-container.c:4289
+msgid "Color used for information text against a light background"
+msgstr "Ýagty arkaplana garşy bilgi metin üçin ullanan renk"
+
+#: libnautilus-private/nautilus-icon-dnd.c:754
+msgid ""
+"Do you want to switch to manual layout and leave this item where you dropped "
+"it? This will clobber the stored manual layout."
+msgstr ""
+
+#: libnautilus-private/nautilus-icon-dnd.c:756
+#: libnautilus-private/nautilus-icon-dnd.c:760
+#: libnautilus-private/nautilus-icon-dnd.c:765
+#: libnautilus-private/nautilus-icon-dnd.c:768
+msgid "This folder uses automatic layout."
+msgstr "Bu halta otomatik düzümden ullanýar"
+
+#: libnautilus-private/nautilus-icon-dnd.c:758
+msgid ""
+"Do you want to switch to manual layout and leave these items where you "
+"dropped them? This will clobber the stored manual layout."
+msgstr ""
+
+#: libnautilus-private/nautilus-icon-dnd.c:764
+msgid ""
+"Do you want to switch to manual layout and leave this item where you dropped "
+"it?"
+msgstr ""
+
+#: libnautilus-private/nautilus-icon-dnd.c:767
+msgid ""
+"Do you want to switch to manual layout and leave these items where you "
+"dropped them?"
+msgstr ""
+
+#: libnautilus-private/nautilus-icon-dnd.c:773
+msgid "Switch to Manual Layout?"
+msgstr ""
+
+#: libnautilus-private/nautilus-icon-dnd.c:774
+msgid "Switch"
+msgstr "Geç"
+
+#: libnautilus-private/nautilus-program-choosing.c:136
+msgid "Open Failed, would you like to choose another application?"
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:137
+#, c-format
+msgid ""
+"\"%s\" can't open \"%s\" because \"%s\" can't access files at \"%s\" "
+"locations."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:142
+msgid "Open Failed, would you like to choose another action?"
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:143
+#, c-format
+msgid ""
+"The default action can't open \"%s\" because it can't access files at \"%s\" "
+"locations."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:150
+#: libnautilus-private/nautilus-program-choosing.c:183
+msgid "Can't Open Location"
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:169
+#, c-format
+msgid ""
+"\"%s\" can't open \"%s\" because \"%s\" can't access files at \"%s\"."
+"locations."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:172
+msgid ""
+"No other applications are available to view this file.  If you copy this "
+"file onto your computer, you may be able to open it."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:176
+#, c-format
+msgid ""
+"The default action can't open \"%s\" because it can't access files at \"%s\"."
+"locations."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:178
+msgid ""
+"No other actions are available to view this file.  If you copy this file "
+"onto your computer, you may be able to open it."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:492
+#: libnautilus-private/nautilus-program-choosing.c:723
+#, c-format
+msgid "Opening %s"
+msgstr ""
+
+#. TODO: These strings suck pretty badly, but we're in string-freeze,
+#. * and I found these in other places to reuse. We should make them
+#. * better later.
+#. Shouldn't have gotten this error unless there's a : separator.
+#: libnautilus-private/nautilus-program-choosing.c:580
+#: libnautilus-private/nautilus-program-choosing.c:591
+#: libnautilus-private/nautilus-program-choosing.c:599
+#: libnautilus-private/nautilus-program-choosing.c:604
+#: src/nautilus-window-manage-views.c:1344
+#: src/nautilus-window-manage-views.c:1350
+#: src/nautilus-window-manage-views.c:1378
+#: src/nautilus-window-manage-views.c:1386
+#: src/nautilus-window-manage-views.c:1392
+#: src/nautilus-window-manage-views.c:1413
+#, c-format
+msgid "Couldn't display \"%s\"."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:593
+#: libnautilus-private/nautilus-program-choosing.c:888
+#: libnautilus-private/nautilus-program-choosing.c:957
+msgid "There was an error launching the application."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:601
+#: src/nautilus-window-manage-views.c:1388
+msgid "The attempt to log in failed."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:606
+#: src/nautilus-window-manage-views.c:1394
+msgid "Access was denied."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:611
+#: src/nautilus-window-manage-views.c:1405
+#, c-format
+msgid "Couldn't display \"%s\", because no host \"%s\" could be found."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:614
+#: src/nautilus-window-manage-views.c:1408
+msgid ""
+"Check that the spelling is correct and that your proxy settings are correct."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:619
+#: src/nautilus-connect-server-dialog.c:140
+#: src/nautilus-window-manage-views.c:1366
+#, c-format
+msgid "\"%s\" is not a valid location."
+msgstr "\"%s\" dogry bir ýer däl."
+
+#: libnautilus-private/nautilus-program-choosing.c:622
+#: libnautilus-private/nautilus-program-choosing.c:629
+#: src/nautilus-connect-server-dialog.c:142
+#: src/nautilus-property-browser.c:1097
+#: src/nautilus-window-manage-views.c:1361
+#: src/nautilus-window-manage-views.c:1369
+msgid "Please check the spelling and try again."
+msgstr "Lütfen ymlany barlaniň we ýenede bir synanyň."
+
+#: libnautilus-private/nautilus-program-choosing.c:626
+#: src/nautilus-window-manage-views.c:1358
+#, c-format
+msgid "Couldn't find \"%s\"."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:644
+#: src/nautilus-connect-server-dialog-main.c:71
+#: src/nautilus-window-manage-views.c:1434
+msgid "Can't Display Location"
+msgstr "Ýeri görkzip başarmadym"
+
+#: libnautilus-private/nautilus-program-choosing.c:873
+msgid "Sorry, but you can't execute commands from a remote site."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:875
+msgid "This is disabled due to security considerations."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:876
+msgid "Can't Execute Remote Links"
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:886
+#: libnautilus-private/nautilus-program-choosing.c:955
+msgid "Details: "
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:890
+#: libnautilus-private/nautilus-program-choosing.c:959
+msgid "Error Launching Application"
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:918
+#: libnautilus-private/nautilus-program-choosing.c:930
+msgid "This drop target only supports local files."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:919
+msgid ""
+"To open non-local files copy them to a local folder and then drop them again."
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:921
+#: libnautilus-private/nautilus-program-choosing.c:933
+msgid "Drop Target Only Supports Local Files"
+msgstr ""
+
+#: libnautilus-private/nautilus-program-choosing.c:931
+msgid ""
+"To open non-local files copy them to a local folder and then drop them "
+"again. The local files you dropped have already been opened."
+msgstr ""
+
+#: libnautilus-private/nautilus-undo-signal-handlers.c:174
+msgid "Edit"
+msgstr "Edit"
+
+#: libnautilus-private/nautilus-undo-signal-handlers.c:175
+msgid "Undo Edit"
+msgstr "Editi Izine Al"
+
+#: libnautilus-private/nautilus-undo-signal-handlers.c:176
+msgid "Undo the edit"
+msgstr "Editi izine al"
+
+#: libnautilus-private/nautilus-undo-signal-handlers.c:177
+msgid "Redo Edit"
+msgstr "Editi Tekrar Et"
+
+#: libnautilus-private/nautilus-undo-signal-handlers.c:178
+msgid "Redo the edit"
+msgstr "Editi tekrar et"
+
+#: nautilus-computer.desktop.in.h:2
+msgid "View your computer storage"
+msgstr ""
+
+#: nautilus-file-management-properties.desktop.in.h:1
+msgid "Change how files are managed"
+msgstr ""
+
+#: nautilus-file-management-properties.desktop.in.h:2
+msgid "File Management"
+msgstr "Faýl Müdirlemegi"
+
+#: nautilus-home.desktop.in.h:1 src/file-manager/fm-tree-view.c:1252
+msgid "Home Folder"
+msgstr "Öý Haltasy"
+
+#: nautilus-home.desktop.in.h:2
+msgid "View your home folder in the Nautilus file manager"
+msgstr "Oa öý haltaňizi nautilusiň faýl müdirinde göriň"
+
+#: nautilus.desktop.in.h:1
+msgid "Browse the filesystem with the file manager"
+msgstr "Faýlsistemi faýl müdiri bilen ahtar"
+
+#: nautilus.desktop.in.h:2
+#, fuzzy
+msgid "File Browser"
+msgstr "Faýl Ahtarçy: %s"
+
+#: src/Nautilus_shell.server.in.h:1
+msgid "Factory for Nautilus shell and file manager"
+msgstr "Nautilusiň gabyk we faýl müdiri aýl müdiri üçin karhana"
+
+#: src/Nautilus_shell.server.in.h:2
+msgid "Nautilus factory"
+msgstr "Nautilus karhanasy"
+
+#: src/Nautilus_shell.server.in.h:3
+msgid "Nautilus metafile factory"
+msgstr ""
+
+#: src/Nautilus_shell.server.in.h:4
+msgid "Nautilus shell"
+msgstr "Nautilus gabyky"
+
+#: src/Nautilus_shell.server.in.h:5
+msgid ""
+"Nautilus shell operations that can be done from subsequent command-line "
+"invocations"
+msgstr ""
+
+#: src/Nautilus_shell.server.in.h:6
+msgid "Produces metafile objects for accessing Nautilus metadata"
+msgstr ""
+
+#: src/file-manager/fm-desktop-icon-view.c:625
+msgid "Background"
+msgstr "Arkaplan"
+
+#: src/file-manager/fm-desktop-icon-view.c:686
+#, fuzzy
+msgid "E_mpty Trash"
+msgstr "Zibili Boşot"
+
+#. name, stock id
+#: src/file-manager/fm-desktop-icon-view.c:696
+msgid "Open T_erminal"
+msgstr "_Terminali Aç"
+
+#. label, accelerator
+#: src/file-manager/fm-desktop-icon-view.c:697
+msgid "Open a new GNOME terminal window"
+msgstr "Bir täze GNOME terminal äpişgesini aç"
+
+#. name, stock id
+#: src/file-manager/fm-desktop-icon-view.c:700
+#: src/file-manager/fm-directory-view.c:5739
+msgid "Create L_auncher"
+msgstr "_Başladyçy Bejer"
+
+#. label, accelerator
+#: src/file-manager/fm-desktop-icon-view.c:701
+#: src/file-manager/fm-directory-view.c:5740
+msgid "Create a new launcher"
+msgstr "Bir täze başladyçy bejer"
+
+#. name, stock id
+#: src/file-manager/fm-desktop-icon-view.c:704
+msgid "Change Desktop _Background"
+msgstr "Desktap Arkaplany Üýtget"
+
+#. label, accelerator
+#: src/file-manager/fm-desktop-icon-view.c:705
+msgid ""
+"Show a window that lets you set your desktop background's pattern or color"
+msgstr ""
+"Size desktap arkaplanyň bejergi we renkini düzmege ejaza berýan äpişgeni "
+"görkez."
+
+#. name, stock id
+#: src/file-manager/fm-desktop-icon-view.c:708
+msgid "Empty Trash"
+msgstr "Zibili Boşot"
+
+#. label, accelerator
+#: src/file-manager/fm-desktop-icon-view.c:709
+#: src/file-manager/fm-directory-view.c:5768
+msgid "Delete all items in the Trash"
+msgstr "Ehli Zibil aýtemlerni poz"
+
+#: src/file-manager/fm-desktop-icon-view.c:798
+#: src/nautilus-desktop-window.c:365
+msgid "Desktop"
+msgstr "Desktoap"
+
+#: src/file-manager/fm-desktop-icon-view.c:799
+#, fuzzy
+msgid "_Desktop"
+msgstr "Desktoap"
+
+#: src/file-manager/fm-directory-view.c:510
+#, c-format
+msgid "Open %d Window?"
+msgid_plural "Open %d Windows?"
+msgstr[0] "%d äpişge açilsinmi?"
+msgstr[1] "%d äpişgeler açilsinmi?"
+
+#: src/file-manager/fm-directory-view.c:511
+msgid "Are you sure you want to open all files?"
+msgstr "Siz ehli faýllar açylmagyna hatyrjem mi?"
+
+#: src/file-manager/fm-directory-view.c:512 src/nautilus-location-bar.c:158
+#, c-format
+msgid "This will open %d separate window."
+msgid_plural "This will open %d separate windows."
+msgstr[0] "Bu %d aýratyn äpişge açar"
+msgstr[1] "Bu %d aýratyn äpişgeler açar"
+
+#: src/file-manager/fm-directory-view.c:813
+#, c-format
+msgid "Are you sure you want to permanently delete \"%s\"?"
+msgstr "Siz \"%s\" faýly hamişelikçe pozmakyna hatyrjem mi?"
+
+#: src/file-manager/fm-directory-view.c:817
+#, c-format
+msgid "Are you sure you want to permanently delete the %d selected item?"
+msgid_plural ""
+"Are you sure you want to permanently delete the %d selected items?"
+msgstr[0] "Siz saýlanan \"%d\" aýtemi hamişelikçe pozmakyna hatyrjem mi?"
+msgstr[1] "Siz saýlanan \"%d\" aýtemi hamişelikçe pozmakyna hatyrjem mi?"
+
+#: src/file-manager/fm-directory-view.c:825
+msgid "If you delete an item, it is permanently lost."
+msgstr "Eger siz bir aýtemi pozsaňyz hamişelikçe ýyter."
+
+#: src/file-manager/fm-directory-view.c:826
+msgid "Delete?"
+msgstr "Pozilsin mi?"
+
+#: src/file-manager/fm-directory-view.c:977
+msgid "Select Pattern"
+msgstr "Saýlanan Bejergi"
+
+#: src/file-manager/fm-directory-view.c:993
+msgid "_Pattern:"
+msgstr "_Bejergi"
+
+#: src/file-manager/fm-directory-view.c:1791
+#, c-format
+msgid "\"%s\" selected"
+msgstr "\"%s\" saýlanydi"
+
+#: src/file-manager/fm-directory-view.c:1793
+#, c-format
+msgid "%d folder selected"
+msgid_plural "%d folders selected"
+msgstr[0] "%d halta saýlanydi"
+msgstr[1] "%d halta saýlanydi"
+
+#: src/file-manager/fm-directory-view.c:1803
+#, c-format
+msgid " (containing %d item)"
+msgid_plural " (containing %d items)"
+msgstr[0] " (%d aýtemi eklenýä)"
+msgstr[1] " (%d aýtemleri eklenýä)"
+
+#. translators: this is preceded with a string of form 'N folders' (N more than 1)
+#: src/file-manager/fm-directory-view.c:1814
+#, c-format
+msgid " (containing a total of %d item)"
+msgid_plural " (containing a total of %d items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/file-manager/fm-directory-view.c:1830
+#, c-format
+msgid "\"%s\" selected (%s)"
+msgstr "\"%s\" saýlandy (%s)"
+
+#: src/file-manager/fm-directory-view.c:1834
+#, c-format
+msgid "%d item selected (%s)"
+msgid_plural "%d items selected (%s)"
+msgstr[0] "%d aýtem saýlandy (%s)"
+msgstr[1] "%d aýtemleri saýlandy (%s)"
+
+#. Folders selected also, use "other" terminology
+#: src/file-manager/fm-directory-view.c:1842
+#, c-format
+msgid "%d other item selected (%s)"
+msgid_plural "%d other items selected (%s)"
+msgstr[0] "%d başga aýtem saýlandy (%s)"
+msgstr[1] "%d başga aýtemler saýlandy (%s)"
+
+#: src/file-manager/fm-directory-view.c:1863
+#, c-format
+msgid "%s, Free space: %s"
+msgstr "%s Azat seleň: %s"
+
+#. This is marked for translation in case a localizer
+#. * needs to change ", " to something else. The comma
+#. * is between the message about the number of folders
+#. * and the number of items in those folders and the
+#. * message about the number of other items and the
+#. * total size of those items.
+#.
+#: src/file-manager/fm-directory-view.c:1888
+#, c-format
+msgid "%s%s, %s"
+msgstr "%s%s, %s"
+
+#. Note that the number of items actually displayed varies somewhat due
+#. * to the way files are collected in batches. So you can't assume that
+#. * no more than the constant limit are displayed.
+#.
+#: src/file-manager/fm-directory-view.c:1958
+#, c-format
+msgid "The folder \"%s\" contains more files than Nautilus can handle."
+msgstr "\"%s\" haltasy Nautilusiň elläp başarjakyndan kop faýllar ekleýär."
+
+#: src/file-manager/fm-directory-view.c:1964
+msgid "Some files will not be displayed."
+msgstr "Bireme faýllar görkezilmer"
+
+#: src/file-manager/fm-directory-view.c:1965
+msgid "Too Many Files"
+msgstr "Beter Kop Faýllar"
+
+#: src/file-manager/fm-directory-view.c:3113
+msgid "Cannot move file to trash, do you want to delete immediately?"
+msgstr "Faýl zibile göçirilip başarmady, ol zöwwe pozylsyn mi?"
+
+#: src/file-manager/fm-directory-view.c:3114
+#, c-format
+msgid "The file \"%s\" cannot be moved to the trash."
+msgstr "\"%s\" faýly zibile göçirilip başarmady"
+
+#: src/file-manager/fm-directory-view.c:3118
+msgid "Cannot move items to trash, do you want to delete them immediately?"
+msgstr "Aýtemler zibile göçirilip başarmady, olar zöwwe pozylsyn mi?"
+
+#: src/file-manager/fm-directory-view.c:3121
+msgid ""
+"Cannot move some items to trash, do you want to delete these immediately?"
+msgstr "Bireme aýtemler zibile göçirilip başarmady, olar zöwwe pozylsyn mi?"
+
+#: src/file-manager/fm-directory-view.c:3128
+msgid "Delete Immediately?"
+msgstr "Zöwwe Pozylsyn mi?"
+
+#: src/file-manager/fm-directory-view.c:3160
+#, c-format
+msgid "Are you sure you want to permanently delete \"%s\" from the trash?"
+msgstr "Siz \"%s\" faýly zibilden zöwwe pozylmakyna hatyrjem mi?"
+
+#: src/file-manager/fm-directory-view.c:3164
+#, c-format
+msgid ""
+"Are you sure you want to permanently delete the %d selected item from the "
+"trash?"
+msgid_plural ""
+"Are you sure you want to permanently delete the %d selected items from the "
+"trash?"
+msgstr[0] "Siz \"%d\" saýlanan aýtemi zibilden zöwwe pozylmakyna hatyrjem mi?"
+msgstr[1] ""
+"Siz \"%d\" saýlanan aýtemleri zibilden zöwwe pozylmakyna hatyrjem mi?"
+
+#: src/file-manager/fm-directory-view.c:3173
+msgid "If you delete an item, it will be permanently lost."
+msgstr "Eger siz bir aýtemi pozsaňyz, ol zöwwe pozylar."
+
+#: src/file-manager/fm-directory-view.c:3174
+msgid "Delete From Trash?"
+msgstr "Zibilden Pozilsin mi?"
+
+#: src/file-manager/fm-directory-view.c:3658
+#, fuzzy, c-format
+msgid "Open with \"%s\""
+msgstr "%s bilen aç"
+
+#: src/file-manager/fm-directory-view.c:3659
+#, c-format
+msgid "Use \"%s\" to open the selected item"
+msgstr "Saýlanan aýtemi açmak üçin \"%s\"den ullan"
+
+#: src/file-manager/fm-directory-view.c:3748
+#, c-format
+msgid "Do you want to run \"%s\", or display its contents?"
+msgstr "\"%s\" bitsinmi ýädä öniň mazmuny görkezilsinmi?"
+
+#: src/file-manager/fm-directory-view.c:3750
+#, c-format
+msgid "\"%s\" is an executable text file."
+msgstr "\"%s\" işe salynjak bir faýl."
+
+#: src/file-manager/fm-directory-view.c:3756
+msgid "Run or Display?"
+msgstr "Bitsinmi ýädä Görkezilsinmi"
+
+#: src/file-manager/fm-directory-view.c:3757
+msgid "Run in _Terminal"
+msgstr "_Terminal içinde Bitir"
+
+#: src/file-manager/fm-directory-view.c:3758
+msgid "_Display"
+msgstr "_Görkez"
+
+#: src/file-manager/fm-directory-view.c:3761
+msgid "_Run"
+msgstr "_Bitir"
+
+#: src/file-manager/fm-directory-view.c:4147
+#, c-format
+msgid "Cannot open %s"
+msgstr "%s açilip bilmedi"
+
+#: src/file-manager/fm-directory-view.c:4150
+#, c-format
+msgid ""
+"The filename \"%s\" indicates that this file is of type \"%s\". The contents "
+"of the file indicate that the file is of type \"%s\". If you open this file, "
+"the file might present a security risk to your system.\n"
+"\n"
+"Do not open the file unless you created the file yourself, or received the "
+"file from a trusted source. To open the file, rename the file to the correct "
+"extension for \"%s\", then open the file normally. Alternatively, use the "
+"Open With menu to choose a specific application for the file. "
+msgstr ""
+"\"%s\" faýl ady faýlyň %s hilden digni görkezýär. Faýlyň mazmuny öniň %s "
+"hilden digni görkezýär. Eger siz bu faýly açsaňyz, ol siziň sistemiňize "
+"howpsyzlyk risk berib biler.\n"
+"\n"
+"Faýly öziňiz bejermedik bolsaňiz we ýädä öni bir ynamly çeşmeden almadyk "
+"bolsaňiz açmaň. Faýly açmak üçin, öniň adyny %s üçin dogry guruka ewez, "
+"şeýlelikde öni kadalyja açyn. Siz Aýry Aç menüsi bilen aýratyn bir programi "
+"bu faýl üçin ullanyň."
+
+#: src/file-manager/fm-directory-view.c:4571
+#, c-format
+msgid "Run \"%s\" on any selected items"
+msgstr "\"%s\"-i her saýlanan aýtem üstine bitir"
+
+#: src/file-manager/fm-directory-view.c:4820
+#, c-format
+msgid "Create Document from template \"%s\""
+msgstr ""
+
+#: src/file-manager/fm-directory-view.c:5026
+msgid "All executable files in this folder will appear in the Scripts menu."
+msgstr ""
+"Bu haltaniň içinde ehli işe salynyp biljek faýllat Skriptler menüsinde "
+"görüner."
+
+#: src/file-manager/fm-directory-view.c:5028
+msgid ""
+"Choosing a script from the menu will run that script with any selected items "
+"as input."
+msgstr ""
+"Menüden bir skripti saýlamak skripti ehli saýlanan aýtemleri giriş edip "
+"bitirer."
+
+#: src/file-manager/fm-directory-view.c:5030
+msgid "About Scripts"
+msgstr "Skriptler Barada"
+
+#: src/file-manager/fm-directory-view.c:5031
+msgid ""
+"All executable files in this folder will appear in the Scripts menu. "
+"Choosing a script from the menu will run that script.\n"
+"\n"
+"When executed from a local folder, scripts will be passed the selected file "
+"names. When executed from a remote folder (e.g. a folder showing web or ftp "
+"content), scripts will be passed no parameters.\n"
+"\n"
+"In all cases, the following environment variables will be set by Nautilus, "
+"which the scripts may use:\n"
+"\n"
+"NAUTILUS_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected "
+"files (only if local)\n"
+"\n"
+"NAUTILUS_SCRIPT_SELECTED_URIS: newline-delimited URIs for selected files\n"
+"\n"
+"NAUTILUS_SCRIPT_CURRENT_URI: URI for current location\n"
+"\n"
+"NAUTILUS_SCRIPT_WINDOW_GEOMETRY: position and size of current window"
+msgstr ""
+
+#: src/file-manager/fm-directory-view.c:5194
+#: src/file-manager/fm-tree-view.c:895
+#, c-format
+msgid "\"%s\" will be moved if you select the Paste Files command"
+msgstr "Eger siz Faýllary Ýapyşdyr buýruky saýlasaňyz \"%s\" göçiriler"
+
+#: src/file-manager/fm-directory-view.c:5198
+#: src/file-manager/fm-tree-view.c:899
+#, c-format
+msgid "\"%s\" will be copied if you select the Paste Files command"
+msgstr "Eger siz Faýllary Ýapyşdyr buýruky saýlasaňyz \"%s\" nusgalanar"
+
+#: src/file-manager/fm-directory-view.c:5205
+#, c-format
+msgid ""
+"The %d selected item will be moved if you select the Paste Files command"
+msgid_plural ""
+"The %d selected items will be moved if you select the Paste Files command"
+msgstr[0] ""
+"Eger siz Faýllary Ýapyşdyr buýruky saýlasaňyz \"%d\" saýlanan aýtem göçiriler"
+msgstr[1] ""
+"Eger siz Faýllary Ýapyşdyr buýruky saýlasaňyz \"%d\" saýlanan aýtemler "
+"göçiriler"
+
+#: src/file-manager/fm-directory-view.c:5212
+#, c-format
+msgid ""
+"The %d selected item will be copied if you select the Paste Files command"
+msgid_plural ""
+"The %d selected items will be copied if you select the Paste Files command"
+msgstr[0] ""
+"Eger siz Faýllary Ýapyşdyr buýruky saýlasaňyz \"%d\" saýlanan aýtemler "
+"nusgalanar"
+msgstr[1] ""
+"Eger siz Faýllary Ýapyşdyr buýruky saýlasaňyz \"%d\" saýlanan aýtemler "
+"nusgalanar"
+
+#: src/file-manager/fm-directory-view.c:5293
+#: src/file-manager/fm-tree-view.c:975
+msgid "There is nothing on the clipboard to paste."
+msgstr ""
+
+#: src/file-manager/fm-directory-view.c:5400
+#: src/file-manager/fm-directory-view.c:6783
+msgid "Mount Error"
+msgstr "Baglama Hatasy"
+
+#: src/file-manager/fm-directory-view.c:5457
+#: src/file-manager/fm-tree-view.c:1060
+msgid "Unmount Error"
+msgstr "Aýyrma Hatasy"
+
+#: src/file-manager/fm-directory-view.c:5470
+#: src/file-manager/fm-tree-view.c:1057
+msgid "Eject Error"
+msgstr "Çykartma Hatasy"
+
+#: src/file-manager/fm-directory-view.c:5619
+#, fuzzy, c-format
+msgid "Connect to Server %s"
+msgstr "Gullukçiýa Baglan"
+
+#: src/file-manager/fm-directory-view.c:5624
+#, fuzzy
+msgid "_Connect"
+msgstr "_Baglan"
+
+#: src/file-manager/fm-directory-view.c:5638
+msgid "Link _name:"
+msgstr "Baglaýyş _ady:"
+
+#: src/file-manager/fm-directory-view.c:5716
+msgid "Create _Document"
+msgstr "_Sened Bejer"
+
+#. name, stock id, label
+#: src/file-manager/fm-directory-view.c:5717
+msgid "Open Wit_h"
+msgstr "_Aýry Aç"
+
+#. name, stock id, label
+#: src/file-manager/fm-directory-view.c:5718
+msgid "Choose a program with which to open the selected item"
+msgstr ""
+
+#: src/file-manager/fm-directory-view.c:5719
+msgid "_Scripts"
+msgstr "_Skriptler"
+
+#. name, stock id, label
+#: src/file-manager/fm-directory-view.c:5720
+#, fuzzy
+msgid "Run or manage scripts from ~/.gnome2/nautilus-scripts"
+msgstr "Skriptleri ~/Nautilus/scripts haltasyndan bitir ýädä müdirle"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5722
+msgid "_Properties"
+msgstr "_Häsiýetler"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5723
+msgid "View or modify the properties of each selected item"
+msgstr "Her saýlanan aýtem häsiýetlerny görkez ýäda üýtget"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5730
+msgid "Create _Folder"
+msgstr "_Halta Bejer"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5731
+msgid "Create a new empty folder inside this folder"
+msgstr "Bu halta içinde bir täze boş halta bejer"
+
+#: src/file-manager/fm-directory-view.c:5733
+msgid "No templates Installed"
+msgstr ""
+
+#. name, stock id, label
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5735
+msgid "_Empty File"
+msgstr "_Boş Faýl"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5736
+msgid "Create a new empty file inside this folder"
+msgstr "Bu halta içinde bir täze boş faýl bejer"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5743
+#: src/file-manager/fm-directory-view.c:6220
+msgid "_Open"
+msgstr "_Aç"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5744
+msgid "Open the selected item in this window"
+msgstr "Saýlanan aýtemi bu äpişgede aç"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5751
+msgid "Open in Navigation Window"
+msgstr ""
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5752
+msgid "Open each selected item in a navigation window"
+msgstr ""
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5755
+#: src/file-manager/fm-directory-view.c:5759
+#, fuzzy
+msgid "Open with Other _Application..."
+msgstr "Başga bir Program bilen Aç"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5756
+#: src/file-manager/fm-directory-view.c:5760
+msgid "Choose another application with which to open the selected item"
+msgstr ""
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5763
+msgid "_Open Scripts Folder"
+msgstr "Skriptler Haltasini _Aç"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5764
+msgid "Show the folder containing the scripts that appear in this menu"
+msgstr "Bu menü-de görkezilýän skriptleri ekleýän haltany görkez"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5771
+#: src/file-manager/fm-directory-view.c:6328
+msgid "Cu_t Files"
+msgstr "Faýly _Kes"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5772
+msgid "Prepare the selected files to be moved with a Paste Files command"
+msgstr "Saýlanan faýllary Faýllary Ýabşir buýruky bilen göçirmek üçin taýyarla"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5775
+#: src/file-manager/fm-directory-view.c:6337
+msgid "_Copy Files"
+msgstr "Faýly _Nusgala"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5776
+msgid "Prepare the selected files to be copied with a Paste Files command"
+msgstr ""
+"Saýlanan faýllary Faýllary Ýabşir buýruky bilen nusgalanmak üçin taýyarla"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5779
+msgid "_Paste Files"
+msgstr "Faýllary _Ýapyşdyr"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5780
+msgid ""
+"Move or copy files previously selected by a Cut Files or Copy Files command"
+msgstr ""
+"Öňki Faýllary Kes we Faýllary Nusgala buýrukler bilen saýlanan faýllary "
+"göçir ýädä nusgala"
+
+#. We make accelerator "" instead of null here to not inherit the stock
+#. accelerator for paste
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5785
+msgid "_Paste Files Into Folder"
+msgstr "Faýllary Halta Içine Ýabşyr"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5786
+msgid ""
+"Move or copy files previously selected by a Cut Files or Copy Files command "
+"into the selected folder"
+msgstr ""
+"Öňki Faýllary Kes we Faýllary Nusgala buýrukler bilen saýlanan faýllary "
+"saýlanan halta içine göçir ýädä nusgala"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5789
+msgid "Select _All Files"
+msgstr "_Ehli Faýllar Saýla"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5790
+msgid "Select all items in this window"
+msgstr "Bu äpişgeniň içinde ehli aýtemleri saýla"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5793
+msgid "Select _Pattern"
+msgstr "Bejergini Saýla"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5794
+msgid "Select items in this window matching a given pattern"
+msgstr "Bu äpişgeniň içinde aýtemleri berilen bejergi bilen nezirläb saýla"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5797
+msgid "D_uplicate"
+msgstr "_Ikile"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5798
+msgid "Duplicate each selected item"
+msgstr "Her bir saýlanan aýtemi ikile"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5801
+#: src/file-manager/fm-directory-view.c:6297
+msgid "Ma_ke Link"
+msgstr "Baglaýyşy _Bejer"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5802
+msgid "Create a symbolic link for each selected item"
+msgstr "Her saýlanan aýtem üçin bir simbolik-baglaýyş bejer"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5805
+msgid "_Rename..."
+msgstr "Ýenbeden Ad Dak..."
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5806
+msgid "Rename selected item"
+msgstr "Saýlanan aýtemleriň adyny üýtget"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5809
+#: src/file-manager/fm-directory-view.c:6263
+#: src/file-manager/fm-directory-view.c:6581
+msgid "Mo_ve to Trash"
+msgstr "Zibile Göçir"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5810
+#: src/file-manager/fm-directory-view.c:6264
+msgid "Move each selected item to the Trash"
+msgstr "Ehli saýlanan aýtemleri Zibile göçir"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5813
+#: src/file-manager/fm-directory-view.c:6282
+msgid "_Delete"
+msgstr "_Poz"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5814
+msgid "Delete each selected item, without moving to the Trash"
+msgstr "Her bir saýlanan aýtemi Zibile göçirmäni poz"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5817
+msgid "Reset View to _Defaults"
+msgstr "Görnöşi _Ön Bellenene Sifirle"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5818
+msgid "Reset sorting order and zoom level to match preferences for this view"
+msgstr ""
+"Tertiblemek tertibini we ulaldyş derejesini bu görnöş bilen nezirlemek üçin "
+"sifirle"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5821
+#, fuzzy
+msgid "Connect To This Server"
+msgstr "Gullukçiýa Baglan"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5822
+msgid "Make a permanent connection to this server"
+msgstr ""
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5825
+msgid "_Mount Volume"
+msgstr "_Hejmi Bagla"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5826
+msgid "Mount the selected volume"
+msgstr "Saýlanan hejmi bagla"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5829
+#: src/file-manager/fm-tree-view.c:745
+msgid "_Unmount Volume"
+msgstr "Hejmi Aýyr"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5830
+msgid "Unmount the selected volume"
+msgstr "Saýlanan hejmi baglamadan aýyr"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5833
+#, fuzzy
+msgid "_Eject"
+msgstr "_Çykart"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5834
+#, fuzzy
+msgid "Eject the selected volume"
+msgstr "Saýlanan hejmi gora"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5837
+#, fuzzy
+msgid "Open File and Close window"
+msgstr "Täze Äpişgede Aç"
+
+#. name, stock id
+#: src/file-manager/fm-directory-view.c:5844
+#, fuzzy
+msgid "Show _Hidden Files"
+msgstr "Gizlin we _zapas faýllary görkez"
+
+#. label, accelerator
+#: src/file-manager/fm-directory-view.c:5845
+msgid "Toggles the display of hidden files in the current window"
+msgstr ""
+
+#: src/file-manager/fm-directory-view.c:6209
+#, fuzzy, c-format
+msgid "_Open with \"%s\""
+msgstr "%s bilen aç"
+
+#. add the "open in new window" menu item
+#: src/file-manager/fm-directory-view.c:6229
+#: src/file-manager/fm-directory-view.c:6231
+#: src/file-manager/fm-tree-view.c:1110
+#, c-format
+msgid "Open in New Window"
+msgid_plural "Open in %d New Windows"
+msgstr[0] "Täze Äpişgede Aç"
+msgstr[1] "Täze %d Äpişgelerde Aç"
+
+#: src/file-manager/fm-directory-view.c:6238
+#, fuzzy
+msgid "_Browse Folder"
+msgstr "Haltany Ahtar"
+
+#: src/file-manager/fm-directory-view.c:6240
+#, fuzzy
+msgid "_Browse Folders"
+msgstr "Haltalary Ahtar"
+
+#: src/file-manager/fm-directory-view.c:6259
+msgid "_Delete from Trash"
+msgstr "Zibil içinden Poz"
+
+#: src/file-manager/fm-directory-view.c:6260
+msgid "Delete all selected items permanently"
+msgstr "Ehli saýlanan aýtemleri hamişelikçe poz"
+
+#: src/file-manager/fm-directory-view.c:6296
+msgid "Ma_ke Links"
+msgstr "Baglaýyşlary _Bejer"
+
+#: src/file-manager/fm-directory-view.c:6327
+msgid "Cu_t File"
+msgstr "Faýllary _Kes"
+
+#: src/file-manager/fm-directory-view.c:6336
+msgid "_Copy File"
+msgstr "Faýllary _Nusgala"
+
+#: src/file-manager/fm-directory-view.c:6572
+msgid "The link is broken, do you want to move it to the Trash?"
+msgstr "Baglaýyş döwük çikdi, öni zibile göçirmeli mi?"
+
+#: src/file-manager/fm-directory-view.c:6574
+msgid "This link can't be used, because it has no target."
+msgstr "Baglaýyş maksady bolmansaň ullanyb başarmaşar."
+
+#: src/file-manager/fm-directory-view.c:6576
+#, c-format
+msgid "This link can't be used, because its target \"%s\" doesn't exist."
+msgstr "Baglaýyş %s maksady bolmansaň ullanyb başarmaşar."
+
+#: src/file-manager/fm-directory-view.c:6581
+msgid "Broken Link"
+msgstr "Döwük Baglaýyş"
+
+#: src/file-manager/fm-directory-view.c:6901
+#, c-format
+msgid "Opening \"%s\"."
+msgstr "\"%s\" açilşi."
+
+#: src/file-manager/fm-directory-view.c:6908
+msgid "Cancel Open?"
+msgstr "Açylma Ybtal Edilsin mi?"
+
+#: src/file-manager/fm-directory-view.c:7784
+#, fuzzy
+msgid "Download location?"
+msgstr "%d ýeri açjakmiňiz?"
+
+#: src/file-manager/fm-directory-view.c:7787
+#, fuzzy
+msgid "You can download it or make a link to it."
+msgstr "Siz bir haltany oz içine göçirip başaramaýarsňiz."
+
+#: src/file-manager/fm-directory-view.c:7790
+#, fuzzy
+msgid "Make a _Link"
+msgstr "Baglaýyşy _Bejer"
+
+#: src/file-manager/fm-directory-view.c:7794
+#, fuzzy
+msgid "_Download"
+msgstr "_Ýene Ýükle"
+
+#: src/file-manager/fm-directory-view.c:7851
+#: src/file-manager/fm-directory-view.c:7873
+#: src/file-manager/fm-directory-view.c:7987
+msgid "Drag and drop is not supported."
+msgstr "Süýremek we zyňmak arkalanmaýar."
+
+#: src/file-manager/fm-directory-view.c:7852
+msgid "Drag and drop is only supported on local file systems."
+msgstr "Süýremek we zyňmak diňe ýeli faýl-sistemlerde arkalanýar."
+
+#: src/file-manager/fm-directory-view.c:7853
+#: src/file-manager/fm-directory-view.c:7875
+#: src/file-manager/fm-directory-view.c:7989
+msgid "Drag and Drop Error"
+msgstr "Süýremek we Zyňmak Hatasy"
+
+#: src/file-manager/fm-directory-view.c:7874
+#: src/file-manager/fm-directory-view.c:7988
+msgid "An invalid drag type was used."
+msgstr "Maýyp süýremek hili ullanylypdir."
+
+#: src/file-manager/fm-ditem-page.c:337 src/file-manager/fm-ditem-page.c:348
+#, fuzzy
+msgid "Comment"
+msgstr "Covalent"
+
+#: src/file-manager/fm-ditem-page.c:340
+msgid "URL"
+msgstr ""
+
+#: src/file-manager/fm-ditem-page.c:344
+#, fuzzy
+msgid "Link"
+msgstr "baglaýyş"
+
+#: src/file-manager/fm-ditem-page.c:351
+#, fuzzy
+msgid "Command"
+msgstr "Compaq"
+
+#: src/file-manager/fm-ditem-page.c:355
+#, fuzzy
+msgid "Launcher"
+msgstr "Başladyçyny Editle"
+
+#: src/file-manager/fm-error-reporting.c:57
+#, c-format
+msgid ""
+"You do not have the permissions necessary to view the contents of \"%s\"."
+msgstr "Siz \"%s\" mazmunyny görmek üçin gerek ejazaňiz ýok."
+
+#: src/file-manager/fm-error-reporting.c:61
+#, c-format
+msgid "\"%s\" couldn't be found. Perhaps it has recently been deleted."
+msgstr "\"%s\" tapylmady. Ol pozylan bolmaly."
+
+#: src/file-manager/fm-error-reporting.c:68
+#, c-format
+msgid "Sorry, couldn't display all the contents of \"%s\"."
+msgstr "Bagyşlaň, \"%s\" ehli mazmuny görkezilip başarmady."
+
+#: src/file-manager/fm-error-reporting.c:71
+msgid "The folder contents could not be displayed."
+msgstr "Halta mazmuny görkezilip başarmady."
+
+#: src/file-manager/fm-error-reporting.c:72
+msgid "Error Displaying Folder"
+msgstr "Haltany görkezmekde hata boldy."
+
+#: src/file-manager/fm-error-reporting.c:103
+#, c-format
+msgid ""
+"The name \"%s\" is already used in this folder. Please use a different name."
+msgstr "\"%s\" ady bu haltada ullanylyp dir. Başgfa bir ady ullanyň."
+
+#: src/file-manager/fm-error-reporting.c:108
+#, c-format
+msgid ""
+"There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
+msgstr "Bu haltada \"%s\" tapylmady. Ol göçirlipdir yädä pozylypdyr."
+
+#: src/file-manager/fm-error-reporting.c:113
+#, c-format
+msgid "You do not have the permissions necessary to rename \"%s\"."
+msgstr "Siz \"%s\" adyny üýtgetmek üçin gerek ejazaňiz ýok."
+
+#: src/file-manager/fm-error-reporting.c:118
+#, c-format
+msgid ""
+"The name \"%s\" is not valid because it contains the character \"/\". Please "
+"use a different name."
+msgstr ""
+"\"%s\" bir dogry ad däl. öniň içinde \"/\" karakteri bar. Lütfen başga bir "
+"ady ullanyň."
+
+#: src/file-manager/fm-error-reporting.c:122
+#, c-format
+msgid "The name \"%s\" is not valid. Please use a different name."
+msgstr "\"%s\" bir dogry ad däl. Lütfen başga bir ady ullanyň."
+
+#: src/file-manager/fm-error-reporting.c:128
+#, c-format
+msgid "Couldn't change the name of \"%s\" because it is on a read-only disk"
+msgstr ""
+"\"%s\" ady üýtgetib başarylmady. Ol diňe-okalýan bir diskiň üstinde dir."
+
+#: src/file-manager/fm-error-reporting.c:137
+#, c-format
+msgid "Sorry, couldn't rename \"%s\" to \"%s\"."
+msgstr "Bagyşlaň, \"%s\" ady \"%s\" ada üýtgetib başarylmady."
+
+#: src/file-manager/fm-error-reporting.c:144
+msgid "The item could not be renamed."
+msgstr "Aýtemiň ady üýtgetib başarylyýar."
+
+#: src/file-manager/fm-error-reporting.c:145
+msgid "Renaming Error"
+msgstr "Ad Üýtgetmegiň Hatasi"
+
+#: src/file-manager/fm-error-reporting.c:165
+#, c-format
+msgid ""
+"You do not have the permissions necessary to change the group of \"%s\"."
+msgstr "Siz \"%s\" toparyny üýtgetmek üçin gerek ejazaňiz ýok."
+
+#: src/file-manager/fm-error-reporting.c:169
+#, c-format
+msgid "Couldn't change the group of \"%s\" because it is on a read-only disk"
+msgstr ""
+"\"%s\" toparyny üýtgetib başarylmady. Ol diňe-okalýan bir diskiň üstinde dir."
+
+#: src/file-manager/fm-error-reporting.c:177
+#, c-format
+msgid "Sorry, couldn't change the group of \"%s\"."
+msgstr "Bagişlaň, \"%s\" toparyny üýtgetib başarylmady."
+
+#: src/file-manager/fm-error-reporting.c:181
+msgid "The group could not be changed."
+msgstr "Topar üýtgetib başarylmady."
+
+#: src/file-manager/fm-error-reporting.c:181
+msgid "Error Setting Group"
+msgstr "Topary düzmede hata boldy."
+
+#: src/file-manager/fm-error-reporting.c:203
+#, c-format
+msgid "Couldn't change the owner of \"%s\" because it is on a read-only disk"
+msgstr ""
+"\"%s\" eýesi üýtgetib başarylmady. Ol diňe-okalýan bir diskiň üstinde dir."
+
+#: src/file-manager/fm-error-reporting.c:210
+#, c-format
+msgid "Sorry, couldn't change the owner of \"%s\"."
+msgstr "Bagişlaň, \"%s\" eýesi üýtgetib başarylmady."
+
+#: src/file-manager/fm-error-reporting.c:213
+msgid "The owner could not be changed."
+msgstr "Eýe üýtgetib başarylmady."
+
+#: src/file-manager/fm-error-reporting.c:213
+msgid "Error Setting Owner"
+msgstr "Eýeni düzmede hata boldy."
+
+#: src/file-manager/fm-error-reporting.c:235
+#, c-format
+msgid ""
+"Couldn't change the permissions of \"%s\" because it is on a read-only disk"
+msgstr ""
+"\"%s\" ejazalarny üýtgetib başarylmady. Ol diňe-okalýan bir diskiň üstinde "
+"dir."
+
+#: src/file-manager/fm-error-reporting.c:242
+#, c-format
+msgid "Sorry, couldn't change the permissions of \"%s\"."
+msgstr "Bagişlaň, \"%s\" ejazalarny üýtgetib başarylmady."
+
+#: src/file-manager/fm-error-reporting.c:245
+msgid "The permissions could not be changed."
+msgstr "Ejazalar üýtgetib başarylmady."
+
+#: src/file-manager/fm-error-reporting.c:246
+msgid "Error Setting Permissions"
+msgstr "Ejazalary düzmede hata boldy."
+
+#: src/file-manager/fm-error-reporting.c:312
+#, c-format
+msgid "Renaming \"%s\" to \"%s\"."
+msgstr ""
+
+#: src/file-manager/fm-error-reporting.c:317
+msgid "Cancel Rename?"
+msgstr "\"%s\" ady \"%s\" ada üýtgetilýär."
+
+#: src/file-manager/fm-icon-view.c:134
+msgid "by _Name"
+msgstr "_Ada görä"
+
+#: src/file-manager/fm-icon-view.c:135 src/file-manager/fm-icon-view.c:1431
+msgid "Keep icons sorted by name in rows"
+msgstr "Tymsallar ada görä tertible"
+
+#: src/file-manager/fm-icon-view.c:141
+msgid "by _Size"
+msgstr "_Ululyk görä"
+
+#: src/file-manager/fm-icon-view.c:142 src/file-manager/fm-icon-view.c:1435
+msgid "Keep icons sorted by size in rows"
+msgstr "Tymsallary ululyka görä tertible"
+
+#: src/file-manager/fm-icon-view.c:148
+msgid "by _Type"
+msgstr "_Hile görä"
+
+#: src/file-manager/fm-icon-view.c:149 src/file-manager/fm-icon-view.c:1439
+msgid "Keep icons sorted by type in rows"
+msgstr "Tymsallary hile görä tertible"
+
+#: src/file-manager/fm-icon-view.c:155
+msgid "by Modification _Date"
+msgstr "Üýgetmek taryhyna görä"
+
+#: src/file-manager/fm-icon-view.c:156 src/file-manager/fm-icon-view.c:1443
+msgid "Keep icons sorted by modification date in rows"
+msgstr "Tymsallary üýgetmek taryhyna görä tertible"
+
+#: src/file-manager/fm-icon-view.c:162
+msgid "by _Emblems"
+msgstr "_Alamatlara görä"
+
+#: src/file-manager/fm-icon-view.c:163 src/file-manager/fm-icon-view.c:1447
+msgid "Keep icons sorted by emblems in rows"
+msgstr "Tymsallary alamatlara görä tetible"
+
+#: src/file-manager/fm-icon-view.c:1391
+msgid "Arran_ge Items"
+msgstr "Aýtemleri _Düze"
+
+#. name, stock id, label
+#. name, stock id
+#: src/file-manager/fm-icon-view.c:1393
+msgid "Str_etch Icon"
+msgstr "Tymsallary _Süýnder"
+
+#. label, accelerator
+#: src/file-manager/fm-icon-view.c:1394
+msgid "Make the selected icon stretchable"
+msgstr "Saýlanan tymsaly süýnerleik ed"
+
+#. name, stock id
+#: src/file-manager/fm-icon-view.c:1397 src/file-manager/fm-icon-view.c:1548
+msgid "Restore Icons' Original Si_zes"
+msgstr "Tymsallaryň Esli _Ululyklaryny Gaytar."
+
+#. label, accelerator
+#: src/file-manager/fm-icon-view.c:1398
+msgid "Restore each selected icon to its original size"
+msgstr "Her saýlanan tymsaly esli ululykna gaytar"
+
+#. name, stock id
+#: src/file-manager/fm-icon-view.c:1401
+msgid "Clean _Up by Name"
+msgstr "Ada Görä _Temizle"
+
+#. label, accelerator
+#: src/file-manager/fm-icon-view.c:1402
+#, fuzzy
+msgid "Reposition icons to better fit in the window and avoid overlapping"
+msgstr ""
+"Tymsallary äpişge içinde gowy sigmak üçin we üst üstine düşmezlik üçin ýene "
+"ýerle"
+
+#. name, stock id
+#: src/file-manager/fm-icon-view.c:1408
+msgid "Compact _Layout"
+msgstr "Sikik _Düzümi"
+
+#. label, accelerator
+#: src/file-manager/fm-icon-view.c:1409
+msgid "Toggle using a tighter layout scheme"
+msgstr ""
+
+#. name, stock id
+#: src/file-manager/fm-icon-view.c:1413
+msgid "Re_versed Order"
+msgstr ""
+
+#. label, accelerator
+#: src/file-manager/fm-icon-view.c:1414
+msgid "Display icons in the opposite order"
+msgstr "Tymsallary ters tetibi bilen görkez"
+
+#. name, stock id
+#: src/file-manager/fm-icon-view.c:1418
+msgid "_Keep Aligned"
+msgstr ""
+
+#. label, accelerator
+#: src/file-manager/fm-icon-view.c:1419
+msgid "Keep icons lined up on a grid"
+msgstr "Tymsallary tor üstinde düz"
+
+#: src/file-manager/fm-icon-view.c:1426
+msgid "_Manually"
+msgstr ""
+
+#: src/file-manager/fm-icon-view.c:1427
+msgid "Leave icons wherever they are dropped"
+msgstr "Tymsallar nirede zyňylan bolsa dursun"
+
+#: src/file-manager/fm-icon-view.c:1430
+msgid "By _Name"
+msgstr "_Ada Görä"
+
+#: src/file-manager/fm-icon-view.c:1434
+msgid "By _Size"
+msgstr "_Ululyka Görä"
+
+#: src/file-manager/fm-icon-view.c:1438
+msgid "By _Type"
+msgstr "_Hile Görä"
+
+#: src/file-manager/fm-icon-view.c:1442
+msgid "By Modification _Date"
+msgstr "Üýtgemek _Tariha Görä"
+
+#: src/file-manager/fm-icon-view.c:1446
+msgid "By _Emblems"
+msgstr "_Alamatlara Görä"
+
+#: src/file-manager/fm-icon-view.c:1549
+msgid "Restore Icon's Original Si_ze"
+msgstr "Tymsalyň Esli _Ululykny Gaytar."
+
+#: src/file-manager/fm-icon-view.c:1910
+#, c-format
+msgid "pointing at \"%s\""
+msgstr "\"%s\" jaýyna yşara edilýär."
+
+#: src/file-manager/fm-icon-view.c:2673
+msgid "Icons"
+msgstr "Tymsallar"
+
+#: src/file-manager/fm-icon-view.c:2674
+#, fuzzy
+msgid "_Icons"
+msgstr "Tymsallar"
+
+#: src/file-manager/fm-list-view.c:1593
+#, c-format
+msgid "%s Visible Columns"
+msgstr "%s aýan sütünler."
+
+#: src/file-manager/fm-list-view.c:1612
+msgid "Choose the order of information to appear in this folder."
+msgstr "Bu halta görinjek bilgileriň düzgünini saýlaň."
+
+#. name, stock id
+#: src/file-manager/fm-list-view.c:1654
+msgid "Visible _Columns..."
+msgstr "Aýan Sütünler..."
+
+#. label, accelerator
+#: src/file-manager/fm-list-view.c:1655
+msgid "Select the columns visible in this folder"
+msgstr "Bu haltada aýan sütünleri saýla"
+
+#: src/file-manager/fm-list-view.c:2305
+msgid "List"
+msgstr "List"
+
+#: src/file-manager/fm-list-view.c:2306
+#, fuzzy
+msgid "_List"
+msgstr "List"
+
+#: src/file-manager/fm-properties-window.c:482
+msgid "You can't assign more than one custom icon at a time!"
+msgstr "Siz birden köp tymsaly bir zamanda yapyp başarmaýarsiňiz."
+
+#: src/file-manager/fm-properties-window.c:483
+#: src/nautilus-information-panel.c:548
+msgid "Please drag just one image to set a custom icon."
+msgstr "Bir şahsy tymsaly düzmek üçin lütfen diňe birje tymsaly süýräň."
+
+#: src/file-manager/fm-properties-window.c:484
+#: src/nautilus-information-panel.c:549
+msgid "More Than One Image"
+msgstr "Birden Köp Resim"
+
+#: src/file-manager/fm-properties-window.c:493
+#: src/nautilus-information-panel.c:568
+msgid "The file that you dropped is not local."
+msgstr "Siziň zyňan faýlyňyz ýerli faýl däl."
+
+#: src/file-manager/fm-properties-window.c:494
+#: src/file-manager/fm-properties-window.c:501
+#: src/nautilus-information-panel.c:569
+msgid "You can only use local images as custom icons."
+msgstr "Siz diňe ýerli resimleri icon ýaly ullanyp başarýarsiňiz."
+
+#: src/file-manager/fm-properties-window.c:495
+#: src/nautilus-information-panel.c:570
+msgid "Local Images Only"
+msgstr "Diňe Ýerli Resimler"
+
+#: src/file-manager/fm-properties-window.c:500
+#: src/nautilus-information-panel.c:575
+msgid "The file that you dropped is not an image."
+msgstr "Siziň zyňan faýlyňyz resim faýl däl."
+
+#: src/file-manager/fm-properties-window.c:502
+#: src/nautilus-information-panel.c:577
+msgid "Images Only"
+msgstr "Diňe Resimler"
+
+#: src/file-manager/fm-properties-window.c:927
+#: src/file-manager/fm-tree-view.c:1203
+msgid "Properties"
+msgstr "Häsiýetler"
+
+#: src/file-manager/fm-properties-window.c:935
+#, c-format
+msgid "%s Properties"
+msgstr "%s Häsiýetleri"
+
+#: src/file-manager/fm-properties-window.c:1449
+msgid "Cancel Group Change?"
+msgstr "Topar Üýtgemekni Ybtal Et."
+
+#: src/file-manager/fm-properties-window.c:1450
+msgid "Changing group."
+msgstr "Topar Üýtgelýär."
+
+#: src/file-manager/fm-properties-window.c:1611
+msgid "Cancel Owner Change?"
+msgstr "Eýe Üýtgemekni Ybtal Et."
+
+#: src/file-manager/fm-properties-window.c:1612
+msgid "Changing owner."
+msgstr "Eýe Üýtgelýär."
+
+#: src/file-manager/fm-properties-window.c:1818
+msgid "nothing"
+msgstr "hiç"
+
+#: src/file-manager/fm-properties-window.c:1820
+msgid "unreadable"
+msgstr "okalyp başarmaýar"
+
+#: src/file-manager/fm-properties-window.c:1830
+#, c-format
+msgid "%d item, with size %s"
+msgid_plural "%d items, totalling %s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/file-manager/fm-properties-window.c:1839
+msgid "(some contents unreadable)"
+msgstr "(bireme mazmunlar okalyp başarmaýar)"
+
+#. Also set the title field here, with a trailing carriage return &
+#. * space if the value field has two lines. This is a hack to get the
+#. * "Contents:" title to line up with the first line of the
+#. * 2-line value. Maybe there's a better way to do this, but I
+#. * couldn't think of one.
+#.
+#: src/file-manager/fm-properties-window.c:1856
+msgid "Contents:"
+msgstr "Mazmunlar:"
+
+#: src/file-manager/fm-properties-window.c:2247
+msgid "Basic"
+msgstr "Asasy"
+
+#: src/file-manager/fm-properties-window.c:2275
+msgid "_Names:"
+msgstr "_Adlar:"
+
+#: src/file-manager/fm-properties-window.c:2277
+msgid "_Name:"
+msgstr "_Ad:"
+
+#: src/file-manager/fm-properties-window.c:2326
+msgid "Type:"
+msgstr "Hil:"
+
+#: src/file-manager/fm-properties-window.c:2328
+#: src/file-manager/fm-properties-window.c:2338
+#: src/file-manager/fm-properties-window.c:2344
+#: src/file-manager/fm-properties-window.c:2351
+#: src/file-manager/fm-properties-window.c:2355
+#: src/file-manager/fm-properties-window.c:2363
+#: src/file-manager/fm-properties-window.c:2369
+#: src/file-manager/fm-properties-window.c:2378
+#: src/file-manager/fm-properties-window.c:2384
+#: src/file-manager/fm-properties-window.c:2977
+#: src/file-manager/fm-properties-window.c:2998
+#: src/file-manager/fm-properties-window.c:3089
+#: src/file-manager/fm-properties-window.c:3093
+#: src/file-manager/fm-properties-window.c:3097
+msgid "--"
+msgstr "--"
+
+#: src/file-manager/fm-properties-window.c:2336
+msgid "Size:"
+msgstr "Ululyk:"
+
+#: src/file-manager/fm-properties-window.c:2342 src/nautilus-location-bar.c:60
+msgid "Location:"
+msgstr "Ýer:"
+
+#: src/file-manager/fm-properties-window.c:2349
+msgid "Volume:"
+msgstr "Hejm:"
+
+#: src/file-manager/fm-properties-window.c:2353
+msgid "Free space:"
+msgstr "Azat Seleň:"
+
+#: src/file-manager/fm-properties-window.c:2361
+msgid "Link target:"
+msgstr "Baglaýyş magsad:"
+
+#: src/file-manager/fm-properties-window.c:2367
+msgid "MIME type:"
+msgstr "MIME hili:"
+
+#: src/file-manager/fm-properties-window.c:2376
+msgid "Modified:"
+msgstr "Üýtgedi:"
+
+#: src/file-manager/fm-properties-window.c:2382
+msgid "Accessed:"
+msgstr "Elýetgiş:"
+
+#: src/file-manager/fm-properties-window.c:2398
+msgid "_Select Custom Icon..."
+msgstr "Şahsy Tymsallary _Saýla..."
+
+#: src/file-manager/fm-properties-window.c:2404
+msgid "_Remove Custom Icon"
+msgstr "_Şahsy Tymsallary _Çykar..."
+
+#: src/file-manager/fm-properties-window.c:2471
+#: src/nautilus-emblem-sidebar.c:1045
+msgid "Emblems"
+msgstr "Alamatlar"
+
+#: src/file-manager/fm-properties-window.c:2756
+msgid "_Read"
+msgstr "_Oka"
+
+#: src/file-manager/fm-properties-window.c:2758
+msgid "_Write"
+msgstr "_Ýaz"
+
+#: src/file-manager/fm-properties-window.c:2760
+msgid "E_xecute"
+msgstr "_Işe sal"
+
+#: src/file-manager/fm-properties-window.c:2843
+msgid "Set _user ID"
+msgstr "_Ullançy ID-sini düz"
+
+#: src/file-manager/fm-properties-window.c:2848
+msgid "Special flags:"
+msgstr "Ýöryte baýdaklar:"
+
+#: src/file-manager/fm-properties-window.c:2851
+msgid "Set gro_up ID"
+msgstr "_Topar ID-sini düz"
+
+#: src/file-manager/fm-properties-window.c:2853
+msgid "_Sticky"
+msgstr ""
+
+#: src/file-manager/fm-properties-window.c:2952
+msgid "You are not the owner, so you can't change these permissions."
+msgstr "​Siz eýe bolmansaňiz ejazalary üýtgetip başarmaýarsiňiz."
+
+#: src/file-manager/fm-properties-window.c:2966
+msgid "File _owner:"
+msgstr "Faýl _eýesi:"
+
+#: src/file-manager/fm-properties-window.c:2972
+msgid "File owner:"
+msgstr "Faýl eýesi:"
+
+#: src/file-manager/fm-properties-window.c:2983
+msgid "_File group:"
+msgstr "Faýl _topary:"
+
+#: src/file-manager/fm-properties-window.c:2992
+msgid "File group:"
+msgstr "Faýl topary:"
+
+#: src/file-manager/fm-properties-window.c:3004
+msgid "Owner:"
+msgstr "Eýe:"
+
+#: src/file-manager/fm-properties-window.c:3005
+msgid "Group:"
+msgstr "Topar:"
+
+#: src/file-manager/fm-properties-window.c:3006
+msgid "Others:"
+msgstr "Başgalar:"
+
+#: src/file-manager/fm-properties-window.c:3088
+msgid "Text view:"
+msgstr "Metin görnöşi:"
+
+#: src/file-manager/fm-properties-window.c:3092
+msgid "Number view:"
+msgstr "San görnöşi:"
+
+#: src/file-manager/fm-properties-window.c:3096
+msgid "Last changed:"
+msgstr "Iň soňky üýtgemek:"
+
+#: src/file-manager/fm-properties-window.c:3102
+#, c-format
+msgid "The permissions of \"%s\" could not be determined."
+msgstr "\"%s\" ejazalary seljerilip bilmedi."
+
+#: src/file-manager/fm-properties-window.c:3105
+msgid "The permissions of the selected file could not be determined."
+msgstr "Saýlanan faýliň ejazalary seljerilip bilmedi."
+
+#: src/file-manager/fm-properties-window.c:3263
+msgid "There was an error displaying help."
+msgstr "Ýardamy görkezmede hata boldy."
+
+#: src/file-manager/fm-properties-window.c:3263
+msgid "Couldn't Show Help"
+msgstr "Ýardam Görkezilip Bilmedi."
+
+#: src/file-manager/fm-properties-window.c:3305
+#, fuzzy
+msgid "Open With"
+msgstr "_Aýry Aç"
+
+#: src/file-manager/fm-properties-window.c:3643
+msgid "Cancel Showing Properties Window?"
+msgstr "Häsiýetlar Äpişgäni Görkezmegi Ybtal Edilmelimi?"
+
+#: src/file-manager/fm-properties-window.c:3644
+msgid "Creating Properties window."
+msgstr "Häsiýetlar Äpişgesi Bejerilýäar."
+
+#: src/file-manager/fm-properties-window.c:3801
+msgid "Select an icon"
+msgstr "Bir tymsaly saýla"
+
+#: src/file-manager/fm-tree-model.c:1200
+msgid "(Empty)"
+msgstr "(Puç)"
+
+#: src/file-manager/fm-tree-model.c:1200
+msgid "Loading..."
+msgstr "Ýüklenýär..."
+
+#: src/file-manager/fm-tree-view.c:745
+msgid "E_ject"
+msgstr "_Çykart"
+
+#: src/file-manager/fm-tree-view.c:1099
+msgid "Open"
+msgstr "Aç"
+
+#. add the "create folder" menu item
+#: src/file-manager/fm-tree-view.c:1123
+msgid "Create Folder"
+msgstr "Halta Bejer"
+
+#: src/file-manager/fm-tree-view.c:1139
+msgid "Cut Folder"
+msgstr "Haltany Kes"
+
+#: src/file-manager/fm-tree-view.c:1153
+msgid "Copy Folder"
+msgstr "Haltany Nusgala"
+
+#: src/file-manager/fm-tree-view.c:1167
+msgid "Paste Files into Folder"
+msgstr "Faýllar halta ýabşyr"
+
+#: src/file-manager/fm-tree-view.c:1185
+msgid "Move to Trash"
+msgstr "Zibile Göçyr"
+
+#: src/file-manager/fm-tree-view.c:1254
+msgid "Filesystem"
+msgstr "Faýl-Sistemler"
+
+#: src/file-manager/fm-tree-view.c:1256
+msgid "Network Neighbourhood"
+msgstr "Şebeke Töwereki"
+
+#: src/file-manager/fm-tree-view.c:1497
+msgid "Tree"
+msgstr "Bag"
+
+#: src/nautilus-application.c:251
+msgid "Couldn't Create Required Folder"
+msgstr ""
+
+#: src/nautilus-application.c:252
+#, c-format
+msgid "Nautilus could not create the required folder \"%s\"."
+msgstr "Nautilus gerek \"%s\" haltany bejerip başarmady."
+
+#: src/nautilus-application.c:254
+msgid ""
+"Before running Nautilus, please create the following folder, or set "
+"permissions such that Nautilus can create it."
+msgstr ""
+"Nautilusi bitirmekden öňinçä  bu haltany bejeriň ýädä Nautilus ony üýgetmek "
+"üçin ejezalari düziň."
+
+#: src/nautilus-application.c:257
+msgid "Couldn't Create Required Folders"
+msgstr "Gerek haltany bejerip başarmady."
+
+#: src/nautilus-application.c:258
+#, c-format
+msgid "Nautilus could not create the following required folders: %s."
+msgstr "Nutilus bu gerek haltalary bejerip bilmedi: %s"
+
+#: src/nautilus-application.c:260
+msgid ""
+"Before running Nautilus, please create these folders, or set permissions "
+"such that Nautilus can create them."
+msgstr ""
+"Nautilusi bitirmekden öňinçä  bu haltalary bejeriň ýädä Nautilus olary "
+"üýgetmek üçin ejezalari düziň."
+
+#: src/nautilus-application.c:328
+msgid "Link To Old Desktop"
+msgstr "Köne Desktap Üçin Baglaýyş"
+
+#: src/nautilus-application.c:344
+msgid "A link called \"Link To Old Desktop\" has been created on the desktop."
+msgstr "\"Öňki Desktap Üçin Baglaýyş\" adly baglaýyş desktapda bejeriljek."
+
+#: src/nautilus-application.c:345
+msgid ""
+"The location of the desktop directory has changed in GNOME 2.4. You can open "
+"the link and move over the files you want, then delete the link."
+msgstr ""
+
+#: src/nautilus-application.c:347
+msgid "Migrated Old Desktop"
+msgstr ""
+
+#. Can't register myself due to trouble locating the
+#. * Nautilus_Shell.server file. This has happened when you
+#. * launch Nautilus with an LD_LIBRARY_PATH that
+#. * doesn't include the directory containing the oaf
+#. * library. It could also happen if the
+#. * Nautilus_Shell.server file was not present for some
+#. * reason. Sometimes killing oafd and gconfd fixes
+#. * this problem but we don't exactly understand why,
+#. * since neither of the above causes explain it.
+#.
+#: src/nautilus-application.c:506
+msgid ""
+"Nautilus can't be used now. Running the command \"bonobo-slay\" from the "
+"console may fix the problem. If not, you can try rebooting the computer or "
+"installing Nautilus again."
+msgstr ""
+
+#. FIXME bugzilla.gnome.org 42536: The guesses and stuff here are lame.
+#: src/nautilus-application.c:512
+msgid ""
+"Nautilus can't be used now. Running the command \"bonobo-slay\" from the "
+"console may fix the problem. If not, you can try rebooting the computer or "
+"installing Nautilus again.\n"
+"\n"
+"Bonobo couldn't locate the Nautilus_shell.server file. One cause of this "
+"seems to be an LD_LIBRARY_PATH that does not include the bonobo-activation "
+"library's directory. Another possible cause would be bad install with a "
+"missing Nautilus_Shell.server file.\n"
+"\n"
+"Running \"bonobo-slay\" will kill all Bonobo Activation and GConf processes, "
+"which may be needed by other applications.\n"
+"\n"
+"Sometimes killing bonobo-activation-server and gconfd fixes the problem, but "
+"we don't know why.\n"
+"\n"
+"We have also seen this error when a faulty version of bonobo-activation was "
+"installed."
+msgstr ""
+
+#. Some misc. error (can never happen with current
+#. * version of bonobo-activation). Show dialog and terminate the
+#. * program.
+#.
+#. FIXME bugzilla.gnome.org 42537: Looks like this does happen with the
+#. * current OAF. I guess I read the code wrong. Need to figure out when and make a
+#. * good message.
+#.
+#. FIXME bugzilla.gnome.org 42538: When can this happen?
+#: src/nautilus-application.c:542 src/nautilus-application.c:560
+#: src/nautilus-application.c:567
+msgid "Nautilus can't be used now, due to an unexpected error."
+msgstr ""
+
+#: src/nautilus-application.c:543
+msgid ""
+"Nautilus can't be used now, due to an unexpected error from Bonobo when "
+"attempting to register the file manager view server."
+msgstr ""
+
+#: src/nautilus-application.c:561
+msgid ""
+"Nautilus can't be used now, due to an unexpected error from Bonobo when "
+"attempting to locate the factory.Killing bonobo-activation-server and "
+"restarting Nautilus may help fix the problem."
+msgstr ""
+
+#: src/nautilus-application.c:568
+msgid ""
+"Nautilus can't be used now, due to an unexpected error from Bonobo when "
+"attempting to locate the shell object. Killing bonobo-activation-server and "
+"restarting Nautilus may help fix the problem."
+msgstr ""
+
+#: src/nautilus-bookmarks-window.c:154
+#: src/nautilus-file-management-properties.c:229
+#: src/nautilus-property-browser.c:1446 src/nautilus-window-menus.c:502
+#, c-format
+msgid ""
+"There was an error displaying help: \n"
+"%s"
+msgstr ""
+"Ýardamy görkezmede hata böldi: \n"
+"%s"
+
+#: src/nautilus-bookmarks-window.c:188
+msgid "No bookmarks defined"
+msgstr "Nişanlar bellenmäpdir"
+
+#: src/nautilus-bookmarks-window.glade.h:1
+msgid "<b>_Bookmarks</b>"
+msgstr "<b>_Nişanlar</b>"
+
+#: src/nautilus-bookmarks-window.glade.h:2
+msgid "<b>_Location</b>"
+msgstr "<b>_Ýer</b>"
+
+#: src/nautilus-bookmarks-window.glade.h:3
+msgid "<b>_Name</b>"
+msgstr "<b>_Ad</b>"
+
+#: src/nautilus-bookmarks-window.glade.h:4
+msgid "Edit Bookmarks"
+msgstr "Nişanlary Editle"
+
+#: src/nautilus-connect-server-dialog-main.c:66
+#, fuzzy, c-format
+msgid "Can't display location \"%s\""
+msgstr "Ýeri görkzip başarmadym"
+
+#: src/nautilus-connect-server-dialog.c:143
+#: src/nautilus-connect-server-dialog.c:158
+msgid "Can't Connect to Server"
+msgstr "Gullukçiýa Baglanyp Başarmday"
+
+#: src/nautilus-connect-server-dialog.c:156
+msgid "You must enter a name for the server."
+msgstr "Siz gullukçi adyny bermeli."
+
+#: src/nautilus-connect-server-dialog.c:157
+msgid "Please enter a name and try again."
+msgstr "Lütfen bir ad berib ýenede bir synanyň."
+
+#: src/nautilus-connect-server-dialog.c:269 src/nautilus-window.c:961
+#, fuzzy, c-format
+msgid "%s on %s"
+msgstr "%s (nusga)%s"
+
+#: src/nautilus-connect-server-dialog.c:388
+#, fuzzy
+msgid "_Location (URI):"
+msgstr "_Ýer (URL):"
+
+#: src/nautilus-connect-server-dialog.c:432
+#, fuzzy
+msgid "_Server:"
+msgstr "_Hergiz"
+
+#: src/nautilus-connect-server-dialog.c:451
+#, fuzzy
+msgid "Optional information:"
+msgstr "_Bilgiler"
+
+#: src/nautilus-connect-server-dialog.c:463
+#, fuzzy
+msgid "_Share:"
+msgstr "_Ad:"
+
+#: src/nautilus-connect-server-dialog.c:484
+#, fuzzy
+msgid "_Port:"
+msgstr "_Kadala"
+
+#: src/nautilus-connect-server-dialog.c:504
+#, fuzzy
+msgid "_Folder:"
+msgstr "Haltany Kes"
+
+#: src/nautilus-connect-server-dialog.c:524
+#, fuzzy
+msgid "_User Name:"
+msgstr "_Ad:"
+
+#: src/nautilus-connect-server-dialog.c:547
+msgid "_Name to use for connection:"
+msgstr ""
+
+#: src/nautilus-connect-server-dialog.c:605
+msgid "Connect to Server"
+msgstr "Gullukçiýa Baglan"
+
+#: src/nautilus-connect-server-dialog.c:622
+msgid "Service _type:"
+msgstr ""
+
+#: src/nautilus-connect-server-dialog.c:631
+msgid "SSH"
+msgstr ""
+
+#: src/nautilus-connect-server-dialog.c:633
+msgid "Public FTP"
+msgstr ""
+
+#: src/nautilus-connect-server-dialog.c:635
+msgid "FTP (with login)"
+msgstr ""
+
+#: src/nautilus-connect-server-dialog.c:637
+#, fuzzy
+msgid "Windows share"
+msgstr "Windows şebekesi"
+
+#: src/nautilus-connect-server-dialog.c:639
+msgid "WebDAV (HTTP)"
+msgstr ""
+
+#: src/nautilus-connect-server-dialog.c:641
+msgid "Secure WebDAV (HTTPS)"
+msgstr ""
+
+#: src/nautilus-connect-server-dialog.c:643
+#, fuzzy
+msgid "Custom Location"
+msgstr "Ýer:"
+
+#: src/nautilus-connect-server-dialog.c:693
+#, fuzzy
+msgid "Browse _Network"
+msgstr "Windows şebekesi"
+
+#: src/nautilus-connect-server-dialog.c:699
+msgid "C_onnect"
+msgstr "_Baglan"
+
+#: src/nautilus-emblem-sidebar.c:241
+#, c-format
+msgid "Couldn't remove emblem with name '%s'."
+msgstr "'%s' adly alamaty çykarmak mümkin däl."
+
+#: src/nautilus-emblem-sidebar.c:242
+msgid ""
+"This is probably because the emblem is a permanent one, and not one you "
+"added yourself."
+msgstr ""
+"Alamtiň hemişelik bolmagy ahmal we mümkin ki siz ony eklemedik böldiňiz."
+
+#: src/nautilus-emblem-sidebar.c:243
+msgid "Couldn't Remove Emblem"
+msgstr "Alamaty çykarmak mümkin däl"
+
+#: src/nautilus-emblem-sidebar.c:276
+#, c-format
+msgid "Couldn't rename emblem with name '%s'."
+msgstr "'%s' adly alamatyň adyny ewez etmek mümkin däl."
+
+#: src/nautilus-emblem-sidebar.c:277
+msgid ""
+"This is probably because the emblem is a permanent one, and not one that you "
+"added yourself."
+msgstr ""
+"Alamtiň hemişelik bolmagy ahmal we mümkin ki siz ony eklemedik böldiňiz."
+
+#: src/nautilus-emblem-sidebar.c:278
+msgid "Couldn't Rename Emblem"
+msgstr "Alamaty adyny ewez etmek mümkin däl"
+
+#: src/nautilus-emblem-sidebar.c:297
+msgid "Rename Emblem"
+msgstr "Alamaty Adyny Ewez et"
+
+#: src/nautilus-emblem-sidebar.c:316
+msgid "Enter a new name for the displayed emblem:"
+msgstr "Görkezilen alamat üçin täze bir ad ber."
+
+#: src/nautilus-emblem-sidebar.c:370
+msgid "Rename"
+msgstr "Adyuny Ewez et"
+
+#: src/nautilus-emblem-sidebar.c:542
+msgid "Add Emblems..."
+msgstr "Alamatlary Ekle..."
+
+#: src/nautilus-emblem-sidebar.c:558
+msgid ""
+"Enter a descriptive name next to each emblem.  This name will be used in "
+"other places to identify the emblem."
+msgstr ""
+"Her bir alamat üçin wasply bir ad ber.  Bu ad başga ýerlerde alamaty tanimak "
+"üçin ullanyb biler."
+
+#: src/nautilus-emblem-sidebar.c:560
+msgid ""
+"Enter a descriptive name next to the emblem.  This name will be used in "
+"other places to identify the emblem."
+msgstr ""
+"Alamat üçin wasply bir ad ber.  Bu ad başga ýerlerde alamaty tanimak üçin "
+"ullanyb biler."
+
+#: src/nautilus-emblem-sidebar.c:779
+msgid "Some of the files could not be added as emblems."
+msgstr "Bireme faýllar alamat bolyp eklenib başarmady."
+
+#: src/nautilus-emblem-sidebar.c:779 src/nautilus-emblem-sidebar.c:781
+msgid "The emblems do not appear to be valid images."
+msgstr "Alamatlar dogry resim bolyp görünmýiärler."
+
+#: src/nautilus-emblem-sidebar.c:779 src/nautilus-emblem-sidebar.c:781
+msgid "Couldn't Add Emblems"
+msgstr "Alamatlary eklenib başarmadylar."
+
+#: src/nautilus-emblem-sidebar.c:781
+msgid "None of the files could be added as emblems."
+msgstr "Hiç bir faýl alamat bolyp eklenib başarmady."
+
+#: src/nautilus-emblem-sidebar.c:802 src/nautilus-emblem-sidebar.c:827
+#: src/nautilus-emblem-sidebar.c:877
+msgid "The emblem cannot be added."
+msgstr "Alamat eklenib başarmady."
+
+#: src/nautilus-emblem-sidebar.c:802
+msgid "The dragged text was not a valid file location."
+msgstr "Süýrenen metin dogry bir faýl ýery däl."
+
+#: src/nautilus-emblem-sidebar.c:802 src/nautilus-emblem-sidebar.c:827
+#: src/nautilus-emblem-sidebar.c:877
+msgid "Couldn't Add Emblem"
+msgstr "Alamat eklenib başarmady."
+
+#: src/nautilus-emblem-sidebar.c:822 src/nautilus-emblem-sidebar.c:876
+#, c-format
+msgid "The file '%s' does not appear to be a valid image."
+msgstr "'%s' faýly dogry bir resim bolyp görünmýiär."
+
+#: src/nautilus-emblem-sidebar.c:825
+msgid "The dragged file does not appear to be a valid image."
+msgstr "Süýrenen faý dogry bir resim bolyp görünmýiär."
+
+#: src/nautilus-file-management-properties.c:307
+msgid "None"
+msgstr "Hiç"
+
+#: src/nautilus-file-management-properties.glade.h:1
+msgid "    "
+msgstr "    "
+
+#: src/nautilus-file-management-properties.glade.h:2
+msgid "1 GB"
+msgstr "1 GB"
+
+#: src/nautilus-file-management-properties.glade.h:5
+msgid "100 KB"
+msgstr "100 KB"
+
+#: src/nautilus-file-management-properties.glade.h:21
+msgid "500 KB"
+msgstr "500 KB"
+
+#: src/nautilus-file-management-properties.glade.h:24
+#, fuzzy
+msgid "<span weight=\"bold\">Behavior</span>"
+msgstr "<span weight=\"bold\">Boluş</span>"
+
+#: src/nautilus-file-management-properties.glade.h:25
+#, fuzzy
+msgid "<span weight=\"bold\">Date</span>"
+msgstr "<span weight=\"bold\">Zibil</span>"
+
+#: src/nautilus-file-management-properties.glade.h:26
+msgid "<span weight=\"bold\">Default View</span>"
+msgstr "<span weight=\"bold\">Ön Bellenen Görnişi</span>"
+
+#: src/nautilus-file-management-properties.glade.h:27
+msgid "<span weight=\"bold\">Executable Text Files</span>"
+msgstr "<span weight=\"bold\">Işe Salnip Biljek Metin Faýllar</span>"
+
+#: src/nautilus-file-management-properties.glade.h:28
+msgid "<span weight=\"bold\">Folders</span>"
+msgstr "<span weight=\"bold\">Haltalar</span>"
+
+#: src/nautilus-file-management-properties.glade.h:29
+msgid "<span weight=\"bold\">Icon Captions</span>"
+msgstr "<span weight=\"bold\">Tymsal Ýazy</span>"
+
+#: src/nautilus-file-management-properties.glade.h:30
+msgid "<span weight=\"bold\">Icon View Defaults</span>"
+msgstr "<span weight=\"bold\">Tymsaliň Ön Bellenen Görnişi</span>"
+
+#: src/nautilus-file-management-properties.glade.h:31
+msgid "<span weight=\"bold\">List Columns</span>"
+msgstr "<span weight=\"bold\">Listiň  Sütünleri</span>"
+
+#: src/nautilus-file-management-properties.glade.h:32
+msgid "<span weight=\"bold\">List View Defaults</span>"
+msgstr "<span weight=\"bold\">List Görnişiniň  Ön Bellenenleri</span>"
+
+#: src/nautilus-file-management-properties.glade.h:33
+msgid "<span weight=\"bold\">Other Previewable Files</span>"
+msgstr "<span weight=\"bold\">Başga Ön Namaýyşlanyp Biljek Faýllar</span>"
+
+#: src/nautilus-file-management-properties.glade.h:34
+msgid "<span weight=\"bold\">Sound Files</span>"
+msgstr "<span weight=\"bold\">Ses Faýllar</span>"
+
+#: src/nautilus-file-management-properties.glade.h:35
+msgid "<span weight=\"bold\">Text Files</span>"
+msgstr "<span weight=\"bold\">Metin Faýllar</span>"
+
+#: src/nautilus-file-management-properties.glade.h:36
+msgid "<span weight=\"bold\">Trash</span>"
+msgstr "<span weight=\"bold\">Zibil</span>"
+
+#: src/nautilus-file-management-properties.glade.h:37
+msgid "<span weight=\"bold\">Tree View Defaults</span>"
+msgstr "<span weight=\"bold\">Bag Görnişiniň  Ön Bellenenleri</span>"
+
+#: src/nautilus-file-management-properties.glade.h:38
+msgid "Always"
+msgstr "Hemişe"
+
+#: src/nautilus-file-management-properties.glade.h:39
+#, fuzzy
+msgid "Always open in _browser windows"
+msgstr "bir ahtarçy äpişgesini aş."
+
+#: src/nautilus-file-management-properties.glade.h:40
+msgid "Ask before _emptying the Trash or deleting files"
+msgstr ""
+
+#: src/nautilus-file-management-properties.glade.h:41
+msgid "Behavior"
+msgstr "Boluş"
+
+#: src/nautilus-file-management-properties.glade.h:47
+msgid ""
+"Choose the order of information to appear beneath icon names. More "
+"information will appear when zooming in closer."
+msgstr ""
+
+#: src/nautilus-file-management-properties.glade.h:48
+msgid "Choose the order of information to appear in the list view."
+msgstr "List görnöşinde görkeziljek bilgileriň tertibini görkez."
+
+#: src/nautilus-file-management-properties.glade.h:49
+msgid "Count _number of items:"
+msgstr "Aýtemleri _sana:"
+
+#: src/nautilus-file-management-properties.glade.h:50
+msgid "Default _zoom level:"
+msgstr "Ön bellenen ulaldyş derejesi:"
+
+#: src/nautilus-file-management-properties.glade.h:51
+#, fuzzy
+msgid "Display"
+msgstr "_Görkez"
+
+#: src/nautilus-file-management-properties.glade.h:52
+msgid "File Management Preferences"
+msgstr "Faýl Müdirlemeg Seçenekleri"
+
+#: src/nautilus-file-management-properties.glade.h:53
+msgid "I_nclude a Delete command that bypasses Trash"
+msgstr "Zibili sowmak üçin bir Poz buýruky ekle"
+
+#: src/nautilus-file-management-properties.glade.h:55
+msgid "List Columns"
+msgstr "List Sütünleri"
+
+#: src/nautilus-file-management-properties.glade.h:57
+msgid "Local Files Only"
+msgstr "Diňe Ýerli Faýllr"
+
+#: src/nautilus-file-management-properties.glade.h:58
+msgid "MIME type"
+msgstr "MIME hili"
+
+#: src/nautilus-file-management-properties.glade.h:59
+msgid "Never"
+msgstr "Hergiz"
+
+#: src/nautilus-file-management-properties.glade.h:60
+msgid "Preview"
+msgstr "Ön Namaýyş"
+
+#: src/nautilus-file-management-properties.glade.h:61
+msgid "Preview _sound files:"
+msgstr "_Ses faýllaryň ön namaýyşy:"
+
+#: src/nautilus-file-management-properties.glade.h:62
+msgid "Show _only folders"
+msgstr "Diňe haltalary görkez"
+
+#: src/nautilus-file-management-properties.glade.h:63
+msgid "Show _thumbnails:"
+msgstr ""
+
+#: src/nautilus-file-management-properties.glade.h:64
+msgid "Show hidden and _backup files"
+msgstr "Gizlin we _zapas faýllary görkez"
+
+#: src/nautilus-file-management-properties.glade.h:65
+msgid "Show te_xt in icons:"
+msgstr "Tymsallarda _metini görkez"
+
+#: src/nautilus-file-management-properties.glade.h:66
+msgid "Sort _folders before files"
+msgstr "_Haltalary faýllardan öňinçä tertible"
+
+#: src/nautilus-file-management-properties.glade.h:67
+msgid "View _new folders using:"
+msgstr "_Täze haltalary bunu ullanyb görkez"
+
+#: src/nautilus-file-management-properties.glade.h:68
+msgid "Views"
+msgstr "Görnöşler"
+
+#: src/nautilus-file-management-properties.glade.h:69
+msgid "_Arrange items:"
+msgstr "Aýtemleri _Düzümle"
+
+#: src/nautilus-file-management-properties.glade.h:71
+msgid "_Default zoom level:"
+msgstr "Ön bellenen ulaldyş derejesi:"
+
+#: src/nautilus-file-management-properties.glade.h:72
+msgid "_Double click to activate items"
+msgstr "Aýtemleri janlaşdyrmak üçin _iki-tikle"
+
+#: src/nautilus-file-management-properties.glade.h:73
+#, fuzzy
+msgid "_Format:"
+msgstr "_Kadala"
+
+#: src/nautilus-file-management-properties.glade.h:74
+msgid "_Only for files smaller than:"
+msgstr "_Diňe bu ululykdan kiçijek faýllar üçin:"
+
+#: src/nautilus-file-management-properties.glade.h:75
+msgid "_Run executable text files when they are clicked"
+msgstr "Işeňger metin faýllary tiklenende _bitir."
+
+#: src/nautilus-file-management-properties.glade.h:76
+msgid "_Single click to activate items"
+msgstr "Aýtemleri janlaşdyrmak üçin _bir-tikle"
+
+#: src/nautilus-file-management-properties.glade.h:77
+msgid "_Text beside icons"
+msgstr "_Metin tymsallariň ýanynda"
+
+#: src/nautilus-file-management-properties.glade.h:78
+msgid "_Use compact layout"
+msgstr "Sikik düzümden _ullan"
+
+#: src/nautilus-file-management-properties.glade.h:79
+msgid "_View executable text files when they are clicked"
+msgstr "Işeňger metin faýllary tiklenende _görkez."
+
+#: src/nautilus-file-management-properties.glade.h:80
+msgid "date accessed"
+msgstr "el ýetirmek taryhy"
+
+#: src/nautilus-file-management-properties.glade.h:81
+msgid "date modified"
+msgstr "üýtgemek taryhy"
+
+#: src/nautilus-file-management-properties.glade.h:82
+msgid "group"
+msgstr "topar"
+
+#: src/nautilus-file-management-properties.glade.h:83
+#, fuzzy
+msgid "informal"
+msgstr "_Bilgiler"
+
+#: src/nautilus-file-management-properties.glade.h:84
+#, fuzzy
+msgid "iso"
+msgstr "Geçmiş"
+
+#: src/nautilus-file-management-properties.glade.h:85
+#, fuzzy
+msgid "locale"
+msgstr "Güllik"
+
+#: src/nautilus-file-management-properties.glade.h:86
+msgid "none"
+msgstr "hiç"
+
+#: src/nautilus-file-management-properties.glade.h:87
+msgid "octal permissions"
+msgstr "sekizlik ejazalar"
+
+#: src/nautilus-file-management-properties.glade.h:88
+msgid "owner"
+msgstr "eýe"
+
+#: src/nautilus-file-management-properties.glade.h:89
+msgid "permissions"
+msgstr "ejazalar"
+
+#: src/nautilus-file-management-properties.glade.h:90
+msgid "size"
+msgstr "ululyk"
+
+#: src/nautilus-file-management-properties.glade.h:91
+msgid "type"
+msgstr "hil"
+
+#: src/nautilus-first-time-druid.c:40
+msgid ""
+"Existence of this file indicates that the Nautilus configuration druid\n"
+"has been presented.\n"
+"\n"
+"You can manually erase this file to present the druid again.\n"
+msgstr ""
+"Bu faýlyň barlygy Nautilusiň tenzimlemek jadygöý işe salynşyny\n"
+"görkezýär.\n"
+"\n"
+"sSiz jadygöýy ýenede işe salmak üçin bu faýly pozyb bilersiňiz.\n"
+
+#: src/nautilus-history-sidebar.c:278
+msgid "History"
+msgstr "Geçmiş"
+
+#: src/nautilus-image-properties-page.c:219
+msgid "Camera Brand"
+msgstr "Fotograf Tagmasy"
+
+#: src/nautilus-image-properties-page.c:220
+msgid "Camera Model"
+msgstr "Fotograf Modeli"
+
+#: src/nautilus-image-properties-page.c:221
+msgid "Date Taken"
+msgstr "Çekilen Taryhy"
+
+#: src/nautilus-image-properties-page.c:222
+msgid "Exposure Time"
+msgstr "Paş Zamany"
+
+#: src/nautilus-image-properties-page.c:223
+msgid "Exposure Program"
+msgstr "Paş Programi"
+
+#: src/nautilus-image-properties-page.c:224
+msgid "Aperture Value"
+msgstr "Deşik mykdary"
+
+#: src/nautilus-image-properties-page.c:225
+msgid "Metering Mode"
+msgstr "Ölçmek Modi"
+
+#: src/nautilus-image-properties-page.c:226
+msgid "Flash Fired"
+msgstr "Ýyldyram ýyldyrady"
+
+#: src/nautilus-image-properties-page.c:227
+msgid "Focal Length"
+msgstr "Orta Uzynlyky"
+
+#: src/nautilus-image-properties-page.c:228
+msgid "Shutter Speed"
+msgstr "Gabsa Tizliki"
+
+#: src/nautilus-image-properties-page.c:229
+msgid "ISO Speed Rating"
+msgstr "ISO Tizlik Desselemeki"
+
+#: src/nautilus-image-properties-page.c:230
+msgid "Software"
+msgstr "Program"
+
+#: src/nautilus-image-properties-page.c:249
+#, c-format
+msgid ""
+"<b>Image Type:</b> %s (%s)\n"
+"<b>Resolution:</b> %dx%d pixels\n"
+msgid_plural ""
+"<b>Image Type:</b> %s (%s)\n"
+"<b>Resolution:</b> %dx%d pixels\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/nautilus-image-properties-page.c:264
+msgid "Failed to load image information"
+msgstr "Resim bilgilerni ýüklemede hata boldy"
+
+#: src/nautilus-image-properties-page.c:414
+msgid "loading..."
+msgstr "Ýüklemek..."
+
+#: src/nautilus-image-properties-page.c:480
+msgid "Image"
+msgstr "Resim"
+
+#: src/nautilus-information-panel.c:178
+msgid "Information"
+msgstr "_Bilgiler"
+
+#. add the reset background item, possibly disabled
+#: src/nautilus-information-panel.c:397
+msgid "Use _Default Background"
+msgstr "_Ön Bellenen Arkaplany Ullan"
+
+#: src/nautilus-information-panel.c:547
+msgid "You can't assign more than one custom icon at a time."
+msgstr "Siz birden köp tymsaly bir zamanda yapyp başarmaýarsiňiz."
+
+#: src/nautilus-information-panel.c:576
+msgid "You can only use images as custom icons."
+msgstr "Siz diňe ýerli resimleri icon ýaly ullanyp başarýarsiňiz."
+
+#: src/nautilus-information-panel.c:891
+#, c-format
+msgid "Open with %s"
+msgstr "%s bilen aç"
+
+#: src/nautilus-information-panel.c:984
+msgid "Unable to launch the cd burner application."
+msgstr "cd ýazujy programy başlab bolmady."
+
+#: src/nautilus-information-panel.c:985
+msgid "Can't Launch CD Burner"
+msgstr "CD Ýazujy Başlanyp Bilmedi"
+
+#. FIXME: We don't use spaces to pad labels!
+#: src/nautilus-information-panel.c:1030
+msgid "Empty _Trash"
+msgstr "_Zibili Boşald"
+
+#. FIXME: We don't use spaces to pad labels!
+#: src/nautilus-information-panel.c:1046
+msgid "_Write contents to CD"
+msgstr "_Mazmunlary CD içine ýaz"
+
+#: src/nautilus-location-bar.c:61
+msgid "Go To:"
+msgstr "Git:"
+
+#: src/nautilus-location-bar.c:154
+#, c-format
+msgid "Do you want to view %d location?"
+msgid_plural "Do you want to view %d locations?"
+msgstr[0] "%d ýeri açjakmiňiz?"
+msgstr[1] "%d ýerleri açjakmiňiz?"
+
+#: src/nautilus-location-bar.c:170
+msgid "View in Multiple Windows?"
+msgstr "Näçe Äpişgeniň Içinde Görkezilsinmi?"
+
+#: src/nautilus-location-dialog.c:139
+msgid "Open Location"
+msgstr "Ýery Aç"
+
+#: src/nautilus-location-dialog.c:150
+msgid "_Location:"
+msgstr "_Ýer"
+
+#: src/nautilus-main.c:212
+msgid "Perform a quick set of self-check tests."
+msgstr ""
+
+#: src/nautilus-main.c:215
+msgid "Create the initial window with the given geometry."
+msgstr "Başlanç äpişgeni berilen şekil bilen bejer."
+
+#: src/nautilus-main.c:215
+msgid "GEOMETRY"
+msgstr "ŞEKIL"
+
+#: src/nautilus-main.c:217
+msgid "Only create windows for explicitly specified URIs."
+msgstr ""
+
+#: src/nautilus-main.c:219
+msgid ""
+"Do not manage the desktop (ignore the preference set in the preferences "
+"dialog)."
+msgstr ""
+"Desktapi müdirleme (seçenekler dýalogyndaky düzülenen seçenekleri red et)."
+
+#: src/nautilus-main.c:221
+msgid "open a browser window."
+msgstr "bir ahtarçy äpişgesini aş."
+
+#: src/nautilus-main.c:223
+msgid "Quit Nautilus."
+msgstr "Nautilusden Çik."
+
+#: src/nautilus-main.c:225
+msgid "Restart Nautilus."
+msgstr "Nautilusi Ýene Başla."
+
+#: src/nautilus-main.c:258
+msgid "File Manager"
+msgstr "Faýl Müdiri"
+
+#. Set initial window title
+#: src/nautilus-main.c:264 src/nautilus-spatial-window.c:330
+#: src/nautilus-window-menus.c:442 src/nautilus-window.c:147
+msgid "Nautilus"
+msgstr "Nautilus"
+
+#. translators: %s is an option (e.g. --check)
+#: src/nautilus-main.c:287 src/nautilus-main.c:296 src/nautilus-main.c:301
+#, fuzzy, c-format
+msgid "nautilus: %s cannot be used with URIs.\n"
+msgstr "nautilus: --quit URI-lar bilen ullanylyp başarmavar.\n"
+
+#: src/nautilus-main.c:292
+#, c-format
+msgid "nautilus: --check cannot be used with other options.\n"
+msgstr "nautilus: --check başga seçgiler bilen ullanylyp başarmavar.\n"
+
+#: src/nautilus-main.c:306
+#, c-format
+msgid "nautilus: --geometry cannot be used with more than one URI.\n"
+msgstr "nautilus: --geometry birden kop URI-lar bilen ullanylyp başarmavar.\n"
+
+#. This is a little joke, shows up occasionally. I only
+#. * implemented this feature so I could use this joke.
+#.
+#: src/nautilus-navigation-window-menus.c:127
+msgid "Are you sure you want to forget history?"
+msgstr "Geçmiş unutylsynmy?"
+
+#: src/nautilus-navigation-window-menus.c:128
+msgid "If you do, you will be doomed to repeat it."
+msgstr "Eger bunu edseňiz, olary gaýtalamaly bolarsiňiz."
+
+#: src/nautilus-navigation-window-menus.c:130
+msgid "Are you sure you want to clear the list of locations you have visited?"
+msgstr "Gören ýerleriňiziň listi pozilsinmi?"
+
+#: src/nautilus-navigation-window-menus.c:132
+msgid "If you clear the list of locations, they will be permanently deleted."
+msgstr ""
+"Eger siz gören ýerleriňiziň listinu pozsaňyz, olar hamişelikçe pozylar."
+
+#: src/nautilus-navigation-window-menus.c:138
+msgid "Clear History"
+msgstr "Geçmişi Poz"
+
+#: src/nautilus-navigation-window-menus.c:287
+msgid ""
+"Do you want to remove any bookmarks with the non-existing location from your "
+"list?"
+msgstr "Ýersiz nişanlar siziň listiňizden çykarylsynmy?"
+
+#: src/nautilus-navigation-window-menus.c:289
+#, c-format
+msgid "The location \"%s\" does not exist."
+msgstr "\"%s\" ýery yok."
+
+#: src/nautilus-navigation-window-menus.c:292
+msgid "Bookmark for Nonexistent Location"
+msgstr "Ýersiz Nişan"
+
+#: src/nautilus-navigation-window-menus.c:293
+msgid "Remove"
+msgstr "Çykar"
+
+#: src/nautilus-navigation-window-menus.c:539
+msgid "_Go"
+msgstr "_Git"
+
+#. name, stock id, label
+#: src/nautilus-navigation-window-menus.c:540
+msgid "_Bookmarks"
+msgstr "_Nişanlar"
+
+#. name, stock id, label
+#: src/nautilus-navigation-window-menus.c:541
+#, fuzzy
+msgid "Open New _Window"
+msgstr "Täze Äpişgede Aç"
+
+#. name, stock id, label
+#: src/nautilus-navigation-window-menus.c:542
+#, fuzzy
+msgid "Open another Nautilus window for the displayed location"
+msgstr "Bu ýer üçin ön bellenen arkaplany ullan"
+
+#: src/nautilus-navigation-window-menus.c:544
+msgid "Close _All Windows"
+msgstr "_Ehli Äpişgeleri Bagla"
+
+#. name, stock id, label
+#: src/nautilus-navigation-window-menus.c:545
+msgid "Close all Navigation windows"
+msgstr ""
+
+#: src/nautilus-navigation-window-menus.c:547
+msgid "_Location..."
+msgstr "_Ýer..."
+
+#. name, stock id, label
+#: src/nautilus-navigation-window-menus.c:548
+#: src/nautilus-spatial-window.c:582
+msgid "Specify a location to open"
+msgstr ""
+
+#: src/nautilus-navigation-window-menus.c:550
+#, fuzzy
+msgid "Clea_r History"
+msgstr "Geçmişi Poz"
+
+#. name, stock id, label
+#: src/nautilus-navigation-window-menus.c:551
+msgid "Clear contents of Go menu and Back/Forward lists"
+msgstr "Git menüsiniň we Iz/Ew listlerniň mazmunlaryny poz"
+
+#: src/nautilus-navigation-window-menus.c:553
+msgid "_Add Bookmark"
+msgstr "Nişan _Goş"
+
+#. name, stock id, label
+#: src/nautilus-navigation-window-menus.c:554
+msgid "Add a bookmark for the current location to this menu"
+msgstr "Häzirki ýer üçin bu menüde bir nişan goş"
+
+#: src/nautilus-navigation-window-menus.c:556
+msgid "_Edit Bookmarks"
+msgstr "Nişanlary _Editle"
+
+#. name, stock id, label
+#: src/nautilus-navigation-window-menus.c:557
+msgid "Display a window that allows editing the bookmarks in this menu"
+msgstr "Bu menü içindäki nişanlary editlemek üçin bir äpişge görkezýär"
+
+#. name, stock id
+#: src/nautilus-navigation-window-menus.c:563
+msgid "_Side Pane"
+msgstr "_Böwür Jam"
+
+#. label, accelerator
+#: src/nautilus-navigation-window-menus.c:564
+msgid "Change the visibility of this window's sidebar"
+msgstr "Bu äpişgäniň böwür zolakynyň aýanlygny üýtget"
+
+#. is_active
+#. name, stock id
+#: src/nautilus-navigation-window-menus.c:568
+msgid "Location _Bar"
+msgstr "Ýer _Zolaky"
+
+#. label, accelerator
+#: src/nautilus-navigation-window-menus.c:569
+msgid "Change the visibility of this window's location bar"
+msgstr "Bu äpişgäniň ýer zolakynyň aýanlygny üýtget"
+
+#. is_active
+#. name, stock id
+#: src/nautilus-navigation-window-menus.c:573
+msgid "St_atusbar"
+msgstr "_Durum Zolaky"
+
+#. label, accelerator
+#: src/nautilus-navigation-window-menus.c:574
+msgid "Change the visibility of this window's statusbar"
+msgstr "Bu äpişgäniň durum zolakynyň aýanlygny üýtget"
+
+#: src/nautilus-navigation-window-menus.c:598
+msgid "_Back"
+msgstr "_Iz"
+
+#: src/nautilus-navigation-window-menus.c:600
+msgid "Go to the previous visited location"
+msgstr "Öňki görilen ýere git"
+
+#: src/nautilus-navigation-window-menus.c:614
+msgid "_Forward"
+msgstr "_Ew"
+
+#: src/nautilus-navigation-window-menus.c:616
+msgid "Go to the next visited location"
+msgstr "Indiki görilen ýere git"
+
+#: src/nautilus-navigation-window.c:613 src/nautilus-window.c:654
+#, c-format
+msgid "View as %s"
+msgstr "%s ýaly görkez"
+
+#: src/nautilus-navigation-window.c:689
+#, fuzzy, c-format
+msgid "%s - File Browser"
+msgstr "Faýl Ahtarçy: %s"
+
+#: src/nautilus-notes-viewer.c:388 src/nautilus-notes-viewer.c:495
+msgid "Notes"
+msgstr "Notlar"
+
+#. set the title and standard close accelerator
+#: src/nautilus-property-browser.c:270
+msgid "Backgrounds and Emblems"
+msgstr "Arkaplanlar we Alamatlar"
+
+#: src/nautilus-property-browser.c:379
+msgid "_Remove..."
+msgstr "_Çykar..."
+
+#: src/nautilus-property-browser.c:399
+msgid "_Add new..."
+msgstr "Täze _göş"
+
+#: src/nautilus-property-browser.c:905
+#, c-format
+msgid "Sorry, but pattern %s couldn't be deleted."
+msgstr "Bagyşlaň, %s bejergisi pozilip bilmedi."
+
+#: src/nautilus-property-browser.c:906
+msgid "Check that you have permission to delete the pattern."
+msgstr "Bejergini pozmana ejazaňiz barligni synanyň."
+
+#: src/nautilus-property-browser.c:907
+msgid "Couldn't Delete Pattern"
+msgstr "Bejergi pozilip bilmedi"
+
+#: src/nautilus-property-browser.c:935
+#, c-format
+msgid "Sorry, but emblem %s couldn't be deleted."
+msgstr "Bagyşlaň, %s alamaty pozilip bilmedi."
+
+#: src/nautilus-property-browser.c:936
+msgid "Check that you have permission to delete the emblem."
+msgstr "Alamaty pozmana ejazaňiz barligni synanyň."
+
+#: src/nautilus-property-browser.c:937
+msgid "Couldn't Delete Emblem"
+msgstr "Alamat pozilip bilmedi"
+
+#: src/nautilus-property-browser.c:975
+msgid "Create a New Emblem:"
+msgstr "Bir Täze Alamat Bejer:"
+
+#. make the keyword label and field
+#: src/nautilus-property-browser.c:988
+msgid "_Keyword:"
+msgstr "_Açar keleme"
+
+#. set up a gnome icon entry to pick the image file
+#: src/nautilus-property-browser.c:1006
+msgid "_Image:"
+msgstr "_Resim:"
+
+#: src/nautilus-property-browser.c:1010
+msgid "Select an image file for the new emblem:"
+msgstr "Täze alamat üçin bir resim saýla:"
+
+#: src/nautilus-property-browser.c:1034
+msgid "Create a New Color:"
+msgstr "Bir Täze Renk Bejer:"
+
+#. make the name label and field
+#: src/nautilus-property-browser.c:1048
+msgid "Color _name:"
+msgstr "Renk _ady:"
+
+#: src/nautilus-property-browser.c:1064
+msgid "Color _value:"
+msgstr "Renk _mykdary:"
+
+#: src/nautilus-property-browser.c:1096
+#, c-format
+msgid "Sorry, but \"%s\" is not a valid file name."
+msgstr "Bagyşlaň, \"%s\" dogry bir faýl ady däl."
+
+#: src/nautilus-property-browser.c:1099
+msgid "Sorry, but you did not supply a valid file name."
+msgstr "Bagyşlaň, siz dogry bir faýl ady üpjünetmapsiňiz."
+
+#: src/nautilus-property-browser.c:1100
+msgid "Please try again."
+msgstr "Ýene bir synanyň."
+
+#: src/nautilus-property-browser.c:1102 src/nautilus-property-browser.c:1147
+msgid "Couldn't Install Pattern"
+msgstr "Bejergi Gurulip Başarmady"
+
+#: src/nautilus-property-browser.c:1113
+msgid "Sorry, but you can't replace the reset image."
+msgstr "Bagyşlaň, siz sifirleme resimi ewez etip başarmaýarsiňiz."
+
+#: src/nautilus-property-browser.c:1114
+msgid "Reset is a special image that cannot be deleted."
+msgstr "Sifirleme pozilip bilmejek bir has resim dir."
+
+#: src/nautilus-property-browser.c:1115 src/nautilus-property-browser.c:1319
+#: src/nautilus-property-browser.c:1335
+msgid "Not an Image"
+msgstr "Bir Resim Däl"
+
+#: src/nautilus-property-browser.c:1146
+#, c-format
+msgid "Sorry, but the pattern %s couldn't be installed."
+msgstr "Bagyşlaň, %s bejergi gurulip başarmady."
+
+#: src/nautilus-property-browser.c:1166
+msgid "Select an image file to add as a pattern"
+msgstr "Bejergi ýaly goşylmak üçin bir resim faýly saýla"
+
+#: src/nautilus-property-browser.c:1227
+msgid "The color cannot be installed."
+msgstr "Renk gurulip başarmady."
+
+#: src/nautilus-property-browser.c:1228
+msgid "Sorry, but you must specify a non-blank name for the new color."
+msgstr "Bagyşlaň, siz täze renk üçin bir boşdäl ad bermeli."
+
+#: src/nautilus-property-browser.c:1229
+msgid "Couldn't Install Color"
+msgstr "Renk Gurup Başarmadym."
+
+#: src/nautilus-property-browser.c:1281
+msgid "Select a color to add"
+msgstr "Goşmak üçin bir renki saýla"
+
+#: src/nautilus-property-browser.c:1318 src/nautilus-property-browser.c:1334
+#, c-format
+msgid "Sorry, but \"%s\" is not a usable image file."
+msgstr "Bagyşlaň, %s ullanylyp biljek bir resim faýl däl."
+
+#: src/nautilus-property-browser.c:1319 src/nautilus-property-browser.c:1335
+msgid "The file is not an image."
+msgstr "Bu faýl bir resim däl."
+
+#: src/nautilus-property-browser.c:2040
+msgid "Select a Category:"
+msgstr "Bir Sinfi Saýla:"
+
+#: src/nautilus-property-browser.c:2049
+msgid "C_ancel Remove"
+msgstr "_Çykarmaky Ybtal Et"
+
+#: src/nautilus-property-browser.c:2055
+msgid "_Add a New Pattern..."
+msgstr "Bir Täze Bejergini _Goş..."
+
+#: src/nautilus-property-browser.c:2058
+msgid "_Add a New Color..."
+msgstr "Bir Täze Renki _Goş..."
+
+#: src/nautilus-property-browser.c:2061
+msgid "_Add a New Emblem..."
+msgstr "Bir Täze Alamaty _Goş..."
+
+#: src/nautilus-property-browser.c:2084
+msgid "Click on a pattern to remove it"
+msgstr "Çykarmak üçin bejergi üstine tikle"
+
+#: src/nautilus-property-browser.c:2087
+msgid "Click on a color to remove it"
+msgstr "Çykarmak üçin renk üstine tikle"
+
+#: src/nautilus-property-browser.c:2090
+msgid "Click on an emblem to remove it"
+msgstr "Çykarmak üçin alamat üstine tikle"
+
+#: src/nautilus-property-browser.c:2099
+msgid "Patterns:"
+msgstr "Bejergiler:"
+
+#: src/nautilus-property-browser.c:2102
+msgid "Colors:"
+msgstr "Renkler:"
+
+#: src/nautilus-property-browser.c:2105
+msgid "Emblems:"
+msgstr "Alamatlar:"
+
+#: src/nautilus-property-browser.c:2125
+msgid "_Remove a Pattern..."
+msgstr "Bir Bejergini _Çykar..."
+
+#: src/nautilus-property-browser.c:2128
+msgid "_Remove a Color..."
+msgstr "Bir Renki _Çykar..."
+
+#: src/nautilus-property-browser.c:2131
+msgid "_Remove an Emblem..."
+msgstr "Bir Alamaty _Çykar..."
+
+#: src/nautilus-side-pane.c:425
+msgid "Close the side pane"
+msgstr "Böwür jamy ýap"
+
+#: src/nautilus-side-pane.c:596
+#, c-format
+msgid "Show %s"
+msgstr "%s görkez"
+
+#: src/nautilus-spatial-window.c:580
+msgid "_Places"
+msgstr "_Ýerler"
+
+#. name, stock id, label
+#: src/nautilus-spatial-window.c:581
+msgid "Open _Location..."
+msgstr "_Ýeri Aç..."
+
+#: src/nautilus-spatial-window.c:584
+msgid "Close P_arent Folders"
+msgstr "_Ene haltalary Ýap"
+
+#. name, stock id, label
+#: src/nautilus-spatial-window.c:585
+msgid "Close this folder's parents"
+msgstr "Bu haltanyň ene haltasyny ýap"
+
+#: src/nautilus-spatial-window.c:587
+#, fuzzy
+msgid "Clos_e All Folders"
+msgstr "_Ene haltalary Ýap"
+
+#. name, stock id, label
+#: src/nautilus-spatial-window.c:588
+#, fuzzy
+msgid "Close all folder windows"
+msgstr "_Ehli Äpişgeleri Bagla"
+
+#: src/nautilus-throbber.c:514
+msgid "throbber"
+msgstr "tyrkyllaýçy"
+
+#: src/nautilus-throbber.c:515
+msgid "provides visual status"
+msgstr "aýan durumy üpjün etýär"
+
+#: src/nautilus-window-manage-views.c:575
+msgid "View Failed"
+msgstr ""
+
+#: src/nautilus-window-manage-views.c:586
+#, c-format
+msgid "The %s view encountered an error and can't continue."
+msgstr ""
+
+#: src/nautilus-window-manage-views.c:587
+msgid "You can choose another view or go to a different location."
+msgstr ""
+
+#: src/nautilus-window-manage-views.c:597
+#, c-format
+msgid "The %s view encountered an error while starting up."
+msgstr ""
+
+#: src/nautilus-window-manage-views.c:598
+msgid "The location cannot be displayed with this viewer."
+msgstr ""
+
+#: src/nautilus-window-manage-views.c:985
+msgid "Content View"
+msgstr ""
+
+#: src/nautilus-window-manage-views.c:986
+#, fuzzy
+msgid "View of the current folder"
+msgstr "Ene haltany aç"
+
+#: src/nautilus-window-manage-views.c:1347
+msgid "Nautilus has no installed viewer capable of displaying the folder."
+msgstr ""
+
+#: src/nautilus-window-manage-views.c:1353
+#, fuzzy
+msgid "The location is not a folder."
+msgstr "\"%s\" ýery yok."
+
+#: src/nautilus-window-manage-views.c:1380
+#, c-format
+msgid "Nautilus cannot handle %s: locations."
+msgstr ""
+
+#: src/nautilus-window-manage-views.c:1415
+msgid "Check that your proxy settings are correct."
+msgstr ""
+
+#: src/nautilus-window-manage-views.c:1420
+#, c-format
+msgid ""
+"Couldn't display \"%s\", because Nautilus cannot contact the SMB master "
+"browser."
+msgstr ""
+
+#: src/nautilus-window-manage-views.c:1423
+msgid "Check that an SMB server is running in the local network."
+msgstr ""
+
+#: src/nautilus-window-manage-views.c:1428
+#, c-format
+msgid "Nautilus cannot display \"%s\"."
+msgstr "Nautilus \"%s\"-i görkezip başarmaýar."
+
+#: src/nautilus-window-manage-views.c:1430
+msgid "Please select another viewer and try again."
+msgstr "Lütfen başga bir namaýyşçyny saýlap synanyň."
+
+#: src/nautilus-window-menus.c:175
+msgid "Go to the location specified by this bookmark"
+msgstr "Bu nişan bilen bellenen ýere git"
+
+#: src/nautilus-window-menus.c:407
+msgid ""
+"Nautilus is free software; you can redistribute it and/or modify \n"
+"it under the terms of the GNU General Public License as published by \n"
+"the Free Software Foundation; either version 2 of the License, or \n"
+"(at your option) any later version."
+msgstr ""
+
+#: src/nautilus-window-menus.c:411
+msgid ""
+"Nautilus is distributed in the hope that it will be useful, \n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n"
+"GNU General Public License for more details."
+msgstr ""
+
+#: src/nautilus-window-menus.c:415
+msgid ""
+"You should have received a copy of the GNU General Public License \n"
+"along with Nautilus; if not, write to the Free Software Foundation, Inc., \n"
+"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA"
+msgstr ""
+
+#: src/nautilus-window-menus.c:444
+msgid ""
+"Nautilus is a graphical shell for GNOME that makes it easy to manage your "
+"files and the rest of your system."
+msgstr ""
+
+#: src/nautilus-window-menus.c:448
+msgid "Copyright © 1999-2005 The Nautilus authors"
+msgstr ""
+
+#: src/nautilus-window-menus.c:453
+#, fuzzy
+msgid "translator-credits"
+msgstr "Gurban Mühemmet Tewekgeli <gmtavakkoli@yahoo.com>"
+
+#: src/nautilus-window-menus.c:590
+msgid "_File"
+msgstr "_Faýl"
+
+#. name, stock id, label
+#: src/nautilus-window-menus.c:591
+msgid "_Edit"
+msgstr "_Edit"
+
+#. name, stock id, label
+#: src/nautilus-window-menus.c:592
+msgid "_View"
+msgstr "_Görnöş"
+
+#. name, stock id, label
+#: src/nautilus-window-menus.c:593
+msgid "_Help"
+msgstr "_Ýardam"
+
+#. name, stock id, label
+#. name, stock id
+#: src/nautilus-window-menus.c:595
+msgid "_Close"
+msgstr "_Ýap"
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:596
+msgid "Close this folder"
+msgstr "Bu haltany ýap"
+
+#: src/nautilus-window-menus.c:599
+msgid "_Backgrounds and Emblems..."
+msgstr "_Arkaplanlar we Alamatlar"
+
+#: src/nautilus-window-menus.c:600
+msgid ""
+"Display patterns, colors, and emblems that can be used to customize "
+"appearance"
+msgstr ""
+"Keşpi haslamak üçin ullanyliyp biljek bejergiler, renkler, we alamatlari "
+"görkez."
+
+#: src/nautilus-window-menus.c:603
+msgid "Prefere_nces"
+msgstr "_Seçenekler"
+
+#: src/nautilus-window-menus.c:604
+msgid "Edit Nautilus preferences"
+msgstr "Nautilus seçeneklerni editle"
+
+#: src/nautilus-window-menus.c:606
+msgid "_Undo"
+msgstr "_Izine Al"
+
+#. name, stock id, label
+#: src/nautilus-window-menus.c:607
+msgid "Undo the last text change"
+msgstr "Iň soňky matin üýtgemegny izine al"
+
+#: src/nautilus-window-menus.c:609
+msgid "Open _Parent"
+msgstr "_Eneni Aç"
+
+#. name, stock id, label
+#: src/nautilus-window-menus.c:610
+msgid "Open the parent folder"
+msgstr "Ene haltany aç"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:616
+msgid "_Stop"
+msgstr "_Dur"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:620
+msgid "_Reload"
+msgstr "_Ýene Ýükle"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:624
+msgid "_Contents"
+msgstr "_Mazmunlar"
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:625
+msgid "Display Nautilus help"
+msgstr "Nautilus ýardamyny görkez"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:628
+msgid "_About"
+msgstr "_Barada"
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:629
+msgid "Display credits for the creators of Nautilus"
+msgstr "Nautilus döredijileriň kreditlerni görkez"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:632
+msgid "Zoom _In"
+msgstr "_Ulalt"
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:633 src/nautilus-zoom-control.c:97
+msgid "Show the contents in more detail"
+msgstr "Mazmuny kadaly kop bilgiler bilen görkez"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:636
+msgid "Zoom _Out"
+msgstr "_Kiçeld"
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:637 src/nautilus-zoom-control.c:98
+msgid "Show the contents in less detail"
+msgstr "Mazmuny kadaly az bilgiler bilen görkez"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:640
+msgid "Normal Si_ze"
+msgstr "Kadaly _Ululyk"
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:641
+msgid "Show the contents at the normal size"
+msgstr "Mazmuny kadaly ululykda görkez"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:644
+msgid "Connect to _Server..."
+msgstr "_Gullukçiýa Baglan..."
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:645
+msgid "Set up a connection to a network server"
+msgstr ""
+
+#. name, stock id
+#: src/nautilus-window-menus.c:648
+msgid "_Home"
+msgstr "_Öý"
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:649
+#, fuzzy
+msgid "Go to the home folder"
+msgstr "Zibil haltasyna git"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:652
+msgid "_Computer"
+msgstr "_Kampýuter"
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:653
+#, fuzzy
+msgid "Go to the computer location"
+msgstr "Öý ýerine git"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:656
+#, fuzzy
+msgid "T_emplates"
+msgstr "_Ewez et"
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:657
+#, fuzzy
+msgid "Go to the templates folder"
+msgstr "Zibil haltasyna git"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:660
+msgid "_Trash"
+msgstr "_Zibil"
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:661
+msgid "Go to the trash folder"
+msgstr "Zibil haltasyna git"
+
+#. name, stock id
+#: src/nautilus-window-menus.c:664
+#, fuzzy
+msgid "CD/_DVD Creator"
+msgstr "CD Dörediji"
+
+#. label, accelerator
+#: src/nautilus-window-menus.c:665
+#, fuzzy
+msgid "Go to the CD/DVD Creator"
+msgstr "CD Döredijie Git"
+
+#: src/nautilus-window-menus.c:691
+msgid "_Up"
+msgstr "_Ýokary"
+
+#: src/nautilus-window.c:655
+#, c-format
+msgid "Display this location with \"%s\""
+msgstr "Bu ýery \"%s\" bilen görkez"
+
+#: src/nautilus-window.c:1452
+msgid "Application"
+msgstr "Program"
+
+#: src/nautilus-window.c:1453
+msgid "The NautilusApplication associated with this window."
+msgstr ""
+
+#: src/nautilus-zoom-control.c:85
+msgid "Zoom In"
+msgstr "Ulalt"
+
+#: src/nautilus-zoom-control.c:86
+msgid "Zoom Out"
+msgstr "Kiçeld"
+
+#: src/nautilus-zoom-control.c:87
+#, fuzzy
+msgid "Zoom to Default"
+msgstr "Jaýlaşdyr"
+
+#: src/nautilus-zoom-control.c:99
+msgid "Show in the default detail level"
+msgstr ""
+
+#: src/nautilus-zoom-control.c:802
+msgid "Zoom"
+msgstr "Ulaldyş"
+
+#: src/nautilus-zoom-control.c:808
+msgid "Set the zoom level of the current view"
+msgstr "Häzirki görnöşiň ulaldyş derejesini düz"
+
+#: src/network-scheme.desktop.in.h:1
+msgid "Network Servers"
+msgstr "Şebeke Gullukçiler"
+
+#: src/network-scheme.desktop.in.h:2
+msgid "View your network servers in the Nautilus file manager"
+msgstr "Şebeke gullukçilerni Nautilus faýl müdirinde görkez"
+
+#~ msgid "Allaire"
+#~ msgstr "Allaire"
+
+#~ msgid "Binary Freedom"
+#~ msgstr "Binary Freedom"
+
+#~ msgid "Borland"
+#~ msgstr "Borland"
+
+#~ msgid "CNET Computers.com"
+#~ msgstr "CNET Computers.com"
+
+#~ msgid "CNET Linux Center"
+#~ msgstr "CNET Linux Merkezi"
+
+#~ msgid "CollabNet"
+#~ msgstr "CollabNet"
+
+#~ msgid "Compaq"
+#~ msgstr "Compaq"
+
+#~ msgid "Conectiva"
+#~ msgstr "Conectiva"
+
+#~ msgid "Covalent"
+#~ msgstr "Covalent"
+
+#~ msgid "Debian.org"
+#~ msgstr "Debian.org"
+
+#~ msgid "Dell"
+#~ msgstr "Dell"
+
+#~ msgid "Freshmeat.net"
+#~ msgstr "Freshmeat.net"
+
+#~ msgid "GNOME.org"
+#~ msgstr "GNOME.org"
+
+#~ msgid "GNU.org"
+#~ msgstr "GNU.org"
+
+#~ msgid "International"
+#~ msgstr "Halkara"
+
+#~ msgid "Linux Documentation Project"
+#~ msgstr "Linux senedleme projekti"
+
+#~ msgid "Linux One"
+#~ msgstr "Linux One"
+
+#~ msgid "Linux Online"
+#~ msgstr "Linux Online"
+
+#~ msgid "Linux Resources"
+#~ msgstr "Linux Resorslar"
+
+#~ msgid "Linux Weekly News"
+#~ msgstr "Linux hepdelik habarlary"
+
+#~ msgid "LinuxNewbie.org"
+#~ msgstr "LinuxNewbie.org"
+
+#~ msgid "LinuxOrbit.com"
+#~ msgstr "LinuxOrbit.com"
+
+#~ msgid "MandrakeSoft"
+#~ msgstr "MandrakeSoft"
+
+#~ msgid "Netraverse"
+#~ msgstr "Netraverse"
+
+#~ msgid "News and Media"
+#~ msgstr "Habarlar we medýalar"
+
+#~ msgid "O'Reilly"
+#~ msgstr "O'Reilly"
+
+#~ msgid "OSDN"
+#~ msgstr "OSDN"
+
+#~ msgid "Open Source Asia"
+#~ msgstr "Open Source Asia"
+
+#~ msgid "OpenOffice"
+#~ msgstr "OpenOffice"
+
+#~ msgid "Penguin Computing"
+#~ msgstr "Penguin Computing"
+
+#~ msgid "Rackspace"
+#~ msgstr "Rackspace"
+
+#~ msgid "Red Hat"
+#~ msgstr "Red Hat"
+
+#~ msgid "Red Hat Network"
+#~ msgstr "Red Hat Network Şebekesi"
+
+#~ msgid "RedFlag Linux"
+#~ msgstr "RedFlag Linux"
+
+#~ msgid "SourceForge"
+#~ msgstr "SourceForge"
+
+#~ msgid "SuSE"
+#~ msgstr "SuSE"
+
+#~ msgid "Sun StarOffice"
+#~ msgstr "Suniň StarAfisi"
+
+#~ msgid "Sun Wah Linux"
+#~ msgstr "Sun Wah Linux"
+
+#~ msgid "Web Services"
+#~ msgstr "Web Servisler"
+
+#~ msgid "Ximian"
+#~ msgstr "Ximian"
+
+#~ msgid "ZDNet Linux Resource Center"
+#~ msgstr "ZDNet Linux Resors Merkezi"
+
+#~ msgid "Zero-Knowledge"
+#~ msgstr "Zero-Knowledge"
+
+#~ msgid "Files thrown out:"
+#~ msgstr "Atylan faýllar"
+
+#~ msgid "Files moved:"
+#~ msgstr "Göçirilen faýllar:"
+
+#~ msgid "Files linked:"
+#~ msgstr "Baglaýyş bejerilen faýllar:"
+
+#~ msgid "Files copied:"
+#~ msgstr "Nusgalanan faýllar:"
+
+#~ msgid "Icons Viewer"
+#~ msgstr "Tymsal Namaýyşçysy"
+
+#~ msgid "List Viewer"
+#~ msgstr "List Namaýyşçysy"
+
+#~ msgid "Nautilus Tree View"
+#~ msgstr "Nautilusiň bag Namaýyşçysy"
+
+#~ msgid "Nautilus Tree side pane"
+#~ msgstr "Nautilus Bag böwür jami"
+
+#~ msgid "Nautilus file manager component that shows a scrollable list"
+#~ msgstr "Nautilusiň faýl müdiriniň guşulyjysy ki ?????? listi görkezýär"
+
+#~ msgid ""
+#~ "Nautilus file manager component that shows a scrollable list for search "
+#~ "results"
+#~ msgstr ""
+#~ "Nautilusiň faýl müdiriniň guşulyjysy ki ?????? listi ahtarmak netijesi "
+#~ "üçin görkezýär"
+
+#~ msgid ""
+#~ "Nautilus file manager component that shows a two-dimensional icon space"
+#~ msgstr ""
+#~ "Nautilusiň faýl müdiriniň guşulyjysy ki iki-gabara tymsal seleňi görkezýär"
+
+#~ msgid "Nautilus file manager component that shows icons on the desktop"
+#~ msgstr ""
+#~ "Nautilusiň faýl müdiriniň guşulyjysy ki tymsallary desktapda görkezýär"
+
+#~ msgid "Nautilus file manager desktop icon view"
+#~ msgstr "Nautilus faýl müdiriniň desktap tymsal görnöşi"
+
+#~ msgid "Nautilus file manager icon view"
+#~ msgstr "Nautilus faýl müdiriniň tymsal görnöşi"
+
+#~ msgid "Nautilus file manager list view"
+#~ msgstr "Nautilus faýl müdiriniň list görnöşi"
+
+#~ msgid "Nautilus file manager search results list view"
+#~ msgstr "Nautilus faýl müdiriniň ahtramak netijesiniň list görnöşi"
+
+#~ msgid "Search List"
+#~ msgstr "Ahtarmak Listi"
+
+#~ msgid "View as Icons"
+#~ msgstr "Tymsal ýaly Görkez"
+
+#~ msgid "View as List"
+#~ msgstr "List ýaly Görkez"
+
+#~ msgid "View as _Icons"
+#~ msgstr "_Tymsal ýaly Görkez"
+
+#~ msgid "View as _List"
+#~ msgstr "_List ýaly Görkez"
+
+#~ msgid "_Empty"
+#~ msgstr "_Boşot"
+
+#~ msgid "Use the default background for this location"
+#~ msgstr "Bu ýer üçin ön bellenen arkaplany ullan"
+
+#~ msgid "_Clear History"
+#~ msgstr "Geçmişi _Poz"
+
+#~ msgid "File Browser: %s"
+#~ msgstr "Faýl Ahtarçy: %s"
+
+#~ msgid "Copyright (C) 1999-2001 Eazel, Inc."
+#~ msgstr "Copyright (C) 1999-2001 Eazel, Inc."
+
+#~ msgid "CD _Creator"
+#~ msgstr "CD _Dörediji"
+
+#~ msgid "Open with..."
+#~ msgstr "Aýry aç..."
+
+#~ msgid "bonobo_ui_init() failed."
+#~ msgstr "bonobo_ui_init() hata hata etdi."
+
+#~ msgid "Factory for Nautilus component adapter factories"
+#~ msgstr "Nautilus guşulyjy adapter karhanasy üçin karhanalar"
+
+#~ msgid "Factory for Nautilus component adapter factories "
+#~ msgstr "Nautilus guşulyjy adapter karhanasy üçin karhanalar"
+
+#~ msgid "Nautilus component adapter factory"
+#~ msgstr "Nautilusiň guşulyjy karhanasy"
+
+#~ msgid "Nautilus Emblem side pane"
+#~ msgstr "Nautilusiň alamatlar böwür jamy"
+
+#~ msgid "Nautilus Emblem view"
+#~ msgstr "Nautilusiň alamatlar görnöşi"
+
+#~ msgid "History side pane"
+#~ msgstr "Geçmiş böwür jamy"
+
+#~ msgid "History side pane for Nautilus"
+#~ msgstr "Nautilus üçin geçmiş böwür jamy"
+
+#~ msgid "URI currently displayed"
+#~ msgstr "URI häzirçe görkezilib dür."
+
+#~ msgid "Image Properties content view component"
+#~ msgstr "Resim Häsiýetler mazmuny görnöş guşulyjysy"
+
+#~ msgid "Nautilus Image Properties view"
+#~ msgstr "Nautilus Resim Häsiýetler görnöşi"
+
+#~ msgid "Notes side pane"
+#~ msgstr "Notlar böwür jamy"
+
+#~ msgid "Notes side pane for Nautilus"
+#~ msgstr "Nautilus üçin notlar böwür jamy"
+
+#~ msgid "Factory for text view"
+#~ msgstr "Metin görnöş üçin karhana"
+
+#~ msgid "Text"
+#~ msgstr "Metin"
+
+#~ msgid "Text Viewer"
+#~ msgstr "Metin Namaýyşçy"
+
+#~ msgid "Text view"
+#~ msgstr "Metin görnöşi"
+
+#~ msgid "Text view factory"
+#~ msgstr "Metin görnöş karhanasy"
+
+#~ msgid "View as Text"
+#~ msgstr "Metin edip görkez"
+
+#~ msgid "animation to indicate on-going activity"
+#~ msgstr "edilip duran etginlik üçin janlaşdyrma görkez"
+
+#~ msgid "throbber factory"
+#~ msgstr "tyrkyllaýçy karhanasy"
+
+#~ msgid "throbber object factory"
+#~ msgstr "tyrkyllaýçy objekt karhanasy"
+
+#~ msgid "C_lear Text"
+#~ msgstr "Metini _Durla"
+
+#~ msgid "Cut Text"
+#~ msgstr "Metini Kes"
+
+#~ msgid "Hide default bookmarks in the bookmark menu"
+#~ msgstr "Ön bellenen nişanlari nişanlar menüsinde görkezme"
+
+#~ msgid ""
+#~ "If set to true, then Nautilus will just show the user's bookmarks in the "
+#~ "bookmark menu."
+#~ msgstr ""
+#~ "Eger true bolsa, Nautilus nişan menüsinda diňe ullançy nişanlarni "
+#~ "görkezer."
+
+#~ msgid "%s Viewer"
+#~ msgstr "%s Namaýyşçysy"
+
+#~ msgid "Could not complete specified action:  %s"
+#~ msgstr "Berilen emel soňlanyp bilmedi: %s"
+
+#~ msgid "Could not complete specified action."
+#~ msgstr "Berilen emel soňlanyp bilmedi."
+
+#~ msgid "Use the default desktop background"
+#~ msgstr "Ön bellenen dasktap arkaplanyny ullan"
+
+#~ msgid "Edit Launcher"
+#~ msgstr "Başladyçyny Editle"
+
+#~ msgid "Edit the launcher information"
+#~ msgstr "Bir başladyçy bilgilerni editle"
+
+#~ msgid "Format the selected volume"
+#~ msgstr "Saýlanan hejmi kadala"
+
+#~ msgid "Medi_a Properties"
+#~ msgstr "_Medýa Häsiýetler"
+
+#~ msgid "Prot_ect"
+#~ msgstr "_Gora"
+
+#~ msgid "Show media properties for the selected volume"
+#~ msgstr "Saýlanan hejm üçin medýa häsiýetlerni görkez"
+
+#~ msgid "_Format"
+#~ msgstr "_Kadala"
+
+#~ msgid "Unfortunately I couldn't tell which one."
+#~ msgstr "Gynansamda haýsy biri digni aýdip başarmaýan."
+
+#~ msgid "Side Pane"
+#~ msgstr "Böwür Jam"
+
+#~ msgid "Contains a side pane view"
+#~ msgstr "Bir böwür jam görnöşini ekleýä"
+
+#~ msgid "Back"
+#~ msgstr "Iz"
+
+#~ msgid "Find"
+#~ msgstr "_Tap"
+
+#~ msgid "Forward"
+#~ msgstr "Ew"
+
+#~ msgid "Home"
+#~ msgstr "Öý"
+
+#~ msgid "Reload"
+#~ msgstr "Ýene Ýükle"
+
+#~ msgid "Search this computer for files"
+#~ msgstr "Bu kampýuteri faýllar üçin ahtar"
+
+#~ msgid "Stop"
+#~ msgstr "Dur"
+
+#~ msgid "Up"
+#~ msgstr "Ýokary"
+
+#~ msgid "Print"
+#~ msgstr "Çapla"
+
+#~ msgid "Save"
+#~ msgstr "Gaýd et"
+
+#~ msgid "Display the latest contents of the current location"
+#~ msgstr "Häzirki ýeriň iň soňky mazmunlaryny görkez"
+
+#~ msgid "Go to Empty CD folder"
+#~ msgstr "Boş CD haltasyna git"
+
+#~ msgid "Go up one level"
+#~ msgstr "Bir dereje ýokary git"
+
+#~ msgid "Report Profiling"
+#~ msgstr "Profaýllamany Bildir"
+
+#~ msgid "Reset Profiling"
+#~ msgstr "Profaýllamany Sifirle"
+
+#~ msgid "Start Profiling"
+#~ msgstr "Profaýllamany Başla"
+
+#~ msgid "Stop Profiling"
+#~ msgstr "Profaýllamany Duruz"
+
+#~ msgid "Stop loading this location"
+#~ msgstr "Bu ýery ýüklemegni duruz"
+
+#, fuzzy
+#~ msgid "_CD/DVD Creator"
+#~ msgstr "_CD Dörediji"
+
+#~ msgid "_Profiler"
+#~ msgstr "_Profaýlçi"
+
+#~ msgid "_Report Profiling"
+#~ msgstr "Profaýl"
+
+#~ msgid "_Reset Profiling"
+#~ msgstr "Profaýllamany _Sifirle"
+
+#~ msgid "_Start Profiling"
+#~ msgstr "Profaýllamany _Başla"
+
+#~ msgid "_Stop Profiling"
+#~ msgstr "Profaýllamany _Duruz"
+
+#~ msgid "Go to Computer"
+#~ msgstr "Kampýuter Git"
+
+#~ msgid "a title"
+#~ msgstr "bir sözbaşy"
+
+#, fuzzy
+#~ msgid "the browse history"
+#~ msgstr "ahtarmak geçmişi"
+
+#~ msgid "the current selection"
+#~ msgstr "häzirki saýlaw"
+
+#, fuzzy
+#~ msgid "whether to show hidden files in the view"
+#~ msgstr "Gizlin faýllaryň görkezilişi"
+
+#~ msgid "Application ID"
+#~ msgstr "Program ID-si"
+
+#~ msgid "The application ID of the window."
+#~ msgstr "Äpişgäniň program ID-si"
+
+#~ msgid "Searching Unavailable"
+#~ msgstr "Agtarmak Nagtdäl"
+
+#~ msgid "Go back a few pages"
+#~ msgstr "Bir näçe sahypa izleýin git"
+
+#~ msgid "Go forward a number of pages"
+#~ msgstr "Bir näçe sahypa ewe git"
+
+#~ msgid "Try to fit in window"
+#~ msgstr "Äpişgäniň içinde jaýlaşdyrmak üçin synan"
+
+#~ msgid "There was an error displaying help: %s"
+#~ msgstr "Ýardami görkezmede hata boldy: %s"
+
+#~ msgid "not in menu"
+#~ msgstr "menüde däl"
+
+#~ msgid "in menu for this file"
+#~ msgstr "bu faýl üçin menüde"
+
+#~ msgid "in menu for \"%s\""
+#~ msgstr "\"%s\" üçin menüde"
+
+#~ msgid "default for this file"
+#~ msgstr "bu faýl üçin ön bellenen"
+
+#~ msgid "default for \"%s\""
+#~ msgstr "\"%s\" üçin ön bellenen"
+
+#~ msgid "Is not in the menu for \"%s\" items."
+#~ msgstr "\"%s\" aýtemleri üçin menüde däl."
+
+#~ msgid "Is in the menu for \"%s\"."
+#~ msgstr "\"%s\" üçin menüde däl."
+
+#~ msgid "Is in the menu for \"%s\" items."
+#~ msgstr "\"%s\" aýtemleri üçin menüde."
+
+#~ msgid "Is in the menu for all \"%s\" items."
+#~ msgstr "\"%s\"iň ehli aýtemlerniň üçin menüde."
+
+#~ msgid "Is the default for \"%s\"."
+#~ msgstr "\"%s\" üçin ön bellenen."
+
+#~ msgid "Is the default for \"%s\" items."
+#~ msgstr "\"%s\" aýtemleri üçin ön bellenen."
+
+#~ msgid "Is the default for all \"%s\" items."
+#~ msgstr "\"%s\" ehli aýtemleri üçin ön bellenen."
+
+#~ msgid "Modify \"%s\""
+#~ msgstr "\"%s\"i üýtget"
+
+#~ msgid "Include in the menu for \"%s\" items"
+#~ msgstr "\"%s\" aýtemleri üçin menü içine girişdir"
+
+#~ msgid "Use as default for \"%s\" items"
+#~ msgstr "\"%s\" aýtemleri üçin ön bellenen ýaly ullan"
+
+#~ msgid "Include in the menu for \"%s\" only"
+#~ msgstr "Diňe \"%s\" üçin menü içine girişdir"
+
+#~ msgid "Use as default for \"%s\" only"
+#~ msgstr "Diňe \"%s\" üçin ön bellenen ýaly ullan"
+
+#~ msgid "Don't include in the menu for \"%s\" items"
+#~ msgstr "\"%s\" aýtemleri üçin menü içine girişdirme"
+
+#~ msgid "Status"
+#~ msgstr "Durum"
+
+#~ msgid "Done"
+#~ msgstr "Bitdi"
+
+#~ msgid "_Modify..."
+#~ msgstr "_Üýget..."
+
+#~ msgid "File Types and Programs"
+#~ msgstr "Faýl Hillar we Programler"
+
+#~ msgid "_Go There"
+#~ msgstr "_Beýläk Git"
+
+#~ msgid "Open with Other Application"
+#~ msgstr "Başga bir Program bilen Aç"
+
+#~ msgid "Open with Other Viewer"
+#~ msgstr "Başga bir Namaýyşçy bilen Aç"
+
+#~ msgid "Choose a view for \"%s\":"
+#~ msgstr "\"%s\" üçin görnöşi saşla:"
+
+#~ msgid "No viewers are available for \"%s\"."
+#~ msgstr "\"%s\" üçin namaýyşçy ýök."
+
+#~ msgid "No Viewers Available"
+#~ msgstr "Namaýyşçylar ýök."
+
+#~ msgid "Adjust your user environment"
+#~ msgstr "Oz ullançy töwerekiňizi düzetin"
+
+#~ msgid "Desktop Preferences"
+#~ msgstr "Desktap Seçenekler"
+
+#~ msgid "Configure network services (web server, DNS server, etc.)"
+#~ msgstr ""
+#~ "Şebeke servislerni tenzim et (web gullukçisi, DNS gullukçisi, we başgalar)"
+
+#~ msgid "Server Settings"
+#~ msgstr "Gullukçi Düzümler"
+
+#~ msgid "Configure network services"
+#~ msgstr "Şebeke servislerni tenzim et"
+
+#~ msgid "Start Here"
+#~ msgstr "Bu ýerden başla"
+
+#~ msgid "Change systemwide settings (affects all users)"
+#~ msgstr "Sistem düzümlerni ewez et (ehli ullançylara edegilsin)"
+
+#~ msgid "System Settings"
+#~ msgstr "Sistem düzümlerni"
+
+#~ msgid "Add Nautilus to session"
+#~ msgstr "Nautilusi oturşuka ekle"
+
+#~ msgid ""
+#~ "If this is set to true, Nautilus adds itself to the session when it "
+#~ "starts up. This means it will be started the next time you log in."
+#~ msgstr ""
+#~ "Eger bu true bolsa, Nautilus ozyny oturşuka ol başlananda ekleýär. Bunuň "
+#~ "magnysy bu ki siz indiki gezek açma girseňiz ol ozy otomatik işin başlar."
+
+#~ msgid "Browse Filesystem"
+#~ msgstr "Faýlsistem Ahtar"
+
+#~ msgid "Other _Application..."
+#~ msgstr "Basga _Program"
+
+#~ msgid "An _Application..."
+#~ msgstr "Bir _Program"
+
+#~ msgid "Example:"
+#~ msgstr "Mysal:"
+
+#~ msgid "Icon Captions"
+#~ msgstr "Tymsal Ýazylsr"
+
+#~ msgid "nautilus: --check cannot be used with URIs.\n"
+#~ msgstr "nautilus: --check URI-lar bilen ullanylyp başarmavar.\n"
+
+#~ msgid "nautilus: --restart cannot be used with URIs.\n"
+#~ msgstr "nautilus: --restart URI-lar bilen ullanylyp başarmavar.\n"
+
+#~ msgid "View as..."
+#~ msgstr "Aýry Görkez..."
+
+#~ msgid "_View as..."
+#~ msgstr "Aýry _Görkez..."
+
+#~ msgid "Error while moving. "
+#~ msgstr "Göçirmekde hata boldy."

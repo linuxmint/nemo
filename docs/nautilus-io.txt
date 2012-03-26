@@ -1,0 +1,255 @@
+Nautilus I/O Primer
+draft ("Better Than Nothing")
+2001-08-23
+Darin Adler <darin@bentspoon.com>
+
+The Nautilus shell, and the file manager inside it, does a lot of
+I/O. Because of this, there are some special disciplines required when
+writing Nautilus code.
+
+No I/O on the main thread
+
+To be able to respond to the user quickly, Nautilus needs to be
+designed so that the main user input thread does not block. The basic
+approach is to never do any disk I/O on the main thread.
+
+In practice, Nautilus code does assume that some disk I/O is fast, in
+some cases intentionally and in other cases due to programmer
+sloppiness. The typical assumption is that reading files from the
+user's home directory and the installed files in the Nautilus datadir
+are very fast, effectively instantaneous.
+
+So the general approach is to allow I/O for files that have file
+system paths, assuming that the access to these files is fast, and to
+prohibit I/O for files that have arbitrary URIs, assuming that access
+to these could be arbitrarily slow. Although this works pretty well,
+it is based on an incorrect assumption, because with NFS and other
+kinds of abstract file systems, there can be arbitrarily slow parts of
+the file system that have file system paths.
+
+For historical reasons, threading in Nautilus is done through the
+gnome-vfs asynchronous I/O abstraction rather than using threads
+directly. This means that all the threads are created by gnome-vfs,
+and Nautilus code runs on the main thread only. Thus, the rule of
+thumb is that synchronous gnome-vfs operations like the ones in
+<libgnomevfs/gnome-vfs-ops.h> are illegal in most Nautilus
+code. Similarly, it's illegal to ask for a piece of information, say a
+file size, and then wait until it arrives. The program's main thread
+must be allowed to get back to the main loop and start asking for user
+input again.
+
+How NautilusFile is used to do this
+
+The NautilusFile class presents an API for scheduling this
+asynchronous I/O and dealing with the uncertainty of when the
+information will be available. (It also does a few other things, but
+that's the main service it provides.) When you want information about
+a particular file or directory, you get the NautilusFile object for
+that item using nautilus_file_get. This operation, like most
+NautilusFile operations, is not allowed to do any disk I/O. Once you
+have a NautilusFile object, you can ask it questions like "What is
+your file type?" by calling functions like
+nautilus_file_get_file_type. However, for a newly created NautilusFile
+object the answer is almost certainly "I don't know." Each function
+defines a default, which is the answer given for "I don't know." For
+example, nautilus_file_get_type will return
+GNOME_VFS_FILE_TYPE_UNKNOWN if it doesn't yet know the type.
+
+It's worth taking a side trip to discuss the nature of the
+NautilusFile API. Since these classes are a private part of the
+Nautilus implementation, we make no effort to have the API be
+"complete" in an abstract sense. Instead we add operations as
+necessary and give them the semantics that are most handy for our
+purposes. For example, we could have a nautilus_file_get_size that
+returns a special distinguishable value to mean "I don't know" or a
+separate boolean instead of returning 0 for files where the size is
+unknown. This is entirely motivated by pragmatic concerns. The intent
+is that we tweak these calls as needed if the semantics aren't good
+enough.
+
+Back to the newly created NautilusFile object. If you actually need to
+get the type, you need to arrange for that information to be fetched
+from the file system. There are two ways to make this request. If you
+are planning to display the type on an ongoing basis then you want to
+tell the NautilusFile that you'll be monitoring the file's type and want to
+know about changes to it. If you just need one-time information about
+the type then you'll want to be informed when the type is
+discovered. The calls used for this are nautilus_file_monitor_add and
+nautilus_file_call_when_ready respectively. Both of these calls take a
+list of information needed about a file. If all you need is the file
+type, for example, you would pass a list containing just
+NAUTILUS_FILE_ATTRIBUTE_FILE_TYPE (the attributes are defined in
+nautilus-file-attributes.h). Not every call has a corresponding file
+attribute type. We add new ones as needed.
+
+If you do a nautilus_file_monitor_add, you also typically connect to
+the NautilusFile object's changed signal. Each time any monitored
+attribute changes, a changed signal is emitted. The caller typically
+caches the value of the attribute that was last seen (for example,
+what's displayed on screen) and does a quick check to see if the
+attribute it cares about has changed. If you do a
+nautilus_file_call_when_ready, you don't typically need to connect to
+the changed signal, because your callback function will be called when
+and if the requested information is ready.
+
+Both a monitor and a callback can be cancelled. For ease of
+use, neither requires that you store an ID for
+canceling. Instead, the monitor function uses an arbitrary client
+pointer, which can be any kind of pointer that's known to not conflict
+with other monitorers. Usually, this is a pointer to the monitoring
+object, but it can also be, for example, a pointer to a global
+variable. The call_when_ready function uses the callback function and callback
+data to identify the particular callback to cancel. One advantage of the monitor
+API is that it also lets the NautilusFile framework know that the file
+should be monitored for changes made outside Nautilus. This is how we
+know when to ask FAM to monitor a file or directory for us.
+
+Lets review a few of the concepts:
+
+1) Nearly all NautilusFile operations, like nautilus_file_get_type,
+   are not allowed to do any disk I/O.
+2) To cause the actual I/O to be done, callers need to use set up
+   either a monitor or a callback.
+3) The actual I/O is done by asynchronous gnome-vfs calls, so the work
+   is done on another thread.
+
+To work with an entire directory of files at once, you use
+a NautilusDirectory object. With the NautilusDirectory object you can
+monitor a whole set of NautilusFile objects at once, and you can
+connect to a single "files_changed" signal that gets emitted whenever
+files within the directory are modified. That way you don't have to
+connect separately to each file you want to monitor. These calls are
+also the mechanism for finding out which files are in a directory. In
+most other respects, they are like the NautilusFile calls.
+
+Caching, the good and the bad
+
+Another feature of the NautilusFile class is the caching. If you keep
+around a NautilusFile object, it keeps around information about the
+last known state of that file. Thus, if you call
+nautilus_file_get_type, you might well get file type of the file found
+at this location the last time you looked, rather than the information
+about what the file type is now, or "unknown". There are some problems
+with this, though.
+
+The first problem is that if wrong information is cached, you need
+some way to "goose" the NautilusFile object and get it to grab new
+information. This is trickier than it might sound, because we don't
+want to constantly distrust information we received just moments
+before. To handle this, we have the
+nautilus_file_invalidate_attributes and
+nautilus_file_invalidate_all_attributes calls, as well as the
+nautilus_directory_force_reload call. If some code in Nautilus makes a
+change to a file that's known to affect the cached information, it can
+call one of these to inform the NautilusFile framework. Changes that
+are made through the framework itself are automatically understood, so
+usually these calls aren't necessary.
+
+The second problem is that it's hard to predict when information will
+and won't be cached. The current rule that's implemented is that no
+information is cached if no one retains a reference to the
+NautilusFile object. This means that someone else holding a
+NautilusFile object can subtly affect the semantics of whether you
+have new data or not. Calling nautilus_file_call_when_ready or
+nautilus_file_monitor_add will not invalidate the cache, but rather
+will return you the already cached information.
+
+These problems are less pronounced when FAM is in use. With FAM, any
+monitored file is highly likely to have accurate information, because
+changes to the file will be noticed by FAM, and that in turn will
+trigger new I/O to determine what the new status of the file is.
+
+Operations that change the file
+
+You'll note that up until this point, I've only discussed getting
+information about the file, not making changes to it. NautilusFile
+also contains some APIs for making changes. There are two kinds of
+these.
+
+The calls that change metadata are examples of the first kind. These
+calls make changes to the internal state right away and schedule I/O
+to write the changes out to the file system. There's no way to detect
+if the I/O succeeds or fails, and as far as the client code is
+concerned the change takes place right away.
+
+The calls that make other kinds of file system change are examples of
+of the second kind. These calls take a
+NautilusFileOperationCallback. They are all cancellable, and they give
+a callback when the operation completes, whether it succeeds or fails.
+
+Files that move
+
+When a file is moved, and the NautilusFile framework knows it, then
+the NautilusFile and NautilusDirectory objects follow the file rather
+than staying stuck to the path. This has a direct influence on the
+user interface of Nautilus -- if you move a directory, already-open
+windows and property windows will follow the directory around.
+
+This means that keeping around a NautilusFile object and keeping
+around a URI for a file have different semantics, and there are
+cases where one is the better choice and cases where the other is.
+
+Icons
+
+The current implementation of the Nautilus icon factory uses
+synchronous I/O to get the icons and ignores these guidelines. The
+only reason this doesn't ruin the Nautilus user experience is that it
+also refuses to even try to fetch icons from URIs that don't
+correspond to file system paths, which for most cases means it limits
+itself to reading from the high-speed local disk. Don't ask me what
+the repercussions of this are for NFS; do the research and tell me
+instead!
+
+Slowness caused by asynchronous operations
+
+One danger in all this asynchronous I/O is that you might end up doing
+repeated drawing and updating. If you go to display a file right
+after asking for information about it, you might immediately show an
+"unknown file type" icon. Then, milliseconds later, you may complete
+the I/O and discover more information about the file, including the
+appropriate icon. So you end up drawing the icon twice. There are a
+number of strategies for preventing this problem. One of them is to
+allow a bit of hysteresis and wait some fixed amount of time after
+requesting the I/O before displaying the "unknown" state. One
+strategy that's used in Nautilus is to wait until some basic
+information is available until displaying anything. This might make
+the program overall be faster, but it might make it seem slower,
+because you don't see things right away. [What other strategies
+are used in Nautilus now for this?]
+
+How to make Nautilus slow
+
+If you add I/O to the functions in NautilusFile that are used simply
+to fetch cached file information, you can make Nautilus incredibly I/O
+intensive. On the other hand, the NautilusFile API does not provide a
+way to do arbitrary file reads, for example. So it can be tricky to
+add features to Nautilus, since you first have to educate NautilusFile
+about how to do the I/O asynchronously and cache it, then request the
+information and have some way to deal with the time when it's not yet
+known.
+
+Adding new kinds of I/O usually involves working on the Nautilus I/O
+state machine in nautilus-directory-async.c. If we changed Nautilus to
+use threading instead of using gnome-vfs asychronous operations, I'm
+pretty sure that most of the changes would be here in this
+file. That's because the external API used for NautilusFile wouldn't
+really have a reason to change. In either case, you'd want to schedule
+work to be done, and get called back when the work is complete.
+
+[We probably need more about nautilus-directory-async.c here.]
+
+Future direction
+
+Some have suggested that by using threading directly in Nautilus
+rather than using it indirectly through the gnome-vfs async. calls,
+we could simplify the I/O code in Nautilus. It's possible this would
+make a big improvement, but it's also possible that this would primarily
+affect the internals and implementation details of NautilusFile and
+still leave the rest of the Nautilus code the same.
+
+That's all for now
+
+This is a very rough early draft of this document. Let me know about
+other topics that would be useful to be covered in here.
+
+    -- Darin

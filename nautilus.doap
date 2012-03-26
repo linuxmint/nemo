@@ -1,0 +1,48 @@
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:gnome="http://api.gnome.org/doap-extensions#"
+         xmlns="http://usefulinc.com/ns/doap#">
+
+  <name xml:lang="en">Nautilus</name>
+  <shortdesc xml:lang="en">Default file manager for gnome</shortdesc>
+  <homepage rdf:resource="http://live.gnome.org/Nautilus" />
+  <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/nautilus-list" />
+  <category rdf:resource="http://api.gnome.org/doap-extensions#desktop" />
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Alexander Larsson</foaf:name>
+      <foaf:mbox rdf:resource="mailto:alexl@redhat.com" />
+      <gnome:userid>alexl</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Martin Wehner</foaf:name>
+      <foaf:mbox rdf:resource="mailto:martin.wehner@gmail.com" />
+      <gnome:userid>mwehner</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Christian Neumair</foaf:name>
+      <foaf:mbox rdf:resource="mailto:cneumair@gnome.org" />
+      <gnome:userid>cneumair</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Andrew Walton</foaf:name>
+      <foaf:mbox rdf:resource="mailto:awalton@gnome.org" />
+      <gnome:userid>awalton</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Cosimo Cecchi</foaf:name>
+      <foaf:mbox rdf:resource="mailto:cosimoc@gnome.org" />
+      <gnome:userid>cosimoc</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+</Project>

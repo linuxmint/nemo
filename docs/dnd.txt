@@ -1,0 +1,92 @@
+		Nautilus dnd code.
+		------------------
+
+
+Nautilus dnd code is pretty compilcated, it has a lot of entry points and exit points.
+Trying to clarify this now.
+
+You have to implement:
+
+If you are a source:
+    drag_begin
+    drag_end
+    drag_get_data
+
+If you are a destination:
+   drag_motion
+   drag_data_received
+   drag_drop
+   drag_leave
+
+
+   1) Source
+   ---------
+
+if you are a source, you have to start a drag trough gtk_drag_begin.
+This will call drag_begin signal in the source.
+Then, when the destination calls gtk_drag_finish, drag_end will be 
+called in the source.
+
+drag_get_data will be called in the source when the destination 
+calls gtk_drag_get_data
+
+So, the source is very easy to write: it just needs to implement 
+those 3 signals and it should not have any memory management issue.
+
+
+   2) Destination
+   --------------
+
+Things get a little bit complicated.
+when the dragging cursor gets in your window, you will get drag_motion 
+events. In nautilus, we do many things in this function:
+	- we start auto-scrolling if it is necessary.
+	- we call nautilus_*_ensure_data
+	- we prelight what is under the cursor if it can accept the drag.
+	- we try to expand what is under you if it can accept the drop (tree view)
+
+nautilus_*_ensure_data is vital. It calls gtk_drag_get_data to get the 
+data from the source. this allows the destination to store it in advance and use it
+to know if what is under the cursor can accept the drag.
+
+Then, when the drop occurs, drag_drop is called on the destination.
+drag_drop calls gtk_drag_get_data to get the data from the source to do its drop.
+Then, drag_data_received is called when the data is received.
+There, we can do the actual operation involved by the drop.
+Also, just before the drag_drop event, a drag_leave event is triggered.
+
+If no drop occurs, a drag_leave occurs.
+
+So, drag_data_received does 2 things: it is called to get the data when we are 
+in motion and store it. It is also called to do the actual drop operation when
+a drop happened.
+
+So, drag_data_received usually does 2 tests: it tests if the data was received.
+If it was received, it stores it.
+Then it tests if the drop occured just before. If so, it does the operation.
+
+This schema involves careful memory management:
+     1) 2 exit points in destination. (drag_leave and drag_data_received)
+     2) a lot of things are done in the callbacks so you have to take into
+     account all the possible code paths.
+
+To solve 1), we should use ONE destroy function which cleans up the drag data.
+To solve 2), we have to be very careful where we call this fution from.
+
+This function has to clean up: 
+     - the list of expanded nodes (tree view).
+     - the autoscroll code.
+     - the prelighting code.
+     It also has to set drag_info->need_to_destroy to TRUE
+     so that during the next drag in this widget, the 
+     rest of the drag data is destroyed before begening the actual
+     new drag.
+
+When we receive a drag_motion, we first test for need_to_destroy and
+destroy the rest of the data left from the previous drag. This code
+has to destroy/reset:
+     - the drag data.
+     - the boolean vars used to store the state of the drag.
+
+
+

@@ -1,0 +1,167 @@
+<html>
+
+<head>
+<title>Eazel: Darin's Recommended Programming Books</title>
+</head>
+
+<body>
+
+<p>This document was really more for Eazel than for all Nautilus hackers,
+but since the style guide references it, I checked it into the Nautilus CVS
+for now. Later we can figure out what to do with it.</p>
+
+<p>This document is left over from when Eazel was doing a program in C++.
+Soon, I'll rearrange the document so it doesn't put all the C++ stuff first,
+since C++ is immaterial for the current Nautilus project.</p>
+
+<p>If you buy books from Amazon.com using the links on this page, Darin will get a small kickback from Amazon.</p>
+
+<p>One of the main reasons for creating this list is that there are many poor C++ books out there.
+I've picked out a small number of extremely useful books so you won't have to wade through the weaker ones.</p>
+
+<h2>C++ Reference Books</h2>
+
+<p>These books cover the C++ language and library. All of them except for the
+C++ standard itself also contain useful introductory material. For some
+programmers, these are enough to explain the features of the language.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201889544/dianepattersonstA"><b><i>The C++ Programming Language, Third Edition</i></b></a>,
+Bjarne Stroustrup. This is the book by the creator of the C++ language. This third edition is far superior
+to the first two, and covers the ISO Standard version of the language in detail, including the library.
+Any serious C++ programmer should read this book. There have been many corrections since the first printing, so get
+the newest printing you can. Bjarne has <a href="http://www.research.att.com/~bs/3rd.html">supporting materials</a>
+for the book on the web, including the errata lists that enumerate all changes between printings.</p>
+
+<p><a name="Josuttis" href="http://www.amazon.com/exec/obidos/ASIN/0201379260/dianepattersonstA"><b><i>The C++ Standard Library</i></b></a>,
+Nicolai M. Josuttis. This book has the best coverage of the library. There have been tons of others that cover
+the library, or focus on the STL or streams. But Josuttis covers all these subjects better than any of his
+predecessors. Since we use the library extensively in Eazel projects, this is a must read.
+The author has some useful <a href="http://josuttis.com/libbook">supporting materials</a> on the web.</p>
+
+<h2>C++ Technique Books</h2>
+
+<p>These books are about specific programming techniques for writing code in C++.
+They can help you understand idioms you'll find in our code.
+This kind of idiomatic programming is important in C++, because the language
+gives you so much freedom to write unusable, unmaintainable code.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201615622/dianepattersonstA"><b><i>Exceptional C++</i></b></a>,
+Herb Sutter. This is a collection of material that was originally part of Herb's
+<a href="http://www.peerdirect.com/resources"><i>Guru of the Week</i></a>. This includes much of the most
+advanced C++ information available. I learned many of the most important techniques from Herb, including
+the swap technique for writing safe assignment operators. Herb covers each topic thoroughly.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201423391/dianepattersonstA"><b><i>Ruminations on C++</i></b></a>,
+Andrew Koenig and Barbara Moo.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201924889/dianepattersonstA"><b><i>Effective C++, Second Edition</i></b></a>
+and <a href="http://www.amazon.com/exec/obidos/ASIN/020163371X/dianepattersonstA"><b><i>More Effective C++</i></b></a>,
+Scott Meyers. These books contain a laundry list of important C++ idioms. The books are a bit less
+important now than when they were first released, but still full of valuable stuff. There's also a
+<a href="http://www.amazon.com/exec/obidos/ASIN/0201310155/dianepattersonstA">CD edition</a>
+(there's a <a href="http://mox.eazel.com/mec">copy</a> of it on Rob's machine)
+that contains both books in electronic form. The publisher's web site has a good collection of
+supporting materials for both
+<a href="http://cseng.aw.com/bookdetail.qry?ISBN=0-201-92488-9">the original</a> and
+<a href="http://cseng.aw.com/bookdetail.qry?ISBN=0-201-63371-X">the second book</a></p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201543303/dianepattersonstA"><b><i>The Design and Evolution of C++</i></b></a>,
+Bjarne Stroustrup. While this book doesn't prescribe any specific techniques, it will help you understand the
+tradeoffs behind all the language features, and how C++ got to be what it is. I highly recommend it.</p>
+
+<h2>C++ Tutorial Books</h2>
+
+<p>These books explain C++ programming from scratch. These particular examples are so good that they
+can be useful even for experienced programmers who already know C++ well.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201485184/dianepattersonstA"><b><i>Essential C++</i></b></a>,
+Stanley Lippman. This tutorial is much more useful than the longer and more complete works, like
+<a href="#Primer"><i>C++ Primer</i></a>.
+It covers the features and the reasons for the features quite well. In particular, it has a good explanation
+of references and pointers and why you'd use one or the other. It covers templates and exceptions fairly well.</p>
+
+<h2>Gtk Books</h2>
+
+<p>OK, so I'm not an expert on Gtk yet. But I'm becoming one.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0735700788/dianepattersonstA"><b><i>Gtk+/Gnome Application Development</i></b></a>,
+Havoc Pennington. I learned a lot from this book. But it's all Gtk+ and C; things are done
+a bit differently with Gtk-- from C++. It's still worth reading.</p>
+
+<h2>Programming Technique Books</h2>
+
+<p>These books are valuable because of the ideas in them, but are not specific to a particular programming language or toolkit.</p>
+
+<p><a name="Refactoring" href="http://www.amazon.com/exec/obidos/ASIN/0201485672/dianepattersonstA"><b><i>Refactoring</i></b></a>,
+Martin Fowler. This book outlines a philosophy of programming that we embrace at Eazel. The ideas
+about changing existing code to improve it so it can be modified are extremely important. The ideas
+about unit testing as a means to this end shape the way we use unit testing at Eazel.
+All the examples in the book are in Java, but the ideas apply well to C++.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/020161586X/dianepattersonstA"><b><i>The Practice of Programming</i></b></a>,
+Brian Kernighan, Rob Pike. This book, by two of the most famous UNIX programmers, covers a lot of basic
+programming smarts. I don't agree with everything they have to say, but the book is great as a whole.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201657880/dianepattersonstA"><b><i>Programming Pearls, Second Edition</i></b></a>,
+Jon Bentley. This classic has recently been updated with a second edition. I haven't read the second edition
+yet, but I'm sure it's great. When I read it, I'll put more specific comments here.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201633612/dianepattersonstA"><b><i>Design Patterns</i></b></a>.
+There's also a <a href="http://www.amazon.com/exec/obidos/ASIN/0201634988/dianepattersonstA">CD edition</a>
+(there's a <a href="http://mox.eazel.com/dp">copy</a> of it on Rob's machine).</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201350882/dianepattersonstA"><b><i>Algorithms in C++, Third Edition</i></b></a>,
+Robert Sedgewick. The <a href="http://www.amazon.com/exec/obidos/ASIN/0201314525/dianepattersonstA">original version</a> is in C.
+There's also an upcoming <a href="http://www.amazon.com/exec/obidos/ASIN/0201361205/dianepattersonstA">Java version</a>.</p>
+
+<h2>Books I Have Read, But Do Not Recommend</h2>
+
+<p>I've also read many books on these topics that were less useful than the ones listed above.
+Here are a few that were not as exemplary. I won't try to sort out the ones that I found simply "not as useful as the best ones"
+from the truly awful. If you see a book that's not on this list, it might be one I'd recommend. Maybe
+I haven't read it.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201498413/dianepattersonstA"><b><i>C Interfaces and Implementations</i></b></a>.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201596415/dianepattersonstA"><b><i>C++ IOStreams Handbook</i></b></a>,
+Steve Teale. <a href="Josuttis">Josuttis</a> covers streams better.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201616416/dianepattersonstA"><b><i>Extreme Programming Explained</i></b></a>.
+My love for <a href="Refactoring"><i>Refactoring</i></a> had me excited about this one, but it was a disappointment.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201309564/dianepattersonstA"><b><i>Generic Programming and the STL</i></b></a>,
+Matt Austern. I don't know of anyone who knows more about the STL than Matt Austern, who's currently
+maintaining the main implementation at SGI. But <a href="Josuttis">Josuttis</a> covers the STL better.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0131209655/dianepattersonstA"><b><i>Industrial Strength C++</i></b></a>.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201834545/dianepattersonstA"><b><i>Inside the C++ Object Model</i></b></a>.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201633620/dianepattersonstA"><b><i>Large-Scale C++ Software Design</i></b></a>,
+John Lakos.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0130142697/dianepattersonstA"><b><i>Objects Unencapsulated: Java, Eiffel and C++??</i></b></a>.
+This is a basically an "Eiffel is great, C++ sucks" book. Some interesting insights, but a lot of sloppy thinking.</p>
+
+<h2>Books That Need Review</h2>
+
+<p>This is a list of possibly important books that I haven't checked out yet.</p>
+
+<p><a name="Primer" href="http://www.amazon.com/exec/obidos/ASIN/0201824701/dianepattersonstA"><b><i>C++ Primer, Third Edition</i></b></a>,
+Stanley Lippman, Josee Lajoie. The earlier editions were good but not great. But I have reason
+to believe that this one might be better than those were.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201309939/dianepattersonstA"><b><i>C++ Primer Answer Book</i></b></a>.
+I checked, and this answer book does go with the third edition of <i>C++ Primer</i>.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0201309599/dianepattersonstA"><b><i>Design Patterns and Contracts</i></b></a>.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0735700214/dianepattersonstA"><b><i>Developing Linux Applications with GTK+ and GDK</i></b></a>.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0764546406/dianepattersonstA"><b><i>Linux Gnome/Gtk Programming Bible</i></b></a>.</p>
+
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0672318296/dianepattersonstA"><b><i>Sams Teach Yourself Gtk+ Programming in 21 Days</i></b></a>.</p>
+
+</body>
+
+</html>

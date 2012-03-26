@@ -1,0 +1,112 @@
+This document describes the keyboard and mouse navigation model used
+in the default Nautilus views in detail. This is useful as a a guide
+for people implementing a Nautilus view or something else that wants
+to have a feel that is compatible with Nautilus.
+
+*********** Icon view ********************
+
+Keyboard:
+=========
+
+Navigation and selection:
+
+When the focus is on the icon view you can move the currently selected
+icon by using:
+
+Arrow Keys - moves one step in the direction
+Tab        - moves to the "next" icon in order (i.e. at the end of one row,
+             go to the first icon the next row)
+Shift Tab  - moves to the "previous" icon in order
+Home       - moves to the first icon
+End        - moves to the last icon
+  
+In order to allow multiple selection the above navigation keys can be
+combined with the Control key to move the keyboard focus without
+affecting the current selection. If you use normal movement (not using
+control) all the previously selected icons will be deselected.
+
+If several icons are selected and there is no keyboard focus you press
+up or left will start navigating from the topmost leftmost icon, while
+pressing down or right will start from the bottommost rightmost
+icon. This works the same way if you hold down Control.
+
+To select or deselect an icon position the keyboard focus on it and
+press ctlr-space. ctrl-space with no keyboard focus produces a
+keyboard focus at the first selected icon, or the first one if none
+are selected.
+
+In manual layout (and especially, on the desktop) the keyboard arrow
+keys work in a slightly different way. To allow all icons to be
+reached the closest icon in the quadrant of the direction selected
+will be used as the "next" icon when navigating. 
+
+Other keyboard shortcuts:
+
+Return, Keypad Return - Activate the selected objects
+Space (without control) - Activate the selected objects
+Escape - Undo icon stretching if in progress
+
+Alt Left - go back
+Alt Right - go forward
+Alt Up - go up a directory
+Alt Down - enter directory / activate selection
+
+Shift-F10 bring up context menu for selection, or the directory context menu if nothing is selected
+Ctrl-F10 bring up context menu for directory
+
+Other key presses are used for typeahead search
+
+In rename mode:
+
+Escape - Cancel rename
+Return, Keypad Return - Finish rename
+
+Mouse:
+======
+
+In double click mode:
+
+Clicking on an icon selects it and deselects all others on
+BUTTON_PRESS. Dragging does the default dnd file operation.
+
+Clicking on blank space deselect all selected icons. Doesn't allow
+dragging.
+
+Double clicking (both clicks on the same icon) with no modifiers
+activates the clicked file. (And deselects the others due to the first
+click.)
+
+Clicking when Control (Shift can also be used, which is not written
+out below) is held down can be used to do multiple selections.
+
+Control-click on empty space does nothing.
+Control-click on unselected icon selects it on BUTTON_PRESS
+Control-click on selected icon de-selects it on BUTTON_RELEASE
+Control-double click does nothing
+Control can be held down while starting a drag
+
+While doing a drag modifers affect the operation the drag causes:
+Control - Copy the files
+Shift - Move the files
+Alt - Open a menu with the available alternatives
+
+All the basic clicks are typically done with the left button, but can
+be done with the other buttons to. [Do we want this?] However some of
+the buttons also have special operations:
+
+Right-click on a selected icon opens the context menu for the selected
+icons.
+Right-click on empty space opens the context menu for the directory.
+Middle-button drag always opens the menu with possible operations on
+drop.
+
+In single click mode:
+
+Single click mode work just like double click mode except single
+clicks on icons activate the icon on button release if you didn't
+drag, didn't hold down for 1.5 secs or clicked twice within the
+double-click time.
+
+*********** List view ********************
+
+[TODO: Add stuff here]

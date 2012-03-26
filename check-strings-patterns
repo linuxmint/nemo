@@ -1,0 +1,68 @@
+^%s %s$ # common simple printf format
+. ||| -skels # CORBA-generated
+. ||| -stubs # CORBA-generated
+^\\n+$ # common simple string
+^Ali Abdin$
+^Andy Hertzfeld$
+^Arlo Rose$
+^C$ # extern "C"
+^Darin Adler$
+^Eli Goldberg$
+^Elliot Lee$
+^Eskil Heyn Olsen$
+^Ettore Perazzoli$
+^Gene Z. Ragan$
+^George Lebl$
+^Ian McKellar$
+^J Shane Culpepper$
+^John Harper$
+^John Sullivan$
+^Josh Barrow$
+^Maciej Stachowiak$
+^Mathieu Lacage$
+^Mike Engber$
+^Mike Fleming$
+OAFIID # strings with oaf IIDs
+^Pavel Císler$
+^Ramiro Estrugo$
+^Raph Levien$
+^Rebecca Schulman$
+^Robey Pointer$
+^Robin \* Slomkowski$
+^Seth Nickell$
+^Susan Kare$
+^\/ # paths
+^[-\w/]+\.(png|xml)$ # recognizable file names
+^bookmark$ ||| nautilus-bookmark-list
+^http:
+^rgb: # color specs
+^Nautilus first time druid read file handle$
+^\w+\.eazel\.com$
+^[-\w]+\/[-\w\*]*$ # mime type
+^Tab$ ||| druid
+^\.\.?$ # self and parent in file system
+network\.proxy
+^_NETSCAPE_URL
+^Switch to \w+ Level$ ||| nautilus-window-menus
+. ||| -common\.c
+^[a-z-]*help: # help URLs
+^cdda: # cdda URLs
+. ||| gdb3html
+^0123456789ABCDEF$
+^\?+$
+^eazel-services: # eazel-services URLs
+^command: # command URLs
+^trash: # trash URLs
+. ||| \/test # test programs
+^[\d:]+$ # all numbers and colons
+. ||| \/intl\/ # things in intl directory
+. ||| \/po\/ # things in po directory
+^\.[a-zA-Z][a-zA-Z][a-zA-Z]$ # common file extensions
+^i-[-a-z]+$ # icon names
+. ||| nautilus-metadata\.h # metadata keys
+^\s+$ # white space only
+^_SAWFISH # keys for WM
+^TRUE$
+^FALSE$
+. ||| components/help/converters
+. ||| components/music/pixmaps\.h$

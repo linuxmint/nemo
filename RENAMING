@@ -1,0 +1,40 @@
+We put plans for renaming in here so we can think about them for a
+while.  Note that when we rename a class, it usually involves renaming
+some functions and files too.
+
+When we rename files in the repository, we do it by this process:
+
+  1) copy the file in the repository by logging in and using cp (to retain history)
+  2) check out to get the new file
+  3) cvs rm to remove the old file on commit
+  4) fix all build problems
+  5) commit
+
+This retains the history in both the old and new locations.
+
+Remove a lot of nautilus prefixes since nothing outside libnautilus is
+intended for use with other programs, so it doesn't need namespacing.
+
+------
+macros
+------
+
+---------------
+directory names
+---------------
+
+----------
+file names
+----------
+*-ui.xml -> *.ui
+src/file-manager/fm-* -> ?
+nautilus-authn-manager.c -> nautilus-authentication-manager.c
+
+----------------------------
+classes and other data types
+----------------------------
+FM* -> ?
+
+--------------
+function names
+--------------

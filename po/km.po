@@ -1,0 +1,5533 @@
+# translation of km.po to Khmer
+#
+# Keo Sophon <keosophon@khmeros.info>, 2006.
+# Leang Chumsoben <soben@khmeros.info>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: nautilus 2.13.91\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-03-02 16:18+0100\n"
+"PO-Revision-Date: 2006-02-27 11:41+0700\n"
+"Last-Translator: Leang Chumsoben <soben@khmeros.info>\n"
+"Language-Team: Khmer <support@khmeros.info>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11\n"
+
+#: ../data/browser.xml.h:1
+#, fuzzy
+msgid "Apparition"
+msgstr "កម្មវិធី​ទាំងអស់"
+
+#: ../data/browser.xml.h:2
+msgid "Azul"
+msgstr ""
+
+#: ../data/browser.xml.h:3
+msgid "Black"
+msgstr ""
+
+#: ../data/browser.xml.h:4
+msgid "Blue Ridge"
+msgstr ""
+
+#: ../data/browser.xml.h:5
+msgid "Blue Rough"
+msgstr ""
+
+#: ../data/browser.xml.h:6
+msgid "Blue Type"
+msgstr ""
+
+#: ../data/browser.xml.h:7
+msgid "Brushed Metal"
+msgstr ""
+
+#: ../data/browser.xml.h:8
+msgid "Bubble Gum"
+msgstr ""
+
+#: ../data/browser.xml.h:9
+msgid "Burlap"
+msgstr ""
+
+#: ../data/browser.xml.h:10
+msgid "C_olors"
+msgstr ""
+
+#: ../data/browser.xml.h:11
+msgid "Camouflage"
+msgstr ""
+
+#: ../data/browser.xml.h:12
+msgid "Chalk"
+msgstr ""
+
+#: ../data/browser.xml.h:13
+msgid "Charcoal"
+msgstr ""
+
+#: ../data/browser.xml.h:14
+msgid "Concrete"
+msgstr ""
+
+#: ../data/browser.xml.h:15
+msgid "Cork"
+msgstr ""
+
+#: ../data/browser.xml.h:16
+msgid "Countertop"
+msgstr ""
+
+#: ../data/browser.xml.h:17
+#, fuzzy
+msgid "Danube"
+msgstr "បិទ"
+
+#: ../data/browser.xml.h:18
+msgid "Dark Cork"
+msgstr ""
+
+#: ../data/browser.xml.h:19
+msgid "Dark GNOME"
+msgstr ""
+
+#: ../data/browser.xml.h:20
+msgid "Deep Teal"
+msgstr ""
+
+#: ../data/browser.xml.h:21
+#, fuzzy
+msgid "Dots"
+msgstr "ពុម្ពអក្សរ"
+
+#: ../data/browser.xml.h:22
+msgid "Drag a color to an object to change it to that color"
+msgstr ""
+
+#: ../data/browser.xml.h:23
+msgid "Drag a pattern tile to an object to change it"
+msgstr ""
+
+#: ../data/browser.xml.h:24
+msgid "Drag an emblem to an object to add it to the object"
+msgstr ""
+
+#: ../data/browser.xml.h:25
+msgid "Eclipse"
+msgstr ""
+
+#: ../data/browser.xml.h:26
+msgid "Envy"
+msgstr ""
+
+#. translators: this is the name of an emblem
+#: ../data/browser.xml.h:28 ../src/nautilus-emblem-sidebar.c:937
+#: ../src/nautilus-property-browser.c:1795
+msgid "Erase"
+msgstr ""
+
+#: ../data/browser.xml.h:29
+msgid "Fibers"
+msgstr ""
+
+#: ../data/browser.xml.h:30
+msgid "Fire Engine"
+msgstr ""
+
+#: ../data/browser.xml.h:31
+msgid "Fleur De Lis"
+msgstr ""
+
+#: ../data/browser.xml.h:32
+#, fuzzy
+msgid "Floral"
+msgstr "ធម្មតា"
+
+#: ../data/browser.xml.h:33
+msgid "Fossil"
+msgstr ""
+
+#: ../data/browser.xml.h:34
+msgid "GNOME"
+msgstr ""
+
+#: ../data/browser.xml.h:35
+msgid "Granite"
+msgstr ""
+
+#: ../data/browser.xml.h:36
+msgid "Grapefruit"
+msgstr ""
+
+#: ../data/browser.xml.h:37
+msgid "Green Weave"
+msgstr ""
+
+#: ../data/browser.xml.h:38
+msgid "Ice"
+msgstr ""
+
+#: ../data/browser.xml.h:39
+msgid "Indigo"
+msgstr ""
+
+#: ../data/browser.xml.h:40
+msgid "Leaf"
+msgstr ""
+
+#: ../data/browser.xml.h:41
+msgid "Lemon"
+msgstr ""
+
+#: ../data/browser.xml.h:42
+msgid "Mango"
+msgstr ""
+
+#: ../data/browser.xml.h:43
+msgid "Manila Paper"
+msgstr ""
+
+#: ../data/browser.xml.h:44
+msgid "Moss Ridge"
+msgstr ""
+
+#: ../data/browser.xml.h:45
+msgid "Mud"
+msgstr ""
+
+#: ../data/browser.xml.h:46
+msgid "Numbers"
+msgstr ""
+
+#: ../data/browser.xml.h:47
+msgid "Ocean Strips"
+msgstr ""
+
+#: ../data/browser.xml.h:48
+msgid "Onyx"
+msgstr ""
+
+#: ../data/browser.xml.h:49
+msgid "Orange"
+msgstr ""
+
+#: ../data/browser.xml.h:50
+msgid "Pale Blue"
+msgstr ""
+
+#: ../data/browser.xml.h:51
+msgid "Purple Marble"
+msgstr ""
+
+#: ../data/browser.xml.h:52
+msgid "Ridged Paper"
+msgstr ""
+
+#: ../data/browser.xml.h:53
+msgid "Rough Paper"
+msgstr ""
+
+#: ../data/browser.xml.h:54
+msgid "Ruby"
+msgstr ""
+
+#: ../data/browser.xml.h:55
+msgid "Sea Foam"
+msgstr ""
+
+#: ../data/browser.xml.h:56
+msgid "Shale"
+msgstr ""
+
+#: ../data/browser.xml.h:57
+msgid "Silver"
+msgstr ""
+
+#: ../data/browser.xml.h:58
+msgid "Sky"
+msgstr ""
+
+#: ../data/browser.xml.h:59
+msgid "Sky Ridge"
+msgstr ""
+
+#: ../data/browser.xml.h:60
+msgid "Snow Ridge"
+msgstr ""
+
+#: ../data/browser.xml.h:61
+msgid "Stucco"
+msgstr ""
+
+#: ../data/browser.xml.h:62
+msgid "Tangerine"
+msgstr ""
+
+#: ../data/browser.xml.h:63
+msgid "Terracotta"
+msgstr ""
+
+#: ../data/browser.xml.h:64
+msgid "Violet"
+msgstr ""
+
+#: ../data/browser.xml.h:65
+msgid "Wavy White"
+msgstr ""
+
+#: ../data/browser.xml.h:66
+msgid "White"
+msgstr ""
+
+#: ../data/browser.xml.h:67
+msgid "White Ribs"
+msgstr ""
+
+#: ../data/browser.xml.h:68
+msgid "_Emblems"
+msgstr ""
+
+#: ../data/browser.xml.h:69
+msgid "_Patterns"
+msgstr ""
+
+#: ../data/nautilus.xml.in.h:1
+#, fuzzy
+msgid "Saved search"
+msgstr "ស្វែងរក"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:1
+msgid ""
+"A list of captions below an icon in the icon view and the desktop. The "
+"actual number of captions shown depends on the zoom level. Possible values "
+"are: \"size\", \"type\", \"date_modified\", \"date_changed\", \"date_accessed"
+"\", \"owner\", \"group\", \"permissions\", \"octal_permissions\" and "
+"\"mime_type\"."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:2
+msgid "Always use the location entry, instead of the pathbar"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:3
+#, fuzzy
+msgid "Computer icon visible on desktop"
+msgstr "រូបតំណាង​ម៉ាស៊ីន​បម្រើ​បណ្តាញ​ដែល​មើល​ឃើញ​លើ​ផ្ទៃតុ"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:4
+msgid "Criteria for search bar searching"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:5
+msgid ""
+"Criteria when matching files searched for in the search bar. If set to "
+"\"search_by_text\", then Nautilus will Search for files by file name only. "
+"If set to \"search_by_text_and_properties\", then Nautilus will search for "
+"files by file name and file properties."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:6
+msgid "Current Nautilus theme (deprecated)"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:7
+msgid "Custom Background Set"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:8
+msgid "Custom Side Pane Background Set"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:9
+msgid "Date Format"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:10
+msgid "Default Background Color"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:11
+msgid "Default Background Filename"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:12
+msgid "Default Side Pane Background Color"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:13
+msgid "Default Side Pane Background Filename"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:14
+msgid "Default column order in the list view"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:15
+msgid "Default column order in the list view."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:16
+#, fuzzy
+msgid "Default folder viewer"
+msgstr "កម្មវិធី​អាន​ព័ត៌មាន​លំនាំដើម"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:17
+msgid "Default icon zoom level"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:18
+msgid "Default list of columns visible in the list view"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:19
+msgid "Default list of columns visible in the list view."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:20
+msgid "Default list zoom level"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:21
+#, fuzzy
+msgid "Default sort order"
+msgstr "កម្មវិធី​អាន​ព័ត៌មាន​លំនាំដើម"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:22
+msgid "Default zoom level used by the icon view."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:23
+msgid "Default zoom level used by the list view."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:24
+msgid "Desktop computer icon name"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:25
+#, fuzzy
+msgid "Desktop font"
+msgstr "ផ្ទៃតុ"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:26
+msgid "Desktop home icon name"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:27
+msgid "Desktop trash icon name"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:28
+msgid "Enable 'special' flags in file preferences dialog"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:29
+msgid "Enables the classic Nautilus behavior, where all windows are browsers"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:30
+msgid ""
+"Filename for the default folder background. Only used if background_set is "
+"true."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:31
+msgid ""
+"Filename for the default side pane background. Only used if "
+"side_pane_background_set is true."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:32
+msgid ""
+"Folders over this size will be truncated to around this size. The purpose of "
+"this is to avoid unintentionally blowing the heap and killing Nautilus on "
+"massive folders. A negative value denotes no limit. The limit is approximate "
+"due to the reading of folders chunk-wise."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:33
+#, fuzzy
+msgid "Home icon visible on desktop"
+msgstr "រូបតំណាង​ម៉ាស៊ីន​បម្រើ​បណ្តាញ​ដែល​មើល​ឃើញ​លើ​ផ្ទៃតុ"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:34
+msgid ""
+"If set to true, Nautilus will only show folders in the tree side pane. "
+"Otherwise it will show both folders and files."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:35
+msgid ""
+"If set to true, newly opened windows will have the location bar visible."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:36
+msgid "If set to true, newly opened windows will have the side pane visible."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:37
+msgid "If set to true, newly opened windows will have the status bar visible."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:38
+msgid "If set to true, newly opened windows will have toolbars visible."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:39
+msgid ""
+"If set to true, then Nautilus browser windows will always use a textual "
+"input entry for the location toolbar, instead of the pathbar."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:40
+msgid ""
+"If set to true, then Nautilus lets you edit some of the more esoteric "
+"options of a file in the file preferences dialog."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:41
+msgid ""
+"If set to true, then Nautilus shows folders prior to showing files in the "
+"icon and list views."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:42
+msgid ""
+"If set to true, then Nautilus will ask for confirmation when you attempt to "
+"put files in the trash."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:43
+msgid "If set to true, then Nautilus will draw the icons on the desktop."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:44
+msgid ""
+"If set to true, then Nautilus will have a feature allowing you to delete a "
+"file immediately and in-place, instead of moving it to the trash. This "
+"feature can be dangerous, so use caution."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:45
+msgid ""
+"If set to true, then Nautilus will use the user's home folder as the "
+"desktop. If it is false, then it will use ~/Desktop as the desktop."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:46
+msgid ""
+"If set to true, then all Nautilus windows will be browser windows. This is "
+"how Nautilus used to behave before version 2.6, and some people prefer this "
+"behavior."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:47
+msgid ""
+"If set to true, then backup files such as those created by Emacs are "
+"displayed. Currently, only files ending in a tilde (~) are considered backup "
+"files."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:48
+msgid ""
+"If set to true, then hidden files are shown in the file manager. Hidden "
+"files are either dotfiles or are listed in the folder's .hidden file."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:49
+msgid ""
+"If this is set to true, an icon linking to the Network Servers view will be "
+"put on the desktop."
+msgstr "ប្រសិនបើ​វា​ពិត រូបតំណាង​តភ្ជាប់​ទៅ​ទិដ្ឋភាព​របស់​ម៉ាស៊ីន​បម្រើ​បណ្តាញ នឹង​ត្រូវ​បានដាក់​លើ​ផ្ទៃតុ ។"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:50
+#, fuzzy
+msgid ""
+"If this is set to true, an icon linking to the computer location will be put "
+"on the desktop."
+msgstr "ប្រសិនបើ​វា​ពិត រូបតំណាង​តភ្ជាប់​ទៅ​ទិដ្ឋភាព​របស់​ម៉ាស៊ីន​បម្រើ​បណ្តាញ នឹង​ត្រូវ​បានដាក់​លើ​ផ្ទៃតុ ។"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:51
+#, fuzzy
+msgid ""
+"If this is set to true, an icon linking to the home folder will be put on "
+"the desktop."
+msgstr "ប្រសិនបើ​វា​ពិត រូបតំណាង​តភ្ជាប់​ទៅ​ទិដ្ឋភាព​របស់​ម៉ាស៊ីន​បម្រើ​បណ្តាញ នឹង​ត្រូវ​បានដាក់​លើ​ផ្ទៃតុ ។"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:52
+#, fuzzy
+msgid ""
+"If this is set to true, an icon linking to the trash will be put on the "
+"desktop."
+msgstr "ប្រសិនបើ​វា​ពិត រូបតំណាង​តភ្ជាប់​ទៅ​ទិដ្ឋភាព​របស់​ម៉ាស៊ីន​បម្រើ​បណ្តាញ នឹង​ត្រូវ​បានដាក់​លើ​ផ្ទៃតុ ។"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:53
+#, fuzzy
+msgid ""
+"If this is set to true, icons linking to mounted volumes will be put on the "
+"desktop."
+msgstr "ប្រសិនបើ​វា​ពិត រូបតំណាង​តភ្ជាប់​ទៅ​ទិដ្ឋភាព​របស់​ម៉ាស៊ីន​បម្រើ​បណ្តាញ នឹង​ត្រូវ​បានដាក់​លើ​ផ្ទៃតុ ។"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:54
+msgid ""
+"If true, files in new windows will be sorted in reverse order. ie, if sorted "
+"by name, then instead of sorting the files from \"a\" to \"z\", they will be "
+"sorted from \"z\" to \"a\"."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:55
+msgid ""
+"If true, files in new windows will be sorted in reverse order. ie, if sorted "
+"by name, then instead of sorting the files from \"a\" to \"z\", they will be "
+"sorted from \"z\" to \"a\"; if sorted by size, instead of being "
+"incrementally they will be sorted decrementally."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:56
+msgid "If true, icons will be laid out tighter by default in new windows."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:57
+msgid ""
+"If true, labels will be placed beside icons rather than underneath them."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:58
+msgid "If true, new windows will use manual layout by default."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:59
+msgid ""
+"Images over this size (in bytes) won't be thumbnailed. The purpose of this "
+"setting is to avoid thumbnailing large images that may take a long time to "
+"load or use lots of memory."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:60
+msgid "List of possible captions on icons"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:61
+msgid "Maximum handled files in a folder"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:62
+msgid "Maximum image size for thumbnailing"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:63
+msgid ""
+"Name of the Nautilus theme to use. This has been deprecated as of Nautilus "
+"2.2. Please use the icon theme instead."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:64
+msgid "Nautilus handles drawing the desktop"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:65
+msgid "Nautilus uses the users home folder as the desktop"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:66
+msgid "Network Servers icon visible on the desktop"
+msgstr "រូបតំណាង​ម៉ាស៊ីន​បម្រើ​បណ្តាញ​ដែល​មើល​ឃើញ​លើ​ផ្ទៃតុ"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:67
+msgid "Only show folders in the tree sidebar"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:68
+msgid ""
+"Possible values are \"single\" to launch files on a single click, or \"double"
+"\" to launch them on a double click."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:69
+msgid "Put labels beside icons"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:70
+msgid "Reverse sort order in new windows"
+msgstr ""
+
+#. Translators: please note this can choose the size. e.g.
+#. "Sans 15". Please do not change "Sans", only change the size if you need to. In
+#. most cases, this should be left alone.
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:74
+msgid "Sans 10"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:75
+msgid "Show folders first in windows"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:76
+msgid "Show location bar in new windows"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:77
+msgid "Show mounted volumes on the desktop"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:78
+msgid "Show side pane in new windows"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:79
+msgid "Show status bar in new windows"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:80
+msgid "Show toolbar in new windows"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:81
+msgid "Side pane view"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:82
+msgid ""
+"Speed tradeoff for when to preview a sound file when mousing over a files "
+"icon. If set to \"always\" then always plays the sound, even if the file is "
+"on a remote server. If set to \"local_only\" then only plays previews on "
+"local file systems. If set to \"never\" then it never previews sound."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:83
+msgid ""
+"Speed tradeoff for when to show a preview of text file contents in the "
+"file's icon. If set to \"always\" then always show previews, even if the "
+"folder is on a remote server. If set to \"local_only\" then only show "
+"previews for local file systems. If set to \"never\" then never bother to "
+"read preview data."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:84
+msgid ""
+"Speed tradeoff for when to show an image file as a thumbnail. If set to "
+"\"always\" then always thumbnail, even if the folder is on a remote server. "
+"If set to \"local_only\" then only show thumbnails for local file systems. "
+"If set to \"never\" then never bother to thumbnail images, just use a "
+"generic icon."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:85
+msgid ""
+"Speed tradeoff for when to show the number of items in a folder. If set to "
+"\"always\" then always show item counts, even if the folder is on a remote "
+"server. If set to \"local_only\" then only show counts for local file "
+"systems. If set to \"never\" then never bother to compute item counts."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:86
+msgid ""
+"The default sort-order for items in the icon view. Possible values are \"name"
+"\", \"size\", \"type\", \"modification_date\", and \"emblems\"."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:87
+msgid ""
+"The default sort-order for the items in the list view. Possible values are "
+"\"name\", \"size\", \"type\", and \"modification_date\"."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:88
+msgid "The default width of the side pane in new windows."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:89
+msgid "The font description used for the icons on the desktop."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:90
+msgid ""
+"The format of file dates. Possible values are \"locale\", \"iso\", and "
+"\"informal\"."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:91
+msgid "The side pane view to show in newly opened windows."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:92
+msgid ""
+"This name can be set if you want a custom name for the computer icon on the "
+"desktop."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:93
+msgid ""
+"This name can be set if you want a custom name for the home icon on the "
+"desktop."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:94
+msgid ""
+"This name can be set if you want a custom name for the trash icon on the "
+"desktop."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:95
+#, fuzzy
+msgid "Trash icon visible on desktop"
+msgstr "រូបតំណាង​ម៉ាស៊ីន​បម្រើ​បណ្តាញ​ដែល​មើល​ឃើញ​លើ​ផ្ទៃតុ"
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:96
+msgid "Type of click used to launch/open files"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:97
+msgid "Use manual layout in new windows"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:98
+msgid "Use tighter layout in new windows"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:99
+msgid "What to do with executable text files when activated"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:100
+msgid ""
+"What to do with executable text files when they are activated (single or "
+"double clicked). Possible values are \"launch\" to launch them as programs, "
+"\"ask\" to ask what to do via a dialog, and \"display\" to display them as "
+"text files."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:101
+msgid ""
+"When a folder is visited this viewer is used unless you have selected "
+"another view for that particular folder. Possible values are \"list_view\" "
+"and \"icon_view\"."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:102
+msgid "When to show number of items in a folder"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:103
+msgid "When to show preview text in icons"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:104
+msgid "When to show thumbnails of image files"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:105
+msgid "Whether a custom default folder background has been set."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:106
+msgid "Whether a custom default side pane background has been set."
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:107
+msgid "Whether to ask for confirmation when moving files to trash"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:108
+msgid "Whether to enable immediate deletion"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:109
+msgid "Whether to preview sounds when mousing over an icon"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:110
+msgid "Whether to show backup files"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:111
+msgid "Whether to show hidden files"
+msgstr ""
+
+#: ../libnautilus-private/apps_nautilus_preferences.schemas.in.h:112
+msgid "Width of the side pane"
+msgstr ""
+
+#. name, stock id
+#. label, accelerator
+#: ../libnautilus-private/nautilus-clipboard.c:442
+msgid "Cut the selected text to the clipboard"
+msgstr ""
+
+#. name, stock id
+#. label, accelerator
+#: ../libnautilus-private/nautilus-clipboard.c:446
+msgid "Copy the selected text to the clipboard"
+msgstr ""
+
+#. name, stock id
+#. label, accelerator
+#: ../libnautilus-private/nautilus-clipboard.c:450
+msgid "Paste the text stored on the clipboard"
+msgstr ""
+
+#. name, stock id
+#: ../libnautilus-private/nautilus-clipboard.c:453
+#: ../src/file-manager/fm-directory-view.c:6662
+msgid "Select _All"
+msgstr ""
+
+#. label, accelerator
+#: ../libnautilus-private/nautilus-clipboard.c:454
+msgid "Select all the text in a text field"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-chooser.c:394
+msgid "Move _Up"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-chooser.c:404
+msgid "Move Dow_n"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-chooser.c:413
+msgid "_Show"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-chooser.c:423
+msgid "Hi_de"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-chooser.c:436
+#, fuzzy
+msgid "Use De_fault"
+msgstr "(លំនាំដើម​របស់​ប្រព័ន្ធ)"
+
+#: ../libnautilus-private/nautilus-column-utilities.c:43
+#: ../src/file-manager/fm-list-view.c:1310
+msgid "Name"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:44
+msgid "The name and icon of the file."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:50
+msgid "Size"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:51
+msgid "The size of the file."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:58
+msgid "Type"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:59
+msgid "The type of the file."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:65
+msgid "Date Modified"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:66
+msgid "The date the file was modified."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:73
+msgid "Date Accessed"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:74
+msgid "The date the file was accessed."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:81
+msgid "Owner"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:82
+msgid "The owner of the file."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:89
+msgid "Group"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:90
+msgid "The group of the file."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:97
+#: ../src/file-manager/fm-properties-window.c:2912
+#, fuzzy
+msgid "Permissions"
+msgstr "ផ្ទាល់ខ្លួន"
+
+#: ../libnautilus-private/nautilus-column-utilities.c:98
+#, fuzzy
+msgid "The permissions of the file."
+msgstr ""
+"សិទ្ធិ​មិន​គ្រប់គ្រាន់​ដើម្បី​រក្សាទុក​ឯកសារ​ទៅ​ក្នុង ៖\n"
+"%s"
+
+#: ../libnautilus-private/nautilus-column-utilities.c:105
+msgid "Octal Permissions"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:106
+msgid "The permissions of the file, in octal notation."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:113
+msgid "MIME Type"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-column-utilities.c:114
+msgid "The mime type of the file."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-customization-data.c:404
+msgid "Reset"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-desktop-directory-file.c:443
+#: ../libnautilus-private/nautilus-desktop-icon-file.c:163
+#: ../libnautilus-private/nautilus-trash-file.c:691
+#, fuzzy
+msgid "on the desktop"
+msgstr "រូបរាង​របស់​ផ្ទៃតុ"
+
+#: ../libnautilus-private/nautilus-desktop-link-monitor.c:115
+#, c-format
+msgid "You cannot move the volume \"%s\" to the trash."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-desktop-link-monitor.c:125
+msgid ""
+"If you want to eject the volume, please use \"Eject\" in the popup menu of "
+"the volume."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-desktop-link-monitor.c:134
+msgid ""
+"If you want to unmount the volume, please use \"Unmount Volume\" in the "
+"popup menu of the volume."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-desktop-link.c:180
+#: ../src/network-scheme.desktop.in.h:1
+#, fuzzy
+msgid "Network Servers"
+msgstr "ប្រូកស៊ី​បណ្តាញ"
+
+#: ../libnautilus-private/nautilus-dnd.c:640
+msgid "_Move Here"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-dnd.c:645
+msgid "_Copy Here"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-dnd.c:650
+msgid "_Link Here"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-dnd.c:655
+msgid "Set as _Background"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-dnd.c:664
+#: ../libnautilus-private/nautilus-dnd.c:719
+msgid "Cancel"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-dnd.c:705
+msgid "Set as background for _all folders"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-dnd.c:710
+msgid "Set as background for _this folder"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-emblem-utils.c:197
+#: ../libnautilus-private/nautilus-emblem-utils.c:202
+#: ../libnautilus-private/nautilus-emblem-utils.c:257
+#: ../libnautilus-private/nautilus-emblem-utils.c:274
+#, fuzzy
+msgid "The emblem cannot be installed."
+msgstr "ឈ្មោះ​ចែក​រំលែក​មិន​អាច​ទទេ​ឡើយ"
+
+#: ../libnautilus-private/nautilus-emblem-utils.c:198
+msgid "Sorry, but you must specify a non-blank keyword for the new emblem."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-emblem-utils.c:203
+msgid ""
+"Sorry, but emblem keywords can only contain letters, spaces and numbers."
+msgstr ""
+
+#. this really should never happen, as a user has no idea
+#. * what a keyword is, and people should be passing a unique
+#. * keyword to us anyway
+#.
+#: ../libnautilus-private/nautilus-emblem-utils.c:213
+#, c-format
+msgid "Sorry, but there is already an emblem named \"%s\"."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-emblem-utils.c:214
+msgid "Please choose a different emblem name."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-emblem-utils.c:258
+msgid "Sorry, unable to save custom emblem."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-emblem-utils.c:275
+msgid "Sorry, unable to save custom emblem name."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations-progress.c:169
+#, c-format
+msgid "%s %ld of %ld %s"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations-progress.c:448
+#, c-format
+msgid "(%d:%02d:%d Remaining)"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations-progress.c:453
+#, c-format
+msgid "(%d:%02d Remaining)"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:449
+#: ../libnautilus-private/nautilus-file-operations.c:478
+#: ../libnautilus-private/nautilus-file-utilities.c:87
+#: ../src/nautilus-connect-server-dialog.c:293
+#, c-format
+msgid "%s on %s"
+msgstr ""
+
+#. "From" dialog label, source path gets placed next to it in the dialog
+#: ../libnautilus-private/nautilus-file-operations.c:460
+msgid "From:"
+msgstr ""
+
+#. "To" dialog label, source path gets placed next to it in the dialog
+#: ../libnautilus-private/nautilus-file-operations.c:487
+msgid "To:"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:673
+#: ../libnautilus-private/nautilus-file-operations.c:721
+#: ../libnautilus-private/nautilus-file-operations.c:726
+#: ../libnautilus-private/nautilus-file-operations.c:736
+msgid "Error while moving."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:674
+#, c-format
+msgid "\"%s\" cannot be moved because it is on a read-only disk."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:684
+#: ../libnautilus-private/nautilus-file-operations.c:690
+msgid "Error while deleting."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:685
+#, c-format
+msgid ""
+"\"%s\" cannot be deleted because you do not have permissions to modify its "
+"parent folder."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:691
+#, c-format
+msgid "\"%s\" cannot be deleted because it is on a read-only disk."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:722
+#, c-format
+msgid ""
+"\"%s\" cannot be moved because you do not have permissions to change it or "
+"its parent folder."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:727
+#, c-format
+msgid ""
+"Cannot move \"%s\" because it or its parent folder are contained in the "
+"destination."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:737
+#, c-format
+msgid ""
+"Cannot move \"%s\" to the trash because you do not have permissions to "
+"change it or its parent folder."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:759
+msgid "Error while copying."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:760
+#, c-format
+msgid "\"%s\" cannot be copied because you do not have permissions to read it."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:780
+#: ../libnautilus-private/nautilus-file-operations.c:801
+#: ../libnautilus-private/nautilus-file-operations.c:805
+#, fuzzy, c-format
+msgid "Error while copying to \"%s\"."
+msgstr "មាន​កំហុស ខណៈពេល​យក​ព័ត៌មាន​ចែករំលែក ៖ %s"
+
+#: ../libnautilus-private/nautilus-file-operations.c:781
+#: ../libnautilus-private/nautilus-file-operations.c:786
+#: ../libnautilus-private/nautilus-file-operations.c:790
+msgid "There is not enough space on the destination."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:785
+#, fuzzy, c-format
+msgid "Error while moving to \"%s\"."
+msgstr "មាន​កំហុស ខណៈពេល​យក​ព័ត៌មាន​ចែករំលែក ៖ %s"
+
+#: ../libnautilus-private/nautilus-file-operations.c:789
+#, fuzzy, c-format
+msgid "Error while creating link in \"%s\"."
+msgstr "មាន​កំហុស ខណៈពេល​យក​ព័ត៌មាន​ចែករំលែក ៖ %s"
+
+#: ../libnautilus-private/nautilus-file-operations.c:802
+#: ../libnautilus-private/nautilus-file-operations.c:813
+#: ../libnautilus-private/nautilus-file-operations.c:824
+#, fuzzy
+msgid "You do not have permissions to write to this folder."
+msgstr "អនុញ្ញាត​ឲ្យ​អ្នក​ផ្សេង​សរសេរ​ទៅ​កាន់​ថត​នេះ"
+
+#: ../libnautilus-private/nautilus-file-operations.c:806
+#: ../libnautilus-private/nautilus-file-operations.c:817
+#: ../libnautilus-private/nautilus-file-operations.c:828
+msgid "The destination disk is read-only."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:812
+#: ../libnautilus-private/nautilus-file-operations.c:816
+#, fuzzy, c-format
+msgid "Error while moving items to \"%s\"."
+msgstr "មាន​កំហុស ខណៈពេល​យក​ព័ត៌មាន​ចែករំលែក ៖ %s"
+
+#: ../libnautilus-private/nautilus-file-operations.c:823
+#: ../libnautilus-private/nautilus-file-operations.c:827
+#, fuzzy, c-format
+msgid "Error while creating links in \"%s\"."
+msgstr "មាន​កំហុស ខណៈពេល​យក​ព័ត៌មាន​ចែករំលែក ៖ %s"
+
+#: ../libnautilus-private/nautilus-file-operations.c:855
+#, c-format
+msgid "Error \"%s\" while copying \"%s\"."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:856
+#: ../libnautilus-private/nautilus-file-operations.c:860
+#: ../libnautilus-private/nautilus-file-operations.c:864
+#: ../libnautilus-private/nautilus-file-operations.c:870
+#: ../libnautilus-private/nautilus-file-operations.c:885
+#: ../libnautilus-private/nautilus-file-operations.c:889
+#: ../libnautilus-private/nautilus-file-operations.c:893
+#: ../libnautilus-private/nautilus-file-operations.c:899
+msgid "Would you like to continue?"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:859
+#, c-format
+msgid "Error \"%s\" while moving \"%s\"."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:863
+#, fuzzy, c-format
+msgid "Error \"%s\" while creating a link to \"%s\"."
+msgstr "មាន​កំហុស ខណៈពេល​យក​ព័ត៌មាន​ចែករំលែក ៖ %s"
+
+#: ../libnautilus-private/nautilus-file-operations.c:869
+#, c-format
+msgid "Error \"%s\" while deleting \"%s\"."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:884
+#, c-format
+msgid "Error \"%s\" while copying."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:888
+#, c-format
+msgid "Error \"%s\" while moving."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:892
+#, c-format
+msgid "Error \"%s\" while linking."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:898
+#, c-format
+msgid "Error \"%s\" while deleting."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1031
+#: ../libnautilus-private/nautilus-file-operations.c:1048
+msgid "_Retry"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1048
+#: ../libnautilus-private/nautilus-file-operations.c:1198
+#: ../libnautilus-private/nautilus-file-operations.c:1216
+msgid "_Skip"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1138
+#, fuzzy, c-format
+msgid "Could not move \"%s\" to the new location."
+msgstr "ទៅ​កាន់​ទីតាំង​បណ្តាញ"
+
+#: ../libnautilus-private/nautilus-file-operations.c:1141
+msgid ""
+"The name is already used for a special item that cannot be removed or "
+"replaced.  If you still want to move the item, rename it and try again."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1145
+#, fuzzy, c-format
+msgid "Could not copy \"%s\" to the new location."
+msgstr "ទៅ​កាន់​ទីតាំង​បណ្តាញ"
+
+#: ../libnautilus-private/nautilus-file-operations.c:1148
+msgid ""
+"The name is already used for a special item that cannot be removed or "
+"replaced.  If you still want to copy the item, rename it and try again."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1172
+#, c-format
+msgid "The folder \"%s\" already exists.  Would you like to replace it?"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1175
+#, c-format
+msgid "The file \"%s\" already exists.  Would you like to replace it?"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1183
+msgid ""
+"If you replace the existing folder, any files in it that conflict with the "
+"files being copied will be overwritten."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1185
+msgid "If you replace an existing file, its contents will be overwritten."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1198
+#: ../libnautilus-private/nautilus-file-operations.c:1216
+msgid "_Replace"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1216
+msgid "S_kip All"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1216
+msgid "Replace _All"
+msgstr ""
+
+#. appended to new link file
+#. Note to localizers: convert file type string for file
+#. * (e.g. "folder", "plain text") to file type for symbolic link
+#. * to that kind of file (e.g. "link to folder").
+#.
+#: ../libnautilus-private/nautilus-file-operations.c:1288
+#: ../libnautilus-private/nautilus-file.c:4747
+#: ../src/file-manager/fm-directory-view.c:9416
+#, c-format
+msgid "link to %s"
+msgstr ""
+
+#. appended to new link file
+#: ../libnautilus-private/nautilus-file-operations.c:1292
+#, c-format
+msgid "another link to %s"
+msgstr ""
+
+#. Localizers: Feel free to leave out the "st" suffix
+#. * if there's no way to do that nicely for a
+#. * particular language.
+#.
+#: ../libnautilus-private/nautilus-file-operations.c:1308
+#, c-format
+msgid "%dst link to %s"
+msgstr ""
+
+#. appended to new link file
+#: ../libnautilus-private/nautilus-file-operations.c:1312
+#, c-format
+msgid "%dnd link to %s"
+msgstr ""
+
+#. appended to new link file
+#: ../libnautilus-private/nautilus-file-operations.c:1316
+#, c-format
+msgid "%drd link to %s"
+msgstr ""
+
+#. appended to new link file
+#: ../libnautilus-private/nautilus-file-operations.c:1320
+#, c-format
+msgid "%dth link to %s"
+msgstr ""
+
+#. Localizers:
+#. * Feel free to leave out the st, nd, rd and th suffix or
+#. * make some or all of them match.
+#.
+#. localizers: tag used to detect the first copy of a file
+#: ../libnautilus-private/nautilus-file-operations.c:1341
+msgid " (copy)"
+msgstr ""
+
+#. localizers: tag used to detect the second copy of a file
+#: ../libnautilus-private/nautilus-file-operations.c:1343
+msgid " (another copy)"
+msgstr ""
+
+#. localizers: tag used to detect the x11th copy of a file
+#. localizers: tag used to detect the x12th copy of a file
+#. localizers: tag used to detect the x13th copy of a file
+#. localizers: tag used to detect the xxth copy of a file
+#: ../libnautilus-private/nautilus-file-operations.c:1346
+#: ../libnautilus-private/nautilus-file-operations.c:1348
+#: ../libnautilus-private/nautilus-file-operations.c:1350
+#: ../libnautilus-private/nautilus-file-operations.c:1360
+msgid "th copy)"
+msgstr ""
+
+#. localizers: tag used to detect the x1st copy of a file
+#: ../libnautilus-private/nautilus-file-operations.c:1353
+msgid "st copy)"
+msgstr ""
+
+#. localizers: tag used to detect the x2nd copy of a file
+#: ../libnautilus-private/nautilus-file-operations.c:1355
+msgid "nd copy)"
+msgstr ""
+
+#. localizers: tag used to detect the x3rd copy of a file
+#: ../libnautilus-private/nautilus-file-operations.c:1357
+msgid "rd copy)"
+msgstr ""
+
+#. localizers: appended to first file copy
+#: ../libnautilus-private/nautilus-file-operations.c:1374
+#, c-format
+msgid "%s (copy)%s"
+msgstr ""
+
+#. localizers: appended to second file copy
+#: ../libnautilus-private/nautilus-file-operations.c:1376
+#, c-format
+msgid "%s (another copy)%s"
+msgstr ""
+
+#. localizers: appended to x11th file copy
+#. localizers: appended to x12th file copy
+#. localizers: appended to x13th file copy
+#. localizers: appended to xxth file copy
+#: ../libnautilus-private/nautilus-file-operations.c:1379
+#: ../libnautilus-private/nautilus-file-operations.c:1381
+#: ../libnautilus-private/nautilus-file-operations.c:1383
+#: ../libnautilus-private/nautilus-file-operations.c:1392
+#, c-format
+msgid "%s (%dth copy)%s"
+msgstr ""
+
+#. localizers: appended to x1st file copy
+#: ../libnautilus-private/nautilus-file-operations.c:1386
+#, c-format
+msgid "%s (%dst copy)%s"
+msgstr ""
+
+#. localizers: appended to x2nd file copy
+#: ../libnautilus-private/nautilus-file-operations.c:1388
+#, c-format
+msgid "%s (%dnd copy)%s"
+msgstr ""
+
+#. localizers: appended to x3rd file copy
+#: ../libnautilus-private/nautilus-file-operations.c:1390
+#, c-format
+msgid "%s (%drd copy)%s"
+msgstr ""
+
+#. localizers: opening parentheses to match the "th copy)" string
+#: ../libnautilus-private/nautilus-file-operations.c:1490
+msgid " ("
+msgstr ""
+
+#. localizers: opening parentheses of the "th copy)" string
+#: ../libnautilus-private/nautilus-file-operations.c:1498
+#, c-format
+msgid " (%d"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:1694
+#: ../libnautilus-private/nautilus-file-operations.c:2304
+#: ../libnautilus-private/nautilus-file-operations.c:2487
+#, c-format
+msgid "Unknown GnomeVFSXferProgressStatus %d"
+msgstr ""
+
+#. localizers: progress dialog title
+#: ../libnautilus-private/nautilus-file-operations.c:2040
+msgid "Moving files to the Trash"
+msgstr ""
+
+#. localizers: label prepended to the progress count
+#: ../libnautilus-private/nautilus-file-operations.c:2042
+msgid "Throwing out file:"
+msgstr ""
+
+#. localizers: label prepended to the name of the current file moved
+#: ../libnautilus-private/nautilus-file-operations.c:2044
+#: ../libnautilus-private/nautilus-file-operations.c:2055
+msgid "Moving"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2045
+msgid "Preparing to Move to Trash..."
+msgstr ""
+
+#. localizers: progress dialog title
+#: ../libnautilus-private/nautilus-file-operations.c:2051
+msgid "Moving files"
+msgstr ""
+
+#. localizers: label prepended to the progress count
+#: ../libnautilus-private/nautilus-file-operations.c:2053
+msgid "Moving file:"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2056
+msgid "Preparing To Move..."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2057
+msgid "Finishing Move..."
+msgstr ""
+
+#. localizers: progress dialog title
+#: ../libnautilus-private/nautilus-file-operations.c:2065
+msgid "Creating links to files"
+msgstr ""
+
+#. localizers: label prepended to the progress count
+#: ../libnautilus-private/nautilus-file-operations.c:2067
+msgid "Linking file:"
+msgstr ""
+
+#. localizers: label prepended to the name of the current file linked
+#: ../libnautilus-private/nautilus-file-operations.c:2069
+msgid "Linking"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2070
+msgid "Preparing to Create Links..."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2071
+msgid "Finishing Creating Links..."
+msgstr ""
+
+#. localizers: progress dialog title
+#: ../libnautilus-private/nautilus-file-operations.c:2077
+msgid "Copying files"
+msgstr ""
+
+#. localizers: label prepended to the progress count
+#: ../libnautilus-private/nautilus-file-operations.c:2079
+msgid "Copying file:"
+msgstr ""
+
+#. localizers: label prepended to the name of the current file copied
+#: ../libnautilus-private/nautilus-file-operations.c:2081
+msgid "Copying"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2082
+msgid "Preparing To Copy..."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2100
+msgid "You cannot copy items into the trash."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2101
+msgid "You cannot create links inside the trash."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2102
+msgid "Files and folders can only be moved into the trash."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2125
+msgid "You cannot move this trash folder."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2126
+msgid "You cannot copy this trash folder."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2127
+msgid "A trash folder is used for storing items moved to the trash."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2151
+msgid "You cannot move a folder into itself."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2152
+msgid "You cannot copy a folder into itself."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2153
+msgid "The destination folder is inside the source folder."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2166
+msgid "You cannot copy a file over itself."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2167
+msgid "The destination and source are the same file."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2222
+#: ../libnautilus-private/nautilus-file-operations.c:2382
+msgid "You do not have permissions to write to the destination."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2224
+#: ../libnautilus-private/nautilus-file-operations.c:2384
+msgid "There is no space on the destination."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2226
+#, c-format
+msgid "Error \"%s\" creating new folder."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2231
+msgid "Error creating new folder."
+msgstr ""
+
+#. localizers: the initial name of a new folder
+#: ../libnautilus-private/nautilus-file-operations.c:2328
+msgid "untitled folder"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2386
+#, c-format
+msgid "Error \"%s\" creating new document."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2391
+msgid "Error creating new document."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2618
+msgid "new file"
+msgstr ""
+
+#. localizers: progress dialog title
+#: ../libnautilus-private/nautilus-file-operations.c:2684
+msgid "Deleting files"
+msgstr ""
+
+#. localizers: label prepended to the progress count
+#: ../libnautilus-private/nautilus-file-operations.c:2686
+#: ../libnautilus-private/nautilus-file-operations.c:2721
+msgid "Files deleted:"
+msgstr ""
+
+#. localizers: label prepended to the name of the current file deleted
+#: ../libnautilus-private/nautilus-file-operations.c:2688
+#: ../libnautilus-private/nautilus-file-operations.c:2723
+msgid "Deleting"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2689
+msgid "Preparing to Delete files..."
+msgstr ""
+
+#. localizers: progress dialog title
+#: ../libnautilus-private/nautilus-file-operations.c:2719
+msgid "Emptying the Trash"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2724
+msgid "Preparing to Empty the Trash..."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2760
+msgid "Empty all of the items from the trash?"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2763
+msgid ""
+"If you choose to empty the trash, all items in it will be permanently lost. "
+"Please note that you can also delete them separately."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-operations.c:2785
+msgid "_Empty Trash"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-utilities.c:75
+#: ../libnautilus-private/nautilus-search-directory-file.c:173
+#: ../libnautilus-private/nautilus-search-directory-file.c:188
+#: ../libnautilus-private/nautilus-search-directory-file.c:210
+msgid "Search"
+msgstr "ស្វែងរក"
+
+#: ../libnautilus-private/nautilus-file-utilities.c:520
+#: ../libnautilus-private/nautilus-global-preferences.c:522
+#: ../nautilus-computer.desktop.in.h:1
+msgid "Computer"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-utilities.c:522
+#, fuzzy
+msgid "Network"
+msgstr "បណ្តាញ"
+
+#: ../libnautilus-private/nautilus-file-utilities.c:524
+msgid "Fonts"
+msgstr "ពុម្ពអក្សរ"
+
+#: ../libnautilus-private/nautilus-file-utilities.c:526
+msgid "Themes"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-utilities.c:528
+msgid "CD/DVD Creator"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file-utilities.c:530
+#, fuzzy
+msgid "Windows Network"
+msgstr "បណ្តាញ"
+
+#. translators: this is the title of the "dns-sd:///" location
+#: ../libnautilus-private/nautilus-file-utilities.c:533
+msgid "Services in"
+msgstr ""
+
+#. Today, use special word.
+#. * strftime patterns preceeded with the widest
+#. * possible resulting string for that pattern.
+#. *
+#. * Note to localizers: You can look at man strftime
+#. * for details on the format, but you should only use
+#. * the specifiers from the C standard, not extensions.
+#. * These include "%" followed by one of
+#. * "aAbBcdHIjmMpSUwWxXyYZ". There are two extensions
+#. * in the Nautilus version of strftime that can be
+#. * used (and match GNU extensions). Putting a "-"
+#. * between the "%" and any numeric directive will turn
+#. * off zero padding, and putting a "_" there will use
+#. * space padding instead of zero padding.
+#.
+#: ../libnautilus-private/nautilus-file.c:2922
+msgid "today at 00:00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2923
+#: ../src/nautilus-file-management-properties.c:460
+msgid "today at %-I:%M:%S %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2925
+msgid "today at 00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2926
+msgid "today at %-I:%M %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2928
+msgid "today, 00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2929
+msgid "today, %-I:%M %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2931
+#: ../libnautilus-private/nautilus-file.c:2932
+msgid "today"
+msgstr ""
+
+#. Yesterday, use special word.
+#. * Note to localizers: Same issues as "today" string.
+#.
+#: ../libnautilus-private/nautilus-file.c:2941
+msgid "yesterday at 00:00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2942
+msgid "yesterday at %-I:%M:%S %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2944
+msgid "yesterday at 00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2945
+msgid "yesterday at %-I:%M %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2947
+msgid "yesterday, 00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2948
+msgid "yesterday, %-I:%M %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2950
+#: ../libnautilus-private/nautilus-file.c:2951
+msgid "yesterday"
+msgstr ""
+
+#. Current week, include day of week.
+#. * Note to localizers: Same issues as "today" string.
+#. * The width measurement templates correspond to
+#. * the day/month name with the most letters.
+#.
+#: ../libnautilus-private/nautilus-file.c:2962
+msgid "Wednesday, September 00 0000 at 00:00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2963
+msgid "%A, %B %-d %Y at %-I:%M:%S %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2965
+msgid "Mon, Oct 00 0000 at 00:00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2966
+msgid "%a, %b %-d %Y at %-I:%M:%S %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2968
+msgid "Mon, Oct 00 0000 at 00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2969
+msgid "%a, %b %-d %Y at %-I:%M %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2971
+msgid "Oct 00 0000 at 00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2972
+msgid "%b %-d %Y at %-I:%M %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2974
+msgid "Oct 00 0000, 00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2975
+msgid "%b %-d %Y, %-I:%M %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2977
+msgid "00/00/00, 00:00 PM"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2978
+msgid "%m/%-d/%y, %-I:%M %p"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2980
+msgid "00/00/00"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:2981
+msgid "%m/%d/%y"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:4264
+#: ../src/file-manager/fm-directory-view.c:2214
+#, c-format
+msgid "%u item"
+msgid_plural "%u items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libnautilus-private/nautilus-file.c:4265
+#, c-format
+msgid "%u folder"
+msgid_plural "%u folders"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libnautilus-private/nautilus-file.c:4266
+#, c-format
+msgid "%u file"
+msgid_plural "%u files"
+msgstr[0] ""
+msgstr[1] ""
+
+#. FIXME: We should use GNOME_VFS_SIZE_FORMAT_STR instead of the explicit format here.
+#: ../libnautilus-private/nautilus-file.c:4344
+#, c-format
+msgid "%s (%lld bytes)"
+msgstr ""
+
+#. This means no contents at all were readable
+#: ../libnautilus-private/nautilus-file.c:4640
+#: ../libnautilus-private/nautilus-file.c:4656
+msgid "? items"
+msgstr ""
+
+#. This means no contents at all were readable
+#: ../libnautilus-private/nautilus-file.c:4646
+msgid "? bytes"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:4661
+msgid "unknown type"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:4664
+msgid "unknown MIME type"
+msgstr ""
+
+#. Fallback, use for both unknown attributes and attributes
+#. * for which we have no more appropriate default.
+#.
+#: ../libnautilus-private/nautilus-file.c:4670
+#: ../src/file-manager/fm-properties-window.c:1283
+msgid "unknown"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:4703
+msgid "program"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:4721
+msgid ""
+"Can't find description even for \"x-directory/normal\". This probably means "
+"that your gnome-vfs.keys file is in the wrong place or isn't being found for "
+"some other reason."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:4725
+#, c-format
+msgid ""
+"No description found for mime type \"%s\" (file is \"%s\"), please tell the "
+"gnome-vfs mailing list."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:4741
+msgid "link"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:4761
+msgid "link (broken)"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-file.c:6258
+#: ../libnautilus-private/nautilus-global-preferences.c:528
+#: ../libnautilus-private/nautilus-trash-directory.c:353
+msgid "Trash"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:70
+msgid "_Always"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:71
+msgid "_Local File Only"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:72
+msgid "_Never"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:78
+#, no-c-format
+msgid "25%"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:80
+#, no-c-format
+msgid "50%"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:82
+#, no-c-format
+msgid "75%"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:84
+#, no-c-format
+msgid "100%"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:86
+#, no-c-format
+msgid "150%"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:88
+#, no-c-format
+msgid "200%"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:90
+#, no-c-format
+msgid "400%"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:95
+msgid "100 K"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:96
+msgid "500 K"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:97
+msgid "1 MB"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:98
+msgid "3 MB"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:99
+msgid "5 MB"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:100
+msgid "10 MB"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:101
+msgid "100 MB"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:107
+msgid "Activate items with a _single click"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:111
+msgid "Activate items with a _double click"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:119
+msgid "E_xecute files when they are clicked"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:123
+msgid "Display _files when they are clicked"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:127
+#: ../src/nautilus-file-management-properties.glade.h:64
+msgid "_Ask each time"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:135
+#, fuzzy
+msgid "Search for files by file name only"
+msgstr "ស្វែងរក​ឯកសារ"
+
+#: ../libnautilus-private/nautilus-global-preferences.c:139
+msgid "Search for files by file name and file properties"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:146
+#: ../src/file-manager/fm-icon-container.c:506
+msgid "Icon View"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:147
+#: ../src/file-manager/fm-list-view.c:1363
+msgid "List View"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:152
+msgid "Manually"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:154
+msgid "By Name"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:155
+msgid "By Size"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:156
+msgid "By Type"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:157
+msgid "By Modification Date"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:158
+msgid "By Emblems"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:163
+msgid "8"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:164
+msgid "10"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:165
+msgid "12"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:166
+msgid "14"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:167
+msgid "16"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:168
+msgid "18"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:169
+msgid "20"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:170
+msgid "22"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-global-preferences.c:171
+msgid "24"
+msgstr ""
+
+#. Note to translators: If it's hard to compose a good home
+#. * icon name from the user name, you can use a string without
+#. * an "%s" here, in which case the home icon name will not
+#. * include the user's name, which should be fine. To avoid a
+#. * warning, put "%.0s" somewhere in the string, which will
+#. * match the user name string passed by the C code, but not
+#. * put the user name in the final string.
+#.
+#: ../libnautilus-private/nautilus-global-preferences.c:516
+#, fuzzy, c-format
+msgid "%s's Home"
+msgstr "ផ្ទះ"
+
+#: ../libnautilus-private/nautilus-icon-container.c:2117
+msgid "The selection rectangle"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-icon-container.c:4792
+#, fuzzy
+msgid "Normal Alpha"
+msgstr "ធម្មតា"
+
+#: ../libnautilus-private/nautilus-icon-container.c:4793
+msgid "Opacity of the normal icons if frame_text is set"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-icon-dnd.c:790
+msgid "Switch to Manual Layout?"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:136
+msgid "Open Failed, would you like to choose another application?"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:137
+#, c-format
+msgid ""
+"\"%s\" can't open \"%s\" because \"%s\" can't access files at \"%s\" "
+"locations."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:142
+msgid "Open Failed, would you like to choose another action?"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:143
+#, c-format
+msgid ""
+"The default action can't open \"%s\" because it can't access files at \"%s\" "
+"locations."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:168
+#, c-format
+msgid ""
+"\"%s\" can't open \"%s\" because \"%s\" can't access files at \"%s\"."
+"locations."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:171
+msgid ""
+"No other applications are available to view this file.  If you copy this "
+"file onto your computer, you may be able to open it."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:175
+#, c-format
+msgid ""
+"The default action can't open \"%s\" because it can't access files at \"%s\"."
+"locations."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:177
+msgid ""
+"No other actions are available to view this file.  If you copy this file "
+"onto your computer, you may be able to open it."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:491
+#: ../libnautilus-private/nautilus-program-choosing.c:733
+#, c-format
+msgid "Opening %s"
+msgstr ""
+
+#. TODO: These strings suck pretty badly, but we're in string-freeze,
+#. * and I found these in other places to reuse. We should make them
+#. * better later.
+#. Shouldn't have gotten this error unless there's a : separator.
+#: ../libnautilus-private/nautilus-program-choosing.c:579
+#: ../libnautilus-private/nautilus-program-choosing.c:590
+#: ../libnautilus-private/nautilus-program-choosing.c:598
+#: ../libnautilus-private/nautilus-program-choosing.c:603
+#: ../src/nautilus-window-manage-views.c:1417
+#: ../src/nautilus-window-manage-views.c:1423
+#: ../src/nautilus-window-manage-views.c:1451
+#: ../src/nautilus-window-manage-views.c:1459
+#: ../src/nautilus-window-manage-views.c:1465
+#: ../src/nautilus-window-manage-views.c:1486
+#, c-format
+msgid "Couldn't display \"%s\"."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:592
+#: ../libnautilus-private/nautilus-program-choosing.c:915
+#: ../libnautilus-private/nautilus-program-choosing.c:983
+#, fuzzy
+msgid "There was an error launching the application."
+msgstr "មាន​កំហុស​មួយ​បាន​កើតឡើង ខណៈពេល​យក​ព័ត៌មាន​ចែក​រំលែក"
+
+#: ../libnautilus-private/nautilus-program-choosing.c:600
+#: ../src/nautilus-window-manage-views.c:1461
+msgid "The attempt to log in failed."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:605
+#: ../src/nautilus-window-manage-views.c:1467
+msgid "Access was denied."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:610
+#: ../src/nautilus-window-manage-views.c:1478
+#, c-format
+msgid "Couldn't display \"%s\", because no host \"%s\" could be found."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:613
+#: ../src/nautilus-window-manage-views.c:1481
+msgid ""
+"Check that the spelling is correct and that your proxy settings are correct."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:618
+#: ../src/nautilus-window-manage-views.c:1439
+#, c-format
+msgid "\"%s\" is not a valid location."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:621
+#: ../libnautilus-private/nautilus-program-choosing.c:628
+#: ../src/nautilus-connect-server-dialog.c:144
+#: ../src/nautilus-property-browser.c:1168
+#: ../src/nautilus-window-manage-views.c:1434
+#: ../src/nautilus-window-manage-views.c:1442
+msgid "Please check the spelling and try again."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:625
+#: ../src/nautilus-window-manage-views.c:1431
+#, c-format
+msgid "Couldn't find \"%s\"."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:736
+#, c-format
+msgid "Opening %d Item"
+msgid_plural "Opening %d Items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:901
+msgid "Sorry, but you can't execute commands from a remote site."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:903
+msgid "This is disabled due to security considerations."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:913
+#: ../libnautilus-private/nautilus-program-choosing.c:981
+msgid "Details: "
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:944
+#: ../libnautilus-private/nautilus-program-choosing.c:955
+msgid "This drop target only supports local files."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:945
+msgid ""
+"To open non-local files copy them to a local folder and then drop them again."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-program-choosing.c:956
+msgid ""
+"To open non-local files copy them to a local folder and then drop them "
+"again. The local files you dropped have already been opened."
+msgstr ""
+
+#: ../libnautilus-private/nautilus-undo-signal-handlers.c:174
+#: ../src/nautilus-query-editor.c:984
+msgid "Edit"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-undo-signal-handlers.c:175
+msgid "Undo Edit"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-undo-signal-handlers.c:176
+msgid "Undo the edit"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-undo-signal-handlers.c:177
+msgid "Redo Edit"
+msgstr ""
+
+#: ../libnautilus-private/nautilus-undo-signal-handlers.c:178
+msgid "Redo the edit"
+msgstr ""
+
+#: ../nautilus-computer.desktop.in.h:2
+msgid "View your computer storage"
+msgstr ""
+
+#: ../nautilus-file-management-properties.desktop.in.h:1
+msgid "Change how files are managed"
+msgstr ""
+
+#: ../nautilus-file-management-properties.desktop.in.h:2
+msgid "File Management"
+msgstr ""
+
+#: ../nautilus-home.desktop.in.h:1 ../src/file-manager/fm-tree-view.c:1245
+msgid "Home Folder"
+msgstr ""
+
+#: ../nautilus-home.desktop.in.h:2
+msgid "View your home folder in the Nautilus file manager"
+msgstr ""
+
+#: ../nautilus.desktop.in.h:1
+msgid "Browse the file system with the file manager"
+msgstr ""
+
+#: ../nautilus.desktop.in.h:2
+msgid "File Browser"
+msgstr ""
+
+#: ../src/Nautilus_shell.server.in.h:1
+msgid "Factory for Nautilus shell and file manager"
+msgstr ""
+
+#: ../src/Nautilus_shell.server.in.h:2
+#, fuzzy
+msgid "Nautilus factory"
+msgstr "Nautilus"
+
+#: ../src/Nautilus_shell.server.in.h:3
+msgid "Nautilus metafile factory"
+msgstr ""
+
+#: ../src/Nautilus_shell.server.in.h:4
+#, fuzzy
+msgid "Nautilus shell"
+msgstr "Nautilus"
+
+#: ../src/Nautilus_shell.server.in.h:5
+msgid ""
+"Nautilus shell operations that can be done from subsequent command-line "
+"invocations"
+msgstr ""
+
+#: ../src/Nautilus_shell.server.in.h:6
+msgid "Produces metafile objects for accessing Nautilus metadata"
+msgstr ""
+
+#: ../src/file-manager/fm-desktop-icon-view.c:617
+msgid "Background"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-desktop-icon-view.c:680
+#: ../src/file-manager/fm-directory-view.c:6640
+#: ../src/file-manager/fm-directory-view.c:7444
+msgid "E_mpty Trash"
+msgstr ""
+
+#. label, accelerator
+#. name, stock id
+#: ../src/file-manager/fm-desktop-icon-view.c:692
+#: ../src/file-manager/fm-directory-view.c:6612
+#, fuzzy
+msgid "Create L_auncher..."
+msgstr "បង្កើត​ការ​ចែក​រំលែក"
+
+#. tooltip
+#. label, accelerator
+#: ../src/file-manager/fm-desktop-icon-view.c:694
+#: ../src/file-manager/fm-directory-view.c:6613
+msgid "Create a new launcher"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-desktop-icon-view.c:699
+msgid "Change Desktop _Background"
+msgstr ""
+
+#. tooltip
+#: ../src/file-manager/fm-desktop-icon-view.c:701
+msgid ""
+"Show a window that lets you set your desktop background's pattern or color"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-desktop-icon-view.c:706
+msgid "Empty Trash"
+msgstr ""
+
+#. tooltip
+#. label, accelerator
+#: ../src/file-manager/fm-desktop-icon-view.c:708
+#: ../src/file-manager/fm-directory-view.c:6641
+msgid "Delete all items in the Trash"
+msgstr ""
+
+#: ../src/file-manager/fm-desktop-icon-view.c:797
+#: ../src/nautilus-desktop-window.c:246 ../src/nautilus-pathbar.c:1127
+#: ../src/nautilus-places-sidebar.c:187
+msgid "Desktop"
+msgstr "ផ្ទៃតុ"
+
+#: ../src/file-manager/fm-desktop-icon-view.c:798
+#, fuzzy
+msgid "View as Desktop"
+msgstr "ផ្ទៃតុ"
+
+#: ../src/file-manager/fm-desktop-icon-view.c:799
+#, fuzzy
+msgid "View as _Desktop"
+msgstr "ផ្ទៃតុ"
+
+#: ../src/file-manager/fm-desktop-icon-view.c:800
+msgid "The desktop view encountered an error."
+msgstr ""
+
+#: ../src/file-manager/fm-desktop-icon-view.c:801
+msgid "The desktop view encountered an error while starting up."
+msgstr ""
+
+#: ../src/file-manager/fm-desktop-icon-view.c:802
+msgid "Display this location with the desktop view."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:659
+msgid "Are you sure you want to open all files?"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:660
+#: ../src/nautilus-location-bar.c:158
+#, c-format
+msgid "This will open %d separate window."
+msgid_plural "This will open %d separate windows."
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:997
+#, c-format
+msgid "Are you sure you want to permanently delete \"%s\"?"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:1001
+#, c-format
+msgid "Are you sure you want to permanently delete the %d selected item?"
+msgid_plural ""
+"Are you sure you want to permanently delete the %d selected items?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:1012
+msgid "If you delete an item, it is permanently lost."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:1164
+msgid "Select Pattern"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:1180
+msgid "_Pattern:"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:1289
+msgid "Save Search as"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:1307
+#, fuzzy
+msgid "Search _name:"
+msgstr "ឈ្មោះ​ចែក​រំលែក ៖"
+
+#: ../src/file-manager/fm-directory-view.c:1320
+#: ../src/nautilus-connect-server-dialog.c:535
+msgid "_Folder:"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:1325
+msgid "Select Folder to Save Search In"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:2146
+#, c-format
+msgid "\"%s\" selected"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:2148
+#, c-format
+msgid "%d folder selected"
+msgid_plural "%d folders selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:2158
+#, c-format
+msgid " (containing %d item)"
+msgid_plural " (containing %d items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: this is preceded with a string of form 'N folders' (N more than 1)
+#: ../src/file-manager/fm-directory-view.c:2169
+#, c-format
+msgid " (containing a total of %d item)"
+msgid_plural " (containing a total of %d items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:2185
+#, c-format
+msgid "\"%s\" selected (%s)"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:2189
+#, c-format
+msgid "%d item selected (%s)"
+msgid_plural "%d items selected (%s)"
+msgstr[0] ""
+msgstr[1] ""
+
+#. Folders selected also, use "other" terminology
+#: ../src/file-manager/fm-directory-view.c:2197
+#, c-format
+msgid "%d other item selected (%s)"
+msgid_plural "%d other items selected (%s)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:2218
+#, c-format
+msgid "%s, Free space: %s"
+msgstr ""
+
+#. This is marked for translation in case a localizer
+#. * needs to change ", " to something else. The comma
+#. * is between the message about the number of folders
+#. * and the number of items in those folders and the
+#. * message about the number of other items and the
+#. * total size of those items.
+#.
+#: ../src/file-manager/fm-directory-view.c:2243
+#, c-format
+msgid "%s%s, %s"
+msgstr ""
+
+#. Note that the number of items actually displayed varies somewhat due
+#. * to the way files are collected in batches. So you can't assume that
+#. * no more than the constant limit are displayed.
+#.
+#: ../src/file-manager/fm-directory-view.c:2325
+#, c-format
+msgid "The folder \"%s\" contains more files than Nautilus can handle."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:2331
+msgid "Some files will not be displayed."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:3754
+msgid "Cannot move file to trash, do you want to delete immediately?"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:3755
+#, c-format
+msgid "The file \"%s\" cannot be moved to the trash."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:3759
+msgid "Cannot move items to trash, do you want to delete them immediately?"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:3760
+#, c-format
+msgid "None of the %d selected items can be moved to the Trash"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:3762
+msgid ""
+"Cannot move some items to trash, do you want to delete these immediately?"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:3763
+#, c-format
+msgid "%d of the selected items cannot be moved to the Trash"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:3801
+#, c-format
+msgid "Are you sure you want to permanently delete \"%s\" from the trash?"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:3805
+#, c-format
+msgid ""
+"Are you sure you want to permanently delete the %d selected item from the "
+"trash?"
+msgid_plural ""
+"Are you sure you want to permanently delete the %d selected items from the "
+"trash?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:3816
+msgid "If you delete an item, it will be permanently lost."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:4396
+#, c-format
+msgid "Open with \"%s\""
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:4397
+#, c-format
+msgid "Use \"%s\" to open the selected item"
+msgid_plural "Use \"%s\" to open the selected items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:4489
+#, c-format
+msgid "Do you want to run \"%s\", or display its contents?"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:4491
+#, c-format
+msgid "\"%s\" is an executable text file."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:4497
+msgid "Run in _Terminal"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:4498
+msgid "_Display"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:4501
+msgid "_Run"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:4897
+#, c-format
+msgid "Cannot open %s"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:4900
+#, c-format
+msgid ""
+"The filename \"%s\" indicates that this file is of type \"%s\". The contents "
+"of the file indicate that the file is of type \"%s\". If you open this file, "
+"the file might present a security risk to your system.\n"
+"\n"
+"Do not open the file unless you created the file yourself, or received the "
+"file from a trusted source. To open the file, rename the file to the correct "
+"extension for \"%s\", then open the file normally. Alternatively, use the "
+"Open With menu to choose a specific application for the file. "
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:5295
+#, c-format
+msgid "Run \"%s\" on any selected items"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:5544
+#, c-format
+msgid "Create Document from template \"%s\""
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:5750
+msgid "All executable files in this folder will appear in the Scripts menu."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:5752
+msgid ""
+"Choosing a script from the menu will run that script with any selected items "
+"as input."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:5754
+msgid ""
+"All executable files in this folder will appear in the Scripts menu. "
+"Choosing a script from the menu will run that script.\n"
+"\n"
+"When executed from a local folder, scripts will be passed the selected file "
+"names. When executed from a remote folder (e.g. a folder showing web or ftp "
+"content), scripts will be passed no parameters.\n"
+"\n"
+"In all cases, the following environment variables will be set by Nautilus, "
+"which the scripts may use:\n"
+"\n"
+"NAUTILUS_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected "
+"files (only if local)\n"
+"\n"
+"NAUTILUS_SCRIPT_SELECTED_URIS: newline-delimited URIs for selected files\n"
+"\n"
+"NAUTILUS_SCRIPT_CURRENT_URI: URI for current location\n"
+"\n"
+"NAUTILUS_SCRIPT_WINDOW_GEOMETRY: position and size of current window"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:5915
+#: ../src/file-manager/fm-tree-view.c:900
+#, c-format
+msgid "\"%s\" will be moved if you select the Paste command"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:5919
+#: ../src/file-manager/fm-tree-view.c:904
+#, c-format
+msgid "\"%s\" will be copied if you select the Paste command"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:5926
+#, c-format
+msgid "The %d selected item will be moved if you select the Paste command"
+msgid_plural ""
+"The %d selected items will be moved if you select the Paste command"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:5933
+#, c-format
+msgid "The %d selected item will be copied if you select the Paste command"
+msgid_plural ""
+"The %d selected items will be copied if you select the Paste command"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:6027
+#: ../src/file-manager/fm-tree-view.c:981
+msgid "There is nothing on the clipboard to paste."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:6392
+#, c-format
+msgid "Connect to Server %s"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:6397
+msgid "_Connect"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:6411
+#, fuzzy
+msgid "Link _name:"
+msgstr "ឈ្មោះ​ចែក​រំលែក ៖"
+
+#: ../src/file-manager/fm-directory-view.c:6586
+#, fuzzy
+msgid "Create _Document"
+msgstr "ឯកសារ"
+
+#. name, stock id, label
+#: ../src/file-manager/fm-directory-view.c:6587
+msgid "Open Wit_h"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/file-manager/fm-directory-view.c:6588
+msgid "Choose a program with which to open the selected item"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6590
+#: ../src/file-manager/fm-directory-view.c:6598
+msgid "_Properties"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6591
+msgid "View or modify the properties of each selected item"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6599
+msgid "View or modify the properties of the open folder"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6602
+#, fuzzy
+msgid "Create _Folder"
+msgstr "បង្កើត​ការ​ចែក​រំលែក"
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6603
+msgid "Create a new empty folder inside this folder"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:6605
+msgid "No templates Installed"
+msgstr ""
+
+#. name, stock id, label
+#. name, stock id
+#. translators: this is used to indicate that a file doesn't contain anything
+#: ../src/file-manager/fm-directory-view.c:6608
+msgid "_Empty File"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6609
+msgid "Create a new empty file inside this folder"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6616
+#: ../src/file-manager/fm-directory-view.c:7345
+#: ../src/file-manager/fm-tree-view.c:1103
+msgid "_Open"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6617
+msgid "Open the selected item in this window"
+msgstr ""
+
+#. name, stock id
+#. Location-specific actions
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6624
+#: ../src/file-manager/fm-directory-view.c:6732
+msgid "Open in Navigation Window"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6625
+msgid "Open each selected item in a navigation window"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6628
+#: ../src/file-manager/fm-directory-view.c:6632
+msgid "Open with Other _Application..."
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6629
+#: ../src/file-manager/fm-directory-view.c:6633
+msgid "Choose another application with which to open the selected item"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6636
+msgid "_Open Scripts Folder"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6637
+msgid "Show the folder containing the scripts that appear in this menu"
+msgstr ""
+
+#. name, stock id
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6645
+msgid "Prepare the selected files to be moved with a Paste command"
+msgstr ""
+
+#. name, stock id
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6649
+msgid "Prepare the selected files to be copied with a Paste command"
+msgstr ""
+
+#. name, stock id
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6653
+msgid "Move or copy files previously selected by a Cut or Copy command"
+msgstr ""
+
+#. We make accelerator "" instead of null here to not inherit the stock
+#. accelerator for paste
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6658
+#: ../src/file-manager/fm-tree-view.c:1161
+msgid "_Paste Into Folder"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6659
+msgid ""
+"Move or copy files previously selected by a Cut or Copy command into the "
+"selected folder"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6663
+msgid "Select all items in this window"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6666
+msgid "Select _Pattern"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6667
+msgid "Select items in this window matching a given pattern"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6670
+msgid "D_uplicate"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6671
+msgid "Duplicate each selected item"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6674
+#: ../src/file-manager/fm-directory-view.c:7418
+msgid "Ma_ke Link"
+msgid_plural "Ma_ke Links"
+msgstr[0] ""
+msgstr[1] ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6675
+msgid "Create a symbolic link for each selected item"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6678
+msgid "_Rename..."
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6679
+msgid "Rename selected item"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6686
+#: ../src/file-manager/fm-directory-view.c:6746
+#: ../src/file-manager/fm-directory-view.c:7202
+#: ../src/file-manager/fm-directory-view.c:7386
+#: ../src/file-manager/fm-directory-view.c:7775
+msgid "Mo_ve to Trash"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6687
+#: ../src/file-manager/fm-directory-view.c:7387
+msgid "Move each selected item to the Trash"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6690
+#: ../src/file-manager/fm-directory-view.c:6750
+#: ../src/file-manager/fm-directory-view.c:7405
+msgid "_Delete"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6691
+msgid "Delete each selected item, without moving to the Trash"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6694
+msgid "Reset View to _Defaults"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6695
+msgid "Reset sorting order and zoom level to match preferences for this view"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6698
+msgid "Connect To This Server"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6699
+msgid "Make a permanent connection to this server"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6702
+#, fuzzy
+msgid "_Mount Volume"
+msgstr "ភាគ SubMount"
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6703
+msgid "Mount the selected volume"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6706
+#: ../src/file-manager/fm-tree-view.c:749
+#, fuzzy
+msgid "_Unmount Volume"
+msgstr "ភាគ SubMount"
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6707
+msgid "Unmount the selected volume"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6710
+msgid "_Eject"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6711
+msgid "Eject the selected volume"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6714
+#, fuzzy
+msgid "_Format"
+msgstr "ធម្មតា"
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6715
+msgid "Format the selected volume"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6718
+msgid "Open File and Close window"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6722
+#, fuzzy
+msgid "Sa_ve Search"
+msgstr "ស្វែងរក"
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6723
+msgid "Save the edited search"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6726
+msgid "Sa_ve Search As..."
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6727
+msgid "Save the current search as a file"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6733
+msgid "Open this folder in a navigation window"
+msgstr ""
+
+#. name, stock id
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6738
+msgid "Prepare this folder to be moved with a Paste command"
+msgstr ""
+
+#. name, stock id
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6742
+msgid "Prepare this folder to be copied with a Paste command"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6747
+msgid "Move this folder to the Trash"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6751
+msgid "Delete this folder, without moving to the Trash"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-directory-view.c:6757
+msgid "Show _Hidden Files"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-directory-view.c:6758
+msgid "Toggle the display of hidden files in the current window"
+msgstr ""
+
+#. Translators: %s is a directory
+#: ../src/file-manager/fm-directory-view.c:6844
+#, c-format
+msgid "Run or manage scripts from %s"
+msgstr ""
+
+#. Create a script action here specially because its tooltip is dynamic
+#: ../src/file-manager/fm-directory-view.c:6846
+msgid "_Scripts"
+msgstr ""
+
+#. add the "open in new window" menu item
+#: ../src/file-manager/fm-directory-view.c:7171
+#: ../src/file-manager/fm-directory-view.c:7354
+#: ../src/file-manager/fm-tree-view.c:1114
+msgid "Open in New Window"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:7173
+#: ../src/file-manager/fm-directory-view.c:7362
+msgid "_Browse Folder"
+msgid_plural "_Browse Folders"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:7198
+#: ../src/file-manager/fm-directory-view.c:7382
+#, fuzzy
+msgid "_Delete from Trash"
+msgstr "លុប​ឯកសារ​ពី​ប័ណ្ណសារ"
+
+#: ../src/file-manager/fm-directory-view.c:7199
+msgid "Delete the open folder permanently"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:7203
+msgid "Move the open folder to the Trash"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:7338
+#, c-format
+msgid "_Open with \"%s\""
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:7356
+#, c-format
+msgid "Open in %d New Window"
+msgid_plural "Open in %d New Windows"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:7383
+msgid "Delete all selected items permanently"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:7755
+#, c-format
+msgid "The Link \"%s\" is Broken."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:7757
+#, c-format
+msgid "The Link \"%s\" is Broken. Move it to Trash?"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:7763
+msgid "This link can't be used, because it has no target."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:7765
+#, c-format
+msgid "This link can't be used, because its target \"%s\" doesn't exist."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:8385
+#, c-format
+msgid "Opening \"%s\"."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:8388
+#, c-format
+msgid "Opening %d item."
+msgid_plural "Opening %d items."
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-directory-view.c:9280
+msgid "Download location?"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:9283
+msgid "You can download it or make a link to it."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:9286
+msgid "Make a _Link"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:9290
+msgid "_Download"
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:9349
+#: ../src/file-manager/fm-directory-view.c:9401
+#: ../src/file-manager/fm-directory-view.c:9498
+msgid "Drag and drop is not supported."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:9350
+msgid "Drag and drop is only supported on local file systems."
+msgstr ""
+
+#: ../src/file-manager/fm-directory-view.c:9402
+#: ../src/file-manager/fm-directory-view.c:9499
+msgid "An invalid drag type was used."
+msgstr ""
+
+#: ../src/file-manager/fm-ditem-page.c:337
+#: ../src/file-manager/fm-ditem-page.c:348
+#, fuzzy
+msgid "Comment"
+msgstr "សេចក្តី​អធិប្បាយ ៖"
+
+#: ../src/file-manager/fm-ditem-page.c:340
+msgid "URL"
+msgstr ""
+
+#: ../src/file-manager/fm-ditem-page.c:343
+#: ../src/file-manager/fm-ditem-page.c:354
+msgid "Description"
+msgstr ""
+
+#: ../src/file-manager/fm-ditem-page.c:344
+msgid "Link"
+msgstr ""
+
+#: ../src/file-manager/fm-ditem-page.c:351
+#, fuzzy
+msgid "Command"
+msgstr "សេចក្តី​អធិប្បាយ ៖"
+
+#: ../src/file-manager/fm-ditem-page.c:355
+msgid "Launcher"
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:59
+#, fuzzy, c-format
+msgid ""
+"You do not have the permissions necessary to view the contents of \"%s\"."
+msgstr "មិន​អាច​ផ្លាស់ប្តូរ​សិទ្ធិ​របស់​ថត \"%s\""
+
+#: ../src/file-manager/fm-error-reporting.c:63
+#, c-format
+msgid "\"%s\" couldn't be found. Perhaps it has recently been deleted."
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:70
+#, c-format
+msgid "Sorry, couldn't display all the contents of \"%s\"."
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:76
+msgid "The folder contents could not be displayed."
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:107
+#, c-format
+msgid ""
+"The name \"%s\" is already used in this folder. Please use a different name."
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:112
+#, c-format
+msgid ""
+"There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:117
+#, fuzzy, c-format
+msgid "You do not have the permissions necessary to rename \"%s\"."
+msgstr "មិន​អាច​ផ្លាស់ប្តូរ​សិទ្ធិ​របស់​ថត \"%s\""
+
+#: ../src/file-manager/fm-error-reporting.c:122
+#, c-format
+msgid ""
+"The name \"%s\" is not valid because it contains the character \"/\". Please "
+"use a different name."
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:126
+#, c-format
+msgid "The name \"%s\" is not valid. Please use a different name."
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:132
+#, c-format
+msgid "Couldn't change the name of \"%s\" because it is on a read-only disk"
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:141
+#, c-format
+msgid "Sorry, couldn't rename \"%s\" to \"%s\"."
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:148
+msgid "The item could not be renamed."
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:168
+#, fuzzy, c-format
+msgid ""
+"You do not have the permissions necessary to change the group of \"%s\"."
+msgstr "មិន​អាច​ផ្លាស់ប្តូរ​សិទ្ធិ​របស់​ថត \"%s\""
+
+#: ../src/file-manager/fm-error-reporting.c:172
+#, c-format
+msgid "Couldn't change the group of \"%s\" because it is on a read-only disk"
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:180
+#, fuzzy, c-format
+msgid "Sorry, couldn't change the group of \"%s\"."
+msgstr "មិន​អាច​ផ្លាស់ប្តូរ​សិទ្ធិ​របស់​ថត \"%s\""
+
+#: ../src/file-manager/fm-error-reporting.c:184
+msgid "The group could not be changed."
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:206
+#, c-format
+msgid "Couldn't change the owner of \"%s\" because it is on a read-only disk"
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:213
+#, fuzzy, c-format
+msgid "Sorry, couldn't change the owner of \"%s\"."
+msgstr "មិន​អាច​ផ្លាស់ប្តូរ​សិទ្ធិ​របស់​ថត \"%s\""
+
+#: ../src/file-manager/fm-error-reporting.c:216
+msgid "The owner could not be changed."
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:238
+#, fuzzy, c-format
+msgid ""
+"Couldn't change the permissions of \"%s\" because it is on a read-only disk"
+msgstr "មិន​អាច​ផ្លាស់ប្តូរ​សិទ្ធិ​របស់​ថត \"%s\""
+
+#: ../src/file-manager/fm-error-reporting.c:245
+#, fuzzy, c-format
+msgid "Sorry, couldn't change the permissions of \"%s\"."
+msgstr "មិន​អាច​ផ្លាស់ប្តូរ​សិទ្ធិ​របស់​ថត \"%s\""
+
+#: ../src/file-manager/fm-error-reporting.c:248
+msgid "The permissions could not be changed."
+msgstr ""
+
+#: ../src/file-manager/fm-error-reporting.c:341
+#, c-format
+msgid "Renaming \"%s\" to \"%s\"."
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:135
+msgid "by _Name"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:136
+#: ../src/file-manager/fm-icon-view.c:1453
+msgid "Keep icons sorted by name in rows"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:142
+msgid "by _Size"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:143
+#: ../src/file-manager/fm-icon-view.c:1457
+msgid "Keep icons sorted by size in rows"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:149
+msgid "by _Type"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:150
+#: ../src/file-manager/fm-icon-view.c:1461
+msgid "Keep icons sorted by type in rows"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:156
+msgid "by Modification _Date"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:157
+#: ../src/file-manager/fm-icon-view.c:1465
+msgid "Keep icons sorted by modification date in rows"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:163
+msgid "by _Emblems"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:164
+#: ../src/file-manager/fm-icon-view.c:1469
+msgid "Keep icons sorted by emblems in rows"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:1413
+msgid "Arran_ge Items"
+msgstr ""
+
+#. name, stock id, label
+#. name, stock id
+#: ../src/file-manager/fm-icon-view.c:1415
+msgid "Str_etch Icon"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-icon-view.c:1416
+msgid "Make the selected icon stretchable"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-icon-view.c:1419
+#: ../src/file-manager/fm-icon-view.c:1571
+msgid "Restore Icons' Original Si_zes"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-icon-view.c:1420
+msgid "Restore each selected icon to its original size"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-icon-view.c:1423
+msgid "Clean _Up by Name"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-icon-view.c:1424
+msgid "Reposition icons to better fit in the window and avoid overlapping"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-icon-view.c:1430
+msgid "Compact _Layout"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-icon-view.c:1431
+msgid "Toggle using a tighter layout scheme"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-icon-view.c:1435
+msgid "Re_versed Order"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-icon-view.c:1436
+msgid "Display icons in the opposite order"
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-icon-view.c:1440
+msgid "_Keep Aligned"
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-icon-view.c:1441
+msgid "Keep icons lined up on a grid"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:1448
+msgid "_Manually"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:1449
+msgid "Leave icons wherever they are dropped"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:1452
+msgid "By _Name"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:1456
+msgid "By _Size"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:1460
+msgid "By _Type"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:1464
+msgid "By Modification _Date"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:1468
+msgid "By _Emblems"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:1572
+msgid "Restore Icon's Original Si_ze"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:1987
+#, c-format
+msgid "pointing at \"%s\""
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:2761
+msgid "Icons"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:2762
+msgid "View as Icons"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:2763
+msgid "View as _Icons"
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:2764
+msgid "The icon view encountered an error."
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:2765
+msgid "The icon view encountered an error while starting up."
+msgstr ""
+
+#: ../src/file-manager/fm-icon-view.c:2766
+msgid "Display this location with the icon view."
+msgstr ""
+
+#: ../src/file-manager/fm-list-model.c:372
+#: ../src/file-manager/fm-tree-model.c:1213
+msgid "(Empty)"
+msgstr ""
+
+#: ../src/file-manager/fm-list-model.c:374
+#: ../src/file-manager/fm-tree-model.c:1213
+msgid "Loading..."
+msgstr ""
+
+#: ../src/file-manager/fm-list-view.c:1922
+#, c-format
+msgid "%s Visible Columns"
+msgstr ""
+
+#: ../src/file-manager/fm-list-view.c:1941
+msgid "Choose the order of information to appear in this folder."
+msgstr ""
+
+#. name, stock id
+#: ../src/file-manager/fm-list-view.c:1983
+msgid "Visible _Columns..."
+msgstr ""
+
+#. label, accelerator
+#: ../src/file-manager/fm-list-view.c:1984
+#, fuzzy
+msgid "Select the columns visible in this folder"
+msgstr "អនុញ្ញាត​ឲ្យ​អ្នក​ផ្សេង​សរសេរ​ទៅ​កាន់​ថត​នេះ"
+
+#: ../src/file-manager/fm-list-view.c:2709
+#, fuzzy
+msgid "List"
+msgstr "ស្រាល"
+
+#: ../src/file-manager/fm-list-view.c:2710
+msgid "View as List"
+msgstr ""
+
+#: ../src/file-manager/fm-list-view.c:2711
+msgid "View as _List"
+msgstr ""
+
+#: ../src/file-manager/fm-list-view.c:2712
+msgid "The list view encountered an error."
+msgstr ""
+
+#: ../src/file-manager/fm-list-view.c:2713
+msgid "The list view encountered an error while starting up."
+msgstr ""
+
+#: ../src/file-manager/fm-list-view.c:2714
+msgid "Display this location with the list view."
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:482
+msgid "You can't assign more than one custom icon at a time!"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:483
+#: ../src/nautilus-information-panel.c:555
+msgid "Please drag just one image to set a custom icon."
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:491
+#: ../src/nautilus-information-panel.c:574
+msgid "The file that you dropped is not local."
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:492
+#: ../src/file-manager/fm-properties-window.c:498
+#: ../src/nautilus-information-panel.c:575
+msgid "You can only use local images as custom icons."
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:497
+#: ../src/nautilus-information-panel.c:580
+msgid "The file that you dropped is not an image."
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:992
+msgid "Properties"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:1000
+#, c-format
+msgid "%s Properties"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:1519
+msgid "Cancel Group Change?"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:1711
+msgid "Cancel Owner Change?"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:1915
+msgid "nothing"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:1917
+#, fuzzy
+msgid "unreadable"
+msgstr "បើក"
+
+#: ../src/file-manager/fm-properties-window.c:1927
+#, c-format
+msgid "%d item, with size %s"
+msgid_plural "%d items, totalling %s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-properties-window.c:1936
+msgid "(some contents unreadable)"
+msgstr ""
+
+#. Also set the title field here, with a trailing carriage return &
+#. * space if the value field has two lines. This is a hack to get the
+#. * "Contents:" title to line up with the first line of the
+#. * 2-line value. Maybe there's a better way to do this, but I
+#. * couldn't think of one.
+#.
+#: ../src/file-manager/fm-properties-window.c:1953
+#, fuzzy
+msgid "Contents:"
+msgstr "សេចក្តី​អធិប្បាយ ៖"
+
+#: ../src/file-manager/fm-properties-window.c:2288
+msgid "Basic"
+msgstr ""
+
+#. Name label
+#: ../src/file-manager/fm-properties-window.c:2318
+msgid "_Name:"
+msgid_plural "_Names:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/file-manager/fm-properties-window.c:2337
+msgid "Type:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2339
+#: ../src/file-manager/fm-properties-window.c:2349
+#: ../src/file-manager/fm-properties-window.c:2355
+#: ../src/file-manager/fm-properties-window.c:2362
+#: ../src/file-manager/fm-properties-window.c:2366
+#: ../src/file-manager/fm-properties-window.c:2374
+#: ../src/file-manager/fm-properties-window.c:2380
+#: ../src/file-manager/fm-properties-window.c:2389
+#: ../src/file-manager/fm-properties-window.c:2395
+#: ../src/file-manager/fm-properties-window.c:2949
+#: ../src/file-manager/fm-properties-window.c:2970
+#: ../src/file-manager/fm-properties-window.c:3061
+#: ../src/file-manager/fm-properties-window.c:3065
+#: ../src/file-manager/fm-properties-window.c:3069
+msgid "--"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2347
+msgid "Size:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2353
+#: ../src/nautilus-location-bar.c:60
+msgid "Location:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2360
+msgid "Volume:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2364
+msgid "Free space:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2372
+msgid "Link target:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2378
+msgid "MIME type:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2387
+msgid "Modified:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2393
+msgid "Accessed:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2441
+#: ../src/nautilus-emblem-sidebar.c:1041
+#, fuzzy
+msgid "Emblems"
+msgstr "បើក"
+
+#: ../src/file-manager/fm-properties-window.c:2726
+msgid "_Read"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2728
+msgid "_Write"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2730
+msgid "E_xecute"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2813
+msgid "Set _user ID"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2818
+msgid "Special flags:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2821
+msgid "Set gro_up ID"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2823
+msgid "_Sticky"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2924
+msgid "You are not the owner, so you can't change these permissions."
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2938
+msgid "File _owner:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2944
+msgid "File owner:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2955
+msgid "_File group:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2964
+msgid "File group:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2976
+msgid "Owner:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2977
+msgid "Group:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:2978
+msgid "Others:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:3060
+msgid "Text view:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:3064
+msgid "Number view:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:3068
+msgid "Last changed:"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:3074
+#, c-format
+msgid "The permissions of \"%s\" could not be determined."
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:3077
+msgid "The permissions of the selected file could not be determined."
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:3235
+msgid "There was an error displaying help."
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:3297
+msgid "Open With"
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:3637
+msgid "Creating Properties window."
+msgstr ""
+
+#: ../src/file-manager/fm-properties-window.c:3880
+msgid "Select Custom Icon"
+msgstr ""
+
+#: ../src/file-manager/fm-tree-view.c:749
+msgid "E_ject"
+msgstr ""
+
+#. add the "create folder" menu item
+#: ../src/file-manager/fm-tree-view.c:1127
+#, fuzzy
+msgid "Create Folder"
+msgstr "បង្កើត​ការ​ចែក​រំលែក"
+
+#: ../src/file-manager/fm-tree-view.c:1179
+msgid "Move to Trash"
+msgstr ""
+
+#: ../src/file-manager/fm-tree-view.c:1247
+#: ../src/nautilus-places-sidebar.c:196
+#, fuzzy
+msgid "File System"
+msgstr "ប្រព័ន្ធ"
+
+#: ../src/file-manager/fm-tree-view.c:1249
+msgid "Network Neighbourhood"
+msgstr ""
+
+#: ../src/file-manager/fm-tree-view.c:1487
+msgid "Tree"
+msgstr ""
+
+#: ../src/file-manager/fm-tree-view.c:1493
+msgid "Show Tree"
+msgstr ""
+
+#: ../src/nautilus-application.c:262
+#, fuzzy, c-format
+msgid "Nautilus could not create the required folder \"%s\"."
+msgstr "មិន​អាច​ផ្លាស់ប្តូរ​សិទ្ធិ​របស់​ថត \"%s\""
+
+#: ../src/nautilus-application.c:264
+msgid ""
+"Before running Nautilus, please create the following folder, or set "
+"permissions such that Nautilus can create it."
+msgstr ""
+
+#: ../src/nautilus-application.c:267
+#, c-format
+msgid "Nautilus could not create the following required folders: %s."
+msgstr ""
+
+#: ../src/nautilus-application.c:269
+msgid ""
+"Before running Nautilus, please create these folders, or set permissions "
+"such that Nautilus can create them."
+msgstr ""
+
+#: ../src/nautilus-application.c:337
+msgid "Link To Old Desktop"
+msgstr ""
+
+#: ../src/nautilus-application.c:353
+msgid "A link called \"Link To Old Desktop\" has been created on the desktop."
+msgstr ""
+
+#: ../src/nautilus-application.c:354
+msgid ""
+"The location of the desktop directory has changed in GNOME 2.4. You can open "
+"the link and move over the files you want, then delete the link."
+msgstr ""
+
+#. Can't register myself due to trouble locating the
+#. * Nautilus_Shell.server file. This has happened when you
+#. * launch Nautilus with an LD_LIBRARY_PATH that
+#. * doesn't include the directory containing the oaf
+#. * library. It could also happen if the
+#. * Nautilus_Shell.server file was not present for some
+#. * reason. Sometimes killing oafd and gconfd fixes
+#. * this problem but we don't exactly understand why,
+#. * since neither of the above causes explain it.
+#.
+#: ../src/nautilus-application.c:513
+msgid ""
+"Nautilus can't be used now. Running the command \"bonobo-slay\" from the "
+"console may fix the problem. If not, you can try rebooting the computer or "
+"installing Nautilus again."
+msgstr ""
+
+#. FIXME bugzilla.gnome.org 42536: The guesses and stuff here are lame.
+#: ../src/nautilus-application.c:519
+msgid ""
+"Nautilus can't be used now. Running the command \"bonobo-slay\" from the "
+"console may fix the problem. If not, you can try rebooting the computer or "
+"installing Nautilus again.\n"
+"\n"
+"Bonobo couldn't locate the Nautilus_shell.server file. One cause of this "
+"seems to be an LD_LIBRARY_PATH that does not include the bonobo-activation "
+"library's directory. Another possible cause would be bad install with a "
+"missing Nautilus_Shell.server file.\n"
+"\n"
+"Running \"bonobo-slay\" will kill all Bonobo Activation and GConf processes, "
+"which may be needed by other applications.\n"
+"\n"
+"Sometimes killing bonobo-activation-server and gconfd fixes the problem, but "
+"we don't know why.\n"
+"\n"
+"We have also seen this error when a faulty version of bonobo-activation was "
+"installed."
+msgstr ""
+
+#. Some misc. error (can never happen with current
+#. * version of bonobo-activation). Show dialog and terminate the
+#. * program.
+#.
+#. FIXME bugzilla.gnome.org 42537: Looks like this does happen with the
+#. * current OAF. I guess I read the code wrong. Need to figure out when and make a
+#. * good message.
+#.
+#. FIXME bugzilla.gnome.org 42538: When can this happen?
+#: ../src/nautilus-application.c:549 ../src/nautilus-application.c:567
+#: ../src/nautilus-application.c:574
+msgid "Nautilus can't be used now, due to an unexpected error."
+msgstr ""
+
+#: ../src/nautilus-application.c:550
+msgid ""
+"Nautilus can't be used now, due to an unexpected error from Bonobo when "
+"attempting to register the file manager view server."
+msgstr ""
+
+#: ../src/nautilus-application.c:568
+msgid ""
+"Nautilus can't be used now, due to an unexpected error from Bonobo when "
+"attempting to locate the factory.Killing bonobo-activation-server and "
+"restarting Nautilus may help fix the problem."
+msgstr ""
+
+#: ../src/nautilus-application.c:575
+msgid ""
+"Nautilus can't be used now, due to an unexpected error from Bonobo when "
+"attempting to locate the shell object. Killing bonobo-activation-server and "
+"restarting Nautilus may help fix the problem."
+msgstr ""
+
+#: ../src/nautilus-bookmarks-window.c:158
+#: ../src/nautilus-file-management-properties.c:216
+#: ../src/nautilus-property-browser.c:1541 ../src/nautilus-window-menus.c:524
+#, fuzzy, c-format
+msgid ""
+"There was an error displaying help: \n"
+"%s"
+msgstr "មាន​កំហុស​មួយ​បាន​កើតឡើង ខណៈពេល​យក​ព័ត៌មាន​ចែក​រំលែក"
+
+#: ../src/nautilus-bookmarks-window.c:192
+msgid "No bookmarks defined"
+msgstr ""
+
+#: ../src/nautilus-bookmarks-window.glade.h:1
+msgid "<b>_Bookmarks</b>"
+msgstr ""
+
+#: ../src/nautilus-bookmarks-window.glade.h:2
+msgid "<b>_Location</b>"
+msgstr ""
+
+#: ../src/nautilus-bookmarks-window.glade.h:3
+msgid "<b>_Name</b>"
+msgstr ""
+
+#: ../src/nautilus-bookmarks-window.glade.h:4
+msgid "Edit Bookmarks"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog-main.c:67
+#, c-format
+msgid "Can't display location \"%s\""
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:142
+#, c-format
+msgid "Can't Connect to Server. \"%s\" is not a valid location."
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:158
+msgid "Can't Connect to Server. You must enter a name for the server."
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:159
+msgid "Please enter a name and try again."
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:416
+msgid "_Location (URI):"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:463
+msgid "_Server:"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:482
+msgid "Optional information:"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:494
+#, fuzzy
+msgid "_Share:"
+msgstr "ឈ្មោះ​ចែក​រំលែក ៖"
+
+#: ../src/nautilus-connect-server-dialog.c:515
+msgid "_Port:"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:555
+msgid "_User Name:"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:576
+msgid "_Domain Name:"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:600
+msgid "_Name to use for connection:"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:658
+msgid "Connect to Server"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:675
+msgid "Service _type:"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:684
+msgid "SSH"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:686
+msgid "Public FTP"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:688
+msgid "FTP (with login)"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:690
+msgid "Windows share"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:692
+msgid "WebDAV (HTTP)"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:694
+msgid "Secure WebDAV (HTTPS)"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:696
+msgid "Custom Location"
+msgstr ""
+
+#: ../src/nautilus-connect-server-dialog.c:748
+#, fuzzy
+msgid "Browse _Network"
+msgstr "បណ្តាញ"
+
+#: ../src/nautilus-connect-server-dialog.c:754
+msgid "C_onnect"
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:241
+#, c-format
+msgid "Couldn't remove emblem with name '%s'."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:242 ../src/nautilus-emblem-sidebar.c:276
+msgid ""
+"This is probably because the emblem is a permanent one, and not one that you "
+"added yourself."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:275
+#, c-format
+msgid "Couldn't rename emblem with name '%s'."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:295
+msgid "Rename Emblem"
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:314
+msgid "Enter a new name for the displayed emblem:"
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:368
+msgid "Rename"
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:540
+msgid "Add Emblems..."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:556
+msgid ""
+"Enter a descriptive name next to each emblem.  This name will be used in "
+"other places to identify the emblem."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:558
+msgid ""
+"Enter a descriptive name next to the emblem.  This name will be used in "
+"other places to identify the emblem."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:777
+msgid "Some of the files could not be added as emblems."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:777 ../src/nautilus-emblem-sidebar.c:779
+msgid "The emblems do not appear to be valid images."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:779
+msgid "None of the files could be added as emblems."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:800 ../src/nautilus-emblem-sidebar.c:825
+#: ../src/nautilus-emblem-sidebar.c:874
+#, fuzzy
+msgid "The emblem cannot be added."
+msgstr "ឈ្មោះ​ចែក​រំលែក​មិន​អាច​ទទេ​ឡើយ"
+
+#: ../src/nautilus-emblem-sidebar.c:800
+msgid "The dragged text was not a valid file location."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:820 ../src/nautilus-emblem-sidebar.c:873
+#, c-format
+msgid "The file '%s' does not appear to be a valid image."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:823
+msgid "The dragged file does not appear to be a valid image."
+msgstr ""
+
+#: ../src/nautilus-emblem-sidebar.c:1047
+msgid "Show Emblems"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.c:293
+msgid "None"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:1
+msgid "    "
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:2
+msgid ""
+"100 KB\n"
+"500 KB\n"
+"1 MB\n"
+"3 MB\n"
+"5 MB\n"
+"10 MB\n"
+"100 MB\n"
+"1 GB"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:11
+#, no-c-format
+msgid ""
+"25%\n"
+"50%\n"
+"75%\n"
+"100%\n"
+"150%\n"
+"200%\n"
+"400%"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:18
+msgid "<span weight=\"bold\">Behavior</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:19
+msgid "<span weight=\"bold\">Date</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:20
+msgid "<span weight=\"bold\">Default View</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:21
+msgid "<span weight=\"bold\">Executable Text Files</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:22
+msgid "<span weight=\"bold\">Folders</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:23
+msgid "<span weight=\"bold\">Icon Captions</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:24
+msgid "<span weight=\"bold\">Icon View Defaults</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:25
+msgid "<span weight=\"bold\">List Columns</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:26
+msgid "<span weight=\"bold\">List View Defaults</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:27
+msgid "<span weight=\"bold\">Other Previewable Files</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:28
+msgid "<span weight=\"bold\">Sound Files</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:29
+msgid "<span weight=\"bold\">Text Files</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:30
+msgid "<span weight=\"bold\">Trash</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:31
+msgid "<span weight=\"bold\">Tree View Defaults</span>"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:32
+msgid ""
+"Always\n"
+"Local Files Only\n"
+"Never"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:35
+msgid "Always open in _browser windows"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:36
+msgid "Always use _text-entry location bar"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:37
+msgid "Ask before _emptying the Trash or deleting files"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:38
+msgid "Behavior"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:39
+msgid ""
+"By Name\n"
+"By Size\n"
+"By Type\n"
+"By Modification Date\n"
+"By Emblems"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:44
+msgid ""
+"Choose the order of information to appear beneath icon names. More "
+"information will appear when zooming in closer."
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:45
+msgid "Choose the order of information to appear in the list view."
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:46
+msgid "Count _number of items:"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:47
+msgid "Default _zoom level:"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:48
+msgid "Display"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:49
+msgid "File Management Preferences"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:50
+msgid "I_nclude a Delete command that bypasses Trash"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:51
+msgid ""
+"Icon View\n"
+"List View"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:53
+msgid "List Columns"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:54
+msgid "Preview"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:55
+msgid "Preview _sound files:"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:56
+msgid "Show _only folders"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:57
+msgid "Show _thumbnails:"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:58
+msgid "Show hidden and _backup files"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:59
+msgid "Show te_xt in icons:"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:60
+#, fuzzy
+msgid "Sort _folders before files"
+msgstr "ស្វែងរក​ឯកសារ"
+
+#: ../src/nautilus-file-management-properties.glade.h:61
+msgid "View _new folders using:"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:62
+#, fuzzy
+msgid "Views"
+msgstr "ព័ត៌មាន"
+
+#: ../src/nautilus-file-management-properties.glade.h:63
+msgid "_Arrange items:"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:65
+msgid "_Default zoom level:"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:66
+msgid "_Double click to activate items"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:67
+msgid "_Format:"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:68
+msgid "_Only for files smaller than:"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:69
+msgid "_Run executable text files when they are clicked"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:70
+msgid "_Single click to activate items"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:71
+msgid "_Text beside icons"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:72
+msgid "_Use compact layout"
+msgstr ""
+
+#: ../src/nautilus-file-management-properties.glade.h:73
+msgid "_View executable text files when they are clicked"
+msgstr ""
+
+#: ../src/nautilus-first-time-druid.c:40
+msgid ""
+"Existence of this file indicates that the Nautilus configuration druid\n"
+"has been presented.\n"
+"\n"
+"You can manually erase this file to present the druid again.\n"
+msgstr ""
+
+#: ../src/nautilus-history-sidebar.c:281
+msgid "History"
+msgstr ""
+
+#: ../src/nautilus-history-sidebar.c:287
+msgid "Show History"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:219
+msgid "Camera Brand"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:220
+msgid "Camera Model"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:221
+msgid "Date Taken"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:222
+msgid "Exposure Time"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:223
+msgid "Exposure Program"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:224
+msgid "Aperture Value"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:225
+msgid "Metering Mode"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:226
+msgid "Flash Fired"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:227
+msgid "Focal Length"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:228
+msgid "Shutter Speed"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:229
+msgid "ISO Speed Rating"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:230
+msgid "Software"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:249
+#, c-format
+msgid "<b>Image Type:</b> %s (%s)\n"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:251
+#, c-format
+msgid "<b>Width:</b> %d pixel\n"
+msgid_plural "<b>Width:</b> %d pixels\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/nautilus-image-properties-page.c:255
+#, c-format
+msgid "<b>Height:</b> %d pixel\n"
+msgid_plural "<b>Height:</b> %d pixels\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/nautilus-image-properties-page.c:270
+msgid "Failed to load image information"
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:420
+msgid "loading..."
+msgstr ""
+
+#: ../src/nautilus-image-properties-page.c:486
+msgid "Image"
+msgstr ""
+
+#: ../src/nautilus-information-panel.c:178
+msgid "Information"
+msgstr ""
+
+#: ../src/nautilus-information-panel.c:184
+msgid "Show Information"
+msgstr ""
+
+#. add the reset background item, possibly disabled
+#: ../src/nautilus-information-panel.c:404
+msgid "Use _Default Background"
+msgstr ""
+
+#: ../src/nautilus-information-panel.c:554
+msgid "You can't assign more than one custom icon at a time."
+msgstr ""
+
+#: ../src/nautilus-information-panel.c:581
+msgid "You can only use images as custom icons."
+msgstr ""
+
+#: ../src/nautilus-information-panel.c:899
+#, c-format
+msgid "Open with %s"
+msgstr ""
+
+#: ../src/nautilus-information-panel.c:994
+msgid "Unable to launch the cd burner application."
+msgstr ""
+
+#. FIXME: We don't use spaces to pad labels!
+#: ../src/nautilus-information-panel.c:1039
+msgid "Empty _Trash"
+msgstr ""
+
+#. FIXME: We don't use spaces to pad labels!
+#: ../src/nautilus-information-panel.c:1055
+msgid "_Write contents to CD"
+msgstr ""
+
+#: ../src/nautilus-location-bar.c:61
+msgid "Go To:"
+msgstr ""
+
+#: ../src/nautilus-location-bar.c:154
+#, c-format
+msgid "Do you want to view %d location?"
+msgid_plural "Do you want to view %d locations?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/nautilus-location-dialog.c:140
+msgid "Open Location"
+msgstr ""
+
+#: ../src/nautilus-location-dialog.c:151
+#, fuzzy
+msgid "_Location:"
+msgstr "ចាក់សោ​ទីតាំង​បន្ទះ"
+
+#: ../src/nautilus-main.c:269
+msgid "Perform a quick set of self-check tests."
+msgstr ""
+
+#: ../src/nautilus-main.c:272
+msgid "Create the initial window with the given geometry."
+msgstr ""
+
+#: ../src/nautilus-main.c:272
+msgid "GEOMETRY"
+msgstr ""
+
+#: ../src/nautilus-main.c:274
+msgid "Only create windows for explicitly specified URIs."
+msgstr ""
+
+#: ../src/nautilus-main.c:276
+msgid ""
+"Do not manage the desktop (ignore the preference set in the preferences "
+"dialog)."
+msgstr ""
+
+#: ../src/nautilus-main.c:278
+msgid "open a browser window."
+msgstr ""
+
+#: ../src/nautilus-main.c:280
+#, fuzzy
+msgid "Quit Nautilus."
+msgstr "Nautilus"
+
+#: ../src/nautilus-main.c:282
+#, fuzzy
+msgid "Restart Nautilus."
+msgstr "Nautilus"
+
+#: ../src/nautilus-main.c:326
+msgid "File Manager"
+msgstr ""
+
+#. Set initial window title
+#: ../src/nautilus-main.c:332 ../src/nautilus-spatial-window.c:406
+#: ../src/nautilus-window-menus.c:461 ../src/nautilus-window.c:155
+msgid "Nautilus"
+msgstr "Nautilus"
+
+#. translators: %s is an option (e.g. --check)
+#: ../src/nautilus-main.c:364 ../src/nautilus-main.c:373
+#: ../src/nautilus-main.c:378
+#, c-format
+msgid "nautilus: %s cannot be used with URIs.\n"
+msgstr ""
+
+#: ../src/nautilus-main.c:369
+#, c-format
+msgid "nautilus: --check cannot be used with other options.\n"
+msgstr ""
+
+#: ../src/nautilus-main.c:383
+#, c-format
+msgid "nautilus: --geometry cannot be used with more than one URI.\n"
+msgstr ""
+
+#. This is a little joke, shows up occasionally. I only
+#. * implemented this feature so I could use this joke.
+#.
+#: ../src/nautilus-navigation-window-menus.c:116
+msgid "Are you sure you want to forget history?"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:117
+msgid "If you do, you will be doomed to repeat it."
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:119
+msgid "Are you sure you want to clear the list of locations you have visited?"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:121
+msgid "If you clear the list of locations, they will be permanently deleted."
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:288
+#: ../src/nautilus-window-bookmarks.c:96
+#, fuzzy, c-format
+msgid "The location \"%s\" does not exist."
+msgstr "មិន​មាន %s ឡើយ ។"
+
+#: ../src/nautilus-navigation-window-menus.c:290
+msgid "The history location doesn't exist."
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:426
+msgid "_Go"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-navigation-window-menus.c:427
+msgid "_Bookmarks"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-navigation-window-menus.c:428
+msgid "Open New _Window"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-navigation-window-menus.c:429
+msgid "Open another Nautilus window for the displayed location"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:431
+msgid "Close _All Windows"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-navigation-window-menus.c:432
+msgid "Close all Navigation windows"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:434
+msgid "_Location..."
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-navigation-window-menus.c:435
+#: ../src/nautilus-spatial-window.c:838
+msgid "Specify a location to open"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:437
+msgid "Clea_r History"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-navigation-window-menus.c:438
+msgid "Clear contents of Go menu and Back/Forward lists"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:440
+#: ../src/nautilus-spatial-window.c:846
+msgid "_Add Bookmark"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-navigation-window-menus.c:441
+#: ../src/nautilus-spatial-window.c:847
+msgid "Add a bookmark for the current location to this menu"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:443
+#: ../src/nautilus-spatial-window.c:849
+msgid "_Edit Bookmarks"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-navigation-window-menus.c:444
+#: ../src/nautilus-spatial-window.c:850
+msgid "Display a window that allows editing the bookmarks in this menu"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:446
+#: ../src/nautilus-spatial-window.c:852
+msgid "_Search"
+msgstr "ស្វែងរក"
+
+#. name, stock id, label
+#: ../src/nautilus-navigation-window-menus.c:447
+#: ../src/nautilus-spatial-window.c:853
+msgid "Search for files"
+msgstr "ស្វែងរក​ឯកសារ"
+
+#. name, stock id
+#: ../src/nautilus-navigation-window-menus.c:454
+msgid "_Main Toolbar"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-navigation-window-menus.c:455
+msgid "Change the visibility of this window's main toolbar"
+msgstr ""
+
+#. is_active
+#. name, stock id
+#: ../src/nautilus-navigation-window-menus.c:459
+msgid "_Side Pane"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-navigation-window-menus.c:460
+msgid "Change the visibility of this window's sidebar"
+msgstr ""
+
+#. is_active
+#. name, stock id
+#: ../src/nautilus-navigation-window-menus.c:464
+msgid "Location _Bar"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-navigation-window-menus.c:465
+msgid "Change the visibility of this window's location bar"
+msgstr ""
+
+#. is_active
+#. name, stock id
+#: ../src/nautilus-navigation-window-menus.c:469
+msgid "St_atusbar"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-navigation-window-menus.c:470
+msgid "Change the visibility of this window's statusbar"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:494
+msgid "_Back"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:496
+#, fuzzy
+msgid "Go to the previous visited location"
+msgstr "ទៅ​កាន់​ទីតាំង​បណ្តាញ"
+
+#: ../src/nautilus-navigation-window-menus.c:497
+msgid "Back history"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:511
+msgid "_Forward"
+msgstr ""
+
+#: ../src/nautilus-navigation-window-menus.c:513
+#, fuzzy
+msgid "Go to the next visited location"
+msgstr "ទៅ​កាន់​ទីតាំង​បណ្តាញ"
+
+#: ../src/nautilus-navigation-window-menus.c:514
+msgid "Forward history"
+msgstr ""
+
+#: ../src/nautilus-navigation-window.c:824
+#, c-format
+msgid "%s - File Browser"
+msgstr ""
+
+#: ../src/nautilus-notes-viewer.c:388 ../src/nautilus-notes-viewer.c:498
+#, fuzzy
+msgid "Notes"
+msgstr "ព័ត៌មាន"
+
+#: ../src/nautilus-notes-viewer.c:394
+msgid "Show Notes"
+msgstr ""
+
+#: ../src/nautilus-places-sidebar.c:950
+msgid "Remove"
+msgstr ""
+
+#: ../src/nautilus-places-sidebar.c:959
+msgid "Rename..."
+msgstr ""
+
+#: ../src/nautilus-places-sidebar.c:1182
+msgid "Places"
+msgstr ""
+
+#: ../src/nautilus-places-sidebar.c:1188
+msgid "Show Places"
+msgstr ""
+
+#. set the title and standard close accelerator
+#: ../src/nautilus-property-browser.c:278
+msgid "Backgrounds and Emblems"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:387
+msgid "_Remove..."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:407
+msgid "_Add new..."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:960
+#, c-format
+msgid "Sorry, but pattern %s couldn't be deleted."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:961
+msgid "Check that you have permission to delete the pattern."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:990
+#, c-format
+msgid "Sorry, but emblem %s couldn't be deleted."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:991
+msgid "Check that you have permission to delete the emblem."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1031
+msgid "Create a New Emblem"
+msgstr ""
+
+#. make the keyword label and field
+#: ../src/nautilus-property-browser.c:1053
+msgid "_Keyword:"
+msgstr ""
+
+#. set up a gnome icon entry to pick the image file
+#: ../src/nautilus-property-browser.c:1072
+msgid "_Image:"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1080
+msgid "Select an Image File for the New Emblem"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1105
+msgid "Create a New Color:"
+msgstr ""
+
+#. make the name label and field
+#: ../src/nautilus-property-browser.c:1119
+#, fuzzy
+msgid "Color _name:"
+msgstr "ឈ្មោះ​ចែក​រំលែក ៖"
+
+#: ../src/nautilus-property-browser.c:1135
+msgid "Color _value:"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1167
+#, c-format
+msgid "Sorry, but \"%s\" is not a valid file name."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1170
+msgid "Sorry, but you did not supply a valid file name."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1171
+msgid "Please try again."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1184
+msgid "Sorry, but you can't replace the reset image."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1185
+msgid "Reset is a special image that cannot be deleted."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1217
+#, c-format
+msgid "Sorry, but the pattern %s couldn't be installed."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1237
+msgid "Select an Image File to Add as a Pattern"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1289
+#: ../src/nautilus-property-browser.c:1320
+msgid "The color cannot be installed."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1290
+msgid "Sorry, but you must specify an unused color name for the new color."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1321
+msgid "Sorry, but you must specify a non-blank name for the new color."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1374
+msgid "Select a Color to Add"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1411
+#: ../src/nautilus-property-browser.c:1427
+#, c-format
+msgid "Sorry, but \"%s\" is not a usable image file."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:1412
+#: ../src/nautilus-property-browser.c:1428
+msgid "The file is not an image."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2105
+msgid "Select a Category:"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2114
+msgid "C_ancel Remove"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2120
+msgid "_Add a New Pattern..."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2123
+msgid "_Add a New Color..."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2126
+msgid "_Add a New Emblem..."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2149
+msgid "Click on a pattern to remove it"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2152
+msgid "Click on a color to remove it"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2155
+msgid "Click on an emblem to remove it"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2164
+msgid "Patterns:"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2167
+msgid "Colors:"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2170
+msgid "Emblems:"
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2190
+msgid "_Remove a Pattern..."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2193
+msgid "_Remove a Color..."
+msgstr ""
+
+#: ../src/nautilus-property-browser.c:2196
+msgid "_Remove an Emblem..."
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:132
+msgid "Location"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:138
+msgid "File Type"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:280
+#, fuzzy
+msgid "Select folder search in"
+msgstr "លុប​ឯកសារ​ពី​ប័ណ្ណសារ"
+
+#: ../src/nautilus-query-editor.c:364
+msgid "Documents"
+msgstr "ឯកសារ"
+
+#: ../src/nautilus-query-editor.c:382
+msgid "Music"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:396
+msgid "Video"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:412
+msgid "Picture"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:432
+msgid "Illustration"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:446
+msgid "Spreadsheet"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:462
+msgid "Presentation"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:471
+msgid "Pdf / Postscript"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:479
+msgid "Text File"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:551
+msgid "Select type"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:635
+msgid "Any"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:650
+msgid "Other Type..."
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:936
+#, fuzzy
+msgid "Remove this criterium from the search"
+msgstr "លុប​ឯកសារ​ពី​ប័ណ្ណសារ"
+
+#: ../src/nautilus-query-editor.c:980
+msgid "<b>Search Folder</b>"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:996
+msgid "Edit the saved search"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:1027
+msgid "Add a new criterium to this search"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:1031
+msgid "Go"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:1033
+#, fuzzy
+msgid "Reload"
+msgstr "ធម្មតា"
+
+#: ../src/nautilus-query-editor.c:1038
+msgid "Perform or update the search"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:1058
+msgid "<b>_Search for:</b>"
+msgstr ""
+
+#: ../src/nautilus-query-editor.c:1085
+#, fuzzy
+msgid "Search results"
+msgstr "ស្វែងរក​ឯកសារ"
+
+#: ../src/nautilus-search-bar.c:142
+msgid "<b>Search:</b>"
+msgstr ""
+
+#: ../src/nautilus-side-pane.c:427
+msgid "Close the side pane"
+msgstr ""
+
+#: ../src/nautilus-spatial-window.c:836
+msgid "_Places"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-spatial-window.c:837
+msgid "Open _Location..."
+msgstr ""
+
+#: ../src/nautilus-spatial-window.c:840
+msgid "Close P_arent Folders"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-spatial-window.c:841
+msgid "Close this folder's parents"
+msgstr ""
+
+#: ../src/nautilus-spatial-window.c:843
+msgid "Clos_e All Folders"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-spatial-window.c:844
+msgid "Close all folder windows"
+msgstr ""
+
+#: ../src/nautilus-throbber.c:514
+msgid "throbber"
+msgstr ""
+
+#: ../src/nautilus-throbber.c:515
+msgid "provides visual status"
+msgstr ""
+
+#: ../src/nautilus-window-bookmarks.c:94
+msgid ""
+"Do you want to remove any bookmarks with the non-existing location from your "
+"list?"
+msgstr ""
+
+#: ../src/nautilus-window-bookmarks.c:99
+msgid "Bookmark for Nonexistent Location"
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:615
+msgid "You can choose another view or go to a different location."
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:628
+msgid "The location cannot be displayed with this viewer."
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:1023
+msgid "Content View"
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:1024
+msgid "View of the current folder"
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:1420
+msgid "Nautilus has no installed viewer capable of displaying the folder."
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:1426
+msgid "The location is not a folder."
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:1453
+#, c-format
+msgid "Nautilus cannot handle %s: locations."
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:1488
+msgid "Check that your proxy settings are correct."
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:1493
+#, c-format
+msgid ""
+"Couldn't display \"%s\", because Nautilus cannot contact the SMB master "
+"browser."
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:1496
+msgid "Check that an SMB server is running in the local network."
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:1505
+#, c-format
+msgid "Nautilus cannot display \"%s\"."
+msgstr ""
+
+#: ../src/nautilus-window-manage-views.c:1507
+msgid "Please select another viewer and try again."
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:182
+msgid "Go to the location specified by this bookmark"
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:426
+msgid ""
+"Nautilus is free software; you can redistribute it and/or modify \n"
+"it under the terms of the GNU General Public License as published by \n"
+"the Free Software Foundation; either version 2 of the License, or \n"
+"(at your option) any later version."
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:430
+msgid ""
+"Nautilus is distributed in the hope that it will be useful, \n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n"
+"GNU General Public License for more details."
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:434
+msgid ""
+"You should have received a copy of the GNU General Public License \n"
+"along with Nautilus; if not, write to the Free Software Foundation, Inc., \n"
+"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA"
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:463
+msgid ""
+"Nautilus is a graphical shell for GNOME that makes it easy to manage your "
+"files and the rest of your system."
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:467
+msgid "Copyright © 1999-2005 The Nautilus authors"
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:472
+msgid "translator-credits"
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:612
+msgid "_File"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-window-menus.c:613
+msgid "_Edit"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-window-menus.c:614
+msgid "_View"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-window-menus.c:615
+msgid "_Help"
+msgstr ""
+
+#. name, stock id, label
+#. name, stock id
+#: ../src/nautilus-window-menus.c:617
+msgid "_Close"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:618
+#, fuzzy
+msgid "Close this folder"
+msgstr "ចែក​រំលែក​ថត​នេះ"
+
+#: ../src/nautilus-window-menus.c:621
+msgid "_Backgrounds and Emblems..."
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:622
+msgid ""
+"Display patterns, colors, and emblems that can be used to customize "
+"appearance"
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:625
+msgid "Prefere_nces"
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:626
+msgid "Edit Nautilus preferences"
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:628
+msgid "_Undo"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-window-menus.c:629
+msgid "Undo the last text change"
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:631
+msgid "Open _Parent"
+msgstr ""
+
+#. name, stock id, label
+#: ../src/nautilus-window-menus.c:632
+msgid "Open the parent folder"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:638
+msgid "_Stop"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:642
+msgid "_Reload"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:646
+msgid "_Contents"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:647
+msgid "Display Nautilus help"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:650
+msgid "_About"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:651
+msgid "Display credits for the creators of Nautilus"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:654
+msgid "Zoom _In"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:655 ../src/nautilus-zoom-control.c:96
+msgid "Show the contents in more detail"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:666
+msgid "Zoom _Out"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:667 ../src/nautilus-zoom-control.c:97
+msgid "Show the contents in less detail"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:674
+#, fuzzy
+msgid "Normal Si_ze"
+msgstr "ធម្មតា"
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:675
+msgid "Show the contents at the normal size"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:678
+msgid "Connect to _Server..."
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:679
+msgid "Set up a connection to a network server"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:682
+#, fuzzy
+msgid "_Home"
+msgstr "ផ្ទះ"
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:683
+msgid "Go to the home folder"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:686
+msgid "_Computer"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:687
+#, fuzzy
+msgid "Go to the computer location"
+msgstr "ទៅ​កាន់​ទីតាំង​បណ្តាញ"
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:690
+msgid "_Network"
+msgstr "បណ្តាញ"
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:691
+msgid "Go to the network location"
+msgstr "ទៅ​កាន់​ទីតាំង​បណ្តាញ"
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:694
+msgid "T_emplates"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:695
+msgid "Go to the templates folder"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:698
+msgid "_Trash"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:699
+msgid "Go to the trash folder"
+msgstr ""
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:702
+msgid "CD/_DVD Creator"
+msgstr ""
+
+#. label, accelerator
+#: ../src/nautilus-window-menus.c:703
+msgid "Go to the CD/DVD Creator"
+msgstr ""
+
+#: ../src/nautilus-window-menus.c:729
+msgid "_Up"
+msgstr ""
+
+#: ../src/nautilus-zoom-control.c:84
+msgid "Zoom In"
+msgstr ""
+
+#: ../src/nautilus-zoom-control.c:85
+msgid "Zoom Out"
+msgstr ""
+
+#: ../src/nautilus-zoom-control.c:86
+msgid "Zoom to Default"
+msgstr ""
+
+#: ../src/nautilus-zoom-control.c:98
+msgid "Show in the default detail level"
+msgstr ""
+
+#: ../src/nautilus-zoom-control.c:801
+msgid "Zoom"
+msgstr ""
+
+#: ../src/nautilus-zoom-control.c:807
+msgid "Set the zoom level of the current view"
+msgstr ""
+
+#: ../src/network-scheme.desktop.in.h:2
+msgid "View your network servers in the Nautilus file manager"
+msgstr ""

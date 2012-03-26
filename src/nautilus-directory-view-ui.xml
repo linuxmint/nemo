@@ -1,0 +1,227 @@
+<ui>
+<accelerator action="OpenAccel"/>
+<accelerator action="OpenCloseParent"/>
+<accelerator action="PropertiesAccel"/>
+<accelerator action="RenameSelectAll"/>
+<menubar name="MenuBar">
+	<menu action="File">
+		<placeholder name="New Items Placeholder">
+			<menuitem name="New Folder" action="New Folder"/>
+			<menu action="New Documents">
+			         <menuitem name="No Templates" action="No Templates"/>
+				 <placeholder name="New Documents Placeholder"/>
+				 <separator name="After New Documents"/>
+				 <menuitem name="New Empty Document" action="New Empty Document"/>
+			</menu>
+		</placeholder>
+		<placeholder name="Open Placeholder">
+			<menuitem name="Open" action="Open"/>
+			<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
+			<menuitem name="OpenAlternate" action="OpenAlternate"/>
+			<placeholder name="Applications Placeholder">
+                        </placeholder>
+			<menu action="Open With">
+				<placeholder name="Applications Placeholder"/>
+				<separator name="Open With Separator"/>
+				<menuitem name="OtherApplication" action="OtherApplication1"/>
+			</menu>
+			<placeholder name="OtherApplicationPlaceholder">
+				<menuitem name="OtherApplication" action="OtherApplication2"/>
+			</placeholder>
+			<menu action="Scripts">
+				 <placeholder name="Scripts Placeholder"/>
+				 <separator name="After Scripts"/>
+				 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
+			</menu>
+		</placeholder>
+		<placeholder name="File Items Placeholder">
+			<menuitem name="Self Mount Volume" action="Self Mount Volume"/>
+			<menuitem name="Self Unmount Volume" action="Self Unmount Volume"/>
+			<menuitem name="Self Eject Volume" action="Self Eject Volume"/>
+			<menuitem name="Self Start Volume" action="Self Start Volume"/>
+			<menuitem name="Self Stop Volume" action="Self Stop Volume"/>
+			<menuitem name="Self Poll" action="Self Poll"/>
+			<separator name="Properties Separator"/>
+			<menuitem name="Properties" action="Properties"/>
+		</placeholder>
+		<placeholder name="Global File Items Placeholder">
+			<menuitem name="Empty Trash" action="Empty Trash"/>
+			<menuitem name="Save Search" action="Save Search"/>
+			<menuitem name="Save Search As" action="Save Search As"/>
+		</placeholder>
+	</menu>
+	<menu action="Edit">
+		<placeholder name="Clipboard Actions">
+			<menuitem name="Cut" action="Cut"/>
+			<menuitem name="Copy" action="Copy"/>
+			<menuitem name="Paste" action="Paste"/>
+		</placeholder>
+		<placeholder name="Undostack Actions">
+			<menuitem name="Undo" action="Undo"/>
+			<menuitem name="Redo" action="Redo"/>
+		</placeholder>
+		<placeholder name="Select Items">
+		<menuitem name="Select All" action="Select All"/>
+		<menuitem name="Select Pattern" action="Select Pattern"/>
+		<menuitem name="Invert Selection" action="Invert Selection"/>
+		</placeholder>
+		<placeholder name="File Items Placeholder">
+			<menuitem name="Duplicate" action="Duplicate"/>
+			<menuitem name="Create Link" action="Create Link"/>
+			<menuitem name="Rename" action="Rename"/>
+			<menu action="CopyToMenu">
+				<menuitem name="Copy to next pane" action="Copy to next pane"/>
+				<menuitem name="Copy to Home" action="Copy to Home"/>
+				<menuitem name="Copy to Desktop" action="Copy to Desktop"/>
+			</menu>
+			<menu action="MoveToMenu">
+				<menuitem name="Move to next pane" action="Move to next pane"/>
+				<menuitem name="Copy to Home" action="Move to Home"/>
+				<menuitem name="Copy to Desktop" action="Move to Desktop"/>
+			</menu>
+		</placeholder>
+		<placeholder name="Dangerous File Items Placeholder">
+			<menuitem name="Trash" action="Trash"/>
+			<menuitem name="Delete" action="Delete"/>
+			<menuitem name="Restore From Trash" action="Restore From Trash"/>
+		</placeholder>
+		<placeholder name="Extension Actions"/>
+	</menu>
+	<menu action="View">
+		<placeholder name="View Preferences Placeholder">
+			<menuitem name="Reset to Defaults" action="Reset to Defaults"/>
+			<menuitem name="Show Hidden Files" action="Show Hidden Files"/>
+		</placeholder>
+	</menu>
+</menubar>
+<popup name="background">
+	<placeholder name="Before Zoom Items">
+		<placeholder name="New Object Items">
+			<menuitem name="New Folder" action="New Folder"/>
+			<menu action="New Documents">
+		         	<menuitem name="No Templates" action="No Templates"/>
+			 	<placeholder name="New Documents Placeholder"/>
+			 	<separator name="After New Documents"/>
+			 	<menuitem name="New Empty Document" action="New Empty Document"/>
+			</menu>
+                	<menu action="Scripts">
+			 	<placeholder name="Scripts Placeholder"/>
+			 	<separator name="After Scripts"/>
+			 	<menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
+			</menu>
+		</placeholder>
+		<separator name="View items separator"/>
+		<placeholder name="View Items"/>
+		<separator name="Clipboard separator"/>
+		<placeholder name="File Clipboard Actions">
+			<menuitem name="Paste" action="Paste"/>
+		</placeholder>
+	</placeholder>
+
+	<separator name="Folder Items separator"/>
+	<placeholder name="Folder Items Placeholder">
+		<menuitem name="Self Mount Volume" action="Self Mount Volume"/>
+		<menuitem name="Self Unmount Volume" action="Self Unmount Volume"/>
+		<menuitem name="Self Eject Volume" action="Self Eject Volume"/>
+		<menuitem name="Self Start Volume" action="Self Start Volume"/>
+		<menuitem name="Self Stop Volume" action="Self Stop Volume"/>
+		<menuitem name="Self Poll" action="Self Poll"/>
+		<separator name="Properties separator"/>
+		<menuitem name="Properties" action="Properties"/>
+	</placeholder>
+
+</popup>
+<popup name="selection">
+	<placeholder name="Open Placeholder">
+		<menuitem name="Open" action="Open"/>
+		<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
+		<menuitem name="OpenAlternate" action="OpenAlternate"/>
+		<separator name="applications separator"/>
+		<placeholder name="Applications Placeholder"/>
+		<menu action="Open With">
+			<placeholder name="Applications Placeholder"/>
+			<separator name="open with separator"/>
+			<menuitem name="OtherApplication" action="OtherApplication1"/>
+		</menu>
+		<placeholder name="OtherApplicationPlaceholder">
+		        <menuitem name="OtherApplication2" action="OtherApplication2"/>
+		</placeholder>
+		<menu action="Scripts">
+			 <placeholder name="Scripts Placeholder"/>
+			 <separator name="After Scripts"/>
+			 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
+		</menu>
+	</placeholder>
+	<separator name="Clipboard separator"/>
+	<placeholder name="File Clipboard Actions">
+		<menuitem name="Cut" action="Cut"/>
+		<menuitem name="Copy" action="Copy"/>
+		<menuitem name="Paste Files Into" action="Paste Files Into"/>
+	</placeholder>
+	<separator name="File actions separator"/>
+	<placeholder name="File Actions">
+		<menuitem name="Create Link" action="Create Link"/>
+		<menuitem name="Rename" action="Rename"/>
+		<menu action="CopyToMenu">
+			<menuitem name="Copy to next pane" action="Copy to next pane"/>
+			<menuitem name="Copy to Home" action="Copy to Home"/>
+			<menuitem name="Copy to Desktop" action="Copy to Desktop"/>
+		</menu>
+		<menu action="MoveToMenu">
+			<menuitem name="Move to next pane" action="Move to next pane"/>
+			<menuitem name="Copy to Home" action="Move to Home"/>
+			<menuitem name="Copy to Desktop" action="Move to Desktop"/>
+		</menu>
+	</placeholder>
+	<separator name="Dangerous separator"/>
+	<placeholder name="Dangerous File Actions">
+		<menuitem name="Trash" action="Trash"/>
+		<menuitem name="Delete" action="Delete"/>
+		<menuitem name="Restore From Trash" action="Restore From Trash"/>
+	</placeholder>
+	<separator name="Appearance separator"/>
+	<placeholder name="Icon Appearance Items">
+	</placeholder>
+	<separator name="Extension actions separator"/>
+	<placeholder name="Extension Actions"/>
+	<separator name="Removable separator"/>
+	<placeholder name="Removable Media Placeholder">
+		 <menuitem name="Mount Volume" action="Mount Volume"/>
+		 <menuitem name="Unmount Volume" action="Unmount Volume"/>
+		 <menuitem name="Eject Volume" action="Eject Volume"/>
+		 <menuitem name="Start Volume" action="Start Volume"/>
+		 <menuitem name="Stop Volume" action="Stop Volume"/>
+		 <menuitem name="Poll" action="Poll"/>
+        </placeholder>
+        <menuitem name="Connect To Server Link" action="Connect To Server Link"/>
+        <separator name="Properties Separator"/>
+        <menuitem name="Properties" action="Properties"/>
+</popup>
+<popup name="location">
+	<placeholder name="Open Placeholder">
+		<menuitem name="LocationOpenInNewTab" action="LocationOpenInNewTab"/>
+		<menuitem name="LocationOpenAlternate" action="LocationOpenAlternate"/>
+	</placeholder>
+	<separator name="Location After Open Separator"/>
+	<placeholder name="Clipboard Actions">
+		<menuitem name="Cut" action="LocationCut"/>
+		<menuitem name="Copy" action="LocationCopy"/>
+		<menuitem name="LocationPasteFilesInto" action="LocationPasteFilesInto"/>
+	</placeholder>
+	<separator name="Location After Clipboard Separator"/>
+	<placeholder name="Dangerous File Actions">
+		<menuitem name="Trash" action="LocationTrash"/>
+		<menuitem name="Delete" action="LocationDelete"/>
+		<menuitem name="Restore From Trash" action="LocationRestoreFromTrash"/>
+	</placeholder>
+	<separator name="Location After Dangerous Separator"/>
+	<menuitem name="Location Mount Volume" action="Location Mount Volume"/>
+	<menuitem name="Location Unmount Volume" action="Location Unmount Volume"/>
+	<menuitem name="Location Eject Volume" action="Location Eject Volume"/>
+	<menuitem name="Location Start Volume" action="Location Start Volume"/>
+	<menuitem name="Location Stop Volume" action="Location Stop Volume"/>
+	<menuitem name="Location Poll" action="Location Poll"/>
+	<separator name="Properties Separator"/>
+	<menuitem name="LocationProperties" action="LocationProperties"/>
+</popup>
+</ui>
