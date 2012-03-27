@@ -17,7 +17,7 @@
 # Carlos Perelló Marín <carlos@hispalinux.es>, 2000.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2004, 2005, 2006.
 # Juanje Ojeda Croissier <jojeda@emergya.es>, 2009.
-# Jorge González <jorgegonz@svn.gnome.org>, 2007, 2008, 2010, 2011.
+# Jorge González <jorgegonz@svn.gnome.org>, 2007, 2008, 2010, 2011, 2012.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2010, 2011, 2012.
 #
 msgid ""
@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: nautilus.master.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-02-14 20:05+0000\n"
+"POT-Creation-Date: 2012-02-15 12:02+0000\n"
 "PO-Revision-Date: 2012-02-15 12:29+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
@@ -1671,7 +1671,6 @@ msgstr "Rehacer la última acción deshecha"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:367
 #, c-format
-#| msgid "Move %d items back to '%s'"
 msgid "Move %d item back to '%s'"
 msgid_plural "Move %d items back to '%s'"
 msgstr[0] "Devolver %d elemento a «%s»"
@@ -1679,7 +1678,6 @@ msgstr[1] "Devolver %d elementos a «%s»"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:370
 #, c-format
-#| msgid "Move %d items to '%s'"
 msgid "Move %d item to '%s'"
 msgid_plural "Move %d items to '%s'"
 msgstr[0] "Mover %d elemento a «%s»"
@@ -1688,7 +1686,6 @@ msgstr[1] "Mover %d elementos a «%s»"
 # libnautilus-private/nautilus-undo-signal-handlers.c:176
 #: ../libnautilus-private/nautilus-file-undo-operations.c:374
 #, c-format
-#| msgid "_Undo Move %d items"
 msgid "_Undo Move %d item"
 msgid_plural "_Undo Move %d items"
 msgstr[0] "_Deshacer mover %d elemento"
@@ -1697,7 +1694,6 @@ msgstr[1] "_Deshacer mover %d elementos"
 # libnautilus-private/nautilus-undo-signal-handlers.c:178
 #: ../libnautilus-private/nautilus-file-undo-operations.c:377
 #, c-format
-#| msgid "_Redo Move %d items"
 msgid "_Redo Move %d item"
 msgid_plural "_Redo Move %d items"
 msgstr[0] "_Rehacer mover %d elemento"
@@ -1735,7 +1731,6 @@ msgstr "_Rehacer restaurar desde la papelera"
 # src/file-manager/dfos-xfer.c:961
 #: ../libnautilus-private/nautilus-file-undo-operations.c:392
 #, c-format
-#| msgid "Move %d items back to trash"
 msgid "Move %d item back to trash"
 msgid_plural "Move %d items back to trash"
 msgstr[0] "Devolver %d elemento a la papelera"
@@ -1745,7 +1740,6 @@ msgstr[1] "Devolver %d elementos a la papelera"
 #: ../libnautilus-private/nautilus-file-undo-operations.c:395
 #: ../libnautilus-private/nautilus-file-undo-operations.c:981
 #, c-format
-#| msgid "Restore %d items from trash"
 msgid "Restore %d item from trash"
 msgid_plural "Restore %d items from trash"
 msgstr[0] "Restaurar %d elemento de la papelera"
@@ -1764,7 +1758,6 @@ msgstr "Restaurar «%s» desde la papelera"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:404
 #, c-format
-#| msgid "Delete %d copied items"
 msgid "Delete %d copied item"
 msgid_plural "Delete %d copied items"
 msgstr[0] "Eliminar %d elemento copiados"
@@ -1772,7 +1765,6 @@ msgstr[1] "Eliminar %d elementos copiados"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:407
 #, c-format
-#| msgid "Copy %d items to '%s'"
 msgid "Copy %d item to '%s'"
 msgid_plural "Copy %d items to '%s'"
 msgstr[0] "Copiar %d elemento a «%s»"
@@ -1780,7 +1772,6 @@ msgstr[1] "Copiar %d elementos a «%s»"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:411
 #, c-format
-#| msgid "_Undo Copy %d items"
 msgid "_Undo Copy %d item"
 msgid_plural "_Undo Copy %d items"
 msgstr[0] "_Deshacer copiar %d elemento"
@@ -1788,7 +1779,6 @@ msgstr[1] "_Deshacer copiar %d elementos"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:414
 #, c-format
-#| msgid "_Redo Copy %d items"
 msgid "_Redo Copy %d item"
 msgid_plural "_Redo Copy %d items"
 msgstr[0] "_Rehacer copiar %d elemento"
@@ -1820,7 +1810,6 @@ msgstr "_Rehacer copiar"
 # src/file-manager/fm-directory-view.c:2678
 #: ../libnautilus-private/nautilus-file-undo-operations.c:426
 #, c-format
-#| msgid "Delete %d duplicated items"
 msgid "Delete %d duplicated item"
 msgid_plural "Delete %d duplicated items"
 msgstr[0] "Eliminar %d elemento duplicados"
@@ -1829,7 +1818,6 @@ msgstr[1] "Eliminar %d elementos duplicados"
 # src/file-manager/fm-directory-view.c:2148
 #: ../libnautilus-private/nautilus-file-undo-operations.c:429
 #, c-format
-#| msgid "Duplicate of %d items in '%s'"
 msgid "Duplicate %d item in '%s'"
 msgid_plural "Duplicate %d items in '%s'"
 msgstr[0] "Duplicar %d elemento en «%s»"
@@ -1838,7 +1826,6 @@ msgstr[1] "Duplicar %d elementos en «%s»"
 # src/file-manager/fm-directory-view.c:2678
 #: ../libnautilus-private/nautilus-file-undo-operations.c:433
 #, c-format
-#| msgid "_Undo Duplicate %d items"
 msgid "_Undo Duplicate %d item"
 msgid_plural "_Undo Duplicate %d items"
 msgstr[0] "_Deshacer duplicar %d elemento"
@@ -1847,7 +1834,6 @@ msgstr[1] "_Deshacer duplicar %d elementos"
 # src/file-manager/fm-directory-view.c:2678
 #: ../libnautilus-private/nautilus-file-undo-operations.c:436
 #, c-format
-#| msgid "_Redo Duplicate %d items"
 msgid "_Redo Duplicate %d item"
 msgid_plural "_Redo Duplicate %d items"
 msgstr[0] "_Rehacer duplicar %d elemento"
@@ -1871,7 +1857,6 @@ msgstr "_Rehacer duplicar"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:449
 #, c-format
-#| msgid "Delete links to %d items"
 msgid "Delete links to %d item"
 msgid_plural "Delete links to %d items"
 msgstr[0] "Eliminar enlaces a %d elemento"
@@ -1880,7 +1865,6 @@ msgstr[1] "Eliminar enlaces a %d elementos"
 # src/file-manager/dfos-xfer.c:713
 #: ../libnautilus-private/nautilus-file-undo-operations.c:452
 #, c-format
-#| msgid "Create links to %d items"
 msgid "Create links to %d item"
 msgid_plural "Create links to %d items"
 msgstr[0] "Crear enlaces a %d elemento"
@@ -1974,7 +1958,6 @@ msgstr "_Rehacer renombrar"
 # src/file-manager/dfos-xfer.c:961
 #: ../libnautilus-private/nautilus-file-undo-operations.c:984
 #, c-format
-#| msgid "Move %d items to trash"
 msgid "Move %d item to trash"
 msgid_plural "Move %d items to trash"
 msgstr[0] "Mover %d elemento a la papelera"
@@ -3823,43 +3806,43 @@ msgstr "400%"
 
 #: ../src/nautilus-file-management-properties.ui.h:72
 msgid "100 KB"
-msgstr "100 KiB"
+msgstr "100 KB"
 
 #: ../src/nautilus-file-management-properties.ui.h:73
 msgid "500 KB"
-msgstr "500 KiB"
+msgstr "500 KB"
 
 #: ../src/nautilus-file-management-properties.ui.h:74
 msgid "1 MB"
-msgstr "1 MiB"
+msgstr "1 MB"
 
 #: ../src/nautilus-file-management-properties.ui.h:75
 msgid "3 MB"
-msgstr "3 MiB"
+msgstr "3 MB"
 
 #: ../src/nautilus-file-management-properties.ui.h:76
 msgid "5 MB"
-msgstr "5 MiB"
+msgstr "5 MB"
 
 #: ../src/nautilus-file-management-properties.ui.h:77
 msgid "10 MB"
-msgstr "10 MiB"
+msgstr "10 MB"
 
 #: ../src/nautilus-file-management-properties.ui.h:78
 msgid "100 MB"
-msgstr "100 MiB"
+msgstr "100 MB"
 
 #: ../src/nautilus-file-management-properties.ui.h:79
 msgid "1 GB"
-msgstr "1 GiB"
+msgstr "1 GB"
 
 #: ../src/nautilus-file-management-properties.ui.h:80
 msgid "2 GB"
-msgstr "2 GiB"
+msgstr "2 GB"
 
 #: ../src/nautilus-file-management-properties.ui.h:81
 msgid "4 GB"
-msgstr "4 GiB"
+msgstr "4 GB"
 
 # src/file-manager/fm-icon-view.c:109
 #: ../src/nautilus-icon-view.c:133
@@ -6400,7 +6383,7 @@ msgstr ""
 #: ../src/nautilus-window-menus.c:398
 msgid "translator-credits"
 msgstr ""
-"Jorge González <jorgegonz@svn.gnome.org>, 2007-2010\n"
+"Jorge González <jorgegonz@svn.gnome.org>, 2007-2010, 2012\n"
 "Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2003-2006\n"
 "Pablo Gonzalo del Campo <pablodc@bigfoot.com>, 2000-2004\n"
 "Carlos Perelló Marín <carlos@gnome-db.org>, 2000, 2002\n"
