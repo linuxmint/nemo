@@ -3006,6 +3006,10 @@ eel_canvas_button (GtkWidget *widget, GdkEventButton *event)
 
 	canvas = EEL_CANVAS (widget);
 
+	/* Don't handle extra mouse button events */
+	if (event->button > 5)
+		return FALSE;
+
 	/*
 	 * dispatch normally regardless of the event's window if an item has
 	 * has a pointer grab in effect
