@@ -310,7 +310,6 @@ nautilus_icon_view_container_get_icon_text (NautilusIconContainer *container,
 					    char                 **additional_text,
 					    gboolean               include_invisible)
 {
-	char *actual_uri;
 	GQuark *attributes;
 	char *text_array[4];
 	int i, j, num_attributes;
@@ -345,25 +344,11 @@ nautilus_icon_view_container_get_icon_text (NautilusIconContainer *container,
 		return;
 	}
 
-	if (NAUTILUS_IS_DESKTOP_ICON_FILE (file)) {
-		/* Don't show the normal extra information for desktop icons, it doesn't
-		 * make sense. */
+	if (NAUTILUS_IS_DESKTOP_ICON_FILE (file) ||
+	    nautilus_file_is_nautilus_link (file)) {
+		/* Don't show the normal extra information for desktop icons,
+		 * or desktop files, it doesn't make sense. */
  		*additional_text = NULL;
-		return;
-	}
-	
-	/* Handle link files specially. */
-	if (nautilus_file_is_nautilus_link (file)) {
-		/* FIXME bugzilla.gnome.org 42531: Does sync. I/O and works only locally. */
- 		*additional_text = NULL;
-		if (nautilus_file_is_local (file)) {
-			actual_uri = nautilus_file_get_uri (file);
-			*additional_text = nautilus_link_local_get_additional_text (actual_uri);
-
-			g_free (actual_uri);
-		}
-		/* Don't show the normal extra information for desktop files, it doesn't
-		 * make sense. */
 		return;
 	}
 
