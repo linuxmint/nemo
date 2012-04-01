@@ -40,7 +40,6 @@ gboolean         nautilus_link_local_set_text                    (const char    
 gboolean         nautilus_link_local_set_icon                    (const char        *uri,
 								  const char        *icon);
 char *           nautilus_link_local_get_text                    (const char        *uri);
-char *           nautilus_link_local_get_additional_text         (const char        *uri);
 char *           nautilus_link_local_get_link_uri                (const char        *uri);
 void             nautilus_link_get_link_info_given_file_contents (const char        *file_contents,
 								  int                link_file_size,

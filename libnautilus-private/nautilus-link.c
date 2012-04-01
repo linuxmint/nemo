@@ -350,31 +350,6 @@ nautilus_link_local_get_text (const char *path)
 	return slurp_key_string (path, "Name", TRUE);
 }
 
-char *
-nautilus_link_local_get_additional_text (const char *uri)
-{
-	char *type;
-	char *retval;
-
-	if (!is_local_file_a_link (uri)) {
-		return NULL;
-	}
-
-	type = slurp_key_string (uri, "Type", FALSE);
-	retval = NULL;
-	if (type == NULL) {
-		return NULL;
-	}
-
-	if (strcmp (type, "Application") == 0) {
-		retval = slurp_key_string (uri, "Comment", TRUE);
-	}
-	
-	g_free (type);
-
-	return retval;
-}
-
 static char *
 nautilus_link_get_link_uri_from_desktop (GKeyFile *key_file, const char *desktop_file_uri)
 {
