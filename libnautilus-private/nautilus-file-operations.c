@@ -2920,14 +2920,14 @@ report_copy_progress (CopyMoveJob *copy_job,
 								       _("Moving file %'d of %'d (in \"%B\") to \"%B\"")
 								       :
 								       _("Copying file %'d of %'d (in \"%B\") to \"%B\""),
-								       transfer_info->num_files,
+								       transfer_info->num_files + 1,
 								       source_info->num_files,
 								       (GFile *)copy_job->files->data,
 								       copy_job->destination));
 			} else {
 				nautilus_progress_info_take_status (job->progress,
 								    f (_("Duplicating file %'d of %'d (in \"%B\")"),
-								       transfer_info->num_files,
+								       transfer_info->num_files + 1,
 								       source_info->num_files,
 								       (GFile *)copy_job->files->data));
 			}
@@ -2938,13 +2938,13 @@ report_copy_progress (CopyMoveJob *copy_job,
 								       _("Moving file %'d of %'d to \"%B\"")
 								       :
 								       _ ("Copying file %'d of %'d to \"%B\""),
-								       transfer_info->num_files,
+								       transfer_info->num_files + 1,
 								       source_info->num_files,
 								       copy_job->destination));
 			} else {
 				nautilus_progress_info_take_status (job->progress,
 								    f (_("Duplicating file %'d of %'d"),
-								       transfer_info->num_files,
+								       transfer_info->num_files + 1,
 								       source_info->num_files));
 			}
 		}
