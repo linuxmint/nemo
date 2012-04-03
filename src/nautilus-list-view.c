@@ -650,6 +650,11 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	selection = gtk_tree_view_get_selection (tree_view);
 	blank_click = FALSE;
 
+	/* Don't handle extra mouse buttons here */
+	if (event->button > 5) {
+		return FALSE;
+	}
+
 	if (event->window != gtk_tree_view_get_bin_window (tree_view)) {
 		return FALSE;
 	}
