@@ -220,6 +220,9 @@ struct NautilusFileDetails
 	eel_boolean_bit filesystem_info_is_up_to_date : 1;
 
 	time_t trash_time; /* 0 is unknown */
+
+	guint64 free_space; /* (guint)-1 for unknown */
+	time_t free_space_read; /* The time free_space was updated, or 0 for never */
 };
 
 typedef struct {

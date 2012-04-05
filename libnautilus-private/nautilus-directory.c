@@ -116,7 +116,6 @@ nautilus_directory_init (NautilusDirectory *directory)
 	directory->details->high_priority_queue = nautilus_file_queue_new ();
 	directory->details->low_priority_queue = nautilus_file_queue_new ();
 	directory->details->extension_queue = nautilus_file_queue_new ();
-	directory->details->free_space = (guint64)-1;
 }
 
 NautilusDirectory *

@@ -136,9 +136,6 @@ struct NautilusDirectoryDetails
 	GList *file_operations_in_progress; /* list of FileOperation * */
 
 	GHashTable *hidden_file_hash;
-
-	guint64 free_space; /* (guint)-1 for unknown */
-	time_t free_space_read; /* The time free_space was updated, or 0 for never */
 };
 
 NautilusDirectory *nautilus_directory_get_existing                    (GFile                     *location);

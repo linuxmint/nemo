@@ -165,6 +165,8 @@ nautilus_file_init (NautilusFile *file)
 
 	nautilus_file_clear_info (file);
 	nautilus_file_invalidate_extension_info_internal (file);
+
+	file->details->free_space = -1;
 }
 
 static GObject*
@@ -6619,12 +6621,11 @@ get_fs_free_cb (GObject *source_object,
 		GAsyncResult *res,
 		gpointer user_data)
 {
-	NautilusDirectory *directory;
 	NautilusFile *file;
 	guint64 free_space;
 	GFileInfo *info;
 
-	directory = NAUTILUS_DIRECTORY (user_data);
+	file = NAUTILUS_FILE (user_data);
 	
 	free_space = (guint64)-1;
 	info = g_file_query_filesystem_info_finish (G_FILE (source_object),
@@ -6636,15 +6637,12 @@ get_fs_free_cb (GObject *source_object,
 		g_object_unref (info);
 	}
 
-	if (directory->details->free_space != free_space) {
-		directory->details->free_space = free_space;
-		file = nautilus_directory_get_existing_corresponding_file (directory);
-		if (file) {
-			nautilus_file_emit_changed (file);
-			nautilus_file_unref (file);
-		}
+	if (file->details->free_space != free_space) {
+		file->details->free_space = free_space;
+		nautilus_file_emit_changed (file);
 	}
-	nautilus_directory_unref (directory);
+
+	nautilus_file_unref (file);
 }
 
 /**
@@ -6657,35 +6655,29 @@ get_fs_free_cb (GObject *source_object,
 char *
 nautilus_file_get_volume_free_space (NautilusFile *file)
 {
-	NautilusDirectory *directory;
 	GFile *location;
 	char *res;
 	time_t now;
 
-	directory = nautilus_directory_get_for_file (file);
-
 	now = time (NULL);
 	/* Update first time and then every 2 seconds */
-	if (directory->details->free_space_read == 0 ||
-	    (now - directory->details->free_space_read) > 2)  {
-		directory->details->free_space_read = now;
+	if (file->details->free_space_read == 0 ||
+	    (now - file->details->free_space_read) > 2)  {
+		file->details->free_space_read = now;
 		location = nautilus_file_get_location (file);
 		g_file_query_filesystem_info_async (location,
 						    G_FILE_ATTRIBUTE_FILESYSTEM_FREE,
 						    0, NULL,
 						    get_fs_free_cb,
-						    directory); /* Inherits ref */
+						    nautilus_file_ref (file));
 		g_object_unref (location);
-	} else {
-		nautilus_directory_unref (directory);
 	}
-
 
 	res = NULL;
-	if (directory->details->free_space != (guint64)-1) {
-		res = g_format_size (directory->details->free_space);
+	if (file->details->free_space != (guint64)-1) {
+		res = g_format_size (file->details->free_space);
 	}
-	
+
 	return res;
 }
 
