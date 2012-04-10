@@ -5,7 +5,7 @@
          xmlns="http://usefulinc.com/ns/doap#">
 
   <name xml:lang="en">Nautilus</name>
-  <shortdesc xml:lang="en">Default file manager for gnome</shortdesc>
+  <shortdesc xml:lang="en">Default file manager for GNOME</shortdesc>
   <homepage rdf:resource="http://live.gnome.org/Nautilus" />
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/nautilus-list" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#desktop" />
