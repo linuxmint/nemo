@@ -7,19 +7,21 @@
 # Aleix Badia i Bosch <abadia@ica.es>, 2004.
 # Josep Puigdemont <josep.puigdemont@gmail.com>, 2006, 2007.
 # Joan Duran <jodufi@gmail.com>, 2008-2012.
+# Jordi Serratosa <jordis@softcatala.cat>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-19 01:19+0100\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
+"POT-Creation-Date: 2012-03-19 00:20+0000\n"
 "PO-Revision-Date: 2012-03-17 00:53+0100\n"
 "Last-Translator: Joan Duran <jodufi@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
-"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bits\n"
+"Language: ca\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #: ../data/nautilus.xml.in.h:1
@@ -300,8 +302,7 @@ msgid ""
 "If you want to eject the volume, please use \"Eject\" in the popup menu of "
 "the volume."
 msgstr ""
-"Si voleu expulsar el volum, utilitzeu «Expulsa» en el menú emergent del "
-"volum."
+"Si voleu expulsar el volum, utilitzeu «Expulsa» en el menú emergent del volum."
 
 #
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:111
@@ -464,7 +465,7 @@ msgstr "ahir"
 #.
 #: ../libnautilus-private/nautilus-file.c:4401
 msgid "Wednesday, September 00 0000 at 00:00:00 PM"
-msgstr "Dimecres, 00 de Setembre de 0000 a les 00:00:00 PM"
+msgstr "Dimecres, 00 de setembre de 0000 a les 00:00:00 PM"
 
 #: ../libnautilus-private/nautilus-file.c:4402
 msgid "%A, %B %-d %Y at %-I:%M:%S %p"
@@ -480,7 +481,7 @@ msgstr "%a, %-d %b %Y a les %-I:%M:%S %p"
 
 #: ../libnautilus-private/nautilus-file.c:4407
 msgid "Mon, Oct 00 0000 at 00:00 PM"
-msgstr "Dl, 00 d'oct. de 0000 a les 00:00:00 PM"
+msgstr "Dl, 00 d'oct. de 0000 a les 00:00 PM"
 
 #: ../libnautilus-private/nautilus-file.c:4408
 msgid "%a, %b %-d %Y at %-I:%M %p"
@@ -1028,8 +1029,8 @@ msgstr ""
 msgid ""
 "There was an error getting information about the files in the folder \"%B\"."
 msgstr ""
-"S'ha produït un error en obtenir informació sobre els fitxers de la carpeta "
-"«%B»."
+"S'ha produït un error en obtenir informació sobre els fitxers de la carpeta «%"
+"B»."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1526
 #: ../libnautilus-private/nautilus-file-operations.c:3518
@@ -1505,14 +1506,14 @@ msgstr[1] "Mou %d elements a «%s»"
 #, c-format
 msgid "_Undo Move %d item"
 msgid_plural "_Undo Move %d items"
-msgstr[0] "_Desfés el moviment de %d element"
+msgstr[0] "_Desfés el moviment d'%d element"
 msgstr[1] "_Desfés el moviment de %d elements"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:377
 #, c-format
 msgid "_Redo Move %d item"
 msgid_plural "_Redo Move %d items"
-msgstr[0] "_Refés el moviment de %d element"
+msgstr[0] "_Refés el moviment d'%d element"
 msgstr[1] "_Refés el moviment de %d elements"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:381
@@ -1584,14 +1585,14 @@ msgstr[1] "Copia %d elements a «%s»"
 #, c-format
 msgid "_Undo Copy %d item"
 msgid_plural "_Undo Copy %d items"
-msgstr[0] "_Desfés la còpia de %d element"
+msgstr[0] "_Desfés la còpia d'%d element"
 msgstr[1] "_Desfés la còpia de %d elements"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:414
 #, c-format
 msgid "_Redo Copy %d item"
 msgid_plural "_Redo Copy %d items"
-msgstr[0] "_Refés la còpia de %d element"
+msgstr[0] "_Refés la còpia d'%d element"
 msgstr[1] "_Refés la còpia de %d elements"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:418
@@ -1632,15 +1633,15 @@ msgstr[1] "Duplica %d elements a «%s»"
 #, c-format
 msgid "_Undo Duplicate %d item"
 msgid_plural "_Undo Duplicate %d items"
-msgstr[0] "_Desfés la duplicació de %d element"
+msgstr[0] "_Desfés la duplicació d'%d element"
 msgstr[1] "_Desfés la duplicació de %d elements"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:436
 #, c-format
 msgid "_Redo Duplicate %d item"
 msgid_plural "_Redo Duplicate %d items"
-msgstr[0] "_Resfés la duplicació de %d element"
-msgstr[1] "_Desfés la duplicació de %d elements"
+msgstr[0] "_Refés la duplicació d'%d element"
+msgstr[1] "_Refés la duplicació de %d elements"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:441
 #, c-format
@@ -2066,8 +2067,7 @@ msgstr ""
 "mostra la previsualització, encara que la carpeta sigui a un servidor remot. "
 "Si s'estableix a «local-only» (només local) aleshores només es mostren les "
 "previsualitzacions de fitxers que estiguin en sistemes de fitxers locals. Si "
-"s'estableix a «never» (mai), no es llegiran mai les dades de "
-"previsualització."
+"s'estableix a «never» (mai), no es llegiran mai les dades de previsualització."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:13
 msgid "When to show number of items in a folder"
@@ -2113,8 +2113,8 @@ msgid ""
 msgstr ""
 "Què fer amb fitxers de text executables quan s'activen (amb un clic simple o "
 "doble). Els valors possibles són «launch» per executar-los com a programes, "
-"«ask» per preguntar què fer mitjançant un diàleg, i «display» per mostrar-"
-"los com a fitxers de text."
+"«ask» per preguntar què fer mitjançant un diàleg, i «display» per mostrar-los "
+"com a fitxers de text."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:19
 msgid "Show the package installer for unknown mime types"
@@ -2172,8 +2172,8 @@ msgid ""
 "Possible values range between 6 and 14."
 msgstr ""
 "Per als usuaris amb ratolins que tenen els botons «Endavant» i «Endarrere» "
-"aquesta clau establirà quin botó activarà l'ordre «Endarrere» en una "
-"finestra del navegador. El rang de valors possibles és entre 6 i 14."
+"aquesta clau establirà quin botó activarà l'ordre «Endarrere» en una finestra "
+"del navegador. El rang de valors possibles és entre 6 i 14."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:27
 msgid "When to show thumbnails of image files"
@@ -2192,8 +2192,8 @@ msgstr ""
 "miniatura. Si s'estableix a «always» (sempre), sempre es miniaturitzarà, "
 "encara que el fitxer sigui a un servidor remot. Si s'estableix a «local-"
 "only» (només local) aleshores només es mostraran miniatures dels fitxes que "
-"estiguin en sistemes de fitxers locals. Si s'estableix a «never» (mai), no "
-"es fan miniatures i s'utilitzarà una icona genèrica."
+"estiguin en sistemes de fitxers locals. Si s'estableix a «never» (mai), no es "
+"fan miniatures i s'utilitzarà una icona genèrica."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:29
 msgid "Maximum image size for thumbnailing"
@@ -2243,8 +2243,8 @@ msgid ""
 "\", \"size\", \"type\" and \"mtime\"."
 msgstr ""
 "El criteri d'ordenació predeterminat dels elements de la vista d'icones. Els "
-"valors possibles són «name» (nom), «size» (mida), «type» (tipus) i "
-"«mtime» (data de modificació)."
+"valors possibles són «name» (nom), «size» (mida), «type» (tipus) i «mtime» (data "
+"de modificació)."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
 msgid "Reverse sort order in new windows"
@@ -2259,9 +2259,9 @@ msgid ""
 msgstr ""
 "Si s'estableix a «True» (cert), els fitxers de les finestres noves "
 "s'ordenaran a la inversa. És a dir, si es fa una ordenació per nom, els "
-"fitxers, en comptes d'ordenar-se de la «a» a la «z», s'ordenaran de la «z» a "
-"la «a»; si es fa per mida, en comptes d'ordenar-se incrementalment "
-"s'ordenaran decrementalment."
+"fitxers, en comptes d'ordenar-se de la «a» a la «z», s'ordenaran de la «z» a la "
+"«a»; si es fa per mida, en comptes d'ordenar-se incrementalment s'ordenaran "
+"decrementalment."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:39
 msgid "Nautilus uses the users home folder as the desktop"
@@ -2272,8 +2272,8 @@ msgid ""
 "If set to true, then Nautilus will use the user's home folder as the "
 "desktop. If it is false, then it will use ~/Desktop as the desktop."
 msgstr ""
-"Si s'estableix a «True» (cert), el Nautilus utilitzarà la carpeta de "
-"l'usuari com a escriptori. Si és «False» (fals), utilitzarà el ~/Escriptori."
+"Si s'estableix a «True» (cert), el Nautilus utilitzarà la carpeta de l'usuari "
+"com a escriptori. Si és «False» (fals), utilitzarà el ~/Escriptori."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:41
 msgid "Default folder viewer"
@@ -2299,8 +2299,8 @@ msgid ""
 "The format of file dates. Possible values are \"locale\", \"iso\", and "
 "\"informal\"."
 msgstr ""
-"El format de les dates dels fitxers. Els valors possibles són «locale», "
-"«iso» i «informal»."
+"El format de les dates dels fitxers. Els valors possibles són «locale», «iso» "
+"i «informal»."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:45
 msgid "Whether to show hidden files"
@@ -2350,9 +2350,9 @@ msgid ""
 msgstr ""
 "Llista de títols sota una icona a la vista Icones i a l'escriptori. El "
 "nombre real de títols mostrats depèn del nivell d'ampliació. Alguns dels "
-"valors possibles són: «size» (mida), «type» (tipus), «date_modified» (data "
-"de modificació), «date_changed» (data de canvis), «date_accessed» (data "
-"d'accés), «owner» (propietari), «group» (grup), «permissions» (permisos), "
+"valors possibles són: «size» (mida), «type» (tipus), «date_modified» (data de "
+"modificació), «date_changed» (data de canvis), «date_accessed» (data d'accés), "
+"«owner» (propietari), «group» (grup), «permissions» (permisos), "
 "«octal_permissions» (permisos octals) i «mime_type» (tipus MIME)."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:51
@@ -2363,8 +2363,8 @@ msgstr "Posa les etiquetes al costat de les icones"
 msgid ""
 "If true, labels will be placed beside icons rather than underneath them."
 msgstr ""
-"Si s'estableix a «True» (cert), les etiquetes es col·locaran al costat de "
-"les icones i no a sota."
+"Si s'estableix a «True» (cert), les etiquetes es col·locaran al costat de les "
+"icones i no a sota."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:53
 msgid "Default icon zoom level"
@@ -2477,9 +2477,9 @@ msgid ""
 "If set to true, Nautilus will only show folders in the tree side pane. "
 "Otherwise it will show both folders and files."
 msgstr ""
-"Si s'estableix a «True» (cert), a la subfinestra lateral en arbre el "
-"Nautilus mostrarà només les carpetes. Si no, hi mostrarà tant les carpetes "
-"com els fitxers."
+"Si s'estableix a «True» (cert), a la subfinestra lateral en arbre el Nautilus "
+"mostrarà només les carpetes. Si no, hi mostrarà tant les carpetes com els "
+"fitxers."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:72
 msgid "Desktop font"
@@ -2536,8 +2536,8 @@ msgid ""
 "If this is set to true, icons linking to mounted volumes will be put on the "
 "desktop."
 msgstr ""
-"Si s'estableix a «True» (cert), s'afegiran a l'escriptori icones amb "
-"enllaços als volums muntats."
+"Si s'estableix a «True» (cert), s'afegiran a l'escriptori icones amb enllaços "
+"als volums muntats."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:82
 msgid "Network Servers icon visible on the desktop"
@@ -3162,8 +3162,8 @@ msgstr "En aquesta carpeta ja hi ha un «%s». Utilitzeu un altre nom."
 msgid ""
 "There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
 msgstr ""
-"En aquesta carpeta no hi ha cap «%s». Podria ser que s'hagués acabat de "
-"moure o suprimir?"
+"En aquesta carpeta no hi ha cap «%s». Podria ser que s'hagués acabat de moure "
+"o suprimir?"
 
 #: ../src/nautilus-error-reporting.c:214
 #, c-format
@@ -6422,9 +6422,9 @@ msgstr "Obre %s"
 #~ "Reducció de velocitat per a quan es previsualitza un fitxer de so en "
 #~ "passar el ratolí per damunt de la icona d'un fitxer. Si s'estableix a "
 #~ "«always» (sempre), sempre es reprodueix el so, encara que el fitxer sigui "
-#~ "a un servidor remot. Si s'estableix a «local-only» (només local) "
-#~ "aleshores només reprodueix les previsualitzacions a sistemes de fitxers "
-#~ "locals. Si s'estableix a «never» (mai), mai previsualitza sons."
+#~ "a un servidor remot. Si s'estableix a «local-only» (només local) aleshores "
+#~ "només reprodueix les previsualitzacions a sistemes de fitxers locals. Si "
+#~ "s'estableix a «never» (mai), mai previsualitza sons."
 
 #~ msgid "Whether to preview sounds when mousing over an icon"
 #~ msgstr ""
@@ -6796,9 +6796,8 @@ msgstr "Obre %s"
 #~ msgstr ""
 #~ "Criteris per fer coincidir fitxers que es cerquen amb la barra de "
 #~ "cerques. Si s'estableix a «search_by_text», el Nautilus cercarà fitxers "
-#~ "només per nom de fitxer. Si s'estableix a "
-#~ "«search_by_text_and_properties», el Nautilus cercarà fitxers per nom i "
-#~ "propietats."
+#~ "només per nom de fitxer. Si s'estableix a «search_by_text_and_properties», "
+#~ "el Nautilus cercarà fitxers per nom i propietats."
 
 #~ msgid "Current Nautilus theme (deprecated)"
 #~ msgstr "Tema actual del Nautilus (desestimat)"
@@ -6902,8 +6901,8 @@ msgstr "Obre %s"
 #~ msgstr ""
 #~ "Si s'estableix a «True» (cert), els fitxers de les finestres noves "
 #~ "s'ordenaran a la inversa. És a dir, si es fa una ordenació per nom, els "
-#~ "fitxers, en comptes d'ordenar-se de la «a» a la «z», s'ordenaran de la "
-#~ "«z» a la «a»."
+#~ "fitxers, en comptes d'ordenar-se de la «a» a la «z», s'ordenaran de la «z» a "
+#~ "la «a»."
 
 #~ msgid "If true, icons will be laid out tighter by default in new windows."
 #~ msgstr ""
@@ -7272,8 +7271,8 @@ msgstr "Obre %s"
 #~ "\"%s\" cannot open \"%s\" because \"%s\" cannot access files at \"%s\" "
 #~ "locations."
 #~ msgstr ""
-#~ "El «%s» no pot obrir «%s» perquè el «%s» no pot accedir als fitxers de "
-#~ "les ubicacions «%s»."
+#~ "El «%s» no pot obrir «%s» perquè el «%s» no pot accedir als fitxers de les "
+#~ "ubicacions «%s»."
 
 #~ msgid "Open Failed, would you like to choose another action?"
 #~ msgstr "No s'ha pogut obrir. Voleu triar una altra acció?"
@@ -7282,8 +7281,8 @@ msgstr "Obre %s"
 #~ "The default action cannot open \"%s\" because it cannot access files at "
 #~ "\"%s\" locations."
 #~ msgstr ""
-#~ "L'acció predeterminada no pot obrir «%s» perquè no pot accedir als "
-#~ "fitxers de les ubicacions «%s»."
+#~ "L'acció predeterminada no pot obrir «%s» perquè no pot accedir als fitxers "
+#~ "de les ubicacions «%s»."
 
 #~ msgid ""
 #~ "No other applications are available to view this file. If you copy this "
@@ -7798,8 +7797,8 @@ msgstr "Obre %s"
 #~ msgid ""
 #~ "If set to true, newly opened windows will have the extra pane visible."
 #~ msgstr ""
-#~ "Si s'estableix a «True» (cert), les finestres noves que s'obrin tindran "
-#~ "la subfinestra addicional visible."
+#~ "Si s'estableix a «True» (cert), les finestres noves que s'obrin tindran la "
+#~ "subfinestra addicional visible."
 
 #~ msgid "Show extra pane in new windows"
 #~ msgstr "Mostra la subfinestra addicional a les finestres noves"
