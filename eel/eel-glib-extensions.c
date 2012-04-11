@@ -46,27 +46,6 @@
 #define SAFE_SHELL_CHARACTERS "-_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 /**
- * eel_g_date_new_tm:
- * 
- * Get a new GDate * for the date represented by a tm struct. 
- * The caller is responsible for g_free-ing the result.
- * @time_pieces: Pointer to a tm struct representing the date to be converted.
- * 
- * Returns: Newly allocated date.
- * 
- **/
-GDate *
-eel_g_date_new_tm (struct tm *time_pieces)
-{
-	/* tm uses 0-based months; GDate uses 1-based months.
-	 * tm_year needs 1900 added to get the full year.
-	 */
-	return g_date_new_dmy (time_pieces->tm_mday,
-			       time_pieces->tm_mon + 1,
-			       time_pieces->tm_year + 1900);
-}
-
-/**
  * eel_strdup_strftime:
  *
  * Cover for standard date-and-time-formatting routine strftime that returns
@@ -225,56 +204,6 @@ eel_strdup_strftime (const char *format, struct tm *time_pieces)
 }
 
 /**
- * eel_g_list_exactly_one_item
- *
- * Like g_list_length (list) == 1, only O(1) instead of O(n).
- * @list: List.
- *
- * Return value: TRUE if the list has exactly one item.
- **/
-gboolean
-eel_g_list_exactly_one_item (GList *list)
-{
-	return list != NULL && list->next == NULL;
-}
-
-/**
- * eel_g_list_more_than_one_item
- *
- * Like g_list_length (list) > 1, only O(1) instead of O(n).
- * @list: List.
- *
- * Return value: TRUE if the list has more than one item.
- **/
-gboolean
-eel_g_list_more_than_one_item (GList *list)
-{
-	return list != NULL && list->next != NULL;
-}
-
-/**
- * eel_g_list_equal
- *
- * Compares two lists to see if they are equal.
- * @list_a: First list.
- * @list_b: Second list.
- *
- * Return value: TRUE if the lists are the same length with the same elements.
- **/
-gboolean
-eel_g_list_equal (GList *list_a, GList *list_b)
-{
-	GList *p, *q;
-
-	for (p = list_a, q = list_b; p != NULL && q != NULL; p = p->next, q = q->next) {
-		if (p->data != q->data) {
-			return FALSE;
-		}
-	}
-	return p == NULL && q == NULL;
-}
-
-/**
  * eel_g_str_list_equal
  *
  * Compares two lists of C strings to see if they are equal.
@@ -313,62 +242,6 @@ eel_g_str_list_copy (GList *list)
 		result = g_list_prepend (result, g_strdup (node->data));
 	}
 	return result;
-}
-
-/**
- * eel_g_str_list_alphabetize
- *
- * Sort a list of strings using locale-sensitive rules.
- *
- * @list: List of strings and/or NULLs.
- * 
- * Return value: @list, sorted.
- **/
-GList *
-eel_g_str_list_alphabetize (GList *list)
-{
-	return g_list_sort (list, (GCompareFunc) g_utf8_collate);
-}
-
-int
-eel_g_str_list_index (GList *str_list,
-		      const char *str)
-{
-	int i;
-	GList *l;
-	for (i = 0, l = str_list; l != NULL; l = l->next, i++) {
-		if (!strcmp (str, (const char*)l->data)) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-/**
- * eel_g_strv_find
- * 
- * Get index of string in array of strings.
- * 
- * @strv: NULL-terminated array of strings.
- * @find_me: string to search for.
- * 
- * Return value: index of array entry in @strv that
- * matches @find_me, or -1 if no matching entry.
- */
-int
-eel_g_strv_find (char **strv, const char *find_me)
-{
-	int index;
-
-	g_return_val_if_fail (find_me != NULL, -1);
-	
-	for (index = 0; strv[index] != NULL; ++index) {
-		if (strcmp (strv[index], find_me) == 0) {
-			return index;
-		}
-	}
-
-	return -1;
 }
 
 gboolean
@@ -491,20 +364,6 @@ eel_g_list_partition (GList *list,
 	return predicate_true;
 }
 
-/**
- * eel_get_system_time
- * 
- * Return value: number of microseconds since the machine was turned on
- */
-gint64
-eel_get_system_time (void)
-{
-	struct timeval tmp;
-
-	gettimeofday (&tmp, NULL);
-	return (gint64)tmp.tv_usec + (gint64)tmp.tv_sec * G_GINT64_CONSTANT (1000000);
-}
-
 typedef struct {
 	GList *keys;
 	GList *values;
@@ -547,37 +406,6 @@ eel_g_hash_table_safe_for_each (GHashTable *hash_table,
 	g_list_free (flattened.values);
 }
 
-int
-eel_round (double d)
-{
-	double val;
-
-	val = floor (d + .5);
-
-	/* The tests are needed because the result of floating-point to integral
-	 * conversion is undefined if the floating point value is not representable
-	 * in the new type. E.g. the magnititude is too large or a negative
-	 * floating-point value being converted to an unsigned.
-	 */
-	g_return_val_if_fail (val <= INT_MAX, INT_MAX);
-	g_return_val_if_fail (val >= INT_MIN, INT_MIN);
-
-	return val;
-}
-
-/**
- * eel_g_object_list_ref
- *
- * Ref all the objects in a list.
- * @list: GList of objects.
- **/
-GList *
-eel_g_object_list_ref (GList *list)
-{
-	g_list_foreach (list, (GFunc) g_object_ref, NULL);
-	return list;
-}
-
 /**
  * eel_g_object_list_copy
  *
@@ -587,128 +415,11 @@ eel_g_object_list_ref (GList *list)
 GList *
 eel_g_object_list_copy (GList *list)
 {
-	return g_list_copy (eel_g_object_list_ref (list));
-}
-
-/**
- * eel_add_weak_pointer
- *
- * Nulls out a saved reference to an object when the object gets destroyed.
- *
- * @pointer_location: Address of the saved pointer.
- **/
-void 
-eel_add_weak_pointer (gpointer pointer_location)
-{
-	gpointer *object_location;
-
-	g_return_if_fail (pointer_location != NULL);
-
-	object_location = (gpointer *) pointer_location;
-	if (*object_location == NULL) {
-		/* The reference is NULL, nothing to do. */
-		return;
-	}
-
-	g_return_if_fail (G_IS_OBJECT (*object_location));
-
-	g_object_add_weak_pointer (G_OBJECT (*object_location),
-				   object_location);
-}
-
-/**
- * eel_remove_weak_pointer
- *
- * Removes the weak pointer that was added by eel_add_weak_pointer.
- * Also nulls out the pointer.
- *
- * @pointer_location: Pointer that was passed to eel_add_weak_pointer.
- **/
-void 
-eel_remove_weak_pointer (gpointer pointer_location)
-{
-	gpointer *object_location;
-
-	g_return_if_fail (pointer_location != NULL);
-
-	object_location = (gpointer *) pointer_location;	
-	if (*object_location == NULL) {
-		/* The object was already destroyed and the reference
-		 * nulled out, nothing to do.
-		 */
-		return;
-	}
-
-	g_return_if_fail (G_IS_OBJECT (*object_location));
-
-	g_object_remove_weak_pointer (G_OBJECT (*object_location),
-				      object_location);
-	
-	*object_location = NULL;
-}
-
-static void
-update_auto_strv_as_quarks (GSettings   *settings,
-			    const gchar *key,
-			    gpointer     user_data)
-{
-	GQuark **storage = user_data;
-	int i = 0;
-	char **value;
-
-	value = g_settings_get_strv (settings, key);
-
-	g_free (*storage);
-	*storage = g_new (GQuark, g_strv_length (value) + 1);
-
-	for (i = 0; value[i] != NULL; ++i) {
-		(*storage)[i] = g_quark_from_string (value[i]);
-	}
-	(*storage)[i] = 0;
-
-	g_strfreev (value);
-}
-
-void
-eel_g_settings_add_auto_strv_as_quarks (GSettings *settings,
-					const char *key,
-					GQuark **storage)
-{
-	char *signal;
-
-	*storage = NULL;
-	update_auto_strv_as_quarks (settings, key, storage);
-	signal = g_strconcat ("changed::", key, NULL);
-	g_signal_connect (settings, signal,
-			  G_CALLBACK(update_auto_strv_as_quarks),
-			  storage);
-
-	g_free (signal);
+	g_list_foreach (list, (GFunc) g_object_ref, NULL);
+	return g_list_copy (list);
 }
 
 #if !defined (EEL_OMIT_SELF_CHECK)
-
-static void
-check_tm_to_g_date (time_t time)
-{
-	struct tm *before_conversion;
-	struct tm after_conversion;
-	GDate *date;
-
-	before_conversion = localtime (&time);
-	date = eel_g_date_new_tm (before_conversion);
-
-	g_date_to_struct_tm (date, &after_conversion);
-
-	g_date_free (date);
-
-	EEL_CHECK_INTEGER_RESULT (after_conversion.tm_mday,
-				       before_conversion->tm_mday);
-	EEL_CHECK_INTEGER_RESULT (after_conversion.tm_mon,
-				       before_conversion->tm_mon);
-	EEL_CHECK_INTEGER_RESULT (after_conversion.tm_year,
-				       before_conversion->tm_year);
-}
 
 static gboolean
 eel_test_predicate (gpointer data,
@@ -743,13 +454,11 @@ test_strftime (const char *format,
 void
 eel_self_check_glib_extensions (void)
 {
-	char **strv;
 	GList *compare_list_1;
 	GList *compare_list_2;
 	GList *compare_list_3;
 	GList *compare_list_4;
 	GList *compare_list_5;
-	gint64 time1, time2;
 	GList *list_to_partition;
 	GList *expected_passed;
 	GList *expected_failed;
@@ -757,25 +466,6 @@ eel_self_check_glib_extensions (void)
 	GList *actual_failed;
 	char *huge_string;
 	
-	check_tm_to_g_date (0);			/* lower limit */
-	check_tm_to_g_date ((time_t) -1);	/* upper limit */
-	check_tm_to_g_date (time (NULL));	/* current time */
-
-	strv = g_strsplit ("zero|one|two|three|four", "|", 0);
-	EEL_CHECK_INTEGER_RESULT (eel_g_strv_find (strv, "zero"), 0);
-	EEL_CHECK_INTEGER_RESULT (eel_g_strv_find (strv, "one"), 1);
-	EEL_CHECK_INTEGER_RESULT (eel_g_strv_find (strv, "four"), 4);
-	EEL_CHECK_INTEGER_RESULT (eel_g_strv_find (strv, "five"), -1);
-	EEL_CHECK_INTEGER_RESULT (eel_g_strv_find (strv, ""), -1);
-	EEL_CHECK_INTEGER_RESULT (eel_g_strv_find (strv, "o"), -1);
-	g_strfreev (strv);
-
-	/* eel_get_system_time */
-	time1 = eel_get_system_time ();
-	time2 = eel_get_system_time ();
-	EEL_CHECK_BOOLEAN_RESULT (time1 - time2 > -1000, TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (time1 - time2 <= 0, TRUE);
-
 	/* eel_g_str_list_equal */
 
 	/* We g_strdup because identical string constants can be shared. */

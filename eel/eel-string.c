@@ -35,36 +35,6 @@
 #include "eel-lib-self-check-functions.h"
 #endif
 
-gboolean
-eel_str_is_empty (const char *string_or_null)
-{
-	return g_strcmp0 (string_or_null, NULL) == 0;
-}
-
-gboolean
-eel_istr_has_prefix (const char *haystack, const char *needle)
-{
-	const char *h, *n;
-	char hc, nc;
-
-	/* Eat one character at a time. */
-	h = haystack == NULL ? "" : haystack;
-	n = needle == NULL ? "" : needle;
-	do {
-		if (*n == '\0') {
-			return TRUE;
-		}
-		if (*h == '\0') {
-			return FALSE;
-		}
-		hc = *h++;
-		nc = *n++;
-		hc = g_ascii_tolower (hc);
-		nc = g_ascii_tolower (nc);
-	} while (hc == nc);
-	return FALSE;
-}
-
 char *
 eel_str_double_underscores (const char *string)
 {

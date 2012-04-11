@@ -56,9 +56,6 @@ GtkMenuItem *         eel_gtk_menu_append_separator                   (GtkMenu  
 GtkMenuItem *         eel_gtk_menu_insert_separator                   (GtkMenu              *menu,
 								       int                   index);
 
-/* GtkLabel */
-void                  eel_gtk_label_make_bold                         (GtkLabel             *label);
-
 /* GtkTreeView */
 void                  eel_gtk_tree_view_set_activate_on_single_click  (GtkTreeView               *tree_view,
 								       gboolean                   should_activate);

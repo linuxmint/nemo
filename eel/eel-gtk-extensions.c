@@ -317,32 +317,6 @@ eel_gtk_menu_insert_separator (GtkMenu *menu, int index)
 	return GTK_MENU_ITEM (menu_item);
 }
 
-/**
- * eel_gtk_label_make_bold.
- *
- * Switches the font of label to a bold equivalent.
- * @label: The label.
- **/
-void
-eel_gtk_label_make_bold (GtkLabel *label)
-{
-	PangoFontDescription *font_desc;
-
-	font_desc = pango_font_description_new ();
-
-	pango_font_description_set_weight (font_desc,
-					   PANGO_WEIGHT_BOLD);
-
-	/* This will only affect the weight of the font, the rest is
-	 * from the current state of the widget, which comes from the
-	 * theme or user prefs, since the font desc only has the
-	 * weight flag turned on.
-	 */
-	gtk_widget_override_font (GTK_WIDGET (label), font_desc);
-
-	pango_font_description_free (font_desc);
-}
-
 static gboolean 
 tree_view_button_press_callback (GtkWidget *tree_view,
 				 GdkEventButton *event,
