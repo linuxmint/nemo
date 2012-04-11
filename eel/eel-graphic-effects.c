@@ -30,6 +30,7 @@
 #include "eel-graphic-effects.h"
 #include "eel-glib-extensions.h"
 
+#include <math.h>
 #include <string.h>
 
 /* shared utility to create a new pixbuf from the passed-in one */
@@ -183,9 +184,9 @@ eel_create_colorized_pixbuf (GdkPixbuf *src,
 				  && gdk_pixbuf_get_n_channels (src) == 4), NULL);
 	g_return_val_if_fail (gdk_pixbuf_get_bits_per_sample (src) == 8, NULL);
 
-	red_value = eel_round (color->red * 255);
-	green_value = eel_round (color->green * 255);
-	blue_value = eel_round (color->blue * 255);	
+	red_value = (gint) floor (color->red * 255);
+	green_value = (gint) floor (color->green * 255);
+	blue_value = (gint) floor (color->blue * 255);	
 
 	dest = create_new_pixbuf (src);
 	
