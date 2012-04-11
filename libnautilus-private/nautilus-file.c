@@ -5183,7 +5183,7 @@ get_real_name (const char *name, const char *gecos)
 	}
 
 
-	if (eel_str_is_empty (real_name)
+	if (g_strcmp0 (real_name, NULL) == 0
 	    || g_strcmp0 (name, real_name) == 0
 	    || g_strcmp0 (capitalized_login_name, real_name) == 0) {
 		g_free (real_name);
@@ -6277,7 +6277,7 @@ get_description (NautilusFile *file)
 	g_assert (NAUTILUS_IS_FILE (file));
 
 	mime_type = eel_ref_str_peek (file->details->mime_type);
-	if (eel_str_is_empty (mime_type)) {
+	if (g_strcmp0 (mime_type, NULL) == 0) {
 		return NULL;
 	}
 
@@ -6287,7 +6287,7 @@ get_description (NautilusFile *file)
 	}
 
 	description = g_content_type_get_description (mime_type);
-	if (!eel_str_is_empty (description)) {
+	if (g_strcmp0 (description, NULL) != 0) {
 		return description;
 	}
 
