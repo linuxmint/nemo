@@ -5440,7 +5440,7 @@ nautilus_get_user_names (void)
 
 	endpwent ();
 
-	return eel_g_str_list_alphabetize (list);
+	return g_list_sort (list, (GCompareFunc) g_utf8_collate);
 }
 
 /**
@@ -5543,7 +5543,7 @@ nautilus_get_group_names_for_user (void)
 		list = g_list_prepend (list, g_strdup (group->gr_name));
 	}
 
-	return eel_g_str_list_alphabetize (list);
+	return g_list_sort (list, (GCompareFunc) g_utf8_collate);
 }
 
 /**
@@ -5566,7 +5566,7 @@ nautilus_get_all_group_names (void)
 	
 	endgrent ();
 	
-	return eel_g_str_list_alphabetize (list);
+	return g_list_sort (list, (GCompareFunc) g_utf8_collate);
 }
 
 /**
@@ -6494,7 +6494,7 @@ sort_keyword_list_and_remove_duplicates (GList *keywords)
 	GList *duplicate_link;
 	
 	if (keywords != NULL) {
-		keywords = eel_g_str_list_alphabetize (keywords);
+		keywords = g_list_sort (keywords, (GCompareFunc) g_utf8_collate);
 
 		p = keywords;
 		while (p->next != NULL) {
