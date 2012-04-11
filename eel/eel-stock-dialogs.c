@@ -133,7 +133,7 @@ timed_wait_free (TimedWait *wait)
 						      wait);
 
 		/* compute time up in milliseconds */
-		time_up = (eel_get_system_time () - wait->dialog_creation_time) / 1000;
+		time_up = (g_get_monotonic_time () - wait->dialog_creation_time) / 1000;
 		
 		if (time_up < TIMED_WAIT_MIN_TIME_UP) {
 			delayed_close_handler_id = g_timeout_add (TIMED_WAIT_MIN_TIME_UP - time_up,
@@ -216,7 +216,7 @@ timed_wait_callback (gpointer callback_data)
 	gtk_window_set_default_size (GTK_WINDOW (dialog),
 				     TIMED_WAIT_MINIMUM_DIALOG_WIDTH,
 				     -1);
-	wait->dialog_creation_time = eel_get_system_time ();
+	wait->dialog_creation_time = g_get_monotonic_time ();
 	gtk_widget_show (GTK_WIDGET (dialog));
 
 	/* FIXME bugzilla.eazel.com 2441: 

@@ -669,7 +669,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 		      NULL);
 
 	/* Determine click count */
-	current_time = eel_get_system_time ();
+	current_time = g_get_monotonic_time ();
 	if (current_time - last_click_time < double_click_time * 1000) {
 		click_count++;
 	} else {

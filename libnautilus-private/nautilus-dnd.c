@@ -916,7 +916,7 @@ nautilus_drag_autoscroll_start (NautilusDragInfo *drag_info,
 	if (nautilus_drag_autoscroll_in_scroll_region (widget)) {
 		if (drag_info->auto_scroll_timeout_id == 0) {
 			drag_info->waiting_to_autoscroll = TRUE;
-			drag_info->start_auto_scroll_in = eel_get_system_time() 
+			drag_info->start_auto_scroll_in = g_get_monotonic_time () 
 				+ AUTOSCROLL_INITIAL_DELAY;
 			
 			drag_info->auto_scroll_timeout_id = g_timeout_add

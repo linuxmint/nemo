@@ -3655,7 +3655,7 @@ changes_timeout_callback (gpointer data)
 
 	g_object_ref (G_OBJECT (view));
 
-	now = eel_get_system_time();
+	now = g_get_monotonic_time ();
 	time_delta = now - view->details->last_queued;
 
 	if (time_delta < UPDATE_INTERVAL_RESET*1000) {
@@ -3680,7 +3680,7 @@ static void
 schedule_changes (NautilusView *view)
 {
 	/* Remember when the change was queued */
-	view->details->last_queued = eel_get_system_time();
+	view->details->last_queued = g_get_monotonic_time ();
 
 	/* No need to schedule if there are already changes pending or during loading */
 	if (view->details->changes_timeout_id != 0 ||
