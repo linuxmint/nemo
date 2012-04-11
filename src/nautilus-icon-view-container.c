@@ -210,6 +210,28 @@ nautilus_icon_view_container_prioritize_thumbnailing (NautilusIconContainer *con
 	}
 }
 
+static void
+update_auto_strv_as_quarks (GSettings   *settings,
+			    const gchar *key,
+			    gpointer     user_data)
+{
+	GQuark **storage = user_data;
+	int i = 0;
+	char **value;
+
+	value = g_settings_get_strv (settings, key);
+
+	g_free (*storage);
+	*storage = g_new (GQuark, g_strv_length (value) + 1);
+
+	for (i = 0; value[i] != NULL; ++i) {
+		(*storage)[i] = g_quark_from_string (value[i]);
+	}
+	(*storage)[i] = 0;
+
+	g_strfreev (value);
+}
+
 /*
  * Get the preference for which caption text should appear
  * beneath icons.
@@ -220,9 +242,13 @@ nautilus_icon_view_container_get_icon_text_attributes_from_preferences (void)
 	static GQuark *attributes = NULL;
 
 	if (attributes == NULL) {
-		eel_g_settings_add_auto_strv_as_quarks (nautilus_icon_view_preferences,
-							NAUTILUS_PREFERENCES_ICON_VIEW_CAPTIONS,
-							&attributes);
+		update_auto_strv_as_quarks (nautilus_icon_view_preferences, 
+					    NAUTILUS_PREFERENCES_ICON_VIEW_CAPTIONS,
+					    &attributes);
+		g_signal_connect (nautilus_icon_view_preferences, 
+				  "changed::" NAUTILUS_PREFERENCES_ICON_VIEW_CAPTIONS,
+				  G_CALLBACK (update_auto_strv_as_quarks),
+				  &attributes);
 	}
 
 	/* We don't need to sanity check the attributes list even though it came
