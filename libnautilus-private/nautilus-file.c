@@ -4458,7 +4458,9 @@ nautilus_file_fit_date_as_string (NautilusFile *file,
 		return eel_strdup_strftime ("%Y-%m-%d %H:%M:%S", file_time);
 	}
 	
-	file_date = eel_g_date_new_tm (file_time);
+	file_date = g_date_new_dmy (file_time->tm_mday,
+				    file_time->tm_mon + 1,
+				    file_time->tm_year + 1900);
 	
 	today = g_date_new ();
 	g_date_set_time_t (today, time (NULL));
