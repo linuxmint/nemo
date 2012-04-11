@@ -37,10 +37,6 @@ typedef guint eel_boolean_bit;
 typedef gboolean (* EelPredicateFunction) (gpointer data,
 					   gpointer callback_data);
 
-/* Date & time functions. */
-char *      eel_strdup_strftime                         (const char            *format,
-							 struct tm             *time_pieces);
-
 /* GList functions. */
 gboolean    eel_g_lists_sort_and_check_for_intersection (GList                **list_a,
 							 GList                **list_b);
