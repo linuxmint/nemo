@@ -115,6 +115,9 @@ real_update_query_editor (NautilusWindowSlot *slot)
 		nautilus_window_slot_add_extra_location_widget (slot, query_editor);
 		gtk_widget_show (query_editor);
 		nautilus_query_editor_grab_focus (NAUTILUS_QUERY_EDITOR (query_editor));
+
+		g_object_add_weak_pointer (G_OBJECT (slot->query_editor),
+					   (gpointer *) &slot->query_editor);
 	}
 
 	nautilus_directory_unref (directory);
@@ -588,8 +591,6 @@ nautilus_window_slot_update_query_editor (NautilusWindowSlot *slot)
 	}
 
 	real_update_query_editor (slot);
-
-	eel_add_weak_pointer (&slot->query_editor);
 }
 
 static void

@@ -1868,7 +1868,12 @@ new_folder_done (GFile *new_folder,
 
  fail:
 	g_hash_table_destroy (data->added_locations);
-	eel_remove_weak_pointer (&data->directory_view);
+
+	if (data->directory_view != NULL) {
+		g_object_remove_weak_pointer (G_OBJECT (data->directory_view),
+					      (gpointer *) &data->directory_view);
+	}
+
 	g_free (data);
 }
 
@@ -1882,7 +1887,8 @@ new_folder_data_new (NautilusView *directory_view)
 	data->directory_view = directory_view;
 	data->added_locations = g_hash_table_new_full (g_file_hash, (GEqualFunc)g_file_equal,
 						       g_object_unref, NULL);
-	eel_add_weak_pointer (&data->directory_view);
+	g_object_add_weak_pointer (G_OBJECT (data->directory_view),
+				   (gpointer *) &data->directory_view);
 
 	return data;
 }
@@ -3089,7 +3095,11 @@ copy_move_done_data_free (CopyMoveDoneData *data)
 {
 	g_assert (data != NULL);
 	
-	eel_remove_weak_pointer (&data->directory_view);
+	if (data->directory_view != NULL) {
+		g_object_remove_weak_pointer (G_OBJECT (data->directory_view),
+					      (gpointer *) &data->directory_view);
+	}
+
 	nautilus_file_list_free (data->added_files);
 	g_free (data);
 }
@@ -3117,7 +3127,8 @@ pre_copy_move (NautilusView *directory_view)
 	copy_move_done_data = g_new0 (CopyMoveDoneData, 1);
 	copy_move_done_data->directory_view = directory_view;
 
-	eel_add_weak_pointer (&copy_move_done_data->directory_view);
+	g_object_add_weak_pointer (G_OBJECT (copy_move_done_data->directory_view),
+				   (gpointer *) &copy_move_done_data->directory_view);
 
 	/* We need to run after the default handler adds the folder we want to
 	 * operate on. The ADD_FILE signal is registered as G_SIGNAL_RUN_LAST, so we

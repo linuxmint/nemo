@@ -943,9 +943,10 @@ unload_file_timeout (gpointer data)
 			}
 			gtk_tree_path_free (path);
 		}
-	}
 
-	eel_remove_weak_pointer (&unload_data->view);
+		g_object_remove_weak_pointer (G_OBJECT (unload_data->view),
+					      (gpointer *) &unload_data->view);
+	}
 	
 	if (unload_data->directory) {
 		nautilus_directory_unref (unload_data->directory);
@@ -990,7 +991,8 @@ row_collapsed_callback (GtkTreeView *treeview, GtkTreeIter *iter, GtkTreePath *p
 	unload_data->file = file;
 	unload_data->directory = directory;
 
-	eel_add_weak_pointer (&unload_data->view);
+	g_object_add_weak_pointer (G_OBJECT (unload_data->view),
+				   (gpointer *) &unload_data->view);
 	
 	g_timeout_add_seconds (COLLAPSE_TO_UNLOAD_DELAY,
 			       unload_file_timeout,
@@ -2601,7 +2603,8 @@ action_visible_columns_callback (GtkAction *action,
 		gtk_window_present (GTK_WINDOW (list_view->details->column_editor));
 	} else {
 		list_view->details->column_editor = create_column_editor (list_view);
-		eel_add_weak_pointer (&list_view->details->column_editor);
+		g_object_add_weak_pointer (G_OBJECT (list_view->details->column_editor),
+					   (gpointer *) &list_view->details->column_editor);
 		
 		gtk_widget_show (list_view->details->column_editor);
 	}

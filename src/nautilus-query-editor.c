@@ -146,7 +146,10 @@ nautilus_query_editor_dispose (GObject *object)
 						      editor);
 		
 		nautilus_search_bar_return_entry (editor->details->bar);
-		eel_remove_weak_pointer (&editor->details->bar);
+
+		g_object_remove_weak_pointer (G_OBJECT (editor->details->bar),
+					      (gpointer *) &editor->details->bar);
+		editor->details->bar = NULL;
 	}
 
 	G_OBJECT_CLASS (nautilus_query_editor_parent_class)->dispose (object);
@@ -1278,7 +1281,8 @@ nautilus_query_editor_new_with_bar (gboolean start_hidden,
 	nautilus_query_editor_set_visible (editor, !start_hidden);
 
 	editor->details->bar = bar;
-	eel_add_weak_pointer (&editor->details->bar);
+	g_object_add_weak_pointer (G_OBJECT (editor->details->bar),
+				   (gpointer *) &editor->details->bar);
 
 	editor->details->slot = slot;
 
