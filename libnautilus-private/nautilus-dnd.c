@@ -627,7 +627,7 @@ add_one_compatible_uri (const char *uri, int x, int y, int w, int h, gpointer da
 	 * gnome-libs function or nothing will be able to understand
 	 * it.
 	 */
-	if (!eel_istr_has_prefix (uri, "file:")) {
+	if (!g_str_has_prefix (uri, "file:")) {
 		g_string_append (result, uri);
 		g_string_append (result, "\r\n");
 	} else {

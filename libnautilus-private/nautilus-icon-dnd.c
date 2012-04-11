@@ -1019,7 +1019,7 @@ selection_is_image_file (GList *selection_list)
 		mime_type = g_file_info_get_content_type (info);
 	}
 
-	result = eel_istr_has_prefix (mime_type, "image/");
+	result = g_str_has_prefix (mime_type, "image/");
 
 	if (info) {
 		g_object_unref (info);
