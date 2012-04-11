@@ -976,7 +976,7 @@ nautilus_view_confirm_multiple (GtkWindow *parent_window,
 static gboolean
 selection_contains_one_item_in_menu_callback (NautilusView *view, GList *selection)
 {
-	if (eel_g_list_exactly_one_item (selection)) {
+	if (g_list_length (selection) == 1) {
 		return TRUE;
 	}
 
@@ -6693,7 +6693,7 @@ action_connect_to_server_link_callback (GtkAction *action,
 	
 	selection = nautilus_view_get_selection (view);
 
-	if (!eel_g_list_exactly_one_item (selection)) {
+	if (g_list_length (selection) != 1) {
 		nautilus_file_list_free (selection);
 		return;
 	}

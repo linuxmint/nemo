@@ -677,7 +677,7 @@ trash_link_is_selection (NautilusView *view)
 	
 	selection = nautilus_view_get_selection (view);
 
-	if (eel_g_list_exactly_one_item (selection) &&
+	if ((g_list_length (selection) == 1) &&
 	    NAUTILUS_IS_DESKTOP_ICON_FILE (selection->data)) {
 		link = nautilus_desktop_icon_file_get_link (NAUTILUS_DESKTOP_ICON_FILE (selection->data));
 		/* link may be NULL if the link was recently removed (unmounted) */
