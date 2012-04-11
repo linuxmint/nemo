@@ -4433,44 +4433,35 @@ nautilus_file_fit_date_as_string (NautilusFile *file,
 				  void *measure_context)
 {
 	time_t file_time_raw;
-	struct tm *file_time;
 	const char **formats;
 	const char *width_template;
 	const char *format;
 	char *date_string;
-	char *result;
-	GDate *today;
-	GDate *file_date;
-	guint32 file_date_age;
+	gchar *result = NULL;
 	int i, date_format_pref;
+	GDateTime *date_time, *today;
+	GTimeSpan file_date_age;
 
 	if (!nautilus_file_get_date (file, date_type, &file_time_raw)) {
 		return NULL;
 	}
 
-	file_time = localtime (&file_time_raw);
+	date_time = g_date_time_new_from_unix_local (file_time_raw);
 	date_format_pref = g_settings_get_enum (nautilus_preferences,
 						NAUTILUS_PREFERENCES_DATE_FORMAT);
 
 	if (date_format_pref == NAUTILUS_DATE_FORMAT_LOCALE) {
-		return eel_strdup_strftime ("%c", file_time);
+		result = g_date_time_format (date_time, "%c");
+		goto out;
 	} else if (date_format_pref == NAUTILUS_DATE_FORMAT_ISO) {
-		return eel_strdup_strftime ("%Y-%m-%d %H:%M:%S", file_time);
+		result = g_date_time_format (date_time, "%Y-%m-%d %H:%M:%S");
+		goto out;
 	}
-	
-	file_date = g_date_new_dmy (file_time->tm_mday,
-				    file_time->tm_mon + 1,
-				    file_time->tm_year + 1900);
-	
-	today = g_date_new ();
-	g_date_set_time_t (today, time (NULL));
 
-	/* Overflow results in a large number; fine for our purposes. */
-	file_date_age = (g_date_get_julian (today) -
-			 g_date_get_julian (file_date));
+	today = g_date_time_new_now_local ();
+	file_date_age = g_date_time_difference (today, date_time);
 
-	g_date_free (file_date);
-	g_date_free (today);
+	g_date_time_unref (today);
 
 	/* Format varies depending on how old the date is. This minimizes
 	 * the length (and thus clutter & complication) of typical dates
@@ -4480,12 +4471,10 @@ nautilus_file_fit_date_as_string (NautilusFile *file,
 	 * internationalization's sake.
 	 */
 
-	if (file_date_age == 0)	{
+	if (file_date_age < G_TIME_SPAN_DAY) {
 		formats = TODAY_TIME_FORMATS;
-	} else if (file_date_age == 1) {
+	} else if (file_date_age < 2 * G_TIME_SPAN_DAY) {
 		formats = YESTERDAY_TIME_FORMATS;
-	} else if (file_date_age < 7) {
-		formats = CURRENT_WEEK_TIME_FORMATS;
 	} else {
 		formats = CURRENT_WEEK_TIME_FORMATS;
 	}
@@ -4507,15 +4496,17 @@ nautilus_file_fit_date_as_string (NautilusFile *file,
 			 * shortest format
 			 */
 			
-			date_string = eel_strdup_strftime (format, file_time);
+			date_string = g_date_time_format (date_time, format);
 
 			if (truncate_callback == NULL) {
-				return date_string;
+				result = date_string;
+				break;
 			}
 			
 			result = (* truncate_callback) (date_string, width, measure_context);
 			g_free (date_string);
-			return result;
+
+			break;
 		}
 		
 		format = _(formats [i + 1]);
@@ -4530,9 +4521,14 @@ nautilus_file_fit_date_as_string (NautilusFile *file,
 			break;
 		}
 	}
-	
-	return eel_strdup_strftime (format, file_time);
 
+	if (result == NULL) {
+		result = g_date_time_format (date_time, format);
+	}
+
+ out:
+	g_date_time_unref (date_time);
+	return result;
 }
 
 /**
