@@ -1106,17 +1106,16 @@ trash_retrieve_files_to_restore_thread (GSimpleAsyncResult *res,
 		GFile *item;
 		GTimeVal timeval;
 		glong trash_time, orig_trash_time;
-		char *origpath;
+		const char *origpath;
 		GFile *origfile;
 		const char *time_string;
 
 		while ((info = g_file_enumerator_next_file (enumerator, NULL, &error)) != NULL) {
 			/* Retrieve the original file uri */
-			origpath = g_file_info_get_attribute_as_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
+			origpath = g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
 			origfile = g_file_new_for_path (origpath);
 
 			lookupvalue = g_hash_table_lookup (self->priv->trashed, origfile);
-			g_free (origpath);
 
 			if (lookupvalue) {
 				orig_trash_time = GPOINTER_TO_SIZE (lookupvalue);
