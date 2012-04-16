@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-03-05 21:15+0000\n"
-"PO-Revision-Date: 2012-03-06 12:38+0100\n"
-"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
+"PO-Revision-Date: 2012-04-14 22:27+0200\n"
+"Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2897,7 +2897,7 @@ msgstr "Za ogled _novih map uporabi:"
 
 #: ../src/nautilus-file-management-properties.ui.h:4
 msgid "_Arrange items:"
-msgstr "_Preuredi predmete:"
+msgstr "_Razporedi predmete:"
 
 #: ../src/nautilus-file-management-properties.ui.h:5
 msgid "Sort _folders before files"
@@ -3342,7 +3342,7 @@ msgstr "Obnovi i_zvorno velikost ikone"
 #. translators: this is used in the view menu
 #: ../src/nautilus-icon-view.c:2666
 msgid "_Icons"
-msgstr "_Ikone"
+msgstr "_Ikonski"
 
 #: ../src/nautilus-icon-view.c:2667
 msgid "The icon view encountered an error."
@@ -3359,7 +3359,7 @@ msgstr "Pokaži to mesto v prikazu ikon."
 #. translators: this is used in the view menu
 #: ../src/nautilus-icon-view.c:2680
 msgid "_Compact"
-msgstr "_Strnjeno"
+msgstr "S_trnjen"
 
 #: ../src/nautilus-icon-view.c:2681
 msgid "The compact view encountered an error."
@@ -3507,7 +3507,7 @@ msgstr "Izberite stolpce, ki naj bodo vidni v tej mapi"
 #. translators: this is used in the view menu
 #: ../src/nautilus-list-view.c:3344
 msgid "_List"
-msgstr "_Seznam"
+msgstr "S_eznamski"
 
 #: ../src/nautilus-list-view.c:3345
 msgid "The list view encountered an error."
@@ -4857,7 +4857,7 @@ msgstr "Izberi vse predmete v tem oknu"
 #. label, accelerator
 #: ../src/nautilus-view.c:7024
 msgid "Select I_tems Matching..."
-msgstr "Izberite ujemajoče _predmete ..."
+msgstr "Izberi ujemajoče _predmete ..."
 
 #. tooltip
 #: ../src/nautilus-view.c:7025
@@ -4965,7 +4965,7 @@ msgstr "Ponovno uveljavi zadnje razveljavljeno dejanje"
 #. label, accelerator
 #: ../src/nautilus-view.c:7074
 msgid "Reset View to _Defaults"
-msgstr "Ponastavi prikaz na _privzete vrednosti"
+msgstr "Ponastavi prikaz na p_rivzete vrednosti"
 
 #. tooltip
 #: ../src/nautilus-view.c:7075
@@ -5618,7 +5618,7 @@ msgstr "Zaustavi nalaganje trenutnega mesta"
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:939
 msgid "_Reload"
-msgstr "_Ponovno naloži"
+msgstr "Po_novno naloži"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:940
@@ -5925,7 +5925,7 @@ msgstr "Stranska vrstica"
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:1064
 msgid "Show _Hidden Files"
-msgstr "Pokaži _skrite datoteke"
+msgstr "Pokaži s_krite datoteke"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:1065
