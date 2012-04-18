@@ -68,6 +68,7 @@ save_in_idle_cb (gpointer data)
 		g_file_set_contents (filename,
 				     contents, length,
 				     &error);
+		g_free (contents);
 	}
 
 	if (error != NULL) {
@@ -75,6 +76,8 @@ save_in_idle_cb (gpointer data)
 			   error->message);
 		g_error_free (error);
 	}
+
+	g_free (filename);
 
 	return FALSE;
 }
