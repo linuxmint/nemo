@@ -396,6 +396,7 @@ nautilus_link_get_link_uri_from_desktop (GKeyFile *key_file, const char *desktop
 				g_object_unref (parent);
 			}
 		}
+		g_free (scheme);
 	}
 
 	return retval;
