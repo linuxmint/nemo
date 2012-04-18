@@ -38,9 +38,9 @@
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2009-2012.
 # Paul Seyfert <pseyfert@mathphys.fsk.uni-heidelberg.de>, 2010.
 # Mario Klug <mario.klug@mk-web.at>, 2010.
-# Christian Kirbach <Christian.Kirbach@googlemail.com>, 2009-2011.
 # Wolfgang Stöggl <c72578@yahoo.de>, 2011.
 # Hendrik Knackstedt <kn.hendrik@gmail.com>, 2011.
+# Christian Kirbach <Christian.Kirbach@googlemail.com>, 2009-2012.
 #
 msgid ""
 msgstr ""
@@ -48,10 +48,9 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-03-17 00:03+0000\n"
-"PO-Revision-Date: 2012-03-18 01:36+0100\n"
+"PO-Revision-Date: 2012-04-18 19:58+0200\n"
 "Last-Translator: Christian Kirbach <Christian.Kirbach@googlemail.com>\n"
-"Language-Team: Ubuntu German Translators <ubuntu-l10n-de-community@lists."
-"launchpad.net>\n"
+"Language-Team: Deutsch <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -338,16 +337,16 @@ msgid ""
 "If you want to eject the volume, please use \"Eject\" in the popup menu of "
 "the volume."
 msgstr ""
-"Verwenden Sie »Auswerfen« im Rechtsklick-Menü des Datenträgers, falls Sie ihn "
-"auswerfen möchten."
+"Verwenden Sie »Auswerfen« im Rechtsklick-Menü des Datenträgers, falls Sie "
+"ihn auswerfen möchten."
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:111
 msgid ""
 "If you want to unmount the volume, please use \"Unmount Volume\" in the "
 "popup menu of the volume."
 msgstr ""
-"Verwenden Sie »Auswerfen« im Rechtsklick-Menü des Datenträgers, falls Sie ihn "
-"aushängen möchten."
+"Verwenden Sie »Auswerfen« im Rechtsklick-Menü des Datenträgers, falls Sie "
+"ihn aushängen möchten."
 
 #: ../libnautilus-private/nautilus-dnd.c:771
 msgid "_Move Here"
@@ -1058,8 +1057,8 @@ msgid ""
 "Files in the folder \"%B\" cannot be deleted because you do not have "
 "permissions to see them."
 msgstr ""
-"Dateien im Ordner »%B« können nicht gelöscht werden, da Sie nicht die nötigen "
-"Lesezugriffsrechte besitzen."
+"Dateien im Ordner »%B« können nicht gelöscht werden, da Sie nicht die "
+"nötigen Lesezugriffsrechte besitzen."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1517
 #: ../libnautilus-private/nautilus-file-operations.c:2521
@@ -1283,7 +1282,7 @@ msgstr "Dupliziert »%B«"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2920
 msgid "Moving file %'d of %'d (in \"%B\") to \"%B\""
-msgstr "Verschieben von %'d von %'d Dateien (in »%B«) nach »%B«"
+msgstr "Datei %'d von %'d (in »%B«) wird nach »%B« verschoben"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2922
 msgid "Copying file %'d of %'d (in \"%B\") to \"%B\""
@@ -1295,16 +1294,16 @@ msgstr "Datei %'d von %'d (in »%B«) wird dupliziert"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2938
 msgid "Moving file %'d of %'d to \"%B\""
-msgstr "%'d Datei von %'d wird nach »%B« verschoben"
+msgstr "Datei %'d von %'d wird nach »%B« verschoben"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2940
 msgid "Copying file %'d of %'d to \"%B\""
-msgstr "%'d Datei von %'d wird nach »%B« kopiert"
+msgstr "Datei %'d von %'d wird nach »%B« kopiert"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2946
 #, c-format
 msgid "Duplicating file %'d of %'d"
-msgstr "%'d von %'d Dateien wird dupliziert"
+msgstr "Datei %'d von %'d wird dupliziert"
 
 #. To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "4 kb of 4 MB"
 #: ../libnautilus-private/nautilus-file-operations.c:2965
@@ -2136,9 +2135,9 @@ msgid ""
 "systems. If set to \"never\" then never bother to compute item counts."
 msgstr ""
 "Ein Geschwindigkeits-Kompromiss, wann die Anzahl der Objekte in einem Ordner "
-"angezeigt werden soll. Zulässige Werte: »always« (immer anzeigen, selbst wenn "
-"er sich auf einem entfernten Server befindet), »local_only« (nur anzeigen, "
-"falls er sich auf einem lokalen Dateisystem befindet) sowie "
+"angezeigt werden soll. Zulässige Werte: »always« (immer anzeigen, selbst "
+"wenn er sich auf einem entfernten Server befindet), »local_only« (nur "
+"anzeigen, falls er sich auf einem lokalen Dateisystem befindet) sowie "
 "»never« (keinesfalls anzeigen)."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:15
@@ -2210,9 +2209,9 @@ msgid ""
 "will set which button activates the \"Forward\" command in a browser window. "
 "Possible values range between 6 and 14."
 msgstr ""
-"Bei Benutzern, die eine Maus mit Tasten für »Vorwärts« und »Zurück« verwenden, "
-"bestimmt dieser Schlüssel, welche Taste den »Vorwärts«-Befehl in einem "
-"Browser-Fenster auslöst. Mögliche Werte liegen zwischen 6 und 14."
+"Bei Benutzern, die eine Maus mit Tasten für »Vorwärts« und »Zurück« "
+"verwenden, bestimmt dieser Schlüssel, welche Taste den »Vorwärts«-Befehl in "
+"einem Browser-Fenster auslöst. Mögliche Werte liegen zwischen 6 und 14."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:25
 msgid "Mouse button to activate the \"Back\" command in browser window"
@@ -2224,9 +2223,9 @@ msgid ""
 "will set which button activates the \"Back\" command in a browser window. "
 "Possible values range between 6 and 14."
 msgstr ""
-"Bei Benutzern, die eine Maus mit Tasten für »Vorwärts« und »Zurück« verwenden, "
-"bestimmt dieser Schlüssel, welche Taste den »Zurück«-Befehl in einem Browser-"
-"Fenster auslöst. Mögliche Werte liegen zwischen 6 und 14."
+"Bei Benutzern, die eine Maus mit Tasten für »Vorwärts« und »Zurück« "
+"verwenden, bestimmt dieser Schlüssel, welche Taste den »Zurück«-Befehl in "
+"einem Browser-Fenster auslöst. Mögliche Werte liegen zwischen 6 und 14."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:27
 msgid "When to show thumbnails of image files"
@@ -2312,9 +2311,9 @@ msgid ""
 msgstr ""
 "Falls dieser Schlüssel wahr ist, werden Dateien in neu geöffneten Fenstern "
 "in umgekehrter Reihenfolge sortiert. Falls sie dem Namen nach sortiert "
-"werden, so werden die Dateien nicht von »a« nach »z«, sondern von »z« nach »a« "
-"angezeigt; falls sie der Größe nach sortiert werden, werden sie auf- statt "
-"absteigend angezeigt."
+"werden, so werden die Dateien nicht von »a« nach »z«, sondern von »z« nach "
+"»a« angezeigt; falls sie der Größe nach sortiert werden, werden sie auf- "
+"statt absteigend angezeigt."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:39
 msgid "Nautilus uses the users home folder as the desktop"
@@ -2613,8 +2612,8 @@ msgid ""
 "This name can be set if you want a custom name for the computer icon on the "
 "desktop."
 msgstr ""
-"Dieser Wert legt einen benutzerdefinierten Namen für das Symbol »Rechner« auf "
-"der Arbeitsfläche fest."
+"Dieser Wert legt einen benutzerdefinierten Namen für das Symbol »Rechner« "
+"auf der Arbeitsfläche fest."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:86
 msgid "Desktop home icon name"
@@ -3146,7 +3145,8 @@ msgstr "Arbeitsfläche"
 msgid ""
 "You do not have the permissions necessary to view the contents of \"%s\"."
 msgstr ""
-"Sie haben nicht die nötigen Zugriffsrechte, um den Inhalt von »%s« anzuzeigen."
+"Sie haben nicht die nötigen Zugriffsrechte, um den Inhalt von »%s« "
+"anzuzeigen."
 
 #: ../src/nautilus-error-reporting.c:72
 #, c-format
@@ -3211,8 +3211,8 @@ msgstr ""
 msgid ""
 "There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
 msgstr ""
-"Es gibt kein »%s« in diesem Ordner. Möglicherweise wurde es gerade verschoben "
-"oder gelöscht?"
+"Es gibt kein »%s« in diesem Ordner. Möglicherweise wurde es gerade "
+"verschoben oder gelöscht?"
 
 #: ../src/nautilus-error-reporting.c:214
 #, c-format
@@ -3225,8 +3225,8 @@ msgid ""
 "The name \"%s\" is not valid because it contains the character \"/\". Please "
 "use a different name."
 msgstr ""
-"Der Name »%s« ist nicht gültig, da er das Zeichen »/« enthält. Bitte verwenden "
-"Sie einen anderen Namen."
+"Der Name »%s« ist nicht gültig, da er das Zeichen »/« enthält. Bitte "
+"verwenden Sie einen anderen Namen."
 
 #: ../src/nautilus-error-reporting.c:223
 #, c-format
