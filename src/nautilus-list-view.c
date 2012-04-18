@@ -744,7 +744,9 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 			 * click to apply to everything that's currently selected. */
 			
 			if (event->button == 3) {
-				blank_click = gtk_tree_view_is_blank_at_pos (tree_view, event->x, event->y, NULL, NULL, NULL, NULL);
+				blank_click = 
+					(!gtk_tree_selection_path_is_selected (selection, path) &&
+					 gtk_tree_view_is_blank_at_pos (tree_view, event->x, event->y, NULL, NULL, NULL, NULL));
 			}
 
 			if (event->button == 3 && 
