@@ -8,6 +8,7 @@ Makefile.in
 *.la
 *.lo
 *.exe
+*.tar.xz
 .deps
 .libs
 test
