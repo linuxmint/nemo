@@ -459,47 +459,6 @@ nautilus_application_close_all_windows (NautilusApplication *self)
 }
 
 static gboolean
-nautilus_window_delete_event_callback (GtkWidget *widget,
-				       GdkEvent *event,
-				       gpointer user_data)
-{
-	NautilusWindow *window;
-
-	window = NAUTILUS_WINDOW (widget);
-	nautilus_window_close (window);
-
-	return TRUE;
-}				       
-
-
-static NautilusWindow *
-create_window (NautilusApplication *application,
-	       GdkScreen *screen)
-{
-	NautilusWindow *window;
-	
-	g_return_val_if_fail (NAUTILUS_IS_APPLICATION (application), NULL);
-	
-	window = g_object_new (NAUTILUS_TYPE_WINDOW,
-			       "screen", screen,
-			       NULL);
-
-	g_signal_connect_data (window, "delete_event",
-			       G_CALLBACK (nautilus_window_delete_event_callback), NULL, NULL,
-			       G_CONNECT_AFTER);
-
-	gtk_application_add_window (GTK_APPLICATION (application),
-				    GTK_WINDOW (window));
-
-	/* Do not yet show the window. It will be shown later on if it can
-	 * successfully display its initial URI. Otherwise it will be destroyed
-	 * without ever having seen the light of day.
-	 */
-
-	return window;
-}
-
-static gboolean
 another_navigation_window_already_showing (NautilusApplication *application,
 					   NautilusWindow *the_window)
 {
@@ -525,7 +484,12 @@ nautilus_application_create_window (NautilusApplication *application,
 
 	g_return_val_if_fail (NAUTILUS_IS_APPLICATION (application), NULL);
 
-	window = create_window (application, screen);
+	window = g_object_new (NAUTILUS_TYPE_WINDOW,
+			       "screen", screen,
+			       NULL);
+
+	gtk_application_add_window (GTK_APPLICATION (application),
+				    GTK_WINDOW (window));
 
 	maximized = g_settings_get_boolean
 		(nautilus_window_state, NAUTILUS_WINDOW_STATE_MAXIMIZED);

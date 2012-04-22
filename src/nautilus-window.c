@@ -544,6 +544,9 @@ nautilus_window_constructed (GObject *self)
 
 	G_OBJECT_CLASS (nautilus_window_parent_class)->constructed (self);
 
+	g_signal_connect_after (window, "delete-event",
+				G_CALLBACK (nautilus_window_close), NULL);
+
 	grid = gtk_grid_new ();
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (grid), GTK_ORIENTATION_VERTICAL);
 	gtk_widget_show (grid);
