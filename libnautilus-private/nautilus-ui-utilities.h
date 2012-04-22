@@ -36,8 +36,6 @@ void        nautilus_ui_prepare_merge_ui           (GtkUIManager      *ui_manage
 						    GtkActionGroup   **action_group);
 GtkAction * nautilus_action_from_menu_item         (NautilusMenuItem  *item);
 
-gboolean  nautilus_event_should_open_in_new_tab   (void);
-
 GdkPixbuf * nautilus_ui_get_menu_icon              (const char        *icon_name);
 
 #endif /* NAUTILUS_UI_UTILITIES_H */

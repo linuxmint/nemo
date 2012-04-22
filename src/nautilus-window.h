@@ -86,9 +86,8 @@ typedef struct {
         void   (* close) (NautilusWindow *window);
 
         /* Signals used only for keybindings */
-        gboolean (* go_up)  (NautilusWindow *window,
-                             gboolean close);
-	void     (* reload) (NautilusWindow *window);
+        void   (* go_up)  (NautilusWindow *window);
+	void   (* reload) (NautilusWindow *window);
 } NautilusWindowClass;
 
 struct NautilusWindow {
@@ -98,6 +97,7 @@ struct NautilusWindow {
 };
 
 GType            nautilus_window_get_type             (void);
+NautilusWindow * nautilus_window_new                  (GdkScreen         *screen);
 void             nautilus_window_close                (NautilusWindow    *window);
 
 void             nautilus_window_connect_content_view (NautilusWindow    *window,
@@ -139,7 +139,7 @@ void     nautilus_window_show_sidebar         (NautilusWindow *window);
 void     nautilus_window_back_or_forward      (NautilusWindow *window,
                                                gboolean        back,
                                                guint           distance,
-                                               gboolean        new_tab);
+                                               NautilusWindowOpenFlags flags);
 void     nautilus_window_split_view_on        (NautilusWindow *window);
 void     nautilus_window_split_view_off       (NautilusWindow *window);
 gboolean nautilus_window_split_view_showing   (NautilusWindow *window);
@@ -147,5 +147,7 @@ gboolean nautilus_window_split_view_showing   (NautilusWindow *window);
 gboolean nautilus_window_disable_chrome_mapping (GValue *value,
                                                  GVariant *variant,
                                                  gpointer user_data);
+
+NautilusWindowOpenFlags nautilus_event_get_window_open_flags   (void);
 
 #endif

@@ -371,10 +371,8 @@ got_activation_uri_callback (NautilusFile *file, gpointer callback_data)
 
 			location = g_file_new_for_uri (uri);
 			nautilus_window_slot_open_location
-				(slot,
-				 location, 
-				 view->details->activation_flags,
-				 NULL);
+				(slot, location, 
+				 view->details->activation_flags);
 			g_object_unref (location);
 		} else {
 			DEBUG ("Tree sidebar, launching application for %s", file_uri);
@@ -397,10 +395,8 @@ got_activation_uri_callback (NautilusFile *file, gpointer callback_data)
 
 			location = g_file_new_for_uri (uri);
 			nautilus_window_slot_open_location
-				(slot,
-				 location,
-				 view->details->activation_flags,
-				 NULL);
+				(slot, location,
+				 view->details->activation_flags);
 			g_object_unref (location);
 		}
 	}

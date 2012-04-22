@@ -484,10 +484,7 @@ nautilus_application_create_window (NautilusApplication *application,
 
 	g_return_val_if_fail (NAUTILUS_IS_APPLICATION (application), NULL);
 
-	window = g_object_new (NAUTILUS_TYPE_WINDOW,
-			       "screen", screen,
-			       NULL);
-
+	window = nautilus_window_new (screen);
 	gtk_application_add_window (GTK_APPLICATION (application),
 				    GTK_WINDOW (window));
 
@@ -635,7 +632,7 @@ mount_removed_callback (GVolumeMonitor *monitor,
 			nautilus_window_pane_slot_close (slot->pane, slot);
 		} else {
 			computer = g_file_new_for_path (g_get_home_dir ());
-			nautilus_window_slot_go_to (slot, computer, FALSE);
+			nautilus_window_slot_open_location (slot, computer, 0);
 			g_object_unref(computer);
 		}
 	}
@@ -708,10 +705,8 @@ nautilus_application_open_location (NautilusApplication *application,
 		sel_list = g_list_prepend (sel_list, nautilus_file_get (selection));
 	}
 
-	nautilus_window_slot_open_location (nautilus_window_get_active_slot (window),
-					    location,
-					    0,
-					    sel_list);
+	nautilus_window_slot_open_location_full (nautilus_window_get_active_slot (window), location,
+						 0, sel_list, NULL, NULL);
 
 	if (sel_list != NULL) {
 		nautilus_file_list_free (sel_list);

@@ -5666,7 +5666,7 @@ action_open_scripts_folder_callback (GtkAction *action,
 	}
 
 	view = NAUTILUS_VIEW (callback_data);
-	nautilus_window_slot_go_to (view->details->slot, location, FALSE);
+	nautilus_window_slot_open_location (view->details->slot, location, 0);
 
 	eel_show_info_dialog_with_details 
 		(_("All executable files in this folder will appear in the "

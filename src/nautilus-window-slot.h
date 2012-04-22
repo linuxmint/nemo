@@ -131,26 +131,16 @@ char *  nautilus_window_slot_get_location_uri		   (NautilusWindowSlot *slot);
 
 void    nautilus_window_slot_reload			   (NautilusWindowSlot *slot);
 
+/* convenience wrapper without selection and callback/user_data */
+#define nautilus_window_slot_open_location(slot, location, flags)\
+	nautilus_window_slot_open_location_full(slot, location, flags, NULL, NULL, NULL)
+
 void nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
 					      GFile *location,
 					      NautilusWindowOpenFlags flags,
 					      GList *new_selection, /* NautilusFile list */
 					      NautilusWindowGoToCallback callback,
 					      gpointer user_data);
-
-/* convenience wrapper without callback/user_data */
-#define nautilus_window_slot_open_location(slot, location, flags, new_selection)\
-	nautilus_window_slot_open_location_full(slot, location, flags, new_selection, NULL, NULL)
-
-/* these are wrappers that always open according to current mode */
-#define nautilus_window_slot_go_to(slot, location, new_tab) \
-	nautilus_window_slot_open_location(slot, location, \
-					   (new_tab ? NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB : 0), \
-					   NULL)
-#define nautilus_window_slot_go_to_full(slot, location, new_tab, callback, user_data) \
-	nautilus_window_slot_open_location_full(slot, location, \
-						(new_tab ? NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB : 0), \
-						NULL, callback, user_data)
 
 void			nautilus_window_slot_stop_loading	      (NautilusWindowSlot	*slot);
 
@@ -161,10 +151,9 @@ gboolean		nautilus_window_slot_content_view_matches_iid (NautilusWindowSlot	*slo
 								       const char		*iid);
 
 void    nautilus_window_slot_go_home			   (NautilusWindowSlot *slot,
-							    gboolean            new_tab);
+							    NautilusWindowOpenFlags flags);
 void    nautilus_window_slot_go_up                         (NautilusWindowSlot *slot,
-							    gboolean close_behind,
-							    gboolean new_tab);
+							    NautilusWindowOpenFlags flags);
 
 void    nautilus_window_slot_set_content_view_widget	   (NautilusWindowSlot *slot,
 							    NautilusView       *content_view);

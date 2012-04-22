@@ -1748,8 +1748,7 @@ activate_files (ActivateParameters *parameters)
 
 			uri = nautilus_file_get_activation_uri (file);
 			f = g_file_new_for_uri (uri);
-			nautilus_window_slot_open_location (parameters->slot,
-							    f, flags, NULL);
+			nautilus_window_slot_open_location (parameters->slot, f, flags);
 			g_object_unref (f);
 			g_free (uri);
 		}

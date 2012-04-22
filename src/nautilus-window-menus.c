@@ -128,8 +128,8 @@ action_home_callback (GtkAction *action,
 	window = NAUTILUS_WINDOW (user_data);
 	slot = nautilus_window_get_active_slot (window);
 
-	nautilus_window_slot_go_home (slot, 
-				      nautilus_event_should_open_in_new_tab ());
+	nautilus_window_slot_go_home (slot,
+				      nautilus_event_get_window_open_flags ());
 }
 
 static void
@@ -144,9 +144,8 @@ action_go_to_computer_callback (GtkAction *action,
 	slot = nautilus_window_get_active_slot (window);
 
 	computer = g_file_new_for_uri (COMPUTER_URI);
-	nautilus_window_slot_go_to (slot,
-				    computer,
-				    nautilus_event_should_open_in_new_tab ());
+	nautilus_window_slot_open_location (slot, computer,
+					    nautilus_event_get_window_open_flags ());
 	g_object_unref (computer);
 }
 
@@ -162,9 +161,8 @@ action_go_to_network_callback (GtkAction *action,
 	slot = nautilus_window_get_active_slot (window);
 
 	network = g_file_new_for_uri (NETWORK_URI);
-	nautilus_window_slot_go_to (slot,
-				    network,
-				    nautilus_event_should_open_in_new_tab ());
+	nautilus_window_slot_open_location (slot, network,
+					    nautilus_event_get_window_open_flags ());
 	g_object_unref (network);
 }
 
@@ -183,9 +181,8 @@ action_go_to_templates_callback (GtkAction *action,
 	path = nautilus_get_templates_directory ();
 	location = g_file_new_for_path (path);
 	g_free (path);
-	nautilus_window_slot_go_to (slot,
-				    location,
-				    nautilus_event_should_open_in_new_tab ());
+	nautilus_window_slot_open_location (slot, location,
+					    nautilus_event_get_window_open_flags ());
 	g_object_unref (location);
 }
 
@@ -201,9 +198,8 @@ action_go_to_trash_callback (GtkAction *action,
 	slot = nautilus_window_get_active_slot (window);
 
 	trash = g_file_new_for_uri ("trash:///");
-	nautilus_window_slot_go_to (slot,
-				    trash,
-				    nautilus_event_should_open_in_new_tab ());
+	nautilus_window_slot_open_location (slot, trash,
+					    nautilus_event_get_window_open_flags ());
 	g_object_unref (trash);
 }
 
@@ -414,7 +410,7 @@ action_up_callback (GtkAction *action,
 	NautilusWindowSlot *slot;
 
 	slot = nautilus_window_get_active_slot (window);
-	nautilus_window_slot_go_up (slot, FALSE, nautilus_event_should_open_in_new_tab ());
+	nautilus_window_slot_go_up (slot, nautilus_event_get_window_open_flags ());
 }
 
 static void
@@ -559,7 +555,7 @@ action_back_callback (GtkAction *action,
 		      gpointer user_data) 
 {
 	nautilus_window_back_or_forward (NAUTILUS_WINDOW (user_data), 
-					 TRUE, 0, nautilus_event_should_open_in_new_tab ());
+					 TRUE, 0, nautilus_event_get_window_open_flags ());
 }
 
 static void
@@ -567,7 +563,7 @@ action_forward_callback (GtkAction *action,
 			 gpointer user_data) 
 {
 	nautilus_window_back_or_forward (NAUTILUS_WINDOW (user_data), 
-					 FALSE, 0, nautilus_event_should_open_in_new_tab ());
+					 FALSE, 0, nautilus_event_get_window_open_flags ());
 }
 
 static void
@@ -593,7 +589,8 @@ action_split_view_same_location_callback (GtkAction *action,
 	}
 	location = nautilus_window_slot_get_location (next_pane->active_slot);
 	if (location) {
-		nautilus_window_slot_go_to (nautilus_window_get_active_slot (window), location, FALSE);
+		nautilus_window_slot_open_location (nautilus_window_get_active_slot (window),
+						    location, 0);
 		g_object_unref (location);
 	}
 }

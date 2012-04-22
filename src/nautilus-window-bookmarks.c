@@ -274,9 +274,8 @@ activate_bookmark_in_menu_item (GtkAction *action, gpointer user_data)
 	} else {
 	        location = nautilus_bookmark_get_location (holder->bookmark);
 		slot = nautilus_window_get_active_slot (holder->window);
-	        nautilus_window_slot_go_to (slot, 
-					    location, 
-					    nautilus_event_should_open_in_new_tab ());
+	        nautilus_window_slot_open_location (slot, location, 
+						    nautilus_event_get_window_open_flags ());
 	        g_object_unref (location);
         }
 }

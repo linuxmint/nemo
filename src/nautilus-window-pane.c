@@ -179,7 +179,7 @@ search_bar_activate_callback (NautilusSearchBar *bar,
 		g_object_unref (query);
 	}
 
-	nautilus_window_slot_go_to (pane->active_slot, location, FALSE);
+	nautilus_window_slot_open_location (pane->active_slot, location, 0);
 
 	nautilus_directory_unref (directory);
 	g_object_unref (location);	
@@ -281,7 +281,7 @@ navigation_bar_location_changed_callback (GtkWidget *widget,
 	restore_focus_widget (pane);
 
 	location = g_file_new_for_uri (uri);
-	nautilus_window_slot_go_to (pane->active_slot, location, FALSE);
+	nautilus_window_slot_open_location (pane->active_slot, location, 0);
 	g_object_unref (location);
 }
 
@@ -310,9 +310,9 @@ path_bar_location_changed_callback (GtkWidget *widget,
 	/* check whether we already visited the target location */
 	i = bookmark_list_get_uri_index (slot->back_list, location);
 	if (i >= 0) {
-		nautilus_window_back_or_forward (pane->window, TRUE, i, FALSE);
+		nautilus_window_back_or_forward (pane->window, TRUE, i, 0);
 	} else {
-		nautilus_window_slot_go_to (pane->active_slot, location, FALSE);
+		nautilus_window_slot_open_location (pane->active_slot, location, 0);
 	}
 }
 
@@ -377,8 +377,7 @@ path_bar_button_released_callback (GtkWidget *widget,
 
 		if (flags != 0) {
 			slot = nautilus_window_get_active_slot (pane->window);
-			nautilus_window_slot_open_location (slot, location,
-							    flags, NULL);
+			nautilus_window_slot_open_location (slot, location, flags);
 			g_object_unref (location);
 			return TRUE;
 		}

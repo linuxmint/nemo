@@ -176,8 +176,8 @@ nautilus_window_go_to (NautilusWindow *window, GFile *location)
 {
 	g_return_if_fail (NAUTILUS_IS_WINDOW (window));
 
-	nautilus_window_slot_go_to (nautilus_window_get_active_slot (window),
-				    location, FALSE);
+	nautilus_window_slot_open_location (nautilus_window_get_active_slot (window),
+					    location, 0);
 }
 
 void
@@ -188,17 +188,14 @@ nautilus_window_go_to_full (NautilusWindow *window,
 {
 	g_return_if_fail (NAUTILUS_IS_WINDOW (window));
 
-	nautilus_window_slot_go_to_full (nautilus_window_get_active_slot (window),
-					 location, FALSE, callback, user_data);
+	nautilus_window_slot_open_location_full (nautilus_window_get_active_slot (window),
+						 location, 0, NULL, callback, user_data);
 }
 
-static gboolean
-nautilus_window_go_up_signal (NautilusWindow *window, gboolean close_behind)
+static void
+nautilus_window_go_up_signal (NautilusWindow *window)
 {
-	nautilus_window_slot_go_up (nautilus_window_get_active_slot (window),
-				    close_behind, FALSE);
-
-	return TRUE;
+	nautilus_window_slot_go_up (nautilus_window_get_active_slot (window), 0);
 }
 
 void
@@ -231,7 +228,7 @@ nautilus_window_new_tab (NautilusWindow *window)
 
 		new_slot = nautilus_window_pane_open_slot (current_slot->pane, flags);
 		nautilus_window_set_active_slot (window, new_slot);
-		nautilus_window_slot_go_to (new_slot, location, FALSE);
+		nautilus_window_slot_open_location (new_slot, location, 0);
 		g_object_unref (location);
 	}
 }
@@ -1811,18 +1808,6 @@ nautilus_window_state_event (GtkWidget *widget,
 	return FALSE;
 }
 
-static void
-nautilus_window_go_back (NautilusWindow *window)
-{
-	nautilus_window_back_or_forward (window, TRUE, 0, FALSE);
-}
-
-static void
-nautilus_window_go_forward (NautilusWindow *window)
-{
-	nautilus_window_back_or_forward (window, FALSE, 0, FALSE);
-}
-
 static gboolean
 nautilus_window_button_press_event (GtkWidget *widget,
 				    GdkEventButton *event)
@@ -1834,10 +1819,10 @@ nautilus_window_button_press_event (GtkWidget *widget,
 	window = NAUTILUS_WINDOW (widget);
 
 	if (mouse_extra_buttons && (event->button == mouse_back_button)) {
-		nautilus_window_go_back (window);
+		nautilus_window_back_or_forward (window, TRUE, 0, 0);
 		handled = TRUE; 
 	} else if (mouse_extra_buttons && (event->button == mouse_forward_button)) {
-		nautilus_window_go_forward (window);
+		nautilus_window_back_or_forward (window, FALSE, 0, 0);
 		handled = TRUE;
 	} else if (GTK_WIDGET_CLASS (nautilus_window_parent_class)->button_press_event) {
 		handled = GTK_WIDGET_CLASS (nautilus_window_parent_class)->button_press_event (widget, event);
@@ -1952,13 +1937,13 @@ nautilus_window_class_init (NautilusWindowClass *class)
 				      G_PARAM_STATIC_STRINGS);
 
 	signals[GO_UP] =
-		g_signal_new ("go_up",
+		g_signal_new ("go-up",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 			      G_STRUCT_OFFSET (NautilusWindowClass, go_up),
-			      g_signal_accumulator_true_handled, NULL,
+			      NULL, NULL,
 			      g_cclosure_marshal_generic,
-			      G_TYPE_BOOLEAN, 1, G_TYPE_BOOLEAN);
+			      G_TYPE_NONE, 0);
 	signals[RELOAD] =
 		g_signal_new ("reload",
 			      G_TYPE_FROM_CLASS (class),
@@ -1995,8 +1980,7 @@ nautilus_window_class_init (NautilusWindowClass *class)
 
 	binding_set = gtk_binding_set_by_class (class);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, 0,
-				      "go_up", 1,
-				      G_TYPE_BOOLEAN, FALSE);
+				      "go-up", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_F5, 0,
 				      "reload", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_slash, 0,
@@ -2026,6 +2010,14 @@ nautilus_window_class_init (NautilusWindowClass *class)
 	g_type_class_add_private (oclass, sizeof (NautilusWindowDetails));
 }
 
+NautilusWindow *
+nautilus_window_new (GdkScreen *screen)
+{
+	return g_object_new (NAUTILUS_TYPE_WINDOW,
+			     "screen", screen,
+			     NULL);
+}
+
 void
 nautilus_window_split_view_on (NautilusWindow *window)
 {
@@ -2049,7 +2041,7 @@ nautilus_window_split_view_on (NautilusWindow *window)
 		location = g_file_new_for_path (g_get_home_dir ());
 	}
 
-	nautilus_window_slot_go_to (slot, location, FALSE);
+	nautilus_window_slot_open_location (slot, location, 0);
 	g_object_unref (location);
 
 	window_set_search_action_text (window, FALSE);
@@ -2084,4 +2076,26 @@ gboolean
 nautilus_window_split_view_showing (NautilusWindow *window)
 {
 	return g_list_length (NAUTILUS_WINDOW (window)->details->panes) > 1;
+}
+
+NautilusWindowOpenFlags
+nautilus_event_get_window_open_flags (void)
+{
+	NautilusWindowOpenFlags flags = 0;
+	GdkEvent *event;
+
+	event = gtk_get_current_event ();
+
+	if (event == NULL) {
+		return flags;
+	}
+
+	if ((event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) &&
+	    (event->button.button == 2)) {
+		flags |= NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB;
+	}
+
+	gdk_event_free (event);
+
+	return flags;
 }
