@@ -66,7 +66,6 @@ struct NautilusLocationBarDetails {
 };
 
 enum {
-	NAUTILUS_DND_MC_DESKTOP_ICON,
 	NAUTILUS_DND_URI_LIST,
 	NAUTILUS_DND_TEXT_PLAIN,
 	NAUTILUS_DND_NTARGETS
@@ -102,39 +101,29 @@ nautilus_location_bar_get_window (GtkWidget *bar)
 /**
  * nautilus_location_bar_get_location
  *
- * Get the "URI" represented by the text in the location bar.
- *
- * @bar: A NautilusLocationBar.
- *
- * returns a newly allocated "string" containing the mangled
- * (by g_file_parse_name) text that the user typed in...maybe a URI 
- * but not guaranteed.
- *
+ * Get the GFile represented by the text in the location bar.
  **/
-static char *
+static GFile *
 nautilus_location_bar_get_location (NautilusLocationBar *bar) 
 {
-	char *user_location, *uri;
+	char *user_location;
 	GFile *location;
 	
 	user_location = gtk_editable_get_chars (GTK_EDITABLE (bar->details->entry), 0, -1);
 	location = g_file_parse_name (user_location);
 	g_free (user_location);
-	uri = g_file_get_uri (location);
-	g_object_unref (location);
-	return uri;
+
+	return location;
 }
 
 static void
 emit_location_changed (NautilusLocationBar *bar)
 {
-	char *location;
+	GFile *location;
 
 	location = nautilus_location_bar_get_location (bar);
-	g_signal_emit (bar,
-		       signals[LOCATION_CHANGED], 0,
-		       location);
-	g_free (location);
+	g_signal_emit (bar, signals[LOCATION_CHANGED], 0, location);
+	g_object_unref (location);
 }
 
 static void
@@ -236,25 +225,28 @@ drag_data_get_callback (GtkWidget *widget,
 			gpointer callback_data)
 {
 	NautilusLocationBar *self;
-	char *entry_text;
+	GFile *location;
+	gchar *uri;
 
 	g_assert (selection_data != NULL);
 	self = callback_data;
 
-	entry_text = nautilus_location_bar_get_location (self);
+	location = nautilus_location_bar_get_location (self);
+	uri = g_file_get_uri (location);
 
 	switch (info) {
 	case NAUTILUS_DND_URI_LIST:
 	case NAUTILUS_DND_TEXT_PLAIN:
 		gtk_selection_data_set (selection_data,
 					gtk_selection_data_get_target (selection_data),
-					8, (guchar *) entry_text,
-					strlen (entry_text));
+					8, (guchar *) uri,
+					strlen (uri));
 		break;
 	default:
 		g_assert_not_reached ();
 	}
-	g_free (entry_text);
+	g_free (uri);
+	g_object_unref (location);
 }
 
 /* routine that determines the usize for the label widget as larger
@@ -441,8 +433,8 @@ nautilus_location_bar_class_init (NautilusLocationBarClass *klass)
 		 G_TYPE_FROM_CLASS (klass),
 		 G_SIGNAL_RUN_LAST, 0,
 		 NULL, NULL,
-		 g_cclosure_marshal_VOID__STRING,
-		 G_TYPE_NONE, 1, G_TYPE_STRING);
+		 g_cclosure_marshal_generic,
+		 G_TYPE_NONE, 1, G_TYPE_OBJECT);
 
 	binding_set = gtk_binding_set_by_class (klass);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "cancel", 0);

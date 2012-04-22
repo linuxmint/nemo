@@ -269,20 +269,16 @@ nautilus_window_pane_hide_search_bar (NautilusWindowPane *pane)
 
 static void
 navigation_bar_location_changed_callback (GtkWidget *widget,
-					  const char *uri,
+					  GFile *location,
 					  NautilusWindowPane *pane)
 {
-	GFile *location;
-
 	nautilus_toolbar_set_show_location_entry (NAUTILUS_TOOLBAR (pane->tool_bar), FALSE);
 	nautilus_window_pane_hide_search_bar (pane);
 	nautilus_window_pane_hide_temporary_bars (pane);
 
 	restore_focus_widget (pane);
 
-	location = g_file_new_for_uri (uri);
 	nautilus_window_slot_open_location (pane->active_slot, location, 0);
-	g_object_unref (location);
 }
 
 static gboolean
