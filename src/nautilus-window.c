@@ -532,8 +532,6 @@ nautilus_window_constructed (GObject *self)
 
 	G_OBJECT_CLASS (nautilus_window_parent_class)->constructed (self);
 
-	g_signal_connect_after (window, "delete-event",
-				G_CALLBACK (nautilus_window_close), NULL);
 
 	grid = gtk_grid_new ();
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (grid), GTK_ORIENTATION_VERTICAL);
@@ -1800,6 +1798,14 @@ nautilus_window_state_event (GtkWidget *widget,
 }
 
 static gboolean
+nautilus_window_delete_event (GtkWidget *widget,
+			      GdkEventAny *event)
+{
+	nautilus_window_close (NAUTILUS_WINDOW (widget));
+	return FALSE;
+}
+
+static gboolean
 nautilus_window_button_press_event (GtkWidget *widget,
 				    GdkEventButton *event)
 {
@@ -1915,6 +1921,7 @@ nautilus_window_class_init (NautilusWindowClass *class)
 	wclass->key_press_event = nautilus_window_key_press_event;
 	wclass->window_state_event = nautilus_window_state_event;
 	wclass->button_press_event = nautilus_window_button_press_event;
+	wclass->delete_event = nautilus_window_delete_event;
 
 	class->get_icon = real_get_icon;
 	class->close = real_window_close;

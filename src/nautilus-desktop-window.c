@@ -132,13 +132,6 @@ nautilus_desktop_window_init (NautilusDesktopWindow *window)
 			   GINT_TO_POINTER (1));
 }
 
-static gint
-nautilus_desktop_window_delete_event (NautilusDesktopWindow *window)
-{
-	/* Returning true tells GTK+ not to delete the window. */
-	return TRUE;
-}
-
 static void
 nautilus_desktop_window_screen_size_changed (GdkScreen             *screen,
 					     NautilusDesktopWindow *window)
@@ -173,14 +166,20 @@ nautilus_desktop_window_new (GdkScreen *screen)
 	/* Special sawmill setting*/
 	gtk_window_set_wmclass (GTK_WINDOW (window), "desktop_window", "Nautilus");
 
-	g_signal_connect (window, "delete_event", G_CALLBACK (nautilus_desktop_window_delete_event), NULL);
-
 	/* Point window at the desktop folder.
 	 * Note that nautilus_desktop_window_init is too early to do this.
 	 */
 	nautilus_desktop_window_update_directory (window);
 
 	return window;
+}
+
+static gboolean
+nautilus_desktop_window_delete_event (GtkWidget *widget,
+				      GdkEventAny *event)
+{
+	/* Returning true tells GTK+ not to delete the window. */
+	return TRUE;
 }
 
 static void
@@ -310,6 +309,7 @@ nautilus_desktop_window_class_init (NautilusDesktopWindowClass *klass)
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;
 	wclass->map = map;
+	wclass->delete_event = nautilus_desktop_window_delete_event;
 
 	nclass->sync_title = real_sync_title;
 	nclass->get_icon = real_get_icon;
