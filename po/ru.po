@@ -37,11 +37,11 @@ msgstr "Предложение автозапуска"
 
 #: ../data/nautilus.desktop.in.in.h:1
 msgid "Files"
-msgstr "Файлы"
+msgstr "Nautilus"
 
 #: ../data/nautilus.desktop.in.in.h:2
 msgid "Access and organize files"
-msgstr "Управление и доступ к файлам"
+msgstr "Управление файлами"
 
 #: ../eel/eel-canvas.c:1255
 #: ../eel/eel-canvas.c:1256
