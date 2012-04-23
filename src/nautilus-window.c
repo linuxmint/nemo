@@ -163,15 +163,6 @@ nautilus_window_push_status (NautilusWindow *window,
 }
 
 void
-nautilus_window_sync_status (NautilusWindow *window)
-{
-	NautilusWindowSlot *slot;
-
-	slot = nautilus_window_get_active_slot (window);
-	nautilus_window_push_status (window, slot->status_text);
-}
-
-void
 nautilus_window_go_to (NautilusWindow *window, GFile *location)
 {
 	g_return_if_fail (NAUTILUS_IS_WINDOW (window));

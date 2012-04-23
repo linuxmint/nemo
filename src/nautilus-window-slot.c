@@ -139,7 +139,7 @@ real_active (NautilusWindowSlot *slot)
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (pane->notebook), page_num);
 
 	/* sync window to new slot */
-	nautilus_window_sync_status (window);
+	nautilus_window_push_status (window, slot->status_text);
 	nautilus_window_sync_allow_stop (window, slot);
 	nautilus_window_sync_title (window, slot);
 	nautilus_window_sync_zoom_widgets (window);
@@ -571,7 +571,7 @@ nautilus_window_slot_set_status (NautilusWindowSlot *slot,
 
 	window = nautilus_window_slot_get_window (slot);
 	if (slot == nautilus_window_get_active_slot (window)) {
-		nautilus_window_sync_status (window);
+		nautilus_window_push_status (window, slot->status_text);
 	}
 }
 

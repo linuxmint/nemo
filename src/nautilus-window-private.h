@@ -144,7 +144,6 @@ NautilusWindowPane * nautilus_window_get_active_pane                     (Nautil
 /* sync window GUI with current slot. Used when changing slots,
  * and when updating the slot state.
  */
-void nautilus_window_sync_status           (NautilusWindow *window);
 void nautilus_window_sync_allow_stop       (NautilusWindow *window,
 					    NautilusWindowSlot *slot);
 void nautilus_window_sync_title            (NautilusWindow *window,
