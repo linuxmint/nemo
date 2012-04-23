@@ -4686,7 +4686,7 @@ msgstr[1] "Isto abrirá %'d janelas separadas."
 
 #: ../src/nautilus-view.c:1477
 msgid "Select Items Matching"
-msgstr "Selecionar ocorrências de padrão"
+msgstr "Selecionar itens coincidentes"
 
 #: ../src/nautilus-view.c:1492
 msgid "_Pattern:"
