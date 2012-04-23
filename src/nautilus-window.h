@@ -73,7 +73,7 @@ typedef enum {
 typedef struct NautilusWindowDetails NautilusWindowDetails;
 
 typedef struct {
-        GtkWindowClass parent_spot;
+        GtkApplicationWindowClass parent_spot;
 
 	/* Function pointers for overriding, without corresponding signals */
 
@@ -91,13 +91,14 @@ typedef struct {
 } NautilusWindowClass;
 
 struct NautilusWindow {
-        GtkWindow parent_object;
+        GtkApplicationWindow parent_object;
         
         NautilusWindowDetails *details;
 };
 
 GType            nautilus_window_get_type             (void);
-NautilusWindow * nautilus_window_new                  (GdkScreen         *screen);
+NautilusWindow * nautilus_window_new                  (GtkApplication    *application,
+                                                       GdkScreen         *screen);
 void             nautilus_window_close                (NautilusWindow    *window);
 
 void             nautilus_window_connect_content_view (NautilusWindow    *window,

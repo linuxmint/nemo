@@ -400,7 +400,8 @@ nautilus_application_create_desktop_windows (NautilusApplication *application)
 		
 		selection_widget = get_desktop_manager_selection (display, i);
 		if (selection_widget != NULL) {
-			window = nautilus_desktop_window_new (gdk_display_get_screen (display, i));
+			window = nautilus_desktop_window_new (GTK_APPLICATION (application),
+							      gdk_display_get_screen (display, i));
 
 			g_signal_connect (selection_widget, "selection_clear_event",
 					  G_CALLBACK (selection_clear_event_cb), window);
@@ -416,9 +417,6 @@ nautilus_application_create_desktop_windows (NautilusApplication *application)
 
 			nautilus_application_desktop_windows =
 				g_list_prepend (nautilus_application_desktop_windows, window);
-
-			gtk_application_add_window (GTK_APPLICATION (application),
-						    GTK_WINDOW (window));
 		}
 	}
 }
@@ -484,9 +482,7 @@ nautilus_application_create_window (NautilusApplication *application,
 
 	g_return_val_if_fail (NAUTILUS_IS_APPLICATION (application), NULL);
 
-	window = nautilus_window_new (screen);
-	gtk_application_add_window (GTK_APPLICATION (application),
-				    GTK_WINDOW (window));
+	window = nautilus_window_new (GTK_APPLICATION (application), screen);
 
 	maximized = g_settings_get_boolean
 		(nautilus_window_state, NAUTILUS_WINDOW_STATE_MAXIMIZED);
@@ -512,6 +508,8 @@ nautilus_application_create_window (NautilusApplication *application,
 			 another_navigation_window_already_showing (application, window));
 	}
 	g_free (geometry_string);
+
+	nautilus_undo_manager_attach (application->undo_manager, G_OBJECT (window));
 
 	DEBUG ("Creating a new navigation window");
 	

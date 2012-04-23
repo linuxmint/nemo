@@ -32,7 +32,6 @@
 #include "nautilus-window-private.h"
 
 #include "nautilus-actions.h"
-#include "nautilus-application.h"
 #include "nautilus-bookmarks-window.h"
 #include "nautilus-location-bar.h"
 #include "nautilus-mime-actions.h"
@@ -123,7 +122,7 @@ static void cancel_view_as_callback         (NautilusWindowSlot      *slot);
 static void action_view_as_callback         (GtkAction               *action,
 					     ActivateViewData        *data);
 
-G_DEFINE_TYPE (NautilusWindow, nautilus_window, GTK_TYPE_WINDOW);
+G_DEFINE_TYPE (NautilusWindow, nautilus_window, GTK_TYPE_APPLICATION_WINDOW);
 
 static const struct {
 	unsigned int keyval;
@@ -525,13 +524,15 @@ nautilus_window_constructed (GObject *self)
 	GtkWidget *vbox;
 	NautilusWindowPane *pane;
 	NautilusWindowSlot *slot;
-	NautilusApplication *application;
 
 	window = NAUTILUS_WINDOW (self);
-	application = nautilus_application_get_singleton ();
 
 	G_OBJECT_CLASS (nautilus_window_parent_class)->constructed (self);
 
+	/* disable automatic menubar handling, since we show our regular
+	 * menubar together with the app menu.
+	 */
+	gtk_application_window_set_show_menubar (GTK_APPLICATION_WINDOW (self), FALSE);
 
 	grid = gtk_grid_new ();
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (grid), GTK_ORIENTATION_VERTICAL);
@@ -602,7 +603,6 @@ nautilus_window_constructed (GObject *self)
 
 	nautilus_window_initialize_bookmarks_menu (window);
 	nautilus_window_set_initial_window_geometry (window);
-	nautilus_undo_manager_attach (application->undo_manager, G_OBJECT (window));
 
 	slot = nautilus_window_pane_open_slot (window->details->active_pane, 0);
 	nautilus_window_set_active_slot (window, slot);
@@ -2009,9 +2009,11 @@ nautilus_window_class_init (NautilusWindowClass *class)
 }
 
 NautilusWindow *
-nautilus_window_new (GdkScreen *screen)
+nautilus_window_new (GtkApplication *application,
+		     GdkScreen      *screen)
 {
 	return g_object_new (NAUTILUS_TYPE_WINDOW,
+			     "application", application,
 			     "screen", screen,
 			     NULL);
 }
