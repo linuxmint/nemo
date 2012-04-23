@@ -140,7 +140,7 @@ sanity_check_window_dimensions (guint *width, guint *height)
  * @width: width of window in pixels
  * @height: height of window in pixels
  */
-void
+static void
 eel_gtk_window_set_initial_geometry (GtkWindow *window, 
 					  EelGdkGeometryFlags geometry_flags,
 					  int left,

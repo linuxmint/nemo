@@ -66,7 +66,6 @@
 
 #define NETWORK_URI          "network:"
 #define COMPUTER_URI         "computer:"
-#define BURN_CD_URI          "burn:"
 
 static void
 action_close_window_slot_callback (GtkAction *action,

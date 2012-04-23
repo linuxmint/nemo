@@ -48,6 +48,21 @@ G_DEFINE_TYPE (NautilusDesktopWindow, nautilus_desktop_window,
 	       NAUTILUS_TYPE_WINDOW);
 
 static void
+nautilus_desktop_window_update_directory (NautilusDesktopWindow *window)
+{
+	GFile *location;
+
+	g_assert (NAUTILUS_IS_DESKTOP_WINDOW (window));
+
+	window->details->loaded = FALSE;
+	location = g_file_new_for_uri (EEL_DESKTOP_URI);
+	nautilus_window_go_to (NAUTILUS_WINDOW (window), location);
+	window->details->loaded = TRUE;
+
+	g_object_unref (location);
+}
+
+static void
 nautilus_desktop_window_dispose (GObject *obj)
 {
 	NautilusDesktopWindow *window = NAUTILUS_DESKTOP_WINDOW (obj);
@@ -122,21 +137,6 @@ nautilus_desktop_window_delete_event (NautilusDesktopWindow *window)
 {
 	/* Returning true tells GTK+ not to delete the window. */
 	return TRUE;
-}
-
-void
-nautilus_desktop_window_update_directory (NautilusDesktopWindow *window)
-{
-	GFile *location;
-
-	g_assert (NAUTILUS_IS_DESKTOP_WINDOW (window));
-
-	window->details->loaded = FALSE;
-	location = g_file_new_for_uri (EEL_DESKTOP_URI);
-	nautilus_window_go_to (NAUTILUS_WINDOW (window), location);
-	window->details->loaded = TRUE;
-
-	g_object_unref (location);
 }
 
 static void
