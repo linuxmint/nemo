@@ -1,0 +1,36 @@
+<interface>
+  <menu id="app-menu">
+    <section>
+      <item>
+	<attribute name="action">app.new-window</attribute>
+	<attribute name="label" translatable="yes">New _Window</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="action">app.connect-to-server</attribute>
+	<attribute name="label" translatable="yes">Connect to _Server</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="action">app.preferences</attribute>
+	<attribute name="label" translatable="yes">Prefere_nces</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="action">app.about</attribute>
+	<attribute name="label" translatable="yes">_About Files</attribute>
+      </item>
+      <item>
+	<attribute name="action">app.help</attribute>
+	<attribute name="label" translatable="yes">_Help</attribute>
+      </item>
+      <item>
+	<attribute name="action">app.quit</attribute>
+	<attribute name="label" translatable="yes">_Quit</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>

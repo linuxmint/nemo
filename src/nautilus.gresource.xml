@@ -9,6 +9,7 @@
     <file>nautilus-desktop-icon-view-ui.xml</file>
     <file>nautilus-list-view-ui.xml</file>
     <file>nautilus-shell-ui.xml</file>
+    <file>nautilus-app-menu.ui</file>
     <file alias="icons/thumbnail_frame.png">../icons/thumbnail_frame.png</file>
     <file alias="icons/knob.png">../icons/knob.png</file>
   </gresource>

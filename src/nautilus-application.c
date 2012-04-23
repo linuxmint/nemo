@@ -1067,6 +1067,51 @@ init_gtk_accels (void)
 }
 
 static void
+nautilus_application_init_app_menu (NautilusApplication *self)
+{
+	GtkBuilder *builder;
+	GError *error = NULL;
+	GSimpleAction *action;
+
+	action = g_simple_action_new ("new-window", NULL);
+	g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
+	g_object_unref (action);
+
+	action = g_simple_action_new ("connect-to-server", NULL);
+	g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
+	g_object_unref (action);
+
+	action = g_simple_action_new ("preferences", NULL);
+	g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
+	g_object_unref (action);
+
+	action = g_simple_action_new ("about", NULL);
+	g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
+	g_object_unref (action);
+
+	action = g_simple_action_new ("help", NULL);
+	g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
+	g_object_unref (action);
+
+	action = g_simple_action_new ("quit", NULL);
+	g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
+	g_object_unref (action);
+
+	builder = gtk_builder_new ();
+	gtk_builder_add_from_resource (builder, "/org/gnome/nautilus/nautilus-app-menu.ui", &error);
+
+	if (error == NULL) {
+		gtk_application_set_app_menu (GTK_APPLICATION (self),
+					      G_MENU_MODEL (gtk_builder_get_object (builder, "app-menu")));
+	} else {
+		g_critical ("Unable to add the application menu: %s\n", error->message);
+		g_error_free (error);
+	}
+
+	g_object_unref (builder);
+}
+
+static void
 nautilus_application_startup (GApplication *app)
 {
 	NautilusApplication *self = NAUTILUS_APPLICATION (app);
@@ -1130,6 +1175,8 @@ nautilus_application_startup (GApplication *app)
 	init_desktop (self);
 
 	do_upgrades_once (self);
+
+	nautilus_application_init_app_menu (self);
 }
 
 static void
