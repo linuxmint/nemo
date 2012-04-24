@@ -39,11 +39,11 @@ libnautilus-private/nautilus-progress-info.c
 libnautilus-private/nautilus-query.c
 libnautilus-private/nautilus-search-directory-file.c
 libnautilus-private/nautilus-tree-view-drag-dest.c
-libnautilus-private/nautilus-undo-signal-handlers.c
 libnautilus-private/nautilus-vfs-file.c
 libnautilus-private/org.gnome.nautilus.gschema.xml.in
 nautilus-sendto-extension/nautilus-nste.c
 src/nautilus-application.c
+[type: gettext/glade]src/nautilus-app-menu.ui
 src/nautilus-autorun-software.c
 src/nautilus-bookmarks-window.c
 [type: gettext/glade]src/nautilus-bookmarks-window.ui
