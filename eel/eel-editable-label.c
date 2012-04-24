@@ -1598,9 +1598,8 @@ eel_editable_label_draw (GtkWidget *widget,
 	  gdk_cairo_region (cr, clip);
 	  cairo_clip (cr);
 
-	  state = GTK_STATE_FLAG_SELECTED;
-	  if (!gtk_widget_has_focus (widget))
-	    state = GTK_STATE_FLAG_ACTIVE;
+          state = gtk_widget_get_state_flags (widget);
+	  state |= GTK_STATE_FLAG_SELECTED;
 
           gtk_style_context_get_background_color (style, state, &background_color);
 	  gdk_cairo_set_source_rgba (cr, &background_color);
