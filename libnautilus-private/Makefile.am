@@ -176,15 +176,6 @@ libnautilus_private_la_SOURCES = \
 	nautilus-tree-view-drag-dest.h \
 	nautilus-ui-utilities.c \
 	nautilus-ui-utilities.h \
-	nautilus-undo-manager.c \
-	nautilus-undo-manager.h \
-	nautilus-undo-private.h \
-	nautilus-undo-signal-handlers.c \
-	nautilus-undo-signal-handlers.h \
-	nautilus-undo-transaction.c \
-	nautilus-undo-transaction.h \
-	nautilus-undo.c \
-	nautilus-undo.h \
 	nautilus-vfs-directory.c \
 	nautilus-vfs-directory.h \
 	nautilus-vfs-file.c \

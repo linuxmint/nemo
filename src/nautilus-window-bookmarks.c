@@ -33,7 +33,6 @@
 #include "nautilus-bookmarks-window.h"
 #include "nautilus-window-bookmarks.h"
 #include "nautilus-window-private.h"
-#include <libnautilus-private/nautilus-undo-manager.h>
 #include <libnautilus-private/nautilus-ui-utilities.h>
 #include <eel/eel-debug.h>
 #include <eel/eel-stock-dialogs.h>

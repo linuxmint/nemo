@@ -60,7 +60,6 @@
 #include <libnautilus-private/nautilus-global-preferences.h>
 #include <libnautilus-private/nautilus-metadata.h>
 #include <libnautilus-private/nautilus-clipboard.h>
-#include <libnautilus-private/nautilus-undo.h>
 #include <libnautilus-private/nautilus-search-directory.h>
 #include <libnautilus-private/nautilus-signaller.h>
 

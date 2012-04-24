@@ -28,8 +28,6 @@
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 
-#include <libnautilus-private/nautilus-undo-manager.h>
-
 #include "nautilus-window.h"
 
 #define NAUTILUS_DESKTOP_ICON_VIEW_IID	"OAFIID:Nautilus_File_Manager_Desktop_Icon_View"
@@ -55,8 +53,6 @@ typedef struct _NautilusApplicationPriv NautilusApplicationPriv;
 
 typedef struct {
 	GtkApplication parent;
-
-	NautilusUndoManager *undo_manager;
 
 	NautilusApplicationPriv *priv;
 } NautilusApplication;

@@ -53,7 +53,6 @@
 #include <libnautilus-private/nautilus-icon-names.h>
 #include <libnautilus-private/nautilus-ui-utilities.h>
 #include <libnautilus-private/nautilus-module.h>
-#include <libnautilus-private/nautilus-undo-manager.h>
 #include <libnautilus-private/nautilus-program-choosing.h>
 #include <libnautilus-private/nautilus-search-directory.h>
 #include <libnautilus-private/nautilus-search-engine.h>

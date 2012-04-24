@@ -29,7 +29,6 @@
 
 #include <string.h>
 #include "nautilus-global-preferences.h"
-#include "nautilus-undo-signal-handlers.h"
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
@@ -62,8 +61,6 @@ nautilus_entry_init (NautilusEntry *entry)
 	entry->details = g_new0 (NautilusEntryDetails, 1);
 	
 	entry->details->user_edit = TRUE;
-
-	nautilus_undo_set_up_nautilus_entry_for_undo (entry);
 }
 
 GtkWidget *

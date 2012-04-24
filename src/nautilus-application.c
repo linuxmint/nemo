@@ -61,7 +61,6 @@
 #include <libnautilus-private/nautilus-module.h>
 #include <libnautilus-private/nautilus-signaller.h>
 #include <libnautilus-private/nautilus-ui-utilities.h>
-#include <libnautilus-private/nautilus-undo-manager.h>
 #include <libnautilus-extension/nautilus-menu-provider.h>
 
 #define DEBUG_FLAG NAUTILUS_DEBUG_APPLICATION
@@ -511,8 +510,6 @@ nautilus_application_create_window (NautilusApplication *application,
 	}
 	g_free (geometry_string);
 
-	nautilus_undo_manager_attach (application->undo_manager, G_OBJECT (window));
-
 	DEBUG ("Creating a new navigation window");
 	
 	return window;
@@ -909,7 +906,6 @@ nautilus_application_finalize (GObject *object)
 
 	nautilus_bookmarks_exiting ();
 
-	g_clear_object (&application->undo_manager);
 	g_clear_object (&application->priv->volume_monitor);
 	g_clear_object (&application->priv->progress_handler);
 
@@ -1203,9 +1199,6 @@ nautilus_application_startup (GApplication *app)
 
 	/* initialize the previewer singleton */
 	nautilus_previewer_get_singleton ();
-
-	/* create an undo manager */
-	self->undo_manager = nautilus_undo_manager_new ();
 
 	/* create DBus manager */
 	nautilus_dbus_manager_start (app);

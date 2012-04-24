@@ -58,8 +58,6 @@
 #include <libnautilus-private/nautilus-metadata.h>
 #include <libnautilus-private/nautilus-mime-application-chooser.h>
 #include <libnautilus-private/nautilus-module.h>
-#include <libnautilus-private/nautilus-undo-signal-handlers.h>
-#include <libnautilus-private/nautilus-undo.h>
 
 #if HAVE_SYS_VFS_H
 #include <sys/vfs.h>
@@ -586,20 +584,6 @@ set_name_field (NautilusPropertiesWindow *window,
 						 GTK_WIDGET (window->details->name_label),
 						 GTK_POS_RIGHT, 1, 1);
 			gtk_label_set_mnemonic_widget (GTK_LABEL (window->details->name_label), window->details->name_field);
-			
-			/* FIXME bugzilla.gnome.org 42151:
-			 * With this (and one place elsewhere in this file, not sure which is the
-			 * trouble-causer) code in place, bug 2151 happens (crash on quit). Since
-			 * we've removed Undo from Nautilus for now, I'm just ifdeffing out this
-			 * code rather than trying to fix 2151 now. Note that it might be possible
-			 * to fix 2151 without making Undo actually work, it's just not worth the
-			 * trouble.
-			 */
-#ifdef UNDO_ENABLED
-			/* Set up name field for undo */
-			nautilus_undo_set_up_nautilus_entry_for_undo ( NAUTILUS_ENTRY (window->details->name_field));
-			nautilus_undo_editable_set_undo_key (GTK_EDITABLE (window->details->name_field), TRUE);
-#endif
 
 			g_signal_connect_object (window->details->name_field, "focus_out_event",
 						 G_CALLBACK (name_field_focus_out), window, 0);

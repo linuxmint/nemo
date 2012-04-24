@@ -27,11 +27,10 @@
 
 #include <config.h>
 #include "nautilus-bookmarks-window.h"
+#include "nautilus-entry.h"
 #include "nautilus-window.h"
 
-#include <libnautilus-private/nautilus-undo.h>
 #include <libnautilus-private/nautilus-global-preferences.h>
-#include <libnautilus-private/nautilus-undo-signal-handlers.h>
 
 #include <eel/eel-gtk-extensions.h>
 #include <eel/eel-gnome-extensions.h>
@@ -266,7 +265,6 @@ create_bookmarks_window (NautilusBookmarkList *list, GObject *undo_manager_sourc
 	jump_button = (GtkWidget *)gtk_builder_get_object (builder, "bookmark_jump_button");
 
 	set_up_close_accelerator (window);
-	nautilus_undo_share_undo_manager (G_OBJECT (window), undo_manager_source);
 
 	gtk_window_set_wmclass (GTK_WINDOW (window), "bookmarks", "Nautilus");
 	nautilus_bookmarks_window_restore_geometry (window);
