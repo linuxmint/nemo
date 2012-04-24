@@ -52,6 +52,10 @@
 #define NAUTILUS_ACTION_SEARCH "Search"
 #define NAUTILUS_ACTION_FOLDER_WINDOW "Folder Window"
 #define NAUTILUS_ACTION_NEW_TAB "New Tab"
+#define NAUTILUS_ACTION_NEW_WINDOW "New Window"
+#define NAUTILUS_ACTION_PREFERENCES "Preferences"
+#define NAUTILUS_ACTION_ABOUT "About Nautilus"
+#define NAUTILUS_ACTION_HELP "NautilusHelp"
 
 #define NAUTILUS_ACTION_OPEN "Open"
 #define NAUTILUS_ACTION_OPEN_ALTERNATE "OpenAlternate"
@@ -94,6 +98,7 @@
 #define NAUTILUS_ACTION_RESTORE_FROM_TRASH "Restore From Trash"
 #define NAUTILUS_ACTION_LOCATION_RESTORE_FROM_TRASH "LocationRestoreFromTrash"
 #define NAUTILUS_ACTION_SHOW_HIDDEN_FILES "Show Hidden Files"
+#define NAUTILUS_ACTION_CONNECT_TO_SERVER "Connect to Server"
 #define NAUTILUS_ACTION_CONNECT_TO_SERVER_LINK "Connect To Server Link"
 #define NAUTILUS_ACTION_MOUNT_VOLUME "Mount Volume"
 #define NAUTILUS_ACTION_UNMOUNT_VOLUME "Unmount Volume"

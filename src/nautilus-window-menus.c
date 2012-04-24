@@ -819,7 +819,7 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("_Close"), "<control>W",
   /* tooltip */                  N_("Close this folder"),
                                  G_CALLBACK (action_close_window_slot_callback) },
-                               { "Preferences", GTK_STOCK_PREFERENCES,
+                               { NAUTILUS_ACTION_PREFERENCES, GTK_STOCK_PREFERENCES,
                                  N_("Prefere_nces"),               
                                  NULL, N_("Edit Nautilus preferences"),
                                  G_CALLBACK (action_preferences_callback) },
@@ -842,7 +842,7 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("_Reload"), "<control>R",
   /* tooltip */                  N_("Reload the current location"),
                                  G_CALLBACK (action_reload_callback) },
-  /* name, stock id */         { "NautilusHelp", GTK_STOCK_HELP,
+  /* name, stock id */         { NAUTILUS_ACTION_HELP, GTK_STOCK_HELP,
   /* label, accelerator */       N_("_All Topics"), "F1",
   /* tooltip */                  N_("Display Nautilus help"),
                                  G_CALLBACK (action_nautilus_manual_callback) },
@@ -862,7 +862,7 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("Share and transfer files"), NULL,
   /* tooltip */                  N_("Easily transfer files to your contacts and devices from the file manager."),
                                  G_CALLBACK (action_nautilus_manual_callback) },
-  /* name, stock id */         { "About Nautilus", GTK_STOCK_ABOUT,
+  /* name, stock id */         { NAUTILUS_ACTION_ABOUT, GTK_STOCK_ABOUT,
   /* label, accelerator */       N_("_About"), NULL,
   /* tooltip */                  N_("Display credits for the creators of Nautilus"),
                                  G_CALLBACK (action_about_nautilus_callback) },
@@ -890,7 +890,7 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("Normal Si_ze"), "<control>0",
   /* tooltip */                  N_("Use the normal view size"),
                                  G_CALLBACK (action_zoom_normal_callback) },
-  /* name, stock id */         { "Connect to Server", NULL, 
+  /* name, stock id */         { NAUTILUS_ACTION_CONNECT_TO_SERVER, NULL, 
   /* label, accelerator */       N_("Connect to _Server..."), NULL,
   /* tooltip */                  N_("Connect to a remote computer or shared disk"),
                                  G_CALLBACK (action_connect_to_server_callback) },
@@ -917,7 +917,7 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "Go", NULL, N_("_Go") },
   /* name, stock id, label */  { "Bookmarks", NULL, N_("_Bookmarks") },
   /* name, stock id, label */  { "Tabs", NULL, N_("_Tabs") },
-  /* name, stock id, label */  { "New Window", "window-new", N_("New _Window"),
+  /* name, stock id, label */  { NAUTILUS_ACTION_NEW_WINDOW, "window-new", N_("New _Window"),
                                  "<control>N", N_("Open another Nautilus window for the displayed location"),
                                  G_CALLBACK (action_new_window_callback) },
   /* name, stock id, label */  { "New Tab", "tab-new", N_("New _Tab"),
@@ -1002,6 +1002,14 @@ static const GtkRadioActionEntry main_radio_entries[] = {
 	{ "Sidebar Tree", NULL,
 	  N_("Tree"), NULL, N_("Select Tree as the default sidebar"),
 	  SIDEBAR_TREE }
+};
+
+static const gchar* app_actions[] = {
+	NAUTILUS_ACTION_NEW_WINDOW,
+	NAUTILUS_ACTION_CONNECT_TO_SERVER,
+	NAUTILUS_ACTION_PREFERENCES,
+	NAUTILUS_ACTION_HELP,
+	NAUTILUS_ACTION_ABOUT
 };
 
 GtkActionGroup *
@@ -1120,6 +1128,28 @@ nautilus_window_initialize_actions (NautilusWindow *window)
 			  NULL);
 }
 
+static void
+nautilus_window_menus_set_visibility_for_app_menu (NautilusWindow *window)
+{
+	const gchar *action_name;
+	gboolean shows_app_menu;
+	GtkSettings *settings;
+	GtkAction *action;
+	gint idx;
+
+	settings = gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window)));
+	g_object_get (settings,
+		      "gtk-shell-shows-app-menu", &shows_app_menu,
+		      NULL);
+
+	for (idx = 0; idx < G_N_ELEMENTS (app_actions); idx++) {
+		action_name = app_actions[idx];
+		action = gtk_action_group_get_action (window->details->main_action_group, action_name);
+
+		gtk_action_set_visible (action, !shows_app_menu);
+	}
+}
+
 /**
  * nautilus_window_initialize_menus
  * 
@@ -1151,6 +1181,11 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 					    main_radio_entries, G_N_ELEMENTS (main_radio_entries),
 					    0, G_CALLBACK (sidebar_radio_entry_changed_cb),
 					    window);
+
+	nautilus_window_menus_set_visibility_for_app_menu (window);
+	g_signal_connect_swapped (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
+				  "notify::gtk-shell-shows-app-menu",
+				  G_CALLBACK (nautilus_window_menus_set_visibility_for_app_menu), window);
 
 	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_UP);
 	g_object_set (action, "short_label", _("_Up"), NULL);
