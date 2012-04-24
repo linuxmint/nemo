@@ -705,9 +705,7 @@ nautilus_bookmarks_window_new (NautilusWindow *parent_window,
 				     BOOKMARKS_WINDOW_INITIAL_HEIGHT);
 	gtk_window_set_application (window,
 				    gtk_window_get_application (GTK_WINDOW (parent_window)));
-	gtk_window_set_transient_for (window, GTK_WINDOW (parent_window));
 	gtk_window_set_destroy_with_parent (window, TRUE);
-	gtk_window_set_screen (window, gtk_window_get_screen (GTK_WINDOW (window)));
 
 	g_signal_connect (window, "key-press-event",
 			  G_CALLBACK (nautilus_bookmarks_window_key_press_event_cb), NULL);

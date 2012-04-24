@@ -99,17 +99,6 @@ show_bogus_bookmark_window (NautilusWindow *window,
 	g_free (detail);
 }
 
-static GtkWindow *
-get_or_create_bookmarks_window (NautilusWindow *window)
-{
-	if (bookmarks_window == NULL) {
-		bookmarks_window = nautilus_bookmarks_window_new (window, window->details->bookmark_list);
-		g_object_add_weak_pointer (G_OBJECT (bookmarks_window), (gpointer *) &bookmarks_window);
-	}
-
-	return bookmarks_window;
-}
-
 /**
  * add_bookmark_for_current_location
  * 
@@ -135,10 +124,14 @@ nautilus_window_add_bookmark_for_current_location (NautilusWindow *window)
 void
 nautilus_window_edit_bookmarks (NautilusWindow *window)
 {
-	GtkWindow *dialog;
+	if (bookmarks_window == NULL) {
+		bookmarks_window = nautilus_bookmarks_window_new (window, window->details->bookmark_list);
+		g_object_add_weak_pointer (G_OBJECT (bookmarks_window), (gpointer *) &bookmarks_window);
+	}
 
-	dialog = get_or_create_bookmarks_window (window);
-        gtk_window_present (dialog);
+	gtk_window_set_transient_for (bookmarks_window, GTK_WINDOW (window));
+	gtk_window_set_screen (GTK_WINDOW (bookmarks_window), gtk_window_get_screen (GTK_WINDOW (window)));
+        gtk_window_present (bookmarks_window);
 }
 
 static void
