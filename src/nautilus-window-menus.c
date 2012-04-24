@@ -105,18 +105,6 @@ action_stop_callback (GtkAction *action,
 	nautilus_window_slot_stop_loading (slot);
 }
 
-#ifdef TEXT_CHANGE_UNDO
-static void
-action_undo_callback (GtkAction *action, 
-		      gpointer user_data) 
-{
-	NautilusApplication *app;
-
-	app = nautilus_application_get_singleton ();
-	nautilus_undo_manager_undo (app->undo_manager);
-}
-#endif
-
 static void
 action_home_callback (GtkAction *action, 
 		      gpointer user_data) 
@@ -823,11 +811,6 @@ static const GtkActionEntry main_entries[] = {
                                  N_("Prefere_nces"),               
                                  NULL, N_("Edit Nautilus preferences"),
                                  G_CALLBACK (action_preferences_callback) },
-#ifdef TEXT_CHANGE_UNDO
-  /* name, stock id, label */  { "Undo", NULL, N_("_Undo"),
-                                 "<control>Z", N_("Undo the last text change"),
-                                 G_CALLBACK (action_undo_callback) },
-#endif
   /* name, stock id, label */  { "Up", GTK_STOCK_GO_UP, N_("Open _Parent"),
                                  "<alt>Up", N_("Open the parent folder"),
                                  G_CALLBACK (action_up_callback) },
