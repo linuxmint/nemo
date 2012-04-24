@@ -69,7 +69,6 @@ static int                   jump_button_signal_id;
 static guint    get_selected_row                            (void);
 static gboolean get_selection_exists                        (void);
 static void     name_or_uri_field_activate                  (NautilusEntry        *entry);
-static void     nautilus_bookmarks_window_restore_geometry  (GtkWidget            *window);
 static void     on_bookmark_list_changed                    (NautilusBookmarkList *list,
 							     gpointer              user_data);
 static void     on_name_field_changed                       (GtkEditable          *editable,
@@ -267,7 +266,9 @@ create_bookmarks_window (NautilusBookmarkList *list, GObject *undo_manager_sourc
 	set_up_close_accelerator (window);
 
 	gtk_window_set_wmclass (GTK_WINDOW (window), "bookmarks", "Nautilus");
-	nautilus_bookmarks_window_restore_geometry (window);
+	gtk_window_set_default_size (GTK_WINDOW (window), 
+				     BOOKMARKS_WINDOW_INITIAL_WIDTH, 
+				     BOOKMARKS_WINDOW_INITIAL_HEIGHT);
 
 	g_object_weak_ref (G_OBJECT (undo_manager_source), edit_bookmarks_dialog_reset_signals, 
 			   undo_manager_source);
@@ -452,54 +453,6 @@ static gboolean
 get_selection_exists (void)
 {
 	return gtk_tree_selection_get_selected (bookmark_selection, NULL, NULL);
-}
-
-static void
-nautilus_bookmarks_window_restore_geometry (GtkWidget *window)
-{
-	const char *window_geometry;
-	
-	g_return_if_fail (GTK_IS_WINDOW (window));
-	g_return_if_fail (NAUTILUS_IS_BOOKMARK_LIST (bookmarks));
-
-	window_geometry = nautilus_bookmark_list_get_window_geometry (bookmarks);
-
-	if (window_geometry != NULL) {	
-		eel_gtk_window_set_initial_geometry_from_string 
-			(GTK_WINDOW (window), window_geometry, 
-			 BOOKMARKS_WINDOW_MIN_WIDTH, BOOKMARKS_WINDOW_MIN_HEIGHT, FALSE);
-
-	} else {
-		/* use default since there was no stored geometry */
-		gtk_window_set_default_size (GTK_WINDOW (window), 
-					     BOOKMARKS_WINDOW_INITIAL_WIDTH, 
-					     BOOKMARKS_WINDOW_INITIAL_HEIGHT);
-
-		/* Let window manager handle default position if no position stored */
-	}
-}
-
-/**
- * nautilus_bookmarks_window_save_geometry:
- * 
- * Save window size & position to disk.
- * @window: The bookmarks window whose geometry should be saved.
- **/
-void
-nautilus_bookmarks_window_save_geometry (GtkWindow *window)
-{
-	g_return_if_fail (GTK_IS_WINDOW (window));
-	g_return_if_fail (NAUTILUS_IS_BOOKMARK_LIST (bookmarks));
-
-	/* Don't bother if window is already closed */
-	if (gtk_widget_get_visible (GTK_WIDGET (window))) {
-		char *geometry_string;
-		
-		geometry_string = eel_gtk_window_get_geometry_string (window);
-
-		nautilus_bookmark_list_set_window_geometry (bookmarks, geometry_string);
-		g_free (geometry_string);
-	}
 }
 
 static void

@@ -78,8 +78,5 @@ NautilusBookmark *      nautilus_bookmark_list_item_at             (NautilusBook
 void                    nautilus_bookmark_list_move_item           (NautilusBookmarkList *bookmarks,
 								    guint                 index,
 								    guint                 destination);
-void                    nautilus_bookmark_list_set_window_geometry (NautilusBookmarkList   *bookmarks,
-								    const char             *geometry);
-const char *            nautilus_bookmark_list_get_window_geometry (NautilusBookmarkList   *bookmarks);
 
 #endif /* NAUTILUS_BOOKMARK_LIST_H */

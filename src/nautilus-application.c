@@ -904,8 +904,6 @@ nautilus_application_finalize (GObject *object)
 
 	application = NAUTILUS_APPLICATION (object);
 
-	nautilus_bookmarks_exiting ();
-
 	g_clear_object (&application->priv->volume_monitor);
 	g_clear_object (&application->priv->progress_handler);
 

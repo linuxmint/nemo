@@ -117,21 +117,6 @@ get_or_create_bookmarks_window (NautilusWindow *window)
 }
 
 /**
- * nautilus_bookmarks_exiting:
- * 
- * Last chance to save state before app exits.
- * Called when application exits; don't call from anywhere else.
- **/
-void
-nautilus_bookmarks_exiting (void)
-{
-	if (bookmarks_window != NULL) {
-		nautilus_bookmarks_window_save_geometry (bookmarks_window);
-		gtk_widget_destroy (GTK_WIDGET (bookmarks_window));
-	}
-}
-
-/**
  * add_bookmark_for_current_location
  * 
  * Add a bookmark for the displayed location to the bookmarks menu.

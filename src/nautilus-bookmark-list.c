@@ -45,7 +45,6 @@ enum {
 };
 
 static guint signals[LAST_SIGNAL];
-static char *window_geometry;
 static NautilusBookmarkList *singleton = NULL;
 
 /* forward declarations */
@@ -389,22 +388,6 @@ nautilus_bookmark_list_delete_items_with_uri (NautilusBookmarkList *bookmarks,
 }
 
 /**
- * nautilus_bookmark_list_get_window_geometry:
- * 
- * Get a string representing the bookmark_list's window's geometry.
- * This is the value set earlier by nautilus_bookmark_list_set_window_geometry.
- * @bookmarks: the list of bookmarks associated with the window.
- * Return value: string representation of window's geometry, suitable for
- * passing to gnome_parse_geometry(), or NULL if
- * no window geometry has yet been saved for this bookmark list.
- **/
-const char *
-nautilus_bookmark_list_get_window_geometry (NautilusBookmarkList *bookmarks)
-{
-	return window_geometry;
-}
-
-/**
  * nautilus_bookmark_list_insert_item:
  * 
  * Insert a bookmark at a specified position.
@@ -693,26 +676,3 @@ nautilus_bookmark_list_new (void)
 
 	return list;
 }
-
-/**
- * nautilus_bookmark_list_set_window_geometry:
- * 
- * Set a bookmarks window's geometry (position & size), in string form. This is
- * stored to disk by this class, and can be retrieved later in
- * the same session or in a future session.
- * @bookmarks: the list of bookmarks associated with the window.
- * @geometry: the new window geometry string.
- **/
-void
-nautilus_bookmark_list_set_window_geometry (NautilusBookmarkList *bookmarks,
-					    const char           *geometry)
-{
-	g_return_if_fail (NAUTILUS_IS_BOOKMARK_LIST (bookmarks));
-	g_return_if_fail (geometry != NULL);
-
-	g_free (window_geometry);
-	window_geometry = g_strdup (geometry);
-
-	nautilus_bookmark_list_save_file (bookmarks);
-}
-

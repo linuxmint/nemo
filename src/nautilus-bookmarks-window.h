@@ -33,7 +33,6 @@
 
 GtkWindow *create_bookmarks_window                 (NautilusBookmarkList *bookmarks,
 						    GObject              *undo_manager_source);
-void       nautilus_bookmarks_window_save_geometry (GtkWindow            *window);
 void	   edit_bookmarks_dialog_set_signals	   (GObject 		 *undo_manager_source);
 
 #endif /* NAUTILUS_BOOKMARKS_WINDOW_H */
