@@ -29,10 +29,11 @@
 #define NAUTILUS_BOOKMARKS_WINDOW_H
 
 #include <gtk/gtk.h>
+
+#include "nautilus-window.h"
 #include "nautilus-bookmark-list.h"
 
-GtkWindow *create_bookmarks_window                 (NautilusBookmarkList *bookmarks,
-						    GObject              *undo_manager_source);
-void	   edit_bookmarks_dialog_set_signals	   (GObject 		 *undo_manager_source);
+GtkWindow *nautilus_bookmarks_window_new (NautilusWindow       *parent_window,
+					  NautilusBookmarkList *bookmarks);
 
 #endif /* NAUTILUS_BOOKMARKS_WINDOW_H */

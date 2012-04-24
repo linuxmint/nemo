@@ -102,15 +102,9 @@ show_bogus_bookmark_window (NautilusWindow *window,
 static GtkWindow *
 get_or_create_bookmarks_window (NautilusWindow *window)
 {
-	GObject *undo_manager_source;
-
-	undo_manager_source = G_OBJECT (window);
-
 	if (bookmarks_window == NULL) {
-		bookmarks_window = create_bookmarks_window (window->details->bookmark_list,
-		                                            undo_manager_source);
-	} else {
-		edit_bookmarks_dialog_set_signals (undo_manager_source);
+		bookmarks_window = nautilus_bookmarks_window_new (window, window->details->bookmark_list);
+		g_object_add_weak_pointer (G_OBJECT (bookmarks_window), (gpointer *) &bookmarks_window);
 	}
 
 	return bookmarks_window;
@@ -144,9 +138,6 @@ nautilus_window_edit_bookmarks (NautilusWindow *window)
 	GtkWindow *dialog;
 
 	dialog = get_or_create_bookmarks_window (window);
-
-	gtk_window_set_screen (
-		dialog, gtk_window_get_screen (GTK_WINDOW (window)));
         gtk_window_present (dialog);
 }
 
