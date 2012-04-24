@@ -150,5 +150,6 @@ gboolean nautilus_window_disable_chrome_mapping (GValue *value,
                                                  gpointer user_data);
 
 NautilusWindowOpenFlags nautilus_event_get_window_open_flags   (void);
+void     nautilus_window_show_about_dialog    (NautilusWindow *window);
 
 #endif

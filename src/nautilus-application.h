@@ -69,8 +69,6 @@ GType nautilus_application_get_type (void);
 
 NautilusApplication *nautilus_application_get_singleton (void);
 
-void nautilus_application_quit (NautilusApplication *self);
-
 NautilusWindow *     nautilus_application_create_window (NautilusApplication *application,
 							 GdkScreen           *screen);
 

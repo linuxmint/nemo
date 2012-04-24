@@ -303,102 +303,9 @@ static void
 action_about_nautilus_callback (GtkAction *action,
 				gpointer user_data)
 {
-	const gchar *authors[] = {
-		"Alexander Larsson",
-		"Ali Abdin",
-		"Anders Carlsson",
-		"Andrew Walton",
-		"Andy Hertzfeld",
-		"Arlo Rose",
-		"Christian Neumair",
-		"Cosimo Cecchi",
-		"Darin Adler",
-		"David Camp",
-		"Eli Goldberg",
-		"Elliot Lee",
-		"Eskil Heyn Olsen",
-		"Ettore Perazzoli",
-		"Gene Z. Ragan",
-		"George Lebl",
-		"Ian McKellar",
-		"J Shane Culpepper",
-		"James Willcox",
-		"Jan Arne Petersen",
-		"John Harper",
-		"John Sullivan",
-		"Josh Barrow",
-		"Maciej Stachowiak",
-		"Mark McLoughlin",
-		"Mathieu Lacage",
-		"Mike Engber",
-		"Mike Fleming",
-		"Pavel Cisler",
-		"Ramiro Estrugo",
-		"Raph Levien",
-		"Rebecca Schulman",
-		"Robey Pointer",
-		"Robin * Slomkowski",
-		"Seth Nickell",
-		"Susan Kare",
-		"Tomas Bzatek",
-		NULL
-	};
-	const gchar *documenters[] = {
-		"GNOME Documentation Team",
-		"Sun Microsystems",
-		NULL
-	};
-	const gchar *license[] = {
-		N_("Nautilus is free software; you can redistribute it and/or modify "
-		   "it under the terms of the GNU General Public License as published by "
-		   "the Free Software Foundation; either version 2 of the License, or "
-		   "(at your option) any later version."),
-		N_("Nautilus is distributed in the hope that it will be useful, "
-		   "but WITHOUT ANY WARRANTY; without even the implied warranty of "
-		   "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
-		   "GNU General Public License for more details."),
-		N_("You should have received a copy of the GNU General Public License "
-		   "along with Nautilus; if not, write to the Free Software Foundation, Inc., "
-		   "51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA")
-	};
-	gchar *license_trans, *copyright_str;
-	GDateTime *date;
+	NautilusWindow *window = user_data;
 
-	license_trans = g_strjoin ("\n\n", _(license[0]), _(license[1]),
-					     _(license[2]), NULL);
-
-	date = g_date_time_new_now_local ();
-
-	/* Translators: these two strings here indicate the copyright time span,
-	 * e.g. 1999-2011.
-	 */
-	copyright_str = g_strdup_printf (_("Copyright \xC2\xA9 %Id\xE2\x80\x93%Id "
-					   "The Nautilus authors"), 1999, g_date_time_get_year (date));
-
-	gtk_show_about_dialog (GTK_WINDOW (user_data),
-			       "program-name", _("Nautilus"),
-			       "version", VERSION,
-			       "comments", _("Nautilus lets you organize "
-					     "files and folders, both on "
-					     "your computer and online."),
-			       "copyright", copyright_str,
-			       "license", license_trans,
-			       "wrap-license", TRUE,
-			       "authors", authors,
-			       "documenters", documenters,
-				/* Translators should localize the following string
-				 * which will be displayed at the bottom of the about
-				 * box to give credit to the translator(s).
-				 */
-			      "translator-credits", _("translator-credits"),
-			      "logo-icon-name", "nautilus",
-			      "website", "http://live.gnome.org/Nautilus",
-			      "website-label", _("Nautilus Web Site"),
-			      NULL);
-
-	g_free (license_trans);
-	g_free (copyright_str);
-	g_date_time_unref (date);
+	nautilus_window_show_about_dialog (window);
 }
 
 static void
@@ -797,7 +704,7 @@ action_new_window_callback (GtkAction *action,
 	new_window = nautilus_application_create_window (
 				application,
 				gtk_window_get_screen (GTK_WINDOW (current_window)));
-	nautilus_window_slot_go_home (nautilus_window_get_active_slot (new_window), FALSE);
+	nautilus_window_slot_go_home (nautilus_window_get_active_slot (new_window), 0);
 }
 
 static void
