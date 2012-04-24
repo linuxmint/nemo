@@ -53,7 +53,6 @@ typedef struct {
 typedef struct {
 	GtkEntryClass parent_class;
 
-	void (*user_changed)      (NautilusEntry *entry);
 	void (*selection_changed) (NautilusEntry *entry);
 } NautilusEntryClass;
 
