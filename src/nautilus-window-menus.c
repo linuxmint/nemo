@@ -440,7 +440,8 @@ static void
 action_close_all_windows_callback (GtkAction *action, 
 				   gpointer user_data)
 {
-	nautilus_application_close_all_windows (nautilus_application_get_singleton ());
+	g_action_group_activate_action (G_ACTION_GROUP (g_application_get_default ()),
+					"quit", NULL);
 }
 
 static void

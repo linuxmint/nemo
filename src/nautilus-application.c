@@ -441,22 +441,6 @@ nautilus_application_close_desktop (void)
 	}
 }
 
-void
-nautilus_application_close_all_windows (NautilusApplication *self)
-{
-	GList *list_copy;
-	GList *l;
-	
-	list_copy = g_list_copy (gtk_application_get_windows (GTK_APPLICATION (self)));
-	for (l = list_copy; l != NULL; l = l->next) {
-		NautilusWindow *window;
-		
-		window = NAUTILUS_WINDOW (l->data);
-		nautilus_window_close (window);
-	}
-	g_list_free (list_copy);
-}
-
 static gboolean
 another_navigation_window_already_showing (NautilusApplication *application,
 					   NautilusWindow *the_window)
