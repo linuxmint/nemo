@@ -835,6 +835,19 @@ action_help (GSimpleAction *action,
 }
 
 static void
+action_kill (GSimpleAction *action,
+	     GVariant *parameter,
+	     gpointer user_data)
+{
+	GtkApplication *application = user_data;
+	GList *windows;
+
+	/* this will also destroy the desktop windows */
+	windows = gtk_application_get_windows (application);
+	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
+}
+
+static void
 action_quit (GSimpleAction *action,
 	     GVariant *parameter,
 	     gpointer user_data)
@@ -842,8 +855,9 @@ action_quit (GSimpleAction *action,
 	GtkApplication *application = user_data;
 	GList *windows;
 
+	/* nautilus_window_close() doesn't do anything for desktop windows */
 	windows = gtk_application_get_windows (application);
-	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
+	g_list_foreach (windows, (GFunc) nautilus_window_close, NULL);
 }
 
 static GActionEntry app_entries[] = {
@@ -853,6 +867,7 @@ static GActionEntry app_entries[] = {
 	{ "about", action_about, NULL, NULL, NULL },
 	{ "help", action_help, NULL, NULL, NULL },
 	{ "quit", action_quit, NULL, NULL, NULL },
+	{ "kill", action_kill, NULL, NULL, NULL },
 };
 
 static void
@@ -1048,7 +1063,7 @@ nautilus_application_local_command_line (GApplication *application,
 	if (kill_shell) {
 		DEBUG ("Killing application, as requested");
 		g_action_group_activate_action (G_ACTION_GROUP (application),
-						"quit", NULL);
+						"kill", NULL);
 		goto out;
 	}
 
