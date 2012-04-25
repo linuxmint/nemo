@@ -977,7 +977,10 @@ static const gchar* app_actions[] = {
 	NAUTILUS_ACTION_PREFERENCES,
 	NAUTILUS_ACTION_HELP,
 	NAUTILUS_ACTION_ABOUT,
-	NAUTILUS_ACTION_CLOSE_ALL_WINDOWS
+	NAUTILUS_ACTION_CLOSE_ALL_WINDOWS,
+
+	/* also hide the help menu entirely when using an app menu */
+	"Help"
 };
 
 GtkActionGroup *
