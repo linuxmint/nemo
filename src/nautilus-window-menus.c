@@ -83,12 +83,8 @@ static void
 action_connect_to_server_callback (GtkAction *action, 
 				   gpointer user_data)
 {
-	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
-	GtkWidget *dialog;
-
-	dialog = nautilus_connect_server_dialog_new (window);
-
-	gtk_widget_show (dialog);
+	g_action_group_activate_action (G_ACTION_GROUP (g_application_get_default ()),
+					"connect-to-server", NULL);
 }
 
 static void
@@ -279,20 +275,16 @@ static void
 action_preferences_callback (GtkAction *action, 
 			     gpointer user_data)
 {
-	GtkWindow *window;
-
-	window = GTK_WINDOW (user_data);
-
-	nautilus_file_management_properties_dialog_show (window);
+	g_action_group_activate_action (G_ACTION_GROUP (g_application_get_default ()),
+					"preferences", NULL);
 }
 
 static void
 action_about_nautilus_callback (GtkAction *action,
 				gpointer user_data)
 {
-	NautilusWindow *window = user_data;
-
-	nautilus_window_show_about_dialog (window);
+	g_action_group_activate_action (G_ACTION_GROUP (g_application_get_default ()),
+					"about", NULL);
 }
 
 static void
