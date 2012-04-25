@@ -683,16 +683,8 @@ static void
 action_new_window_callback (GtkAction *action,
 			    gpointer user_data)
 {
-	NautilusApplication *application;
-	NautilusWindow *current_window, *new_window;
-
-	current_window = NAUTILUS_WINDOW (user_data);
-	application = nautilus_application_get_singleton ();
-
-	new_window = nautilus_application_create_window (
-				application,
-				gtk_window_get_screen (GTK_WINDOW (current_window)));
-	nautilus_window_slot_go_home (nautilus_window_get_active_slot (new_window), 0);
+	g_action_group_activate_action (G_ACTION_GROUP (g_application_get_default ()),
+					"new-window", NULL);
 }
 
 static void

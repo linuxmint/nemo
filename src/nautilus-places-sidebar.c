@@ -1802,7 +1802,7 @@ volume_mounted_cb (GVolume *volume,
 				NautilusWindow *new, *cur;
 
 				cur = NAUTILUS_WINDOW (sidebar->window);
-				new = nautilus_application_create_window (nautilus_application_get_singleton (),
+				new = nautilus_application_create_window (NAUTILUS_APPLICATION (g_application_get_default ()),
 									  gtk_window_get_screen (GTK_WINDOW (cur)));
 				nautilus_window_go_to (new, location);
 			}
@@ -1870,7 +1870,7 @@ open_selected_bookmark (NautilusPlacesSidebar *sidebar,
 			NautilusWindow *cur, *new;
 			
 			cur = NAUTILUS_WINDOW (sidebar->window);
-			new = nautilus_application_create_window (nautilus_application_get_singleton (),
+			new = nautilus_application_create_window (NAUTILUS_APPLICATION (g_application_get_default ()),
 								  gtk_window_get_screen (GTK_WINDOW (cur)));
 			nautilus_window_go_to (new, location);
 		}

@@ -382,23 +382,18 @@ static void
 release_application (NautilusProgressInfo *info,
 		     NautilusProgressUIHandler *self)
 {
-	NautilusApplication *app;
-
 	/* release the GApplication hold we acquired */
-	app = nautilus_application_get_singleton ();
-	g_application_release (G_APPLICATION (app));
+	g_application_release (g_application_get_default ());
 }
 
 static void
 progress_info_started_cb (NautilusProgressInfo *info,
 			  NautilusProgressUIHandler *self)
 {
-	NautilusApplication *app;
 	TimeoutData *data;
 
 	/* hold GApplication so we never quit while there's an operation pending */
-	app = nautilus_application_get_singleton ();
-	g_application_hold (G_APPLICATION (app));
+	g_application_hold (g_application_get_default ());
 
 	g_signal_connect (info, "finished",
 			  G_CALLBACK (release_application), self);

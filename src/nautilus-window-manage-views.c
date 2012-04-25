@@ -417,7 +417,6 @@ nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
 	GList *l;
 	gboolean use_same;
 	gboolean is_desktop;
-	NautilusApplication *app;
 
 	window = nautilus_window_slot_get_window (slot);
 
@@ -468,9 +467,8 @@ nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
 	if (use_same) {
 		target_window = window;
 	} else {
-		app = nautilus_application_get_singleton ();
 		target_window = nautilus_application_create_window
-			(app,
+			(NAUTILUS_APPLICATION (g_application_get_default ()),
 			 gtk_window_get_screen (GTK_WINDOW (window)));
 	}
 
@@ -772,7 +770,7 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 	GFile *location;
 	GMountOperation *mount_op;
 	MountNotMountedData *data;
-	NautilusApplication *app;
+	GtkApplication *app;
 
 	slot = callback_data;
 	window = nautilus_window_slot_get_window (slot);
@@ -887,9 +885,9 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 			 */
 			/* if this is the only window, we don't want to quit, so we redirect it to home */
 
-			app = nautilus_application_get_singleton ();
-			
-			if (g_list_length (gtk_application_get_windows (GTK_APPLICATION (app))) == 1) {
+			app = GTK_APPLICATION (g_application_get_default ());
+
+			if (g_list_length (gtk_application_get_windows (app)) == 1) {
 				/* the user could have typed in a home directory that doesn't exist,
 				   in which case going home would cause an infinite loop, so we
 				   better test for that */
