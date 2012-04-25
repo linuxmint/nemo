@@ -529,16 +529,6 @@ desktop_changed_callback (gpointer user_data)
 	}
 }
 
-static gboolean
-window_can_be_closed (NautilusWindow *window)
-{
-	if (!NAUTILUS_IS_DESKTOP_WINDOW (window)) {
-		return TRUE;
-	}
-	
-	return FALSE;
-}
-
 static void
 mount_added_callback (GVolumeMonitor *monitor,
 		      GMount *mount,
@@ -596,7 +586,7 @@ mount_removed_callback (GVolumeMonitor *monitor,
 	/* Construct a list of windows to be closed. Do not add the non-closable windows to the list. */
 	for (node = window_list; node != NULL; node = node->next) {
 		window = NAUTILUS_WINDOW (node->data);
-		if (window != NULL && window_can_be_closed (window)) {
+		if (window != NULL && !NAUTILUS_IS_DESKTOP_WINDOW (window)) {
 			GList *l;
 			GList *lp;
 
