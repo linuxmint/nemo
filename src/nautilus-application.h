@@ -63,8 +63,6 @@ typedef struct {
 
 GType nautilus_application_get_type (void);
 
-NautilusApplication *nautilus_application_get_singleton (void);
-
 NautilusWindow *     nautilus_application_create_window (NautilusApplication *application,
 							 GdkScreen           *screen);
 

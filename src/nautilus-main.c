@@ -96,8 +96,10 @@ main (int argc, char *argv[])
 #endif
 
 	/* Run the nautilus application. */
-	application = nautilus_application_get_singleton ();
-
+	application = g_object_new (NAUTILUS_TYPE_APPLICATION,
+				    "application-id", "org.gnome.NautilusApplication",
+				    "flags", G_APPLICATION_HANDLES_OPEN,
+				    NULL);
 	retval = g_application_run (G_APPLICATION (application),
 				    argc, argv);
 

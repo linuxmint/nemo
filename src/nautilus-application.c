@@ -86,8 +86,6 @@
 
 #define NAUTILUS_ACCEL_MAP_SAVE_DELAY 30
 
-static NautilusApplication *singleton = NULL;
-
 /* Keeps track of all the desktop windows. */
 static GList *nautilus_application_desktop_windows;
 
@@ -699,26 +697,6 @@ nautilus_application_open (GApplication *app,
 		      self->priv->geometry);
 }
 
-static GObject *
-nautilus_application_constructor (GType type,
-				  guint n_construct_params,
-				  GObjectConstructParam *construct_params)
-{
-        GObject *retval;
-
-        if (singleton != NULL) {
-                return G_OBJECT (singleton);
-        }
-
-        retval = G_OBJECT_CLASS (nautilus_application_parent_class)->constructor
-                (type, n_construct_params, construct_params);
-
-        singleton = NAUTILUS_APPLICATION (retval);
-        g_object_add_weak_pointer (retval, (gpointer) &singleton);
-
-        return retval;
-}
-
 static GtkWindow *
 get_focus_window (GtkApplication *application)
 {
@@ -1274,7 +1252,6 @@ nautilus_application_class_init (NautilusApplicationClass *class)
 	GtkApplicationClass *gtkapp_class;
 
         object_class = G_OBJECT_CLASS (class);
-	object_class->constructor = nautilus_application_constructor;
         object_class->finalize = nautilus_application_finalize;
 
 	application_class = G_APPLICATION_CLASS (class);
@@ -1287,13 +1264,4 @@ nautilus_application_class_init (NautilusApplicationClass *class)
 	gtkapp_class->window_removed = nautilus_application_window_removed;
 
 	g_type_class_add_private (class, sizeof (NautilusApplicationPriv));
-}
-
-NautilusApplication *
-nautilus_application_get_singleton (void)
-{
-	return g_object_new (NAUTILUS_TYPE_APPLICATION,
-			     "application-id", "org.gnome.NautilusApplication",
-			     "flags", G_APPLICATION_HANDLES_OPEN,
-			     NULL);
 }
