@@ -905,7 +905,7 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "New Tab", "tab-new", N_("New _Tab"),
                                  "<control>T", N_("Open another tab for the displayed location"),
                                  G_CALLBACK (action_new_tab_callback) },
-  /* name, stock id, label */  { "Close All Windows", NULL, N_("Close _All Windows"),
+  /* name, stock id, label */  { NAUTILUS_ACTION_CLOSE_ALL_WINDOWS, NULL, N_("Close _All Windows"),
                                  "<control>Q", N_("Close all Navigation windows"),
                                  G_CALLBACK (action_close_all_windows_callback) },
   /* name, stock id, label */  { NAUTILUS_ACTION_BACK, GTK_STOCK_GO_BACK, N_("_Back"),
@@ -991,7 +991,8 @@ static const gchar* app_actions[] = {
 	NAUTILUS_ACTION_CONNECT_TO_SERVER,
 	NAUTILUS_ACTION_PREFERENCES,
 	NAUTILUS_ACTION_HELP,
-	NAUTILUS_ACTION_ABOUT
+	NAUTILUS_ACTION_ABOUT,
+	NAUTILUS_ACTION_CLOSE_ALL_WINDOWS
 };
 
 GtkActionGroup *
