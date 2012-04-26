@@ -53,7 +53,6 @@
 static void update_xdg_dir_cache (void);
 static void schedule_user_dirs_changed (void);
 static void desktop_dir_changed (void);
-static GFile *nautilus_find_file_insensitive_next (GFile *parent, const gchar *name);
 
 char *
 nautilus_compute_title_for_location (GFile *location)
@@ -489,19 +488,6 @@ nautilus_get_desktop_directory_uri (void)
 }
 
 char *
-nautilus_get_desktop_directory_uri_no_create (void)
-{
-	char *desktop_path;
-	char *desktop_uri;
-	
-	desktop_path = get_desktop_path ();
-	desktop_uri = g_filename_to_uri (desktop_path, NULL, NULL);
-	g_free (desktop_path);
-
-	return desktop_uri;
-}
-
-char *
 nautilus_get_home_directory_uri (void)
 {
 	return  g_filename_to_uri (g_get_home_dir (), NULL, NULL);
@@ -691,45 +677,6 @@ nautilus_is_desktop_directory (GFile *dir)
 	return g_file_equal (dir, desktop_dir);
 }
 
-
-/**
- * nautilus_get_gmc_desktop_directory:
- * 
- * Get the path for the directory containing the legacy gmc desktop.
- *
- * Return value: the directory path.
- **/
-char *
-nautilus_get_gmc_desktop_directory (void)
-{
-	return g_build_filename (g_get_home_dir (), LEGACY_DESKTOP_DIRECTORY_NAME, NULL);
-}
-
-char *
-nautilus_get_data_file_path (const char *partial_path)
-{
-	char *path;
-	char *user_directory;
-
-	/* first try the user's home directory */
-	user_directory = nautilus_get_user_directory ();
-	path = g_build_filename (user_directory, partial_path, NULL);
-	g_free (user_directory);
-	if (g_file_test (path, G_FILE_TEST_EXISTS)) {
-		return path;
-	}
-	g_free (path);
-	
-	/* next try the shared directory */
-	path = g_build_filename (NAUTILUS_DATADIR, partial_path, NULL);
-	if (g_file_test (path, G_FILE_TEST_EXISTS)) {
-		return path;
-	}
-	g_free (path);
-
-	return NULL;
-}
-
 char *
 nautilus_ensure_unique_file_name (const char *directory_uri,
 				  const char *base_name,
@@ -778,26 +725,6 @@ nautilus_ensure_unique_file_name (const char *directory_uri,
 	return res;
 }
 
-char *
-nautilus_unique_temporary_file_name (void)
-{
-	const char *prefix = "/tmp/nautilus-temp-file";
-	char *file_name;
-	int fd;
-
-	file_name = g_strdup_printf ("%sXXXXXX", prefix);
-
-	fd = g_mkstemp (file_name); 
-	if (fd == -1) {
-		g_free (file_name);
-		file_name = NULL;
-	} else {
-		close (fd);
-	}
-	
-	return file_name;
-}
-
 GFile *
 nautilus_find_existing_uri_in_hierarchy (GFile *location)
 {
@@ -821,117 +748,6 @@ nautilus_find_existing_uri_in_hierarchy (GFile *location)
 	}
 	
 	return location;
-}
-
-/**
- * nautilus_find_file_insensitive
- * 
- * Attempt to find a file case-insentively. If the path can be found, the
- * returned file maps directly to it. Otherwise, a file using the
- * originally-cased path is returned. This function performs might perform
- * I/O.
- * 
- * Return value: a #GFile to a child specified by @name.
- **/
-GFile *
-nautilus_find_file_insensitive (GFile *parent, const gchar *name)
-{
-	gchar **split_path;
-	gchar *component;
-	GFile *file, *next;
-	gint i;
-	
-	split_path = g_strsplit (name, G_DIR_SEPARATOR_S, -1);
-	
-	file = g_object_ref (parent);
-	
-	for (i = 0; (component = split_path[i]) != NULL; i++) {
-		if (!(next = nautilus_find_file_insensitive_next (file,
-		                                                  component))) {
-			/* File does not exist */
-			g_object_unref (file);
-			file = NULL;
-			break;
-		}
-		g_object_unref (file);
-		file = next;
-	}
-	g_strfreev (split_path);
-	
-	if (file) {
-		return file;
-	}
-	return g_file_get_child (parent, name);
-}
-
-static GFile *
-nautilus_find_file_insensitive_next (GFile *parent, const gchar *name)
-{
-	GFileEnumerator *children;
-	GFileInfo *info;
-	gboolean use_utf8, found;
-	char *filename, *case_folded_name, *utf8_collation_key, *ascii_collation_key, *child_key;
-	GFile *file;
-	const char *child_name, *compare_key;
-
-	/* First check the given version */
-	file = g_file_get_child (parent, name);
-	if (g_file_query_exists (file, NULL)) {
-		return file;
-	}
-	g_object_unref (file);
-	
-	ascii_collation_key = g_ascii_strdown (name, -1);
-	use_utf8 = g_utf8_validate (name, -1, NULL);
-	utf8_collation_key = NULL;	
-	if (use_utf8) {
-		case_folded_name = g_utf8_casefold (name, -1);
-		utf8_collation_key = g_utf8_collate_key (case_folded_name, -1);
-		g_free (case_folded_name);
-	}
-
-	/* Enumerate and compare insensitive */
-	filename = NULL;
-	children = g_file_enumerate_children (parent,
-	                                      G_FILE_ATTRIBUTE_STANDARD_NAME,
-	                                      0, NULL, NULL);
-	if (children != NULL) {
-		while ((info = g_file_enumerator_next_file (children, NULL, NULL))) {
-			child_name = g_file_info_get_name (info);
-			
-			if (use_utf8 && g_utf8_validate (child_name, -1, NULL)) {
-				gchar *case_folded;
-				
-				case_folded = g_utf8_casefold (child_name, -1);
-				child_key = g_utf8_collate_key (case_folded, -1);
-				g_free (case_folded);
-				compare_key = utf8_collation_key;
-			} else {
-				child_key = g_ascii_strdown (child_name, -1);
-				compare_key = ascii_collation_key;
-			}
-			
-			found = strcmp (child_key, compare_key) == 0;
-			g_free (child_key);
-			if (found) {
-				filename = g_strdup (child_name);
-				break;
-			}
-		}
-		g_file_enumerator_close (children, NULL, NULL);
-		g_object_unref (children);
-	}
-	
-	g_free (ascii_collation_key);
-	g_free (utf8_collation_key);
-	
-	if (filename) {
-		file = g_file_get_child (parent, filename);
-		g_free (filename);
-		return file;
-	}
-	
-	return NULL;
 }
 
 gboolean
