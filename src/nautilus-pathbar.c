@@ -96,7 +96,6 @@ struct _NautilusPathBarDetails {
 	GtkWidget *up_slider_button;
 	GtkWidget *down_slider_button;
 	guint settings_signal_id;
-	gint icon_size;
 	gint16 slider_width;
 	gint16 spacing;
 	gint16 button_offset;
@@ -251,7 +250,6 @@ nautilus_path_bar_init (NautilusPathBar *path_bar)
         path_bar->priv->spacing = 3;
         path_bar->priv->up_slider_button = get_slider_button (path_bar, GTK_ARROW_LEFT);
         path_bar->priv->down_slider_button = get_slider_button (path_bar, GTK_ARROW_RIGHT);
-        path_bar->priv->icon_size = NAUTILUS_PATH_BAR_ICON_SIZE;
 
         g_signal_connect_swapped (path_bar->priv->up_slider_button, "clicked", G_CALLBACK (nautilus_path_bar_scroll_up), path_bar);
         g_signal_connect_swapped (path_bar->priv->down_slider_button, "clicked", G_CALLBACK (nautilus_path_bar_scroll_down), path_bar);
@@ -1110,13 +1108,6 @@ reload_icons (NautilusPathBar *path_bar)
         }
 }
 
-static void
-change_icon_theme (NautilusPathBar *path_bar)
-{
-	path_bar->priv->icon_size = NAUTILUS_PATH_BAR_ICON_SIZE;
-        reload_icons (path_bar);
-}
-
 /* Callback used when a GtkSettings value changes */
 static void
 settings_notify_cb (GObject    *object,
@@ -1128,7 +1119,7 @@ settings_notify_cb (GObject    *object,
         name = g_param_spec_get_name (pspec);
 
       	if (! strcmp (name, "gtk-icon-theme-name") || ! strcmp (name, "gtk-icon-sizes")) {
-	      change_icon_theme (path_bar);	
+	      reload_icons (path_bar);
 	}
 }
 
@@ -1144,7 +1135,7 @@ nautilus_path_bar_check_icon_theme (NautilusPathBar *path_bar)
         settings = gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (path_bar)));
         path_bar->priv->settings_signal_id = g_signal_connect (settings, "notify", G_CALLBACK (settings_notify_cb), path_bar);
 
-        change_icon_theme (path_bar);
+        reload_icons (path_bar);
 }
 
 /* Public functions and their helpers */
