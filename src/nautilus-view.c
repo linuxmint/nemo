@@ -46,6 +46,9 @@
 #include <glib/gstdio.h>
 #include <gio/gio.h>
 #include <math.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-gnome-extensions.h>
@@ -2155,6 +2158,7 @@ sort_directories_first_changed_callback (gpointer callback_data)
 static gboolean
 set_up_scripts_directory_global (void)
 {
+	char *old_scripts_directory_path;
 	char *scripts_directory_path;
 	const char *override;
 
@@ -2162,17 +2166,56 @@ set_up_scripts_directory_global (void)
 		return TRUE;
 	}
 
+	scripts_directory_path = g_build_filename (g_get_user_data_dir (),
+						   "nautilus",
+						   "scripts",
+						   NULL);
+
 	override = g_getenv ("GNOME22_USER_DIR");
 
 	if (override) {
-		scripts_directory_path = g_build_filename (override,
-							   "nautilus-scripts",
-							   NULL);
+		old_scripts_directory_path = g_build_filename (override,
+							       "nautilus-scripts",
+							       NULL);
 	} else {
-		scripts_directory_path = g_build_filename (g_get_home_dir (),
-							   ".gnome2",
-							   "nautilus-scripts",
-							   NULL);
+		old_scripts_directory_path = g_build_filename (g_get_home_dir (),
+							       ".gnome2",
+							       "nautilus-scripts",
+							       NULL);
+	}
+
+	if (g_file_test (old_scripts_directory_path, G_FILE_TEST_IS_DIR)
+	    && !g_file_test (scripts_directory_path, G_FILE_TEST_EXISTS)) {
+		char *updated;
+		const char *message;
+
+		/* test if we already attempted to migrate first */
+		updated = g_build_filename (old_scripts_directory_path, "DEPRECATED-DIRECTORY", NULL);
+		message = _("Nautilus 3.6 deprecated this directory and tried migrating "
+			    "this configuration to ~/.local/share/nautilus");
+		if (!g_file_test (updated, G_FILE_TEST_EXISTS)) {
+			char *parent_dir;
+
+			parent_dir = g_path_get_dirname (scripts_directory_path);
+			if (g_mkdir_with_parents (parent_dir, 0755) == 0) {
+				int fd, res;
+
+				/* rename() works fine if the destination directory is
+				 * empty.
+				 */
+				res = g_rename (old_scripts_directory_path, scripts_directory_path);
+				if (res == -1) {
+					fd = g_creat (updated, 0600);
+					if (fd != -1) {
+						res = write (fd, message, strlen (message));
+						close (fd);
+					}
+				}
+			}
+			g_free (parent_dir);
+		}
+
+		g_free (updated);
 	}
 
 	if (g_mkdir_with_parents (scripts_directory_path, 0755) == 0) {
@@ -2181,6 +2224,7 @@ set_up_scripts_directory_global (void)
 	}
 
 	g_free (scripts_directory_path);
+	g_free (old_scripts_directory_path);
 
 	return (scripts_directory_uri != NULL) ? TRUE : FALSE;
 }
