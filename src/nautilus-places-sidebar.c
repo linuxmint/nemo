@@ -261,8 +261,7 @@ get_eject_icon (NautilusPlacesSidebar *sidebar,
 static gboolean
 should_show_desktop (void)
 {
-	return g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP) &&
-	       !g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_DESKTOP_IS_HOME_DIR);
+	return g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP);
 }
 
 static gboolean
@@ -3401,10 +3400,6 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 	eel_gtk_tree_view_set_activate_on_single_click (sidebar->tree_view,
 							TRUE);
 
-	g_signal_connect_swapped (nautilus_preferences, "changed::" NAUTILUS_PREFERENCES_DESKTOP_IS_HOME_DIR,
-				  G_CALLBACK(desktop_setting_changed_callback),
-				  sidebar);
-
 	g_signal_connect_swapped (gnome_background_preferences, "changed::" NAUTILUS_PREFERENCES_SHOW_DESKTOP,
 				  G_CALLBACK(desktop_setting_changed_callback),
 				  sidebar);
@@ -3449,10 +3444,6 @@ nautilus_places_sidebar_dispose (GObject *object)
 					      (gpointer *) &sidebar->go_to_after_mount_slot);
 		sidebar->go_to_after_mount_slot = NULL;
 	}
-
-	g_signal_handlers_disconnect_by_func (nautilus_preferences,
-					      desktop_setting_changed_callback,
-					      sidebar);
 
 	g_signal_handlers_disconnect_by_func (nautilus_preferences,
 					      bookmarks_popup_menu_detach_cb,

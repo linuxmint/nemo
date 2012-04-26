@@ -8668,8 +8668,7 @@ real_update_menus (NautilusView *view)
 
 
 	show_desktop_target =
-		g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP) &&
-		!g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_DESKTOP_IS_HOME_DIR);
+		g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_COPY_TO_HOME);

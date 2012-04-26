@@ -18,7 +18,6 @@ show-advanced-permissions = /apps/nautilus/preferences/show_advanced_permissions
 sort-directories-first = /apps/nautilus/preferences/sort_directories_first
 default-sort-order = /apps/nautilus/icon_view/default_sort_order
 default-sort-in-reverse-order = /apps/nautilus/icon_view/default_sort_in_reverse_order
-desktop-is-home-dir = /apps/nautilus/preferences/desktop_is_home_dir
 default-folder-viewer = /apps/nautilus/preferences/default_folder_viewer
 date-format = /apps/nautilus/preferences/date_format
 show-hidden-files = /desktop/gnome/file_views/show_hidden_files

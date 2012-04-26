@@ -506,10 +506,6 @@ nautilus_desktop_directory_init (NautilusDesktopDirectory *desktop)
 							    NULL, (GDestroyNotify)merged_monitor_destroy);
 
 	update_desktop_directory (NAUTILUS_DESKTOP_DIRECTORY (desktop));
-
-	g_signal_connect_swapped (nautilus_preferences, "changed::" NAUTILUS_PREFERENCES_DESKTOP_IS_HOME_DIR,
-				  G_CALLBACK(desktop_directory_changed_callback),
-				  desktop);
 }
 
 static void

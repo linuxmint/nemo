@@ -63,18 +63,6 @@ nautilus_desktop_window_update_directory (NautilusDesktopWindow *window)
 }
 
 static void
-nautilus_desktop_window_dispose (GObject *obj)
-{
-	NautilusDesktopWindow *window = NAUTILUS_DESKTOP_WINDOW (obj);
-
-	g_signal_handlers_disconnect_by_func (nautilus_preferences,
-					      nautilus_desktop_window_update_directory,
-					      window);
-
-	G_OBJECT_CLASS (nautilus_desktop_window_parent_class)->dispose (obj);
-}
-
-static void
 nautilus_desktop_window_constructed (GObject *obj)
 {
 	GtkActionGroup *action_group;
@@ -106,12 +94,6 @@ nautilus_desktop_window_constructed (GObject *obj)
 	if (accessible) {
 		atk_object_set_name (accessible, _("Desktop"));
 	}
-
-	/* Monitor the preference to have the desktop */
-	/* point to the Unix home folder */
-	g_signal_connect_swapped (nautilus_preferences, "changed::" NAUTILUS_PREFERENCES_DESKTOP_IS_HOME_DIR,
-				  G_CALLBACK (nautilus_desktop_window_update_directory),
-				  window);
 }
 
 static void
@@ -306,7 +288,6 @@ nautilus_desktop_window_class_init (NautilusDesktopWindowClass *klass)
 	GObjectClass *oclass = G_OBJECT_CLASS (klass);
 
 	oclass->constructed = nautilus_desktop_window_constructed;
-	oclass->dispose = nautilus_desktop_window_dispose;
 
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;

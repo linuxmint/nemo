@@ -415,11 +415,7 @@ nautilus_get_xdg_dir (const char *type)
 static char *
 get_desktop_path (void)
 {
-	if (g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_DESKTOP_IS_HOME_DIR)) {
-		return g_strdup (g_get_home_dir());
-	} else {
-		return nautilus_get_xdg_dir ("DESKTOP");
-	}
+	return nautilus_get_xdg_dir ("DESKTOP");
 }
 
 /**
@@ -437,17 +433,15 @@ nautilus_get_desktop_directory (void)
 	desktop_directory = get_desktop_path ();
 
 	/* Don't try to create a home directory */
-	if (!g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_DESKTOP_IS_HOME_DIR)) {
-		if (!g_file_test (desktop_directory, G_FILE_TEST_EXISTS)) {
-			g_mkdir (desktop_directory, DEFAULT_DESKTOP_DIRECTORY_MODE);
-			/* FIXME bugzilla.gnome.org 41286: 
-			 * How should we handle the case where this mkdir fails? 
-			 * Note that nautilus_application_startup will refuse to launch if this 
-			 * directory doesn't get created, so that case is OK. But the directory 
-			 * could be deleted after Nautilus was launched, and perhaps
-			 * there is some bad side-effect of not handling that case.
-			 */
-		}
+	if (!g_file_test (desktop_directory, G_FILE_TEST_EXISTS)) {
+		g_mkdir (desktop_directory, DEFAULT_DESKTOP_DIRECTORY_MODE);
+		/* FIXME bugzilla.gnome.org 41286: 
+		 * How should we handle the case where this mkdir fails? 
+		 * Note that nautilus_application_startup will refuse to launch if this 
+		 * directory doesn't get created, so that case is OK. But the directory 
+		 * could be deleted after Nautilus was launched, and perhaps
+		 * there is some bad side-effect of not handling that case.
+		 */
 	}
 
 	return desktop_directory;
@@ -555,7 +549,6 @@ nautilus_get_searches_directory (void)
 static GFile *desktop_dir = NULL;
 static GFile *desktop_dir_dir = NULL;
 static char *desktop_dir_filename = NULL;
-static gboolean desktop_dir_changed_callback_installed = FALSE;
 
 
 static void
@@ -571,12 +564,6 @@ desktop_dir_changed (void)
 	desktop_dir = NULL;
 	desktop_dir_dir = NULL;
 	desktop_dir_filename = NULL;
-}
-
-static void
-desktop_dir_changed_callback (gpointer callback_data)
-{
-	desktop_dir_changed ();
 }
 
 static void
@@ -644,13 +631,6 @@ nautilus_is_desktop_directory_file (GFile *dir,
 				    const char *file)
 {
 
-	if (!desktop_dir_changed_callback_installed) {
-		g_signal_connect_swapped (nautilus_preferences, "changed::" NAUTILUS_PREFERENCES_DESKTOP_IS_HOME_DIR,
-					  G_CALLBACK(desktop_dir_changed_callback),
-					  NULL);
-		desktop_dir_changed_callback_installed = TRUE;
-	}
-
 	if (desktop_dir == NULL) {
 		update_desktop_dir ();
 	}
@@ -662,13 +642,6 @@ nautilus_is_desktop_directory_file (GFile *dir,
 gboolean
 nautilus_is_desktop_directory (GFile *dir)
 {
-
-	if (!desktop_dir_changed_callback_installed) {
-		g_signal_connect_swapped (nautilus_preferences, "changed::" NAUTILUS_PREFERENCES_DESKTOP_IS_HOME_DIR,
-					  G_CALLBACK(desktop_dir_changed_callback),
-					  NULL);
-		desktop_dir_changed_callback_installed = TRUE;
-	}
 
 	if (desktop_dir == NULL) {
 		update_desktop_dir ();

@@ -35,9 +35,6 @@ G_BEGIN_DECLS
 #define NAUTILUS_PREFERENCES_CONFIRM_TRASH			"confirm-trash"
 #define NAUTILUS_PREFERENCES_ENABLE_DELETE			"enable-delete"
 
-/* Desktop options */
-#define NAUTILUS_PREFERENCES_DESKTOP_IS_HOME_DIR                "desktop-is-home-dir"
-
 /* Display  */
 #define NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
 #define NAUTILUS_PREFERENCES_SHOW_ADVANCED_PERMISSIONS		"show-advanced-permissions"

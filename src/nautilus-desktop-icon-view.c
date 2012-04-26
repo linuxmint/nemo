@@ -94,13 +94,6 @@ static time_t desktop_dir_modify_time;
 #define get_icon_container(w) nautilus_icon_view_get_icon_container(NAUTILUS_ICON_VIEW (w))
 
 static void
-desktop_directory_changed_callback (gpointer callback_data)
-{
-	g_free (desktop_directory);
-	desktop_directory = nautilus_get_desktop_directory ();
-}
-
-static void
 icon_container_set_workarea (NautilusIconContainer *icon_container,
 			     GdkScreen             *screen,
 			     long                  *workareas,
@@ -288,11 +281,6 @@ nautilus_desktop_icon_view_dispose (GObject *object)
 	g_signal_handlers_disconnect_by_func (nautilus_preferences,
 					      font_changed_callback,
 					      icon_view);
-
-	g_signal_handlers_disconnect_by_func (nautilus_preferences,
-					      desktop_directory_changed_callback,
-					      NULL);
-
 	g_signal_handlers_disconnect_by_func (gnome_lockdown_preferences,
 					      nautilus_view_update_menus,
 					      icon_view);
@@ -566,10 +554,7 @@ nautilus_desktop_icon_view_init (NautilusDesktopIconView *desktop_icon_view)
 								  NautilusDesktopIconViewDetails);
 
 	if (desktop_directory == NULL) {
-		g_signal_connect_swapped (nautilus_preferences, "changed::" NAUTILUS_PREFERENCES_DESKTOP_IS_HOME_DIR,
-					  G_CALLBACK(desktop_directory_changed_callback),
-					  NULL);
-		desktop_directory_changed_callback (NULL);
+		desktop_directory = nautilus_get_desktop_directory ();
 	}
 
 	nautilus_icon_view_filter_by_screen (NAUTILUS_ICON_VIEW (desktop_icon_view), TRUE);
