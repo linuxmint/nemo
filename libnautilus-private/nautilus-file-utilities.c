@@ -460,7 +460,6 @@ nautilus_get_desktop_location (void)
 	return res;
 }
 
-
 /**
  * nautilus_get_desktop_directory_uri:
  * 

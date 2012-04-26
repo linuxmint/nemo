@@ -259,12 +259,6 @@ get_eject_icon (NautilusPlacesSidebar *sidebar,
 }
 
 static gboolean
-should_show_desktop (void)
-{
-	return g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP);
-}
-
-static gboolean
 is_built_in_bookmark (NautilusFile *file)
 {
 	gboolean built_in;
@@ -274,7 +268,8 @@ is_built_in_bookmark (NautilusFile *file)
 		return TRUE;
 	}
 
-	if (nautilus_file_is_desktop_directory (file) && !should_show_desktop ()) {
+	if (nautilus_file_is_desktop_directory (file) &&
+	    !g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
 		return FALSE;
 	}
 
@@ -478,7 +473,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 	GList *volumes;
 	GVolume *volume;
 	int bookmark_count, index;
-	char *location, *mount_uri, *name, *desktop_path, *last_uri, *identifier;
+	char *location, *mount_uri, *name, *last_uri, *identifier;
 	const gchar *path, *bookmark_name;
 	GIcon *icon;
 	GFile *root;
@@ -702,10 +697,9 @@ update_places (NautilusPlacesSidebar *sidebar)
 	g_object_unref (icon);
 	g_free (mount_uri);
 
-	if (should_show_desktop ()) {
+	if (g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
 		/* desktop */
-		desktop_path = nautilus_get_desktop_directory ();
-		mount_uri = g_filename_to_uri (desktop_path, NULL, NULL);
+		mount_uri = nautilus_get_desktop_directory_uri ();
 		icon = g_themed_icon_new (NAUTILUS_ICON_DESKTOP);
 		add_place (sidebar, PLACES_BUILT_IN,
 			   SECTION_COMPUTER,
@@ -714,7 +708,6 @@ update_places (NautilusPlacesSidebar *sidebar)
 			   _("Open the contents of your desktop in a folder"));
 		g_object_unref (icon);
 		g_free (mount_uri);
-		g_free (desktop_path);
 	}
 
 	
