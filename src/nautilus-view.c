@@ -2197,7 +2197,7 @@ set_up_scripts_directory_global (void)
 			char *parent_dir;
 
 			parent_dir = g_path_get_dirname (scripts_directory_path);
-			if (g_mkdir_with_parents (parent_dir, 0755) == 0) {
+			if (g_mkdir_with_parents (parent_dir, 0700) == 0) {
 				int fd, res;
 
 				/* rename() works fine if the destination directory is
@@ -2218,7 +2218,7 @@ set_up_scripts_directory_global (void)
 		g_free (updated);
 	}
 
-	if (g_mkdir_with_parents (scripts_directory_path, 0755) == 0) {
+	if (g_mkdir_with_parents (scripts_directory_path, 0700) == 0) {
 		scripts_directory_uri = g_filename_to_uri (scripts_directory_path, NULL, NULL);
 		scripts_directory_uri_length = strlen (scripts_directory_uri);
 	}
