@@ -86,10 +86,6 @@ typedef struct {
 
 struct _NautilusPathBarDetails {
 	GdkWindow *event_window;
- 
-	GFile *root_path;
-	GFile *home_path;
-	GFile *desktop_path;
 
 	GFile *current_path;
 	gpointer current_button_data;
@@ -247,8 +243,6 @@ nautilus_path_bar_slider_drag_leave (GtkWidget      *widget,
 static void
 nautilus_path_bar_init (NautilusPathBar *path_bar)
 {
-	char *p;
-
 	path_bar->priv = G_TYPE_INSTANCE_GET_PRIVATE (path_bar, NAUTILUS_TYPE_PATH_BAR, NautilusPathBarDetails);
 
 	gtk_widget_set_has_window (GTK_WIDGET (path_bar), FALSE);
@@ -258,12 +252,6 @@ nautilus_path_bar_init (NautilusPathBar *path_bar)
         path_bar->priv->up_slider_button = get_slider_button (path_bar, GTK_ARROW_LEFT);
         path_bar->priv->down_slider_button = get_slider_button (path_bar, GTK_ARROW_RIGHT);
         path_bar->priv->icon_size = NAUTILUS_PATH_BAR_ICON_SIZE;
-
-	p = nautilus_get_desktop_directory ();
-	path_bar->priv->desktop_path = g_file_new_for_path (p);
-	g_free (p);
-	path_bar->priv->home_path = g_file_new_for_path (g_get_home_dir ());
-	path_bar->priv->root_path = g_file_new_for_path ("/");
 
         g_signal_connect_swapped (path_bar->priv->up_slider_button, "clicked", G_CALLBACK (nautilus_path_bar_scroll_up), path_bar);
         g_signal_connect_swapped (path_bar->priv->down_slider_button, "clicked", G_CALLBACK (nautilus_path_bar_scroll_down), path_bar);
@@ -318,9 +306,6 @@ nautilus_path_bar_finalize (GObject *object)
 	}
 
         g_list_free (path_bar->priv->button_list);
-	g_clear_object (&path_bar->priv->root_path);
-	g_clear_object (&path_bar->priv->home_path);
-	g_clear_object (&path_bar->priv->desktop_path);
 
 	g_signal_handlers_disconnect_by_func (nautilus_trash_monitor_get (),
 					      trash_state_changed_cb, path_bar);
@@ -1430,12 +1415,12 @@ setup_button_type (ButtonData       *button_data,
 		   NautilusPathBar  *path_bar,
 		   GFile *location)
 {
-	if (path_bar->priv->root_path != NULL && g_file_equal (location, path_bar->priv->root_path)) {
+	if (nautilus_is_root_directory (location)) {
 		button_data->type = ROOT_BUTTON;
-	} else if (path_bar->priv->home_path != NULL && g_file_equal (location, path_bar->priv->home_path)) {
+	} else if (nautilus_is_home_directory (location)) {
 		button_data->type = HOME_BUTTON;
 		button_data->fake_root = TRUE;
-	} else if (path_bar->priv->desktop_path != NULL && g_file_equal (location, path_bar->priv->desktop_path)) {
+	} else if (nautilus_is_desktop_directory (location)) {
 		button_data->type = DESKTOP_BUTTON;
 	} else if (setup_file_path_mounted_mount (location, button_data)) {
 		/* already setup */
