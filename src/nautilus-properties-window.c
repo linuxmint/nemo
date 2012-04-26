@@ -2033,7 +2033,6 @@ directory_contents_value_field_update (NautilusPropertiesWindow *window)
 	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (window));
 
 	status = NAUTILUS_REQUEST_DONE;
-	file_status = NAUTILUS_REQUEST_NOT_STARTED;
 	total_count = window->details->total_count;
 	total_size = window->details->total_size;
 	unreadable_directory_count = FALSE;
@@ -4115,8 +4114,7 @@ create_simple_permissions (NautilusPropertiesWindow *window, GtkGrid *page_grid)
 	}
 
 	append_blank_slim_row (page_grid);
-
-	group_label = attach_title_field (page_grid, _("Others"));
+	attach_title_field (page_grid, _("Others"));
 	
 	if (has_directory) {
 		add_permissions_combo_box (window, page_grid,
@@ -4161,7 +4159,8 @@ create_permission_checkboxes (NautilusPropertiesWindow *window,
 	gtk_grid_attach_next_to (page_grid, GTK_WIDGET (check_button_grid),
 				 GTK_WIDGET (owner_perm_label),
 				 GTK_POS_RIGHT, 1, 3);
-	
+
+	/* user */
 	w = add_permissions_checkbox (window,
 				      check_button_grid, 
 				      NULL,
@@ -4178,14 +4177,15 @@ create_permission_checkboxes (NautilusPropertiesWindow *window,
 				      owner_perm_label,
 				      is_folder);
 
-	w = add_permissions_checkbox (window,
-				      check_button_grid,
-				      w,
-				      PERMISSIONS_CHECKBOXES_EXECUTE,
-				      UNIX_PERM_USER_EXEC,
-				      owner_perm_label,
-				      is_folder);
+	add_permissions_checkbox (window,
+				  check_button_grid,
+				  w,
+				  PERMISSIONS_CHECKBOXES_EXECUTE,
+				  UNIX_PERM_USER_EXEC,
+				  owner_perm_label,
+				  is_folder);
 
+	/* group */
 	w = add_permissions_checkbox (window,
 				      check_button_grid, 
 				      NULL,
@@ -4202,14 +4202,15 @@ create_permission_checkboxes (NautilusPropertiesWindow *window,
 				      group_perm_label,
 				      is_folder);
 	
-	w = add_permissions_checkbox (window,
-				      check_button_grid, 
-				      w,
-				      PERMISSIONS_CHECKBOXES_EXECUTE,
-				      UNIX_PERM_GROUP_EXEC,
-				      group_perm_label,
-				      is_folder);
-	
+	add_permissions_checkbox (window,
+				  check_button_grid, 
+				  w,
+				  PERMISSIONS_CHECKBOXES_EXECUTE,
+				  UNIX_PERM_GROUP_EXEC,
+				  group_perm_label,
+				  is_folder);
+
+	/* other */
 	w = add_permissions_checkbox (window,
 				      check_button_grid, 
 				      NULL,

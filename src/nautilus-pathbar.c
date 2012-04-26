@@ -606,10 +606,8 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
 
                 if (direction == GTK_TEXT_DIR_RTL) {
 			child_allocation.x -= path_bar->spacing;
-	  		down_slider_offset = child_allocation.x - widget_allocation.x - path_bar->slider_width;
 	  		down_slider_offset = 0;
 		} else {
-			down_slider_offset = child_allocation.x - widget_allocation.x;
 	  		down_slider_offset = allocation->width - path_bar->slider_width;
 	  		child_allocation.x += child_allocation.width + path_bar->spacing;
 		}
@@ -1741,7 +1739,6 @@ nautilus_path_bar_update_path (NautilusPathBar *path_bar,
 	fake_root = NULL;
         result = TRUE;
 	first_directory = TRUE;
-	last_directory = FALSE;
 	new_buttons = NULL;
 	current_button_data = NULL;
 

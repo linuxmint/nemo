@@ -1177,8 +1177,6 @@ nautilus_file_get_start_stop_type (NautilusFile *file)
 
 	g_return_val_if_fail (NAUTILUS_IS_FILE (file), FALSE);
 
-	ret = G_DRIVE_START_STOP_TYPE_UNKNOWN;
-
 	ret = file->details->start_stop_type;
 	if (ret != G_DRIVE_START_STOP_TYPE_UNKNOWN)
 		goto out;
@@ -2710,7 +2708,6 @@ get_time (NautilusFile *file,
 		return UNKNOWN;
 	}
 
-	time = 0;
 	switch (type) {
 	case NAUTILUS_DATE_TYPE_MODIFIED:
 		time = file->details->mtime;

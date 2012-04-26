@@ -1318,8 +1318,6 @@ lay_down_icons_horizontal (NautilusIconContainer *container,
 								 &bounds.x1, &bounds.y1);
 
 		icon_bounds = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
-		text_bounds = nautilus_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
-
 		icon_width = ceil ((bounds.x1 - bounds.x0)/grid_width) * grid_width;
 		
 		/* Calculate size above/below baseline */
@@ -1386,9 +1384,6 @@ lay_down_icons_horizontal (NautilusIconContainer *container,
 			}
 		
 		lay_down_one_line (container, line_start, NULL, y, max_height_above, positions, TRUE);
-		
-		/* Advance to next line. */
-		y += max_height_below + ICON_PAD_BOTTOM;
 	}
 
 	g_array_free (positions, TRUE);

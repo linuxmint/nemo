@@ -1465,7 +1465,6 @@ nautilus_window_sync_zoom_widgets (NautilusWindow *window)
 		can_zoom_in = can_zoom && nautilus_view_can_zoom_in (view);
 		can_zoom_out = can_zoom && nautilus_view_can_zoom_out (view);
 	} else {
-		zoom_level = NAUTILUS_ZOOM_LEVEL_STANDARD;
 		supports_zooming = FALSE;
 		can_zoom = FALSE;
 		can_zoom_in = FALSE;
@@ -1823,7 +1822,6 @@ nautilus_window_button_press_event (GtkWidget *widget,
 	NautilusWindow *window;
 	gboolean handled;
 
-	handled = FALSE;
 	window = NAUTILUS_WINDOW (widget);
 
 	if (mouse_extra_buttons && (event->button == mouse_back_button)) {
