@@ -26,7 +26,7 @@
 
 typedef struct _NautilusPathBar      NautilusPathBar;
 typedef struct _NautilusPathBarClass NautilusPathBarClass;
-
+typedef struct _NautilusPathBarDetails NautilusPathBarDetails;
 
 #define NAUTILUS_TYPE_PATH_BAR                 (nautilus_path_bar_get_type ())
 #define NAUTILUS_PATH_BAR(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_PATH_BAR, NautilusPathBar))
@@ -38,33 +38,8 @@ typedef struct _NautilusPathBarClass NautilusPathBarClass;
 struct _NautilusPathBar
 {
 	GtkContainer parent;
-
-	GdkWindow *event_window;
- 
-	GFile *root_path;
-	GFile *home_path;
-	GFile *desktop_path;
-
-	GFile *current_path;
-	gpointer current_button_data;
-
-	GList *button_list;
-	GList *first_scrolled_button;
-	GList *fake_root;
-	GtkWidget *up_slider_button;
-	GtkWidget *down_slider_button;
-	guint settings_signal_id;
-	gint icon_size;
-	gint16 slider_width;
-	gint16 spacing;
-	gint16 button_offset;
-	guint timer;
-	guint slider_visible : 1;
-	guint need_timer : 1;
-	guint ignore_click : 1;
-
-	unsigned int drag_slider_timeout;
-	gboolean drag_slider_timeout_for_up_button;
+	
+	NautilusPathBarDetails *priv;
 };
 
 struct _NautilusPathBarClass
