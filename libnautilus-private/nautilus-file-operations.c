@@ -946,7 +946,8 @@ finalize_common (CommonJob *common)
 	nautilus_progress_info_finish (common->progress);
 
 	if (common->inhibit_cookie != -1) {
-		nautilus_uninhibit_power_manager (common->inhibit_cookie);
+		gtk_application_uninhibit (GTK_APPLICATION (g_application_get_default ()),
+					   common->inhibit_cookie);
 	}
 
 	common->inhibit_cookie = -1;
@@ -1266,7 +1267,11 @@ run_question (CommonJob *job,
 static void
 inhibit_power_manager (CommonJob *job, const char *message)
 {
-	job->inhibit_cookie = nautilus_inhibit_power_manager (message);
+	job->inhibit_cookie = gtk_application_inhibit (GTK_APPLICATION (g_application_get_default ()),
+						       GTK_WINDOW (job->parent_window),
+						       GTK_APPLICATION_INHIBIT_LOGOUT |
+						       GTK_APPLICATION_INHIBIT_SUSPEND,
+						       message);
 }
 
 static void
