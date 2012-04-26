@@ -1079,14 +1079,13 @@ nautilus_uninhibit_power_manager (gint cookie)
 	g_variant_unref (result);
 }
 
-/* Returns TRUE if the file is in XDG_DATA_DIRS or
-   in "~/.gnome2/". This is used for deciding
-   if a desktop file is "trusted" based on the path */
+/* Returns TRUE if the file is in XDG_DATA_DIRS. This is used for
+   deciding if a desktop file is "trusted" based on the path */
 gboolean
 nautilus_is_in_system_dir (GFile *file)
 {
 	const char * const * data_dirs; 
-	char *path, *gnome2;
+	char *path;
 	int i;
 	gboolean res;
 	
@@ -1107,16 +1106,6 @@ nautilus_is_in_system_dir (GFile *file)
 		
 	}
 
-	if (!res) {
-		/* Panel desktop files are here, trust them */
-		gnome2 = g_build_filename (g_get_home_dir (), ".gnome2", NULL);
-		if (g_str_has_prefix (path, gnome2)) {
-			res = TRUE;
-		}
-		g_free (gnome2);
-	}
-	g_free (path);
-	
 	return res;
 }
 
