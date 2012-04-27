@@ -1471,7 +1471,7 @@ nautilus_icon_canvas_item_draw (EelCanvasItem *item,
 #define ZERO_WIDTH_SPACE "\xE2\x80\x8B"
 
 #define ZERO_OR_THREE_DIGITS(p) \
-	(!g_ascii_isdigit (*p) || \
+	(!g_ascii_isdigit (*(p)) || \
 	 (g_ascii_isdigit (*(p+1)) && \
 	  g_ascii_isdigit (*(p+2))))
 
