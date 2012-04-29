@@ -50,6 +50,9 @@ struct _NautilusPathBarClass
 				 GFile             *location);
   	void (* path_set)       (NautilusPathBar  *path_bar,
 				 GFile             *location);
+        void (* path_event)     (NautilusPathBar  *path_bar,
+                                 GdkEventButton   *event,
+                                 GFile            *location);
 };
 
 GType    nautilus_path_bar_get_type (void) G_GNUC_CONST;

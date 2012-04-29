@@ -42,6 +42,7 @@
 enum {
         PATH_CLICKED,
         PATH_SET,
+        PATH_EVENT,
         LAST_SIGNAL
 };
 
@@ -876,6 +877,15 @@ nautilus_path_bar_class_init (NautilusPathBarClass *path_bar_class)
 		  g_cclosure_marshal_VOID__OBJECT,
 		  G_TYPE_NONE, 1,
 		  G_TYPE_FILE);
+        path_bar_signals [PATH_EVENT] =
+                g_signal_new ("path-event",
+		  G_OBJECT_CLASS_TYPE (path_bar_class),
+		  G_SIGNAL_RUN_FIRST,
+		  G_STRUCT_OFFSET (NautilusPathBarClass, path_event),
+		  NULL, NULL, NULL,
+		  G_TYPE_NONE, 2,
+		  G_TYPE_FILE,
+		  GDK_TYPE_EVENT);
 
 	 gtk_container_class_handle_border_width (container_class);
 	 g_type_class_add_private (path_bar_class, sizeof (NautilusPathBarDetails));
@@ -1137,6 +1147,46 @@ button_clicked_cb (GtkWidget *button,
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
 
         g_signal_emit (path_bar, path_bar_signals [PATH_CLICKED], 0, button_data->path);
+}
+
+static gboolean
+button_event_cb (GtkWidget *button,
+		 GdkEventButton *event,
+		 gpointer   data)
+{
+        ButtonData *button_data;
+        NautilusPathBar *path_bar;
+        GList *button_list;
+
+        button_data = BUTTON_DATA (data);
+        path_bar = NAUTILUS_PATH_BAR (gtk_widget_get_parent (button));
+
+	if (event->type == GDK_BUTTON_PRESS) {
+		g_object_set_data (G_OBJECT (button), "handle-button-release",
+				   GINT_TO_POINTER (TRUE));
+	}
+
+	if (event->type == GDK_BUTTON_RELEASE &&
+	    !GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (button),
+						  "handle-button-release"))) {
+		return FALSE;
+	}
+
+        button_list = g_list_find (path_bar->priv->button_list, button_data);
+        g_assert (button_list != NULL);
+
+        g_signal_emit (path_bar, path_bar_signals [PATH_EVENT], 0, button_data->path, event);
+
+	return FALSE;
+}
+
+static void
+button_drag_begin_cb (GtkWidget *widget,
+		      GdkDragContext *drag_context,
+		      gpointer user_data)
+{
+	g_object_set_data (G_OBJECT (widget), "handle-button-release",
+			   GINT_TO_POINTER (FALSE));
 }
 
 static NautilusIconInfo *
@@ -1617,6 +1667,9 @@ make_button_data (NautilusPathBar  *path_bar,
         nautilus_path_bar_update_button_state (button_data, current_dir);
 
         g_signal_connect (button_data->button, "clicked", G_CALLBACK (button_clicked_cb), button_data);
+	g_signal_connect (button_data->button, "button-press-event", G_CALLBACK (button_event_cb), button_data);
+	g_signal_connect (button_data->button, "button-release-event", G_CALLBACK (button_event_cb), button_data);
+	g_signal_connect (button_data->button, "drag-begin", G_CALLBACK (button_drag_begin_cb), button_data);
         g_object_weak_ref (G_OBJECT (button_data->button), (GWeakNotify) button_data_free, button_data);
 
 	setup_button_drag_source (button_data);
