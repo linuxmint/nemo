@@ -14,15 +14,13 @@
 # translation of nn.po to Norwegian Nynorsk
 # Copyright (C) 2000 Gaute Hvoslef Kvalnes.
 # Roy-Magne Mo <rmo@sunnmore.net>, 2001-2002.
-# Åsmund Skjæveland <aasmunds@fys.uio.no>, 2003, 2004, 2006.
+# Åsmund Skjæveland <aasmunds@ulrik.uio.no>, 2003-2012.
 # Sigurd Gartmann <sigurdga@europe.yahoo-inc.com>, 2005.
 # Eskild Hustvedt, <eskildh@gnome.org>, 2008.
 # Gaute Hvoslef Kvalnes <ai98ghk@stud.hib.no>, 2000.
 # Kjartan Maraas  <kmaraas@gnome.org>, 2000,2001.
-# Åsmund Skjæveland <aasmunds@ulrik.uio.no>, 2004-2008, 2010, 2011.
 # Torstein Adolf Winterseth <kvikende@yahoo.no>, 2009.
 # Torstein Adolf Winterseth <kvikende@fsfe.org>, 2010, 2011.
-# Åsmund Skjæveland <skjaeve@gmail.com>, 2011.
 # Andreas N. <gedemiti@gmail.com>, 2011.
 #
 msgid ""
@@ -5630,7 +5628,7 @@ msgstr ""
 msgid "translator-credits"
 msgstr ""
 "Roy-Magne Mo <rmo@sunnmore.net>\n"
-"Åsmund Skjæveland <aasmunds@fys.uio.no>\n"
+"Åsmund Skjæveland <aasmunds@ulrik.uio.no>\n"
 "Kjartan Maraas <kmaraas@gnome.org>\n"
 "Sigurd Gartmann <sigurdga@europe.yahoo-inc.com>\n"
 "Eskild Hustvedt <eskildh@gnome.org\n"
