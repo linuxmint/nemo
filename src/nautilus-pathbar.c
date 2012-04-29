@@ -34,14 +34,10 @@
 #include <libnautilus-private/nautilus-trash-monitor.h>
 #include <libnautilus-private/nautilus-icon-dnd.h>
 
-#include "nautilus-window.h"
-#include "nautilus-window-private.h"
-#include "nautilus-window-slot.h"
 #include "nautilus-window-slot-dnd.h"
 
 enum {
         PATH_CLICKED,
-        PATH_SET,
         PATH_EVENT,
         LAST_SIGNAL
 };
@@ -864,15 +860,6 @@ nautilus_path_bar_class_init (NautilusPathBarClass *path_bar_class)
 		  G_OBJECT_CLASS_TYPE (path_bar_class),
 		  G_SIGNAL_RUN_FIRST,
 		  G_STRUCT_OFFSET (NautilusPathBarClass, path_clicked),
-		  NULL, NULL,
-		  g_cclosure_marshal_VOID__OBJECT,
-		  G_TYPE_NONE, 1,
-		  G_TYPE_FILE);
-	 path_bar_signals [PATH_SET] =
-		g_signal_new ("path-set",
-		  G_OBJECT_CLASS_TYPE (path_bar_class),
-		  G_SIGNAL_RUN_FIRST,
-		  G_STRUCT_OFFSET (NautilusPathBarClass, path_set),
 		  NULL, NULL,
 		  g_cclosure_marshal_VOID__OBJECT,
 		  G_TYPE_NONE, 1,
@@ -1764,7 +1751,6 @@ nautilus_path_bar_update_path (NautilusPathBar *path_bar,
 	}	
 
         gtk_widget_pop_composite_child ();
-	g_signal_emit (path_bar, path_bar_signals [PATH_SET], 0, file_path);
 }
 
 void
@@ -1789,24 +1775,4 @@ nautilus_path_bar_set_path (NautilusPathBar *path_bar,
 
 	path_bar->priv->current_path = g_object_ref (file_path);
 	path_bar->priv->current_button_data = button_data;
-}
-
-GFile *
-nautilus_path_bar_get_path_for_button (NautilusPathBar *path_bar,
-				       GtkWidget       *button)
-{
-	GList *list;
- 
-	g_return_val_if_fail (NAUTILUS_IS_PATH_BAR (path_bar), NULL);
-	g_return_val_if_fail (GTK_IS_BUTTON (button), NULL);
-
-	for (list = path_bar->priv->button_list; list; list = list->next) {
-		ButtonData *button_data;
-		button_data = BUTTON_DATA (list->data);
-		if (button_data->button == button) {
-			return g_object_ref (button_data->path);
-		}
-	}
-
-	return NULL;
 }

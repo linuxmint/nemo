@@ -48,8 +48,6 @@ struct _NautilusPathBarClass
 
   	void (* path_clicked)   (NautilusPathBar  *path_bar,
 				 GFile             *location);
-  	void (* path_set)       (NautilusPathBar  *path_bar,
-				 GFile             *location);
         void (* path_event)     (NautilusPathBar  *path_bar,
                                  GdkEventButton   *event,
                                  GFile            *location);
@@ -58,8 +56,6 @@ struct _NautilusPathBarClass
 GType    nautilus_path_bar_get_type (void) G_GNUC_CONST;
 
 void     nautilus_path_bar_set_path    (NautilusPathBar *path_bar, GFile *file);
-GFile *  nautilus_path_bar_get_path_for_button (NautilusPathBar *path_bar,
-						GtkWidget       *button);
 void     nautilus_path_bar_clear_buttons (NautilusPathBar *path_bar);
 
 #endif /* NAUTILUS_PATHBAR_H */
