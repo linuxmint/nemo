@@ -27,9 +27,9 @@
 
 #include <config.h>
 #include "nautilus-bookmarks-window.h"
-#include "nautilus-entry.h"
 #include "nautilus-window.h"
 
+#include <libnautilus-private/nautilus-entry.h>
 #include <libnautilus-private/nautilus-global-preferences.h>
 
 #include <eel/eel-gtk-extensions.h>
