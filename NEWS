@@ -1,3 +1,22 @@
+Major changes in 3.5.1 are:
+* Add an application menu
+* Don't show sliders up to the file system root in the pathbar
+* Add support for AFP shares in the Connect to Server dialog
+* Don't remove selection when clicking on a row out of name boundaries
+* Fix a wrapping issue with numeric strings in some circumstances
+* Fix rename field selection color for backdrop state
+* Don't select all icons on Ctrl+A when the search entry is focused
+* Remove desktop-is-home-dir GSetting
+* Remove custom accel map loading/saving
+* Use new XDG location for GTK bookmarks file
+
+Major changes in 3.4.1 are:
+* Don't display comment field for desktop files
+* Fix off-by-one error in file operation counts
+* Fix mouse hardware back/forward buttons not working correctly
+* Fix "Undo Trash" for files with non-ASCII characters
+* Fix name corruption for untitled files under some circumstances
+
 Major changes in 3.4.0 are:
 * Fix a regression where "Open With" was hidden for folders
 * Translation updates
