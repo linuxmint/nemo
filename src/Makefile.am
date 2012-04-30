@@ -54,6 +54,7 @@ $(dbus_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-dbus-interfac
 		$(NULL)
 
 UI_FILES = \
+	nautilus-app-menu.ui			\
 	nautilus-bookmarks-window.ui		\
 	nautilus-file-management-properties.ui	\
 	nautilus-icon-view-ui.xml		\
