@@ -766,7 +766,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 		root = g_mount_get_default_location (mount);
 
 		if (!g_file_is_native (root)) {
-			network_mounts = g_list_prepend (network_mounts, g_object_ref (mount));
+			network_mounts = g_list_prepend (network_mounts, mount);
 			continue;
 		}
 
@@ -848,7 +848,6 @@ update_places (NautilusPlacesSidebar *sidebar)
 			   name, icon, mount_uri,
 			   NULL, NULL, mount, 0, tooltip);
 		g_object_unref (root);
-		g_object_unref (mount);
 		g_object_unref (icon);
 		g_free (name);
 		g_free (mount_uri);
