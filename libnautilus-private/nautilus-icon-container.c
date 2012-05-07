@@ -9115,40 +9115,6 @@ nautilus_icon_container_accessible_get_type (void)
         return type;
 }
 
-#if ! defined (NAUTILUS_OMIT_SELF_CHECK)
-
-static char *
-check_compute_stretch (int icon_x, int icon_y, int icon_size,
-		       int start_pointer_x, int start_pointer_y,
-		       int end_pointer_x, int end_pointer_y)
-{
-	StretchState start, current;
-
-	start.icon_x = icon_x;
-	start.icon_y = icon_y;
-	start.icon_size = icon_size;
-	start.pointer_x = start_pointer_x;
-	start.pointer_y = start_pointer_y;
-	current.pointer_x = end_pointer_x;
-	current.pointer_y = end_pointer_y;
-
-	compute_stretch (&start, &current);
-
-	return g_strdup_printf ("%d,%d:%d",
-				current.icon_x,
-				current.icon_y,
-				current.icon_size);
-}
-
-void
-nautilus_self_check_icon_container (void)
-{
-	EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 0, 0, 0, 0), "0,0:16");
-	EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 16, 16, 17, 17), "0,0:17");
-	EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 16, 16, 17, 16), "0,0:16");
-	EEL_CHECK_STRING_RESULT (check_compute_stretch (100, 100, 64, 105, 105, 40, 40), "35,35:129");
-}
-
 gboolean
 nautilus_icon_container_is_layout_rtl (NautilusIconContainer *container)
 {
@@ -9266,5 +9232,39 @@ nautilus_icon_container_set_store_layout_timestamps (NautilusIconContainer *cont
 	container->details->store_layout_timestamps = store_layout_timestamps;
 }
 
+
+#if ! defined (NAUTILUS_OMIT_SELF_CHECK)
+
+static char *
+check_compute_stretch (int icon_x, int icon_y, int icon_size,
+		       int start_pointer_x, int start_pointer_y,
+		       int end_pointer_x, int end_pointer_y)
+{
+	StretchState start, current;
+
+	start.icon_x = icon_x;
+	start.icon_y = icon_y;
+	start.icon_size = icon_size;
+	start.pointer_x = start_pointer_x;
+	start.pointer_y = start_pointer_y;
+	current.pointer_x = end_pointer_x;
+	current.pointer_y = end_pointer_y;
+
+	compute_stretch (&start, &current);
+
+	return g_strdup_printf ("%d,%d:%d",
+				current.icon_x,
+				current.icon_y,
+				current.icon_size);
+}
+
+void
+nautilus_self_check_icon_container (void)
+{
+	EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 0, 0, 0, 0), "0,0:16");
+	EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 16, 16, 17, 17), "0,0:17");
+	EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 16, 16, 17, 16), "0,0:16");
+	EEL_CHECK_STRING_RESULT (check_compute_stretch (100, 100, 64, 105, 105, 40, 40), "35,35:129");
+}
 
 #endif /* ! NAUTILUS_OMIT_SELF_CHECK */
