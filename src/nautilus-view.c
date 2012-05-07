@@ -676,28 +676,6 @@ nautilus_view_scroll_to_file (NautilusView *view,
 	NAUTILUS_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->scroll_to_file (view, uri);
 }
 
-char **
-nautilus_view_get_emblem_names_to_exclude (NautilusView *view)
-{
-	char **excludes;
-	int i;
-	
-	g_assert (NAUTILUS_IS_VIEW (view));
-
-	excludes = g_new (char *, 3);
-	
-	i = 0;
-	excludes[i++] = g_strdup (NAUTILUS_FILE_EMBLEM_NAME_TRASH);
-
-	if (!nautilus_file_can_write (view->details->directory_as_file)) {
-		excludes[i++] = g_strdup (NAUTILUS_FILE_EMBLEM_NAME_CANT_WRITE);
-	}
-
-	excludes[i++] = NULL;
-
-	return excludes;
-}
-
 /**
  * nautilus_view_get_selection:
  *

@@ -390,7 +390,6 @@ void              nautilus_view_load_location              (NautilusView      *v
 							    GFile             *location);
 void              nautilus_view_stop_loading               (NautilusView      *view);
 
-char **           nautilus_view_get_emblem_names_to_exclude (NautilusView     *view);
 char *            nautilus_view_get_first_visible_file     (NautilusView      *view);
 void              nautilus_view_scroll_to_file             (NautilusView      *view,
 							    const char        *uri);
