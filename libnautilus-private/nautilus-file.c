@@ -6401,6 +6401,56 @@ nautilus_file_is_launchable (NautilusFile *file)
 		!nautilus_file_is_directory (file);
 }
 
+static GList *
+sort_keyword_list_and_remove_duplicates (GList *keywords)
+{
+	GList *p;
+	GList *duplicate_link;
+	
+	if (keywords != NULL) {
+		keywords = g_list_sort (keywords, (GCompareFunc) g_utf8_collate);
+
+		p = keywords;
+		while (p->next != NULL) {
+			if (strcmp ((const char *) p->data, (const char *) p->next->data) == 0) {
+				duplicate_link = p->next;
+				keywords = g_list_remove_link (keywords, duplicate_link);
+				g_list_free_full (duplicate_link, g_free);
+			} else {
+				p = p->next;
+			}
+		}
+	}
+	
+	return keywords;
+}
+
+/**
+ * nautilus_file_get_keywords
+ * 
+ * Return this file's keywords.
+ * @file: NautilusFile representing the file in question.
+ * 
+ * Returns: A list of keywords.
+ * 
+ **/
+static GList *
+nautilus_file_get_keywords (NautilusFile *file)
+{
+	GList *keywords;
+
+	if (file == NULL) {
+		return NULL;
+	}
+
+	g_return_val_if_fail (NAUTILUS_IS_FILE (file), NULL);
+
+	keywords = eel_g_str_list_copy (file->details->extension_emblems);
+	keywords = g_list_concat (keywords, eel_g_str_list_copy (file->details->pending_extension_emblems));
+	keywords = g_list_concat (keywords, nautilus_file_get_metadata_list (file, NAUTILUS_METADATA_KEY_EMBLEMS));
+
+	return sort_keyword_list_and_remove_duplicates (keywords);
+}
 
 /**
  * nautilus_file_get_emblem_icons
@@ -6464,57 +6514,6 @@ nautilus_file_get_emblem_icons (NautilusFile *file)
 	g_list_free_full (keywords, g_free);
 	
 	return icons;
-}
-
-static GList *
-sort_keyword_list_and_remove_duplicates (GList *keywords)
-{
-	GList *p;
-	GList *duplicate_link;
-	
-	if (keywords != NULL) {
-		keywords = g_list_sort (keywords, (GCompareFunc) g_utf8_collate);
-
-		p = keywords;
-		while (p->next != NULL) {
-			if (strcmp ((const char *) p->data, (const char *) p->next->data) == 0) {
-				duplicate_link = p->next;
-				keywords = g_list_remove_link (keywords, duplicate_link);
-				g_list_free_full (duplicate_link, g_free);
-			} else {
-				p = p->next;
-			}
-		}
-	}
-	
-	return keywords;
-}
-
-/**
- * nautilus_file_get_keywords
- * 
- * Return this file's keywords.
- * @file: NautilusFile representing the file in question.
- * 
- * Returns: A list of keywords.
- * 
- **/
-GList *
-nautilus_file_get_keywords (NautilusFile *file)
-{
-	GList *keywords;
-
-	if (file == NULL) {
-		return NULL;
-	}
-
-	g_return_val_if_fail (NAUTILUS_IS_FILE (file), NULL);
-
-	keywords = eel_g_str_list_copy (file->details->extension_emblems);
-	keywords = g_list_concat (keywords, eel_g_str_list_copy (file->details->pending_extension_emblems));
-	keywords = g_list_concat (keywords, nautilus_file_get_metadata_list (file, NAUTILUS_METADATA_KEY_EMBLEMS));
-
-	return sort_keyword_list_and_remove_duplicates (keywords);
 }
 
 /**
