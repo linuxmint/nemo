@@ -2918,12 +2918,6 @@ prepend_automatic_keywords (NautilusFile *file,
 
 	parent = nautilus_file_get_parent (file);
 
-#ifdef TRASH_IS_FAST_ENOUGH
-	if (nautilus_file_is_in_trash (file)) {
-		names = g_list_prepend
-			(names, g_strdup (NAUTILUS_FILE_EMBLEM_NAME_TRASH));
-	}
-#endif
 	if (file_has_note (file)) {
 		names = g_list_prepend
 			(names, g_strdup (NAUTILUS_FILE_EMBLEM_NAME_NOTE));
@@ -6441,31 +6435,14 @@ nautilus_file_get_emblem_icons (NautilusFile *file,
 	icons = NULL;
 	for (l = keywords; l != NULL; l = l->next) {
 		keyword = l->data;
-		
-#ifdef TRASH_IS_FAST_ENOUGH
-		if (strcmp (keyword, NAUTILUS_FILE_EMBLEM_NAME_TRASH) == 0) {
-			char *uri;
-			gboolean file_is_trash;
-			/* Leave out the trash emblem for the trash itself, since
-			 * putting a trash emblem on a trash icon is gilding the
-			 * lily.
-			 */
-			uri = nautilus_file_get_uri (file);
-			file_is_trash = strcmp (uri, EEL_TRASH_URI) == 0;
-			g_free (uri);
-			if (file_is_trash) {
-				continue;
-			}
-		}
-#endif
+
 		if (exclude) {
 			for (i = 0; exclude[i] != NULL; i++) {
 				if (strcmp (exclude[i], keyword) == 0) {
 					continue;
 				}
 			}
-		}
-		
+		}		
 
 		icon_names[0] = g_strconcat ("emblem-", keyword, NULL);
 		icon_names[1] = keyword;
