@@ -6407,6 +6407,50 @@ sort_keyword_list_and_remove_duplicates (GList *keywords)
 	return keywords;
 }
 
+static void
+clean_up_metadata_keywords (NautilusFile *file,
+			    GList **metadata_keywords)
+{
+	NautilusFile *parent_file;
+	GList *l, *res = NULL;
+	char *exclude[4];
+	char *keyword;
+	gboolean found;
+	gint i;
+
+	i = 0;
+	exclude[i++] = NAUTILUS_FILE_EMBLEM_NAME_TRASH;
+	exclude[i++] = NAUTILUS_FILE_EMBLEM_NAME_NOTE;
+
+	parent_file = nautilus_file_get_parent (file);
+	if (parent_file) {
+		if (!nautilus_file_can_write (parent_file)) {
+			exclude[i++] = NAUTILUS_FILE_EMBLEM_NAME_CANT_WRITE;
+		}
+		nautilus_file_unref (parent_file);
+	}
+	exclude[i++] = NULL;
+
+	for (l = *metadata_keywords; l != NULL; l = l->next) {
+		keyword = l->data;
+		found = FALSE;
+
+		for (i = 0; exclude[i] != NULL; i++) {
+			if (strcmp (exclude[i], keyword) == 0) {
+				found = TRUE;
+				break;
+			}
+		}
+
+		if (!found) {
+			res = g_list_prepend (res, keyword);
+		}
+	}
+
+	g_list_free (*metadata_keywords);
+	*metadata_keywords = res;
+}
+
 /**
  * nautilus_file_get_keywords
  * 
@@ -6419,7 +6463,7 @@ sort_keyword_list_and_remove_duplicates (GList *keywords)
 static GList *
 nautilus_file_get_keywords (NautilusFile *file)
 {
-	GList *keywords;
+	GList *keywords, *metadata_keywords;
 
 	if (file == NULL) {
 		return NULL;
@@ -6429,7 +6473,10 @@ nautilus_file_get_keywords (NautilusFile *file)
 
 	keywords = eel_g_str_list_copy (file->details->extension_emblems);
 	keywords = g_list_concat (keywords, eel_g_str_list_copy (file->details->pending_extension_emblems));
-	keywords = g_list_concat (keywords, nautilus_file_get_metadata_list (file, NAUTILUS_METADATA_KEY_EMBLEMS));
+
+	metadata_keywords = nautilus_file_get_metadata_list (file, NAUTILUS_METADATA_KEY_EMBLEMS);
+	clean_up_metadata_keywords (file, &metadata_keywords);
+	keywords = g_list_concat (keywords, metadata_keywords);
 
 	return sort_keyword_list_and_remove_duplicates (keywords);
 }
@@ -6447,14 +6494,11 @@ nautilus_file_get_keywords (NautilusFile *file)
 GList *
 nautilus_file_get_emblem_icons (NautilusFile *file)
 {
-	NautilusFile *parent_file;
 	GList *keywords, *l;
 	GList *icons;
 	char *icon_names[2];
-	char *exclude[3];
 	char *keyword;
 	GIcon *icon;
-	int i;
 	
 	if (file == NULL) {
 		return NULL;
@@ -6462,28 +6506,12 @@ nautilus_file_get_emblem_icons (NautilusFile *file)
 	
 	g_return_val_if_fail (NAUTILUS_IS_FILE (file), NULL);
 
-	i = 0;
-	parent_file = nautilus_file_get_parent (file);
-	exclude[i++] = NAUTILUS_FILE_EMBLEM_NAME_TRASH;
-	if (parent_file) {
-		if (!nautilus_file_can_write (parent_file)) {
-			exclude[i++] = NAUTILUS_FILE_EMBLEM_NAME_CANT_WRITE;
-		}
-		nautilus_file_unref (parent_file);
-	}
-	exclude[i++] = NULL;
-
 	keywords = nautilus_file_get_keywords (file);
 	keywords = prepend_automatic_keywords (file, keywords);
 
 	icons = NULL;
 	for (l = keywords; l != NULL; l = l->next) {
 		keyword = l->data;
-		for (i = 0; exclude[i] != NULL; i++) {
-			if (strcmp (exclude[i], keyword) == 0) {
-				continue;
-			}
-		}
 
 		icon_names[0] = g_strconcat ("emblem-", keyword, NULL);
 		icon_names[1] = keyword;
