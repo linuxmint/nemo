@@ -2896,19 +2896,6 @@ compare_by_directory_name (NautilusFile *file_1, NautilusFile *file_2)
 	return compare;
 }
 
-static gboolean
-file_has_note (NautilusFile *file)
-{
-	char *note;
-	gboolean res;
-
-	note = nautilus_file_get_metadata (file, NAUTILUS_METADATA_KEY_ANNOTATION, NULL);
-	res = note != NULL && note[0] != 0;
-	g_free (note);
-
-	return res;
-}
-
 static GList *
 prepend_automatic_keywords (NautilusFile *file,
 			    GList *names)
@@ -2917,11 +2904,6 @@ prepend_automatic_keywords (NautilusFile *file,
 	NautilusFile *parent;
 
 	parent = nautilus_file_get_parent (file);
-
-	if (file_has_note (file)) {
-		names = g_list_prepend
-			(names, g_strdup (NAUTILUS_FILE_EMBLEM_NAME_NOTE));
-	}
 
 	/* Trash files are assumed to be read-only, 
 	 * so we want to ignore them here. */
