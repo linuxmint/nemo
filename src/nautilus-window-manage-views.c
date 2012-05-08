@@ -766,7 +766,7 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 	char *mimetype;
 	NautilusWindow *window;
 	NautilusWindowSlot *slot;
-	NautilusFile *viewed_file;
+	NautilusFile *viewed_file, *parent_file;
 	GFile *location;
 	GMountOperation *mount_op;
 	MountNotMountedData *data;
@@ -805,7 +805,9 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 		return;
 	}
 
-	if (nautilus_file_get_file_type (file) == G_FILE_TYPE_REGULAR) {
+	parent_file = nautilus_file_get_parent (file);
+	if ((parent_file != NULL) &&
+	    nautilus_file_get_file_type (file) == G_FILE_TYPE_REGULAR) {
 		if (slot->pending_selection != NULL) {
 			g_list_free_full (slot->pending_selection, (GDestroyNotify) nautilus_file_unref);
 		}
@@ -815,7 +817,7 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 	
 		slot->pending_location = nautilus_file_get_parent_location (file);
 		slot->pending_selection = g_list_prepend (NULL, nautilus_file_ref (file));
-		slot->determine_view_file = nautilus_file_get_parent (file);
+		slot->determine_view_file = parent_file;
 		slot->pending_scroll_to = nautilus_file_get_uri (file);
 
 		nautilus_file_invalidate_all_attributes (slot->determine_view_file);
@@ -829,6 +831,7 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 		return;
 	}
 
+	nautilus_file_unref (parent_file);
 	location = slot->pending_location;
 	
 	view_id = NULL;
