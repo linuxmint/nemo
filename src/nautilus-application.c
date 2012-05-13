@@ -84,8 +84,13 @@
 
 #define START_STATE_CONFIG "start-state"
 
+#define NAUTILUS_ACCEL_MAP_SAVE_DELAY 30
+
 /* Keeps track of all the desktop windows. */
 static GList *nautilus_application_desktop_windows;
+
+/* The saving of the accelerator map was requested  */
+static gboolean save_of_accel_map_requested = FALSE;
 
 static void     desktop_changed_callback          (gpointer                  user_data);
 static void     mount_removed_callback            (GVolumeMonitor            *monitor,
@@ -1103,6 +1108,50 @@ init_desktop (NautilusApplication *self)
 				  self);
 }
 
+static gboolean 
+nautilus_application_save_accel_map (gpointer data)
+{
+	if (save_of_accel_map_requested) {
+		char *accel_map_filename;
+	 	accel_map_filename = nautilus_get_accel_map_file ();
+	 	if (accel_map_filename) {
+	 		gtk_accel_map_save (accel_map_filename);
+	 		g_free (accel_map_filename);
+	 	}
+		save_of_accel_map_requested = FALSE;
+	}
+
+	return FALSE;
+}
+
+static void 
+queue_accel_map_save_callback (GtkAccelMap *object, gchar *accel_path,
+		guint accel_key, GdkModifierType accel_mods,
+		gpointer user_data)
+{
+	if (!save_of_accel_map_requested) {
+		save_of_accel_map_requested = TRUE;
+		g_timeout_add_seconds (NAUTILUS_ACCEL_MAP_SAVE_DELAY, 
+				nautilus_application_save_accel_map, NULL);
+	}
+}
+
+static void
+init_gtk_accels (void)
+{
+	char *accel_map_filename;
+
+	/* load accelerator map, and register save callback */
+	accel_map_filename = nautilus_get_accel_map_file ();
+	if (accel_map_filename) {
+		gtk_accel_map_load (accel_map_filename);
+		g_free (accel_map_filename);
+	}
+
+	g_signal_connect (gtk_accel_map_get (), "changed",
+			  G_CALLBACK (queue_accel_map_save_callback), NULL);
+}
+
 static void
 nautilus_application_startup (GApplication *app)
 {
@@ -1137,6 +1186,7 @@ nautilus_application_startup (GApplication *app)
 
 	/* initialize theming */
 	init_icons_and_styles ();
+	init_gtk_accels ();
 	
 	/* initialize nautilus modules */
 	nautilus_module_setup ();
@@ -1173,6 +1223,7 @@ nautilus_application_quit_mainloop (GApplication *app)
 	DEBUG ("Quitting mainloop");
 
 	nautilus_icon_info_clear_caches ();
+ 	nautilus_application_save_accel_map (NULL);
 
 	G_APPLICATION_CLASS (nautilus_application_parent_class)->quit_mainloop (app);
 }
