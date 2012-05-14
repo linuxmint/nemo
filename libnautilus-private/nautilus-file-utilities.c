@@ -121,20 +121,25 @@ nautilus_get_user_directory (void)
  * Get the path for the filename containing nautilus accelerator map.
  * The filename need not exist.
  *
- * Return value: the filename path, or NULL if the home directory could not be found
+ * Return value: the filename path
  **/
 char *
 nautilus_get_accel_map_file (void)
 {
-	const gchar *override;
+	return g_build_filename (g_get_user_config_dir (), "nautilus", "accels", NULL);
+}
 
-	override = g_getenv ("GNOME22_USER_DIR");
-
-	if (override) {
-		return g_build_filename (override, "accels/nautilus", NULL);
-	} else {
-		return g_build_filename (g_get_home_dir (), ".gnome2/accels/nautilus", NULL);
-	}
+/**
+ * nautilus_get_scripts_directory_path:
+ *
+ * Get the path for the directory containing nautilus scripts.
+ *
+ * Return value: the directory path containing nautilus scripts
+ **/
+char *
+nautilus_get_scripts_directory_path (void)
+{
+	return g_build_filename (g_get_user_data_dir (), "nautilus", "scripts", NULL);
 }
 
 typedef struct {

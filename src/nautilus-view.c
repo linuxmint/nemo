@@ -2239,10 +2239,7 @@ set_up_scripts_directory_global (void)
 		return TRUE;
 	}
 
-	scripts_directory_path = g_build_filename (g_get_user_data_dir (),
-						   "nautilus",
-						   "scripts",
-						   NULL);
+	scripts_directory_path = nautilus_get_scripts_directory_path ();
 
 	override = g_getenv ("GNOME22_USER_DIR");
 
@@ -4319,41 +4316,6 @@ open_with_launch_application_callback (GtkAction *action,
 }
 
 static char *
-escape_action_name (const char *action_name,
-		    const char *prefix)
-{
-	GString *s;
-
-	if (action_name == NULL) {
-		return NULL;
-	}
-	
-	s = g_string_new (prefix);
-
-	while (*action_name != 0) {
-		switch (*action_name) {
-		case '\\':
-			g_string_append (s, "\\\\");
-			break;
-		case '/':
-			g_string_append (s, "\\s");
-			break;
-		case '&':
-			g_string_append (s, "\\a");
-			break;
-		case '"':
-			g_string_append (s, "\\q");
-			break;
-		default:
-			g_string_append_c (s, *action_name);
-		}
-
-		action_name ++;
-	}
-	return g_string_free (s, FALSE);
-}
-
-static char *
 escape_action_path (const char *action_path)
 {
 	GString *s;
@@ -4402,7 +4364,7 @@ add_submenu (GtkUIManager *ui_manager,
 	GtkAction *action;
 	
 	if (parent_path != NULL) {
-		action_name = escape_action_name (uri, "submenu_");
+		action_name = nautilus_escape_action_name (uri, "submenu_");
 		submenu_name = g_path_get_basename (uri);
 		escaped_submenu_name = escape_action_path (submenu_name);
 		escaped_label = eel_str_double_underscores (label);
@@ -5282,7 +5244,7 @@ add_script_to_scripts_menus (NautilusView *directory_view,
 
 	launch_parameters = script_launch_parameters_new (file, directory_view);
 
-	action_name = escape_action_name (uri, "script_");
+	action_name = nautilus_escape_action_name (uri, "script_");
 	escaped_label = eel_str_double_underscores (name);
 
 	action = gtk_action_new (action_name,
@@ -5531,7 +5493,7 @@ add_template_to_templates_menus (NautilusView *directory_view,
 	uri = nautilus_file_get_uri (file);
 	tip = g_strdup_printf (_("Create a new document from template \"%s\""), name);
 
-	action_name = escape_action_name (uri, "template_");
+	action_name = nautilus_escape_action_name (uri, "template_");
 	escaped_label = eel_str_double_underscores (name);
 	
 	parameters = create_template_parameters_new (file, directory_view);
