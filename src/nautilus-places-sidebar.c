@@ -52,6 +52,8 @@
 #include "nautilus-window.h"
 #include "nautilus-window-slot.h"
 
+#include <libnotify/notify.h>
+
 #define DEBUG_FLAG NAUTILUS_DEBUG_PLACES
 #include <libnautilus-private/nautilus-debug.h>
 
@@ -97,6 +99,8 @@ typedef struct {
 	gboolean mounting;
 	NautilusWindowSlot *go_to_after_mount_slot;
 	NautilusWindowOpenFlags go_to_after_mount_flags;
+
+	NotifyNotification *unmount_notify;
 
 	GtkTreePath *eject_highlight_path;
 
@@ -2006,6 +2010,30 @@ unmount_shortcut_cb (GtkMenuItem           *item,
 }
 
 static void
+show_unmount_progress_cb (GMountOperation *op,
+			  const gchar *message,
+			  gint64 time_left,
+			  gint64 bytes_left,
+			  gpointer user_data)
+{
+	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
+
+	if (bytes_left == 0) {
+		nautilus_application_notify_unmount_done (app, message);
+	} else {
+		nautilus_application_notify_unmount_show (app, message);
+	}
+}
+
+static void
+show_unmount_progress_aborted_cb (GMountOperation *op,
+				  gpointer user_data)
+{
+	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
+	nautilus_application_notify_unmount_done (app, NULL);
+}
+
+static void
 drive_eject_cb (GObject *source_object,
 		GAsyncResult *res,
 		gpointer user_data)
@@ -2108,6 +2136,11 @@ do_eject (GMount *mount,
 		g_drive_eject_with_operation (drive, 0, mount_op, NULL, drive_eject_cb,
 					      g_object_ref (sidebar->window));
 	}
+
+	g_signal_connect (mount_op, "show-unmount-progress",
+			  G_CALLBACK (show_unmount_progress_cb), sidebar);
+	g_signal_connect (mount_op, "aborted",
+			  G_CALLBACK (show_unmount_progress_aborted_cb), sidebar);
 	g_object_unref (mount_op);
 }
 
@@ -3318,6 +3351,7 @@ nautilus_places_sidebar_dispose (GObject *object)
 	sidebar->uri = NULL;
 
 	free_drag_data (sidebar);
+	g_clear_object (&sidebar->unmount_notify);
 
 	if (sidebar->eject_highlight_path != NULL) {
 		gtk_tree_path_free (sidebar->eject_highlight_path);

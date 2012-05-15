@@ -71,4 +71,10 @@ void nautilus_application_open_location (NautilusApplication *application,
 					 GFile *selection,
 					 const char *startup_id);
 
+void nautilus_application_notify_unmount_show (NautilusApplication *application,
+					       const gchar *message);
+
+void nautilus_application_notify_unmount_done (NautilusApplication *application,
+					       const gchar *message);
+
 #endif /* __NAUTILUS_APPLICATION_H__ */
