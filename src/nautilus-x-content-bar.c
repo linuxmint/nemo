@@ -88,29 +88,30 @@ get_message_for_x_content_type (const char *x_content_type)
 	description = g_content_type_get_description (x_content_type);
 
 	/* Customize greeting for well-known x-content types */
+	/* translators: these describe the contents of removable media */
 	if (strcmp (x_content_type, "x-content/audio-cdda") == 0) {
-		message = g_strdup (_("These files are on an Audio CD."));
+		message = g_strdup (_("Audio CD"));
 	} else if (strcmp (x_content_type, "x-content/audio-dvd") == 0) {
-		message = g_strdup (_("These files are on an Audio DVD."));
+		message = g_strdup (_("Audio DVD"));
 	} else if (strcmp (x_content_type, "x-content/video-dvd") == 0) {
-		message = g_strdup (_("These files are on a Video DVD."));
+		message = g_strdup (_("Video DVD"));
 	} else if (strcmp (x_content_type, "x-content/video-vcd") == 0) {
-		message = g_strdup (_("These files are on a Video CD."));
+		message = g_strdup (_("Video CD"));
 	} else if (strcmp (x_content_type, "x-content/video-svcd") == 0) {
-		message = g_strdup (_("These files are on a Super Video CD."));
+		message = g_strdup (_("Super Video CD"));
 	} else if (strcmp (x_content_type, "x-content/image-photocd") == 0) {
-		message = g_strdup (_("These files are on a Photo CD."));
+		message = g_strdup (_("Photo CD"));
 	} else if (strcmp (x_content_type, "x-content/image-picturecd") == 0) {
-		message = g_strdup (_("These files are on a Picture CD."));
+		message = g_strdup (_("Picture CD"));
 	} else if (strcmp (x_content_type, "x-content/image-dcf") == 0) {
-		message = g_strdup (_("The media contains digital photos."));
+		message = g_strdup (_("Contains digital photos"));
 	} else if (strcmp (x_content_type, "x-content/audio-player") == 0) {
-		message = g_strdup (_("These files are on a digital audio player."));
+		message = g_strdup (_("Contains music"));
 	} else if (strcmp (x_content_type, "x-content/software") == 0) {
-		message = g_strdup (_("The media contains software."));
+		message = g_strdup (_("Contains software"));
 	} else {
 		/* fallback to generic greeting */
-		message = g_strdup_printf (_("The media has been detected as \"%s\"."), description);
+		message = g_strdup_printf (_("Detected as \"%s\""), description);
 	}
 
 	g_free (description);
@@ -130,12 +131,13 @@ get_message_for_two_x_content_types (char **x_content_types)
 	if (strcmp (x_content_types[0], "x-content/image-dcf") == 0
 	    || strcmp (x_content_types[1], "x-content/image-dcf") == 0) {
 
+		/* translators: these describe the contents of removable media */
 		if (strcmp (x_content_types[0], "x-content/audio-player") == 0) {
-			message = g_strdup (_("The media contains music and photos"));
+			message = g_strdup (_("Contains music and photos"));
 		} else if (strcmp (x_content_types[1], "x-content/audio-player") == 0) {
-			message = g_strdup (_("The media contains photos and music"));
+			message = g_strdup (_("Contains photos and music"));
 		} else {
-			message = g_strdup (_("The media contains digital photos."));
+			message = g_strdup (_("Contains digital photos"));
 		}
 	} else {
 		message = get_message_for_x_content_type (x_content_types[0]);
