@@ -230,6 +230,7 @@ nautilus_x_content_bar_set_x_content_types (NautilusXContentBar *bar, const char
 						  n);
 
 		gtk_button_set_image (GTK_BUTTON (button), image);
+		gtk_button_set_always_show_image (GTK_BUTTON (button), TRUE);
 		gtk_button_set_label (GTK_BUTTON (button), name);
 		gtk_widget_show (button);
 	}
