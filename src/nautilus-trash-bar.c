@@ -223,5 +223,6 @@ nautilus_trash_bar_new (NautilusView *view)
 {
 	return g_object_new (NAUTILUS_TYPE_TRASH_BAR,
 			     "view", view,
+			     "message-type", GTK_MESSAGE_QUESTION,
 			     NULL);
 }
