@@ -143,6 +143,7 @@ append_label (GtkWidget *vbox,
 	 * selectable but without the cursor showing.
 	 */
 	gtk_widget_set_can_focus (label, FALSE);
+	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
 
 	gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
 	gtk_widget_show (label);
