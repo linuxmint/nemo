@@ -53,9 +53,6 @@ nautilus_search_bar_draw (GtkWidget *widget,
 
 	context = gtk_widget_get_style_context (widget);
 
-	gtk_style_context_save (context);
-	gtk_style_context_add_class (context, GTK_STYLE_CLASS_INFO);
-
 	gtk_render_background (context, cr, 0, 0,
 			       gtk_widget_get_allocated_width (widget),
 			       gtk_widget_get_allocated_height (widget));
@@ -63,8 +60,6 @@ nautilus_search_bar_draw (GtkWidget *widget,
 	gtk_render_frame (context, cr, 0, 0,
 			  gtk_widget_get_allocated_width (widget),
 			  gtk_widget_get_allocated_height (widget));
-
-	gtk_style_context_restore (context);
 
 	GTK_WIDGET_CLASS (nautilus_search_bar_parent_class)->draw (widget, cr);
 
@@ -136,19 +131,24 @@ nautilus_search_bar_init (NautilusSearchBar *bar)
 {
 	GtkWidget *label;
 	GtkWidget *align;
+	PangoAttrList *attrs;
 
 	bar->details =
 		G_TYPE_INSTANCE_GET_PRIVATE (bar, NAUTILUS_TYPE_SEARCH_BAR,
 					     NautilusSearchBarDetails);
 
+	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (bar)),
+				     GTK_STYLE_CLASS_QUESTION);
 	gtk_widget_set_redraw_on_allocate (GTK_WIDGET (bar), TRUE);
 
+	attrs = pango_attr_list_new ();
+	pango_attr_list_insert (attrs, pango_attr_weight_new (PANGO_WEIGHT_BOLD));
 	label = gtk_label_new (_("Search:"));
-	gtk_style_context_add_class (gtk_widget_get_style_context (label),
-				     "nautilus-cluebar-label");
-	gtk_widget_show (label);
+	gtk_label_set_attributes (GTK_LABEL (label), attrs);
+	pango_attr_list_unref (attrs);
 
 	gtk_box_pack_start (GTK_BOX (bar), label, FALSE, FALSE, 0);
+	gtk_widget_show (label);
 
 	g_object_set (label,
 		      "margin-left", 6,

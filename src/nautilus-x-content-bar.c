@@ -257,13 +257,17 @@ static void
 nautilus_x_content_bar_init (NautilusXContentBar *bar)
 {
 	GtkWidget *content_area;
+	PangoAttrList *attrs;
 
 	bar->priv = NAUTILUS_X_CONTENT_BAR_GET_PRIVATE (bar);
 	content_area = gtk_info_bar_get_content_area (GTK_INFO_BAR (bar));
 
+	attrs = pango_attr_list_new ();
+	pango_attr_list_insert (attrs, pango_attr_weight_new (PANGO_WEIGHT_BOLD));
 	bar->priv->label = gtk_label_new (NULL);
-	gtk_style_context_add_class (gtk_widget_get_style_context (bar->priv->label),
-				     "nautilus-cluebar-label");
+	gtk_label_set_attributes (GTK_LABEL (bar->priv->label), attrs);
+	pango_attr_list_unref (attrs);
+
 	gtk_label_set_ellipsize (GTK_LABEL (bar->priv->label), PANGO_ELLIPSIZE_END);
 	gtk_container_add (GTK_CONTAINER (content_area), bar->priv->label);
 
