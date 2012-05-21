@@ -72,13 +72,9 @@
 			<menuitem name="Rename" action="Rename"/>
 			<menu action="CopyToMenu">
 				<menuitem name="Copy to next pane" action="Copy to next pane"/>
-				<menuitem name="Copy to Home" action="Copy to Home"/>
-				<menuitem name="Copy to Desktop" action="Copy to Desktop"/>
 			</menu>
 			<menu action="MoveToMenu">
 				<menuitem name="Move to next pane" action="Move to next pane"/>
-				<menuitem name="Copy to Home" action="Move to Home"/>
-				<menuitem name="Copy to Desktop" action="Move to Desktop"/>
 			</menu>
 		</placeholder>
 		<placeholder name="Dangerous File Items Placeholder">
@@ -169,13 +165,9 @@
 		<menuitem name="Rename" action="Rename"/>
 		<menu action="CopyToMenu">
 			<menuitem name="Copy to next pane" action="Copy to next pane"/>
-			<menuitem name="Copy to Home" action="Copy to Home"/>
-			<menuitem name="Copy to Desktop" action="Copy to Desktop"/>
 		</menu>
 		<menu action="MoveToMenu">
 			<menuitem name="Move to next pane" action="Move to next pane"/>
-			<menuitem name="Copy to Home" action="Move to Home"/>
-			<menuitem name="Copy to Desktop" action="Move to Desktop"/>
 		</menu>
 	</placeholder>
 	<separator name="Dangerous separator"/>

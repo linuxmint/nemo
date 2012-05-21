@@ -5973,58 +5973,6 @@ action_move_to_next_pane_callback (GtkAction *action, gpointer callback_data)
 }
 
 static void
-action_copy_to_home_callback (GtkAction *action, gpointer callback_data)
-{
-	NautilusView *view;
-	char *dest_location;
-
-	view = NAUTILUS_VIEW (callback_data);
-
-	dest_location = nautilus_get_home_directory_uri ();
-	move_copy_selection_to_location (view, GDK_ACTION_COPY, dest_location);
-	g_free (dest_location);
-}
-
-static void
-action_move_to_home_callback (GtkAction *action, gpointer callback_data)
-{
-	NautilusView *view;
-	char *dest_location;
-
-	view = NAUTILUS_VIEW (callback_data);
-
-	dest_location = nautilus_get_home_directory_uri ();
-	move_copy_selection_to_location (view, GDK_ACTION_MOVE, dest_location);
-	g_free (dest_location);
-}
-
-static void
-action_copy_to_desktop_callback (GtkAction *action, gpointer callback_data)
-{
-	NautilusView *view;
-	char *dest_location;
-
-	view = NAUTILUS_VIEW (callback_data);
-
-	dest_location = nautilus_get_desktop_directory_uri ();
-	move_copy_selection_to_location (view, GDK_ACTION_COPY, dest_location);
-	g_free (dest_location);
-}
-
-static void
-action_move_to_desktop_callback (GtkAction *action, gpointer callback_data)
-{
-	NautilusView *view;
-	char *dest_location;
-
-	view = NAUTILUS_VIEW (callback_data);
-
-	dest_location = nautilus_get_desktop_directory_uri ();
-	move_copy_selection_to_location (view, GDK_ACTION_MOVE, dest_location);
-	g_free (dest_location);
-}
-
-static void
 action_cut_files_callback (GtkAction *action,
 			   gpointer callback_data)
 {
@@ -7339,22 +7287,6 @@ static const GtkActionEntry directory_view_entries[] = {
   /* name, stock id, label */  {NAUTILUS_ACTION_MOVE_TO_NEXT_PANE, NULL, N_("_Other pane"),
 				NULL, N_("Move the current selection to the other pane in the window"),
 				G_CALLBACK (action_move_to_next_pane_callback) },
-  /* name, stock id, label */  {NAUTILUS_ACTION_COPY_TO_HOME, NAUTILUS_ICON_HOME,
-				N_("_Home"), NULL,
-				N_("Copy the current selection to the home folder"),
-				G_CALLBACK (action_copy_to_home_callback) },
-  /* name, stock id, label */  {NAUTILUS_ACTION_MOVE_TO_HOME, NAUTILUS_ICON_HOME,
-				N_("_Home"), NULL,
-				N_("Move the current selection to the home folder"),
-				G_CALLBACK (action_move_to_home_callback) },
-  /* name, stock id, label */  {NAUTILUS_ACTION_COPY_TO_DESKTOP, NAUTILUS_ICON_DESKTOP,
-				N_("_Desktop"), NULL,
-				N_("Copy the current selection to the desktop"),
-				G_CALLBACK (action_copy_to_desktop_callback) },
-  /* name, stock id, label */  {NAUTILUS_ACTION_MOVE_TO_DESKTOP, NAUTILUS_ICON_DESKTOP,
-				N_("_Desktop"), NULL,
-				N_("Move the current selection to the desktop"),
-				G_CALLBACK (action_move_to_desktop_callback) },
 };
 
 static void
@@ -8419,7 +8351,6 @@ real_update_menus (NautilusView *view)
 	gboolean show_save_search;
 	gboolean save_search_sensitive;
 	gboolean show_save_search_as;
-	gboolean show_desktop_target;
 	GtkAction *action;
 	GAppInfo *app;
 	GIcon *app_icon;
@@ -8750,26 +8681,6 @@ real_update_menus (NautilusView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_MOVE_TO_NEXT_PANE);
 	gtk_action_set_sensitive (action, can_delete_files && next_pane_is_writable);
-
-
-	show_desktop_target =
-		g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP);
-
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NAUTILUS_ACTION_COPY_TO_HOME);
-	gtk_action_set_sensitive (action, can_copy_files);
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NAUTILUS_ACTION_COPY_TO_DESKTOP);
-	gtk_action_set_sensitive (action, can_copy_files);
-	gtk_action_set_visible (action, show_desktop_target);
-
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NAUTILUS_ACTION_MOVE_TO_HOME);
-	gtk_action_set_sensitive (action, can_delete_files);
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NAUTILUS_ACTION_MOVE_TO_DESKTOP);
-	gtk_action_set_sensitive (action, can_delete_files);
-	gtk_action_set_visible (action, show_desktop_target);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      "CopyToMenu");
