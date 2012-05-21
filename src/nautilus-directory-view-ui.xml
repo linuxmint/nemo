@@ -161,6 +161,7 @@
 	</placeholder>
 	<separator name="File actions separator"/>
 	<placeholder name="File Actions">
+		<menuitem name="Properties" action="Properties"/>
 		<menuitem name="Rename" action="Rename"/>
 		<menu action="CopyToMenu">
 			<menuitem name="Copy to next pane" action="Copy to next pane"/>
@@ -190,8 +191,6 @@
 		 <menuitem name="Poll" action="Poll"/>
         </placeholder>
         <menuitem name="Connect To Server Link" action="Connect To Server Link"/>
-        <separator name="Properties Separator"/>
-        <menuitem name="Properties" action="Properties"/>
 </popup>
 <popup name="location">
 	<placeholder name="Open Placeholder">
