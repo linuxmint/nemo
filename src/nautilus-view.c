@@ -8676,11 +8676,13 @@ real_update_menus (NautilusView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_COPY_TO_NEXT_PANE);
 	gtk_action_set_sensitive (action, can_copy_files && next_pane_is_writable);
+	gtk_action_set_visible (action, next_pane_is_writable);
 
 	/* move to next pane: works if file is cuttable, and next pane is writable */
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_MOVE_TO_NEXT_PANE);
 	gtk_action_set_sensitive (action, can_delete_files && next_pane_is_writable);
+	gtk_action_set_visible (action, next_pane_is_writable);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      "CopyToMenu");
