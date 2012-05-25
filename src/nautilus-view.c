@@ -5723,8 +5723,8 @@ update_templates_menu (NautilusView *view)
 	}
 	nautilus_directory_list_free (sorted_copy);
 
-	action = gtk_action_group_get_action (view->details->dir_action_group, NAUTILUS_ACTION_NO_TEMPLATES);
-	gtk_action_set_visible (action, !any_templates);
+	action = gtk_action_group_get_action (view->details->dir_action_group, NAUTILUS_ACTION_NEW_DOCUMENTS);
+	gtk_action_set_visible (action, any_templates);
 
 	g_free (templates_directory_uri);
 }
@@ -7332,9 +7332,6 @@ real_merge_menus (NautilusView *view)
 	gtk_action_group_add_action (action_group, action);
 	g_object_unref (action);
 	g_free (tooltip);
-
-	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_NO_TEMPLATES);
-	gtk_action_set_sensitive (action, FALSE);
 
 	g_signal_connect_object (action_group, "connect-proxy",
 				 G_CALLBACK (connect_proxy), G_OBJECT (view),
