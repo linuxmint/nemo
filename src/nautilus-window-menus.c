@@ -349,46 +349,6 @@ action_nautilus_manual_callback (GtkAction *action,
 }
 
 static void
-menu_item_select_cb (GtkMenuItem *proxy,
-		     NautilusWindow *window)
-{
-	GtkAction *action;
-	char *message;
-
-	action = gtk_activatable_get_related_action (GTK_ACTIVATABLE (proxy));
-	g_return_if_fail (action != NULL);
-	
-	g_object_get (G_OBJECT (action), "tooltip", &message, NULL);
-	if (message) {
-		gtk_statusbar_push (GTK_STATUSBAR (window->details->statusbar),
-				    window->details->help_message_cid, message);
-		g_free (message);
-	}
-}
-
-static void
-menu_item_deselect_cb (GtkMenuItem *proxy,
-		       NautilusWindow *window)
-{
-	gtk_statusbar_pop (GTK_STATUSBAR (window->details->statusbar),
-			   window->details->help_message_cid);
-}
-
-static void
-disconnect_proxy_cb (GtkUIManager *manager,
-		     GtkAction *action,
-		     GtkWidget *proxy,
-		     NautilusWindow *window)
-{
-	if (GTK_IS_MENU_ITEM (proxy)) {
-		g_signal_handlers_disconnect_by_func
-			(proxy, G_CALLBACK (menu_item_select_cb), window);
-		g_signal_handlers_disconnect_by_func
-			(proxy, G_CALLBACK (menu_item_deselect_cb), window);
-	}
-}
-
-static void
 trash_state_changed_cb (NautilusTrashMonitor *monitor,
 			gboolean state,
 			NautilusWindow *window)
@@ -630,11 +590,6 @@ connect_proxy_cb (GtkActionGroup *action_group,
 
 	gtk_label_set_ellipsize (label, PANGO_ELLIPSIZE_END);
 	gtk_label_set_max_width_chars (label, MENU_ITEM_MAX_WIDTH_CHARS);
-
-	g_signal_connect (proxy, "select",
-			  G_CALLBACK (menu_item_select_cb), window);
-	g_signal_connect (proxy, "deselect",
-			  G_CALLBACK (menu_item_deselect_cb), window);
 }
 
 static const char* icon_entries[] = {
@@ -940,11 +895,6 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* tooltip */              N_("Change the visibility of this window's side pane"),
                              G_CALLBACK (action_show_hide_sidebar_callback),
   /* is_active */            TRUE }, 
-  /* name, stock id */     { "Show Hide Statusbar", NULL,
-  /* label, accelerator */   N_("St_atusbar"), NULL,
-  /* tooltip */              N_("Change the visibility of this window's statusbar"),
-                             NULL,
-  /* is_active */            TRUE },
   /* name, stock id */     { "Search", "edit-find-symbolic",
   /* label, accelerator */   N_("_Search for Files..."), "<control>f",
   /* tooltip */              N_("Search documents and folders by name"),
@@ -1044,15 +994,6 @@ window_menus_set_bindings (NautilusWindow *window)
 	GtkAction *action;
 
 	action_group = nautilus_window_get_main_action_group (window);
-
-	action = gtk_action_group_get_action (action_group,
-					      NAUTILUS_ACTION_SHOW_HIDE_STATUSBAR);
-
-	g_settings_bind (nautilus_window_state,
-			 NAUTILUS_WINDOW_STATE_START_WITH_STATUS_BAR,
-			 action,
-			 "active",
-			 G_SETTINGS_BIND_DEFAULT);
 
 	action = gtk_action_group_get_action (action_group,
 					      NAUTILUS_ACTION_SHOW_HIDE_SIDEBAR);	
@@ -1192,8 +1133,6 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 	
 	g_signal_connect (ui_manager, "connect_proxy",
 			  G_CALLBACK (connect_proxy_cb), window);
-	g_signal_connect (ui_manager, "disconnect_proxy",
-			  G_CALLBACK (disconnect_proxy_cb), window);
 
 	/* add the UI */
 	gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nautilus/nautilus-shell-ui.xml", NULL);

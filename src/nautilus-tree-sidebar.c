@@ -880,7 +880,6 @@ static void
 copy_or_cut_files (FMTreeView *view,
 		   gboolean cut)
 {
-	char *status_string, *name;
 	NautilusClipboardInfo info;
         GtkTargetList *target_list;
         GtkTargetEntry *targets;
@@ -906,22 +905,6 @@ copy_or_cut_files (FMTreeView *view,
 	nautilus_clipboard_monitor_set_clipboard_info (nautilus_clipboard_monitor_get (),
 	                                               &info);
 	g_list_free (info.files);
-
-	name = nautilus_file_get_display_name (view->details->popup_file);
-	if (cut) {
-		status_string = g_strdup_printf (_("\"%s\" will be moved "
-						   "if you select the Paste command"),
-						 name);
-	} else {
-		status_string = g_strdup_printf (_("\"%s\" will be copied "
-						   "if you select the Paste command"),
-						 name);
-	}
-	g_free (name);
-	
-	nautilus_window_push_status (view->details->window,
-					  status_string);
-	g_free (status_string);
 }
 
 static void
@@ -950,10 +933,7 @@ paste_clipboard_data (FMTreeView *view,
 	item_uris = nautilus_clipboard_get_uri_list_from_selection_data (selection_data, &cut,
 									 copied_files_atom);
 
-	if (item_uris == NULL|| destination_uri == NULL) {
-		nautilus_window_push_status (view->details->window,
-						  _("There is nothing on the clipboard to paste."));
-	} else {
+	if (item_uris != NULL && destination_uri != NULL) {
 		nautilus_file_operations_copy_move
 			(item_uris, NULL, destination_uri,
 			 cut ? GDK_ACTION_MOVE : GDK_ACTION_COPY,

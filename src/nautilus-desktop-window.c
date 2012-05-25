@@ -73,7 +73,6 @@ nautilus_desktop_window_constructed (GObject *obj)
 
 	G_OBJECT_CLASS (nautilus_desktop_window_parent_class)->constructed (obj);
 	
-	gtk_widget_hide (nwindow->details->statusbar);
 	gtk_widget_hide (nwindow->details->menubar);
 
 	action_group = nautilus_window_get_main_action_group (nwindow);

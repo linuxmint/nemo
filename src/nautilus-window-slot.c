@@ -139,7 +139,6 @@ real_active (NautilusWindowSlot *slot)
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (pane->notebook), page_num);
 
 	/* sync window to new slot */
-	nautilus_window_push_status (window, slot->status_text);
 	nautilus_window_sync_allow_stop (window, slot);
 	nautilus_window_sync_title (window, slot);
 	nautilus_window_sync_zoom_widgets (window);
@@ -469,22 +468,17 @@ static void
 real_slot_set_short_status (NautilusWindowSlot *slot,
 			    const gchar *status)
 {
-	
-	gboolean show_statusbar;
 	gboolean disable_chrome;
 
 	nautilus_floating_bar_cleanup_actions (NAUTILUS_FLOATING_BAR (slot->floating_bar));
 	nautilus_floating_bar_set_show_spinner (NAUTILUS_FLOATING_BAR (slot->floating_bar),
 						FALSE);
 
-	show_statusbar = g_settings_get_boolean (nautilus_window_state,
-						 NAUTILUS_WINDOW_STATE_START_WITH_STATUS_BAR);
-
 	g_object_get (nautilus_window_slot_get_window (slot),
 		      "disable-chrome", &disable_chrome,
 		      NULL);
 
-	if (status == NULL || show_statusbar || disable_chrome) {
+	if (status == NULL || disable_chrome) {
 		gtk_widget_hide (slot->floating_bar);
 		return;
 	}
@@ -558,8 +552,6 @@ nautilus_window_slot_set_status (NautilusWindowSlot *slot,
 				 const char *status,
 				 const char *short_status)
 {
-	NautilusWindow *window;
-
 	g_assert (NAUTILUS_IS_WINDOW_SLOT (slot));
 
 	g_free (slot->status_text);
@@ -567,11 +559,6 @@ nautilus_window_slot_set_status (NautilusWindowSlot *slot,
 
 	if (slot->content_view != NULL) {
 		set_floating_bar_status (slot, short_status);
-	}
-
-	window = nautilus_window_slot_get_window (slot);
-	if (slot == nautilus_window_get_active_slot (window)) {
-		nautilus_window_push_status (window, slot->status_text);
 	}
 }
 

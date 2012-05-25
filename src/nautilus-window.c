@@ -147,20 +147,6 @@ static const struct {
 };
 
 void
-nautilus_window_push_status (NautilusWindow *window,
-			     const char *text)
-{
-	g_return_if_fail (NAUTILUS_IS_WINDOW (window));
-
-	/* clear any previous message, underflow is allowed */
-	gtk_statusbar_pop (GTK_STATUSBAR (window->details->statusbar), 0);
-
-	if (text != NULL && text[0] != '\0') {
-		gtk_statusbar_push (GTK_STATUSBAR (window->details->statusbar), 0, text);
-	}
-}
-
-void
 nautilus_window_go_to (NautilusWindow *window, GFile *location)
 {
 	g_return_if_fail (NAUTILUS_IS_WINDOW (window));
@@ -518,7 +504,6 @@ nautilus_window_constructed (GObject *self)
 	NautilusWindow *window;
 	GtkWidget *grid;
 	GtkWidget *menu;
-	GtkWidget *statusbar;
 	GtkWidget *hpaned;
 	GtkWidget *vbox;
 	NautilusWindowPane *pane;
@@ -537,12 +522,6 @@ nautilus_window_constructed (GObject *self)
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (grid), GTK_ORIENTATION_VERTICAL);
 	gtk_widget_show (grid);
 	gtk_container_add (GTK_CONTAINER (window), grid);
-
-	statusbar = gtk_statusbar_new ();
-	window->details->statusbar = statusbar;
-	window->details->help_message_cid = gtk_statusbar_get_context_id
-		(GTK_STATUSBAR (statusbar), "help_message");
-	/* Statusbar is packed in the subclasses */
 
 	nautilus_window_initialize_menus (window);
 	nautilus_window_initialize_actions (window);
@@ -573,16 +552,6 @@ nautilus_window_constructed (GObject *self)
 	gtk_box_pack_start (GTK_BOX (vbox), hpaned, TRUE, TRUE, 0);
 	gtk_widget_show (hpaned);
 	window->details->split_view_hpane = hpaned;
-
-	gtk_box_pack_start (GTK_BOX (vbox), window->details->statusbar, FALSE, FALSE, 0);
-
-	g_settings_bind_with_mapping (nautilus_window_state,
-				      NAUTILUS_WINDOW_STATE_START_WITH_STATUS_BAR,
-				      window->details->statusbar,
-				      "visible",
-				      G_SETTINGS_BIND_DEFAULT,
-				      nautilus_window_disable_chrome_mapping, NULL,
-				      window, NULL);
 
 	pane = nautilus_window_pane_new (window);
 	window->details->panes = g_list_prepend (window->details->panes, pane);

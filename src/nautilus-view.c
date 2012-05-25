@@ -2678,10 +2678,6 @@ nautilus_view_init (NautilusView *view)
 				  "changed::" NAUTILUS_PREFERENCES_LOCKDOWN_COMMAND_LINE,
 				  G_CALLBACK (schedule_update_menus), view);
 
-	g_signal_connect_swapped (nautilus_window_state,
-				  "changed::" NAUTILUS_WINDOW_STATE_START_WITH_STATUS_BAR,
-				  G_CALLBACK (nautilus_view_display_selection_info), view);
-				  
 	manager = nautilus_file_undo_manager_get ();
 	g_signal_connect_object (manager, "undo-changed",
 				 G_CALLBACK (undo_manager_changed_cb), view, 0);				  

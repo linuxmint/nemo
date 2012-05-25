@@ -39,7 +39,6 @@
 /* FIXME bugzilla.gnome.org 42575: Migrate more fields into here. */
 struct NautilusWindowDetails
 {
-        GtkWidget *statusbar;
         GtkWidget *menubar;
         
         GtkUIManager *ui_manager;

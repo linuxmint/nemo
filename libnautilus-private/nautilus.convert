@@ -59,6 +59,5 @@ geometry = /apps/nautilus/preferences/navigation_window_saved_geometry
 maximized = /apps/nautilus/preferences/navigation_window_saved_maximized
 sidebar-width = /apps/nautilus/preferences/sidebar_width
 start-with-location-bar = /apps/nautilus/preferences/start_with_location_bar
-start-with-status-bar = /apps/nautilus/preferences/start_with_status_bar
 start-with-sidebar = /apps/nautilus/preferences/start_with_sidebar
 side-pane-view = /apps/nautilus/preferences/side_pane_view
