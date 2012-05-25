@@ -1506,21 +1506,15 @@ lay_down_icons_vertical (NautilusIconContainer *container,
 			x += ICON_PAD_LEFT;
 
 			/* correctly set (per-column) width */
-			if (!container->details->all_columns_same_width) {
-				for (i = 0; i < (int) positions->len; i++) {
-					position = &g_array_index (positions, IconPositions, i);
-					position->width = max_width_in_column;
-				}
+			for (i = 0; i < (int) positions->len; i++) {
+				position = &g_array_index (positions, IconPositions, i);
+				position->width = max_width_in_column;
 			}
 
 			lay_down_one_column (container, line_start, p, x, CONTAINER_PAD_TOP, max_height_with_borders, positions);
 
 			/* Advance to next column. */
-			if (container->details->all_columns_same_width) {
-				x += max_width + ICON_PAD_RIGHT;
-			} else {
-				x += max_width_in_column + ICON_PAD_RIGHT;
-			}
+			x += max_width_in_column + ICON_PAD_RIGHT;
 
 			line_height = ICON_PAD_TOP;
 			line_start = p;
@@ -1538,9 +1532,8 @@ lay_down_icons_vertical (NautilusIconContainer *container,
 
 		g_array_set_size (positions, i + 1);
 		position = &g_array_index (positions, IconPositions, i++);
-		if (container->details->all_columns_same_width) {
-			position->width = max_width;
-		}
+
+		position->width = max_width;
 		position->height = max_height;
 		position->y_offset = ICON_PAD_TOP;
 		position->x_offset = ICON_PAD_LEFT;
@@ -6878,12 +6871,7 @@ nautilus_icon_container_update_icon (NautilusIconContainer *container,
 	max_image_size = MAX (MAXIMUM_IMAGE_SIZE * EEL_CANVAS (container)->pixels_per_unit, NAUTILUS_ICON_MAXIMUM_SIZE);
 
 	/* Get the appropriate images for the file. */
-	if (container->details->forced_icon_size > 0) {
-		icon_size = container->details->forced_icon_size;
-	} else {
-		icon_get_size (container, icon, &icon_size);
-	}
-
+	icon_get_size (container, icon, &icon_size);
 
 	icon_size = MAX (icon_size, min_image_size);
 	icon_size = MIN (icon_size, max_image_size);
@@ -6899,11 +6887,7 @@ nautilus_icon_container_update_icon (NautilusIconContainer *container,
 							     large_embedded_text, &embedded_text_needs_loading,
 							     &has_open_window);
 
-	if (container->details->forced_icon_size > 0) {
-		pixbuf = nautilus_icon_info_get_pixbuf_at_size (icon_info, icon_size);
-	} else {
-		pixbuf = nautilus_icon_info_get_pixbuf (icon_info);
-	}
+	pixbuf = nautilus_icon_info_get_pixbuf (icon_info);
 
 	nautilus_icon_info_get_attach_points (icon_info, &attach_points, &n_attach_points);
 	has_embedded_text_rect = nautilus_icon_info_get_embedded_rect (icon_info,
@@ -8481,34 +8465,6 @@ nautilus_icon_container_set_allow_moves	(NautilusIconContainer *container,
 	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
 
 	container->details->drag_allow_moves = allow_moves;
-}
-
-void
-nautilus_icon_container_set_forced_icon_size (NautilusIconContainer *container,
-					      int                    forced_icon_size)
-{
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
-
-	if (forced_icon_size != container->details->forced_icon_size) {
-		container->details->forced_icon_size = forced_icon_size;
-
-		invalidate_label_sizes (container);
-		nautilus_icon_container_request_update_all (container);
-	}
-}
-
-void
-nautilus_icon_container_set_all_columns_same_width (NautilusIconContainer *container,
-						    gboolean               all_columns_same_width)
-{
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
-
-	if (all_columns_same_width != container->details->all_columns_same_width) {
-		container->details->all_columns_same_width = all_columns_same_width;
-
-		invalidate_labels (container);
-		nautilus_icon_container_request_update_all (container);
-	}
 }
 
 /**

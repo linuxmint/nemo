@@ -2055,11 +2055,7 @@ nautilus_icon_canvas_item_get_max_text_width (NautilusIconCanvasItem *item)
 	if (container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
 		if (container->details->layout_mode == NAUTILUS_ICON_LAYOUT_T_B_L_R ||
 		    container->details->layout_mode == NAUTILUS_ICON_LAYOUT_T_B_R_L) {
-			if (container->details->all_columns_same_width) {
-				return MAX_TEXT_WIDTH_BESIDE_TOP_TO_BOTTOM * canvas_item->canvas->pixels_per_unit;
-			} else {
-				return -1;
-			}
+			return -1;
 		} else {
 			return MAX_TEXT_WIDTH_BESIDE * canvas_item->canvas->pixels_per_unit;
 		}

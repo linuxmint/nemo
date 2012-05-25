@@ -212,20 +212,12 @@ struct NautilusIconContainerDetails {
 	/* Mode settings. */
 	gboolean single_click_mode;
 	gboolean auto_layout;
-	gboolean tighter_layout;
 
-	/* Whether for the vertical layout, all columns are supposed to
-	 * have the same width. */
-	gboolean all_columns_same_width;
-	
 	/* Layout mode */
 	NautilusIconLayoutMode layout_mode;
 
 	/* Label position */
 	NautilusIconLabelPosition label_position;
-
-	/* Forced icon size, iff greater than 0 */
-	int forced_icon_size;
 
 	/* Should the container keep icons aligned to a grid */
 	gboolean keep_aligned;

@@ -336,10 +336,6 @@ char*             nautilus_icon_container_get_icon_description          (Nautilu
 gboolean          nautilus_icon_container_get_allow_moves               (NautilusIconContainer  *container);
 void              nautilus_icon_container_set_allow_moves               (NautilusIconContainer  *container,
 									 gboolean                allow_moves);
-void		  nautilus_icon_container_set_forced_icon_size		(NautilusIconContainer  *container,
-									 int                     forced_icon_size);
-void		  nautilus_icon_container_set_all_columns_same_width	(NautilusIconContainer  *container,
-									 gboolean                all_columns_same_width);
 
 gboolean	  nautilus_icon_container_is_layout_rtl			(NautilusIconContainer  *container);
 gboolean	  nautilus_icon_container_is_layout_vertical		(NautilusIconContainer  *container);
