@@ -83,12 +83,8 @@ nautilus_icon_view_container_get_icon_images (NautilusIconContainer *container,
 	*has_window_open = nautilus_file_has_open_window (file);
 
 	flags = NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM;
-	if (!nautilus_icon_view_is_compact (icon_view) ||
-	    nautilus_icon_container_get_zoom_level (container) > NAUTILUS_ZOOM_LEVEL_STANDARD) {
+	if (nautilus_icon_container_get_zoom_level (container) > NAUTILUS_ZOOM_LEVEL_STANDARD) {
 		flags |= NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS;
-		if (nautilus_icon_view_is_compact (icon_view)) {
-			flags |= NAUTILUS_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE;
-		}
 	}
 
 	if (use_embedding) {
@@ -356,11 +352,6 @@ nautilus_icon_view_container_get_icon_text (NautilusIconContainer *container,
 	}
 
 	if (!use_additional) {
-		return;
-	}
-
-	if (nautilus_icon_view_is_compact (icon_view)) {
-		*additional_text = NULL;
 		return;
 	}
 

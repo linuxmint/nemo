@@ -44,7 +44,6 @@ typedef struct NautilusIconViewClass NautilusIconViewClass;
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_TYPE_ICON_VIEW, NautilusIconViewClass))
 
 #define NAUTILUS_ICON_VIEW_ID "OAFIID:Nautilus_File_Manager_Icon_View"
-#define FM_COMPACT_VIEW_ID "OAFIID:Nautilus_File_Manager_Compact_View"
 
 typedef struct NautilusIconViewDetails NautilusIconViewDetails;
 
@@ -64,10 +63,8 @@ int     nautilus_icon_view_compare_files (NautilusIconView   *icon_view,
 					  NautilusFile *b);
 void    nautilus_icon_view_filter_by_screen (NautilusIconView *icon_view,
 					     gboolean filter);
-gboolean nautilus_icon_view_is_compact   (NautilusIconView *icon_view);
 
 void    nautilus_icon_view_register         (void);
-void    nautilus_icon_view_compact_register (void);
 
 NautilusIconContainer * nautilus_icon_view_get_icon_container (NautilusIconView *view);
 

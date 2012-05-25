@@ -18,8 +18,7 @@
 
   <enum id="org.gnome.nautilus.FolderView">
     <value nick="icon-view" value="0"/>
-    <value nick="compact-view" value="1"/>
-    <value nick="list-view" value="2"/>
+    <value nick="list-view" value="1"/>
   </enum>
 
   <enum id="org.gnome.nautilus.DateFormat">
@@ -56,7 +55,6 @@
   <schema id="org.gnome.nautilus" path="/org/gnome/nautilus/" gettext-domain="nautilus">
     <child name="preferences" schema="org.gnome.nautilus.preferences"/>
     <child name="icon-view" schema="org.gnome.nautilus.icon-view"/>
-    <child name="compact-view" schema="org.gnome.nautilus.compact-view"/>
     <child name="list-view" schema="org.gnome.nautilus.list-view"/>
     <child name="sidebar-panels" schema="org.gnome.nautilus.sidebar-panels"/>
     <child name="desktop" schema="org.gnome.nautilus.desktop"/>
@@ -171,12 +169,13 @@
     <key name="default-folder-viewer" enum="org.gnome.nautilus.FolderView">
       <aliases>
         <alias value='icon_view' target='icon-view'/>
-        <alias value='compact_view' target='compact-view'/>
+        <alias value='compact_view' target='icon-view'/>
+        <alias value='compact-view' target='icon-view'/>
         <alias value='list_view' target='list-view'/>
       </aliases>
       <default>'icon-view'</default>
       <_summary>Default folder viewer</_summary>
-      <_description>When a folder is visited this viewer is used unless you have selected another view for that particular folder. Possible values are "list-view", "icon-view" and "compact-view".</_description>
+      <_description>When a folder is visited this viewer is used unless you have selected another view for that particular folder. Possible values are "list-view", and "icon-view".</_description>
     </key>
     <key name="date-format" enum="org.gnome.nautilus.DateFormat">
       <default>'locale'</default>
@@ -242,19 +241,6 @@
 	     Available zoom levels:
 	     smallest (33%), smaller (50%), small (66%), standard (100%), large (150%),
 	     larger (200%), largest (400%)</_description>
-    </key>
-  </schema>
-
-  <schema id="org.gnome.nautilus.compact-view" path="/org/gnome/nautilus/compact-view/" gettext-domain="nautilus">
-    <key name="default-zoom-level" enum="org.gnome.nautilus.ZoomLevel">
-      <default>'standard'</default>
-      <_summary>Default compact view zoom level</_summary>
-      <_description>Default zoom level used by the compact view.</_description>
-    </key>
-    <key name="all-columns-have-same-width" type="b">
-      <default>false</default>
-      <_summary>All columns have same width</_summary>
-      <_description>If this preference is set, all columns in the compact view have the same width. Otherwise, the width of each column is determined seperately.</_description>
     </key>
   </schema>
 

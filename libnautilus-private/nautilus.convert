@@ -29,10 +29,6 @@ default-zoom-level = /apps/nautilus/icon_view/default_zoom_level
 thumbnail-size = /apps/nautilus/icon_view/thumbnail_size
 text-ellipsis-limit = /apps/nautilus/icon_view/text_ellipsis_limit
 
-[org.gnome.nautilus.compact-view]
-default-zoom-level = /apps/nautilus/compact_view/default_zoom_level
-all-columns-have-same-width = /apps/nautilus/compact_view/all_columns_have_same_width
-
 [org.gnome.nautilus.list-view]
 default-zoom-level = /apps/nautilus/list_view/default_zoom_level
 default-visible-columns = /apps/nautilus/list_view/default_visible_columns

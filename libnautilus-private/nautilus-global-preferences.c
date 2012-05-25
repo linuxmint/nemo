@@ -48,8 +48,6 @@ nautilus_global_preferences_get_default_folder_viewer_preference_as_iid (void)
 
 	if (preference_value == NAUTILUS_DEFAULT_FOLDER_VIEWER_LIST_VIEW) {
 		viewer_iid = NAUTILUS_LIST_VIEW_IID;
-	} else if (preference_value == NAUTILUS_DEFAULT_FOLDER_VIEWER_COMPACT_VIEW) {
-		viewer_iid = NAUTILUS_COMPACT_VIEW_IID;
 	} else {
 		viewer_iid = NAUTILUS_ICON_VIEW_IID;
 	}
@@ -72,7 +70,6 @@ nautilus_global_preferences_init (void)
 	nautilus_window_state = g_settings_new("org.gnome.nautilus.window-state");
 	nautilus_icon_view_preferences = g_settings_new("org.gnome.nautilus.icon-view");
 	nautilus_list_view_preferences = g_settings_new("org.gnome.nautilus.list-view");
-	nautilus_compact_view_preferences = g_settings_new("org.gnome.nautilus.compact-view");
 	nautilus_desktop_preferences = g_settings_new("org.gnome.nautilus.desktop");
 	nautilus_tree_sidebar_preferences = g_settings_new("org.gnome.nautilus.sidebar-panels.tree");
 	gnome_lockdown_preferences = g_settings_new("org.gnome.desktop.lockdown");

@@ -1277,7 +1277,6 @@ nautilus_application_startup (GApplication *app)
 	nautilus_icon_view_register ();
 	nautilus_desktop_icon_view_register ();
 	nautilus_list_view_register ();
-	nautilus_icon_view_compact_register ();
 #if ENABLE_EMPTY_VIEW
 	nautilus_empty_view_register ();
 #endif

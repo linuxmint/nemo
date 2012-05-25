@@ -103,7 +103,6 @@ static struct {
 	{"list_view_sort_reversed", "metadata::" NAUTILUS_METADATA_KEY_LIST_VIEW_SORT_REVERSED},
 	{"list_view_visible_columns", "metadata::" NAUTILUS_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS},
 	{"list_view_column_order", "metadata::" NAUTILUS_METADATA_KEY_LIST_VIEW_COLUMN_ORDER},
-	{"compact_view_zoom_level", "metadata::" NAUTILUS_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL},
 	{"window_geometry", "metadata::" NAUTILUS_METADATA_KEY_WINDOW_GEOMETRY},
 	{"window_scroll_position", "metadata::" NAUTILUS_METADATA_KEY_WINDOW_SCROLL_POSITION},
 	{"window_show_hidden_files", "metadata::" NAUTILUS_METADATA_KEY_WINDOW_SHOW_HIDDEN_FILES},

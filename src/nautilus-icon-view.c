@@ -68,8 +68,7 @@
 
 enum 
 {
-	PROP_COMPACT = 1,
-	PROP_SUPPORTS_AUTO_LAYOUT,
+	PROP_SUPPORTS_AUTO_LAYOUT = 1,
 	PROP_SUPPORTS_SCALING,
 	PROP_SUPPORTS_KEEP_ALIGNED,
 	PROP_SUPPORTS_LABELS_BESIDE_ICONS,
@@ -107,8 +106,6 @@ struct NautilusIconViewDetails
 	
 	gboolean filter_by_screen;
 	int num_screens;
-
-	gboolean compact;
 
 	gulong clipboard_handler_id;
 
@@ -231,7 +228,7 @@ nautilus_icon_view_supports_manual_layout (NautilusIconView *view)
 {
 	g_return_val_if_fail (NAUTILUS_IS_ICON_VIEW (view), FALSE);
 
-	return !nautilus_icon_view_is_compact (view);
+	return TRUE;
 }
 
 static gboolean
@@ -867,17 +864,15 @@ get_sort_criterion_by_sort_type (NautilusFileSortType sort_type)
 	return &sort_criteria[0];
 }
 
-#define DEFAULT_ZOOM_LEVEL(icon_view) icon_view->details->compact ? default_compact_zoom_level : default_zoom_level
+#define DEFAULT_ZOOM_LEVEL(icon_view) default_zoom_level
 
 static NautilusZoomLevel
 get_default_zoom_level (NautilusIconView *icon_view)
 {
-	NautilusZoomLevel default_zoom_level, default_compact_zoom_level;
+	NautilusZoomLevel default_zoom_level;
 
 	default_zoom_level = g_settings_get_enum (nautilus_icon_view_preferences,
 						  NAUTILUS_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL);
-	default_compact_zoom_level = g_settings_get_enum (nautilus_icon_view_preferences,
-							  NAUTILUS_PREFERENCES_COMPACT_VIEW_DEFAULT_ZOOM_LEVEL);
 
 	return CLAMP (DEFAULT_ZOOM_LEVEL(icon_view), NAUTILUS_ZOOM_LEVEL_SMALLEST, NAUTILUS_ZOOM_LEVEL_LARGEST);
 }
@@ -888,9 +883,8 @@ set_labels_beside_icons (NautilusIconView *icon_view)
 	gboolean labels_beside;
 
 	if (nautilus_icon_view_supports_labels_beside_icons (icon_view)) {
-		labels_beside = nautilus_icon_view_is_compact (icon_view) ||
-			g_settings_get_boolean (nautilus_icon_view_preferences,
-						NAUTILUS_PREFERENCES_ICON_VIEW_LABELS_BESIDE_ICONS);
+		labels_beside =  g_settings_get_boolean (nautilus_icon_view_preferences,
+							 NAUTILUS_PREFERENCES_ICON_VIEW_LABELS_BESIDE_ICONS);
 
 		if (labels_beside) {
 			nautilus_icon_container_set_label_position
@@ -901,18 +895,6 @@ set_labels_beside_icons (NautilusIconView *icon_view)
 				(get_icon_container (icon_view),
 				 NAUTILUS_ICON_LABEL_POSITION_UNDER);
 		}
-	}
-}
-
-static void
-set_columns_same_width (NautilusIconView *icon_view)
-{
-	gboolean all_columns_same_width;
-
-	if (nautilus_icon_view_is_compact (icon_view)) {
-		all_columns_same_width = g_settings_get_boolean (nautilus_compact_view_preferences,
-								 NAUTILUS_PREFERENCES_COMPACT_VIEW_ALL_COLUMNS_SAME_WIDTH);
-		nautilus_icon_container_set_all_columns_same_width (get_icon_container (icon_view), all_columns_same_width);
 	}
 }
 
@@ -941,18 +923,9 @@ nautilus_icon_view_begin_loading (NautilusView *view)
 
 	/* Set up the zoom level from the metadata. */
 	if (nautilus_view_supports_zooming (NAUTILUS_VIEW (icon_view))) {
-		if (icon_view->details->compact) {
-			level = nautilus_file_get_integer_metadata
-				(file, 
-				 NAUTILUS_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
-				 get_default_zoom_level (icon_view));
-		} else {
-			level = nautilus_file_get_integer_metadata
-				(file, 
-				 NAUTILUS_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
-				 get_default_zoom_level (icon_view));
-		}
-
+		level = nautilus_file_get_integer_metadata (file, 
+							    NAUTILUS_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
+							    get_default_zoom_level (icon_view));
 		nautilus_icon_view_set_zoom_level (icon_view, level, TRUE);
 	}
 
@@ -972,7 +945,6 @@ nautilus_icon_view_begin_loading (NautilusView *view)
 		 nautilus_icon_view_get_directory_keep_aligned (icon_view, file));
 
 	set_labels_beside_icons (icon_view);
-	set_columns_same_width (icon_view);
 
 	/* We must set auto-layout last, because it invokes the layout_changed 
 	 * callback, which works incorrectly if the other layout criteria are
@@ -1049,19 +1021,11 @@ nautilus_icon_view_set_zoom_level (NautilusIconView *view,
 		return;
 	}
 
-	if (view->details->compact) {
-		nautilus_file_set_integer_metadata
-			(nautilus_view_get_directory_as_file (NAUTILUS_VIEW (view)), 
-			 NAUTILUS_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
-			 get_default_zoom_level (view),
-			 new_level);
-	} else {
-		nautilus_file_set_integer_metadata
-			(nautilus_view_get_directory_as_file (NAUTILUS_VIEW (view)), 
-			 NAUTILUS_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
-			 get_default_zoom_level (view),
-			 new_level);
-	}
+	nautilus_file_set_integer_metadata
+		(nautilus_view_get_directory_as_file (NAUTILUS_VIEW (view)), 
+		 NAUTILUS_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
+		 get_default_zoom_level (view),
+		 new_level);
 
 	nautilus_icon_container_set_zoom_level (icon_container, new_level);
 
@@ -1762,54 +1726,6 @@ nautilus_icon_view_screen_changed (GtkWidget *widget,
 	}
 }
 
-static gboolean
-nautilus_icon_view_scroll_event (GtkWidget *widget,
-			   GdkEventScroll *scroll_event)
-{
-	NautilusIconView *icon_view;
-	GdkEvent *event_copy;
-	GdkEventScroll *scroll_event_copy;
-	gboolean ret;
-
-	icon_view = NAUTILUS_ICON_VIEW (widget);
-
-	if (icon_view->details->compact &&
-	    (scroll_event->direction == GDK_SCROLL_UP ||
-	     scroll_event->direction == GDK_SCROLL_DOWN ||
-	     scroll_event->direction == GDK_SCROLL_SMOOTH)) {
-		ret = nautilus_view_handle_scroll_event (NAUTILUS_VIEW (icon_view), scroll_event);
-		if (!ret) {
-			/* in column-wise layout, re-emit vertical mouse scroll events as horizontal ones,
-			 * if they don't bump zoom */
-			event_copy = gdk_event_copy ((GdkEvent *) scroll_event);
-			scroll_event_copy = (GdkEventScroll *) event_copy;
-
-			/* transform vertical integer smooth scroll events into horizontal events */
-			if (scroll_event_copy->direction == GDK_SCROLL_SMOOTH &&
-				   scroll_event_copy->delta_x == 0) {
-				if (scroll_event_copy->delta_y == 1.0) {
-					scroll_event_copy->direction = GDK_SCROLL_DOWN;
-				} else if (scroll_event_copy->delta_y == -1.0) {
-					scroll_event_copy->direction = GDK_SCROLL_UP;
-				}
-			}
-
-			if (scroll_event_copy->direction == GDK_SCROLL_UP) {
-				scroll_event_copy->direction = GDK_SCROLL_LEFT;
-			} else if (scroll_event_copy->direction == GDK_SCROLL_DOWN) {
-				scroll_event_copy->direction = GDK_SCROLL_RIGHT;
-			}
-
-			ret = GTK_WIDGET_CLASS (nautilus_icon_view_parent_class)->scroll_event (widget, scroll_event_copy);
-			gdk_event_free (event_copy);
-		}
-
-		return ret;
-	}
-
-	return GTK_WIDGET_CLASS (nautilus_icon_view_parent_class)->scroll_event (widget, scroll_event);
-}
-
 static void
 selection_changed_callback (NautilusIconContainer *container,
 			    NautilusIconView *icon_view)
@@ -2051,15 +1967,10 @@ default_zoom_level_changed_callback (gpointer callback_data)
 	if (nautilus_view_supports_zooming (NAUTILUS_VIEW (icon_view))) {
 		file = nautilus_view_get_directory_as_file (NAUTILUS_VIEW (icon_view));
 
-		if (nautilus_icon_view_is_compact (icon_view)) {
-			level = nautilus_file_get_integer_metadata (file, 
-								    NAUTILUS_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
-								    get_default_zoom_level (icon_view));
-		} else {
-			level = nautilus_file_get_integer_metadata (file, 
-								    NAUTILUS_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
-								    get_default_zoom_level (icon_view));
-		}
+		level = nautilus_file_get_integer_metadata (file, 
+							    NAUTILUS_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
+							    get_default_zoom_level (icon_view));
+
 		nautilus_view_zoom_to_level (NAUTILUS_VIEW (icon_view), level);
 	}
 }
@@ -2075,19 +1986,6 @@ labels_beside_icons_changed_callback (gpointer callback_data)
 
 	set_labels_beside_icons (icon_view);
 }
-
-static void
-all_columns_same_width_changed_callback (gpointer callback_data)
-{
-	NautilusIconView *icon_view;
-
-	g_assert (NAUTILUS_IS_ICON_VIEW (callback_data));
-
-	icon_view = NAUTILUS_ICON_VIEW (callback_data);
-
-	set_columns_same_width (icon_view);
-}
-
 
 static void
 nautilus_icon_view_sort_directories_first_changed (NautilusView *directory_view)
@@ -2369,10 +2267,6 @@ icon_view_scroll_to_file (NautilusView *view,
 static const char *
 nautilus_icon_view_get_id (NautilusView *view)
 {
-	if (nautilus_icon_view_is_compact (NAUTILUS_ICON_VIEW (view))) {
-		return FM_COMPACT_VIEW_ID;
-	}
-
 	return NAUTILUS_ICON_VIEW_ID;
 }
 
@@ -2387,17 +2281,6 @@ nautilus_icon_view_set_property (GObject         *object,
 	icon_view = NAUTILUS_ICON_VIEW (object);
 
 	switch (prop_id)  {
-	case PROP_COMPACT:
-		icon_view->details->compact = g_value_get_boolean (value);
-		if (icon_view->details->compact) {
-			nautilus_icon_container_set_layout_mode (get_icon_container (icon_view),
-								 gtk_widget_get_direction (GTK_WIDGET(icon_view)) == GTK_TEXT_DIR_RTL ?
-								 NAUTILUS_ICON_LAYOUT_T_B_R_L :
-								 NAUTILUS_ICON_LAYOUT_T_B_L_R);
-			nautilus_icon_container_set_forced_icon_size (get_icon_container (icon_view),
-								      NAUTILUS_ICON_SIZE_SMALLEST);
-		}
-		break;
 	case PROP_SUPPORTS_AUTO_LAYOUT:
 		icon_view->details->supports_auto_layout = g_value_get_boolean (value);
 		break;
@@ -2445,13 +2328,6 @@ nautilus_icon_view_finalize (GObject *object)
 					      text_attribute_names_changed_callback,
 					      icon_view);
 
-	g_signal_handlers_disconnect_by_func (nautilus_compact_view_preferences,
-					      default_zoom_level_changed_callback,
-					      icon_view);
-	g_signal_handlers_disconnect_by_func (nautilus_compact_view_preferences,
-					      all_columns_same_width_changed_callback,
-					      icon_view);
-
 	G_OBJECT_CLASS (nautilus_icon_view_parent_class)->finalize (object);
 }
 
@@ -2469,7 +2345,6 @@ nautilus_icon_view_class_init (NautilusIconViewClass *klass)
 
 	GTK_WIDGET_CLASS (klass)->destroy = nautilus_icon_view_destroy;
 	GTK_WIDGET_CLASS (klass)->screen_changed = nautilus_icon_view_screen_changed;
-	GTK_WIDGET_CLASS (klass)->scroll_event = nautilus_icon_view_scroll_event;
 	
 	nautilus_view_class->add_file = nautilus_icon_view_add_file;
 	nautilus_view_class->begin_loading = nautilus_icon_view_begin_loading;
@@ -2507,13 +2382,6 @@ nautilus_icon_view_class_init (NautilusIconViewClass *klass)
 	nautilus_view_class->get_first_visible_file = icon_view_get_first_visible_file;
 	nautilus_view_class->scroll_to_file = icon_view_scroll_to_file;
 
-	properties[PROP_COMPACT] =
-		g_param_spec_boolean ("compact",
-				      "Compact",
-				      "Whether this view provides a compact listing",
-				      FALSE,
-				      G_PARAM_WRITABLE |
-				      G_PARAM_CONSTRUCT_ONLY);
 	properties[PROP_SUPPORTS_AUTO_LAYOUT] =
 		g_param_spec_boolean ("supports-auto-layout",
 				      "Supports auto layout",
@@ -2591,15 +2459,6 @@ nautilus_icon_view_init (NautilusIconView *icon_view)
 				  G_CALLBACK (text_attribute_names_changed_callback),
 				  icon_view);
 
-	g_signal_connect_swapped (nautilus_compact_view_preferences,
-				  "changed::" NAUTILUS_PREFERENCES_COMPACT_VIEW_DEFAULT_ZOOM_LEVEL,
-				  G_CALLBACK (default_zoom_level_changed_callback),
-				  icon_view);
-	g_signal_connect_swapped (nautilus_compact_view_preferences,
-				  "changed::" NAUTILUS_PREFERENCES_COMPACT_VIEW_ALL_COLUMNS_SAME_WIDTH,
-				  G_CALLBACK (all_columns_same_width_changed_callback),
-				  icon_view);
-
 	g_signal_connect_object (get_icon_container (icon_view), "handle_netscape_url",
 				 G_CALLBACK (icon_view_handle_netscape_url), icon_view, 0);
 	g_signal_connect_object (get_icon_container (icon_view), "handle_uri_list",
@@ -2622,19 +2481,6 @@ nautilus_icon_view_create (NautilusWindowSlot *slot)
 
 	view = g_object_new (NAUTILUS_TYPE_ICON_VIEW,
 			     "window-slot", slot,
-			     "compact", FALSE,
-			     NULL);
-	return NAUTILUS_VIEW (view);
-}
-
-static NautilusView *
-nautilus_compact_view_create (NautilusWindowSlot *slot)
-{
-	NautilusIconView *view;
-
-	view = g_object_new (NAUTILUS_TYPE_ICON_VIEW,
-			     "window-slot", slot,
-			     "compact", TRUE,
 			     NULL);
 	return NAUTILUS_VIEW (view);
 }
@@ -2682,37 +2528,10 @@ static NautilusViewInfo nautilus_icon_view = {
 	nautilus_icon_view_supports_uri
 };
 
-static NautilusViewInfo nautilus_compact_view = {
-	FM_COMPACT_VIEW_ID,
-	/* translators: this is used in the view selection dropdown
-	 * of navigation windows and in the preferences dialog */
-	N_("Compact View"),
-	/* translators: this is used in the view menu */
-	N_("_Compact"),
-	N_("The compact view encountered an error."),
-	N_("The compact view encountered an error while starting up."),
-	N_("Display this location with the compact view."),
-	nautilus_compact_view_create,
-	nautilus_icon_view_supports_uri
-};
-
-gboolean
-nautilus_icon_view_is_compact (NautilusIconView *view)
-{
-	return view->details->compact;
-}
-
 void
 nautilus_icon_view_register (void)
 {
 	TRANSLATE_VIEW_INFO (nautilus_icon_view)
 		nautilus_view_factory_register (&nautilus_icon_view);
-}
-
-void
-nautilus_icon_view_compact_register (void)
-{
-	TRANSLATE_VIEW_INFO (nautilus_compact_view)
-		nautilus_view_factory_register (&nautilus_compact_view);
 }
 

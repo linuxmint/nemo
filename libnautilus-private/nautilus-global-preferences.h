@@ -94,14 +94,12 @@ typedef enum
 enum
 {
 	NAUTILUS_DEFAULT_FOLDER_VIEWER_ICON_VIEW,
-	NAUTILUS_DEFAULT_FOLDER_VIEWER_COMPACT_VIEW,
 	NAUTILUS_DEFAULT_FOLDER_VIEWER_LIST_VIEW,
 	NAUTILUS_DEFAULT_FOLDER_VIEWER_OTHER
 };
 
 /* These IIDs are used by the preferences code and in nautilus-application.c */
 #define NAUTILUS_ICON_VIEW_IID		"OAFIID:Nautilus_File_Manager_Icon_View"
-#define NAUTILUS_COMPACT_VIEW_IID	"OAFIID:Nautilus_File_Manager_Compact_View"
 #define NAUTILUS_LIST_VIEW_IID		"OAFIID:Nautilus_File_Manager_List_View"
 
 
@@ -119,10 +117,6 @@ enum
 /* ellipsization preferences */
 #define NAUTILUS_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT		"text-ellipsis-limit"
 #define NAUTILUS_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT		"text-ellipsis-limit"
-
-/* Compact View */
-#define NAUTILUS_PREFERENCES_COMPACT_VIEW_DEFAULT_ZOOM_LEVEL		"default-zoom-level"
-#define NAUTILUS_PREFERENCES_COMPACT_VIEW_ALL_COLUMNS_SAME_WIDTH	"all-columns-have-same-width"
 
 /* List View */
 #define NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_ZOOM_LEVEL		"default-zoom-level"
@@ -186,7 +180,6 @@ char *nautilus_global_preferences_get_default_folder_viewer_preference_as_iid (v
 GSettings *nautilus_preferences;
 GSettings *nautilus_icon_view_preferences;
 GSettings *nautilus_list_view_preferences;
-GSettings *nautilus_compact_view_preferences;
 GSettings *nautilus_desktop_preferences;
 GSettings *nautilus_tree_sidebar_preferences;
 GSettings *nautilus_window_state;
