@@ -2,7 +2,6 @@
 #define NAUTILUS_ICON_NAMES_H
 
 /* Icons for places */
-#define NAUTILUS_ICON_COMPUTER		"computer"
 #define NAUTILUS_ICON_DESKTOP		"user-desktop"
 #define NAUTILUS_ICON_FILESYSTEM	"drive-harddisk-system"
 #define NAUTILUS_ICON_FOLDER		"folder"

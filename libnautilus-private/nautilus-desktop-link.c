@@ -124,21 +124,6 @@ home_name_changed (gpointer callback_data)
 }
 
 static void
-computer_name_changed (gpointer callback_data)
-{
-	NautilusDesktopLink *link;
-
-	link = NAUTILUS_DESKTOP_LINK (callback_data);
-	g_assert (link->details->type == NAUTILUS_DESKTOP_LINK_COMPUTER);
-
-	g_free (link->details->display_name);
-	link->details->display_name = g_settings_get_string (nautilus_desktop_preferences,
-							     NAUTILUS_PREFERENCES_DESKTOP_COMPUTER_NAME);
-
-	nautilus_desktop_link_changed (link);
-}
-
-static void
 trash_name_changed (gpointer callback_data)
 {
 	NautilusDesktopLink *link;
@@ -185,20 +170,6 @@ nautilus_desktop_link_new (NautilusDesktopLinkType type)
 		g_signal_connect_swapped (nautilus_desktop_preferences,
 					  "changed::" NAUTILUS_PREFERENCES_DESKTOP_HOME_NAME,
 					  G_CALLBACK (home_name_changed),
-					  link);
-		break;
-
-	case NAUTILUS_DESKTOP_LINK_COMPUTER:
-		link->details->filename = g_strdup ("computer");
-		link->details->display_name = g_settings_get_string (nautilus_desktop_preferences,
-								     NAUTILUS_PREFERENCES_DESKTOP_COMPUTER_NAME);
-		link->details->activation_location = g_file_new_for_uri ("computer:///");
-		/* TODO: This might need a different icon: */
-		link->details->icon = g_themed_icon_new (NAUTILUS_ICON_COMPUTER);
-
-		g_signal_connect_swapped (nautilus_desktop_preferences,
-					  "changed::" NAUTILUS_PREFERENCES_DESKTOP_COMPUTER_NAME,
-					  G_CALLBACK (computer_name_changed),
 					  link);
 		break;
 
@@ -356,8 +327,7 @@ nautilus_desktop_link_can_rename (NautilusDesktopLink     *link)
 {
 	return (link->details->type == NAUTILUS_DESKTOP_LINK_HOME ||
 		link->details->type == NAUTILUS_DESKTOP_LINK_TRASH ||
-		link->details->type == NAUTILUS_DESKTOP_LINK_NETWORK ||
-		link->details->type == NAUTILUS_DESKTOP_LINK_COMPUTER);
+		link->details->type == NAUTILUS_DESKTOP_LINK_NETWORK);
 }
 
 gboolean
@@ -368,11 +338,6 @@ nautilus_desktop_link_rename (NautilusDesktopLink     *link,
 	case NAUTILUS_DESKTOP_LINK_HOME:
 		g_settings_set_string (nautilus_desktop_preferences,
 				       NAUTILUS_PREFERENCES_DESKTOP_HOME_NAME,
-				       name);
-		break;
-	case NAUTILUS_DESKTOP_LINK_COMPUTER:
-		g_settings_set_string (nautilus_desktop_preferences,
-				       NAUTILUS_PREFERENCES_DESKTOP_COMPUTER_NAME,
 				       name);
 		break;
 	case NAUTILUS_DESKTOP_LINK_TRASH:
@@ -425,12 +390,6 @@ desktop_link_finalize (GObject *object)
 		g_signal_handlers_disconnect_by_func (nautilus_desktop_preferences,
 						 home_name_changed,
 						 link);
-	}
-
-	if (link->details->type == NAUTILUS_DESKTOP_LINK_COMPUTER) {
-		g_signal_handlers_disconnect_by_func (nautilus_desktop_preferences,
-						      computer_name_changed,
-						      link);
 	}
 
 	if (link->details->type == NAUTILUS_DESKTOP_LINK_TRASH) {

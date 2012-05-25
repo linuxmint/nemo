@@ -44,11 +44,9 @@ show-only-directories = /apps/nautilus/sidebar_panels/tree/show_only_directories
 [org.gnome.nautilus.desktop]
 font = /apps/nautilus/preferences/desktop_font
 home-icon-visible = /apps/nautilus/desktop/home_icon_visible
-computer-icon-visible = /apps/nautilus/desktop/computer_icon_visible
 trash-icon-visible = /apps/nautilus/desktop/trash_icon_visible
 volumes-visible = /apps/nautilus/desktop/volumes_visible
 network-icon-visible = /apps/nautilus/desktop/network_icon_visible
-computer-icon-name = /apps/nautilus/desktop/computer_icon_name
 home-icon-name = /apps/nautilus/desktop/home_icon_name
 trash-icon-name = /apps/nautilus/desktop/trash_icon_name
 network-icon-name = /apps/nautilus/desktop/network_icon_name

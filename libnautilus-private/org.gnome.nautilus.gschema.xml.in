@@ -299,11 +299,6 @@
       <_summary>Home icon visible on desktop</_summary>
       <_description>If this is set to true, an icon linking to the home folder will be put on the desktop.</_description>
     </key>
-    <key name="computer-icon-visible" type="b">
-      <default>true</default>
-      <_summary>Computer icon visible on desktop</_summary>
-      <_description>If this is set to true, an icon linking to the computer location will be put on the desktop.</_description>
-    </key>
     <key name="trash-icon-visible" type="b">
       <default>true</default>
       <_summary>Trash icon visible on desktop</_summary>
@@ -318,11 +313,6 @@
       <default>false</default>
       <_summary>Network Servers icon visible on the desktop</_summary>
       <_description>If this is set to true, an icon linking to the Network Servers view will be put on the desktop.</_description>
-    </key>
-    <key name="computer-icon-name" type="s">
-      <default l10n="messages" context="computer-icon-name">'Computer'</default>
-      <_summary>Desktop computer icon name</_summary>
-      <_description>This name can be set if you want a custom name for the computer icon on the desktop.</_description>
     </key>
     <key name="home-icon-name" type="s">
       <default>''</default>

@@ -44,7 +44,6 @@ struct NautilusDesktopLinkMonitorDetails {
 	NautilusDirectory *desktop_dir;
 	
 	NautilusDesktopLink *home_link;
-	NautilusDesktopLink *computer_link;
 	NautilusDesktopLink *trash_link;
 	NautilusDesktopLink *network_link;
 
@@ -125,7 +124,6 @@ nautilus_desktop_link_monitor_delete_link (NautilusDesktopLinkMonitor *monitor,
 {
 	switch (nautilus_desktop_link_get_link_type (link)) {
 	case NAUTILUS_DESKTOP_LINK_HOME:
-	case NAUTILUS_DESKTOP_LINK_COMPUTER:
 	case NAUTILUS_DESKTOP_LINK_TRASH:
 	case NAUTILUS_DESKTOP_LINK_NETWORK:
 		/* just ignore. We don't allow you to delete these */
@@ -301,19 +299,6 @@ desktop_home_visible_changed (gpointer callback_data)
 }
 
 static void
-desktop_computer_visible_changed (gpointer callback_data)
-{
-	NautilusDesktopLinkMonitor *monitor;
-
-	monitor = NAUTILUS_DESKTOP_LINK_MONITOR (callback_data);
-
-	update_link_visibility (NAUTILUS_DESKTOP_LINK_MONITOR (callback_data),
-				&monitor->details->computer_link,
-				NAUTILUS_DESKTOP_LINK_COMPUTER,
-				NAUTILUS_PREFERENCES_DESKTOP_COMPUTER_VISIBLE);
-}
-
-static void
 desktop_trash_visible_changed (gpointer callback_data)
 {
 	NautilusDesktopLinkMonitor *monitor;
@@ -408,12 +393,6 @@ nautilus_desktop_link_monitor_init (NautilusDesktopLinkMonitor *monitor)
 					G_CALLBACK (desktop_home_visible_changed),
 					monitor);
 
-	create_link_and_add_preference (&monitor->details->computer_link,
-					NAUTILUS_DESKTOP_LINK_COMPUTER,
-					NAUTILUS_PREFERENCES_DESKTOP_COMPUTER_VISIBLE,
-					G_CALLBACK (desktop_computer_visible_changed),
-					monitor);
-
 	create_link_and_add_preference (&monitor->details->trash_link,
 					NAUTILUS_DESKTOP_LINK_TRASH,
 					NAUTILUS_PREFERENCES_DESKTOP_TRASH_VISIBLE,
@@ -482,11 +461,6 @@ desktop_link_monitor_finalize (GObject *object)
 	remove_link_and_preference (&monitor->details->home_link,
 				    NAUTILUS_PREFERENCES_DESKTOP_HOME_VISIBLE,
 				    G_CALLBACK (desktop_home_visible_changed),
-				    monitor);
-
-	remove_link_and_preference (&monitor->details->computer_link,
-				    NAUTILUS_PREFERENCES_DESKTOP_COMPUTER_VISIBLE,
-				    G_CALLBACK (desktop_computer_visible_changed),
 				    monitor);
 
 	remove_link_and_preference (&monitor->details->trash_link,

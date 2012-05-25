@@ -64,7 +64,6 @@
 #define POPUP_PATH_EXTENSION_ACTIONS                     "/background/Before Zoom Items/Extension Actions"
 
 #define NETWORK_URI          "network:"
-#define COMPUTER_URI         "computer:"
 
 static void
 action_close_window_slot_callback (GtkAction *action,
@@ -112,23 +111,6 @@ action_home_callback (GtkAction *action,
 
 	nautilus_window_slot_go_home (slot,
 				      nautilus_event_get_window_open_flags ());
-}
-
-static void
-action_go_to_computer_callback (GtkAction *action, 
-				gpointer user_data) 
-{
-	NautilusWindow *window;
-	NautilusWindowSlot *slot;
-	GFile *computer;
-
-	window = NAUTILUS_WINDOW (user_data);
-	slot = nautilus_window_get_active_slot (window);
-
-	computer = g_file_new_for_uri (COMPUTER_URI);
-	nautilus_window_slot_open_location (slot, computer,
-					    nautilus_event_get_window_open_flags ());
-	g_object_unref (computer);
 }
 
 static void
@@ -594,7 +576,6 @@ connect_proxy_cb (GtkActionGroup *action_group,
 
 static const char* icon_entries[] = {
 	"/MenuBar/Other Menus/Go/Home",
-	"/MenuBar/Other Menus/Go/Computer",
 	"/MenuBar/Other Menus/Go/Go to Templates",
 	"/MenuBar/Other Menus/Go/Go to Trash",
 	"/MenuBar/Other Menus/Go/Go to Network",
@@ -820,10 +801,6 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("_Home"), "<alt>Home",
   /* tooltip */                  N_("Open your personal folder"),
                                  G_CALLBACK (action_home_callback) },
-  /* name, stock id */         { "Go to Computer", NAUTILUS_ICON_COMPUTER,
-  /* label, accelerator */       N_("_Computer"), NULL,
-  /* tooltip */                  N_("Browse all local and remote disks and folders accessible from this computer"),
-                                 G_CALLBACK (action_go_to_computer_callback) },
   /* name, stock id */         { "Go to Network", NAUTILUS_ICON_NETWORK,
   /* label, accelerator */       N_("_Network"), NULL,
   /* tooltip */                  N_("Browse bookmarked and local network locations"),

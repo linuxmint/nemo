@@ -131,7 +131,7 @@ typedef struct
 	 * customize collecting the list of files in a directory.
 	 * For example, the NautilusDesktopDirectory overrides this so that it can
 	 * merge together the list of files in the $HOME/Desktop directory with
-	 * the list of standard icons (Computer, Home, Trash) on the desktop.
+	 * the list of standard icons (Home, Trash) on the desktop.
 	 */
 	GList *	 (* get_file_list)	 (NautilusDirectory *directory);
 

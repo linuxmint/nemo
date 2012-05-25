@@ -404,15 +404,13 @@ nautilus_icon_view_container_get_icon_text (NautilusIconContainer *container,
 }
 
 /* Sort as follows:
- *   0) computer link
- *   1) home link
- *   2) network link
- *   3) mount links
- *   4) other
- *   5) trash link
+ *   0) home link
+ *   1) network link
+ *   2) mount links
+ *   3) other
+ *   4) trash link
  */
 typedef enum {
-	SORT_COMPUTER_LINK,
 	SORT_HOME_LINK,
 	SORT_NETWORK_LINK,
 	SORT_MOUNT_LINK,
@@ -432,9 +430,6 @@ get_sort_category (NautilusFile *file)
 		link = nautilus_desktop_icon_file_get_link (NAUTILUS_DESKTOP_ICON_FILE (file));
 		if (link != NULL) {
 			switch (nautilus_desktop_link_get_link_type (link)) {
-			case NAUTILUS_DESKTOP_LINK_COMPUTER:
-				category = SORT_COMPUTER_LINK;
-				break;
 			case NAUTILUS_DESKTOP_LINK_HOME:
 				category = SORT_HOME_LINK;
 				break;

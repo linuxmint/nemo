@@ -92,7 +92,6 @@
 	                </placeholder>
 	                <separator/>
 			<menuitem name="Home" action="Home"/>
-			<menuitem name="Computer" action="Go to Computer"/>
 			<menuitem name="Go to Templates" action="Go to Templates"/>
 			<menuitem name="Go to Trash" action="Go to Trash"/>
 		        <menuitem name="Go to Network" action="Go to Network"/>
