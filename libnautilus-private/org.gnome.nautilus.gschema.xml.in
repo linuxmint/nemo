@@ -367,11 +367,6 @@
       <_summary>Width of the side pane</_summary>
       <_description>The default width of the side pane in new windows.</_description>
     </key>
-    <key name="start-with-toolbar" type="b">
-      <default>true</default>
-      <_summary>Show toolbar in new windows</_summary>
-      <_description>If set to true, newly opened windows will have toolbars visible.</_description>
-    </key>
     <key name="start-with-location-bar" type="b">
       <default>true</default>
       <_summary>Show location bar in new windows</_summary>

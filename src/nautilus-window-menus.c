@@ -935,11 +935,6 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* tooltip */                  N_("Toggle the display of hidden files in the current window"),
                                  G_CALLBACK (action_show_hidden_files_callback),
                                  TRUE },
-  /* name, stock id */     { "Show Hide Toolbar", NULL,
-  /* label, accelerator */   N_("_Main Toolbar"), NULL,
-  /* tooltip */              N_("Change the visibility of this window's main toolbar"),
-			     NULL,
-  /* is_active */            TRUE }, 
   /* name, stock id */     { "Show Hide Sidebar", NULL,
   /* label, accelerator */   N_("_Show Sidebar"), "F9",
   /* tooltip */              N_("Change the visibility of this window's side pane"),
@@ -1049,15 +1044,6 @@ window_menus_set_bindings (NautilusWindow *window)
 	GtkAction *action;
 
 	action_group = nautilus_window_get_main_action_group (window);
-
-	action = gtk_action_group_get_action (action_group,
-					      NAUTILUS_ACTION_SHOW_HIDE_TOOLBAR);
-
-	g_settings_bind (nautilus_window_state,
-			 NAUTILUS_WINDOW_STATE_START_WITH_TOOLBAR,
-			 action,
-			 "active",
-			 G_SETTINGS_BIND_DEFAULT);
 
 	action = gtk_action_group_get_action (action_group,
 					      NAUTILUS_ACTION_SHOW_HIDE_STATUSBAR);

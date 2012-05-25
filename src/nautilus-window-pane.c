@@ -242,15 +242,6 @@ nautilus_window_pane_ensure_search_bar (NautilusWindowPane *pane)
 
 	nautilus_toolbar_set_show_search_bar (NAUTILUS_TOOLBAR (pane->tool_bar), TRUE);
 
-	if (!g_settings_get_boolean (nautilus_window_state,
-				     NAUTILUS_WINDOW_STATE_START_WITH_TOOLBAR)) {
-		nautilus_toolbar_set_show_main_bar (NAUTILUS_TOOLBAR (pane->tool_bar), FALSE);
-		gtk_widget_show (pane->tool_bar);
-		nautilus_search_bar_clear (NAUTILUS_SEARCH_BAR (pane->search_bar));
-
-		pane->temporary_search_bar = TRUE;
-	}
-
 	nautilus_search_bar_grab_focus (NAUTILUS_SEARCH_BAR (pane->search_bar));
 }
 
@@ -655,6 +646,7 @@ nautilus_window_pane_constructed (GObject *obj)
 	action_group = nautilus_window_create_toolbar_action_group (window);
 	pane->tool_bar = nautilus_toolbar_new (action_group);
 	pane->action_group = action_group;
+	gtk_widget_show (pane->tool_bar);
 
 	setup_search_action (pane);
 	g_signal_connect (pane->action_group, "pre-activate",
@@ -666,14 +658,6 @@ nautilus_window_pane_constructed (GObject *obj)
 
 	/* start as non-active */
 	nautilus_window_pane_set_active (pane, FALSE);
-
-	g_settings_bind_with_mapping (nautilus_window_state,
-				      NAUTILUS_WINDOW_STATE_START_WITH_TOOLBAR,
-				      pane->tool_bar,
-				      "visible",
-				      G_SETTINGS_BIND_GET,
-				      nautilus_window_disable_chrome_mapping, NULL,
-				      window, NULL);
 
 	/* connect to the pathbar signals */
 	pane->path_bar = nautilus_toolbar_get_path_bar (NAUTILUS_TOOLBAR (pane->tool_bar));
@@ -966,12 +950,6 @@ nautilus_window_pane_ensure_location_bar (NautilusWindowPane *pane)
 
 	nautilus_toolbar_set_show_main_bar (NAUTILUS_TOOLBAR (pane->tool_bar), TRUE);
 	nautilus_toolbar_set_show_location_entry (NAUTILUS_TOOLBAR (pane->tool_bar), TRUE);
-
-	if (!g_settings_get_boolean (nautilus_window_state,
-				     NAUTILUS_WINDOW_STATE_START_WITH_TOOLBAR)) {
-		gtk_widget_show (pane->tool_bar);
-		pane->temporary_navigation_bar = TRUE;
-	}
 
 	nautilus_location_bar_activate
 		(NAUTILUS_LOCATION_BAR (pane->location_bar));
