@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eel.HEAD.he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-25 10:34+0300\n"
-"PO-Revision-Date: 2012-05-25 10:36+0200\n"
+"POT-Creation-Date: 2012-05-25 10:36+0300\n"
+"PO-Revision-Date: 2012-05-25 10:37+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "Language: he\n"
@@ -5258,8 +5258,8 @@ msgstr "העברת התיקייה הפתוחה לאשפה"
 #, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "תיקייה חדשה עם הבחירה (פריט אחד)"
+msgstr[1] "תיקייה חדשה עם הבחירה (%'d פריטים)"
 
 #: ../src/nautilus-view.c:8401
 #, c-format
