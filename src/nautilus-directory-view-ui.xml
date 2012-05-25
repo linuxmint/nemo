@@ -69,12 +69,6 @@
 			<menuitem name="Duplicate" action="Duplicate"/>
 			<menuitem name="Create Link" action="Create Link"/>
 			<menuitem name="Rename" action="Rename"/>
-			<menu action="CopyToMenu">
-				<menuitem name="Copy to next pane" action="Copy to next pane"/>
-			</menu>
-			<menu action="MoveToMenu">
-				<menuitem name="Move to next pane" action="Move to next pane"/>
-			</menu>
 		</placeholder>
 		<placeholder name="Dangerous File Items Placeholder">
 			<menuitem name="Trash" action="Trash"/>
@@ -161,12 +155,6 @@
 	<placeholder name="File Actions">
 		<menuitem name="Properties" action="Properties"/>
 		<menuitem name="Rename" action="Rename"/>
-		<menu action="CopyToMenu">
-			<menuitem name="Copy to next pane" action="Copy to next pane"/>
-		</menu>
-		<menu action="MoveToMenu">
-			<menuitem name="Move to next pane" action="Move to next pane"/>
-		</menu>
 	</placeholder>
 	<separator name="Dangerous separator"/>
 	<placeholder name="Dangerous File Actions">

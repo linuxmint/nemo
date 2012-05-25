@@ -1527,9 +1527,9 @@ focus_in_event_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_
 	NautilusWindowSlot *slot;
 	NautilusListView *list_view = NAUTILUS_LIST_VIEW (user_data);
 
-	/* make the corresponding slot (and the pane that contains it) active */
+	/* make the corresponding slot (and the window that contains it) active */
 	slot = nautilus_view_get_nautilus_window_slot (NAUTILUS_VIEW (list_view));
-	nautilus_window_slot_make_hosting_pane_active (slot);
+	nautilus_window_slot_make_hosting_window_active (slot);
 
 	return FALSE;
 }

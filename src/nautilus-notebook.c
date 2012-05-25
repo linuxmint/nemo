@@ -120,7 +120,7 @@ find_notebook_at_pointer (gint abs_x, gint abs_y)
 	/* toplevel should be an NautilusWindow */
 	if (toplevel != NULL && NAUTILUS_IS_WINDOW (toplevel))
 	{
-		return NAUTILUS_NOTEBOOK (NAUTILUS_WINDOW (toplevel)->details->active_pane->notebook);
+		return NAUTILUS_NOTEBOOK (NAUTILUS_WINDOW (toplevel)->details->notebook);
 	}
 
 	return NULL;

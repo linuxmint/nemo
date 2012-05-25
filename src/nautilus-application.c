@@ -570,19 +570,14 @@ mount_removed_callback (GVolumeMonitor *monitor,
 		window = NAUTILUS_WINDOW (node->data);
 		if (window != NULL && !NAUTILUS_IS_DESKTOP_WINDOW (window)) {
 			GList *l;
-			GList *lp;
 
-			for (lp = window->details->panes; lp != NULL; lp = lp->next) {
-				NautilusWindowPane *pane;
-				pane = (NautilusWindowPane*) lp->data;
-				for (l = pane->slots; l != NULL; l = l->next) {
-					slot = l->data;
-					n_slots++;
-					if (nautilus_window_slot_should_close_with_mount (slot, mount)) {
-						close_list = g_list_prepend (close_list, slot);
-					}
-				} /* for all slots */
-			} /* for all panes */
+			for (l = window->details->slots; l != NULL; l = l->next) {
+				slot = l->data;
+				n_slots++;
+				if (nautilus_window_slot_should_close_with_mount (slot, mount)) {
+					close_list = g_list_prepend (close_list, slot);
+				}
+			} /* for all slots */
 		}
 	}
 
@@ -598,11 +593,11 @@ mount_removed_callback (GVolumeMonitor *monitor,
 		slot = node->data;
 
 		if (slot != force_no_close_slot) {
-			nautilus_window_pane_slot_close (slot->pane, slot);
+			nautilus_window_slot_close (slot->window, slot);
 		} else {
 			computer = g_file_new_for_path (g_get_home_dir ());
 			nautilus_window_slot_open_location (slot, computer, 0);
-			g_object_unref(computer);
+			g_object_unref (computer);
 		}
 	}
 

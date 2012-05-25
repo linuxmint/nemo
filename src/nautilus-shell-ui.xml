@@ -1,6 +1,5 @@
 <ui>
 <accelerator action="Search"/>
-<accelerator action="SplitViewNextPane"/>
 <accelerator action="TabsPrevious"/>
 <accelerator action="TabsNext"/>
 <accelerator action="TabsMoveLeft"/>
@@ -37,8 +36,6 @@
 		<placeholder name="Clipboard Actions">
                 </placeholder>
 		<separator/>
-		<placeholder name="Copy Move to Placeholder"/>
-		<separator/>
 		<placeholder name="Select Items"/>
 		<separator/>
 		<placeholder name="File Items Placeholder"/>
@@ -63,7 +60,6 @@
 				<separator/>
 				<menuitem name="Show Hide Sidebar" action="Show Hide Sidebar"/>
 			</menu>
-			<menuitem name="Show Hide Extra Pane" action="Show Hide Extra Pane"/>
 		</placeholder>
 		<separator/>
 		<placeholder name="View Preferences Placeholder"/>
@@ -88,7 +84,6 @@
 			<menuitem name="Up" action="Up"/>
 			<menuitem name="Back" action="Back"/>
 			<menuitem name="Forward"  action="Forward"/>
-			<menuitem name="SplitViewSameLocationMenu" action="SplitViewSameLocation"/>
 	                </placeholder>
 	                <separator/>
 			<menuitem name="Home" action="Home"/>

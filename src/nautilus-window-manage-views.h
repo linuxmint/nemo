@@ -28,7 +28,6 @@
 #define NAUTILUS_WINDOW_MANAGE_VIEWS_H
 
 #include "nautilus-window.h"
-#include "nautilus-window-pane.h"
 
 void nautilus_window_manage_views_close_slot (NautilusWindowSlot *slot);
 

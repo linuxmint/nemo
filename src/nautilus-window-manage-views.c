@@ -37,6 +37,7 @@
 #include "nautilus-window-private.h"
 #include "nautilus-window-slot.h"
 #include "nautilus-trash-bar.h"
+#include "nautilus-toolbar.h"
 #include "nautilus-view-factory.h"
 #include "nautilus-x-content-bar.h"
 #include <eel/eel-accessibility.h>
@@ -265,7 +266,7 @@ viewed_file_changed_callback (NautilusFile *file,
 	gboolean is_in_trash, was_in_trash;
 
         g_assert (NAUTILUS_IS_FILE (file));
-	g_assert (NAUTILUS_IS_WINDOW_PANE (slot->pane));
+	g_assert (NAUTILUS_IS_WINDOW (slot->window));
 	g_assert (file == slot->viewed_file);
 
         if (!nautilus_file_is_not_yet_confirmed (file)) {
@@ -313,11 +314,14 @@ viewed_file_changed_callback (NautilusFile *file,
 				/* the path bar URI will be set to go_to_uri immediately
 				 * in begin_location_change, but we don't want the
 				 * inexistant children to show up anymore */
-				if (slot == slot->pane->active_slot) {
+				if (slot == slot->window->details->active_slot) {
+					GtkWidget *path_bar;
+
 					/* multiview-TODO also update NautilusWindowSlot
 					 * [which as of writing doesn't save/store any path bar state]
 					 */
-					nautilus_path_bar_clear_buttons (NAUTILUS_PATH_BAR (slot->pane->path_bar));
+					path_bar = nautilus_toolbar_get_path_bar (NAUTILUS_TOOLBAR (slot->window->details->toolbar));
+					nautilus_path_bar_clear_buttons (NAUTILUS_PATH_BAR (path_bar));
 				}
 				
 				nautilus_window_slot_open_location (slot, go_to_file, 0);
@@ -335,8 +339,8 @@ viewed_file_changed_callback (NautilusFile *file,
 				   slot->location)) {
                         g_object_unref (slot->location);
                         slot->location = new_location;
-			if (slot == slot->pane->active_slot) {
-				nautilus_window_pane_sync_location_widgets (slot->pane);
+			if (slot == slot->window->details->active_slot) {
+				nautilus_window_sync_location_widgets (slot->window);
 			}
                 } else {
 			/* TODO?
@@ -408,13 +412,11 @@ nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
 {
 	NautilusWindow *window;
         NautilusWindow *target_window;
-        NautilusWindowPane *pane;
         NautilusWindowSlot *target_slot;
 	NautilusWindowOpenFlags slot_flags;
 	GFile *old_location;
 	char *old_uri, *new_uri;
 	int new_slot_position;
-	GList *l;
 	gboolean use_same;
 	gboolean is_desktop;
 
@@ -485,8 +487,8 @@ nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
 			slot_flags = NAUTILUS_WINDOW_OPEN_SLOT_APPEND;
 		}
 
-		target_slot = nautilus_window_pane_open_slot (nautilus_window_get_active_pane (window),
-							      slot_flags);
+		target_slot = nautilus_window_open_slot (window,
+							 slot_flags);
 	}
 
 	/* close the current window if the flags say so */
@@ -526,17 +528,6 @@ nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
 
         begin_location_change (target_slot, location, old_location, new_selection,
 			       NAUTILUS_LOCATION_CHANGE_STANDARD, 0, NULL, callback, user_data);
-
-	/* Additionally, load this in all slots that have no location, this means
-	   we load both panes in e.g. a newly opened dual pane window. */
-	for (l = target_window->details->panes; l != NULL; l = l->next) {
-		pane = l->data;
-		slot = pane->active_slot;
-		if (slot->location == NULL && slot->pending_location == NULL) {
-			begin_location_change (slot, location, old_location, new_selection,
-					       NAUTILUS_LOCATION_CHANGE_STANDARD, 0, NULL, NULL, NULL);
-		}
-	}
 
 	g_clear_object (&old_location);
 }
@@ -924,7 +915,7 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 			/* We're missing a previous location (if opened location
 			 * in a new tab) so close it and return */
 			if (slot->location == NULL) {
-				nautilus_window_pane_slot_close (slot->pane, slot);
+				nautilus_window_slot_close (slot->window, slot);
 			} else {
 				/* We disconnected this, so we need to re-connect it */
 				viewed_file = nautilus_file_get (slot->location);
@@ -1420,11 +1411,11 @@ update_for_new_location (NautilusWindowSlot *slot)
 	nautilus_window_slot_update_title (slot);
 	nautilus_window_slot_update_icon (slot);
 
-	if (slot == slot->pane->active_slot) {
-		nautilus_window_pane_sync_location_widgets (slot->pane);
+	if (slot == slot->window->details->active_slot) {
+		nautilus_window_sync_location_widgets (slot->window);
 
 		if (location_really_changed) {
-			nautilus_window_pane_sync_search_widgets (slot->pane);
+			nautilus_window_sync_search_widgets (slot->window);
 		}
 	}
 }

@@ -61,7 +61,7 @@ struct NautilusWindowSlotClass {
 struct NautilusWindowSlot {
 	GtkBox parent;
 
-	NautilusWindowPane *pane;
+	NautilusWindow *window;
 
 	/* slot contains
  	 *  1) an event box containing extra_location_widgets
@@ -120,7 +120,7 @@ struct NautilusWindowSlot {
 
 GType   nautilus_window_slot_get_type (void);
 
-NautilusWindowSlot * nautilus_window_slot_new (NautilusWindowPane *pane);
+NautilusWindowSlot * nautilus_window_slot_new (NautilusWindow *window);
 
 void    nautilus_window_slot_update_title		   (NautilusWindowSlot *slot);
 void    nautilus_window_slot_update_icon		   (NautilusWindowSlot *slot);
@@ -172,7 +172,7 @@ void    nautilus_window_slot_remove_extra_location_widgets (NautilusWindowSlot *
 NautilusView * nautilus_window_slot_get_current_view     (NautilusWindowSlot *slot);
 char           * nautilus_window_slot_get_current_uri      (NautilusWindowSlot *slot);
 NautilusWindow * nautilus_window_slot_get_window           (NautilusWindowSlot *slot);
-void           nautilus_window_slot_make_hosting_pane_active (NautilusWindowSlot *slot);
+void           nautilus_window_slot_make_hosting_window_active (NautilusWindowSlot *slot);
 
 gboolean nautilus_window_slot_should_close_with_mount (NautilusWindowSlot *slot,
 						       GMount *mount);

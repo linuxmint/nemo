@@ -75,7 +75,7 @@ action_close_window_slot_callback (GtkAction *action,
 	window = NAUTILUS_WINDOW (user_data);
 	slot = nautilus_window_get_active_slot (window);
 
-	nautilus_window_pane_slot_close (slot->pane, slot);
+	nautilus_window_slot_close (window, slot);
 }
 
 static void
@@ -395,35 +395,6 @@ action_forward_callback (GtkAction *action,
 }
 
 static void
-action_split_view_switch_next_pane_callback(GtkAction *action,
-					    gpointer user_data)
-{
-	nautilus_window_pane_grab_focus (nautilus_window_get_next_pane (NAUTILUS_WINDOW (user_data)));
-}
-
-static void
-action_split_view_same_location_callback (GtkAction *action,
-					  gpointer user_data)
-{
-	NautilusWindow *window;
-	NautilusWindowPane *next_pane;
-	GFile *location;
-
-	window = NAUTILUS_WINDOW (user_data);
-	next_pane = nautilus_window_get_next_pane (window);
-
-	if (!next_pane) {
-		return;
-	}
-	location = nautilus_window_slot_get_location (next_pane->active_slot);
-	if (location) {
-		nautilus_window_slot_open_location (nautilus_window_get_active_slot (window),
-						    location, 0);
-		g_object_unref (location);
-	}
-}
-
-static void
 action_show_hide_sidebar_callback (GtkAction *action, 
 				   gpointer user_data)
 {
@@ -436,78 +407,6 @@ action_show_hide_sidebar_callback (GtkAction *action,
 	} else {
 		nautilus_window_hide_sidebar (window);
 	}
-}
-
-static void
-action_split_view_callback (GtkAction *action,
-			    gpointer user_data)
-{
-	NautilusWindow *window;
-	gboolean is_active;
-
-	window = NAUTILUS_WINDOW (user_data);
-
-	is_active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
-	if (is_active != nautilus_window_split_view_showing (window)) {
-		NautilusWindowSlot *slot;
-
-		if (is_active) {
-			nautilus_window_split_view_on (window);
-		} else {
-			nautilus_window_split_view_off (window);
-		}
-
-		slot = nautilus_window_get_active_slot (window);
-		if (slot != NULL) {
-			nautilus_view_update_menus (slot->content_view);
-		}
-	}
-}
-
-static void
-nautilus_window_update_split_view_actions_sensitivity (NautilusWindow *window)
-{
-	GtkActionGroup *action_group;
-	GtkAction *action;
-	gboolean have_multiple_panes;
-	gboolean next_pane_is_in_same_location;
-	GFile *active_pane_location;
-	GFile *next_pane_location;
-	NautilusWindowPane *next_pane;
-	NautilusWindowSlot *active_slot;
-
-	active_slot = nautilus_window_get_active_slot (window);
-	action_group = nautilus_window_get_main_action_group (window);
-
-	/* collect information */
-	have_multiple_panes = nautilus_window_split_view_showing (window);
-	if (active_slot != NULL) {
-		active_pane_location = nautilus_window_slot_get_location (active_slot);
-	} else {
-		active_pane_location = NULL;
-	}
-
-	next_pane = nautilus_window_get_next_pane (window);
-	if (next_pane && next_pane->active_slot) {
-		next_pane_location = nautilus_window_slot_get_location (next_pane->active_slot);
-		next_pane_is_in_same_location = (active_pane_location && next_pane_location &&
-						 g_file_equal (active_pane_location, next_pane_location));
-	} else {
-		next_pane_location = NULL;
-		next_pane_is_in_same_location = FALSE;
-	}
-
-	/* switch to next pane */
-	action = gtk_action_group_get_action (action_group, "SplitViewNextPane");
-	gtk_action_set_sensitive (action, have_multiple_panes);
-
-	/* same location */
-	action = gtk_action_group_get_action (action_group, "SplitViewSameLocation");
-	gtk_action_set_sensitive (action, have_multiple_panes && !next_pane_is_in_same_location);
-
-	/* clean up */
-	g_clear_object (&active_pane_location);
-	g_clear_object (&next_pane_location);
 }
 
 /* TODO: bind all of this with g_settings_bind and GBinding */
@@ -530,12 +429,6 @@ nautilus_window_update_show_hide_menu_items (NautilusWindow *window)
 	guint current_value;
 
 	action_group = nautilus_window_get_main_action_group (window);
-
-	action = gtk_action_group_get_action (action_group,
-					      NAUTILUS_ACTION_SHOW_HIDE_EXTRA_PANE);
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-				      nautilus_window_split_view_showing (window));
-	nautilus_window_update_split_view_actions_sensitivity (window);
 
 	action = gtk_action_group_get_action (action_group,
 					      "Sidebar Places");
@@ -630,67 +523,54 @@ action_go_to_location_callback (GtkAction *action,
 				gpointer user_data)
 {
 	NautilusWindow *window = user_data;
-	NautilusWindowPane *pane;
-
-	pane = nautilus_window_get_active_pane (window);
-	nautilus_window_pane_ensure_location_bar (pane);
+	nautilus_window_ensure_location_bar (window);
 }
 
 static void
 action_tabs_previous_callback (GtkAction *action,
 			       gpointer user_data)
 {
-	NautilusWindowPane *pane;
 	NautilusWindow *window = user_data;
 
-	pane = nautilus_window_get_active_pane (window);
-	nautilus_notebook_set_current_page_relative (NAUTILUS_NOTEBOOK (pane->notebook), -1);
+	nautilus_notebook_set_current_page_relative (NAUTILUS_NOTEBOOK (window->details->notebook), -1);
 }
 
 static void
 action_tabs_next_callback (GtkAction *action,
 			   gpointer user_data)
 {
-	NautilusWindowPane *pane;
 	NautilusWindow *window = user_data;
 
-	pane = nautilus_window_get_active_pane (window);
-	nautilus_notebook_set_current_page_relative (NAUTILUS_NOTEBOOK (pane->notebook), 1);
+	nautilus_notebook_set_current_page_relative (NAUTILUS_NOTEBOOK (window->details->notebook), 1);
 }
 
 static void
 action_tabs_move_left_callback (GtkAction *action,
 				gpointer user_data)
 {
-	NautilusWindowPane *pane;
 	NautilusWindow *window = user_data;
 
-	pane = nautilus_window_get_active_pane (window);
-	nautilus_notebook_reorder_current_child_relative (NAUTILUS_NOTEBOOK (pane->notebook), -1);
+	nautilus_notebook_reorder_current_child_relative (NAUTILUS_NOTEBOOK (window->details->notebook), -1);
 }
 
 static void
 action_tabs_move_right_callback (GtkAction *action,
 				 gpointer user_data)
 {
-	NautilusWindowPane *pane;
 	NautilusWindow *window = user_data;
 
-	pane = nautilus_window_get_active_pane (window);
-	nautilus_notebook_reorder_current_child_relative (NAUTILUS_NOTEBOOK (pane->notebook), 1);
+	nautilus_notebook_reorder_current_child_relative (NAUTILUS_NOTEBOOK (window->details->notebook), 1);
 }
 
 static void
 action_tab_change_action_activate_callback (GtkAction *action, 
 					    gpointer user_data)
 {
-	NautilusWindowPane *pane;
 	NautilusWindow *window = user_data;
 	GtkNotebook *notebook;
 	int num;
 
-	pane = nautilus_window_get_active_pane (window);
-	notebook = GTK_NOTEBOOK (pane->notebook);
+	notebook = GTK_NOTEBOOK (window->details->notebook);
 
 	num = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action), "num"));
 	if (num < gtk_notebook_get_n_pages (notebook)) {
@@ -834,12 +714,6 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "Go to Location", NULL, N_("_Location..."),
                                  "<control>L", N_("Specify a location to open"),
                                  G_CALLBACK (action_go_to_location_callback) },
-  /* name, stock id, label */  { "SplitViewNextPane", NULL, N_("S_witch to Other Pane"),
-				 "F6", N_("Move focus to the other pane in a split view window"),
-				 G_CALLBACK (action_split_view_switch_next_pane_callback) },
-  /* name, stock id, label */  { "SplitViewSameLocation", NULL, N_("Sa_me Location as Other Pane"),
-				 NULL, N_("Go to the same location as in the extra pane"),
-				 G_CALLBACK (action_split_view_same_location_callback) },
   /* name, stock id, label */  { "Add Bookmark", GTK_STOCK_ADD, N_("_Add Bookmark"),
                                  "<control>d", N_("Add a bookmark for the current location to this menu"),
                                  G_CALLBACK (action_add_bookmark_callback) },
@@ -876,11 +750,6 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* label, accelerator */   N_("_Search for Files..."), "<control>f",
   /* tooltip */              N_("Search documents and folders by name"),
 			     NULL,
-  /* is_active */            FALSE },
-  /* name, stock id */     { NAUTILUS_ACTION_SHOW_HIDE_EXTRA_PANE, NULL,
-  /* label, accelerator */   N_("E_xtra Pane"), "F3",
-  /* tooltip */              N_("Open an extra folder view side-by-side"),
-                             G_CALLBACK (action_split_view_callback),
   /* is_active */            FALSE },
 };
 
@@ -997,10 +866,6 @@ nautilus_window_initialize_actions (NautilusWindow *window)
 
 	window_menus_set_bindings (window);
 	nautilus_window_update_show_hide_menu_items (window);
-
-	g_signal_connect (window, "loading_uri",
-			  G_CALLBACK (nautilus_window_update_split_view_actions_sensitivity),
-			  NULL);
 }
 
 static void

@@ -166,8 +166,6 @@ nautilus_SOURCES = \
 	nautilus-window-manage-views.c		\
 	nautilus-window-manage-views.h		\
 	nautilus-window-menus.c         	\
-	nautilus-window-pane.c	\
-	nautilus-window-pane.h	\
 	nautilus-window-private.h		\
 	nautilus-window-slot.c			\
 	nautilus-window-slot.h			\

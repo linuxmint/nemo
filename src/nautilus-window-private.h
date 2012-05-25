@@ -30,7 +30,6 @@
 
 #include "nautilus-window.h"
 #include "nautilus-window-slot.h"
-#include "nautilus-window-pane.h"
 #include "nautilus-navigation-state.h"
 #include "nautilus-bookmark-list.h"
 
@@ -72,11 +71,13 @@ struct NautilusWindowDetails
 	 */
 	gboolean temporarily_ignore_view_signals;
 
-        /* available panes, and active pane.
+        GtkWidget *notebook;
+
+        /* available slots, and active slot.
          * Both of them may never be NULL.
          */
-        GList *panes;
-        NautilusWindowPane *active_pane;
+        GList *slots;
+        NautilusWindowSlot *active_slot;
 
         GtkWidget *content_paned;
         NautilusNavigationState *nav_state;
@@ -85,9 +86,15 @@ struct NautilusWindowDetails
         int side_pane_width;
         GtkWidget *sidebar;
         gchar *sidebar_id;
-        
+
+        /* Main view */
+        GtkWidget *main_view;
+
         /* Toolbar */
         GtkWidget *toolbar;
+        GtkActionGroup *toolbar_action_group;
+        gboolean temporary_navigation_bar;
+        gboolean temporary_search_bar;
 
         guint extensions_toolbar_merge_id;
         GtkActionGroup *extensions_toolbar_action_group;
@@ -95,8 +102,6 @@ struct NautilusWindowDetails
         /* focus widget before the location bar has been shown temporarily */
         GtkWidget *last_focus_widget;
         	
-        /* split view */
-        GtkWidget *split_view_hpane;
 
         gboolean disable_chrome;
 
@@ -119,7 +124,6 @@ typedef void (*NautilusBookmarkFailedCallback) (NautilusWindow *window,
 
 void               nautilus_window_load_view_as_menus                    (NautilusWindow    *window);
 void               nautilus_window_load_extension_menus                  (NautilusWindow    *window);
-NautilusWindowPane *nautilus_window_get_next_pane                        (NautilusWindow *window);
 void               nautilus_menus_append_bookmark_to_menu                (NautilusWindow    *window, 
                                                                           NautilusBookmark  *bookmark, 
                                                                           const char        *parent_path,
@@ -135,9 +139,6 @@ NautilusWindowSlot *nautilus_window_get_slot_for_view                    (Nautil
 
 void                 nautilus_window_set_active_slot                     (NautilusWindow    *window,
 									  NautilusWindowSlot *slot);
-void                 nautilus_window_set_active_pane                     (NautilusWindow *window,
-                                                                          NautilusWindowPane *new_pane);
-NautilusWindowPane * nautilus_window_get_active_pane                     (NautilusWindow *window);
 
 
 /* sync window GUI with current slot. Used when changing slots,
@@ -151,15 +152,11 @@ void nautilus_window_sync_zoom_widgets     (NautilusWindow *window);
 void nautilus_window_sync_up_button        (NautilusWindow *window);
 
 /* window menus */
-GtkActionGroup *nautilus_window_create_toolbar_action_group (NautilusWindow *window);
+GtkActionGroup    *nautilus_window_create_toolbar_action_group           (NautilusWindow *window);
 void               nautilus_window_initialize_actions                    (NautilusWindow    *window);
 void               nautilus_window_initialize_menus                      (NautilusWindow    *window);
 void               nautilus_window_finalize_menus                        (NautilusWindow    *window);
 
 void               nautilus_window_update_show_hide_menu_items           (NautilusWindow     *window);
-
-/* window toolbar */
-void               nautilus_window_close_pane                            (NautilusWindow    *window,
-                                                                          NautilusWindowPane *pane);
 
 #endif /* NAUTILUS_WINDOW_PRIVATE_H */

@@ -5086,23 +5086,6 @@ get_strings_for_environment_variables (NautilusView *view, GList *selected_files
 	}
 }
 
-static NautilusView *
-get_directory_view_of_extra_pane (NautilusView *view)
-{
-	NautilusWindowSlot *slot;
-	NautilusView *next_view;
-
-	slot = nautilus_window_get_extra_slot (nautilus_view_get_nautilus_window (view));
-	if (slot != NULL) {
-		next_view = nautilus_window_slot_get_current_view (slot);
-
-		if (NAUTILUS_IS_VIEW (next_view)) {
-			return NAUTILUS_VIEW (next_view);
-		}
-	}
-	return NULL;
-}
-
 /*
  * Set up some environment variables that scripts can use
  * to take advantage of the current Nautilus state.
@@ -5114,7 +5097,6 @@ set_script_environment_variables (NautilusView *view, GList *selected_files)
 	char *uris;
 	char *uri;
 	char *geometry_string;
-	NautilusView *next_view;
 
 	get_strings_for_environment_variables (view, selected_files,
 					       &file_paths, &uris, &uri);
@@ -5132,30 +5114,6 @@ set_script_environment_variables (NautilusView *view, GList *selected_files)
 		(GTK_WINDOW (nautilus_view_get_containing_window (view)));
 	g_setenv ("NAUTILUS_SCRIPT_WINDOW_GEOMETRY", geometry_string, TRUE);
 	g_free (geometry_string);
-
-	/* next pane */
-	next_view = get_directory_view_of_extra_pane (view);
-	if (next_view) {
-		GList *next_pane_selected_files;
-		next_pane_selected_files = nautilus_view_get_selection (next_view);
-
-		get_strings_for_environment_variables (next_view, next_pane_selected_files,
-						       &file_paths, &uris, &uri);
-		nautilus_file_list_free (next_pane_selected_files);
-	} else {
-		file_paths = g_strdup("");
-		uris = g_strdup("");
-		uri = g_strdup("");
-	}
-
-	g_setenv ("NAUTILUS_SCRIPT_NEXT_PANE_SELECTED_FILE_PATHS", file_paths, TRUE);
-	g_free (file_paths);
-
-	g_setenv ("NAUTILUS_SCRIPT_NEXT_PANE_SELECTED_URIS", uris, TRUE);
-	g_free (uris);
-
-	g_setenv ("NAUTILUS_SCRIPT_NEXT_PANE_CURRENT_URI", uri, TRUE);
-	g_free (uri);
 }
 
 /* Unset all the special script environment variables. */
@@ -5166,9 +5124,6 @@ unset_script_environment_variables (void)
 	g_unsetenv ("NAUTILUS_SCRIPT_SELECTED_URIS");
 	g_unsetenv ("NAUTILUS_SCRIPT_CURRENT_URI");
 	g_unsetenv ("NAUTILUS_SCRIPT_WINDOW_GEOMETRY");
-	g_unsetenv ("NAUTILUS_SCRIPT_NEXT_PANE_SELECTED_FILE_PATHS");
-	g_unsetenv ("NAUTILUS_SCRIPT_NEXT_PANE_SELECTED_URIS");
-	g_unsetenv ("NAUTILUS_SCRIPT_NEXT_PANE_CURRENT_URI");
 }
 
 static void
@@ -5757,10 +5712,7 @@ action_open_scripts_folder_callback (GtkAction *action,
 		   "NAUTILUS_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected files (only if local)\n\n"
 		   "NAUTILUS_SCRIPT_SELECTED_URIS: newline-delimited URIs for selected files\n\n"
 		   "NAUTILUS_SCRIPT_CURRENT_URI: URI for current location\n\n"
-		   "NAUTILUS_SCRIPT_WINDOW_GEOMETRY: position and size of current window\n\n"
-		   "NAUTILUS_SCRIPT_NEXT_PANE_SELECTED_FILE_PATHS: newline-delimited paths for selected files in the inactive pane of a split-view window (only if local)\n\n"
-		   "NAUTILUS_SCRIPT_NEXT_PANE_SELECTED_URIS: newline-delimited URIs for selected files in the inactive pane of a split-view window\n\n"
-		   "NAUTILUS_SCRIPT_NEXT_PANE_CURRENT_URI: URI for current location in the inactive pane of a split-view window"),
+		   "NAUTILUS_SCRIPT_WINDOW_GEOMETRY: position and size of current window\n\n"),
 		 nautilus_view_get_containing_window (view));
 }
 
@@ -5857,77 +5809,6 @@ action_copy_files_callback (GtkAction *action,
 	selection = nautilus_view_get_selection_for_file_transfer (view);
 	copy_or_cut_files (view, selection, FALSE);
 	nautilus_file_list_free (selection);
-}
-
-static void
-move_copy_selection_to_location (NautilusView *view,
-				 int copy_action,
-				 char *target_uri)
-{
-	GList *selection, *uris, *l;
-
-	selection = nautilus_view_get_selection_for_file_transfer (view);
-	if (selection == NULL) {
-		return;
-	}
-
-	uris = NULL;
-	for (l = selection; l != NULL; l = l->next) {
-		uris = g_list_prepend (uris,
-				       nautilus_file_get_uri ((NautilusFile *) l->data));
-	}
-	uris = g_list_reverse (uris);
-
-	nautilus_view_move_copy_items (view, uris, NULL, target_uri,
-				       copy_action,
-				       0, 0);
-
-	g_list_free_full (uris, g_free);
-	nautilus_file_list_free (selection);
-}
-
-static void
-move_copy_selection_to_next_pane (NautilusView *view,
-				  int copy_action)
-{
-	NautilusWindowSlot *slot;
-	char *dest_location;
-
-	slot = nautilus_window_get_extra_slot (nautilus_view_get_nautilus_window (view));
-	g_return_if_fail (slot != NULL);
-
-	dest_location = nautilus_window_slot_get_current_uri (slot);
-	g_return_if_fail (dest_location != NULL);
-
-	move_copy_selection_to_location (view, copy_action, dest_location);
-}
-
-static void
-action_copy_to_next_pane_callback (GtkAction *action, gpointer callback_data)
-{
-	NautilusView *view;
-
-	view = NAUTILUS_VIEW (callback_data);
-	move_copy_selection_to_next_pane (view,
-					  GDK_ACTION_COPY);
-}
-
-static void
-action_move_to_next_pane_callback (GtkAction *action, gpointer callback_data)
-{
-	NautilusWindowSlot *slot;
-	char *dest_location;
-	NautilusView *view;
-
-	view = NAUTILUS_VIEW (callback_data);
-
-	slot = nautilus_window_get_extra_slot (nautilus_view_get_nautilus_window (view));
-	g_return_if_fail (slot != NULL);
-
-	dest_location = nautilus_window_slot_get_current_uri (slot);
-	g_return_if_fail (dest_location != NULL);
-
-	move_copy_selection_to_location (view, GDK_ACTION_MOVE, dest_location);
 }
 
 static void
@@ -7238,13 +7119,6 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("_Properties"), NULL,
   /* tooltip */                  N_("View or modify the properties of this folder"),
 				 G_CALLBACK (action_location_properties_callback) },
-
-  /* name, stock id, label */  {NAUTILUS_ACTION_COPY_TO_NEXT_PANE, NULL, N_("_Other pane"),
-				NULL, N_("Copy the current selection to the other pane in the window"),
-				G_CALLBACK (action_copy_to_next_pane_callback) },
-  /* name, stock id, label */  {NAUTILUS_ACTION_MOVE_TO_NEXT_PANE, NULL, N_("_Other pane"),
-				NULL, N_("Move the current selection to the other pane in the window"),
-				G_CALLBACK (action_move_to_next_pane_callback) },
 };
 
 static void
@@ -8272,18 +8146,6 @@ can_delete_all (GList *files)
 	return TRUE;
 }
 
-static gboolean
-has_writable_extra_pane (NautilusView *view)
-{
-	NautilusView *other_view;
-
-	other_view = get_directory_view_of_extra_pane (view);
-	if (other_view != NULL) {
-		return !nautilus_view_is_read_only (other_view);
-	}
-	return FALSE;
-}
-
 static void
 real_update_menus (NautilusView *view)
 {
@@ -8310,7 +8172,6 @@ real_update_menus (NautilusView *view)
 	GAppInfo *app;
 	GIcon *app_icon;
 	GtkWidget *menuitem;
-	gboolean next_pane_is_writable;
 	gboolean show_properties;
 
 	selection = nautilus_view_get_selection (view);
@@ -8624,20 +8485,6 @@ real_update_menus (NautilusView *view)
 	if (can_create_files && view->details->templates_invalid) {
 		update_templates_menu (view);
 	}
-
-	next_pane_is_writable = has_writable_extra_pane (view);
-
-	/* next pane: works if file is copyable, and next pane is writable */
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NAUTILUS_ACTION_COPY_TO_NEXT_PANE);
-	gtk_action_set_sensitive (action, can_copy_files && next_pane_is_writable);
-	gtk_action_set_visible (action, next_pane_is_writable);
-
-	/* move to next pane: works if file is cuttable, and next pane is writable */
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NAUTILUS_ACTION_MOVE_TO_NEXT_PANE);
-	gtk_action_set_sensitive (action, can_delete_files && next_pane_is_writable);
-	gtk_action_set_visible (action, next_pane_is_writable);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      "CopyToMenu");
