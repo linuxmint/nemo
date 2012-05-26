@@ -1,7 +1,0 @@
-<ui>
-<toolbar name="Toolbar">
-	<toolitem name="Back" action="Back"/>
-	<toolitem name="Forward" action="Forward"/>
-        <toolitem name="Search" action="Search"/>
-</toolbar>
-</ui>

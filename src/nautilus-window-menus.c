@@ -653,10 +653,10 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { NAUTILUS_ACTION_CLOSE_ALL_WINDOWS, NULL, N_("Close _All Windows"),
                                  "<control>Q", N_("Close all Navigation windows"),
                                  G_CALLBACK (action_close_all_windows_callback) },
-  /* name, stock id, label */  { NAUTILUS_ACTION_BACK, GTK_STOCK_GO_BACK, N_("_Back"),
+  /* name, stock id, label */  { NAUTILUS_ACTION_BACK, "go-previous-symbolic", N_("_Back"),
 				 "<alt>Left", N_("Go to the previous visited location"),
 				 G_CALLBACK (action_back_callback) },
-  /* name, stock id, label */  { NAUTILUS_ACTION_FORWARD, GTK_STOCK_GO_FORWARD, N_("_Forward"),
+  /* name, stock id, label */  { NAUTILUS_ACTION_FORWARD, "go-next-symbolic", N_("_Forward"),
 				 "<alt>Right", N_("Go to the next visited location"),
 				 G_CALLBACK (action_forward_callback) },
   /* name, stock id, label */  { "Go to Location", NULL, N_("_Location..."),
@@ -726,7 +726,7 @@ nautilus_window_create_toolbar_action_group (NautilusWindow *window)
 	action = g_object_new (NAUTILUS_TYPE_NAVIGATION_ACTION,
 			       "name", NAUTILUS_ACTION_BACK,
 			       "label", _("_Back"),
-			       "stock_id", GTK_STOCK_GO_BACK,
+			       "icon-name", "go-previous-symbolic",
 			       "tooltip", _("Go to the previous visited location"),
 			       "arrow-tooltip", _("Back history"),
 			       "window", window,
@@ -742,7 +742,7 @@ nautilus_window_create_toolbar_action_group (NautilusWindow *window)
 	action = g_object_new (NAUTILUS_TYPE_NAVIGATION_ACTION,
 			       "name", NAUTILUS_ACTION_FORWARD,
 			       "label", _("_Forward"),
-			       "stock_id", GTK_STOCK_GO_FORWARD,
+			       "icon-name", "go-next-symbolic",
 			       "tooltip", _("Go to the next visited location"),
 			       "arrow-tooltip", _("Forward history"),
 			       "window", window,
@@ -762,7 +762,6 @@ nautilus_window_create_toolbar_action_group (NautilusWindow *window)
 					NULL));
 	gtk_action_group_add_action (action_group, action);
 	gtk_action_set_icon_name (GTK_ACTION (action), "edit-find-symbolic");
-	gtk_action_set_is_important (GTK_ACTION (action), TRUE);
 
 	g_object_unref (action);
 

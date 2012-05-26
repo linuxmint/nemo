@@ -1142,10 +1142,6 @@ create_toolbar (NautilusWindow *window)
 	nautilus_navigation_state_set_master (window->details->nav_state, window->details->toolbar_action_group );
 
 	toolbar = nautilus_toolbar_new (action_group);
-	gtk_box_pack_start (GTK_BOX (window->details->main_view),
-			    toolbar,
-			    FALSE, FALSE, 0);
-	gtk_widget_show (toolbar);
 
 	g_object_bind_property (window, "disable-chrome",
 				toolbar, "visible",
@@ -1176,7 +1172,6 @@ create_toolbar (NautilusWindow *window)
 
 	/* connect to the search bar signals */
 	search_bar = nautilus_toolbar_get_search_bar (NAUTILUS_TOOLBAR (toolbar));
-	gtk_size_group_add_widget (header_size_group, search_bar);
 
 	g_signal_connect_object (search_bar, "activate",
 				 G_CALLBACK (search_bar_activate_callback), window, 0);
@@ -1253,6 +1248,11 @@ nautilus_window_constructed (GObject *self)
 	/* Register to menu provider extension signal managing menu updates */
 	g_signal_connect_object (nautilus_signaller_get_current (), "popup_menu_changed",
 			 G_CALLBACK (nautilus_window_load_extension_menus), window, G_CONNECT_SWAPPED);
+	window->details->toolbar = create_toolbar (window);
+	gtk_container_add (GTK_CONTAINER (grid), window->details->toolbar);
+	gtk_widget_set_hexpand (window->details->toolbar, TRUE);
+	gtk_widget_set_vexpand (window->details->toolbar, FALSE);
+	gtk_widget_show (window->details->toolbar);
 
 	window->details->content_paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_set_hexpand (window->details->content_paned, TRUE);
@@ -1266,7 +1266,6 @@ nautilus_window_constructed (GObject *self)
 			 TRUE, FALSE);
 	gtk_widget_show (window->details->main_view);
 
-	window->details->toolbar = create_toolbar (window);
 	window->details->notebook = create_notebook (window);
 
 	nautilus_window_initialize_bookmarks_menu (window);

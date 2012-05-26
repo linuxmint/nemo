@@ -29,6 +29,7 @@
 
 #include "nautilus-location-bar.h"
 #include "nautilus-pathbar.h"
+#include "nautilus-actions.h"
 #include "nautilus-window-private.h"
 
 #include <libnautilus-private/nautilus-global-preferences.h>
@@ -43,6 +44,8 @@ struct _NautilusToolbarPriv {
 	GtkWidget *path_bar;
 	GtkWidget *location_bar;
 	GtkWidget *search_bar;
+
+	GtkToolItem *back_forward;
 
 	gboolean show_main_bar;
 	gboolean show_location_entry;
@@ -86,37 +89,69 @@ nautilus_toolbar_constructed (GObject *obj)
 {
 	NautilusToolbar *self = NAUTILUS_TOOLBAR (obj);
 	GtkToolItem *item;
-	GtkWidget *hbox, *toolbar, *search;
+	GtkWidget *hbox, *toolbar;
 	GtkStyleContext *context;
+	GtkWidget *tool_button, *box;
+	GtkToolItem *back_forward;
+	GtkToolItem *search;
+	GtkActionGroup *action_group;
+	GtkAction *action;
 
 	G_OBJECT_CLASS (nautilus_toolbar_parent_class)->constructed (obj);
 
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (self)),
 					      GTK_JUNCTION_BOTTOM);
 
-	/* add the UI */
-	self->priv->ui_manager = gtk_ui_manager_new ();
-	gtk_ui_manager_add_ui_from_resource (self->priv->ui_manager, "/org/gnome/nautilus/nautilus-toolbar-ui.xml", NULL);
-	gtk_ui_manager_insert_action_group (self->priv->ui_manager, self->priv->action_group, 0);
-
-	toolbar = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar");
+	toolbar = gtk_toolbar_new ();
 	self->priv->toolbar = toolbar;
-	gtk_toolbar_set_icon_size (GTK_TOOLBAR (toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR);
-
-	context = gtk_widget_get_style_context (toolbar);
-	gtk_style_context_add_class (context, GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
-
-	search = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Search");
-	gtk_style_context_add_class (gtk_widget_get_style_context (search), GTK_STYLE_CLASS_RAISED);
-	gtk_widget_set_name (search, "nautilus-search-button");
 
 	gtk_box_pack_start (GTK_BOX (self), self->priv->toolbar, TRUE, TRUE, 0);
 	gtk_widget_show_all (self->priv->toolbar);
 
+	context = gtk_widget_get_style_context (toolbar);
+	/* Set the MENUBAR style class so it's possible to drag the app
+	 * using the toolbar. */
+	gtk_style_context_add_class (context, GTK_STYLE_CLASS_MENUBAR);
+
+	/* Back and Forward */
+	back_forward = gtk_tool_item_new ();
+	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+
+	action_group = self->priv->action_group;
+
+	/* Back */
+	tool_button = gtk_button_new ();
+	gtk_button_set_image (GTK_BUTTON (tool_button), gtk_image_new ());
+	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_BACK);
+	gtk_activatable_set_related_action (GTK_ACTIVATABLE (tool_button),
+					    action);
+	gtk_button_set_label (GTK_BUTTON (tool_button), NULL);
+	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
+
+	/* Forward */
+	tool_button = gtk_button_new ();
+	gtk_button_set_image (GTK_BUTTON (tool_button), gtk_image_new ());
+	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_FORWARD);
+	gtk_activatable_set_related_action (GTK_ACTIVATABLE (tool_button),
+					    action);
+	gtk_button_set_label (GTK_BUTTON (tool_button), NULL);
+	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
+
+	gtk_style_context_add_class (gtk_widget_get_style_context (box),
+				     GTK_STYLE_CLASS_RAISED);
+	gtk_style_context_add_class (gtk_widget_get_style_context (box),
+				     GTK_STYLE_CLASS_LINKED);
+
+	gtk_container_add (GTK_CONTAINER (back_forward), box);
+	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (back_forward));
+
+	gtk_widget_show_all (GTK_WIDGET (back_forward));
+	gtk_widget_set_margin_right (GTK_WIDGET (back_forward), 12);
+
+	/* regular path bar */
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
 
-	/* regular path bar */
 	self->priv->path_bar = g_object_new (NAUTILUS_TYPE_PATH_BAR, NULL);
 	gtk_box_pack_start (GTK_BOX (hbox), self->priv->path_bar, TRUE, TRUE, 0);
 
@@ -127,8 +162,22 @@ nautilus_toolbar_constructed (GObject *obj)
 	item = gtk_tool_item_new ();
 	gtk_tool_item_set_expand (item, TRUE);
 	gtk_container_add (GTK_CONTAINER (item), hbox);
-	gtk_toolbar_insert (GTK_TOOLBAR (self->priv->toolbar), item, 0);
+	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (item));
 	gtk_widget_show (GTK_WIDGET (item));
+
+	/* search */
+	search = gtk_tool_item_new ();
+	tool_button = gtk_button_new ();
+	gtk_button_set_image (GTK_BUTTON (tool_button), gtk_image_new ());
+	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_SEARCH);
+	gtk_activatable_set_related_action (GTK_ACTIVATABLE (tool_button),
+					    action);
+	gtk_button_set_label (GTK_BUTTON (tool_button), NULL);
+	gtk_widget_set_name (tool_button, "nautilus-search-button");
+	gtk_container_add (GTK_CONTAINER (search), GTK_WIDGET (tool_button));
+	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (search));
+	gtk_widget_show_all (GTK_WIDGET (search));
+	gtk_widget_set_margin_left (GTK_WIDGET (search), 12);
 
 	/* search bar */
 	self->priv->search_bar = nautilus_search_bar_new ();

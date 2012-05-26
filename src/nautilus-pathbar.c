@@ -239,7 +239,7 @@ nautilus_path_bar_init (NautilusPathBar *path_bar)
 	gtk_widget_set_has_window (GTK_WIDGET (path_bar), FALSE);
         gtk_widget_set_redraw_on_allocate (GTK_WIDGET (path_bar), FALSE);
 
-        path_bar->priv->spacing = 3;
+        path_bar->priv->spacing = 0;
         path_bar->priv->up_slider_button = get_slider_button (path_bar, GTK_ARROW_LEFT);
         path_bar->priv->down_slider_button = get_slider_button (path_bar, GTK_ARROW_RIGHT);
 
@@ -279,6 +279,9 @@ nautilus_path_bar_init (NautilusPathBar *path_bar)
                           "trash_state_changed",
                           G_CALLBACK (trash_state_changed_cb),
                           path_bar);
+
+	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (path_bar)),
+                                     GTK_STYLE_CLASS_LINKED);
 }
 
 static void
