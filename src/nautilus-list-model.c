@@ -403,39 +403,31 @@ nautilus_list_model_iter_children (GtkTreeModel *tree_model, GtkTreeIter *iter, 
 {
 	NautilusListModel *model;
 	GSequence *files;
-	FileEntry *file_entry;
 
 	model = (NautilusListModel *)tree_model;
-	
-	if (parent == NULL) {
-		files = model->details->files;
-	} else {
-		file_entry = g_sequence_get (parent->user_data);
-		files = file_entry->files;
-	}
 
-	if (files == NULL || g_sequence_get_length (files) == 0) {
+	/* this is a list, nodes have no children */
+	if (parent != NULL) {
+		iter->stamp = 0;
 		return FALSE;
 	}
-	
-	iter->stamp = model->details->stamp;
-	iter->user_data = g_sequence_get_begin_iter (files);
 
-	return TRUE;
+	files = model->details->files;
+
+	if (g_sequence_get_length (files) > 0) {
+		iter->stamp = model->details->stamp;
+		iter->user_data = g_sequence_get_begin_iter (files);
+		return TRUE;
+	} else {
+		iter->stamp = 0;
+		return FALSE;
+	}
 }
 
 static gboolean
 nautilus_list_model_iter_has_child (GtkTreeModel *tree_model, GtkTreeIter *iter)
 {
-	FileEntry *file_entry;
-	
-	if (iter == NULL) {
-		return !nautilus_list_model_is_empty (NAUTILUS_LIST_MODEL (tree_model));
-	}
-
-	file_entry = g_sequence_get (iter->user_data);
-
-	return (file_entry->files != NULL && g_sequence_get_length (file_entry->files) > 0);
+	return FALSE;
 }
 
 static int
@@ -443,15 +435,13 @@ nautilus_list_model_iter_n_children (GtkTreeModel *tree_model, GtkTreeIter *iter
 {
 	NautilusListModel *model;
 	GSequence *files;
-	FileEntry *file_entry;
 
 	model = (NautilusListModel *)tree_model;
 
 	if (iter == NULL) {
 		files = model->details->files;
 	} else {
-		file_entry = g_sequence_get (iter->user_data);
-		files = file_entry->files;
+		return 0;
 	}
 
 	return g_sequence_get_length (files);
@@ -463,17 +453,16 @@ nautilus_list_model_iter_nth_child (GtkTreeModel *tree_model, GtkTreeIter *iter,
 	NautilusListModel *model;
 	GSequenceIter *child;
 	GSequence *files;
-	FileEntry *file_entry;
 
 	model = (NautilusListModel *)tree_model;
-	
+
+	iter->stamp = 0;
+
 	if (parent != NULL) {
-		file_entry = g_sequence_get (parent->user_data);
-		files = file_entry->files;
-	} else {
-		files = model->details->files;
+		return FALSE;
 	}
 
+	files = model->details->files;
 	child = g_sequence_get_iter_at_pos (files, n);
 
 	if (g_sequence_iter_is_end (child)) {
@@ -489,21 +478,9 @@ nautilus_list_model_iter_nth_child (GtkTreeModel *tree_model, GtkTreeIter *iter,
 static gboolean
 nautilus_list_model_iter_parent (GtkTreeModel *tree_model, GtkTreeIter *iter, GtkTreeIter *child)
 {
-	NautilusListModel *model;
-	FileEntry *file_entry;
-	
-	model = (NautilusListModel *)tree_model;
-	
-	file_entry = g_sequence_get (child->user_data);
-	
-	if (file_entry->parent == NULL) {
-		return FALSE;
-	}
+	iter->stamp = 0;
 
-	iter->stamp = model->details->stamp;
-	iter->user_data = file_entry->parent->ptr;
-	
-	return TRUE;
+	return FALSE;
 }
 
 static GSequenceIter *
