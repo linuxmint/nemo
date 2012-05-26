@@ -2427,7 +2427,7 @@ nautilus_window_init (NautilusWindow *window)
 	window->details->show_hidden_files_mode = NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT;
 
 	/* Set initial window title */
-	gtk_window_set_title (GTK_WINDOW (window), _("Nautilus"));
+	gtk_window_set_title (GTK_WINDOW (window), _("Files"));
 }
 
 static NautilusIconInfo *
@@ -2629,6 +2629,7 @@ nautilus_window_show_about_dialog (NautilusWindow *window)
 		"Seth Nickell",
 		"Susan Kare",
 		"Tomas Bzatek",
+		"William Jon McCann",
 		NULL
 	};
 	const gchar *documenters[] = {
@@ -2637,11 +2638,11 @@ nautilus_window_show_about_dialog (NautilusWindow *window)
 		NULL
 	};
 	const gchar *license[] = {
-		N_("Nautilus is free software; you can redistribute it and/or modify "
+		N_("Files is free software; you can redistribute it and/or modify "
 		   "it under the terms of the GNU General Public License as published by "
 		   "the Free Software Foundation; either version 2 of the License, or "
 		   "(at your option) any later version."),
-		N_("Nautilus is distributed in the hope that it will be useful, "
+		N_("Files is distributed in the hope that it will be useful, "
 		   "but WITHOUT ANY WARRANTY; without even the implied warranty of "
 		   "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
 		   "GNU General Public License for more details."),
@@ -2661,14 +2662,12 @@ nautilus_window_show_about_dialog (NautilusWindow *window)
 	 * e.g. 1999-2011.
 	 */
 	copyright_str = g_strdup_printf (_("Copyright \xC2\xA9 %Id\xE2\x80\x93%Id "
-					   "The Nautilus authors"), 1999, g_date_time_get_year (date));
+					   "The Files authors"), 1999, g_date_time_get_year (date));
 
 	gtk_show_about_dialog (window ? GTK_WINDOW (window) : NULL,
-			       "program-name", _("Nautilus"),
+			       "program-name", _("Files"),
 			       "version", VERSION,
-			       "comments", _("Nautilus lets you organize "
-					     "files and folders, both on "
-					     "your computer and online."),
+			       "comments", _("Access and organize your files."),
 			       "copyright", copyright_str,
 			       "license", license_trans,
 			       "wrap-license", TRUE,
@@ -2679,9 +2678,7 @@ nautilus_window_show_about_dialog (NautilusWindow *window)
 				 * box to give credit to the translator(s).
 				 */
 			      "translator-credits", _("translator-credits"),
-			      "logo-icon-name", "nautilus",
-			      "website", "http://live.gnome.org/Nautilus",
-			      "website-label", _("Nautilus Web Site"),
+			      "logo-icon-name", "system-file-manager",
 			      NULL);
 
 	g_free (license_trans);
