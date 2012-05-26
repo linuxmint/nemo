@@ -71,7 +71,7 @@
 #include <sys/time.h>
 
 /* dock items */
-#define NAUTILUS_MENU_PATH_SHORT_LIST_PLACEHOLDER  	"/MenuBar/View/View Choices/Short List"
+#define NAUTILUS_MENU_PATH_SHORT_LIST_PLACEHOLDER  	"/ViewMenu/View/View Choices/Short List"
 
 #define MAX_TITLE_LENGTH 180
 
@@ -1141,7 +1141,7 @@ create_toolbar (NautilusWindow *window)
 			  G_CALLBACK (action_show_hide_search_callback), window);
 	nautilus_navigation_state_set_master (window->details->nav_state, window->details->toolbar_action_group );
 
-	toolbar = nautilus_toolbar_new (action_group);
+	toolbar = nautilus_toolbar_new (nautilus_window_get_ui_manager (NAUTILUS_WINDOW (window)), action_group);
 
 	g_object_bind_property (window, "disable-chrome",
 				toolbar, "visible",
@@ -1219,7 +1219,6 @@ nautilus_window_constructed (GObject *self)
 {
 	NautilusWindow *window;
 	GtkWidget *grid;
-	GtkWidget *menu;
 	NautilusWindowSlot *slot;
 
 	window = NAUTILUS_WINDOW (self);
@@ -1238,12 +1237,6 @@ nautilus_window_constructed (GObject *self)
 
 	nautilus_window_initialize_menus (window);
 	nautilus_window_initialize_actions (window);
-
-	menu = gtk_ui_manager_get_widget (window->details->ui_manager, "/MenuBar");
-	window->details->menubar = menu;
-	gtk_widget_set_hexpand (menu, TRUE);
-	gtk_widget_show (menu);
-	gtk_container_add (GTK_CONTAINER (grid), menu);
 
 	/* Register to menu provider extension signal managing menu updates */
 	g_signal_connect_object (nautilus_signaller_get_current (), "popup_menu_changed",

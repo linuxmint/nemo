@@ -60,7 +60,7 @@
 #include <libnautilus-private/nautilus-trash-monitor.h>
 #include <string.h>
 
-#define MENU_PATH_EXTENSION_ACTIONS                     "/MenuBar/File/Extension Actions"
+#define MENU_PATH_EXTENSION_ACTIONS                     "/ViewMenu/Extension Actions"
 #define POPUP_PATH_EXTENSION_ACTIONS                     "/background/Before Zoom Items/Extension Actions"
 
 #define NETWORK_URI          "network:"
@@ -729,7 +729,6 @@ nautilus_window_create_toolbar_action_group (NautilusWindow *window)
 					NULL));
 	gtk_action_group_add_action (action_group, action);
 	gtk_action_set_icon_name (GTK_ACTION (action), "edit-find-symbolic");
-
 	g_object_unref (action);
 
 	navigation_state = nautilus_window_get_navigation_state (window);

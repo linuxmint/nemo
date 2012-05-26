@@ -54,6 +54,7 @@ struct _NautilusToolbarPriv {
 
 enum {
 	PROP_ACTION_GROUP = 1,
+	PROP_UI_MANAGER,
 	PROP_SHOW_LOCATION_ENTRY,
 	PROP_SHOW_SEARCH_BAR,
 	PROP_SHOW_MAIN_BAR,
@@ -88,12 +89,14 @@ static void
 nautilus_toolbar_constructed (GObject *obj)
 {
 	NautilusToolbar *self = NAUTILUS_TOOLBAR (obj);
-	GtkToolItem *item;
 	GtkWidget *hbox, *toolbar;
 	GtkStyleContext *context;
-	GtkWidget *tool_button, *box;
+	GtkWidget *tool_button;
+	GtkWidget *menu;
+	GtkWidget *image;
+	GtkWidget *box;
 	GtkToolItem *back_forward;
-	GtkToolItem *search;
+	GtkToolItem *tool_item;
 	GtkActionGroup *action_group;
 	GtkAction *action;
 
@@ -159,14 +162,14 @@ nautilus_toolbar_constructed (GObject *obj)
 	self->priv->location_bar = nautilus_location_bar_new ();
 	gtk_box_pack_start (GTK_BOX (hbox), self->priv->location_bar, TRUE, TRUE, 0);
 
-	item = gtk_tool_item_new ();
-	gtk_tool_item_set_expand (item, TRUE);
-	gtk_container_add (GTK_CONTAINER (item), hbox);
-	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (item));
-	gtk_widget_show (GTK_WIDGET (item));
+	tool_item = gtk_tool_item_new ();
+	gtk_tool_item_set_expand (tool_item, TRUE);
+	gtk_container_add (GTK_CONTAINER (tool_item), hbox);
+	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_item));
+	gtk_widget_show (GTK_WIDGET (tool_item));
 
 	/* search */
-	search = gtk_tool_item_new ();
+	tool_item = gtk_tool_item_new ();
 	tool_button = gtk_button_new ();
 	gtk_button_set_image (GTK_BUTTON (tool_button), gtk_image_new ());
 	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_SEARCH);
@@ -174,10 +177,23 @@ nautilus_toolbar_constructed (GObject *obj)
 					    action);
 	gtk_button_set_label (GTK_BUTTON (tool_button), NULL);
 	gtk_widget_set_name (tool_button, "nautilus-search-button");
-	gtk_container_add (GTK_CONTAINER (search), GTK_WIDGET (tool_button));
-	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (search));
-	gtk_widget_show_all (GTK_WIDGET (search));
-	gtk_widget_set_margin_left (GTK_WIDGET (search), 12);
+	gtk_container_add (GTK_CONTAINER (tool_item), GTK_WIDGET (tool_button));
+	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_item));
+	gtk_widget_show_all (GTK_WIDGET (tool_item));
+	gtk_widget_set_margin_left (GTK_WIDGET (tool_item), 12);
+
+	/* Page Menu */
+	tool_item = gtk_tool_item_new ();
+	tool_button = gtk_menu_button_new ();
+	menu = gtk_ui_manager_get_widget (self->priv->ui_manager, "/ViewMenu");
+	gtk_menu_button_set_menu (GTK_MENU_BUTTON (tool_button), menu);
+	image = gtk_image_new ();
+	gtk_image_set_from_icon_name (GTK_IMAGE (image), "emblem-system-symbolic", GTK_ICON_SIZE_MENU);
+	gtk_button_set_image (GTK_BUTTON (tool_button), image);
+	gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
+	gtk_container_add (GTK_CONTAINER (toolbar), GTK_WIDGET (tool_item));
+	gtk_widget_show_all (GTK_WIDGET (tool_item));
+	gtk_widget_set_margin_left (GTK_WIDGET (tool_item), 6);
 
 	/* search bar */
 	self->priv->search_bar = nautilus_search_bar_new ();
@@ -231,6 +247,9 @@ nautilus_toolbar_set_property (GObject *object,
 	NautilusToolbar *self = NAUTILUS_TOOLBAR (object);
 
 	switch (property_id) {
+	case PROP_UI_MANAGER:
+		self->priv->ui_manager = g_value_get_object (value);
+		break;
 	case PROP_ACTION_GROUP:
 		self->priv->action_group = g_value_dup_object (value);
 		break;
@@ -281,6 +300,13 @@ nautilus_toolbar_class_init (NautilusToolbarClass *klass)
 				     GTK_TYPE_ACTION_GROUP,
 				     G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY |
 				     G_PARAM_STATIC_STRINGS);
+	properties[PROP_UI_MANAGER] =
+		g_param_spec_object ("ui-manager",
+				     "The UI manager",
+				     "The UI manager",
+				     GTK_TYPE_UI_MANAGER,
+				     G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY |
+				     G_PARAM_STATIC_STRINGS);
 	properties[PROP_SHOW_LOCATION_ENTRY] =
 		g_param_spec_boolean ("show-location-entry",
 				      "Whether to show the location entry",
@@ -305,10 +331,12 @@ nautilus_toolbar_class_init (NautilusToolbarClass *klass)
 }
 
 GtkWidget *
-nautilus_toolbar_new (GtkActionGroup *action_group)
+nautilus_toolbar_new (GtkUIManager *ui_manager,
+		      GtkActionGroup *action_group)
 {
 	return g_object_new (NAUTILUS_TYPE_TOOLBAR,
 			     "action-group", action_group,
+			     "ui-manager", ui_manager,
 			     "orientation", GTK_ORIENTATION_VERTICAL,
 			     NULL);
 }

@@ -104,12 +104,12 @@
 
 #define MAX_QUEUED_UPDATES 500
 
-#define NAUTILUS_VIEW_MENU_PATH_APPLICATIONS_SUBMENU_PLACEHOLDER  "/MenuBar/File/Open Placeholder/Open With/Applications Placeholder"
-#define NAUTILUS_VIEW_MENU_PATH_APPLICATIONS_PLACEHOLDER    	  "/MenuBar/File/Open Placeholder/Applications Placeholder"
-#define NAUTILUS_VIEW_MENU_PATH_SCRIPTS_PLACEHOLDER               "/MenuBar/File/Open Placeholder/Scripts/Scripts Placeholder"
-#define NAUTILUS_VIEW_MENU_PATH_EXTENSION_ACTIONS_PLACEHOLDER     "/MenuBar/Edit/Extension Actions"
-#define NAUTILUS_VIEW_MENU_PATH_NEW_DOCUMENTS_PLACEHOLDER  	  "/MenuBar/File/New Items Placeholder/New Documents/New Documents Placeholder"
-#define NAUTILUS_VIEW_MENU_PATH_OPEN				  "/MenuBar/File/Open Placeholder/Open"
+#define NAUTILUS_VIEW_MENU_PATH_APPLICATIONS_SUBMENU_PLACEHOLDER  "/ViewMenu/Open Placeholder/Open With/Applications Placeholder"
+#define NAUTILUS_VIEW_MENU_PATH_APPLICATIONS_PLACEHOLDER    	  "/ViewMenu/Open Placeholder/Applications Placeholder"
+#define NAUTILUS_VIEW_MENU_PATH_SCRIPTS_PLACEHOLDER               "/ViewMenu/Open Placeholder/Scripts/Scripts Placeholder"
+#define NAUTILUS_VIEW_MENU_PATH_EXTENSION_ACTIONS_PLACEHOLDER     "/ViewMenu/Edit/Extension Actions"
+#define NAUTILUS_VIEW_MENU_PATH_NEW_DOCUMENTS_PLACEHOLDER  	  "/ViewMenu/New Items Placeholder/New Documents/New Documents Placeholder"
+#define NAUTILUS_VIEW_MENU_PATH_OPEN				  "/ViewMenu/Open Placeholder/Open"
 
 #define NAUTILUS_VIEW_POPUP_PATH_SELECTION			  "/selection"
 #define NAUTILUS_VIEW_POPUP_PATH_APPLICATIONS_SUBMENU_PLACEHOLDER "/selection/Open Placeholder/Open With/Applications Placeholder"

@@ -41,7 +41,7 @@
 #include <glib/gi18n.h>
 
 #define MENU_ITEM_MAX_WIDTH_CHARS 32
-#define MENU_PATH_BOOKMARKS_PLACEHOLDER	 "/MenuBar/Other Menus/Bookmarks/Bookmarks Placeholder"
+#define MENU_PATH_BOOKMARKS_PLACEHOLDER	 "/ViewMenu/Bookmarks/Bookmarks Placeholder"
 
 static GtkWindow *bookmarks_window = NULL;
 

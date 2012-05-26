@@ -1,52 +1,51 @@
 <ui>
-<menubar name="MenuBar">
-	<menu action="Edit">
-		<placeholder name="Edit Items Placeholder">
-			<menuitem name="Stretch" action="Stretch"/>
-			<menuitem name="Unstretch" action="Unstretch"/>
-		</placeholder>
-	</menu>
-	<menu action="View">
-		<placeholder name="View Items Placeholder">
-			<menu action="Arrange Items">
-				<menuitem name="Manual Layout" action="Manual Layout"/>
-				<placeholder name="Auto Layout">
-					<menuitem name="Sort by Name" action="Sort by Name"/>
-					<menuitem name="Sort by Size" action="Sort by Size"/>
-					<menuitem name="Sort by Type" action="Sort by Type"/>
-					<menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
-					<menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
-				</placeholder>
-				<separator name="Layout separator"/>
-				<menuitem name="Reversed Order" action="Reversed Order"/>
-			</menu>
-			<menuitem name="Clean Up" action="Clean Up"/>
-			<menuitem name="Keep Aligned" action="Keep Aligned"/>
-		</placeholder>
-		
-	</menu>
-</menubar>
-<popup name="background">
-	<placeholder name="Before Zoom Items">
-		<placeholder name="View Items">
-			<menu action="Arrange Items">
-				<menuitem name="Manual Layout" action="Manual Layout"/>
-				<placeholder name="Auto Layout">
-					<menuitem name="Sort by Name" action="Sort by Name"/>
-					<menuitem name="Sort by Size" action="Sort by Size"/>
-					<menuitem name="Sort by Type" action="Sort by Type"/>
-					<menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
-					<menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
-				</placeholder>
-				<separator name="Layout separator"/>
-				<menuitem name="Reversed Order" action="Reversed Order"/>
-			</menu>
-			<menuitem name="Clean Up" action="Clean Up"/>
-			<menuitem name="Keep Aligned" action="Keep Aligned"/>
-		</placeholder>
-	</placeholder>
-</popup>
-<popup name="selection">
-	<placeholder name="Icon Appearance Items"/>
-</popup>
+  <popup name="ViewMenu">
+    <menu action="Edit">
+      <placeholder name="Edit Items Placeholder">
+        <menuitem name="Stretch" action="Stretch"/>
+        <menuitem name="Unstretch" action="Unstretch"/>
+      </placeholder>
+    </menu>
+    <menu action="View">
+      <placeholder name="View Items Placeholder">
+        <menu action="Arrange Items">
+          <menuitem name="Manual Layout" action="Manual Layout"/>
+          <placeholder name="Auto Layout">
+            <menuitem name="Sort by Name" action="Sort by Name"/>
+            <menuitem name="Sort by Size" action="Sort by Size"/>
+            <menuitem name="Sort by Type" action="Sort by Type"/>
+            <menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
+            <menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
+          </placeholder>
+          <separator name="Layout separator"/>
+          <menuitem name="Reversed Order" action="Reversed Order"/>
+        </menu>
+        <menuitem name="Clean Up" action="Clean Up"/>
+        <menuitem name="Keep Aligned" action="Keep Aligned"/>
+      </placeholder>
+    </menu>
+  </popup>
+  <popup name="background">
+    <placeholder name="Before Zoom Items">
+      <placeholder name="View Items">
+        <menu action="Arrange Items">
+          <menuitem name="Manual Layout" action="Manual Layout"/>
+          <placeholder name="Auto Layout">
+            <menuitem name="Sort by Name" action="Sort by Name"/>
+            <menuitem name="Sort by Size" action="Sort by Size"/>
+            <menuitem name="Sort by Type" action="Sort by Type"/>
+            <menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
+            <menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
+          </placeholder>
+          <separator name="Layout separator"/>
+          <menuitem name="Reversed Order" action="Reversed Order"/>
+        </menu>
+        <menuitem name="Clean Up" action="Clean Up"/>
+        <menuitem name="Keep Aligned" action="Keep Aligned"/>
+      </placeholder>
+    </placeholder>
+  </popup>
+  <popup name="selection">
+    <placeholder name="Icon Appearance Items"/>
+  </popup>
 </ui>
