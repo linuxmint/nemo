@@ -3350,6 +3350,7 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 	gtk_tree_view_set_model (tree_view, GTK_TREE_MODEL (sidebar->store));
 	gtk_container_add (GTK_CONTAINER (sidebar), GTK_WIDGET (tree_view));
 	gtk_widget_show (GTK_WIDGET (tree_view));
+	gtk_tree_view_set_enable_search (tree_view, FALSE);
 
 	gtk_widget_show (GTK_WIDGET (sidebar));
 	sidebar->tree_view = tree_view;
