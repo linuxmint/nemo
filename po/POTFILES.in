@@ -85,7 +85,6 @@ src/nautilus-window-bookmarks.c
 src/nautilus-window.c
 src/nautilus-window-manage-views.c
 src/nautilus-window-menus.c
-src/nautilus-window-pane.c
 src/nautilus-window-private.h
 src/nautilus-window-slot.c
 src/nautilus-x-content-bar.c
