@@ -3141,11 +3141,11 @@ create_basic_page (NemoPropertiesWindow *window)
 		append_blank_row (grid);
 
 		append_title_value_pair (window, grid, _("Accessed:"), 
-					 "date_accessed",
+					 "date_accessed_full",
 					 INCONSISTENT_STATE_STRING,
 					 FALSE);
 		append_title_value_pair (window, grid, _("Modified:"), 
-					 "date_modified",
+					 "date_modified_full",
 					 INCONSISTENT_STATE_STRING,
 					 FALSE);
 	}
