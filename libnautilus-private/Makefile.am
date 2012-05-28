@@ -61,8 +61,6 @@ libnautilus_private_la_LIBADD =		\
 libnautilus_private_la_SOURCES = \
 	nautilus-bookmark.c \
 	nautilus-bookmark.h \
-	nautilus-cell-renderer-text-ellipsized.c \
-	nautilus-cell-renderer-text-ellipsized.h \
 	nautilus-clipboard-monitor.c \
 	nautilus-clipboard-monitor.h \
 	nautilus-clipboard.c \

@@ -57,7 +57,6 @@
 #include <libnautilus-private/nautilus-module.h>
 #include <libnautilus-private/nautilus-tree-view-drag-dest.h>
 #include <libnautilus-private/nautilus-clipboard.h>
-#include <libnautilus-private/nautilus-cell-renderer-text-ellipsized.h>
 
 #define DEBUG_FLAG NAUTILUS_DEBUG_LIST_VIEW
 #include <libnautilus-private/nautilus-debug.h>
@@ -1666,15 +1665,18 @@ create_and_set_up_tree_view (NautilusListView *view)
 			gtk_tree_view_column_set_sort_column_id (view->details->file_name_column, column_num);
 			gtk_tree_view_column_set_title (view->details->file_name_column, _("Name"));
 			gtk_tree_view_column_set_resizable (view->details->file_name_column, TRUE);
-			
+			gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
+
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
 			gtk_tree_view_column_set_attributes (view->details->file_name_column,
 							     cell,
 							     "pixbuf", NAUTILUS_LIST_MODEL_SMALLEST_ICON_COLUMN,
 							     NULL);
 			
-			cell = nautilus_cell_renderer_text_ellipsized_new ();
+			cell = gtk_cell_renderer_text_new ();
 			view->details->file_name_cell = (GtkCellRendererText *)cell;
+			g_object_set (cell, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+
 			g_signal_connect (cell, "edited", G_CALLBACK (cell_renderer_edited), view);
 			g_signal_connect (cell, "editing-canceled", G_CALLBACK (cell_renderer_editing_canceled), view);
 			g_signal_connect (cell, "editing-started", G_CALLBACK (cell_renderer_editing_started_cb), view);
@@ -1683,7 +1685,7 @@ create_and_set_up_tree_view (NautilusListView *view)
 			gtk_tree_view_column_set_cell_data_func (view->details->file_name_column, cell,
 								 (GtkTreeCellDataFunc) filename_cell_data_func,
 								 view, NULL);
-		} else {		
+		} else {
 			cell = gtk_cell_renderer_text_new ();
 			g_object_set (cell, "xalign", xalign, NULL);
 			view->details->cells = g_list_append (view->details->cells,
