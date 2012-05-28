@@ -120,8 +120,10 @@ static GQuark attribute_name_q,
 	attribute_type_q,
 	attribute_modification_date_q,
 	attribute_date_modified_q,
+	attribute_date_modified_full_q,
 	attribute_accessed_date_q,
 	attribute_date_accessed_q,
+	attribute_date_accessed_full_q,
 	attribute_mime_type_q,
 	attribute_size_detail_q,
 	attribute_deep_size_q,
@@ -129,9 +131,12 @@ static GQuark attribute_name_q,
 	attribute_deep_directory_count_q,
 	attribute_deep_total_count_q,
 	attribute_date_changed_q,
+	attribute_date_changed_full_q,
 	attribute_trashed_on_q,
+	attribute_trashed_on_full_q,
 	attribute_trash_orig_path_q,
 	attribute_date_permissions_q,
+	attribute_date_permissions_full_q,
 	attribute_permissions_q,
 	attribute_selinux_context_q,
 	attribute_octal_permissions_q,
@@ -3191,17 +3196,17 @@ nautilus_file_compare_for_sort_by_attribute_q   (NautilusFile                   
 						       NAUTILUS_FILE_SORT_BY_TYPE,
 						       directories_first,
 						       reversed);
-	} else if (attribute == attribute_modification_date_q || attribute == attribute_date_modified_q) {
+	} else if (attribute == attribute_modification_date_q || attribute == attribute_date_modified_q || attribute == attribute_date_modified_full_q) {
 		return nautilus_file_compare_for_sort (file_1, file_2,
 						       NAUTILUS_FILE_SORT_BY_MTIME,
 						       directories_first,
 						       reversed);
-        } else if (attribute == attribute_accessed_date_q || attribute == attribute_date_accessed_q) {
+        } else if (attribute == attribute_accessed_date_q || attribute == attribute_date_accessed_q || attribute == attribute_date_accessed_full_q) {
 		return nautilus_file_compare_for_sort (file_1, file_2,
 						       NAUTILUS_FILE_SORT_BY_ATIME,
 						       directories_first,
 						       reversed);
-        } else if (attribute == attribute_trashed_on_q) {
+        } else if (attribute == attribute_trashed_on_q || attribute == attribute_trashed_on_full_q) {
 		return nautilus_file_compare_for_sort (file_1, file_2,
 						       NAUTILUS_FILE_SORT_BY_TRASHED_TIME,
 						       directories_first,
@@ -4317,218 +4322,6 @@ nautilus_file_get_where_string (NautilusFile *file)
 	return NAUTILUS_FILE_CLASS (G_OBJECT_GET_CLASS (file))->get_where_string (file);
 }
 
-static const char *TODAY_TIME_FORMATS [] = {
-	/* Today, use special word.
-	 * strftime patterns preceeded with the widest
-	 * possible resulting string for that pattern.
-	 *
-	 * Note to localizers: You can look at man strftime
-	 * for details on the format, but you should only use
-	 * the specifiers from the C standard, not extensions.
-	 * These include "%" followed by one of
-	 * "aAbBcdHIjmMpSUwWxXyYZ". There are two extensions
-	 * in the Nautilus version of strftime that can be
-	 * used (and match GNU extensions). Putting a "-"
-	 * between the "%" and any numeric directive will turn
-	 * off zero padding, and putting a "_" there will use
-	 * space padding instead of zero padding.
-	 */
-	N_("today at 00:00:00 PM"),
-	N_("today at %-I:%M:%S %p"),
-	
-	N_("today at 00:00 PM"),
-	N_("today at %-I:%M %p"),
-	
-	N_("today, 00:00 PM"),
-	N_("today, %-I:%M %p"),
-	
-	N_("today"),
-	N_("today"),
-
-	NULL
-};
-
-static const char *YESTERDAY_TIME_FORMATS [] = {
-	/* Yesterday, use special word.
-	 * Note to localizers: Same issues as "today" string.
-	 */
-	N_("yesterday at 00:00:00 PM"),
-	N_("yesterday at %-I:%M:%S %p"),
-	
-	N_("yesterday at 00:00 PM"),
-	N_("yesterday at %-I:%M %p"),
-	
-	N_("yesterday, 00:00 PM"),
-	N_("yesterday, %-I:%M %p"),
-	
-	N_("yesterday"),
-	N_("yesterday"),
-
-	NULL
-};
-
-static const char *CURRENT_WEEK_TIME_FORMATS [] = {
-	/* Current week, include day of week.
-	 * Note to localizers: Same issues as "today" string.
-	 * The width measurement templates correspond to
-	 * the day/month name with the most letters.
-	 */
-	N_("Wednesday, September 00 0000 at 00:00:00 PM"),
-	N_("%A, %B %-d %Y at %-I:%M:%S %p"),
-
-	N_("Mon, Oct 00 0000 at 00:00:00 PM"),
-	N_("%a, %b %-d %Y at %-I:%M:%S %p"),
-
-	N_("Mon, Oct 00 0000 at 00:00 PM"),
-	N_("%a, %b %-d %Y at %-I:%M %p"),
-	
-	N_("Oct 00 0000 at 00:00 PM"),
-	N_("%b %-d %Y at %-I:%M %p"),
-	
-	N_("Oct 00 0000, 00:00 PM"),
-	N_("%b %-d %Y, %-I:%M %p"),
-	
-	N_("00/00/00, 00:00 PM"),
-	N_("%m/%-d/%y, %-I:%M %p"),
-
-	N_("00/00/00"),
-	N_("%m/%d/%y"),
-
-	NULL
-};
-
-static char *
-nautilus_file_fit_date_as_string (NautilusFile *file,
-				  NautilusDateType date_type,
-				  int width,
-				  NautilusWidthMeasureCallback measure_callback,
-				  NautilusTruncateCallback truncate_callback,
-				  void *measure_context)
-{
-	time_t file_time_raw;
-	const char **formats;
-	const char *width_template;
-	const char *format;
-	char *date_string;
-	gchar *result = NULL;
-	int i, date_format_pref;
-	GDateTime *date_time, *today;
-	GTimeSpan file_date_age;
-
-	if (!nautilus_file_get_date (file, date_type, &file_time_raw)) {
-		return NULL;
-	}
-
-	date_time = g_date_time_new_from_unix_local (file_time_raw);
-	date_format_pref = g_settings_get_enum (nautilus_preferences,
-						NAUTILUS_PREFERENCES_DATE_FORMAT);
-
-	if (date_format_pref == NAUTILUS_DATE_FORMAT_LOCALE) {
-		result = g_date_time_format (date_time, "%c");
-		goto out;
-	} else if (date_format_pref == NAUTILUS_DATE_FORMAT_ISO) {
-		result = g_date_time_format (date_time, "%Y-%m-%d %H:%M:%S");
-		goto out;
-	}
-
-	today = g_date_time_new_now_local ();
-	file_date_age = g_date_time_difference (today, date_time);
-
-	g_date_time_unref (today);
-
-	/* Format varies depending on how old the date is. This minimizes
-	 * the length (and thus clutter & complication) of typical dates
-	 * while providing sufficient detail for recent dates to make
-	 * them maximally understandable at a glance. Keep all format
-	 * strings separate rather than combining bits & pieces for
-	 * internationalization's sake.
-	 */
-
-	if (file_date_age < G_TIME_SPAN_DAY) {
-		formats = TODAY_TIME_FORMATS;
-	} else if (file_date_age < 2 * G_TIME_SPAN_DAY) {
-		formats = YESTERDAY_TIME_FORMATS;
-	} else {
-		formats = CURRENT_WEEK_TIME_FORMATS;
-	}
-
-	/* Find the date format that just fits the required width. Instead of measuring
-	 * the resulting string width directly, measure the width of a template that represents
-	 * the widest possible version of a date in a given format. This is done by using M, m
-	 * and 0 for the variable letters/digits respectively.
-	 */
-	format = NULL;
-	
-	for (i = 0; ; i += 2) {
-		width_template = (formats [i] ? _(formats [i]) : NULL);
-		if (width_template == NULL) {
-			/* no more formats left */
-			g_assert (format != NULL);
-			
-			/* Can't fit even the shortest format -- return an ellipsized form in the
-			 * shortest format
-			 */
-			
-			date_string = g_date_time_format (date_time, format);
-
-			if (truncate_callback == NULL) {
-				result = date_string;
-				break;
-			}
-			
-			result = (* truncate_callback) (date_string, width, measure_context);
-			g_free (date_string);
-
-			break;
-		}
-		
-		format = _(formats [i + 1]);
-
-		if (measure_callback == NULL) {
-			/* don't care about fitting the width */
-			break;
-		}
-
-		if ((* measure_callback) (width_template, measure_context) <= width) {
-			/* The template fits, this is the format we can fit. */
-			break;
-		}
-	}
-
-	if (result == NULL) {
-		result = g_date_time_format (date_time, format);
-	}
-
- out:
-	g_date_time_unref (date_time);
-	return result;
-}
-
-/**
- * nautilus_file_fit_modified_date_as_string:
- * 
- * Get a user-displayable string representing a file modification date,
- * truncated to @width using the measuring and truncating callbacks.
- * @file: NautilusFile representing the file in question.
- * @width: The desired resulting string width.
- * @measure_callback: The callback used to measure the string width.
- * @truncate_callback: The callback used to truncate the string to a desired width.
- * @measure_context: Data neede when measuring and truncating.
- * 
- * Returns: Newly allocated string ready to display to the user.
- * 
- **/
-char *
-nautilus_file_fit_modified_date_as_string (NautilusFile *file,
-					   int width,
-					   NautilusWidthMeasureCallback measure_callback,
-					   NautilusTruncateCallback truncate_callback,
-					   void *measure_context)
-{
-	return nautilus_file_fit_date_as_string (file, NAUTILUS_DATE_TYPE_MODIFIED,
-		width, measure_callback, truncate_callback, measure_context);
-}
-
 static char *
 nautilus_file_get_trash_original_file_parent_as_string (NautilusFile *file)
 {
@@ -4553,6 +4346,24 @@ nautilus_file_get_trash_original_file_parent_as_string (NautilusFile *file)
 	return NULL;
 }
 
+/*
+ * Note to localizers: You can look at man strftime
+ * for details on the format, but you should only use
+ * the specifiers from the C standard, not extensions.
+ * These include "%" followed by one of
+ * "aAbBcdHIjmMpSUwWxXyYZ". There are two extensions
+ * in the Nautilus version of strftime that can be
+ * used (and match GNU extensions). Putting a "-"
+ * between the "%" and any numeric directive will turn
+ * off zero padding, and putting a "_" there will use
+ * space padding instead of zero padding.
+ */
+#define TODAY_TIME_FORMAT N_("%-I:%M %P")
+#define THIS_MONTH_TIME_FORMAT N_("%b %-e")
+#define THIS_YEAR_TIME_FORMAT N_("%b %-e")
+#define ANYTIME_TIME_FORMAT N_("%b %-d %Y")
+#define FULL_FORMAT N_("%a, %b %e %Y %H:%M:%S %p")
+
 /**
  * nautilus_file_get_date_as_string:
  * 
@@ -4564,10 +4375,45 @@ nautilus_file_get_trash_original_file_parent_as_string (NautilusFile *file)
  * 
  **/
 static char *
-nautilus_file_get_date_as_string (NautilusFile *file, NautilusDateType date_type)
+nautilus_file_get_date_as_string (NautilusFile *file, NautilusDateType date_type, gboolean compact)
 {
-	return nautilus_file_fit_date_as_string (file, date_type,
-		0, NULL, NULL, NULL);
+	time_t file_time_raw;
+	const char *format;
+	char *result = NULL;
+	int i;
+	GDateTime *date_time, *today;
+	int y, m, d;
+	int y_now, m_now, d_now;
+
+	if (!nautilus_file_get_date (file, date_type, &file_time_raw)) {
+		return NULL;
+	}
+
+	date_time = g_date_time_new_from_unix_local (file_time_raw);
+
+	g_date_time_get_ymd (date_time, &y, &m, &d);
+
+	today = g_date_time_new_now_local ();
+	g_date_time_get_ymd (today, &y_now, &m_now, &d_now);
+	g_date_time_unref (today);
+
+	if (!compact) {
+		format = FULL_FORMAT;
+	} else if (y == y_now && m == m_now && d == d_now) {
+		format = TODAY_TIME_FORMAT;
+	} else if (y == y_now && m == m_now) {
+		format = THIS_MONTH_TIME_FORMAT;
+	} else if (y == y_now) {
+		format = THIS_YEAR_TIME_FORMAT;
+	} else {
+		format = ANYTIME_TIME_FORMAT;
+	}
+
+	result = g_date_time_format (date_time, format);
+
+	g_date_time_unref (date_time);
+
+	return result;
 }
 
 static NautilusSpeedTradeoffValue show_directory_item_count;
@@ -6006,9 +5852,10 @@ nautilus_file_get_deep_directory_count_as_string (NautilusFile *file)
  * @file: NautilusFile representing the file in question.
  * @attribute_name: The name of the desired attribute. The currently supported
  * set includes "name", "type", "mime_type", "size", "deep_size", "deep_directory_count",
- * "deep_file_count", "deep_total_count", "date_modified", "date_changed", "date_accessed", 
- * "date_permissions", "owner", "group", "permissions", "octal_permissions", "uri", "where",
- * "link_target", "volume", "free_space", "selinux_context", "trashed_on", "trashed_orig_path"
+ * "deep_file_count", "deep_total_count", "date_modified", "date_changed", "date_accessed",
+ * "date_permissions", "date_modified_full", "date_changed_full", "date_accessed_full",
+ * "date_permissions_full", "owner", "group", "permissions", "octal_permissions", "uri", "where",
+ * "link_target", "volume", "free_space", "selinux_context", "trashed_on", "trashed_on_full", "trashed_orig_path"
  * 
  * Returns: Newly allocated string ready to display to the user, or NULL
  * if the value is unknown or @attribute_name is not supported.
@@ -6051,23 +5898,53 @@ nautilus_file_get_string_attribute_q (NautilusFile *file, GQuark attribute_q)
 	}
 	if (attribute_q == attribute_date_modified_q) {
 		return nautilus_file_get_date_as_string (file, 
-							 NAUTILUS_DATE_TYPE_MODIFIED);
+							 NAUTILUS_DATE_TYPE_MODIFIED,
+							 TRUE);
+	}
+	if (attribute_q == attribute_date_modified_full_q) {
+		return nautilus_file_get_date_as_string (file, 
+							 NAUTILUS_DATE_TYPE_MODIFIED,
+							 FALSE);
 	}
 	if (attribute_q == attribute_date_changed_q) {
 		return nautilus_file_get_date_as_string (file, 
-							 NAUTILUS_DATE_TYPE_CHANGED);
+							 NAUTILUS_DATE_TYPE_CHANGED,
+							 TRUE);
+	}
+	if (attribute_q == attribute_date_changed_full_q) {
+		return nautilus_file_get_date_as_string (file, 
+							 NAUTILUS_DATE_TYPE_CHANGED,
+							 FALSE);
 	}
 	if (attribute_q == attribute_date_accessed_q) {
 		return nautilus_file_get_date_as_string (file,
-							 NAUTILUS_DATE_TYPE_ACCESSED);
+							 NAUTILUS_DATE_TYPE_ACCESSED,
+							 TRUE);
+	}
+	if (attribute_q == attribute_date_accessed_full_q) {
+		return nautilus_file_get_date_as_string (file,
+							 NAUTILUS_DATE_TYPE_ACCESSED,
+							 FALSE);
 	}
 	if (attribute_q == attribute_trashed_on_q) {
 		return nautilus_file_get_date_as_string (file,
-							 NAUTILUS_DATE_TYPE_TRASHED);
+							 NAUTILUS_DATE_TYPE_TRASHED,
+							 TRUE);
+	}
+	if (attribute_q == attribute_trashed_on_full_q) {
+		return nautilus_file_get_date_as_string (file,
+							 NAUTILUS_DATE_TYPE_TRASHED,
+							 FALSE);
 	}
 	if (attribute_q == attribute_date_permissions_q) {
 		return nautilus_file_get_date_as_string (file,
-							 NAUTILUS_DATE_TYPE_PERMISSIONS_CHANGED);
+							 NAUTILUS_DATE_TYPE_PERMISSIONS_CHANGED,
+							 TRUE);
+	}
+	if (attribute_q == attribute_date_permissions_full_q) {
+		return nautilus_file_get_date_as_string (file,
+							 NAUTILUS_DATE_TYPE_PERMISSIONS_CHANGED,
+							 FALSE);
 	}
 	if (attribute_q == attribute_permissions_q) {
 		return nautilus_file_get_permissions_as_string (file);
@@ -6216,11 +6093,16 @@ nautilus_file_is_date_sort_attribute_q (GQuark attribute_q)
 {
 	if (attribute_q == attribute_modification_date_q ||
 	    attribute_q == attribute_date_modified_q ||
+	    attribute_q == attribute_date_modified_full_q ||
 	    attribute_q == attribute_accessed_date_q ||
 	    attribute_q == attribute_date_accessed_q ||
+	    attribute_q == attribute_date_accessed_full_q ||
 	    attribute_q == attribute_date_changed_q ||
+	    attribute_q == attribute_date_changed_full_q ||
 	    attribute_q == attribute_trashed_on_q ||
-	    attribute_q == attribute_date_permissions_q) {
+	    attribute_q == attribute_trashed_on_full_q ||
+	    attribute_q == attribute_date_permissions_q ||
+	    attribute_q == attribute_date_permissions_full_q) {
 		return TRUE;
 	}
 
@@ -7986,8 +7868,10 @@ nautilus_file_class_init (NautilusFileClass *class)
 	attribute_type_q = g_quark_from_static_string ("type");
 	attribute_modification_date_q = g_quark_from_static_string ("modification_date");
 	attribute_date_modified_q = g_quark_from_static_string ("date_modified");
+	attribute_date_modified_full_q = g_quark_from_static_string ("date_modified_full");
 	attribute_accessed_date_q = g_quark_from_static_string ("accessed_date");
 	attribute_date_accessed_q = g_quark_from_static_string ("date_accessed");
+	attribute_date_accessed_full_q = g_quark_from_static_string ("date_accessed_full");
 	attribute_mime_type_q = g_quark_from_static_string ("mime_type");
 	attribute_size_detail_q = g_quark_from_static_string ("size_detail");
 	attribute_deep_size_q = g_quark_from_static_string ("deep_size");
@@ -7995,9 +7879,12 @@ nautilus_file_class_init (NautilusFileClass *class)
 	attribute_deep_directory_count_q = g_quark_from_static_string ("deep_directory_count");
 	attribute_deep_total_count_q = g_quark_from_static_string ("deep_total_count");
 	attribute_date_changed_q = g_quark_from_static_string ("date_changed");
+	attribute_date_changed_full_q = g_quark_from_static_string ("date_changed_full");
 	attribute_trashed_on_q = g_quark_from_static_string ("trashed_on");
+	attribute_trashed_on_full_q = g_quark_from_static_string ("trashed_on_full");
 	attribute_trash_orig_path_q = g_quark_from_static_string ("trash_orig_path");
 	attribute_date_permissions_q = g_quark_from_static_string ("date_permissions");
+	attribute_date_permissions_full_q = g_quark_from_static_string ("date_permissions_full");
 	attribute_permissions_q = g_quark_from_static_string ("permissions");
 	attribute_selinux_context_q = g_quark_from_static_string ("selinux_context");
 	attribute_octal_permissions_q = g_quark_from_static_string ("octal_permissions");

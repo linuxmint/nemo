@@ -366,11 +366,6 @@ char *                  nautilus_file_get_string_attribute_with_default (Nautilu
 									 const char                     *attribute_name);
 char *                  nautilus_file_get_string_attribute_with_default_q (NautilusFile                  *file,
 									 GQuark                          attribute_q);
-char *			nautilus_file_fit_modified_date_as_string	(NautilusFile 			*file,
-									 int				 width,
-									 NautilusWidthMeasureCallback    measure_callback,
-									 NautilusTruncateCallback	 truncate_callback,
-									 void				*measure_truncate_context);
 
 /* Matching with another URI. */
 gboolean                nautilus_file_matches_uri                       (NautilusFile                   *file,
