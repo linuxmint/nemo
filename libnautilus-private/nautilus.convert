@@ -19,7 +19,6 @@ sort-directories-first = /apps/nautilus/preferences/sort_directories_first
 default-sort-order = /apps/nautilus/icon_view/default_sort_order
 default-sort-in-reverse-order = /apps/nautilus/icon_view/default_sort_in_reverse_order
 default-folder-viewer = /apps/nautilus/preferences/default_folder_viewer
-date-format = /apps/nautilus/preferences/date_format
 show-hidden-files = /desktop/gnome/file_views/show_hidden_files
 
 [org.gnome.nautilus.icon-view]

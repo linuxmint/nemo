@@ -45,7 +45,6 @@
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_ICON_VIEW_ZOOM_WIDGET "icon_view_zoom_combobox"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_LIST_VIEW_ZOOM_WIDGET "list_view_zoom_combobox"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_SORT_ORDER_WIDGET "sort_order_combobox"
-#define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET "date_format_combobox"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_TEXT_WIDGET "preview_text_combobox"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_IMAGE_WIDGET "preview_image_combobox"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET "preview_folder_combobox"
@@ -442,34 +441,6 @@ nautilus_file_management_properties_dialog_setup_icon_caption_page (GtkBuilder *
 }
 
 static void
-create_date_format_menu (GtkBuilder *builder)
-{
-	GtkComboBoxText *combo_box;
-	gchar *date_string;
-	GDateTime *now;
-
-	combo_box = GTK_COMBO_BOX_TEXT
-		(gtk_builder_get_object (builder,
-					 NAUTILUS_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET));
-
-	now = g_date_time_new_now_local ();
-
-	date_string = g_date_time_format (now, "%c");
-	gtk_combo_box_text_append_text (combo_box, date_string);
-	g_free (date_string);
-
-	date_string = g_date_time_format (now, "%Y-%m-%d %H:%M:%S");
-	gtk_combo_box_text_append_text (combo_box, date_string);
-	g_free (date_string);
-
-	date_string = g_date_time_format (now, _("today at %-I:%M:%S %p"));
-	gtk_combo_box_text_append_text (combo_box, date_string);
-	g_free (date_string);
-
-	g_date_time_unref (now);
-}
-
-static void
 set_columns_from_settings (NautilusColumnChooser *chooser)
 {
 	char **visible_columns;
@@ -715,7 +686,6 @@ nautilus_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow
 	nautilus_file_management_properties_size_group_create (builder,
 							       "preview_label",
 							       4);
-	create_date_format_menu (builder);
 
 	/* setup preferences */
 	bind_builder_bool (builder, nautilus_icon_view_preferences,
@@ -766,11 +736,6 @@ nautilus_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow
 			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET,
 			   NAUTILUS_PREFERENCES_SHOW_DIRECTORY_ITEM_COUNTS,
 			   (const char **) preview_values);
-	bind_builder_enum (builder, nautilus_preferences,
-			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET,
-			   NAUTILUS_PREFERENCES_DATE_FORMAT,
-			   (const char **) date_format_values);
-
 
 	bind_builder_radio (builder, nautilus_preferences,
 			    (const char **) click_behavior_components,

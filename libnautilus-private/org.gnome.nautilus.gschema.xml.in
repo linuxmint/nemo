@@ -21,12 +21,6 @@
     <value nick="list-view" value="1"/>
   </enum>
 
-  <enum id="org.gnome.nautilus.DateFormat">
-    <value nick="locale" value="0"/>
-    <value nick="iso" value="1"/>
-    <value nick="informal" value="2"/>
-  </enum>
-
   <enum id="org.gnome.nautilus.SortOrder">
     <value nick="manually" value="0"/>
     <value nick="name" value="1"/>
@@ -175,11 +169,6 @@
       <default>'icon-view'</default>
       <_summary>Default folder viewer</_summary>
       <_description>When a folder is visited this viewer is used unless you have selected another view for that particular folder. Possible values are "list-view", and "icon-view".</_description>
-    </key>
-    <key name="date-format" enum="org.gnome.nautilus.DateFormat">
-      <default>'locale'</default>
-      <_summary>Date Format</_summary>
-      <_description>The format of file dates. Possible values are "locale", "iso", and "informal".</_description>
     </key>
     <key name="show-hidden-files" type="b">
       <default>false</default>

@@ -38,19 +38,11 @@ G_BEGIN_DECLS
 /* Display  */
 #define NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
 #define NAUTILUS_PREFERENCES_SHOW_ADVANCED_PERMISSIONS		"show-advanced-permissions"
-#define NAUTILUS_PREFERENCES_DATE_FORMAT			"date-format"
 
 /* Mouse */
 #define NAUTILUS_PREFERENCES_MOUSE_USE_EXTRA_BUTTONS		"mouse-use-extra-buttons"
 #define NAUTILUS_PREFERENCES_MOUSE_FORWARD_BUTTON		"mouse-forward-button"
 #define NAUTILUS_PREFERENCES_MOUSE_BACK_BUTTON			"mouse-back-button"
-
-typedef enum
-{
-	NAUTILUS_DATE_FORMAT_LOCALE,
-	NAUTILUS_DATE_FORMAT_ISO,
-	NAUTILUS_DATE_FORMAT_INFORMAL
-} NautilusDateFormat;
 
 typedef enum
 {
