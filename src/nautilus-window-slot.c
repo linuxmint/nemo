@@ -179,7 +179,6 @@ nautilus_window_slot_init (NautilusWindowSlot *slot)
 
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (slot),
 					GTK_ORIENTATION_VERTICAL);
-	gtk_widget_show (GTK_WIDGET (slot));
 
 	extras_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	slot->extra_location_widgets = extras_vbox;
