@@ -24,6 +24,8 @@
    Author: Martin Wehner <martin.wehner@gmail.com>
 */
 
+#include "config.h"
+
 #include "nautilus-cell-renderer-text-ellipsized.h"
 
 G_DEFINE_TYPE (NautilusCellRendererTextEllipsized, nautilus_cell_renderer_text_ellipsized,

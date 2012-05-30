@@ -21,6 +21,8 @@
  *
  */
 
+#include "config.h"
+
 #include "nautilus-previewer.h"
 
 #define DEBUG_FLAG NAUTILUS_DEBUG_PREVIEWER

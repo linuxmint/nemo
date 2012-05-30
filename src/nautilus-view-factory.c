@@ -22,6 +22,8 @@
    Author: Alexander Larsson <alexl@redhat.com>
 */
 
+#include "config.h"
+
 #include "nautilus-view-factory.h"
 
 static GList *registered_views;

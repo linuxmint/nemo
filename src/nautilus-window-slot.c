@@ -21,6 +21,9 @@
   
    Author: Christian Neumair <cneumair@gnome.org>
 */
+
+#include "config.h"
+
 #include "nautilus-window-slot.h"
 
 #include "nautilus-desktop-window.h"
