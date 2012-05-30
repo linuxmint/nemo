@@ -56,14 +56,11 @@ struct NautilusWindowDetails
 
 	/* View As menu */
 	GList *short_list_viewers;
-	char *extra_viewer;
 
 	/* View As choices */
 	GtkActionGroup *view_as_action_group; /* owned by ui_manager */
 	GtkRadioAction *view_as_radio_action;
-	GtkRadioAction *extra_viewer_radio_action;
 	guint short_list_merge_id;
-	guint extra_viewer_merge_id;
 
 	/* Ensures that we do not react on signals of a
 	 * view that is re-used as new view when its loading

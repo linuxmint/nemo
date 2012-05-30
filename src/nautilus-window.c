@@ -72,10 +72,7 @@
 #include <sys/time.h>
 
 /* dock items */
-
-#define NAUTILUS_MENU_PATH_EXTRA_VIEWER_PLACEHOLDER	"/MenuBar/View/View Choices/Extra Viewer"
 #define NAUTILUS_MENU_PATH_SHORT_LIST_PLACEHOLDER  	"/MenuBar/View/View Choices/Short List"
-#define NAUTILUS_MENU_PATH_AFTER_SHORT_LIST_SEPARATOR   "/MenuBar/View/View Choices/After Short List"
 
 #define MAX_TITLE_LENGTH 180
 
@@ -1383,8 +1380,6 @@ free_stored_viewers (NautilusWindow *window)
 {
 	g_list_free_full (window->details->short_list_viewers, g_free);
 	window->details->short_list_viewers = NULL;
-	g_free (window->details->extra_viewer);
-	window->details->extra_viewer = NULL;
 }
 
 static void
@@ -1780,72 +1775,6 @@ add_view_as_menu_item (NautilusWindow *window,
 	return action; /* return value owned by group */
 }
 
-/* Make a special first item in the "View as" option menu that represents
- * the current content view. This should only be called if the current
- * content view isn't already in the "View as" option menu.
- */
-static void
-update_extra_viewer_in_view_as_menus (NautilusWindow *window,
-				      const char *id)
-{
-	gboolean had_extra_viewer;
-
-	had_extra_viewer = window->details->extra_viewer != NULL;
-
-	if (id == NULL) {
-		if (!had_extra_viewer) {
-			return;
-		}
-	} else {
-		if (had_extra_viewer
-		    && strcmp (window->details->extra_viewer, id) == 0) {
-			return;
-		}
-	}
-	g_free (window->details->extra_viewer);
-	window->details->extra_viewer = g_strdup (id);
-
-	if (window->details->extra_viewer_merge_id != 0) {
-		gtk_ui_manager_remove_ui (window->details->ui_manager,
-					  window->details->extra_viewer_merge_id);
-		window->details->extra_viewer_merge_id = 0;
-	}
-	
-	if (window->details->extra_viewer_radio_action != NULL) {
-		gtk_action_group_remove_action (window->details->view_as_action_group,
-						GTK_ACTION (window->details->extra_viewer_radio_action));
-		window->details->extra_viewer_radio_action = NULL;
-	}
-	
-	if (id != NULL) {
-		window->details->extra_viewer_merge_id = gtk_ui_manager_new_merge_id (window->details->ui_manager);
-                window->details->extra_viewer_radio_action =
-			add_view_as_menu_item (window, 
-					       NAUTILUS_MENU_PATH_EXTRA_VIEWER_PLACEHOLDER, 
-					       window->details->extra_viewer, 
-					       0,
-					       window->details->extra_viewer_merge_id);
-	}
-}
-
-static void
-remove_extra_viewer_in_view_as_menus (NautilusWindow *window)
-{
-	update_extra_viewer_in_view_as_menus (window, NULL);
-}
-
-static void
-replace_extra_viewer_in_view_as_menus (NautilusWindow *window)
-{
-	NautilusWindowSlot *slot;
-	const char *id;
-
-	slot = nautilus_window_get_active_slot (window);
-
-	id = nautilus_window_slot_get_content_view_id (slot);
-	update_extra_viewer_in_view_as_menus (window, id);
-}
-
 /**
  * nautilus_window_sync_view_as_menus:
  * 
@@ -1878,12 +1807,6 @@ nautilus_window_sync_view_as_menus (NautilusWindow *window)
 		if (nautilus_window_slot_content_view_matches_iid (slot, (char *)node->data)) {
 			break;
 		}
-	}
-	if (node == NULL) {
-		replace_extra_viewer_in_view_as_menus (window);
-		index = 0;
-	} else {
-		remove_extra_viewer_in_view_as_menus (window);
 	}
 
 	g_snprintf (action_name, sizeof (action_name), "view_as_%d", index);
@@ -1938,12 +1861,6 @@ load_view_as_menu (NautilusWindow *window)
 		gtk_ui_manager_remove_ui (window->details->ui_manager,
 					  window->details->short_list_merge_id);
 		window->details->short_list_merge_id = 0;
-	}
-	if (window->details->extra_viewer_merge_id != 0) {
-		gtk_ui_manager_remove_ui (window->details->ui_manager,
-					  window->details->extra_viewer_merge_id);
-		window->details->extra_viewer_merge_id = 0;
-		window->details->extra_viewer_radio_action = NULL;
 	}
 	if (window->details->view_as_action_group != NULL) {
 		gtk_ui_manager_remove_action_group (window->details->ui_manager,
