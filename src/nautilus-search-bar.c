@@ -175,12 +175,6 @@ nautilus_search_bar_init (NautilusSearchBar *bar)
 }
 
 GtkWidget *
-nautilus_search_bar_get_entry (NautilusSearchBar *bar)
-{
-	return bar->details->entry;
-}
-
-GtkWidget *
 nautilus_search_bar_borrow_entry (NautilusSearchBar *bar)
 {
 	GtkBindingSet *binding_set;

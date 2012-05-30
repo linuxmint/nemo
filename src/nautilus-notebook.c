@@ -41,8 +41,6 @@
 #define AFTER_ALL_TABS -1
 #define NOT_IN_APP_WINDOWS -2
 
-static void nautilus_notebook_init		 (NautilusNotebook *notebook);
-static void nautilus_notebook_class_init	 (NautilusNotebookClass *klass);
 static int  nautilus_notebook_insert_page	 (GtkNotebook *notebook,
 					  GtkWidget *child,
 					  GtkWidget *tab_label,

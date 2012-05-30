@@ -1240,21 +1240,18 @@ create_notebook (NautilusWindow *window)
 	GtkWidget *notebook;
 
 	notebook = g_object_new (NAUTILUS_TYPE_NOTEBOOK, NULL);
-	g_signal_connect (notebook,
-			  "tab-close-request",
+	g_signal_connect (notebook, "tab-close-request",
 			  G_CALLBACK (notebook_tab_close_requested),
 			  window);
-	g_signal_connect_after (notebook,
-				"button_press_event",
-				G_CALLBACK (notebook_button_press_cb),
-				window);
 	g_signal_connect (notebook, "popup-menu",
 			  G_CALLBACK (notebook_popup_menu_cb),
 			  window);
-	g_signal_connect (notebook,
-			  "switch-page",
+	g_signal_connect (notebook, "switch-page",
 			  G_CALLBACK (notebook_switch_page_cb),
 			  window);
+	g_signal_connect_after (notebook, "button-press-event",
+				G_CALLBACK (notebook_button_press_cb),
+				window);
 
 	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), FALSE);
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
