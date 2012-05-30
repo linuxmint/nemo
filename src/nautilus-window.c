@@ -1261,12 +1261,6 @@ create_notebook (NautilusWindow *window)
 	gtk_widget_show (notebook);
 	gtk_container_set_border_width (GTK_CONTAINER (notebook), 0);
 
-	/* Ensure that the view has some minimal size and that other parts
-	 * of the UI (like location bar and tabs) don't request more and
-	 * thus affect the default position
-	 */
-	gtk_widget_set_size_request (GTK_WIDGET (notebook), 60, 60);
-
 	gtk_box_pack_start (GTK_BOX (window->details->main_view),
 			    notebook,
 			    TRUE, TRUE, 0);
