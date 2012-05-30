@@ -31,7 +31,6 @@ EXTRA_DIST=					\
 	intltool-merge.in			\
 	intltool-update.in			\
 	Makefile.shared				\
-	add-include-prefix			\
 	$(NULL)
 
 DISTCLEANFILES = \
@@ -51,7 +50,7 @@ distclean-local:
 ChangeLog:
 	@echo Creating $@
 	@if test -d "$(srcdir)/.git"; then \
-	  (GIT_DIR=$(top_srcdir)/.git ./missing --run git log NAUTILUS_2_26_2.. --stat -M -C --name-status  --date=short --no-color) | fmt --split-only > $@.tmp \
+	  (GIT_DIR=$(top_srcdir)/.git ./missing --run git log --stat -M -C --name-status  --date=short --no-color) | fmt --split-only > $@.tmp \
 	  && mv -f $@.tmp $@ \
 	  || ($(RM) $@.tmp; \
 	      echo Failed to generate ChangeLog, your ChangeLog may be outdated >&2; \
