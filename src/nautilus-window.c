@@ -1868,7 +1868,6 @@ load_view_as_menu (NautilusWindow *window)
 		window->details->view_as_action_group = NULL;
 	}
 
-	
 	refresh_stored_viewers (window);
 
 	merge_id = gtk_ui_manager_new_merge_id (window->details->ui_manager);

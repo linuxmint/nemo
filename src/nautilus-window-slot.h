@@ -51,12 +51,8 @@ struct NautilusWindowSlotClass {
 	void (* inactive) (NautilusWindowSlot *slot);
 };
 
-/* Each NautilusWindowSlot corresponds to
- * a location in the window for displaying
- * a NautilusView.
- *
- * For navigation windows, this would be a
- * tab, while spatial windows only have one slot.
+/* Each NautilusWindowSlot corresponds to a location in the window
+ * for displaying a NautilusView, i.e. a tab.
  */
 struct NautilusWindowSlot {
 	GtkBox parent;

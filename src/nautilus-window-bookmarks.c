@@ -248,7 +248,7 @@ activate_bookmark_in_menu_item (GtkAction *action, gpointer user_data)
         }
 }
 
-void
+static void
 nautilus_menus_append_bookmark_to_menu (NautilusWindow *window, 
 					NautilusBookmark *bookmark, 
 					const char *parent_path,
