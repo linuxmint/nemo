@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: nautilus.master.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-05-31 10:12+0000\n"
+"POT-Creation-Date: 2012-05-31 12:16+0000\n"
 "PO-Revision-Date: 2012-05-31 11:10+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
@@ -133,7 +133,7 @@ msgstr "Puede parar esta operación pulsando cancelar."
 
 #: ../eel/eel-vfs-extensions.c:93
 msgid " (invalid Unicode)"
-msgstr " (Unicode inválido)"
+msgstr " (Unicode no válido)"
 
 #: ../libnautilus-private/nautilus-bookmark.c:129
 #: ../libnautilus-private/nautilus-desktop-link.c:120
@@ -6079,7 +6079,7 @@ msgstr ""
 
 #: ../src/nautilus-view-dnd.c:207 ../src/nautilus-view-dnd.c:298
 msgid "An invalid drag type was used."
-msgstr "Se ha utilizado un tipo de arrastre inválido."
+msgstr "Se ha utilizado un tipo de arrastre no válido."
 
 #. Translator: This is the filename used for when you dnd text to a directory
 #: ../src/nautilus-view-dnd.c:375
