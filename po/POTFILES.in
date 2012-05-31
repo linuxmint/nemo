@@ -77,8 +77,6 @@ src/nautilus-query-editor.c
 src/nautilus-search-bar.c
 src/nautilus-shell-ui.xml
 src/nautilus-trash-bar.c
-src/nautilus-tree-sidebar.c
-src/nautilus-tree-sidebar-model.c
 src/nautilus-view.c
 src/nautilus-view-dnd.c
 src/nautilus-window-bookmarks.c
