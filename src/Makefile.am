@@ -149,10 +149,6 @@ nautilus_SOURCES = \
 	nautilus-self-check-functions.h 	\
 	nautilus-toolbar.c			\
 	nautilus-toolbar.h			\
-	nautilus-tree-sidebar.c			\
-	nautilus-tree-sidebar.h			\
-	nautilus-tree-sidebar-model.c		\
-	nautilus-tree-sidebar-model.h		\
 	nautilus-trash-bar.c			\
 	nautilus-trash-bar.h			\
 	nautilus-view.c				\

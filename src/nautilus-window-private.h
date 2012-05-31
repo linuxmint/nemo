@@ -81,7 +81,6 @@ struct NautilusWindowDetails
         /* Side Pane */
         int side_pane_width;
         GtkWidget *sidebar;
-        gchar *sidebar_id;
 
         /* Main view */
         GtkWidget *main_view;

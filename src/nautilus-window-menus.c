@@ -365,11 +365,6 @@ nautilus_window_initialize_trash_icon_monitor (NautilusWindow *window)
 
 #define MENU_ITEM_MAX_WIDTH_CHARS 32
 
-enum {
-	SIDEBAR_PLACES,
-	SIDEBAR_TREE
-};
-
 static void
 action_close_all_windows_callback (GtkAction *action, 
 				   gpointer user_data)
@@ -396,44 +391,17 @@ action_forward_callback (GtkAction *action,
 
 static void
 action_show_hide_sidebar_callback (GtkAction *action, 
-				   gpointer user_data)
+                                  gpointer user_data)
 {
-	NautilusWindow *window;
+       NautilusWindow *window;
 
-	window = NAUTILUS_WINDOW (user_data);
+       window = NAUTILUS_WINDOW (user_data);
 
-	if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
-		nautilus_window_show_sidebar (window);
-	} else {
-		nautilus_window_hide_sidebar (window);
-	}
-}
-
-/* TODO: bind all of this with g_settings_bind and GBinding */
-static guint
-sidebar_id_to_value (const gchar *sidebar_id)
-{
-	guint retval = SIDEBAR_PLACES;
-
-	if (g_strcmp0 (sidebar_id, NAUTILUS_WINDOW_SIDEBAR_TREE) == 0)
-		retval = SIDEBAR_TREE;
-
-	return retval;
-}
-
-void
-nautilus_window_update_show_hide_menu_items (NautilusWindow *window) 
-{
-	GtkActionGroup *action_group;
-	GtkAction *action;
-	guint current_value;
-
-	action_group = nautilus_window_get_main_action_group (window);
-
-	action = gtk_action_group_get_action (action_group,
-					      "Sidebar Places");
-	current_value = sidebar_id_to_value (window->details->sidebar_id);
-	gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), current_value);
+       if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
+               nautilus_window_show_sidebar (window);
+       } else {
+               nautilus_window_hide_sidebar (window);
+       }
 }
 
 static void
@@ -575,26 +543,6 @@ action_tab_change_action_activate_callback (GtkAction *action,
 	num = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action), "num"));
 	if (num < gtk_notebook_get_n_pages (notebook)) {
 		gtk_notebook_set_current_page (notebook, num);
-	}
-}
-
-static void
-sidebar_radio_entry_changed_cb (GtkAction *action,
-				GtkRadioAction *current,
-				gpointer user_data)
-{
-	gint current_value;
-
-	current_value = gtk_radio_action_get_current_value (current);
-
-	if (current_value == SIDEBAR_PLACES) {
-		g_settings_set_string (nautilus_window_state,
-				       NAUTILUS_WINDOW_STATE_SIDE_PANE_VIEW,
-				       NAUTILUS_WINDOW_SIDEBAR_PLACES);
-	} else if (current_value == SIDEBAR_TREE) {
-		g_settings_set_string (nautilus_window_state,
-				       NAUTILUS_WINDOW_STATE_SIDE_PANE_VIEW,
-				       NAUTILUS_WINDOW_SIDEBAR_TREE);
 	}
 }
 
@@ -745,21 +693,12 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* label, accelerator */   N_("_Show Sidebar"), "F9",
   /* tooltip */              N_("Change the visibility of this window's side pane"),
                              G_CALLBACK (action_show_hide_sidebar_callback),
-  /* is_active */            TRUE }, 
+  /* is_active */            TRUE },
   /* name, stock id */     { "Search", "edit-find-symbolic",
   /* label, accelerator */   N_("_Search for Files..."), "<control>f",
   /* tooltip */              N_("Search documents and folders by name"),
 			     NULL,
   /* is_active */            FALSE },
-};
-
-static const GtkRadioActionEntry main_radio_entries[] = {
-	{ "Sidebar Places", NULL,
-	  N_("Places"), NULL, N_("Select Places as the default sidebar"),
-	  SIDEBAR_PLACES },
-	{ "Sidebar Tree", NULL,
-	  N_("Tree"), NULL, N_("Select Tree as the default sidebar"),
-	  SIDEBAR_TREE }
 };
 
 static const gchar* app_actions[] = {
@@ -836,19 +775,19 @@ nautilus_window_create_toolbar_action_group (NautilusWindow *window)
 static void
 window_menus_set_bindings (NautilusWindow *window)
 {
-	GtkActionGroup *action_group;
-	GtkAction *action;
+       GtkActionGroup *action_group;
+       GtkAction *action;
 
-	action_group = nautilus_window_get_main_action_group (window);
+       action_group = nautilus_window_get_main_action_group (window);
 
-	action = gtk_action_group_get_action (action_group,
-					      NAUTILUS_ACTION_SHOW_HIDE_SIDEBAR);	
+       action = gtk_action_group_get_action (action_group,
+                                             NAUTILUS_ACTION_SHOW_HIDE_SIDEBAR);
 
-	g_settings_bind (nautilus_window_state,
-			 NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR,
-			 action,
-			 "active",
-			 G_SETTINGS_BIND_DEFAULT);
+       g_settings_bind (nautilus_window_state,
+                        NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR,
+                        action,
+                        "active",
+                        G_SETTINGS_BIND_DEFAULT);
 }
 
 void 
@@ -865,7 +804,6 @@ nautilus_window_initialize_actions (NautilusWindow *window)
 								    nav_state_actions);
 
 	window_menus_set_bindings (window);
-	nautilus_window_update_show_hide_menu_items (window);
 }
 
 static void
@@ -917,10 +855,6 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 	gtk_action_group_add_toggle_actions (action_group, 
 					     main_toggle_entries, G_N_ELEMENTS (main_toggle_entries),
 					     window);
-	gtk_action_group_add_radio_actions (action_group,
-					    main_radio_entries, G_N_ELEMENTS (main_radio_entries),
-					    0, G_CALLBACK (sidebar_radio_entry_changed_cb),
-					    window);
 
 	nautilus_window_menus_set_visibility_for_app_menu (window);
 	g_signal_connect_swapped (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),

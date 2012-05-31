@@ -53,14 +53,7 @@
 		<menuitem name="Stop" action="Stop"/>
 		<menuitem name="Reload" action="Reload"/>
 		<separator/>
-		<placeholder name="Show Hide Placeholder">
-			<menu action="Sidebar List">
-				<menuitem name="Sidebar Places" action="Sidebar Places"/>
-				<menuitem name="Sidebar Tree" action="Sidebar Tree"/>
-				<separator/>
-				<menuitem name="Show Hide Sidebar" action="Show Hide Sidebar"/>
-			</menu>
-		</placeholder>
+		<menuitem name="Show Hide Sidebar" action="Show Hide Sidebar"/>
 		<separator/>
 		<placeholder name="View Preferences Placeholder"/>
 		<separator/>

@@ -58,9 +58,6 @@ typedef enum
 	NAUTILUS_NEW_TAB_POSITION_END,
 } NautilusNewTabPosition;
 
-/* Sidebar panels  */
-#define NAUTILUS_PREFERENCES_TREE_SHOW_ONLY_DIRECTORIES         "show-only-directories"
-
 /* Single/Double click preference  */
 #define NAUTILUS_PREFERENCES_CLICK_POLICY			"click-policy"
 
@@ -77,8 +74,7 @@ typedef enum
 #define NAUTILUS_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY		"always-use-location-entry"
 
 /* Which views should be displayed for new windows */
-#define NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR		"start-with-sidebar"
-#define NAUTILUS_WINDOW_STATE_SIDE_PANE_VIEW                    "side-pane-view"
+#define NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR               "start-with-sidebar"
 #define NAUTILUS_WINDOW_STATE_GEOMETRY				"geometry"
 #define NAUTILUS_WINDOW_STATE_MAXIMIZED				"maximized"
 #define NAUTILUS_WINDOW_STATE_SIDEBAR_WIDTH			"sidebar-width"

@@ -34,9 +34,6 @@ default-zoom-level = /apps/nautilus/list_view/default_zoom_level
 default-visible-columns = /apps/nautilus/list_view/default_visible_columns
 default-column-order = /apps/nautilus/list_view/default_column_order
 
-[org.gnome.nautilus.sidebar-panels.tree]
-show-only-directories = /apps/nautilus/sidebar_panels/tree/show_only_directories
-
 [org.gnome.nautilus.desktop]
 font = /apps/nautilus/preferences/desktop_font
 home-icon-visible = /apps/nautilus/desktop/home_icon_visible
@@ -54,4 +51,3 @@ maximized = /apps/nautilus/preferences/navigation_window_saved_maximized
 sidebar-width = /apps/nautilus/preferences/sidebar_width
 start-with-location-bar = /apps/nautilus/preferences/start_with_location_bar
 start-with-sidebar = /apps/nautilus/preferences/start_with_sidebar
-side-pane-view = /apps/nautilus/preferences/side_pane_view

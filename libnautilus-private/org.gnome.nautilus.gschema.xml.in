@@ -56,7 +56,6 @@
     <child name="preferences" schema="org.gnome.nautilus.preferences"/>
     <child name="icon-view" schema="org.gnome.nautilus.icon-view"/>
     <child name="list-view" schema="org.gnome.nautilus.list-view"/>
-    <child name="sidebar-panels" schema="org.gnome.nautilus.sidebar-panels"/>
     <child name="desktop" schema="org.gnome.nautilus.desktop"/>
     <child name="window-state" schema="org.gnome.nautilus.window-state"/>
   </schema>
@@ -262,18 +261,6 @@
     </key>
   </schema>
 
-  <schema id="org.gnome.nautilus.sidebar-panels" path="/org/gnome/nautilus/sidebar-panels/" gettext-domain="nautilus">
-    <child name="tree" schema="org.gnome.nautilus.sidebar-panels.tree"/>
-  </schema>
-
-  <schema id="org.gnome.nautilus.sidebar-panels.tree" path="/org/gnome/nautilus/sidebar-panels/tree/" gettext-domain="nautilus">
-    <key name="show-only-directories" type="b">
-      <default>true</default>
-      <_summary>Only show folders in the tree side pane</_summary>
-      <_description>If set to true, Nautilus will only show folders in the tree side pane. Otherwise it will show both folders and files.</_description>
-    </key>
-  </schema>
-
   <schema id="org.gnome.nautilus.desktop" path="/org/gnome/nautilus/desktop/" gettext-domain="nautilus">
     <key name="font" type="s">
       <default l10n="messages" context="desktop-font">''</default>
@@ -352,19 +339,6 @@
       <default>true</default>
       <_summary>Show side pane in new windows</_summary>
       <_description>If set to true, newly opened windows will have the side pane visible.</_description>
-    </key>
-    <key name="side-pane-view" type="s">
-      <choices>
-	<choice value='places'/>
-	<choice value='tree'/>
-      </choices>
-      <aliases>
-	<alias value='NautilusPlacesSidebar' target='places'/>
-	<alias value='NautilusTreeSidebar' target='tree'/>
-      </aliases>
-      <default>'places'</default>
-      <_summary>Side pane view</_summary>
-      <_description>The side pane view to show in newly opened windows.</_description>
     </key>
   </schema>
 </schemalist>

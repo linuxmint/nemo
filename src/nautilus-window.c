@@ -40,7 +40,6 @@
 #include "nautilus-pathbar.h"
 #include "nautilus-search-bar.h"
 #include "nautilus-toolbar.h"
-#include "nautilus-tree-sidebar.h"
 #include "nautilus-view-factory.h"
 #include "nautilus-window-manage-views.h"
 #include "nautilus-window-bookmarks.h"
@@ -700,19 +699,10 @@ setup_side_pane_width (NautilusWindow *window)
 				window->details->side_pane_width);
 }
 
-static gboolean
-sidebar_id_is_valid (const gchar *sidebar_id)
-{
-	return (g_strcmp0 (sidebar_id, NAUTILUS_WINDOW_SIDEBAR_PLACES) == 0 ||
-		g_strcmp0 (sidebar_id, NAUTILUS_WINDOW_SIDEBAR_TREE) == 0);
-}
-
 static void
 nautilus_window_set_up_sidebar (NautilusWindow *window)
 {
 	GtkWidget *sidebar;
-
-	DEBUG ("Setting up sidebar id %s", window->details->sidebar_id);
 
 	window->details->sidebar = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_style_context_add_class (gtk_widget_get_style_context (window->details->sidebar),
@@ -728,14 +718,7 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 			  G_CALLBACK (side_pane_size_allocate_callback),
 			  window);
 
-	if (g_strcmp0 (window->details->sidebar_id, NAUTILUS_WINDOW_SIDEBAR_PLACES) == 0) {
-		sidebar = nautilus_places_sidebar_new (window);
-	} else if (g_strcmp0 (window->details->sidebar_id, NAUTILUS_WINDOW_SIDEBAR_TREE) == 0) {
-		sidebar = nautilus_tree_sidebar_new (window);
-	} else {
-		g_assert_not_reached ();
-	}
-
+	sidebar = nautilus_places_sidebar_new (window);
 	gtk_box_pack_start (GTK_BOX (window->details->sidebar), sidebar, TRUE, TRUE, 0);
 	gtk_widget_show (sidebar);
 	gtk_widget_show (GTK_WIDGET (window->details->sidebar));
@@ -762,8 +745,6 @@ nautilus_window_hide_sidebar (NautilusWindow *window)
 	}
 
 	nautilus_window_tear_down_sidebar (window);
-	nautilus_window_update_show_hide_menu_items (window);
-
 	g_settings_set_boolean (nautilus_window_state, NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR, FALSE);
 }
 
@@ -781,38 +762,7 @@ nautilus_window_show_sidebar (NautilusWindow *window)
 	}
 
 	nautilus_window_set_up_sidebar (window);
-	nautilus_window_update_show_hide_menu_items (window);
 	g_settings_set_boolean (nautilus_window_state, NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR, TRUE);
-}
-
-static void
-side_pane_id_changed (NautilusWindow *window)
-{
-	gchar *sidebar_id;
-
-	sidebar_id = g_settings_get_string (nautilus_window_state,
-					    NAUTILUS_WINDOW_STATE_SIDE_PANE_VIEW);
-
-	DEBUG ("Sidebar id changed to %s", sidebar_id);
-
-	if (g_strcmp0 (sidebar_id, window->details->sidebar_id) == 0) {
-		g_free (sidebar_id);
-		return;
-	}
-
-	if (!sidebar_id_is_valid (sidebar_id)) {
-		g_free (sidebar_id);
-		return;
-	}
-
-	g_free (window->details->sidebar_id);
-	window->details->sidebar_id = sidebar_id;
-
-	if (window->details->sidebar != NULL) {
-		/* refresh the sidebar setting */
-		nautilus_window_tear_down_sidebar (window);
-		nautilus_window_set_up_sidebar (window);
-	}
 }
 
 gboolean
@@ -1315,13 +1265,6 @@ nautilus_window_constructed (GObject *self)
 	window->details->toolbar = create_toolbar (window);
 	window->details->notebook = create_notebook (window);
 
-	g_signal_connect_swapped (nautilus_window_state,
-				  "changed::" NAUTILUS_WINDOW_STATE_SIDE_PANE_VIEW,
-				  G_CALLBACK (side_pane_id_changed),
-				  window);
-
-	side_pane_id_changed (window);
-
 	nautilus_window_initialize_bookmarks_menu (window);
 	nautilus_window_set_initial_window_geometry (window);
 
@@ -1422,14 +1365,11 @@ nautilus_window_finalize (GObject *object)
 	}
 
 	nautilus_window_finalize_menus (window);
-	g_signal_handlers_disconnect_by_func (nautilus_window_state,
-					      side_pane_id_changed, window);
 
 	g_clear_object (&window->details->nav_state);
 	g_clear_object (&window->details->bookmark_list);
 	g_clear_object (&window->details->ui_manager);
 
-	g_free (window->details->sidebar_id);
 	free_stored_viewers (window);
 
 	/* nautilus_window_close() should have run */
