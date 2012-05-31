@@ -397,7 +397,7 @@ get_direct_save_filename (GdkDragContext *context)
 		return NULL;
 	}
 	
-	return prop_text;
+	return (gchar *) prop_text;
 }
 
 static void
@@ -1532,8 +1532,8 @@ drag_data_received_callback (GtkWidget *widget,
 			     gpointer user_data)
 {
     	NautilusDragInfo *drag_info;
-	char *tmp;
-	const char *tmp_raw;
+	guchar *tmp;
+	const guchar *tmp_raw;
 	int length;
 	gboolean success;
 
@@ -1606,7 +1606,7 @@ drag_data_received_callback (GtkWidget *widget,
 			tmp_raw = gtk_selection_data_get_data (data);
 			receive_dropped_raw
 				(NAUTILUS_ICON_CONTAINER (widget),
-				 tmp_raw, length, drag_info->direct_save_uri,
+				 (const gchar *) tmp_raw, length, drag_info->direct_save_uri,
 				 context, x, y);
 			success = TRUE;
 			break;

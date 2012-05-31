@@ -1934,7 +1934,7 @@ eel_editable_label_select_region_index (EelEditableLabel *label,
     {
       GtkTargetList *list;
       GtkTargetEntry *targets;
-      guint n_targets;
+      gint n_targets;
 
       list = gtk_target_list_new (NULL, 0);
       gtk_target_list_add_text_targets (list, 0);
