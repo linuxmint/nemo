@@ -177,7 +177,6 @@ GSettings *nautilus_preferences;
 GSettings *nautilus_icon_view_preferences;
 GSettings *nautilus_list_view_preferences;
 GSettings *nautilus_desktop_preferences;
-GSettings *nautilus_tree_sidebar_preferences;
 GSettings *nautilus_window_state;
 GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;

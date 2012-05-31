@@ -71,7 +71,6 @@ nautilus_global_preferences_init (void)
 	nautilus_icon_view_preferences = g_settings_new("org.gnome.nautilus.icon-view");
 	nautilus_list_view_preferences = g_settings_new("org.gnome.nautilus.list-view");
 	nautilus_desktop_preferences = g_settings_new("org.gnome.nautilus.desktop");
-	nautilus_tree_sidebar_preferences = g_settings_new("org.gnome.nautilus.sidebar-panels.tree");
 	gnome_lockdown_preferences = g_settings_new("org.gnome.desktop.lockdown");
 	gnome_background_preferences = g_settings_new("org.gnome.desktop.background");
 }
