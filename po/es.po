@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: nautilus.master.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-05-30 16:51+0000\n"
+"POT-Creation-Date: 2012-05-31 10:12+0000\n"
 "PO-Revision-Date: 2012-05-31 11:10+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
@@ -3058,14 +3058,11 @@ msgstr "_Marcadores"
 # src/file-manager/fm-search-list-view.c:140
 # src/nautilus-bookmarks-window.c:172
 #: ../src/nautilus-bookmarks-window.ui.h:3
-#| msgid "_Name:"
-#| msgid_plural "_Names:"
 msgid "_Name"
 msgstr "_Nombre"
 
 # src/nautilus-location-bar.c:401
 #: ../src/nautilus-bookmarks-window.ui.h:4
-#| msgid "_Location:"
 msgid "_Location"
 msgstr "_Ubicación"
 
@@ -3447,7 +3444,6 @@ msgid "File Management Preferences"
 msgstr "Preferencias de administración de archivos"
 
 #: ../src/nautilus-file-management-properties.ui.h:2
-#| msgid "<b>Default View</b>"
 msgid "Default View"
 msgstr "Vista predeterminada"
 
@@ -3468,7 +3464,6 @@ msgid "Show hidden and _backup files"
 msgstr "Mostrar los archivos ocultos y de _respaldo"
 
 #: ../src/nautilus-file-management-properties.ui.h:7
-#| msgid "<b>Icon View Defaults</b>"
 msgid "Icon View Defaults"
 msgstr "Valores predeterminados para la vista de iconos"
 
@@ -3481,7 +3476,6 @@ msgid "_Text beside icons"
 msgstr "_Texto al lado de los iconos"
 
 #: ../src/nautilus-file-management-properties.ui.h:10
-#| msgid "<b>List View Defaults</b>"
 msgid "List View Defaults"
 msgstr "Valores predeterminados para la vista de lista"
 
@@ -3490,7 +3484,6 @@ msgid "D_efault zoom level:"
 msgstr "Niv_el de ampliación predeterminado:"
 
 #: ../src/nautilus-file-management-properties.ui.h:12
-#| msgid "<b>Tree View Defaults</b>"
 msgid "Tree View Defaults"
 msgstr "Valores predeterminados para la vista de árbol"
 
@@ -3523,7 +3516,6 @@ msgid "Open each _folder in its own window"
 msgstr "Abrir cada _carpeta en su propia ventana"
 
 #: ../src/nautilus-file-management-properties.ui.h:19
-#| msgid "<b>Executable Text Files</b>"
 msgid "Executable Text Files"
 msgstr "Archivos de texto ejecutables"
 
@@ -3555,7 +3547,6 @@ msgstr "_Incluir un comando «Eliminar» que no use la papelera"
 
 # src/nautilus-location-bar.c:401
 #: ../src/nautilus-file-management-properties.ui.h:26
-#| msgid "<b>Icon Captions</b>"
 msgid "Icon Captions"
 msgstr "Descripciones de iconos"
 
@@ -3570,7 +3561,6 @@ msgstr ""
 
 # libnautilus-private/nautilus-program-chooser.c:1262
 #: ../src/nautilus-file-management-properties.ui.h:28
-#| msgid "Danube"
 msgid "Date"
 msgstr "Fecha"
 
@@ -3596,7 +3586,6 @@ msgstr ""
 
 # src/file-manager/fm-properties-window.c:1563
 #: ../src/nautilus-file-management-properties.ui.h:33
-#| msgid "Text File"
 msgid "Text Files"
 msgstr "Archivos de texto"
 
@@ -3606,7 +3595,6 @@ msgid "Show te_xt in icons:"
 msgstr "Mostrar _texto en los iconos:"
 
 #: ../src/nautilus-file-management-properties.ui.h:35
-#| msgid "<b>Other Previewable Files</b>"
 msgid "Other Previewable Files"
 msgstr "Otros archivos previsualizables"
 
@@ -3622,7 +3610,6 @@ msgstr "_Sólo para archivos menores de:"
 # src/file-manager/fm-directory-view.c:2140
 # src/file-manager/fm-directory-view.c:2257
 #: ../src/nautilus-file-management-properties.ui.h:38
-#| msgid "Folder:"
 msgid "Folders"
 msgstr "Carpetas"
 
@@ -4083,7 +4070,7 @@ msgstr "(Vacío)"
 
 #: ../src/nautilus-list-model.c:378 ../src/nautilus-tree-sidebar-model.c:1238
 #: ../src/nautilus-window-manage-views.c:1129
-#: ../src/nautilus-window-slot.c:204
+#: ../src/nautilus-window-slot.c:207
 msgid "Loading..."
 msgstr "Cargando…"
 
