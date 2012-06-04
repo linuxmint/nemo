@@ -58,6 +58,7 @@ typedef enum {
 static guint path_bar_signals [LAST_SIGNAL] = { 0 };
 
 #define NAUTILUS_PATH_BAR_ICON_SIZE 16
+#define NAUTILUS_PATH_BAR_BUTTON_MAX_WIDTH 250
 
 typedef struct {
         GtkWidget *button;
@@ -447,6 +448,7 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
         GtkAllocation child_allocation;
         GList *list, *first_button;
         gint width;
+        gint largest_width;
         gboolean need_sliders;
         gint up_slider_offset;
         gint down_slider_offset;
@@ -554,11 +556,17 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
 		}
         }
 
+        /* Determine the largest possible allocation size */
+        largest_width = allocation->width;
+        if (need_sliders) {
+		largest_width -= (path_bar->priv->spacing + path_bar->priv->slider_width) * 2;
+        }
+
         for (list = first_button; list; list = list->prev) {
                 child = BUTTON_DATA (list->data)->button;
 		gtk_widget_get_preferred_size (child, &child_requisition, NULL);
 
-                child_allocation.width = child_requisition.width;
+                child_allocation.width = MIN (child_requisition.width, largest_width);
                 if (direction == GTK_TEXT_DIR_RTL) {
 			child_allocation.x -= child_allocation.width;
 		}
@@ -1248,10 +1256,11 @@ set_label_size_request (ButtonData *button_data)
 
         pango_layout_get_pixel_size (layout, &bold_width, &bold_height);
 
-	gtk_widget_set_size_request (button_data->alignment,
-				     MAX (width, bold_width),
-				     MAX (height, bold_height));
-	
+	width = MAX (width, bold_width);
+	width = MIN (width, NAUTILUS_PATH_BAR_BUTTON_MAX_WIDTH);
+	height = MAX (height, bold_height);
+
+	gtk_widget_set_size_request (button_data->alignment, width, height);
         g_object_unref (layout);
 }
 
@@ -1622,6 +1631,10 @@ make_button_data (NautilusPathBar  *path_bar,
 			gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 0);
 			gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 0);
         }
+
+	if (button_data->label != NULL) {
+		gtk_label_set_ellipsize (GTK_LABEL (button_data->label), PANGO_ELLIPSIZE_MIDDLE);
+	}
 
 	if (button_data->path == NULL) {
         	button_data->path = g_object_ref (path);
