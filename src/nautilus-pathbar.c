@@ -447,12 +447,10 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
         GtkAllocation child_allocation;
         GList *list, *first_button;
         gint width;
-        gint allocation_width;
         gboolean need_sliders;
         gint up_slider_offset;
         gint down_slider_offset;
 	GtkRequisition child_requisition;
-	GtkAllocation widget_allocation;
 
 	need_sliders = FALSE;
 	up_slider_offset = 0;
@@ -472,7 +470,6 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
                 return;
 	}
         direction = gtk_widget_get_direction (widget);
-        allocation_width = allocation->width;
 
   	/* First, we check to see if we need the scrollbars. */
 	width = 0;
@@ -483,12 +480,11 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
 
         for (list = path_bar->priv->button_list->next; list; list = list->next) {
         	child = BUTTON_DATA (list->data)->button;
-		gtk_widget_get_preferred_size (child,
-					       &child_requisition, NULL);
+		gtk_widget_get_preferred_size (child, &child_requisition, NULL);
                 width += child_requisition.width + path_bar->priv->spacing;
         }
 
-        if (width <= allocation_width) {
+        if (width <= allocation->width) {
 		first_button = g_list_last (path_bar->priv->button_list);
         } else {
                 gboolean reached_end;
@@ -514,10 +510,9 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
                 list = first_button->prev;
                 while (list && !reached_end) {
 	  		child = BUTTON_DATA (list->data)->button;
-			gtk_widget_get_preferred_size (child,
-						       &child_requisition, NULL);
+			gtk_widget_get_preferred_size (child, &child_requisition, NULL);
 
-	  		if (width + child_requisition.width + path_bar->priv->spacing + slider_space > allocation_width) {
+	  		if (width + child_requisition.width + path_bar->priv->spacing + slider_space > allocation->width) {
 	    			reached_end = TRUE;
 	  		} else {
 				width += child_requisition.width + path_bar->priv->spacing;
@@ -530,10 +525,9 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
 
                 while (first_button->next && ! reached_end) {
 	  		child = BUTTON_DATA (first_button->next->data)->button;
-			gtk_widget_get_preferred_size (child,
-						       &child_requisition, NULL);
+			gtk_widget_get_preferred_size (child, &child_requisition, NULL);
 
-	  		if (width + child_requisition.width + path_bar->priv->spacing + slider_space > allocation_width) {
+	  		if (width + child_requisition.width + path_bar->priv->spacing + slider_space > allocation->width) {
 	      			reached_end = TRUE;
 	    		} else {
 	      			width += child_requisition.width + path_bar->priv->spacing;
@@ -562,10 +556,7 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
 
         for (list = first_button; list; list = list->prev) {
                 child = BUTTON_DATA (list->data)->button;
-		gtk_widget_get_preferred_size (child,
-					       &child_requisition, NULL);
-
-		gtk_widget_get_allocation (widget, &widget_allocation);
+		gtk_widget_get_preferred_size (child, &child_requisition, NULL);
 
                 child_allocation.width = child_requisition.width;
                 if (direction == GTK_TEXT_DIR_RTL) {
@@ -573,12 +564,12 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
 		}
                 /* Check to see if we've don't have any more space to allocate buttons */
                 if (need_sliders && direction == GTK_TEXT_DIR_RTL) {
-	  		if (child_allocation.x - path_bar->priv->spacing - path_bar->priv->slider_width < widget_allocation.x) {
+	  		if (child_allocation.x - path_bar->priv->spacing - path_bar->priv->slider_width < allocation->x) {
 			    break;
 			}
 		} else {
 			if (need_sliders && direction == GTK_TEXT_DIR_LTR) {
-	  			if (child_allocation.x + child_allocation.width + path_bar->priv->spacing + path_bar->priv->slider_width > widget_allocation.x + allocation_width) {
+	  			if (child_allocation.x + child_allocation.width + path_bar->priv->spacing + path_bar->priv->slider_width > allocation->x + allocation->width) {
 	    				break;	
 				}	
 			}
