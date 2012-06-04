@@ -1,3 +1,20 @@
+Major changes in 3.5.2 are:
+* Add a way to create a new directory for selection
+* Don't pack multiple x-content bars in the view
+* Show icons x-content bar application launchers
+* Hide New Document menu when no templates are installed
+* Remove statusbar
+* Remove "Go->Computer"
+* Remove compact view
+* Remove extra panes and tree sidebar
+* Fix pathbar buttons disappearing for too long titles
+* Fix sidebar typeahead find being triggered
+* Fix image properties label not wrapping for long width
+* Don't trigger context menu for sidebar headings
+* Don't show old 'note' emblems
+* Reintroduce GTK accel map loading/saving and migrate it to XDG dirs
+* Remove markup from GtkBuilder strings
+
 Major changes in 3.5.1 are:
 * Add an application menu
 * Don't show sliders up to the file system root in the pathbar
