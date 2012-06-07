@@ -118,13 +118,19 @@ eel_accessibility_create_accessible_gtype (const char *type_name,
 	GType atk_type, parent_atk_type;
 	GTypeQuery query;
 	AtkObject *parent_atk;
-	GtkWidgetClass *parent_class;
+	GtkWidgetClass *parent_class, *klass;
 
 	if ((atk_type = g_type_from_name (type_name))) {
 		return atk_type;
 	}
 
-	parent_class = g_type_class_peek_parent (G_OBJECT_GET_CLASS (widget));
+	klass = GTK_WIDGET_CLASS (G_OBJECT_GET_CLASS (widget));
+	parent_class = klass;
+
+	while (klass->get_accessible == parent_class->get_accessible) {
+		parent_class = g_type_class_peek_parent (parent_class);
+	}
+
 	parent_atk = parent_class->get_accessible (widget);
 	parent_atk_type = G_TYPE_FROM_INSTANCE (parent_atk);
 
