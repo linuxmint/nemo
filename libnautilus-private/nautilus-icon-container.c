@@ -143,7 +143,7 @@ typedef struct {
 	char *action_descriptions[LAST_ACTION];
 } NautilusIconContainerAccessiblePrivate;
 
-static GType         nautilus_icon_container_accessible_get_type (void);
+static AtkObject *   get_accessible                                 (GtkWidget *widget);
 
 static void          preview_selected_items                         (NautilusIconContainer *container);
 static void          activate_selected_items                        (NautilusIconContainer *container);
@@ -5515,22 +5515,6 @@ draw_canvas_background (EelCanvas *canvas,
 	/* Don't chain up to the parent to avoid clearing and redrawing */
 }
 
-
-static AtkObject *
-get_accessible (GtkWidget *widget)
-{
-	AtkObject *accessible;
-	
-	if ((accessible = eel_accessibility_get_atk_object (widget))) {
-		return accessible;
-	}
-	
-	accessible = g_object_new 
-		(nautilus_icon_container_accessible_get_type (), NULL);
-	
-	return eel_accessibility_set_atk_object_return (widget, accessible);
-}
-
 static void
 grab_notify_cb  (GtkWidget        *widget,
 		 gboolean          was_grabbed)
@@ -5951,9 +5935,9 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 	widget_class->motion_notify_event = motion_notify_event;
 	widget_class->key_press_event = key_press_event;
 	widget_class->popup_menu = popup_menu;
-	widget_class->get_accessible = get_accessible;
 	widget_class->style_updated = style_updated;
 	widget_class->grab_notify = grab_notify_cb;
+	widget_class->get_accessible = get_accessible;
 
 	canvas_class = EEL_CANVAS_CLASS (class);
 	canvas_class->draw_background = draw_canvas_background;
@@ -9039,36 +9023,43 @@ nautilus_icon_container_accessible_class_init (AtkObjectClass *klass)
 	accessible_private_data_quark = g_quark_from_static_string ("icon-container-accessible-private-data");
 }
 
-static GType
-nautilus_icon_container_accessible_get_type (void)
+static AtkObject *
+get_accessible (GtkWidget *widget)
 {
         static GType type = 0;
+	AtkObject *accessible;
+	
+	if ((accessible = eel_accessibility_get_atk_object (widget))) {
+		return accessible;
+	}
 
         if (!type) {
-                static GInterfaceInfo atk_action_info = {
+                const GInterfaceInfo atk_action_info = {
                         (GInterfaceInitFunc) nautilus_icon_container_accessible_action_interface_init,
                         (GInterfaceFinalizeFunc) NULL,
                         NULL
                 };              
 		
-                static GInterfaceInfo atk_selection_info = {
+                const GInterfaceInfo atk_selection_info = {
                         (GInterfaceInitFunc) nautilus_icon_container_accessible_selection_interface_init,
                         (GInterfaceFinalizeFunc) NULL,
                         NULL
-                };              
+                };
 
-		type = eel_accessibility_create_derived_type 
+		type = eel_accessibility_create_accessible_gtype 
 			("NautilusIconContainerAccessible",
-			 EEL_TYPE_CANVAS,
-			 nautilus_icon_container_accessible_class_init);
+			 widget,
+			 (GClassInitFunc) nautilus_icon_container_accessible_class_init);
 		
                 g_type_add_interface_static (type, ATK_TYPE_ACTION,
                                              &atk_action_info);
                 g_type_add_interface_static (type, ATK_TYPE_SELECTION,
                                              &atk_selection_info);
         }
+	
+	accessible = g_object_new (type, "widget", widget, NULL);
 
-        return type;
+	return eel_accessibility_set_atk_object_return (widget, accessible);
 }
 
 gboolean
