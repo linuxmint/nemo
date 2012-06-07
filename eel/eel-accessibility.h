@@ -43,6 +43,9 @@ AtkObject    *eel_accessibility_set_atk_object_return (gpointer              obj
 GType         eel_accessibility_create_derived_type   (const char           *type_name,
 						       GType                 existing_gobject_with_proxy,
 						       EelAccessibilityClassInitFn class_init);
+GType         eel_accessibility_create_accessible_gtype (const char *type_name,
+							 GtkWidget *widget,
+							 GClassInitFunc class_init);
 
 char*         eel_accessibility_text_get_text         (AtkText              *text,
                                                        gint                 start_pos,

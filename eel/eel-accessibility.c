@@ -110,6 +110,39 @@ eel_accessibility_create_derived_type (const char *type_name,
 	return type;
 }
 
+GType
+eel_accessibility_create_accessible_gtype (const char *type_name,
+					   GtkWidget *widget,
+					   GClassInitFunc class_init)
+{
+	GType atk_type, parent_atk_type;
+	GTypeQuery query;
+	AtkObject *parent_atk;
+	GtkWidgetClass *parent_class;
+
+	if ((atk_type = g_type_from_name (type_name))) {
+		return atk_type;
+	}
+
+	parent_class = g_type_class_peek_parent (G_OBJECT_GET_CLASS (widget));
+	parent_atk = parent_class->get_accessible (widget);
+	parent_atk_type = G_TYPE_FROM_INSTANCE (parent_atk);
+
+	if (!parent_atk_type) {
+		return G_TYPE_INVALID;
+	}
+
+	/* Figure out the size of the class and instance 
+	 * we are deriving from
+	 */
+	g_type_query (parent_atk_type, &query);
+
+	/* Register the type */
+	return g_type_register_static_simple (parent_atk_type, type_name,
+					      query.class_size, class_init,
+					      query.instance_size, NULL, 0);
+}
+
 
 static GQuark
 get_quark_accessible (void)
