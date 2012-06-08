@@ -1147,6 +1147,10 @@ create_toolbar (NautilusWindow *window)
 			    FALSE, FALSE, 0);
 	gtk_widget_show (toolbar);
 
+	g_object_bind_property (window, "disable-chrome",
+				toolbar, "visible",
+				G_BINDING_INVERT_BOOLEAN);
+
 	/* connect to the pathbar signals */
 	path_bar = nautilus_toolbar_get_path_bar (NAUTILUS_TOOLBAR (toolbar));
 	gtk_size_group_add_widget (header_size_group, path_bar);
