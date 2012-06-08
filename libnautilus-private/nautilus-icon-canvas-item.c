@@ -2196,12 +2196,16 @@ typedef struct {
 	gint action_number;
 } NautilusIconCanvasItemAccessibleActionContext;
 
-static GType nautilus_icon_canvas_item_accessible_get_type (void);
+typedef struct {
+	EelCanvasItemAccessible parent;
+	NautilusIconCanvasItemAccessiblePrivate *priv;
+} NautilusIconCanvasItemAccessible;
 
-#define GET_PRIV(o) \
-	G_TYPE_INSTANCE_GET_PRIVATE(o,\
-				    nautilus_icon_canvas_item_accessible_get_type (),\
-				    NautilusIconCanvasItemAccessiblePrivate);
+typedef struct {
+	EelCanvasItemAccessibleClass parent_class;
+} NautilusIconCanvasItemAccessibleClass;
+
+#define GET_ACCESSIBLE_PRIV(o) ((NautilusIconCanvasItemAccessible *) o)->priv;
 
 /* accessible AtkAction interface */
 static gboolean
@@ -2303,7 +2307,7 @@ nautilus_icon_canvas_item_accessible_action_get_description (AtkAction *accessib
 
 	g_assert (i < LAST_ACTION);
 
-	priv = GET_PRIV (accessible);
+	priv = GET_ACCESSIBLE_PRIV (accessible);
 
 	if (priv->action_descriptions[i]) {
 		return priv->action_descriptions[i];
@@ -2338,7 +2342,7 @@ nautilus_icon_canvas_item_accessible_action_set_description (AtkAction *accessib
 
 	g_assert (i < LAST_ACTION);
 
-	priv = GET_PRIV (accessible);
+	priv = GET_ACCESSIBLE_PRIV (accessible);
 
 	if (priv->action_descriptions[i]) {
 		g_free (priv->action_descriptions[i]);
@@ -2442,7 +2446,7 @@ nautilus_icon_canvas_item_accessible_get_image_description (AtkImage *image)
 	NautilusIconContainer *container;
 	char *description;
 
-	priv = GET_PRIV (image);
+	priv = GET_ACCESSIBLE_PRIV (image);
 
 	if (priv->image_description) {
 		return priv->image_description;
@@ -2521,7 +2525,7 @@ nautilus_icon_canvas_item_accessible_set_image_description (AtkImage    *image,
 {
 	NautilusIconCanvasItemAccessiblePrivate *priv;
 
-	priv = GET_PRIV (image);
+	priv = GET_ACCESSIBLE_PRIV (image);
 
 	g_free (priv->image_description);
 	priv->image_description = g_strdup (description);
@@ -2735,17 +2739,9 @@ nautilus_icon_canvas_item_accessible_text_interface_init (AtkTextIface *iface)
 	iface->get_offset_at_point     = nautilus_icon_canvas_item_accessible_get_offset_at_point;
 }
 
-typedef struct {
-	AtkGObjectAccessible parent;
-} NautilusIconCanvasItemAccessible;
-
-typedef struct {
-	AtkGObjectAccessibleClass parent_class;
-} NautilusIconCanvasItemAccessibleClass;
-
 G_DEFINE_TYPE_WITH_CODE (NautilusIconCanvasItemAccessible,
 			 nautilus_icon_canvas_item_accessible,
-			 ATK_TYPE_GOBJECT_ACCESSIBLE,
+			 eel_canvas_item_accessible_get_type (),
 			 G_IMPLEMENT_INTERFACE (ATK_TYPE_IMAGE,
 						nautilus_icon_canvas_item_accessible_image_interface_init)
 			 G_IMPLEMENT_INTERFACE (ATK_TYPE_TEXT,
@@ -2808,7 +2804,7 @@ nautilus_icon_canvas_item_accessible_finalize (GObject *object)
 	NautilusIconCanvasItemAccessiblePrivate *priv;
 	int i;
 
-	priv = GET_PRIV (object);
+	priv = GET_ACCESSIBLE_PRIV (object);
 
 	for (i = 0; i < LAST_ACTION; i++) {
 		g_free (priv->action_descriptions[i]);
@@ -2850,6 +2846,8 @@ nautilus_icon_canvas_item_accessible_class_init (NautilusIconCanvasItemAccessibl
 static void
 nautilus_icon_canvas_item_accessible_init (NautilusIconCanvasItemAccessible *self)
 {
+	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, nautilus_icon_canvas_item_accessible_get_type (),
+						  NautilusIconCanvasItemAccessiblePrivate);
 }
 
 /* dummy typedef */
