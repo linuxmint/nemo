@@ -4144,6 +4144,8 @@ G_DEFINE_TYPE_WITH_CODE (EelCanvasItemAccessible,
 			 G_IMPLEMENT_INTERFACE (ATK_TYPE_COMPONENT,
 						eel_canvas_item_accessible_component_interface_init));
 
+static GType eel_canvas_item_accessible_factory_get_type (void);
+
 typedef AtkObjectFactory      EelCanvasItemAccessibleFactory;
 typedef AtkObjectFactoryClass EelCanvasItemAccessibleFactoryClass;
 G_DEFINE_TYPE (EelCanvasItemAccessibleFactory, eel_canvas_item_accessible_factory,
