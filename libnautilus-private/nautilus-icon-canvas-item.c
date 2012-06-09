@@ -2739,6 +2739,8 @@ nautilus_icon_canvas_item_accessible_text_interface_init (AtkTextIface *iface)
 	iface->get_offset_at_point     = nautilus_icon_canvas_item_accessible_get_offset_at_point;
 }
 
+static GType nautilus_icon_canvas_item_accessible_get_type (void);
+
 G_DEFINE_TYPE_WITH_CODE (NautilusIconCanvasItemAccessible,
 			 nautilus_icon_canvas_item_accessible,
 			 eel_canvas_item_accessible_get_type (),

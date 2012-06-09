@@ -8938,6 +8938,8 @@ nautilus_icon_container_accessible_ref_child (AtkObject *accessible, int i)
         }
 }
 
+static GType nautilus_icon_container_accessible_get_type (void);
+
 G_DEFINE_TYPE_WITH_CODE (NautilusIconContainerAccessible, nautilus_icon_container_accessible,
 			 eel_canvas_accessible_get_type (),
 			 G_IMPLEMENT_INTERFACE (ATK_TYPE_ACTION, nautilus_icon_container_accessible_action_interface_init)
