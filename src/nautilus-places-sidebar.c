@@ -32,7 +32,6 @@
 #include <libnautilus-private/nautilus-dnd.h>
 #include <libnautilus-private/nautilus-bookmark.h>
 #include <libnautilus-private/nautilus-global-preferences.h>
-#include <libnautilus-private/nautilus-module.h>
 #include <libnautilus-private/nautilus-file.h>
 #include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-file-operations.h>
@@ -170,8 +169,8 @@ static void bookmarks_check_popup_sensitivity          (NautilusPlacesSidebar *s
 
 /* Identifiers for target types */
 enum {
-  GTK_TREE_MODEL_ROW,
-  TEXT_URI_LIST
+	GTK_TREE_MODEL_ROW,
+	TEXT_URI_LIST
 };
 
 /* Target types for dragging from the shortcuts list */
@@ -187,17 +186,14 @@ static const GtkTargetEntry nautilus_shortcuts_drop_targets [] = {
 
 /* Drag and drop interface declarations */
 typedef struct {
-  GtkListStore parent;
+	GtkListStore parent;
 
-  NautilusPlacesSidebar *sidebar;
+	NautilusPlacesSidebar *sidebar;
 } NautilusShortcutsModel;
 
 typedef struct {
-  GtkListStoreClass parent_class;
+	GtkListStoreClass parent_class;
 } NautilusShortcutsModelClass;
-
-#define NAUTILUS_TYPE_SHORTCUTS_MODEL (_nautilus_shortcuts_model_get_type ())
-#define NAUTILUS_SHORTCUTS_MODEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_SHORTCUTS_MODEL_TYPE, NautilusShortcutsModel))
 
 GType _nautilus_shortcuts_model_get_type (void);
 static void _nautilus_shortcuts_model_drag_source_init (GtkTreeDragSourceIface *iface);
@@ -1074,12 +1070,12 @@ loading_uri_callback (NautilusWindow *window,
 
 /* Computes the appropriate row and position for dropping */
 static gboolean
-compute_drop_position (GtkTreeView *tree_view,
+compute_drop_position (GtkTreeView             *tree_view,
 		       int                      x,
 		       int                      y,
 		       GtkTreePath            **path,
 		       GtkTreeViewDropPosition *pos,
-		       NautilusPlacesSidebar *sidebar)
+		       NautilusPlacesSidebar   *sidebar)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
@@ -3626,7 +3622,7 @@ nautilus_shortcuts_model_new (NautilusPlacesSidebar *sidebar)
 		G_TYPE_STRING
 	};
 
-	model = g_object_new (NAUTILUS_TYPE_SHORTCUTS_MODEL, NULL);
+	model = g_object_new (_nautilus_shortcuts_model_get_type (), NULL);
 	model->sidebar = sidebar;
 
 	gtk_list_store_set_column_types (GTK_LIST_STORE (model),
