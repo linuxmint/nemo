@@ -857,9 +857,10 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 					     window);
 
 	nautilus_window_menus_set_visibility_for_app_menu (window);
-	g_signal_connect_swapped (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
-				  "notify::gtk-shell-shows-app-menu",
-				  G_CALLBACK (nautilus_window_menus_set_visibility_for_app_menu), window);
+	window->details->app_menu_visibility_id =
+		g_signal_connect_swapped (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
+					  "notify::gtk-shell-shows-app-menu",
+					  G_CALLBACK (nautilus_window_menus_set_visibility_for_app_menu), window);
 
 	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_UP);
 	g_object_set (action, "short_label", _("_Up"), NULL);
@@ -929,6 +930,12 @@ nautilus_window_finalize_menus (NautilusWindow *window)
 
 	g_signal_handlers_disconnect_by_func (nautilus_preferences,
 					      show_hidden_files_preference_callback, window);
+
+	if (window->details->app_menu_visibility_id != 0) {
+		g_signal_handler_disconnect (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
+					     window->details->app_menu_visibility_id);
+		window->details->app_menu_visibility_id = 0;
+	}
 }
 
 static GList *
