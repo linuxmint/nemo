@@ -5,7 +5,7 @@ dnl ===========================================================================
 m4_define(glib_minver,                 2.31.9)
 m4_define(gnome_desktop_minver,        3.0.0)
 m4_define(pango_minver,                1.28.3)
-m4_define(gtk_minver,                  3.5.3)
+m4_define(gtk_minver,                  3.5.5)
 m4_define(xml_minver,                  2.7.8)
 m4_define(exif_minver,                 0.6.20)
 m4_define(exempi_minver,               2.1.0)

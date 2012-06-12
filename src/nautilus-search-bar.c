@@ -110,15 +110,6 @@ entry_has_text (NautilusSearchBar *bar)
 }
 
 static void
-entry_icon_release_cb (GtkEntry *entry,
-		       GtkEntryIconPosition position,
-		       GdkEvent *event,
-		       NautilusSearchBar *bar)
-{
-	g_signal_emit_by_name (entry, "activate", 0);
-}
-
-static void
 entry_activate_cb (GtkWidget *entry, NautilusSearchBar *bar)
 {
        if (entry_has_text (bar) && !bar->details->entry_borrowed) {
@@ -160,16 +151,11 @@ nautilus_search_bar_init (NautilusSearchBar *bar)
 	gtk_box_pack_start (GTK_BOX (bar), align, TRUE, TRUE, 0);
 	gtk_widget_show (align);
 
-	bar->details->entry = gtk_entry_new ();
-	gtk_entry_set_icon_from_icon_name (GTK_ENTRY (bar->details->entry),
-					   GTK_ENTRY_ICON_SECONDARY,
-					   "edit-find-symbolic");
+	bar->details->entry = gtk_search_entry_new ();
 	gtk_container_add (GTK_CONTAINER (align), bar->details->entry);
 
 	g_signal_connect (bar->details->entry, "activate",
 			  G_CALLBACK (entry_activate_cb), bar);
-	g_signal_connect (bar->details->entry, "icon-release",
-			  G_CALLBACK (entry_icon_release_cb), bar);
 
 	gtk_widget_show (bar->details->entry);
 }
