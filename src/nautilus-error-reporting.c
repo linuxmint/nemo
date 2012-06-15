@@ -264,6 +264,7 @@ rename_callback (NautilusFile *file, GFile *result_location,
 		 GError *error, gpointer callback_data)
 {
 	NautilusRenameData *data;
+	gboolean cancelled = FALSE;
 
 	g_assert (NAUTILUS_IS_FILE (file));
 	g_assert (callback_data == NULL);
@@ -271,23 +272,22 @@ rename_callback (NautilusFile *file, GFile *result_location,
 	data = g_object_get_data (G_OBJECT (file), NEW_NAME_TAG);
 	g_assert (data != NULL);
 
-	if (error &&
-	    !(error->domain == G_IO_ERROR && error->code == G_IO_ERROR_CANCELLED)) {
+	if (error) {
+	  if (!(error->domain == G_IO_ERROR && error->code == G_IO_ERROR_CANCELLED)) {
 		/* If rename failed, notify the user. */
 		nautilus_report_error_renaming_file (file, data->name, error, NULL);
+	  } else {
+		cancelled = TRUE;
+	  }
 	}
 
-	finish_rename (file, TRUE, error);
+	finish_rename (file, ! cancelled, error);
 }
 
 static void
 cancel_rename_callback (gpointer callback_data)
 {
-	GError *error;
-	
-	error = g_error_new (G_IO_ERROR, G_IO_ERROR_CANCELLED, "Cancelled");
-	finish_rename (NAUTILUS_FILE (callback_data), FALSE, error);
-	g_error_free (error);
+	nautilus_file_cancel (NAUTILUS_FILE (callback_data), rename_callback, NULL);
 }
 
 static void
