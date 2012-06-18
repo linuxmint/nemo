@@ -82,10 +82,8 @@ nautilus_icon_view_container_get_icon_images (NautilusIconContainer *container,
 	
 	*has_window_open = nautilus_file_has_open_window (file);
 
-	flags = NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM;
-	if (nautilus_icon_container_get_zoom_level (container) > NAUTILUS_ZOOM_LEVEL_STANDARD) {
-		flags |= NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS;
-	}
+	flags = NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
+		NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS;
 
 	if (use_embedding) {
 		flags |= NAUTILUS_FILE_ICON_FLAGS_EMBEDDING_TEXT;
