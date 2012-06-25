@@ -73,7 +73,8 @@ typedef struct {
 
         GtkWidget *image;
         GtkWidget *label;
-	GtkWidget *alignment;
+	GtkWidget *bold_label;
+
         guint ignore_changes : 1;
         guint is_root : 1;
 } ButtonData;
@@ -325,6 +326,42 @@ nautilus_path_bar_dispose (GObject *object)
         G_OBJECT_CLASS (nautilus_path_bar_parent_class)->dispose (object);
 }
 
+static const char *
+get_dir_name (ButtonData *button_data)
+{
+	if (button_data->type == DESKTOP_BUTTON) {
+		return _("Desktop");
+	} else if (button_data->type == HOME_BUTTON) {
+		return _("Home");
+	} else {
+		return button_data->dir_name;
+	}
+}
+
+/* We always want to request the same size for the label, whether
+ * or not the contents are bold
+ */
+static void
+set_label_size_request (ButtonData *button_data)
+{
+        const gchar *dir_name = get_dir_name (button_data);
+        gint width, height;
+        gchar *markup;
+	GtkRequisition min_req, bold_req;
+
+	gtk_label_set_ellipsize (GTK_LABEL (button_data->label), PANGO_ELLIPSIZE_NONE);
+	gtk_widget_get_preferred_size (button_data->label, &min_req, NULL);
+	gtk_label_set_ellipsize (GTK_LABEL (button_data->label), PANGO_ELLIPSIZE_MIDDLE);	
+
+	gtk_widget_get_preferred_size (button_data->bold_label, &bold_req, NULL);
+
+	width = MAX (min_req.width, bold_req.width);
+	width = MIN (width, NAUTILUS_PATH_BAR_BUTTON_MAX_WIDTH);
+	height = MAX (min_req.height, bold_req.height);
+
+	gtk_widget_set_size_request (button_data->label, width, height);
+}
+
 /* Size requisition:
  * 
  * Ideally, our size is determined by another widget, and we are just filling
@@ -349,6 +386,8 @@ nautilus_path_bar_get_preferred_width (GtkWidget *widget,
 
 	for (list = path_bar->priv->button_list; list; list = list->next) {
 		button_data = BUTTON_DATA (list->data);
+		set_label_size_request (button_data);
+
 		gtk_widget_get_preferred_width (button_data->button, &child_min, &child_nat);
 		gtk_widget_get_preferred_height (button_data->button, &child_height, NULL);
 		height = MAX (height, child_height);
@@ -391,6 +430,8 @@ nautilus_path_bar_get_preferred_height (GtkWidget *widget,
 
 	for (list = path_bar->priv->button_list; list; list = list->next) {
 		button_data = BUTTON_DATA (list->data);
+		set_label_size_request (button_data);
+
 		gtk_widget_get_preferred_height (button_data->button, &child_min, &child_nat);
 
 		*minimum = MAX (*minimum, child_min);
@@ -1224,46 +1265,6 @@ button_data_free (ButtonData *button_data)
         g_free (button_data);
 }
 
-static const char *
-get_dir_name (ButtonData *button_data)
-{
-	if (button_data->type == DESKTOP_BUTTON) {
-		return _("Desktop");
-	} else if (button_data->type == HOME_BUTTON) {
-		return _("Home");
-	} else {
-		return button_data->dir_name;
-	}
-}
-
-/* We always want to request the same size for the label, whether
- * or not the contents are bold
- */
-static void
-set_label_size_request (ButtonData *button_data)
-{
-        const gchar *dir_name = get_dir_name (button_data);
-        PangoLayout *layout;
-        gint width, height, bold_width, bold_height;
-        gchar *markup;
-	
-	layout = gtk_widget_create_pango_layout (button_data->label, dir_name);
-        pango_layout_get_pixel_size (layout, &width, &height);
-  
-        markup = g_markup_printf_escaped ("<b>%s</b>", dir_name);
-        pango_layout_set_markup (layout, markup, -1);
-        g_free (markup);
-
-        pango_layout_get_pixel_size (layout, &bold_width, &bold_height);
-
-	width = MAX (width, bold_width);
-	width = MIN (width, NAUTILUS_PATH_BAR_BUTTON_MAX_WIDTH);
-	height = MAX (height, bold_height);
-
-	gtk_widget_set_size_request (button_data->alignment, width, height);
-        g_object_unref (layout);
-}
-
 static void
 nautilus_path_bar_update_button_appearance (ButtonData *button_data)
 {
@@ -1272,23 +1273,18 @@ nautilus_path_bar_update_button_appearance (ButtonData *button_data)
         const gchar *dir_name = get_dir_name (button_data);
 
         if (button_data->label != NULL) {
-                if (gtk_label_get_use_markup (GTK_LABEL (button_data->label))) {
-			char *markup;
+		char *markup;
 
-	  		markup = g_markup_printf_escaped ("<b>%s</b>", dir_name);
+		markup = g_markup_printf_escaped ("<b>%s</b>", dir_name);
+
+                if (gtk_label_get_use_markup (GTK_LABEL (button_data->label))) {
 	  		gtk_label_set_markup (GTK_LABEL (button_data->label), markup);
-	  		g_free (markup);
 		} else {
 			gtk_label_set_text (GTK_LABEL (button_data->label), dir_name);
 		}
 
-		/* FIXME: Maybe we dont need this alignment at all and we can
-		 * use GtkMisc aligments or even GtkWidget:halign/valign center.
-		 *
-		 * The following function ensures that the alignment will always
-		 * request the same size whether the button's text is bold or not.
-		 */
-		set_label_size_request (button_data);
+		gtk_label_set_markup (GTK_LABEL (button_data->bold_label), markup);
+		g_free (markup);
         }
 
 	if (button_data->custom_icon) {
@@ -1320,6 +1316,7 @@ nautilus_path_bar_update_button_state (ButtonData *button_data,
 {
 	if (button_data->label != NULL) {
 		gtk_label_set_label (GTK_LABEL (button_data->label), NULL);
+		gtk_label_set_label (GTK_LABEL (button_data->bold_label), NULL);
 		gtk_label_set_use_markup (GTK_LABEL (button_data->label), current_dir);
 	}
 
@@ -1615,25 +1612,21 @@ make_button_data (NautilusPathBar  *path_bar,
                 case HOME_BUTTON:
                 case DESKTOP_BUTTON:
 		case MOUNT_BUTTON:
-                        button_data->label = gtk_label_new (NULL);
-                        button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
-                        gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
-                        child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
-                        gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 0);
-                        gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 0);
-                        break;
 		case NORMAL_BUTTON:
     		default:
 			button_data->label = gtk_label_new (NULL);
-			button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
-			gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
                         child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
 			gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 0);
-			gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 0);
+			gtk_box_pack_start (GTK_BOX (child), button_data->label, FALSE, FALSE, 0);
+			break;
         }
 
 	if (button_data->label != NULL) {
 		gtk_label_set_ellipsize (GTK_LABEL (button_data->label), PANGO_ELLIPSIZE_MIDDLE);
+
+		button_data->bold_label = gtk_label_new (NULL);
+		gtk_widget_set_no_show_all (button_data->bold_label, TRUE);
+		gtk_box_pack_start (GTK_BOX (child), button_data->bold_label, FALSE, FALSE, 0);
 	}
 
 	if (button_data->path == NULL) {
