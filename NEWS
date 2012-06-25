@@ -1,3 +1,12 @@
+Major changes in 3.5.3 are:
+* Fix accessibility implementation of rename entries and icon view
+* Fix DnD not working on sidebar bookmarks
+* Fix thumbnails failing to display in icon view
+* Fix crasher after ejecting a volume from the sidebar
+* Fix crasher on gtk-shell-shows-app-menu GtkSetting change
+* Fix possible crasher when cancelling a rename operation
+* Use GtkSearchEntry
+
 Major changes in 3.5.2 are:
 * Add a way to create a new directory for selection
 * Don't pack multiple x-content bars in the view
