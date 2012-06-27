@@ -991,9 +991,6 @@ nautilus_query_editor_init (NautilusQueryEditor *editor)
 	gtk_label_set_markup (GTK_LABEL (label), label_markup);
 	g_free (label_markup);
 
-	gtk_style_context_add_class (gtk_widget_get_style_context (label),
-				     "nautilus-cluebar-label");
-	
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show (label);
 	
@@ -1069,9 +1066,6 @@ setup_internal_entry (NautilusQueryEditor *editor)
 	g_free (label_markup);
 	gtk_widget_show (label);
 
-	gtk_style_context_add_class (gtk_widget_get_style_context (label),
-				     "nautilus-cluebar-label");
-	
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 
 	editor->details->entry = gtk_entry_new ();
@@ -1103,9 +1097,6 @@ setup_external_entry (NautilusQueryEditor *editor, GtkWidget *entry)
 	gtk_label_set_markup (GTK_LABEL (label), label_markup);
 	gtk_widget_show (label);
 
-	gtk_style_context_add_class (gtk_widget_get_style_context (label),
-				     "nautilus-cluebar-label");
-	
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 	
 	editor->details->entry = entry;
