@@ -23,7 +23,6 @@ show-hidden-files = /desktop/gnome/file_views/show_hidden_files
 
 [org.gnome.nautilus.icon-view]
 captions = /apps/nautilus/icon_view/captions
-labels-beside-icons = /apps/nautilus/icon_view/labels_beside_icons
 default-zoom-level = /apps/nautilus/icon_view/default_zoom_level
 thumbnail-size = /apps/nautilus/icon_view/thumbnail_size
 text-ellipsis-limit = /apps/nautilus/icon_view/text_ellipsis_limit

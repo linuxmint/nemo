@@ -192,11 +192,6 @@
       "size", "type", "date_modified", "date_changed", "date_accessed", "owner",
       "group", "permissions", "octal_permissions" and "mime_type".</_description>
     </key>
-    <key name="labels-beside-icons" type="b">
-      <default>false</default>
-      <_summary>Put labels beside icons</_summary>
-      <_description>If true, labels will be placed beside icons rather than underneath them.</_description>
-    </key>
     <key name="default-zoom-level" enum="org.gnome.nautilus.ZoomLevel">
       <default>'standard'</default>
       <_summary>Default icon zoom level</_summary>

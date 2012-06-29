@@ -764,7 +764,6 @@ nautilus_desktop_icon_view_create (NautilusWindowSlot *slot)
 			     "supports-auto-layout", FALSE,
 			     "supports-scaling", TRUE,
 			     "supports-keep-aligned", TRUE,
-			     "supports-labels-beside-icons", FALSE,
 			     NULL);
 	return NAUTILUS_VIEW (view);
 }

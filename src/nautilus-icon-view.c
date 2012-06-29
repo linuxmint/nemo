@@ -71,7 +71,6 @@ enum
 	PROP_SUPPORTS_AUTO_LAYOUT = 1,
 	PROP_SUPPORTS_SCALING,
 	PROP_SUPPORTS_KEEP_ALIGNED,
-	PROP_SUPPORTS_LABELS_BESIDE_ICONS,
 	NUM_PROPERTIES
 };
 
@@ -114,7 +113,6 @@ struct NautilusIconViewDetails
 	gboolean supports_auto_layout;
 	gboolean supports_scaling;
 	gboolean supports_keep_aligned;
-	gboolean supports_labels_beside_icons;
 };
 
 
@@ -578,14 +576,6 @@ nautilus_icon_view_supports_keep_aligned (NautilusIconView *view)
 	return view->details->supports_keep_aligned;
 }
 
-static gboolean
-nautilus_icon_view_supports_labels_beside_icons (NautilusIconView *view)
-{
-	g_return_val_if_fail (NAUTILUS_IS_ICON_VIEW (view), FALSE);
-
-	return view->details->supports_labels_beside_icons;
-}
-
 static void
 update_layout_menus (NautilusIconView *view)
 {
@@ -878,27 +868,6 @@ get_default_zoom_level (NautilusIconView *icon_view)
 }
 
 static void
-set_labels_beside_icons (NautilusIconView *icon_view)
-{
-	gboolean labels_beside;
-
-	if (nautilus_icon_view_supports_labels_beside_icons (icon_view)) {
-		labels_beside =  g_settings_get_boolean (nautilus_icon_view_preferences,
-							 NAUTILUS_PREFERENCES_ICON_VIEW_LABELS_BESIDE_ICONS);
-
-		if (labels_beside) {
-			nautilus_icon_container_set_label_position
-				(get_icon_container (icon_view),
-				 NAUTILUS_ICON_LABEL_POSITION_BESIDE);
-		} else {
-			nautilus_icon_container_set_label_position
-				(get_icon_container (icon_view),
-				 NAUTILUS_ICON_LABEL_POSITION_UNDER);
-		}
-	}
-}
-
-static void
 nautilus_icon_view_begin_loading (NautilusView *view)
 {
 	NautilusIconView *icon_view;
@@ -943,8 +912,6 @@ nautilus_icon_view_begin_loading (NautilusView *view)
 	nautilus_icon_container_set_keep_aligned
 		(get_icon_container (icon_view), 
 		 nautilus_icon_view_get_directory_keep_aligned (icon_view, file));
-
-	set_labels_beside_icons (icon_view);
 
 	/* We must set auto-layout last, because it invokes the layout_changed 
 	 * callback, which works incorrectly if the other layout criteria are
@@ -1976,18 +1943,6 @@ default_zoom_level_changed_callback (gpointer callback_data)
 }
 
 static void
-labels_beside_icons_changed_callback (gpointer callback_data)
-{
-	NautilusIconView *icon_view;
-
-	g_return_if_fail (NAUTILUS_IS_ICON_VIEW (callback_data));
-
-	icon_view = NAUTILUS_ICON_VIEW (callback_data);
-
-	set_labels_beside_icons (icon_view);
-}
-
-static void
 nautilus_icon_view_sort_directories_first_changed (NautilusView *directory_view)
 {
 	NautilusIconView *icon_view;
@@ -2290,9 +2245,6 @@ nautilus_icon_view_set_property (GObject         *object,
 	case PROP_SUPPORTS_KEEP_ALIGNED:
 		icon_view->details->supports_keep_aligned = g_value_get_boolean (value);
 		break;
-	case PROP_SUPPORTS_LABELS_BESIDE_ICONS:
-		icon_view->details->supports_labels_beside_icons = g_value_get_boolean (value);
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -2320,9 +2272,6 @@ nautilus_icon_view_finalize (GObject *object)
 
 	g_signal_handlers_disconnect_by_func (nautilus_icon_view_preferences,
 					      default_zoom_level_changed_callback,
-					      icon_view);
-	g_signal_handlers_disconnect_by_func (nautilus_icon_view_preferences,
-					      labels_beside_icons_changed_callback,
 					      icon_view);
 	g_signal_handlers_disconnect_by_func (nautilus_icon_view_preferences,
 					      text_attribute_names_changed_callback,
@@ -2403,13 +2352,6 @@ nautilus_icon_view_class_init (NautilusIconViewClass *klass)
 				      FALSE,
 				      G_PARAM_WRITABLE |
 				      G_PARAM_CONSTRUCT_ONLY);
-	properties[PROP_SUPPORTS_LABELS_BESIDE_ICONS] =
-		g_param_spec_boolean ("supports-labels-beside-icons",
-				      "Supports labels beside icons",
-				      "Whether this view supports labels beside icons",
-				      TRUE,
-				      G_PARAM_WRITABLE |
-				      G_PARAM_CONSTRUCT_ONLY);
 
 	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
@@ -2449,10 +2391,6 @@ nautilus_icon_view_init (NautilusIconView *icon_view)
 	g_signal_connect_swapped (nautilus_icon_view_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
 				  G_CALLBACK (default_zoom_level_changed_callback),
-				  icon_view);
-	g_signal_connect_swapped (nautilus_icon_view_preferences,
-				  "changed::" NAUTILUS_PREFERENCES_ICON_VIEW_LABELS_BESIDE_ICONS,
-				  G_CALLBACK (labels_beside_icons_changed_callback),
 				  icon_view);
 	g_signal_connect_swapped (nautilus_icon_view_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_ICON_VIEW_CAPTIONS,

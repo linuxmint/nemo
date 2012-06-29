@@ -98,8 +98,6 @@
 
 #define STANDARD_ICON_GRID_WIDTH 155
 
-#define TEXT_BESIDE_ICON_GRID_WIDTH 205
-
 /* Desktop layout mode defines */
 #define DESKTOP_PAD_HORIZONTAL 	10
 #define DESKTOP_PAD_VERTICAL 	10
@@ -113,9 +111,6 @@
  * Its selected so that the non-large text should fit in "normal" icon sizes
  */
 #define ICON_SIZE_FOR_LARGE_EMBEDDED_TEXT 55
-
-/* From nautilus-icon-canvas-item.c */
-#define MAX_TEXT_WIDTH_BESIDE 90
 
 #define SNAP_HORIZONTAL(func,x) ((func ((double)((x) - DESKTOP_PAD_HORIZONTAL) / SNAP_SIZE_X) * SNAP_SIZE_X) + DESKTOP_PAD_HORIZONTAL)
 #define SNAP_VERTICAL(func, y) ((func ((double)((y) - DESKTOP_PAD_VERTICAL) / SNAP_SIZE_Y) * SNAP_SIZE_Y) + DESKTOP_PAD_VERTICAL)
@@ -1151,11 +1146,7 @@ resort (NautilusIconContainer *container)
 static double
 get_grid_width (NautilusIconContainer *container)
 {
-	if (container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-		return TEXT_BESIDE_ICON_GRID_WIDTH;
-	} else {
-		return STANDARD_ICON_GRID_WIDTH;
-	}
+	return STANDARD_ICON_GRID_WIDTH;
 }
 #endif
 typedef struct {
@@ -1190,12 +1181,7 @@ lay_down_one_line (NautilusIconContainer *container,
 		icon = p->data;
 
 		position = &g_array_index (positions, IconPositions, i++);
-		
-		if (container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-			y_offset = (max_height - position->height) / 2;
-		} else {
-			y_offset = position->y_offset;
-		}
+		y_offset = position->y_offset;
 
 		icon_set_position
 			(icon,
@@ -1281,24 +1267,9 @@ lay_down_icons_horizontal (NautilusIconContainer *container,
 	canvas_width = CANVAS_WIDTH(container, allocation);
 	max_icon_width = max_text_width = 0.0;
 
-	if (container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-		/* Would it be worth caching these bounds for the next loop? */
-		for (p = icons; p != NULL; p = p->next) {
-			icon = p->data;
+	grid_width = STANDARD_ICON_GRID_WIDTH;
 
-			icon_bounds = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
-			max_icon_width = MAX (max_icon_width, ceil (icon_bounds.x1 - icon_bounds.x0));
-
-			text_bounds = nautilus_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
-			max_text_width = MAX (max_text_width, ceil (text_bounds.x1 - text_bounds.x0));
-		}
-
-		grid_width = max_icon_width + max_text_width + ICON_PAD_LEFT + ICON_PAD_RIGHT;
-	} else {
-		grid_width = STANDARD_ICON_GRID_WIDTH;
-	}
-	
-	line_width = container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE ? ICON_PAD_LEFT : 0;
+	line_width = 0;
 	line_start = icons;
 	y = start_y + CONTAINER_PAD_TOP;
 	i = 0;
@@ -1322,23 +1293,15 @@ lay_down_icons_horizontal (NautilusIconContainer *container,
 
 		/* If this icon doesn't fit, it's time to lay out the line that's queued up. */
 		if (line_start != p && line_width + icon_width >= canvas_width ) {
-			if (container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-				y += ICON_PAD_TOP;
-			} else {
-				/* Advance to the baseline. */
-				y += ICON_PAD_TOP + max_height_above;
-			}
+			/* Advance to the baseline. */
+			y += ICON_PAD_TOP + max_height_above;
 
 			lay_down_one_line (container, line_start, p, y, max_height_above, positions, FALSE);
-			
-			if (container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-				y += max_height_above + max_height_below + ICON_PAD_BOTTOM;
-			} else {
-				/* Advance to next line. */
-				y += max_height_below + ICON_PAD_BOTTOM;
-			}
-			
-			line_width = container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE ? ICON_PAD_LEFT : 0;
+
+			/* Advance to next line. */
+			y += max_height_below + ICON_PAD_BOTTOM;
+
+			line_width = 0;
 			line_start = p;
 			i = 0;
 			
@@ -1358,13 +1321,8 @@ lay_down_icons_horizontal (NautilusIconContainer *container,
 		position->width = icon_width;
 		position->height = icon_bounds.y1 - icon_bounds.y0;
 
-		if (container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-			position->x_offset = max_icon_width + ICON_PAD_LEFT + ICON_PAD_RIGHT - (icon_bounds.x1 - icon_bounds.x0);
-			position->y_offset = 0;
-		} else {
-			position->x_offset = (icon_width - (icon_bounds.x1 - icon_bounds.x0)) / 2;
-			position->y_offset = icon_bounds.y0 - icon_bounds.y1;
-		}
+		position->x_offset = (icon_width - (icon_bounds.x1 - icon_bounds.x0)) / 2;
+		position->y_offset = icon_bounds.y0 - icon_bounds.y1;
 
 		/* Add this icon. */
 		line_width += icon_width;
@@ -1372,13 +1330,9 @@ lay_down_icons_horizontal (NautilusIconContainer *container,
 
 	/* Lay down that last line of icons. */
 	if (line_start != NULL) {
-			if (container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-				y += ICON_PAD_TOP;
-			} else {
-				/* Advance to the baseline. */
-				y += ICON_PAD_TOP + max_height_above;
-			}
-		
+		/* Advance to the baseline. */
+		y += ICON_PAD_TOP + max_height_above;
+
 		lay_down_one_line (container, line_start, NULL, y, max_height_above, positions, TRUE);
 	}
 
@@ -1423,7 +1377,6 @@ get_max_icon_dimensions (GList *icon_start,
 	}
 }
 
-/* column-wise layout. At the moment, this only works with label-beside-icon (used by "Compact View"). */
 static void
 lay_down_icons_vertical (NautilusIconContainer *container,
 			 GList *icons,
@@ -1454,7 +1407,6 @@ lay_down_icons_vertical (NautilusIconContainer *container,
 	int i;
 
 	g_assert (NAUTILUS_IS_ICON_CONTAINER (container));
-	g_assert (container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE);
 
 	if (icons == NULL) {
 		return;
@@ -2785,26 +2737,14 @@ static int
 get_cmp_point_x (NautilusIconContainer *container,
 		 EelDRect icon_rect)
 {
-	if (container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-		if (gtk_widget_get_direction (GTK_WIDGET (container)) == GTK_TEXT_DIR_RTL) {
-			return icon_rect.x0;
-		} else {
-			return icon_rect.x1;
-		}
-	} else {
-		return (icon_rect.x0 + icon_rect.x1) / 2;
-	}
+	return (icon_rect.x0 + icon_rect.x1) / 2;
 }
 
 static int
 get_cmp_point_y (NautilusIconContainer *container,
 		 EelDRect icon_rect)
 {
-	if (container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-		return (icon_rect.y0 + icon_rect.y1)/2;
-	} else {
-		return icon_rect.y1;
-	}
+	return icon_rect.y1;
 }
 
 
@@ -8135,9 +8075,7 @@ nautilus_icon_container_start_renaming_selected_item (NautilusIconContainer *con
 		eel_editable_label_set_line_wrap_mode (EEL_EDITABLE_LABEL (details->rename_widget), PANGO_WRAP_WORD_CHAR);
 		eel_editable_label_set_draw_outline (EEL_EDITABLE_LABEL (details->rename_widget), TRUE);
 
-		if (details->label_position != NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-			eel_editable_label_set_justify (EEL_EDITABLE_LABEL (details->rename_widget), GTK_JUSTIFY_CENTER);
-		}
+		eel_editable_label_set_justify (EEL_EDITABLE_LABEL (details->rename_widget), GTK_JUSTIFY_CENTER);
 
 		gtk_misc_set_padding (GTK_MISC (details->rename_widget), 1, 1);
 		gtk_layout_put (GTK_LAYOUT (container),
@@ -8161,26 +8099,13 @@ nautilus_icon_container_start_renaming_selected_item (NautilusIconContainer *con
 	icon_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
 	text_rect = nautilus_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
 
-	if (nautilus_icon_container_is_layout_vertical (container) &&
-	    container->details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-		/* for one-line editables, the width changes dynamically */
-		width = -1;
-	} else {
-		width = nautilus_icon_canvas_item_get_max_text_width (icon->item);
-	}
+	width = nautilus_icon_canvas_item_get_max_text_width (icon->item);
 
-	if (details->label_position == NAUTILUS_ICON_LABEL_POSITION_BESIDE) {
-		eel_canvas_w2c (EEL_CANVAS_ITEM (icon->item)->canvas,
-				text_rect.x0,
-				text_rect.y0,
-				&x, &y);
-	} else {
-		eel_canvas_w2c (EEL_CANVAS_ITEM (icon->item)->canvas,
-				(icon_rect.x0 + icon_rect.x1) / 2,
-				icon_rect.y1,
-				&x, &y);
-		x = x - width / 2 - 1;
-	}
+	eel_canvas_w2c (EEL_CANVAS_ITEM (icon->item)->canvas,
+			(icon_rect.x0 + icon_rect.x1) / 2,
+			icon_rect.y1,
+			&x, &y);
+	x = x - width / 2 - 1;
 
 	gtk_layout_move (GTK_LAYOUT (container),
 			 details->rename_widget,
