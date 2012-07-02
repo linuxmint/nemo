@@ -100,6 +100,9 @@ typedef struct {
 
 	GtkTreePath *eject_highlight_path;
 
+	GDBusProxy *hostnamed_proxy;
+	char *hostname;
+
 	guint bookmarks_changed_id;
 } NautilusPlacesSidebar;
 
@@ -500,7 +503,82 @@ update_places (NautilusPlacesSidebar *sidebar)
 	network_mounts = network_volumes = NULL;
 	volume_monitor = sidebar->volume_monitor;
 
-	/* first go through all connected drives */
+	/* add built in bookmarks */
+
+	add_heading (sidebar, SECTION_COMPUTER,
+		     _("Places"));
+
+	/* home folder */
+	mount_uri = nautilus_get_home_directory_uri ();
+	icon = g_themed_icon_new (NAUTILUS_ICON_HOME);
+	add_place (sidebar, PLACES_BUILT_IN,
+		   SECTION_COMPUTER,
+		   _("Home"), icon,
+		   mount_uri, NULL, NULL, NULL, 0,
+		   _("Open your personal folder"));
+	g_object_unref (icon);
+	g_free (mount_uri);
+
+	if (g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
+		/* desktop */
+		mount_uri = nautilus_get_desktop_directory_uri ();
+		icon = g_themed_icon_new (NAUTILUS_ICON_DESKTOP);
+		add_place (sidebar, PLACES_BUILT_IN,
+			   SECTION_COMPUTER,
+			   _("Desktop"), icon,
+			   mount_uri, NULL, NULL, NULL, 0,
+			   _("Open the contents of your desktop in a folder"));
+		g_object_unref (icon);
+		g_free (mount_uri);
+	}
+
+	/* XDG directories */
+	for (index = 0; index < G_USER_N_DIRECTORIES; index++) {
+
+		if (index == G_USER_DIRECTORY_DESKTOP ||
+		    index == G_USER_DIRECTORY_TEMPLATES ||
+		    index == G_USER_DIRECTORY_PUBLIC_SHARE) {
+			continue;
+		}
+
+		path = g_get_user_special_dir (index);
+
+		/* xdg resets special dirs to the home directory in case
+		 * it's not finiding what it expects. We don't want the home
+		 * to be added multiple times in that weird configuration.
+		 */
+		if (!path || g_strcmp0 (path, g_get_home_dir ()) == 0) {
+			continue;
+		}
+
+		root = g_file_new_for_path (path);
+		name = g_file_get_basename (root);
+		icon = nautilus_user_special_directory_get_gicon (index);
+		mount_uri = g_file_get_uri (root);
+		tooltip = g_file_get_parse_name (root);
+
+		add_place (sidebar, PLACES_XDG_DIR,
+			   SECTION_COMPUTER,
+			   name, icon, mount_uri,
+			   NULL, NULL, NULL, 0,
+			   tooltip);
+		g_free (name);
+		g_object_unref (root);
+		g_object_unref (icon);
+		g_free (mount_uri);
+		g_free (tooltip);
+	}
+
+	mount_uri = "trash:///"; /* No need to strdup */
+	icon = nautilus_trash_monitor_get_icon ();
+	add_place (sidebar, PLACES_BUILT_IN,
+		   SECTION_COMPUTER,
+		   _("Trash"), icon, mount_uri,
+		   NULL, NULL, NULL, 0,
+		   _("Open the trash"));
+	g_object_unref (icon);
+
+	/* go through all connected drives */
 	drives = g_volume_monitor_get_connected_drives (volume_monitor);
 
 	for (l = drives; l != NULL; l = l->next) {
@@ -640,7 +718,18 @@ update_places (NautilusPlacesSidebar *sidebar)
 		g_object_unref (volume);
 	}
 	g_list_free (volumes);
-	
+
+	/* file system root */
+
+ 	mount_uri = "file:///"; /* No need to strdup */
+	icon = g_themed_icon_new (NAUTILUS_ICON_FILESYSTEM);
+	add_place (sidebar, PLACES_BUILT_IN,
+		   SECTION_DEVICES,
+		   sidebar->hostname, icon,
+		   mount_uri, NULL, NULL, NULL, 0,
+		   _("Open the contents of the File System"));
+	g_object_unref (icon);
+
 	/* add bookmarks */
 	bookmark_count = nautilus_bookmark_list_length (sidebar->bookmarks);
 
@@ -671,73 +760,6 @@ update_places (NautilusPlacesSidebar *sidebar)
 			   bookmark_name, icon, mount_uri,
 			   NULL, NULL, NULL, index,
 			   tooltip);
-		g_object_unref (root);
-		g_object_unref (icon);
-		g_free (mount_uri);
-		g_free (tooltip);
-	}
-
-	add_heading (sidebar, SECTION_COMPUTER,
-		     _("Computer"));
-
-	/* add built in bookmarks */
-
-	/* home folder */
-	mount_uri = nautilus_get_home_directory_uri ();
-	icon = g_themed_icon_new (NAUTILUS_ICON_HOME);
-	add_place (sidebar, PLACES_BUILT_IN,
-		   SECTION_COMPUTER,
-		   _("Home"), icon,
-		   mount_uri, NULL, NULL, NULL, 0,
-		   _("Open your personal folder"));
-	g_object_unref (icon);
-	g_free (mount_uri);
-
-	if (g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
-		/* desktop */
-		mount_uri = nautilus_get_desktop_directory_uri ();
-		icon = g_themed_icon_new (NAUTILUS_ICON_DESKTOP);
-		add_place (sidebar, PLACES_BUILT_IN,
-			   SECTION_COMPUTER,
-			   _("Desktop"), icon,
-			   mount_uri, NULL, NULL, NULL, 0,
-			   _("Open the contents of your desktop in a folder"));
-		g_object_unref (icon);
-		g_free (mount_uri);
-	}
-
-	
-	/* XDG directories */
-	for (index = 0; index < G_USER_N_DIRECTORIES; index++) {
-
-		if (index == G_USER_DIRECTORY_DESKTOP ||
-		    index == G_USER_DIRECTORY_TEMPLATES ||
-		    index == G_USER_DIRECTORY_PUBLIC_SHARE) {
-			continue;
-		}
-
-		path = g_get_user_special_dir (index);
-
-		/* xdg resets special dirs to the home directory in case
-		 * it's not finiding what it expects. We don't want the home
-		 * to be added multiple times in that weird configuration.
-		 */
-		if (!path || g_strcmp0 (path, g_get_home_dir ()) == 0) {
-			continue;
-		}
-
-		root = g_file_new_for_path (path);
-		name = g_file_get_basename (root);
-		icon = nautilus_user_special_directory_get_gicon (index);
-		mount_uri = g_file_get_uri (root);
-		tooltip = g_file_get_parse_name (root);
-
-		add_place (sidebar, PLACES_XDG_DIR,
-			   SECTION_COMPUTER,
-			   name, icon, mount_uri,
-			   NULL, NULL, NULL, 0,
-			   tooltip);
-		g_free (name);
 		g_object_unref (root);
 		g_object_unref (icon);
 		g_free (mount_uri);
@@ -783,28 +805,18 @@ update_places (NautilusPlacesSidebar *sidebar)
 	}
 	g_list_free (mounts);
 
-	/* file system root */
- 	mount_uri = "file:///"; /* No need to strdup */
-	icon = g_themed_icon_new (NAUTILUS_ICON_FILESYSTEM);
-	add_place (sidebar, PLACES_BUILT_IN,
-		   SECTION_COMPUTER,
-		   _("File System"), icon,
-		   mount_uri, NULL, NULL, NULL, 0,
-		   _("Open the contents of the File System"));
-	g_object_unref (icon);
-
-	mount_uri = "trash:///"; /* No need to strdup */
-	icon = nautilus_trash_monitor_get_icon ();
-	add_place (sidebar, PLACES_BUILT_IN,
-		   SECTION_COMPUTER,
-		   _("Trash"), icon, mount_uri,
-		   NULL, NULL, NULL, 0,
-		   _("Open the trash"));
-	g_object_unref (icon);
-
 	/* network */
 	add_heading (sidebar, SECTION_NETWORK,
 		     _("Network"));
+
+ 	mount_uri = "network:///"; /* No need to strdup */
+	icon = g_themed_icon_new (NAUTILUS_ICON_NETWORK);
+	add_place (sidebar, PLACES_BUILT_IN,
+		   SECTION_NETWORK,
+		   _("Browse Network"), icon,
+		   mount_uri, NULL, NULL, NULL, 0,
+		   _("Browse the contents of the network"));
+	g_object_unref (icon);
 
 	network_volumes = g_list_reverse (network_volumes);
 	for (l = network_volumes; l != NULL; l = l->next) {
@@ -851,16 +863,6 @@ update_places (NautilusPlacesSidebar *sidebar)
 	}
 
 	g_list_free_full (network_mounts, g_object_unref);
-
-	/* network:// */
- 	mount_uri = "network:///"; /* No need to strdup */
-	icon = g_themed_icon_new (NAUTILUS_ICON_NETWORK);
-	add_place (sidebar, PLACES_BUILT_IN,
-		   SECTION_NETWORK,
-		   _("Browse Network"), icon,
-		   mount_uri, NULL, NULL, NULL, 0,
-		   _("Browse the contents of the network"));
-	g_object_unref (icon);
 
 	/* restore selection */
 	sidebar_update_restore_selection (sidebar, location, last_uri);
@@ -3129,6 +3131,107 @@ places_sidebar_sort_func (GtkTreeModel *model,
 }
 
 static void
+pretty_hostname_cb (GObject *source_object,
+		    GAsyncResult *res,
+		    gpointer user_data)
+{
+	NautilusPlacesSidebar *sidebar = user_data;
+	GError *error = NULL;
+	GVariant *variant;
+	GVariant *inner;
+	gsize len;
+
+	variant = g_dbus_proxy_call_finish (G_DBUS_PROXY (source_object), res, &error);
+	if (error != NULL) {
+		g_debug ("Failed to get pretty hostname: %s", error->message);
+		g_error_free (error);
+		return;
+	}
+
+	g_variant_get (variant, "(v)", &inner);
+	if (inner != NULL
+	    && g_variant_get_string (inner, &len)
+	    && len > 0) {
+		g_free (sidebar->hostname);
+		sidebar->hostname = g_variant_dup_string (inner, NULL);
+		update_places (sidebar);
+	}
+
+	g_variant_unref (variant);
+}
+
+static void
+update_hostname_async (NautilusPlacesSidebar *sidebar)
+{
+	GVariant *variant;
+	char *str;
+	gsize len;
+
+	if (sidebar->hostnamed_proxy == NULL)
+		return;
+
+	variant = g_dbus_proxy_get_cached_property (sidebar->hostnamed_proxy,
+						    "PrettyHostname");
+	if (variant != NULL
+	    && g_variant_get_string (variant, &len)
+	    && len > 0) {
+		g_free (sidebar->hostname);
+		sidebar->hostname = g_variant_dup_string (variant, NULL);
+		g_variant_unref (variant);
+		update_places (sidebar);
+	} else {
+		/* Work around systemd-hostname not sending us back
+		 * the property value when changing values:
+		 * https://bugs.freedesktop.org/show_bug.cgi?id=37632 */
+		g_dbus_proxy_call (sidebar->hostnamed_proxy,
+				   "org.freedesktop.DBus.Properties.Get",
+				   g_variant_new ("(ss)", "org.freedesktop.hostname1", "PrettyHostname"),
+				   G_DBUS_CALL_FLAGS_NONE,
+				   -1,
+				   NULL,
+				   pretty_hostname_cb,
+				   sidebar);
+	}
+}
+
+static void
+on_hostname_changed (GDBusProxy *proxy,
+		     GVariant   *changed_properties,
+		     GStrv       invalidated_properties,
+		     gpointer    user_data)
+{
+	int i;
+	for (i = 0; invalidated_properties[i] != NULL; i++) {
+		if (g_str_equal (invalidated_properties[i], "PrettyHostname")) {
+			update_hostname_async (user_data);
+		}
+	}
+}
+
+static void
+hostname_proxy_new_cb (GObject      *source_object,
+		       GAsyncResult *res,
+		       gpointer      user_data)
+{
+	NautilusPlacesSidebar *sidebar = user_data;
+	GError *error = NULL;
+
+	sidebar->hostnamed_proxy = g_dbus_proxy_new_for_bus_finish (res, &error);
+	if (error != NULL) {
+		g_debug ("Failed to create D-Bus proxy: %s", error->message);
+		g_error_free (error);
+		return;
+	}
+
+	g_signal_connect (sidebar->hostnamed_proxy,
+			  "g-properties-changed",
+			  G_CALLBACK (on_hostname_changed),
+			  sidebar);
+
+	update_hostname_async (sidebar);
+}
+
+static void
 nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 {
 	GtkTreeView       *tree_view;
@@ -3313,6 +3416,17 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 				  G_CALLBACK(desktop_setting_changed_callback),
 				  sidebar);
 
+	sidebar->hostname = g_strdup (_("Computer"));
+	g_dbus_proxy_new_for_bus (G_BUS_TYPE_SYSTEM,
+				  G_DBUS_PROXY_FLAGS_NONE,
+				  NULL,
+				  "org.freedesktop.hostname1",
+				  "/org/freedesktop/hostname1",
+				  "org.freedesktop.hostname1",
+				  NULL,
+				  hostname_proxy_new_cb,
+				  sidebar);
+
 	g_signal_connect_object (nautilus_trash_monitor_get (),
 				 "trash_state_changed",
 				 G_CALLBACK (trash_state_changed_cb),
@@ -3384,6 +3498,10 @@ nautilus_places_sidebar_dispose (GObject *object)
 
 		g_clear_object (&sidebar->volume_monitor);
 	}
+
+	g_clear_object (&sidebar->hostnamed_proxy);
+	g_free (sidebar->hostname);
+	sidebar->hostname = NULL;
 
 	G_OBJECT_CLASS (nautilus_places_sidebar_parent_class)->dispose (object);
 }
