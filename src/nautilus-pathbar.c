@@ -352,6 +352,10 @@ set_label_size_request (ButtonData *button_data)
         gchar *markup;
 	GtkRequisition min_req, bold_req;
 
+	if (button_data->label == NULL) {
+		return;
+	}
+
 	gtk_label_set_ellipsize (GTK_LABEL (button_data->label), PANGO_ELLIPSIZE_NONE);
 	gtk_widget_get_preferred_size (button_data->label, &min_req, NULL);
 	gtk_label_set_ellipsize (GTK_LABEL (button_data->label), PANGO_ELLIPSIZE_MIDDLE);	
