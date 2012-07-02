@@ -289,7 +289,6 @@ static void     clipboard_changed_callback                     (NautilusClipboar
 static void     open_one_in_new_window                         (gpointer              data,
 								gpointer              callback_data);
 static void     schedule_update_menus                          (NautilusView      *view);
-static void     schedule_update_menus_callback                 (gpointer              callback_data);
 static void     remove_update_menus_timeout_callback           (NautilusView      *view);
 static void     schedule_update_status                          (NautilusView      *view);
 static void     remove_update_status_idle_callback             (NautilusView *view); 
@@ -2660,13 +2659,13 @@ nautilus_view_init (NautilusView *view)
 
 	/* Register to menu provider extension signal managing menu updates */
 	g_signal_connect_object (nautilus_signaller_get_current (), "popup_menu_changed",
-				 G_CALLBACK (nautilus_view_update_menus), view, G_CONNECT_SWAPPED);
+				 G_CALLBACK (schedule_update_menus), view, G_CONNECT_SWAPPED);
 
 	gtk_widget_show (GTK_WIDGET (view));
 
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_ENABLE_DELETE,
-				  G_CALLBACK (schedule_update_menus_callback), view);
+				  G_CALLBACK (schedule_update_menus), view);
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_CLICK_POLICY,
 				  G_CALLBACK(click_policy_changed_callback),
@@ -2788,7 +2787,7 @@ nautilus_view_finalize (GObject *object)
 	view = NAUTILUS_VIEW (object);
 
 	g_signal_handlers_disconnect_by_func (nautilus_preferences,
-					      schedule_update_menus_callback, view);
+					      schedule_update_menus, view);
 	g_signal_handlers_disconnect_by_func (nautilus_preferences,
 					      click_policy_changed_callback, view);
 	g_signal_handlers_disconnect_by_func (nautilus_preferences,
@@ -9116,12 +9115,6 @@ real_using_manual_layout (NautilusView *view)
 	g_return_val_if_fail (NAUTILUS_IS_VIEW (view), FALSE);
 
 	return FALSE;
-}
-
-static void
-schedule_update_menus_callback (gpointer callback_data)
-{
-	schedule_update_menus (NAUTILUS_VIEW (callback_data));
 }
 
 void
