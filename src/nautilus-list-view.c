@@ -2712,41 +2712,6 @@ nautilus_list_view_reset_to_defaults (NautilusView *view)
 }
 
 static void
-nautilus_list_view_scale_font_size (NautilusListView *view, 
-				    NautilusZoomLevel new_level)
-{
-	GList *l;
-	static gboolean first_time = TRUE;
-	static double pango_scale[7];
-	int medium;
-	int i;
-
-	g_return_if_fail (new_level >= NAUTILUS_ZOOM_LEVEL_SMALLEST &&
-			  new_level <= NAUTILUS_ZOOM_LEVEL_LARGEST);
-
-	if (first_time) {
-		first_time = FALSE;
-		medium = NAUTILUS_ZOOM_LEVEL_SMALLER;
-		pango_scale[medium] = PANGO_SCALE_MEDIUM;
-		for (i = medium; i > NAUTILUS_ZOOM_LEVEL_SMALLEST; i--) {
-			pango_scale[i - 1] = (1 / 1.2) * pango_scale[i];
-		}
-		for (i = medium; i < NAUTILUS_ZOOM_LEVEL_LARGEST; i++) {
-			pango_scale[i + 1] = 1.2 * pango_scale[i];
-		}
-	}
-					 
-	g_object_set (G_OBJECT (view->details->file_name_cell),
-		      "scale", pango_scale[new_level],
-		      NULL);
-	for (l = view->details->cells; l != NULL; l = l->next) {
-		g_object_set (G_OBJECT (l->data),
-			      "scale", pango_scale[new_level],
-			      NULL);
-	}
-}
-
-static void
 nautilus_list_view_set_zoom_level (NautilusListView *view,
 				   NautilusZoomLevel new_level,
 				   gboolean always_emit)
@@ -2780,9 +2745,6 @@ nautilus_list_view_set_zoom_level (NautilusListView *view,
 					     GTK_CELL_RENDERER (view->details->pixbuf_cell),
 					     "pixbuf", column,
 					     NULL);
-
-	/* Scale text. */
-	nautilus_list_view_scale_font_size (view, new_level);
 
 	/* Make all rows the same size. */
 	icon_size = nautilus_get_icon_size_for_zoom_level (new_level);
