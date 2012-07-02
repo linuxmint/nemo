@@ -1396,9 +1396,6 @@
       <row>
         <col id="0" translatable="yes">List View</col>
       </row>
-      <row>
-        <col id="0" translatable="yes">Compact View</col>
-      </row>
     </data>
   </object>
   <object class="GtkListStore" id="model10">
