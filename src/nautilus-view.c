@@ -4597,12 +4597,8 @@ reset_open_with_menu (NautilusView *view, GList *selection)
 
 	num_applications = g_list_length (applications);
 
-	if (file_list_all_are_folders (selection)) {
-		submenu_visible = (num_applications > 2);
-	} else {
-		submenu_visible = (num_applications > 3);
-	}
-	
+	submenu_visible = (num_applications > 1);
+
 	for (node = applications, index = 0; node != NULL; node = node->next, index++) {
 		GAppInfo *application;
 		char *menu_path;
