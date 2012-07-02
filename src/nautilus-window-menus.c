@@ -435,39 +435,6 @@ connect_proxy_cb (GtkActionGroup *action_group,
 	gtk_label_set_max_width_chars (label, MENU_ITEM_MAX_WIDTH_CHARS);
 }
 
-static const char* icon_entries[] = {
-	"/MenuBar/Other Menus/Go/Home",
-	"/MenuBar/Other Menus/Go/Go to Templates",
-	"/MenuBar/Other Menus/Go/Go to Trash",
-	"/MenuBar/Other Menus/Go/Go to Network",
-	"/MenuBar/Other Menus/Go/Go to Location"
-};
-
-/**
- * refresh_go_menu:
- * 
- * Refresh list of bookmarks at end of Go menu to match centralized history list.
- * @window: The NautilusWindow whose Go menu will be refreshed.
- **/
-static void
-nautilus_window_initialize_go_menu (NautilusWindow *window)
-{
-	GtkUIManager *ui_manager;
-	GtkWidget *menuitem;
-	int i;
-
-	ui_manager = nautilus_window_get_ui_manager (NAUTILUS_WINDOW (window));
-
-	for (i = 0; i < G_N_ELEMENTS (icon_entries); i++) {
-		menuitem = gtk_ui_manager_get_widget (
-				ui_manager,
-				icon_entries[i]);
-
-		gtk_image_menu_item_set_always_show_image (
-				GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
-	}
-}
-
 static void
 action_new_window_callback (GtkAction *action,
 			    gpointer user_data)
@@ -914,7 +881,6 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 	gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nautilus/nautilus-shell-ui.xml", NULL);
 
 	nautilus_window_initialize_trash_icon_monitor (window);
-	nautilus_window_initialize_go_menu (window);
 }
 
 void

@@ -70,23 +70,10 @@
 		</placeholder>
 	</menu>
 	<placeholder name="Other Menus">
-	        <menu action="Go">
-                        <placeholder name="Navigation Items">
-			<menuitem name="Up" action="Up"/>
-			<menuitem name="Back" action="Back"/>
-			<menuitem name="Forward"  action="Forward"/>
-	                </placeholder>
-	                <separator/>
-			<menuitem name="Home" action="Home"/>
-			<menuitem name="Go to Templates" action="Go to Templates"/>
-			<menuitem name="Go to Trash" action="Go to Trash"/>
-		        <menuitem name="Go to Network" action="Go to Network"/>
-			<menuitem name="Go to Location" action="Go to Location"/>
-			<menuitem name="Search" action="Search"/>
-		</menu>
 		<menu action="Bookmarks">
 			<menuitem name="Add Bookmark" action="Add Bookmark"/>
 			<menuitem name="Edit Bookmark" action="Edit Bookmarks"/>
+			<menuitem name="Go to Location" action="Go to Location"/>
 			<separator/>
 			<placeholder name="Bookmarks Placeholder"/>
 		</menu>
