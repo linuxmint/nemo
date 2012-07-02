@@ -2546,6 +2546,10 @@ static void
 undo_manager_changed_cb (NautilusFileUndoManager* manager,
 			 NautilusView *view)
 {
+	if (!view->details->active) {
+		return;
+	}
+
 	update_undo_actions (view);
 }
 
@@ -2602,7 +2606,6 @@ nautilus_view_init (NautilusView *view)
 	NautilusDirectory *scripts_directory;
 	NautilusDirectory *templates_directory;
 	char *templates_uri;
-	NautilusFileUndoManager* manager;
 
 	view->details = G_TYPE_INSTANCE_GET_PRIVATE (view, NAUTILUS_TYPE_VIEW,
 						     NautilusViewDetails);
@@ -2677,9 +2680,8 @@ nautilus_view_init (NautilusView *view)
 				  "changed::" NAUTILUS_PREFERENCES_LOCKDOWN_COMMAND_LINE,
 				  G_CALLBACK (schedule_update_menus), view);
 
-	manager = nautilus_file_undo_manager_get ();
-	g_signal_connect_object (manager, "undo-changed",
-				 G_CALLBACK (undo_manager_changed_cb), view, 0);				  
+	g_signal_connect_object (nautilus_file_undo_manager_get (), "undo-changed",
+				 G_CALLBACK (undo_manager_changed_cb), view, 0);
 
 	/* Accessibility */
 	atk_object = gtk_widget_get_accessible (GTK_WIDGET (view));
