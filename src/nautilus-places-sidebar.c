@@ -3164,7 +3164,6 @@ static void
 update_hostname_async (NautilusPlacesSidebar *sidebar)
 {
 	GVariant *variant;
-	char *str;
 	gsize len;
 
 	if (sidebar->hostnamed_proxy == NULL)

@@ -608,7 +608,7 @@ compute_text_rectangle (const NautilusIconCanvasItem *item,
 {
 	EelIRect text_rectangle;
 	double pixels_per_unit;
-	double text_width, text_height, text_height_for_layout, text_height_for_entire_text, real_text_height, text_dx;
+	double text_width, text_height, text_height_for_layout, text_height_for_entire_text, real_text_height;
 
 	pixels_per_unit = EEL_CANVAS_ITEM (item)->canvas->pixels_per_unit;
 	if (canvas_coords) {
@@ -616,13 +616,11 @@ compute_text_rectangle (const NautilusIconCanvasItem *item,
 		text_height = item->details->text_height;
 		text_height_for_layout = item->details->text_height_for_layout;
 		text_height_for_entire_text = item->details->text_height_for_entire_text;
-		text_dx = item->details->text_dx;
 	} else {
 		text_width = item->details->text_width / pixels_per_unit;
 		text_height = item->details->text_height / pixels_per_unit;
 		text_height_for_layout = item->details->text_height_for_layout / pixels_per_unit;
 		text_height_for_entire_text = item->details->text_height_for_entire_text / pixels_per_unit;
-		text_dx = item->details->text_dx / pixels_per_unit;
 	}
 
 	text_rectangle.x0 = (icon_rectangle.x0 + icon_rectangle.x1) / 2 - (int) text_width / 2;
@@ -800,12 +798,7 @@ static void
 prepare_pango_layout_for_measure_entire_text (NautilusIconCanvasItem *item,
 					      PangoLayout *layout)
 {
-	NautilusIconContainer *container;
-
 	prepare_pango_layout_width (item, layout);
-
-	container = NAUTILUS_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas);
-
 	pango_layout_set_height (layout, G_MININT);
 }
 
@@ -1983,10 +1976,8 @@ double
 nautilus_icon_canvas_item_get_max_text_width (NautilusIconCanvasItem *item)
 {
 	EelCanvasItem *canvas_item;
-	NautilusIconContainer *container;
 
 	canvas_item = EEL_CANVAS_ITEM (item);
-	container = NAUTILUS_ICON_CONTAINER (canvas_item->canvas);
 
 	return MAX_TEXT_WIDTH_STANDARD * canvas_item->canvas->pixels_per_unit;
 }

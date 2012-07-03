@@ -1244,12 +1244,10 @@ lay_down_icons_horizontal (NautilusIconContainer *container,
 	IconPositions *position;
 	EelDRect bounds;
 	EelDRect icon_bounds;
-	EelDRect text_bounds;
 	double max_height_above, max_height_below;
 	double height_above, height_below;
 	double line_width;
 	double grid_width;
-	double max_text_width, max_icon_width;
 	int icon_width;
 	int i;
 	GtkAllocation allocation;
@@ -1265,7 +1263,6 @@ lay_down_icons_horizontal (NautilusIconContainer *container,
 	
 	/* Lay out icons a line at a time. */
 	canvas_width = CANVAS_WIDTH(container, allocation);
-	max_icon_width = max_text_width = 0.0;
 
 	grid_width = STANDARD_ICON_GRID_WIDTH;
 
@@ -8020,7 +8017,6 @@ nautilus_icon_container_start_renaming_selected_item (NautilusIconContainer *con
 	NautilusIconContainerDetails *details;
 	NautilusIcon *icon;
 	EelDRect icon_rect;
-	EelDRect text_rect;
 	PangoContext *context;
 	PangoFontDescription *desc;
 	const char *editable_text;
@@ -8097,7 +8093,6 @@ nautilus_icon_container_start_renaming_selected_item (NautilusIconContainer *con
 	pango_font_description_free (desc);
 	
 	icon_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
-	text_rect = nautilus_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
 
 	width = nautilus_icon_canvas_item_get_max_text_width (icon->item);
 

@@ -4380,7 +4380,6 @@ nautilus_file_get_date_as_string (NautilusFile *file, NautilusDateType date_type
 	time_t file_time_raw;
 	const char *format;
 	char *result = NULL;
-	int i;
 	GDateTime *date_time, *today;
 	int y, m, d;
 	int y_now, m_now, d_now;

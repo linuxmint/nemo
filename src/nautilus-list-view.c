@@ -136,8 +136,6 @@ static GList *nautilus_list_view_get_selection_for_file_transfer (NautilusView  
 static void   nautilus_list_view_set_zoom_level                  (NautilusListView        *view,
 								  NautilusZoomLevel  new_level,
 								  gboolean           always_set_level);
-static void   nautilus_list_view_scale_font_size                 (NautilusListView        *view,
-								  NautilusZoomLevel  new_level);
 static void   nautilus_list_view_scroll_to_file                  (NautilusListView        *view,
 								  NautilusFile      *file);
 static void   nautilus_list_view_rename_callback                 (NautilusFile      *file,

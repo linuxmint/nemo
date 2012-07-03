@@ -347,9 +347,7 @@ get_dir_name (ButtonData *button_data)
 static void
 set_label_size_request (ButtonData *button_data)
 {
-        const gchar *dir_name = get_dir_name (button_data);
         gint width, height;
-        gchar *markup;
 	GtkRequisition min_req, bold_req;
 
 	if (button_data->label == NULL) {
