@@ -5725,7 +5725,82 @@ create_popup_menu (NautilusView *view, const char *popup_path)
 
 	return GTK_MENU (menu);
 }
-	
+
+typedef struct _CopyCallbackData {
+	NautilusView *view;
+	GList        *selection;
+	gboolean      is_move;
+} CopyCallbackData;
+
+static void
+on_destination_dialog_response (GtkDialog *dialog,
+				gint       response_id,
+				gpointer   user_data)
+{
+	CopyCallbackData *copy_data = user_data;
+
+	if (response_id == GTK_RESPONSE_OK) {
+		char *target_uri;
+		GList *uris, *l;
+
+		target_uri = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (dialog));
+
+		uris = NULL;
+		for (l = copy_data->selection; l != NULL; l = l->next) {
+			uris = g_list_prepend (uris,
+					       nautilus_file_get_uri ((NautilusFile *) l->data));
+		}
+		uris = g_list_reverse (uris);
+
+		nautilus_view_move_copy_items (copy_data->view, uris, NULL, target_uri,
+					       copy_data->is_move ? GDK_ACTION_MOVE : GDK_ACTION_COPY,
+					       0, 0);
+
+		g_list_free_full (uris, g_free);
+		g_free (target_uri);
+	}
+
+	nautilus_file_list_free (copy_data->selection);
+	g_free (copy_data);
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+
+}
+
+static void
+copy_or_move_selection (NautilusView *view,
+			gboolean      is_move)
+{
+	GtkWidget *dialog;
+	char *uri;
+	CopyCallbackData *copy_data;
+	GList *selection;
+
+	selection = nautilus_view_get_selection_for_file_transfer (view);
+
+	dialog = gtk_file_chooser_dialog_new (_("Select Destination"),
+					      GTK_WINDOW (view->details->window),
+					      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+					      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					      _("_Select"), GTK_RESPONSE_OK,
+					      NULL);
+	gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
+	gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+
+	uri = nautilus_directory_get_uri (view->details->model);
+	gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dialog), uri);
+	g_free (uri);
+
+	copy_data = g_new0 (CopyCallbackData, 1);
+	copy_data->view = view;
+	copy_data->selection = selection;
+	copy_data->is_move = is_move;
+	g_signal_connect (dialog, "response",
+			  G_CALLBACK (on_destination_dialog_response),
+			  copy_data);
+
+	gtk_widget_show_all (dialog);
+}
+
 static void
 copy_or_cut_files (NautilusView *view,
 		   GList           *clipboard_contents,
@@ -5819,6 +5894,26 @@ action_cut_files_callback (GtkAction *action,
 	selection = nautilus_view_get_selection_for_file_transfer (view);
 	copy_or_cut_files (view, selection, TRUE);
 	nautilus_file_list_free (selection);
+}
+
+static void
+action_copy_to_callback (GtkAction *action,
+			 gpointer callback_data)
+{
+	NautilusView *view;
+
+	view = NAUTILUS_VIEW (callback_data);
+	copy_or_move_selection (view, FALSE);
+}
+
+static void
+action_move_to_callback (GtkAction *action,
+			 gpointer callback_data)
+{
+	NautilusView *view;
+
+	view = NAUTILUS_VIEW (callback_data);
+	copy_or_move_selection (view, TRUE);
 }
 
 static void
@@ -6926,8 +7021,14 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("_Paste Into Folder"), "",
   /* tooltip */                  N_("Move or copy files previously selected by a Cut or Copy command into the selected folder"),
 				 G_CALLBACK (action_paste_files_into_callback) },
-  /* name, stock id, label */  { "CopyToMenu", NULL, N_("Cop_y to") },
-  /* name, stock id, label */  { "MoveToMenu", NULL, N_("M_ove to") },                      
+  /* name, stock id */         { "Copy To", NULL,
+  /* label, accelerator */       N_("Copy To..."), NULL,
+  /* tooltip */                  N_("Copy selected files to another location"),
+				 G_CALLBACK (action_copy_to_callback) },
+  /* name, stock id */         { "Move To", NULL,
+  /* label, accelerator */       N_("Move To..."), NULL,
+  /* tooltip */                  N_("Move selected files to another location"),
+				 G_CALLBACK (action_move_to_callback) },
   /* name, stock id */         { "Select All", NULL,
   /* label, accelerator */       N_("Select _All"), "<control>A",
   /* tooltip */                  N_("Select all items in this window"),
@@ -8483,10 +8584,10 @@ real_update_menus (NautilusView *view)
 	}
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      "CopyToMenu");
+					      NAUTILUS_ACTION_COPY_TO);
 	gtk_action_set_sensitive (action, can_copy_files);
 	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      "MoveToMenu");
+					      NAUTILUS_ACTION_MOVE_TO);
 	gtk_action_set_sensitive (action, can_delete_files);
 }
 

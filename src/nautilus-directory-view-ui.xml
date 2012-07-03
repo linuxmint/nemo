@@ -152,6 +152,8 @@
   </placeholder>
   <separator name="File actions separator"/>
   <placeholder name="File Actions">
+    <menuitem name="Move To" action="Move To"/>
+    <menuitem name="Copy To" action="Copy To"/>
     <menuitem name="Properties" action="Properties"/>
     <menuitem name="Rename" action="Rename"/>
   </placeholder>
