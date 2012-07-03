@@ -131,7 +131,7 @@ enum {
 	PLACES_SIDEBAR_COLUMN_NO_EJECT,
 	PLACES_SIDEBAR_COLUMN_BOOKMARK,
 	PLACES_SIDEBAR_COLUMN_TOOLTIP,
-	PLACES_SIDEBAR_COLUMN_EJECT_ICON,
+	PLACES_SIDEBAR_COLUMN_EJECT_GICON,
 	PLACES_SIDEBAR_COLUMN_SECTION_TYPE,
 	PLACES_SIDEBAR_COLUMN_HEADING_TEXT,
 
@@ -206,56 +206,6 @@ G_DEFINE_TYPE_WITH_CODE (NautilusShortcutsModel, _nautilus_shortcuts_model, GTK_
 static GtkListStore *nautilus_shortcuts_model_new (NautilusPlacesSidebar *sidebar);
 
 G_DEFINE_TYPE (NautilusPlacesSidebar, nautilus_places_sidebar, GTK_TYPE_SCROLLED_WINDOW);
-
-static GdkPixbuf *
-get_eject_icon (NautilusPlacesSidebar *sidebar,
-		gboolean highlighted)
-{
-	GdkPixbuf *eject;
-	GtkIconInfo *icon_info;
-	GIcon *icon;
-	int icon_size;
-	GtkIconTheme *icon_theme;
-	GtkStyleContext *style;
-	GtkStateFlags state;
-
-	icon_theme = gtk_icon_theme_get_default ();
-	icon_size = nautilus_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
-	icon = g_themed_icon_new_with_default_fallbacks ("media-eject-symbolic");
-	icon_info = gtk_icon_theme_lookup_by_gicon (icon_theme, icon, icon_size, 0);
-
-	style = gtk_widget_get_style_context (GTK_WIDGET (sidebar));
-	gtk_style_context_save (style);
-
-	if (icon_info != NULL) {
-		state = gtk_widget_get_state_flags (GTK_WIDGET (sidebar));
-		gtk_style_context_add_class (style, GTK_STYLE_CLASS_IMAGE);
-
-		if (highlighted) {
-			state |= GTK_STATE_FLAG_PRELIGHT;
-		}
-
-		gtk_style_context_set_state (style, state);
-
-		eject = gtk_icon_info_load_symbolic_for_context (icon_info,
-								 style,
-								 NULL,
-								 NULL);
-
-		gtk_icon_info_free (icon_info);
-	} else {
-		GtkIconSet *icon_set;
-
-		gtk_style_context_set_state (style, GTK_STATE_FLAG_NORMAL);
-		icon_set = gtk_style_context_lookup_icon_set (style, GTK_STOCK_MISSING_IMAGE);
-		eject = gtk_icon_set_render_icon_pixbuf (icon_set, style, GTK_ICON_SIZE_MENU);
-	}
-
-	gtk_style_context_restore (style);
-	g_object_unref (icon);
-
-	return eject;
-}
 
 static gboolean
 is_built_in_bookmark (NautilusFile *file)
@@ -348,7 +298,7 @@ add_place (NautilusPlacesSidebar *sidebar,
 {
 	GdkPixbuf            *pixbuf;
 	GtkTreeIter           iter;
-	GdkPixbuf	     *eject;
+	GIcon *eject;
 	NautilusIconInfo *icon_info;
 	int icon_size;
 	gboolean show_eject, show_unmount;
@@ -376,7 +326,7 @@ add_place (NautilusPlacesSidebar *sidebar,
 	}
 
 	if (show_eject_button) {
-		eject = get_eject_icon (sidebar, FALSE);
+		eject = g_themed_icon_new_with_default_fallbacks ("media-eject-symbolic");
 	} else {
 		eject = NULL;
 	}
@@ -395,12 +345,16 @@ add_place (NautilusPlacesSidebar *sidebar,
 			    PLACES_SIDEBAR_COLUMN_NO_EJECT, !show_eject_button,
 			    PLACES_SIDEBAR_COLUMN_BOOKMARK, place_type != PLACES_BOOKMARK,
 			    PLACES_SIDEBAR_COLUMN_TOOLTIP, tooltip,
-			    PLACES_SIDEBAR_COLUMN_EJECT_ICON, eject,
+			    PLACES_SIDEBAR_COLUMN_EJECT_GICON, eject,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,
 			    -1);
 
 	if (pixbuf != NULL) {
 		g_object_unref (pixbuf);
+	}
+
+	if (eject != NULL) {
+		g_object_unref (eject);
 	}
 }
 
@@ -2785,100 +2739,6 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 	return FALSE;
 }
 
-static void
-update_eject_buttons (NautilusPlacesSidebar *sidebar,
-		      GtkTreePath 	    *path)
-{
-	GtkTreeIter iter;
-	gboolean icon_visible, path_same;
-
-	icon_visible = TRUE;
-
-	if (path == NULL && sidebar->eject_highlight_path == NULL) {
-		/* Both are null - highlight up to date */
-		return;
-	}
-
-	path_same = (path != NULL) &&
-		(sidebar->eject_highlight_path != NULL) &&
-		(gtk_tree_path_compare (sidebar->eject_highlight_path, path) == 0);
-
-	if (path_same) {
-		/* Same path - highlight up to date */
-		return;
-	}
-
-	if (path) {
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store),
-					 &iter,
-					 path);
-
-		gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store),
-				    &iter,
-				    PLACES_SIDEBAR_COLUMN_EJECT, &icon_visible,
-				    -1);
-	}
-
-	if (!icon_visible || path == NULL || !path_same) {
-		/* remove highlighting and reset the saved path, as we are leaving
-		 * an eject button area.
-		 */
-		if (sidebar->eject_highlight_path) {
-			gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store),
-						 &iter,
-						 sidebar->eject_highlight_path);
-
-			gtk_list_store_set (sidebar->store,
-					    &iter,
-					    PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, FALSE),
-					    -1);
-
-			gtk_tree_path_free (sidebar->eject_highlight_path);
-			sidebar->eject_highlight_path = NULL;
-		}
-
-		if (!icon_visible) {
-			return;
-		}
-	}
-
-	if (path != NULL) {
-		/* add highlighting to the selected path, as the icon is visible and
-		 * we're hovering it.
-		 */
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store),
-					 &iter,
-					 path);
-		gtk_list_store_set (sidebar->store,
-				    &iter,
-				    PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, TRUE),
-				    -1);
-
-		sidebar->eject_highlight_path = gtk_tree_path_copy (path);
-	}
-}
-
-static gboolean
-bookmarks_motion_event_cb (GtkWidget             *widget,
-			   GdkEventMotion        *event,
-			   NautilusPlacesSidebar *sidebar)
-{
-	GtkTreePath *path;
-
-	path = NULL;
-
-	if (over_eject_button (sidebar, event->x, event->y, &path)) {
-		update_eject_buttons (sidebar, path);
-		gtk_tree_path_free (path);
-
-		return TRUE;
-	}
-
-	update_eject_buttons (sidebar, NULL);
-
-	return FALSE;
-}
-
 /* Callback used when a button is pressed on the shortcuts list.  
  * We trap button 3 to bring up a popup menu, and button 2 to
  * open in a new tab.
@@ -3318,11 +3178,12 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 		      /* align right, because for some reason gtk+ expands
 			 this even though we tell it not to. */
 		      "xalign", 1.0,
+		      "follow-state", TRUE,
 		      NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (col, cell,
 					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
-					     "pixbuf", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
+					     "gicon", PLACES_SIDEBAR_COLUMN_EJECT_GICON,
 					     NULL);
 
 	/* normal text renderer */
@@ -3403,8 +3264,6 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 			  G_CALLBACK (bookmarks_popup_menu_cb), sidebar);
 	g_signal_connect (tree_view, "button-press-event",
 			  G_CALLBACK (bookmarks_button_press_event_cb), sidebar);
-	g_signal_connect (tree_view, "motion-notify-event",
-			  G_CALLBACK (bookmarks_motion_event_cb), sidebar);
 	g_signal_connect (tree_view, "button-release-event",
 			  G_CALLBACK (bookmarks_button_release_event_cb), sidebar);
 
@@ -3646,7 +3505,7 @@ nautilus_shortcuts_model_new (NautilusPlacesSidebar *sidebar)
 		G_TYPE_BOOLEAN,
 		G_TYPE_BOOLEAN,
 		G_TYPE_STRING,
-		GDK_TYPE_PIXBUF,
+		G_TYPE_ICON,
 		G_TYPE_INT,
 		G_TYPE_STRING
 	};
