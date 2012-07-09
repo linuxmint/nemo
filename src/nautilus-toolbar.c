@@ -35,6 +35,8 @@
 #include <libnautilus-private/nautilus-global-preferences.h>
 #include <libnautilus-private/nautilus-ui-utilities.h>
 
+#include <math.h>
+
 struct _NautilusToolbarPriv {
 	GtkWidget *toolbar;
 
@@ -85,6 +87,51 @@ toolbar_update_appearance (NautilusToolbar *self)
 				self->priv->show_search_bar);
 }
 
+static gint
+get_icon_margin (NautilusToolbar *self)
+{
+	GtkIconSize toolbar_size;
+	gint toolbar_size_px, menu_size_px;
+
+	toolbar_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (self->priv->toolbar));
+
+	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &menu_size_px, NULL);
+	gtk_icon_size_lookup (toolbar_size, &toolbar_size_px, NULL);
+
+	return (gint) floor ((toolbar_size_px - menu_size_px) / 2.0);
+}
+
+static GtkWidget *
+toolbar_create_toolbutton (NautilusToolbar *self,
+			   gboolean create_menu,
+			   const gchar *name)
+{
+	GtkWidget *button, *image;
+	GtkAction *action;
+
+	if (create_menu) {
+		button = gtk_menu_button_new ();
+	} else {
+		button = gtk_button_new ();
+	}
+
+	image = gtk_image_new ();
+	g_object_set (image, "margin", get_icon_margin (self), NULL);
+
+	gtk_button_set_image (GTK_BUTTON (button), image);
+
+	if (create_menu) {
+		gtk_image_set_from_icon_name (GTK_IMAGE (image), "emblem-system-symbolic",
+					      GTK_ICON_SIZE_MENU);
+	} else {
+		action = gtk_action_group_get_action (self->priv->action_group, name);
+		gtk_activatable_set_related_action (GTK_ACTIVATABLE (button), action);
+		gtk_button_set_label (GTK_BUTTON (button), NULL);
+	}
+
+	return button;
+}
+
 static void
 nautilus_toolbar_constructed (GObject *obj)
 {
@@ -93,12 +140,9 @@ nautilus_toolbar_constructed (GObject *obj)
 	GtkStyleContext *context;
 	GtkWidget *tool_button;
 	GtkWidget *menu;
-	GtkWidget *image;
 	GtkWidget *box;
 	GtkToolItem *back_forward;
 	GtkToolItem *tool_item;
-	GtkActionGroup *action_group;
-	GtkAction *action;
 
 	G_OBJECT_CLASS (nautilus_toolbar_parent_class)->constructed (obj);
 
@@ -120,24 +164,12 @@ nautilus_toolbar_constructed (GObject *obj)
 	back_forward = gtk_tool_item_new ();
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
-	action_group = self->priv->action_group;
-
 	/* Back */
-	tool_button = gtk_button_new ();
-	gtk_button_set_image (GTK_BUTTON (tool_button), gtk_image_new ());
-	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_BACK);
-	gtk_activatable_set_related_action (GTK_ACTIVATABLE (tool_button),
-					    action);
-	gtk_button_set_label (GTK_BUTTON (tool_button), NULL);
+	tool_button = toolbar_create_toolbutton (self, FALSE, NAUTILUS_ACTION_BACK);
 	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
 
 	/* Forward */
-	tool_button = gtk_button_new ();
-	gtk_button_set_image (GTK_BUTTON (tool_button), gtk_image_new ());
-	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_FORWARD);
-	gtk_activatable_set_related_action (GTK_ACTIVATABLE (tool_button),
-					    action);
-	gtk_button_set_label (GTK_BUTTON (tool_button), NULL);
+	tool_button = toolbar_create_toolbutton (self, FALSE, NAUTILUS_ACTION_FORWARD);
 	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (box),
@@ -170,13 +202,7 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	/* search */
 	tool_item = gtk_tool_item_new ();
-	tool_button = gtk_button_new ();
-	gtk_button_set_image (GTK_BUTTON (tool_button), gtk_image_new ());
-	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_SEARCH);
-	gtk_activatable_set_related_action (GTK_ACTIVATABLE (tool_button),
-					    action);
-	gtk_button_set_label (GTK_BUTTON (tool_button), NULL);
-	gtk_widget_set_name (tool_button, "nautilus-search-button");
+	tool_button = toolbar_create_toolbutton (self, FALSE, NAUTILUS_ACTION_SEARCH);
 	gtk_container_add (GTK_CONTAINER (tool_item), GTK_WIDGET (tool_button));
 	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_item));
 	gtk_widget_show_all (GTK_WIDGET (tool_item));
@@ -184,12 +210,9 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	/* Page Menu */
 	tool_item = gtk_tool_item_new ();
-	tool_button = gtk_menu_button_new ();
+	tool_button = toolbar_create_toolbutton (self, TRUE, "emblem-system-symbolic");
 	menu = gtk_ui_manager_get_widget (self->priv->ui_manager, "/ViewMenu");
 	gtk_menu_button_set_menu (GTK_MENU_BUTTON (tool_button), menu);
-	image = gtk_image_new ();
-	gtk_image_set_from_icon_name (GTK_IMAGE (image), "emblem-system-symbolic", GTK_ICON_SIZE_MENU);
-	gtk_button_set_image (GTK_BUTTON (tool_button), image);
 	gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
 	gtk_container_add (GTK_CONTAINER (toolbar), GTK_WIDGET (tool_item));
 	gtk_widget_show_all (GTK_WIDGET (tool_item));
