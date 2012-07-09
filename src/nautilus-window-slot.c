@@ -45,6 +45,7 @@ G_DEFINE_TYPE (NautilusWindowSlot, nautilus_window_slot, GTK_TYPE_BOX);
 enum {
 	ACTIVE,
 	INACTIVE,
+	LOCATION_CHANGED,
 	LAST_SIGNAL
 };
 
@@ -302,6 +303,16 @@ nautilus_window_slot_class_init (NautilusWindowSlotClass *klass)
 			      NULL, NULL,
 			      g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
+	signals[LOCATION_CHANGED] =
+		g_signal_new ("location-changed",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      g_cclosure_marshal_generic,
+			      G_TYPE_NONE, 2,
+			      G_TYPE_STRING,
+			      G_TYPE_STRING);
 }
 
 GFile *

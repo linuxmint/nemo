@@ -1082,6 +1082,23 @@ nautilus_window_emit_location_change (NautilusWindow *window,
 	g_free (uri);
 }
 
+static void
+nautilus_window_slot_emit_location_change (NautilusWindowSlot *slot,
+					   GFile *from,
+					   GFile *to)
+{
+	char *from_uri = NULL;
+	char *to_uri = NULL;
+
+	if (from != NULL)
+		from_uri = g_file_get_uri (from);
+	if (to != NULL)
+		to_uri = g_file_get_uri (to);
+	g_signal_emit_by_name (slot, "location-changed", from_uri, to_uri);
+	g_free (to_uri);
+	g_free (from_uri);
+}
+
 /* reports location change to window's "loading-uri" clients, i.e.
  * sidebar panels [used when switching tabs]. It will emit the pending
  * location, or the existing location if none is pending.
@@ -1344,7 +1361,9 @@ update_for_new_location (NautilusWindowSlot *slot)
 	location_really_changed =
 		slot->location == NULL ||
 		!g_file_equal (slot->location, new_location);
-		
+
+	nautilus_window_slot_emit_location_change (slot, slot->location, new_location);
+
         /* Set the new location. */
 	g_clear_object (&slot->location);
 	slot->location = new_location;

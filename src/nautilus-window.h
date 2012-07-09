@@ -131,6 +131,7 @@ void                 nautilus_window_report_load_underway  (NautilusWindow *wind
 void                 nautilus_window_view_visible          (NautilusWindow *window,
                                                             NautilusView *view);
 NautilusWindowSlot * nautilus_window_get_active_slot       (NautilusWindow *window);
+GList *              nautilus_window_get_slots             (NautilusWindow *window);
 NautilusWindowSlot * nautilus_window_open_slot             (NautilusWindow *window,
                                                             NautilusWindowOpenSlotFlags flags);
 void                 nautilus_window_slot_close            (NautilusWindow *window,

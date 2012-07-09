@@ -5727,10 +5727,206 @@ create_popup_menu (NautilusView *view, const char *popup_path)
 }
 
 typedef struct _CopyCallbackData {
-	NautilusView *view;
-	GList        *selection;
-	gboolean      is_move;
+	NautilusView   *view;
+	GtkFileChooser *chooser;
+	GHashTable     *locations;
+	GList          *selection;
+	gboolean        is_move;
 } CopyCallbackData;
+
+static void
+add_bookmark_for_uri (CopyCallbackData *data,
+		      const char       *uri)
+{
+	GError *error = NULL;
+	int count;
+
+	count = GPOINTER_TO_INT (g_hash_table_lookup (data->locations, uri));
+	if (count == 0) {
+		gtk_file_chooser_add_shortcut_folder_uri (data->chooser,
+							  uri,
+							  &error);
+		if (error != NULL) {
+			DEBUG ("Unable to add location '%s' to file selector: %s", uri, error->message);
+			g_clear_error (&error);
+		}
+	}
+	g_hash_table_replace (data->locations, g_strdup (uri), GINT_TO_POINTER (count + 1));
+}
+
+static void
+remove_bookmark_for_uri (CopyCallbackData *data,
+			 const char       *uri)
+{
+	GError *error = NULL;
+	int count;
+
+	count = GPOINTER_TO_INT (g_hash_table_lookup (data->locations, uri));
+	if (count == 1) {
+		gtk_file_chooser_remove_shortcut_folder_uri (data->chooser,
+							     uri,
+							     &error);
+		if (error != NULL) {
+			DEBUG ("Unable to remove location '%s' to file selector: %s", uri, error->message);
+			g_clear_error (&error);
+		}
+		g_hash_table_remove (data->locations, uri);
+	} else {
+		g_hash_table_replace (data->locations, g_strdup (uri), GINT_TO_POINTER (count - 1));
+	}
+}
+
+static void
+add_bookmarks_for_window_slot (CopyCallbackData   *data,
+			       NautilusWindowSlot *slot)
+{
+	char *uri;
+
+	uri = nautilus_window_slot_get_location_uri (slot);
+	if (uri != NULL) {
+		add_bookmark_for_uri (data, uri);
+	}
+	g_free (uri);
+}
+
+static void
+remove_bookmarks_for_window_slot (CopyCallbackData   *data,
+				  NautilusWindowSlot *slot)
+{
+	char *uri;
+
+	uri = nautilus_window_slot_get_location_uri (slot);
+	if (uri != NULL) {
+		remove_bookmark_for_uri (data, uri);
+	}
+	g_free (uri);
+}
+
+static void
+on_slot_location_changed (NautilusWindowSlot *slot,
+			  const char         *from,
+			  const char         *to,
+			  CopyCallbackData   *data)
+{
+	if (from != NULL) {
+		remove_bookmark_for_uri (data, from);
+	}
+
+	if (to != NULL) {
+		add_bookmark_for_uri (data, to);
+	}
+}
+
+static void
+on_slot_added (NautilusWindow     *window,
+	       NautilusWindowSlot *slot,
+	       CopyCallbackData   *data)
+{
+	add_bookmarks_for_window_slot (data, slot);
+	g_signal_connect (slot, "location-changed", G_CALLBACK (on_slot_location_changed), data);
+}
+
+static void
+on_slot_removed (NautilusWindow     *window,
+		 NautilusWindowSlot *slot,
+		 CopyCallbackData   *data)
+{
+	remove_bookmarks_for_window_slot (data, slot);
+	g_signal_handlers_disconnect_by_func (slot,
+					      G_CALLBACK (on_slot_location_changed),
+					      data);
+}
+
+static void
+add_bookmarks_for_window (CopyCallbackData *data,
+			  NautilusWindow   *window)
+{
+	GList *s;
+	GList *slots;
+
+	slots = nautilus_window_get_slots (window);
+	for (s = slots; s != NULL; s = s->next) {
+		NautilusWindowSlot *slot = s->data;
+		add_bookmarks_for_window_slot (data, slot);
+		g_signal_connect (slot, "location-changed", G_CALLBACK (on_slot_location_changed), data);
+	}
+	g_signal_connect (window, "slot-added", G_CALLBACK (on_slot_added), data);
+	g_signal_connect (window, "slot-removed", G_CALLBACK (on_slot_removed), data);
+}
+
+static void
+remove_bookmarks_for_window (CopyCallbackData *data,
+			     NautilusWindow   *window)
+{
+	GList *s;
+	GList *slots;
+
+	slots = nautilus_window_get_slots (window);
+	for (s = slots; s != NULL; s = s->next) {
+		NautilusWindowSlot *slot = s->data;
+		remove_bookmarks_for_window_slot (data, slot);
+		g_signal_handlers_disconnect_by_func (slot,
+						      G_CALLBACK (on_slot_location_changed),
+						      data);
+	}
+	g_signal_handlers_disconnect_by_func (window,
+					      G_CALLBACK (on_slot_added),
+					      data);
+	g_signal_handlers_disconnect_by_func (window,
+					      G_CALLBACK (on_slot_removed),
+					      data);
+}
+
+static void
+on_app_window_added (GtkApplication   *application,
+		     GtkWindow        *window,
+		     CopyCallbackData *data)
+{
+	add_bookmarks_for_window (data, NAUTILUS_WINDOW (window));
+}
+
+static void
+on_app_window_removed (GtkApplication   *application,
+		       GtkWindow        *window,
+		       CopyCallbackData *data)
+{
+	remove_bookmarks_for_window (data, NAUTILUS_WINDOW (window));
+}
+
+static void
+copy_data_free (CopyCallbackData *data)
+{
+	GtkApplication *application;
+	GList *windows;
+	GList *w;
+
+	application = gtk_window_get_application (GTK_WINDOW (data->view->details->window));
+	g_signal_handlers_disconnect_by_func (application,
+					      G_CALLBACK (on_app_window_added),
+					      data);
+	g_signal_handlers_disconnect_by_func (application,
+					      G_CALLBACK (on_app_window_removed),
+					      data);
+
+	windows = gtk_application_get_windows (application);
+	for (w = windows; w != NULL; w = w->next) {
+		NautilusWindow *window = w->data;
+		GList *slots;
+		GList *s;
+
+		slots = nautilus_window_get_slots (window);
+		for (s = slots; s != NULL; s = s->next) {
+			NautilusWindowSlot *slot = s->data;
+			g_signal_handlers_disconnect_by_func (slot, G_CALLBACK (on_slot_location_changed), data);
+		}
+		g_signal_handlers_disconnect_by_func (window, G_CALLBACK (on_slot_added), data);
+		g_signal_handlers_disconnect_by_func (window, G_CALLBACK (on_slot_removed), data);
+	}
+
+	nautilus_file_list_free (data->selection);
+	g_hash_table_destroy (data->locations);
+	g_free (data);
+}
 
 static void
 on_destination_dialog_response (GtkDialog *dialog,
@@ -5760,10 +5956,26 @@ on_destination_dialog_response (GtkDialog *dialog,
 		g_free (target_uri);
 	}
 
-	nautilus_file_list_free (copy_data->selection);
-	g_free (copy_data);
+	copy_data_free (copy_data);
 	gtk_widget_destroy (GTK_WIDGET (dialog));
+}
 
+static void
+add_window_location_bookmarks (CopyCallbackData *data)
+{
+	GtkApplication *application;
+	GList *windows;
+	GList *w;
+
+	application = gtk_window_get_application (GTK_WINDOW (data->view->details->window));
+	windows = gtk_application_get_windows (application);
+	g_signal_connect (application, "window-added", G_CALLBACK (on_app_window_added), data);
+	g_signal_connect (application, "window-removed", G_CALLBACK (on_app_window_removed), data);
+
+	for (w = windows; w != NULL; w = w->next) {
+		NautilusWindow *window = w->data;
+		add_bookmarks_for_window (data, window);
+	}
 }
 
 static void
@@ -5786,14 +5998,19 @@ copy_or_move_selection (NautilusView *view,
 	gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
 	gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
 
-	uri = nautilus_directory_get_uri (view->details->model);
-	gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dialog), uri);
-	g_free (uri);
-
 	copy_data = g_new0 (CopyCallbackData, 1);
 	copy_data->view = view;
 	copy_data->selection = selection;
 	copy_data->is_move = is_move;
+	copy_data->chooser = GTK_FILE_CHOOSER (dialog);
+	copy_data->locations = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+
+	add_window_location_bookmarks (copy_data);
+
+	uri = nautilus_directory_get_uri (view->details->model);
+	gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dialog), uri);
+	g_free (uri);
+
 	g_signal_connect (dialog, "response",
 			  G_CALLBACK (on_destination_dialog_response),
 			  copy_data);
