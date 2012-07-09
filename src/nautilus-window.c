@@ -2250,12 +2250,18 @@ use_extra_mouse_buttons_changed (gpointer callback_data)
 static void
 nautilus_window_init (NautilusWindow *window)
 {
+	GtkWindowGroup *window_group;
+
 	window->details = G_TYPE_INSTANCE_GET_PRIVATE (window, NAUTILUS_TYPE_WINDOW, NautilusWindowDetails);
 
 	window->details->slots = NULL;
 	window->details->active_slot = NULL;
 
 	window->details->show_hidden_files_mode = NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT;
+
+	window_group = gtk_window_group_new ();
+	gtk_window_group_add_window (window_group, GTK_WINDOW (window));
+	g_object_unref (window_group);
 
 	/* Set initial window title */
 	gtk_window_set_title (GTK_WINDOW (window), _("Files"));
