@@ -26,6 +26,7 @@
 
 #include "nautilus-window-slot.h"
 
+#include "nautilus-actions.h"
 #include "nautilus-desktop-window.h"
 #include "nautilus-toolbar.h"
 #include "nautilus-floating-bar.h"
@@ -52,7 +53,69 @@ enum {
 static guint signals[LAST_SIGNAL] = { 0 };
 
 static void
-query_editor_changed_callback (NautilusSearchBar *bar,
+sync_search_directory (NautilusWindowSlot *slot)
+{
+	NautilusDirectory *directory;
+	NautilusQuery *query;
+
+	g_assert (NAUTILUS_IS_FILE (slot->viewed_file));
+
+	directory = nautilus_directory_get_for_file (slot->viewed_file);
+	g_assert (NAUTILUS_IS_SEARCH_DIRECTORY (directory));
+
+	query = nautilus_query_editor_get_query (slot->query_editor);
+	nautilus_search_directory_set_query (NAUTILUS_SEARCH_DIRECTORY (directory),
+					     query);
+	g_object_unref (query);
+	nautilus_window_slot_reload (slot);
+
+	nautilus_directory_unref (directory);
+}
+
+static void
+sync_search_location_cb (NautilusWindow *window,
+			 GError *error,
+			 gpointer user_data)
+{
+	NautilusWindowSlot *slot = user_data;
+
+	sync_search_directory (slot);
+}
+
+static void
+create_new_search (NautilusWindowSlot *slot)
+{
+	char *uri;
+	NautilusDirectory *directory;
+	GFile *location;
+
+	uri = nautilus_search_directory_generate_new_uri ();
+	location = g_file_new_for_uri (uri);
+
+	directory = nautilus_directory_get (location);
+	g_assert (NAUTILUS_IS_SEARCH_DIRECTORY (directory));
+
+	nautilus_window_slot_open_location_full (slot, location, 0, NULL, sync_search_location_cb, slot);
+
+	nautilus_directory_unref (directory);
+	g_object_unref (location);
+	g_free (uri);
+}
+
+static void
+query_editor_cancel_callback (NautilusQueryEditor *editor,
+			      NautilusWindowSlot *slot)
+{
+	GtkAction *search;
+
+	search = gtk_action_group_get_action (slot->window->details->toolbar_action_group,
+					      NAUTILUS_ACTION_SEARCH);
+
+	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (search), FALSE);
+}
+
+static void
+query_editor_changed_callback (NautilusQueryEditor *editor,
 			       NautilusQuery *query,
 			       gboolean reload,
 			       NautilusWindowSlot *slot)
@@ -62,73 +125,90 @@ query_editor_changed_callback (NautilusSearchBar *bar,
 	g_assert (NAUTILUS_IS_FILE (slot->viewed_file));
 
 	directory = nautilus_directory_get_for_file (slot->viewed_file);
-	g_assert (NAUTILUS_IS_SEARCH_DIRECTORY (directory));
-
-	nautilus_search_directory_set_query (NAUTILUS_SEARCH_DIRECTORY (directory),
-					     query);
-	if (reload) {
-		nautilus_window_slot_reload (slot);
+	if (!NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
+		/* this is the first change from the query editor. we
+		   ask for a location change to the search directory,
+		   indicate the directory needs to be sync'd with the
+		   current query. */
+		create_new_search (slot);
+	} else {
+		sync_search_directory (slot);
 	}
 
 	nautilus_directory_unref (directory);
 }
 
 static void
-real_update_query_editor (NautilusWindowSlot *slot)
+update_query_editor (NautilusWindowSlot *slot)
 {
 	NautilusDirectory *directory;
 	NautilusSearchDirectory *search_directory;
 	NautilusQuery *query;
-	GtkWidget *query_editor;
-	gboolean slot_is_active;
-	NautilusWindow *window;
-
-	window = slot->window;
-	query_editor = NULL;
-	slot_is_active = (slot == nautilus_window_get_active_slot (window));
 
 	directory = nautilus_directory_get (slot->location);
+
+	query = NULL;
+
 	if (NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
 		search_directory = NAUTILUS_SEARCH_DIRECTORY (directory);
-
-		if (nautilus_search_directory_is_saved_search (search_directory)) {
-			query_editor = nautilus_query_editor_new (TRUE);
-			nautilus_window_sync_search_widgets (window);
-		} else {
-			GtkWidget *search_bar;
-
-			search_bar = nautilus_toolbar_get_search_bar (NAUTILUS_TOOLBAR (window->details->toolbar));
-			query_editor = nautilus_query_editor_new_with_bar (FALSE,
-									   slot_is_active,
-									   NAUTILUS_SEARCH_BAR (search_bar),
-									   slot);
-		}
-	}
-
-	slot->query_editor = NAUTILUS_QUERY_EDITOR (query_editor);
-
-	if (query_editor != NULL) {
-		g_signal_connect_object (query_editor, "changed",
-					 G_CALLBACK (query_editor_changed_callback), slot, 0);
-		
 		query = nautilus_search_directory_get_query (search_directory);
-		if (query != NULL) {
-			nautilus_query_editor_set_query (NAUTILUS_QUERY_EDITOR (query_editor),
-							 query);
-			g_object_unref (query);
-		} else {
-			nautilus_query_editor_set_default_query (NAUTILUS_QUERY_EDITOR (query_editor));
-		}
-
-		nautilus_window_slot_add_extra_location_widget (slot, query_editor);
-		gtk_widget_show (query_editor);
-		nautilus_query_editor_grab_focus (NAUTILUS_QUERY_EDITOR (query_editor));
-
-		g_object_add_weak_pointer (G_OBJECT (slot->query_editor),
-					   (gpointer *) &slot->query_editor);
 	}
+
+	if (query == NULL) {
+		char *uri;
+		uri = g_file_get_uri (slot->location);
+		query = nautilus_query_new ();
+		nautilus_query_set_location (query, uri);
+		g_free (uri);
+	}
+	nautilus_query_editor_set_query (slot->query_editor,
+					 query);
+	g_object_unref (query);
 
 	nautilus_directory_unref (directory);
+}
+
+static void
+ensure_query_editor (NautilusWindowSlot *slot)
+{
+	GtkWidget *query_editor;
+
+	if (slot->query_editor != NULL) {
+		return;
+	}
+
+	query_editor = nautilus_query_editor_new ();
+	slot->query_editor = NAUTILUS_QUERY_EDITOR (query_editor);
+
+	nautilus_window_slot_add_extra_location_widget (slot, query_editor);
+	gtk_widget_show (query_editor);
+	nautilus_query_editor_grab_focus (slot->query_editor);
+
+	update_query_editor (slot);
+
+	g_signal_connect_object (slot->query_editor, "changed",
+				 G_CALLBACK (query_editor_changed_callback), slot, 0);
+	g_signal_connect_object (slot->query_editor, "cancel",
+				 G_CALLBACK (query_editor_cancel_callback), slot, 0);
+
+	g_object_add_weak_pointer (G_OBJECT (slot->query_editor),
+				   (gpointer *) &slot->query_editor);
+}
+
+void
+nautilus_window_slot_set_query_editor_visible (NautilusWindowSlot *slot,
+					       gboolean            visible)
+{
+	if (visible) {
+		ensure_query_editor (slot);
+		nautilus_query_editor_set_visible (slot->query_editor, TRUE);
+		nautilus_query_editor_grab_focus (slot->query_editor);
+	} else {
+		if (slot->query_editor != NULL) {
+			gtk_widget_destroy (GTK_WIDGET (slot->query_editor));
+			g_assert (slot->query_editor == NULL);
+		}
+	}
 }
 
 static void
@@ -578,41 +658,28 @@ nautilus_window_slot_set_status (NautilusWindowSlot *slot,
 	}
 }
 
-/* nautilus_window_slot_update_query_editor:
- * 
- * Update the query editor.
- * Called when the location has changed.
- *
- * @slot: The NautilusWindowSlot in question.
- */
-void
-nautilus_window_slot_update_query_editor (NautilusWindowSlot *slot)
+static void
+remove_all_extra_location_widgets (GtkWidget *widget,
+				   gpointer data)
 {
-	if (slot->query_editor != NULL) {
-		gtk_widget_destroy (GTK_WIDGET (slot->query_editor));
-		g_assert (slot->query_editor == NULL);
+	NautilusWindowSlot *slot = data;
+	NautilusDirectory *directory;
+
+	directory = nautilus_directory_get (slot->location);
+	if (!NAUTILUS_IS_SEARCH_DIRECTORY (directory)
+	    || (widget != GTK_WIDGET (slot->query_editor))) {
+		gtk_container_remove (GTK_CONTAINER (slot->extra_location_widgets), widget);
 	}
 
-	real_update_query_editor (slot);
-}
-
-static void
-remove_all (GtkWidget *widget,
-	    gpointer data)
-{
-	GtkContainer *container;
-	container = GTK_CONTAINER (data);
-
-	gtk_container_remove (container, widget);
+	nautilus_directory_unref (directory);
 }
 
 void
 nautilus_window_slot_remove_extra_location_widgets (NautilusWindowSlot *slot)
 {
 	gtk_container_foreach (GTK_CONTAINER (slot->extra_location_widgets),
-			       remove_all,
-			       slot->extra_location_widgets);
-	gtk_widget_hide (slot->extra_location_widgets);
+			       remove_all_extra_location_widgets,
+			       slot);
 }
 
 void

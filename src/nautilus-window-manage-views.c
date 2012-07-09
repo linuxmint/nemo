@@ -32,7 +32,6 @@
 #include "nautilus-application.h"
 #include "nautilus-floating-bar.h"
 #include "nautilus-location-bar.h"
-#include "nautilus-search-bar.h"
 #include "nautilus-pathbar.h"
 #include "nautilus-window-private.h"
 #include "nautilus-window-slot.h"
@@ -1397,8 +1396,6 @@ update_for_new_location (NautilusWindowSlot *slot)
 		nautilus_window_slot_remove_extra_location_widgets (slot);
 		
 		directory = nautilus_directory_get (slot->location);
-
-		nautilus_window_slot_update_query_editor (slot);
 
 		if (nautilus_directory_is_in_trash (directory)) {
 			nautilus_window_slot_show_trash_bar (slot);

@@ -23,7 +23,7 @@
 
 #include <config.h>
 #include "nautilus-query-editor.h"
-#include "nautilus-window-slot.h"
+#include "nautilus-file-utilities.h"
 
 #include <string.h>
 #include <glib/gi18n.h>
@@ -34,7 +34,6 @@
 #include <gtk/gtk.h>
 
 typedef enum {
-	NAUTILUS_QUERY_EDITOR_ROW_LOCATION,
 	NAUTILUS_QUERY_EDITOR_ROW_TYPE,
 	
 	NAUTILUS_QUERY_EDITOR_ROW_LAST
@@ -67,14 +66,14 @@ struct NautilusQueryEditorDetails {
 	gboolean change_frozen;
 	guint typing_timeout_id;
 	gboolean is_visible;
-	GtkWidget *invisible_vbox;
-	GtkWidget *visible_vbox;
+	GtkWidget *vbox;
+
+	GtkWidget *search_current_button;
+	GtkWidget *search_all_button;
+	char *current_uri;
 
 	GList *rows;
 	char *last_set_query_text;
-	
-	NautilusSearchBar *bar;
-	NautilusWindowSlot *slot;
 };
 
 enum {
@@ -93,12 +92,6 @@ static void nautilus_query_editor_changed (NautilusQueryEditor *editor);
 static NautilusQueryEditorRow * nautilus_query_editor_add_row (NautilusQueryEditor *editor,
 							       NautilusQueryEditorRowType type);
 
-static GtkWidget *location_row_create_widgets  (NautilusQueryEditorRow *row);
-static void       location_row_add_to_query    (NautilusQueryEditorRow *row,
-					        NautilusQuery          *query);
-static void       location_row_free_data       (NautilusQueryEditorRow *row);
-static void       location_add_rows_from_query (NautilusQueryEditor    *editor,
-					        NautilusQuery          *query);
 static GtkWidget *type_row_create_widgets      (NautilusQueryEditorRow *row);
 static void       type_row_add_to_query        (NautilusQueryEditorRow *row,
 					        NautilusQuery          *query);
@@ -109,12 +102,6 @@ static void       type_add_rows_from_query     (NautilusQueryEditor    *editor,
 
 
 static NautilusQueryEditorRowOps row_type[] = {
-	{ N_("Location"),
-	  location_row_create_widgets,
-	  location_row_add_to_query,
-	  location_row_free_data,
-	  location_add_rows_from_query
-	},
 	{ N_("File Type"),
 	  type_row_create_widgets,
 	  type_row_add_to_query,
@@ -132,24 +119,9 @@ nautilus_query_editor_dispose (GObject *object)
 
 	editor = NAUTILUS_QUERY_EDITOR (object);
 
-	if (editor->details->typing_timeout_id) {
+	if (editor->details->typing_timeout_id > 0) {
 		g_source_remove (editor->details->typing_timeout_id);
 		editor->details->typing_timeout_id = 0;
-	}
-
-	if (editor->details->bar != NULL) {
-		g_signal_handlers_disconnect_by_func (editor->details->entry,
-						      entry_activate_cb,
-						      editor);
-		g_signal_handlers_disconnect_by_func (editor->details->entry,
-						      entry_changed_cb,
-						      editor);
-		
-		nautilus_search_bar_return_entry (editor->details->bar);
-
-		g_object_remove_weak_pointer (G_OBJECT (editor->details->bar),
-					      (gpointer *) &editor->details->bar);
-		editor->details->bar = NULL;
 	}
 
 	G_OBJECT_CLASS (nautilus_query_editor_parent_class)->dispose (object);
@@ -213,10 +185,19 @@ nautilus_query_editor_class_init (NautilusQueryEditorClass *class)
 	g_type_class_add_private (class, sizeof (NautilusQueryEditorDetails));
 }
 
+GFile *
+nautilus_query_editor_get_location (NautilusQueryEditor *editor)
+{
+	GFile *file = NULL;
+	if (editor->details->current_uri != NULL)
+		file = g_file_new_for_uri (editor->details->current_uri);
+	return file;
+}
+
 static void
 entry_activate_cb (GtkWidget *entry, NautilusQueryEditor *editor)
 {
-	if (editor->details->typing_timeout_id) {
+	if (editor->details->typing_timeout_id > 0) {
 		g_source_remove (editor->details->typing_timeout_id);
 		editor->details->typing_timeout_id = 0;
 	}
@@ -230,10 +211,9 @@ typing_timeout_cb (gpointer user_data)
 	NautilusQueryEditor *editor;
 
 	editor = NAUTILUS_QUERY_EDITOR (user_data);
+	editor->details->typing_timeout_id = 0;
 
 	nautilus_query_editor_changed (editor);
-
-	editor->details->typing_timeout_id = 0;
 
 	return FALSE;
 }
@@ -247,7 +227,7 @@ entry_changed_cb (GtkWidget *entry, NautilusQueryEditor *editor)
 		return;
 	}
 
-	if (editor->details->typing_timeout_id) {
+	if (editor->details->typing_timeout_id > 0) {
 		g_source_remove (editor->details->typing_timeout_id);
 	}
 
@@ -256,88 +236,6 @@ entry_changed_cb (GtkWidget *entry, NautilusQueryEditor *editor)
 			       typing_timeout_cb,
 			       editor);
 }
-
-static void
-edit_clicked (GtkButton *button, NautilusQueryEditor *editor)
-{
-	nautilus_query_editor_set_visible (editor, TRUE);
-	nautilus_query_editor_grab_focus (editor);
-}
-
-/* Location */
-
-static GtkWidget *
-location_row_create_widgets (NautilusQueryEditorRow *row)
-{
-	GtkWidget *chooser;
-
-	chooser = gtk_file_chooser_button_new (_("Select folder to search in"),
-					       GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-	gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (chooser), TRUE);
-	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
-					     g_get_home_dir ());
-	gtk_widget_show (chooser);
-
-	g_signal_connect_swapped (chooser, "current-folder-changed",
-				  G_CALLBACK (nautilus_query_editor_changed),
-				  row->editor);
-		
-	gtk_box_pack_start (GTK_BOX (row->hbox), chooser, FALSE, FALSE, 0);
-	
-	return chooser;
-}
-
-static void
-location_row_add_to_query (NautilusQueryEditorRow *row,
-			   NautilusQuery          *query)
-{
-	char *folder, *uri;
-	
-	folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (row->type_widget));
-	if (folder == NULL) {
-		/* I don't know why, but i got NULL here on initial search in browser mode
-		   even with the location set to the homedir in create_widgets... */
-		folder = g_strdup (g_get_home_dir ());
-	}
-	
-	uri = g_filename_to_uri (folder, NULL, NULL);
-	g_free (folder);
-		
-	nautilus_query_set_location (query, uri);
-	g_free (uri);
-}
-
-static void
-location_row_free_data (NautilusQueryEditorRow *row)
-{
-}
-
-static void
-location_add_rows_from_query (NautilusQueryEditor    *editor,
-			      NautilusQuery          *query)
-{
-	NautilusQueryEditorRow *row;
-	char *uri, *folder;
-	
-	uri = nautilus_query_get_location (query);
-
-	if (uri == NULL) {
-		return;
-	}
-	folder = g_filename_from_uri (uri, NULL, NULL);
-	g_free (uri);
-	if (folder == NULL) {
-		return;
-	}
-	
-	row = nautilus_query_editor_add_row (editor,
-					     NAUTILUS_QUERY_EDITOR_ROW_LOCATION);
-	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (row->type_widget),
-					     folder);
-	
-	g_free (folder);
-}
-
 
 /* Type */
 
@@ -847,7 +745,7 @@ remove_row_cb (GtkButton *clicked_button, NautilusQueryEditorRow *row)
 	NautilusQueryEditor *editor;
 
 	editor = row->editor;
-	gtk_container_remove (GTK_CONTAINER (editor->details->visible_vbox),
+	gtk_container_remove (GTK_CONTAINER (editor->details->vbox),
 			      row->hbox);
 	
 	editor->details->rows = g_list_remove (editor->details->rows, row);
@@ -905,7 +803,7 @@ nautilus_query_editor_add_row (NautilusQueryEditor *editor,
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
 	row->hbox = hbox;
 	gtk_widget_show (hbox);
-	gtk_box_pack_start (GTK_BOX (editor->details->visible_vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (editor->details->vbox), hbox, FALSE, FALSE, 0);
 
 	combo = gtk_combo_box_text_new ();
 	row->combo = combo;
@@ -925,8 +823,8 @@ nautilus_query_editor_add_row (NautilusQueryEditor *editor,
 	create_type_widgets (row);
 	
 	button = gtk_button_new ();
-	image = gtk_image_new_from_stock (GTK_STOCK_REMOVE,
-					  GTK_ICON_SIZE_SMALL_TOOLBAR);
+	image = gtk_image_new_from_icon_name ("list-remove-symbolic",
+					      GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_container_add (GTK_CONTAINER (button), image);
 	gtk_widget_show (image);
 	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
@@ -943,12 +841,6 @@ nautilus_query_editor_add_row (NautilusQueryEditor *editor,
 }
 
 static void
-go_search_cb (GtkButton *clicked_button, NautilusQueryEditor *editor)
-{
-	nautilus_query_editor_changed_force (editor, TRUE);
-}
-
-static void
 add_new_row_cb (GtkButton *clicked_button, NautilusQueryEditor *editor)
 {
 	nautilus_query_editor_add_row (editor, get_next_free_type (editor));
@@ -958,57 +850,41 @@ add_new_row_cb (GtkButton *clicked_button, NautilusQueryEditor *editor)
 static void
 nautilus_query_editor_init (NautilusQueryEditor *editor)
 {
-	GtkWidget *hbox, *label, *button;
-	char *label_markup;
-
 	editor->details = G_TYPE_INSTANCE_GET_PRIVATE (editor, NAUTILUS_TYPE_QUERY_EDITOR,
 						       NautilusQueryEditorDetails);
-	editor->details->is_visible = TRUE;
+	editor->details->is_visible = FALSE;
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (editor)),
-				     GTK_STYLE_CLASS_QUESTION);
+				     GTK_STYLE_CLASS_TOOLBAR);
+	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (editor)),
+				     GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
+
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 
-	editor->details->invisible_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-	gtk_container_set_border_width (GTK_CONTAINER (editor->details->invisible_vbox), 6);
-	gtk_box_pack_start (GTK_BOX (editor), editor->details->invisible_vbox,
+	editor->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
+	gtk_widget_set_no_show_all (editor->details->vbox, TRUE);
+	gtk_container_set_border_width (GTK_CONTAINER (editor->details->vbox), 6);
+	gtk_box_pack_start (GTK_BOX (editor), editor->details->vbox,
 			    FALSE, FALSE, 0);
-	editor->details->visible_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-	gtk_container_set_border_width (GTK_CONTAINER (editor->details->visible_vbox), 6);
-	gtk_box_pack_start (GTK_BOX (editor), editor->details->visible_vbox,
-			    FALSE, FALSE, 0);
-	/* Only show visible vbox */
-	gtk_widget_show (editor->details->visible_vbox);
-
-	/* Create invisible part: */
-	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-	gtk_box_pack_start (GTK_BOX (editor->details->invisible_vbox),
-			    hbox, FALSE, FALSE, 0);
-	gtk_widget_show (hbox);
-	
-	label = gtk_label_new ("");
-	label_markup = g_strconcat ("<b>", _("Search Folder"), "</b>", NULL);
-	gtk_label_set_markup (GTK_LABEL (label), label_markup);
-	g_free (label_markup);
-
-	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show (label);
-	
-	button = gtk_button_new_with_label (_("Edit"));
-	gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
-	gtk_widget_show (button);
-
-	g_signal_connect (button, "clicked",
-			  G_CALLBACK (edit_clicked), editor);
-
-	gtk_widget_set_tooltip_text (button,
-				     _("Edit the saved search"));
 }
 
 void
 nautilus_query_editor_set_default_query (NautilusQueryEditor *editor)
 {
-	nautilus_query_editor_add_row (editor, NAUTILUS_QUERY_EDITOR_ROW_LOCATION);
+	nautilus_query_editor_changed (editor);
+}
+
+static void
+on_all_button_toggled (GtkToggleButton     *button,
+		       NautilusQueryEditor *editor)
+{
+	nautilus_query_editor_changed (editor);
+}
+
+static void
+on_current_button_toggled (GtkToggleButton     *button,
+			   NautilusQueryEditor *editor)
+{
 	nautilus_query_editor_changed (editor);
 }
 
@@ -1018,8 +894,8 @@ finish_first_line (NautilusQueryEditor *editor, GtkWidget *hbox, gboolean use_go
 	GtkWidget *button, *image;
 
 	button = gtk_button_new ();
-	image = gtk_image_new_from_stock (GTK_STOCK_ADD,
-					  GTK_ICON_SIZE_SMALL_TOOLBAR);
+	image = gtk_image_new_from_icon_name ("list-add-symbolic",
+					      GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_container_add (GTK_CONTAINER (button), image);
 	gtk_widget_show (image);
 	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
@@ -1033,43 +909,32 @@ finish_first_line (NautilusQueryEditor *editor, GtkWidget *hbox, gboolean use_go
 	gtk_widget_set_tooltip_text (button,
 				     _("Add a new criterion to this search"));
 
-	if (use_go) {
-		button = gtk_button_new_with_label (_("Go"));
-	} else {
-		button = gtk_button_new_with_label (_("Reload"));
-	}
-	gtk_widget_show (button);
-
-	gtk_widget_set_tooltip_text (button,
-				     _("Perform or update the search"));
-		
-	g_signal_connect (button, "clicked",
-			  G_CALLBACK (go_search_cb), editor);
-		
-	gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+	editor->details->search_current_button = gtk_radio_button_new_with_label (NULL, _("Current"));
+	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (editor->details->search_current_button), FALSE);
+	gtk_widget_show (editor->details->search_current_button);
+	editor->details->search_all_button = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (editor->details->search_current_button),
+											  _("All Files"));
+	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (editor->details->search_all_button), FALSE);
+	gtk_widget_show (editor->details->search_all_button);
+	g_signal_connect (editor->details->search_all_button, "toggled",
+			  G_CALLBACK (on_all_button_toggled), editor);
+	g_signal_connect (editor->details->search_current_button, "toggled",
+			  G_CALLBACK (on_current_button_toggled), editor);
+	gtk_box_pack_start (GTK_BOX (hbox), editor->details->search_current_button, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), editor->details->search_all_button, FALSE, FALSE, 0);
 }
 
 static void
-setup_internal_entry (NautilusQueryEditor *editor)
+setup_widgets (NautilusQueryEditor *editor)
 {
-	GtkWidget *hbox, *label;
-	char *label_markup;
-	
+	GtkWidget *hbox;
+
 	/* Create visible part: */
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_widget_show (hbox);
-	gtk_box_pack_start (GTK_BOX (editor->details->visible_vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (editor->details->vbox), hbox, FALSE, FALSE, 0);
 
-	label = gtk_label_new ("");
-	label_markup = g_strconcat ("<b>", _("_Search for:"), "</b>", NULL);
-	gtk_label_set_markup_with_mnemonic (GTK_LABEL (label), label_markup);
-	g_free (label_markup);
-	gtk_widget_show (label);
-
-	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-
-	editor->details->entry = gtk_entry_new ();
-	gtk_label_set_mnemonic_widget (GTK_LABEL (label), editor->details->entry);
+	editor->details->entry = gtk_search_entry_new ();
 	gtk_box_pack_start (GTK_BOX (hbox), editor->details->entry, TRUE, TRUE, 0);
 
 	g_signal_connect (editor->details->entry, "activate",
@@ -1081,46 +946,15 @@ setup_internal_entry (NautilusQueryEditor *editor)
 	finish_first_line (editor, hbox, TRUE);
 }
 
-static void
-setup_external_entry (NautilusQueryEditor *editor, GtkWidget *entry)
-{
-	GtkWidget *hbox, *label;
-	gchar *label_markup;
-	
-	/* Create visible part: */
-	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-	gtk_widget_show (hbox);
-	gtk_box_pack_start (GTK_BOX (editor->details->visible_vbox), hbox, FALSE, FALSE, 0);
-
-	label_markup = g_strconcat ("<b>", _("Search results"), "</b>", NULL);
-	label = gtk_label_new (NULL);
-	gtk_label_set_markup (GTK_LABEL (label), label_markup);
-	gtk_widget_show (label);
-
-	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-	
-	editor->details->entry = entry;
-	g_signal_connect (editor->details->entry, "activate",
-			  G_CALLBACK (entry_activate_cb), editor);
-	g_signal_connect (editor->details->entry, "changed",
-			  G_CALLBACK (entry_changed_cb), editor);
-
-	finish_first_line (editor, hbox, FALSE);
-
-	g_free (label_markup);
-}
-
 void
 nautilus_query_editor_set_visible (NautilusQueryEditor *editor,
 				   gboolean visible)
 {
 	editor->details->is_visible = visible;
 	if (visible) {
-		gtk_widget_show (editor->details->visible_vbox);
-		gtk_widget_hide (editor->details->invisible_vbox);
+		gtk_widget_show (editor->details->vbox);
 	} else {
-		gtk_widget_hide (editor->details->visible_vbox);
-		gtk_widget_show (editor->details->invisible_vbox);
+		gtk_widget_hide (editor->details->vbox);
 	}
 }
 
@@ -1154,7 +988,7 @@ nautilus_query_editor_changed_force (NautilusQueryEditor *editor, gboolean force
 static void
 nautilus_query_editor_changed (NautilusQueryEditor *editor)
 {
-	nautilus_query_editor_changed_force (editor, FALSE);
+	nautilus_query_editor_changed_force (editor, TRUE);
 }
 
 void
@@ -1163,6 +997,22 @@ nautilus_query_editor_grab_focus (NautilusQueryEditor *editor)
 	if (editor->details->is_visible) {
 		gtk_widget_grab_focus (editor->details->entry);
 	}
+}
+
+static void
+add_location_to_query (NautilusQueryEditor *editor,
+		       NautilusQuery       *query)
+{
+	char *uri;
+
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (editor->details->search_all_button))) {
+		uri = nautilus_get_home_directory_uri ();
+	} else {
+		uri = g_strdup (editor->details->current_uri);
+	}
+
+	nautilus_query_set_location (query, uri);
+	g_free (uri);
 }
 
 NautilusQuery *
@@ -1187,6 +1037,8 @@ nautilus_query_editor_get_query (NautilusQueryEditor *editor)
 	query = nautilus_query_new ();
 	nautilus_query_set_text (query, query_text);
 
+	add_location_to_query (editor, query);
+
 	for (l = editor->details->rows; l != NULL; l = l->next) {
 		row = l->data;
 		
@@ -1209,84 +1061,47 @@ nautilus_query_editor_clear_query (NautilusQueryEditor *editor)
 }
 
 GtkWidget *
-nautilus_query_editor_new (gboolean start_hidden)
+nautilus_query_editor_new (void)
 {
 	GtkWidget *editor;
 
 	editor = g_object_new (NAUTILUS_TYPE_QUERY_EDITOR, NULL);
-	nautilus_query_editor_set_visible (NAUTILUS_QUERY_EDITOR (editor),
-					   !start_hidden);
-	
-	setup_internal_entry (NAUTILUS_QUERY_EDITOR (editor));
-		
+	setup_widgets (NAUTILUS_QUERY_EDITOR (editor));
+
 	return editor;
 }
 
 static void
-detach_from_external_entry (NautilusQueryEditor *editor)
+update_location (NautilusQueryEditor *editor,
+		 NautilusQuery       *query)
 {
-	if (editor->details->bar != NULL) {
-		nautilus_search_bar_return_entry (editor->details->bar);
-		g_signal_handlers_block_by_func (editor->details->entry,
-						 entry_activate_cb,
-						 editor);
-		g_signal_handlers_block_by_func (editor->details->entry,
-						 entry_changed_cb,
-						 editor);
+	char *uri;
+	NautilusFile *file;
+
+	uri = nautilus_query_get_location (query);
+	if (uri == NULL) {
+		return;
 	}
-}
+	g_free (editor->details->current_uri);
+	editor->details->current_uri = uri;
+	file = nautilus_file_get_by_uri (uri);
 
-static void
-attach_to_external_entry (NautilusQueryEditor *editor)
-{
-	if (editor->details->bar != NULL) {
-		nautilus_search_bar_borrow_entry (editor->details->bar);
-		g_signal_handlers_unblock_by_func (editor->details->entry,
-						   entry_activate_cb,
-						   editor);
-		g_signal_handlers_unblock_by_func (editor->details->entry,
-						   entry_changed_cb,
-						   editor);
+	if (file != NULL) {
+		char *name;
+		if (nautilus_file_is_home (file)) {
+			name = g_strdup (_("Home"));
+		} else {
+			char *filename;
+			filename = nautilus_file_get_display_name (file);
+			name = g_strdup_printf ("\342\200\234%s\342\200\235", filename);
+			g_free (filename);
+		}
+		gtk_button_set_label (GTK_BUTTON (editor->details->search_current_button),
+				      name);
+		g_free (name);
 
-		editor->details->change_frozen = TRUE;
-		gtk_entry_set_text (GTK_ENTRY (editor->details->entry),
-				    editor->details->last_set_query_text);
-		editor->details->change_frozen = FALSE;
+		nautilus_file_unref (file);
 	}
-}
-
-GtkWidget*
-nautilus_query_editor_new_with_bar (gboolean start_hidden,
-				    gboolean start_attached,
-				    NautilusSearchBar *bar,
-				    NautilusWindowSlot *slot)
-{
-	GtkWidget *entry;
-	NautilusQueryEditor *editor;
-
-	editor = NAUTILUS_QUERY_EDITOR (g_object_new (NAUTILUS_TYPE_QUERY_EDITOR, NULL));
-	nautilus_query_editor_set_visible (editor, !start_hidden);
-
-	editor->details->bar = bar;
-	g_object_add_weak_pointer (G_OBJECT (editor->details->bar),
-				   (gpointer *) &editor->details->bar);
-
-	editor->details->slot = slot;
-
-	entry = nautilus_search_bar_borrow_entry (bar);
-	setup_external_entry (editor, entry);
-	if (!start_attached) {
-		detach_from_external_entry (editor);
-	}
-
-	g_signal_connect_object (slot, "active",
-				 G_CALLBACK (attach_to_external_entry),
-				 editor, G_CONNECT_SWAPPED);
-	g_signal_connect_object (slot, "inactive",
-				 G_CALLBACK (detach_from_external_entry),
-				 editor, G_CONNECT_SWAPPED);
-	
-	return GTK_WIDGET (editor);
 }
 
 void
@@ -1308,6 +1123,8 @@ nautilus_query_editor_set_query (NautilusQueryEditor *editor, NautilusQuery *que
 
 	editor->details->change_frozen = TRUE;
 	gtk_entry_set_text (GTK_ENTRY (editor->details->entry), text);
+
+	update_location (editor, query);
 
 	for (type = 0; type < NAUTILUS_QUERY_EDITOR_ROW_LAST; type++) {
 		row_type[type].add_rows_from_query (editor, query);

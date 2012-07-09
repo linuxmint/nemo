@@ -139,8 +139,8 @@ void                 nautilus_window_slot_close            (NautilusWindow *wind
 
 GtkWidget *          nautilus_window_ensure_location_bar   (NautilusWindow *window);
 void                 nautilus_window_sync_location_widgets (NautilusWindow *window);
-void                 nautilus_window_sync_search_widgets   (NautilusWindow *window);
 void                 nautilus_window_grab_focus            (NautilusWindow *window);
+void                 nautilus_window_sync_search_widgets   (NautilusWindow *window);
 
 void     nautilus_window_hide_sidebar         (NautilusWindow *window);
 void     nautilus_window_show_sidebar         (NautilusWindow *window);

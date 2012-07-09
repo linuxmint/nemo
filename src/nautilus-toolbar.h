@@ -67,13 +67,10 @@ GtkWidget *nautilus_toolbar_new (GtkUIManager *ui_manager,
 
 GtkWidget *nautilus_toolbar_get_path_bar (NautilusToolbar *self);
 GtkWidget *nautilus_toolbar_get_location_bar (NautilusToolbar *self);
-GtkWidget *nautilus_toolbar_get_search_bar (NautilusToolbar *self);
 
 void nautilus_toolbar_set_show_main_bar (NautilusToolbar *self,
 					 gboolean show_main_bar);
 void nautilus_toolbar_set_show_location_entry (NautilusToolbar *self,
 					       gboolean show_location_entry);
-void nautilus_toolbar_set_show_search_bar (NautilusToolbar *self,
-					   gboolean show_search_bar);
 
 #endif /* __NAUTILUS_TOOLBAR_H__ */

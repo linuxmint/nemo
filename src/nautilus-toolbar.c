@@ -45,20 +45,17 @@ struct _NautilusToolbarPriv {
 
 	GtkWidget *path_bar;
 	GtkWidget *location_bar;
-	GtkWidget *search_bar;
 
 	GtkToolItem *back_forward;
 
 	gboolean show_main_bar;
 	gboolean show_location_entry;
-	gboolean show_search_bar;
 };
 
 enum {
 	PROP_ACTION_GROUP = 1,
 	PROP_UI_MANAGER,
 	PROP_SHOW_LOCATION_ENTRY,
-	PROP_SHOW_SEARCH_BAR,
 	PROP_SHOW_MAIN_BAR,
 	NUM_PROPERTIES
 };
@@ -82,9 +79,6 @@ toolbar_update_appearance (NautilusToolbar *self)
 				show_location_entry);
 	gtk_widget_set_visible (self->priv->path_bar,
 				!show_location_entry);
-
-	gtk_widget_set_visible (self->priv->search_bar,
-				self->priv->show_search_bar);
 }
 
 static gint
@@ -221,10 +215,6 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_widget_show_all (GTK_WIDGET (tool_item));
 	gtk_widget_set_margin_left (GTK_WIDGET (tool_item), 6);
 
-	/* search bar */
-	self->priv->search_bar = nautilus_search_bar_new ();
-	gtk_box_pack_start (GTK_BOX (self), self->priv->search_bar, TRUE, TRUE, 0);
-
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY,
 				  G_CALLBACK (toolbar_update_appearance), self);
@@ -252,9 +242,6 @@ nautilus_toolbar_get_property (GObject *object,
 	case PROP_SHOW_LOCATION_ENTRY:
 		g_value_set_boolean (value, self->priv->show_location_entry);
 		break;
-	case PROP_SHOW_SEARCH_BAR:
-		g_value_set_boolean (value, self->priv->show_search_bar);
-		break;
 	case PROP_SHOW_MAIN_BAR:
 		g_value_set_boolean (value, self->priv->show_main_bar);
 		break;
@@ -281,9 +268,6 @@ nautilus_toolbar_set_property (GObject *object,
 		break;
 	case PROP_SHOW_LOCATION_ENTRY:
 		nautilus_toolbar_set_show_location_entry (self, g_value_get_boolean (value));
-		break;
-	case PROP_SHOW_SEARCH_BAR:
-		nautilus_toolbar_set_show_search_bar (self, g_value_get_boolean (value));
 		break;
 	case PROP_SHOW_MAIN_BAR:
 		nautilus_toolbar_set_show_main_bar (self, g_value_get_boolean (value));
@@ -337,12 +321,6 @@ nautilus_toolbar_class_init (NautilusToolbarClass *klass)
 				      "Whether to show the location entry instead of the pathbar",
 				      FALSE,
 				      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	properties[PROP_SHOW_SEARCH_BAR] =
-		g_param_spec_boolean ("show-search-bar",
-				      "Whether to show the search bar",
-				      "Whether to show the search bar beside the toolbar",
-				      FALSE,
-				      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	properties[PROP_SHOW_MAIN_BAR] =
 		g_param_spec_boolean ("show-main-bar",
 				      "Whether to show the main bar",
@@ -377,12 +355,6 @@ nautilus_toolbar_get_location_bar (NautilusToolbar *self)
 	return self->priv->location_bar;
 }
 
-GtkWidget *
-nautilus_toolbar_get_search_bar (NautilusToolbar *self)
-{
-	return self->priv->search_bar;
-}
-
 void
 nautilus_toolbar_set_show_main_bar (NautilusToolbar *self,
 				    gboolean show_main_bar)
@@ -404,17 +376,5 @@ nautilus_toolbar_set_show_location_entry (NautilusToolbar *self,
 		toolbar_update_appearance (self);
 
 		g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SHOW_LOCATION_ENTRY]);
-	}
-}
-
-void
-nautilus_toolbar_set_show_search_bar (NautilusToolbar *self,
-				      gboolean show_search_bar)
-{
-	if (show_search_bar != self->priv->show_search_bar) {
-		self->priv->show_search_bar = show_search_bar;
-		toolbar_update_appearance (self);
-
-		g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SHOW_SEARCH_BAR]);
 	}
 }

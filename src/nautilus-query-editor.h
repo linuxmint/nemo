@@ -28,8 +28,6 @@
 
 #include <libnautilus-private/nautilus-query.h>
 
-#include "nautilus-search-bar.h"
-
 #define NAUTILUS_TYPE_QUERY_EDITOR nautilus_query_editor_get_type()
 #define NAUTILUS_QUERY_EDITOR(obj) \
   (G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_QUERY_EDITOR, NautilusQueryEditor))
@@ -61,11 +59,7 @@ typedef struct {
 #include "nautilus-window-slot.h"
 
 GType      nautilus_query_editor_get_type     	   (void);
-GtkWidget* nautilus_query_editor_new          	   (gboolean start_hidden);
-GtkWidget* nautilus_query_editor_new_with_bar      (gboolean start_hidden,
-						    gboolean start_attached,
-						    NautilusSearchBar *bar,
-						    NautilusWindowSlot *slot);
+GtkWidget* nautilus_query_editor_new          	   (void);
 void       nautilus_query_editor_set_default_query (NautilusQueryEditor *editor);
 
 void	   nautilus_query_editor_grab_focus (NautilusQueryEditor *editor);
@@ -74,6 +68,7 @@ void       nautilus_query_editor_clear_query (NautilusQueryEditor *editor);
 NautilusQuery *nautilus_query_editor_get_query   (NautilusQueryEditor *editor);
 void           nautilus_query_editor_set_query   (NautilusQueryEditor *editor,
 						  NautilusQuery       *query);
+GFile *        nautilus_query_editor_get_location (NautilusQueryEditor *editor);
 void           nautilus_query_editor_set_visible (NautilusQueryEditor *editor,
 						  gboolean             visible);
 

@@ -142,8 +142,6 @@ nautilus_SOURCES = \
 	nautilus-properties-window.h		\
 	nautilus-query-editor.c			\
 	nautilus-query-editor.h			\
-	nautilus-search-bar.c			\
-	nautilus-search-bar.h			\
 	nautilus-self-check-functions.c 	\
 	nautilus-self-check-functions.h 	\
 	nautilus-toolbar.c			\
