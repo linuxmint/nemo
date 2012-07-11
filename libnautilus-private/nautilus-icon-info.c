@@ -686,7 +686,6 @@ nautilus_user_special_directory_get_gicon (GUserDirectory directory)
 
 	switch (directory) {
 
-		ICON_CASE (DESKTOP);
 		ICON_CASE (DOCUMENTS);
 		ICON_CASE (DOWNLOAD);
 		ICON_CASE (MUSIC);
@@ -696,7 +695,7 @@ nautilus_user_special_directory_get_gicon (GUserDirectory directory)
 		ICON_CASE (VIDEOS);
 
 	default:
-		return g_themed_icon_new ("folder");
+		return g_themed_icon_new ("folder-symbolic");
 	}
 
 	#undef ICON_CASE

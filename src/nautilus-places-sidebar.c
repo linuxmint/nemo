@@ -463,7 +463,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 	if (g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
 		/* desktop */
 		mount_uri = nautilus_get_desktop_directory_uri ();
-		icon = g_themed_icon_new (NAUTILUS_ICON_DESKTOP);
+		icon = g_themed_icon_new (NAUTILUS_ICON_FOLDER);
 		add_place (sidebar, PLACES_BUILT_IN,
 			   SECTION_COMPUTER,
 			   _("Desktop"), icon,
@@ -3135,6 +3135,7 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 
 	/* icon renderer */
 	cell = gtk_cell_renderer_pixbuf_new ();
+	g_object_set (cell, "follow-state", TRUE, NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (col, cell,
 					     "gicon", PLACES_SIDEBAR_COLUMN_GICON,
