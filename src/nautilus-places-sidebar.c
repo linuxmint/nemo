@@ -398,6 +398,31 @@ sidebar_update_restore_selection (NautilusPlacesSidebar *sidebar,
 	}
 }
 
+static GIcon *
+special_directory_get_gicon (GUserDirectory directory)
+{
+
+	#define ICON_CASE(x) \
+		case G_USER_DIRECTORY_ ## x:\
+			return g_themed_icon_new (NAUTILUS_ICON_FOLDER_ ## x);
+
+	switch (directory) {
+
+		ICON_CASE (DOCUMENTS);
+		ICON_CASE (DOWNLOAD);
+		ICON_CASE (MUSIC);
+		ICON_CASE (PICTURES);
+		ICON_CASE (PUBLIC_SHARE);
+		ICON_CASE (TEMPLATES);
+		ICON_CASE (VIDEOS);
+
+	default:
+		return g_themed_icon_new ("folder-symbolic");
+	}
+
+	#undef ICON_CASE
+}
+
 static void
 update_places (NautilusPlacesSidebar *sidebar)
 {
@@ -494,7 +519,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 
 		root = g_file_new_for_path (path);
 		name = g_file_get_basename (root);
-		icon = nautilus_user_special_directory_get_gicon (index);
+		icon = special_directory_get_gicon (index);
 		mount_uri = g_file_get_uri (root);
 		tooltip = g_file_get_parse_name (root);
 
