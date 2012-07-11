@@ -46,7 +46,6 @@ typedef enum {
         NORMAL_BUTTON,
         ROOT_BUTTON,
         HOME_BUTTON,
-        DESKTOP_BUTTON,
 	MOUNT_BUTTON
 } ButtonType;
 
@@ -332,9 +331,7 @@ nautilus_path_bar_dispose (GObject *object)
 static const char *
 get_dir_name (ButtonData *button_data)
 {
-	if (button_data->type == DESKTOP_BUTTON) {
-		return _("Desktop");
-	} else if (button_data->type == HOME_BUTTON) {
+	if (button_data->type == HOME_BUTTON) {
 		return _("Home");
 	} else {
 		return button_data->dir_name;
@@ -1333,31 +1330,16 @@ button_drag_begin_cb (GtkWidget *widget,
 			   GINT_TO_POINTER (FALSE));
 }
 
-static NautilusIconInfo *
-get_type_icon_info (ButtonData *button_data)
+static GIcon *
+get_gicon (ButtonData *button_data)
 {
 	switch (button_data->type)
         {
 		case ROOT_BUTTON:
-			return nautilus_icon_info_lookup_from_name (NAUTILUS_ICON_FILESYSTEM,
-								    NAUTILUS_PATH_BAR_ICON_SIZE);
-
+			return g_themed_icon_new (NAUTILUS_ICON_FILESYSTEM);
 		case HOME_BUTTON:
-			return nautilus_icon_info_lookup_from_name (NAUTILUS_ICON_HOME,
-								    NAUTILUS_PATH_BAR_ICON_SIZE);
-
-                case DESKTOP_BUTTON:
-			return nautilus_icon_info_lookup_from_name (NAUTILUS_ICON_DESKTOP,
-								    NAUTILUS_PATH_BAR_ICON_SIZE);
-
-                case NORMAL_BUTTON:
-			if (button_data->is_root) {
-				return nautilus_file_get_icon (button_data->file,
-							       NAUTILUS_PATH_BAR_ICON_SIZE,
-							       NAUTILUS_FILE_ICON_FLAGS_NONE);
-			}
-
-	    	default:
+			return g_themed_icon_new (NAUTILUS_ICON_HOME);
+		default:
 			return NULL;
         }
   
@@ -1385,8 +1367,6 @@ button_data_free (ButtonData *button_data)
 static void
 nautilus_path_bar_update_button_appearance (ButtonData *button_data)
 {
-	NautilusIconInfo *icon_info;
-	GdkPixbuf *pixbuf;
         const gchar *dir_name = get_dir_name (button_data);
 
         if (button_data->label != NULL) {
@@ -1408,19 +1388,13 @@ nautilus_path_bar_update_button_appearance (ButtonData *button_data)
 		gtk_image_set_from_pixbuf (GTK_IMAGE (button_data->image), button_data->custom_icon);  
 		gtk_widget_show (GTK_WIDGET (button_data->image));
 	} else {
-		icon_info = get_type_icon_info (button_data);
+		GIcon *icon;
 
-		pixbuf = NULL;
-
-		if (icon_info != NULL) {
-			pixbuf = nautilus_icon_info_get_pixbuf_at_size (icon_info, NAUTILUS_PATH_BAR_ICON_SIZE);
-			g_object_unref (icon_info);
-		}
-
-		if (pixbuf != NULL) {
-			gtk_image_set_from_pixbuf (GTK_IMAGE (button_data->image), pixbuf);
+		icon = get_gicon (button_data);
+		if (icon != NULL) {
+			gtk_image_set_from_gicon (GTK_IMAGE (button_data->image), icon, GTK_ICON_SIZE_MENU);
 			gtk_widget_show (GTK_WIDGET (button_data->image));
-			g_object_unref (pixbuf);
+			g_object_unref (icon);
 		} else {
 			gtk_widget_hide (GTK_WIDGET (button_data->image));
 		}
@@ -1529,8 +1503,6 @@ setup_button_type (ButtonData       *button_data,
 	} else if (nautilus_is_home_directory (location)) {
 		button_data->type = HOME_BUTTON;
 		button_data->is_root = TRUE;
-	} else if (nautilus_is_desktop_directory (location)) {
-		button_data->type = DESKTOP_BUTTON;
 	} else if (setup_file_path_mounted_mount (location, button_data)) {
 		/* already setup */
 	} else {
@@ -1727,7 +1699,6 @@ make_button_data (NautilusPathBar  *path_bar,
                         button_data->label = NULL;
                         break;
                 case HOME_BUTTON:
-                case DESKTOP_BUTTON:
 		case MOUNT_BUTTON:
 		case NORMAL_BUTTON:
     		default:
