@@ -2624,7 +2624,6 @@ nautilus_view_init (NautilusView *view)
 					GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (view), NULL);
 	gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (view), NULL);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_NONE);
 
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (view)),
 					      GTK_JUNCTION_TOP | GTK_JUNCTION_LEFT);
@@ -9608,6 +9607,26 @@ real_get_selected_icon_locations (NautilusView *view)
 }
 
 static void
+window_slots_changed (NautilusWindow *window,
+		      NautilusWindowSlot *slot,
+		      NautilusView *view)
+{
+	GList *slots;
+
+	slots = nautilus_window_get_slots (window);
+
+	/* Only add a shadow to the scrolled window when we're in a tabless
+	 * notebook, since when the notebook has tabs, it will draw its own
+	 * border.
+	 */
+	if (g_list_length (slots) > 1) {
+		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_NONE);
+	} else {
+		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_IN);
+	}
+}
+
+static void
 nautilus_view_set_property (GObject         *object,
 			    guint            prop_id,
 			    const GValue    *value,
@@ -9635,6 +9654,14 @@ nautilus_view_set_property (GObject         *object,
 		g_signal_connect_object (directory_view->details->slot,
 					 "inactive", G_CALLBACK (slot_inactive),
 					 directory_view, 0);
+
+		g_signal_connect_object (directory_view->details->window,
+					 "slot-added", G_CALLBACK (window_slots_changed),
+					 directory_view, 0);
+		g_signal_connect_object (directory_view->details->window,
+					 "slot-removed", G_CALLBACK (window_slots_changed),
+					 directory_view, 0);
+		window_slots_changed (window, slot, directory_view);
 
 		g_signal_connect_object (directory_view->details->window,
 					 "hidden-files-mode-changed", G_CALLBACK (hidden_files_mode_changed),
