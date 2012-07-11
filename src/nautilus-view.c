@@ -8460,6 +8460,21 @@ can_delete_all (GList *files)
 	return TRUE;
 }
 
+static gboolean
+can_trash_all (GList *files)
+{
+	NautilusFile *file;
+	GList *l;
+
+	for (l = files; l != NULL; l = l->next) {
+		file = l->data;
+		if (!nautilus_file_can_trash (file)) {
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
 static void
 real_update_menus (NautilusView *view)
 {
@@ -8471,6 +8486,7 @@ real_update_menus (NautilusView *view)
 	gboolean selection_contains_desktop_or_home_dir;
 	gboolean can_create_files;
 	gboolean can_delete_files;
+	gboolean can_trash_files;
 	gboolean can_copy_files;
 	gboolean can_link_files;
 	gboolean can_duplicate_files;
@@ -8497,6 +8513,11 @@ real_update_menus (NautilusView *view)
 	can_create_files = nautilus_view_supports_creating_files (view);
 	can_delete_files =
 		can_delete_all (selection) &&
+		selection_count != 0 &&
+		!selection_contains_special_link &&
+		!selection_contains_desktop_or_home_dir;
+	can_trash_files =
+		can_trash_all (selection) &&
 		selection_count != 0 &&
 		!selection_contains_special_link &&
 		!selection_contains_desktop_or_home_dir;
@@ -8676,13 +8697,19 @@ real_update_menus (NautilusView *view)
 		      "icon-name", all_selected_items_in_trash (view) ?
 		      NAUTILUS_ICON_DELETE : NAUTILUS_ICON_TRASH_FULL,
 		      NULL);
-	gtk_action_set_sensitive (action, can_delete_files);
+	/* if the backend supports delete but not trash then don't show trash */
+	if (!can_trash_files && can_delete_files)
+		gtk_action_set_visible (action, FALSE);
+	else
+		gtk_action_set_sensitive (action, can_trash_files);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_DELETE);
-	gtk_action_set_visible (action, show_separate_delete_command);
-	
-	if (show_separate_delete_command) {
+	/* if the backend doesn't support trash but supports delete
+	   show the delete option. or if the user set this  pref */
+	gtk_action_set_visible (action, (!can_trash_files && can_delete_files) || show_separate_delete_command);
+
+	if ((!can_trash_files && can_delete_files) || show_separate_delete_command) {
 		g_object_set (action,
 			      "label", _("_Delete"),
 			      "icon-name", NAUTILUS_ICON_DELETE,
