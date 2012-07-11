@@ -86,34 +86,6 @@ nautilus_bookmark_set_name_internal (NautilusBookmark *bookmark,
 }
 
 static void
-nautilus_bookmark_update_icon (NautilusBookmark *bookmark)
-{
-	GIcon *new_icon;
-
-	if (bookmark->details->file == NULL) {
-		return;
-	}
-
-	if (!nautilus_file_is_local (bookmark->details->file)) {
-		/* never update icons for remote bookmarks */
-		return;
-	}
-
-	if (!nautilus_file_is_not_yet_confirmed (bookmark->details->file) &&
-	    nautilus_file_check_if_ready (bookmark->details->file,
-					  NAUTILUS_FILE_ATTRIBUTES_FOR_ICON)) {
-		DEBUG ("%s: set new icon", nautilus_bookmark_get_name (bookmark));
-
-		new_icon = nautilus_file_get_gicon (bookmark->details->file, 0);
-		g_object_set (bookmark,
-			      "icon", new_icon,
-			      NULL);
-
-		g_object_unref (new_icon);
-	}
-}
-
-static void
 bookmark_set_name_from_ready_file (NautilusBookmark *self,
 				   NautilusFile *file)
 {
@@ -178,7 +150,6 @@ bookmark_file_changed_callback (NautilusFile *file,
 		DEBUG ("%s: trashed", nautilus_bookmark_get_name (bookmark));
 		nautilus_bookmark_disconnect_file (bookmark);
 	} else {
-		nautilus_bookmark_update_icon (bookmark);
 		bookmark_set_name_from_ready_file (bookmark, file);
 	}
 }
@@ -258,9 +229,6 @@ nautilus_bookmark_connect_file (NautilusBookmark *bookmark)
 		g_signal_connect_object (bookmark->details->file, "changed",
 					 G_CALLBACK (bookmark_file_changed_callback), bookmark, 0);
 	}
-
-	/* Set icon based on available information. */
-	nautilus_bookmark_update_icon (bookmark);
 
 	if (bookmark->details->icon == NULL) {
 		nautilus_bookmark_set_icon_to_default (bookmark);
