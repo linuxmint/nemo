@@ -68,11 +68,6 @@ int		nautilus_notebook_add_tab	(NautilusNotebook *nb,
 						 int position,
 						 gboolean jump_to);
 	
-void		nautilus_notebook_set_show_tabs	(NautilusNotebook *nb,
-						 gboolean show_tabs);
-
-void		nautilus_notebook_set_dnd_enabled (NautilusNotebook *nb,
-						   gboolean enabled);
 void		nautilus_notebook_sync_tab_label (NautilusNotebook *nb,
 						  NautilusWindowSlot *slot);
 void		nautilus_notebook_sync_loading   (NautilusNotebook *nb,
