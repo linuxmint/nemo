@@ -104,6 +104,7 @@ get_icon_margin (NautilusToolbar *self)
 static GtkWidget *
 toolbar_create_toolbutton (NautilusToolbar *self,
 			   gboolean create_menu,
+			   gboolean create_toggle,
 			   const gchar *name)
 {
 	GtkWidget *button, *image;
@@ -111,6 +112,8 @@ toolbar_create_toolbutton (NautilusToolbar *self,
 
 	if (create_menu) {
 		button = gtk_menu_button_new ();
+	} else if (create_toggle) {
+		button = gtk_toggle_button_new ();
 	} else {
 		button = gtk_button_new ();
 	}
@@ -165,11 +168,11 @@ nautilus_toolbar_constructed (GObject *obj)
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
 	/* Back */
-	tool_button = toolbar_create_toolbutton (self, FALSE, NAUTILUS_ACTION_BACK);
+	tool_button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_BACK);
 	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
 
 	/* Forward */
-	tool_button = toolbar_create_toolbutton (self, FALSE, NAUTILUS_ACTION_FORWARD);
+	tool_button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_FORWARD);
 	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (box),
@@ -202,7 +205,7 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	/* search */
 	tool_item = gtk_tool_item_new ();
-	tool_button = toolbar_create_toolbutton (self, FALSE, NAUTILUS_ACTION_SEARCH);
+	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_SEARCH);
 	gtk_container_add (GTK_CONTAINER (tool_item), GTK_WIDGET (tool_button));
 	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_item));
 	gtk_widget_show_all (GTK_WIDGET (tool_item));
@@ -210,7 +213,7 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	/* Page Menu */
 	tool_item = gtk_tool_item_new ();
-	tool_button = toolbar_create_toolbutton (self, TRUE, "emblem-system-symbolic");
+	tool_button = toolbar_create_toolbutton (self, TRUE, FALSE, "emblem-system-symbolic");
 	menu = gtk_ui_manager_get_widget (self->priv->ui_manager, "/ViewMenu");
 	gtk_menu_button_set_menu (GTK_MENU_BUTTON (tool_button), menu);
 	gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
