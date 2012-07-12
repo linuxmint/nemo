@@ -545,6 +545,8 @@ file_open_callback (GObject      *object,
 					   page);
 
 		g_object_unref (stream);
+	} else {
+		load_finished (page);
 	}
 }
 
