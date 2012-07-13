@@ -114,60 +114,6 @@ action_home_callback (GtkAction *action,
 }
 
 static void
-action_go_to_network_callback (GtkAction *action, 
-				gpointer user_data) 
-{
-	NautilusWindow *window;
-	NautilusWindowSlot *slot;
-	GFile *network;
-
-	window = NAUTILUS_WINDOW (user_data);
-	slot = nautilus_window_get_active_slot (window);
-
-	network = g_file_new_for_uri (NETWORK_URI);
-	nautilus_window_slot_open_location (slot, network,
-					    nautilus_event_get_window_open_flags ());
-	g_object_unref (network);
-}
-
-static void
-action_go_to_templates_callback (GtkAction *action,
-				 gpointer user_data) 
-{
-	NautilusWindow *window;
-	NautilusWindowSlot *slot;
-	char *path;
-	GFile *location;
-
-	window = NAUTILUS_WINDOW (user_data);
-	slot = nautilus_window_get_active_slot (window);
-
-	path = nautilus_get_templates_directory ();
-	location = g_file_new_for_path (path);
-	g_free (path);
-	nautilus_window_slot_open_location (slot, location,
-					    nautilus_event_get_window_open_flags ());
-	g_object_unref (location);
-}
-
-static void
-action_go_to_trash_callback (GtkAction *action, 
-			     gpointer user_data) 
-{
-	NautilusWindow *window;
-	NautilusWindowSlot *slot;
-	GFile *trash;
-
-	window = NAUTILUS_WINDOW (user_data);
-	slot = nautilus_window_get_active_slot (window);
-
-	trash = g_file_new_for_uri ("trash:///");
-	nautilus_window_slot_open_location (slot, trash,
-					    nautilus_event_get_window_open_flags ());
-	g_object_unref (trash);
-}
-
-static void
 action_reload_callback (GtkAction *action, 
 			gpointer user_data) 
 {
@@ -328,39 +274,6 @@ action_nautilus_manual_callback (GtkAction *action,
 		gtk_widget_show (dialog);
 		g_error_free (error);
 	}
-}
-
-static void
-trash_state_changed_cb (NautilusTrashMonitor *monitor,
-			gboolean state,
-			NautilusWindow *window)
-{
-	GtkActionGroup *action_group;
-	GtkAction *action;
-	GIcon *gicon;
-
-	action_group = nautilus_window_get_main_action_group (window);
-	action = gtk_action_group_get_action (action_group, "Go to Trash");
-
-	gicon = nautilus_trash_monitor_get_icon ();
-
-	if (gicon) {
-		g_object_set (action, "gicon", gicon, NULL);
-		g_object_unref (gicon);
-	}
-}
-
-static void
-nautilus_window_initialize_trash_icon_monitor (NautilusWindow *window)
-{
-	NautilusTrashMonitor *monitor;
-
-	monitor = nautilus_trash_monitor_get ();
-
-	trash_state_changed_cb (monitor, TRUE, window);
-
-	g_signal_connect (monitor, "trash_state_changed",
-			  G_CALLBACK (trash_state_changed_cb), window);
 }
 
 #define MENU_ITEM_MAX_WIDTH_CHARS 32
@@ -596,18 +509,6 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("_Home"), "<alt>Home",
   /* tooltip */                  N_("Open your personal folder"),
                                  G_CALLBACK (action_home_callback) },
-  /* name, stock id */         { "Go to Network", NAUTILUS_ICON_NETWORK,
-  /* label, accelerator */       N_("_Network"), NULL,
-  /* tooltip */                  N_("Browse bookmarked and local network locations"),
-                                 G_CALLBACK (action_go_to_network_callback) },
-  /* name, stock id */         { "Go to Templates", NAUTILUS_ICON_TEMPLATE,
-  /* label, accelerator */       N_("T_emplates"), NULL,
-  /* tooltip */                  N_("Open your personal templates folder"),
-                                 G_CALLBACK (action_go_to_templates_callback) },
-  /* name, stock id */         { "Go to Trash", NAUTILUS_ICON_TRASH,
-  /* label, accelerator */       N_("_Trash"), NULL,
-  /* tooltip */                  N_("Open your personal trash folder"),
-                                 G_CALLBACK (action_go_to_trash_callback) },
   /* name, stock id, label */  { "Go", NULL, N_("_Go") },
   /* name, stock id, label */  { "Bookmarks", NULL, N_("_Bookmarks") },
   /* name, stock id, label */  { "Tabs", NULL, N_("_Tabs") },
@@ -878,20 +779,11 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 
 	/* add the UI */
 	gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nautilus/nautilus-shell-ui.xml", NULL);
-
-	nautilus_window_initialize_trash_icon_monitor (window);
 }
 
 void
 nautilus_window_finalize_menus (NautilusWindow *window)
 {
-	NautilusTrashMonitor *monitor;
-
-	monitor = nautilus_trash_monitor_get ();
-
-	g_signal_handlers_disconnect_by_func (monitor,
-					      trash_state_changed_cb, window);
-
 	g_signal_handlers_disconnect_by_func (nautilus_preferences,
 					      show_hidden_files_preference_callback, window);
 
