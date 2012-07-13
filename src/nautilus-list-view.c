@@ -1547,7 +1547,7 @@ create_and_set_up_tree_view (NautilusListView *view)
 							g_str_equal,
 							(GDestroyNotify)g_free,
 							(GDestroyNotify) g_object_unref);
-	gtk_tree_view_set_enable_search (view->details->tree_view, TRUE);
+	gtk_tree_view_set_enable_search (view->details->tree_view, FALSE);
 
 	/* Don't handle backspace key. It's used to open the parent folder. */
 	binding_set = gtk_binding_set_by_class (GTK_WIDGET_GET_CLASS (view->details->tree_view));
