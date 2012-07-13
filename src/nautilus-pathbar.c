@@ -140,32 +140,6 @@ get_slider_button (NautilusPathBar  *path_bar,
         return button;
 }
 
-static void
-trash_state_changed_cb (NautilusTrashMonitor *monitor,
-                        gboolean state,
-                        NautilusPathBar *path_bar)
-{
-        GFile *file;
-        GList *list;
-      
-        file = g_file_new_for_uri ("trash:///");
-        for (list = path_bar->priv->button_list; list; list = list->next) {
-                ButtonData *button_data;
-                button_data = BUTTON_DATA (list->data);
-                if (g_file_equal (file, button_data->path)) {
-                        GIcon *icon;
-                        NautilusIconInfo *icon_info;
-                        GdkPixbuf *pixbuf;
-
-                        icon = nautilus_trash_monitor_get_icon ();
-                        icon_info = nautilus_icon_info_lookup (icon, NAUTILUS_PATH_BAR_ICON_SIZE);                        
-                        pixbuf = nautilus_icon_info_get_pixbuf_at_size (icon_info, NAUTILUS_PATH_BAR_ICON_SIZE);
-                        gtk_image_set_from_pixbuf (GTK_IMAGE (button_data->image), pixbuf);
-                }
-        }
-        g_object_unref (file);
-}
-
 static gboolean
 slider_timeout (gpointer user_data)
 {
@@ -274,11 +248,6 @@ nautilus_path_bar_init (NautilusPathBar *path_bar)
 			  G_CALLBACK (nautilus_path_bar_slider_drag_leave),
 			  path_bar);
 
-        g_signal_connect (nautilus_trash_monitor_get (),
-                          "trash_state_changed",
-                          G_CALLBACK (trash_state_changed_cb),
-                          path_bar);
-
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (path_bar)),
                                      GTK_STYLE_CLASS_LINKED);
 }
@@ -298,9 +267,6 @@ nautilus_path_bar_finalize (GObject *object)
 	}
 
         g_list_free (path_bar->priv->button_list);
-
-	g_signal_handlers_disconnect_by_func (nautilus_trash_monitor_get (),
-					      trash_state_changed_cb, path_bar);
 
         G_OBJECT_CLASS (nautilus_path_bar_parent_class)->finalize (object);
 }
