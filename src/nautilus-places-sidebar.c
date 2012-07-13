@@ -102,8 +102,6 @@ typedef struct {
 
 	NotifyNotification *unmount_notify;
 
-	GtkTreePath *eject_highlight_path;
-
 	GDBusProxy *hostnamed_proxy;
 	char *hostname;
 
@@ -3352,11 +3350,6 @@ nautilus_places_sidebar_dispose (GObject *object)
 
 	free_drag_data (sidebar);
 	g_clear_object (&sidebar->unmount_notify);
-
-	if (sidebar->eject_highlight_path != NULL) {
-		gtk_tree_path_free (sidebar->eject_highlight_path);
-		sidebar->eject_highlight_path = NULL;
-	}
 
 	if (sidebar->bookmarks_changed_id != 0) {
 		g_signal_handler_disconnect (sidebar->bookmarks,
