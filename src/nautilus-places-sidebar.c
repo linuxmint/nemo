@@ -425,6 +425,21 @@ special_directory_get_gicon (GUserDirectory directory)
 	#undef ICON_CASE
 }
 
+static gboolean
+recent_is_supported (void)
+{
+	const char * const *supported;
+	int i;
+
+	supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
+	for (i = 0; supported[i] != NULL; i++) {
+		if (strcmp ("recent", supported[i]) == 0) {
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 static void
 update_places (NautilusPlacesSidebar *sidebar)
 {
@@ -475,6 +490,17 @@ update_places (NautilusPlacesSidebar *sidebar)
 
 	add_heading (sidebar, SECTION_COMPUTER,
 		     _("Places"));
+
+	if (recent_is_supported ()) {
+		mount_uri = "recent:///"; /* No need to strdup */
+		icon = g_themed_icon_new ("document-open-recent-symbolic");
+		add_place (sidebar, PLACES_BUILT_IN,
+			   SECTION_COMPUTER,
+			   _("Recent"), icon, mount_uri,
+			   NULL, NULL, NULL, 0,
+			   _("Recent files"));
+		g_object_unref (icon);
+	}
 
 	/* home folder */
 	mount_uri = nautilus_get_home_directory_uri ();

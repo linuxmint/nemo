@@ -2393,6 +2393,19 @@ is_burn_directory (NautilusFile *file)
 }
 
 static gboolean
+is_recent_directory (NautilusFile *file)
+{
+	char *file_uri;
+	gboolean result;
+
+	file_uri = nautilus_file_get_uri (file);
+	result = strcmp (file_uri, "recent:///") == 0;
+	g_free (file_uri);
+
+	return result;
+}
+
+static gboolean
 should_show_custom_icon_buttons (NautilusPropertiesWindow *window) 
 {
 	if (is_multi_file_window (window)) {
@@ -2457,6 +2470,15 @@ should_show_link_target (NautilusPropertiesWindow *window)
 }
 
 static gboolean
+location_show_original (NautilusPropertiesWindow *window)
+{
+	NautilusFile *file;
+
+	file = get_original_file (window);
+	return !nautilus_file_is_in_recent (file);
+}
+
+static gboolean
 should_show_free_space (NautilusPropertiesWindow *window)
 {
 
@@ -2464,6 +2486,7 @@ should_show_free_space (NautilusPropertiesWindow *window)
 	    && (is_merged_trash_directory (get_target_file (window)) ||
 		is_computer_directory (get_target_file (window)) ||
 		is_network_directory (get_target_file (window)) ||
+		is_recent_directory (get_target_file (window)) ||
 		is_burn_directory (get_target_file (window)))) {
 		return FALSE;
 	}
@@ -3083,7 +3106,7 @@ create_basic_page (NautilusPropertiesWindow *window)
 		append_title_and_ellipsizing_value (window, grid, _("Location:"), 
 						    "where",
 						    INCONSISTENT_STATE_STRING,
-						    TRUE);
+						    location_show_original (window));
 		
 		append_title_and_ellipsizing_value (window, grid, 
 						    _("Volume:"), 
@@ -4576,6 +4599,7 @@ should_show_permissions (NautilusPropertiesWindow *window)
 	 */
 	if (!is_multi_file_window (window)
 	    && (is_merged_trash_directory (file) ||
+		is_recent_directory (file) ||
 		is_computer_directory (file))) {
 		return FALSE;
 	}

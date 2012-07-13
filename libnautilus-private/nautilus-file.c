@@ -6763,6 +6763,23 @@ nautilus_file_is_in_trash (NautilusFile *file)
 	return nautilus_directory_is_in_trash (file->details->directory);
 }
 
+/**
+ * nautilus_file_is_in_recent
+ * 
+ * Check if this file is a file in Recent.
+ * @file: NautilusFile representing the file in question.
+ * 
+ * Returns: TRUE if @file is in Recent.
+ * 
+ **/
+gboolean
+nautilus_file_is_in_recent (NautilusFile *file)
+{
+	g_assert (NAUTILUS_IS_FILE (file));
+
+	return nautilus_directory_is_in_recent (file->details->directory);
+}
+
 GError *
 nautilus_file_get_file_info_error (NautilusFile *file)
 {

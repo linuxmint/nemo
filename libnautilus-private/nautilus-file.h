@@ -188,6 +188,7 @@ gboolean                nautilus_file_is_user_special_directory         (Nautilu
 									 GUserDirectory                 special_directory);
 gboolean		nautilus_file_is_archive			(NautilusFile			*file);
 gboolean                nautilus_file_is_in_trash                       (NautilusFile                   *file);
+gboolean                nautilus_file_is_in_recent                      (NautilusFile                   *file);
 gboolean                nautilus_file_is_in_desktop                     (NautilusFile                   *file);
 gboolean		nautilus_file_is_home				(NautilusFile                   *file);
 gboolean                nautilus_file_is_desktop_directory              (NautilusFile                   *file);

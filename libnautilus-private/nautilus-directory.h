@@ -216,6 +216,7 @@ gboolean           nautilus_directory_are_all_files_seen       (NautilusDirector
 gboolean           nautilus_directory_is_local                 (NautilusDirectory         *directory);
 
 gboolean           nautilus_directory_is_in_trash              (NautilusDirectory         *directory);
+gboolean           nautilus_directory_is_in_recent             (NautilusDirectory         *directory);
 
 /* Return false if directory contains anything besides a Nautilus metafile.
  * Only valid if directory is monitored. Used by the Trash monitor.

@@ -523,11 +523,25 @@ showing_trash_directory (NautilusView *view)
 }
 
 static gboolean
+showing_recent_directory (NautilusView *view)
+{
+	NautilusFile *file;
+
+	file = nautilus_view_get_directory_as_file (view);
+	if (file != NULL) {
+		return nautilus_file_is_in_recent (file);
+	}
+	return FALSE;
+}
+
+static gboolean
 nautilus_view_supports_creating_files (NautilusView *view)
 {
 	g_return_val_if_fail (NAUTILUS_IS_VIEW (view), FALSE);
 
-	return !nautilus_view_is_read_only (view) && !showing_trash_directory (view);
+	return !nautilus_view_is_read_only (view)
+		&& !showing_trash_directory (view)
+		&& !showing_recent_directory (view);
 }
 
 static gboolean
@@ -8281,22 +8295,26 @@ real_update_paste_menu (NautilusView *view,
 {
 	gboolean can_paste_files_into;
 	gboolean selection_is_read_only;
+	gboolean selection_contains_recent;
 	gboolean is_read_only;
 	GtkAction *action;
 
 	selection_is_read_only = selection_count == 1 &&
 		(!nautilus_file_can_write (NAUTILUS_FILE (selection->data)) &&
 		 !nautilus_file_has_activation_uri (NAUTILUS_FILE (selection->data)));
-		 
+
 	is_read_only = nautilus_view_is_read_only (view);
-	
-	can_paste_files_into = (selection_count == 1 && 
+	selection_contains_recent = showing_recent_directory (view);
+
+	can_paste_files_into = (!selection_contains_recent &&
+				selection_count == 1 &&
 	                        can_paste_into_file (NAUTILUS_FILE (selection->data)));
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_PASTE);
 	gtk_action_set_sensitive (action, !is_read_only);
-	
+	gtk_action_set_visible (action, !selection_contains_recent);
+
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_PASTE_FILES_INTO);
 	gtk_action_set_visible (action, can_paste_files_into);
@@ -8316,6 +8334,7 @@ real_update_location_menu (NautilusView *view)
 	NautilusFile *file;
 	gboolean is_special_link;
 	gboolean is_desktop_or_home_dir;
+	gboolean is_recent;
 	gboolean can_delete_file, show_delete;
 	gboolean show_separate_delete_command;
 	gboolean show_open_in_new_tab;
@@ -8354,6 +8373,7 @@ real_update_location_menu (NautilusView *view)
 	is_special_link = NAUTILUS_IS_DESKTOP_ICON_FILE (file);
 	is_desktop_or_home_dir = nautilus_file_is_home (file)
 		|| nautilus_file_is_desktop_directory (file);
+	is_recent = nautilus_file_is_in_recent (file);
 
 	can_delete_file =
 		nautilus_file_can_delete (file) &&
@@ -8362,7 +8382,8 @@ real_update_location_menu (NautilusView *view)
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_LOCATION_CUT);
-	gtk_action_set_sensitive (action, can_delete_file);
+	gtk_action_set_sensitive (action, !is_recent && can_delete_file);
+	gtk_action_set_visible (action, !is_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_LOCATION_PASTE_FILES_INTO);
@@ -8370,10 +8391,12 @@ real_update_location_menu (NautilusView *view)
 			   "can-paste-according-to-destination",
 			   GINT_TO_POINTER (can_paste_into_file (file)));
 	gtk_action_set_sensitive (action,
+				  !is_recent &&
 				  GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
 								      "can-paste-according-to-clipboard")) &&
 				  GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
 								      "can-paste-according-to-destination")));
+	gtk_action_set_visible (action, !is_recent);
 
 	show_delete = TRUE;
 
@@ -8483,6 +8506,7 @@ real_update_menus (NautilusView *view)
 	char *label_with_underscore;
 	gboolean selection_contains_special_link;
 	gboolean selection_contains_desktop_or_home_dir;
+	gboolean selection_contains_recent;
 	gboolean can_create_files;
 	gboolean can_delete_files;
 	gboolean can_trash_files;
@@ -8508,6 +8532,7 @@ real_update_menus (NautilusView *view)
 
 	selection_contains_special_link = special_link_in_selection (view);
 	selection_contains_desktop_or_home_dir = desktop_or_home_dir_in_selection (view);
+	selection_contains_recent = showing_recent_directory (view);
 
 	can_create_files = nautilus_view_supports_creating_files (view);
 	can_delete_files =
@@ -8521,11 +8546,12 @@ real_update_menus (NautilusView *view)
 		!selection_contains_special_link &&
 		!selection_contains_desktop_or_home_dir;
 	can_copy_files = selection_count != 0
-		&& !selection_contains_special_link;	
+		&& !selection_contains_recent
+		&& !selection_contains_special_link;
 
 	can_duplicate_files = can_create_files && can_copy_files;
 	can_link_files = can_create_files && can_copy_files;
-	
+
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_RENAME);
 	/* rename sensitivity depending on selection */
@@ -8537,15 +8563,17 @@ real_update_menus (NautilusView *view)
 					  selection_count == 1 &&
 					  nautilus_view_can_rename_file (view, selection->data));
 	}
+	gtk_action_set_visible (action, !selection_contains_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_NEW_FOLDER);
 	gtk_action_set_sensitive (action, can_create_files);
+	gtk_action_set_visible (action, !selection_contains_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_NEW_FOLDER_WITH_SELECTION);
 	gtk_action_set_sensitive (action, can_create_files && can_delete_files && (selection_count > 1));
-	gtk_action_set_visible (action, selection_count > 1);
+	gtk_action_set_visible (action, !selection_contains_recent && (selection_count > 1));
 	label_with_underscore = g_strdup_printf (ngettext("New Folder with Selection (%'d Item)",
 							  "New Folder with Selection (%'d Items)",
 							  selection_count),
@@ -8724,10 +8752,12 @@ real_update_menus (NautilusView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_DUPLICATE);
 	gtk_action_set_sensitive (action, can_duplicate_files);
+	gtk_action_set_visible (action, !selection_contains_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_CREATE_LINK);
 	gtk_action_set_sensitive (action, can_link_files);
+	gtk_action_set_visible (action, !selection_contains_recent);
 	g_object_set (action, "label",
 		      ngettext ("Ma_ke Link",
 			      	"Ma_ke Links",
@@ -8801,6 +8831,7 @@ real_update_menus (NautilusView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_CUT);
 	gtk_action_set_sensitive (action, can_delete_files);
+	gtk_action_set_visible (action, !selection_contains_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_COPY);
@@ -8821,6 +8852,7 @@ real_update_menus (NautilusView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_NEW_DOCUMENTS);
 	gtk_action_set_sensitive (action, can_create_files);
+	gtk_action_set_visible (action, !selection_contains_recent);
 
 	if (can_create_files && view->details->templates_invalid) {
 		update_templates_menu (view);
@@ -8829,9 +8861,11 @@ real_update_menus (NautilusView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_COPY_TO);
 	gtk_action_set_sensitive (action, can_copy_files);
+	gtk_action_set_visible (action, !selection_contains_recent);
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_MOVE_TO);
 	gtk_action_set_sensitive (action, can_delete_files);
+	gtk_action_set_visible (action, !selection_contains_recent);
 }
 
 /**
