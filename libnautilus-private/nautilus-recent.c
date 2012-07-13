@@ -44,7 +44,10 @@ nautilus_recent_add_file (NautilusFile *file,
 	GtkRecentData recent_data;
 	char *uri;
 
-	uri = nautilus_file_get_uri (file);
+	uri = nautilus_file_get_activation_uri (file);
+	if (uri == NULL) {
+		uri = nautilus_file_get_uri (file);
+	}
 
 	/* do not add trash:// etc */
 	if (eel_uri_is_trash (uri)  ||
