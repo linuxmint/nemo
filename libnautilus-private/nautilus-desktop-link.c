@@ -86,6 +86,20 @@ mount_changed_callback (GMount *mount, NautilusDesktopLink *link)
 	nautilus_desktop_link_changed (link);
 }
 
+static GIcon *
+get_desktop_trash_icon (void)
+{
+	const gchar *icon_name;
+
+	if (nautilus_trash_monitor_is_empty ()) {
+		icon_name = NAUTILUS_DESKTOP_ICON_TRASH;
+	} else {
+		icon_name = NAUTILUS_DESKTOP_ICON_TRASH_FULL;
+	}
+
+	return g_themed_icon_new (icon_name);
+}
+
 static void
 trash_state_changed_callback (NautilusTrashMonitor *trash_monitor,
 			      gboolean state,
@@ -99,7 +113,7 @@ trash_state_changed_callback (NautilusTrashMonitor *trash_monitor,
 	if (link->details->icon) {
 		g_object_unref (link->details->icon);
 	}
-	link->details->icon = nautilus_trash_monitor_get_icon ();
+	link->details->icon = get_desktop_trash_icon ();
 
 	nautilus_desktop_link_changed (link);
 }
@@ -165,7 +179,7 @@ nautilus_desktop_link_new (NautilusDesktopLinkType type)
 		link->details->display_name = g_settings_get_string (nautilus_desktop_preferences,
 								     NAUTILUS_PREFERENCES_DESKTOP_HOME_NAME);
 		link->details->activation_location = g_file_new_for_path (g_get_home_dir ());
-		link->details->icon = g_themed_icon_new (NAUTILUS_ICON_HOME);
+		link->details->icon = g_themed_icon_new (NAUTILUS_DESKTOP_ICON_HOME);
 
 		g_signal_connect_swapped (nautilus_desktop_preferences,
 					  "changed::" NAUTILUS_PREFERENCES_DESKTOP_HOME_NAME,
@@ -178,7 +192,7 @@ nautilus_desktop_link_new (NautilusDesktopLinkType type)
 		link->details->display_name = g_settings_get_string (nautilus_desktop_preferences,
 								     NAUTILUS_PREFERENCES_DESKTOP_TRASH_NAME);
 		link->details->activation_location = g_file_new_for_uri (EEL_TRASH_URI);
-		link->details->icon = nautilus_trash_monitor_get_icon ();
+		link->details->icon = get_desktop_trash_icon ();
 
 		g_signal_connect_swapped (nautilus_desktop_preferences,
 					  "changed::" NAUTILUS_PREFERENCES_DESKTOP_TRASH_NAME,
@@ -195,7 +209,7 @@ nautilus_desktop_link_new (NautilusDesktopLinkType type)
 		link->details->display_name = g_settings_get_string (nautilus_desktop_preferences,
 								     NAUTILUS_PREFERENCES_DESKTOP_NETWORK_NAME);
 		link->details->activation_location = g_file_new_for_uri ("network:///");
-		link->details->icon = g_themed_icon_new (NAUTILUS_ICON_NETWORK);
+		link->details->icon = g_themed_icon_new (NAUTILUS_DESKTOP_ICON_NETWORK);
 
 		g_signal_connect_swapped (nautilus_desktop_preferences,
 					  "changed::" NAUTILUS_PREFERENCES_DESKTOP_NETWORK_NAME,
