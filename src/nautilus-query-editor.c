@@ -331,7 +331,7 @@ typing_timeout_cb (gpointer user_data)
 	return FALSE;
 }
 
-#define TYPING_TIMEOUT 750
+#define TYPING_TIMEOUT 250
 
 static void
 entry_changed_cb (GtkWidget *entry, NautilusQueryEditor *editor)
