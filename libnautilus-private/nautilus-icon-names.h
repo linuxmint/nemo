@@ -22,6 +22,13 @@
 #define NAUTILUS_ICON_FOLDER_VIDEOS     "folder-videos-symbolic"
 #define NAUTILUS_ICON_FOLDER_SAVED_SEARCH "folder-saved-search-symbolic"
 
+/* Icons for desktop */
+#define NAUTILUS_DESKTOP_ICON_DESKTOP    "user-desktop"
+#define NAUTILUS_DESKTOP_ICON_TRASH      "user-trash"
+#define NAUTILUS_DESKTOP_ICON_TRASH_FULL "user-trash-full"
+#define NAUTILUS_DESKTOP_ICON_HOME       "user-home"
+#define NAUTILUS_DESKTOP_ICON_NETWORK    "network-workgroup"
+
 /* Other icons */
 #define NAUTILUS_ICON_TEMPLATE		"text-x-generic-template"
 

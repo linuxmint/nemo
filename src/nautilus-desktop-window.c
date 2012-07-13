@@ -261,7 +261,7 @@ static NautilusIconInfo *
 real_get_icon (NautilusWindow *window,
 	       NautilusWindowSlot *slot)
 {
-	return nautilus_icon_info_lookup_from_name ("user-desktop", 48);
+	return nautilus_icon_info_lookup_from_name (NAUTILUS_DESKTOP_ICON_DESKTOP, 48);
 }
 
 static void
