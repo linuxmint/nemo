@@ -86,7 +86,7 @@ void
 nautilus_query_set_text (NautilusQuery *query, const char *text)
 {
 	g_free (query->details->text);
-	query->details->text = g_strdup (text);
+	query->details->text = g_strstrip (g_strdup (text));
 }
 
 char *
@@ -125,7 +125,7 @@ nautilus_query_add_mime_type (NautilusQuery *query, const char *mime_type)
 char *
 nautilus_query_to_readable_string (NautilusQuery *query)
 {
-	if (!query || !query->details->text) {
+	if (!query || !query->details->text || query->details->text[0] == '\0') {
 		return g_strdup (_("Search"));
 	}
 

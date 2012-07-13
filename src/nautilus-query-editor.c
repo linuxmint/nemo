@@ -1071,16 +1071,6 @@ nautilus_query_editor_set_visible (NautilusQueryEditor *editor,
 	}
 }
 
-static gboolean
-query_is_valid (NautilusQueryEditor *editor)
-{
-	const char *text;
-
-	text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
-
-	return text != NULL && text[0] != '\0';
-}
-
 static void
 nautilus_query_editor_changed_force (NautilusQueryEditor *editor, gboolean force_reload)
 {
@@ -1089,13 +1079,11 @@ nautilus_query_editor_changed_force (NautilusQueryEditor *editor, gboolean force
 	if (editor->details->change_frozen) {
 		return;
 	}
-	
-	if (query_is_valid (editor)) {
-		query = nautilus_query_editor_get_query (editor);
-		g_signal_emit (editor, signals[CHANGED], 0,
-			       query, force_reload);
-		g_object_unref (query);
-	}
+
+	query = nautilus_query_editor_get_query (editor);
+	g_signal_emit (editor, signals[CHANGED], 0,
+		       query, force_reload);
+	g_object_unref (query);
 }
 
 static void
@@ -1142,11 +1130,6 @@ nautilus_query_editor_get_query (NautilusQueryEditor *editor)
 
 	query_text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
 
-	/* Empty string is a NULL query */
-	if (query_text && query_text[0] == '\0') {
-		return NULL;
-	}
-	
 	query = nautilus_query_new ();
 	nautilus_query_set_text (query, query_text);
 
