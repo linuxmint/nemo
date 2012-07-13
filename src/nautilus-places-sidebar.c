@@ -3034,80 +3034,30 @@ places_sidebar_sort_func (GtkTreeModel *model,
 }
 
 static void
-pretty_hostname_cb (GObject *source_object,
-		    GAsyncResult *res,
-		    gpointer user_data)
-{
-	NautilusPlacesSidebar *sidebar = user_data;
-	GError *error = NULL;
-	GVariant *variant;
-	GVariant *inner;
-	gsize len;
-
-	variant = g_dbus_proxy_call_finish (G_DBUS_PROXY (source_object), res, &error);
-	if (error != NULL) {
-		g_debug ("Failed to get pretty hostname: %s", error->message);
-		g_error_free (error);
-		return;
-	}
-
-	g_variant_get (variant, "(v)", &inner);
-	if (inner != NULL
-	    && g_variant_get_string (inner, &len)
-	    && len > 0) {
-		g_free (sidebar->hostname);
-		sidebar->hostname = g_variant_dup_string (inner, NULL);
-		update_places (sidebar);
-	}
-
-	g_variant_unref (variant);
-}
-
-static void
-update_hostname_async (NautilusPlacesSidebar *sidebar)
+update_hostname (NautilusPlacesSidebar *sidebar)
 {
 	GVariant *variant;
 	gsize len;
+	const gchar *hostname;
 
 	if (sidebar->hostnamed_proxy == NULL)
 		return;
 
 	variant = g_dbus_proxy_get_cached_property (sidebar->hostnamed_proxy,
 						    "PrettyHostname");
-	if (variant != NULL
-	    && g_variant_get_string (variant, &len)
-	    && len > 0) {
-		g_free (sidebar->hostname);
-		sidebar->hostname = g_variant_dup_string (variant, NULL);
-		g_variant_unref (variant);
-		update_places (sidebar);
-	} else {
-		/* Work around systemd-hostname not sending us back
-		 * the property value when changing values:
-		 * https://bugs.freedesktop.org/show_bug.cgi?id=37632 */
-		g_dbus_proxy_call (sidebar->hostnamed_proxy,
-				   "org.freedesktop.DBus.Properties.Get",
-				   g_variant_new ("(ss)", "org.freedesktop.hostname1", "PrettyHostname"),
-				   G_DBUS_CALL_FLAGS_NONE,
-				   -1,
-				   NULL,
-				   pretty_hostname_cb,
-				   sidebar);
+	if (variant == NULL) {
+		return;
 	}
-}
 
-static void
-on_hostname_changed (GDBusProxy *proxy,
-		     GVariant   *changed_properties,
-		     GStrv       invalidated_properties,
-		     gpointer    user_data)
-{
-	int i;
-	for (i = 0; invalidated_properties[i] != NULL; i++) {
-		if (g_str_equal (invalidated_properties[i], "PrettyHostname")) {
-			update_hostname_async (user_data);
-		}
+	hostname = g_variant_get_string (variant, &len);
+	if (len > 0 &&
+	    g_strcmp0 (sidebar->hostname, hostname) != 0) {
+		g_free (sidebar->hostname);
+		sidebar->hostname = g_strdup (hostname);
+		update_places (sidebar);
 	}
+
+	g_variant_unref (variant);
 }
 
 static void
@@ -3125,12 +3075,11 @@ hostname_proxy_new_cb (GObject      *source_object,
 		return;
 	}
 
-	g_signal_connect (sidebar->hostnamed_proxy,
-			  "g-properties-changed",
-			  G_CALLBACK (on_hostname_changed),
-			  sidebar);
-
-	update_hostname_async (sidebar);
+	g_signal_connect_swapped (sidebar->hostnamed_proxy,
+				  "g-properties-changed",
+				  G_CALLBACK (update_hostname),
+				  sidebar);
+	update_hostname (sidebar);
 }
 
 static void
@@ -3320,7 +3269,7 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 
 	sidebar->hostname = g_strdup (_("Computer"));
 	g_dbus_proxy_new_for_bus (G_BUS_TYPE_SYSTEM,
-				  G_DBUS_PROXY_FLAGS_NONE,
+				  G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES,
 				  NULL,
 				  "org.freedesktop.hostname1",
 				  "/org/freedesktop/hostname1",
