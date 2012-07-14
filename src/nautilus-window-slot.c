@@ -174,10 +174,10 @@ ensure_query_editor (NautilusWindowSlot *slot)
 {
 	g_assert (slot->query_editor != NULL);
 
-	gtk_widget_show (GTK_WIDGET (slot->query_editor));
-	nautilus_query_editor_grab_focus (slot->query_editor);
-
 	update_query_editor (slot);
+
+	gtk_widget_show (GTK_WIDGET (slot->query_editor));
+	gtk_widget_grab_focus (GTK_WIDGET (slot->query_editor));
 }
 
 void
@@ -186,9 +186,6 @@ nautilus_window_slot_set_query_editor_visible (NautilusWindowSlot *slot,
 {
 	if (visible) {
 		ensure_query_editor (slot);
-		gtk_widget_show (GTK_WIDGET (slot->query_editor));
-		nautilus_query_editor_set_visible (slot->query_editor, TRUE);
-		nautilus_query_editor_grab_focus (slot->query_editor);
 
 		if (slot->qe_changed_id == 0)
 			slot->qe_changed_id = g_signal_connect (slot->query_editor, "changed",
@@ -203,7 +200,7 @@ nautilus_window_slot_set_query_editor_visible (NautilusWindowSlot *slot,
 		slot->qe_changed_id = 0;
 		g_signal_handler_disconnect (slot->query_editor, slot->qe_cancel_id);
 		slot->qe_cancel_id = 0;
-		nautilus_query_editor_clear_query (slot->query_editor);
+		nautilus_query_editor_set_query (slot->query_editor, NULL);
 	}
 }
 

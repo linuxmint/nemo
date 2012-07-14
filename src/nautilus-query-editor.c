@@ -263,6 +263,16 @@ nautilus_query_editor_draw (GtkWidget *widget,
 }
 
 static void
+nautilus_query_editor_grab_focus (GtkWidget *widget)
+{
+	NautilusQueryEditor *editor = NAUTILUS_QUERY_EDITOR (widget);
+
+	if (gtk_widget_get_visible (widget)) {
+		entry_focus_hack (editor->details->entry, gtk_get_current_event_device ());
+	}
+}
+
+static void
 nautilus_query_editor_class_init (NautilusQueryEditorClass *class)
 {
 	GObjectClass *gobject_class;
@@ -274,6 +284,7 @@ nautilus_query_editor_class_init (NautilusQueryEditorClass *class)
 
 	widget_class = GTK_WIDGET_CLASS (class);
 	widget_class->draw = nautilus_query_editor_draw;
+	widget_class->grab_focus = nautilus_query_editor_grab_focus;
 
 	signals[CHANGED] =
 		g_signal_new ("changed",
@@ -966,7 +977,6 @@ nautilus_query_editor_init (NautilusQueryEditor *editor)
 {
 	editor->details = G_TYPE_INSTANCE_GET_PRIVATE (editor, NAUTILUS_TYPE_QUERY_EDITOR,
 						       NautilusQueryEditorDetails);
-	editor->details->is_visible = FALSE;
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (editor)),
 				     GTK_STYLE_CLASS_TOOLBAR);
@@ -976,16 +986,10 @@ nautilus_query_editor_init (NautilusQueryEditor *editor)
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 
 	editor->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-	gtk_widget_set_no_show_all (editor->details->vbox, TRUE);
 	gtk_container_set_border_width (GTK_CONTAINER (editor->details->vbox), 6);
 	gtk_box_pack_start (GTK_BOX (editor), editor->details->vbox,
 			    FALSE, FALSE, 0);
-}
-
-void
-nautilus_query_editor_set_default_query (NautilusQueryEditor *editor)
-{
-	nautilus_query_editor_changed (editor);
+	gtk_widget_show (editor->details->vbox);
 }
 
 static void
@@ -1060,18 +1064,6 @@ setup_widgets (NautilusQueryEditor *editor)
 	finish_first_line (editor, hbox, TRUE);
 }
 
-void
-nautilus_query_editor_set_visible (NautilusQueryEditor *editor,
-				   gboolean visible)
-{
-	editor->details->is_visible = visible;
-	if (visible) {
-		gtk_widget_show (editor->details->vbox);
-	} else {
-		gtk_widget_hide (editor->details->vbox);
-	}
-}
-
 static void
 nautilus_query_editor_changed_force (NautilusQueryEditor *editor, gboolean force_reload)
 {
@@ -1091,14 +1083,6 @@ static void
 nautilus_query_editor_changed (NautilusQueryEditor *editor)
 {
 	nautilus_query_editor_changed_force (editor, TRUE);
-}
-
-void
-nautilus_query_editor_grab_focus (NautilusQueryEditor *editor)
-{
-	if (editor->details->is_visible) {
-		entry_focus_hack (editor->details->entry, gtk_get_current_event_device ());
-	}
 }
 
 static void
@@ -1143,18 +1127,6 @@ nautilus_query_editor_get_query (NautilusQueryEditor *editor)
 	}
 	
 	return query;
-}
-
-void
-nautilus_query_editor_clear_query (NautilusQueryEditor *editor)
-{
-	editor->details->change_frozen = TRUE;
-	gtk_entry_set_text (GTK_ENTRY (editor->details->entry), "");
-
-	g_free (editor->details->last_set_query_text);
-	editor->details->last_set_query_text = g_strdup ("");
-
-	editor->details->change_frozen = FALSE;
 }
 
 GtkWidget *
@@ -1203,37 +1175,38 @@ nautilus_query_editor_set_location (NautilusQueryEditor *editor,
 }
 
 void
-nautilus_query_editor_set_query (NautilusQueryEditor *editor, NautilusQuery *query)
+nautilus_query_editor_set_query (NautilusQueryEditor	*editor,
+				 NautilusQuery		*query)
 {
 	NautilusQueryEditorRowType type;
-	char *text;
+	char *text = NULL;
 
-	if (!query) {
-		nautilus_query_editor_clear_query (editor);
-		return;
+	if (query != NULL) {
+		text = nautilus_query_get_text (query);
 	}
-
-	text = nautilus_query_get_text (query);
 
 	if (!text) {
 		text = g_strdup ("");
 	}
 
 	editor->details->change_frozen = TRUE;
-
 	gtk_entry_set_text (GTK_ENTRY (editor->details->entry), text);
 
 	g_free (editor->details->current_uri);
-	editor->details->current_uri = nautilus_query_get_location (query);
+	editor->details->current_uri = NULL;
 
-	update_location (editor);
+	if (query != NULL) {
+		editor->details->current_uri = nautilus_query_get_location (query);
+		update_location (editor);
 
-	for (type = 0; type < NAUTILUS_QUERY_EDITOR_ROW_LAST; type++) {
-		row_type[type].add_rows_from_query (editor, query);
+
+		for (type = 0; type < NAUTILUS_QUERY_EDITOR_ROW_LAST; type++) {
+			row_type[type].add_rows_from_query (editor, query);
+		}
 	}
-	
-	editor->details->change_frozen = FALSE;
 
 	g_free (editor->details->last_set_query_text);
 	editor->details->last_set_query_text = text;
+
+	editor->details->change_frozen = FALSE;
 }
