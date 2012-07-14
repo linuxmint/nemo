@@ -198,6 +198,9 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 	const char *new_text;
 
 	editor->details->got_preedit = FALSE;
+	if (!gtk_widget_get_realized (editor->details->entry)) {
+		gtk_widget_realize (editor->details->entry);
+	}
 
 	old_text = g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry)));
 
@@ -205,9 +208,9 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 			       G_CALLBACK (entry_preedit_changed_cb), editor);
 
 	new_event = gdk_event_copy ((GdkEvent *) event);
-	((GdkEventKey *) new_event)->window = gtk_widget_get_window (editor->details->entry);
-
-	gtk_widget_realize (editor->details->entry);
+	g_object_unref (((GdkEventKey *) new_event)->window);
+	((GdkEventKey *) new_event)->window = g_object_ref
+		(gtk_widget_get_window (editor->details->entry));
 	retval = gtk_widget_event (editor->details->entry, new_event);
 	gdk_event_free (new_event);
 
@@ -217,9 +220,7 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 	text_changed = strcmp (old_text, new_text) != 0;
 	g_free (old_text);
 
-	handled = (editor->details->got_preedit
-		   || (retval && text_changed));
-
+	handled = (editor->details->got_preedit) || (retval && text_changed);
 	editor->details->got_preedit = FALSE;
 
 	return handled;
