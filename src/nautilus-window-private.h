@@ -87,7 +87,6 @@ struct NautilusWindowDetails
         GtkWidget *toolbar;
         GtkActionGroup *toolbar_action_group;
         gboolean temporary_navigation_bar;
-        gboolean temporary_search_bar;
 
         /* focus widget before the location bar has been shown temporarily */
         GtkWidget *last_focus_widget;

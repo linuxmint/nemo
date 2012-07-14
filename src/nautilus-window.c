@@ -197,32 +197,6 @@ bookmark_list_get_uri_index (GList *list, GFile *location)
 }
 
 static void
-nautilus_window_hide_temporary_bars (NautilusWindow *window)
-{
-	NautilusWindowSlot *slot;
-	NautilusDirectory *directory;
-
-	slot = window->details->active_slot;
-
-	if (window->details->temporary_navigation_bar) {
-		directory = nautilus_directory_get (slot->location);
-
-		window->details->temporary_navigation_bar = FALSE;
-
-		/* if we're in a search directory, hide the main bar, and show the search
-		 * bar again; otherwise, just hide the whole toolbar.
-		 */
-		if (NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
-			nautilus_toolbar_set_show_main_bar (NAUTILUS_TOOLBAR (window->details->toolbar), FALSE);
-		} else {
-			gtk_widget_hide (window->details->toolbar);
-		}
-
-		nautilus_directory_unref (directory);
-	}
-}
-
-static void
 unset_focus_widget (NautilusWindow *window)
 {
 	if (window->details->last_focus_widget != NULL) {
@@ -232,27 +206,13 @@ unset_focus_widget (NautilusWindow *window)
 	}
 }
 
-static gboolean
-widget_is_in_temporary_bars (GtkWidget      *widget,
-			     NautilusWindow *window)
-{
-	gboolean res = FALSE;
-
-	if ((gtk_widget_get_ancestor (widget, NAUTILUS_TYPE_LOCATION_BAR) != NULL &&
-	     window->details->temporary_navigation_bar))
-		res = TRUE;
-
-	return res;
-}
-
 static void
 remember_focus_widget (NautilusWindow *window)
 {
 	GtkWidget *focus_widget;
 
 	focus_widget = gtk_window_get_focus (GTK_WINDOW (window));
-	if (focus_widget != NULL &&
-	    !widget_is_in_temporary_bars (focus_widget, window)) {
+	if (focus_widget != NULL) {
 		unset_focus_widget (window);
 
 		window->details->last_focus_widget = focus_widget;
@@ -289,7 +249,6 @@ navigation_bar_cancel_callback (GtkWidget      *widget,
 {
 	nautilus_toolbar_set_show_location_entry (NAUTILUS_TOOLBAR (window->details->toolbar), FALSE);
 
-	nautilus_window_hide_temporary_bars (window);
 	restore_focus_widget (window);
 }
 
@@ -299,7 +258,6 @@ navigation_bar_location_changed_callback (GtkWidget      *widget,
 					  NautilusWindow *window)
 {
 	nautilus_toolbar_set_show_location_entry (NAUTILUS_TOOLBAR (window->details->toolbar), FALSE);
-	nautilus_window_hide_temporary_bars (window);
 
 	restore_focus_widget (window);
 
@@ -780,8 +738,6 @@ nautilus_window_sync_location_widgets (NautilusWindow *window)
 
 	slot = window->details->active_slot;
 
-	nautilus_window_hide_temporary_bars (window);
-
 	/* Change the location bar and path bar to match the current location. */
 	if (slot->location != NULL) {
 		char *uri;
@@ -819,7 +775,6 @@ nautilus_window_ensure_location_bar (NautilusWindow *window)
 
 	remember_focus_widget (window);
 
-	nautilus_toolbar_set_show_main_bar (NAUTILUS_TOOLBAR (window->details->toolbar), TRUE);
 	nautilus_toolbar_set_show_location_entry (NAUTILUS_TOOLBAR (window->details->toolbar), TRUE);
 
 	location_bar = nautilus_toolbar_get_location_bar (NAUTILUS_TOOLBAR (window->details->toolbar));

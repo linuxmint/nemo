@@ -48,7 +48,6 @@ struct _NautilusToolbarPriv {
 
 	GtkToolItem *back_forward;
 
-	gboolean show_main_bar;
 	gboolean show_location_entry;
 };
 
@@ -56,7 +55,6 @@ enum {
 	PROP_ACTION_GROUP = 1,
 	PROP_UI_MANAGER,
 	PROP_SHOW_LOCATION_ENTRY,
-	PROP_SHOW_MAIN_BAR,
 	NUM_PROPERTIES
 };
 
@@ -71,9 +69,6 @@ toolbar_update_appearance (NautilusToolbar *self)
 
 	show_location_entry = self->priv->show_location_entry ||
 		g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY);
-
-	gtk_widget_set_visible (self->priv->toolbar,
-				self->priv->show_main_bar);
 
 	gtk_widget_set_visible (self->priv->location_bar,
 				show_location_entry);
@@ -227,7 +222,6 @@ nautilus_toolbar_init (NautilusToolbar *self)
 {
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, NAUTILUS_TYPE_TOOLBAR,
 						  NautilusToolbarPriv);
-	self->priv->show_main_bar = TRUE;	
 }
 
 static void
@@ -241,9 +235,6 @@ nautilus_toolbar_get_property (GObject *object,
 	switch (property_id) {
 	case PROP_SHOW_LOCATION_ENTRY:
 		g_value_set_boolean (value, self->priv->show_location_entry);
-		break;
-	case PROP_SHOW_MAIN_BAR:
-		g_value_set_boolean (value, self->priv->show_main_bar);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -268,9 +259,6 @@ nautilus_toolbar_set_property (GObject *object,
 		break;
 	case PROP_SHOW_LOCATION_ENTRY:
 		nautilus_toolbar_set_show_location_entry (self, g_value_get_boolean (value));
-		break;
-	case PROP_SHOW_MAIN_BAR:
-		nautilus_toolbar_set_show_main_bar (self, g_value_get_boolean (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -321,12 +309,6 @@ nautilus_toolbar_class_init (NautilusToolbarClass *klass)
 				      "Whether to show the location entry instead of the pathbar",
 				      FALSE,
 				      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	properties[PROP_SHOW_MAIN_BAR] =
-		g_param_spec_boolean ("show-main-bar",
-				      "Whether to show the main bar",
-				      "Whether to show the main toolbar",
-				      TRUE,
-				      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	
 	g_type_class_add_private (klass, sizeof (NautilusToolbarClass));
 	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
@@ -353,18 +335,6 @@ GtkWidget *
 nautilus_toolbar_get_location_bar (NautilusToolbar *self)
 {
 	return self->priv->location_bar;
-}
-
-void
-nautilus_toolbar_set_show_main_bar (NautilusToolbar *self,
-				    gboolean show_main_bar)
-{
-	if (show_main_bar != self->priv->show_main_bar) {
-		self->priv->show_main_bar = show_main_bar;
-		toolbar_update_appearance (self);
-
-		g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SHOW_MAIN_BAR]);
-	}
 }
 
 void
