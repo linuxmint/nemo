@@ -1449,7 +1449,6 @@ nautilus_window_key_press_event (GtkWidget *widget,
 	NautilusView *view;
 	GtkWidget *focus_widget;
 	int i;
-	gboolean handled = FALSE;
 
 	window = NAUTILUS_WINDOW (widget);
 
@@ -1501,8 +1500,7 @@ nautilus_window_key_press_event (GtkWidget *widget,
 		}
 	}
 
-	if (!handled &&
-	    event->keyval != GDK_KEY_slash /* don't steal slash key event, used for "go to" */ &&
+	if (event->keyval != GDK_KEY_slash /* don't steal slash key event, used for "go to" */ &&
 	    event->keyval != GDK_KEY_BackSpace &&
 	    event->keyval != GDK_KEY_Delete) {
 		if (nautilus_window_slot_handle_event (window->details->active_slot, event)) {
@@ -1511,10 +1509,7 @@ nautilus_window_key_press_event (GtkWidget *widget,
 		}
 	}
 
-	if (!handled)
-		handled = GTK_WIDGET_CLASS (nautilus_window_parent_class)->key_press_event (widget, event);
-
-	return handled;
+	return GTK_WIDGET_CLASS (nautilus_window_parent_class)->key_press_event (widget, event);
 }
 
 /*
