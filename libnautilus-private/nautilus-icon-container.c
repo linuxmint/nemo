@@ -3903,13 +3903,6 @@ destroy (GtkWidget *object)
 		container->details->size_allocation_count_id = 0;
 	}
 
-	/* destroy interactive search dialog */
-	if (container->details->search_window) {
-		gtk_widget_destroy (container->details->search_window);
-		container->details->search_window = NULL;
-		container->details->search_entry = NULL;
-	}
-
 	GTK_WIDGET_CLASS (nautilus_icon_container_parent_class)->destroy (object);
 }
 

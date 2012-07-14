@@ -261,14 +261,6 @@ struct NautilusIconContainerDetails {
 	eel_boolean_bit store_layout_timestamps : 1;
 	eel_boolean_bit store_layout_timestamps_when_finishing_new_icons : 1;
 	time_t layout_timestamp;
-
-	/* interactive search */
-	gboolean imcontext_changed;
-	int selected_iter;
-	GtkWidget *search_window;
-	GtkWidget *search_entry;
-	guint search_entry_changed_id;
-	guint typeselect_flush_timeout;
 };
 
 /* Private functions shared by mutiple files. */
