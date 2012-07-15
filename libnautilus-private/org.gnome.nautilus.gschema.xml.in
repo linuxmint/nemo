@@ -142,7 +142,7 @@
       <_description>If set to true, then Nautilus lets you edit and display file permissions in a more unix-like way, accessing some more esoteric options.</_description>
     </key>
     <key name="sort-directories-first" type="b">
-      <default>true</default>
+      <default>false</default>
       <_summary>Show folders first in windows</_summary>
       <_description>If set to true, then Nautilus shows folders prior to showing files in the icon and list views.</_description>
     </key>
