@@ -229,7 +229,7 @@
 
   <schema id="org.gnome.nautilus.list-view" path="/org/gnome/nautilus/list-view/" gettext-domain="nautilus">
     <key name="default-zoom-level" enum="org.gnome.nautilus.ZoomLevel">
-      <default>'smaller'</default>
+      <default>'small'</default>
       <_summary>Default list zoom level</_summary>
       <_description>Default zoom level used by the list view.</_description>
     </key>
