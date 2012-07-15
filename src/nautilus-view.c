@@ -224,6 +224,7 @@ struct NautilusViewDetails
 	gboolean menu_states_untrustworthy;
 	gboolean scripts_invalid;
 	gboolean templates_invalid;
+	gboolean templates_present;
 	gboolean reported_load_error;
 
 	/* flag to indicate that no file updates should be dispatched to subclasses.
@@ -5640,7 +5641,6 @@ update_templates_menu (NautilusView *view)
 	NautilusDirectory *directory;
 	GtkUIManager *ui_manager;
 	char *uri;
-	GtkAction *action;
 	char *templates_directory_uri;
 
 	if (nautilus_should_use_templates_directory ()) {
@@ -5683,8 +5683,7 @@ update_templates_menu (NautilusView *view)
 	}
 	nautilus_directory_list_free (sorted_copy);
 
-	action = gtk_action_group_get_action (view->details->dir_action_group, NAUTILUS_ACTION_NEW_DOCUMENTS);
-	gtk_action_set_visible (action, any_templates);
+	view->details->templates_present = any_templates;
 
 	g_free (templates_directory_uri);
 }
@@ -8898,14 +8897,15 @@ real_update_menus (NautilusView *view)
 		update_scripts_menu (view);
 	}
 
+	if (can_create_files
+	    && !selection_contains_recent
+	    && view->details->templates_invalid) {
+		update_templates_menu (view);
+	}
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_NEW_DOCUMENTS);
 	gtk_action_set_sensitive (action, can_create_files);
-	gtk_action_set_visible (action, !selection_contains_recent);
-
-	if (can_create_files && view->details->templates_invalid) {
-		update_templates_menu (view);
-	}
+	gtk_action_set_visible (action, !selection_contains_recent && view->details->templates_present);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_COPY_TO);
