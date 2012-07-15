@@ -2474,8 +2474,10 @@ location_show_original (NautilusPropertiesWindow *window)
 {
 	NautilusFile *file;
 
-	file = get_original_file (window);
-	return !nautilus_file_is_in_recent (file);
+	/* there is no way a recent item will be mixed with
+	   other items so just pick the first file to check */
+	file = NAUTILUS_FILE (g_list_nth_data (window->details->original_files, 0));
+	return (file != NULL && !nautilus_file_is_in_recent (file));
 }
 
 static gboolean
