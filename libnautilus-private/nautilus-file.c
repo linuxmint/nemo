@@ -5609,9 +5609,7 @@ nautilus_file_get_owner_as_string (NautilusFile *file, gboolean include_real_nam
 		user_name = g_strdup (eel_ref_str_peek (file->details->owner_real));
 	} else if (include_real_name &&
 		   strcmp (eel_ref_str_peek (file->details->owner), eel_ref_str_peek (file->details->owner_real)) != 0) {
-		user_name = g_strdup_printf ("%s - %s",
-					     eel_ref_str_peek (file->details->owner),
-					     eel_ref_str_peek (file->details->owner_real));
+		user_name = g_strdup (eel_ref_str_peek (file->details->owner_real));
 	} else {
 		user_name = g_strdup (eel_ref_str_peek (file->details->owner));
 	}
