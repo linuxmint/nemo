@@ -1452,7 +1452,6 @@ nautilus_window_key_press_event (GtkWidget *widget,
 	}
 
 	if (event->keyval != GDK_KEY_slash /* don't steal slash key event, used for "go to" */ &&
-	    event->keyval != GDK_KEY_BackSpace &&
 	    event->keyval != GDK_KEY_Delete) {
 		if (nautilus_window_slot_handle_event (window->details->active_slot, event)) {
 			toggle_toolbar_search_button (window, TRUE);
@@ -2248,8 +2247,6 @@ nautilus_window_class_init (NautilusWindowClass *class)
 			      G_TYPE_NONE, 1, NAUTILUS_TYPE_WINDOW_SLOT);
 
 	binding_set = gtk_binding_set_by_class (class);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, 0,
-				      "go-up", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_F5, 0,
 				      "reload", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_slash, 0,

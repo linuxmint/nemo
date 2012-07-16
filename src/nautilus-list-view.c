@@ -1536,7 +1536,6 @@ create_and_set_up_tree_view (NautilusListView *view)
 {
 	GtkCellRenderer *cell;
 	GtkTreeViewColumn *column;
-	GtkBindingSet *binding_set;
 	AtkObject *atk_obj;
 	GList *nautilus_columns;
 	GList *l;
@@ -1548,10 +1547,6 @@ create_and_set_up_tree_view (NautilusListView *view)
 							(GDestroyNotify)g_free,
 							(GDestroyNotify) g_object_unref);
 	gtk_tree_view_set_enable_search (view->details->tree_view, FALSE);
-
-	/* Don't handle backspace key. It's used to open the parent folder. */
-	binding_set = gtk_binding_set_by_class (GTK_WIDGET_GET_CLASS (view->details->tree_view));
-	gtk_binding_entry_remove (binding_set, GDK_KEY_BackSpace, 0);
 
 	view->details->drag_dest = 
 		nautilus_tree_view_drag_dest_new (view->details->tree_view);
