@@ -589,9 +589,6 @@ nautilus_desktop_icon_view_init (NautilusDesktopIconView *desktop_icon_view)
 	gtk_adjustment_set_value (hadj, 0);
 	gtk_adjustment_set_value (vadj, 0);
 
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (desktop_icon_view),
-					     GTK_SHADOW_NONE);
-
 	nautilus_view_ignore_hidden_file_preferences
 		(NAUTILUS_VIEW (desktop_icon_view));
 

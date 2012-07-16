@@ -9739,7 +9739,8 @@ window_slots_changed (NautilusWindow *window,
 	 * notebook, since when the notebook has tabs, it will draw its own
 	 * border.
 	 */
-	if (g_list_length (slots) > 1) {
+	if (g_list_length (slots) > 1 ||
+	    NAUTILUS_IS_DESKTOP_ICON_VIEW (view)) {
 		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_NONE);
 	} else {
 		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_IN);
