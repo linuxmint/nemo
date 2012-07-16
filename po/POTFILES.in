@@ -78,7 +78,6 @@ src/nautilus-shell-ui.xml
 src/nautilus-trash-bar.c
 src/nautilus-view.c
 src/nautilus-view-dnd.c
-src/nautilus-window-bookmarks.c
 src/nautilus-window.c
 src/nautilus-window-manage-views.c
 src/nautilus-window-menus.c
