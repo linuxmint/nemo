@@ -3333,7 +3333,6 @@ nautilus_places_sidebar_dispose (GObject *object)
 	}
 
 	g_clear_object (&sidebar->store);
-	g_clear_object (&sidebar->bookmarks);
 
 	if (sidebar->go_to_after_mount_slot) {
 		g_object_remove_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
@@ -3393,12 +3392,13 @@ nautilus_places_sidebar_set_parent_window (NautilusPlacesSidebar *sidebar,
 					   NautilusWindow *window)
 {
 	NautilusWindowSlot *slot;
+	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
 
 	sidebar->window = window;
 
 	slot = nautilus_window_get_active_slot (window);
 
-	sidebar->bookmarks = nautilus_bookmark_list_new ();
+	sidebar->bookmarks = nautilus_application_get_bookmarks (app);
 	sidebar->uri = nautilus_window_slot_get_current_uri (slot);
 
 	sidebar->bookmarks_changed_id =

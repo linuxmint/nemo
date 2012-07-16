@@ -34,6 +34,7 @@
 #include "nautilus-empty-view.h"
 #endif /* ENABLE_EMPTY_VIEW */
 
+#include "nautilus-bookmarks-window.h"
 #include "nautilus-connect-server-dialog.h"
 #include "nautilus-desktop-icon-view.h"
 #include "nautilus-desktop-window.h"
@@ -46,7 +47,6 @@
 #include "nautilus-progress-ui-handler.h"
 #include "nautilus-self-check-functions.h"
 #include "nautilus-window.h"
-#include "nautilus-window-bookmarks.h"
 #include "nautilus-window-manage-views.h"
 #include "nautilus-window-private.h"
 #include "nautilus-window-slot.h"
@@ -110,8 +110,37 @@ struct _NautilusApplicationPriv {
 	gchar *geometry;
 
 	NotifyNotification *unmount_notify;
+
+	GtkWidget *bookmarks_window;
+	NautilusBookmarkList *bookmark_list;
 };
 
+NautilusBookmarkList *
+nautilus_application_get_bookmarks (NautilusApplication *application)
+{
+	return application->priv->bookmark_list;
+}
+
+void
+nautilus_application_edit_bookmarks (NautilusApplication *application,
+				     NautilusWindow      *window)
+{
+	GtkWindow *bookmarks_window;
+
+	bookmarks_window = GTK_WINDOW (application->priv->bookmarks_window);
+
+	if (bookmarks_window == NULL) {
+		bookmarks_window = nautilus_bookmarks_window_new (window, application->priv->bookmark_list);
+		application->priv->bookmarks_window = GTK_WIDGET (bookmarks_window);
+
+		g_object_add_weak_pointer (G_OBJECT (bookmarks_window),
+					   (gpointer *) &application->priv->bookmarks_window);
+	}
+
+	gtk_window_set_transient_for (bookmarks_window, GTK_WINDOW (window));
+	gtk_window_set_screen (bookmarks_window, gtk_window_get_screen (GTK_WINDOW (window)));
+	gtk_window_present (bookmarks_window);
+}
 
 void
 nautilus_application_notify_unmount_done (NautilusApplication *application,
@@ -921,6 +950,7 @@ nautilus_application_finalize (GObject *object)
 
 	g_clear_object (&application->priv->volume_monitor);
 	g_clear_object (&application->priv->progress_handler);
+	g_clear_object (&application->priv->bookmark_list);
 
 	g_free (application->priv->geometry);
 
@@ -1353,6 +1383,8 @@ nautilus_application_startup (GApplication *app)
 				 G_CALLBACK (mount_removed_callback), self, 0);
 	g_signal_connect_object (self->priv->volume_monitor, "mount_added",
 				 G_CALLBACK (mount_added_callback), self, 0);
+
+	self->priv->bookmark_list = nautilus_bookmark_list_new ();
 
 	/* Check the user's ~/.nautilus directories and post warnings
 	 * if there are problems.

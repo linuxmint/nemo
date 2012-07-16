@@ -154,8 +154,6 @@ nautilus_SOURCES = \
 	nautilus-view-dnd.h			\
 	nautilus-view-factory.c 		\
 	nautilus-view-factory.h 		\
-	nautilus-window-bookmarks.c		\
-	nautilus-window-bookmarks.h		\
 	nautilus-window-manage-views.c		\
 	nautilus-window-manage-views.h		\
 	nautilus-window-menus.c         	\

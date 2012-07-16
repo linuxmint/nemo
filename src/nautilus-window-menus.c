@@ -36,7 +36,6 @@
 #include "nautilus-navigation-action.h"
 #include "nautilus-notebook.h"
 #include "nautilus-window-manage-views.h"
-#include "nautilus-window-bookmarks.h"
 #include "nautilus-window-private.h"
 #include "nautilus-desktop-window.h"
 #include <gtk/gtk.h>
@@ -320,14 +319,27 @@ static void
 action_add_bookmark_callback (GtkAction *action,
 			      gpointer user_data)
 {
-        nautilus_window_add_bookmark_for_current_location (NAUTILUS_WINDOW (user_data));
+	NautilusWindow *window = user_data;
+	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
+	NautilusBookmark *bookmark;
+	NautilusWindowSlot *slot;
+	NautilusBookmarkList *list;
+
+	slot = nautilus_window_get_active_slot (window);
+	bookmark = slot->current_location_bookmark;
+	list = nautilus_application_get_bookmarks (app);
+
+	if (!nautilus_bookmark_list_contains (list, bookmark)) {
+		nautilus_bookmark_list_append (list, bookmark);
+	}
 }
 
 static void
 action_edit_bookmarks_callback (GtkAction *action, 
 				gpointer user_data)
 {
-        nautilus_window_edit_bookmarks (NAUTILUS_WINDOW (user_data));
+	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
+	nautilus_application_edit_bookmarks (app, NAUTILUS_WINDOW (user_data));
 }
 
 static void

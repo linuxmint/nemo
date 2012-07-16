@@ -45,10 +45,6 @@ struct NautilusWindowDetails
         guint extensions_menu_merge_id;
         GtkActionGroup *extensions_menu_action_group;
 
-        GtkActionGroup *bookmarks_action_group;
-        guint bookmarks_merge_id;
-        NautilusBookmarkList *bookmark_list;
-
 	NautilusWindowShowHiddenFilesMode show_hidden_files_mode;
 
 	/* View As menu */

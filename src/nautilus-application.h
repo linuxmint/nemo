@@ -28,6 +28,7 @@
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 
+#include "nautilus-bookmark-list.h"
 #include "nautilus-window.h"
 
 #define NAUTILUS_DESKTOP_ICON_VIEW_IID	"OAFIID:Nautilus_File_Manager_Desktop_Icon_View"
@@ -76,5 +77,10 @@ void nautilus_application_notify_unmount_show (NautilusApplication *application,
 
 void nautilus_application_notify_unmount_done (NautilusApplication *application,
 					       const gchar *message);
+
+NautilusBookmarkList *
+     nautilus_application_get_bookmarks  (NautilusApplication *application);
+void nautilus_application_edit_bookmarks (NautilusApplication *application,
+					  NautilusWindow      *window);
 
 #endif /* __NAUTILUS_APPLICATION_H__ */

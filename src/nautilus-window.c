@@ -41,7 +41,6 @@
 #include "nautilus-toolbar.h"
 #include "nautilus-view-factory.h"
 #include "nautilus-window-manage-views.h"
-#include "nautilus-window-bookmarks.h"
 #include "nautilus-window-slot.h"
 
 #include <eel/eel-debug.h>
@@ -1115,8 +1114,6 @@ nautilus_window_constructed (GObject *self)
 	gtk_widget_show (window->details->main_view);
 
 	window->details->notebook = create_notebook (window);
-
-	nautilus_window_initialize_bookmarks_menu (window);
 	nautilus_window_set_initial_window_geometry (window);
 
 	slot = nautilus_window_open_slot (window, 0);
@@ -1218,7 +1215,6 @@ nautilus_window_finalize (GObject *object)
 	nautilus_window_finalize_menus (window);
 
 	g_clear_object (&window->details->nav_state);
-	g_clear_object (&window->details->bookmark_list);
 	g_clear_object (&window->details->ui_manager);
 
 	free_stored_viewers (window);
