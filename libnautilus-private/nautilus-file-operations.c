@@ -2353,7 +2353,7 @@ volume_mount_cb (GObject *source_object,
 		if (error->code != G_IO_ERROR_FAILED_HANDLED &&
                     error->code != G_IO_ERROR_ALREADY_MOUNTED) {
 			name = g_volume_get_name (G_VOLUME (source_object));
-			primary = g_strdup_printf (_("Unable to mount %s"), name);
+			primary = g_strdup_printf (_("Unable to access %s"), name);
 			g_free (name);
 			success = FALSE;
 			eel_show_error_dialog (primary,
