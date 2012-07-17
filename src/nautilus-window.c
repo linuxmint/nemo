@@ -712,15 +712,18 @@ nautilus_window_sync_search_widgets (NautilusWindow *window)
 {
 	NautilusDirectory *directory;
 	NautilusSearchDirectory *search_directory;
+	NautilusWindowSlot *slot;
 
 	search_directory = NULL;
+	slot = window->details->active_slot;
 
-	directory = nautilus_directory_get (window->details->active_slot->location);
+	directory = nautilus_directory_get (slot->location);
 	if (NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
 		search_directory = NAUTILUS_SEARCH_DIRECTORY (directory);
 	}
 
-	if (search_directory != NULL) {
+	if (search_directory != NULL || slot->load_with_search) {
+		slot->load_with_search = FALSE;
 		toggle_toolbar_search_button (window, TRUE);
 	} else {
 		toggle_toolbar_search_button (window, FALSE);

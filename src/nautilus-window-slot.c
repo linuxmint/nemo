@@ -64,6 +64,8 @@ sync_search_directory (NautilusWindowSlot *slot)
 {
 	NautilusDirectory *directory;
 	NautilusQuery *query;
+	gchar *text;
+	GFile *location;
 
 	g_assert (NAUTILUS_IS_FILE (slot->viewed_file));
 
@@ -71,11 +73,21 @@ sync_search_directory (NautilusWindowSlot *slot)
 	g_assert (NAUTILUS_IS_SEARCH_DIRECTORY (directory));
 
 	query = nautilus_query_editor_get_query (slot->query_editor);
-	nautilus_search_directory_set_query (NAUTILUS_SEARCH_DIRECTORY (directory),
-					     query);
-	g_object_unref (query);
-	nautilus_window_slot_reload (slot);
+	text = nautilus_query_get_text (query);
 
+	if (!strlen (text)) {
+		location = nautilus_query_editor_get_location (slot->query_editor);
+		slot->load_with_search = TRUE;
+		nautilus_window_slot_open_location (slot, location, 0);
+		g_object_unref (location);
+	} else {
+		nautilus_search_directory_set_query (NAUTILUS_SEARCH_DIRECTORY (directory),
+						     query);
+		nautilus_window_slot_reload (slot);
+	}
+
+	g_free (text);
+	g_object_unref (query);
 	nautilus_directory_unref (directory);
 }
 
