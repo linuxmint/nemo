@@ -36,16 +36,16 @@
 typedef struct NautilusSearchEngineTrackerDetails NautilusSearchEngineTrackerDetails;
 
 typedef struct NautilusSearchEngineTracker {
-	NautilusSearchEngine parent;
+	GObject parent;
 	NautilusSearchEngineTrackerDetails *details;
 } NautilusSearchEngineTracker;
 
 typedef struct {
-	NautilusSearchEngineClass parent_class;
+	GObjectClass parent_class;
 } NautilusSearchEngineTrackerClass;
 
 GType nautilus_search_engine_tracker_get_type (void);
 
-NautilusSearchEngine* nautilus_search_engine_tracker_new (void);
+NautilusSearchEngineTracker* nautilus_search_engine_tracker_new (void);
 
 #endif /* NAUTILUS_SEARCH_ENGINE_TRACKER_H */

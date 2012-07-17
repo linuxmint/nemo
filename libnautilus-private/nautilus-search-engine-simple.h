@@ -36,16 +36,16 @@
 typedef struct NautilusSearchEngineSimpleDetails NautilusSearchEngineSimpleDetails;
 
 typedef struct NautilusSearchEngineSimple {
-	NautilusSearchEngine parent;
+	GObject parent;
 	NautilusSearchEngineSimpleDetails *details;
 } NautilusSearchEngineSimple;
 
 typedef struct {
-	NautilusSearchEngineClass parent_class;
+	GObjectClass parent_class;
 } NautilusSearchEngineSimpleClass;
 
 GType          nautilus_search_engine_simple_get_type  (void);
 
-NautilusSearchEngine* nautilus_search_engine_simple_new       (void);
+NautilusSearchEngineSimple* nautilus_search_engine_simple_new       (void);
 
 #endif /* NAUTILUS_SEARCH_ENGINE_SIMPLE_H */

@@ -1,3 +1,4 @@
+#include <libnautilus-private/nautilus-search-provider.h>
 #include <libnautilus-private/nautilus-search-engine.h>
 #include <gtk/gtk.h>
 
@@ -46,10 +47,10 @@ main (int argc, char* argv[])
 
 	query = nautilus_query_new ();
 	nautilus_query_set_text (query, "richard hult");
-	nautilus_search_engine_set_query (engine, query);
+	nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (engine), query);
 	g_object_unref (query);
 
-	nautilus_search_engine_start (engine);
+	nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine));
        
 	gtk_main ();
 	return 0;

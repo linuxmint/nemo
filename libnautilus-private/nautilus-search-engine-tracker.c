@@ -22,6 +22,7 @@
  */
 
 #include <config.h>
+#include "nautilus-search-provider.h"
 #include "nautilus-search-engine-tracker.h"
 #include <string.h>
 #include <gio/gio.h>
@@ -36,9 +37,13 @@ struct NautilusSearchEngineTrackerDetails {
 	GCancellable  *cancellable;
 };
 
-G_DEFINE_TYPE (NautilusSearchEngineTracker,
-	       nautilus_search_engine_tracker,
-	       NAUTILUS_TYPE_SEARCH_ENGINE);
+static void nautilus_search_provider_init (NautilusSearchProviderIface  *iface);
+
+G_DEFINE_TYPE_WITH_CODE (NautilusSearchEngineTracker,
+			 nautilus_search_engine_tracker,
+			 G_TYPE_OBJECT,
+			 G_IMPLEMENT_INTERFACE (NAUTILUS_TYPE_SEARCH_PROVIDER,
+						nautilus_search_provider_init))
 
 static void
 finalize (GObject *object)
@@ -89,19 +94,14 @@ cursor_callback (GObject      *object,
 	success = tracker_sparql_cursor_next_finish (cursor, result, &error);
 
 	if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-		tracker->details->query_pending = FALSE;
-		nautilus_search_engine_error (NAUTILUS_SEARCH_ENGINE (tracker), error->message);
-		g_error_free (error);
-		g_object_unref (cursor);
-
-		return;
+		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (tracker), error->message);
 	}
 
 	g_clear_error (&error);
 
 	if (!success) {
 		tracker->details->query_pending = FALSE;
-		nautilus_search_engine_finished (NAUTILUS_SEARCH_ENGINE (tracker));
+		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (tracker));
 		g_object_unref (cursor);
 
 		return;
@@ -109,7 +109,7 @@ cursor_callback (GObject      *object,
 
 	/* We iterate result by result, not n at a time. */
 	hits = g_list_append (NULL, (gchar*) tracker_sparql_cursor_get_string (cursor, 0, NULL));
-	nautilus_search_engine_hits_added (NAUTILUS_SEARCH_ENGINE (tracker), hits);
+	nautilus_search_provider_hits_added (NAUTILUS_SEARCH_PROVIDER (tracker), hits);
 	g_list_free (hits);
 
 	/* Get next */
@@ -134,17 +134,14 @@ query_callback (GObject      *object,
 	                                                 &error);
 
 	if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-		tracker->details->query_pending = FALSE;
-		nautilus_search_engine_error (NAUTILUS_SEARCH_ENGINE (tracker), error->message);
-		g_error_free (error);
-		return;
+		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (tracker), error->message);
 	}
 
 	g_clear_error (&error);
 
 	if (!cursor) {
 		tracker->details->query_pending = FALSE;
-		nautilus_search_engine_finished (NAUTILUS_SEARCH_ENGINE (tracker));
+		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (tracker));
 		return;
 	}
 
@@ -152,7 +149,7 @@ query_callback (GObject      *object,
 }
 
 static void
-nautilus_search_engine_tracker_start (NautilusSearchEngine *engine)
+nautilus_search_engine_tracker_start (NautilusSearchProvider *provider)
 {
 	NautilusSearchEngineTracker *tracker;
 	gchar	*query_text, *search_text, *location_uri, *downcase;
@@ -160,7 +157,7 @@ nautilus_search_engine_tracker_start (NautilusSearchEngine *engine)
 	GList *mimetypes, *l;
 	gint mime_count;
 
-	tracker = NAUTILUS_SEARCH_ENGINE_TRACKER (engine);
+	tracker = NAUTILUS_SEARCH_ENGINE_TRACKER (provider);
 
 	if (tracker->details->query_pending) {
 		return;
@@ -232,11 +229,11 @@ nautilus_search_engine_tracker_start (NautilusSearchEngine *engine)
 }
 
 static void
-nautilus_search_engine_tracker_stop (NautilusSearchEngine *engine)
+nautilus_search_engine_tracker_stop (NautilusSearchProvider *provider)
 {
 	NautilusSearchEngineTracker *tracker;
 
-	tracker = NAUTILUS_SEARCH_ENGINE_TRACKER (engine);
+	tracker = NAUTILUS_SEARCH_ENGINE_TRACKER (provider);
 	
 	if (tracker->details->query && tracker->details->query_pending) {
 		g_cancellable_cancel (tracker->details->cancellable);
@@ -246,11 +243,12 @@ nautilus_search_engine_tracker_stop (NautilusSearchEngine *engine)
 }
 
 static void
-nautilus_search_engine_tracker_set_query (NautilusSearchEngine *engine, NautilusQuery *query)
+nautilus_search_engine_tracker_set_query (NautilusSearchProvider *provider,
+					  NautilusQuery *query)
 {
 	NautilusSearchEngineTracker *tracker;
 
-	tracker = NAUTILUS_SEARCH_ENGINE_TRACKER (engine);
+	tracker = NAUTILUS_SEARCH_ENGINE_TRACKER (provider);
 
 	if (query) {
 		g_object_ref (query);
@@ -264,18 +262,20 @@ nautilus_search_engine_tracker_set_query (NautilusSearchEngine *engine, Nautilus
 }
 
 static void
+nautilus_search_provider_init (NautilusSearchProviderIface *iface)
+{
+	iface->set_query = nautilus_search_engine_tracker_set_query;
+	iface->start = nautilus_search_engine_tracker_start;
+	iface->stop = nautilus_search_engine_tracker_stop;
+}
+
+static void
 nautilus_search_engine_tracker_class_init (NautilusSearchEngineTrackerClass *class)
 {
 	GObjectClass *gobject_class;
-	NautilusSearchEngineClass *engine_class;
 
 	gobject_class = G_OBJECT_CLASS (class);
 	gobject_class->finalize = finalize;
-
-	engine_class = NAUTILUS_SEARCH_ENGINE_CLASS (class);
-	engine_class->set_query = nautilus_search_engine_tracker_set_query;
-	engine_class->start = nautilus_search_engine_tracker_start;
-	engine_class->stop = nautilus_search_engine_tracker_stop;
 
 	g_type_class_add_private (class, sizeof (NautilusSearchEngineTrackerDetails));
 }
@@ -288,7 +288,7 @@ nautilus_search_engine_tracker_init (NautilusSearchEngineTracker *engine)
 }
 
 
-NautilusSearchEngine *
+NautilusSearchEngineTracker *
 nautilus_search_engine_tracker_new (void)
 {
 	NautilusSearchEngineTracker *engine;
@@ -306,5 +306,5 @@ nautilus_search_engine_tracker_new (void)
 	engine = g_object_new (NAUTILUS_TYPE_SEARCH_ENGINE_TRACKER, NULL);
 	engine->details->connection = connection;
 
-	return NAUTILUS_SEARCH_ENGINE (engine);
+	return engine;
 }

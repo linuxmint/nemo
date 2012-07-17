@@ -28,6 +28,7 @@
 #include "nautilus-file.h"
 #include "nautilus-file-private.h"
 #include "nautilus-file-utilities.h"
+#include "nautilus-search-provider.h"
 #include "nautilus-search-engine.h"
 #include <eel/eel-glib-extensions.h>
 #include <gtk/gtk.h>
@@ -139,17 +140,17 @@ start_or_stop_search_engine (NautilusSearchDirectory *search, gboolean adding)
 		search->details->search_running = TRUE;
 		search->details->search_finished = FALSE;
 		ensure_search_engine (search);
-		nautilus_search_engine_set_query (search->details->engine, search->details->query);
+		nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (search->details->engine), search->details->query);
 
 		reset_file_list (search);
 
-		nautilus_search_engine_start (search->details->engine);
+		nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (search->details->engine));
 	} else if (!adding && (!search->details->monitor_list ||
 		   !search->details->pending_callback_list) &&
 		   search->details->engine &&
 		   search->details->search_running) {
 		search->details->search_running = FALSE;
-		nautilus_search_engine_stop (search->details->engine);
+		nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (search->details->engine));
 
 		reset_file_list (search);
 	}
@@ -603,7 +604,7 @@ search_force_reload (NautilusDirectory *directory)
 	reset_file_list (search);
 	
 	if (search->details->search_running) {
-		nautilus_search_engine_stop (search->details->engine);
+		nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (search->details->engine));
 		search->details->search_running = FALSE;
 	}
 }
@@ -690,7 +691,7 @@ search_dispose (GObject *object)
 
 	if (search->details->engine) {
 		if (search->details->search_running) {
-			nautilus_search_engine_stop (search->details->engine);
+			nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (search->details->engine));
 		}
 		
 		g_object_unref (search->details->engine);

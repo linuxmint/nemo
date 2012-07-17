@@ -25,7 +25,6 @@
 #define NAUTILUS_SEARCH_ENGINE_H
 
 #include <glib-object.h>
-#include <libnautilus-private/nautilus-query.h>
 
 #define NAUTILUS_TYPE_SEARCH_ENGINE		(nautilus_search_engine_get_type ())
 #define NAUTILUS_SEARCH_ENGINE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_SEARCH_ENGINE, NautilusSearchEngine))
@@ -43,31 +42,10 @@ typedef struct NautilusSearchEngine {
 
 typedef struct {
 	GObjectClass parent_class;
-	
-	/* VTable */
-	void (*set_query) (NautilusSearchEngine *engine, NautilusQuery *query);
-	void (*start) (NautilusSearchEngine *engine);
-	void (*stop) (NautilusSearchEngine *engine);
-
-	/* Signals */
-	void (*hits_added) (NautilusSearchEngine *engine, GList *hits);
-	void (*hits_subtracted) (NautilusSearchEngine *engine, GList *hits);
-	void (*finished) (NautilusSearchEngine *engine);
-	void (*error) (NautilusSearchEngine *engine, const char *error_message);
 } NautilusSearchEngineClass;
 
 GType          nautilus_search_engine_get_type  (void);
-gboolean       nautilus_search_engine_enabled (void);
 
 NautilusSearchEngine* nautilus_search_engine_new       (void);
-
-void           nautilus_search_engine_set_query (NautilusSearchEngine *engine, NautilusQuery *query);
-void	       nautilus_search_engine_start (NautilusSearchEngine *engine);
-void	       nautilus_search_engine_stop (NautilusSearchEngine *engine);
-
-void	       nautilus_search_engine_hits_added (NautilusSearchEngine *engine, GList *hits);
-void	       nautilus_search_engine_hits_subtracted (NautilusSearchEngine *engine, GList *hits);
-void	       nautilus_search_engine_finished (NautilusSearchEngine *engine);
-void	       nautilus_search_engine_error (NautilusSearchEngine *engine, const char *error_message);
 
 #endif /* NAUTILUS_SEARCH_ENGINE_H */

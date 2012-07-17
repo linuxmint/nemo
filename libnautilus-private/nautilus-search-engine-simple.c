@@ -22,6 +22,7 @@
  */
 
 #include <config.h>
+#include "nautilus-search-provider.h"
 #include "nautilus-search-engine-simple.h"
 
 #include <string.h>
@@ -55,8 +56,13 @@ struct NautilusSearchEngineSimpleDetails {
 	gboolean query_finished;
 };
 
-G_DEFINE_TYPE (NautilusSearchEngineSimple, nautilus_search_engine_simple,
-	       NAUTILUS_TYPE_SEARCH_ENGINE);
+static void nautilus_search_provider_init (NautilusSearchProviderIface  *iface);
+
+G_DEFINE_TYPE_WITH_CODE (NautilusSearchEngineSimple,
+			 nautilus_search_engine_simple,
+			 G_TYPE_OBJECT,
+			 G_IMPLEMENT_INTERFACE (NAUTILUS_TYPE_SEARCH_PROVIDER,
+						nautilus_search_provider_init))
 
 static void
 finalize (GObject *object)
@@ -134,7 +140,7 @@ search_thread_done_idle (gpointer user_data)
 	data = user_data;
 
 	if (!g_cancellable_is_cancelled (data->cancellable)) {
-		nautilus_search_engine_finished (NAUTILUS_SEARCH_ENGINE (data->engine));
+		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (data->engine));
 		data->engine->details->active_search = NULL;
 	}
 	
@@ -157,8 +163,8 @@ search_thread_add_hits_idle (gpointer user_data)
 	hits = user_data;
 
 	if (!g_cancellable_is_cancelled (hits->thread_data->cancellable)) {
-		nautilus_search_engine_hits_added (NAUTILUS_SEARCH_ENGINE (hits->thread_data->engine),
-						   hits->uris);
+		nautilus_search_provider_hits_added (NAUTILUS_SEARCH_PROVIDER (hits->thread_data->engine),
+						     hits->uris);
 	}
 
 	g_list_free_full (hits->uris, g_free);
@@ -323,13 +329,13 @@ search_thread_func (gpointer user_data)
 }
 
 static void
-nautilus_search_engine_simple_start (NautilusSearchEngine *engine)
+nautilus_search_engine_simple_start (NautilusSearchProvider *provider)
 {
 	NautilusSearchEngineSimple *simple;
 	SearchThreadData *data;
 	GThread *thread;
 	
-	simple = NAUTILUS_SEARCH_ENGINE_SIMPLE (engine);
+	simple = NAUTILUS_SEARCH_ENGINE_SIMPLE (provider);
 
 	if (simple->details->active_search != NULL) {
 		return;
@@ -348,11 +354,11 @@ nautilus_search_engine_simple_start (NautilusSearchEngine *engine)
 }
 
 static void
-nautilus_search_engine_simple_stop (NautilusSearchEngine *engine)
+nautilus_search_engine_simple_stop (NautilusSearchProvider *provider)
 {
 	NautilusSearchEngineSimple *simple;
 
-	simple = NAUTILUS_SEARCH_ENGINE_SIMPLE (engine);
+	simple = NAUTILUS_SEARCH_ENGINE_SIMPLE (provider);
 
 	if (simple->details->active_search != NULL) {
 		g_cancellable_cancel (simple->details->active_search->cancellable);
@@ -361,11 +367,12 @@ nautilus_search_engine_simple_stop (NautilusSearchEngine *engine)
 }
 
 static void
-nautilus_search_engine_simple_set_query (NautilusSearchEngine *engine, NautilusQuery *query)
+nautilus_search_engine_simple_set_query (NautilusSearchProvider *provider,
+					 NautilusQuery          *query)
 {
 	NautilusSearchEngineSimple *simple;
 
-	simple = NAUTILUS_SEARCH_ENGINE_SIMPLE (engine);
+	simple = NAUTILUS_SEARCH_ENGINE_SIMPLE (provider);
 
 	if (query) {
 		g_object_ref (query);
@@ -379,18 +386,20 @@ nautilus_search_engine_simple_set_query (NautilusSearchEngine *engine, NautilusQ
 }
 
 static void
+nautilus_search_provider_init (NautilusSearchProviderIface *iface)
+{
+	iface->set_query = nautilus_search_engine_simple_set_query;
+	iface->start = nautilus_search_engine_simple_start;
+	iface->stop = nautilus_search_engine_simple_stop;
+}
+
+static void
 nautilus_search_engine_simple_class_init (NautilusSearchEngineSimpleClass *class)
 {
 	GObjectClass *gobject_class;
-	NautilusSearchEngineClass *engine_class;
 
 	gobject_class = G_OBJECT_CLASS (class);
 	gobject_class->finalize = finalize;
-
-	engine_class = NAUTILUS_SEARCH_ENGINE_CLASS (class);
-	engine_class->set_query = nautilus_search_engine_simple_set_query;
-	engine_class->start = nautilus_search_engine_simple_start;
-	engine_class->stop = nautilus_search_engine_simple_stop;
 
 	g_type_class_add_private (class, sizeof (NautilusSearchEngineSimpleDetails));
 }
@@ -402,10 +411,10 @@ nautilus_search_engine_simple_init (NautilusSearchEngineSimple *engine)
 						       NautilusSearchEngineSimpleDetails);
 }
 
-NautilusSearchEngine *
+NautilusSearchEngineSimple *
 nautilus_search_engine_simple_new (void)
 {
-	NautilusSearchEngine *engine;
+	NautilusSearchEngineSimple *engine;
 
 	engine = g_object_new (NAUTILUS_TYPE_SEARCH_ENGINE_SIMPLE, NULL);
 
