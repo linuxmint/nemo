@@ -23,15 +23,15 @@
 
 #include <config.h>
 #include "nautilus-query-editor.h"
-#include "nautilus-file-utilities.h"
 
 #include <string.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
-
-#include <eel/eel-glib-extensions.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+
+#include <eel/eel-glib-extensions.h>
+#include <libnautilus-private/nautilus-file-utilities.h>
 
 typedef enum {
 	NAUTILUS_QUERY_EDITOR_ROW_TYPE,
