@@ -604,8 +604,7 @@ search_force_reload (NautilusDirectory *directory)
 	
 	if (search->details->search_running) {
 		nautilus_search_engine_stop (search->details->engine);
-		nautilus_search_engine_set_query (search->details->engine, search->details->query);
-		nautilus_search_engine_start (search->details->engine);
+		search->details->search_running = FALSE;
 	}
 }
 
