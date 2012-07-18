@@ -1,4 +1,3 @@
-01_lpi.patch
 03_translations_list_update.patch
 04_suppress_umount_in_ltsp.patch
 05_desktop_menu_export.patch

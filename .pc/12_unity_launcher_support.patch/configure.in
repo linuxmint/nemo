@@ -303,7 +303,6 @@ PKG_CHECK_MODULES(NEMO, [
 	gio-unix-2.0 >= glib_minver
 	gsettings-desktop-schemas
 	libnotify >= notify_minver
-	launchpad-integration-3.0
 ])
 
 AC_SUBST(NEMO_CFLAGS)

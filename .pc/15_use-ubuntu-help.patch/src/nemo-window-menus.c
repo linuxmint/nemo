@@ -60,7 +60,6 @@
 #include <libnemo-private/nemo-signaller.h>
 #include <libnemo-private/nemo-trash-monitor.h>
 #include <string.h>
-#include <launchpad-integration.h>
 
 #define MENU_PATH_EXTENSION_ACTIONS                     "/MenuBar/File/Extension Actions"
 #define POPUP_PATH_EXTENSION_ACTIONS                     "/background/Before Zoom Items/Extension Actions"
@@ -1303,8 +1302,6 @@ nemo_window_initialize_menus (NemoWindow *window)
 
 	/* add the UI */
 	gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nemo/nemo-shell-ui.xml", NULL);
-
-	launchpad_integration_add_ui (ui_manager, "/MenuBar/Help/LaunchpadItems");
 
 	nemo_window_initialize_trash_icon_monitor (window);
 	nemo_window_initialize_go_menu (window);

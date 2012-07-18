@@ -115,7 +115,6 @@
 		<menuitem action="NemoHelpSort"/>
 		<menuitem action="NemoHelpLost"/>
 		<menuitem action="NemoHelpShare"/>
-		<placeholder name='LaunchpadItems'/>
 		<separator/>
 		<menuitem name="About Nemo" action="About Nemo"/>
 	</menu>
