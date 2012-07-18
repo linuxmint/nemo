@@ -38,6 +38,7 @@ libnautilus-private/nautilus-program-choosing.c
 libnautilus-private/nautilus-progress-info.c
 libnautilus-private/nautilus-query.c
 libnautilus-private/nautilus-search-directory-file.c
+libnautilus-private/nautilus-search-engine.c
 libnautilus-private/nautilus-tree-view-drag-dest.c
 libnautilus-private/nautilus-vfs-file.c
 libnautilus-private/org.gnome.nautilus.gschema.xml.in
