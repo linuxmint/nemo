@@ -14,7 +14,7 @@ DEB_CONFIGURE_EXTRA_FLAGS += --libexecdir=/usr/lib/nemo \
                              --enable-introspection \
                              --disable-appindicator
 LDFLAGS += -Wl,-z,defs -Wl,-O1 -Wl,--as-needed
-DEB_DH_MAKESHLIBS_ARGS_libnemo-extension1a += -V 'libnemo-extension1a (>= 1:2.91)'
+DEB_DH_MAKESHLIBS_ARGS_libnemo-extension1a += -V 'libnemo-extension1a'
 DEB_DH_MAKESHLIBS_ARGS_nemo += -Xusr/lib/nemo/extensions-3.0/
 
 binary-post-install/nemo-data::
