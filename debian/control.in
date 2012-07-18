@@ -28,10 +28,7 @@ Build-Depends: debhelper (>= 8),
                gobject-introspection (>= 0.9.12-4~),
                libgirepository1.0-dev (>= 0.9.12),
                libglib2.0-doc,
-               libgtk-3-doc,
-               liblaunchpad-integration-3.0-dev,
-               libunity-dev (>= 5.0.0),
-               libzeitgeist-dev
+               libgtk-3-doc
 Homepage: http://www.gnome.org/projects/nemo/
 Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/nemo/precise
 Standards-Version: 3.9.2
