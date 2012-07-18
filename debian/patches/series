@@ -7,7 +7,6 @@
 11_copy_skipping_pager.patch
 14_bring_del_instead_ctrl_del.patch
 git-0001-Workaround-focus-issues-on-typeahead.patch
-zg_activity_logging.patch
 dont_wrap_labels_after_dots.patch
 git_bookmark_place_dnd.patch
 git_image_properties_wrapping.patch

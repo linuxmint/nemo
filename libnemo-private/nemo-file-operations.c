@@ -66,8 +66,6 @@
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
 
-#include <zeitgeist.h>
-
 /* TODO: TESTING!!! */
 
 typedef struct {
@@ -193,104 +191,6 @@ typedef struct {
 #define MERGE _("_Merge")
 #define MERGE_ALL _("Merge _All")
 #define COPY_FORCE _("Copy _Anyway")
-
-#define ZEITGEIST_NEMO_ACTOR "application://nemo.desktop"
-
-static void
-send_event_to_zeitgeist (ZeitgeistEvent *event)
-{
-    ZeitgeistLog *log = zeitgeist_log_get_default ();
-    zeitgeist_log_insert_events_no_reply (log, event, NULL);
-}
-
-typedef struct {
-    const char *event_interpretation;
-    //char *event_origin;
-    GFile *file;
-    gchar *original_uri; // for MOVE_EVENT
-} _ZeitgeistFileEventData;
-
-static void
-_log_zeitgeist_event_for_file_cb (GObject *source_object,
-        GAsyncResult *res, gpointer user_data)
-{
-    _ZeitgeistFileEventData *data;
-    GError *error;
-    GFileInfo *info;
-    gchar *uri;
-    gchar *origin;
-    const gchar *display_name;
-    const gchar *mimetype;
-    
-    data = user_data;
-
-    error = NULL;
-    info = g_file_query_info_finish (G_FILE (source_object), res, &error);
-
-    if (info) {
-        uri = g_file_get_uri (data->file);
-        origin = g_path_get_dirname (uri);
-        display_name = g_file_info_get_display_name (info);
-        mimetype = g_file_info_get_content_type (info);
-    } else {
-        g_warning ("Error getting info: %s\n", error->message);
-        g_error_free (error);
-        g_object_unref (data->file);
-        g_free (data->original_uri);
-        g_free (data);
-        return; // skip this event
-    }
-
-    ZeitgeistSubject *subject = zeitgeist_subject_new_full (
-        (data->original_uri) ? (data->original_uri) : uri,
-        NULL, // subject interpretation - auto-guess
-        NULL, // suject manifestation - auto-guess
-        mimetype,
-        origin,
-        display_name,
-        NULL // storage - auto-guess
-    );
-
-    if (data->original_uri)
-        zeitgeist_subject_set_current_uri (subject, uri);
-
-    g_free (uri);
-    g_free (origin);
-    g_object_unref (info);
-
-    if (subject) {
-        ZeitgeistEvent *event = zeitgeist_event_new_full (
-            data->event_interpretation,
-            ZEITGEIST_ZG_USER_ACTIVITY,
-            ZEITGEIST_NEMO_ACTOR,
-            subject, NULL);
-        send_event_to_zeitgeist (event);
-    }
-
-    g_object_unref (data->file);
-    g_free (data->original_uri);
-    g_free (data);
-}
-
-static void
-log_zeitgeist_event_for_file_no_reply (const char *event_interpretation,
-    GFile *file, gchar *original_uri)
-{
-    _ZeitgeistFileEventData *data;
-    data = g_new0 (_ZeitgeistFileEventData, 1);
-
-    data->event_interpretation = event_interpretation;
-    data->original_uri = original_uri;
-    data->file = file;
-
-    g_file_query_info_async (file,
-        G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
-            G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
-        G_FILE_QUERY_INFO_NONE,
-        G_PRIORITY_DEFAULT,
-        NULL,
-        _log_zeitgeist_event_for_file_cb, data);
-}
 
 static void
 mark_desktop_file_trusted (CommonJob *common,
@@ -1950,35 +1850,6 @@ delete_job_done (gpointer user_data)
 	GHashTable *debuting_uris;
 
 	job = user_data;
-
-	// Send event to Zeitgeist for deletions/trash
-    GList *file_iter = job->files;
-	while (file_iter != NULL) {
-		gchar *uri = g_file_get_uri (file_iter->data);
-		gchar *origin = g_path_get_dirname (uri);
-        gchar *parse_name = g_file_get_parse_name (file_iter->data);
-		gchar *display_name = g_path_get_basename (parse_name);
-		ZeitgeistEvent *event = zeitgeist_event_new_full (
-			ZEITGEIST_ZG_DELETE_EVENT,
-			ZEITGEIST_ZG_USER_ACTIVITY,
-			ZEITGEIST_NEMO_ACTOR,
-			zeitgeist_subject_new_full (
-				uri,
-				NULL, // subject interpretation - auto-guess
-				NULL, // suject manifestation - auto-guess
-				NULL, // mime-type
-				origin,
-				display_name,
-				NULL // storage - auto-guess
-			), NULL);
-		send_event_to_zeitgeist (event);
-		g_free (uri);
-		g_free (origin);
-        g_free (parse_name);
-		g_free (display_name);
-        file_iter = g_list_next (file_iter);
-	}
-	// ---
 
 	g_list_free_full (job->files, g_object_unref);
 
@@ -4607,23 +4478,6 @@ copy_job_done (gpointer user_data)
 				    job->done_callback_data);
 	}
 
-	// Send event to Zeitgeist
-	GHashTableIter iter;
-	GFile *file;
-	gpointer done;
-	g_hash_table_iter_init (&iter, job->debuting_files);
-	while (g_hash_table_iter_next (&iter, (gpointer *) &file, &done)) {
-		if (GPOINTER_TO_INT (done)) {
-            // operation was completed successfully for this file
-            g_object_ref (file);
-            // FIXME: Set event origin to the original file URI, if we
-            //        can somehow figure out which one it is.
-            log_zeitgeist_event_for_file_no_reply (
-                ZEITGEIST_ZG_CREATE_EVENT, file, NULL);
-		}
-	}
-	// ---
-
 	g_list_free_full (job->files, g_object_unref);
 	if (job->destination) {
 		g_object_unref (job->destination);
@@ -5187,19 +5041,6 @@ move_job_done (gpointer user_data)
 				    job->done_callback_data);
 	}
 
-	// Send event to Zeitgeist for moved files (not renaming)
-    GList *file_iter = job->files;
-	while (file_iter != NULL) {
-        char *basename = g_file_get_basename (file_iter->data);
-        GFile *new_file = g_file_get_child (job->destination, basename);
-        g_free (basename);
-
-        log_zeitgeist_event_for_file_no_reply (ZEITGEIST_ZG_MOVE_EVENT,
-            new_file, g_file_get_uri (file_iter->data));
-        file_iter = g_list_next (file_iter);
-	}
-	// ---
-
 	g_list_free_full (job->files, g_object_unref);
 	g_object_unref (job->destination);
 	g_hash_table_unref (job->debuting_files);
@@ -5542,23 +5383,6 @@ link_job_done (gpointer user_data)
 				    !job_aborted ((CommonJob *) job),
 				    job->done_callback_data);
 	}
-
-	// Send event to Zeitgeist
-	GHashTableIter iter;
-	GFile *file;
-	gpointer done;
-	g_hash_table_iter_init (&iter, job->debuting_files);
-	while (g_hash_table_iter_next (&iter, (gpointer *) &file, &done)) {
-		if (GPOINTER_TO_INT (done)) {
-            // operation was completed successfully for this file
-            g_object_ref (file);
-            // FIXME: Set event origin to the original file URI, if we
-            //        can somehow figure out which one it is.
-            log_zeitgeist_event_for_file_no_reply (
-                ZEITGEIST_ZG_CREATE_EVENT, file, NULL);
-		}
-	}
-	// ---
 
 	g_list_free_full (job->files, g_object_unref);
 	g_object_unref (job->destination);
@@ -6031,14 +5855,6 @@ create_job_done (gpointer user_data)
 				    !job_aborted ((CommonJob *) job),
 				    job->done_callback_data);
 	}
-
-	// Send event to Zeitgeist
-    if (job->created_file) {
-        g_object_ref (job->created_file);
-        log_zeitgeist_event_for_file_no_reply (
-            ZEITGEIST_ZG_CREATE_EVENT, job->created_file, NULL);
-    }
-    // ---
 
 	g_object_unref (job->dest_dir);
 	if (job->src) {
