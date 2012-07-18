@@ -307,52 +307,7 @@ action_preferences_callback (GtkAction *action,
 static void
 action_about_nemo_callback (GtkAction *action,
 				gpointer user_data)
-{
-	const gchar *authors[] = {
-		"Alexander Larsson",
-		"Ali Abdin",
-		"Anders Carlsson",
-		"Andrew Walton",
-		"Andy Hertzfeld",
-		"Arlo Rose",
-		"Christian Neumair",
-		"Cosimo Cecchi",
-		"Darin Adler",
-		"David Camp",
-		"Eli Goldberg",
-		"Elliot Lee",
-		"Eskil Heyn Olsen",
-		"Ettore Perazzoli",
-		"Gene Z. Ragan",
-		"George Lebl",
-		"Ian McKellar",
-		"J Shane Culpepper",
-		"James Willcox",
-		"Jan Arne Petersen",
-		"John Harper",
-		"John Sullivan",
-		"Josh Barrow",
-		"Maciej Stachowiak",
-		"Mark McLoughlin",
-		"Mathieu Lacage",
-		"Mike Engber",
-		"Mike Fleming",
-		"Pavel Cisler",
-		"Ramiro Estrugo",
-		"Raph Levien",
-		"Rebecca Schulman",
-		"Robey Pointer",
-		"Robin * Slomkowski",
-		"Seth Nickell",
-		"Susan Kare",
-		"Tomas Bzatek",
-		NULL
-	};
-	const gchar *documenters[] = {
-		"GNOME Documentation Team",
-		"Sun Microsystems",
-		NULL
-	};
+{	
 	const gchar *license[] = {
 		N_("Nemo is free software; you can redistribute it and/or modify "
 		   "it under the terms of the GNU General Public License as published by "
@@ -372,33 +327,17 @@ action_about_nemo_callback (GtkAction *action,
 	license_trans = g_strjoin ("\n\n", _(license[0]), _(license[1]),
 					     _(license[2]), NULL);
 
-	date = g_date_time_new_now_local ();
-
-	/* Translators: these two strings here indicate the copyright time span,
-	 * e.g. 1999-2011.
-	 */
-	copyright_str = g_strdup_printf (_("Copyright \xC2\xA9 %Id\xE2\x80\x93%Id "
-					   "The Nemo authors"), 1999, g_date_time_get_year (date));
+	date = g_date_time_new_now_local ();	
 
 	gtk_show_about_dialog (GTK_WINDOW (user_data),
 			       "program-name", _("Nemo"),
 			       "version", VERSION,
 			       "comments", _("Nemo lets you organize "
 					     "files and folders, both on "
-					     "your computer and online."),
-			       "copyright", copyright_str,
+					     "your computer and online."),			       
 			       "license", license_trans,
-			       "wrap-license", TRUE,
-			       "authors", authors,
-			       "documenters", documenters,
-				/* Translators should localize the following string
-				 * which will be displayed at the bottom of the about
-				 * box to give credit to the translator(s).
-				 */
-			      "translator-credits", _("translator-credits"),
-			      "logo-icon-name", "nemo",
-			      "website", "http://live.gnome.org/Nemo",
-			      "website-label", _("Nemo Web Site"),
+			       "wrap-license", TRUE,			       				
+			      "logo-icon-name", "nemo",			      
 			      NULL);
 
 	g_free (license_trans);
