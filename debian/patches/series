@@ -1,6 +1,5 @@
 03_translations_list_update.patch
 04_suppress_umount_in_ltsp.patch
-05_desktop_menu_export.patch
 06_never_exec_nonexec_launchers.patch
 08_clean_session_capplet.patch
 09_no-initial-fade.patch

@@ -766,15 +766,6 @@ real_merge_menus (NemoView *view)
 
 	desktop_view->details->desktop_merge_id =
 		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nemo/nemo-desktop-icon-view-ui.xml", NULL);
-
-	GList * agroups = gtk_ui_manager_get_action_groups(ui_manager);
-	while (agroups != NULL) {
-		if (g_strcmp0("DirViewActions", gtk_action_group_get_name(GTK_ACTION_GROUP(agroups->data))) == 0) {
-			GtkAction * defaults = gtk_action_group_get_action(GTK_ACTION_GROUP(agroups->data), "Reset to Defaults");
-			gtk_action_set_visible(defaults, FALSE);
-		}
-		agroups = g_list_next(agroups);
-	}
 }
 
 static NemoView *

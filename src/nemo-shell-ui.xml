@@ -51,8 +51,6 @@
 		<placeholder name="Extension Actions"/>
 		<separator/>
 		<menuitem name="Preferences" action="Preferences"/>
-		<separator/>
-		<placeholder name="Desktop Background"/>
 	</menu>
 	<menu action="View">
 		<menuitem name="Stop" action="Stop"/>
@@ -119,8 +117,6 @@
 		<menuitem action="NemoHelpShare"/>
 		<separator/>
 		<menuitem name="About Nemo" action="About Nemo"/>
-		<separator/>
-		<placeholder name="Ubuntu Desktop Help"/>
 	</menu>
 </menubar>
 <popup name="background">

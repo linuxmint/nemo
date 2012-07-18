@@ -37,7 +37,6 @@
 #include "nemo-location-bar.h"
 #include "nemo-mime-actions.h"
 #include "nemo-notebook.h"
-#include "nemo-desktop-window.h"
 #include "nemo-places-sidebar.h"
 #include "nemo-search-bar.h"
 #include "nemo-tree-sidebar.h"
@@ -1113,10 +1112,6 @@ add_view_as_menu_item (NemoWindow *window,
 		/* Index 0 is the extra view, and we don't want to use that here,
 		   as it can get deleted/changed later */
 		window->details->view_as_radio_action = action;
-	}
-
-	if (NEMO_IS_DESKTOP_WINDOW(window)) {
-		gtk_action_set_visible(GTK_ACTION(action), FALSE);
 	}
 
 	data = g_slice_new (ActivateViewData);

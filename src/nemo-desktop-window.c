@@ -37,38 +37,12 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-global-preferences.h>
-#include <libnemo-private/nemo-ui-utilities.h>
 
 struct NemoDesktopWindowDetails {
 	gulong size_changed_id;
 
 	gboolean loaded;
 };
-
-static void
-desktop_background_cb (GtkAction * action, gpointer user_data)
-{
-	g_spawn_command_line_async("gnome-control-center background", NULL);
-	return;
-}
-
-static void
-ubuntu_docs_cb (GtkAction * action, gpointer user_data)
-{
-	g_spawn_command_line_async("yelp", NULL);
-	return;
-}
-
-static const GtkActionEntry desktop_entries[] = {
-	/* name, stock id, label */ { "Change Desktop Background", NULL, N_("Change Desktop _Background"),
-	/* accel, tooltip */          NULL, NULL,
-								  G_CALLBACK(desktop_background_cb)},
-	/* name, stock id, label */ { "Ubuntu Documentation",      NULL, N_("Ubuntu Help"),
-	/* accel, tooltip */          NULL, NULL,
-								  G_CALLBACK(ubuntu_docs_cb)}
-};
-
-static void set_wmspec_desktop_hint (GdkWindow *window);
 
 G_DEFINE_TYPE (NemoDesktopWindow, nemo_desktop_window, 
 	       NEMO_TYPE_WINDOW);
@@ -111,123 +85,6 @@ nemo_desktop_window_constructed (GObject *obj)
 					      NEMO_ACTION_NEW_TAB);
 	gtk_action_set_sensitive (action, FALSE);
 
- 	UbuntuMenuProxy * proxy = ubuntu_menu_proxy_get();
- 	if (proxy != NULL) {
- 		ubuntu_menu_proxy_insert(proxy, GTK_WIDGET(window), NEMO_WINDOW(window)->details->menubar, 0);
- 	}
-
- 	/* Add actions for the desktop */
- 	GtkActionGroup * desktop_agroup = gtk_action_group_new("DesktopActions");
- 	gtk_action_group_set_translation_domain(desktop_agroup, GETTEXT_PACKAGE);
- 	gtk_action_group_add_actions(desktop_agroup, desktop_entries, G_N_ELEMENTS(desktop_entries), window);
- 	gtk_ui_manager_insert_action_group(nemo_window_get_ui_manager(NEMO_WINDOW(window)),
- 	                                   desktop_agroup, 0);
- 	g_object_unref(desktop_agroup);
- 
- 	GtkUIManager * ui_manager = nemo_window_get_ui_manager(NEMO_WINDOW(window));
- 	gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nemo/nemo-desktop-window-ui.xml", NULL);
-
- 	/* Hide actions that don't make sense on the desktop */
- 	GList * agroups = gtk_ui_manager_get_action_groups(NEMO_WINDOW(window)->details->ui_manager);
- 	while (agroups != NULL) {
- 		GtkActionGroup * agroup = GTK_ACTION_GROUP(agroups->data);
- 		const gchar * name = gtk_action_group_get_name(agroup);
- 
- 		if (g_strcmp0(name, "LaunchpadIntegration") == 0) {
- 			gtk_action_group_set_visible(agroup, FALSE);
- 		} else if (g_strcmp0(name, "SpatialActions") == 0) {
- 			GtkAction * action = NULL;
- 
- 			action = gtk_action_group_get_action(agroup, "Close Parent Folders");
- 			gtk_action_set_visible(action, FALSE);
- 
- 			action = gtk_action_group_get_action(agroup, "Close All Folders");
- 			gtk_action_set_visible(action, FALSE);
- 		} else if (g_strcmp0(name, "ShellActions") == 0) {
- 			GtkAction * action = NULL;
- 
- 			action = gtk_action_group_get_action(agroup, "Close All Windows");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_CLOSE);
- 			gtk_action_set_visible(action, FALSE);
- 
- 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_STOP);
- 			gtk_action_set_visible(action, FALSE);
- 
- 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_RELOAD);
- 			gtk_action_set_visible(action, FALSE);
- 
- 			action = gtk_action_group_get_action(agroup, "Preferences");
- 			gtk_action_set_visible(action, FALSE);
- 
- 			action = gtk_action_group_get_action(agroup, "About Nemo");
- 			gtk_action_set_visible(action, FALSE);
- 
- 			action = gtk_action_group_get_action(agroup, "Up");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "New Window");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "New Tab");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_BACK);
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_FORWARD);
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_SHOW_HIDE_EXTRA_PANE);
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "SplitViewSameLocation");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "Go to Location");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "Search");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "Bookmarks");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "Show Hide Sidebar");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "Show Hide Statusbar");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "Show Hide Toolbar");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "Sidebar Places");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "Sidebar Tree");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "NemoHelp");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "NemoHelpSearch");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "NemoHelpSort");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "NemoHelpLost");
- 			gtk_action_set_visible(action, FALSE);
-
- 			action = gtk_action_group_get_action(agroup, "NemoHelpShare");
- 			gtk_action_set_visible(action, FALSE);
- 		}
- 
- 		agroups = g_list_next(agroups);
- 	}
-
 	/* Set the accessible name so that it doesn't inherit the cryptic desktop URI. */
 	accessible = gtk_widget_get_accessible (GTK_WIDGET (window));
 
@@ -258,8 +115,6 @@ nemo_desktop_window_init (NemoDesktopWindow *window)
 
 	g_object_set_data (G_OBJECT (window), "is_desktop_window", 
 			   GINT_TO_POINTER (1));
-
- 
 }
 
 static gint
