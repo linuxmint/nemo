@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/gnome/nemo">
+    <file compressed="true">nemo-bookmarks-window.ui</file>
+    <file compressed="true">nemo-file-management-properties.ui</file>
+    <file>nemo-icon-view-ui.xml</file>
+    <file>nemo-toolbar-ui.xml</file>
+    <file>nemo-directory-view-ui.xml</file>
+    <file>nemo-desktop-icon-view-ui.xml</file>
+    <file>nemo-list-view-ui.xml</file>
+    <file>nemo-shell-ui.xml</file>
+    <file alias="icons/thumbnail_frame.png">../icons/thumbnail_frame.png</file>
+    <file alias="icons/knob.png">../icons/knob.png</file>
+  </gresource>
+</gresources>

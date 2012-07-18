@@ -1,0 +1,15 @@
+[Desktop Entry]
+_Name=Files
+_Comment=Access and organize files
+Exec=nemo %U
+Icon=system-file-manager
+Terminal=false
+Type=Application
+StartupNotify=true
+OnlyShowIn=GNOME;Unity;
+Categories=GNOME;GTK;Utility;Core;
+MimeType=inode/directory;application/x-gnome-saved-search;
+X-GNOME-Bugzilla-Bugzilla=GNOME
+X-GNOME-Bugzilla-Product=nemo
+X-GNOME-Bugzilla-Component=general
+X-GNOME-Bugzilla-Version=@VERSION@
