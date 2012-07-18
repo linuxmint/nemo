@@ -5,10 +5,7 @@
 08_clean_session_capplet.patch
 09_no-initial-fade.patch
 11_copy_skipping_pager.patch
-12_unity_launcher_support.patch
-13_translate_unity_launcher.patch
 14_bring_del_instead_ctrl_del.patch
-20_static_unity_quicklist.patch
 git-0001-Workaround-focus-issues-on-typeahead.patch
 zg_activity_logging.patch
 dont_wrap_labels_after_dots.patch

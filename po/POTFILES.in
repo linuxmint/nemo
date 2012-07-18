@@ -5,7 +5,6 @@ data/nemo.xml.in
 data/nemo-autorun-software.desktop.in.in
 data/nemo.desktop.in.in
 debian/mount-archive.desktop.in
-debian/nemo-home.desktop.in
 eel/eel-canvas.c
 eel/eel-editable-label.c
 eel/eel-glib-extensions.c
@@ -91,4 +90,3 @@ src/nemo-window-pane.c
 src/nemo-window-private.h
 src/nemo-window-slot.c
 src/nemo-x-content-bar.c
-src/unity-quicklist-handler.h

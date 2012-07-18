@@ -38,11 +38,6 @@
 
 #include <libnotify/notify.h>
 
-#ifdef HAVE_UNITY
-#include <unity.h>
-#include "unity-quicklist-handler.h"
-#endif
-
 struct _NemoProgressUIHandlerPriv {
 	NemoProgressInfoManager *manager;
 
@@ -52,9 +47,6 @@ struct _NemoProgressUIHandlerPriv {
 
 	NotifyNotification *progress_notification;
 	GtkStatusIcon *status_icon;
-#ifdef HAVE_UNITY
-	UnityQuicklistHandler *unity_quicklist_handler;
-#endif
 };
 
 G_DEFINE_TYPE (NemoProgressUIHandler, nemo_progress_ui_handler, G_TYPE_OBJECT);
@@ -189,208 +181,6 @@ progress_ui_handler_update_status_icon (NemoProgressUIHandler *self)
 	gtk_status_icon_set_visible (self->priv->status_icon, TRUE);
 }
 
-#ifdef HAVE_UNITY
-
-static void
-progress_ui_handler_unity_progress_changed (NemoProgressInfo *info,
-                                            NemoProgressUIHandler *self)
-{
-	g_return_if_fail (self);
-	g_return_if_fail (self->priv->unity_quicklist_handler);
-	g_return_if_fail (self->priv->manager);
-
-	GList *infos, *l;
-	double progress = 0;
-	double c, current = 0;
-	double t, total = 0;
-
-	infos = nemo_progress_info_manager_get_all_infos (self->priv->manager);
-
-	for (l = infos; l; l = l->next) {
-		NemoProgressInfo *i = l->data;
-		c = nemo_progress_info_get_current (i);
-		t = nemo_progress_info_get_total (i);
-
-		if (c < 0) c = 0;
-		if (t <= 0) continue;
-
-		total += t;
-		current += c;
-	}
-
-	if (current >= 0 && total > 0)
-		progress = current / total;
-
-	if (progress > 1.0)
-		progress = 1.0;
-
-	for (l = unity_quicklist_get_launcher_entries (self->priv->unity_quicklist_handler); l; l = l->next) {
-		UnityLauncherEntry *entry = l->data;
-		unity_launcher_entry_set_progress (entry, progress);
-	}
-}
-
-static gboolean
-progress_ui_handler_disable_unity_urgency (UnityLauncherEntry *entry)
-{
-	g_return_if_fail (entry);
-
-	unity_launcher_entry_set_urgent (entry, FALSE);
-	return FALSE;
-}
-
-static void
-progress_ui_handler_unity_quicklist_show_activated (DbusmenuMenuitem *menu,
-                                                    guint timestamp,
-                                                    NemoProgressUIHandler *self)
-{
-	g_return_if_fail (self);
-
-	if (!gtk_widget_get_visible (self->priv->progress_window)) {
-		gtk_window_present (GTK_WINDOW (self->priv->progress_window));
-	} else {
-		gtk_window_set_keep_above (GTK_WINDOW (self->priv->progress_window), TRUE);
-		gtk_window_set_keep_above (GTK_WINDOW (self->priv->progress_window), FALSE);
-	}
-}
-
-static void
-progress_ui_handler_unity_quicklist_cancel_activated (DbusmenuMenuitem *menu,
-                                                      guint timestamp,
-                                                      NemoProgressUIHandler *self)
-{
-	g_return_if_fail (self);
-	g_return_if_fail (self->priv->manager);
-
-	GList *infos, *l;
-	infos = nemo_progress_info_manager_get_all_infos (self->priv->manager);
-
-	for (l = infos; l; l = l->next) {
-		NemoProgressInfo *info = l->data;
-		nemo_progress_info_cancel (info);
-	}
-}
-
-static DbusmenuMenuitem *
-progress_ui_handler_build_unity_quicklist (NemoProgressUIHandler *self)
-{
-	g_return_if_fail (self);
-	GList *l;
-
-	for (l = unity_quicklist_get_launcher_entries (self->priv->unity_quicklist_handler); l; l = l->next) {
-		UnityLauncherEntry *entry = l->data;
-
-		DbusmenuMenuitem *quickmenu = dbusmenu_menuitem_new ();
-		dbusmenu_menuitem_property_set (quickmenu,
-		                                DBUSMENU_MENUITEM_PROP_LABEL,
-			                            UNITY_QUICKLIST_SHOW_COPY_DIALOG);
-		dbusmenu_menuitem_property_set_bool (quickmenu,
-		                                     DBUSMENU_MENUITEM_PROP_VISIBLE, FALSE);
-		unity_quicklist_handler_append_menuitem (entry, quickmenu);
-		g_signal_connect (quickmenu, DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
-		                  (GCallback) progress_ui_handler_unity_quicklist_show_activated,
-			              self);
-
-		quickmenu = dbusmenu_menuitem_new ();
-		dbusmenu_menuitem_property_set (quickmenu,
-			                            DBUSMENU_MENUITEM_PROP_LABEL,
-				                        UNITY_QUICKLIST_CANCEL_COPY);
-		dbusmenu_menuitem_property_set_bool (quickmenu,
-		                                     DBUSMENU_MENUITEM_PROP_VISIBLE, FALSE);
-		unity_quicklist_handler_append_menuitem (entry, quickmenu);
-		g_signal_connect (quickmenu, DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
-		                  (GCallback) progress_ui_handler_unity_quicklist_cancel_activated,
-			              self);
-	}
-}
-
-static void
-progress_ui_handler_show_unity_quicklist (NemoProgressUIHandler *self,
-                                          UnityLauncherEntry *entry,
-                                          gboolean show)
-{
-	g_return_if_fail (self);
-	g_return_if_fail (entry);
-
-	DbusmenuMenuitem *ql;
-	GList *children, *l;
-
-	ql = unity_launcher_entry_get_quicklist (entry);
-	children = dbusmenu_menuitem_get_children (ql);
-
-	for (l = children; l; l = l->next) {
-		DbusmenuMenuitem *child = l->data;
-		if (unity_quicklist_handler_menuitem_is_progress_item (child))
-			dbusmenu_menuitem_property_set_bool(child,
-	                                    DBUSMENU_MENUITEM_PROP_VISIBLE, show);
-	}
-}
-
-static void
-progress_ui_handler_update_unity_launcher_entry (NemoProgressUIHandler *self,
-                                                 NemoProgressInfo *info,
-                                                 UnityLauncherEntry *entry)
-{
-	g_return_if_fail (self);
-	g_return_if_fail (entry);
-
-	if (self->priv->active_infos > 0) {
-		unity_launcher_entry_set_progress_visible (entry, TRUE);
-		progress_ui_handler_show_unity_quicklist (self, entry, TRUE);
-		progress_ui_handler_unity_progress_changed (NULL, self);
-
-		if (self->priv->active_infos > 1) {
-			unity_launcher_entry_set_count (entry, self->priv->active_infos);
-			unity_launcher_entry_set_count_visible (entry, TRUE);
-		} else {
-			unity_launcher_entry_set_count_visible (entry, FALSE);
-		}
-	} else {
-		unity_launcher_entry_set_progress_visible (entry, FALSE);
-		unity_launcher_entry_set_progress (entry, 0.0);
-		unity_launcher_entry_set_count_visible (entry, FALSE);
-		progress_ui_handler_show_unity_quicklist (self, entry, FALSE);
-		GCancellable *pc = nemo_progress_info_get_cancellable (info);
-
-		if (!g_cancellable_is_cancelled (pc)) {
-			unity_launcher_entry_set_urgent (entry, TRUE);
-
-			g_timeout_add_seconds (2, (GSourceFunc)
-				               progress_ui_handler_disable_unity_urgency,
-					       entry);
-		}
-	}
-}
-
-static void
-progress_ui_handler_update_unity_launcher (NemoProgressUIHandler *self,
-                                           NemoProgressInfo *info,
-                                           gboolean added)
-{
-	g_return_if_fail (self);
-	GList *l;
-
-	if (!self->priv->unity_quicklist_handler) {
-		self->priv->unity_quicklist_handler = unity_quicklist_handler_get_singleton ();
-		if (!self->priv->unity_quicklist_handler)
-			return;
-
-		progress_ui_handler_build_unity_quicklist (self);
-	}
-
-	for (l = unity_quicklist_get_launcher_entries (self->priv->unity_quicklist_handler); l; l = l->next) {
-		UnityLauncherEntry *entry = l->data;
-		progress_ui_handler_update_unity_launcher_entry (self, info, entry);
-	}
-
-	if (added) {
-		g_signal_connect (info, "progress-changed",
-				  (GCallback) progress_ui_handler_unity_progress_changed,
-				  self);
-	}
-}
-#endif
-
 static gboolean
 progress_window_delete_event (GtkWidget *widget,
 			      GdkEvent *event,
@@ -523,10 +313,6 @@ progress_info_finished_cb (NemoProgressInfo *info,
 			progress_ui_handler_show_complete_notification (self);
 		}
 	}
-
-#ifdef HAVE_UNITY
-	progress_ui_handler_update_unity_launcher (self, info, FALSE);
-#endif
 }
 
 static void
@@ -549,10 +335,6 @@ handle_new_progress_info (NemoProgressUIHandler *self,
 			progress_ui_handler_update_notification_or_status (self);
 		}
 	}
-
-#ifdef HAVE_UNITY
-	progress_ui_handler_update_unity_launcher (self, info, TRUE);
-#endif
 }
 
 typedef struct {
