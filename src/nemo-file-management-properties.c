@@ -239,7 +239,7 @@ nemo_file_management_properties_dialog_response_cb (GtkDialog *parent,
 			section = "nemo-preview";
 			break;
 		}
-		preferences_show_help (GTK_WINDOW (parent), "ubuntu-help", section);
+		preferences_show_help (GTK_WINDOW (parent), "gnome-help", section);
 	} else if (response_id == GTK_RESPONSE_CLOSE) {
 		gtk_widget_destroy (GTK_WIDGET (parent));
 	}

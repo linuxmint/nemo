@@ -431,19 +431,19 @@ action_nemo_manual_callback (GtkAction *action,
 	window = NEMO_WINDOW (user_data);
 
 	if (g_str_equal (name, "NemoHelpSearch")) {
-		helpuri = "help:ubuntu-help/files-search";
+		helpuri = "help:gnome-help/files-search";
 	} else if (g_str_equal (name,"NemoHelpSort")) {
-		helpuri = "help:ubuntu-help/files-sort";
+		helpuri = "help:gnome-help/files-sort";
 	} else if (g_str_equal (name, "NemoHelpLost")) {
-		helpuri = "help:ubuntu-help/files-lost";
+		helpuri = "help:gnome-help/files-lost";
 	} else if (g_str_equal (name, "NemoHelpShare")) {
-		helpuri = "help:ubuntu-help/files-share";
+		helpuri = "help:gnome-help/files-share";
 	} else {
-		helpuri = "help:ubuntu-help/files";
+		helpuri = "help:gnome-help/files";
 	}
 
 	if (NEMO_IS_DESKTOP_WINDOW (window)) {
-		nemo_launch_application_from_command (gtk_window_get_screen (GTK_WINDOW (window)), "ubuntu-help", FALSE, NULL);
+		nemo_launch_application_from_command (gtk_window_get_screen (GTK_WINDOW (window)), "gnome-help", FALSE, NULL);
 	} else {
 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (window)),
 			      helpuri,

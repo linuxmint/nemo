@@ -146,7 +146,7 @@ nemo_bookmarks_window_response_callback (GtkDialog *dialog,
 		GError *error = NULL;
 
 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
-			      "help:ubuntu-help/nemo-bookmarks-edit",
+			      "help:gnome-help/nemo-bookmarks-edit",
 			      gtk_get_current_event_time (), &error);
 
 		if (error) {

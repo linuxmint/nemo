@@ -695,7 +695,7 @@ connect_dialog_response_cb (NemoConnectServerDialog *dialog,
 	case GTK_RESPONSE_HELP :
 		error = NULL;
 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
-			      "help:ubuntu-help/nemo-connect",
+			      "help:gnome-help/nemo-connect",
 			      gtk_get_current_event_time (), &error);
 		if (error) {
 			eel_show_error_dialog (_("There was an error displaying help."), error->message,

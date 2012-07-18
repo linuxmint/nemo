@@ -3020,7 +3020,7 @@ create_basic_page (NemoPropertiesWindow *window)
 	GtkWidget *hbox, *vbox;
 
 	hbox = create_page_with_hbox (window->details->notebook, _("Basic"),
-				      "help:ubuntu-help/nemo-file-properties-basic");
+				      "help:gnome-help/nemo-file-properties-basic");
 	
 	/* Icon pixmap */
 
@@ -4466,7 +4466,7 @@ create_permissions_page (NemoPropertiesWindow *window)
 
 	vbox = create_page_with_vbox (window->details->notebook,
 				      _("Permissions"),
-				      "help:ubuntu-help/nemo-file-properties-permissions");
+				      "help:gnome-help/nemo-file-properties-permissions");
 
 	file_list = window->details->original_files;
 
@@ -4760,7 +4760,7 @@ create_open_with_page (NemoPropertiesWindow *window)
 	gtk_widget_show (vbox);
 	g_free (mime_type);
 
-	g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:ubuntu-help/files-open"), g_free);
+	g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:gnome-help/files-open"), g_free);
 	gtk_notebook_append_page (window->details->notebook, 
 				  vbox, gtk_label_new (_("Open With")));
 }
@@ -5114,7 +5114,7 @@ real_response (GtkDialog *dialog,
 						     gtk_notebook_get_current_page (window->details->notebook));
 		helpuri = g_object_get_data (G_OBJECT (curpage), "help-uri");
 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
-			      helpuri ? helpuri : "help:ubuntu-help/files",
+			      helpuri ? helpuri : "help:gnome-help/files",
 			      gtk_get_current_event_time (),
 			      &error);
 		if (error != NULL) {
