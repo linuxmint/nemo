@@ -950,7 +950,7 @@ nemo_application_local_command_line (GApplication *application,
 	}
 
 	if (version) {
-		g_print ("GNOME nemo " PACKAGE_VERSION "\n");
+		g_print ("nemo " PACKAGE_VERSION "\n");
 		goto out;
 	}
 
