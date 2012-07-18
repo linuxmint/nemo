@@ -1,0 +1,19 @@
+For tasks outside the porting effort, we track them as bugs in
+http://bugzilla.gnome.org. For the porting effort, please let
+darin@bentspoon.com know what you are working on.
+
+- Visit all the GNOME2_CONVERSION_COMPLETE and fix each issue
+  (details forthcoming)
+
+- Visit all the destroy and move things into finalize or dispose
+  and make them callable twice as appropriate.
+- Change things that use destroy handlers to use weak references
+  instead.
+
+- Figure out why we get NULL font problems in Pango when the progress
+  dialog comes up.
+
+- Split themes into a separate tarball/package?
+
+- Add mnemonics for all preferences, so you can use the keyboard to
+  drive the preferences dialog.

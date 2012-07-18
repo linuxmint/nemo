@@ -1,0 +1,303 @@
+<!-- ##### SECTION Title ##### -->
+nemo-file-info
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### MACRO NEMO_FILE_DEFINED ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### TYPEDEF NemoFile ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### TYPEDEF NemoFileInfo ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT NemoFileInfoIface ##### -->
+<para>
+
+</para>
+
+@g_iface: 
+@is_gone: 
+@get_name: 
+@get_uri: 
+@get_parent_uri: 
+@get_uri_scheme: 
+@get_mime_type: 
+@is_mime_type: 
+@is_directory: 
+@add_emblem: 
+@get_string_attribute: 
+@add_string_attribute: 
+@invalidate_extension_info: 
+@get_activation_uri: 
+@get_file_type: 
+@get_location: 
+@get_parent_location: 
+@get_parent_info: 
+@get_mount: 
+@can_write: 
+
+<!-- ##### FUNCTION nemo_file_info_create ##### -->
+<para>
+
+</para>
+
+@location: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_create_for_uri ##### -->
+<para>
+
+</para>
+
+@uri: 
+@Returns: 
+
+
+<!-- ##### USER_FUNCTION nemo_file_info_getter ##### -->
+<para>
+
+</para>
+
+@location: 
+@create: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_lookup ##### -->
+<para>
+
+</para>
+
+@location: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_lookup_for_uri ##### -->
+<para>
+
+</para>
+
+@uri: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_list_copy ##### -->
+<para>
+
+</para>
+
+@files: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_list_free ##### -->
+<para>
+
+</para>
+
+@files: 
+
+
+<!-- ##### FUNCTION nemo_file_info_is_gone ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_file_type ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_location ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_name ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_uri ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_activation_uri ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_parent_location ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_parent_uri ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_mount ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_uri_scheme ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_parent_info ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_mime_type ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_is_mime_type ##### -->
+<para>
+
+</para>
+
+@file: 
+@mime_type: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_is_directory ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_can_write ##### -->
+<para>
+
+</para>
+
+@file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_add_emblem ##### -->
+<para>
+
+</para>
+
+@file: 
+@emblem_name: 
+
+
+<!-- ##### FUNCTION nemo_file_info_get_string_attribute ##### -->
+<para>
+
+</para>
+
+@file: 
+@attribute_name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_file_info_add_string_attribute ##### -->
+<para>
+
+</para>
+
+@file: 
+@attribute_name: 
+@value: 
+
+
+<!-- ##### FUNCTION nemo_file_info_invalidate_extension_info ##### -->
+<para>
+
+</para>
+
+@file: 
+
+

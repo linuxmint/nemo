@@ -1,0 +1,300 @@
+## Description: Add special Nemo desktop menu
+## Origin/Author: Ted Gould <ted@ubuntu.com> 
+## Bug: https://bugs.launchpad.net/bugs/805252
+Index: nemo-3.3.92/src/Makefile.am
+===================================================================
+--- nemo-3.3.92.orig/src/Makefile.am	2012-02-06 20:44:45.000000000 +0100
++++ nemo-3.3.92/src/Makefile.am	2012-03-20 11:19:38.183758608 +0100
+@@ -60,6 +60,7 @@
+ 	nemo-toolbar-ui.xml			\
+ 	nemo-directory-view-ui.xml		\
+ 	nemo-desktop-icon-view-ui.xml	\
++	nemo-desktop-window-ui.xml  	\
+ 	nemo-list-view-ui.xml		\
+ 	nemo-shell-ui.xml			\
+ 	$(NULL)
+Index: nemo-3.3.92/src/nemo-desktop-icon-view.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-desktop-icon-view.c	2012-02-06 20:44:45.000000000 +0100
++++ nemo-3.3.92/src/nemo-desktop-icon-view.c	2012-03-20 11:19:28.539758142 +0100
+@@ -766,6 +766,15 @@
+ 
+ 	desktop_view->details->desktop_merge_id =
+ 		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nemo/nemo-desktop-icon-view-ui.xml", NULL);
++
++	GList * agroups = gtk_ui_manager_get_action_groups(ui_manager);
++	while (agroups != NULL) {
++		if (g_strcmp0("DirViewActions", gtk_action_group_get_name(GTK_ACTION_GROUP(agroups->data))) == 0) {
++			GtkAction * defaults = gtk_action_group_get_action(GTK_ACTION_GROUP(agroups->data), "Reset to Defaults");
++			gtk_action_set_visible(defaults, FALSE);
++		}
++		agroups = g_list_next(agroups);
++	}
+ }
+ 
+ static NemoView *
+Index: nemo-3.3.92/src/nemo-desktop-window-ui.xml
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ nemo-3.3.92/src/nemo-desktop-window-ui.xml	2012-03-20 11:19:28.555758142 +0100
+@@ -0,0 +1,14 @@
++<ui>
++<menubar name="MenuBar">
++	<menu action="Edit">
++		<placeholder name="Desktop Background">
++			<menuitem name="Change Desktop _Background" action="Change Desktop Background"/>
++		</placeholder>
++	</menu>
++	<menu action="Help">
++		<placeholder name="Ubuntu Desktop Help">
++			<menuitem name="Ubuntu Documentation" action="Ubuntu Documentation"/>
++		</placeholder>
++	</menu>
++</menubar>
++</ui>
+Index: nemo-3.3.92/src/nemo-desktop-window.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-desktop-window.c	2012-02-06 20:44:45.000000000 +0100
++++ nemo-3.3.92/src/nemo-desktop-window.c	2012-03-20 11:19:28.559758142 +0100
+@@ -37,6 +37,7 @@
+ #include <libnemo-private/nemo-file-utilities.h>
+ #include <libnemo-private/nemo-icon-names.h>
+ #include <libnemo-private/nemo-global-preferences.h>
++#include <libnemo-private/nemo-ui-utilities.h>
+ 
+ struct NemoDesktopWindowDetails {
+ 	gulong size_changed_id;
+@@ -44,6 +45,31 @@
+ 	gboolean loaded;
+ };
+ 
++static void
++desktop_background_cb (GtkAction * action, gpointer user_data)
++{
++	g_spawn_command_line_async("gnome-control-center background", NULL);
++	return;
++}
++
++static void
++ubuntu_docs_cb (GtkAction * action, gpointer user_data)
++{
++	g_spawn_command_line_async("yelp", NULL);
++	return;
++}
++
++static const GtkActionEntry desktop_entries[] = {
++	/* name, stock id, label */ { "Change Desktop Background", NULL, N_("Change Desktop _Background"),
++	/* accel, tooltip */          NULL, NULL,
++								  G_CALLBACK(desktop_background_cb)},
++	/* name, stock id, label */ { "Ubuntu Documentation",      NULL, N_("Ubuntu Help"),
++	/* accel, tooltip */          NULL, NULL,
++								  G_CALLBACK(ubuntu_docs_cb)}
++};
++
++static void set_wmspec_desktop_hint (GdkWindow *window);
++
+ G_DEFINE_TYPE (NemoDesktopWindow, nemo_desktop_window, 
+ 	       NEMO_TYPE_WINDOW);
+ 
+@@ -85,6 +111,123 @@
+ 					      NEMO_ACTION_NEW_TAB);
+ 	gtk_action_set_sensitive (action, FALSE);
+ 
++ 	UbuntuMenuProxy * proxy = ubuntu_menu_proxy_get();
++ 	if (proxy != NULL) {
++ 		ubuntu_menu_proxy_insert(proxy, GTK_WIDGET(window), NEMO_WINDOW(window)->details->menubar, 0);
++ 	}
++
++ 	/* Add actions for the desktop */
++ 	GtkActionGroup * desktop_agroup = gtk_action_group_new("DesktopActions");
++ 	gtk_action_group_set_translation_domain(desktop_agroup, GETTEXT_PACKAGE);
++ 	gtk_action_group_add_actions(desktop_agroup, desktop_entries, G_N_ELEMENTS(desktop_entries), window);
++ 	gtk_ui_manager_insert_action_group(nemo_window_get_ui_manager(NEMO_WINDOW(window)),
++ 	                                   desktop_agroup, 0);
++ 	g_object_unref(desktop_agroup);
++ 
++ 	GtkUIManager * ui_manager = nemo_window_get_ui_manager(NEMO_WINDOW(window));
++ 	gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nemo/nemo-desktop-window-ui.xml", NULL);
++
++ 	/* Hide actions that don't make sense on the desktop */
++ 	GList * agroups = gtk_ui_manager_get_action_groups(NEMO_WINDOW(window)->details->ui_manager);
++ 	while (agroups != NULL) {
++ 		GtkActionGroup * agroup = GTK_ACTION_GROUP(agroups->data);
++ 		const gchar * name = gtk_action_group_get_name(agroup);
++ 
++ 		if (g_strcmp0(name, "LaunchpadIntegration") == 0) {
++ 			gtk_action_group_set_visible(agroup, FALSE);
++ 		} else if (g_strcmp0(name, "SpatialActions") == 0) {
++ 			GtkAction * action = NULL;
++ 
++ 			action = gtk_action_group_get_action(agroup, "Close Parent Folders");
++ 			gtk_action_set_visible(action, FALSE);
++ 
++ 			action = gtk_action_group_get_action(agroup, "Close All Folders");
++ 			gtk_action_set_visible(action, FALSE);
++ 		} else if (g_strcmp0(name, "ShellActions") == 0) {
++ 			GtkAction * action = NULL;
++ 
++ 			action = gtk_action_group_get_action(agroup, "Close All Windows");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_CLOSE);
++ 			gtk_action_set_visible(action, FALSE);
++ 
++ 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_STOP);
++ 			gtk_action_set_visible(action, FALSE);
++ 
++ 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_RELOAD);
++ 			gtk_action_set_visible(action, FALSE);
++ 
++ 			action = gtk_action_group_get_action(agroup, "Preferences");
++ 			gtk_action_set_visible(action, FALSE);
++ 
++ 			action = gtk_action_group_get_action(agroup, "About Nemo");
++ 			gtk_action_set_visible(action, FALSE);
++ 
++ 			action = gtk_action_group_get_action(agroup, "Up");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "New Window");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "New Tab");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_BACK);
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_FORWARD);
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, NEMO_ACTION_SHOW_HIDE_EXTRA_PANE);
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "SplitViewSameLocation");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "Go to Location");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "Search");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "Bookmarks");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "Show Hide Sidebar");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "Show Hide Statusbar");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "Show Hide Toolbar");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "Sidebar Places");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "Sidebar Tree");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "NemoHelp");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "NemoHelpSearch");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "NemoHelpSort");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "NemoHelpLost");
++ 			gtk_action_set_visible(action, FALSE);
++
++ 			action = gtk_action_group_get_action(agroup, "NemoHelpShare");
++ 			gtk_action_set_visible(action, FALSE);
++ 		}
++ 
++ 		agroups = g_list_next(agroups);
++ 	}
++
+ 	/* Set the accessible name so that it doesn't inherit the cryptic desktop URI. */
+ 	accessible = gtk_widget_get_accessible (GTK_WIDGET (window));
+ 
+@@ -115,6 +258,8 @@
+ 
+ 	g_object_set_data (G_OBJECT (window), "is_desktop_window", 
+ 			   GINT_TO_POINTER (1));
++
++ 
+ }
+ 
+ static gint
+Index: nemo-3.3.92/src/nemo-shell-ui.xml
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-shell-ui.xml	2012-03-20 11:19:28.411758136 +0100
++++ nemo-3.3.92/src/nemo-shell-ui.xml	2012-03-20 11:19:28.563758142 +0100
+@@ -51,6 +51,8 @@
+ 		<placeholder name="Extension Actions"/>
+ 		<separator/>
+ 		<menuitem name="Preferences" action="Preferences"/>
++		<separator/>
++		<placeholder name="Desktop Background"/>
+ 	</menu>
+ 	<menu action="View">
+ 		<menuitem name="Stop" action="Stop"/>
+@@ -118,6 +120,8 @@
+ 		<placeholder name='LaunchpadItems'/>
+ 		<separator/>
+ 		<menuitem name="About Nemo" action="About Nemo"/>
++		<separator/>
++		<placeholder name="Ubuntu Desktop Help"/>
+ 	</menu>
+ </menubar>
+ <popup name="background">
+Index: nemo-3.3.92/src/nemo-window.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-window.c	2012-02-14 03:33:13.000000000 +0100
++++ nemo-3.3.92/src/nemo-window.c	2012-03-20 11:19:28.567758142 +0100
+@@ -37,6 +37,7 @@
+ #include "nemo-location-bar.h"
+ #include "nemo-mime-actions.h"
+ #include "nemo-notebook.h"
++#include "nemo-desktop-window.h"
+ #include "nemo-places-sidebar.h"
+ #include "nemo-search-bar.h"
+ #include "nemo-tree-sidebar.h"
+@@ -1114,6 +1115,10 @@
+ 		window->details->view_as_radio_action = action;
+ 	}
+ 
++	if (NEMO_IS_DESKTOP_WINDOW(window)) {
++		gtk_action_set_visible(GTK_ACTION(action), FALSE);
++	}
++
+ 	data = g_slice_new (ActivateViewData);
+ 	data->window = window;
+ 	data->id = g_strdup (identifier);
+Index: nemo-3.3.92/src/Makefile.in
+===================================================================
+--- nemo-3.3.92.orig/src/Makefile.in	2012-03-19 22:26:08.000000000 +0100
++++ nemo-3.3.92/src/Makefile.in	2012-03-20 11:19:28.571758143 +0100
+@@ -460,6 +460,7 @@
+ 	nemo-toolbar-ui.xml			\
+ 	nemo-directory-view-ui.xml		\
+ 	nemo-desktop-icon-view-ui.xml	\
++	nemo-desktop-window-ui.xml  	\
+ 	nemo-list-view-ui.xml		\
+ 	nemo-shell-ui.xml			\
+ 	$(NULL)
+Index: nemo-3.3.92/src/nemo.gresource.xml
+===================================================================
+--- nemo-3.3.92.orig/src/nemo.gresource.xml	2012-02-06 20:44:45.000000000 +0100
++++ nemo-3.3.92/src/nemo.gresource.xml	2012-03-20 11:19:28.571758143 +0100
+@@ -7,6 +7,7 @@
+     <file>nemo-toolbar-ui.xml</file>
+     <file>nemo-directory-view-ui.xml</file>
+     <file>nemo-desktop-icon-view-ui.xml</file>
++    <file>nemo-desktop-window-ui.xml</file>
+     <file>nemo-list-view-ui.xml</file>
+     <file>nemo-shell-ui.xml</file>
+     <file alias="icons/thumbnail_frame.png">../icons/thumbnail_frame.png</file>

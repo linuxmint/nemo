@@ -1,0 +1,12 @@
+Index: nemo-3.3.92/po/POTFILES.in
+===================================================================
+--- nemo-3.3.92.orig/po/POTFILES.in	2012-03-20 11:19:28.691758148 +0100
++++ nemo-3.3.92/po/POTFILES.in	2012-03-20 11:19:28.711758149 +0100
+@@ -5,6 +5,7 @@
+ data/nemo-autorun-software.desktop.in.in
+ data/nemo.desktop.in.in
+ debian/mount-archive.desktop.in
++debian/nemo-home.desktop.in
+ eel/eel-canvas.c
+ eel/eel-editable-label.c
+ eel/eel-glib-extensions.c

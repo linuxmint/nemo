@@ -1,0 +1,2 @@
+#!/bin/sh
+./nemo --check --g-fatal-warnings

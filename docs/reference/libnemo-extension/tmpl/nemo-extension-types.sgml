@@ -1,0 +1,78 @@
+<!-- ##### SECTION Title ##### -->
+nemo-extension-types
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### MACRO NEMO_TYPE_OPERATION_RESULT ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### STRUCT NemoOperationHandle ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ENUM NemoOperationResult ##### -->
+<para>
+
+</para>
+
+@NEMO_OPERATION_COMPLETE: 
+@NEMO_OPERATION_FAILED: 
+@NEMO_OPERATION_IN_PROGRESS: 
+
+<!-- ##### FUNCTION nemo_operation_result_get_type ##### -->
+<para>
+
+</para>
+
+@void: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_module_initialize ##### -->
+<para>
+
+</para>
+
+@module: 
+
+
+<!-- ##### FUNCTION nemo_module_shutdown ##### -->
+<para>
+
+</para>
+
+@void: 
+
+
+<!-- ##### FUNCTION nemo_module_list_types ##### -->
+<para>
+
+</para>
+
+@types: 
+@num_types: 
+
+

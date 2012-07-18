@@ -1,0 +1,392 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>NemoMenuItem</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="Nemo Extension Reference Manual">
+<link rel="up" href="ch01.html" title="Extension Interfaces">
+<link rel="prev" href="libnemo-extension-nemo-menu-provider.html" title="nemo-menu-provider">
+<link rel="next" href="libnemo-extension-nemo-property-page-provider.html" title="nemo-property-page-provider">
+<meta name="generator" content="GTK-Doc V1.18.1 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="libnemo-extension-nemo-menu-provider.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">Nemo Extension Reference Manual</th>
+<td><a accesskey="n" href="libnemo-extension-nemo-property-page-provider.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#libnemo-extension-nemo-menu.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#libnemo-extension-nemo-menu.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#libnemo-extension-nemo-menu.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#libnemo-extension-nemo-menu.properties" class="shortcut">Properties</a>
+                   | 
+                  <a href="#libnemo-extension-nemo-menu.signals" class="shortcut">Signals</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="libnemo-extension-nemo-menu"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libnemo-extension-nemo-menu.top_of_page"></a>NemoMenuItem</span></h2>
+<p>NemoMenuItem</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="libnemo-extension-nemo-menu.synopsis"></a><h2>Synopsis</h2>
+<a name="NemoMenu"></a><a name="NemoMenuItem"></a><pre class="synopsis">#define             <a class="link" href="libnemo-extension-nemo-menu.html#NEMO-TYPE-MENU-ITEM:CAPS" title="NEMO_TYPE_MENU_ITEM">NEMO_TYPE_MENU_ITEM</a>
+#define             <a class="link" href="libnemo-extension-nemo-menu.html#NEMO-MENU-ITEM:CAPS" title="NEMO_MENU_ITEM()">NEMO_MENU_ITEM</a>                  (obj)
+#define             <a class="link" href="libnemo-extension-nemo-menu.html#NEMO-MENU-ITEM-CLASS:CAPS" title="NEMO_MENU_ITEM_CLASS()">NEMO_MENU_ITEM_CLASS</a>            (klass)
+#define             <a class="link" href="libnemo-extension-nemo-menu.html#NEMO-MENU-IS-ITEM:CAPS" title="NEMO_MENU_IS_ITEM()">NEMO_MENU_IS_ITEM</a>               (obj)
+#define             <a class="link" href="libnemo-extension-nemo-menu.html#NEMO-MENU-IS-ITEM-CLASS:CAPS" title="NEMO_MENU_IS_ITEM_CLASS()">NEMO_MENU_IS_ITEM_CLASS</a>         (klass)
+#define             <a class="link" href="libnemo-extension-nemo-menu.html#NEMO-MENU-ITEM-GET-CLASS:CAPS" title="NEMO_MENU_ITEM_GET_CLASS()">NEMO_MENU_ITEM_GET_CLASS</a>        (obj)
+                    <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuPrivate" title="NemoMenuPrivate">NemoMenuPrivate</a>;
+                    <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItemDetails" title="NemoMenuItemDetails">NemoMenuItemDetails</a>;
+struct              <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu-struct" title="struct NemoMenu">NemoMenu</a>;
+struct              <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem-struct" title="struct NemoMenuItem">NemoMenuItem</a>;
+<a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="returnvalue">NemoMenu</span></a> *      <a class="link" href="libnemo-extension-nemo-menu.html#nemo-menu-new" title="nemo_menu_new ()">nemo_menu_new</a>                   (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libnemo-extension-nemo-menu.html#nemo-menu-append-item" title="nemo_menu_append_item ()">nemo_menu_append_item</a>           (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="type">NemoMenu</span></a> *menu</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a> *item</code></em>);
+<span class="returnvalue">GList</span> *             <a class="link" href="libnemo-extension-nemo-menu.html#nemo-menu-get-items" title="nemo_menu_get_items ()">nemo_menu_get_items</a>             (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="type">NemoMenu</span></a> *menu</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libnemo-extension-nemo-menu.html#nemo-menu-item-list-free" title="nemo_menu_item_list_free ()">nemo_menu_item_list_free</a>        (<em class="parameter"><code><span class="type">GList</span> *item_list</code></em>);
+<span class="returnvalue">GType</span>               <a class="link" href="libnemo-extension-nemo-menu.html#nemo-menu-item-get-type" title="nemo_menu_item_get_type ()">nemo_menu_item_get_type</a>         (<em class="parameter"><code><span class="type">void</span></code></em>);
+<a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="returnvalue">NemoMenuItem</span></a> *  <a class="link" href="libnemo-extension-nemo-menu.html#nemo-menu-item-new" title="nemo_menu_item_new ()">nemo_menu_item_new</a>              (<em class="parameter"><code>const <span class="type">char</span> *name</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *label</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *tip</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *icon</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libnemo-extension-nemo-menu.html#nemo-menu-item-activate" title="nemo_menu_item_activate ()">nemo_menu_item_activate</a>         (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a> *item</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libnemo-extension-nemo-menu.html#nemo-menu-item-set-submenu" title="nemo_menu_item_set_submenu ()">nemo_menu_item_set_submenu</a>      (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a> *item</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="type">NemoMenu</span></a> *menu</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="libnemo-extension-nemo-menu.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  GObject
+   +----NemoMenu
+</pre>
+<pre class="synopsis">
+  GObject
+   +----NemoMenuItem
+</pre>
+</div>
+<div class="refsect1">
+<a name="libnemo-extension-nemo-menu.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem--icon" title='The "icon" property'>icon</a>"                     <span class="type">gchar</span>*                : Read / Write
+  "<a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem--label" title='The "label" property'>label</a>"                    <span class="type">gchar</span>*                : Read / Write
+  "<a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem--menu" title='The "menu" property'>menu</a>"                     <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="type">NemoMenu</span></a>*         : Read / Write
+  "<a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem--name" title='The "name" property'>name</a>"                     <span class="type">gchar</span>*                : Read / Write / Construct Only
+  "<a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem--priority" title='The "priority" property'>priority</a>"                 <span class="type">gboolean</span>              : Read / Write
+  "<a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem--sensitive" title='The "sensitive" property'>sensitive</a>"                <span class="type">gboolean</span>              : Read / Write
+  "<a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem--tip" title='The "tip" property'>tip</a>"                      <span class="type">gchar</span>*                : Read / Write
+</pre>
+</div>
+<div class="refsect1">
+<a name="libnemo-extension-nemo-menu.signals"></a><h2>Signals</h2>
+<pre class="synopsis">
+  "<a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem-activate" title='The "activate" signal'>activate</a>"                                       : <code class="literal">Run Last</code>
+</pre>
+</div>
+<div class="refsect1">
+<a name="libnemo-extension-nemo-menu.description"></a><h2>Description</h2>
+<p>
+</p>
+</div>
+<div class="refsect1">
+<a name="libnemo-extension-nemo-menu.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="NEMO-TYPE-MENU-ITEM:CAPS"></a><h3>NEMO_TYPE_MENU_ITEM</h3>
+<pre class="programlisting">#define NEMO_TYPE_MENU_ITEM            (nemo_menu_item_get_type())
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NEMO-MENU-ITEM:CAPS"></a><h3>NEMO_MENU_ITEM()</h3>
+<pre class="programlisting">#define NEMO_MENU_ITEM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_MENU_ITEM, NemoMenuItem))
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NEMO-MENU-ITEM-CLASS:CAPS"></a><h3>NEMO_MENU_ITEM_CLASS()</h3>
+<pre class="programlisting">#define NEMO_MENU_ITEM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_MENU_ITEM, NemoMenuItemClass))
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NEMO-MENU-IS-ITEM:CAPS"></a><h3>NEMO_MENU_IS_ITEM()</h3>
+<pre class="programlisting">#define NEMO_MENU_IS_ITEM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_MENU_ITEM))
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NEMO-MENU-IS-ITEM-CLASS:CAPS"></a><h3>NEMO_MENU_IS_ITEM_CLASS()</h3>
+<pre class="programlisting">#define NEMO_MENU_IS_ITEM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), NEMO_TYPE_MENU_ITEM))
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NEMO-MENU-ITEM-GET-CLASS:CAPS"></a><h3>NEMO_MENU_ITEM_GET_CLASS()</h3>
+<pre class="programlisting">#define NEMO_MENU_ITEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), NEMO_TYPE_MENU_ITEM, NemoMenuItemClass))
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoMenuPrivate"></a><h3>NemoMenuPrivate</h3>
+<pre class="programlisting">typedef struct _NemoMenuPrivate NemoMenuPrivate;</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoMenuItemDetails"></a><h3>NemoMenuItemDetails</h3>
+<pre class="programlisting">typedef struct _NemoMenuItemDetails NemoMenuItemDetails;</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoMenu-struct"></a><h3>struct NemoMenu</h3>
+<pre class="programlisting">struct NemoMenu;</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoMenuItem-struct"></a><h3>struct NemoMenuItem</h3>
+<pre class="programlisting">struct NemoMenuItem;</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-menu-new"></a><h3>nemo_menu_new ()</h3>
+<pre class="programlisting"><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="returnvalue">NemoMenu</span></a> *      nemo_menu_new                   (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-menu-append-item"></a><h3>nemo_menu_append_item ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                nemo_menu_append_item           (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="type">NemoMenu</span></a> *menu</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a> *item</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-menu-get-items"></a><h3>nemo_menu_get_items ()</h3>
+<pre class="programlisting"><span class="returnvalue">GList</span> *             nemo_menu_get_items             (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="type">NemoMenu</span></a> *menu</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>menu</code></em> :</span></p></td>
+<td>a <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="type">NemoMenu</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the provided <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a> list. <span class="annotation">[<a href="http://foldoc.org/element-type"><span class="acronym">element-type</span></a> NemoMenuItem][<a href="http://foldoc.org/transfer%20full"><span class="acronym">transfer full</span></a>]</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-menu-item-list-free"></a><h3>nemo_menu_item_list_free ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                nemo_menu_item_list_free        (<em class="parameter"><code><span class="type">GList</span> *item_list</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>item_list</code></em> :</span></p></td>
+<td>a list of <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a>. <span class="annotation">[<a href="http://foldoc.org/element-type"><span class="acronym">element-type</span></a> NemoMenuItem]</span>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-menu-item-get-type"></a><h3>nemo_menu_item_get_type ()</h3>
+<pre class="programlisting"><span class="returnvalue">GType</span>               nemo_menu_item_get_type         (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-menu-item-new"></a><h3>nemo_menu_item_new ()</h3>
+<pre class="programlisting"><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="returnvalue">NemoMenuItem</span></a> *  nemo_menu_item_new              (<em class="parameter"><code>const <span class="type">char</span> *name</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *label</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *tip</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *icon</code></em>);</pre>
+<p>
+Creates a new menu item that can be added to the toolbar or to a contextual menu.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
+<td>the identifier for the menu item</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>label</code></em> :</span></p></td>
+<td>the user-visible label of the menu item</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>tip</code></em> :</span></p></td>
+<td>the tooltip of the menu item</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>icon</code></em> :</span></p></td>
+<td>the name of the icon to display in the menu item</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a newly create <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-menu-item-activate"></a><h3>nemo_menu_item_activate ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                nemo_menu_item_activate         (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a> *item</code></em>);</pre>
+<p>
+emits the activate signal.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>item</code></em> :</span></p></td>
+<td>pointer to a <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-menu-item-set-submenu"></a><h3>nemo_menu_item_set_submenu ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                nemo_menu_item_set_submenu      (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a> *item</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="type">NemoMenu</span></a> *menu</code></em>);</pre>
+<p>
+Attachs a menu to the given <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>item</code></em> :</span></p></td>
+<td>pointer to a <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>menu</code></em> :</span></p></td>
+<td>pointer to a <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="type">NemoMenu</span></a> to attach to the button</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="libnemo-extension-nemo-menu.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="NemoMenuItem--icon"></a><h3>The <code class="literal">"icon"</code> property</h3>
+<pre class="programlisting">  "icon"                     <span class="type">gchar</span>*                : Read / Write</pre>
+<p>Name of the icon to display in the menu item.</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoMenuItem--label"></a><h3>The <code class="literal">"label"</code> property</h3>
+<pre class="programlisting">  "label"                    <span class="type">gchar</span>*                : Read / Write</pre>
+<p>Label to display to the user.</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoMenuItem--menu"></a><h3>The <code class="literal">"menu"</code> property</h3>
+<pre class="programlisting">  "menu"                     <a class="link" href="libnemo-extension-nemo-menu.html#NemoMenu"><span class="type">NemoMenu</span></a>*         : Read / Write</pre>
+<p>The menu belonging to this item. May be null.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoMenuItem--name"></a><h3>The <code class="literal">"name"</code> property</h3>
+<pre class="programlisting">  "name"                     <span class="type">gchar</span>*                : Read / Write / Construct Only</pre>
+<p>Name of the item.</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoMenuItem--priority"></a><h3>The <code class="literal">"priority"</code> property</h3>
+<pre class="programlisting">  "priority"                 <span class="type">gboolean</span>              : Read / Write</pre>
+<p>Show priority text in toolbars.</p>
+<p>Default value: TRUE</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoMenuItem--sensitive"></a><h3>The <code class="literal">"sensitive"</code> property</h3>
+<pre class="programlisting">  "sensitive"                <span class="type">gboolean</span>              : Read / Write</pre>
+<p>Whether the menu item is sensitive.</p>
+<p>Default value: TRUE</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoMenuItem--tip"></a><h3>The <code class="literal">"tip"</code> property</h3>
+<pre class="programlisting">  "tip"                      <span class="type">gchar</span>*                : Read / Write</pre>
+<p>Tooltip for the menu item.</p>
+<p>Default value: NULL</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="libnemo-extension-nemo-menu.signal-details"></a><h2>Signal Details</h2>
+<div class="refsect2">
+<a name="NemoMenuItem-activate"></a><h3>The <code class="literal">"activate"</code> signal</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="libnemo-extension-nemo-menu.html#NemoMenuItem"><span class="type">NemoMenuItem</span></a> *nemomenuitem,
+                                                        <span class="type">gpointer</span>          user_data)             : <code class="literal">Run Last</code></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>nemomenuitem</code></em> :</span></p></td>
+<td>the object which received the signal.</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
+<td>user data set when the signal handler was connected.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18.1</div>
+</body>
+</html>

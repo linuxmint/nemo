@@ -1,0 +1,80 @@
+<!-- ##### SECTION Title ##### -->
+nemo-info-provider
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT NemoInfoProvider ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT NemoInfoProviderIface ##### -->
+<para>
+
+</para>
+
+@g_iface: 
+@update_file_info: 
+@cancel_update: 
+
+<!-- ##### USER_FUNCTION NemoInfoProviderUpdateComplete ##### -->
+<para>
+
+</para>
+
+@provider: 
+@handle: 
+@result: 
+@user_data: 
+
+
+<!-- ##### FUNCTION nemo_info_provider_update_file_info ##### -->
+<para>
+
+</para>
+
+@provider: 
+@file: 
+@update_complete: 
+@handle: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_info_provider_cancel_update ##### -->
+<para>
+
+</para>
+
+@provider: 
+@handle: 
+
+
+<!-- ##### FUNCTION nemo_info_provider_update_complete_invoke ##### -->
+<para>
+
+</para>
+
+@update_complete: 
+@provider: 
+@handle: 
+@result: 
+
+

@@ -1,0 +1,14 @@
+<ui>
+<menubar name="MenuBar">
+	<menu action="Edit">
+		<placeholder name="Desktop Background">
+			<menuitem name="Change Desktop _Background" action="Change Desktop Background"/>
+		</placeholder>
+	</menu>
+	<menu action="Help">
+		<placeholder name="Ubuntu Desktop Help">
+			<menuitem name="Ubuntu Documentation" action="Ubuntu Documentation"/>
+		</placeholder>
+	</menu>
+</menubar>
+</ui>

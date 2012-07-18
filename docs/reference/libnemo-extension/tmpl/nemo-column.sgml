@@ -1,0 +1,76 @@
+<!-- ##### SECTION Title ##### -->
+NemoColumn
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT NemoColumnDetails ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT NemoColumn ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG NemoColumn:attribute ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoColumn:attribute-q ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoColumn:description ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoColumn:label ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoColumn:name ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoColumn:xalign ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION nemo_column_new ##### -->
+<para>
+
+</para>
+
+@name: 
+@attribute: 
+@label: 
+@description: 
+@Returns: 
+
+

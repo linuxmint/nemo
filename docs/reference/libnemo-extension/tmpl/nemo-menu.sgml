@@ -1,0 +1,208 @@
+<!-- ##### SECTION Title ##### -->
+NemoMenuItem
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### MACRO NEMO_TYPE_MENU_ITEM ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO NEMO_MENU_ITEM ##### -->
+<para>
+
+</para>
+
+@obj: 
+
+
+<!-- ##### MACRO NEMO_MENU_ITEM_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+
+<!-- ##### MACRO NEMO_MENU_IS_ITEM ##### -->
+<para>
+
+</para>
+
+@obj: 
+
+
+<!-- ##### MACRO NEMO_MENU_IS_ITEM_CLASS ##### -->
+<para>
+
+</para>
+
+@klass: 
+
+
+<!-- ##### MACRO NEMO_MENU_ITEM_GET_CLASS ##### -->
+<para>
+
+</para>
+
+@obj: 
+
+
+<!-- ##### STRUCT NemoMenuPrivate ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT NemoMenuItemDetails ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT NemoMenu ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT NemoMenuItem ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SIGNAL NemoMenuItem::activate ##### -->
+<para>
+
+</para>
+
+@nemomenuitem: the object which received the signal.
+
+<!-- ##### ARG NemoMenuItem:icon ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoMenuItem:label ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoMenuItem:menu ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoMenuItem:name ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoMenuItem:priority ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoMenuItem:sensitive ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoMenuItem:tip ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION nemo_menu_new ##### -->
+<para>
+
+</para>
+
+@void: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_menu_append_item ##### -->
+<para>
+
+</para>
+
+@menu: 
+@item: 
+
+
+<!-- ##### FUNCTION nemo_menu_get_items ##### -->
+<para>
+
+</para>
+
+@menu: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_menu_item_list_free ##### -->
+<para>
+
+</para>
+
+@item_list: 
+
+
+<!-- ##### FUNCTION nemo_menu_item_get_type ##### -->
+<para>
+
+</para>
+
+@void: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_menu_item_new ##### -->
+<para>
+
+</para>
+
+@name: 
+@label: 
+@tip: 
+@icon: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_menu_item_activate ##### -->
+<para>
+
+</para>
+
+@item: 
+
+
+<!-- ##### FUNCTION nemo_menu_item_set_submenu ##### -->
+<para>
+
+</para>
+
+@item: 
+@menu: 
+
+

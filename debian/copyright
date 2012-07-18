@@ -1,0 +1,51 @@
+This package was debianized by Takuo KITAME <kitame@excalibur.northeye.org> on
+Fri, 19 May 2000 14:10:24 +0900.
+
+It was downloaded from ftp://ftp.gnome.org/pub/GNOME/sources/nemo
+
+Copyright Holders and Upstream Authors:
+  Copyright (C) 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
+  Copyright (C) 1997-2000, 2008 Free Software Foundation, Inc.
+  Copyright (C) 1999, 2000, 2001 Eazel, Inc.
+  Copyright (C) 1999, 2000, 2003, 2004 Red Hat, Inc.
+  Copyright (C) 2001, 2002 Anders Carlsson
+  Copyright (C) 2001 Maciej Stachowiak
+  Copyright (C) 2002, 2004 James Willcox
+  Copyright (C) 2002 Bent Spoon Software
+  Copyright (C) 2002 Christophe Fergeau
+  Copyright (C) 2002 Darin Adler
+  Copyright (C) 2002 Jan Arne Petersen
+  Copyright (C) 2002 Sun Microsystems, Inc.
+  Copyright (C) 2003, 2004, 2005 Christian Persch
+  Copyright (C) 2003, 2004 Marco Pesenti Gritti
+  Copyright (C) 2005 Jamie McCracken
+  Copyright (C) 2005 Raffaele Sandrini
+  Copyright (C) 2005 Roberto Majadas
+  Copyright (C) 2005 Vincent Untz
+  Copyright (C) 2006 Paolo Borelli
+  Copyright (C) 2006 Zbigniew Chyla
+  Copyright (C) 2007 Collabora Ltd.
+  Copyright (C) 2007 Martin Wehner
+  Copyright (C) 2007 Nokia Corporation
+  Copyright (C) 2008-2010 Cosimo Cecchi
+  Copyright (C) 2009 Alexander Larsson
+  Copyright (C) 2011 Ignacio Casal Quinteiro
+
+License:
+
+   This package is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This package is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this package; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+On Debian systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL'.

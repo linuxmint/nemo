@@ -1,0 +1,10 @@
+Nemo extensions link against the libnemo-extenstions library which is
+is under the LGPL license. However, they also get loaded into the main
+nemo program which is licensed under the GPL. So, extensions should not
+be incompatible with the LGPL or GPL.
+
+Some extensions are GPL but use some IPC mechanism like dbus to talk to a
+potentially non-GPL application. This is actually not such a bad design in
+general if your extension is doing a lot of work, as running as a nemo
+extension with all its issues (no synchronous i/o, can't control of the
+context your code runs in, etc) can be kind of a pain.

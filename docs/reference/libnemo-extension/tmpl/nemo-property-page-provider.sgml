@@ -1,0 +1,46 @@
+<!-- ##### SECTION Title ##### -->
+nemo-property-page-provider
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT NemoPropertyPageProvider ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT NemoPropertyPageProviderIface ##### -->
+<para>
+
+</para>
+
+@g_iface: 
+@get_pages: 
+
+<!-- ##### FUNCTION nemo_property_page_provider_get_pages ##### -->
+<para>
+
+</para>
+
+@provider: 
+@files: 
+@Returns: 
+
+

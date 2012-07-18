@@ -1,0 +1,29 @@
+Description: Don't list volumes option on LTSP configs
+Bug: https://launchpad.net/bugs/220564
+
+Index: nemo-3.3.92/libnemo-private/nemo-file.c
+===================================================================
+--- nemo-3.3.92.orig/libnemo-private/nemo-file.c	2012-03-08 02:47:13.000000000 +0100
++++ nemo-3.3.92/libnemo-private/nemo-file.c	2012-03-20 11:19:40.807758735 +0100
+@@ -1016,6 +1016,10 @@
+ {
+ 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
+ 
++	if (getenv("LTSP_CLIENT")) {
++		return FALSE;
++	}
++
+ 	return file->details->can_unmount ||
+ 		(file->details->mount != NULL &&
+ 		 g_mount_can_unmount (file->details->mount));
+@@ -1026,6 +1030,10 @@
+ {
+ 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
+ 
++	if (getenv("LTSP_CLIENT")) {
++		return FALSE;
++	}
++
+ 	return file->details->can_eject ||
+ 		(file->details->mount != NULL &&
+ 		 g_mount_can_eject (file->details->mount));

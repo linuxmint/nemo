@@ -1,0 +1,493 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>nemo-file-info</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="Nemo Extension Reference Manual">
+<link rel="up" href="ch01.html" title="Extension Interfaces">
+<link rel="prev" href="libnemo-extension-nemo-extension-types.html" title="nemo-extension-types">
+<link rel="next" href="libnemo-extension-nemo-info-provider.html" title="nemo-info-provider">
+<meta name="generator" content="GTK-Doc V1.18.1 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="libnemo-extension-nemo-extension-types.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">Nemo Extension Reference Manual</th>
+<td><a accesskey="n" href="libnemo-extension-nemo-info-provider.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#libnemo-extension-nemo-file-info.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#libnemo-extension-nemo-file-info.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#libnemo-extension-nemo-file-info.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#libnemo-extension-nemo-file-info.prerequisites" class="shortcut">Prerequisites</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="libnemo-extension-nemo-file-info"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libnemo-extension-nemo-file-info.top_of_page"></a>nemo-file-info</span></h2>
+<p>nemo-file-info</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="libnemo-extension-nemo-file-info.synopsis"></a><h2>Synopsis</h2>
+<a name="NemoFileInfo"></a><pre class="synopsis">#define             <a class="link" href="libnemo-extension-nemo-file-info.html#NEMO-FILE-DEFINED:CAPS" title="NEMO_FILE_DEFINED">NEMO_FILE_DEFINED</a>
+typedef             <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFile" title="NemoFile">NemoFile</a>;
+typedef             <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo">NemoFileInfo</a>;
+struct              <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfoIface" title="struct NemoFileInfoIface">NemoFileInfoIface</a>;
+<a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-create" title="nemo_file_info_create ()">nemo_file_info_create</a>           (<em class="parameter"><code><span class="type">GFile</span> *location</code></em>);
+<a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-create-for-uri" title="nemo_file_info_create_for_uri ()">nemo_file_info_create_for_uri</a>   (<em class="parameter"><code>const <span class="type">char</span> *uri</code></em>);
+<a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  (<a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-getter" title="nemo_file_info_getter ()">*nemo_file_info_getter</a>)        (<em class="parameter"><code><span class="type">GFile</span> *location</code></em>,
+                                                         <em class="parameter"><code><span class="type">gboolean</span> create</code></em>);
+<a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-lookup" title="nemo_file_info_lookup ()">nemo_file_info_lookup</a>           (<em class="parameter"><code><span class="type">GFile</span> *location</code></em>);
+<a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-lookup-for-uri" title="nemo_file_info_lookup_for_uri ()">nemo_file_info_lookup_for_uri</a>   (<em class="parameter"><code>const <span class="type">char</span> *uri</code></em>);
+<span class="returnvalue">GList</span> *             <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-list-copy" title="nemo_file_info_list_copy ()">nemo_file_info_list_copy</a>        (<em class="parameter"><code><span class="type">GList</span> *files</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-list-free" title="nemo_file_info_list_free ()">nemo_file_info_list_free</a>        (<em class="parameter"><code><span class="type">GList</span> *files</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-is-gone" title="nemo_file_info_is_gone ()">nemo_file_info_is_gone</a>          (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">GFileType</span>           <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-file-type" title="nemo_file_info_get_file_type ()">nemo_file_info_get_file_type</a>    (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">GFile</span> *             <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-location" title="nemo_file_info_get_location ()">nemo_file_info_get_location</a>     (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">char</span> *              <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-name" title="nemo_file_info_get_name ()">nemo_file_info_get_name</a>         (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">char</span> *              <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-uri" title="nemo_file_info_get_uri ()">nemo_file_info_get_uri</a>          (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">char</span> *              <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-activation-uri" title="nemo_file_info_get_activation_uri ()">nemo_file_info_get_activation_uri</a>
+                                                        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">GFile</span> *             <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-parent-location" title="nemo_file_info_get_parent_location ()">nemo_file_info_get_parent_location</a>
+                                                        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">char</span> *              <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-parent-uri" title="nemo_file_info_get_parent_uri ()">nemo_file_info_get_parent_uri</a>   (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">GMount</span> *            <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-mount" title="nemo_file_info_get_mount ()">nemo_file_info_get_mount</a>        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">char</span> *              <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-uri-scheme" title="nemo_file_info_get_uri_scheme ()">nemo_file_info_get_uri_scheme</a>   (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-parent-info" title="nemo_file_info_get_parent_info ()">nemo_file_info_get_parent_info</a>  (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">char</span> *              <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-mime-type" title="nemo_file_info_get_mime_type ()">nemo_file_info_get_mime_type</a>    (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-is-mime-type" title="nemo_file_info_is_mime_type ()">nemo_file_info_is_mime_type</a>     (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *mime_type</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-is-directory" title="nemo_file_info_is_directory ()">nemo_file_info_is_directory</a>     (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-can-write" title="nemo_file_info_can_write ()">nemo_file_info_can_write</a>        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-add-emblem" title="nemo_file_info_add_emblem ()">nemo_file_info_add_emblem</a>       (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *emblem_name</code></em>);
+<span class="returnvalue">char</span> *              <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-get-string-attribute" title="nemo_file_info_get_string_attribute ()">nemo_file_info_get_string_attribute</a>
+                                                        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *attribute_name</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-add-string-attribute" title="nemo_file_info_add_string_attribute ()">nemo_file_info_add_string_attribute</a>
+                                                        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *attribute_name</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *value</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-invalidate-extension-info" title="nemo_file_info_invalidate_extension_info ()">nemo_file_info_invalidate_extension_info</a>
+                                                        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="libnemo-extension-nemo-file-info.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  GInterface
+   +----NemoFileInfo
+</pre>
+</div>
+<div class="refsect1">
+<a name="libnemo-extension-nemo-file-info.prerequisites"></a><h2>Prerequisites</h2>
+<p>
+NemoFileInfo requires
+ GObject.</p>
+</div>
+<div class="refsect1">
+<a name="libnemo-extension-nemo-file-info.description"></a><h2>Description</h2>
+<p>
+</p>
+</div>
+<div class="refsect1">
+<a name="libnemo-extension-nemo-file-info.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="NEMO-FILE-DEFINED:CAPS"></a><h3>NEMO_FILE_DEFINED</h3>
+<pre class="programlisting">#define NEMO_FILE_DEFINED
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoFile"></a><h3>NemoFile</h3>
+<pre class="programlisting">typedef struct NemoFile          NemoFile;
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoFileInfo"></a><h3>NemoFileInfo</h3>
+<pre class="programlisting">typedef NemoFile                  NemoFileInfo;
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NemoFileInfoIface"></a><h3>struct NemoFileInfoIface</h3>
+<pre class="programlisting">struct NemoFileInfoIface {
+	GTypeInterface g_iface;
+
+	gboolean          (*is_gone)              (NemoFileInfo *file);
+	
+	char *            (*get_name)             (NemoFileInfo *file);
+	char *            (*get_uri)              (NemoFileInfo *file);
+	char *            (*get_parent_uri)       (NemoFileInfo *file);
+	char *            (*get_uri_scheme)       (NemoFileInfo *file);
+	
+	char *            (*get_mime_type)        (NemoFileInfo *file);
+	gboolean          (*is_mime_type)         (NemoFileInfo *file,
+						   const char       *mime_Type);
+	gboolean          (*is_directory)         (NemoFileInfo *file);
+	
+	void              (*add_emblem)           (NemoFileInfo *file,
+						   const char       *emblem_name);
+	char *            (*get_string_attribute) (NemoFileInfo *file,
+						   const char       *attribute_name);
+	void              (*add_string_attribute) (NemoFileInfo *file,
+						   const char       *attribute_name,
+						   const char       *value);
+	void              (*invalidate_extension_info) (NemoFileInfo *file);
+	
+	char *            (*get_activation_uri)   (NemoFileInfo *file);
+
+	GFileType         (*get_file_type)        (NemoFileInfo *file);
+	GFile *           (*get_location)         (NemoFileInfo *file);
+	GFile *           (*get_parent_location)  (NemoFileInfo *file);
+	NemoFileInfo* (*get_parent_info)      (NemoFileInfo *file);
+	GMount *          (*get_mount)            (NemoFileInfo *file);
+	gboolean          (*can_write)            (NemoFileInfo *file);
+};
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-create"></a><h3>nemo_file_info_create ()</h3>
+<pre class="programlisting"><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  nemo_file_info_create           (<em class="parameter"><code><span class="type">GFile</span> *location</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>location</code></em> :</span></p></td>
+<td>the location to create the file info for</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a>. <span class="annotation">[<a href="http://foldoc.org/transfer%20full"><span class="acronym">transfer full</span></a>]</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-create-for-uri"></a><h3>nemo_file_info_create_for_uri ()</h3>
+<pre class="programlisting"><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  nemo_file_info_create_for_uri   (<em class="parameter"><code>const <span class="type">char</span> *uri</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
+<td>the URI to lookup the file info for</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a>. <span class="annotation">[<a href="http://foldoc.org/transfer%20full"><span class="acronym">transfer full</span></a>]</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-getter"></a><h3>nemo_file_info_getter ()</h3>
+<pre class="programlisting"><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  (*nemo_file_info_getter)        (<em class="parameter"><code><span class="type">GFile</span> *location</code></em>,
+                                                         <em class="parameter"><code><span class="type">gboolean</span> create</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-lookup"></a><h3>nemo_file_info_lookup ()</h3>
+<pre class="programlisting"><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  nemo_file_info_lookup           (<em class="parameter"><code><span class="type">GFile</span> *location</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>location</code></em> :</span></p></td>
+<td>the location to lookup the file info for</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a>. <span class="annotation">[<a href="http://foldoc.org/transfer%20full"><span class="acronym">transfer full</span></a>]</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-lookup-for-uri"></a><h3>nemo_file_info_lookup_for_uri ()</h3>
+<pre class="programlisting"><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  nemo_file_info_lookup_for_uri   (<em class="parameter"><code>const <span class="type">char</span> *uri</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
+<td>the URI to lookup the file info for</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a>. <span class="annotation">[<a href="http://foldoc.org/transfer%20full"><span class="acronym">transfer full</span></a>]</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-list-copy"></a><h3>nemo_file_info_list_copy ()</h3>
+<pre class="programlisting"><span class="returnvalue">GList</span> *             nemo_file_info_list_copy        (<em class="parameter"><code><span class="type">GList</span> *files</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>files</code></em> :</span></p></td>
+<td>the files to copy. <span class="annotation">[<a href="http://foldoc.org/element-type"><span class="acronym">element-type</span></a> NemoFileInfo]</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a copy of <em class="parameter"><code>files</code></em>.
+Use <a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-list-free" title="nemo_file_info_list_free ()"><span class="type">nemo_file_info_list_free</span></a> to free the list and unref its contents. <span class="annotation">[<a href="http://foldoc.org/element-type"><span class="acronym">element-type</span></a> NemoFileInfo][<a href="http://foldoc.org/transfer%20full"><span class="acronym">transfer full</span></a>]</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-list-free"></a><h3>nemo_file_info_list_free ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                nemo_file_info_list_free        (<em class="parameter"><code><span class="type">GList</span> *files</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>files</code></em> :</span></p></td>
+<td>a list created with
+<a class="link" href="libnemo-extension-nemo-file-info.html#nemo-file-info-list-copy" title="nemo_file_info_list_copy ()"><span class="type">nemo_file_info_list_copy</span></a>. <span class="annotation">[<a href="http://foldoc.org/element-type"><span class="acronym">element-type</span></a> NemoFileInfo]</span>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-is-gone"></a><h3>nemo_file_info_is_gone ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            nemo_file_info_is_gone          (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-file-type"></a><h3>nemo_file_info_get_file_type ()</h3>
+<pre class="programlisting"><span class="returnvalue">GFileType</span>           nemo_file_info_get_file_type    (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-location"></a><h3>nemo_file_info_get_location ()</h3>
+<pre class="programlisting"><span class="returnvalue">GFile</span> *             nemo_file_info_get_location     (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>file</code></em> :</span></p></td>
+<td>a <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a <span class="type">GFile</span> for the location of <em class="parameter"><code>file</code></em>. <span class="annotation">[<a href="http://foldoc.org/transfer%20full"><span class="acronym">transfer full</span></a>]</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-name"></a><h3>nemo_file_info_get_name ()</h3>
+<pre class="programlisting"><span class="returnvalue">char</span> *              nemo_file_info_get_name         (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-uri"></a><h3>nemo_file_info_get_uri ()</h3>
+<pre class="programlisting"><span class="returnvalue">char</span> *              nemo_file_info_get_uri          (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-activation-uri"></a><h3>nemo_file_info_get_activation_uri ()</h3>
+<pre class="programlisting"><span class="returnvalue">char</span> *              nemo_file_info_get_activation_uri
+                                                        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-parent-location"></a><h3>nemo_file_info_get_parent_location ()</h3>
+<pre class="programlisting"><span class="returnvalue">GFile</span> *             nemo_file_info_get_parent_location
+                                                        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>file</code></em> :</span></p></td>
+<td>a <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a <span class="type">GFile</span> for the parent location of <em class="parameter"><code>file</code></em>,
+or <a href="/opt/jhbuild/share/gtk-doc/html/liboil/liboil-liboiljunk.html#NULL--CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>file</code></em> has no parent. <span class="annotation">[<a href="http://foldoc.org/allow-none"><span class="acronym">allow-none</span></a>][<a href="http://foldoc.org/transfer%20full"><span class="acronym">transfer full</span></a>]</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-parent-uri"></a><h3>nemo_file_info_get_parent_uri ()</h3>
+<pre class="programlisting"><span class="returnvalue">char</span> *              nemo_file_info_get_parent_uri   (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-mount"></a><h3>nemo_file_info_get_mount ()</h3>
+<pre class="programlisting"><span class="returnvalue">GMount</span> *            nemo_file_info_get_mount        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>file</code></em> :</span></p></td>
+<td>a <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a <span class="type">GMount</span> for the mount of <em class="parameter"><code>file</code></em>,
+or <a href="/opt/jhbuild/share/gtk-doc/html/liboil/liboil-liboiljunk.html#NULL--CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>file</code></em> has no mount. <span class="annotation">[<a href="http://foldoc.org/allow-none"><span class="acronym">allow-none</span></a>][<a href="http://foldoc.org/transfer%20full"><span class="acronym">transfer full</span></a>]</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-uri-scheme"></a><h3>nemo_file_info_get_uri_scheme ()</h3>
+<pre class="programlisting"><span class="returnvalue">char</span> *              nemo_file_info_get_uri_scheme   (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-parent-info"></a><h3>nemo_file_info_get_parent_info ()</h3>
+<pre class="programlisting"><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="returnvalue">NemoFileInfo</span></a> *  nemo_file_info_get_parent_info  (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>file</code></em> :</span></p></td>
+<td>a <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a <a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> for the parent of <em class="parameter"><code>file</code></em>,
+or <a href="/opt/jhbuild/share/gtk-doc/html/liboil/liboil-liboiljunk.html#NULL--CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>file</code></em> has no parent. <span class="annotation">[<a href="http://foldoc.org/allow-none"><span class="acronym">allow-none</span></a>][<a href="http://foldoc.org/transfer%20full"><span class="acronym">transfer full</span></a>]</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-mime-type"></a><h3>nemo_file_info_get_mime_type ()</h3>
+<pre class="programlisting"><span class="returnvalue">char</span> *              nemo_file_info_get_mime_type    (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-is-mime-type"></a><h3>nemo_file_info_is_mime_type ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            nemo_file_info_is_mime_type     (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *mime_type</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-is-directory"></a><h3>nemo_file_info_is_directory ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            nemo_file_info_is_directory     (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-can-write"></a><h3>nemo_file_info_can_write ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            nemo_file_info_can_write        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-add-emblem"></a><h3>nemo_file_info_add_emblem ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                nemo_file_info_add_emblem       (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *emblem_name</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-get-string-attribute"></a><h3>nemo_file_info_get_string_attribute ()</h3>
+<pre class="programlisting"><span class="returnvalue">char</span> *              nemo_file_info_get_string_attribute
+                                                        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *attribute_name</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-add-string-attribute"></a><h3>nemo_file_info_add_string_attribute ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                nemo_file_info_add_string_attribute
+                                                        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *attribute_name</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">char</span> *value</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nemo-file-info-invalidate-extension-info"></a><h3>nemo_file_info_invalidate_extension_info ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                nemo_file_info_invalidate_extension_info
+                                                        (<em class="parameter"><code><a class="link" href="libnemo-extension-nemo-file-info.html#NemoFileInfo"><span class="type">NemoFileInfo</span></a> *file</code></em>);</pre>
+<p>
+</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18.1</div>
+</body>
+</html>

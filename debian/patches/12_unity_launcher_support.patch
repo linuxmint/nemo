@@ -1,0 +1,870 @@
+=== modified file 'configure.in'
+Index: nemo-3.3.92/configure.in
+===================================================================
+--- nemo-3.3.92.orig/configure.in	2012-03-20 11:19:28.411758136 +0100
++++ nemo-3.3.92/configure.in	2012-03-20 11:19:28.671758147 +0100
+@@ -10,6 +10,8 @@
+ m4_define(exif_minver,                 0.6.20)
+ m4_define(exempi_minver,               2.1.0)
+ m4_define(notify_minver,               0.7.0)
++m4_define(unity_minver,                4.0.0)
++m4_define(dbusmenu_minver,             0.4.90)
+ 
+ 
+ dnl 1. If the library code has changed at all since last release, then increment revision.
+@@ -184,6 +186,29 @@
+ 
+ dnl ==========================================================================
+ 
++AM_CONDITIONAL(HAVE_UNITY, false)
++
++AC_ARG_ENABLE(unity,
++	AC_HELP_STRING([--disable-unity],
++			[build without unity launcher support]))
++
++msg_unity=no
++if test "x$enable_unity" != "xno"; then
++	PKG_CHECK_MODULES(UNITY,
++		[unity >= unity_minver
++		 dbusmenu-glib-0.4 >= dbusmenu_minver], [
++                     AM_CONDITIONAL(HAVE_UNITY, 1)
++                     AC_DEFINE(HAVE_UNITY, 1, [Have Unity])
++                     ]
++                     msg_unity=yes,
++                     [AM_CONDITIONAL(HAVE_UNITY, 0)
++                     ])
++   		AC_SUBST(UNITY_CFLAGS)
++   		AC_SUBST(UNITY_LIBS)
++fi
++
++dnl ==========================================================================
++
+ dnl Turn on the additional warnings last, so -Werror doesn't affect other tests.
+ 
+ WARNING_CFLAGS=""
+@@ -366,6 +391,7 @@
+ 	libexif support:	$msg_libexif
+ 	libexempi support:	$msg_xmp
+ 	PackageKit support:     $msg_packagekit
++	Unity support:	        $msg_unity
+ 	nemo-sendto ext:	$enable_nst_extension
+ 	Tracker support:	$build_tracker
+ 
+Index: nemo-3.3.92/libnemo-private/nemo-progress-info.c
+===================================================================
+--- nemo-3.3.92.orig/libnemo-private/nemo-progress-info.c	2012-02-06 20:44:45.000000000 +0100
++++ nemo-3.3.92/libnemo-private/nemo-progress-info.c	2012-03-20 11:19:28.675758148 +0100
+@@ -52,6 +52,8 @@
+ 	char *status;
+ 	char *details;
+ 	double progress;
++	double current;
++	double total;
+ 	gboolean activity_mode;
+ 	gboolean started;
+ 	gboolean finished;
+@@ -233,6 +235,42 @@
+ 	return res;
+ }
+ 
++double
++nemo_progress_info_get_current (NemoProgressInfo *info)
++{
++	double current;
++	
++	G_LOCK (progress_info);
++
++	if (info->activity_mode) {
++		current = 0.0;
++	} else {
++		current = info->current;
++	}
++	
++	G_UNLOCK (progress_info);
++	
++	return current;
++}
++
++double
++nemo_progress_info_get_total (NemoProgressInfo *info)
++{
++	double total;
++	
++	G_LOCK (progress_info);
++
++	if (info->activity_mode) {
++		total = -1.0;
++	} else {
++		total = info->total;
++	}
++	
++	G_UNLOCK (progress_info);
++	
++	return total;
++}
++
+ void
+ nemo_progress_info_cancel (NemoProgressInfo *info)
+ {
+@@ -566,6 +604,8 @@
+ 	    ) {
+ 		info->activity_mode = FALSE;
+ 		info->progress = current_percent;
++		info->current = current;
++		info->total = total;
+ 		info->progress_at_idle = TRUE;
+ 		queue_idle (info, FALSE);
+ 	}
+Index: nemo-3.3.92/libnemo-private/nemo-progress-info.h
+===================================================================
+--- nemo-3.3.92.orig/libnemo-private/nemo-progress-info.h	2011-07-31 20:29:17.000000000 +0200
++++ nemo-3.3.92/libnemo-private/nemo-progress-info.h	2012-03-20 11:19:28.675758148 +0100
+@@ -62,6 +62,8 @@
+ gboolean      nemo_progress_info_get_is_started  (NemoProgressInfo *info);
+ gboolean      nemo_progress_info_get_is_finished (NemoProgressInfo *info);
+ gboolean      nemo_progress_info_get_is_paused   (NemoProgressInfo *info);
++double        nemo_progress_info_get_current     (NemoProgressInfo *info);
++double        nemo_progress_info_get_total       (NemoProgressInfo *info);
+ 
+ void          nemo_progress_info_start           (NemoProgressInfo *info);
+ void          nemo_progress_info_finish          (NemoProgressInfo *info);
+Index: nemo-3.3.92/src/Makefile.am
+===================================================================
+--- nemo-3.3.92.orig/src/Makefile.am	2012-03-20 11:19:28.539758142 +0100
++++ nemo-3.3.92/src/Makefile.am	2012-03-20 11:19:28.675758148 +0100
+@@ -30,6 +30,7 @@
+ 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
+ 	-DVERSION="\"$(VERSION)\"" 				\
+ 	$(DISABLE_DEPRECATED_CFLAGS)                            \
++	$(UNITY_CFLAGS)                                         \
+ 	$(NULL)
+ 
+ LDADD =\
+@@ -41,6 +42,7 @@
+ 	$(EXIF_LIBS) \
+ 	$(EXEMPI_LIBS) \
+ 	$(POPT_LIBS) \
++	$(UNITY_LIBS) \
+ 	$(NULL)
+ 
+ dbus_built_sources = nemo-freedesktop-generated.c nemo-freedesktop-generated.h
+@@ -178,6 +180,10 @@
+ 	nemo-window-types.h			\
+ 	nemo-x-content-bar.c		\
+ 	nemo-x-content-bar.h		\
++	unity-quicklist-handler.c		\
++	unity-quicklist-handler.h		\
++	unity-bookmarks-handler.c		\
++	unity-bookmarks-handler.h		\
+ 	$(NULL)
+ 
+ nodist_nemo_SOURCES = \
+Index: nemo-3.3.92/src/nemo-progress-ui-handler.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-progress-ui-handler.c	2012-03-20 11:19:28.655758148 +0100
++++ nemo-3.3.92/src/nemo-progress-ui-handler.c	2012-03-20 11:19:28.679758148 +0100
+@@ -38,6 +38,11 @@
+ 
+ #include <libnotify/notify.h>
+ 
++#ifdef HAVE_UNITY
++#include <unity.h>
++#include "unity-quicklist-handler.h"
++#endif
++
+ struct _NemoProgressUIHandlerPriv {
+ 	NemoProgressInfoManager *manager;
+ 
+@@ -47,6 +52,9 @@
+ 
+ 	NotifyNotification *progress_notification;
+ 	GtkStatusIcon *status_icon;
++#ifdef HAVE_UNITY
++	UnityQuicklistHandler *unity_quicklist_handler;
++#endif
+ };
+ 
+ G_DEFINE_TYPE (NemoProgressUIHandler, nemo_progress_ui_handler, G_TYPE_OBJECT);
+@@ -181,6 +189,208 @@
+ 	gtk_status_icon_set_visible (self->priv->status_icon, TRUE);
+ }
+ 
++#ifdef HAVE_UNITY
++
++static void
++progress_ui_handler_unity_progress_changed (NemoProgressInfo *info,
++                                            NemoProgressUIHandler *self)
++{
++	g_return_if_fail (self);
++	g_return_if_fail (self->priv->unity_quicklist_handler);
++	g_return_if_fail (self->priv->manager);
++
++	GList *infos, *l;
++	double progress = 0;
++	double c, current = 0;
++	double t, total = 0;
++
++	infos = nemo_progress_info_manager_get_all_infos (self->priv->manager);
++
++	for (l = infos; l; l = l->next) {
++		NemoProgressInfo *i = l->data;
++		c = nemo_progress_info_get_current (i);
++		t = nemo_progress_info_get_total (i);
++
++		if (c < 0) c = 0;
++		if (t <= 0) continue;
++
++		total += t;
++		current += c;
++	}
++
++	if (current >= 0 && total > 0)
++		progress = current / total;
++
++	if (progress > 1.0)
++		progress = 1.0;
++
++	for (l = unity_quicklist_get_launcher_entries (self->priv->unity_quicklist_handler); l; l = l->next) {
++		UnityLauncherEntry *entry = l->data;
++		unity_launcher_entry_set_progress (entry, progress);
++	}
++}
++
++static gboolean
++progress_ui_handler_disable_unity_urgency (UnityLauncherEntry *entry)
++{
++	g_return_if_fail (entry);
++
++	unity_launcher_entry_set_urgent (entry, FALSE);
++	return FALSE;
++}
++
++static void
++progress_ui_handler_unity_quicklist_show_activated (DbusmenuMenuitem *menu,
++                                                    guint timestamp,
++                                                    NemoProgressUIHandler *self)
++{
++	g_return_if_fail (self);
++
++	if (!gtk_widget_get_visible (self->priv->progress_window)) {
++		gtk_window_present (GTK_WINDOW (self->priv->progress_window));
++	} else {
++		gtk_window_set_keep_above (GTK_WINDOW (self->priv->progress_window), TRUE);
++		gtk_window_set_keep_above (GTK_WINDOW (self->priv->progress_window), FALSE);
++	}
++}
++
++static void
++progress_ui_handler_unity_quicklist_cancel_activated (DbusmenuMenuitem *menu,
++                                                      guint timestamp,
++                                                      NemoProgressUIHandler *self)
++{
++	g_return_if_fail (self);
++	g_return_if_fail (self->priv->manager);
++
++	GList *infos, *l;
++	infos = nemo_progress_info_manager_get_all_infos (self->priv->manager);
++
++	for (l = infos; l; l = l->next) {
++		NemoProgressInfo *info = l->data;
++		nemo_progress_info_cancel (info);
++	}
++}
++
++static DbusmenuMenuitem *
++progress_ui_handler_build_unity_quicklist (NemoProgressUIHandler *self)
++{
++	g_return_if_fail (self);
++	GList *l;
++
++	for (l = unity_quicklist_get_launcher_entries (self->priv->unity_quicklist_handler); l; l = l->next) {
++		UnityLauncherEntry *entry = l->data;
++
++		DbusmenuMenuitem *quickmenu = dbusmenu_menuitem_new ();
++		dbusmenu_menuitem_property_set (quickmenu,
++		                                DBUSMENU_MENUITEM_PROP_LABEL,
++			                            UNITY_QUICKLIST_SHOW_COPY_DIALOG);
++		dbusmenu_menuitem_property_set_bool (quickmenu,
++		                                     DBUSMENU_MENUITEM_PROP_VISIBLE, FALSE);
++		unity_quicklist_handler_append_menuitem (entry, quickmenu);
++		g_signal_connect (quickmenu, DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
++		                  (GCallback) progress_ui_handler_unity_quicklist_show_activated,
++			              self);
++
++		quickmenu = dbusmenu_menuitem_new ();
++		dbusmenu_menuitem_property_set (quickmenu,
++			                            DBUSMENU_MENUITEM_PROP_LABEL,
++				                        UNITY_QUICKLIST_CANCEL_COPY);
++		dbusmenu_menuitem_property_set_bool (quickmenu,
++		                                     DBUSMENU_MENUITEM_PROP_VISIBLE, FALSE);
++		unity_quicklist_handler_append_menuitem (entry, quickmenu);
++		g_signal_connect (quickmenu, DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
++		                  (GCallback) progress_ui_handler_unity_quicklist_cancel_activated,
++			              self);
++	}
++}
++
++static void
++progress_ui_handler_show_unity_quicklist (NemoProgressUIHandler *self,
++                                          UnityLauncherEntry *entry,
++                                          gboolean show)
++{
++	g_return_if_fail (self);
++	g_return_if_fail (entry);
++
++	DbusmenuMenuitem *ql;
++	GList *children, *l;
++
++	ql = unity_launcher_entry_get_quicklist (entry);
++	children = dbusmenu_menuitem_get_children (ql);
++
++	for (l = children; l; l = l->next) {
++		DbusmenuMenuitem *child = l->data;
++		if (unity_quicklist_handler_menuitem_is_progress_item (child))
++			dbusmenu_menuitem_property_set_bool(child,
++	                                    DBUSMENU_MENUITEM_PROP_VISIBLE, show);
++	}
++}
++
++static void
++progress_ui_handler_update_unity_launcher_entry (NemoProgressUIHandler *self,
++                                                 NemoProgressInfo *info,
++                                                 UnityLauncherEntry *entry)
++{
++	g_return_if_fail (self);
++	g_return_if_fail (entry);
++
++	if (self->priv->active_infos > 0) {
++		unity_launcher_entry_set_progress_visible (entry, TRUE);
++		progress_ui_handler_show_unity_quicklist (self, entry, TRUE);
++		progress_ui_handler_unity_progress_changed (NULL, self);
++
++		if (self->priv->active_infos > 1) {
++			unity_launcher_entry_set_count (entry, self->priv->active_infos);
++			unity_launcher_entry_set_count_visible (entry, TRUE);
++		} else {
++			unity_launcher_entry_set_count_visible (entry, FALSE);
++		}
++	} else {
++		unity_launcher_entry_set_progress_visible (entry, FALSE);
++		unity_launcher_entry_set_progress (entry, 0.0);
++		unity_launcher_entry_set_count_visible (entry, FALSE);
++		progress_ui_handler_show_unity_quicklist (self, entry, FALSE);
++		GCancellable *pc = nemo_progress_info_get_cancellable (info);
++
++		if (!g_cancellable_is_cancelled (pc)) {
++			unity_launcher_entry_set_urgent (entry, TRUE);
++
++			g_timeout_add_seconds (2, (GSourceFunc)
++				               progress_ui_handler_disable_unity_urgency,
++					       entry);
++		}
++	}
++}
++
++static void
++progress_ui_handler_update_unity_launcher (NemoProgressUIHandler *self,
++                                           NemoProgressInfo *info,
++                                           gboolean added)
++{
++	g_return_if_fail (self);
++	GList *l;
++
++	if (!self->priv->unity_quicklist_handler) {
++		self->priv->unity_quicklist_handler = unity_quicklist_handler_get_singleton ();
++		if (!self->priv->unity_quicklist_handler)
++			return;
++
++		progress_ui_handler_build_unity_quicklist (self);
++	}
++
++	for (l = unity_quicklist_get_launcher_entries (self->priv->unity_quicklist_handler); l; l = l->next) {
++		UnityLauncherEntry *entry = l->data;
++		progress_ui_handler_update_unity_launcher_entry (self, info, entry);
++	}
++
++	if (added) {
++		g_signal_connect (info, "progress-changed",
++				  (GCallback) progress_ui_handler_unity_progress_changed,
++				  self);
++	}
++}
++#endif
++
+ static gboolean
+ progress_window_delete_event (GtkWidget *widget,
+ 			      GdkEvent *event,
+@@ -313,6 +522,10 @@
+ 			progress_ui_handler_show_complete_notification (self);
+ 		}
+ 	}
++
++#ifdef HAVE_UNITY
++	progress_ui_handler_update_unity_launcher (self, info, FALSE);
++#endif
+ }
+ 
+ static void
+@@ -335,6 +548,10 @@
+ 			progress_ui_handler_update_notification_or_status (self);
+ 		}
+ 	}
++
++#ifdef HAVE_UNITY
++	progress_ui_handler_update_unity_launcher (self, info, TRUE);
++#endif
+ }
+ 
+ typedef struct {
+Index: nemo-3.3.92/src/unity-quicklist-handler.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ nemo-3.3.92/src/unity-quicklist-handler.c	2012-03-20 11:19:28.679758148 +0100
+@@ -0,0 +1,156 @@
++/*unity-quicklist-handler.c: handle Unity quicklists
++ *
++ * Copyright (C) 2012 Canonical
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public
++ * License along with this program; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Didier Roche <didrocks@ubuntu.com>
++ *
++ */
++
++#include <config.h>
++
++#include "unity-quicklist-handler.h"
++
++struct _UnityQuicklistHandlerPriv {
++    GList *launcher_entries;
++};
++
++G_DEFINE_TYPE (UnityQuicklistHandler, unity_quicklist_handler, G_TYPE_OBJECT);
++
++static UnityQuicklistHandler *unity_quicklist_handler_singleton = NULL;
++
++GList *
++unity_quicklist_get_launcher_entries (UnityQuicklistHandler *self)
++{
++	return self->priv->launcher_entries;
++}
++
++gboolean
++unity_quicklist_handler_menuitem_is_progress_item (DbusmenuMenuitem *ql)
++{
++	g_return_val_if_fail(ql, FALSE);
++	const gchar *label = dbusmenu_menuitem_property_get (ql, DBUSMENU_MENUITEM_PROP_LABEL);
++
++	return ((g_strcmp0 (label, (const gchar*)UNITY_QUICKLIST_SHOW_COPY_DIALOG) == 0) ||
++	        (g_strcmp0 (label, (const gchar*)UNITY_QUICKLIST_CANCEL_COPY) == 0));
++}
++
++gboolean
++unity_quicklist_handler_menuitem_is_bookmark_item (DbusmenuMenuitem *ql)
++{
++	g_return_val_if_fail(ql, FALSE);
++	return (!unity_quicklist_handler_menuitem_is_progress_item(ql));
++}
++
++void
++unity_quicklist_handler_append_menuitem (UnityLauncherEntry *entry, DbusmenuMenuitem *elem)
++{
++	g_return_if_fail (entry);
++
++	GList *children, *l;
++	int position = 0;
++	DbusmenuMenuitem *ql = unity_launcher_entry_get_quicklist (entry);
++
++	gboolean is_bookmark = unity_quicklist_handler_menuitem_is_bookmark_item (elem);
++	gboolean is_progress = unity_quicklist_handler_menuitem_is_progress_item (elem);
++
++	if (!ql) {
++		ql = dbusmenu_menuitem_new ();
++		unity_launcher_entry_set_quicklist (entry, ql);
++	}
++
++	children = dbusmenu_menuitem_get_children (ql);
++	for (l = children; l; l = l->next) {
++		DbusmenuMenuitem *child = l->data;
++		/* set quicklist groups together, and bookmarks group after progress group.
++		   bookmarks elements are ordered alphabetically */
++		if ((is_bookmark && unity_quicklist_handler_menuitem_is_bookmark_item (child) &&
++                (g_strcmp0 (dbusmenu_menuitem_property_get (child, DBUSMENU_MENUITEM_PROP_LABEL), dbusmenu_menuitem_property_get (elem, DBUSMENU_MENUITEM_PROP_LABEL)) < 0)) ||
++			(is_progress && unity_quicklist_handler_menuitem_is_progress_item (child)) ||
++			(is_progress && unity_quicklist_handler_menuitem_is_bookmark_item (child)))
++			position++;
++		else
++			break;
++	}
++
++	dbusmenu_menuitem_child_add_position (ql, elem, position);
++}
++
++static void
++unity_quicklist_handler_dispose (GObject *obj)
++{
++	UnityQuicklistHandler *self = UNITY_QUICKLIST_HANDLER (obj);
++
++	if (self->priv->launcher_entries) {
++		g_list_free_full (self->priv->launcher_entries, g_object_unref);
++		self->priv->launcher_entries = NULL;
++	}
++
++	G_OBJECT_CLASS (unity_quicklist_handler_parent_class)->dispose (obj);
++}
++
++static void
++unity_quicklist_handler_launcher_entry_add (UnityQuicklistHandler *self,
++                                            const gchar *entry_id)
++{
++	GList **entries;
++	UnityLauncherEntry *entry;
++
++	entries = &(self->priv->launcher_entries);
++	entry = unity_launcher_entry_get_for_desktop_id (entry_id);
++
++	if (entry) {
++		*entries = g_list_prepend (*entries, entry);
++	}
++}
++
++static void
++unity_quicklist_handler_init (UnityQuicklistHandler *self)
++{
++	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, UNITY_TYPE_QUICKLIST_HANDLER,
++	                                          UnityQuicklistHandlerPriv);
++
++	unity_quicklist_handler_launcher_entry_add (self, "nemo.desktop");
++	unity_quicklist_handler_launcher_entry_add (self, "nemo-home.desktop");
++	g_return_if_fail (g_list_length (self->priv->launcher_entries) != 0);
++}
++
++static void
++unity_quicklist_handler_class_init (UnityQuicklistHandlerClass *klass)
++{
++	GObjectClass *oclass;
++
++	oclass = G_OBJECT_CLASS (klass);
++	oclass->dispose = unity_quicklist_handler_dispose;
++
++	g_type_class_add_private (klass, sizeof (UnityQuicklistHandlerPriv));
++}
++
++UnityQuicklistHandler *
++unity_quicklist_handler_get_singleton (void)
++{
++	if (!unity_quicklist_handler_singleton)
++		unity_quicklist_handler_singleton = unity_quicklist_handler_new ();
++	return unity_quicklist_handler_singleton;
++}
++
++UnityQuicklistHandler *
++unity_quicklist_handler_new (void)
++{
++	return g_object_new (UNITY_TYPE_QUICKLIST_HANDLER, NULL);
++}
++
+Index: nemo-3.3.92/src/unity-quicklist-handler.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ nemo-3.3.92/src/unity-quicklist-handler.h	2012-03-20 11:19:28.683758148 +0100
+@@ -0,0 +1,73 @@
++/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
++/*
++ * unity-quicklist.h: handle unity quicklists.
++ *
++ * Copyright (C) 2012 Canonical
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public
++ * License along with this program; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Didier Roche <didrocks@ubuntu.com>
++ *
++ */
++
++#ifndef __UNITY_QUICKLIST_HANDLER_H__
++#define __UNITY_QUICKLIST_HANDLER_H__
++
++#include <glib-object.h>
++#include <glib/gi18n.h>
++
++#include <libdbusmenu-glib/dbusmenu-glib.h>
++#include <unity.h>
++
++#define UNITY_TYPE_QUICKLIST_HANDLER unity_quicklist_handler_get_type()
++#define UNITY_QUICKLIST_HANDLER(obj) \
++  (G_TYPE_CHECK_INSTANCE_CAST ((obj), UNITY_TYPE_QUICKLIST_HANDLER, UnityQuicklistHandler))
++#define UNITY_QUICKLIST_HANDLER_CLASS(klass) \
++  (G_TYPE_CHECK_CLASS_CAST ((klass), UNITY_TYPE_QUICKLIST_HANDLER, UnityQuicklistHandlerClass))
++#define UNITY_IS_QUICKLIST_HANDLER(obj) \
++  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), UNITY_TYPE_QUICKLIST_HANDLER))
++#define UNITY_IS_QUICKLIST_HANDLER_CLASS(klass) \
++  (G_TYPE_CHECK_CLASS_TYPE ((klass), UNITY_TYPE_QUICKLIST_HANDLER))
++#define UNITY_QUICKLIST_HANDLER_GET_CLASS(obj) \
++  (G_TYPE_INSTANCE_GET_CLASS ((obj), UNITY_TYPE_QUICKLIST_HANDLER, UnityQuicklistHandlerClass))
++
++typedef struct _UnityQuicklistHandlerPriv UnityQuicklistHandlerPriv;
++
++typedef struct {
++  GObject parent;
++
++  /* private */
++  UnityQuicklistHandlerPriv *priv;
++} UnityQuicklistHandler;
++
++typedef struct {
++  GObjectClass parent_class;
++} UnityQuicklistHandlerClass;
++
++GType unity_quicklist_handler_get_type (void);
++
++UnityQuicklistHandler * unity_quicklist_handler_new (void);
++UnityQuicklistHandler * unity_quicklist_handler_get_singleton (void);
++
++GList * unity_quicklist_get_launcher_entries (UnityQuicklistHandler *unity_quicklist_handler);
++gboolean unity_quicklist_handler_menuitem_is_progress_item (DbusmenuMenuitem *ql);
++gboolean unity_quicklist_handler_menuitem_is_bookmark_item (DbusmenuMenuitem *ql);
++void unity_quicklist_handler_append_menuitem (UnityLauncherEntry *entry, DbusmenuMenuitem *elem);
++
++#define UNITY_QUICKLIST_SHOW_COPY_DIALOG _("Show Copy Dialog")
++#define UNITY_QUICKLIST_CANCEL_COPY _("Cancel All In-progress Actions")
++
++#endif /* __UNITY_QUICKLIST_HANDLER_H__ */
+Index: nemo-3.3.92/src/nemo-application.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-application.c	2012-02-06 20:44:45.000000000 +0100
++++ nemo-3.3.92/src/nemo-application.c	2012-03-20 11:19:28.683758148 +0100
+@@ -77,6 +77,10 @@
+ #include <gdk/gdkx.h>
+ #include <gtk/gtk.h>
+ 
++#ifdef HAVE_UNITY
++#include "src/unity-bookmarks-handler.h"
++#endif
++
+ /* Keep window from shrinking down ridiculously small; numbers are somewhat arbitrary */
+ #define APPLICATION_WINDOW_MIN_WIDTH	300
+ #define APPLICATION_WINDOW_MIN_HEIGHT	100
+@@ -1173,6 +1177,10 @@
+ 	init_desktop (self);
+ 
+ 	do_upgrades_once (self);
++
++#ifdef HAVE_UNITY
++    unity_bookmarks_handler_initialize ();
++#endif
+ }
+ 
+ static void
+Index: nemo-3.3.92/src/unity-bookmarks-handler.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ nemo-3.5.1/src/unity-bookmarks-handler.c	2012-05-22 08:52:17 +0000
+@@ -0,0 +1,137 @@
++/*unity-bookmarks-handler.c: handle Unity bookmark for quicklist
++ *
++ * Copyright (C) 2012 Canonical
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public
++ * License along with this program; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Didier Roche <didrocks@ubuntu.com>
++ *
++ */
++
++#include <config.h>
++
++#include "unity-bookmarks-handler.h"
++
++#include <libdbusmenu-glib/dbusmenu-glib.h>
++#include "unity-quicklist-handler.h"
++
++#include "nemo-application.h"
++#include "nemo-window-private.h"
++
++#include <eel/eel-string.h>
++
++static UnityQuicklistHandler* unity_quicklist_handler = NULL;
++static NemoBookmarkList* bookmarks = NULL;
++
++static void
++activate_bookmark_by_quicklist (DbusmenuMenuitem *menu,
++								guint timestamp,
++								NemoBookmark *bookmark)
++{
++	g_assert (NEMO_IS_BOOKMARK (bookmark));
++
++	GFile *location;
++	NemoApplication *application;
++	NemoWindow *new_window;
++
++	location = nemo_bookmark_get_location (bookmark);
++
++	application = nemo_application_get_singleton ();
++	new_window = nemo_application_create_window (application, gdk_screen_get_default ());
++	nemo_window_slot_go_to (nemo_window_get_active_slot (new_window), location, FALSE);
++
++	g_object_unref (location);
++}
++
++static void
++unity_bookmarks_handler_remove_bookmark_quicklists () {
++
++	GList *children, *l;
++
++	/* remove unity quicklist bookmarks to launcher entries */
++	for (l = unity_quicklist_get_launcher_entries (unity_quicklist_handler); l; l = l->next) {
++		UnityLauncherEntry *entry = l->data;
++		DbusmenuMenuitem *ql = unity_launcher_entry_get_quicklist (entry);
++		if (!ql)
++			break;
++
++		children = dbusmenu_menuitem_get_children (ql);
++		while (children) {
++			DbusmenuMenuitem *child = children->data;
++			children = children->next;
++			if (unity_quicklist_handler_menuitem_is_bookmark_item (child)) {
++				g_signal_handlers_disconnect_matched (child, G_SIGNAL_MATCH_FUNC, 0, 0, 0, (GCallback) activate_bookmark_by_quicklist, 0);
++				dbusmenu_menuitem_child_delete (ql, child);
++				g_object_unref(child);
++			}
++		}
++	}
++}
++
++static void
++unity_bookmarks_handler_update_bookmarks () {
++
++	NemoBookmark *bookmark;
++	guint bookmark_count;
++	guint index;
++	GList *l;
++
++	/* append new set of bookmarks */
++	bookmark_count = nemo_bookmark_list_length (bookmarks);
++	for (index = 0; index < bookmark_count; ++index) {
++
++		bookmark = nemo_bookmark_list_item_at (bookmarks, index);
++
++		if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
++			continue;
++		}
++
++		for (l = unity_quicklist_get_launcher_entries (unity_quicklist_handler); l; l = l->next) {
++			UnityLauncherEntry *entry = l->data;
++
++			DbusmenuMenuitem* menuitem = dbusmenu_menuitem_new();
++			gchar *bookmark_name_dbusmenu = eel_str_replace_substring (nemo_bookmark_get_name (bookmark), "_", "__");
++			dbusmenu_menuitem_property_set (menuitem, "label", bookmark_name_dbusmenu);
++			g_free (bookmark_name_dbusmenu);
++			g_signal_connect (menuitem, DBUSMENU_MENUITEM_SIGNAL_ITEM_ACTIVATED,
++										 (GCallback) activate_bookmark_by_quicklist,
++										 bookmark);
++
++			unity_quicklist_handler_append_menuitem (entry, menuitem);
++		}
++	}
++}
++
++static void
++unity_bookmarks_handler_refresh_bookmarks ()
++{
++	unity_bookmarks_handler_remove_bookmark_quicklists ();
++	unity_bookmarks_handler_update_bookmarks ();
++}
++
++void
++unity_bookmarks_handler_initialize ()
++{
++	unity_quicklist_handler = unity_quicklist_handler_get_singleton ();
++	// get the singleton
++	bookmarks = nemo_bookmark_list_new ();
++	unity_bookmarks_handler_refresh_bookmarks ();
++
++    /* Recreate dynamic part of menu if bookmark list changes */
++	g_signal_connect (bookmarks, "changed",
++						G_CALLBACK (unity_bookmarks_handler_refresh_bookmarks), 0);
++}
++
+Index: nemo-3.3.92/src/unity-bookmarks-handler.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ nemo-3.3.92/src/unity-bookmarks-handler.h	2012-03-20 11:19:28.687758148 +0100
+@@ -0,0 +1,31 @@
++/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
++/*
++ * unity-bookmarks-handler.h: handle Unity bookmark for quicklist
++ *
++ * Copyright (C) 2012 Canonical
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public
++ * License along with this program; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Didier Roche <didrocks@ubuntu.com>
++ *
++ */
++
++#ifndef __UNITY_BOOKMARKS_HANDLER_H__
++#define __UNITY_BOOKMARKS_HANDLER_H__
++
++void unity_bookmarks_handler_initialize (void);
++
++#endif /* __UNITY_BOOKMARKS_HANDLER_H__*/
+Index: nemo-3.3.92/po/POTFILES.in
+===================================================================
+--- nemo-3.3.92.orig/po/POTFILES.in	2012-03-20 11:19:28.495758139 +0100
++++ nemo-3.3.92/po/POTFILES.in	2012-03-20 11:19:37.203758560 +0100
+@@ -90,3 +90,4 @@
+ src/nemo-window-private.h
+ src/nemo-window-slot.c
+ src/nemo-x-content-bar.c
++src/unity-quicklist-handler.h

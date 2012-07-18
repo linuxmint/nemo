@@ -1,0 +1,34 @@
+From a9e8dc2ca6f93286db9b804b1539a9df315bfa35 Mon Sep 17 00:00:00 2001
+From: Chow Loong Jin <hyperair@ubuntu.com>
+Date: Fri, 28 Oct 2011 02:26:08 +0800
+Subject: [PATCH] Workaround focus issues on typeahead
+
+On some window managers, the focus does not properly go to search_entry on
+search_window, and events still end up in NemoIconContainer. When this
+happens, detect it and forward all events to the search_entry instead.
+
+Closes: BGO #662591
+Index: nemo-3.3.92/libnemo-private/nemo-icon-container.c
+===================================================================
+--- nemo-3.3.92.orig/libnemo-private/nemo-icon-container.c	2012-03-17 01:00:40.000000000 +0100
++++ nemo-3.3.92/libnemo-private/nemo-icon-container.c	2012-03-20 11:19:28.827758155 +0100
+@@ -5330,6 +5330,19 @@
+ 		default:
+ 			break;
+ 		}
++	} else if (container->details->search_window != NULL &&
++	           gtk_widget_get_visible (container->details->search_window)) {
++		/* Workaround for BGO #662591, where container is still focused
++		 * although we're in search mode. Forward events to
++		 * search_entry, where they belong. */
++		GdkEvent *new_event = gdk_event_copy ((GdkEvent *) event);
++		GdkWindow *window = ((GdkEventKey *) new_event)->window;
++		((GdkEventKey *) new_event)->window = gtk_widget_get_window (container->details->search_entry);
++
++		handled = gtk_widget_event (container->details->search_window, new_event);
++
++		((GdkEventKey *) new_event)->window = window;
++		gdk_event_free(new_event);
+ 	} else {
+ 		switch (event->keyval) {
+ 		case GDK_KEY_Home:

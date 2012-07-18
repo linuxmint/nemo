@@ -1,0 +1,25 @@
+From b774a3daa236cc89608ba8eaeaae805acc58426e Mon Sep 17 00:00:00 2001
+From: rustyBSD <rustyBSD@gmx.fr>
+Date: Mon, 21 May 2012 20:44:04 +0000
+Subject: image-properties: set the description label to wrap
+
+Or images with a very long description will create a label that is
+bigger than the whole screen.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=566411
+---
+diff --git a/src/nemo-image-properties-page.c b/src/nemo-image-properties-page.c
+index 628cf49..cef017c 100644
+--- a/src/nemo-image-properties-page.c
++++ b/src/nemo-image-properties-page.c
+@@ -143,6 +143,7 @@ append_label (GtkWidget *vbox,
+ 	 * selectable but without the cursor showing.
+ 	 */
+ 	gtk_widget_set_can_focus (label, FALSE);
++	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+ 
+ 	gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
+ 	gtk_widget_show (label);
+--
+cgit v0.9.0.2
+

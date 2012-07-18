@@ -1,0 +1,14 @@
+Index: nemo-3.3.92/data/nemo.desktop.in.in
+===================================================================
+--- nemo-3.3.92.orig/data/nemo.desktop.in.in	2011-12-12 17:31:15.000000000 +0100
++++ nemo-3.3.92/data/nemo.desktop.in.in	2012-03-20 11:19:28.799758154 +0100
+@@ -13,3 +13,9 @@
+ X-GNOME-Bugzilla-Product=nemo
+ X-GNOME-Bugzilla-Component=general
+ X-GNOME-Bugzilla-Version=@VERSION@
++Actions=Window;
++
++[Desktop Action Window]
++_Name=Open a New Window
++Exec=nemo
++OnlyShowIn=Unity;

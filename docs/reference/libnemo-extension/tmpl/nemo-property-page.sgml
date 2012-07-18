@@ -1,0 +1,60 @@
+<!-- ##### SECTION Title ##### -->
+NemoPropertyPage
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT NemoPropertyPageDetails ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT NemoPropertyPage ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG NemoPropertyPage:label ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoPropertyPage:name ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoPropertyPage:page ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION nemo_property_page_new ##### -->
+<para>
+
+</para>
+
+@name: 
+@label: 
+@page: 
+@Returns: 
+
+

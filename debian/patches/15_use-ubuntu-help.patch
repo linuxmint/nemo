@@ -1,0 +1,126 @@
+Description: Use Ubuntu system help instead of GNOME's
+Forwarded: Not needed
+Author: Jeremy Bicha <jbicha@ubuntu.com>
+
+Index: nemo-3.3.92/src/nemo-bookmarks-window.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-bookmarks-window.c	2012-02-06 20:44:45.000000000 +0100
++++ nemo-3.3.92/src/nemo-bookmarks-window.c	2012-03-20 11:19:28.759758152 +0100
+@@ -146,7 +146,7 @@
+ 		GError *error = NULL;
+ 
+ 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
+-			      "help:gnome-help/nemo-bookmarks-edit",
++			      "help:ubuntu-help/nemo-bookmarks-edit",
+ 			      gtk_get_current_event_time (), &error);
+ 
+ 		if (error) {
+Index: nemo-3.3.92/src/nemo-connect-server-dialog.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-connect-server-dialog.c	2012-02-06 20:44:45.000000000 +0100
++++ nemo-3.3.92/src/nemo-connect-server-dialog.c	2012-03-20 11:19:28.759758152 +0100
+@@ -695,7 +695,7 @@
+ 	case GTK_RESPONSE_HELP :
+ 		error = NULL;
+ 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
+-			      "help:gnome-help/nemo-connect",
++			      "help:ubuntu-help/nemo-connect",
+ 			      gtk_get_current_event_time (), &error);
+ 		if (error) {
+ 			eel_show_error_dialog (_("There was an error displaying help."), error->message,
+Index: nemo-3.3.92/src/nemo-file-management-properties.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-file-management-properties.c	2012-02-06 20:44:45.000000000 +0100
++++ nemo-3.3.92/src/nemo-file-management-properties.c	2012-03-20 11:19:28.763758152 +0100
+@@ -239,7 +239,7 @@
+ 			section = "nemo-preview";
+ 			break;
+ 		}
+-		preferences_show_help (GTK_WINDOW (parent), "gnome-help", section);
++		preferences_show_help (GTK_WINDOW (parent), "ubuntu-help", section);
+ 	} else if (response_id == GTK_RESPONSE_CLOSE) {
+ 		gtk_widget_destroy (GTK_WIDGET (parent));
+ 	}
+Index: nemo-3.3.92/src/nemo-properties-window.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-properties-window.c	2012-03-12 22:13:37.000000000 +0100
++++ nemo-3.3.92/src/nemo-properties-window.c	2012-03-20 11:19:28.771758152 +0100
+@@ -3020,7 +3020,7 @@
+ 	GtkWidget *hbox, *vbox;
+ 
+ 	hbox = create_page_with_hbox (window->details->notebook, _("Basic"),
+-				      "help:gnome-help/nemo-file-properties-basic");
++				      "help:ubuntu-help/nemo-file-properties-basic");
+ 	
+ 	/* Icon pixmap */
+ 
+@@ -4466,7 +4466,7 @@
+ 
+ 	vbox = create_page_with_vbox (window->details->notebook,
+ 				      _("Permissions"),
+-				      "help:gnome-help/nemo-file-properties-permissions");
++				      "help:ubuntu-help/nemo-file-properties-permissions");
+ 
+ 	file_list = window->details->original_files;
+ 
+@@ -4760,7 +4760,7 @@
+ 	gtk_widget_show (vbox);
+ 	g_free (mime_type);
+ 
+-	g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:gnome-help/files-open"), g_free);
++	g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:ubuntu-help/files-open"), g_free);
+ 	gtk_notebook_append_page (window->details->notebook, 
+ 				  vbox, gtk_label_new (_("Open With")));
+ }
+@@ -5114,7 +5114,7 @@
+ 						     gtk_notebook_get_current_page (window->details->notebook));
+ 		helpuri = g_object_get_data (G_OBJECT (curpage), "help-uri");
+ 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
+-			      helpuri ? helpuri : "help:gnome-help/files",
++			      helpuri ? helpuri : "help:ubuntu-help/files",
+ 			      gtk_get_current_event_time (),
+ 			      &error);
+ 		if (error != NULL) {
+Index: nemo-3.3.92/src/nemo-view.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-view.c	2012-03-20 11:19:28.739758151 +0100
++++ nemo-3.3.92/src/nemo-view.c	2012-03-20 11:19:28.775758153 +0100
+@@ -1451,7 +1451,7 @@
+ 	case GTK_RESPONSE_HELP :
+ 		error = NULL;
+ 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
+-			      "help:gnome-help/files-select",
++			      "help:ubuntu-help/files-select",
+ 			      gtk_get_current_event_time (), &error);
+ 		if (error) {
+ 			eel_show_error_dialog (_("There was an error displaying help."), error->message,
+Index: nemo-3.3.92/src/nemo-window-menus.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-window-menus.c	2012-03-20 11:19:28.471758138 +0100
++++ nemo-3.3.92/src/nemo-window-menus.c	2012-03-20 11:19:28.783758154 +0100
+@@ -432,19 +432,19 @@
+ 	window = NEMO_WINDOW (user_data);
+ 
+ 	if (g_str_equal (name, "NemoHelpSearch")) {
+-		helpuri = "help:gnome-help/files-search";
++		helpuri = "help:ubuntu-help/files-search";
+ 	} else if (g_str_equal (name,"NemoHelpSort")) {
+-		helpuri = "help:gnome-help/files-sort";
++		helpuri = "help:ubuntu-help/files-sort";
+ 	} else if (g_str_equal (name, "NemoHelpLost")) {
+-		helpuri = "help:gnome-help/files-lost";
++		helpuri = "help:ubuntu-help/files-lost";
+ 	} else if (g_str_equal (name, "NemoHelpShare")) {
+-		helpuri = "help:gnome-help/files-share";
++		helpuri = "help:ubuntu-help/files-share";
+ 	} else {
+-		helpuri = "help:gnome-help/files";
++		helpuri = "help:ubuntu-help/files";
+ 	}
+ 
+ 	if (NEMO_IS_DESKTOP_WINDOW (window)) {
+-		nemo_launch_application_from_command (gtk_window_get_screen (GTK_WINDOW (window)), "gnome-help", FALSE, NULL);
++		nemo_launch_application_from_command (gtk_window_get_screen (GTK_WINDOW (window)), "ubuntu-help", FALSE, NULL);
+ 	} else {
+ 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (window)),
+ 			      helpuri,

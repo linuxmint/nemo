@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE book PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
+<book xmlns="http://www.devhelp.net/book" title="Nemo Extension Reference Manual" link="index.html" author="" name="libnemo-extension" version="2" language="c">
+  <chapters>
+    <sub name="API Reference" link="pt01.html">
+      <sub name="Extension Interfaces" link="ch01.html">
+        <sub name="nemo-column-provider" link="libnemo-extension-nemo-column-provider.html"/>
+        <sub name="NemoColumn" link="libnemo-extension-nemo-column.html"/>
+        <sub name="nemo-extension-types" link="libnemo-extension-nemo-extension-types.html"/>
+        <sub name="nemo-file-info" link="libnemo-extension-nemo-file-info.html"/>
+        <sub name="nemo-info-provider" link="libnemo-extension-nemo-info-provider.html"/>
+        <sub name="nemo-location-widget-provider" link="libnemo-extension-nemo-location-widget-provider.html"/>
+        <sub name="nemo-menu-provider" link="libnemo-extension-nemo-menu-provider.html"/>
+        <sub name="NemoMenuItem" link="libnemo-extension-nemo-menu.html"/>
+        <sub name="nemo-property-page-provider" link="libnemo-extension-nemo-property-page-provider.html"/>
+        <sub name="NemoPropertyPage" link="libnemo-extension-nemo-property-page.html"/>
+      </sub>
+    </sub>
+    <sub name="Index" link="ix01.html"/>
+  </chapters>
+  <functions>
+    <keyword type="struct" name="NemoColumnProvider" link="libnemo-extension-nemo-column-provider.html#NemoColumnProvider-struct"/>
+    <keyword type="struct" name="struct NemoColumnProviderIface" link="libnemo-extension-nemo-column-provider.html#NemoColumnProviderIface"/>
+    <keyword type="function" name="nemo_column_provider_get_columns ()" link="libnemo-extension-nemo-column-provider.html#nemo-column-provider-get-columns"/>
+    <keyword type="struct" name="NemoColumnDetails" link="libnemo-extension-nemo-column.html#NemoColumnDetails"/>
+    <keyword type="struct" name="struct NemoColumn" link="libnemo-extension-nemo-column.html#NemoColumn-struct"/>
+    <keyword type="function" name="nemo_column_new ()" link="libnemo-extension-nemo-column.html#nemo-column-new"/>
+    <keyword type="property" name="The &quot;attribute&quot; property" link="libnemo-extension-nemo-column.html#NemoColumn--attribute"/>
+    <keyword type="property" name="The &quot;attribute-q&quot; property" link="libnemo-extension-nemo-column.html#NemoColumn--attribute-q"/>
+    <keyword type="property" name="The &quot;description&quot; property" link="libnemo-extension-nemo-column.html#NemoColumn--description"/>
+    <keyword type="property" name="The &quot;label&quot; property" link="libnemo-extension-nemo-column.html#NemoColumn--label"/>
+    <keyword type="property" name="The &quot;name&quot; property" link="libnemo-extension-nemo-column.html#NemoColumn--name"/>
+    <keyword type="property" name="The &quot;xalign&quot; property" link="libnemo-extension-nemo-column.html#NemoColumn--xalign"/>
+    <keyword type="macro" name="NEMO_TYPE_OPERATION_RESULT" link="libnemo-extension-nemo-extension-types.html#NEMO-TYPE-OPERATION-RESULT:CAPS"/>
+    <keyword type="struct" name="NemoOperationHandle" link="libnemo-extension-nemo-extension-types.html#NemoOperationHandle"/>
+    <keyword type="enum" name="enum NemoOperationResult" link="libnemo-extension-nemo-extension-types.html#NemoOperationResult-enum"/>
+    <keyword type="function" name="nemo_operation_result_get_type ()" link="libnemo-extension-nemo-extension-types.html#nemo-operation-result-get-type"/>
+    <keyword type="function" name="nemo_module_initialize ()" link="libnemo-extension-nemo-extension-types.html#nemo-module-initialize"/>
+    <keyword type="function" name="nemo_module_shutdown ()" link="libnemo-extension-nemo-extension-types.html#nemo-module-shutdown"/>
+    <keyword type="function" name="nemo_module_list_types ()" link="libnemo-extension-nemo-extension-types.html#nemo-module-list-types"/>
+    <keyword type="macro" name="NEMO_FILE_DEFINED" link="libnemo-extension-nemo-file-info.html#NEMO-FILE-DEFINED:CAPS"/>
+    <keyword type="typedef" name="NemoFile" link="libnemo-extension-nemo-file-info.html#NemoFile"/>
+    <keyword type="typedef" name="NemoFileInfo" link="libnemo-extension-nemo-file-info.html#NemoFileInfo"/>
+    <keyword type="struct" name="struct NemoFileInfoIface" link="libnemo-extension-nemo-file-info.html#NemoFileInfoIface"/>
+    <keyword type="function" name="nemo_file_info_create ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-create"/>
+    <keyword type="function" name="nemo_file_info_create_for_uri ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-create-for-uri"/>
+    <keyword type="function" name="nemo_file_info_getter ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-getter"/>
+    <keyword type="function" name="nemo_file_info_lookup ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-lookup"/>
+    <keyword type="function" name="nemo_file_info_lookup_for_uri ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-lookup-for-uri"/>
+    <keyword type="function" name="nemo_file_info_list_copy ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-list-copy"/>
+    <keyword type="function" name="nemo_file_info_list_free ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-list-free"/>
+    <keyword type="function" name="nemo_file_info_is_gone ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-is-gone"/>
+    <keyword type="function" name="nemo_file_info_get_file_type ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-file-type"/>
+    <keyword type="function" name="nemo_file_info_get_location ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-location"/>
+    <keyword type="function" name="nemo_file_info_get_name ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-name"/>
+    <keyword type="function" name="nemo_file_info_get_uri ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-uri"/>
+    <keyword type="function" name="nemo_file_info_get_activation_uri ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-activation-uri"/>
+    <keyword type="function" name="nemo_file_info_get_parent_location ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-parent-location"/>
+    <keyword type="function" name="nemo_file_info_get_parent_uri ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-parent-uri"/>
+    <keyword type="function" name="nemo_file_info_get_mount ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-mount"/>
+    <keyword type="function" name="nemo_file_info_get_uri_scheme ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-uri-scheme"/>
+    <keyword type="function" name="nemo_file_info_get_parent_info ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-parent-info"/>
+    <keyword type="function" name="nemo_file_info_get_mime_type ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-mime-type"/>
+    <keyword type="function" name="nemo_file_info_is_mime_type ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-is-mime-type"/>
+    <keyword type="function" name="nemo_file_info_is_directory ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-is-directory"/>
+    <keyword type="function" name="nemo_file_info_can_write ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-can-write"/>
+    <keyword type="function" name="nemo_file_info_add_emblem ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-add-emblem"/>
+    <keyword type="function" name="nemo_file_info_get_string_attribute ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-get-string-attribute"/>
+    <keyword type="function" name="nemo_file_info_add_string_attribute ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-add-string-attribute"/>
+    <keyword type="function" name="nemo_file_info_invalidate_extension_info ()" link="libnemo-extension-nemo-file-info.html#nemo-file-info-invalidate-extension-info"/>
+    <keyword type="struct" name="NemoInfoProvider" link="libnemo-extension-nemo-info-provider.html#NemoInfoProvider-struct"/>
+    <keyword type="struct" name="struct NemoInfoProviderIface" link="libnemo-extension-nemo-info-provider.html#NemoInfoProviderIface"/>
+    <keyword type="function" name="NemoInfoProviderUpdateComplete ()" link="libnemo-extension-nemo-info-provider.html#NemoInfoProviderUpdateComplete"/>
+    <keyword type="function" name="nemo_info_provider_update_file_info ()" link="libnemo-extension-nemo-info-provider.html#nemo-info-provider-update-file-info"/>
+    <keyword type="function" name="nemo_info_provider_cancel_update ()" link="libnemo-extension-nemo-info-provider.html#nemo-info-provider-cancel-update"/>
+    <keyword type="function" name="nemo_info_provider_update_complete_invoke ()" link="libnemo-extension-nemo-info-provider.html#nemo-info-provider-update-complete-invoke"/>
+    <keyword type="struct" name="NemoLocationWidgetProvider" link="libnemo-extension-nemo-location-widget-provider.html#NemoLocationWidgetProvider-struct"/>
+    <keyword type="struct" name="struct NemoLocationWidgetProviderIface" link="libnemo-extension-nemo-location-widget-provider.html#NemoLocationWidgetProviderIface"/>
+    <keyword type="function" name="nemo_location_widget_provider_get_widget ()" link="libnemo-extension-nemo-location-widget-provider.html#nemo-location-widget-provider-get-widget"/>
+    <keyword type="struct" name="NemoMenuProvider" link="libnemo-extension-nemo-menu-provider.html#NemoMenuProvider-struct"/>
+    <keyword type="struct" name="struct NemoMenuProviderIface" link="libnemo-extension-nemo-menu-provider.html#NemoMenuProviderIface"/>
+    <keyword type="function" name="nemo_menu_provider_get_file_items ()" link="libnemo-extension-nemo-menu-provider.html#nemo-menu-provider-get-file-items"/>
+    <keyword type="function" name="nemo_menu_provider_get_background_items ()" link="libnemo-extension-nemo-menu-provider.html#nemo-menu-provider-get-background-items"/>
+    <keyword type="function" name="nemo_menu_provider_emit_items_updated_signal ()" link="libnemo-extension-nemo-menu-provider.html#nemo-menu-provider-emit-items-updated-signal"/>
+    <keyword type="signal" name="The &quot;items-updated&quot; signal" link="libnemo-extension-nemo-menu-provider.html#NemoMenuProvider-items-updated"/>
+    <keyword type="macro" name="NEMO_TYPE_MENU_ITEM" link="libnemo-extension-nemo-menu.html#NEMO-TYPE-MENU-ITEM:CAPS"/>
+    <keyword type="macro" name="NEMO_MENU_ITEM()" link="libnemo-extension-nemo-menu.html#NEMO-MENU-ITEM:CAPS"/>
+    <keyword type="macro" name="NEMO_MENU_ITEM_CLASS()" link="libnemo-extension-nemo-menu.html#NEMO-MENU-ITEM-CLASS:CAPS"/>
+    <keyword type="macro" name="NEMO_MENU_IS_ITEM()" link="libnemo-extension-nemo-menu.html#NEMO-MENU-IS-ITEM:CAPS"/>
+    <keyword type="macro" name="NEMO_MENU_IS_ITEM_CLASS()" link="libnemo-extension-nemo-menu.html#NEMO-MENU-IS-ITEM-CLASS:CAPS"/>
+    <keyword type="macro" name="NEMO_MENU_ITEM_GET_CLASS()" link="libnemo-extension-nemo-menu.html#NEMO-MENU-ITEM-GET-CLASS:CAPS"/>
+    <keyword type="struct" name="NemoMenuPrivate" link="libnemo-extension-nemo-menu.html#NemoMenuPrivate"/>
+    <keyword type="struct" name="NemoMenuItemDetails" link="libnemo-extension-nemo-menu.html#NemoMenuItemDetails"/>
+    <keyword type="struct" name="struct NemoMenu" link="libnemo-extension-nemo-menu.html#NemoMenu-struct"/>
+    <keyword type="struct" name="struct NemoMenuItem" link="libnemo-extension-nemo-menu.html#NemoMenuItem-struct"/>
+    <keyword type="function" name="nemo_menu_new ()" link="libnemo-extension-nemo-menu.html#nemo-menu-new"/>
+    <keyword type="function" name="nemo_menu_append_item ()" link="libnemo-extension-nemo-menu.html#nemo-menu-append-item"/>
+    <keyword type="function" name="nemo_menu_get_items ()" link="libnemo-extension-nemo-menu.html#nemo-menu-get-items"/>
+    <keyword type="function" name="nemo_menu_item_list_free ()" link="libnemo-extension-nemo-menu.html#nemo-menu-item-list-free"/>
+    <keyword type="function" name="nemo_menu_item_get_type ()" link="libnemo-extension-nemo-menu.html#nemo-menu-item-get-type"/>
+    <keyword type="function" name="nemo_menu_item_new ()" link="libnemo-extension-nemo-menu.html#nemo-menu-item-new"/>
+    <keyword type="function" name="nemo_menu_item_activate ()" link="libnemo-extension-nemo-menu.html#nemo-menu-item-activate"/>
+    <keyword type="function" name="nemo_menu_item_set_submenu ()" link="libnemo-extension-nemo-menu.html#nemo-menu-item-set-submenu"/>
+    <keyword type="property" name="The &quot;icon&quot; property" link="libnemo-extension-nemo-menu.html#NemoMenuItem--icon"/>
+    <keyword type="property" name="The &quot;label&quot; property" link="libnemo-extension-nemo-menu.html#NemoMenuItem--label"/>
+    <keyword type="property" name="The &quot;menu&quot; property" link="libnemo-extension-nemo-menu.html#NemoMenuItem--menu"/>
+    <keyword type="property" name="The &quot;name&quot; property" link="libnemo-extension-nemo-menu.html#NemoMenuItem--name"/>
+    <keyword type="property" name="The &quot;priority&quot; property" link="libnemo-extension-nemo-menu.html#NemoMenuItem--priority"/>
+    <keyword type="property" name="The &quot;sensitive&quot; property" link="libnemo-extension-nemo-menu.html#NemoMenuItem--sensitive"/>
+    <keyword type="property" name="The &quot;tip&quot; property" link="libnemo-extension-nemo-menu.html#NemoMenuItem--tip"/>
+    <keyword type="signal" name="The &quot;activate&quot; signal" link="libnemo-extension-nemo-menu.html#NemoMenuItem-activate"/>
+    <keyword type="struct" name="NemoPropertyPageProvider" link="libnemo-extension-nemo-property-page-provider.html#NemoPropertyPageProvider-struct"/>
+    <keyword type="struct" name="struct NemoPropertyPageProviderIface" link="libnemo-extension-nemo-property-page-provider.html#NemoPropertyPageProviderIface"/>
+    <keyword type="function" name="nemo_property_page_provider_get_pages ()" link="libnemo-extension-nemo-property-page-provider.html#nemo-property-page-provider-get-pages"/>
+    <keyword type="struct" name="NemoPropertyPageDetails" link="libnemo-extension-nemo-property-page.html#NemoPropertyPageDetails"/>
+    <keyword type="struct" name="struct NemoPropertyPage" link="libnemo-extension-nemo-property-page.html#NemoPropertyPage-struct"/>
+    <keyword type="function" name="nemo_property_page_new ()" link="libnemo-extension-nemo-property-page.html#nemo-property-page-new"/>
+    <keyword type="property" name="The &quot;label&quot; property" link="libnemo-extension-nemo-property-page.html#NemoPropertyPage--label"/>
+    <keyword type="property" name="The &quot;name&quot; property" link="libnemo-extension-nemo-property-page.html#NemoPropertyPage--name"/>
+    <keyword type="property" name="The &quot;page&quot; property" link="libnemo-extension-nemo-property-page.html#NemoPropertyPage--page"/>
+  </functions>
+</book>

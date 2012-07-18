@@ -1,0 +1,21 @@
+README for nemo/cut-n-paste-code
+
+The code in this directory hierarchy was cut-n-pasted from 
+somewhere else.
+
+In the soon to come, Star Trek future, this code will be available
+as part of standard libraries.
+
+For example, the code in libegg will be one day available as part
+of Gtk+.
+
+Until that happens, DON'T HACK the code, unless you are updating 
+from the original cut-n-paste source.
+
+Instead of hacking the code in cut-n-paste-code, create subclasses 
+and put them in libnemo-extensions.
+
+If you have any specific questions, comments or complaints about this
+setup, send mail to the nemo mailing list at:
+
+nemo-list@gnome.org

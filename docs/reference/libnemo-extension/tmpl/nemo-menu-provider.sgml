@@ -1,0 +1,74 @@
+<!-- ##### SECTION Title ##### -->
+nemo-menu-provider
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT NemoMenuProvider ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SIGNAL NemoMenuProvider::items-updated ##### -->
+<para>
+
+</para>
+
+@nemomenuprovider: the object which received the signal.
+
+<!-- ##### STRUCT NemoMenuProviderIface ##### -->
+<para>
+
+</para>
+
+@g_iface: 
+@get_file_items: 
+@get_background_items: 
+
+<!-- ##### FUNCTION nemo_menu_provider_get_file_items ##### -->
+<para>
+
+</para>
+
+@provider: 
+@window: 
+@files: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_menu_provider_get_background_items ##### -->
+<para>
+
+</para>
+
+@provider: 
+@window: 
+@current_folder: 
+@Returns: 
+
+
+<!-- ##### FUNCTION nemo_menu_provider_emit_items_updated_signal ##### -->
+<para>
+
+</para>
+
+@provider: 
+
+

@@ -1,0 +1,13 @@
+README for nemo/libnemo-private
+
+This library, libnemo-private, is totally private to nemo.
+
+If you are writing a nemo component, you should not use this
+library or link with it.  The code in here is internal to nemo
+and not available for public consumption.
+
+If you think that there is something interesting in this library that
+you would like to use in a third party component, please send mail to
+the nemo mailing list at:
+
+nemo-list@gnome.org

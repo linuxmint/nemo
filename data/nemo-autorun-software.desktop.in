@@ -1,0 +1,14 @@
+[Desktop Entry]
+_Name=Autorun Prompt
+TryExec=nemo-autorun-software
+Exec=nemo-autorun-software %u
+Icon=application-x-executable
+NoDisplay=true
+Terminal=false
+StartupNotify=true
+Type=Application
+MimeType=x-content/unix-software;
+X-GNOME-Bugzilla-Bugzilla=GNOME
+X-GNOME-Bugzilla-Product=nemo
+X-GNOME-Bugzilla-Component=general
+X-GNOME-Bugzilla-Version=3.4.2

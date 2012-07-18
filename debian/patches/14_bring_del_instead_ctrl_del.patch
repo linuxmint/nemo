@@ -1,0 +1,34 @@
+# Description: basically revert upstream commits
+# c6279ac229545d7f64b64212383df2753482e233 and
+# cce40272e35b20b4aaf5f93109a05b7bb89704d5.
+# People don't find a way to delete files, Ctrl + Del is even more difficult
+# than Shift + Del, and the trash is already there to prevent fat fingering?
+# Bug-Ubuntu: https://bugs.launchpad.net/bugs/823221
+# Forwarded: not needed (against upstream decision)
+# Author: Didier Roche <didrocks@ubuntu.com>
+
+Index: nemo-3.3.92/src/nemo-view.c
+===================================================================
+--- nemo-3.3.92.orig/src/nemo-view.c	2012-03-13 16:28:59.000000000 +0100
++++ nemo-3.3.92/src/nemo-view.c	2012-03-20 11:19:35.843758495 +0100
+@@ -7044,7 +7044,7 @@
+   /* tooltip */                  NULL,
+ 				 G_CALLBACK (action_rename_select_all_callback) },
+   /* name, stock id */         { "Trash", NULL,
+-  /* label, accelerator */       N_("Mo_ve to Trash"), "<control>Delete",
++  /* label, accelerator */       N_("Mo_ve to Trash"), NULL,
+   /* tooltip */                  N_("Move each selected item to the Trash"),
+ 				 G_CALLBACK (action_trash_callback) },
+   /* name, stock id */         { "Delete", NULL,
+@@ -9725,9 +9725,9 @@
+ 	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
+ 
+ 	binding_set = gtk_binding_set_by_class (klass);
+-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, GDK_CONTROL_MASK,
++	gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, 0,
+ 				      "trash", 0);
+-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, GDK_CONTROL_MASK,
++	gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, 0,
+ 				      "trash", 0);
+ 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, GDK_SHIFT_MASK,
+ 				      "delete", 0);

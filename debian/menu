@@ -1,0 +1,2 @@
+?package(nemo):needs="X11" section="Applications/File Management" \
+  title="Nemo" command="/usr/bin/nemo" icon="/usr/share/pixmaps/nemo.xpm"

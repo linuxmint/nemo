@@ -1,0 +1,11 @@
+nemo_property_page_provider_get_type
+nemo_location_widget_provider_get_type
+nemo_operation_result_get_type
+nemo_file_info_get_type
+nemo_property_page_get_type
+nemo_info_provider_get_type
+nemo_column_get_type
+nemo_column_provider_get_type
+nemo_menu_provider_get_type
+nemo_menu_get_type
+nemo_menu_item_get_type

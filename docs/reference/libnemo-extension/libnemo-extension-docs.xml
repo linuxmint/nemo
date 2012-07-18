@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>Nemo Extension Reference Manual</title>
+    <releaseinfo>For Nemo-Extension &version;</releaseinfo>
+
+    </bookinfo>
+
+  <part>
+    <title>API Reference</title>
+
+    <chapter>
+      <title>Extension Interfaces</title>
+      <xi:include href="xml/nemo-column-provider.xml" />
+      <xi:include href="xml/nemo-column.xml" />
+      <xi:include href="xml/nemo-extension-types.xml" />
+      <xi:include href="xml/nemo-file-info.xml" />
+      <xi:include href="xml/nemo-info-provider.xml" />
+      <xi:include href="xml/nemo-location-widget-provider.xml" />
+      <xi:include href="xml/nemo-menu-provider.xml" />
+      <xi:include href="xml/nemo-menu.xml" />
+      <xi:include href="xml/nemo-property-page-provider.xml" />
+      <xi:include href="xml/nemo-property-page.xml" />
+    </chapter>
+
+  </part>
+  <index>
+    <title id="index-all">Index</title>
+  </index>
+</book>

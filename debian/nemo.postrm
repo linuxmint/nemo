@@ -1,0 +1,15 @@
+#!/bin/sh -e
+
+if [ "$1" = "purge" ] ; then
+    if [ -d /etc/X11/starthere ]; then
+        rmdir --ignore-fail-on-non-empty /etc/X11/starthere
+    fi
+    if [ -d /etc/X11/sysconfig ]; then
+        rmdir --ignore-fail-on-non-empty /etc/X11/sysconfig
+    fi
+    if [ -d /etc/X11/serverconfig ]; then
+        rmdir --ignore-fail-on-non-empty /etc/X11/serverconfig
+    fi
+fi
+
+#DEBHELPER#
