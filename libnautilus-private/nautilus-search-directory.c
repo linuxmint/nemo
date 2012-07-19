@@ -468,22 +468,26 @@ search_engine_hits_added (NautilusSearchEngine *engine, GList *hits,
 	GList *hit_list;
 	GList *file_list;
 	NautilusFile *file;
-	char *uri;
 	SearchMonitor *monitor;
 	GList *monitor_list;
 
 	file_list = NULL;
 
 	for (hit_list = hits; hit_list != NULL; hit_list = hit_list->next) {
-		uri = hit_list->data;
+		NautilusSearchHit *hit = hit_list->data;
+		const char *uri;
 
+		uri = nautilus_search_hit_get_uri (hit);
 		if (g_str_has_suffix (uri, NAUTILUS_SAVED_SEARCH_EXTENSION)) {
 			/* Never return saved searches themselves as hits */
 			continue;
 		}
-		
+
+		nautilus_search_hit_compute_scores (hit, search->details->query);
+
 		file = nautilus_file_get_by_uri (uri);
-		
+		nautilus_file_set_search_relevance (file, nautilus_search_hit_get_relevance (hit));
+
 		for (monitor_list = search->details->monitor_list; monitor_list; monitor_list = monitor_list->next) {
 			monitor = monitor_list->data;
 
@@ -513,13 +517,15 @@ search_engine_hits_subtracted (NautilusSearchEngine *engine, GList *hits,
 	GList *monitor_list;
 	SearchMonitor *monitor;
 	GList *file_list;
-	char *uri;
 	NautilusFile *file;
 
 	file_list = NULL;
 
 	for (hit_list = hits; hit_list != NULL; hit_list = hit_list->next) {
-		uri = hit_list->data;
+		NautilusSearchHit *hit = hit_list->data;
+		const char *uri;
+
+		uri = nautilus_search_hit_get_uri (hit);
 		file = nautilus_file_get_by_uri (uri);
 
 		for (monitor_list = search->details->monitor_list; monitor_list; 

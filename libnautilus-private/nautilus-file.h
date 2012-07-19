@@ -60,7 +60,8 @@ typedef enum {
 	NAUTILUS_FILE_SORT_BY_TYPE,
 	NAUTILUS_FILE_SORT_BY_MTIME,
         NAUTILUS_FILE_SORT_BY_ATIME,
-	NAUTILUS_FILE_SORT_BY_TRASHED_TIME
+	NAUTILUS_FILE_SORT_BY_TRASHED_TIME,
+	NAUTILUS_FILE_SORT_BY_SEARCH_RELEVANCE
 } NautilusFileSortType;	
 
 typedef enum {
@@ -187,6 +188,7 @@ gboolean                nautilus_file_is_directory                      (Nautilu
 gboolean                nautilus_file_is_user_special_directory         (NautilusFile                   *file,
 									 GUserDirectory                 special_directory);
 gboolean		nautilus_file_is_archive			(NautilusFile			*file);
+gboolean                nautilus_file_is_in_search                      (NautilusFile                   *file);
 gboolean                nautilus_file_is_in_trash                       (NautilusFile                   *file);
 gboolean                nautilus_file_is_in_recent                      (NautilusFile                   *file);
 gboolean                nautilus_file_is_in_desktop                     (NautilusFile                   *file);
@@ -214,6 +216,8 @@ char *                  nautilus_file_peek_top_left_text                (Nautilu
 gboolean                nautilus_file_get_directory_item_mime_types     (NautilusFile                   *file,
 									 GList                         **mime_list);
 
+void                    nautilus_file_set_search_relevance              (NautilusFile                   *file,
+									 gdouble                         relevance);
 void                    nautilus_file_set_attributes                    (NautilusFile                   *file, 
 									 GFileInfo                      *attributes,
 									 NautilusFileOperationCallback   callback,

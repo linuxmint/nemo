@@ -21,6 +21,7 @@
 
 #include <glib-object.h>
 #include <libnautilus-private/nautilus-query.h>
+#include <libnautilus-private/nautilus-search-hit.h>
 
 G_BEGIN_DECLS
 

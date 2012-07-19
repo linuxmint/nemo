@@ -130,6 +130,7 @@ static GQuark attribute_name_q,
 	attribute_deep_file_count_q,
 	attribute_deep_directory_count_q,
 	attribute_deep_total_count_q,
+	attribute_search_relevance_q,
 	attribute_trashed_on_q,
 	attribute_trashed_on_full_q,
 	attribute_trash_orig_path_q,
@@ -2986,6 +2987,49 @@ compare_by_type (NautilusFile *file_1, NautilusFile *file_2)
 	return result;
 }
 
+static Knowledge
+get_search_relevance (NautilusFile *file,
+		      gdouble      *relevance_out)
+{
+	if (!nautilus_file_is_in_search (file)) {
+		return UNKNOWABLE;
+	}
+
+	*relevance_out = file->details->search_relevance;
+
+	return KNOWN;
+}
+
+static int
+compare_by_search_relevance (NautilusFile *file_1, NautilusFile *file_2)
+{
+	gdouble r_1, r_2;
+	Knowledge known_1, known_2;
+
+	known_1 = get_search_relevance (file_1, &r_1);
+	known_2 = get_search_relevance (file_2, &r_2);
+
+	if (known_1 > known_2) {
+		return -1;
+	}
+	if (known_1 < known_2) {
+		return +1;
+	}
+
+	if (known_1 == UNKNOWABLE || known_1 == UNKNOWN) {
+		return 0;
+	}
+
+	if (r_1 < r_2) {
+		return -1;
+	}
+	if (r_1 > r_2) {
+		return +1;
+	}
+
+	return 0;
+}
+
 static int
 compare_by_time (NautilusFile *file_1, NautilusFile *file_2, NautilusDateType type)
 {
@@ -3145,6 +3189,12 @@ nautilus_file_compare_for_sort (NautilusFile *file_1,
 				result = compare_by_full_path (file_1, file_2);
 			}
 			break;
+		case NAUTILUS_FILE_SORT_BY_SEARCH_RELEVANCE:
+			result = compare_by_search_relevance (file_1, file_2);
+			if (result == 0) {
+				result = compare_by_full_path (file_1, file_2);
+			}
+			break;
 		default:
 			g_return_val_if_reached (0);
 		}
@@ -3201,6 +3251,11 @@ nautilus_file_compare_for_sort_by_attribute_q   (NautilusFile                   
         } else if (attribute == attribute_trashed_on_q || attribute == attribute_trashed_on_full_q) {
 		return nautilus_file_compare_for_sort (file_1, file_2,
 						       NAUTILUS_FILE_SORT_BY_TRASHED_TIME,
+						       directories_first,
+						       reversed);
+        } else if (attribute == attribute_search_relevance_q) {
+		return nautilus_file_compare_for_sort (file_1, file_2,
+						       NAUTILUS_FILE_SORT_BY_SEARCH_RELEVANCE,
 						       directories_first,
 						       reversed);
 	}
@@ -3330,6 +3385,19 @@ nautilus_file_is_in_desktop (NautilusFile *file)
 		return nautilus_is_desktop_directory (file->details->directory->details->location);
 	}
 	return FALSE;
+}
+
+gboolean
+nautilus_file_is_in_search (NautilusFile *file)
+{
+	char *uri;
+	gboolean ret;
+
+	uri = nautilus_file_get_uri (file);
+	ret = eel_uri_is_search (uri);
+	g_free (uri);
+
+	return ret;
 }
 
 static gboolean
@@ -4772,6 +4840,12 @@ nautilus_file_set_attributes (NautilusFile *file,
 	g_object_unref (location);
 }
 
+void
+nautilus_file_set_search_relevance (NautilusFile *file,
+				    gdouble       relevance)
+{
+	file->details->search_relevance = relevance;
+}
 
 /**
  * nautilus_file_can_get_permissions:
@@ -7415,13 +7489,15 @@ static gboolean
 get_attributes_for_default_sort_type (NautilusFile *file,
 				      gboolean *is_recent,
 				      gboolean *is_download,
-				      gboolean *is_trash)
+				      gboolean *is_trash,
+				      gboolean *is_search)
 {
-	gboolean is_recent_dir, is_download_dir, is_desktop_dir, is_trash_dir, retval;
+	gboolean is_recent_dir, is_download_dir, is_desktop_dir, is_trash_dir, is_search_dir, retval;
 
 	*is_recent = FALSE;
 	*is_download = FALSE;
 	*is_trash = FALSE;
+	*is_search = FALSE;
 	retval = FALSE;
 
 	/* special handling for certain directories */
@@ -7434,6 +7510,8 @@ get_attributes_for_default_sort_type (NautilusFile *file,
 			nautilus_file_is_user_special_directory (file, G_USER_DIRECTORY_DESKTOP);
 		is_trash_dir =
 			nautilus_file_is_in_trash (file);
+		is_search_dir =
+			nautilus_file_is_in_search (file);
 
 		if (is_download_dir && !is_desktop_dir) {
 			*is_download = TRUE;
@@ -7443,6 +7521,9 @@ get_attributes_for_default_sort_type (NautilusFile *file,
 			retval = TRUE;
 		} else if (is_recent_dir) {
 			*is_recent = TRUE;
+			retval = TRUE;
+		} else if (is_search_dir) {
+			*is_search = TRUE;
 			retval = TRUE;
 		}
 	}
@@ -7455,17 +7536,19 @@ nautilus_file_get_default_sort_type (NautilusFile *file,
 				     gboolean *reversed)
 {
 	NautilusFileSortType retval;
-	gboolean is_recent, is_download, is_trash, res;
+	gboolean is_recent, is_download, is_trash, is_search, res;
 
 	retval = NAUTILUS_FILE_SORT_NONE;
-	is_recent = is_download = is_trash = FALSE;
-	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash);
+	is_recent = is_download = is_trash = is_search = FALSE;
+	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash, &is_search);
 
 	if (res) {
 		if (is_recent || is_download) {
 			retval = NAUTILUS_FILE_SORT_BY_MTIME;
 		} else if (is_trash) {
 			retval = NAUTILUS_FILE_SORT_BY_TRASHED_TIME;
+		} else if (is_search) {
+			retval = NAUTILUS_FILE_SORT_BY_SEARCH_RELEVANCE;
 		}
 
 		if (reversed != NULL) {
@@ -7481,17 +7564,19 @@ nautilus_file_get_default_sort_attribute (NautilusFile *file,
 					  gboolean *reversed)
 {
 	const gchar *retval;
-	gboolean is_recent, is_download, is_trash, res;
+	gboolean is_recent, is_download, is_trash, is_search, res;
 
 	retval = NULL;
-	is_download = is_trash = FALSE;
-	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash);
+	is_download = is_trash = is_search = FALSE;
+	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash, &is_search);
 
 	if (res) {
 		if (is_recent || is_download) {
 			retval = g_quark_to_string (attribute_date_modified_q);
 		} else if (is_trash) {
 			retval = g_quark_to_string (attribute_trashed_on_q);
+		} else if (is_search) {
+			retval = g_quark_to_string (attribute_search_relevance_q);
 		}
 
 		if (reversed != NULL) {
@@ -7869,6 +7954,7 @@ nautilus_file_class_init (NautilusFileClass *class)
 	attribute_deep_file_count_q = g_quark_from_static_string ("deep_file_count");
 	attribute_deep_directory_count_q = g_quark_from_static_string ("deep_directory_count");
 	attribute_deep_total_count_q = g_quark_from_static_string ("deep_total_count");
+	attribute_search_relevance_q = g_quark_from_static_string ("search_relevance");
 	attribute_trashed_on_q = g_quark_from_static_string ("trashed_on");
 	attribute_trashed_on_full_q = g_quark_from_static_string ("trashed_on_full");
 	attribute_trash_orig_path_q = g_quark_from_static_string ("trash_orig_path");
