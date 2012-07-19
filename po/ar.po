@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-17 13:37+0200\n"
-"PO-Revision-Date: 2012-07-17 13:37+0200\n"
+"POT-Creation-Date: 2012-07-20 00:46+0200\n"
+"PO-Revision-Date: 2012-07-20 00:47+0200\n"
 "Last-Translator: Khaled Hosny <khaledhosny@eglug.org>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
 "Language: ar\n"
@@ -38,8 +38,8 @@ msgid "Autorun Prompt"
 msgstr "محث التنفيذ التلقائي"
 
 #. Set initial window title
-#: ../data/nautilus.desktop.in.in.h:1 ../src/nautilus-window.c:2138
-#: ../src/nautilus-window.c:2391
+#: ../data/nautilus.desktop.in.in.h:1 ../src/nautilus-window.c:2135
+#: ../src/nautilus-window.c:2388
 msgid "Files"
 msgstr "الملفات"
 
@@ -125,7 +125,7 @@ msgstr " (يونيكود غير صحيح)"
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:67
 #: ../src/nautilus-pathbar.c:301 ../src/nautilus-places-sidebar.c:510
-#: ../src/nautilus-query-editor.c:1154
+#: ../src/nautilus-query-editor.c:1169
 msgid "Home"
 msgstr "المنزل"
 
@@ -1971,6 +1971,10 @@ msgstr "ابحث"
 #, c-format
 msgid "Search for \"%s\""
 msgstr "ابحث عن \"%s\""
+
+#: ../libnautilus-private/nautilus-search-engine.c:148
+msgid "Unable to complete the requested search"
+msgstr "تعذّر إكمال البحث المطلوب"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:1
 msgid "Where to position newly open tabs in browser windows."
@@ -4342,71 +4346,71 @@ msgstr "اختر أيقونة مخصصة"
 msgid "File Type"
 msgstr "نوع الملف"
 
-#: ../src/nautilus-query-editor.c:387
+#: ../src/nautilus-query-editor.c:402
 msgid "Documents"
 msgstr "مستندات"
 
-#: ../src/nautilus-query-editor.c:405
+#: ../src/nautilus-query-editor.c:420
 msgid "Music"
 msgstr "موسيقى"
 
-#: ../src/nautilus-query-editor.c:420
+#: ../src/nautilus-query-editor.c:435
 msgid "Video"
 msgstr "فيديو"
 
-#: ../src/nautilus-query-editor.c:436
+#: ../src/nautilus-query-editor.c:451
 msgid "Picture"
 msgstr "صورة"
 
-#: ../src/nautilus-query-editor.c:456
+#: ../src/nautilus-query-editor.c:471
 msgid "Illustration"
 msgstr "رسم توضيحي"
 
-#: ../src/nautilus-query-editor.c:470
+#: ../src/nautilus-query-editor.c:485
 msgid "Spreadsheet"
 msgstr "أوراق عمل ممتدة"
 
-#: ../src/nautilus-query-editor.c:486
+#: ../src/nautilus-query-editor.c:501
 msgid "Presentation"
 msgstr "عرض تقديمي"
 
-#: ../src/nautilus-query-editor.c:495
+#: ../src/nautilus-query-editor.c:510
 msgid "Pdf / Postscript"
 msgstr "Pdf / Postscript"
 
-#: ../src/nautilus-query-editor.c:503
+#: ../src/nautilus-query-editor.c:518
 msgid "Text File"
 msgstr "ملف نصي"
 
-#: ../src/nautilus-query-editor.c:582
+#: ../src/nautilus-query-editor.c:597
 msgid "Select type"
 msgstr "اختر نوع"
 
-#: ../src/nautilus-query-editor.c:586
+#: ../src/nautilus-query-editor.c:601
 msgid "Select"
 msgstr "اختر"
 
-#: ../src/nautilus-query-editor.c:667
+#: ../src/nautilus-query-editor.c:682
 msgid "Any"
 msgstr "أيّ"
 
-#: ../src/nautilus-query-editor.c:682
+#: ../src/nautilus-query-editor.c:697
 msgid "Other Type..."
 msgstr "فئة أخرى..."
 
-#: ../src/nautilus-query-editor.c:962
+#: ../src/nautilus-query-editor.c:977
 msgid "Remove this criterion from the search"
 msgstr "أزل هذا المعيار من البحث"
 
-#: ../src/nautilus-query-editor.c:1029
+#: ../src/nautilus-query-editor.c:1044
 msgid "Add a new criterion to this search"
 msgstr "أضف معيارا جديدا لهذا البحث"
 
-#: ../src/nautilus-query-editor.c:1031
+#: ../src/nautilus-query-editor.c:1046
 msgid "Current"
 msgstr "الحالي"
 
-#: ../src/nautilus-query-editor.c:1035
+#: ../src/nautilus-query-editor.c:1050
 msgid "All Files"
 msgstr "كل الملفات"
 
@@ -5487,7 +5491,7 @@ msgstr "انقل اللسان ي_مينا"
 msgid "_Close Tab"
 msgstr "أ_غلق اللسان"
 
-#: ../src/nautilus-window.c:2364
+#: ../src/nautilus-window.c:2361
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5498,7 +5502,7 @@ msgstr ""
 "العمومية العامة لجنو والتي نشرتها منظمة البرمجيات الحرة؛ سواء الإصدارة 2 من "
 "الرخصة أو أي إصدارة بعدها (حسب رغبتك)."
 
-#: ../src/nautilus-window.c:2368
+#: ../src/nautilus-window.c:2365
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5509,7 +5513,7 @@ msgstr ""
 "أيضمان يضمن صلاحية العرض في السوق أو توافقه مع أي استخدام محدد.  يمكنك "
 "مراجعة الرخصة العمومية العامة لجنو لمزيد من التفاصيل."
 
-#: ../src/nautilus-window.c:2372
+#: ../src/nautilus-window.c:2369
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5523,11 +5527,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2387
+#: ../src/nautilus-window.c:2384
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "حقوق النشر © %Id–%Id مؤلفي «الملفات»"
 
-#: ../src/nautilus-window.c:2393
+#: ../src/nautilus-window.c:2390
 msgid "Access and organize your files."
 msgstr "نظم ملفاتك وتعامل معها."
 
@@ -5535,7 +5539,7 @@ msgstr "نظم ملفاتك وتعامل معها."
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2403
+#: ../src/nautilus-window.c:2400
 msgid "translator-credits"
 msgstr ""
 "فريق عربآيز للترجمة http://www.arabeyes.org:\n"
