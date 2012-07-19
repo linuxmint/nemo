@@ -1849,6 +1849,7 @@ nautilus_window_connect_content_view (NautilusWindow *window,
 				      NautilusView *view)
 {
 	NautilusWindowSlot *slot;
+	NautilusDirectory *directory;
 
 	g_assert (NAUTILUS_IS_WINDOW (window));
 	g_assert (NAUTILUS_IS_VIEW (view));
@@ -1870,9 +1871,14 @@ nautilus_window_connect_content_view (NautilusWindow *window,
        */
 	if (slot->pending_location == NULL) {
 		nautilus_window_load_view_as_menus (window);
-	}
+	} else {
+		directory = nautilus_directory_get (slot->pending_location);
+		if (!NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
+			nautilus_view_grab_focus (view);
+		}
 
-	nautilus_view_grab_focus (view);
+		nautilus_directory_unref (directory);
+	}
 }
 
 void
