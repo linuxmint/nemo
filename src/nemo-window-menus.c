@@ -1029,6 +1029,11 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* tooltip */              N_("Open an extra folder view side-by-side"),
                              G_CALLBACK (action_split_view_callback),
   /* is_active */            FALSE },
+  /* name, stock id */     { "Show Hide Location Entry", NULL,
+  /* label, accelerator */   N_("Loca_tion entry"), "<control>l",
+  /* tooltip */              N_("Change the visibility of this window's location entry"),
+                             NULL,
+  /* is_active */            TRUE },
 };
 
 static const GtkRadioActionEntry main_radio_entries[] = {
@@ -1133,6 +1138,15 @@ window_menus_set_bindings (NemoWindow *window)
 			 action,
 			 "active",
 			 G_SETTINGS_BIND_DEFAULT);
+    
+    action = gtk_action_group_get_action (action_group,
+					      NEMO_ACTION_SHOW_HIDE_LOCATION_ENTRY);
+
+	g_settings_bind (nemo_preferences,
+             NEMO_PREFERENCES_SHOW_LOCATION_ENTRY,
+			 action,
+			 "active",
+             G_SETTINGS_BIND_DEFAULT);
 }
 
 void 

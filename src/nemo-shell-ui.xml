@@ -66,6 +66,7 @@
 			<menuitem name="Show Hide Toolbar" action="Show Hide Toolbar"/>
 			<menuitem name="Show Hide Statusbar" action="Show Hide Statusbar"/>
 			<menuitem name="Show Hide Extra Pane" action="Show Hide Extra Pane"/>
+            <menuitem name="Show Hide Location Entry" action="Show Hide Location Entry"/>
 		</placeholder>
 		<separator/>
 		<placeholder name="View Preferences Placeholder"/>
@@ -98,7 +99,6 @@
 			<menuitem name="Go to Templates" action="Go to Templates"/>
 			<menuitem name="Go to Trash" action="Go to Trash"/>
 		        <menuitem name="Go to Network" action="Go to Network"/>
-			<menuitem name="Go to Location" action="Go to Location"/>
 			<menuitem name="Search" action="Search"/>
 		</menu>
 		<menu action="Bookmarks">
