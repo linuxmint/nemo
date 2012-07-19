@@ -1454,12 +1454,16 @@ nautilus_window_key_press_event (GtkWidget *widget,
 		}
 	}
 
+	if (GTK_WIDGET_CLASS (nautilus_window_parent_class)->key_press_event (widget, event)) {
+		return TRUE;
+	}
+
 	if (nautilus_window_slot_handle_event (window->details->active_slot, event)) {
 		toggle_toolbar_search_button (window, TRUE);
 		return TRUE;
 	}
 
-	return GTK_WIDGET_CLASS (nautilus_window_parent_class)->key_press_event (widget, event);
+	return FALSE;
 }
 
 /*
