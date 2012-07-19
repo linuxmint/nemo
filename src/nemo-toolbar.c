@@ -67,7 +67,7 @@ toolbar_update_appearance (NemoToolbar *self)
 	gboolean show_location_entry;
 
 	show_location_entry = self->priv->show_location_entry ||
-		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY);
+		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY);
 
 	gtk_widget_set_visible (self->priv->toolbar,
 				self->priv->show_main_bar);
@@ -75,7 +75,7 @@ toolbar_update_appearance (NemoToolbar *self)
 	gtk_widget_set_visible (self->priv->location_bar,
 				show_location_entry);
 	gtk_widget_set_visible (self->priv->path_bar,
-				!show_location_entry);
+				TRUE);
 
 	gtk_widget_set_visible (self->priv->search_bar,
 				self->priv->show_search_bar);
@@ -85,8 +85,8 @@ static void
 nemo_toolbar_constructed (GObject *obj)
 {
 	NemoToolbar *self = NEMO_TOOLBAR (obj);
-	GtkToolItem *item;
-	GtkWidget *hbox, *toolbar, *search;
+	GtkToolItem *item, *location_item;
+	GtkWidget *vbox, *toolbar, *search;
 	GtkStyleContext *context;
 
 	G_OBJECT_CLASS (nemo_toolbar_parent_class)->constructed (obj);
@@ -109,24 +109,24 @@ nemo_toolbar_constructed (GObject *obj)
 	search = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Search");
 	gtk_style_context_add_class (gtk_widget_get_style_context (search), GTK_STYLE_CLASS_RAISED);
 	gtk_widget_set_name (search, "nemo-search-button");
-
+    
 	gtk_box_pack_start (GTK_BOX (self), self->priv->toolbar, TRUE, TRUE, 0);
 	gtk_widget_show_all (self->priv->toolbar);
+    
+    /* entry-like location bar */
+	self->priv->location_bar = nemo_location_bar_new ();
+	gtk_box_pack_start (GTK_BOX (self), self->priv->location_bar, TRUE, TRUE, 0);
 
-	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-	gtk_widget_show (hbox);
+	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+	gtk_widget_show (vbox);
 
 	/* regular path bar */
 	self->priv->path_bar = g_object_new (NEMO_TYPE_PATH_BAR, NULL);
-	gtk_box_pack_start (GTK_BOX (hbox), self->priv->path_bar, TRUE, TRUE, 0);
-
-	/* entry-like location bar */
-	self->priv->location_bar = nemo_location_bar_new ();
-	gtk_box_pack_start (GTK_BOX (hbox), self->priv->location_bar, TRUE, TRUE, 0);
-
+	gtk_box_pack_start (GTK_BOX (vbox), self->priv->path_bar, TRUE, TRUE, 0);
+	
 	item = gtk_tool_item_new ();
 	gtk_tool_item_set_expand (item, TRUE);
-	gtk_container_add (GTK_CONTAINER (item), hbox);
+	gtk_container_add (GTK_CONTAINER (item), vbox);
 	gtk_toolbar_insert (GTK_TOOLBAR (self->priv->toolbar), item, 0);
 	gtk_widget_show (GTK_WIDGET (item));
 
@@ -135,7 +135,7 @@ nemo_toolbar_constructed (GObject *obj)
 	gtk_box_pack_start (GTK_BOX (self), self->priv->search_bar, TRUE, TRUE, 0);
 
 	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY,
+				  "changed::" NEMO_PREFERENCES_SHOW_LOCATION_ENTRY,
 				  G_CALLBACK (toolbar_update_appearance), self);
 
 	toolbar_update_appearance (self);

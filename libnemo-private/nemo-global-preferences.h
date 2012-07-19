@@ -77,7 +77,7 @@ typedef enum
 #define NEMO_PREFERENCES_ALWAYS_USE_BROWSER			"always-use-browser"
 #define NEMO_PREFERENCES_NEW_TAB_POSITION			"tabs-open-position"
 
-#define NEMO_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY		"always-use-location-entry"
+#define NEMO_PREFERENCES_SHOW_LOCATION_ENTRY		"show-location-entry"
 
 /* Which views should be displayed for new windows */
 #define NEMO_WINDOW_STATE_START_WITH_STATUS_BAR		"start-with-status-bar"

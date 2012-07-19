@@ -77,10 +77,10 @@
       <_summary>Enables the classic Nemo behavior, where all windows are browsers</_summary>
       <_description>If set to true, then all Nemo windows will be browser windows. This is how Nemo used to behave before version 2.6, and some people prefer this behavior.</_description>
     </key>
-    <key name="always-use-location-entry" type="b">
-      <default>false</default>
-      <_summary>Always use the location entry, instead of the pathbar</_summary>
-      <_description>If set to true, then Nemo browser windows will always use a textual input entry for the location toolbar, instead of the pathbar.</_description>
+    <key name="show-location-entry" type="b">
+      <default>true</default>
+      <_summary>Show the location entry by default</_summary>
+      <_description>If set to true, then Nemo browser windows will show a textual input entry for the location toolbar.</_description>
     </key>
     <key name="confirm-trash" type="b">
       <default>true</default>
