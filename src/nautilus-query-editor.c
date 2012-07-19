@@ -1058,6 +1058,17 @@ finish_first_line (NautilusQueryEditor *editor, GtkWidget *hbox, gboolean use_go
 	gtk_box_pack_start (GTK_BOX (hbox), editor->details->search_all_button, FALSE, FALSE, 0);
 }
 
+static gboolean
+entry_key_press_event_cb (GtkWidget           *widget,
+			  GdkEventKey         *event,
+			  NautilusQueryEditor *editor)
+{
+	if (event->keyval == GDK_KEY_Down) {
+		nautilus_window_grab_focus (NAUTILUS_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (widget))));
+	}
+	return FALSE;
+}
+
 static void
 setup_widgets (NautilusQueryEditor *editor)
 {
@@ -1071,6 +1082,8 @@ setup_widgets (NautilusQueryEditor *editor)
 	editor->details->entry = gtk_search_entry_new ();
 	gtk_box_pack_start (GTK_BOX (hbox), editor->details->entry, TRUE, TRUE, 0);
 
+	g_signal_connect (editor->details->entry, "key-press-event",
+			  G_CALLBACK (entry_key_press_event_cb), editor);
 	g_signal_connect (editor->details->entry, "activate",
 			  G_CALLBACK (entry_activate_cb), editor);
 	g_signal_connect (editor->details->entry, "changed",
