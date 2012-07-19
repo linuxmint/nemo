@@ -52,6 +52,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET "preview_folder_combobox"
 
 /* bool preferences */
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LOCATION_ENTRY_WIDGET "show_location_entry_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET "sort_folders_first_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_LABELS_BESIDE_ICONS_WIDGET "labels_beside_icons_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_ALL_COLUMNS_SAME_WIDTH "all_columns_same_width_checkbutton"
@@ -727,6 +728,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 	bind_builder_bool (builder, nemo_compact_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_ALL_COLUMNS_SAME_WIDTH,
 			   NEMO_PREFERENCES_COMPACT_VIEW_ALL_COLUMNS_SAME_WIDTH);
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LOCATION_ENTRY_WIDGET,
+			   NEMO_PREFERENCES_SHOW_LOCATION_ENTRY);
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
 			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
