@@ -1627,13 +1627,16 @@ create_and_set_up_tree_view (NautilusListView *view)
 		char *name;
 		char *label;
 		float xalign;
+		GtkSortType sort_order;
 
 		nautilus_column = NAUTILUS_COLUMN (l->data);
 
 		g_object_get (nautilus_column, 
 			      "name", &name, 
 			      "label", &label,
-			      "xalign", &xalign, NULL);
+			      "xalign", &xalign,
+			      "default-sort-order", &sort_order,
+			      NULL);
 
 		column_num = nautilus_list_model_add_column (view->details->model,
 						       nautilus_column);
@@ -1701,6 +1704,7 @@ create_and_set_up_tree_view (NautilusListView *view)
 			
 			gtk_tree_view_column_set_resizable (column, TRUE);
 			gtk_tree_view_column_set_visible (column, TRUE);
+			gtk_tree_view_column_set_sort_order (column, sort_order);
 		}
 		g_free (name);
 		g_free (label);
