@@ -1677,9 +1677,11 @@ make_button_data (NautilusPathBar  *path_bar,
 
 	if (button_data->label != NULL) {
 		gtk_label_set_ellipsize (GTK_LABEL (button_data->label), PANGO_ELLIPSIZE_MIDDLE);
+		gtk_label_set_single_line_mode (GTK_LABEL (button_data->label), TRUE);
 
 		button_data->bold_label = gtk_label_new (NULL);
 		gtk_widget_set_no_show_all (button_data->bold_label, TRUE);
+		gtk_label_set_single_line_mode (GTK_LABEL (button_data->bold_label), TRUE);
 		gtk_box_pack_start (GTK_BOX (child), button_data->bold_label, FALSE, FALSE, 0);
 	}
 
