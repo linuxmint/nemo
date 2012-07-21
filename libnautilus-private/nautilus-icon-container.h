@@ -321,8 +321,6 @@ void              nautilus_icon_container_set_is_desktop                (Nautilu
 void              nautilus_icon_container_reset_scroll_region           (NautilusIconContainer  *container);
 void              nautilus_icon_container_set_font                      (NautilusIconContainer  *container,
 									 const char             *font); 
-void              nautilus_icon_container_set_font_size_table           (NautilusIconContainer  *container,
-									 const int               font_size_table[NAUTILUS_ZOOM_LEVEL_LARGEST + 1]);
 void              nautilus_icon_container_set_margins                   (NautilusIconContainer  *container,
 									 int                     left_margin,
 									 int                     right_margin,
