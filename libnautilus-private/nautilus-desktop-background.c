@@ -261,8 +261,9 @@ on_fade_finished (GnomeBGCrossfade *fade,
         NautilusDesktopBackground *self = user_data;
 
 	nautilus_desktop_background_ensure_realized (self);
-	gnome_bg_set_surface_as_root (gdk_window_get_screen (window),
-                                      self->details->background_surface);
+	if (self->details->background_surface != NULL)
+		gnome_bg_set_surface_as_root (gdk_window_get_screen (window),
+					      self->details->background_surface);
 }
 
 static gboolean
@@ -303,6 +304,9 @@ nautilus_desktop_background_set_up_widget (NautilusDesktopBackground *self)
 	}
 
 	nautilus_desktop_background_ensure_realized (self);
+	if (self->details->background_surface == NULL)
+		return;
+
         window = gtk_layout_get_bin_window (GTK_LAYOUT (widget));
 
 	in_fade = fade_to_surface (self, window,
