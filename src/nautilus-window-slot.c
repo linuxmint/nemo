@@ -27,11 +27,11 @@
 #include "nautilus-window-slot.h"
 
 #include "nautilus-actions.h"
-#include "nautilus-desktop-window.h"
 #include "nautilus-toolbar.h"
 #include "nautilus-floating-bar.h"
 #include "nautilus-window-private.h"
 #include "nautilus-window-manage-views.h"
+#include "nautilus-desktop-window.h"
 
 #include <glib/gi18n.h>
 
@@ -56,6 +56,11 @@ gboolean
 nautilus_window_slot_handle_event (NautilusWindowSlot *slot,
 				   GdkEventKey        *event)
 {
+	NautilusWindow *window;
+
+	window = nautilus_window_slot_get_window (slot);
+	if (NAUTILUS_IS_DESKTOP_WINDOW (window))
+		return FALSE;
 	return nautilus_query_editor_handle_event (slot->query_editor, event);
 }
 
