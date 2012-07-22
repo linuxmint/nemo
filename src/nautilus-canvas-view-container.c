@@ -23,7 +23,7 @@
 */
 #include <config.h>
 
-#include "nautilus-icon-view-container.h"
+#include "nautilus-canvas-view-container.h"
 
 #include <string.h>
 #include <glib/gi18n.h>
@@ -37,20 +37,20 @@
 #define ICON_TEXT_ATTRIBUTES_NUM_ITEMS		3
 #define ICON_TEXT_ATTRIBUTES_DEFAULT_TOKENS	"size,date_modified,type"
 
-G_DEFINE_TYPE (NautilusIconViewContainer, nautilus_icon_view_container, NAUTILUS_TYPE_ICON_CONTAINER);
+G_DEFINE_TYPE (NautilusCanvasViewContainer, nautilus_canvas_view_container, NAUTILUS_TYPE_CANVAS_CONTAINER);
 
 static GQuark attribute_none_q;
 
-static NautilusIconView *
-get_icon_view (NautilusIconContainer *container)
+static NautilusCanvasView *
+get_canvas_view (NautilusCanvasContainer *container)
 {
 	/* Type unsafe comparison for performance */
-	return ((NautilusIconViewContainer *)container)->view;
+	return ((NautilusCanvasViewContainer *)container)->view;
 }
 
 static NautilusIconInfo *
-nautilus_icon_view_container_get_icon_images (NautilusIconContainer *container,
-					      NautilusIconData      *data,
+nautilus_canvas_view_container_get_icon_images (NautilusCanvasContainer *container,
+					      NautilusCanvasIconData      *data,
 					      int                    size,
 					      char                 **embedded_text,
 					      gboolean               for_drag_accept,
@@ -58,7 +58,7 @@ nautilus_icon_view_container_get_icon_images (NautilusIconContainer *container,
 					      gboolean              *embedded_text_needs_loading,
 					      gboolean              *has_window_open)
 {
-	NautilusIconView *icon_view;
+	NautilusCanvasView *canvas_view;
 	NautilusFile *file;
 	gboolean use_embedding;
 	NautilusFileIconFlags flags;
@@ -71,8 +71,8 @@ nautilus_icon_view_container_get_icon_images (NautilusIconContainer *container,
 	file = (NautilusFile *) data;
 
 	g_assert (NAUTILUS_IS_FILE (file));
-	icon_view = get_icon_view (container);
-	g_return_val_if_fail (icon_view != NULL, NULL);
+	canvas_view = get_canvas_view (container);
+	g_return_val_if_fail (canvas_view != NULL, NULL);
 
 	use_embedding = FALSE;
 	if (embedded_text) {
@@ -126,8 +126,8 @@ nautilus_icon_view_container_get_icon_images (NautilusIconContainer *container,
 }
 
 static char *
-nautilus_icon_view_container_get_icon_description (NautilusIconContainer *container,
-						   NautilusIconData      *data)
+nautilus_canvas_view_container_get_icon_description (NautilusCanvasContainer *container,
+						   NautilusCanvasIconData      *data)
 {
 	NautilusFile *file;
 	char *mime_type;
@@ -147,8 +147,8 @@ nautilus_icon_view_container_get_icon_description (NautilusIconContainer *contai
 }
 
 static void
-nautilus_icon_view_container_start_monitor_top_left (NautilusIconContainer *container,
-						     NautilusIconData      *data,
+nautilus_canvas_view_container_start_monitor_top_left (NautilusCanvasContainer *container,
+						     NautilusCanvasIconData      *data,
 						     gconstpointer          client,
 						     gboolean               large_text)
 {
@@ -167,8 +167,8 @@ nautilus_icon_view_container_start_monitor_top_left (NautilusIconContainer *cont
 }
 
 static void
-nautilus_icon_view_container_stop_monitor_top_left (NautilusIconContainer *container,
-						    NautilusIconData      *data,
+nautilus_canvas_view_container_stop_monitor_top_left (NautilusCanvasContainer *container,
+						    NautilusCanvasIconData      *data,
 						    gconstpointer          client)
 {
 	NautilusFile *file;
@@ -181,8 +181,8 @@ nautilus_icon_view_container_stop_monitor_top_left (NautilusIconContainer *conta
 }
 
 static void
-nautilus_icon_view_container_prioritize_thumbnailing (NautilusIconContainer *container,
-						      NautilusIconData      *data)
+nautilus_canvas_view_container_prioritize_thumbnailing (NautilusCanvasContainer *container,
+						      NautilusCanvasIconData      *data)
 {
 	NautilusFile *file;
 	char *uri;
@@ -225,7 +225,7 @@ update_auto_strv_as_quarks (GSettings   *settings,
  * beneath icons.
  */
 static GQuark *
-nautilus_icon_view_container_get_icon_text_attributes_from_preferences (void)
+nautilus_canvas_view_container_get_icon_text_attributes_from_preferences (void)
 {
 	static GQuark *attributes = NULL;
 
@@ -280,16 +280,16 @@ quarkv_length (GQuark *attributes)
 }
 
 /**
- * nautilus_icon_view_get_icon_text_attribute_names:
+ * nautilus_canvas_view_get_icon_text_attribute_names:
  *
  * Get a list representing which text attributes should be displayed
  * beneath an icon. The result is dependent on zoom level and possibly
  * user configuration. Don't free the result.
- * @view: NautilusIconView to query.
+ * @view: NautilusCanvasView to query.
  * 
  **/
 static GQuark *
-nautilus_icon_view_container_get_icon_text_attribute_names (NautilusIconContainer *container,
+nautilus_canvas_view_container_get_icon_text_attribute_names (NautilusCanvasContainer *container,
 							    int *len)
 {
 	GQuark *attributes;
@@ -305,9 +305,9 @@ nautilus_icon_view_container_get_icon_text_attribute_names (NautilusIconContaine
 		3	/* NAUTILUS_ZOOM_LEVEL_LARGEST */
 	};
 
-	piece_count = pieces_by_level[nautilus_icon_container_get_zoom_level (container)];
+	piece_count = pieces_by_level[nautilus_canvas_container_get_zoom_level (container)];
 
-	attributes = nautilus_icon_view_container_get_icon_text_attributes_from_preferences ();
+	attributes = nautilus_canvas_view_container_get_icon_text_attributes_from_preferences ();
 
 	*len = MIN (piece_count, quarkv_length (attributes));
 
@@ -318,8 +318,8 @@ nautilus_icon_view_container_get_icon_text_attribute_names (NautilusIconContaine
  * part below that is not editable.
  */
 static void
-nautilus_icon_view_container_get_icon_text (NautilusIconContainer *container,
-					    NautilusIconData      *data,
+nautilus_canvas_view_container_get_icon_text (NautilusCanvasContainer *container,
+					    NautilusCanvasIconData      *data,
 					    char                 **editable_text,
 					    char                 **additional_text,
 					    gboolean               include_invisible)
@@ -327,7 +327,7 @@ nautilus_icon_view_container_get_icon_text (NautilusIconContainer *container,
 	GQuark *attributes;
 	char *text_array[4];
 	int i, j, num_attributes;
-	NautilusIconView *icon_view;
+	NautilusCanvasView *canvas_view;
 	NautilusFile *file;
 	gboolean use_additional;
 
@@ -335,13 +335,13 @@ nautilus_icon_view_container_get_icon_text (NautilusIconContainer *container,
 
 	g_assert (NAUTILUS_IS_FILE (file));
 	g_assert (editable_text != NULL);
-	icon_view = get_icon_view (container);
-	g_return_if_fail (icon_view != NULL);
+	canvas_view = get_canvas_view (container);
+	g_return_if_fail (canvas_view != NULL);
 
 	use_additional = (additional_text != NULL);
 
 	/* In the smallest zoom mode, no text is drawn. */
-	if (nautilus_icon_container_get_zoom_level (container) == NAUTILUS_ZOOM_LEVEL_SMALLEST &&
+	if (nautilus_canvas_container_get_zoom_level (container) == NAUTILUS_ZOOM_LEVEL_SMALLEST &&
             !include_invisible) {
 		*editable_text = NULL;
 	} else {
@@ -362,7 +362,7 @@ nautilus_icon_view_container_get_icon_text (NautilusIconContainer *container,
 	}
 
 	/* Find out what attributes go below each icon. */
-	attributes = nautilus_icon_view_container_get_icon_text_attribute_names (container,
+	attributes = nautilus_canvas_view_container_get_icon_text_attribute_names (container,
 									   &num_attributes);
 
 	/* Get the attributes. */
@@ -443,9 +443,9 @@ get_sort_category (NautilusFile *file)
 }
 
 static int
-fm_desktop_icon_container_icons_compare (NautilusIconContainer *container,
-					 NautilusIconData      *data_a,
-					 NautilusIconData      *data_b)
+fm_desktop_canvas_container_icons_compare (NautilusCanvasContainer *container,
+					 NautilusCanvasIconData      *data_a,
+					 NautilusCanvasIconData      *data_b)
 {
 	NautilusFile *file_a;
 	NautilusFile *file_b;
@@ -455,7 +455,7 @@ fm_desktop_icon_container_icons_compare (NautilusIconContainer *container,
 	file_a = (NautilusFile *) data_a;
 	file_b = (NautilusFile *) data_b;
 
-	directory_view = NAUTILUS_VIEW (NAUTILUS_ICON_VIEW_CONTAINER (container)->view);
+	directory_view = NAUTILUS_VIEW (NAUTILUS_CANVAS_VIEW_CONTAINER (container)->view);
 	g_return_val_if_fail (directory_view != NULL, 0);
 	
 	category_a = get_sort_category (file_a);
@@ -476,30 +476,30 @@ fm_desktop_icon_container_icons_compare (NautilusIconContainer *container,
 }
 
 static int
-nautilus_icon_view_container_compare_icons (NautilusIconContainer *container,
-					    NautilusIconData      *icon_a,
-					    NautilusIconData      *icon_b)
+nautilus_canvas_view_container_compare_icons (NautilusCanvasContainer *container,
+					    NautilusCanvasIconData      *icon_a,
+					    NautilusCanvasIconData      *icon_b)
 {
-	NautilusIconView *icon_view;
+	NautilusCanvasView *canvas_view;
 
-	icon_view = get_icon_view (container);
-	g_return_val_if_fail (icon_view != NULL, 0);
+	canvas_view = get_canvas_view (container);
+	g_return_val_if_fail (canvas_view != NULL, 0);
 
-	if (NAUTILUS_ICON_VIEW_CONTAINER (container)->sort_for_desktop) {
-		return fm_desktop_icon_container_icons_compare
+	if (NAUTILUS_CANVAS_VIEW_CONTAINER (container)->sort_for_desktop) {
+		return fm_desktop_canvas_container_icons_compare
 			(container, icon_a, icon_b);
 	}
 
 	/* Type unsafe comparisons for performance */
-	return nautilus_icon_view_compare_files (icon_view,
+	return nautilus_canvas_view_compare_files (canvas_view,
 					   (NautilusFile *)icon_a,
 					   (NautilusFile *)icon_b);
 }
 
 static int
-nautilus_icon_view_container_compare_icons_by_name (NautilusIconContainer *container,
-						    NautilusIconData      *icon_a,
-						    NautilusIconData      *icon_b)
+nautilus_canvas_view_container_compare_icons_by_name (NautilusCanvasContainer *container,
+						    NautilusCanvasIconData      *icon_a,
+						    NautilusCanvasIconData      *icon_b)
 {
 	return nautilus_file_compare_for_sort
 		(NAUTILUS_FILE (icon_a),
@@ -509,77 +509,77 @@ nautilus_icon_view_container_compare_icons_by_name (NautilusIconContainer *conta
 }
 
 static void
-nautilus_icon_view_container_freeze_updates (NautilusIconContainer *container)
+nautilus_canvas_view_container_freeze_updates (NautilusCanvasContainer *container)
 {
-	NautilusIconView *icon_view;
-	icon_view = get_icon_view (container);
-	g_return_if_fail (icon_view != NULL);
-	nautilus_view_freeze_updates (NAUTILUS_VIEW (icon_view));
+	NautilusCanvasView *canvas_view;
+	canvas_view = get_canvas_view (container);
+	g_return_if_fail (canvas_view != NULL);
+	nautilus_view_freeze_updates (NAUTILUS_VIEW (canvas_view));
 }
 
 static void
-nautilus_icon_view_container_unfreeze_updates (NautilusIconContainer *container)
+nautilus_canvas_view_container_unfreeze_updates (NautilusCanvasContainer *container)
 {
-	NautilusIconView *icon_view;
-	icon_view = get_icon_view (container);
-	g_return_if_fail (icon_view != NULL);
-	nautilus_view_unfreeze_updates (NAUTILUS_VIEW (icon_view));
+	NautilusCanvasView *canvas_view;
+	canvas_view = get_canvas_view (container);
+	g_return_if_fail (canvas_view != NULL);
+	nautilus_view_unfreeze_updates (NAUTILUS_VIEW (canvas_view));
 }
 
 static void
-nautilus_icon_view_container_class_init (NautilusIconViewContainerClass *klass)
+nautilus_canvas_view_container_class_init (NautilusCanvasViewContainerClass *klass)
 {
-	NautilusIconContainerClass *ic_class;
+	NautilusCanvasContainerClass *ic_class;
 
 	ic_class = &klass->parent_class;
 
 	attribute_none_q = g_quark_from_static_string ("none");
 	
-	ic_class->get_icon_text = nautilus_icon_view_container_get_icon_text;
-	ic_class->get_icon_images = nautilus_icon_view_container_get_icon_images;
-	ic_class->get_icon_description = nautilus_icon_view_container_get_icon_description;
-	ic_class->start_monitor_top_left = nautilus_icon_view_container_start_monitor_top_left;
-	ic_class->stop_monitor_top_left = nautilus_icon_view_container_stop_monitor_top_left;
-	ic_class->prioritize_thumbnailing = nautilus_icon_view_container_prioritize_thumbnailing;
+	ic_class->get_icon_text = nautilus_canvas_view_container_get_icon_text;
+	ic_class->get_icon_images = nautilus_canvas_view_container_get_icon_images;
+	ic_class->get_icon_description = nautilus_canvas_view_container_get_icon_description;
+	ic_class->start_monitor_top_left = nautilus_canvas_view_container_start_monitor_top_left;
+	ic_class->stop_monitor_top_left = nautilus_canvas_view_container_stop_monitor_top_left;
+	ic_class->prioritize_thumbnailing = nautilus_canvas_view_container_prioritize_thumbnailing;
 
-	ic_class->compare_icons = nautilus_icon_view_container_compare_icons;
-	ic_class->compare_icons_by_name = nautilus_icon_view_container_compare_icons_by_name;
-	ic_class->freeze_updates = nautilus_icon_view_container_freeze_updates;
-	ic_class->unfreeze_updates = nautilus_icon_view_container_unfreeze_updates;
+	ic_class->compare_icons = nautilus_canvas_view_container_compare_icons;
+	ic_class->compare_icons_by_name = nautilus_canvas_view_container_compare_icons_by_name;
+	ic_class->freeze_updates = nautilus_canvas_view_container_freeze_updates;
+	ic_class->unfreeze_updates = nautilus_canvas_view_container_unfreeze_updates;
 }
 
 static void
-nautilus_icon_view_container_init (NautilusIconViewContainer *icon_container)
+nautilus_canvas_view_container_init (NautilusCanvasViewContainer *canvas_container)
 {
-	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (icon_container)),
+	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (canvas_container)),
 				     GTK_STYLE_CLASS_VIEW);
 
 }
 
-NautilusIconContainer *
-nautilus_icon_view_container_construct (NautilusIconViewContainer *icon_container, NautilusIconView *view)
+NautilusCanvasContainer *
+nautilus_canvas_view_container_construct (NautilusCanvasViewContainer *canvas_container, NautilusCanvasView *view)
 {
 	AtkObject *atk_obj;
 
-	g_return_val_if_fail (NAUTILUS_IS_ICON_VIEW (view), NULL);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_VIEW (view), NULL);
 
-	icon_container->view = view;
-	atk_obj = gtk_widget_get_accessible (GTK_WIDGET (icon_container));
-	atk_object_set_name (atk_obj, _("Icon View"));
+	canvas_container->view = view;
+	atk_obj = gtk_widget_get_accessible (GTK_WIDGET (canvas_container));
+	atk_object_set_name (atk_obj, _("Canvas View"));
 
-	return NAUTILUS_ICON_CONTAINER (icon_container);
+	return NAUTILUS_CANVAS_CONTAINER (canvas_container);
 }
 
-NautilusIconContainer *
-nautilus_icon_view_container_new (NautilusIconView *view)
+NautilusCanvasContainer *
+nautilus_canvas_view_container_new (NautilusCanvasView *view)
 {
-	return nautilus_icon_view_container_construct
-		(g_object_new (NAUTILUS_TYPE_ICON_VIEW_CONTAINER, NULL),
+	return nautilus_canvas_view_container_construct
+		(g_object_new (NAUTILUS_TYPE_CANVAS_VIEW_CONTAINER, NULL),
 		 view);
 }
 
 void
-nautilus_icon_view_container_set_sort_desktop (NautilusIconViewContainer *container,
+nautilus_canvas_view_container_set_sort_desktop (NautilusCanvasViewContainer *container,
 					       gboolean         desktop)
 {
 	container->sort_for_desktop = desktop;

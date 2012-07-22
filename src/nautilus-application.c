@@ -36,11 +36,11 @@
 
 #include "nautilus-bookmarks-window.h"
 #include "nautilus-connect-server-dialog.h"
-#include "nautilus-desktop-icon-view.h"
+#include "nautilus-desktop-canvas-view.h"
 #include "nautilus-desktop-window.h"
 #include "nautilus-file-management-properties.h"
 #include "nautilus-freedesktop-dbus.h"
-#include "nautilus-icon-view.h"
+#include "nautilus-canvas-view.h"
 #include "nautilus-image-properties-page.h"
 #include "nautilus-list-view.h"
 #include "nautilus-previewer.h"
@@ -1353,8 +1353,8 @@ nautilus_application_startup (GApplication *app)
 	nautilus_global_preferences_init ();
 
 	/* register views */
-	nautilus_icon_view_register ();
-	nautilus_desktop_icon_view_register ();
+	nautilus_canvas_view_register ();
+	nautilus_desktop_canvas_view_register ();
 	nautilus_list_view_register ();
 #if ENABLE_EMPTY_VIEW
 	nautilus_empty_view_register ();

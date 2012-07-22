@@ -43,7 +43,6 @@
 #include <eel/eel-vfs-extensions.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
-#include <libnautilus-private/nautilus-icon-dnd.h>
 #include <libnautilus-private/nautilus-clipboard.h>
 #include <stdio.h>
 #include <string.h>

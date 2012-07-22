@@ -32,7 +32,6 @@
 #include <libnautilus-private/nautilus-global-preferences.h>
 #include <libnautilus-private/nautilus-icon-names.h>
 #include <libnautilus-private/nautilus-trash-monitor.h>
-#include <libnautilus-private/nautilus-icon-dnd.h>
 
 #include "nautilus-window-slot-dnd.h"
 

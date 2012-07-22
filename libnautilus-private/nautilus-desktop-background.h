@@ -31,7 +31,7 @@
 
 #include <gtk/gtk.h>
 
-#include "nautilus-icon-container.h"
+#include "nautilus-canvas-container.h"
 
 typedef struct NautilusDesktopBackground NautilusDesktopBackground;
 typedef struct NautilusDesktopBackgroundClass NautilusDesktopBackgroundClass;
@@ -49,7 +49,7 @@ typedef struct NautilusDesktopBackgroundClass NautilusDesktopBackgroundClass;
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_TYPE_DESKTOP_BACKGROUND, NautilusDesktopBackgroundClass))
 
 GType nautilus_desktop_background_get_type (void);
-NautilusDesktopBackground * nautilus_desktop_background_new (NautilusIconContainer *container);
+NautilusDesktopBackground * nautilus_desktop_background_new (NautilusCanvasContainer *container);
 
 void nautilus_desktop_background_receive_dropped_background_image (NautilusDesktopBackground *self,
 								   const gchar *image_uri);

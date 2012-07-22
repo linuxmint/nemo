@@ -549,7 +549,7 @@ nautilus_desktop_background_class_init (NautilusDesktopBackgroundClass *klass)
 
         pspec = g_param_spec_object ("widget", "The widget for this background",
                                      "The widget that gets its background set",
-                                     NAUTILUS_TYPE_ICON_CONTAINER,
+                                     NAUTILUS_TYPE_CANVAS_CONTAINER,
                                      G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
         g_object_class_install_property (object_class, PROP_WIDGET, pspec);
 
@@ -591,7 +591,7 @@ nautilus_desktop_background_receive_dropped_background_image (NautilusDesktopBac
 }
 
 NautilusDesktopBackground *
-nautilus_desktop_background_new (NautilusIconContainer *container)
+nautilus_desktop_background_new (NautilusCanvasContainer *container)
 {
         return g_object_new (NAUTILUS_TYPE_DESKTOP_BACKGROUND,
                              "widget", container,

@@ -33,7 +33,6 @@
 
 #include <libnautilus-private/nautilus-directory.h>
 #include <libnautilus-private/nautilus-file.h>
-#include <libnautilus-private/nautilus-icon-container.h>
 #include <libnautilus-private/nautilus-link.h>
 
 typedef struct NautilusView NautilusView;

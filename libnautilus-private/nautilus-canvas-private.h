@@ -1,5 +1,5 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
-/* gnome-icon-container-private.h
+/* gnome-canvas-container-private.h
 
    Copyright (C) 1999, 2000 Free Software Foundation
    Copyright (C) 2000 Eazel, Inc.
@@ -22,22 +22,22 @@
    Author: Ettore Perazzoli <ettore@gnu.org>
 */
 
-#ifndef NAUTILUS_ICON_CONTAINER_PRIVATE_H
-#define NAUTILUS_ICON_CONTAINER_PRIVATE_H
+#ifndef NAUTILUS_CANVAS_CONTAINER_PRIVATE_H
+#define NAUTILUS_CANVAS_CONTAINER_PRIVATE_H
 
 #include <eel/eel-glib-extensions.h>
-#include <libnautilus-private/nautilus-icon-canvas-item.h>
-#include <libnautilus-private/nautilus-icon-container.h>
-#include <libnautilus-private/nautilus-icon-dnd.h>
+#include <libnautilus-private/nautilus-canvas-item.h>
+#include <libnautilus-private/nautilus-canvas-container.h>
+#include <libnautilus-private/nautilus-canvas-dnd.h>
 
 /* An Icon. */
 
 typedef struct {
 	/* Object represented by this icon. */
-	NautilusIconData *data;
+	NautilusCanvasIconData *data;
 
 	/* Canvas item for the icon. */
-	NautilusIconCanvasItem *item;
+	NautilusCanvasItem *item;
 
 	/* X/Y coordinates. */
 	double x, y;
@@ -66,10 +66,10 @@ typedef struct {
 	eel_boolean_bit is_monitored : 1;
 
 	eel_boolean_bit has_lazy_position : 1;
-} NautilusIcon;
+} NautilusCanvasIcon;
 
 
-/* Private NautilusIconContainer members. */
+/* Private NautilusCanvasContainer members. */
 
 typedef struct {
 	gboolean active;
@@ -84,7 +84,7 @@ typedef struct {
 	EelDRect prev_rect;
 	int last_adj_x;
 	int last_adj_y;
-} NautilusIconRubberbandInfo;
+} NautilusCanvasRubberbandInfo;
 
 typedef enum {
 	DRAG_STATE_INITIAL,
@@ -118,33 +118,33 @@ enum {
 	LAST_LABEL_COLOR
 };
 
-struct NautilusIconContainerDetails {
+struct NautilusCanvasContainerDetails {
 	/* List of icons. */
 	GList *icons;
 	GList *new_icons;
 	GHashTable *icon_set;
 
 	/* Current icon for keyboard navigation. */
-	NautilusIcon *keyboard_focus;
-	NautilusIcon *keyboard_rubberband_start;
+	NautilusCanvasIcon *keyboard_focus;
+	NautilusCanvasIcon *keyboard_rubberband_start;
 
 	/* Current icon with stretch handles, so we have only one. */
-	NautilusIcon *stretch_icon;
+	NautilusCanvasIcon *stretch_icon;
 	double stretch_initial_x, stretch_initial_y;
 	guint stretch_initial_size;
 	
 	/* Last highlighted drop target. */
-	NautilusIcon *drop_target;
+	NautilusCanvasIcon *drop_target;
 
 	/* Rubberbanding status. */
-	NautilusIconRubberbandInfo rubberband_info;
+	NautilusCanvasRubberbandInfo rubberband_info;
 
 	/* Timeout used to make a selected icon fully visible after a short
 	 * period of time. (The timeout is needed to make sure
 	 * double-clicking still works.)
 	 */
 	guint keyboard_icon_reveal_timer_id;
-	NautilusIcon *keyboard_icon_to_reveal;
+	NautilusCanvasIcon *keyboard_icon_to_reveal;
 
 	/* Used to coalesce selection changed signals in some cases */
 	guint selection_changed_id;
@@ -152,19 +152,19 @@ struct NautilusIconContainerDetails {
 	/* If a request is made to reveal an unpositioned icon we remember
 	 * it and reveal it once it gets positioned (in relayout).
 	 */
-	NautilusIcon *pending_icon_to_reveal;
+	NautilusCanvasIcon *pending_icon_to_reveal;
 
 	/* If a request is made to rename an unpositioned icon we remember
 	 * it and start renaming it once it gets positioned (in relayout).
 	 */
-	NautilusIcon *pending_icon_to_rename;
+	NautilusCanvasIcon *pending_icon_to_rename;
 
 	/* Remembered information about the start of the current event. */
 	guint32 button_down_time;
 	
 	/* Drag state. Valid only if drag_button is non-zero. */
 	guint drag_button;
-	NautilusIcon *drag_icon;
+	NautilusCanvasIcon *drag_icon;
 	int drag_x, drag_y;
 	DragState drag_state;
 	gboolean drag_started;
@@ -172,10 +172,10 @@ struct NautilusIconContainerDetails {
 	gboolean drag_allow_moves;
 
 	gboolean icon_selected_on_button_down;
-	NautilusIcon *double_click_icon[2]; /* Both clicks in a double click need to be on the same icon */
+	NautilusCanvasIcon *double_click_icon[2]; /* Both clicks in a double click need to be on the same icon */
 	guint double_click_button[2];
 
-	NautilusIcon *range_selection_base_icon;
+	NautilusCanvasIcon *range_selection_base_icon;
 	
 	/* Renaming Details */
 	gboolean renaming;
@@ -192,7 +192,7 @@ struct NautilusIconContainerDetails {
 	guint align_idle_id;
 
 	/* DnD info. */
-	NautilusIconDndInfo *dnd_info;
+	NautilusCanvasDndInfo *dnd_info;
 
 	/* zoom level */
 	int zoom_level;
@@ -211,10 +211,10 @@ struct NautilusIconContainerDetails {
 	gboolean auto_layout;
 
 	/* Layout mode */
-	NautilusIconLayoutMode layout_mode;
+	NautilusCanvasLayoutMode layout_mode;
 
 	/* Label position */
-	NautilusIconLabelPosition label_position;
+	NautilusCanvasLabelPosition label_position;
 
 	/* Should the container keep icons aligned to a grid */
 	gboolean keep_aligned;
@@ -261,28 +261,28 @@ struct NautilusIconContainerDetails {
 };
 
 /* Private functions shared by mutiple files. */
-NautilusIcon *nautilus_icon_container_get_icon_by_uri             (NautilusIconContainer *container,
-								   const char            *uri);
-void          nautilus_icon_container_move_icon                   (NautilusIconContainer *container,
-								   NautilusIcon          *icon,
-								   int                    x,
-								   int                    y,
-								   double                 scale,
-								   gboolean               raise,
-								   gboolean               snap,
-								   gboolean		  update_position);
-void          nautilus_icon_container_select_list_unselect_others (NautilusIconContainer *container,
-								   GList                 *icons);
-char *        nautilus_icon_container_get_icon_uri                (NautilusIconContainer *container,
-								   NautilusIcon          *icon);
-char *        nautilus_icon_container_get_icon_drop_target_uri    (NautilusIconContainer *container,
-								   NautilusIcon          *icon);
-void          nautilus_icon_container_update_icon                 (NautilusIconContainer *container,
-								   NautilusIcon          *icon);
-gboolean      nautilus_icon_container_has_stored_icon_positions   (NautilusIconContainer *container);
-gboolean      nautilus_icon_container_scroll                      (NautilusIconContainer *container,
-								   int                    delta_x,
-								   int                    delta_y);
-void          nautilus_icon_container_update_scroll_region        (NautilusIconContainer *container);
+NautilusCanvasIcon *nautilus_canvas_container_get_icon_by_uri             (NautilusCanvasContainer *container,
+									 const char            *uri);
+void          nautilus_canvas_container_move_icon                   (NautilusCanvasContainer *container,
+								       NautilusCanvasIcon      *icon,
+								       int                    x,
+								       int                    y,
+								       double                 scale,
+								       gboolean               raise,
+								       gboolean               snap,
+								       gboolean		  update_position);
+void          nautilus_canvas_container_select_list_unselect_others (NautilusCanvasContainer *container,
+								     GList                 *icons);
+char *        nautilus_canvas_container_get_icon_uri                (NautilusCanvasContainer *container,
+								       NautilusCanvasIcon          *canvas);
+char *        nautilus_canvas_container_get_icon_drop_target_uri    (NautilusCanvasContainer *container,
+								       NautilusCanvasIcon          *canvas);
+void          nautilus_canvas_container_update_icon                 (NautilusCanvasContainer *container,
+								       NautilusCanvasIcon          *canvas);
+gboolean      nautilus_canvas_container_has_stored_icon_positions   (NautilusCanvasContainer *container);
+gboolean      nautilus_canvas_container_scroll                      (NautilusCanvasContainer *container,
+								     int                    delta_x,
+								     int                    delta_y);
+void          nautilus_canvas_container_update_scroll_region        (NautilusCanvasContainer *container);
 
-#endif /* NAUTILUS_ICON_CONTAINER_PRIVATE_H */
+#endif /* NAUTILUS_CANVAS_CONTAINER_PRIVATE_H */

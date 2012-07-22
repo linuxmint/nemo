@@ -32,7 +32,7 @@
 #include "nautilus-view.h"
 
 #include "nautilus-actions.h"
-#include "nautilus-desktop-icon-view.h"
+#include "nautilus-desktop-canvas-view.h"
 #include "nautilus-error-reporting.h"
 #include "nautilus-list-view.h"
 #include "nautilus-mime-actions.h"
@@ -8745,7 +8745,7 @@ real_update_menus (NautilusView *view)
 	show_open_alternate = file_list_all_are_folders (selection) &&
 		selection_count > 0 &&
 		g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_ALWAYS_USE_BROWSER) &&
-		!NAUTILUS_IS_DESKTOP_ICON_VIEW (view);
+		!NAUTILUS_IS_DESKTOP_CANVAS_VIEW (view);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_OPEN_ALTERNATE);
@@ -8849,7 +8849,7 @@ real_update_menus (NautilusView *view)
 				selection_count),
 		      NULL);
 	
-	show_properties = (!NAUTILUS_IS_DESKTOP_ICON_VIEW (view) || selection_count > 0);
+	show_properties = (!NAUTILUS_IS_DESKTOP_CANVAS_VIEW (view) || selection_count > 0);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_PROPERTIES);
@@ -9740,7 +9740,7 @@ window_slots_changed (NautilusWindow *window,
 	 * border.
 	 */
 	if (g_list_length (slots) > 1 ||
-	    NAUTILUS_IS_DESKTOP_ICON_VIEW (view)) {
+	    NAUTILUS_IS_DESKTOP_CANVAS_VIEW (view)) {
 		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_NONE);
 	} else {
 		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_IN);

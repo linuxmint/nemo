@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 
-/* nautilus-icon-dnd.h - Drag & drop handling for the icon container widget.
+/* nautilus-canvas-dnd.h - Drag & drop handling for the canvas container widget.
 
    Copyright (C) 1999, 2000 Free Software Foundation
    Copyright (C) 2000 Eazel, Inc.
@@ -25,10 +25,10 @@
 	    Andy Hertzfeld <andy@eazel.com>
 */
 
-#ifndef NAUTILUS_ICON_DND_H
-#define NAUTILUS_ICON_DND_H
+#ifndef NAUTILUS_CANVAS_DND_H
+#define NAUTILUS_CANVAS_DND_H
 
-#include <libnautilus-private/nautilus-icon-container.h>
+#include <libnautilus-private/nautilus-canvas-container.h>
 #include <libnautilus-private/nautilus-dnd.h>
 
 /* DnD-related information. */
@@ -40,17 +40,17 @@ typedef struct {
 	
 	/* Shadow for the icons being dragged.  */
 	EelCanvasItem *shadow;
-} NautilusIconDndInfo;
+} NautilusCanvasDndInfo;
 
 
-void   nautilus_icon_dnd_init                  (NautilusIconContainer *container);
-void   nautilus_icon_dnd_fini                  (NautilusIconContainer *container);
-void   nautilus_icon_dnd_begin_drag            (NautilusIconContainer *container,
-						GdkDragAction          actions,
-						gint                   button,
-						GdkEventMotion        *event,
-						int                    start_x,
-						int                    start_y);
-void   nautilus_icon_dnd_end_drag              (NautilusIconContainer *container);
+void   nautilus_canvas_dnd_init                  (NautilusCanvasContainer *container);
+void   nautilus_canvas_dnd_fini                  (NautilusCanvasContainer *container);
+void   nautilus_canvas_dnd_begin_drag            (NautilusCanvasContainer *container,
+						  GdkDragAction          actions,
+						  gint                   button,
+						  GdkEventMotion        *event,
+						  int                    start_x,
+						  int                    start_y);
+void   nautilus_canvas_dnd_end_drag              (NautilusCanvasContainer *container);
 
-#endif /* NAUTILUS_ICON_DND_H */
+#endif /* NAUTILUS_CANVAS_DND_H */

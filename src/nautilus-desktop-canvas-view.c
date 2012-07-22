@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 
-/* fm-desktop-icon-view.c - implementation of icon view for managing the desktop.
+/* nautilus-desktop-canvas-view.c - implementation of canvas view for managing the desktop.
 
    Copyright (C) 2000, 2001 Eazel, Inc.mou
 
@@ -26,10 +26,10 @@
 
 #include <config.h>
 
-#include "nautilus-desktop-icon-view.h"
+#include "nautilus-desktop-canvas-view.h"
 
 #include "nautilus-actions.h"
-#include "nautilus-icon-view-container.h"
+#include "nautilus-canvas-view-container.h"
 #include "nautilus-view-factory.h"
 #include "nautilus-view.h"
 
@@ -65,7 +65,7 @@
 /* Timeout to check the desktop directory for updates */
 #define RESCAN_TIMEOUT 4
 
-struct NautilusDesktopIconViewDetails
+struct NautilusDesktopCanvasViewDetails
 {
 	GdkWindow *root_window;
 	GtkActionGroup *desktop_action_group;
@@ -83,18 +83,18 @@ struct NautilusDesktopIconViewDetails
 static void     default_zoom_level_changed                        (gpointer                user_data);
 static void     real_merge_menus                                  (NautilusView        *view);
 static void     real_update_menus                                 (NautilusView        *view);
-static void     nautilus_desktop_icon_view_update_icon_container_fonts  (NautilusDesktopIconView      *view);
+static void     nautilus_desktop_canvas_view_update_canvas_container_fonts  (NautilusDesktopCanvasView      *view);
 static void     font_changed_callback                             (gpointer                callback_data);
 
-G_DEFINE_TYPE (NautilusDesktopIconView, nautilus_desktop_icon_view, NAUTILUS_TYPE_ICON_VIEW)
+G_DEFINE_TYPE (NautilusDesktopCanvasView, nautilus_desktop_canvas_view, NAUTILUS_TYPE_CANVAS_VIEW)
 
 static char *desktop_directory;
 static time_t desktop_dir_modify_time;
 
-#define get_icon_container(w) nautilus_icon_view_get_icon_container(NAUTILUS_ICON_VIEW (w))
+#define get_canvas_container(w) nautilus_canvas_view_get_canvas_container(NAUTILUS_CANVAS_VIEW (w))
 
 static void
-icon_container_set_workarea (NautilusIconContainer *icon_container,
+canvas_container_set_workarea (NautilusCanvasContainer *canvas_container,
 			     GdkScreen             *screen,
 			     long                  *workareas,
 			     int                    n_items)
@@ -123,12 +123,12 @@ icon_container_set_workarea (NautilusIconContainer *icon_container,
 		bottom = MAX (bottom, screen_height - height - y);
 	}
 
-	nautilus_icon_container_set_margins (icon_container,
+	nautilus_canvas_container_set_margins (canvas_container,
 					     left, right, top, bottom);
 }
 
 static void
-net_workarea_changed (NautilusDesktopIconView *icon_view,
+net_workarea_changed (NautilusDesktopCanvasView *canvas_view,
 		      GdkWindow         *window)
 {
 	long *nworkareas = NULL;
@@ -136,12 +136,12 @@ net_workarea_changed (NautilusDesktopIconView *icon_view,
 	GdkAtom type_returned;
 	int format_returned;
 	int length_returned;
-	NautilusIconContainer *icon_container;
+	NautilusCanvasContainer *canvas_container;
 	GdkScreen *screen;
 
-	g_return_if_fail (NAUTILUS_IS_DESKTOP_ICON_VIEW (icon_view));
+	g_return_if_fail (NAUTILUS_IS_DESKTOP_CANVAS_VIEW (canvas_view));
 
-	icon_container = get_icon_container (icon_view);
+	canvas_container = get_canvas_container (canvas_view);
 
 	/* Find the number of desktops so we know how long the
 	 * workareas array is going to be (each desktop will have four
@@ -194,13 +194,13 @@ net_workarea_changed (NautilusDesktopIconView *icon_view,
 	    || ((*nworkareas) * 4 * sizeof(long)) != length_returned
 	    || format_returned != 32) {
 		g_warning("Can not determine workarea, guessing at layout");
-		nautilus_icon_container_set_margins (icon_container,
+		nautilus_canvas_container_set_margins (canvas_container,
 						     0, 0, 0, 0);
 	} else {
 		screen = gdk_window_get_screen (window);
 
-		icon_container_set_workarea
-			(icon_container, screen, workareas, length_returned / sizeof (long));
+		canvas_container_set_workarea
+			(canvas_container, screen, workareas, length_returned / sizeof (long));
 	}
 
 	if (nworkareas != NULL)
@@ -211,19 +211,19 @@ net_workarea_changed (NautilusDesktopIconView *icon_view,
 }
 
 static GdkFilterReturn
-desktop_icon_view_property_filter (GdkXEvent *gdk_xevent,
+desktop_canvas_view_property_filter (GdkXEvent *gdk_xevent,
 				   GdkEvent *event,
 				   gpointer data)
 {
 	XEvent *xevent = gdk_xevent;
-	NautilusDesktopIconView *icon_view;
+	NautilusDesktopCanvasView *canvas_view;
 
-	icon_view = NAUTILUS_DESKTOP_ICON_VIEW (data);
+	canvas_view = NAUTILUS_DESKTOP_CANVAS_VIEW (data);
   
 	switch (xevent->type) {
 	case PropertyNotify:
 		if (xevent->xproperty.atom == gdk_x11_get_xatom_by_name ("_NET_WORKAREA"))
-			net_workarea_changed (icon_view, event->any.window);
+			net_workarea_changed (canvas_view, event->any.window);
 		break;
 	default:
 		break;
@@ -235,92 +235,92 @@ desktop_icon_view_property_filter (GdkXEvent *gdk_xevent,
 static void
 real_begin_loading (NautilusView *object)
 {
-	NautilusIconContainer *icon_container;
-	NautilusDesktopIconView *view;
+	NautilusCanvasContainer *canvas_container;
+	NautilusDesktopCanvasView *view;
 
-	view = NAUTILUS_DESKTOP_ICON_VIEW (object);
+	view = NAUTILUS_DESKTOP_CANVAS_VIEW (object);
 
-	icon_container = get_icon_container (view);
+	canvas_container = get_canvas_container (view);
 	if (view->details->background == NULL) {
-		view->details->background = nautilus_desktop_background_new (icon_container);
+		view->details->background = nautilus_desktop_background_new (canvas_container);
 	}
 
-	NAUTILUS_VIEW_CLASS (nautilus_desktop_icon_view_parent_class)->begin_loading (object);
+	NAUTILUS_VIEW_CLASS (nautilus_desktop_canvas_view_parent_class)->begin_loading (object);
 }
 
 static const char *
 real_get_id (NautilusView *view)
 {
-	return NAUTILUS_DESKTOP_ICON_VIEW_ID;
+	return NAUTILUS_DESKTOP_CANVAS_VIEW_ID;
 }
 
 static void
-nautilus_desktop_icon_view_dispose (GObject *object)
+nautilus_desktop_canvas_view_dispose (GObject *object)
 {
-	NautilusDesktopIconView *icon_view;
+	NautilusDesktopCanvasView *canvas_view;
 	GtkUIManager *ui_manager;
 
-	icon_view = NAUTILUS_DESKTOP_ICON_VIEW (object);
+	canvas_view = NAUTILUS_DESKTOP_CANVAS_VIEW (object);
 
 	/* Remove desktop rescan timeout. */
-	if (icon_view->details->reload_desktop_timeout != 0) {
-		g_source_remove (icon_view->details->reload_desktop_timeout);
-		icon_view->details->reload_desktop_timeout = 0;
+	if (canvas_view->details->reload_desktop_timeout != 0) {
+		g_source_remove (canvas_view->details->reload_desktop_timeout);
+		canvas_view->details->reload_desktop_timeout = 0;
 	}
 
-	ui_manager = nautilus_view_get_ui_manager (NAUTILUS_VIEW (icon_view));
+	ui_manager = nautilus_view_get_ui_manager (NAUTILUS_VIEW (canvas_view));
 	if (ui_manager != NULL) {
 		nautilus_ui_unmerge_ui (ui_manager,
-					&icon_view->details->desktop_merge_id,
-					&icon_view->details->desktop_action_group);
+					&canvas_view->details->desktop_merge_id,
+					&canvas_view->details->desktop_action_group);
 	}
 
 	g_signal_handlers_disconnect_by_func (nautilus_icon_view_preferences,
 					      default_zoom_level_changed,
-					      icon_view);
+					      canvas_view);
 	g_signal_handlers_disconnect_by_func (nautilus_preferences,
 					      font_changed_callback,
-					      icon_view);
+					      canvas_view);
 	g_signal_handlers_disconnect_by_func (gnome_lockdown_preferences,
 					      nautilus_view_update_menus,
-					      icon_view);
+					      canvas_view);
 
-	if (icon_view->details->background != NULL) {
-		g_object_unref (icon_view->details->background);
-		icon_view->details->background = NULL;
+	if (canvas_view->details->background != NULL) {
+		g_object_unref (canvas_view->details->background);
+		canvas_view->details->background = NULL;
 	}
 
-	G_OBJECT_CLASS (nautilus_desktop_icon_view_parent_class)->dispose (object);
+	G_OBJECT_CLASS (nautilus_desktop_canvas_view_parent_class)->dispose (object);
 }
 
 static void
-nautilus_desktop_icon_view_class_init (NautilusDesktopIconViewClass *class)
+nautilus_desktop_canvas_view_class_init (NautilusDesktopCanvasViewClass *class)
 {
 	NautilusViewClass *vclass;
 
 	vclass = NAUTILUS_VIEW_CLASS (class);
 
-	G_OBJECT_CLASS (class)->dispose = nautilus_desktop_icon_view_dispose;
+	G_OBJECT_CLASS (class)->dispose = nautilus_desktop_canvas_view_dispose;
 
 	vclass->begin_loading = real_begin_loading;
 	vclass->merge_menus = real_merge_menus;
 	vclass->update_menus = real_update_menus;
 	vclass->get_view_id = real_get_id;
 
-	g_type_class_add_private (class, sizeof (NautilusDesktopIconViewDetails));
+	g_type_class_add_private (class, sizeof (NautilusDesktopCanvasViewDetails));
 }
 
 static void
-nautilus_desktop_icon_view_handle_middle_click (NautilusIconContainer *icon_container,
+nautilus_desktop_canvas_view_handle_middle_click (NautilusCanvasContainer *canvas_container,
 						GdkEventButton *event,
-						NautilusDesktopIconView *desktop_icon_view)
+						NautilusDesktopCanvasView *desktop_canvas_view)
 {
 	XButtonEvent x_event;
 	GdkDevice *keyboard = NULL, *pointer = NULL, *cur;
 	GdkDeviceManager *manager;
 	GList *list, *l;
 
-	manager = gdk_display_get_device_manager (gtk_widget_get_display (GTK_WIDGET (icon_container)));
+	manager = gdk_display_get_device_manager (gtk_widget_get_display (GTK_WIDGET (canvas_container)));
 	list = gdk_device_manager_list_devices (manager, GDK_DEVICE_TYPE_MASTER);
 
 	for (l = list; l != NULL; l = l->next) {
@@ -357,7 +357,7 @@ nautilus_desktop_icon_view_handle_middle_click (NautilusIconContainer *icon_cont
 
 	/* Stop the event because we don't want anyone else dealing with it. */	
 	gdk_flush ();
-	g_signal_stop_emission_by_name (icon_container, "middle_click");
+	g_signal_stop_emission_by_name (canvas_container, "middle_click");
 
 	/* build an X event to represent the middle click. */
 	x_event.type = ButtonPress;
@@ -381,25 +381,25 @@ nautilus_desktop_icon_view_handle_middle_click (NautilusIconContainer *icon_cont
 }
 
 static void
-unrealized_callback (GtkWidget *widget, NautilusDesktopIconView *desktop_icon_view)
+unrealized_callback (GtkWidget *widget, NautilusDesktopCanvasView *desktop_canvas_view)
 {
-	g_return_if_fail (desktop_icon_view->details->root_window != NULL);
+	g_return_if_fail (desktop_canvas_view->details->root_window != NULL);
 
 	/* Remove the property filter */
-	gdk_window_remove_filter (desktop_icon_view->details->root_window,
-				  desktop_icon_view_property_filter,
-				  desktop_icon_view);
-	desktop_icon_view->details->root_window = NULL;
+	gdk_window_remove_filter (desktop_canvas_view->details->root_window,
+				  desktop_canvas_view_property_filter,
+				  desktop_canvas_view);
+	desktop_canvas_view->details->root_window = NULL;
 }
 
 static void
-realized_callback (GtkWidget *widget, NautilusDesktopIconView *desktop_icon_view)
+realized_callback (GtkWidget *widget, NautilusDesktopCanvasView *desktop_canvas_view)
 {
 	GdkWindow *root_window;
 	GdkScreen *screen;
 	GtkAllocation allocation;
 
-	g_return_if_fail (desktop_icon_view->details->root_window == NULL);
+	g_return_if_fail (desktop_canvas_view->details->root_window == NULL);
 
 	screen = gtk_widget_get_screen (widget);
 
@@ -413,21 +413,21 @@ realized_callback (GtkWidget *widget, NautilusDesktopIconView *desktop_icon_view
 	allocation.y = 0;
 	allocation.width = gdk_screen_get_width (screen);
 	allocation.height = gdk_screen_get_height (screen);
-	gtk_widget_size_allocate (GTK_WIDGET(get_icon_container(desktop_icon_view)),
+	gtk_widget_size_allocate (GTK_WIDGET(get_canvas_container(desktop_canvas_view)),
 				  &allocation);
 	
 	root_window = gdk_screen_get_root_window (screen);
 
-	desktop_icon_view->details->root_window = root_window;
+	desktop_canvas_view->details->root_window = root_window;
 
 	/* Read out the workarea geometry and update the icon container accordingly */
-	net_workarea_changed (desktop_icon_view, root_window);
+	net_workarea_changed (desktop_canvas_view, root_window);
 
 	/* Setup the property filter */
 	gdk_window_set_events (root_window, GDK_PROPERTY_CHANGE_MASK);
 	gdk_window_add_filter (root_window,
-			       desktop_icon_view_property_filter,
-			       desktop_icon_view);
+			       desktop_canvas_view_property_filter,
+			       desktop_canvas_view);
 }
 
 static NautilusZoomLevel
@@ -445,23 +445,23 @@ static void
 default_zoom_level_changed (gpointer user_data)
 {
 	NautilusZoomLevel new_level;
-	NautilusDesktopIconView *desktop_icon_view;
+	NautilusDesktopCanvasView *desktop_canvas_view;
 
-	desktop_icon_view = NAUTILUS_DESKTOP_ICON_VIEW (user_data);
+	desktop_canvas_view = NAUTILUS_DESKTOP_CANVAS_VIEW (user_data);
 	new_level = get_default_zoom_level ();
 
-	nautilus_icon_container_set_zoom_level (get_icon_container (desktop_icon_view),
+	nautilus_canvas_container_set_zoom_level (get_canvas_container (desktop_canvas_view),
 						new_level);
 }
 
 static gboolean
 do_desktop_rescan (gpointer data)
 {
-	NautilusDesktopIconView *desktop_icon_view;
+	NautilusDesktopCanvasView *desktop_canvas_view;
 	struct stat buf;
 
-	desktop_icon_view = NAUTILUS_DESKTOP_ICON_VIEW (data);
-	if (desktop_icon_view->details->pending_rescan) {
+	desktop_canvas_view = NAUTILUS_DESKTOP_CANVAS_VIEW (data);
+	if (desktop_canvas_view->details->pending_rescan) {
 		return TRUE;
 	}
 	
@@ -473,21 +473,21 @@ do_desktop_rescan (gpointer data)
 		return TRUE;
 	}
 
-	desktop_icon_view->details->pending_rescan = TRUE;
+	desktop_canvas_view->details->pending_rescan = TRUE;
 
 	nautilus_directory_force_reload
-		(nautilus_view_get_model (NAUTILUS_VIEW (desktop_icon_view)));
+		(nautilus_view_get_model (NAUTILUS_VIEW (desktop_canvas_view)));
 
 	return TRUE;
 }
 
 static void
 done_loading (NautilusDirectory *model,
-	      NautilusDesktopIconView *desktop_icon_view)
+	      NautilusDesktopCanvasView *desktop_canvas_view)
 {
 	struct stat buf;
 
-	desktop_icon_view->details->pending_rescan = FALSE;
+	desktop_canvas_view->details->pending_rescan = FALSE;
 	if (stat (desktop_directory, &buf) == -1) {
 		return;
 	}
@@ -496,135 +496,135 @@ done_loading (NautilusDirectory *model,
 }
 
 /* This function is used because the NautilusDirectory model does not
- * exist always in the desktop_icon_view, so we wait until it has been
+ * exist always in the desktop_canvas_view, so we wait until it has been
  * instantiated.
  */
 static void
-delayed_init (NautilusDesktopIconView *desktop_icon_view)
+delayed_init (NautilusDesktopCanvasView *desktop_canvas_view)
 {
 	/* Keep track of the load time. */
-	g_signal_connect_object (nautilus_view_get_model (NAUTILUS_VIEW (desktop_icon_view)),
+	g_signal_connect_object (nautilus_view_get_model (NAUTILUS_VIEW (desktop_canvas_view)),
 				 "done_loading",
-				 G_CALLBACK (done_loading), desktop_icon_view, 0);
+				 G_CALLBACK (done_loading), desktop_canvas_view, 0);
 
 	/* Monitor desktop directory. */
-	desktop_icon_view->details->reload_desktop_timeout =
-		g_timeout_add_seconds (RESCAN_TIMEOUT, do_desktop_rescan, desktop_icon_view);
+	desktop_canvas_view->details->reload_desktop_timeout =
+		g_timeout_add_seconds (RESCAN_TIMEOUT, do_desktop_rescan, desktop_canvas_view);
 
-	g_signal_handler_disconnect (desktop_icon_view,
-				     desktop_icon_view->details->delayed_init_signal);
+	g_signal_handler_disconnect (desktop_canvas_view,
+				     desktop_canvas_view->details->delayed_init_signal);
 
-	desktop_icon_view->details->delayed_init_signal = 0;
+	desktop_canvas_view->details->delayed_init_signal = 0;
 }
 
 static void
 font_changed_callback (gpointer callback_data)
 {
- 	g_return_if_fail (NAUTILUS_IS_DESKTOP_ICON_VIEW (callback_data));
+ 	g_return_if_fail (NAUTILUS_IS_DESKTOP_CANVAS_VIEW (callback_data));
 	
-	nautilus_desktop_icon_view_update_icon_container_fonts (NAUTILUS_DESKTOP_ICON_VIEW (callback_data));
+	nautilus_desktop_canvas_view_update_canvas_container_fonts (NAUTILUS_DESKTOP_CANVAS_VIEW (callback_data));
 }
 
 static void
-nautilus_desktop_icon_view_update_icon_container_fonts (NautilusDesktopIconView *icon_view)
+nautilus_desktop_canvas_view_update_canvas_container_fonts (NautilusDesktopCanvasView *canvas_view)
 {
-	NautilusIconContainer *icon_container;
+	NautilusCanvasContainer *canvas_container;
 	char *font;
 
-	icon_container = get_icon_container (icon_view);
-	g_assert (icon_container != NULL);
+	canvas_container = get_canvas_container (canvas_view);
+	g_assert (canvas_container != NULL);
 
 	font = g_settings_get_string (nautilus_desktop_preferences,
 				      NAUTILUS_PREFERENCES_DESKTOP_FONT);
 
-	nautilus_icon_container_set_font (icon_container, font);
+	nautilus_canvas_container_set_font (canvas_container, font);
 
 	g_free (font);
 }
 
 static void
-nautilus_desktop_icon_view_init (NautilusDesktopIconView *desktop_icon_view)
+nautilus_desktop_canvas_view_init (NautilusDesktopCanvasView *desktop_canvas_view)
 {
-	NautilusIconContainer *icon_container;
+	NautilusCanvasContainer *canvas_container;
 	GtkAllocation allocation;
 	GtkAdjustment *hadj, *vadj;
 
-	desktop_icon_view->details = G_TYPE_INSTANCE_GET_PRIVATE (desktop_icon_view,
-								  NAUTILUS_TYPE_DESKTOP_ICON_VIEW,
-								  NautilusDesktopIconViewDetails);
+	desktop_canvas_view->details = G_TYPE_INSTANCE_GET_PRIVATE (desktop_canvas_view,
+								  NAUTILUS_TYPE_DESKTOP_CANVAS_VIEW,
+								  NautilusDesktopCanvasViewDetails);
 
 	if (desktop_directory == NULL) {
 		desktop_directory = nautilus_get_desktop_directory ();
 	}
 
-	nautilus_icon_view_filter_by_screen (NAUTILUS_ICON_VIEW (desktop_icon_view), TRUE);
-	icon_container = get_icon_container (desktop_icon_view);
-	nautilus_icon_container_set_use_drop_shadows (icon_container, TRUE);
-	nautilus_icon_view_container_set_sort_desktop (NAUTILUS_ICON_VIEW_CONTAINER (icon_container), TRUE);
+	nautilus_canvas_view_filter_by_screen (NAUTILUS_CANVAS_VIEW (desktop_canvas_view), TRUE);
+	canvas_container = get_canvas_container (desktop_canvas_view);
+	nautilus_canvas_container_set_use_drop_shadows (canvas_container, TRUE);
+	nautilus_canvas_view_container_set_sort_desktop (NAUTILUS_CANVAS_VIEW_CONTAINER (canvas_container), TRUE);
 
 	/* Do a reload on the desktop if we don't have FAM, a smarter
 	 * way to keep track of the items on the desktop.
 	 */
 	if (!nautilus_monitor_active ()) {
-		desktop_icon_view->details->delayed_init_signal = g_signal_connect_object
-			(desktop_icon_view, "begin_loading",
-			 G_CALLBACK (delayed_init), desktop_icon_view, 0);
+		desktop_canvas_view->details->delayed_init_signal = g_signal_connect_object
+			(desktop_canvas_view, "begin_loading",
+			 G_CALLBACK (delayed_init), desktop_canvas_view, 0);
 	}
 	
-	nautilus_icon_container_set_is_fixed_size (icon_container, TRUE);
-	nautilus_icon_container_set_is_desktop (icon_container, TRUE);
-	nautilus_icon_container_set_store_layout_timestamps (icon_container, TRUE);
+	nautilus_canvas_container_set_is_fixed_size (canvas_container, TRUE);
+	nautilus_canvas_container_set_is_desktop (canvas_container, TRUE);
+	nautilus_canvas_container_set_store_layout_timestamps (canvas_container, TRUE);
 
 	/* Set allocation to be at 0, 0 */
-	gtk_widget_get_allocation (GTK_WIDGET (icon_container), &allocation);
+	gtk_widget_get_allocation (GTK_WIDGET (canvas_container), &allocation);
 	allocation.x = 0;
 	allocation.y = 0;
-	gtk_widget_set_allocation (GTK_WIDGET (icon_container), &allocation);
+	gtk_widget_set_allocation (GTK_WIDGET (canvas_container), &allocation);
 	
-	gtk_widget_queue_resize (GTK_WIDGET (icon_container));
+	gtk_widget_queue_resize (GTK_WIDGET (canvas_container));
 
-	hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (icon_container));
-	vadj = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (icon_container));
+	hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (canvas_container));
+	vadj = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (canvas_container));
 
 	gtk_adjustment_set_value (hadj, 0);
 	gtk_adjustment_set_value (vadj, 0);
 
 	nautilus_view_ignore_hidden_file_preferences
-		(NAUTILUS_VIEW (desktop_icon_view));
+		(NAUTILUS_VIEW (desktop_canvas_view));
 
-	nautilus_view_set_show_foreign (NAUTILUS_VIEW (desktop_icon_view),
+	nautilus_view_set_show_foreign (NAUTILUS_VIEW (desktop_canvas_view),
 					FALSE);
 	
 	/* Set our default layout mode */
-	nautilus_icon_container_set_layout_mode (icon_container,
-						 gtk_widget_get_direction (GTK_WIDGET(icon_container)) == GTK_TEXT_DIR_RTL ?
-						 NAUTILUS_ICON_LAYOUT_T_B_R_L :
-						 NAUTILUS_ICON_LAYOUT_T_B_L_R);
+	nautilus_canvas_container_set_layout_mode (canvas_container,
+						 gtk_widget_get_direction (GTK_WIDGET(canvas_container)) == GTK_TEXT_DIR_RTL ?
+						 NAUTILUS_CANVAS_LAYOUT_T_B_R_L :
+						 NAUTILUS_CANVAS_LAYOUT_T_B_L_R);
 
-	g_signal_connect_object (icon_container, "middle_click",
-				 G_CALLBACK (nautilus_desktop_icon_view_handle_middle_click), desktop_icon_view, 0);
-	g_signal_connect_object (desktop_icon_view, "realize",
-				 G_CALLBACK (realized_callback), desktop_icon_view, 0);
-	g_signal_connect_object (desktop_icon_view, "unrealize",
-				 G_CALLBACK (unrealized_callback), desktop_icon_view, 0);
+	g_signal_connect_object (canvas_container, "middle_click",
+				 G_CALLBACK (nautilus_desktop_canvas_view_handle_middle_click), desktop_canvas_view, 0);
+	g_signal_connect_object (desktop_canvas_view, "realize",
+				 G_CALLBACK (realized_callback), desktop_canvas_view, 0);
+	g_signal_connect_object (desktop_canvas_view, "unrealize",
+				 G_CALLBACK (unrealized_callback), desktop_canvas_view, 0);
 
 	g_signal_connect_swapped (nautilus_icon_view_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
 				  G_CALLBACK (default_zoom_level_changed),
-				  desktop_icon_view);
+				  desktop_canvas_view);
 
 	g_signal_connect_swapped (nautilus_desktop_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_DESKTOP_FONT,
 				  G_CALLBACK (font_changed_callback),
-				  desktop_icon_view);
+				  desktop_canvas_view);
 
-	default_zoom_level_changed (desktop_icon_view);
-	nautilus_desktop_icon_view_update_icon_container_fonts (desktop_icon_view);
+	default_zoom_level_changed (desktop_canvas_view);
+	nautilus_desktop_canvas_view_update_canvas_container_fonts (desktop_canvas_view);
 
 	g_signal_connect_swapped (gnome_lockdown_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_LOCKDOWN_COMMAND_LINE,
 				  G_CALLBACK (nautilus_view_update_menus),
-				  desktop_icon_view);
+				  desktop_canvas_view);
 }
 
 static void
@@ -680,16 +680,16 @@ trash_link_is_selection (NautilusView *view)
 static void
 real_update_menus (NautilusView *view)
 {
-	NautilusDesktopIconView *desktop_view;
+	NautilusDesktopCanvasView *desktop_view;
 	char *label;
 	gboolean include_empty_trash;
 	GtkAction *action;
 
-	g_assert (NAUTILUS_IS_DESKTOP_ICON_VIEW (view));
+	g_assert (NAUTILUS_IS_DESKTOP_CANVAS_VIEW (view));
 
-	NAUTILUS_VIEW_CLASS (nautilus_desktop_icon_view_parent_class)->update_menus (view);
+	NAUTILUS_VIEW_CLASS (nautilus_desktop_canvas_view_parent_class)->update_menus (view);
 
-	desktop_view = NAUTILUS_DESKTOP_ICON_VIEW (view);
+	desktop_view = NAUTILUS_DESKTOP_CANVAS_VIEW (view);
 
 	/* Empty Trash */
 	include_empty_trash = trash_link_is_selection (view);
@@ -726,13 +726,13 @@ static const GtkActionEntry desktop_view_entries[] = {
 static void
 real_merge_menus (NautilusView *view)
 {
-	NautilusDesktopIconView *desktop_view;
+	NautilusDesktopCanvasView *desktop_view;
 	GtkUIManager *ui_manager;
 	GtkActionGroup *action_group;
 
-	NAUTILUS_VIEW_CLASS (nautilus_desktop_icon_view_parent_class)->merge_menus (view);
+	NAUTILUS_VIEW_CLASS (nautilus_desktop_canvas_view_parent_class)->merge_menus (view);
 
-	desktop_view = NAUTILUS_DESKTOP_ICON_VIEW (view);
+	desktop_view = NAUTILUS_DESKTOP_CANVAS_VIEW (view);
 
 	ui_manager = nautilus_view_get_ui_manager (view);
 
@@ -747,15 +747,15 @@ real_merge_menus (NautilusView *view)
 	g_object_unref (action_group); /* owned by ui manager */
 
 	desktop_view->details->desktop_merge_id =
-		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nautilus/nautilus-desktop-icon-view-ui.xml", NULL);
+		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nautilus/nautilus-desktop-canvas-view-ui.xml", NULL);
 }
 
 static NautilusView *
-nautilus_desktop_icon_view_create (NautilusWindowSlot *slot)
+nautilus_desktop_canvas_view_create (NautilusWindowSlot *slot)
 {
-	NautilusIconView *view;
+	NautilusCanvasView *view;
 
-	view = g_object_new (NAUTILUS_TYPE_DESKTOP_ICON_VIEW,
+	view = g_object_new (NAUTILUS_TYPE_DESKTOP_CANVAS_VIEW,
 			     "window-slot", slot,
 			     "supports-zooming", FALSE,
 			     "supports-auto-layout", FALSE,
@@ -766,7 +766,7 @@ nautilus_desktop_icon_view_create (NautilusWindowSlot *slot)
 }
 
 static gboolean
-nautilus_desktop_icon_view_supports_uri (const char *uri,
+nautilus_desktop_canvas_view_supports_uri (const char *uri,
 				   GFileType file_type,
 				   const char *mime_type)
 {
@@ -777,22 +777,22 @@ nautilus_desktop_icon_view_supports_uri (const char *uri,
 	return FALSE;
 }
 
-static NautilusViewInfo nautilus_desktop_icon_view = {
-	NAUTILUS_DESKTOP_ICON_VIEW_ID,
+static NautilusViewInfo nautilus_desktop_canvas_view = {
+	NAUTILUS_DESKTOP_CANVAS_VIEW_ID,
 	"Desktop View",
 	"_Desktop",
 	N_("The desktop view encountered an error."),
 	N_("The desktop view encountered an error while starting up."),
 	"Display this location with the desktop view.",
-	nautilus_desktop_icon_view_create,
-	nautilus_desktop_icon_view_supports_uri
+	nautilus_desktop_canvas_view_create,
+	nautilus_desktop_canvas_view_supports_uri
 };
 
 void
-nautilus_desktop_icon_view_register (void)
+nautilus_desktop_canvas_view_register (void)
 {
-	nautilus_desktop_icon_view.error_label = _(nautilus_desktop_icon_view.error_label);
-	nautilus_desktop_icon_view.startup_error_label = _(nautilus_desktop_icon_view.startup_error_label);
+	nautilus_desktop_canvas_view.error_label = _(nautilus_desktop_canvas_view.error_label);
+	nautilus_desktop_canvas_view.startup_error_label = _(nautilus_desktop_canvas_view.startup_error_label);
 	
-	nautilus_view_factory_register (&nautilus_desktop_icon_view);
+	nautilus_view_factory_register (&nautilus_desktop_canvas_view);
 }

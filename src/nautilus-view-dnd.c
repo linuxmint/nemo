@@ -31,7 +31,6 @@
 
 #include "nautilus-view-dnd.h"
 
-#include "nautilus-desktop-icon-view.h"
 #include "nautilus-view.h"
 
 #include <eel/eel-stock-dialogs.h>

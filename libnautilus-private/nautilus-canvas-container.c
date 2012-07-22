@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 
-/* nautilus-icon-container.c - Icon container widget.
+/* nautilus-canvas-container.c - Canvas container widget.
 
    Copyright (C) 1999, 2000 Free Software Foundation
    Copyright (C) 2000, 2001 Eazel, Inc.
@@ -27,10 +27,10 @@
 
 #include <config.h>
 #include <math.h>
-#include "nautilus-icon-container.h"
+#include "nautilus-canvas-container.h"
 
 #include "nautilus-global-preferences.h"
-#include "nautilus-icon-private.h"
+#include "nautilus-canvas-private.h"
 #include "nautilus-lib-self-check-functions.h"
 #include "nautilus-selection-canvas-item.h"
 #include <atk/atkaction.h>
@@ -47,7 +47,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define DEBUG_FLAG NAUTILUS_DEBUG_ICON_CONTAINER
+#define DEBUG_FLAG NAUTILUS_DEBUG_CANVAS_CONTAINER
 #include "nautilus-debug.h"
 
 #define TAB_NAVIGATION_DISABLED
@@ -121,8 +121,8 @@
 #define SNAP_CEIL_HORIZONTAL(x) SNAP_HORIZONTAL (ceil, x)
 #define SNAP_CEIL_VERTICAL(y) SNAP_VERTICAL (ceil, y)
 
-/* Copied from NautilusIconContainer */
-#define NAUTILUS_ICON_CONTAINER_SEARCH_DIALOG_TIMEOUT 5
+/* Copied from NautilusCanvasContainer */
+#define NAUTILUS_CANVAS_CONTAINER_SEARCH_DIALOG_TIMEOUT 5
 
 /* Copied from NautilusFile */
 #define UNDEFINED_TIME ((time_t) (-1))
@@ -136,84 +136,84 @@ enum {
 typedef struct {
 	GList *selection;
 	char *action_descriptions[LAST_ACTION];
-} NautilusIconContainerAccessiblePrivate;
+} NautilusCanvasContainerAccessiblePrivate;
 
 static AtkObject *   get_accessible                                 (GtkWidget *widget);
 
-static void          preview_selected_items                         (NautilusIconContainer *container);
-static void          activate_selected_items                        (NautilusIconContainer *container);
-static void          activate_selected_items_alternate              (NautilusIconContainer *container,
-								     NautilusIcon          *icon);
+static void          preview_selected_items                         (NautilusCanvasContainer *container);
+static void          activate_selected_items                        (NautilusCanvasContainer *container);
+static void          activate_selected_items_alternate              (NautilusCanvasContainer *container,
+								     NautilusCanvasIcon          *icon);
 static void          compute_stretch                                (StretchState          *start,
 								     StretchState          *current);
-static NautilusIcon *get_first_selected_icon                        (NautilusIconContainer *container);
-static NautilusIcon *get_nth_selected_icon                          (NautilusIconContainer *container,
-								     int                    index);
-static gboolean      has_multiple_selection                         (NautilusIconContainer *container);
-static gboolean      all_selected                                   (NautilusIconContainer *container);
-static gboolean      has_selection                                  (NautilusIconContainer *container);
-static void          icon_destroy                                   (NautilusIconContainer *container,
-								     NautilusIcon          *icon);
-static void          end_renaming_mode                              (NautilusIconContainer *container,
+static NautilusCanvasIcon *get_first_selected_icon                        (NautilusCanvasContainer *container);
+static NautilusCanvasIcon *get_nth_selected_icon                          (NautilusCanvasContainer *container,
+									 int                    index);
+static gboolean      has_multiple_selection                         (NautilusCanvasContainer *container);
+static gboolean      all_selected                                   (NautilusCanvasContainer *container);
+static gboolean      has_selection                                  (NautilusCanvasContainer *container);
+static void          icon_destroy                                   (NautilusCanvasContainer *container,
+								       NautilusCanvasIcon          *icon);
+static void          end_renaming_mode                              (NautilusCanvasContainer *container,
 								     gboolean               commit);
-static NautilusIcon *get_icon_being_renamed                         (NautilusIconContainer *container);
-static void          finish_adding_new_icons                        (NautilusIconContainer *container);
-static inline void   icon_get_bounding_box                          (NautilusIcon          *icon,
-								     int                   *x1_return,
-								     int                   *y1_return,
-								     int                   *x2_return,
-								     int                   *y2_return,
-								     NautilusIconCanvasItemBoundsUsage usage);
-static gboolean      is_renaming                                    (NautilusIconContainer *container);
-static gboolean      is_renaming_pending                            (NautilusIconContainer *container);
-static void          process_pending_icon_to_rename                 (NautilusIconContainer *container);
-static void          nautilus_icon_container_stop_monitor_top_left  (NautilusIconContainer *container,
-								     NautilusIconData      *data,
-								     gconstpointer          client);
-static void          nautilus_icon_container_start_monitor_top_left (NautilusIconContainer *container,
-								     NautilusIconData      *data,
-								     gconstpointer          client,
-								     gboolean               large_text);
+static NautilusCanvasIcon *get_icon_being_renamed                         (NautilusCanvasContainer *container);
+static void          finish_adding_new_icons                        (NautilusCanvasContainer *container);
+static inline void   icon_get_bounding_box                          (NautilusCanvasIcon          *icon,
+								       int                   *x1_return,
+								       int                   *y1_return,
+								       int                   *x2_return,
+								       int                   *y2_return,
+								       NautilusCanvasItemBoundsUsage usage);
+static gboolean      is_renaming                                    (NautilusCanvasContainer *container);
+static gboolean      is_renaming_pending                            (NautilusCanvasContainer *container);
+static void          process_pending_icon_to_rename                 (NautilusCanvasContainer *container);
+static void          nautilus_canvas_container_stop_monitor_top_left  (NautilusCanvasContainer *container,
+								       NautilusCanvasIconData      *data,
+								       gconstpointer          client);
+static void          nautilus_canvas_container_start_monitor_top_left (NautilusCanvasContainer *container,
+								       NautilusCanvasIconData      *data,
+								       gconstpointer          client,
+								       gboolean               large_text);
 static void          handle_hadjustment_changed                     (GtkAdjustment         *adjustment,
-								     NautilusIconContainer *container);
+								     NautilusCanvasContainer *container);
 static void          handle_vadjustment_changed                     (GtkAdjustment         *adjustment,
-								     NautilusIconContainer *container);
-static GList *       nautilus_icon_container_get_selected_icons (NautilusIconContainer *container);
-static void          nautilus_icon_container_update_visible_icons   (NautilusIconContainer *container);
-static void          reveal_icon                                    (NautilusIconContainer *container,
-								     NautilusIcon *icon);
+								     NautilusCanvasContainer *container);
+static GList *       nautilus_canvas_container_get_selected_icons (NautilusCanvasContainer *container);
+static void          nautilus_canvas_container_update_visible_icons   (NautilusCanvasContainer *container);
+static void          reveal_icon                                    (NautilusCanvasContainer *container,
+								       NautilusCanvasIcon *icon);
 
-static void	     nautilus_icon_container_set_rtl_positions (NautilusIconContainer *container);
-static double	     get_mirror_x_position                     (NautilusIconContainer *container,
-								NautilusIcon *icon,
+static void	     nautilus_canvas_container_set_rtl_positions (NautilusCanvasContainer *container);
+static double	     get_mirror_x_position                     (NautilusCanvasContainer *container,
+								NautilusCanvasIcon *icon,
 								double x);
 static void         text_ellipsis_limit_changed_container_callback  (gpointer callback_data);
 
-static int compare_icons_horizontal (NautilusIconContainer *container,
-				     NautilusIcon *icon_a,
-				     NautilusIcon *icon_b);
+static int compare_icons_horizontal (NautilusCanvasContainer *container,
+				       NautilusCanvasIcon *icon_a,
+				       NautilusCanvasIcon *icon_b);
 
-static int compare_icons_vertical (NautilusIconContainer *container,
-				   NautilusIcon *icon_a,
-				   NautilusIcon *icon_b);
+static int compare_icons_vertical (NautilusCanvasContainer *container,
+				     NautilusCanvasIcon *icon_a,
+				     NautilusCanvasIcon *icon_b);
 
-static void store_layout_timestamps_now (NautilusIconContainer *container);
+static void store_layout_timestamps_now (NautilusCanvasContainer *container);
 
-static const char *nautilus_icon_container_accessible_action_names[] = {
+static const char *nautilus_canvas_container_accessible_action_names[] = {
 	"activate",
 	"menu",
 	NULL
 };
 
-static const char *nautilus_icon_container_accessible_action_descriptions[] = {
+static const char *nautilus_canvas_container_accessible_action_descriptions[] = {
 	"Activate selected items",
 	"Popup context menu",
 	NULL
 };
 
-G_DEFINE_TYPE (NautilusIconContainer, nautilus_icon_container, EEL_TYPE_CANVAS);
+G_DEFINE_TYPE (NautilusCanvasContainer, nautilus_canvas_container, EEL_TYPE_CANVAS);
 
-/* The NautilusIconContainer signals.  */
+/* The NautilusCanvasContainer signals.  */
 enum {
 	ACTIVATE,
 	ACTIVATE_ALTERNATE,
@@ -262,15 +262,15 @@ static guint signals[LAST_SIGNAL];
 /* Functions dealing with NautilusIcons.  */
 
 static void
-icon_free (NautilusIcon *icon)
+icon_free (NautilusCanvasIcon *icon)
 {
-	/* Destroy this canvas item; the parent will unref it. */
+	/* Destroy this icon item; the parent will unref it. */
 	eel_canvas_item_destroy (EEL_CANVAS_ITEM (icon->item));
 	g_free (icon);
 }
 
 static gboolean
-icon_is_positioned (const NautilusIcon *icon)
+icon_is_positioned (const NautilusCanvasIcon *icon)
 {
 	return icon->x != ICON_UNPOSITIONED_VALUE && icon->y != ICON_UNPOSITIONED_VALUE;
 }
@@ -278,10 +278,10 @@ icon_is_positioned (const NautilusIcon *icon)
 
 /* x, y are the top-left coordinates of the icon. */
 static void
-icon_set_position (NautilusIcon *icon,
-		   double x, double y)
+icon_set_position (NautilusCanvasIcon *icon,
+		     double x, double y)
 {	
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	double pixels_per_unit;	
 	int container_left, container_top, container_right, container_bottom;
 	int x1, x2, y1, y2;
@@ -295,25 +295,25 @@ icon_set_position (NautilusIcon *icon,
 		return;
 	}
 
-	container = NAUTILUS_ICON_CONTAINER (EEL_CANVAS_ITEM (icon->item)->canvas);
+	container = NAUTILUS_CANVAS_CONTAINER (EEL_CANVAS_ITEM (icon->item)->canvas);
 
 	if (icon == get_icon_being_renamed (container)) {
 		end_renaming_mode (container, TRUE);
 	}
 
-	if (nautilus_icon_container_get_is_fixed_size (container)) {
+	if (nautilus_canvas_container_get_is_fixed_size (container)) {
 		/*  FIXME: This should be:
 		    
-		container_x = GTK_WIDGET (container)->allocation.x;
-		container_y = GTK_WIDGET (container)->allocation.y;
-		container_width = GTK_WIDGET (container)->allocation.width;
-		container_height = GTK_WIDGET (container)->allocation.height;
+		    container_x = GTK_WIDGET (container)->allocation.x;
+		    container_y = GTK_WIDGET (container)->allocation.y;
+		    container_width = GTK_WIDGET (container)->allocation.width;
+		    container_height = GTK_WIDGET (container)->allocation.height;
 
-		But for some reason the widget allocation is sometimes not done
-		at startup, and the allocation is then only 45x60. which is
-		really bad.
+		    But for some reason the widget allocation is sometimes not done
+		    at startup, and the allocation is then only 45x60. which is
+		    really bad.
 
-		For now, we have a cheesy workaround:
+		    For now, we have a cheesy workaround:
 		*/
 		container_x = 0;
 		container_y = 0;
@@ -335,7 +335,7 @@ icon_set_position (NautilusIcon *icon,
 		item_width = x2 - x1;
 		item_height = y2 - y1;
 
-		icon_bounds = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
+		icon_bounds = nautilus_canvas_item_get_icon_rectangle (icon->item);
 
 		/* determine icon rectangle relative to item rectangle */
 		height_above = icon_bounds.y0 - y1;
@@ -358,21 +358,21 @@ icon_set_position (NautilusIcon *icon,
 	}
 	
 	eel_canvas_item_move (EEL_CANVAS_ITEM (icon->item),
-				x - icon->x,
-				y - icon->y);
+			      x - icon->x,
+			      y - icon->y);
 
 	icon->x = x;
 	icon->y = y;
 }
 
 static void
-icon_get_size (NautilusIconContainer *container,
-	       NautilusIcon *icon,
-	       guint *size)
+icon_get_size (NautilusCanvasContainer *container,
+		 NautilusCanvasIcon *icon,
+		 guint *size)
 {
 	if (size != NULL) {
 		*size = MAX (nautilus_get_icon_size_for_zoom_level (container->details->zoom_level)
-			       * icon->scale, NAUTILUS_ICON_SIZE_SMALLEST);
+			     * icon->scale, NAUTILUS_ICON_SIZE_SMALLEST);
 	}
 }
 
@@ -382,11 +382,11 @@ icon_get_size (NautilusIconContainer *container,
  * separate from X and we will change this around.
  */
 static void
-icon_set_size (NautilusIconContainer *container,
-	       NautilusIcon *icon,
-	       guint icon_size,
-	       gboolean snap,
-	       gboolean update_position)
+icon_set_size (NautilusCanvasContainer *container,
+		 NautilusCanvasIcon *icon,
+		 guint icon_size,
+		 gboolean snap,
+		 gboolean update_position)
 {
 	guint old_size;
 	double scale;
@@ -399,42 +399,42 @@ icon_set_size (NautilusIconContainer *container,
 	scale = (double) icon_size /
 		nautilus_get_icon_size_for_zoom_level
 		(container->details->zoom_level);
-	nautilus_icon_container_move_icon (container, icon,
-					   icon->x, icon->y,
-					   scale, FALSE,
-					   snap, update_position);
+	nautilus_canvas_container_move_icon (container, icon,
+					       icon->x, icon->y,
+					       scale, FALSE,
+					       snap, update_position);
 }
 
 static void
-icon_raise (NautilusIcon *icon)
+icon_raise (NautilusCanvasIcon *icon)
 {
 	EelCanvasItem *item, *band;
 	
 	item = EEL_CANVAS_ITEM (icon->item);
-	band = NAUTILUS_ICON_CONTAINER (item->canvas)->details->rubberband_info.selection_rectangle;
+	band = NAUTILUS_CANVAS_CONTAINER (item->canvas)->details->rubberband_info.selection_rectangle;
 	
 	eel_canvas_item_send_behind (item, band);
 }
 
 static void
-emit_stretch_started (NautilusIconContainer *container, NautilusIcon *icon)
+emit_stretch_started (NautilusCanvasContainer *container, NautilusCanvasIcon *icon)
 {
 	g_signal_emit (container,
-			 signals[ICON_STRETCH_STARTED], 0,
-			 icon->data);
+		       signals[ICON_STRETCH_STARTED], 0,
+		       icon->data);
 }
 
 static void
-emit_stretch_ended (NautilusIconContainer *container, NautilusIcon *icon)
+emit_stretch_ended (NautilusCanvasContainer *container, NautilusCanvasIcon *icon)
 {
 	g_signal_emit (container,
-			 signals[ICON_STRETCH_ENDED], 0,
-			 icon->data);
+		       signals[ICON_STRETCH_ENDED], 0,
+		       icon->data);
 }
 
 static void
-icon_toggle_selected (NautilusIconContainer *container,
-		      NautilusIcon *icon)
+icon_toggle_selected (NautilusCanvasContainer *container,
+		      NautilusCanvasIcon *icon)
 {		
 	end_renaming_mode (container, TRUE);
 
@@ -448,14 +448,14 @@ icon_toggle_selected (NautilusIconContainer *container,
 	 */
 	if (icon == container->details->stretch_icon) {
 		container->details->stretch_icon = NULL;
-		nautilus_icon_canvas_item_set_show_stretch_handles (icon->item, FALSE);
+		nautilus_canvas_item_set_show_stretch_handles (icon->item, FALSE);
 		/* snap the icon if necessary */
 		if (container->details->keep_aligned) {
-			nautilus_icon_container_move_icon (container,
-							   icon,
-							   icon->x, icon->y,
-							   icon->scale,
-							   FALSE, TRUE, TRUE);
+			nautilus_canvas_container_move_icon (container,
+							       icon,
+							       icon->x, icon->y,
+							       icon->scale,
+							       FALSE, TRUE, TRUE);
 		}
 		
 		emit_stretch_ended (container, icon);
@@ -469,9 +469,9 @@ icon_toggle_selected (NautilusIconContainer *container,
 
 /* Select an icon. Return TRUE if selection has changed. */
 static gboolean
-icon_set_selected (NautilusIconContainer *container,
-		   NautilusIcon *icon,
-		   gboolean select)
+icon_set_selected (NautilusCanvasContainer *container,
+		     NautilusCanvasIcon *icon,
+		     gboolean select)
 {
 	g_assert (select == FALSE || select == TRUE);
 	g_assert (icon->is_selected == FALSE || icon->is_selected == TRUE);
@@ -486,10 +486,10 @@ icon_set_selected (NautilusIconContainer *container,
 }
 
 static inline void
-icon_get_bounding_box (NautilusIcon *icon,
+icon_get_bounding_box (NautilusCanvasIcon *icon,
 		       int *x1_return, int *y1_return,
 		       int *x2_return, int *y2_return,
-		       NautilusIconCanvasItemBoundsUsage usage)
+		       NautilusCanvasItemBoundsUsage usage)
 {
 	double x1, y1, x2, y2;
 
@@ -497,11 +497,11 @@ icon_get_bounding_box (NautilusIcon *icon,
 		eel_canvas_item_get_bounds (EEL_CANVAS_ITEM (icon->item),
 					    &x1, &y1, &x2, &y2);
 	} else if (usage == BOUNDS_USAGE_FOR_LAYOUT) {
-		nautilus_icon_canvas_item_get_bounds_for_layout (icon->item,
-								 &x1, &y1, &x2, &y2);
+		nautilus_canvas_item_get_bounds_for_layout (icon->item,
+								   &x1, &y1, &x2, &y2);
 	} else if (usage == BOUNDS_USAGE_FOR_ENTIRE_ITEM) {
-		nautilus_icon_canvas_item_get_bounds_for_entire_item (icon->item,
-								      &x1, &y1, &x2, &y2);
+		nautilus_canvas_item_get_bounds_for_entire_item (icon->item,
+									&x1, &y1, &x2, &y2);
 	} else {
 		g_assert_not_reached ();
 	}
@@ -523,11 +523,11 @@ icon_get_bounding_box (NautilusIcon *icon,
 	}
 }
 
-/* Utility functions for NautilusIconContainer.  */
+/* Utility functions for NautilusCanvasContainer.  */
 
 gboolean
-nautilus_icon_container_scroll (NautilusIconContainer *container,
-				int delta_x, int delta_y)
+nautilus_canvas_container_scroll (NautilusCanvasContainer *container,
+				  int delta_x, int delta_y)
 {
 	GtkAdjustment *hadj, *vadj;
 	int old_h_value, old_v_value;
@@ -551,26 +551,26 @@ nautilus_icon_container_scroll (NautilusIconContainer *container,
 }
 
 static void
-pending_icon_to_reveal_destroy_callback (NautilusIconCanvasItem *item,
-					 NautilusIconContainer *container)
+pending_icon_to_reveal_destroy_callback (NautilusCanvasItem *item,
+					   NautilusCanvasContainer *container)
 {
-	g_assert (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_assert (NAUTILUS_IS_CANVAS_CONTAINER (container));
 	g_assert (container->details->pending_icon_to_reveal != NULL);
 	g_assert (container->details->pending_icon_to_reveal->item == item);
 
 	container->details->pending_icon_to_reveal = NULL;
 }
 
-static NautilusIcon*
-get_pending_icon_to_reveal (NautilusIconContainer *container)
+static NautilusCanvasIcon *
+get_pending_icon_to_reveal (NautilusCanvasContainer *container)
 {
 	return container->details->pending_icon_to_reveal;
 }
 
 static void
-set_pending_icon_to_reveal (NautilusIconContainer *container, NautilusIcon *icon)
+set_pending_icon_to_reveal (NautilusCanvasContainer *container, NautilusCanvasIcon *icon)
 {
-	NautilusIcon *old_icon;
+	NautilusCanvasIcon *old_icon;
 	
 	old_icon = container->details->pending_icon_to_reveal;
 	
@@ -633,13 +633,13 @@ item_get_canvas_bounds (EelCanvasItem *item,
 }
 
 static void
-icon_get_row_and_column_bounds (NautilusIconContainer *container,
-				NautilusIcon *icon,
+icon_get_row_and_column_bounds (NautilusCanvasContainer *container,
+				NautilusCanvasIcon *icon,
 				EelIRect *bounds,
 				gboolean safety_pad)
 {
 	GList *p;
-	NautilusIcon *one_icon;
+	NautilusCanvasIcon *one_icon;
 	EelIRect one_bounds;
 
 	item_get_canvas_bounds (EEL_CANVAS_ITEM (icon->item), bounds, safety_pad);
@@ -668,8 +668,8 @@ icon_get_row_and_column_bounds (NautilusIconContainer *container,
 }
 
 static void
-reveal_icon (NautilusIconContainer *container,
-	     NautilusIcon *icon)
+reveal_icon (NautilusCanvasContainer *container,
+	     NautilusCanvasIcon *icon)
 {
 	GtkAllocation allocation;
 	GtkAdjustment *hadj, *vadj;
@@ -687,7 +687,7 @@ reveal_icon (NautilusIconContainer *container,
 	hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (container));
 	vadj = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (container));
 
-	if (nautilus_icon_container_is_auto_layout (container)) {
+	if (nautilus_canvas_container_is_auto_layout (container)) {
 		/* ensure that we reveal the entire row/column */
 		icon_get_row_and_column_bounds (container, icon, &bounds, TRUE);
 	} else {
@@ -709,9 +709,9 @@ reveal_icon (NautilusIconContainer *container,
 }
 
 static void
-process_pending_icon_to_reveal (NautilusIconContainer *container)
+process_pending_icon_to_reveal (NautilusCanvasContainer *container)
 {
-	NautilusIcon *pending_icon_to_reveal;
+	NautilusCanvasIcon *pending_icon_to_reveal;
 	
 	pending_icon_to_reveal = get_pending_icon_to_reveal (container);
 	
@@ -723,10 +723,10 @@ process_pending_icon_to_reveal (NautilusIconContainer *container)
 static gboolean
 keyboard_icon_reveal_timeout_callback (gpointer data)
 {
-	NautilusIconContainer *container;
-	NautilusIcon *icon;
+	NautilusCanvasContainer *container;
+	NautilusCanvasIcon *icon;
 
-	container = NAUTILUS_ICON_CONTAINER (data);
+	container = NAUTILUS_CANVAS_CONTAINER (data);
 	icon = container->details->keyboard_icon_to_reveal;
 
 	g_assert (icon != NULL);
@@ -748,9 +748,9 @@ keyboard_icon_reveal_timeout_callback (gpointer data)
 }
 
 static void
-unschedule_keyboard_icon_reveal (NautilusIconContainer *container)
+unschedule_keyboard_icon_reveal (NautilusCanvasContainer *container)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
 
 	details = container->details;
 
@@ -760,10 +760,10 @@ unschedule_keyboard_icon_reveal (NautilusIconContainer *container)
 }
 
 static void
-schedule_keyboard_icon_reveal (NautilusIconContainer *container,
-			       NautilusIcon *icon)
+schedule_keyboard_icon_reveal (NautilusCanvasContainer *container,
+				 NautilusCanvasIcon *icon)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
 
 	details = container->details;
 
@@ -777,19 +777,19 @@ schedule_keyboard_icon_reveal (NautilusIconContainer *container,
 }
 
 static void
-clear_keyboard_focus (NautilusIconContainer *container)
+clear_keyboard_focus (NautilusCanvasContainer *container)
 {
         if (container->details->keyboard_focus != NULL) {
 		eel_canvas_item_set (EEL_CANVAS_ITEM (container->details->keyboard_focus->item),
-				       "highlighted_as_keyboard_focus", 0,
-				       NULL);
+				     "highlighted_as_keyboard_focus", 0,
+				     NULL);
 	}
 	
 	container->details->keyboard_focus = NULL;
 }
 
 static void inline
-emit_atk_focus_tracker_notify (NautilusIcon *icon)
+emit_atk_focus_tracker_notify (NautilusCanvasIcon *icon)
 {
 	AtkObject *atk_object = atk_gobject_accessible_for_object (G_OBJECT (icon->item));
 	atk_focus_tracker_notify (atk_object);
@@ -797,8 +797,8 @@ emit_atk_focus_tracker_notify (NautilusIcon *icon)
 
 /* Set @icon as the icon currently selected for keyboard operations. */
 static void
-set_keyboard_focus (NautilusIconContainer *container,
-		    NautilusIcon *icon)
+set_keyboard_focus (NautilusCanvasContainer *container,
+		    NautilusCanvasIcon *icon)
 {
 	g_assert (icon != NULL);
 
@@ -811,34 +811,34 @@ set_keyboard_focus (NautilusIconContainer *container,
 	container->details->keyboard_focus = icon;
 
 	eel_canvas_item_set (EEL_CANVAS_ITEM (container->details->keyboard_focus->item),
-			       "highlighted_as_keyboard_focus", 1,
-			       NULL);
+			     "highlighted_as_keyboard_focus", 1,
+			     NULL);
 
 	emit_atk_focus_tracker_notify (icon);
 }
 
 static void
-set_keyboard_rubberband_start (NautilusIconContainer *container,
-			       NautilusIcon *icon)
+set_keyboard_rubberband_start (NautilusCanvasContainer *container,
+			       NautilusCanvasIcon *icon)
 {
 	container->details->keyboard_rubberband_start = icon;
 }
 
 static void
-clear_keyboard_rubberband_start (NautilusIconContainer *container)
+clear_keyboard_rubberband_start (NautilusCanvasContainer *container)
 {
 	container->details->keyboard_rubberband_start = NULL;
 }
 
 /* carbon-copy of eel_canvas_group_bounds(), but
- * for NautilusIconContainerItems it returns the
+ * for NautilusCanvasContainerItems it returns the
  * bounds for the “entire item”.
  */
 static void
 get_icon_bounds_for_canvas_bounds (EelCanvasGroup *group,
-				   double *x1, double *y1,
-				   double *x2, double *y2,
-				   NautilusIconCanvasItemBoundsUsage usage)
+				     double *x1, double *y1,
+				     double *x2, double *y2,
+				     NautilusCanvasItemBoundsUsage usage)
 {
 	EelCanvasItem *child;
 	GList *list;
@@ -855,21 +855,21 @@ get_icon_bounds_for_canvas_bounds (EelCanvasGroup *group,
 	for (list = group->item_list; list; list = list->next) {
 		child = list->data;
 
-		if (!NAUTILUS_IS_ICON_CANVAS_ITEM (child)) {
+		if (!NAUTILUS_IS_CANVAS_ITEM (child)) {
 			continue;
 		}
 
 		if (child->flags & EEL_CANVAS_ITEM_VISIBLE) {
 			set = TRUE;
-			if (!NAUTILUS_IS_ICON_CANVAS_ITEM (child) ||
+			if (!NAUTILUS_IS_CANVAS_ITEM (child) ||
 			    usage == BOUNDS_USAGE_FOR_DISPLAY) {
 				eel_canvas_item_get_bounds (child, &minx, &miny, &maxx, &maxy);
 			} else if (usage == BOUNDS_USAGE_FOR_LAYOUT) {
-				nautilus_icon_canvas_item_get_bounds_for_layout (NAUTILUS_ICON_CANVAS_ITEM (child),
-										 &minx, &miny, &maxx, &maxy);
+				nautilus_canvas_item_get_bounds_for_layout (NAUTILUS_CANVAS_ITEM (child),
+										   &minx, &miny, &maxx, &maxy);
 			} else if (usage == BOUNDS_USAGE_FOR_ENTIRE_ITEM) {
-				nautilus_icon_canvas_item_get_bounds_for_entire_item (NAUTILUS_ICON_CANVAS_ITEM (child),
-										      &minx, &miny, &maxx, &maxy);
+				nautilus_canvas_item_get_bounds_for_entire_item (NAUTILUS_CANVAS_ITEM (child),
+											&minx, &miny, &maxx, &maxy);
 			} else {
 				g_assert_not_reached ();
 			}
@@ -891,22 +891,22 @@ get_icon_bounds_for_canvas_bounds (EelCanvasGroup *group,
 	for (; list; list = list->next) {
 		child = list->data;
 
-		if (!NAUTILUS_IS_ICON_CANVAS_ITEM (child)) {
+		if (!NAUTILUS_IS_CANVAS_ITEM (child)) {
 			continue;
 		}
 
 		if (!(child->flags & EEL_CANVAS_ITEM_VISIBLE))
 			continue;
 
-		if (!NAUTILUS_IS_ICON_CANVAS_ITEM (child) ||
+		if (!NAUTILUS_IS_CANVAS_ITEM (child) ||
 		    usage == BOUNDS_USAGE_FOR_DISPLAY) {
 			eel_canvas_item_get_bounds (child, &tx1, &ty1, &tx2, &ty2);
 		} else if (usage == BOUNDS_USAGE_FOR_LAYOUT) {
-			nautilus_icon_canvas_item_get_bounds_for_layout (NAUTILUS_ICON_CANVAS_ITEM (child),
-									 &tx1, &ty1, &tx2, &ty2);
+			nautilus_canvas_item_get_bounds_for_layout (NAUTILUS_CANVAS_ITEM (child),
+									   &tx1, &ty1, &tx2, &ty2);
 		} else if (usage == BOUNDS_USAGE_FOR_ENTIRE_ITEM) {
-			nautilus_icon_canvas_item_get_bounds_for_entire_item (NAUTILUS_ICON_CANVAS_ITEM (child),
-									      &tx1, &ty1, &tx2, &ty2);
+			nautilus_canvas_item_get_bounds_for_entire_item (NAUTILUS_CANVAS_ITEM (child),
+										&tx1, &ty1, &tx2, &ty2);
 		} else {
 			g_assert_not_reached ();
 		}
@@ -951,22 +951,22 @@ get_icon_bounds_for_canvas_bounds (EelCanvasGroup *group,
 }
 
 static void
-get_all_icon_bounds (NautilusIconContainer *container,
+get_all_icon_bounds (NautilusCanvasContainer *container,
 		     double *x1, double *y1,
 		     double *x2, double *y2,
-		     NautilusIconCanvasItemBoundsUsage usage)
+		     NautilusCanvasItemBoundsUsage usage)
 {
 	/* FIXME bugzilla.gnome.org 42477: Do we have to do something about the rubberband
 	 * here? Any other non-icon items?
 	 */
 	get_icon_bounds_for_canvas_bounds (EEL_CANVAS_GROUP (EEL_CANVAS (container)->root),
-					   x1, y1, x2, y2, usage);
+					     x1, y1, x2, y2, usage);
 }
 
 /* Don't preserve visible white space the next time the scroll region
  * is recomputed when the container is not empty. */
 void
-nautilus_icon_container_reset_scroll_region (NautilusIconContainer *container)
+nautilus_canvas_container_reset_scroll_region (NautilusCanvasContainer *container)
 {
 	container->details->reset_scroll_region_trigger = TRUE;
 }
@@ -1001,7 +1001,7 @@ canvas_set_scroll_region_include_visible_area (EelCanvas *canvas,
 }
 
 void
-nautilus_icon_container_update_scroll_region (NautilusIconContainer *container)
+nautilus_canvas_container_update_scroll_region (NautilusCanvasContainer *container)
 {
 	double x1, y1, x2, y2;
 	double pixels_per_unit;
@@ -1012,7 +1012,7 @@ nautilus_icon_container_update_scroll_region (NautilusIconContainer *container)
 
 	pixels_per_unit = EEL_CANVAS (container)->pixels_per_unit;
 
-	if (nautilus_icon_container_get_is_fixed_size (container)) {
+	if (nautilus_canvas_container_get_is_fixed_size (container)) {
 		/* Set the scroll region to the size of the container allocation */
 		gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
 		eel_canvas_set_scroll_region
@@ -1020,26 +1020,26 @@ nautilus_icon_container_update_scroll_region (NautilusIconContainer *container)
 			 (double) - container->details->left_margin / pixels_per_unit,
 			 (double) - container->details->top_margin / pixels_per_unit,
 			 ((double) (allocation.width - 1)
-			 - container->details->left_margin
-			 - container->details->right_margin)
+			  - container->details->left_margin
+			  - container->details->right_margin)
 			 / pixels_per_unit,
 			 ((double) (allocation.height - 1)
-			 - container->details->top_margin
-			 - container->details->bottom_margin)
+			  - container->details->top_margin
+			  - container->details->bottom_margin)
 			 / pixels_per_unit);
 		return;
 	}
 
 	reset_scroll_region = container->details->reset_scroll_region_trigger
-		|| nautilus_icon_container_is_empty (container)
-		|| nautilus_icon_container_is_auto_layout (container);
+		|| nautilus_canvas_container_is_empty (container)
+		|| nautilus_canvas_container_is_auto_layout (container);
 
 	/* The trigger is only cleared when container is non-empty, so
 	 * callers can reliably reset the scroll region when an item
 	 * is added even if extraneous relayouts are called when the
 	 * window is still empty.
 	 */
-	if (!nautilus_icon_container_is_empty (container)) {
+	if (!nautilus_canvas_container_is_empty (container)) {
 		container->details->reset_scroll_region_trigger = FALSE;
 	}
 
@@ -1051,8 +1051,8 @@ nautilus_icon_container_update_scroll_region (NautilusIconContainer *container)
 	 * Vertical layout is used by the compact view so the end
 	 * depends on the RTL setting.
 	 */
-	if (nautilus_icon_container_is_layout_vertical (container)) {
-		if (nautilus_icon_container_is_layout_rtl (container)) {
+	if (nautilus_canvas_container_is_layout_vertical (container)) {
+		if (nautilus_canvas_container_is_layout_rtl (container)) {
 			x1 -= ICON_PAD_LEFT + CONTAINER_PAD_LEFT;
 		} else {
 			x2 += ICON_PAD_RIGHT + CONTAINER_PAD_RIGHT;
@@ -1064,7 +1064,7 @@ nautilus_icon_container_update_scroll_region (NautilusIconContainer *container)
 	/* Auto-layout assumes a 0, 0 scroll origin and at least allocation->width.
 	 * Then we lay out to the right or to the left, so
 	 * x can be < 0 and > allocation */
-	if (nautilus_icon_container_is_auto_layout (container)) {
+	if (nautilus_canvas_container_is_auto_layout (container)) {
 		gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
 		x1 = MIN (x1, 0);
 		x2 = MAX (x2, allocation.width / pixels_per_unit);
@@ -1072,7 +1072,7 @@ nautilus_icon_container_update_scroll_region (NautilusIconContainer *container)
 	} else {
 		/* Otherwise we add the padding that is at the start of the
 		   layout */
-		if (nautilus_icon_container_is_layout_rtl (container)) {
+		if (nautilus_canvas_container_is_layout_rtl (container)) {
 			x2 += ICON_PAD_RIGHT + CONTAINER_PAD_RIGHT;
 		} else {
 			x1 -= ICON_PAD_LEFT + CONTAINER_PAD_LEFT;
@@ -1111,39 +1111,39 @@ nautilus_icon_container_update_scroll_region (NautilusIconContainer *container)
 }
 
 static int
-compare_icons (gconstpointer a, gconstpointer b, gpointer icon_container)
+compare_icons (gconstpointer a, gconstpointer b, gpointer canvas_container)
 {
-	NautilusIconContainerClass *klass;
-	const NautilusIcon *icon_a, *icon_b;
+	NautilusCanvasContainerClass *klass;
+	const NautilusCanvasIcon *icon_a, *icon_b;
 
 	icon_a = a;
 	icon_b = b;
-	klass  = NAUTILUS_ICON_CONTAINER_GET_CLASS (icon_container);
+	klass  = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (canvas_container);
 
-	return klass->compare_icons (icon_container, icon_a->data, icon_b->data);
+	return klass->compare_icons (canvas_container, icon_a->data, icon_b->data);
 }
 
 static void
-sort_icons (NautilusIconContainer *container,
-	    GList                **icons)
+sort_icons (NautilusCanvasContainer *container,
+	      GList                **icons)
 {
-	NautilusIconContainerClass *klass;
+	NautilusCanvasContainerClass *klass;
 
-	klass = NAUTILUS_ICON_CONTAINER_GET_CLASS (container);
+	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
 	g_assert (klass->compare_icons != NULL);
 
 	*icons = g_list_sort_with_data (*icons, compare_icons, container);
 }
 
 static void
-resort (NautilusIconContainer *container)
+resort (NautilusCanvasContainer *container)
 {
 	sort_icons (container, &container->details->icons);
 }
 
 #if 0
 static double
-get_grid_width (NautilusIconContainer *container)
+get_grid_width (NautilusCanvasContainer *container)
 {
 	return STANDARD_ICON_GRID_WIDTH;
 }
@@ -1156,7 +1156,7 @@ typedef struct {
 } IconPositions;
 
 static void
-lay_down_one_line (NautilusIconContainer *container,
+lay_down_one_line (NautilusCanvasContainer *container,
 		   GList *line_start,
 		   GList *line_end,
 		   double y,
@@ -1165,13 +1165,13 @@ lay_down_one_line (NautilusIconContainer *container,
 		   gboolean whole_text)
 {
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	double x, y_offset;
 	IconPositions *position;
 	int i;
 	gboolean is_rtl;
 
-	is_rtl = nautilus_icon_container_is_layout_rtl (container);
+	is_rtl = nautilus_canvas_container_is_layout_rtl (container);
 
 	/* Lay out the icons along the baseline. */
 	x = ICON_PAD_LEFT;
@@ -1186,7 +1186,7 @@ lay_down_one_line (NautilusIconContainer *container,
 			(icon,
 			 is_rtl ? get_mirror_x_position (container, icon, x + position->x_offset) : x + position->x_offset,
 			 y + y_offset);
-		nautilus_icon_canvas_item_set_entire_text (icon->item, whole_text);
+		nautilus_canvas_item_set_entire_text (icon->item, whole_text);
 
 		icon->saved_ltr_x = is_rtl ? get_mirror_x_position (container, icon, icon->x) : icon->x;
 
@@ -1195,7 +1195,7 @@ lay_down_one_line (NautilusIconContainer *container,
 }
 
 static void
-lay_down_one_column (NautilusIconContainer *container,
+lay_down_one_column (NautilusCanvasContainer *container,
 		     GList *line_start,
 		     GList *line_end,
 		     double x,
@@ -1204,13 +1204,13 @@ lay_down_one_column (NautilusIconContainer *container,
 		     GArray *positions)
 {
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	double y;
 	IconPositions *position;
 	int i;
 	gboolean is_rtl;
 
-        is_rtl = nautilus_icon_container_is_layout_rtl (container);
+        is_rtl = nautilus_canvas_container_is_layout_rtl (container);
 
 	/* Lay out the icons along the baseline. */
 	y = y_start;
@@ -1232,12 +1232,12 @@ lay_down_one_column (NautilusIconContainer *container,
 }
 
 static void
-lay_down_icons_horizontal (NautilusIconContainer *container,
-			   GList *icons,
-			   double start_y)
+lay_down_icons_horizontal (NautilusCanvasContainer *container,
+			     GList *icons,
+			     double start_y)
 {
 	GList *p, *line_start;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	double canvas_width, y;
 	GArray *positions;
 	IconPositions *position;
@@ -1251,7 +1251,7 @@ lay_down_icons_horizontal (NautilusIconContainer *container,
 	int i;
 	GtkAllocation allocation;
 
-	g_assert (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_assert (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	if (icons == NULL) {
 		return;
@@ -1276,11 +1276,11 @@ lay_down_icons_horizontal (NautilusIconContainer *container,
 		icon = p->data;
 
 		/* Assume it's only one level hierarchy to avoid costly affine calculations */
-		nautilus_icon_canvas_item_get_bounds_for_layout (icon->item,
-								 &bounds.x0, &bounds.y0,
-								 &bounds.x1, &bounds.y1);
+		nautilus_canvas_item_get_bounds_for_layout (icon->item,
+								   &bounds.x0, &bounds.y0,
+								   &bounds.x1, &bounds.y1);
 
-		icon_bounds = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
+		icon_bounds = nautilus_canvas_item_get_icon_rectangle (icon->item);
 		icon_width = ceil ((bounds.x1 - bounds.x0)/grid_width) * grid_width;
 		
 		/* Calculate size above/below baseline */
@@ -1344,7 +1344,7 @@ get_max_icon_dimensions (GList *icon_start,
 			 double *max_text_height,
 			 double *max_bounds_height)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	EelDRect icon_bounds;
 	EelDRect text_bounds;
 	GList *p;
@@ -1358,28 +1358,28 @@ get_max_icon_dimensions (GList *icon_start,
 	for (p = icon_start; p != icon_end; p = p->next) {
 		icon = p->data;
 
-		icon_bounds = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
+		icon_bounds = nautilus_canvas_item_get_icon_rectangle (icon->item);
 		*max_icon_width = MAX (*max_icon_width, ceil (icon_bounds.x1 - icon_bounds.x0));
 		*max_icon_height = MAX (*max_icon_height, ceil (icon_bounds.y1 - icon_bounds.y0));
 
-		text_bounds = nautilus_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
+		text_bounds = nautilus_canvas_item_get_text_rectangle (icon->item, TRUE);
 		*max_text_width = MAX (*max_text_width, ceil (text_bounds.x1 - text_bounds.x0));
 		*max_text_height = MAX (*max_text_height, ceil (text_bounds.y1 - text_bounds.y0));
 
-		nautilus_icon_canvas_item_get_bounds_for_layout (icon->item,
-								 NULL, &y1,
-								 NULL, &y2);
+		nautilus_canvas_item_get_bounds_for_layout (icon->item,
+								   NULL, &y1,
+								   NULL, &y2);
 		*max_bounds_height = MAX (*max_bounds_height, y2 - y1);
 	}
 }
 
 static void
-lay_down_icons_vertical (NautilusIconContainer *container,
-			 GList *icons,
-			 double start_y)
+lay_down_icons_vertical (NautilusCanvasContainer *container,
+			   GList *icons,
+			   double start_y)
 {
 	GList *p, *line_start;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	double x, canvas_height;
 	GArray *positions;
 	IconPositions *position;
@@ -1402,7 +1402,7 @@ lay_down_icons_vertical (NautilusIconContainer *container,
 	int height;
 	int i;
 
-	g_assert (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_assert (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	if (icons == NULL) {
 		return;
@@ -1419,9 +1419,9 @@ lay_down_icons_vertical (NautilusIconContainer *container,
 	max_bounds_height = 0.0;
 
 	get_max_icon_dimensions (icons, NULL,
-				 &max_icon_width, &max_icon_height,
-				 &max_text_width, &max_text_height,
-				 &max_bounds_height);
+				   &max_icon_width, &max_icon_height,
+				   &max_text_width, &max_text_height,
+				   &max_bounds_height);
 
 	max_width = max_icon_width + max_text_width;
 	max_height = MAX (max_icon_height, max_text_height);
@@ -1467,8 +1467,8 @@ lay_down_icons_vertical (NautilusIconContainer *container,
 			max_width_in_column = 0;
 		}
 
-		icon_bounds = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
-		text_bounds = nautilus_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
+		icon_bounds = nautilus_canvas_item_get_icon_rectangle (icon->item);
+		text_bounds = nautilus_canvas_item_get_text_rectangle (icon->item, TRUE);
 
 		max_width_in_column = MAX (max_width_in_column,
 					   ceil (icon_bounds.x1 - icon_bounds.x0) +
@@ -1501,8 +1501,8 @@ lay_down_icons_vertical (NautilusIconContainer *container,
 }
 
 static void
-snap_position (NautilusIconContainer *container,
-	       NautilusIcon *icon,
+snap_position (NautilusCanvasContainer *container,
+	       NautilusCanvasIcon *icon,
 	       int *x, int *y)
 {
 	int center_x;
@@ -1511,19 +1511,19 @@ snap_position (NautilusIconContainer *container,
 	int icon_height;
 	int total_width;
 	int total_height;
-	EelDRect icon_position;
+	EelDRect canvas_position;
 	GtkAllocation allocation;
 	
-	icon_position = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
-	icon_width = icon_position.x1 - icon_position.x0;
-	icon_height = icon_position.y1 - icon_position.y0;
+	canvas_position = nautilus_canvas_item_get_icon_rectangle (icon->item);
+	icon_width = canvas_position.x1 - canvas_position.x0;
+	icon_height = canvas_position.y1 - canvas_position.y0;
 
 	gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
 	total_width = CANVAS_WIDTH (container, allocation);
 	total_height = CANVAS_HEIGHT (container, allocation);
 
-	if (nautilus_icon_container_is_layout_rtl (container))
-	    *x = get_mirror_x_position (container, icon, *x);
+	if (nautilus_canvas_container_is_layout_rtl (container))
+		*x = get_mirror_x_position (container, icon, *x);
 
 	if (*x + icon_width / 2 < DESKTOP_PAD_HORIZONTAL + SNAP_SIZE_X) {
 		*x = DESKTOP_PAD_HORIZONTAL + SNAP_SIZE_X - icon_width / 2;
@@ -1543,8 +1543,8 @@ snap_position (NautilusIconContainer *container,
 
 	center_x = *x + icon_width / 2;
 	*x = SNAP_NEAREST_HORIZONTAL (center_x) - (icon_width / 2);
-	if (nautilus_icon_container_is_layout_rtl (container)) {
-	    *x = get_mirror_x_position (container, icon, *x);
+	if (nautilus_canvas_container_is_layout_rtl (container)) {
+		*x = get_mirror_x_position (container, icon, *x);
 	}
 
 
@@ -1557,19 +1557,19 @@ snap_position (NautilusIconContainer *container,
 static int
 compare_icons_by_position (gconstpointer a, gconstpointer b)
 {
-	NautilusIcon *icon_a, *icon_b;
+	NautilusCanvasIcon *icon_a, *icon_b;
 	int x1, y1, x2, y2;
 	int center_a;
 	int center_b;
 
-	icon_a = (NautilusIcon*)a;
-	icon_b = (NautilusIcon*)b;
+	icon_a = (NautilusCanvasIcon *)a;
+	icon_b = (NautilusCanvasIcon *)b;
 
 	icon_get_bounding_box (icon_a, &x1, &y1, &x2, &y2,
-			       BOUNDS_USAGE_FOR_DISPLAY);
+				 BOUNDS_USAGE_FOR_DISPLAY);
 	center_a = x1 + (x2 - x1) / 2;
 	icon_get_bounding_box (icon_b, &x1, &y1, &x2, &y2,
-			       BOUNDS_USAGE_FOR_DISPLAY);
+				 BOUNDS_USAGE_FOR_DISPLAY);
 	center_b = x1 + (x2 - x1) / 2;
 
 	return center_a == center_b ?
@@ -1578,7 +1578,7 @@ compare_icons_by_position (gconstpointer a, gconstpointer b)
 }
 
 static PlacementGrid *
-placement_grid_new (NautilusIconContainer *container, gboolean tight)
+placement_grid_new (NautilusCanvasContainer *container, gboolean tight)
 {
 	PlacementGrid *grid;
 	int width, height;
@@ -1688,25 +1688,25 @@ canvas_position_to_grid_position (PlacementGrid *grid,
 }
 
 static void
-placement_grid_mark_icon (PlacementGrid *grid, NautilusIcon *icon)
+placement_grid_mark_icon (PlacementGrid *grid, NautilusCanvasIcon *icon)
 {
-	EelIRect icon_pos;
+	EelIRect canvas_pos;
 	EelIRect grid_pos;
 	
 	icon_get_bounding_box (icon,
-			       &icon_pos.x0, &icon_pos.y0,
-			       &icon_pos.x1, &icon_pos.y1,
-			       BOUNDS_USAGE_FOR_LAYOUT);
+				 &canvas_pos.x0, &canvas_pos.y0,
+				 &canvas_pos.x1, &canvas_pos.y1,
+				 BOUNDS_USAGE_FOR_LAYOUT);
 	canvas_position_to_grid_position (grid, 
-					  icon_pos,
+					  canvas_pos,
 					  &grid_pos);
 	placement_grid_mark (grid, grid_pos);
 }
 
 static void
-find_empty_location (NautilusIconContainer *container,
+find_empty_location (NautilusCanvasContainer *container,
 		     PlacementGrid *grid,
-		     NautilusIcon *icon,
+		     NautilusCanvasIcon *icon,
 		     int start_x,
 		     int start_y,
 		     int *x, 
@@ -1727,19 +1727,19 @@ find_empty_location (NautilusIconContainer *container,
 	canvas_height = CANVAS_HEIGHT(container, allocation);
 
 	icon_get_bounding_box (icon,
-			       &icon_position.x0, &icon_position.y0,
-			       &icon_position.x1, &icon_position.y1,
-			       BOUNDS_USAGE_FOR_LAYOUT);
+				 &icon_position.x0, &icon_position.y0,
+				 &icon_position.x1, &icon_position.y1,
+				 BOUNDS_USAGE_FOR_LAYOUT);
 	icon_width = icon_position.x1 - icon_position.x0;
 	icon_height = icon_position.y1 - icon_position.y0;
 
 	icon_get_bounding_box (icon,
-			       NULL, &icon_position.y0,
-			       NULL, &icon_position.y1,
-			       BOUNDS_USAGE_FOR_ENTIRE_ITEM);
+				 NULL, &icon_position.y0,
+				 NULL, &icon_position.y1,
+				 BOUNDS_USAGE_FOR_ENTIRE_ITEM);
 	height_for_bound_check = icon_position.y1 - icon_position.y0;
 
-	pixbuf_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
+	pixbuf_rect = nautilus_canvas_item_get_icon_rectangle (icon->item);
 	
 	/* Start the icon on a grid location */
 	snap_position (container, icon, &start_x, &start_y);
@@ -1787,7 +1787,7 @@ find_empty_location (NautilusIconContainer *container,
 }
 
 static void
-align_icons (NautilusIconContainer *container)
+align_icons (NautilusCanvasContainer *container)
 {
 	GList *unplaced_icons;
 	GList *l;
@@ -1796,9 +1796,9 @@ align_icons (NautilusIconContainer *container)
 	unplaced_icons = g_list_copy (container->details->icons);
 	
 	unplaced_icons = g_list_sort (unplaced_icons, 
-				      compare_icons_by_position);
+					compare_icons_by_position);
 
-	if (nautilus_icon_container_is_layout_rtl (container)) {
+	if (nautilus_canvas_container_is_layout_rtl (container)) {
 		unplaced_icons = g_list_reverse (unplaced_icons);
 	}
 
@@ -1809,7 +1809,7 @@ align_icons (NautilusIconContainer *container)
 	}
 
 	for (l = unplaced_icons; l != NULL; l = l->next) {
-		NautilusIcon *icon;
+		NautilusCanvasIcon *icon;
 		int x, y;
 
 		icon = l->data;
@@ -1827,28 +1827,28 @@ align_icons (NautilusIconContainer *container)
 
 	placement_grid_free (grid);
 
-	if (nautilus_icon_container_is_layout_rtl (container)) {
-		nautilus_icon_container_set_rtl_positions (container);
+	if (nautilus_canvas_container_is_layout_rtl (container)) {
+		nautilus_canvas_container_set_rtl_positions (container);
 	}
 }
 
 static double
-get_mirror_x_position (NautilusIconContainer *container, NautilusIcon *icon, double x)
+get_mirror_x_position (NautilusCanvasContainer *container, NautilusCanvasIcon *icon, double x)
 {
 	EelDRect icon_bounds;
 	GtkAllocation allocation;
 
 	gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
-	icon_bounds = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
+	icon_bounds = nautilus_canvas_item_get_icon_rectangle (icon->item);
 
 	return CANVAS_WIDTH(container, allocation) - x - (icon_bounds.x1 - icon_bounds.x0);
 }
 
 static void
-nautilus_icon_container_set_rtl_positions (NautilusIconContainer *container)
+nautilus_canvas_container_set_rtl_positions (NautilusCanvasContainer *container)
 {
 	GList *l;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	double x;
 
 	if (!container->details->icons) {
@@ -1863,11 +1863,11 @@ nautilus_icon_container_set_rtl_positions (NautilusIconContainer *container)
 }
 
 static void
-lay_down_icons_vertical_desktop (NautilusIconContainer *container, GList *icons)
+lay_down_icons_vertical_desktop (NautilusCanvasContainer *container, GList *icons)
 {
 	GList *p, *placed_icons, *unplaced_icons;
 	int total, new_length, placed;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	int height, max_width, column_width, icon_width, icon_height;
 	int x, y, x1, x2, y1, y2;
 	EelDRect icon_rect;
@@ -1906,14 +1906,14 @@ lay_down_icons_vertical_desktop (NautilusIconContainer *container, GList *icons)
 		if (grid) {
 			for (p = placed_icons; p != NULL; p = p->next) {
 				placement_grid_mark_icon
-					(grid, (NautilusIcon*)p->data);
+					(grid, (NautilusCanvasIcon *)p->data);
 			}
 			
 			/* Place unplaced icons in the best locations */
 			for (p = unplaced_icons; p != NULL; p = p->next) {
 				icon = p->data;
 				
-				icon_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
+				icon_rect = nautilus_canvas_item_get_icon_rectangle (icon->item);
 				
 				/* Start the icon in the first column */
 				x = DESKTOP_PAD_HORIZONTAL + (SNAP_SIZE_X / 2) - ((icon_rect.x1 - icon_rect.x0) / 2);
@@ -1956,7 +1956,7 @@ lay_down_icons_vertical_desktop (NautilusIconContainer *container, GList *icons)
 				icon = p->data;
 
 				icon_get_bounding_box (icon, &x1, &y1, &x2, &y2,
-						       BOUNDS_USAGE_FOR_LAYOUT);
+							 BOUNDS_USAGE_FOR_LAYOUT);
 				icon_width = x2 - x1;
 				icon_height = y2 - y1;
 
@@ -1966,7 +1966,7 @@ lay_down_icons_vertical_desktop (NautilusIconContainer *container, GList *icons)
 
 				if (should_snap) {
 					/* Snap the baseline to a grid position */
-					icon_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
+					icon_rect = nautilus_canvas_item_get_icon_rectangle (icon->item);
 					baseline = y + (icon_rect.y1 - icon_rect.y0);
 					baseline = SNAP_CEIL_VERTICAL (baseline);
 					y = baseline - (icon_rect.y1 - icon_rect.y0);
@@ -1998,14 +1998,14 @@ lay_down_icons_vertical_desktop (NautilusIconContainer *container, GList *icons)
 			for (p = icons; p != NULL; p = p->next) {
 				icon = p->data;
 				icon_get_bounding_box (icon, &x1, &y1, &x2, &y2,
-						       BOUNDS_USAGE_FOR_LAYOUT);
+							 BOUNDS_USAGE_FOR_LAYOUT);
 				icon_height = y2 - y1;
 
 				icon_get_bounding_box (icon, NULL, &y1, NULL, &y2,
-						       BOUNDS_USAGE_FOR_ENTIRE_ITEM);
+							 BOUNDS_USAGE_FOR_ENTIRE_ITEM);
 				icon_height_for_bound_check = y2 - y1;
 				
-				icon_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
+				icon_rect = nautilus_canvas_item_get_icon_rectangle (icon->item);
 
 				if (should_snap) {
 					baseline = y + (icon_rect.y1 - icon_rect.y0);
@@ -2022,8 +2022,8 @@ lay_down_icons_vertical_desktop (NautilusIconContainer *container, GList *icons)
 				}
 				
 				icon_set_position (icon,
-						   center_x - (icon_rect.x1 - icon_rect.x0) / 2,
-						   y);
+						     center_x - (icon_rect.x1 - icon_rect.x0) / 2,
+						     y);
 				
 				icon->saved_ltr_x = icon->x;
 				y += icon_height + DESKTOP_PAD_VERTICAL;
@@ -2039,36 +2039,36 @@ lay_down_icons_vertical_desktop (NautilusIconContainer *container, GList *icons)
 	 * This should not be tied to the direction of layout.
 	 * It should be a separate switch.
 	 */
-	nautilus_icon_container_freeze_icon_positions (container);
+	nautilus_canvas_container_freeze_icon_positions (container);
 }
 
 
 static void
-lay_down_icons (NautilusIconContainer *container, GList *icons, double start_y)
+lay_down_icons (NautilusCanvasContainer *container, GList *icons, double start_y)
 {
 	switch (container->details->layout_mode)
-	{
-	case NAUTILUS_ICON_LAYOUT_L_R_T_B:
-	case NAUTILUS_ICON_LAYOUT_R_L_T_B:
-		lay_down_icons_horizontal (container, icons, start_y);
-		break;
+		{
+		case NAUTILUS_CANVAS_LAYOUT_L_R_T_B:
+		case NAUTILUS_CANVAS_LAYOUT_R_L_T_B:
+			lay_down_icons_horizontal (container, icons, start_y);
+			break;
 		
-	case NAUTILUS_ICON_LAYOUT_T_B_L_R:
-	case NAUTILUS_ICON_LAYOUT_T_B_R_L:
-		if (nautilus_icon_container_get_is_desktop (container)) {
-			lay_down_icons_vertical_desktop (container, icons);
-		} else {
-			lay_down_icons_vertical (container, icons, start_y);
+		case NAUTILUS_CANVAS_LAYOUT_T_B_L_R:
+		case NAUTILUS_CANVAS_LAYOUT_T_B_R_L:
+			if (nautilus_canvas_container_get_is_desktop (container)) {
+				lay_down_icons_vertical_desktop (container, icons);
+			} else {
+				lay_down_icons_vertical (container, icons, start_y);
+			}
+			break;
+		
+		default:
+			g_assert_not_reached ();
 		}
-		break;
-		
-	default:
-		g_assert_not_reached ();
-	}
 }
 
 static void
-redo_layout_internal (NautilusIconContainer *container)
+redo_layout_internal (NautilusCanvasContainer *container)
 {
 	finish_adding_new_icons (container);
 
@@ -2086,23 +2086,23 @@ redo_layout_internal (NautilusIconContainer *container)
 		lay_down_icons (container, container->details->icons, 0);
 	}
 
-	if (nautilus_icon_container_is_layout_rtl (container)) {
-		nautilus_icon_container_set_rtl_positions (container);
+	if (nautilus_canvas_container_is_layout_rtl (container)) {
+		nautilus_canvas_container_set_rtl_positions (container);
 	}
 
-	nautilus_icon_container_update_scroll_region (container);
+	nautilus_canvas_container_update_scroll_region (container);
 
 	process_pending_icon_to_reveal (container);
 	process_pending_icon_to_rename (container);
-	nautilus_icon_container_update_visible_icons (container);
+	nautilus_canvas_container_update_visible_icons (container);
 }
 
 static gboolean
 redo_layout_callback (gpointer callback_data)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	container = NAUTILUS_ICON_CONTAINER (callback_data);
+	container = NAUTILUS_CANVAS_CONTAINER (callback_data);
 	redo_layout_internal (container);
 	container->details->idle_id = 0;
 
@@ -2110,7 +2110,7 @@ redo_layout_callback (gpointer callback_data)
 }
 
 static void
-unschedule_redo_layout (NautilusIconContainer *container)
+unschedule_redo_layout (NautilusCanvasContainer *container)
 {
         if (container->details->idle_id != 0) {
 		g_source_remove (container->details->idle_id);
@@ -2119,7 +2119,7 @@ unschedule_redo_layout (NautilusIconContainer *container)
 }
 
 static void
-schedule_redo_layout (NautilusIconContainer *container)
+schedule_redo_layout (NautilusCanvasContainer *container)
 {
 	if (container->details->idle_id == 0
 	    && container->details->has_been_allocated) {
@@ -2129,19 +2129,19 @@ schedule_redo_layout (NautilusIconContainer *container)
 }
 
 static void
-redo_layout (NautilusIconContainer *container)
+redo_layout (NautilusCanvasContainer *container)
 {
 	unschedule_redo_layout (container);
 	redo_layout_internal (container);
 }
 
 static void
-reload_icon_positions (NautilusIconContainer *container)
+reload_icon_positions (NautilusCanvasContainer *container)
 {
 	GList *p, *no_position_icons;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	gboolean have_stored_position;
-	NautilusIconPosition position;
+	NautilusCanvasPosition position;
 	EelDRect bounds;
 	double bottom;
 	EelCanvasItem *item;
@@ -2159,18 +2159,18 @@ reload_icon_positions (NautilusIconContainer *container)
 
 		have_stored_position = FALSE;
 		g_signal_emit (container,
-				 signals[GET_STORED_ICON_POSITION], 0,
-				 icon->data,
-				 &position,
-				 &have_stored_position);
+			       signals[GET_STORED_ICON_POSITION], 0,
+			       icon->data,
+			       &position,
+			       &have_stored_position);
 		if (have_stored_position) {
 			icon_set_position (icon, position.x, position.y);
 			item = EEL_CANVAS_ITEM (icon->item);
-			nautilus_icon_canvas_item_get_bounds_for_layout (icon->item,
-									 &bounds.x0,
-									 &bounds.y0,
-									 &bounds.x1,
-									 &bounds.y1);
+			nautilus_canvas_item_get_bounds_for_layout (icon->item,
+									   &bounds.x0,
+									   &bounds.y0,
+									   &bounds.x1,
+									   &bounds.y1);
 			eel_canvas_item_i2w (item->parent,
 					     &bounds.x0,
 					     &bounds.y0);
@@ -2201,42 +2201,42 @@ button_event_modifies_selection (GdkEventButton *event)
 
 /* invalidate the cached label sizes for all the icons */
 static void
-invalidate_label_sizes (NautilusIconContainer *container)
+invalidate_label_sizes (NautilusCanvasContainer *container)
 {
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	
 	for (p = container->details->icons; p != NULL; p = p->next) {
 		icon = p->data;
 
-		nautilus_icon_canvas_item_invalidate_label_size (icon->item);		
+		nautilus_canvas_item_invalidate_label_size (icon->item);		
 	}
 }
 
 /* invalidate the entire labels (i.e. their attributes) for all the icons */
 static void
-invalidate_labels (NautilusIconContainer *container)
+invalidate_labels (NautilusCanvasContainer *container)
 {
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	
 	for (p = container->details->icons; p != NULL; p = p->next) {
 		icon = p->data;
 
-		nautilus_icon_canvas_item_invalidate_label (icon->item);		
+		nautilus_canvas_item_invalidate_label (icon->item);		
 	}
 }
 
 static gboolean
-select_range (NautilusIconContainer *container,
-	      NautilusIcon *icon1,
-	      NautilusIcon *icon2,
+select_range (NautilusCanvasContainer *container,
+	      NautilusCanvasIcon *icon1,
+	      NautilusCanvasIcon *icon2,
 	      gboolean unselect_outside_range)
 {
 	gboolean selection_changed;
 	GList *p;
-	NautilusIcon *icon;
-	NautilusIcon *unmatched_icon;
+	NautilusCanvasIcon *icon;
+	NautilusCanvasIcon *unmatched_icon;
 	gboolean select;
 
 	selection_changed = FALSE;
@@ -2275,12 +2275,12 @@ select_range (NautilusIconContainer *container,
 
 
 static gboolean
-select_one_unselect_others (NautilusIconContainer *container,
-			    NautilusIcon *icon_to_select)
+select_one_unselect_others (NautilusCanvasContainer *container,
+			    NautilusCanvasIcon *icon_to_select)
 {
 	gboolean selection_changed;
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
 	selection_changed = FALSE;
 	
@@ -2299,23 +2299,23 @@ select_one_unselect_others (NautilusIconContainer *container,
 }
 
 static gboolean
-unselect_all (NautilusIconContainer *container)
+unselect_all (NautilusCanvasContainer *container)
 {
 	return select_one_unselect_others (container, NULL);
 }
 
 void
-nautilus_icon_container_move_icon (NautilusIconContainer *container,
-				   NautilusIcon *icon,
-				   int x, int y,
-				   double scale,
-				   gboolean raise,
-				   gboolean snap,
-				   gboolean update_position)
+nautilus_canvas_container_move_icon (NautilusCanvasContainer *container,
+				       NautilusCanvasIcon *icon,
+				       int x, int y,
+				       double scale,
+				       gboolean raise,
+				       gboolean snap,
+				       gboolean update_position)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
 	gboolean emit_signal;
-	NautilusIconPosition position;
+	NautilusCanvasPosition position;
 	
 	details = container->details;
 	
@@ -2327,7 +2327,7 @@ nautilus_icon_container_move_icon (NautilusIconContainer *container,
 
 	if (scale != icon->scale) {
 		icon->scale = scale;
-		nautilus_icon_container_update_icon (container, icon);
+		nautilus_canvas_container_update_icon (container, icon);
 		if (update_position) {
 			redo_layout (container); 
 			emit_signal = TRUE;
@@ -2344,7 +2344,7 @@ nautilus_icon_container_move_icon (NautilusIconContainer *container,
 			emit_signal = update_position;
 		}
 
-		icon->saved_ltr_x = nautilus_icon_container_is_layout_rtl (container) ? get_mirror_x_position (container, icon, icon->x) : icon->x;
+		icon->saved_ltr_x = nautilus_canvas_container_is_layout_rtl (container) ? get_mirror_x_position (container, icon, icon->x) : icon->x;
 	}
 	
 	if (emit_signal) {
@@ -2352,8 +2352,8 @@ nautilus_icon_container_move_icon (NautilusIconContainer *container,
 		position.y = icon->y;
 		position.scale = scale;
 		g_signal_emit (container,
-				 signals[ICON_POSITION_CHANGED], 0,
-				 icon->data, &position);
+			       signals[ICON_POSITION_CHANGED], 0,
+			       icon->data, &position);
 	}
 	
 	if (raise) {
@@ -2371,13 +2371,13 @@ nautilus_icon_container_move_icon (NautilusIconContainer *container,
 
 /* Implementation of rubberband selection.  */
 static void
-rubberband_select (NautilusIconContainer *container,
+rubberband_select (NautilusCanvasContainer *container,
 		   const EelDRect *previous_rect,
 		   const EelDRect *current_rect)
 {
 	GList *p;
 	gboolean selection_changed, is_in, canvas_rect_calculated;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	EelIRect canvas_rect;
 	EelCanvas *canvas;
 			
@@ -2405,7 +2405,7 @@ rubberband_select (NautilusIconContainer *container,
 			canvas_rect_calculated = TRUE;
 		}
 		
-		is_in = nautilus_icon_canvas_item_hit_test_rectangle (icon->item, canvas_rect);
+		is_in = nautilus_canvas_item_hit_test_rectangle (icon->item, canvas_rect);
 
 		selection_changed |= icon_set_selected
 			(container, icon,
@@ -2414,16 +2414,16 @@ rubberband_select (NautilusIconContainer *container,
 
 	if (selection_changed) {
 		g_signal_emit (container,
-				 signals[SELECTION_CHANGED], 0);
+			       signals[SELECTION_CHANGED], 0);
 	}
 }
 
 static int
 rubberband_timeout_callback (gpointer data)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	GtkWidget *widget;
-	NautilusIconRubberbandInfo *band_info;
+	NautilusCanvasRubberbandInfo *band_info;
 	int x, y;
 	double x1, y1, x2, y2;
 	double world_x, world_y;
@@ -2435,7 +2435,7 @@ rubberband_timeout_callback (gpointer data)
 	EelDRect selection_rect;
 
 	widget = GTK_WIDGET (data);
-	container = NAUTILUS_ICON_CONTAINER (data);
+	container = NAUTILUS_CANVAS_CONTAINER (data);
 	band_info = &container->details->rubberband_info;
 
 	g_assert (band_info->timer_id != 0);
@@ -2457,8 +2457,8 @@ rubberband_timeout_callback (gpointer data)
 
 	gdk_window_get_device_position (gtk_widget_get_window (widget),
 					gdk_device_manager_get_client_pointer (
-						gdk_display_get_device_manager (
-							gtk_widget_get_display (widget))),
+									       gdk_display_get_device_manager (
+													       gtk_widget_get_display (widget))),
 					&x, &y, NULL);
 
 	if (x < RUBBERBAND_SCROLL_THRESHOLD) {
@@ -2486,7 +2486,7 @@ rubberband_timeout_callback (gpointer data)
 		return TRUE;
 	}
 
-	nautilus_icon_container_scroll (container, x_scroll, y_scroll);
+	nautilus_canvas_container_scroll (container, x_scroll, y_scroll);
 
 	/* Remember to convert from widget to scrolled window coords */
 	eel_canvas_window_to_world (EEL_CANVAS (container),
@@ -2542,15 +2542,15 @@ rubberband_timeout_callback (gpointer data)
 }
 
 static void
-start_rubberbanding (NautilusIconContainer *container,
+start_rubberbanding (NautilusCanvasContainer *container,
 		     GdkEventButton *event)
 {
 	AtkObject *accessible;
-	NautilusIconContainerDetails *details;
-	NautilusIconRubberbandInfo *band_info;
+	NautilusCanvasContainerDetails *details;
+	NautilusCanvasRubberbandInfo *band_info;
 	GdkRGBA bg_color, border_color;
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	GtkStyleContext *context;
 
 	details = container->details;
@@ -2608,17 +2608,17 @@ start_rubberbanding (NautilusIconContainer *container,
 	}
 
 	eel_canvas_item_grab (band_info->selection_rectangle,
-				(GDK_POINTER_MOTION_MASK
-				 | GDK_BUTTON_RELEASE_MASK 
-				 | GDK_SCROLL_MASK),
-				NULL, event->time);
+			      (GDK_POINTER_MOTION_MASK
+			       | GDK_BUTTON_RELEASE_MASK 
+			       | GDK_SCROLL_MASK),
+			      NULL, event->time);
 }
 
 static void
-stop_rubberbanding (NautilusIconContainer *container,
+stop_rubberbanding (NautilusCanvasContainer *container,
 		    guint32 time)
 {
-	NautilusIconRubberbandInfo *band_info;
+	NautilusCanvasRubberbandInfo *band_info;
 	GList *icons;
 	gboolean enable_animation;
 
@@ -2644,32 +2644,32 @@ stop_rubberbanding (NautilusIconContainer *container,
 
 	/* if only one item has been selected, use it as range
 	 * selection base (cf. handle_icon_button_press) */
-	icons = nautilus_icon_container_get_selected_icons (container);
+	icons = nautilus_canvas_container_get_selected_icons (container);
 	if (g_list_length (icons) == 1) {
 		container->details->range_selection_base_icon = icons->data;
 	}
 	g_list_free (icons);
 
 	g_signal_emit (container,
-			 signals[BAND_SELECT_ENDED], 0);
+		       signals[BAND_SELECT_ENDED], 0);
 }
 
 /* Keyboard navigation.  */
 
-typedef gboolean (* IsBetterIconFunction) (NautilusIconContainer *container,
-					   NautilusIcon *start_icon,
-					   NautilusIcon *best_so_far,
-					   NautilusIcon *candidate,
-					   void *data);
+typedef gboolean (* IsBetterCanvasFunction) (NautilusCanvasContainer *container,
+					     NautilusCanvasIcon *start_icon,
+					     NautilusCanvasIcon *best_so_far,
+					     NautilusCanvasIcon *candidate,
+					     void *data);
 
-static NautilusIcon *
-find_best_icon (NautilusIconContainer *container,
-		NautilusIcon *start_icon,
-		IsBetterIconFunction function,
-		void *data)
+static NautilusCanvasIcon *
+find_best_icon (NautilusCanvasContainer *container,
+		  NautilusCanvasIcon *start_icon,
+		  IsBetterCanvasFunction function,
+		  void *data)
 {
 	GList *p;
-	NautilusIcon *best, *candidate;
+	NautilusCanvasIcon *best, *candidate;
 
 	best = NULL;
 	for (p = container->details->icons; p != NULL; p = p->next) {
@@ -2684,14 +2684,14 @@ find_best_icon (NautilusIconContainer *container,
 	return best;
 }
 
-static NautilusIcon *
-find_best_selected_icon (NautilusIconContainer *container,
-			 NautilusIcon *start_icon,
-			 IsBetterIconFunction function,
-			 void *data)
+static NautilusCanvasIcon *
+find_best_selected_icon (NautilusCanvasContainer *container,
+			   NautilusCanvasIcon *start_icon,
+			   IsBetterCanvasFunction function,
+			   void *data)
 {
 	GList *p;
-	NautilusIcon *best, *candidate;
+	NautilusCanvasIcon *best, *candidate;
 
 	best = NULL;
 	for (p = container->details->icons; p != NULL; p = p->next) {
@@ -2707,20 +2707,20 @@ find_best_selected_icon (NautilusIconContainer *container,
 }
 
 static int
-compare_icons_by_uri (NautilusIconContainer *container,
-		      NautilusIcon *icon_a,
-		      NautilusIcon *icon_b)
+compare_icons_by_uri (NautilusCanvasContainer *container,
+			NautilusCanvasIcon *icon_a,
+			NautilusCanvasIcon *icon_b)
 {
 	char *uri_a, *uri_b;
 	int result;
 
-	g_assert (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_assert (NAUTILUS_IS_CANVAS_CONTAINER (container));
 	g_assert (icon_a != NULL);
 	g_assert (icon_b != NULL);
 	g_assert (icon_a != icon_b);
 
-	uri_a = nautilus_icon_container_get_icon_uri (container, icon_a);
-	uri_b = nautilus_icon_container_get_icon_uri (container, icon_b);
+	uri_a = nautilus_canvas_container_get_icon_uri (container, icon_a);
+	uri_b = nautilus_canvas_container_get_icon_uri (container, icon_b);
 	result = strcmp (uri_a, uri_b);
 	g_assert (result != 0);
 	g_free (uri_a);
@@ -2730,14 +2730,14 @@ compare_icons_by_uri (NautilusIconContainer *container,
 }
 
 static int
-get_cmp_point_x (NautilusIconContainer *container,
+get_cmp_point_x (NautilusCanvasContainer *container,
 		 EelDRect icon_rect)
 {
 	return (icon_rect.x0 + icon_rect.x1) / 2;
 }
 
 static int
-get_cmp_point_y (NautilusIconContainer *container,
+get_cmp_point_y (NautilusCanvasContainer *container,
 		 EelDRect icon_rect)
 {
 	return icon_rect.y1;
@@ -2745,21 +2745,21 @@ get_cmp_point_y (NautilusIconContainer *container,
 
 
 static int
-compare_icons_horizontal (NautilusIconContainer *container,
-			  NautilusIcon *icon_a,
-			  NautilusIcon *icon_b)
+compare_icons_horizontal (NautilusCanvasContainer *container,
+			    NautilusCanvasIcon *icon_a,
+			    NautilusCanvasIcon *icon_b)
 {
 	EelDRect world_rect;
 	int ax, bx;
 
-	world_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon_a->item);
+	world_rect = nautilus_canvas_item_get_icon_rectangle (icon_a->item);
 	eel_canvas_w2c
 		(EEL_CANVAS (container),
 		 get_cmp_point_x (container, world_rect),
 		 get_cmp_point_y (container, world_rect),
 		 &ax,
 		 NULL);
-	world_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon_b->item);
+	world_rect = nautilus_canvas_item_get_icon_rectangle (icon_b->item);
 	eel_canvas_w2c
 		(EEL_CANVAS (container),
 		 get_cmp_point_x (container, world_rect),
@@ -2777,21 +2777,21 @@ compare_icons_horizontal (NautilusIconContainer *container,
 }
 
 static int
-compare_icons_vertical (NautilusIconContainer *container,
-			NautilusIcon *icon_a,
-			NautilusIcon *icon_b)
+compare_icons_vertical (NautilusCanvasContainer *container,
+			  NautilusCanvasIcon *icon_a,
+			  NautilusCanvasIcon *icon_b)
 {
 	EelDRect world_rect;
 	int ay, by;
 
-	world_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon_a->item);
+	world_rect = nautilus_canvas_item_get_icon_rectangle (icon_a->item);
 	eel_canvas_w2c
 		(EEL_CANVAS (container),
 		 get_cmp_point_x (container, world_rect),
 		 get_cmp_point_y (container, world_rect),
 		 NULL,
 		 &ay);
-	world_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon_b->item);
+	world_rect = nautilus_canvas_item_get_icon_rectangle (icon_b->item);
 	eel_canvas_w2c
 		(EEL_CANVAS (container),
 		 get_cmp_point_x (container, world_rect),
@@ -2809,21 +2809,21 @@ compare_icons_vertical (NautilusIconContainer *container,
 }
 
 static int
-compare_icons_horizontal_first (NautilusIconContainer *container,
-				NautilusIcon *icon_a,
-				NautilusIcon *icon_b)
+compare_icons_horizontal_first (NautilusCanvasContainer *container,
+				  NautilusCanvasIcon *icon_a,
+				  NautilusCanvasIcon *icon_b)
 {
 	EelDRect world_rect;
 	int ax, ay, bx, by;
 
-	world_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon_a->item);
+	world_rect = nautilus_canvas_item_get_icon_rectangle (icon_a->item);
 	eel_canvas_w2c
 		(EEL_CANVAS (container),
 		 get_cmp_point_x (container, world_rect),
 		 get_cmp_point_y (container, world_rect),
 		 &ax,
 		 &ay);
-	world_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon_b->item);
+	world_rect = nautilus_canvas_item_get_icon_rectangle (icon_b->item);
 	eel_canvas_w2c
 		(EEL_CANVAS (container),
 		 get_cmp_point_x (container, world_rect),
@@ -2847,21 +2847,21 @@ compare_icons_horizontal_first (NautilusIconContainer *container,
 }
 
 static int
-compare_icons_vertical_first (NautilusIconContainer *container,
-			      NautilusIcon *icon_a,
-			      NautilusIcon *icon_b)
+compare_icons_vertical_first (NautilusCanvasContainer *container,
+				NautilusCanvasIcon *icon_a,
+				NautilusCanvasIcon *icon_b)
 {
 	EelDRect world_rect;
 	int ax, ay, bx, by;
 
-	world_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon_a->item);
+	world_rect = nautilus_canvas_item_get_icon_rectangle (icon_a->item);
 	eel_canvas_w2c
 		(EEL_CANVAS (container),
 		 get_cmp_point_x (container, world_rect),
 		 get_cmp_point_y (container, world_rect),
 		 &ax,
 		 &ay);
-	world_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon_b->item);
+	world_rect = nautilus_canvas_item_get_icon_rectangle (icon_b->item);
 	eel_canvas_w2c
 		(EEL_CANVAS (container),
 		 get_cmp_point_x (container, world_rect),
@@ -2885,10 +2885,10 @@ compare_icons_vertical_first (NautilusIconContainer *container,
 }
 
 static gboolean
-leftmost_in_top_row (NautilusIconContainer *container,
-		     NautilusIcon *start_icon,
-		     NautilusIcon *best_so_far,
-		     NautilusIcon *candidate,
+leftmost_in_top_row (NautilusCanvasContainer *container,
+		     NautilusCanvasIcon *start_icon,
+		     NautilusCanvasIcon *best_so_far,
+		     NautilusCanvasIcon *candidate,
 		     void *data)
 {
 	if (best_so_far == NULL) {
@@ -2898,10 +2898,10 @@ leftmost_in_top_row (NautilusIconContainer *container,
 }
 
 static gboolean
-rightmost_in_top_row (NautilusIconContainer *container,
-		      NautilusIcon *start_icon,
-		      NautilusIcon *best_so_far,
-		      NautilusIcon *candidate,
+rightmost_in_top_row (NautilusCanvasContainer *container,
+		      NautilusCanvasIcon *start_icon,
+		      NautilusCanvasIcon *best_so_far,
+		      NautilusCanvasIcon *candidate,
 		      void *data)
 {
 	if (best_so_far == NULL) {
@@ -2912,10 +2912,10 @@ rightmost_in_top_row (NautilusIconContainer *container,
 }
 
 static gboolean
-rightmost_in_bottom_row (NautilusIconContainer *container,
-			 NautilusIcon *start_icon,
-			 NautilusIcon *best_so_far,
-			 NautilusIcon *candidate,
+rightmost_in_bottom_row (NautilusCanvasContainer *container,
+			 NautilusCanvasIcon *start_icon,
+			 NautilusCanvasIcon *best_so_far,
+			 NautilusCanvasIcon *candidate,
 			 void *data)
 {
 	if (best_so_far == NULL) {
@@ -2925,8 +2925,8 @@ rightmost_in_bottom_row (NautilusIconContainer *container,
 }
 
 static int
-compare_with_start_row (NautilusIconContainer *container,
-			NautilusIcon *icon)
+compare_with_start_row (NautilusCanvasContainer *container,
+			NautilusCanvasIcon *icon)
 {
 	EelCanvasItem *item;
 
@@ -2942,8 +2942,8 @@ compare_with_start_row (NautilusIconContainer *container,
 }
 
 static int
-compare_with_start_column (NautilusIconContainer *container,
-			   NautilusIcon *icon)
+compare_with_start_column (NautilusCanvasContainer *container,
+			   NautilusCanvasIcon *icon)
 {
 	EelCanvasItem *item;
 
@@ -2959,10 +2959,10 @@ compare_with_start_column (NautilusIconContainer *container,
 }
 
 static gboolean
-same_row_right_side_leftmost (NautilusIconContainer *container,
-			      NautilusIcon *start_icon,
-			      NautilusIcon *best_so_far,
-			      NautilusIcon *candidate,
+same_row_right_side_leftmost (NautilusCanvasContainer *container,
+			      NautilusCanvasIcon *start_icon,
+			      NautilusCanvasIcon *best_so_far,
+			      NautilusCanvasIcon *candidate,
 			      void *data)
 {
 	/* Candidates not on the start row do not qualify. */
@@ -2973,16 +2973,16 @@ same_row_right_side_leftmost (NautilusIconContainer *container,
 	/* Candidates that are farther right lose out. */
 	if (best_so_far != NULL) {
 		if (compare_icons_horizontal_first (container,
-						    best_so_far,
-						    candidate) < 0) {
+						      best_so_far,
+						      candidate) < 0) {
 			return FALSE;
 		}
 	}
 
 	/* Candidate to the left of the start do not qualify. */
 	if (compare_icons_horizontal_first (container,
-					    candidate,
-					    start_icon) <= 0) {
+					      candidate,
+					      start_icon) <= 0) {
 		return FALSE;
 	}
 
@@ -2990,10 +2990,10 @@ same_row_right_side_leftmost (NautilusIconContainer *container,
 }
 
 static gboolean
-same_row_left_side_rightmost (NautilusIconContainer *container,
-			      NautilusIcon *start_icon,
-			      NautilusIcon *best_so_far,
-			      NautilusIcon *candidate,
+same_row_left_side_rightmost (NautilusCanvasContainer *container,
+			      NautilusCanvasIcon *start_icon,
+			      NautilusCanvasIcon *best_so_far,
+			      NautilusCanvasIcon *candidate,
 			      void *data)
 {
 	/* Candidates not on the start row do not qualify. */
@@ -3004,16 +3004,16 @@ same_row_left_side_rightmost (NautilusIconContainer *container,
 	/* Candidates that are farther left lose out. */
 	if (best_so_far != NULL) {
 		if (compare_icons_horizontal_first (container,
-						    best_so_far,
-						    candidate) > 0) {
+						      best_so_far,
+						      candidate) > 0) {
 			return FALSE;
 		}
 	}
 
 	/* Candidate to the right of the start do not qualify. */
 	if (compare_icons_horizontal_first (container,
-					    candidate,
-					    start_icon) >= 0) {
+					      candidate,
+					      start_icon) >= 0) {
 		return FALSE;
 	}
 
@@ -3021,10 +3021,10 @@ same_row_left_side_rightmost (NautilusIconContainer *container,
 }
 
 static gboolean
-next_row_leftmost (NautilusIconContainer *container,
-		   NautilusIcon *start_icon,
-	           NautilusIcon *best_so_far,
-		   NautilusIcon *candidate,
+next_row_leftmost (NautilusCanvasContainer *container,
+		   NautilusCanvasIcon *start_icon,
+	           NautilusCanvasIcon *best_so_far,
+		   NautilusCanvasIcon *candidate,
 		   void *data)
 {
 	/* sort out icons that are not below the current row */
@@ -3034,15 +3034,15 @@ next_row_leftmost (NautilusIconContainer *container,
 
 	if (best_so_far != NULL) {
 		if (compare_icons_vertical_first (container,
-						  best_so_far,
-						  candidate) > 0) {
+						    best_so_far,
+						    candidate) > 0) {
 			/* candidate is above best choice, but below the current row */
 			return TRUE;
 		}
 
 		if (compare_icons_horizontal_first (container,
-						    best_so_far,
-						    candidate) > 0) {
+						      best_so_far,
+						      candidate) > 0) {
 			return TRUE;
 		}
 	}
@@ -3051,10 +3051,10 @@ next_row_leftmost (NautilusIconContainer *container,
 }
 
 static gboolean
-next_row_rightmost (NautilusIconContainer *container,
-		    NautilusIcon *start_icon,
-		    NautilusIcon *best_so_far,
-		    NautilusIcon *candidate,
+next_row_rightmost (NautilusCanvasContainer *container,
+		    NautilusCanvasIcon *start_icon,
+		    NautilusCanvasIcon *best_so_far,
+		    NautilusCanvasIcon *candidate,
 		    void *data)
 {
 	/* sort out icons that are not below the current row */
@@ -3064,15 +3064,15 @@ next_row_rightmost (NautilusIconContainer *container,
 
 	if (best_so_far != NULL) {
 		if (compare_icons_vertical_first (container,
-						  best_so_far,
-						  candidate) > 0) {
+						    best_so_far,
+						    candidate) > 0) {
 			/* candidate is above best choice, but below the current row */
 			return TRUE;
 		}
 
 		if (compare_icons_horizontal_first (container,
-						    best_so_far,
-						    candidate) < 0) {
+						      best_so_far,
+						      candidate) < 0) {
 			return TRUE;
 		}
 	}
@@ -3081,10 +3081,10 @@ next_row_rightmost (NautilusIconContainer *container,
 }
 
 static gboolean
-next_column_bottommost (NautilusIconContainer *container,
-			NautilusIcon *start_icon,
-			NautilusIcon *best_so_far,
-			NautilusIcon *candidate,
+next_column_bottommost (NautilusCanvasContainer *container,
+			NautilusCanvasIcon *start_icon,
+			NautilusCanvasIcon *best_so_far,
+			NautilusCanvasIcon *candidate,
 			void *data)
 {
 	/* sort out icons that are not on the right of the current column */
@@ -3094,43 +3094,13 @@ next_column_bottommost (NautilusIconContainer *container,
 
 	if (best_so_far != NULL) {
 		if (compare_icons_horizontal_first (container,
-						  best_so_far,
-						  candidate) > 0) {
+						      best_so_far,
+						      candidate) > 0) {
 			/* candidate is above best choice, but below the current row */
 			return TRUE;
 		}
 
 		if (compare_icons_vertical_first (container,
-						  best_so_far,
-						  candidate) < 0) {
-			return TRUE;
-		}
-	}
-
-	return best_so_far == NULL;
-}
-
-static gboolean
-previous_row_rightmost (NautilusIconContainer *container,
-		        NautilusIcon *start_icon,
-			NautilusIcon *best_so_far,
-			NautilusIcon *candidate,
-			void *data)
-{
-	/* sort out icons that are not above the current row */
-	if (compare_with_start_row (container, candidate) <= 0) {
-		return FALSE;
-	}
-
-	if (best_so_far != NULL) {
-		if (compare_icons_vertical_first (container,
-						  best_so_far,
-						  candidate) < 0) {
-			/* candidate is below the best choice, but above the current row */
-			return TRUE;
-		}
-
-		if (compare_icons_horizontal_first (container,
 						    best_so_far,
 						    candidate) < 0) {
 			return TRUE;
@@ -3141,10 +3111,40 @@ previous_row_rightmost (NautilusIconContainer *container,
 }
 
 static gboolean
-same_column_above_lowest (NautilusIconContainer *container,
-			  NautilusIcon *start_icon,
-			  NautilusIcon *best_so_far,
-			  NautilusIcon *candidate,
+previous_row_rightmost (NautilusCanvasContainer *container,
+		        NautilusCanvasIcon *start_icon,
+			NautilusCanvasIcon *best_so_far,
+			NautilusCanvasIcon *candidate,
+			void *data)
+{
+	/* sort out icons that are not above the current row */
+	if (compare_with_start_row (container, candidate) <= 0) {
+		return FALSE;
+	}
+
+	if (best_so_far != NULL) {
+		if (compare_icons_vertical_first (container,
+						    best_so_far,
+						    candidate) < 0) {
+			/* candidate is below the best choice, but above the current row */
+			return TRUE;
+		}
+
+		if (compare_icons_horizontal_first (container,
+						      best_so_far,
+						      candidate) < 0) {
+			return TRUE;
+		}
+	}
+
+	return best_so_far == NULL;
+}
+
+static gboolean
+same_column_above_lowest (NautilusCanvasContainer *container,
+			  NautilusCanvasIcon *start_icon,
+			  NautilusCanvasIcon *best_so_far,
+			  NautilusCanvasIcon *candidate,
 			  void *data)
 {
 	/* Candidates not on the start column do not qualify. */
@@ -3155,16 +3155,16 @@ same_column_above_lowest (NautilusIconContainer *container,
 	/* Candidates that are higher lose out. */
 	if (best_so_far != NULL) {
 		if (compare_icons_vertical_first (container,
-						  best_so_far,
-						  candidate) > 0) {
+						    best_so_far,
+						    candidate) > 0) {
 			return FALSE;
 		}
 	}
 
 	/* Candidates below the start do not qualify. */
 	if (compare_icons_vertical_first (container,
-					  candidate,
-					  start_icon) >= 0) {
+					    candidate,
+					    start_icon) >= 0) {
 		return FALSE;
 	}
 
@@ -3172,10 +3172,10 @@ same_column_above_lowest (NautilusIconContainer *container,
 }
 
 static gboolean
-same_column_below_highest (NautilusIconContainer *container,
-			   NautilusIcon *start_icon,
-			   NautilusIcon *best_so_far,
-			   NautilusIcon *candidate,
+same_column_below_highest (NautilusCanvasContainer *container,
+			   NautilusCanvasIcon *start_icon,
+			   NautilusCanvasIcon *best_so_far,
+			   NautilusCanvasIcon *candidate,
 			   void *data)
 {
 	/* Candidates not on the start column do not qualify. */
@@ -3186,16 +3186,16 @@ same_column_below_highest (NautilusIconContainer *container,
 	/* Candidates that are lower lose out. */
 	if (best_so_far != NULL) {
 		if (compare_icons_vertical_first (container,
-						  best_so_far,
-						  candidate) < 0) {
+						    best_so_far,
+						    candidate) < 0) {
 			return FALSE;
 		}
 	}
 
 	/* Candidates above the start do not qualify. */
 	if (compare_icons_vertical_first (container,
-					  candidate,
-					  start_icon) <= 0) {
+					    candidate,
+					    start_icon) <= 0) {
 		return FALSE;
 	}
 
@@ -3203,10 +3203,10 @@ same_column_below_highest (NautilusIconContainer *container,
 }
 
 static gboolean
-previous_column_highest (NautilusIconContainer *container,
-			 NautilusIcon *start_icon,
-			 NautilusIcon *best_so_far,
-			 NautilusIcon *candidate,
+previous_column_highest (NautilusCanvasContainer *container,
+			 NautilusCanvasIcon *start_icon,
+			 NautilusCanvasIcon *best_so_far,
+			 NautilusCanvasIcon *candidate,
 			 void *data)
 {
 	/* sort out icons that are not before the current column */
@@ -3216,15 +3216,15 @@ previous_column_highest (NautilusIconContainer *container,
 
 	if (best_so_far != NULL) {
 		if (compare_icons_horizontal (container,
-					      best_so_far,
-					      candidate) < 0) {
+						best_so_far,
+						candidate) < 0) {
 			/* candidate is right of the best choice, but left of the current column */
 			return TRUE;
 		}
 
 		if (compare_icons_vertical (container,
-					    best_so_far,
-					    candidate) > 0) {
+					      best_so_far,
+					      candidate) > 0) {
 			return TRUE;
 		}
 	}
@@ -3234,10 +3234,10 @@ previous_column_highest (NautilusIconContainer *container,
 
 
 static gboolean
-next_column_highest (NautilusIconContainer *container,
-		     NautilusIcon *start_icon,
-		     NautilusIcon *best_so_far,
-		     NautilusIcon *candidate,
+next_column_highest (NautilusCanvasContainer *container,
+		     NautilusCanvasIcon *start_icon,
+		     NautilusCanvasIcon *best_so_far,
+		     NautilusCanvasIcon *candidate,
 		     void *data)
 {
 	/* sort out icons that are not after the current column */
@@ -3247,15 +3247,15 @@ next_column_highest (NautilusIconContainer *container,
 
 	if (best_so_far != NULL) {
 		if (compare_icons_horizontal_first (container,
-						    best_so_far,
-						    candidate) > 0) {
+						      best_so_far,
+						      candidate) > 0) {
 			/* candidate is left of the best choice, but right of the current column */
 			return TRUE;
 		}
 
 		if (compare_icons_vertical_first (container,
-						  best_so_far,
-						  candidate) > 0) {
+						    best_so_far,
+						    candidate) > 0) {
 			return TRUE;
 		}
 	}
@@ -3264,10 +3264,10 @@ next_column_highest (NautilusIconContainer *container,
 }
 
 static gboolean
-previous_column_lowest (NautilusIconContainer *container,
-		        NautilusIcon *start_icon,
-			NautilusIcon *best_so_far,
-			NautilusIcon *candidate,
+previous_column_lowest (NautilusCanvasContainer *container,
+		        NautilusCanvasIcon *start_icon,
+			NautilusCanvasIcon *best_so_far,
+			NautilusCanvasIcon *candidate,
 			void *data)
 {
 	/* sort out icons that are not before the current column */
@@ -3277,15 +3277,15 @@ previous_column_lowest (NautilusIconContainer *container,
 
 	if (best_so_far != NULL) {
 		if (compare_icons_horizontal_first (container,
-						    best_so_far,
-						    candidate) < 0) {
+						      best_so_far,
+						      candidate) < 0) {
 			/* candidate is right of the best choice, but left of the current column */
 			return TRUE;
 		}
 
 		if (compare_icons_vertical_first (container,
-						  best_so_far,
-						  candidate) < 0) {
+						    best_so_far,
+						    candidate) < 0) {
 			return TRUE;
 		}
 	}
@@ -3294,10 +3294,10 @@ previous_column_lowest (NautilusIconContainer *container,
 }
 
 static gboolean
-last_column_lowest (NautilusIconContainer *container,
-		    NautilusIcon *start_icon,
-		    NautilusIcon *best_so_far,
-		    NautilusIcon *candidate,
+last_column_lowest (NautilusCanvasContainer *container,
+		    NautilusCanvasIcon *start_icon,
+		    NautilusCanvasIcon *best_so_far,
+		    NautilusCanvasIcon *candidate,
 		    void *data)
 {
 	if (best_so_far == NULL) {
@@ -3307,10 +3307,10 @@ last_column_lowest (NautilusIconContainer *container,
 }
 
 static gboolean
-closest_in_90_degrees (NautilusIconContainer *container,
-		       NautilusIcon *start_icon,
-		       NautilusIcon *best_so_far,
-		       NautilusIcon *candidate,
+closest_in_90_degrees (NautilusCanvasContainer *container,
+		       NautilusCanvasIcon *start_icon,
+		       NautilusCanvasIcon *best_so_far,
+		       NautilusCanvasIcon *candidate,
 		       void *data)
 {
 	EelDRect world_rect;
@@ -3320,7 +3320,7 @@ closest_in_90_degrees (NautilusIconContainer *container,
 	int *best_dist;
 
 
-	world_rect = nautilus_icon_canvas_item_get_icon_rectangle (candidate->item);
+	world_rect = nautilus_canvas_item_get_icon_rectangle (candidate->item);
 	eel_canvas_w2c
 		(EEL_CANVAS (container),
 		 get_cmp_point_x (container, world_rect),
@@ -3377,8 +3377,8 @@ closest_in_90_degrees (NautilusIconContainer *container,
 }
 
 static EelDRect 
-get_rubberband (NautilusIcon *icon1,
-		NautilusIcon *icon2)
+get_rubberband (NautilusCanvasIcon *icon1,
+		NautilusCanvasIcon *icon2)
 {
 	EelDRect rect1;
 	EelDRect rect2;
@@ -3397,9 +3397,9 @@ get_rubberband (NautilusIcon *icon1,
 }
 
 static void
-keyboard_move_to (NautilusIconContainer *container,
-		  NautilusIcon *icon,
-		  NautilusIcon *from,
+keyboard_move_to (NautilusCanvasContainer *container,
+		  NautilusCanvasIcon *icon,
+		  NautilusCanvasIcon *from,
 		  GdkEventKey *event)
 {
 	if (icon == NULL) {
@@ -3436,7 +3436,7 @@ keyboard_move_to (NautilusIconContainer *container,
 		   (event->state & GDK_CONTROL_MASK) == 0 &&
 		   (event->state & GDK_SHIFT_MASK) != 0) {
 		/* Select range */
-		NautilusIcon *start_icon;
+		NautilusCanvasIcon *start_icon;
 
 		start_icon = container->details->range_selection_base_icon;
 		if (start_icon == NULL || !start_icon->is_selected) {
@@ -3458,61 +3458,61 @@ keyboard_move_to (NautilusIconContainer *container,
 		container->details->range_selection_base_icon = icon;
 		if (select_one_unselect_others (container, icon)) {
 			g_signal_emit (container,
-					 signals[SELECTION_CHANGED], 0);
+				       signals[SELECTION_CHANGED], 0);
 		}
 	}
 	schedule_keyboard_icon_reveal (container, icon);
 }
 
 static void
-keyboard_home (NautilusIconContainer *container,
+keyboard_home (NautilusCanvasContainer *container,
 	       GdkEventKey *event)
 {
-	NautilusIcon *from;
-	NautilusIcon *to;
+	NautilusCanvasIcon *from;
+	NautilusCanvasIcon *to;
 	
-	/* Home selects the first icon.
-	 * Control-Home sets the keyboard focus to the first icon.
+	/* Home selects the first canvas.
+	 * Control-Home sets the keyboard focus to the first canvas.
 	 */
 
 	from = find_best_selected_icon (container, NULL,
-					rightmost_in_bottom_row, 
-					NULL);
+					  rightmost_in_bottom_row, 
+					  NULL);
 	to = find_best_icon (container, NULL, leftmost_in_top_row, NULL);	
 
 	keyboard_move_to (container, to, from, event);
 }
 
 static void
-keyboard_end (NautilusIconContainer *container,
+keyboard_end (NautilusCanvasContainer *container,
 	      GdkEventKey *event)
 {
-	NautilusIcon *to;
-	NautilusIcon *from;
+	NautilusCanvasIcon *to;
+	NautilusCanvasIcon *from;
 
-	/* End selects the last icon.
-	 * Control-End sets the keyboard focus to the last icon.
+	/* End selects the last canvas.
+	 * Control-End sets the keyboard focus to the last canvas.
 	 */
 	from = find_best_selected_icon (container, NULL,
-					leftmost_in_top_row, 
-					NULL);
+					  leftmost_in_top_row, 
+					  NULL);
 	to = find_best_icon (container, NULL,
-			     nautilus_icon_container_is_layout_vertical (container) ?
-			     last_column_lowest :
-			     rightmost_in_bottom_row,
-			     NULL);
+			       nautilus_canvas_container_is_layout_vertical (container) ?
+			       last_column_lowest :
+			       rightmost_in_bottom_row,
+			       NULL);
 
 	keyboard_move_to (container, to, from, event);
 }
 
 static void
-record_arrow_key_start (NautilusIconContainer *container,
-			NautilusIcon *icon,
+record_arrow_key_start (NautilusCanvasContainer *container,
+			NautilusCanvasIcon *icon,
 			GtkDirectionType direction)
 {
 	EelDRect world_rect;
 
-	world_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
+	world_rect = nautilus_canvas_item_get_icon_rectangle (icon->item);
 	eel_canvas_w2c
 		(EEL_CANVAS (container),
 		 get_cmp_point_x (container, world_rect),
@@ -3523,18 +3523,18 @@ record_arrow_key_start (NautilusIconContainer *container,
 }
 
 static void
-keyboard_arrow_key (NautilusIconContainer *container,
+keyboard_arrow_key (NautilusCanvasContainer *container,
 		    GdkEventKey *event,
 		    GtkDirectionType direction,
-		    IsBetterIconFunction better_start,
-		    IsBetterIconFunction empty_start,
-		    IsBetterIconFunction better_destination,
-		    IsBetterIconFunction better_destination_fallback,
-		    IsBetterIconFunction better_destination_fallback_fallback,
-		    IsBetterIconFunction better_destination_manual)
+		    IsBetterCanvasFunction better_start,
+		    IsBetterCanvasFunction empty_start,
+		    IsBetterCanvasFunction better_destination,
+		    IsBetterCanvasFunction better_destination_fallback,
+		    IsBetterCanvasFunction better_destination_fallback_fallback,
+		    IsBetterCanvasFunction better_destination_manual)
 {
-	NautilusIcon *from;
-	NautilusIcon *to;
+	NautilusCanvasIcon *from;
+	NautilusCanvasIcon *to;
 	int data;
 
 	/* Chose the icon to start with.
@@ -3624,25 +3624,25 @@ static gboolean
 is_rectangle_selection_event (GdkEventKey *event)
 {
 	return (event->state & GDK_CONTROL_MASK) != 0 &&
-	       (event->state & GDK_SHIFT_MASK) != 0;
+		(event->state & GDK_SHIFT_MASK) != 0;
 }
 
 static void
-keyboard_right (NautilusIconContainer *container,
+keyboard_right (NautilusCanvasContainer *container,
 		GdkEventKey *event)
 {
-	IsBetterIconFunction fallback;
-	IsBetterIconFunction next_column_fallback;
+	IsBetterCanvasFunction fallback;
+	IsBetterCanvasFunction next_column_fallback;
 
 	fallback = NULL;
 	if (container->details->auto_layout &&
-	    !nautilus_icon_container_is_layout_vertical (container) &&
+	    !nautilus_canvas_container_is_layout_vertical (container) &&
 	    !is_rectangle_selection_event (event)) {
 		fallback = next_row_leftmost;
 	}
 
 	next_column_fallback = NULL;
-	if (nautilus_icon_container_is_layout_vertical (container) &&
+	if (nautilus_canvas_container_is_layout_vertical (container) &&
 	    gtk_widget_get_direction (GTK_WIDGET (container)) != GTK_TEXT_DIR_RTL) {
 		next_column_fallback = next_column_bottommost;
 	}
@@ -3654,7 +3654,7 @@ keyboard_right (NautilusIconContainer *container,
 			    event,
 			    GTK_DIR_RIGHT,
 			    rightmost_in_bottom_row,
-			    nautilus_icon_container_is_layout_rtl (container) ?
+			    nautilus_canvas_container_is_layout_rtl (container) ?
 			    rightmost_in_top_row : leftmost_in_top_row,
 			    same_row_right_side_leftmost,
 			    fallback,
@@ -3663,21 +3663,21 @@ keyboard_right (NautilusIconContainer *container,
 }
 
 static void
-keyboard_left (NautilusIconContainer *container,
+keyboard_left (NautilusCanvasContainer *container,
 	       GdkEventKey *event)
 {
-	IsBetterIconFunction fallback;
-	IsBetterIconFunction previous_column_fallback;
+	IsBetterCanvasFunction fallback;
+	IsBetterCanvasFunction previous_column_fallback;
 
 	fallback = NULL;
 	if (container->details->auto_layout &&
-	    !nautilus_icon_container_is_layout_vertical (container) &&
+	    !nautilus_canvas_container_is_layout_vertical (container) &&
 	    !is_rectangle_selection_event (event)) {
 		fallback = previous_row_rightmost;
 	}
 
 	previous_column_fallback = NULL;
-	if (nautilus_icon_container_is_layout_vertical (container) &&
+	if (nautilus_canvas_container_is_layout_vertical (container) &&
 	    gtk_widget_get_direction (GTK_WIDGET (container)) == GTK_TEXT_DIR_RTL) {
 		previous_column_fallback = previous_column_lowest;
 	}
@@ -3689,7 +3689,7 @@ keyboard_left (NautilusIconContainer *container,
 			    event,
 			    GTK_DIR_LEFT,
 			    rightmost_in_bottom_row,
-			    nautilus_icon_container_is_layout_rtl (container) ?
+			    nautilus_canvas_container_is_layout_rtl (container) ?
 			    rightmost_in_top_row : leftmost_in_top_row,
 			    same_row_left_side_rightmost,
 			    fallback,
@@ -3698,15 +3698,15 @@ keyboard_left (NautilusIconContainer *container,
 }
 
 static void
-keyboard_down (NautilusIconContainer *container,
+keyboard_down (NautilusCanvasContainer *container,
 	       GdkEventKey *event)
 {
-	IsBetterIconFunction fallback;
-	IsBetterIconFunction next_row_fallback;
+	IsBetterCanvasFunction fallback;
+	IsBetterCanvasFunction next_row_fallback;
 
 	fallback = NULL;
 	if (container->details->auto_layout &&
-	    nautilus_icon_container_is_layout_vertical (container) &&
+	    nautilus_canvas_container_is_layout_vertical (container) &&
 	    !is_rectangle_selection_event (event)) {
 		if (gtk_widget_get_direction (GTK_WIDGET (container)) == GTK_TEXT_DIR_RTL) {
 			fallback = previous_column_highest;
@@ -3716,7 +3716,7 @@ keyboard_down (NautilusIconContainer *container,
 	}
 
 	next_row_fallback = NULL;
-	if (!nautilus_icon_container_is_layout_vertical (container)) {
+	if (!nautilus_canvas_container_is_layout_vertical (container)) {
 		if (gtk_widget_get_direction (GTK_WIDGET (container)) == GTK_TEXT_DIR_RTL) {
 			next_row_fallback = next_row_leftmost;
 		} else {
@@ -3731,7 +3731,7 @@ keyboard_down (NautilusIconContainer *container,
 			    event,
 			    GTK_DIR_DOWN,
 			    rightmost_in_bottom_row,
-			    nautilus_icon_container_is_layout_rtl (container) ?
+			    nautilus_canvas_container_is_layout_rtl (container) ?
 			    rightmost_in_top_row : leftmost_in_top_row,
 			    same_column_below_highest,
 			    fallback,
@@ -3740,14 +3740,14 @@ keyboard_down (NautilusIconContainer *container,
 }
 
 static void
-keyboard_up (NautilusIconContainer *container,
+keyboard_up (NautilusCanvasContainer *container,
 	     GdkEventKey *event)
 {
-	IsBetterIconFunction fallback;
+	IsBetterCanvasFunction fallback;
 
 	fallback = NULL;
 	if (container->details->auto_layout &&
-	    nautilus_icon_container_is_layout_vertical (container) &&
+	    nautilus_canvas_container_is_layout_vertical (container) &&
 	    !is_rectangle_selection_event (event)) {
 		if (gtk_widget_get_direction (GTK_WIDGET (container)) == GTK_TEXT_DIR_RTL) {
 			fallback = next_column_bottommost;
@@ -3763,7 +3763,7 @@ keyboard_up (NautilusIconContainer *container,
 			    event,
 			    GTK_DIR_UP,
 			    rightmost_in_bottom_row,
-			    nautilus_icon_container_is_layout_rtl (container) ?
+			    nautilus_canvas_container_is_layout_rtl (container) ?
 			    rightmost_in_top_row : leftmost_in_top_row,
 			    same_column_above_lowest,
 			    fallback,
@@ -3772,10 +3772,10 @@ keyboard_up (NautilusIconContainer *container,
 }
 
 static void
-keyboard_space (NautilusIconContainer *container,
+keyboard_space (NautilusCanvasContainer *container,
 		GdkEventKey *event)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	
 	if (!has_selection (container) &&
 	    container->details->keyboard_focus != NULL) {
@@ -3793,14 +3793,14 @@ keyboard_space (NautilusIconContainer *container,
 			} 
 		} else {
 			icon = find_best_selected_icon (container,
-							NULL,
-							leftmost_in_top_row,
-							NULL);
+							    NULL,
+							    leftmost_in_top_row,
+							    NULL);
 			if (icon == NULL) {
 				icon = find_best_icon (container,
-						       NULL,
-						       leftmost_in_top_row,
-						       NULL);
+							   NULL,
+							   leftmost_in_top_row,
+							   NULL);
 			}
 			if (icon != NULL) {
 				set_keyboard_focus (container, icon);
@@ -3813,7 +3813,7 @@ keyboard_space (NautilusIconContainer *container,
 	}
 }
 
-/* look for the first icon that matches the longest part of a given
+/* look for the first canvas that matches the longest part of a given
  * search pattern
  */
 typedef struct {
@@ -3823,11 +3823,11 @@ typedef struct {
 
 #ifndef TAB_NAVIGATION_DISABLED
 static void
-select_previous_or_next_icon (NautilusIconContainer *container, 
-			      gboolean next, 
-			      GdkEventKey *event)
+select_previous_or_next_icon (NautilusCanvasContainer *container, 
+				gboolean next, 
+				GdkEventKey *event)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	const GList *item;
 
 	item = NULL;
@@ -3841,7 +3841,7 @@ select_previous_or_next_icon (NautilusIconContainer *container,
 	}
 
 	if (icon != NULL) {
-		/* must have at least @icon in the list */
+		/* must have at least @canvas in the list */
 		g_assert (container->details->icons != NULL);
 		item = g_list_find (container->details->icons, icon);
 		g_assert (item != NULL);
@@ -3867,11 +3867,11 @@ select_previous_or_next_icon (NautilusIconContainer *container,
 static void
 destroy (GtkWidget *object)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	container = NAUTILUS_ICON_CONTAINER (object);
+	container = NAUTILUS_CANVAS_CONTAINER (object);
 
-        nautilus_icon_container_clear (container);
+        nautilus_canvas_container_clear (container);
 
 	if (container->details->rubberband_info.timer_id != 0) {
 		g_source_remove (container->details->rubberband_info.timer_id);
@@ -3903,15 +3903,15 @@ destroy (GtkWidget *object)
 		container->details->size_allocation_count_id = 0;
 	}
 
-	GTK_WIDGET_CLASS (nautilus_icon_container_parent_class)->destroy (object);
+	GTK_WIDGET_CLASS (nautilus_canvas_container_parent_class)->destroy (object);
 }
 
 static void
 finalize (GObject *object)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
 
-	details = NAUTILUS_ICON_CONTAINER (object)->details;
+	details = NAUTILUS_CANVAS_CONTAINER (object)->details;
 
 	g_signal_handlers_disconnect_by_func (nautilus_icon_view_preferences,
 					      text_ellipsis_limit_changed_container_callback,
@@ -3937,7 +3937,7 @@ finalize (GObject *object)
 
 	g_free (details);
 
-	G_OBJECT_CLASS (nautilus_icon_container_parent_class)->finalize (object);
+	G_OBJECT_CLASS (nautilus_canvas_container_parent_class)->finalize (object);
 }
 
 /* GtkWidget methods.  */
@@ -3945,9 +3945,9 @@ finalize (GObject *object)
 static gboolean
 clear_size_allocation_count (gpointer data)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	container = NAUTILUS_ICON_CONTAINER (data);
+	container = NAUTILUS_CANVAS_CONTAINER (data);
 
 	container->details->size_allocation_count_id = 0;
 	container->details->size_allocation_count = 0;
@@ -3959,11 +3959,11 @@ static void
 size_allocate (GtkWidget *widget,
 	       GtkAllocation *allocation)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	gboolean need_layout_redone;
 	GtkAllocation wid_allocation;
 
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
 
 	need_layout_redone = !container->details->has_been_allocated;
 	gtk_widget_get_allocation (widget, &wid_allocation);
@@ -3998,7 +3998,7 @@ size_allocate (GtkWidget *widget,
 		need_layout_redone = FALSE;
 	}
 	
-	GTK_WIDGET_CLASS (nautilus_icon_container_parent_class)->size_allocate (widget, allocation);
+	GTK_WIDGET_CLASS (nautilus_canvas_container_parent_class)->size_allocate (widget, allocation);
 
 	container->details->has_been_allocated = TRUE;
 
@@ -4010,8 +4010,8 @@ size_allocate (GtkWidget *widget,
 static GtkSizeRequestMode
 get_request_mode (GtkWidget *widget)
 {
-  /* Don't trade size at all, since we get whatever we get anyway. */
-  return GTK_SIZE_REQUEST_CONSTANT_SIZE;
+	/* Don't trade size at all, since we get whatever we get anyway. */
+	return GTK_SIZE_REQUEST_CONSTANT_SIZE;
 }
 
 /* We need to implement these since the GtkScrolledWindow uses them
@@ -4072,11 +4072,11 @@ static void
 realize (GtkWidget *widget)
 {
 	GtkAdjustment *vadj, *hadj;
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	GTK_WIDGET_CLASS (nautilus_icon_container_parent_class)->realize (widget);
+	GTK_WIDGET_CLASS (nautilus_canvas_container_parent_class)->realize (widget);
 
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
 
 	/* Ensure that the desktop window is native so the background
 	   set on it is drawn by X. */
@@ -4085,7 +4085,7 @@ realize (GtkWidget *widget)
 	}
 
 	/* Set up DnD.  */
-	nautilus_icon_dnd_init (container);
+	nautilus_canvas_dnd_init (container);
 
 	hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (widget));
 	g_signal_connect (hadj, "value_changed",
@@ -4100,33 +4100,33 @@ realize (GtkWidget *widget)
 static void
 unrealize (GtkWidget *widget)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
 
-	nautilus_icon_dnd_fini (container);
+	nautilus_canvas_dnd_fini (container);
 
-	GTK_WIDGET_CLASS (nautilus_icon_container_parent_class)->unrealize (widget);
+	GTK_WIDGET_CLASS (nautilus_canvas_container_parent_class)->unrealize (widget);
 }
 
 static void
 style_updated (GtkWidget *widget)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
 	container->details->use_drop_shadows = container->details->drop_shadows_requested;
 
 	/* Don't chain up to parent, if this is a desktop container,
 	 * because that resets the background of the window.
 	 */
-	if (!nautilus_icon_container_get_is_desktop (container)) {
-		GTK_WIDGET_CLASS (nautilus_icon_container_parent_class)->style_updated (widget);
+	if (!nautilus_canvas_container_get_is_desktop (container)) {
+		GTK_WIDGET_CLASS (nautilus_canvas_container_parent_class)->style_updated (widget);
 	}
 
 	if (gtk_widget_get_realized (widget)) {
 		invalidate_labels (container);
-		nautilus_icon_container_request_update_all (container);
+		nautilus_canvas_container_request_update_all (container);
 	}
 }
 
@@ -4134,12 +4134,12 @@ static gboolean
 button_press_event (GtkWidget *widget,
 		    GdkEventButton *event)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	gboolean selection_changed;
 	gboolean return_value;
 	gboolean clicked_on_icon;
 
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
         container->details->button_down_time = event->time;
 	
         /* Forget about the old keyboard selection now that we've started mousing. */
@@ -4152,9 +4152,9 @@ button_press_event (GtkWidget *widget,
 	}
 
 	/* Invoke the canvas event handler and see if an item picks up the event. */
-	clicked_on_icon = GTK_WIDGET_CLASS (nautilus_icon_container_parent_class)->button_press_event (widget, event);
+	clicked_on_icon = GTK_WIDGET_CLASS (nautilus_canvas_container_parent_class)->button_press_event (widget, event);
 	
-	/* Move focus to icon container, unless we're still renaming (to avoid exiting
+	/* Move focus to canvas container, unless we're still renaming (to avoid exiting
 	 * renaming mode)
 	 */
   	if (!gtk_widget_has_focus (widget) && !(is_renaming (container) || is_renaming_pending (container))) {
@@ -4178,7 +4178,7 @@ button_press_event (GtkWidget *widget,
 			selection_changed = unselect_all (container);
 			if (selection_changed) {
 				g_signal_emit (container,
-						 signals[SELECTION_CHANGED], 0);
+					       signals[SELECTION_CHANGED], 0);
 			}
 		}
 
@@ -4220,10 +4220,10 @@ button_press_event (GtkWidget *widget,
 }
 
 static void
-nautilus_icon_container_did_not_drag (NautilusIconContainer *container,
-				      GdkEventButton *event)
+nautilus_canvas_container_did_not_drag (NautilusCanvasContainer *container,
+					GdkEventButton *event)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
 	gboolean selection_changed;
 	static gint64 last_click_time = 0;
 	static gint click_count = 0;
@@ -4296,7 +4296,7 @@ nautilus_icon_container_did_not_drag (NautilusIconContainer *container,
 }
 
 static gboolean
-clicked_within_double_click_interval (NautilusIconContainer *container)
+clicked_within_double_click_interval (NautilusCanvasContainer *container)
 {
 	static gint64 last_click_time = 0;
 	static gint click_count = 0;
@@ -4327,17 +4327,17 @@ clicked_within_double_click_interval (NautilusIconContainer *container)
 }
 
 static void
-clear_drag_state (NautilusIconContainer *container)
+clear_drag_state (NautilusCanvasContainer *container)
 {
 	container->details->drag_icon = NULL;
 	container->details->drag_state = DRAG_STATE_INITIAL;
 }
 
 static gboolean
-start_stretching (NautilusIconContainer *container)
+start_stretching (NautilusCanvasContainer *container)
 {
-	NautilusIconContainerDetails *details;
-	NautilusIcon *icon;
+	NautilusCanvasContainerDetails *details;
+	NautilusCanvasIcon *icon;
 	GtkWidget *toplevel;
 	GtkCornerType corner;
 	GdkCursor *cursor;
@@ -4346,9 +4346,9 @@ start_stretching (NautilusIconContainer *container)
 	icon = details->stretch_icon;
 	
 	/* Check if we hit the stretch handles. */
-	if (!nautilus_icon_canvas_item_hit_test_stretch_handles (icon->item,
-								 details->drag_x, details->drag_y,
-								 &corner)) {
+	if (!nautilus_canvas_item_hit_test_stretch_handles (icon->item,
+								   details->drag_x, details->drag_y,
+								   &corner)) {
 		return FALSE;
 	}
 
@@ -4372,22 +4372,22 @@ start_stretching (NautilusIconContainer *container)
 	/* Set up the dragging. */
 	details->drag_state = DRAG_STATE_STRETCH;
 	eel_canvas_w2c (EEL_CANVAS (container),
-			  details->drag_x,
-			  details->drag_y,
-			  &details->stretch_start.pointer_x,
-			  &details->stretch_start.pointer_y);
+			details->drag_x,
+			details->drag_y,
+			&details->stretch_start.pointer_x,
+			&details->stretch_start.pointer_y);
 	eel_canvas_w2c (EEL_CANVAS (container),
-			  icon->x, icon->y,
-			  &details->stretch_start.icon_x,
-			  &details->stretch_start.icon_y);
+			icon->x, icon->y,
+			&details->stretch_start.icon_x,
+			&details->stretch_start.icon_y);
 	icon_get_size (container, icon,
-		       &details->stretch_start.icon_size);
+			 &details->stretch_start.icon_size);
 
 	eel_canvas_item_grab (EEL_CANVAS_ITEM (icon->item),
-				(GDK_POINTER_MOTION_MASK
-				 | GDK_BUTTON_RELEASE_MASK),
-				cursor,
-				GDK_CURRENT_TIME);
+			      (GDK_POINTER_MOTION_MASK
+			       | GDK_BUTTON_RELEASE_MASK),
+			      cursor,
+			      GDK_CURRENT_TIME);
 	if (cursor)
 		g_object_unref (cursor);
 
@@ -4401,10 +4401,10 @@ start_stretching (NautilusIconContainer *container)
 }
 
 static gboolean
-update_stretch_at_idle (NautilusIconContainer *container)
+update_stretch_at_idle (NautilusCanvasContainer *container)
 {
-	NautilusIconContainerDetails *details;
-	NautilusIcon *icon;
+	NautilusCanvasContainerDetails *details;
+	NautilusCanvasIcon *icon;
 	double world_x, world_y;
 	StretchState stretch_state;
 
@@ -4417,15 +4417,15 @@ update_stretch_at_idle (NautilusIconContainer *container)
 	}
 
 	eel_canvas_w2c (EEL_CANVAS (container),
-			  details->world_x, details->world_y,
-			  &stretch_state.pointer_x, &stretch_state.pointer_y);
+			details->world_x, details->world_y,
+			&stretch_state.pointer_x, &stretch_state.pointer_y);
 
 	compute_stretch (&details->stretch_start,
 			 &stretch_state);
 
 	eel_canvas_c2w (EEL_CANVAS (container),
-			  stretch_state.icon_x, stretch_state.icon_y,
-			  &world_x, &world_y);
+			stretch_state.icon_x, stretch_state.icon_y,
+			&world_x, &world_y);
 
 	icon_set_position (icon, world_x, world_y);
 	icon_set_size (container, icon, stretch_state.icon_size, FALSE, FALSE);
@@ -4436,11 +4436,11 @@ update_stretch_at_idle (NautilusIconContainer *container)
 }	
 
 static void
-continue_stretching (NautilusIconContainer *container,
+continue_stretching (NautilusCanvasContainer *container,
 		     double world_x, double world_y)
 {
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	container->details->world_x = world_x;
 	container->details->world_y = world_y;
@@ -4451,10 +4451,10 @@ continue_stretching (NautilusIconContainer *container,
 }
 
 static gboolean
-keyboard_stretching (NautilusIconContainer *container,
+keyboard_stretching (NautilusCanvasContainer *container,
 		     GdkEventKey           *event)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	guint size;
 
 	icon = container->details->stretch_icon;
@@ -4477,10 +4477,10 @@ keyboard_stretching (NautilusIconContainer *container,
 		break;
 	case GDK_KEY_0:
 	case GDK_KEY_KP_0:
-		nautilus_icon_container_move_icon (container, icon,
-						   icon->x, icon->y,
-						   1.0,
-						   FALSE, TRUE, TRUE);
+		nautilus_canvas_container_move_icon (container, icon,
+						       icon->x, icon->y,
+						       1.0,
+						       FALSE, TRUE, TRUE);
 		break;
 	}
 	
@@ -4488,18 +4488,18 @@ keyboard_stretching (NautilusIconContainer *container,
 }
 
 static void
-ungrab_stretch_icon (NautilusIconContainer *container)
+ungrab_stretch_icon (NautilusCanvasContainer *container)
 {
 	eel_canvas_item_ungrab (EEL_CANVAS_ITEM (container->details->stretch_icon->item),
-				  GDK_CURRENT_TIME);
+				GDK_CURRENT_TIME);
 }
 
 static void
-end_stretching (NautilusIconContainer *container,
+end_stretching (NautilusCanvasContainer *container,
 		double world_x, double world_y)
 {
-	NautilusIconPosition position;
-	NautilusIcon *icon;
+	NautilusCanvasPosition position;
+	NautilusCanvasIcon *icon;
 	
 	continue_stretching (container, world_x, world_y);
 	ungrab_stretch_icon (container);
@@ -4507,7 +4507,7 @@ end_stretching (NautilusIconContainer *container,
 	/* now that we're done stretching, update the icon's position */
 	
 	icon = container->details->drag_icon;	
-	if (nautilus_icon_container_is_layout_rtl (container)) {
+	if (nautilus_canvas_container_is_layout_rtl (container)) {
 		position.x = icon->saved_ltr_x = get_mirror_x_position (container, icon, icon->x);
 	} else {
 		position.x = icon->x;
@@ -4515,17 +4515,17 @@ end_stretching (NautilusIconContainer *container,
 	position.y = icon->y;
 	position.scale = icon->scale;
 	g_signal_emit (container,
-			 signals[ICON_POSITION_CHANGED], 0,
-			 icon->data, &position);
+		       signals[ICON_POSITION_CHANGED], 0,
+		       icon->data, &position);
 	
 	clear_drag_state (container);
 	redo_layout (container);
 }
 
 static gboolean
-undo_stretching (NautilusIconContainer *container)
+undo_stretching (NautilusCanvasContainer *container)
 {
-	NautilusIcon *stretched_icon;
+	NautilusCanvasIcon *stretched_icon;
 
 	stretched_icon = container->details->stretch_icon;
 
@@ -4537,17 +4537,17 @@ undo_stretching (NautilusIconContainer *container)
 		ungrab_stretch_icon (container);
 		clear_drag_state (container);
 	}
-	nautilus_icon_canvas_item_set_show_stretch_handles
+	nautilus_canvas_item_set_show_stretch_handles
 		(stretched_icon->item, FALSE);
 	
 	icon_set_position (stretched_icon,
-			   container->details->stretch_initial_x,
-			   container->details->stretch_initial_y);
+			     container->details->stretch_initial_x,
+			     container->details->stretch_initial_y);
 	icon_set_size (container,
-		       stretched_icon, 
-		       container->details->stretch_initial_size,
-		       TRUE,
-		       TRUE);
+			 stretched_icon, 
+			 container->details->stretch_initial_size,
+			 TRUE,
+			 TRUE);
 	
 	container->details->stretch_icon = NULL;				
 	emit_stretch_ended (container, stretched_icon);
@@ -4560,11 +4560,11 @@ static gboolean
 button_release_event (GtkWidget *widget,
 		      GdkEventButton *event)
 {
-	NautilusIconContainer *container;
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainer *container;
+	NautilusCanvasContainerDetails *details;
 	double world_x, world_y;
 	
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
 	details = container->details;
 
 	if (event->button == RUBBERBAND_BUTTON && details->rubberband_info.active) {
@@ -4578,10 +4578,10 @@ button_release_event (GtkWidget *widget,
 		switch (details->drag_state) {
 		case DRAG_STATE_MOVE_OR_COPY:
 			if (!details->drag_started) {
-				nautilus_icon_container_did_not_drag (container, event);
+				nautilus_canvas_container_did_not_drag (container, event);
 			} else {
-				nautilus_icon_dnd_end_drag (container);
-				DEBUG ("Ending drag from icon container");
+				nautilus_canvas_dnd_end_drag (container);
+				DEBUG ("Ending drag from canvas container");
 			}
 			break;
 		case DRAG_STATE_STRETCH:
@@ -4597,20 +4597,20 @@ button_release_event (GtkWidget *widget,
 		return TRUE;
 	}
 
-	return GTK_WIDGET_CLASS (nautilus_icon_container_parent_class)->button_release_event (widget, event);
+	return GTK_WIDGET_CLASS (nautilus_canvas_container_parent_class)->button_release_event (widget, event);
 }
 
 static int
 motion_notify_event (GtkWidget *widget,
 		     GdkEventMotion *event)
 {
-	NautilusIconContainer *container;
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainer *container;
+	NautilusCanvasContainerDetails *details;
 	double world_x, world_y;
 	int canvas_x, canvas_y;
 	GdkDragAction actions;
 
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
 	details = container->details;
 
 	if (details->drag_button != 0) {
@@ -4634,10 +4634,10 @@ motion_notify_event (GtkWidget *widget,
 				end_renaming_mode (container, TRUE);
 			
 				eel_canvas_w2c (EEL_CANVAS (container),
-						  details->drag_x,
-						  details->drag_y,
-						  &canvas_x,
-						  &canvas_y);
+						details->drag_x,
+						details->drag_y,
+						&canvas_x,
+						&canvas_y);
 
 				actions = GDK_ACTION_COPY
 					| GDK_ACTION_LINK
@@ -4647,13 +4647,13 @@ motion_notify_event (GtkWidget *widget,
 					actions |= GDK_ACTION_MOVE;
 				}
 
-				nautilus_icon_dnd_begin_drag (container,
-							      actions,
-							      details->drag_button,
-							      event, 
-							      canvas_x,
-							      canvas_y);
-				DEBUG ("Beginning drag from icon container");
+				nautilus_canvas_dnd_begin_drag (container,
+								actions,
+								details->drag_button,
+								event, 
+								canvas_x,
+								canvas_y);
+				DEBUG ("Beginning drag from canvas container");
 			}
 			break;
 		case DRAG_STATE_STRETCH:
@@ -4666,26 +4666,26 @@ motion_notify_event (GtkWidget *widget,
 		}
 	}
 
-	return GTK_WIDGET_CLASS (nautilus_icon_container_parent_class)->motion_notify_event (widget, event);
+	return GTK_WIDGET_CLASS (nautilus_canvas_container_parent_class)->motion_notify_event (widget, event);
 }
 
 static void
-nautilus_icon_container_get_icon_text (NautilusIconContainer *container,
-				       NautilusIconData      *data,
-				       char                 **editable_text,
-				       char                 **additional_text,
-				       gboolean               include_invisible)
+nautilus_canvas_container_get_icon_text (NautilusCanvasContainer *container,
+					   NautilusCanvasIconData      *data,
+					   char                 **editable_text,
+					   char                 **additional_text,
+					   gboolean               include_invisible)
 {
-	NautilusIconContainerClass *klass;
+	NautilusCanvasContainerClass *klass;
 
-	klass = NAUTILUS_ICON_CONTAINER_GET_CLASS (container);
+	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
 	g_assert (klass->get_icon_text != NULL);
 
 	klass->get_icon_text (container, data, editable_text, additional_text, include_invisible);
 }
 
 static gboolean
-handle_popups (NautilusIconContainer *container,
+handle_popups (NautilusCanvasContainer *container,
 	       GdkEventKey           *event,
 	       const char            *signal)
 {
@@ -4703,10 +4703,10 @@ static int
 key_press_event (GtkWidget *widget,
 		 GdkEventKey *event)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	gboolean handled;
 
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
 	handled = FALSE;
 
 	if (is_renaming (container) || is_renaming_pending (container)) {
@@ -4775,7 +4775,7 @@ key_press_event (GtkWidget *widget,
 		case GDK_KEY_Tab:
 		case GDK_KEY_ISO_Left_Tab:
 			select_previous_or_next_icon (container, 
-						      (event->state & GDK_SHIFT_MASK) == 0, event);
+							(event->state & GDK_SHIFT_MASK) == 0, event);
 			handled = TRUE;
 			break;
 #endif
@@ -4825,7 +4825,7 @@ key_press_event (GtkWidget *widget,
 	}
 
 	if (!handled) {
-		handled = GTK_WIDGET_CLASS (nautilus_icon_container_parent_class)->key_press_event (widget, event);
+		handled = GTK_WIDGET_CLASS (nautilus_canvas_container_parent_class)->key_press_event (widget, event);
 	}
 
 	return handled;
@@ -4834,9 +4834,9 @@ key_press_event (GtkWidget *widget,
 static gboolean
 popup_menu (GtkWidget *widget)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
 
 	if (has_selection (container)) {
 		handle_popups (container, NULL,
@@ -4850,7 +4850,7 @@ popup_menu (GtkWidget *widget)
 }
 
 static void
-draw_canvas_background (EelCanvas *canvas,
+draw_canvas_background (EelCanvas *icon,
                         cairo_t   *cr)
 {
 	/* Don't chain up to the parent to avoid clearing and redrawing */
@@ -4860,9 +4860,9 @@ static void
 grab_notify_cb  (GtkWidget        *widget,
 		 gboolean          was_grabbed)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
 	
 	if (container->details->rubberband_info.active &&
 	    !was_grabbed) {
@@ -4879,28 +4879,28 @@ grab_notify_cb  (GtkWidget        *widget,
 static void
 text_ellipsis_limit_changed_container_callback (gpointer callback_data)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	container = NAUTILUS_ICON_CONTAINER (callback_data);
+	container = NAUTILUS_CANVAS_CONTAINER (callback_data);
 	invalidate_label_sizes (container);
 	schedule_redo_layout (container);
 }
 
 static GObject*
-nautilus_icon_container_constructor (GType                  type,
-				     guint                  n_construct_params,
-				     GObjectConstructParam *construct_params)
+nautilus_canvas_container_constructor (GType                  type,
+				       guint                  n_construct_params,
+				       GObjectConstructParam *construct_params)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	GObject *object;
 
-	object = G_OBJECT_CLASS (nautilus_icon_container_parent_class)->constructor
+	object = G_OBJECT_CLASS (nautilus_canvas_container_parent_class)->constructor
 		(type,
 		 n_construct_params,
 		 construct_params);
 
-	container = NAUTILUS_ICON_CONTAINER (object);
-	if (nautilus_icon_container_get_is_desktop (container)) {
+	container = NAUTILUS_CANVAS_CONTAINER (object);
+	if (nautilus_canvas_container_get_is_desktop (container)) {
 		g_signal_connect_swapped (nautilus_desktop_preferences,
 					  "changed::" NAUTILUS_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT,
 					  G_CALLBACK (text_ellipsis_limit_changed_container_callback),
@@ -4918,12 +4918,12 @@ nautilus_icon_container_constructor (GType                  type,
 /* Initialization.  */
 
 static void
-nautilus_icon_container_class_init (NautilusIconContainerClass *class)
+nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 {
 	GtkWidgetClass *widget_class;
 	EelCanvasClass *canvas_class;
 
-	G_OBJECT_CLASS (class)->constructor = nautilus_icon_container_constructor;
+	G_OBJECT_CLASS (class)->constructor = nautilus_canvas_container_constructor;
 	G_OBJECT_CLASS (class)->finalize = finalize;
 
 	/* Signals.  */
@@ -4932,7 +4932,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("selection_changed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 selection_changed),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__VOID,
@@ -4941,7 +4941,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("button_press",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 button_press),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -4951,7 +4951,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("activate",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 activate),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__POINTER,
@@ -4961,7 +4961,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("activate_alternate",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 activate_alternate),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__POINTER,
@@ -4971,7 +4971,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("activate_previewer",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 activate_previewer),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -4981,7 +4981,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("context_click_selection",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 context_click_selection),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__POINTER,
@@ -4991,7 +4991,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("context_click_background",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 context_click_background),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__POINTER,
@@ -5001,7 +5001,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("middle_click",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 middle_click),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__POINTER,
@@ -5011,7 +5011,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("icon_position_changed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 icon_position_changed),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5022,7 +5022,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("icon_stretch_started",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 icon_stretch_started),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__POINTER,
@@ -5032,8 +5032,8 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("icon_stretch_ended",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
-						     icon_stretch_ended),
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
+						 icon_stretch_ended),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__POINTER,
 		                G_TYPE_NONE, 1,
@@ -5042,7 +5042,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("icon_rename_started",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 icon_rename_started),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__POINTER,
@@ -5052,7 +5052,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("icon_rename_ended",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 icon_rename_ended),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5063,7 +5063,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("get_icon_uri",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 get_icon_uri),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5073,7 +5073,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("get_icon_drop_target_uri",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 get_icon_drop_target_uri),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5083,7 +5083,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("move_copy_items",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass, 
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
 						 move_copy_items),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5098,7 +5098,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("handle_netscape_url",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass, 
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
 						 handle_netscape_url),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5112,8 +5112,8 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("handle_uri_list",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass, 
-						     handle_uri_list),
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
+						 handle_uri_list),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
 		                G_TYPE_NONE, 5,
@@ -5126,7 +5126,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("handle_text",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass, 
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
 						 handle_text),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5140,7 +5140,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("handle_raw",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 handle_raw),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5156,7 +5156,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("get_container_uri",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass, 
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
 						 get_container_uri),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5165,7 +5165,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("can_accept_item",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass, 
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
 						 can_accept_item),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5176,7 +5176,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("get_stored_icon_position",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 get_stored_icon_position),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5187,7 +5187,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("get_stored_layout_timestamp",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 get_stored_layout_timestamp),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5198,7 +5198,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("store_layout_timestamp",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 store_layout_timestamp),
 		                NULL, NULL,
 		                g_cclosure_marshal_generic,
@@ -5209,7 +5209,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("layout_changed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 layout_changed),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__VOID,
@@ -5218,7 +5218,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("band_select_started",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 band_select_started),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__VOID,
@@ -5227,8 +5227,8 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("band_select_ended",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
-						     band_select_ended),
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
+						 band_select_ended),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__VOID,
 		                G_TYPE_NONE, 0);
@@ -5236,7 +5236,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("icon_added",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 icon_added),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__POINTER,
@@ -5245,7 +5245,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("icon_removed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 icon_removed),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__POINTER,
@@ -5255,7 +5255,7 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 		= g_signal_new ("cleared",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
-		                G_STRUCT_OFFSET (NautilusIconContainerClass,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
 						 cleared),
 		                NULL, NULL,
 		                g_cclosure_marshal_VOID__VOID,
@@ -5285,17 +5285,17 @@ nautilus_icon_container_class_init (NautilusIconContainerClass *class)
 
 	gtk_widget_class_install_style_property (widget_class,
 						 g_param_spec_boolean ("activate_prelight_icon_label",
-								     "Activate Prelight Icon Label",
-								     "Whether icon labels should make use of its prelight color in prelight state",
-								     FALSE,
-								     G_PARAM_READABLE));
+								       "Activate Prelight Icon Label",
+								       "Whether icon labels should make use of its prelight color in prelight state",
+								       FALSE,
+								       G_PARAM_READABLE));
 }
 
 static void
-update_selected (NautilusIconContainer *container)
+update_selected (NautilusCanvasContainer *container)
 {
 	GList *node;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	
 	for (node = container->details->icons; node != NULL; node = node->next) {
 		icon = node->data;
@@ -5308,7 +5308,7 @@ update_selected (NautilusIconContainer *container)
 static gboolean
 handle_focus_in_event (GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
 {
-	update_selected (NAUTILUS_ICON_CONTAINER (widget));
+	update_selected (NAUTILUS_CANVAS_CONTAINER (widget));
 
 	return FALSE;
 }
@@ -5317,8 +5317,8 @@ static gboolean
 handle_focus_out_event (GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
 {
 	/* End renaming and commit change. */
-	end_renaming_mode (NAUTILUS_ICON_CONTAINER (widget), TRUE);
-	update_selected (NAUTILUS_ICON_CONTAINER (widget));
+	end_renaming_mode (NAUTILUS_CANVAS_CONTAINER (widget), TRUE);
+	update_selected (NAUTILUS_CANVAS_CONTAINER (widget));
 
 	return FALSE;
 }
@@ -5408,12 +5408,12 @@ desktop_text_ellipsis_limit_changed_callback (gpointer callback_data)
 }
 
 static void
-nautilus_icon_container_init (NautilusIconContainer *container)
+nautilus_canvas_container_init (NautilusCanvasContainer *container)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
 	static gboolean setup_prefs = FALSE;
 
-	details = g_new0 (NautilusIconContainerDetails, 1);
+	details = g_new0 (NautilusCanvasContainerDetails, 1);
 
 	details->icon_set = g_hash_table_new (g_direct_hash, g_direct_equal);
 	details->layout_timestamp = UNDEFINED_TIME;
@@ -5444,16 +5444,16 @@ nautilus_icon_container_init (NautilusIconContainer *container)
 }
 
 typedef struct {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	GdkEventButton	      *event;
 } ContextMenuParameters;
 
 static gboolean
-handle_icon_double_click (NautilusIconContainer *container,
-			  NautilusIcon *icon,
-			  GdkEventButton *event)
+handle_canvas_double_click (NautilusCanvasContainer *container,
+			    NautilusCanvasIcon *icon,
+			    GdkEventButton *event)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
 
 	if (event->button != DRAG_BUTTON) {
 		return FALSE;
@@ -5478,7 +5478,7 @@ handle_icon_double_click (NautilusIconContainer *container,
 	return FALSE;
 }
 
-/* NautilusIcon event handling.  */
+/* NautilusCanvasIcon event handling.  */
 
 /* Conceptually, pressing button 1 together with CTRL or SHIFT toggles
  * selection of a single icon without affecting the other icons;
@@ -5487,14 +5487,14 @@ handle_icon_double_click (NautilusIconContainer *container,
  * only happen when the button is released if the icon is already
  * selected, because the user might select multiple icons and drag all
  * of them by doing a simple click-drag.
-*/
+ */
 
 static gboolean
-handle_icon_button_press (NautilusIconContainer *container,
-			  NautilusIcon *icon,
-			  GdkEventButton *event)
+handle_canvas_button_press (NautilusCanvasContainer *container,
+			    NautilusCanvasIcon *icon,
+			    GdkEventButton *event)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
 
 	details = container->details;
 
@@ -5518,7 +5518,7 @@ handle_icon_button_press (NautilusIconContainer *container,
 		details->double_click_button[0] = event->button;
 	}
 
-	if (handle_icon_double_click (container, icon, event)) {
+	if (handle_canvas_double_click (container, icon, event)) {
 		/* Double clicking does not trigger a D&D action. */
 		details->drag_button = 0;
 		details->drag_icon = NULL;
@@ -5527,7 +5527,7 @@ handle_icon_button_press (NautilusIconContainer *container,
 
 	if (event->button == DRAG_BUTTON
 	    || event->button == DRAG_MENU_BUTTON) {
-			details->drag_button = event->button;
+		details->drag_button = event->button;
 		details->drag_icon = icon;
 		details->drag_x = event->x;
 		details->drag_y = event->y;
@@ -5551,7 +5551,7 @@ handle_icon_button_press (NautilusIconContainer *container,
 	
 	if ((event->button == DRAG_BUTTON || event->button == MIDDLE_BUTTON) &&
 	    (event->state & GDK_SHIFT_MASK) != 0) {
-		NautilusIcon *start_icon;
+		NautilusCanvasIcon *start_icon;
 
 		start_icon = details->range_selection_base_icon;
 		if (start_icon == NULL || !start_icon->is_selected) {
@@ -5593,17 +5593,17 @@ item_event_callback (EelCanvasItem *item,
 		     GdkEvent *event,
 		     gpointer data)
 {
-	NautilusIconContainer *container;
-	NautilusIcon *icon;
+	NautilusCanvasContainer *container;
+	NautilusCanvasIcon *icon;
 
-	container = NAUTILUS_ICON_CONTAINER (data);
+	container = NAUTILUS_CANVAS_CONTAINER (data);
 
-	icon = NAUTILUS_ICON_CANVAS_ITEM (item)->user_data;
+	icon = NAUTILUS_CANVAS_ITEM (item)->user_data;
 	g_assert (icon != NULL);
 
 	switch (event->type) {
 	case GDK_BUTTON_PRESS:
-		if (handle_icon_button_press (container, icon, &event->button)) {
+		if (handle_canvas_button_press (container, icon, &event->button)) {
 			/* Stop the event from being passed along further. Returning
 			 * TRUE ain't enough. 
 			 */
@@ -5616,20 +5616,20 @@ item_event_callback (EelCanvasItem *item,
 }
 
 GtkWidget *
-nautilus_icon_container_new (void)
+nautilus_canvas_container_new (void)
 {
-	return gtk_widget_new (NAUTILUS_TYPE_ICON_CONTAINER, NULL);
+	return gtk_widget_new (NAUTILUS_TYPE_CANVAS_CONTAINER, NULL);
 }
 
 /* Clear all of the icons in the container. */
 void
-nautilus_icon_container_clear (NautilusIconContainer *container)
+nautilus_canvas_container_clear (NautilusCanvasContainer *container)
 {
-	NautilusIconContainerDetails *details;
-	NautilusIcon *icon;
+	NautilusCanvasContainerDetails *details;
+	NautilusCanvasIcon *icon;
 	GList *p;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	details = container->details;
 	details->layout_timestamp = UNDEFINED_TIME;
@@ -5651,9 +5651,9 @@ nautilus_icon_container_clear (NautilusIconContainer *container)
 	for (p = details->icons; p != NULL; p = p->next) {
 		icon = p->data;
 		if (icon->is_monitored) {
-			nautilus_icon_container_stop_monitor_top_left (container,
-								       icon->data,
-								       icon);
+			nautilus_canvas_container_stop_monitor_top_left (container,
+									 icon->data,
+									 icon);
 		}
 		icon_free (p->data);
 	}
@@ -5665,20 +5665,20 @@ nautilus_icon_container_clear (NautilusIconContainer *container)
  	g_hash_table_destroy (details->icon_set);
  	details->icon_set = g_hash_table_new (g_direct_hash, g_direct_equal);
  
-	nautilus_icon_container_update_scroll_region (container);
+	nautilus_canvas_container_update_scroll_region (container);
 }
 
 gboolean
-nautilus_icon_container_is_empty (NautilusIconContainer *container)
+nautilus_canvas_container_is_empty (NautilusCanvasContainer *container)
 {
 	return container->details->icons == NULL;
 }
 
-NautilusIconData *
-nautilus_icon_container_get_first_visible_icon (NautilusIconContainer *container)
+NautilusCanvasIconData *
+nautilus_canvas_container_get_first_visible_icon (NautilusCanvasContainer *container)
 {
 	GList *l;
-	NautilusIcon *icon, *best_icon;
+	NautilusCanvasIcon *icon, *best_icon;
 	double x, y;
 	double x1, y1, x2, y2;
 	double *pos, best_pos;
@@ -5690,7 +5690,7 @@ nautilus_icon_container_get_first_visible_icon (NautilusIconContainer *container
 	vadj_v = gtk_adjustment_get_value (gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (container)));
 	h_page_size = gtk_adjustment_get_page_size (gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (container)));
 
-	if (nautilus_icon_container_is_layout_rtl (container)) {
+	if (nautilus_canvas_container_is_layout_rtl (container)) {
 		x = hadj_v + h_page_size - ICON_PAD_LEFT - 1;
 		y = vadj_v;
 	} else {
@@ -5713,9 +5713,9 @@ nautilus_icon_container_get_first_visible_icon (NautilusIconContainer *container
 						    &x1, &y1, &x2, &y2);
 
 			compare_lt = FALSE;
-			if (nautilus_icon_container_is_layout_vertical (container)) {
+			if (nautilus_canvas_container_is_layout_vertical (container)) {
 				pos = &x1;
-				if (nautilus_icon_container_is_layout_rtl (container)) {
+				if (nautilus_canvas_container_is_layout_rtl (container)) {
 					compare_lt = TRUE;
 					better_icon = x1 < x + ICON_PAD_LEFT;
 				} else {
@@ -5749,11 +5749,11 @@ nautilus_icon_container_get_first_visible_icon (NautilusIconContainer *container
 
 /* puts the icon at the top of the screen */
 void
-nautilus_icon_container_scroll_to_icon (NautilusIconContainer  *container,
-					NautilusIconData       *data)
+nautilus_canvas_container_scroll_to_canvas (NautilusCanvasContainer  *container,
+					    NautilusCanvasIconData       *data)
 {
 	GList *l;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	GtkAdjustment *hadj, *vadj;
 	EelIRect bounds;
 	GtkAllocation allocation;
@@ -5764,7 +5764,7 @@ nautilus_icon_container_scroll_to_icon (NautilusIconContainer  *container,
 
 	/* We need to force a relayout now if there are updates queued
 	 * since we need the final positions */
-	nautilus_icon_container_layout_now (container);
+	nautilus_canvas_container_layout_now (container);
 	
 	l = container->details->icons;
 	while (l != NULL) {
@@ -5773,15 +5773,15 @@ nautilus_icon_container_scroll_to_icon (NautilusIconContainer  *container,
 		if (icon->data == data &&
 		    icon_is_positioned (icon)) {
 
-			if (nautilus_icon_container_is_auto_layout (container)) {
+			if (nautilus_canvas_container_is_auto_layout (container)) {
 				/* ensure that we reveal the entire row/column */
 				icon_get_row_and_column_bounds (container, icon, &bounds, TRUE);
 			} else {
 				item_get_canvas_bounds (EEL_CANVAS_ITEM (icon->item), &bounds, TRUE);
 			}
 
-			if (nautilus_icon_container_is_layout_vertical (container)) {
-				if (nautilus_icon_container_is_layout_rtl (container)) {
+			if (nautilus_canvas_container_is_layout_vertical (container)) {
+				if (nautilus_canvas_container_is_layout_rtl (container)) {
 					gtk_adjustment_set_value (hadj, bounds.x1 - allocation.width);
 				} else {
 					gtk_adjustment_set_value (hadj, bounds.x0);
@@ -5797,14 +5797,14 @@ nautilus_icon_container_scroll_to_icon (NautilusIconContainer  *container,
 
 /* Call a function for all the icons. */
 typedef struct {
-	NautilusIconCallback callback;
+	NautilusCanvasCallback callback;
 	gpointer callback_data;
 } CallbackAndData;
 
 static void
-call_icon_callback (gpointer data, gpointer callback_data)
+call_canvas_callback (gpointer data, gpointer callback_data)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	CallbackAndData *callback_and_data;
 
 	icon = data;
@@ -5813,27 +5813,27 @@ call_icon_callback (gpointer data, gpointer callback_data)
 }
 
 void
-nautilus_icon_container_for_each (NautilusIconContainer *container,
-				  NautilusIconCallback callback,
-				  gpointer callback_data)
+nautilus_canvas_container_for_each (NautilusCanvasContainer *container,
+				    NautilusCanvasCallback callback,
+				    gpointer callback_data)
 {
 	CallbackAndData callback_and_data;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	callback_and_data.callback = callback;
 	callback_and_data.callback_data = callback_data;
 
 	g_list_foreach (container->details->icons,
-			call_icon_callback, &callback_and_data);
+			call_canvas_callback, &callback_and_data);
 }
 
 static int
 selection_changed_at_idle_callback (gpointer data)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	container = NAUTILUS_ICON_CONTAINER (data);
+	container = NAUTILUS_CANVAS_CONTAINER (data);
 	
 	g_signal_emit (container,
 		       signals[SELECTION_CHANGED], 0);
@@ -5845,12 +5845,12 @@ selection_changed_at_idle_callback (gpointer data)
 /* utility routine to remove a single icon from the container */
 
 static void
-icon_destroy (NautilusIconContainer *container,
-	      NautilusIcon *icon)
+icon_destroy (NautilusCanvasContainer *container,
+	      NautilusCanvasIcon *icon)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
 	gboolean was_selected;
-	NautilusIcon *icon_to_focus;
+	NautilusCanvasIcon *icon_to_focus;
 	GList *item;
  
 	details = container->details;
@@ -5898,9 +5898,9 @@ icon_destroy (NautilusIconContainer *container,
 	}
 
 	if (icon->is_monitored) {
-		nautilus_icon_container_stop_monitor_top_left (container,
-							       icon->data,
-							       icon);
+		nautilus_canvas_container_stop_monitor_top_left (container,
+								 icon->data,
+								 icon);
 	}
 	icon_free (icon);
 
@@ -5912,32 +5912,32 @@ icon_destroy (NautilusIconContainer *container,
 
 /* activate any selected items in the container */
 static void
-activate_selected_items (NautilusIconContainer *container)
+activate_selected_items (NautilusCanvasContainer *container)
 {
 	GList *selection;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
-	selection = nautilus_icon_container_get_selection (container);
+	selection = nautilus_canvas_container_get_selection (container);
 	if (selection != NULL) {
 	  	g_signal_emit (container,
-				 signals[ACTIVATE], 0,
-				 selection);
+			       signals[ACTIVATE], 0,
+			       selection);
 	}
 	g_list_free (selection);
 }
 
 static void
-preview_selected_items (NautilusIconContainer *container)
+preview_selected_items (NautilusCanvasContainer *container)
 {
 	GList *selection;
 	GArray *locations;
 	gint idx;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
-	selection = nautilus_icon_container_get_selection (container);
-	locations = nautilus_icon_container_get_selected_icon_locations (container);
+	selection = nautilus_canvas_container_get_selection (container);
+	locations = nautilus_canvas_container_get_selected_icon_locations (container);
 
 	for (idx = 0; idx < locations->len; idx++) {
 		GdkPoint *point = &(g_array_index (locations, GdkPoint, idx));
@@ -5959,30 +5959,30 @@ preview_selected_items (NautilusIconContainer *container)
 }
 
 static void
-activate_selected_items_alternate (NautilusIconContainer *container,
-				   NautilusIcon *icon)
+activate_selected_items_alternate (NautilusCanvasContainer *container,
+				   NautilusCanvasIcon *icon)
 {
 	GList *selection;
 
-	g_assert (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_assert (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	if (icon != NULL) {
 		selection = g_list_prepend (NULL, icon->data);
 	} else {
-		selection = nautilus_icon_container_get_selection (container);
+		selection = nautilus_canvas_container_get_selection (container);
 	}
 	if (selection != NULL) {
 	  	g_signal_emit (container,
-				 signals[ACTIVATE_ALTERNATE], 0,
-				 selection);
+			       signals[ACTIVATE_ALTERNATE], 0,
+			       selection);
 	}
 	g_list_free (selection);
 }
 
-static NautilusIcon *
-get_icon_being_renamed (NautilusIconContainer *container)
+static NautilusCanvasIcon *
+get_icon_being_renamed (NautilusCanvasContainer *container)
 {
-	NautilusIcon *rename_icon;
+	NautilusCanvasIcon *rename_icon;
 
 	if (!is_renaming (container)) {
 		return NULL;
@@ -5997,67 +5997,67 @@ get_icon_being_renamed (NautilusIconContainer *container)
 }			 
 
 static NautilusIconInfo *
-nautilus_icon_container_get_icon_images (NautilusIconContainer *container,
-					 NautilusIconData      *data,
-					 int                    size,
-					 char                 **embedded_text,
-					 gboolean               for_drag_accept,
-					 gboolean               need_large_embeddded_text,
-					 gboolean              *embedded_text_needs_loading,
-					 gboolean              *has_open_window)
+nautilus_canvas_container_get_icon_images (NautilusCanvasContainer *container,
+					     NautilusCanvasIconData      *data,
+					     int                    size,
+					     char                 **embedded_text,
+					     gboolean               for_drag_accept,
+					     gboolean               need_large_embeddded_text,
+					     gboolean              *embedded_text_needs_loading,
+					     gboolean              *has_open_window)
 {
-	NautilusIconContainerClass *klass;
+	NautilusCanvasContainerClass *klass;
 
-	klass = NAUTILUS_ICON_CONTAINER_GET_CLASS (container);
+	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
 	g_assert (klass->get_icon_images != NULL);
 
 	return klass->get_icon_images (container, data, size, embedded_text, for_drag_accept, need_large_embeddded_text, embedded_text_needs_loading, has_open_window);
 }
 
 static void
-nautilus_icon_container_freeze_updates (NautilusIconContainer *container)
+nautilus_canvas_container_freeze_updates (NautilusCanvasContainer *container)
 {
-	NautilusIconContainerClass *klass;
+	NautilusCanvasContainerClass *klass;
 
-	klass = NAUTILUS_ICON_CONTAINER_GET_CLASS (container);
+	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
 	g_assert (klass->freeze_updates != NULL);
 
 	klass->freeze_updates (container);
 }
 
 static void
-nautilus_icon_container_unfreeze_updates (NautilusIconContainer *container)
+nautilus_canvas_container_unfreeze_updates (NautilusCanvasContainer *container)
 {
-	NautilusIconContainerClass *klass;
+	NautilusCanvasContainerClass *klass;
 
-	klass = NAUTILUS_ICON_CONTAINER_GET_CLASS (container);
+	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
 	g_assert (klass->unfreeze_updates != NULL);
 
 	klass->unfreeze_updates (container);
 }
 
 static void
-nautilus_icon_container_start_monitor_top_left (NautilusIconContainer *container,
-						NautilusIconData *data,
-						gconstpointer client,
-						gboolean large_text)
+nautilus_canvas_container_start_monitor_top_left (NautilusCanvasContainer *container,
+						  NautilusCanvasIconData *data,
+						  gconstpointer client,
+						  gboolean large_text)
 {
-	NautilusIconContainerClass *klass;
+	NautilusCanvasContainerClass *klass;
 
-	klass = NAUTILUS_ICON_CONTAINER_GET_CLASS (container);
+	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
 	g_assert (klass->start_monitor_top_left != NULL);
 
 	klass->start_monitor_top_left (container, data, client, large_text);
 }
 
 static void
-nautilus_icon_container_stop_monitor_top_left (NautilusIconContainer *container,
-					       NautilusIconData *data,
-					       gconstpointer client)
+nautilus_canvas_container_stop_monitor_top_left (NautilusCanvasContainer *container,
+						 NautilusCanvasIconData *data,
+						 gconstpointer client)
 {
-	NautilusIconContainerClass *klass;
+	NautilusCanvasContainerClass *klass;
 
-	klass = NAUTILUS_ICON_CONTAINER_GET_CLASS (container);
+	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
 	g_return_if_fail (klass->stop_monitor_top_left != NULL);
 
 	klass->stop_monitor_top_left (container, data, client);
@@ -6065,26 +6065,26 @@ nautilus_icon_container_stop_monitor_top_left (NautilusIconContainer *container,
 
 
 static void
-nautilus_icon_container_prioritize_thumbnailing (NautilusIconContainer *container,
-						 NautilusIcon *icon)
+nautilus_canvas_container_prioritize_thumbnailing (NautilusCanvasContainer *container,
+						   NautilusCanvasIcon *icon)
 {
-	NautilusIconContainerClass *klass;
+	NautilusCanvasContainerClass *klass;
 
-	klass = NAUTILUS_ICON_CONTAINER_GET_CLASS (container);
+	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
 	g_assert (klass->prioritize_thumbnailing != NULL);
 
 	klass->prioritize_thumbnailing (container, icon->data);
 }
 
 static void
-nautilus_icon_container_update_visible_icons (NautilusIconContainer *container)
+nautilus_canvas_container_update_visible_icons (NautilusCanvasContainer *container)
 {
 	GtkAdjustment *vadj, *hadj;
 	double min_y, max_y;
 	double min_x, max_x;
 	double x0, y0, x1, y1;
 	GList *node;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	gboolean visible;
 	GtkAllocation allocation;
 
@@ -6122,18 +6122,18 @@ nautilus_icon_container_update_visible_icons (NautilusIconContainer *container)
 					     &x1,
 					     &y1);
 
-			if (nautilus_icon_container_is_layout_vertical (container)) {
+			if (nautilus_canvas_container_is_layout_vertical (container)) {
 				visible = x1 >= min_x && x0 <= max_x;
 			} else {
 				visible = y1 >= min_y && y0 <= max_y;
 			}
 
 			if (visible) {
-				nautilus_icon_canvas_item_set_is_visible (icon->item, TRUE);
-				nautilus_icon_container_prioritize_thumbnailing (container,
-										 icon);
+				nautilus_canvas_item_set_is_visible (icon->item, TRUE);
+				nautilus_canvas_container_prioritize_thumbnailing (container,
+										   icon);
 			} else {
-				nautilus_icon_canvas_item_set_is_visible (icon->item, FALSE);
+				nautilus_canvas_item_set_is_visible (icon->item, FALSE);
 			}
 		}
 	}
@@ -6141,28 +6141,28 @@ nautilus_icon_container_update_visible_icons (NautilusIconContainer *container)
 
 static void
 handle_vadjustment_changed (GtkAdjustment *adjustment,
-			    NautilusIconContainer *container)
+			    NautilusCanvasContainer *container)
 {
-	if (!nautilus_icon_container_is_layout_vertical (container)) {
-		nautilus_icon_container_update_visible_icons (container);
+	if (!nautilus_canvas_container_is_layout_vertical (container)) {
+		nautilus_canvas_container_update_visible_icons (container);
 	}
 }
 
 static void
 handle_hadjustment_changed (GtkAdjustment *adjustment,
-			    NautilusIconContainer *container)
+			    NautilusCanvasContainer *container)
 {
-	if (nautilus_icon_container_is_layout_vertical (container)) {
-		nautilus_icon_container_update_visible_icons (container);
+	if (nautilus_canvas_container_is_layout_vertical (container)) {
+		nautilus_canvas_container_update_visible_icons (container);
 	}
 }
 
 
 void 
-nautilus_icon_container_update_icon (NautilusIconContainer *container,
-				     NautilusIcon *icon)
+nautilus_canvas_container_update_icon (NautilusCanvasContainer *container,
+					 NautilusCanvasIcon *icon)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
 	guint icon_size;
 	guint min_image_size, max_image_size;
 	NautilusIconInfo *icon_info;
@@ -6198,30 +6198,30 @@ nautilus_icon_container_update_icon (NautilusIconContainer *container,
 	/* Get the icons. */
 	embedded_text = NULL;
 	large_embedded_text = icon_size > ICON_SIZE_FOR_LARGE_EMBEDDED_TEXT;
-	icon_info = nautilus_icon_container_get_icon_images (container, icon->data, icon_size,
-							     &embedded_text,
-							     icon == details->drop_target,							     
-							     large_embedded_text, &embedded_text_needs_loading,
-							     &has_open_window);
+	icon_info = nautilus_canvas_container_get_icon_images (container, icon->data, icon_size,
+							       &embedded_text,
+							       icon == details->drop_target,							     
+							       large_embedded_text, &embedded_text_needs_loading,
+							       &has_open_window);
 
 	pixbuf = nautilus_icon_info_get_pixbuf (icon_info);
 
 	nautilus_icon_info_get_attach_points (icon_info, &attach_points, &n_attach_points);
 	has_embedded_text_rect = nautilus_icon_info_get_embedded_rect (icon_info,
-								       &embedded_text_rect);
+									 &embedded_text_rect);
 
 	g_object_unref (icon_info);
  
 	if (has_embedded_text_rect && embedded_text_needs_loading) {
 		icon->is_monitored = TRUE;
-		nautilus_icon_container_start_monitor_top_left (container, icon->data, icon, large_embedded_text);
+		nautilus_canvas_container_start_monitor_top_left (container, icon->data, icon, large_embedded_text);
 	}
 	
-	nautilus_icon_container_get_icon_text (container,
-					       icon->data,
-					       &editable_text,
-					       &additional_text,
-					       FALSE);
+	nautilus_canvas_container_get_icon_text (container,
+						   icon->data,
+						   &editable_text,
+						   &additional_text,
+						   FALSE);
 
 	/* If name of icon being renamed was changed from elsewhere, end renaming mode. 
 	 * Alternatively, we could replace the characters in the editable text widget
@@ -6230,7 +6230,7 @@ nautilus_icon_container_update_icon (NautilusIconContainer *container,
 	 */
 	if (icon == get_icon_being_renamed (container) &&
 	    g_strcmp0 (editable_text,
-		       nautilus_icon_canvas_item_get_editable_text (icon->item)) != 0) {
+		       nautilus_canvas_item_get_editable_text (icon->item)) != 0) {
 		end_renaming_mode (container, FALSE);
 	}
 
@@ -6240,10 +6240,10 @@ nautilus_icon_container_update_icon (NautilusIconContainer *container,
 			     "highlighted_for_drop", icon == details->drop_target,
 			     NULL);
 
-	nautilus_icon_canvas_item_set_image (icon->item, pixbuf);
-	nautilus_icon_canvas_item_set_attach_points (icon->item, attach_points, n_attach_points);
-	nautilus_icon_canvas_item_set_embedded_text_rect (icon->item, &embedded_text_rect);
-	nautilus_icon_canvas_item_set_embedded_text (icon->item, embedded_text);
+	nautilus_canvas_item_set_image (icon->item, pixbuf);
+	nautilus_canvas_item_set_attach_points (icon->item, attach_points, n_attach_points);
+	nautilus_canvas_item_set_embedded_text_rect (icon->item, &embedded_text_rect);
+	nautilus_canvas_item_set_embedded_text (icon->item, embedded_text);
 
 	/* Let the pixbufs go. */
 	g_object_unref (pixbuf);
@@ -6253,20 +6253,20 @@ nautilus_icon_container_update_icon (NautilusIconContainer *container,
 }
 
 static gboolean
-assign_icon_position (NautilusIconContainer *container,
-		      NautilusIcon *icon)
+assign_icon_position (NautilusCanvasContainer *container,
+			NautilusCanvasIcon *icon)
 {
 	gboolean have_stored_position;
-	NautilusIconPosition position;
+	NautilusCanvasPosition position;
 
 	/* Get the stored position. */
 	have_stored_position = FALSE;
 	position.scale = 1.0;
 	g_signal_emit (container,
-			 signals[GET_STORED_ICON_POSITION], 0,
-			 icon->data,
-			 &position,
-			 &have_stored_position);
+		       signals[GET_STORED_ICON_POSITION], 0,
+		       icon->data,
+		       &position,
+		       &have_stored_position);
 	icon->scale = position.scale;
 	if (!container->details->auto_layout) {
 		if (have_stored_position) {
@@ -6280,10 +6280,10 @@ assign_icon_position (NautilusIconContainer *container,
 }
 
 static void
-finish_adding_icon (NautilusIconContainer *container,
-		    NautilusIcon *icon)
+finish_adding_icon (NautilusCanvasContainer *container,
+		    NautilusCanvasIcon *icon)
 {
-	nautilus_icon_container_update_icon (container, icon);
+	nautilus_canvas_container_update_icon (container, icon);
 	eel_canvas_item_show (EEL_CANVAS_ITEM (icon->item));
 
 	g_signal_connect_object (icon->item, "event",
@@ -6293,10 +6293,10 @@ finish_adding_icon (NautilusIconContainer *container,
 }
 
 static void
-finish_adding_new_icons (NautilusIconContainer *container)
+finish_adding_new_icons (NautilusCanvasContainer *container)
 {
 	GList *p, *new_icons, *no_position_icons, *semi_position_icons;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	double bottom;
 
 	new_icons = container->details->new_icons;
@@ -6342,8 +6342,8 @@ finish_adding_new_icons (NautilusIconContainer *container)
 		now = time (NULL);
 
 		for (p = semi_position_icons; p != NULL; p = p->next) {
-			NautilusIcon *icon;
-			NautilusIconPosition position;
+			NautilusCanvasIcon *icon;
+			NautilusCanvasPosition position;
 			int x, y;
 
 			icon = p->data;
@@ -6379,7 +6379,7 @@ finish_adding_new_icons (NautilusIconContainer *container)
 		g_assert (!container->details->auto_layout);
 		
 		sort_icons (container, &no_position_icons);
-		if (nautilus_icon_container_get_is_desktop (container)) {
+		if (nautilus_canvas_container_get_is_desktop (container)) {
 			lay_down_icons (container, no_position_icons, CONTAINER_PAD_TOP);
 		} else {
 			get_all_icon_bounds (container, NULL, NULL, NULL, &bottom, BOUNDS_USAGE_FOR_LAYOUT);
@@ -6395,8 +6395,8 @@ finish_adding_new_icons (NautilusIconContainer *container)
 }
 
 static gboolean
-is_old_or_unknown_icon_data (NautilusIconContainer *container,
-			     NautilusIconData *data)
+is_old_or_unknown_icon_data (NautilusCanvasContainer *container,
+			       NautilusCanvasIconData *data)
 {
 	time_t timestamp;
 	gboolean success;
@@ -6413,22 +6413,22 @@ is_old_or_unknown_icon_data (NautilusIconContainer *container,
 }
 
 /**
- * nautilus_icon_container_add:
- * @container: A NautilusIconContainer
+ * nautilus_canvas_container_add:
+ * @container: A NautilusCanvasContainer
  * @data: Icon data.
  * 
  * Add icon to represent @data to container.
  * Returns FALSE if there was already such an icon.
  **/
 gboolean
-nautilus_icon_container_add (NautilusIconContainer *container,
-			     NautilusIconData *data)
+nautilus_canvas_container_add (NautilusCanvasContainer *container,
+			       NautilusCanvasIconData *data)
 {
-	NautilusIconContainerDetails *details;
-	NautilusIcon *icon;
+	NautilusCanvasContainerDetails *details;
+	NautilusCanvasIcon *icon;
 	EelCanvasItem *band, *item;
 	
-	g_return_val_if_fail (NAUTILUS_IS_ICON_CONTAINER (container), FALSE);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
 
 	details = container->details;
@@ -6438,7 +6438,7 @@ nautilus_icon_container_add (NautilusIconContainer *container,
 	}
 
 	/* Create the new icon, including the canvas item. */
-	icon = g_new0 (NautilusIcon, 1);
+	icon = g_new0 (NautilusCanvasIcon, 1);
 	icon->data = data;
 	icon->x = ICON_UNPOSITIONED_VALUE;
 	icon->y = ICON_UNPOSITIONED_VALUE;
@@ -6449,16 +6449,16 @@ nautilus_icon_container_add (NautilusIconContainer *container,
 	 */
 	icon->has_lazy_position = is_old_or_unknown_icon_data (container, data);
 	icon->scale = 1.0;
- 	icon->item = NAUTILUS_ICON_CANVAS_ITEM
+ 	icon->item = NAUTILUS_CANVAS_ITEM
 		(eel_canvas_item_new (EEL_CANVAS_GROUP (EEL_CANVAS (container)->root),
-				      nautilus_icon_canvas_item_get_type (),
+				      nautilus_canvas_item_get_type (),
 				      "visible", FALSE,
 				      NULL));
 	icon->item->user_data = icon;
 
 	/* Make sure the icon is under the selection_rectangle */
 	item = EEL_CANVAS_ITEM (icon->item);
-	band = NAUTILUS_ICON_CONTAINER (item->canvas)->details->rubberband_info.selection_rectangle;
+	band = NAUTILUS_CANVAS_CONTAINER (item->canvas)->details->rubberband_info.selection_rectangle;
 	if (band) {
 		eel_canvas_item_send_behind (item, band);
 	}
@@ -6478,7 +6478,7 @@ nautilus_icon_container_add (NautilusIconContainer *container,
 }
 
 void
-nautilus_icon_container_layout_now (NautilusIconContainer *container)
+nautilus_canvas_container_layout_now (NautilusCanvasContainer *container)
 {
 	if (container->details->idle_id != 0) {
 		unschedule_redo_layout (container);
@@ -6492,19 +6492,19 @@ nautilus_icon_container_layout_now (NautilusIconContainer *container)
 }
 
 /**
- * nautilus_icon_container_remove:
- * @container: A NautilusIconContainer.
+ * nautilus_canvas_container_remove:
+ * @container: A NautilusCanvasContainer.
  * @data: Icon data.
  * 
  * Remove the icon with this data.
  **/
 gboolean
-nautilus_icon_container_remove (NautilusIconContainer *container,
-				NautilusIconData *data)
+nautilus_canvas_container_remove (NautilusCanvasContainer *container,
+				  NautilusCanvasIconData *data)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
-	g_return_val_if_fail (NAUTILUS_IS_ICON_CONTAINER (container), FALSE);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
 
 	end_renaming_mode (container, FALSE);
@@ -6524,25 +6524,25 @@ nautilus_icon_container_remove (NautilusIconContainer *container,
 }
 
 /**
- * nautilus_icon_container_request_update:
- * @container: A NautilusIconContainer.
+ * nautilus_canvas_container_request_update:
+ * @container: A NautilusCanvasContainer.
  * @data: Icon data.
  * 
  * Update the icon with this data.
  **/
 void
-nautilus_icon_container_request_update (NautilusIconContainer *container,
-					NautilusIconData *data)
+nautilus_canvas_container_request_update (NautilusCanvasContainer *container,
+					  NautilusCanvasIconData *data)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 	g_return_if_fail (data != NULL);
 
 	icon = g_hash_table_lookup (container->details->icon_set, data);
 
 	if (icon != NULL) {
-		nautilus_icon_container_update_icon (container, icon);
+		nautilus_canvas_container_update_icon (container, icon);
 		container->details->needs_resort = TRUE;
 		schedule_redo_layout (container);
 	}
@@ -6551,15 +6551,15 @@ nautilus_icon_container_request_update (NautilusIconContainer *container,
 /* zooming */
 
 NautilusZoomLevel
-nautilus_icon_container_get_zoom_level (NautilusIconContainer *container)
+nautilus_canvas_container_get_zoom_level (NautilusCanvasContainer *container)
 {
         return container->details->zoom_level;
 }
 
 void
-nautilus_icon_container_set_zoom_level (NautilusIconContainer *container, int new_level)
+nautilus_canvas_container_set_zoom_level (NautilusCanvasContainer *container, int new_level)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
         int pinned_level;
 	double pixels_per_unit;
 	
@@ -6585,27 +6585,27 @@ nautilus_icon_container_set_zoom_level (NautilusIconContainer *container, int ne
 	eel_canvas_set_pixels_per_unit (EEL_CANVAS (container), pixels_per_unit);
 
 	invalidate_labels (container);
-	nautilus_icon_container_request_update_all (container);
+	nautilus_canvas_container_request_update_all (container);
 }
 
 /**
- * nautilus_icon_container_request_update_all:
+ * nautilus_canvas_container_request_update_all:
  * For each icon, synchronizes the displayed information (image, text) with the
  * information from the model.
  * 
- * @container: An icon container.
+ * @container: An canvas container.
  **/
 void
-nautilus_icon_container_request_update_all (NautilusIconContainer *container)
+nautilus_canvas_container_request_update_all (NautilusCanvasContainer *container)
 {
 	GList *node;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	for (node = container->details->icons; node != NULL; node = node->next) {
 		icon = node->data;
-		nautilus_icon_container_update_icon (container, icon);
+		nautilus_canvas_container_update_icon (container, icon);
 	}
 
 	container->details->needs_resort = TRUE;
@@ -6613,15 +6613,15 @@ nautilus_icon_container_request_update_all (NautilusIconContainer *container)
 }
 
 /**
- * nautilus_icon_container_reveal:
+ * nautilus_canvas_container_reveal:
  * Change scroll position as necessary to reveal the specified item.
  */
 void
-nautilus_icon_container_reveal (NautilusIconContainer *container, NautilusIconData *data)
+nautilus_canvas_container_reveal (NautilusCanvasContainer *container, NautilusCanvasIconData *data)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 	g_return_if_fail (data != NULL);
 
 	icon = g_hash_table_lookup (container->details->icon_set, data);
@@ -6632,25 +6632,25 @@ nautilus_icon_container_reveal (NautilusIconContainer *container, NautilusIconDa
 }
 
 /**
- * nautilus_icon_container_get_selection:
- * @container: An icon container.
+ * nautilus_canvas_container_get_selection:
+ * @container: An canvas container.
  * 
  * Get a list of the icons currently selected in @container.
  * 
  * Return value: A GList of the programmer-specified data associated to each
- * selected icon, or NULL if no icon is selected.  The caller is expected to
+ * selected icon, or NULL if no canvas is selected.  The caller is expected to
  * free the list when it is not needed anymore.
  **/
 GList *
-nautilus_icon_container_get_selection (NautilusIconContainer *container)
+nautilus_canvas_container_get_selection (NautilusCanvasContainer *container)
 {
 	GList *list, *p;
 
-	g_return_val_if_fail (NAUTILUS_IS_ICON_CONTAINER (container), NULL);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), NULL);
 
 	list = NULL;
 	for (p = container->details->icons; p != NULL; p = p->next) {
-		NautilusIcon *icon;
+		NautilusCanvasIcon *icon;
 
 		icon = p->data;
 		if (icon->is_selected) {
@@ -6662,15 +6662,15 @@ nautilus_icon_container_get_selection (NautilusIconContainer *container)
 }
 
 static GList *
-nautilus_icon_container_get_selected_icons (NautilusIconContainer *container)
+nautilus_canvas_container_get_selected_icons (NautilusCanvasContainer *container)
 {
 	GList *list, *p;
 
-	g_return_val_if_fail (NAUTILUS_IS_ICON_CONTAINER (container), NULL);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), NULL);
 
 	list = NULL;
 	for (p = container->details->icons; p != NULL; p = p->next) {
-		NautilusIcon *icon;
+		NautilusCanvasIcon *icon;
 
 		icon = p->data;
 		if (icon->is_selected) {
@@ -6682,21 +6682,21 @@ nautilus_icon_container_get_selected_icons (NautilusIconContainer *container)
 }
 
 /**
- * nautilus_icon_container_invert_selection:
- * @container: An icon container.
+ * nautilus_canvas_container_invert_selection:
+ * @container: An canvas container.
  * 
  * Inverts the selection in @container.
  * 
  **/
 void
-nautilus_icon_container_invert_selection (NautilusIconContainer *container)
+nautilus_canvas_container_invert_selection (NautilusCanvasContainer *container)
 {
 	GList *p;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	for (p = container->details->icons; p != NULL; p = p->next) {
-		NautilusIcon *icon;
+		NautilusCanvasIcon *icon;
 
 		icon = p->data;
 		icon_toggle_selected (container, icon);
@@ -6708,8 +6708,8 @@ nautilus_icon_container_invert_selection (NautilusIconContainer *container)
 
 /* Returns an array of GdkPoints of locations of the icons. */
 static GArray *
-nautilus_icon_container_get_icon_locations (NautilusIconContainer *container,
-					    GList *icons)
+nautilus_canvas_container_get_icon_locations (NautilusCanvasContainer *container,
+						GList *icons)
 {
 	GArray *result;
 	GList *node;
@@ -6720,49 +6720,49 @@ nautilus_icon_container_get_icon_locations (NautilusIconContainer *container,
 		
 	for (index = 0, node = icons; node != NULL; index++, node = node->next) {
 	     	g_array_index (result, GdkPoint, index).x =
-	     		((NautilusIcon *)node->data)->x;
+	     		((NautilusCanvasIcon *)node->data)->x;
 	     	g_array_index (result, GdkPoint, index).y =
-			((NautilusIcon *)node->data)->y;
+			((NautilusCanvasIcon *)node->data)->y;
 	}
 
 	return result;
 }
 
 /**
- * nautilus_icon_container_get_selected_icon_locations:
- * @container: An icon container widget.
+ * nautilus_canvas_container_get_selected_icon_locations:
+ * @container: An canvas container widget.
  * 
  * Returns an array of GdkPoints of locations of the selected icons.
  **/
 GArray *
-nautilus_icon_container_get_selected_icon_locations (NautilusIconContainer *container)
+nautilus_canvas_container_get_selected_icon_locations (NautilusCanvasContainer *container)
 {
 	GArray *result;
 	GList *icons;
 
-	g_return_val_if_fail (NAUTILUS_IS_ICON_CONTAINER (container), NULL);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), NULL);
 
-	icons = nautilus_icon_container_get_selected_icons (container);
-	result = nautilus_icon_container_get_icon_locations (container, icons);
+	icons = nautilus_canvas_container_get_selected_icons (container);
+	result = nautilus_canvas_container_get_icon_locations (container, icons);
 	g_list_free (icons);
 	
 	return result;
 }
 
 /**
- * nautilus_icon_container_select_all:
- * @container: An icon container widget.
+ * nautilus_canvas_container_select_all:
+ * @container: An canvas container widget.
  * 
  * Select all the icons in @container at once.
  **/
 void
-nautilus_icon_container_select_all (NautilusIconContainer *container)
+nautilus_canvas_container_select_all (NautilusCanvasContainer *container)
 {
 	gboolean selection_changed;
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	selection_changed = FALSE;
 
@@ -6774,29 +6774,29 @@ nautilus_icon_container_select_all (NautilusIconContainer *container)
 
 	if (selection_changed) {
 		g_signal_emit (container,
-				 signals[SELECTION_CHANGED], 0);
+			       signals[SELECTION_CHANGED], 0);
 	}
 }
 
 /**
- * nautilus_icon_container_set_selection:
- * @container: An icon container widget.
- * @selection: A list of NautilusIconData *.
+ * nautilus_canvas_container_set_selection:
+ * @container: An canvas container widget.
+ * @selection: A list of NautilusCanvasIconData *.
  * 
  * Set the selection to exactly the icons in @container which have
  * programmer data matching one of the items in @selection.
  **/
 void
-nautilus_icon_container_set_selection (NautilusIconContainer *container,
-				       GList *selection)
+nautilus_canvas_container_set_selection (NautilusCanvasContainer *container,
+					 GList *selection)
 {
 	gboolean selection_changed;
 	GHashTable *hash;
 	GList *p;
 	gboolean res;
-	NautilusIcon *icon, *selected_icon;
+	NautilusCanvasIcon *icon, *selected_icon;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	selection_changed = FALSE;
 	selected_icon = NULL;
@@ -6821,33 +6821,33 @@ nautilus_icon_container_set_selection (NautilusIconContainer *container,
 
 	if (selection_changed) {
 		/* if only one item has been selected, use it as range
-		 * selection base (cf. handle_icon_button_press) */
+		 * selection base (cf. handle_canvas_button_press) */
 		if (g_list_length (selection) == 1) {
 			container->details->range_selection_base_icon = selected_icon;
 		}
 
 		g_signal_emit (container,
-				 signals[SELECTION_CHANGED], 0);
+			       signals[SELECTION_CHANGED], 0);
 	}
 }
 
 /**
- * nautilus_icon_container_select_list_unselect_others.
- * @container: An icon container widget.
- * @selection: A list of NautilusIcon *.
+ * nautilus_canvas_container_select_list_unselect_others.
+ * @container: An canvas container widget.
+ * @selection: A list of NautilusCanvasIcon *.
  * 
  * Set the selection to exactly the icons in @selection.
  **/
 void
-nautilus_icon_container_select_list_unselect_others (NautilusIconContainer *container,
-						     GList *selection)
+nautilus_canvas_container_select_list_unselect_others (NautilusCanvasContainer *container,
+						       GList *selection)
 {
 	gboolean selection_changed;
 	GHashTable *hash;
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	selection_changed = FALSE;
 
@@ -6866,56 +6866,56 @@ nautilus_icon_container_select_list_unselect_others (NautilusIconContainer *cont
 
 	if (selection_changed) {
 		g_signal_emit (container,
-				 signals[SELECTION_CHANGED], 0);
+			       signals[SELECTION_CHANGED], 0);
 	}
 }
 
 /**
- * nautilus_icon_container_unselect_all:
- * @container: An icon container widget.
+ * nautilus_canvas_container_unselect_all:
+ * @container: An canvas container widget.
  * 
  * Deselect all the icons in @container.
  **/
 void
-nautilus_icon_container_unselect_all (NautilusIconContainer *container)
+nautilus_canvas_container_unselect_all (NautilusCanvasContainer *container)
 {
 	if (unselect_all (container)) {
 		g_signal_emit (container,
-				 signals[SELECTION_CHANGED], 0);
+			       signals[SELECTION_CHANGED], 0);
 	}
 }
 
 /**
- * nautilus_icon_container_get_icon_by_uri:
- * @container: An icon container widget.
- * @uri: The uri of an icon to find.
+ * nautilus_canvas_container_get_icon_by_uri:
+ * @container: An canvas container widget.
+ * @uri: The uri of an canvas to find.
  * 
  * Locate an icon, given the URI. The URI must match exactly.
  * Later we may have to have some way of figuring out if the
  * URI specifies the same object that does not require an exact match.
  **/
-NautilusIcon *
-nautilus_icon_container_get_icon_by_uri (NautilusIconContainer *container,
-					 const char *uri)
+NautilusCanvasIcon *
+nautilus_canvas_container_get_icon_by_uri (NautilusCanvasContainer *container,
+					     const char *uri)
 {
-	NautilusIconContainerDetails *details;
+	NautilusCanvasContainerDetails *details;
 	GList *p;
 
-	/* Eventually, we must avoid searching the entire icon list,
+	/* Eventually, we must avoid searching the entire canvas list,
 	   but it's OK for now.
-	   A hash table mapping uri to icon is one possibility.
+	   A hash table mapping uri to canvas is one possibility.
 	*/
 
 	details = container->details;
 
 	for (p = details->icons; p != NULL; p = p->next) {
-		NautilusIcon *icon;
+		NautilusCanvasIcon *icon;
 		char *icon_uri;
 		gboolean is_match;
 
 		icon = p->data;
 
-		icon_uri = nautilus_icon_container_get_icon_uri
+		icon_uri = nautilus_canvas_container_get_icon_uri
 			(container, icon);
 		is_match = strcmp (uri, icon_uri) == 0;
 		g_free (icon_uri);
@@ -6928,11 +6928,11 @@ nautilus_icon_container_get_icon_by_uri (NautilusIconContainer *container,
 	return NULL;
 }
 
-static NautilusIcon *
-get_nth_selected_icon (NautilusIconContainer *container, int index)
+static NautilusCanvasIcon *
+get_nth_selected_icon (NautilusCanvasContainer *container, int index)
 {
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	int selection_count;
 
 	g_assert (index > 0);
@@ -6950,23 +6950,23 @@ get_nth_selected_icon (NautilusIconContainer *container, int index)
 	return NULL;
 }
 
-static NautilusIcon *
-get_first_selected_icon (NautilusIconContainer *container)
+static NautilusCanvasIcon *
+get_first_selected_icon (NautilusCanvasContainer *container)
 {
         return get_nth_selected_icon (container, 1);
 }
 
 static gboolean
-has_multiple_selection (NautilusIconContainer *container)
+has_multiple_selection (NautilusCanvasContainer *container)
 {
         return get_nth_selected_icon (container, 2) != NULL;
 }
 
 static gboolean
-all_selected (NautilusIconContainer *container)
+all_selected (NautilusCanvasContainer *container)
 {
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
 	for (p = container->details->icons; p != NULL; p = p->next) {
 		icon = p->data;
@@ -6978,22 +6978,22 @@ all_selected (NautilusIconContainer *container)
 }
 
 static gboolean
-has_selection (NautilusIconContainer *container)
+has_selection (NautilusCanvasContainer *container)
 {
         return get_nth_selected_icon (container, 1) != NULL;
 }
 
 /**
- * nautilus_icon_container_show_stretch_handles:
- * @container: An icon container widget.
+ * nautilus_canvas_container_show_stretch_handles:
+ * @container: An canvas container widget.
  * 
  * Makes stretch handles visible on the first selected icon.
  **/
 void
-nautilus_icon_container_show_stretch_handles (NautilusIconContainer *container)
+nautilus_canvas_container_show_stretch_handles (NautilusCanvasContainer *container)
 {
-	NautilusIconContainerDetails *details;
-	NautilusIcon *icon;
+	NautilusCanvasContainerDetails *details;
+	NautilusCanvasIcon *icon;
 	guint initial_size;
 	
 	icon = get_first_selected_icon (container);
@@ -7007,14 +7007,14 @@ nautilus_icon_container_show_stretch_handles (NautilusIconContainer *container)
 		return;
 	}
 
-	/* Get rid of the existing stretch handles and put them on the new icon. */
+	/* Get rid of the existing stretch handles and put them on the new canvas. */
 	if (details->stretch_icon != NULL) {
-		nautilus_icon_canvas_item_set_show_stretch_handles
+		nautilus_canvas_item_set_show_stretch_handles
 			(details->stretch_icon->item, FALSE);
 		ungrab_stretch_icon (container);
 		emit_stretch_ended (container, details->stretch_icon);
 	}
-	nautilus_icon_canvas_item_set_show_stretch_handles (icon->item, TRUE);
+	nautilus_canvas_item_set_show_stretch_handles (icon->item, TRUE);
 	details->stretch_icon = icon;
 	
 	icon_get_size (container, icon, &initial_size);
@@ -7028,15 +7028,15 @@ nautilus_icon_container_show_stretch_handles (NautilusIconContainer *container)
 }
 
 /**
- * nautilus_icon_container_has_stretch_handles
- * @container: An icon container widget.
+ * nautilus_canvas_container_has_stretch_handles
+ * @container: An canvas container widget.
  * 
  * Returns true if the first selected item has stretch handles.
  **/
 gboolean
-nautilus_icon_container_has_stretch_handles (NautilusIconContainer *container)
+nautilus_canvas_container_has_stretch_handles (NautilusCanvasContainer *container)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
 	icon = get_first_selected_icon (container);
 	if (icon == NULL) {
@@ -7047,16 +7047,16 @@ nautilus_icon_container_has_stretch_handles (NautilusIconContainer *container)
 }
 
 /**
- * nautilus_icon_container_is_stretched
- * @container: An icon container widget.
+ * nautilus_canvas_container_is_stretched
+ * @container: An canvas container widget.
  * 
  * Returns true if the any selected item is stretched to a size other than 1.0.
  **/
 gboolean
-nautilus_icon_container_is_stretched (NautilusIconContainer *container)
+nautilus_canvas_container_is_stretched (NautilusCanvasContainer *container)
 {
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
 	for (p = container->details->icons; p != NULL; p = p->next) {
 		icon = p->data;
@@ -7068,24 +7068,24 @@ nautilus_icon_container_is_stretched (NautilusIconContainer *container)
 }
 
 /**
- * nautilus_icon_container_unstretch
- * @container: An icon container widget.
+ * nautilus_canvas_container_unstretch
+ * @container: An canvas container widget.
  * 
- * Gets rid of any icon stretching.
+ * Gets rid of any canvas stretching.
  **/
 void
-nautilus_icon_container_unstretch (NautilusIconContainer *container)
+nautilus_canvas_container_unstretch (NautilusCanvasContainer *container)
 {
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
 	for (p = container->details->icons; p != NULL; p = p->next) {
 		icon = p->data;
 		if (icon->is_selected) {
-			nautilus_icon_container_move_icon (container, icon,
-							   icon->x, icon->y,
-							   1.0,
-							   FALSE, TRUE, TRUE);
+			nautilus_canvas_container_move_icon (container, icon,
+							       icon->x, icon->y,
+							       1.0,
+							       FALSE, TRUE, TRUE);
 		}
 	}
 }
@@ -7114,7 +7114,7 @@ compute_stretch (StretchState *start,
 		y_stretch = - y_stretch;
 	}
 	current->icon_size = MAX ((int) start->icon_size + MIN (x_stretch, y_stretch),
-				  (int) NAUTILUS_ICON_SIZE_SMALLEST);
+				    (int) NAUTILUS_ICON_SIZE_SMALLEST);
 
 	/* Figure out where the corner of the icon should be. */
 	current->icon_x = start->icon_x;
@@ -7128,30 +7128,30 @@ compute_stretch (StretchState *start,
 }
 
 char *
-nautilus_icon_container_get_icon_uri (NautilusIconContainer *container,
-				      NautilusIcon *icon)
+nautilus_canvas_container_get_icon_uri (NautilusCanvasContainer *container,
+					  NautilusCanvasIcon *icon)
 {
 	char *uri;
 
 	uri = NULL;
 	g_signal_emit (container,
-			 signals[GET_ICON_URI], 0,
-			 icon->data,
-			 &uri);
+		       signals[GET_ICON_URI], 0,
+		       icon->data,
+		       &uri);
 	return uri;
 }
 
 char *
-nautilus_icon_container_get_icon_drop_target_uri (NautilusIconContainer *container,
-				   	     	  NautilusIcon *icon)
+nautilus_canvas_container_get_icon_drop_target_uri (NautilusCanvasContainer *container,
+						      NautilusCanvasIcon *icon)
 {
 	char *uri;
 
 	uri = NULL;
 	g_signal_emit (container,
-			 signals[GET_ICON_DROP_TARGET_URI], 0,
-			 icon->data,
-			 &uri);
+		       signals[GET_ICON_DROP_TARGET_URI], 0,
+		       icon->data,
+		       &uri);
 	return uri;
 }
 
@@ -7159,10 +7159,10 @@ nautilus_icon_container_get_icon_drop_target_uri (NautilusIconContainer *contain
  * to avoid having the flag linger until the next file is added.
  */
 static void
-reset_scroll_region_if_not_empty (NautilusIconContainer *container)
+reset_scroll_region_if_not_empty (NautilusCanvasContainer *container)
 {
-	if (!nautilus_icon_container_is_empty (container)) {
-		nautilus_icon_container_reset_scroll_region (container);
+	if (!nautilus_canvas_container_is_empty (container)) {
+		nautilus_canvas_container_reset_scroll_region (container);
 	}
 }
 
@@ -7171,10 +7171,10 @@ reset_scroll_region_if_not_empty (NautilusIconContainer *container)
  * last manual layout.
  */
 void
-nautilus_icon_container_set_auto_layout (NautilusIconContainer *container,
-					 gboolean auto_layout)
+nautilus_canvas_container_set_auto_layout (NautilusCanvasContainer *container,
+					   gboolean auto_layout)
 {
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 	g_return_if_fail (auto_layout == FALSE || auto_layout == TRUE);
 
 	if (container->details->auto_layout == auto_layout) {
@@ -7186,7 +7186,7 @@ nautilus_icon_container_set_auto_layout (NautilusIconContainer *container,
 
 	if (!auto_layout) {
 		reload_icon_positions (container);
-		nautilus_icon_container_freeze_icon_positions (container);
+		nautilus_canvas_container_freeze_icon_positions (container);
 	}
 
 	container->details->needs_resort = TRUE;
@@ -7196,7 +7196,7 @@ nautilus_icon_container_set_auto_layout (NautilusIconContainer *container,
 }
 
 gboolean
-nautilus_icon_container_is_keep_aligned (NautilusIconContainer *container)
+nautilus_canvas_container_is_keep_aligned (NautilusCanvasContainer *container)
 {
 	return container->details->keep_aligned;
 }
@@ -7204,9 +7204,9 @@ nautilus_icon_container_is_keep_aligned (NautilusIconContainer *container)
 static gboolean
 align_icons_callback (gpointer callback_data)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	container = NAUTILUS_ICON_CONTAINER (callback_data);
+	container = NAUTILUS_CANVAS_CONTAINER (callback_data);
 	align_icons (container);
 	container->details->align_idle_id = 0;
 
@@ -7214,7 +7214,7 @@ align_icons_callback (gpointer callback_data)
 }
 
 static void
-unschedule_align_icons (NautilusIconContainer *container)
+unschedule_align_icons (NautilusCanvasContainer *container)
 {
         if (container->details->align_idle_id != 0) {
 		g_source_remove (container->details->align_idle_id);
@@ -7223,7 +7223,7 @@ unschedule_align_icons (NautilusIconContainer *container)
 }
 
 static void
-schedule_align_icons (NautilusIconContainer *container)
+schedule_align_icons (NautilusCanvasContainer *container)
 {
 	if (container->details->align_idle_id == 0
 	    && container->details->has_been_allocated) {
@@ -7233,8 +7233,8 @@ schedule_align_icons (NautilusIconContainer *container)
 }
 
 void
-nautilus_icon_container_set_keep_aligned (NautilusIconContainer *container,
-					  gboolean keep_aligned)
+nautilus_canvas_container_set_keep_aligned (NautilusCanvasContainer *container,
+					    gboolean keep_aligned)
 {
 	if (container->details->keep_aligned != keep_aligned) {
 		container->details->keep_aligned = keep_aligned;
@@ -7248,10 +7248,10 @@ nautilus_icon_container_set_keep_aligned (NautilusIconContainer *container,
 }
 
 void
-nautilus_icon_container_set_layout_mode (NautilusIconContainer *container,
-					 NautilusIconLayoutMode mode)
+nautilus_canvas_container_set_layout_mode (NautilusCanvasContainer *container,
+					   NautilusCanvasLayoutMode mode)
 {
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	container->details->layout_mode = mode;
 	invalidate_labels (container);
@@ -7263,32 +7263,32 @@ nautilus_icon_container_set_layout_mode (NautilusIconContainer *container,
 }
 
 void
-nautilus_icon_container_set_label_position (NautilusIconContainer *container,
-					    NautilusIconLabelPosition position)
+nautilus_canvas_container_set_label_position (NautilusCanvasContainer *container,
+					      NautilusCanvasLabelPosition position)
 {
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	if (container->details->label_position != position) {
 		container->details->label_position = position;
 
 		invalidate_labels (container);
-		nautilus_icon_container_request_update_all (container);
+		nautilus_canvas_container_request_update_all (container);
 
 		schedule_redo_layout (container);
 	}
 }
 
 /* Switch from automatic to manual layout, freezing all the icons in their
- * current positions instead of restoring icon positions from the last manual
+ * current positions instead of restoring canvas positions from the last manual
  * layout as set_auto_layout does.
  */
 void
-nautilus_icon_container_freeze_icon_positions (NautilusIconContainer *container)
+nautilus_canvas_container_freeze_icon_positions (NautilusCanvasContainer *container)
 {
 	gboolean changed;
 	GList *p;
-	NautilusIcon *icon;
-	NautilusIconPosition position;
+	NautilusCanvasIcon *icon;
+	NautilusCanvasPosition position;
 
 	changed = container->details->auto_layout;
 	container->details->auto_layout = FALSE;
@@ -7300,7 +7300,7 @@ nautilus_icon_container_freeze_icon_positions (NautilusIconContainer *container)
 		position.y = icon->y;
 		position.scale = icon->scale;
 		g_signal_emit (container, signals[ICON_POSITION_CHANGED], 0,
-				 icon->data, &position);
+			       icon->data, &position);
 	}
 
 	if (changed) {
@@ -7310,7 +7310,7 @@ nautilus_icon_container_freeze_icon_positions (NautilusIconContainer *container)
 
 /* Re-sort, switching to automatic layout if it was in manual layout. */
 void
-nautilus_icon_container_sort (NautilusIconContainer *container)
+nautilus_canvas_container_sort (NautilusCanvasContainer *container)
 {
 	gboolean changed;
 
@@ -7327,31 +7327,31 @@ nautilus_icon_container_sort (NautilusIconContainer *container)
 }
 
 gboolean
-nautilus_icon_container_is_auto_layout (NautilusIconContainer *container)
+nautilus_canvas_container_is_auto_layout (NautilusCanvasContainer *container)
 {
-	g_return_val_if_fail (NAUTILUS_IS_ICON_CONTAINER (container), FALSE);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), FALSE);
 
 	return container->details->auto_layout;
 }
 
 static void
-pending_icon_to_rename_destroy_callback (NautilusIconCanvasItem *item, NautilusIconContainer *container)
+pending_icon_to_rename_destroy_callback (NautilusCanvasItem *item, NautilusCanvasContainer *container)
 {
 	g_assert (container->details->pending_icon_to_rename != NULL);
 	g_assert (container->details->pending_icon_to_rename->item == item);
 	container->details->pending_icon_to_rename = NULL;
 }
 
-static NautilusIcon*
-get_pending_icon_to_rename (NautilusIconContainer *container)
+static NautilusCanvasIcon *
+get_pending_icon_to_rename (NautilusCanvasContainer *container)
 {
 	return container->details->pending_icon_to_rename;
 }
 
 static void
-set_pending_icon_to_rename (NautilusIconContainer *container, NautilusIcon *icon)
+set_pending_icon_to_rename (NautilusCanvasContainer *container, NautilusCanvasIcon *icon)
 {
-	NautilusIcon *old_icon;
+	NautilusCanvasIcon *old_icon;
 	
 	old_icon = container->details->pending_icon_to_rename;
 	
@@ -7375,15 +7375,15 @@ set_pending_icon_to_rename (NautilusIconContainer *container, NautilusIcon *icon
 }
 
 static void
-process_pending_icon_to_rename (NautilusIconContainer *container)
+process_pending_icon_to_rename (NautilusCanvasContainer *container)
 {
-	NautilusIcon *pending_icon_to_rename;
+	NautilusCanvasIcon *pending_icon_to_rename;
 	
 	pending_icon_to_rename = get_pending_icon_to_rename (container);
 	
 	if (pending_icon_to_rename != NULL) {
 		if (pending_icon_to_rename->is_selected && !has_multiple_selection (container)) {
-			nautilus_icon_container_start_renaming_selected_item (container, FALSE);
+			nautilus_canvas_container_start_renaming_selected_item (container, FALSE);
 		} else {
 			set_pending_icon_to_rename (container, NULL);
 		}
@@ -7391,31 +7391,31 @@ process_pending_icon_to_rename (NautilusIconContainer *container)
 }
 
 static gboolean
-is_renaming_pending (NautilusIconContainer *container)
+is_renaming_pending (NautilusCanvasContainer *container)
 {
 	return get_pending_icon_to_rename (container) != NULL;
 }
 
 static gboolean
-is_renaming (NautilusIconContainer *container)
+is_renaming (NautilusCanvasContainer *container)
 {
 	return container->details->renaming;
 }
 
 /**
- * nautilus_icon_container_start_renaming_selected_item
- * @container: An icon container widget.
+ * nautilus_canvas_container_start_renaming_selected_item
+ * @container: An canvas container widget.
  * @select_all: Whether the whole file should initially be selected, or
  *              only its basename (i.e. everything except its extension).
  * 
  * Displays the edit name widget on the first selected icon
  **/
 void
-nautilus_icon_container_start_renaming_selected_item (NautilusIconContainer *container,
-						      gboolean select_all)
+nautilus_canvas_container_start_renaming_selected_item (NautilusCanvasContainer *container,
+							gboolean select_all)
 {
-	NautilusIconContainerDetails *details;
-	NautilusIcon *icon;
+	NautilusCanvasContainerDetails *details;
+	NautilusCanvasIcon *icon;
 	EelDRect icon_rect;
 	PangoContext *context;
 	PangoFontDescription *desc;
@@ -7449,7 +7449,7 @@ nautilus_icon_container_start_renaming_selected_item (NautilusIconContainer *con
 	set_pending_icon_to_rename (container, NULL);
 
 	/* Make a copy of the original editable text for a later compare */
-	editable_text = nautilus_icon_canvas_item_get_editable_text (icon->item);
+	editable_text = nautilus_canvas_item_get_editable_text (icon->item);
 
 	/* This could conceivably be NULL if a rename was triggered really early. */
 	if (editable_text == NULL) {
@@ -7459,10 +7459,10 @@ nautilus_icon_container_start_renaming_selected_item (NautilusIconContainer *con
 	details->original_text = g_strdup (editable_text);
 	
 	/* Freeze updates so files added while renaming don't cause rename to loose focus, bug #318373 */
-	nautilus_icon_container_freeze_updates (container);
+	nautilus_canvas_container_freeze_updates (container);
 
 	/* Create text renaming widget, if it hasn't been created already.
-	 * We deal with the broken icon text item widget by keeping it around
+	 * We deal with the broken canvas text item widget by keeping it around
 	 * so its contents can still be cut and pasted as part of the clipboard
 	 */
 	if (details->rename_widget == NULL) {
@@ -7489,9 +7489,9 @@ nautilus_icon_container_start_renaming_selected_item (NautilusIconContainer *con
 						 desc);
 	pango_font_description_free (desc);
 	
-	icon_rect = nautilus_icon_canvas_item_get_icon_rectangle (icon->item);
+	icon_rect = nautilus_canvas_item_get_icon_rectangle (icon->item);
 
-	width = nautilus_icon_canvas_item_get_max_text_width (icon->item);
+	width = nautilus_canvas_item_get_max_text_width (icon->item);
 
 	eel_canvas_w2c (EEL_CANVAS_ITEM (icon->item)->canvas,
 			(icon_rect.x0 + icon_rect.x1) / 2,
@@ -7525,17 +7525,17 @@ nautilus_icon_container_start_renaming_selected_item (NautilusIconContainer *con
 		       signals[ICON_RENAME_STARTED], 0,
 		       GTK_EDITABLE (details->rename_widget));
 	
-	nautilus_icon_container_update_icon (container, icon);
+	nautilus_canvas_container_update_icon (container, icon);
 	
 	/* We are in renaming mode */
 	details->renaming = TRUE;
-	nautilus_icon_canvas_item_set_renaming (icon->item, TRUE);
+	nautilus_canvas_item_set_renaming (icon->item, TRUE);
 }
 
 static void
-end_renaming_mode (NautilusIconContainer *container, gboolean commit)
+end_renaming_mode (NautilusCanvasContainer *container, gboolean commit)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	const char *changed_text = NULL;
 
 	set_pending_icon_to_rename (container, NULL);
@@ -7547,9 +7547,9 @@ end_renaming_mode (NautilusIconContainer *container, gboolean commit)
 
 	/* We are not in renaming mode */
 	container->details->renaming = FALSE;
-	nautilus_icon_canvas_item_set_renaming (icon->item, FALSE);
+	nautilus_canvas_item_set_renaming (icon->item, FALSE);
 	
-	nautilus_icon_container_unfreeze_updates (container);
+	nautilus_canvas_container_unfreeze_updates (container);
 
 	if (commit) {
 		set_pending_icon_to_reveal (container, icon);
@@ -7567,30 +7567,29 @@ end_renaming_mode (NautilusIconContainer *container, gboolean commit)
 
 	g_signal_emit (container,
 		       signals[ICON_RENAME_ENDED], 0,
-		       icon->data,
-		       changed_text);
+		       icon->data,		       changed_text);
 
 	gtk_widget_hide (container->details->rename_widget);
 	g_free (container->details->original_text);
 }
 
 gboolean
-nautilus_icon_container_has_stored_icon_positions (NautilusIconContainer *container)
+nautilus_canvas_container_has_stored_icon_positions (NautilusCanvasContainer *container)
 {
 	GList *p;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	gboolean have_stored_position;
-	NautilusIconPosition position;
+	NautilusCanvasPosition position;
 
 	for (p = container->details->icons; p != NULL; p = p->next) {
 		icon = p->data;
 
 		have_stored_position = FALSE;
 		g_signal_emit (container,
-				 signals[GET_STORED_ICON_POSITION], 0,
-				 icon->data,
-				 &position,
-				 &have_stored_position);
+			       signals[GET_STORED_ICON_POSITION], 0,
+			       icon->data,
+			       &position,
+			       &have_stored_position);
 		if (have_stored_position) {
 			return TRUE;
 		}
@@ -7599,46 +7598,46 @@ nautilus_icon_container_has_stored_icon_positions (NautilusIconContainer *contai
 }
 
 void
-nautilus_icon_container_set_single_click_mode (NautilusIconContainer *container,
-					       gboolean single_click_mode)
+nautilus_canvas_container_set_single_click_mode (NautilusCanvasContainer *container,
+						 gboolean single_click_mode)
 {
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	container->details->single_click_mode = single_click_mode;
 }
 
-/* Return if the icon container is a fixed size */
+/* Return if the canvas container is a fixed size */
 gboolean
-nautilus_icon_container_get_is_fixed_size (NautilusIconContainer *container)
+nautilus_canvas_container_get_is_fixed_size (NautilusCanvasContainer *container)
 {
-	g_return_val_if_fail (NAUTILUS_IS_ICON_CONTAINER (container), FALSE);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), FALSE);
 
 	return container->details->is_fixed_size;
 }
 
-/* Set the icon container to be a fixed size */
+/* Set the canvas container to be a fixed size */
 void
-nautilus_icon_container_set_is_fixed_size (NautilusIconContainer *container,
-					   gboolean is_fixed_size)
+nautilus_canvas_container_set_is_fixed_size (NautilusCanvasContainer *container,
+					     gboolean is_fixed_size)
 {
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	container->details->is_fixed_size = is_fixed_size;
 }
 
 gboolean
-nautilus_icon_container_get_is_desktop (NautilusIconContainer *container)
+nautilus_canvas_container_get_is_desktop (NautilusCanvasContainer *container)
 {
-	g_return_val_if_fail (NAUTILUS_IS_ICON_CONTAINER (container), FALSE);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), FALSE);
 
 	return container->details->is_desktop;
 }
 
 void
-nautilus_icon_container_set_is_desktop (NautilusIconContainer *container,
-					   gboolean is_desktop)
+nautilus_canvas_container_set_is_desktop (NautilusCanvasContainer *container,
+					  gboolean is_desktop)
 {
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	container->details->is_desktop = is_desktop;
 
@@ -7651,13 +7650,13 @@ nautilus_icon_container_set_is_desktop (NautilusIconContainer *container,
 }
 
 void
-nautilus_icon_container_set_margins (NautilusIconContainer *container,
-				     int left_margin,
-				     int right_margin,
-				     int top_margin,
-				     int bottom_margin)
+nautilus_canvas_container_set_margins (NautilusCanvasContainer *container,
+				       int left_margin,
+				       int right_margin,
+				       int top_margin,
+				       int bottom_margin)
 {
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	container->details->left_margin = left_margin;
 	container->details->right_margin = right_margin;
@@ -7669,8 +7668,8 @@ nautilus_icon_container_set_margins (NautilusIconContainer *container,
 }
 
 void
-nautilus_icon_container_set_use_drop_shadows (NautilusIconContainer  *container,
-					      gboolean                use_drop_shadows)
+nautilus_canvas_container_set_use_drop_shadows (NautilusCanvasContainer  *container,
+						gboolean                use_drop_shadows)
 {
 	if (container->details->drop_shadows_requested == use_drop_shadows) {
 		return;
@@ -7684,10 +7683,10 @@ nautilus_icon_container_set_use_drop_shadows (NautilusIconContainer  *container,
 /* handle theme changes */
 
 void
-nautilus_icon_container_set_font (NautilusIconContainer *container,
-				  const char *font)
+nautilus_canvas_container_set_font (NautilusCanvasContainer *container,
+				    const char *font)
 {
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	if (g_strcmp0 (container->details->font, font) == 0) {
 		return;
@@ -7697,24 +7696,24 @@ nautilus_icon_container_set_font (NautilusIconContainer *container,
 	container->details->font = g_strdup (font);
 
 	invalidate_labels (container);
-	nautilus_icon_container_request_update_all (container);
+	nautilus_canvas_container_request_update_all (container);
 	gtk_widget_queue_draw (GTK_WIDGET (container));
 }
 
 /**
- * nautilus_icon_container_get_icon_description
- * @container: An icon container widget.
+ * nautilus_canvas_container_get_icon_description
+ * @container: An canvas container widget.
  * @data: Icon data 
  * 
  * Gets the description for the icon. This function may return NULL.
  **/
 char*
-nautilus_icon_container_get_icon_description (NautilusIconContainer *container,
-				              NautilusIconData      *data)
+nautilus_canvas_container_get_icon_description (NautilusCanvasContainer *container,
+						  NautilusCanvasIconData      *data)
 {
-	NautilusIconContainerClass *klass;
+	NautilusCanvasContainerClass *klass;
 
-	klass = NAUTILUS_ICON_CONTAINER_GET_CLASS (container);
+	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
 
 	if (klass->get_icon_description) {
 		return klass->get_icon_description (container, data);
@@ -7724,41 +7723,41 @@ nautilus_icon_container_get_icon_description (NautilusIconContainer *container,
 }
 
 gboolean
-nautilus_icon_container_get_allow_moves (NautilusIconContainer *container)
+nautilus_canvas_container_get_allow_moves (NautilusCanvasContainer *container)
 {
-	g_return_val_if_fail (NAUTILUS_IS_ICON_CONTAINER (container), FALSE);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), FALSE);
 
 	return container->details->drag_allow_moves;
 }
 
 void
-nautilus_icon_container_set_allow_moves	(NautilusIconContainer *container,
-					 gboolean               allow_moves)
+nautilus_canvas_container_set_allow_moves	(NautilusCanvasContainer *container,
+						 gboolean               allow_moves)
 {
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	container->details->drag_allow_moves = allow_moves;
 }
 
 /**
- * nautilus_icon_container_set_highlighted_for_clipboard
- * @container: An icon container widget.
- * @data: Icon Data associated with all icons that should be highlighted.
+ * nautilus_canvas_container_set_highlighted_for_clipboard
+ * @container: An canvas container widget.
+ * @data: Canvas Data associated with all icons that should be highlighted.
  *        Others will be unhighlighted.
  **/
 void
-nautilus_icon_container_set_highlighted_for_clipboard (NautilusIconContainer *container,
-						       GList                 *clipboard_icon_data)
+nautilus_canvas_container_set_highlighted_for_clipboard (NautilusCanvasContainer *container,
+							 GList                 *clipboard_canvas_data)
 {
 	GList *l;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	gboolean highlighted_for_clipboard;
 
-	g_return_if_fail (NAUTILUS_IS_ICON_CONTAINER (container));
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
 
 	for (l = container->details->icons; l != NULL; l = l->next) {
 		icon = l->data;
-		highlighted_for_clipboard = (g_list_find (clipboard_icon_data, icon->data) != NULL);
+		highlighted_for_clipboard = (g_list_find (clipboard_canvas_data, icon->data) != NULL);
 
 		eel_canvas_item_set (EEL_CANVAS_ITEM (icon->item),
 				     "highlighted-for-clipboard", highlighted_for_clipboard,
@@ -7767,22 +7766,22 @@ nautilus_icon_container_set_highlighted_for_clipboard (NautilusIconContainer *co
 
 }
 
-/* NautilusIconContainerAccessible */
+/* NautilusCanvasContainerAccessible */
 typedef struct {
 	EelCanvasAccessible parent;
-	NautilusIconContainerAccessiblePrivate *priv;
-} NautilusIconContainerAccessible;
+	NautilusCanvasContainerAccessiblePrivate *priv;
+} NautilusCanvasContainerAccessible;
 
-typedef EelCanvasAccessibleClass NautilusIconContainerAccessibleClass;
+typedef EelCanvasAccessibleClass NautilusCanvasContainerAccessibleClass;
 
-#define GET_ACCESSIBLE_PRIV(o) ((NautilusIconContainerAccessible *) o)->priv
+#define GET_ACCESSIBLE_PRIV(o) ((NautilusCanvasContainerAccessible *) o)->priv
 
 /* AtkAction interface */
 static gboolean
-nautilus_icon_container_accessible_do_action (AtkAction *accessible, int i)
+nautilus_canvas_container_accessible_do_action (AtkAction *accessible, int i)
 {
 	GtkWidget *widget;
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	GList *selection;
 
 	g_return_val_if_fail (i < LAST_ACTION, FALSE);
@@ -7792,10 +7791,10 @@ nautilus_icon_container_accessible_do_action (AtkAction *accessible, int i)
 		return FALSE;
 	}
 	
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
 	switch (i) {
 	case ACTION_ACTIVATE :
-		selection = nautilus_icon_container_get_selection (container);
+		selection = nautilus_canvas_container_get_selection (container);
 
 		if (selection) {
 			g_signal_emit_by_name (container, "activate", selection);
@@ -7806,23 +7805,23 @@ nautilus_icon_container_accessible_do_action (AtkAction *accessible, int i)
 		handle_popups (container, NULL,"context_click_background");
 		break;
 	default :
-		g_warning ("Invalid action passed to NautilusIconContainerAccessible::do_action");
+		g_warning ("Invalid action passed to NautilusCanvasContainerAccessible::do_action");
 		return FALSE;
 	}
 	return TRUE;
 }
 
 static int
-nautilus_icon_container_accessible_get_n_actions (AtkAction *accessible)
+nautilus_canvas_container_accessible_get_n_actions (AtkAction *accessible)
 {
 	return LAST_ACTION;
 }
 
 static const char *
-nautilus_icon_container_accessible_action_get_description (AtkAction *accessible, 
-							   int i)
+nautilus_canvas_container_accessible_action_get_description (AtkAction *accessible, 
+							     int i)
 {
-	NautilusIconContainerAccessiblePrivate *priv;
+	NautilusCanvasContainerAccessiblePrivate *priv;
 	
 	g_assert (i < LAST_ACTION);
 
@@ -7831,21 +7830,21 @@ nautilus_icon_container_accessible_action_get_description (AtkAction *accessible
 	if (priv->action_descriptions[i]) {
 		return priv->action_descriptions[i];
 	} else {
-		return nautilus_icon_container_accessible_action_descriptions[i];
+		return nautilus_canvas_container_accessible_action_descriptions[i];
 	}
 }
 
 static const char *
-nautilus_icon_container_accessible_action_get_name (AtkAction *accessible, int i)
+nautilus_canvas_container_accessible_action_get_name (AtkAction *accessible, int i)
 {
 	g_assert (i < LAST_ACTION);
 
-	return nautilus_icon_container_accessible_action_names[i];
+	return nautilus_canvas_container_accessible_action_names[i];
 }
 
 static const char *
-nautilus_icon_container_accessible_action_get_keybinding (AtkAction *accessible, 
-							  int i)
+nautilus_canvas_container_accessible_action_get_keybinding (AtkAction *accessible, 
+							    int i)
 {
 	g_assert (i < LAST_ACTION);
 
@@ -7853,11 +7852,11 @@ nautilus_icon_container_accessible_action_get_keybinding (AtkAction *accessible,
 }
 
 static gboolean
-nautilus_icon_container_accessible_action_set_description (AtkAction *accessible, 
-							   int i, 
-							   const char *description)
+nautilus_canvas_container_accessible_action_set_description (AtkAction *accessible, 
+							     int i, 
+							     const char *description)
 {
-	NautilusIconContainerAccessiblePrivate *priv;
+	NautilusCanvasContainerAccessiblePrivate *priv;
 
 	g_assert (i < LAST_ACTION);
 
@@ -7872,27 +7871,27 @@ nautilus_icon_container_accessible_action_set_description (AtkAction *accessible
 }
 
 static void
-nautilus_icon_container_accessible_action_interface_init (AtkActionIface *iface)
+nautilus_canvas_container_accessible_action_interface_init (AtkActionIface *iface)
 {
-	iface->do_action = nautilus_icon_container_accessible_do_action;
-	iface->get_n_actions = nautilus_icon_container_accessible_get_n_actions;
-	iface->get_description = nautilus_icon_container_accessible_action_get_description;
-	iface->get_name = nautilus_icon_container_accessible_action_get_name;
-	iface->get_keybinding = nautilus_icon_container_accessible_action_get_keybinding;
-	iface->set_description = nautilus_icon_container_accessible_action_set_description;
+	iface->do_action = nautilus_canvas_container_accessible_do_action;
+	iface->get_n_actions = nautilus_canvas_container_accessible_get_n_actions;
+	iface->get_description = nautilus_canvas_container_accessible_action_get_description;
+	iface->get_name = nautilus_canvas_container_accessible_action_get_name;
+	iface->get_keybinding = nautilus_canvas_container_accessible_action_get_keybinding;
+	iface->set_description = nautilus_canvas_container_accessible_action_set_description;
 }
 
 /* AtkSelection interface */
 
 static void
-nautilus_icon_container_accessible_update_selection (AtkObject *accessible)
+nautilus_canvas_container_accessible_update_selection (AtkObject *accessible)
 {
-	NautilusIconContainer *container;
-	NautilusIconContainerAccessiblePrivate *priv;
+	NautilusCanvasContainer *container;
+	NautilusCanvasContainerAccessiblePrivate *priv;
 	GList *l;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
-	container = NAUTILUS_ICON_CONTAINER (gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible)));
+	container = NAUTILUS_CANVAS_CONTAINER (gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible)));
 	priv = GET_ACCESSIBLE_PRIV (accessible);
 
 	if (priv->selection) {
@@ -7912,18 +7911,18 @@ nautilus_icon_container_accessible_update_selection (AtkObject *accessible)
 }
 
 static void
-nautilus_icon_container_accessible_selection_changed_cb (NautilusIconContainer *container,
-							 gpointer data)
+nautilus_canvas_container_accessible_selection_changed_cb (NautilusCanvasContainer *container,
+							   gpointer data)
 {
 	g_signal_emit_by_name (data, "selection_changed");
 }
 
 static void
-nautilus_icon_container_accessible_icon_added_cb (NautilusIconContainer *container,
-						  NautilusIconData *icon_data,
-						  gpointer data)
+nautilus_canvas_container_accessible_icon_added_cb (NautilusCanvasContainer *container,
+						      NautilusCanvasIconData *icon_data,
+						      gpointer data)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	AtkObject *atk_parent;
 	AtkObject *atk_child;
 	int index;
@@ -7941,11 +7940,11 @@ nautilus_icon_container_accessible_icon_added_cb (NautilusIconContainer *contain
 }
 
 static void
-nautilus_icon_container_accessible_icon_removed_cb (NautilusIconContainer *container,
-						    NautilusIconData *icon_data,
-						    gpointer data)
+nautilus_canvas_container_accessible_icon_removed_cb (NautilusCanvasContainer *container,
+							NautilusCanvasIconData *icon_data,
+							gpointer data)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	AtkObject *atk_parent;
 	AtkObject *atk_child;
 	int index;
@@ -7963,37 +7962,37 @@ nautilus_icon_container_accessible_icon_removed_cb (NautilusIconContainer *conta
 }
 
 static void
-nautilus_icon_container_accessible_cleared_cb (NautilusIconContainer *container, 
-					       gpointer data)
+nautilus_canvas_container_accessible_cleared_cb (NautilusCanvasContainer *container, 
+						 gpointer data)
 {
 	g_signal_emit_by_name (data, "children_changed", 0, NULL, NULL);
 }
 
 static gboolean 
-nautilus_icon_container_accessible_add_selection (AtkSelection *accessible, 
-						  int i)
+nautilus_canvas_container_accessible_add_selection (AtkSelection *accessible, 
+						    int i)
 {
 	GtkWidget *widget;
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	GList *l;
 	GList *selection;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
 	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible));
 	if (!widget) {
 		return FALSE;
 	}
 
-        container = NAUTILUS_ICON_CONTAINER (widget);
+        container = NAUTILUS_CANVAS_CONTAINER (widget);
 	
 	l = g_list_nth (container->details->icons, i);
 	if (l) {
 		icon = l->data;
 		
-		selection = nautilus_icon_container_get_selection (container);
+		selection = nautilus_canvas_container_get_selection (container);
 		selection = g_list_prepend (selection, 
 					    icon->data);
-		nautilus_icon_container_set_selection (container, selection);
+		nautilus_canvas_container_set_selection (container, selection);
 		
 		g_list_free (selection);
 		return TRUE;
@@ -8003,33 +8002,33 @@ nautilus_icon_container_accessible_add_selection (AtkSelection *accessible,
 }
 
 static gboolean
-nautilus_icon_container_accessible_clear_selection (AtkSelection *accessible)
+nautilus_canvas_container_accessible_clear_selection (AtkSelection *accessible)
 {
 	GtkWidget *widget;
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
 	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible));
 	if (!widget) {
 		return FALSE;
 	}
 
-        container = NAUTILUS_ICON_CONTAINER (widget);
+        container = NAUTILUS_CANVAS_CONTAINER (widget);
 
-	nautilus_icon_container_unselect_all (container);
+	nautilus_canvas_container_unselect_all (container);
 
 	return TRUE;
 }
 
 static AtkObject *
-nautilus_icon_container_accessible_ref_selection (AtkSelection *accessible, 
-						  int i)
+nautilus_canvas_container_accessible_ref_selection (AtkSelection *accessible, 
+						    int i)
 {
-	NautilusIconContainerAccessiblePrivate *priv;
+	NautilusCanvasContainerAccessiblePrivate *priv;
 	AtkObject *atk_object;
 	GList *item;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 
-	nautilus_icon_container_accessible_update_selection (ATK_OBJECT (accessible));
+	nautilus_canvas_container_accessible_update_selection (ATK_OBJECT (accessible));
 	priv = GET_ACCESSIBLE_PRIV (accessible);
 
 	item = (g_list_nth (priv->selection, i));
@@ -8048,25 +8047,25 @@ nautilus_icon_container_accessible_ref_selection (AtkSelection *accessible,
 }
 
 static int
-nautilus_icon_container_accessible_get_selection_count (AtkSelection *accessible)
+nautilus_canvas_container_accessible_get_selection_count (AtkSelection *accessible)
 {
-	NautilusIconContainerAccessiblePrivate *priv;
+	NautilusCanvasContainerAccessiblePrivate *priv;
 	int count;
 
 	priv = GET_ACCESSIBLE_PRIV (accessible);
-	nautilus_icon_container_accessible_update_selection (ATK_OBJECT (accessible));
+	nautilus_canvas_container_accessible_update_selection (ATK_OBJECT (accessible));
 	count = g_list_length (priv->selection);
 
 	return count;
 }
 
 static gboolean
-nautilus_icon_container_accessible_is_child_selected (AtkSelection *accessible,
-						      int i)
+nautilus_canvas_container_accessible_is_child_selected (AtkSelection *accessible,
+							int i)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	GList *l;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	GtkWidget *widget;
 
 	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible));
@@ -8074,7 +8073,7 @@ nautilus_icon_container_accessible_is_child_selected (AtkSelection *accessible,
 		return FALSE;
 	}
 
-        container = NAUTILUS_ICON_CONTAINER (widget);
+        container = NAUTILUS_CANVAS_CONTAINER (widget);
 
 	l = g_list_nth (container->details->icons, i);
 	if (l) {
@@ -8085,14 +8084,14 @@ nautilus_icon_container_accessible_is_child_selected (AtkSelection *accessible,
 }
 
 static gboolean
-nautilus_icon_container_accessible_remove_selection (AtkSelection *accessible,
-						     int i)
+nautilus_canvas_container_accessible_remove_selection (AtkSelection *accessible,
+						       int i)
 {
-	NautilusIconContainerAccessiblePrivate *priv;
-	NautilusIconContainer *container;
+	NautilusCanvasContainerAccessiblePrivate *priv;
+	NautilusCanvasContainer *container;
 	GList *l;
 	GList *selection;
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	GtkWidget *widget;
 
 	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible));
@@ -8100,17 +8099,17 @@ nautilus_icon_container_accessible_remove_selection (AtkSelection *accessible,
 		return FALSE;
 	}
 
-        container = NAUTILUS_ICON_CONTAINER (widget);
-	nautilus_icon_container_accessible_update_selection (ATK_OBJECT (accessible));
+        container = NAUTILUS_CANVAS_CONTAINER (widget);
+	nautilus_canvas_container_accessible_update_selection (ATK_OBJECT (accessible));
 
 	priv = GET_ACCESSIBLE_PRIV (accessible);
 	l = g_list_nth (priv->selection, i);
 	if (l) {
 		icon = l->data;
 		
-		selection = nautilus_icon_container_get_selection (container);
+		selection = nautilus_canvas_container_get_selection (container);
 		selection = g_list_remove (selection, icon->data);
-		nautilus_icon_container_set_selection (container, selection);
+		nautilus_canvas_container_set_selection (container, selection);
 		
 		g_list_free (selection);
 		return TRUE;
@@ -8120,9 +8119,9 @@ nautilus_icon_container_accessible_remove_selection (AtkSelection *accessible,
 }
 
 static gboolean
-nautilus_icon_container_accessible_select_all_selection (AtkSelection *accessible)
+nautilus_canvas_container_accessible_select_all_selection (AtkSelection *accessible)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	GtkWidget *widget;
 
 	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible));
@@ -8130,16 +8129,16 @@ nautilus_icon_container_accessible_select_all_selection (AtkSelection *accessibl
 		return FALSE;
 	}
 
-        container = NAUTILUS_ICON_CONTAINER (widget);
+        container = NAUTILUS_CANVAS_CONTAINER (widget);
 
-	nautilus_icon_container_select_all (container);
+	nautilus_canvas_container_select_all (container);
 
 	return TRUE;
 }
 
 void
-nautilus_icon_container_widget_to_file_operation_position (NautilusIconContainer *container,
-							   GdkPoint              *position)
+nautilus_canvas_container_widget_to_file_operation_position (NautilusCanvasContainer *container,
+							     GdkPoint              *position)
 {
 	double x, y;
 
@@ -8159,22 +8158,22 @@ nautilus_icon_container_widget_to_file_operation_position (NautilusIconContainer
 }
 
 static void 
-nautilus_icon_container_accessible_selection_interface_init (AtkSelectionIface *iface)
+nautilus_canvas_container_accessible_selection_interface_init (AtkSelectionIface *iface)
 {
-	iface->add_selection = nautilus_icon_container_accessible_add_selection;
-	iface->clear_selection = nautilus_icon_container_accessible_clear_selection;
-	iface->ref_selection = nautilus_icon_container_accessible_ref_selection;
-	iface->get_selection_count = nautilus_icon_container_accessible_get_selection_count;
-	iface->is_child_selected = nautilus_icon_container_accessible_is_child_selected;
-	iface->remove_selection = nautilus_icon_container_accessible_remove_selection;
-	iface->select_all_selection = nautilus_icon_container_accessible_select_all_selection;
+	iface->add_selection = nautilus_canvas_container_accessible_add_selection;
+	iface->clear_selection = nautilus_canvas_container_accessible_clear_selection;
+	iface->ref_selection = nautilus_canvas_container_accessible_ref_selection;
+	iface->get_selection_count = nautilus_canvas_container_accessible_get_selection_count;
+	iface->is_child_selected = nautilus_canvas_container_accessible_is_child_selected;
+	iface->remove_selection = nautilus_canvas_container_accessible_remove_selection;
+	iface->select_all_selection = nautilus_canvas_container_accessible_select_all_selection;
 }
 
 
 static gint 
-nautilus_icon_container_accessible_get_n_children (AtkObject *accessible)
+nautilus_canvas_container_accessible_get_n_children (AtkObject *accessible)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 	GtkWidget *widget;
 	gint i;
 	
@@ -8183,7 +8182,7 @@ nautilus_icon_container_accessible_get_n_children (AtkObject *accessible)
 		return FALSE;
 	}
 
-	container = NAUTILUS_ICON_CONTAINER (widget);
+	container = NAUTILUS_CANVAS_CONTAINER (widget);
 
 	i = g_hash_table_size (container->details->icon_set);
 	if (container->details->rename_widget) {
@@ -8194,12 +8193,12 @@ nautilus_icon_container_accessible_get_n_children (AtkObject *accessible)
 }
 
 static AtkObject* 
-nautilus_icon_container_accessible_ref_child (AtkObject *accessible, int i)
+nautilus_canvas_container_accessible_ref_child (AtkObject *accessible, int i)
 {
         AtkObject *atk_object;
-        NautilusIconContainer *container;
+        NautilusCanvasContainer *container;
         GList *item;
-        NautilusIcon *icon;
+        NautilusCanvasIcon *icon;
 	GtkWidget *widget;
         
 	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible));
@@ -8207,7 +8206,7 @@ nautilus_icon_container_accessible_ref_child (AtkObject *accessible, int i)
 		return NULL;
 	}
 
-        container = NAUTILUS_ICON_CONTAINER (widget);
+        container = NAUTILUS_CANVAS_CONTAINER (widget);
         
         item = (g_list_nth (container->details->icons, i));
         
@@ -8231,47 +8230,47 @@ nautilus_icon_container_accessible_ref_child (AtkObject *accessible, int i)
         }
 }
 
-static GType nautilus_icon_container_accessible_get_type (void);
+static GType nautilus_canvas_container_accessible_get_type (void);
 
-G_DEFINE_TYPE_WITH_CODE (NautilusIconContainerAccessible, nautilus_icon_container_accessible,
+G_DEFINE_TYPE_WITH_CODE (NautilusCanvasContainerAccessible, nautilus_canvas_container_accessible,
 			 eel_canvas_accessible_get_type (),
-			 G_IMPLEMENT_INTERFACE (ATK_TYPE_ACTION, nautilus_icon_container_accessible_action_interface_init)
-			 G_IMPLEMENT_INTERFACE (ATK_TYPE_SELECTION, nautilus_icon_container_accessible_selection_interface_init))
+			 G_IMPLEMENT_INTERFACE (ATK_TYPE_ACTION, nautilus_canvas_container_accessible_action_interface_init)
+			 G_IMPLEMENT_INTERFACE (ATK_TYPE_SELECTION, nautilus_canvas_container_accessible_selection_interface_init))
 
 static void
-nautilus_icon_container_accessible_initialize (AtkObject *accessible, 
-					       gpointer data)
+nautilus_canvas_container_accessible_initialize (AtkObject *accessible, 
+						 gpointer data)
 {
-	NautilusIconContainer *container;
+	NautilusCanvasContainer *container;
 
-	if (ATK_OBJECT_CLASS (nautilus_icon_container_accessible_parent_class)->initialize) {
-		ATK_OBJECT_CLASS (nautilus_icon_container_accessible_parent_class)->initialize (accessible, data);
+	if (ATK_OBJECT_CLASS (nautilus_canvas_container_accessible_parent_class)->initialize) {
+		ATK_OBJECT_CLASS (nautilus_canvas_container_accessible_parent_class)->initialize (accessible, data);
 	}
 
 	if (GTK_IS_ACCESSIBLE (accessible)) {
-		nautilus_icon_container_accessible_update_selection 
+		nautilus_canvas_container_accessible_update_selection 
 			(ATK_OBJECT (accessible));
 		
-		container = NAUTILUS_ICON_CONTAINER (gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible)));
+		container = NAUTILUS_CANVAS_CONTAINER (gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible)));
 		g_signal_connect (container, "selection_changed",
-				  G_CALLBACK (nautilus_icon_container_accessible_selection_changed_cb), 
+				  G_CALLBACK (nautilus_canvas_container_accessible_selection_changed_cb), 
 				  accessible);
 		g_signal_connect (container, "icon_added",
-				  G_CALLBACK (nautilus_icon_container_accessible_icon_added_cb), 
+				  G_CALLBACK (nautilus_canvas_container_accessible_icon_added_cb), 
 				  accessible);
 		g_signal_connect (container, "icon_removed",
-				  G_CALLBACK (nautilus_icon_container_accessible_icon_removed_cb), 
+				  G_CALLBACK (nautilus_canvas_container_accessible_icon_removed_cb), 
 				  accessible);
 		g_signal_connect (container, "cleared",
-				  G_CALLBACK (nautilus_icon_container_accessible_cleared_cb), 
+				  G_CALLBACK (nautilus_canvas_container_accessible_cleared_cb), 
 				  accessible);
 	}
 }
 
 static void
-nautilus_icon_container_accessible_finalize (GObject *object)
+nautilus_canvas_container_accessible_finalize (GObject *object)
 {
-	NautilusIconContainerAccessiblePrivate *priv;
+	NautilusCanvasContainerAccessiblePrivate *priv;
 	int i;
 
 	priv = GET_ACCESSIBLE_PRIV (object);
@@ -8286,29 +8285,29 @@ nautilus_icon_container_accessible_finalize (GObject *object)
 		}
 	}
 
-	G_OBJECT_CLASS (nautilus_icon_container_accessible_parent_class)->finalize (object);
+	G_OBJECT_CLASS (nautilus_canvas_container_accessible_parent_class)->finalize (object);
 }
 
 static void
-nautilus_icon_container_accessible_init (NautilusIconContainerAccessible *self)
+nautilus_canvas_container_accessible_init (NautilusCanvasContainerAccessible *self)
 {
-	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, nautilus_icon_container_accessible_get_type (),
-						  NautilusIconContainerAccessiblePrivate);
+	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, nautilus_canvas_container_accessible_get_type (),
+						  NautilusCanvasContainerAccessiblePrivate);
 }
 
 static void
-nautilus_icon_container_accessible_class_init (NautilusIconContainerAccessibleClass *klass)
+nautilus_canvas_container_accessible_class_init (NautilusCanvasContainerAccessibleClass *klass)
 {
 	AtkObjectClass *atk_class = ATK_OBJECT_CLASS (klass);
 	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-	gobject_class->finalize = nautilus_icon_container_accessible_finalize;
+	gobject_class->finalize = nautilus_canvas_container_accessible_finalize;
 
-	atk_class->get_n_children = nautilus_icon_container_accessible_get_n_children;
-	atk_class->ref_child = nautilus_icon_container_accessible_ref_child;
-	atk_class->initialize = nautilus_icon_container_accessible_initialize;
+	atk_class->get_n_children = nautilus_canvas_container_accessible_get_n_children;
+	atk_class->ref_child = nautilus_canvas_container_accessible_ref_child;
+	atk_class->initialize = nautilus_canvas_container_accessible_initialize;
 
-	g_type_class_add_private (klass, sizeof (NautilusIconContainerAccessiblePrivate));
+	g_type_class_add_private (klass, sizeof (NautilusCanvasContainerAccessiblePrivate));
 }
 
 static AtkObject *
@@ -8320,35 +8319,35 @@ get_accessible (GtkWidget *widget)
 		return accessible;
 	}
 
-	accessible = g_object_new (nautilus_icon_container_accessible_get_type (), "widget", widget, NULL);
+	accessible = g_object_new (nautilus_canvas_container_accessible_get_type (), "widget", widget, NULL);
 
 	return eel_accessibility_set_atk_object_return (widget, accessible);
 }
 
 gboolean
-nautilus_icon_container_is_layout_rtl (NautilusIconContainer *container)
+nautilus_canvas_container_is_layout_rtl (NautilusCanvasContainer *container)
 {
-	g_return_val_if_fail (NAUTILUS_IS_ICON_CONTAINER (container), 0);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), 0);
 
-	return container->details->layout_mode == NAUTILUS_ICON_LAYOUT_T_B_R_L ||
-		container->details->layout_mode == NAUTILUS_ICON_LAYOUT_R_L_T_B;
+	return container->details->layout_mode == NAUTILUS_CANVAS_LAYOUT_T_B_R_L ||
+		container->details->layout_mode == NAUTILUS_CANVAS_LAYOUT_R_L_T_B;
 }
 
 gboolean
-nautilus_icon_container_is_layout_vertical (NautilusIconContainer *container)
+nautilus_canvas_container_is_layout_vertical (NautilusCanvasContainer *container)
 {
-	g_return_val_if_fail (NAUTILUS_IS_ICON_CONTAINER (container), FALSE);
+	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), FALSE);
 
-	return (container->details->layout_mode == NAUTILUS_ICON_LAYOUT_T_B_L_R ||
-		container->details->layout_mode == NAUTILUS_ICON_LAYOUT_T_B_R_L);
+	return (container->details->layout_mode == NAUTILUS_CANVAS_LAYOUT_T_B_L_R ||
+		container->details->layout_mode == NAUTILUS_CANVAS_LAYOUT_T_B_R_L);
 }
 
 int
-nautilus_icon_container_get_max_layout_lines_for_pango (NautilusIconContainer  *container)
+nautilus_canvas_container_get_max_layout_lines_for_pango (NautilusCanvasContainer  *container)
 {
 	int limit;
 
-	if (nautilus_icon_container_get_is_desktop (container)) {
+	if (nautilus_canvas_container_get_is_desktop (container)) {
 		limit = desktop_text_ellipsis_limit;
 	} else {
 		limit = text_ellipsis_limits[container->details->zoom_level];
@@ -8362,11 +8361,11 @@ nautilus_icon_container_get_max_layout_lines_for_pango (NautilusIconContainer  *
 }
 
 int
-nautilus_icon_container_get_max_layout_lines (NautilusIconContainer  *container)
+nautilus_canvas_container_get_max_layout_lines (NautilusCanvasContainer  *container)
 {
 	int limit;
 
-	if (nautilus_icon_container_get_is_desktop (container)) {
+	if (nautilus_canvas_container_get_is_desktop (container)) {
 		limit = desktop_text_ellipsis_limit;
 	} else {
 		limit = text_ellipsis_limits[container->details->zoom_level];
@@ -8380,11 +8379,11 @@ nautilus_icon_container_get_max_layout_lines (NautilusIconContainer  *container)
 }
 
 void
-nautilus_icon_container_begin_loading (NautilusIconContainer *container)
+nautilus_canvas_container_begin_loading (NautilusCanvasContainer *container)
 {
 	gboolean dummy;
 
-	if (nautilus_icon_container_get_store_layout_timestamps (container)) {
+	if (nautilus_canvas_container_get_store_layout_timestamps (container)) {
 		container->details->layout_timestamp = UNDEFINED_TIME;
 		g_signal_emit (container,
 			       signals[GET_STORED_LAYOUT_TIMESTAMP], 0,
@@ -8393,9 +8392,9 @@ nautilus_icon_container_begin_loading (NautilusIconContainer *container)
 }
 
 static void
-store_layout_timestamps_now (NautilusIconContainer *container)
+store_layout_timestamps_now (NautilusCanvasContainer *container)
 {
-	NautilusIcon *icon;
+	NautilusCanvasIcon *icon;
 	GList *p;
 	gboolean dummy;
 
@@ -8415,11 +8414,11 @@ store_layout_timestamps_now (NautilusIconContainer *container)
 
 
 void
-nautilus_icon_container_end_loading (NautilusIconContainer *container,
-				     gboolean               all_icons_added)
+nautilus_canvas_container_end_loading (NautilusCanvasContainer *container,
+				       gboolean               all_icons_added)
 {
 	if (all_icons_added &&
-	    nautilus_icon_container_get_store_layout_timestamps (container)) {
+	    nautilus_canvas_container_get_store_layout_timestamps (container)) {
 		if (container->details->new_icons == NULL) {
 			store_layout_timestamps_now (container);
 		} else {
@@ -8429,15 +8428,15 @@ nautilus_icon_container_end_loading (NautilusIconContainer *container,
 }
 
 gboolean
-nautilus_icon_container_get_store_layout_timestamps (NautilusIconContainer *container)
+nautilus_canvas_container_get_store_layout_timestamps (NautilusCanvasContainer *container)
 {
 	return container->details->store_layout_timestamps;
 }
 
 
 void
-nautilus_icon_container_set_store_layout_timestamps (NautilusIconContainer *container,
-						     gboolean               store_layout_timestamps)
+nautilus_canvas_container_set_store_layout_timestamps (NautilusCanvasContainer *container,
+						       gboolean               store_layout_timestamps)
 {
 	container->details->store_layout_timestamps = store_layout_timestamps;
 }
@@ -8469,7 +8468,7 @@ check_compute_stretch (int icon_x, int icon_y, int icon_size,
 }
 
 void
-nautilus_self_check_icon_container (void)
+nautilus_self_check_canvas_container (void)
 {
 	EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 0, 0, 0, 0), "0,0:16");
 	EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 16, 16, 17, 17), "0,0:17");

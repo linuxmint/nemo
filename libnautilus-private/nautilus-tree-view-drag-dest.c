@@ -34,7 +34,6 @@
 
 #include "nautilus-file-dnd.h"
 #include "nautilus-file-changes-queue.h"
-#include "nautilus-icon-dnd.h"
 #include "nautilus-link.h"
 
 #include <gtk/gtk.h>

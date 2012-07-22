@@ -85,13 +85,17 @@ nautilus_SOURCES = \
 	nautilus-bookmark-list.h		\
 	nautilus-bookmarks-window.c		\
 	nautilus-bookmarks-window.h		\
+	nautilus-canvas-view.c			\
+	nautilus-canvas-view.h			\
+	nautilus-canvas-view-container.c	\
+	nautilus-canvas-view-container.h	\
 	nautilus-connect-server-dialog.c	\
 	nautilus-connect-server-dialog.h	\
 	nautilus-connect-server-dialog-nonmain.c \
 	nautilus-connect-server-operation.c	\
 	nautilus-connect-server-operation.h	\
-	nautilus-desktop-icon-view.c		\
-	nautilus-desktop-icon-view.h		\
+	nautilus-desktop-canvas-view.c		\
+	nautilus-desktop-canvas-view.h		\
 	nautilus-desktop-item-properties.c	\
 	nautilus-desktop-item-properties.h	\
 	nautilus-desktop-window.c		\
@@ -104,10 +108,6 @@ nautilus_SOURCES = \
 	nautilus-floating-bar.h			\
 	nautilus-freedesktop-dbus.c		\
 	nautilus-freedesktop-dbus.h		\
-	nautilus-icon-view.c			\
-	nautilus-icon-view.h			\
-	nautilus-icon-view-container.c		\
-	nautilus-icon-view-container.h		\
 	nautilus-image-properties-page.c	\
 	nautilus-image-properties-page.h	\
 	nautilus-list-model.c			\

@@ -41,7 +41,6 @@
 #include <gio/gio.h>
 #include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-entry.h>
-#include <libnautilus-private/nautilus-icon-dnd.h>
 #include <libnautilus-private/nautilus-clipboard.h>
 #include <stdio.h>
 #include <string.h>

@@ -30,9 +30,9 @@ libnautilus-private/nautilus-file-operations.c
 libnautilus-private/nautilus-file-undo-operations.c
 libnautilus-private/nautilus-file-utilities.c
 libnautilus-private/nautilus-global-preferences.c
-libnautilus-private/nautilus-icon-canvas-item.c
-libnautilus-private/nautilus-icon-container.c
-libnautilus-private/nautilus-icon-dnd.c
+libnautilus-private/nautilus-canvas-item.c
+libnautilus-private/nautilus-canvas-container.c
+libnautilus-private/nautilus-canvas-dnd.c
 libnautilus-private/nautilus-mime-application-chooser.c
 libnautilus-private/nautilus-program-choosing.c
 libnautilus-private/nautilus-progress-info.c
@@ -50,7 +50,7 @@ src/nautilus-bookmarks-window.c
 [type: gettext/glade]src/nautilus-bookmarks-window.ui
 src/nautilus-connect-server-dialog.c
 src/nautilus-connect-server-dialog-main.c
-src/nautilus-desktop-icon-view.c
+src/nautilus-desktop-canvas-view.c
 src/nautilus-desktop-icon-view-ui.xml
 src/nautilus-desktop-item-properties.c
 src/nautilus-desktop-window.c
@@ -58,8 +58,8 @@ src/nautilus-directory-view-ui.xml
 src/nautilus-error-reporting.c
 src/nautilus-file-management-properties.c
 [type: gettext/glade]src/nautilus-file-management-properties.ui
-src/nautilus-icon-view.c
-src/nautilus-icon-view-container.c
+src/nautilus-canvas-view.c
+src/nautilus-canvas-view-container.c
 src/nautilus-icon-view-ui.xml
 src/nautilus-image-properties-page.c
 src/nautilus-list-model.c

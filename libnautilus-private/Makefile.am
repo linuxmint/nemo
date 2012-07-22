@@ -61,6 +61,13 @@ libnautilus_private_la_LIBADD =		\
 libnautilus_private_la_SOURCES = \
 	nautilus-bookmark.c \
 	nautilus-bookmark.h \
+	nautilus-canvas-container.c \
+	nautilus-canvas-container.h \
+	nautilus-canvas-dnd.c \
+	nautilus-canvas-dnd.h \
+	nautilus-canvas-item.c \
+	nautilus-canvas-item.h \
+	nautilus-canvas-private.h \
 	nautilus-clipboard-monitor.c \
 	nautilus-clipboard-monitor.h \
 	nautilus-clipboard.c \
@@ -118,13 +125,6 @@ libnautilus_private_la_SOURCES = \
 	nautilus-generated.h \
 	nautilus-global-preferences.c \
 	nautilus-global-preferences.h \
-	nautilus-icon-canvas-item.c \
-	nautilus-icon-canvas-item.h \
-	nautilus-icon-container.c \
-	nautilus-icon-container.h \
-	nautilus-icon-dnd.c \
-	nautilus-icon-dnd.h \
-	nautilus-icon-private.h \
 	nautilus-icon-info.c \
 	nautilus-icon-info.h \
 	nautilus-icon-names.h \
