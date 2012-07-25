@@ -113,7 +113,7 @@ toolbar_create_toolbutton (NautilusToolbar *self,
 	gtk_button_set_image (GTK_BUTTON (button), image);
 
 	if (create_menu) {
-		gtk_image_set_from_icon_name (GTK_IMAGE (image), "emblem-system-symbolic",
+		gtk_image_set_from_icon_name (GTK_IMAGE (image), name,
 					      GTK_ICON_SIZE_MENU);
 	} else {
 		action = gtk_action_group_get_action (self->priv->action_group, name);
