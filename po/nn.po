@@ -1515,7 +1515,7 @@ msgstr "Gje_r om gjenopprett frå papirkorga"
 msgid "Move %d item back to trash"
 msgid_plural "Move %d items back to trash"
 msgstr[0] "Flytt %d oppføring til papirkorga"
-msgstr[1] "Flytt %d oppføringer til papirkorga"
+msgstr[1] "Flytt %d oppføringar til papirkorga"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:395
 #: ../libnautilus-private/nautilus-file-undo-operations.c:981
