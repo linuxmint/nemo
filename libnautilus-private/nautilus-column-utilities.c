@@ -35,7 +35,6 @@ static const char *default_column_order[] = {
 	"name",
 	"size",
 	"type",
-	"date_used",
 	"date_modified",
 	"date_accessed",
 	"owner",
@@ -75,15 +74,6 @@ get_builtin_columns (void)
 					       "label", _("Type"),
 					       "description", _("The type of the file."),
 					       NULL));
-	columns = g_list_append (columns,
-				 g_object_new (NAUTILUS_TYPE_COLUMN,
-					       "name", "date_used",
-					       "attribute", "date_used",
-					       "label", _("Used"),
-					       "description", _("The date the file was last used."),
-					       "default-sort-order", GTK_SORT_DESCENDING,
-					       NULL));
-
 	columns = g_list_append (columns,
 				 g_object_new (NAUTILUS_TYPE_COLUMN,
 					       "name", "date_modified",
