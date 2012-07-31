@@ -667,6 +667,23 @@ window_menus_set_bindings (NautilusWindow *window)
                         G_SETTINGS_BIND_DEFAULT);
 }
 
+static void
+action_toggle_state (GSimpleAction *action,
+		     GVariant *parameter,
+		     gpointer user_data)
+{
+	GVariant *state;
+
+	state = g_action_get_state (G_ACTION (action));
+	g_action_change_state (G_ACTION (action),
+			       g_variant_new_boolean (!g_variant_get_boolean (state)));
+	g_variant_unref (state);
+}
+
+const GActionEntry win_entries[] = {
+	{ "gear-menu", action_toggle_state, NULL, "false", NULL },
+};
+
 void 
 nautilus_window_initialize_actions (NautilusWindow *window)
 {
@@ -675,6 +692,10 @@ nautilus_window_initialize_actions (NautilusWindow *window)
 		NAUTILUS_ACTION_BACK, NAUTILUS_ACTION_FORWARD,
 		NAUTILUS_ACTION_SEARCH, NULL
 	};
+
+	g_action_map_add_action_entries (G_ACTION_MAP (window),
+					 win_entries, G_N_ELEMENTS (win_entries),
+					 window);
 
 	action_group = nautilus_window_get_main_action_group (window);
 	window->details->nav_state = nautilus_navigation_state_new (action_group,

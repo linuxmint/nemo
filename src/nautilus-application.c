@@ -899,21 +899,7 @@ action_quit (GSimpleAction *action,
 	g_list_foreach (windows, (GFunc) nautilus_window_close, NULL);
 }
 
-static void
-action_toggle_state (GSimpleAction *action,
-		     GVariant *parameter,
-		     gpointer user_data)
-{
-	GVariant *state;
-
-	state = g_action_get_state (G_ACTION (action));
-	g_action_change_state (G_ACTION (action),
-			       g_variant_new_boolean (!g_variant_get_boolean (state)));
-	g_variant_unref (state);
-}
-
 static GActionEntry app_entries[] = {
-	{ "gear-menu", action_toggle_state, NULL, "false", NULL },
 	{ "new-window", action_new_window, NULL, NULL, NULL },
 	{ "connect-to-server", action_connect_to_server, NULL, NULL, NULL },
 	{ "preferences", action_preferences, NULL, NULL, NULL },
@@ -932,7 +918,7 @@ nautilus_application_init_actions (NautilusApplication *self)
 	g_action_map_add_action_entries (G_ACTION_MAP (self),
 					 app_entries, G_N_ELEMENTS (app_entries),
 					 self);
-	gtk_application_add_accelerator (GTK_APPLICATION (self), "F10", "app.gear-menu", NULL);
+	gtk_application_add_accelerator (GTK_APPLICATION (self), "F10", "win.gear-menu", NULL);
 
 	builder = gtk_builder_new ();
 	gtk_builder_add_from_resource (builder, "/org/gnome/nautilus/nautilus-app-menu.ui", &error);

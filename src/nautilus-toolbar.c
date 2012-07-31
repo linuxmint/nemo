@@ -205,7 +205,7 @@ nautilus_toolbar_constructed (GObject *obj)
 	tool_button = toolbar_create_toolbutton (self, TRUE, FALSE, "emblem-system-symbolic");
 	menu = gtk_ui_manager_get_widget (self->priv->ui_manager, "/ViewMenu");
 	gtk_menu_button_set_menu (GTK_MENU_BUTTON (tool_button), menu);
-	gtk_actionable_set_action_name (GTK_ACTIONABLE (tool_button), "app.gear-menu");
+	gtk_actionable_set_action_name (GTK_ACTIONABLE (tool_button), "win.gear-menu");
 
 	gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
 	gtk_container_add (GTK_CONTAINER (toolbar), GTK_WIDGET (tool_item));
