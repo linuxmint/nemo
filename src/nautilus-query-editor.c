@@ -964,11 +964,13 @@ nautilus_query_editor_add_row (NautilusQueryEditor *editor,
 	create_type_widgets (row);
 	
 	button = gtk_button_new ();
+	gtk_style_context_add_class (gtk_widget_get_style_context (button),
+				     GTK_STYLE_CLASS_RAISED);
+
 	image = gtk_image_new_from_icon_name ("window-close-symbolic",
 					      GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_container_add (GTK_CONTAINER (button), image);
 	gtk_widget_show (image);
-	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
 	gtk_widget_show (button);
 
 	g_signal_connect (button, "clicked",
@@ -1028,11 +1030,12 @@ finish_first_line (NautilusQueryEditor *editor, GtkWidget *hbox, gboolean use_go
 	GtkWidget *button, *image;
 
 	button = gtk_button_new ();
+	gtk_style_context_add_class (gtk_widget_get_style_context (button),
+				     GTK_STYLE_CLASS_RAISED);
 	image = gtk_image_new_from_icon_name ("list-add-symbolic",
 					      GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_container_add (GTK_CONTAINER (button), image);
 	gtk_widget_show (image);
-	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
 	gtk_widget_show (button);
 
 	g_signal_connect (button, "clicked",
@@ -1044,10 +1047,14 @@ finish_first_line (NautilusQueryEditor *editor, GtkWidget *hbox, gboolean use_go
 				     _("Add a new criterion to this search"));
 
 	editor->details->search_current_button = gtk_radio_button_new_with_label (NULL, _("Current"));
+	gtk_style_context_add_class (gtk_widget_get_style_context (editor->details->search_current_button),
+				     GTK_STYLE_CLASS_RAISED);
 	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (editor->details->search_current_button), FALSE);
 	gtk_widget_show (editor->details->search_current_button);
 	editor->details->search_all_button = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (editor->details->search_current_button),
 											  _("All Files"));
+	gtk_style_context_add_class (gtk_widget_get_style_context (editor->details->search_all_button),
+				     GTK_STYLE_CLASS_RAISED);
 	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (editor->details->search_all_button), FALSE);
 	gtk_widget_show (editor->details->search_all_button);
 	g_signal_connect (editor->details->search_all_button, "toggled",
