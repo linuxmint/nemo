@@ -256,27 +256,6 @@ nautilus_query_editor_dispose (GObject *object)
 	G_OBJECT_CLASS (nautilus_query_editor_parent_class)->dispose (object);
 }
 
-static gboolean
-nautilus_query_editor_draw (GtkWidget *widget,
-			    cairo_t *cr)
-{
-	GtkStyleContext *context;
-
-	context = gtk_widget_get_style_context (widget);
-
-	gtk_render_background (context, cr, 0, 0,
-			       gtk_widget_get_allocated_width (widget),
-			       gtk_widget_get_allocated_height (widget));
-
-	gtk_render_frame (context, cr, 0, 0,
-			  gtk_widget_get_allocated_width (widget),
-			  gtk_widget_get_allocated_height (widget));
-
-	GTK_WIDGET_CLASS (nautilus_query_editor_parent_class)->draw (widget, cr);
-
-	return FALSE;
-}
-
 static void
 nautilus_query_editor_grab_focus (GtkWidget *widget)
 {
@@ -298,7 +277,6 @@ nautilus_query_editor_class_init (NautilusQueryEditorClass *class)
         gobject_class->dispose = nautilus_query_editor_dispose;
 
 	widget_class = GTK_WIDGET_CLASS (class);
-	widget_class->draw = nautilus_query_editor_draw;
 	widget_class->grab_focus = nautilus_query_editor_grab_focus;
 
 	signals[CHANGED] =
@@ -942,6 +920,9 @@ nautilus_query_editor_add_row (NautilusQueryEditor *editor,
 	row->type = type;
 	
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
+	gtk_style_context_add_class (gtk_widget_get_style_context (hbox),
+				     GTK_STYLE_CLASS_TOOLBAR);
 	row->hbox = hbox;
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (editor->details->vbox), hbox, FALSE, FALSE, 0);
@@ -996,15 +977,9 @@ nautilus_query_editor_init (NautilusQueryEditor *editor)
 	editor->details = G_TYPE_INSTANCE_GET_PRIVATE (editor, NAUTILUS_TYPE_QUERY_EDITOR,
 						       NautilusQueryEditorDetails);
 
-	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (editor)),
-				     GTK_STYLE_CLASS_TOOLBAR);
-	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (editor)),
-				     GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
-
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 
-	editor->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-	gtk_container_set_border_width (GTK_CONTAINER (editor->details->vbox), 6);
+	editor->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_pack_start (GTK_BOX (editor), editor->details->vbox,
 			    FALSE, FALSE, 0);
 	gtk_widget_show (editor->details->vbox);
@@ -1082,15 +1057,45 @@ entry_key_press_event_cb (GtkWidget           *widget,
 	return FALSE;
 }
 
+static gboolean
+entry_box_draw_cb (GtkWidget *widget,
+		   cairo_t *cr)
+{
+	GtkStyleContext *context;
+
+	context = gtk_widget_get_style_context (widget);
+
+	gtk_render_background (context, cr, 0, 0,
+			       gtk_widget_get_allocated_width (widget),
+			       gtk_widget_get_allocated_height (widget));
+
+	gtk_render_frame (context, cr, 0, 0,
+			  gtk_widget_get_allocated_width (widget),
+			  gtk_widget_get_allocated_height (widget));
+
+	return FALSE;
+}
+
 static void
 setup_widgets (NautilusQueryEditor *editor)
 {
+	GtkWidget *bg_hbox;
 	GtkWidget *hbox;
 
-	/* Create visible part: */
+	bg_hbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+	gtk_style_context_add_class (gtk_widget_get_style_context (bg_hbox),
+				     GTK_STYLE_CLASS_TOOLBAR);
+	gtk_style_context_add_class (gtk_widget_get_style_context (bg_hbox),
+				     GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
+	g_signal_connect (bg_hbox, "draw", G_CALLBACK (entry_box_draw_cb), NULL);
+
+	gtk_widget_show (bg_hbox);
+	gtk_box_pack_start (GTK_BOX (editor->details->vbox), bg_hbox, FALSE, FALSE, 0);
+
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_widget_show (hbox);
-	gtk_box_pack_start (GTK_BOX (editor->details->vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (bg_hbox), hbox, FALSE, FALSE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
 
 	editor->details->entry = gtk_search_entry_new ();
 	gtk_box_pack_start (GTK_BOX (hbox), editor->details->entry, TRUE, TRUE, 0);
