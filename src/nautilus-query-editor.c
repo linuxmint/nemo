@@ -964,7 +964,7 @@ nautilus_query_editor_add_row (NautilusQueryEditor *editor,
 	create_type_widgets (row);
 	
 	button = gtk_button_new ();
-	image = gtk_image_new_from_icon_name ("list-remove-symbolic",
+	image = gtk_image_new_from_icon_name ("window-close-symbolic",
 					      GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_container_add (GTK_CONTAINER (button), image);
 	gtk_widget_show (image);
