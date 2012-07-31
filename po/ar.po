@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-20 00:46+0200\n"
-"PO-Revision-Date: 2012-07-20 00:47+0200\n"
+"POT-Creation-Date: 2012-07-31 06:06+0200\n"
+"PO-Revision-Date: 2012-07-31 06:10+0200\n"
 "Last-Translator: Khaled Hosny <khaledhosny@eglug.org>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
 "Language: ar\n"
@@ -38,8 +38,8 @@ msgid "Autorun Prompt"
 msgstr "محث التنفيذ التلقائي"
 
 #. Set initial window title
-#: ../data/nautilus.desktop.in.in.h:1 ../src/nautilus-window.c:2135
-#: ../src/nautilus-window.c:2388
+#: ../data/nautilus.desktop.in.in.h:1 ../src/nautilus-window.c:2145
+#: ../src/nautilus-window.c:2398
 msgid "Files"
 msgstr "الملفات"
 
@@ -125,7 +125,7 @@ msgstr " (يونيكود غير صحيح)"
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:67
 #: ../src/nautilus-pathbar.c:301 ../src/nautilus-places-sidebar.c:510
-#: ../src/nautilus-query-editor.c:1169
+#: ../src/nautilus-query-editor.c:1182
 msgid "Home"
 msgstr "المنزل"
 
@@ -173,118 +173,126 @@ msgstr "انقل لأ_سفل"
 msgid "Use De_fault"
 msgstr "استخدم ال_مبدئي"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:59
-#: ../src/nautilus-list-view.c:1659
+#: ../libnautilus-private/nautilus-column-utilities.c:60
+#: ../src/nautilus-list-view.c:1662
 msgid "Name"
 msgstr "الاسم"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:60
+#: ../libnautilus-private/nautilus-column-utilities.c:61
 msgid "The name and icon of the file."
 msgstr "اسم و أيقونة الملف."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:66
+#: ../libnautilus-private/nautilus-column-utilities.c:67
 msgid "Size"
 msgstr "الحجم"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:67
+#: ../libnautilus-private/nautilus-column-utilities.c:68
 msgid "The size of the file."
 msgstr "حجم الملف."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:74
+#: ../libnautilus-private/nautilus-column-utilities.c:75
 msgid "Type"
 msgstr "النوع"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:75
+#: ../libnautilus-private/nautilus-column-utilities.c:76
 msgid "The type of the file."
 msgstr "نوع الملف."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:81
-msgid "Modified"
-msgstr "عُدِّل"
-
 #: ../libnautilus-private/nautilus-column-utilities.c:82
+msgid "Used"
+msgstr "آخر استخدام"
+
+#: ../libnautilus-private/nautilus-column-utilities.c:83
+msgid "The date the file was last used."
+msgstr "تاريخ آخر استخدام للملف."
+
+#: ../libnautilus-private/nautilus-column-utilities.c:91
+msgid "Modified"
+msgstr "آخر تعديل"
+
+#: ../libnautilus-private/nautilus-column-utilities.c:92
 msgid "The date the file was modified."
-msgstr "التاريخ الذي فيه عدل الملف."
+msgstr "تاريخ آخر تعديل الملف."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:89
+#: ../libnautilus-private/nautilus-column-utilities.c:100
 msgid "Accessed"
-msgstr "نُفِذ إليه"
+msgstr "آخر وصول"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:90
+#: ../libnautilus-private/nautilus-column-utilities.c:101
 msgid "The date the file was accessed."
-msgstr "التاريخ الذي وُصِل فيه إلى الملف."
+msgstr "تاريخ آخر وصول إلى الملف."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:97
+#: ../libnautilus-private/nautilus-column-utilities.c:109
 msgid "Owner"
 msgstr "المالك"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:98
+#: ../libnautilus-private/nautilus-column-utilities.c:110
 msgid "The owner of the file."
 msgstr "مالك الملف."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:105
+#: ../libnautilus-private/nautilus-column-utilities.c:117
 msgid "Group"
 msgstr "المجموعة"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:106
+#: ../libnautilus-private/nautilus-column-utilities.c:118
 msgid "The group of the file."
 msgstr "مجموعة الملف."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:113
+#: ../libnautilus-private/nautilus-column-utilities.c:125
 #: ../src/nautilus-properties-window.c:4472
 msgid "Permissions"
 msgstr "التصاريح"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:114
+#: ../libnautilus-private/nautilus-column-utilities.c:126
 msgid "The permissions of the file."
 msgstr "تصاريح الملف."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:121
+#: ../libnautilus-private/nautilus-column-utilities.c:133
 msgid "Octal Permissions"
 msgstr "تصاريح ثُمانيّة"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:122
+#: ../libnautilus-private/nautilus-column-utilities.c:134
 msgid "The permissions of the file, in octal notation."
 msgstr "تصاريح الملف، بتمثيل ثُماني."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:129
+#: ../libnautilus-private/nautilus-column-utilities.c:141
 msgid "MIME Type"
 msgstr "نوع MIME"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:130
+#: ../libnautilus-private/nautilus-column-utilities.c:142
 msgid "The mime type of the file."
 msgstr "نوع mime للملف."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:137
+#: ../libnautilus-private/nautilus-column-utilities.c:149
 msgid "Security Context"
 msgstr "سياق الأمن"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:138
+#: ../libnautilus-private/nautilus-column-utilities.c:150
 msgid "The security context of the file."
 msgstr "سياق أمن الملف."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:145
+#: ../libnautilus-private/nautilus-column-utilities.c:157
 #: ../src/nautilus-image-properties-page.c:343
 msgid "Location"
 msgstr "المكان"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:146
+#: ../libnautilus-private/nautilus-column-utilities.c:158
 msgid "The location of the file."
 msgstr "مكان الملف."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:187
+#: ../libnautilus-private/nautilus-column-utilities.c:199
 msgid "Trashed On"
 msgstr "نقل إلى المهملات في"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:188
+#: ../libnautilus-private/nautilus-column-utilities.c:200
 msgid "Date when file was moved to the Trash"
 msgstr "تاريخ نقل الملف إلى المهملات"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:194
+#: ../libnautilus-private/nautilus-column-utilities.c:206
 msgid "Original Location"
 msgstr "المكان الأصلي"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:195
+#: ../libnautilus-private/nautilus-column-utilities.c:207
 msgid "Original location of file before moved to the Trash"
 msgstr "المكان الأصلي للملف قبل نقله إلى المهملات"
 
@@ -330,50 +338,50 @@ msgstr "اجعلها ال_خلفية"
 msgid "Cancel"
 msgstr "ألغِ"
 
-#: ../libnautilus-private/nautilus-file.c:1214
-#: ../libnautilus-private/nautilus-vfs-file.c:382
+#: ../libnautilus-private/nautilus-file.c:1217
+#: ../libnautilus-private/nautilus-vfs-file.c:392
 msgid "This file cannot be mounted"
 msgstr "لا يمكن وصْل هذا الملف"
 
-#: ../libnautilus-private/nautilus-file.c:1259
+#: ../libnautilus-private/nautilus-file.c:1262
 msgid "This file cannot be unmounted"
 msgstr "لا يمكن فصل هذا الملف"
 
-#: ../libnautilus-private/nautilus-file.c:1293
+#: ../libnautilus-private/nautilus-file.c:1296
 msgid "This file cannot be ejected"
 msgstr "لا يمكن إخراج هذا الملف"
 
-#: ../libnautilus-private/nautilus-file.c:1326
-#: ../libnautilus-private/nautilus-vfs-file.c:560
+#: ../libnautilus-private/nautilus-file.c:1329
+#: ../libnautilus-private/nautilus-vfs-file.c:570
 msgid "This file cannot be started"
 msgstr "لا يمكن بدء هذا الملف"
 
-#: ../libnautilus-private/nautilus-file.c:1378
-#: ../libnautilus-private/nautilus-file.c:1409
+#: ../libnautilus-private/nautilus-file.c:1381
+#: ../libnautilus-private/nautilus-file.c:1412
 msgid "This file cannot be stopped"
 msgstr "لا يمكن إيقاف هذا الملف"
 
-#: ../libnautilus-private/nautilus-file.c:1820
+#: ../libnautilus-private/nautilus-file.c:1823
 #, c-format
 msgid "Slashes are not allowed in filenames"
 msgstr "لا يُسمح باستخدام الشرطات المائلة في أسماء الملفات"
 
-#: ../libnautilus-private/nautilus-file.c:1838
+#: ../libnautilus-private/nautilus-file.c:1841
 #, c-format
 msgid "File not found"
 msgstr "الملف غير موجود"
 
-#: ../libnautilus-private/nautilus-file.c:1866
+#: ../libnautilus-private/nautilus-file.c:1869
 #, c-format
 msgid "Toplevel files cannot be renamed"
 msgstr "لا يمكن تغيير اسم ملفات المستوى الأول"
 
-#: ../libnautilus-private/nautilus-file.c:1889
+#: ../libnautilus-private/nautilus-file.c:1892
 #, c-format
 msgid "Unable to rename desktop icon"
 msgstr "تعذر تغيير اسم أيقونة سطح المكتب"
 
-#: ../libnautilus-private/nautilus-file.c:1918
+#: ../libnautilus-private/nautilus-file.c:1921
 #, c-format
 msgid "Unable to rename desktop file"
 msgstr "تعذر تغيير اسم ملف سطح المكتب"
@@ -390,54 +398,54 @@ msgstr "تعذر تغيير اسم ملف سطح المكتب"
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4361
+#: ../libnautilus-private/nautilus-file.c:4379
 msgid "%-I:%M %P"
 msgstr "%-I:%M %p"
 
-#: ../libnautilus-private/nautilus-file.c:4362
-#: ../libnautilus-private/nautilus-file.c:4363
+#: ../libnautilus-private/nautilus-file.c:4380
+#: ../libnautilus-private/nautilus-file.c:4381
 msgid "%b %-e"
 msgstr "%-e %b"
 
-#: ../libnautilus-private/nautilus-file.c:4364
+#: ../libnautilus-private/nautilus-file.c:4382
 msgid "%b %-d %Y"
 msgstr "%-d %B %Y"
 
-#: ../libnautilus-private/nautilus-file.c:4365
+#: ../libnautilus-private/nautilus-file.c:4383
 msgid "%a, %b %e %Y %H:%M:%S %p"
 msgstr "%A %e %B %Y %H:%M:%S %p"
 
-#: ../libnautilus-private/nautilus-file.c:4876
+#: ../libnautilus-private/nautilus-file.c:4894
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "غير مسموح بضبط التصاريح"
 
-#: ../libnautilus-private/nautilus-file.c:5171
+#: ../libnautilus-private/nautilus-file.c:5189
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "غير مسموح بتعيين المالك"
 
-#: ../libnautilus-private/nautilus-file.c:5189
+#: ../libnautilus-private/nautilus-file.c:5207
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "المالك المحدد '%s' غير موجود"
 
-#: ../libnautilus-private/nautilus-file.c:5453
+#: ../libnautilus-private/nautilus-file.c:5471
 #, c-format
 msgid "Not allowed to set group"
 msgstr "غير مسموح بتعيين مجموعة"
 
-#: ../libnautilus-private/nautilus-file.c:5471
+#: ../libnautilus-private/nautilus-file.c:5489
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "المجموعة المحددة '%s' غير موجودة"
 
 #. Translators: "me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5605
+#: ../libnautilus-private/nautilus-file.c:5623
 msgid "me"
 msgstr "أنا"
 
-#: ../libnautilus-private/nautilus-file.c:5629 ../src/nautilus-view.c:2986
+#: ../libnautilus-private/nautilus-file.c:5647 ../src/nautilus-view.c:2986
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
@@ -448,7 +456,7 @@ msgstr[3] "%I'u عناصر"
 msgstr[4] "%I'u عنصرًا"
 msgstr[5] "%I'u عنصر"
 
-#: ../libnautilus-private/nautilus-file.c:5630
+#: ../libnautilus-private/nautilus-file.c:5648
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
@@ -459,7 +467,7 @@ msgstr[3] "%I'u مجلّدات"
 msgstr[4] "%I'u مجلّدًا"
 msgstr[5] "%I'u مجلّد"
 
-#: ../libnautilus-private/nautilus-file.c:5631
+#: ../libnautilus-private/nautilus-file.c:5649
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
@@ -471,37 +479,37 @@ msgstr[4] "%I'u ملفًّا"
 msgstr[5] "%I'u ملفّ"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6044
-#: ../libnautilus-private/nautilus-file.c:6060
+#: ../libnautilus-private/nautilus-file.c:6072
+#: ../libnautilus-private/nautilus-file.c:6088
 msgid "? items"
 msgstr "؟ عناصر"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6050
+#: ../libnautilus-private/nautilus-file.c:6078
 msgid "? bytes"
 msgstr "؟ بايتات"
 
-#: ../libnautilus-private/nautilus-file.c:6065
+#: ../libnautilus-private/nautilus-file.c:6093
 msgid "unknown type"
 msgstr "نوع مجهول"
 
-#: ../libnautilus-private/nautilus-file.c:6068
+#: ../libnautilus-private/nautilus-file.c:6096
 msgid "unknown MIME type"
 msgstr "نوع MIME مجهول"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6082
+#: ../libnautilus-private/nautilus-file.c:6110
 #: ../src/nautilus-properties-window.c:1106
 msgid "unknown"
 msgstr "مجهول"
 
-#: ../libnautilus-private/nautilus-file.c:6137
+#: ../libnautilus-private/nautilus-file.c:6165
 msgid "program"
 msgstr "برنامج"
 
-#: ../libnautilus-private/nautilus-file.c:6157
+#: ../libnautilus-private/nautilus-file.c:6185
 msgid "link"
 msgstr "وصلة"
 
@@ -510,14 +518,14 @@ msgstr "وصلة"
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6163
+#: ../libnautilus-private/nautilus-file.c:6191
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:125
 #, c-format
 msgid "Link to %s"
 msgstr "وصلة إلى %s"
 
-#: ../libnautilus-private/nautilus-file.c:6179
+#: ../libnautilus-private/nautilus-file.c:6207
 msgid "link (broken)"
 msgstr "وصلة (مكسورة)"
 
@@ -2565,53 +2573,53 @@ msgstr ""
 "حدث خطأ عند عرض المساعدة: \n"
 "%s"
 
-#: ../src/nautilus-application.c:975
+#: ../src/nautilus-application.c:990
 msgid "--check cannot be used with other options."
 msgstr "لا يمكن استخدام ‪--check‬ مع الخيارات الأخرى."
 
-#: ../src/nautilus-application.c:981
+#: ../src/nautilus-application.c:996
 msgid "--quit cannot be used with URIs."
 msgstr "لا يمكن استخدام ‎--quit مع المسارات."
 
-#: ../src/nautilus-application.c:988
+#: ../src/nautilus-application.c:1003
 msgid "--geometry cannot be used with more than one URI."
 msgstr "لا يمكن استخدام ‪--geometry‬ مع أكثر من مسار."
 
-#: ../src/nautilus-application.c:1032
+#: ../src/nautilus-application.c:1047
 msgid "Perform a quick set of self-check tests."
 msgstr "أجرِ مجموعة سريعة من الفحوص الذاتية."
 
-#: ../src/nautilus-application.c:1038
+#: ../src/nautilus-application.c:1053
 msgid "Show the version of the program."
 msgstr "اعرض إصدارة البرنامج."
 
-#: ../src/nautilus-application.c:1040
+#: ../src/nautilus-application.c:1055
 msgid "Create the initial window with the given geometry."
 msgstr "أنشئ النافذة الأولية بالأبعاد المعطاة."
 
-#: ../src/nautilus-application.c:1040
+#: ../src/nautilus-application.c:1055
 msgid "GEOMETRY"
 msgstr "الأبعاد"
 
-#: ../src/nautilus-application.c:1042
+#: ../src/nautilus-application.c:1057
 msgid "Only create windows for explicitly specified URIs."
 msgstr "أنشئ نوافذ فقط للعناوين المحددة صراحة."
 
-#: ../src/nautilus-application.c:1044
+#: ../src/nautilus-application.c:1059
 msgid ""
 "Do not manage the desktop (ignore the preference set in the preferences "
 "dialog)."
 msgstr "لا تدِر سطح المكتب (تجاهل مجموعة التفضيلات في حوار التفضيلات)."
 
-#: ../src/nautilus-application.c:1046
+#: ../src/nautilus-application.c:1061
 msgid "Quit Nautilus."
 msgstr "أنهِ نوتلس."
 
-#: ../src/nautilus-application.c:1047
+#: ../src/nautilus-application.c:1062
 msgid "[URI...]"
 msgstr "[مسار...]"
 
-#: ../src/nautilus-application.c:1058
+#: ../src/nautilus-application.c:1073
 msgid ""
 "\n"
 "\n"
@@ -3188,7 +3196,7 @@ msgstr "منظور الأيقونات"
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
 #: ../src/nautilus-file-management-properties.ui.h:37
-#: ../src/nautilus-list-view.c:1726 ../src/nautilus-list-view.c:3315
+#: ../src/nautilus-list-view.c:1730 ../src/nautilus-list-view.c:3319
 msgid "List View"
 msgstr "منظور القائمة"
 
@@ -3568,44 +3576,44 @@ msgid "(Empty)"
 msgstr "(فارغ)"
 
 #: ../src/nautilus-list-model.c:378 ../src/nautilus-window-manage-views.c:1145
-#: ../src/nautilus-window-slot.c:299
+#: ../src/nautilus-window-slot.c:304
 msgid "Loading..."
 msgstr "يجري التحميل..."
 
-#: ../src/nautilus-list-view.c:2543
+#: ../src/nautilus-list-view.c:2547
 #, c-format
 msgid "%s Visible Columns"
 msgstr "‏%s أعمدة مرئية"
 
-#: ../src/nautilus-list-view.c:2563
+#: ../src/nautilus-list-view.c:2567
 msgid "Choose the order of information to appear in this folder:"
 msgstr "اختر ترتيب ظهور المعلومات في هذا المجلد:"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-list-view.c:2618
+#: ../src/nautilus-list-view.c:2622
 msgid "Visible _Columns..."
 msgstr "الأ_عمدة المرئية..."
 
 #. tooltip
-#: ../src/nautilus-list-view.c:2619
+#: ../src/nautilus-list-view.c:2623
 msgid "Select the columns visible in this folder"
 msgstr "اختر أي الأعمدة ستكون مرئية في هذا المجلد"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-list-view.c:3317
+#: ../src/nautilus-list-view.c:3321
 msgid "_List"
 msgstr "_قائمة"
 
-#: ../src/nautilus-list-view.c:3318
+#: ../src/nautilus-list-view.c:3322
 msgid "The list view encountered an error."
 msgstr "واجه منظور القائمة خطأ."
 
-#: ../src/nautilus-list-view.c:3319
+#: ../src/nautilus-list-view.c:3323
 msgid "The list view encountered an error while starting up."
 msgstr "واجه منظور القائمة خطأ أثناء بدء التشغيل."
 
-#: ../src/nautilus-list-view.c:3320
+#: ../src/nautilus-list-view.c:3324
 msgid "Display this location with the list view."
 msgstr "اعرض شريط المكان هذا مع منظور القائمة."
 
@@ -5491,7 +5499,7 @@ msgstr "انقل اللسان ي_مينا"
 msgid "_Close Tab"
 msgstr "أ_غلق اللسان"
 
-#: ../src/nautilus-window.c:2361
+#: ../src/nautilus-window.c:2371
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5502,7 +5510,7 @@ msgstr ""
 "العمومية العامة لجنو والتي نشرتها منظمة البرمجيات الحرة؛ سواء الإصدارة 2 من "
 "الرخصة أو أي إصدارة بعدها (حسب رغبتك)."
 
-#: ../src/nautilus-window.c:2365
+#: ../src/nautilus-window.c:2375
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5513,7 +5521,7 @@ msgstr ""
 "أيضمان يضمن صلاحية العرض في السوق أو توافقه مع أي استخدام محدد.  يمكنك "
 "مراجعة الرخصة العمومية العامة لجنو لمزيد من التفاصيل."
 
-#: ../src/nautilus-window.c:2369
+#: ../src/nautilus-window.c:2379
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5527,11 +5535,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2384
+#: ../src/nautilus-window.c:2394
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "حقوق النشر © %Id–%Id مؤلفي «الملفات»"
 
-#: ../src/nautilus-window.c:2390
+#: ../src/nautilus-window.c:2400
 msgid "Access and organize your files."
 msgstr "نظم ملفاتك وتعامل معها."
 
@@ -5539,7 +5547,7 @@ msgstr "نظم ملفاتك وتعامل معها."
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2400
+#: ../src/nautilus-window.c:2410
 msgid "translator-credits"
 msgstr ""
 "فريق عربآيز للترجمة http://www.arabeyes.org:\n"
