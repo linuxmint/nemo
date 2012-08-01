@@ -277,15 +277,6 @@ vfs_file_get_date (NautilusFile *file,
 		   time_t *date)
 {
 	switch (date_type) {
-	case NAUTILUS_DATE_TYPE_CHANGED:
-		/* Before we have info on a file, the date is unknown. */
-		if (file->details->ctime == 0) {
-			return FALSE;
-		}
-		if (date != NULL) {
-			*date = file->details->ctime;
-		}
-		return TRUE;
 	case NAUTILUS_DATE_TYPE_ACCESSED:
 		/* Before we have info on a file, the date is unknown. */
 		if (file->details->atime == 0) {
@@ -311,23 +302,6 @@ vfs_file_get_date (NautilusFile *file,
 		}
 		if (date != NULL) {
 			*date = file->details->trash_time;
-		}
-		return TRUE;
-	case NAUTILUS_DATE_TYPE_PERMISSIONS_CHANGED:
-		/* Before we have info on a file, the date is unknown. */
-		if (file->details->mtime == 0 || file->details->ctime == 0) {
-			return FALSE;
-		}
-		/* mtime is when the contents changed; ctime is when the
-		 * contents or the permissions (inc. owner/group) changed.
-		 * So we can only know when the permissions changed if mtime
-		 * and ctime are different.
-		 */
-		if (file->details->mtime == file->details->ctime) {
-			return FALSE;
-		}
-		if (date != NULL) {
-			*date = file->details->ctime;
 		}
 		return TRUE;
 	}

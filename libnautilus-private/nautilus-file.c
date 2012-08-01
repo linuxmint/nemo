@@ -130,13 +130,9 @@ static GQuark attribute_name_q,
 	attribute_deep_file_count_q,
 	attribute_deep_directory_count_q,
 	attribute_deep_total_count_q,
-	attribute_date_changed_q,
-	attribute_date_changed_full_q,
 	attribute_trashed_on_q,
 	attribute_trashed_on_full_q,
 	attribute_trash_orig_path_q,
-	attribute_date_permissions_q,
-	attribute_date_permissions_full_q,
 	attribute_permissions_q,
 	attribute_selinux_context_q,
 	attribute_octal_permissions_q,
@@ -473,7 +469,6 @@ nautilus_file_clear_info (NautilusFile *file)
 	file->details->sort_order = 0;
 	file->details->mtime = 0;
 	file->details->atime = 0;
-	file->details->ctime = 0;
 	file->details->trash_time = 0;
 	g_free (file->details->symlink_name);
 	file->details->symlink_name = NULL;
@@ -2096,7 +2091,7 @@ update_info_internal (NautilusFile *file,
 	int uid, gid;
 	goffset size;
 	int sort_order;
-	time_t atime, mtime, ctime;
+	time_t atime, mtime;
 	time_t trash_time;
 	GTimeVal g_trash_time;
 	const char * time_string;
@@ -2377,11 +2372,9 @@ update_info_internal (NautilusFile *file,
 	file->details->sort_order = sort_order;
 	
 	atime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_ACCESS);
-	ctime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_CHANGED);
 	mtime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
 	if (file->details->atime != atime ||
-	    file->details->mtime != mtime ||
-	    file->details->ctime != ctime) {
+	    file->details->mtime != mtime) {
 		if (file->details->thumbnail == NULL) {
 			file->details->thumbnail_is_up_to_date = FALSE;
 		}
@@ -2389,7 +2382,6 @@ update_info_internal (NautilusFile *file,
 		changed = TRUE;
 	}
 	file->details->atime = atime;
-	file->details->ctime = ctime;
 	file->details->mtime = mtime;
 
 	if (file->details->thumbnail != NULL &&
@@ -4295,11 +4287,10 @@ nautilus_file_get_date (NautilusFile *file,
 		*date = 0;
 	}
 
-	g_return_val_if_fail (date_type == NAUTILUS_DATE_TYPE_CHANGED
-			      || date_type == NAUTILUS_DATE_TYPE_ACCESSED
+	g_return_val_if_fail (date_type == NAUTILUS_DATE_TYPE_ACCESSED
 			      || date_type == NAUTILUS_DATE_TYPE_MODIFIED
-			      || date_type == NAUTILUS_DATE_TYPE_TRASHED
-			      || date_type == NAUTILUS_DATE_TYPE_PERMISSIONS_CHANGED, FALSE);
+			      || date_type == NAUTILUS_DATE_TYPE_TRASHED,
+			      FALSE);
 
 	if (file == NULL) {
 		return FALSE;
@@ -5852,9 +5843,9 @@ nautilus_file_get_deep_directory_count_as_string (NautilusFile *file)
  * @file: NautilusFile representing the file in question.
  * @attribute_name: The name of the desired attribute. The currently supported
  * set includes "name", "type", "mime_type", "size", "deep_size", "deep_directory_count",
- * "deep_file_count", "deep_total_count", "date_modified", "date_changed", "date_accessed",
- * "date_permissions", "date_modified_full", "date_changed_full", "date_accessed_full",
- * "date_permissions_full", "owner", "group", "permissions", "octal_permissions", "uri", "where",
+ * "deep_file_count", "deep_total_count", "date_modified", "date_accessed",
+ * "date_modified_full", "date_accessed_full",
+ * "owner", "group", "permissions", "octal_permissions", "uri", "where",
  * "link_target", "volume", "free_space", "selinux_context", "trashed_on", "trashed_on_full", "trashed_orig_path"
  * 
  * Returns: Newly allocated string ready to display to the user, or NULL
@@ -5906,16 +5897,6 @@ nautilus_file_get_string_attribute_q (NautilusFile *file, GQuark attribute_q)
 							 NAUTILUS_DATE_TYPE_MODIFIED,
 							 FALSE);
 	}
-	if (attribute_q == attribute_date_changed_q) {
-		return nautilus_file_get_date_as_string (file, 
-							 NAUTILUS_DATE_TYPE_CHANGED,
-							 TRUE);
-	}
-	if (attribute_q == attribute_date_changed_full_q) {
-		return nautilus_file_get_date_as_string (file, 
-							 NAUTILUS_DATE_TYPE_CHANGED,
-							 FALSE);
-	}
 	if (attribute_q == attribute_date_accessed_q) {
 		return nautilus_file_get_date_as_string (file,
 							 NAUTILUS_DATE_TYPE_ACCESSED,
@@ -5934,16 +5915,6 @@ nautilus_file_get_string_attribute_q (NautilusFile *file, GQuark attribute_q)
 	if (attribute_q == attribute_trashed_on_full_q) {
 		return nautilus_file_get_date_as_string (file,
 							 NAUTILUS_DATE_TYPE_TRASHED,
-							 FALSE);
-	}
-	if (attribute_q == attribute_date_permissions_q) {
-		return nautilus_file_get_date_as_string (file,
-							 NAUTILUS_DATE_TYPE_PERMISSIONS_CHANGED,
-							 TRUE);
-	}
-	if (attribute_q == attribute_date_permissions_full_q) {
-		return nautilus_file_get_date_as_string (file,
-							 NAUTILUS_DATE_TYPE_PERMISSIONS_CHANGED,
 							 FALSE);
 	}
 	if (attribute_q == attribute_permissions_q) {
@@ -6097,12 +6068,8 @@ nautilus_file_is_date_sort_attribute_q (GQuark attribute_q)
 	    attribute_q == attribute_accessed_date_q ||
 	    attribute_q == attribute_date_accessed_q ||
 	    attribute_q == attribute_date_accessed_full_q ||
-	    attribute_q == attribute_date_changed_q ||
-	    attribute_q == attribute_date_changed_full_q ||
 	    attribute_q == attribute_trashed_on_q ||
-	    attribute_q == attribute_trashed_on_full_q ||
-	    attribute_q == attribute_date_permissions_q ||
-	    attribute_q == attribute_date_permissions_full_q) {
+	    attribute_q == attribute_trashed_on_full_q) {
 		return TRUE;
 	}
 
@@ -7902,13 +7869,9 @@ nautilus_file_class_init (NautilusFileClass *class)
 	attribute_deep_file_count_q = g_quark_from_static_string ("deep_file_count");
 	attribute_deep_directory_count_q = g_quark_from_static_string ("deep_directory_count");
 	attribute_deep_total_count_q = g_quark_from_static_string ("deep_total_count");
-	attribute_date_changed_q = g_quark_from_static_string ("date_changed");
-	attribute_date_changed_full_q = g_quark_from_static_string ("date_changed_full");
 	attribute_trashed_on_q = g_quark_from_static_string ("trashed_on");
 	attribute_trashed_on_full_q = g_quark_from_static_string ("trashed_on_full");
 	attribute_trash_orig_path_q = g_quark_from_static_string ("trash_orig_path");
-	attribute_date_permissions_q = g_quark_from_static_string ("date_permissions");
-	attribute_date_permissions_full_q = g_quark_from_static_string ("date_permissions_full");
 	attribute_permissions_q = g_quark_from_static_string ("permissions");
 	attribute_selinux_context_q = g_quark_from_static_string ("selinux_context");
 	attribute_octal_permissions_q = g_quark_from_static_string ("octal_permissions");

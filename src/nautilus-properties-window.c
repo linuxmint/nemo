@@ -4507,11 +4507,7 @@ create_permissions_page (NautilusPropertiesWindow *window)
 			 "selinux_context", INCONSISTENT_STATE_STRING,
 			 FALSE);
 #endif
-		append_title_value_pair
-			(window, page_grid, _("Last changed:"), 
-			 "date_permissions", INCONSISTENT_STATE_STRING,
-			 FALSE);
-	
+
 		if (window->details->has_recursive_apply) {
 			hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 			gtk_widget_show (hbox);
