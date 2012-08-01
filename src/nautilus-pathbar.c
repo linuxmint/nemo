@@ -643,6 +643,9 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
                 gtk_widget_set_child_visible (path_bar->priv->up_slider_button, TRUE);
                 gtk_widget_show_all (path_bar->priv->up_slider_button);
 
+		if (direction == GTK_TEXT_DIR_LTR) {
+			down_slider_offset += path_bar->priv->slider_width;
+		}
         } else {
 		needs_reorder |= gtk_widget_get_child_visible (path_bar->priv->up_slider_button) == TRUE;
         	gtk_widget_set_child_visible (path_bar->priv->up_slider_button, FALSE);
