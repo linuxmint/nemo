@@ -615,9 +615,9 @@ nautilus_path_bar_size_allocate (GtkWidget     *widget,
                 gtk_widget_size_allocate (child, &child_allocation);
 
                 if (direction == GTK_TEXT_DIR_RTL) {
-	  		down_slider_offset = 0;
+	  		down_slider_offset = child_allocation.x - allocation->x - path_bar->priv->slider_width;
 		} else {
-	  		down_slider_offset = allocation->width - path_bar->priv->slider_width;
+	  		down_slider_offset += child_allocation.width;
 	  		child_allocation.x += child_allocation.width;
 		}
         }
