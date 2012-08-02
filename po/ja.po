@@ -2194,7 +2194,7 @@ msgstr "設定(_N)"
 
 #: ../src/nautilus-app-menu.ui.h:4
 msgid "_About Files"
-msgstr "情報(_A)"
+msgstr "このアプリケーションについて(_A)"
 
 #. name, stock id, label
 #: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-window-menus.c:432
@@ -5075,7 +5075,7 @@ msgstr "ファイルマネージャーを使って、仲間や別のデバイス
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:476
 msgid "_About"
-msgstr "情報(_A)"
+msgstr "このアプリケーションについて(_A)"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:477
