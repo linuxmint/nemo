@@ -12,9 +12,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nautilus.master.te\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-07-25 14:27+0000\n"
-"PO-Revision-Date: 2012-07-26 23:15+0530\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
+"POT-Creation-Date: 2012-08-02 06:48+0000\n"
+"PO-Revision-Date: 2012-08-03 00:22+0530\n"
 "Last-Translator: Praveen Illa <mail2ipn@gmail.com>\n"
 "Language-Team: Telugu <indlinux-telugu@lists.sourceforge.net>\n"
 "Language: te\n"
@@ -32,8 +33,7 @@ msgid "Autorun Prompt"
 msgstr "స్వయంచాలకంగా అడుగు"
 
 #. Set initial window title
-#: ../data/nautilus.desktop.in.in.h:1
-#: ../src/nautilus-window.c:2145
+#: ../data/nautilus.desktop.in.in.h:1 ../src/nautilus-window.c:2145
 #: ../src/nautilus-window.c:2398
 msgid "Files"
 msgstr "దస్త్రాలు"
@@ -42,13 +42,11 @@ msgstr "దస్త్రాలు"
 msgid "Access and organize files"
 msgstr "దస్త్రాలను నిర్వహించండి మరియు ప్రాప్తించండి"
 
-#: ../eel/eel-canvas.c:1255
-#: ../eel/eel-canvas.c:1256
+#: ../eel/eel-canvas.c:1255 ../eel/eel-canvas.c:1256
 msgid "X"
 msgstr "X"
 
-#: ../eel/eel-canvas.c:1262
-#: ../eel/eel-canvas.c:1263
+#: ../eel/eel-canvas.c:1262 ../eel/eel-canvas.c:1263
 msgid "Y"
 msgstr "Y"
 
@@ -65,8 +63,13 @@ msgid "Justification"
 msgstr "సర్దుబాటు"
 
 #: ../eel/eel-editable-label.c:319
-msgid "The alignment of the lines in the text of the label relative to each other. This does NOT affect the alignment of the label within its allocation. See GtkMisc::xalign for that."
-msgstr "లేబుల్ యొక్క పాఠ్యమునందలి వరుసలయొక్క అమర్పు ఒకదానికి ఒకటి సారూప్యంగా ఉంటాయి. ఇది లేబుల్ యొక్క అమర్పుపై దాని స్థానమునందు ఎటువంటి ప్రభావాన్ని చూపదు. దానికొరకు GtkMisc::xalign చూడండి."
+msgid ""
+"The alignment of the lines in the text of the label relative to each other. "
+"This does NOT affect the alignment of the label within its allocation. See "
+"GtkMisc::xalign for that."
+msgstr ""
+"లేబుల్ యొక్క పాఠ్యమునందలి వరుసలయొక్క అమర్పు ఒకదానికి ఒకటి సారూప్యంగా ఉంటాయి. ఇది లేబుల్ యొక్క అమర్పుపై "
+"దాని స్థానమునందు ఎటువంటి ప్రభావాన్ని చూపదు. దానికొరకు GtkMisc::xalign చూడండి."
 
 #: ../eel/eel-editable-label.c:327
 msgid "Line wrap"
@@ -89,7 +92,8 @@ msgid "Selection Bound"
 msgstr "ఎంపిక హద్దు"
 
 #: ../eel/eel-editable-label.c:346
-msgid "The position of the opposite end of the selection from the cursor in chars."
+msgid ""
+"The position of the opposite end of the selection from the cursor in chars."
 msgstr "కర్సర్ నుండి ఎంపికయొక్క వ్యతిరేక స్థానము అక్షరములలో."
 
 #: ../eel/eel-editable-label.c:3051
@@ -115,9 +119,8 @@ msgstr "(తప్పుడు యూనికోడ్)"
 #: ../libnautilus-private/nautilus-bookmark.c:101
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:67
-#: ../src/nautilus-pathbar.c:301
-#: ../src/nautilus-places-sidebar.c:510
-#: ../src/nautilus-query-editor.c:1182
+#: ../src/nautilus-pathbar.c:299 ../src/nautilus-places-sidebar.c:514
+#: ../src/nautilus-query-editor.c:1200
 msgid "Home"
 msgstr "నివాసం"
 
@@ -144,8 +147,7 @@ msgstr "క్లిప్‌బోర్డులో ఉన్న పాఠ్�
 
 #. name, stock id
 #. label, accelerator
-#: ../libnautilus-private/nautilus-clipboard.c:370
-#: ../src/nautilus-view.c:7348
+#: ../libnautilus-private/nautilus-clipboard.c:370 ../src/nautilus-view.c:7348
 msgid "Select _All"
 msgstr "అన్నిటినీ ఎంచుకోండి (_A)"
 
@@ -166,128 +168,120 @@ msgstr "క్రిందికి కదుపు (_n)"
 msgid "Use De_fault"
 msgstr "అప్రమేయమును వాడు (_f)"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:60
+#: ../libnautilus-private/nautilus-column-utilities.c:58
 #: ../src/nautilus-list-view.c:1662
 msgid "Name"
 msgstr "పేరు"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:61
+#: ../libnautilus-private/nautilus-column-utilities.c:59
 msgid "The name and icon of the file."
 msgstr "దస్త్రం యొక్క పేరు మరియు ప్రతీక."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:67
+#: ../libnautilus-private/nautilus-column-utilities.c:65
 msgid "Size"
 msgstr "పరిమాణం"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:68
+#: ../libnautilus-private/nautilus-column-utilities.c:66
 msgid "The size of the file."
 msgstr "దస్త్రం యొక్క పరిమాణం."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:75
+#: ../libnautilus-private/nautilus-column-utilities.c:73
 msgid "Type"
 msgstr "రకం"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:76
+#: ../libnautilus-private/nautilus-column-utilities.c:74
 msgid "The type of the file."
 msgstr "దస్త్రం రకం."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:82
-msgid "Used"
-msgstr "వాడినది"
-
-#: ../libnautilus-private/nautilus-column-utilities.c:83
-msgid "The date the file was last used."
-msgstr "దస్త్రమును చివరిసారిగా వాడిన తేది."
-
-#: ../libnautilus-private/nautilus-column-utilities.c:91
+#: ../libnautilus-private/nautilus-column-utilities.c:80
 msgid "Modified"
 msgstr "సవరించబడినది"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:92
+#: ../libnautilus-private/nautilus-column-utilities.c:81
 msgid "The date the file was modified."
 msgstr "దస్త్రం సవరించబడిన తేది."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:100
-msgid "Accessed"
-msgstr "వాడబడినది"
-
-#: ../libnautilus-private/nautilus-column-utilities.c:101
-msgid "The date the file was accessed."
-msgstr "దస్త్రం వాడబడిన తేది."
-
-#: ../libnautilus-private/nautilus-column-utilities.c:109
+#: ../libnautilus-private/nautilus-column-utilities.c:89
 msgid "Owner"
 msgstr "యజమాని"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:110
+#: ../libnautilus-private/nautilus-column-utilities.c:90
 msgid "The owner of the file."
 msgstr "దస్త్రం యజమాని."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:117
+#: ../libnautilus-private/nautilus-column-utilities.c:97
 msgid "Group"
 msgstr "సమూహం"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:118
+#: ../libnautilus-private/nautilus-column-utilities.c:98
 msgid "The group of the file."
 msgstr "దస్త్రం యొక్క సమూహం."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:125
+#: ../libnautilus-private/nautilus-column-utilities.c:105
 #: ../src/nautilus-properties-window.c:4472
 msgid "Permissions"
 msgstr "అనుమతులు"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:126
+#: ../libnautilus-private/nautilus-column-utilities.c:106
 msgid "The permissions of the file."
 msgstr "దస్త్రం యొక్క అనుమతులు."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:133
+#: ../libnautilus-private/nautilus-column-utilities.c:113
 msgid "Octal Permissions"
 msgstr "అష్టపు అనుమతులు"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:134
+#: ../libnautilus-private/nautilus-column-utilities.c:114
 msgid "The permissions of the file, in octal notation."
 msgstr "అష్టసంఖ్యామానములో దస్త్రము యొక్క అనుమతులు."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:141
+#: ../libnautilus-private/nautilus-column-utilities.c:121
 msgid "MIME Type"
 msgstr "MIME రకం"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:142
+#: ../libnautilus-private/nautilus-column-utilities.c:122
 msgid "The mime type of the file."
 msgstr "దస్త్రం యొక్క mime రకం."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:149
+#: ../libnautilus-private/nautilus-column-utilities.c:129
 msgid "Security Context"
 msgstr "భద్రత సందర్భం"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:150
+#: ../libnautilus-private/nautilus-column-utilities.c:130
 msgid "The security context of the file."
 msgstr "దస్త్రం యొక్క రక్షణ సందర్భం."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:157
+#: ../libnautilus-private/nautilus-column-utilities.c:137
 #: ../src/nautilus-image-properties-page.c:343
 msgid "Location"
 msgstr "స్థానము"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:158
+#: ../libnautilus-private/nautilus-column-utilities.c:138
 msgid "The location of the file."
 msgstr "దస్త్రం యొక్క ప్రదేశము."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:199
+#: ../libnautilus-private/nautilus-column-utilities.c:179
 msgid "Trashed On"
 msgstr "చెత్తబుట్టలో వేసిన తేదీ"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:200
+#: ../libnautilus-private/nautilus-column-utilities.c:180
 msgid "Date when file was moved to the Trash"
 msgstr "దస్త్రాన్ని చెత్తబుట్టకు తరలించిన తేదీ"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:206
+#: ../libnautilus-private/nautilus-column-utilities.c:186
 msgid "Original Location"
 msgstr "అసలు స్థానము"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:207
+#: ../libnautilus-private/nautilus-column-utilities.c:187
 msgid "Original location of file before moved to the Trash"
 msgstr "చెత్తబుట్టలోకి తరలించక ముందు దస్త్రం యొక్క ఆసలు స్థానము"
+
+#: ../libnautilus-private/nautilus-column-utilities.c:204
+msgid "Relevance"
+msgstr "సాంగత్వము"
+
+#: ../libnautilus-private/nautilus-column-utilities.c:205
+msgid "Relevance rank for search"
+msgstr "శోధించుటకై సాంగత్వ ర్యాంకు"
 
 #: ../libnautilus-private/nautilus-desktop-directory-file.c:435
 #: ../libnautilus-private/nautilus-desktop-icon-file.c:151
@@ -300,12 +294,20 @@ msgid "You cannot move the volume \"%s\" to the trash."
 msgstr "మీరు \"%s\" సంపుటమును చెత్తబుట్టకు తరలించలేరు."
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:101
-msgid "If you want to eject the volume, please use \"Eject\" in the popup menu of the volume."
-msgstr "ఒకవేళ మీరు సంపుటమును బయటకు నెట్టివేయాలనుకుంటే, దయచేసి సంపుటము యొక్క పాప్అప్ మెనూలోని \"Eject\" ను వాడండి."
+msgid ""
+"If you want to eject the volume, please use \"Eject\" in the popup menu of "
+"the volume."
+msgstr ""
+"ఒకవేళ మీరు సంపుటమును బయటకు నెట్టివేయాలనుకుంటే, దయచేసి సంపుటము యొక్క పాప్అప్ మెనూలోని \"Eject\" "
+"ను వాడండి."
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:110
-msgid "If you want to unmount the volume, please use \"Unmount Volume\" in the popup menu of the volume."
-msgstr "ఒకవేళ మీరు సంపుటమును అనధిరోహించాలనుకుంటే, దయచేసి సంపుటము యొక్క పాప్అప్ మెనూలోని \"Unmount Volume\" ను వాడండి."
+msgid ""
+"If you want to unmount the volume, please use \"Unmount Volume\" in the "
+"popup menu of the volume."
+msgstr ""
+"ఒకవేళ మీరు సంపుటమును అనధిరోహించాలనుకుంటే, దయచేసి సంపుటము యొక్క పాప్అప్ మెనూలోని \"Unmount "
+"Volume\" ను వాడండి."
 
 #: ../libnautilus-private/nautilus-dnd.c:697
 msgid "_Move Here"
@@ -327,50 +329,50 @@ msgstr "నేపథ్యము వలె అమర్చు (_B)"
 msgid "Cancel"
 msgstr "రద్దుచేయి"
 
-#: ../libnautilus-private/nautilus-file.c:1217
-#: ../libnautilus-private/nautilus-vfs-file.c:392
+#: ../libnautilus-private/nautilus-file.c:1210
+#: ../libnautilus-private/nautilus-vfs-file.c:356
 msgid "This file cannot be mounted"
 msgstr "ఈ దస్త్రం మౌంటు కాదు"
 
-#: ../libnautilus-private/nautilus-file.c:1262
+#: ../libnautilus-private/nautilus-file.c:1255
 msgid "This file cannot be unmounted"
 msgstr "ఈ దస్త్రం అన్‌మౌంటు కాలేదు"
 
-#: ../libnautilus-private/nautilus-file.c:1296
+#: ../libnautilus-private/nautilus-file.c:1289
 msgid "This file cannot be ejected"
 msgstr "ఈ దస్త్రం నెట్టివేయబడదు"
 
-#: ../libnautilus-private/nautilus-file.c:1329
-#: ../libnautilus-private/nautilus-vfs-file.c:570
+#: ../libnautilus-private/nautilus-file.c:1322
+#: ../libnautilus-private/nautilus-vfs-file.c:534
 msgid "This file cannot be started"
 msgstr "ఈ దస్త్రం ప్రారంభము కాబడదు"
 
-#: ../libnautilus-private/nautilus-file.c:1381
-#: ../libnautilus-private/nautilus-file.c:1412
+#: ../libnautilus-private/nautilus-file.c:1374
+#: ../libnautilus-private/nautilus-file.c:1405
 msgid "This file cannot be stopped"
 msgstr "ఈ దస్త్రం ఆపబడదు"
 
-#: ../libnautilus-private/nautilus-file.c:1823
+#: ../libnautilus-private/nautilus-file.c:1816
 #, c-format
 msgid "Slashes are not allowed in filenames"
 msgstr "దస్త్ర పేరులలో స్లాషెస్ అనుమతింపబడవు"
 
-#: ../libnautilus-private/nautilus-file.c:1841
+#: ../libnautilus-private/nautilus-file.c:1834
 #, c-format
 msgid "File not found"
 msgstr "దస్త్రం కనబడలేదు"
 
-#: ../libnautilus-private/nautilus-file.c:1869
+#: ../libnautilus-private/nautilus-file.c:1862
 #, c-format
 msgid "Toplevel files cannot be renamed"
 msgstr "పై స్థాయి దస్త్రాల పేర్లు మార్చబడవు"
 
-#: ../libnautilus-private/nautilus-file.c:1892
+#: ../libnautilus-private/nautilus-file.c:1885
 #, c-format
 msgid "Unable to rename desktop icon"
 msgstr "డెస్క్‍టాప్‌ ప్రతీక పేరుమార్చలేకపోతుంది"
 
-#: ../libnautilus-private/nautilus-file.c:1921
+#: ../libnautilus-private/nautilus-file.c:1914
 #, c-format
 msgid "Unable to rename desktop file"
 msgstr "డెస్క్‍టాప్‌ దస్త్రం పేరుమార్చలేకపోతుంది"
@@ -387,69 +389,68 @@ msgstr "డెస్క్‍టాప్‌ దస్త్రం పేరు�
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4379
+#: ../libnautilus-private/nautilus-file.c:4420
 msgid "%-I:%M %P"
 msgstr "%-I:%M %P"
 
-#: ../libnautilus-private/nautilus-file.c:4380
-#: ../libnautilus-private/nautilus-file.c:4381
+#: ../libnautilus-private/nautilus-file.c:4421
+#: ../libnautilus-private/nautilus-file.c:4422
 msgid "%b %-e"
 msgstr "%b %-e"
 
-#: ../libnautilus-private/nautilus-file.c:4382
+#: ../libnautilus-private/nautilus-file.c:4423
 msgid "%b %-d %Y"
 msgstr "%b %-d %Y"
 
-#: ../libnautilus-private/nautilus-file.c:4383
+#: ../libnautilus-private/nautilus-file.c:4424
 msgid "%a, %b %e %Y %H:%M:%S %p"
 msgstr "%a, %b %e %Y %H:%M:%S %p"
 
-#: ../libnautilus-private/nautilus-file.c:4894
+#: ../libnautilus-private/nautilus-file.c:4941
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "అనుమతులను అమర్చుటకు అనుమతించుటలేదు"
 
-#: ../libnautilus-private/nautilus-file.c:5189
+#: ../libnautilus-private/nautilus-file.c:5236
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "యజమానిని అమర్చుటకు అనుమతించుటలేదు"
 
-#: ../libnautilus-private/nautilus-file.c:5207
+#: ../libnautilus-private/nautilus-file.c:5254
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "నిర్దిష్ట '%s' యజమాని లేడు"
 
-#: ../libnautilus-private/nautilus-file.c:5471
+#: ../libnautilus-private/nautilus-file.c:5518
 #, c-format
 msgid "Not allowed to set group"
 msgstr "సమూహమును అమర్చుటకు అనుమతించుటలేదు"
 
-#: ../libnautilus-private/nautilus-file.c:5489
+#: ../libnautilus-private/nautilus-file.c:5536
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "నిర్దిష్ట సమూహం '%s' అసలు లేదు"
 
 #. Translators: "me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5623
+#: ../libnautilus-private/nautilus-file.c:5670
 msgid "me"
 msgstr "నన్ను"
 
-#: ../libnautilus-private/nautilus-file.c:5647
-#: ../src/nautilus-view.c:2986
+#: ../libnautilus-private/nautilus-file.c:5694 ../src/nautilus-view.c:2986
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
 msgstr[0] "%'u అంశం"
 msgstr[1] "%'u అంశాలు"
 
-#: ../libnautilus-private/nautilus-file.c:5648
+#: ../libnautilus-private/nautilus-file.c:5695
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] "%'u సంచయం"
 msgstr[1] "%'u సంచయాలు"
 
-#: ../libnautilus-private/nautilus-file.c:5649
+#: ../libnautilus-private/nautilus-file.c:5696
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
@@ -457,37 +458,37 @@ msgstr[0] "%'u దస్త్రం"
 msgstr[1] "%'u దస్త్రాలు"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6072
-#: ../libnautilus-private/nautilus-file.c:6088
+#: ../libnautilus-private/nautilus-file.c:6089
+#: ../libnautilus-private/nautilus-file.c:6105
 msgid "? items"
 msgstr "? అంశాలు"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6078
+#: ../libnautilus-private/nautilus-file.c:6095
 msgid "? bytes"
 msgstr "? బైట్లు"
 
-#: ../libnautilus-private/nautilus-file.c:6093
+#: ../libnautilus-private/nautilus-file.c:6110
 msgid "unknown type"
 msgstr "తెలియని రకము"
 
-#: ../libnautilus-private/nautilus-file.c:6096
+#: ../libnautilus-private/nautilus-file.c:6113
 msgid "unknown MIME type"
 msgstr "తెలియని MIME రకం"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6110
+#: ../libnautilus-private/nautilus-file.c:6127
 #: ../src/nautilus-properties-window.c:1106
 msgid "unknown"
 msgstr "తెలియదు"
 
-#: ../libnautilus-private/nautilus-file.c:6165
+#: ../libnautilus-private/nautilus-file.c:6178
 msgid "program"
 msgstr "కార్యక్రమం"
 
-#: ../libnautilus-private/nautilus-file.c:6185
+#: ../libnautilus-private/nautilus-file.c:6198
 msgid "link"
 msgstr "లంకె"
 
@@ -496,14 +497,14 @@ msgstr "లంకె"
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6191
+#: ../libnautilus-private/nautilus-file.c:6204
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:125
 #, c-format
 msgid "Link to %s"
 msgstr "%s నకు లంకెవేయి"
 
-#: ../libnautilus-private/nautilus-file.c:6207
+#: ../libnautilus-private/nautilus-file.c:6220
 msgid "link (broken)"
 msgstr "లంకె (విరిగినది)"
 
@@ -513,8 +514,12 @@ msgid "Merge folder \"%s\"?"
 msgstr "\"%s\" సంచయాన్ని విలీనంవేయాలా?"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:145
-msgid "Merging will ask for confirmation before replacing any files in the folder that conflict with the files being copied."
-msgstr "ఈ కలిపే ప్రక్రియ, ఇప్పటికే ఉన్న దస్త్రాల స్థానంలో కొత్త దస్త్రాలను భర్తీ చేయాల్సి వస్తే, మీ నిర్ధారణ కోసం అడుగుతుంది."
+msgid ""
+"Merging will ask for confirmation before replacing any files in the folder "
+"that conflict with the files being copied."
+msgstr ""
+"ఈ కలిపే ప్రక్రియ, ఇప్పటికే ఉన్న దస్త్రాల స్థానంలో కొత్త దస్త్రాలను భర్తీ చేయాల్సి వస్తే, మీ నిర్ధారణ కోసం "
+"అడుగుతుంది."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:150
 #, c-format
@@ -827,8 +832,12 @@ msgstr "చెత్తబుట్ట నుండి \"%B\"ను శాశ్
 
 #: ../libnautilus-private/nautilus-file-operations.c:1326
 #, c-format
-msgid "Are you sure you want to permanently delete the %'d selected item from the trash?"
-msgid_plural "Are you sure you want to permanently delete the %'d selected items from the trash?"
+msgid ""
+"Are you sure you want to permanently delete the %'d selected item from the "
+"trash?"
+msgid_plural ""
+"Are you sure you want to permanently delete the %'d selected items from the "
+"trash?"
 msgstr[0] "ఎంచుకున్న %'d అంశమును చెత్తబుట్ట నుండి శాశ్వతముగా తొలగించాలనుకుంటున్నారా?"
 msgstr[1] "ఎంచుకున్న %'d అంశములను చెత్తబుట్ట నుండి శాశ్వతముగా తొలగించాలనుకుంటున్నారా?"
 
@@ -848,8 +857,7 @@ msgstr "చెత్తబుట్టలో ఉన్న అన్ని అం
 #. Empty Trash menu item
 #: ../libnautilus-private/nautilus-file-operations.c:1363
 #: ../libnautilus-private/nautilus-file-operations.c:2226
-#: ../src/nautilus-places-sidebar.c:2716
-#: ../src/nautilus-trash-bar.c:208
+#: ../src/nautilus-places-sidebar.c:2720 ../src/nautilus-trash-bar.c:208
 msgid "Empty _Trash"
 msgstr "చెత్తబుట్టని ఖాళీచేయి (_T)"
 
@@ -860,7 +868,8 @@ msgstr "\"%B\"ను శాశ్వతముగా తొలగించాల�
 #: ../libnautilus-private/nautilus-file-operations.c:1393
 #, c-format
 msgid "Are you sure you want to permanently delete the %'d selected item?"
-msgid_plural "Are you sure you want to permanently delete the %'d selected items?"
+msgid_plural ""
+"Are you sure you want to permanently delete the %'d selected items?"
 msgstr[0] "ఎంచుకున్న %'d అంశమును శాశ్వతముగా తొలగించాలనుకుంటున్నారా?"
 msgstr[1] "ఎంచుకున్న %'d అంశములను శాశ్వతముగా తొలగించాలనుకుంటున్నారా?"
 
@@ -893,13 +902,16 @@ msgid "Error while deleting."
 msgstr "తొలగించునపుడు దోషం."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1527
-msgid "Files in the folder \"%B\" cannot be deleted because you do not have permissions to see them."
+msgid ""
+"Files in the folder \"%B\" cannot be deleted because you do not have "
+"permissions to see them."
 msgstr "\"%B\" సంచయములో ఉన్న దస్త్రాలు తొలగించబడవు ఎందుకంటే వాటిని చూచుటకు మీకు అనుమతిలేదు."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1530
 #: ../libnautilus-private/nautilus-file-operations.c:2547
 #: ../libnautilus-private/nautilus-file-operations.c:3535
-msgid "There was an error getting information about the files in the folder \"%B\"."
+msgid ""
+"There was an error getting information about the files in the folder \"%B\"."
 msgstr "\"%B\" సంచయములో ఉన్న దస్త్రాల గురించిన సమాచారం పొందుటలో అక్కడ ఒక దోషం ఉన్నది."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1539
@@ -908,7 +920,9 @@ msgid "_Skip files"
 msgstr "దస్త్రాలను దాటవేయి (_S)"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1560
-msgid "The folder \"%B\" cannot be deleted because you do not have permissions to read it."
+msgid ""
+"The folder \"%B\" cannot be deleted because you do not have permissions to "
+"read it."
 msgstr "\"%B\" సంచయం తొలగించబడదు ఎందుకంటే మీకు దానిని చదువుటకు అనుమతులు లేవు."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1563
@@ -965,8 +979,12 @@ msgid "Do you want to empty the trash before you unmount?"
 msgstr "మీరు అన్‌మౌంట్ చేయుటకు ముందే చెత్తబుట్టను ఖాళీ చేయాలనుకుంటున్నారా?"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2218
-msgid "In order to regain the free space on this volume the trash must be emptied. All trashed items on the volume will be permanently lost."
-msgstr "ఈ సంపుటము నందు ఖాళీ స్థలమును తిరిగి పొందుటకు మీరు చెత్తబుట్టను తప్పక ఖాళీ చేయబడాలి. ఈ సంపుటము నుండి చెత్తబుట్టలో వేసిన అన్ని అంశములు శాశ్వతంగా పోతాయి."
+msgid ""
+"In order to regain the free space on this volume the trash must be emptied. "
+"All trashed items on the volume will be permanently lost."
+msgstr ""
+"ఈ సంపుటము నందు ఖాళీ స్థలమును తిరిగి పొందుటకు మీరు చెత్తబుట్టను తప్పక ఖాళీ చేయబడాలి. ఈ సంపుటము "
+"నుండి చెత్తబుట్టలో వేసిన అన్ని అంశములు శాశ్వతంగా పోతాయి."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2224
 msgid "Do _not Empty Trash"
@@ -1023,15 +1041,23 @@ msgid "Error while moving files to trash."
 msgstr "దస్త్రాన్ని చెత్తబుట్టకు తరలించుటలో దోషం."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2544
-msgid "Files in the folder \"%B\" cannot be handled because you do not have permissions to see them."
-msgstr "\"%B\" సంచయం నందు ఉన్న దస్త్రాలను వ్యవహరించలేరు ఎందుకంటే మీకు వాటిని చూచుటకు అనుమతులను కలిగిలేరు."
+msgid ""
+"Files in the folder \"%B\" cannot be handled because you do not have "
+"permissions to see them."
+msgstr ""
+"\"%B\" సంచయం నందు ఉన్న దస్త్రాలను వ్యవహరించలేరు ఎందుకంటే మీకు వాటిని చూచుటకు అనుమతులను "
+"కలిగిలేరు."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2583
-msgid "The folder \"%B\" cannot be handled because you do not have permissions to read it."
+msgid ""
+"The folder \"%B\" cannot be handled because you do not have permissions to "
+"read it."
 msgstr "\"%B\" సంచయమును వ్యవహరించలేరు ఎందుకంటే మీకు దానిని చదువుటకు అనుమతులను కలిగిలేరు."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2660
-msgid "The file \"%B\" cannot be handled because you do not have permissions to read it."
+msgid ""
+"The file \"%B\" cannot be handled because you do not have permissions to "
+"read it."
 msgstr "\"%B\" దస్త్రమును వ్యవహరించలేరు ఎందుకంటే మీకు దానిని చదువుటకు అనుమతులను కలిగిలేరు."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2663
@@ -1058,7 +1084,9 @@ msgid "The destination is not a folder."
 msgstr "గమ్యము సంచయం కాదు."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2841
-msgid "There is not enough space on the destination. Try to remove files to make space."
+msgid ""
+"There is not enough space on the destination. Try to remove files to make "
+"space."
 msgstr "గమ్యం నందు తగిన ఖాళీ స్థలము లేదు. ఖాళీ స్థలము కోసం దస్త్రాలను తీసివేయుటకు ప్రయత్నించండి."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2843
@@ -1125,19 +1153,27 @@ msgstr[0] "%S అయినది %S కి గాను — %T మిగిల�
 msgstr[1] "%S అయినది %S కి గాను— %T మిగిలివున్నాయి (%S/sec)"
 
 #: ../libnautilus-private/nautilus-file-operations.c:3399
-msgid "The folder \"%B\" cannot be copied because you do not have permissions to create it in the destination."
-msgstr "\"%B\" సంచయమును నకలుతీయబడదు ఎందుకంటే దానిని గమ్యస్థానములో సృష్టించగలిగే అనుమతులు మీకు లేవు."
+msgid ""
+"The folder \"%B\" cannot be copied because you do not have permissions to "
+"create it in the destination."
+msgstr ""
+"\"%B\" సంచయమును నకలుతీయబడదు ఎందుకంటే దానిని గమ్యస్థానములో సృష్టించగలిగే అనుమతులు మీకు లేవు."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3402
 msgid "There was an error creating the folder \"%B\"."
 msgstr "\"%B\" సంచయమును సృష్టించుటలో అక్కడ ఒక దోషం ఉంది."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3532
-msgid "Files in the folder \"%B\" cannot be copied because you do not have permissions to see them."
-msgstr "\"%B\" సంచయములో ఉన్న దస్త్రములు నకలుతీయబడడవు ఎందుకంటే వాటిని చూచుటకు  మీకు అనుమతులులేవు."
+msgid ""
+"Files in the folder \"%B\" cannot be copied because you do not have "
+"permissions to see them."
+msgstr ""
+"\"%B\" సంచయములో ఉన్న దస్త్రములు నకలుతీయబడడవు ఎందుకంటే వాటిని చూచుటకు  మీకు అనుమతులులేవు."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3577
-msgid "The folder \"%B\" cannot be copied because you do not have permissions to read it."
+msgid ""
+"The folder \"%B\" cannot be copied because you do not have permissions to "
+"read it."
 msgstr "\"%B\" సంచయమును నకలుతీయబడదు ఎందుకంటే దానిని చదువుటకు మీకు అనుమతులు లేవు."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3622
@@ -1752,12 +1788,17 @@ msgid "This drop target only supports local files."
 msgstr "ఈ గమ్యపు పడవేయుట స్థానిక దస్త్రాలకు మాత్రమే సహకరించును."
 
 #: ../libnautilus-private/nautilus-program-choosing.c:350
-msgid "To open non-local files copy them to a local folder and then drop them again."
+msgid ""
+"To open non-local files copy them to a local folder and then drop them again."
 msgstr "స్థానిక దస్త్రాలు కాని వాటిని తెరుచుటకు, వాటిని స్థానిక సంచయములోనికి నకలుచేసి లాగివేయండి."
 
 #: ../libnautilus-private/nautilus-program-choosing.c:361
-msgid "To open non-local files copy them to a local folder and then drop them again. The local files you dropped have already been opened."
-msgstr "స్థానిక దస్త్రాలు కాని వాటిని తెరుచుటకు ముందు వాటిని ఒక స్థానిక సంచయానికి నకలుతీసి అప్పుడు మరలా వాటిని లాగివదలండి. మీరు లాగివదిలిన స్థానిక దస్త్రాలు ఇప్పటికే తెరువబడి ఉన్నాయి."
+msgid ""
+"To open non-local files copy them to a local folder and then drop them "
+"again. The local files you dropped have already been opened."
+msgstr ""
+"స్థానిక దస్త్రాలు కాని వాటిని తెరుచుటకు ముందు వాటిని ఒక స్థానిక సంచయానికి నకలుతీసి అప్పుడు మరలా వాటిని "
+"లాగివదలండి. మీరు లాగివదిలిన స్థానిక దస్త్రాలు ఇప్పటికే తెరువబడి ఉన్నాయి."
 
 #: ../libnautilus-private/nautilus-program-choosing.c:390
 msgid "Details: "
@@ -1781,7 +1822,7 @@ msgstr "వెతుకు"
 msgid "Search for \"%s\""
 msgstr "\"%s\" కోసం వెతుకు"
 
-#: ../libnautilus-private/nautilus-search-engine.c:148
+#: ../libnautilus-private/nautilus-search-engine.c:154
 msgid "Unable to complete the requested search"
 msgstr "అభ్యర్ధించిన శోధనను పూర్తి చేయలేకపోయాము"
 
@@ -1790,184 +1831,320 @@ msgid "Where to position newly open tabs in browser windows."
 msgstr "విహారిణి కిటికీలలో కొత్తగా తెరిచిన ట్యాబులను ఎక్కడ ఉంచాలి."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:2
-msgid "If set to \"after-current-tab\", then new tabs are inserted after the current tab. If set to \"end\", then new tabs are appended to the end of the tab list."
-msgstr "ఒకవేళ \"after_current_tab\" అమర్చినట్లయితే, కొత్త టాబ్‌లు ప్రస్తుత ట్యాబ్ తర్వాత చేర్చబడతాయి. ఒకవేళ \"end\" అమర్చినట్లయితే, కొత్త టాబ్‌లు ట్యాబ్ జాబితా చివరకు చేర్చబడతాయి."
+msgid ""
+"If set to \"after-current-tab\", then new tabs are inserted after the "
+"current tab. If set to \"end\", then new tabs are appended to the end of the "
+"tab list."
+msgstr ""
+"ఒకవేళ \"after_current_tab\" అమర్చినట్లయితే, కొత్త టాబ్‌లు ప్రస్తుత ట్యాబ్ తర్వాత చేర్చబడతాయి. ఒకవేళ "
+"\"end\" అమర్చినట్లయితే, కొత్త టాబ్‌లు ట్యాబ్ జాబితా చివరకు చేర్చబడతాయి."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:3
 msgid "Enables the classic Nautilus behavior, where all windows are browsers"
 msgstr "ఎక్కడైతే అన్ని కిటికీలు విహారిణిలు అవుతాయో, క్లాసికల్ నాటిలస్ ప్రవర్తనను చేతనపరుచు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:4
-msgid "If set to true, then all Nautilus windows will be browser windows. This is how Nautilus used to behave before version 2.6, and some people prefer this behavior."
-msgstr "ఒకవేళ నిజమని అమరిస్తే, అప్పుడు అన్ని నాటిలస్ విండోలు విహారక విండోలు అవుతాయి. వర్షన్ 2.6 కు ముందు నాటిలస్ ఇలా ప్రవర్తించేది, మరియు కొంతమంది ఈ ప్రవర్తనను ఇష్టపడతారు."
+msgid ""
+"If set to true, then all Nautilus windows will be browser windows. This is "
+"how Nautilus used to behave before version 2.6, and some people prefer this "
+"behavior."
+msgstr ""
+"ఒకవేళ నిజమని అమరిస్తే, అప్పుడు అన్ని నాటిలస్ విండోలు విహారక విండోలు అవుతాయి. వర్షన్ 2.6 కు ముందు "
+"నాటిలస్ ఇలా ప్రవర్తించేది, మరియు కొంతమంది ఈ ప్రవర్తనను ఇష్టపడతారు."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:5
 msgid "Always use the location entry, instead of the pathbar"
 msgstr "పాత్‌బార్‌కు బదులుగా, ఎల్లప్పుడూ స్థానము ప్రవేశమును ఉపయోగించు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:6
-msgid "If set to true, then Nautilus browser windows will always use a textual input entry for the location toolbar, instead of the pathbar."
-msgstr "ఒకవేళ నిజమని అమరిస్తే, నాటిలస్ విహారిణి విండోలు త్రోవ పట్టీకు బదులుగా, ఎల్లప్పుడూ స్థానపు సాధనములపట్టీ కొరకు అక్షర ప్రవేశమును కలిగిఉంటాయి."
+msgid ""
+"If set to true, then Nautilus browser windows will always use a textual "
+"input entry for the location toolbar, instead of the pathbar."
+msgstr ""
+"ఒకవేళ నిజమని అమరిస్తే, నాటిలస్ విహారిణి విండోలు త్రోవ పట్టీకు బదులుగా, ఎల్లప్పుడూ స్థానపు సాధనములపట్టీ "
+"కొరకు అక్షర ప్రవేశమును కలిగిఉంటాయి."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:7
 msgid "Whether to ask for confirmation when deleting files, or emptying Trash"
 msgstr "దస్త్రాలను తొలగించునప్పుడు, లేదా చెత్తబుట్టను ఖాళీ చేస్తున్నప్పుడు నిర్ధారణ కోసం అడగవలెనా"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:8
-msgid "If set to true, then Nautilus will ask for confirmation when you attempt to delete files, or empty the Trash."
-msgstr "ఒకవేళ నిజమని అమరిస్తే, మీరు దస్త్రాలను తొలిగించుటకు లేదా చెత్తను ఖాళీచేయుటకు ప్రయత్నించినప్పుడు నాటిలస్ నిర్ధారణ కోసం అడుగుతుంది."
+msgid ""
+"If set to true, then Nautilus will ask for confirmation when you attempt to "
+"delete files, or empty the Trash."
+msgstr ""
+"ఒకవేళ నిజమని అమరిస్తే, మీరు దస్త్రాలను తొలిగించుటకు లేదా చెత్తను ఖాళీచేయుటకు ప్రయత్నించినప్పుడు నాటిలస్ "
+"నిర్ధారణ కోసం అడుగుతుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:9
 msgid "Whether to enable immediate deletion"
 msgstr "సత్వర తొలగింపును చేతనపరచాలా"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:10
-msgid "If set to true, then Nautilus will have a feature allowing you to delete a file immediately and in-place, instead of moving it to the trash. This feature can be dangerous, so use caution."
-msgstr "ఒకవేళ నిజమని అమరిస్తే, దస్త్రాన్ని చెత్తబుట్టకు కదుపుటకు బదులుగా, నాటిలస్ తక్షణమే ఆ స్థానము నుండి దస్త్రాలను తొలగించుటకు మిమ్మల్ని అనుమతినిస్తుంది.ఈ సౌలభ్యము చాలా ప్రమాదకరమైంది, కాబట్టి జాగ్రత్తగా వినియోగించండి."
+msgid ""
+"If set to true, then Nautilus will have a feature allowing you to delete a "
+"file immediately and in-place, instead of moving it to the trash. This "
+"feature can be dangerous, so use caution."
+msgstr ""
+"ఒకవేళ నిజమని అమరిస్తే, దస్త్రాన్ని చెత్తబుట్టకు కదుపుటకు బదులుగా, నాటిలస్ తక్షణమే ఆ స్థానము నుండి "
+"దస్త్రాలను తొలగించుటకు మిమ్మల్ని అనుమతినిస్తుంది.ఈ సౌలభ్యము చాలా ప్రమాదకరమైంది, కాబట్టి జాగ్రత్తగా "
+"వినియోగించండి."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:11
 msgid "When to show preview text in icons"
 msgstr "ప్రతిమలో పాఠ్యము మునుజూపును ఎప్పుడు చూపించాలి"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:12
-msgid "Speed tradeoff for when to show a preview of text file contents in the file's icon. If set to \"always\" then always show previews, even if the folder is on a remote server. If set to \"local-only\" then only show previews for local file systems. If set to \"never\" then never bother to read preview data."
-msgstr "దస్త్రాల ప్రతీకలో పాఠ్య సారాన్ని మునుజూపునప్పుడు వేగం ట్రేడ్ఆఫ్. ఒకవేళ \"always\" అమర్చితే దూరస్థ సేవికంలో ఉన్నా కూడా ఎప్పుడూ మునుజూపును చూపిస్తుంది. ఒకవేళ \"local_only\" కి అమర్చినట్లయితే స్థానిక దస్త్ర వ్యవస్థ కొరకు మాత్రమే మునుజూపును చూపిస్తుంది. ఒకవేళ \"never\"కి అమర్చినట్లయితే ఎప్పటికి మునుజూపు డేటాను చదువుటకు ఏ మాత్రం ఇబ్బందిపడదు."
+msgid ""
+"Speed tradeoff for when to show a preview of text file contents in the "
+"file's icon. If set to \"always\" then always show previews, even if the "
+"folder is on a remote server. If set to \"local-only\" then only show "
+"previews for local file systems. If set to \"never\" then never bother to "
+"read preview data."
+msgstr ""
+"దస్త్రాల ప్రతీకలో పాఠ్య సారాన్ని మునుజూపునప్పుడు వేగం ట్రేడ్ఆఫ్. ఒకవేళ \"always\" అమర్చితే దూరస్థ "
+"సేవికంలో ఉన్నా కూడా ఎప్పుడూ మునుజూపును చూపిస్తుంది. ఒకవేళ \"local_only\" కి అమర్చినట్లయితే "
+"స్థానిక దస్త్ర వ్యవస్థ కొరకు మాత్రమే మునుజూపును చూపిస్తుంది. ఒకవేళ \"never\"కి అమర్చినట్లయితే "
+"ఎప్పటికి మునుజూపు డేటాను చదువుటకు ఏ మాత్రం ఇబ్బందిపడదు."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:13
 msgid "When to show number of items in a folder"
 msgstr "సంచయంలో ఉన్న అంశాలను ఎప్పుడు చూపించాలి"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:14
-msgid "Speed tradeoff for when to show the number of items in a folder. If set to \"always\" then always show item counts, even if the folder is on a remote server. If set to \"local-only\" then only show counts for local file systems. If set to \"never\" then never bother to compute item counts."
-msgstr "సంచయంలో అంశముల సంఖ్య చూపించుతున్నప్పుడు వేగం ట్రేడ్ఆఫ్. ఒకవేళ \"always\" అమర్చితే దూరస్థ సేవకంలో ఉన్నా కూడా ఎప్పుడూ అంశముల సంఖ్యను చూపుతుంది. ఒకవేళ \"local-only\" కి అమర్చినట్లయితే స్థానిక దస్త్ర వ్యవస్థకు మాత్రమే సంఖ్యలను చూపిస్తుంది. ఒకవేళ \"never\"కి అమర్చినట్లైతే ఎప్పటికి అంశముల సంఖ్య లెక్కించదు."
+msgid ""
+"Speed tradeoff for when to show the number of items in a folder. If set to "
+"\"always\" then always show item counts, even if the folder is on a remote "
+"server. If set to \"local-only\" then only show counts for local file "
+"systems. If set to \"never\" then never bother to compute item counts."
+msgstr ""
+"సంచయంలో అంశముల సంఖ్య చూపించుతున్నప్పుడు వేగం ట్రేడ్ఆఫ్. ఒకవేళ \"always\" అమర్చితే దూరస్థ "
+"సేవకంలో ఉన్నా కూడా ఎప్పుడూ అంశముల సంఖ్యను చూపుతుంది. ఒకవేళ \"local-only\" కి అమర్చినట్లయితే "
+"స్థానిక దస్త్ర వ్యవస్థకు మాత్రమే సంఖ్యలను చూపిస్తుంది. ఒకవేళ \"never\"కి అమర్చినట్లైతే ఎప్పటికి "
+"అంశముల సంఖ్య లెక్కించదు."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:15
 msgid "Type of click used to launch/open files"
 msgstr "దస్త్రాలను తెరవడానికి/ప్రారంభించడానికి వాడే క్లిక్ రకము"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:16
-msgid "Possible values are \"single\" to launch files on a single click, or \"double\" to launch them on a double click."
-msgstr "ఒక క్లిక్కుతో దస్త్రాలను ప్రారంభించుటకు సాధ్యమయ్యే విలువ \"single\", లేదా రెండు క్లిక్కులతో వాటిని ప్రారంభించుటకు సాధ్యమయ్యే విలువ \"double\"."
+msgid ""
+"Possible values are \"single\" to launch files on a single click, or \"double"
+"\" to launch them on a double click."
+msgstr ""
+"ఒక క్లిక్కుతో దస్త్రాలను ప్రారంభించుటకు సాధ్యమయ్యే విలువ \"single\", లేదా రెండు క్లిక్కులతో వాటిని "
+"ప్రారంభించుటకు సాధ్యమయ్యే విలువ \"double\"."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:17
 msgid "What to do with executable text files when activated"
 msgstr "ఎక్జిక్యూటబుల్ పాఠ్యపు దస్త్రాలు క్రియాశీలమైనపుడు వాటితో ఏమి చేయాలి"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:18
-msgid "What to do with executable text files when they are activated (single or double clicked). Possible values are \"launch\" to launch them as programs, \"ask\" to ask what to do via a dialog, and \"display\" to display them as text files."
-msgstr "ఎగ్జిక్యూటబుల్ పాఠ్య దస్త్రాలు (ఒకటి లేదా రెండు క్లిక్కులతో) చేతనం అయినప్పుడు వాటితో ఏమి చేయాలి.సాధ్యమగు విలువలు \"launch\" వాటిని ప్రోగ్రామ్ వలె ప్రారంభించుటకు, \"ask\" డైలాగ్ ద్వారా ఏమిచేయలో అడుగుటకు, మరియు \"display\" వాటిని పాఠ్య దస్త్రాలుగా ప్రదర్శించుటకు."
+msgid ""
+"What to do with executable text files when they are activated (single or "
+"double clicked). Possible values are \"launch\" to launch them as programs, "
+"\"ask\" to ask what to do via a dialog, and \"display\" to display them as "
+"text files."
+msgstr ""
+"ఎగ్జిక్యూటబుల్ పాఠ్య దస్త్రాలు (ఒకటి లేదా రెండు క్లిక్కులతో) చేతనం అయినప్పుడు వాటితో ఏమి చేయాలి.సాధ్యమగు "
+"విలువలు \"launch\" వాటిని ప్రోగ్రామ్ వలె ప్రారంభించుటకు, \"ask\" డైలాగ్ ద్వారా ఏమిచేయలో అడుగుటకు, "
+"మరియు \"display\" వాటిని పాఠ్య దస్త్రాలుగా ప్రదర్శించుటకు."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:19
 msgid "Show the package installer for unknown mime types"
 msgstr "తెలియని mime రకముల కొరకు ప్యాకేజీ స్థాపకాన్ని చూపించు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:20
-msgid "Whether to show the user a package installer dialog in case an unknown mime type is opened, in order to search for an application to handle it."
-msgstr "తెలియని mime రకము తెరువబడినప్పుడు దానిని వ్యవహరించుటకు ఒక అనువర్తనమును శోధించుటకు, వాడుకరికి ప్యాకేజీ స్థాపకము డైలాగును చూపించాలా."
+msgid ""
+"Whether to show the user a package installer dialog in case an unknown mime "
+"type is opened, in order to search for an application to handle it."
+msgstr ""
+"తెలియని mime రకము తెరువబడినప్పుడు దానిని వ్యవహరించుటకు ఒక అనువర్తనమును శోధించుటకు, వాడుకరికి "
+"ప్యాకేజీ స్థాపకము డైలాగును చూపించాలా."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:21
 msgid "Use extra mouse button events in Nautilus' browser window"
 msgstr "నాటిలస్ విహారిణి కిటికీ నందు అదనపు మౌస్ బటన్ కార్యక్రమాలను ఉపయోగించు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:22
-msgid "For users with mice that have \"Forward\" and \"Back\" buttons, this key will determine if any action is taken inside of Nautilus when either is pressed."
-msgstr "\"ముందుకు\" మరియు \"వెనుకకు\" బటన్సుతో ఉన్న మౌస్‌ను కలిగివున్న వాడుకరులకు, అవి నొక్క బడినవప్పుడు నాటిలస్ నందు ఏవైనా చర్యలు తీసుకొనవలెనంటే ఈ కీ నిర్ణయిస్తుంది."
+msgid ""
+"For users with mice that have \"Forward\" and \"Back\" buttons, this key "
+"will determine if any action is taken inside of Nautilus when either is "
+"pressed."
+msgstr ""
+"\"ముందుకు\" మరియు \"వెనుకకు\" బటన్సుతో ఉన్న మౌస్‌ను కలిగివున్న వాడుకరులకు, అవి నొక్క "
+"బడినవప్పుడు నాటిలస్ నందు ఏవైనా చర్యలు తీసుకొనవలెనంటే ఈ కీ నిర్ణయిస్తుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:23
 msgid "Mouse button to activate the \"Forward\" command in browser window"
 msgstr "విహారిణి కిటికీలో \"ముందుకు\" ఆదేశమును క్రియాశీల పర్చుటకు వాడే మౌస్ బటన్"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:24
-msgid "For users with mice that have buttons for \"Forward\" and \"Back\", this key will set which button activates the \"Forward\" command in a browser window. Possible values range between 6 and 14."
-msgstr "\"ముందుకు\" మరియు \"వెనుకకు\" బటన్సు ఉన్న మౌస్‌ను కలిగివున్న వాడుకరులకు, విహారిణి కిటికీ నందు \"ముందుకు\" ఆదేశమును ఏ బటన్ ద్వారా క్రియాశీలం చేయాలో ఈ కీ నిర్ణయిస్తుంది. సాధ్యమగు విలువలు 6 నుండి 14 మధ్యన వుంటాయి."
+msgid ""
+"For users with mice that have buttons for \"Forward\" and \"Back\", this key "
+"will set which button activates the \"Forward\" command in a browser window. "
+"Possible values range between 6 and 14."
+msgstr ""
+"\"ముందుకు\" మరియు \"వెనుకకు\" బటన్సు ఉన్న మౌస్‌ను కలిగివున్న వాడుకరులకు, విహారిణి కిటికీ నందు "
+"\"ముందుకు\" ఆదేశమును ఏ బటన్ ద్వారా క్రియాశీలం చేయాలో ఈ కీ నిర్ణయిస్తుంది. సాధ్యమగు విలువలు 6 నుండి "
+"14 మధ్యన వుంటాయి."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:25
 msgid "Mouse button to activate the \"Back\" command in browser window"
 msgstr "విహారిణి కిటికీ నందు \"వెనుకకు\" ఆదేశమును క్రియాశీల పర్చుటకు వాడే మౌస్ బటన్"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:26
-msgid "For users with mice that have buttons for \"Forward\" and \"Back\", this key will set which button activates the \"Back\" command in a browser window. Possible values range between 6 and 14."
-msgstr "\"ముందుకు\" మరియు \"వెనుకకు\" బటన్సు ఉన్న మౌస్‌ను కలిగివున్న వాడుకరులకు, విహారిణి కిటికీ నందు \"వెనుకకు\" ఆదేశమును ఏ బటన్ ద్వారా క్రియాశీలం చేయాలో ఈ కీ నిర్ణయిస్తుంది. సాధ్యమగు విలువలు 6 నుండి 14 మధ్యన వుంటాయి."
+msgid ""
+"For users with mice that have buttons for \"Forward\" and \"Back\", this key "
+"will set which button activates the \"Back\" command in a browser window. "
+"Possible values range between 6 and 14."
+msgstr ""
+"\"ముందుకు\" మరియు \"వెనుకకు\" బటన్సు ఉన్న మౌస్‌ను కలిగివున్న వాడుకరులకు, విహారిణి కిటికీ నందు "
+"\"వెనుకకు\" ఆదేశమును ఏ బటన్ ద్వారా క్రియాశీలం చేయాలో ఈ కీ నిర్ణయిస్తుంది. సాధ్యమగు విలువలు 6 నుండి "
+"14 మధ్యన వుంటాయి."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:27
 msgid "When to show thumbnails of image files"
 msgstr "బొమ్మ దస్త్రాల యొక్క చిరుచిత్రాలు ఎప్పుడు చూపించాలి"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:28
-msgid "Speed tradeoff for when to show an image file as a thumbnail. If set to \"always\" then always thumbnail, even if the folder is on a remote server. If set to \"local-only\" then only show thumbnails for local file systems. If set to \"never\" then never bother to thumbnail images, just use a generic icon."
-msgstr "బొమ్మ దస్త్రాన్ని చిరుచిత్రముగా చూపించునప్పుడు వేగం ట్రేడ్ఆఫ్. ఒకవేళ \"always\" అమర్చితే సంచయం దూరస్థ సేవకంలో ఉన్నా కూడా ఎల్లప్పుడూ చిరుచిత్రముగా చూపబడుతుంది. ఒకవేళ \"local_only\" కి అమర్చినట్లైతే చిరుచిత్రాలను స్థానిక దస్త్ర వ్యవస్థలో మాత్రమే చూపిస్తుంది.ఒకవేళ \"never\" కి అమర్చినట్లైతే ఎప్పటికి చిరుచిత్రాల గురించి పట్టించుకోదు, సాధారణ ప్రతిమను మాత్రమే ఉపయోగిస్తుంది."
+msgid ""
+"Speed tradeoff for when to show an image file as a thumbnail. If set to "
+"\"always\" then always thumbnail, even if the folder is on a remote server. "
+"If set to \"local-only\" then only show thumbnails for local file systems. "
+"If set to \"never\" then never bother to thumbnail images, just use a "
+"generic icon."
+msgstr ""
+"బొమ్మ దస్త్రాన్ని చిరుచిత్రముగా చూపించునప్పుడు వేగం ట్రేడ్ఆఫ్. ఒకవేళ \"always\" అమర్చితే సంచయం "
+"దూరస్థ సేవకంలో ఉన్నా కూడా ఎల్లప్పుడూ చిరుచిత్రముగా చూపబడుతుంది. ఒకవేళ \"local_only\" కి "
+"అమర్చినట్లైతే చిరుచిత్రాలను స్థానిక దస్త్ర వ్యవస్థలో మాత్రమే చూపిస్తుంది.ఒకవేళ \"never\" కి అమర్చినట్లైతే "
+"ఎప్పటికి చిరుచిత్రాల గురించి పట్టించుకోదు, సాధారణ ప్రతిమను మాత్రమే ఉపయోగిస్తుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:29
 msgid "Maximum image size for thumbnailing"
 msgstr "చిరుచిత్రాల యొక్క గరిష్ట బొమ్మ పరిమాణము"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:30
-msgid "Images over this size (in bytes) won't be thumbnailed. The purpose of this setting is to avoid thumbnailing large images that may take a long time to load or use lots of memory."
-msgstr "ప్రతీకలు ఈ పరిమాణంకన్నా (బైట్లలో) మించితే చిరుచిత్రాలు కావు. లోడవ్వడానికి ఎక్కువసమయం తీసుకొని మరియు ఎక్కువ మెమోరీని ‌ఉపయోగించుకొను బొమ్మల చిరుచిత్రాలను నిరోధించుటే ఈ అమరిక ప్రయోజనం."
+msgid ""
+"Images over this size (in bytes) won't be thumbnailed. The purpose of this "
+"setting is to avoid thumbnailing large images that may take a long time to "
+"load or use lots of memory."
+msgstr ""
+"ప్రతీకలు ఈ పరిమాణంకన్నా (బైట్లలో) మించితే చిరుచిత్రాలు కావు. లోడవ్వడానికి ఎక్కువసమయం తీసుకొని మరియు "
+"ఎక్కువ మెమోరీని ‌ఉపయోగించుకొను బొమ్మల చిరుచిత్రాలను నిరోధించుటే ఈ అమరిక ప్రయోజనం."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:31
 msgid "Show advanced permissions in the file property dialog"
 msgstr "దస్త్ర లక్షణ డైలాగులో అధునాతన అనుమతులను చూపించు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:32
-msgid "If set to true, then Nautilus lets you edit and display file permissions in a more unix-like way, accessing some more esoteric options."
-msgstr "ఒకవేళ నిజమని అమరిస్తే, ఇంకొన్ని ఎసోటెరిక్ ఐచ్ఛికాలను వాడుకొనుటద్వారా, దస్త్ర అనుమతులను unix-like మార్గంలో సవరించుటకు మరియు ప్రదర్శించుటకు నాటిలస్ మిమ్నుల్ని అనుమతిస్తుంది."
+msgid ""
+"If set to true, then Nautilus lets you edit and display file permissions in "
+"a more unix-like way, accessing some more esoteric options."
+msgstr ""
+"ఒకవేళ నిజమని అమరిస్తే, ఇంకొన్ని ఎసోటెరిక్ ఐచ్ఛికాలను వాడుకొనుటద్వారా, దస్త్ర అనుమతులను unix-like "
+"మార్గంలో సవరించుటకు మరియు ప్రదర్శించుటకు నాటిలస్ మిమ్నుల్ని అనుమతిస్తుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:33
 msgid "Show folders first in windows"
 msgstr "కిటికీలలో మొదట సంచయాలు చూపించు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:34
-msgid "If set to true, then Nautilus shows folders prior to showing files in the icon and list views."
-msgstr "ఒకవేళ నిజమని అమరిస్తే, సంచయాలలో దస్త్రాల ప్రతీకలు మరియు జాబితా దర్శనంలో చూపించుటకు నాటిలస్ ప్రాధాన్యమిస్తుంది."
+msgid ""
+"If set to true, then Nautilus shows folders prior to showing files in the "
+"icon and list views."
+msgstr ""
+"ఒకవేళ నిజమని అమరిస్తే, సంచయాలలో దస్త్రాల ప్రతీకలు మరియు జాబితా దర్శనంలో చూపించుటకు నాటిలస్ "
+"ప్రాధాన్యమిస్తుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:35
 msgid "Default sort order"
 msgstr "అప్రమేయ క్రమబద్దీకరణ క్రమం"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:36
-msgid "The default sort-order for items in the icon view. Possible values are \"name\", \"size\", \"type\" and \"mtime\"."
-msgstr "ప్రతీక దర్శనంలో అంశముల కొరకు అప్రమేయ పేర్చు-క్రమం. సాధ్యమగు విలువలు \"name\", \"size\", \"type\", మరియు \"modification_date\"."
+msgid ""
+"The default sort-order for items in the icon view. Possible values are \"name"
+"\", \"size\", \"type\" and \"mtime\"."
+msgstr ""
+"ప్రతీక దర్శనంలో అంశముల కొరకు అప్రమేయ పేర్చు-క్రమం. సాధ్యమగు విలువలు \"name\", \"size\", "
+"\"type\", మరియు \"modification_date\"."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
 msgid "Reverse sort order in new windows"
 msgstr "కొత్త కిటికీల నందు వ్యతిరేక క్రమములో ఉంచు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:38
-msgid "If true, files in new windows will be sorted in reverse order. ie, if sorted by name, then instead of sorting the files from \"a\" to \"z\", they will be sorted from \"z\" to \"a\"; if sorted by size, instead of being incrementally they will be sorted decrementally."
-msgstr "ఒకవేళ నిజమైతే, కొత్త కిటికీలలోని దస్త్రాలు వ్యతిరేక క్రమములో పేర్చబడతాయి.అనగా, ఒకవేళ పేరును బట్టి క్రమబద్దీకరిస్తే, అప్పుడు దస్త్రాలను \"a\" నుండి \"z\" కి  క్రమబద్దీకరించుటకు బదులుగా, \"z\" నుండి \"a\" క్రమబద్దీకరిస్తుంది; పరిమాణం ద్వారా క్రమబద్దీకరిస్తే, ఆరోహణం కు బదులుగా అవరోహణంలో క్రమబద్దీకరిస్తుంది."
+msgid ""
+"If true, files in new windows will be sorted in reverse order. ie, if sorted "
+"by name, then instead of sorting the files from \"a\" to \"z\", they will be "
+"sorted from \"z\" to \"a\"; if sorted by size, instead of being "
+"incrementally they will be sorted decrementally."
+msgstr ""
+"ఒకవేళ నిజమైతే, కొత్త కిటికీలలోని దస్త్రాలు వ్యతిరేక క్రమములో పేర్చబడతాయి.అనగా, ఒకవేళ పేరును బట్టి "
+"క్రమబద్దీకరిస్తే, అప్పుడు దస్త్రాలను \"a\" నుండి \"z\" కి  క్రమబద్దీకరించుటకు బదులుగా, \"z\" "
+"నుండి \"a\" క్రమబద్దీకరిస్తుంది; పరిమాణం ద్వారా క్రమబద్దీకరిస్తే, ఆరోహణం కు బదులుగా అవరోహణంలో "
+"క్రమబద్దీకరిస్తుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:39
 msgid "Default folder viewer"
 msgstr "అప్రమేయ సంచయ వీక్షకం"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:40
-msgid "When a folder is visited this viewer is used unless you have selected another view for that particular folder. Possible values are \"list-view\", and \"icon-view\"."
-msgstr "సంచయాన్ని సందర్శించినపుడు ఆ నిర్దిష్ట సంచయానికి మీరు వేరొక దర్శనాన్ని ఎంపికచేయకపోయినట్టయితే ఈ వీక్షకం వాడబడుతుంది. సాధ్యమగు విలువలు \"జాబితా-వీక్షణం\", \"ప్రతీక-వీక్షణం\" మరియు \"కాంపాక్ట్-వీక్షణం\"."
+msgid ""
+"When a folder is visited this viewer is used unless you have selected "
+"another view for that particular folder. Possible values are \"list-view\", "
+"and \"icon-view\"."
+msgstr ""
+"సంచయాన్ని సందర్శించినపుడు ఆ నిర్దిష్ట సంచయానికి మీరు వేరొక దర్శనాన్ని ఎంపికచేయకపోయినట్టయితే ఈ వీక్షకం "
+"వాడబడుతుంది. సాధ్యమగు విలువలు \"జాబితా-వీక్షణం\", \"ప్రతీక-వీక్షణం\" మరియు \"కాంపాక్ట్-వీక్షణం\"."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:41
 msgid "Whether to show hidden files"
 msgstr "దాయబడిన దస్త్రాలను చూపించాలా లేక వద్దా"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:42
-msgid "If set to true, then hidden files are shown by default in the file manager. Hidden files are either dotfiles, listed in the folder's .hidden file or backup files ending with a tilde (~)."
-msgstr "ఒకవేళ నిజానికి అమర్చితే, అదృశ్యమై ఉన్న దస్త్రాలు దస్త్ర నిర్వాహకము నందు అప్రమేయముగా చూపబడతాయి. అదృశ్య దస్త్రాలంటే సంచయము జాబితాలో చుక్కతో ఉన్న దస్త్రాలు. .hidden దస్త్రము లేదా బ్యాక్అప్ దస్త్రములు టిల్డ్ (~) అనే గుర్తుతో అంతమవుతాయి."
+msgid ""
+"If set to true, then hidden files are shown by default in the file manager. "
+"Hidden files are either dotfiles, listed in the folder's .hidden file or "
+"backup files ending with a tilde (~)."
+msgstr ""
+"ఒకవేళ నిజానికి అమర్చితే, అదృశ్యమై ఉన్న దస్త్రాలు దస్త్ర నిర్వాహకము నందు అప్రమేయముగా చూపబడతాయి. అదృశ్య "
+"దస్త్రాలంటే సంచయము జాబితాలో చుక్కతో ఉన్న దస్త్రాలు. .hidden దస్త్రము లేదా బ్యాక్అప్ దస్త్రములు టిల్డ్ "
+"(~) అనే గుర్తుతో అంతమవుతాయి."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:43
 msgid "Bulk rename utility"
 msgstr "పెద్దమొత్తంలో పేరుమార్చు వినియోగం"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:44
-msgid "If set, Nautilus will append URIs of selected files and treat the result as a command line for bulk renaming. Bulk rename applications can register themselves in this key by setting the key to a space-separated string of their executable name and any command line options. If the executable name is not set to a full path, it will be searched for in the search path."
-msgstr "ఒకవేళ అమర్చితే, నాటిలస్ ఎంచుకున్న దస్త్రాల యొక్క URIలను జతచేస్తుంది మరియు పెద్దమొత్తంలో పేరుమార్చుటకు ఫలితాన్ని కమాండు లైను వలె పరిగణిస్తుంది. అధికమొత్తంలో అనువర్తనాల పేరుమార్చుట వల్ల వాటంతట అవే ఈ కీ నందు కీను ఎక్జిక్యూటబుల్ పేరు యొక్క ఖాళీ అక్షరం అమర్చుట ద్వారా నమోదుచేసుకుంటాయి మరియు ఏదైనా కమాండు లైను ఐచ్ఛికాల ద్వారా. ఒకవేళ ఎక్జిక్యూటబుల్ పేరును ఒక పూర్తి త్రోవకు అమర్చన్లయితే, దానిని వెతుకులాట త్రోవలో వెతకబడుతుంది."
+msgid ""
+"If set, Nautilus will append URIs of selected files and treat the result as "
+"a command line for bulk renaming. Bulk rename applications can register "
+"themselves in this key by setting the key to a space-separated string of "
+"their executable name and any command line options. If the executable name "
+"is not set to a full path, it will be searched for in the search path."
+msgstr ""
+"ఒకవేళ అమర్చితే, నాటిలస్ ఎంచుకున్న దస్త్రాల యొక్క URIలను జతచేస్తుంది మరియు పెద్దమొత్తంలో పేరుమార్చుటకు "
+"ఫలితాన్ని కమాండు లైను వలె పరిగణిస్తుంది. అధికమొత్తంలో అనువర్తనాల పేరుమార్చుట వల్ల వాటంతట అవే ఈ కీ "
+"నందు కీను ఎక్జిక్యూటబుల్ పేరు యొక్క ఖాళీ అక్షరం అమర్చుట ద్వారా నమోదుచేసుకుంటాయి మరియు ఏదైనా కమాండు "
+"లైను ఐచ్ఛికాల ద్వారా. ఒకవేళ ఎక్జిక్యూటబుల్ పేరును ఒక పూర్తి త్రోవకు అమర్చన్లయితే, దానిని వెతుకులాట "
+"త్రోవలో వెతకబడుతుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:45
 msgid "List of possible captions on icons"
 msgstr "ప్రతీకల మీద సాధ్యమయ్యే క్లుప్తవివరణల జాబితా"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:46
-msgid "A list of captions below an icon in the icon view and the desktop. The actual number of captions shown depends on the zoom level. Some possible values are: \"size\", \"type\", \"date_modified\", \"date_changed\", \"date_accessed\", \"owner\", \"group\", \"permissions\", \"octal_permissions\" and \"mime_type\"."
-msgstr "ప్రతీక దర్శనం మరియు డెస్క్‍టాప్‌లోని ప్రతీక క్రింది క్లుప్తవివరణల యొక్క జాబితా.యాదార్ధంగా చూపించవలిసిన క్లుప్తవివరణల యొక్క సంఖ్య జూమ్ స్థాయి మీద ఆధారపడి ఉంటుంది. సాధ్యమగు విలువలు: \"size\", \"type\", \"date_modified\", \"date_changed\", \"date_accessed\", \"owner\", \"group\", \"permissions\", \"octal_permissions\" మరియు \"mime_type\"."
+msgid ""
+"A list of captions below an icon in the icon view and the desktop. The "
+"actual number of captions shown depends on the zoom level. Some possible "
+"values are: \"size\", \"type\", \"date_modified\", \"owner\", \"group\", "
+"\"permissions\", \"octal_permissions\" and \"mime_type\"."
+msgstr ""
+"ప్రతీక దర్శనం మరియు డెస్క్‍టాప్‌లోని ప్రతీక క్రింది క్లుప్తవివరణల యొక్క జాబితా.యాదార్ధంగా చూపించవలిసిన "
+"క్లుప్తవివరణల యొక్క సంఖ్య జూమ్ స్థాయి మీద ఆధారపడి ఉంటుంది. సాధ్యమగు విలువలు: \"size\", \"type"
+"\", \"date_modified\", \"owner\", \"group\", \"permissions\", "
+"\"octal_permissions\" మరియు \"mime_type\"."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:47
 msgid "Default icon zoom level"
@@ -1991,8 +2168,32 @@ msgstr "పాఠ్యము ఎలిప్సిస్ పరిమితి"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:53
 #, no-c-format
-msgid "A string specifying how parts of overlong file names should be replaced by ellipses, depending on the zoom level. Each of the list entries is of the form \"Zoom Level:Integer\". For each specified zoom level, if the given integer is larger than 0, the file name will not exceed the given number of lines. If the integer is 0 or smaller, no limit is imposed on the specified zoom level. A default entry of the form \"Integer\" without any specified zoom level is also allowed. It defines the maximum number of lines for all other zoom levels. Examples: 0 - always display overlong file names; 3 - shorten file names if they exceed three lines; smallest:5,smaller:4,0 - shorten file names if they exceed five lines for zoom level \"smallest\". Shorten file names if they exceed four lines for zoom level \"smaller\". Do not shorten file names for other zoom levels. Available zoom levels: smallest (33%), smaller (50%), small (66%), standard (100%), large (150%), larger (200%), largest (400%)"
-msgstr "జూమ్ స్థాయి పై అధారపడి, పొడవైన దస్త్రం పేర్లు ఎలా ఎలిప్సెస్‌తో పునఃస్థాపించాలో తెలిపే స్ట్రింగ్. జాబితా యొక్క ప్రతీ అంశము  \"Zoom Level:Integer\" రూపమువి. తెలుపబడిన ప్రతి జూమ్ స్థాయికు, యిచ్చిన పూర్ణాంకము 0 కన్నా పెద్దదైతే, దస్త్రం పేరు యిచ్చిన వరుసల సంఖ్యకు మించదు. పూర్ణాంకం 0 కన్నా తక్కవైతే, జూమ్ స్థాయిపై యెటువంటి పరిమితివుండదు. ఎటువంటి జూమ్ స్థాయి తెలుపకుండా అప్రమేయ జూమ్ \"integer\"కూడా యివ్వవచ్చు.ఉదాహరణకు: 0- ఎల్లప్పుడు పొడవైన దస్త్రాలను ప్రదర్శిస్తుంది. 3- మూడువరుసల కన్నాపొడవైన పేర్లను కుదిస్తుంది; అంత్యంతచిన్నది:5, చిన్నది:4, 0 - ఐదువరుసల కన్నామించిన ఫైల్ పేర్లు కుదించబడతాయి జూమ్ స్థాయి \"అత్యంతచిన్నది\" కొరకు.జూమ్ స్థాయి \"చిన్నది\" కొరకు నాలుగువరుసల కన్నా మించిన దస్త్రమును కుదిస్తుంది. ఇతరజూమ్ స్థాయిలకొరకు దస్త్రం పేర్లను కుదించదు. అందుబాటులోవున్న జూమ్ స్థాయిలు:అత్యంతచిన్నది (33%) కొద్దిగాచిన్నది (50%), చిన్నది (66%), ప్రామాణికమైంది (100%), పెద్దది (150%), కొద్దిగాపెద్దది (200%), అత్యంతపెద్దది (400%)"
+msgid ""
+"A string specifying how parts of overlong file names should be replaced by "
+"ellipses, depending on the zoom level. Each of the list entries is of the "
+"form \"Zoom Level:Integer\". For each specified zoom level, if the given "
+"integer is larger than 0, the file name will not exceed the given number of "
+"lines. If the integer is 0 or smaller, no limit is imposed on the specified "
+"zoom level. A default entry of the form \"Integer\" without any specified "
+"zoom level is also allowed. It defines the maximum number of lines for all "
+"other zoom levels. Examples: 0 - always display overlong file names; 3 - "
+"shorten file names if they exceed three lines; smallest:5,smaller:4,0 - "
+"shorten file names if they exceed five lines for zoom level \"smallest\". "
+"Shorten file names if they exceed four lines for zoom level \"smaller\". Do "
+"not shorten file names for other zoom levels. Available zoom levels: "
+"smallest (33%), smaller (50%), small (66%), standard (100%), large (150%), "
+"larger (200%), largest (400%)"
+msgstr ""
+"జూమ్ స్థాయి పై అధారపడి, పొడవైన దస్త్రం పేర్లు ఎలా ఎలిప్సెస్‌తో పునఃస్థాపించాలో తెలిపే స్ట్రింగ్. జాబితా యొక్క ప్రతీ "
+"అంశము  \"Zoom Level:Integer\" రూపమువి. తెలుపబడిన ప్రతి జూమ్ స్థాయికు, యిచ్చిన పూర్ణాంకము 0 "
+"కన్నా పెద్దదైతే, దస్త్రం పేరు యిచ్చిన వరుసల సంఖ్యకు మించదు. పూర్ణాంకం 0 కన్నా తక్కవైతే, జూమ్ స్థాయిపై "
+"యెటువంటి పరిమితివుండదు. ఎటువంటి జూమ్ స్థాయి తెలుపకుండా అప్రమేయ జూమ్ \"integer\"కూడా యివ్వవచ్చు."
+"ఉదాహరణకు: 0- ఎల్లప్పుడు పొడవైన దస్త్రాలను ప్రదర్శిస్తుంది. 3- మూడువరుసల కన్నాపొడవైన పేర్లను "
+"కుదిస్తుంది; అంత్యంతచిన్నది:5, చిన్నది:4, 0 - ఐదువరుసల కన్నామించిన ఫైల్ పేర్లు కుదించబడతాయి జూమ్ "
+"స్థాయి \"అత్యంతచిన్నది\" కొరకు.జూమ్ స్థాయి \"చిన్నది\" కొరకు నాలుగువరుసల కన్నా మించిన దస్త్రమును "
+"కుదిస్తుంది. ఇతరజూమ్ స్థాయిలకొరకు దస్త్రం పేర్లను కుదించదు. అందుబాటులోవున్న జూమ్ స్థాయిలు:"
+"అత్యంతచిన్నది (33%) కొద్దిగాచిన్నది (50%), చిన్నది (66%), ప్రామాణికమైంది (100%), పెద్దది (150%), "
+"కొద్దిగాపెద్దది (200%), అత్యంతపెద్దది (400%)"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:54
 msgid "Default list zoom level"
@@ -2031,7 +2232,9 @@ msgid "Home icon visible on desktop"
 msgstr "నివాస సంచయం ప్రతీక డెస్క్‍టాప్‌పై కనిపించును"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:63
-msgid "If this is set to true, an icon linking to the home folder will be put on the desktop."
+msgid ""
+"If this is set to true, an icon linking to the home folder will be put on "
+"the desktop."
 msgstr "ఒకవేళ నిజమని అమరిస్తే, నివాస సంచయంకు లంకె చేయబడిన ప్రతీక డెస్క్‍టాప్‌మీద పెట్టబడుతుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:64
@@ -2039,7 +2242,9 @@ msgid "Trash icon visible on desktop"
 msgstr "చెత్తబుట్ట ప్రతిమను డెస్క్‍టాప్‌మీద చూపించు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:65
-msgid "If this is set to true, an icon linking to the trash will be put on the desktop."
+msgid ""
+"If this is set to true, an icon linking to the trash will be put on the "
+"desktop."
 msgstr "ఒకవేళ నిజమని అమరిస్తే, చెత్తబుట్టకు లంకె చేయబడిన ప్రతీక డెస్క్‍టాప్‌మీద పెట్టబడుతుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:66
@@ -2047,7 +2252,9 @@ msgid "Show mounted volumes on the desktop"
 msgstr "మౌంటుచేయబడిన సంపుటములను డెస్క్‍టాప్‌మీద చూపించు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:67
-msgid "If this is set to true, icons linking to mounted volumes will be put on the desktop."
+msgid ""
+"If this is set to true, icons linking to mounted volumes will be put on the "
+"desktop."
 msgstr "ఒకవేళ నిజమని అమరిస్తే, మౌంటయిన సంపుటములకు లంకె చేయబడిన ప్రతీక డెస్క్‍టాప్‌మీద పెట్టబడుతుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:68
@@ -2055,51 +2262,76 @@ msgid "Network Servers icon visible on the desktop"
 msgstr "నెట్‌వర్కు సేవకాల ప్రతీక డెస్క్‍టాప్‌మీద ప్రదర్శితమవుతుంది"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:69
-msgid "If this is set to true, an icon linking to the Network Servers view will be put on the desktop."
-msgstr "ఒకవేళ నిజమని అమరిస్తే, నెట్‌వర్కు సేవకాల దర్శనముకు లంకెచేసిన ఒక ప్రతిమను డెస్క్‍టాప్‌పై ఉంచుతుంది."
+msgid ""
+"If this is set to true, an icon linking to the Network Servers view will be "
+"put on the desktop."
+msgstr ""
+"ఒకవేళ నిజమని అమరిస్తే, నెట్‌వర్కు సేవకాల దర్శనముకు లంకెచేసిన ఒక ప్రతిమను డెస్క్‍టాప్‌పై ఉంచుతుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:70
 msgid "Desktop home icon name"
 msgstr "డెస్క్‍టాప్‌ నివాస సంచయపు ప్రతీక పేరు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:71
-msgid "This name can be set if you want a custom name for the home icon on the desktop."
-msgstr "ఒకవేళ డెస్క్‍టాప్‌మీద ఉన్న నివాస సంచయము ప్రతిమకు ఒక మలచిన పేరు పెట్టాలనుకుంటే, ఈ పేరును అమర్చవచ్చు."
+msgid ""
+"This name can be set if you want a custom name for the home icon on the "
+"desktop."
+msgstr ""
+"ఒకవేళ డెస్క్‍టాప్‌మీద ఉన్న నివాస సంచయము ప్రతిమకు ఒక మలచిన పేరు పెట్టాలనుకుంటే, ఈ పేరును అమర్చవచ్చు."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:72
 msgid "Desktop trash icon name"
 msgstr "డెస్క్‍టాప్‌ చెత్తబుట్ట ప్రతీక పేరు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:73
-msgid "This name can be set if you want a custom name for the trash icon on the desktop."
-msgstr "ఒకవేళ డెస్క్‍టాప్‌మీద ఉన్న చెత్తబుట్ట ప్రతిమకు ఒక మలచిన పేరు పెట్టాలనుకుంటే, ఈ పేరును అమర్చవచ్చు."
+msgid ""
+"This name can be set if you want a custom name for the trash icon on the "
+"desktop."
+msgstr ""
+"ఒకవేళ డెస్క్‍టాప్‌మీద ఉన్న చెత్తబుట్ట ప్రతిమకు ఒక మలచిన పేరు పెట్టాలనుకుంటే, ఈ పేరును అమర్చవచ్చు."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:74
 msgid "Network servers icon name"
 msgstr "నెట్‍వర్కు సేవకాల ప్రతీక పేరు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:75
-msgid "This name can be set if you want a custom name for the network servers icon on the desktop."
-msgstr "ఒకవేళ డెస్క్‍టాప్‌మీద ఉన్న నెట్‌వర్కు సేవకాల ప్రతిమకు ఒక మలచిన పేరు పెట్టాలనుకుంటే, ఈ పేరును అమర్చవచ్చు."
+msgid ""
+"This name can be set if you want a custom name for the network servers icon "
+"on the desktop."
+msgstr ""
+"ఒకవేళ డెస్క్‍టాప్‌మీద ఉన్న నెట్‌వర్కు సేవకాల ప్రతిమకు ఒక మలచిన పేరు పెట్టాలనుకుంటే, ఈ పేరును అమర్చవచ్చు."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:76
-msgid "An integer specifying how parts of overlong file names should be replaced by ellipses on the desktop. If the number is larger than 0, the file name will not exceed the given number of lines. If the number is 0 or smaller, no limit is imposed on the number of displayed lines."
-msgstr "అతిపొడవైన దస్త్రాల పేర్ల భాగములు డెస్కుటాప్ పై ఎలా ఎలిప్సెస్ చేత పునఃస్థాపించ బడవలెనో పూర్ణసంఖ్య తెలుపుతుంది. సంఖ్య 0 కన్నా ఎక్కువ అయితే, దస్త్రం పేరు వరుసలు ఇచ్చిన సంఖ్య కన్నా మించవు. సంఖ్య 0 లేదా తక్కువైనా, ప్రదర్శించవలసిన వరుసలపై ఎటువంటి పరిమితివుండదు."
+msgid ""
+"An integer specifying how parts of overlong file names should be replaced by "
+"ellipses on the desktop. If the number is larger than 0, the file name will "
+"not exceed the given number of lines. If the number is 0 or smaller, no "
+"limit is imposed on the number of displayed lines."
+msgstr ""
+"అతిపొడవైన దస్త్రాల పేర్ల భాగములు డెస్కుటాప్ పై ఎలా ఎలిప్సెస్ చేత పునఃస్థాపించ బడవలెనో పూర్ణసంఖ్య "
+"తెలుపుతుంది. సంఖ్య 0 కన్నా ఎక్కువ అయితే, దస్త్రం పేరు వరుసలు ఇచ్చిన సంఖ్య కన్నా మించవు. సంఖ్య "
+"0 లేదా తక్కువైనా, ప్రదర్శించవలసిన వరుసలపై ఎటువంటి పరిమితివుండదు."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:77
 msgid "Fade the background on change"
 msgstr "నేపథ్యము మార్పును క్రమంగా అంతరించు ప్రభావంతో చేయి"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:78
-msgid "If set to true, then Nautilus will use a fade effect to change the desktop background."
-msgstr "ఒకవేళ నిజముకు అమర్చినట్లయితే, అపుడు నాటిలస్ డెస్క్‍టాప్ నేపథ్యాన్ని మార్చుటకు ఒక క్రమంగా అంతరించు ప్రభావాన్ని వాడుకుంటుంది."
+msgid ""
+"If set to true, then Nautilus will use a fade effect to change the desktop "
+"background."
+msgstr ""
+"ఒకవేళ నిజముకు అమర్చినట్లయితే, అపుడు నాటిలస్ డెస్క్‍టాప్ నేపథ్యాన్ని మార్చుటకు ఒక క్రమంగా అంతరించు "
+"ప్రభావాన్ని వాడుకుంటుంది."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:79
 msgid "The geometry string for a navigation window."
 msgstr "నావిగేషన్ కిటికీ కొరకు జ్యామితి స్ట్రింగ్"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:80
-msgid "A string containing the saved geometry and coordinates string for navigation windows."
+msgid ""
+"A string containing the saved geometry and coordinates string for navigation "
+"windows."
 msgstr "నావిగేషన్ కిటికీల కొరకు దాచబడిన జ్యామితిని మరియు సమన్వయించే స్ట్రింగును కలిగివున్న ఒక స్ట్రింగ్"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:81
@@ -2123,7 +2355,8 @@ msgid "Show location bar in new windows"
 msgstr "కొత్త కిటికీలలో స్థానపట్టీని చూపించు"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:86
-msgid "If set to true, newly opened windows will have the location bar visible."
+msgid ""
+"If set to true, newly opened windows will have the location bar visible."
 msgstr "ఒకవేళ నిజమని అమరిస్తే, కొత్తగా తెరిచిన కిటికీలు స్థానపు పట్టీని కలిగివుంటాయి."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:87
@@ -2153,8 +2386,12 @@ msgid "Nautilus could not create the required folder \"%s\"."
 msgstr "అవసరమగు \"%s\" సంచయమును నాటిలస్ సృష్టించలేదు."
 
 #: ../src/nautilus-application.c:240
-msgid "Before running Nautilus, please create the following folder, or set permissions such that Nautilus can create it."
-msgstr "నాటిలస్ నడిపే ముందు, దయచేసి పేర్కొన్న సంచయమును సృష్టించండి, లేదా నాటిలస్‌కు ఆ సంచయమును సృష్టించడానికి అనుమతి ఇవ్వండి."
+msgid ""
+"Before running Nautilus, please create the following folder, or set "
+"permissions such that Nautilus can create it."
+msgstr ""
+"నాటిలస్ నడిపే ముందు, దయచేసి పేర్కొన్న సంచయమును సృష్టించండి, లేదా నాటిలస్‌కు ఆ సంచయమును సృష్టించడానికి "
+"అనుమతి ఇవ్వండి."
 
 #: ../src/nautilus-application.c:243
 #, c-format
@@ -2162,15 +2399,22 @@ msgid "Nautilus could not create the following required folders: %s."
 msgstr "పేర్కొన్న అవసరమగు సంచయములను నాటిలస్ సృష్టించలేకపోయింది: %s."
 
 #: ../src/nautilus-application.c:245
-msgid "Before running Nautilus, please create these folders, or set permissions such that Nautilus can create them."
-msgstr "నాటిలస్ నడిపే ముందు, దయచేసి ఈ సంచయములను సృష్టించండి , లేదా నాటిలస్‌కు ఆ సంచయములను సృష్టించిండానికి కావలసిన అనుమతి ఇవ్వండి."
+msgid ""
+"Before running Nautilus, please create these folders, or set permissions "
+"such that Nautilus can create them."
+msgstr ""
+"నాటిలస్ నడిపే ముందు, దయచేసి ఈ సంచయములను సృష్టించండి , లేదా నాటిలస్‌కు ఆ సంచయములను సృష్టించిండానికి "
+"కావలసిన అనుమతి ఇవ్వండి."
 
 #: ../src/nautilus-application.c:377
-msgid "Nautilus 3.0 deprecated this directory and tried migrating this configuration to ~/.config/nautilus"
-msgstr "నాటిలస్ 3.0 ఈ డైరెక్టరీని తగ్గించింది మరియు ఈ స్వరూపణాన్ని ~/.config/nautilus కు మార్చుటకు ప్రయత్నించింది"
+msgid ""
+"Nautilus 3.0 deprecated this directory and tried migrating this "
+"configuration to ~/.config/nautilus"
+msgstr ""
+"నాటిలస్ 3.0 ఈ డైరెక్టరీని తగ్గించింది మరియు ఈ స్వరూపణాన్ని ~/.config/nautilus కు మార్చుటకు "
+"ప్రయత్నించింది"
 
-#: ../src/nautilus-application.c:864
-#: ../src/nautilus-bookmarks-window.c:142
+#: ../src/nautilus-application.c:864 ../src/nautilus-bookmarks-window.c:142
 #: ../src/nautilus-file-management-properties.c:198
 #: ../src/nautilus-window-menus.c:265
 #, c-format
@@ -2181,51 +2425,53 @@ msgstr ""
 "సహాయాన్ని ప్రదర్శించుటలో అక్కడ ఒక దోషం ఉన్నది: \n"
 "%s"
 
-#: ../src/nautilus-application.c:990
+#: ../src/nautilus-application.c:976
 msgid "--check cannot be used with other options."
 msgstr "--check అను దానిని ఇతర ఐచ్ఛికాలతో వాడకూడదు."
 
-#: ../src/nautilus-application.c:996
+#: ../src/nautilus-application.c:982
 msgid "--quit cannot be used with URIs."
 msgstr "--quit అను దానిని URIలతో వాడకూడదు."
 
-#: ../src/nautilus-application.c:1003
+#: ../src/nautilus-application.c:989
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometryని ఒకటి కంటే ఎక్కువ URIలతో  ఉపయోగించకూడదు."
 
-#: ../src/nautilus-application.c:1047
+#: ../src/nautilus-application.c:1033
 msgid "Perform a quick set of self-check tests."
 msgstr "స్వయం-తనిఖీ పరీక్షలు సత్వరముగా జరుపు."
 
-#: ../src/nautilus-application.c:1053
+#: ../src/nautilus-application.c:1039
 msgid "Show the version of the program."
 msgstr "కార్యక్రమం యొక్క రూపాంతరాన్ని చూపించు."
 
-#: ../src/nautilus-application.c:1055
+#: ../src/nautilus-application.c:1041
 msgid "Create the initial window with the given geometry."
 msgstr "ఇచ్చిన క్షేత్రగణితంతో ప్రథమ కిటికీని సృష్టించు."
 
-#: ../src/nautilus-application.c:1055
+#: ../src/nautilus-application.c:1041
 msgid "GEOMETRY"
 msgstr "క్షేత్రగణితం"
 
-#: ../src/nautilus-application.c:1057
+#: ../src/nautilus-application.c:1043
 msgid "Only create windows for explicitly specified URIs."
 msgstr "స్పష్టమైన నిర్దిష్ట URIలతో మాత్రమే  కిటికీలను సృష్టించు."
 
-#: ../src/nautilus-application.c:1059
-msgid "Do not manage the desktop (ignore the preference set in the preferences dialog)."
+#: ../src/nautilus-application.c:1045
+msgid ""
+"Do not manage the desktop (ignore the preference set in the preferences "
+"dialog)."
 msgstr "డెస్క్‍టాప్ నిర్వహించవద్దు (ప్రాధాన్యతల డైలాగులో ప్రాధాన్య జాబితాను వదిలివేయి)."
 
-#: ../src/nautilus-application.c:1061
+#: ../src/nautilus-application.c:1047
 msgid "Quit Nautilus."
 msgstr "నాటిలస్ నుండి నిష్క్రమించు."
 
-#: ../src/nautilus-application.c:1062
+#: ../src/nautilus-application.c:1048
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:1073
+#: ../src/nautilus-application.c:1059
 msgid ""
 "\n"
 "\n"
@@ -2236,8 +2482,7 @@ msgstr ""
 "దస్త్ర నిర్వాహకముతో దస్త్ర వ్యవస్థలో విహరించు"
 
 #. name, stock id, label
-#: ../src/nautilus-app-menu.ui.h:1
-#: ../src/nautilus-window-menus.c:526
+#: ../src/nautilus-app-menu.ui.h:1 ../src/nautilus-window-menus.c:526
 msgid "New _Window"
 msgstr "కొత్త కిటికీ (_W)"
 
@@ -2245,8 +2490,7 @@ msgstr "కొత్త కిటికీ (_W)"
 msgid "Connect to _Server"
 msgstr "సేవకానికి అనుసంధానించు (_S)"
 
-#: ../src/nautilus-app-menu.ui.h:3
-#: ../src/nautilus-window-menus.c:450
+#: ../src/nautilus-app-menu.ui.h:3 ../src/nautilus-window-menus.c:450
 msgid "Prefere_nces"
 msgstr "ప్రాధాన్యతలు (_n)"
 
@@ -2255,8 +2499,7 @@ msgid "_About Files"
 msgstr "దస్త్రాల గురించి (_A)"
 
 #. name, stock id, label
-#: ../src/nautilus-app-menu.ui.h:5
-#: ../src/nautilus-window-menus.c:444
+#: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-window-menus.c:444
 msgid "_Help"
 msgstr "సహాయం (_H)"
 
@@ -2280,22 +2523,27 @@ msgid "<big><b>Error autorunning software</b></big>"
 msgstr "<big><b>స్వయంచాలకంగా నడుచు సాఫ్ట్‍వేరులో దోషము</b></big>"
 
 #: ../src/nautilus-autorun-software.c:197
-msgid "<big><b>This medium contains software intended to be automatically started. Would you like to run it?</b></big>"
-msgstr "<big><b>స్యయంచాలకంగా ప్రారంభించబడే సాఫ్ట్‍వేర్‌ను ఈ మాధ్యమం కలిగివుంది. దీనిని నడుపుటకు మీరు ఇష్టపడతున్నారా?</b></big>"
+msgid ""
+"<big><b>This medium contains software intended to be automatically started. "
+"Would you like to run it?</b></big>"
+msgstr ""
+"<big><b>స్యయంచాలకంగా ప్రారంభించబడే సాఫ్ట్‍వేర్‌ను ఈ మాధ్యమం కలిగివుంది. దీనిని నడుపుటకు మీరు "
+"ఇష్టపడతున్నారా?</b></big>"
 
 #: ../src/nautilus-autorun-software.c:199
 #, c-format
 msgid ""
-"The software will run directly from the medium \"%s\". You should never run software that you don't trust.\n"
+"The software will run directly from the medium \"%s\". You should never run "
+"software that you don't trust.\n"
 "\n"
 "If in doubt, press Cancel."
 msgstr ""
-"ఈ సాఫ్ట్‍వేర్‌ \"%s\" మాధ్యమం నుండి నేరుగా నడుపబడుతుంది. మీరు నమ్మని సాఫ్ట్‍వేర్‌ని మీరు ఎప్పుడూ నడుపకూడదు.\n"
+"ఈ సాఫ్ట్‍వేర్‌ \"%s\" మాధ్యమం నుండి నేరుగా నడుపబడుతుంది. మీరు నమ్మని సాఫ్ట్‍వేర్‌ని మీరు ఎప్పుడూ "
+"నడుపకూడదు.\n"
 "\n"
 "ఒకవేళ అనుమానంగా ఉంటే, రద్దుచేయి నొక్కండి."
 
-#: ../src/nautilus-autorun-software.c:233
-#: ../src/nautilus-mime-actions.c:718
+#: ../src/nautilus-autorun-software.c:233 ../src/nautilus-mime-actions.c:718
 msgid "_Run"
 msgstr "నడుపు (_R)"
 
@@ -2308,8 +2556,7 @@ msgid "Edit Bookmarks"
 msgstr "ఇష్టాంశములను సవరించు"
 
 #. name, stock id, label
-#: ../src/nautilus-bookmarks-window.ui.h:2
-#: ../src/nautilus-window-menus.c:524
+#: ../src/nautilus-bookmarks-window.ui.h:2 ../src/nautilus-window-menus.c:524
 msgid "_Bookmarks"
 msgstr "ఇష్టాంశాలు (_B)"
 
@@ -2384,8 +2631,7 @@ msgid "Continue"
 msgstr "కొనసాగు"
 
 #: ../src/nautilus-connect-server-dialog.c:703
-#: ../src/nautilus-properties-window.c:5126
-#: ../src/nautilus-view.c:1452
+#: ../src/nautilus-properties-window.c:5122 ../src/nautilus-view.c:1452
 msgid "There was an error displaying help."
 msgstr "సహాయాన్ని ప్రదర్శించుటలో అక్కడ ఒక దోషము ఉన్నది."
 
@@ -2424,8 +2670,7 @@ msgid "Sh_are:"
 msgstr "భాగస్వామ్యం (_a):"
 
 #. fourth row: folder entry
-#: ../src/nautilus-connect-server-dialog.c:1010
-#: ../src/nautilus-view.c:1646
+#: ../src/nautilus-connect-server-dialog.c:1010 ../src/nautilus-view.c:1646
 msgid "_Folder:"
 msgstr "సంచయం (_F):"
 
@@ -2475,8 +2720,7 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-icon-view.c:701
-#: ../src/nautilus-view.c:7318
+#: ../src/nautilus-desktop-icon-view.c:701 ../src/nautilus-view.c:7318
 #: ../src/nautilus-view.c:8875
 msgid "E_mpty Trash"
 msgstr "చెత్తబుట్టను ఖాళీచేయి (_m)"
@@ -2488,7 +2732,8 @@ msgstr "డెస్క్‍టాప్‌ నేపథ్యమును మ�
 
 #. tooltip
 #: ../src/nautilus-desktop-icon-view.c:715
-msgid "Show a window that lets you set your desktop background's pattern or color"
+msgid ""
+"Show a window that lets you set your desktop background's pattern or color"
 msgstr "డెస్క్‍టాప్‌  నేపథ్యము రీతిని లేదా రంగును అమర్చుటకు ఒక కిటికీని చూపించు"
 
 #. label, accelerator
@@ -2497,8 +2742,7 @@ msgid "Empty Trash"
 msgstr "చెత్తబుట్టను ఖాళీ చేయి"
 
 #. tooltip
-#: ../src/nautilus-desktop-icon-view.c:722
-#: ../src/nautilus-trash-bar.c:211
+#: ../src/nautilus-desktop-icon-view.c:722 ../src/nautilus-trash-bar.c:211
 #: ../src/nautilus-view.c:7319
 msgid "Delete all items in the Trash"
 msgstr "చెత్తబుట్టలో ఉన్న అన్ని అంశాలను తొలగించు"
@@ -2531,15 +2775,15 @@ msgid "Command"
 msgstr "ఆదేశము"
 
 #. hardcode "Desktop"
-#: ../src/nautilus-desktop-window.c:92
-#: ../src/nautilus-desktop-window.c:270
-#: ../src/nautilus-places-sidebar.c:522
+#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:270
+#: ../src/nautilus-places-sidebar.c:526
 msgid "Desktop"
 msgstr "డెస్క్‍టాప్‌"
 
 #: ../src/nautilus-error-reporting.c:68
 #, c-format
-msgid "You do not have the permissions necessary to view the contents of \"%s\"."
+msgid ""
+"You do not have the permissions necessary to view the contents of \"%s\"."
 msgstr "\"%s\" యొక్క విషయములను తప్పనిసరిగా చూచుటకు మీకు అనుమతులు లేవు."
 
 #: ../src/nautilus-error-reporting.c:72
@@ -2558,7 +2802,8 @@ msgstr "సంచయపు విషయములు ప్రదర్శిం�
 
 #: ../src/nautilus-error-reporting.c:107
 #, c-format
-msgid "You do not have the permissions necessary to change the group of \"%s\"."
+msgid ""
+"You do not have the permissions necessary to change the group of \"%s\"."
 msgstr "\"%s\" యొక్క సమూహంను తప్పనిసరిగా మార్చడానికి మీకు అనుమతులు లేవు."
 
 #. fall through
@@ -2591,12 +2836,14 @@ msgstr "అనుమతులు మార్చుటకు వీలుకా�
 
 #: ../src/nautilus-error-reporting.c:204
 #, c-format
-msgid "The name \"%s\" is already used in this folder. Please use a different name."
+msgid ""
+"The name \"%s\" is already used in this folder. Please use a different name."
 msgstr "\"%s\" పేరు ఇప్పటికే ఈ సంచయములో ఉన్నది.దయచేసి వేరొక పేరును వాడండి."
 
 #: ../src/nautilus-error-reporting.c:209
 #, c-format
-msgid "There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
+msgid ""
+"There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
 msgstr "ఈ సంచయములో \"%s\" లేదు. దీనిని తరలించారనుకుంటా లేదా తొలగించారనుకుంటా?"
 
 #: ../src/nautilus-error-reporting.c:214
@@ -2606,8 +2853,11 @@ msgstr "\"%s\" యొక్క పేరు మార్చుటకు మీ�
 
 #: ../src/nautilus-error-reporting.c:219
 #, c-format
-msgid "The name \"%s\" is not valid because it contains the character \"/\". Please use a different name."
-msgstr "\"%s\" యొక్క పేరు చెల్లదు, ఎందుకంటే దానిలో \"/\"అక్షరము ఉన్నది . దయచేసి వేరొక పేరును వాడండి."
+msgid ""
+"The name \"%s\" is not valid because it contains the character \"/\". Please "
+"use a different name."
+msgstr ""
+"\"%s\" యొక్క పేరు చెల్లదు, ఎందుకంటే దానిలో \"/\"అక్షరము ఉన్నది . దయచేసి వేరొక పేరును వాడండి."
 
 #: ../src/nautilus-error-reporting.c:223
 #, c-format
@@ -2721,8 +2971,7 @@ msgid "_Ask each time"
 msgstr "ప్రతీసారి అడుగు(_A)"
 
 #: ../src/nautilus-file-management-properties.ui.h:20
-#: ../src/nautilus-places-sidebar.c:570
-#: ../src/nautilus-trash-bar.c:194
+#: ../src/nautilus-places-sidebar.c:574 ../src/nautilus-trash-bar.c:194
 msgid "Trash"
 msgstr "చెత్తబుట్ట"
 
@@ -2739,8 +2988,12 @@ msgid "Icon Captions"
 msgstr "ప్రతీక శీర్షికలు"
 
 #: ../src/nautilus-file-management-properties.ui.h:24
-msgid "Choose the order of information to appear beneath icon names. More information will appear when zooming in closer."
-msgstr "ప్రతీకల పేర్ల క్రింద కనిపించాల్సిన సమాచార క్రమాన్ని ఎంచుకోండి. ఎప్పుడైతే దగ్గరగా జూమ్ చేస్తారో అప్పుడు మరింత సమాచారం కనిపిస్తుంది."
+msgid ""
+"Choose the order of information to appear beneath icon names. More "
+"information will appear when zooming in closer."
+msgstr ""
+"ప్రతీకల పేర్ల క్రింద కనిపించాల్సిన సమాచార క్రమాన్ని ఎంచుకోండి. ఎప్పుడైతే దగ్గరగా జూమ్ చేస్తారో అప్పుడు "
+"మరింత సమాచారం కనిపిస్తుంది."
 
 #: ../src/nautilus-file-management-properties.ui.h:25
 msgid "Display"
@@ -2789,16 +3042,14 @@ msgstr "మునుజూపు"
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
 #: ../src/nautilus-file-management-properties.ui.h:36
-#: ../src/nautilus-icon-view.c:2459
-#: ../src/nautilus-icon-view-container.c:568
+#: ../src/nautilus-icon-view.c:2459 ../src/nautilus-icon-view-container.c:568
 msgid "Icon View"
 msgstr "ప్రతీక వీక్షణం"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
 #: ../src/nautilus-file-management-properties.ui.h:37
-#: ../src/nautilus-list-view.c:1730
-#: ../src/nautilus-list-view.c:3319
+#: ../src/nautilus-list-view.c:1730 ../src/nautilus-list-view.c:3319
 msgid "List View"
 msgstr "జాబితా వీక్షణం"
 
@@ -2917,8 +3168,7 @@ msgstr "4 గిబై"
 msgid "by _Name"
 msgstr "పేరును బట్టి (_N)"
 
-#: ../src/nautilus-icon-view.c:129
-#: ../src/nautilus-icon-view.c:1263
+#: ../src/nautilus-icon-view.c:129 ../src/nautilus-icon-view.c:1263
 msgid "Keep icons sorted by name in rows"
 msgstr "పేరును బట్టి అడ్డవరుసలలో ప్రతిమలను క్రమబద్దీకరించి వుంచు"
 
@@ -2926,8 +3176,7 @@ msgstr "పేరును బట్టి అడ్డవరుసలలో ప
 msgid "by _Size"
 msgstr "పరిమాణమును బట్టి (_S)"
 
-#: ../src/nautilus-icon-view.c:136
-#: ../src/nautilus-icon-view.c:1267
+#: ../src/nautilus-icon-view.c:136 ../src/nautilus-icon-view.c:1267
 msgid "Keep icons sorted by size in rows"
 msgstr "పరిమాణమును బట్టి అడ్డవరుసలలో ప్రతిమలను క్రమబద్దీకరించి వుంచు"
 
@@ -2935,8 +3184,7 @@ msgstr "పరిమాణమును బట్టి అడ్డవరుస�
 msgid "by _Type"
 msgstr "రకమును బట్టి (_T)"
 
-#: ../src/nautilus-icon-view.c:143
-#: ../src/nautilus-icon-view.c:1271
+#: ../src/nautilus-icon-view.c:143 ../src/nautilus-icon-view.c:1271
 msgid "Keep icons sorted by type in rows"
 msgstr "రకమును బట్టి అడ్డవరుసలలో ప్రతిమలను క్రమబద్దీకరించి వుంచు"
 
@@ -2944,8 +3192,7 @@ msgstr "రకమును బట్టి అడ్డవరుసలలో ప
 msgid "by Modification _Date"
 msgstr "సవరించబడిన తేదీని బట్టి (_D)"
 
-#: ../src/nautilus-icon-view.c:150
-#: ../src/nautilus-icon-view.c:1275
+#: ../src/nautilus-icon-view.c:150 ../src/nautilus-icon-view.c:1275
 msgid "Keep icons sorted by modification date in rows"
 msgstr "సవరించబడిన తేదీని బట్టి అడ్డవరుసలలో ప్రతిమలను క్రమబద్దీకరించి వుంచు"
 
@@ -2953,8 +3200,7 @@ msgstr "సవరించబడిన తేదీని బట్టి అడ
 msgid "by T_rash Time"
 msgstr "చెత్తలో వేసిన తేదీని బట్టి (_r)"
 
-#: ../src/nautilus-icon-view.c:157
-#: ../src/nautilus-icon-view.c:1279
+#: ../src/nautilus-icon-view.c:157 ../src/nautilus-icon-view.c:1279
 msgid "Keep icons sorted by trash time in rows"
 msgstr "చెత్తలో వేసిన సమయాన్ని బట్టి అడ్డవరుసలో ప్రతిమలను క్రమబద్దీకరించి వుంచు"
 
@@ -2980,8 +3226,7 @@ msgstr "ఎంచుకున్న ప్రతీక పరిమాణం మ
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-icon-view.c:1234
-#: ../src/nautilus-icon-view.c:1398
+#: ../src/nautilus-icon-view.c:1234 ../src/nautilus-icon-view.c:1398
 msgid "Restore Icons' Original Si_zes"
 msgstr "ప్రతీకల అసలు పరిమాణాలకు పునరుద్ధరించు (_z)"
 
@@ -2999,7 +3244,8 @@ msgstr "పేరును బట్టి సర్దు (_O)"
 #. tooltip
 #: ../src/nautilus-icon-view.c:1239
 msgid "Reposition icons to better fit in the window and avoid overlapping"
-msgstr "కిటికీలో ప్రతీకల ఉత్తమ అమరికకు మరియు అతివ్యాప్తి చెందుటను నిరోధించడానికి ప్రతీకల స్థానమును తాజాపరుచు"
+msgstr ""
+"కిటికీలో ప్రతీకల ఉత్తమ అమరికకు మరియు అతివ్యాప్తి చెందుటను నిరోధించడానికి ప్రతీకల స్థానమును తాజాపరుచు"
 
 #. name, stock id
 #. label, accelerator
@@ -3175,8 +3421,7 @@ msgstr "బొమ్మ"
 msgid "(Empty)"
 msgstr "(ఖాళీ )"
 
-#: ../src/nautilus-list-model.c:378
-#: ../src/nautilus-window-manage-views.c:1145
+#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-manage-views.c:1145
 #: ../src/nautilus-window-slot.c:304
 msgid "Loading..."
 msgstr "లోడవుతున్నది..."
@@ -3218,8 +3463,7 @@ msgstr "ప్రారంభమవుతున్నప్పడు జాబ�
 msgid "Display this location with the list view."
 msgstr "ఈ స్థానమును జాబితా వీక్షణముతో ప్రదర్శించు"
 
-#: ../src/nautilus-location-bar.c:54
-#: ../src/nautilus-properties-window.c:3108
+#: ../src/nautilus-location-bar.c:54 ../src/nautilus-properties-window.c:3108
 msgid "Location:"
 msgstr "స్థానము:"
 
@@ -3234,8 +3478,7 @@ msgid_plural "Do you want to view %d locations?"
 msgstr[0] "%d స్థానమును చూడాలనుకుంటున్నారా?"
 msgstr[1] "%d స్థానములను చూడాలనుకుంటున్నారా?"
 
-#: ../src/nautilus-location-bar.c:173
-#: ../src/nautilus-mime-actions.c:1046
+#: ../src/nautilus-location-bar.c:173 ../src/nautilus-mime-actions.c:1046
 #, c-format
 msgid "This will open %d separate window."
 msgid_plural "This will open %d separate windows."
@@ -3263,10 +3506,8 @@ msgstr "ఈ లంకెని ఉపయోగించలేము, ఎంద�
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-mime-actions.c:646
-#: ../src/nautilus-view.c:7376
-#: ../src/nautilus-view.c:7494
-#: ../src/nautilus-view.c:8498
+#: ../src/nautilus-mime-actions.c:646 ../src/nautilus-view.c:7376
+#: ../src/nautilus-view.c:7494 ../src/nautilus-view.c:8498
 #: ../src/nautilus-view.c:8799
 msgid "Mo_ve to Trash"
 msgstr "చెత్తబుట్టకి తరలించు (_v)"
@@ -3289,8 +3530,7 @@ msgstr "టెర్మినల్‌లో నడుపు (_T)"
 msgid "_Display"
 msgstr "ప్రదర్శించు(_D)"
 
-#: ../src/nautilus-mime-actions.c:1041
-#: ../src/nautilus-mime-actions.c:1783
+#: ../src/nautilus-mime-actions.c:1041 ../src/nautilus-mime-actions.c:1783
 #: ../src/nautilus-view.c:952
 msgid "Are you sure you want to open all files?"
 msgstr "మీరు ఖచ్ఛితంగా అన్ని దస్త్రాలను తెరవాలనుకుంటున్నారా?"
@@ -3349,8 +3589,12 @@ msgstr "నమ్మలేని అనువర్తన ప్రారంభ�
 
 #: ../src/nautilus-mime-actions.c:1542
 #, c-format
-msgid "The application launcher \"%s\" has not been marked as trusted. If you do not know the source of this file, launching it may be unsafe."
-msgstr "అనువర్తన ప్రారంభకము \"%s\" నమ్మదగినదిగా గుర్తించబడిలేదు. ఒకవేళ మీకు ఈ దస్త్రము యొక్క మూలము తెలియకపోతే, దీనిని ప్రారంభించుట అంత మంచిది కాదు."
+msgid ""
+"The application launcher \"%s\" has not been marked as trusted. If you do "
+"not know the source of this file, launching it may be unsafe."
+msgstr ""
+"అనువర్తన ప్రారంభకము \"%s\" నమ్మదగినదిగా గుర్తించబడిలేదు. ఒకవేళ మీకు ఈ దస్త్రము యొక్క మూలము "
+"తెలియకపోతే, దీనిని ప్రారంభించుట అంత మంచిది కాదు."
 
 #: ../src/nautilus-mime-actions.c:1557
 msgid "_Launch Anyway"
@@ -3367,14 +3611,12 @@ msgid_plural "This will open %d separate applications."
 msgstr[0] "ఇది %d వేరొక అనువర్తనాన్ని తెరుస్తుంది."
 msgstr[1] "ఇది %d వేరువేరు అనువర్తనాలను తెరుస్తుంది."
 
-#: ../src/nautilus-mime-actions.c:1861
-#: ../src/nautilus-mime-actions.c:2135
+#: ../src/nautilus-mime-actions.c:1861 ../src/nautilus-mime-actions.c:2135
 #: ../src/nautilus-view.c:6486
 msgid "Unable to mount location"
 msgstr "స్థానమును మౌంట్ చేయలేకపోతుంది"
 
-#: ../src/nautilus-mime-actions.c:2214
-#: ../src/nautilus-view.c:6633
+#: ../src/nautilus-mime-actions.c:2214 ../src/nautilus-view.c:6633
 msgid "Unable to start location"
 msgstr "స్థానమును ప్రారంభించలేకపోతుంది"
 
@@ -3402,234 +3644,202 @@ msgstr "పరికరాలు"
 msgid "Bookmarks"
 msgstr "ఇష్టాంశాలు"
 
-#: ../src/nautilus-places-sidebar.c:492
+#: ../src/nautilus-places-sidebar.c:496
 msgid "Places"
 msgstr "స్థలములు"
 
-#: ../src/nautilus-places-sidebar.c:499
+#: ../src/nautilus-places-sidebar.c:503
 msgid "Recent"
 msgstr "ఇటీవలివి"
 
-#: ../src/nautilus-places-sidebar.c:501
+#: ../src/nautilus-places-sidebar.c:505
 msgid "Recent files"
 msgstr "ఇటీవలి దస్త్రాలు"
 
 #. tooltip
-#: ../src/nautilus-places-sidebar.c:512
-#: ../src/nautilus-window-menus.c:521
+#: ../src/nautilus-places-sidebar.c:516 ../src/nautilus-window-menus.c:521
 msgid "Open your personal folder"
 msgstr "వ్యక్తిగత సంచయాన్ని తెరువండి"
 
-#: ../src/nautilus-places-sidebar.c:524
+#: ../src/nautilus-places-sidebar.c:528
 msgid "Open the contents of your desktop in a folder"
 msgstr "మీ డెస్క్‍టాప్‌యొక్క విషయములను ఒక సంచయంలో తెరువు"
 
-#: ../src/nautilus-places-sidebar.c:572
+#: ../src/nautilus-places-sidebar.c:576
 msgid "Open the trash"
 msgstr "చెత్తబుట్టని తెరువు"
 
-#: ../src/nautilus-places-sidebar.c:624
-#: ../src/nautilus-places-sidebar.c:649
-#: ../src/nautilus-places-sidebar.c:826
+#: ../src/nautilus-places-sidebar.c:628 ../src/nautilus-places-sidebar.c:653
+#: ../src/nautilus-places-sidebar.c:830
 #, c-format
 msgid "Mount and open %s"
 msgstr "%s ని మౌంటుచేసి తెరవండి"
 
-#: ../src/nautilus-places-sidebar.c:724
+#: ../src/nautilus-places-sidebar.c:728
 msgid "Open the contents of the File System"
 msgstr "దస్త్ర వ్యవస్థ యొక్క విషయములను తెరువు"
 
-#: ../src/nautilus-places-sidebar.c:804
+#: ../src/nautilus-places-sidebar.c:808
 msgid "Network"
 msgstr "నెట్‌వర్క్"
 
-#: ../src/nautilus-places-sidebar.c:810
+#: ../src/nautilus-places-sidebar.c:814
 msgid "Browse Network"
 msgstr "నెట్‌వర్కులో విహరించు"
 
-#: ../src/nautilus-places-sidebar.c:812
+#: ../src/nautilus-places-sidebar.c:816
 msgid "Browse the contents of the network"
 msgstr "నెట్‌వర్క్ యొక్క విషయాలను వెతుకు"
 
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1633
-#: ../src/nautilus-places-sidebar.c:2700
-#: ../src/nautilus-view.c:7422
-#: ../src/nautilus-view.c:7446
-#: ../src/nautilus-view.c:7518
-#: ../src/nautilus-view.c:8125
-#: ../src/nautilus-view.c:8129
-#: ../src/nautilus-view.c:8212
-#: ../src/nautilus-view.c:8216
-#: ../src/nautilus-view.c:8316
+#: ../src/nautilus-places-sidebar.c:1637 ../src/nautilus-places-sidebar.c:2704
+#: ../src/nautilus-view.c:7422 ../src/nautilus-view.c:7446
+#: ../src/nautilus-view.c:7518 ../src/nautilus-view.c:8125
+#: ../src/nautilus-view.c:8129 ../src/nautilus-view.c:8212
+#: ../src/nautilus-view.c:8216 ../src/nautilus-view.c:8316
 #: ../src/nautilus-view.c:8320
 msgid "_Start"
 msgstr "ప్రారంభించు (_S)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1634
-#: ../src/nautilus-places-sidebar.c:2707
-#: ../src/nautilus-view.c:7426
-#: ../src/nautilus-view.c:7450
-#: ../src/nautilus-view.c:7522
-#: ../src/nautilus-view.c:8154
-#: ../src/nautilus-view.c:8241
-#: ../src/nautilus-view.c:8345
+#: ../src/nautilus-places-sidebar.c:1638 ../src/nautilus-places-sidebar.c:2711
+#: ../src/nautilus-view.c:7426 ../src/nautilus-view.c:7450
+#: ../src/nautilus-view.c:7522 ../src/nautilus-view.c:8154
+#: ../src/nautilus-view.c:8241 ../src/nautilus-view.c:8345
 #: ../src/nautilus-window-menus.c:460
 msgid "_Stop"
 msgstr "ఆపివేయి(_S)"
 
 #. start() for type G_DRIVE_START_STOP_TYPE_SHUTDOWN is normally not used
-#: ../src/nautilus-places-sidebar.c:1639
+#: ../src/nautilus-places-sidebar.c:1643
 msgid "_Power On"
 msgstr "పవర్ ఆన్ (_P)"
 
-#: ../src/nautilus-places-sidebar.c:1640
-#: ../src/nautilus-view.c:8158
-#: ../src/nautilus-view.c:8245
-#: ../src/nautilus-view.c:8349
+#: ../src/nautilus-places-sidebar.c:1644 ../src/nautilus-view.c:8158
+#: ../src/nautilus-view.c:8245 ../src/nautilus-view.c:8349
 msgid "_Safely Remove Drive"
 msgstr "డ్రైవును సురక్షితముగా తీసివేయండి (_S)"
 
-#: ../src/nautilus-places-sidebar.c:1643
+#: ../src/nautilus-places-sidebar.c:1647
 msgid "_Connect Drive"
 msgstr "డ్రైవును అనుసంధానించు (_C)"
 
-#: ../src/nautilus-places-sidebar.c:1644
+#: ../src/nautilus-places-sidebar.c:1648
 msgid "_Disconnect Drive"
 msgstr "డ్రైవును అననుసంధానించు (_D)"
 
-#: ../src/nautilus-places-sidebar.c:1647
+#: ../src/nautilus-places-sidebar.c:1651
 msgid "_Start Multi-disk Device"
 msgstr "బహుళ-డిస్కు పరికరమును ప్రారంభించు (_S)"
 
-#: ../src/nautilus-places-sidebar.c:1648
+#: ../src/nautilus-places-sidebar.c:1652
 msgid "_Stop Multi-disk Device"
 msgstr "బహుళ-డిస్కు పరికరమును ఆపు (_S)"
 
 #. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
-#: ../src/nautilus-places-sidebar.c:1652
-#: ../src/nautilus-view.c:8228
+#: ../src/nautilus-places-sidebar.c:1656 ../src/nautilus-view.c:8228
 #: ../src/nautilus-view.c:8332
 msgid "_Unlock Drive"
 msgstr "డ్రైవు తాళం తీయి (_U)"
 
-#: ../src/nautilus-places-sidebar.c:1653
-#: ../src/nautilus-view.c:8170
-#: ../src/nautilus-view.c:8257
-#: ../src/nautilus-view.c:8361
+#: ../src/nautilus-places-sidebar.c:1657 ../src/nautilus-view.c:8170
+#: ../src/nautilus-view.c:8257 ../src/nautilus-view.c:8361
 msgid "_Lock Drive"
 msgstr "డ్రైవుకు తాళంవేయి (_L)"
 
-#: ../src/nautilus-places-sidebar.c:1730
-#: ../src/nautilus-places-sidebar.c:2324
+#: ../src/nautilus-places-sidebar.c:1734 ../src/nautilus-places-sidebar.c:2328
 #, c-format
 msgid "Unable to start %s"
 msgstr "%s‍ను ప్రారంభించలేకపోతుంది"
 
-#: ../src/nautilus-places-sidebar.c:2078
-#: ../src/nautilus-places-sidebar.c:2106
-#: ../src/nautilus-places-sidebar.c:2134
+#: ../src/nautilus-places-sidebar.c:2082 ../src/nautilus-places-sidebar.c:2110
+#: ../src/nautilus-places-sidebar.c:2138
 #, c-format
 msgid "Unable to eject %s"
 msgstr "%s‍ను నెట్టివేయలేకపోతుంది"
 
-#: ../src/nautilus-places-sidebar.c:2279
+#: ../src/nautilus-places-sidebar.c:2283
 #, c-format
 msgid "Unable to poll %s for media changes"
 msgstr "మాధ్యమం మార్పుల కొరకు %s కు మద్దతు తెలుపలేకపోతోంది"
 
-#: ../src/nautilus-places-sidebar.c:2379
+#: ../src/nautilus-places-sidebar.c:2383
 #, c-format
 msgid "Unable to stop %s"
 msgstr "%sను ఆపలేకపోతుంది"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2616
-#: ../src/nautilus-view.c:7290
+#: ../src/nautilus-places-sidebar.c:2620 ../src/nautilus-view.c:7290
 #: ../src/nautilus-view.c:8715
 msgid "_Open"
 msgstr "తెరువు (_O)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2624
-#: ../src/nautilus-view.c:7302
-#: ../src/nautilus-view.c:7476
-#: ../src/nautilus-view.c:8447
+#: ../src/nautilus-places-sidebar.c:2628 ../src/nautilus-view.c:7302
+#: ../src/nautilus-view.c:7476 ../src/nautilus-view.c:8447
 #: ../src/nautilus-view.c:8777
 msgid "Open in New _Tab"
 msgstr "కొత్త ట్యాబ్‌లో తెరువు (_T)"
 
-#: ../src/nautilus-places-sidebar.c:2634
-#: ../src/nautilus-view.c:8438
+#: ../src/nautilus-places-sidebar.c:2638 ../src/nautilus-view.c:8438
 #: ../src/nautilus-view.c:8757
 msgid "Open in New _Window"
 msgstr "కొత్త కిటికీలో తెరువు(_W)"
 
 #. name, stock id, label
-#: ../src/nautilus-places-sidebar.c:2645
-#: ../src/nautilus-window-menus.c:544
+#: ../src/nautilus-places-sidebar.c:2649 ../src/nautilus-window-menus.c:544
 msgid "_Add Bookmark"
 msgstr "ఇష్టాంశముగా చేయి (_A)"
 
-#: ../src/nautilus-places-sidebar.c:2651
+#: ../src/nautilus-places-sidebar.c:2655
 msgid "Remove"
 msgstr "తీసివేయి"
 
-#: ../src/nautilus-places-sidebar.c:2660
+#: ../src/nautilus-places-sidebar.c:2664
 msgid "Rename..."
 msgstr "పేరుమార్చు..."
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2672
-#: ../src/nautilus-view.c:7410
-#: ../src/nautilus-view.c:7434
-#: ../src/nautilus-view.c:7506
+#: ../src/nautilus-places-sidebar.c:2676 ../src/nautilus-view.c:7410
+#: ../src/nautilus-view.c:7434 ../src/nautilus-view.c:7506
 msgid "_Mount"
 msgstr "మౌంటుచేయి (_M)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2679
-#: ../src/nautilus-view.c:7414
-#: ../src/nautilus-view.c:7438
-#: ../src/nautilus-view.c:7510
+#: ../src/nautilus-places-sidebar.c:2683 ../src/nautilus-view.c:7414
+#: ../src/nautilus-view.c:7438 ../src/nautilus-view.c:7510
 msgid "_Unmount"
 msgstr "అన్‌మౌంటుచేయి (_U)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2686
-#: ../src/nautilus-view.c:7418
-#: ../src/nautilus-view.c:7442
-#: ../src/nautilus-view.c:7514
+#: ../src/nautilus-places-sidebar.c:2690 ../src/nautilus-view.c:7418
+#: ../src/nautilus-view.c:7442 ../src/nautilus-view.c:7514
 msgid "_Eject"
 msgstr "నెట్టివేయి (_E)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2693
-#: ../src/nautilus-view.c:7430
-#: ../src/nautilus-view.c:7454
-#: ../src/nautilus-view.c:7526
+#: ../src/nautilus-places-sidebar.c:2697 ../src/nautilus-view.c:7430
+#: ../src/nautilus-view.c:7454 ../src/nautilus-view.c:7526
 msgid "_Detect Media"
 msgstr "మాధ్యమాన్ని కనిపెట్టు (_D)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2728
-#: ../src/nautilus-view.c:7268
+#: ../src/nautilus-places-sidebar.c:2732 ../src/nautilus-view.c:7268
 #: ../src/nautilus-view.c:7531
 msgid "_Properties"
 msgstr "లక్షణాలు (_P)"
 
-#: ../src/nautilus-places-sidebar.c:3297
+#: ../src/nautilus-places-sidebar.c:3301
 msgid "Computer"
 msgstr "కంప్యూటర్"
 
@@ -3925,32 +4135,28 @@ msgstr "మీరు యజమాని కారు, కాబట్టి ఈ 
 msgid "Security context:"
 msgstr "భద్రత సందర్భం:"
 
-#: ../src/nautilus-properties-window.c:4511
-msgid "Last changed:"
-msgstr "చివరిగా మార్చినది:"
-
-#: ../src/nautilus-properties-window.c:4523
+#: ../src/nautilus-properties-window.c:4519
 msgid "Apply Permissions to Enclosed Files"
 msgstr "జతచేసిన దస్త్రాలకు అనుమతులను అనువర్తించు"
 
-#: ../src/nautilus-properties-window.c:4533
+#: ../src/nautilus-properties-window.c:4529
 #, c-format
 msgid "The permissions of \"%s\" could not be determined."
 msgstr "\"%s\" యొక్క అనుమతులు కనిపెట్టడం వీలుకాదు."
 
-#: ../src/nautilus-properties-window.c:4536
+#: ../src/nautilus-properties-window.c:4532
 msgid "The permissions of the selected file could not be determined."
 msgstr "ఎంచుకున్న దస్త్రము యొక్క అనుమతులు కనిపెట్టుట వీలుకాదు."
 
-#: ../src/nautilus-properties-window.c:4770
+#: ../src/nautilus-properties-window.c:4766
 msgid "Open With"
 msgstr "దీనితో తెరువు"
 
-#: ../src/nautilus-properties-window.c:5094
+#: ../src/nautilus-properties-window.c:5090
 msgid "Creating Properties window."
 msgstr "లక్షణాల కిటికీని సృష్టిస్తున్నది."
 
-#: ../src/nautilus-properties-window.c:5380
+#: ../src/nautilus-properties-window.c:5376
 msgid "Select Custom Icon"
 msgstr "అనురూపిత ప్రతీకను ఎంచుకొను"
 
@@ -3958,71 +4164,71 @@ msgstr "అనురూపిత ప్రతీకను ఎంచుకొన�
 msgid "File Type"
 msgstr "దస్త్ర రకం"
 
-#: ../src/nautilus-query-editor.c:402
+#: ../src/nautilus-query-editor.c:380
 msgid "Documents"
 msgstr "పత్రములు"
 
-#: ../src/nautilus-query-editor.c:420
+#: ../src/nautilus-query-editor.c:398
 msgid "Music"
 msgstr "సంగీతం"
 
-#: ../src/nautilus-query-editor.c:435
+#: ../src/nautilus-query-editor.c:413
 msgid "Video"
 msgstr "వీడియో"
 
-#: ../src/nautilus-query-editor.c:451
+#: ../src/nautilus-query-editor.c:429
 msgid "Picture"
 msgstr "చిత్రం"
 
-#: ../src/nautilus-query-editor.c:471
+#: ../src/nautilus-query-editor.c:449
 msgid "Illustration"
 msgstr "విశదీకరణము"
 
-#: ../src/nautilus-query-editor.c:485
+#: ../src/nautilus-query-editor.c:463
 msgid "Spreadsheet"
 msgstr "స్ప్రెడ్‌షీట్"
 
-#: ../src/nautilus-query-editor.c:501
+#: ../src/nautilus-query-editor.c:479
 msgid "Presentation"
 msgstr "సమర్పణ"
 
-#: ../src/nautilus-query-editor.c:510
+#: ../src/nautilus-query-editor.c:488
 msgid "Pdf / Postscript"
 msgstr "Pdf / Postscript"
 
-#: ../src/nautilus-query-editor.c:518
+#: ../src/nautilus-query-editor.c:496
 msgid "Text File"
 msgstr "పాఠ్యపు దస్త్రము"
 
-#: ../src/nautilus-query-editor.c:597
+#: ../src/nautilus-query-editor.c:575
 msgid "Select type"
 msgstr "రకమును ఎంచుకోండి"
 
-#: ../src/nautilus-query-editor.c:601
+#: ../src/nautilus-query-editor.c:579
 msgid "Select"
 msgstr "ఎంచుకోండి"
 
-#: ../src/nautilus-query-editor.c:682
+#: ../src/nautilus-query-editor.c:660
 msgid "Any"
 msgstr "ఏదేని"
 
-#: ../src/nautilus-query-editor.c:697
+#: ../src/nautilus-query-editor.c:675
 msgid "Other Type..."
 msgstr "ఇతర రకము..."
 
-#: ../src/nautilus-query-editor.c:977
+#: ../src/nautilus-query-editor.c:960
 msgid "Remove this criterion from the search"
 msgstr "వెతుకులాట నుండి ఈ ప్రమాణాన్ని తొలగించు"
 
-#: ../src/nautilus-query-editor.c:1044
+#: ../src/nautilus-query-editor.c:1023
 msgid "Add a new criterion to this search"
 msgstr "ఈ వెతుకులాటకు కొత్త ప్రమాణాన్ని జతచేయి"
 
-#: ../src/nautilus-query-editor.c:1046
+#: ../src/nautilus-query-editor.c:1025
 msgid "Current"
 msgstr "ప్రస్తుతం"
 
-#: ../src/nautilus-query-editor.c:1050
+#: ../src/nautilus-query-editor.c:1029
 msgid "All Files"
 msgstr "అన్ని దస్త్రాలు"
 
@@ -4073,8 +4279,12 @@ msgid "Select Folder to Save Search In"
 msgstr "దాచబడిన వెతుకులాటను దాచుటకు ఒక సంచయాన్ని ఎంచుకోండి"
 
 #: ../src/nautilus-view.c:2278
-msgid "Nautilus 3.6 deprecated this directory and tried migrating this configuration to ~/.local/share/nautilus"
-msgstr "నాటిలస్ 3.6 ఈ డైరెక్టరీని తగ్గించింది మరియు ఈ స్వరూపణాన్ని ~/.config/nautilus కు మార్చుటకు ప్రయత్నించింది"
+msgid ""
+"Nautilus 3.6 deprecated this directory and tried migrating this "
+"configuration to ~/.local/share/nautilus"
+msgstr ""
+"నాటిలస్ 3.6 ఈ డైరెక్టరీని తగ్గించింది మరియు ఈ స్వరూపణాన్ని ~/.config/nautilus కు మార్చుటకు "
+"ప్రయత్నించింది"
 
 #: ../src/nautilus-view.c:2702
 msgid "Content View"
@@ -4084,8 +4294,7 @@ msgstr "విషయ దర్శనం"
 msgid "View of the current folder"
 msgstr "ప్రస్తుత సంచయము యొక్క దర్శనం"
 
-#: ../src/nautilus-view.c:2903
-#: ../src/nautilus-view.c:2940
+#: ../src/nautilus-view.c:2903 ../src/nautilus-view.c:2940
 #, c-format
 msgid "\"%s\" selected"
 msgstr "\"%s\" ఎంచుకోబడెను"
@@ -4169,8 +4378,7 @@ msgstr "%s, %s"
 #. * message about the number of other items and the
 #. * total size of those items.
 #.
-#: ../src/nautilus-view.c:3023
-#: ../src/nautilus-view.c:3036
+#: ../src/nautilus-view.c:3023 ../src/nautilus-view.c:3036
 #, c-format
 msgid "%s%s, %s"
 msgstr "%s%s, %s"
@@ -4215,18 +4423,27 @@ msgid "All executable files in this folder will appear in the Scripts menu."
 msgstr "ఈ సంచయములోని అన్ని ఎక్జిక్యూటబుల్ దస్త్రాల స్క్రిప్టుల మెనూలో కనిపిస్తాయి."
 
 #: ../src/nautilus-view.c:5709
-msgid "Choosing a script from the menu will run that script with any selected items as input."
-msgstr "మెనూ నుండి ఒక స్క్రిప్టును ఎంచుకొనుట ద్వారా ఏదేని ఎంచుకోబడిన అంశములు ఇన్‌పుట్‌గా ఆ స్క్రిప్టు నడుపబడుతుంది."
+msgid ""
+"Choosing a script from the menu will run that script with any selected items "
+"as input."
+msgstr ""
+"మెనూ నుండి ఒక స్క్రిప్టును ఎంచుకొనుట ద్వారా ఏదేని ఎంచుకోబడిన అంశములు ఇన్‌పుట్‌గా ఆ స్క్రిప్టు "
+"నడుపబడుతుంది."
 
 #: ../src/nautilus-view.c:5711
 msgid ""
-"All executable files in this folder will appear in the Scripts menu. Choosing a script from the menu will run that script.\n"
+"All executable files in this folder will appear in the Scripts menu. "
+"Choosing a script from the menu will run that script.\n"
 "\n"
-"When executed from a local folder, scripts will be passed the selected file names. When executed from a remote folder (e.g. a folder showing web or ftp content), scripts will be passed no parameters.\n"
+"When executed from a local folder, scripts will be passed the selected file "
+"names. When executed from a remote folder (e.g. a folder showing web or ftp "
+"content), scripts will be passed no parameters.\n"
 "\n"
-"In all cases, the following environment variables will be set by Nautilus, which the scripts may use:\n"
+"In all cases, the following environment variables will be set by Nautilus, "
+"which the scripts may use:\n"
 "\n"
-"NAUTILUS_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected files (only if local)\n"
+"NAUTILUS_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected "
+"files (only if local)\n"
 "\n"
 "NAUTILUS_SCRIPT_SELECTED_URIS: newline-delimited URIs for selected files\n"
 "\n"
@@ -4235,13 +4452,17 @@ msgid ""
 "NAUTILUS_SCRIPT_WINDOW_GEOMETRY: position and size of current window\n"
 "\n"
 msgstr ""
-"ఈ సంచయంలోని అన్ని ఎక్జిక్యూటబుల్ దస్త్రాలు స్క్రిప్టు మెనూలో కనిపిస్తాయి. మెనూ నుండి ఒక స్క్రిప్టును ఎంచుకొనుట ద్వారా దానిని నడుపవచ్చు.\n"
+"ఈ సంచయంలోని అన్ని ఎక్జిక్యూటబుల్ దస్త్రాలు స్క్రిప్టు మెనూలో కనిపిస్తాయి. మెనూ నుండి ఒక స్క్రిప్టును "
+"ఎంచుకొనుట ద్వారా దానిని నడుపవచ్చు.\n"
 "\n"
-"ఎప్పుడైతే స్థానిక సంచయం నుండి ఎక్జిక్యూట్ చేయబడతాయో, స్క్రిప్టులు ఎంచుకున్న దస్త్రాల పేర్లను పంపిస్తాయి. ఎప్పుడైతే దూరస్థ సంచయం నుండి ఎగ్జిక్యూట్ చేయబడతాయో(ఉదా. వెబ్ లేదా ftp విషయమును ఒక సంచయం చూపించుట), అప్పుడు స్క్రిప్టులు ఏ పారామితులను పంపించవు.\n"
+"ఎప్పుడైతే స్థానిక సంచయం నుండి ఎక్జిక్యూట్ చేయబడతాయో, స్క్రిప్టులు ఎంచుకున్న దస్త్రాల పేర్లను పంపిస్తాయి. "
+"ఎప్పుడైతే దూరస్థ సంచయం నుండి ఎగ్జిక్యూట్ చేయబడతాయో(ఉదా. వెబ్ లేదా ftp విషయమును ఒక సంచయం "
+"చూపించుట), అప్పుడు స్క్రిప్టులు ఏ పారామితులను పంపించవు.\n"
 "\n"
 "అన్ని సందర్బాలలోను, ఈ క్రింది పరిసర చరరాశులు నాటిలస్ ద్వారా అమర్చబడతాయి, ఏ స్క్రిప్టులను వాడవచ్చంటే:\n"
 "\n"
-"NAUTILUS_SCRIPT_SELECTED_FILE_PATHS: ఎంచుకున్న దస్త్రాలకు (స్థానికం అయినపుడు మాత్రమే) newline-delimited పథాలు\n"
+"NAUTILUS_SCRIPT_SELECTED_FILE_PATHS: ఎంచుకున్న దస్త్రాలకు (స్థానికం అయినపుడు మాత్రమే) "
+"newline-delimited పథాలు\n"
 "\n"
 "NAUTILUS_SCRIPT_SELECTED_URIS: ఎంచుకున్న దస్త్రాలకు newline-delimited URIs\n"
 "\n"
@@ -4270,14 +4491,16 @@ msgstr "ఒకవేళ మీరు అతికించిన ఆదేశా
 #: ../src/nautilus-view.c:6165
 #, c-format
 msgid "The %'d selected item will be moved if you select the Paste command"
-msgid_plural "The %'d selected items will be moved if you select the Paste command"
+msgid_plural ""
+"The %'d selected items will be moved if you select the Paste command"
 msgstr[0] "ఒకవేళ అతికించు ఆదేశాన్ని ఎంచుకున్నట్లయితే ఎంచుకున్న %'d అంశము తరలించబడుతుంది"
 msgstr[1] "ఒకవేళ అతికించు ఆదేశాన్ని ఎంచుకున్నట్లయితే ఎంచుకున్న %'d అంశాలు తరలించబడతాయి"
 
 #: ../src/nautilus-view.c:6172
 #, c-format
 msgid "The %'d selected item will be copied if you select the Paste command"
-msgid_plural "The %'d selected items will be copied if you select the Paste command"
+msgid_plural ""
+"The %'d selected items will be copied if you select the Paste command"
 msgstr[0] "ఒకవేళ అతికించు ఆదేశమును ఎంచుకున్నట్లయితే ఎంచుకున్న %'d అంశము నకలుచేయబడుతుంది"
 msgstr[1] "ఒకవేళ అతికించు ఆదేశమును ఎంచుకున్నట్లయితే ఎంచుకున్న %'d అంశాలు నకలుచేయబడతాయి"
 
@@ -4302,10 +4525,8 @@ msgstr "డ్రైవ్‌ను ఆపివేయలేకపోతుం�
 msgid "Connect to Server %s"
 msgstr "%s సేవకానికి అనుసంధానించు"
 
-#: ../src/nautilus-view.c:7032
-#: ../src/nautilus-view.c:8133
-#: ../src/nautilus-view.c:8220
-#: ../src/nautilus-view.c:8324
+#: ../src/nautilus-view.c:7032 ../src/nautilus-view.c:8133
+#: ../src/nautilus-view.c:8220 ../src/nautilus-view.c:8324
 msgid "_Connect"
 msgstr "అనుసంధానించు (_C)"
 
@@ -4328,8 +4549,7 @@ msgid "Choose a program with which to open the selected item"
 msgstr "ఎంచుకున్న అంశమును తెరుచుటకు ఒక కార్యక్రమాన్ని ఎంచుకోండి"
 
 #. tooltip
-#: ../src/nautilus-view.c:7269
-#: ../src/nautilus-view.c:8862
+#: ../src/nautilus-view.c:7269 ../src/nautilus-view.c:8862
 msgid "View or modify the properties of each selected item"
 msgstr "ఎంచుకున్న ప్రతీ అంశము లక్షణాలను చూడండి లేదా సవరించండి"
 
@@ -4382,8 +4602,7 @@ msgstr "ఎంచుకున్న అంశమును ఈ విండోల
 #. Location-specific actions
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7298
-#: ../src/nautilus-view.c:7472
+#: ../src/nautilus-view.c:7298 ../src/nautilus-view.c:7472
 msgid "Open in Navigation Window"
 msgstr "విహారణ కిటికీలో తెరువు"
 
@@ -4404,8 +4623,7 @@ msgid "Other _Application..."
 msgstr "ఇతర అనువర్తనము...(_A)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7307
-#: ../src/nautilus-view.c:7311
+#: ../src/nautilus-view.c:7307 ../src/nautilus-view.c:7311
 msgid "Choose another application with which to open the selected item"
 msgstr "ఎంచుకున్న అంశమును తెరుచుటకు  వేరొక అనువర్తనమును ఎంచుకోండి"
 
@@ -4445,21 +4663,25 @@ msgstr "ఎంచుకున్న దస్త్రాలను ఒక అత
 #. tooltip
 #: ../src/nautilus-view.c:7331
 msgid "Move or copy files previously selected by a Cut or Copy command"
-msgstr "కత్తిరించు లేదా నకలుతీయు ఆదేశం ద్వారా ఇంతకుముందు ఎంచుకున్న దస్త్రాలను తరలించు లేదా నకలుతీయు"
+msgstr ""
+"కత్తిరించు లేదా నకలుతీయు ఆదేశం ద్వారా ఇంతకుముందు ఎంచుకున్న దస్త్రాలను తరలించు లేదా నకలుతీయు"
 
 #. We make accelerator "" instead of null here to not inherit the stock
 #. accelerator for paste
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7336
-#: ../src/nautilus-view.c:7489
+#: ../src/nautilus-view.c:7336 ../src/nautilus-view.c:7489
 msgid "_Paste Into Folder"
 msgstr "సంచయములోనికి అతికించు (_P)"
 
 #. tooltip
 #: ../src/nautilus-view.c:7337
-msgid "Move or copy files previously selected by a Cut or Copy command into the selected folder"
-msgstr "కత్తిరించు లేదా నకలుతీయు ఆదేశం ద్వారా ఇంతకుముందు ఎంచుకున్న దస్త్రాలను ఎంచుకున్న సంచయంలోనికి కదుపు లేదా నకలుతీయి"
+msgid ""
+"Move or copy files previously selected by a Cut or Copy command into the "
+"selected folder"
+msgstr ""
+"కత్తిరించు లేదా నకలుతీయు ఆదేశం ద్వారా ఇంతకుముందు ఎంచుకున్న దస్త్రాలను ఎంచుకున్న సంచయంలోనికి "
+"కదుపు లేదా నకలుతీయి"
 
 #. name, stock id
 #. label, accelerator
@@ -4523,8 +4745,7 @@ msgstr "ఎంచుకున్న ప్రతీ అంశమును నక
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7364
-#: ../src/nautilus-view.c:8847
+#: ../src/nautilus-view.c:7364 ../src/nautilus-view.c:8847
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "లింకెను చేయి (_k)"
@@ -4547,15 +4768,13 @@ msgid "Rename selected item"
 msgstr "ఎంచుకున్న అంశము పేరుమార్చు"
 
 #. tooltip
-#: ../src/nautilus-view.c:7377
-#: ../src/nautilus-view.c:8800
+#: ../src/nautilus-view.c:7377 ../src/nautilus-view.c:8800
 msgid "Move each selected item to the Trash"
 msgstr "ఎంచుకున్న ప్రతీ అంశమును చెత్తబుట్టకి కదుపు"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7380
-#: ../src/nautilus-view.c:7498
+#: ../src/nautilus-view.c:7380 ../src/nautilus-view.c:7498
 #: ../src/nautilus-view.c:8826
 msgid "_Delete"
 msgstr "తొలగించు (_D)"
@@ -4567,8 +4786,7 @@ msgstr "ఎంచుకున్న ప్రతీఅంశమును చె�
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7384
-#: ../src/nautilus-view.c:7502
+#: ../src/nautilus-view.c:7384 ../src/nautilus-view.c:7502
 msgid "_Restore"
 msgstr "తిరిగివుంచు (_R)"
 
@@ -4643,14 +4861,12 @@ msgid "Start the selected volume"
 msgstr "ఎంచుకున్న సంపుటమును ప్రారంభించు"
 
 #. tooltip
-#: ../src/nautilus-view.c:7427
-#: ../src/nautilus-view.c:8346
+#: ../src/nautilus-view.c:7427 ../src/nautilus-view.c:8346
 msgid "Stop the selected volume"
 msgstr "ఎంచుకున్న సంపుటమును ఆపివేయి"
 
 #. tooltip
-#: ../src/nautilus-view.c:7431
-#: ../src/nautilus-view.c:7455
+#: ../src/nautilus-view.c:7431 ../src/nautilus-view.c:7455
 #: ../src/nautilus-view.c:7527
 msgid "Detect media in the selected drive"
 msgstr "ఎంచుకున్న డ్రైవు నందలి మాధ్యమాన్ని కనిపెట్టు"
@@ -4734,8 +4950,12 @@ msgstr "ఈ సంచయమును అతికించు ఆదేశము
 
 #. tooltip
 #: ../src/nautilus-view.c:7490
-msgid "Move or copy files previously selected by a Cut or Copy command into this folder"
-msgstr "ముందుగా ఎంచుకున్న దస్త్రాలను కత్తిరించు లేదా నకలుతీయి ఆదేశము ద్వారా ఈ సంచయంలోనికి కదుపు లేదా నకలుతీయు"
+msgid ""
+"Move or copy files previously selected by a Cut or Copy command into this "
+"folder"
+msgstr ""
+"ముందుగా ఎంచుకున్న దస్త్రాలను కత్తిరించు లేదా నకలుతీయి ఆదేశము ద్వారా ఈ సంచయంలోనికి కదుపు లేదా "
+"నకలుతీయు"
 
 #. tooltip
 #: ../src/nautilus-view.c:7495
@@ -4835,26 +5055,21 @@ msgid_plural "Move the selected items out of the trash"
 msgstr[0] "ఎంచుకున్న అంశమును చెత్తబుట్ట నుండి బయటకు తరలించు"
 msgstr[1] "ఎంచుకున్న అంశములను చెత్తబుట్ట నుండి బయటకు తరలించు"
 
-#: ../src/nautilus-view.c:8126
-#: ../src/nautilus-view.c:8130
-#: ../src/nautilus-view.c:8317
-#: ../src/nautilus-view.c:8321
+#: ../src/nautilus-view.c:8126 ../src/nautilus-view.c:8130
+#: ../src/nautilus-view.c:8317 ../src/nautilus-view.c:8321
 msgid "Start the selected drive"
 msgstr "ఎంచుకున్న డ్రైవును ప్రారంభించు"
 
-#: ../src/nautilus-view.c:8134
-#: ../src/nautilus-view.c:8325
+#: ../src/nautilus-view.c:8134 ../src/nautilus-view.c:8325
 msgid "Connect to the selected drive"
 msgstr "ఎంచుకున్న డ్రైవుకు అనుసంధానించు"
 
-#: ../src/nautilus-view.c:8137
-#: ../src/nautilus-view.c:8224
+#: ../src/nautilus-view.c:8137 ../src/nautilus-view.c:8224
 #: ../src/nautilus-view.c:8328
 msgid "_Start Multi-disk Drive"
 msgstr "బహుళ-డిస్కు డ్రైవును ప్రారంభించు (_S)"
 
-#: ../src/nautilus-view.c:8138
-#: ../src/nautilus-view.c:8329
+#: ../src/nautilus-view.c:8138 ../src/nautilus-view.c:8329
 msgid "Start the selected multi-disk drive"
 msgstr "ఎంచుకున్న బహుళ-డిస్కు డ్రైవును ప్రారంభించు"
 
@@ -4862,8 +5077,7 @@ msgstr "ఎంచుకున్న బహుళ-డిస్కు డ్రై
 msgid "U_nlock Drive"
 msgstr "డ్రైవుకు వున్న తాళంతీయి (_n)"
 
-#: ../src/nautilus-view.c:8142
-#: ../src/nautilus-view.c:8333
+#: ../src/nautilus-view.c:8142 ../src/nautilus-view.c:8333
 msgid "Unlock the selected drive"
 msgstr "ఎంచుకున్న డ్రైవుకు ఉన్న తాళంతీయి"
 
@@ -4871,40 +5085,33 @@ msgstr "ఎంచుకున్న డ్రైవుకు ఉన్న తా
 msgid "Stop the selected drive"
 msgstr "ఎంచుకున్న డ్రైవును ఆపివేయి"
 
-#: ../src/nautilus-view.c:8159
-#: ../src/nautilus-view.c:8350
+#: ../src/nautilus-view.c:8159 ../src/nautilus-view.c:8350
 msgid "Safely remove the selected drive"
 msgstr "ఎంచుకున్న డ్రైవును సురక్షితముగా తీసివేయి"
 
-#: ../src/nautilus-view.c:8162
-#: ../src/nautilus-view.c:8249
+#: ../src/nautilus-view.c:8162 ../src/nautilus-view.c:8249
 #: ../src/nautilus-view.c:8353
 msgid "_Disconnect"
 msgstr "అననుసంధానించు (_D)"
 
-#: ../src/nautilus-view.c:8163
-#: ../src/nautilus-view.c:8354
+#: ../src/nautilus-view.c:8163 ../src/nautilus-view.c:8354
 msgid "Disconnect the selected drive"
 msgstr "ఎంచుకున్న డ్రైవును అననుసంధానించు"
 
-#: ../src/nautilus-view.c:8166
-#: ../src/nautilus-view.c:8253
+#: ../src/nautilus-view.c:8166 ../src/nautilus-view.c:8253
 #: ../src/nautilus-view.c:8357
 msgid "_Stop Multi-disk Drive"
 msgstr "బహుళ-డిస్కు డ్రైవును ఆపివేయి (_S)"
 
-#: ../src/nautilus-view.c:8167
-#: ../src/nautilus-view.c:8358
+#: ../src/nautilus-view.c:8167 ../src/nautilus-view.c:8358
 msgid "Stop the selected multi-disk drive"
 msgstr "ఎంచుకున్న బహుళ-డిస్కు డ్రైవును ఆపుము"
 
-#: ../src/nautilus-view.c:8171
-#: ../src/nautilus-view.c:8362
+#: ../src/nautilus-view.c:8171 ../src/nautilus-view.c:8362
 msgid "Lock the selected drive"
 msgstr "ఎంచుకున్న డ్రైవుకు తాళంవేయి"
 
-#: ../src/nautilus-view.c:8213
-#: ../src/nautilus-view.c:8217
+#: ../src/nautilus-view.c:8213 ../src/nautilus-view.c:8217
 msgid "Start the drive associated with the open folder"
 msgstr "తెరిచివున్న సంచయంతో సంబంధము కలిగివున్న డ్రైవును ప్రారంభించు"
 
@@ -4940,8 +5147,7 @@ msgstr "తెరిచివున్న సంచయంతో సంబంధ�
 msgid "Lock the drive associated with the open folder"
 msgstr "తెరిచివున్న సంచయంతో సంబంధము కలిగివున్న డ్రైవుకు తాళంవేయి"
 
-#: ../src/nautilus-view.c:8494
-#: ../src/nautilus-view.c:8795
+#: ../src/nautilus-view.c:8494 ../src/nautilus-view.c:8795
 msgid "_Delete Permanently"
 msgstr "శాశ్వతంగా తొలగించు (_D)"
 
@@ -4987,8 +5193,7 @@ msgstr "ఎంపికచేసిన అన్ని అంశములను 
 msgid "View or modify the properties of the open folder"
 msgstr "తెరిచిన సంచయం యొక్క లక్షణాలను చూడు లేదా సవరించు"
 
-#: ../src/nautilus-view-dnd.c:172
-#: ../src/nautilus-view-dnd.c:206
+#: ../src/nautilus-view-dnd.c:172 ../src/nautilus-view-dnd.c:206
 #: ../src/nautilus-view-dnd.c:297
 msgid "Drag and drop is not supported."
 msgstr "లాగి వదులుట మరియు లాగి పడవేయుటకు సహకారము లేదు."
@@ -4997,8 +5202,7 @@ msgstr "లాగి వదులుట మరియు లాగి పడవ�
 msgid "Drag and drop is only supported on local file systems."
 msgstr "లాగి వదులుట మరియు లాగి పడవేయుట కేవలం స్ధానిక దస్త్ర వ్యవస్థలలో మాత్రమే సహకరించును."
 
-#: ../src/nautilus-view-dnd.c:207
-#: ../src/nautilus-view-dnd.c:298
+#: ../src/nautilus-view-dnd.c:207 ../src/nautilus-view-dnd.c:298
 msgid "An invalid drag type was used."
 msgstr "చెల్లని డ్రాగ్ రకము ఉపయోగించబడింది."
 
@@ -5018,13 +5222,11 @@ msgstr "లాగి వదలబడిన డేటా"
 msgid "_New Tab"
 msgstr "కొత్త ట్యాబ్ (_T)"
 
-#: ../src/nautilus-window.c:909
-#: ../src/nautilus-window-menus.c:556
+#: ../src/nautilus-window.c:909 ../src/nautilus-window-menus.c:556
 msgid "Move Tab _Left"
 msgstr "ట్యాబ్‌ను ఎడమవైపు జరుపు (_L)"
 
-#: ../src/nautilus-window.c:917
-#: ../src/nautilus-window-menus.c:559
+#: ../src/nautilus-window.c:917 ../src/nautilus-window-menus.c:559
 msgid "Move Tab _Right"
 msgstr "ట్యాబ్‌ను కుడివైపుకు జరుపు (_R)"
 
@@ -5033,16 +5235,36 @@ msgid "_Close Tab"
 msgstr "ట్యాబ్ మూసివేయి (_C)"
 
 #: ../src/nautilus-window.c:2371
-msgid "Files is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version."
-msgstr "నాటిలస్ ఒక స్వేచ్ఛా సాఫ్ట్‍వేర్: దీనిని మీరు ఫ్రీ సాఫ్ట్‍వేర్ ఫౌండేషన్ ప్రచురించిన  గ్నూ జనరల్ పబ్లిక్ లైసెన్స్ రూపాంతరం 2, లేదా (మీ ఇష్టాన్ని బట్టి) ఏదైనా తరువాత రూపాంతరపు నిబంధనలకు అనుగుణంగా  పునఃపంపిణీ చెయ్యవచ్చు మరియు/లేదా సవరించుకోవచ్చు."
+msgid ""
+"Files is free software; you can redistribute it and/or modify it under the "
+"terms of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version."
+msgstr ""
+"నాటిలస్ ఒక స్వేచ్ఛా సాఫ్ట్‍వేర్: దీనిని మీరు ఫ్రీ సాఫ్ట్‍వేర్ ఫౌండేషన్ ప్రచురించిన  గ్నూ జనరల్ పబ్లిక్ లైసెన్స్ "
+"రూపాంతరం 2, లేదా (మీ ఇష్టాన్ని బట్టి) ఏదైనా తరువాత రూపాంతరపు నిబంధనలకు అనుగుణంగా  పునఃపంపిణీ "
+"చెయ్యవచ్చు మరియు/లేదా సవరించుకోవచ్చు."
 
 #: ../src/nautilus-window.c:2375
-msgid "Files is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details."
-msgstr "సమాజానికి ఉపయోగపడుతుంది అనే ఆశతో , ఏవిధమైన పూచీకత్తులు లేకుండా, కనీసం వ్యాపారానికి గాని లేదా ఒక ఖచ్చితమైన ప్రయోజనానికి ఉపయోగించవచ్చని భావించిన పూచీకత్తులు కూడా లేకుండా  దస్త్రాలు పంచబడుతుంది. మరిన్ని వివరాలకు గ్నూ జనరల్ పబ్లిక్ లైసెన్సుని చూడండి"
+msgid ""
+"Files is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details."
+msgstr ""
+"సమాజానికి ఉపయోగపడుతుంది అనే ఆశతో , ఏవిధమైన పూచీకత్తులు లేకుండా, కనీసం వ్యాపారానికి గాని లేదా ఒక "
+"ఖచ్చితమైన ప్రయోజనానికి ఉపయోగించవచ్చని భావించిన పూచీకత్తులు కూడా లేకుండా  దస్త్రాలు పంచబడుతుంది. మరిన్ని "
+"వివరాలకు గ్నూ జనరల్ పబ్లిక్ లైసెన్సుని చూడండి"
 
 #: ../src/nautilus-window.c:2379
-msgid "You should have received a copy of the GNU General Public License along with Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA"
-msgstr "మీరు నాటిలస్‌తో పాటుగా గ్నూ జనరల్ పబ్లిక్ లైసెన్స్ యొక్క నకలు పొందివుండాలి; ఒకవేళ పొందకపోతే, Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA కి వ్రాయండి"
+msgid ""
+"You should have received a copy of the GNU General Public License along with "
+"Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"Street, Fifth Floor, Boston, MA 02110-1301 USA"
+msgstr ""
+"మీరు నాటిలస్‌తో పాటుగా గ్నూ జనరల్ పబ్లిక్ లైసెన్స్ యొక్క నకలు పొందివుండాలి; ఒకవేళ పొందకపోతే, Free "
+"Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA "
+"02110-1301 USA కి వ్రాయండి"
 
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
@@ -5117,7 +5339,8 @@ msgid "Could not display \"%s\", because the host could not be found."
 msgstr "\"%s\" ను ప్రదర్శించలేదు, ఎందుకంటే హోస్టును కనుగొనలేకపోయింది."
 
 #: ../src/nautilus-window-manage-views.c:1644
-msgid "Check that the spelling is correct and that your proxy settings are correct."
+msgid ""
+"Check that the spelling is correct and that your proxy settings are correct."
 msgstr "అక్షరక్రమము మరియు మీ ప్రోక్సీ అమరిక సరిగా ఉన్నాయో లేదో తనిఖీచేయండి."
 
 #: ../src/nautilus-window-manage-views.c:1659
@@ -5203,8 +5426,11 @@ msgstr "దస్త్రాల కోసం వెతుకు..."
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:473
-msgid "Locate files based on file name and type. Save your searches for later use."
-msgstr "దస్త్రము పేరు మరియు రకము ప్రకారము దస్త్రాలను కనుగొను. మీ వెతుకులాటలను తరువాత వాడుకొనుటకు భద్రపరుచు."
+msgid ""
+"Locate files based on file name and type. Save your searches for later use."
+msgstr ""
+"దస్త్రము పేరు మరియు రకము ప్రకారము దస్త్రాలను కనుగొను. మీ వెతుకులాటలను తరువాత వాడుకొనుటకు "
+"భద్రపరుచు."
 
 #. name, stock id
 #. label, accelerator
@@ -5236,7 +5462,8 @@ msgstr "దస్త్రాలను పంచు మరియు పంపు
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:485
-msgid "Easily transfer files to your contacts and devices from the file manager."
+msgid ""
+"Easily transfer files to your contacts and devices from the file manager."
 msgstr "దస్త్ర నిర్వాహకం నుంచి సులువుగా దస్త్రాలను మీ పరిచయాలకు మరియు పరికరములకు పంపుకొను"
 
 #. name, stock id
@@ -5296,8 +5523,7 @@ msgstr "ఒక దూరస్థ కంప్యూటర్‌కు గాన
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:520
-#: ../src/nautilus-window-menus.c:746
+#: ../src/nautilus-window-menus.c:520 ../src/nautilus-window-menus.c:767
 msgid "_Home"
 msgstr "నివాసం (_H)"
 
@@ -5334,24 +5560,20 @@ msgid "Close all Navigation windows"
 msgstr "అన్ని నావిగేషన్ కిటికీలను మూసివేయి"
 
 #. name, stock id, label
-#: ../src/nautilus-window-menus.c:535
-#: ../src/nautilus-window-menus.c:607
+#: ../src/nautilus-window-menus.c:535 ../src/nautilus-window-menus.c:607
 msgid "_Back"
 msgstr "వెనకకు (_B)"
 
-#: ../src/nautilus-window-menus.c:536
-#: ../src/nautilus-window-menus.c:609
+#: ../src/nautilus-window-menus.c:536 ../src/nautilus-window-menus.c:609
 msgid "Go to the previous visited location"
 msgstr "ఇంతకు ముందు సందర్శించిన స్థానమునకు వెళ్ళు"
 
 #. name, stock id, label
-#: ../src/nautilus-window-menus.c:538
-#: ../src/nautilus-window-menus.c:623
+#: ../src/nautilus-window-menus.c:538 ../src/nautilus-window-menus.c:623
 msgid "_Forward"
 msgstr "ముందుకు (_F)"
 
-#: ../src/nautilus-window-menus.c:539
-#: ../src/nautilus-window-menus.c:625
+#: ../src/nautilus-window-menus.c:539 ../src/nautilus-window-menus.c:625
 msgid "Go to the next visited location"
 msgstr "తరువాత సందర్శించిన స్థానమునకు వెళ్ళు"
 
@@ -5435,8 +5657,7 @@ msgid "_Search for Files..."
 msgstr "దస్త్రాల కోసం వెతుకు...(_S)"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:578
-#: ../src/nautilus-window-menus.c:640
+#: ../src/nautilus-window-menus.c:578 ../src/nautilus-window-menus.c:640
 msgid "Search documents and folders by name"
 msgstr "పేరును బట్టి పత్రాలను మరియు సంచయాలను వెతుకు"
 
@@ -5448,7 +5669,7 @@ msgstr "వెనుకటి చరిత్ర"
 msgid "Forward history"
 msgstr "ముందలి చరిత్ర"
 
-#: ../src/nautilus-window-menus.c:743
+#: ../src/nautilus-window-menus.c:764
 msgid "_Up"
 msgstr "పైకి (_U)"
 
@@ -5480,8 +5701,7 @@ msgstr "ఛాయాచిత్ర సీడీ"
 msgid "Picture CD"
 msgstr "చిత్ర సీడీ"
 
-#: ../src/nautilus-x-content-bar.c:107
-#: ../src/nautilus-x-content-bar.c:140
+#: ../src/nautilus-x-content-bar.c:107 ../src/nautilus-x-content-bar.c:140
 msgid "Contains digital photos"
 msgstr "డిజిటల్ ఫొటోలను కలిగివుంది"
 
@@ -5510,6 +5730,21 @@ msgstr "ఫొటోలను మరియు సంగీతం కలిగి
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "దీనితో తెరువు:"
+
+#~ msgid "Used"
+#~ msgstr "వాడినది"
+
+#~ msgid "The date the file was last used."
+#~ msgstr "దస్త్రమును చివరిసారిగా వాడిన తేది."
+
+#~ msgid "Accessed"
+#~ msgstr "వాడబడినది"
+
+#~ msgid "The date the file was accessed."
+#~ msgstr "దస్త్రం వాడబడిన తేది."
+
+#~ msgid "Last changed:"
+#~ msgstr "చివరిగా మార్చినది:"
 
 #~ msgid "Unable to mount %s"
 #~ msgstr "%s మౌంట్ చేయలేకపోతున్నది"
@@ -6861,7 +7096,6 @@ msgstr "దీనితో తెరువు:"
 #~ msgstr "కొత్త విండోలో అన్వేషించుము (_W)"
 
 #~ msgid "_Browse Folder"
-
 #~ msgid_plural "_Browse Folders"
 #~ msgstr[0] "సంచయమును అన్వేషించుము(_B)"
 #~ msgstr[1] "సంచయములను అన్వేషించుము(_B)"
@@ -6870,13 +7104,11 @@ msgstr "దీనితో తెరువు:"
 #~ msgstr "కొత్త టాబ్‌లో అన్వేషించుము (_T)"
 
 #~ msgid "Browse in %'d New _Window"
-
 #~ msgid_plural "Browse in %'d New _Windows"
 #~ msgstr[0] "కొత్త %'d విండోలో అన్వేషించుము (_W)"
 #~ msgstr[1] "కొత్త %'d విండోలలో తెరుచుము (_W)"
 
 #~ msgid "Browse in %'d New _Tab"
-
 #~ msgid_plural "Browse in %'d New _Tabs"
 #~ msgstr[0] "కొత్త %'d టాబ్‌లో అన్వేషించు (_T)"
 #~ msgstr[1] "కొత్త %'d టాబ్‌లలో తెరుచుము (_T)"
