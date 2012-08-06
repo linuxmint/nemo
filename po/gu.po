@@ -12,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug."
 "cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-08-01 11:20+0000\n"
-"PO-Revision-Date: 2012-08-06 17:16+0530\n"
+"PO-Revision-Date: 2012-08-06 18:22+0530\n"
 "Last-Translator: \n"
 "Language-Team: gu_IN <kde-i18n-doc@kde.org>\n"
 "Language: \n"
@@ -436,10 +436,9 @@ msgstr "સ્પષ્ટ થયેલ જૂથ '%s' એ અસ્તિત્
 
 #. Translators: "me" is used to indicate the file is owned by me (the current user)
 #: ../libnautilus-private/nautilus-file.c:5670
-#, fuzzy
 #| msgid "Home"
 msgid "me"
-msgstr "ઘર"
+msgstr "મને"
 
 #: ../libnautilus-private/nautilus-file.c:5694 ../src/nautilus-view.c:2986
 #, c-format
@@ -996,10 +995,10 @@ msgid "Do _not Empty Trash"
 msgstr "કચરાપેટી ખાલી કરશો નહિં (_n)"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2359
-#, fuzzy, c-format
+#, c-format
 #| msgid "Unable to stop %s"
 msgid "Unable to access %s"
-msgstr "%s બંધ કરવામાં અસમર્થ"
+msgstr "%s ને વાપરવામાં અસમર્થ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2435
 #, c-format
@@ -1145,18 +1144,17 @@ msgid "Moving file %'d of %'d to \"%B\""
 msgstr "%'d ફાઈલને \"%B\" માં ખસેડી રહ્યા છીએ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2966
-#, fuzzy
 #| msgid "Copying %'d file to \"%B\""
 #| msgid_plural "Copying %'d files to \"%B\""
 msgid "Copying file %'d of %'d to \"%B\""
-msgstr "%'d ફાઈલની \"%B\" માં નકલ કરી રહ્યા છીએ"
+msgstr "%'d ની ફાઇલ %'d ને \"%B\" માં નકલ કરી રહ્યા છે"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2972
-#, fuzzy, c-format
+#, c-format
 #| msgid "Duplicating %'d file"
 #| msgid_plural "Duplicating %'d files"
 msgid "Duplicating file %'d of %'d"
-msgstr "%'d ફાઈલની નકલ કરી રહ્યા છીએ"
+msgstr "%'d ની ફાઇલ %'d ની નકલ કરી રહ્યા છે"
 
 #. To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "4 kb of 4 MB"
 #: ../libnautilus-private/nautilus-file-operations.c:2991
@@ -1367,25 +1365,22 @@ msgstr "લોન્ચર વિશ્વાસ ચિહ્નિત કરવ
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:135
 #: ../src/nautilus-view.c:2525
-#, fuzzy
 #| msgid "_Undo"
 msgid "Undo"
-msgstr "છેલ્લી ક્રિયા રદ કરો (_U)"
+msgstr "પાછું લાવો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:138
 #: ../src/nautilus-view.c:2526
-#, fuzzy
 #| msgid "Unable to start location"
 msgid "Undo last action"
-msgstr "સ્થાનને શરૂ કરવામાં અસમર્થ"
+msgstr "છેલ્લી ક્રિયા પાછી લાવો"
 
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:142
 #: ../src/nautilus-view.c:2544
-#, fuzzy
 #| msgid "Redo Edit"
 msgid "Redo"
-msgstr "છેલ્લે કરેલ ફેરફાર ફરી કરો"
+msgstr "ફરી શરૂ કરો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:145
 #: ../src/nautilus-view.c:2545
@@ -1421,7 +1416,7 @@ msgstr[1] "છેલ્લે કરેલા ફેરફારને રદ �
 #| msgid "Redo the edit"
 msgid "_Redo Move %d item"
 msgid_plural "_Redo Move %d items"
-msgstr[0] "છેલ્લે કરેલા ફેરફારને ફરીથી કરો"
+msgstr[0] ""
 msgstr[1] "છેલ્લે કરેલા ફેરફારને ફરીથી કરો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:381
@@ -1435,34 +1430,31 @@ msgid "Move '%s' to '%s'"
 msgstr "'%s' માં '%s' ને ખસેડો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:384
-#, fuzzy
 #| msgid "_Undo"
 msgid "_Undo Move"
-msgstr "છેલ્લી ક્રિયા રદ કરો (_U)"
+msgstr "ખસેડવાનુ પાછુ લાવો (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:385
 msgid "_Redo Move"
 msgstr "ખસેડવાનું ફરી શરૂ કરો (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:388
-#, fuzzy
 #| msgid "The item cannot be restored from trash"
 msgid "_Undo Restore from Trash"
-msgstr "વસ્તુ કચરાપેટીમાંથી પુનઃસંગ્રહી શકાશે નહિં"
+msgstr "કચરાપેટીમાંથી પુન:સંગ્રહવાનુ પાછુ લાવો (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:389
-#, fuzzy
 #| msgid "The item cannot be restored from trash"
 msgid "_Redo Restore from Trash"
-msgstr "વસ્તુ કચરાપેટીમાંથી પુનઃસંગ્રહી શકાશે નહિં"
+msgstr "કચરાપેટીમાંથી પુન:સંગ્રહવાનું ફરી શરૂ કરો (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:392
-#, fuzzy, c-format
+#, c-format
 #| msgid "Move each selected item to the Trash"
 msgid "Move %d item back to trash"
 msgid_plural "Move %d items back to trash"
-msgstr[0] "પસંદ કરેલ દરેક વસ્તુ કચરાપેટીમાં મોકલો"
-msgstr[1] "પસંદ કરેલ દરેક વસ્તુ કચરાપેટીમાં મોકલો"
+msgstr[0] "કચરાપેટીમાં પાછુ %d વસ્તુને ખસેડો"
+msgstr[1] "કચરાપેટીમાં પાછુ %d વસ્તુઓને ખસેડો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:395
 #: ../libnautilus-private/nautilus-file-undo-operations.c:981
@@ -1537,98 +1529,94 @@ msgid "_Redo Copy"
 msgstr "નકલ કરવાનું ફરી શરૂ કરો (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:426
-#, fuzzy, c-format
+#, c-format
 #| msgid "Duplicate each selected item"
 msgid "Delete %d duplicated item"
 msgid_plural "Delete %d duplicated items"
-msgstr[0] "પસંદ કરેલ દરેક વસ્તુની નકલ કરો"
-msgstr[1] "પસંદ કરેલ દરેક વસ્તુની નકલ કરો"
+msgstr[0] "%d નકલ થયેલ વસ્તુને કાઢી નાંખો"
+msgstr[1] "%d નકલ થયેલ વસ્તુઓને કાઢી નાંખો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:429
-#, fuzzy, c-format
+#, c-format
 #| msgid "Duplicating %'d file (in \"%B\")"
 #| msgid_plural "Duplicating %'d files (in \"%B\")"
 msgid "Duplicate %d item in '%s'"
 msgid_plural "Duplicate %d items in '%s'"
-msgstr[0] "%'d ફાઇલની (\"%B\" માં) નકલ કરી રહ્યા છે"
-msgstr[1] "%'d ફાઇલોની (\"%B\" માં) નકલ કરી રહ્યા છે"
+msgstr[0] "%d વસ્તુને  %s' માં નકલ કરો"
+msgstr[1] "%d વસ્તુઓને '%s' માં નકલ કરો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:433
-#, fuzzy, c-format
+#, c-format
 #| msgid "Duplicating %'d file"
 #| msgid_plural "Duplicating %'d files"
 msgid "_Undo Duplicate %d item"
 msgid_plural "_Undo Duplicate %d items"
-msgstr[0] "%'d ફાઈલની નકલ કરી રહ્યા છીએ"
-msgstr[1] "%'d ફાઈલોની નકલ કરી રહ્યા છીએ"
+msgstr[0] "%d વસ્તુને નકલ કરવાનું પાછુ લાવો (_U)"
+msgstr[1] "%d વસ્તુઓને નકલ કરવાનું પાછુ લાવો (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:436
-#, fuzzy, c-format
+#, c-format
 #| msgid "Duplicating %'d file"
 #| msgid_plural "Duplicating %'d files"
 msgid "_Redo Duplicate %d item"
 msgid_plural "_Redo Duplicate %d items"
-msgstr[0] "%'d ફાઈલની નકલ કરી રહ્યા છીએ"
-msgstr[1] "%'d ફાઈલોની નકલ કરી રહ્યા છીએ"
+msgstr[0] "%d વસ્તુને નકલ કરવાનું ફરી શરૂ કરો (_R)"
+msgstr[1] "%d વસ્તુઓને નકલ કરવાનું ફરી શરૂ કરો (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:441
-#, fuzzy, c-format
+#, c-format
 #| msgid "Duplicating \"%B\""
 msgid "Duplicate '%s' in '%s'"
-msgstr "\"%B\" ની નકલ કરી રહ્યા છીએ"
+msgstr "'%s' માં '%s' ની નકલ કરો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:444
-#, fuzzy
 #| msgid "D_uplicate"
 msgid "_Undo Duplicate"
-msgstr "નકલી (_u)"
+msgstr "નકલ કરવાનું પાછુ લાવો (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:445
-#, fuzzy
 #| msgid "D_uplicate"
 msgid "_Redo Duplicate"
-msgstr "નકલી (_u)"
+msgstr "નકલ કરવાનું ફરી શરૂ કરો (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:449
-#, fuzzy, c-format
+#, c-format
 #| msgid "_Double click to open items"
 msgid "Delete links to %d item"
 msgid_plural "Delete links to %d items"
-msgstr[0] "વસ્તુઓ ખોલવા માટે બમણું ક્લિક કરો (_D)"
-msgstr[1] "વસ્તુઓ ખોલવા માટે બમણું ક્લિક કરો (_D)"
+msgstr[0] "%d વસ્તુ માટે કડીઓને કાઢી નાંખો"
+msgstr[1] "%d વસ્તુઓ માટે કડીઓને કાઢી નાંખો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:452
-#, fuzzy, c-format
+#, c-format
 #| msgid "Making link to %'d file"
 #| msgid_plural "Making links to %'d files"
 msgid "Create links to %d item"
 msgid_plural "Create links to %d items"
-msgstr[0] "%'d ફાઈલની કડી બનાવી રહ્યા છીએ"
-msgstr[1] "%'d ફાઈલોની કડી બનાવી રહ્યા છીએ"
+msgstr[0] "%d વસ્તુ માટે કડીઓને બનાવો"
+msgstr[1] "%d વસ્તુઓ માટે કડીઓને બનાવો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:456
-#, fuzzy, c-format
+#, c-format
 #| msgid "Another link to %s"
 msgid "Delete link to '%s'"
-msgstr "%s ની અન્ય કડી"
+msgstr "'%s' માં કડીને કાઢી નાંખો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:457
-#, fuzzy, c-format
+#, c-format
 #| msgid "Another link to %s"
 msgid "Create link to '%s'"
-msgstr "%s ની અન્ય કડી"
+msgstr "'%s' માં કડીને બનાવો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:459
-#, fuzzy
 #| msgid "Undo the edit"
 msgid "_Undo Create Link"
-msgstr "છેલ્લે કરેલા ફેરફારને રદ કરો"
+msgstr "કડીને બનાવવાનું પાછુ લાવો (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:460
-#, fuzzy
 #| msgid "Redo the edit"
 msgid "_Redo Create Link"
-msgstr "છેલ્લે કરેલા ફેરફારને ફરીથી કરો"
+msgstr "કડીને બનાવવાનું ફરી શરૂ કરો (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:676
 #, c-format
@@ -1651,16 +1639,14 @@ msgid "Create a new folder '%s'"
 msgstr "નવાં ફોલ્ડર '%s' ને બનાવો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:683
-#, fuzzy
 #| msgid "Create New _Folder"
 msgid "_Undo Create Folder"
-msgstr "નવા ફોલ્ડરને બનાવો (_F)"
+msgstr "ફોલ્ડર બનાવવાનું પાછુ લાવો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:684
-#, fuzzy
 #| msgid "Create New _Folder"
 msgid "_Redo Create Folder"
-msgstr "નવા ફોલ્ડરને બનાવો (_F)"
+msgstr "ફોલ્ડરને બનાવવાનું ફરી શરૂ કરો (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:686
 #, c-format
@@ -1683,24 +1669,22 @@ msgid "Rename '%s' as '%s'"
 msgstr "'%s' તરીકે '%s' નુ નામ બદલો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:872
-#, fuzzy
 #| msgid "_Rename..."
 msgid "_Undo Rename"
-msgstr "ફરીથી નામ આપો (_R)..."
+msgstr "નામ બદલવાનું પાછુ લાવો (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:873
-#, fuzzy
 #| msgid "_Rename..."
 msgid "_Redo Rename"
-msgstr "ફરીથી નામ આપો (_R)..."
+msgstr "નામ બદલવાનુ ફરી શરૂ કરો (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:984
-#, fuzzy, c-format
+#, c-format
 #| msgid "Moving files to trash"
 msgid "Move %d item to trash"
 msgid_plural "Move %d items to trash"
-msgstr[0] "ફાઈલોને કચરાપેટીમાં ખસેડી રહ્યા છીએ"
-msgstr[1] "ફાઈલોને કચરાપેટીમાં ખસેડી રહ્યા છીએ"
+msgstr[0] "કચરાપેટીમાં %d વસ્તુને ખસેડો"
+msgstr[1] "કચરાપેટીમાં %d વસ્તુઓને ખસેડો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:996
 #, c-format
@@ -1708,22 +1692,20 @@ msgid "Restore '%s' to '%s'"
 msgstr "'%s' માં '%s' ને પુન:સંગ્રહો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1003
-#, fuzzy, c-format
+#, c-format
 #| msgid "Mo_ve to Trash"
 msgid "Move '%s' to trash"
-msgstr "કચરાપેટીમાં મોકલો (_v)"
+msgstr "કચરાપેટીમાં '%s' ને ખસેડો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1007
-#, fuzzy
 #| msgid "_Trash"
 msgid "_Undo Trash"
-msgstr "કચરાપેટી (_T)"
+msgstr "કચરાપેટી પાછી લાવો (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1008
-#, fuzzy
 #| msgid "Mo_ve to Trash"
 msgid "_Redo Trash"
-msgstr "કચરાપેટીમાં મોકલો (_v)"
+msgstr "કચરાપેટી ફરી શરૂ કરો (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1300
 #, c-format
@@ -1731,24 +1713,22 @@ msgid "Restore original permissions of items enclosed in '%s'"
 msgstr "'%s' માં બંધ થયેલ વસ્તુઓની મૂળભૂત પરવાનગીઓને પુન:સંગ્રહો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1301
-#, fuzzy, c-format
+#, c-format
 #| msgid "The permissions of the file."
 msgid "Set permissions of items enclosed in '%s'"
-msgstr "ફાઈલની પરવાનગીઓ."
+msgstr "'%s' માં બંધ થયેલ વસ્તુઓની પરવાનગીઓને સુયોજિત કરો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1303
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1458
-#, fuzzy
 #| msgid "Folder Permissions:"
 msgid "_Undo Change Permissions"
-msgstr "ફોલ્ડર પરવાનગીઓ:"
+msgstr "પરવાનગીઓમાં ફેરફાર કરવાનું પાછુ લાવો (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1304
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1459
-#, fuzzy
 #| msgid "Folder Permissions:"
 msgid "_Redo Change Permissions"
-msgstr "ફોલ્ડર પરવાનગીઓ:"
+msgstr "પરવાનગીઓમાં ફેરફાર કરવાનું ફરી શરૂ કરો (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1455
 #, c-format
@@ -1756,10 +1736,10 @@ msgid "Restore original permissions of '%s'"
 msgstr "'%s' ની મૂળભૂત પરવાનગીઓને પુન:સંગ્રહો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1456
-#, fuzzy, c-format
+#, c-format
 #| msgid "Setting permissions"
 msgid "Set permissions of '%s'"
-msgstr "સુયોજના પરવાનગીઓ"
+msgstr "'%s' ની પરવાનગીઓને સુયોજિત કરો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1566
 #, c-format
@@ -3035,20 +3015,18 @@ msgid "Show hidden and _backup files"
 msgstr "સંતાડેલી અને બૅકઅપ ફાઇલો દેખાડો (_b)"
 
 #: ../src/nautilus-file-management-properties.ui.h:7
-#, fuzzy
 #| msgid "<b>Icon View Defaults</b>"
 msgid "Icon View Defaults"
-msgstr "<b>ચિહ્નના દૃશ્યના મૂળભૂત</b>"
+msgstr "ચિહ્ન દૃશ્ય મૂળભૂત"
 
 #: ../src/nautilus-file-management-properties.ui.h:8
 msgid "Default _zoom level:"
 msgstr "નાનુમોટું કરવાનુ મૂળભૂત સ્તર (_z):"
 
 #: ../src/nautilus-file-management-properties.ui.h:9
-#, fuzzy
 #| msgid "<b>List View Defaults</b>"
 msgid "List View Defaults"
-msgstr "<b>યાદી દૃશ્યના મૂળભૂત</b>"
+msgstr "યાદી દૃશ્યના મૂળભૂત"
 
 #: ../src/nautilus-file-management-properties.ui.h:10
 msgid "D_efault zoom level:"
@@ -4746,10 +4724,9 @@ msgstr "પસંદગી સાથે નવું ફોલ્ડર"
 
 #. tooltip
 #: ../src/nautilus-view.c:7281
-#, fuzzy
 #| msgid "Create a symbolic link for each selected item"
 msgid "Create a new folder containing the selected items"
-msgstr "દરેક પસંદ કરેલ વસ્તુ માટે સાંકેતીક કડી બનાવો"
+msgstr "પસંદ થયેલ વસ્તુઓને સમાવતા નવા ફોલ્ડરને બનાવો"
 
 #. name, stock id, label
 #: ../src/nautilus-view.c:7283
@@ -4859,25 +4836,22 @@ msgstr "કાપો અથવા નકલ કરો આદેશ દ્વા�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7340
-#, fuzzy
 #| msgid "Send To..."
 msgid "Copy To..."
-msgstr "મોકલવા માટે..."
+msgstr "માં નકલ કરો..."
 
 #. tooltip
 #: ../src/nautilus-view.c:7341
-#, fuzzy
 #| msgid "Copy the selected text to the clipboard"
 msgid "Copy selected files to another location"
-msgstr "પસંદ કરેલ લખાણની ક્લિપબોર્ડ પર નકલ કરો"
+msgstr "બીજા સ્થાનમાં પસંદ થયેલ ફાઇલોની નકલ કરો"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7344
-#, fuzzy
 #| msgid "Send To..."
 msgid "Move To..."
-msgstr "મોકલવા માટે..."
+msgstr "માં ખસેડો..."
 
 #. tooltip
 #: ../src/nautilus-view.c:7345
@@ -4979,16 +4953,15 @@ msgstr "છેલ્લી ક્રિયા રદ કરો (_U)"
 
 #. tooltip
 #: ../src/nautilus-view.c:7389
-#, fuzzy
 #| msgid "Undo the last text change"
 msgid "Undo the last action"
-msgstr "છેલ્લે લખાણમાં કરેલ બદલાવને રદ કરો"
+msgstr "છેલ્લી ક્રિયાને પાછી લાવો"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7392
 msgid "_Redo"
-msgstr "નવેસરથી શરૂ કરો (_R)"
+msgstr "ફરી શરૂ કરો (_R)"
 
 #. tooltip
 #: ../src/nautilus-view.c:7393
@@ -5471,10 +5444,9 @@ msgid "Copyright © %Id–%Id The Files authors"
 msgstr "Copyright © %Id–%Id The Files authors"
 
 #: ../src/nautilus-window.c:2400
-#, fuzzy
 #| msgid "Access and organize files"
 msgid "Access and organize your files."
-msgstr "ફાઇલોને વાપરો અને સંચાલિત કરો"
+msgstr "તમારી ફાઇલોને વાપરો અને સંચાલિત કરો."
 
 #. Translators should localize the following string
 #. * which will be displayed at the bottom of the about
@@ -5896,29 +5868,26 @@ msgid "Picture CD"
 msgstr "ચિત્ર CD"
 
 #: ../src/nautilus-x-content-bar.c:107 ../src/nautilus-x-content-bar.c:140
-#, fuzzy
 #| msgid "The media contains digital photos."
 msgid "Contains digital photos"
-msgstr "મીડિયા એ ડિઝિટલ ફોટોને સમાવે છે."
+msgstr "ડિઝિટલ ફોટોને સમાવે છે"
 
 #: ../src/nautilus-x-content-bar.c:109
-#, fuzzy
 #| msgid "Continue"
 msgid "Contains music"
-msgstr "ચાલુ રાખો"
+msgstr "સંગીતને સમાવે છે"
 
 #: ../src/nautilus-x-content-bar.c:111
-#, fuzzy
 #| msgid "The media contains software."
 msgid "Contains software"
-msgstr "મીડિયા સોફ્ટવેર ને સમાવે છે."
+msgstr "સોફ્ટવેરને સમાવે છે"
 
 #. fallback to generic greeting
 #: ../src/nautilus-x-content-bar.c:114
-#, fuzzy, c-format
+#, c-format
 #| msgid "_Detect Media"
 msgid "Detected as \"%s\""
-msgstr "મીડિયાને શોધો (_D)"
+msgstr "\"%s\" તરીકે મળ્યુ"
 
 #: ../src/nautilus-x-content-bar.c:136
 msgid "Contains music and photos"
