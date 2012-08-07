@@ -72,6 +72,15 @@
     <menuitem name="Close All Windows" action="Close All Windows"/>
   </placeholder>
   <menuitem name="Close" action="Close"/>
+  <separator/>
+  <menuitem name="About" action="About Nautilus"/>
+  <menu action="Help">
+    <menuitem action="NautilusHelp"/>
+    <menuitem action="NautilusHelpSearch"/>
+    <menuitem action="NautilusHelpSort"/>
+    <menuitem action="NautilusHelpLost"/>
+    <menuitem action="NautilusHelpShare"/>
+  </menu>
 </popup>
 <popup name="background">
 	<placeholder name="Before Zoom Items">
