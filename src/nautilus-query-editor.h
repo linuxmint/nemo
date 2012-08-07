@@ -50,10 +50,11 @@ typedef struct NautilusQueryEditor {
 typedef struct {
 	GtkBoxClass parent_class;
 
-	void (* changed) (NautilusQueryEditor  *editor,
-			  NautilusQuery        *query,
-			  gboolean              reload);
-	void (* cancel)   (NautilusQueryEditor *editor);
+	void (* changed)   (NautilusQueryEditor  *editor,
+			    NautilusQuery        *query,
+			    gboolean              reload);
+	void (* cancel)    (NautilusQueryEditor *editor);
+	void (* activated) (NautilusQueryEditor *editor);
 } NautilusQueryEditorClass;
 
 #include "nautilus-window-slot.h"

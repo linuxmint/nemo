@@ -169,6 +169,10 @@ struct NautilusViewClass {
          * select all of the items in the view */
         void     (* select_all)	         	(NautilusView *view);
 
+        /* select_first is a function pointer that subclasses must override to
+         * select the first item in the view */
+        void     (* select_first)	      	(NautilusView *view);
+
         /* set_selection is a function pointer that subclasses must
          * override to select the specified items (and unselect all
          * others). The argument is a list of NautilusFiles. */
@@ -379,6 +383,7 @@ void              nautilus_view_new_file_with_initial_contents (NautilusView *vi
 								GdkPoint *pos);
 
 /* selection handling */
+void              nautilus_view_activate_selection         (NautilusView      *view);
 int               nautilus_view_get_selection_count        (NautilusView      *view);
 GList *           nautilus_view_get_selection              (NautilusView      *view);
 void              nautilus_view_set_selection              (NautilusView      *view,

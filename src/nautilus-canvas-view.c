@@ -1443,6 +1443,17 @@ nautilus_canvas_view_select_all (NautilusView *view)
 }
 
 static void
+nautilus_canvas_view_select_first (NautilusView *view)
+{
+	NautilusCanvasContainer *canvas_container;
+
+	g_return_if_fail (NAUTILUS_IS_CANVAS_VIEW (view));
+
+	canvas_container = get_canvas_container (NAUTILUS_CANVAS_VIEW (view));
+        nautilus_canvas_container_select_first (canvas_container);
+}
+
+static void
 nautilus_canvas_view_reveal_selection (NautilusView *view)
 {
 	GList *selection;
@@ -2314,6 +2325,7 @@ nautilus_canvas_view_class_init (NautilusCanvasViewClass *klass)
 	nautilus_view_class->restore_default_zoom_level = nautilus_canvas_view_restore_default_zoom_level;
 	nautilus_view_class->reveal_selection = nautilus_canvas_view_reveal_selection;
 	nautilus_view_class->select_all = nautilus_canvas_view_select_all;
+	nautilus_view_class->select_first = nautilus_canvas_view_select_first;
 	nautilus_view_class->set_selection = nautilus_canvas_view_set_selection;
 	nautilus_view_class->invert_selection = nautilus_canvas_view_invert_selection;
 	nautilus_view_class->compare_files = compare_files;

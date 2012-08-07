@@ -291,6 +291,9 @@ void              nautilus_canvas_container_unselect_all                  (Nauti
 void              nautilus_canvas_container_select_all                    (NautilusCanvasContainer  *view);
 
 
+void              nautilus_canvas_container_select_first                  (NautilusCanvasContainer  *view);
+
+
 /* operations on the selection */
 GList     *       nautilus_canvas_container_get_selection                 (NautilusCanvasContainer  *view);
 void			  nautilus_canvas_container_invert_selection				(NautilusCanvasContainer  *view);

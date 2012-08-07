@@ -2410,6 +2410,19 @@ nautilus_list_view_select_all (NautilusView *view)
 }
 
 static void
+nautilus_list_view_select_first (NautilusView *view)
+{
+	GtkTreeSelection *selection;
+	GtkTreeIter iter;
+
+	if (!gtk_tree_model_get_iter_first (GTK_TREE_MODEL (NAUTILUS_LIST_VIEW (view)->details->model), &iter)) {
+		return;
+	}
+	selection = gtk_tree_view_get_selection (NAUTILUS_LIST_VIEW (view)->details->tree_view);
+	gtk_tree_selection_select_iter (selection, &iter);
+}
+
+static void
 column_editor_response_callback (GtkWidget *dialog, 
 				 int response_id,
 				 gpointer user_data)
@@ -3223,6 +3236,7 @@ nautilus_list_view_class_init (NautilusListViewClass *class)
 	nautilus_view_class->restore_default_zoom_level = nautilus_list_view_restore_default_zoom_level;
 	nautilus_view_class->reveal_selection = nautilus_list_view_reveal_selection;
 	nautilus_view_class->select_all = nautilus_list_view_select_all;
+	nautilus_view_class->select_first = nautilus_list_view_select_first;
 	nautilus_view_class->set_selection = nautilus_list_view_set_selection;
 	nautilus_view_class->invert_selection = nautilus_list_view_invert_selection;
 	nautilus_view_class->compare_files = nautilus_list_view_compare_files;

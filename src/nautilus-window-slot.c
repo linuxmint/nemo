@@ -141,6 +141,15 @@ query_editor_cancel_callback (NautilusQueryEditor *editor,
 }
 
 static void
+query_editor_activated_callback (NautilusQueryEditor *editor,
+				 NautilusWindowSlot *slot)
+{
+	if (slot->content_view != NULL) {
+		nautilus_view_activate_selection (slot->content_view);
+	}
+}
+
+static void
 query_editor_changed_callback (NautilusQueryEditor *editor,
 			       NautilusQuery *query,
 			       gboolean reload,
@@ -212,6 +221,9 @@ nautilus_window_slot_set_query_editor_visible (NautilusWindowSlot *slot,
 		if (slot->qe_cancel_id == 0)
 			slot->qe_cancel_id = g_signal_connect (slot->query_editor, "cancel",
 							       G_CALLBACK (query_editor_cancel_callback), slot);
+		if (slot->qe_activated_id == 0)
+			slot->qe_activated_id = g_signal_connect (slot->query_editor, "activated",
+							       G_CALLBACK (query_editor_activated_callback), slot);
 
 	} else {
 		gtk_widget_hide (GTK_WIDGET (slot->query_editor));
@@ -219,6 +231,8 @@ nautilus_window_slot_set_query_editor_visible (NautilusWindowSlot *slot,
 		slot->qe_changed_id = 0;
 		g_signal_handler_disconnect (slot->query_editor, slot->qe_cancel_id);
 		slot->qe_cancel_id = 0;
+		g_signal_handler_disconnect (slot->query_editor, slot->qe_activated_id);
+		slot->qe_activated_id = 0;
 		nautilus_query_editor_set_query (slot->query_editor, NULL);
 	}
 }
