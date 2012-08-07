@@ -1,3 +1,14 @@
+Major changes in 3.5.5 are:
+* Combine results from both search providers
+* Use a ranking algorithm for search results
+* Preselect first search result
+* Add a keybinding for the gear menu
+* Improve styling for the search query editor
+* Fix Ctrl+V not working correctly
+* Fix previewers not being activated correctly
+* Fix search not to trigger on the desktop window
+* Fix pathbar scroll button styling bugs
+
 Major changes in 3.5.4 are:
 * Add Copy To and Move To actions
 * Add a notification while ejecting volumes
