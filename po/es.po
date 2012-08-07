@@ -25,8 +25,8 @@ msgstr ""
 "Project-Id-Version: nautilus.master.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-08-07 14:03+0000\n"
-"PO-Revision-Date: 2012-08-07 20:28+0200\n"
+"POT-Creation-Date: 2012-08-07 19:10+0000\n"
+"PO-Revision-Date: 2012-08-07 21:12+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -140,7 +140,7 @@ msgstr " (Unicode no válido)"
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:67
 #: ../src/nautilus-pathbar.c:298 ../src/nautilus-places-sidebar.c:514
-#: ../src/nautilus-query-editor.c:1200
+#: ../src/nautilus-query-editor.c:1170
 msgid "Home"
 msgstr "Carpeta personal"
 
@@ -2408,12 +2408,6 @@ msgid "List of possible captions on icons"
 msgstr "Lista de las descripciones posibles de los iconos"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:46
-#| msgid ""
-#| "A list of captions below an icon in the icon view and the desktop. The "
-#| "actual number of captions shown depends on the zoom level. Some possible "
-#| "values are: \"size\", \"type\", \"date_modified\", \"date_changed\", "
-#| "\"date_accessed\", \"owner\", \"group\", \"permissions\", "
-#| "\"octal_permissions\" and \"mime_type\"."
 msgid ""
 "A list of captions below an icon in the icon view and the desktop. The "
 "actual number of captions shown depends on the zoom level. Some possible "
@@ -2739,43 +2733,43 @@ msgstr ""
 "%s"
 
 # src/nautilus-main.c:117
-#: ../src/nautilus-application.c:976
+#: ../src/nautilus-application.c:985
 msgid "--check cannot be used with other options."
 msgstr "--check no se puede usar con otras opciones."
 
 # src/nautilus-main.c:117
-#: ../src/nautilus-application.c:982
+#: ../src/nautilus-application.c:991
 msgid "--quit cannot be used with URIs."
 msgstr "--quit no se puede usar con URI."
 
 # src/nautilus-main.c:117
-#: ../src/nautilus-application.c:989
+#: ../src/nautilus-application.c:998
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry no se puede usar con más de un URI."
 
 # src/nautilus-main.c:63
-#: ../src/nautilus-application.c:1033
+#: ../src/nautilus-application.c:1042
 msgid "Perform a quick set of self-check tests."
 msgstr "Realiza un conjunto rápido de auto-verificaciones."
 
 # src/file-manager/fm-properties-window.c:1641
-#: ../src/nautilus-application.c:1039
+#: ../src/nautilus-application.c:1048
 msgid "Show the version of the program."
 msgstr "Mostrar la versión del programa."
 
-#: ../src/nautilus-application.c:1041
+#: ../src/nautilus-application.c:1050
 msgid "Create the initial window with the given geometry."
 msgstr "Crea la ventana inicial con la geometría indicada."
 
-#: ../src/nautilus-application.c:1041
+#: ../src/nautilus-application.c:1050
 msgid "GEOMETRY"
 msgstr "GEOMETRÍA"
 
-#: ../src/nautilus-application.c:1043
+#: ../src/nautilus-application.c:1052
 msgid "Only create windows for explicitly specified URIs."
 msgstr "Sólo crear ventanas para las URI explícitamente especificadas."
 
-#: ../src/nautilus-application.c:1045
+#: ../src/nautilus-application.c:1054
 msgid ""
 "Do not manage the desktop (ignore the preference set in the preferences "
 "dialog)."
@@ -2784,15 +2778,15 @@ msgstr ""
 "diálogo de preferencias)."
 
 # src/nautilus-main.c:65
-#: ../src/nautilus-application.c:1047
+#: ../src/nautilus-application.c:1056
 msgid "Quit Nautilus."
 msgstr "Salir de Nautilus."
 
-#: ../src/nautilus-application.c:1048
+#: ../src/nautilus-application.c:1057
 msgid "[URI...]"
 msgstr "[URI…]"
 
-#: ../src/nautilus-application.c:1059
+#: ../src/nautilus-application.c:1068
 msgid ""
 "\n"
 "\n"
@@ -3450,6 +3444,7 @@ msgstr "Vista previa"
 #. * of navigation windows and in the preferences dialog
 #: ../src/nautilus-file-management-properties.ui.h:36
 #: ../src/nautilus-canvas-view.c:2459
+#: ../src/nautilus-canvas-view-container.c:568
 msgid "Icon View"
 msgstr "Vista de icono"
 
@@ -3647,15 +3642,15 @@ msgstr "Organi_zar los elementos"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-canvas-view.c:1230
-#| msgid "Resize Icon..."
-msgid "Resize Canvas..."
-msgstr "Redimensionar lienzo…"
+#| msgid "Resize Canvas..."
+msgid "Resize Icon..."
+msgstr "Redimensionar icono…"
 
 #. tooltip
 #: ../src/nautilus-canvas-view.c:1231
-#| msgid "Make the selected icon resizable"
-msgid "Make the selected canvas resizable"
-msgstr "Hacer que el lienzo seleccionado sea redimensionable"
+#| msgid "Make the selected canvas resizable"
+msgid "Make the selected icons resizable"
+msgstr "Hacer que los iconos seleccionados sea redimensionables"
 
 # src/file-manager/fm-icon-view.c:318
 #. name, stock id
@@ -3667,9 +3662,9 @@ msgstr "Re_staurar el tamaño original de los iconos"
 # src/file-manager/fm-icon-view.c:318
 #. tooltip
 #: ../src/nautilus-canvas-view.c:1235
-#| msgid "Restore each selected icon to its original size"
-msgid "Restore each selected canvas to its original size"
-msgstr "Restaura cada lienzo seleccionado a su tamaño original"
+#| msgid "Restore each selected canvas to its original size"
+msgid "Restore each selected icons to its original size"
+msgstr "Restaura cada icono seleccionado a su tamaño original"
 
 #. name, stock id
 #. label, accelerator
@@ -3743,9 +3738,9 @@ msgstr "Por _hora movido a la papelera"
 
 # src/file-manager/fm-icon-view.c:318
 #: ../src/nautilus-canvas-view.c:1399
-#| msgid "Restore Icon's Original Si_ze"
-msgid "Restore Canvas's Original Si_ze"
-msgstr "Restablecer el tamaño original del lien_zo"
+#| msgid "Restore Icons' Original Si_zes"
+msgid "Restore Icon's Original Si_ze"
+msgstr "Re_staurar el tamaño original de los iconos"
 
 # Lo ponemos en minusculas
 # libnautilus-private/nautilus-search-bar-criterion.c:55
@@ -3764,15 +3759,9 @@ msgstr "La vista de iconos ha encontrado un error mientras se iniciaba."
 
 # libnautilus-private/nautilus-global-preferences.c:693
 #: ../src/nautilus-canvas-view.c:2464
-#| msgid "Display this location with the icon view."
-msgid "Display this location with the canvas view."
-msgstr "Mostrar esta ubicación con la vista de lienzo."
-
-# src/file-manager/fm-properties-window.c:878
-#: ../src/nautilus-canvas-view-container.c:568
-#| msgid "Content View"
-msgid "Canvas View"
-msgstr "Vista del lienzo"
+#| msgid "Display this location with the canvas view."
+msgid "Display this location with the icon view."
+msgstr "Mostrar esta ubicación con la vista de iconos."
 
 # #-#-#-#-#  nautilus-es.po (Nautilus)  #-#-#-#-#
 # libnautilus-private/nautilus-program-chooser.c:1196
@@ -4805,23 +4794,24 @@ msgid "Other Type..."
 msgstr "Otro tipo…"
 
 # src/file-manager/dfos-xfer.c:961
-#: ../src/nautilus-query-editor.c:960
+#: ../src/nautilus-query-editor.c:956
 msgid "Remove this criterion from the search"
 msgstr "Quitar este criterio de la búsqueda"
 
-#: ../src/nautilus-query-editor.c:1023
-msgid "Add a new criterion to this search"
-msgstr "Añadir un criterio nuevo a esta búsqueda"
-
-#: ../src/nautilus-query-editor.c:1025
+#. create the Current/All Files selector
+#: ../src/nautilus-query-editor.c:1045
 msgid "Current"
 msgstr "Actual"
 
 # #-#-#-#-#  nautilus-es.po (Nautilus)  #-#-#-#-#
 # components/music/nautilus-music-view.c:198
-#: ../src/nautilus-query-editor.c:1029
+#: ../src/nautilus-query-editor.c:1048
 msgid "All Files"
 msgstr "Todos los archivos"
+
+#: ../src/nautilus-query-editor.c:1070
+msgid "Add a new criterion to this search"
+msgstr "Añadir un criterio nuevo a esta búsqueda"
 
 #: ../src/nautilus-trash-bar.c:202
 msgid "Restore Selected Items"
@@ -6468,6 +6458,16 @@ msgstr "Contiene fotos y música"
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "Abrir con:"
+
+# src/file-manager/fm-icon-view.c:318
+#~| msgid "Restore Icon's Original Si_ze"
+#~ msgid "Restore Canvas's Original Si_ze"
+#~ msgstr "Restablecer el tamaño original del lien_zo"
+
+# src/file-manager/fm-properties-window.c:878
+#~| msgid "Content View"
+#~ msgid "Canvas View"
+#~ msgstr "Vista del lienzo"
 
 #~ msgid "Used"
 #~ msgstr "Usado"
