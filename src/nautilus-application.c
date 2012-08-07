@@ -914,6 +914,7 @@ nautilus_application_init_actions (NautilusApplication *self)
 {
 	GtkBuilder *builder;
 	GError *error = NULL;
+	const gchar *debug_no_app_menu;
 
 	g_action_map_add_action_entries (G_ACTION_MAP (self),
 					 app_entries, G_N_ELEMENTS (app_entries),
@@ -932,6 +933,14 @@ nautilus_application_init_actions (NautilusApplication *self)
 	}
 
 	g_object_unref (builder);
+
+	debug_no_app_menu = g_getenv ("NAUTILUS_DEBUG_NO_APP_MENU");
+	if (debug_no_app_menu) {
+		DEBUG ("Disabling app menu GtkSetting as requested...");
+		g_object_set (gtk_settings_get_default (),
+			      "gtk-shell-shows-app-menu", FALSE,
+			      NULL);
+	}
 }
 
 static void
