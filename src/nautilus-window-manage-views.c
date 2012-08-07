@@ -87,8 +87,9 @@ static void end_location_change                       (NautilusWindowSlot       
 static void cancel_location_change                    (NautilusWindowSlot         *slot);
 static void got_file_info_for_view_selection_callback (NautilusFile               *file,
 						       gpointer                    callback_data);
-static void create_content_view                       (NautilusWindowSlot         *slot,
-						       const char                 *view_id);
+static gboolean create_content_view                   (NautilusWindowSlot         *slot,
+						       const char                 *view_id,
+						       GError                    **error);
 static void display_view_selection_failure            (NautilusWindow             *window,
 						       NautilusFile               *file,
 						       GFile                      *location,
@@ -555,12 +556,13 @@ report_callback (NautilusWindowSlot *slot,
 		 GError *error)
 {
 	if (slot->open_callback != NULL) {
-		slot->open_callback (nautilus_window_slot_get_window (slot),
-				     error, slot->open_callback_user_data);
+		gboolean res;
+		res = slot->open_callback (nautilus_window_slot_get_window (slot),
+					   error, slot->open_callback_user_data);
 		slot->open_callback = NULL;
 		slot->open_callback_user_data = NULL;
 
-		return TRUE;
+		return res;
 	}
 
 	return FALSE;
@@ -751,7 +753,7 @@ static void
 got_file_info_for_view_selection_callback (NautilusFile *file,
 					   gpointer callback_data)
 {
-        GError *error;
+        GError *error = NULL;
 	char *view_id;
 	char *mimetype;
 	NautilusWindow *window;
@@ -769,9 +771,9 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 	slot->determine_view_file = NULL;
 
 	if (slot->mount_error) {
-		error = slot->mount_error;
-	} else {
-		error = nautilus_file_get_file_info_error (file);
+		error = g_error_copy (slot->mount_error);
+	} else if (nautilus_file_get_file_info_error (file) != NULL) {
+		error = g_error_copy (nautilus_file_get_file_info_error (file));
 	}
 
 	if (error && error->domain == G_IO_ERROR && error->code == G_IO_ERROR_NOT_MOUNTED &&
@@ -790,9 +792,7 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 		g_object_unref (location);
 		g_object_unref (mount_op);
 
-		nautilus_file_unref (file);
-
-		return;
+		goto done;
 	}
 
 	parent_file = nautilus_file_get_parent (file);
@@ -816,9 +816,7 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 					       got_file_info_for_view_selection_callback,
 					       slot);		
 
-		nautilus_file_unref (file);
-
-		return;
+		goto done;
 	}
 
 	nautilus_file_unref (parent_file);
@@ -862,11 +860,18 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 	}
 
 	if (view_id != NULL) {
-		create_content_view (slot, view_id);
+		GError *err = NULL;
+
+		create_content_view (slot, view_id, &err);
 		g_free (view_id);
 
-		report_callback (slot, NULL);
+		report_callback (slot, err);
+		g_clear_error (&err);
 	} else {
+		if (error == NULL) {
+			error = g_error_new (G_IO_ERROR, G_IO_ERROR_NOT_FOUND,
+					     _("Unable to load location"));
+		}
 		if (!report_callback (slot, error)) {
 			display_view_selection_failure (window, file,
 							location, error);
@@ -932,7 +937,10 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 			}
 		}
 	}
-	
+
+ done:
+	g_clear_error (&error);
+
 	nautilus_file_unref (file);
 }
 
@@ -943,13 +951,16 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
  * pending_location/selection will be used. If not, we're just switching
  * view, and the current location will be used.
  */
-static void
+static gboolean
 create_content_view (NautilusWindowSlot *slot,
-		     const char *view_id)
+		     const char *view_id,
+		     GError **error_out)
 {
 	NautilusWindow *window;
         NautilusView *view;
 	GList *selection;
+	gboolean ret = TRUE;
+	GError *error = NULL;
 
 	window = nautilus_window_slot_get_window (slot);
 
@@ -1000,11 +1011,18 @@ create_content_view (NautilusWindowSlot *slot,
 				   TRUE);
 		g_list_free_full (selection, g_object_unref);
 	} else {
-		/* Something is busted, there was no location to load.
-		   Just load the homedir. */
-		nautilus_window_slot_go_home (slot, FALSE);
-		
+		/* Something is busted, there was no location to load. */
+		ret = FALSE;
+		error = g_error_new (G_IO_ERROR,
+				     G_IO_ERROR_NOT_FOUND,
+				     _("Unable to load location"));
 	}
+
+	if (error != NULL) {
+		g_propagate_error (error_out, error);
+	}
+
+	return ret;
 }
 
 static void
@@ -1720,7 +1738,10 @@ nautilus_window_slot_set_content_view (NautilusWindowSlot *slot,
         }
 	slot->location_change_type = NAUTILUS_LOCATION_CHANGE_RELOAD;
 	
-        create_content_view (slot, id);
+        if (!create_content_view (slot, id, NULL)) {
+		/* Just load the homedir. */
+		nautilus_window_slot_go_home (slot, FALSE);
+	}
 }
 
 void

@@ -96,14 +96,16 @@ sync_search_directory (NautilusWindowSlot *slot)
 	nautilus_directory_unref (directory);
 }
 
-static void
+static gboolean
 sync_search_location_cb (NautilusWindow *window,
 			 GError *error,
 			 gpointer user_data)
 {
 	NautilusWindowSlot *slot = user_data;
-
-	sync_search_directory (slot);
+	if (error == NULL) {
+		sync_search_directory (slot);
+	}
+	return (error == NULL);
 }
 
 static void

@@ -36,9 +36,9 @@ typedef struct NautilusWindow NautilusWindow;
 typedef struct NautilusWindowSlot NautilusWindowSlot;
 typedef struct NautilusWindowSlotClass NautilusWindowSlotClass;
 
-typedef void (* NautilusWindowGoToCallback) (NautilusWindow *window,
-                                             GError *error,
-                                             gpointer user_data);
+typedef gboolean (* NautilusWindowGoToCallback) (NautilusWindow *window,
+                                                 GError *error,
+                                                 gpointer user_data);
 
 typedef enum {
         NAUTILUS_WINDOW_OPEN_FLAG_CLOSE_BEHIND = 1<<0,
