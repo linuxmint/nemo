@@ -49,7 +49,7 @@ nautilus_global_preferences_get_default_folder_viewer_preference_as_iid (void)
 	if (preference_value == NAUTILUS_DEFAULT_FOLDER_VIEWER_LIST_VIEW) {
 		viewer_iid = NAUTILUS_LIST_VIEW_IID;
 	} else {
-		viewer_iid = NAUTILUS_ICON_VIEW_IID;
+		viewer_iid = NAUTILUS_CANVAS_VIEW_IID;
 	}
 
 	return g_strdup (viewer_iid);
