@@ -12,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug."
 "cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-08-01 11:20+0000\n"
-"PO-Revision-Date: 2012-08-06 18:22+0530\n"
+"PO-Revision-Date: 2012-08-07 13:27+0530\n"
 "Last-Translator: \n"
 "Language-Team: gu_IN <kde-i18n-doc@kde.org>\n"
 "Language: \n"
@@ -1116,32 +1116,28 @@ msgid "Duplicating \"%B\""
 msgstr "\"%B\" ની નકલ કરી રહ્યા છીએ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2946
-#, fuzzy
 #| msgid "Moving %'d file (in \"%B\") to \"%B\""
 #| msgid_plural "Moving %'d files (in \"%B\") to \"%B\""
 msgid "Moving file %'d of %'d (in \"%B\") to \"%B\""
-msgstr "%'d ફાઈલને (\"%B\" માંથી) \"%B\" માં ખસેડી રહ્યા છીએ"
+msgstr "%'d ની %'d ફાઈલને \"%B\" (\"%B\" માં) માં ખસેડી રહ્યા છીએ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2948
-#, fuzzy
 #| msgid "Copying %'d file (in \"%B\") to \"%B\""
 #| msgid_plural "Copying %'d files (in \"%B\") to \"%B\""
 msgid "Copying file %'d of %'d (in \"%B\") to \"%B\""
-msgstr "%'d ફાઈલની (\"%B\" માંથી) \"%B\" માં નકલ કરી રહ્યા છીએ"
+msgstr "%'d ની %'d ફાઈલને (\"%B\" માં) \"%B\" માં નકલ કરી રહ્યા છીએ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2955
-#, fuzzy
 #| msgid "Duplicating %'d file (in \"%B\")"
 #| msgid_plural "Duplicating %'d files (in \"%B\")"
 msgid "Duplicating file %'d of %'d (in \"%B\")"
-msgstr "%'d ફાઇલની (\"%B\" માં) નકલ કરી રહ્યા છે"
+msgstr "%'d ની ફાઇલ %'d ની નકલ કરી રહ્યા છે (\"%B\" માં)"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2964
-#, fuzzy
 #| msgid "Moving %'d file to \"%B\""
 #| msgid_plural "Moving %'d files to \"%B\""
 msgid "Moving file %'d of %'d to \"%B\""
-msgstr "%'d ફાઈલને \"%B\" માં ખસેડી રહ્યા છીએ"
+msgstr "%'d નું %'d ફાઈલને \"%B\" માં ખસેડી રહ્યા છીએ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2966
 #| msgid "Copying %'d file to \"%B\""
@@ -1395,29 +1391,29 @@ msgstr[0] "%d વસ્તુને '%s' માં પાછુ ખસેડો"
 msgstr[1] "%d વસ્તુઓને '%s' માં પાછુ ખસેડો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:370
-#, fuzzy, c-format
+#, c-format
 #| msgid "Moving %'d file to \"%B\""
 #| msgid_plural "Moving %'d files to \"%B\""
 msgid "Move %d item to '%s'"
 msgid_plural "Move %d items to '%s'"
 msgstr[0] "%d વસ્તુને '%s' માં ખસેડો"
-msgstr[1] "%'d ફાઈલોને \"%B\" માં ખસેડી રહ્યા છીએ"
+msgstr[1] "%d વસ્તુઓને '%s' માં ખસેડો"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:374
-#, fuzzy, c-format
+#, c-format
 #| msgid "Undo the edit"
 msgid "_Undo Move %d item"
 msgid_plural "_Undo Move %d items"
-msgstr[0] "છેલ્લે કરેલા ફેરફારને રદ કરો"
-msgstr[1] "છેલ્લે કરેલા ફેરફારને રદ કરો"
+msgstr[0] "%d વસ્તુને ખસેડવાનું પાછુ લાવો (_U)"
+msgstr[1] "%d વસ્તુઓને ખસેડવાનું પાછુ લાવો (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:377
-#, fuzzy, c-format
+#, c-format
 #| msgid "Redo the edit"
 msgid "_Redo Move %d item"
 msgid_plural "_Redo Move %d items"
-msgstr[0] ""
-msgstr[1] "છેલ્લે કરેલા ફેરફારને ફરીથી કરો"
+msgstr[0] "%d વસ્તુને ખસેડવાનું ફરી શરૂ કરો (_R)"
+msgstr[1] "%d વસ્તુઓને ખસેડવાનું ફરી શરૂ કરો (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:381
 #, c-format
@@ -2169,7 +2165,6 @@ msgid "Default folder viewer"
 msgstr "મૂળભૂત ફોલ્ડર દર્શક"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:40
-#, fuzzy
 #| msgid ""
 #| "When a folder is visited this viewer is used unless you have selected "
 #| "another view for that particular folder. Possible values are \"list-view"
@@ -2180,8 +2175,7 @@ msgid ""
 "and \"icon-view\"."
 msgstr ""
 "જ્યારે ફોલ્ડર એ આ દર્શકની મુલાકાત લેવાયેલ હોય એ વપરાય જ્યાં સુધી તમે તે વ્યક્તિગત ફોલ્ડર "
-"માટે અન્ય દેખાવ પસંદ કરેલ હોય. શક્ય કિંમતો \"list-view\", \"icon-view\" અને "
-"\"compact-view\" છે."
+"માટે અન્ય દેખાવ પસંદ કરેલ હોય. શક્ય કિંમતો \"list-view\", અને \"icon-view\" છે."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:41
 msgid "Whether to show hidden files"
@@ -2219,7 +2213,6 @@ msgid "List of possible captions on icons"
 msgstr "ચિહ્નો પરના શક્ય નામોની યાદી"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:46
-#, fuzzy
 #| msgid ""
 #| "A list of captions below an icon in the icon view and the desktop. The "
 #| "actual number of captions shown depends on the zoom level. Some possible "
@@ -2233,9 +2226,9 @@ msgid ""
 "\"permissions\", \"octal_permissions\" and \"mime_type\"."
 msgstr ""
 "ચિહ્નના દૃશ્ય અને ડૅસ્કટોપમાં ચિહ્નની નીચેની નામોની યાદી. દેખાતા નામોની સંખ્યા તેના નાનું "
-"મોટુ કરવાના સ્તર પર આધારિત છે. શક્ય કિંમતો આ છે: \"size\", \"type\", "
-"\"date_modified\", \"date_changed\", \"date_accessed\", \"owner\", \"group"
-"\", \"permissions\", \"octal_permissions\" અને \"mime_type\"."
+"મોટુ કરવાના સ્તર પર આધારિત છે. શક્ય કિંમતો આ છે: \"size\", \"type\", \"date_modified\", "
+"\"owner\", \"group\", "
+"\"permissions\", \"octal_permissions\" અને \"mime_type\"."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:47
 msgid "Default icon zoom level"
@@ -4388,7 +4381,6 @@ msgid "Select Folder to Save Search In"
 msgstr "શોધ સંગ્રહવા માટે ફોલ્ડર પસંદ કરો"
 
 #: ../src/nautilus-view.c:2278
-#, fuzzy
 #| msgid ""
 #| "Nautilus 3.0 deprecated this directory and tried migrating this "
 #| "configuration to ~/.config/nautilus"
@@ -4396,7 +4388,7 @@ msgid ""
 "Nautilus 3.6 deprecated this directory and tried migrating this "
 "configuration to ~/.local/share/nautilus"
 msgstr ""
-"Nautilus 3.0 એ આ ડિરેક્ટરીને અપ્રચલિત થયેલ છે અને ~/.config/nautilus માં આ રૂપરેખાંકનને "
+"Nautilus 3.6  એ આ ડિરેક્ટરીને અપ્રચલિત થયેલ છે અને ~/.local/share/nautilus માં આ રૂપરેખાંકનને "
 "સ્થળાંતર કરવાનો પ્રયત્ન કરેલ છે"
 
 #: ../src/nautilus-view.c:2702
@@ -4542,7 +4534,6 @@ msgid ""
 msgstr "મેનુમાંથી કોઇપણ લિપિ પસંદ કરતા તે લિપિને કોઈપણ પસંદ કરેલ ઇનપુટ વસ્તુ સાથે ચલાવી શકાય છે."
 
 #: ../src/nautilus-view.c:5711
-#, fuzzy
 #| msgid ""
 #| "All executable files in this folder will appear in the Scripts menu. "
 #| "Choosing a script from the menu will run that script.\n"
@@ -4596,28 +4587,22 @@ msgstr ""
 "આ ફોલ્ડરમાં રહેલી બધીજ ચલાવી શકાય તેવી ફાઈલ સ્ક્રિપ્ટ મેનુમાં દેખાશે. મેનુ માંથી સ્ક્રિપ્ટ પસંદ "
 "કરતા તે સ્ક્રિપ્ટ ચાલે છે\n"
 "\n"
-"જ્યારે સ્થાનિક ફોલ્ડરરમાંથી સ્ક્રિપ્ટ ને ચલાવવામાં આવે ત્યારે, સ્ક્રિપ્ટ પસંદિત ફાઈલને પરિમાણ "
-"તરીકે મોકલશે. જ્યારે દૂરના ફોલ્ડરમાંથી ચલાવવામાં આવે ત્યારે (દા.ત. ફોલ્ડર કે જે વેબ અથવા "
+"જ્યારે સ્થાનિક ફોલ્ડરરમાંથી સ્ક્રિપ્ટ ને ચલાવવામાં આવે ત્યારે, સ્ક્રિપ્ટ પસંદિત ફાઈલ નામ"
+"તરીકે મોકલશે. જ્યારે દૂરસ્થ ફોલ્ડરમાંથી ચલાવવામાં આવે ત્યારે (દા.ત. ફોલ્ડર કે જે વેબ અથવા "
 "ftp માં સમાવિષ્ટ ભાગો દર્શાવે છે) કોઇ સ્ક્રિપ્ટ પરિમાણ તરીકે કંઇ મોકલશે નહિ.\n"
-" આ બધાજ પ્રકારમાં નીચેના ક્ષેત્રીય ચલ Nautilus દ્વારા સુયોજિત થાય છે જેનો કદાચ સ્ક્રિપ્ટ "
+"\n"
+"બધી સ્થિતિઓમાં, નીચેના પર્યાવરણ ચલો Nautilus દ્વારા સુયોજિત થાય છે જેનો કદાચ સ્ક્રિપ્ટ "
 "ઉપયોગ કરે \n"
 "\n"
 "NAUTILUS_SCRIPT_SELECTED_FILE_PATHS:(જો સ્થાનીય હોય તો) નવી લીટી પસંદ કરેલ ફાઇલ "
 "માટેનો પથ બંધ કરે છે.\n"
 "\n"
-"NAUTILUS_SCRIPT_SILECTED_URIS:પસંદ કરેલ ફાઈલ માટે નવી લીટી URL બંધ કરે છે \n"
+"NAUTILUS_SCRIPT_SILECTED_URIS:પસંદ કરેલ ફાઈલ માટે નવી લીટી URIs બંધ કરે છે \n"
 "\n"
-"NAUTILUS_SCRIPT_CURRENT_URI: વર્તમાન સ્થાન માટેનો URL\n"
+"NAUTILUS_SCRIPT_CURRENT_URI: વર્તમાન સ્થાન માટેની URI\n"
 "\n"
-"NAUTILUS_SCRIPT_WINDOW_GEOMETRY:ચાલુ વિન્ડોની જગ્યા અને સ્થાન \n"
-"NAUTILUS_SCRIPT_NEXT_PANE_SELECTED_FILE_PATHS: સ્પ્લિટ-દેખાવ વિન્ડોની નિષ્ક્રિય "
-"પટ્ટીમાં પસંદ થયેલ ફાઇલો માટે નવીલીટી-મર્યાદિત થયેલ પાથો (ફક્ત જો સ્થાનિય હોય તો)\n"
+"NAUTILUS_SCRIPT_WINDOW_GEOMETRY:વર્તમાન વિન્ડોની જગ્યા અને સ્થાન\n"
 "\n"
-"NAUTILUS_SCRIPT_NEXT_PANE_SELECTED_URIS: સ્પ્લિટ-દેખાવ વિન્ડોની નિષ્ક્રિય પટ્ટીમાં "
-"પસંદ થયેલ ફાઇલો માટે નવીલીટી-મર્યાદિત URIs\n"
-"\n"
-"NAUTILUS_SCRIPT_NEXT_PANE_CURRENT_URI: સ્પ્લિટ-દેખાવ વિન્ડોની નિષ્ક્રિય પટ્ટીમાં "
-"હાલનાં સ્થાન માટે URI"
 
 #: ../src/nautilus-view.c:6073
 #| msgid "_Select Application"
