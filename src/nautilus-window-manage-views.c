@@ -1677,7 +1677,7 @@ display_view_selection_failure (NautilusWindow *window, NautilusFile *file,
 		detail_message = g_strdup_printf (_("Error: %s\nPlease select another viewer and try again."), error->message);
 	}
 	
-	eel_show_error_dialog (error_message, detail_message, NULL);
+	eel_show_error_dialog (error_message, detail_message, GTK_WINDOW (window));
 
 	g_free (uri_for_display);
 	g_free (error_message);
