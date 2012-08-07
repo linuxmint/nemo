@@ -142,6 +142,8 @@ libnautilus_private_la_SOURCES = \
 	nautilus-module.h \
 	nautilus-monitor.c \
 	nautilus-monitor.h \
+	nautilus-profile.c \
+	nautilus-profile.h \
 	nautilus-progress-info.c \
 	nautilus-progress-info.h \
 	nautilus-progress-info-manager.c \
