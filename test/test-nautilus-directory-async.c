@@ -6,16 +6,6 @@
 
 void *client1, *client2;
 
-#if 0
-static gboolean
-quit_cb (gpointer data)
-{
-	gtk_main_quit ();
-
-	return FALSE;
-}
-#endif
-
 static void
 files_added (NautilusDirectory *directory,
 	     GList *added_files)
@@ -51,51 +41,47 @@ files_changed (NautilusDirectory *directory,
 		 g_list_length (changed_files));
 }
 
-static gboolean
-force_reload (NautilusDirectory *directory)
-{
-	g_print ("forcing reload!\n");
-
-	nautilus_directory_force_reload (directory);
-
-	return FALSE;
-}
-
 static void
 done_loading (NautilusDirectory *directory)
 {
-	static int i = 0;
-
 	g_print ("done loading\n");
-
-	if (i == 0) {
-		g_timeout_add (5000, (GSourceFunc)force_reload, directory);
-		i++;
-	} else {
-	}
+	gtk_main_quit ();
 }
 
 int
 main (int argc, char **argv)
 {
 	NautilusDirectory *directory;
-	NautilusQuery *query;
+	NautilusFileAttributes attributes;
+	const char *uri;
+
 	client1 = g_new0 (int, 1);
 	client2 = g_new0 (int, 1);
 
 	gtk_init (&argc, &argv);
 
-	query = nautilus_query_new ();
-	nautilus_query_set_text (query, "richard hult");
-	directory = nautilus_directory_get_by_uri ("x-nautilus-search://0/");
-	nautilus_search_directory_set_query (NAUTILUS_SEARCH_DIRECTORY (directory), query);
-	g_object_unref (query);
+	if (argv[1] == NULL) {
+		uri = "file:///tmp";
+	} else {
+		uri = argv[1];
+	}
+	g_print ("loading %s", uri);
+	directory = nautilus_directory_get_by_uri (uri);
 
 	g_signal_connect (directory, "files-added", G_CALLBACK (files_added), NULL);
 	g_signal_connect (directory, "files-changed", G_CALLBACK (files_changed), NULL);
 	g_signal_connect (directory, "done-loading", G_CALLBACK (done_loading), NULL);
+
+	attributes =
+		NAUTILUS_FILE_ATTRIBUTES_FOR_ICON |
+		NAUTILUS_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT |
+		NAUTILUS_FILE_ATTRIBUTE_INFO |
+		NAUTILUS_FILE_ATTRIBUTE_LINK_INFO |
+		NAUTILUS_FILE_ATTRIBUTE_MOUNT |
+		NAUTILUS_FILE_ATTRIBUTE_EXTENSION_INFO;
+
 	nautilus_directory_file_monitor_add (directory, client1, TRUE,
-					     NAUTILUS_FILE_ATTRIBUTE_INFO,
+                                             attributes,
 					     NULL, NULL);
 
 
