@@ -60,7 +60,7 @@ src/nautilus-file-management-properties.c
 [type: gettext/glade]src/nautilus-file-management-properties.ui
 src/nautilus-canvas-view.c
 src/nautilus-canvas-view-container.c
-src/nautilus-icon-view-ui.xml
+src/nautilus-canvas-view-ui.xml
 src/nautilus-image-properties-page.c
 src/nautilus-list-model.c
 src/nautilus-list-view.c

@@ -565,7 +565,7 @@ nautilus_canvas_view_container_construct (NautilusCanvasViewContainer *canvas_co
 
 	canvas_container->view = view;
 	atk_obj = gtk_widget_get_accessible (GTK_WIDGET (canvas_container));
-	atk_object_set_name (atk_obj, _("Canvas View"));
+	atk_object_set_name (atk_obj, _("Icon View"));
 
 	return NAUTILUS_CANVAS_CONTAINER (canvas_container);
 }

@@ -57,7 +57,7 @@ UI_FILES = \
 	nautilus-app-menu.ui			\
 	nautilus-bookmarks-window.ui		\
 	nautilus-file-management-properties.ui	\
-	nautilus-icon-view-ui.xml		\
+	nautilus-canvas-view-ui.xml		\
 	nautilus-directory-view-ui.xml		\
 	nautilus-desktop-icon-view-ui.xml	\
 	nautilus-list-view-ui.xml		\

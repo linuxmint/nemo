@@ -46,6 +46,6 @@
     </placeholder>
   </popup>
   <popup name="selection">
-    <placeholder name="Icon Appearance Items"/>
+    <placeholder name="Canvas Appearance Items"/>
   </popup>
 </ui>

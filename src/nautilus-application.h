@@ -31,7 +31,7 @@
 #include "nautilus-bookmark-list.h"
 #include "nautilus-window.h"
 
-#define NAUTILUS_DESKTOP_ICON_VIEW_IID	"OAFIID:Nautilus_File_Manager_Desktop_Icon_View"
+#define NAUTILUS_DESKTOP_ICON_VIEW_IID	"OAFIID:Nautilus_File_Manager_Desktop_Canvas_View"
 
 #define NAUTILUS_TYPE_APPLICATION nautilus_application_get_type()
 #define NAUTILUS_APPLICATION(obj) \
