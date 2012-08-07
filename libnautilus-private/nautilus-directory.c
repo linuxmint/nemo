@@ -33,6 +33,7 @@
 #include "nautilus-global-preferences.h"
 #include "nautilus-lib-self-check-functions.h"
 #include "nautilus-metadata.h"
+#include "nautilus-profile.h"
 #include "nautilus-desktop-directory.h"
 #include "nautilus-vfs-directory.h"
 #include <eel/eel-glib-extensions.h>
@@ -712,22 +713,26 @@ void
 nautilus_directory_emit_files_added (NautilusDirectory *directory,
 				     GList *added_files)
 {
+	nautilus_profile_start (NULL);
 	if (added_files != NULL) {
 		g_signal_emit (directory,
 				 signals[FILES_ADDED], 0,
 				 added_files);
 	}
+	nautilus_profile_end (NULL);
 }
 
 void
 nautilus_directory_emit_files_changed (NautilusDirectory *directory,
 				       GList *changed_files)
 {
+	nautilus_profile_start (NULL);
 	if (changed_files != NULL) {
 		g_signal_emit (directory,
 				 signals[FILES_CHANGED], 0,
 				 changed_files);
 	}
+	nautilus_profile_end (NULL);
 }
 
 void
@@ -736,10 +741,12 @@ nautilus_directory_emit_change_signals (NautilusDirectory *directory,
 {
 	GList *p;
 
+	nautilus_profile_start (NULL);
 	for (p = changed_files; p != NULL; p = p->next) {
 		nautilus_file_emit_changed (p->data);
 	}
 	nautilus_directory_emit_files_changed (directory, changed_files);
+	nautilus_profile_end (NULL);
 }
 
 void
@@ -903,6 +910,8 @@ nautilus_directory_notify_files_added (GList *files)
 	NautilusFile *file;
 	GFile *location, *parent;
 
+	nautilus_profile_start (NULL);
+
 	/* Make a list of added files in each directory. */
 	added_lists = g_hash_table_new (NULL, NULL);
 
@@ -972,6 +981,8 @@ nautilus_directory_notify_files_added (GList *files)
 	/* Invalidate count for each parent directory. */
 	g_hash_table_foreach (parent_directories, invalidate_count_and_unref, NULL);
 	g_hash_table_destroy (parent_directories);
+
+	nautilus_profile_end (NULL);
 }
 
 static void

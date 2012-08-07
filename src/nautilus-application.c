@@ -59,6 +59,7 @@
 #include <libnautilus-private/nautilus-global-preferences.h>
 #include <libnautilus-private/nautilus-lib-self-check-functions.h>
 #include <libnautilus-private/nautilus-module.h>
+#include <libnautilus-private/nautilus-profile.h>
 #include <libnautilus-private/nautilus-signaller.h>
 #include <libnautilus-private/nautilus-ui-utilities.h>
 #include <libnautilus-extension/nautilus-menu-provider.h>
@@ -202,6 +203,8 @@ check_required_directories (NautilusApplication *application)
 
 	g_assert (NAUTILUS_IS_APPLICATION (application));
 
+	nautilus_profile_start (NULL);
+
 	ret = TRUE;
 
 	user_directory = nautilus_get_user_directory ();
@@ -258,6 +261,7 @@ check_required_directories (NautilusApplication *application)
 	g_slist_free (directories);
 	g_free (user_directory);
 	g_free (desktop_directory);
+	nautilus_profile_end (NULL);
 
 	return ret;
 }
@@ -546,6 +550,7 @@ nautilus_application_create_window (NautilusApplication *application,
 	gboolean maximized;
 
 	g_return_val_if_fail (NAUTILUS_IS_APPLICATION (application), NULL);
+	nautilus_profile_start (NULL);
 
 	window = nautilus_window_new (GTK_APPLICATION (application), screen);
 
@@ -575,7 +580,8 @@ nautilus_application_create_window (NautilusApplication *application,
 	g_free (geometry_string);
 
 	DEBUG ("Creating a new navigation window");
-	
+	nautilus_profile_end (NULL);
+
 	return window;
 }
 
@@ -695,7 +701,7 @@ open_window (NautilusApplication *application,
 
 	uri = g_file_get_uri (location);
 	DEBUG ("Opening new window at uri %s", uri);
-
+	nautilus_profile_start (NULL);
 	window = nautilus_application_create_window (application,
 						     screen);
 	nautilus_window_go_to (window, location);
@@ -711,6 +717,8 @@ open_window (NautilusApplication *application,
 								 APPLICATION_WINDOW_MIN_HEIGHT,
 								 FALSE);
 	}
+
+	nautilus_profile_end (NULL);
 
 	g_free (uri);
 }
@@ -744,6 +752,8 @@ nautilus_application_open_location (NautilusApplication *application,
 	NautilusWindow *window;
 	GList *sel_list = NULL;
 
+	nautilus_profile_start (NULL);
+
 	window = nautilus_application_create_window (application, gdk_screen_get_default ());
 	gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
 
@@ -757,6 +767,8 @@ nautilus_application_open_location (NautilusApplication *application,
 	if (sel_list != NULL) {
 		nautilus_file_list_free (sel_list);
 	}
+
+	nautilus_profile_end (NULL);
 }
 
 static void
@@ -1009,6 +1021,7 @@ static void
 do_perform_self_checks (gint *exit_status)
 {
 #ifndef NAUTILUS_OMIT_SELF_CHECK
+	nautilus_profile_start (NULL);
 	/* Run the checks (each twice) for nautilus and libnautilus-private. */
 
 	nautilus_run_self_checks ();
@@ -1018,6 +1031,7 @@ do_perform_self_checks (gint *exit_status)
 	nautilus_run_self_checks ();
 	nautilus_run_lib_self_checks ();
 	eel_exit_if_self_checks_failed ();
+	nautilus_profile_end (NULL);
 #endif
 
 	*exit_status = EXIT_SUCCESS;
@@ -1064,6 +1078,8 @@ nautilus_application_local_command_line (GApplication *application,
 	gchar **argv = NULL;
 
 	*exit_status = EXIT_SUCCESS;
+
+	nautilus_profile_start (NULL);
 
 	context = g_option_context_new (_("\n\nBrowse the file system with the file manager"));
 	g_option_context_add_main_entries (context, options, NULL);
@@ -1162,6 +1178,7 @@ nautilus_application_local_command_line (GApplication *application,
 
  out:
 	g_option_context_free (context);
+	nautilus_profile_end (NULL);
 
 	return TRUE;	
 }
@@ -1346,6 +1363,8 @@ nautilus_application_startup (GApplication *app)
 {
 	NautilusApplication *self = NAUTILUS_APPLICATION (app);
 
+	nautilus_profile_start (NULL);
+
 	/* chain up to the GTK+ implementation early, so gtk_init()
 	 * is called for us.
 	 */
@@ -1362,12 +1381,14 @@ nautilus_application_startup (GApplication *app)
 	nautilus_global_preferences_init ();
 
 	/* register views */
+	nautilus_profile_start ("Register views");
 	nautilus_canvas_view_register ();
 	nautilus_desktop_canvas_view_register ();
 	nautilus_list_view_register ();
 #if ENABLE_EMPTY_VIEW
 	nautilus_empty_view_register ();
 #endif
+	nautilus_profile_end ("Register views");
 
 	/* register property pages */
 	nautilus_image_properties_page_register ();
@@ -1377,7 +1398,9 @@ nautilus_application_startup (GApplication *app)
 	init_gtk_accels ();
 	
 	/* initialize nautilus modules */
+	nautilus_profile_start ("Modules");
 	nautilus_module_setup ();
+	nautilus_profile_end ("Modules");
 
 	/* attach menu-provider module callback */
 	menu_provider_init_callback ();
@@ -1405,6 +1428,8 @@ nautilus_application_startup (GApplication *app)
 	do_upgrades_once (self);
 
 	nautilus_application_init_actions (self);
+
+	nautilus_profile_end (NULL);
 }
 
 static void

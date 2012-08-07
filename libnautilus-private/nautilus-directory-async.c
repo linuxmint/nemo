@@ -32,6 +32,7 @@
 #include "nautilus-signaller.h"
 #include "nautilus-global-preferences.h"
 #include "nautilus-link.h"
+#include "nautilus-profile.h"
 #include <eel/eel-glib-extensions.h>
 #include <gtk/gtk.h>
 #include <libxml/parser.h>
@@ -743,8 +744,18 @@ nautilus_directory_monitor_add_internal (NautilusDirectory *directory,
 {
 	Monitor *monitor;
 	GList *file_list;
-		
+	char *file_uri = NULL;
+	char *dir_uri = NULL;
+
 	g_assert (NAUTILUS_IS_DIRECTORY (directory));
+
+	if (file != NULL)
+		file_uri = nautilus_file_get_uri (file);
+	if (directory != NULL)
+		dir_uri = nautilus_directory_get_uri (directory);
+	nautilus_profile_start ("uri %s file-uri %s client %p", dir_uri, file_uri, client);
+	g_free (dir_uri);
+	g_free (file_uri);
 
 	/* Replace any current monitor for this client/file pair. */
 	remove_monitor (directory, file, client);
@@ -797,6 +808,7 @@ nautilus_directory_monitor_add_internal (NautilusDirectory *directory,
 
 	/* Kick off I/O. */
 	nautilus_directory_async_state_changed (directory);
+	nautilus_profile_end (NULL);
 }
 
 static void
@@ -873,6 +885,8 @@ dequeue_pending_idle_callback (gpointer callback_data)
 	directory = NAUTILUS_DIRECTORY (callback_data);
 
 	nautilus_directory_ref (directory);
+
+	nautilus_profile_start ("nitems %d", g_list_length (directory->details->pending_file_info));
 
 	directory->details->dequeue_pending_idle_id = 0;
 
@@ -1000,6 +1014,8 @@ dequeue_pending_idle_callback (gpointer callback_data)
 	/* Get the state machine running again. */
 	nautilus_directory_async_state_changed (directory);
 
+	nautilus_profile_end (NULL);
+
 	nautilus_directory_unref (directory);
 	return FALSE;
 }
@@ -1091,6 +1107,8 @@ directory_load_done (NautilusDirectory *directory,
 {
 	GList *node;
 
+	nautilus_profile_start (NULL);
+
 	directory->details->directory_loaded = TRUE;
 	directory->details->directory_loaded_sent_notification = FALSE;
 
@@ -1116,6 +1134,8 @@ directory_load_done (NautilusDirectory *directory,
 	dequeue_pending_idle_callback (directory);
 
 	directory_load_cancel (directory);
+
+	nautilus_profile_end (NULL);
 }
 
 void
@@ -2298,6 +2318,8 @@ void
 nautilus_directory_force_reload_internal (NautilusDirectory     *directory,
 					  NautilusFileAttributes file_attributes)
 {
+	nautilus_profile_start (NULL);
+
 	/* invalidate attributes that are getting reloaded for all files */
 	nautilus_directory_invalidate_file_attributes (directory, file_attributes);
 
@@ -2310,6 +2332,8 @@ nautilus_directory_force_reload_internal (NautilusDirectory     *directory,
 
 	add_all_files_to_work_queue (directory);
 	nautilus_directory_async_state_changed (directory);
+
+	nautilus_profile_end (NULL);
 }
 
 static gboolean

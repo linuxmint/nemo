@@ -76,6 +76,7 @@
 #include <libnautilus-private/nautilus-metadata.h>
 #include <libnautilus-private/nautilus-recent.h>
 #include <libnautilus-private/nautilus-module.h>
+#include <libnautilus-private/nautilus-profile.h>
 #include <libnautilus-private/nautilus-program-choosing.h>
 #include <libnautilus-private/nautilus-trash-monitor.h>
 #include <libnautilus-private/nautilus-ui-utilities.h>
@@ -2636,6 +2637,8 @@ nautilus_view_init (NautilusView *view)
 	NautilusDirectory *templates_directory;
 	char *templates_uri;
 
+	nautilus_profile_start (NULL);
+
 	view->details = G_TYPE_INSTANCE_GET_PRIVATE (view, NAUTILUS_TYPE_VIEW,
 						     NautilusViewDetails);
 
@@ -2715,6 +2718,8 @@ nautilus_view_init (NautilusView *view)
 	atk_object = gtk_widget_get_accessible (GTK_WIDGET (view));
 	atk_object_set_name (atk_object, _("Content View"));
 	atk_object_set_description (atk_object, _("View of the current folder"));
+
+	nautilus_profile_end (NULL);
 }
 
 static void
@@ -3104,10 +3109,11 @@ nautilus_view_load_location (NautilusView *nautilus_view,
 	NautilusView *directory_view;
 
 	directory_view = NAUTILUS_VIEW (nautilus_view);
-
+	nautilus_profile_start (NULL);
 	directory = nautilus_directory_get (location);
 	load_directory (directory_view, directory);
 	nautilus_directory_unref (directory);
+	nautilus_profile_end (NULL);
 }
 
 static gboolean
@@ -3133,6 +3139,8 @@ done_loading (NautilusView *view,
 	if (!view->details->loading) {
 		return;
 	}
+
+	nautilus_profile_start (NULL);
 
 	/* This can be called during destruction, in which case there
 	 * is no NautilusWindow any more.
@@ -3186,6 +3194,7 @@ done_loading (NautilusView *view,
 	g_signal_emit (view, signals[END_LOADING], 0, all_files_seen);
 
 	view->details->loading = FALSE;
+	nautilus_profile_end (NULL);
 }
 
 
@@ -3214,6 +3223,8 @@ debuting_files_add_file_callback (NautilusView *view,
 {
 	GFile *location;
 
+	nautilus_profile_start (NULL);
+
 	location = nautilus_file_get_location (new_file);
 
 	if (g_hash_table_remove (data->debuting_files, location)) {
@@ -3228,7 +3239,9 @@ debuting_files_add_file_callback (NautilusView *view,
 							      data);
 		}
 	}
-	
+
+	nautilus_profile_end (NULL);
+
 	g_object_unref (location);
 }
 
@@ -3861,6 +3874,8 @@ files_added_callback (NautilusDirectory *directory,
 
 	view = NAUTILUS_VIEW (callback_data);
 
+	nautilus_profile_start (NULL);
+
 	window = nautilus_view_get_containing_window (view);
 	uri = nautilus_view_get_uri (view);
 	DEBUG_FILES (files, "Files added in window %p: %s",
@@ -3873,6 +3888,8 @@ files_added_callback (NautilusDirectory *directory,
 
 	/* The number of items could have changed */
 	schedule_update_status (view);
+
+	nautilus_profile_end (NULL);
 }
 
 static void
@@ -3912,7 +3929,8 @@ done_loading_callback (NautilusDirectory *directory,
 	NautilusView *view;
 
 	view = NAUTILUS_VIEW (callback_data);
-	
+
+	nautilus_profile_start (NULL);
 	process_new_files (view);
 	if (g_hash_table_size (view->details->non_ready_files) == 0) {
 		/* Unschedule a pending update and schedule a new one with the minimal
@@ -3922,6 +3940,7 @@ done_loading_callback (NautilusDirectory *directory,
 		unschedule_display_of_pending_files (view);
 		schedule_timeout_display_of_pending_files (view, UPDATE_INTERVAL_MIN);
 	}
+	nautilus_profile_end (NULL);
 }
 
 static void
@@ -9278,6 +9297,8 @@ load_directory (NautilusView *view,
 	g_assert (NAUTILUS_IS_VIEW (view));
 	g_assert (NAUTILUS_IS_DIRECTORY (directory));
 
+	nautilus_profile_start (NULL);
+
 	nautilus_view_stop_loading (view);
 	g_signal_emit (view, signals[CLEAR], 0);
 
@@ -9341,6 +9362,8 @@ load_directory (NautilusView *view,
 	view->details->file_changed_handler_id = g_signal_connect
 		(view->details->directory_as_file, "changed",
 		 G_CALLBACK (file_changed_callback), view);
+
+	nautilus_profile_end (NULL);
 }
 
 static void
@@ -9348,13 +9371,17 @@ finish_loading (NautilusView *view)
 {
 	NautilusFileAttributes attributes;
 
+	nautilus_profile_start (NULL);
+
 	nautilus_window_report_load_underway (view->details->window,
 					      NAUTILUS_VIEW (view));
 
 	/* Tell interested parties that we've begun loading this directory now.
 	 * Subclasses use this to know that the new metadata is now available.
 	 */
+	nautilus_profile_start ("BEGIN_LOADING");
 	g_signal_emit (view, signals[BEGIN_LOADING], 0);
+	nautilus_profile_end ("BEGIN_LOADING");
 
 	/* Assume we have now all information to show window */
 	nautilus_window_view_visible  (view->details->window, NAUTILUS_VIEW (view));
@@ -9403,6 +9430,8 @@ finish_loading (NautilusView *view)
 	view->details->files_changed_handler_id = g_signal_connect
 		(view->details->model, "files_changed",
 		 G_CALLBACK (files_changed_callback), view);
+
+	nautilus_profile_end (NULL);
 }
 
 static void
@@ -9426,9 +9455,12 @@ metadata_for_directory_as_file_ready_callback (NautilusFile *file,
 	g_assert (view->details->directory_as_file == file);
 	g_assert (view->details->metadata_for_directory_as_file_pending);
 
+	nautilus_profile_start (NULL);
+
 	view->details->metadata_for_directory_as_file_pending = FALSE;
 	
 	finish_loading_if_all_metadata_loaded (view);
+	nautilus_profile_end (NULL);
 }
 
 static void
@@ -9444,9 +9476,12 @@ metadata_for_files_in_directory_ready_callback (NautilusDirectory *directory,
 	g_assert (view->details->model == directory);
 	g_assert (view->details->metadata_for_files_in_directory_pending);
 
+	nautilus_profile_start (NULL);
+
 	view->details->metadata_for_files_in_directory_pending = FALSE;
 	
 	finish_loading_if_all_metadata_loaded (view);
+	nautilus_profile_end (NULL);
 }
 
 static void
