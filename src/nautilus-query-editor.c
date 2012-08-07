@@ -42,6 +42,7 @@ typedef enum {
 typedef struct {
 	NautilusQueryEditorRowType type;
 	NautilusQueryEditor *editor;
+	GtkWidget *toolbar;
 	GtkWidget *hbox;
 	GtkWidget *combo;
 
@@ -865,7 +866,7 @@ remove_row_cb (GtkButton *clicked_button, NautilusQueryEditorRow *row)
 
 	editor = row->editor;
 	gtk_container_remove (GTK_CONTAINER (editor->details->vbox),
-			      row->hbox);
+			      row->toolbar);
 	
 	editor->details->rows = g_list_remove (editor->details->rows, row);
 
@@ -912,27 +913,32 @@ nautilus_query_editor_add_row (NautilusQueryEditor *editor,
 			       NautilusQueryEditorRowType type)
 {
 	GtkWidget *hbox, *button, *image, *combo;
+	GtkToolItem *item;
 	NautilusQueryEditorRow *row;
 	int i;
 
 	row = g_new0 (NautilusQueryEditorRow, 1);
 	row->editor = editor;
 	row->type = type;
-	
-	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
-	gtk_style_context_add_class (gtk_widget_get_style_context (hbox),
-				     GTK_STYLE_CLASS_TOOLBAR);
-	row->hbox = hbox;
-	gtk_widget_show (hbox);
-	gtk_box_pack_start (GTK_BOX (editor->details->vbox), hbox, FALSE, FALSE, 0);
 
+	/* create the toolbar and the box container for its contents */
+	row->toolbar = gtk_toolbar_new ();
+	gtk_box_pack_start (GTK_BOX (editor->details->vbox), row->toolbar, TRUE, TRUE, 0);
+
+	item = gtk_tool_item_new ();
+	gtk_tool_item_set_expand (item, TRUE);
+	gtk_toolbar_insert (GTK_TOOLBAR (row->toolbar), item, -1);
+
+	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+	gtk_container_add (GTK_CONTAINER (item), hbox);
+	row->hbox = hbox;
+
+	/* create the criterion selector combobox */
 	combo = gtk_combo_box_text_new ();
 	row->combo = combo;
 	for (i = 0; i < NAUTILUS_QUERY_EDITOR_ROW_LAST; i++) {
 		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), gettext (row_type[i].name));
 	}
-	gtk_widget_show (combo);
 	gtk_box_pack_start (GTK_BOX (hbox), combo, FALSE, FALSE, 0);
 
 	gtk_combo_box_set_active (GTK_COMBO_BOX (combo), row->type);
@@ -943,23 +949,24 @@ nautilus_query_editor_add_row (NautilusQueryEditor *editor,
 			  G_CALLBACK (row_type_combo_changed_cb), row);
 	
 	create_type_widgets (row);
-	
+
+	/* create the remove row button */
 	button = gtk_button_new ();
 	gtk_style_context_add_class (gtk_widget_get_style_context (button),
 				     GTK_STYLE_CLASS_RAISED);
+	gtk_widget_set_tooltip_text (button,
+				     _("Remove this criterion from the search"));
+	gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 
 	image = gtk_image_new_from_icon_name ("window-close-symbolic",
 					      GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_container_add (GTK_CONTAINER (button), image);
-	gtk_widget_show (image);
-	gtk_widget_show (button);
 
 	g_signal_connect (button, "clicked",
 			  G_CALLBACK (remove_row_cb), row);
-	gtk_widget_set_tooltip_text (button,
-				     _("Remove this criterion from the search"));
-	
-	gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+
+	/* show everything */
+	gtk_widget_show_all (row->toolbar);
 
 	return row;
 }
@@ -999,53 +1006,6 @@ on_current_button_toggled (GtkToggleButton     *button,
 	nautilus_query_editor_changed (editor);
 }
 
-static void
-finish_first_line (NautilusQueryEditor *editor, GtkWidget *hbox, gboolean use_go)
-{
-	GtkWidget *button, *image;
-	GtkWidget *button_box;
-
-	button = gtk_button_new ();
-	gtk_style_context_add_class (gtk_widget_get_style_context (button),
-				     GTK_STYLE_CLASS_RAISED);
-	image = gtk_image_new_from_icon_name ("list-add-symbolic",
-					      GTK_ICON_SIZE_SMALL_TOOLBAR);
-	gtk_container_add (GTK_CONTAINER (button), image);
-	gtk_widget_show (image);
-	gtk_widget_show (button);
-
-	g_signal_connect (button, "clicked",
-			  G_CALLBACK (add_new_row_cb), editor);
-	
-	gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
-
-	gtk_widget_set_tooltip_text (button,
-				     _("Add a new criterion to this search"));
-
-	editor->details->search_current_button = gtk_radio_button_new_with_label (NULL, _("Current"));
-	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (editor->details->search_current_button), FALSE);
-	gtk_widget_show (editor->details->search_current_button);
-	editor->details->search_all_button = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (editor->details->search_current_button),
-											  _("All Files"));
-	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (editor->details->search_all_button), FALSE);
-	gtk_widget_show (editor->details->search_all_button);
-	g_signal_connect (editor->details->search_all_button, "toggled",
-			  G_CALLBACK (on_all_button_toggled), editor);
-	g_signal_connect (editor->details->search_current_button, "toggled",
-			  G_CALLBACK (on_current_button_toggled), editor);
-
-	button_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-	gtk_widget_show (button_box);
-	gtk_box_pack_end (GTK_BOX (hbox), button_box, FALSE, FALSE, 0);
-	gtk_style_context_add_class (gtk_widget_get_style_context (button_box),
-				     GTK_STYLE_CLASS_LINKED);
-	gtk_style_context_add_class (gtk_widget_get_style_context (button_box),
-				     GTK_STYLE_CLASS_RAISED);
-
-	gtk_box_pack_start (GTK_BOX (button_box), editor->details->search_current_button, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (button_box), editor->details->search_all_button, FALSE, FALSE, 0);
-}
-
 static gboolean
 entry_key_press_event_cb (GtkWidget           *widget,
 			  GdkEventKey         *event,
@@ -1057,46 +1017,27 @@ entry_key_press_event_cb (GtkWidget           *widget,
 	return FALSE;
 }
 
-static gboolean
-entry_box_draw_cb (GtkWidget *widget,
-		   cairo_t *cr)
-{
-	GtkStyleContext *context;
-
-	context = gtk_widget_get_style_context (widget);
-
-	gtk_render_background (context, cr, 0, 0,
-			       gtk_widget_get_allocated_width (widget),
-			       gtk_widget_get_allocated_height (widget));
-
-	gtk_render_frame (context, cr, 0, 0,
-			  gtk_widget_get_allocated_width (widget),
-			  gtk_widget_get_allocated_height (widget));
-
-	return FALSE;
-}
-
 static void
 setup_widgets (NautilusQueryEditor *editor)
 {
-	GtkWidget *bg_hbox;
-	GtkWidget *hbox;
+	GtkToolItem *item;
+	GtkWidget *toolbar, *button_box, *hbox;
+	GtkWidget *button, *image;
 
-	bg_hbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-	gtk_style_context_add_class (gtk_widget_get_style_context (bg_hbox),
-				     GTK_STYLE_CLASS_TOOLBAR);
-	gtk_style_context_add_class (gtk_widget_get_style_context (bg_hbox),
+	/* create the toolbar and the box container for its contents */
+	toolbar = gtk_toolbar_new ();
+	gtk_style_context_add_class (gtk_widget_get_style_context (toolbar),
 				     GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
-	g_signal_connect (bg_hbox, "draw", G_CALLBACK (entry_box_draw_cb), NULL);
+	gtk_box_pack_start (GTK_BOX (editor->details->vbox), toolbar, TRUE, TRUE, 0);
 
-	gtk_widget_show (bg_hbox);
-	gtk_box_pack_start (GTK_BOX (editor->details->vbox), bg_hbox, FALSE, FALSE, 0);
+	item = gtk_tool_item_new ();
+	gtk_tool_item_set_expand (item, TRUE);
+	gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-	gtk_widget_show (hbox);
-	gtk_box_pack_start (GTK_BOX (bg_hbox), hbox, FALSE, FALSE, 0);
-	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
+	gtk_container_add (GTK_CONTAINER (item), hbox);
 
+	/* create the search entry */
 	editor->details->entry = gtk_search_entry_new ();
 	gtk_box_pack_start (GTK_BOX (hbox), editor->details->entry, TRUE, TRUE, 0);
 
@@ -1106,9 +1047,45 @@ setup_widgets (NautilusQueryEditor *editor)
 			  G_CALLBACK (entry_activate_cb), editor);
 	g_signal_connect (editor->details->entry, "changed",
 			  G_CALLBACK (entry_changed_cb), editor);
-	gtk_widget_show (editor->details->entry);
 
-	finish_first_line (editor, hbox, TRUE);
+	/* create the Current/All Files selector */
+	editor->details->search_current_button = gtk_radio_button_new_with_label (NULL, _("Current"));
+	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (editor->details->search_current_button), FALSE);
+	editor->details->search_all_button = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (editor->details->search_current_button),
+											  _("All Files"));
+	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (editor->details->search_all_button), FALSE);
+	g_signal_connect (editor->details->search_all_button, "toggled",
+			  G_CALLBACK (on_all_button_toggled), editor);
+	g_signal_connect (editor->details->search_current_button, "toggled",
+			  G_CALLBACK (on_current_button_toggled), editor);
+
+	button_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), button_box, FALSE, FALSE, 0);
+	gtk_style_context_add_class (gtk_widget_get_style_context (button_box),
+				     GTK_STYLE_CLASS_LINKED);
+	gtk_style_context_add_class (gtk_widget_get_style_context (button_box),
+				     GTK_STYLE_CLASS_RAISED);
+
+	gtk_box_pack_start (GTK_BOX (button_box), editor->details->search_current_button, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (button_box), editor->details->search_all_button, FALSE, FALSE, 0);
+
+	/* finally, create the add new row button */
+	button = gtk_button_new ();
+	gtk_style_context_add_class (gtk_widget_get_style_context (button),
+				     GTK_STYLE_CLASS_RAISED);
+	gtk_widget_set_tooltip_text (button,
+				     _("Add a new criterion to this search"));
+	gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+
+	image = gtk_image_new_from_icon_name ("list-add-symbolic",
+					      GTK_ICON_SIZE_SMALL_TOOLBAR);
+	gtk_container_add (GTK_CONTAINER (button), image);
+
+	g_signal_connect (button, "clicked",
+			  G_CALLBACK (add_new_row_cb), editor);
+
+	/* show everything */
+	gtk_widget_show_all (toolbar);
 }
 
 static void
