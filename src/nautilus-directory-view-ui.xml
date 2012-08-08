@@ -5,6 +5,12 @@
 <accelerator action="PropertiesAccel"/>
 <accelerator action="RenameSelectAll"/>
 <popup name="ViewMenu">
+  <placeholder name="View Details">
+    <menuitem name="Reset to Defaults" action="Reset to Defaults"/>
+    <menuitem name="Show Hidden Files" action="Show Hidden Files"/>
+  </placeholder>
+</popup>
+<popup name="ActionMenu">
   <placeholder name="New Items Placeholder">
     <menuitem name="New Folder" action="New Folder"/>
     <menuitem name="New Folder with Selection" action="New Folder with Selection"/>
@@ -75,12 +81,6 @@
       <menuitem name="Restore From Trash" action="Restore From Trash"/>
     </placeholder>
     <placeholder name="Extension Actions"/>
-  </menu>
-  <menu action="View">
-    <placeholder name="View Preferences Placeholder">
-      <menuitem name="Reset to Defaults" action="Reset to Defaults"/>
-      <menuitem name="Show Hidden Files" action="Show Hidden Files"/>
-    </placeholder>
   </menu>
 </popup>
 <popup name="background">

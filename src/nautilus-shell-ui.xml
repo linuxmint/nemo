@@ -8,6 +8,24 @@
 <accelerator action="ZoomInAccel2"/>
 <accelerator action="ZoomOutAccel"/>
 <popup name="ViewMenu">
+  <placeholder name="Zoom Items Placeholder">
+    <menuitem name="Zoom In" action="Zoom In"/>
+    <menuitem name="Zoom Out" action="Zoom Out"/>
+    <menuitem name="Zoom Normal" action="Zoom Normal"/>
+  </placeholder>
+  <separator/>
+  <menuitem name="Stop" action="Stop"/>
+  <menuitem name="Reload" action="Reload"/>
+  <separator/>
+  <placeholder name="Layout Options"/>
+  <separator/>
+  <menuitem name="Show Hide Sidebar" action="Show Hide Sidebar"/>
+  <separator/>
+  <placeholder name="View Preferences"/>
+  <separator/>
+  <placeholder name="View Details"/>
+</popup>
+<popup name="ActionMenu">
   <placeholder name="New Items Placeholder">
     <menuitem name="New Tab" action="New Tab"/>
     <menuitem name="New Window" action="New Window"/>
@@ -40,22 +58,6 @@
     <placeholder name="Extension Actions"/>
     <separator/>
     <menuitem name="Preferences" action="Preferences"/>
-  </menu>
-  <menu action="View">
-    <menuitem name="Stop" action="Stop"/>
-    <menuitem name="Reload" action="Reload"/>
-    <separator/>
-    <menuitem name="Show Hide Sidebar" action="Show Hide Sidebar"/>
-    <separator/>
-    <placeholder name="View Preferences Placeholder"/>
-    <separator/>
-    <placeholder name="View Items Placeholder"/>
-    <separator/>
-    <placeholder name="Zoom Items Placeholder">
-      <menuitem name="Zoom In" action="Zoom In"/>
-      <menuitem name="Zoom Out" action="Zoom Out"/>
-      <menuitem name="Zoom Normal" action="Zoom Normal"/>
-    </placeholder>
   </menu>
   <menu action="Bookmarks">
     <menuitem name="Add Bookmark" action="Add Bookmark"/>

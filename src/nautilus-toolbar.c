@@ -208,6 +208,10 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
 	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_VIEW_GRID);
 	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
+	tool_button = toolbar_create_toolbutton (self, TRUE, FALSE, "go-down-symbolic");
+	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
+	menu = gtk_ui_manager_get_widget (self->priv->ui_manager, "/ViewMenu");
+	gtk_menu_button_set_menu (GTK_MENU_BUTTON (tool_button), menu);
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (box),
 				     GTK_STYLE_CLASS_RAISED);
@@ -219,10 +223,10 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_widget_show_all (GTK_WIDGET (tool_item));
 	gtk_widget_set_margin_left (GTK_WIDGET (tool_item), 12);
 
-	/* Page Menu */
+	/* Action Menu */
 	tool_item = gtk_tool_item_new ();
 	tool_button = toolbar_create_toolbutton (self, TRUE, FALSE, "emblem-system-symbolic");
-	menu = gtk_ui_manager_get_widget (self->priv->ui_manager, "/ViewMenu");
+	menu = gtk_ui_manager_get_widget (self->priv->ui_manager, "/ActionMenu");
 	gtk_menu_button_set_menu (GTK_MENU_BUTTON (tool_button), menu);
 	gtk_actionable_set_action_name (GTK_ACTIONABLE (tool_button), "win.gear-menu");
 

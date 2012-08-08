@@ -1,29 +1,24 @@
 <ui>
   <popup name="ViewMenu">
-    <menu action="Edit">
-      <placeholder name="Edit Items Placeholder">
-        <menuitem name="Stretch" action="Stretch"/>
-        <menuitem name="Unstretch" action="Unstretch"/>
+    <placeholder name="Layout Options">
+      <menuitem name="Manual Layout" action="Manual Layout"/>
+      <placeholder name="Auto Layout">
+        <menuitem name="Sort by Name" action="Sort by Name"/>
+        <menuitem name="Sort by Size" action="Sort by Size"/>
+        <menuitem name="Sort by Type" action="Sort by Type"/>
+        <menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
+        <menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
       </placeholder>
-    </menu>
-    <menu action="View">
-      <placeholder name="View Items Placeholder">
-        <menu action="Arrange Items">
-          <menuitem name="Manual Layout" action="Manual Layout"/>
-          <placeholder name="Auto Layout">
-            <menuitem name="Sort by Name" action="Sort by Name"/>
-            <menuitem name="Sort by Size" action="Sort by Size"/>
-            <menuitem name="Sort by Type" action="Sort by Type"/>
-            <menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
-            <menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
-          </placeholder>
-          <separator name="Layout separator"/>
-          <menuitem name="Reversed Order" action="Reversed Order"/>
-        </menu>
-        <menuitem name="Clean Up" action="Clean Up"/>
-        <menuitem name="Keep Aligned" action="Keep Aligned"/>
-      </placeholder>
-    </menu>
+      <separator name="Layout separator"/>
+      <menuitem name="Reversed Order" action="Reversed Order"/>
+      <menuitem name="Clean Up" action="Clean Up"/>
+      <menuitem name="Keep Aligned" action="Keep Aligned"/>
+    </placeholder>
+    <separator/>
+    <placeholder name="View Details">
+      <menuitem name="Stretch" action="Stretch"/>
+      <menuitem name="Unstretch" action="Unstretch"/>
+    </placeholder>
   </popup>
   <popup name="background">
     <placeholder name="Before Zoom Items">

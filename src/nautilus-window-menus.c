@@ -58,7 +58,7 @@
 #include <libnautilus-private/nautilus-trash-monitor.h>
 #include <string.h>
 
-#define MENU_PATH_EXTENSION_ACTIONS                     "/ViewMenu/Extension Actions"
+#define MENU_PATH_EXTENSION_ACTIONS                     "/ActionMenu/Extension Actions"
 #define POPUP_PATH_EXTENSION_ACTIONS                     "/background/Before Zoom Items/Extension Actions"
 
 #define NETWORK_URI          "network:"

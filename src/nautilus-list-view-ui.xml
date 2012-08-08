@@ -1,9 +1,7 @@
 <ui>
   <popup name="ViewMenu">
-    <menu action="View">
-      <placeholder name="View Items Placeholder">
-        <menuitem name="Visible Columns" action="Visible Columns"/>
-      </placeholder>
-    </menu>
+    <placeholder name="View Details">
+      <menuitem name="Visible Columns" action="Visible Columns"/>
+    </placeholder>
   </popup>
 </ui>
