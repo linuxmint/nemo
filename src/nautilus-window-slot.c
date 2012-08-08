@@ -258,7 +258,7 @@ real_active (NautilusWindowSlot *slot)
 	nautilus_window_sync_search_widgets (window);
 
 	if (slot->viewed_file != NULL) {
-		nautilus_window_load_view_as_menus (window);
+		nautilus_window_sync_view_as_menus (window);
 		nautilus_window_load_extension_menus (window);
 	}
 }

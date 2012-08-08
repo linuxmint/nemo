@@ -598,6 +598,7 @@ nautilus_window_create_toolbar_action_group (NautilusWindow *window)
 	NautilusNavigationState *navigation_state;
 	GtkActionGroup *action_group;
 	GtkAction *action;
+	GSList *radio_group = NULL;
 
 	action_group = gtk_action_group_new ("ToolbarActions");
 	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
@@ -641,6 +642,30 @@ nautilus_window_create_toolbar_action_group (NautilusWindow *window)
 					NULL));
 	gtk_action_group_add_action (action_group, action);
 	gtk_action_set_icon_name (GTK_ACTION (action), "edit-find-symbolic");
+	g_object_unref (action);
+
+	action = GTK_ACTION
+		(gtk_radio_action_new (NAUTILUS_ACTION_VIEW_LIST,
+				       _("List"),
+				       _("View items as a list"),
+				       NULL, 0));
+	gtk_action_group_add_action (action_group, action);
+	gtk_accel_map_add_entry ("<Nautilus-Window>/View List", GDK_KEY_1, GDK_CONTROL_MASK);
+	gtk_action_set_accel_path (GTK_ACTION (action), "<Nautilus-Window>/View List");
+	gtk_action_set_icon_name (GTK_ACTION (action), "view-list-symbolic");
+	radio_group = gtk_radio_action_get_group (GTK_RADIO_ACTION (action));
+	g_object_unref (action);
+
+	action = GTK_ACTION
+		(gtk_radio_action_new (NAUTILUS_ACTION_VIEW_GRID,
+				       _("Icons"),
+				       _("View items as a grid of icons"),
+				       NULL, 0));
+	gtk_action_group_add_action (action_group, action);
+	gtk_action_set_icon_name (GTK_ACTION (action), "view-grid-symbolic");
+	gtk_accel_map_add_entry ("<Nautilus-Window>/View Grid", GDK_KEY_2, GDK_CONTROL_MASK);
+	gtk_action_set_accel_path (GTK_ACTION (action), "<Nautilus-Window>/View Grid");
+	gtk_radio_action_set_group (GTK_RADIO_ACTION (action), radio_group);
 	g_object_unref (action);
 
 	navigation_state = nautilus_window_get_navigation_state (window);

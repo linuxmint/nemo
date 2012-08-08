@@ -47,14 +47,6 @@ struct NautilusWindowDetails
 
 	NautilusWindowShowHiddenFilesMode show_hidden_files_mode;
 
-	/* View As menu */
-	GList *short_list_viewers;
-
-	/* View As choices */
-	GtkActionGroup *view_as_action_group; /* owned by ui_manager */
-	GtkRadioAction *view_as_radio_action;
-	guint short_list_merge_id;
-
 	/* Ensures that we do not react on signals of a
 	 * view that is re-used as new view when its loading
 	 * is cancelled
@@ -107,7 +99,7 @@ struct NautilusWindowDetails
 typedef void (*NautilusBookmarkFailedCallback) (NautilusWindow *window,
                                                 NautilusBookmark *bookmark);
 
-void               nautilus_window_load_view_as_menus                    (NautilusWindow    *window);
+void               nautilus_window_sync_view_as_menus                    (NautilusWindow    *window);
 void               nautilus_window_load_extension_menus                  (NautilusWindow    *window);
 
 NautilusWindowSlot *nautilus_window_get_slot_for_view                    (NautilusWindow *window,

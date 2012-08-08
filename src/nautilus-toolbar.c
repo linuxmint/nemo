@@ -200,6 +200,25 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_widget_show_all (GTK_WIDGET (tool_item));
 	gtk_widget_set_margin_left (GTK_WIDGET (tool_item), 12);
 
+	/* View buttons */
+	tool_item = gtk_tool_item_new ();
+	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+
+	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_VIEW_LIST);
+	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
+	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_VIEW_GRID);
+	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
+
+	gtk_style_context_add_class (gtk_widget_get_style_context (box),
+				     GTK_STYLE_CLASS_RAISED);
+	gtk_style_context_add_class (gtk_widget_get_style_context (box),
+				     GTK_STYLE_CLASS_LINKED);
+
+	gtk_container_add (GTK_CONTAINER (tool_item), box);
+	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_item));
+	gtk_widget_show_all (GTK_WIDGET (tool_item));
+	gtk_widget_set_margin_left (GTK_WIDGET (tool_item), 12);
+
 	/* Page Menu */
 	tool_item = gtk_tool_item_new ();
 	tool_button = toolbar_create_toolbutton (self, TRUE, FALSE, "emblem-system-symbolic");
@@ -210,7 +229,7 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
 	gtk_container_add (GTK_CONTAINER (toolbar), GTK_WIDGET (tool_item));
 	gtk_widget_show_all (GTK_WIDGET (tool_item));
-	gtk_widget_set_margin_left (GTK_WIDGET (tool_item), 6);
+	gtk_widget_set_margin_left (GTK_WIDGET (tool_item), 12);
 
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY,

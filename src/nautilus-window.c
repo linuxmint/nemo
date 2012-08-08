@@ -42,6 +42,8 @@
 #include "nautilus-view-factory.h"
 #include "nautilus-window-manage-views.h"
 #include "nautilus-window-slot.h"
+#include "nautilus-list-view.h"
+#include "nautilus-canvas-view.h"
 
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
@@ -70,8 +72,6 @@
 #include <sys/time.h>
 
 /* dock items */
-#define NAUTILUS_MENU_PATH_SHORT_LIST_PLACEHOLDER  	"/ViewMenu/View/View Choices/Short List"
-
 #define MAX_TITLE_LENGTH 180
 
 /* Forward and back buttons on the mouse */
@@ -110,15 +110,6 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
-
-typedef struct  {
-	NautilusWindow *window;
-	char *id;
-} ActivateViewData;
-
-static void cancel_view_as_callback         (NautilusWindowSlot      *slot);
-static void action_view_as_callback         (GtkAction               *action,
-					     ActivateViewData        *data);
 
 G_DEFINE_TYPE (NautilusWindow, nautilus_window, GTK_TYPE_APPLICATION_WINDOW);
 
@@ -985,6 +976,33 @@ notebook_popup_menu_cb (GtkWidget *widget,
 	notebook_popup_menu_show (window, NULL);
 	return TRUE;
 }
+static void
+action_view_list_changed_cb (GtkRadioAction *action,
+			     GtkRadioAction *current,
+                             NautilusWindow *window)
+{
+	NautilusWindowSlot *slot;
+
+	if (action != current)
+		return;
+
+	slot = nautilus_window_get_active_slot (window);
+	nautilus_window_slot_set_content_view (slot, NAUTILUS_LIST_VIEW_ID);
+}
+
+static void
+action_view_grid_changed_cb (GtkRadioAction *action,
+			     GtkRadioAction *current,
+                             NautilusWindow *window)
+{
+	NautilusWindowSlot *slot;
+
+	if (action != current)
+		return;
+
+	slot = nautilus_window_get_active_slot (window);
+	nautilus_window_slot_set_content_view (slot, NAUTILUS_CANVAS_VIEW_ID);
+}
 
 static GtkWidget *
 create_toolbar (NautilusWindow *window)
@@ -1005,6 +1023,13 @@ create_toolbar (NautilusWindow *window)
 	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_SEARCH);
 	g_signal_connect (action, "activate",
 			  G_CALLBACK (action_show_hide_search_callback), window);
+	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_VIEW_LIST);
+	g_signal_connect (action, "changed",
+			  G_CALLBACK (action_view_list_changed_cb), window);
+	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_VIEW_GRID);
+	g_signal_connect (action, "changed",
+			  G_CALLBACK (action_view_grid_changed_cb), window);
+
 	nautilus_navigation_state_set_master (window->details->nav_state, window->details->toolbar_action_group );
 
 	toolbar = nautilus_toolbar_new (nautilus_window_get_ui_manager (NAUTILUS_WINDOW (window)), action_group);
@@ -1166,13 +1191,6 @@ nautilus_window_get_property (GObject *object,
 }
 
 static void
-free_stored_viewers (NautilusWindow *window)
-{
-	g_list_free_full (window->details->short_list_viewers, g_free);
-	window->details->short_list_viewers = NULL;
-}
-
-static void
 destroy_slots_foreach (gpointer data,
 		       gpointer user_data)
 {
@@ -1224,8 +1242,6 @@ nautilus_window_finalize (GObject *object)
 
 	g_clear_object (&window->details->nav_state);
 	g_clear_object (&window->details->ui_manager);
-
-	free_stored_viewers (window);
 
 	/* nautilus_window_close() should have run */
 	g_assert (window->details->slots == NULL);
@@ -1475,101 +1491,6 @@ nautilus_window_key_press_event (GtkWidget *widget,
  * Main API
  */
 
-static void
-free_activate_view_data (gpointer data)
-{
-	ActivateViewData *activate_data;
-
-	activate_data = data;
-
-	g_free (activate_data->id);
-
-	g_slice_free (ActivateViewData, activate_data);
-}
-
-static void
-action_view_as_callback (GtkAction *action,
-			 ActivateViewData *data)
-{
-	NautilusWindow *window;
-	NautilusWindowSlot *slot;
-
-	window = data->window;
-
-	if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
-		slot = nautilus_window_get_active_slot (window);
-		nautilus_window_slot_set_content_view (slot,
-						       data->id);
-	}
-}
-
-static GtkRadioAction *
-add_view_as_menu_item (NautilusWindow *window,
-		       const char *placeholder_path,
-		       const char *identifier,
-		       int index, /* extra_viewer is always index 0 */
-		       guint merge_id)
-{
-	const NautilusViewInfo *info;
-	GtkRadioAction *action;
-	char action_name[32];
-	ActivateViewData *data;
-
-	char accel[32];
-	char accel_path[48];
-	unsigned int accel_keyval;
-
-	info = nautilus_view_factory_lookup (identifier);
-	
-	g_snprintf (action_name, sizeof (action_name), "view_as_%d", index);
-	action = gtk_radio_action_new (action_name,
-				       _(info->view_menu_label_with_mnemonic),
-				       _(info->display_location_label),
-				       NULL,
-				       0);
-
-	if (index >= 1 && index <= 9) {
-		g_snprintf (accel, sizeof (accel), "%d", index);
-		g_snprintf (accel_path, sizeof (accel_path), "<Nautilus-Window>/%s", action_name);
-
-		accel_keyval = gdk_keyval_from_name (accel);
-		g_assert (accel_keyval != GDK_KEY_VoidSymbol);
-
-		gtk_accel_map_add_entry (accel_path, accel_keyval, GDK_CONTROL_MASK);
-		gtk_action_set_accel_path (GTK_ACTION (action), accel_path);
-	}
-
-	if (window->details->view_as_radio_action != NULL) {
-		gtk_radio_action_set_group (action,
-					    gtk_radio_action_get_group (window->details->view_as_radio_action));
-	} else if (index != 0) {
-		/* Index 0 is the extra view, and we don't want to use that here,
-		   as it can get deleted/changed later */
-		window->details->view_as_radio_action = action;
-	}
-
-	data = g_slice_new (ActivateViewData);
-	data->window = window;
-	data->id = g_strdup (identifier);
-	g_signal_connect_data (action, "activate",
-			       G_CALLBACK (action_view_as_callback),
-			       data, (GClosureNotify) free_activate_view_data, 0);
-	
-	gtk_action_group_add_action (window->details->view_as_action_group,
-				     GTK_ACTION (action));
-	g_object_unref (action);
-
-	gtk_ui_manager_add_ui (window->details->ui_manager,
-			       merge_id,
-			       placeholder_path,
-			       action_name,
-			       action_name,
-			       GTK_UI_MANAGER_MENUITEM,
-			       FALSE);
-
-	return action; /* return value owned by group */
-}
-
 /**
  * nautilus_window_sync_view_as_menus:
  * 
@@ -1579,14 +1500,11 @@ add_view_as_menu_item (NautilusWindow *window,
  * 
  * @window: The NautilusWindow whose "View as" option menu should be synched.
  */
-static void
+void
 nautilus_window_sync_view_as_menus (NautilusWindow *window)
 {
 	NautilusWindowSlot *slot;
-	int index;
-	char action_name[32];
 	GtkAction *action;
-	GList *node;
 
 	g_assert (NAUTILUS_IS_WINDOW (window));
 
@@ -1596,141 +1514,38 @@ nautilus_window_sync_view_as_menus (NautilusWindow *window)
 		return;
 	}
 
-	for (node = window->details->short_list_viewers, index = 1;
-	     node != NULL;
-	     node = node->next, ++index) {
-		if (nautilus_window_slot_content_view_matches_iid (slot, (char *)node->data)) {
-			break;
-		}
+	if (nautilus_window_slot_content_view_matches_iid (slot, NAUTILUS_LIST_VIEW_ID)) {
+		action = gtk_action_group_get_action (window->details->toolbar_action_group, NAUTILUS_ACTION_VIEW_LIST);
+	} else {
+		action = gtk_action_group_get_action (window->details->toolbar_action_group, NAUTILUS_ACTION_VIEW_GRID);
 	}
-
-	g_snprintf (action_name, sizeof (action_name), "view_as_%d", index);
-	action = gtk_action_group_get_action (window->details->view_as_action_group,
-					      action_name);
 
 	/* Don't trigger the action callback when we're synchronizing */
 	g_signal_handlers_block_matched (action,
 					 G_SIGNAL_MATCH_FUNC,
 					 0, 0,
 					 NULL,
-					 action_view_as_callback,
+					 action_view_list_changed_cb,
+					 NULL);
+	g_signal_handlers_block_matched (action,
+					 G_SIGNAL_MATCH_FUNC,
+					 0, 0,
+					 NULL,
+					 action_view_grid_changed_cb,
 					 NULL);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), TRUE);
 	g_signal_handlers_unblock_matched (action,
 					   G_SIGNAL_MATCH_FUNC,
 					   0, 0,
 					   NULL,
-					   action_view_as_callback,
+					   action_view_list_changed_cb,
 					   NULL);
-}
-
-static void
-refresh_stored_viewers (NautilusWindow *window)
-{
-	NautilusWindowSlot *slot;
-	GList *viewers;
-	char *uri, *mimetype;
-
-	slot = nautilus_window_get_active_slot (window);
-
-	uri = nautilus_file_get_uri (slot->viewed_file);
-	mimetype = nautilus_file_get_mime_type (slot->viewed_file);
-	viewers = nautilus_view_factory_get_views_for_uri (uri,
-							   nautilus_file_get_file_type (slot->viewed_file),
-							   mimetype);
-	g_free (uri);
-	g_free (mimetype);
-
-        free_stored_viewers (window);
-	window->details->short_list_viewers = viewers;
-}
-
-static void
-load_view_as_menu (NautilusWindow *window)
-{
-	GList *node;
-	int index;
-	guint merge_id;
-
-	if (window->details->short_list_merge_id != 0) {
-		gtk_ui_manager_remove_ui (window->details->ui_manager,
-					  window->details->short_list_merge_id);
-		window->details->short_list_merge_id = 0;
-	}
-	if (window->details->view_as_action_group != NULL) {
-		gtk_ui_manager_remove_action_group (window->details->ui_manager,
-						    window->details->view_as_action_group);
-		window->details->view_as_action_group = NULL;
-	}
-
-	refresh_stored_viewers (window);
-
-	merge_id = gtk_ui_manager_new_merge_id (window->details->ui_manager);
-	window->details->short_list_merge_id = merge_id;
-	window->details->view_as_action_group = gtk_action_group_new ("ViewAsGroup");
-	gtk_action_group_set_translation_domain (window->details->view_as_action_group, GETTEXT_PACKAGE);
-	window->details->view_as_radio_action = NULL;
-	
-        /* Add a menu item for each view in the preferred list for this location. */
-	/* Start on 1, because extra_viewer gets index 0 */
-        for (node = window->details->short_list_viewers, index = 1; 
-             node != NULL; 
-             node = node->next, ++index) {
-		/* Menu item in View menu. */
-                add_view_as_menu_item (window, 
-				       NAUTILUS_MENU_PATH_SHORT_LIST_PLACEHOLDER, 
-				       node->data, 
-				       index,
-				       merge_id);
-        }
-	gtk_ui_manager_insert_action_group (window->details->ui_manager,
-					    window->details->view_as_action_group,
-					    -1);
-	g_object_unref (window->details->view_as_action_group); /* owned by ui_manager */
-
-	nautilus_window_sync_view_as_menus (window);
-}
-
-static void
-load_view_as_menus_callback (NautilusFile *file, 
-			    gpointer callback_data)
-{
-	NautilusWindow *window;
-	NautilusWindowSlot *slot;
-
-	slot = callback_data;
-	window = nautilus_window_slot_get_window (slot);
-
-	if (slot == nautilus_window_get_active_slot (window)) {
-		load_view_as_menu (window);
-	}
-}
-
-static void
-cancel_view_as_callback (NautilusWindowSlot *slot)
-{
-	nautilus_file_cancel_call_when_ready (slot->viewed_file, 
-					      load_view_as_menus_callback,
-					      slot);
-}
-
-void
-nautilus_window_load_view_as_menus (NautilusWindow *window)
-{
-	NautilusWindowSlot *slot;
-	NautilusFileAttributes attributes;
-
-        g_return_if_fail (NAUTILUS_IS_WINDOW (window));
-
-	attributes = nautilus_mime_actions_get_required_file_attributes ();
-
-	slot = nautilus_window_get_active_slot (window);
-
-	cancel_view_as_callback (slot);
-	nautilus_file_call_when_ready (slot->viewed_file,
-				       attributes, 
-				       load_view_as_menus_callback,
-				       slot);
+	g_signal_handlers_unblock_matched (action,
+					   G_SIGNAL_MATCH_FUNC,
+					   0, 0,
+					   NULL,
+					   action_view_grid_changed_cb,
+					   NULL);
 }
 
 void
@@ -1875,7 +1690,7 @@ nautilus_window_connect_content_view (NautilusWindow *window,
        * views in the menu are for the old location).
        */
 	if (slot->pending_location == NULL) {
-		nautilus_window_load_view_as_menus (window);
+		nautilus_window_sync_view_as_menus (window);
 	} else {
 		directory = nautilus_directory_get (slot->pending_location);
 		if (!NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
@@ -1964,8 +1779,6 @@ nautilus_window_slot_set_viewed_file (NautilusWindowSlot *slot,
 	}
 
 	nautilus_file_ref (file);
-
-	cancel_view_as_callback (slot);
 
 	if (slot->viewed_file != NULL) {
 		nautilus_file_monitor_remove (slot->viewed_file,

@@ -1426,8 +1426,8 @@ update_for_new_location (NautilusWindowSlot *slot)
 		nautilus_window_sync_up_button (window);
 		nautilus_window_sync_zoom_widgets (window);
 
-		/* Set up the content view menu for this new location. */
-		nautilus_window_load_view_as_menus (window);
+		/* Sync the content view menu for this new location. */
+		nautilus_window_sync_view_as_menus (window);
 
 		/* Load menus from nautilus extensions for this location */
 		nautilus_window_load_extension_menus (window);
