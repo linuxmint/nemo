@@ -11,6 +11,10 @@
 	<attribute name="action">app.connect-to-server</attribute>
 	<attribute name="label" translatable="yes">Connect to _Server</attribute>
       </item>
+      <item>
+	<attribute name="action">app.enter-location</attribute>
+	<attribute name="label" translatable="yes">Enter _Location</attribute>
+      </item>
     </section>
     <section>
       <item>

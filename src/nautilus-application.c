@@ -833,6 +833,20 @@ action_connect_to_server (GSimpleAction *action,
 }
 
 static void
+action_enter_location (GSimpleAction *action,
+		       GVariant *parameter,
+		       gpointer user_data)
+{
+	GtkApplication *application = user_data;
+	NautilusWindow *window;
+	GtkWindow *cur_window;
+
+	cur_window = get_focus_window (application);
+	window = NAUTILUS_WINDOW (cur_window);
+	nautilus_window_ensure_location_bar (window);
+}
+
+static void
 action_bookmarks (GSimpleAction *action,
 		  GVariant *parameter,
 		  gpointer user_data)
@@ -924,6 +938,7 @@ action_quit (GSimpleAction *action,
 static GActionEntry app_entries[] = {
 	{ "new-window", action_new_window, NULL, NULL, NULL },
 	{ "connect-to-server", action_connect_to_server, NULL, NULL, NULL },
+	{ "enter-location", action_enter_location, NULL, NULL, NULL },
 	{ "bookmarks", action_bookmarks, NULL, NULL, NULL },
 	{ "preferences", action_preferences, NULL, NULL, NULL },
 	{ "about", action_about, NULL, NULL, NULL },
