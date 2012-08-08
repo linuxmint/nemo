@@ -4512,21 +4512,6 @@ add_application_to_open_with_menu (NautilusView *view,
 	gtk_action_group_add_action (view->details->open_with_action_group,
 				     action);
 	g_object_unref (action);
-	
-	gtk_ui_manager_add_ui (nautilus_window_get_ui_manager (view->details->window),
-			       view->details->open_with_merge_id,
-			       menu_placeholder,
-			       action_name,
-			       action_name,
-			       GTK_UI_MANAGER_MENUITEM,
-			       FALSE);
-
-	path = g_strdup_printf ("%s/%s", menu_placeholder, action_name);
-	menuitem = gtk_ui_manager_get_widget (
-					      nautilus_window_get_ui_manager (view->details->window),
-					      path);
-	gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
-	g_free (path);
 
 	gtk_ui_manager_add_ui (nautilus_window_get_ui_manager (view->details->window),
 			       view->details->open_with_merge_id,
@@ -8756,14 +8741,6 @@ real_update_menus (NautilusView *view)
 	g_object_set (action, "label", 
 		      label_with_underscore ? label_with_underscore : _("_Open"),
 		      NULL);
-
-	menuitem = gtk_ui_manager_get_widget (
-					      nautilus_window_get_ui_manager (view->details->window),
-					      NAUTILUS_VIEW_MENU_PATH_OPEN);
-
-	/* Only force displaying the icon if it is an application icon */
-	gtk_image_menu_item_set_always_show_image (
-						   GTK_IMAGE_MENU_ITEM (menuitem), app_icon != NULL);
 
 	menuitem = gtk_ui_manager_get_widget (
 					      nautilus_window_get_ui_manager (view->details->window),

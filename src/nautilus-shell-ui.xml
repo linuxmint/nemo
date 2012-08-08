@@ -40,25 +40,16 @@
   <separator/>
   <placeholder name="Global File Items Placeholder"/>
   <separator/>
-  <menu action="Edit">
+  <placeholder name="Edit Actions">
     <placeholder name="Undostack Actions"/>
     <separator/>
-    <placeholder name="Clipboard Actions">
-    </placeholder>
     <separator/>
     <placeholder name="Select Items"/>
     <separator/>
     <placeholder name="File Items Placeholder"/>
     <separator/>
-    <placeholder name="Dangerous File Items Placeholder"/>
-    <separator/>
-    <placeholder name="Edit Items Placeholder"/>
-    <placeholder name="Global Edit Items Placeholder"/>
-    <separator/>
-    <placeholder name="Extension Actions"/>
-    <separator/>
     <menuitem name="Preferences" action="Preferences"/>
-  </menu>
+  </placeholder>
   <separator/>
   <menuitem name="Add Bookmark" action="Add Bookmark"/>
   <menuitem name="Edit Bookmark" action="Edit Bookmarks"/>

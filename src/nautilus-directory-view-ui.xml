@@ -20,47 +20,12 @@
       <menuitem name="New Empty Document" action="New Empty Document"/>
     </menu>
   </placeholder>
-  <placeholder name="Open Placeholder">
-    <menuitem name="Open" action="Open"/>
-    <menuitem name="OpenInNewTab" action="OpenInNewTab"/>
-    <menuitem name="OpenAlternate" action="OpenAlternate"/>
-    <placeholder name="Applications Placeholder">
-    </placeholder>
-    <menu action="Open With">
-      <placeholder name="Applications Placeholder"/>
-      <separator name="Open With Separator"/>
-      <menuitem name="OtherApplication" action="OtherApplication1"/>
-    </menu>
-    <placeholder name="OtherApplicationPlaceholder">
-      <menuitem name="OtherApplication" action="OtherApplication2"/>
-    </placeholder>
-    <menu action="Scripts">
-      <placeholder name="Scripts Placeholder"/>
-      <separator name="After Scripts"/>
-      <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
-    </menu>
-  </placeholder>
-  <placeholder name="File Items Placeholder">
-    <menuitem name="Self Mount Volume" action="Self Mount Volume"/>
-    <menuitem name="Self Unmount Volume" action="Self Unmount Volume"/>
-    <menuitem name="Self Eject Volume" action="Self Eject Volume"/>
-    <menuitem name="Self Start Volume" action="Self Start Volume"/>
-    <menuitem name="Self Stop Volume" action="Self Stop Volume"/>
-    <menuitem name="Self Poll" action="Self Poll"/>
-    <separator name="Properties Separator"/>
-    <menuitem name="Properties" action="Properties"/>
-  </placeholder>
   <placeholder name="Global File Items Placeholder">
     <menuitem name="Empty Trash" action="Empty Trash"/>
     <menuitem name="Save Search" action="Save Search"/>
     <menuitem name="Save Search As" action="Save Search As"/>
   </placeholder>
-  <menu action="Edit">
-    <placeholder name="Clipboard Actions">
-      <menuitem name="Cut" action="Cut"/>
-      <menuitem name="Copy" action="Copy"/>
-      <menuitem name="Paste" action="Paste"/>
-    </placeholder>
+  <placeholder name="Edit Actions">
     <placeholder name="Undostack Actions">
       <menuitem name="Undo" action="Undo"/>
       <menuitem name="Redo" action="Redo"/>
@@ -70,18 +35,7 @@
       <menuitem name="Select Pattern" action="Select Pattern"/>
       <menuitem name="Invert Selection" action="Invert Selection"/>
     </placeholder>
-    <placeholder name="File Items Placeholder">
-      <menuitem name="Duplicate" action="Duplicate"/>
-      <menuitem name="Create Link" action="Create Link"/>
-      <menuitem name="Rename" action="Rename"/>
-    </placeholder>
-    <placeholder name="Dangerous File Items Placeholder">
-      <menuitem name="Trash" action="Trash"/>
-      <menuitem name="Delete" action="Delete"/>
-      <menuitem name="Restore From Trash" action="Restore From Trash"/>
-    </placeholder>
-    <placeholder name="Extension Actions"/>
-  </menu>
+  </placeholder>
 </popup>
 <popup name="background">
   <placeholder name="Before Zoom Items">
