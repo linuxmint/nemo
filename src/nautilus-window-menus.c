@@ -85,6 +85,14 @@ action_connect_to_server_callback (GtkAction *action,
 }
 
 static void
+action_bookmarks_callback (GtkAction *action, 
+			   gpointer user_data)
+{
+	g_action_group_activate_action (G_ACTION_GROUP (g_application_get_default ()),
+					"bookmarks", NULL);
+}
+
+static void
 action_stop_callback (GtkAction *action, 
 		      gpointer user_data)
 {
@@ -335,14 +343,6 @@ action_add_bookmark_callback (GtkAction *action,
 }
 
 static void
-action_edit_bookmarks_callback (GtkAction *action, 
-				gpointer user_data)
-{
-	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
-	nautilus_application_edit_bookmarks (app, NAUTILUS_WINDOW (user_data));
-}
-
-static void
 connect_proxy_cb (GtkActionGroup *action_group,
                   GtkAction *action,
                   GtkWidget *proxy,
@@ -541,12 +541,12 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "Go to Location", NULL, N_("_Location..."),
                                  "<control>L", N_("Specify a location to open"),
                                  G_CALLBACK (action_go_to_location_callback) },
-  /* name, stock id, label */  { "Add Bookmark", GTK_STOCK_ADD, N_("_Add Bookmark"),
-                                 "<control>d", N_("Add a bookmark for the current location to this menu"),
+  /* name, stock id, label */  { NAUTILUS_ACTION_ADD_BOOKMARK, GTK_STOCK_ADD, N_("Bookmark this Location"),
+                                 "<control>d", N_("Add a bookmark for the current location"),
                                  G_CALLBACK (action_add_bookmark_callback) },
-  /* name, stock id, label */  { "Edit Bookmarks", NULL, N_("_Edit Bookmarks..."),
-                                 "<control>b", N_("Display a window that allows editing the bookmarks in this menu"),
-                                 G_CALLBACK (action_edit_bookmarks_callback) },
+  /* name, stock id, label */  { NAUTILUS_ACTION_EDIT_BOOKMARKS, NULL, N_("_Bookmarks..."),
+                                 "<control>b", N_("Display and edit bookmarks"),
+                                 G_CALLBACK (action_bookmarks_callback) },
   { "TabsPrevious", NULL, N_("_Previous Tab"), "<control>Page_Up",
     N_("Activate previous tab"),
     G_CALLBACK (action_tabs_previous_callback) },
@@ -583,6 +583,7 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
 static const gchar* app_actions[] = {
 	NAUTILUS_ACTION_NEW_WINDOW,
 	NAUTILUS_ACTION_CONNECT_TO_SERVER,
+	NAUTILUS_ACTION_EDIT_BOOKMARKS,
 	NAUTILUS_ACTION_PREFERENCES,
 	NAUTILUS_ACTION_HELP,
 	NAUTILUS_ACTION_ABOUT,

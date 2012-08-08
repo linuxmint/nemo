@@ -14,6 +14,12 @@
     </section>
     <section>
       <item>
+	<attribute name="action">app.bookmarks</attribute>
+	<attribute name="label" translatable="yes">_Bookmarks</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
 	<attribute name="action">app.preferences</attribute>
 	<attribute name="label" translatable="yes">Prefere_nces</attribute>
       </item>
