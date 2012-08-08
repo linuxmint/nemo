@@ -6795,7 +6795,9 @@ nautilus_canvas_container_select_first (NautilusCanvasContainer *container)
 	selection_changed = FALSE;
 
 	icon = g_list_nth_data (container->details->icons, 0);
-	selection_changed |= icon_set_selected (container, icon, TRUE);
+	if (icon) {
+		selection_changed |= icon_set_selected (container, icon, TRUE);
+	}
 
 	if (selection_changed) {
 		g_signal_emit (container,
