@@ -1,9 +1,9 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
 [encoding: UTF-8]
-data/nautilus.xml.in
 data/nautilus-autorun-software.desktop.in.in
 data/nautilus.desktop.in.in
+data/nautilus.xml.in
 eel/eel-canvas.c
 eel/eel-editable-label.c
 eel/eel-glib-extensions.c
@@ -15,6 +15,9 @@ libnautilus-extension/nautilus-column.c
 libnautilus-extension/nautilus-menu-item.c
 libnautilus-extension/nautilus-property-page.c
 libnautilus-private/nautilus-bookmark.c
+libnautilus-private/nautilus-canvas-container.c
+libnautilus-private/nautilus-canvas-dnd.c
+libnautilus-private/nautilus-canvas-item.c
 libnautilus-private/nautilus-clipboard.c
 libnautilus-private/nautilus-column-chooser.c
 libnautilus-private/nautilus-column-utilities.c
@@ -30,9 +33,6 @@ libnautilus-private/nautilus-file-operations.c
 libnautilus-private/nautilus-file-undo-operations.c
 libnautilus-private/nautilus-file-utilities.c
 libnautilus-private/nautilus-global-preferences.c
-libnautilus-private/nautilus-canvas-item.c
-libnautilus-private/nautilus-canvas-container.c
-libnautilus-private/nautilus-canvas-dnd.c
 libnautilus-private/nautilus-mime-application-chooser.c
 libnautilus-private/nautilus-program-choosing.c
 libnautilus-private/nautilus-progress-info.c
@@ -48,19 +48,19 @@ src/nautilus-application.c
 src/nautilus-autorun-software.c
 src/nautilus-bookmarks-window.c
 [type: gettext/glade]src/nautilus-bookmarks-window.ui
+src/nautilus-canvas-view.c
+src/nautilus-canvas-view-container.c
+src/nautilus-canvas-view-ui.xml
 src/nautilus-connect-server-dialog.c
 src/nautilus-connect-server-dialog-main.c
 src/nautilus-desktop-canvas-view.c
-src/nautilus-desktop-icon-view-ui.xml
+src/nautilus-desktop-canvas-view-ui.xml
 src/nautilus-desktop-item-properties.c
 src/nautilus-desktop-window.c
 src/nautilus-directory-view-ui.xml
 src/nautilus-error-reporting.c
 src/nautilus-file-management-properties.c
 [type: gettext/glade]src/nautilus-file-management-properties.ui
-src/nautilus-canvas-view.c
-src/nautilus-canvas-view-container.c
-src/nautilus-canvas-view-ui.xml
 src/nautilus-image-properties-page.c
 src/nautilus-list-model.c
 src/nautilus-list-view.c
