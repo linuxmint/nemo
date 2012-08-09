@@ -58,8 +58,8 @@ UI_FILES = \
 	nautilus-bookmarks-window.ui		\
 	nautilus-file-management-properties.ui	\
 	nautilus-canvas-view-ui.xml		\
+	nautilus-desktop-canvas-view-ui.xml	\
 	nautilus-directory-view-ui.xml		\
-	nautilus-desktop-icon-view-ui.xml	\
 	nautilus-list-view-ui.xml		\
 	nautilus-shell-ui.xml			\
 	$(NULL)
