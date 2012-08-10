@@ -2,6 +2,14 @@
 <toolbar name="Toolbar">
 	<toolitem name="Back" action="Back"/>
 	<toolitem name="Forward" action="Forward"/>
+        <toolitem name="Up" action="Up"/>
+ 	<toolitem name="Reload" action="Reload"/>
+	<separator name="AfterNavigation" />
+        <toolitem name="Edit" action="Edit"/>
+        <toolitem name="Home" action="Home"/>
+        <toolitem name="Computer" action="Computer"/>
+	<placeholder />
+	<separator name="BeforeSearch" />
         <toolitem name="Search" action="Search"/>
 </toolbar>
 </ui>

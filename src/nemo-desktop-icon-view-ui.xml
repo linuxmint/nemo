@@ -4,6 +4,7 @@
                 <placeholder name="New Window Items">
                 </placeholder>
                 <placeholder name="New Object Items">
+                        <menuitem name="New Launcher" action="New Launcher Desktop"/>
                 </placeholder>
         </placeholder>
         <placeholder name="After Zoom Items">

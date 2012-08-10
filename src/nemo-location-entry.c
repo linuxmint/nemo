@@ -385,12 +385,12 @@ nemo_location_entry_set_secondary_action (NemoLocationEntry *entry,
 	case NEMO_LOCATION_ENTRY_ACTION_CLEAR:
 		gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry), 
 						   GTK_ENTRY_ICON_SECONDARY,
-						   "edit-clear-symbolic");
+						   "edit-clear");
 		break;
 	case NEMO_LOCATION_ENTRY_ACTION_GOTO:
 		gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry),
 						   GTK_ENTRY_ICON_SECONDARY,
-						   "go-next-symbolic");
+						   "go-next");
 		break;
 	default:
 		g_assert_not_reached ();

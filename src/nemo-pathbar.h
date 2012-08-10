@@ -45,6 +45,15 @@ struct _NemoPathBar
 	GFile *home_path;
 	GFile *desktop_path;
 
+	/** XDG Dirs */
+	GFile *xdg_documents_path;
+	GFile *xdg_download_path;
+	GFile *xdg_music_path;
+	GFile *xdg_pictures_path;
+	GFile *xdg_public_path;
+	GFile *xdg_templates_path;
+	GFile *xdg_videos_path;
+
 	GFile *current_path;
 	gpointer current_button_data;
 

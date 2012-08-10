@@ -130,7 +130,7 @@ progress_ui_handler_ensure_status_icon (NemoProgressUIHandler *self)
 		return;
 	}
 
-	icon = g_themed_icon_new_with_default_fallbacks ("system-file-manager-symbolic");
+	icon = g_themed_icon_new_with_default_fallbacks ("system-file-manager");
 	status_icon = gtk_status_icon_new_from_gicon (icon);
 	g_signal_connect (status_icon, "activate",
 			  (GCallback) status_icon_activate_cb,

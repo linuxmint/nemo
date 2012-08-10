@@ -149,6 +149,16 @@ show_menu (NemoNavigationAction *self,
 	case NEMO_NAVIGATION_DIRECTION_BACK:
 		fill_menu (window, menu, TRUE);
 		break;
+ 	case NEMO_NAVIGATION_DIRECTION_UP:
+ 		return;
+ 	case NEMO_NAVIGATION_DIRECTION_RELOAD:
+ 		return;
+ 	case NEMO_NAVIGATION_DIRECTION_HOME:
+ 		return;
+ 	case NEMO_NAVIGATION_DIRECTION_COMPUTER:
+ 		return;
+ 	case NEMO_NAVIGATION_DIRECTION_EDIT:
+ 		return;
 	default:
 		g_assert_not_reached ();
 		break;

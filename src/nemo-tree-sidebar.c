@@ -1333,7 +1333,12 @@ create_tree (FMTreeView *view)
 		(view->details->child_model, "row_loaded",
 		 G_CALLBACK (row_loaded_callback),
 		 view, G_CONNECT_AFTER);
-	home_uri = nemo_get_home_directory_uri ();
+#ifdef NOT_YET_USABLE /* Do we really want this? */
+	icon = g_themed_icon_new (NEMO_ICON_COMPUTER);
+	fm_tree_model_add_root_uri (view->details->child_model, "computer:///", _("Computer"), icon, NULL);
+	g_object_unref (icon);
+#endif
+ 	home_uri = nemo_get_home_directory_uri ();
 	icon = g_themed_icon_new (NEMO_ICON_HOME);
 	fm_tree_model_add_root_uri (view->details->child_model, home_uri, _("Home"), icon, NULL);
 	g_object_unref (icon);
@@ -1343,7 +1348,7 @@ create_tree (FMTreeView *view)
 	g_object_unref (icon);
 #ifdef NOT_YET_USABLE /* Do we really want this? */
 	icon = g_themed_icon_new (NEMO_ICON_NETWORK);
-	fm_tree_model_add_root_uri (view->details->child_model, "network:///", _("Network Neighbourhood"), icon, NULL);
+	fm_tree_model_add_root_uri (view->details->child_model, "network:///", _("Network"), icon, NULL);
 	g_object_unref (icon);
 #endif
 	

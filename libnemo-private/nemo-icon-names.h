@@ -4,7 +4,7 @@
 /* Icons for places */
 #define NEMO_ICON_COMPUTER		"computer"
 #define NEMO_ICON_DESKTOP		"user-desktop"
-#define NEMO_ICON_FILESYSTEM	"drive-harddisk-system"
+#define NEMO_ICON_FILESYSTEM	"drive-harddisk"
 #define NEMO_ICON_FOLDER		"folder"
 #define NEMO_ICON_FOLDER_REMOTE	"folder-remote"
 #define NEMO_ICON_HOME		"user-home"
