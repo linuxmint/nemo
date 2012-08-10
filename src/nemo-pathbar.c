@@ -1269,8 +1269,13 @@ get_dir_name (ButtonData *button_data)
 {
 	if (button_data->type == DESKTOP_BUTTON) {
 		return _("Desktop");
+	/*
+	}
+	 * originally this would look like /home/Home/Desktop in the pathbar.
+	 * I can see the logic, when you're only staying in $HOME, i.e. Home/Desktop
+	 * but when you've come from a directory further up it just looks wrong. *
 	} else if (button_data->type == HOME_BUTTON) {
-		return _("Home");
+		return _("Home");*/
 	} else {
 		return button_data->dir_name;
 	}
