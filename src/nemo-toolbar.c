@@ -124,6 +124,8 @@ nemo_toolbar_constructed (GObject *obj)
 	GtkWidget *vbox, *toolbar, *search;
 	GtkStyleContext *context;
 
+	GtkWidget *sep_space;
+
 	G_OBJECT_CLASS (nemo_toolbar_parent_class)->constructed (obj);
 
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (self)),
@@ -141,6 +143,10 @@ nemo_toolbar_constructed (GObject *obj)
 
 	context = gtk_widget_get_style_context (toolbar);
 	gtk_style_context_add_class (context, GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
+
+	sep_space = gtk_ui_manager_get_widget(self->priv->ui_manager, "/Toolbar/BeforeSearch");
+	gtk_separator_tool_item_set_draw (GTK_SEPARATOR_TOOL_ITEM (sep_space), FALSE);
+	gtk_tool_item_set_expand (GTK_SEPARATOR_TOOL_ITEM (sep_space), TRUE);
 
 	search = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Search");
 	gtk_style_context_add_class (gtk_widget_get_style_context (search), GTK_STYLE_CLASS_RAISED);
@@ -164,7 +170,7 @@ nemo_toolbar_constructed (GObject *obj)
 	gtk_tool_item_set_expand (item, TRUE);
 	gtk_container_add (GTK_CONTAINER (item), vbox);
 	/* append to the end of the toolbar so navigation buttons are at the beginning */
-	gtk_toolbar_insert (GTK_TOOLBAR (self->priv->toolbar), item, -1);
+	gtk_toolbar_insert (GTK_TOOLBAR (self->priv->toolbar), item, 8);
 	gtk_widget_show (GTK_WIDGET (item));
 
 	/* search bar */
