@@ -51,6 +51,7 @@ typedef enum {
         HOME_BUTTON,
         DESKTOP_BUTTON,
 	MOUNT_BUTTON,
+	XDG_BUTTON,
 	DEFAULT_LOCATION_BUTTON,
 } ButtonType;
 
@@ -79,6 +80,8 @@ struct _ButtonData
 	/* custom icon */ 
 	GdkPixbuf *custom_icon;
 
+	char *xdg_icon;
+
 	/* flag to indicate its the base folder in the URI */
 	gboolean is_base_dir;
 
@@ -92,6 +95,7 @@ struct _ButtonData
 G_DEFINE_TYPE (NemoPathBar, nemo_path_bar,
 	       GTK_TYPE_CONTAINER);
 
+static GFile* get_xdg_dir 				(GUserDirectory dir);
 static void     nemo_path_bar_scroll_up                (NemoPathBar *path_bar);
 static void     nemo_path_bar_scroll_down              (NemoPathBar *path_bar);
 static void     nemo_path_bar_stop_scrolling           (NemoPathBar *path_bar);
@@ -256,6 +260,25 @@ nemo_path_bar_slider_drag_leave (GtkWidget      *widget,
 	}
 }
 
+/**
+ * Utility function. Return a GFile for the "special directory" if it exists, or NULL
+ * Ripped from nemo-file.c (nemo_file_is_user_special_directory) and slightly modified
+ */
+static GFile*
+get_xdg_dir (GUserDirectory dir) {
+
+	const gchar *special_dir;
+
+	special_dir = g_get_user_special_dir (dir);
+
+	if (special_dir) {
+		return g_file_new_for_path (special_dir);
+	} else {
+		return NULL;
+	}
+
+}
+
 static void
 nemo_path_bar_init (NemoPathBar *path_bar)
 {
@@ -274,6 +297,14 @@ nemo_path_bar_init (NemoPathBar *path_bar)
 	g_free (p);
 	path_bar->home_path = g_file_new_for_path (g_get_home_dir ());
 	path_bar->root_path = g_file_new_for_path ("/");
+	path_bar->xdg_documents_path = get_xdg_dir (G_USER_DIRECTORY_DOCUMENTS);
+	path_bar->xdg_download_path = get_xdg_dir (G_USER_DIRECTORY_DOWNLOAD);
+	path_bar->xdg_music_path = get_xdg_dir (G_USER_DIRECTORY_MUSIC);
+	path_bar->xdg_pictures_path = get_xdg_dir (G_USER_DIRECTORY_PICTURES);
+	path_bar->xdg_public_path = get_xdg_dir (G_USER_DIRECTORY_PUBLIC_SHARE);
+	path_bar->xdg_templates_path = get_xdg_dir (G_USER_DIRECTORY_TEMPLATES);
+	path_bar->xdg_videos_path = get_xdg_dir (G_USER_DIRECTORY_VIDEOS);
+
 	desktop_is_home = g_file_equal (path_bar->home_path, path_bar->desktop_path);
 
 	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
@@ -336,6 +367,13 @@ nemo_path_bar_finalize (GObject *object)
 	g_clear_object (&path_bar->root_path);
 	g_clear_object (&path_bar->home_path);
 	g_clear_object (&path_bar->desktop_path);
+	g_clear_object (&path_bar->xdg_documents_path);
+	g_clear_object (&path_bar->xdg_download_path);
+	g_clear_object (&path_bar->xdg_music_path);
+	g_clear_object (&path_bar->xdg_pictures_path);
+	g_clear_object (&path_bar->xdg_public_path);
+	g_clear_object (&path_bar->xdg_templates_path);
+	g_clear_object (&path_bar->xdg_videos_path);
 
 	g_signal_handlers_disconnect_by_func (nemo_trash_monitor_get (),
 					      trash_state_changed_cb, path_bar);
@@ -1231,14 +1269,15 @@ get_type_icon_info (ButtonData *button_data)
                 case DESKTOP_BUTTON:
 			return nemo_icon_info_lookup_from_name (NEMO_ICON_DESKTOP,
 								    NEMO_PATH_BAR_ICON_SIZE);
-
+		case XDG_BUTTON:
+			return nemo_icon_info_lookup_from_name (button_data->xdg_icon,
+							    NEMO_PATH_BAR_ICON_SIZE);								
                 case NORMAL_BUTTON:
 			if (button_data->is_base_dir) {
 				return nemo_file_get_icon (button_data->file,
 							       NEMO_PATH_BAR_ICON_SIZE,
 							       NEMO_FILE_ICON_FLAGS_NONE);
 			}
-
 	    	default:
 			return NULL;
         }
@@ -1253,6 +1292,9 @@ button_data_free (ButtonData *button_data)
         g_free (button_data->dir_name);
 	if (button_data->custom_icon) {
 		g_object_unref (button_data->custom_icon);
+	}
+	if (button_data->type == XDG_BUTTON) {
+		g_free (button_data->xdg_icon);
 	}
 	if (button_data->file != NULL) {
 		g_signal_handler_disconnect (button_data->file,
@@ -1465,6 +1507,27 @@ setup_button_type (ButtonData       *button_data,
 		} else {
 			button_data->type = NORMAL_BUTTON;
 		}
+	} else if (path_bar->xdg_documents_path != NULL && g_file_equal (location, path_bar->xdg_documents_path)) {
+		button_data->type = XDG_BUTTON;
+		button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_DOCUMENTS);
+	} else if (path_bar->xdg_download_path != NULL && g_file_equal (location, path_bar->xdg_download_path)) {
+		button_data->type = XDG_BUTTON;
+		button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_DOWNLOAD);
+	} else if (path_bar->xdg_music_path != NULL && g_file_equal (location, path_bar->xdg_music_path)) {
+		button_data->type = XDG_BUTTON;
+		button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_MUSIC);
+	} else if (path_bar->xdg_pictures_path != NULL && g_file_equal (location, path_bar->xdg_pictures_path)) {
+		button_data->type = XDG_BUTTON;
+		button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_PICTURES);
+	} else if (path_bar->xdg_templates_path != NULL && g_file_equal (location, path_bar->xdg_templates_path)) {
+		button_data->type = XDG_BUTTON;
+		button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_TEMPLATES);
+	} else if (path_bar->xdg_videos_path != NULL && g_file_equal (location, path_bar->xdg_videos_path)) {
+		button_data->type = XDG_BUTTON;
+		button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_VIDEOS);
+	} else if (path_bar->xdg_public_path != NULL && g_file_equal (location, path_bar->xdg_public_path)) {
+		button_data->type = XDG_BUTTON;
+		button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_PUBLIC_SHARE);
 	} else if (setup_file_path_mounted_mount (location, button_data)) {
 		/* already setup */
 	} else {
