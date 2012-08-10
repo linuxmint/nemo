@@ -2035,6 +2035,29 @@ action_new_empty_file_callback (GtkAction *action,
 }
 
 static void
+action_new_launcher_callback (GtkAction *action,
+			      gpointer callback_data)
+{
+	char *parent_uri;
+	NemoView *view;
+	GtkWindow *window;
+
+	g_assert (NEMO_IS_VIEW (callback_data));
+
+	view = NEMO_VIEW (callback_data);
+
+	parent_uri = nemo_view_get_backing_uri (view);
+
+	window = nemo_view_get_containing_window (view);
+	nemo_launch_application_from_command (gtk_widget_get_screen (GTK_WIDGET (view)),
+						  "gnome-desktop-item-edit", 
+						  FALSE,
+						  "--create-new", parent_uri, NULL);
+
+	g_free (parent_uri);
+}
+
+static void
 action_properties_callback (GtkAction *action,
 			    gpointer callback_data)
 {
@@ -6964,6 +6987,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("_Empty Document"), NULL,
   /* tooltip */                  N_("Create a new empty document inside this folder"),
 				 G_CALLBACK (action_new_empty_file_callback) },
+  /* name, stock id */         { "New Launcher", NULL,
+  /* label, accelerator */       N_("Create L_auncher..."), NULL,
+  /* tooltip */                  N_("Create a new launcher"),
+                                 G_CALLBACK (action_new_launcher_callback) },
   /* name, stock id */         { "Open", NULL,
   /* label, accelerator */       N_("_Open"), "<control>o",
   /* tooltip */                  N_("Open the selected item in this window"),

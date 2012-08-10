@@ -98,6 +98,7 @@
 	<placeholder name="Before Zoom Items">
 		<placeholder name="New Object Items">
 			<menuitem name="New Folder" action="New Folder"/>
+			<menuitem name="New Launcher" action="New Launcher"/>
 			<menu action="New Documents">
 		         	<menuitem name="No Templates" action="No Templates"/>
 			 	<placeholder name="New Documents Placeholder"/>

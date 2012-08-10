@@ -666,6 +666,23 @@ action_empty_trash_conditional_callback (GtkAction *action,
 	nemo_file_operations_empty_trash (GTK_WIDGET (data));
 }
 
+static void
+action_new_launcher_callback (GtkAction *action, gpointer data)
+{
+	char *desktop_directory;
+
+        g_assert (NEMO_IS_VIEW (data));
+
+	desktop_directory = nemo_get_desktop_directory ();
+
+	nemo_launch_application_from_command (gtk_widget_get_screen (GTK_WIDGET (data)),
+						  "gnome-desktop-item-edit", 
+						  FALSE,
+						  "--create-new", desktop_directory, NULL);
+	g_free (desktop_directory);
+
+}
+
 static gboolean
 trash_link_is_selection (NemoView *view)
 {
@@ -709,6 +726,13 @@ real_update_menus (NemoView *view)
 
 	desktop_view = NEMO_DESKTOP_ICON_VIEW (view);
 
+
+	/* New Launcher */
+	action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+					      NEMO_ACTION_NEW_LAUNCHER_DESKTOP);
+	gtk_action_set_visible (action,
+				TRUE);
+
 	/* Empty Trash */
 	include_empty_trash = trash_link_is_selection (view);
 	action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
@@ -725,6 +749,13 @@ real_update_menus (NemoView *view)
 }
 
 static const GtkActionEntry desktop_view_entries[] = {
+	/* name, stock id */
+	{ "New Launcher Desktop", NULL,
+	  /* label, accelerator */
+	  N_("Create L_auncher..."), NULL,
+	  /* tooltip */
+	  N_("Create a new launcher"),
+	  G_CALLBACK (action_new_launcher_callback) },
 	/* name, stock id */
 	{ "Change Background", NULL,
 	  /* label, accelerator */
