@@ -45,6 +45,9 @@
 #define DEBUG_FLAG NEMO_DEBUG_WINDOW
 #include <libnemo-private/nemo-debug.h>
 
+// For: NEMO_IS_DESKTOP_WINDOW
+#include "nemo-desktop-window.h"
+
 enum {
 	PROP_WINDOW = 1,
 	NUM_PROPERTIES
@@ -746,9 +749,10 @@ nemo_window_pane_constructed (GObject *obj)
 	g_signal_connect (pane->action_group, "pre-activate",
 			  G_CALLBACK (toolbar_action_group_activated_callback), pane);
 
-	gtk_box_pack_start (GTK_BOX (pane),
+	/* Pack to windows hbox (under the menu */
+	gtk_box_pack_start (GTK_BOX (window->details->toolbar_holder),
 			    pane->tool_bar,
-			    FALSE, FALSE, 0);
+			    TRUE, TRUE, 0);
 
 	/* start as non-active */
 	nemo_window_pane_set_active (pane, FALSE);
@@ -827,6 +831,13 @@ nemo_window_pane_constructed (GObject *obj)
 	 * thus affect the default position of the split view paned.
 	 */
 	gtk_widget_set_size_request (GTK_WIDGET (pane), 60, 60);
+
+	/*
+	 * If we're on the desktop we need to make sure the toolbar can never show
+	 */
+	if (NEMO_IS_DESKTOP_WINDOW(window)) {
+		gtk_widget_hide (GTK_WIDGET (window->details->toolbar_holder));
+	}
 
 	/* we can unref the size group now */
 	g_object_unref (header_size_group);

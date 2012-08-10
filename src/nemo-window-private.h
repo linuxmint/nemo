@@ -90,6 +90,9 @@ struct NemoWindowDetails
         /* Toolbar */
         GtkWidget *toolbar;
 
+        /* Toolbar holder */
+        GtkWidget *toolbar_holder;
+
         guint extensions_toolbar_merge_id;
         GtkActionGroup *extensions_toolbar_action_group;
 

@@ -535,6 +535,7 @@ nemo_window_constructed (GObject *self)
 	GtkWidget *statusbar;
 	GtkWidget *hpaned;
 	GtkWidget *vbox;
+	GtkWidget *toolbar_holder;
 	NemoWindowPane *pane;
 	NemoWindowSlot *slot;
 	NemoApplication *application;
@@ -563,6 +564,12 @@ nemo_window_constructed (GObject *self)
 	gtk_widget_set_hexpand (menu, TRUE);
 	gtk_widget_show (menu);
 	gtk_container_add (GTK_CONTAINER (grid), menu);
+
+	/* Set up the toolbar place holder */
+	toolbar_holder = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	gtk_container_add (GTK_CONTAINER (grid), toolbar_holder);
+	gtk_widget_show (toolbar_holder);
+	window->details->toolbar_holder = toolbar_holder;
 
 	/* Register to menu provider extension signal managing menu updates */
 	g_signal_connect_object (nemo_signaller_get_current (), "popup_menu_changed",
@@ -837,6 +844,10 @@ nemo_window_close_pane (NemoWindow *window,
 		window->details->active_pane = NULL;
 	}
 
+	/* Required really. Destroying the NemoWindowPane still leaves behind the toolbar.
+	 * This kills it off. Do it before we call gtk_widget_destroy for safety. */
+	gtk_container_remove (GTK_CONTAINER (window->details->toolbar_holder), GTK_WIDGET (pane->tool_bar));
+
 	window->details->panes = g_list_remove (window->details->panes, pane);
 
 	gtk_widget_destroy (GTK_WIDGET (pane));
@@ -888,7 +899,6 @@ void
 nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
 {
 	NemoWindowSlot *old_slot;
-
 	g_assert (NEMO_IS_WINDOW (window));
 
 	DEBUG ("Setting new slot %p as active", new_slot);
@@ -911,7 +921,7 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
 		if (old_slot->content_view != NULL) {
 			nemo_window_disconnect_content_view (window, old_slot->content_view);
 		}
-
+		gtk_widget_hide (GTK_WIDGET (old_slot->pane->tool_bar));
 		/* inform slot & view */
 		g_signal_emit_by_name (old_slot, "inactive");
 	}
@@ -934,6 +944,14 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
                         /* inform window */
                         nemo_window_connect_content_view (window, new_slot->content_view);
                 }
+
+		// Show active toolbar
+		gboolean show_toolbar;
+		show_toolbar = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_TOOLBAR);
+
+		if ( show_toolbar) {
+			gtk_widget_show (GTK_WIDGET (new_slot->pane->tool_bar));
+		}
 
 		/* inform slot & view */
                 g_signal_emit_by_name (new_slot, "active");
@@ -1774,6 +1792,9 @@ create_extra_pane (NemoWindow *window)
 	} else {
 		gtk_paned_pack2 (paned, GTK_WIDGET (pane), TRUE, FALSE);
 	}
+
+	/* Ensure the toolbar doesn't pop itself into existence (double toolbars suck.) */
+	gtk_widget_hide (pane->tool_bar);
 
 	/* slot */
 	slot = nemo_window_pane_open_slot (NEMO_WINDOW_PANE (pane),
