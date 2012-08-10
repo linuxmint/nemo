@@ -64,6 +64,10 @@ G_DEFINE_TYPE (NemoToolbar, nemo_toolbar, GTK_TYPE_BOX);
 static void
 toolbar_update_appearance (NemoToolbar *self)
 {
+	GtkAction *action;
+	GtkWidget *widgetitem;
+	gboolean icon_toolbar;
+
 	gboolean show_location_entry;
 
 	show_location_entry = self->priv->show_location_entry ||
@@ -79,6 +83,37 @@ toolbar_update_appearance (NemoToolbar *self)
 
 	gtk_widget_set_visible (self->priv->search_bar,
 				self->priv->show_search_bar);
+
+
+	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Up");
+	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_UP_ICON_TOOLBAR);
+	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
+	else {gtk_widget_show (widgetitem);}
+
+	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Reload");
+	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_RELOAD_ICON_TOOLBAR);
+	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
+	else {gtk_widget_show (widgetitem);}
+
+	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Edit");
+	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR);
+	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
+	else {gtk_widget_show (widgetitem);}
+
+	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Home");
+	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HOME_ICON_TOOLBAR);
+	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
+	else {gtk_widget_show (widgetitem);}
+
+	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Computer");
+	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_COMPUTER_ICON_TOOLBAR);
+	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
+	else {gtk_widget_show (widgetitem);}
+
+	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Search");
+	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR);
+	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
+	else {gtk_widget_show (widgetitem);}
 }
 
 static void
@@ -101,7 +136,8 @@ nemo_toolbar_constructed (GObject *obj)
 
 	toolbar = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar");
 	self->priv->toolbar = toolbar;
-	gtk_toolbar_set_icon_size (GTK_TOOLBAR (toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR);
+	/** Remove this, should be up to the user what the icon size is.
+	gtk_toolbar_set_icon_size (GTK_TOOLBAR (toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR); */
 
 	context = gtk_widget_get_style_context (toolbar);
 	gtk_style_context_add_class (context, GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
@@ -127,7 +163,8 @@ nemo_toolbar_constructed (GObject *obj)
 	item = gtk_tool_item_new ();
 	gtk_tool_item_set_expand (item, TRUE);
 	gtk_container_add (GTK_CONTAINER (item), vbox);
-	gtk_toolbar_insert (GTK_TOOLBAR (self->priv->toolbar), item, 0);
+	/* append to the end of the toolbar so navigation buttons are at the beginning */
+	gtk_toolbar_insert (GTK_TOOLBAR (self->priv->toolbar), item, -1);
 	gtk_widget_show (GTK_WIDGET (item));
 
 	/* search bar */
@@ -138,7 +175,31 @@ nemo_toolbar_constructed (GObject *obj)
 				  "changed::" NEMO_PREFERENCES_SHOW_LOCATION_ENTRY,
 				  G_CALLBACK (toolbar_update_appearance), self);
 
+	/* nemo patch */
+	g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_UP_ICON_TOOLBAR,
+				  G_CALLBACK (toolbar_update_appearance), self);
+	g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR,
+				  G_CALLBACK (toolbar_update_appearance), self);
+	g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_RELOAD_ICON_TOOLBAR,
+				  G_CALLBACK (toolbar_update_appearance), self);
+	g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_HOME_ICON_TOOLBAR,
+				  G_CALLBACK (toolbar_update_appearance), self);
+	g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_COMPUTER_ICON_TOOLBAR,
+				  G_CALLBACK (toolbar_update_appearance), self);
+	g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR,
+				  G_CALLBACK (toolbar_update_appearance), self);
+	g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR,
+				  G_CALLBACK (toolbar_update_appearance), self);
+
 	toolbar_update_appearance (self);
+
 }
 
 static void
@@ -280,6 +341,12 @@ GtkWidget *
 nemo_toolbar_get_search_bar (NemoToolbar *self)
 {
 	return self->priv->search_bar;
+}
+
+GtkWidget *
+nemo_toolbar_get_show_location_entry (NemoToolbar *self)
+{
+	return self->priv->show_location_entry;
 }
 
 void

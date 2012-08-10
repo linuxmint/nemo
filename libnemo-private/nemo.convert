@@ -2,6 +2,13 @@
 tabs-open-position = /desktop/gnome/file_views/tabs_open_position
 always-use-browser = /apps/nemo/preferences/always_use_browser
 always-use-location-entry = /apps/nemo/preferences/always_use_location_entry
+show-up-icon-toolbar = /apps/nemo/preferences/show-up-icon-toolbar
+show-edit-icon-toolbar = /apps/nemo/preferences/show-edit-icon-toolbar
+show-reload-icon-toolbar = /apps/nemo/preferences/show-reload-icon-toolbar
+show-home-icon-toolbar = /apps/nemo/preferences/show-home-icon-toolbar
+show-computer-icon-toolbar = /apps/nemo/preferences/show-computer-icon-toolbar
+show-search-icon-toolbar = /apps/nemo/preferences/show-search-icon-toolbar
+show-label-search-icon-toolbar = /apps/nemo/preferences/show-label-search-icon-toolbar
 confirm-trash = /apps/nemo/preferences/confirm_trash
 enable-delete = /apps/nemo/preferences/enable_delete
 show-icon-text = /apps/nemo/preferences/show_icon_text

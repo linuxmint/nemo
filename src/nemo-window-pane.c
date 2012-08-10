@@ -1048,10 +1048,17 @@ nemo_window_pane_grab_focus (NemoWindowPane *pane)
 void
 nemo_window_pane_ensure_location_bar (NemoWindowPane *pane)
 {
+ 	gboolean fl_active;
 	remember_focus_widget (pane);
 
 	nemo_toolbar_set_show_main_bar (NEMO_TOOLBAR (pane->tool_bar), TRUE);
-	nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), TRUE);
+  
+  	fl_active = nemo_toolbar_get_show_location_entry (NEMO_TOOLBAR (pane->tool_bar));
+  	if (fl_active) {
+  		nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
+ 	} else {
+ 		nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), TRUE);
+ 	}
 
 	if (!g_settings_get_boolean (nemo_window_state,
 				     NEMO_WINDOW_STATE_START_WITH_TOOLBAR)) {

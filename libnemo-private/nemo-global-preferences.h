@@ -78,6 +78,13 @@ typedef enum
 #define NEMO_PREFERENCES_NEW_TAB_POSITION			"tabs-open-position"
 
 #define NEMO_PREFERENCES_SHOW_LOCATION_ENTRY		"show-location-entry"
+#define NEMO_PREFERENCES_SHOW_UP_ICON_TOOLBAR		"show-up-icon-toolbar"
+#define NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR		"show-edit-icon-toolbar"
+#define NEMO_PREFERENCES_SHOW_RELOAD_ICON_TOOLBAR		"show-reload-icon-toolbar"
+#define NEMO_PREFERENCES_SHOW_HOME_ICON_TOOLBAR		"show-home-icon-toolbar"
+#define NEMO_PREFERENCES_SHOW_COMPUTER_ICON_TOOLBAR		"show-computer-icon-toolbar"
+#define NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR		"show-search-icon-toolbar"
+#define NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR	"show-label-search-icon-toolbar"
 
 /* Which views should be displayed for new windows */
 #define NEMO_WINDOW_STATE_START_WITH_STATUS_BAR		"start-with-status-bar"

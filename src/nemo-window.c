@@ -2055,6 +2055,7 @@ nemo_window_split_view_on (NemoWindow *window)
 void
 nemo_window_split_view_off (NemoWindow *window)
 {
+	gboolean show_label_search_icon_toolbar;
 	NemoWindowPane *pane, *active_pane;
 	GList *l, *next;
 
@@ -2074,7 +2075,9 @@ nemo_window_split_view_off (NemoWindow *window)
 					      active_pane->action_group);
 
 	nemo_window_update_show_hide_menu_items (window);
-	window_set_search_action_text (window, TRUE);
+
+	show_label_search_icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR);
+	window_set_search_action_text (window, show_label_search_icon_toolbar);
 }
 
 gboolean

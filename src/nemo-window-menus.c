@@ -1048,6 +1048,8 @@ static const GtkRadioActionEntry main_radio_entries[] = {
 GtkActionGroup *
 nemo_window_create_toolbar_action_group (NemoWindow *window)
 {
+	gboolean show_label_search_icon_toolbar;
+
 	NemoNavigationState *navigation_state;
 	GtkActionGroup *action_group;
 	GtkAction *action;
@@ -1087,16 +1089,92 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 
 	g_object_unref (action);
 
-	action = GTK_ACTION
-		(gtk_toggle_action_new (NEMO_ACTION_SEARCH,
-					_("Search"),
-					_("Search documents and folders by name"),
-					NULL));
-	gtk_action_group_add_action (action_group, action);
-	gtk_action_set_icon_name (GTK_ACTION (action), "edit-find");
-	gtk_action_set_is_important (GTK_ACTION (action), TRUE);
+	/**
+	 * Nemo 2.30/2.32 type actions
+	 */
+   	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
+   			       "name", NEMO_ACTION_UP,
+   			       "label", _("_Up"),
+   			       "stock_id", GTK_STOCK_GO_UP,
+   			       "tooltip", _("Go to parent folder"),
+   			       "arrow-tooltip", _("Forward history"),
+   			       "window", window,
+   			       "direction", NEMO_NAVIGATION_DIRECTION_UP,
+   			       NULL);
+   	g_signal_connect (action, "activate",
+   			  G_CALLBACK (action_up_callback), window);
+   	gtk_action_group_add_action (action_group, action);
+   
+   	g_object_unref (action);
+  
+   	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
+   			       "name", NEMO_ACTION_RELOAD,
+   			       "label", _("_Reload"),
+   			       "stock_id", GTK_STOCK_REFRESH,
+   			       "tooltip", _("Reload the current location"),
+   			       "window", window,
+   			       "direction", NEMO_NAVIGATION_DIRECTION_RELOAD,
+   			       NULL);
+   	g_signal_connect (action, "activate",
+   			  G_CALLBACK (action_reload_callback), window);
+   	gtk_action_group_add_action (action_group, action);
+   	
+   	g_object_unref (action);
+   
+   	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
+   			       "name", NEMO_ACTION_HOME,
+   			       "label", _("_Home"),
+   			       "stock_id", GTK_STOCK_HOME,
+   			       "tooltip", _("Go to home directory"),
+   			       "window", window,
+   			       "direction", NEMO_NAVIGATION_DIRECTION_HOME,
+   			       NULL);
+   	g_signal_connect (action, "activate",
+   			  G_CALLBACK (action_home_callback), window);
+   	gtk_action_group_add_action (action_group, action);
+   
+   	g_object_unref (action);
+   
+   	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
+   			       "name", NEMO_ACTION_COMPUTER,
+   			       "label", _("_Computer"),
+   			       "stock_id", GTK_STOCK_HARDDISK,
+   			       "tooltip", _("Go to Computer"),
+   			       "window", window,
+   			       "direction", NEMO_NAVIGATION_DIRECTION_COMPUTER,
+   			       NULL);
+   	g_signal_connect (action, "activate",
+   			  G_CALLBACK (action_go_to_computer_callback), window);
+   	gtk_action_group_add_action (action_group, action);
+   
+   	g_object_unref (action);
+ 
+   	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
+   			       "name", NEMO_ACTION_EDIT,
+   			       "label", _("Location"),
+   			       "stock_id", GTK_STOCK_EDIT,
+   			       "tooltip", _("Toggle Location bar / Path bar"),
+   			       "window", window,
+    			       "direction", NEMO_NAVIGATION_DIRECTION_EDIT,
+   			       NULL);
+   	g_signal_connect (action, "activate",
+   			  G_CALLBACK (action_go_to_location_callback), window);
+   	gtk_action_group_add_action (action_group, action);
+  
+   	g_object_unref (action);
 
-	g_object_unref (action);
+ 	action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_SEARCH,
+ 				_("Search"),_("Search documents and folders by name"),
+ 				NULL));
+ 
+  	gtk_action_group_add_action (action_group, action);
+  	gtk_action_set_icon_name (GTK_ACTION (action), "edit-find");
+ 
+ 
+ 	show_label_search_icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR);
+ 	gtk_action_set_is_important (GTK_ACTION (action), show_label_search_icon_toolbar);
+  
+  	g_object_unref (action);
 
 	navigation_state = nemo_window_get_navigation_state (window);
 	nemo_navigation_state_add_group (navigation_state, action_group);
@@ -1154,7 +1232,7 @@ nemo_window_initialize_actions (NemoWindow *window)
 {
 	GtkActionGroup *action_group;
 	const gchar *nav_state_actions[] = {
-		NEMO_ACTION_BACK, NEMO_ACTION_FORWARD,
+		NEMO_ACTION_BACK, NEMO_ACTION_FORWARD, NEMO_ACTION_UP, NEMO_ACTION_RELOAD, NEMO_ACTION_COMPUTER, NEMO_ACTION_HOME, NEMO_ACTION_EDIT,
 		NEMO_ACTION_SEARCH, NULL
 	};
 
@@ -1207,6 +1285,9 @@ nemo_window_initialize_menus (NemoWindow *window)
 
 	action = gtk_action_group_get_action (action_group, NEMO_ACTION_HOME);
 	g_object_set (action, "short_label", _("_Home"), NULL);
+
+  	action = gtk_action_group_get_action (action_group, NEMO_ACTION_EDIT);
+  	g_object_set (action, "short_label", _("_Location"), NULL);
 
 	action = gtk_action_group_get_action (action_group, NEMO_ACTION_SHOW_HIDDEN_FILES);
 	g_signal_handlers_block_by_func (action, action_show_hidden_files_callback, window);

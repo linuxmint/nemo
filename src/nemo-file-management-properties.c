@@ -63,6 +63,15 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_HIDDEN_WIDGET "hidden_files_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TREE_VIEW_FOLDERS_WIDGET "treeview_folders_checkbutton"
 
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_UP_ICON_TOOLBAR_WIDGET "show_up_icon_toolbar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_RELOAD_ICON_TOOLBAR_WIDGET "show_reload_icon_toolbar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_EDIT_ICON_TOOLBAR_WIDGET "show_edit_icon_toolbar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_HOME_ICON_TOOLBAR_WIDGET "show_home_icon_toolbar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPUTER_ICON_TOOLBAR_WIDGET "show_computer_icon_toolbar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_SEARCH_ICON_TOOLBAR_WIDGET "show_search_icon_toolbar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LABEL_SEARCH_ICON_TOOLBAR_WIDGET "show_label_search_icon_toolbar_checkbutton"
+
+
 /* int enums */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET "preview_image_size_combobox"
 
@@ -720,6 +729,30 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 							       "preview_label",
 							       4);
 	create_date_format_menu (builder);
+
+
+	/* nemo patch */
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_UP_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_UP_ICON_TOOLBAR);
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_RELOAD_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_RELOAD_ICON_TOOLBAR);
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_EDIT_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR);
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_HOME_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_HOME_ICON_TOOLBAR);
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPUTER_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_COMPUTER_ICON_TOOLBAR);
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_SEARCH_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR);
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LABEL_SEARCH_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR);
 
 	/* setup preferences */
 	bind_builder_bool (builder, nemo_icon_view_preferences,
