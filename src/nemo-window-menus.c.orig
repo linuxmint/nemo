@@ -1019,7 +1019,7 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* tooltip */              N_("Change the visibility of this window's statusbar"),
                              NULL,
   /* is_active */            TRUE },
-  /* name, stock id */     { "Search", "edit-find",
+  /* name, stock id */     { "Search", "edit-find-symbolic",
   /* label, accelerator */   N_("_Search for Files..."), "<control>f",
   /* tooltip */              N_("Search documents and folders by name"),
 			     NULL,
@@ -1093,7 +1093,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 					_("Search documents and folders by name"),
 					NULL));
 	gtk_action_group_add_action (action_group, action);
-	gtk_action_set_icon_name (GTK_ACTION (action), "edit-find");
+	gtk_action_set_icon_name (GTK_ACTION (action), "edit-find-symbolic");
 	gtk_action_set_is_important (GTK_ACTION (action), TRUE);
 
 	g_object_unref (action);
