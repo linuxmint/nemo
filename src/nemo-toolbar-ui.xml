@@ -5,7 +5,7 @@
         <toolitem name="Up" action="Up"/>
  	<toolitem name="Reload" action="Reload"/>
 	<separator name="AfterNavigation" />
-        <toolitem name="Edit" action="Edit"/>
+        <toolitem name="Edit Location" action="Edit Location"/>
         <toolitem name="Home" action="Home"/>
         <toolitem name="Computer" action="Computer"/>
 	<placeholder />

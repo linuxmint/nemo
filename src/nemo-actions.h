@@ -45,7 +45,7 @@
 #define NEMO_ACTION_GO_HOME "Home"
 #define NEMO_ACTION_ADD_BOOKMARK "Add Bookmark"
 #define NEMO_ACTION_EDIT_BOOKMARKS "Edit Bookmarks"
-#define NEMO_ACTION_EDIT "Edit"
+#define NEMO_ACTION_EDIT_LOCATION "Edit Location"
 #define NEMO_ACTION_HOME "Home"
 #define NEMO_ACTION_ZOOM_IN "Zoom In"
 #define NEMO_ACTION_ZOOM_OUT "Zoom Out"

@@ -968,7 +968,7 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { NEMO_ACTION_FORWARD, GTK_STOCK_GO_FORWARD, N_("_Forward"),
 				 "<alt>Right", N_("Go to the next visited location"),
 				 G_CALLBACK (action_forward_callback) },
-  /* name, stock id, label */  { "Go to Location", NULL, N_("_Location..."),
+  /* name, stock id, label */  { "Edit Location", NULL, N_("_Location..."),
                                  NULL, N_("Specify a location to open"),
                                  G_CALLBACK (action_go_to_location_callback) },
   /* name, stock id, label */  { "SplitViewNextPane", NULL, N_("S_witch to Other Pane"),
@@ -1157,7 +1157,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	g_object_unref (action);
  
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
-   			       "name", NEMO_ACTION_EDIT,
+   			       "name", NEMO_ACTION_EDIT_LOCATION,
    			       "label", _("Location"),
    			       "stock_id", GTK_STOCK_EDIT,
    			       "tooltip", _("Toggle Location bar / Path bar"),
@@ -1241,7 +1241,7 @@ nemo_window_initialize_actions (NemoWindow *window)
 {
 	GtkActionGroup *action_group;
 	const gchar *nav_state_actions[] = {
-		NEMO_ACTION_BACK, NEMO_ACTION_FORWARD, NEMO_ACTION_UP, NEMO_ACTION_RELOAD, NEMO_ACTION_COMPUTER, NEMO_ACTION_HOME, NEMO_ACTION_EDIT,
+		NEMO_ACTION_BACK, NEMO_ACTION_FORWARD, NEMO_ACTION_UP, NEMO_ACTION_RELOAD, NEMO_ACTION_COMPUTER, NEMO_ACTION_HOME, NEMO_ACTION_EDIT_LOCATION,
 		NEMO_ACTION_SEARCH, NULL
 	};
 
@@ -1297,7 +1297,7 @@ nemo_window_initialize_menus (NemoWindow *window)
 	action = gtk_action_group_get_action (action_group, NEMO_ACTION_HOME);
 	g_object_set (action, "short_label", _("_Home"), NULL);
 
-  	action = gtk_action_group_get_action (action_group, NEMO_ACTION_EDIT);
+  	action = gtk_action_group_get_action (action_group, NEMO_ACTION_EDIT_LOCATION);
   	g_object_set (action, "short_label", _("_Location"), NULL);
 
 	action = gtk_action_group_get_action (action_group, NEMO_ACTION_SHOW_HIDDEN_FILES);
