@@ -43,7 +43,6 @@
 #include <eel/eel-debug.h>
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-stock-dialogs.h>
-#include <eel/eel-string.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <glib/gi18n.h>
@@ -1608,101 +1607,63 @@ static void
 display_view_selection_failure (NautilusWindow *window, NautilusFile *file,
 				GFile *location, GError *error)
 {
-	char *full_uri_for_display;
-	char *uri_for_display;
 	char *error_message;
 	char *detail_message;
 	char *scheme_string;
 
 	/* Some sort of failure occurred. How 'bout we tell the user? */
-	full_uri_for_display = g_file_get_parse_name (location);
-	/* Truncate the URI so it doesn't get insanely wide. Note that even
-	 * though the dialog uses wrapped text, if the URI doesn't contain
-	 * white space then the text-wrapping code is too stupid to wrap it.
-	 */
-	uri_for_display = eel_str_middle_truncate
-		(full_uri_for_display, MAX_URI_IN_DIALOG_LENGTH);
-	g_free (full_uri_for_display);
 
-	error_message = NULL;
+	error_message = g_strdup (_("Oops! Something went wrong."));
 	detail_message = NULL;
 	if (error == NULL) {
 		if (nautilus_file_is_directory (file)) {
-			error_message = g_strdup_printf
-				(_("Could not display \"%s\"."),
-				 uri_for_display);
-			detail_message = g_strdup 
-				(_("Nautilus has no installed viewer capable of displaying the folder."));
+			detail_message = g_strdup (_("Unable to display the contents of this folder."));
 		} else {
-			error_message = g_strdup_printf
-				(_("Could not display \"%s\"."),
-				 uri_for_display);
-			detail_message = g_strdup 
-				(_("The location is not a folder."));
+			detail_message = g_strdup (_("This location doesn't appear to be a folder."));
 		}
 	} else if (error->domain == G_IO_ERROR) {
 		switch (error->code) {
 		case G_IO_ERROR_NOT_FOUND:
-			error_message = g_strdup_printf
-				(_("Could not find \"%s\"."), 
-				 uri_for_display);
-			detail_message = g_strdup 
-				(_("Please check the spelling and try again."));
+			error_message = g_strdup (_("Unable to find the requested file. Please check the spelling and try again."));
 			break;
 		case G_IO_ERROR_NOT_SUPPORTED:
 			scheme_string = g_file_get_uri_scheme (location);
-				
-			error_message = g_strdup_printf (_("Could not display \"%s\"."),
-							 uri_for_display);
 			if (scheme_string != NULL) {
-				detail_message = g_strdup_printf (_("Nautilus cannot handle \"%s\" locations."),
+				detail_message = g_strdup_printf (_("\"%s\" locations are not supported."),
 								  scheme_string);
 			} else {
-				detail_message = g_strdup (_("Nautilus cannot handle this kind of location."));
+				detail_message = g_strdup (_("Unable to handle this kind of location."));
 			}
 			g_free (scheme_string);
 			break;
 		case G_IO_ERROR_NOT_MOUNTED:
-			error_message = g_strdup_printf (_("Could not display \"%s\"."),
-							 uri_for_display);
-			detail_message = g_strdup (_("Unable to mount the location."));
+			detail_message = g_strdup (_("Unable to access the requested location."));
 			break;
-			
 		case G_IO_ERROR_PERMISSION_DENIED:
-			error_message = g_strdup_printf (_("Could not display \"%s\"."),
-							 uri_for_display);
-			detail_message = g_strdup (_("Access was denied."));
+			detail_message = g_strdup (_("Don't have permission to access the requested location."));
 			break;
-			
 		case G_IO_ERROR_HOST_NOT_FOUND:
 			/* This case can be hit for user-typed strings like "foo" due to
 			 * the code that guesses web addresses when there's no initial "/".
 			 * But this case is also hit for legitimate web addresses when
 			 * the proxy is set up wrong.
 			 */
-			error_message = g_strdup_printf (_("Could not display \"%s\", because the host could not be found."),
-							 uri_for_display);
-			detail_message = g_strdup (_("Check that the spelling is correct and that your proxy settings are correct."));
+			detail_message = g_strdup (_("Unable to find the requested location. Please check the spelling or the network settings."));
 			break;
 		case G_IO_ERROR_CANCELLED:
 		case G_IO_ERROR_FAILED_HANDLED:
-			g_free (uri_for_display);
-			return;
-			
+			goto done;
 		default:
 			break;
 		}
 	}
 	
-	if (error_message == NULL) {
-		error_message = g_strdup_printf (_("Could not display \"%s\"."),
-						 uri_for_display);
-		detail_message = g_strdup_printf (_("Error: %s\nPlease select another viewer and try again."), error->message);
+	if (detail_message == NULL) {
+		detail_message = g_strdup_printf (_("Unhandled error message: %s"), error->message);
 	}
 	
 	eel_show_error_dialog (error_message, detail_message, GTK_WINDOW (window));
-
-	g_free (uri_for_display);
+ done:
 	g_free (error_message);
 	g_free (detail_message);
 }
