@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eel.HEAD.he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-10 15:45+0300\n"
-"PO-Revision-Date: 2012-08-10 15:47+0200\n"
+"POT-Creation-Date: 2012-08-13 22:57+0300\n"
+"PO-Revision-Date: 2012-08-13 22:59+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "Language: he\n"
@@ -1972,9 +1972,8 @@ msgid "List of possible captions on icons"
 msgstr "List of possible captions on icons"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:46
-#, fuzzy
 msgid "A list of captions below an icon in the icon view and the desktop. The actual number of captions shown depends on the zoom level. Some possible values are: \"size\", \"type\", \"date_modified\", \"owner\", \"group\", \"permissions\", \"octal_permissions\" and \"mime_type\"."
-msgstr "A list of captions below an icon in the icon view and the desktop. The actual number of captions shown depends on the zoom level. Some possible values are: \"size\", \"type\", \"date_modified\", \"date_changed\", \"date_accessed\", \"owner\", \"group\", \"permissions\", \"octal_permissions\" and \"mime_type\"."
+msgstr "A list of captions below an icon in the icon view and the desktop. The actual number of captions shown depends on the zoom level. Some possible values are: \"size\", \"type\", \"date_modified\", \"owner\", \"group\", \"permissions\", \"octal_permissions\" and \"mime_type\"."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:47
 msgid "Default icon zoom level"
@@ -2254,9 +2253,8 @@ msgid "Connect to _Server"
 msgstr "התחברות ל_שרת"
 
 #: ../src/nautilus-app-menu.ui.h:3
-#, fuzzy
 msgid "Enter _Location"
-msgstr "_מיקום"
+msgstr "נא להזין מי_קום"
 
 #. name, stock id, label
 #: ../src/nautilus-app-menu.ui.h:4
@@ -2397,7 +2395,6 @@ msgstr "_שינוי גודל הסמל..."
 
 #. tooltip
 #: ../src/nautilus-canvas-view.c:1231
-#, fuzzy
 msgid "Make the selected icons resizable"
 msgstr "הפיכת הסמל הנבחר לבעל גודל משתנה"
 
@@ -2410,9 +2407,8 @@ msgstr "החזרת הגדלים ה_מקוריים של הסמלים"
 
 #. tooltip
 #: ../src/nautilus-canvas-view.c:1235
-#, fuzzy
 msgid "Restore each selected icons to its original size"
-msgstr "החזרת כל סמל נבחר לגודלו המקורי"
+msgstr "החזרת כל סמל מאלו שנבחרו לגודלו המקורי"
 
 #. name, stock id
 #. label, accelerator
