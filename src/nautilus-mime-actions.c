@@ -1095,27 +1095,20 @@ static char *
 get_application_no_mime_type_handler_message (NautilusFile *file, char *uri)
 {
 	char *uri_for_display;
-	char *nice_uri;
+	char *name;
 	char *error_message;
-	GFile *location;
 
-	/* For local files, we want to use filename if possible */
-	if (nautilus_file_is_local (file)) {
-		location = nautilus_file_get_location (file);
-		nice_uri = g_file_get_parse_name (location);
-		g_object_unref (location);
-	} else {
-		nice_uri = g_strdup (uri);
-	}
+	name = nautilus_file_get_display_name (file);
 
 	/* Truncate the URI so it doesn't get insanely wide. Note that even
 	 * though the dialog uses wrapped text, if the URI doesn't contain
 	 * white space then the text-wrapping code is too stupid to wrap it.
 	 */
-	uri_for_display = eel_str_middle_truncate (nice_uri, MAX_URI_IN_DIALOG_LENGTH);
+	uri_for_display = eel_str_middle_truncate (name, MAX_URI_IN_DIALOG_LENGTH);
 	error_message = g_strdup_printf (_("Could not display \"%s\"."), uri_for_display);
-	g_free (nice_uri);
 	g_free (uri_for_display);
+	g_free (name);
+
 	return error_message;
 }
 
