@@ -1,5 +1,5 @@
 [Desktop Entry]
-_Name=Autorun Prompt
+_Name=Run Software
 TryExec=nautilus-autorun-software
 Exec=nautilus-autorun-software %u
 Icon=application-x-executable
