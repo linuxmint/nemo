@@ -50,7 +50,6 @@
 
 /* bool preferences */
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET "sort_folders_first_checkbutton"
-#define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET "always_use_browser_checkbutton"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET "trash_confirm_checkbutton"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_TRASH_DELETE_WIDGET "trash_delete_checkbutton"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_OPEN_NEW_WINDOW_WIDGET "new_window_checkbutton"
@@ -499,17 +498,6 @@ bind_builder_bool (GtkBuilder *builder,
 			 "active", G_SETTINGS_BIND_DEFAULT);
 }
 
-static void
-bind_builder_bool_inverted (GtkBuilder *builder,
-			    GSettings *settings,
-			    const char *widget_name,
-			    const char *prefs)
-{
-	g_settings_bind (settings, prefs,
-			 gtk_builder_get_object (builder, widget_name),
-			 "active", G_SETTINGS_BIND_INVERT_BOOLEAN);
-}
-
 static gboolean
 enum_get_mapping (GValue             *value,
 		  GVariant           *variant,
@@ -688,9 +676,6 @@ nautilus_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow
 	bind_builder_bool (builder, nautilus_preferences,
 			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
 			   NAUTILUS_PREFERENCES_SORT_DIRECTORIES_FIRST);
-	bind_builder_bool_inverted (builder, nautilus_preferences,
-				    NAUTILUS_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET,
-				    NAUTILUS_PREFERENCES_ALWAYS_USE_BROWSER);
 
 	bind_builder_bool (builder, nautilus_preferences,
 			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET,
