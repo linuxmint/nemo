@@ -1504,7 +1504,7 @@ select_pattern (NautilusView *view)
 
 	example = gtk_label_new (NULL);
 	gtk_widget_set_halign (example, GTK_ALIGN_START);
-	example_pattern = g_strdup_printf ("<b>%s</b><i>%s</i> ", 
+	example_pattern = g_strdup_printf ("%s<i>%s</i> ", 
 					   _("Examples: "),
 					   "*.png, file\?\?.txt, pict*.\?\?\?");
 	gtk_label_set_markup (GTK_LABEL (example), example_pattern);
