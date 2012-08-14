@@ -76,6 +76,7 @@ src/nautilus-progress-ui-handler.c
 src/nautilus-properties-window.c
 src/nautilus-query-editor.c
 src/nautilus-shell-ui.xml
+src/nautilus-special-location-bar.c
 src/nautilus-trash-bar.c
 src/nautilus-view.c
 src/nautilus-view-dnd.c
