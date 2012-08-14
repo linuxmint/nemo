@@ -5379,7 +5379,9 @@ select_image_button_callback (GtkWidget *widget,
 						      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						      GTK_STOCK_OPEN, GTK_RESPONSE_OK,
 						      NULL);
-		gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (dialog), "/usr/share/pixmaps", NULL);
+		gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (dialog),
+						      g_get_user_special_dir (G_USER_DIRECTORY_PICTURES),
+						      NULL);
 		gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
 
 		filter = gtk_file_filter_new ();
