@@ -101,7 +101,7 @@
       <_description>Possible values are "single" to launch files on a single click,  or "double" to launch them on a double click.</_description>
     </key>
     <key name="executable-text-activation" enum="org.gnome.nautilus.ActivationChoice">
-      <default>'ask'</default>
+      <default>'display'</default>
       <_summary>What to do with executable text files when activated</_summary>
       <_description>What to do with executable text files when they are activated (single or double clicked). Possible values are "launch" to launch them as programs, "ask" to ask what to do via a dialog, and "display" to display them as text files.</_description>
     </key>
