@@ -250,13 +250,13 @@ file_list_ready_cb (GList *files,
 
 	str = g_string_new (NULL);
 	g_string_append_printf (str, "<b>%s</b>\n", _("Original file"));
-	g_string_append_printf (str, "<i>%s</i> %s\n", _("Size:"), size);
+	g_string_append_printf (str, "%s %s\n", _("Size:"), size);
 
 	if (should_show_type) {
-		g_string_append_printf (str, "<i>%s</i> %s\n", _("Type:"), type);
+		g_string_append_printf (str, "%s %s\n", _("Type:"), type);
 	}
 
-	g_string_append_printf (str, "<i>%s</i> %s", _("Last modified:"), date);
+	g_string_append_printf (str, "%s %s", _("Last modified:"), date);
 
 	label_text = str->str;
 	gtk_label_set_markup (GTK_LABEL (label),
@@ -281,13 +281,13 @@ file_list_ready_cb (GList *files,
 	}
 
 	g_string_append_printf (str, "<b>%s</b>\n", _("Replace with"));
-	g_string_append_printf (str, "<i>%s</i> %s\n", _("Size:"), size);
+	g_string_append_printf (str, "%s %s\n", _("Size:"), size);
 
 	if (should_show_type) {
-		g_string_append_printf (str, "<i>%s</i> %s\n", _("Type:"), type);
+		g_string_append_printf (str, "%s %s\n", _("Type:"), type);
 	}
 
-	g_string_append_printf (str, "<i>%s</i> %s", _("Last modified:"), date);
+	g_string_append_printf (str, "%s %s", _("Last modified:"), date);
 	label_text = g_string_free (str, FALSE);
 
 	gtk_label_set_markup (GTK_LABEL (label),
