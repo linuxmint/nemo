@@ -1580,8 +1580,6 @@ void
 nautilus_window_sync_title (NautilusWindow *window,
 			    NautilusWindowSlot *slot)
 {
-	char *window_title;
-
 	if (NAUTILUS_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->sync_title != NULL) {
 		NAUTILUS_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->sync_title (window, slot);
 
