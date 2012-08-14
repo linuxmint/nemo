@@ -64,17 +64,61 @@ UI_FILES = \
 	nautilus-shell-ui.xml			\
 	$(NULL)
 
+headers =					\
+	nautilus-special-location-bar.h		\
+	$(NULL)
+
 nautilus-resources.c: nautilus.gresource.xml $(UI_FILES)
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-source --c-name nautilus $(srcdir)/nautilus.gresource.xml
 
 nautilus-resources.h: nautilus.gresource.xml
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-header --c-name nautilus $(srcdir)/nautilus.gresource.xml
 
+nautilus-enum-types.h: stamp-nautilus-enum-types.h
+	$(AM_V_GEN)true
+
+stamp-nautilus-enum-types.h: $(headers) Makefile
+	$(AM_V_GEN)(cd $(srcdir) \
+	&& glib-mkenums \
+			--fhead "#ifndef __NAUTILUS_ENUM_TYPES_H__\n" \
+			--fhead "#define __NAUTILUS_ENUM_TYPES_H__ 1\n\n" \
+			--fhead "#include <glib-object.h>\n\n" \
+			--fhead "G_BEGIN_DECLS\n\n" \
+			--ftail "G_END_DECLS\n\n" \
+			--ftail "#endif /* __NAUTILUS_ENUM_TYPES_H__ */\n" \
+			--fprod "#include \"@filename@\"\n" \
+			--eprod "#define @ENUMPREFIX@_TYPE_@ENUMSHORT@ @enum_name@_get_type()\n" \
+			--eprod "GType @enum_name@_get_type (void);\n" \
+		$(headers) ) > xgen-gth \
+	&& (cmp -s xgen-gth nautilus-enum-type.h || cp xgen-gth nautilus-enum-types.h) \
+	&& rm -f xgen-gth \
+	&& echo timestamp > $(@F)
+
+nautilus-enum-types.c: $(headers) Makefile
+	$(AM_V_GEN)(cd $(srcdir) \
+	&& glib-mkenums \
+			--fhead "#include <config.h>\n" \
+			--fhead "#include <glib-object.h>\n" \
+			--fhead "#include \"nautilus-enum-types.h\"\n\n" \
+			--fprod "\n/* enumerations from \"@filename@\" */" \
+			--vhead "static const G@Type@Value _@enum_name@_values[] = {" \
+			--vprod "  { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
+			--vtail "  { 0, NULL, NULL }\n};\n\n" \
+			--vtail "GType\n@enum_name@_get_type (void)\n{\n" \
+			--vtail "  static GType type = 0;\n\n" \
+			--vtail "  if (!type)\n" \
+			--vtail "    type = g_@type@_register_static (\"@EnumName@\", _@enum_name@_values);\n\n" \
+			--vtail "  return type;\n}\n\n" \
+		$(headers) ) > xgen-gtc \
+	&& cp xgen-gtc $(@F) \
+	&& rm -f xgen-gtc
 
 BUILT_SOURCES = \
 	$(dbus_built_sources) \
 	nautilus-resources.c \
 	nautilus-resources.h \
+	nautilus-enum-types.h \
+	nautilus-enum-types.c \
 	$(NULL)
 
 nautilus_SOURCES = \
@@ -144,6 +188,8 @@ nautilus_SOURCES = \
 	nautilus-query-editor.h			\
 	nautilus-self-check-functions.c 	\
 	nautilus-self-check-functions.h 	\
+	nautilus-special-location-bar.c		\
+	nautilus-special-location-bar.h		\
 	nautilus-toolbar.c			\
 	nautilus-toolbar.h			\
 	nautilus-trash-bar.c			\
@@ -206,6 +252,7 @@ TESTS=check-nautilus
 CLEANFILES = \
 	$(BUILT_SOURCES)			\
 	$(server_DATA)				\
+	stamp-nautilus-enum-types.h		\
 	$(NULL)
 
 EXTRA_DIST =					\

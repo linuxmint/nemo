@@ -7634,8 +7634,7 @@ real_merge_menus (NautilusView *view)
 				      directory_view_entries, G_N_ELEMENTS (directory_view_entries),
 				      view);
 
-	/* Translators: %s is a directory */
-	tooltip = g_strdup_printf (_("Run or manage scripts from %s"), "~/.gnome2/nautilus-scripts");
+	tooltip = g_strdup (_("Run or manage scripts"));
 	/* Create a script action here specially because its tooltip is dynamic */
 	action = gtk_action_new ("Scripts", _("_Scripts"), tooltip, NULL);
 	gtk_action_group_add_action (action_group, action);

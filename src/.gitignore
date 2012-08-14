@@ -1,7 +1,9 @@
 nautilus
 nautilus-autorun-software
 nautilus-connect-server
+nautilus-enum-types.[ch]
 nautilus-file-management-properties
 nautilus-convert-metadata
 nautilus-freedesktop-generated.[ch]
 nautilus-resources.[ch]
+stamp-nautilus-enum-types.h
