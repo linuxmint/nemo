@@ -879,7 +879,7 @@ nautilus_restore_files_from_trash (GList *files,
 	for (l = unhandled_files; l != NULL; l = l->next) {
 		file = NAUTILUS_FILE (l->data);
 		file_name = nautilus_file_get_display_name (file);
-		message = g_strdup_printf (_("Could not determine original location of \"%s\" "), file_name);
+		message = g_strdup_printf (_("Could not determine original location of “%s” "), file_name);
 		g_free (file_name);
 
 		eel_show_warning_dialog (message,

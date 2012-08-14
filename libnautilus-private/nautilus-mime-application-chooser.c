@@ -80,7 +80,7 @@ add_clicked_cb (GtkButton *button,
 	g_app_info_set_as_last_used_for_type (info, chooser->details->content_type, &error);
 
 	if (error != NULL) {
-		message = g_strdup_printf (_("Error while adding \"%s\": %s"),
+		message = g_strdup_printf (_("Error while adding “%s”: %s"),
 					   g_app_info_get_display_name (info), error->message);
 		eel_show_error_dialog (_("Could not add application"),
 				       message,
@@ -172,7 +172,7 @@ set_as_default_clicked_cb (GtkButton *button,
 					    &error);
 
 	if (error != NULL) {
-		message = g_strdup_printf (_("Error while setting \"%s\" as default application: %s"),
+		message = g_strdup_printf (_("Error while setting “%s” as default application: %s"),
 					   g_app_info_get_display_name (info), error->message);
 		eel_show_error_dialog (_("Could not set as default"),
 				       message,
@@ -281,7 +281,7 @@ nautilus_mime_application_chooser_apply_labels (NautilusMimeApplicationChooser *
 			description = g_content_type_get_description (chooser->details->content_type);
 		}
 
-		label = g_strdup_printf (_("Open all files of type \"%s\" with"),
+		label = g_strdup_printf (_("Open all files of type “%s” with"),
 					 description);
 	} else {
 		GFile *file;
@@ -301,7 +301,7 @@ nautilus_mime_application_chooser_apply_labels (NautilusMimeApplicationChooser *
 
 		/* first %s is filename, second %s is mime-type description */
 		emname = g_strdup_printf ("<i>%s</i>", basename);
-		label = g_strdup_printf (_("Select an application to open %s and other files of type \"%s\""),
+		label = g_strdup_printf (_("Select an application to open %s and other files of type “%s”"),
 					 emname, description);
 
 		g_free (emname);

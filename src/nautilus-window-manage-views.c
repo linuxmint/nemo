@@ -1653,7 +1653,7 @@ display_view_selection_failure (NautilusWindow *window, NautilusFile *file,
 		case G_IO_ERROR_NOT_SUPPORTED:
 			scheme_string = g_file_get_uri_scheme (location);
 			if (scheme_string != NULL) {
-				detail_message = g_strdup_printf (_("\"%s\" locations are not supported."),
+				detail_message = g_strdup_printf (_("“%s” locations are not supported."),
 								  scheme_string);
 			} else {
 				detail_message = g_strdup (_("Unable to handle this kind of location."));

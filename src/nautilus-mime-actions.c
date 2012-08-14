@@ -623,9 +623,9 @@ report_broken_symbolic_link (GtkWindow *parent_window, NautilusFile *file)
 
 	display_name = nautilus_file_get_display_name (file);
 	if (nautilus_file_is_in_trash (file)) {
-		prompt = g_strdup_printf (_("The Link \"%s\" is Broken."), display_name);
+		prompt = g_strdup_printf (_("The Link “%s” is Broken."), display_name);
 	} else {
-		prompt = g_strdup_printf (_("The Link \"%s\" is Broken. Move it to Trash?"), display_name);
+		prompt = g_strdup_printf (_("The Link “%s” is Broken. Move it to Trash?"), display_name);
 	}
 	g_free (display_name);
 
@@ -634,7 +634,7 @@ report_broken_symbolic_link (GtkWindow *parent_window, NautilusFile *file)
 		detail = g_strdup (_("This link cannot be used, because it has no target."));
 	} else {
 		detail = g_strdup_printf (_("This link cannot be used, because its target "
-					    "\"%s\" doesn't exist."), target_path);
+					    "“%s” doesn't exist."), target_path);
 	}
 	
 	if (nautilus_file_is_in_trash (file)) {
@@ -703,9 +703,9 @@ get_executable_text_file_action (GtkWindow *parent_window, NautilusFile *file)
 
 
 	file_name = nautilus_file_get_display_name (file);
-	prompt = g_strdup_printf (_("Do you want to run \"%s\", or display its contents?"), 
+	prompt = g_strdup_printf (_("Do you want to run “%s”, or display its contents?"), 
 	                            file_name);
-	detail = g_strdup_printf (_("\"%s\" is an executable text file."),
+	detail = g_strdup_printf (_("“%s” is an executable text file."),
 				    file_name);
 	g_free (file_name);
 
@@ -1105,7 +1105,7 @@ get_application_no_mime_type_handler_message (NautilusFile *file, char *uri)
 	 * white space then the text-wrapping code is too stupid to wrap it.
 	 */
 	uri_for_display = eel_str_middle_truncate (name, MAX_URI_IN_DIALOG_LENGTH);
-	error_message = g_strdup_printf (_("Could not display \"%s\"."), uri_for_display);
+	error_message = g_strdup_printf (_("Could not display “%s”."), uri_for_display);
 	g_free (uri_for_display);
 	g_free (name);
 
@@ -1532,7 +1532,7 @@ activate_desktop_file (ActivateParameters *parameters,
 		primary = _("Untrusted application launcher");
 		display_name = nautilus_file_get_display_name (file);
 		secondary =
-			g_strdup_printf (_("The application launcher \"%s\" has not been marked as trusted. "
+			g_strdup_printf (_("The application launcher “%s” has not been marked as trusted. "
 					   "If you do not know the source of this file, launching it may be unsafe."
 					   ),
 					 display_name);
@@ -2288,7 +2288,7 @@ nautilus_mime_activate_files (GtkWindow *parent_window,
 	file_count = g_list_length (files);
 	if (file_count == 1) {
 		file_name = nautilus_file_get_display_name (files->data);
-		parameters->timed_wait_prompt = g_strdup_printf (_("Opening \"%s\"."), file_name);
+		parameters->timed_wait_prompt = g_strdup_printf (_("Opening “%s”."), file_name);
 		g_free (file_name);
 	} else {
 		parameters->timed_wait_prompt = g_strdup_printf (ngettext ("Opening %d item.",

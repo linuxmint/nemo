@@ -111,7 +111,7 @@ get_message_for_x_content_type (const char *x_content_type)
 		message = g_strdup (_("Contains software"));
 	} else {
 		/* fallback to generic greeting */
-		message = g_strdup_printf (_("Detected as \"%s\""), description);
+		message = g_strdup_printf (_("Detected as “%s”"), description);
 	}
 
 	g_free (description);

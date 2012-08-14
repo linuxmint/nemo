@@ -47,7 +47,7 @@ sendto_callback (NautilusMenuItem *item,
 		NautilusFileInfo *file = scan->data;
 
 		uri = nautilus_file_info_get_uri (file);
-		g_string_append_printf (cmd, " \"%s\"", uri);
+		g_string_append_printf (cmd, " “%s”", uri);
 		g_free (uri);
 	}
 

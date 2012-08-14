@@ -88,7 +88,7 @@ volume_delete_dialog (GtkWidget *parent_view,
 
 	if (mount != NULL) {
 		display_name = nautilus_desktop_link_get_display_name (link);
-		dialog_str = g_strdup_printf (_("You cannot move the volume \"%s\" to the trash."),
+		dialog_str = g_strdup_printf (_("You cannot move the volume “%s” to the trash."),
 					      display_name);
 		g_free (display_name);
 
@@ -98,7 +98,7 @@ volume_delete_dialog (GtkWidget *parent_view,
 				 FALSE,
 				 GTK_MESSAGE_ERROR,
 				 dialog_str,
-				 _("If you want to eject the volume, please use \"Eject\" in the "
+				 _("If you want to eject the volume, please use Eject in the "
 				   "popup menu of the volume."),
 				 GTK_STOCK_OK, NULL);
 		} else {
@@ -107,7 +107,7 @@ volume_delete_dialog (GtkWidget *parent_view,
 				 FALSE,
 				 GTK_MESSAGE_ERROR,
 				 dialog_str,
-				 _("If you want to unmount the volume, please use \"Unmount Volume\" in the "
+				 _("If you want to unmount the volume, please use Unmount Volume in the "
 				   "popup menu of the volume."),
 				 GTK_STOCK_OK, NULL);
 		}
