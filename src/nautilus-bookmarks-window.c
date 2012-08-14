@@ -77,7 +77,7 @@ static int                   key_pressed_signal_id;
 
 /* Larger size initially; user can stretch or shrink (but not shrink below min) */
 #define BOOKMARKS_WINDOW_INITIAL_WIDTH	500
-#define BOOKMARKS_WINDOW_INITIAL_HEIGHT	200
+#define BOOKMARKS_WINDOW_INITIAL_HEIGHT	400
 
 static gboolean
 get_selection_exists (void)
