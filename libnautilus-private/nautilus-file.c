@@ -5666,8 +5666,8 @@ nautilus_file_get_owner_as_string (NautilusFile *file, gboolean include_real_nam
 	}
 
 	if (file->details->uid == getuid ()) {
-		/* Translators: "me" is used to indicate the file is owned by me (the current user) */
-		user_name = g_strdup (_("me"));
+		/* Translators: "Me" is used to indicate the file is owned by me (the current user) */
+		user_name = g_strdup (_("Me"));
 	} else if (file->details->owner_real == NULL) {
 		user_name = g_strdup (eel_ref_str_peek (file->details->owner));
 	} else if (file->details->owner == NULL) {
