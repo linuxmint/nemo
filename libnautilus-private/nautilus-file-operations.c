@@ -1804,11 +1804,14 @@ trash_files (CommonJob *job, GList *files, int *files_skipped)
 				goto skip;
 			}
 
-			primary = f (_("Cannot move file to trash, do you want to delete immediately?"));
-			secondary = f (_("The file \"%B\" cannot be moved to the trash."), file);
+			/* Translators: %B is a file name */
+			primary = f (_("\"%B\" can't be put in the trash. Do you want to delete it immediately?"), file);
 			details = NULL;
+			secondary = NULL;
 			if (!IS_IO_ERROR (error, NOT_SUPPORTED)) {
 				details = error->message;
+			} else if (!g_file_is_native (file)) {
+				secondary = f (_("This remote location does not support sending items to the trash."));
 			}
 
 			response = run_question (job,
