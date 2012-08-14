@@ -251,6 +251,7 @@ main (int argc, char *argv[])
         GVolumeMonitor *monitor;
         GFile *file;
         GMount *mount;
+	GError *error;
 
 	bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -259,23 +260,29 @@ main (int argc, char *argv[])
 	gtk_init (&argc, &argv);
 
         if (argc != 2) {
+		g_print ("Usage: %s mount-uri\n", argv[0]);
                 goto out;
 	}
 
         /* instantiate monitor so we get the "unmounted" signal properly */
         monitor = g_volume_monitor_get ();
         if (monitor == NULL) {
+		g_warning ("Unable to connect to the volume monitor");
                 goto out;
 	}
 
         file = g_file_new_for_commandline_arg (argv[1]);
         if (file == NULL) {
 		g_object_unref (monitor);
+		g_warning ("Unable to parse mount URI");
                 goto out;
 	}
 
-        mount = g_file_find_enclosing_mount (file, NULL, NULL);
+	error = NULL;
+        mount = g_file_find_enclosing_mount (file, NULL, &error);
         if (mount == NULL) {
+		g_warning ("Unable to find device for URI: %s", error->message);
+		g_clear_error (&error);
 		g_object_unref (file);
 		g_object_unref (monitor);
                 goto out;
