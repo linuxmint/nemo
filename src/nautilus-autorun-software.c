@@ -170,6 +170,11 @@ out:
 							     GTK_BUTTONS_OK,
 							     _("<big><b>Error autorunning software</b></big>"));
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", error_string);
+		/* This is required because we don't show dialogs in the
+		   window picker and if the window pops under another window
+		   there is no way to get it back. */
+		gtk_window_set_keep_above (GTK_WINDOW (dialog), TRUE);
+
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 		g_free (error_string);
@@ -201,6 +206,11 @@ present_autorun_for_software_dialog (GMount *mount)
 						    "\n"
 						    "If in doubt, press Cancel."),
                                                   mount_name);
+
+	/* This is required because we don't show dialogs in the
+	   window picker and if the window pops under another window
+	   there is no way to get it back. */
+	gtk_window_set_keep_above (GTK_WINDOW (dialog), TRUE);
 
 	/* TODO: in a star trek future add support for verifying
 	 * software on media (e.g. if it has a certificate, check it
