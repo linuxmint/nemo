@@ -5729,26 +5729,6 @@ action_open_scripts_folder_callback (GtkAction *action,
 
 	view = NAUTILUS_VIEW (callback_data);
 	nautilus_window_slot_open_location (view->details->slot, location, 0);
-
-	eel_show_info_dialog_with_details 
-		(_("All executable files in this folder will appear in the "
-		   "Scripts menu."),
-		 _("Choosing a script from the menu will run "
-		   "that script with any selected items as input."), 
-		 _("All executable files in this folder will appear in the "
-		   "Scripts menu. Choosing a script from the menu will run "
-		   "that script.\n\n"
-		   "When executed from a local folder, scripts will be passed "
-		   "the selected file names. When executed from a remote folder "
-		   "(e.g. a folder showing web or ftp content), scripts will "
-		   "be passed no parameters.\n\n"
-		   "In all cases, the following environment variables will be "
-		   "set by Nautilus, which the scripts may use:\n\n"
-		   "NAUTILUS_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected files (only if local)\n\n"
-		   "NAUTILUS_SCRIPT_SELECTED_URIS: newline-delimited URIs for selected files\n\n"
-		   "NAUTILUS_SCRIPT_CURRENT_URI: URI for current location\n\n"
-		   "NAUTILUS_SCRIPT_WINDOW_GEOMETRY: position and size of current window\n\n"),
-		 nautilus_view_get_containing_window (view));
 }
 
 static GtkMenu *
