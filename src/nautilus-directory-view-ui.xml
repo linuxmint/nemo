@@ -108,7 +108,6 @@
   <placeholder name="File Actions">
     <menuitem name="Move To" action="Move To"/>
     <menuitem name="Copy To" action="Copy To"/>
-    <menuitem name="Properties" action="Properties"/>
     <menuitem name="Rename" action="Rename"/>
     <menuitem name="Set As Wallpaper" action="Set As Wallpaper"/>
   </placeholder>
@@ -133,6 +132,8 @@
     <menuitem name="Poll" action="Poll"/>
   </placeholder>
   <menuitem name="Connect To Server Link" action="Connect To Server Link"/>
+  <separator/>
+  <menuitem name="Properties" action="Properties"/>
 </popup>
 <popup name="location">
   <placeholder name="Open Placeholder">
