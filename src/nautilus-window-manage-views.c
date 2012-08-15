@@ -425,7 +425,7 @@ nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
 
         target_window = NULL;
 	target_slot = NULL;
-	use_same = FALSE;
+	use_same = TRUE;
 
 	/* this happens at startup */
 	old_uri = nautilus_window_slot_get_location_uri (slot);
@@ -453,8 +453,6 @@ nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
 			flags ^= NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB;
 			flags |= NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW;
 		}
-	} else {
-		use_same |= g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_ALWAYS_USE_BROWSER);
 	}
 
 	g_assert (!((flags & NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW) != 0 &&

@@ -60,7 +60,6 @@ typedef enum
 #define NAUTILUS_PREFERENCES_INSTALL_MIME_ACTIVATION		"install-mime-activation"
 
 /* Spatial or browser mode */
-#define NAUTILUS_PREFERENCES_ALWAYS_USE_BROWSER			"always-use-browser"
 #define NAUTILUS_PREFERENCES_NEW_TAB_POSITION			"tabs-open-position"
 
 #define NAUTILUS_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY		"always-use-location-entry"

@@ -1,6 +1,5 @@
 [org.gnome.nautilus.preferences]
 tabs-open-position = /desktop/gnome/file_views/tabs_open_position
-always-use-browser = /apps/nautilus/preferences/always_use_browser
 always-use-location-entry = /apps/nautilus/preferences/always_use_location_entry
 confirm-trash = /apps/nautilus/preferences/confirm_trash
 enable-delete = /apps/nautilus/preferences/enable_delete

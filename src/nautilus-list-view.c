@@ -278,15 +278,10 @@ activate_selected_items_alternate (NautilusListView *view,
 
 	flags = 0;
 
-	if (g_settings_get_boolean (nautilus_preferences,
-				    NAUTILUS_PREFERENCES_ALWAYS_USE_BROWSER)) {
-		if (open_in_tab) {
-			flags |= NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB;
-		} else {
-			flags |= NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW;
-		}
+	if (open_in_tab) {
+		flags |= NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB;
 	} else {
-		flags |= NAUTILUS_WINDOW_OPEN_FLAG_CLOSE_BEHIND;
+		flags |= NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW;
 	}
 
 	if (file != NULL) {

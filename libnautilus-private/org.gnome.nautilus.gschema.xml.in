@@ -63,11 +63,6 @@
       <_summary>Where to position newly open tabs in browser windows.</_summary>
       <_description>If set to "after-current-tab", then new tabs are inserted after the current tab. If set to "end", then new tabs are appended to the end of the tab list.</_description>
     </key>
-    <key name="always-use-browser" type="b">
-      <default>true</default>
-      <_summary>Enables the classic Nautilus behavior, where all windows are browsers</_summary>
-      <_description>If set to true, then all Nautilus windows will be browser windows. This is how Nautilus used to behave before version 2.6, and some people prefer this behavior.</_description>
-    </key>
     <key name="always-use-location-entry" type="b">
       <default>false</default>
       <_summary>Always use the location entry, instead of the pathbar</_summary>
