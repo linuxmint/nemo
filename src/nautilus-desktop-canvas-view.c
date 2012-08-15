@@ -759,6 +759,7 @@ nautilus_desktop_canvas_view_create (NautilusWindowSlot *slot)
 			     "window-slot", slot,
 			     "supports-zooming", FALSE,
 			     "supports-auto-layout", FALSE,
+			     "supports-manual-layout", TRUE,
 			     "supports-scaling", TRUE,
 			     "supports-keep-aligned", TRUE,
 			     NULL);

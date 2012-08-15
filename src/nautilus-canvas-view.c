@@ -71,6 +71,7 @@ enum
 	PROP_SUPPORTS_AUTO_LAYOUT = 1,
 	PROP_SUPPORTS_SCALING,
 	PROP_SUPPORTS_KEEP_ALIGNED,
+	PROP_SUPPORTS_MANUAL_LAYOUT,
 	NUM_PROPERTIES
 };
 
@@ -111,6 +112,7 @@ struct NautilusCanvasViewDetails
 	GtkWidget *canvas_container;
 
 	gboolean supports_auto_layout;
+	gboolean supports_manual_layout;
 	gboolean supports_scaling;
 	gboolean supports_keep_aligned;
 };
@@ -226,7 +228,7 @@ nautilus_canvas_view_supports_manual_layout (NautilusCanvasView *view)
 {
 	g_return_val_if_fail (NAUTILUS_IS_CANVAS_VIEW (view), FALSE);
 
-	return TRUE;
+	return view->details->supports_manual_layout;
 }
 
 static gboolean
@@ -623,6 +625,8 @@ update_layout_menus (NautilusCanvasView *view)
 	action = gtk_action_group_get_action (view->details->canvas_action_group,
 					      NAUTILUS_ACTION_CLEAN_UP);
 	gtk_action_set_sensitive (action, !is_auto_layout);	
+	gtk_action_set_visible (action,
+				nautilus_canvas_view_supports_manual_layout (view));
 
 	if (NAUTILUS_IS_DESKTOP_CANVAS_VIEW (view)) {
 		gtk_action_set_label (action, _("_Organize Desktop by Name"));
@@ -1254,7 +1258,7 @@ static const GtkToggleActionEntry canvas_view_toggle_entries[] = {
 };
 
 static const GtkRadioActionEntry arrange_radio_entries[] = {
-  { "Manual Layout", NULL,
+  { NAUTILUS_ACTION_MANUAL_LAYOUT, NULL,
     N_("_Manually"), NULL,
     N_("Leave icons wherever they are dropped"),
     NAUTILUS_FILE_SORT_NONE },
@@ -2250,6 +2254,9 @@ nautilus_canvas_view_set_property (GObject         *object,
 	case PROP_SUPPORTS_AUTO_LAYOUT:
 		canvas_view->details->supports_auto_layout = g_value_get_boolean (value);
 		break;
+	case PROP_SUPPORTS_MANUAL_LAYOUT:
+		canvas_view->details->supports_manual_layout = g_value_get_boolean (value);
+		break;
 	case PROP_SUPPORTS_SCALING:
 		canvas_view->details->supports_scaling = g_value_get_boolean (value);
 		break;
@@ -2348,6 +2355,13 @@ nautilus_canvas_view_class_init (NautilusCanvasViewClass *klass)
 				      "Supports auto layout",
 				      "Whether this view supports auto layout",
 				      TRUE,
+				      G_PARAM_WRITABLE |
+				      G_PARAM_CONSTRUCT_ONLY);
+	properties[PROP_SUPPORTS_MANUAL_LAYOUT] =
+		g_param_spec_boolean ("supports-manual-layout",
+				      "Supports manual layout",
+				      "Whether this view supports manual layout",
+				      FALSE,
 				      G_PARAM_WRITABLE |
 				      G_PARAM_CONSTRUCT_ONLY);
 	properties[PROP_SUPPORTS_SCALING] =
