@@ -110,6 +110,7 @@
     <menuitem name="Copy To" action="Copy To"/>
     <menuitem name="Properties" action="Properties"/>
     <menuitem name="Rename" action="Rename"/>
+    <menuitem name="Set As Wallpaper" action="Set As Wallpaper"/>
   </placeholder>
   <separator name="Dangerous separator"/>
   <placeholder name="Dangerous File Actions">

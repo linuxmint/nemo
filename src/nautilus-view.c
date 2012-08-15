@@ -84,6 +84,9 @@
 #include <libnautilus-private/nautilus-icon-names.h>
 #include <libnautilus-private/nautilus-file-undo-manager.h>
 
+#define GNOME_DESKTOP_USE_UNSTABLE_API
+#include <gdesktop-enums.h>
+
 #define DEBUG_FLAG NAUTILUS_DEBUG_DIRECTORY_VIEW
 #include <libnautilus-private/nautilus-debug.h>
 
@@ -3336,7 +3339,6 @@ remove_not_really_moved_files (gpointer key,
 	return TRUE;
 }
 
-
 /* When this function is invoked, the file operation is over, but all
  * the icons may not have been added to the directory view yet, so
  * we can't select them yet.
@@ -6495,6 +6497,117 @@ action_rename_select_all_callback (GtkAction *action,
 	real_action_rename (NAUTILUS_VIEW (callback_data), TRUE);
 }
 
+#define BG_KEY_DRAW_BACKGROUND    "draw-background"
+#define BG_KEY_PRIMARY_COLOR      "primary-color"
+#define BG_KEY_SECONDARY_COLOR    "secondary-color"
+#define BG_KEY_COLOR_TYPE         "color-shading-type"
+#define BG_KEY_PICTURE_PLACEMENT  "picture-options"
+#define BG_KEY_PICTURE_URI        "picture-uri"
+
+static void
+set_uri_as_wallpaper (const char *uri)
+{
+	GSettings *settings;
+
+	settings = gnome_background_preferences;
+
+	g_settings_delay (settings);
+
+	if (uri == NULL)
+		uri = "";
+
+	g_settings_set_boolean (settings, BG_KEY_DRAW_BACKGROUND, TRUE);
+	g_settings_set_string (settings, BG_KEY_PICTURE_URI, uri);
+	g_settings_set_string (settings, BG_KEY_PRIMARY_COLOR, "#000000");
+	g_settings_set_string (settings, BG_KEY_SECONDARY_COLOR, "#000000");
+	g_settings_set_enum (settings, BG_KEY_COLOR_TYPE, G_DESKTOP_BACKGROUND_SHADING_SOLID);
+	g_settings_set_enum (settings, BG_KEY_PICTURE_PLACEMENT, G_DESKTOP_BACKGROUND_STYLE_ZOOM);
+
+	/* Apply changes atomically. */
+	g_settings_apply (settings);
+}
+
+static void
+wallpaper_copy_done_callback (GHashTable *debuting_files,
+			      gboolean success,
+			      gpointer data)
+{
+	GHashTableIter iter;
+	gpointer key, value;
+
+	g_hash_table_iter_init (&iter, debuting_files);
+	while (g_hash_table_iter_next (&iter, &key, &value)) {
+		char *uri;
+		uri = g_file_get_uri (G_FILE (key));
+		set_uri_as_wallpaper (uri);
+		g_free (uri);
+		break;
+	}
+}
+
+static gboolean
+can_set_wallpaper (GList *selection)
+{
+	NautilusFile *file;
+
+	if (g_list_length (selection) != 1) {
+		return FALSE;
+	}
+
+	file = NAUTILUS_FILE (selection->data);
+	if (!nautilus_file_is_mime_type (file, "image/*")) {
+		return FALSE;
+	}
+
+	/* FIXME: check file size? */
+
+	return TRUE;
+}
+
+static void
+action_set_as_wallpaper_callback (GtkAction    *action,
+				  NautilusView *view)
+{
+	GList *selection;
+
+	/* Copy the item to Pictures/Wallpaper since it may be
+	   remote. Then set it as the current wallpaper. */
+
+	g_assert (NAUTILUS_IS_VIEW (view));
+
+	selection = nautilus_view_get_selection (view);
+
+	if (can_set_wallpaper (selection)
+	    && selection_not_empty_in_menu_callback (view, selection)) {
+		NautilusFile *file;
+		char *target_uri;
+		GList *uris;
+		GFile *parent;
+		GFile *target;
+
+		file = NAUTILUS_FILE (selection->data);
+
+		parent = g_file_new_for_path (g_get_user_special_dir (G_USER_DIRECTORY_PICTURES));
+		target = g_file_get_child (parent, "Wallpapers");
+		g_object_unref (parent);
+		g_file_make_directory_with_parents (target, NULL, NULL);
+		target_uri = g_file_get_uri (target);
+		g_object_unref (target);
+		uris = g_list_prepend (NULL, nautilus_file_get_uri (file));
+		nautilus_file_operations_copy_move (uris,
+						    NULL,
+						    target_uri,
+						    GDK_ACTION_COPY,
+						    GTK_WIDGET (view),
+						    wallpaper_copy_done_callback,
+						    NULL);
+		g_free (target_uri);
+		g_list_free_full (uris, g_free);
+	}
+
+	nautilus_file_list_free (selection);
+}
+
 static void
 file_mount_callback (NautilusFile  *file,
 		     GFile         *result_location,
@@ -7391,6 +7504,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Rena_me..."), "F2",
   /* tooltip */                  N_("Rename selected item"),
 				 G_CALLBACK (action_rename_callback) },
+  /* name, stock id */         { "Set As Wallpaper", NULL,
+  /* label, accelerator */       N_("Set as Wallpaper"), NULL,
+  /* tooltip */                  N_("Make item the wallpaper"),
+				 G_CALLBACK (action_set_as_wallpaper_callback) },
   /* name, stock id */         { "RenameSelectAll", NULL,
   /* label, accelerator */       "RenameSelectAll", "<shift>F2",
   /* tooltip */                  NULL,
@@ -8671,6 +8788,15 @@ real_update_menus (NautilusView *view)
 					  nautilus_view_can_rename_file (view, selection->data));
 	}
 	gtk_action_set_visible (action, !selection_contains_recent);
+
+	action = gtk_action_group_get_action (view->details->dir_action_group,
+					      NAUTILUS_ACTION_SET_AS_WALLPAPER);
+	/* rename sensitivity depending on selection */
+	if (can_set_wallpaper (selection)) {
+		gtk_action_set_visible (action, TRUE);
+	} else {
+		gtk_action_set_visible (action, FALSE);
+	}
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_NEW_FOLDER);
