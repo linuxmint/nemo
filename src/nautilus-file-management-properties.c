@@ -45,8 +45,7 @@
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_ICON_VIEW_ZOOM_WIDGET "icon_view_zoom_combobox"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_LIST_VIEW_ZOOM_WIDGET "list_view_zoom_combobox"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_SORT_ORDER_WIDGET "sort_order_combobox"
-#define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_TEXT_WIDGET "preview_text_combobox"
-#define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_IMAGE_WIDGET "preview_image_combobox"
+#define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FILES_WIDGET "preview_image_combobox"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET "preview_folder_combobox"
 
 /* bool preferences */
@@ -556,7 +555,6 @@ bind_builder_enum (GtkBuilder *builder,
 				      enum_values, NULL);
 }
 
-
 typedef struct {
 	const guint64 *values;
 	int n_values;
@@ -684,7 +682,7 @@ nautilus_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow
 							       3);
 	nautilus_file_management_properties_size_group_create (builder,
 							       "preview_label",
-							       4);
+							       3);
 
 	/* setup preferences */
 	bind_builder_bool (builder, nautilus_preferences,
@@ -721,12 +719,8 @@ nautilus_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow
 			   NAUTILUS_PREFERENCES_DEFAULT_SORT_ORDER,
 			   (const char **) sort_order_values);
 	bind_builder_enum (builder, nautilus_preferences,
-			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_TEXT_WIDGET,
-			   NAUTILUS_PREFERENCES_SHOW_TEXT_IN_ICONS,
-			   (const char **) preview_values);
-	bind_builder_enum (builder, nautilus_preferences,
-			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_IMAGE_WIDGET,
-			   NAUTILUS_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
+			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FILES_WIDGET,
+			   NAUTILUS_PREFERENCES_SHOW_FILE_THUMBNAILS,
 			   (const char **) preview_values);
 	bind_builder_enum (builder, nautilus_preferences,
 			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET,
@@ -744,7 +738,7 @@ nautilus_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow
 
 	bind_builder_uint_enum (builder, nautilus_preferences,
 				NAUTILUS_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET,
-				NAUTILUS_PREFERENCES_IMAGE_FILE_THUMBNAIL_LIMIT,
+				NAUTILUS_PREFERENCES_FILE_THUMBNAIL_LIMIT,
 				thumbnail_limit_values,
 				G_N_ELEMENTS (thumbnail_limit_values));
 

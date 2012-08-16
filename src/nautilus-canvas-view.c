@@ -2410,7 +2410,7 @@ nautilus_canvas_view_init (NautilusCanvasView *canvas_view)
 				  G_CALLBACK (default_sort_in_reverse_order_changed_callback),
 				  canvas_view);
 	g_signal_connect_swapped (nautilus_preferences,
-				  "changed::" NAUTILUS_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
+				  "changed::" NAUTILUS_PREFERENCES_SHOW_FILE_THUMBNAILS,
 				  G_CALLBACK (image_display_policy_changed_callback),
 				  canvas_view);
 
