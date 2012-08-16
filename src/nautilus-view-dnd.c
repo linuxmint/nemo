@@ -338,6 +338,54 @@ nautilus_view_handle_uri_list_drop (NautilusView  *view,
 	g_free (container_uri);
 }
 
+#define MAX_LEN_FILENAME 128
+#define MIN_LEN_FILENAME 10
+
+static char *
+get_drop_filename (const char *text)
+{
+	char *filename;
+	char trimmed[MAX_LEN_FILENAME];
+	int i;
+	int last_word = -1;
+	int last_sentence = -1;
+	int last_nonspace = -1;
+	int num_attrs;
+	PangoLogAttr *attrs;
+
+	num_attrs = MIN (g_utf8_strlen (text, -1) + 1, MAX_LEN_FILENAME);
+	attrs = g_new (PangoLogAttr, num_attrs);
+	g_utf8_strncpy (trimmed, text, num_attrs);
+	pango_get_log_attrs (trimmed, -1, -1, pango_language_get_default (), attrs, num_attrs);
+
+	/* since the end of the text will always match a word boundary don't include it */
+	for (i = 0; (i < num_attrs - 1); i++) {
+		if (!attrs[i].is_white)
+			last_nonspace = i;
+		if (attrs[i].is_sentence_end)
+			last_sentence = last_nonspace;
+		if (attrs[i].is_word_boundary)
+			last_word = last_nonspace;
+	}
+	g_free (attrs);
+
+	if (last_sentence > 0)
+		i = last_sentence;
+	else
+		i = last_word;
+
+	if (i > MIN_LEN_FILENAME) {
+		char basename[MAX_LEN_FILENAME];
+		g_utf8_strncpy (basename, trimmed, i);
+		filename = g_strdup_printf ("%s.txt", basename);
+	} else {
+		/* Translator: This is the filename used for when you dnd text to a directory */
+		filename = g_strdup (_("Dropped Text.txt"));
+	}
+
+	return filename;
+}
+
 void
 nautilus_view_handle_text_drop (NautilusView  *view,
                                 const char    *text,
@@ -349,6 +397,7 @@ nautilus_view_handle_text_drop (NautilusView  *view,
 	int length;
 	char *container_uri;
 	GdkPoint pos;
+	char *filename;
 
 	if (text == NULL) {
 		return;
@@ -368,12 +417,16 @@ nautilus_view_handle_text_drop (NautilusView  *view,
 	pos.y = y;
 	view_widget_to_file_operation_position (view, &pos);
 
-	nautilus_view_new_file_with_initial_contents (
-		view, target_uri != NULL ? target_uri : container_uri,
-		/* Translator: This is the filename used for when you dnd text to a directory */
-		_("dropped text.txt"),
-		text, length, &pos);
+	/* try to get text to use as a filename */
+	filename = get_drop_filename (text);
 
+	nautilus_view_new_file_with_initial_contents (view,
+						      target_uri != NULL ? target_uri : container_uri,
+						      filename,
+						      text,
+						      length,
+						      &pos);
+	g_free (filename);
 	g_free (container_uri);
 }
 
