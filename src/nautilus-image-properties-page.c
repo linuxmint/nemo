@@ -467,6 +467,13 @@ file_read_callback (GObject      *object,
 		done_reading = TRUE;
 	}
 
+	if (error != NULL) {
+		char *uri = g_file_get_uri (G_FILE (object));
+		g_warning ("Error reading %s: %s", uri, error->message);
+		g_free (uri);
+		g_clear_error (&error);
+	}
+
 	if (done_reading) {
 		load_finished (page);
 		g_input_stream_close_async (stream,
@@ -493,29 +500,44 @@ size_prepared_callback (GdkPixbufLoader *loader,
 	page->details->pixbuf_still_loading = FALSE;
 }
 
+typedef struct {
+	NautilusImagePropertiesPage *page;
+	NautilusFileInfo            *info;
+} FileOpenData;
+
 static void
 file_open_callback (GObject      *object,
 		    GAsyncResult *res,
-		    gpointer      data)
+		    gpointer      user_data)
 {
-	NautilusImagePropertiesPage *page;
+	FileOpenData *data = user_data;
+	NautilusImagePropertiesPage *page = data->page;
 	GFile *file;
 	GFileInputStream *stream;
 	GError *error;
+	char *uri;
 
-	page = NAUTILUS_IMAGE_PROPERTIES_PAGE (data);
 	file = G_FILE (object);
+	uri = g_file_get_uri (file);
 
 	error = NULL;
 	stream = g_file_read_finish (file, res, &error);
 	if (stream) {
-		page->details->loader = gdk_pixbuf_loader_new ();
+		char *mime_type;
+
+		mime_type = nautilus_file_info_get_mime_type (data->info);
+		page->details->loader = gdk_pixbuf_loader_new_with_mime_type (mime_type, &error);
+		if (error != NULL) {
+			g_warning ("Error creating loader for %s: %s", uri, error->message);
+			g_clear_error (&error);
+		}
 		page->details->pixbuf_still_loading = TRUE;
 		page->details->width = 0;
 		page->details->height = 0;
 #ifdef HAVE_EXIF
 		page->details->exifldr = exif_loader_new ();
 #endif /*HAVE_EXIF*/
+		g_free (mime_type);
 
 		g_signal_connect (page->details->loader,
 				  "size_prepared",
@@ -532,21 +554,30 @@ file_open_callback (GObject      *object,
 
 		g_object_unref (stream);
 	} else {
+		g_warning ("Error reading %s: %s", uri, error->message);
+		g_clear_error (&error);
 		load_finished (page);
 	}
+
+	g_free (uri);
+	g_free (data);
 }
 
 static void
 load_location (NautilusImagePropertiesPage *page,
-	       const char                  *location)
+	       NautilusFileInfo            *info)
 {
 	GFile *file;
+	char *uri;
+	FileOpenData *data;
 
 	g_assert (NAUTILUS_IS_IMAGE_PROPERTIES_PAGE (page));
-	g_assert (location != NULL);
+	g_assert (info != NULL);
 
 	page->details->cancellable = g_cancellable_new ();
-	file = g_file_new_for_uri (location);
+
+	uri = nautilus_file_info_get_uri (info);
+	file = g_file_new_for_uri (uri);
 
 #ifdef HAVE_EXEMPI
 	{
@@ -555,7 +586,7 @@ load_location (NautilusImagePropertiesPage *page,
 		XmpFilePtr xf;
 		char *localname;
 
-		localname = g_filename_from_uri (location, NULL, NULL);
+		localname = g_filename_from_uri (uri, NULL, NULL);
 		if (localname) {
 			xf = xmp_files_open_new (localname, 0);
 			page->details->xmp = xmp_files_get_new_xmp (xf); /* only load when loading */
@@ -568,13 +599,18 @@ load_location (NautilusImagePropertiesPage *page,
 	}
 #endif /*HAVE_EXEMPI*/
 
+	data = g_new0 (FileOpenData, 1);
+	data->page = page;
+	data->info = info;
+
 	g_file_read_async (file,
 			   0,
 			   page->details->cancellable,
 			   file_open_callback,
-			   page);
+			   data);
 
 	g_object_unref (file);
+	g_free (uri);
 }
 
 static void
@@ -622,53 +658,67 @@ nautilus_image_properties_page_init (NautilusImagePropertiesPage *page)
 	gtk_widget_show_all (GTK_WIDGET (page));
 }
 
+static gboolean
+is_mime_type_supported (const char *mime_type)
+{
+	gboolean supported;
+	GSList *formats;
+	GSList *l;
+
+	supported = FALSE;
+	formats = gdk_pixbuf_get_formats ();
+
+	for (l = formats; supported == FALSE && l != NULL; l = l->next) {
+		GdkPixbufFormat *format = l->data;
+		char **mime_types = gdk_pixbuf_format_get_mime_types (format);
+		int i;
+
+		for (i = 0; mime_types[i] != NULL; i++) {
+			if (strcmp (mime_types[i], mime_type) == 0) {
+				supported = TRUE;
+				break;
+			}
+		}
+		g_strfreev (mime_types);
+	}
+	g_slist_free (formats);
+
+	return supported;
+}
+
 static GList *
 get_property_pages (NautilusPropertyPageProvider *provider,
                     GList *files)
 {
 	GList *pages;
-	NautilusPropertyPage *real_page;
 	NautilusFileInfo *file;
-        char *uri;
-	NautilusImagePropertiesPage *page;
-	
+	char *mime_type;
+
 	/* Only show the property page if 1 file is selected */
 	if (!files || files->next != NULL) {
 		return NULL;
 	}
 
-	file = NAUTILUS_FILE_INFO (files->data);
-	
-	if (!
-	    (nautilus_file_info_is_mime_type (file, "image/x-bmp") ||
-	     nautilus_file_info_is_mime_type (file, "image/x-ico") ||
-	     nautilus_file_info_is_mime_type (file, "image/jpeg") ||
-	     nautilus_file_info_is_mime_type (file, "image/gif") ||
-	     nautilus_file_info_is_mime_type (file, "image/png") ||
-	     nautilus_file_info_is_mime_type (file, "image/pnm") ||
-	     nautilus_file_info_is_mime_type (file, "image/ras") ||
-	     nautilus_file_info_is_mime_type (file, "image/tga") ||
-	     nautilus_file_info_is_mime_type (file, "image/tiff") ||
-	     nautilus_file_info_is_mime_type (file, "image/wbmp") ||
-	     nautilus_file_info_is_mime_type (file, "image/x-xbitmap") ||
-	     nautilus_file_info_is_mime_type (file, "image/x-xpixmap"))) {
-		return NULL;
-	}
-	
 	pages = NULL;
-	
-        uri = nautilus_file_info_get_uri (file);
+	file = NAUTILUS_FILE_INFO (files->data);
 
-	page = g_object_new (nautilus_image_properties_page_get_type (), NULL);
-	load_location (page, uri);
+	mime_type = nautilus_file_info_get_mime_type (file);
+	if (mime_type != NULL
+	    && is_mime_type_supported (mime_type)) {
+		NautilusImagePropertiesPage *page;
+		NautilusPropertyPage *real_page;
 
-	g_free (uri);
+		page = g_object_new (nautilus_image_properties_page_get_type (), NULL);
+		load_location (page, file);
 
-        real_page = nautilus_property_page_new
-                ("NautilusImagePropertiesPage::property_page", 
-                 gtk_label_new (_("Image")),
-                 GTK_WIDGET (page));
-        pages = g_list_append (pages, real_page);
+		real_page = nautilus_property_page_new
+			("NautilusImagePropertiesPage::property_page", 
+			 gtk_label_new (_("Image")),
+			 GTK_WIDGET (page));
+		pages = g_list_append (pages, real_page);
+	}
+
+	g_free (mime_type);
 
 	return pages;
 }
