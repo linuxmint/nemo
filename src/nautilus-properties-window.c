@@ -4876,10 +4876,9 @@ create_properties_window (StartupData *startup_data)
 				NULL);
 
 	/* FIXME - HIGificiation, should be done inside GTK+ */
-	gtk_container_set_border_width (GTK_CONTAINER (window), 12);
-	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (window))), 12);
+	gtk_container_set_border_width (GTK_CONTAINER (window), 5);
+	gtk_container_set_border_width (GTK_CONTAINER (window->details->notebook), 5);
 	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_action_area (GTK_DIALOG (window))), 0);
-	gtk_box_set_spacing (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (window))), 12);
 
 	/* Update from initial state */
 	properties_window_update (window, NULL);
