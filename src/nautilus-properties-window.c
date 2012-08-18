@@ -3130,7 +3130,8 @@ create_basic_page (NautilusPropertiesWindow *window)
 					 FALSE);
 	}
 
-	if (should_show_free_space (window)) {
+	if (should_show_free_space (window)
+	    && ! should_show_volume_usage (window)) {
 		append_blank_row (grid);
 
 		append_title_value_pair (window, grid, _("Free space:"), 
