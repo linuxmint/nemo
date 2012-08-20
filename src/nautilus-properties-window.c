@@ -141,12 +141,6 @@ struct NautilusPropertiesWindowDetails {
 	GdkRGBA free_stroke_color;
 };
 
-typedef enum {
-	PERMISSIONS_CHECKBOXES_READ,
-	PERMISSIONS_CHECKBOXES_WRITE,
-	PERMISSIONS_CHECKBOXES_EXECUTE
-} CheckboxType;
-
 enum {
 	COLUMN_NAME,
 	COLUMN_VALUE,
@@ -3497,13 +3491,13 @@ set_up_permissions_checkbox (NautilusPropertiesWindow *window,
 }
 
 static GtkWidget *
-add_permissions_checkbox_with_label (NautilusPropertiesWindow *window,
-				     GtkGrid *grid,
-				     GtkWidget *sibling,
-				     const char *label,
-				     guint32 permission_to_check,
-				     GtkLabel *label_for,
-				     gboolean is_folder)
+add_execute_checkbox_with_label (NautilusPropertiesWindow *window,
+				 GtkGrid *grid,
+				 GtkWidget *sibling,
+				 const char *label,
+				 guint32 permission_to_check,
+				 GtkLabel *label_for,
+				 gboolean is_folder)
 {
 	GtkWidget *check_button;
 	gboolean a11y_enabled;
@@ -3530,33 +3524,6 @@ add_permissions_checkbox_with_label (NautilusPropertiesWindow *window,
 	}
 
 	return check_button;
-}
-
-static GtkWidget *
-add_permissions_checkbox (NautilusPropertiesWindow *window,
-			  GtkGrid *grid,
-			  GtkWidget *sibling,
-			  CheckboxType type,
-			  guint32 permission_to_check,
-			  GtkLabel *label_for,
-			  gboolean is_folder)
-{
-	const gchar *label;
-
-	if (type == PERMISSIONS_CHECKBOXES_READ) {
-		label = _("_Read");
-	} else if (type == PERMISSIONS_CHECKBOXES_WRITE) {
-		label = _("_Write");
-	} else {
-		label = _("E_xecute");
-	}
-
-	return add_permissions_checkbox_with_label (window, grid, 
-						    sibling,
-						    label,
-						    permission_to_check,
-						    label_for,
-						    is_folder);
 }
 
 enum {
@@ -3983,51 +3950,6 @@ add_permissions_combo_box (NautilusPropertiesWindow *window,
 				 GTK_POS_RIGHT, 1, 1);
 }
 
-
-static GtkWidget *
-append_special_execution_checkbox (NautilusPropertiesWindow *window,
-				   GtkGrid *grid,
-				   GtkWidget *sibling,
-				   const char *label_text,
-				   guint32 permission_to_check)
-{
-	GtkWidget *check_button;
-
-	check_button = gtk_check_button_new_with_mnemonic (label_text);
-	gtk_widget_show (check_button);
-
-	if (sibling != NULL) {
-		gtk_grid_attach_next_to (grid, check_button, sibling,
-					 GTK_POS_RIGHT, 1, 1);
-	} else {
-		gtk_container_add_with_properties (GTK_CONTAINER (grid), check_button,
-						   "left-attach", 1,
-						   NULL);
-	}
-
-	set_up_permissions_checkbox (window, 
-				     check_button, 
-				     permission_to_check,
-				     FALSE);
-	g_object_set_data (G_OBJECT (check_button), "is-special",
-			   GINT_TO_POINTER (TRUE));
-
-	return check_button;
-}
-
-static void
-append_special_execution_flags (NautilusPropertiesWindow *window, GtkGrid *grid)
-{
-	GtkWidget *title;
-
-	append_blank_slim_row (grid);
-	title = GTK_WIDGET (attach_title_field (grid, _("Special flags:")));
-
-	append_special_execution_checkbox (window, grid, title, _("Set _user ID"), UNIX_PERM_SUID);
-	append_special_execution_checkbox (window, grid, NULL, _("Set gro_up ID"), UNIX_PERM_SGID);
-	append_special_execution_checkbox (window, grid, NULL, _("_Sticky"), UNIX_PERM_STICKY);
-}
-
 static gboolean
 all_can_get_permissions (GList *file_list)
 {
@@ -4175,184 +4097,12 @@ create_simple_permissions (NautilusPropertiesWindow *window, GtkGrid *page_grid)
 		append_blank_slim_row (page_grid);
 
 		execute_label = attach_title_field (page_grid, _("Execute:"));
-		add_permissions_checkbox_with_label (window, page_grid,
-						     GTK_WIDGET (execute_label),
-						     _("Allow _executing file as program"),
-						     UNIX_PERM_USER_EXEC|UNIX_PERM_GROUP_EXEC|UNIX_PERM_OTHER_EXEC,
-						     execute_label, FALSE);
+		add_execute_checkbox_with_label (window, page_grid,
+						 GTK_WIDGET (execute_label),
+						 _("Allow _executing file as program"),
+						 UNIX_PERM_USER_EXEC|UNIX_PERM_GROUP_EXEC|UNIX_PERM_OTHER_EXEC,
+						 execute_label, FALSE);
 	}
-}
-
-static void
-create_permission_checkboxes (NautilusPropertiesWindow *window,
-			      GtkGrid *page_grid,
-			      gboolean is_folder)
-{
-	GtkLabel *owner_perm_label;
-	GtkLabel *group_perm_label;
-	GtkLabel *other_perm_label;
-	GtkGrid *check_button_grid;
-	GtkWidget *w;
-	
-	owner_perm_label = attach_title_field (page_grid, _("Owner:"));
-	group_perm_label = attach_title_field (page_grid, _("Group:"));
-	other_perm_label = attach_title_field (page_grid, _("Others:"));
-
-	check_button_grid = GTK_GRID (create_grid_with_standard_properties ());
-	gtk_widget_show (GTK_WIDGET (check_button_grid));
-
-	gtk_grid_attach_next_to (page_grid, GTK_WIDGET (check_button_grid),
-				 GTK_WIDGET (owner_perm_label),
-				 GTK_POS_RIGHT, 1, 3);
-
-	/* user */
-	w = add_permissions_checkbox (window,
-				      check_button_grid, 
-				      NULL,
-				      PERMISSIONS_CHECKBOXES_READ,
-				      UNIX_PERM_USER_READ,
-				      owner_perm_label,
-				      is_folder);
-
-	w = add_permissions_checkbox (window,
-				      check_button_grid, 
-				      w,
-				      PERMISSIONS_CHECKBOXES_WRITE,
-				      UNIX_PERM_USER_WRITE,
-				      owner_perm_label,
-				      is_folder);
-
-	add_permissions_checkbox (window,
-				  check_button_grid,
-				  w,
-				  PERMISSIONS_CHECKBOXES_EXECUTE,
-				  UNIX_PERM_USER_EXEC,
-				  owner_perm_label,
-				  is_folder);
-
-	/* group */
-	w = add_permissions_checkbox (window,
-				      check_button_grid, 
-				      NULL,
-				      PERMISSIONS_CHECKBOXES_READ,
-				      UNIX_PERM_GROUP_READ,
-				      group_perm_label,
-				      is_folder);
-	
-	w = add_permissions_checkbox (window,
-				      check_button_grid, 
-				      w,
-				      PERMISSIONS_CHECKBOXES_WRITE,
-				      UNIX_PERM_GROUP_WRITE,
-				      group_perm_label,
-				      is_folder);
-	
-	add_permissions_checkbox (window,
-				  check_button_grid, 
-				  w,
-				  PERMISSIONS_CHECKBOXES_EXECUTE,
-				  UNIX_PERM_GROUP_EXEC,
-				  group_perm_label,
-				  is_folder);
-
-	/* other */
-	w = add_permissions_checkbox (window,
-				      check_button_grid, 
-				      NULL,
-				      PERMISSIONS_CHECKBOXES_READ,
-				      UNIX_PERM_OTHER_READ,
-				      other_perm_label,
-				      is_folder);
-	
-	w = add_permissions_checkbox (window,
-				      check_button_grid, 
-				      w,
-				      PERMISSIONS_CHECKBOXES_WRITE,
-				      UNIX_PERM_OTHER_WRITE,
-				      other_perm_label,
-				      is_folder);
-
-	add_permissions_checkbox (window,
-				  check_button_grid, 
-				  w,
-				  PERMISSIONS_CHECKBOXES_EXECUTE,
-				  UNIX_PERM_OTHER_EXEC,
-				  other_perm_label,
-				  is_folder);
-}
-
-static void
-create_advanced_permissions (NautilusPropertiesWindow *window, GtkGrid *page_grid)
-{
-	GtkLabel *group_label;
-	GtkLabel *owner_label;
-	GtkComboBox *group_combo_box;
-	GtkComboBox *owner_combo_box;
-	gboolean has_directory;
-	gboolean has_file;
-
-	if (!is_multi_file_window (window) && nautilus_file_can_set_owner (get_target_file (window))) {
-		
-		owner_label  = attach_title_field (page_grid, _("_Owner:"));
-		/* Combo box in this case. */
-		owner_combo_box = attach_owner_combo_box (page_grid,
-							  GTK_WIDGET (owner_label),
-							  get_target_file (window));
-		gtk_label_set_mnemonic_widget (owner_label,
-					       GTK_WIDGET (owner_combo_box));
-	} else {
-		GtkWidget *value;
-
-		owner_label = attach_title_field (page_grid, _("Owner:"));
-		/* Static text in this case. */
-		value = attach_value_field (window, 
-					    page_grid,
-					    GTK_WIDGET (owner_label),
-					    "owner",
-					    INCONSISTENT_STATE_STRING,
-					    FALSE); 
-		gtk_label_set_mnemonic_widget (owner_label, value);
-	}
-	
-	if (!is_multi_file_window (window) && nautilus_file_can_set_group (get_target_file (window))) {
-		group_label = attach_title_field (page_grid, _("_Group:"));
-
-		/* Combo box in this case. */
-		group_combo_box = attach_group_combo_box (page_grid, GTK_WIDGET (group_label),
-							  get_target_file (window));
-		gtk_label_set_mnemonic_widget (group_label,
-					       GTK_WIDGET (group_combo_box));
-	} else {
-		group_label = attach_title_field (page_grid, _("Group:"));
-
-		/* Static text in this case. */
-		attach_value_field (window, page_grid, GTK_WIDGET (group_label),
-				    "group",
-				    INCONSISTENT_STATE_STRING,
-				    FALSE); 
-	}
-
-	append_blank_slim_row (page_grid);
-
-	has_directory = files_has_directory (window);
-	has_file = files_has_file (window);
-
-	if (has_directory && has_file) {
-		attach_title_field (page_grid, _("Folder Permissions:"));
-		create_permission_checkboxes (window, page_grid, TRUE);
-		attach_title_field (page_grid, _("File Permissions:"));
-		create_permission_checkboxes (window, page_grid, FALSE);
-	} else {
-		create_permission_checkboxes (window, page_grid, has_directory);
-	}
-
-	append_blank_slim_row (page_grid);
-	append_special_execution_flags (window, page_grid);
-	
-	append_title_value_pair
-		(window, page_grid, _("Text view:"), 
-		 "permissions", INCONSISTENT_STATE_STRING,
-		 FALSE);
 }
 
 static void
@@ -4623,11 +4373,7 @@ create_permissions_page (NautilusPropertiesWindow *window)
 				    GTK_WIDGET (page_grid), 
 				    TRUE, TRUE, 0);
 
-		if (g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SHOW_ADVANCED_PERMISSIONS)) {
-			create_advanced_permissions (window, page_grid);
-		} else {
-			create_simple_permissions (window, page_grid);
-		}
+		create_simple_permissions (window, page_grid);
 
 #ifdef HAVE_SELINUX
 		append_blank_slim_row (page_grid);

@@ -125,11 +125,6 @@
       <_summary>Maximum image size for thumbnailing</_summary>
       <_description>Images over this size (in bytes) won't be  thumbnailed. The purpose of this setting is to  avoid thumbnailing large images that may take a long time to load or use lots of memory.</_description>
     </key>
-    <key name="show-advanced-permissions" type="b">
-      <default>false</default>
-      <_summary>Show advanced permissions in the file property dialog</_summary>
-      <_description>If set to true, then Nautilus lets you edit and display file permissions in a more unix-like way, accessing some more esoteric options.</_description>
-    </key>
     <key name="sort-directories-first" type="b">
       <default>false</default>
       <_summary>Show folders first in windows</_summary>
