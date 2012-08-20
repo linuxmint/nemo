@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus 3.1.90\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-15 15:14+0800\n"
-"PO-Revision-Date: 2012-08-15 11:12+0800\n"
+"POT-Creation-Date: 2012-08-20 23:17+0800\n"
+"PO-Revision-Date: 2012-08-20 21:18+0800\n"
 "Last-Translator: Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>\n"
 "Language-Team: Chinese(Taiwan) <zh-l10n@lists.linux.org.tw>\n"
 "Language: \n"
@@ -22,12 +22,13 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../data/nautilus-autorun-software.desktop.in.in.h:1
-msgid "Autorun Prompt"
-msgstr "自動執行提示"
+msgid "Run Software"
+msgstr "執行軟體"
 
 #. Set initial window title
-#: ../data/nautilus.desktop.in.in.h:1 ../src/nautilus-window.c:1958
-#: ../src/nautilus-window.c:2211
+#: ../data/nautilus.desktop.in.in.h:1
+#: ../src/nautilus-file-management-properties.ui.h:27
+#: ../src/nautilus-window.c:1958 ../src/nautilus-window.c:2211
 msgid "Files"
 msgstr "檔案"
 
@@ -148,7 +149,7 @@ msgstr "貼上存於剪貼簿內的文字"
 
 #. name, stock id
 #. label, accelerator
-#: ../libnautilus-private/nautilus-clipboard.c:370 ../src/nautilus-view.c:7355
+#: ../libnautilus-private/nautilus-clipboard.c:370 ../src/nautilus-view.c:7484
 msgid "Select _All"
 msgstr "全部選取(_A)"
 
@@ -170,7 +171,7 @@ msgid "Use De_fault"
 msgstr "使用預設值(_F)"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:58
-#: ../src/nautilus-list-view.c:1661
+#: ../src/nautilus-list-view.c:1656
 msgid "Name"
 msgstr "名稱"
 
@@ -252,7 +253,7 @@ msgid "The security context of the file."
 msgstr "檔案的安全性內容。"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:137
-#: ../src/nautilus-image-properties-page.c:328
+#: ../src/nautilus-image-properties-page.c:329
 msgid "Location"
 msgstr "位置"
 
@@ -326,50 +327,50 @@ msgstr "設為背景(_B)"
 msgid "Cancel"
 msgstr "取消"
 
-#: ../libnautilus-private/nautilus-file.c:1210
+#: ../libnautilus-private/nautilus-file.c:1216
 #: ../libnautilus-private/nautilus-vfs-file.c:356
 msgid "This file cannot be mounted"
 msgstr "這個檔案無法被掛載"
 
-#: ../libnautilus-private/nautilus-file.c:1255
+#: ../libnautilus-private/nautilus-file.c:1261
 msgid "This file cannot be unmounted"
 msgstr "這個檔案無法被掛載"
 
-#: ../libnautilus-private/nautilus-file.c:1289
+#: ../libnautilus-private/nautilus-file.c:1295
 msgid "This file cannot be ejected"
 msgstr "這個檔案無法被退出"
 
-#: ../libnautilus-private/nautilus-file.c:1322
+#: ../libnautilus-private/nautilus-file.c:1328
 #: ../libnautilus-private/nautilus-vfs-file.c:534
 msgid "This file cannot be started"
 msgstr "這個檔案無法開啟"
 
-#: ../libnautilus-private/nautilus-file.c:1374
-#: ../libnautilus-private/nautilus-file.c:1405
+#: ../libnautilus-private/nautilus-file.c:1380
+#: ../libnautilus-private/nautilus-file.c:1411
 msgid "This file cannot be stopped"
 msgstr "這個檔案無法關閉"
 
-#: ../libnautilus-private/nautilus-file.c:1816
+#: ../libnautilus-private/nautilus-file.c:1822
 #, c-format
 msgid "Slashes are not allowed in filenames"
 msgstr "檔案名稱中不能使用斜線( / )"
 
-#: ../libnautilus-private/nautilus-file.c:1834
+#: ../libnautilus-private/nautilus-file.c:1840
 #, c-format
 msgid "File not found"
 msgstr "找不到檔案"
 
-#: ../libnautilus-private/nautilus-file.c:1862
+#: ../libnautilus-private/nautilus-file.c:1868
 #, c-format
 msgid "Toplevel files cannot be renamed"
 msgstr "頂端層級檔案無法更改名稱"
 
-#: ../libnautilus-private/nautilus-file.c:1885
+#: ../libnautilus-private/nautilus-file.c:1891
 #, c-format
 msgid "Unable to rename desktop icon"
 msgstr "無法重新命名桌面圖示"
 
-#: ../libnautilus-private/nautilus-file.c:1914
+#: ../libnautilus-private/nautilus-file.c:1920
 #, c-format
 msgid "Unable to rename desktop file"
 msgstr "無法重新命名桌面檔案"
@@ -386,103 +387,103 @@ msgstr "無法重新命名桌面檔案"
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4420
+#: ../libnautilus-private/nautilus-file.c:4421
 msgid "%-I:%M %P"
 msgstr "%P %-I:%M"
 
-#: ../libnautilus-private/nautilus-file.c:4421
 #: ../libnautilus-private/nautilus-file.c:4422
+#: ../libnautilus-private/nautilus-file.c:4423
 msgid "%b %-e"
 msgstr "%b %-e"
 
-#: ../libnautilus-private/nautilus-file.c:4423
+#: ../libnautilus-private/nautilus-file.c:4424
 msgid "%b %-d %Y"
 msgstr "%Y年%m月%-d日%p"
 
-#: ../libnautilus-private/nautilus-file.c:4424
+#: ../libnautilus-private/nautilus-file.c:4425
 msgid "%a, %b %e %Y %H:%M:%S %p"
 msgstr "%Y年%m月%d日(%a) %p %H:%M:%S"
 
-#: ../libnautilus-private/nautilus-file.c:4941
+#: ../libnautilus-private/nautilus-file.c:4919
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "不允許設定權限"
 
-#: ../libnautilus-private/nautilus-file.c:5236
+#: ../libnautilus-private/nautilus-file.c:5214
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "不允許設定擁有者"
 
-#: ../libnautilus-private/nautilus-file.c:5254
+#: ../libnautilus-private/nautilus-file.c:5232
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "指定的擁有者“%s”不存在"
 
-#: ../libnautilus-private/nautilus-file.c:5518
+#: ../libnautilus-private/nautilus-file.c:5496
 #, c-format
 msgid "Not allowed to set group"
 msgstr "不允許設定群組"
 
-#: ../libnautilus-private/nautilus-file.c:5536
+#: ../libnautilus-private/nautilus-file.c:5514
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "指定的群組「%s」不存在"
 
 #. Translators: "Me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5670
+#: ../libnautilus-private/nautilus-file.c:5648
 msgid "Me"
 msgstr "我"
 
-#: ../libnautilus-private/nautilus-file.c:5694 ../src/nautilus-view.c:3005
+#: ../libnautilus-private/nautilus-file.c:5672 ../src/nautilus-view.c:3008
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
 msgstr[0] "%'u 個項目"
 
-#: ../libnautilus-private/nautilus-file.c:5695
+#: ../libnautilus-private/nautilus-file.c:5673
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] "%'u 個資料夾"
 
-#: ../libnautilus-private/nautilus-file.c:5696
+#: ../libnautilus-private/nautilus-file.c:5674
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
 msgstr[0] "%'u 個檔案"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6089
-#: ../libnautilus-private/nautilus-file.c:6105
+#: ../libnautilus-private/nautilus-file.c:6067
+#: ../libnautilus-private/nautilus-file.c:6083
 msgid "? items"
 msgstr "? 個項目"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6095
+#: ../libnautilus-private/nautilus-file.c:6073
 msgid "? bytes"
 msgstr "? 個位元組"
 
-#: ../libnautilus-private/nautilus-file.c:6110
+#: ../libnautilus-private/nautilus-file.c:6088
 msgid "unknown type"
 msgstr "類型不詳"
 
-#: ../libnautilus-private/nautilus-file.c:6113
+#: ../libnautilus-private/nautilus-file.c:6091
 msgid "unknown MIME type"
 msgstr "MIME 類型不詳"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6127
+#: ../libnautilus-private/nautilus-file.c:6105
 #: ../src/nautilus-properties-window.c:1106
 msgid "unknown"
 msgstr "不明"
 
-#: ../libnautilus-private/nautilus-file.c:6178
+#: ../libnautilus-private/nautilus-file.c:6156
 msgid "program"
 msgstr "程式"
 
-#: ../libnautilus-private/nautilus-file.c:6198
+#: ../libnautilus-private/nautilus-file.c:6176
 msgid "link"
 msgstr "連結"
 
@@ -491,14 +492,14 @@ msgstr "連結"
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6204
+#: ../libnautilus-private/nautilus-file.c:6182
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:124
 #, c-format
 msgid "Link to %s"
 msgstr "連結至 %s"
 
-#: ../libnautilus-private/nautilus-file.c:6220
+#: ../libnautilus-private/nautilus-file.c:6198
 msgid "link (broken)"
 msgstr "連結（目標不存在）"
 
@@ -602,7 +603,7 @@ msgid "_Select a new name for the destination"
 msgstr "為目的端選擇新的名稱(_S)"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:519
-#: ../libnautilus-private/nautilus-mime-application-chooser.c:379
+#: ../libnautilus-private/nautilus-mime-application-chooser.c:377
 msgid "Reset"
 msgstr "重設"
 
@@ -845,7 +846,7 @@ msgstr "所有在回收筒中的項目會永遠地被刪除。"
 #. Empty Trash menu item
 #: ../libnautilus-private/nautilus-file-operations.c:1363
 #: ../libnautilus-private/nautilus-file-operations.c:2229
-#: ../src/nautilus-places-sidebar.c:2720
+#: ../src/nautilus-places-sidebar.c:2710
 msgid "Empty _Trash"
 msgstr "清理回收筒(_T)"
 
@@ -1314,23 +1315,23 @@ msgstr "無法標記啟動圖示為受信任的（可執行的）"
 
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:135
-#: ../src/nautilus-view.c:2540
+#: ../src/nautilus-view.c:2543
 msgid "Undo"
 msgstr "復原"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:138
-#: ../src/nautilus-view.c:2541
+#: ../src/nautilus-view.c:2544
 msgid "Undo last action"
 msgstr "還原上一步"
 
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:142
-#: ../src/nautilus-view.c:2559
+#: ../src/nautilus-view.c:2562
 msgid "Redo"
 msgstr "取消復原"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:145
-#: ../src/nautilus-view.c:2560
+#: ../src/nautilus-view.c:2563
 msgid "Redo last undone action"
 msgstr "重複剛取消的動作"
 
@@ -1708,16 +1709,17 @@ msgstr "%s 文件"
 msgid "Open all files of type “%s” with"
 msgstr "以此開啟所有類型為“%s”的檔案："
 
-#: ../libnautilus-private/nautilus-mime-application-chooser.c:304
+#. first %s is filename, second %s is mime-type description
+#: ../libnautilus-private/nautilus-mime-application-chooser.c:303
 #, c-format
-msgid "Select an application to open %s and other files of type “%s”"
-msgstr "選擇用來開啟 %s 及其他檔案類型為“%s”的應用程式"
+msgid "Select an application to open “%s” and other files of type “%s”"
+msgstr "選擇用來開啟“%s”及其他檔案類型為“%s”的應用程式"
 
-#: ../libnautilus-private/nautilus-mime-application-chooser.c:366
+#: ../libnautilus-private/nautilus-mime-application-chooser.c:364
 msgid "Show other applications"
 msgstr "顯示其他的應用程式"
 
-#: ../libnautilus-private/nautilus-mime-application-chooser.c:395
+#: ../libnautilus-private/nautilus-mime-application-chooser.c:393
 msgid "Set as default"
 msgstr "設為預設值"
 
@@ -1792,23 +1794,10 @@ msgstr ""
 "「end」，則新的分頁會加到分頁清單的最後端。"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:3
-msgid "Enables the classic Nautilus behavior, where all windows are browsers"
-msgstr "啟用典型的 Nautilus 運作方式，那麼所有視窗都是瀏覽器"
-
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:4
-msgid ""
-"If set to true, then all Nautilus windows will be browser windows. This is "
-"how Nautilus used to behave before version 2.6, and some people prefer this "
-"behavior."
-msgstr ""
-"如設定為‘true’，那麼所有 Nautilus 視窗皆是瀏覽器視窗。這是 Nautilus 在 2.6 版"
-"前的運作方式，有些人比較喜歡這種運作方式。"
-
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:5
 msgid "Always use the location entry, instead of the pathbar"
 msgstr "總是使用需要輸入的位置列，而非路徑列"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:6
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:4
 msgid ""
 "If set to true, then Nautilus browser windows will always use a textual "
 "input entry for the location toolbar, instead of the pathbar."
@@ -1816,21 +1805,21 @@ msgstr ""
 "如設定為‘true’，Nautilus 瀏覽器視窗會使用輸入文字項目的位置工具列，而非路徑"
 "列。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:7
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:5
 msgid "Whether to ask for confirmation when deleting files, or emptying Trash"
 msgstr "刪除檔案或清空回收筒時是否需要確認"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:8
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:6
 msgid ""
 "If set to true, then Nautilus will ask for confirmation when you attempt to "
 "delete files, or empty the Trash."
 msgstr "如設定為‘true’，Nautilus 會在您嘗試刪除檔案或清空回收筒時先進行確認。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:9
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:7
 msgid "Whether to enable immediate deletion"
 msgstr "是否啟用立即刪除功能"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:10
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:8
 msgid ""
 "If set to true, then Nautilus will have a feature allowing you to delete a "
 "file immediately and in-place, instead of moving it to the trash. This "
@@ -1839,27 +1828,11 @@ msgstr ""
 "如設定為‘true’，Nautilus 會提供另一種功能，讓您即時刪除檔案，而不是將檔案丟進"
 "回收筒。本功能是比較危險，所以請小心使用。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:11
-msgid "When to show preview text in icons"
-msgstr "何時會在圖示內顯示預覽文字"
-
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:12
-msgid ""
-"Speed tradeoff for when to show a preview of text file contents in the "
-"file's icon. If set to \"always\" then always show previews, even if the "
-"folder is on a remote server. If set to \"local-only\" then only show "
-"previews for local file systems. If set to \"never\" then never bother to "
-"read preview data."
-msgstr ""
-"有關檔案的圖示是否顯示文字檔預覽內容在速度方面的權衡。如果設定為“always”，即"
-"使是遠端檔案仍然會顯示預覽圖示。如果設定為“local-only”則只會顯示本地檔案系統"
-"的預覽圖示。如果設定為“never”則不會顯示預覽圖示。"
-
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:13
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:9
 msgid "When to show number of items in a folder"
 msgstr "何時會在資料夾中顯示有多少個項目"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:14
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:10
 msgid ""
 "Speed tradeoff for when to show the number of items in a folder. If set to "
 "\"always\" then always show item counts, even if the folder is on a remote "
@@ -1870,11 +1843,11 @@ msgstr ""
 "仍然會顯示數目。如果設定為“local-only”則只會在本地檔案系統的目錄顯示數目。如"
 "果設定為“never”則不會計算數目。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:15
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:11
 msgid "Type of click used to launch/open files"
 msgstr "啟動/開啟檔案的按滑鼠按鈕方式"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:16
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:12
 msgid ""
 "Possible values are \"single\" to launch files on a single click, or \"double"
 "\" to launch them on a double click."
@@ -1883,11 +1856,11 @@ msgstr ""
 "“single”：按一下滑鼠按鈕\n"
 "“double”：連按兩下滑鼠按鈕"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:17
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:13
 msgid "What to do with executable text files when activated"
 msgstr "當按下可執行的文字檔時，會以哪種方式處理"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:18
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:14
 msgid ""
 "What to do with executable text files when they are activated (single or "
 "double clicked). Possible values are \"launch\" to launch them as programs, "
@@ -1900,11 +1873,11 @@ msgstr ""
 "“ask”會顯示對話盒詢問使用者，\n"
 "“display”會以文字檔方式顯示內容。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:19
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:15
 msgid "Show the package installer for unknown mime types"
 msgstr "是否對不明的 mime 類型顯示套件安裝程式"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:20
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:16
 msgid ""
 "Whether to show the user a package installer dialog in case an unknown mime "
 "type is opened, in order to search for an application to handle it."
@@ -1912,11 +1885,11 @@ msgstr ""
 "是否在開啟不明的 mime 類型時顯示套件安裝程式對話盒，以便搜尋能處理它的應用程"
 "式。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:21
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:17
 msgid "Use extra mouse button events in Nautilus' browser window"
 msgstr "是否在 Nautilus 瀏覽器視窗中使用額外的滑鼠按鈕事件"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:22
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:18
 msgid ""
 "For users with mice that have \"Forward\" and \"Back\" buttons, this key "
 "will determine if any action is taken inside of Nautilus when either is "
@@ -1925,11 +1898,11 @@ msgstr ""
 "用於使用者的滑鼠有「往前」和「往後」按鈕時，這個設定鍵會決定當 Nautilus 被按"
 "下時所進行的行動。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:23
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:19
 msgid "Mouse button to activate the \"Forward\" command in browser window"
 msgstr "用來觸發瀏覽器視窗中「下一頁」指令的滑鼠按鈕"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:24
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:20
 msgid ""
 "For users with mice that have buttons for \"Forward\" and \"Back\", this key "
 "will set which button activates the \"Forward\" command in a browser window. "
@@ -1938,11 +1911,11 @@ msgstr ""
 "用於使用者的滑鼠有「往前」和「往後」按鈕時，這個設定鍵會決定哪個按鈕會觸發瀏"
 "覽器視窗中的「下一頁」指令。可能的數值範圍在 6 到 14 之間。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:25
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:21
 msgid "Mouse button to activate the \"Back\" command in browser window"
 msgstr "用來觸發瀏覽器視窗中「上一頁」指令的滑鼠按鈕"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:26
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:22
 msgid ""
 "For users with mice that have buttons for \"Forward\" and \"Back\", this key "
 "will set which button activates the \"Back\" command in a browser window. "
@@ -1951,27 +1924,28 @@ msgstr ""
 "用於使用者的滑鼠有「往前」和「往後」按鈕時，這個設定鍵會決定哪個按鈕會觸發瀏"
 "覽器視窗中的「上一頁」指令。可能的數值範圍在 6 到 14 之間。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:27
-msgid "When to show thumbnails of image files"
-msgstr "何時會顯示相應於圖片的縮圖"
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:23
+msgid "When to show thumbnails of files"
+msgstr "何時會顯示檔案的縮圖"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:28
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:24
 msgid ""
-"Speed tradeoff for when to show an image file as a thumbnail. If set to "
-"\"always\" then always thumbnail, even if the folder is on a remote server. "
-"If set to \"local-only\" then only show thumbnails for local file systems. "
-"If set to \"never\" then never bother to thumbnail images, just use a "
-"generic icon."
+"Speed tradeoff for when to show a file as a thumbnail. If set to \"always\" "
+"then always thumbnail, even if the folder is on a remote server. If set to "
+"\"local-only\" then only show thumbnails for local file systems. If set to "
+"\"never\" then never bother to thumbnail files, just use a generic icon. "
+"Despite what the name may suggest, this applies to any previewable file type."
 msgstr ""
-"有關顯示圖片時是否以縮圖來代替在速度方面的權衡。如果設定為“always”，即使是遠"
-"端檔案仍然會顯示縮圖。如果設定為“local-only”則只會顯示本地檔案系統的縮圖。如"
-"果設定為“never”則不會顯示縮圖，只會用一般的圖示代替。"
+"有關顯示檔案時是否以縮圖來代替在速度方面的權衡。如果設定為“always”，即使是遠"
+"端伺服器上的資料夾仍然會顯示縮圖。如果設定為“local-only”則只會顯示本地檔案系"
+"統的縮圖。如果設定為“never”則不會顯示縮圖，只會用一般的圖示代替。不論可能建議"
+"的名稱為何，這個選項會套用到任何可預覽的檔案類型。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:29
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:25
 msgid "Maximum image size for thumbnailing"
 msgstr "所產生的縮圖的圖片大小上限"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:30
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:26
 msgid ""
 "Images over this size (in bytes) won't be thumbnailed. The purpose of this "
 "setting is to avoid thumbnailing large images that may take a long time to "
@@ -1980,11 +1954,11 @@ msgstr ""
 "不會為超過指定大小（以位元組計算）的圖片產生縮圖。這個設定的目的是避免為太大"
 "的圖片產生縮圖，消耗過多的時間或記憶體。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:31
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:27
 msgid "Show advanced permissions in the file property dialog"
 msgstr "在檔案屬性對話盒中顯示進階權限"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:32
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:28
 msgid ""
 "If set to true, then Nautilus lets you edit and display file permissions in "
 "a more unix-like way, accessing some more esoteric options."
@@ -1992,11 +1966,11 @@ msgstr ""
 "如設定為‘true’，Nautilus 會讓您以較 unix 相似的形式修改及顯示檔案權限，存取一"
 "些較難懂的選項。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:33
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:29
 msgid "Show folders first in windows"
 msgstr "在視窗中先顯示資料夾"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:34
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:30
 msgid ""
 "If set to true, then Nautilus shows folders prior to showing files in the "
 "icon and list views."
@@ -2004,11 +1978,11 @@ msgstr ""
 "如設定為‘true’，Nautilus 會在圖示顯示模式及清單顯示模式中先顯示目錄，然後才顯"
 "示檔案。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:35
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:31
 msgid "Default sort order"
 msgstr "預設排列次序"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:36
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:32
 msgid ""
 "The default sort-order for items in the icon view. Possible values are \"name"
 "\", \"size\", \"type\" and \"mtime\"."
@@ -2016,11 +1990,11 @@ msgstr ""
 "在圖示顯示模式中，各項目的預設排列方式。可接受的值"
 "為“name”、“size”、“type”和“mtime”。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:33
 msgid "Reverse sort order in new windows"
 msgstr "在新的視窗中以相反次序排列"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:38
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:34
 msgid ""
 "If true, files in new windows will be sorted in reverse order. ie, if sorted "
 "by name, then instead of sorting the files from \"a\" to \"z\", they will be "
@@ -2031,11 +2005,11 @@ msgstr ""
 "排列，本來從“a”至“z”排列的檔案會改為從“z”至“a”排列；如果是以檔案大小來排列，"
 "本來是遞增排列的，現在會變成遞減。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:39
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:35
 msgid "Default folder viewer"
 msgstr "預設的資料夾顯示模式"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:40
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:36
 msgid ""
 "When a folder is visited this viewer is used unless you have selected "
 "another view for that particular folder. Possible values are \"list-view\", "
@@ -2044,11 +2018,11 @@ msgstr ""
 "當開啟資料夾時，除非特地為該資料夾選取了顯示模式，否則預設會使用這個顯示模"
 "式。可接受的值為「list-view」及「icon-view」。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:41
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
 msgid "Whether to show hidden files"
 msgstr "是否顯示隱藏檔案"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:42
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:38
 msgid ""
 "If set to true, then hidden files are shown by default in the file manager. "
 "Hidden files are either dotfiles, listed in the folder's .hidden file or "
@@ -2058,11 +2032,11 @@ msgstr ""
 "第一個字元為一點‘.’的檔案，或者在某個資料夾的 .hidden 檔案或備份檔案（以 ~ 結"
 "尾）內容之中。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:43
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:39
 msgid "Bulk rename utility"
 msgstr "大量重新命名公用程式"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:44
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:40
 msgid ""
 "If set, Nautilus will append URIs of selected files and treat the result as "
 "a command line for bulk renaming. Bulk rename applications can register "
@@ -2075,11 +2049,11 @@ msgstr ""
 "串，包含它們的執行名稱與任何命令列選項。如果執行名稱沒有設為完整路徑，將會在"
 "搜尋路徑中自動搜尋。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:45
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:41
 msgid "List of possible captions on icons"
 msgstr "圖示下方可以出現的標題"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:46
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:42
 msgid ""
 "A list of captions below an icon in the icon view and the desktop. The "
 "actual number of captions shown depends on the zoom level. Some possible "
@@ -2091,27 +2065,27 @@ msgstr ""
 "「date_modified」、「owner」、「group」、「permissions」、"
 "「octal_permissions」及「mime_type」。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:47
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:43
 msgid "Default icon zoom level"
 msgstr "預設的圖示縮放倍率"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:48
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:44
 msgid "Default zoom level used by the icon view."
 msgstr "圖示顯示模式的預設縮放倍率。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:49
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:45
 msgid "Default Thumbnail Icon Size"
 msgstr "預設的縮圖大小"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:50
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:46
 msgid "The default size of an icon for a thumbnail in the icon view."
 msgstr "圖示顯示模式中預設顯示的圖示大小。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:51
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:47
 msgid "Text Ellipsis Limit"
 msgstr "文字省略限制"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:53
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:49
 #, no-c-format
 msgid ""
 "A string specifying how parts of overlong file names should be replaced by "
@@ -2140,109 +2114,109 @@ msgstr ""
 "smallest (33%)、 smaller (50%)、 small (66%)、 standard (100%)、 large "
 "(150%)、 larger (200%)、 largest (400%)"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:54
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:50
 msgid "Default list zoom level"
 msgstr "預設的清單縮放倍率"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:55
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:51
 msgid "Default zoom level used by the list view."
 msgstr "清單顯示模式的預設縮放倍率。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:52
 msgid "Default list of columns visible in the list view"
 msgstr "清單顯示模式中預設顯示的欄位"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:53
 msgid "Default list of columns visible in the list view."
 msgstr "清單顯示模式中預設顯示的欄位。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:58
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:54
 msgid "Default column order in the list view"
 msgstr "清單顯示模式中預設的欄位次序"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:59
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:55
 msgid "Default column order in the list view."
 msgstr "清單顯示模式中預設的欄位次序。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:60
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
 msgid "Desktop font"
 msgstr "桌面字型"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:61
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
 msgid "The font _description used for the icons on the desktop."
 msgstr "桌面圖示所使用的字型描述。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:62
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:58
 msgid "Home icon visible on desktop"
 msgstr "在桌面中顯示「個人資料夾」圖示"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:63
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:59
 msgid ""
 "If this is set to true, an icon linking to the home folder will be put on "
 "the desktop."
 msgstr "如設定為‘true’，則桌面上會有一個圖示連結至「個人資料夾」。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:64
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:60
 msgid "Trash icon visible on desktop"
 msgstr "在桌面上顯示「回收筒」圖示"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:65
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:61
 msgid ""
 "If this is set to true, an icon linking to the trash will be put on the "
 "desktop."
 msgstr "如設定為‘true’，則桌面上會有一個圖示連結至回收筒。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:66
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:62
 msgid "Show mounted volumes on the desktop"
 msgstr "在桌面上顯示已掛載的儲存區"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:67
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:63
 msgid ""
 "If this is set to true, icons linking to mounted volumes will be put on the "
 "desktop."
 msgstr "如設定為‘true’，則桌面上會出現連結到已掛載的儲存區的圖示。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:68
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:64
 msgid "Network Servers icon visible on the desktop"
 msgstr "在桌面中顯示網路伺服器圖示"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:69
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:65
 msgid ""
 "If this is set to true, an icon linking to the Network Servers view will be "
 "put on the desktop."
 msgstr "如設定為‘true’，則桌面上會有一個圖示連結至顯示網路伺服器。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:70
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:66
 msgid "Desktop home icon name"
 msgstr "桌面中「個人資料夾」圖示的名稱"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:71
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:67
 msgid ""
 "This name can be set if you want a custom name for the home icon on the "
 "desktop."
 msgstr "如果您想為桌面上的「個人資料夾」圖示自訂名稱，可以在這裡設定。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:72
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:68
 msgid "Desktop trash icon name"
 msgstr "桌面中「回收筒」圖示的名稱"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:73
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:69
 msgid ""
 "This name can be set if you want a custom name for the trash icon on the "
 "desktop."
 msgstr "如果您想為桌面上的「回收筒」圖示自訂名稱，可以在這裡設定。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:74
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:70
 msgid "Network servers icon name"
 msgstr "網路伺服器圖示名稱"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:75
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:71
 msgid ""
 "This name can be set if you want a custom name for the network servers icon "
 "on the desktop."
 msgstr "如果您想為桌面上的「網路伺服器」圖示自訂名稱，可以在這裡設定。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:76
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:72
 msgid ""
 "An integer specifying how parts of overlong file names should be replaced by "
 "ellipses on the desktop. If the number is larger than 0, the file name will "
@@ -2253,56 +2227,56 @@ msgstr ""
 "於 0，則檔案名稱的長度將不會超過該整數值的列數。如果該整數值小於或等於 0，表"
 "示對指定的縮放等級不予限制長度。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:77
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:73
 msgid "Fade the background on change"
 msgstr "變更時淡化背景"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:78
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:74
 msgid ""
 "If set to true, then Nautilus will use a fade effect to change the desktop "
 "background."
 msgstr "如設定為「true」，Nautilus 會在改變桌面背景時使用淡化效果。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:79
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:75
 msgid "The geometry string for a navigation window."
 msgstr "導覽視窗的位置大小字串。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:80
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:76
 msgid ""
 "A string containing the saved geometry and coordinates string for navigation "
 "windows."
 msgstr "包含儲存導覽視窗大小和坐標的字串。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:81
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:77
 msgid "Whether the navigation window should be maximized."
 msgstr "導覽視窗是否該被最大化。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:82
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:78
 msgid "Whether the navigation window should be maximized by default."
 msgstr "導覽視窗是否預設最大化。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:83
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:79
 msgid "Width of the side pane"
 msgstr "側面窗格寬度"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:84
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:80
 msgid "The default width of the side pane in new windows."
 msgstr "側面窗格在新的視窗中的預設寬度。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:85
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:81
 msgid "Show location bar in new windows"
 msgstr "在新的視窗中顯示位置列"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:86
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:82
 msgid ""
 "If set to true, newly opened windows will have the location bar visible."
 msgstr "如設定為‘true’，新的視窗會顯示位置列。"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:87
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:83
 msgid "Show side pane in new windows"
 msgstr "在新的視窗中顯示側面窗格"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:88
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:84
 msgid "If set to true, newly opened windows will have the side pane visible."
 msgstr "如設定為‘true’，新開啟的視窗會顯示側面窗格。"
 
@@ -2321,7 +2295,7 @@ msgstr "經電子郵件、即時訊息…傳送檔案"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
 #: ../src/nautilus-application.c:240
-#: ../src/nautilus-window-manage-views.c:1640
+#: ../src/nautilus-window-manage-views.c:1638
 msgid "Oops! Something went wrong."
 msgstr "糟糕！有些地方出問題了。"
 
@@ -2354,7 +2328,7 @@ msgid ""
 msgstr "Nautilus 3.0 已廢棄這個目錄並且嘗試將這個組態轉移到 ~/.config/nautilus"
 
 #: ../src/nautilus-application.c:900 ../src/nautilus-bookmarks-window.c:142
-#: ../src/nautilus-file-management-properties.c:198
+#: ../src/nautilus-file-management-properties.c:196
 #: ../src/nautilus-window-menus.c:273
 #, c-format
 msgid ""
@@ -2459,37 +2433,34 @@ msgstr "結束(_Q)"
 #: ../src/nautilus-autorun-software.c:143
 #: ../src/nautilus-autorun-software.c:146
 #, c-format
-msgid "Error starting autorun program: %s"
-msgstr "啟動自動執行程式時發生錯誤：%s"
+msgid ""
+"Unable to start the program:\n"
+"%s"
+msgstr ""
+"無法啟動程式：\n"
+"%s"
 
 #: ../src/nautilus-autorun-software.c:149
 #, c-format
-msgid "Cannot find the autorun program"
-msgstr "找不到自動執行的程式"
+msgid "Unable to locate the program"
+msgstr "無法定位程式"
 
 #: ../src/nautilus-autorun-software.c:171
-msgid "<big><b>Error autorunning software</b></big>"
-msgstr "<big><b>自動執行軟體錯誤</b></big>"
+msgid "Oops! There was a problem running this software."
+msgstr "噢！執行這個軟體時發生問題。"
 
-#: ../src/nautilus-autorun-software.c:197
-msgid ""
-"<big><b>This medium contains software intended to be automatically started. "
-"Would you like to run it?</b></big>"
-msgstr "<big><b>這個媒體包含了要求自動執行的軟體。是否要執行它？</b></big>"
-
-#: ../src/nautilus-autorun-software.c:199
+#: ../src/nautilus-autorun-software.c:202
 #, c-format
 msgid ""
-"The software will run directly from the medium “%s”. You should never run "
-"software that you don't trust.\n"
-"\n"
-"If in doubt, press Cancel."
-msgstr ""
-"此軟體將直接從媒體“%s”執行。若不信任此軟體請勿執行它。\n"
-"\n"
-"如果懷疑，請按「取消」。"
+"“%s” contains software intended to be automatically started. Would you like "
+"to run it?"
+msgstr "“%s” 包含了要求自動執行的軟體。是否要執行它？"
 
-#: ../src/nautilus-autorun-software.c:233 ../src/nautilus-mime-actions.c:718
+#: ../src/nautilus-autorun-software.c:206
+msgid "If you don't trust this location or aren't sure, press Cancel."
+msgstr "如果您不信任這個位置或不確定，請按「取消」。"
+
+#: ../src/nautilus-autorun-software.c:240 ../src/nautilus-mime-actions.c:718
 msgid "_Run"
 msgstr "執行(_R)"
 
@@ -2509,164 +2480,164 @@ msgstr "名稱(_N)"
 msgid "_Location"
 msgstr "位置(_L)"
 
-#: ../src/nautilus-canvas-view.c:128
+#: ../src/nautilus-canvas-view.c:130
 msgid "by _Name"
 msgstr "以名稱(_N)"
 
-#: ../src/nautilus-canvas-view.c:129 ../src/nautilus-canvas-view.c:1263
+#: ../src/nautilus-canvas-view.c:131 ../src/nautilus-canvas-view.c:1267
 msgid "Keep icons sorted by name in rows"
 msgstr "以名稱排列圖示"
 
-#: ../src/nautilus-canvas-view.c:135
+#: ../src/nautilus-canvas-view.c:137
 msgid "by _Size"
 msgstr "依大小(_S)"
 
-#: ../src/nautilus-canvas-view.c:136 ../src/nautilus-canvas-view.c:1267
+#: ../src/nautilus-canvas-view.c:138 ../src/nautilus-canvas-view.c:1271
 msgid "Keep icons sorted by size in rows"
 msgstr "以大小排列圖示"
 
-#: ../src/nautilus-canvas-view.c:142
+#: ../src/nautilus-canvas-view.c:144
 msgid "by _Type"
 msgstr "以檔案類型(_T)"
 
-#: ../src/nautilus-canvas-view.c:143 ../src/nautilus-canvas-view.c:1271
+#: ../src/nautilus-canvas-view.c:145 ../src/nautilus-canvas-view.c:1275
 msgid "Keep icons sorted by type in rows"
 msgstr "以檔案類型排列圖示"
 
-#: ../src/nautilus-canvas-view.c:149
+#: ../src/nautilus-canvas-view.c:151
 msgid "by Modification _Date"
 msgstr "以修改日期(_D)"
 
-#: ../src/nautilus-canvas-view.c:150 ../src/nautilus-canvas-view.c:1275
+#: ../src/nautilus-canvas-view.c:152 ../src/nautilus-canvas-view.c:1279
 msgid "Keep icons sorted by modification date in rows"
 msgstr "以修改日期排列圖示"
 
-#: ../src/nautilus-canvas-view.c:156
+#: ../src/nautilus-canvas-view.c:158
 msgid "by T_rash Time"
 msgstr "以回收筒時刻(_R)"
 
-#: ../src/nautilus-canvas-view.c:157 ../src/nautilus-canvas-view.c:1279
+#: ../src/nautilus-canvas-view.c:159 ../src/nautilus-canvas-view.c:1283
 msgid "Keep icons sorted by trash time in rows"
 msgstr "以回收筒時刻排列圖示"
 
-#: ../src/nautilus-canvas-view.c:628
+#: ../src/nautilus-canvas-view.c:632
 msgid "_Organize Desktop by Name"
 msgstr "以名稱組織桌面(_O)"
 
 #. name, stock id, label
-#: ../src/nautilus-canvas-view.c:1228
+#: ../src/nautilus-canvas-view.c:1232
 msgid "Arran_ge Items"
 msgstr "項目排列方式(_G)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-canvas-view.c:1230
+#: ../src/nautilus-canvas-view.c:1234
 msgid "Resize Icon..."
 msgstr "改變圖示大小…"
 
 #. tooltip
-#: ../src/nautilus-canvas-view.c:1231
+#: ../src/nautilus-canvas-view.c:1235
 msgid "Make the selected icons resizable"
 msgstr "將選取的圖示設為可改變大小"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-canvas-view.c:1234 ../src/nautilus-canvas-view.c:1398
+#: ../src/nautilus-canvas-view.c:1238 ../src/nautilus-canvas-view.c:1402
 msgid "Restore Icons' Original Si_zes"
 msgstr "還原圖示大小(_Z)"
 
 #. tooltip
-#: ../src/nautilus-canvas-view.c:1235
+#: ../src/nautilus-canvas-view.c:1239
 msgid "Restore each selected icons to its original size"
 msgstr "還原所有選取圖示的大小"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-canvas-view.c:1238
+#: ../src/nautilus-canvas-view.c:1242
 msgid "_Organize by Name"
 msgstr "依名稱排序(_O)"
 
 #. tooltip
-#: ../src/nautilus-canvas-view.c:1239
+#: ../src/nautilus-canvas-view.c:1243
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr "重新排列圖示以符合視窗及避免重疊"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-canvas-view.c:1245
+#: ../src/nautilus-canvas-view.c:1249
 msgid "Re_versed Order"
 msgstr "相反次序(_V)"
 
 #. tooltip
-#: ../src/nautilus-canvas-view.c:1246
+#: ../src/nautilus-canvas-view.c:1250
 msgid "Display icons in the opposite order"
 msgstr "以相反次序顯示圖示"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-canvas-view.c:1250
+#: ../src/nautilus-canvas-view.c:1254
 msgid "_Keep Aligned"
 msgstr "保持整齊排列(_K)"
 
 #. tooltip
-#: ../src/nautilus-canvas-view.c:1251
+#: ../src/nautilus-canvas-view.c:1255
 msgid "Keep icons lined up on a grid"
 msgstr "令圖示貼齊格線"
 
-#: ../src/nautilus-canvas-view.c:1258
+#: ../src/nautilus-canvas-view.c:1262
 msgid "_Manually"
 msgstr "手動(_M)"
 
-#: ../src/nautilus-canvas-view.c:1259
+#: ../src/nautilus-canvas-view.c:1263
 msgid "Leave icons wherever they are dropped"
 msgstr "拖放圖示後不自動編排圖示的位置"
 
-#: ../src/nautilus-canvas-view.c:1262
+#: ../src/nautilus-canvas-view.c:1266
 msgid "By _Name"
 msgstr "依名稱(_N)"
 
-#: ../src/nautilus-canvas-view.c:1266
+#: ../src/nautilus-canvas-view.c:1270
 msgid "By _Size"
 msgstr "依大小(_S)"
 
-#: ../src/nautilus-canvas-view.c:1270
+#: ../src/nautilus-canvas-view.c:1274
 msgid "By _Type"
 msgstr "依類型(_T)"
 
-#: ../src/nautilus-canvas-view.c:1274
+#: ../src/nautilus-canvas-view.c:1278
 msgid "By Modification _Date"
 msgstr "依修改日期(_D)"
 
-#: ../src/nautilus-canvas-view.c:1278
+#: ../src/nautilus-canvas-view.c:1282
 msgid "By T_rash Time"
 msgstr "以回收筒時刻(_R)"
 
-#: ../src/nautilus-canvas-view.c:1399
+#: ../src/nautilus-canvas-view.c:1403
 msgid "Restore Icon's Original Si_ze"
 msgstr "還原圖示大小(_Z)"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
-#: ../src/nautilus-canvas-view.c:2471
+#: ../src/nautilus-canvas-view.c:2480
 #: ../src/nautilus-canvas-view-container.c:568
-#: ../src/nautilus-file-management-properties.ui.h:36
+#: ../src/nautilus-file-management-properties.ui.h:33
 msgid "Icon View"
 msgstr "圖示檢視"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-canvas-view.c:2473
+#: ../src/nautilus-canvas-view.c:2482
 msgid "_Icons"
 msgstr "圖示(_I)"
 
-#: ../src/nautilus-canvas-view.c:2474
+#: ../src/nautilus-canvas-view.c:2483
 msgid "The icon view encountered an error."
 msgstr "圖示顯示模式發生錯誤。"
 
-#: ../src/nautilus-canvas-view.c:2475
+#: ../src/nautilus-canvas-view.c:2484
 msgid "The icon view encountered an error while starting up."
 msgstr "啟動圖示顯示模式時發生錯誤。"
 
-#: ../src/nautilus-canvas-view.c:2476
+#: ../src/nautilus-canvas-view.c:2485
 msgid "Display this location with the icon view."
 msgstr "以圖示顯示模式來顯示本位置。"
 
@@ -2733,7 +2704,7 @@ msgid "Continue"
 msgstr "繼續"
 
 #: ../src/nautilus-connect-server-dialog.c:703
-#: ../src/nautilus-properties-window.c:5122 ../src/nautilus-view.c:1467
+#: ../src/nautilus-properties-window.c:5122 ../src/nautilus-view.c:1470
 msgid "There was an error displaying help."
 msgstr "顯示說明文件時發生錯誤。"
 
@@ -2772,7 +2743,7 @@ msgid "Sh_are:"
 msgstr "分享(_A):"
 
 #. fourth row: folder entry
-#: ../src/nautilus-connect-server-dialog.c:1010 ../src/nautilus-view.c:1661
+#: ../src/nautilus-connect-server-dialog.c:1010 ../src/nautilus-view.c:1664
 msgid "_Folder:"
 msgstr "資料夾(_F):"
 
@@ -2822,8 +2793,8 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:701 ../src/nautilus-view.c:7325
-#: ../src/nautilus-view.c:8873
+#: ../src/nautilus-desktop-canvas-view.c:701 ../src/nautilus-view.c:7454
+#: ../src/nautilus-view.c:9007
 msgid "E_mpty Trash"
 msgstr "清理回收筒(_M)"
 
@@ -2845,15 +2816,15 @@ msgstr "清理回收筒"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:722 ../src/nautilus-trash-bar.c:212
-#: ../src/nautilus-view.c:7326
+#: ../src/nautilus-view.c:7455
 msgid "Delete all items in the Trash"
 msgstr "清理回收筒所有項目"
 
-#: ../src/nautilus-desktop-canvas-view.c:784
+#: ../src/nautilus-desktop-canvas-view.c:785
 msgid "The desktop view encountered an error."
 msgstr "桌面顯示模式發生錯誤。"
 
-#: ../src/nautilus-desktop-canvas-view.c:785
+#: ../src/nautilus-desktop-canvas-view.c:786
 msgid "The desktop view encountered an error while starting up."
 msgstr "啟動桌面顯示模式時發生錯誤。"
 
@@ -2868,7 +2839,7 @@ msgstr "URL"
 
 #: ../src/nautilus-desktop-item-properties.c:411
 #: ../src/nautilus-desktop-item-properties.c:421
-#: ../src/nautilus-image-properties-page.c:329
+#: ../src/nautilus-image-properties-page.c:330
 msgid "Description"
 msgstr "說明"
 
@@ -2987,15 +2958,15 @@ msgstr "重新命名“%s”為“%s”。"
 #. Translators: this is referred to the permissions
 #. * the user has in a directory.
 #.
-#: ../src/nautilus-file-management-properties.c:282
+#: ../src/nautilus-file-management-properties.c:280
 #: ../src/nautilus-properties-window.c:3921
 #: ../src/nautilus-properties-window.c:3932
 msgid "None"
 msgstr "沒有"
 
 #: ../src/nautilus-file-management-properties.ui.h:1
-msgid "File Management Preferences"
-msgstr "檔案管理偏好設定"
+msgid "Files Preferences"
+msgstr "檔案偏好設定"
 
 #: ../src/nautilus-file-management-properties.ui.h:2
 msgid "Default View"
@@ -3050,43 +3021,39 @@ msgid "_Double click to open items"
 msgstr "連按兩下會開啟項目(_D)"
 
 #: ../src/nautilus-file-management-properties.ui.h:15
-msgid "Open each _folder in its own window"
-msgstr "分別以自己的視窗開啟每個資料夾(_F)"
-
-#: ../src/nautilus-file-management-properties.ui.h:16
 msgid "Executable Text Files"
 msgstr "可執行的文字檔"
 
-#: ../src/nautilus-file-management-properties.ui.h:17
+#: ../src/nautilus-file-management-properties.ui.h:16
 msgid "_Run executable text files when they are opened"
 msgstr "當按下文字檔時執行該檔案(_R)"
 
-#: ../src/nautilus-file-management-properties.ui.h:18
+#: ../src/nautilus-file-management-properties.ui.h:17
 msgid "_View executable text files when they are opened"
 msgstr "當按下可執行的文字檔時顯示檔案內容(_V)"
 
-#: ../src/nautilus-file-management-properties.ui.h:19
+#: ../src/nautilus-file-management-properties.ui.h:18
 msgid "_Ask each time"
 msgstr "每次都會詢問(_A)"
 
-#: ../src/nautilus-file-management-properties.ui.h:20
+#: ../src/nautilus-file-management-properties.ui.h:19
 #: ../src/nautilus-places-sidebar.c:574 ../src/nautilus-trash-bar.c:194
 msgid "Trash"
 msgstr "回收筒"
 
-#: ../src/nautilus-file-management-properties.ui.h:21
+#: ../src/nautilus-file-management-properties.ui.h:20
 msgid "Ask before _emptying the Trash or deleting files"
 msgstr "清理回收筒或刪除檔案前會先詢問(_E)"
 
-#: ../src/nautilus-file-management-properties.ui.h:22
+#: ../src/nautilus-file-management-properties.ui.h:21
 msgid "I_nclude a Delete command that bypasses Trash"
 msgstr "在選單中加入不使用回收筒的「刪除」指令(_N)"
 
-#: ../src/nautilus-file-management-properties.ui.h:23
+#: ../src/nautilus-file-management-properties.ui.h:22
 msgid "Icon Captions"
 msgstr "圖示標題"
 
-#: ../src/nautilus-file-management-properties.ui.h:24
+#: ../src/nautilus-file-management-properties.ui.h:23
 msgid ""
 "Choose the order of information to appear beneath icon names. More "
 "information will appear when zooming in closer."
@@ -3094,267 +3061,255 @@ msgstr ""
 "請選擇圖示下方顯示資訊的次序。\n"
 "當圖示放得越大時顯示的資訊會越多。"
 
-#: ../src/nautilus-file-management-properties.ui.h:25
+#: ../src/nautilus-file-management-properties.ui.h:24
 msgid "Display"
 msgstr "顯示"
 
-#: ../src/nautilus-file-management-properties.ui.h:26
+#: ../src/nautilus-file-management-properties.ui.h:25
 msgid "List Columns"
 msgstr "欄位清單"
 
-#: ../src/nautilus-file-management-properties.ui.h:27
+#: ../src/nautilus-file-management-properties.ui.h:26
 msgid "Choose the order of information to appear in the list view."
 msgstr "請選擇在清單顯示模式時，顯示資訊的次序。"
 
 #: ../src/nautilus-file-management-properties.ui.h:28
-msgid "Text Files"
-msgstr "文字檔案"
-
-#: ../src/nautilus-file-management-properties.ui.h:29
-msgid "Show te_xt in icons:"
-msgstr "在圖示內顯示文字(_X):"
-
-#: ../src/nautilus-file-management-properties.ui.h:30
-msgid "Other Previewable Files"
-msgstr "其他可預覽的檔案"
-
-#: ../src/nautilus-file-management-properties.ui.h:31
 msgid "Show _thumbnails:"
 msgstr "顯示縮圖(_T):"
 
-#: ../src/nautilus-file-management-properties.ui.h:32
+#: ../src/nautilus-file-management-properties.ui.h:29
 msgid "_Only for files smaller than:"
 msgstr "僅當檔案小於(_O):"
 
-#: ../src/nautilus-file-management-properties.ui.h:33
+#: ../src/nautilus-file-management-properties.ui.h:30
 msgid "Folders"
 msgstr "資料夾"
 
-#: ../src/nautilus-file-management-properties.ui.h:34
+#: ../src/nautilus-file-management-properties.ui.h:31
 msgid "Count _number of items:"
 msgstr "顯示項目總數(_N):"
 
-#: ../src/nautilus-file-management-properties.ui.h:35
+#: ../src/nautilus-file-management-properties.ui.h:32
 msgid "Preview"
 msgstr "預覽"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
-#: ../src/nautilus-file-management-properties.ui.h:37
-#: ../src/nautilus-list-view.c:1729 ../src/nautilus-list-view.c:3332
+#: ../src/nautilus-file-management-properties.ui.h:34
+#: ../src/nautilus-list-view.c:1724 ../src/nautilus-list-view.c:3327
 msgid "List View"
 msgstr "清單檢視"
 
-#: ../src/nautilus-file-management-properties.ui.h:38
+#: ../src/nautilus-file-management-properties.ui.h:35
 msgid "Always"
 msgstr "總是"
 
-#: ../src/nautilus-file-management-properties.ui.h:39
+#: ../src/nautilus-file-management-properties.ui.h:36
 msgid "Local Files Only"
 msgstr "只有本機檔案"
 
-#: ../src/nautilus-file-management-properties.ui.h:40
+#: ../src/nautilus-file-management-properties.ui.h:37
 msgid "Never"
 msgstr "永不"
 
-#: ../src/nautilus-file-management-properties.ui.h:41
+#: ../src/nautilus-file-management-properties.ui.h:38
 msgid "By Name"
 msgstr "以名稱"
 
-#: ../src/nautilus-file-management-properties.ui.h:42
+#: ../src/nautilus-file-management-properties.ui.h:39
 msgid "By Size"
 msgstr "以大小"
 
-#: ../src/nautilus-file-management-properties.ui.h:43
+#: ../src/nautilus-file-management-properties.ui.h:40
 msgid "By Type"
 msgstr "以類型"
 
-#: ../src/nautilus-file-management-properties.ui.h:44
+#: ../src/nautilus-file-management-properties.ui.h:41
 msgid "By Modification Date"
 msgstr "以修改日期"
 
-#: ../src/nautilus-file-management-properties.ui.h:45
+#: ../src/nautilus-file-management-properties.ui.h:42
 msgid "By Access Date"
 msgstr "以存取日期"
 
-#: ../src/nautilus-file-management-properties.ui.h:46
+#: ../src/nautilus-file-management-properties.ui.h:43
 msgid "By Trashed Date"
 msgstr "以刪除日期"
 
-#: ../src/nautilus-file-management-properties.ui.h:48
+#: ../src/nautilus-file-management-properties.ui.h:45
 #, no-c-format
 msgid "33%"
 msgstr "33%"
 
-#: ../src/nautilus-file-management-properties.ui.h:50
+#: ../src/nautilus-file-management-properties.ui.h:47
 #, no-c-format
 msgid "50%"
 msgstr "50%"
 
-#: ../src/nautilus-file-management-properties.ui.h:52
+#: ../src/nautilus-file-management-properties.ui.h:49
 #, no-c-format
 msgid "66%"
 msgstr "66%"
 
-#: ../src/nautilus-file-management-properties.ui.h:54
+#: ../src/nautilus-file-management-properties.ui.h:51
 #, no-c-format
 msgid "100%"
 msgstr "100%"
 
-#: ../src/nautilus-file-management-properties.ui.h:56
+#: ../src/nautilus-file-management-properties.ui.h:53
 #, no-c-format
 msgid "150%"
 msgstr "150%"
 
-#: ../src/nautilus-file-management-properties.ui.h:58
+#: ../src/nautilus-file-management-properties.ui.h:55
 #, no-c-format
 msgid "200%"
 msgstr "200%"
 
-#: ../src/nautilus-file-management-properties.ui.h:60
+#: ../src/nautilus-file-management-properties.ui.h:57
 #, no-c-format
 msgid "400%"
 msgstr "400%"
 
-#: ../src/nautilus-file-management-properties.ui.h:61
+#: ../src/nautilus-file-management-properties.ui.h:58
 msgid "100 KB"
 msgstr "100 KB"
 
-#: ../src/nautilus-file-management-properties.ui.h:62
+#: ../src/nautilus-file-management-properties.ui.h:59
 msgid "500 KB"
 msgstr "500 KB"
 
-#: ../src/nautilus-file-management-properties.ui.h:63
+#: ../src/nautilus-file-management-properties.ui.h:60
 msgid "1 MB"
 msgstr "1 MB"
 
-#: ../src/nautilus-file-management-properties.ui.h:64
+#: ../src/nautilus-file-management-properties.ui.h:61
 msgid "3 MB"
 msgstr "3 MB"
 
-#: ../src/nautilus-file-management-properties.ui.h:65
+#: ../src/nautilus-file-management-properties.ui.h:62
 msgid "5 MB"
 msgstr "5 MB"
 
-#: ../src/nautilus-file-management-properties.ui.h:66
+#: ../src/nautilus-file-management-properties.ui.h:63
 msgid "10 MB"
 msgstr "10 MB"
 
-#: ../src/nautilus-file-management-properties.ui.h:67
+#: ../src/nautilus-file-management-properties.ui.h:64
 msgid "100 MB"
 msgstr "100 MB"
 
-#: ../src/nautilus-file-management-properties.ui.h:68
+#: ../src/nautilus-file-management-properties.ui.h:65
 msgid "1 GB"
 msgstr "1 GB"
 
-#: ../src/nautilus-file-management-properties.ui.h:69
+#: ../src/nautilus-file-management-properties.ui.h:66
 msgid "2 GB"
 msgstr "2 GB"
 
-#: ../src/nautilus-file-management-properties.ui.h:70
+#: ../src/nautilus-file-management-properties.ui.h:67
 msgid "4 GB"
 msgstr "4 GB"
 
-#: ../src/nautilus-image-properties-page.c:254
+#: ../src/nautilus-image-properties-page.c:255
 msgid "Camera Brand"
 msgstr "相機廠商"
 
-#: ../src/nautilus-image-properties-page.c:255
+#: ../src/nautilus-image-properties-page.c:256
 msgid "Camera Model"
 msgstr "相機型號"
 
 #. Choose which date to show in order of relevance
-#: ../src/nautilus-image-properties-page.c:258
+#: ../src/nautilus-image-properties-page.c:259
 msgid "Date Taken"
 msgstr "拍攝時間"
 
-#: ../src/nautilus-image-properties-page.c:260
+#: ../src/nautilus-image-properties-page.c:261
 msgid "Date Digitized"
 msgstr "數位化日期"
 
-#: ../src/nautilus-image-properties-page.c:262
+#: ../src/nautilus-image-properties-page.c:263
 msgid "Date Modified"
 msgstr "修改日期"
 
-#: ../src/nautilus-image-properties-page.c:266
+#: ../src/nautilus-image-properties-page.c:267
 msgid "Exposure Time"
 msgstr "曝光時間"
 
-#: ../src/nautilus-image-properties-page.c:267
+#: ../src/nautilus-image-properties-page.c:268
 msgid "Aperture Value"
 msgstr "光圈值"
 
-#: ../src/nautilus-image-properties-page.c:268
+#: ../src/nautilus-image-properties-page.c:269
 msgid "ISO Speed Rating"
 msgstr "ISO 速率"
 
-#: ../src/nautilus-image-properties-page.c:269
+#: ../src/nautilus-image-properties-page.c:270
 msgid "Flash Fired"
 msgstr "使用閃光燈"
 
-#: ../src/nautilus-image-properties-page.c:270
+#: ../src/nautilus-image-properties-page.c:271
 msgid "Metering Mode"
 msgstr "測光模式"
 
-#: ../src/nautilus-image-properties-page.c:271
+#: ../src/nautilus-image-properties-page.c:272
 msgid "Exposure Program"
 msgstr "曝光模式"
 
-#: ../src/nautilus-image-properties-page.c:272
+#: ../src/nautilus-image-properties-page.c:273
 msgid "Focal Length"
 msgstr "焦距"
 
-#: ../src/nautilus-image-properties-page.c:273
+#: ../src/nautilus-image-properties-page.c:274
 msgid "Software"
 msgstr "軟體"
 
-#: ../src/nautilus-image-properties-page.c:330
+#: ../src/nautilus-image-properties-page.c:331
 msgid "Keywords"
 msgstr "關鍵字"
 
-#: ../src/nautilus-image-properties-page.c:331
+#: ../src/nautilus-image-properties-page.c:332
 msgid "Creator"
 msgstr "製作者"
 
-#: ../src/nautilus-image-properties-page.c:332
+#: ../src/nautilus-image-properties-page.c:333
 msgid "Copyright"
 msgstr "版權所有"
 
-#: ../src/nautilus-image-properties-page.c:333
+#: ../src/nautilus-image-properties-page.c:334
 msgid "Rating"
 msgstr "評價"
 
-#: ../src/nautilus-image-properties-page.c:366
+#: ../src/nautilus-image-properties-page.c:367
 msgid "Image Type"
 msgstr "影像類型"
 
-#: ../src/nautilus-image-properties-page.c:368
-#: ../src/nautilus-image-properties-page.c:374
+#: ../src/nautilus-image-properties-page.c:369
+#: ../src/nautilus-image-properties-page.c:375
 #, c-format
 msgid "%d pixel"
 msgid_plural "%d pixels"
 msgstr[0] "%d 像素"
 
-#: ../src/nautilus-image-properties-page.c:372
+#: ../src/nautilus-image-properties-page.c:373
 msgid "Width"
 msgstr "寬度"
 
-#: ../src/nautilus-image-properties-page.c:378
+#: ../src/nautilus-image-properties-page.c:379
 msgid "Height"
 msgstr "高度"
 
-#: ../src/nautilus-image-properties-page.c:389
+#: ../src/nautilus-image-properties-page.c:390
 msgid "Failed to load image information"
 msgstr "無法獲取圖片的資訊"
 
-#: ../src/nautilus-image-properties-page.c:607
-#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-manage-views.c:1186
+#: ../src/nautilus-image-properties-page.c:655
+#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-manage-views.c:1184
 #: ../src/nautilus-window-slot.c:320
 msgid "Loading..."
 msgstr "載入中…"
 
-#: ../src/nautilus-image-properties-page.c:659
+#: ../src/nautilus-image-properties-page.c:716
 msgid "Image"
 msgstr "影像"
 
@@ -3362,40 +3317,40 @@ msgstr "影像"
 msgid "(Empty)"
 msgstr "(空的)"
 
-#: ../src/nautilus-list-view.c:2559
+#: ../src/nautilus-list-view.c:2554
 #, c-format
 msgid "%s Visible Columns"
 msgstr "%s 可視欄位"
 
-#: ../src/nautilus-list-view.c:2579
+#: ../src/nautilus-list-view.c:2574
 msgid "Choose the order of information to appear in this folder:"
 msgstr "請選擇這個資料夾顯示資訊的次序："
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-list-view.c:2634
+#: ../src/nautilus-list-view.c:2629
 msgid "Visible _Columns..."
 msgstr "可視欄位(_C)…"
 
 #. tooltip
-#: ../src/nautilus-list-view.c:2635
+#: ../src/nautilus-list-view.c:2630
 msgid "Select the columns visible in this folder"
 msgstr "請選擇本資料夾中會顯示甚麼欄位"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-list-view.c:3334
+#: ../src/nautilus-list-view.c:3329
 msgid "_List"
 msgstr "清單(_L)"
 
-#: ../src/nautilus-list-view.c:3335
+#: ../src/nautilus-list-view.c:3330
 msgid "The list view encountered an error."
 msgstr "清單顯示模式發生錯誤。"
 
-#: ../src/nautilus-list-view.c:3336
+#: ../src/nautilus-list-view.c:3331
 msgid "The list view encountered an error while starting up."
 msgstr "啟動清單顯示模式時發生錯誤。"
 
-#: ../src/nautilus-list-view.c:3337
+#: ../src/nautilus-list-view.c:3332
 msgid "Display this location with the list view."
 msgstr "以清單顯示模式來顯示本位置。"
 
@@ -3440,9 +3395,9 @@ msgstr "連結無法使用，因為它的目標位置“%s”不存在。"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-mime-actions.c:646 ../src/nautilus-view.c:7383
-#: ../src/nautilus-view.c:7501 ../src/nautilus-view.c:8504
-#: ../src/nautilus-view.c:8797
+#: ../src/nautilus-mime-actions.c:646 ../src/nautilus-view.c:7516
+#: ../src/nautilus-view.c:7634 ../src/nautilus-view.c:8630
+#: ../src/nautilus-view.c:8931
 msgid "Mo_ve to Trash"
 msgstr "丟進回收筒(_V)"
 
@@ -3465,7 +3420,7 @@ msgid "_Display"
 msgstr "顯示(_D)"
 
 #: ../src/nautilus-mime-actions.c:1041 ../src/nautilus-mime-actions.c:1776
-#: ../src/nautilus-view.c:961
+#: ../src/nautilus-view.c:964
 msgid "Are you sure you want to open all files?"
 msgstr "確定要開啟所有檔案嗎？"
 
@@ -3538,11 +3493,11 @@ msgid_plural "This will open %d separate applications."
 msgstr[0] "這樣會開啟 %d 個應用程式。"
 
 #: ../src/nautilus-mime-actions.c:1854 ../src/nautilus-mime-actions.c:2128
-#: ../src/nautilus-view.c:6493
+#: ../src/nautilus-view.c:6622
 msgid "Unable to mount location"
 msgstr "無法掛載位置"
 
-#: ../src/nautilus-mime-actions.c:2207 ../src/nautilus-view.c:6640
+#: ../src/nautilus-mime-actions.c:2207 ../src/nautilus-view.c:6769
 msgid "Unable to start location"
 msgstr "無法開啟位置"
 
@@ -3619,21 +3574,21 @@ msgstr "瀏覽網路的內容"
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1637 ../src/nautilus-places-sidebar.c:2704
-#: ../src/nautilus-view.c:7429 ../src/nautilus-view.c:7453
-#: ../src/nautilus-view.c:7525 ../src/nautilus-view.c:8131
-#: ../src/nautilus-view.c:8135 ../src/nautilus-view.c:8218
-#: ../src/nautilus-view.c:8222 ../src/nautilus-view.c:8322
-#: ../src/nautilus-view.c:8326
+#: ../src/nautilus-places-sidebar.c:1637 ../src/nautilus-places-sidebar.c:2694
+#: ../src/nautilus-view.c:7562 ../src/nautilus-view.c:7586
+#: ../src/nautilus-view.c:7658 ../src/nautilus-view.c:8264
+#: ../src/nautilus-view.c:8268 ../src/nautilus-view.c:8351
+#: ../src/nautilus-view.c:8355 ../src/nautilus-view.c:8455
+#: ../src/nautilus-view.c:8459
 msgid "_Start"
 msgstr "開啟(_S)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1638 ../src/nautilus-places-sidebar.c:2711
-#: ../src/nautilus-view.c:7433 ../src/nautilus-view.c:7457
-#: ../src/nautilus-view.c:7529 ../src/nautilus-view.c:8160
-#: ../src/nautilus-view.c:8247 ../src/nautilus-view.c:8351
+#: ../src/nautilus-places-sidebar.c:1638 ../src/nautilus-places-sidebar.c:2701
+#: ../src/nautilus-view.c:7566 ../src/nautilus-view.c:7590
+#: ../src/nautilus-view.c:7662 ../src/nautilus-view.c:8293
+#: ../src/nautilus-view.c:8380 ../src/nautilus-view.c:8484
 #: ../src/nautilus-window-menus.c:460
 msgid "_Stop"
 msgstr "停止(_S)"
@@ -3643,8 +3598,8 @@ msgstr "停止(_S)"
 msgid "_Power On"
 msgstr "電源開啟(_P)"
 
-#: ../src/nautilus-places-sidebar.c:1644 ../src/nautilus-view.c:8164
-#: ../src/nautilus-view.c:8251 ../src/nautilus-view.c:8355
+#: ../src/nautilus-places-sidebar.c:1644 ../src/nautilus-view.c:8297
+#: ../src/nautilus-view.c:8384 ../src/nautilus-view.c:8488
 msgid "_Safely Remove Drive"
 msgstr "安全的移除裝置(_S)"
 
@@ -3665,13 +3620,13 @@ msgid "_Stop Multi-disk Device"
 msgstr "關閉多磁碟裝置(_S)"
 
 #. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
-#: ../src/nautilus-places-sidebar.c:1656 ../src/nautilus-view.c:8234
-#: ../src/nautilus-view.c:8338
+#: ../src/nautilus-places-sidebar.c:1656 ../src/nautilus-view.c:8367
+#: ../src/nautilus-view.c:8471
 msgid "_Unlock Drive"
 msgstr "解鎖裝置"
 
-#: ../src/nautilus-places-sidebar.c:1657 ../src/nautilus-view.c:8176
-#: ../src/nautilus-view.c:8263 ../src/nautilus-view.c:8367
+#: ../src/nautilus-places-sidebar.c:1657 ../src/nautilus-view.c:8309
+#: ../src/nautilus-view.c:8396 ../src/nautilus-view.c:8500
 msgid "_Lock Drive"
 msgstr "鎖定裝置(_L)"
 
@@ -3698,72 +3653,69 @@ msgstr "無法關閉 %s"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2620 ../src/nautilus-view.c:7297
-#: ../src/nautilus-view.c:8721
+#: ../src/nautilus-places-sidebar.c:2616 ../src/nautilus-view.c:7426
+#: ../src/nautilus-view.c:8856
 msgid "_Open"
 msgstr "開啟(_O)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2628 ../src/nautilus-view.c:7309
-#: ../src/nautilus-view.c:7483 ../src/nautilus-view.c:8453
-#: ../src/nautilus-view.c:8775
+#: ../src/nautilus-places-sidebar.c:2624 ../src/nautilus-view.c:7438
+#: ../src/nautilus-view.c:7616 ../src/nautilus-view.c:8579
+#: ../src/nautilus-view.c:8909
 msgid "Open in New _Tab"
 msgstr "在新的分頁中開啟(_T)"
 
-#: ../src/nautilus-places-sidebar.c:2638 ../src/nautilus-view.c:8444
-#: ../src/nautilus-view.c:8755
+#: ../src/nautilus-places-sidebar.c:2631 ../src/nautilus-view.c:8571
+#: ../src/nautilus-view.c:8889
 msgid "Open in New _Window"
 msgstr "在新的視窗中開啟(_W)"
 
-#: ../src/nautilus-places-sidebar.c:2649
+#: ../src/nautilus-places-sidebar.c:2639
 msgid "_Add Bookmark"
 msgstr "加入書籤(_A)"
 
-#: ../src/nautilus-places-sidebar.c:2655
+#: ../src/nautilus-places-sidebar.c:2645
 msgid "Remove"
 msgstr "移除"
 
-#: ../src/nautilus-places-sidebar.c:2664
+#: ../src/nautilus-places-sidebar.c:2654
 msgid "Rename..."
 msgstr "重新命名…"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2676 ../src/nautilus-view.c:7417
-#: ../src/nautilus-view.c:7441 ../src/nautilus-view.c:7513
+#: ../src/nautilus-places-sidebar.c:2666 ../src/nautilus-view.c:7550
+#: ../src/nautilus-view.c:7574 ../src/nautilus-view.c:7646
 msgid "_Mount"
 msgstr "掛載(_M)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2683 ../src/nautilus-view.c:7421
-#: ../src/nautilus-view.c:7445 ../src/nautilus-view.c:7517
+#: ../src/nautilus-places-sidebar.c:2673 ../src/nautilus-view.c:7554
+#: ../src/nautilus-view.c:7578 ../src/nautilus-view.c:7650
 msgid "_Unmount"
 msgstr "卸載(_U)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2690 ../src/nautilus-view.c:7425
-#: ../src/nautilus-view.c:7449 ../src/nautilus-view.c:7521
+#: ../src/nautilus-places-sidebar.c:2680 ../src/nautilus-view.c:7558
+#: ../src/nautilus-view.c:7582 ../src/nautilus-view.c:7654
 msgid "_Eject"
 msgstr "退出(_E)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2697 ../src/nautilus-view.c:7437
-#: ../src/nautilus-view.c:7461 ../src/nautilus-view.c:7533
+#: ../src/nautilus-places-sidebar.c:2687 ../src/nautilus-view.c:7570
+#: ../src/nautilus-view.c:7594 ../src/nautilus-view.c:7666
 msgid "_Detect Media"
 msgstr "偵測媒體(_D)"
 
-#. name, stock id
-#. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2732 ../src/nautilus-view.c:7275
-#: ../src/nautilus-view.c:7538
+#: ../src/nautilus-places-sidebar.c:2722
 msgid "_Properties"
 msgstr "屬性(_P)"
 
-#: ../src/nautilus-places-sidebar.c:3301
+#: ../src/nautilus-places-sidebar.c:3286
 msgid "Computer"
 msgstr "電腦"
 
@@ -4176,89 +4128,89 @@ msgstr "還原選取的項目到它們原來的位置"
 msgid "Empty"
 msgstr "清空"
 
-#: ../src/nautilus-view.c:963
+#: ../src/nautilus-view.c:966
 #, c-format
 msgid "This will open %'d separate tab."
 msgid_plural "This will open %'d separate tabs."
 msgstr[0] "這樣會開啟 %'d 個分頁。"
 
-#: ../src/nautilus-view.c:966
+#: ../src/nautilus-view.c:969
 #, c-format
 msgid "This will open %'d separate window."
 msgid_plural "This will open %'d separate windows."
 msgstr[0] "這樣會多開啟 %'d 個視窗。"
 
-#: ../src/nautilus-view.c:1487
+#: ../src/nautilus-view.c:1490
 msgid "Select Items Matching"
 msgstr "選擇項目比對"
 
-#: ../src/nautilus-view.c:1502
+#: ../src/nautilus-view.c:1505
 msgid "_Pattern:"
 msgstr "樣式(_P):"
 
-#: ../src/nautilus-view.c:1508
+#: ../src/nautilus-view.c:1511
 msgid "Examples: "
 msgstr "範例："
 
-#: ../src/nautilus-view.c:1621
+#: ../src/nautilus-view.c:1624
 msgid "Save Search as"
 msgstr "另存搜尋為"
 
-#: ../src/nautilus-view.c:1644
+#: ../src/nautilus-view.c:1647
 msgid "Search _name:"
 msgstr "搜尋名稱(_N):"
 
-#: ../src/nautilus-view.c:1666
+#: ../src/nautilus-view.c:1669
 msgid "Select Folder to Save Search In"
 msgstr "選取儲存搜尋的資料夾"
 
-#: ../src/nautilus-view.c:2293
+#: ../src/nautilus-view.c:2296
 msgid ""
 "Nautilus 3.6 deprecated this directory and tried migrating this "
 "configuration to ~/.local/share/nautilus"
 msgstr ""
 "Nautilus 3.6 已廢棄這個目錄並且嘗試將這個組態轉移到 ~/.local/share/nautilus"
 
-#: ../src/nautilus-view.c:2719
+#: ../src/nautilus-view.c:2722
 msgid "Content View"
 msgstr "內容顯示模式"
 
-#: ../src/nautilus-view.c:2720
+#: ../src/nautilus-view.c:2723
 msgid "View of the current folder"
 msgstr "顯示目前的資料夾"
 
-#: ../src/nautilus-view.c:2922 ../src/nautilus-view.c:2959
+#: ../src/nautilus-view.c:2925 ../src/nautilus-view.c:2962
 #, c-format
 msgid "“%s” selected"
 msgstr "已選取“%s”"
 
-#: ../src/nautilus-view.c:2924
+#: ../src/nautilus-view.c:2927
 #, c-format
 msgid "%'d folder selected"
 msgid_plural "%'d folders selected"
 msgstr[0] "已選取 %'d 個資料夾"
 
-#: ../src/nautilus-view.c:2934
+#: ../src/nautilus-view.c:2937
 #, c-format
 msgid " (containing %'d item)"
 msgid_plural " (containing %'d items)"
 msgstr[0] "(包含 %'d 個項目)"
 
 #. translators: this is preceded with a string of form 'N folders' (N more than 1)
-#: ../src/nautilus-view.c:2945
+#: ../src/nautilus-view.c:2948
 #, c-format
 msgid " (containing a total of %'d item)"
 msgid_plural " (containing a total of %'d items)"
 msgstr[0] "(總共包含 %'d 個項目)"
 
-#: ../src/nautilus-view.c:2962
+#: ../src/nautilus-view.c:2965
 #, c-format
 msgid "%'d item selected"
 msgid_plural "%'d items selected"
 msgstr[0] "已選取 %'d 個項目"
 
 #. Folders selected also, use "other" terminology
-#: ../src/nautilus-view.c:2969
+#: ../src/nautilus-view.c:2972
 #, c-format
 msgid "%'d other item selected"
 msgid_plural "%'d other items selected"
@@ -4269,17 +4221,17 @@ msgstr[0] "另外選取了 %'d 個項目"
 #. * first message gives the number of items selected;
 #. * the message in parentheses the size of those items.
 #.
-#: ../src/nautilus-view.c:2984
+#: ../src/nautilus-view.c:2987
 #, c-format
 msgid "%s (%s)"
 msgstr "%s (%s)"
 
-#: ../src/nautilus-view.c:2997
+#: ../src/nautilus-view.c:3000
 #, c-format
 msgid "Free space: %s"
 msgstr "可用空間：%s"
 
-#: ../src/nautilus-view.c:3008
+#: ../src/nautilus-view.c:3011
 #, c-format
 msgid "%s, Free space: %s"
 msgstr "%s，可用空間：%s"
@@ -4289,7 +4241,7 @@ msgstr "%s，可用空間：%s"
 #. * After the comma the amount of free space will
 #. * be shown.
 #.
-#: ../src/nautilus-view.c:3023
+#: ../src/nautilus-view.c:3026
 #, c-format
 msgid "%s, %s"
 msgstr "%s，%s"
@@ -4306,7 +4258,7 @@ msgstr "%s，%s"
 #. * message about the number of other items and the
 #. * total size of those items.
 #.
-#: ../src/nautilus-view.c:3042 ../src/nautilus-view.c:3055
+#: ../src/nautilus-view.c:3045 ../src/nautilus-view.c:3058
 #, c-format
 msgid "%s%s, %s"
 msgstr "%s%s，%s"
@@ -4319,154 +4271,160 @@ msgstr "%s%s，%s"
 #. * total size of those items. After the second comma
 #. * the free space is written.
 #.
-#: ../src/nautilus-view.c:3069
+#: ../src/nautilus-view.c:3072
 #, c-format
 msgid "%s%s, %s, %s"
 msgstr "%s%s，%s，%s"
 
-#: ../src/nautilus-view.c:4482
+#: ../src/nautilus-view.c:4499
 #, c-format
 msgid "Open With %s"
 msgstr "以 %s 開啟"
 
-#: ../src/nautilus-view.c:4484
+#: ../src/nautilus-view.c:4501
 #, c-format
 msgid "Use “%s” to open the selected item"
 msgid_plural "Use “%s” to open the selected items"
 msgstr[0] "使用“%s”來開啟選取的項目"
 
-#: ../src/nautilus-view.c:5231
+#: ../src/nautilus-view.c:5244
 #, c-format
 msgid "Run “%s” on any selected items"
 msgstr "在任何選取的項目執行“%s”"
 
-#: ../src/nautilus-view.c:5482
+#: ../src/nautilus-view.c:5498
 #, c-format
 msgid "Create a new document from template “%s”"
 msgstr "從範本“%s”建立新文件"
 
-#: ../src/nautilus-view.c:6080
+#: ../src/nautilus-view.c:6098
 msgid "Select Destination"
 msgstr "選擇目的地"
 
-#: ../src/nautilus-view.c:6084
+#: ../src/nautilus-view.c:6102
 msgid "_Select"
 msgstr "選擇(_S)"
 
-#: ../src/nautilus-view.c:6161
+#: ../src/nautilus-view.c:6179
 #, c-format
 msgid "“%s” will be moved if you select the Paste command"
 msgstr "選擇「貼上」指令則會移動“%s”"
 
-#: ../src/nautilus-view.c:6165
+#: ../src/nautilus-view.c:6183
 #, c-format
 msgid "“%s” will be copied if you select the Paste command"
 msgstr "選擇「貼上」指令則會複製“%s”"
 
-#: ../src/nautilus-view.c:6172
+#: ../src/nautilus-view.c:6190
 #, c-format
 msgid "The %'d selected item will be moved if you select the Paste command"
 msgid_plural ""
 "The %'d selected items will be moved if you select the Paste command"
 msgstr[0] "選取「貼上」指令則會移動 %'d 個已選的項目"
 
-#: ../src/nautilus-view.c:6179
+#: ../src/nautilus-view.c:6197
 #, c-format
 msgid "The %'d selected item will be copied if you select the Paste command"
 msgid_plural ""
 "The %'d selected items will be copied if you select the Paste command"
 msgstr[0] "選取「貼上」指令則會複製 %'d 個已選的項目"
 
-#: ../src/nautilus-view.c:6255
+#: ../src/nautilus-view.c:6273
 msgid "There is nothing on the clipboard to paste."
 msgstr "剪貼簿中沒有內容可供貼上。"
 
-#: ../src/nautilus-view.c:6513
+#: ../src/nautilus-view.c:6642
 msgid "Unable to unmount location"
 msgstr "無法卸載位置"
 
-#: ../src/nautilus-view.c:6533
+#: ../src/nautilus-view.c:6662
 msgid "Unable to eject location"
 msgstr "無法退出位置"
 
-#: ../src/nautilus-view.c:6548
+#: ../src/nautilus-view.c:6677
 msgid "Unable to stop drive"
 msgstr "無法停止裝置"
 
-#: ../src/nautilus-view.c:7034
+#: ../src/nautilus-view.c:7163
 #, c-format
 msgid "Connect to Server %s"
 msgstr "連接伺服器 %s"
 
-#: ../src/nautilus-view.c:7039 ../src/nautilus-view.c:8139
-#: ../src/nautilus-view.c:8226 ../src/nautilus-view.c:8330
+#: ../src/nautilus-view.c:7168 ../src/nautilus-view.c:8272
+#: ../src/nautilus-view.c:8359 ../src/nautilus-view.c:8463
 msgid "_Connect"
 msgstr "連接(_C)"
 
-#: ../src/nautilus-view.c:7053
+#: ../src/nautilus-view.c:7182
 msgid "Link _name:"
 msgstr "連結名稱(_N):"
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7271
+#: ../src/nautilus-view.c:7400
 msgid "New _Document"
 msgstr "新增文件(_D)"
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7272
+#: ../src/nautilus-view.c:7401
 msgid "Open Wit_h"
 msgstr "以其它方式開啟(_H)"
 
-#: ../src/nautilus-view.c:7273
+#: ../src/nautilus-view.c:7402
 msgid "Choose a program with which to open the selected item"
 msgstr "請選取程式來開啟選定的項目"
 
+#. name, stock id
+#. label, accelerator
+#: ../src/nautilus-view.c:7404 ../src/nautilus-view.c:7671
+msgid "P_roperties"
+msgstr "屬性(_R)"
+
 #. tooltip
-#: ../src/nautilus-view.c:7276 ../src/nautilus-view.c:8860
+#: ../src/nautilus-view.c:7405 ../src/nautilus-view.c:8994
 msgid "View or modify the properties of each selected item"
 msgstr "顯示或修改所有選定項目的屬性"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7283
+#: ../src/nautilus-view.c:7412
 msgid "New _Folder"
 msgstr "新增資料夾(_F)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7284
+#: ../src/nautilus-view.c:7413
 msgid "Create a new empty folder inside this folder"
 msgstr "在本資料夾中新增空白資料夾"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7287
+#: ../src/nautilus-view.c:7416
 msgid "New Folder with Selection"
 msgstr "以選取範圍新增資料夾"
 
 #. tooltip
-#: ../src/nautilus-view.c:7288
+#: ../src/nautilus-view.c:7417
 msgid "Create a new folder containing the selected items"
 msgstr "為所有選取的項目建立新的資料夾"
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7290
+#: ../src/nautilus-view.c:7419
 msgid "No templates installed"
 msgstr "沒有安裝任何模板"
 
 #. name, stock id
 #. translators: this is used to indicate that a document doesn't contain anything
 #. label, accelerator
-#: ../src/nautilus-view.c:7293
+#: ../src/nautilus-view.c:7422
 msgid "_Empty Document"
 msgstr "空的文件(_E)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7294
+#: ../src/nautilus-view.c:7423
 msgid "Create a new empty document inside this folder"
 msgstr "在這個資料夾中新增空白的文件"
 
 #. tooltip
-#: ../src/nautilus-view.c:7298
+#: ../src/nautilus-view.c:7427
 msgid "Open the selected item in this window"
 msgstr "在本視窗中開啟選定的項目"
 
@@ -4475,66 +4433,66 @@ msgstr "在本視窗中開啟選定的項目"
 #. Location-specific actions
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7305 ../src/nautilus-view.c:7479
+#: ../src/nautilus-view.c:7434 ../src/nautilus-view.c:7612
 msgid "Open in Navigation Window"
 msgstr "在視窗中開啟"
 
 #. tooltip
-#: ../src/nautilus-view.c:7306
+#: ../src/nautilus-view.c:7435
 msgid "Open each selected item in a navigation window"
 msgstr "用新的視窗分別開啟每個選定的項目"
 
 #. tooltip
-#: ../src/nautilus-view.c:7310
+#: ../src/nautilus-view.c:7439
 msgid "Open each selected item in a new tab"
 msgstr "在新的分頁分別開啟每個選取的項目"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7313
+#: ../src/nautilus-view.c:7442
 msgid "Other _Application..."
 msgstr "其他應用程式(_A)…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7314 ../src/nautilus-view.c:7318
+#: ../src/nautilus-view.c:7443 ../src/nautilus-view.c:7447
 msgid "Choose another application with which to open the selected item"
 msgstr "請選取其它程式來開啟選定的項目"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7317
+#: ../src/nautilus-view.c:7446
 msgid "Open With Other _Application..."
 msgstr "以其他應用程式開啟(_A)…"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7321
+#: ../src/nautilus-view.c:7450
 msgid "_Open Scripts Folder"
 msgstr "開啟指令稿資料夾(_O)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7322
+#: ../src/nautilus-view.c:7451
 msgid "Show the folder containing the scripts that appear in this menu"
 msgstr "顯示載有本選單中出現的指令稿的資料夾"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7330
+#: ../src/nautilus-view.c:7459
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr "以「貼上」指令來準備移動選定的檔案"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7334
+#: ../src/nautilus-view.c:7463
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr "以「貼上」指令來準備複製選定的檔案"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7338
+#: ../src/nautilus-view.c:7467
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "將剛才以「剪下」或「複製」指令選取的檔案移動或複製"
 
@@ -4542,12 +4500,12 @@ msgstr "將剛才以「剪下」或「複製」指令選取的檔案移動或複
 #. accelerator for paste
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7343 ../src/nautilus-view.c:7496
+#: ../src/nautilus-view.c:7472 ../src/nautilus-view.c:7629
 msgid "_Paste Into Folder"
 msgstr "貼上至資料夾內(_P)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7344
+#: ../src/nautilus-view.c:7473
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -4555,129 +4513,140 @@ msgstr "將剛才以「剪下」或「複製」指令選取的檔案移動或複
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7347
+#: ../src/nautilus-view.c:7476
 msgid "Copy To..."
 msgstr "複製到…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7348
+#: ../src/nautilus-view.c:7477
 msgid "Copy selected files to another location"
 msgstr "將選取的檔案複製到另一個位置"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7351
+#: ../src/nautilus-view.c:7480
 msgid "Move To..."
 msgstr "移動到…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7352
+#: ../src/nautilus-view.c:7481
 msgid "Move selected files to another location"
 msgstr "將選取的檔案移動至另一個位置"
 
 #. tooltip
-#: ../src/nautilus-view.c:7356
+#: ../src/nautilus-view.c:7485
 msgid "Select all items in this window"
 msgstr "選取本視窗中所有項目"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7359
+#: ../src/nautilus-view.c:7488
 msgid "Select I_tems Matching..."
 msgstr "選擇項目比對(_T)…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7360
+#: ../src/nautilus-view.c:7489
 msgid "Select items in this window matching a given pattern"
 msgstr "選取本視窗中所有符合指定樣式的項目"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7363
+#: ../src/nautilus-view.c:7492
 msgid "_Invert Selection"
 msgstr "反向選擇(_I)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7364
+#: ../src/nautilus-view.c:7493
 msgid "Select all and only the items that are not currently selected"
 msgstr "選擇所有目前尚未被選取的項目"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7367
+#: ../src/nautilus-view.c:7496
 msgid "D_uplicate"
 msgstr "複製(_U)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7368
+#: ../src/nautilus-view.c:7497
 msgid "Duplicate each selected item"
 msgstr "複製所有選定的項目"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7371 ../src/nautilus-view.c:8845
+#: ../src/nautilus-view.c:7500 ../src/nautilus-view.c:8979
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "建立連結(_K)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7372
+#: ../src/nautilus-view.c:7501
 msgid "Create a symbolic link for each selected item"
 msgstr "為所有選定的項目建立連結"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7375
-msgid "_Rename..."
-msgstr "重新命名(_R)…"
+#: ../src/nautilus-view.c:7504
+msgid "Rena_me..."
+msgstr "重新命名(_M)…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7376
+#: ../src/nautilus-view.c:7505
 msgid "Rename selected item"
 msgstr "將選定的項目重新命名"
 
+#. name, stock id
+#. label, accelerator
+#: ../src/nautilus-view.c:7508
+msgid "Set as Wallpaper"
+msgstr "設為桌布"
+
 #. tooltip
-#: ../src/nautilus-view.c:7384 ../src/nautilus-view.c:8798
+#: ../src/nautilus-view.c:7509
+msgid "Make item the wallpaper"
+msgstr "將項目設為桌布"
+
+#. tooltip
+#: ../src/nautilus-view.c:7517 ../src/nautilus-view.c:8932
 msgid "Move each selected item to the Trash"
 msgstr "將每個選定的項目丟進回收筒"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7387 ../src/nautilus-view.c:7505
-#: ../src/nautilus-view.c:8824
+#: ../src/nautilus-view.c:7520 ../src/nautilus-view.c:7638
+#: ../src/nautilus-view.c:8958
 msgid "_Delete"
 msgstr "刪除(_D)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7388
+#: ../src/nautilus-view.c:7521
 msgid "Delete each selected item, without moving to the Trash"
 msgstr "將所有選定的項目直接刪除而不丟進回收筒"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7391 ../src/nautilus-view.c:7509
+#: ../src/nautilus-view.c:7524 ../src/nautilus-view.c:7642
 msgid "_Restore"
 msgstr "還原(_R)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7395
+#: ../src/nautilus-view.c:7528
 msgid "_Undo"
 msgstr "復原(_U)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7396
+#: ../src/nautilus-view.c:7529
 msgid "Undo the last action"
 msgstr "取消剛完成的動作"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7399
+#: ../src/nautilus-view.c:7532
 msgid "_Redo"
 msgstr "取消復原(_R)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7400
+#: ../src/nautilus-view.c:7533
 msgid "Redo the last undone action"
 msgstr "重複剛取消的動作"
 
@@ -4689,363 +4658,363 @@ msgstr "重複剛取消的動作"
 #.
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7409
+#: ../src/nautilus-view.c:7542
 msgid "Reset View to _Defaults"
 msgstr "重新設定顯示模式(_D)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7410
+#: ../src/nautilus-view.c:7543
 msgid "Reset sorting order and zoom level to match preferences for this view"
 msgstr "重設此顯示模式的排列次序及縮放倍率以配合偏好設定"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7413
+#: ../src/nautilus-view.c:7546
 msgid "Connect To This Server"
 msgstr "連接此伺服器"
 
 #. tooltip
-#: ../src/nautilus-view.c:7414
+#: ../src/nautilus-view.c:7547
 msgid "Make a permanent connection to this server"
 msgstr "永遠地連接到此伺服器"
 
 #. tooltip
-#: ../src/nautilus-view.c:7418
+#: ../src/nautilus-view.c:7551
 msgid "Mount the selected volume"
 msgstr "掛載選取的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7422
+#: ../src/nautilus-view.c:7555
 msgid "Unmount the selected volume"
 msgstr "卸載選定的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7426
+#: ../src/nautilus-view.c:7559
 msgid "Eject the selected volume"
 msgstr "退出選定的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7430
+#: ../src/nautilus-view.c:7563
 msgid "Start the selected volume"
 msgstr "開啟選取的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7434 ../src/nautilus-view.c:8352
+#: ../src/nautilus-view.c:7567 ../src/nautilus-view.c:8485
 msgid "Stop the selected volume"
 msgstr "關閉選取的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7438 ../src/nautilus-view.c:7462
-#: ../src/nautilus-view.c:7534
+#: ../src/nautilus-view.c:7571 ../src/nautilus-view.c:7595
+#: ../src/nautilus-view.c:7667
 msgid "Detect media in the selected drive"
 msgstr "偵測在選取光碟機中的媒體"
 
 #. tooltip
-#: ../src/nautilus-view.c:7442
+#: ../src/nautilus-view.c:7575
 msgid "Mount the volume associated with the open folder"
 msgstr "掛載與所開啟資料夾相關聯的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7446
+#: ../src/nautilus-view.c:7579
 msgid "Unmount the volume associated with the open folder"
 msgstr "卸載與所開啟資料夾相關聯的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7450
+#: ../src/nautilus-view.c:7583
 msgid "Eject the volume associated with the open folder"
 msgstr "退出與所開啟資料夾相關聯的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7454
+#: ../src/nautilus-view.c:7587
 msgid "Start the volume associated with the open folder"
 msgstr "掛載與所開啟資料夾相關聯的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7458
+#: ../src/nautilus-view.c:7591
 msgid "Stop the volume associated with the open folder"
 msgstr "卸載與所開啟資料夾相關聯的儲存區"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7465
+#: ../src/nautilus-view.c:7598
 msgid "Open File and Close window"
 msgstr "開啟檔案及關閉視窗"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7469
+#: ../src/nautilus-view.c:7602
 msgid "Sa_ve Search"
 msgstr "儲存搜尋(_V)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7470
+#: ../src/nautilus-view.c:7603
 msgid "Save the edited search"
 msgstr "儲存已編輯搜尋"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7473
+#: ../src/nautilus-view.c:7606
 msgid "Sa_ve Search As..."
 msgstr "另存搜尋為(_V)…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7474
+#: ../src/nautilus-view.c:7607
 msgid "Save the current search as a file"
 msgstr "另存目前的搜尋為檔案"
 
 #. tooltip
-#: ../src/nautilus-view.c:7480
+#: ../src/nautilus-view.c:7613
 msgid "Open this folder in a navigation window"
 msgstr "在導航視窗中開啟本資料夾"
 
 #. tooltip
-#: ../src/nautilus-view.c:7484
+#: ../src/nautilus-view.c:7617
 msgid "Open this folder in a new tab"
 msgstr "在新的分頁中開啟本資料夾"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7489
+#: ../src/nautilus-view.c:7622
 msgid "Prepare this folder to be moved with a Paste command"
 msgstr "以「貼上」指令來準備移動本資料夾"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7493
+#: ../src/nautilus-view.c:7626
 msgid "Prepare this folder to be copied with a Paste command"
 msgstr "以「貼上」指令來準備複製本資料夾"
 
 #. tooltip
-#: ../src/nautilus-view.c:7497
+#: ../src/nautilus-view.c:7630
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into this "
 "folder"
 msgstr "將剛才以「剪下」或「複製」指令選取的檔案移動或複製至這個資料夾"
 
 #. tooltip
-#: ../src/nautilus-view.c:7502
+#: ../src/nautilus-view.c:7635
 msgid "Move this folder to the Trash"
 msgstr "將本資料夾丟進回收筒"
 
 #. tooltip
-#: ../src/nautilus-view.c:7506
+#: ../src/nautilus-view.c:7639
 msgid "Delete this folder, without moving to the Trash"
 msgstr "直接刪除本資料夾，毋需丟進回收筒"
 
 #. tooltip
-#: ../src/nautilus-view.c:7514
+#: ../src/nautilus-view.c:7647
 msgid "Mount the volume associated with this folder"
 msgstr "掛載與這個資料夾相關聯的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7518
+#: ../src/nautilus-view.c:7651
 msgid "Unmount the volume associated with this folder"
 msgstr "卸載與這個資料夾相關聯的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7522
+#: ../src/nautilus-view.c:7655
 msgid "Eject the volume associated with this folder"
 msgstr "退出與這個資料夾相關聯的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7526
+#: ../src/nautilus-view.c:7659
 msgid "Start the volume associated with this folder"
 msgstr "掛載與這個資料夾相關聯的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7530
+#: ../src/nautilus-view.c:7663
 msgid "Stop the volume associated with this folder"
 msgstr "卸載與這個資料夾相關聯的儲存區"
 
 #. tooltip
-#: ../src/nautilus-view.c:7539
+#: ../src/nautilus-view.c:7672
 msgid "View or modify the properties of this folder"
 msgstr "顯示或修改這個資料夾的屬性"
 
-#: ../src/nautilus-view.c:7617
+#: ../src/nautilus-view.c:7750
 msgid "Run or manage scripts"
 msgstr "執行或管理命令稿"
 
 #. Create a script action here specially because its tooltip is dynamic
-#: ../src/nautilus-view.c:7619
+#: ../src/nautilus-view.c:7752
 msgid "_Scripts"
 msgstr "命令稿(_S)"
 
-#: ../src/nautilus-view.c:7989
+#: ../src/nautilus-view.c:8122
 #, c-format
 msgid "Move the open folder out of the trash to “%s”"
 msgstr "將開啟的資料夾自回收筒移至“%s”"
 
-#: ../src/nautilus-view.c:7992
+#: ../src/nautilus-view.c:8125
 #, c-format
 msgid "Move the selected folder out of the trash to “%s”"
 msgid_plural "Move the selected folders out of the trash to “%s”"
 msgstr[0] "將選取的資料夾自回收筒移至“%s”"
 
-#: ../src/nautilus-view.c:7996
+#: ../src/nautilus-view.c:8129
 #, c-format
 msgid "Move the selected folder out of the trash"
 msgid_plural "Move the selected folders out of the trash"
 msgstr[0] "將選取的資料夾自回收筒移出"
 
-#: ../src/nautilus-view.c:8002
+#: ../src/nautilus-view.c:8135
 #, c-format
 msgid "Move the selected file out of the trash to “%s”"
 msgid_plural "Move the selected files out of the trash to “%s”"
 msgstr[0] "將選取的檔案自回收筒移至“%s”"
 
-#: ../src/nautilus-view.c:8006
+#: ../src/nautilus-view.c:8139
 #, c-format
 msgid "Move the selected file out of the trash"
 msgid_plural "Move the selected files out of the trash"
 msgstr[0] "將選取的檔案自回收筒移出"
 
-#: ../src/nautilus-view.c:8012
+#: ../src/nautilus-view.c:8145
 #, c-format
 msgid "Move the selected item out of the trash to “%s”"
 msgid_plural "Move the selected items out of the trash to “%s”"
 msgstr[0] "將選取的項目自回收筒移至“%s”"
 
-#: ../src/nautilus-view.c:8016
+#: ../src/nautilus-view.c:8149
 #, c-format
 msgid "Move the selected item out of the trash"
 msgid_plural "Move the selected items out of the trash"
 msgstr[0] "將選取的項目自回收筒移出"
 
-#: ../src/nautilus-view.c:8132 ../src/nautilus-view.c:8136
-#: ../src/nautilus-view.c:8323 ../src/nautilus-view.c:8327
+#: ../src/nautilus-view.c:8265 ../src/nautilus-view.c:8269
+#: ../src/nautilus-view.c:8456 ../src/nautilus-view.c:8460
 msgid "Start the selected drive"
 msgstr "開啟選擇的裝置"
 
-#: ../src/nautilus-view.c:8140 ../src/nautilus-view.c:8331
+#: ../src/nautilus-view.c:8273 ../src/nautilus-view.c:8464
 msgid "Connect to the selected drive"
 msgstr "連接到選取的裝置"
 
-#: ../src/nautilus-view.c:8143 ../src/nautilus-view.c:8230
-#: ../src/nautilus-view.c:8334
+#: ../src/nautilus-view.c:8276 ../src/nautilus-view.c:8363
+#: ../src/nautilus-view.c:8467
 msgid "_Start Multi-disk Drive"
 msgstr "開啟多磁碟裝置(_S)"
 
-#: ../src/nautilus-view.c:8144 ../src/nautilus-view.c:8335
+#: ../src/nautilus-view.c:8277 ../src/nautilus-view.c:8468
 msgid "Start the selected multi-disk drive"
 msgstr "開啟選取的多磁碟裝置"
 
-#: ../src/nautilus-view.c:8147
+#: ../src/nautilus-view.c:8280
 msgid "U_nlock Drive"
 msgstr "解鎖裝置(_N)"
 
-#: ../src/nautilus-view.c:8148 ../src/nautilus-view.c:8339
+#: ../src/nautilus-view.c:8281 ../src/nautilus-view.c:8472
 msgid "Unlock the selected drive"
 msgstr "解鎖選取的裝置"
 
-#: ../src/nautilus-view.c:8161
+#: ../src/nautilus-view.c:8294
 msgid "Stop the selected drive"
 msgstr "關閉選擇的裝置"
 
-#: ../src/nautilus-view.c:8165 ../src/nautilus-view.c:8356
+#: ../src/nautilus-view.c:8298 ../src/nautilus-view.c:8489
 msgid "Safely remove the selected drive"
 msgstr "安全的移除選取的裝置"
 
-#: ../src/nautilus-view.c:8168 ../src/nautilus-view.c:8255
-#: ../src/nautilus-view.c:8359
+#: ../src/nautilus-view.c:8301 ../src/nautilus-view.c:8388
+#: ../src/nautilus-view.c:8492
 msgid "_Disconnect"
 msgstr "中斷(_D)"
 
-#: ../src/nautilus-view.c:8169 ../src/nautilus-view.c:8360
+#: ../src/nautilus-view.c:8302 ../src/nautilus-view.c:8493
 msgid "Disconnect the selected drive"
 msgstr "中斷選取的裝置"
 
-#: ../src/nautilus-view.c:8172 ../src/nautilus-view.c:8259
-#: ../src/nautilus-view.c:8363
+#: ../src/nautilus-view.c:8305 ../src/nautilus-view.c:8392
+#: ../src/nautilus-view.c:8496
 msgid "_Stop Multi-disk Drive"
 msgstr "關閉多磁碟裝置(_S)"
 
-#: ../src/nautilus-view.c:8173 ../src/nautilus-view.c:8364
+#: ../src/nautilus-view.c:8306 ../src/nautilus-view.c:8497
 msgid "Stop the selected multi-disk drive"
 msgstr "關閉選取的多磁碟裝置"
 
-#: ../src/nautilus-view.c:8177 ../src/nautilus-view.c:8368
+#: ../src/nautilus-view.c:8310 ../src/nautilus-view.c:8501
 msgid "Lock the selected drive"
 msgstr "鎖定選取的裝置"
 
-#: ../src/nautilus-view.c:8219 ../src/nautilus-view.c:8223
+#: ../src/nautilus-view.c:8352 ../src/nautilus-view.c:8356
 msgid "Start the drive associated with the open folder"
 msgstr "掛載與所開啟資料夾相關聯的裝置"
 
-#: ../src/nautilus-view.c:8227
+#: ../src/nautilus-view.c:8360
 msgid "Connect to the drive associated with the open folder"
 msgstr "卸載與所開啟資料夾相關聯的裝置"
 
-#: ../src/nautilus-view.c:8231
+#: ../src/nautilus-view.c:8364
 msgid "Start the multi-disk drive associated with the open folder"
 msgstr "掛載與所開啟資料夾相關聯的多磁碟裝置"
 
-#: ../src/nautilus-view.c:8235
+#: ../src/nautilus-view.c:8368
 msgid "Unlock the drive associated with the open folder"
 msgstr "解鎖與所開啟資料夾相關聯的裝置"
 
-#: ../src/nautilus-view.c:8248
+#: ../src/nautilus-view.c:8381
 msgid "_Stop the drive associated with the open folder"
 msgstr "卸載與所開啟資料夾相關聯的裝置(_S)"
 
-#: ../src/nautilus-view.c:8252
+#: ../src/nautilus-view.c:8385
 msgid "Safely remove the drive associated with the open folder"
 msgstr "安全的移除與所開啟資料夾相關聯的裝置"
 
-#: ../src/nautilus-view.c:8256
+#: ../src/nautilus-view.c:8389
 msgid "Disconnect the drive associated with the open folder"
 msgstr "中斷與所開啟資料夾相關聯裝置的連線"
 
-#: ../src/nautilus-view.c:8260
+#: ../src/nautilus-view.c:8393
 msgid "Stop the multi-disk drive associated with the open folder"
 msgstr "卸載與所開啟資料夾相關聯的多磁碟裝置"
 
-#: ../src/nautilus-view.c:8264
+#: ../src/nautilus-view.c:8397
 msgid "Lock the drive associated with the open folder"
 msgstr "鎖定與所開啟資料夾相關聯的裝置"
 
-#: ../src/nautilus-view.c:8500 ../src/nautilus-view.c:8793
+#: ../src/nautilus-view.c:8626 ../src/nautilus-view.c:8927
 msgid "_Delete Permanently"
 msgstr "永久刪除(_D)"
 
-#: ../src/nautilus-view.c:8501
+#: ../src/nautilus-view.c:8627
 msgid "Delete the open folder permanently"
 msgstr "永久刪除開啟的資料夾"
 
-#: ../src/nautilus-view.c:8505
+#: ../src/nautilus-view.c:8631
 msgid "Move the open folder to the Trash"
 msgstr "將開啟的資料夾丟進回收筒"
 
-#: ../src/nautilus-view.c:8668
+#: ../src/nautilus-view.c:8803
 #, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
 msgstr[0] "以選取範圍新增資料夾 (%'d 個項目)"
 
-#: ../src/nautilus-view.c:8708
+#: ../src/nautilus-view.c:8843
 #, c-format
 msgid "_Open With %s"
 msgstr "以 %s 開啟(_O)"
 
-#: ../src/nautilus-view.c:8757
+#: ../src/nautilus-view.c:8891
 #, c-format
 msgid "Open in %'d New _Window"
 msgid_plural "Open in %'d New _Windows"
 msgstr[0] "在 %'d 個新的視窗內開啟(_W)"
 
-#: ../src/nautilus-view.c:8777
+#: ../src/nautilus-view.c:8911
 #, c-format
 msgid "Open in %'d New _Tab"
 msgid_plural "Open in %'d New _Tabs"
 msgstr[0] "在 %'d 個新的分頁開啟(_T)"
 
-#: ../src/nautilus-view.c:8794
+#: ../src/nautilus-view.c:8928
 msgid "Delete all selected items permanently"
 msgstr "永久刪除所有選定的項目"
 
-#: ../src/nautilus-view.c:8858
+#: ../src/nautilus-view.c:8992
 msgid "View or modify the properties of the open folder"
 msgstr "顯示或修改開啟的資料夾的屬性"
 
@@ -5063,14 +5032,14 @@ msgid "An invalid drag type was used."
 msgstr "拖曳方式不正確。"
 
 #. Translator: This is the filename used for when you dnd text to a directory
-#: ../src/nautilus-view-dnd.c:374
-msgid "dropped text.txt"
-msgstr "拖放的 text.txt"
+#: ../src/nautilus-view-dnd.c:383
+msgid "Dropped Text.txt"
+msgstr "拖放的 Text.txt"
 
 #. Translator: This is the filename used for when you dnd raw
 #. * data to a directory, if the source didn't supply a name.
 #.
-#: ../src/nautilus-view-dnd.c:419
+#: ../src/nautilus-view-dnd.c:472
 msgid "dropped data"
 msgstr "拖放的資料"
 
@@ -5147,43 +5116,43 @@ msgstr ""
 "Abel Cheung <abel@oaka.org>, 2001-2004\n"
 "Gong Yi LIAO <granziliao@sinamail.com>, 2000"
 
-#: ../src/nautilus-window-manage-views.c:883
-#: ../src/nautilus-window-manage-views.c:1032
+#: ../src/nautilus-window-manage-views.c:881
+#: ../src/nautilus-window-manage-views.c:1030
 #, c-format
 msgid "Unable to load location"
 msgstr "無法載入位置"
 
-#: ../src/nautilus-window-manage-views.c:1186
+#: ../src/nautilus-window-manage-views.c:1184
 msgid "Searching..."
 msgstr "搜尋…"
 
-#: ../src/nautilus-window-manage-views.c:1644
+#: ../src/nautilus-window-manage-views.c:1642
 msgid "Unable to display the contents of this folder."
 msgstr "無法顯示這個資料夾的內容。"
 
-#: ../src/nautilus-window-manage-views.c:1646
+#: ../src/nautilus-window-manage-views.c:1644
 msgid "This location doesn't appear to be a folder."
 msgstr "這個位置似乎不是資料夾。"
 
-#: ../src/nautilus-window-manage-views.c:1651
+#: ../src/nautilus-window-manage-views.c:1649
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr "找不到要求的檔案。請檢查拼字是否正確並再試一次。"
 
-#: ../src/nautilus-window-manage-views.c:1656
+#: ../src/nautilus-window-manage-views.c:1654
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "“%s”位置是不支援的。"
 
-#: ../src/nautilus-window-manage-views.c:1659
+#: ../src/nautilus-window-manage-views.c:1657
 msgid "Unable to handle this kind of location."
 msgstr "無法處理此類型的位置。"
 
-#: ../src/nautilus-window-manage-views.c:1664
+#: ../src/nautilus-window-manage-views.c:1662
 msgid "Unable to access the requested location."
 msgstr "無法存取要求的位置。"
 
-#: ../src/nautilus-window-manage-views.c:1667
+#: ../src/nautilus-window-manage-views.c:1665
 msgid "Don't have permission to access the requested location."
 msgstr "您沒有存取要求位置的權限。"
 
@@ -5192,13 +5161,13 @@ msgstr "您沒有存取要求位置的權限。"
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-manage-views.c:1675
+#: ../src/nautilus-window-manage-views.c:1673
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
 msgstr "無法尋找要求的位置。請檢查拼字或網路設定值。"
 
-#: ../src/nautilus-window-manage-views.c:1686
+#: ../src/nautilus-window-manage-views.c:1684
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "未處理的錯誤訊息：%s"
@@ -5601,6 +5570,72 @@ msgstr "包含相片與音樂"
 msgid "Open with:"
 msgstr "以此開啟："
 
+#~ msgid "Autorun Prompt"
+#~ msgstr "自動執行提示"
+
+#~ msgid ""
+#~ "Enables the classic Nautilus behavior, where all windows are browsers"
+#~ msgstr "啟用典型的 Nautilus 運作方式，那麼所有視窗都是瀏覽器"
+
+#~ msgid ""
+#~ "If set to true, then all Nautilus windows will be browser windows. This "
+#~ "is how Nautilus used to behave before version 2.6, and some people prefer "
+#~ "this behavior."
+#~ msgstr ""
+#~ "如設定為‘true’，那麼所有 Nautilus 視窗皆是瀏覽器視窗。這是 Nautilus 在 "
+#~ "2.6 版前的運作方式，有些人比較喜歡這種運作方式。"
+
+#~ msgid "When to show preview text in icons"
+#~ msgstr "何時會在圖示內顯示預覽文字"
+
+#~ msgid ""
+#~ "Speed tradeoff for when to show a preview of text file contents in the "
+#~ "file's icon. If set to \"always\" then always show previews, even if the "
+#~ "folder is on a remote server. If set to \"local-only\" then only show "
+#~ "previews for local file systems. If set to \"never\" then never bother to "
+#~ "read preview data."
+#~ msgstr ""
+#~ "有關檔案的圖示是否顯示文字檔預覽內容在速度方面的權衡。如果設定為“always”，"
+#~ "即使是遠端檔案仍然會顯示預覽圖示。如果設定為“local-only”則只會顯示本地檔案"
+#~ "系統的預覽圖示。如果設定為“never”則不會顯示預覽圖示。"
+
+#~ msgid "Error starting autorun program: %s"
+#~ msgstr "啟動自動執行程式時發生錯誤：%s"
+
+#~ msgid "Cannot find the autorun program"
+#~ msgstr "找不到自動執行的程式"
+
+#~ msgid "<big><b>Error autorunning software</b></big>"
+#~ msgstr "<big><b>自動執行軟體錯誤</b></big>"
+
+#~ msgid ""
+#~ "The software will run directly from the medium “%s”. You should never run "
+#~ "software that you don't trust.\n"
+#~ "\n"
+#~ "If in doubt, press Cancel."
+#~ msgstr ""
+#~ "此軟體將直接從媒體“%s”執行。若不信任此軟體請勿執行它。\n"
+#~ "\n"
+#~ "如果懷疑，請按「取消」。"
+
+#~ msgid "File Management Preferences"
+#~ msgstr "檔案管理偏好設定"
+
+#~ msgid "Open each _folder in its own window"
+#~ msgstr "分別以自己的視窗開啟每個資料夾(_F)"
+
+#~ msgid "Text Files"
+#~ msgstr "文字檔案"
+
+#~ msgid "Show te_xt in icons:"
+#~ msgstr "在圖示內顯示文字(_X):"
+
+#~ msgid "Other Previewable Files"
+#~ msgstr "其他可預覽的檔案"
+
+#~ msgid "_Rename..."
+#~ msgstr "重新命名(_R)…"
+
 #~ msgid "me"
 #~ msgstr "我"
 
@@ -5688,9 +5723,6 @@ msgstr "以此開啟："
 
 #~ msgid "Nautilus cannot handle \"%s\" locations."
 #~ msgstr "Nautilus 無法處理「%s」的位置。"
-
-#~ msgid "Unable to mount the location."
-#~ msgstr "無法掛載該位置。"
 
 #~ msgid "Access was denied."
 #~ msgstr "存取被禁止。"
