@@ -39,7 +39,6 @@ static const char *default_column_order[] = {
 	"owner",
 	"group",
 	"permissions",
-	"octal_permissions",
 	"mime_type",
 	"selinux_context",
 	"where",
@@ -104,14 +103,6 @@ get_builtin_columns (void)
 					       "attribute", "permissions",
 					       "label", _("Permissions"),
 					       "description", _("The permissions of the file."),
-					       NULL));
-
-	columns = g_list_append (columns,
-				 g_object_new (NAUTILUS_TYPE_COLUMN,
-					       "name", "octal_permissions",
-					       "attribute", "octal_permissions",
-					       "label", _("Octal Permissions"),
-					       "description", _("The permissions of the file, in octal notation."),
 					       NULL));
 
 	columns = g_list_append (columns,

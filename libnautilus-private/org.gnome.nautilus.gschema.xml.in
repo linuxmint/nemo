@@ -179,7 +179,7 @@
       the desktop.  The actual number of captions shown depends on
       the zoom level.  Some possible values are:
       "size", "type", "date_modified", "owner",
-      "group", "permissions", "octal_permissions" and "mime_type".</_description>
+      "group", "permissions", and "mime_type".</_description>
     </key>
     <key name="default-zoom-level" enum="org.gnome.nautilus.ZoomLevel">
       <default>'standard'</default>
