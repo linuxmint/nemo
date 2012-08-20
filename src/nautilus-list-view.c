@@ -1863,16 +1863,6 @@ set_sort_order_from_metadata_and_preferences (NautilusListView *list_view)
 					      sort_reversed ? GTK_SORT_DESCENDING : GTK_SORT_ASCENDING);					      
 }
 
-static gboolean
-list_view_changed_foreach (GtkTreeModel *model,
-              		   GtkTreePath  *path,
-			   GtkTreeIter  *iter,
-			   gpointer      data)
-{
-	gtk_tree_model_row_changed (model, path, iter);
-	return FALSE;
-}
-
 static NautilusZoomLevel
 get_default_zoom_level (void) {
 	NautilusZoomLevel default_zoom_level;
@@ -1889,25 +1879,6 @@ get_default_zoom_level (void) {
 }
 
 static void
-set_zoom_level_from_metadata_and_preferences (NautilusListView *list_view)
-{
-	NautilusFile *file;
-	int level;
-
-	if (nautilus_view_supports_zooming (NAUTILUS_VIEW (list_view))) {
-		file = nautilus_view_get_directory_as_file (NAUTILUS_VIEW (list_view));
-		level = nautilus_file_get_integer_metadata (file,
-							    NAUTILUS_METADATA_KEY_LIST_VIEW_ZOOM_LEVEL, 
-							    get_default_zoom_level ());
-		nautilus_list_view_set_zoom_level (list_view, level, TRUE);
-		
-		/* updated the rows after updating the font size */
-		gtk_tree_model_foreach (GTK_TREE_MODEL (list_view->details->model),
-					list_view_changed_foreach, NULL);
-	}
-}
-
-static void
 nautilus_list_view_begin_loading (NautilusView *view)
 {
 	NautilusListView *list_view;
@@ -1915,7 +1886,6 @@ nautilus_list_view_begin_loading (NautilusView *view)
 	list_view = NAUTILUS_LIST_VIEW (view);
 
 	set_sort_order_from_metadata_and_preferences (list_view);
-	set_zoom_level_from_metadata_and_preferences (list_view);
 	set_columns_settings_from_metadata_and_preferences (list_view);
 }
 
@@ -2705,7 +2675,6 @@ nautilus_list_view_reset_to_defaults (NautilusView *view)
 
 	nautilus_file_set_metadata (file, NAUTILUS_METADATA_KEY_LIST_VIEW_SORT_COLUMN, NULL, NULL);
 	nautilus_file_set_metadata (file, NAUTILUS_METADATA_KEY_LIST_VIEW_SORT_REVERSED, NULL, NULL);
-	nautilus_file_set_metadata (file, NAUTILUS_METADATA_KEY_LIST_VIEW_ZOOM_LEVEL, NULL, NULL);
 	nautilus_file_set_metadata_list (file, NAUTILUS_METADATA_KEY_LIST_VIEW_COLUMN_ORDER, NULL);
 	nautilus_file_set_metadata_list (file, NAUTILUS_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS, NULL);
 
@@ -2742,12 +2711,6 @@ nautilus_list_view_set_zoom_level (NautilusListView *view,
 
 	view->details->zoom_level = new_level;
 	g_signal_emit_by_name (NAUTILUS_VIEW(view), "zoom_level_changed");
-
-	nautilus_file_set_integer_metadata
-		(nautilus_view_get_directory_as_file (NAUTILUS_VIEW (view)), 
-		 NAUTILUS_METADATA_KEY_LIST_VIEW_ZOOM_LEVEL, 
-		 get_default_zoom_level (),
-		 new_level);
 
 	/* Select correctly scaled icons. */
 	column = nautilus_list_model_get_column_id_from_zoom_level (new_level);
@@ -2950,16 +2913,6 @@ default_sort_order_changed_callback (gpointer callback_data)
 }
 
 static void
-default_zoom_level_changed_callback (gpointer callback_data)
-{
-	NautilusListView *list_view;
-
-	list_view = NAUTILUS_LIST_VIEW (callback_data);
-
-	set_zoom_level_from_metadata_and_preferences (list_view);
-}
-
-static void
 default_visible_columns_changed_callback (gpointer callback_data)
 {
 	NautilusListView *list_view;
@@ -3074,9 +3027,6 @@ nautilus_list_view_finalize (GObject *object)
 
 	g_signal_handlers_disconnect_by_func (nautilus_preferences,
 					      default_sort_order_changed_callback,
-					      list_view);
-	g_signal_handlers_disconnect_by_func (nautilus_list_view_preferences,
-					      default_zoom_level_changed_callback,
 					      list_view);
 	g_signal_handlers_disconnect_by_func (nautilus_list_view_preferences,
 					      default_visible_columns_changed_callback,
@@ -3260,10 +3210,6 @@ nautilus_list_view_init (NautilusListView *list_view)
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_DEFAULT_SORT_IN_REVERSE_ORDER,
 				  G_CALLBACK (default_sort_order_changed_callback),
-				  list_view);
-	g_signal_connect_swapped (nautilus_list_view_preferences,
-				  "changed::" NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_ZOOM_LEVEL,
-				  G_CALLBACK (default_zoom_level_changed_callback),
 				  list_view);
 	g_signal_connect_swapped (nautilus_list_view_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS,

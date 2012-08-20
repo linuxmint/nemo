@@ -91,13 +91,11 @@ static struct {
 } metadata_keys[] = {
 	{"background_color", "metadata::" NAUTILUS_METADATA_KEY_LOCATION_BACKGROUND_COLOR},
 	{"background_tile_image", "metadata::" NAUTILUS_METADATA_KEY_LOCATION_BACKGROUND_IMAGE},
-	{"icon_view_zoom_level", "metadata::" NAUTILUS_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL},
 	{"icon_view_auto_layout", "metadata::" NAUTILUS_METADATA_KEY_ICON_VIEW_AUTO_LAYOUT},
 	{"icon_view_sort_by", "metadata::" NAUTILUS_METADATA_KEY_ICON_VIEW_SORT_BY},
 	{"icon_view_sort_reversed", "metadata::" NAUTILUS_METADATA_KEY_ICON_VIEW_SORT_REVERSED},
 	{"icon_view_keep_aligned", "metadata::" NAUTILUS_METADATA_KEY_ICON_VIEW_KEEP_ALIGNED},
 	{"icon_view_layout_timestamp", "metadata::" NAUTILUS_METADATA_KEY_ICON_VIEW_LAYOUT_TIMESTAMP},
-	{"list_view_zoom_level", "metadata::" NAUTILUS_METADATA_KEY_LIST_VIEW_ZOOM_LEVEL},
 	{"list_view_sort_column", "metadata::" NAUTILUS_METADATA_KEY_LIST_VIEW_SORT_COLUMN},
 	{"list_view_sort_reversed", "metadata::" NAUTILUS_METADATA_KEY_LIST_VIEW_SORT_REVERSED},
 	{"list_view_visible_columns", "metadata::" NAUTILUS_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS},
