@@ -838,17 +838,8 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 
 		mimetype = nautilus_file_get_mime_type (file);
 
-		/* Look in metadata for view */
-		view_id = nautilus_file_get_metadata 
-			(file, NAUTILUS_METADATA_KEY_DEFAULT_VIEW, NULL);
-		if (view_id != NULL && 
-		    !nautilus_view_factory_view_supports_uri (view_id,
-							      location,
-							      nautilus_file_get_file_type (file),
-							      mimetype)) {
-			g_free (view_id);
-			view_id = NULL;
-		}
+		/* Try to use the existing view */
+		view_id = g_strdup (nautilus_window_slot_get_content_view_id (slot));
 
 		/* Otherwise, use default */
 		if (view_id == NULL) {
@@ -1713,7 +1704,6 @@ void
 nautilus_window_slot_set_content_view (NautilusWindowSlot *slot,
 				       const char *id)
 {
-	NautilusFile *file;
 	char *uri;
 
 	g_assert (slot != NULL);
@@ -1730,11 +1720,6 @@ nautilus_window_slot_set_content_view (NautilusWindowSlot *slot,
 
         end_location_change (slot);
 
-	file = nautilus_file_get (slot->location);
-	nautilus_file_set_metadata 
-		(file, NAUTILUS_METADATA_KEY_DEFAULT_VIEW, NULL, id);
-        nautilus_file_unref (file);
-        
         nautilus_window_slot_set_allow_stop (slot, TRUE);
 
         if (nautilus_view_get_selection_count (slot->content_view) == 0) {

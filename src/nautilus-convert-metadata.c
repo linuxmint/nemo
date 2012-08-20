@@ -89,7 +89,6 @@ static struct {
 	const char *old_key;
 	const char *new_key;
 } metadata_keys[] = {
-	{"default_component", "metadata::" NAUTILUS_METADATA_KEY_DEFAULT_VIEW},
 	{"background_color", "metadata::" NAUTILUS_METADATA_KEY_LOCATION_BACKGROUND_COLOR},
 	{"background_tile_image", "metadata::" NAUTILUS_METADATA_KEY_LOCATION_BACKGROUND_IMAGE},
 	{"icon_view_zoom_level", "metadata::" NAUTILUS_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL},

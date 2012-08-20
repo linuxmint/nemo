@@ -34,8 +34,6 @@
 
 /* Per-file */
 
-#define NAUTILUS_METADATA_KEY_DEFAULT_VIEW		 	"nautilus-default-view"
-
 #define NAUTILUS_METADATA_KEY_LOCATION_BACKGROUND_COLOR 	"folder-background-color"
 #define NAUTILUS_METADATA_KEY_LOCATION_BACKGROUND_IMAGE 	"folder-background-image"
 
