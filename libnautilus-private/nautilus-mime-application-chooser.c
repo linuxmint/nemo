@@ -315,17 +315,6 @@ nautilus_mime_application_chooser_apply_labels (NautilusMimeApplicationChooser *
 }
 
 static void
-show_more_clicked_cb (GtkWidget *button,
-		      gpointer user_data)
-{
-	NautilusMimeApplicationChooser *chooser = user_data;
-
-	gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
-					       TRUE);
-	gtk_widget_hide (button);
-}
-
-static void
 nautilus_mime_application_chooser_build_ui (NautilusMimeApplicationChooser *chooser)
 {
 	GtkWidget *box, *button;
@@ -360,13 +349,8 @@ nautilus_mime_application_chooser_build_ui (NautilusMimeApplicationChooser *choo
 	g_signal_connect (chooser->details->open_with_widget, "populate-popup",
 			  G_CALLBACK (populate_popup_cb),
 			  chooser);
-
-	button = gtk_button_new_with_label (_("Show other applications"));
-	gtk_box_pack_start (GTK_BOX (chooser->details->open_with_widget), button, FALSE, FALSE, 6);
-	gtk_widget_show_all (button);
-
-	g_signal_connect (button, "clicked",
-			  G_CALLBACK (show_more_clicked_cb), chooser);
+	gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
+					       TRUE);
 
 	box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_set_spacing (GTK_BOX (box), 6);
