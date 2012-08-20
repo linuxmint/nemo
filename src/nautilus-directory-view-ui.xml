@@ -81,7 +81,6 @@
   <placeholder name="Open Placeholder">
     <menuitem name="Open" action="Open"/>
     <menuitem name="OpenInNewTab" action="OpenInNewTab"/>
-    <menuitem name="OpenAlternate" action="OpenAlternate"/>
     <separator name="applications separator"/>
     <placeholder name="Applications Placeholder"/>
     <menu action="Open With">
