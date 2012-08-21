@@ -368,12 +368,15 @@ nautilus_canvas_view_container_get_icon_text (NautilusCanvasContainer *container
 	/* Get the attributes. */
 	j = 0;
 	for (i = 0; i < num_attributes; ++i) {
+		char *text;
 		if (attributes[i] == attribute_none_q) {
 			continue;
 		}
-
-		text_array[j++] =
-			nautilus_file_get_string_attribute_with_default_q (file, attributes[i]);
+		text = nautilus_file_get_string_attribute_q (file, attributes[i]);
+		if (text == NULL) {
+			continue;
+		}
+		text_array[j++] = text;
 	}
 	text_array[j] = NULL;
 
