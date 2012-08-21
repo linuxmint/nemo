@@ -1446,7 +1446,8 @@ update_for_new_location (NautilusWindowSlot *slot)
 			char *scripts_path = nautilus_get_scripts_directory_path ();
 			scripts_file = g_file_new_for_path (scripts_path);
 			g_free (scripts_path);
-			if (nautilus_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
+			if (nautilus_should_use_templates_directory () &&
+			    nautilus_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
 				nautilus_window_slot_show_special_location_bar (slot, NAUTILUS_SPECIAL_LOCATION_TEMPLATES);
 			} else if (g_file_equal (slot->location, scripts_file)) {
 				nautilus_window_slot_show_special_location_bar (slot, NAUTILUS_SPECIAL_LOCATION_SCRIPTS);
