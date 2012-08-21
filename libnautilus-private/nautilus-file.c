@@ -6800,6 +6800,23 @@ nautilus_file_is_in_recent (NautilusFile *file)
 	return nautilus_directory_is_in_recent (file->details->directory);
 }
 
+/**
+ * nautilus_file_is_in_network
+ * 
+ * Check if this file is a file in Network.
+ * @file: NautilusFile representing the file in question.
+ * 
+ * Returns: TRUE if @file is in Network.
+ * 
+ **/
+gboolean
+nautilus_file_is_in_network (NautilusFile *file)
+{
+	g_assert (NAUTILUS_IS_FILE (file));
+
+	return nautilus_directory_is_in_network (file->details->directory);
+}
+
 GError *
 nautilus_file_get_file_info_error (NautilusFile *file)
 {

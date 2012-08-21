@@ -548,6 +548,19 @@ nautilus_directory_is_in_recent (NautilusDirectory *directory)
 }
 
 gboolean
+nautilus_directory_is_in_network (NautilusDirectory *directory)
+{
+	g_assert (NAUTILUS_IS_DIRECTORY (directory));
+
+	if (directory->details->location == NULL) {
+		return FALSE;
+	}
+
+	return g_file_has_uri_scheme (directory->details->location, "network") ||
+		g_file_has_uri_scheme (directory->details->location, "dns-sd");
+}
+
+gboolean
 nautilus_directory_are_all_files_seen (NautilusDirectory *directory)
 {
 	g_return_val_if_fail (NAUTILUS_IS_DIRECTORY (directory), FALSE);
