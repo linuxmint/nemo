@@ -1,3 +1,22 @@
+Major changes in 3.5.90 are:
+* Reorganize application and gear menu, and add a menu for view actions
+* Add a View options selector to the toolbar
+* Add cluebars for Templates and Scripts special directories
+* Add ability to reorder bookmarks
+* Improve strings in the Autorun prompt
+* Improve error message strings
+* Improve the image Properties page
+* Improve the Permissions page in the Properties window
+* Improve the layout of the Bookmarks dialog
+* Use the dropped text paragraph as name when creating new files
+  using DnD of text snippets
+* Use double quotes instead of ASCII quotes for filenames
+* Change default action for executable text files to Display
+* Change the view mode and zoom level to be per-window instead of per-folder
+* Remove support for Manual layouting in icon views outside of Desktop
+* Remove the Octal permissions list view column
+* Fix segfault when no search results are found
+
 Major changes in 3.5.5 are:
 * Combine results from both search providers
 * Use a ranking algorithm for search results
