@@ -171,6 +171,7 @@ goffset                 nautilus_file_get_size                          (Nautilu
 time_t                  nautilus_file_get_mtime                         (NautilusFile                   *file);
 GFileType               nautilus_file_get_file_type                     (NautilusFile                   *file);
 char *                  nautilus_file_get_mime_type                     (NautilusFile                   *file);
+char *                  nautilus_file_get_extension                     (NautilusFile                   *file);
 gboolean                nautilus_file_is_mime_type                      (NautilusFile                   *file,
 									 const char                     *mime_type);
 gboolean                nautilus_file_is_launchable                     (NautilusFile                   *file);

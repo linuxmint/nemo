@@ -4577,6 +4577,9 @@ static gboolean
 should_show_open_with (NautilusPropertiesWindow *window)
 {
 	NautilusFile *file;
+	char *mime_type;
+	char *extension;
+	gboolean hide;
 
 	/* Don't show open with tab for desktop special icons (trash, etc)
 	 * or desktop files. We don't get the open-with menu for these anyway.
@@ -4584,31 +4587,40 @@ should_show_open_with (NautilusPropertiesWindow *window)
 	 * Also don't show it for folders. Changing the default app for folders
 	 * leads to all sort of hard to understand errors.
 	 */
-	
+
 	if (is_multi_file_window (window)) {
-		if (!file_list_attributes_identical (window->details->original_files,
+		GList *l;
+
+		if (!file_list_attributes_identical (window->details->target_files,
 						     "mime_type")) {
 			return FALSE;
-		} else {
-			
-			GList *l;
-			
-			for (l = window->details->original_files; l; l = l->next) {
-				file = NAUTILUS_FILE (l->data);
-				if (nautilus_file_is_directory (file) ||
-				    is_a_special_file (file)) {
-					return FALSE;
-				}
+		}
+
+		for (l = window->details->target_files; l; l = l->next) {
+			file = NAUTILUS_FILE (l->data);
+			if (nautilus_file_is_directory (file) || is_a_special_file (file)) {
+				return FALSE;
 			}
-		}		
+		}
+
+		/* since we just confirmed all the mime types are the
+		   same we only need to test one file */
+		file = window->details->target_files->data;
 	} else {
-		file = get_original_file (window);
-		if (nautilus_file_is_directory (file) ||
-		    is_a_special_file (file)) {
+		file = get_target_file (window);
+
+		if (nautilus_file_is_directory (file) || is_a_special_file (file)) {
 			return FALSE;
 		}
 	}
-	return TRUE;
+
+	mime_type = nautilus_file_get_mime_type (file);
+	extension = nautilus_file_get_extension (file);
+	hide = (g_content_type_is_unknown (mime_type) && extension == NULL);
+	g_free (mime_type);
+	g_free (extension);
+
+	return !hide;
 }
 
 static void

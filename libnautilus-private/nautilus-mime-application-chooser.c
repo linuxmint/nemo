@@ -237,34 +237,6 @@ application_selected_cb (GtkAppChooserWidget *widget,
 				  app_info_can_add (info, chooser->details->content_type));
 }
 
-static char *
-get_extension (const char *basename)
-{
-	char *p;
-	
-	p = strrchr (basename, '.');
-	
-	if (p && *(p + 1) != '\0') {
-		return g_strdup (p + 1);
-	} else {
-		return NULL;
-	}
-}
-
-static gchar *
-get_extension_from_file (NautilusFile *nfile)
-{
-	char *name;
-	char *extension;
-
-	name = nautilus_file_get_name (nfile);
-	extension = get_extension (name);
-
-	g_free (name);
-
-	return extension;
-}
-
 static void
 nautilus_mime_application_chooser_apply_labels (NautilusMimeApplicationChooser *chooser)
 {
@@ -273,7 +245,7 @@ nautilus_mime_application_chooser_apply_labels (NautilusMimeApplicationChooser *
 	if (chooser->details->files != NULL) {
 		/* here we assume all files are of the same content type */
 		if (g_content_type_is_unknown (chooser->details->content_type)) {
-			extension = get_extension_from_file (NAUTILUS_FILE (chooser->details->files->data));
+			extension = nautilus_file_get_extension (NAUTILUS_FILE (chooser->details->files->data));
 
 			/* the %s here is a file extension */
 			description = g_strdup_printf (_("%s document"), extension);
@@ -291,7 +263,7 @@ nautilus_mime_application_chooser_apply_labels (NautilusMimeApplicationChooser *
 		basename = g_file_get_basename (file);
 
 		if (g_content_type_is_unknown (chooser->details->content_type)) {
-			extension = get_extension (basename);
+			extension = nautilus_file_get_extension (file);
 
 			/* the %s here is a file extension */
 			description = g_strdup_printf (_("%s document"), extension);
