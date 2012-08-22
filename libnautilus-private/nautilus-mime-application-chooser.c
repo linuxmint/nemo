@@ -339,18 +339,11 @@ nautilus_mime_application_chooser_build_ui (NautilusMimeApplicationChooser *choo
 						 TRUE);
 	gtk_app_chooser_widget_set_show_fallback (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
 						  TRUE);
+	gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
+					       TRUE);
 	gtk_box_pack_start (GTK_BOX (chooser), chooser->details->open_with_widget,
 			    TRUE, TRUE, 6);
 	gtk_widget_show (chooser->details->open_with_widget);
-
-	g_signal_connect (chooser->details->open_with_widget, "application-selected",
-			  G_CALLBACK (application_selected_cb),
-			  chooser);
-	g_signal_connect (chooser->details->open_with_widget, "populate-popup",
-			  G_CALLBACK (populate_popup_cb),
-			  chooser);
-	gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
-					       TRUE);
 
 	box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_set_spacing (GTK_BOX (box), 6);
@@ -390,6 +383,15 @@ nautilus_mime_application_chooser_build_ui (NautilusMimeApplicationChooser *choo
 					 info, chooser);
 		g_object_unref (info);
 	}
+
+	g_signal_connect (chooser->details->open_with_widget,
+			  "application-selected",
+			  G_CALLBACK (application_selected_cb),
+			  chooser);
+	g_signal_connect (chooser->details->open_with_widget,
+			  "populate-popup",
+			  G_CALLBACK (populate_popup_cb),
+			  chooser);
 }
 
 static void
