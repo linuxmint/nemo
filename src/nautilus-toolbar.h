@@ -28,6 +28,8 @@
 
 #include <gtk/gtk.h>
 
+#include "nautilus-window.h"
+
 #define NAUTILUS_TYPE_TOOLBAR nautilus_toolbar_get_type()
 #define NAUTILUS_TOOLBAR(obj) \
 	(G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_TOOLBAR, NautilusToolbar))
@@ -62,8 +64,7 @@ struct _NautilusToolbarClass {
 
 GType nautilus_toolbar_get_type (void);
 
-GtkWidget *nautilus_toolbar_new (GtkUIManager *ui_manager,
-				 GtkActionGroup *action_group);
+GtkWidget *nautilus_toolbar_new (NautilusWindow *window);
 
 GtkWidget *nautilus_toolbar_get_path_bar (NautilusToolbar *self);
 GtkWidget *nautilus_toolbar_get_location_bar (NautilusToolbar *self);

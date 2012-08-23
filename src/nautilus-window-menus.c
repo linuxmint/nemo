@@ -35,7 +35,6 @@
 #include "nautilus-connect-server-dialog.h"
 #include "nautilus-file-management-properties.h"
 #include "nautilus-list-view.h"
-#include "nautilus-navigation-action.h"
 #include "nautilus-notebook.h"
 #include "nautilus-window-manage-views.h"
 #include "nautilus-window-private.h"

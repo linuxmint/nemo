@@ -988,8 +988,7 @@ create_toolbar (NautilusWindow *window)
 	gtk_size_group_set_ignore_hidden (header_size_group, FALSE);
 
 	/* build the toolbar */
-	toolbar = nautilus_toolbar_new (nautilus_window_get_ui_manager (NAUTILUS_WINDOW (window)),
-					nautilus_window_get_main_action_group (NAUTILUS_WINDOW (window)));
+	toolbar = nautilus_toolbar_new (NAUTILUS_WINDOW (window));
 
 	g_object_bind_property (window, "disable-chrome",
 				toolbar, "visible",
