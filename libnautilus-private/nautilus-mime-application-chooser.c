@@ -41,7 +41,6 @@
 
 struct _NautilusMimeApplicationChooserDetails {
 	GList *files;
-	char *uri;
 
 	char *content_type;
 
@@ -54,7 +53,6 @@ struct _NautilusMimeApplicationChooserDetails {
 
 enum {
 	PROP_CONTENT_TYPE = 1,
-	PROP_URI,
 	PROP_FILES,
 	NUM_PROPERTIES
 };
@@ -241,42 +239,35 @@ static void
 nautilus_mime_application_chooser_apply_labels (NautilusMimeApplicationChooser *chooser)
 {
 	gchar *label, *extension = NULL, *description = NULL;
+	gint num_files;
+	NautilusFile *file;
 
-	if (chooser->details->files != NULL) {
-		/* here we assume all files are of the same content type */
-		if (g_content_type_is_unknown (chooser->details->content_type)) {
-			extension = nautilus_file_get_extension (NAUTILUS_FILE (chooser->details->files->data));
+	num_files = g_list_length (chooser->details->files);
+	file = chooser->details->files->data;
 
-			/* the %s here is a file extension */
-			description = g_strdup_printf (_("%s document"), extension);
-		} else {
-			description = g_content_type_get_description (chooser->details->content_type);
-		}
+	/* here we assume all files are of the same content type */
+	if (g_content_type_is_unknown (chooser->details->content_type)) {
+		extension = nautilus_file_get_extension (file);
 
+		/* Translators: the %s here is a file extension */
+		description = g_strdup_printf (_("%s document"), extension);
+	} else {
+		description = g_content_type_get_description (chooser->details->content_type);
+	}
+
+	if (num_files > 1) {
+		/* Translators; %s here is a mime-type description */
 		label = g_strdup_printf (_("Open all files of type “%s” with"),
 					 description);
 	} else {
-		GFile *file;
-		gchar *basename;
+		gchar *display_name;
+		display_name = nautilus_file_get_display_name (file);
 
-		file = g_file_new_for_uri (chooser->details->uri);
-		basename = g_file_get_basename (file);
-
-		if (g_content_type_is_unknown (chooser->details->content_type)) {
-			extension = nautilus_file_get_extension (file);
-
-			/* the %s here is a file extension */
-			description = g_strdup_printf (_("%s document"), extension);
-		} else {
-			description = g_content_type_get_description (chooser->details->content_type);
-		}
-
-		/* first %s is filename, second %s is mime-type description */
+		/* Translators: first %s is filename, second %s is mime-type description */
 		label = g_strdup_printf (_("Select an application to open “%s” and other files of type “%s”"),
-					 basename, description);
+					 display_name, description);
 
-		g_free (basename);
-		g_object_unref (file);
+		g_free (display_name);
 	}
 
 	gtk_label_set_markup (GTK_LABEL (chooser->details->label), label);
@@ -395,8 +386,8 @@ nautilus_mime_application_chooser_finalize (GObject *object)
 
 	chooser = NAUTILUS_MIME_APPLICATION_CHOOSER (object);
 
-	g_free (chooser->details->uri);
 	g_free (chooser->details->content_type);
+	nautilus_file_list_free (chooser->details->files);
 
 	G_OBJECT_CLASS (nautilus_mime_application_chooser_parent_class)->finalize (object);
 }
@@ -432,10 +423,7 @@ nautilus_mime_application_chooser_set_property (GObject *object,
 		chooser->details->content_type = g_value_dup_string (value);
 		break;
 	case PROP_FILES:
-		chooser->details->files = g_value_get_pointer (value);
-		break;
-	case PROP_URI:
-		chooser->details->uri = g_value_dup_string (value);
+		chooser->details->files = nautilus_file_list_copy (g_value_get_pointer (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -460,12 +448,6 @@ nautilus_mime_application_chooser_class_init (NautilusMimeApplicationChooserClas
 							     NULL,
 							     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 							     G_PARAM_STATIC_STRINGS);
-	properties[PROP_URI] = g_param_spec_string ("uri",
-						    "URI",
-						    "URI for this widget",
-						    NULL,
-						    G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY |
-						    G_PARAM_STATIC_STRINGS);
 	properties[PROP_FILES] = g_param_spec_pointer ("files",
 						       "Files",
 						       "Files for this widget",
@@ -478,14 +460,12 @@ nautilus_mime_application_chooser_class_init (NautilusMimeApplicationChooserClas
 }
 
 GtkWidget *
-nautilus_mime_application_chooser_new (const char *uri,
-				       GList *files,
+nautilus_mime_application_chooser_new (GList *files,
 				       const char *mime_type)
 {
 	GtkWidget *chooser;
 
 	chooser = g_object_new (NAUTILUS_TYPE_MIME_APPLICATION_CHOOSER,
-				"uri", uri,
 				"files", files,
 				"content-type", mime_type,
 				NULL);

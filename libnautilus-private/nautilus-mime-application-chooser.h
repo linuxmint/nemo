@@ -47,8 +47,7 @@ struct _NautilusMimeApplicationChooserClass {
 };
 
 GType      nautilus_mime_application_chooser_get_type (void);
-GtkWidget * nautilus_mime_application_chooser_new (const char *uri,
-						   GList *files,
+GtkWidget * nautilus_mime_application_chooser_new (GList *files,
 						   const char *mime_type);
 
 #endif /* NAUTILUS_MIME_APPLICATION_CHOOSER_H */
