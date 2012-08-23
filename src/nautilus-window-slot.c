@@ -133,9 +133,12 @@ query_editor_cancel_callback (NautilusQueryEditor *editor,
 			      NautilusWindowSlot *slot)
 {
 	GtkAction *search;
+	NautilusWindow *window;
+	GtkActionGroup *action_group;
 
-	search = gtk_action_group_get_action (slot->window->details->toolbar_action_group,
-					      NAUTILUS_ACTION_SEARCH);
+	window = slot->window;
+	action_group = nautilus_window_get_main_action_group (window);
+	search = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_SEARCH);
 
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (search), FALSE);
 }

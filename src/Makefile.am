@@ -168,8 +168,6 @@ nautilus_SOURCES = \
 	nautilus-mime-actions.h 		\
 	nautilus-navigation-action.c		\
 	nautilus-navigation-action.h		\
-	nautilus-navigation-state.c		\
-	nautilus-navigation-state.h		\
 	nautilus-notebook.c			\
 	nautilus-notebook.h			\
 	nautilus-pathbar.c			\

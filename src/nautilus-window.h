@@ -34,7 +34,6 @@
 #include <libnautilus-private/nautilus-bookmark.h>
 #include <libnautilus-private/nautilus-search-directory.h>
 
-#include "nautilus-navigation-state.h"
 #include "nautilus-view.h"
 #include "nautilus-window-types.h"
 
@@ -116,8 +115,6 @@ void             nautilus_window_new_tab              (NautilusWindow    *window
 
 GtkUIManager *   nautilus_window_get_ui_manager       (NautilusWindow    *window);
 GtkActionGroup * nautilus_window_get_main_action_group (NautilusWindow   *window);
-NautilusNavigationState * 
-                 nautilus_window_get_navigation_state (NautilusWindow    *window);
 
 void                 nautilus_window_report_load_complete     (NautilusWindow *window,
                                                                NautilusView *view);

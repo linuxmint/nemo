@@ -8,6 +8,8 @@
 <accelerator action="TabsMoveLeft"/>
 <accelerator action="TabsMoveRight"/>
 <accelerator action="Up"/>
+<accelerator action="View Grid"/>
+<accelerator action="View List"/>
 <accelerator action="ZoomInAccel"/>
 <accelerator action="ZoomInAccel2"/>
 <accelerator action="ZoomOutAccel"/>

@@ -30,7 +30,6 @@
 
 #include "nautilus-window.h"
 #include "nautilus-window-slot.h"
-#include "nautilus-navigation-state.h"
 #include "nautilus-bookmark-list.h"
 
 #include <libnautilus-private/nautilus-directory.h>
@@ -62,7 +61,6 @@ struct NautilusWindowDetails
         NautilusWindowSlot *active_slot;
 
         GtkWidget *content_paned;
-        NautilusNavigationState *nav_state;
         
         /* Side Pane */
         int side_pane_width;
@@ -73,7 +71,6 @@ struct NautilusWindowDetails
 
         /* Toolbar */
         GtkWidget *toolbar;
-        GtkActionGroup *toolbar_action_group;
         gboolean temporary_navigation_bar;
 
         /* focus widget before the location bar has been shown temporarily */
@@ -119,8 +116,10 @@ void nautilus_window_sync_title            (NautilusWindow *window,
 void nautilus_window_sync_zoom_widgets     (NautilusWindow *window);
 void nautilus_window_sync_up_button        (NautilusWindow *window);
 
+void nautilus_window_set_search_visible   (NautilusWindow *window,
+                                           gboolean        visible);
+
 /* window menus */
-GtkActionGroup    *nautilus_window_create_toolbar_action_group           (NautilusWindow *window);
 void               nautilus_window_initialize_actions                    (NautilusWindow    *window);
 void               nautilus_window_initialize_menus                      (NautilusWindow    *window);
 void               nautilus_window_finalize_menus                        (NautilusWindow    *window);

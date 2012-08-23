@@ -31,8 +31,10 @@
 
 #include "nautilus-actions.h"
 #include "nautilus-application.h"
+#include "nautilus-canvas-view.h"
 #include "nautilus-connect-server-dialog.h"
 #include "nautilus-file-management-properties.h"
+#include "nautilus-list-view.h"
 #include "nautilus-navigation-action.h"
 #include "nautilus-notebook.h"
 #include "nautilus-window-manage-views.h"
@@ -437,6 +439,34 @@ action_tab_change_action_activate_callback (GtkAction *action,
 	}
 }
 
+static void
+action_show_hide_search_callback (GtkAction *action,
+				  NautilusWindow *window)
+{
+	gboolean active;
+
+	active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+	nautilus_window_set_search_visible (window, active);
+}
+
+static void
+action_view_radio_changed (GtkRadioAction *action,
+			   GtkRadioAction *current,
+			   NautilusWindow *window)
+{
+	const gchar *name;
+	NautilusWindowSlot *slot;
+
+	name = gtk_action_get_name (GTK_ACTION (current));
+	slot = nautilus_window_get_active_slot (window);
+
+	if (g_strcmp0 (name, NAUTILUS_ACTION_VIEW_LIST) == 0) {
+		nautilus_window_slot_set_content_view (slot, NAUTILUS_LIST_VIEW_ID);
+	} else if (g_strcmp0 (name, NAUTILUS_ACTION_VIEW_GRID) == 0) {
+		nautilus_window_slot_set_content_view (slot, NAUTILUS_CANVAS_VIEW_ID);
+	}
+}
+
 static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "Help", NULL, N_("_Help") },
   /* name, stock id */         { NAUTILUS_ACTION_CLOSE, GTK_STOCK_CLOSE,
@@ -566,8 +596,15 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* name, stock id */     { NAUTILUS_ACTION_SEARCH, "edit-find-symbolic",
   /* label, accelerator */   N_("_Search for Files..."), "<control>f",
   /* tooltip */              N_("Search documents and folders by name"),
-			     NULL,
+			     G_CALLBACK (action_show_hide_search_callback),
   /* is_active */            FALSE },
+};
+
+static const GtkRadioActionEntry view_radio_entries[] = {
+	{ NAUTILUS_ACTION_VIEW_LIST, "view-list-symbolic", N_("List"),
+	  "<control>1", N_("View items as a list"), 0 },
+	{ NAUTILUS_ACTION_VIEW_GRID, "view-grid-symbolic", N_("List"),
+	  "<control>2", N_("View items as a grid of icons"), 1 }
 };
 
 static const gchar* app_actions[] = {
@@ -583,88 +620,6 @@ static const gchar* app_actions[] = {
 	/* also hide the help menu entirely when using an app menu */
 	"Help"
 };
-
-GtkActionGroup *
-nautilus_window_create_toolbar_action_group (NautilusWindow *window)
-{
-	NautilusNavigationState *navigation_state;
-	GtkActionGroup *action_group;
-	GtkAction *action;
-	GSList *radio_group = NULL;
-
-	action_group = gtk_action_group_new ("ToolbarActions");
-	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
-
-	action = g_object_new (NAUTILUS_TYPE_NAVIGATION_ACTION,
-			       "name", NAUTILUS_ACTION_BACK,
-			       "label", _("_Back"),
-			       "icon-name", "go-previous-symbolic",
-			       "tooltip", _("Go to the previous visited location"),
-			       "arrow-tooltip", _("Back history"),
-			       "window", window,
-			       "direction", NAUTILUS_NAVIGATION_DIRECTION_BACK,
-			       "sensitive", FALSE,
-			       NULL);
-	g_signal_connect (action, "activate",
-			  G_CALLBACK (action_back_callback), window);
-	gtk_action_group_add_action (action_group, action);
-
-	g_object_unref (action);
-
-	action = g_object_new (NAUTILUS_TYPE_NAVIGATION_ACTION,
-			       "name", NAUTILUS_ACTION_FORWARD,
-			       "label", _("_Forward"),
-			       "icon-name", "go-next-symbolic",
-			       "tooltip", _("Go to the next visited location"),
-			       "arrow-tooltip", _("Forward history"),
-			       "window", window,
-			       "direction", NAUTILUS_NAVIGATION_DIRECTION_FORWARD,
-			       "sensitive", FALSE,
-			       NULL);
-	g_signal_connect (action, "activate",
-			  G_CALLBACK (action_forward_callback), window);
-	gtk_action_group_add_action (action_group, action);
-
-	g_object_unref (action);
-
-	action = GTK_ACTION
-		(gtk_toggle_action_new (NAUTILUS_ACTION_SEARCH,
-					_("Search"),
-					_("Search documents and folders by name"),
-					NULL));
-	gtk_action_group_add_action (action_group, action);
-	gtk_action_set_icon_name (GTK_ACTION (action), "edit-find-symbolic");
-	g_object_unref (action);
-
-	action = GTK_ACTION
-		(gtk_radio_action_new (NAUTILUS_ACTION_VIEW_LIST,
-				       _("List"),
-				       _("View items as a list"),
-				       NULL, 0));
-	gtk_action_group_add_action (action_group, action);
-	gtk_accel_map_add_entry ("<Nautilus-Window>/View List", GDK_KEY_1, GDK_CONTROL_MASK);
-	gtk_action_set_accel_path (GTK_ACTION (action), "<Nautilus-Window>/View List");
-	gtk_action_set_icon_name (GTK_ACTION (action), "view-list-symbolic");
-	radio_group = gtk_radio_action_get_group (GTK_RADIO_ACTION (action));
-	g_object_unref (action);
-
-	action = GTK_ACTION
-		(gtk_radio_action_new (NAUTILUS_ACTION_VIEW_GRID,
-				       _("Icons"),
-				       _("View items as a grid of icons"),
-				       NULL, 0));
-	gtk_action_group_add_action (action_group, action);
-	gtk_action_set_icon_name (GTK_ACTION (action), "view-grid-symbolic");
-	gtk_accel_map_add_entry ("<Nautilus-Window>/View Grid", GDK_KEY_2, GDK_CONTROL_MASK);
-	gtk_action_set_accel_path (GTK_ACTION (action), "<Nautilus-Window>/View Grid");
-	gtk_radio_action_set_group (GTK_RADIO_ACTION (action), radio_group);
-	g_object_unref (action);
-
-	navigation_state = nautilus_window_get_navigation_state (window);
-	nautilus_navigation_state_add_group (navigation_state, action_group);
-
-	return action_group;
-}
 
 static void
 window_menus_set_bindings (NautilusWindow *window)
@@ -704,20 +659,9 @@ const GActionEntry win_entries[] = {
 void 
 nautilus_window_initialize_actions (NautilusWindow *window)
 {
-	GtkActionGroup *action_group;
-	const gchar *nav_state_actions[] = {
-		NAUTILUS_ACTION_BACK, NAUTILUS_ACTION_FORWARD,
-		NAUTILUS_ACTION_SEARCH, NULL
-	};
-
 	g_action_map_add_action_entries (G_ACTION_MAP (window),
 					 win_entries, G_N_ELEMENTS (win_entries),
 					 window);
-
-	action_group = nautilus_window_get_main_action_group (window);
-	window->details->nav_state = nautilus_navigation_state_new (action_group,
-								    nav_state_actions);
-
 	window_menus_set_bindings (window);
 }
 
@@ -770,6 +714,10 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 	gtk_action_group_add_toggle_actions (action_group, 
 					     main_toggle_entries, G_N_ELEMENTS (main_toggle_entries),
 					     window);
+	gtk_action_group_add_radio_actions (action_group,
+					    view_radio_entries, G_N_ELEMENTS (view_radio_entries),
+					    -1, G_CALLBACK (action_view_radio_changed),
+					    window);
 
 	nautilus_window_menus_set_visibility_for_app_menu (window);
 	window->details->app_menu_visibility_id =
