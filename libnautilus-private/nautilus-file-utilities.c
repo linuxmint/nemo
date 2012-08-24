@@ -821,7 +821,7 @@ nautilus_trashed_files_get_original_directories (GList *files,
 			if (directories == NULL) {
 				directories = g_hash_table_new_full (g_direct_hash, g_direct_equal,
 								     (GDestroyNotify) nautilus_file_unref,
-								     (GDestroyNotify) nautilus_file_list_unref);
+								     (GDestroyNotify) nautilus_file_list_free);
 			}
 			nautilus_file_ref (original_dir);
 			m = g_hash_table_lookup (directories, original_dir);
