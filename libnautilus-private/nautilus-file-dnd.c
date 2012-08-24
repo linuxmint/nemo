@@ -35,14 +35,14 @@
 static gboolean
 nautilus_drag_can_accept_files (NautilusFile *drop_target_item)
 {
-	NautilusDirectory *directory;
-
 	if (nautilus_file_is_directory (drop_target_item)) {
+		NautilusDirectory *directory;
 		gboolean res;
 
 		/* target is a directory, accept if editable */
 		directory = nautilus_directory_get_for_file (drop_target_item);
-		res = nautilus_directory_is_editable (directory);
+		res = nautilus_directory_is_editable (directory) &&
+			nautilus_file_can_write (drop_target_item);
 		nautilus_directory_unref (directory);
 		return res;
 	}

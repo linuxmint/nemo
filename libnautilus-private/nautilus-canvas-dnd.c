@@ -974,11 +974,22 @@ nautilus_canvas_container_find_drop_target (NautilusCanvasContainer *container,
 
 		container_uri = get_container_uri (container);
 
-		if (rewrite_desktop &&
-		    container_uri != NULL &&
-		    eel_uri_is_desktop (container_uri)) {
-			g_free (container_uri);
-			container_uri = nautilus_get_desktop_directory_uri ();
+		if (container_uri != NULL) {
+			if (rewrite_desktop && eel_uri_is_desktop (container_uri)) {
+				g_free (container_uri);
+				container_uri = nautilus_get_desktop_directory_uri ();
+			} else {
+				gboolean can;
+				file = nautilus_file_get_by_uri (container_uri);
+				can = nautilus_drag_can_accept_info (file,
+								     container->details->dnd_info->drag_info.data_type,
+								     container->details->dnd_info->drag_info.selection_list);
+				g_object_unref (file);
+				if (!can) {
+					g_free (container_uri);
+					container_uri = NULL;
+				}
+			}
 		}
 		
 		return container_uri;
