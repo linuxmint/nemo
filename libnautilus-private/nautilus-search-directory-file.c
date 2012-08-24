@@ -190,6 +190,8 @@ nautilus_search_directory_file_update_display_name (NautilusSearchDirectoryFile 
 	if (changed) {
 		nautilus_file_emit_changed (file);
 	}
+
+	g_free (display_name);
 }
 
 static void
