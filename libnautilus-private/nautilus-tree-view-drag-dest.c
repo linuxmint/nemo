@@ -610,7 +610,7 @@ receive_uris (NautilusTreeViewDragDest *dest,
 
 	/* We only want to copy external uris */
 	if (dest->details->drag_type == NAUTILUS_ICON_DND_URI_LIST) {
-		action = GDK_ACTION_COPY;
+		real_action = GDK_ACTION_COPY;
 	}
 
 	if (real_action > 0) {
