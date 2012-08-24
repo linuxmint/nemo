@@ -47,6 +47,7 @@ finalize (GObject *object)
 
 	query = NAUTILUS_QUERY (object);
 	g_free (query->details->text);
+	g_free (query->details->location_uri);
 
 	G_OBJECT_CLASS (nautilus_query_parent_class)->finalize (object);
 }
