@@ -1065,6 +1065,8 @@ nautilus_view_preview_files (NautilusView *view,
 
 	xid = gdk_x11_window_get_xid (gtk_widget_get_window (toplevel));
 	nautilus_previewer_call_show_file (previewer, uri, xid, TRUE);
+
+	g_free (uri);
 }
 
 void
