@@ -5804,7 +5804,7 @@ nautilus_file_operations_copy_move (const GList *item_uris,
 
 	locations = location_list_from_uri_list (item_uris);
 	
-	for (p = location_list_from_uri_list (item_uris); p != NULL; p = p->next) {
+	for (p = locations; p != NULL; p = p->next) {
 		if (!g_file_has_uri_scheme ((GFile* )p->data, "burn")) {                
 			have_nonmapping_source = TRUE;
 		}
