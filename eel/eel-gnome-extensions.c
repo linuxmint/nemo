@@ -51,6 +51,7 @@ try_terminal_command (const char *program,
 	}
 
 	quoted = g_shell_quote (program_in_path);
+	g_free (program_in_path);
 	if (args == NULL || args[0] == '\0') {
 		return quoted;
 	}
