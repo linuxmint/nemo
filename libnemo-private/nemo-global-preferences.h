@@ -90,6 +90,7 @@ typedef enum
 #define NEMO_WINDOW_STATE_START_WITH_STATUS_BAR		"start-with-status-bar"
 #define NEMO_WINDOW_STATE_START_WITH_SIDEBAR		"start-with-sidebar"
 #define NEMO_WINDOW_STATE_START_WITH_TOOLBAR		"start-with-toolbar"
+#define NEMO_WINDOW_STATE_START_WITH_MENU_BAR           "start-with-menu-bar"
 #define NEMO_WINDOW_STATE_SIDE_PANE_VIEW                    "side-pane-view"
 #define NEMO_WINDOW_STATE_GEOMETRY				"geometry"
 #define NEMO_WINDOW_STATE_MAXIMIZED				"maximized"
