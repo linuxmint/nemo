@@ -21,8 +21,8 @@ INCLUDES = 						\
 dbus_built_sources = nemo-generated.c nemo-generated.h
 $(dbus_built_sources) : Makefile.am $(top_srcdir)/data/dbus-interfaces.xml
 	gdbus-codegen									\
-		--interface-prefix org.gnome.Nemo.					\
-		--c-namespace NemoDBus						\
+		--interface-prefix org.Nemo.						\
+		--c-namespace NemoDBus							\
 		--c-generate-object-manager						\
 		--generate-c-code nemo-generated					\
 		$(top_srcdir)/data/dbus-interfaces.xml					\
@@ -202,7 +202,7 @@ nodist_libnemo_private_la_SOURCES =\
 
 $(lib_LTLIBRARIES): $(dependency_static_libs)
 
-gsettingsschema_in_files = org.gnome.nemo.gschema.xml.in
+gsettingsschema_in_files = org.nemo.gschema.xml.in
 gsettings_SCHEMAS = $(gsettingsschema_in_files:.xml.in=.xml)
 .PRECIOUS: $(gsettings_SCHEMAS)
 
@@ -226,3 +226,4 @@ CLEANFILES = \
 
 dist-hook:
 	cd $(distdir); rm -f $(CLEANFILES)
+

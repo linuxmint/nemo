@@ -92,13 +92,12 @@ am__DEPENDENCIES_1 =
 libnemo_extension_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__objects_1 =
 am_libnemo_extension_la_OBJECTS = nemo-column-provider.lo \
-	nemo-column.lo nemo-extension-types.lo \
-	nemo-file-info.lo nemo-info-provider.lo \
-	nemo-location-widget-provider.lo nemo-menu-item.lo \
-	nemo-menu-provider.lo nemo-property-page-provider.lo \
-	nemo-property-page.lo nemo-menu.lo $(am__objects_1)
-libnemo_extension_la_OBJECTS =  \
-	$(am_libnemo_extension_la_OBJECTS)
+	nemo-column.lo nemo-extension-types.lo nemo-file-info.lo \
+	nemo-info-provider.lo nemo-location-widget-provider.lo \
+	nemo-menu-item.lo nemo-menu-provider.lo \
+	nemo-property-page-provider.lo nemo-property-page.lo \
+	nemo-menu.lo $(am__objects_1)
+libnemo_extension_la_OBJECTS = $(am_libnemo_extension_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -732,8 +731,8 @@ info: info-am
 info-am:
 
 install-data-am: install-girDATA \
-	install-libnemo_extension_includeHEADERS \
-	install-pkgconfigDATA install-typelibsDATA
+	install-libnemo_extension_includeHEADERS install-pkgconfigDATA \
+	install-typelibsDATA
 
 install-dvi: install-dvi-am
 

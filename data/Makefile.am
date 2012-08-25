@@ -23,9 +23,9 @@ servicedir = $(datadir)/dbus-1/services
 service_DATA = $(service_in_files:.service.in=.service)
 service_in_files = 				\
 	org.freedesktop.NemoFileManager1.service.in	\
-	org.gnome.Nemo.service.in
+	org.Nemo.service.in
 
-org.gnome.Nemo.service: org.gnome.Nemo.service.in Makefile
+org.Nemo.service: org.Nemo.service.in Makefile
 	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
 
 org.freedesktop.NemoFileManager1.service: org.freedesktop.NemoFileManager1.service.in Makefile

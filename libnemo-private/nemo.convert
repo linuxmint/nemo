@@ -1,4 +1,4 @@
-[org.gnome.nemo.preferences]
+[org.nemo.preferences]
 tabs-open-position = /desktop/gnome/file_views/tabs_open_position
 always-use-browser = /apps/nemo/preferences/always_use_browser
 always-use-location-entry = /apps/nemo/preferences/always_use_location_entry
@@ -30,26 +30,26 @@ default-folder-viewer = /apps/nemo/preferences/default_folder_viewer
 date-format = /apps/nemo/preferences/date_format
 show-hidden-files = /desktop/gnome/file_views/show_hidden_files
 
-[org.gnome.nemo.icon-view]
+[org.nemo.icon-view]
 captions = /apps/nemo/icon_view/captions
 labels-beside-icons = /apps/nemo/icon_view/labels_beside_icons
 default-zoom-level = /apps/nemo/icon_view/default_zoom_level
 thumbnail-size = /apps/nemo/icon_view/thumbnail_size
 text-ellipsis-limit = /apps/nemo/icon_view/text_ellipsis_limit
 
-[org.gnome.nemo.compact-view]
+[org.nemo.compact-view]
 default-zoom-level = /apps/nemo/compact_view/default_zoom_level
 all-columns-have-same-width = /apps/nemo/compact_view/all_columns_have_same_width
 
-[org.gnome.nemo.list-view]
+[org.nemo.list-view]
 default-zoom-level = /apps/nemo/list_view/default_zoom_level
 default-visible-columns = /apps/nemo/list_view/default_visible_columns
 default-column-order = /apps/nemo/list_view/default_column_order
 
-[org.gnome.nemo.sidebar-panels.tree]
+[org.nemo.sidebar-panels.tree]
 show-only-directories = /apps/nemo/sidebar_panels/tree/show_only_directories
 
-[org.gnome.nemo.desktop]
+[org.nemo.desktop]
 font = /apps/nemo/preferences/desktop_font
 home-icon-visible = /apps/nemo/desktop/home_icon_visible
 computer-icon-visible = /apps/nemo/desktop/computer_icon_visible
@@ -62,7 +62,7 @@ trash-icon-name = /apps/nemo/desktop/trash_icon_name
 network-icon-name = /apps/nemo/desktop/network_icon_name
 text-ellipsis-limit = /apps/nemo/desktop/text_ellipsis_limit
 
-[org.gnome.nemo.window-state]
+[org.nemo.window-state]
 geometry = /apps/nemo/preferences/navigation_window_saved_geometry
 maximized = /apps/nemo/preferences/navigation_window_saved_maximized
 sidebar-width = /apps/nemo/preferences/sidebar_width

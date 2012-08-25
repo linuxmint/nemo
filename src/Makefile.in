@@ -57,102 +57,80 @@ am__EXEEXT_1 =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libexecdir)"
 PROGRAMS = $(bin_PROGRAMS) $(libexec_PROGRAMS)
 am__nemo_SOURCES_DIST = nemo-actions.h nemo-application.c \
-	nemo-application.h nemo-bookmark-list.c \
-	nemo-bookmark-list.h nemo-bookmarks-window.c \
-	nemo-bookmarks-window.h nemo-connect-server-dialog.c \
-	nemo-connect-server-dialog.h \
+	nemo-application.h nemo-bookmark-list.c nemo-bookmark-list.h \
+	nemo-bookmarks-window.c nemo-bookmarks-window.h \
+	nemo-connect-server-dialog.c nemo-connect-server-dialog.h \
 	nemo-connect-server-dialog-nonmain.c \
 	nemo-connect-server-operation.c \
-	nemo-connect-server-operation.h \
-	nemo-desktop-icon-view.c nemo-desktop-icon-view.h \
-	nemo-desktop-item-properties.c \
+	nemo-connect-server-operation.h nemo-desktop-icon-view.c \
+	nemo-desktop-icon-view.h nemo-desktop-item-properties.c \
 	nemo-desktop-item-properties.h nemo-desktop-window.c \
 	nemo-desktop-window.h nemo-error-reporting.c \
-	nemo-error-reporting.h \
-	nemo-file-management-properties.c \
+	nemo-error-reporting.h nemo-file-management-properties.c \
 	nemo-file-management-properties.h nemo-floating-bar.c \
 	nemo-floating-bar.h nemo-freedesktop-dbus.c \
-	nemo-freedesktop-dbus.h nemo-icon-view.c \
-	nemo-icon-view.h nemo-icon-view-container.c \
-	nemo-icon-view-container.h \
-	nemo-image-properties-page.c \
-	nemo-image-properties-page.h nemo-list-model.c \
-	nemo-list-model.h nemo-list-view-private.h \
-	nemo-list-view.c nemo-list-view.h \
-	nemo-location-bar.c nemo-location-bar.h \
-	nemo-location-entry.c nemo-location-entry.h \
-	nemo-main.c nemo-mime-actions.c \
+	nemo-freedesktop-dbus.h nemo-icon-view.c nemo-icon-view.h \
+	nemo-icon-view-container.c nemo-icon-view-container.h \
+	nemo-image-properties-page.c nemo-image-properties-page.h \
+	nemo-list-model.c nemo-list-model.h nemo-list-view-private.h \
+	nemo-list-view.c nemo-list-view.h nemo-location-bar.c \
+	nemo-location-bar.h nemo-location-entry.c \
+	nemo-location-entry.h nemo-main.c nemo-mime-actions.c \
 	nemo-mime-actions.h nemo-navigation-action.c \
 	nemo-navigation-action.h nemo-navigation-state.c \
-	nemo-navigation-state.h nemo-notebook.c \
-	nemo-notebook.h nemo-pathbar.c nemo-pathbar.h \
-	nemo-places-sidebar.c nemo-places-sidebar.h \
-	nemo-previewer.c nemo-previewer.h \
-	nemo-progress-info-widget.c \
-	nemo-progress-info-widget.h nemo-progress-ui-handler.c \
-	nemo-progress-ui-handler.h nemo-properties-window.c \
-	nemo-properties-window.h nemo-query-editor.c \
-	nemo-query-editor.h nemo-search-bar.c \
+	nemo-navigation-state.h nemo-notebook.c nemo-notebook.h \
+	nemo-pathbar.c nemo-pathbar.h nemo-places-sidebar.c \
+	nemo-places-sidebar.h nemo-previewer.c nemo-previewer.h \
+	nemo-progress-info-widget.c nemo-progress-info-widget.h \
+	nemo-progress-ui-handler.c nemo-progress-ui-handler.h \
+	nemo-properties-window.c nemo-properties-window.h \
+	nemo-query-editor.c nemo-query-editor.h nemo-search-bar.c \
 	nemo-search-bar.h nemo-self-check-functions.c \
-	nemo-self-check-functions.h nemo-toolbar.c \
-	nemo-toolbar.h nemo-tree-sidebar.c \
-	nemo-tree-sidebar.h nemo-tree-sidebar-model.c \
-	nemo-tree-sidebar-model.h nemo-trash-bar.c \
-	nemo-trash-bar.h nemo-view.c nemo-view.h \
-	nemo-view-dnd.c nemo-view-dnd.h \
-	nemo-view-factory.c nemo-view-factory.h \
-	nemo-window-bookmarks.c nemo-window-bookmarks.h \
-	nemo-window-manage-views.c nemo-window-manage-views.h \
-	nemo-window-menus.c nemo-window-pane.c \
-	nemo-window-pane.h nemo-window-private.h \
-	nemo-window-slot.c nemo-window-slot.h \
-	nemo-window-slot-dnd.c nemo-window-slot-dnd.h \
-	nemo-window.c nemo-window.h nemo-window-types.h \
-	nemo-x-content-bar.c nemo-x-content-bar.h \
+	nemo-self-check-functions.h nemo-toolbar.c nemo-toolbar.h \
+	nemo-tree-sidebar.c nemo-tree-sidebar.h \
+	nemo-tree-sidebar-model.c nemo-tree-sidebar-model.h \
+	nemo-trash-bar.c nemo-trash-bar.h nemo-view.c nemo-view.h \
+	nemo-view-dnd.c nemo-view-dnd.h nemo-view-factory.c \
+	nemo-view-factory.h nemo-window-bookmarks.c \
+	nemo-window-bookmarks.h nemo-window-manage-views.c \
+	nemo-window-manage-views.h nemo-window-menus.c \
+	nemo-window-pane.c nemo-window-pane.h nemo-window-private.h \
+	nemo-window-slot.c nemo-window-slot.h nemo-window-slot-dnd.c \
+	nemo-window-slot-dnd.h nemo-window.c nemo-window.h \
+	nemo-window-types.h nemo-x-content-bar.c nemo-x-content-bar.h \
 	nemo-empty-view.c nemo-empty-view.h
 am__objects_1 =
 am__objects_2 = nemo-empty-view.$(OBJEXT)
 @ENABLE_EMPTY_VIEW_TRUE@am__objects_3 = $(am__objects_2)
 am_nemo_OBJECTS = nemo-application.$(OBJEXT) \
-	nemo-bookmark-list.$(OBJEXT) \
-	nemo-bookmarks-window.$(OBJEXT) \
+	nemo-bookmark-list.$(OBJEXT) nemo-bookmarks-window.$(OBJEXT) \
 	nemo-connect-server-dialog.$(OBJEXT) \
 	nemo-connect-server-dialog-nonmain.$(OBJEXT) \
 	nemo-connect-server-operation.$(OBJEXT) \
 	nemo-desktop-icon-view.$(OBJEXT) \
 	nemo-desktop-item-properties.$(OBJEXT) \
-	nemo-desktop-window.$(OBJEXT) \
-	nemo-error-reporting.$(OBJEXT) \
+	nemo-desktop-window.$(OBJEXT) nemo-error-reporting.$(OBJEXT) \
 	nemo-file-management-properties.$(OBJEXT) \
-	nemo-floating-bar.$(OBJEXT) \
-	nemo-freedesktop-dbus.$(OBJEXT) \
-	nemo-icon-view.$(OBJEXT) \
-	nemo-icon-view-container.$(OBJEXT) \
-	nemo-image-properties-page.$(OBJEXT) \
-	nemo-list-model.$(OBJEXT) nemo-list-view.$(OBJEXT) \
-	nemo-location-bar.$(OBJEXT) \
+	nemo-floating-bar.$(OBJEXT) nemo-freedesktop-dbus.$(OBJEXT) \
+	nemo-icon-view.$(OBJEXT) nemo-icon-view-container.$(OBJEXT) \
+	nemo-image-properties-page.$(OBJEXT) nemo-list-model.$(OBJEXT) \
+	nemo-list-view.$(OBJEXT) nemo-location-bar.$(OBJEXT) \
 	nemo-location-entry.$(OBJEXT) nemo-main.$(OBJEXT) \
-	nemo-mime-actions.$(OBJEXT) \
-	nemo-navigation-action.$(OBJEXT) \
-	nemo-navigation-state.$(OBJEXT) \
-	nemo-notebook.$(OBJEXT) nemo-pathbar.$(OBJEXT) \
-	nemo-places-sidebar.$(OBJEXT) nemo-previewer.$(OBJEXT) \
-	nemo-progress-info-widget.$(OBJEXT) \
+	nemo-mime-actions.$(OBJEXT) nemo-navigation-action.$(OBJEXT) \
+	nemo-navigation-state.$(OBJEXT) nemo-notebook.$(OBJEXT) \
+	nemo-pathbar.$(OBJEXT) nemo-places-sidebar.$(OBJEXT) \
+	nemo-previewer.$(OBJEXT) nemo-progress-info-widget.$(OBJEXT) \
 	nemo-progress-ui-handler.$(OBJEXT) \
-	nemo-properties-window.$(OBJEXT) \
-	nemo-query-editor.$(OBJEXT) nemo-search-bar.$(OBJEXT) \
-	nemo-self-check-functions.$(OBJEXT) \
+	nemo-properties-window.$(OBJEXT) nemo-query-editor.$(OBJEXT) \
+	nemo-search-bar.$(OBJEXT) nemo-self-check-functions.$(OBJEXT) \
 	nemo-toolbar.$(OBJEXT) nemo-tree-sidebar.$(OBJEXT) \
-	nemo-tree-sidebar-model.$(OBJEXT) \
-	nemo-trash-bar.$(OBJEXT) nemo-view.$(OBJEXT) \
-	nemo-view-dnd.$(OBJEXT) nemo-view-factory.$(OBJEXT) \
-	nemo-window-bookmarks.$(OBJEXT) \
-	nemo-window-manage-views.$(OBJEXT) \
-	nemo-window-menus.$(OBJEXT) nemo-window-pane.$(OBJEXT) \
-	nemo-window-slot.$(OBJEXT) \
+	nemo-tree-sidebar-model.$(OBJEXT) nemo-trash-bar.$(OBJEXT) \
+	nemo-view.$(OBJEXT) nemo-view-dnd.$(OBJEXT) \
+	nemo-view-factory.$(OBJEXT) nemo-window-bookmarks.$(OBJEXT) \
+	nemo-window-manage-views.$(OBJEXT) nemo-window-menus.$(OBJEXT) \
+	nemo-window-pane.$(OBJEXT) nemo-window-slot.$(OBJEXT) \
 	nemo-window-slot-dnd.$(OBJEXT) nemo-window.$(OBJEXT) \
-	nemo-x-content-bar.$(OBJEXT) $(am__objects_1) \
-	$(am__objects_3)
+	nemo-x-content-bar.$(OBJEXT) $(am__objects_1) $(am__objects_3)
 am__objects_4 = nemo-freedesktop-generated.$(OBJEXT)
 am__objects_5 = $(am__objects_4) nemo-resources.$(OBJEXT) \
 	$(am__objects_1)
@@ -168,10 +146,9 @@ nemo_DEPENDENCIES =  \
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
-am_nemo_autorun_software_OBJECTS =  \
-	nemo-autorun-software.$(OBJEXT) $(am__objects_1)
-nemo_autorun_software_OBJECTS =  \
-	$(am_nemo_autorun_software_OBJECTS)
+am_nemo_autorun_software_OBJECTS = nemo-autorun-software.$(OBJEXT) \
+	$(am__objects_1)
+nemo_autorun_software_OBJECTS = $(am_nemo_autorun_software_OBJECTS)
 nemo_autorun_software_LDADD = $(LDADD)
 nemo_autorun_software_DEPENDENCIES =  \
 	$(top_builddir)/libnemo-private/libnemo-private.la \
@@ -182,18 +159,16 @@ am_nemo_connect_server_OBJECTS = nemo-bookmark-list.$(OBJEXT) \
 	nemo-connect-server-dialog.$(OBJEXT) \
 	nemo-connect-server-dialog-main.$(OBJEXT) \
 	nemo-connect-server-operation.$(OBJEXT) $(am__objects_1)
-nemo_connect_server_OBJECTS =  \
-	$(am_nemo_connect_server_OBJECTS)
+nemo_connect_server_OBJECTS = $(am_nemo_connect_server_OBJECTS)
 nemo_connect_server_LDADD = $(LDADD)
 nemo_connect_server_DEPENDENCIES =  \
 	$(top_builddir)/libnemo-private/libnemo-private.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am_nemo_convert_metadata_OBJECTS =  \
-	nemo-convert-metadata.$(OBJEXT) $(am__objects_1)
-nemo_convert_metadata_OBJECTS =  \
-	$(am_nemo_convert_metadata_OBJECTS)
+am_nemo_convert_metadata_OBJECTS = nemo-convert-metadata.$(OBJEXT) \
+	$(am__objects_1)
+nemo_convert_metadata_OBJECTS = $(am_nemo_convert_metadata_OBJECTS)
 nemo_convert_metadata_LDADD = $(LDADD)
 nemo_convert_metadata_DEPENDENCIES =  \
 	$(top_builddir)/libnemo-private/libnemo-private.la \
@@ -476,60 +451,49 @@ BUILT_SOURCES = \
 	nemo-resources.h \
 	$(NULL)
 
-nemo_SOURCES = nemo-actions.h nemo-application.c \
-	nemo-application.h nemo-bookmark-list.c \
-	nemo-bookmark-list.h nemo-bookmarks-window.c \
-	nemo-bookmarks-window.h nemo-connect-server-dialog.c \
-	nemo-connect-server-dialog.h \
+nemo_SOURCES = nemo-actions.h nemo-application.c nemo-application.h \
+	nemo-bookmark-list.c nemo-bookmark-list.h \
+	nemo-bookmarks-window.c nemo-bookmarks-window.h \
+	nemo-connect-server-dialog.c nemo-connect-server-dialog.h \
 	nemo-connect-server-dialog-nonmain.c \
 	nemo-connect-server-operation.c \
-	nemo-connect-server-operation.h \
-	nemo-desktop-icon-view.c nemo-desktop-icon-view.h \
-	nemo-desktop-item-properties.c \
+	nemo-connect-server-operation.h nemo-desktop-icon-view.c \
+	nemo-desktop-icon-view.h nemo-desktop-item-properties.c \
 	nemo-desktop-item-properties.h nemo-desktop-window.c \
 	nemo-desktop-window.h nemo-error-reporting.c \
-	nemo-error-reporting.h \
-	nemo-file-management-properties.c \
+	nemo-error-reporting.h nemo-file-management-properties.c \
 	nemo-file-management-properties.h nemo-floating-bar.c \
 	nemo-floating-bar.h nemo-freedesktop-dbus.c \
-	nemo-freedesktop-dbus.h nemo-icon-view.c \
-	nemo-icon-view.h nemo-icon-view-container.c \
-	nemo-icon-view-container.h \
-	nemo-image-properties-page.c \
-	nemo-image-properties-page.h nemo-list-model.c \
-	nemo-list-model.h nemo-list-view-private.h \
-	nemo-list-view.c nemo-list-view.h \
-	nemo-location-bar.c nemo-location-bar.h \
-	nemo-location-entry.c nemo-location-entry.h \
-	nemo-main.c nemo-mime-actions.c \
+	nemo-freedesktop-dbus.h nemo-icon-view.c nemo-icon-view.h \
+	nemo-icon-view-container.c nemo-icon-view-container.h \
+	nemo-image-properties-page.c nemo-image-properties-page.h \
+	nemo-list-model.c nemo-list-model.h nemo-list-view-private.h \
+	nemo-list-view.c nemo-list-view.h nemo-location-bar.c \
+	nemo-location-bar.h nemo-location-entry.c \
+	nemo-location-entry.h nemo-main.c nemo-mime-actions.c \
 	nemo-mime-actions.h nemo-navigation-action.c \
 	nemo-navigation-action.h nemo-navigation-state.c \
-	nemo-navigation-state.h nemo-notebook.c \
-	nemo-notebook.h nemo-pathbar.c nemo-pathbar.h \
-	nemo-places-sidebar.c nemo-places-sidebar.h \
-	nemo-previewer.c nemo-previewer.h \
-	nemo-progress-info-widget.c \
-	nemo-progress-info-widget.h nemo-progress-ui-handler.c \
-	nemo-progress-ui-handler.h nemo-properties-window.c \
-	nemo-properties-window.h nemo-query-editor.c \
-	nemo-query-editor.h nemo-search-bar.c \
+	nemo-navigation-state.h nemo-notebook.c nemo-notebook.h \
+	nemo-pathbar.c nemo-pathbar.h nemo-places-sidebar.c \
+	nemo-places-sidebar.h nemo-previewer.c nemo-previewer.h \
+	nemo-progress-info-widget.c nemo-progress-info-widget.h \
+	nemo-progress-ui-handler.c nemo-progress-ui-handler.h \
+	nemo-properties-window.c nemo-properties-window.h \
+	nemo-query-editor.c nemo-query-editor.h nemo-search-bar.c \
 	nemo-search-bar.h nemo-self-check-functions.c \
-	nemo-self-check-functions.h nemo-toolbar.c \
-	nemo-toolbar.h nemo-tree-sidebar.c \
-	nemo-tree-sidebar.h nemo-tree-sidebar-model.c \
-	nemo-tree-sidebar-model.h nemo-trash-bar.c \
-	nemo-trash-bar.h nemo-view.c nemo-view.h \
-	nemo-view-dnd.c nemo-view-dnd.h \
-	nemo-view-factory.c nemo-view-factory.h \
-	nemo-window-bookmarks.c nemo-window-bookmarks.h \
-	nemo-window-manage-views.c nemo-window-manage-views.h \
-	nemo-window-menus.c nemo-window-pane.c \
-	nemo-window-pane.h nemo-window-private.h \
-	nemo-window-slot.c nemo-window-slot.h \
-	nemo-window-slot-dnd.c nemo-window-slot-dnd.h \
-	nemo-window.c nemo-window.h nemo-window-types.h \
-	nemo-x-content-bar.c nemo-x-content-bar.h $(NULL) \
-	$(am__append_1)
+	nemo-self-check-functions.h nemo-toolbar.c nemo-toolbar.h \
+	nemo-tree-sidebar.c nemo-tree-sidebar.h \
+	nemo-tree-sidebar-model.c nemo-tree-sidebar-model.h \
+	nemo-trash-bar.c nemo-trash-bar.h nemo-view.c nemo-view.h \
+	nemo-view-dnd.c nemo-view-dnd.h nemo-view-factory.c \
+	nemo-view-factory.h nemo-window-bookmarks.c \
+	nemo-window-bookmarks.h nemo-window-manage-views.c \
+	nemo-window-manage-views.h nemo-window-menus.c \
+	nemo-window-pane.c nemo-window-pane.h nemo-window-private.h \
+	nemo-window-slot.c nemo-window-slot.h nemo-window-slot-dnd.c \
+	nemo-window-slot-dnd.h nemo-window.c nemo-window.h \
+	nemo-window-types.h nemo-x-content-bar.c nemo-x-content-bar.h \
+	$(NULL) $(am__append_1)
 nodist_nemo_SOURCES = \
 	$(BUILT_SOURCES) \
 	$(NULL)
