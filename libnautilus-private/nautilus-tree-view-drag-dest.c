@@ -368,14 +368,19 @@ get_drop_target_uri_for_path (NautilusTreeViewDragDest *dest,
 			      GtkTreePath *path)
 {
 	NautilusFile *file;
-	char *target;
+	char *target = NULL;
+	gboolean can;
 
 	file = file_for_path (dest, path);
 	if (file == NULL) {
 		return NULL;
 	}
-	
-	target = nautilus_file_get_drop_target_uri (file);
+	can = nautilus_drag_can_accept_info (file,
+					     dest->details->drag_type,
+					     dest->details->drag_list);
+	if (can) {
+		target = nautilus_file_get_drop_target_uri (file);
+	}
 	nautilus_file_unref (file);
 	
 	return target;
@@ -395,56 +400,36 @@ get_drop_action (NautilusTreeViewDragDest *dest,
 		return 0;
 	}
 
+	drop_target = get_drop_target_uri_for_path (dest, path);
+	if (drop_target == NULL) {
+		return 0;
+	}
+
+	action = 0;
 	switch (dest->details->drag_type) {
 	case NAUTILUS_ICON_DND_GNOME_ICON_LIST :
-		drop_target = get_drop_target_uri_for_path (dest, path);
-		
-		if (!drop_target) {
-			return 0;
-		}
-
 		nautilus_drag_default_drop_action_for_icons
 			(context,
 			 drop_target,
 			 dest->details->drag_list,
 			 &action);
-
-		g_free (drop_target);
-		
-		return action;
-		
+		break;
 	case NAUTILUS_ICON_DND_NETSCAPE_URL:
-		drop_target = get_drop_target_uri_for_path (dest, path);
-
-		if (drop_target == NULL) {
-			return 0;
-		}
-
 		action = nautilus_drag_default_drop_action_for_netscape_url (context);
-
-		g_free (drop_target);
-
-		return action;
-		
+		break;
 	case NAUTILUS_ICON_DND_URI_LIST :
-		drop_target = get_drop_target_uri_for_path (dest, path);
-
-		if (drop_target == NULL) {
-			return 0;
-		}
-
-		g_free (drop_target);
-
-		return gdk_drag_context_get_suggested_action (context);
-
+		action = gdk_drag_context_get_suggested_action (context);
+		break;
 	case NAUTILUS_ICON_DND_TEXT:
 	case NAUTILUS_ICON_DND_RAW:
 	case NAUTILUS_ICON_DND_XDNDDIRECTSAVE:
-		return GDK_ACTION_COPY;
-
+		action = GDK_ACTION_COPY;
+		break;
 	}
 
-	return 0;
+	g_free (drop_target);
+
+	return action;
 }
 
 static gboolean

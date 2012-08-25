@@ -1144,28 +1144,23 @@ nautilus_canvas_container_get_drop_action (NautilusCanvasContainer *container,
 	canvas_widget_to_world (EEL_CANVAS (container), x, y, &world_x, &world_y);
 	*action = 0;
 
+	drop_target = nautilus_canvas_container_find_drop_target (container,
+								  context, x, y, &icon_hit, FALSE);
+	if (drop_target == NULL) {
+		return;
+	}
+
 	/* case out on the type of object being dragged */
 	switch (container->details->dnd_info->drag_info.data_type) {
 	case NAUTILUS_ICON_DND_GNOME_ICON_LIST:
-		if (container->details->dnd_info->drag_info.selection_list == NULL) {
-			return;
+		if (container->details->dnd_info->drag_info.selection_list != NULL) {
+			nautilus_drag_default_drop_action_for_icons (context, drop_target, 
+								     container->details->dnd_info->drag_info.selection_list, 
+								     action);
 		}
-		drop_target = nautilus_canvas_container_find_drop_target (container,
-									context, x, y, &icon_hit, FALSE);
-		if (!drop_target) {
-			return;
-		}
-		nautilus_drag_default_drop_action_for_icons (context, drop_target, 
-							     container->details->dnd_info->drag_info.selection_list, 
-							     action);
-		g_free (drop_target);
 		break;
 	case NAUTILUS_ICON_DND_URI_LIST:
-		drop_target = nautilus_canvas_container_find_drop_target (container,
-									context, x, y, &icon_hit, FALSE);
 		*action = nautilus_drag_default_drop_action_for_uri_list (context, drop_target);
-
-		g_free (drop_target);
 		break;
 
 	case NAUTILUS_ICON_DND_NETSCAPE_URL:
@@ -1182,6 +1177,8 @@ nautilus_canvas_container_get_drop_action (NautilusCanvasContainer *container,
 		*action = GDK_ACTION_COPY;
 		break;
 	}
+
+	g_free (drop_target);
 }
 
 static void
