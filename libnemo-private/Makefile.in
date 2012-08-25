@@ -61,96 +61,82 @@ libnemo_private_la_DEPENDENCIES = $(am__DEPENDENCIES_2) \
 	$(top_builddir)/libnemo-extension/libnemo-extension.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am__libnemo_private_la_SOURCES_DIST = nemo-bookmark.c \
-	nemo-bookmark.h nemo-cell-renderer-text-ellipsized.c \
-	nemo-cell-renderer-text-ellipsized.h \
-	nemo-clipboard-monitor.c nemo-clipboard-monitor.h \
-	nemo-clipboard.c nemo-clipboard.h \
+am__libnemo_private_la_SOURCES_DIST = nemo-bookmark.c nemo-bookmark.h \
+	nemo-cell-renderer-text-ellipsized.c \
+	nemo-cell-renderer-text-ellipsized.h nemo-clipboard-monitor.c \
+	nemo-clipboard-monitor.h nemo-clipboard.c nemo-clipboard.h \
 	nemo-column-chooser.c nemo-column-chooser.h \
 	nemo-column-utilities.c nemo-column-utilities.h \
-	nemo-dbus-manager.c nemo-dbus-manager.h \
-	nemo-debug.c nemo-debug.h nemo-default-file-icon.c \
-	nemo-default-file-icon.h nemo-desktop-background.c \
-	nemo-desktop-background.h \
-	nemo-desktop-directory-file.c \
-	nemo-desktop-directory-file.h nemo-desktop-directory.c \
-	nemo-desktop-directory.h nemo-desktop-icon-file.c \
-	nemo-desktop-icon-file.h nemo-desktop-link-monitor.c \
-	nemo-desktop-link-monitor.h nemo-desktop-link.c \
-	nemo-desktop-link.h nemo-desktop-metadata.c \
-	nemo-desktop-metadata.h nemo-directory-async.c \
-	nemo-directory-notify.h nemo-directory-private.h \
-	nemo-directory.c nemo-directory.h nemo-dnd.c \
-	nemo-dnd.h nemo-entry.c nemo-entry.h \
+	nemo-dbus-manager.c nemo-dbus-manager.h nemo-debug.c \
+	nemo-debug.h nemo-default-file-icon.c nemo-default-file-icon.h \
+	nemo-desktop-background.c nemo-desktop-background.h \
+	nemo-desktop-directory-file.c nemo-desktop-directory-file.h \
+	nemo-desktop-directory.c nemo-desktop-directory.h \
+	nemo-desktop-icon-file.c nemo-desktop-icon-file.h \
+	nemo-desktop-link-monitor.c nemo-desktop-link-monitor.h \
+	nemo-desktop-link.c nemo-desktop-link.h \
+	nemo-desktop-metadata.c nemo-desktop-metadata.h \
+	nemo-directory-async.c nemo-directory-notify.h \
+	nemo-directory-private.h nemo-directory.c nemo-directory.h \
+	nemo-dnd.c nemo-dnd.h nemo-entry.c nemo-entry.h \
 	nemo-file-attributes.h nemo-file-changes-queue.c \
 	nemo-file-changes-queue.h nemo-file-conflict-dialog.c \
-	nemo-file-conflict-dialog.h nemo-file-dnd.c \
-	nemo-file-dnd.h nemo-file-operations.c \
-	nemo-file-operations.h nemo-file-private.h \
-	nemo-file-queue.c nemo-file-queue.h \
-	nemo-file-utilities.c nemo-file-utilities.h \
-	nemo-file.c nemo-file.h nemo-generated.c \
-	nemo-generated.h nemo-global-preferences.c \
-	nemo-global-preferences.h nemo-icon-canvas-item.c \
-	nemo-icon-canvas-item.h nemo-icon-container.c \
-	nemo-icon-container.h nemo-icon-dnd.c \
-	nemo-icon-dnd.h nemo-icon-private.h \
-	nemo-icon-info.c nemo-icon-info.h \
-	nemo-icon-names.h nemo-lib-self-check-functions.c \
-	nemo-lib-self-check-functions.h nemo-link.c \
-	nemo-link.h nemo-merged-directory.c \
-	nemo-merged-directory.h nemo-metadata.h \
-	nemo-metadata.c nemo-mime-application-chooser.c \
-	nemo-mime-application-chooser.h nemo-module.c \
-	nemo-module.h nemo-monitor.c nemo-monitor.h \
-	nemo-progress-info.c nemo-progress-info.h \
-	nemo-progress-info-manager.c \
+	nemo-file-conflict-dialog.h nemo-file-dnd.c nemo-file-dnd.h \
+	nemo-file-operations.c nemo-file-operations.h \
+	nemo-file-private.h nemo-file-queue.c nemo-file-queue.h \
+	nemo-file-utilities.c nemo-file-utilities.h nemo-file.c \
+	nemo-file.h nemo-generated.c nemo-generated.h \
+	nemo-global-preferences.c nemo-global-preferences.h \
+	nemo-icon-canvas-item.c nemo-icon-canvas-item.h \
+	nemo-icon-container.c nemo-icon-container.h nemo-icon-dnd.c \
+	nemo-icon-dnd.h nemo-icon-private.h nemo-icon-info.c \
+	nemo-icon-info.h nemo-icon-names.h \
+	nemo-lib-self-check-functions.c \
+	nemo-lib-self-check-functions.h nemo-link.c nemo-link.h \
+	nemo-merged-directory.c nemo-merged-directory.h \
+	nemo-metadata.h nemo-metadata.c \
+	nemo-mime-application-chooser.c \
+	nemo-mime-application-chooser.h nemo-module.c nemo-module.h \
+	nemo-monitor.c nemo-monitor.h nemo-progress-info.c \
+	nemo-progress-info.h nemo-progress-info-manager.c \
 	nemo-progress-info-manager.h nemo-program-choosing.c \
-	nemo-program-choosing.h nemo-recent.c \
-	nemo-recent.h nemo-saved-search-file.c \
-	nemo-saved-search-file.h nemo-search-directory.c \
-	nemo-search-directory.h nemo-search-directory-file.c \
-	nemo-search-directory-file.h nemo-search-engine.c \
-	nemo-search-engine.h nemo-search-engine-simple.c \
-	nemo-search-engine-simple.h \
-	nemo-selection-canvas-item.c \
-	nemo-selection-canvas-item.h nemo-signaller.h \
-	nemo-signaller.c nemo-query.c nemo-query.h \
-	nemo-thumbnails.c nemo-thumbnails.h \
-	nemo-trash-monitor.c nemo-trash-monitor.h \
-	nemo-tree-view-drag-dest.c nemo-tree-view-drag-dest.h \
-	nemo-ui-utilities.c nemo-ui-utilities.h \
-	nemo-undo-manager.c nemo-undo-manager.h \
+	nemo-program-choosing.h nemo-recent.c nemo-recent.h \
+	nemo-saved-search-file.c nemo-saved-search-file.h \
+	nemo-search-directory.c nemo-search-directory.h \
+	nemo-search-directory-file.c nemo-search-directory-file.h \
+	nemo-search-engine.c nemo-search-engine.h \
+	nemo-search-engine-simple.c nemo-search-engine-simple.h \
+	nemo-selection-canvas-item.c nemo-selection-canvas-item.h \
+	nemo-signaller.h nemo-signaller.c nemo-query.c nemo-query.h \
+	nemo-thumbnails.c nemo-thumbnails.h nemo-trash-monitor.c \
+	nemo-trash-monitor.h nemo-tree-view-drag-dest.c \
+	nemo-tree-view-drag-dest.h nemo-ui-utilities.c \
+	nemo-ui-utilities.h nemo-undo-manager.c nemo-undo-manager.h \
 	nemo-undo-private.h nemo-undo-signal-handlers.c \
 	nemo-undo-signal-handlers.h nemo-undo-transaction.c \
 	nemo-undo-transaction.h nemo-undo.c nemo-undo.h \
-	nemo-vfs-directory.c nemo-vfs-directory.h \
-	nemo-vfs-file.c nemo-vfs-file.h \
-	nemo-file-undo-operations.c \
+	nemo-vfs-directory.c nemo-vfs-directory.h nemo-vfs-file.c \
+	nemo-vfs-file.h nemo-file-undo-operations.c \
 	nemo-file-undo-operations.h nemo-file-undo-manager.c \
 	nemo-file-undo-manager.h nemo-search-engine-tracker.c \
 	nemo-search-engine-tracker.h
-@ENABLE_TRACKER_TRUE@am__objects_1 =  \
-@ENABLE_TRACKER_TRUE@	nemo-search-engine-tracker.lo
+@ENABLE_TRACKER_TRUE@am__objects_1 = nemo-search-engine-tracker.lo
 am__objects_2 =
 am_libnemo_private_la_OBJECTS = nemo-bookmark.lo \
 	nemo-cell-renderer-text-ellipsized.lo \
 	nemo-clipboard-monitor.lo nemo-clipboard.lo \
 	nemo-column-chooser.lo nemo-column-utilities.lo \
-	nemo-dbus-manager.lo nemo-debug.lo \
-	nemo-default-file-icon.lo nemo-desktop-background.lo \
-	nemo-desktop-directory-file.lo \
+	nemo-dbus-manager.lo nemo-debug.lo nemo-default-file-icon.lo \
+	nemo-desktop-background.lo nemo-desktop-directory-file.lo \
 	nemo-desktop-directory.lo nemo-desktop-icon-file.lo \
 	nemo-desktop-link-monitor.lo nemo-desktop-link.lo \
 	nemo-desktop-metadata.lo nemo-directory-async.lo \
 	nemo-directory.lo nemo-dnd.lo nemo-entry.lo \
-	nemo-file-changes-queue.lo \
-	nemo-file-conflict-dialog.lo nemo-file-dnd.lo \
-	nemo-file-operations.lo nemo-file-queue.lo \
-	nemo-file-utilities.lo nemo-file.lo \
-	nemo-generated.lo nemo-global-preferences.lo \
-	nemo-icon-canvas-item.lo nemo-icon-container.lo \
-	nemo-icon-dnd.lo nemo-icon-info.lo \
+	nemo-file-changes-queue.lo nemo-file-conflict-dialog.lo \
+	nemo-file-dnd.lo nemo-file-operations.lo nemo-file-queue.lo \
+	nemo-file-utilities.lo nemo-file.lo nemo-generated.lo \
+	nemo-global-preferences.lo nemo-icon-canvas-item.lo \
+	nemo-icon-container.lo nemo-icon-dnd.lo nemo-icon-info.lo \
 	nemo-lib-self-check-functions.lo nemo-link.lo \
 	nemo-merged-directory.lo nemo-metadata.lo \
 	nemo-mime-application-chooser.lo nemo-module.lo \
@@ -159,19 +145,16 @@ am_libnemo_private_la_OBJECTS = nemo-bookmark.lo \
 	nemo-recent.lo nemo-saved-search-file.lo \
 	nemo-search-directory.lo nemo-search-directory-file.lo \
 	nemo-search-engine.lo nemo-search-engine-simple.lo \
-	nemo-selection-canvas-item.lo nemo-signaller.lo \
-	nemo-query.lo nemo-thumbnails.lo \
-	nemo-trash-monitor.lo nemo-tree-view-drag-dest.lo \
-	nemo-ui-utilities.lo nemo-undo-manager.lo \
-	nemo-undo-signal-handlers.lo nemo-undo-transaction.lo \
-	nemo-undo.lo nemo-vfs-directory.lo \
+	nemo-selection-canvas-item.lo nemo-signaller.lo nemo-query.lo \
+	nemo-thumbnails.lo nemo-trash-monitor.lo \
+	nemo-tree-view-drag-dest.lo nemo-ui-utilities.lo \
+	nemo-undo-manager.lo nemo-undo-signal-handlers.lo \
+	nemo-undo-transaction.lo nemo-undo.lo nemo-vfs-directory.lo \
 	nemo-vfs-file.lo nemo-file-undo-operations.lo \
-	nemo-file-undo-manager.lo $(am__objects_1) \
-	$(am__objects_2)
+	nemo-file-undo-manager.lo $(am__objects_1) $(am__objects_2)
 am__objects_3 = nemo-generated.lo
 am__objects_4 = $(am__objects_3) $(am__objects_2)
-nodist_libnemo_private_la_OBJECTS = $(am__objects_4) \
-	$(am__objects_2)
+nodist_libnemo_private_la_OBJECTS = $(am__objects_4) $(am__objects_2)
 libnemo_private_la_OBJECTS = $(am_libnemo_private_la_OBJECTS) \
 	$(nodist_libnemo_private_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -616,7 +599,7 @@ nodist_libnemo_private_la_SOURCES = \
 	$(BUILT_SOURCES) \
 	$(NULL)
 
-gsettingsschema_in_files = org.gnome.nemo.gschema.xml.in
+gsettingsschema_in_files = org.nemo.gschema.xml.in
 gsettings_SCHEMAS = $(gsettingsschema_in_files:.xml.in=.xml)
 convertdir = $(datadir)/GConf/gsettings
 convert_DATA = nemo.convert
@@ -1010,8 +993,8 @@ uninstall-am: uninstall-convertDATA
 
 $(dbus_built_sources) : Makefile.am $(top_srcdir)/data/dbus-interfaces.xml
 	gdbus-codegen									\
-		--interface-prefix org.gnome.Nemo.					\
-		--c-namespace NemoDBus						\
+		--interface-prefix org.Nemo.						\
+		--c-namespace NemoDBus							\
 		--c-generate-object-manager						\
 		--generate-c-code nemo-generated					\
 		$(top_srcdir)/data/dbus-interfaces.xml					\

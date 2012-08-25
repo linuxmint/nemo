@@ -48,8 +48,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = nemo.desktop.in \
-	nemo-autorun-software.desktop.in
+CONFIG_CLEAN_FILES = nemo.desktop.in nemo-autorun-software.desktop.in
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
@@ -96,8 +95,8 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(autostartdir)" \
 	"$(DESTDIR)$(desktopdir)" "$(DESTDIR)$(mimedir)" \
 	"$(DESTDIR)$(nemodatadir)" "$(DESTDIR)$(servicedir)"
-DATA = $(autostart_DATA) $(desktop_DATA) $(mime_DATA) \
-	$(nemodata_DATA) $(service_DATA)
+DATA = $(autostart_DATA) $(desktop_DATA) $(mime_DATA) $(nemodata_DATA) \
+	$(service_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -335,7 +334,7 @@ servicedir = $(datadir)/dbus-1/services
 service_DATA = $(service_in_files:.service.in=.service)
 service_in_files = \
 	org.freedesktop.NemoFileManager1.service.in	\
-	org.gnome.Nemo.service.in
+	org.Nemo.service.in
 
 nemodatadir = $(datadir)/nemo
 nemodata_DATA = \
@@ -827,7 +826,7 @@ uninstall-am: uninstall-autostartDATA uninstall-desktopDATA \
 
 @INTLTOOL_DESKTOP_RULE@
 
-org.gnome.Nemo.service: org.gnome.Nemo.service.in Makefile
+org.Nemo.service: org.Nemo.service.in Makefile
 	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
 
 org.freedesktop.NemoFileManager1.service: org.freedesktop.NemoFileManager1.service.in Makefile

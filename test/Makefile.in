@@ -35,9 +35,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = test-nemo-search-engine$(EXEEXT) \
-	test-nemo-directory-async$(EXEEXT) \
-	test-nemo-copy$(EXEEXT) test-eel-editable-label$(EXEEXT) \
-	$(am__EXEEXT_1)
+	test-nemo-directory-async$(EXEEXT) test-nemo-copy$(EXEEXT) \
+	test-eel-editable-label$(EXEEXT) $(am__EXEEXT_1)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4

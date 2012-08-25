@@ -1229,7 +1229,7 @@ NemoApplication *
 nemo_application_get_singleton (void)
 {
 	return g_object_new (NEMO_TYPE_APPLICATION,
-			     "application-id", "org.gnome.NemoApplication",
+			     "application-id", "org.NemoApplication",
 			     "flags", G_APPLICATION_HANDLES_OPEN,
 			     NULL);
 }

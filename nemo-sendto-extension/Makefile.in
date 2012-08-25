@@ -79,18 +79,18 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(nemo_extensiondir)"
 LTLIBRARIES = $(nemo_extension_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-libnemo_sendto_la_DEPENDENCIES = $(top_builddir)/libnemo-extension/libnemo-extension.la \
+libnemo_sendto_la_DEPENDENCIES =  \
+	$(top_builddir)/libnemo-extension/libnemo-extension.la \
 	$(am__DEPENDENCIES_1)
-am_libnemo_sendto_la_OBJECTS = nemo-nste.lo \
-	nemo-sendto-module.lo
+am_libnemo_sendto_la_OBJECTS = nemo-nste.lo nemo-sendto-module.lo
 libnemo_sendto_la_OBJECTS = $(am_libnemo_sendto_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 libnemo_sendto_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(AM_CFLAGS) $(CFLAGS) $(libnemo_sendto_la_LDFLAGS) \
-	$(LDFLAGS) -o $@
+	$(AM_CFLAGS) $(CFLAGS) $(libnemo_sendto_la_LDFLAGS) $(LDFLAGS) \
+	-o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -555,8 +555,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool \
-	clean-nemo_extensionLTLIBRARIES mostlyclean-am
+clean-am: clean-generic clean-libtool clean-nemo_extensionLTLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -627,16 +627,15 @@ uninstall-am: uninstall-nemo_extensionLTLIBRARIES
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-nemo_extensionLTLIBRARIES ctags \
-	distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man \
-	install-nemo_extensionLTLIBRARIES install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	clean-libtool clean-nemo_extensionLTLIBRARIES ctags distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-nemo_extensionLTLIBRARIES install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am \

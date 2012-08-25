@@ -133,7 +133,7 @@ nemo_toolbar_constructed (GObject *obj)
 
 	/* add the UI */
 	self->priv->ui_manager = gtk_ui_manager_new ();
-	gtk_ui_manager_add_ui_from_resource (self->priv->ui_manager, "/org/gnome/nemo/nemo-toolbar-ui.xml", NULL);
+	gtk_ui_manager_add_ui_from_resource (self->priv->ui_manager, "/org/nemo/nemo-toolbar-ui.xml", NULL);
 	gtk_ui_manager_insert_action_group (self->priv->ui_manager, self->priv->action_group, 0);
 
 	toolbar = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar");

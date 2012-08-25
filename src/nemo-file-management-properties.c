@@ -872,7 +872,7 @@ nemo_file_management_properties_dialog_show (GtkWindow *window)
 	builder = gtk_builder_new ();
 
 	gtk_builder_add_from_resource (builder,
-				       "/org/gnome/nemo/nemo-file-management-properties.ui",
+				       "/org/nemo/nemo-file-management-properties.ui",
 				       NULL);
 
 	nemo_file_management_properties_dialog_setup (builder, window);
