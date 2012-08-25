@@ -1235,7 +1235,6 @@ nautilus_window_view_visible (NautilusWindow *window,
 		slot = l->data;
 
 		nautilus_window_slot_update_title (slot);
-		nautilus_window_slot_update_icon (slot);
 	}
 
 	nautilus_window_grab_focus (window);
@@ -1879,6 +1878,7 @@ nautilus_window_init (NautilusWindow *window)
 
 	/* Set initial window title */
 	gtk_window_set_title (GTK_WINDOW (window), _("Files"));
+	gtk_window_set_icon_name (GTK_WINDOW (window), "system-file-manager");
 	gtk_window_set_hide_titlebar_when_maximized (GTK_WINDOW (window), TRUE);
 }
 

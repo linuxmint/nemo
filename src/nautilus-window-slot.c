@@ -507,47 +507,6 @@ nautilus_window_slot_update_title (NautilusWindowSlot *slot)
 	}
 }
 
-/* nautilus_window_slot_update_icon:
- * 
- * Re-calculate the slot icon
- * Called when the location or view or icon set has changed.
- * @slot: The NautilusWindowSlot in question.
- */
-void
-nautilus_window_slot_update_icon (NautilusWindowSlot *slot)
-{
-	NautilusWindow *window;
-	NautilusIconInfo *info;
-	const char *icon_name;
-	GdkPixbuf *pixbuf;
-
-	window = nautilus_window_slot_get_window (slot);
-	info = NAUTILUS_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->get_icon (window, slot);
-
-	icon_name = NULL;
-	if (info) {
-		icon_name = nautilus_icon_info_get_used_name (info);
-		if (icon_name != NULL) {
-			/* Gtk+ doesn't short circuit this (yet), so avoid lots of work
-			 * if we're setting to the same icon. This happens a lot e.g. when
-			 * the trash directory changes due to the file count changing.
-			 */
-			if (g_strcmp0 (icon_name, gtk_window_get_icon_name (GTK_WINDOW (window))) != 0) {			
-				gtk_window_set_icon_name (GTK_WINDOW (window), icon_name);
-			}
-		} else {
-			pixbuf = nautilus_icon_info_get_pixbuf_nodefault (info);
-			
-			if (pixbuf) {
-				gtk_window_set_icon (GTK_WINDOW (window), pixbuf);
-				g_object_unref (pixbuf);
-			} 
-		}
-		
-		g_object_unref (info);
-	}
-}
-
 void
 nautilus_window_slot_set_content_view_widget (NautilusWindowSlot *slot,
 					      NautilusView *new_view)

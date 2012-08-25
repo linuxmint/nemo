@@ -345,12 +345,11 @@ viewed_file_changed_callback (NautilusFile *file,
 			}
                 } else {
 			/* TODO?
- 			 *   why do we update title & icon at all in this case? */
+ 			 *   why do we update title at all in this case? */
                         g_object_unref (new_location);
                 }
 
                 nautilus_window_slot_update_title (slot);
-		nautilus_window_slot_update_icon (slot);
         }
 }
 
@@ -1479,7 +1478,6 @@ update_for_new_location (NautilusWindowSlot *slot)
 	}
 
 	nautilus_window_slot_update_title (slot);
-	nautilus_window_slot_update_icon (slot);
 
 	if (slot == slot->window->details->active_slot) {
 		nautilus_window_sync_location_widgets (slot->window);
