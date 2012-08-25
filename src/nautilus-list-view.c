@@ -89,7 +89,6 @@ struct NautilusListViewDetails {
 	int drag_y;
 
 	gboolean drag_started;
-	gboolean ignore_button_release;
 	gboolean row_selected_on_button_down;
 	gboolean menus_ready;
 	gboolean active;
@@ -119,9 +118,6 @@ struct SelectionForeachData {
  * that works well with the set of emblems we've designed.
  */
 #define LIST_VIEW_MINIMUM_ROW_HEIGHT	28
-
-/* We wait two seconds after row is collapsed to unload the subdirectory */
-#define COLLAPSE_TO_UNLOAD_DELAY 2 
 
 /* Wait for the rename to end when activating a file being renamed */
 #define WAIT_FOR_RENAME_ON_ACTIVATE 200
@@ -631,8 +627,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	static gint64 last_click_time = 0;
 	static int click_count = 0;
 	int double_click_time;
-	int expander_size, horizontal_separator;
-	gboolean on_expander;
+	int horizontal_separator;
 	gboolean blank_click;
 
 	view = NAUTILUS_LIST_VIEW (callback_data);
@@ -675,21 +670,12 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 		return TRUE;
 	}
 
-	view->details->ignore_button_release = FALSE;
-
 	call_parent = TRUE;
 	if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y,
 					   &path, NULL, NULL, NULL)) {
 		gtk_widget_style_get (widget,
-				      "expander-size", &expander_size,
 				      "horizontal-separator", &horizontal_separator,
 				      NULL);
-		/* TODO we should not hardcode this extra padding. It is
-		 * EXPANDER_EXTRA_PADDING from GtkTreeView.
-		 */
-		expander_size += 4;
-		on_expander = (event->x <= horizontal_separator / 2 +
-			       gtk_tree_path_get_depth (path) * expander_size);
 
 		/* Keep track of path of last click so double clicks only happen
 		 * on the same item */
@@ -705,8 +691,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 			/* Double clicking does not trigger a D&D action. */
 			view->details->drag_button = 0;
 			if (view->details->double_click_path[1] &&
-			    gtk_tree_path_compare (view->details->double_click_path[0], view->details->double_click_path[1]) == 0 &&
-			    !on_expander) {
+			    gtk_tree_path_compare (view->details->double_click_path[0], view->details->double_click_path[1]) == 0) {
 				/* NOTE: Activation can actually destroy the view if we're switching */
 				if (!button_event_modifies_selection (event)) {
 					if ((event->button == 1 || event->button == 3)) {
@@ -749,10 +734,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 			    ((event->state & GDK_CONTROL_MASK) != 0 ||
 			     (event->state & GDK_SHIFT_MASK) == 0)) {			
 				view->details->row_selected_on_button_down = gtk_tree_selection_path_is_selected (selection, path);
-				if (view->details->row_selected_on_button_down) {
-					call_parent = on_expander;
-					view->details->ignore_button_release = call_parent;
-				} else if ((event->state & GDK_CONTROL_MASK) != 0) {
+				if ((event->state & GDK_CONTROL_MASK) != 0) {
 					GList *selected_rows;
 					GList *l;
 
@@ -782,8 +764,6 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 						gtk_tree_path_free (p);
 					}
 					g_list_free (selected_rows);
-				} else {
-					view->details->ignore_button_release = on_expander;
 				}
 			}
 		
@@ -853,8 +833,7 @@ button_release_callback (GtkWidget *widget,
 
 	if (event->button == view->details->drag_button) {
 		stop_drag_check (view);
-		if (!view->details->drag_started &&
-		    !view->details->ignore_button_release) {
+		if (!view->details->drag_started) {
 			nautilus_list_view_did_not_drag (view, event);
 		}
 	}
@@ -879,118 +858,11 @@ subdirectory_done_loading_callback (NautilusDirectory *directory, NautilusListVi
 	nautilus_list_model_subdirectory_done_loading (view->details->model, directory);
 }
 
-static void
-row_expanded_callback (GtkTreeView *treeview, GtkTreeIter *iter, GtkTreePath *path, gpointer callback_data)
-{
- 	NautilusListView *view;
- 	NautilusDirectory *directory;
-
-	view = NAUTILUS_LIST_VIEW (callback_data);
-
-	if (nautilus_list_model_load_subdirectory (view->details->model, path, &directory)) {
-		char *uri;
-
-		uri = nautilus_directory_get_uri (directory);
-		DEBUG ("Row expaded callback for uri %s", uri);
-		g_free (uri);
-
-		nautilus_view_add_subdirectory (NAUTILUS_VIEW (view), directory);
-		
-		if (nautilus_directory_are_all_files_seen (directory)) {
-			nautilus_list_model_subdirectory_done_loading (view->details->model,
-								 directory);
-		} else {
-			g_signal_connect_object (directory, "done_loading",
-						 G_CALLBACK (subdirectory_done_loading_callback),
-						 view, 0);
-		}
-		
-		nautilus_directory_unref (directory);
-	}
-}
-
 struct UnloadDelayData {
 	NautilusFile *file;
 	NautilusDirectory *directory;
 	NautilusListView *view;
 };
-
-static gboolean
-unload_file_timeout (gpointer data)
-{
-	struct UnloadDelayData *unload_data = data;
-	GtkTreeIter iter;
-	NautilusListModel *model;
-	GtkTreePath *path;
-
-	if (unload_data->view != NULL) {
-		model = unload_data->view->details->model;
-		if (nautilus_list_model_get_tree_iter_from_file (model,
-							   unload_data->file,
-							   unload_data->directory,
-							   &iter)) {
-			path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
-			if (!gtk_tree_view_row_expanded (unload_data->view->details->tree_view,
-							 path)) {
-				nautilus_list_model_unload_subdirectory (model, &iter);
-			}
-			gtk_tree_path_free (path);
-		}
-
-		g_object_remove_weak_pointer (G_OBJECT (unload_data->view),
-					      (gpointer *) &unload_data->view);
-	}
-	
-	if (unload_data->directory) {
-		nautilus_directory_unref (unload_data->directory);
-	}
-	nautilus_file_unref (unload_data->file);
-	g_free (unload_data);
-	return FALSE;
-}
-
-static void
-row_collapsed_callback (GtkTreeView *treeview, GtkTreeIter *iter, GtkTreePath *path, gpointer callback_data)
-{
- 	NautilusListView *view;
- 	NautilusFile *file;
-	NautilusDirectory *directory;
-	GtkTreeIter parent;
-	struct UnloadDelayData *unload_data;
-	GtkTreeModel *model;
-	char *uri;
-	
-	view = NAUTILUS_LIST_VIEW (callback_data);
-	model = GTK_TREE_MODEL (view->details->model);
-		
-	gtk_tree_model_get (model, iter, 
-			    NAUTILUS_LIST_MODEL_FILE_COLUMN, &file,
-			    -1);
-
-	directory = NULL;
-	if (gtk_tree_model_iter_parent (model, &parent, iter)) {
-		gtk_tree_model_get (model, &parent, 
-				    NAUTILUS_LIST_MODEL_SUBDIRECTORY_COLUMN, &directory,
-				    -1);
-	}
-	
-
-	uri = nautilus_file_get_uri (file);
-	DEBUG ("Row collapsed callback for uri %s", uri);
-	g_free (uri);
-
-	unload_data = g_new (struct UnloadDelayData, 1);
-	unload_data->view = view;
-	unload_data->file = file;
-	unload_data->directory = directory;
-
-	g_object_add_weak_pointer (G_OBJECT (unload_data->view),
-				   (gpointer *) &unload_data->view);
-	
-	g_timeout_add_seconds (COLLAPSE_TO_UNLOAD_DELAY,
-			       unload_file_timeout,
-			       unload_data);
-}
 
 static void
 subdirectory_unloaded_callback (NautilusListModel *model,
@@ -1016,10 +888,6 @@ key_press_callback (GtkWidget *widget, GdkEventKey *event, gpointer callback_dat
 	NautilusView *view;
 	GdkEventButton button_event = { 0 };
 	gboolean handled;
-	GtkTreeView *tree_view;
-	GtkTreePath *path;
-
-	tree_view = GTK_TREE_VIEW (widget);
 
 	view = NAUTILUS_VIEW (callback_data);
 	handled = FALSE;
@@ -1030,30 +898,6 @@ key_press_callback (GtkWidget *widget, GdkEventKey *event, gpointer callback_dat
 			nautilus_view_pop_up_background_context_menu (view, &button_event);
 			handled = TRUE;
 		}
-		break;
-	case GDK_KEY_Right:
-		gtk_tree_view_get_cursor (tree_view, &path, NULL);
-		if (path) {
-			gtk_tree_view_expand_row (tree_view, path, FALSE);
-			gtk_tree_path_free (path);
-		}
-		handled = TRUE;
-		break;
-	case GDK_KEY_Left:
-		gtk_tree_view_get_cursor (tree_view, &path, NULL);
-		if (path) {
-			if (!gtk_tree_view_collapse_row (tree_view, path)) {
-				/* if the row is already collapsed or doesn't have any children,
-				 * jump to the parent row instead.
-				 */
-				if ((gtk_tree_path_get_depth (path) > 1) && gtk_tree_path_up (path)) {
-					gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
-				}
-			}
-
-			gtk_tree_path_free (path);
-		}
-		handled = TRUE;
 		break;
 	case GDK_KEY_space:
 		if (event->state & GDK_CONTROL_MASK) {
@@ -1588,10 +1432,6 @@ create_and_set_up_tree_view (NautilusListView *view)
 				 G_CALLBACK (key_press_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "popup_menu",
                                  G_CALLBACK (popup_menu_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "row_expanded",
-                                 G_CALLBACK (row_expanded_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "row_collapsed",
-                                 G_CALLBACK (row_collapsed_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "row-activated",
                                  G_CALLBACK (row_activated_callback), view, 0);
 	
@@ -2061,14 +1901,12 @@ nautilus_list_view_get_backing_uri (NautilusView *view)
 
 	g_assert (list_model);
 
-	/* We currently handle three common cases here:
+	/* We currently handle two common cases here:
 	 * (a) if the selection contains non-filesystem items (i.e., the
 	 *     "(Empty)" label), we return the uri of the parent.
-	 * (b) if the selection consists of exactly one _expanded_ directory, we
-	 *     return its URI.
-	 * (c) if the selection consists of either exactly one item which is not
-	 *     an expanded directory) or multiple items in the same directory,
-	 *     we return the URI of the common parent.
+	 * (b) if the selection consists of either exactly one item or
+	 *     multiple items in the same directory, we return the URI
+	 *     of the common parent.
 	 */
 
 	uri = NULL;
@@ -2086,14 +1924,6 @@ nautilus_list_view_get_backing_uri (NautilusView *view)
 			/* The selected item is a label, not a file */
 			gtk_tree_path_up (path);
 			file = nautilus_list_model_file_for_path (list_model, path);
-		}
-
-		if (file != NULL) {
-			if (nautilus_file_is_directory (file) &&
-			    gtk_tree_view_row_expanded (tree_view, path)) {
-				uri = nautilus_file_get_uri (file);
-			}
-			nautilus_file_unref (file);
 		}
 
 		gtk_tree_path_free (path);
