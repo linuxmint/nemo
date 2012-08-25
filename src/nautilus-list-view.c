@@ -1500,7 +1500,7 @@ create_and_set_up_tree_view (NautilusListView *view)
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
 			gtk_tree_view_column_set_attributes (view->details->file_name_column,
 							     cell,
-							     "pixbuf", NAUTILUS_LIST_MODEL_SMALLEST_ICON_COLUMN,
+							     "pixbuf", nautilus_list_model_get_column_id_from_zoom_level (view->details->zoom_level),
 							     NULL);
 			
 			cell = gtk_cell_renderer_text_new ();
@@ -3031,6 +3031,9 @@ nautilus_list_view_init (NautilusListView *list_view)
 {
 	list_view->details = g_new0 (NautilusListViewDetails, 1);
 
+	/* ensure that the zoom level is always set before settings up the tree view columns */
+	list_view->details->zoom_level = get_default_zoom_level ();
+
 	create_and_set_up_tree_view (list_view);
 
 	g_signal_connect_swapped (nautilus_preferences,
@@ -3053,9 +3056,6 @@ nautilus_list_view_init (NautilusListView *list_view)
 	nautilus_list_view_click_policy_changed (NAUTILUS_VIEW (list_view));
 
 	nautilus_list_view_sort_directories_first_changed (NAUTILUS_VIEW (list_view));
-
-	/* ensure that the zoom level is always set in begin_loading */
-	list_view->details->zoom_level = NAUTILUS_ZOOM_LEVEL_SMALLEST - 1;
 
 	list_view->details->hover_path = NULL;
 	list_view->details->clipboard_handler_id =
