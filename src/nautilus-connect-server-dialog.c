@@ -45,6 +45,7 @@ struct _NautilusConnectServerDialogDetails {
 	GtkWidget *menu;
 	GtkWidget *remove_menu_item;
 	GtkWidget *clear_menu_item;
+	GtkWidget *browse_button;
 
 	char **supported;
 };
@@ -58,6 +59,13 @@ enum {
 
 G_DEFINE_TYPE (NautilusConnectServerDialog, nautilus_connect_server_dialog,
 	       GTK_TYPE_DIALOG)
+
+void
+nautilus_connect_server_dialog_set_show_browse (NautilusConnectServerDialog *dialog,
+						gboolean                     show)
+{
+	gtk_widget_set_visible (dialog->details->browse_button, show);
+}
 
 GFile *
 nautilus_connect_server_dialog_get_location (NautilusConnectServerDialog *dialog)
@@ -684,6 +692,7 @@ nautilus_connect_server_dialog_init (NautilusConnectServerDialog *dialog)
 					GTK_RESPONSE_ACCEPT);
 	gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (gtk_dialog_get_action_area (GTK_DIALOG (dialog))),
 					    button, TRUE);
+	dialog->details->browse_button = button;
 
 	gtk_dialog_add_button (GTK_DIALOG (dialog),
 			       GTK_STOCK_CANCEL,

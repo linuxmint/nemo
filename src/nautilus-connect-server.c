@@ -165,6 +165,8 @@ main (int argc, char *argv[])
 	g_option_context_free (context);
 
 	dialog = nautilus_connect_server_dialog_new (NULL);
+	nautilus_connect_server_dialog_set_show_browse (NAUTILUS_CONNECT_SERVER_DIALOG (dialog), FALSE);
+
 	gtk_window_set_default_icon_name ("folder-remote-symbolic");
 
 	g_signal_connect (dialog, "response",

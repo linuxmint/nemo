@@ -56,7 +56,9 @@ struct _NautilusConnectServerDialogClass {
 
 GType nautilus_connect_server_dialog_get_type (void);
 
-GtkWidget * nautilus_connect_server_dialog_new          (NautilusWindow *window);
-GFile *     nautilus_connect_server_dialog_get_location (NautilusConnectServerDialog *dialog);
+GtkWidget * nautilus_connect_server_dialog_new             (NautilusWindow *window);
+GFile *     nautilus_connect_server_dialog_get_location    (NautilusConnectServerDialog *dialog);
+void        nautilus_connect_server_dialog_set_show_browse (NautilusConnectServerDialog *dialog,
+							    gboolean                     show);
 
 #endif /* NAUTILUS_CONNECT_SERVER_DIALOG_H */
