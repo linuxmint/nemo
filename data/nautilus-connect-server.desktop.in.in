@@ -1,0 +1,13 @@
+[Desktop Entry]
+_Name=Connect to Server
+TryExec=nautilus-connect-server
+Exec=nautilus-connect-server
+Icon=applications-internet
+NoDisplay=true
+Terminal=false
+StartupNotify=true
+Type=Application
+X-GNOME-Bugzilla-Bugzilla=GNOME
+X-GNOME-Bugzilla-Product=nautilus
+X-GNOME-Bugzilla-Component=general
+X-GNOME-Bugzilla-Version=@VERSION@

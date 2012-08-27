@@ -8,7 +8,8 @@ desktopdir       = $(datadir)/applications
 desktop_DATA     = $(desktop_in_files:.desktop.in=.desktop)
 desktop_in_files = 					\
 	nautilus.desktop.in				\
-	nautilus-autorun-software.desktop.in
+	nautilus-autorun-software.desktop.in		\
+	nautilus-connect-server.desktop.in
 
 autostartdir     = $(sysconfdir)/xdg/autostart
 autostart_in_files = nautilus-autostart.desktop.in

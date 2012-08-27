@@ -3,6 +3,7 @@ include $(top_srcdir)/Makefile.shared
 bin_PROGRAMS=					\
 	nautilus				\
 	nautilus-autorun-software		\
+	nautilus-connect-server			\
 	$(NULL)
 
 libexec_PROGRAMS=				\
@@ -221,6 +222,12 @@ endif
 
 nautilus_autorun_software_SOURCES= 			\
 	nautilus-autorun-software.c			\
+	$(NULL)
+
+nautilus_connect_server_SOURCES= \
+	nautilus-connect-server-dialog.c        \
+	nautilus-connect-server-dialog.h        \
+	nautilus-connect-server.c		\
 	$(NULL)
 
 nautilus_convert_metadata_SOURCES= \
