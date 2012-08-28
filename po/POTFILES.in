@@ -25,6 +25,7 @@ libnautilus-private/nautilus-desktop-directory-file.c
 libnautilus-private/nautilus-desktop-icon-file.c
 libnautilus-private/nautilus-desktop-link.c
 libnautilus-private/nautilus-desktop-link-monitor.c
+libnautilus-private/nautilus-directory.c
 libnautilus-private/nautilus-dnd.c
 libnautilus-private/nautilus-entry.c
 libnautilus-private/nautilus-file.c
