@@ -598,7 +598,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 				mount = g_volume_get_mount (volume);
 				if (mount != NULL) {
 					/* Show mounted volume in the sidebar */
-					icon = g_mount_get_icon (mount);
+					icon = g_mount_get_symbolic_icon (mount);
 					root = g_mount_get_default_location (mount);
 					mount_uri = g_file_get_uri (root);
 					name = g_mount_get_name (mount);
@@ -623,7 +623,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 					 * cue that the user should remember to yank out the media if
 					 * he just unmounted it.
 					 */
-					icon = g_volume_get_icon (volume);
+					icon = g_volume_get_symbolic_icon (volume);
 					name = g_volume_get_name (volume);
 					tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
@@ -648,7 +648,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 				 * work.. but it's also for human beings who like to turn off media detection
 				 * in the OS to save battery juice.
 				 */
-				icon = g_drive_get_icon (drive);
+				icon = g_drive_get_symbolic_icon (drive);
 				name = g_drive_get_name (drive);
 				tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
@@ -687,7 +687,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 
 		mount = g_volume_get_mount (volume);
 		if (mount != NULL) {
-			icon = g_mount_get_icon (mount);
+			icon = g_mount_get_symbolic_icon (mount);
 			root = g_mount_get_default_location (mount);
 			mount_uri = g_file_get_uri (root);
 			tooltip = g_file_get_parse_name (root);
@@ -704,7 +704,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 			g_free (mount_uri);
 		} else {
 			/* see comment above in why we add an icon for an unmounted mountable volume */
-			icon = g_volume_get_icon (volume);
+			icon = g_volume_get_symbolic_icon (volume);
 			name = g_volume_get_name (volume);
 			add_place (sidebar, PLACES_MOUNTED_VOLUME,
 				   SECTION_DEVICES,
@@ -750,7 +750,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 			continue;
 		}
 
-		icon = g_mount_get_icon (mount);
+		icon = g_mount_get_symbolic_icon (mount);
 		mount_uri = g_file_get_uri (root);
 		name = g_mount_get_name (mount);
 		tooltip = g_file_get_parse_name (root);
@@ -825,7 +825,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 			network_mounts = g_list_prepend (network_mounts, mount);
 			continue;
 		} else {
-			icon = g_volume_get_icon (volume);
+			icon = g_volume_get_symbolic_icon (volume);
 			name = g_volume_get_name (volume);
 			tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
@@ -845,7 +845,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 	for (l = network_mounts; l != NULL; l = l->next) {
 		mount = l->data;
 		root = g_mount_get_default_location (mount);
-		icon = g_mount_get_icon (mount);
+		icon = g_mount_get_symbolic_icon (mount);
 		mount_uri = g_file_get_uri (root);
 		name = g_mount_get_name (mount);
 		tooltip = g_file_get_parse_name (root);
