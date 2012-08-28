@@ -103,30 +103,44 @@ static void load_new_location                         (NautilusWindowSlot       
 static void location_has_really_changed               (NautilusWindowSlot         *slot);
 static void update_for_new_location                   (NautilusWindowSlot         *slot);
 
-/* set_displayed_location:
- */
 static void
-set_displayed_location (NautilusWindowSlot *slot, GFile *location)
+set_displayed_file (NautilusWindowSlot *slot, NautilusFile *file)
 {
-        GFile *bookmark_location;
         gboolean recreate;
+	GFile *new_location = NULL;
 
-        if (slot->current_location_bookmark == NULL || location == NULL) {
+	if (file != NULL) {
+		new_location = nautilus_file_get_location (file);
+	}
+
+        if (slot->current_location_bookmark == NULL || file == NULL) {
                 recreate = TRUE;
         } else {
+		GFile *bookmark_location;
                 bookmark_location = nautilus_bookmark_get_location (slot->current_location_bookmark);
-                recreate = !g_file_equal (bookmark_location, location);
+                recreate = !g_file_equal (bookmark_location, new_location);
                 g_object_unref (bookmark_location);
         }
-        
+
         if (recreate) {
+		char *display_name = NULL;
+
                 /* We've changed locations, must recreate bookmark for current location. */
 		g_clear_object (&slot->last_location_bookmark);
 
+		if (file != NULL) {
+			display_name = nautilus_file_get_display_name (file);
+		}
 		slot->last_location_bookmark = slot->current_location_bookmark;
-		slot->current_location_bookmark = (location == NULL) ? NULL
-                        : nautilus_bookmark_new (location, NULL, NULL);
+		if (new_location == NULL) {
+			slot->current_location_bookmark = NULL;
+		} else {
+			slot->current_location_bookmark = nautilus_bookmark_new (new_location, display_name, NULL);
+		}
+		g_free (display_name);
         }
+
+	g_clear_object (&new_location);
 }
 
 static void
@@ -1394,7 +1408,8 @@ update_for_new_location (NautilusWindowSlot *slot)
 	new_location = slot->pending_location;
 	slot->pending_location = NULL;
 
-	set_displayed_location (slot, new_location);
+	file = nautilus_file_get (new_location);
+	set_displayed_file (slot, file);
 
 	update_history (slot, slot->location_change_type, new_location);
 
@@ -1412,7 +1427,6 @@ update_for_new_location (NautilusWindowSlot *slot)
          * if it goes away.
          */
 	cancel_viewed_file_changed_callback (slot);
-	file = nautilus_file_get (slot->location);
 	nautilus_window_slot_set_viewed_file (slot, file);
 	slot->viewed_file_seen = !nautilus_file_is_not_yet_confirmed (file);
 	slot->viewed_file_in_trash = nautilus_file_is_in_trash (file);
