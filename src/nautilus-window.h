@@ -78,6 +78,7 @@ typedef struct {
 
         void   (* sync_title) (NautilusWindow *window,
 			       NautilusWindowSlot *slot);
+        void   (* sync_view_as_menus) (NautilusWindow *window);
         NautilusIconInfo * (* get_icon) (NautilusWindow *window,
                                          NautilusWindowSlot *slot);
 

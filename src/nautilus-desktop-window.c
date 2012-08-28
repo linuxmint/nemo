@@ -278,6 +278,13 @@ real_window_close (NautilusWindow *window)
 }
 
 static void
+real_sync_view_as_menus (NautilusWindow *window)
+{
+	/* stub, does nothing */
+	return;
+}
+
+static void
 nautilus_desktop_window_class_init (NautilusDesktopWindowClass *klass)
 {
 	GtkWidgetClass *wclass = GTK_WIDGET_CLASS (klass);
@@ -292,6 +299,7 @@ nautilus_desktop_window_class_init (NautilusDesktopWindowClass *klass)
 	wclass->delete_event = nautilus_desktop_window_delete_event;
 
 	nclass->sync_title = real_sync_title;
+	nclass->sync_view_as_menus = real_sync_view_as_menus;
 	nclass->get_icon = real_get_icon;
 	nclass->close = real_window_close;
 

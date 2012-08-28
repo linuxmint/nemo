@@ -1445,17 +1445,8 @@ nautilus_window_key_press_event (GtkWidget *widget,
  * Main API
  */
 
-/**
- * nautilus_window_sync_view_as_menus:
- * 
- * Set the visible item of the "View as" option menu and
- * the marked "View as" item in the View menu to
- * match the current content view.
- * 
- * @window: The NautilusWindow whose "View as" option menu should be synched.
- */
-void
-nautilus_window_sync_view_as_menus (NautilusWindow *window)
+static void
+real_sync_view_as_menus (NautilusWindow *window)
 {
 	NautilusWindowSlot *slot;
 	GtkActionGroup *action_group;
@@ -1478,6 +1469,23 @@ nautilus_window_sync_view_as_menus (NautilusWindow *window)
 	}
 
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), TRUE);
+}
+
+/**
+ * nautilus_window_sync_view_as_menus:
+ *
+ * Set the visible item of the "View as" option menu and
+ * the marked "View as" item in the View menu to
+ * match the current content view.
+ *
+ * @window: The NautilusWindow whose "View as" option menu should be synched.
+ */
+void
+nautilus_window_sync_view_as_menus (NautilusWindow *window)
+{
+	if (NAUTILUS_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->sync_view_as_menus != NULL) {
+		NAUTILUS_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->sync_view_as_menus (window);
+	}
 }
 
 void
@@ -1925,6 +1933,7 @@ nautilus_window_class_init (NautilusWindowClass *class)
 
 	class->get_icon = real_get_icon;
 	class->close = real_window_close;
+	class->sync_view_as_menus = real_sync_view_as_menus;
 
 	properties[PROP_DISABLE_CHROME] =
 		g_param_spec_boolean ("disable-chrome",
