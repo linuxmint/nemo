@@ -6,9 +6,7 @@
 Source: nemo
 Section: gnome
 Priority: optional
-Maintainer: Ubuntu Desktop Team <ubuntu-desktop@lists.ubuntu.com>
-XSBC-Original-Maintainer: Josselin Mouette <joss@debian.org>
-Uploaders: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
+Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends: debhelper (>= 8),
                dh-autoreconf,
                cdbs (>= 0.4.90),
@@ -34,8 +32,7 @@ Build-Depends: debhelper (>= 8),
                libgirepository1.0-dev (>= 0.9.12),
                libglib2.0-doc,
                libgtk-3-doc
-Homepage: http://www.gnome.org/projects/nemo/
-Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/nemo/precise
+Homepage: http://www.github.com/linuxmint/nemo/
 Standards-Version: 3.9.2
 
 Package: nemo
