@@ -54,6 +54,8 @@ typedef struct {
 GType   nautilus_desktop_link_monitor_get_type (void);
 
 NautilusDesktopLinkMonitor *   nautilus_desktop_link_monitor_get (void);
+void nautilus_desktop_link_monitor_shutdown (void);
+
 void nautilus_desktop_link_monitor_delete_link (NautilusDesktopLinkMonitor *monitor,
 						NautilusDesktopLink *link,
 						GtkWidget *parent_view);

@@ -58,12 +58,10 @@ G_DEFINE_TYPE (NautilusDesktopLinkMonitor, nautilus_desktop_link_monitor, G_TYPE
 
 static NautilusDesktopLinkMonitor *the_link_monitor = NULL;
 
-static void
-destroy_desktop_link_monitor (void)
+void
+nautilus_desktop_link_monitor_shutdown (void)
 {
-	if (the_link_monitor != NULL) {
-		g_object_unref (the_link_monitor);
-	}
+	g_clear_object (&the_link_monitor);
 }
 
 NautilusDesktopLinkMonitor *
@@ -71,7 +69,7 @@ nautilus_desktop_link_monitor_get (void)
 {
 	if (the_link_monitor == NULL) {
 		g_object_new (NAUTILUS_TYPE_DESKTOP_LINK_MONITOR, NULL);
-		eel_debug_call_at_shutdown (destroy_desktop_link_monitor);
+		eel_debug_call_at_shutdown (nautilus_desktop_link_monitor_shutdown);
 	}
 	return the_link_monitor;
 }

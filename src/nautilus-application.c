@@ -494,25 +494,6 @@ nautilus_application_create_desktop_windows (NautilusApplication *application)
 	}
 }
 
-static void
-nautilus_application_open_desktop (NautilusApplication *application)
-{
-	if (nautilus_application_desktop_windows == NULL) {
-		nautilus_application_create_desktop_windows (application);
-	}
-}
-
-static void
-nautilus_application_close_desktop (void)
-{
-	if (nautilus_application_desktop_windows != NULL) {
-		g_list_foreach (nautilus_application_desktop_windows,
-				(GFunc) gtk_widget_destroy, NULL);
-		g_list_free (nautilus_application_desktop_windows);
-		nautilus_application_desktop_windows = NULL;
-	}
-}
-
 static gboolean
 another_navigation_window_already_showing (NautilusApplication *application,
 					   NautilusWindow *the_window)
@@ -571,20 +552,6 @@ nautilus_application_create_window (NautilusApplication *application,
 	nautilus_profile_end (NULL);
 
 	return window;
-}
-
-/* callback for showing or hiding the desktop based on the user's preference */
-static void
-desktop_changed_callback (gpointer user_data)
-{
-	NautilusApplication *application;
-
-	application = NAUTILUS_APPLICATION (user_data);
-	if (g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
-		nautilus_application_open_desktop (application);
-	} else {
-		nautilus_application_close_desktop ();
-	}
 }
 
 static void
@@ -1206,11 +1173,45 @@ init_icons_and_styles (void)
 }
 
 static void
-init_desktop (NautilusApplication *self)
+nautilus_application_open_desktop (NautilusApplication *application)
 {
 	/* Initialize the desktop link monitor singleton */
 	nautilus_desktop_link_monitor_get ();
 
+	if (nautilus_application_desktop_windows == NULL) {
+		nautilus_application_create_desktop_windows (application);
+	}
+}
+
+static void
+nautilus_application_close_desktop (void)
+{
+	if (nautilus_application_desktop_windows != NULL) {
+		g_list_foreach (nautilus_application_desktop_windows,
+				(GFunc) gtk_widget_destroy, NULL);
+		g_list_free (nautilus_application_desktop_windows);
+		nautilus_application_desktop_windows = NULL;
+	}
+	nautilus_desktop_link_monitor_shutdown ();
+}
+
+/* callback for showing or hiding the desktop based on the user's preference */
+static void
+desktop_changed_callback (gpointer user_data)
+{
+	NautilusApplication *application;
+
+	application = NAUTILUS_APPLICATION (user_data);
+	if (g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
+		nautilus_application_open_desktop (application);
+	} else {
+		nautilus_application_close_desktop ();
+	}
+}
+
+static void
+init_desktop (NautilusApplication *self)
+{
 	if (!self->priv->no_desktop &&
 	    !g_settings_get_boolean (gnome_background_preferences,
 				     NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
