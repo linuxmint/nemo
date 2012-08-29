@@ -112,7 +112,6 @@ struct _NautilusApplicationPriv {
 
 	NotifyNotification *unmount_notify;
 
-	GtkWidget *bookmarks_window;
 	NautilusBookmarkList *bookmark_list;
 };
 
@@ -128,18 +127,7 @@ nautilus_application_edit_bookmarks (NautilusApplication *application,
 {
 	GtkWindow *bookmarks_window;
 
-	bookmarks_window = GTK_WINDOW (application->priv->bookmarks_window);
-
-	if (bookmarks_window == NULL) {
-		bookmarks_window = nautilus_bookmarks_window_new (window, application->priv->bookmark_list);
-		application->priv->bookmarks_window = GTK_WIDGET (bookmarks_window);
-
-		g_object_add_weak_pointer (G_OBJECT (bookmarks_window),
-					   (gpointer *) &application->priv->bookmarks_window);
-	}
-
-	gtk_window_set_transient_for (bookmarks_window, GTK_WINDOW (window));
-	gtk_window_set_screen (bookmarks_window, gtk_window_get_screen (GTK_WINDOW (window)));
+	bookmarks_window = nautilus_bookmarks_window_new (window);
 	gtk_window_present (bookmarks_window);
 }
 

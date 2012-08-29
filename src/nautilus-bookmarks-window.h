@@ -33,7 +33,32 @@
 #include "nautilus-window.h"
 #include "nautilus-bookmark-list.h"
 
-GtkWindow *nautilus_bookmarks_window_new (NautilusWindow       *parent_window,
-					  NautilusBookmarkList *bookmarks);
+#define NAUTILUS_TYPE_BOOKMARKS_WINDOW nautilus_bookmarks_window_get_type()
+#define NAUTILUS_BOOKMARKS_WINDOW(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_BOOKMARKS_WINDOW, NautilusBookmarksWindow))
+#define NAUTILUS_BOOKMARKS_WINDOW_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_CAST ((klass), NAUTILUS_TYPE_BOOKMARKS_WINDOW, NautilusBookmarksWindowClass))
+#define NAUTILUS_IS_BOOKMARKS_WINDOW(obj) \
+  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NAUTILUS_TYPE_BOOKMARKS_WINDOW))
+#define NAUTILUS_IS_BOOKMARKS_WINDOW_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_TYPE ((klass), NAUTILUS_TYPE_BOOKMARKS_WINDOW))
+#define NAUTILUS_BOOKMARKS_WINDOW_GET_CLASS(obj) \
+  (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_TYPE_BOOKMARKS_WINDOW, NautilusBookmarksWindowClass))
+
+typedef struct NautilusBookmarksWindowPrivate NautilusBookmarksWindowPrivate;
+
+typedef struct  {
+	GtkWindow parent;
+
+	NautilusBookmarksWindowPrivate *priv;
+} NautilusBookmarksWindow;
+
+typedef struct {
+	GtkWindowClass parent_class;
+} NautilusBookmarksWindowClass;
+
+GType nautilus_bookmarks_window_get_type (void);
+
+GtkWindow *nautilus_bookmarks_window_new (NautilusWindow       *parent_window);
 
 #endif /* NAUTILUS_BOOKMARKS_WINDOW_H */
