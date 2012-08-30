@@ -1507,6 +1507,7 @@ create_and_set_up_tree_view (NautilusListView *view)
 			view->details->file_name_cell = (GtkCellRendererText *)cell;
 			g_object_set (cell,
 				      "ellipsize", PANGO_ELLIPSIZE_END,
+				      "single-paragraph-mode", TRUE,
 				      "xpad", 5,
 				      NULL);
 
