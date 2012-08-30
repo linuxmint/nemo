@@ -95,7 +95,7 @@ toolbar_update_appearance (NemoToolbar *self)
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
 	else {gtk_widget_show (widgetitem);}
 
-	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Edit");
+	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Edit Location");
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR);
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
 	else {gtk_widget_show (widgetitem);}
