@@ -167,6 +167,7 @@ GSettings *nautilus_desktop_preferences;
 GSettings *nautilus_window_state;
 GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
+GSettings *gnome_interface_preferences;
 
 G_END_DECLS
 

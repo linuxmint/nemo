@@ -73,4 +73,5 @@ nautilus_global_preferences_init (void)
 	nautilus_desktop_preferences = g_settings_new("org.gnome.nautilus.desktop");
 	gnome_lockdown_preferences = g_settings_new("org.gnome.desktop.lockdown");
 	gnome_background_preferences = g_settings_new("org.gnome.desktop.background");
+	gnome_interface_preferences = g_settings_new ("org.gnome.desktop.interface");
 }
