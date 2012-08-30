@@ -107,6 +107,7 @@
   <placeholder name="File Actions">
     <menuitem name="Move To" action="Move To"/>
     <menuitem name="Copy To" action="Copy To"/>
+    <menuitem name="Create Link" action="Create Link"/>
     <menuitem name="Rename" action="Rename"/>
     <menuitem name="Set As Wallpaper" action="Set As Wallpaper"/>
   </placeholder>
