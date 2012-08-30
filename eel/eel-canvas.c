@@ -3320,15 +3320,11 @@ idle_handler (gpointer data)
 {
 	EelCanvas *canvas;
 
-	gdk_threads_enter ();
-
 	canvas = EEL_CANVAS (data);
 	do_update (canvas);
 
 	/* Reset idle id */
 	canvas->idle_id = 0;
-
-	gdk_threads_leave ();
 
 	return FALSE;
 }
