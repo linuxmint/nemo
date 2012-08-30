@@ -337,7 +337,7 @@ action_about_nemo_callback (GtkAction *action,
 					     "your computer and online."),			       
 			       "license", license_trans,
 			       "wrap-license", TRUE,			       				
-			      "logo-icon-name", "system-file-manager",			      
+			      "logo-icon-name", "folder",			      
 			      NULL);
 
 	g_free (license_trans);

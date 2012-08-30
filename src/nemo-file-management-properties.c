@@ -848,7 +848,7 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 	g_signal_connect (dialog, "delete-event",
 			  G_CALLBACK (gtk_widget_destroy), NULL);
 
-	gtk_window_set_icon_name (GTK_WINDOW (dialog), "system-file-manager");
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), "folder");
 
 	if (window) {
 		gtk_window_set_screen (GTK_WINDOW (dialog), gtk_window_get_screen(window));

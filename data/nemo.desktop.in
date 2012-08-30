@@ -2,7 +2,7 @@
 _Name=Files
 _Comment=Access and organize files
 Exec=nemo %U
-Icon=system-file-manager
+Icon=folder
 Terminal=false
 Type=Application
 StartupNotify=true

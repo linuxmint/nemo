@@ -130,7 +130,7 @@ progress_ui_handler_ensure_status_icon (NemoProgressUIHandler *self)
 		return;
 	}
 
-	icon = g_themed_icon_new_with_default_fallbacks ("system-file-manager");
+	icon = g_themed_icon_new_with_default_fallbacks ("system-run");
 	status_icon = gtk_status_icon_new_from_gicon (icon);
 	g_signal_connect (status_icon, "activate",
 			  (GCallback) status_icon_activate_cb,
@@ -220,7 +220,7 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 	gtk_window_set_position (GTK_WINDOW (progress_window),
 				 GTK_WIN_POS_CENTER);
 	gtk_window_set_icon_name (GTK_WINDOW (progress_window),
-				"system-file-manager");
+				"system-run");
 	if ((!g_strcmp0(desktop_environment, "ubuntu")) ||
 	       (!g_strcmp0(desktop_environment, "ubuntu-2d")))
 	    gtk_window_set_skip_taskbar_hint (GTK_WINDOW (progress_window),
