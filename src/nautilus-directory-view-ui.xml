@@ -131,7 +131,6 @@
     <menuitem name="Stop Volume" action="Stop Volume"/>
     <menuitem name="Poll" action="Poll"/>
   </placeholder>
-  <menuitem name="Connect To Server Link" action="Connect To Server Link"/>
   <separator/>
   <menuitem name="Properties" action="Properties"/>
 </popup>
