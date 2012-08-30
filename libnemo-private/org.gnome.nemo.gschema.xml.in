@@ -113,7 +113,7 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-label-search-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show the Search button label in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the Search label button.</description>
     </key>

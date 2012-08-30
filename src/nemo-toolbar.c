@@ -144,13 +144,13 @@ nemo_toolbar_constructed (GObject *obj)
 	context = gtk_widget_get_style_context (toolbar);
 	gtk_style_context_add_class (context, GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
 
-	sep_space = gtk_ui_manager_get_widget(self->priv->ui_manager, "/Toolbar/BeforeSearch");
-	gtk_separator_tool_item_set_draw (GTK_SEPARATOR_TOOL_ITEM (sep_space), FALSE);
-	gtk_tool_item_set_expand (GTK_TOOL_ITEM (sep_space), FALSE);
+	//sep_space = gtk_ui_manager_get_widget(self->priv->ui_manager, "/Toolbar/BeforeSearch");
+	//gtk_separator_tool_item_set_draw (GTK_SEPARATOR_TOOL_ITEM (sep_space), TRUE);
+	//gtk_tool_item_set_expand (GTK_TOOL_ITEM (sep_space), FALSE);
 
-	search = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Search");
-	gtk_style_context_add_class (gtk_widget_get_style_context (search), GTK_STYLE_CLASS_RAISED);
-	gtk_widget_set_name (search, "nemo-search-button");
+	//search = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Search");
+	//gtk_style_context_add_class (gtk_widget_get_style_context (search), GTK_STYLE_CLASS_RAISED);
+	//gtk_widget_set_name (search, "nemo-search-button");
     
 	gtk_box_pack_start (GTK_BOX (self), self->priv->toolbar, TRUE, TRUE, 0);
 	gtk_widget_show_all (self->priv->toolbar);

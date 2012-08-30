@@ -4,12 +4,12 @@
 	<toolitem name="Forward" action="Forward"/>
         <toolitem name="Up" action="Up"/>
  	<toolitem name="Reload" action="Reload"/>
-	<separator name="AfterNavigation" />
-        <toolitem name="Edit Location" action="Edit Location"/>
+	<separator name="AfterNavigation" />        
         <toolitem name="Home" action="Home"/>
         <toolitem name="Computer" action="Computer"/>
-	<placeholder />
+	<toolitem name="Edit Location" action="Edit Location"/>	
 	<separator name="BeforeSearch" />
         <toolitem name="Search" action="Search"/>
+	<placeholder />
 </toolbar>
 </ui>
