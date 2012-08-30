@@ -274,6 +274,7 @@ GSettings *gnome_background_preferences;
 GSettings *gnome_media_handling_preferences;
 GSettings *gnome_terminal_preferences;
 GSettings *cinnamon_privacy_preferences;
+GSettings *cinnamon_interface_preferences;
 
 gint64 nemo_startup_time;
 
