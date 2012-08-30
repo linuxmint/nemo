@@ -97,7 +97,6 @@
 #define NAUTILUS_ACTION_REDO "Redo"
 #define NAUTILUS_ACTION_RESET_TO_DEFAULTS "Reset to Defaults"
 #define NAUTILUS_ACTION_CONNECT_TO_SERVER "Connect to Server"
-#define NAUTILUS_ACTION_CONNECT_TO_SERVER_LINK "Connect To Server Link"
 #define NAUTILUS_ACTION_MOUNT_VOLUME "Mount Volume"
 #define NAUTILUS_ACTION_UNMOUNT_VOLUME "Unmount Volume"
 #define NAUTILUS_ACTION_EJECT_VOLUME "Eject Volume"
