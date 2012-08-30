@@ -274,9 +274,6 @@ typedef struct {
 /* forward declarations */
 
 static gboolean display_selection_info_idle_callback           (gpointer              data);
-static void     nautilus_view_duplicate_selection              (NautilusView      *view,
-							        GList                *files,
-							        GArray               *item_locations);
 static void     nautilus_view_create_links_for_files           (NautilusView      *view,
 							        GList                *files,
 							        GArray               *item_locations);
@@ -1379,31 +1376,6 @@ real_delete (NautilusView *view)
 		return TRUE;
 	}
 	return FALSE;
-}
-
-static void
-action_duplicate_callback (GtkAction *action,
-			   gpointer callback_data)
-{
-        NautilusView *view;
-        GList *selection;
-        GArray *selected_item_locations;
- 
-        view = NAUTILUS_VIEW (callback_data);
-	selection = nautilus_view_get_selection_for_file_transfer (view);
-	if (selection_not_empty_in_menu_callback (view, selection)) {
-		/* FIXME bugzilla.gnome.org 45061:
-		 * should change things here so that we use a get_icon_locations (view, selection).
-		 * Not a problem in this case but in other places the selection may change by
-		 * the time we go and retrieve the icon positions, relying on the selection
-		 * staying intact to ensure the right sequence and count of positions is fragile.
-		 */
-		selected_item_locations = nautilus_view_get_selected_icon_locations (view);
-	        nautilus_view_duplicate_selection (view, selection, selected_item_locations);
-	        g_array_free (selected_item_locations, TRUE);
-	}
-
-        nautilus_file_list_free (selection);
 }
 
 static void
@@ -4165,38 +4137,6 @@ nautilus_view_create_links_for_files (NautilusView *view, GList *files,
 	nautilus_file_operations_copy_move (uris, relative_item_points, dir_uri, GDK_ACTION_LINK, 
 					    GTK_WIDGET (view), copy_move_done_callback, copy_move_done_data);
 	g_free (dir_uri);
-	g_list_free_full (uris, g_free);
-}
-
-static void
-nautilus_view_duplicate_selection (NautilusView *view, GList *files,
-				   GArray *relative_item_points)
-{
-	GList *uris;
-	CopyMoveDoneData *copy_move_done_data;
-
-        g_assert (NAUTILUS_IS_VIEW (view));
-        g_assert (files != NULL);
-	g_assert (g_list_length (files) == relative_item_points->len
-		  || relative_item_points->len == 0);
-
-	/* create a list of URIs */
-	uris = NULL;
-	g_list_foreach (files, prepend_uri_one, &uris);
-	uris = g_list_reverse (uris);
-
-        g_assert (g_list_length (uris) == g_list_length (files));
-        
-	/* offset the drop locations a bit so that we don't pile
-	 * up the icons on top of each other
-	 */
-	offset_drop_points (relative_item_points,
-			    DUPLICATE_HORIZONTAL_ICON_OFFSET,
-			    DUPLICATE_VERTICAL_ICON_OFFSET);
-
-        copy_move_done_data = pre_copy_move (view);
-	nautilus_file_operations_copy_move (uris, relative_item_points, NULL, GDK_ACTION_COPY,
-					    GTK_WIDGET (view), copy_move_done_callback, copy_move_done_data);
 	g_list_free_full (uris, g_free);
 }
 
@@ -7413,10 +7353,6 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("_Invert Selection"), "<control><shift>I",
   /* tooltip */                  N_("Select all and only the items that are not currently selected"),
 				 G_CALLBACK (action_invert_selection_callback) }, 
-  /* name, stock id */         { NAUTILUS_ACTION_DUPLICATE, NULL,
-  /* label, accelerator */       N_("D_uplicate"), NULL,
-  /* tooltip */                  N_("Duplicate each selected item"),
-				 G_CALLBACK (action_duplicate_callback) },
   /* name, stock id */         { NAUTILUS_ACTION_CREATE_LINK, NULL,
   /* label, accelerator */       N_("Ma_ke Link"), "<control>M",
   /* tooltip */                  N_("Create a symbolic link for each selected item"),
@@ -8637,7 +8573,6 @@ real_update_menus (NautilusView *view)
 	gboolean can_trash_files;
 	gboolean can_copy_files;
 	gboolean can_link_files;
-	gboolean can_duplicate_files;
 	gboolean show_separate_delete_command;
 	gboolean show_open_alternate;
 	gboolean show_open_in_new_tab;
@@ -8674,7 +8609,6 @@ real_update_menus (NautilusView *view)
 		&& !selection_contains_recent
 		&& !selection_contains_special_link;
 
-	can_duplicate_files = can_create_files && can_copy_files;
 	can_link_files = can_create_files && can_copy_files;
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
@@ -8873,11 +8807,6 @@ real_update_menus (NautilusView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_RESTORE_FROM_TRASH);
 	update_restore_from_trash_action (action, selection, FALSE);
-	
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NAUTILUS_ACTION_DUPLICATE);
-	gtk_action_set_sensitive (action, can_duplicate_files);
-	gtk_action_set_visible (action, !selection_contains_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_CREATE_LINK);
