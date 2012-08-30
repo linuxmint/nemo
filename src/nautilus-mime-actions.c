@@ -621,26 +621,29 @@ report_broken_symbolic_link (GtkWindow *parent_window, NautilusFile *file)
 	GtkDialog *dialog;
 	GList file_as_list;
 	int response;
-	
+	gboolean can_trash;
+
 	g_assert (nautilus_file_is_broken_symbolic_link (file));
 
 	display_name = nautilus_file_get_display_name (file);
-	if (nautilus_file_is_in_trash (file)) {
-		prompt = g_strdup_printf (_("The Link “%s” is Broken."), display_name);
+	can_trash = nautilus_file_can_trash (file) && !nautilus_file_is_in_trash (file);
+
+	if (can_trash) {
+		prompt = g_strdup_printf (_("The link “%s” is broken. Move it to Trash?"), display_name);
 	} else {
-		prompt = g_strdup_printf (_("The Link “%s” is Broken. Move it to Trash?"), display_name);
+		prompt = g_strdup_printf (_("The link “%s” is broken."), display_name);
 	}
 	g_free (display_name);
 
 	target_path = nautilus_file_get_symbolic_link_target_path (file);
 	if (target_path == NULL) {
-		detail = g_strdup (_("This link cannot be used, because it has no target."));
+		detail = g_strdup (_("This link cannot be used because it has no target."));
 	} else {
-		detail = g_strdup_printf (_("This link cannot be used, because its target "
+		detail = g_strdup_printf (_("This link cannot be used because its target "
 					    "“%s” doesn't exist."), target_path);
 	}
 	
-	if (nautilus_file_is_in_trash (file)) {
+	if (!can_trash) {
 		eel_run_simple_dialog (GTK_WIDGET (parent_window), FALSE, GTK_MESSAGE_WARNING,
 				       prompt, detail, GTK_STOCK_CANCEL, NULL);
 		goto out;
