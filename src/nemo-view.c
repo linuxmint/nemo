@@ -6054,6 +6054,15 @@ paste_into (NemoView *view,
 }
 
 static void
+open_as_root (NemoView *view,
+	    NemoFile *target)
+{	
+	g_assert (NEMO_IS_VIEW (view));
+	g_assert (NEMO_IS_FILE (target));
+	g_spawn_command_line_async (g_strdup_printf("gksu nemo %s", nemo_file_get_location (target)), NULL);
+}
+
+static void
 action_paste_files_into_callback (GtkAction *action,
 				  gpointer callback_data)
 {
@@ -6064,6 +6073,22 @@ action_paste_files_into_callback (GtkAction *action,
 	selection = nemo_view_get_selection (view);
 	if (selection != NULL) {
 		paste_into (view, NEMO_FILE (selection->data));
+		nemo_file_list_free (selection);
+	}
+
+}
+
+static void
+action_open_as_root_callback (GtkAction *action,
+				  gpointer callback_data)
+{
+	NemoView *view;
+	GList *selection;
+
+	view = NEMO_VIEW (callback_data);
+	selection = nemo_view_get_selection (view);
+	if (selection != NULL) {
+		open_as_root (view, NEMO_FILE (selection->data));
 		nemo_file_list_free (selection);
 	}
 
@@ -7007,6 +7032,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open in New _Tab"), "<control><shift>o",
   /* tooltip */                  N_("Open each selected item in a new tab"),
 				 G_CALLBACK (action_open_new_tab_callback) },
+  /* name, stock id */         { "OpenAsRoot", NULL,
+  /* label, accelerator */       N_("Open as Root"), "",
+  /* tooltip */                  N_("Open the folder with administration privileges"),
+				 G_CALLBACK (action_open_as_root_callback) },
   /* name, stock id */         { "OtherApplication1", NULL,
   /* label, accelerator */       N_("Other _Application..."), NULL,
   /* tooltip */                  N_("Choose another application with which to open the selected item"),

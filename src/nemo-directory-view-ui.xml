@@ -137,6 +137,7 @@
 		<menuitem name="Open" action="Open"/>
 		<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
 		<menuitem name="OpenAlternate" action="OpenAlternate"/>
+		<menuitem name="OpenAsRoot" action="OpenAsRoot"/>
 		<separator name="applications separator"/>
 		<placeholder name="Applications Placeholder"/>
 		<menu action="Open With">
