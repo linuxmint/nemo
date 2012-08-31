@@ -4232,8 +4232,20 @@ nautilus_file_get_icon (NautilusFile *file,
 	
 	gicon = get_custom_icon (file);
 	if (gicon) {
+		GdkPixbuf *pixbuf;
+
 		icon = nautilus_icon_info_lookup (gicon, size);
 		g_object_unref (gicon);
+
+		pixbuf = nautilus_icon_info_get_pixbuf (icon);
+		if (pixbuf != NULL) {
+			nautilus_ui_frame_image (&pixbuf);
+			g_object_unref (icon);
+
+			icon = nautilus_icon_info_new_for_pixbuf (pixbuf);
+			g_object_unref (pixbuf);
+		}
+
 		return icon;
 	}
 
