@@ -6059,7 +6059,7 @@ open_as_root (NemoView *view,
 {	
 	g_assert (NEMO_IS_VIEW (view));
 	g_assert (NEMO_IS_FILE (target));
-	g_spawn_command_line_async (g_strdup_printf("gksu nemo %s", nemo_file_get_location (target)), NULL);
+	g_spawn_command_line_async (g_strdup_printf("gksu xdg-open %s", g_shell_quote(g_file_get_path(nemo_file_get_location (target)))), NULL);
 }
 
 static void
@@ -7032,7 +7032,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open in New _Tab"), "<control><shift>o",
   /* tooltip */                  N_("Open each selected item in a new tab"),
 				 G_CALLBACK (action_open_new_tab_callback) },
-  /* name, stock id */         { "OpenAsRoot", NULL,
+  /* name, stock id */         { "OpenAsRoot", GTK_STOCK_DIALOG_AUTHENTICATION,
   /* label, accelerator */       N_("Open as Root"), "",
   /* tooltip */                  N_("Open the folder with administration privileges"),
 				 G_CALLBACK (action_open_as_root_callback) },
@@ -9789,4 +9789,3 @@ nemo_view_class_init (NemoViewClass *klass)
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, GDK_SHIFT_MASK,
 				      "delete", 0);
 }
-
