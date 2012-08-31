@@ -243,7 +243,7 @@ nemo_get_thumbnail_frame (void)
 	static GdkPixbuf *thumbnail_frame = NULL;
 
 	if (thumbnail_frame == NULL) {
-		GInputStream *stream = g_resources_open_stream ("/org/gnome/nemo/icons/thumbnail_frame.png", 0, NULL);
+		GInputStream *stream = g_resources_open_stream ("/org/nemo/icons/thumbnail_frame.png", 0, NULL);
 		if (stream != NULL) {
 			thumbnail_frame = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
 			g_object_unref (stream);

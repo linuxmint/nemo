@@ -2640,7 +2640,7 @@ nemo_list_view_merge_menus (NemoView *view)
 	g_object_unref (action_group); /* owned by ui manager */
 
 	list_view->details->list_merge_id =
-		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nemo/nemo-list-view-ui.xml", NULL);
+		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-list-view-ui.xml", NULL);
 
 	list_view->details->menus_ready = TRUE;
 }

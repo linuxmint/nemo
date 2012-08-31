@@ -7351,7 +7351,7 @@ real_merge_menus (NemoView *view)
 	gtk_ui_manager_insert_action_group (ui_manager, action_group, -1);
 	g_object_unref (action_group); /* owned by ui manager */
 
-	view->details->dir_merge_id = gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nemo/nemo-directory-view-ui.xml", NULL);
+	view->details->dir_merge_id = gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-directory-view-ui.xml", NULL);
 	
 	view->details->scripts_invalid = TRUE;
 	view->details->templates_invalid = TRUE;

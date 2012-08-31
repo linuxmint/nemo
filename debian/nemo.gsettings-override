@@ -1,4 +1,4 @@
-[org.gnome.nemo.desktop]
+[org.nemo.desktop]
 home-icon-visible=false
 computer-icon-visible=false
 trash-icon-visible=false

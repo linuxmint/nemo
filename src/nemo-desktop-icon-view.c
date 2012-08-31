@@ -796,7 +796,7 @@ real_merge_menus (NemoView *view)
 	g_object_unref (action_group); /* owned by ui manager */
 
 	desktop_view->details->desktop_merge_id =
-		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nemo/nemo-desktop-icon-view-ui.xml", NULL);
+		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-desktop-icon-view-ui.xml", NULL);
 }
 
 static NemoView *
