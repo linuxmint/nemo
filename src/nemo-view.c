@@ -6057,9 +6057,23 @@ static void
 open_as_root (NemoView *view,
 	    NemoFile *target)
 {	
+    gchar *argv[4];
 	g_assert (NEMO_IS_VIEW (view));
 	g_assert (NEMO_IS_FILE (target));
-	g_spawn_command_line_async (g_strdup_printf("gksu xdg-open %s", g_shell_quote(g_file_get_path(nemo_file_get_location (target)))), NULL);
+    argv[0] = "gksu";
+    argv[1] = "xdg-open";
+    argv[2] = g_file_get_path(nemo_file_get_location (target));
+    argv[3] = NULL;
+    g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
+}
+
+static void
+open_in_terminal (gchar *location)
+{	
+    gchar *argv[2];
+    argv[0] = "x-terminal-emulator";
+    argv[1] = NULL;
+    g_spawn_async(location, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
 }
 
 static void
@@ -6092,6 +6106,23 @@ action_open_as_root_callback (GtkAction *action,
 		nemo_file_list_free (selection);
 	}
 
+}
+
+static void
+action_open_in_terminal_callback(GtkAction *action,
+				  gpointer callback_data)
+{
+	NemoView *view;
+	GList *selection;
+
+	view = NEMO_VIEW (callback_data);
+	selection = nemo_view_get_selection (view);
+	if (selection != NULL) {
+        open_in_terminal (g_file_get_path(nemo_file_get_location (NEMO_FILE (selection->data))));
+		nemo_file_list_free (selection);
+	} else {
+        open_in_terminal (g_filename_from_uri(nemo_view_get_uri(view), NULL, NULL));
+    }
 }
 
 static void
@@ -7032,6 +7063,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open in New _Tab"), "<control><shift>o",
   /* tooltip */                  N_("Open each selected item in a new tab"),
 				 G_CALLBACK (action_open_new_tab_callback) },
+  /* name, stock id */         { "OpenInTerminal", NULL,
+  /* label, accelerator */       N_("Open in Terminal"), "",
+  /* tooltip */                  N_("Open terminal in the selected folder"),
+				 G_CALLBACK (action_open_in_terminal_callback) },
   /* name, stock id */         { "OpenAsRoot", GTK_STOCK_DIALOG_AUTHENTICATION,
   /* label, accelerator */       N_("Open as Root"), "",
   /* tooltip */                  N_("Open the folder with administration privileges"),

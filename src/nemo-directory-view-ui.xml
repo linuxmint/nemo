@@ -111,6 +111,8 @@
 			 	<menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 			</menu>
 		</placeholder>
+		<separator name="Open terminal separator"/>
+        <menuitem name="OpenInTerminal" action="OpenInTerminal"/>
 		<separator name="View items separator"/>
 		<placeholder name="View Items"/>
 		<separator name="Clipboard separator"/>
@@ -137,6 +139,7 @@
 		<menuitem name="Open" action="Open"/>
 		<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
 		<menuitem name="OpenAlternate" action="OpenAlternate"/>
+		<menuitem name="OpenInTerminal" action="OpenInTerminal"/>
 		<menuitem name="OpenAsRoot" action="OpenAsRoot"/>
 		<separator name="applications separator"/>
 		<placeholder name="Applications Placeholder"/>
