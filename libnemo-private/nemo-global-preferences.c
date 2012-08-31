@@ -68,13 +68,13 @@ nemo_global_preferences_init (void)
 
 	initialized = TRUE;
 
-	nemo_preferences = g_settings_new("org.gnome.nemo.preferences");
-	nemo_window_state = g_settings_new("org.gnome.nemo.window-state");
-	nemo_icon_view_preferences = g_settings_new("org.gnome.nemo.icon-view");
-	nemo_list_view_preferences = g_settings_new("org.gnome.nemo.list-view");
-	nemo_compact_view_preferences = g_settings_new("org.gnome.nemo.compact-view");
-	nemo_desktop_preferences = g_settings_new("org.gnome.nemo.desktop");
-	nemo_tree_sidebar_preferences = g_settings_new("org.gnome.nemo.sidebar-panels.tree");
+	nemo_preferences = g_settings_new("org.nemo.preferences");
+	nemo_window_state = g_settings_new("org.nemo.window-state");
+	nemo_icon_view_preferences = g_settings_new("org.nemo.icon-view");
+	nemo_list_view_preferences = g_settings_new("org.nemo.list-view");
+	nemo_compact_view_preferences = g_settings_new("org.nemo.compact-view");
+	nemo_desktop_preferences = g_settings_new("org.nemo.desktop");
+	nemo_tree_sidebar_preferences = g_settings_new("org.nemo.sidebar-panels.tree");
 	gnome_lockdown_preferences = g_settings_new("org.gnome.desktop.lockdown");
 	gnome_background_preferences = g_settings_new("org.gnome.desktop.background");
 }

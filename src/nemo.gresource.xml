@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/nemo">
+  <gresource prefix="/org/nemo">
     <file compressed="true">nemo-bookmarks-window.ui</file>
     <file compressed="true">nemo-file-management-properties.ui</file>
     <file>nemo-icon-view-ui.xml</file>

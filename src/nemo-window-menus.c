@@ -1346,7 +1346,7 @@ nemo_window_initialize_menus (NemoWindow *window)
 			  G_CALLBACK (disconnect_proxy_cb), window);
 
 	/* add the UI */
-	gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nemo/nemo-shell-ui.xml", NULL);
+	gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-shell-ui.xml", NULL);
 
 	nemo_window_initialize_trash_icon_monitor (window);
 	nemo_window_initialize_go_menu (window);

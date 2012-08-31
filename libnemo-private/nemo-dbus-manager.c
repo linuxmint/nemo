@@ -187,7 +187,7 @@ bus_acquired_handler_cb (GDBusConnection *conn,
 
   self->connection = g_object_ref (conn);
 
-  self->object_manager = g_dbus_object_manager_server_new ("/org/gnome/Nemo");
+  self->object_manager = g_dbus_object_manager_server_new ("/org/Nemo");
 
   self->file_operations = nemo_dbus_file_operations_skeleton_new ();
 
@@ -205,7 +205,7 @@ bus_acquired_handler_cb (GDBusConnection *conn,
 		    self);
 
   g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->file_operations), self->connection,
-				    "/org/gnome/Nemo", NULL);
+				    "/org/Nemo", NULL);
 
   g_dbus_object_manager_server_set_connection (self->object_manager, self->connection);
 
@@ -263,7 +263,7 @@ nemo_dbus_manager_constructed (GObject *object)
   g_application_hold (self->application);
 
   self->owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
-				   "org.gnome.Nemo",
+				   "org.Nemo",
 				   G_BUS_NAME_OWNER_FLAGS_NONE,
 				   bus_acquired_handler_cb,
 				   on_name_acquired,

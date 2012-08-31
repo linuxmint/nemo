@@ -30,9 +30,9 @@
 
 G_DEFINE_TYPE (NemoPreviewer, nemo_previewer, G_TYPE_OBJECT);
 
-#define PREVIEWER_DBUS_NAME "org.gnome.NemoPreviewer"
-#define PREVIEWER_DBUS_IFACE "org.gnome.NemoPreviewer"
-#define PREVIEWER_DBUS_PATH "/org/gnome/NemoPreviewer"
+#define PREVIEWER_DBUS_NAME "org.NemoPreviewer"
+#define PREVIEWER_DBUS_IFACE "org.NemoPreviewer"
+#define PREVIEWER_DBUS_PATH "/org/NemoPreviewer"
 
 static NemoPreviewer *singleton = NULL;
 
