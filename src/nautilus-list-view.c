@@ -628,13 +628,11 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	static int click_count = 0;
 	int double_click_time;
 	int horizontal_separator;
-	gboolean blank_click;
 
 	view = NAUTILUS_LIST_VIEW (callback_data);
 	tree_view = GTK_TREE_VIEW (widget);
 	tree_view_class = GTK_WIDGET_GET_CLASS (tree_view);
 	selection = gtk_tree_view_get_selection (tree_view);
-	blank_click = FALSE;
 
 	/* Don't handle extra mouse buttons here */
 	if (event->button > 5) {
@@ -718,18 +716,11 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 			 * but one row would be would be deselected. We don't
 			 * want that; we want the right click menu or single
 			 * click to apply to everything that's currently selected. */
-			
-			if (event->button == 3) {
-				blank_click = 
-					(!gtk_tree_selection_path_is_selected (selection, path) &&
-					 gtk_tree_view_is_blank_at_pos (tree_view, event->x, event->y, NULL, NULL, NULL, NULL));
+
+			if (event->button == 3 && gtk_tree_selection_path_is_selected (selection, path)) {
+				call_parent = FALSE;
 			}
 
-			if (event->button == 3 && 
-			    (blank_click || gtk_tree_selection_path_is_selected (selection, path))) {
-				call_parent = FALSE;
-			} 
-			
 			if ((event->button == 1 || event->button == 2) &&
 			    ((event->state & GDK_CONTROL_MASK) != 0 ||
 			     (event->state & GDK_SHIFT_MASK) == 0)) {			
@@ -790,9 +781,6 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 			}
 			
 			if (event->button == 3) {
-				if (blank_click) {
-					gtk_tree_selection_unselect_all (selection);
-				}
 				do_popup_menu (widget, view, event);
 			}
 		}
