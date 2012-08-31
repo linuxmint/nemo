@@ -826,23 +826,6 @@ nautilus_window_slot_clear_back_list (NautilusWindowSlot *slot)
 	slot->back_list = NULL;
 }
 
-gboolean
-nautilus_window_slot_should_close_with_mount (NautilusWindowSlot *slot,
-					      GMount *mount)
-{
-	GFile *mount_location;
-	gboolean close_with_mount;
-
-	mount_location = g_mount_get_root (mount);
-	close_with_mount = 
-		g_file_has_prefix (NAUTILUS_WINDOW_SLOT (slot)->location, mount_location) ||
-		g_file_equal (NAUTILUS_WINDOW_SLOT (slot)->location, mount_location);
-
-	g_object_unref (mount_location);
-
-	return close_with_mount;
-}
-
 NautilusWindowSlot *
 nautilus_window_slot_new (NautilusWindow *window)
 {

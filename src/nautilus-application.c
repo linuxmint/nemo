@@ -94,9 +94,6 @@ static GList *nautilus_application_desktop_windows;
 static gboolean save_of_accel_map_requested = FALSE;
 
 static void     desktop_changed_callback          (gpointer                  user_data);
-static void     mount_removed_callback            (GVolumeMonitor            *monitor,
-						   GMount                    *mount,
-						   NautilusApplication       *application);
 static void     mount_added_callback              (GVolumeMonitor            *monitor,
 						   GMount                    *mount,
 						   NautilusApplication       *application);
@@ -575,76 +572,6 @@ mount_added_callback (GVolumeMonitor *monitor,
 		nautilus_directory_force_reload (directory);
 		nautilus_directory_unref (directory);
 	}
-}
-
-/* Called whenever a mount is unmounted. Check and see if there are
- * any windows open displaying contents on the mount. If there are,
- * close them.  It would also be cool to save open window and position
- * info.
- */
-static void
-mount_removed_callback (GVolumeMonitor *monitor,
-			GMount *mount,
-			NautilusApplication *application)
-{
-	GList *window_list, *node, *close_list;
-	NautilusWindow *window;
-	NautilusWindowSlot *slot;
-	NautilusWindowSlot *force_no_close_slot;
-	GFile *root, *computer;
-	gchar *uri;
-	gint n_slots;
-
-	close_list = NULL;
-	force_no_close_slot = NULL;
-	n_slots = 0;
-
-	/* Check and see if any of the open windows are displaying contents from the unmounted mount */
-	window_list = gtk_application_get_windows (GTK_APPLICATION (application));
-
-	root = g_mount_get_root (mount);
-	uri = g_file_get_uri (root);
-
-	DEBUG ("Removed mount at uri %s", uri);
-	g_free (uri);
-
-	/* Construct a list of windows to be closed. Do not add the non-closable windows to the list. */
-	for (node = window_list; node != NULL; node = node->next) {
-		window = NAUTILUS_WINDOW (node->data);
-		if (window != NULL && !NAUTILUS_IS_DESKTOP_WINDOW (window)) {
-			GList *l;
-
-			for (l = window->details->slots; l != NULL; l = l->next) {
-				slot = l->data;
-				n_slots++;
-				if (nautilus_window_slot_should_close_with_mount (slot, mount)) {
-					close_list = g_list_prepend (close_list, slot);
-				}
-			} /* for all slots */
-		}
-	}
-
-	if ((nautilus_application_desktop_windows == NULL) &&
-	    (close_list != NULL) &&
-	    (g_list_length (close_list) == n_slots)) {
-		/* We are trying to close all open slots. Keep one navigation slot open. */
-		force_no_close_slot = close_list->data;
-	}
-
-	/* Handle the windows in the close list. */
-	for (node = close_list; node != NULL; node = node->next) {
-		slot = node->data;
-
-		if (slot != force_no_close_slot) {
-			nautilus_window_slot_close (slot->window, slot);
-		} else {
-			computer = g_file_new_for_path (g_get_home_dir ());
-			nautilus_window_slot_open_location (slot, computer, 0);
-			g_object_unref (computer);
-		}
-	}
-
-	g_list_free (close_list);
 }
 
 static void
@@ -1424,11 +1351,7 @@ nautilus_application_startup (GApplication *app)
 	notify_init (GETTEXT_PACKAGE);
 	self->priv->progress_handler = nautilus_progress_ui_handler_new ();
 
-	/* Watch for unmounts so we can close open windows */
-	/* TODO-gio: This should be using the UNMOUNTED feature of GFileMonitor instead */
 	self->priv->volume_monitor = g_volume_monitor_get ();
-	g_signal_connect_object (self->priv->volume_monitor, "mount_removed",
-				 G_CALLBACK (mount_removed_callback), self, 0);
 	g_signal_connect_object (self->priv->volume_monitor, "mount_added",
 				 G_CALLBACK (mount_added_callback), self, 0);
 

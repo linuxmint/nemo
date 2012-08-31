@@ -175,9 +175,6 @@ char           * nautilus_window_slot_get_current_uri      (NautilusWindowSlot *
 NautilusWindow * nautilus_window_slot_get_window           (NautilusWindowSlot *slot);
 void           nautilus_window_slot_make_hosting_window_active (NautilusWindowSlot *slot);
 
-gboolean nautilus_window_slot_should_close_with_mount (NautilusWindowSlot *slot,
-						       GMount *mount);
-
 void nautilus_window_slot_clear_forward_list (NautilusWindowSlot *slot);
 void nautilus_window_slot_clear_back_list    (NautilusWindowSlot *slot);
 

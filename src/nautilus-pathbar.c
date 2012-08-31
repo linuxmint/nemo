@@ -1385,55 +1385,15 @@ nautilus_path_bar_update_button_state (ButtonData *button_data,
         }
 }
 
-static GMount *
-get_location_is_mounted_mount (GFile *location)
-{
-	GVolumeMonitor *volume_monitor;
-	GList *mounts, *l;
-	GMount *mount, *result = NULL;
-	GFile *root = NULL, *default_location = NULL;
-
-	volume_monitor = g_volume_monitor_get ();
-	mounts = g_volume_monitor_get_mounts (volume_monitor);
-
-	for (l = mounts; l != NULL; l = l->next) {
-		mount = l->data;
-
-                if (g_mount_is_shadowed (mount)) {
-			continue;
-                }
-
-		root = g_mount_get_root (mount);
-		if (g_file_equal (location, root)) {
-			result = g_object_ref (mount);
-			break;
-		}
-
-		default_location = g_mount_get_default_location (mount);
-		if (!g_file_equal (default_location, root) &&
-		    g_file_equal (location, default_location)) {
-			result = g_object_ref (mount);
-			break;
-		}
-	}
-
-	g_clear_object (&root);
-	g_clear_object (&default_location);
-	g_list_free_full (mounts, g_object_unref);
-
-	return result;
-}
-
 static gboolean
 setup_file_path_mounted_mount (GFile *location, 
 			       ButtonData *button_data)
 {
 	NautilusIconInfo *info;
 	GIcon *icon;
-	GMount *mount = NULL;
+	GMount *mount;
 
-	mount = get_location_is_mounted_mount (location);
-
+	mount = nautilus_get_mounted_mount_for_root (location);
 	if (mount == NULL) {
 		return FALSE;
 	}
