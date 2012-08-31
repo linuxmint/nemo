@@ -38,7 +38,8 @@ GtkAction * nautilus_action_from_menu_item         (NautilusMenuItem  *item);
 
 GdkPixbuf * nautilus_ui_get_menu_icon              (const char        *icon_name);
 
-char * nautilus_escape_action_name (const char *action_name, const char *prefix);
-
+char * nautilus_escape_action_name                 (const char        *action_name,
+						    const char        *prefix);
+void   nautilus_ui_frame_image                     (GdkPixbuf        **pixbuf);
 
 #endif /* NAUTILUS_UI_UTILITIES_H */

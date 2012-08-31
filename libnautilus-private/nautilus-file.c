@@ -43,6 +43,7 @@
 #include "nautilus-search-directory.h"
 #include "nautilus-search-directory-file.h"
 #include "nautilus-thumbnails.h"
+#include "nautilus-ui-utilities.h"
 #include "nautilus-vfs-file.h"
 #include "nautilus-file-undo-operations.h"
 #include "nautilus-file-undo-manager.h"
@@ -4276,10 +4277,7 @@ nautilus_file_get_icon (NautilusFile *file,
 								 MAX (h * scale, 1),
 								 GDK_INTERP_BILINEAR);
 
-			/* We don't want frames around small icons */
-			if (!gdk_pixbuf_get_has_alpha(raw_pixbuf) || s >= 128) {
-				nautilus_thumbnail_frame_image (&scaled_pixbuf);
-			}
+			nautilus_ui_frame_image (&scaled_pixbuf);
 			g_object_unref (raw_pixbuf);
 
 			/* Don't scale up if more than 25%, then read the original
