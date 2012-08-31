@@ -1,34 +1,34 @@
 <schemalist>
-  <enum id="org.gnome.nemo.SpeedTradeoff">
+  <enum id="org.nemo.SpeedTradeoff">
     <value nick="always" value="0"/>
     <value nick="local-only" value="1"/>
     <value nick="never" value="2"/>
   </enum>
 
-  <enum id="org.gnome.nemo.ClickPolicy">
+  <enum id="org.nemo.ClickPolicy">
     <value nick="single" value="0"/>
     <value nick="double" value="1"/>
   </enum>
 
-  <enum id="org.gnome.nemo.ActivationChoice">
+  <enum id="org.nemo.ActivationChoice">
     <value nick="launch" value="0"/>
     <value nick="display" value="1"/>
     <value nick="ask" value="2"/>
   </enum>
 
-  <enum id="org.gnome.nemo.FolderView">
+  <enum id="org.nemo.FolderView">
     <value nick="icon-view" value="0"/>
     <value nick="compact-view" value="1"/>
     <value nick="list-view" value="2"/>
   </enum>
 
-  <enum id="org.gnome.nemo.DateFormat">
+  <enum id="org.nemo.DateFormat">
     <value nick="locale" value="0"/>
     <value nick="iso" value="1"/>
     <value nick="informal" value="2"/>
   </enum>
 
-  <enum id="org.gnome.nemo.SortOrder">
+  <enum id="org.nemo.SortOrder">
     <value nick="manually" value="0"/>
     <value nick="name" value="1"/>
     <value nick="size" value="2"/>
@@ -38,7 +38,7 @@
     <value nick="trash-time" value="6"/>
   </enum>
 
-  <enum id="org.gnome.nemo.ZoomLevel">
+  <enum id="org.nemo.ZoomLevel">
     <value nick="smallest" value="0"/>
     <value nick="smaller" value="1"/>
     <value nick="small" value="2"/>
@@ -48,23 +48,23 @@
     <value nick="largest" value="6"/>
   </enum>
 
-  <enum id="org.gnome.nemo.TabPosition">
+  <enum id="org.nemo.TabPosition">
     <value nick="after-current-tab" value="0"/>
     <value nick="end" value="1"/>
   </enum>
 
-  <schema id="org.gnome.nemo" path="/org/gnome/nemo/" gettext-domain="nemo">
-    <child name="preferences" schema="org.gnome.nemo.preferences"/>
-    <child name="icon-view" schema="org.gnome.nemo.icon-view"/>
-    <child name="compact-view" schema="org.gnome.nemo.compact-view"/>
-    <child name="list-view" schema="org.gnome.nemo.list-view"/>
-    <child name="sidebar-panels" schema="org.gnome.nemo.sidebar-panels"/>
-    <child name="desktop" schema="org.gnome.nemo.desktop"/>
-    <child name="window-state" schema="org.gnome.nemo.window-state"/>
+  <schema id="org.nemo" path="/org/nemo/" gettext-domain="nemo">
+    <child name="preferences" schema="org.nemo.preferences"/>
+    <child name="icon-view" schema="org.nemo.icon-view"/>
+    <child name="compact-view" schema="org.nemo.compact-view"/>
+    <child name="list-view" schema="org.nemo.list-view"/>
+    <child name="sidebar-panels" schema="org.nemo.sidebar-panels"/>
+    <child name="desktop" schema="org.nemo.desktop"/>
+    <child name="window-state" schema="org.nemo.window-state"/>
   </schema>
 
-  <schema id="org.gnome.nemo.preferences" path="/org/gnome/nemo/preferences/" gettext-domain="nemo">
-    <key name="tabs-open-position" enum="org.gnome.nemo.TabPosition">
+  <schema id="org.nemo.preferences" path="/org/nemo/preferences/" gettext-domain="nemo">
+    <key name="tabs-open-position" enum="org.nemo.TabPosition">
       <aliases>
 	<alias value='after_current_tab' target='after-current-tab'/>
       </aliases>
@@ -127,24 +127,24 @@
       <_summary>Whether to enable immediate deletion</_summary>
       <_description>If set to true, then Nemo will have a feature allowing you to delete a file immediately and in-place, instead of moving it  to the trash. This feature can be dangerous, so use caution.</_description>
     </key>
-    <key name="show-icon-text" enum="org.gnome.nemo.SpeedTradeoff">
+    <key name="show-icon-text" enum="org.nemo.SpeedTradeoff">
       <aliases><alias value='local_only' target='local-only'/></aliases>
       <default>'local-only'</default>
       <_summary>When to show preview text in icons</_summary>
       <_description>Speed tradeoff for when to show a preview of text file contents in the file's icon. If set to "always" then always show previews,  even if the folder is on a remote server. If set to "local-only" then only show previews for local file systems. If set to "never" then never bother to read preview data.</_description>
     </key>
-    <key name="show-directory-item-counts"  enum="org.gnome.nemo.SpeedTradeoff">
+    <key name="show-directory-item-counts"  enum="org.nemo.SpeedTradeoff">
       <aliases><alias value='local_only' target='local-only'/></aliases>
       <default>'local-only'</default>
       <_summary>When to show number of items in a folder</_summary>
       <_description>Speed tradeoff for when to show the number of items in a  folder. If set to "always" then always show item counts,  even if the folder is on a remote server.  If set to "local-only" then only show counts for local file systems. If set to "never" then never bother to compute item counts.</_description>
     </key>
-    <key name="click-policy" enum="org.gnome.nemo.ClickPolicy">
+    <key name="click-policy" enum="org.nemo.ClickPolicy">
       <default>'double'</default>
       <_summary>Type of click used to launch/open files</_summary>
       <_description>Possible values are "single" to launch files on a single click,  or "double" to launch them on a double click.</_description>
     </key>
-    <key name="executable-text-activation" enum="org.gnome.nemo.ActivationChoice">
+    <key name="executable-text-activation" enum="org.nemo.ActivationChoice">
       <default>'ask'</default>
       <_summary>What to do with executable text files when activated</_summary>
       <_description>What to do with executable text files when they are activated (single or double clicked). Possible values are "launch" to launch them as programs, "ask" to ask what to do via a dialog, and "display" to display them as text files.</_description>
@@ -169,7 +169,7 @@
       <_summary>Mouse button to activate the "Back" command in browser window</_summary>
       <_description>For users with mice that have buttons for "Forward" and "Back", this key will set which button activates the "Back" command in a browser window. Possible values range between 6 and 14.</_description>
     </key>
-    <key name="show-image-thumbnails" enum="org.gnome.nemo.SpeedTradeoff">
+    <key name="show-image-thumbnails" enum="org.nemo.SpeedTradeoff">
       <aliases><alias value='local_only' target='local-only'/></aliases>
       <default>'local-only'</default>
       <_summary>When to show thumbnails of image files</_summary>
@@ -190,7 +190,7 @@
       <_summary>Show folders first in windows</_summary>
       <_description>If set to true, then Nemo shows folders prior to showing files in the icon and list views.</_description>
     </key>
-    <key name="default-sort-order" enum="org.gnome.nemo.SortOrder">
+    <key name="default-sort-order" enum="org.nemo.SortOrder">
       <aliases>
 	<alias value='modification_date' target='mtime'/>
       </aliases>
@@ -208,7 +208,7 @@
       <_summary>Nemo uses the users home folder as the desktop</_summary>
       <_description>If set to true, then Nemo will use the user's home folder as the desktop.  If it is false, then it will use ~/Desktop as the desktop.</_description>
     </key>
-    <key name="default-folder-viewer" enum="org.gnome.nemo.FolderView">
+    <key name="default-folder-viewer" enum="org.nemo.FolderView">
       <aliases>
         <alias value='icon_view' target='icon-view'/>
         <alias value='compact_view' target='compact-view'/>
@@ -218,7 +218,7 @@
       <_summary>Default folder viewer</_summary>
       <_description>When a folder is visited this viewer is used unless you have selected another view for that particular folder. Possible values are "list-view", "icon-view" and "compact-view".</_description>
     </key>
-    <key name="date-format" enum="org.gnome.nemo.DateFormat">
+    <key name="date-format" enum="org.nemo.DateFormat">
       <default>'locale'</default>
       <_summary>Date Format</_summary>
       <_description>The format of file dates. Possible values are "locale", "iso", and "informal".</_description>
@@ -235,7 +235,7 @@
     </key>
   </schema>
 
-  <schema id="org.gnome.nemo.icon-view" path="/org/gnome/nemo/icon-view/" gettext-domain="nemo">
+  <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">
     <key name="captions" type="as">
       <default>[ 'none', 'size', 'date_modified' ]</default>
       <_summary>List of possible captions on icons</_summary>
@@ -250,7 +250,7 @@
       <_summary>Put labels beside icons</_summary>
       <_description>If true, labels will be placed beside icons rather than underneath them.</_description>
     </key>
-    <key name="default-zoom-level" enum="org.gnome.nemo.ZoomLevel">
+    <key name="default-zoom-level" enum="org.nemo.ZoomLevel">
       <default>'standard'</default>
       <_summary>Default icon zoom level</_summary>
       <_description>Default zoom level used by the icon view.</_description>
@@ -285,8 +285,8 @@
     </key>
   </schema>
 
-  <schema id="org.gnome.nemo.compact-view" path="/org/gnome/nemo/compact-view/" gettext-domain="nemo">
-    <key name="default-zoom-level" enum="org.gnome.nemo.ZoomLevel">
+  <schema id="org.nemo.compact-view" path="/org/nemo/compact-view/" gettext-domain="nemo">
+    <key name="default-zoom-level" enum="org.nemo.ZoomLevel">
       <default>'standard'</default>
       <_summary>Default compact view zoom level</_summary>
       <_description>Default zoom level used by the compact view.</_description>
@@ -298,8 +298,8 @@
     </key>
   </schema>
 
-  <schema id="org.gnome.nemo.list-view" path="/org/gnome/nemo/list-view/" gettext-domain="nemo">
-    <key name="default-zoom-level" enum="org.gnome.nemo.ZoomLevel">
+  <schema id="org.nemo.list-view" path="/org/nemo/list-view/" gettext-domain="nemo">
+    <key name="default-zoom-level" enum="org.nemo.ZoomLevel">
       <default>'smaller'</default>
       <_summary>Default list zoom level</_summary>
       <_description>Default zoom level used by the list view.</_description>
@@ -316,11 +316,11 @@
     </key>
   </schema>
 
-  <schema id="org.gnome.nemo.sidebar-panels" path="/org/gnome/nemo/sidebar-panels/" gettext-domain="nemo">
-    <child name="tree" schema="org.gnome.nemo.sidebar-panels.tree"/>
+  <schema id="org.nemo.sidebar-panels" path="/org/nemo/sidebar-panels/" gettext-domain="nemo">
+    <child name="tree" schema="org.nemo.sidebar-panels.tree"/>
   </schema>
 
-  <schema id="org.gnome.nemo.sidebar-panels.tree" path="/org/gnome/nemo/sidebar-panels/tree/" gettext-domain="nemo">
+  <schema id="org.nemo.sidebar-panels.tree" path="/org/nemo/sidebar-panels/tree/" gettext-domain="nemo">
     <key name="show-only-directories" type="b">
       <default>true</default>
       <_summary>Only show folders in the tree side pane</_summary>
@@ -328,7 +328,7 @@
     </key>
   </schema>
 
-  <schema id="org.gnome.nemo.desktop" path="/org/gnome/nemo/desktop/" gettext-domain="nemo">
+  <schema id="org.nemo.desktop" path="/org/nemo/desktop/" gettext-domain="nemo">
     <key name="font" type="s">
       <default l10n="messages" context="desktop-font">''</default>
       <_summary>Desktop font</_summary>
@@ -391,7 +391,7 @@
     </key>
   </schema>
 
-  <schema id="org.gnome.nemo.window-state" path="/org/gnome/nemo/window-state/" gettext-domain="nemo">
+  <schema id="org.nemo.window-state" path="/org/nemo/window-state/" gettext-domain="nemo">
     <key name="geometry" type="s">
       <default>''</default>
       <_summary>The geometry string for a navigation window.</_summary>

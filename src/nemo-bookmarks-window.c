@@ -255,7 +255,7 @@ create_bookmarks_window (NemoBookmarkList *list, GObject *undo_manager_source)
 
 	builder = gtk_builder_new ();
 	if (!gtk_builder_add_from_resource (builder,
-					    "/org/gnome/nemo/nemo-bookmarks-window.ui",
+					    "/org/nemo/nemo-bookmarks-window.ui",
 					    NULL)) {
 		return NULL;
 	}

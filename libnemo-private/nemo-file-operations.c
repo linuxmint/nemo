@@ -1281,12 +1281,10 @@ job_aborted (CommonJob *job)
 static gboolean
 should_confirm_trash (void)
 {
-	GSettings *prefs;
 	gboolean confirm_trash;
 
-	prefs = g_settings_new ("org.gnome.nemo.preferences");
-	confirm_trash = g_settings_get_boolean (prefs, NEMO_PREFERENCES_CONFIRM_TRASH);
-	g_object_unref (prefs);
+	confirm_trash = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CONFIRM_TRASH);
+
 	return confirm_trash;
 }
 
