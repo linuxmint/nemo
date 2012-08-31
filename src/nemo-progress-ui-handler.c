@@ -44,6 +44,7 @@ struct _NemoProgressUIHandlerPriv {
 	GtkWidget *progress_window;
 	GtkWidget *window_vbox;
 	guint active_infos;
+	GList *infos;
 
 	NotifyNotification *progress_notification;
 	GtkStatusIcon *status_icon;
@@ -261,7 +262,7 @@ progress_ui_handler_add_to_window (NemoProgressUIHandler *self,
 			    progress,
 			    FALSE, FALSE, 6);
 
-	gtk_widget_show (progress);
+	gtk_widget_show (progress);	
 }
 
 static void
@@ -300,6 +301,7 @@ progress_info_finished_cb (NemoProgressInfo *info,
 			   NemoProgressUIHandler *self)
 {
 	self->priv->active_infos--;
+	self->priv->infos = g_list_remove (self->priv->infos, info);
 
 	if (self->priv->active_infos > 0) {
 		if (!gtk_widget_get_visible (self->priv->progress_window)) {
@@ -316,11 +318,33 @@ progress_info_finished_cb (NemoProgressInfo *info,
 }
 
 static void
+progress_info_changed_cb (NemoProgressInfo *info,
+			   NemoProgressUIHandler *self)
+{	
+	if (g_list_length(self->priv->infos) > 0) {
+			NemoProgressInfo *first_info = (NemoProgressInfo *) g_list_first(self->priv->infos)->data;			
+			double progress = nemo_progress_info_get_progress(first_info);
+			if (progress > 0) {
+				int iprogress = progress * 100;				
+				gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), g_strdup_printf (_("%d%% %s"), iprogress, nemo_progress_info_get_status(first_info)));
+			}			
+			else {
+				gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), nemo_progress_info_get_status(first_info));	
+			}			
+	} 
+}
+
+static void
 handle_new_progress_info (NemoProgressUIHandler *self,
 			  NemoProgressInfo *info)
 {
+	self->priv->infos = g_list_append (self->priv->infos, info);	
+	
 	g_signal_connect (info, "finished",
 			  G_CALLBACK (progress_info_finished_cb), self);
+			  
+	g_signal_connect (info, "progress-changed",
+			  G_CALLBACK (progress_info_changed_cb), self);
 
 	self->priv->active_infos++;
 
@@ -328,6 +352,8 @@ handle_new_progress_info (NemoProgressUIHandler *self,
 		/* this is the only active operation, present the window */
 		progress_ui_handler_add_to_window (self, info);
 		gtk_window_present (GTK_WINDOW (self->priv->progress_window));
+		gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), nemo_progress_info_get_details(info));
+		gtk_window_set_icon_name (GTK_WINDOW (self->priv->progress_window), "system-run");			     
 	} else {
 		if (gtk_widget_get_visible (self->priv->progress_window)) {
 			progress_ui_handler_add_to_window (self, info);
