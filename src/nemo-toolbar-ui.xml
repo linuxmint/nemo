@@ -7,6 +7,7 @@
 	<separator name="AfterNavigation" />        
         <toolitem name="Home" action="Home"/>
         <toolitem name="Computer" action="Computer"/>
+	<separator name="BeforeLocation" />
 	<toolitem name="Edit Location" action="Edit Location"/>	
 	<separator name="BeforeSearch" />
         <toolitem name="Search" action="Search"/>

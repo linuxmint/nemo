@@ -1145,7 +1145,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_COMPUTER,
    			       "label", _("_Computer"),
-   			       "stock_id", GTK_STOCK_HARDDISK,
+   			       "icon_name", "computer",
    			       "tooltip", _("Go to Computer"),
    			       "window", window,
    			       "direction", NEMO_NAVIGATION_DIRECTION_COMPUTER,
