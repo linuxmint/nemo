@@ -5,6 +5,10 @@
     </placeholder>
     <placeholder name="New Object Items">
     </placeholder>
+    <placeholder name="View Items">
+      <menuitem name="Clean Up" action="Clean Up"/>
+      <menuitem name="Keep Aligned" action="Keep Aligned"/>
+    </placeholder>
   </placeholder>
   <placeholder name="After Zoom Items">
     <placeholder name="Background Items">

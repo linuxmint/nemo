@@ -46,20 +46,12 @@
         <separator name="After New Documents"/>
         <menuitem name="New Empty Document" action="New Empty Document"/>
       </menu>
-      <menu action="Scripts">
-        <placeholder name="Scripts Placeholder"/>
-        <separator name="After Scripts"/>
-        <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
-      </menu>
     </placeholder>
-    <separator name="View items separator"/>
-    <placeholder name="View Items"/>
     <separator name="Clipboard separator"/>
     <placeholder name="File Clipboard Actions">
       <menuitem name="Paste" action="Paste"/>
     </placeholder>
   </placeholder>
-
   <separator name="Folder Items separator"/>
   <placeholder name="Folder Items Placeholder">
     <menuitem name="Self Mount Volume" action="Self Mount Volume"/>
@@ -71,7 +63,6 @@
     <separator name="Properties separator"/>
     <menuitem name="Properties" action="Properties"/>
   </placeholder>
-
 </popup>
 <popup name="selection">
   <placeholder name="New Object Items">

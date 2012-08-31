@@ -85,12 +85,6 @@
 	       <placeholder name="Extension Actions"/>
 	</placeholder>
         <separator/>
-	<placeholder name="Zoom Items">
-		<menuitem name="Zoom In" action="Zoom In"/>
-		<menuitem name="Zoom Out" action="Zoom Out"/>
-		<menuitem name="Zoom Normal" action="Zoom Normal"/>
-	</placeholder>
-        <separator/>
 	<placeholder name="After Zoom Items"/>
 </popup>
 </ui>
