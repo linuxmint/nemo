@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-30 18:14+0200\n"
-"PO-Revision-Date: 2012-08-30 18:15+0200\n"
+"POT-Creation-Date: 2012-08-31 15:36+0200\n"
+"PO-Revision-Date: 2012-08-31 15:37+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -175,7 +175,7 @@ msgid "Use De_fault"
 msgstr "Użyj do_myślnych"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:57
-#: ../src/nautilus-list-view.c:1496
+#: ../src/nautilus-list-view.c:1512
 msgid "Name"
 msgstr "Nazwa"
 
@@ -338,50 +338,50 @@ msgstr "Ustaw jako _tło"
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: ../libnautilus-private/nautilus-file.c:1217
+#: ../libnautilus-private/nautilus-file.c:1218
 #: ../libnautilus-private/nautilus-vfs-file.c:356
 msgid "This file cannot be mounted"
 msgstr "Tego pliku nie można zamontować"
 
-#: ../libnautilus-private/nautilus-file.c:1262
+#: ../libnautilus-private/nautilus-file.c:1263
 msgid "This file cannot be unmounted"
 msgstr "Tego pliku nie można odmontować"
 
-#: ../libnautilus-private/nautilus-file.c:1296
+#: ../libnautilus-private/nautilus-file.c:1297
 msgid "This file cannot be ejected"
 msgstr "Tego pliku nie można wysunąć"
 
-#: ../libnautilus-private/nautilus-file.c:1329
+#: ../libnautilus-private/nautilus-file.c:1330
 #: ../libnautilus-private/nautilus-vfs-file.c:534
 msgid "This file cannot be started"
 msgstr "Tego pliku nie można uruchomić"
 
-#: ../libnautilus-private/nautilus-file.c:1381
-#: ../libnautilus-private/nautilus-file.c:1412
+#: ../libnautilus-private/nautilus-file.c:1382
+#: ../libnautilus-private/nautilus-file.c:1413
 msgid "This file cannot be stopped"
 msgstr "Tego pliku nie można zatrzymać"
 
-#: ../libnautilus-private/nautilus-file.c:1823
+#: ../libnautilus-private/nautilus-file.c:1824
 #, c-format
 msgid "Slashes are not allowed in filenames"
 msgstr "Ukośniki w nazwach plików nie są dozwolone"
 
-#: ../libnautilus-private/nautilus-file.c:1841
+#: ../libnautilus-private/nautilus-file.c:1842
 #, c-format
 msgid "File not found"
 msgstr "Nie odnaleziono pliku"
 
-#: ../libnautilus-private/nautilus-file.c:1869
+#: ../libnautilus-private/nautilus-file.c:1870
 #, c-format
 msgid "Toplevel files cannot be renamed"
 msgstr "Nie można zmieniać nazw plików najwyższego poziomu"
 
-#: ../libnautilus-private/nautilus-file.c:1892
+#: ../libnautilus-private/nautilus-file.c:1893
 #, c-format
 msgid "Unable to rename desktop icon"
 msgstr "Nie można zmienić nazwy ikony pulpitu"
 
-#: ../libnautilus-private/nautilus-file.c:1921
+#: ../libnautilus-private/nautilus-file.c:1922
 #, c-format
 msgid "Unable to rename desktop file"
 msgstr "Nie można zmienić nazwy pliku pulpitu"
@@ -398,54 +398,62 @@ msgstr "Nie można zmienić nazwy pliku pulpitu"
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4422
-msgid "%-I:%M %P"
-msgstr "%-H:%M"
-
 #: ../libnautilus-private/nautilus-file.c:4423
+msgid "%R"
+msgstr "%R"
+
 #: ../libnautilus-private/nautilus-file.c:4424
+msgid "%-I:%M %P"
+msgstr "%-I:%M %P"
+
+#: ../libnautilus-private/nautilus-file.c:4425
+#: ../libnautilus-private/nautilus-file.c:4426
 msgid "%b %-e"
 msgstr "%-e %b"
 
-#: ../libnautilus-private/nautilus-file.c:4425
+#: ../libnautilus-private/nautilus-file.c:4427
 msgid "%b %-d %Y"
 msgstr "%-d %b %Y"
 
-#: ../libnautilus-private/nautilus-file.c:4426
-msgid "%a, %b %e %Y %H:%M:%S %p"
-msgstr "%a, %e %b %Y o %-H:%M:%S"
+#: ../libnautilus-private/nautilus-file.c:4428
+msgid "%a, %b %e %Y %I:%M:%S %p"
+msgstr "%a, %e %b %Y o %I:%M:%S %p"
 
-#: ../libnautilus-private/nautilus-file.c:4920
+#: ../libnautilus-private/nautilus-file.c:4429
+msgid "%a, %b %e %Y %T"
+msgstr "%a, %e %b %Y o %T"
+
+#: ../libnautilus-private/nautilus-file.c:4928
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "Zmiana uprawnień niedozwolona"
 
-#: ../libnautilus-private/nautilus-file.c:5215
+#: ../libnautilus-private/nautilus-file.c:5223
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "Zmiana właściciela niedozwolona"
 
-#: ../libnautilus-private/nautilus-file.c:5233
+#: ../libnautilus-private/nautilus-file.c:5241
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "Podany właściciel \"%s\" nie istnieje"
 
-#: ../libnautilus-private/nautilus-file.c:5497
+#: ../libnautilus-private/nautilus-file.c:5505
 #, c-format
 msgid "Not allowed to set group"
 msgstr "Zmiana grupy niedozwolona"
 
-#: ../libnautilus-private/nautilus-file.c:5515
+#: ../libnautilus-private/nautilus-file.c:5523
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "Podana grupa \"%s\" nie istnieje"
 
 #. Translators: "Me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5649
+#: ../libnautilus-private/nautilus-file.c:5657
 msgid "Me"
 msgstr "Ja"
 
-#: ../libnautilus-private/nautilus-file.c:5673 ../src/nautilus-view.c:2994
+#: ../libnautilus-private/nautilus-file.c:5681 ../src/nautilus-view.c:2994
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
@@ -453,7 +461,7 @@ msgstr[0] "%'u element"
 msgstr[1] "%'u elementy"
 msgstr[2] "%'u elementów"
 
-#: ../libnautilus-private/nautilus-file.c:5674
+#: ../libnautilus-private/nautilus-file.c:5682
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
@@ -461,7 +469,7 @@ msgstr[0] "%'u katalog"
 msgstr[1] "%'u katalogi"
 msgstr[2] "%'u katalogów"
 
-#: ../libnautilus-private/nautilus-file.c:5675
+#: ../libnautilus-private/nautilus-file.c:5683
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
@@ -470,37 +478,37 @@ msgstr[1] "%'u pliki"
 msgstr[2] "%'u plików"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6068
-#: ../libnautilus-private/nautilus-file.c:6084
+#: ../libnautilus-private/nautilus-file.c:6076
+#: ../libnautilus-private/nautilus-file.c:6092
 msgid "? items"
 msgstr "? elementów"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6074
+#: ../libnautilus-private/nautilus-file.c:6082
 msgid "? bytes"
 msgstr "? bajtów"
 
-#: ../libnautilus-private/nautilus-file.c:6089
+#: ../libnautilus-private/nautilus-file.c:6097
 msgid "unknown type"
 msgstr "nieznany typ"
 
-#: ../libnautilus-private/nautilus-file.c:6092
+#: ../libnautilus-private/nautilus-file.c:6100
 msgid "unknown MIME type"
 msgstr "nieznany typ MIME"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6106
+#: ../libnautilus-private/nautilus-file.c:6114
 #: ../src/nautilus-properties-window.c:1103
 msgid "unknown"
 msgstr "nieznane"
 
-#: ../libnautilus-private/nautilus-file.c:6157
+#: ../libnautilus-private/nautilus-file.c:6165
 msgid "program"
 msgstr "program"
 
-#: ../libnautilus-private/nautilus-file.c:6177
+#: ../libnautilus-private/nautilus-file.c:6185
 msgid "link"
 msgstr "dowiązanie"
 
@@ -509,14 +517,14 @@ msgstr "dowiązanie"
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6183
+#: ../libnautilus-private/nautilus-file.c:6191
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:124
 #, c-format
 msgid "Link to %s"
 msgstr "Dowiązanie do %s"
 
-#: ../libnautilus-private/nautilus-file.c:6199
+#: ../libnautilus-private/nautilus-file.c:6207
 msgid "link (broken)"
 msgstr "dowiązanie (uszkodzone)"
 
@@ -2776,26 +2784,26 @@ msgstr "Przywróć p_ierwotny rozmiar ikony"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
-#: ../src/nautilus-canvas-view.c:2436
+#: ../src/nautilus-canvas-view.c:2438
 #: ../src/nautilus-canvas-view-container.c:571
 #: ../src/nautilus-file-management-properties.ui.h:33
 msgid "Icon View"
 msgstr "Widok ikon"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-canvas-view.c:2438
+#: ../src/nautilus-canvas-view.c:2440
 msgid "_Icons"
 msgstr "_Ikony"
 
-#: ../src/nautilus-canvas-view.c:2439
+#: ../src/nautilus-canvas-view.c:2441
 msgid "The icon view encountered an error."
 msgstr "Wystąpił błąd w widoku ikon."
 
-#: ../src/nautilus-canvas-view.c:2440
+#: ../src/nautilus-canvas-view.c:2442
 msgid "The icon view encountered an error while starting up."
 msgstr "Wystąpił błąd podczas uruchamiania widoku ikon."
 
-#: ../src/nautilus-canvas-view.c:2441
+#: ../src/nautilus-canvas-view.c:2443
 msgid "Display this location with the icon view."
 msgstr "Wyświetla położenie za pomocą widoku ikon."
 
@@ -3261,7 +3269,7 @@ msgstr "Podgląd"
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
 #: ../src/nautilus-file-management-properties.ui.h:34
-#: ../src/nautilus-list-view.c:1564 ../src/nautilus-list-view.c:3107
+#: ../src/nautilus-list-view.c:1581 ../src/nautilus-list-view.c:3118
 msgid "List View"
 msgstr "Widok listy"
 
@@ -3484,40 +3492,40 @@ msgstr "Obraz"
 msgid "(Empty)"
 msgstr "(Pusty)"
 
-#: ../src/nautilus-list-view.c:2354
+#: ../src/nautilus-list-view.c:2371
 #, c-format
 msgid "%s Visible Columns"
 msgstr "Widoczne kolumny: %s"
 
-#: ../src/nautilus-list-view.c:2374
+#: ../src/nautilus-list-view.c:2391
 msgid "Choose the order of information to appear in this folder:"
 msgstr "Kolejność wyświetlania informacji w tym katalogu:"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-list-view.c:2429
+#: ../src/nautilus-list-view.c:2446
 msgid "Visible _Columns..."
 msgstr "Wido_czne kolumny..."
 
 #. tooltip
-#: ../src/nautilus-list-view.c:2430
+#: ../src/nautilus-list-view.c:2447
 msgid "Select the columns visible in this folder"
 msgstr "Zaznacza kolumny widoczne w tym katalogu"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-list-view.c:3109
+#: ../src/nautilus-list-view.c:3120
 msgid "_List"
 msgstr "_Lista"
 
-#: ../src/nautilus-list-view.c:3110
+#: ../src/nautilus-list-view.c:3121
 msgid "The list view encountered an error."
 msgstr "Wystąpił błąd w widoku listy."
 
-#: ../src/nautilus-list-view.c:3111
+#: ../src/nautilus-list-view.c:3122
 msgid "The list view encountered an error while starting up."
 msgstr "Wystąpił błąd podczas uruchamiania widoku listy."
 
-#: ../src/nautilus-list-view.c:3112
+#: ../src/nautilus-list-view.c:3123
 msgid "Display this location with the list view."
 msgstr "Wyświetla położenie za pomocą widoku listy."
 
