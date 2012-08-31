@@ -139,8 +139,6 @@
 		<menuitem name="Open" action="Open"/>
 		<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
 		<menuitem name="OpenAlternate" action="OpenAlternate"/>
-		<menuitem name="OpenInTerminal" action="OpenInTerminal"/>
-		<menuitem name="OpenAsRoot" action="OpenAsRoot"/>
 		<separator name="applications separator"/>
 		<placeholder name="Applications Placeholder"/>
 		<menu action="Open With">
@@ -178,6 +176,9 @@
 			<menuitem name="Copy to Desktop" action="Move to Desktop"/>
 		</menu>
 	</placeholder>
+	<separator name="Advanced separator"/>
+	<menuitem name="OpenInTerminal" action="OpenInTerminal"/>
+	<menuitem name="OpenAsRoot" action="OpenAsRoot"/>
 	<separator name="Dangerous separator"/>
 	<placeholder name="Dangerous File Actions">
 		<menuitem name="Trash" action="Trash"/>
