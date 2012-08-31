@@ -39,6 +39,8 @@
 #include "nautilus-window-manage-views.h"
 #include "nautilus-window-private.h"
 #include "nautilus-desktop-window.h"
+#include "nautilus-properties-window.h"
+
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 #include <glib/gi18n.h>
@@ -128,6 +130,26 @@ action_reload_callback (GtkAction *action,
 
 	slot = nautilus_window_get_active_slot (NAUTILUS_WINDOW (user_data));
 	nautilus_window_slot_reload (slot);
+}
+
+static void
+action_location_properties_callback (GtkAction *action,
+				     gpointer   user_data)
+{
+	NautilusWindowSlot *slot;
+	GList              *files;
+	NautilusView       *view;
+	NautilusFile       *file;
+
+	slot = nautilus_window_get_active_slot (NAUTILUS_WINDOW (user_data));
+	view = nautilus_window_slot_get_current_view (slot);
+	file = nautilus_view_get_directory_as_file (view);
+
+	files = g_list_append (NULL, file);
+
+	nautilus_properties_window_present (files, GTK_WIDGET (view), NULL);
+
+	nautilus_file_list_free (files);
 }
 
 static NautilusView *
@@ -578,7 +600,12 @@ static const GtkActionEntry main_entries[] = {
     G_CALLBACK (action_tabs_move_left_callback) },
   { "TabsMoveRight", NULL, N_("Move Tab _Right"), "<shift><control>Page_Down",
     N_("Move current tab to right"),
-    G_CALLBACK (action_tabs_move_right_callback) }
+    G_CALLBACK (action_tabs_move_right_callback) },
+  /* name, stock id */         { NAUTILUS_ACTION_LOCATION_PROPERTIES, GTK_STOCK_PROPERTIES,
+  /* label, accelerator */       N_("P_roperties"), NULL,
+  /* tooltip */                  N_("View or modify the properties of this folder"),
+				 G_CALLBACK (action_location_properties_callback) },
+
 };
 
 static const GtkToggleActionEntry main_toggle_entries[] = {

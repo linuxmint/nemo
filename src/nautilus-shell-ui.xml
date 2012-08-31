@@ -60,6 +60,7 @@
   <menuitem name="Add Bookmark" action="Add Bookmark"/>
   <menuitem name="Edit Bookmark" action="Edit Bookmarks"/>
   <menuitem name="Enter Location" action="Enter Location"/>
+  <menuitem name="LocationProperties" action="LocationProperties"/>
   <separator/>
   <placeholder name="Extension Actions"/>
   <separator/>
