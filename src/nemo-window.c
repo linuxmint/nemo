@@ -562,7 +562,12 @@ nemo_window_constructed (GObject *self)
 	menu = gtk_ui_manager_get_widget (window->details->ui_manager, "/MenuBar");
 	window->details->menubar = menu;
 	gtk_widget_set_hexpand (menu, TRUE);
-	gtk_widget_show (menu);
+	if (g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_MENU_BAR)){
+		gtk_widget_show (menu);
+	} else {
+		gtk_widget_hide (menu);
+	}
+
 	gtk_container_add (GTK_CONTAINER (grid), menu);
 
 	/* Set up the toolbar place holder */
