@@ -664,11 +664,11 @@ update_places (NemoPlacesSidebar *sidebar)
 		root = nemo_bookmark_get_location (bookmark);
 		file = nemo_file_get (root);
 
-		if (is_built_in_bookmark (file)) {
-			g_object_unref (root);
-			nemo_file_unref (file);
-			continue;
-		}
+		//if (is_built_in_bookmark (file)) {
+		//	g_object_unref (root);
+		//	nemo_file_unref (file);
+		//	continue;
+		//}
 		nemo_file_unref (file);
 
 		bookmark_name = nemo_bookmark_get_name (bookmark);
@@ -719,42 +719,7 @@ update_places (NemoPlacesSidebar *sidebar)
 	}
 
 	
-	/* XDG directories */
-	for (index = 0; index < G_USER_N_DIRECTORIES; index++) {
-
-		if (index == G_USER_DIRECTORY_DESKTOP ||
-		    index == G_USER_DIRECTORY_TEMPLATES ||
-		    index == G_USER_DIRECTORY_PUBLIC_SHARE) {
-			continue;
-		}
-
-		path = g_get_user_special_dir (index);
-
-		/* xdg resets special dirs to the home directory in case
-		 * it's not finiding what it expects. We don't want the home
-		 * to be added multiple times in that weird configuration.
-		 */
-		if (!path || g_strcmp0 (path, g_get_home_dir ()) == 0) {
-			continue;
-		}
-
-		root = g_file_new_for_path (path);
-		name = g_file_get_basename (root);
-		icon = nemo_user_special_directory_get_gicon (index);
-		mount_uri = g_file_get_uri (root);
-		tooltip = g_file_get_parse_name (root);
-
-		add_place (sidebar, PLACES_XDG_DIR,
-			   SECTION_COMPUTER,
-			   name, icon, mount_uri,
-			   NULL, NULL, NULL, 0,
-			   tooltip);
-		g_free (name);
-		g_object_unref (root);
-		g_object_unref (icon);
-		g_free (mount_uri);
-		g_free (tooltip);
-	}
+	
 
 	/* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
 	mounts = g_volume_monitor_get_mounts (volume_monitor);
@@ -869,7 +834,7 @@ update_places (NemoPlacesSidebar *sidebar)
 	icon = g_themed_icon_new (NEMO_ICON_NETWORK);
 	add_place (sidebar, PLACES_BUILT_IN,
 		   SECTION_NETWORK,
-		   _("Browse Network"), icon,
+		   _("Network"), icon,
 		   mount_uri, NULL, NULL, NULL, 0,
 		   _("Browse the contents of the network"));
 	g_object_unref (icon);
