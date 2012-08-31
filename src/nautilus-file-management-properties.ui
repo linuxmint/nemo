@@ -929,50 +929,27 @@
                     <property name="orientation">vertical</property>
                     <property name="spacing">6</property>
                     <child>
-                      <object class="GtkLabel" id="label31">
+                      <object class="GtkBox" id="list_columns_vbox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">List Columns</property>
-                        <attributes>
-                          <attribute name="weight" value="bold"/>
-                        </attributes>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkAlignment" id="alignment21">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="left_padding">12</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
                         <child>
-                          <object class="GtkBox" id="list_columns_vbox">
+                          <object class="GtkLabel" id="label33">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">6</property>
-                            <child>
-                              <object class="GtkLabel" id="label33">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
-                                <property name="label" translatable="yes">Choose the order of information to appear in the list view.</property>
-                                <property name="wrap">True</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Choose the order of information to appear in the list view.</property>
+                            <property name="wrap">True</property>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
