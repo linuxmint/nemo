@@ -2111,6 +2111,8 @@ create_canvas_container (NautilusCanvasView *canvas_view)
 			   GTK_WIDGET (canvas_container));
 
 	nautilus_canvas_view_update_click_mode (canvas_view);
+	nautilus_canvas_container_set_zoom_level (canvas_container,
+						  get_default_zoom_level (canvas_view));
 
 	gtk_widget_show (GTK_WIDGET (canvas_container));
 

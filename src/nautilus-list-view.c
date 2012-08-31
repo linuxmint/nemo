@@ -1370,6 +1370,21 @@ focus_in_event_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_
 }
 
 static void
+set_up_pixbuf_size (NautilusListView *view)
+{
+	int icon_size;
+
+	/* Make all rows the same size. */
+	icon_size = nautilus_get_icon_size_for_zoom_level (view->details->zoom_level);
+	gtk_cell_renderer_set_fixed_size (GTK_CELL_RENDERER (view->details->pixbuf_cell),
+					  -1, icon_size);
+
+
+	/* FIXME: https://bugzilla.gnome.org/show_bug.cgi?id=641518 */
+	gtk_tree_view_columns_autosize (view->details->tree_view);
+}
+
+static void
 create_and_set_up_tree_view (NautilusListView *view)
 {
 	GtkCellRenderer *cell;
@@ -1481,6 +1496,7 @@ create_and_set_up_tree_view (NautilusListView *view)
 			/* Create the file name column */
 			cell = gtk_cell_renderer_pixbuf_new ();
 			view->details->pixbuf_cell = (GtkCellRendererPixbuf *)cell;
+			set_up_pixbuf_size (view);
 			
 			view->details->file_name_column = gtk_tree_view_column_new ();
 			g_object_ref_sink (view->details->file_name_column);
@@ -2526,7 +2542,6 @@ nautilus_list_view_set_zoom_level (NautilusListView *view,
 				   NautilusZoomLevel new_level,
 				   gboolean always_emit)
 {
-	int icon_size;
 	int column;
 
 	g_return_if_fail (NAUTILUS_IS_LIST_VIEW (view));
@@ -2550,15 +2565,9 @@ nautilus_list_view_set_zoom_level (NautilusListView *view,
 					     "pixbuf", column,
 					     NULL);
 
-	/* Make all rows the same size. */
-	icon_size = nautilus_get_icon_size_for_zoom_level (new_level);
-	gtk_cell_renderer_set_fixed_size (GTK_CELL_RENDERER (view->details->pixbuf_cell),
-					  -1, icon_size);
-
 	nautilus_view_update_menus (NAUTILUS_VIEW (view));
 
-	/* FIXME: https://bugzilla.gnome.org/show_bug.cgi?id=641518 */
-	gtk_tree_view_columns_autosize (view->details->tree_view);
+	set_up_pixbuf_size (view);
 }
 
 static void
@@ -3061,6 +3070,7 @@ nautilus_list_view_init (NautilusListView *list_view)
 	nautilus_list_view_click_policy_changed (NAUTILUS_VIEW (list_view));
 
 	nautilus_list_view_sort_directories_first_changed (NAUTILUS_VIEW (list_view));
+	nautilus_list_view_set_zoom_level (list_view, get_default_zoom_level (), TRUE);
 
 	list_view->details->hover_path = NULL;
 	list_view->details->clipboard_handler_id =
