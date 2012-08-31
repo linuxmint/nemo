@@ -81,7 +81,6 @@ struct NautilusWindowSlot {
 	/* Current location. */
 	GFile *location;
 	char *title;
-	char *status_text;
 
 	NautilusFile *viewed_file;
 	gboolean viewed_file_seen;
@@ -164,8 +163,8 @@ void    nautilus_window_slot_set_viewed_file		   (NautilusWindowSlot *slot,
 void    nautilus_window_slot_set_allow_stop		   (NautilusWindowSlot *slot,
 							    gboolean	    allow_stop);
 void    nautilus_window_slot_set_status			   (NautilusWindowSlot *slot,
-							    const char	 *status,
-							    const char   *short_status);
+							    const char         *primary_status,
+							    const char         *detail_status);
 
 void    nautilus_window_slot_add_extra_location_widget     (NautilusWindowSlot *slot,
 							    GtkWidget       *widget);

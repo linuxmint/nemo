@@ -1072,32 +1072,6 @@ nautilus_canvas_view_get_selection (NautilusView *view)
 }
 
 static void
-count_item (NautilusCanvasIconData *icon_data,
-	    gpointer callback_data)
-{
-	guint *count;
-
-	count = callback_data;
-	(*count)++;
-}
-
-static guint
-nautilus_canvas_view_get_item_count (NautilusView *view)
-{
-	guint count;
-
-	g_return_val_if_fail (NAUTILUS_IS_CANVAS_VIEW (view), 0);
-
-	count = 0;
-	
-	nautilus_canvas_container_for_each
-		(get_canvas_container (NAUTILUS_CANVAS_VIEW (view)),
-		 count_item, &count);
-
-	return count;
-}
-
-static void
 set_sort_criterion_by_sort_type (NautilusCanvasView *canvas_view,
 				 NautilusFileSortType  sort_type)
 {
@@ -2282,7 +2256,6 @@ nautilus_canvas_view_class_init (NautilusCanvasViewClass *klass)
 	nautilus_view_class->get_selected_icon_locations = nautilus_canvas_view_get_selected_icon_locations;
 	nautilus_view_class->get_selection = nautilus_canvas_view_get_selection;
 	nautilus_view_class->get_selection_for_file_transfer = nautilus_canvas_view_get_selection;
-	nautilus_view_class->get_item_count = nautilus_canvas_view_get_item_count;
 	nautilus_view_class->is_empty = nautilus_canvas_view_is_empty;
 	nautilus_view_class->remove_file = nautilus_canvas_view_remove_file;
 	nautilus_view_class->reset_to_defaults = nautilus_canvas_view_reset_to_defaults;

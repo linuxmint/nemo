@@ -652,7 +652,7 @@ begin_location_change (NautilusWindowSlot *slot,
 	end_location_change (slot);
 
 	nautilus_window_slot_set_allow_stop (slot, TRUE);
-	nautilus_window_slot_set_status (slot, " ", NULL);
+	nautilus_window_slot_set_status (slot, NULL, NULL);
 
 	g_assert (slot->pending_location == NULL);
 	g_assert (slot->pending_selection == NULL);
@@ -1183,9 +1183,9 @@ real_setup_loading_floating_bar (NautilusWindowSlot *slot)
 		return;
 	}
 
-	nautilus_floating_bar_set_label (NAUTILUS_FLOATING_BAR (slot->floating_bar),
-					 NAUTILUS_IS_SEARCH_DIRECTORY (nautilus_view_get_model (slot->content_view)) ?
-					 _("Searching...") : _("Loading..."));
+	nautilus_floating_bar_set_primary_label (NAUTILUS_FLOATING_BAR (slot->floating_bar),
+						 NAUTILUS_IS_SEARCH_DIRECTORY (nautilus_view_get_model (slot->content_view)) ?
+						 _("Searching...") : _("Loading..."));
 	nautilus_floating_bar_set_show_spinner (NAUTILUS_FLOATING_BAR (slot->floating_bar),
 						TRUE);
 	nautilus_floating_bar_add_action (NAUTILUS_FLOATING_BAR (slot->floating_bar),

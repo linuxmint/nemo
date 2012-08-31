@@ -188,8 +188,6 @@ struct NautilusViewClass {
 	/* Return an array of locations of selected icons in their view. */
 	GArray * (* get_selected_icon_locations) (NautilusView *view);
 
-	guint    (* get_item_count)             (NautilusView *view);
-
         /* bump_zoom_level is a function pointer that subclasses must override
          * to change the zoom level of an object. */
         void    (* bump_zoom_level)      	(NautilusView *view,

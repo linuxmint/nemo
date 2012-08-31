@@ -2056,17 +2056,6 @@ nautilus_list_view_get_selection_for_file_transfer (NautilusView *view)
 	return g_list_reverse (selection_data.list);
 }
 
-
-
-
-static guint
-nautilus_list_view_get_item_count (NautilusView *view)
-{
-	g_return_val_if_fail (NAUTILUS_IS_LIST_VIEW (view), 0);
-
-	return nautilus_list_model_get_length (NAUTILUS_LIST_VIEW (view)->details->model);
-}
-
 static gboolean
 nautilus_list_view_is_empty (NautilusView *view)
 {
@@ -3015,7 +3004,6 @@ nautilus_list_view_class_init (NautilusListViewClass *class)
 	nautilus_view_class->get_backing_uri = nautilus_list_view_get_backing_uri;
 	nautilus_view_class->get_selection = nautilus_list_view_get_selection;
 	nautilus_view_class->get_selection_for_file_transfer = nautilus_list_view_get_selection_for_file_transfer;
-	nautilus_view_class->get_item_count = nautilus_list_view_get_item_count;
 	nautilus_view_class->is_empty = nautilus_list_view_is_empty;
 	nautilus_view_class->remove_file = nautilus_list_view_remove_file;
 	nautilus_view_class->merge_menus = nautilus_list_view_merge_menus;

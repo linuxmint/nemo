@@ -356,7 +356,7 @@ nautilus_window_slot_constructed (GObject *object)
 	gtk_box_pack_start (GTK_BOX (slot), slot->view_overlay, TRUE, TRUE, 0);
 	gtk_widget_show (slot->view_overlay);
 
-	slot->floating_bar = nautilus_floating_bar_new ("", FALSE);
+	slot->floating_bar = nautilus_floating_bar_new (NULL, NULL, FALSE);
 	gtk_widget_set_halign (slot->floating_bar, GTK_ALIGN_END);
 	gtk_widget_set_valign (slot->floating_bar, GTK_ALIGN_END);
 	gtk_overlay_add_overlay (GTK_OVERLAY (slot->view_overlay),
@@ -435,9 +435,6 @@ nautilus_window_slot_dispose (GObject *object)
 
 	g_free (slot->title);
 	slot->title = NULL;
-
-	g_free (slot->status_text);
-	slot->status_text = NULL;
 
 	G_OBJECT_CLASS (nautilus_window_slot_parent_class)->dispose (object);
 }
@@ -618,7 +615,8 @@ nautilus_window_slot_set_allow_stop (NautilusWindowSlot *slot,
 
 static void
 real_slot_set_short_status (NautilusWindowSlot *slot,
-			    const gchar *status)
+			    const gchar *primary_status,
+			    const gchar *detail_status)
 {
 	gboolean disable_chrome;
 
@@ -630,17 +628,19 @@ real_slot_set_short_status (NautilusWindowSlot *slot,
 		      "disable-chrome", &disable_chrome,
 		      NULL);
 
-	if (status == NULL || disable_chrome) {
+	if ((primary_status == NULL && detail_status == NULL) || disable_chrome) {
 		gtk_widget_hide (slot->floating_bar);
 		return;
 	}
 
-	nautilus_floating_bar_set_label (NAUTILUS_FLOATING_BAR (slot->floating_bar), status);
+	nautilus_floating_bar_set_labels (NAUTILUS_FLOATING_BAR (slot->floating_bar),
+					  primary_status, detail_status);
 	gtk_widget_show (slot->floating_bar);
 }
 
 typedef struct {
-	gchar *status;
+	gchar *primary_status;
+	gchar *detail_status;
 	NautilusWindowSlot *slot;
 } SetStatusData;
 
@@ -649,7 +649,8 @@ set_status_data_free (gpointer data)
 {
 	SetStatusData *status_data = data;
 
-	g_free (status_data->status);
+	g_free (status_data->primary_status);
+	g_free (status_data->detail_status);
 
 	g_slice_free (SetStatusData, data);
 }
@@ -660,14 +661,17 @@ set_status_timeout_cb (gpointer data)
 	SetStatusData *status_data = data;
 
 	status_data->slot->set_status_timeout_id = 0;
-	real_slot_set_short_status (status_data->slot, status_data->status);
+	real_slot_set_short_status (status_data->slot,
+				    status_data->primary_status,
+				    status_data->detail_status);
 
 	return FALSE;
 }
 
 static void
 set_floating_bar_status (NautilusWindowSlot *slot,
-			 const gchar *status)
+			 const gchar *primary_status,
+			 const gchar *detail_status)
 {
 	GtkSettings *settings;
 	gint double_click_time;
@@ -684,7 +688,8 @@ set_floating_bar_status (NautilusWindowSlot *slot,
 		      NULL);
 
 	status_data = g_slice_new0 (SetStatusData);
-	status_data->status = g_strdup (status);
+	status_data->primary_status = g_strdup (primary_status);
+	status_data->detail_status = g_strdup (detail_status);
 	status_data->slot = slot;
 
 	/* waiting for half of the double-click-time before setting
@@ -701,16 +706,13 @@ set_floating_bar_status (NautilusWindowSlot *slot,
 
 void
 nautilus_window_slot_set_status (NautilusWindowSlot *slot,
-				 const char *status,
-				 const char *short_status)
+				 const char *primary_status,
+				 const char *detail_status)
 {
 	g_assert (NAUTILUS_IS_WINDOW_SLOT (slot));
 
-	g_free (slot->status_text);
-	slot->status_text = g_strdup (status);
-
 	if (slot->content_view != NULL) {
-		set_floating_bar_status (slot, short_status);
+		set_floating_bar_status (slot, primary_status, detail_status);
 	}
 }
 
