@@ -310,7 +310,8 @@ nautilus_window_set_search_visible (NautilusWindow *window,
 
 static void
 close_slot (NautilusWindow     *window,
-	    NautilusWindowSlot *slot)
+	    NautilusWindowSlot *slot,
+	    gboolean            remove_from_notebook)
 {
 	int page_num;
 	GtkNotebook *notebook;
@@ -325,17 +326,20 @@ close_slot (NautilusWindow     *window,
 	g_signal_emit (window, signals[SLOT_REMOVED], 0, slot);
 
 	notebook = GTK_NOTEBOOK (window->details->notebook);
-	page_num = gtk_notebook_page_num (notebook, GTK_WIDGET (slot));
-	g_assert (page_num >= 0);
 
-	g_signal_handlers_block_by_func (notebook,
-					 G_CALLBACK (notebook_switch_page_cb),
-					 window);
-	/* this will call gtk_widget_destroy on the slot */
-	gtk_notebook_remove_page (notebook, page_num);
-	g_signal_handlers_unblock_by_func (notebook,
-					   G_CALLBACK (notebook_switch_page_cb),
-					   window);
+	if (remove_from_notebook) {
+		page_num = gtk_notebook_page_num (notebook, GTK_WIDGET (slot));
+		g_assert (page_num >= 0);
+
+		g_signal_handlers_block_by_func (notebook,
+						 G_CALLBACK (notebook_switch_page_cb),
+						 window);
+		/* this will call gtk_widget_destroy on the slot */
+		gtk_notebook_remove_page (notebook, page_num);
+		g_signal_handlers_unblock_by_func (notebook,
+						   G_CALLBACK (notebook_switch_page_cb),
+						   window);
+	}
 }
 
 NautilusWindowSlot *
@@ -674,7 +678,7 @@ nautilus_window_slot_close (NautilusWindow     *window,
 		nautilus_window_set_active_slot (window, next_slot);
 	}
 
-	close_slot (window, slot);
+	close_slot (window, slot, TRUE);
 
 	/* If that was the last slot in the window, close the window. */
 	if (window->details->slots == NULL) {
@@ -1150,7 +1154,7 @@ destroy_slots_foreach (gpointer data,
 	NautilusWindowSlot *slot = data;
 	NautilusWindow *window = user_data;
 
-	close_slot (window, slot);
+	close_slot (window, slot, TRUE);
 }
 
 static void
