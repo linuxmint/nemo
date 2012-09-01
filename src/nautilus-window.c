@@ -99,9 +99,6 @@ enum {
 };
 
 enum {
-	GO_UP,
-	RELOAD,
-	PROMPT_FOR_LOCATION,
 	LOADING_URI,
 	SLOT_ADDED,
 	SLOT_REMOVED,
@@ -155,12 +152,6 @@ nautilus_window_go_to_full (NautilusWindow *window,
 
 	nautilus_window_slot_open_location_full (nautilus_window_get_active_slot (window),
 						 location, 0, NULL, callback, user_data);
-}
-
-static void
-nautilus_window_go_up_signal (NautilusWindow *window)
-{
-	nautilus_window_slot_go_up (nautilus_window_get_active_slot (window), 0);
 }
 
 static int
@@ -449,7 +440,7 @@ nautilus_window_sync_allow_stop (NautilusWindow *window,
 	}
 }
 
-static void
+void
 nautilus_window_prompt_for_location (NautilusWindow *window,
 				     const char     *initial)
 {
@@ -1882,15 +1873,6 @@ nautilus_window_get_slots (NautilusWindow *window)
 	return window->details->slots;
 }
 
-static void
-nautilus_window_reload (NautilusWindow *window)
-{
-	NautilusWindowSlot *active_slot;
-
-	active_slot = nautilus_window_get_active_slot (window);
-	nautilus_window_slot_reload (active_slot);
-}
-
 static gboolean
 nautilus_window_state_event (GtkWidget *widget,
 			     GdkEventWindowState *event)
@@ -2019,7 +2001,6 @@ real_window_close (NautilusWindow *window)
 static void
 nautilus_window_class_init (NautilusWindowClass *class)
 {
-	GtkBindingSet *binding_set;
 	GObjectClass *oclass = G_OBJECT_CLASS (class);
 	GtkWidgetClass *wclass = GTK_WIDGET_CLASS (class);
 
@@ -2050,30 +2031,6 @@ nautilus_window_class_init (NautilusWindowClass *class)
 				      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 				      G_PARAM_STATIC_STRINGS);
 
-	signals[GO_UP] =
-		g_signal_new ("go-up",
-			      G_TYPE_FROM_CLASS (class),
-			      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-			      G_STRUCT_OFFSET (NautilusWindowClass, go_up),
-			      NULL, NULL,
-			      g_cclosure_marshal_generic,
-			      G_TYPE_NONE, 0);
-	signals[RELOAD] =
-		g_signal_new ("reload",
-			      G_TYPE_FROM_CLASS (class),
-			      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-			      G_STRUCT_OFFSET (NautilusWindowClass, reload),
-			      NULL, NULL,
-			      g_cclosure_marshal_VOID__VOID,
-			      G_TYPE_NONE, 0);
-	signals[PROMPT_FOR_LOCATION] =
-		g_signal_new ("prompt-for-location",
-			      G_TYPE_FROM_CLASS (class),
-			      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-			      G_STRUCT_OFFSET (NautilusWindowClass, prompt_for_location),
-			      NULL, NULL,
-			      g_cclosure_marshal_VOID__STRING,
-			      G_TYPE_NONE, 1, G_TYPE_STRING);
 	signals[LOADING_URI] =
 		g_signal_new ("loading_uri",
 			      G_TYPE_FROM_CLASS (class),
@@ -2099,17 +2056,6 @@ nautilus_window_class_init (NautilusWindowClass *class)
 			      NULL, NULL,
 			      g_cclosure_marshal_VOID__OBJECT,
 			      G_TYPE_NONE, 1, NAUTILUS_TYPE_WINDOW_SLOT);
-
-	binding_set = gtk_binding_set_by_class (class);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_F5, 0,
-				      "reload", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_slash, 0,
-				      "prompt-for-location", 1,
-				      G_TYPE_STRING, "/");
-
-	class->reload = nautilus_window_reload;
-	class->go_up = nautilus_window_go_up_signal;
-	class->prompt_for_location = nautilus_window_prompt_for_location;
 
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_MOUSE_BACK_BUTTON,

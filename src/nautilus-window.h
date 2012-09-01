@@ -76,12 +76,7 @@ typedef struct {
         NautilusIconInfo * (* get_icon) (NautilusWindow *window,
                                          NautilusWindowSlot *slot);
 
-        void   (* prompt_for_location) (NautilusWindow *window, const char *initial);
         void   (* close) (NautilusWindow *window);
-
-        /* Signals used only for keybindings */
-        void   (* go_up)  (NautilusWindow *window);
-	void   (* reload) (NautilusWindow *window);
 } NautilusWindowClass;
 
 struct NautilusWindow {

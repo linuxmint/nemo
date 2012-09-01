@@ -102,6 +102,8 @@ NautilusWindowSlot *nautilus_window_get_slot_for_view                    (Nautil
 void                 nautilus_window_set_active_slot                     (NautilusWindow    *window,
 									  NautilusWindowSlot *slot);
 
+void                 nautilus_window_prompt_for_location                 (NautilusWindow *window,
+                                                                          const char     *initial);
 
 /* sync window GUI with current slot. Used when changing slots,
  * and when updating the slot state.

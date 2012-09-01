@@ -429,6 +429,13 @@ action_show_hide_search_callback (GtkAction *action,
 }
 
 static void
+action_prompt_for_location_callback (GtkAction *action,
+				     NautilusWindow *window)
+{
+	nautilus_window_prompt_for_location (window, "/");
+}
+
+static void
 action_view_radio_changed (GtkRadioAction *action,
 			   GtkRadioAction *current,
 			   NautilusWindow *window)
@@ -466,6 +473,10 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id */         { NAUTILUS_ACTION_RELOAD, GTK_STOCK_REFRESH,
   /* label, accelerator */       N_("_Reload"), "<control>R",
   /* tooltip */                  N_("Reload the current location"),
+                                 G_CALLBACK (action_reload_callback) },
+  /* name, stock id */         { "ReloadAccel", NULL,
+  /* label, accelerator */       "ReloadAccel", "F5",
+  /* tooltip */                  NULL,
                                  G_CALLBACK (action_reload_callback) },
   /* name, stock id */         { NAUTILUS_ACTION_HELP, GTK_STOCK_HELP,
   /* label, accelerator */       N_("_All Topics"), "F1",
@@ -563,7 +574,10 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("P_roperties"), NULL,
   /* tooltip */                  N_("View or modify the properties of this folder"),
 				 G_CALLBACK (action_location_properties_callback) },
-
+  /* name, stock id */         { "PromptLocationAccel", NULL,
+  /* label, accelerator */       "PromptLocationAccel", "slash",
+  /* tooltip */                  NULL,
+				 G_CALLBACK (action_prompt_for_location_callback) },
 };
 
 static const GtkToggleActionEntry main_toggle_entries[] = {
