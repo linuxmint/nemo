@@ -403,6 +403,7 @@ nautilus_notebook_insert_page (GtkNotebook *gnotebook,
 	gtk_notebook_set_show_tabs (gnotebook,
 				    gtk_notebook_get_n_pages (gnotebook) > 1);
 	gtk_notebook_set_tab_reorderable (gnotebook, tab_widget, TRUE);
+	gtk_notebook_set_tab_detachable (gnotebook, tab_widget, TRUE);
 
 	return position;
 }

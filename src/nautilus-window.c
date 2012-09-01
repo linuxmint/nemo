@@ -32,6 +32,7 @@
 #include "nautilus-window-private.h"
 
 #include "nautilus-actions.h"
+#include "nautilus-application.h"
 #include "nautilus-bookmarks-window.h"
 #include "nautilus-location-bar.h"
 #include "nautilus-mime-actions.h"
@@ -1023,6 +1024,88 @@ create_toolbar (NautilusWindow *window)
 	return toolbar;
 }
 
+static void
+notebook_page_removed_cb (GtkNotebook *notebook,
+			  GtkWidget *page,
+			  guint page_num,
+			  gpointer user_data)
+{
+	NautilusWindow *window = user_data;
+	NautilusWindowSlot *slot = NAUTILUS_WINDOW_SLOT (page), *next_slot;
+	gboolean dnd_slot;
+
+	dnd_slot = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (slot), "dnd-window-slot"));
+	if (!dnd_slot) {
+		return;
+	}
+
+	if (window->details->active_slot == slot) {
+		next_slot = get_first_inactive_slot (window);
+		nautilus_window_set_active_slot (window, next_slot);
+	}
+
+	close_slot (window, slot, FALSE);
+}
+
+static void
+notebook_page_added_cb (GtkNotebook *notebook,
+			GtkWidget *page,
+			guint page_num,
+			gpointer user_data)
+{
+	NautilusWindow *window = user_data;
+	NautilusWindowSlot *slot = NAUTILUS_WINDOW_SLOT (page);
+	NautilusWindowSlot *dummy_slot;
+	gboolean dnd_slot;
+
+	dnd_slot = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (slot), "dnd-window-slot"));
+	if (!dnd_slot) {
+		return;
+	}
+
+	g_object_set_data (G_OBJECT (page), "dnd-window-slot",
+			   GINT_TO_POINTER (FALSE));
+
+	nautilus_window_slot_set_window (slot, window);
+	window->details->slots = g_list_append (window->details->slots, slot);
+	g_signal_emit (window, signals[SLOT_ADDED], 0, slot);
+
+	nautilus_window_set_active_slot (window, slot);
+
+	dummy_slot = g_list_nth_data (window->details->slots, 0);
+	if (dummy_slot != NULL) {
+		close_slot (window, dummy_slot, TRUE);
+	}
+
+	gtk_widget_show (GTK_WIDGET (window));
+}
+
+static GtkNotebook *
+notebook_create_window_cb (GtkNotebook *notebook,
+			   GtkWidget *page,
+			   gint x,
+			   gint y,
+			   gpointer user_data)
+{
+	NautilusApplication *app;
+	NautilusWindow *new_window;
+	NautilusWindowSlot *slot;
+
+	if (!NAUTILUS_IS_WINDOW_SLOT (page)) {
+		return NULL;
+	}
+
+	app = NAUTILUS_APPLICATION (g_application_get_default ());
+	new_window = nautilus_application_create_window
+		(app, gtk_widget_get_screen (GTK_WIDGET (notebook)));
+
+	slot = NAUTILUS_WINDOW_SLOT (page);
+	g_object_set_data (G_OBJECT (slot), "dnd-window-slot",
+			   GINT_TO_POINTER (TRUE));
+
+	return GTK_NOTEBOOK (new_window->details->notebook);
+}
+
 static GtkWidget *
 create_notebook (NautilusWindow *window)
 {
@@ -1037,6 +1120,15 @@ create_notebook (NautilusWindow *window)
 			  window);
 	g_signal_connect (notebook, "switch-page",
 			  G_CALLBACK (notebook_switch_page_cb),
+			  window);
+	g_signal_connect (notebook, "create-window",
+			  G_CALLBACK (notebook_create_window_cb),
+			  window);
+	g_signal_connect (notebook, "page-added",
+			  G_CALLBACK (notebook_page_added_cb),
+			  window);
+	g_signal_connect (notebook, "page-removed",
+			  G_CALLBACK (notebook_page_removed_cb),
 			  window);
 	g_signal_connect_after (notebook, "button-press-event",
 				G_CALLBACK (notebook_button_press_cb),
