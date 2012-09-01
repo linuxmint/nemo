@@ -16,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-08-31 19:23+0000\n"
-"PO-Revision-Date: 2012-09-01 17:00+0700\n"
+"PO-Revision-Date: 2012-09-01 17:03+0700\n"
 "Last-Translator: Nguyễn Thái Ngọc Duy <pclouds@gmail.com>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
 "Language: vi\n"
@@ -397,10 +397,9 @@ msgstr "Không thể thay đổi tên của tập tin màn hình nền"
 #. * space padding instead of zero padding.
 #.
 #: ../libnautilus-private/nautilus-file.c:4433
-#, fuzzy
 #| msgid "%"
 msgid "%R"
-msgstr "%"
+msgstr "%R"
 
 #: ../libnautilus-private/nautilus-file.c:4434
 msgid "%-I:%M %P"
@@ -416,16 +415,14 @@ msgid "%b %-d %Y"
 msgstr " %-d %b %Y"
 
 #: ../libnautilus-private/nautilus-file.c:4438
-#, fuzzy
 #| msgid "%a, %b %e %Y %H:%M:%S %p"
 msgid "%a, %b %e %Y %I:%M:%S %p"
-msgstr "%a, %H:%M:%S %p %e %b %Y"
+msgstr "%a, %I:%M:%S %p %e %b %Y"
 
 #: ../libnautilus-private/nautilus-file.c:4439
-#, fuzzy
 #| msgid "%a, %b %e %Y %H:%M:%S %p"
 msgid "%a, %b %e %Y %T"
-msgstr "%a, %H:%M:%S %p %e %b %Y"
+msgstr "%a, %T %e %b %Y"
 
 #: ../libnautilus-private/nautilus-file.c:4938
 #, c-format
@@ -524,7 +521,7 @@ msgstr "Liên kết đến %s"
 
 #: ../libnautilus-private/nautilus-file.c:6217
 msgid "link (broken)"
-msgstr "liên kết (bị ngắt)"
+msgstr "liên kết (hư)"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:141
 #, c-format
@@ -2742,7 +2739,7 @@ msgstr "WebDAV bảo mật (HTTPS)"
 
 #: ../src/nautilus-connect-server-dialog.c:143
 msgid "Apple Filing Protocol (AFP)"
-msgstr ""
+msgstr "Apple Filing Protocol (AFP)"
 
 #: ../src/nautilus-connect-server-dialog.c:189
 msgid "Connecting..."
@@ -3448,25 +3445,24 @@ msgid_plural "This will open %d separate windows."
 msgstr[0] "Hành động này sẽ mở %d cửa sổ riêng."
 
 #: ../src/nautilus-mime-actions.c:632
-#, fuzzy, c-format
+#, c-format
 #| msgid "The Link “%s” is Broken. Move it to Trash?"
 msgid "The link “%s” is broken. Move it to Trash?"
-msgstr "Liên kết “%s” bị ngắt nên chuyển nó vào Sọt rác chứ?"
+msgstr "Liên kết “%s” bị hư. Chuyển nó vào Sọt rác chứ?"
 
 #: ../src/nautilus-mime-actions.c:634
-#, fuzzy, c-format
+#, c-format
 #| msgid "The Link “%s” is Broken."
 msgid "The link “%s” is broken."
-msgstr "Liên kết “%s” bị ngắt."
+msgstr "Liên kết “%s” bị hư."
 
 #: ../src/nautilus-mime-actions.c:640
-#, fuzzy
 #| msgid "This link cannot be used, because it has no target."
 msgid "This link cannot be used because it has no target."
 msgstr "Không thể dùng liên kết này vì nó không có đích đến."
 
 #: ../src/nautilus-mime-actions.c:642
-#, fuzzy, c-format
+#, c-format
 #| msgid "This link cannot be used, because its target “%s” doesn't exist."
 msgid "This link cannot be used because its target “%s” doesn't exist."
 msgstr "Không thể dùng liên kết này vì đích đến “%s” không tồn tại."
@@ -4225,7 +4221,7 @@ msgid_plural "%'d folders selected"
 msgstr[0] "Đã chọn %'d thư mục"
 
 #: ../src/nautilus-view.c:2911
-#, fuzzy, c-format
+#, c-format
 #| msgid " (containing %'d item)"
 #| msgid_plural " (containing %'d items)"
 msgid "(containing %'d item)"
@@ -4234,7 +4230,7 @@ msgstr[0] " (chứa %'d mục)"
 
 #. translators: this is preceded with a string of form 'N folders' (N more than 1)
 #: ../src/nautilus-view.c:2922
-#, fuzzy, c-format
+#, c-format
 #| msgid " (containing a total of %'d item)"
 #| msgid_plural " (containing a total of %'d items)"
 msgid "(containing a total of %'d item)"
@@ -4259,10 +4255,10 @@ msgstr[0] "Đã chọn %'d mục khác"
 #. * the message in parentheses is the size of the selected items.
 #.
 #: ../src/nautilus-view.c:2958
-#, fuzzy, c-format
+#, c-format
 #| msgid "%s (%s)"
 msgid "(%s)"
-msgstr "%s (%s)"
+msgstr "(%s)"
 
 # Variable: don't translate / Biến: đừng dịch
 #. This is marked for translation in case a localizer
@@ -4273,10 +4269,10 @@ msgstr "%s (%s)"
 #. * total size of those items.
 #.
 #: ../src/nautilus-view.c:2982
-#, fuzzy, c-format
+#, c-format
 #| msgid "%s%s, %s, %s"
 msgid "%s %s, %s %s"
-msgstr "%s%s, %s, %s"
+msgstr "%s %s, %s %s"
 
 #: ../src/nautilus-view.c:4371
 #, c-format
@@ -5468,7 +5464,7 @@ msgstr "Phim CD"
 
 #: ../src/nautilus-x-content-bar.c:101
 msgid "Super Video CD"
-msgstr ""
+msgstr "Super Video CD"
 
 #: ../src/nautilus-x-content-bar.c:103
 msgid "Photo CD"
