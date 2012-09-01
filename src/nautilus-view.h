@@ -305,7 +305,6 @@ struct NautilusViewClass {
 GType               nautilus_view_get_type                         (void);
 
 /* Functions callable from the user interface and elsewhere. */
-NautilusWindow     *nautilus_view_get_nautilus_window              (NautilusView  *view);
 NautilusWindowSlot *nautilus_view_get_nautilus_window_slot     (NautilusView  *view);
 char *              nautilus_view_get_uri                          (NautilusView  *view);
 

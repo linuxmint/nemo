@@ -165,7 +165,6 @@ static int scripts_directory_uri_length;
 
 struct NautilusViewDetails
 {
-	NautilusWindow *window;
 	NautilusWindowSlot *slot;
 	NautilusDirectory *model;
 	NautilusFile *directory_as_file;
@@ -469,14 +468,16 @@ static void
 nautilus_view_reset_to_defaults (NautilusView *view)
 {
 	NautilusWindowShowHiddenFilesMode mode;
+	NautilusWindow *window;
 
 	g_return_if_fail (NAUTILUS_IS_VIEW (view));
 
 	NAUTILUS_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->reset_to_defaults (view);
 
-	mode = nautilus_window_get_hidden_files_mode (view->details->window);
+	window = nautilus_window_slot_get_window (view->details->slot);
+	mode = nautilus_window_get_hidden_files_mode (window);
 	if (mode != NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT) {
-		nautilus_window_set_hidden_files_mode (view->details->window,
+		nautilus_window_set_hidden_files_mode (window,
 						       NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT);
 	}
 }
@@ -913,12 +914,10 @@ create_templates_parameters_free (CreateTemplateParameters *parameters)
 	g_free (parameters);
 }			      
 
-NautilusWindow *
-nautilus_view_get_nautilus_window (NautilusView  *view)
+static NautilusWindow *
+nautilus_view_get_window (NautilusView  *view)
 {
-	g_assert (view->details->window != NULL);
-
-	return view->details->window;
+	return nautilus_window_slot_get_window (view->details->slot);
 }
 
 NautilusWindowSlot *
@@ -1713,7 +1712,7 @@ delayed_rename_file_hack_callback (RenameData *data)
 	view = data->view;
 	new_file = data->new_file;
 
-	if (view->details->window != NULL &&
+	if (view->details->slot != NULL &&
 	    view->details->active) {
 		NAUTILUS_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->start_renaming_file (view, new_file, FALSE);
 		nautilus_view_reveal_selection (view);
@@ -2708,11 +2707,10 @@ real_unmerge_menus (NautilusView *view)
 {
 	GtkUIManager *ui_manager;
 
-	if (view->details->window == NULL) {
+	ui_manager = nautilus_view_get_ui_manager (view);
+	if (ui_manager == NULL) {
 		return;
 	}
-
-	ui_manager = nautilus_window_get_ui_manager (view->details->window);
 
 	nautilus_ui_unmerge_ui (ui_manager,
 				&view->details->dir_merge_id,
@@ -2745,7 +2743,6 @@ nautilus_view_destroy (GtkWidget *object)
 	
 	/* We don't own the window, so no unref */
 	view->details->slot = NULL;
-	view->details->window = NULL;
 	
 	nautilus_view_stop_loading (view);
 
@@ -3042,6 +3039,7 @@ done_loading (NautilusView *view,
 {
 	GList *selection;
 	gboolean do_reveal = FALSE;
+	NautilusWindow *window;
 
 	if (!view->details->loading) {
 		return;
@@ -3049,12 +3047,14 @@ done_loading (NautilusView *view,
 
 	nautilus_profile_start (NULL);
 
+	window = nautilus_view_get_window (view);
+
 	/* This can be called during destruction, in which case there
 	 * is no NautilusWindow any more.
 	 */
-	if (view->details->window != NULL) {
+	if (window != NULL) {
 		if (all_files_seen) {
-			nautilus_window_report_load_complete (view->details->window, NAUTILUS_VIEW (view));
+			nautilus_window_report_load_complete (window, NAUTILUS_VIEW (view));
 		}
 
 		schedule_update_menus (view);
@@ -3962,10 +3962,14 @@ nautilus_view_get_loading (NautilusView *view)
 GtkUIManager *
 nautilus_view_get_ui_manager (NautilusView  *view)
 {
-	if (view->details->window == NULL) {
+	NautilusWindow *window;
+
+	if (view->details->slot == NULL) {
 		return NULL;
 	}
-	return nautilus_window_get_ui_manager (view->details->window);	
+
+	window = nautilus_window_slot_get_window (view->details->slot);
+	return nautilus_window_get_ui_manager (window);
 }
 
 /**
@@ -4402,7 +4406,7 @@ add_application_to_open_with_menu (NautilusView *view,
 				     action);
 	g_object_unref (action);
 
-	ui_manager = nautilus_window_get_ui_manager (view->details->window);
+	ui_manager = nautilus_view_get_ui_manager (view);
 	gtk_ui_manager_add_ui (ui_manager,
 			       view->details->open_with_merge_id,
 			       popup_placeholder,
@@ -4426,7 +4430,7 @@ get_x_content_async_callback (const char **content,
 
 	view = NAUTILUS_VIEW (user_data);
 
-	if (view->details->window != NULL) {
+	if (view->details->slot != NULL) {
 		schedule_update_menus (view);
 	}
 	g_object_unref (view);
@@ -4484,7 +4488,7 @@ reset_open_with_menu (NautilusView *view, GList *selection)
 
 	/* Clear any previous inserted items in the applications and viewers placeholders */
 
-	ui_manager = nautilus_window_get_ui_manager (view->details->window);
+	ui_manager = nautilus_view_get_ui_manager (view);
 	nautilus_ui_unmerge_ui (ui_manager,
 				&view->details->open_with_merge_id,
 				&view->details->open_with_action_group);
@@ -4543,7 +4547,7 @@ reset_open_with_menu (NautilusView *view, GList *selection)
 			popup_path = NAUTILUS_VIEW_POPUP_PATH_APPLICATIONS_PLACEHOLDER;
 		}
 
-		gtk_ui_manager_add_ui (nautilus_window_get_ui_manager (view->details->window),
+		gtk_ui_manager_add_ui (nautilus_view_get_ui_manager (view),
 				       view->details->open_with_merge_id,
 				       menu_path,
 				       "separator",
@@ -4775,7 +4779,7 @@ add_extension_menu_items (NautilusView *view,
 	GtkUIManager *ui_manager;
 	GList *l;
 
-	ui_manager = nautilus_window_get_ui_manager (view->details->window);
+	ui_manager = nautilus_view_get_ui_manager (view);
 	
 	for (l = menu_items; l; l = l->next) {
 		NautilusMenuItem *item;
@@ -4835,7 +4839,7 @@ reset_extension_actions_menu (NautilusView *view, GList *selection)
 	GtkUIManager *ui_manager;
 	
 	/* Clear any previous inserted items in the extension actions placeholder */
-	ui_manager = nautilus_window_get_ui_manager (view->details->window);
+	ui_manager = nautilus_view_get_ui_manager (view);
 
 	nautilus_ui_unmerge_ui (ui_manager,
 				&view->details->extensions_menu_merge_id,
@@ -5140,7 +5144,7 @@ add_script_to_scripts_menus (NautilusView *directory_view,
 						action, NULL);
 	g_object_unref (action);
 
-	ui_manager = nautilus_window_get_ui_manager (directory_view->details->window);
+	ui_manager = nautilus_view_get_ui_manager (directory_view);
 
 	gtk_ui_manager_add_ui (ui_manager,
 			       directory_view->details->scripts_merge_id,
@@ -5189,7 +5193,7 @@ add_submenu_to_directory_menus (NautilusView *directory_view,
 	char *uri;
 	GtkUIManager *ui_manager;
 
-	ui_manager = nautilus_window_get_ui_manager (directory_view->details->window);
+	ui_manager = nautilus_view_get_ui_manager (directory_view);
 	uri = nautilus_file_get_uri (file);
 	name = nautilus_file_get_display_name (file);
 	pixbuf = get_menu_icon_for_file (file);
@@ -5307,7 +5311,7 @@ update_scripts_menu (NautilusView *view)
 	   occur before we finish. */
 	view->details->scripts_invalid = FALSE;
 
-	ui_manager = nautilus_window_get_ui_manager (view->details->window);
+	ui_manager = nautilus_view_get_ui_manager (view);
 	nautilus_ui_unmerge_ui (ui_manager,
 				&view->details->scripts_merge_id,
 				&view->details->scripts_action_group);
@@ -5394,7 +5398,7 @@ add_template_to_templates_menus (NautilusView *directory_view,
 				     action);
 	g_object_unref (action);
 
-	ui_manager = nautilus_window_get_ui_manager (directory_view->details->window);
+	ui_manager = nautilus_view_get_ui_manager (directory_view);
 
 	gtk_ui_manager_add_ui (ui_manager,
 			       directory_view->details->templates_merge_id,
@@ -5571,7 +5575,7 @@ update_templates_menu (NautilusView *view)
 	   occur before we finish. */
 	view->details->templates_invalid = FALSE;
 
-	ui_manager = nautilus_window_get_ui_manager (view->details->window);
+	ui_manager = nautilus_view_get_ui_manager (view);
 	nautilus_ui_unmerge_ui (ui_manager,
 				&view->details->templates_merge_id,
 				&view->details->templates_action_group);
@@ -5626,7 +5630,7 @@ create_popup_menu (NautilusView *view, const char *popup_path)
 {
 	GtkWidget *menu;
 	
-	menu = gtk_ui_manager_get_widget (nautilus_window_get_ui_manager (view->details->window),
+	menu = gtk_ui_manager_get_widget (nautilus_view_get_ui_manager (view),
 					  popup_path);
 	gtk_menu_set_screen (GTK_MENU (menu),
 			     gtk_widget_get_screen (GTK_WIDGET (view)));
@@ -5809,7 +5813,7 @@ copy_data_free (CopyCallbackData *data)
 	GList *windows;
 	GList *w;
 
-	application = gtk_window_get_application (GTK_WINDOW (data->view->details->window));
+	application = GTK_APPLICATION (g_application_get_default ());
 	g_signal_handlers_disconnect_by_func (application,
 					      G_CALLBACK (on_app_window_added),
 					      data);
@@ -5945,7 +5949,7 @@ add_window_location_bookmarks (CopyCallbackData *data)
 	GList *windows;
 	GList *w;
 
-	application = gtk_window_get_application (GTK_WINDOW (data->view->details->window));
+	application = GTK_APPLICATION (g_application_get_default ());
 	windows = gtk_application_get_windows (application);
 	g_signal_connect (application, "window-added", G_CALLBACK (on_app_window_added), data);
 	g_signal_connect (application, "window-removed", G_CALLBACK (on_app_window_removed), data);
@@ -5968,7 +5972,7 @@ copy_or_move_selection (NautilusView *view,
 	selection = nautilus_view_get_selection_for_file_transfer (view);
 
 	dialog = gtk_file_chooser_dialog_new (_("Select Destination"),
-					      GTK_WINDOW (view->details->window),
+					      GTK_WINDOW (nautilus_view_get_window (view)),
 					      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 					      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					      _("_Select"), GTK_RESPONSE_OK,
@@ -6129,7 +6133,7 @@ paste_clipboard_received_callback (GtkClipboard     *clipboard,
 
 	view_uri = nautilus_view_get_backing_uri (view);
 
-	if (view->details->window != NULL) {
+	if (view->details->slot != NULL) {
 		paste_clipboard_data (view, selection_data, view_uri);
 	}
 
@@ -6156,7 +6160,7 @@ paste_into_clipboard_received_callback (GtkClipboard     *clipboard,
 
 	view = NAUTILUS_VIEW (data->view);
 
-	if (view->details->window != NULL) {
+	if (view->details->slot != NULL) {
 		directory_uri = nautilus_file_get_activation_uri (data->target);
 
 		paste_clipboard_data (view, selection_data, directory_uri);
@@ -6459,7 +6463,8 @@ file_mount_callback (NautilusFile  *file,
 		name = nautilus_file_get_display_name (file);
 		/* Translators: %s is a file name formatted for display */
 		text = g_strdup_printf (_("Unable to access “%s”"), name);
-		eel_show_error_dialog (text, error->message, GTK_WINDOW (view->details->window));
+		eel_show_error_dialog (text, error->message,
+				       GTK_WINDOW (nautilus_view_get_window (view)));
 		g_free (text);
 		g_free (name);
 	}
@@ -6485,7 +6490,8 @@ file_unmount_callback (NautilusFile  *file,
 		name = nautilus_file_get_display_name (file);
 		/* Translators: %s is a file name formatted for display */
 		text = g_strdup_printf (_("Unable to remove “%s”"), name);
-		eel_show_error_dialog (text, error->message, GTK_WINDOW (view->details->window));
+		eel_show_error_dialog (text, error->message,
+				       GTK_WINDOW (nautilus_view_get_window (view)));
 		g_free (text);
 		g_free (name);
 	}
@@ -6511,7 +6517,8 @@ file_eject_callback (NautilusFile  *file,
 		name = nautilus_file_get_display_name (file);
 		/* Translators: %s is a file name formatted for display */
 		text = g_strdup_printf (_("Unable to eject “%s”"), name);
-		eel_show_error_dialog (text, error->message, GTK_WINDOW (view->details->window));
+		eel_show_error_dialog (text, error->message,
+				       GTK_WINDOW (nautilus_view_get_window (view)));
 		g_free (text);
 		g_free (name);
 	}
@@ -6532,7 +6539,8 @@ file_stop_callback (NautilusFile  *file,
 	     (error->code != G_IO_ERROR_CANCELLED &&
 	      error->code != G_IO_ERROR_FAILED_HANDLED))) {
 		eel_show_error_dialog (_("Unable to stop drive"),
-				       error->message, GTK_WINDOW (view->details->window));
+				       error->message,
+				       GTK_WINDOW (nautilus_view_get_window (view)));
 	}
 }
 
@@ -6633,7 +6641,8 @@ file_start_callback (NautilusFile  *file,
 		name = nautilus_file_get_display_name (file);
 		/* Translators: %s is a file name formatted for display */
 		text = g_strdup_printf (_("Unable to start “%s”"), name);
-		eel_show_error_dialog (text, error->message, GTK_WINDOW (view->details->window));
+		eel_show_error_dialog (text, error->message,
+				       GTK_WINDOW (nautilus_view_get_window (view)));
 		g_free (text);
 		g_free (name);
 	}
@@ -7111,7 +7120,7 @@ nautilus_view_init_show_hidden_files (NautilusView *view)
 	}
 
 	show_hidden_changed = FALSE;
-	mode = nautilus_window_get_hidden_files_mode (view->details->window);
+	mode = nautilus_window_get_hidden_files_mode (nautilus_view_get_window (view));
 
 	if (mode == NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT) {
 		show_hidden_default_setting = g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES);
@@ -7468,7 +7477,7 @@ real_merge_menus (NautilusView *view)
 	GtkAction *action;
 	char *tooltip;
 
-	ui_manager = nautilus_window_get_ui_manager (view->details->window);
+	ui_manager = nautilus_view_get_ui_manager (view);
 
 	action_group = gtk_action_group_new ("DirViewActions");
 	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
@@ -7549,7 +7558,7 @@ clipboard_targets_received (GtkClipboard     *clipboard,
 	view = NAUTILUS_VIEW (user_data);
 	can_paste = FALSE;
 
-	if (view->details->window == NULL ||
+	if (view->details->slot == NULL ||
 	    !view->details->active) {
 		/* We've been destroyed or became inactive since call */
 		g_object_unref (view);
@@ -8576,7 +8585,7 @@ real_update_menus (NautilusView *view)
 		      NULL);
 
 	menuitem = gtk_ui_manager_get_widget (
-					      nautilus_window_get_ui_manager (view->details->window),
+					      nautilus_view_get_ui_manager (view),
 					      NAUTILUS_VIEW_POPUP_PATH_OPEN);
 
 	/* Only force displaying the icon if it is an application icon */
@@ -8967,7 +8976,7 @@ schedule_update_menus (NautilusView *view)
 	/* Don't schedule updates after destroy (#349551),
  	 * or if we are not active.
 	 */
-	if (view->details->window == NULL ||
+	if (view->details->slot == NULL ||
 	    !view->details->active) {
 		return;
 	}
@@ -9007,7 +9016,7 @@ schedule_update_status (NautilusView *view)
 	g_assert (NAUTILUS_IS_VIEW (view));
 
 	/* Make sure we haven't already destroyed it */
-	if (view->details->window == NULL) {
+	if (view->details->slot == NULL) {
 		return;
 	}
 
@@ -9175,11 +9184,12 @@ static void
 finish_loading (NautilusView *view)
 {
 	NautilusFileAttributes attributes;
+	NautilusWindow *window;
 
 	nautilus_profile_start (NULL);
 
-	nautilus_window_report_load_underway (view->details->window,
-					      NAUTILUS_VIEW (view));
+	window = nautilus_view_get_window (view);
+	nautilus_window_report_load_underway (window, NAUTILUS_VIEW (view));
 
 	/* Tell interested parties that we've begun loading this directory now.
 	 * Subclasses use this to know that the new metadata is now available.
@@ -9189,7 +9199,7 @@ finish_loading (NautilusView *view)
 	nautilus_profile_end ("BEGIN_LOADING");
 
 	/* Assume we have now all information to show window */
-	nautilus_window_view_visible  (view->details->window, NAUTILUS_VIEW (view));
+	nautilus_window_view_visible  (window, NAUTILUS_VIEW (view));
 
 	if (nautilus_directory_are_all_files_seen (view->details->model)) {
 		/* Unschedule a pending update and schedule a new one with the minimal
@@ -9630,7 +9640,6 @@ nautilus_view_set_property (GObject         *object,
 		window = nautilus_window_slot_get_window (slot);
 
 		directory_view->details->slot = slot;
-		directory_view->details->window = window;
 
 		g_signal_connect_object (directory_view->details->slot,
 					 "active", G_CALLBACK (slot_active),
@@ -9639,15 +9648,15 @@ nautilus_view_set_property (GObject         *object,
 					 "inactive", G_CALLBACK (slot_inactive),
 					 directory_view, 0);
 
-		g_signal_connect_object (directory_view->details->window,
+		g_signal_connect_object (window,
 					 "slot-added", G_CALLBACK (window_slots_changed),
 					 directory_view, 0);
-		g_signal_connect_object (directory_view->details->window,
+		g_signal_connect_object (window,
 					 "slot-removed", G_CALLBACK (window_slots_changed),
 					 directory_view, 0);
 		window_slots_changed (window, slot, directory_view);
 
-		g_signal_connect_object (directory_view->details->window,
+		g_signal_connect_object (window,
 					 "hidden-files-mode-changed", G_CALLBACK (hidden_files_mode_changed),
 					 directory_view, 0);
 		nautilus_view_init_show_hidden_files (directory_view);
@@ -9751,7 +9760,7 @@ nautilus_view_parent_set (GtkWidget *widget,
 		g_assert (old_parent == NULL);
 
 		if (view->details->slot == 
-		    nautilus_window_get_active_slot (view->details->window)) {
+		    nautilus_window_get_active_slot (nautilus_view_get_window (view))) {
 			view->details->active = TRUE;
 
 			nautilus_view_merge_menus (view);
