@@ -44,8 +44,6 @@ struct NautilusWindowDetails
         guint extensions_menu_merge_id;
         GtkActionGroup *extensions_menu_action_group;
 
-	NautilusWindowShowHiddenFilesMode show_hidden_files_mode;
-
 	/* Ensures that we do not react on signals of a
 	 * view that is re-used as new view when its loading
 	 * is cancelled

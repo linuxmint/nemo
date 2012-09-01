@@ -284,7 +284,8 @@ static void     load_directory                                 (NautilusView    
 								NautilusDirectory    *directory);
 static void     nautilus_view_merge_menus                      (NautilusView      *view);
 static void     nautilus_view_unmerge_menus                    (NautilusView      *view);
-static void     nautilus_view_init_show_hidden_files           (NautilusView      *view);
+static void     nautilus_view_set_show_hidden_files           (NautilusView      *view,
+							       gboolean           show_hidden);
 static void     clipboard_changed_callback                     (NautilusClipboardMonitor *monitor,
 								NautilusView      *view);
 static void     open_one_in_new_window                         (gpointer              data,
@@ -467,19 +468,12 @@ nautilus_view_reveal_selection (NautilusView *view)
 static void
 nautilus_view_reset_to_defaults (NautilusView *view)
 {
-	NautilusWindowShowHiddenFilesMode mode;
-	NautilusWindow *window;
+	GtkAction *action;
 
-	g_return_if_fail (NAUTILUS_IS_VIEW (view));
-
-	NAUTILUS_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->reset_to_defaults (view);
-
-	window = nautilus_window_slot_get_window (view->details->slot);
-	mode = nautilus_window_get_hidden_files_mode (window);
-	if (mode != NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT) {
-		nautilus_window_set_hidden_files_mode (window,
-						       NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT);
-	}
+	action = gtk_action_group_get_action (view->details->dir_action_group,
+					      NAUTILUS_ACTION_SHOW_HIDDEN_FILES);
+	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
+				      g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES));
 }
 
 static gboolean
@@ -1536,18 +1530,6 @@ action_reset_to_defaults_callback (GtkAction *action,
 	nautilus_view_reset_to_defaults (callback_data);
 }
 
-
-static void
-hidden_files_mode_changed (NautilusWindow *window,
-			   gpointer callback_data)
-{
-	NautilusView *directory_view;
-
-	directory_view = NAUTILUS_VIEW (callback_data);
-
-	nautilus_view_init_show_hidden_files (directory_view);
-}
-
 static void
 action_save_search_callback (GtkAction *action,
 			     gpointer callback_data)
@@ -2205,6 +2187,18 @@ all_selected_items_in_trash (NautilusView *view)
 }
 
 static void
+action_show_hidden_files_callback (GtkAction *action,
+				   gpointer callback_data)
+{
+	NautilusView *view;
+
+	view = NAUTILUS_VIEW (callback_data);
+
+	nautilus_view_set_show_hidden_files
+		(view, gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)));
+}
+
+static void
 click_policy_changed_callback (gpointer callback_data)
 {
 	NautilusView *view;
@@ -2663,6 +2657,8 @@ nautilus_view_init (NautilusView *view)
 
 	view->details->sort_directories_first =
 		g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SORT_DIRECTORIES_FIRST);
+	view->details->show_hidden_files =
+		g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES);
 
 	g_signal_connect_object (nautilus_trash_monitor_get (), "trash_state_changed",
 				 G_CALLBACK (nautilus_view_trash_state_changed_callback), view, 0);
@@ -7108,40 +7104,26 @@ action_location_restore_from_trash_callback (GtkAction *action,
 					   nautilus_view_get_containing_window (view));
 }
 
-static void
-nautilus_view_init_show_hidden_files (NautilusView *view)
+gboolean
+nautilus_view_get_show_hidden_files (NautilusView *view)
 {
-	NautilusWindowShowHiddenFilesMode mode;
-	gboolean show_hidden_changed;
-	gboolean show_hidden_default_setting;
+	return view->details->show_hidden_files;
+}
 
+static void
+nautilus_view_set_show_hidden_files (NautilusView *view,
+				     gboolean show_hidden)
+{
 	if (view->details->ignore_hidden_file_preferences) {
 		return;
 	}
 
-	show_hidden_changed = FALSE;
-	mode = nautilus_window_get_hidden_files_mode (nautilus_view_get_window (view));
-
-	if (mode == NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT) {
-		show_hidden_default_setting = g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES);
-		if (show_hidden_default_setting != view->details->show_hidden_files) {
-			view->details->show_hidden_files = show_hidden_default_setting;
-			show_hidden_changed = TRUE;
-		}
-	} else {
-		if (mode == NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_ENABLE) {
-			show_hidden_changed = !view->details->show_hidden_files;
-			view->details->show_hidden_files = TRUE;
-		} else {
-			show_hidden_changed = view->details->show_hidden_files;
-			view->details->show_hidden_files = FALSE;
+	if (show_hidden != view->details->show_hidden_files) {
+		view->details->show_hidden_files = show_hidden;
+		if (view->details->model != NULL) {
+			load_directory (view, view->details->model);
 		}
 	}
-
-	if (show_hidden_changed && (view->details->model != NULL)) {
-		load_directory (view, view->details->model);	
-	}
-
 }
 
 static const GtkActionEntry directory_view_entries[] = {
@@ -7412,6 +7394,14 @@ static const GtkActionEntry directory_view_entries[] = {
 				 G_CALLBACK (action_location_properties_callback) },
 };
 
+static const GtkToggleActionEntry directory_view_toggle_entries[] = {
+  /* name, stock id */         { NAUTILUS_ACTION_SHOW_HIDDEN_FILES, NULL,
+  /* label, accelerator */       N_("Show _Hidden Files"), "<control>H",
+  /* tooltip */                  N_("Toggle the display of hidden files in the current window"),
+                                 G_CALLBACK (action_show_hidden_files_callback),
+                                 TRUE },
+};
+
 static void
 connect_proxy (NautilusView *view,
 	       GtkAction *action,
@@ -7485,6 +7475,9 @@ real_merge_menus (NautilusView *view)
 	gtk_action_group_add_actions (action_group, 
 				      directory_view_entries, G_N_ELEMENTS (directory_view_entries),
 				      view);
+	gtk_action_group_add_toggle_actions (action_group,
+					     directory_view_toggle_entries, G_N_ELEMENTS (directory_view_toggle_entries),
+					     view);
 
 	tooltip = g_strdup (_("Run or manage scripts"));
 	/* Create a script action here specially because its tooltip is dynamic */
@@ -8808,6 +8801,9 @@ real_update_menus (NautilusView *view)
 					      NAUTILUS_ACTION_MOVE_TO);
 	gtk_action_set_sensitive (action, can_delete_files);
 	gtk_action_set_visible (action, !selection_contains_recent);
+
+	action = gtk_action_group_get_action (view->details->dir_action_group, NAUTILUS_ACTION_SHOW_HIDDEN_FILES);
+	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), view->details->show_hidden_files);
 }
 
 /**
@@ -9600,27 +9596,6 @@ real_get_selected_icon_locations (NautilusView *view)
 }
 
 static void
-window_slots_changed (NautilusWindow *window,
-		      NautilusWindowSlot *slot,
-		      NautilusView *view)
-{
-	GList *slots;
-
-	slots = nautilus_window_get_slots (window);
-
-	/* Only add a shadow to the scrolled window when we're in a tabless
-	 * notebook, since when the notebook has tabs, it will draw its own
-	 * border.
-	 */
-	if (g_list_length (slots) > 1 ||
-	    NAUTILUS_IS_DESKTOP_CANVAS_VIEW (view)) {
-		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_NONE);
-	} else {
-		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_IN);
-	}
-}
-
-static void
 nautilus_view_set_property (GObject         *object,
 			    guint            prop_id,
 			    const GValue    *value,
@@ -9628,7 +9603,6 @@ nautilus_view_set_property (GObject         *object,
 {
 	NautilusView *directory_view;
 	NautilusWindowSlot *slot;
-	NautilusWindow *window;
   
 	directory_view = NAUTILUS_VIEW (object);
 
@@ -9637,8 +9611,6 @@ nautilus_view_set_property (GObject         *object,
 		g_assert (directory_view->details->slot == NULL);
 
 		slot = NAUTILUS_WINDOW_SLOT (g_value_get_object (value));
-		window = nautilus_window_slot_get_window (slot);
-
 		directory_view->details->slot = slot;
 
 		g_signal_connect_object (directory_view->details->slot,
@@ -9647,19 +9619,6 @@ nautilus_view_set_property (GObject         *object,
 		g_signal_connect_object (directory_view->details->slot,
 					 "inactive", G_CALLBACK (slot_inactive),
 					 directory_view, 0);
-
-		g_signal_connect_object (window,
-					 "slot-added", G_CALLBACK (window_slots_changed),
-					 directory_view, 0);
-		g_signal_connect_object (window,
-					 "slot-removed", G_CALLBACK (window_slots_changed),
-					 directory_view, 0);
-		window_slots_changed (window, slot, directory_view);
-
-		g_signal_connect_object (window,
-					 "hidden-files-mode-changed", G_CALLBACK (hidden_files_mode_changed),
-					 directory_view, 0);
-		nautilus_view_init_show_hidden_files (directory_view);
 		break;
 	case PROP_SUPPORTS_ZOOMING:
 		directory_view->details->supports_zooming = g_value_get_boolean (value);

@@ -410,4 +410,6 @@ void              nautilus_view_pop_up_location_context_menu (NautilusView    *v
 void              nautilus_view_grab_focus                 (NautilusView      *view);
 void              nautilus_view_update_menus               (NautilusView      *view);
 
+gboolean          nautilus_view_get_show_hidden_files      (NautilusView      *view);
+
 #endif /* NAUTILUS_VIEW_H */

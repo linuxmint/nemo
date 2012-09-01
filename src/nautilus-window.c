@@ -34,6 +34,7 @@
 #include "nautilus-actions.h"
 #include "nautilus-application.h"
 #include "nautilus-bookmarks-window.h"
+#include "nautilus-desktop-window.h"
 #include "nautilus-location-bar.h"
 #include "nautilus-mime-actions.h"
 #include "nautilus-notebook.h"
@@ -102,7 +103,6 @@ enum {
 	RELOAD,
 	PROMPT_FOR_LOCATION,
 	LOADING_URI,
-	HIDDEN_FILES_MODE_CHANGED,
 	SLOT_ADDED,
 	SLOT_REMOVED,
 	LAST_SIGNAL
@@ -332,14 +332,8 @@ close_slot (NautilusWindow     *window,
 		page_num = gtk_notebook_page_num (notebook, GTK_WIDGET (slot));
 		g_assert (page_num >= 0);
 
-		g_signal_handlers_block_by_func (notebook,
-						 G_CALLBACK (notebook_switch_page_cb),
-						 window);
 		/* this will call gtk_widget_destroy on the slot */
 		gtk_notebook_remove_page (notebook, page_num);
-		g_signal_handlers_unblock_by_func (notebook,
-						   G_CALLBACK (notebook_switch_page_cb),
-						   window);
 	}
 }
 
@@ -1025,6 +1019,33 @@ create_toolbar (NautilusWindow *window)
 }
 
 static void
+notebook_num_pages_changed (NautilusWindow *window)
+{
+	NautilusView *view;
+	NautilusWindowSlot *active_slot;
+
+	active_slot = nautilus_window_get_active_slot (window);
+	if (active_slot == NULL) {
+		return;
+	}
+	view = nautilus_window_slot_get_current_view (active_slot);
+	if (view == NULL) {
+		return;
+	}
+
+	/* Only add a shadow to the scrolled window when we're in a tabless
+	 * notebook, since when the notebook has tabs, it will draw its own
+	 * border.
+	 */
+	if (g_list_length (window->details->slots) > 1 ||
+	    NAUTILUS_IS_DESKTOP_WINDOW (window)) {
+		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_NONE);
+	} else {
+		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_IN);
+	}
+}
+
+static void
 notebook_page_removed_cb (GtkNotebook *notebook,
 			  GtkWidget *page,
 			  guint page_num,
@@ -1033,6 +1054,8 @@ notebook_page_removed_cb (GtkNotebook *notebook,
 	NautilusWindow *window = user_data;
 	NautilusWindowSlot *slot = NAUTILUS_WINDOW_SLOT (page), *next_slot;
 	gboolean dnd_slot;
+
+	notebook_num_pages_changed (window);
 
 	dnd_slot = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (slot), "dnd-window-slot"));
 	if (!dnd_slot) {
@@ -1057,6 +1080,11 @@ notebook_page_added_cb (GtkNotebook *notebook,
 	NautilusWindowSlot *slot = NAUTILUS_WINDOW_SLOT (page);
 	NautilusWindowSlot *dummy_slot;
 	gboolean dnd_slot;
+
+	/* It's too early here to call notebook_num_pages_changed(),
+	 * since the view might not be associagted to the slot yet.
+	 * Defer the call to nautilus_window_connect_content_view().
+	 */
 
 	dnd_slot = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (slot), "dnd-window-slot"));
 	if (!dnd_slot) {
@@ -1710,6 +1738,9 @@ nautilus_window_connect_content_view (NautilusWindow *window,
 			  G_CALLBACK (zoom_level_changed_callback),
 			  window);
 
+	/* See the comment in notebook_page_added_cb() */
+	notebook_num_pages_changed (window);
+
       /* Update displayed view in menu. Only do this if we're not switching
        * locations though, because if we are switching locations we'll
        * install a whole new set of views in the menu later (the current
@@ -1835,21 +1866,6 @@ nautilus_window_get_slot_for_view (NautilusWindow *window,
 	return slot;
 }
 
-NautilusWindowShowHiddenFilesMode
-nautilus_window_get_hidden_files_mode (NautilusWindow *window)
-{
-	return window->details->show_hidden_files_mode;
-}
-
-void
-nautilus_window_set_hidden_files_mode (NautilusWindow *window,
-				       NautilusWindowShowHiddenFilesMode  mode)
-{
-	window->details->show_hidden_files_mode = mode;
-
-	g_signal_emit_by_name (window, "hidden_files_mode_changed");
-}
-
 NautilusWindowSlot *
 nautilus_window_get_active_slot (NautilusWindow *window)
 {
@@ -1971,8 +1987,6 @@ nautilus_window_init (NautilusWindow *window)
 	window->details->slots = NULL;
 	window->details->active_slot = NULL;
 
-	window->details->show_hidden_files_mode = NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT;
-
 	window_group = gtk_window_group_new ();
 	gtk_window_group_add_window (window_group, GTK_WINDOW (window));
 	g_object_unref (window_group);
@@ -2060,14 +2074,6 @@ nautilus_window_class_init (NautilusWindowClass *class)
 			      NULL, NULL,
 			      g_cclosure_marshal_VOID__STRING,
 			      G_TYPE_NONE, 1, G_TYPE_STRING);
-	signals[HIDDEN_FILES_MODE_CHANGED] =
-		g_signal_new ("hidden_files_mode_changed",
-			      G_TYPE_FROM_CLASS (class),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      g_cclosure_marshal_VOID__VOID,
-			      G_TYPE_NONE, 0);
 	signals[LOADING_URI] =
 		g_signal_new ("loading_uri",
 			      G_TYPE_FROM_CLASS (class),

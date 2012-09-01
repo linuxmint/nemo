@@ -50,12 +50,6 @@
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_TYPE_WINDOW, NautilusWindowClass))
 
 typedef enum {
-        NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT,
-        NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_ENABLE,
-        NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DISABLE
-} NautilusWindowShowHiddenFilesMode;
-
-typedef enum {
         NAUTILUS_WINDOW_NOT_SHOWN,
         NAUTILUS_WINDOW_POSITION_SET,
         NAUTILUS_WINDOW_SHOULD_SHOW
@@ -120,10 +114,6 @@ GtkActionGroup * nautilus_window_get_main_action_group (NautilusWindow   *window
 void                 nautilus_window_report_load_complete     (NautilusWindow *window,
                                                                NautilusView *view);
 
-NautilusWindowShowHiddenFilesMode
-                     nautilus_window_get_hidden_files_mode (NautilusWindow *window);
-void                 nautilus_window_set_hidden_files_mode (NautilusWindow *window,
-                                                            NautilusWindowShowHiddenFilesMode  mode);
 void                 nautilus_window_report_load_underway  (NautilusWindow *window,
                                                             NautilusView *view);
 void                 nautilus_window_view_visible          (NautilusWindow *window,

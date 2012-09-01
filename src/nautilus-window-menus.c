@@ -187,48 +187,6 @@ action_zoom_normal_callback (GtkAction *action,
 }
 
 static void
-action_show_hidden_files_callback (GtkAction *action, 
-				   gpointer callback_data)
-{
-	NautilusWindow *window;
-	NautilusWindowShowHiddenFilesMode mode;
-
-	window = NAUTILUS_WINDOW (callback_data);
-
-	if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
-		mode = NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_ENABLE;
-	} else {
-		mode = NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DISABLE;
-	}
-
-	nautilus_window_set_hidden_files_mode (window, mode);
-}
-
-static void
-show_hidden_files_preference_callback (gpointer callback_data)
-{
-	NautilusWindow *window;
-	GtkAction *action;
-
-	window = NAUTILUS_WINDOW (callback_data);
-
-	if (window->details->show_hidden_files_mode == NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT) {
-		action = gtk_action_group_get_action (nautilus_window_get_main_action_group (window),
-						      NAUTILUS_ACTION_SHOW_HIDDEN_FILES);
-
-		/* update button */
-		g_signal_handlers_block_by_func (action, action_show_hidden_files_callback, window);
-		gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-					      g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES));
-		g_signal_handlers_unblock_by_func (action, action_show_hidden_files_callback, window);
-
-		/* inform views */
-		nautilus_window_set_hidden_files_mode (window, NAUTILUS_WINDOW_SHOW_HIDDEN_FILES_DEFAULT);
-
-	}
-}
-
-static void
 action_preferences_callback (GtkAction *action, 
 			     gpointer user_data)
 {
@@ -609,11 +567,6 @@ static const GtkActionEntry main_entries[] = {
 };
 
 static const GtkToggleActionEntry main_toggle_entries[] = {
-  /* name, stock id */         { NAUTILUS_ACTION_SHOW_HIDDEN_FILES, NULL,
-  /* label, accelerator */       N_("Show _Hidden Files"), "<control>H",
-  /* tooltip */                  N_("Toggle the display of hidden files in the current window"),
-                                 G_CALLBACK (action_show_hidden_files_callback),
-                                 TRUE },
   /* name, stock id */     { NAUTILUS_ACTION_SHOW_HIDE_SIDEBAR, NULL,
   /* label, accelerator */   N_("_Show Sidebar"), "F9",
   /* tooltip */              N_("Change the visibility of this window's side pane"),
@@ -734,7 +687,7 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 	action_group = gtk_action_group_new ("ShellActions");
 	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
 	window->details->main_action_group = action_group;
-	gtk_action_group_add_actions (action_group, 
+	gtk_action_group_add_actions (action_group,
 				      main_entries, G_N_ELEMENTS (main_entries),
 				      window);
 	gtk_action_group_add_toggle_actions (action_group, 
@@ -756,17 +709,6 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 
 	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_HOME);
 	g_object_set (action, "short_label", _("_Home"), NULL);
-
-	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_SHOW_HIDDEN_FILES);
-	g_signal_handlers_block_by_func (action, action_show_hidden_files_callback, window);
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-				      g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES));
-	g_signal_handlers_unblock_by_func (action, action_show_hidden_files_callback, window);
-
-
-	g_signal_connect_swapped (nautilus_preferences, "changed::" NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES,
-				  G_CALLBACK(show_hidden_files_preference_callback),
-				  window);
 
 	/* Alt+N for the first 10 tabs */
 	for (i = 0; i < 10; ++i) {
@@ -807,9 +749,6 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 void
 nautilus_window_finalize_menus (NautilusWindow *window)
 {
-	g_signal_handlers_disconnect_by_func (nautilus_preferences,
-					      show_hidden_files_preference_callback, window);
-
 	if (window->details->app_menu_visibility_id != 0) {
 		g_signal_handler_disconnect (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
 					     window->details->app_menu_visibility_id);
