@@ -652,9 +652,9 @@ action_change_background_callback (GtkAction *action,
         g_assert (NEMO_VIEW (data));
 
 	nemo_launch_application_from_command (gtk_widget_get_screen (GTK_WIDGET (data)),
-						  "gnome-control-center",
+						  "cinnamon-settings",
 						  FALSE,
-						  "background", NULL);
+						  "backgrounds", NULL);
 }
 
 static void
