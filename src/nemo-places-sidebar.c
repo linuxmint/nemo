@@ -508,8 +508,136 @@ update_places (NemoPlacesSidebar *sidebar)
 	location = nemo_window_slot_get_current_uri (slot);
 
 	network_mounts = network_volumes = NULL;
-	volume_monitor = sidebar->volume_monitor;
+	volume_monitor = sidebar->volume_monitor;	
+	
+	/* add bookmarks */
+	bookmark_count = nemo_bookmark_list_length (sidebar->bookmarks);
 
+	for (index = 0; index < bookmark_count; ++index) {
+		bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
+
+		if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
+			continue;
+		}
+
+		root = nemo_bookmark_get_location (bookmark);
+		file = nemo_file_get (root);
+
+		//if (is_built_in_bookmark (file)) {
+		//	g_object_unref (root);
+		//	nemo_file_unref (file);
+		//	continue;
+		//}
+		nemo_file_unref (file);
+
+		bookmark_name = nemo_bookmark_get_name (bookmark);
+		icon = nemo_bookmark_get_icon (bookmark);
+		mount_uri = nemo_bookmark_get_uri (bookmark);
+		tooltip = g_file_get_parse_name (root);
+
+		add_place (sidebar, PLACES_BOOKMARK,
+			   SECTION_BOOKMARKS,
+			   bookmark_name, icon, mount_uri,
+			   NULL, NULL, NULL, index,
+			   tooltip);
+		g_object_unref (root);
+		g_object_unref (icon);
+		g_free (mount_uri);
+		g_free (tooltip);
+	}
+
+	add_heading (sidebar, SECTION_COMPUTER,
+		     _("Computer"));
+
+	/* add built in bookmarks */
+
+	/* home folder */
+	mount_uri = nemo_get_home_directory_uri ();
+	icon = g_themed_icon_new (NEMO_ICON_HOME);
+	add_place (sidebar, PLACES_BUILT_IN,
+		   SECTION_COMPUTER,
+		   _("Home"), icon,
+		   mount_uri, NULL, NULL, NULL, 0,
+		   _("Open your personal folder"));
+	g_object_unref (icon);
+	g_free (mount_uri);
+
+	if (should_show_desktop ()) {
+		/* desktop */
+		desktop_path = nemo_get_desktop_directory ();
+		mount_uri = g_filename_to_uri (desktop_path, NULL, NULL);
+		icon = g_themed_icon_new (NEMO_ICON_DESKTOP);
+		add_place (sidebar, PLACES_BUILT_IN,
+			   SECTION_COMPUTER,
+			   _("Desktop"), icon,
+			   mount_uri, NULL, NULL, NULL, 0,
+			   _("Open the contents of your desktop in a folder"));
+		g_object_unref (icon);
+		g_free (mount_uri);
+		g_free (desktop_path);
+	}
+
+	
+	
+
+	/* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
+	mounts = g_volume_monitor_get_mounts (volume_monitor);
+
+	for (l = mounts; l != NULL; l = l->next) {
+		mount = l->data;
+		if (g_mount_is_shadowed (mount)) {
+			g_object_unref (mount);
+			continue;
+		}
+		volume = g_mount_get_volume (mount);
+		if (volume != NULL) {
+		    	g_object_unref (volume);
+			g_object_unref (mount);
+			continue;
+		}
+		root = g_mount_get_default_location (mount);
+
+		if (!g_file_is_native (root)) {
+			network_mounts = g_list_prepend (network_mounts, mount);
+			continue;
+		}
+
+		icon = g_mount_get_icon (mount);
+		mount_uri = g_file_get_uri (root);
+		name = g_mount_get_name (mount);
+		tooltip = g_file_get_parse_name (root);
+		add_place (sidebar, PLACES_MOUNTED_VOLUME,
+			   SECTION_COMPUTER,
+			   name, icon, mount_uri,
+			   NULL, NULL, mount, 0, tooltip);
+		g_object_unref (root);
+		g_object_unref (mount);
+		g_object_unref (icon);
+		g_free (name);
+		g_free (mount_uri);
+		g_free (tooltip);
+	}
+	g_list_free (mounts);
+
+	/* file system root */
+ 	mount_uri = "file:///"; /* No need to strdup */
+	icon = g_themed_icon_new (NEMO_ICON_FILESYSTEM);
+	add_place (sidebar, PLACES_BUILT_IN,
+		   SECTION_COMPUTER,
+		   _("File System"), icon,
+		   mount_uri, NULL, NULL, NULL, 0,
+		   _("Open the contents of the File System"));
+	g_object_unref (icon);
+
+	mount_uri = "trash:///"; /* No need to strdup */
+	icon = nemo_trash_monitor_get_icon ();
+	add_place (sidebar, PLACES_BUILT_IN,
+		   SECTION_COMPUTER,
+		   _("Trash"), icon, mount_uri,
+		   NULL, NULL, NULL, 0,
+		   _("Open the trash"));
+	g_object_unref (icon);
+	
 	/* first go through all connected drives */
 	drives = g_volume_monitor_get_connected_drives (volume_monitor);
 
@@ -650,134 +778,6 @@ update_places (NemoPlacesSidebar *sidebar)
 		g_object_unref (volume);
 	}
 	g_list_free (volumes);
-	
-	/* add bookmarks */
-	bookmark_count = nemo_bookmark_list_length (sidebar->bookmarks);
-
-	for (index = 0; index < bookmark_count; ++index) {
-		bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
-
-		if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
-			continue;
-		}
-
-		root = nemo_bookmark_get_location (bookmark);
-		file = nemo_file_get (root);
-
-		//if (is_built_in_bookmark (file)) {
-		//	g_object_unref (root);
-		//	nemo_file_unref (file);
-		//	continue;
-		//}
-		nemo_file_unref (file);
-
-		bookmark_name = nemo_bookmark_get_name (bookmark);
-		icon = nemo_bookmark_get_icon (bookmark);
-		mount_uri = nemo_bookmark_get_uri (bookmark);
-		tooltip = g_file_get_parse_name (root);
-
-		add_place (sidebar, PLACES_BOOKMARK,
-			   SECTION_BOOKMARKS,
-			   bookmark_name, icon, mount_uri,
-			   NULL, NULL, NULL, index,
-			   tooltip);
-		g_object_unref (root);
-		g_object_unref (icon);
-		g_free (mount_uri);
-		g_free (tooltip);
-	}
-
-	add_heading (sidebar, SECTION_COMPUTER,
-		     _("Computer"));
-
-	/* add built in bookmarks */
-
-	/* home folder */
-	mount_uri = nemo_get_home_directory_uri ();
-	icon = g_themed_icon_new (NEMO_ICON_HOME);
-	add_place (sidebar, PLACES_BUILT_IN,
-		   SECTION_COMPUTER,
-		   _("Home"), icon,
-		   mount_uri, NULL, NULL, NULL, 0,
-		   _("Open your personal folder"));
-	g_object_unref (icon);
-	g_free (mount_uri);
-
-	if (should_show_desktop ()) {
-		/* desktop */
-		desktop_path = nemo_get_desktop_directory ();
-		mount_uri = g_filename_to_uri (desktop_path, NULL, NULL);
-		icon = g_themed_icon_new (NEMO_ICON_DESKTOP);
-		add_place (sidebar, PLACES_BUILT_IN,
-			   SECTION_COMPUTER,
-			   _("Desktop"), icon,
-			   mount_uri, NULL, NULL, NULL, 0,
-			   _("Open the contents of your desktop in a folder"));
-		g_object_unref (icon);
-		g_free (mount_uri);
-		g_free (desktop_path);
-	}
-
-	
-	
-
-	/* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
-	mounts = g_volume_monitor_get_mounts (volume_monitor);
-
-	for (l = mounts; l != NULL; l = l->next) {
-		mount = l->data;
-		if (g_mount_is_shadowed (mount)) {
-			g_object_unref (mount);
-			continue;
-		}
-		volume = g_mount_get_volume (mount);
-		if (volume != NULL) {
-		    	g_object_unref (volume);
-			g_object_unref (mount);
-			continue;
-		}
-		root = g_mount_get_default_location (mount);
-
-		if (!g_file_is_native (root)) {
-			network_mounts = g_list_prepend (network_mounts, mount);
-			continue;
-		}
-
-		icon = g_mount_get_icon (mount);
-		mount_uri = g_file_get_uri (root);
-		name = g_mount_get_name (mount);
-		tooltip = g_file_get_parse_name (root);
-		add_place (sidebar, PLACES_MOUNTED_VOLUME,
-			   SECTION_COMPUTER,
-			   name, icon, mount_uri,
-			   NULL, NULL, mount, 0, tooltip);
-		g_object_unref (root);
-		g_object_unref (mount);
-		g_object_unref (icon);
-		g_free (name);
-		g_free (mount_uri);
-		g_free (tooltip);
-	}
-	g_list_free (mounts);
-
-	/* file system root */
- 	mount_uri = "file:///"; /* No need to strdup */
-	icon = g_themed_icon_new (NEMO_ICON_FILESYSTEM);
-	add_place (sidebar, PLACES_BUILT_IN,
-		   SECTION_COMPUTER,
-		   _("File System"), icon,
-		   mount_uri, NULL, NULL, NULL, 0,
-		   _("Open the contents of the File System"));
-	g_object_unref (icon);
-
-	mount_uri = "trash:///"; /* No need to strdup */
-	icon = nemo_trash_monitor_get_icon ();
-	add_place (sidebar, PLACES_BUILT_IN,
-		   SECTION_COMPUTER,
-		   _("Trash"), icon, mount_uri,
-		   NULL, NULL, NULL, 0,
-		   _("Open the trash"));
-	g_object_unref (icon);
 
 	/* network */
 	add_heading (sidebar, SECTION_NETWORK,
