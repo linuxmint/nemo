@@ -2005,19 +2005,6 @@ store_layout_timestamp (NautilusCanvasContainer *container,
 	return TRUE;
 }
 
-static gboolean
-focus_in_event_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
-{
-	NautilusWindowSlot *slot;
-	NautilusCanvasView *canvas_view = NAUTILUS_CANVAS_VIEW (user_data);
-	
-	/* make the corresponding slot (and the window that contains it) active */
-	slot = nautilus_view_get_nautilus_window_slot (NAUTILUS_VIEW (canvas_view));
-	nautilus_window_slot_make_hosting_window_active (slot);
-
-	return FALSE; 
-}
-
 static NautilusCanvasContainer *
 create_canvas_container (NautilusCanvasView *canvas_view)
 {
@@ -2030,8 +2017,6 @@ create_canvas_container (NautilusCanvasView *canvas_view)
 	
 	gtk_widget_set_can_focus (GTK_WIDGET (canvas_container), TRUE);
 	
-	g_signal_connect_object (canvas_container, "focus_in_event",
-				 G_CALLBACK (focus_in_event_callback), canvas_view, 0);
 	g_signal_connect_object (canvas_container, "activate",	
 				 G_CALLBACK (canvas_container_activate_callback), canvas_view, 0);
 	g_signal_connect_object (canvas_container, "activate_alternate",	

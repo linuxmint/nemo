@@ -512,15 +512,6 @@ nautilus_window_slot_get_location_uri (NautilusWindowSlot *slot)
 	return NULL;
 }
 
-void
-nautilus_window_slot_make_hosting_window_active (NautilusWindowSlot *slot)
-{
-	g_assert (NAUTILUS_IS_WINDOW_SLOT (slot));
-	
-	nautilus_window_set_active_slot (nautilus_window_slot_get_window (slot),
-					 slot);
-}
-
 NautilusWindow *
 nautilus_window_slot_get_window (NautilusWindowSlot *slot)
 {

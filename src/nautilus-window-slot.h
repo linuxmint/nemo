@@ -173,7 +173,6 @@ void    nautilus_window_slot_remove_extra_location_widgets (NautilusWindowSlot *
 NautilusView * nautilus_window_slot_get_current_view     (NautilusWindowSlot *slot);
 char           * nautilus_window_slot_get_current_uri      (NautilusWindowSlot *slot);
 NautilusWindow * nautilus_window_slot_get_window           (NautilusWindowSlot *slot);
-void           nautilus_window_slot_make_hosting_window_active (NautilusWindowSlot *slot);
 
 void nautilus_window_slot_clear_forward_list (NautilusWindowSlot *slot);
 void nautilus_window_slot_clear_back_list    (NautilusWindowSlot *slot);
