@@ -45,11 +45,6 @@
 #define NAUTILUS_APPLICATION_GET_CLASS(obj) \
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_TYPE_APPLICATION, NautilusApplicationClass))
 
-#ifndef NAUTILUS_SPATIAL_WINDOW_DEFINED
-#define NAUTILUS_SPATIAL_WINDOW_DEFINED
-typedef struct _NautilusSpatialWindow NautilusSpatialWindow;
-#endif
-
 typedef struct _NautilusApplicationPriv NautilusApplicationPriv;
 
 typedef struct {
