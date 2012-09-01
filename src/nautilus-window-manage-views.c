@@ -279,10 +279,13 @@ viewed_file_changed_callback (NautilusFile *file,
 {
         GFile *new_location;
 	gboolean is_in_trash, was_in_trash;
+	NautilusWindow *window;
 
         g_assert (NAUTILUS_IS_FILE (file));
-	g_assert (NAUTILUS_IS_WINDOW (slot->window));
+	g_assert (NAUTILUS_IS_WINDOW_SLOT (slot));
 	g_assert (file == slot->viewed_file);
+
+	window = nautilus_window_slot_get_window (slot);
 
         if (!nautilus_file_is_not_yet_confirmed (file)) {
                 slot->viewed_file_seen = TRUE;
@@ -348,8 +351,8 @@ viewed_file_changed_callback (NautilusFile *file,
 				   slot->location)) {
                         g_object_unref (slot->location);
                         slot->location = new_location;
-			if (slot == slot->window->details->active_slot) {
-				nautilus_window_sync_location_widgets (slot->window);
+			if (slot == nautilus_window_get_active_slot (window)) {
+				nautilus_window_sync_location_widgets (window);
 			}
                 } else {
 			/* TODO?
@@ -925,7 +928,7 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 			/* We're missing a previous location (if opened location
 			 * in a new tab) so close it and return */
 			if (slot->location == NULL) {
-				nautilus_window_slot_close (slot->window, slot);
+				nautilus_window_slot_close (window, slot);
 			} else {
 				/* We disconnected this, so we need to re-connect it */
 				viewed_file = nautilus_file_get (slot->location);
@@ -1487,11 +1490,11 @@ update_for_new_location (NautilusWindowSlot *slot)
 
 	nautilus_window_slot_update_title (slot);
 
-	if (slot == slot->window->details->active_slot) {
-		nautilus_window_sync_location_widgets (slot->window);
+	if (slot == nautilus_window_get_active_slot (window)) {
+		nautilus_window_sync_location_widgets (window);
 
 		if (location_really_changed) {
-			nautilus_window_sync_search_widgets (slot->window);
+			nautilus_window_sync_search_widgets (window);
 		}
 	}
 }
