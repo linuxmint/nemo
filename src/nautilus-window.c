@@ -336,9 +336,6 @@ close_slot (NautilusWindow     *window,
 	g_signal_handlers_unblock_by_func (notebook,
 					   G_CALLBACK (notebook_switch_page_cb),
 					   window);
-
-	gtk_notebook_set_show_tabs (notebook,
-				    gtk_notebook_get_n_pages (notebook) > 1);
 }
 
 NautilusWindowSlot *
