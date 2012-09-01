@@ -333,19 +333,6 @@ viewed_file_changed_callback (NautilusFile *file,
 			}
 
 			if (go_to_file != NULL) {
-				/* the path bar URI will be set to go_to_uri immediately
-				 * in begin_location_change, but we don't want the
-				 * inexistant children to show up anymore */
-				if (slot == slot->window->details->active_slot) {
-					GtkWidget *path_bar;
-
-					/* multiview-TODO also update NautilusWindowSlot
-					 * [which as of writing doesn't save/store any path bar state]
-					 */
-					path_bar = nautilus_toolbar_get_path_bar (NAUTILUS_TOOLBAR (slot->window->details->toolbar));
-					nautilus_path_bar_clear_buttons (NAUTILUS_PATH_BAR (path_bar));
-				}
-				
 				nautilus_window_slot_open_location (slot, go_to_file, 0);
 				g_object_unref (go_to_file);
 			} else {

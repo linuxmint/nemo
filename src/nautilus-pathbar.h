@@ -56,6 +56,5 @@ struct _NautilusPathBarClass
 GType    nautilus_path_bar_get_type (void) G_GNUC_CONST;
 
 void     nautilus_path_bar_set_path    (NautilusPathBar *path_bar, GFile *file);
-void     nautilus_path_bar_clear_buttons (NautilusPathBar *path_bar);
 
 #endif /* NAUTILUS_PATHBAR_H */
