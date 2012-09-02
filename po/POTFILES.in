@@ -2,6 +2,7 @@
 # Please keep this file sorted alphabetically.
 [encoding: UTF-8]
 data/nautilus-autorun-software.desktop.in.in
+data/nautilus-connect-server.desktop.in.in
 data/nautilus.desktop.in.in
 data/nautilus.xml.in
 eel/eel-canvas.c
@@ -52,8 +53,8 @@ src/nautilus-bookmarks-window.c
 src/nautilus-canvas-view.c
 src/nautilus-canvas-view-container.c
 src/nautilus-canvas-view-ui.xml
+src/nautilus-connect-server.c
 src/nautilus-connect-server-dialog.c
-src/nautilus-connect-server-dialog-main.c
 src/nautilus-desktop-canvas-view.c
 src/nautilus-desktop-canvas-view-ui.xml
 src/nautilus-desktop-item-properties.c
