@@ -1,0 +1,7 @@
+nemo
+nemo-autorun-software
+nemo-connect-server
+nemo-file-management-properties
+nemo-convert-metadata
+nemo-freedesktop-generated.[ch]
+nemo-resources.[ch]
