@@ -832,13 +832,6 @@ nemo_window_pane_constructed (GObject *obj)
 	 */
 	gtk_widget_set_size_request (GTK_WIDGET (pane), 60, 60);
 
-	/*
-	 * If we're on the desktop we need to make sure the toolbar can never show
-	 */
-	if (NEMO_IS_DESKTOP_WINDOW(window)) {
-		gtk_widget_hide (GTK_WIDGET (window->details->toolbar_holder));
-	}
-
 	/* we can unref the size group now */
 	g_object_unref (header_size_group);
 }

@@ -576,6 +576,10 @@ nemo_window_constructed (GObject *self)
 	gtk_widget_show (toolbar_holder);
 	window->details->toolbar_holder = toolbar_holder;
 
+	g_object_bind_property (window, "disable-chrome",
+				toolbar_holder, "visible",
+				G_BINDING_INVERT_BOOLEAN);
+
 	/* Register to menu provider extension signal managing menu updates */
 	g_signal_connect_object (nemo_signaller_get_current (), "popup_menu_changed",
 			 G_CALLBACK (nemo_window_load_extension_menus), window, G_CONNECT_SWAPPED);
