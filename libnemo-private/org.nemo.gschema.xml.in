@@ -93,7 +93,7 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-edit-icon-toolbar">
-      <default>false</default>
+      <default>true</default>
       <summary>Show toggle button location entry/pathbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
