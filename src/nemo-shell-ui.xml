@@ -66,7 +66,7 @@
 			<menuitem name="Show Hide Toolbar" action="Show Hide Toolbar"/>
 			<menuitem name="Show Hide Statusbar" action="Show Hide Statusbar"/>
 			<menuitem name="Show Hide Extra Pane" action="Show Hide Extra Pane"/>
-            <menuitem name="Show Hide Location Entry" action="Show Hide Location Entry"/>
+            <menuitem name="Edit Location" action="Edit Location"/>
 		</placeholder>
 		<separator/>
 		<placeholder name="View Preferences Placeholder"/>

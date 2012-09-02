@@ -1029,7 +1029,7 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* tooltip */              N_("Open an extra folder view side-by-side"),
                              G_CALLBACK (action_split_view_callback),
   /* is_active */            FALSE },
-  /* name, stock id */     { "Show Hide Location Entry", NULL,
+  /* name, stock id */     { "Edit Location", NULL,
   /* label, accelerator */   N_("Loca_tion entry"), NULL,
   /* tooltip */              N_("Change the visibility of this window's location entry"),
                              NULL,
