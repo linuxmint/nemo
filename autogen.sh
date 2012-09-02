@@ -4,7 +4,7 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-PKG_NAME="nautilus"
+PKG_NAME="nemo"
 
 (test -f $srcdir/configure.in \
   && test -f $srcdir/README \
