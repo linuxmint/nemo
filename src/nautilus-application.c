@@ -110,6 +110,8 @@ struct _NautilusApplicationPriv {
 	NotifyNotification *unmount_notify;
 
 	NautilusBookmarkList *bookmark_list;
+
+	GtkWidget *connect_server_window;
 };
 
 NautilusBookmarkList *
@@ -702,16 +704,115 @@ action_new_window (GSimpleAction *action,
 	nautilus_window_slot_go_home (nautilus_window_get_active_slot (window), 0);
 }
 
+static gboolean
+go_to_server_cb (NautilusWindow *window,
+		 GError         *error,
+		 gpointer        user_data)
+{
+	GFile *location = user_data;
+
+	if (error == NULL) {
+		GBookmarkFile *bookmarks;
+		GError *error = NULL;
+		char *datadir;
+		char *filename;
+		char *uri;
+		char *title;
+		NautilusFile *file;
+		gboolean safe_to_save = TRUE;
+
+		file = nautilus_file_get_existing (location);
+
+		bookmarks = g_bookmark_file_new ();
+		datadir = g_build_filename (g_get_user_config_dir (), "nautilus", NULL);
+		filename = g_build_filename (datadir, "servers", NULL);
+		g_mkdir_with_parents (datadir, 0700);
+		g_free (datadir);
+		g_bookmark_file_load_from_file (bookmarks,
+						filename,
+						&error);
+		if (error != NULL) {
+			if (! g_error_matches (error, G_FILE_ERROR, G_FILE_ERROR_NOENT)) {
+				/* only warn if the file exists */
+				g_warning ("Unable to open server bookmarks: %s", error->message);
+				safe_to_save = FALSE;
+			}
+			g_error_free (error);
+		}
+
+		if (safe_to_save) {
+			uri = nautilus_file_get_uri (file);
+			title = nautilus_file_get_display_name (file);
+			g_bookmark_file_set_title (bookmarks, uri, title);
+			g_bookmark_file_set_visited (bookmarks, uri, -1);
+			g_bookmark_file_add_application (bookmarks, uri, NULL, NULL);
+			g_free (uri);
+			g_free (title);
+
+			g_bookmark_file_to_file (bookmarks, filename, NULL);
+		}
+
+		g_free (filename);
+		g_bookmark_file_free (bookmarks);
+	} else {
+		g_warning ("Unable to connect to server: %s\n", error->message);
+	}
+
+	g_object_unref (location);
+
+	return TRUE;
+}
+
+static void
+on_connect_server_response (GtkDialog      *dialog,
+			    int             response,
+			    GtkApplication *application)
+{
+	if (response == GTK_RESPONSE_OK) {
+		GFile *location;
+
+		location = nautilus_connect_server_dialog_get_location (NAUTILUS_CONNECT_SERVER_DIALOG (dialog));
+		if (location != NULL) {
+			nautilus_window_go_to_full (NAUTILUS_WINDOW (get_focus_window (application)),
+						    location,
+						    go_to_server_cb,
+						    location);
+		}
+	}
+
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+}
+
+static void
+nautilus_application_connect_server (NautilusApplication *application,
+				     NautilusWindow      *window)
+{
+	GtkWidget *dialog;
+
+	dialog = application->priv->connect_server_window;
+
+	if (dialog == NULL) {
+		dialog = nautilus_connect_server_dialog_new (window);
+		g_signal_connect (dialog, "response", G_CALLBACK (on_connect_server_response), application);
+		application->priv->connect_server_window = GTK_WIDGET (dialog);
+
+		g_object_add_weak_pointer (G_OBJECT (dialog),
+					   (gpointer *) &application->priv->connect_server_window);
+	}
+
+	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
+	gtk_window_set_screen (GTK_WINDOW (dialog), gtk_window_get_screen (GTK_WINDOW (window)));
+	gtk_window_present (GTK_WINDOW (dialog));
+}
+
 static void
 action_connect_to_server (GSimpleAction *action,
 			  GVariant *parameter,
 			  gpointer user_data)
 {
 	GtkApplication *application = user_data;
-	GtkWidget *dialog;
 
-	dialog = nautilus_connect_server_dialog_new (NAUTILUS_WINDOW (get_focus_window (application)));
-	gtk_widget_show (dialog);
+	nautilus_application_connect_server (NAUTILUS_APPLICATION (application), NAUTILUS_WINDOW (get_focus_window (application)));
 }
 
 static void

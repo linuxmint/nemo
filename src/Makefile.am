@@ -3,7 +3,6 @@ include $(top_srcdir)/Makefile.shared
 bin_PROGRAMS=					\
 	nautilus				\
 	nautilus-autorun-software		\
-	nautilus-connect-server			\
 	$(NULL)
 
 libexec_PROGRAMS=				\
@@ -135,9 +134,6 @@ nautilus_SOURCES = \
 	nautilus-canvas-view-container.h	\
 	nautilus-connect-server-dialog.c	\
 	nautilus-connect-server-dialog.h	\
-	nautilus-connect-server-dialog-nonmain.c \
-	nautilus-connect-server-operation.c	\
-	nautilus-connect-server-operation.h	\
 	nautilus-desktop-canvas-view.c		\
 	nautilus-desktop-canvas-view.h		\
 	nautilus-desktop-item-properties.c	\
@@ -225,16 +221,6 @@ endif
 
 nautilus_autorun_software_SOURCES= 			\
 	nautilus-autorun-software.c			\
-	$(NULL)
-
-nautilus_connect_server_SOURCES= \
-	nautilus-bookmark-list.c		\
-	nautilus-bookmark-list.h		\
-	nautilus-connect-server-dialog.c	\
-	nautilus-connect-server-dialog.h	\
-	nautilus-connect-server-dialog-main.c	\
-	nautilus-connect-server-operation.c     \
-	nautilus-connect-server-operation.h     \
 	$(NULL)
 
 nautilus_convert_metadata_SOURCES= \

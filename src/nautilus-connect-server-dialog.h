@@ -56,24 +56,7 @@ struct _NautilusConnectServerDialogClass {
 
 GType nautilus_connect_server_dialog_get_type (void);
 
-GtkWidget* nautilus_connect_server_dialog_new (NautilusWindow *window);
-
-void nautilus_connect_server_dialog_display_location_async (NautilusConnectServerDialog *self,
-							    GFile *location,
-							    GAsyncReadyCallback callback,
-							    gpointer user_data);
-gboolean nautilus_connect_server_dialog_display_location_finish (NautilusConnectServerDialog *self,
-								 GAsyncResult *result,
-								 GError **error);
-
-void nautilus_connect_server_dialog_fill_details_async (NautilusConnectServerDialog *self,
-							GMountOperation *operation,
-							const gchar *default_user,
-							const gchar *default_domain,
-							GAskPasswordFlags flags,
-							GAsyncReadyCallback callback,
-							gpointer user_data);
-gboolean nautilus_connect_server_dialog_fill_details_finish (NautilusConnectServerDialog *self,
-							     GAsyncResult *result);
+GtkWidget * nautilus_connect_server_dialog_new          (NautilusWindow *window);
+GFile *     nautilus_connect_server_dialog_get_location (NautilusConnectServerDialog *dialog);
 
 #endif /* NAUTILUS_CONNECT_SERVER_DIALOG_H */
