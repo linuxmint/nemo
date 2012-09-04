@@ -466,7 +466,7 @@ nautilus_directory_get_name_for_self_as_new_file (NautilusDirectory *directory)
 	g_object_unref (file);
 
 	nautilus_uri_parse (directory_uri, &hostname, NULL, NULL);
-	if (hostname == NULL) {
+	if (hostname == NULL || (strlen (hostname) == 0)) {
 		name = g_strdup (directory_uri);
 	} else if (scheme == NULL) {
 		name = g_strdup (hostname);
