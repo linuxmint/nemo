@@ -1,3 +1,24 @@
+Major changes in 3.5.91 are:
+* New design for the Connect to Server dialog
+* Add the possibility to detach tabs using drag and drop
+* Add paste and location properties actions to the gear menu
+* Use symbolic icons in the sidebar for drives and mounts
+* Follow 12h/24h GSettings preference for view date display
+* Cleanup icon view caption strings
+* Fix wrong zoom level restored at startup
+* Fix unparented mount/eject error dialogs
+* Fix drag and drop for unwritable locations
+* Fix stray templates bar when no templates directory is defined
+* Fix Open With menu showing for apps that don't support URIs and files
+* Fix item count not updating in realtime for directories in Properties
+* Fix missing keybindings for Back/Forward/Up/Go Home
+* Fix missing history context menu on navigation buttons
+* Fix missing Create Link context action
+* Fix missing frame around custom icons
+* Fix broken behavior with multiline filenames
+* Plug a number of memory leaks
+* Remove context menu on blank list view space
+
 Major changes in 3.5.90 are:
 * Reorganize application and gear menu, and add a menu for view actions
 * Add a View options selector to the toolbar
