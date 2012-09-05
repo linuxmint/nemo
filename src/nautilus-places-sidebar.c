@@ -404,9 +404,9 @@ static GIcon *
 special_directory_get_gicon (GUserDirectory directory)
 {
 
-	#define ICON_CASE(x) \
-		case G_USER_DIRECTORY_ ## x:\
-			return g_themed_icon_new (NAUTILUS_ICON_FOLDER_ ## x);
+#define ICON_CASE(x)				\
+	case G_USER_DIRECTORY_ ## x:					\
+		return g_themed_icon_new (NAUTILUS_ICON_FOLDER_ ## x);
 
 	switch (directory) {
 
@@ -422,7 +422,7 @@ special_directory_get_gicon (GUserDirectory directory)
 		return g_themed_icon_new ("folder-symbolic");
 	}
 
-	#undef ICON_CASE
+#undef ICON_CASE
 }
 
 static gboolean
@@ -445,6 +445,62 @@ recent_is_supported (void)
 }
 
 static void
+add_special_dirs (NautilusPlacesSidebar *sidebar)
+{
+	GList *dirs;
+	int index;
+
+	dirs = NULL;
+	for (index = 0; index < G_USER_N_DIRECTORIES; index++) {
+		const char *path;
+		GFile *root;
+		GIcon *icon;
+		char *name;
+		char *mount_uri;
+		char *tooltip;
+
+		if (index == G_USER_DIRECTORY_DESKTOP ||
+		    index == G_USER_DIRECTORY_TEMPLATES ||
+		    index == G_USER_DIRECTORY_PUBLIC_SHARE) {
+			continue;
+		}
+
+		path = g_get_user_special_dir (index);
+
+		/* xdg resets special dirs to the home directory in case
+		 * it's not finiding what it expects. We don't want the home
+		 * to be added multiple times in that weird configuration.
+		 */
+		if (path == NULL
+		    || g_strcmp0 (path, g_get_home_dir ()) == 0
+		    || g_list_find_custom (dirs, path, (GCompareFunc) g_strcmp0) != NULL) {
+			continue;
+		}
+
+		root = g_file_new_for_path (path);
+		name = g_file_get_basename (root);
+		icon = special_directory_get_gicon (index);
+		mount_uri = g_file_get_uri (root);
+		tooltip = g_file_get_parse_name (root);
+
+		add_place (sidebar, PLACES_XDG_DIR,
+			   SECTION_COMPUTER,
+			   name, icon, mount_uri,
+			   NULL, NULL, NULL, 0,
+			   tooltip);
+		g_free (name);
+		g_object_unref (root);
+		g_object_unref (icon);
+		g_free (mount_uri);
+		g_free (tooltip);
+
+		dirs = g_list_prepend (dirs, (char *)path);
+	}
+
+	g_list_free (dirs);
+}
+
+static void
 update_places (NautilusPlacesSidebar *sidebar)
 {
 	NautilusBookmark *bookmark;
@@ -460,7 +516,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 	GVolume *volume;
 	int bookmark_count, index;
 	char *location, *mount_uri, *name, *last_uri, *identifier;
-	const gchar *path, *bookmark_name;
+	const gchar *bookmark_name;
 	GIcon *icon;
 	GFile *root;
 	NautilusWindowSlot *slot;
@@ -531,41 +587,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 	}
 
 	/* XDG directories */
-	for (index = 0; index < G_USER_N_DIRECTORIES; index++) {
-
-		if (index == G_USER_DIRECTORY_DESKTOP ||
-		    index == G_USER_DIRECTORY_TEMPLATES ||
-		    index == G_USER_DIRECTORY_PUBLIC_SHARE) {
-			continue;
-		}
-
-		path = g_get_user_special_dir (index);
-
-		/* xdg resets special dirs to the home directory in case
-		 * it's not finiding what it expects. We don't want the home
-		 * to be added multiple times in that weird configuration.
-		 */
-		if (!path || g_strcmp0 (path, g_get_home_dir ()) == 0) {
-			continue;
-		}
-
-		root = g_file_new_for_path (path);
-		name = g_file_get_basename (root);
-		icon = special_directory_get_gicon (index);
-		mount_uri = g_file_get_uri (root);
-		tooltip = g_file_get_parse_name (root);
-
-		add_place (sidebar, PLACES_XDG_DIR,
-			   SECTION_COMPUTER,
-			   name, icon, mount_uri,
-			   NULL, NULL, NULL, 0,
-			   tooltip);
-		g_free (name);
-		g_object_unref (root);
-		g_object_unref (icon);
-		g_free (mount_uri);
-		g_free (tooltip);
-	}
+	add_special_dirs (sidebar);
 
 	mount_uri = "trash:///"; /* No need to strdup */
 	icon = nautilus_trash_monitor_get_icon ();
