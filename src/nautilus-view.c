@@ -3094,9 +3094,9 @@ done_loading (NautilusView *view,
 		nautilus_view_display_selection_info (view);
 	}
 
+	view->details->loading = FALSE;
 	g_signal_emit (view, signals[END_LOADING], 0, all_files_seen);
 
-	view->details->loading = FALSE;
 	nautilus_profile_end (NULL);
 }
 

@@ -129,7 +129,7 @@ action_reload_callback (GtkAction *action,
 	NautilusWindowSlot *slot;
 
 	slot = nautilus_window_get_active_slot (NAUTILUS_WINDOW (user_data));
-	nautilus_window_slot_reload (slot);
+	nautilus_window_slot_queue_reload (slot);
 }
 
 static void

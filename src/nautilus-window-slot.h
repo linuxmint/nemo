@@ -109,6 +109,8 @@ struct NautilusWindowSlot {
 	gpointer open_callback_user_data;
 	gboolean load_with_search;
 
+	gboolean needs_reload;
+
 	GCancellable *find_mount_cancellable;
 
 	gboolean visible;
@@ -136,7 +138,8 @@ gboolean nautilus_window_slot_handle_event       	   (NautilusWindowSlot *slot,
 GFile * nautilus_window_slot_get_location		   (NautilusWindowSlot *slot);
 char *  nautilus_window_slot_get_location_uri		   (NautilusWindowSlot *slot);
 
-void    nautilus_window_slot_reload			   (NautilusWindowSlot *slot);
+void    nautilus_window_slot_queue_reload		   (NautilusWindowSlot *slot);
+void    nautilus_window_slot_force_reload		   (NautilusWindowSlot *slot);
 
 /* convenience wrapper without selection and callback/user_data */
 #define nautilus_window_slot_open_location(slot, location, flags)\

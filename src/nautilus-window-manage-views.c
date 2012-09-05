@@ -1811,7 +1811,7 @@ nautilus_window_back_or_forward (NautilusWindow *window,
 
 /* reload the contents of the window */
 void
-nautilus_window_slot_reload (NautilusWindowSlot *slot)
+nautilus_window_slot_force_reload (NautilusWindowSlot *slot)
 {
 	GFile *location;
         char *current_pos;
@@ -1820,13 +1820,6 @@ nautilus_window_slot_reload (NautilusWindowSlot *slot)
 	g_assert (NAUTILUS_IS_WINDOW_SLOT (slot));
 
 	if (slot->location == NULL) {
-		return;
-	}
-
-	if (slot->pending_location != NULL
-	    || slot->content_view == NULL
-	    || nautilus_view_get_loading (slot->content_view)) {
-		/* there is a reload in flight */
 		return;
 	}
 
@@ -1847,4 +1840,24 @@ nautilus_window_slot_reload (NautilusWindowSlot *slot)
         g_free (current_pos);
 	g_object_unref (location);
 	g_list_free_full (selection, g_object_unref);
+}
+
+void
+nautilus_window_slot_queue_reload (NautilusWindowSlot *slot)
+{
+	g_assert (NAUTILUS_IS_WINDOW_SLOT (slot));
+
+	if (slot->location == NULL) {
+		return;
+	}
+
+	if (slot->pending_location != NULL
+	    || slot->content_view == NULL
+	    || nautilus_view_get_loading (slot->content_view)) {
+		/* there is a reload in flight */
+		slot->needs_reload = TRUE;
+		return;
+	}
+
+	nautilus_window_slot_force_reload (slot);
 }

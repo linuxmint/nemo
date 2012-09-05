@@ -98,7 +98,7 @@ sync_search_directory (NautilusWindowSlot *slot)
 	} else {
 		nautilus_search_directory_set_query (NAUTILUS_SEARCH_DIRECTORY (directory),
 						     query);
-		nautilus_window_slot_reload (slot);
+		nautilus_window_slot_force_reload (slot);
 	}
 
 	g_free (text);
@@ -380,6 +380,17 @@ nautilus_window_slot_init (NautilusWindowSlot *slot)
 }
 
 static void
+view_end_loading_cb (NautilusView       *view,
+		     gboolean            all_files_seen,
+		     NautilusWindowSlot *slot)
+{
+	if (slot->needs_reload) {
+		nautilus_window_slot_queue_reload (slot);
+		slot->needs_reload = FALSE;
+	}
+}
+
+static void
 nautilus_window_slot_dispose (GObject *object)
 {
 	NautilusWindowSlot *slot;
@@ -588,6 +599,8 @@ nautilus_window_slot_set_content_view_widget (NautilusWindowSlot *slot,
 
 	if (slot->content_view != NULL) {
 		/* disconnect old view */
+		g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (view_end_loading_cb), slot);
+
 		nautilus_window_disconnect_content_view (window, slot->content_view);
 
 		widget = GTK_WIDGET (slot->content_view);
@@ -603,6 +616,8 @@ nautilus_window_slot_set_content_view_widget (NautilusWindowSlot *slot,
 
 		slot->content_view = new_view;
 		g_object_ref (slot->content_view);
+
+		g_signal_connect (new_view, "end_loading", G_CALLBACK (view_end_loading_cb), slot);
 
 		/* connect new view */
 		nautilus_window_connect_content_view (window, new_view);
