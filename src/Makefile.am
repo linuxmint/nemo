@@ -8,6 +8,7 @@ bin_PROGRAMS=					\
 
 libexec_PROGRAMS=				\
 	nautilus-convert-metadata		\
+	nautilus-shell-search-provider		\
 	$(NULL)
 
 INCLUDES =							\
@@ -43,8 +44,11 @@ LDADD =\
 	$(POPT_LIBS) \
 	$(NULL)
 
-dbus_built_sources = nautilus-freedesktop-generated.c nautilus-freedesktop-generated.h
-$(dbus_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-dbus-interfaces.xml
+dbus_freedesktop_built_sources =			\
+	nautilus-freedesktop-generated.c		\
+	nautilus-freedesktop-generated.h
+
+$(dbus_freedesktop_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-dbus-interfaces.xml
 	gdbus-codegen									\
 		--interface-prefix org.freedesktop.					\
 		--c-namespace NautilusFreedesktop					\
@@ -113,8 +117,8 @@ nautilus-enum-types.c: $(headers) Makefile
 	&& cp xgen-gtc $(@F) \
 	&& rm -f xgen-gtc
 
-BUILT_SOURCES = \
-	$(dbus_built_sources) \
+nautilus_built_sources = \
+	$(dbus_freedesktop_built_sources) \
 	nautilus-resources.c \
 	nautilus-resources.h \
 	nautilus-enum-types.h \
@@ -209,7 +213,7 @@ nautilus_SOURCES = \
 	$(NULL)
 
 nodist_nautilus_SOURCES = \
-	$(BUILT_SOURCES) \
+	$(nautilus_built_sources) \
 	$(NULL)
 
 EMPTY_VIEW_SOURCES = \
@@ -232,6 +236,31 @@ nautilus_connect_server_SOURCES= \
 
 nautilus_convert_metadata_SOURCES= \
 	nautilus-convert-metadata.c	\
+	$(NULL)
+
+dbus_shell_search_provider_built_sources =		\
+	nautilus-shell-search-provider-generated.c	\
+	nautilus-shell-search-provider-generated.h
+
+$(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml
+	gdbus-codegen									\
+		--interface-prefix org.gnome.						\
+		--c-namespace Nautilus							\
+		--generate-c-code nautilus-shell-search-provider-generated		\
+		$(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml		\
+		$(NULL)
+
+nautilus_shell_search_provider_SOURCES = 		\
+	nautilus-shell-search-provider.c		\
+	$(NULL)
+
+nodist_nautilus_shell_search_provider_SOURCES =		\
+	$(dbus_shell_search_provider_built_sources)	\
+	$(NULL)
+
+BUILT_SOURCES = 					\
+	$(nautilus_built_sources) 			\
+	$(dbus_shell_search_provider_built_sources) 	\
 	$(NULL)
 
 TESTS=check-nautilus
