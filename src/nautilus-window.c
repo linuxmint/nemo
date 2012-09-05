@@ -1568,7 +1568,7 @@ real_sync_view_as_menus (NautilusWindow *window)
 
 	slot = nautilus_window_get_active_slot (window);
 
-	if (slot->content_view == NULL) {
+	if (slot->content_view == NULL || slot->new_content_view != NULL) {
 		return;
 	}
 
