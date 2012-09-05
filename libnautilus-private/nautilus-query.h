@@ -45,7 +45,6 @@ typedef struct {
 } NautilusQueryClass;
 
 GType          nautilus_query_get_type (void);
-gboolean       nautilus_query_enabled  (void);
 
 NautilusQuery* nautilus_query_new      (void);
 
