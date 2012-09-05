@@ -372,7 +372,7 @@ action_tabs_previous_callback (GtkAction *action,
 {
 	NautilusWindow *window = user_data;
 
-	nautilus_notebook_set_current_page_relative (NAUTILUS_NOTEBOOK (window->details->notebook), -1);
+	nautilus_notebook_prev_page (NAUTILUS_NOTEBOOK (window->details->notebook));
 }
 
 static void
@@ -381,7 +381,7 @@ action_tabs_next_callback (GtkAction *action,
 {
 	NautilusWindow *window = user_data;
 
-	nautilus_notebook_set_current_page_relative (NAUTILUS_NOTEBOOK (window->details->notebook), 1);
+	nautilus_notebook_next_page (NAUTILUS_NOTEBOOK (window->details->notebook));
 }
 
 static void

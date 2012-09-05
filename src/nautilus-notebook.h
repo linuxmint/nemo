@@ -75,13 +75,11 @@ void		nautilus_notebook_sync_loading   (NautilusNotebook *nb,
 
 void		nautilus_notebook_reorder_current_child_relative (NautilusNotebook *notebook,
 								  int offset);
-void		nautilus_notebook_set_current_page_relative (NautilusNotebook *notebook,
-							     int offset);
-
 gboolean        nautilus_notebook_can_reorder_current_child_relative (NautilusNotebook *notebook,
 								      int offset);
-gboolean        nautilus_notebook_can_set_current_page_relative (NautilusNotebook *notebook,
-								 int offset);
+void            nautilus_notebook_prev_page (NautilusNotebook *notebook);
+void            nautilus_notebook_next_page (NautilusNotebook *notebook);
+
 
 G_END_DECLS
 
