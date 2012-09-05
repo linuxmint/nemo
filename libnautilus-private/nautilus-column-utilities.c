@@ -337,12 +337,12 @@ GList *
 nautilus_sort_columns (GList  *columns, 
 		       char  **column_order)
 {
-	if (!column_order) {
-		return NULL;
+	if (column_order == NULL) {
+		return columns;
 	}
 
 	return g_list_sort_with_data (columns,
 				      (GCompareDataFunc)column_compare,
 				      column_order);
 }
-		       
+
