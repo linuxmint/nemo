@@ -1249,6 +1249,8 @@ apply_columns_settings (NautilusListView *list_view,
 						      g_str_equal,
 						      (GDestroyNotify) g_free,
 						      (GDestroyNotify) g_free);
+	/* always show name column */
+	g_hash_table_insert (visible_columns_hash, g_strdup ("name"), g_strdup ("name"));
 	if (visible_columns != NULL) {
 		for (i = 0; visible_columns[i] != NULL; ++i) {
 			g_hash_table_insert (visible_columns_hash,
