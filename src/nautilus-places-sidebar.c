@@ -2789,6 +2789,7 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeView *tree_view;
+	gboolean ret = FALSE;
 	gboolean res;
 
 	path = NULL;
@@ -2807,68 +2808,25 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 	tree_view = GTK_TREE_VIEW (widget);
 	model = gtk_tree_view_get_model (tree_view);
 
-	if (event->button == 1) {
-
-		if (event->window != gtk_tree_view_get_bin_window (tree_view)) {
-			return FALSE;
-		}
-
-		res = gtk_tree_view_get_path_at_pos (tree_view, (int) event->x, (int) event->y,
-						     &path, NULL, NULL, NULL);
-
-		if (!res) {
-			return FALSE;
-		}
-
-		gtk_tree_model_get_iter (model, &iter, path);
-
-		open_selected_bookmark (sidebar, model, &iter, 0);
-
-		gtk_tree_path_free (path);
-	}
-
-	return FALSE;
-}
-
-/* Callback used when a button is pressed on the shortcuts list.  
- * We trap button 3 to bring up a popup menu, and button 2 to
- * open in a new tab.
- */
-static gboolean
-bookmarks_button_press_event_cb (GtkWidget             *widget,
-				 GdkEventButton        *event,
-				 NautilusPlacesSidebar *sidebar)
-
-{
-	GtkTreeModel *model;
-	GtkTreeView *tree_view;
-	GtkTreeIter iter;
-	GtkTreePath *path = NULL;
-	gboolean retval = FALSE;
-	PlaceType row_type;
-
-	if (event->type != GDK_BUTTON_PRESS) {
-		/* ignore multiple clicks */
-		return TRUE;
-	}
-
-	tree_view = GTK_TREE_VIEW (widget);
-	model = gtk_tree_view_get_model (tree_view);
-	gtk_tree_view_get_path_at_pos (tree_view, (int) event->x, (int) event->y, 
-				       &path, NULL, NULL, NULL);
-
-	if (path == NULL || !gtk_tree_model_get_iter (model, &iter, path)) {
+	if (event->window != gtk_tree_view_get_bin_window (tree_view)) {
 		return FALSE;
 	}
 
-	if (event->button == 3) {
-		gtk_tree_model_get (model, &iter,
-				    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &row_type,
-				    -1);
+	res = gtk_tree_view_get_path_at_pos (tree_view, (int) event->x, (int) event->y,
+					     &path, NULL, NULL, NULL);
 
-		if (row_type != PLACES_HEADING) {
-			bookmarks_popup_menu (sidebar, event);
-		}
+	if (!res || path == NULL) {
+		return FALSE;
+	}
+
+	res = gtk_tree_model_get_iter (model, &iter, path);
+	if (!res) {
+		gtk_tree_path_free (path);
+		return FALSE;
+	}
+
+	if (event->button == 1) {
+		open_selected_bookmark (sidebar, model, &iter, 0);
 	} else if (event->button == 2) {
 		NautilusWindowOpenFlags flags = 0;
 
@@ -2877,14 +2835,23 @@ bookmarks_button_press_event_cb (GtkWidget             *widget,
 			NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB;
 
 		open_selected_bookmark (sidebar, model, &iter, flags);
-		retval = TRUE;
+		ret = TRUE;
+	} else if (event->button == 3) {
+		PlaceType row_type;
+
+		gtk_tree_model_get (model, &iter,
+				    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &row_type,
+				    -1);
+
+		if (row_type != PLACES_HEADING) {
+			bookmarks_popup_menu (sidebar, event);
+		}
 	}
 
 	gtk_tree_path_free (path);
 
-	return retval;
+	return ret;
 }
-
 
 static void
 bookmarks_edited (GtkCellRenderer       *cell,
@@ -3298,8 +3265,6 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 			  G_CALLBACK (bookmarks_selection_changed_cb), sidebar);
 	g_signal_connect (tree_view, "popup-menu",
 			  G_CALLBACK (bookmarks_popup_menu_cb), sidebar);
-	g_signal_connect (tree_view, "button-press-event",
-			  G_CALLBACK (bookmarks_button_press_event_cb), sidebar);
 	g_signal_connect (tree_view, "button-release-event",
 			  G_CALLBACK (bookmarks_button_release_event_cb), sidebar);
 
