@@ -41,9 +41,7 @@ struct NautilusSearchEngineDetails
 	NautilusSearchEngineTracker *tracker;
 #endif
 	NautilusSearchEngineSimple *simple;
-
 	NautilusSearchEngineModel *model;
-	NautilusDirectory *base_model;
 
 	GHashTable *uris;
 	guint providers_running;
