@@ -80,6 +80,7 @@ typedef struct {
 enum {
 	PROP_0,
 	PROP_BASE_MODEL,
+	PROP_QUERY,
 	NUM_PROPERTIES
 };
 
@@ -685,6 +686,9 @@ search_set_property (GObject *object,
 	case PROP_BASE_MODEL:
 		nautilus_search_directory_set_base_model (search, g_value_get_object (value));
 		break;
+	case PROP_QUERY:
+		nautilus_search_directory_set_query (search, g_value_get_object (value));
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 		break;
@@ -702,6 +706,9 @@ search_get_property (GObject *object,
 	switch (property_id) {
 	case PROP_BASE_MODEL:
 		g_value_set_object (value, nautilus_search_directory_get_base_model (search));
+		break;
+	case PROP_QUERY:
+		g_value_take_object (value, nautilus_search_directory_get_query (search));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -820,6 +827,12 @@ nautilus_search_directory_class_init (NautilusSearchDirectoryClass *class)
 				     "The base directory model for this directory",
 				     NAUTILUS_TYPE_DIRECTORY,
 				     G_PARAM_READWRITE);
+	properties[PROP_QUERY] =
+		g_param_spec_object ("query",
+				     "The query",
+				     "The query for this search directory",
+				     NAUTILUS_TYPE_QUERY,
+				     G_PARAM_READWRITE);
 
 	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 	g_type_class_add_private (class, sizeof (NautilusSearchDirectoryDetails));
@@ -862,32 +875,29 @@ nautilus_search_directory_generate_new_uri (void)
 	return uri;
 }
 
-
 void
 nautilus_search_directory_set_query (NautilusSearchDirectory *search,
 				     NautilusQuery *query)
 {
-	NautilusDirectory *dir;
-	NautilusFile *as_file;
+	NautilusFile *file;
 
 	if (search->details->query != query) {
 		search->details->modified = TRUE;
+
+		if (query) {
+			g_object_ref (query);
+		}
+
+		g_clear_object (&search->details->query);
+		search->details->query = query;
+
+		g_object_notify_by_pspec (G_OBJECT (search), properties[PROP_QUERY]);
 	}
 
-	if (query) {
-		g_object_ref (query);
-	}
-
-	if (search->details->query) {
-		g_object_unref (search->details->query);
-	}
-
-	search->details->query = query;
-
-	dir = NAUTILUS_DIRECTORY (search);
-	as_file = dir->details->as_file;
-	if (as_file != NULL) {
-		nautilus_search_directory_file_update_display_name (NAUTILUS_SEARCH_DIRECTORY_FILE (as_file));
+	file = nautilus_directory_get_existing_corresponding_file (NAUTILUS_DIRECTORY (search));
+	if (file != NULL) {
+		nautilus_search_directory_file_update_display_name (NAUTILUS_SEARCH_DIRECTORY_FILE (file));
+		g_object_unref (file);
 	}
 }
 
