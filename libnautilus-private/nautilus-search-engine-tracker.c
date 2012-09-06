@@ -35,6 +35,8 @@ struct NautilusSearchEngineTrackerDetails {
 	NautilusQuery *query;
 
 	gboolean       query_pending;
+	GQueue        *hits_pending;
+
 	GCancellable  *cancellable;
 };
 
@@ -60,8 +62,31 @@ finalize (GObject *object)
 
 	g_clear_object (&tracker->details->query);
 	g_clear_object (&tracker->details->connection);
+	g_queue_free_full (tracker->details->hits_pending, g_object_unref);
 
 	G_OBJECT_CLASS (nautilus_search_engine_tracker_parent_class)->finalize (object);
+}
+
+#define BATCH_SIZE 100
+
+static void
+check_pending_hits (NautilusSearchEngineTracker *tracker,
+		    gboolean force_send)
+{
+	GList *hits = NULL;
+	NautilusSearchHit *hit;
+
+	if (!force_send &&
+	    g_queue_get_length (tracker->details->hits_pending) < BATCH_SIZE) {
+		return;
+	}
+
+	while ((hit = g_queue_pop_head (tracker->details->hits_pending))) {
+		hits = g_list_prepend (hits, hit);
+	}
+
+	nautilus_search_provider_hits_added (NAUTILUS_SEARCH_PROVIDER (tracker), hits);
+	g_list_free_full (hits, g_object_unref);
 }
 
 static void cursor_callback (GObject      *object,
@@ -92,21 +117,30 @@ cursor_callback (GObject      *object,
 	const char *atime_str;
 	GTimeVal tv;
 	gdouble rank;
-	GList *hits;
-	gboolean success;
+	gboolean success, has_error;
 
 	tracker = NAUTILUS_SEARCH_ENGINE_TRACKER (user_data);
 
 	cursor = TRACKER_SPARQL_CURSOR (object);
+	has_error = FALSE;
 	success = tracker_sparql_cursor_next_finish (cursor, result, &error);
 
 	if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
 		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (tracker), error->message);
+		has_error = TRUE;
 	}
 
 	g_clear_error (&error);
 
 	if (!success) {
+		if (!has_error) {
+			check_pending_hits (tracker, TRUE);
+		} else {
+			g_queue_foreach (tracker->details->hits_pending,
+					 (GFunc) g_object_unref, NULL);
+			g_queue_clear (tracker->details->hits_pending);
+		}
+
 		tracker->details->query_pending = FALSE;
 		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (tracker));
 		g_object_unref (cursor);
@@ -139,10 +173,8 @@ cursor_callback (GObject      *object,
 		g_warning ("unable to parse atime: %s", atime_str);
 	}
 
-	hits = g_list_append (NULL, hit);
-	nautilus_search_provider_hits_added (NAUTILUS_SEARCH_PROVIDER (tracker), hits);
-	g_list_free (hits);
-	g_object_unref (hit);
+	g_queue_push_head (tracker->details->hits_pending, hit);
+	check_pending_hits (tracker, FALSE);
 
 	/* Get next */
 	cursor_next (tracker, cursor);
@@ -317,6 +349,7 @@ nautilus_search_engine_tracker_init (NautilusSearchEngineTracker *engine)
 {
 	engine->details = G_TYPE_INSTANCE_GET_PRIVATE (engine, NAUTILUS_TYPE_SEARCH_ENGINE_TRACKER,
 						       NautilusSearchEngineTrackerDetails);
+	engine->details->hits_pending = g_queue_new ();
 }
 
 
