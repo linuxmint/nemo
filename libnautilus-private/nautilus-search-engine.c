@@ -47,6 +47,8 @@ struct NautilusSearchEngineDetails
 #ifdef ENABLE_TRACKER
 	NautilusSearchEngineTracker *tracker;
 #endif
+	NautilusDirectory *base_model;
+
 	GHashTable *uris;
 	guint num_providers;
 	guint providers_finished;
@@ -282,4 +284,10 @@ nautilus_search_engine_new (void)
 	engine = g_object_new (NAUTILUS_TYPE_SEARCH_ENGINE, NULL);
 
 	return engine;
+}
+
+NautilusSearchEngineModel *
+nautilus_search_engine_get_model_provider (NautilusSearchEngine *engine)
+{
+	return engine->details->model;
 }

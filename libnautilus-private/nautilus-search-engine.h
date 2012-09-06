@@ -26,6 +26,9 @@
 
 #include <glib-object.h>
 
+#include <libnautilus-private/nautilus-directory.h>
+#include <libnautilus-private/nautilus-search-engine-model.h>
+
 #define NAUTILUS_TYPE_SEARCH_ENGINE		(nautilus_search_engine_get_type ())
 #define NAUTILUS_SEARCH_ENGINE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_SEARCH_ENGINE, NautilusSearchEngine))
 #define NAUTILUS_SEARCH_ENGINE_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), NAUTILUS_TYPE_SEARCH_ENGINE, NautilusSearchEngineClass))
@@ -44,8 +47,10 @@ typedef struct {
 	GObjectClass parent_class;
 } NautilusSearchEngineClass;
 
-GType          nautilus_search_engine_get_type  (void);
+GType                 nautilus_search_engine_get_type           (void);
 
-NautilusSearchEngine* nautilus_search_engine_new       (void);
+NautilusSearchEngine *nautilus_search_engine_new                (void);
+NautilusSearchEngineModel *
+                      nautilus_search_engine_get_model_provider (NautilusSearchEngine *engine);
 
 #endif /* NAUTILUS_SEARCH_ENGINE_H */

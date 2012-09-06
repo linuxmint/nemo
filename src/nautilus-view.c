@@ -9125,9 +9125,15 @@ load_directory (NautilusView *view,
 						   view->details->subdirectory_list->data);
 	}
 
+	old_directory = view->details->model;
+
+	if (NAUTILUS_IS_SEARCH_DIRECTORY (directory) &&
+	    !NAUTILUS_IS_SEARCH_DIRECTORY (old_directory)) {
+		nautilus_search_directory_set_base_model (NAUTILUS_SEARCH_DIRECTORY (directory), old_directory);
+	}
+
 	disconnect_model_handlers (view);
 
-	old_directory = view->details->model;
 	nautilus_directory_ref (directory);
 	view->details->model = directory;
 	nautilus_directory_unref (old_directory);

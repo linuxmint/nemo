@@ -67,4 +67,9 @@ NautilusQuery *nautilus_search_directory_get_query       (NautilusSearchDirector
 void           nautilus_search_directory_set_query       (NautilusSearchDirectory *search,
 							  NautilusQuery           *query);
 
+NautilusDirectory *
+               nautilus_search_directory_get_base_model (NautilusSearchDirectory  *search);
+void           nautilus_search_directory_set_base_model (NautilusSearchDirectory  *search,
+							 NautilusDirectory        *base_model);
+
 #endif /* NAUTILUS_SEARCH_DIRECTORY_H */
