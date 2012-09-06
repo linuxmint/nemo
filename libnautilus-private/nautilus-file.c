@@ -4216,6 +4216,12 @@ get_default_file_icon (NautilusFileIconFlags flags)
 	}
 }
 
+char *
+nautilus_file_get_thumbnail_path (NautilusFile *file)
+{
+	return g_strdup (file->details->thumbnail_path);
+}
+
 NautilusIconInfo *
 nautilus_file_get_icon (NautilusFile *file,
 			int size,
