@@ -53,6 +53,8 @@ typedef struct {
   NautilusShellSearchProvider *skeleton;
 
   PendingSearch *current_search;
+
+  GHashTable *metas_cache;
 } NautilusShellSearchProviderApp;
 
 typedef GApplicationClass NautilusShellSearchProviderAppClass;
@@ -319,13 +321,41 @@ typedef struct {
 
   gint64 start_time;
   GDBusMethodInvocation *invocation;
+
+  gchar **uris;
 } ResultMetasData;
 
 static void
 result_metas_data_free (ResultMetasData *data)
 {
   g_clear_object (&data->self);
+  g_strfreev (data->uris);
+
   g_slice_free (ResultMetasData, data);
+}
+
+static void
+result_metas_return_from_cache (ResultMetasData *data)
+{
+  GVariantBuilder builder;
+  GVariant *meta;
+  gint64 current_time;
+  gint idx;
+
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("aa{sv}"));
+
+  for (idx = 0; data->uris[idx] != NULL; idx++) {
+    meta = g_hash_table_lookup (data->self->metas_cache,
+                                data->uris[idx]);
+    g_variant_builder_add_value (&builder, meta);
+  }
+
+  current_time = g_get_monotonic_time ();
+  g_debug ("*** GetResultMetas completed - time elapsed %dms",
+           (gint) ((current_time - data->start_time) / 1000));
+
+  g_dbus_method_invocation_return_value (data->invocation,
+                                         g_variant_new ("(aa{sv})", &builder));
 }
 
 static void
@@ -333,17 +363,15 @@ result_list_attributes_ready_cb (GList    *file_list,
                                  gpointer  user_data)
 {
   ResultMetasData *data = user_data;
-  GVariantBuilder builder, meta;
+  GVariantBuilder meta;
   NautilusFile *file;
   GList *l;
   gchar *uri, *display_name;
   GdkPixbuf *pix;
-  gint64 current_time;
   gchar *thumbnail_path, *gicon_str;
   GIcon *gicon;
   GFile *location;
-
-  g_variant_builder_init (&builder, G_VARIANT_TYPE ("aa{sv}"));
+  GVariant *meta_variant;
 
   for (l = file_list; l != NULL; l = l->next) {
     file = l->data;
@@ -388,18 +416,15 @@ result_list_attributes_ready_cb (GList    *file_list,
       g_object_unref (pix);
     }
 
-    g_variant_builder_add (&builder, "a{sv}", &meta);
+    meta_variant = g_variant_builder_end (&meta);
+    g_hash_table_insert (data->self->metas_cache,
+                         g_strdup (uri), g_variant_ref_sink (meta_variant));
 
     g_free (display_name);
     g_free (uri);
   }
 
-  current_time = g_get_monotonic_time ();
-  g_debug ("*** GetResultMetas completed - time elapsed %dms",
-           (gint) ((current_time - data->start_time) / 1000));
-
-  g_dbus_method_invocation_return_value (data->invocation,
-                                         g_variant_new ("(aa{sv})", &builder));
+  result_metas_return_from_cache (data);
   result_metas_data_free (data);
 }
 
@@ -410,7 +435,7 @@ handle_get_result_metas (NautilusShellSearchProvider  *skeleton,
                          gpointer                      user_data)
 {
   NautilusShellSearchProviderApp *self = user_data;
-  GList *nautilus_files = NULL;
+  GList *missing_files = NULL;
   const gchar *uri;
   ResultMetasData *data;
   gint idx;
@@ -419,20 +444,30 @@ handle_get_result_metas (NautilusShellSearchProvider  *skeleton,
 
   for (idx = 0; results[idx] != NULL; idx++) {
     uri = results[idx];
-    nautilus_files = g_list_prepend (nautilus_files, nautilus_file_get_by_uri (uri));
+
+    if (!g_hash_table_lookup (self->metas_cache, uri)) {
+      missing_files = g_list_prepend (missing_files, nautilus_file_get_by_uri (uri));
+    }
   }
 
   data = g_slice_new0 (ResultMetasData);
   data->self = g_object_ref (self);
   data->invocation = invocation;
   data->start_time = g_get_monotonic_time ();
+  data->uris = g_strdupv (results);
 
-  nautilus_file_list_call_when_ready (nautilus_files,
+  if (missing_files == NULL) {
+    result_metas_return_from_cache (data);
+    result_metas_data_free (data);
+    return;
+  }
+
+  nautilus_file_list_call_when_ready (missing_files,
                                       NAUTILUS_FILE_ATTRIBUTES_FOR_ICON,
                                       NULL,
                                       result_list_attributes_ready_cb,
                                       data);
-  nautilus_file_list_free (nautilus_files);
+  nautilus_file_list_free (missing_files);
 }
 
 static void
@@ -507,6 +542,7 @@ search_provider_app_dispose (GObject *obj)
   }
 
   g_clear_object (&self->object_manager);
+  g_hash_table_destroy (self->metas_cache);
   cancel_current_search (self);
 
   G_OBJECT_CLASS (nautilus_shell_search_provider_app_parent_class)->dispose (obj);
@@ -540,6 +576,9 @@ nautilus_shell_search_provider_app_init (NautilusShellSearchProviderApp *self)
   g_application_set_inactivity_timeout (app, SEARCH_PROVIDER_INACTIVITY_TIMEOUT);
   g_application_set_application_id (app, "org.gnome.Nautilus.SearchProvider");
   g_application_set_flags (app, G_APPLICATION_IS_SERVICE);
+
+  self->metas_cache = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                             g_free, (GDestroyNotify) g_variant_unref);
 }
 
 static void
