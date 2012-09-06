@@ -129,5 +129,6 @@
 #define NAUTILUS_ACTION_UNSTRETCH "Unstretch"
 #define NAUTILUS_ACTION_ZOOM_ITEMS "Zoom Items"
 #define NAUTILUS_ACTION_SORT_TRASH_TIME "Sort by Trash Time"
+#define NAUTILUS_ACTION_SORT_SEARCH_RELEVANCE "Sort by Search Relevance"
 
 #endif /* NAUTILUS_ACTIONS_H */

@@ -143,6 +143,11 @@ static const SortCriterion sort_criteria[] = {
 		NAUTILUS_FILE_SORT_BY_TRASHED_TIME,
 		"trashed",
 		NAUTILUS_ACTION_SORT_TRASH_TIME
+	},
+	{
+		NAUTILUS_FILE_SORT_BY_SEARCH_RELEVANCE,
+		NULL,
+		NAUTILUS_ACTION_SORT_SEARCH_RELEVANCE,
 	}
 };
 
@@ -574,6 +579,15 @@ update_layout_menus (NautilusCanvasView *view)
 		} else {
 			gtk_action_set_visible (action, FALSE);
 		}
+
+		action = gtk_action_group_get_action (view->details->canvas_action_group,
+		                                      NAUTILUS_ACTION_SORT_SEARCH_RELEVANCE);
+
+		if (file != NULL && nautilus_file_is_in_search (file)) {
+			gtk_action_set_visible (action, TRUE);
+		} else {
+			gtk_action_set_visible (action, FALSE);
+		}
 	}
 
 	action = gtk_action_group_get_action (view->details->canvas_action_group,
@@ -785,7 +799,7 @@ get_sort_criterion_by_metadata_text (const char *metadata_text)
 
 	/* Figure out what the new sort setting should be. */
 	for (i = 0; i < G_N_ELEMENTS (sort_criteria); i++) {
-		if (strcmp (sort_criteria[i].metadata_text, metadata_text) == 0) {
+		if (g_strcmp0 (sort_criteria[i].metadata_text, metadata_text) == 0) {
 			return &sort_criteria[i];
 		}
 	}
@@ -1174,6 +1188,10 @@ static const GtkRadioActionEntry arrange_radio_entries[] = {
     N_("By T_rash Time"), NULL,
     N_("Keep icons sorted by trash time in rows"),
     NAUTILUS_FILE_SORT_BY_TRASHED_TIME },
+  { NAUTILUS_ACTION_SORT_SEARCH_RELEVANCE, NULL,
+    N_("By Search Relevance"), NULL,
+    N_("Keep icons sorted by search relevance in rows"),
+    NAUTILUS_FILE_SORT_BY_SEARCH_RELEVANCE },
 };
 
 static void

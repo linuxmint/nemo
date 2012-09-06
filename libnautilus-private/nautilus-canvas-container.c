@@ -6795,6 +6795,11 @@ nautilus_canvas_container_select_first (NautilusCanvasContainer *container)
 
 	selection_changed = FALSE;
 
+	if (container->details->needs_resort) {
+		resort (container);
+		container->details->needs_resort = FALSE;
+	}
+
 	icon = g_list_nth_data (container->details->icons, 0);
 	if (icon) {
 		selection_changed |= icon_set_selected (container, icon, TRUE);
