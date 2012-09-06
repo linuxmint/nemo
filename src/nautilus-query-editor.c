@@ -991,15 +991,8 @@ nautilus_query_editor_init (NautilusQueryEditor *editor)
 }
 
 static void
-on_all_button_toggled (GtkToggleButton     *button,
+on_location_button_toggled (GtkToggleButton     *button,
 		       NautilusQueryEditor *editor)
-{
-	nautilus_query_editor_changed (editor);
-}
-
-static void
-on_current_button_toggled (GtkToggleButton     *button,
-			   NautilusQueryEditor *editor)
 {
 	nautilus_query_editor_changed (editor);
 }
@@ -1052,10 +1045,10 @@ setup_widgets (NautilusQueryEditor *editor)
 	editor->details->search_all_button = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (editor->details->search_current_button),
 											  _("All Files"));
 	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (editor->details->search_all_button), FALSE);
-	g_signal_connect (editor->details->search_all_button, "toggled",
-			  G_CALLBACK (on_all_button_toggled), editor);
+
+	/* connect to the signal only on one of the two, since they're mutually exclusive */
 	g_signal_connect (editor->details->search_current_button, "toggled",
-			  G_CALLBACK (on_current_button_toggled), editor);
+			  G_CALLBACK (on_location_button_toggled), editor);
 
 	button_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_box_pack_start (GTK_BOX (hbox), button_box, FALSE, FALSE, 0);
