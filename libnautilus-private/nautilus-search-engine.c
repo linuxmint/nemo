@@ -153,6 +153,7 @@ search_provider_error (NautilusSearchProvider *provider,
 	if (engine->details->providers_error == engine->details->num_providers) {
 		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (engine),
 						_("Unable to complete the requested search"));
+		g_hash_table_remove_all (engine->details->uris);
 	}
 }
 
@@ -162,8 +163,10 @@ search_provider_finished (NautilusSearchProvider *provider,
 
 {
 	engine->details->providers_finished++;
-	if (engine->details->providers_finished == engine->details->num_providers)
+	if (engine->details->providers_finished == engine->details->num_providers) {
 		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (engine));
+		g_hash_table_remove_all (engine->details->uris);
+	}
 }
 
 static void
