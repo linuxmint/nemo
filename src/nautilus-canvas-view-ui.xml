@@ -15,8 +15,6 @@
     </placeholder>
     <separator/>
     <placeholder name="View Details">
-      <menuitem name="Stretch" action="Stretch"/>
-      <menuitem name="Unstretch" action="Unstretch"/>
     </placeholder>
   </popup>
 </ui>

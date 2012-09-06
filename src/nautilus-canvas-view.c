@@ -79,8 +79,6 @@ typedef struct {
 	const NautilusFileSortType sort_type;
 	const char *metadata_text;
 	const char *action;
-	const char *menu_label;
-	const char *menu_hint;
 } SortCriterion;
 
 typedef enum {
@@ -124,37 +122,27 @@ static const SortCriterion sort_criteria[] = {
 	{
 		NAUTILUS_FILE_SORT_BY_DISPLAY_NAME,
 		"name",
-		"Sort by Name",
-		N_("by _Name"),
-		N_("Keep icons sorted by name in rows")
+		"Sort by Name"
 	},
 	{
 		NAUTILUS_FILE_SORT_BY_SIZE,
 		"size",
-		"Sort by Size",
-		N_("by _Size"),
-		N_("Keep icons sorted by size in rows")
+		"Sort by Size"
 	},
 	{
 		NAUTILUS_FILE_SORT_BY_TYPE,
 		"type",
-		"Sort by Type",
-		N_("by _Type"),
-		N_("Keep icons sorted by type in rows")
+		"Sort by Type"
 	},
 	{
 		NAUTILUS_FILE_SORT_BY_MTIME,
 		"modification date",
-		"Sort by Modification Date",
-		N_("by Modification _Date"),
-		N_("Keep icons sorted by modification date in rows")
+		"Sort by Modification Date"
 	},
 	{
 		NAUTILUS_FILE_SORT_BY_TRASHED_TIME,
 		"trashed",
-		"Sort by Trash Time",
-		N_("by T_rash Time"),
-		N_("Keep icons sorted by trash time in rows")
+		NAUTILUS_ACTION_SORT_TRASH_TIME
 	}
 };
 
@@ -1182,7 +1170,7 @@ static const GtkRadioActionEntry arrange_radio_entries[] = {
     N_("By Modification _Date"), NULL,
     N_("Keep icons sorted by modification date in rows"),
     NAUTILUS_FILE_SORT_BY_MTIME },
-  { "Sort by Trash Time", NULL,
+  { NAUTILUS_ACTION_SORT_TRASH_TIME, NULL,
     N_("By T_rash Time"), NULL,
     N_("Keep icons sorted by trash time in rows"),
     NAUTILUS_FILE_SORT_BY_TRASHED_TIME },

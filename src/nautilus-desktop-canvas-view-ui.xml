@@ -20,6 +20,9 @@
   <placeholder name="Empty Trash Holder">
     <menuitem name="Empty Trash" action="Empty Trash Conditional"/>
   </placeholder>
-  <placeholder name="Canvas Appearance Items"/>
+  <placeholder name="Canvas Appearance Items">
+    <menuitem name="Stretch" action="Stretch"/>
+    <menuitem name="Unstretch" action="Unstretch"/>
+  </placeholder>
 </popup>
 </ui>
