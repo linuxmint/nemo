@@ -19,7 +19,4 @@
       <menuitem name="Unstretch" action="Unstretch"/>
     </placeholder>
   </popup>
-  <popup name="selection">
-    <placeholder name="Canvas Appearance Items"/>
-  </popup>
 </ui>

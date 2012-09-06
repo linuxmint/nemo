@@ -64,8 +64,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define POPUP_PATH_CANVAS_APPEARANCE		"/selection/Canvas Appearance Items"
-
 enum 
 {
 	PROP_SUPPORTS_AUTO_LAYOUT = 1,
@@ -326,26 +324,6 @@ static void
 clear_sort_criterion (NautilusCanvasView *canvas_view)
 {
 	real_set_sort_criterion (canvas_view, NULL, TRUE, TRUE);
-}
-
-static void
-action_stretch_callback (GtkAction *action,
-			 gpointer callback_data)
-{
-	g_assert (NAUTILUS_IS_CANVAS_VIEW (callback_data));
-
-	nautilus_canvas_container_show_stretch_handles
-		(get_canvas_container (NAUTILUS_CANVAS_VIEW (callback_data)));
-}
-
-static void
-action_unstretch_callback (GtkAction *action,
-			   gpointer callback_data)
-{
-	g_assert (NAUTILUS_IS_CANVAS_VIEW (callback_data));
-
-	nautilus_canvas_container_unstretch
-		(get_canvas_container (NAUTILUS_CANVAS_VIEW (callback_data)));
 }
 
 void
@@ -1170,18 +1148,6 @@ nautilus_canvas_view_start_renaming_file (NautilusView *view,
 		(get_canvas_container (NAUTILUS_CANVAS_VIEW (view)), select_all);
 }
 
-static const GtkActionEntry canvas_view_entries[] = {
-  /* name, stock id, label */  { "Arrange Items", NULL, N_("Arran_ge Items") }, 
-  /* name, stock id */         { "Stretch", NULL,
-  /* label, accelerator */       N_("Resize Icon..."), NULL,
-  /* tooltip */                  N_("Make the selected icons resizable"),
-                                 G_CALLBACK (action_stretch_callback) },
-  /* name, stock id */         { "Unstretch", NULL,
-  /* label, accelerator */       N_("Restore Icons' Original Si_zes"), NULL,
-  /* tooltip */                  N_("Restore each selected icons to its original size"),
-                                 G_CALLBACK (action_unstretch_callback) },
-};
-
 static const GtkToggleActionEntry canvas_view_toggle_entries[] = {
   /* name, stock id */      { "Reversed Order", NULL,
   /* label, accelerator */    N_("Re_versed Order"), NULL,
@@ -1228,7 +1194,6 @@ nautilus_canvas_view_merge_menus (NautilusView *view)
 	NautilusCanvasView *canvas_view;
 	GtkUIManager *ui_manager;
 	GtkActionGroup *action_group;
-	GtkAction *action;
 	
         g_assert (NAUTILUS_IS_CANVAS_VIEW (view));
 
@@ -1241,9 +1206,6 @@ nautilus_canvas_view_merge_menus (NautilusView *view)
 	action_group = gtk_action_group_new ("CanvasViewActions");
 	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
 	canvas_view->details->canvas_action_group = action_group;
-	gtk_action_group_add_actions (action_group,
-				      canvas_view_entries, G_N_ELEMENTS (canvas_view_entries),
-				      canvas_view);
 	gtk_action_group_add_toggle_actions (action_group, 
 					     canvas_view_toggle_entries, G_N_ELEMENTS (canvas_view_toggle_entries),
 					     canvas_view);
@@ -1259,32 +1221,6 @@ nautilus_canvas_view_merge_menus (NautilusView *view)
 
 	canvas_view->details->canvas_merge_id =
 		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nautilus/nautilus-canvas-view-ui.xml", NULL);
-
-	/* Do one-time state-setting here; context-dependent state-setting
-	 * is done in update_menus.
-	 */
-	if (!nautilus_canvas_view_supports_auto_layout (canvas_view)) {
-		action = gtk_action_group_get_action (action_group,
-						      NAUTILUS_ACTION_ARRANGE_ITEMS);
-		gtk_action_set_visible (action, FALSE);
-	}
-
-	if (nautilus_canvas_view_supports_scaling (canvas_view)) {
-		gtk_ui_manager_add_ui (ui_manager,
-				       canvas_view->details->canvas_merge_id,
-				       POPUP_PATH_CANVAS_APPEARANCE,
-				       NAUTILUS_ACTION_STRETCH,
-				       NAUTILUS_ACTION_STRETCH,
-				       GTK_UI_MANAGER_MENUITEM,
-				       FALSE);
-		gtk_ui_manager_add_ui (ui_manager,
-				       canvas_view->details->canvas_merge_id,
-				       POPUP_PATH_CANVAS_APPEARANCE,
-				       NAUTILUS_ACTION_UNSTRETCH,
-				       NAUTILUS_ACTION_UNSTRETCH,
-				       GTK_UI_MANAGER_MENUITEM,
-				       FALSE);
-	}
 
 	update_layout_menus (canvas_view);
 }
@@ -1311,41 +1247,12 @@ static void
 nautilus_canvas_view_update_menus (NautilusView *view)
 {
 	NautilusCanvasView *canvas_view;
-        int selection_count;
 	GtkAction *action;
-        NautilusCanvasContainer *canvas_container;
 	gboolean editable;
 
         canvas_view = NAUTILUS_CANVAS_VIEW (view);
 
 	NAUTILUS_VIEW_CLASS (nautilus_canvas_view_parent_class)->update_menus(view);
-
-        selection_count = nautilus_view_get_selection_count (view);
-        canvas_container = get_canvas_container (canvas_view);
-
-	action = gtk_action_group_get_action (canvas_view->details->canvas_action_group,
-					      NAUTILUS_ACTION_STRETCH);
-	gtk_action_set_sensitive (action,
-				  selection_count == 1
-				  && canvas_container != NULL
-				  && !nautilus_canvas_container_has_stretch_handles (canvas_container));
-
-	gtk_action_set_visible (action,
-				nautilus_canvas_view_supports_scaling (canvas_view));
-
-	action = gtk_action_group_get_action (canvas_view->details->canvas_action_group,
-					      NAUTILUS_ACTION_UNSTRETCH);
-	g_object_set (action, "label",
-		      (selection_count > 1)
-		      ? _("Restore Icons' Original Si_zes")
-		      : _("Restore Icon's Original Si_ze"),
-		      NULL);
-	gtk_action_set_sensitive (action,
-				  canvas_container != NULL
-				  && nautilus_canvas_container_is_stretched (canvas_container));
-
-	gtk_action_set_visible (action,
-				nautilus_canvas_view_supports_scaling (canvas_view));
 
 	editable = nautilus_view_is_editable (view);
 	action = gtk_action_group_get_action (canvas_view->details->canvas_action_group,
