@@ -27,8 +27,11 @@
 #include "nautilus-search-provider.h"
 #include "nautilus-search-engine.h"
 #include "nautilus-search-engine-simple.h"
+#include "nautilus-search-engine-model.h"
 #define DEBUG_FLAG NAUTILUS_DEBUG_SEARCH
 #include "nautilus-debug.h"
+
+#undef ENABLE_TRACKER
 
 #ifdef ENABLE_TRACKER
 #include "nautilus-search-engine-tracker.h"
@@ -36,7 +39,11 @@
 
 struct NautilusSearchEngineDetails
 {
+#if USE_MODEL
+	NautilusSearchEngineModel *model;
+#else
 	NautilusSearchEngineSimple *simple;
+#endif
 #ifdef ENABLE_TRACKER
 	NautilusSearchEngineTracker *tracker;
 #endif
@@ -62,7 +69,11 @@ nautilus_search_engine_set_query (NautilusSearchProvider *provider,
 #ifdef ENABLE_TRACKER
 	nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (engine->details->tracker), query);
 #endif
+#if USE_MODEL
+	nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (engine->details->model), query);
+#else
 	nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (engine->details->simple), query);
+#endif
 }
 
 static void
@@ -74,7 +85,11 @@ nautilus_search_engine_start (NautilusSearchProvider *provider)
 #ifdef ENABLE_TRACKER
 	nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->tracker));
 #endif
+#if USE_MODEL
+	nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->model));
+#else
 	nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->simple));
+#endif
 }
 
 static void
@@ -84,7 +99,11 @@ nautilus_search_engine_stop (NautilusSearchProvider *provider)
 #ifdef ENABLE_TRACKER
 	nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (engine->details->tracker));
 #endif
+#if USE_MODEL
+	nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (engine->details->model));
+#else
 	nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (engine->details->simple));
+#endif
 }
 
 static void
@@ -209,7 +228,11 @@ nautilus_search_engine_finalize (GObject *object)
 #ifdef ENABLE_TRACKER
 	g_clear_object (&engine->details->tracker);
 #endif
+#if USE_MODEL
+	g_clear_object (&engine->details->model);
+#else
 	g_clear_object (&engine->details->simple);
+#endif
 
 	G_OBJECT_CLASS (nautilus_search_engine_parent_class)->finalize (object);
 }
@@ -240,10 +263,15 @@ nautilus_search_engine_init (NautilusSearchEngine *engine)
 	connect_provider_signals (engine, NAUTILUS_SEARCH_PROVIDER (engine->details->tracker));
 	engine->details->num_providers++;
 #endif
-
+#if USE_MODEL
+	engine->details->model = nautilus_search_engine_model_new ();
+	connect_provider_signals (engine, NAUTILUS_SEARCH_PROVIDER (engine->details->model));
+	engine->details->num_providers++;
+#else
 	engine->details->simple = nautilus_search_engine_simple_new ();
 	connect_provider_signals (engine, NAUTILUS_SEARCH_PROVIDER (engine->details->simple));
 	engine->details->num_providers++;
+#endif
 }
 
 NautilusSearchEngine *
