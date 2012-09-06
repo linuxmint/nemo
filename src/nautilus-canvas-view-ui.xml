@@ -11,7 +11,6 @@
       </placeholder>
       <separator name="Layout separator"/>
       <menuitem name="Reversed Order" action="Reversed Order"/>
-      <menuitem name="Clean Up" action="Clean Up"/>
       <menuitem name="Keep Aligned" action="Keep Aligned"/>
     </placeholder>
     <separator/>

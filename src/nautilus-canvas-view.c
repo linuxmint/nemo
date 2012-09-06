@@ -348,8 +348,8 @@ action_unstretch_callback (GtkAction *action,
 		(get_canvas_container (NAUTILUS_CANVAS_VIEW (callback_data)));
 }
 
-static void
-nautilus_canvas_view_clean_up (NautilusCanvasView *canvas_view)
+void
+nautilus_canvas_view_clean_up_by_name (NautilusCanvasView *canvas_view)
 {
 	NautilusCanvasContainer *canvas_container;
 	gboolean saved_sort_reversed;
@@ -366,12 +366,6 @@ nautilus_canvas_view_clean_up (NautilusCanvasView *canvas_view)
 	nautilus_canvas_container_freeze_icon_positions (canvas_container);
 
 	set_sort_reversed (canvas_view, saved_sort_reversed, FALSE);
-}
-
-static void
-action_clean_up_callback (GtkAction *action, gpointer callback_data)
-{
-	nautilus_canvas_view_clean_up (NAUTILUS_CANVAS_VIEW (callback_data));
 }
 
 static gboolean
@@ -620,17 +614,6 @@ update_layout_menus (NautilusCanvasView *view)
 					      NAUTILUS_ACTION_MANUAL_LAYOUT);
 	gtk_action_set_visible (action,
 				nautilus_canvas_view_supports_manual_layout (view));
-
-	/* Clean Up is only relevant for manual layout */
-	action = gtk_action_group_get_action (view->details->canvas_action_group,
-					      NAUTILUS_ACTION_CLEAN_UP);
-	gtk_action_set_sensitive (action, !is_auto_layout);	
-	gtk_action_set_visible (action,
-				nautilus_canvas_view_supports_manual_layout (view));
-
-	if (NAUTILUS_IS_DESKTOP_CANVAS_VIEW (view)) {
-		gtk_action_set_label (action, _("_Organize Desktop by Name"));
-	}
 
 	action = gtk_action_group_get_action (view->details->canvas_action_group,
 					      NAUTILUS_ACTION_KEEP_ALIGNED);
@@ -1197,10 +1180,6 @@ static const GtkActionEntry canvas_view_entries[] = {
   /* label, accelerator */       N_("Restore Icons' Original Si_zes"), NULL,
   /* tooltip */                  N_("Restore each selected icons to its original size"),
                                  G_CALLBACK (action_unstretch_callback) },
-  /* name, stock id */         { "Clean Up", NULL,
-  /* label, accelerator */       N_("_Organize by Name"), NULL,
-  /* tooltip */                  N_("Reposition icons to better fit in the window and avoid overlapping"),
-                                 G_CALLBACK (action_clean_up_callback) },
 };
 
 static const GtkToggleActionEntry canvas_view_toggle_entries[] = {
