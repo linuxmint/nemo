@@ -31,26 +31,22 @@
 #define DEBUG_FLAG NAUTILUS_DEBUG_SEARCH
 #include "nautilus-debug.h"
 
-#undef ENABLE_TRACKER
-
 #ifdef ENABLE_TRACKER
 #include "nautilus-search-engine-tracker.h"
 #endif
 
 struct NautilusSearchEngineDetails
 {
-#if USE_MODEL
-	NautilusSearchEngineModel *model;
-#else
-	NautilusSearchEngineSimple *simple;
-#endif
 #ifdef ENABLE_TRACKER
 	NautilusSearchEngineTracker *tracker;
 #endif
+	NautilusSearchEngineSimple *simple;
+
+	NautilusSearchEngineModel *model;
 	NautilusDirectory *base_model;
 
 	GHashTable *uris;
-	guint num_providers;
+	guint providers_running;
 	guint providers_finished;
 	guint providers_error;
 };
@@ -71,27 +67,30 @@ nautilus_search_engine_set_query (NautilusSearchProvider *provider,
 #ifdef ENABLE_TRACKER
 	nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (engine->details->tracker), query);
 #endif
-#if USE_MODEL
 	nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (engine->details->model), query);
-#else
 	nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (engine->details->simple), query);
-#endif
 }
 
 static void
 nautilus_search_engine_start (NautilusSearchProvider *provider)
 {
 	NautilusSearchEngine *engine = NAUTILUS_SEARCH_ENGINE (provider);
+
+	engine->details->providers_running = 0;
 	engine->details->providers_finished = 0;
 	engine->details->providers_error = 0;
+
 #ifdef ENABLE_TRACKER
 	nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->tracker));
+	engine->details->providers_running++;
 #endif
-#if USE_MODEL
-	nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->model));
-#else
-	nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->simple));
-#endif
+	if (nautilus_search_engine_model_get_model (engine->details->model)) {
+		nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->model));
+		engine->details->providers_running++;
+	} else {
+		nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->simple));
+		engine->details->providers_running++;
+	}
 }
 
 static void
@@ -101,11 +100,8 @@ nautilus_search_engine_stop (NautilusSearchProvider *provider)
 #ifdef ENABLE_TRACKER
 	nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (engine->details->tracker));
 #endif
-#if USE_MODEL
 	nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (engine->details->model));
-#else
 	nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (engine->details->simple));
-#endif
 }
 
 static void
@@ -171,7 +167,7 @@ search_provider_error (NautilusSearchProvider *provider,
 {
 	DEBUG ("Search provider error: %s", error_message);
 	engine->details->providers_error++;
-	if (engine->details->providers_error == engine->details->num_providers) {
+	if (engine->details->providers_error == engine->details->providers_running) {
 		g_object_ref (engine);
 		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (engine),
 						_("Unable to complete the requested search"));
@@ -186,7 +182,7 @@ search_provider_finished (NautilusSearchProvider *provider,
 
 {
 	engine->details->providers_finished++;
-	if (engine->details->providers_finished == engine->details->num_providers) {
+	if (engine->details->providers_finished == engine->details->providers_running) {
 		g_object_ref (engine);
 		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (engine));
 		g_hash_table_remove_all (engine->details->uris);
@@ -230,11 +226,8 @@ nautilus_search_engine_finalize (GObject *object)
 #ifdef ENABLE_TRACKER
 	g_clear_object (&engine->details->tracker);
 #endif
-#if USE_MODEL
 	g_clear_object (&engine->details->model);
-#else
 	g_clear_object (&engine->details->simple);
-#endif
 
 	G_OBJECT_CLASS (nautilus_search_engine_parent_class)->finalize (object);
 }
@@ -263,17 +256,12 @@ nautilus_search_engine_init (NautilusSearchEngine *engine)
 #ifdef ENABLE_TRACKER
 	engine->details->tracker = nautilus_search_engine_tracker_new ();
 	connect_provider_signals (engine, NAUTILUS_SEARCH_PROVIDER (engine->details->tracker));
-	engine->details->num_providers++;
 #endif
-#if USE_MODEL
 	engine->details->model = nautilus_search_engine_model_new ();
 	connect_provider_signals (engine, NAUTILUS_SEARCH_PROVIDER (engine->details->model));
-	engine->details->num_providers++;
-#else
+
 	engine->details->simple = nautilus_search_engine_simple_new ();
 	connect_provider_signals (engine, NAUTILUS_SEARCH_PROVIDER (engine->details->simple));
-	engine->details->num_providers++;
-#endif
 }
 
 NautilusSearchEngine *
