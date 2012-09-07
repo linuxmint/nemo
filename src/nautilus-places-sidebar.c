@@ -52,8 +52,6 @@
 #include "nautilus-window.h"
 #include "nautilus-window-slot.h"
 
-#include <libnotify/notify.h>
-
 #define DEBUG_FLAG NAUTILUS_DEBUG_PLACES
 #include <libnautilus-private/nautilus-debug.h>
 
@@ -99,8 +97,6 @@ typedef struct {
 	gboolean mounting;
 	NautilusWindowSlot *go_to_after_mount_slot;
 	NautilusWindowOpenFlags go_to_after_mount_flags;
-
-	NotifyNotification *unmount_notify;
 
 	GDBusProxy *hostnamed_proxy;
 	char *hostname;
@@ -3306,7 +3302,6 @@ nautilus_places_sidebar_dispose (GObject *object)
 	sidebar->uri = NULL;
 
 	free_drag_data (sidebar);
-	g_clear_object (&sidebar->unmount_notify);
 
 	if (sidebar->bookmarks_changed_id != 0) {
 		g_signal_handler_disconnect (sidebar->bookmarks,
