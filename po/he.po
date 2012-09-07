@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eel.HEAD.he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-07 16:05+0300\n"
-"PO-Revision-Date: 2012-09-07 16:08+0200\n"
+"POT-Creation-Date: 2012-09-07 16:08+0300\n"
+"PO-Revision-Date: 2012-09-07 16:10+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "Language: he\n"
@@ -418,9 +418,8 @@ msgid "%a, %b %e %Y %I:%M:%S %p"
 msgstr "%a, ה־%e ב%b %Y %H:%M:%S"
 
 #: ../libnautilus-private/nautilus-file.c:4445
-#, fuzzy
 msgid "%a, %b %e %Y %T"
-msgstr "%a, ה־%e ב%b %Y %H:%M:%S"
+msgstr "%a, ה־%e ב%b %Y %T"
 
 #: ../libnautilus-private/nautilus-file.c:4944
 #, c-format
