@@ -1,9 +1,9 @@
 # Thai nautilus translation.
-# Copyright (C) 2003-2011 Free Software Foundation, Inc.
+# Copyright (C) 2003-2012 Free Software Foundation, Inc.
 # This file is distributed under the same license as the nautilus package.
 # Paisa Seeluangsawat <paisa@users.sf.net>, 2003, 2004.
 # Supranee Thirawatthanasuk <supranee@opentle.org>, 2005.
-# Theppitak Karoonboonyanan <thep@linux.thai.net>, 2005-2011.
+# Theppitak Karoonboonyanan <thep@linux.thai.net>, 2005-2012.
 #
 # Thai translation for eel.
 # Copyright (C) 2003-2008 Free Software Foundation, Inc.
@@ -18,7 +18,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2011-09-10 13:07+0000\n"
-"PO-Revision-Date: 2011-09-18 09:29+0700\n"
+"PO-Revision-Date: 2012-09-07 16:14+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@linux.thai.net>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -554,7 +554,7 @@ msgstr " (สำเนา)"
 #. localizers: tag used to detect the second copy of a file
 #: ../libnautilus-private/nautilus-file-operations.c:448
 msgid " (another copy)"
-msgstr " (สำเนาอื่น)"
+msgstr " (อีกสำเนา)"
 
 #. localizers: tag used to detect the x11th copy of a file
 #. localizers: tag used to detect the x12th copy of a file
@@ -592,7 +592,7 @@ msgstr "%s (สำเนา)%s"
 #: ../libnautilus-private/nautilus-file-operations.c:481
 #, c-format
 msgid "%s (another copy)%s"
-msgstr "%s (สำเนาอื่น)%s"
+msgstr "%s (อีกสำเนา)%s"
 
 #. localizers: appended to x11th file copy
 #. localizers: appended to x12th file copy
