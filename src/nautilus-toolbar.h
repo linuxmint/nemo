@@ -48,7 +48,7 @@ typedef struct _NautilusToolbarClass NautilusToolbarClass;
 
 typedef enum {
 	NAUTILUS_TOOLBAR_MODE_PATH_BAR,
-	NAUTILUS_TOOLBAR_MODE_LOCATION_BAR,
+	NAUTILUS_TOOLBAR_MODE_LOCATION_ENTRY,
 } NautilusToolbarMode;
 
 struct _NautilusToolbar {
@@ -67,7 +67,7 @@ GType nautilus_toolbar_get_type (void);
 GtkWidget *nautilus_toolbar_new (NautilusWindow *window);
 
 GtkWidget *nautilus_toolbar_get_path_bar (NautilusToolbar *self);
-GtkWidget *nautilus_toolbar_get_location_bar (NautilusToolbar *self);
+GtkWidget *nautilus_toolbar_get_location_entry (NautilusToolbar *self);
 
 void nautilus_toolbar_set_show_main_bar (NautilusToolbar *self,
 					 gboolean show_main_bar);

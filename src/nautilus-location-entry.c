@@ -33,6 +33,7 @@
 #include <config.h>
 #include "nautilus-location-entry.h"
 
+#include "nautilus-application.h"
 #include "nautilus-window-private.h"
 #include "nautilus-window.h"
 #include <gtk/gtk.h>
@@ -42,16 +43,38 @@
 #include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-entry.h>
 #include <libnautilus-private/nautilus-clipboard.h>
+#include <eel/eel-stock-dialogs.h>
+#include <eel/eel-string.h>
+#include <eel/eel-vfs-extensions.h>
 #include <stdio.h>
 #include <string.h>
 
+#define NAUTILUS_DND_URI_LIST_TYPE 	  "text/uri-list"
+#define NAUTILUS_DND_TEXT_PLAIN_TYPE 	  "text/plain"
+
+enum {
+	NAUTILUS_DND_URI_LIST,
+	NAUTILUS_DND_TEXT_PLAIN,
+	NAUTILUS_DND_NTARGETS
+};
+
+static const GtkTargetEntry drag_types [] = {
+	{ NAUTILUS_DND_URI_LIST_TYPE,   0, NAUTILUS_DND_URI_LIST },
+	{ NAUTILUS_DND_TEXT_PLAIN_TYPE, 0, NAUTILUS_DND_TEXT_PLAIN },
+};
+
+static const GtkTargetEntry drop_types [] = {
+	{ NAUTILUS_DND_URI_LIST_TYPE,   0, NAUTILUS_DND_URI_LIST },
+	{ NAUTILUS_DND_TEXT_PLAIN_TYPE, 0, NAUTILUS_DND_TEXT_PLAIN },
+};
+
 struct NautilusLocationEntryDetails {
-	GtkLabel *label;
-	
 	char *current_directory;
 	GFilenameCompleter *completer;
-	
+
 	guint idle_id;
+
+	char *last_uri;
 
 	gboolean has_special_text;
 	gboolean setting_special_text;
@@ -59,7 +82,267 @@ struct NautilusLocationEntryDetails {
 	NautilusLocationEntryAction secondary_action;
 };
 
+enum {
+	CANCEL,
+	LOCATION_CHANGED,
+	LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL];
+
 G_DEFINE_TYPE (NautilusLocationEntry, nautilus_location_entry, NAUTILUS_TYPE_ENTRY);
+
+void
+nautilus_location_entry_focus (NautilusLocationEntry *entry)
+{
+	/* Put the keyboard focus in the text field when switching to this mode,
+	 * and select all text for easy overtyping
+	 */
+	gtk_widget_grab_focus (GTK_WIDGET (entry));
+	nautilus_entry_select_all (NAUTILUS_ENTRY (entry));
+}
+
+static GFile *
+nautilus_location_entry_get_location (NautilusLocationEntry *entry)
+{
+	char *user_location;
+	GFile *location;
+
+	user_location = gtk_editable_get_chars (GTK_EDITABLE (entry), 0, -1);
+	location = g_file_parse_name (user_location);
+	g_free (user_location);
+
+	return location;
+}
+
+static void
+emit_location_changed (NautilusLocationEntry *entry)
+{
+	GFile *location;
+
+	location = nautilus_location_entry_get_location (entry);
+	g_signal_emit (entry, signals[LOCATION_CHANGED], 0, location);
+	g_object_unref (location);
+}
+
+static void
+nautilus_location_entry_update_action (NautilusLocationEntry *entry)
+{
+	const char *current_text;
+	GFile *location;
+	GFile *last_location;
+
+	if (entry->details->last_uri == NULL){
+		nautilus_location_entry_set_secondary_action (entry,
+							      NAUTILUS_LOCATION_ENTRY_ACTION_GOTO);
+		return;
+	}
+
+	current_text = gtk_entry_get_text (GTK_ENTRY (entry));
+	location = g_file_parse_name (current_text);
+	last_location = g_file_parse_name (entry->details->last_uri);
+
+	if (g_file_equal (last_location, location)) {
+		nautilus_location_entry_set_secondary_action (entry,
+							      NAUTILUS_LOCATION_ENTRY_ACTION_CLEAR);
+	} else {
+		nautilus_location_entry_set_secondary_action (entry,
+							      NAUTILUS_LOCATION_ENTRY_ACTION_GOTO);
+	}
+
+	g_object_unref (location);
+	g_object_unref (last_location);
+}
+
+static int
+get_editable_number_of_chars (GtkEditable *editable)
+{
+	char *text;
+	int length;
+
+	text = gtk_editable_get_chars (editable, 0, -1);
+	length = g_utf8_strlen (text, -1);
+	g_free (text);
+	return length;
+}
+
+static void
+set_position_and_selection_to_end (GtkEditable *editable)
+{
+	int end;
+
+	end = get_editable_number_of_chars (editable);
+	gtk_editable_select_region (editable, end, end);
+	gtk_editable_set_position (editable, end);
+}
+
+static void
+nautilus_location_entry_update_current_uri (NautilusLocationEntry *entry,
+					    const char *uri)
+{
+	g_free (entry->details->current_directory);
+	entry->details->current_directory = g_strdup (uri);
+
+	nautilus_entry_set_text (NAUTILUS_ENTRY (entry), uri);
+	set_position_and_selection_to_end (GTK_EDITABLE (entry));
+}
+
+void
+nautilus_location_entry_set_uri (NautilusLocationEntry *entry,
+				 const char            *uri)
+{
+	char *formatted_uri;
+	GFile *file;
+
+	g_assert (uri != NULL);
+
+	/* Note: This is called in reaction to external changes, and
+	 * thus should not emit the LOCATION_CHANGED signal. */
+
+	if (eel_uri_is_search (uri)) {
+		nautilus_location_entry_set_special_text (entry,
+							  "");
+	} else {
+		file = g_file_new_for_uri (uri);
+		formatted_uri = g_file_get_parse_name (file);
+		g_object_unref (file);
+		nautilus_location_entry_update_current_uri (entry,
+								 formatted_uri);
+		g_free (formatted_uri);
+	}
+
+	/* remember the original uri for later comparison */
+
+	if (entry->details->last_uri != uri) {
+		g_free (entry->details->last_uri);
+		entry->details->last_uri = g_strdup (uri);
+	}
+
+	nautilus_location_entry_update_action (entry);
+}
+
+static void
+drag_data_received_callback (GtkWidget *widget,
+			     GdkDragContext *context,
+			     int x,
+			     int y,
+			     GtkSelectionData *data,
+			     guint info,
+			     guint32 time,
+			     gpointer callback_data)
+{
+	char **names;
+	NautilusApplication *application;
+	int name_count;
+	NautilusWindow *new_window;
+	GtkWidget *window;
+	GdkScreen      *screen;
+	gboolean new_windows_for_extras;
+	char *prompt;
+	char *detail;
+	GFile *location;
+	NautilusLocationEntry *self = NAUTILUS_LOCATION_ENTRY (widget);
+
+	g_assert (data != NULL);
+	g_assert (callback_data == NULL);
+
+	names = g_uri_list_extract_uris ((const gchar *) gtk_selection_data_get_data (data));
+
+	if (names == NULL || *names == NULL) {
+		g_warning ("No D&D URI's");
+		gtk_drag_finish (context, FALSE, FALSE, time);
+		return;
+	}
+
+	window = gtk_widget_get_toplevel (widget);
+	new_windows_for_extras = FALSE;
+	/* Ask user if they really want to open multiple windows
+	 * for multiple dropped URIs. This is likely to have been
+	 * a mistake.
+	 */
+	name_count = g_strv_length (names);
+	if (name_count > 1) {
+		prompt = g_strdup_printf (ngettext("Do you want to view %d location?",
+						   "Do you want to view %d locations?",
+						   name_count),
+					  name_count);
+		detail = g_strdup_printf (ngettext("This will open %d separate window.",
+						   "This will open %d separate windows.",
+						   name_count),
+					  name_count);
+		/* eel_run_simple_dialog should really take in pairs
+		 * like gtk_dialog_new_with_buttons() does. */
+		new_windows_for_extras = eel_run_simple_dialog (GTK_WIDGET (window),
+								TRUE,
+								GTK_MESSAGE_QUESTION,
+								prompt,
+								detail,
+								GTK_STOCK_CANCEL, GTK_STOCK_OK,
+								NULL) != 0 /* GNOME_OK */;
+
+		g_free (prompt);
+		g_free (detail);
+
+		if (!new_windows_for_extras) {
+			gtk_drag_finish (context, FALSE, FALSE, time);
+			return;
+		}
+	}
+
+	nautilus_location_entry_set_uri (self, names[0]);
+	emit_location_changed (self);
+
+	if (new_windows_for_extras) {
+		int i;
+
+		application = NAUTILUS_APPLICATION (g_application_get_default ());
+		screen = gtk_window_get_screen (GTK_WINDOW (window));
+
+		for (i = 1; names[i] != NULL; ++i) {
+			new_window = nautilus_application_create_window (application, screen);
+			location = g_file_new_for_uri (names[i]);
+			nautilus_window_go_to (new_window, location);
+			g_object_unref (location);
+		}
+	}
+
+	g_strfreev (names);
+
+	gtk_drag_finish (context, TRUE, FALSE, time);
+}
+
+static void
+drag_data_get_callback (GtkWidget *widget,
+			GdkDragContext *context,
+			GtkSelectionData *selection_data,
+			guint info,
+			guint32 time,
+			gpointer callback_data)
+{
+	NautilusLocationEntry *self;
+	GFile *location;
+	gchar *uri;
+
+	g_assert (selection_data != NULL);
+	self = callback_data;
+
+	location = nautilus_location_entry_get_location (self);
+	uri = g_file_get_uri (location);
+
+	switch (info) {
+	case NAUTILUS_DND_URI_LIST:
+	case NAUTILUS_DND_TEXT_PLAIN:
+		gtk_selection_data_set (selection_data,
+					gtk_selection_data_get_target (selection_data),
+					8, (guchar *) uri,
+					strlen (uri));
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+	g_free (uri);
+	g_object_unref (location);
+}
 
 /* routine that performs the tab expansion.  Extract the directory name and
    incomplete basename, then iterate through the directory trying to complete it.  If we
@@ -142,28 +425,6 @@ entry_would_have_inserted_characters (const GdkEventKey *event)
 		}
 		return event->length > 0;
 	}
-}
-
-static int
-get_editable_number_of_chars (GtkEditable *editable)
-{
-	char *text;
-	int length;
-
-	text = gtk_editable_get_chars (editable, 0, -1);
-	length = g_utf8_strlen (text, -1);
-	g_free (text);
-	return length;
-}
-
-static void
-set_position_and_selection_to_end (GtkEditable *editable)
-{
-	int end;
-
-	end = get_editable_number_of_chars (editable);
-	gtk_editable_select_region (editable, end, end);
-	gtk_editable_set_position (editable, end);
 }
 
 static gboolean
@@ -249,6 +510,9 @@ finalize (GObject *object)
 
 	g_object_unref (entry->details->completer);
 	g_free (entry->details->special_text);
+
+	g_free (entry->details->last_uri);
+	entry->details->last_uri = NULL;
 
 	G_OBJECT_CLASS (nautilus_location_entry_parent_class)->finalize (object);
 }
@@ -343,11 +607,21 @@ nautilus_location_entry_activate (GtkEntry *entry)
 }
 
 static void
+nautilus_location_entry_cancel (NautilusLocationEntry *entry)
+{
+	char *last_uri;
+
+	last_uri = entry->details->last_uri;
+	nautilus_location_entry_set_uri (entry, last_uri);
+}
+
+static void
 nautilus_location_entry_class_init (NautilusLocationEntryClass *class)
 {
 	GtkWidgetClass *widget_class;
 	GObjectClass *gobject_class;
 	GtkEntryClass *entry_class;
+	GtkBindingSet *binding_set;
 
 	widget_class = GTK_WIDGET_CLASS (class);
 	widget_class->focus_in_event = nautilus_location_entry_focus_in;
@@ -359,18 +633,30 @@ nautilus_location_entry_class_init (NautilusLocationEntryClass *class)
 	entry_class = GTK_ENTRY_CLASS (class);
 	entry_class->activate = nautilus_location_entry_activate;
 
+	class->cancel = nautilus_location_entry_cancel;
+
+	signals[CANCEL] = g_signal_new
+		("cancel",
+		 G_TYPE_FROM_CLASS (class),
+		 G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+		 G_STRUCT_OFFSET (NautilusLocationEntryClass,
+				  cancel),
+		 NULL, NULL,
+		 g_cclosure_marshal_VOID__VOID,
+		 G_TYPE_NONE, 0);
+
+	signals[LOCATION_CHANGED] = g_signal_new
+		("location-changed",
+		 G_TYPE_FROM_CLASS (class),
+		 G_SIGNAL_RUN_LAST, 0,
+		 NULL, NULL,
+		 g_cclosure_marshal_generic,
+		 G_TYPE_NONE, 1, G_TYPE_OBJECT);
+
+	binding_set = gtk_binding_set_by_class (class);
+	gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "cancel", 0);
+
 	g_type_class_add_private (class, sizeof (NautilusLocationEntryDetails));
-}
-
-void
-nautilus_location_entry_update_current_location (NautilusLocationEntry *entry,
-						 const char *location)
-{
-	g_free (entry->details->current_directory);
-	entry->details->current_directory = g_strdup (location);
-
-	nautilus_entry_set_text (NAUTILUS_ENTRY (entry), location);
-	set_position_and_selection_to_end (GTK_EDITABLE (entry));
 }
 
 void
@@ -398,13 +684,41 @@ nautilus_location_entry_set_secondary_action (NautilusLocationEntry *entry,
 }
 
 static void
+editable_activate_callback (GtkEntry *entry,
+			    gpointer user_data)
+{
+	NautilusLocationEntry *self = user_data;
+	const char *entry_text;
+
+	entry_text = gtk_entry_get_text (entry);
+	if (entry_text != NULL && *entry_text != '\0') {
+		emit_location_changed (self);
+	}
+}
+
+static void
+editable_changed_callback (GtkEntry *entry,
+			   gpointer user_data)
+{
+	nautilus_location_entry_update_action (NAUTILUS_LOCATION_ENTRY (entry));
+}
+
+static void
 nautilus_location_entry_init (NautilusLocationEntry *entry)
 {
+	GtkTargetList *targetlist;
+
 	entry->details = G_TYPE_INSTANCE_GET_PRIVATE (entry, NAUTILUS_TYPE_LOCATION_ENTRY,
 						      NautilusLocationEntryDetails);
 
 	entry->details->completer = g_filename_completer_new ();
 	g_filename_completer_set_dirs_only (entry->details->completer, TRUE);
+
+	gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry), GTK_ENTRY_ICON_PRIMARY, "folder-symbolic");
+	gtk_entry_set_icon_activatable (GTK_ENTRY (entry), GTK_ENTRY_ICON_PRIMARY, FALSE);
+	targetlist = gtk_target_list_new (drag_types, G_N_ELEMENTS (drag_types));
+	gtk_entry_set_icon_drag_source (GTK_ENTRY (entry), GTK_ENTRY_ICON_PRIMARY, targetlist, GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
+	gtk_target_list_unref (targetlist);
 
 	nautilus_location_entry_set_secondary_action (entry,
 						      NAUTILUS_LOCATION_ENTRY_ACTION_CLEAR);
@@ -422,6 +736,23 @@ nautilus_location_entry_init (NautilusLocationEntry *entry)
 
 	g_signal_connect (entry->details->completer, "got_completion_data",
 		          G_CALLBACK (got_completion_data_callback), entry);
+
+	/* Drag source */
+	g_signal_connect_object (entry, "drag_data_get",
+				 G_CALLBACK (drag_data_get_callback), entry, 0);
+
+	/* Drag dest. */
+	gtk_drag_dest_set (GTK_WIDGET (entry),
+			   GTK_DEST_DEFAULT_ALL,
+			   drop_types, G_N_ELEMENTS (drop_types),
+			   GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
+	g_signal_connect (entry, "drag_data_received",
+			  G_CALLBACK (drag_data_received_callback), NULL);
+
+	g_signal_connect_object (entry, "activate",
+				 G_CALLBACK (editable_activate_callback), entry, G_CONNECT_AFTER);
+	g_signal_connect_object (entry, "changed",
+				 G_CALLBACK (editable_changed_callback), entry, 0);
 }
 
 GtkWidget *

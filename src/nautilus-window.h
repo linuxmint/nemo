@@ -120,7 +120,7 @@ NautilusWindowSlot * nautilus_window_open_slot             (NautilusWindow *wind
 void                 nautilus_window_slot_close            (NautilusWindow *window,
                                                             NautilusWindowSlot *slot);
 
-GtkWidget *          nautilus_window_ensure_location_bar   (NautilusWindow *window);
+GtkWidget *          nautilus_window_ensure_location_entry (NautilusWindow *window);
 void                 nautilus_window_sync_location_widgets (NautilusWindow *window);
 void                 nautilus_window_grab_focus            (NautilusWindow *window);
 void                 nautilus_window_sync_search_widgets   (NautilusWindow *window);

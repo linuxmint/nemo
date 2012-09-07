@@ -826,7 +826,7 @@ action_enter_location (GSimpleAction *action,
 
 	cur_window = get_focus_window (application);
 	window = NAUTILUS_WINDOW (cur_window);
-	nautilus_window_ensure_location_bar (window);
+	nautilus_window_ensure_location_entry (window);
 }
 
 static void

@@ -50,6 +50,8 @@ typedef struct NautilusLocationEntry {
 
 typedef struct {
 	NautilusEntryClass parent_class;
+	/* for GtkBindingSet */
+	void         (* cancel)           (NautilusLocationEntry *entry);
 } NautilusLocationEntryClass;
 
 typedef enum {
@@ -58,12 +60,14 @@ typedef enum {
 } NautilusLocationEntryAction;
 
 GType      nautilus_location_entry_get_type     	(void);
+
 GtkWidget* nautilus_location_entry_new          	(void);
 void       nautilus_location_entry_set_special_text     (NautilusLocationEntry *entry,
 							 const char            *special_text);
 void       nautilus_location_entry_set_secondary_action (NautilusLocationEntry *entry,
 							 NautilusLocationEntryAction secondary_action);
-void       nautilus_location_entry_update_current_location (NautilusLocationEntry *entry,
-							    const char *path);
+void       nautilus_location_entry_set_uri              (NautilusLocationEntry *entry,
+							 const char            *location);
+void       nautilus_location_entry_focus                (NautilusLocationEntry *entry);
 
 #endif /* NAUTILUS_LOCATION_ENTRY_H */

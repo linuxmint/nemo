@@ -27,7 +27,7 @@
 
 #include "nautilus-toolbar.h"
 
-#include "nautilus-location-bar.h"
+#include "nautilus-location-entry.h"
 #include "nautilus-pathbar.h"
 #include "nautilus-actions.h"
 
@@ -47,7 +47,7 @@ struct _NautilusToolbarPriv {
 	NautilusWindow *window;
 
 	GtkWidget *path_bar;
-	GtkWidget *location_bar;
+	GtkWidget *location_entry;
 
 	GtkToolItem *back_forward;
 
@@ -76,7 +76,7 @@ toolbar_update_appearance (NautilusToolbar *self)
 	show_location_entry = self->priv->show_location_entry ||
 		g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY);
 
-	gtk_widget_set_visible (self->priv->location_bar,
+	gtk_widget_set_visible (self->priv->location_entry,
 				show_location_entry);
 	gtk_widget_set_visible (self->priv->path_bar,
 				!show_location_entry);
@@ -383,8 +383,8 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_box_pack_start (GTK_BOX (hbox), self->priv->path_bar, TRUE, TRUE, 0);
 
 	/* entry-like location bar */
-	self->priv->location_bar = nautilus_location_bar_new ();
-	gtk_box_pack_start (GTK_BOX (hbox), self->priv->location_bar, TRUE, TRUE, 0);
+	self->priv->location_entry = nautilus_location_entry_new ();
+	gtk_box_pack_start (GTK_BOX (hbox), self->priv->location_entry, TRUE, TRUE, 0);
 
 	tool_item = gtk_tool_item_new ();
 	gtk_tool_item_set_expand (tool_item, TRUE);
@@ -546,9 +546,9 @@ nautilus_toolbar_get_path_bar (NautilusToolbar *self)
 }
 
 GtkWidget *
-nautilus_toolbar_get_location_bar (NautilusToolbar *self)
+nautilus_toolbar_get_location_entry (NautilusToolbar *self)
 {
-	return self->priv->location_bar;
+	return self->priv->location_entry;
 }
 
 void

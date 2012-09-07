@@ -35,7 +35,7 @@
 #include "nautilus-application.h"
 #include "nautilus-bookmarks-window.h"
 #include "nautilus-desktop-window.h"
-#include "nautilus-location-bar.h"
+#include "nautilus-location-entry.h"
 #include "nautilus-mime-actions.h"
 #include "nautilus-notebook.h"
 #include "nautilus-places-sidebar.h"
@@ -226,7 +226,7 @@ restore_focus_widget (NautilusWindow *window)
 }
 
 static void
-navigation_bar_cancel_callback (GtkWidget      *widget,
+location_entry_cancel_callback (GtkWidget      *widget,
 				NautilusWindow *window)
 {
 	nautilus_toolbar_set_show_location_entry (NAUTILUS_TOOLBAR (window->details->toolbar), FALSE);
@@ -235,7 +235,7 @@ navigation_bar_cancel_callback (GtkWidget      *widget,
 }
 
 static void
-navigation_bar_location_changed_callback (GtkWidget      *widget,
+location_entry_location_changed_callback (GtkWidget      *widget,
 					  GFile          *location,
 					  NautilusWindow *window)
 {
@@ -444,15 +444,15 @@ void
 nautilus_window_prompt_for_location (NautilusWindow *window,
 				     const char     *initial)
 {
-	GtkWidget *bar;
+	GtkWidget *entry;
 
 	g_return_if_fail (NAUTILUS_IS_WINDOW (window));
 
-	bar = nautilus_window_ensure_location_bar (window);
+	entry = nautilus_window_ensure_location_entry (window);
 
 	if (initial) {
-		nautilus_location_bar_set_location (NAUTILUS_LOCATION_BAR (bar),
-						    initial);
+		nautilus_location_entry_set_uri (NAUTILUS_LOCATION_ENTRY (entry),
+						 initial);
 	}
 }
 
@@ -722,15 +722,15 @@ nautilus_window_sync_location_widgets (NautilusWindow *window)
 	/* Change the location bar and path bar to match the current location. */
 	if (slot->location != NULL) {
 		char *uri;
-		GtkWidget *location_bar;
+		GtkWidget *location_entry;
 		GtkWidget *path_bar;
 
-		location_bar = nautilus_toolbar_get_location_bar (NAUTILUS_TOOLBAR (window->details->toolbar));
+		location_entry = nautilus_toolbar_get_location_entry (NAUTILUS_TOOLBAR (window->details->toolbar));
 		path_bar = nautilus_toolbar_get_path_bar (NAUTILUS_TOOLBAR (window->details->toolbar));
 
 		/* this may be NULL if we just created the slot */
 		uri = nautilus_window_slot_get_location_uri (slot);
-		nautilus_location_bar_set_location (NAUTILUS_LOCATION_BAR (location_bar), uri);
+		nautilus_location_entry_set_uri (NAUTILUS_LOCATION_ENTRY (location_entry), uri);
 		g_free (uri);
 		nautilus_path_bar_set_path (NAUTILUS_PATH_BAR (path_bar), slot->location);
 	}
@@ -749,18 +749,18 @@ nautilus_window_sync_location_widgets (NautilusWindow *window)
 }
 
 GtkWidget *
-nautilus_window_ensure_location_bar (NautilusWindow *window)
+nautilus_window_ensure_location_entry (NautilusWindow *window)
 {
-	GtkWidget *location_bar;
+	GtkWidget *location_entry;
 
 	remember_focus_widget (window);
 
 	nautilus_toolbar_set_show_location_entry (NAUTILUS_TOOLBAR (window->details->toolbar), TRUE);
 
-	location_bar = nautilus_toolbar_get_location_bar (NAUTILUS_TOOLBAR (window->details->toolbar));
-	nautilus_location_bar_activate (NAUTILUS_LOCATION_BAR (location_bar));
+	location_entry = nautilus_toolbar_get_location_entry (NAUTILUS_TOOLBAR (window->details->toolbar));
+	nautilus_location_entry_focus (NAUTILUS_LOCATION_ENTRY (location_entry));
 
-	return location_bar;
+	return location_entry;
 }
 
 static void
@@ -969,7 +969,7 @@ create_toolbar (NautilusWindow *window)
 	GtkSizeGroup *header_size_group;
 	GtkWidget *toolbar;
 	GtkWidget *path_bar;
-	GtkWidget *location_bar;
+	GtkWidget *location_entry;
 
 	header_size_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
 	gtk_size_group_set_ignore_hidden (header_size_group, FALSE);
@@ -990,19 +990,18 @@ create_toolbar (NautilusWindow *window)
 	g_signal_connect_object (path_bar, "path-event",
 				 G_CALLBACK (path_bar_path_event_callback), window, 0);
 
-	/* connect to the location bar signals */
-	location_bar = nautilus_toolbar_get_location_bar (NAUTILUS_TOOLBAR (toolbar));
-	gtk_size_group_add_widget (header_size_group, location_bar);
+	/* connect to the location entry signals */
+	location_entry = nautilus_toolbar_get_location_entry (NAUTILUS_TOOLBAR (toolbar));
+	gtk_size_group_add_widget (header_size_group, location_entry);
 
-	nautilus_clipboard_set_up_editable
-		(GTK_EDITABLE (nautilus_location_bar_get_entry (NAUTILUS_LOCATION_BAR (location_bar))),
-		 nautilus_window_get_ui_manager (NAUTILUS_WINDOW (window)),
-		 TRUE);
+	nautilus_clipboard_set_up_editable (GTK_EDITABLE (location_entry),
+					    nautilus_window_get_ui_manager (NAUTILUS_WINDOW (window)),
+					    TRUE);
 
-	g_signal_connect_object (location_bar, "location-changed",
-				 G_CALLBACK (navigation_bar_location_changed_callback), window, 0);
-	g_signal_connect_object (location_bar, "cancel",
-				 G_CALLBACK (navigation_bar_cancel_callback), window, 0);
+	g_signal_connect_object (location_entry, "location-changed",
+				 G_CALLBACK (location_entry_location_changed_callback), window, 0);
+	g_signal_connect_object (location_entry, "cancel",
+				 G_CALLBACK (location_entry_cancel_callback), window, 0);
 
 	g_object_unref (header_size_group);
 

@@ -160,8 +160,6 @@ nautilus_SOURCES = \
 	nautilus-list-view-private.h 		\
 	nautilus-list-view.c			\
 	nautilus-list-view.h 			\
-	nautilus-location-bar.c         	\
-	nautilus-location-bar.h			\
 	nautilus-location-entry.c               \
 	nautilus-location-entry.h               \
 	nautilus-main.c 			\

@@ -31,7 +31,6 @@
 #include "nautilus-actions.h"
 #include "nautilus-application.h"
 #include "nautilus-floating-bar.h"
-#include "nautilus-location-bar.h"
 #include "nautilus-pathbar.h"
 #include "nautilus-window-private.h"
 #include "nautilus-window-slot.h"
