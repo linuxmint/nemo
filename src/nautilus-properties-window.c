@@ -103,6 +103,7 @@ struct NautilusPropertiesWindowDetails {
 
 	GtkLabel *directory_contents_title_field;
 	GtkLabel *directory_contents_value_field;
+	GtkWidget *directory_contents_spinner;
 	guint update_directory_contents_timeout_id;
 	guint update_files_timeout_id;
 
@@ -130,11 +131,12 @@ struct NautilusPropertiesWindowDetails {
 
 	guint long_operation_underway;
 
- 	GList *changed_files;
- 	
- 	guint64 volume_capacity;
- 	guint64 volume_free;
-	
+	GList *changed_files;
+	GList *deep_count_files;
+
+	guint64 volume_capacity;
+	guint64 volume_free;
+
 	GdkRGBA used_color;
 	GdkRGBA free_color;
 	GdkRGBA used_stroke_color;
@@ -183,6 +185,7 @@ static const GtkTargetEntry target_table[] = {
  */
 #define CHOWN_CHGRP_TIMEOUT			300 /* milliseconds */
 
+static void schedule_directory_contents_update    (NautilusPropertiesWindow *window);
 static void directory_contents_value_field_update (NautilusPropertiesWindow *window);
 static void file_changed_callback                 (NautilusFile       *file,
 						   gpointer            user_data);
@@ -934,6 +937,52 @@ get_mime_list (NautilusPropertiesWindow *window)
 }
 
 static void
+start_spinner (NautilusPropertiesWindow *window)
+{
+	gtk_widget_show (window->details->directory_contents_spinner);
+	gtk_spinner_start (GTK_SPINNER (window->details->directory_contents_spinner));
+}
+
+static void
+stop_spinner (NautilusPropertiesWindow *window)
+{
+	gtk_spinner_stop (GTK_SPINNER (window->details->directory_contents_spinner));
+	gtk_widget_hide (window->details->directory_contents_spinner);
+}
+
+static void
+stop_deep_count_for_file (NautilusPropertiesWindow *window,
+			  NautilusFile             *file)
+{
+	if (g_list_find (window->details->deep_count_files, file)) {
+		g_signal_handlers_disconnect_by_func (file,
+						      G_CALLBACK (schedule_directory_contents_update),
+						      window);
+		nautilus_file_unref (file);
+		window->details->deep_count_files = g_list_remove (window->details->deep_count_files, file);
+	}
+}
+
+static void
+start_deep_count_for_file (NautilusPropertiesWindow *window,
+			   NautilusFile             *file)
+{
+	if (!g_list_find (window->details->deep_count_files, file)) {
+		nautilus_file_ref (file);
+		window->details->deep_count_files = g_list_prepend (window->details->deep_count_files, file);
+
+		nautilus_file_recompute_deep_counts (file);
+		if (!window->details->deep_count_finished) {
+			g_signal_connect_object (file,
+						 "updated_deep_count_in_progress",
+						 G_CALLBACK (schedule_directory_contents_update),
+						 window, G_CONNECT_SWAPPED);
+			start_spinner (window);
+		}
+	}
+}
+
+static void
 properties_window_update (NautilusPropertiesWindow *window, 
 			  GList *files)
 {
@@ -970,7 +1019,7 @@ properties_window_update (NautilusPropertiesWindow *window,
 			dirty_target = TRUE;
 		}
 		if (changed_file != NULL) {
-			nautilus_file_recompute_deep_counts (changed_file);
+			start_deep_count_for_file (window, changed_file);
 		}
 	}
 
@@ -2016,7 +2065,7 @@ file_has_prefix (NautilusFile *file,
 static void
 directory_contents_value_field_update (NautilusPropertiesWindow *window)
 {
-	NautilusRequestStatus file_status, status;
+	NautilusRequestStatus file_status;
 	char *text, *temp;
 	guint directory_count;
 	guint file_count;
@@ -2028,10 +2077,10 @@ directory_contents_value_field_update (NautilusPropertiesWindow *window)
 	GList *l;
 	guint file_unreadable;
 	goffset file_size;
+	gboolean deep_count_active;
 
 	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (window));
 
-	status = NAUTILUS_REQUEST_DONE;
 	total_count = window->details->total_count;
 	total_size = window->details->total_size;
 	unreadable_directory_count = FALSE;
@@ -2045,34 +2094,34 @@ directory_contents_value_field_update (NautilusPropertiesWindow *window)
 		}
 
 		if (nautilus_file_is_directory (file)) {
-			file_status = nautilus_file_get_deep_counts (file, 
-					 &directory_count,
-					 &file_count, 
-					 &file_unreadable,
-					 &file_size,
-					 TRUE);
+			file_status = nautilus_file_get_deep_counts (file,
+								     &directory_count,
+								     &file_count,
+								     &file_unreadable,
+								     &file_size,
+								     TRUE);
 			total_count += (file_count + directory_count);
 			total_size += file_size;
-			
+
 			if (file_unreadable) {
 				unreadable_directory_count = TRUE;
 			}
-			
-			if (file_status != NAUTILUS_REQUEST_DONE) {
-				status = file_status;
+
+			if (file_status == NAUTILUS_REQUEST_DONE) {
+				stop_deep_count_for_file (window, file);
 			}
 		} else {
 			++total_count;
 			total_size += nautilus_file_get_size (file);
 		}
 	}
-	
+
+	deep_count_active = (g_list_length (window->details->deep_count_files) > 0);
 	/* If we've already displayed the total once, don't do another visible
 	 * count-up if the deep_count happens to get invalidated.
 	 * But still display the new total, since it might have changed.
 	 */
-	if (window->details->deep_count_finished &&
-	    status != NAUTILUS_REQUEST_DONE) {
+	if (window->details->deep_count_finished && deep_count_active) {
 		return;
 	}
 
@@ -2080,16 +2129,13 @@ directory_contents_value_field_update (NautilusPropertiesWindow *window)
 	used_two_lines = FALSE;
 	
 	if (total_count == 0) {
-		switch (status) {
-		case NAUTILUS_REQUEST_DONE:
+		if (!deep_count_active) {
 			if (unreadable_directory_count == 0) {
 				text = g_strdup (_("nothing"));
 			} else {
 				text = g_strdup (_("unreadable"));
 			}
-			
-			break;
-		default:
+		} else {
 			text = g_strdup ("...");
 		}
 	} else {
@@ -2131,8 +2177,9 @@ directory_contents_value_field_update (NautilusPropertiesWindow *window)
 			    text);
 	g_free (text);
 
-	if (status == NAUTILUS_REQUEST_DONE) {
+	if (!deep_count_active) {
 		window->details->deep_count_finished = TRUE;
+		stop_spinner (window);
 	}
 }
 
@@ -2168,8 +2215,6 @@ attach_directory_contents_value_field (NautilusPropertiesWindow *window,
 				       GtkWidget *sibling)
 {
 	GtkLabel *value_field;
-	GList *l;
-	NautilusFile *file;
 
 	value_field = attach_value_label (grid, sibling, "");
 
@@ -2177,21 +2222,8 @@ attach_directory_contents_value_field (NautilusPropertiesWindow *window,
 	window->details->directory_contents_value_field = value_field;
 
 	gtk_label_set_line_wrap (value_field, TRUE);
-	
-	/* Fill in the initial value. */
-	directory_contents_value_field_update (window);
- 
-	for (l = window->details->target_files; l; l = l->next) {
-		file = NAUTILUS_FILE (l->data);
-		nautilus_file_recompute_deep_counts (file);
-		
-		g_signal_connect_object (file,
-					 "updated_deep_count_in_progress",
-					 G_CALLBACK (schedule_directory_contents_update),
-					 window, G_CONNECT_SWAPPED);
-	}
-	
-	return value_field;	
+
+	return value_field;
 }
 
 static GtkLabel *
@@ -2248,13 +2280,30 @@ append_directory_contents_fields (NautilusPropertiesWindow *window,
 				  GtkGrid *grid)
 {
 	GtkLabel *title_field, *value_field;
+	GList *l;
 
 	title_field = attach_title_field (grid, "");
 	window->details->directory_contents_title_field = title_field;
 	gtk_label_set_line_wrap (title_field, TRUE);
 
-	value_field = attach_directory_contents_value_field 
-		(window, grid, GTK_WIDGET (title_field));
+	value_field = attach_directory_contents_value_field (window, grid, GTK_WIDGET (title_field));
+
+	window->details->directory_contents_spinner = gtk_spinner_new ();
+	gtk_grid_attach_next_to (grid,
+				 window->details->directory_contents_spinner,
+				 GTK_WIDGET (value_field),
+				 GTK_POS_RIGHT,
+				 1, 1);
+
+	for (l = window->details->target_files; l; l = l->next) {
+		NautilusFile *file;
+
+		file = NAUTILUS_FILE (l->data);
+		start_deep_count_for_file (window, file);
+	}
+
+	/* Fill in the initial value. */
+	directory_contents_value_field_update (window);
 
 	gtk_label_set_mnemonic_widget (title_field, GTK_WIDGET(value_field));
 }
@@ -4561,7 +4610,6 @@ file_changed_callback (NautilusFile *file, gpointer user_data)
 	if (!g_list_find (window->details->changed_files, file)) {
 		nautilus_file_ref (file);
 		window->details->changed_files = g_list_prepend (window->details->changed_files, file);
-		
 		schedule_files_update (window);
 	}
 }
@@ -5054,7 +5102,13 @@ real_destroy (GtkWidget *object)
 
 	nautilus_file_list_free (window->details->changed_files);
 	window->details->changed_files = NULL;
- 
+
+	for (l = window->details->deep_count_files; l != NULL; l = l->next) {
+		stop_deep_count_for_file (window, l->data);
+	}
+	g_list_free (window->details->deep_count_files);
+	window->details->deep_count_files = NULL;
+
 	window->details->name_field = NULL;
 
 	g_list_free (window->details->permission_buttons);
