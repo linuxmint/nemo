@@ -125,6 +125,8 @@ struct NautilusPropertiesWindowDetails {
 	GList *mime_list;
 
 	gboolean deep_count_finished;
+	GList *deep_count_files;
+	guint deep_count_spinner_timeout_id;
 
 	guint total_count;
 	goffset total_size;
@@ -132,7 +134,6 @@ struct NautilusPropertiesWindowDetails {
 	guint long_operation_underway;
 
 	GList *changed_files;
-	GList *deep_count_files;
 
 	guint64 volume_capacity;
 	guint64 volume_free;
@@ -936,11 +937,25 @@ get_mime_list (NautilusPropertiesWindow *window)
 	return ret;
 }
 
-static void
-start_spinner (NautilusPropertiesWindow *window)
+static gboolean
+start_spinner_callback (NautilusPropertiesWindow *window)
 {
 	gtk_widget_show (window->details->directory_contents_spinner);
 	gtk_spinner_start (GTK_SPINNER (window->details->directory_contents_spinner));
+	window->details->deep_count_spinner_timeout_id = 0;
+
+	return FALSE;
+}
+
+static void
+schedule_start_spinner (NautilusPropertiesWindow *window)
+{
+	if (window->details->deep_count_spinner_timeout_id == 0) {
+		window->details->deep_count_spinner_timeout_id
+			= g_timeout_add_seconds (1,
+						 (GSourceFunc)start_spinner_callback,
+						 window);
+	}
 }
 
 static void
@@ -948,6 +963,10 @@ stop_spinner (NautilusPropertiesWindow *window)
 {
 	gtk_spinner_stop (GTK_SPINNER (window->details->directory_contents_spinner));
 	gtk_widget_hide (window->details->directory_contents_spinner);
+	if (window->details->deep_count_spinner_timeout_id > 0) {
+		g_source_remove (window->details->deep_count_spinner_timeout_id);
+		window->details->deep_count_spinner_timeout_id = 0;
+	}
 }
 
 static void
@@ -977,7 +996,7 @@ start_deep_count_for_file (NautilusPropertiesWindow *window,
 						 "updated_deep_count_in_progress",
 						 G_CALLBACK (schedule_directory_contents_update),
 						 window, G_CONNECT_SWAPPED);
-			start_spinner (window);
+			schedule_start_spinner (window);
 		}
 	}
 }
@@ -5102,6 +5121,10 @@ real_destroy (GtkWidget *object)
 
 	nautilus_file_list_free (window->details->changed_files);
 	window->details->changed_files = NULL;
+
+	if (window->details->deep_count_spinner_timeout_id > 0) {
+		g_source_remove (window->details->deep_count_spinner_timeout_id);
+	}
 
 	for (l = window->details->deep_count_files; l != NULL; l = l->next) {
 		stop_deep_count_for_file (window, l->data);
