@@ -126,6 +126,7 @@ static NautilusSpeedTradeoffValue show_directory_item_count;
 static GQuark attribute_name_q,
 	attribute_size_q,
 	attribute_type_q,
+	attribute_detailed_type_q,
 	attribute_modification_date_q,
 	attribute_date_modified_q,
 	attribute_date_modified_full_q,
@@ -157,6 +158,7 @@ static void     nautilus_file_info_iface_init                (NautilusFileInfoIf
 static char *   nautilus_file_get_owner_as_string            (NautilusFile          *file,
 							      gboolean               include_real_name);
 static char *   nautilus_file_get_type_as_string             (NautilusFile          *file);
+static char *   nautilus_file_get_detailed_type_as_string    (NautilusFile          *file);
 static gboolean update_info_and_name                         (NautilusFile          *file,
 							      GFileInfo             *info);
 static const char * nautilus_file_peek_display_name (NautilusFile *file);
@@ -5919,7 +5921,7 @@ nautilus_file_get_deep_directory_count_as_string (NautilusFile *file)
  * 
  * @file: NautilusFile representing the file in question.
  * @attribute_name: The name of the desired attribute. The currently supported
- * set includes "name", "type", "mime_type", "size", "deep_size", "deep_directory_count",
+ * set includes "name", "type", "detailed_type", "mime_type", "size", "deep_size", "deep_directory_count",
  * "deep_file_count", "deep_total_count", "date_modified", "date_accessed",
  * "date_modified_full", "date_accessed_full",
  * "owner", "group", "permissions", "octal_permissions", "uri", "where",
@@ -5939,6 +5941,9 @@ nautilus_file_get_string_attribute_q (NautilusFile *file, GQuark attribute_q)
 	}
 	if (attribute_q == attribute_type_q) {
 		return nautilus_file_get_type_as_string (file);
+	}
+	if (attribute_q == attribute_detailed_type_q) {
+		return nautilus_file_get_detailed_type_as_string (file);
 	}
 	if (attribute_q == attribute_mime_type_q) {
 		return nautilus_file_get_mime_type (file);
@@ -6109,11 +6114,10 @@ nautilus_file_get_string_attribute_with_default_q (NautilusFile *file, GQuark at
 		}
 		return g_strdup ("...");
 	}
-	if (attribute_q == attribute_type_q) {
-		return g_strdup (_("unknown type"));
-	}
-	if (attribute_q == attribute_mime_type_q) {
-		return g_strdup (_("unknown MIME type"));
+	if (attribute_q == attribute_type_q
+	    || attribute_q == attribute_detailed_type_q
+	    || attribute_q == attribute_mime_type_q) {
+		return g_strdup (_("Unknown"));
 	}
 	if (attribute_q == attribute_trashed_on_q) {
 		/* If n/a */
@@ -6153,37 +6157,92 @@ nautilus_file_is_date_sort_attribute_q (GQuark attribute_q)
 	return FALSE;
 }
 
-/**
- * get_description:
- * 
- * Get a user-displayable string representing a file type. The caller
- * is responsible for g_free-ing this string.
- * @file: NautilusFile representing the file in question.
- * 
- * Returns: Newly allocated string ready to display to the user.
- * 
- **/
+struct {
+        const char *icon_name;
+        const char *display_name;
+} mime_type_map[] = {
+	{ "application-x-executable", N_("Program") },
+	{ "audio-x-generic", N_("Audio") },
+	{ "font-x-generic", N_("Font") },
+	{ "image-x-generic", N_("Image") },
+	{ "package-x-generic", N_("Archive") },
+	{ "text-html", N_("Markup") },
+	{ "text-x-generic", N_("Text") },
+	{ "text-x-generic-template", N_("Text") },
+	{ "text-x-script", N_("Program") },
+	{ "video-x-generic", N_("Video") },
+	{ "x-office-address-book", N_("Contacts") },
+	{ "x-office-calendar", N_("Calendar") },
+	{ "x-office-document", N_("Document") },
+	{ "x-office-presentation", N_("Presentation") },
+	{ "x-office-spreadsheet", N_("Spreadsheet") },
+};
+
 static char *
-get_description (NautilusFile *file)
+get_basic_type_for_mime_type (const char *mime_type)
+{
+	char *icon_name;
+	char *basic_type = NULL;
+
+	icon_name = g_content_type_get_generic_icon_name (mime_type);
+	if (icon_name != NULL) {
+		int i;
+
+		for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
+			if (strcmp (mime_type_map[i].icon_name, icon_name) == 0) {
+				basic_type = g_strdup (mime_type_map[i].display_name);
+				break;
+			}
+		}
+        }
+
+	if (basic_type == NULL) {
+		basic_type = g_strdup (_("Unknown"));
+	}
+
+	g_free (icon_name);
+
+	return basic_type;
+}
+
+static char *
+get_description (NautilusFile *file,
+		 gboolean      detailed)
 {
 	const char *mime_type;
-	char *description;
 
 	g_assert (NAUTILUS_IS_FILE (file));
 
 	mime_type = eel_ref_str_peek (file->details->mime_type);
-	if (g_strcmp0 (mime_type, NULL) == 0) {
+	if (mime_type == NULL) {
 		return NULL;
 	}
 
-	if (g_content_type_is_unknown (mime_type) &&
-	    nautilus_file_is_executable (file)) {
-		return g_strdup (_("program"));
+	if (g_content_type_is_unknown (mime_type)) {
+		if (nautilus_file_is_executable (file)) {
+			return g_strdup (_("Program"));
+		}
+		return g_strdup (_("Binary"));
 	}
 
-	description = g_content_type_get_description (mime_type);
-	if (g_strcmp0 (description, NULL) != 0) {
-		return description;
+	if (strcmp (mime_type, "inode/directory") == 0) {
+		return g_strdup (_("Folder"));
+	}
+
+	if (detailed) {
+		char *description;
+
+		description = g_content_type_get_description (mime_type);
+		if (description != NULL) {
+			return description;
+		}
+	} else {
+		char *category;
+
+		category = get_basic_type_for_mime_type (mime_type);
+		if (category != NULL) {
+			return category;
+		}
 	}
 
 	return g_strdup (mime_type);
@@ -6198,7 +6257,7 @@ update_description_for_link (NautilusFile *file, char *string)
 	if (nautilus_file_is_symbolic_link (file)) {
 		g_assert (!nautilus_file_is_broken_symbolic_link (file));
 		if (string == NULL) {
-			return g_strdup (_("link"));
+			return g_strdup (_("Link"));
 		}
 		/* Note to localizers: convert file type string for file 
 		 * (e.g. "folder", "plain text") to file type for symbolic link 
@@ -6220,10 +6279,24 @@ nautilus_file_get_type_as_string (NautilusFile *file)
 	}
 
 	if (nautilus_file_is_broken_symbolic_link (file)) {
-		return g_strdup (_("link (broken)"));
+		return g_strdup (_("Link (broken)"));
 	}
 	
-	return update_description_for_link (file, get_description (file));
+	return update_description_for_link (file, get_description (file, FALSE));
+}
+
+static char *
+nautilus_file_get_detailed_type_as_string (NautilusFile *file)
+{
+	if (file == NULL) {
+		return NULL;
+	}
+
+	if (nautilus_file_is_broken_symbolic_link (file)) {
+		return g_strdup (_("Link (broken)"));
+	}
+	
+	return update_description_for_link (file, get_description (file, TRUE));
 }
 
 /**
@@ -7977,6 +8050,7 @@ nautilus_file_class_init (NautilusFileClass *class)
 	attribute_name_q = g_quark_from_static_string ("name");
 	attribute_size_q = g_quark_from_static_string ("size");
 	attribute_type_q = g_quark_from_static_string ("type");
+	attribute_detailed_type_q = g_quark_from_static_string ("detailed_type");
 	attribute_modification_date_q = g_quark_from_static_string ("modification_date");
 	attribute_date_modified_q = g_quark_from_static_string ("date_modified");
 	attribute_date_modified_full_q = g_quark_from_static_string ("date_modified_full");
