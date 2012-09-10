@@ -40,7 +40,6 @@ static const char *default_column_order[] = {
 	"group",
 	"permissions",
 	"mime_type",
-	"selinux_context",
 	"where",
 	NULL
 };
@@ -112,15 +111,7 @@ get_builtin_columns (void)
 					       "label", _("MIME Type"),
 					       "description", _("The mime type of the file."),
 					       NULL));
-#ifdef HAVE_SELINUX
-	columns = g_list_append (columns,
-				 g_object_new (NAUTILUS_TYPE_COLUMN,
-					       "name", "selinux_context",
-					       "attribute", "selinux_context",
-					       "label", _("Security Context"),
-					       "description", _("The security context of the file."),
-					       NULL));
-#endif
+
 	columns = g_list_append (columns,
 				 g_object_new (NAUTILUS_TYPE_COLUMN,
 					       "name", "where",
