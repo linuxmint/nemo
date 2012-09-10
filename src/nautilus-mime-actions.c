@@ -1213,7 +1213,7 @@ show_unhandled_type_error (ActivateParametersInstall *parameters)
 			      NULL);
 	} else {
 		char *text;
-		text = g_strdup_printf (_("There is no application installed for %s files"), g_content_type_get_description (mime_type));
+		text = g_strdup_printf (_("There is no application installed for “%s” files"), g_content_type_get_description (mime_type));
 
 		dialog = gtk_message_dialog_new (parameters->parent_window,
 						 GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -1385,7 +1385,7 @@ pk_proxy_appeared_cb (GObject *source,
 	                                 GTK_BUTTONS_YES_NO,
 	                                 "%s", error_message);
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-	                                          _("There is no application installed for %s files.\n"
+	                                          _("There is no application installed for “%s” files.\n"
 	                                            "Do you want to search for an application to open this file?"),
 	                                          g_content_type_get_description (mime_type));
 	gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
