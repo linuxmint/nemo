@@ -627,7 +627,6 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	static gint64 last_click_time = 0;
 	static int click_count = 0;
 	int double_click_time;
-	int horizontal_separator;
 
 	view = NAUTILUS_LIST_VIEW (callback_data);
 	tree_view = GTK_TREE_VIEW (widget);
@@ -671,10 +670,6 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	call_parent = TRUE;
 	if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y,
 					   &path, NULL, NULL, NULL)) {
-		gtk_widget_style_get (widget,
-				      "horizontal-separator", &horizontal_separator,
-				      NULL);
-
 		/* Keep track of path of last click so double clicks only happen
 		 * on the same item */
 		if ((event->button == 1 || event->button == 2)  && 
