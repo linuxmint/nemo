@@ -1722,7 +1722,7 @@ static void
 nautilus_path_bar_update_path (NautilusPathBar *path_bar,
 			       GFile *file_path)
 {
-	NautilusFile *file, *parent_file;
+	NautilusFile *file;
         gboolean first_directory;
         GList *new_buttons, *l;
 	ButtonData *button_data;
@@ -1738,6 +1738,8 @@ nautilus_path_bar_update_path (NautilusPathBar *path_bar,
         gtk_widget_push_composite_child ();
 
         while (file != NULL) {
+		NautilusFile *parent_file;
+
 		parent_file = nautilus_file_get_parent (file);
 		button_data = make_button_data (path_bar, file, first_directory);
 		nautilus_file_unref (file);
@@ -1750,6 +1752,7 @@ nautilus_path_bar_update_path (NautilusPathBar *path_bar,
 
 		if (parent_file != NULL &&
 		    button_data->is_root) {
+			nautilus_file_unref (parent_file);
 			break;
 		}
 		
