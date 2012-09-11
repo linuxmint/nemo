@@ -67,7 +67,6 @@ src/nautilus-image-properties-page.c
 src/nautilus-list-model.c
 src/nautilus-list-view.c
 src/nautilus-list-view-ui.xml
-src/nautilus-location-bar.c
 src/nautilus-location-entry.c
 src/nautilus-main.c
 src/nautilus-mime-actions.c
