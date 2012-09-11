@@ -314,7 +314,6 @@ Makefile
 cut-n-paste-code/Makefile
 cut-n-paste-code/libegg/Makefile
 data/Makefile
-data/icons/Makefile
 data/nautilus.desktop.in
 data/nautilus-autorun-software.desktop.in
 data/nautilus-connect-server.desktop.in
