@@ -498,10 +498,12 @@ load_io_thread (GSimpleAsyncResult *result,
 
 	file = nautilus_bookmark_list_get_file ();
 	if (!g_file_query_exists (file, NULL)) {
+		g_object_unref (file);
 		file = nautilus_bookmark_list_get_legacy_file ();
 	}
 
 	g_file_load_contents (file, NULL, &contents, NULL, NULL, &error);
+	g_object_unref (file);
 
 	if (error != NULL) {
 		if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
