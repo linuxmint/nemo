@@ -1052,6 +1052,8 @@ nautilus_is_in_system_dir (GFile *file)
 		
 	}
 
+	g_free (path);
+
 	return res;
 }
 
