@@ -5252,12 +5252,12 @@ report_link_progress (CopyMoveJob *link_job, int total, int left)
 }
 
 static char *
-get_abs_path_for_symlink (GFile *file)
+get_abs_path_for_symlink (GFile *file, GFile *destination)
 {
 	GFile *root, *parent;
 	char *relative, *abs;
 	
-	if (g_file_is_native (file)) {
+	if (g_file_is_native (file) || g_file_is_native (destination)) {
 		return g_file_get_path (file);
 	}
 
@@ -5311,7 +5311,7 @@ link_file (CopyMoveJob *job,
 	error = NULL;
 	not_local = FALSE;
 	
-	path = get_abs_path_for_symlink (src);
+	path = get_abs_path_for_symlink (src, dest);
 	if (path == NULL) {
 		not_local = TRUE;
 	} else if (g_file_make_symbolic_link (dest,
