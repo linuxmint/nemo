@@ -72,20 +72,22 @@ nautilus_search_hit_compute_scores (NautilusSearchHit *hit,
 		guint dir_count;
 
 		hit_path = g_filename_from_uri (hit->details->uri, NULL, NULL);
-		hit_parent = g_path_get_dirname (hit_path);
-		g_free (hit_path);
+		if (hit_path != NULL) {
+			hit_parent = g_path_get_dirname (hit_path);
+			g_free (hit_path);
 
-		dir_count = 0;
-		for (i = strlen (query_path); hit_parent[i] != '\0'; i++) {
-			if (G_IS_DIR_SEPARATOR (hit_parent[i]))
-				dir_count++;
-		}
-		g_free (hit_parent);
+			dir_count = 0;
+			for (i = strlen (query_path); hit_parent[i] != '\0'; i++) {
+				if (G_IS_DIR_SEPARATOR (hit_parent[i]))
+					dir_count++;
+			}
+			g_free (hit_parent);
 
-		if (dir_count < 10) {
-			proximity_bonus = 100.0 - 10 * dir_count;
-		} else {
-			proximity_bonus = 0.0;
+			if (dir_count < 10) {
+				proximity_bonus = 100.0 - 10 * dir_count;
+			} else {
+				proximity_bonus = 0.0;
+			}
 		}
 	}
 	g_free (query_path);
