@@ -25,12 +25,14 @@
 #include <config.h>
 
 #include <gio/gio.h>
+#include <string.h>
 
 #include <libnautilus-private/nautilus-file.h>
 #include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-search-engine.h>
 #include <libnautilus-private/nautilus-search-provider.h>
 
+#include "nautilus-bookmark-list.h"
 #include "nautilus-shell-search-provider-generated.h"
 
 #define SEARCH_PROVIDER_INACTIVITY_TIMEOUT 12000 /* milliseconds */
@@ -55,6 +57,9 @@ typedef struct {
   PendingSearch *current_search;
 
   GHashTable *metas_cache;
+
+  NautilusBookmarkList *bookmarks;
+  GVolumeMonitor *volumes;
 } NautilusShellSearchProviderApp;
 
 typedef GApplicationClass NautilusShellSearchProviderAppClass;
@@ -87,6 +92,52 @@ variant_from_pixbuf (GdkPixbuf *pixbuf)
                                                     (GDestroyNotify)g_object_unref,
                                                     g_object_ref (pixbuf)));
   return variant;
+}
+
+static gchar *
+get_display_name (NautilusShellSearchProviderApp *self,
+                  NautilusFile                   *file)
+{
+  gchar *uri;
+  NautilusBookmark *bookmark;
+
+  uri = nautilus_file_get_uri (file);
+  bookmark = nautilus_bookmark_list_item_with_uri (self->bookmarks, uri);
+  g_free (uri);
+
+  if (bookmark)
+    return g_strdup (nautilus_bookmark_get_name (bookmark));
+  else
+    return nautilus_file_get_display_name (file);
+}
+
+static GIcon *
+get_gicon (NautilusShellSearchProviderApp *self,
+           NautilusFile                   *file)
+{
+  gchar *uri;
+  NautilusBookmark *bookmark;
+
+  uri = nautilus_file_get_uri (file);
+  bookmark = nautilus_bookmark_list_item_with_uri (self->bookmarks, uri);
+  g_free (uri);
+
+  if (bookmark)
+    return nautilus_bookmark_get_icon (bookmark);
+  else
+    return nautilus_file_get_gicon (file, 0);
+}
+
+static gchar *
+prepare_string_for_compare (const gchar *string)
+{
+  gchar *normalized, *res;
+
+  normalized = g_utf8_normalize (string, -1, G_NORMALIZE_NFD);
+  res = g_utf8_strdown (normalized, -1);
+  g_free (normalized);
+
+  return res;
 }
 
 static void
@@ -236,6 +287,136 @@ search_error_cb (NautilusSearchEngine *engine,
 }
 
 static void
+search_add_volumes_and_bookmarks (NautilusShellSearchProviderApp *self)
+{
+  NautilusSearchHit *hit;
+  NautilusBookmark *bookmark;
+  const gchar *name;
+  gint length, idx, j;
+  gchar *query_text, *prepared, *uri;
+  gchar **terms;
+  gboolean found;
+  GList *l, *m, *drives, *volumes, *mounts, *mounts_to_check;
+  GDrive *drive;
+  GVolume *volume;
+  GMount *mount;
+  GFile *location;
+
+  query_text = nautilus_query_get_text (self->current_search->query);
+  prepared = prepare_string_for_compare (query_text);
+  terms = g_strsplit (prepared, " ", -1);
+
+  g_free (prepared);
+  g_free (query_text);
+
+  /* first match bookmarks */
+  length = nautilus_bookmark_list_length (self->bookmarks);
+  for (idx = 0; idx < length; idx++) {
+    bookmark = nautilus_bookmark_list_item_at (self->bookmarks, idx);
+
+    name = nautilus_bookmark_get_name (bookmark);
+    prepared = prepare_string_for_compare (name);
+
+    found = TRUE;
+
+    for (j = 0; terms[j] != NULL; j++) {
+      if (strstr (prepared, terms[j]) == NULL) {
+        found = FALSE;
+        break;
+      }
+    }
+
+    g_free (prepared);
+
+    if (found) {
+      uri = nautilus_bookmark_get_uri (bookmark);
+      hit = nautilus_search_hit_new (uri);
+      nautilus_search_hit_compute_scores (hit, self->current_search->query);
+      g_hash_table_replace (self->current_search->hits, uri, hit);
+    }
+  }
+
+  /* now match mounts */
+  mounts_to_check = NULL;
+
+  /* first check all connected drives */
+  drives = g_volume_monitor_get_connected_drives (self->volumes);
+  for (l = drives; l != NULL; l = l->next) {
+    drive = l->data;
+    volumes = g_drive_get_volumes (drive);
+
+    for (m = volumes; m != NULL; m = m->next) {
+      volume = m->data;
+      mounts_to_check = g_list_prepend (mounts_to_check, g_volume_get_mount (volume));
+    }
+
+    g_list_free_full (volumes, g_object_unref);
+  }
+  g_list_free_full (drives, g_object_unref);
+
+  /* then volumes that don't have a drive */
+  volumes = g_volume_monitor_get_volumes (self->volumes);
+  for (l = volumes; l != NULL; l = l->next) {
+    volume = l->data;
+    drive = g_volume_get_drive (volume);
+
+    if (drive == NULL)
+      mounts_to_check = g_list_prepend (mounts_to_check, g_volume_get_mount (volume));
+    g_clear_object (&drive);
+  }
+  g_list_free_full (volumes, g_object_unref);
+
+  /* then mounts that have no volume */
+  mounts = g_volume_monitor_get_mounts (self->volumes);
+  for (l = mounts; l != NULL; l = l->next) {
+    mount = l->data;
+
+    if (g_mount_is_shadowed (mount))
+      continue;
+
+    volume = g_mount_get_volume (mount);
+    if (volume == NULL)
+      mounts_to_check = g_list_prepend (mounts_to_check, g_object_ref (mount));
+    g_clear_object (&volume);
+  }
+  g_list_free_full (mounts, g_object_unref);
+
+  /* now do the actual string matching */
+  for (l = mounts_to_check; l != NULL; l = l->next) {
+    mount = l->data;
+
+    query_text = g_mount_get_name (mount);
+    prepared = prepare_string_for_compare (query_text);
+    g_free (query_text);
+
+    found = TRUE;
+
+    for (j = 0; terms[j] != NULL; j++) {
+      if (strstr (prepared, terms[j]) == NULL) {
+        found = FALSE;
+        break;
+      }
+    }
+
+    g_free (prepared);
+
+    if (found) {
+      location = g_mount_get_default_location (mount);
+      uri = g_file_get_uri (location);
+      hit = nautilus_search_hit_new (uri);
+
+      nautilus_search_hit_compute_scores (hit, self->current_search->query);
+      g_hash_table_replace (self->current_search->hits, uri, hit);
+
+      g_object_unref (location);
+    }
+  }
+  g_list_free_full (mounts_to_check, g_object_unref);
+
+  g_strfreev (terms);
+}
+
+static void
 execute_search (NautilusShellSearchProviderApp *self,
                 GDBusMethodInvocation          *invocation,
                 gchar                         **terms)
@@ -280,6 +461,8 @@ execute_search (NautilusShellSearchProviderApp *self,
 
   self->current_search = pending_search;
   g_application_hold (G_APPLICATION (self));
+
+  search_add_volumes_and_bookmarks (self);
 
   /* start searching */
   g_debug ("*** Search engine search started");
@@ -378,7 +561,7 @@ result_list_attributes_ready_cb (GList    *file_list,
     g_variant_builder_init (&meta, G_VARIANT_TYPE ("a{sv}"));
 
     uri = nautilus_file_get_uri (file);
-    display_name = nautilus_file_get_display_name (file);
+    display_name = get_display_name (data->self, file);
     pix = nautilus_file_get_icon_pixbuf (file, 128, TRUE,
                                          NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS);
 
@@ -397,7 +580,7 @@ result_list_attributes_ready_cb (GList    *file_list,
       g_free (thumbnail_path);
       g_object_unref (location);
     } else {
-      gicon = nautilus_file_get_gicon (file, 0);
+      gicon = get_gicon (data->self, file);
     }
 
     if (gicon != NULL) {
@@ -545,6 +728,9 @@ search_provider_app_dispose (GObject *obj)
   g_hash_table_destroy (self->metas_cache);
   cancel_current_search (self);
 
+  g_clear_object (&self->bookmarks);
+  g_clear_object (&self->volumes);
+
   G_OBJECT_CLASS (nautilus_shell_search_provider_app_parent_class)->dispose (obj);
 }
 
@@ -579,6 +765,8 @@ nautilus_shell_search_provider_app_init (NautilusShellSearchProviderApp *self)
 
   self->metas_cache = g_hash_table_new_full (g_str_hash, g_str_equal,
                                              g_free, (GDestroyNotify) g_variant_unref);
+  self->bookmarks = nautilus_bookmark_list_new ();
+  self->volumes = g_volume_monitor_get ();
 }
 
 static void

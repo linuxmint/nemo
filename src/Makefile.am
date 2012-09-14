@@ -249,6 +249,8 @@ $(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/she
 		$(NULL)
 
 nautilus_shell_search_provider_SOURCES = 		\
+	nautilus-bookmark-list.h			\
+	nautilus-bookmark-list.c			\
 	nautilus-shell-search-provider.c		\
 	$(NULL)
 
