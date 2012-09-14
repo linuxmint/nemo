@@ -298,7 +298,7 @@ repopulate (NautilusBookmarksWindow *self)
 
 		bookmark = nautilus_bookmark_list_item_at (self->priv->bookmarks, index);
 		bookmark_name = nautilus_bookmark_get_name (bookmark);
-		bookmark_icon = nautilus_bookmark_get_icon (bookmark);
+		bookmark_icon = nautilus_bookmark_get_symbolic_icon (bookmark);
 
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter, 
@@ -540,7 +540,7 @@ update_bookmark_from_text (NautilusBookmarksWindow *self)
 
 	bookmark_in_list = nautilus_bookmark_list_item_at (self->priv->bookmarks, selected_row);
 	name = nautilus_bookmark_get_name (bookmark_in_list);
-	icon = nautilus_bookmark_get_icon (bookmark_in_list);
+	icon = nautilus_bookmark_get_symbolic_icon (bookmark_in_list);
 
 	gtk_list_store_set (self->priv->model, &iter,
 			    BOOKMARK_LIST_COLUMN_BOOKMARK, bookmark_in_list,

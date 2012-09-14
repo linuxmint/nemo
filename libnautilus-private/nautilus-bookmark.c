@@ -50,6 +50,7 @@ enum {
 	PROP_CUSTOM_NAME,
 	PROP_LOCATION,
 	PROP_ICON,
+	PROP_SYMBOLIC_ICON,
 	NUM_PROPERTIES
 };
 
@@ -64,6 +65,7 @@ struct NautilusBookmarkDetails
 	gboolean has_custom_name;
 	GFile *location;
 	GIcon *icon;
+	GIcon *symbolic_icon;
 	NautilusFile *file;
 	
 	char *scroll_file;
@@ -155,20 +157,45 @@ bookmark_file_changed_callback (NautilusFile *file,
 }
 
 static void
+apply_warning_emblem (GIcon **base,
+		      gboolean symbolic)
+{
+	GIcon *warning, *emblemed_icon;
+	GEmblem *emblem;
+
+	if (symbolic) {
+		warning = g_themed_icon_new ("dialog-warning-symbolic");
+	} else {
+		warning = g_themed_icon_new (GTK_STOCK_DIALOG_WARNING);
+	}
+
+	emblem = g_emblem_new (warning);
+	emblemed_icon = g_emblemed_icon_new (*base, emblem);
+
+	g_object_unref (emblem);
+	g_object_unref (warning);
+	g_object_unref (*base);
+
+	*base = emblemed_icon;
+}
+
+static void
 nautilus_bookmark_set_icon_to_default (NautilusBookmark *bookmark)
 {
-	GIcon *icon, *emblemed_icon, *folder;
-	GEmblem *emblem;
+	GIcon *icon, *symbolic_icon;
 	char *uri;
 
 	if (g_file_is_native (bookmark->details->location)) {
-		folder = g_themed_icon_new (NAUTILUS_ICON_FOLDER);
+		symbolic_icon = g_themed_icon_new (NAUTILUS_ICON_FOLDER);
+		icon = g_themed_icon_new (NAUTILUS_ICON_FULLCOLOR_FOLDER);
 	} else {
 		uri = nautilus_bookmark_get_uri (bookmark);
 		if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
-			folder = g_themed_icon_new (NAUTILUS_ICON_FOLDER_SAVED_SEARCH);
+			symbolic_icon = g_themed_icon_new (NAUTILUS_ICON_FOLDER_SAVED_SEARCH);
+			icon = g_themed_icon_new (NAUTILUS_ICON_FULLCOLOR_FOLDER_SAVED_SEARCH);
 		} else {
-			folder = g_themed_icon_new (NAUTILUS_ICON_FOLDER_REMOTE);
+			symbolic_icon = g_themed_icon_new (NAUTILUS_ICON_FOLDER_REMOTE);
+			icon = g_themed_icon_new (NAUTILUS_ICON_FULLCOLOR_FOLDER_REMOTE);
 		}
 		g_free (uri);
 	}
@@ -176,25 +203,19 @@ nautilus_bookmark_set_icon_to_default (NautilusBookmark *bookmark)
 	if (nautilus_bookmark_uri_known_not_to_exist (bookmark)) {
 		DEBUG ("%s: file does not exist, add emblem", nautilus_bookmark_get_name (bookmark));
 
-		icon = g_themed_icon_new (GTK_STOCK_DIALOG_WARNING);
-		emblem = g_emblem_new (icon);
-
-		emblemed_icon = g_emblemed_icon_new (folder, emblem);
-
-		g_object_unref (emblem);
-		g_object_unref (icon);
-		g_object_unref (folder);
-
-		folder = emblemed_icon;
+		apply_warning_emblem (&icon, FALSE);
+		apply_warning_emblem (&symbolic_icon, TRUE);
 	}
 
 	DEBUG ("%s: setting icon to default", nautilus_bookmark_get_name (bookmark));
 
 	g_object_set (bookmark,
-		      "icon", folder,
+		      "icon", icon,
+		      "symbolic-icon", symbolic_icon,
 		      NULL);
 
-	g_object_unref (folder);
+	g_object_unref (icon);
+	g_object_unref (symbolic_icon);
 }
 
 static void
@@ -230,7 +251,8 @@ nautilus_bookmark_connect_file (NautilusBookmark *bookmark)
 					 G_CALLBACK (bookmark_file_changed_callback), bookmark, 0);
 	}
 
-	if (bookmark->details->icon == NULL) {
+	if (bookmark->details->icon == NULL ||
+	    bookmark->details->symbolic_icon == NULL) {
 		nautilus_bookmark_set_icon_to_default (bookmark);
 	}
 
@@ -265,6 +287,15 @@ nautilus_bookmark_set_property (GObject *object,
 		}
 
 		break;
+	case PROP_SYMBOLIC_ICON:
+		new_icon = g_value_get_object (value);
+
+		if (new_icon != NULL && !g_icon_equal (self->details->symbolic_icon, new_icon)) {
+			g_clear_object (&self->details->symbolic_icon);
+			self->details->symbolic_icon = g_object_ref (new_icon);
+		}
+
+		break;
 	case PROP_LOCATION:
 		self->details->location = g_value_dup_object (value);
 		break;
@@ -295,6 +326,9 @@ nautilus_bookmark_get_property (GObject *object,
 	case PROP_ICON:
 		g_value_set_object (value, self->details->icon);
 		break;
+	case PROP_SYMBOLIC_ICON:
+		g_value_set_object (value, self->details->symbolic_icon);
+		break;
 	case PROP_LOCATION:
 		g_value_set_object (value, self->details->location);
 		break;
@@ -320,6 +354,7 @@ nautilus_bookmark_finalize (GObject *object)
 
 	g_object_unref (bookmark->details->location);
 	g_clear_object (&bookmark->details->icon);
+	g_clear_object (&bookmark->details->symbolic_icon);
 
 	g_free (bookmark->details->name);
 	g_free (bookmark->details->scroll_file);
@@ -379,6 +414,13 @@ nautilus_bookmark_class_init (NautilusBookmarkClass *class)
 		g_param_spec_object ("icon",
 				     "Bookmark's icon",
 				     "The icon of this bookmark",
+				     G_TYPE_ICON,
+				     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+	properties[PROP_SYMBOLIC_ICON] =
+		g_param_spec_object ("symbolic-icon",
+				     "Bookmark's symbolic icon",
+				     "The symbolic icon of this bookmark",
 				     G_TYPE_ICON,
 				     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
@@ -496,13 +538,35 @@ nautilus_bookmark_compare_uris (gconstpointer a, gconstpointer b)
 NautilusBookmark *
 nautilus_bookmark_copy (NautilusBookmark *bookmark)
 {
+	NautilusBookmark *retval;
+
 	g_return_val_if_fail (NAUTILUS_IS_BOOKMARK (bookmark), NULL);
 
-	return nautilus_bookmark_new (
-			bookmark->details->location,
-			bookmark->details->has_custom_name ?
-			bookmark->details->name : NULL,
-			bookmark->details->icon);
+	retval = nautilus_bookmark_new (bookmark->details->location,
+					bookmark->details->has_custom_name ?
+					bookmark->details->name : NULL);
+	if (bookmark->details->icon) {
+		g_object_set (retval, "icon", bookmark->details->icon, NULL);
+	}
+	if (bookmark->details->symbolic_icon) {
+		g_object_set (retval, "symbolic-icon", bookmark->details->symbolic_icon, NULL);
+	}
+
+	return retval;
+}
+
+GIcon *
+nautilus_bookmark_get_symbolic_icon (NautilusBookmark *bookmark)
+{
+	g_return_val_if_fail (NAUTILUS_IS_BOOKMARK (bookmark), NULL);
+
+	/* Try to connect a file in case file exists now but didn't earlier. */
+	nautilus_bookmark_connect_file (bookmark);
+
+	if (bookmark->details->symbolic_icon) {
+		return g_object_ref (bookmark->details->symbolic_icon);
+	}
+	return NULL;
 }
 
 GIcon *
@@ -568,7 +632,7 @@ create_image_widget_for_bookmark (NautilusBookmark *bookmark)
 	GIcon *icon;
 	GtkWidget *widget;
 
-	icon = nautilus_bookmark_get_icon (bookmark);
+	icon = nautilus_bookmark_get_symbolic_icon (bookmark);
         widget = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
 	g_object_unref (icon);
 

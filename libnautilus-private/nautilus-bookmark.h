@@ -71,6 +71,7 @@ const char *          nautilus_bookmark_get_name               (NautilusBookmark
 GFile *               nautilus_bookmark_get_location           (NautilusBookmark      *bookmark);
 char *                nautilus_bookmark_get_uri                (NautilusBookmark      *bookmark);
 GIcon *               nautilus_bookmark_get_icon               (NautilusBookmark      *bookmark);
+GIcon *               nautilus_bookmark_get_symbolic_icon      (NautilusBookmark      *bookmark);
 gboolean	      nautilus_bookmark_get_has_custom_name    (NautilusBookmark      *bookmark);		
 void                  nautilus_bookmark_set_custom_name        (NautilusBookmark      *bookmark,
 								const char            *new_name);		

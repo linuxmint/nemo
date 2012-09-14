@@ -807,7 +807,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 		nautilus_file_unref (file);
 
 		bookmark_name = nautilus_bookmark_get_name (bookmark);
-		icon = nautilus_bookmark_get_icon (bookmark);
+		icon = nautilus_bookmark_get_symbolic_icon (bookmark);
 		mount_uri = nautilus_bookmark_get_uri (bookmark);
 		tooltip = g_file_get_parse_name (root);
 

@@ -29,6 +29,11 @@
 #define NAUTILUS_DESKTOP_ICON_HOME       "user-home"
 #define NAUTILUS_DESKTOP_ICON_NETWORK    "network-workgroup"
 
+/* Fullcolor icons */
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER        "folder"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_REMOTE "folder-remote"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_SAVED_SEARCH "folder-saved-search"
+
 /* Other icons */
 #define NAUTILUS_ICON_TEMPLATE		"text-x-generic-template"
 
