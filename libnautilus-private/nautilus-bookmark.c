@@ -549,14 +549,12 @@ nautilus_bookmark_get_uri (NautilusBookmark *bookmark)
 
 NautilusBookmark *
 nautilus_bookmark_new (GFile *location,
-		       const gchar *custom_name,
-                       GIcon *icon)
+		       const gchar *custom_name)
 {
 	NautilusBookmark *new_bookmark;
 
 	new_bookmark = NAUTILUS_BOOKMARK (g_object_new (NAUTILUS_TYPE_BOOKMARK,
 							"location", location,
-							"icon", icon,
 							"name", custom_name,
 							"custom-name", custom_name != NULL,
 							NULL));

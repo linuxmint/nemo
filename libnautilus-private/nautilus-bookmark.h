@@ -65,8 +65,7 @@ typedef struct NautilusBookmarkClass NautilusBookmarkClass;
 
 GType                 nautilus_bookmark_get_type               (void);
 NautilusBookmark *    nautilus_bookmark_new                    (GFile *location,
-                                                                const char *custom_name,
-                                                                GIcon *icon);
+                                                                const char *custom_name);
 NautilusBookmark *    nautilus_bookmark_copy                   (NautilusBookmark      *bookmark);
 const char *          nautilus_bookmark_get_name               (NautilusBookmark      *bookmark);
 GFile *               nautilus_bookmark_get_location           (NautilusBookmark      *bookmark);

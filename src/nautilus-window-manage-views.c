@@ -134,7 +134,7 @@ set_displayed_file (NautilusWindowSlot *slot, NautilusFile *file)
 		if (new_location == NULL) {
 			slot->current_location_bookmark = NULL;
 		} else {
-			slot->current_location_bookmark = nautilus_bookmark_new (new_location, display_name, NULL);
+			slot->current_location_bookmark = nautilus_bookmark_new (new_location, display_name);
 		}
 		g_free (display_name);
         }

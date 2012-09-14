@@ -67,7 +67,7 @@ new_bookmark_from_uri (const char *uri, const char *label)
 	new_bookmark = NULL;
 
 	if (location) {
-		new_bookmark = nautilus_bookmark_new (location, label, NULL);
+		new_bookmark = nautilus_bookmark_new (location, label);
 		g_object_unref (location);
 	}
 
