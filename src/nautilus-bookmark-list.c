@@ -417,6 +417,45 @@ nautilus_bookmark_list_item_at (NautilusBookmarkList *bookmarks, guint index)
 }
 
 /**
+ * nautilus_bookmark_list_item_with_uri:
+ *
+ * Get the bookmark with the specified URI, if any
+ * @bookmarks: the list of bookmarks.
+ * @uri: an URI
+ *
+ * Return value: the bookmark with URI @uri, or %NULL.
+ **/
+NautilusBookmark *
+nautilus_bookmark_list_item_with_uri (NautilusBookmarkList *bookmarks,
+				      const gchar	   *uri)
+{
+	GList *node;
+	gchar *bookmark_uri;
+	NautilusBookmark *bookmark;
+	gboolean found = FALSE;
+
+	g_return_val_if_fail (NAUTILUS_IS_BOOKMARK_LIST (bookmarks), NULL);
+	g_return_val_if_fail (uri != NULL, NULL);
+
+	for (node = bookmarks->list; node != NULL; node = node->next) {
+		bookmark = node->data;
+		bookmark_uri = nautilus_bookmark_get_uri (bookmark);
+
+		if (g_strcmp0 (uri, bookmark_uri) == 0) {
+			found = TRUE;
+		}
+
+		g_free (bookmark_uri);
+
+		if (found) {
+			return bookmark;
+		}
+	}
+
+	return NULL;
+}
+
+/**
  * nautilus_bookmark_list_length:
  * 
  * Get the number of bookmarks in the list.
