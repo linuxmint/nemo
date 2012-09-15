@@ -6190,7 +6190,7 @@ get_basic_type_for_mime_type (const char *mime_type)
 
 		for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
 			if (strcmp (mime_type_map[i].icon_name, icon_name) == 0) {
-				basic_type = g_strdup (mime_type_map[i].display_name);
+				basic_type = g_strdup (gettext (mime_type_map[i].display_name));
 				break;
 			}
 		}
