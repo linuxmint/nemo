@@ -26,8 +26,8 @@ msgstr ""
 "Project-Id-Version: nautilus.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-09-12 16:09+0000\n"
-"PO-Revision-Date: 2012-04-30 19:18+0100\n"
+"POT-Creation-Date: 2012-09-15 16:09+0000\n"
+"PO-Revision-Date: 2012-09-15 20:07+0200\n"
 "Last-Translator: Alexandre Franke <alexandre.franke@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "Language: \n"
@@ -70,7 +70,8 @@ msgstr "X"
 msgid "Y"
 msgstr "Y"
 
-#: ../eel/eel-editable-label.c:311
+#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6170
+#: ../libnautilus-private/nautilus-file.c:6171
 msgid "Text"
 msgstr "Texte"
 
@@ -139,7 +140,7 @@ msgstr "Vous pouvez arrêter cette opération en cliquant sur annuler."
 msgid " (invalid Unicode)"
 msgstr " (Unicode non valide)"
 
-#: ../libnautilus-private/nautilus-bookmark.c:101
+#: ../libnautilus-private/nautilus-bookmark.c:103
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:274
 #: ../src/nautilus-pathbar.c:298 ../src/nautilus-places-sidebar.c:566
@@ -346,50 +347,50 @@ msgstr "Définir comme _arrière-plan"
 msgid "Cancel"
 msgstr "Annuler"
 
-#: ../libnautilus-private/nautilus-file.c:1219
+#: ../libnautilus-private/nautilus-file.c:1221
 #: ../libnautilus-private/nautilus-vfs-file.c:356
 msgid "This file cannot be mounted"
 msgstr "Impossible de monter ce fichier"
 
-#: ../libnautilus-private/nautilus-file.c:1264
+#: ../libnautilus-private/nautilus-file.c:1266
 msgid "This file cannot be unmounted"
 msgstr "Impossible de démonter ce fichier"
 
-#: ../libnautilus-private/nautilus-file.c:1298
+#: ../libnautilus-private/nautilus-file.c:1300
 msgid "This file cannot be ejected"
 msgstr "Impossible d'éjecter ce fichier"
 
-#: ../libnautilus-private/nautilus-file.c:1331
+#: ../libnautilus-private/nautilus-file.c:1333
 #: ../libnautilus-private/nautilus-vfs-file.c:534
 msgid "This file cannot be started"
 msgstr "Impossible de démarrer ce fichier"
 
-#: ../libnautilus-private/nautilus-file.c:1383
-#: ../libnautilus-private/nautilus-file.c:1414
+#: ../libnautilus-private/nautilus-file.c:1385
+#: ../libnautilus-private/nautilus-file.c:1416
 msgid "This file cannot be stopped"
 msgstr "Impossible de stopper ce fichier"
 
-#: ../libnautilus-private/nautilus-file.c:1825
+#: ../libnautilus-private/nautilus-file.c:1827
 #, c-format
 msgid "Slashes are not allowed in filenames"
 msgstr "Les barres obliques ne sont pas autorisées dans les noms de fichiers"
 
-#: ../libnautilus-private/nautilus-file.c:1843
+#: ../libnautilus-private/nautilus-file.c:1845
 #, c-format
 msgid "File not found"
 msgstr "Fichier non trouvé"
 
-#: ../libnautilus-private/nautilus-file.c:1871
+#: ../libnautilus-private/nautilus-file.c:1873
 #, c-format
 msgid "Toplevel files cannot be renamed"
 msgstr "Impossible de renommer les fichiers racines"
 
-#: ../libnautilus-private/nautilus-file.c:1894
+#: ../libnautilus-private/nautilus-file.c:1896
 #, c-format
 msgid "Unable to rename desktop icon"
 msgstr "Impossible de renommer l'icône de bureau"
 
-#: ../libnautilus-private/nautilus-file.c:1923
+#: ../libnautilus-private/nautilus-file.c:1925
 #, c-format
 msgid "Unable to rename desktop file"
 msgstr "Impossible de renommer le fichier de bureau"
@@ -406,76 +407,76 @@ msgstr "Impossible de renommer le fichier de bureau"
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4439
+#: ../libnautilus-private/nautilus-file.c:4441
 msgid "%R"
 msgstr "%R"
 
-#: ../libnautilus-private/nautilus-file.c:4440
+#: ../libnautilus-private/nautilus-file.c:4442
 msgid "%-I:%M %P"
 msgstr "%-I:%M %P"
 
-#: ../libnautilus-private/nautilus-file.c:4441
-#: ../libnautilus-private/nautilus-file.c:4442
+#: ../libnautilus-private/nautilus-file.c:4443
+#: ../libnautilus-private/nautilus-file.c:4444
 msgid "%b %-e"
 msgstr "%b %-e"
 
-#: ../libnautilus-private/nautilus-file.c:4443
+#: ../libnautilus-private/nautilus-file.c:4445
 msgid "%b %-d %Y"
 msgstr "%-d %b %Y"
 
-#: ../libnautilus-private/nautilus-file.c:4444
+#: ../libnautilus-private/nautilus-file.c:4446
 msgid "%a, %b %e %Y %I:%M:%S %p"
 msgstr "%a %e %b %Y %I:%M:%S %p"
 
-#: ../libnautilus-private/nautilus-file.c:4445
+#: ../libnautilus-private/nautilus-file.c:4447
 msgid "%a, %b %e %Y %T"
 msgstr "%a %e %b %Y %T"
 
-#: ../libnautilus-private/nautilus-file.c:4944
+#: ../libnautilus-private/nautilus-file.c:4946
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "Vous n'êtes pas autorisé à définir les permissions"
 
-#: ../libnautilus-private/nautilus-file.c:5239
+#: ../libnautilus-private/nautilus-file.c:5241
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "Vous n'êtes pas autorisé à définir le propriétaire"
 
-#: ../libnautilus-private/nautilus-file.c:5257
+#: ../libnautilus-private/nautilus-file.c:5259
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "Le propriétaire indiqué « %s » n'existe pas"
 
-#: ../libnautilus-private/nautilus-file.c:5521
+#: ../libnautilus-private/nautilus-file.c:5523
 #, c-format
 msgid "Not allowed to set group"
 msgstr "Vous n'êtes pas autorisé à définir le groupe"
 
-#: ../libnautilus-private/nautilus-file.c:5539
+#: ../libnautilus-private/nautilus-file.c:5541
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "Le groupe indiqué « %s » n'existe pas"
 
 #. Translators: "Me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5673
+#: ../libnautilus-private/nautilus-file.c:5675
 msgid "Me"
 msgstr "Moi"
 
-#: ../libnautilus-private/nautilus-file.c:5697
+#: ../libnautilus-private/nautilus-file.c:5699
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
 msgstr[0] "%'u élément"
 msgstr[1] "%'u éléments"
 
-#: ../libnautilus-private/nautilus-file.c:5698
+#: ../libnautilus-private/nautilus-file.c:5700
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] "%'u dossier"
 msgstr[1] "%'u dossiers"
 
-#: ../libnautilus-private/nautilus-file.c:5699
+#: ../libnautilus-private/nautilus-file.c:5701
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
@@ -483,55 +484,111 @@ msgstr[0] "%'u fichier"
 msgstr[1] "%'u fichiers"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6092
-#: ../libnautilus-private/nautilus-file.c:6108
+#: ../libnautilus-private/nautilus-file.c:6097
+#: ../libnautilus-private/nautilus-file.c:6113
 msgid "? items"
 msgstr "? éléments"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6098
+#: ../libnautilus-private/nautilus-file.c:6103
 msgid "? bytes"
 msgstr "? octets"
 
-#: ../libnautilus-private/nautilus-file.c:6113
-msgid "unknown type"
-msgstr "type inconnu"
-
-#: ../libnautilus-private/nautilus-file.c:6116
-msgid "unknown MIME type"
-msgstr "type MIME inconnu"
+#: ../libnautilus-private/nautilus-file.c:6120
+#: ../libnautilus-private/nautilus-file.c:6200
+msgid "Unknown"
+msgstr "Inconnu"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6130
+#: ../libnautilus-private/nautilus-file.c:6134
 #: ../src/nautilus-properties-window.c:1173
 msgid "unknown"
 msgstr "inconnu"
 
-#: ../libnautilus-private/nautilus-file.c:6181
-msgid "program"
-msgstr "application"
+#: ../libnautilus-private/nautilus-file.c:6164
+#: ../libnautilus-private/nautilus-file.c:6172
+#: ../libnautilus-private/nautilus-file.c:6223
+msgid "Program"
+msgstr "Application"
 
-#: ../libnautilus-private/nautilus-file.c:6201
-msgid "link"
-msgstr "lien"
+#: ../libnautilus-private/nautilus-file.c:6165
+msgid "Audio"
+msgstr "Audio"
+
+#: ../libnautilus-private/nautilus-file.c:6166
+msgid "Font"
+msgstr "Police"
+
+#: ../libnautilus-private/nautilus-file.c:6167
+#: ../src/nautilus-image-properties-page.c:716
+msgid "Image"
+msgstr "Image"
+
+#: ../libnautilus-private/nautilus-file.c:6168
+msgid "Archive"
+msgstr "Archive"
+
+#: ../libnautilus-private/nautilus-file.c:6169
+msgid "Markup"
+msgstr "Balisage"
+
+#: ../libnautilus-private/nautilus-file.c:6173
+#: ../src/nautilus-query-editor.c:418
+msgid "Video"
+msgstr "Vidéo"
+
+#: ../libnautilus-private/nautilus-file.c:6174
+msgid "Contacts"
+msgstr "Contacts"
+
+#: ../libnautilus-private/nautilus-file.c:6175
+msgid "Calendar"
+msgstr "Agenda"
+
+#: ../libnautilus-private/nautilus-file.c:6176
+msgid "Document"
+msgstr "Document"
+
+#: ../libnautilus-private/nautilus-file.c:6177
+#: ../src/nautilus-query-editor.c:484
+msgid "Presentation"
+msgstr "Présentation"
+
+#: ../libnautilus-private/nautilus-file.c:6178
+#: ../src/nautilus-query-editor.c:468
+msgid "Spreadsheet"
+msgstr "Feuille de calcul"
+
+#: ../libnautilus-private/nautilus-file.c:6225
+msgid "Binary"
+msgstr "Binaire"
+
+#: ../libnautilus-private/nautilus-file.c:6229
+msgid "Folder"
+msgstr "Dossier"
+
+#: ../libnautilus-private/nautilus-file.c:6260
+msgid "Link"
+msgstr "Lien"
 
 #. Note to localizers: convert file type string for file
 #. * (e.g. "folder", "plain text") to file type for symbolic link
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6207
+#: ../libnautilus-private/nautilus-file.c:6266
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:124
 #, c-format
 msgid "Link to %s"
 msgstr "Lien vers %s"
 
-#: ../libnautilus-private/nautilus-file.c:6223
-msgid "link (broken)"
-msgstr "lien (brisé)"
+#: ../libnautilus-private/nautilus-file.c:6282
+#: ../libnautilus-private/nautilus-file.c:6296
+msgid "Link (broken)"
+msgstr "Lien (brisé)"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:141
 #, c-format
@@ -2644,7 +2701,7 @@ msgstr "_Lancer"
 msgid "No bookmarks defined"
 msgstr "Aucun signet n'est défini"
 
-#: ../src/nautilus-bookmarks-window.c:711 ../src/nautilus-places-sidebar.c:274
+#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:274
 msgid "Bookmarks"
 msgstr "Signets"
 
@@ -3407,10 +3464,6 @@ msgstr "Impossible de charger les informations de l'image"
 msgid "Loading..."
 msgstr "Chargement..."
 
-#: ../src/nautilus-image-properties-page.c:716
-msgid "Image"
-msgstr "Image"
-
 #: ../src/nautilus-list-model.c:376
 msgid "(Empty)"
 msgstr "(Vide)"
@@ -3534,8 +3587,8 @@ msgstr "Le type du fichier est inconnu"
 
 #: ../src/nautilus-mime-actions.c:1216
 #, c-format
-msgid "There is no application installed for %s files"
-msgstr "Aucune application n'est installée pour les fichiers %s"
+msgid "There is no application installed for “%s” files"
+msgstr "Aucune application n'est installée pour les fichiers « %s »"
 
 #: ../src/nautilus-mime-actions.c:1231
 msgid "_Select Application"
@@ -3552,10 +3605,10 @@ msgstr "Impossible de rechercher l'application"
 #: ../src/nautilus-mime-actions.c:1388
 #, c-format
 msgid ""
-"There is no application installed for %s files.\n"
+"There is no application installed for “%s” files.\n"
 "Do you want to search for an application to open this file?"
 msgstr ""
-"Aucune application n'est installée pour les fichiers %s.\n"
+"Aucune application n'est installée pour les fichiers « %s ».\n"
 "Voulez-vous rechercher une application pour ouvrir ce fichier ?"
 
 #: ../src/nautilus-mime-actions.c:1538
@@ -4105,10 +4158,6 @@ msgstr "Documents"
 msgid "Music"
 msgstr "Musique"
 
-#: ../src/nautilus-query-editor.c:418
-msgid "Video"
-msgstr "Vidéo"
-
 #: ../src/nautilus-query-editor.c:434
 msgid "Picture"
 msgstr "Image"
@@ -4116,14 +4165,6 @@ msgstr "Image"
 #: ../src/nautilus-query-editor.c:454
 msgid "Illustration"
 msgstr "Figure"
-
-#: ../src/nautilus-query-editor.c:468
-msgid "Spreadsheet"
-msgstr "Feuille de calcul"
-
-#: ../src/nautilus-query-editor.c:484
-msgid "Presentation"
-msgstr "Présentation"
 
 #: ../src/nautilus-query-editor.c:493
 msgid "Pdf / Postscript"
@@ -5566,6 +5607,15 @@ msgstr "Contient des photos et de la musique"
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "Ouvrir avec :"
+
+#~ msgid "unknown type"
+#~ msgstr "type inconnu"
+
+#~ msgid "unknown MIME type"
+#~ msgstr "type MIME inconnu"
+
+#~ msgid "link"
+#~ msgstr "lien"
 
 #~ msgid "Security Context"
 #~ msgstr "Contexte de sécurité"
