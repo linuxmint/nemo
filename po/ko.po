@@ -20,8 +20,8 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-09-14 23:06+0000\n"
-"PO-Revision-Date: 2012-09-09 16:37+0900\n"
+"POT-Creation-Date: 2012-09-16 15:49+0000\n"
+"PO-Revision-Date: 2012-09-17 02:33+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: GNOME Korea <gnome-kr@googlegroups.com>\n"
 "Language: Korean\n"
@@ -482,8 +482,6 @@ msgstr "? 바이트"
 
 #: ../libnautilus-private/nautilus-file.c:6120
 #: ../libnautilus-private/nautilus-file.c:6200
-#, fuzzy
-#| msgid "unknown"
 msgid "Unknown"
 msgstr "알 수 없음"
 
@@ -498,20 +496,16 @@ msgstr "알 수 없음"
 #: ../libnautilus-private/nautilus-file.c:6164
 #: ../libnautilus-private/nautilus-file.c:6172
 #: ../libnautilus-private/nautilus-file.c:6223
-#, fuzzy
-#| msgid "program"
 msgid "Program"
 msgstr "프로그램"
 
 #: ../libnautilus-private/nautilus-file.c:6165
-#, fuzzy
-#| msgid "Audio CD"
 msgid "Audio"
-msgstr "오디오 CD"
+msgstr "오디오"
 
 #: ../libnautilus-private/nautilus-file.c:6166
 msgid "Font"
-msgstr ""
+msgstr "글꼴"
 
 #: ../libnautilus-private/nautilus-file.c:6167
 #: ../src/nautilus-image-properties-page.c:716
@@ -520,11 +514,11 @@ msgstr "그림"
 
 #: ../libnautilus-private/nautilus-file.c:6168
 msgid "Archive"
-msgstr ""
+msgstr "압축"
 
 #: ../libnautilus-private/nautilus-file.c:6169
 msgid "Markup"
-msgstr ""
+msgstr "마크업"
 
 #: ../libnautilus-private/nautilus-file.c:6173
 #: ../src/nautilus-query-editor.c:418
@@ -532,18 +526,14 @@ msgid "Video"
 msgstr "동영상"
 
 #: ../libnautilus-private/nautilus-file.c:6174
-#, fuzzy
-#| msgid "Contents:"
 msgid "Contacts"
-msgstr "내용:"
+msgstr "연락처"
 
 #: ../libnautilus-private/nautilus-file.c:6175
 msgid "Calendar"
-msgstr ""
+msgstr "달력"
 
 #: ../libnautilus-private/nautilus-file.c:6176
-#, fuzzy
-#| msgid "Documents"
 msgid "Document"
 msgstr "문서"
 
@@ -559,17 +549,15 @@ msgstr "표"
 
 #: ../libnautilus-private/nautilus-file.c:6225
 msgid "Binary"
-msgstr ""
+msgstr "이진파일"
 
 #: ../libnautilus-private/nautilus-file.c:6229
-#, fuzzy
-#| msgid "Folders"
 msgid "Folder"
 msgstr "폴더"
 
 #: ../libnautilus-private/nautilus-file.c:6260
 msgid "Link"
-msgstr ""
+msgstr "연결"
 
 #. Note to localizers: convert file type string for file
 #. * (e.g. "folder", "plain text") to file type for symbolic link
@@ -585,8 +573,6 @@ msgstr "%s에 링크"
 
 #: ../libnautilus-private/nautilus-file.c:6282
 #: ../libnautilus-private/nautilus-file.c:6296
-#, fuzzy
-#| msgid "link (broken)"
 msgid "Link (broken)"
 msgstr "링크(깨짐)"
 
@@ -2486,18 +2472,14 @@ msgstr ""
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
 #: ../src/nautilus-application.c:1103
-#, fuzzy
-#| msgid "Could not set as default"
 msgid "Could not parse arguments"
-msgstr "기본값으로 설정할 수 없습니다"
+msgstr "인자를 해석할 수 없습니다"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
 #: ../src/nautilus-application.c:1135
-#, fuzzy
-#| msgid "Could not add application"
 msgid "Could not register the application"
-msgstr "프로그램을 추가할 수 없습니다"
+msgstr "프로그램을 등록할 수 없습니다"
 
 #. name, stock id, label
 #: ../src/nautilus-app-menu.ui.h:1 ../src/nautilus-window-menus.c:537
@@ -2668,16 +2650,12 @@ msgid "Keep icons sorted by trash time in rows"
 msgstr "버린 시각 순서로 아이콘을 정렬합니다"
 
 #: ../src/nautilus-canvas-view.c:1192
-#, fuzzy
-#| msgid "Relevance"
 msgid "By Search Relevance"
-msgstr "연관성"
+msgstr "검색 연관순"
 
 #: ../src/nautilus-canvas-view.c:1193
-#, fuzzy
-#| msgid "Keep icons sorted by size in rows"
 msgid "Keep icons sorted by search relevance in rows"
-msgstr "크기 순서로 아이콘을 정렬합니다"
+msgstr "검색 연관 순서대로 아이콘의 일렬 정렬 상태를 유지합니다"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
@@ -3447,10 +3425,9 @@ msgid "The file is of an unknown type"
 msgstr "파일이 올바른 타입이 아닙니다"
 
 #: ../src/nautilus-mime-actions.c:1216
-#, fuzzy, c-format
-#| msgid "There is no application installed for %s files"
+#, c-format
 msgid "There is no application installed for “%s” files"
-msgstr "%s 파일을 처리할 수 있는 프로그램이 없습니다"
+msgstr "“%s” 파일을 위해 설치한 프로그램이 없음"
 
 #: ../src/nautilus-mime-actions.c:1231
 msgid "_Select Application"
@@ -3465,16 +3442,13 @@ msgid "Unable to search for application"
 msgstr "프로그램을 찾을 수 없습니다"
 
 #: ../src/nautilus-mime-actions.c:1388
-#, fuzzy, c-format
-#| msgid ""
-#| "There is no application installed for %s files.\n"
-#| "Do you want to search for an application to open this file?"
+#, c-format
 msgid ""
 "There is no application installed for “%s” files.\n"
 "Do you want to search for an application to open this file?"
 msgstr ""
-"%s 파일을 처리할 수 있는 프로그램이 없습니다.\n"
-"이 파일을 열 수 있는 프로그램을 찾으시겠습니까?"
+"“%s” 파일을 위해 설치한 프로그램이 없습니다.\n"
+"이 파일을 열 프로그램을 찾으시겠습니까?"
 
 #: ../src/nautilus-mime-actions.c:1538
 msgid "Untrusted application launcher"
@@ -5383,7 +5357,7 @@ msgstr "수퍼 비디오 CD"
 
 #: ../src/nautilus-x-content-bar.c:103
 msgid "Photo CD"
-msgstr "사진 CD"
+msgstr "포토 CD"
 
 #: ../src/nautilus-x-content-bar.c:105
 msgid "Picture CD"
