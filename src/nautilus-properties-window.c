@@ -2663,7 +2663,7 @@ paint_slice (cairo_t       *cr,
 	     double         y,
 	     double         radius,
 	     double         percent_start,
-	     double         percent_end,
+	     double         percent_width,
 	     const GdkRGBA *fill,
 	     const GdkRGBA *stroke)
 {
@@ -2672,10 +2672,14 @@ paint_slice (cairo_t       *cr,
 	gboolean full;
 	double offset = G_PI / 2.0;
 
-	angle1 = (percent_start * 2 * G_PI) - offset;
-	angle2 = (percent_end * 2 * G_PI) - offset;
+	if (percent_width < .01) {
+		return;
+	}
 
-	full = ((percent_end - percent_start) > .99);
+	angle1 = (percent_start * 2 * G_PI) - offset;
+	angle2 = angle1 + (percent_width * 2 * G_PI);
+
+	full = (percent_width > .99);
 
 	if (!full) {
 		cairo_move_to (cr, x, y);
@@ -2735,18 +2739,16 @@ paint_pie_chart (GtkWidget *widget,
 		radius = height / 2 - 8;
 	}
 
-	/* first fill in a complete circle so we don't look dumb if
-	   missing a piece */
 	paint_slice (cr, xc, yc, radius,
-		     0, 1,
-		     &window->details->unknown_color, &window->details->unknown_stroke_color);
-
-	paint_slice (cr, xc, yc, radius,
-		     reserved, reserved + used,
-		     &window->details->used_color, &window->details->used_stroke_color);
-	paint_slice (cr, xc, yc, radius,
-		     reserved + used, reserved + used + free,
+		     0, free,
 		     &window->details->free_color, &window->details->free_stroke_color);
+	paint_slice (cr, xc, yc, radius,
+		     free + used, reserved,
+		     &window->details->unknown_color, &window->details->unknown_stroke_color);
+	/* paint the used last so its slice strokes are on top */
+	paint_slice (cr, xc, yc, radius,
+		     free, used,
+		     &window->details->used_color, &window->details->used_stroke_color);
 }
 
 
