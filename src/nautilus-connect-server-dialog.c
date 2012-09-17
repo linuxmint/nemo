@@ -168,7 +168,7 @@ on_uri_entry_clear (GtkEntry                    *entry,
 }
 
 static const char *
-get_default_scheme (NautilusConnectServerDialog *dialog)
+get_default_schema (NautilusConnectServerDialog *dialog)
 {
 	if (dialog->details->supported == NULL) {
 		return NULL;
@@ -256,11 +256,17 @@ reset_example_label (NautilusConnectServerDialog *dialog)
 {
 	char *text;
 	char *uri;
+	const char *schema;
 
-	uri = g_strdup_printf ("%s://foo.example.com", get_default_scheme (dialog));
-	/* Translators: %s is a URI of the form "smb://foo.example.com" */
-	text = g_strdup_printf (_("For example, %s"), uri);
-	g_free (uri);
+	schema = get_default_schema (dialog);
+	if (schema != NULL) {
+		uri = g_strdup_printf ("%s://foo.example.org", schema);
+		/* Translators: %s is a URI of the form "smb://foo.example.com" */
+		text = g_strdup_printf (_("For example, %s"), uri);
+		g_free (uri);
+	} else {
+		text = g_strdup ("");
+	}
 	gtk_label_set_text (GTK_LABEL (dialog->details->error_label), text);
 	g_free (text);
 }
