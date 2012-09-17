@@ -68,6 +68,10 @@
 #include <sys/mount.h>
 #endif
 
+#define UNKNOWN_FILL_R  0.6
+#define UNKNOWN_FILL_G  0.6
+#define UNKNOWN_FILL_B  0.6
+
 #define USED_FILL_R  0.988235294
 #define USED_FILL_G  0.91372549
 #define USED_FILL_B  0.309803922
@@ -137,11 +141,14 @@ struct NautilusPropertiesWindowDetails {
 
 	guint64 volume_capacity;
 	guint64 volume_free;
+	guint64 volume_used;
 
 	GdkRGBA used_color;
 	GdkRGBA free_color;
+	GdkRGBA unknown_color;
 	GdkRGBA used_stroke_color;
 	GdkRGBA free_stroke_color;
+	GdkRGBA unknown_stroke_color;
 };
 
 enum {
@@ -2650,15 +2657,50 @@ paint_free_legend (GtkWidget *widget,
 }
 
 static void
+paint_slice (cairo_t       *cr,
+	     double         x,
+	     double         y,
+	     double         radius,
+	     double         percent_start,
+	     double         percent_end,
+	     const GdkRGBA *fill,
+	     const GdkRGBA *stroke)
+{
+	double angle1;
+	double angle2;
+	gboolean full;
+	double offset = G_PI / 2.0;
+
+	angle1 = (percent_start * 2 * G_PI) - offset;
+	angle2 = (percent_end * 2 * G_PI) - offset;
+
+	full = ((percent_end - percent_start) > .99);
+
+	if (!full) {
+		cairo_move_to (cr, x, y);
+	}
+	cairo_arc (cr, x, y, radius, angle1, angle2);
+
+	if (!full) {
+		cairo_line_to (cr, x, y);
+	}
+
+	gdk_cairo_set_source_rgba (cr, fill);
+	cairo_fill_preserve (cr);
+
+	gdk_cairo_set_source_rgba (cr, stroke);
+	cairo_stroke (cr);
+}
+
+static void
 paint_pie_chart (GtkWidget *widget,
 		 cairo_t *cr,
 		 gpointer data)
 {
-  	
-  	NautilusPropertiesWindow *window;
+	NautilusPropertiesWindow *window;
 	gint width, height;
-	double free, used;
-	double angle1, angle2, split, xc, yc, radius;
+	double free, used, reserved;
+	double xc, yc, radius;
 	GtkAllocation allocation;
 	GtkStyleContext *notebook_ctx;
 	GdkRGBA bg_color;
@@ -2667,7 +2709,7 @@ paint_pie_chart (GtkWidget *widget,
 	gtk_widget_get_allocation (widget, &allocation);
 
 	width  = allocation.width;
-  	height = allocation.height;
+	height = allocation.height;
 
 	notebook_ctx = gtk_widget_get_style_context (GTK_WIDGET (window->details->notebook));
 	gtk_style_context_get_background_color (notebook_ctx,
@@ -2680,11 +2722,9 @@ paint_pie_chart (GtkWidget *widget,
 	cairo_restore (cr);
 
 	free = (double)window->details->volume_free / (double)window->details->volume_capacity;
-	used =  1.0 - free;
+	used = (double)window->details->volume_used / (double)window->details->volume_capacity;
+	reserved = 1.0 - (used + free);
 
-	angle1 = free * 2 * G_PI;
-	angle2 = used * 2 * G_PI;
-	split = (2 * G_PI - angle1) * .5;
 	xc = width / 2;
 	yc = height / 2;
 
@@ -2693,50 +2733,19 @@ paint_pie_chart (GtkWidget *widget,
 	} else {
 		radius = height / 2 - 8;
 	}
-	
-	if (angle1 != 2 * G_PI && angle1 != 0) {
-		angle1 = angle1 + split;
-	}
-		
-	if (angle2 != 2 * G_PI && angle2 != 0) {
-		angle2 = angle2 - split;
-	}
-	
-	if (used > 0) {
-		if (free != 0) {
-			cairo_move_to (cr,xc,yc);
-		}
-		
-		cairo_arc (cr, xc, yc, radius, angle1, angle2);
-		
-		if (free != 0) {
-			cairo_line_to (cr,xc,yc);
-		}
-		
-		gdk_cairo_set_source_rgba (cr, &window->details->used_color);
-		cairo_fill_preserve (cr);
-		
-		gdk_cairo_set_source_rgba (cr, &window->details->used_stroke_color);
-		cairo_stroke (cr);
-	}
-	
-	if (free > 0) {
-		if (used != 0) {
-			cairo_move_to (cr,xc,yc);
-		}
-	
-		cairo_arc_negative (cr, xc, yc, radius, angle1, angle2);
-	
-		if (used != 0) {
-			cairo_line_to (cr,xc,yc);
-		}
 
-		gdk_cairo_set_source_rgba (cr, &window->details->free_color);
-		cairo_fill_preserve(cr);
+	/* first fill in a complete circle so we don't look dumb if
+	   missing a piece */
+	paint_slice (cr, xc, yc, radius,
+		     0, 1,
+		     &window->details->unknown_color, &window->details->unknown_stroke_color);
 
-		gdk_cairo_set_source_rgba (cr, &window->details->free_stroke_color);
-		cairo_stroke (cr);
-	}
+	paint_slice (cr, xc, yc, radius,
+		     reserved, reserved + used,
+		     &window->details->used_color, &window->details->used_stroke_color);
+	paint_slice (cr, xc, yc, radius,
+		     reserved + used, reserved + used + free,
+		     &window->details->free_color, &window->details->free_stroke_color);
 }
 
 
@@ -2950,7 +2959,7 @@ create_pie_widget (NautilusPropertiesWindow *window)
 	
 	capacity = g_format_size (window->details->volume_capacity);
 	free 	 = g_format_size (window->details->volume_free);
-	used 	 = g_format_size (window->details->volume_capacity - window->details->volume_free);	
+	used 	 = g_format_size (window->details->volume_used);
 	
 	file = get_original_file (window);
 	
@@ -2961,6 +2970,12 @@ create_pie_widget (NautilusPropertiesWindow *window)
 	gtk_grid_set_column_spacing (GTK_GRID (grid), 5);
 	style = gtk_widget_get_style_context (GTK_WIDGET (grid));
 
+	if (!gtk_style_context_lookup_color (style, "chart_rgba_0", &window->details->unknown_color)) {
+		window->details->unknown_color.red = UNKNOWN_FILL_R;
+		window->details->unknown_color.green = UNKNOWN_FILL_G;
+		window->details->unknown_color.blue = UNKNOWN_FILL_B;
+		window->details->unknown_color.alpha = 1;
+	}
 	if (!gtk_style_context_lookup_color (style, "chart_rgba_1", &window->details->used_color)) {
 		window->details->used_color.red = USED_FILL_R;
 		window->details->used_color.green = USED_FILL_G;
@@ -2977,7 +2992,8 @@ create_pie_widget (NautilusPropertiesWindow *window)
 
 	_pie_style_shade (&window->details->used_color, &window->details->used_stroke_color, 0.7);
 	_pie_style_shade (&window->details->free_color, &window->details->free_stroke_color, 0.7);
-	
+	_pie_style_shade (&window->details->unknown_color, &window->details->unknown_stroke_color, 0.7);
+
 	pie_canvas = gtk_drawing_area_new ();
 	gtk_widget_set_size_request (pie_canvas, 200, 200);
 
@@ -3052,9 +3068,9 @@ create_volume_usage_widget (NautilusPropertiesWindow *window)
 	NautilusFile *file;
 	GFile *location;
 	GFileInfo *info;
-	
+
 	file = get_original_file (window);
-	
+
 	uri = nautilus_file_get_activation_uri (file);
 
 	location = g_file_new_for_uri (uri);
@@ -3063,13 +3079,19 @@ create_volume_usage_widget (NautilusPropertiesWindow *window)
 	if (info) {
 		window->details->volume_capacity = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
 		window->details->volume_free = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+		if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED)) {
+			window->details->volume_used = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
+		} else {
+			window->details->volume_used = window->details->volume_capacity - window->details->volume_free;
+		}
 
 		g_object_unref (info);
 	} else {
-		window->details->volume_capacity = 0;		
-		window->details->volume_free = 0;		
+		window->details->volume_capacity = 0;
+		window->details->volume_free = 0;
+		window->details->volume_used = 0;
 	}
-	
+
 	g_object_unref (location);
 
 	if (window->details->volume_capacity > 0) {
