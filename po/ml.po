@@ -1865,7 +1865,7 @@ msgstr "ഈ ഇനം ചവറ്റുകുട്ടയില്‍ നിന
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:81
 #, c-format
-msgid "Error while adding “%s”: %s"
+msgid "Error while adding \"%B\": %s"
 msgstr "\"%B\" നീക്കുന്നതില്‍ പിശക് : %s"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:83
