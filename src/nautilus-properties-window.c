@@ -2315,6 +2315,7 @@ append_directory_contents_fields (NautilusPropertiesWindow *window,
 	value_field = attach_directory_contents_value_field (window, grid, GTK_WIDGET (title_field));
 
 	window->details->directory_contents_spinner = gtk_spinner_new ();
+
 	gtk_grid_attach_next_to (grid,
 				 window->details->directory_contents_spinner,
 				 GTK_WIDGET (value_field),
@@ -2945,10 +2946,15 @@ create_pie_widget (NautilusPropertiesWindow *window)
 	GtkWidget 		*pie_canvas;
 	GtkWidget 		*used_canvas;
 	GtkWidget 		*used_label;
+	GtkWidget 		*used_type_label;
 	GtkWidget 		*free_canvas;
 	GtkWidget 		*free_label;
+	GtkWidget 		*free_type_label;
 	GtkWidget 		*capacity_label;
+	GtkWidget 		*capacity_value_label;
 	GtkWidget 		*fstype_label;
+	GtkWidget 		*fstype_value_label;
+	GtkWidget 		*spacer_label;
 	gchar			*capacity;
 	gchar 			*used;
 	gchar 			*free;
@@ -2966,8 +2972,10 @@ create_pie_widget (NautilusPropertiesWindow *window)
 	uri = nautilus_file_get_activation_uri (file);
 	
 	grid = GTK_GRID (gtk_grid_new ());
+	gtk_widget_set_hexpand (GTK_WIDGET (grid), FALSE);
 	gtk_container_set_border_width (GTK_CONTAINER (grid), 5);
-	gtk_grid_set_column_spacing (GTK_GRID (grid), 5);
+	gtk_grid_set_row_spacing (GTK_GRID (grid), 10);
+	gtk_grid_set_column_spacing (GTK_GRID (grid), 10);
 	style = gtk_widget_get_style_context (GTK_WIDGET (grid));
 
 	if (!gtk_style_context_lookup_color (style, "chart_rgba_0", &window->details->unknown_color)) {
@@ -2998,21 +3006,24 @@ create_pie_widget (NautilusPropertiesWindow *window)
 	gtk_widget_set_size_request (pie_canvas, 200, 200);
 
 	used_canvas = gtk_drawing_area_new ();
-	gtk_widget_set_valign (used_canvas, GTK_ALIGN_CENTER);
-	gtk_widget_set_halign (used_canvas, GTK_ALIGN_CENTER);
 	gtk_widget_set_size_request (used_canvas, 20, 20);
+	used_label = gtk_label_new (used);
 	/* Translators: "used" refers to the capacity of the filesystem */
-	used_label = gtk_label_new (g_strconcat (used, " ", _("used"), NULL));
+	used_type_label = gtk_label_new (_("used"));
 
 	free_canvas = gtk_drawing_area_new ();
-	gtk_widget_set_valign (free_canvas, GTK_ALIGN_CENTER);
-	gtk_widget_set_halign (free_canvas, GTK_ALIGN_CENTER);
 	gtk_widget_set_size_request (free_canvas, 20, 20);
+	free_label = gtk_label_new (free);
 	/* Translators: "free" refers to the capacity of the filesystem */
-	free_label = gtk_label_new (g_strconcat (free, " ", _("free"), NULL));  
+	free_type_label = gtk_label_new (_("free"));
 
-	capacity_label = gtk_label_new (g_strconcat (_("Total capacity:"), " ", capacity, NULL));
-	fstype_label = gtk_label_new (NULL);
+	capacity_label = gtk_label_new (_("Total capacity:"));
+	capacity_value_label = gtk_label_new (capacity);
+
+	fstype_label = gtk_label_new (_("Filesystem type:"));
+	fstype_value_label = gtk_label_new (NULL);
+
+	spacer_label = gtk_label_new ("");
 
 	location = g_file_new_for_uri (uri);
 	info = g_file_query_filesystem_info (location, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE,
@@ -3020,9 +3031,9 @@ create_pie_widget (NautilusPropertiesWindow *window)
 	if (info) {
 		fs_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
 		if (fs_type != NULL) {
-			gtk_label_set_text (GTK_LABEL (fstype_label), g_strconcat (_("Filesystem type:"), " ", fs_type, NULL));
+			gtk_label_set_text (GTK_LABEL (fstype_value_label), fs_type);
 		}
-		
+
 		g_object_unref (info);
 	}
 	g_object_unref (location);
@@ -3033,23 +3044,57 @@ create_pie_widget (NautilusPropertiesWindow *window)
 	g_free (free);
 
 	gtk_container_add_with_properties (GTK_CONTAINER (grid), pie_canvas,
-					   "height", 4,
+					   "height", 5,
 					   NULL);
-	gtk_grid_attach_next_to (grid, used_canvas, pie_canvas,
+
+	gtk_widget_set_vexpand (spacer_label, TRUE);
+	gtk_grid_attach_next_to (grid, spacer_label, pie_canvas,
 				 GTK_POS_RIGHT, 1, 1);
+
+	gtk_widget_set_halign (used_canvas, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (used_canvas, FALSE);
+	gtk_grid_attach_next_to (grid, used_canvas, spacer_label,
+				 GTK_POS_BOTTOM, 1, 1);
+	gtk_widget_set_halign (used_label, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (used_label, FALSE);
 	gtk_grid_attach_next_to (grid, used_label, used_canvas,
 				 GTK_POS_RIGHT, 1, 1);
-
-	gtk_grid_attach_next_to (grid, free_canvas, used_canvas,
-				 GTK_POS_BOTTOM, 1, 1);
-	gtk_grid_attach_next_to (grid, free_label, free_canvas,
+	gtk_widget_set_halign (used_type_label, GTK_ALIGN_START);
+	gtk_widget_set_vexpand (used_type_label, FALSE);
+	gtk_grid_attach_next_to (grid, used_type_label, used_label,
 				 GTK_POS_RIGHT, 1, 1);
 
+	gtk_widget_set_halign (free_canvas, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (free_canvas, FALSE);
+	gtk_grid_attach_next_to (grid, free_canvas, used_canvas,
+				 GTK_POS_BOTTOM, 1, 1);
+	gtk_widget_set_halign (free_label, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (free_label, FALSE);
+	gtk_grid_attach_next_to (grid, free_label, free_canvas,
+				 GTK_POS_RIGHT, 1, 1);
+	gtk_widget_set_halign (free_type_label, GTK_ALIGN_START);
+	gtk_widget_set_vexpand (free_type_label, FALSE);
+	gtk_grid_attach_next_to (grid, free_type_label, free_label,
+				 GTK_POS_RIGHT, 1, 1);
+
+	gtk_widget_set_halign (capacity_label, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (capacity_label, FALSE);
 	gtk_grid_attach_next_to (grid, capacity_label, free_canvas,
-				 GTK_POS_BOTTOM, 2, 1);
+				 GTK_POS_BOTTOM, 1, 1);
+	gtk_widget_set_halign (capacity_value_label, GTK_ALIGN_START);
+	gtk_widget_set_vexpand (capacity_value_label, FALSE);
+	gtk_grid_attach_next_to (grid, capacity_value_label, capacity_label,
+				 GTK_POS_RIGHT, 1, 1);
+
+	gtk_widget_set_halign (fstype_label, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (fstype_label, FALSE);
 	gtk_grid_attach_next_to (grid, fstype_label, capacity_label,
-				 GTK_POS_BOTTOM, 2, 1);
-	
+				 GTK_POS_BOTTOM, 1, 1);
+	gtk_widget_set_halign (fstype_value_label, GTK_ALIGN_START);
+	gtk_widget_set_vexpand (fstype_value_label, FALSE);
+	gtk_grid_attach_next_to (grid, fstype_value_label, fstype_label,
+				 GTK_POS_RIGHT, 1, 1);
+
 	g_signal_connect (pie_canvas, "draw",
 			  G_CALLBACK (paint_pie_chart), window);
 	g_signal_connect (used_canvas, "draw",
@@ -3235,7 +3280,7 @@ create_basic_page (NautilusPropertiesWindow *window)
 		if (volume_usage != NULL) {
 			gtk_container_add_with_properties (GTK_CONTAINER (grid),
 							   volume_usage,
-							   "width", 2,
+							   "width", 3,
 							   NULL);
 		}
 	}
