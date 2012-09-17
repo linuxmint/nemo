@@ -1205,7 +1205,7 @@ value_field_update_internal (GtkLabel *label,
 	attribute_value = file_list_get_string_attribute (file_list, 
 							  attribute_name,
 							  inconsistent_string);
-	if (!strcmp (attribute_name, "type") && strcmp (attribute_value, inconsistent_string)) {
+	if (!strcmp (attribute_name, "detailed_type") && strcmp (attribute_value, inconsistent_string)) {
 		mime_type = file_list_get_string_attribute (file_list,
 							    "mime_type",
 							    inconsistent_string);
@@ -3147,7 +3147,7 @@ create_basic_page (NautilusPropertiesWindow *window)
 	if (should_show_file_type (window)) {
 		append_title_and_ellipsizing_value (window, grid,
 						    _("Type:"), 
-						    "type",
+						    "detailed_type",
 						    INCONSISTENT_STATE_STRING,
 						    FALSE);
 	}
