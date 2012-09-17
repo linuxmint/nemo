@@ -1121,6 +1121,8 @@ notebook_create_window_cb (GtkNotebook *notebook,
 	g_object_set_data (G_OBJECT (slot), "dnd-window-slot",
 			   GINT_TO_POINTER (TRUE));
 
+	gtk_window_set_position (GTK_WINDOW (new_window), GTK_WIN_POS_MOUSE);
+
 	return GTK_NOTEBOOK (new_window->details->notebook);
 }
 
