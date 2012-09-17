@@ -106,24 +106,13 @@ sync_search_directory (NautilusWindowSlot *slot)
 	nautilus_directory_unref (directory);
 }
 
-static gboolean
-sync_search_location_cb (NautilusWindow *window,
-			 GError *error,
-			 gpointer user_data)
-{
-	NautilusWindowSlot *slot = user_data;
-	if (error == NULL) {
-		sync_search_directory (slot);
-	}
-	return (error == NULL);
-}
-
 static void
 create_new_search (NautilusWindowSlot *slot)
 {
 	char *uri;
 	NautilusDirectory *directory;
 	GFile *location;
+	NautilusQuery *query;
 
 	uri = nautilus_search_directory_generate_new_uri ();
 	location = g_file_new_for_uri (uri);
@@ -131,9 +120,13 @@ create_new_search (NautilusWindowSlot *slot)
 	directory = nautilus_directory_get (location);
 	g_assert (NAUTILUS_IS_SEARCH_DIRECTORY (directory));
 
-	nautilus_window_slot_open_location_full (slot, location, 0, NULL, sync_search_location_cb, slot);
+	query = nautilus_query_editor_get_query (slot->query_editor);
+	nautilus_search_directory_set_query (NAUTILUS_SEARCH_DIRECTORY (directory), query);
+
+	nautilus_window_slot_open_location (slot, location, 0);
 
 	nautilus_directory_unref (directory);
+	g_object_unref (query);
 	g_object_unref (location);
 	g_free (uri);
 }
