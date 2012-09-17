@@ -1674,7 +1674,9 @@ nautilus_file_operation_free (NautilusFileOperation *op)
 }
 
 void
-nautilus_file_operation_complete (NautilusFileOperation *op, GFile *result_file, GError *error)
+nautilus_file_operation_complete (NautilusFileOperation *op,
+				  GFile *result_file,
+				  GError *error)
 {
 	/* Claim that something changed even if the operation failed.
 	 * This makes it easier for some clients who see the "reverting"
@@ -1685,6 +1687,11 @@ nautilus_file_operation_complete (NautilusFileOperation *op, GFile *result_file,
 	if (op->callback) {
 		(* op->callback) (op->file, result_file, error, op->callback_data);
 	}
+
+	if (error != NULL) {
+		g_clear_object (&op->undo_info);
+	}
+
 	nautilus_file_operation_free (op);
 }
 
