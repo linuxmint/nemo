@@ -971,6 +971,7 @@ create_content_view (NautilusWindowSlot *slot,
 	GList *selection;
 	gboolean ret = TRUE;
 	GError *error = NULL;
+	NautilusDirectory *old_directory, *new_directory;
 
 	window = nautilus_window_slot_get_window (slot);
 
@@ -1002,6 +1003,21 @@ create_content_view (NautilusWindowSlot *slot,
                 slot->new_content_view = view;
 		nautilus_window_connect_content_view (window, slot->new_content_view);
         }
+
+	/* Forward search selection and state before loading the new model */
+	new_directory = nautilus_directory_get (slot->pending_location);
+	old_directory = nautilus_directory_get (slot->location);
+
+	if (NAUTILUS_IS_SEARCH_DIRECTORY (new_directory) &&
+	    !NAUTILUS_IS_SEARCH_DIRECTORY (old_directory)) {
+		nautilus_search_directory_set_base_model (NAUTILUS_SEARCH_DIRECTORY (new_directory), old_directory);
+	}
+
+	if (NAUTILUS_IS_SEARCH_DIRECTORY (old_directory) &&
+	    !NAUTILUS_IS_SEARCH_DIRECTORY (new_directory) &&
+	    slot->pending_selection == NULL) {
+		slot->pending_selection = nautilus_view_get_selection (slot->content_view);
+	}
 
 	/* Actually load the pending location and selection: */
 
