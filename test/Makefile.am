@@ -34,3 +34,5 @@ test_nautilus_directory_async_SOURCES = test-nautilus-directory-async.c
 EXTRA_DIST = \
 	test.h \
 	$(NULL)
+
+-include $(top_srcdir)/git.mk

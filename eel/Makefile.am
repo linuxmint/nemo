@@ -76,3 +76,5 @@ TESTS = check-eel
 EXTRA_DIST =					\
 	check-eel				\
 	$(NULL)
+
+-include $(top_srcdir)/git.mk
