@@ -1667,6 +1667,7 @@ nautilus_file_operation_free (NautilusFileOperation *op)
 
 	if (op->undo_info != NULL) {
 		nautilus_file_undo_manager_set_action (op->undo_info);
+		g_object_unref (op->undo_info);
 	}
 
 	g_free (op);
