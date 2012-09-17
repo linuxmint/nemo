@@ -275,34 +275,31 @@ static void
 check_uri_entry (NautilusConnectServerDialog *dialog)
 {
 	guint length;
-	gboolean active = FALSE;
+	gboolean button_active = FALSE;
+	gboolean icon_active = FALSE;
 	const char *text = NULL;
-	const char *icon_name = NULL;
 
 	length = gtk_entry_get_text_length (GTK_ENTRY (dialog->details->uri_entry));
 	if (length > 0) {
 		GError *error = NULL;
 
 		text = gtk_entry_get_text (GTK_ENTRY (dialog->details->uri_entry));
-		active = validate_uri (dialog, text, &error);
+		button_active = validate_uri (dialog, text, &error);
 		if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED)) {
 			gtk_label_set_text (GTK_LABEL (dialog->details->error_label), error->message);
 		} else {
 			reset_example_label (dialog);
 		}
 		g_clear_error (&error);
+		icon_active = TRUE;
 	}
 
-	gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, active);
-
-	if (length > 0) {
-		icon_name = "edit-clear-symbolic";
-	}
+	gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, button_active);
 
 	g_object_set (dialog->details->uri_entry,
-		      "secondary-icon-name", icon_name,
-		      "secondary-icon-activatable", active,
-		      "secondary-icon-sensitive", active,
+		      "secondary-icon-name", icon_active ? "edit-clear-symbolic" : NULL,
+		      "secondary-icon-activatable", icon_active,
+		      "secondary-icon-sensitive", icon_active,
 		      NULL);
 }
 
