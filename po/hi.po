@@ -5958,7 +5958,7 @@ msgstr "सॉफ्टवेयर हैं."
 #: ../src/nautilus-x-content-bar.c:114
 #, c-format
 msgid "Detected as “%s”"
-msgstr "“% के रूप में पहचाना"
+msgstr "“%s” के रूप में पहचाना"
 
 #: ../src/nautilus-x-content-bar.c:136
 msgid "Contains music and photos"
