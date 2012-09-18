@@ -25,8 +25,8 @@ msgstr ""
 "Project-Id-Version: nautilus.master.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-09-14 23:06+0000\n"
-"PO-Revision-Date: 2012-09-10 18:08+0200\n"
+"POT-Creation-Date: 2012-09-16 11:24+0000\n"
+"PO-Revision-Date: 2012-09-18 16:30+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -568,20 +568,18 @@ msgstr "desconocido"
 #: ../libnautilus-private/nautilus-file.c:6164
 #: ../libnautilus-private/nautilus-file.c:6172
 #: ../libnautilus-private/nautilus-file.c:6223
-#, fuzzy
 #| msgid "program"
 msgid "Program"
-msgstr "programa"
+msgstr "Programa"
 
 #: ../libnautilus-private/nautilus-file.c:6165
-#, fuzzy
 #| msgid "Audio CD"
 msgid "Audio"
-msgstr "CD de música"
+msgstr "Sonido"
 
 #: ../libnautilus-private/nautilus-file.c:6166
 msgid "Font"
-msgstr ""
+msgstr "Tipografía"
 
 #: ../libnautilus-private/nautilus-file.c:6167
 #: ../src/nautilus-image-properties-page.c:716
@@ -590,11 +588,11 @@ msgstr "Imagen"
 
 #: ../libnautilus-private/nautilus-file.c:6168
 msgid "Archive"
-msgstr ""
+msgstr "Archivador"
 
 #: ../libnautilus-private/nautilus-file.c:6169
 msgid "Markup"
-msgstr ""
+msgstr "Marcado"
 
 #: ../libnautilus-private/nautilus-file.c:6173
 #: ../src/nautilus-query-editor.c:418
@@ -603,21 +601,19 @@ msgstr "Vídeo"
 
 # src/file-manager/fm-properties-window.c:878
 #: ../libnautilus-private/nautilus-file.c:6174
-#, fuzzy
 #| msgid "Contents:"
 msgid "Contacts"
-msgstr "Contenido:"
+msgstr "Contactos"
 
 #: ../libnautilus-private/nautilus-file.c:6175
 msgid "Calendar"
-msgstr ""
+msgstr "Calendario"
 
 # src/file-manager/fm-directory-view.c:1865
 #: ../libnautilus-private/nautilus-file.c:6176
-#, fuzzy
 #| msgid "Documents"
 msgid "Document"
-msgstr "Documentos"
+msgstr "Documento"
 
 #: ../libnautilus-private/nautilus-file.c:6177
 #: ../src/nautilus-query-editor.c:484
@@ -631,19 +627,18 @@ msgstr "Hoja de cálculo"
 
 #: ../libnautilus-private/nautilus-file.c:6225
 msgid "Binary"
-msgstr ""
+msgstr "Binario"
 
 # src/file-manager/fm-directory-view.c:2140
 # src/file-manager/fm-directory-view.c:2257
 #: ../libnautilus-private/nautilus-file.c:6229
-#, fuzzy
 #| msgid "Folders"
 msgid "Folder"
-msgstr "Carpetas"
+msgstr "Carpeta"
 
 #: ../libnautilus-private/nautilus-file.c:6260
 msgid "Link"
-msgstr ""
+msgstr "Enlace"
 
 # src/nautilus-link-set-window.c:185
 #. Note to localizers: convert file type string for file
@@ -660,10 +655,9 @@ msgstr "Enlace hacia %s"
 
 #: ../libnautilus-private/nautilus-file.c:6282
 #: ../libnautilus-private/nautilus-file.c:6296
-#, fuzzy
 #| msgid "link (broken)"
 msgid "Link (broken)"
-msgstr "enlace (roto)"
+msgstr "Enlace (roto)"
 
 # libnautilus-private/nautilus-global-preferences.c:727
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:141
@@ -2208,10 +2202,10 @@ msgid ""
 "systems. If set to \"never\" then never bother to compute item counts."
 msgstr ""
 "Compensación de velocidad para cuando se muestre el número de elementos en "
-"una carpeta. Si se establece a «always» (siempre) entonces siempre se "
-"contará el número de elementos, aún si la carpeta se encuentra en un "
-"servidor remoto. Si se establece a «local_only» (sólo local) entonces sólo "
-"se mostrará el número en los sistemas de archivos locales. Si se establece a "
+"una carpeta. Si se establece a «always» (siempre) entonces siempre se contará "
+"el número de elementos, aún si la carpeta se encuentra en un servidor "
+"remoto. Si se establece a «local_only» (sólo local) entonces sólo se mostrará "
+"el número en los sistemas de archivos locales. Si se establece a "
 "«never» (nunca) entonces nunca se contará el número de elementos."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:11
@@ -2267,9 +2261,9 @@ msgid ""
 "will determine if any action is taken inside of Nautilus when either is "
 "pressed."
 msgstr ""
-"Para usuarios con ratones que tienen botones «Adelante» y «Atrás», esta "
-"tecla determinará si cualquier acción se realiza dentro de Nautilus cuando "
-"se pulse cualquiera de los botones."
+"Para usuarios con ratones que tienen botones «Adelante» y «Atrás», esta tecla "
+"determinará si cualquier acción se realiza dentro de Nautilus cuando se "
+"pulse cualquiera de los botones."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:19
 msgid "Mouse button to activate the \"Forward\" command in browser window"
@@ -2283,8 +2277,8 @@ msgid ""
 "will set which button activates the \"Forward\" command in a browser window. "
 "Possible values range between 6 and 14."
 msgstr ""
-"Para usuarios con ratones que tienen botones «Adelante» y «Atrás», esta "
-"tecla establecerá qué botón activa el comando «Adelante» en una ventana del "
+"Para usuarios con ratones que tienen botones «Adelante» y «Atrás», esta tecla "
+"establecerá qué botón activa el comando «Adelante» en una ventana del "
 "examinador. Los posibles rangos de valores están entre 6 y 14."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:21
@@ -2298,8 +2292,8 @@ msgid ""
 "will set which button activates the \"Back\" command in a browser window. "
 "Possible values range between 6 and 14."
 msgstr ""
-"Para usuarios con ratones que tienen botones «Adelante» y «Atrás», esta "
-"tecla establecerá qué botón activa el comando «Atrás» en una ventana del "
+"Para usuarios con ratones que tienen botones «Adelante» y «Atrás», esta tecla "
+"establecerá qué botón activa el comando «Atrás» en una ventana del "
 "examinador. Los posibles rangos de valores están entre 6 y 14."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:23
@@ -2319,9 +2313,9 @@ msgstr ""
 "mostrarán miniaturas, aún cuando la carpeta se encuentre en un servidor "
 "remoto. Si está definido como «local_only» (sólo local) entonces sólo se "
 "mostrarán miniaturas en los sistemas de archivos locales. Si se establece a "
-"«never» (nunca) entonces no se mostrarán miniaturas de las imágenes, sino "
-"que se mostrará un icono genérico. A pesar de lo que el nombre pueda "
-"sugerir, esto se aplica a cualquier archivo previsualizable."
+"«never» (nunca) entonces no se mostrarán miniaturas de las imágenes, sino que "
+"se mostrará un icono genérico. A pesar de lo que el nombre pueda sugerir, "
+"esto se aplica a cualquier archivo previsualizable."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:25
 msgid "Maximum image size for thumbnailing"
@@ -2378,9 +2372,8 @@ msgid ""
 msgstr ""
 "Si se establece a cierto, los archivos en las ventanas nuevas se colocarán "
 "en sentido inverso. Ej: si se ordenados por nombre entonces en vez de "
-"colocarse de la «a» a la «z» se colocarán de la «z» a la «a» ; si se colocan "
-"por tamaño; en lugar de ordenarse incrementalmente se ordenarán "
-"decrementalmente."
+"colocarse de la «a» a la «z» se colocarán de la «z» a la «a» ; si se colocan por "
+"tamaño; en lugar de ordenarse incrementalmente se ordenarán decrementalmente."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:33
 msgid "Default folder viewer"
@@ -2443,8 +2436,8 @@ msgid ""
 msgstr ""
 "Una lista de descripciones bajo un icono en la vista de icono y el "
 "escritorio. El número actual de descripciones mostradas depende del nivel de "
-"ampliación. Los valores posibles son «size», «type», «date_modified», "
-"«owner», «group», «permissions» y «mime_type»."
+"ampliación. Los valores posibles son «size», «type», «date_modified», «owner», "
+"«group», «permissions» y «mime_type»."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:41
 msgid "Default icon zoom level"
@@ -3331,8 +3324,7 @@ msgstr "Los permisos no pudieron cambiarse."
 #, c-format
 msgid ""
 "The name “%s” is already used in this location. Please use a different name."
-msgstr ""
-"El nombre «%s» ya se está usando en este lugar. Use un nombre distinto."
+msgstr "El nombre «%s» ya se está usando en este lugar. Use un nombre distinto."
 
 #: ../src/nautilus-error-reporting.c:209
 #, c-format
@@ -3926,10 +3918,10 @@ msgid "The file is of an unknown type"
 msgstr "El archivo es de un tipo desconocido"
 
 #: ../src/nautilus-mime-actions.c:1216
-#, fuzzy, c-format
+#, c-format
 #| msgid "There is no application installed for %s files"
 msgid "There is no application installed for “%s” files"
-msgstr "No existe una aplicación instalada para los archivos %s"
+msgstr "No existe una aplicación instalada para los archivos «%s»"
 
 # src/nautilus-property-browser.c:263 src/nautilus-property-browser.c:1977
 #: ../src/nautilus-mime-actions.c:1231
@@ -3945,7 +3937,7 @@ msgid "Unable to search for application"
 msgstr "No se pudo buscar una aplicación"
 
 #: ../src/nautilus-mime-actions.c:1388
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "There is no application installed for %s files.\n"
 #| "Do you want to search for an application to open this file?"
@@ -3953,7 +3945,7 @@ msgid ""
 "There is no application installed for “%s” files.\n"
 "Do you want to search for an application to open this file?"
 msgstr ""
-"No existe una aplicación instalada para los archivos %s.\n"
+"No existe una aplicación instalada para los archivos «%s».\n"
 "¿Quiere buscar una aplicación para abrir este archivo?"
 
 #: ../src/nautilus-mime-actions.c:1538
@@ -4983,16 +4975,14 @@ msgstr "Muestra la carpeta que contiene los scripts que aparecen en este menú"
 #. tooltip
 #: ../src/nautilus-view.c:7188
 msgid "Prepare the selected files to be moved with a Paste command"
-msgstr ""
-"Prepara los archivos seleccionados para moverlos con un comando «Pegar»"
+msgstr "Prepara los archivos seleccionados para moverlos con un comando «Pegar»"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
 #: ../src/nautilus-view.c:7192
 msgid "Prepare the selected files to be copied with a Paste command"
-msgstr ""
-"Prepara los archivos seleccionados para copiarse con un comando «Pegar»"
+msgstr "Prepara los archivos seleccionados para copiarse con un comando «Pegar»"
 
 #. name, stock id
 #. label, accelerator
@@ -5000,8 +4990,8 @@ msgstr ""
 #: ../src/nautilus-view.c:7196
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
-"Mover o copiar los archivos previamente seleccionados por un comando "
-"«Cortar» o «Copiar»"
+"Mover o copiar los archivos previamente seleccionados por un comando «Cortar» "
+"o «Copiar»"
 
 #. We make accelerator "" instead of null here to not inherit the stock
 #. accelerator for paste
@@ -5017,8 +5007,8 @@ msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr ""
-"Mover o copiar los archivos previamente seleccionados por un comando "
-"«Cortar» o «Copiar» en la carpeta seleccionada"
+"Mover o copiar los archivos previamente seleccionados por un comando «Cortar» "
+"o «Copiar» en la carpeta seleccionada"
 
 # #-#-#-#-#  nautilus-es.po (Nautilus)  #-#-#-#-#
 # src/file-manager/dfos-xfer.c:725
@@ -6300,8 +6290,7 @@ msgstr "Abrir con:"
 #~ msgstr[0] ""
 #~ "El elemento seleccionado se moverá si selecciona el comando «Pegar»"
 #~ msgstr[1] ""
-#~ "Los %'d elementos seleccionados se moverán si selecciona el comando "
-#~ "«Pegar»"
+#~ "Los %'d elementos seleccionados se moverán si selecciona el comando «Pegar»"
 
 #~ msgid "The %'d selected item will be copied if you select the Paste command"
 #~ msgid_plural ""
@@ -6528,8 +6517,8 @@ msgstr "Abrir con:"
 #~ "\n"
 #~ "If in doubt, press Cancel."
 #~ msgstr ""
-#~ "El software se ejecutará directamente desde el soporte «%s». Nunca "
-#~ "ejecute software del que desconfía.\n"
+#~ "El software se ejecutará directamente desde el soporte «%s». Nunca ejecute "
+#~ "software del que desconfía.\n"
 #~ "\n"
 #~ "Si duda, pulse Cancelar."
 
@@ -7238,9 +7227,9 @@ msgstr "Abrir con:"
 #~ "un archivo de sonido al colocar el ratón sobre los iconos de los "
 #~ "archivos. Si se establece a «always» (siempre) entonces se reproducirá el "
 #~ "sonido, aún si el archivo se encuentra en un servidor remoto. Si se "
-#~ "establece a «local_only» (sólo local) entonces la reproducción previa "
-#~ "sólo se realizará sobre archivos locales. Si se establece a "
-#~ "«never» (nunca) entonces nunca de reproducirá previamente el sonido."
+#~ "establece a «local_only» (sólo local) entonces la reproducción previa sólo "
+#~ "se realizará sobre archivos locales. Si se establece a «never» (nunca) "
+#~ "entonces nunca de reproducirá previamente el sonido."
 
 #~ msgid "Whether to preview sounds when mousing over an icon"
 #~ msgstr ""
@@ -7277,8 +7266,7 @@ msgstr "Abrir con:"
 #~ msgstr "L_impiar el histórico"
 
 #~ msgid "Clear contents of Go menu and Back/Forward lists"
-#~ msgstr ""
-#~ "Limpia el contenido del menú «Ir» y las listas de «Atrás» y «Adelante»"
+#~ msgstr "Limpia el contenido del menú «Ir» y las listas de «Atrás» y «Adelante»"
 
 # src/file-manager/fm-directory-view.c:2126
 #~ msgid "Open in _Folder Window"
@@ -7545,9 +7533,9 @@ msgstr "Abrir con:"
 #~ msgstr ""
 #~ "Si se establece a cierto, entonces Nautilus saldrá cuando todas las "
 #~ "ventanas se destruyan. Este es el ajuste predeterminado. Si se establece "
-#~ "a «false», se puede iniciar sin ninguna ventana, de tal forma que "
-#~ "Nautilus puede servir como un demonio para monitorizar el automontaje de "
-#~ "soportes, o tareas similares."
+#~ "a «false», se puede iniciar sin ninguna ventana, de tal forma que Nautilus "
+#~ "puede servir como un demonio para monitorizar el automontaje de soportes, "
+#~ "o tareas similares."
 
 #~ msgid "Nautilus will exit when last window destroyed."
 #~ msgstr "Nautilus saldrá cuando la última ventana se haya destruido."
@@ -7622,8 +7610,8 @@ msgstr "Abrir con:"
 #~ "\"%s\" cannot open \"%s\" because \"%s\" cannot access files at \"%s\" "
 #~ "locations."
 #~ msgstr ""
-#~ "«%s» no puede abrir «%s» porque «%s» no puede acceder a los archivos en "
-#~ "los lugares «%s»."
+#~ "«%s» no puede abrir «%s» porque «%s» no puede acceder a los archivos en los "
+#~ "lugares «%s»."
 
 #~ msgid "Open Failed, would you like to choose another action?"
 #~ msgstr "La apertura ha fallado, ¿quiere probar con otra acción?"
@@ -7632,8 +7620,8 @@ msgstr "Abrir con:"
 #~ "The default action cannot open \"%s\" because it cannot access files at "
 #~ "\"%s\" locations."
 #~ msgstr ""
-#~ "La acción predeterminada no puede abrir «%s» porque no puede acceder a "
-#~ "los archivos en los lugares «%s»."
+#~ "La acción predeterminada no puede abrir «%s» porque no puede acceder a los "
+#~ "archivos en los lugares «%s»."
 
 #~ msgid ""
 #~ "No other applications are available to view this file. If you copy this "
@@ -7747,8 +7735,8 @@ msgstr "Abrir con:"
 #~ "Select how to open \"%s\" and whether to perform this action in the "
 #~ "future for other media of type \"%s\"."
 #~ msgstr ""
-#~ "Seleccione cómo abrir «%s» y si se realizará esta acción en el futuro "
-#~ "para otros soportes del tipo «%s»."
+#~ "Seleccione cómo abrir «%s» y si se realizará esta acción en el futuro para "
+#~ "otros soportes del tipo «%s»."
 
 #~ msgid "_Always perform this action"
 #~ msgstr "_Siempre realizar esta acción"
@@ -8299,10 +8287,9 @@ msgstr "Abrir con:"
 #~ "search for files by file name and file properties."
 #~ msgstr ""
 #~ "El criterio al buscar archivos en la barra de búsqueda. Si está definido "
-#~ "como «search_by_text» entonces Nautilus buscará los archivos por el "
-#~ "nombre de archivo solamente. Si se establece a "
-#~ "«search_by_text_and_properties» entonces Nautilus buscará los archivos "
-#~ "por su nombre y propiedades."
+#~ "como «search_by_text» entonces Nautilus buscará los archivos por el nombre "
+#~ "de archivo solamente. Si se establece a «search_by_text_and_properties» "
+#~ "entonces Nautilus buscará los archivos por su nombre y propiedades."
 
 #~ msgid "Current Nautilus theme (deprecated)"
 #~ msgstr "Tema actual de Nautilus (obsoleto)"
@@ -8764,8 +8751,8 @@ msgstr "Abrir con:"
 #~ "A folder named \"%B\" already exists.  Do you want to merge the source "
 #~ "folder?"
 #~ msgstr ""
-#~ "Ya existe una carpeta llamada «%B» ya existe. ¿Desea mezclar la carpeta "
-#~ "de origen?"
+#~ "Ya existe una carpeta llamada «%B» ya existe. ¿Desea mezclar la carpeta de "
+#~ "origen?"
 
 # src/file-manager/dfos-xfer.c:407
 #~ msgid "A folder named \"%B\" already exists.  Do you want to replace it?"
