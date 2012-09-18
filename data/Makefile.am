@@ -56,6 +56,7 @@ EXTRA_DIST = $(nautilusdata_DATA) 	\
 	$(desktop_in_files)		\
 	$(service_in_files)		\
 	$(autostart_in_files)		\
+	$(searchprovider_DATA)		\
 	$(NULL)
 
 CLEANFILES = $(xml_files)	\
