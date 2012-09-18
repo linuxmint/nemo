@@ -19,8 +19,8 @@ msgstr ""
 "Project-Id-Version: ml\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug."
 "cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-09-14 23:06+0000\n"
-"PO-Revision-Date: 2012-09-17 23:23+0000\n"
+"POT-Creation-Date: 2012-09-17 18:02+0000\n"
+"PO-Revision-Date: 2012-09-18 11:03+0000\n"
 "Last-Translator: Ani Peter <apeter@redhat.com>\n"
 "Language-Team: Malayalam <discuss@lists.smc.org.in>\n"
 "Language: ml\n"
@@ -34,21 +34,20 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../data/nautilus-autorun-software.desktop.in.in.h:1
-#| msgid "Software"
 msgid "Run Software"
 msgstr "സോഫ്റ്റ്‌വെയര്‍ പ്രവര്‍ത്തിപ്പിയ്ക്കുക"
 
 #. set dialog properties
 #: ../data/nautilus-connect-server.desktop.in.in.h:1
-#: ../src/nautilus-connect-server-dialog.c:585
+#: ../src/nautilus-connect-server-dialog.c:588
 msgid "Connect to Server"
 msgstr "സര്‍വറിലേക്കു് കണക്ടു് ചെയ്യുക"
 
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:27
-#: ../src/nautilus-properties-window.c:4364 ../src/nautilus-window.c:1976
-#: ../src/nautilus-window.c:2187
+#: ../src/nautilus-properties-window.c:4364 ../src/nautilus-window.c:1978
+#: ../src/nautilus-window.c:2189
 msgid "Files"
 msgstr "ഫയലുകള്‍"
 
@@ -68,8 +67,8 @@ msgstr "X"
 msgid "Y"
 msgstr "Y"
 
-#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6170
-#: ../libnautilus-private/nautilus-file.c:6171
+#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6178
+#: ../libnautilus-private/nautilus-file.c:6179
 msgid "Text"
 msgstr "പദാവലി"
 
@@ -216,7 +215,6 @@ msgid "The type of the file."
 msgstr "ഏതു്  തരത്തിലുളള ഫയല്‍."
 
 #: ../libnautilus-private/nautilus-column-utilities.c:78
-#| msgid "Modified:"
 msgid "Modified"
 msgstr "പരിഷ്കരിച്ചതു്"
 
@@ -297,23 +295,16 @@ msgstr "പണിയിടത്തില്‍"
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:89
 #, c-format
-#| msgid "You cannot move the volume \"%s\" to the trash."
 msgid "You cannot move the volume “%s” to the trash."
 msgstr "നിങ്ങള്‍ക്കു് \"%s\" വോള്യം ചവറ്റുകുട്ടയിലേക്കു് നീക്കുവാന്‍ സാധ്യമല്ല."
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:99
-#| msgid ""
-#| "If you want to eject the volume, please use \"Eject\" in the popup menu "
-#| "of the volume."
 msgid ""
 "If you want to eject the volume, please use Eject in the popup menu of the "
 "volume."
 msgstr "വോള്യം പുറത്തെടുക്കണമെങ്കില്‍ പോപ്പപ്പ് മെനുവിലുളള പുറത്തെടുക്കുക ഉപയോഗിക്കുക"
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:108
-#| msgid ""
-#| "If you want to unmount the volume, please use \"Unmount Volume\" in the "
-#| "popup menu of the volume."
 msgid ""
 "If you want to unmount the volume, please use Unmount Volume in the popup "
 "menu of the volume."
@@ -370,27 +361,27 @@ msgstr "ഈ ഫയല്‍ ആരഭിക്കുവാന്‍ സാധ്
 msgid "This file cannot be stopped"
 msgstr "ഈ ഫയല്‍ നിര്‍ത്തുവാന്‍ സാധ്യമല്ല"
 
-#: ../libnautilus-private/nautilus-file.c:1827
+#: ../libnautilus-private/nautilus-file.c:1835
 #, c-format
 msgid "Slashes are not allowed in filenames"
 msgstr "ഫയലിന്റെ പേരുകളില്‍ സ്ലാഷുകള്‍ അനുവദിച്ചിട്ടില്ല"
 
-#: ../libnautilus-private/nautilus-file.c:1845
+#: ../libnautilus-private/nautilus-file.c:1853
 #, c-format
 msgid "File not found"
 msgstr "ഫയല്‍ കണ്ടില്ല"
 
-#: ../libnautilus-private/nautilus-file.c:1873
+#: ../libnautilus-private/nautilus-file.c:1881
 #, c-format
 msgid "Toplevel files cannot be renamed"
 msgstr "മുന്‍നിര ഫയലുകളുടെ പേരു് മാറ്റുവാന്‍ സാധ്യമല്ല"
 
-#: ../libnautilus-private/nautilus-file.c:1896
+#: ../libnautilus-private/nautilus-file.c:1904
 #, c-format
 msgid "Unable to rename desktop icon"
 msgstr "പണിയിടത്തിലെ ചിഹ്നത്തിന്റെ പേരു് മാറ്റാന്‍ സാധിച്ചില്ല"
 
-#: ../libnautilus-private/nautilus-file.c:1925
+#: ../libnautilus-private/nautilus-file.c:1933
 #, c-format
 msgid "Unable to rename desktop file"
 msgstr "പണിയിടത്തിലെ ഫയലിന്റെ പേരു് മാറ്റാന്‍ സാധിച്ചില്ല"
@@ -407,81 +398,76 @@ msgstr "പണിയിടത്തിലെ ഫയലിന്റെ പേര�
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4441
-#| msgid "%"
+#: ../libnautilus-private/nautilus-file.c:4449
 msgid "%R"
 msgstr "%R"
 
-#: ../libnautilus-private/nautilus-file.c:4442
-#| msgid "today, %-I:%M %p"
+#: ../libnautilus-private/nautilus-file.c:4450
 msgid "%-I:%M %P"
 msgstr "%-I:%M %P"
 
-#: ../libnautilus-private/nautilus-file.c:4443
-#: ../libnautilus-private/nautilus-file.c:4444
+#: ../libnautilus-private/nautilus-file.c:4451
+#: ../libnautilus-private/nautilus-file.c:4452
 msgid "%b %-e"
 msgstr "%b %-e"
 
-#: ../libnautilus-private/nautilus-file.c:4445
-#| msgid "%b %-d %Y, %-I:%M %p"
+#: ../libnautilus-private/nautilus-file.c:4453
 msgid "%b %-d %Y"
 msgstr "%b %-d %Y"
 
-#: ../libnautilus-private/nautilus-file.c:4446
-#| msgid "%a, %b %-d %Y at %-I:%M:%S %p"
+#: ../libnautilus-private/nautilus-file.c:4454
 msgid "%a, %b %e %Y %I:%M:%S %p"
 msgstr "%a, %b %e %Y %I:%M:%S %p"
 
-#: ../libnautilus-private/nautilus-file.c:4447
-#| msgid "%a, %b %-d %Y at %-I:%M %p"
+#: ../libnautilus-private/nautilus-file.c:4455
 msgid "%a, %b %e %Y %T"
 msgstr "%a, %b %e %Y %T"
 
-#: ../libnautilus-private/nautilus-file.c:4946
+#: ../libnautilus-private/nautilus-file.c:4954
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "അനുവാദങ്ങള്‍ സജ്ജമാക്കുവാന്‍ അനുമതിയില്ല:"
 
-#: ../libnautilus-private/nautilus-file.c:5241
+#: ../libnautilus-private/nautilus-file.c:5249
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "ഉടമസ്ഥനെ ക്രമീകരിയ്ക്കാന്‍ അനുവാദമില്ല"
 
-#: ../libnautilus-private/nautilus-file.c:5259
+#: ../libnautilus-private/nautilus-file.c:5267
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "പറഞ്ഞിരിയ്ക്കുന്ന ഉടമസ്ഥന്‍ '%s' നിലവിലില്ല."
 
-#: ../libnautilus-private/nautilus-file.c:5523
+#: ../libnautilus-private/nautilus-file.c:5531
 #, c-format
 msgid "Not allowed to set group"
 msgstr "ഗ്രൂപ്പ് ക്രമീകരിയ്ക്കാന്‍ അനുവാദമില്ല"
 
-#: ../libnautilus-private/nautilus-file.c:5541
+#: ../libnautilus-private/nautilus-file.c:5549
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "പറഞ്ഞിരിയ്ക്കുന്ന ഗ്രൂപ്പ് '%s' നിലവിലില്ല."
 
 #. Translators: "Me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5675
+#: ../libnautilus-private/nautilus-file.c:5683
 msgid "Me"
 msgstr "ഞാന്‍"
 
-#: ../libnautilus-private/nautilus-file.c:5699
+#: ../libnautilus-private/nautilus-file.c:5707
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
 msgstr[0] "%'u വസ്തു"
 msgstr[1] "%'u വസ്തുക്കള്‍"
 
-#: ../libnautilus-private/nautilus-file.c:5700
+#: ../libnautilus-private/nautilus-file.c:5708
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] "%'u ഫോള്‍ഡര്‍"
 msgstr[1] "%'u ഫോള്‍ഡറുകള്‍"
 
-#: ../libnautilus-private/nautilus-file.c:5701
+#: ../libnautilus-private/nautilus-file.c:5709
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
@@ -489,97 +475,92 @@ msgstr[0] "%'u ഫയല്‍"
 msgstr[1] "%'u ഫയലുകള്‍"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6097
-#: ../libnautilus-private/nautilus-file.c:6113
+#: ../libnautilus-private/nautilus-file.c:6105
+#: ../libnautilus-private/nautilus-file.c:6121
 msgid "? items"
 msgstr "? ഇനങ്ങള്‍"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6103
+#: ../libnautilus-private/nautilus-file.c:6111
 msgid "? bytes"
 msgstr "? ബൈറ്റ്സ്"
 
-#: ../libnautilus-private/nautilus-file.c:6120
-#: ../libnautilus-private/nautilus-file.c:6200
+#: ../libnautilus-private/nautilus-file.c:6128
+#: ../libnautilus-private/nautilus-file.c:6208
 msgid "Unknown"
 msgstr "അപരിചിതമായ"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6134
+#: ../libnautilus-private/nautilus-file.c:6142
 #: ../src/nautilus-properties-window.c:1173
 msgid "unknown"
 msgstr "അറിയാത്ത"
 
-#: ../libnautilus-private/nautilus-file.c:6164
 #: ../libnautilus-private/nautilus-file.c:6172
-#: ../libnautilus-private/nautilus-file.c:6223
-#| msgid "program"
+#: ../libnautilus-private/nautilus-file.c:6180
+#: ../libnautilus-private/nautilus-file.c:6231
 msgid "Program"
 msgstr "പ്രോഗ്രാം"
 
-#: ../libnautilus-private/nautilus-file.c:6165
-#| msgid "CD _Audio:"
+#: ../libnautilus-private/nautilus-file.c:6173
 msgid "Audio"
 msgstr "ഓഡിയോ"
 
-#: ../libnautilus-private/nautilus-file.c:6166
+#: ../libnautilus-private/nautilus-file.c:6174
 msgid "Font"
 msgstr "അക്ഷരസഞ്ചയം"
 
-#: ../libnautilus-private/nautilus-file.c:6167
+#: ../libnautilus-private/nautilus-file.c:6175
 #: ../src/nautilus-image-properties-page.c:716
 msgid "Image"
 msgstr "ചിത്രം"
 
-#: ../libnautilus-private/nautilus-file.c:6168
+#: ../libnautilus-private/nautilus-file.c:6176
 msgid "Archive"
 msgstr "ആര്‍ക്കൈവ്"
 
-#: ../libnautilus-private/nautilus-file.c:6169
+#: ../libnautilus-private/nautilus-file.c:6177
 msgid "Markup"
 msgstr "മാര്‍ക്കപ്പ്"
 
-#: ../libnautilus-private/nautilus-file.c:6173
+#: ../libnautilus-private/nautilus-file.c:6181
 #: ../src/nautilus-query-editor.c:418
 msgid "Video"
 msgstr "ചലച്ചിത്രം"
 
-#: ../libnautilus-private/nautilus-file.c:6174
-#| msgid "Contents:"
+#: ../libnautilus-private/nautilus-file.c:6182
 msgid "Contacts"
 msgstr "വിലാസങ്ങള്‍"
 
-#: ../libnautilus-private/nautilus-file.c:6175
+#: ../libnautilus-private/nautilus-file.c:6183
 msgid "Calendar"
 msgstr "കലണ്ടര്‍"
 
-#: ../libnautilus-private/nautilus-file.c:6176
-#| msgid "Documents"
+#: ../libnautilus-private/nautilus-file.c:6184
 msgid "Document"
 msgstr "രേഖ"
 
-#: ../libnautilus-private/nautilus-file.c:6177
+#: ../libnautilus-private/nautilus-file.c:6185
 #: ../src/nautilus-query-editor.c:484
 msgid "Presentation"
 msgstr "അവതരണം"
 
-#: ../libnautilus-private/nautilus-file.c:6178
+#: ../libnautilus-private/nautilus-file.c:6186
 #: ../src/nautilus-query-editor.c:468
 msgid "Spreadsheet"
 msgstr "കണക്കുപുസ്തകം"
 
-#: ../libnautilus-private/nautilus-file.c:6225
+#: ../libnautilus-private/nautilus-file.c:6233
 msgid "Binary"
 msgstr "ബൈനറി"
 
-#: ../libnautilus-private/nautilus-file.c:6229
-#| msgid "_Folder:"
+#: ../libnautilus-private/nautilus-file.c:6237
 msgid "Folder"
 msgstr "ഫോള്‍ഡര്‍"
 
-#: ../libnautilus-private/nautilus-file.c:6260
+#: ../libnautilus-private/nautilus-file.c:6268
 msgid "Link"
 msgstr "കണ്ണി"
 
@@ -588,22 +569,20 @@ msgstr "കണ്ണി"
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6266
+#: ../libnautilus-private/nautilus-file.c:6274
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:124
 #, c-format
 msgid "Link to %s"
 msgstr "%s-ലേക്കു് ബന്ധിപ്പിക്കുക"
 
-#: ../libnautilus-private/nautilus-file.c:6282
-#: ../libnautilus-private/nautilus-file.c:6296
-#| msgid "link (broken)"
+#: ../libnautilus-private/nautilus-file.c:6290
+#: ../libnautilus-private/nautilus-file.c:6304
 msgid "Link (broken)"
 msgstr "ബന്ധം (പൊട്ടിയ)"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:141
 #, c-format
-#| msgid "Merge folder \"%s\"?"
 msgid "Merge folder “%s”?"
 msgstr "\"%s\" ഫോള്‍ഡര്‍ കൂട്ടിച്ചേര്‍ക്കണോ?"
 
@@ -617,19 +596,16 @@ msgstr ""
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:150
 #, c-format
-#| msgid "An older folder with the same name already exists in \"%s\"."
 msgid "An older folder with the same name already exists in “%s”."
 msgstr "\"%s\" -ല്‍ ഇതേ പേരില്‍ താരതമ്യേന പഴയ ഒരു ഫോള്‍ഡര്‍ നിലവിലുണ്ടു്."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:154
 #, c-format
-#| msgid "A newer folder with the same name already exists in \"%s\"."
 msgid "A newer folder with the same name already exists in “%s”."
 msgstr "\"%s\" -ല്‍ ഇതേ പേരില്‍ താരതമ്യേന പുതിയ ഒരു ഫോള്‍ഡര്‍ നിലവിലുണ്ടു്."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:158
 #, c-format
-#| msgid "Another folder with the same name already exists in \"%s\"."
 msgid "Another folder with the same name already exists in “%s”."
 msgstr "\"%s\"-ല്‍ ഇതേ പേരില്‍ മറ്റൊരു ഫോള്‍ഡര്‍ നിലവിലുണ്ടു്."
 
@@ -639,19 +615,16 @@ msgstr "ഇത് മാറ്റി സ്ഥാപിക്കുന്നത�
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:165
 #, c-format
-#| msgid "Replace folder \"%s\"?"
 msgid "Replace folder “%s”?"
 msgstr "\"%s\" ഫോള്‍ഡര്‍ മാറ്റി സ്ഥാപിക്കണോ?"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:167
 #, c-format
-#| msgid "A folder with the same name already exists in \"%s\"."
 msgid "A folder with the same name already exists in “%s”."
 msgstr "\"%s\" -ല്‍ ഇതേ പേരില്‍ ഒരു ഫോള്‍ഡര്‍ നിലവിലുണ്ട്."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:172
 #, c-format
-#| msgid "Replace file \"%s\"?"
 msgid "Replace file “%s”?"
 msgstr "\"%s\" ഫയല്‍ മാറ്റി സ്ഥാപിക്കണോ?"
 
@@ -661,19 +634,16 @@ msgstr "ഇതു് മാറ്റിയാല്‍ അതിന്റെ ഉ
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:178
 #, c-format
-#| msgid "An older file with the same name already exists in \"%s\"."
 msgid "An older file with the same name already exists in “%s”."
 msgstr "\"%s\" -ല്‍ ഇതേ പേരില്‍ താരതമ്യേന പഴയ ഒരു ഫയല്‍ നിലവിലുണ്ടു്."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:182
 #, c-format
-#| msgid "A newer file with the same name already exists in \"%s\"."
 msgid "A newer file with the same name already exists in “%s”."
 msgstr "\"%s\" -ല്‍ ഇതേ പേരില്‍ താരതമ്യേന പുതിയ ഒരു ഫയല്‍ നിലവിലുണ്ടു്."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:186
 #, c-format
-#| msgid "Another file with the same name already exists in \"%s\"."
 msgid "Another file with the same name already exists in “%s”."
 msgstr "\"%s\" -ല്‍ ഇതേ പേരില്‍ മറ്റൊരു ഫയല്‍ നിലവിലുണ്ടു്."
 
@@ -930,7 +900,6 @@ msgid " (%'d"
 msgstr "(%'d"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1323
-#| msgid "Are you sure you want to permanently delete \"%B\" from the trash?"
 msgid "Are you sure you want to permanently delete “%B” from the trash?"
 msgstr "നിങ്ങള്‍ക്കു് ചവറ്റുകുട്ടയില്‍ നിന്നും \"%B\" എന്നേക്കുമായി നീക്കം ചെയ്യണം എന്നു് ഉറപ്പാണോ?"
 
@@ -970,7 +939,6 @@ msgid "Empty _Trash"
 msgstr "ചവറ്റുകുട്ട വെടിപ്പാക്കുക"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1390
-#| msgid "Are you sure you want to permanently delete \"%B\"?"
 msgid "Are you sure you want to permanently delete “%B”?"
 msgstr "താങ്കള്‍ക്കു് \"%B\" എന്നെന്നേക്കുമായി നീക്കം ചെയ്യണം എന്നു് ഉറപ്പുണ്ടോ?"
 
@@ -1010,9 +978,6 @@ msgid "Error while deleting."
 msgstr "നീക്കം ചെയ്യുമ്പോള്‍ പിശകു്."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1527
-#| msgid ""
-#| "Files in the folder \"%B\" cannot be deleted because you do not have "
-#| "permissions to see them."
 msgid ""
 "Files in the folder “%B” cannot be deleted because you do not have "
 "permissions to see them."
@@ -1021,9 +986,6 @@ msgstr "\"%B\" വായിക്കുവാനുളള അനുവാദം 
 #: ../libnautilus-private/nautilus-file-operations.c:1530
 #: ../libnautilus-private/nautilus-file-operations.c:2550
 #: ../libnautilus-private/nautilus-file-operations.c:3550
-#| msgid ""
-#| "There was an error getting information about the files in the folder \"%B"
-#| "\"."
 msgid "There was an error getting information about the files in the folder “%B”."
 msgstr "\"%B\" എന്ന അറയിലെ ഫയലുകളെക്കുറിച്ചുള്ള വിവരം ലഭിയ്ക്കുന്നതില്‍ ഒരു പിശകുണ്ടായി."
 
@@ -1033,9 +995,6 @@ msgid "_Skip files"
 msgstr "_ഉപേക്ഷിക്കുക"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1560
-#| msgid ""
-#| "The folder \"%B\" cannot be deleted because you do not have permissions "
-#| "to read it."
 msgid ""
 "The folder “%B” cannot be deleted because you do not have permissions to "
 "read it."
@@ -1044,7 +1003,6 @@ msgstr "\"%B\" വായിക്കുവാനുളള അനുവാദം 
 #: ../libnautilus-private/nautilus-file-operations.c:1563
 #: ../libnautilus-private/nautilus-file-operations.c:2589
 #: ../libnautilus-private/nautilus-file-operations.c:3595
-#| msgid "There was an error reading the folder \"%B\"."
 msgid "There was an error reading the folder “%B”."
 msgstr "\"%B\" ഫോള്‍ഡര്‍ വായിയ്ക്കുന്നതില്‍ തകരാര്‍."
 
@@ -1069,7 +1027,6 @@ msgstr[1] "%'d ഫയലുകള്‍ ചവറ്റുകുട്ടയി�
 
 #. Translators: %B is a file name
 #: ../libnautilus-private/nautilus-file-operations.c:1808
-#| msgid "Cannot move file to trash, do you want to delete immediately?"
 msgid "“%B” can't be put in the trash. Do you want to delete it immediately?"
 msgstr "“%B” ചവറ്റുകുട്ടയിലേക്കു് നീക്കം ചെയ്യുവാന്‍ സാധ്യമല്ല, നിങ്ങള്‍ക്കു് ഉടന്‍ ഇതു്  നീക്കം ചെയ്യണമോ?"
 
@@ -1113,7 +1070,6 @@ msgstr "ചവറ്റുകുട്ട _വെടിപ്പാക്കേ�
 #: ../libnautilus-private/nautilus-file-operations.c:2362
 #: ../src/nautilus-view.c:6461
 #, c-format
-#| msgid "Unable to stop %s"
 msgid "Unable to access “%s”"
 msgstr "%s ലഭ്യമാക്കുവാന്‍ സാധ്യമല്ല"
 
@@ -1163,34 +1119,24 @@ msgid "Error while moving files to trash."
 msgstr "ഫയലുകള്‍ നീക്കംചെയ്യുന്നതില്‍ പിശക്."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2547
-#| msgid ""
-#| "Files in the folder \"%B\" cannot be handled because you do not have "
-#| "permissions to see them."
 msgid ""
 "Files in the folder “%B” cannot be handled because you do not have "
 "permissions to see them."
 msgstr "\"%B\" വായിക്കുവാനുളള അനുവാദം നിങ്ങള്‍ക്കില്ലാത്തതിനാല്‍ ഇതിലൊന്നും ചെയ്യാന്‍ സാധ്യമല്ല."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2586
-#| msgid ""
-#| "The folder \"%B\" cannot be handled because you do not have permissions "
-#| "to read it."
 msgid ""
 "The folder “%B” cannot be handled because you do not have permissions to "
 "read it."
 msgstr "\"%B\" വായിക്കുവാനുളള അനുവാദം നിങ്ങള്‍ക്കില്ലാത്തതിനാല്‍ ഇതിലൊന്നും ചെയ്യാന്‍ സാധ്യമല്ല."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2663
-#| msgid ""
-#| "The file \"%B\" cannot be handled because you do not have permissions to "
-#| "read it."
 msgid ""
 "The file “%B” cannot be handled because you do not have permissions to read "
 "it."
 msgstr "\"%B\" വായിക്കുവാനുളള അനുവാദം നിങ്ങള്‍ക്കില്ലാത്തതിനാല്‍ ഇതിലൊന്നും ചെയ്യാന്‍ സാധ്യമല്ല."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2666
-#| msgid "There was an error getting information about \"%B\"."
 msgid "There was an error getting information about “%B”."
 msgstr "\"%B\" നെപ്പറ്റിയുള്ള വിവരങ്ങള്‍ ലഭ്യമാക്കുന്നതില്‍ പിശകു്."
 
@@ -1198,7 +1144,6 @@ msgstr "\"%B\" നെപ്പറ്റിയുള്ള വിവരങ്ങ�
 #: ../libnautilus-private/nautilus-file-operations.c:2816
 #: ../libnautilus-private/nautilus-file-operations.c:2855
 #: ../libnautilus-private/nautilus-file-operations.c:2885
-#| msgid "Error while copying to \"%B\"."
 msgid "Error while copying to “%B”."
 msgstr "\"%B\"-ലേയ്ക്കു് പകര്‍ത്തുന്നതില്‍ പിശക്."
 
@@ -1232,17 +1177,14 @@ msgid "The destination is read-only."
 msgstr "ലക്ഷ്യസ്ഥാനത്തുളള ഡിസ്കു് എഴുതാന്‍പറ്റാത്തതാണു്."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2945
-#| msgid "Moving \"%B\" to \"%B\""
 msgid "Moving “%B” to “%B”"
 msgstr "\"%B\" നെ  \"%B\" ലേയ്ക്കു് മാറ്റുന്നു."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2946
-#| msgid "Copying \"%B\" to \"%B\""
 msgid "Copying “%B” to “%B”"
 msgstr "\"%B\" നെ  \"%B\" ലേയ്ക്കു് പകര്‍ത്തുന്നു."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2953
-#| msgid "Duplicating \"%B\""
 msgid "Duplicating “%B”"
 msgstr "\"%B\" ന്റെ തനിപ്പകര്‍പ്പുണ്ടാക്കുന്നു"
 
@@ -1289,32 +1231,22 @@ msgstr[0] "%S of %S — %T left (%S/sec)"
 msgstr[1] "%S of %S — %T left (%S/sec)"
 
 #: ../libnautilus-private/nautilus-file-operations.c:3414
-#| msgid ""
-#| "The folder \"%B\" cannot be copied because you do not have permissions to "
-#| "create it in the destination."
 msgid ""
 "The folder “%B” cannot be copied because you do not have permissions to "
 "create it in the destination."
 msgstr "ലക്ഷ്യസ്ഥാനത്തു് എഴുതുവാനുള്ള അനുവാദം ഇല്ലാത്തതിനാല്‍ \"%B\"  പകര്‍ത്തുവാന്‍ സാധ്യമല്ല."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3417
-#| msgid "There was an error creating the folder \"%B\"."
 msgid "There was an error creating the folder “%B”."
 msgstr "\"%B\" ഫോള്‍ഡര്‍ ഉണ്ടാക്കുന്നതില്‍ തകരാര്‍."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3547
-#| msgid ""
-#| "Files in the folder \"%B\" cannot be copied because you do not have "
-#| "permissions to see them."
 msgid ""
 "Files in the folder “%B” cannot be copied because you do not have "
 "permissions to see them."
 msgstr "വായിയ്ക്കാനുള്ള അനുവാദം ഇല്ലാത്തതിനാല്‍ \"%B\"  പകര്‍ത്തുവാന്‍ സാധ്യമല്ല."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3592
-#| msgid ""
-#| "The folder \"%B\" cannot be copied because you do not have permissions to "
-#| "read it."
 msgid ""
 "The folder “%B” cannot be copied because you do not have permissions to read "
 "it."
@@ -1323,7 +1255,6 @@ msgstr "\"%B\" വായിക്കുവാനുളള അനുവാദം 
 #: ../libnautilus-private/nautilus-file-operations.c:3637
 #: ../libnautilus-private/nautilus-file-operations.c:4330
 #: ../libnautilus-private/nautilus-file-operations.c:4945
-#| msgid "Error while moving \"%B\"."
 msgid "Error while moving “%B”."
 msgstr "\"%B\" നീക്കുന്നതില്‍ പിശക്."
 
@@ -1335,7 +1266,6 @@ msgstr "ഉറവിടമായ അറ നീക്കുവാന്‍ കഴ
 #: ../libnautilus-private/nautilus-file-operations.c:3764
 #: ../libnautilus-private/nautilus-file-operations.c:4332
 #: ../libnautilus-private/nautilus-file-operations.c:4403
-#| msgid "Error while copying \"%B\"."
 msgid "Error while copying “%B”."
 msgstr "\"%B\"-ലേക്കു് പകര്‍ത്തുന്നതില്‍ പിശക്."
 
@@ -1394,7 +1324,6 @@ msgid "Copying Files"
 msgstr "ഫയലുകള്‍ പകര്‍ത്തുന്നു"
 
 #: ../libnautilus-private/nautilus-file-operations.c:4698
-#| msgid "Preparing to Move to \"%B\""
 msgid "Preparing to Move to “%B”"
 msgstr "\"%B\"-ലേക്കു് നീക്കുവാന്‍ തയ്യാറെടുക്കുന്നു"
 
@@ -1415,7 +1344,6 @@ msgid "Moving Files"
 msgstr "ഫയലുകള്‍ നീക്കുന്നു"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5243
-#| msgid "Creating links in \"%B\""
 msgid "Creating links in “%B”"
 msgstr "\"%B\"-ല്‍ ബന്ധങ്ങളുണ്ടാക്കുന്നു"
 
@@ -1855,7 +1783,6 @@ msgstr "ഉടമസ്ഥ മാറ്റം വീണ്ടും _ചെയ�
 
 #: ../libnautilus-private/nautilus-file-utilities.c:1145
 #, c-format
-#| msgid "Could not determine original location of \"%s\" "
 msgid "Could not determine original location of “%s” "
 msgstr "\"%s\" ന്റെ നേരത്തെയുണ്ടായിരുന്ന സ്ഥാനം നിര്‍ണ്ണയിയ്ക്കാന്‍ സാധിച്ചില്ല"
 
@@ -1865,8 +1792,9 @@ msgstr "ഈ ഇനം ചവറ്റുകുട്ടയില്‍ നിന
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:81
 #, c-format
-msgid "Error while adding \"%B\": %s"
-msgstr "\"%B\" നീക്കുന്നതില്‍ പിശക് : %s"
+#| msgid "Error while adding \"%B\": %s"
+msgid "Error while adding “%s”: %s"
+msgstr "\"%s\" ചേര്‍ക്കുന്നതില്‍ പിശക് : %s"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:83
 msgid "Could not add application"
@@ -1882,7 +1810,6 @@ msgstr "അസോസിയേഷന്‍ മറക്കുക"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:173
 #, c-format
-#| msgid "Error while setting \"%s\" as default application: %s"
 msgid "Error while setting “%s” as default application: %s"
 msgstr "സ്വതവേയുള്ള പ്രയോഗത്തിനായി \"%s\" ക്രമികരിയ്ക്കുന്നതില്‍ പിശക്: %s"
 
@@ -1899,14 +1826,12 @@ msgstr "%s രേഖ"
 #. Translators; %s here is a mime-type description
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:260
 #, c-format
-#| msgid "Open all files of type \"%s\" with"
 msgid "Open all files of type “%s” with"
 msgstr "\"%s\" തരത്തിലുള്ള എല്ലാ ഫയലുകളും ഇതില്‍ തുറക്കുക"
 
 #. Translators: first %s is filename, second %s is mime-type description
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:267
 #, c-format
-#| msgid "Select an application to open %s and other files of type \"%s\""
 msgid "Select an application to open “%s” and other files of type “%s”"
 msgstr "%s ഉം \"%s\" തരത്തിലുള്ള മറ്റു് ഫയലുകളും തുറക്കാനുള്ള പ്രയോഗം തെരഞ്ഞെടുക്കുക"
 
@@ -1964,7 +1889,6 @@ msgstr "തിരയുക"
 
 #: ../libnautilus-private/nautilus-query.c:133
 #, c-format
-#| msgid "Search for \"%s\""
 msgid "Search for “%s”"
 msgstr "\"%s\"വേണ്ടി തിരയുന്നു"
 
@@ -2123,7 +2047,6 @@ msgstr ""
 "14-നും ഇടയിലുള്ളവയാണു്."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:23
-#| msgid "When to show thumbnails of image files"
 msgid "When to show thumbnails of files"
 msgstr "ചിത്രങ്ങളുടെ നഖചിത്രങ്ങള്‍ കാണിക്കേണ്ടതു്  എപ്പോള്‍"
 
@@ -2218,9 +2141,9 @@ msgid ""
 "Hidden files are either dotfiles, listed in the folder's .hidden file or "
 "backup files ending with a tilde (~)."
 msgstr ""
-"ഇതു്  true എന്നു ക്രമീകരിച്ചാല്‍, അദൃശ്യമായ ഫയലുകള്‍ ഫയല്‍ മാനേജറില്‍ കാണിയ്ക്കും. "
-"കൂടുകളില്‍ ഉളള .hidden ഫയലായ ഡോട്ടു് ഫയലുകള്‍ അല്ലെങ്കില്‍ ഒരു റ്റില്‍ഡയില്‍ (~) അവസാനിയ്ക്കുന്ന "
-"ബാക്കപ്പ് ഫയലുകളാണു് അദൃശ്യമായ ഫയലുകള്‍."
+"ഇതു്  true എന്നു ക്രമീകരിച്ചാല്‍, അദൃശ്യമായ ഫയലുകള്‍ ഫയല്‍ മാനേജറില്‍ കാണിയ്ക്കും. കൂടുകളില്‍ ഉളള ."
+"hidden ഫയലായ ഡോട്ടു് ഫയലുകള്‍ അല്ലെങ്കില്‍ ഒരു റ്റില്‍ഡയില്‍ (~) അവസാനിയ്ക്കുന്ന ബാക്കപ്പ് ഫയലുകളാണു് "
+"അദൃശ്യമായ ഫയലുകള്‍."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
 msgid "Bulk rename utility"
@@ -2234,11 +2157,10 @@ msgid ""
 "their executable name and any command line options. If the executable name "
 "is not set to a full path, it will be searched for in the search path."
 msgstr ""
-"സജ്ജമെങ്കില്‍, തെരഞ്ഞെടുത്ത ഫയലുകളുടെ കണ്ണികള്‍ നോട്ടിലസ് മാറ്റംവരുത്തി, കൂട്ടത്തോടെ "
-"പേരു് മാറ്റുന്നതിനായി ഫലം കമാന്‍ഡ് ലൈനായി കണക്കാക്കുന്നു. സ്പെയിസ് ഉപയോഗിച്ചു് "
-"മാറ്റിയിട്ടുള്ള സ്ട്രിങും കമാന്‍ഡ് ലൈന്‍ ഐച്ഛികങ്ങളുമായി ഈ കീയില്‍ സജ്ജമാക്കി പേരുമാറ്റല്‍ "
-"പ്രയോഗങ്ങള്‍ക്കു് രജിസ്ടര്‍ ചെയ്യാം. എക്സിക്യൂട്ടബിള്‍ നാമം പൂര്‍ണ്ണ പാഥായി സജ്ജമല്ലെങ്കില്‍, "
-"തെരച്ചില്‍ പാഥയില്‍ ഇതു് തെരയുന്നു."
+"സജ്ജമെങ്കില്‍, തെരഞ്ഞെടുത്ത ഫയലുകളുടെ കണ്ണികള്‍ നോട്ടിലസ് മാറ്റംവരുത്തി, കൂട്ടത്തോടെ പേരു് "
+"മാറ്റുന്നതിനായി ഫലം കമാന്‍ഡ് ലൈനായി കണക്കാക്കുന്നു. സ്പെയിസ് ഉപയോഗിച്ചു് മാറ്റിയിട്ടുള്ള സ്ട്രിങും "
+"കമാന്‍ഡ് ലൈന്‍ ഐച്ഛികങ്ങളുമായി ഈ കീയില്‍ സജ്ജമാക്കി പേരുമാറ്റല്‍ പ്രയോഗങ്ങള്‍ക്കു് രജിസ്ടര്‍ ചെയ്യാം. "
+"എക്സിക്യൂട്ടബിള്‍ നാമം പൂര്‍ണ്ണ പാഥായി സജ്ജമല്ലെങ്കില്‍, തെരച്ചില്‍ പാഥയില്‍ ഇതു് തെരയുന്നു."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:39
 msgid "List of possible captions on icons"
@@ -2446,9 +2368,7 @@ msgstr "ഒരു നാവിഗേഷന്‍ ജാലകത്തിനു�
 msgid ""
 "A string containing the saved geometry and coordinates string for navigation "
 "windows."
-msgstr ""
-"സൂക്ഷിച്ച ജോമട്രിയും നാവിഗേഷന്‍ ജാലകങ്ങള്‍ക്കുള്ള കോര്‍ഡിനേറ്റ് സ്ട്രിങും അടങ്ങുന്നൊരു "
-"സ്ട്രിങ്."
+msgstr "സൂക്ഷിച്ച ജോമട്രിയും നാവിഗേഷന്‍ ജാലകങ്ങള്‍ക്കുള്ള കോര്‍ഡിനേറ്റ് സ്ട്രിങും അടങ്ങുന്നൊരു സ്ട്രിങ്."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:75
 msgid "Whether the navigation window should be maximized."
@@ -2497,15 +2417,12 @@ msgstr "മെയിലായോ ഇന്‍സ്റ്റന്റ് മെ�
 
 #. Some sort of failure occurred. How 'bout we tell the user?
 #: ../src/nautilus-application.c:227
-#: ../src/nautilus-window-manage-views.c:1638
+#: ../src/nautilus-window-manage-views.c:1654
 msgid "Oops! Something went wrong."
 msgstr "ഒരു പിശകുണ്ടായിരിയ്ക്കുന്നു...!!"
 
 #: ../src/nautilus-application.c:229
 #, c-format
-#| msgid ""
-#| "Before running Nautilus, please create the following folder, or set "
-#| "permissions such that Nautilus can create it."
 msgid ""
 "Unable to create a required folder. Please create the following folder, or "
 "set permissions such that it can be created:\n"
@@ -2517,9 +2434,6 @@ msgstr ""
 
 #: ../src/nautilus-application.c:234
 #, c-format
-#| msgid ""
-#| "Before running Nautilus, please create the following folder, or set "
-#| "permissions such that Nautilus can create it."
 msgid ""
 "Unable to create required folders. Please create the following folders, or "
 "set permissions such that they can be created:\n"
@@ -2534,8 +2448,8 @@ msgid ""
 "Nautilus 3.0 deprecated this directory and tried migrating this "
 "configuration to ~/.config/nautilus"
 msgstr ""
-"നോട്ടിലസ് 3.0 ഈ ഡയറക്ടറി ഇല്ലാതാക്കി ഈ ക്രമീകരണം ~/.config/nautilus-ലേക്കു് "
-"നീക്കുവാന്‍ ശ്രമിച്ചു."
+"നോട്ടിലസ് 3.0 ഈ ഡയറക്ടറി ഇല്ലാതാക്കി ഈ ക്രമീകരണം ~/.config/nautilus-ലേക്കു് നീക്കുവാന്‍ "
+"ശ്രമിച്ചു."
 
 #: ../src/nautilus-application.c:883
 #: ../src/nautilus-file-management-properties.c:196
@@ -2607,14 +2521,12 @@ msgstr ""
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
 #: ../src/nautilus-application.c:1103
-#| msgid "Could not set as default"
 msgid "Could not parse arguments"
 msgstr "ആര്‍ഗ്യുമെന്റുകള്‍ പാഴ്സ് ചെയ്യുവാന്‍ സാധ്യമല്ല"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
 #: ../src/nautilus-application.c:1135
-#| msgid "Could not remove application"
 msgid "Could not register the application"
 msgstr "പ്രയോഗം രജിസ്ടര്‍ ചെയ്യുവാന്‍ സാധ്യമല്ല"
 
@@ -2624,12 +2536,10 @@ msgid "New _Window"
 msgstr "പുതിയ ജാലകം "
 
 #: ../src/nautilus-app-menu.ui.h:2
-#| msgid "Connect to Server"
 msgid "Connect to _Server"
 msgstr "_സര്‍വറിലേക്കു് കണക്ടു് ചെയ്യുക"
 
 #: ../src/nautilus-app-menu.ui.h:3
-#| msgid "_Location:"
 msgid "Enter _Location"
 msgstr "സ്ഥാ_നം നല്‍കുക:"
 
@@ -2642,7 +2552,6 @@ msgid "Prefere_nces"
 msgstr "മുന്‍‌ഗണനകള്‍"
 
 #: ../src/nautilus-app-menu.ui.h:6
-#| msgid "_About"
 msgid "_About Files"
 msgstr "ഫയലു_കളെപ്പറ്റി"
 
@@ -2658,7 +2567,6 @@ msgstr "പു_റത്തു് കടക്കുക"
 #: ../src/nautilus-autorun-software.c:143
 #: ../src/nautilus-autorun-software.c:146
 #, c-format
-#| msgid "Unable to start %s"
 msgid ""
 "Unable to start the program:\n"
 "%s"
@@ -2668,7 +2576,6 @@ msgstr ""
 
 #: ../src/nautilus-autorun-software.c:149
 #, c-format
-#| msgid "Unable to mount the location."
 msgid "Unable to locate the program"
 msgstr "പ്രോഗ്രാം കണ്ടുപിടിയ്ക്കുവാന്‍ സാധ്യമല്ല"
 
@@ -2678,15 +2585,11 @@ msgstr "ഈ സോഫ്റ്റ്‌വെയറില്‍ എന്തോ 
 
 #: ../src/nautilus-autorun-software.c:202
 #, c-format
-#| msgid ""
-#| "<big><b>This medium contains software intended to be automatically "
-#| "started. Would you like to run it?</b></big>"
 msgid ""
 "“%s” contains software intended to be automatically started. Would you like "
 "to run it?"
 msgstr ""
-"സ്വയമായി ആരംഭിയ്ക്കുന്ന സോഫ്റ്റ്‌വെയര്‍ “%s”-ല്‍ അടങ്ങുന്നു. നിങ്ങള്‍ക്കതു് "
-"പ്രവര്‍ത്തിപ്പിയ്ക്കാനാഗ്രഹമുണ്ടോ?"
+"സ്വയമായി ആരംഭിയ്ക്കുന്ന സോഫ്റ്റ്‌വെയര്‍ “%s”-ല്‍ അടങ്ങുന്നു. നിങ്ങള്‍ക്കതു് പ്രവര്‍ത്തിപ്പിയ്ക്കാനാഗ്രഹമുണ്ടോ?"
 
 #: ../src/nautilus-autorun-software.c:206
 msgid "If you don't trust this location or aren't sure, press Cancel."
@@ -2710,23 +2613,18 @@ msgid "Remove"
 msgstr "നീക്കം ചെയ്യുക"
 
 #: ../src/nautilus-bookmarks-window.ui.h:2
-#| msgid "Move _Up"
 msgid "Move Up"
 msgstr "മുകളിലേക്ക്"
 
 #: ../src/nautilus-bookmarks-window.ui.h:3
-#| msgid "Move Dow_n"
 msgid "Move Down"
 msgstr "താഴേക്ക്"
 
 #: ../src/nautilus-bookmarks-window.ui.h:4
-#| msgid "_Name:"
-#| msgid_plural "_Names:"
 msgid "_Name"
 msgstr "_പേരു്"
 
 #: ../src/nautilus-bookmarks-window.ui.h:5
-#| msgid "_Location:"
 msgid "_Location"
 msgstr "സ്ഥാ_നം"
 
@@ -2805,7 +2703,6 @@ msgid "By Search Relevance"
 msgstr "തെരച്ചിലിന്റെ പ്രാധാന്യമനുസരിച്ചു്"
 
 #: ../src/nautilus-canvas-view.c:1193
-#| msgid "Keep icons sorted by size in rows"
 msgid "Keep icons sorted by search relevance in rows"
 msgstr "ഒരു നിരയില്‍ തെരച്ചിലനുസരിച്ചു് ചിഹ്നങ്ങള്‍ നിരത്തുക"
 
@@ -2837,12 +2734,10 @@ msgstr "ഈ സ്ഥാനം സൂചനാചിത്രപ്രദര്�
 #. if it wasn't cancelled show a dialog
 #: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1860
 #: ../src/nautilus-mime-actions.c:2133
-#| msgid "Unable to start location"
 msgid "Unable to access location"
 msgstr "സ്ഥാനം ആരംഭിക്കുവാന്‍ സാധ്യമല്ല"
 
 #: ../src/nautilus-connect-server.c:74
-#| msgid "Unable to start location"
 msgid "Unable to display location"
 msgstr "സ്ഥാനം കാണിയ്ക്കുവാന്‍ സാധ്യമല്ല"
 
@@ -2876,37 +2771,32 @@ msgid "This doesn't look like an address."
 msgstr "ഇതൊരു വിലാസമല്ല."
 
 #. Translators: %s is a URI of the form "smb://foo.example.com"
-#: ../src/nautilus-connect-server-dialog.c:262
+#: ../src/nautilus-connect-server-dialog.c:265
 #, c-format
 msgid "For example, %s"
 msgstr "ഉദാഹരണത്തിനു്, %s"
 
-#: ../src/nautilus-connect-server-dialog.c:530
-#| msgid "Remove"
+#: ../src/nautilus-connect-server-dialog.c:533
 msgid "_Remove"
 msgstr "നീക്കം ചെയ്യു_ക"
 
-#: ../src/nautilus-connect-server-dialog.c:539
-#| msgid "Select All"
+#: ../src/nautilus-connect-server-dialog.c:542
 msgid "_Clear All"
 msgstr "_എല്ലാം തെരഞ്ഞെടുക്കുക"
 
-#: ../src/nautilus-connect-server-dialog.c:601
-#| msgid "Server Details"
+#: ../src/nautilus-connect-server-dialog.c:604
 msgid "_Server Address"
 msgstr "_സര്‍വര്‍ വിലാസം"
 
-#: ../src/nautilus-connect-server-dialog.c:625
-#| msgid "Network Servers"
+#: ../src/nautilus-connect-server-dialog.c:628
 msgid "_Recent Servers"
 msgstr "_ഏറ്റവും പുതിയ സര്‍വറുകള്‍"
 
-#: ../src/nautilus-connect-server-dialog.c:691
-#| msgid "_Browse..."
+#: ../src/nautilus-connect-server-dialog.c:694
 msgid "_Browse"
 msgstr "_പരതുക"
 
-#: ../src/nautilus-connect-server-dialog.c:701
+#: ../src/nautilus-connect-server-dialog.c:704
 msgid "C_onnect"
 msgstr "കണക്ടു് ചെയ്യുക"
 
@@ -2965,13 +2855,11 @@ msgstr "ചിഹ്നത്തിന്റെ വലിപ്പം മാറ�
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:787
-#| msgid "Make the selected icon resizable"
 msgid "Make the selected icons resizable"
 msgstr "തെരഞ്ഞെടുത്ത സൂചനാചിത്രം വലിപ്പവ്യത്യാസം വരുത്താവുന്നതാക്കുക"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:794
-#| msgid "Restore each selected icon to its original size"
 msgid "Restore each selected icons to its original size"
 msgstr "തെരഞ്ഞെടുത്ത സൂചനാചിത്രങ്ങള്‍ യഥാര്‍ത്ഥ വലിപ്പത്തിലാക്കുക"
 
@@ -3010,39 +2898,31 @@ msgstr "പണിയിടം"
 
 #: ../src/nautilus-error-reporting.c:68
 #, c-format
-#| msgid ""
-#| "You do not have the permissions necessary to view the contents of \"%s\"."
 msgid "You do not have the permissions necessary to view the contents of “%s”."
 msgstr "നിങ്ങള്‍ക്കു് \"%s\" ന്റെ ഉള്ളടക്കം കാണുവാനുള്ള അനുവാദമില്ല."
 
 #: ../src/nautilus-error-reporting.c:72
 #, c-format
-#| msgid "\"%s\" could not be found. Perhaps it has recently been deleted."
 msgid "“%s” could not be found. Perhaps it has recently been deleted."
 msgstr "\"%s\" കണ്ടെത്താന്‍ കഴിയാത്തില്ല. ഒരുപക്ഷേ അടുത്തിടെ അതു്  നീക്കം ചെയ്തിട്ടുണ്ടാവാം."
 
 #: ../src/nautilus-error-reporting.c:76
 #, c-format
-#| msgid "Sorry, could not display all the contents of \"%s\": %s"
 msgid "Sorry, could not display all the contents of “%s”: %s"
 msgstr "ക്ഷമിക്കുക, \"%s\"-ന്റെ എല്ലാ ഉള്ളടക്കങ്ങളും പ്രദര്‍ശിപ്പിക്കാന്‍ കഴിഞ്ഞില്ല: %s"
 
 #: ../src/nautilus-error-reporting.c:83
-#| msgid "The folder contents could not be displayed."
 msgid "This location could not be displayed."
 msgstr "ഈ സ്ഥാനം പ്രദര്‍ശിപ്പിക്കുവാന്‍ സാധ്യമല്ല."
 
 #: ../src/nautilus-error-reporting.c:107
 #, c-format
-#| msgid ""
-#| "You do not have the permissions necessary to change the group of \"%s\"."
 msgid "You do not have the permissions necessary to change the group of “%s”."
 msgstr "നിങ്ങള്‍ക്കു് \"%s\" ന്റെ കൂട്ടം മാറ്റാന്‍ അനുവാദമില്ല."
 
 #. fall through
 #: ../src/nautilus-error-reporting.c:120
 #, c-format
-#| msgid "Sorry, could not change the group of \"%s\": %s"
 msgid "Sorry, could not change the group of “%s”: %s"
 msgstr "ക്ഷമിക്കുക, \"%s\"-നുള്ള ഗ്രൂപ്പിനെ മാറ്റാന്‍‌ കഴിഞ്ഞില്ല: %s"
 
@@ -3052,7 +2932,6 @@ msgstr "ഗ്രൂപ്പ് മാറ്റുവാന്‍ സാധ്�
 
 #: ../src/nautilus-error-reporting.c:145
 #, c-format
-#| msgid "Sorry, could not change the owner of \"%s\": %s"
 msgid "Sorry, could not change the owner of “%s”: %s"
 msgstr "ക്ഷമിക്കുക, \"%s\"-നുള്ള ഉടമസ്ഥനെ മാറ്റാന്‍‌ കഴിഞ്ഞില്ല: %s"
 
@@ -3062,7 +2941,6 @@ msgstr "ഉടമസ്ഥനെ മാറ്റുവാന്‍ സാധ്�
 
 #: ../src/nautilus-error-reporting.c:167
 #, c-format
-#| msgid "Sorry, could not change the permissions of \"%s\": %s"
 msgid "Sorry, could not change the permissions of “%s”: %s"
 msgstr "ക്ഷമിക്കുക, \"%s\"-നുള്ള അനുവാദങ്ങള്‍ മാറ്റാന്‍‌ കഴിഞ്ഞില്ല: %s"
 
@@ -3072,30 +2950,21 @@ msgstr "അനുവാദങ്ങള്‍ മാറ്റുവാന്‍ �
 
 #: ../src/nautilus-error-reporting.c:204
 #, c-format
-#| msgid ""
-#| "The name \"%s\" is already used in this folder. Please use a different "
-#| "name."
 msgid "The name “%s” is already used in this location. Please use a different name."
 msgstr "\"%s\" എന്ന പേരു് നിലവില്‍ ഈ സ്ഥാനത്തു് ഉപയോഗത്തിലുണ്ടു്. ദയവായി മറ്റൊരു പേരു് തിരഞ്ഞെടുക്കുക."
 
 #: ../src/nautilus-error-reporting.c:209
 #, c-format
-#| msgid ""
-#| "There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
 msgid "There is no “%s” in this location. Perhaps it was just moved or deleted?"
 msgstr "ഈ സ്ഥാനത്തു് \"%s\" ലഭ്യമല്ല. ചിലപ്പോള്‍ അതു്  മാറ്റുകയോ എടുത്തു്  കളയുകയോ ചെയ്തിരിക്കാം?"
 
 #: ../src/nautilus-error-reporting.c:214
 #, c-format
-#| msgid "You do not have the permissions necessary to rename \"%s\"."
 msgid "You do not have the permissions necessary to rename “%s”."
 msgstr "നിങ്ങള്‍ക്കു് \"%s\"-ന്റെ പേരു് മാറ്റാന്‍ അനുവാദമില്ല."
 
 #: ../src/nautilus-error-reporting.c:219
 #, c-format
-#| msgid ""
-#| "The name \"%s\" is not valid because it contains the character \"/\". "
-#| "Please use a different name."
 msgid ""
 "The name “%s” is not valid because it contains the character “/”. Please use "
 "a different name."
@@ -3103,20 +2972,17 @@ msgstr "\"/\" ഉളളതിനാല്‍ \"%s\" എന്ന പേരു്
 
 #: ../src/nautilus-error-reporting.c:223
 #, c-format
-#| msgid "The name \"%s\" is not valid. Please use a different name."
 msgid "The name “%s” is not valid. Please use a different name."
 msgstr "\"%s\" എന്ന പേരു് അസാധുവാണു്. ദയവായി മറ്റൊരു പേരു് ഉപയോഗിക്കുക."
 
 #: ../src/nautilus-error-reporting.c:229
 #, c-format
-#| msgid "The name \"%s\" is too long. Please use a different name."
 msgid "The name “%s” is too long. Please use a different name."
 msgstr "\"%s\" എന്ന പേരിന് നീളം കൂടുതലാണ്. ദയവായി മറ്റൊരു പേരു് ഉപയോഗിക്കുക."
 
 #. fall through
 #: ../src/nautilus-error-reporting.c:243
 #, c-format
-#| msgid "Sorry, could not rename \"%s\" to \"%s\": %s"
 msgid "Sorry, could not rename “%s” to “%s”: %s"
 msgstr "ക്ഷമിക്കുക, \"%s\" എന്നതിനെ \"%s\"-പേരു് മാറ്റുവാന്‍ കഴിഞ്ഞില്ല: %s"
 
@@ -3126,7 +2992,6 @@ msgstr "വസ്തുവിന്റെ പേരു് മാറ്റുവ�
 
 #: ../src/nautilus-error-reporting.c:348
 #, c-format
-#| msgid "Renaming \"%s\" to \"%s\"."
 msgid "Renaming “%s” to “%s”."
 msgstr "\"%s\" നെ \"%s\"-ലേക്കു് പുനര്‍നാമകരണം ചെയ്യുന്നു."
 
@@ -3138,12 +3003,10 @@ msgid "None"
 msgstr "ഒന്നുമില്ല "
 
 #: ../src/nautilus-file-management-properties.ui.h:1
-#| msgid "Prefere_nces"
 msgid "Files Preferences"
 msgstr "ഫയലുകളുടെ മുന്‍‌ഗണനകള്‍"
 
 #: ../src/nautilus-file-management-properties.ui.h:2
-#| msgid "<b>Default View</b>"
 msgid "Default View"
 msgstr "സ്വതേയുള്ള കാഴ്ച"
 
@@ -3164,7 +3027,6 @@ msgid "Show hidden and _backup files"
 msgstr "ഒളിഞ്ഞിരിയ്ക്കുന്നതും കരുതിവെച്ചതുമായ ഫയലുകള്‍ കാണിക്കുക"
 
 #: ../src/nautilus-file-management-properties.ui.h:7
-#| msgid "<b>Icon View Defaults</b>"
 msgid "Icon View Defaults"
 msgstr "സ്വതേയുള്ള സൂചനാചിത്രകാഴ്ച"
 
@@ -3173,7 +3035,6 @@ msgid "Default _zoom level:"
 msgstr "സ്വതേയുള്ള വലിപ്പ നിലവാരം:"
 
 #: ../src/nautilus-file-management-properties.ui.h:9
-#| msgid "<b>List View Defaults</b>"
 msgid "List View Defaults"
 msgstr "സ്വതേയുള്ള നാമാവലി കാഴ്ച"
 
@@ -3198,7 +3059,6 @@ msgid "_Double click to open items"
 msgstr "വസ്തുക്കള്‍ തുറക്കുന്നതിനായി രണ്ടു് തവണ ക്ലിക്കു് ചെയ്യുക"
 
 #: ../src/nautilus-file-management-properties.ui.h:15
-#| msgid "<b>Executable Text Files</b>"
 msgid "Executable Text Files"
 msgstr "പ്രവര്‍ത്തിപ്പിക്കാവുന്ന രചനകള്‍"
 
@@ -3230,7 +3090,6 @@ msgstr ""
 "_N"
 
 #: ../src/nautilus-file-management-properties.ui.h:22
-#| msgid "<b>Icon Captions</b>"
 msgid "Icon Captions"
 msgstr "സൂചനാചിത്രങ്ങളുടെ തലക്കെട്ടുകള്‍"
 
@@ -3264,7 +3123,6 @@ msgstr "ഇതിലും ചെറുതായ രചനകള്‍ക്ക�
 
 #: ../src/nautilus-file-management-properties.ui.h:30
 #: ../src/nautilus-properties-window.c:4367
-#| msgid "_Folder:"
 msgid "Folders"
 msgstr "ഫോള്‍ഡറുകള്‍:"
 
@@ -3464,7 +3322,6 @@ msgid "Rating"
 msgstr "നിലവാരം"
 
 #: ../src/nautilus-image-properties-page.c:367
-#| msgid "Image Type:"
 msgid "Image Type"
 msgstr "ചിത്രത്തിന്റെ തരം"
 
@@ -3489,8 +3346,8 @@ msgid "Failed to load image information"
 msgstr "ചിത്ര-വിവരം ലഭിക്കുന്നതില്‍ പരാജയം"
 
 #: ../src/nautilus-image-properties-page.c:655
-#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-manage-views.c:1184
-#: ../src/nautilus-window-slot.c:372
+#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-manage-views.c:1200
+#: ../src/nautilus-window-slot.c:365
 msgid "Loading..."
 msgstr "കാത്തിരിക്കൂ..."
 
@@ -3551,24 +3408,20 @@ msgstr[1] "ഇതു്  %d വ്യത്യത്ഥ ജാലകങ്ങള
 
 #: ../src/nautilus-mime-actions.c:632
 #, c-format
-#| msgid "The Link \"%s\" is Broken. Move it to Trash?"
 msgid "The link “%s” is broken. Move it to Trash?"
 msgstr "ലിങ്കു് \"%s\" തകരാറിലാണു്. ചവറ്റുകുട്ടയിലേക്കു് നീക്കണമോ?"
 
 #: ../src/nautilus-mime-actions.c:634
 #, c-format
-#| msgid "The Link \"%s\" is Broken."
 msgid "The link “%s” is broken."
 msgstr "ലിങ്കു് \"%s\" തകരാറിലാണു്."
 
 #: ../src/nautilus-mime-actions.c:640
-#| msgid "This link cannot be used, because it has no target."
 msgid "This link cannot be used because it has no target."
 msgstr "ലക്ഷ്യസ്ഥാനമില്ലാത്തതിനാല്‍ കണ്ണി ഉപയോഗിക്കുവാന്‍ സാധ്യമല്ല."
 
 #: ../src/nautilus-mime-actions.c:642
 #, c-format
-#| msgid "This link cannot be used, because its target \"%s\" doesn't exist."
 msgid "This link cannot be used because its target “%s” doesn't exist."
 msgstr "\"%s\" ന്റെ ലക്ഷ്യസ്ഥാനം നിലവിലില്ലാത്തതിനാല്‍ കണ്ണി ഉപയോഗിക്കുവാന്‍ സാധ്യമല്ല."
 
@@ -3582,13 +3435,11 @@ msgstr "ചവറ്റുകുട്ടയിലേക്കു് നീക�
 
 #: ../src/nautilus-mime-actions.c:712
 #, c-format
-#| msgid "Do you want to run \"%s\", or display its contents?"
 msgid "Do you want to run “%s”, or display its contents?"
 msgstr "\"%s\" പ്രവര്‍ത്തിക്കുകയോ ഇതിലുളളവ കാണിക്കുകയോ ചെയ്യണമോ?"
 
 #: ../src/nautilus-mime-actions.c:714
 #, c-format
-#| msgid "\"%s\" is an executable text file."
 msgid "“%s” is an executable text file."
 msgstr "\"%s\" ഒരു പ്രവര്‍ത്തിപ്പിക്കാവുന്ന ഫയലാണു്."
 
@@ -3614,7 +3465,6 @@ msgstr[1] "ഇതു്  %d വ്യത്യത്ഥ കിളിവാതി
 
 #: ../src/nautilus-mime-actions.c:1114
 #, c-format
-#| msgid "Could not display \"%s\"."
 msgid "Could not display “%s”."
 msgstr "\"%s\" പ്രദര്‍ശിപ്പിയ്ക്കുവാന്‍ സാധ്യമല്ല."
 
@@ -3624,7 +3474,6 @@ msgstr "ഫയല്‍ അപരിചിതമായ തരത്തിലു�
 
 #: ../src/nautilus-mime-actions.c:1216
 #, c-format
-#| msgid "There is no application installed for %s files"
 msgid "There is no application installed for “%s” files"
 msgstr "\"%s\" ഫയലുകള്‍ക്കുള്ള പ്രയോഗങ്ങളൊന്നും ഇന്‍സ്റ്റോള്‍ ചെയ്തിട്ടില്ല"
 
@@ -3642,9 +3491,6 @@ msgstr "പ്രയോഗം കണ്ടുപിടിക്കുവാന�
 
 #: ../src/nautilus-mime-actions.c:1388
 #, c-format
-#| msgid ""
-#| "There is no application installed for %s files.\n"
-#| "Do you want to search for an application to open this file?"
 msgid ""
 "There is no application installed for “%s” files.\n"
 "Do you want to search for an application to open this file?"
@@ -3658,9 +3504,6 @@ msgstr "അവിശ്വസനീയമായ പ്രയോഗം ലഭ്�
 
 #: ../src/nautilus-mime-actions.c:1541
 #, c-format
-#| msgid ""
-#| "The application launcher \"%s\" has not been marked as trusted. If you do "
-#| "not know the source of this file, launching it may be unsafe."
 msgid ""
 "The application launcher “%s” has not been marked as trusted. If you do not "
 "know the source of this file, launching it may be unsafe."
@@ -3689,7 +3532,6 @@ msgstr "സ്ഥാനം ആരംഭിക്കുവാന്‍ സാധ�
 
 #: ../src/nautilus-mime-actions.c:2296
 #, c-format
-#| msgid "Opening \"%s\"."
 msgid "Opening “%s”."
 msgstr "\"%s\" തുറക്കുന്നു."
 
@@ -3717,7 +3559,6 @@ msgid "Recent"
 msgstr "ഏറ്റവും പുതിയതു്"
 
 #: ../src/nautilus-places-sidebar.c:557
-#| msgid "Deleting files"
 msgid "Recent files"
 msgstr "ഏറ്റവും പുതിയ ഫയലുകള്‍"
 
@@ -4141,12 +3982,10 @@ msgid "Allow _executing file as program"
 msgstr "പ്രവര്‍ത്തനത്തിലുളള ഫയല്‍ പ്രോഗ്രാമായി അനുവദിക്കുക."
 
 #: ../src/nautilus-properties-window.c:4352
-#| msgid "Apply Permissions to Enclosed Files"
 msgid "Change Permissions for Enclosed Files"
 msgstr "ഉള്‍‌പ്പെടുത്തിയിരിയ്ക്കുന്ന ഫയലുകളില്‍ അനുവാദങ്ങള്‍ ഭേദപ്പെടുത്തുക"
 
 #: ../src/nautilus-properties-window.c:4356
-#| msgid "Orange"
 msgid "Change"
 msgstr "മാറ്റുക"
 
@@ -4159,18 +3998,15 @@ msgid "You are not the owner, so you cannot change these permissions."
 msgstr "നിങ്ങള്‍ ഉടമയല്ല, അതിനാല്‍ ഈ അനുവാദങ്ങള്‍ മാറ്റാന്‍ കഴിയില്ല."
 
 #: ../src/nautilus-properties-window.c:4455
-#| msgid "SELinux context:"
 msgid "Security context:"
 msgstr "SELinux കോണ്‍ടെക്സ്റ്റ്:"
 
 #: ../src/nautilus-properties-window.c:4470
-#| msgid "Apply Permissions to Enclosed Files"
 msgid "Change Permissions for Enclosed Files..."
 msgstr "ഉള്‍‌പ്പെടുത്തിയിരിയ്ക്കുന്ന ഫയലുകളില്‍ അനുവാദങ്ങള്‍ ഭേദപ്പെടുത്തുക..."
 
 #: ../src/nautilus-properties-window.c:4480
 #, c-format
-#| msgid "The permissions of \"%s\" could not be determined."
 msgid "The permissions of “%s” could not be determined."
 msgstr "%s ന്റെ അനുവാദങ്ങള്‍ മനസ്സിലാക്കാന്‍ കഴിയില്ല."
 
@@ -4223,7 +4059,6 @@ msgid "Select type"
 msgstr "ഏതു്  തരം എന്നു് തിരഞ്ഞെടുക്കുക"
 
 #: ../src/nautilus-query-editor.c:584
-#| msgid "Select All"
 msgid "Select"
 msgstr "തെരഞ്ഞെടുക്കുക"
 
@@ -4245,7 +4080,6 @@ msgid "Current"
 msgstr "നിലവിലുള്ളതു്"
 
 #: ../src/nautilus-query-editor.c:1046
-#| msgid "Files"
 msgid "All Files"
 msgstr "എല്ലാ ഫയലുകളും"
 
@@ -4254,17 +4088,14 @@ msgid "Add a new criterion to this search"
 msgstr "ഈ തിരച്ചിലിലേക്കു് ഒരു പുതിയ വിഭാഗം ചേര്‍ക്കുക"
 
 #: ../src/nautilus-special-location-bar.c:52
-#| msgid "All executable files in this folder will appear in the Scripts menu."
 msgid "Files in this folder will appear in the Create Document menu."
 msgstr "രേഖ തയ്യാറാക്കല്‍ മെനുവില്‍ ഈ ഫോള്‍ഡറിലുള്ള ഫയലുകള്‍ കാണാം."
 
 #: ../src/nautilus-special-location-bar.c:55
-#| msgid "All executable files in this folder will appear in the Scripts menu."
 msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr "സ്ക്രിപ്റ്റ്സ് പട്ടികയില്‍ ഈ കൂടിലുള്ള നടപ്പിലാക്കാവുന്ന എല്ലാ ഫയലുകളും കാണും."
 
 #: ../src/nautilus-trash-bar.c:202
-#| msgid "_Restore"
 msgid "Restore"
 msgstr "പുനഃസ്ഥാപിയ്ക്കുക"
 
@@ -4274,7 +4105,6 @@ msgstr "തെരഞ്ഞെടുത്ത ഇനങ്ങള്‍ അവയ�
 
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:209
-#| msgid "(Empty)"
 msgid "Empty"
 msgstr "ഒഴിഞ്ഞ"
 
@@ -4338,7 +4168,6 @@ msgstr "നിലവിലുളള അറ കാണുക"
 
 #: ../src/nautilus-view.c:2892 ../src/nautilus-view.c:2927
 #, c-format
-#| msgid "\"%s\" selected"
 msgid "“%s” selected"
 msgstr "\"%s\" തെരഞ്ഞെടുത്തൂ"
 
@@ -4351,8 +4180,6 @@ msgstr[1] "%'d അറകള്‍ തിരഞ്ഞെടുത്തിരി�
 
 #: ../src/nautilus-view.c:2904
 #, c-format
-#| msgid " (containing %'d item)"
-#| msgid_plural " (containing %'d items)"
 msgid "(containing %'d item)"
 msgid_plural "(containing %'d items)"
 msgstr[0] " (%'d വസ്തു അടങ്ങുന്നു)"
@@ -4361,8 +4188,6 @@ msgstr[1] "(%'d വസ്തുക്കള്‍ അടങ്ങുന്നു
 #. translators: this is preceded with a string of form 'N folders' (N more than 1)
 #: ../src/nautilus-view.c:2915
 #, c-format
-#| msgid " (containing a total of %'d item)"
-#| msgid_plural " (containing a total of %'d items)"
 msgid "(containing a total of %'d item)"
 msgid_plural "(containing a total of %'d items)"
 msgstr[0] "(ആകെ %'d വസ്തു അടങ്ങുന്നു)"
@@ -4389,7 +4214,6 @@ msgstr[1] "%'d മറ്റ് വസ്തുക്കള്‍ തിരഞ്
 #.
 #: ../src/nautilus-view.c:2951
 #, c-format
-#| msgid "%s (%s)"
 msgid "(%s)"
 msgstr "(%s)"
 
@@ -4402,7 +4226,6 @@ msgstr "(%s)"
 #.
 #: ../src/nautilus-view.c:2975
 #, c-format
-#| msgid "%s%s, %s, %s"
 msgid "%s %s, %s %s"
 msgstr "%s %s, %s %s"
 
@@ -4413,8 +4236,6 @@ msgstr "%s കൊണ്ടു് തുറക്കുക"
 
 #: ../src/nautilus-view.c:4373
 #, c-format
-#| msgid "Use \"%s\" to open the selected item"
-#| msgid_plural "Use \"%s\" to open the selected items"
 msgid "Use “%s” to open the selected item"
 msgid_plural "Use “%s” to open the selected items"
 msgstr[0] "തിരഞ്ഞെടുത്ത വസ്തു തുറക്കുന്നതിന് \"%s\" ഉപയോഗിക്കുക"
@@ -4422,7 +4243,6 @@ msgstr[1] "തിരഞ്ഞെടുത്ത വസ്തുക്കള്�
 
 #: ../src/nautilus-view.c:5116
 #, c-format
-#| msgid "Run \"%s\" on any selected items"
 msgid "Run “%s” on any selected items"
 msgstr "\"%s\" തെരഞ്ഞെടുത്ത ഇനങ്ങളില്‍ പ്രവര്‍ത്തിപ്പിക്കുക"
 
@@ -4432,26 +4252,22 @@ msgid "Create a new document from template “%s”"
 msgstr "\"%s\" എന്ന ടെംപ്ളേറ്റില്‍ നിന്നു് രചന ഉണ്ടാക്കുക"
 
 #: ../src/nautilus-view.c:5970
-#| msgid "_Select Application"
 msgid "Select Destination"
 msgstr "ലക്ഷ്യസ്ഥാനം തെരഞ്ഞെടുക്കുക"
 
 #: ../src/nautilus-view.c:5974
-#| msgid "Select All"
 msgid "_Select"
 msgstr "തെ_രഞ്ഞെടുക്കുക"
 
 #. Translators: %s is a file name formatted for display
 #: ../src/nautilus-view.c:6488
 #, c-format
-#| msgid "Unable to mount %s"
 msgid "Unable to remove “%s”"
 msgstr "\"%s\" നീക്കം ചെയ്യുവാന്‍ കഴിഞ്ഞില്ല"
 
 #. Translators: %s is a file name formatted for display
 #: ../src/nautilus-view.c:6515
 #, c-format
-#| msgid "Unable to eject %s"
 msgid "Unable to eject “%s”"
 msgstr "\"%s\" പുറത്തെടുക്കാന്‍ സാധിച്ചില്ല"
 
@@ -4462,13 +4278,11 @@ msgstr "ഡ്രൈവ് നിര്‍ത്തുവാന്‍ സാധ�
 #. Translators: %s is a file name formatted for display
 #: ../src/nautilus-view.c:6639
 #, c-format
-#| msgid "Unable to start %s"
 msgid "Unable to start “%s”"
 msgstr "\"%s\" ആരംഭിക്കുവാന്‍ സാധ്യമല്ല"
 
 #. name, stock id, label
 #: ../src/nautilus-view.c:7130
-#| msgid "Create New _Document"
 msgid "New _Document"
 msgstr "പുതിയ രേ_ഖ ഉണ്ടാക്കുക"
 
@@ -4485,7 +4299,6 @@ msgstr "തിരഞ്ഞെടുത്ത ഇനം തുറക്കുന�
 #. label, accelerator
 #: ../src/nautilus-view.c:7134 ../src/nautilus-view.c:7392
 #: ../src/nautilus-window-menus.c:574
-#| msgid "Properties"
 msgid "P_roperties"
 msgstr "ഗു_ണഗണങ്ങള്‍"
 
@@ -4497,7 +4310,6 @@ msgstr "തിരഞ്ഞെടുത്തവയുടെ ഗുണഗണങ�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7142
-#| msgid "Create New _Folder"
 msgid "New _Folder"
 msgstr "പുതിയ _അറ"
 
@@ -4509,13 +4321,11 @@ msgstr "ഈ അറയ്ക്കുള്ളില്‍ ഒഴിഞ്ഞ പ
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7146
-#| msgid "_Invert Selection"
 msgid "New Folder with Selection"
 msgstr "തെരഞ്ഞെടുത്തതുമായി പുതിയ ഫോള്‍ഡര്‍"
 
 #. tooltip
 #: ../src/nautilus-view.c:7147
-#| msgid "Create a symbolic link for each selected item"
 msgid "Create a new folder containing the selected items"
 msgstr "തെരഞ്ഞെടുത്ത വസ്തുക്കളടങ്ങുന്ന പുതിയൊരു ഫോള്‍ഡര്‍ ഉണ്ടാക്കുക"
 
@@ -4626,27 +4436,22 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7205
-#| msgid "Send To..."
 msgid "Copy To..."
 msgstr "ഇങ്ങോട്ടു് പകര്‍ത്തുക..."
 
 #. tooltip
 #: ../src/nautilus-view.c:7206
-#| msgid "Copy the selected text to the clipboard"
 msgid "Copy selected files to another location"
 msgstr "തെരഞ്ഞെടുത്ത ഫയലുകള്‍ മറ്റൊരിടത്തേക്കു് പകര്‍ത്തുക"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7209
-#| msgid "Send To..."
 msgid "Move To..."
 msgstr "ഇങ്ങോട്ടു് നീക്കുക..."
 
 #. tooltip
 #: ../src/nautilus-view.c:7210
-#| msgid "Move the selected file out of the trash"
-#| msgid_plural "Move the selected files out of the trash"
 msgid "Move selected files to another location"
 msgstr "തെരഞ്ഞെടുത്ത ഫയലുകള്‍ മറ്റൊരു സ്ഥാനത്തേക്കു് നീക്കുക"
 
@@ -4693,7 +4498,6 @@ msgstr "ഓരോ തെരഞ്ഞടുത്ത ഇനത്തിനും 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7229
-#| msgid "Rename..."
 msgid "Rena_me..."
 msgstr "പേരു് മാറ്റു_ക..."
 
@@ -4705,7 +4509,6 @@ msgstr "തെരഞ്ഞെടുത്ത ഇനത്തിന്റെ പ�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7233
-#| msgid "Set as default"
 msgid "Set as Wallpaper"
 msgstr "വോള്‍പേപ്പറായി സജ്ജമാക്കുക"
 
@@ -4945,7 +4748,6 @@ msgid "Toggle the display of hidden files in the current window"
 msgstr "ഇപ്പോഴുള്ള പ്രദര്‍ശനരീതിയില്‍ മറഞ്ഞിരിയ്ക്കുന്ന ഫയലുകള്‍ കാണിക്കുക/കാണിക്കാതിരിയ്ക്കുക"
 
 #: ../src/nautilus-view.c:7482
-#| msgid "Run or manage scripts from %s"
 msgid "Run or manage scripts"
 msgstr "സ്ക്രിപ്റ്റുകള്‍ പ്രവര്‍ത്തിപ്പിയ്ക്കുക അല്ലെങ്കില്‍ കൈകാര്യം ചെയ്യുക"
 
@@ -4956,85 +4758,60 @@ msgstr "സ്ക്രിപ്റ്റ്സ്"
 
 #: ../src/nautilus-view.c:7837
 #, c-format
-#| msgid "Move the open folder out of the trash to \"%s\""
 msgid "Move the open folder out of the trash to “%s”"
 msgstr "തുറന്ന അറ ചവറ്റുകുട്ടയില്‍ നിന്നും \"%s\" ലേയ്ക്കു് നീക്കുക"
 
 #: ../src/nautilus-view.c:7841
 #, c-format
-#| msgid "Move the selected folder out of the trash to \"%s\""
-#| msgid_plural "Move the selected folders out of the trash to \"%s\""
 msgid "Move the selected folder out of the trash to “%s”"
 msgstr "തെരഞ്ഞെടുത്ത അറ ചവറ്റുകുട്ടയില്‍ നിന്നും \"%s\" ലേയ്ക്കു് നീക്കുക"
 
 #: ../src/nautilus-view.c:7844
 #, c-format
-#| msgid "Move the selected folder out of the trash to \"%s\""
-#| msgid_plural "Move the selected folders out of the trash to \"%s\""
 msgid "Move the selected folders out of the trash to “%s”"
 msgstr "തെരഞ്ഞെടുത്ത അറകള്‍ ചവറ്റുകുട്ടയില്‍ നിന്നും \"%s\" ലേയ്ക്കു് നീക്കുക"
 
 #: ../src/nautilus-view.c:7849
-#| msgid "Move the selected folder out of the trash"
-#| msgid_plural "Move the selected folders out of the trash"
 msgid "Move the selected folder out of the trash"
 msgstr "തെരഞ്ഞെടുത്ത അറ ചവറ്റുകുട്ടയില്‍ നിന്നും നീക്കുക"
 
 #: ../src/nautilus-view.c:7851
-#| msgid "Move the selected folder out of the trash"
-#| msgid_plural "Move the selected folders out of the trash"
 msgid "Move the selected folders out of the trash"
 msgstr "തെരഞ്ഞെടുത്ത അറകള്‍ ചവറ്റുകുട്ടയില്‍ നിന്നും നീക്കുക"
 
 #: ../src/nautilus-view.c:7857
 #, c-format
-#| msgid "Move the selected file out of the trash to \"%s\""
-#| msgid_plural "Move the selected files out of the trash to \"%s\""
 msgid "Move the selected file out of the trash to “%s”"
 msgstr "തെരഞ്ഞെടുത്ത ഫയല്‍ ചവറ്റുകുട്ടയില്‍ നിന്നും \"%s\" ലേയ്ക്കു് നീക്കുക"
 
 #: ../src/nautilus-view.c:7860
 #, c-format
-#| msgid "Move the selected file out of the trash to \"%s\""
-#| msgid_plural "Move the selected files out of the trash to \"%s\""
 msgid "Move the selected files out of the trash to “%s”"
 msgstr "തെരഞ്ഞെടുത്ത ഫയലുകള്‍ ചവറ്റുകുട്ടയില്‍ നിന്നും \"%s\" ലേയ്ക്കു് നീക്കുക"
 
 #: ../src/nautilus-view.c:7865
-#| msgid "Move the selected file out of the trash"
-#| msgid_plural "Move the selected files out of the trash"
 msgid "Move the selected file out of the trash"
 msgstr "തെരഞ്ഞെടുത്ത ഫയല്‍ ചവറ്റുകുട്ടയില്‍ നിന്നും നീക്കുക"
 
 #: ../src/nautilus-view.c:7867
-#| msgid "Move the selected file out of the trash"
-#| msgid_plural "Move the selected files out of the trash"
 msgid "Move the selected files out of the trash"
 msgstr "തെരഞ്ഞെടുത്ത ഫയലുകള്‍ ചവറ്റുകുട്ടയില്‍ നിന്നും നീക്കുക"
 
 #: ../src/nautilus-view.c:7873
 #, c-format
-#| msgid "Move the selected item out of the trash to \"%s\""
-#| msgid_plural "Move the selected items out of the trash to \"%s\""
 msgid "Move the selected item out of the trash to “%s”"
 msgstr "തെരഞ്ഞെടുത്ത ഇനം ചവറ്റുകുട്ടയില്‍ നിന്നും \"%s\" ലേയ്ക്കു് നീക്കുക"
 
 #: ../src/nautilus-view.c:7876
 #, c-format
-#| msgid "Move the selected item out of the trash to \"%s\""
-#| msgid_plural "Move the selected items out of the trash to \"%s\""
 msgid "Move the selected items out of the trash to “%s”"
 msgstr "തെരഞ്ഞെടുത്ത ഇനങ്ങള്‍ ചവറ്റുകുട്ടയില്‍ നിന്നും \"%s\" ലേയ്ക്കു് നീക്കുക"
 
 #: ../src/nautilus-view.c:7881
-#| msgid "Move the selected item out of the trash"
-#| msgid_plural "Move the selected items out of the trash"
 msgid "Move the selected item out of the trash"
 msgstr "തെരഞ്ഞെടുത്ത ഇനം ചവറ്റുകുട്ടയിലേക്കു് നീക്കുക"
 
 #: ../src/nautilus-view.c:7883
-#| msgid "Move the selected item out of the trash"
-#| msgid_plural "Move the selected items out of the trash"
 msgid "Move the selected items out of the trash"
 msgstr "തെരഞ്ഞെടുത്ത ഇനങ്ങള്‍ ചവറ്റുകുട്ടയിലേക്കു് നീക്കുക"
 
@@ -5196,7 +4973,6 @@ msgstr "വലിച്ചിട്ടതു്  ഒരു തെറ്റായ
 
 #. Translator: This is the filename used for when you dnd text to a directory
 #: ../src/nautilus-view-dnd.c:383
-#| msgid "dropped text.txt"
 msgid "Dropped Text.txt"
 msgstr "ഉപേക്ഷിച്ച Text.txt"
 
@@ -5223,12 +4999,7 @@ msgstr "കിളിവാതില്‍ _വലത്തോട്ടു് ന
 msgid "_Close Tab"
 msgstr "റ്റാബ് അ_ടയ്ക്കുക"
 
-#: ../src/nautilus-window.c:2160
-#| msgid ""
-#| "Nautilus is free software; you can redistribute it and/or modify it under "
-#| "the terms of the GNU General Public License as published by the Free "
-#| "Software Foundation; either version 2 of the License, or (at your option) "
-#| "any later version."
+#: ../src/nautilus-window.c:2162
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5239,12 +5010,7 @@ msgstr ""
 "ഫൌണ്ടേഷന്‍ പ്രസിദ്ധീകരിച്ച ഗ്നു ജനറല്‍ പബ്ലികു് ലൈസന്‍സ് ലക്കം 2 അല്ലെങ്കില്‍ അതിനേക്കാള്‍ പുതിയ പതിപ്പു്"
 "(നിങ്ങളുടെ ഇഷ്ടപ്രകാരം) പ്രകാരം ഭേദഗതി വരുത്താവുന്നതോ ആണു്."
 
-#: ../src/nautilus-window.c:2164
-#| msgid ""
-#| "Nautilus is distributed in the hope that it will be useful, but WITHOUT "
-#| "ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
-#| "FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for "
-#| "more details."
+#: ../src/nautilus-window.c:2166
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5256,7 +5022,7 @@ msgstr ""
 "ചേരുന്നതാണെന്നോ ഉള്ള പരോക്ഷമായ ഒരു വാറണ്ടി പോലും ഇല്ല. കൂടുതല്‍ വിവരങ്ങള്‍ക്കു് ഗ്നു ജനറല്‍ പബ്ലിക് "
 "ലൈസന്‍സ് കാണുക."
 
-#: ../src/nautilus-window.c:2168
+#: ../src/nautilus-window.c:2170
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5270,12 +5036,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2183
-#| msgid "Copyright © %Id–%Id The Nautilus authors"
+#: ../src/nautilus-window.c:2185
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "പകര്‍പ്പവകാശം © %Id–%Id ഫയലുകളുടെ രചയിതാക്കള്‍"
 
-#: ../src/nautilus-window.c:2189
+#: ../src/nautilus-window.c:2191
 msgid "Access and organize your files."
 msgstr "നിങ്ങളുടെ ഫയലുകളിലേക്കു് പ്രവേശിച്ചു് അവ ക്രമത്തിലാക്കുക."
 
@@ -5283,55 +5048,48 @@ msgstr "നിങ്ങളുടെ ഫയലുകളിലേക്കു് �
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2199
+#: ../src/nautilus-window.c:2201
 msgid "translator-credits"
 msgstr ""
 "സന്തോഷ് തോട്ടിങ്ങല്‍ <santhosh.thottingal@gmail.com>\n"
 "അനി പീറ്റര്‍ <peter.ani@gmail.com>"
 
 #: ../src/nautilus-window-manage-views.c:881
-#: ../src/nautilus-window-manage-views.c:1030
+#: ../src/nautilus-window-manage-views.c:1046
 #, c-format
-#| msgid "Unable to mount location"
 msgid "Unable to load location"
 msgstr "സ്ഥാനം ലഭ്യമാക്കുവാന്‍ സാധ്യമല്ല"
 
-#: ../src/nautilus-window-manage-views.c:1184
+#: ../src/nautilus-window-manage-views.c:1200
 msgid "Searching..."
 msgstr "തിരയുന്നു..."
 
-#: ../src/nautilus-window-manage-views.c:1642
-#| msgid "View or modify the properties of this folder"
+#: ../src/nautilus-window-manage-views.c:1658
 msgid "Unable to display the contents of this folder."
 msgstr "ഈ അറയില്‍ ഉള്ള വിവരങ്ങള്‍ കാണിയ്ക്കുവാന്‍ സാധ്യമല്ല."
 
-#: ../src/nautilus-window-manage-views.c:1644
-#| msgid "The location is not a folder."
+#: ../src/nautilus-window-manage-views.c:1660
 msgid "This location doesn't appear to be a folder."
 msgstr "സ്ഥാനം ഒരു അറ അല്ല."
 
-#: ../src/nautilus-window-manage-views.c:1649
-#| msgid "Please check the spelling and try again."
+#: ../src/nautilus-window-manage-views.c:1665
 msgid "Unable to find the requested file. Please check the spelling and try again."
 msgstr "ആവശ്യപ്പെട്ട ഫയല്‍ ലഭ്യമായില്ല. ദയവായി അക്ഷരതെറ്റ് പരിശോധിച്ച ശേഷം വീണ്ടും ശ്രമിക്കുക."
 
-#: ../src/nautilus-window-manage-views.c:1654
+#: ../src/nautilus-window-manage-views.c:1670
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "“%s” സ്ഥാനങ്ങള്‍ പിന്തുണയ്ക്കുന്നില്ല."
 
-#: ../src/nautilus-window-manage-views.c:1657
-#| msgid "Nautilus cannot handle this kind of location."
+#: ../src/nautilus-window-manage-views.c:1673
 msgid "Unable to handle this kind of location."
 msgstr "ഇത്തരം സ്ഥാനം കൈകാര്യം ചെയ്യുവാന്‍ സാധ്യമല്ല."
 
-#: ../src/nautilus-window-manage-views.c:1662
-#| msgid "Unable to start location"
+#: ../src/nautilus-window-manage-views.c:1678
 msgid "Unable to access the requested location."
 msgstr "ആവശ്യപ്പെട്ട സ്ഥാനിലേക്കു് പ്രവേശനം സാധ്യമല്ല."
 
-#: ../src/nautilus-window-manage-views.c:1665
-#| msgid "You do not have permissions to access the destination folder."
+#: ../src/nautilus-window-manage-views.c:1681
 msgid "Don't have permission to access the requested location."
 msgstr "ആവശ്യപ്പെട്ട സ്ഥലത്തിലേക്കു് പ്രവേശിയ്ക്കുവാന്‍ നിങ്ങള്‍ക്കു് അനുവാദമില്ല."
 
@@ -5340,7 +5098,7 @@ msgstr "ആവശ്യപ്പെട്ട സ്ഥലത്തിലേക�
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-manage-views.c:1673
+#: ../src/nautilus-window-manage-views.c:1689
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5348,7 +5106,7 @@ msgstr ""
 "ആവശ്യപ്പെട്ട സ്ഥാനം കണ്ടുപിടിയ്ക്കുവാന്‍ സാധ്യമായില്ല. അക്ഷരത്തെറ്റ് അല്ലെങ്കില്‍ നെറ്റ്‌വര്‍ക്ക് "
 "സജ്ജീകരണങ്ങള്‍ ദയവായി പരിശോധിയ്ക്കുക."
 
-#: ../src/nautilus-window-manage-views.c:1684
+#: ../src/nautilus-window-manage-views.c:1700
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "കൈകാര്യം ചെയ്യാത്ത പിശക് സന്ദേശം: %s"
@@ -5559,7 +5317,6 @@ msgstr "സന്ദര്‍ശിച്ചവയില്‍ അടുത്�
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:552
-#| msgid "Open _Location..."
 msgid "Enter _Location..."
 msgstr "സ്ഥാ_നം നല്‍കുക..."
 
@@ -5569,23 +5326,19 @@ msgstr "തുറക്കുന്നതിനായി ഒരു സഥാന�
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:555
-#| msgid "Bookmark for Nonexistent Location"
 msgid "Bookmark this Location"
 msgstr "ഈ സ്ഥാനം അടയാളക്കുറിപ്പാക്കുക"
 
 #: ../src/nautilus-window-menus.c:556
-#| msgid "Add a bookmark for the current location to this menu"
 msgid "Add a bookmark for the current location"
 msgstr "ഇപ്പോഴുള്ള സ്ഥലത്തിനൊരു അടയാളക്കുറിപ്പു് ചേര്‍ക്കുക"
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:558
-#| msgid "_Bookmarks"
 msgid "_Bookmarks..."
 msgstr "_അടയാളക്കുറിപ്പുകള്‍..."
 
 #: ../src/nautilus-window-menus.c:559
-#| msgid "Edit Bookmarks"
 msgid "Display and edit bookmarks"
 msgstr "അടയാളക്കുറിപ്പുകള്‍ പ്രദര്‍ശിപ്പിച്ചു് ചിട്ടപ്പെടുത്തുക"
 
@@ -5637,7 +5390,6 @@ msgid "Search documents and folders by name"
 msgstr "പേരു് വഴി ഈ കമ്പ്യൂട്ടറിലുളള ഡോക്യുമെന്‍റുകളും ഫോള്‍ഡറുകളും കണ്ടുപിടിക്കുക"
 
 #: ../src/nautilus-window-menus.c:597 ../src/nautilus-window-menus.c:599
-#| msgid "_List"
 msgid "List"
 msgstr "പട്ടിക"
 
@@ -5662,12 +5414,10 @@ msgid "Audio DVD"
 msgstr "ഓഡിയോ ഡിവിഡി"
 
 #: ../src/nautilus-x-content-bar.c:97
-#| msgid "Video"
 msgid "Video DVD"
 msgstr "ചലച്ചിത്ര ഡിവിഡി"
 
 #: ../src/nautilus-x-content-bar.c:99
-#| msgid "Video"
 msgid "Video CD"
 msgstr "ചലച്ചിത്ര സിഡി"
 
@@ -5676,27 +5426,22 @@ msgid "Super Video CD"
 msgstr "സൂപ്പര്‍ ചലചിത്ര സിഡി"
 
 #: ../src/nautilus-x-content-bar.c:103
-#| msgid "_Photos:"
 msgid "Photo CD"
 msgstr "ഫോട്ടോ സിഡി"
 
 #: ../src/nautilus-x-content-bar.c:105
-#| msgid "Picture"
 msgid "Picture CD"
 msgstr "ചിത്ര സിഡി"
 
 #: ../src/nautilus-x-content-bar.c:107 ../src/nautilus-x-content-bar.c:140
-#| msgid "The media contains digital photos."
 msgid "Contains digital photos"
 msgstr "ഡിജിറ്റല്‍ ചിത്രങ്ങള്‍ അടങ്ങുന്നു"
 
 #: ../src/nautilus-x-content-bar.c:109
-#| msgid "Continue"
 msgid "Contains music"
 msgstr "പാട്ടുകള്‍ അടങ്ങുന്നു"
 
 #: ../src/nautilus-x-content-bar.c:111
-#| msgid "The media contains software."
 msgid "Contains software"
 msgstr "സോഫ്റ്റ്‌വെയര്‍ അടങ്ങുന്നു."
 
@@ -5715,7 +5460,6 @@ msgid "Contains photos and music"
 msgstr "ഫോട്ടോകളും പാട്ടും അടങ്ങുന്നു"
 
 #: ../src/nautilus-x-content-bar.c:195
-#| msgid "Open %s with:"
 msgid "Open with:"
 msgstr "തുറക്കേണ്ട പ്രയോഗം:"
 
