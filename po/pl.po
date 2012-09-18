@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-15 01:12+0200\n"
-"PO-Revision-Date: 2012-09-15 01:13+0200\n"
+"POT-Creation-Date: 2012-09-18 17:06+0200\n"
+"PO-Revision-Date: 2012-09-18 17:07+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -34,15 +34,15 @@ msgstr "Uruchamianie oprogramowania"
 
 #. set dialog properties
 #: ../data/nautilus-connect-server.desktop.in.in.h:1
-#: ../src/nautilus-connect-server-dialog.c:585
+#: ../src/nautilus-connect-server-dialog.c:588
 msgid "Connect to Server"
 msgstr "Połączenie z serwerem"
 
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:27
-#: ../src/nautilus-properties-window.c:4364 ../src/nautilus-window.c:1976
-#: ../src/nautilus-window.c:2187
+#: ../src/nautilus-properties-window.c:4433 ../src/nautilus-window.c:1978
+#: ../src/nautilus-window.c:2189
 msgid "Files"
 msgstr "Pliki"
 
@@ -62,8 +62,8 @@ msgstr "X"
 msgid "Y"
 msgstr "Y"
 
-#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6170
-#: ../libnautilus-private/nautilus-file.c:6171
+#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6178
+#: ../libnautilus-private/nautilus-file.c:6179
 msgid "Text"
 msgstr "Tekst"
 
@@ -238,7 +238,7 @@ msgid "The group of the file."
 msgstr "Grupa pliku."
 
 #: ../libnautilus-private/nautilus-column-utilities.c:103
-#: ../src/nautilus-properties-window.c:4426
+#: ../src/nautilus-properties-window.c:4495
 msgid "Permissions"
 msgstr "Uprawnienia"
 
@@ -362,27 +362,27 @@ msgstr "Tego pliku nie można uruchomić"
 msgid "This file cannot be stopped"
 msgstr "Tego pliku nie można zatrzymać"
 
-#: ../libnautilus-private/nautilus-file.c:1827
+#: ../libnautilus-private/nautilus-file.c:1835
 #, c-format
 msgid "Slashes are not allowed in filenames"
 msgstr "Ukośniki w nazwach plików nie są dozwolone"
 
-#: ../libnautilus-private/nautilus-file.c:1845
+#: ../libnautilus-private/nautilus-file.c:1853
 #, c-format
 msgid "File not found"
 msgstr "Nie odnaleziono pliku"
 
-#: ../libnautilus-private/nautilus-file.c:1873
+#: ../libnautilus-private/nautilus-file.c:1881
 #, c-format
 msgid "Toplevel files cannot be renamed"
 msgstr "Nie można zmieniać nazw plików najwyższego poziomu"
 
-#: ../libnautilus-private/nautilus-file.c:1896
+#: ../libnautilus-private/nautilus-file.c:1904
 #, c-format
 msgid "Unable to rename desktop icon"
 msgstr "Nie można zmienić nazwy ikony pulpitu"
 
-#: ../libnautilus-private/nautilus-file.c:1925
+#: ../libnautilus-private/nautilus-file.c:1933
 #, c-format
 msgid "Unable to rename desktop file"
 msgstr "Nie można zmienić nazwy pliku pulpitu"
@@ -399,62 +399,62 @@ msgstr "Nie można zmienić nazwy pliku pulpitu"
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4441
+#: ../libnautilus-private/nautilus-file.c:4449
 msgid "%R"
 msgstr "%R"
 
-#: ../libnautilus-private/nautilus-file.c:4442
+#: ../libnautilus-private/nautilus-file.c:4450
 msgid "%-I:%M %P"
 msgstr "%-I:%M %P"
 
-#: ../libnautilus-private/nautilus-file.c:4443
-#: ../libnautilus-private/nautilus-file.c:4444
+#: ../libnautilus-private/nautilus-file.c:4451
+#: ../libnautilus-private/nautilus-file.c:4452
 msgid "%b %-e"
 msgstr "%-e %b"
 
-#: ../libnautilus-private/nautilus-file.c:4445
+#: ../libnautilus-private/nautilus-file.c:4453
 msgid "%b %-d %Y"
 msgstr "%-d %b %Y"
 
-#: ../libnautilus-private/nautilus-file.c:4446
+#: ../libnautilus-private/nautilus-file.c:4454
 msgid "%a, %b %e %Y %I:%M:%S %p"
 msgstr "%a, %e %b %Y o %I:%M:%S %p"
 
-#: ../libnautilus-private/nautilus-file.c:4447
+#: ../libnautilus-private/nautilus-file.c:4455
 msgid "%a, %b %e %Y %T"
 msgstr "%a, %e %b %Y o %T"
 
-#: ../libnautilus-private/nautilus-file.c:4946
+#: ../libnautilus-private/nautilus-file.c:4954
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "Zmiana uprawnień niedozwolona"
 
-#: ../libnautilus-private/nautilus-file.c:5241
+#: ../libnautilus-private/nautilus-file.c:5249
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "Zmiana właściciela niedozwolona"
 
-#: ../libnautilus-private/nautilus-file.c:5259
+#: ../libnautilus-private/nautilus-file.c:5267
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "Podany właściciel \"%s\" nie istnieje"
 
-#: ../libnautilus-private/nautilus-file.c:5523
+#: ../libnautilus-private/nautilus-file.c:5531
 #, c-format
 msgid "Not allowed to set group"
 msgstr "Zmiana grupy niedozwolona"
 
-#: ../libnautilus-private/nautilus-file.c:5541
+#: ../libnautilus-private/nautilus-file.c:5549
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "Podana grupa \"%s\" nie istnieje"
 
 #. Translators: "Me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5675
+#: ../libnautilus-private/nautilus-file.c:5683
 msgid "Me"
 msgstr "Ja"
 
-#: ../libnautilus-private/nautilus-file.c:5699
+#: ../libnautilus-private/nautilus-file.c:5707
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
@@ -462,7 +462,7 @@ msgstr[0] "%'u element"
 msgstr[1] "%'u elementy"
 msgstr[2] "%'u elementów"
 
-#: ../libnautilus-private/nautilus-file.c:5700
+#: ../libnautilus-private/nautilus-file.c:5708
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
@@ -470,7 +470,7 @@ msgstr[0] "%'u katalog"
 msgstr[1] "%'u katalogi"
 msgstr[2] "%'u katalogów"
 
-#: ../libnautilus-private/nautilus-file.c:5701
+#: ../libnautilus-private/nautilus-file.c:5709
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
@@ -479,92 +479,92 @@ msgstr[1] "%'u pliki"
 msgstr[2] "%'u plików"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6097
-#: ../libnautilus-private/nautilus-file.c:6113
+#: ../libnautilus-private/nautilus-file.c:6105
+#: ../libnautilus-private/nautilus-file.c:6121
 msgid "? items"
 msgstr "? elementów"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6103
+#: ../libnautilus-private/nautilus-file.c:6111
 msgid "? bytes"
 msgstr "? bajtów"
 
-#: ../libnautilus-private/nautilus-file.c:6120
-#: ../libnautilus-private/nautilus-file.c:6200
+#: ../libnautilus-private/nautilus-file.c:6128
+#: ../libnautilus-private/nautilus-file.c:6208
 msgid "Unknown"
 msgstr "Nieznany"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6134
-#: ../src/nautilus-properties-window.c:1173
+#: ../libnautilus-private/nautilus-file.c:6142
+#: ../src/nautilus-properties-window.c:1180
 msgid "unknown"
 msgstr "nieznany"
 
-#: ../libnautilus-private/nautilus-file.c:6164
 #: ../libnautilus-private/nautilus-file.c:6172
-#: ../libnautilus-private/nautilus-file.c:6223
+#: ../libnautilus-private/nautilus-file.c:6180
+#: ../libnautilus-private/nautilus-file.c:6231
 msgid "Program"
 msgstr "Program"
 
-#: ../libnautilus-private/nautilus-file.c:6165
+#: ../libnautilus-private/nautilus-file.c:6173
 msgid "Audio"
 msgstr "Dźwięk"
 
-#: ../libnautilus-private/nautilus-file.c:6166
+#: ../libnautilus-private/nautilus-file.c:6174
 msgid "Font"
 msgstr "Czcionka"
 
-#: ../libnautilus-private/nautilus-file.c:6167
+#: ../libnautilus-private/nautilus-file.c:6175
 #: ../src/nautilus-image-properties-page.c:716
 msgid "Image"
 msgstr "Obraz"
 
-#: ../libnautilus-private/nautilus-file.c:6168
+#: ../libnautilus-private/nautilus-file.c:6176
 msgid "Archive"
 msgstr "Archiwum"
 
-#: ../libnautilus-private/nautilus-file.c:6169
+#: ../libnautilus-private/nautilus-file.c:6177
 msgid "Markup"
 msgstr "Hipertekst"
 
-#: ../libnautilus-private/nautilus-file.c:6173
+#: ../libnautilus-private/nautilus-file.c:6181
 #: ../src/nautilus-query-editor.c:418
 msgid "Video"
 msgstr "Wideo"
 
-#: ../libnautilus-private/nautilus-file.c:6174
+#: ../libnautilus-private/nautilus-file.c:6182
 msgid "Contacts"
 msgstr "Kontakty"
 
-#: ../libnautilus-private/nautilus-file.c:6175
+#: ../libnautilus-private/nautilus-file.c:6183
 msgid "Calendar"
 msgstr "Kalendarz"
 
-#: ../libnautilus-private/nautilus-file.c:6176
+#: ../libnautilus-private/nautilus-file.c:6184
 msgid "Document"
 msgstr "Dokument"
 
-#: ../libnautilus-private/nautilus-file.c:6177
+#: ../libnautilus-private/nautilus-file.c:6185
 #: ../src/nautilus-query-editor.c:484
 msgid "Presentation"
 msgstr "Prezentacja"
 
-#: ../libnautilus-private/nautilus-file.c:6178
+#: ../libnautilus-private/nautilus-file.c:6186
 #: ../src/nautilus-query-editor.c:468
 msgid "Spreadsheet"
 msgstr "Arkusz kalkulacyjny"
 
-#: ../libnautilus-private/nautilus-file.c:6225
+#: ../libnautilus-private/nautilus-file.c:6233
 msgid "Binary"
 msgstr "Plik binarny"
 
-#: ../libnautilus-private/nautilus-file.c:6229
+#: ../libnautilus-private/nautilus-file.c:6237
 msgid "Folder"
 msgstr "Katalog"
 
-#: ../libnautilus-private/nautilus-file.c:6260
+#: ../libnautilus-private/nautilus-file.c:6268
 msgid "Link"
 msgstr "Dowiązanie"
 
@@ -573,15 +573,15 @@ msgstr "Dowiązanie"
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6266
+#: ../libnautilus-private/nautilus-file.c:6274
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:124
 #, c-format
 msgid "Link to %s"
 msgstr "Dowiązanie do %s"
 
-#: ../libnautilus-private/nautilus-file.c:6282
-#: ../libnautilus-private/nautilus-file.c:6296
+#: ../libnautilus-private/nautilus-file.c:6290
+#: ../libnautilus-private/nautilus-file.c:6304
 msgid "Link (broken)"
 msgstr "Dowiązanie (uszkodzone)"
 
@@ -657,13 +657,13 @@ msgstr "Pierwotny plik"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:253
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:284
-#: ../src/nautilus-properties-window.c:3167
+#: ../src/nautilus-properties-window.c:3236
 msgid "Size:"
 msgstr "Rozmiar:"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:256
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:287
-#: ../src/nautilus-properties-window.c:3149
+#: ../src/nautilus-properties-window.c:3218
 msgid "Type:"
 msgstr "Typ:"
 
@@ -2499,7 +2499,7 @@ msgstr "Wysyła pliki przez pocztę, komunikator..."
 
 #. Some sort of failure occurred. How 'bout we tell the user?
 #: ../src/nautilus-application.c:227
-#: ../src/nautilus-window-manage-views.c:1638
+#: ../src/nautilus-window-manage-views.c:1654
 msgid "Oops! Something went wrong."
 msgstr "Coś poszło źle."
 
@@ -2844,7 +2844,7 @@ msgstr ""
 "Dodanie połączenia do punktu montowania serwera"
 
 #: ../src/nautilus-connect-server-dialog.c:104
-#: ../src/nautilus-properties-window.c:5082 ../src/nautilus-view.c:1441
+#: ../src/nautilus-properties-window.c:5151 ../src/nautilus-view.c:1441
 msgid "There was an error displaying help."
 msgstr "Wystąpił błąd podczas wyświetlania pomocy."
 
@@ -2857,32 +2857,32 @@ msgid "This doesn't look like an address."
 msgstr "To nie jest adres."
 
 #. Translators: %s is a URI of the form "smb://foo.example.com"
-#: ../src/nautilus-connect-server-dialog.c:262
+#: ../src/nautilus-connect-server-dialog.c:265
 #, c-format
 msgid "For example, %s"
 msgstr "Na przykład %s"
 
-#: ../src/nautilus-connect-server-dialog.c:530
+#: ../src/nautilus-connect-server-dialog.c:533
 msgid "_Remove"
 msgstr "_Usuń"
 
-#: ../src/nautilus-connect-server-dialog.c:539
+#: ../src/nautilus-connect-server-dialog.c:542
 msgid "_Clear All"
 msgstr "Wy_czyść wszystko"
 
-#: ../src/nautilus-connect-server-dialog.c:601
+#: ../src/nautilus-connect-server-dialog.c:604
 msgid "_Server Address"
 msgstr "Adres _serwera"
 
-#: ../src/nautilus-connect-server-dialog.c:625
+#: ../src/nautilus-connect-server-dialog.c:628
 msgid "_Recent Servers"
 msgstr "_Ostatnio używane serwery"
 
-#: ../src/nautilus-connect-server-dialog.c:691
+#: ../src/nautilus-connect-server-dialog.c:694
 msgid "_Browse"
 msgstr "P_rzeglądaj"
 
-#: ../src/nautilus-connect-server-dialog.c:701
+#: ../src/nautilus-connect-server-dialog.c:704
 msgid "C_onnect"
 msgstr "_Połącz"
 
@@ -3094,8 +3094,8 @@ msgstr "Zmienianie nazwy \"%s\" na \"%s\"."
 
 #. Translators: this is referred to captions under icons.
 #: ../src/nautilus-file-management-properties.c:280
-#: ../src/nautilus-properties-window.c:3939
-#: ../src/nautilus-properties-window.c:3966
+#: ../src/nautilus-properties-window.c:4008
+#: ../src/nautilus-properties-window.c:4035
 msgid "None"
 msgstr "Brak"
 
@@ -3219,7 +3219,7 @@ msgid "_Only for files smaller than:"
 msgstr "_Tylko dla plików nie większych niż:"
 
 #: ../src/nautilus-file-management-properties.ui.h:30
-#: ../src/nautilus-properties-window.c:4367
+#: ../src/nautilus-properties-window.c:4436
 msgid "Folders"
 msgstr "Katalogi"
 
@@ -3444,8 +3444,8 @@ msgid "Failed to load image information"
 msgstr "Wczytanie informacji o obrazie się nie powiodło"
 
 #: ../src/nautilus-image-properties-page.c:655
-#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-manage-views.c:1184
-#: ../src/nautilus-window-slot.c:372
+#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-manage-views.c:1200
+#: ../src/nautilus-window-slot.c:365
 msgid "Loading..."
 msgstr "Wczytywanie..."
 
@@ -3870,67 +3870,67 @@ msgstr[2] "%'d aktywnych działań na plikach"
 msgid "All file operations have been successfully completed"
 msgstr "Wszystkie działania na plikach zostały pomyślnie ukończone"
 
-#: ../src/nautilus-properties-window.c:482
+#: ../src/nautilus-properties-window.c:489
 msgid "You cannot assign more than one custom icon at a time!"
 msgstr "Nie można przypisać więcej niż jednej ikony użytkownika jednocześnie."
 
-#: ../src/nautilus-properties-window.c:483
+#: ../src/nautilus-properties-window.c:490
 msgid "Please drag just one image to set a custom icon."
 msgstr "Proszę przeciągnąć dokładnie jeden obraz, aby ustawić wygląd ikony."
 
-#: ../src/nautilus-properties-window.c:494
+#: ../src/nautilus-properties-window.c:501
 msgid "The file that you dropped is not local."
 msgstr "Przeciągnięty plik nie jest plikiem lokalnym."
 
-#: ../src/nautilus-properties-window.c:495
-#: ../src/nautilus-properties-window.c:501
+#: ../src/nautilus-properties-window.c:502
+#: ../src/nautilus-properties-window.c:508
 msgid "You can only use local images as custom icons."
 msgstr "Jako ikony użytkownika mogą być wykorzystywane tylko obrazy lokalne."
 
-#: ../src/nautilus-properties-window.c:500
+#: ../src/nautilus-properties-window.c:507
 msgid "The file that you dropped is not an image."
 msgstr "Przeciągnięty plik nie jest obrazem."
 
-#: ../src/nautilus-properties-window.c:622
+#: ../src/nautilus-properties-window.c:629
 msgid "_Name:"
 msgid_plural "_Names:"
 msgstr[0] "_Nazwa:"
 msgstr[1] "_Nazwy:"
 msgstr[2] "_Nazwy:"
 
-#: ../src/nautilus-properties-window.c:817
+#: ../src/nautilus-properties-window.c:824
 #, c-format
 msgid "Properties"
 msgstr "Właściwości"
 
-#: ../src/nautilus-properties-window.c:825
+#: ../src/nautilus-properties-window.c:832
 #, c-format
 msgid "%s Properties"
 msgstr "Właściwości %s"
 
-#: ../src/nautilus-properties-window.c:1214
+#: ../src/nautilus-properties-window.c:1221
 #, c-format
 msgctxt "MIME type description (MIME type)"
 msgid "%s (%s)"
 msgstr "%s (%s)"
 
-#: ../src/nautilus-properties-window.c:1422
+#: ../src/nautilus-properties-window.c:1429
 msgid "Cancel Group Change?"
 msgstr "Anulować zmianę grupy?"
 
-#: ../src/nautilus-properties-window.c:1837
+#: ../src/nautilus-properties-window.c:1844
 msgid "Cancel Owner Change?"
 msgstr "Anulować zmianę właściciela?"
 
-#: ../src/nautilus-properties-window.c:2153
+#: ../src/nautilus-properties-window.c:2160
 msgid "nothing"
 msgstr "nic"
 
-#: ../src/nautilus-properties-window.c:2155
+#: ../src/nautilus-properties-window.c:2162
 msgid "unreadable"
 msgstr "nieczytelne"
 
-#: ../src/nautilus-properties-window.c:2163
+#: ../src/nautilus-properties-window.c:2170
 #, c-format
 msgid "%'d item, with size %s"
 msgid_plural "%'d items, totalling %s"
@@ -3938,7 +3938,7 @@ msgstr[0] "%'d element o rozmiarze %s"
 msgstr[1] "%'d elementy o całkowitym rozmiarze %s"
 msgstr[2] "%'d elementów o całkowitym rozmiarze %s"
 
-#: ../src/nautilus-properties-window.c:2172
+#: ../src/nautilus-properties-window.c:2179
 msgid "(some contents unreadable)"
 msgstr "(część zawartości jest nieczytelna)"
 
@@ -3948,190 +3948,190 @@ msgstr "(część zawartości jest nieczytelna)"
 #. * 2-line value. Maybe there's a better way to do this, but I
 #. * couldn't think of one.
 #.
-#: ../src/nautilus-properties-window.c:2189
+#: ../src/nautilus-properties-window.c:2196
 msgid "Contents:"
 msgstr "Zawartość:"
 
 #. Translators: "used" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:2989
+#: ../src/nautilus-properties-window.c:3014
 msgid "used"
 msgstr "użytych"
 
 #. Translators: "free" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:2996
+#: ../src/nautilus-properties-window.c:3020
 msgid "free"
 msgstr "wolnych"
 
-#: ../src/nautilus-properties-window.c:2998
+#: ../src/nautilus-properties-window.c:3022
 msgid "Total capacity:"
 msgstr "Całkowita pojemność:"
 
-#: ../src/nautilus-properties-window.c:3007
+#: ../src/nautilus-properties-window.c:3025
 msgid "Filesystem type:"
 msgstr "Typ systemu plików:"
 
-#: ../src/nautilus-properties-window.c:3092
+#: ../src/nautilus-properties-window.c:3161
 msgid "Basic"
 msgstr "Podstawowe"
 
-#: ../src/nautilus-properties-window.c:3157
+#: ../src/nautilus-properties-window.c:3226
 msgid "Link target:"
 msgstr "Cel dowiązania:"
 
-#: ../src/nautilus-properties-window.c:3176
+#: ../src/nautilus-properties-window.c:3245
 msgid "Location:"
 msgstr "Położenie:"
 
-#: ../src/nautilus-properties-window.c:3182
+#: ../src/nautilus-properties-window.c:3251
 msgid "Volume:"
 msgstr "Wolumin:"
 
-#: ../src/nautilus-properties-window.c:3191
+#: ../src/nautilus-properties-window.c:3260
 msgid "Accessed:"
 msgstr "Dostęp:"
 
-#: ../src/nautilus-properties-window.c:3195
+#: ../src/nautilus-properties-window.c:3264
 msgid "Modified:"
 msgstr "Zmodyfikowano:"
 
-#: ../src/nautilus-properties-window.c:3205
+#: ../src/nautilus-properties-window.c:3274
 msgid "Free space:"
 msgstr "Wolne miejsce:"
 
 #. translators: this gets concatenated to "no read",
 #. * "no access", etc. (see following strings)
 #.
-#: ../src/nautilus-properties-window.c:3856
-#: ../src/nautilus-properties-window.c:3867
-#: ../src/nautilus-properties-window.c:3879
+#: ../src/nautilus-properties-window.c:3925
+#: ../src/nautilus-properties-window.c:3936
+#: ../src/nautilus-properties-window.c:3948
 msgid "no "
 msgstr "bez "
 
-#: ../src/nautilus-properties-window.c:3859
+#: ../src/nautilus-properties-window.c:3928
 msgid "list"
 msgstr "wyświetlania zawartości"
 
-#: ../src/nautilus-properties-window.c:3861
+#: ../src/nautilus-properties-window.c:3930
 msgid "read"
 msgstr "odczytu"
 
-#: ../src/nautilus-properties-window.c:3870
+#: ../src/nautilus-properties-window.c:3939
 msgid "create/delete"
 msgstr "tworzenia/usuwania"
 
-#: ../src/nautilus-properties-window.c:3872
+#: ../src/nautilus-properties-window.c:3941
 msgid "write"
 msgstr "zapisu"
 
-#: ../src/nautilus-properties-window.c:3881
+#: ../src/nautilus-properties-window.c:3950
 msgid "access"
 msgstr "dostępu"
 
-#: ../src/nautilus-properties-window.c:3946
+#: ../src/nautilus-properties-window.c:4015
 msgid "List files only"
 msgstr "Tylko wyświetlanie plików"
 
-#: ../src/nautilus-properties-window.c:3952
+#: ../src/nautilus-properties-window.c:4021
 msgid "Access files"
 msgstr "Dostęp do plików"
 
-#: ../src/nautilus-properties-window.c:3958
+#: ../src/nautilus-properties-window.c:4027
 msgid "Create and delete files"
 msgstr "Tworzenie i usuwanie plików"
 
-#: ../src/nautilus-properties-window.c:3973
+#: ../src/nautilus-properties-window.c:4042
 msgid "Read-only"
 msgstr "Tylko do odczytu"
 
-#: ../src/nautilus-properties-window.c:3979
+#: ../src/nautilus-properties-window.c:4048
 msgid "Read and write"
 msgstr "Odczyt i zapis"
 
-#: ../src/nautilus-properties-window.c:4006
+#: ../src/nautilus-properties-window.c:4075
 msgid "Access:"
 msgstr "Dostęp:"
 
-#: ../src/nautilus-properties-window.c:4008
+#: ../src/nautilus-properties-window.c:4077
 msgid "Folder access:"
 msgstr "Dostęp do katalogu:"
 
-#: ../src/nautilus-properties-window.c:4010
+#: ../src/nautilus-properties-window.c:4079
 msgid "File access:"
 msgstr "Dostęp do pliku:"
 
-#: ../src/nautilus-properties-window.c:4099
+#: ../src/nautilus-properties-window.c:4168
 msgid "_Owner:"
 msgstr "_Właściciel:"
 
-#: ../src/nautilus-properties-window.c:4107
-#: ../src/nautilus-properties-window.c:4371
+#: ../src/nautilus-properties-window.c:4176
+#: ../src/nautilus-properties-window.c:4440
 msgid "Owner:"
 msgstr "Właściciel:"
 
-#: ../src/nautilus-properties-window.c:4129
+#: ../src/nautilus-properties-window.c:4198
 msgid "_Group:"
 msgstr "_Grupa:"
 
-#: ../src/nautilus-properties-window.c:4137
-#: ../src/nautilus-properties-window.c:4385
+#: ../src/nautilus-properties-window.c:4206
+#: ../src/nautilus-properties-window.c:4454
 msgid "Group:"
 msgstr "Grupa:"
 
-#: ../src/nautilus-properties-window.c:4158
+#: ../src/nautilus-properties-window.c:4227
 msgid "Others"
 msgstr "Inni"
 
-#: ../src/nautilus-properties-window.c:4173
+#: ../src/nautilus-properties-window.c:4242
 msgid "Execute:"
 msgstr "Wykonywanie:"
 
-#: ../src/nautilus-properties-window.c:4176
+#: ../src/nautilus-properties-window.c:4245
 msgid "Allow _executing file as program"
 msgstr "Zezwolenie na _wykonywanie pliku jako programu"
 
-#: ../src/nautilus-properties-window.c:4352
+#: ../src/nautilus-properties-window.c:4421
 msgid "Change Permissions for Enclosed Files"
 msgstr "Zmień uprawnienia zawartych plików"
 
-#: ../src/nautilus-properties-window.c:4356
+#: ../src/nautilus-properties-window.c:4425
 msgid "Change"
 msgstr "Zmień"
 
-#: ../src/nautilus-properties-window.c:4399
+#: ../src/nautilus-properties-window.c:4468
 msgid "Others:"
 msgstr "Inni:"
 
-#: ../src/nautilus-properties-window.c:4440
+#: ../src/nautilus-properties-window.c:4509
 msgid "You are not the owner, so you cannot change these permissions."
 msgstr "Nie można zmienić tych uprawnień nie będąc właścicielem."
 
-#: ../src/nautilus-properties-window.c:4455
+#: ../src/nautilus-properties-window.c:4524
 msgid "Security context:"
 msgstr "Kontekst zabezpieczeń:"
 
-#: ../src/nautilus-properties-window.c:4470
+#: ../src/nautilus-properties-window.c:4539
 msgid "Change Permissions for Enclosed Files..."
 msgstr "Zmień uprawnienia zawartych plików..."
 
-#: ../src/nautilus-properties-window.c:4480
+#: ../src/nautilus-properties-window.c:4549
 #, c-format
 msgid "The permissions of “%s” could not be determined."
 msgstr "Nie można określić uprawnień \"%s\"."
 
-#: ../src/nautilus-properties-window.c:4483
+#: ../src/nautilus-properties-window.c:4552
 msgid "The permissions of the selected file could not be determined."
 msgstr "Nie można określić uprawnień do wybranego pliku."
 
 # wd: Nazwa karty we właściwościach pliku
-#: ../src/nautilus-properties-window.c:4727
+#: ../src/nautilus-properties-window.c:4796
 msgid "Open With"
 msgstr "Otwieranie"
 
-#: ../src/nautilus-properties-window.c:5050
+#: ../src/nautilus-properties-window.c:5119
 msgid "Creating Properties window."
 msgstr "Tworzenie okna właściwości."
 
-#: ../src/nautilus-properties-window.c:5349
+#: ../src/nautilus-properties-window.c:5418
 msgid "Select Custom Icon"
 msgstr "Wybór własnej ikony"
 
@@ -4157,7 +4157,7 @@ msgstr "Ilustracja"
 
 #: ../src/nautilus-query-editor.c:493
 msgid "Pdf / Postscript"
-msgstr "PDF / PostScript"
+msgstr "PDF/PostScript"
 
 #: ../src/nautilus-query-editor.c:501
 msgid "Text File"
@@ -5129,7 +5129,7 @@ msgstr "P_rzesuń kartę w prawo"
 msgid "_Close Tab"
 msgstr "Za_mknij kartę"
 
-#: ../src/nautilus-window.c:2160
+#: ../src/nautilus-window.c:2162
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5141,7 +5141,7 @@ msgstr ""
 "przez Fundację Wolnego Oprogramowania - według wersji drugiej tej Licencji "
 "lub którejś z późniejszych wersji. "
 
-#: ../src/nautilus-window.c:2164
+#: ../src/nautilus-window.c:2166
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5154,7 +5154,7 @@ msgstr ""
 "bliższych informacji należy zapoznać się z Powszechną Licencją Publiczną "
 "GNU. "
 
-#: ../src/nautilus-window.c:2168
+#: ../src/nautilus-window.c:2170
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5168,11 +5168,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2183
+#: ../src/nautilus-window.c:2185
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "Copyright © %Id–%Id Autorzy menedżera plików"
 
-#: ../src/nautilus-window.c:2189
+#: ../src/nautilus-window.c:2191
 msgid "Access and organize your files."
 msgstr "Organizowanie plików."
 
@@ -5180,7 +5180,7 @@ msgstr "Organizowanie plików."
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2199
+#: ../src/nautilus-window.c:2201
 msgid "translator-credits"
 msgstr ""
 "Zbigniew Chyla <chyla@alice.ci.pwr.wroc.pl>, 2000-2003\n"
@@ -5192,44 +5192,44 @@ msgstr ""
 "Aviary.pl <gnomepl@aviary.pl>, 2006-2012"
 
 #: ../src/nautilus-window-manage-views.c:881
-#: ../src/nautilus-window-manage-views.c:1030
+#: ../src/nautilus-window-manage-views.c:1046
 #, c-format
 msgid "Unable to load location"
 msgstr "Nie można wczytać położenia"
 
-#: ../src/nautilus-window-manage-views.c:1184
+#: ../src/nautilus-window-manage-views.c:1200
 msgid "Searching..."
 msgstr "Wyszukiwanie..."
 
-#: ../src/nautilus-window-manage-views.c:1642
+#: ../src/nautilus-window-manage-views.c:1658
 msgid "Unable to display the contents of this folder."
 msgstr "Nie można wyświetlić zawartości tego katalogu."
 
-#: ../src/nautilus-window-manage-views.c:1644
+#: ../src/nautilus-window-manage-views.c:1660
 msgid "This location doesn't appear to be a folder."
 msgstr "To położenie nie jest katalogiem."
 
-#: ../src/nautilus-window-manage-views.c:1649
+#: ../src/nautilus-window-manage-views.c:1665
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr ""
 "Nie można odnaleźć żądanego pliku. Proszę sprawdzić, czy wpisano je "
 "poprawnie i spróbować ponownie."
 
-#: ../src/nautilus-window-manage-views.c:1654
+#: ../src/nautilus-window-manage-views.c:1670
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "Położenia \"%s\" nie są obsługiwane."
 
-#: ../src/nautilus-window-manage-views.c:1657
+#: ../src/nautilus-window-manage-views.c:1673
 msgid "Unable to handle this kind of location."
 msgstr "Nie można obsłużyć tego rodzaju położenia."
 
-#: ../src/nautilus-window-manage-views.c:1662
+#: ../src/nautilus-window-manage-views.c:1678
 msgid "Unable to access the requested location."
 msgstr "Nie można uzyskać dostępu do żądanego położenia."
 
-#: ../src/nautilus-window-manage-views.c:1665
+#: ../src/nautilus-window-manage-views.c:1681
 msgid "Don't have permission to access the requested location."
 msgstr "Brak uprawnień do dostępu do żądanego położenia."
 
@@ -5238,7 +5238,7 @@ msgstr "Brak uprawnień do dostępu do żądanego położenia."
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-manage-views.c:1673
+#: ../src/nautilus-window-manage-views.c:1689
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5246,7 +5246,7 @@ msgstr ""
 "Nie można odnaleźć żądanego położenia. Proszę sprawdzić, czy wpisano je "
 "poprawnie oraz czy ustawienia sieci są poprawne."
 
-#: ../src/nautilus-window-manage-views.c:1684
+#: ../src/nautilus-window-manage-views.c:1700
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "Nieobsłużony komunikat błędu: %s"
