@@ -1,3 +1,23 @@
+Major changes in 3.5.92 are:
+* Add a Shell search results provider
+* Add a NautilusDirectory-based search engine implementation for network
+  directories
+* Improve performance and stability of the search engine
+* Change the Type column to only show basic type information
+* Preserve view selection when exiting search
+* Use a symbolic icon for the location entry
+* Fix wrong order of files when searching in canvas view
+* Fix inability to drop on current directory in list view
+* Fix crash when trying to undo failed directory creations
+* Fix positioning of detached tabs
+* Fix symlink creation for remote shares
+* Fix duplicate entries in the sidebar
+* Fix inability to clear entry in Connect to Server dialog
+* Fix view selector flashing while switching views
+* Plug a number of memory leaks
+* Tweak the color scheme for the pie chart in mount properties
+* Remove the SELinux context column for list view
+
 Major changes in 3.5.91 are:
 * New design for the Connect to Server dialog
 * Add the possibility to detach tabs using drag and drop
