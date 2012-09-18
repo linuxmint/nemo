@@ -2736,10 +2736,6 @@ nautilus_view_destroy (GtkWidget *object)
 	disconnect_model_handlers (view);
 
 	nautilus_view_unmerge_menus (view);
-	
-	/* We don't own the window, so no unref */
-	view->details->slot = NULL;
-	
 	nautilus_view_stop_loading (view);
 
 	for (node = view->details->scripts_directory_list; node != NULL; node = next) {
@@ -2784,6 +2780,9 @@ nautilus_view_destroy (GtkWidget *object)
 		nautilus_file_unref (view->details->directory_as_file);
 		view->details->directory_as_file = NULL;
 	}
+
+	/* We don't own the slot, so no unref */
+	view->details->slot = NULL;
 
 	GTK_WIDGET_CLASS (nautilus_view_parent_class)->destroy (object);
 }
