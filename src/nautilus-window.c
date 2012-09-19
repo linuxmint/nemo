@@ -599,7 +599,6 @@ nautilus_window_hide_sidebar (NautilusWindow *window)
 	}
 
 	nautilus_window_tear_down_sidebar (window);
-	g_settings_set_boolean (nautilus_window_state, NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR, FALSE);
 }
 
 void
@@ -616,7 +615,6 @@ nautilus_window_show_sidebar (NautilusWindow *window)
 	}
 
 	nautilus_window_set_up_sidebar (window);
-	g_settings_set_boolean (nautilus_window_state, NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR, TRUE);
 }
 
 gboolean

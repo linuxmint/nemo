@@ -615,24 +615,6 @@ static const gchar* app_actions[] = {
 };
 
 static void
-window_menus_set_bindings (NautilusWindow *window)
-{
-       GtkActionGroup *action_group;
-       GtkAction *action;
-
-       action_group = nautilus_window_get_main_action_group (window);
-
-       action = gtk_action_group_get_action (action_group,
-                                             NAUTILUS_ACTION_SHOW_HIDE_SIDEBAR);
-
-       g_settings_bind (nautilus_window_state,
-                        NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR,
-                        action,
-                        "active",
-                        G_SETTINGS_BIND_DEFAULT);
-}
-
-static void
 action_toggle_state (GSimpleAction *action,
 		     GVariant *parameter,
 		     gpointer user_data)
@@ -655,7 +637,6 @@ nautilus_window_initialize_actions (NautilusWindow *window)
 	g_action_map_add_action_entries (G_ACTION_MAP (window),
 					 win_entries, G_N_ELEMENTS (win_entries),
 					 window);
-	window_menus_set_bindings (window);
 }
 
 static void
