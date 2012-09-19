@@ -139,7 +139,6 @@ enum {
 	END_FILE_CHANGES,
 	END_LOADING,
 	FILE_CHANGED,
-	LOAD_ERROR,
 	MOVE_COPY_ITEMS,
 	REMOVE_FILE,
 	ZOOM_LEVEL_CHANGED,
@@ -228,7 +227,6 @@ struct NautilusViewDetails
 	gboolean scripts_invalid;
 	gboolean templates_invalid;
 	gboolean templates_present;
-	gboolean reported_load_error;
 
 	/* flag to indicate that no file updates should be dispatched to subclasses.
 	 * This is a workaround for bug #87701 that prevents the list view from
@@ -3858,29 +3856,10 @@ load_error_callback (NautilusDirectory *directory,
 	 */
 	nautilus_view_stop_loading (view);
 
-	/* Emit a signal to tell subclasses that a load error has
-	 * occurred, so they can handle it in the UI.
-	 */
-	g_signal_emit (view,
-		       signals[LOAD_ERROR], 0, error);
-}
-
-static void
-real_load_error (NautilusView *view, GError *error)
-{
-	/* Report only one error per failed directory load (from the UI
-	 * point of view, not from the NautilusDirectory point of view).
-	 * Otherwise you can get multiple identical errors caused by 
-	 * unrelated code that just happens to try to iterate this
-	 * directory.
-	 */
-	if (!view->details->reported_load_error) {
-		nautilus_report_error_loading_directory 
-			(nautilus_view_get_directory_as_file (view),
-			 error,
-			 nautilus_view_get_containing_window (view));
-	}
-	view->details->reported_load_error = TRUE;
+	nautilus_report_error_loading_directory
+		(nautilus_view_get_directory_as_file (view),
+		 error,
+		 nautilus_view_get_containing_window (view));
 }
 
 void
@@ -9136,8 +9115,6 @@ load_directory (NautilusView *view,
 		nautilus_directory_get_corresponding_file (directory);
 	nautilus_file_unref (old_file);
 
-	view->details->reported_load_error = FALSE;
-
 	/* FIXME bugzilla.gnome.org 45062: In theory, we also need to monitor metadata here (as
          * well as doing a call when ready), in case external forces
          * change the directory's file metadata.
@@ -9812,14 +9789,6 @@ nautilus_view_class_init (NautilusViewClass *klass)
 		              NULL, NULL,
 		              g_cclosure_marshal_generic,
 		              G_TYPE_NONE, 2, NAUTILUS_TYPE_FILE, NAUTILUS_TYPE_DIRECTORY);
-	signals[LOAD_ERROR] =
-		g_signal_new ("load_error",
-		              G_TYPE_FROM_CLASS (klass),
-		              G_SIGNAL_RUN_LAST,
-		              G_STRUCT_OFFSET (NautilusViewClass, load_error),
-		              NULL, NULL,
-		              g_cclosure_marshal_VOID__POINTER,
-		              G_TYPE_NONE, 1, G_TYPE_POINTER);
 	signals[REMOVE_FILE] =
 		g_signal_new ("remove_file",
 		              G_TYPE_FROM_CLASS (klass),
@@ -9862,7 +9831,6 @@ nautilus_view_class_init (NautilusViewClass *klass)
 
 	klass->get_selected_icon_locations = real_get_selected_icon_locations;
 	klass->is_read_only = real_is_read_only;
-	klass->load_error = real_load_error;
 	klass->can_rename_file = can_rename_file;
 	klass->start_renaming_file = start_renaming_file;
 	klass->get_backing_uri = real_get_backing_uri;
