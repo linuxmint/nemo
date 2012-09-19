@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus.master.ta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-01 17:46+0530\n"
-"PO-Revision-Date: 2012-09-01 17:47+0530\n"
+"POT-Creation-Date: 2012-09-19 20:18+0530\n"
+"PO-Revision-Date: 2012-09-19 20:25+0530\n"
 "Last-Translator: Dr.T.Vasudevan <agnihot3@gmail.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: ta\n"
@@ -33,6 +33,12 @@ msgstr ""
 msgid "Run Software"
 msgstr "மென்பொருளை இயக்கு"
 
+#. set dialog properties
+#: ../data/nautilus-connect-server.desktop.in.in.h:1
+#: ../src/nautilus-connect-server-dialog.c:588
+msgid "Connect to Server"
+msgstr "சேவகனுடன் இணை"
+
 #: ../data/nautilus.desktop.in.in.h:1
 msgid "Access and organize files"
 msgstr "கோப்புகளை அணுகு மற்றும் ஒழுங்கு படுத்து"
@@ -40,8 +46,8 @@ msgstr "கோப்புகளை அணுகு மற்றும் ஒழ
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:2
 #: ../src/nautilus-file-management-properties.ui.h:42
-#: ../src/nautilus-properties-window.c:4296 ../src/nautilus-window.c:1977
-#: ../src/nautilus-window.c:2188
+#: ../src/nautilus-properties-window.c:4433 ../src/nautilus-window.c:1978
+#: ../src/nautilus-window.c:2189
 msgid "Files"
 msgstr "கோப்புகள்"
 
@@ -57,7 +63,8 @@ msgstr "X"
 msgid "Y"
 msgstr "Y"
 
-#: ../eel/eel-editable-label.c:311
+#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6178
+#: ../libnautilus-private/nautilus-file.c:6179
 msgid "Text"
 msgstr "உரை"
 
@@ -122,11 +129,11 @@ msgstr "ரத்து செய் என்பதை அழுத்தி �
 msgid " (invalid Unicode)"
 msgstr "(செல்லுபடியாகாத யூனிகோடு)"
 
-#: ../libnautilus-private/nautilus-bookmark.c:101
+#: ../libnautilus-private/nautilus-bookmark.c:103
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:274
-#: ../src/nautilus-pathbar.c:298 ../src/nautilus-places-sidebar.c:514
-#: ../src/nautilus-query-editor.c:1175
+#: ../src/nautilus-pathbar.c:298 ../src/nautilus-places-sidebar.c:566
+#: ../src/nautilus-query-editor.c:1168
 msgid "Home"
 msgstr "இல்லம்"
 
@@ -157,7 +164,7 @@ msgstr "சேமிக்கப்பட்ட உரையை தற்கா�
 
 #. name, stock id
 #. label, accelerator
-#: ../libnautilus-private/nautilus-clipboard.c:370 ../src/nautilus-view.c:7213
+#: ../libnautilus-private/nautilus-clipboard.c:370 ../src/nautilus-view.c:7212
 msgid "Select _All"
 msgstr "(_A)அனைத்தையும் தேர்வு செய்"
 
@@ -166,122 +173,114 @@ msgstr "(_A)அனைத்தையும் தேர்வு செய்"
 msgid "Select all the text in a text field"
 msgstr "உரை புலத்தில் உள்ள அனைத்து உரையையும் தேர்வு செய்"
 
-#: ../libnautilus-private/nautilus-column-chooser.c:368
+#: ../libnautilus-private/nautilus-column-chooser.c:372
 msgid "Move _Up"
 msgstr "(_U)மேலே நகர்த்து"
 
-#: ../libnautilus-private/nautilus-column-chooser.c:378
+#: ../libnautilus-private/nautilus-column-chooser.c:382
 msgid "Move Dow_n"
 msgstr "கீழே நகர்த்து (_n)"
 
-#: ../libnautilus-private/nautilus-column-chooser.c:391
+#: ../libnautilus-private/nautilus-column-chooser.c:395
 msgid "Use De_fault"
 msgstr "முன்னிருப்பை பயன்படுத்து (_f)"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:57
-#: ../src/nautilus-list-view.c:1484
+#: ../libnautilus-private/nautilus-column-utilities.c:56
+#: ../src/nautilus-list-view.c:1483
 msgid "Name"
 msgstr "பெயர்"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:58
+#: ../libnautilus-private/nautilus-column-utilities.c:57
 msgid "The name and icon of the file."
 msgstr "கோப்பின் பெயர் மற்றும் சின்னம்"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:64
+#: ../libnautilus-private/nautilus-column-utilities.c:63
 msgid "Size"
 msgstr "அளவு"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:65
+#: ../libnautilus-private/nautilus-column-utilities.c:64
 msgid "The size of the file."
 msgstr "கோப்பின் அளவு"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:72
+#: ../libnautilus-private/nautilus-column-utilities.c:71
 msgid "Type"
 msgstr "வகை"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:73
+#: ../libnautilus-private/nautilus-column-utilities.c:72
 msgid "The type of the file."
 msgstr "கோப்பின்  வகை"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:79
+#: ../libnautilus-private/nautilus-column-utilities.c:78
 msgid "Modified"
 msgstr "திருத்தப்பட்ட"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:80
+#: ../libnautilus-private/nautilus-column-utilities.c:79
 msgid "The date the file was modified."
 msgstr "கோப்பு திருத்தப்பட்ட தேதி"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:88
+#: ../libnautilus-private/nautilus-column-utilities.c:87
 msgid "Owner"
 msgstr "உரிமையாளர்"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:89
+#: ../libnautilus-private/nautilus-column-utilities.c:88
 msgid "The owner of the file."
 msgstr "கோப்பின் உரிமையாளர்"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:96
+#: ../libnautilus-private/nautilus-column-utilities.c:95
 msgid "Group"
 msgstr "குழு"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:97
+#: ../libnautilus-private/nautilus-column-utilities.c:96
 msgid "The group of the file."
 msgstr "கோப்பின் குழு"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:104
-#: ../src/nautilus-properties-window.c:4358
+#: ../libnautilus-private/nautilus-column-utilities.c:103
+#: ../src/nautilus-properties-window.c:4495
 msgid "Permissions"
 msgstr "அனுமதிகள்"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:105
+#: ../libnautilus-private/nautilus-column-utilities.c:104
 msgid "The permissions of the file."
 msgstr "கோப்பின் அனுமதிகள்"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:112
+#: ../libnautilus-private/nautilus-column-utilities.c:111
 msgid "MIME Type"
 msgstr "மைம் வகை"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:113
+#: ../libnautilus-private/nautilus-column-utilities.c:112
 msgid "The mime type of the file."
 msgstr "கோப்பின் மைம் வகை"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:120
-msgid "Security Context"
-msgstr "பாதுகாப்பு சூழல்"
-
-#: ../libnautilus-private/nautilus-column-utilities.c:121
-msgid "The security context of the file."
-msgstr "கோப்பின் பாதுகாப்பு சூழல்."
-
-#: ../libnautilus-private/nautilus-column-utilities.c:128
+#: ../libnautilus-private/nautilus-column-utilities.c:119
 #: ../src/nautilus-image-properties-page.c:329
 msgid "Location"
 msgstr "இடம்"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:129
+#: ../libnautilus-private/nautilus-column-utilities.c:120
 msgid "The location of the file."
 msgstr "கோப்பின் இடம்"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:170
+#: ../libnautilus-private/nautilus-column-utilities.c:161
 msgid "Trashed On"
 msgstr " குப்பைதொட்டியில் வீசியது"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:171
+#: ../libnautilus-private/nautilus-column-utilities.c:162
 msgid "Date when file was moved to the Trash"
 msgstr "கோப்பு குப்பைக்கு நகர்த்தப்பட்ட தேதி"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:177
+#: ../libnautilus-private/nautilus-column-utilities.c:168
 msgid "Original Location"
 msgstr "அசல் இடம் "
 
-#: ../libnautilus-private/nautilus-column-utilities.c:178
+#: ../libnautilus-private/nautilus-column-utilities.c:169
 msgid "Original location of file before moved to the Trash"
 msgstr "கோப்பு குப்பைக்கு நகர்த்தப்படும் முன் இருந்த அசல் இடம்"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:195
+#: ../libnautilus-private/nautilus-column-utilities.c:186
 msgid "Relevance"
 msgstr "பொருத்தம்"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:196
+#: ../libnautilus-private/nautilus-column-utilities.c:187
 msgid "Relevance rank for search"
 msgstr "தேடலுக்கு பொருத்த தரவிடம்"
 
@@ -337,50 +336,50 @@ msgstr "(_B)பின்னனியாக அமை"
 msgid "Cancel"
 msgstr "ரத்து செய்"
 
-#: ../libnautilus-private/nautilus-file.c:1219
+#: ../libnautilus-private/nautilus-file.c:1221
 #: ../libnautilus-private/nautilus-vfs-file.c:356
 msgid "This file cannot be mounted"
 msgstr "இந்த கோப்பு ஏற்றப்பட முடியாதது "
 
-#: ../libnautilus-private/nautilus-file.c:1264
+#: ../libnautilus-private/nautilus-file.c:1266
 msgid "This file cannot be unmounted"
 msgstr "இந்த கோப்பு இறக்கப்பட முடியாதது "
 
-#: ../libnautilus-private/nautilus-file.c:1298
+#: ../libnautilus-private/nautilus-file.c:1300
 msgid "This file cannot be ejected"
 msgstr "இந்த கோப்பு வெளியேற்றப்பட முடியாதது "
 
-#: ../libnautilus-private/nautilus-file.c:1331
+#: ../libnautilus-private/nautilus-file.c:1333
 #: ../libnautilus-private/nautilus-vfs-file.c:534
 msgid "This file cannot be started"
 msgstr "இந்த கோப்பை துவக்க முடியாது "
 
-#: ../libnautilus-private/nautilus-file.c:1383
-#: ../libnautilus-private/nautilus-file.c:1414
+#: ../libnautilus-private/nautilus-file.c:1385
+#: ../libnautilus-private/nautilus-file.c:1416
 msgid "This file cannot be stopped"
 msgstr "இந்த கோப்பை நிறுத்த முடியாது "
 
-#: ../libnautilus-private/nautilus-file.c:1825
+#: ../libnautilus-private/nautilus-file.c:1835
 #, c-format
 msgid "Slashes are not allowed in filenames"
 msgstr "கோப்பு பெயர்களில் வெட்டுக்குறி (/) ஐ அனுமதிப்பதில்லை"
 
-#: ../libnautilus-private/nautilus-file.c:1843
+#: ../libnautilus-private/nautilus-file.c:1853
 #, c-format
 msgid "File not found"
 msgstr "கோப்பு காணவில்லை"
 
-#: ../libnautilus-private/nautilus-file.c:1871
+#: ../libnautilus-private/nautilus-file.c:1881
 #, c-format
 msgid "Toplevel files cannot be renamed"
 msgstr "உயர்மட்ட கோப்புகள் பெயரை மாற்ற முடியாது"
 
-#: ../libnautilus-private/nautilus-file.c:1894
+#: ../libnautilus-private/nautilus-file.c:1904
 #, c-format
 msgid "Unable to rename desktop icon"
 msgstr "மேல்மேசை சின்னத்தை வேறு பெயரிட முடியாது"
 
-#: ../libnautilus-private/nautilus-file.c:1923
+#: ../libnautilus-private/nautilus-file.c:1933
 #, c-format
 msgid "Unable to rename desktop file"
 msgstr "மேல்மேசை சின்னத்தை வேறு பெயரிட முடியவில்லை"
@@ -397,76 +396,76 @@ msgstr "மேல்மேசை சின்னத்தை வேறு பெ
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4433
+#: ../libnautilus-private/nautilus-file.c:4449
 msgid "%R"
 msgstr "%R"
 
-#: ../libnautilus-private/nautilus-file.c:4434
+#: ../libnautilus-private/nautilus-file.c:4450
 msgid "%-I:%M %P"
 msgstr "%-I:%M %P"
 
-#: ../libnautilus-private/nautilus-file.c:4435
-#: ../libnautilus-private/nautilus-file.c:4436
+#: ../libnautilus-private/nautilus-file.c:4451
+#: ../libnautilus-private/nautilus-file.c:4452
 msgid "%b %-e"
 msgstr "%b %-e"
 
-#: ../libnautilus-private/nautilus-file.c:4437
+#: ../libnautilus-private/nautilus-file.c:4453
 msgid "%b %-d %Y"
 msgstr "%b %-d %Y"
 
-#: ../libnautilus-private/nautilus-file.c:4438
+#: ../libnautilus-private/nautilus-file.c:4454
 msgid "%a, %b %e %Y %I:%M:%S %p"
 msgstr "%a, %b %e %Y %I:%M:%S %p"
 
-#: ../libnautilus-private/nautilus-file.c:4439
+#: ../libnautilus-private/nautilus-file.c:4455
 msgid "%a, %b %e %Y %T"
 msgstr "%a, %b %e %Y %T"
 
-#: ../libnautilus-private/nautilus-file.c:4938
+#: ../libnautilus-private/nautilus-file.c:4954
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "அனுமதிகளை அமைக்க முடியாது "
 
-#: ../libnautilus-private/nautilus-file.c:5233
+#: ../libnautilus-private/nautilus-file.c:5249
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "உரிமையாளரை அமைக்க முடியாது"
 
-#: ../libnautilus-private/nautilus-file.c:5251
+#: ../libnautilus-private/nautilus-file.c:5267
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "குறிப்பிட்ட உரிமையாளர் '%s'  இருப்பில் இல்லை "
 
-#: ../libnautilus-private/nautilus-file.c:5515
+#: ../libnautilus-private/nautilus-file.c:5531
 #, c-format
 msgid "Not allowed to set group"
 msgstr "குழுவை அமைக்க முடியாது"
 
-#: ../libnautilus-private/nautilus-file.c:5533
+#: ../libnautilus-private/nautilus-file.c:5549
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "குறிப்பிட்ட குழு '%s'  இருப்பில் இல்லை "
 
 #. Translators: "Me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5667
+#: ../libnautilus-private/nautilus-file.c:5683
 msgid "Me"
 msgstr "எனது"
 
-#: ../libnautilus-private/nautilus-file.c:5691
+#: ../libnautilus-private/nautilus-file.c:5707
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
 msgstr[0] "%'u உருப்படி"
 msgstr[1] "%'u உருப்படிகள்"
 
-#: ../libnautilus-private/nautilus-file.c:5692
+#: ../libnautilus-private/nautilus-file.c:5708
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] "%'u அடைவு"
 msgstr[1] "%'u அடைவுகள்"
 
-#: ../libnautilus-private/nautilus-file.c:5693
+#: ../libnautilus-private/nautilus-file.c:5709
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
@@ -474,38 +473,93 @@ msgstr[0] "%'u கோப்பு"
 msgstr[1] "%'u கோப்புகள்"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6086
-#: ../libnautilus-private/nautilus-file.c:6102
+#: ../libnautilus-private/nautilus-file.c:6105
+#: ../libnautilus-private/nautilus-file.c:6121
 msgid "? items"
 msgstr "? உருப்படிகள்"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6092
+#: ../libnautilus-private/nautilus-file.c:6111
 msgid "? bytes"
 msgstr "? பைட்கள்"
 
-#: ../libnautilus-private/nautilus-file.c:6107
-msgid "unknown type"
-msgstr "தெரியாத வகை"
-
-#: ../libnautilus-private/nautilus-file.c:6110
-msgid "unknown MIME type"
-msgstr "தெரியாத மைம் வகை"
+#: ../libnautilus-private/nautilus-file.c:6128
+#: ../libnautilus-private/nautilus-file.c:6208
+msgid "Unknown"
+msgstr "தெரியாத"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6124
-#: ../src/nautilus-properties-window.c:1105
+#: ../libnautilus-private/nautilus-file.c:6142
+#: ../src/nautilus-properties-window.c:1180
 msgid "unknown"
 msgstr "தெரியாத"
 
-#: ../libnautilus-private/nautilus-file.c:6175
-msgid "program"
+#: ../libnautilus-private/nautilus-file.c:6172
+#: ../libnautilus-private/nautilus-file.c:6180
+#: ../libnautilus-private/nautilus-file.c:6231
+msgid "Program"
 msgstr "நிரல்"
 
-#: ../libnautilus-private/nautilus-file.c:6195
-msgid "link"
+#: ../libnautilus-private/nautilus-file.c:6173
+msgid "Audio"
+msgstr "கேட்பொலி"
+
+#: ../libnautilus-private/nautilus-file.c:6174
+msgid "Font"
+msgstr "எழுத்துரு "
+
+#: ../libnautilus-private/nautilus-file.c:6175
+#: ../src/nautilus-image-properties-page.c:716
+msgid "Image"
+msgstr "பிம்பம்"
+
+#: ../libnautilus-private/nautilus-file.c:6176
+msgid "Archive"
+msgstr "காப்பகம் "
+
+#: ../libnautilus-private/nautilus-file.c:6177
+msgid "Markup"
+msgstr "குறியீட்டு"
+
+#: ../libnautilus-private/nautilus-file.c:6181
+#: ../src/nautilus-query-editor.c:418
+msgid "Video"
+msgstr "வீடியோ"
+
+#: ../libnautilus-private/nautilus-file.c:6182
+msgid "Contacts"
+msgstr "தொடர்புகள்"
+
+#: ../libnautilus-private/nautilus-file.c:6183
+msgid "Calendar"
+msgstr "நாள்காட்டி"
+
+#: ../libnautilus-private/nautilus-file.c:6184
+msgid "Document"
+msgstr "ஆவணம்"
+
+#: ../libnautilus-private/nautilus-file.c:6185
+#: ../src/nautilus-query-editor.c:484
+msgid "Presentation"
+msgstr "காட்சி"
+
+#: ../libnautilus-private/nautilus-file.c:6186
+#: ../src/nautilus-query-editor.c:468
+msgid "Spreadsheet"
+msgstr "விரிதாள்"
+
+#: ../libnautilus-private/nautilus-file.c:6233
+msgid "Binary"
+msgstr "இருமம்"
+
+#: ../libnautilus-private/nautilus-file.c:6237
+msgid "Folder"
+msgstr "அடைவு"
+
+#: ../libnautilus-private/nautilus-file.c:6268
+msgid "Link"
 msgstr "இணைப்பு"
 
 #. Note to localizers: convert file type string for file
@@ -513,16 +567,17 @@ msgstr "இணைப்பு"
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6201
+#: ../libnautilus-private/nautilus-file.c:6274
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:124
 #, c-format
 msgid "Link to %s"
 msgstr "%s உடன் தொடுப்பு"
 
-#: ../libnautilus-private/nautilus-file.c:6217
-msgid "link (broken)"
-msgstr "இணைப்பு(அருபட்டது)"
+#: ../libnautilus-private/nautilus-file.c:6290
+#: ../libnautilus-private/nautilus-file.c:6304
+msgid "Link (broken)"
+msgstr "இணைப்பு (அறுபட்டது)"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:141
 #, c-format
@@ -596,13 +651,13 @@ msgstr "அசல் கோப்பு"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:253
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:284
-#: ../src/nautilus-properties-window.c:3099
+#: ../src/nautilus-properties-window.c:3236
 msgid "Size:"
 msgstr "அளவு:"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:256
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:287
-#: ../src/nautilus-properties-window.c:3081
+#: ../src/nautilus-properties-window.c:3218
 msgid "Type:"
 msgstr "வகை:"
 
@@ -873,7 +928,7 @@ msgstr "குப்பைதொட்டியில் உள்ள அனை�
 #. Empty Trash menu item
 #: ../libnautilus-private/nautilus-file-operations.c:1363
 #: ../libnautilus-private/nautilus-file-operations.c:2229
-#: ../src/nautilus-places-sidebar.c:2715
+#: ../src/nautilus-places-sidebar.c:2734
 msgid "Empty _Trash"
 msgstr "(_T)குப்பையை காலி செய்"
 
@@ -924,12 +979,12 @@ msgstr "\"%B\" இல் கோப்புகளை காண உங்கள�
 
 #: ../libnautilus-private/nautilus-file-operations.c:1530
 #: ../libnautilus-private/nautilus-file-operations.c:2550
-#: ../libnautilus-private/nautilus-file-operations.c:3538
+#: ../libnautilus-private/nautilus-file-operations.c:3550
 msgid "There was an error getting information about the files in the folder “%B”."
 msgstr "அடைவு \"%B\" இல் உள்ள  கோப்புகளின்  தகவலை பெறுவதில் பிழை"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1539
-#: ../libnautilus-private/nautilus-file-operations.c:3547
+#: ../libnautilus-private/nautilus-file-operations.c:3559
 msgid "_Skip files"
 msgstr "(_S) கோப்புகளை தவிர்"
 
@@ -941,7 +996,7 @@ msgstr "\"%B\" அடைவை காண உங்களுக்கு அன�
 
 #: ../libnautilus-private/nautilus-file-operations.c:1563
 #: ../libnautilus-private/nautilus-file-operations.c:2589
-#: ../libnautilus-private/nautilus-file-operations.c:3583
+#: ../libnautilus-private/nautilus-file-operations.c:3595
 msgid "There was an error reading the folder “%B”."
 msgstr "\"%B\" அடைவை படிப்பதில் பிழை ஏற்பட்டது"
 
@@ -1007,7 +1062,7 @@ msgstr "(_n) குப்பையை காலி செய்யாதே"
 
 #. Translators: %s is a file name formatted for display
 #: ../libnautilus-private/nautilus-file-operations.c:2362
-#: ../src/nautilus-view.c:6461
+#: ../src/nautilus-view.c:6460
 #, c-format
 msgid "Unable to access “%s”"
 msgstr " \"%s\" ஐ அணுக முடியவில்லை "
@@ -1041,15 +1096,15 @@ msgstr[0] " %'d கோப்பை குப்பைக்கு நகர்�
 msgstr[1] " %'d கோப்புகளை குப்பைக்கு நகர்த்த தயார்படுத்துகிறது"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2487
-#: ../libnautilus-private/nautilus-file-operations.c:3398
-#: ../libnautilus-private/nautilus-file-operations.c:3530
-#: ../libnautilus-private/nautilus-file-operations.c:3575
+#: ../libnautilus-private/nautilus-file-operations.c:3410
+#: ../libnautilus-private/nautilus-file-operations.c:3542
+#: ../libnautilus-private/nautilus-file-operations.c:3587
 msgid "Error while copying."
 msgstr "நகலெடுக்கும் போது பிழை"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2489
-#: ../libnautilus-private/nautilus-file-operations.c:3528
-#: ../libnautilus-private/nautilus-file-operations.c:3573
+#: ../libnautilus-private/nautilus-file-operations.c:3540
+#: ../libnautilus-private/nautilus-file-operations.c:3585
 msgid "Error while moving."
 msgstr "நகர்த்தும்போது பிழை"
 
@@ -1081,79 +1136,79 @@ msgstr "\"%B\"  கோப்பை கையாள முடியாது. ஏ
 msgid "There was an error getting information about “%B”."
 msgstr "\"%B\" குறித்த தகவல் பெறுவதில் பிழை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2767
-#: ../libnautilus-private/nautilus-file-operations.c:2809
-#: ../libnautilus-private/nautilus-file-operations.c:2843
-#: ../libnautilus-private/nautilus-file-operations.c:2873
+#: ../libnautilus-private/nautilus-file-operations.c:2768
+#: ../libnautilus-private/nautilus-file-operations.c:2816
+#: ../libnautilus-private/nautilus-file-operations.c:2855
+#: ../libnautilus-private/nautilus-file-operations.c:2885
 msgid "Error while copying to “%B”."
 msgstr "\"%B\" க்கு பிரதி எடுப்பதில் பிழை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2771
+#: ../libnautilus-private/nautilus-file-operations.c:2772
 msgid "You do not have permissions to access the destination folder."
 msgstr "இலக்கு அடைவை அணுக உமக்கு அனுமதி இல்லை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2773
+#: ../libnautilus-private/nautilus-file-operations.c:2774
 msgid "There was an error getting information about the destination."
 msgstr "இலக்கு குறித்த தகவல் பெறுவதில் பிழை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2810
+#: ../libnautilus-private/nautilus-file-operations.c:2817
 msgid "The destination is not a folder."
 msgstr "இலக்கு ஒரு அடைவு இல்லை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2844
+#: ../libnautilus-private/nautilus-file-operations.c:2856
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
 msgstr "இலக்கில் தேவையான இடைவெளி இல்லை. சில கோப்புகளை நீக்கி இடம் உண்டாக்குங்கள்"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2846
+#: ../libnautilus-private/nautilus-file-operations.c:2858
 #, c-format
 msgid "%S more space is required to copy to the destination."
 msgstr "இலக்குக்கு பிரதி எடுக்க %S அதிக இடம் தேவை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2874
+#: ../libnautilus-private/nautilus-file-operations.c:2886
 msgid "The destination is read-only."
 msgstr "இலக்கு படிக்க மட்டும்"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2933
+#: ../libnautilus-private/nautilus-file-operations.c:2945
 msgid "Moving “%B” to “%B”"
 msgstr "\"%B\" ஐ  \"%B\" க்கு நகர்த்துகிறது"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2934
+#: ../libnautilus-private/nautilus-file-operations.c:2946
 msgid "Copying “%B” to “%B”"
 msgstr "\"%B\" ஐ  \"%B\" க்கு நகலெடுக்கிறது"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2941
+#: ../libnautilus-private/nautilus-file-operations.c:2953
 msgid "Duplicating “%B”"
 msgstr "\"%B\" ஐ இரண்டாம் பிரதி எடுக்கிறது"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2949
+#: ../libnautilus-private/nautilus-file-operations.c:2961
 msgid "Moving file %'d of %'d (in “%B”) to “%B”"
 msgstr " %'d கோப்பு  %'d இல் ( \"%B\") இல்  \"%B\" க்கு நகர்த்துகிறது "
 
-#: ../libnautilus-private/nautilus-file-operations.c:2951
+#: ../libnautilus-private/nautilus-file-operations.c:2963
 msgid "Copying file %'d of %'d (in “%B”) to “%B”"
 msgstr " %'d கோப்பு  %'d இல் ( \"%B\") இல்  \"%B\" க்கு நகலெடுக்கிறது"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2958
+#: ../libnautilus-private/nautilus-file-operations.c:2970
 msgid "Duplicating file %'d of %'d (in “%B”)"
 msgstr " %'d கோப்பு  %'d இல் ( \"%B\") இல், இரண்டாம் பிரதி எடுக்கிறது"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2967
+#: ../libnautilus-private/nautilus-file-operations.c:2979
 msgid "Moving file %'d of %'d to “%B”"
 msgstr " %'d கோப்பை ( %'d இல் ) \"%B\" க்கு நகர்த்துகிறது "
 
-#: ../libnautilus-private/nautilus-file-operations.c:2969
+#: ../libnautilus-private/nautilus-file-operations.c:2981
 msgid "Copying file %'d of %'d to “%B”"
 msgstr " %'d  (%'d இல்) கோப்பினை \"%B\"க்கு பிரதி எடுக்கிறது"
 
-#: ../libnautilus-private/nautilus-file-operations.c:2975
+#: ../libnautilus-private/nautilus-file-operations.c:2987
 #, c-format
 msgid "Duplicating file %'d of %'d"
 msgstr " %'d  (%'d இல்) கோப்பை இரண்டாம் பிரதி எடுக்கிறது"
 
 #. To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "4 kb of 4 MB"
-#: ../libnautilus-private/nautilus-file-operations.c:2994
+#: ../libnautilus-private/nautilus-file-operations.c:3006
 #, c-format
 msgid "%S of %S"
 msgstr "%S - %S இல்"
@@ -1163,13 +1218,13 @@ msgstr "%S - %S இல்"
 #. *
 #. * The singular/plural form will be used depending on the remaining time (i.e. the %T argument).
 #.
-#: ../libnautilus-private/nautilus-file-operations.c:3005
+#: ../libnautilus-private/nautilus-file-operations.c:3017
 msgid "%S of %S — %T left (%S/sec)"
 msgid_plural "%S of %S — %T left (%S/sec)"
 msgstr[0] "%S - %S இல்— %T மீதம் (%S/வினாடி)"
 msgstr[1] "%S - %S இல்— %T மீதம் (%S/வினாடி)"
 
-#: ../libnautilus-private/nautilus-file-operations.c:3402
+#: ../libnautilus-private/nautilus-file-operations.c:3414
 msgid ""
 "The folder “%B” cannot be copied because you do not have permissions to "
 "create it in the destination."
@@ -1177,11 +1232,11 @@ msgstr ""
 "அடைவு \"%B\"  ஐ பிரதி எடுக்க முடியாது; ஏனெனில் இலக்கில் அதை உருவாக்க தேவையான "
 "அனுமதிகள் உமக்கு இல்லை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:3405
+#: ../libnautilus-private/nautilus-file-operations.c:3417
 msgid "There was an error creating the folder “%B”."
 msgstr "அடைவு \"%B\"  ஐ உருவாக்குவதில் பிழை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:3535
+#: ../libnautilus-private/nautilus-file-operations.c:3547
 msgid ""
 "Files in the folder “%B” cannot be copied because you do not have "
 "permissions to see them."
@@ -1189,7 +1244,7 @@ msgstr ""
 "அடைவு \"%B\"  இல் உள்ள கோப்புகளை பிரதி எடுக்க முடியாது; ஏனெனில் அவற்றை காண தேவையான "
 "அனுமதிகள் உமக்கு இல்லை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:3580
+#: ../libnautilus-private/nautilus-file-operations.c:3592
 msgid ""
 "The folder “%B” cannot be copied because you do not have permissions to read "
 "it."
@@ -1197,166 +1252,166 @@ msgstr ""
 "அடைவு \"%B\" ஐ பிரதி எடுக்க முடியாது; ஏனெனில் அதை படிக்க தேவையான அனுமதிகள் உமக்கு "
 "இல்லை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:3625
-#: ../libnautilus-private/nautilus-file-operations.c:4318
-#: ../libnautilus-private/nautilus-file-operations.c:4933
+#: ../libnautilus-private/nautilus-file-operations.c:3637
+#: ../libnautilus-private/nautilus-file-operations.c:4330
+#: ../libnautilus-private/nautilus-file-operations.c:4945
 msgid "Error while moving “%B”."
 msgstr "\"%B\" ஐ நகர்த்தும்போது பிழை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:3626
+#: ../libnautilus-private/nautilus-file-operations.c:3638
 msgid "Could not remove the source folder."
 msgstr "மூல அடைவை நீக்க முடியவில்லை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:3711
-#: ../libnautilus-private/nautilus-file-operations.c:3752
-#: ../libnautilus-private/nautilus-file-operations.c:4320
-#: ../libnautilus-private/nautilus-file-operations.c:4391
+#: ../libnautilus-private/nautilus-file-operations.c:3723
+#: ../libnautilus-private/nautilus-file-operations.c:3764
+#: ../libnautilus-private/nautilus-file-operations.c:4332
+#: ../libnautilus-private/nautilus-file-operations.c:4403
 msgid "Error while copying “%B”."
 msgstr "\"%B\" ஐ பிரதி எடுக்கும்போது பிழை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:3712
+#: ../libnautilus-private/nautilus-file-operations.c:3724
 #, c-format
 msgid "Could not remove files from the already existing folder %F."
 msgstr "ஏற்கெனவே இருக்கிற அடைவு %F இலிருந்து கோப்புகளை நீக்க முடியாது."
 
-#: ../libnautilus-private/nautilus-file-operations.c:3753
+#: ../libnautilus-private/nautilus-file-operations.c:3765
 #, c-format
 msgid "Could not remove the already existing file %F."
 msgstr "ஏற்கெனவே இருக்கிற கோப்பு %F ஐ நீக்க முடியாது."
 
 #. the run_warning() frees all strings passed in automatically
-#: ../libnautilus-private/nautilus-file-operations.c:4073
-#: ../libnautilus-private/nautilus-file-operations.c:4776
+#: ../libnautilus-private/nautilus-file-operations.c:4085
+#: ../libnautilus-private/nautilus-file-operations.c:4788
 msgid "You cannot move a folder into itself."
 msgstr "அடைவை அதற்குள்ளேயே நகர்த்த முடியாது."
 
-#: ../libnautilus-private/nautilus-file-operations.c:4074
-#: ../libnautilus-private/nautilus-file-operations.c:4777
+#: ../libnautilus-private/nautilus-file-operations.c:4086
+#: ../libnautilus-private/nautilus-file-operations.c:4789
 msgid "You cannot copy a folder into itself."
 msgstr "அடைவை அதற்குள்ளேயே நகலெடுக்க முடியாது."
 
-#: ../libnautilus-private/nautilus-file-operations.c:4075
-#: ../libnautilus-private/nautilus-file-operations.c:4778
+#: ../libnautilus-private/nautilus-file-operations.c:4087
+#: ../libnautilus-private/nautilus-file-operations.c:4790
 msgid "The destination folder is inside the source folder."
 msgstr "இலக்கு  அடைவு மூல அடைவுக்குள் உள்ளது"
 
 #. the run_warning() frees all strings passed in automatically
-#: ../libnautilus-private/nautilus-file-operations.c:4106
+#: ../libnautilus-private/nautilus-file-operations.c:4118
 msgid "You cannot move a file over itself."
 msgstr "கோப்பை கோப்புக்கு மேலேயே நகர்த்த முடியாது."
 
-#: ../libnautilus-private/nautilus-file-operations.c:4107
+#: ../libnautilus-private/nautilus-file-operations.c:4119
 msgid "You cannot copy a file over itself."
 msgstr "கோப்பை கோப்புக்கு மேலேயே நகலெடுக் முடியாது."
 
-#: ../libnautilus-private/nautilus-file-operations.c:4108
+#: ../libnautilus-private/nautilus-file-operations.c:4120
 msgid "The source file would be overwritten by the destination."
 msgstr "மூல கோப்பு இலக்கால் மேலெழுதப்படும்"
 
-#: ../libnautilus-private/nautilus-file-operations.c:4322
+#: ../libnautilus-private/nautilus-file-operations.c:4334
 #, c-format
 msgid "Could not remove the already existing file with the same name in %F."
 msgstr "%F இல்  ஏற்கெனவே அதே பெயரில் உள்ள கோப்பை நீக்க முடியவில்லை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:4392
+#: ../libnautilus-private/nautilus-file-operations.c:4404
 #, c-format
 msgid "There was an error copying the file into %F."
 msgstr "%F இல் கோப்பை நகலெடுப்பதில் பிழை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:4624
-#: ../libnautilus-private/nautilus-file-operations.c:4658
+#: ../libnautilus-private/nautilus-file-operations.c:4636
+#: ../libnautilus-private/nautilus-file-operations.c:4670
 msgid "Copying Files"
 msgstr "கோப்புகளை நகலெடுக்கிறது"
 
-#: ../libnautilus-private/nautilus-file-operations.c:4686
+#: ../libnautilus-private/nautilus-file-operations.c:4698
 msgid "Preparing to Move to “%B”"
 msgstr "\"%B\" க்கு நகர்த்த தயார் ஆகிறது"
 
-#: ../libnautilus-private/nautilus-file-operations.c:4690
+#: ../libnautilus-private/nautilus-file-operations.c:4702
 #, c-format
 msgid "Preparing to move %'d file"
 msgid_plural "Preparing to move %'d files"
 msgstr[0] "%'d கோப்பு நகர்த்த தயார் ஆகிறது"
 msgstr[1] "%'d கோப்புகள் நகர்த்த தயார் ஆகிறது"
 
-#: ../libnautilus-private/nautilus-file-operations.c:4934
+#: ../libnautilus-private/nautilus-file-operations.c:4946
 #, c-format
 msgid "There was an error moving the file into %F."
 msgstr "%F இல் கோப்பை நகர்த்தும் போது பிழை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:5196
+#: ../libnautilus-private/nautilus-file-operations.c:5208
 msgid "Moving Files"
 msgstr "நகரும் கோப்புகள்"
 
-#: ../libnautilus-private/nautilus-file-operations.c:5231
+#: ../libnautilus-private/nautilus-file-operations.c:5243
 msgid "Creating links in “%B”"
 msgstr "\"%B\" இல் தொடுப்புகளை உருவாக்குகிறது"
 
-#: ../libnautilus-private/nautilus-file-operations.c:5235
+#: ../libnautilus-private/nautilus-file-operations.c:5247
 #, c-format
 msgid "Making link to %'d file"
 msgid_plural "Making links to %'d files"
 msgstr[0] "%'d கோப்புக்கு தொடுப்புகளை உருவாக்குகிறது"
 msgstr[1] "%'d கோப்புகளுக்கு தொடுப்புகளை உருவாக்குகிறது"
 
-#: ../libnautilus-private/nautilus-file-operations.c:5370
+#: ../libnautilus-private/nautilus-file-operations.c:5382
 msgid "Error while creating link to %B."
 msgstr "%B க்கு தொடுப்புகளை உருவாக்கும்போது பிழை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:5372
+#: ../libnautilus-private/nautilus-file-operations.c:5384
 msgid "Symbolic links only supported for local files"
 msgstr "உள்ளமை கோப்புகளுக்கு மட்டுமே அடையாள தொடுப்புகள் ஆதரவு உண்டு"
 
-#: ../libnautilus-private/nautilus-file-operations.c:5375
+#: ../libnautilus-private/nautilus-file-operations.c:5387
 msgid "The target doesn't support symbolic links."
 msgstr "இந்த இலக்கு அடையாள தொடுப்புகளை ஆதரிக்கவில்லை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:5378
+#: ../libnautilus-private/nautilus-file-operations.c:5390
 #, c-format
 msgid "There was an error creating the symlink in %F."
 msgstr "%F இல்அடையாள தொடுப்புகளை உருவாக்கும்போது பிழை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:5697
+#: ../libnautilus-private/nautilus-file-operations.c:5709
 msgid "Setting permissions"
 msgstr "அனுமதிகளை அமைக்கிறது"
 
 #. localizers: the initial name of a new folder
-#: ../libnautilus-private/nautilus-file-operations.c:5962
+#: ../libnautilus-private/nautilus-file-operations.c:5974
 msgid "Untitled Folder"
 msgstr "தலைப்பில்லா அடைவு"
 
 #. localizers: the initial name of a new template document
-#: ../libnautilus-private/nautilus-file-operations.c:5968
+#: ../libnautilus-private/nautilus-file-operations.c:5980
 #, c-format
 msgid "Untitled %s"
 msgstr "தலைப்பில்லாதது %s"
 
 #. localizers: the initial name of a new empty document
-#: ../libnautilus-private/nautilus-file-operations.c:5974
+#: ../libnautilus-private/nautilus-file-operations.c:5986
 msgid "Untitled Document"
 msgstr "தலைப்பில்லாத ஆவணம்"
 
-#: ../libnautilus-private/nautilus-file-operations.c:6152
+#: ../libnautilus-private/nautilus-file-operations.c:6164
 msgid "Error while creating directory %B."
 msgstr "அடைவு %B உருவாக்கும்போது பிழை "
 
-#: ../libnautilus-private/nautilus-file-operations.c:6154
+#: ../libnautilus-private/nautilus-file-operations.c:6166
 msgid "Error while creating file %B."
 msgstr "கோப்பு %B உருவாக்கும்போது பிழை "
 
-#: ../libnautilus-private/nautilus-file-operations.c:6156
+#: ../libnautilus-private/nautilus-file-operations.c:6168
 #, c-format
 msgid "There was an error creating the directory in %F."
 msgstr "%F இல் அடைவை உருவாக்கும்போது பிழை"
 
-#: ../libnautilus-private/nautilus-file-operations.c:6425
+#: ../libnautilus-private/nautilus-file-operations.c:6437
 msgid "Emptying Trash"
 msgstr "குப்பையை காலி செய்"
 
-#: ../libnautilus-private/nautilus-file-operations.c:6473
-#: ../libnautilus-private/nautilus-file-operations.c:6514
-#: ../libnautilus-private/nautilus-file-operations.c:6549
-#: ../libnautilus-private/nautilus-file-operations.c:6584
+#: ../libnautilus-private/nautilus-file-operations.c:6485
+#: ../libnautilus-private/nautilus-file-operations.c:6526
+#: ../libnautilus-private/nautilus-file-operations.c:6561
+#: ../libnautilus-private/nautilus-file-operations.c:6596
 msgid "Unable to mark launcher trusted (executable)"
 msgstr "நம்பப்பட்ட ஏற்றியை குறிக்க முடியவில்லை (இயங்கக்கூடியது)"
 
@@ -1726,12 +1781,12 @@ msgstr "_U உரிமையாளரை மாற்றியதை மீட�
 msgid "_Redo Change Owner"
 msgstr "_R உரிமையாளரை மாற்றியதை மீண்டும் செய்"
 
-#: ../libnautilus-private/nautilus-file-utilities.c:1143
+#: ../libnautilus-private/nautilus-file-utilities.c:1145
 #, c-format
 msgid "Could not determine original location of “%s” "
 msgstr "\"%s\" இன் மூல இடத்தை நிர்ணயம் செய்ய முடியவில்லை."
 
-#: ../libnautilus-private/nautilus-file-utilities.c:1147
+#: ../libnautilus-private/nautilus-file-utilities.c:1149
 msgid "The item cannot be restored from trash"
 msgstr "குப்பையிலிருந்து உருப்படியை மீட்டு எடுக்க முடியாது."
 
@@ -1834,7 +1889,7 @@ msgstr "தேடு"
 msgid "Search for “%s”"
 msgstr "\"%s\"க்கு தேடுகிறது"
 
-#: ../libnautilus-private/nautilus-search-engine.c:155
+#: ../libnautilus-private/nautilus-search-engine.c:171
 msgid "Unable to complete the requested search"
 msgstr "வேண்டிய தேடலை பூர்த்தி செய்ய முடியவில்லை."
 
@@ -2351,12 +2406,12 @@ msgid "Send files by mail, instant message..."
 msgstr "கோப்புகளை அஞ்சல், துரித செய்தி மூலம் அனுப்புக..."
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:225
-#: ../src/nautilus-window-manage-views.c:1639
+#: ../src/nautilus-application.c:227
+#: ../src/nautilus-window-manage-views.c:1654
 msgid "Oops! Something went wrong."
 msgstr "அடடா! ஏதோ தவறு நிகழ்ந்தது."
 
-#: ../src/nautilus-application.c:227
+#: ../src/nautilus-application.c:229
 #, c-format
 msgid ""
 "Unable to create a required folder. Please create the following folder, or "
@@ -2367,7 +2422,7 @@ msgstr ""
 "உருவாக்குவதற்கான உரிமையை தரவும்:\n"
 "%s"
 
-#: ../src/nautilus-application.c:232
+#: ../src/nautilus-application.c:234
 #, c-format
 msgid ""
 "Unable to create required folders. Please create the following folders, or "
@@ -2378,7 +2433,7 @@ msgstr ""
 "நாடுலஸ் அவற்றை உருவாக்குவதற்கான உரிமையை தரவும்:\n"
 "%s"
 
-#: ../src/nautilus-application.c:366
+#: ../src/nautilus-application.c:368
 msgid ""
 "Nautilus 3.0 deprecated this directory and tried migrating this "
 "configuration to ~/.config/nautilus"
@@ -2386,7 +2441,7 @@ msgstr ""
 "நாடுலஸ் 3.0 இந்த அடைவை கைவிட்டு இந்த வடிவமைப்பை  ~/.config/nautilus க்கு இடம் மாற்ற "
 "முயற்சித்தது"
 
-#: ../src/nautilus-application.c:782
+#: ../src/nautilus-application.c:883
 #: ../src/nautilus-file-management-properties.c:196
 #: ../src/nautilus-window-menus.c:254
 #, c-format
@@ -2397,53 +2452,53 @@ msgstr ""
 "உதவியை காட்டுவதில் பிழை\n"
 "%s"
 
-#: ../src/nautilus-application.c:905
+#: ../src/nautilus-application.c:1006
 msgid "--check cannot be used with other options."
 msgstr "--check மற்ற தேர்வுகளோடு சோதிப்பை பயன்படுத்த முடியாது"
 
-#: ../src/nautilus-application.c:911
+#: ../src/nautilus-application.c:1012
 msgid "--quit cannot be used with URIs."
 msgstr "--quit ஐ URIகளோடு பயன்படுத்த முடியாது"
 
-#: ../src/nautilus-application.c:918
+#: ../src/nautilus-application.c:1019
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry ஒரு URI க்கு மேல் வடிவத்தை பயன்படுத்த முடியாது"
 
-#: ../src/nautilus-application.c:964
+#: ../src/nautilus-application.c:1065
 msgid "Perform a quick set of self-check tests."
 msgstr "தானாக-சோதனைக்கான உடனடி பணியை செய்"
 
-#: ../src/nautilus-application.c:970
+#: ../src/nautilus-application.c:1071
 msgid "Show the version of the program."
 msgstr "பயன்பாட்டின் பதிப்பை காட்டுக"
 
-#: ../src/nautilus-application.c:972
+#: ../src/nautilus-application.c:1073
 msgid "Create the initial window with the given geometry."
 msgstr "கொடுக்கப்பட்டுள்ள அளவில் முதன்மை சாளரத்தை உருவாக்கு"
 
-#: ../src/nautilus-application.c:972
+#: ../src/nautilus-application.c:1073
 msgid "GEOMETRY"
 msgstr "GEOMETRY"
 
-#: ../src/nautilus-application.c:974
+#: ../src/nautilus-application.c:1075
 msgid "Only create windows for explicitly specified URIs."
 msgstr "வெளிப்படையாக குறிப்பிடப்பட்ட URI க்கு மட்டும் சாளரத்தை உருவாக்கு"
 
-#: ../src/nautilus-application.c:976
+#: ../src/nautilus-application.c:1077
 msgid ""
 "Do not manage the desktop (ignore the preference set in the preferences "
 "dialog)."
 msgstr "மேல்மேசையை கண்கானிக்காதே(விருப்பங்கள் உரையாடல் பெட்டியில் உள்ள விருப்பங்களை தவிர்)"
 
-#: ../src/nautilus-application.c:978
+#: ../src/nautilus-application.c:1079
 msgid "Quit Nautilus."
 msgstr "நாடுலஸிலிருந்து வெளியேறு"
 
-#: ../src/nautilus-application.c:979
+#: ../src/nautilus-application.c:1080
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:992
+#: ../src/nautilus-application.c:1093
 msgid ""
 "\n"
 "\n"
@@ -2452,6 +2507,18 @@ msgstr ""
 "\n"
 "\n"
 "கோப்பு மேலாளர் மூலம் கோப்பு முறைமையை உலாவு"
+
+#. Translators: this is a fatal error quit message printed on the
+#. * command line
+#: ../src/nautilus-application.c:1103
+msgid "Could not parse arguments"
+msgstr "தரு மதிப்புகளை அலகிட முடியவில்லை"
+
+#. Translators: this is a fatal error quit message printed on the
+#. * command line
+#: ../src/nautilus-application.c:1135
+msgid "Could not register the application"
+msgstr "பயன்பாட்டை பதிவு செய்ய முடியவில்லை"
 
 #: ../src/nautilus-autorun-software.c:143
 #: ../src/nautilus-autorun-software.c:146
@@ -2491,7 +2558,7 @@ msgstr "(_R)இயக்கு"
 msgid "No bookmarks defined"
 msgstr "புத்தக குறிகள் குறிப்பிடப்படவில்லை"
 
-#: ../src/nautilus-bookmarks-window.c:711 ../src/nautilus-places-sidebar.c:278
+#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:274
 msgid "Bookmarks"
 msgstr "புத்தககுறிகள்"
 
@@ -2504,7 +2571,7 @@ msgid "Move Up"
 msgstr "மேலே நகர்த்து"
 
 #: ../src/nautilus-bookmarks-window.ui.h:3
-#: ../src/nautilus-places-sidebar.c:2650
+#: ../src/nautilus-places-sidebar.c:2669
 msgid "Remove"
 msgstr "நீக்கு"
 
@@ -2516,308 +2583,126 @@ msgstr "(_L) இடம்"
 msgid "_Name"
 msgstr "பெயர் (_N)"
 
-#: ../src/nautilus-canvas-view.c:130
-msgid "by _Name"
-msgstr "(_N)பெயர்வாரியாக"
-
-#: ../src/nautilus-canvas-view.c:131 ../src/nautilus-canvas-view.c:1226
-msgid "Keep icons sorted by name in rows"
-msgstr "சின்னங்களை பெயர்வாரியாக வரிசையாக அடுக்கு"
-
-#: ../src/nautilus-canvas-view.c:137
-msgid "by _Size"
-msgstr "(_S)அளவு வாரியாக"
-
-#: ../src/nautilus-canvas-view.c:138 ../src/nautilus-canvas-view.c:1230
-msgid "Keep icons sorted by size in rows"
-msgstr "சின்ங்களை அளவு வாரியாக வரிசையாக அடுக்கு"
-
-#: ../src/nautilus-canvas-view.c:144
-msgid "by _Type"
-msgstr "(_T)வகைவாரியாக"
-
-#: ../src/nautilus-canvas-view.c:145 ../src/nautilus-canvas-view.c:1234
-msgid "Keep icons sorted by type in rows"
-msgstr "சின்ங்கலை வகைவாரியாக வரிசையாக அடுக்கு"
-
-#: ../src/nautilus-canvas-view.c:151
-msgid "by Modification _Date"
-msgstr "(_D)திருத்திய தேதியில்"
-
-#: ../src/nautilus-canvas-view.c:152 ../src/nautilus-canvas-view.c:1238
-msgid "Keep icons sorted by modification date in rows"
-msgstr "சின்ங்களை தேரிவாரியாக வரிசையாக அடுக்கு"
-
-#: ../src/nautilus-canvas-view.c:158
-msgid "by T_rash Time"
-msgstr "_r குப்பைக்கு நகர்த்திய நேரமடிப்படையில்"
-
-#: ../src/nautilus-canvas-view.c:159 ../src/nautilus-canvas-view.c:1242
-msgid "Keep icons sorted by trash time in rows"
-msgstr "சின்னங்களை குப்பைக்கு நகர்த்திய நேரமடிப்படையில் வரிசையாக அடுக்கு"
-
-#: ../src/nautilus-canvas-view.c:632
-msgid "_Organize Desktop by Name"
-msgstr "_O மேல்மேசையை பெயரால் அடுக்குக"
-
-#. name, stock id, label
-#: ../src/nautilus-canvas-view.c:1191
-msgid "Arran_ge Items"
-msgstr "(_g)உருப்படிகளை அடுக்கு"
-
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-canvas-view.c:1193
-msgid "Resize Icon..."
-msgstr "சின்னத்தை அளவு மாற்று..."
-
-#. tooltip
-#: ../src/nautilus-canvas-view.c:1194
-msgid "Make the selected icons resizable"
-msgstr "தேர்வு செய்த சின்னத்தை அளவு மாற்றக்கூடியதாக்கு"
-
-#. name, stock id
-#. label, accelerator
-#: ../src/nautilus-canvas-view.c:1197 ../src/nautilus-canvas-view.c:1361
-msgid "Restore Icons' Original Si_zes"
-msgstr "(_z)சின்னத்தின் உண்மையான அளவுக்கு மீட்டமை"
-
-#. tooltip
-#: ../src/nautilus-canvas-view.c:1198
-msgid "Restore each selected icons to its original size"
-msgstr "தேர்வு செய்த சின்னத்தின் சரியான அளவை மீட்கவும்"
-
-#. name, stock id
-#. label, accelerator
-#: ../src/nautilus-canvas-view.c:1201
-msgid "_Organize by Name"
-msgstr "_O பெயரால் அடுக்குக "
-
-#. tooltip
-#: ../src/nautilus-canvas-view.c:1202
-msgid "Reposition icons to better fit in the window and avoid overlapping"
-msgstr "சின்னங்களை சாளரத்தில் பொருந்துமாறு மாற்றி அமைத்து ஒன்றின் மேல் ஒன்றாக அடுக்குவதை தவிர்க"
-
-#. name, stock id
-#. label, accelerator
-#: ../src/nautilus-canvas-view.c:1208
+#: ../src/nautilus-canvas-view.c:1155
 msgid "Re_versed Order"
 msgstr "(_v)தலைகீழ் வரிசை"
 
 #. tooltip
-#: ../src/nautilus-canvas-view.c:1209
+#: ../src/nautilus-canvas-view.c:1156
 msgid "Display icons in the opposite order"
 msgstr "சின்னங்களை எதிர்வரிசையில் காட்டவும்"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-canvas-view.c:1213
+#: ../src/nautilus-canvas-view.c:1160
 msgid "_Keep Aligned"
 msgstr "(_K)சரியாக அடுக்கவும்"
 
 #. tooltip
-#: ../src/nautilus-canvas-view.c:1214
+#: ../src/nautilus-canvas-view.c:1161
 msgid "Keep icons lined up on a grid"
 msgstr "சின்னங்களை கட்டங்களுக்குள் பொருத்தவும்"
 
-#: ../src/nautilus-canvas-view.c:1221
+#: ../src/nautilus-canvas-view.c:1168
 msgid "_Manually"
 msgstr "(_M)கைமுறையாக"
 
-#: ../src/nautilus-canvas-view.c:1222
+#: ../src/nautilus-canvas-view.c:1169
 msgid "Leave icons wherever they are dropped"
 msgstr "விடும்போது சின்னத்தை விட்டுவிடவும்"
 
-#: ../src/nautilus-canvas-view.c:1225
+#: ../src/nautilus-canvas-view.c:1172
 msgid "By _Name"
 msgstr "(_N)பெயரின் படி"
 
-#: ../src/nautilus-canvas-view.c:1229
+#: ../src/nautilus-canvas-view.c:1173
+msgid "Keep icons sorted by name in rows"
+msgstr "சின்னங்களை பெயர்வாரியாக வரிசையாக அடுக்கு"
+
+#: ../src/nautilus-canvas-view.c:1176
 msgid "By _Size"
 msgstr "(_S)அளவின் படி"
 
-#: ../src/nautilus-canvas-view.c:1233
+#: ../src/nautilus-canvas-view.c:1177
+msgid "Keep icons sorted by size in rows"
+msgstr "சின்ங்களை அளவு வாரியாக வரிசையாக அடுக்கு"
+
+#: ../src/nautilus-canvas-view.c:1180
 msgid "By _Type"
 msgstr "(_T)வகைவாரியாக"
 
-#: ../src/nautilus-canvas-view.c:1237
+#: ../src/nautilus-canvas-view.c:1181
+msgid "Keep icons sorted by type in rows"
+msgstr "சின்ங்கலை வகைவாரியாக வரிசையாக அடுக்கு"
+
+#: ../src/nautilus-canvas-view.c:1184
 msgid "By Modification _Date"
 msgstr "(_D)மாற்றிய தேதிகளின் வரிசையில்"
 
-#: ../src/nautilus-canvas-view.c:1241
+#: ../src/nautilus-canvas-view.c:1185
+msgid "Keep icons sorted by modification date in rows"
+msgstr "சின்ங்களை தேரிவாரியாக வரிசையாக அடுக்கு"
+
+#: ../src/nautilus-canvas-view.c:1188
 msgid "By T_rash Time"
 msgstr "_r குப்பைக்கு நகர்த்திய நேரமடிப்படையில்"
 
-#: ../src/nautilus-canvas-view.c:1362
-msgid "Restore Icon's Original Si_ze"
-msgstr "(_z)சின்னத்தின் உண்மையான அளவுக்கு மீட்டமை"
+#: ../src/nautilus-canvas-view.c:1189
+msgid "Keep icons sorted by trash time in rows"
+msgstr "சின்னங்களை குப்பைக்கு நகர்த்திய நேரமடிப்படையில் வரிசையாக அடுக்கு"
+
+#: ../src/nautilus-canvas-view.c:1192
+msgid "By Search Relevance"
+msgstr "தேடல் பொருத்தம் மூலம்"
+
+#: ../src/nautilus-canvas-view.c:1193
+msgid "Keep icons sorted by search relevance in rows"
+msgstr "சின்னங்களை தேடல் பொருத்தம் வாரியாக வரிசையாக அடுக்கு"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
-#: ../src/nautilus-canvas-view.c:2396
+#: ../src/nautilus-canvas-view.c:2288
 #: ../src/nautilus-canvas-view-container.c:571
 #: ../src/nautilus-file-management-properties.ui.h:47
 msgid "Icon View"
 msgstr "சின்னம் காட்சி"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-canvas-view.c:2398
+#: ../src/nautilus-canvas-view.c:2290
 msgid "_Icons"
 msgstr "(_I) சின்னங்கள்"
 
-#: ../src/nautilus-canvas-view.c:2399
+#: ../src/nautilus-canvas-view.c:2291
 msgid "The icon view encountered an error."
 msgstr "சின்ன காட்சியில் பிழை ஏற்பட்டது."
 
-#: ../src/nautilus-canvas-view.c:2400
+#: ../src/nautilus-canvas-view.c:2292
 msgid "The icon view encountered an error while starting up."
 msgstr "சின்ன காட்சி துவங்கும் போது பிழை ஏற்பட்டது"
 
-#: ../src/nautilus-canvas-view.c:2401
+#: ../src/nautilus-canvas-view.c:2293
 msgid "Display this location with the icon view."
 msgstr "இந்த இடத்தை சின்னத்தின் பார்வையில் காட்டவும்"
 
-#: ../src/nautilus-connect-server-dialog.c:129
-msgid "SSH"
-msgstr "SSH"
+#. if it wasn't cancelled show a dialog
+#: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1860
+#: ../src/nautilus-mime-actions.c:2133
+msgid "Unable to access location"
+msgstr "இடத்தை அணுக முடியவில்லை"
 
-#: ../src/nautilus-connect-server-dialog.c:132
-msgid "Public FTP"
-msgstr "பொது FTP"
+#: ../src/nautilus-connect-server.c:74
+msgid "Unable to display location"
+msgstr "காட்சி இடத்தை காட்ட முடியவில்லை"
 
-#: ../src/nautilus-connect-server-dialog.c:134
-msgid "FTP (with login)"
-msgstr "FTP (நுழைவு அனுமதி)"
-
-#: ../src/nautilus-connect-server-dialog.c:137
-msgid "Windows share"
-msgstr "விண்டோஸ் பகிர்வுகள்"
-
-#: ../src/nautilus-connect-server-dialog.c:139
-msgid "WebDAV (HTTP)"
-msgstr "WebDAV (HTTP)"
-
-#: ../src/nautilus-connect-server-dialog.c:141
-msgid "Secure WebDAV (HTTPS)"
-msgstr "பாதுகாப்பான WebDAV (HTTPS)"
-
-#: ../src/nautilus-connect-server-dialog.c:143
-msgid "Apple Filing Protocol (AFP)"
-msgstr "ஆப்பிள் கோப்பு நெறிமுறை (AFP)"
-
-#: ../src/nautilus-connect-server-dialog.c:189
-msgid "Connecting..."
-msgstr "இணைக்கிறது..."
-
-#: ../src/nautilus-connect-server-dialog.c:213
-msgid ""
-"Can't load the supported server method list.\n"
-"Please check your gvfs installation."
-msgstr ""
-"ஆதரவுள்ள சேவையக பட்டியலை ஏற்ற முடியவில்லை\n"
-"உங்கள் gvfs நிறுவலை சரி பார்க்கவும்"
-
-#: ../src/nautilus-connect-server-dialog.c:291
-#, c-format
-msgid "The folder “%s” cannot be opened on “%s”."
-msgstr "அடைவு \"%s\" ஐ \"%s\" இல் திறக்க முடியாது."
-
-#: ../src/nautilus-connect-server-dialog.c:301
-#, c-format
-msgid "The server at “%s” cannot be found."
-msgstr "\"%s\" இல் சேவையகத்தை கண்டுபிடிக்க முடியவில்லை."
-
-#: ../src/nautilus-connect-server-dialog.c:336
-msgid "Try Again"
-msgstr "மீண்டும் முயல்க"
-
-#: ../src/nautilus-connect-server-dialog.c:401
-msgid "Please verify your user details."
-msgstr "உங்கள் பயனர் விவரங்களை சரி பார்க்கவும்"
-
-#: ../src/nautilus-connect-server-dialog.c:431
-msgid "Continue"
-msgstr "தொடர் "
-
-#: ../src/nautilus-connect-server-dialog.c:703
-#: ../src/nautilus-properties-window.c:5015 ../src/nautilus-view.c:1441
-msgid "There was an error displaying help."
-msgstr "உதவியை காட்டுவதில் பிழை"
-
-#: ../src/nautilus-connect-server-dialog.c:721
-#: ../src/nautilus-connect-server-dialog.c:1111
-msgid "C_onnect"
-msgstr "(_o)இணை"
-
-#. set dialog properties
-#: ../src/nautilus-connect-server-dialog.c:846
-msgid "Connect to Server"
-msgstr "சேவகனுடன் இணை"
-
-#: ../src/nautilus-connect-server-dialog.c:864
-msgid "Server Details"
-msgstr "சேவையக விவரங்கள்"
-
-#. first row: server entry + port spinbutton
-#: ../src/nautilus-connect-server-dialog.c:888
-msgid "_Server:"
-msgstr "(_S)சேவகன்:"
-
-#. port
-#: ../src/nautilus-connect-server-dialog.c:908
-msgid "_Port:"
-msgstr "(_P)வழி:"
-
-#. second row: type combobox
-#: ../src/nautilus-connect-server-dialog.c:926
-msgid "_Type:"
-msgstr "_T வகை:"
-
-#. third row: share entry
-#: ../src/nautilus-connect-server-dialog.c:995
-msgid "Sh_are:"
-msgstr "(_ a) பகிர்:"
-
-#. fourth row: folder entry
-#: ../src/nautilus-connect-server-dialog.c:1010 ../src/nautilus-view.c:1623
-msgid "_Folder:"
-msgstr "(_F)அடைவு:"
-
-#: ../src/nautilus-connect-server-dialog.c:1028
-msgid "User Details"
-msgstr "பயனர் விவரங்கள்"
-
-#. first row: domain entry
-#: ../src/nautilus-connect-server-dialog.c:1051
-msgid "_Domain name:"
-msgstr "_D களப்பெயர்:"
-
-#. second row: username entry
-#: ../src/nautilus-connect-server-dialog.c:1066
-msgid "_User name:"
-msgstr "(_U) பயனர் பெயர்:"
-
-#. third row: password entry
-#: ../src/nautilus-connect-server-dialog.c:1081
-msgid "Pass_word:"
-msgstr "_w கடவுச்சொல்:"
-
-#. fourth row: remember checkbox
-#: ../src/nautilus-connect-server-dialog.c:1097
-msgid "_Remember this password"
-msgstr "(_R)  இந்த கடவுச்சொல்லை  நினைவில் கொள்க"
-
-#: ../src/nautilus-connect-server-dialog.c:1197
-msgid "Operation cancelled"
-msgstr "செயல்பாடு ரத்து செய்யப்பட்டது"
-
-#: ../src/nautilus-connect-server-dialog-main.c:120
+#: ../src/nautilus-connect-server.c:140
 msgid "Print but do not open the URI"
 msgstr "அச்சிடு ஆனால் யூஆர்ஐ யை திறக்காதே"
 
 #. Translators: This is the --help description for the connect to server app,
 #. the initial newlines are between the command line arg and the description
-#: ../src/nautilus-connect-server-dialog-main.c:131
+#: ../src/nautilus-connect-server.c:152
 msgid ""
 "\n"
 "\n"
@@ -2827,39 +2712,117 @@ msgstr ""
 "\n"
 "சேவகன் ஏற்றத்துக்கு இணைப்பை சேர்க்க"
 
+#: ../src/nautilus-connect-server-dialog.c:104
+#: ../src/nautilus-properties-window.c:5151 ../src/nautilus-view.c:1441
+msgid "There was an error displaying help."
+msgstr "உதவியை காட்டுவதில் பிழை"
+
+#: ../src/nautilus-connect-server-dialog.c:149
+msgid "Don't recognize this file server type."
+msgstr "இந்த கோப்பு சேவ்வையகத்தை அடையாளம் காண முடியவில்லை"
+
+#: ../src/nautilus-connect-server-dialog.c:156
+msgid "This doesn't look like an address."
+msgstr "இது  முகவரி போல இல்லை"
+
+#. Translators: %s is a URI of the form "smb://foo.example.com"
+#: ../src/nautilus-connect-server-dialog.c:265
+#, c-format
+msgid "For example, %s"
+msgstr "உதாரணமாக, %s"
+
+#: ../src/nautilus-connect-server-dialog.c:533
+msgid "_Remove"
+msgstr "நீக்கவும் (_R)"
+
+#: ../src/nautilus-connect-server-dialog.c:542
+msgid "_Clear All"
+msgstr "_C அனைத்தையும் துடை"
+
+#: ../src/nautilus-connect-server-dialog.c:604
+msgid "_Server Address"
+msgstr "_S சேவையக முகவரி"
+
+#: ../src/nautilus-connect-server-dialog.c:628
+msgid "_Recent Servers"
+msgstr "_R சமீபத்திய சேவையகங்கள்"
+
+#: ../src/nautilus-connect-server-dialog.c:694
+msgid "_Browse"
+msgstr "_B மேலோடு"
+
+#: ../src/nautilus-connect-server-dialog.c:704
+msgid "C_onnect"
+msgstr "(_o)இணை"
+
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:701 ../src/nautilus-view.c:7183
-#: ../src/nautilus-view.c:8724
+#: ../src/nautilus-desktop-canvas-view.c:727 ../src/nautilus-view.c:7182
+#: ../src/nautilus-view.c:8723
 msgid "E_mpty Trash"
 msgstr "தேவையற்றதை வெறுமையாக்கு"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:713
+#: ../src/nautilus-desktop-canvas-view.c:751
+#: ../src/nautilus-desktop-canvas-view.c:792
+msgid "Restore Icons' Original Si_zes"
+msgstr "(_z)சின்னத்தின் உண்மையான அளவுக்கு மீட்டமை"
+
+#: ../src/nautilus-desktop-canvas-view.c:752
+msgid "Restore Icon's Original Si_ze"
+msgstr "(_z)சின்னத்தின் உண்மையான அளவுக்கு மீட்டமை"
+
+#. label, accelerator
+#: ../src/nautilus-desktop-canvas-view.c:764
 msgid "Change Desktop _Background"
 msgstr "(_B)மேல்மேசையின் பின்னனியை மாற்று"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:715
+#: ../src/nautilus-desktop-canvas-view.c:766
 msgid "Show a window that lets you set your desktop background's pattern or color"
 msgstr "உங்கள் மேல்மேசையின் நிறம் மற்றும் மாதிரியை தேர்வு செய்யும் சாளரத்தை காட்டவும்"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:720
+#: ../src/nautilus-desktop-canvas-view.c:771
 msgid "Empty Trash"
 msgstr "குப்பையை காலி செய்"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:722 ../src/nautilus-trash-bar.c:212
-#: ../src/nautilus-view.c:7184
+#: ../src/nautilus-desktop-canvas-view.c:773 ../src/nautilus-trash-bar.c:212
+#: ../src/nautilus-view.c:7183
 msgid "Delete all items in the Trash"
 msgstr "குப்பைதொட்டியில் உள்ள அனைத்து உருப்படிகளையும் நீக்கு"
 
+#. label, accelerator
+#: ../src/nautilus-desktop-canvas-view.c:778
+msgid "_Organize Desktop by Name"
+msgstr "_O மேல்மேசையை பெயரால் அடுக்குக"
+
+#. tooltip
+#: ../src/nautilus-desktop-canvas-view.c:780
+msgid "Reposition icons to better fit in the window and avoid overlapping"
+msgstr "சின்னங்களை சாளரத்தில் பொருந்துமாறு மாற்றி அமைத்து ஒன்றின் மேல் ஒன்றாக அடுக்குவதை தவிர்க"
+
+#. label, accelerator
 #: ../src/nautilus-desktop-canvas-view.c:785
+msgid "Resize Icon..."
+msgstr "சின்னத்தை அளவு மாற்று..."
+
+#. tooltip
+#: ../src/nautilus-desktop-canvas-view.c:787
+msgid "Make the selected icons resizable"
+msgstr "தேர்வு செய்த சின்னத்தை அளவு மாற்றக்கூடியதாக்கு"
+
+#. tooltip
+#: ../src/nautilus-desktop-canvas-view.c:794
+msgid "Restore each selected icons to its original size"
+msgstr "தேர்வு செய்த சின்னத்தின் சரியான அளவை மீட்கவும்"
+
+#: ../src/nautilus-desktop-canvas-view.c:872
 msgid "The desktop view encountered an error."
 msgstr "பணிமேடை பார்வை ஒரு பிழையை கண்டுள்ளது."
 
-#: ../src/nautilus-desktop-canvas-view.c:786
+#: ../src/nautilus-desktop-canvas-view.c:873
 msgid "The desktop view encountered an error while starting up."
 msgstr "மேல்மேசை காட்சி துவங்கும் போது பிழை ஏற்பட்டது"
 
@@ -2884,7 +2847,7 @@ msgstr "கட்டளை"
 
 #. hardcode "Desktop"
 #: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:270
-#: ../src/nautilus-places-sidebar.c:526
+#: ../src/nautilus-places-sidebar.c:578
 msgid "Desktop"
 msgstr "மேல்மேசை"
 
@@ -2990,8 +2953,8 @@ msgstr "\"%s\" ஐ \"%s\" ஆக மறுபெயரிடுகிறது"
 
 #. Translators: this is referred to captions under icons.
 #: ../src/nautilus-file-management-properties.c:280
-#: ../src/nautilus-properties-window.c:3871
-#: ../src/nautilus-properties-window.c:3898
+#: ../src/nautilus-properties-window.c:4008
+#: ../src/nautilus-properties-window.c:4035
 msgid "None"
 msgstr "எதுவுமில்லை"
 
@@ -3147,7 +3110,7 @@ msgid "Files Preferences"
 msgstr "கோப்பு விருப்பங்கள்"
 
 #: ../src/nautilus-file-management-properties.ui.h:44
-#: ../src/nautilus-properties-window.c:4299
+#: ../src/nautilus-properties-window.c:4436
 msgid "Folders"
 msgstr "அடைவுகள்"
 
@@ -3170,7 +3133,7 @@ msgstr "நெடுவரிசைகளை பட்டியலிடு"
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
 #: ../src/nautilus-file-management-properties.ui.h:50
-#: ../src/nautilus-list-view.c:1553 ../src/nautilus-list-view.c:3078
+#: ../src/nautilus-list-view.c:1552 ../src/nautilus-list-view.c:3077
 msgid "List View"
 msgstr "பட்டியல் காட்சி"
 
@@ -3203,7 +3166,7 @@ msgid "Sort _folders before files"
 msgstr "(_f)கோப்புகளுக்கு முன் அடைவுகளை அடுக்கு"
 
 #: ../src/nautilus-file-management-properties.ui.h:58
-#: ../src/nautilus-places-sidebar.c:574 ../src/nautilus-trash-bar.c:194
+#: ../src/nautilus-places-sidebar.c:592 ../src/nautilus-trash-bar.c:194
 msgid "Trash"
 msgstr "குப்பைதொட்டி"
 
@@ -3337,72 +3300,60 @@ msgid "Failed to load image information"
 msgstr "பிம்பத்தகவலை ஏற்றுவதில் தோல்வி"
 
 #: ../src/nautilus-image-properties-page.c:655
-#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-manage-views.c:1185
-#: ../src/nautilus-window-slot.c:372
+#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-manage-views.c:1200
+#: ../src/nautilus-window-slot.c:365
 msgid "Loading..."
 msgstr "ஏற்றுகிறது..."
-
-#: ../src/nautilus-image-properties-page.c:716
-msgid "Image"
-msgstr "பிம்பம்"
 
 #: ../src/nautilus-list-model.c:376
 msgid "(Empty)"
 msgstr "(காலி)"
 
-#: ../src/nautilus-list-view.c:2332
+#: ../src/nautilus-list-view.c:2331
 #, c-format
 msgid "%s Visible Columns"
 msgstr "%s தெரியும் நெடுவரிசைகள்"
 
-#: ../src/nautilus-list-view.c:2352
+#: ../src/nautilus-list-view.c:2351
 msgid "Choose the order of information to appear in this folder:"
 msgstr "இந்த அடைவில் தகவல் தெரிய வேண்டிய வரிசையை  தேர்வு செய்யவும்"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-list-view.c:2407
+#: ../src/nautilus-list-view.c:2406
 msgid "Visible _Columns..."
 msgstr "(_C)தெரியும் நெடுவரிசைகள்..,"
 
 #. tooltip
-#: ../src/nautilus-list-view.c:2408
+#: ../src/nautilus-list-view.c:2407
 msgid "Select the columns visible in this folder"
 msgstr "இந்த அடைவில் மட்டும் தெரியும் நெடுவரிசைகளை தேர்வுசெய்யவும்"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-list-view.c:3080
+#: ../src/nautilus-list-view.c:3079
 msgid "_List"
 msgstr "(_L) பட்டியல்"
 
-#: ../src/nautilus-list-view.c:3081
+#: ../src/nautilus-list-view.c:3080
 msgid "The list view encountered an error."
 msgstr "பட்டியல் பார்வை ஒரு பிழையை கண்டுள்ளது."
 
-#: ../src/nautilus-list-view.c:3082
+#: ../src/nautilus-list-view.c:3081
 msgid "The list view encountered an error while starting up."
 msgstr "துவங்கும் போது பட்டியல் பார்வையில் பிழை ஏற்பட்டது"
 
-#: ../src/nautilus-list-view.c:3083
+#: ../src/nautilus-list-view.c:3082
 msgid "Display this location with the list view."
 msgstr "இந்த இடத்தை பட்டியல் காட்சியில் காட்டு"
 
-#: ../src/nautilus-location-bar.c:53 ../src/nautilus-properties-window.c:3108
-msgid "Location:"
-msgstr "இடம்:"
-
-#: ../src/nautilus-location-bar.c:54
-msgid "Go To:"
-msgstr "கு செல்:"
-
-#: ../src/nautilus-location-bar.c:168
+#: ../src/nautilus-location-entry.c:265
 #, c-format
 msgid "Do you want to view %d location?"
 msgid_plural "Do you want to view %d locations?"
 msgstr[0] "%d இடத்தைப் பார்க்க வேண்டுமா?"
 msgstr[1] "%d இடங்களை பார்க்க வேண்டுமா?"
 
-#: ../src/nautilus-location-bar.c:172 ../src/nautilus-mime-actions.c:1052
+#: ../src/nautilus-location-entry.c:269 ../src/nautilus-mime-actions.c:1052
 #, c-format
 msgid "This will open %d separate window."
 msgid_plural "This will open %d separate windows."
@@ -3430,9 +3381,9 @@ msgstr "இந்த தொடுப்பை பயன்படுத்த ம
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-mime-actions.c:652 ../src/nautilus-view.c:7241
-#: ../src/nautilus-view.c:7355 ../src/nautilus-view.c:8353
-#: ../src/nautilus-view.c:8652
+#: ../src/nautilus-mime-actions.c:652 ../src/nautilus-view.c:7240
+#: ../src/nautilus-view.c:7354 ../src/nautilus-view.c:8352
+#: ../src/nautilus-view.c:8651
 msgid "Mo_ve to Trash"
 msgstr "குப்பைக்கு நகர்த்து (_v)"
 
@@ -3477,8 +3428,8 @@ msgstr "இந்த கோப்பு தெரியாத வகை"
 
 #: ../src/nautilus-mime-actions.c:1216
 #, c-format
-msgid "There is no application installed for %s files"
-msgstr "%s  கோப்புகளுக்கு பயன்பாடு நிறுவப்பட்டு இல்லை "
+msgid "There is no application installed for “%s” files"
+msgstr "\"%s\"  கோப்புகளுக்கு பயன்பாடு நிறுவப்பட்டு இல்லை "
 
 #: ../src/nautilus-mime-actions.c:1231
 msgid "_Select Application"
@@ -3495,10 +3446,10 @@ msgstr "பயன்பாடை தேட முடியவில்லை"
 #: ../src/nautilus-mime-actions.c:1388
 #, c-format
 msgid ""
-"There is no application installed for %s files.\n"
+"There is no application installed for “%s” files.\n"
 "Do you want to search for an application to open this file?"
 msgstr ""
-"%s  கோப்பு வகைக்கு பயன்பாடு நிறுவப்பட்டு இல்லை \n"
+"\"%s\"  கோப்புகளுக்கு பயன்பாடு நிறுவப்பட்டு இல்லை \n"
 "இந்த கோப்பை திறக்க பயன்பாட்டை தேட விருப்பமா?"
 
 #: ../src/nautilus-mime-actions.c:1538
@@ -3529,10 +3480,6 @@ msgid_plural "This will open %d separate applications."
 msgstr[0] "இது %d ஐ தனி நிரலால் திறக்கும்"
 msgstr[1] "இது %d ஐ தனி நிரல்களால் திறக்கும்"
 
-#: ../src/nautilus-mime-actions.c:1860 ../src/nautilus-mime-actions.c:2133
-msgid "Unable to access location"
-msgstr "இடத்தை அணுக முடியவில்லை"
-
 #: ../src/nautilus-mime-actions.c:2212
 msgid "Unable to start location"
 msgstr "இடத்தை துவக்க முடியவில்லை"
@@ -3553,198 +3500,198 @@ msgstr[1] "%d உருப்படிகளை திறக்கிறது."
 msgid "Close tab"
 msgstr "கீற்றை  மூடு"
 
-#: ../src/nautilus-places-sidebar.c:270
+#: ../src/nautilus-places-sidebar.c:266
 msgid "Devices"
 msgstr "சாதனங்கள்"
 
-#: ../src/nautilus-places-sidebar.c:496
+#: ../src/nautilus-places-sidebar.c:548
 msgid "Places"
 msgstr "இடங்கள்"
 
-#: ../src/nautilus-places-sidebar.c:503
+#: ../src/nautilus-places-sidebar.c:555
 msgid "Recent"
 msgstr "சமீபத்திய"
 
-#: ../src/nautilus-places-sidebar.c:505
+#: ../src/nautilus-places-sidebar.c:557
 msgid "Recent files"
 msgstr "சமீபத்திய கோப்புகள்"
 
 #. tooltip
-#: ../src/nautilus-places-sidebar.c:516 ../src/nautilus-window-menus.c:535
+#: ../src/nautilus-places-sidebar.c:568 ../src/nautilus-window-menus.c:535
 msgid "Open your personal folder"
 msgstr "உங்கள் அந்தரங்க அடைவை திறக்கவும்"
 
-#: ../src/nautilus-places-sidebar.c:528
+#: ../src/nautilus-places-sidebar.c:580
 msgid "Open the contents of your desktop in a folder"
 msgstr "உங்கள் மேல்மேசை உள்ளடக்கத்தை ஒரு அடைவில் திறக்கவும்"
 
-#: ../src/nautilus-places-sidebar.c:576
+#: ../src/nautilus-places-sidebar.c:594
 msgid "Open the trash"
 msgstr "குப்பையை திற "
 
-#: ../src/nautilus-places-sidebar.c:628 ../src/nautilus-places-sidebar.c:653
-#: ../src/nautilus-places-sidebar.c:830
+#: ../src/nautilus-places-sidebar.c:646 ../src/nautilus-places-sidebar.c:671
+#: ../src/nautilus-places-sidebar.c:849
 #, c-format
 msgid "Mount and open %s"
 msgstr " %s ஐ ஏற்றி திறக்கவும்"
 
-#: ../src/nautilus-places-sidebar.c:728
+#: ../src/nautilus-places-sidebar.c:746
 msgid "Open the contents of the File System"
 msgstr "கோப்பு அமைப்பின் உள்ளடக்கங்களை திற"
 
-#: ../src/nautilus-places-sidebar.c:808
+#: ../src/nautilus-places-sidebar.c:827
 msgid "Network"
 msgstr "வலைப்பின்னல்"
 
-#: ../src/nautilus-places-sidebar.c:814
+#: ../src/nautilus-places-sidebar.c:833
 msgid "Browse Network"
 msgstr "வலைப்பின்னலில் உலாவுக"
 
-#: ../src/nautilus-places-sidebar.c:816
+#: ../src/nautilus-places-sidebar.c:835
 msgid "Browse the contents of the network"
 msgstr "வலைப்பின்னலின் உள்ளடக்கங்களை உலாவுக"
 
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1637 ../src/nautilus-places-sidebar.c:2699
-#: ../src/nautilus-view.c:7283 ../src/nautilus-view.c:7307
-#: ../src/nautilus-view.c:7379 ../src/nautilus-view.c:7989
-#: ../src/nautilus-view.c:7993 ../src/nautilus-view.c:8076
-#: ../src/nautilus-view.c:8080 ../src/nautilus-view.c:8178
-#: ../src/nautilus-view.c:8182
+#: ../src/nautilus-places-sidebar.c:1656 ../src/nautilus-places-sidebar.c:2718
+#: ../src/nautilus-view.c:7282 ../src/nautilus-view.c:7306
+#: ../src/nautilus-view.c:7378 ../src/nautilus-view.c:7988
+#: ../src/nautilus-view.c:7992 ../src/nautilus-view.c:8075
+#: ../src/nautilus-view.c:8079 ../src/nautilus-view.c:8177
+#: ../src/nautilus-view.c:8181
 msgid "_Start"
 msgstr "துவக்கு (_S):"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1638 ../src/nautilus-places-sidebar.c:2706
-#: ../src/nautilus-view.c:7287 ../src/nautilus-view.c:7311
-#: ../src/nautilus-view.c:7383 ../src/nautilus-view.c:8018
-#: ../src/nautilus-view.c:8105 ../src/nautilus-view.c:8207
+#: ../src/nautilus-places-sidebar.c:1657 ../src/nautilus-places-sidebar.c:2725
+#: ../src/nautilus-view.c:7286 ../src/nautilus-view.c:7310
+#: ../src/nautilus-view.c:7382 ../src/nautilus-view.c:8017
+#: ../src/nautilus-view.c:8104 ../src/nautilus-view.c:8206
 #: ../src/nautilus-window-menus.c:470
 msgid "_Stop"
 msgstr "(_S) நிறுத்து"
 
 #. start() for type G_DRIVE_START_STOP_TYPE_SHUTDOWN is normally not used
-#: ../src/nautilus-places-sidebar.c:1643
+#: ../src/nautilus-places-sidebar.c:1662
 msgid "_Power On"
 msgstr "(_P) சக்தியூட்டப்பட்டது"
 
-#: ../src/nautilus-places-sidebar.c:1644 ../src/nautilus-view.c:8022
-#: ../src/nautilus-view.c:8109 ../src/nautilus-view.c:8211
+#: ../src/nautilus-places-sidebar.c:1663 ../src/nautilus-view.c:8021
+#: ../src/nautilus-view.c:8108 ../src/nautilus-view.c:8210
 msgid "_Safely Remove Drive"
 msgstr "(_S) பாதுகாப்பாக இயக்கியை நீக்கு"
 
-#: ../src/nautilus-places-sidebar.c:1647
+#: ../src/nautilus-places-sidebar.c:1666
 msgid "_Connect Drive"
 msgstr "(_C) இயக்கியை இணை"
 
-#: ../src/nautilus-places-sidebar.c:1648
+#: ../src/nautilus-places-sidebar.c:1667
 msgid "_Disconnect Drive"
 msgstr "(_D) இயக்கி இணைப்பு நீக்கு"
 
-#: ../src/nautilus-places-sidebar.c:1651
+#: ../src/nautilus-places-sidebar.c:1670
 msgid "_Start Multi-disk Device"
 msgstr "(_S) பல் வட்டு சாதனத்தை துவக்கு"
 
-#: ../src/nautilus-places-sidebar.c:1652
+#: ../src/nautilus-places-sidebar.c:1671
 msgid "_Stop Multi-disk Device"
 msgstr "(_S) பல் வட்டு சாதனத்தை நிறுத்து"
 
 #. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
-#: ../src/nautilus-places-sidebar.c:1656 ../src/nautilus-view.c:8092
-#: ../src/nautilus-view.c:8194
+#: ../src/nautilus-places-sidebar.c:1675 ../src/nautilus-view.c:8091
+#: ../src/nautilus-view.c:8193
 msgid "_Unlock Drive"
 msgstr "(_U) இயக்கி பூட்டு திற"
 
-#: ../src/nautilus-places-sidebar.c:1657 ../src/nautilus-view.c:8034
-#: ../src/nautilus-view.c:8121 ../src/nautilus-view.c:8223
+#: ../src/nautilus-places-sidebar.c:1676 ../src/nautilus-view.c:8033
+#: ../src/nautilus-view.c:8120 ../src/nautilus-view.c:8222
 msgid "_Lock Drive"
 msgstr "(_L) இயக்கியை பூட்டு"
 
-#: ../src/nautilus-places-sidebar.c:1734 ../src/nautilus-places-sidebar.c:2333
+#: ../src/nautilus-places-sidebar.c:1753 ../src/nautilus-places-sidebar.c:2352
 #, c-format
 msgid "Unable to start %s"
 msgstr " %s ஐ துவக்க முடியவில்லை "
 
-#: ../src/nautilus-places-sidebar.c:2087 ../src/nautilus-places-sidebar.c:2115
-#: ../src/nautilus-places-sidebar.c:2143
+#: ../src/nautilus-places-sidebar.c:2106 ../src/nautilus-places-sidebar.c:2134
+#: ../src/nautilus-places-sidebar.c:2162
 #, c-format
 msgid "Unable to eject %s"
 msgstr "வெளியேற்ற முடியவில்லை %s"
 
-#: ../src/nautilus-places-sidebar.c:2288
+#: ../src/nautilus-places-sidebar.c:2307
 #, c-format
 msgid "Unable to poll %s for media changes"
 msgstr "ஊடக மாற்றங்களுக்கு %sஐ பதிவு செய்ய முடியவில்லை"
 
-#: ../src/nautilus-places-sidebar.c:2388
+#: ../src/nautilus-places-sidebar.c:2407
 #, c-format
 msgid "Unable to stop %s"
 msgstr " %s ஐ நிறுத்த முடியவில்லை "
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2621 ../src/nautilus-view.c:7155
-#: ../src/nautilus-view.c:8577
+#: ../src/nautilus-places-sidebar.c:2640 ../src/nautilus-view.c:7154
+#: ../src/nautilus-view.c:8576
 msgid "_Open"
 msgstr "(_O)திற"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2629 ../src/nautilus-view.c:7167
-#: ../src/nautilus-view.c:7337 ../src/nautilus-view.c:8302
-#: ../src/nautilus-view.c:8630
+#: ../src/nautilus-places-sidebar.c:2648 ../src/nautilus-view.c:7166
+#: ../src/nautilus-view.c:7336 ../src/nautilus-view.c:8301
+#: ../src/nautilus-view.c:8629
 msgid "Open in New _Tab"
 msgstr "புது _சாளரத்தில் திறக்கவும்"
 
-#: ../src/nautilus-places-sidebar.c:2636 ../src/nautilus-view.c:8294
-#: ../src/nautilus-view.c:8610
+#: ../src/nautilus-places-sidebar.c:2655 ../src/nautilus-view.c:8293
+#: ../src/nautilus-view.c:8609
 msgid "Open in New _Window"
 msgstr "புது _சாளரத்தில் திறக்கவும்"
 
-#: ../src/nautilus-places-sidebar.c:2644
+#: ../src/nautilus-places-sidebar.c:2663
 msgid "_Add Bookmark"
 msgstr "(_A)புத்தககுறியை சேர்"
 
-#: ../src/nautilus-places-sidebar.c:2659
+#: ../src/nautilus-places-sidebar.c:2678
 msgid "Rename..."
 msgstr "மறுபெயரிடு..."
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2671 ../src/nautilus-view.c:7271
-#: ../src/nautilus-view.c:7295 ../src/nautilus-view.c:7367
+#: ../src/nautilus-places-sidebar.c:2690 ../src/nautilus-view.c:7270
+#: ../src/nautilus-view.c:7294 ../src/nautilus-view.c:7366
 msgid "_Mount"
 msgstr "ஏற்று (_M)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2678 ../src/nautilus-view.c:7275
-#: ../src/nautilus-view.c:7299 ../src/nautilus-view.c:7371
+#: ../src/nautilus-places-sidebar.c:2697 ../src/nautilus-view.c:7274
+#: ../src/nautilus-view.c:7298 ../src/nautilus-view.c:7370
 msgid "_Unmount"
 msgstr "இறக்கு (_U)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2685 ../src/nautilus-view.c:7279
-#: ../src/nautilus-view.c:7303 ../src/nautilus-view.c:7375
+#: ../src/nautilus-places-sidebar.c:2704 ../src/nautilus-view.c:7278
+#: ../src/nautilus-view.c:7302 ../src/nautilus-view.c:7374
 msgid "_Eject"
 msgstr "வெளியேற்று (_E)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2692 ../src/nautilus-view.c:7291
-#: ../src/nautilus-view.c:7315 ../src/nautilus-view.c:7387
+#: ../src/nautilus-places-sidebar.c:2711 ../src/nautilus-view.c:7290
+#: ../src/nautilus-view.c:7314 ../src/nautilus-view.c:7386
 msgid "_Detect Media"
 msgstr "(_D) ஊடகத்தை கண்டுபிடி"
 
-#: ../src/nautilus-places-sidebar.c:2727
+#: ../src/nautilus-places-sidebar.c:2746
 msgid "_Properties"
 msgstr "(_P)பண்புகள்"
 
-#: ../src/nautilus-places-sidebar.c:3291
+#: ../src/nautilus-places-sidebar.c:3275
 msgid "Computer"
 msgstr "கணிப்பொறி"
 
@@ -3771,74 +3718,74 @@ msgstr[1] " %'d கோப்பு செயல்கள் உள்ளன"
 msgid "All file operations have been successfully completed"
 msgstr "எல்லா கோப்பு செயல்களும்  வெற்றிகரமாக முடிந்தது"
 
-#: ../src/nautilus-properties-window.c:478
+#: ../src/nautilus-properties-window.c:489
 msgid "You cannot assign more than one custom icon at a time!"
 msgstr "ஒரே நேரத்தில் ஒன்றுக்கும் மேற்பட்ட தனிப்பயன் சின்னங்களை அமைக்க முடியாது!"
 
-#: ../src/nautilus-properties-window.c:479
+#: ../src/nautilus-properties-window.c:490
 msgid "Please drag just one image to set a custom icon."
 msgstr "தனிப்பயன் சின்னமாக அமைக்க ஒரு பிம்பத்தை மட்டும் இழுக்கவும்"
 
-#: ../src/nautilus-properties-window.c:490
+#: ../src/nautilus-properties-window.c:501
 msgid "The file that you dropped is not local."
 msgstr "நீங்கள் கைவிட்ட கோப்பு உங்கள் கணினியில் இல்லை"
 
-#: ../src/nautilus-properties-window.c:491
-#: ../src/nautilus-properties-window.c:497
+#: ../src/nautilus-properties-window.c:502
+#: ../src/nautilus-properties-window.c:508
 msgid "You can only use local images as custom icons."
 msgstr ""
 "உள் உங்கள் கணினியில் உள்ள சித்திரங்களை மட்டுமே தனிப்பயன் சின்னங்களாக பயன்படுத்த முடியும்."
 
-#: ../src/nautilus-properties-window.c:496
+#: ../src/nautilus-properties-window.c:507
 msgid "The file that you dropped is not an image."
 msgstr "நீங்கள் கைவிட்ட கோப்பு பிம்பம் இல்லை"
 
-#: ../src/nautilus-properties-window.c:618
+#: ../src/nautilus-properties-window.c:629
 msgid "_Name:"
 msgid_plural "_Names:"
 msgstr[0] "பெயர்: (_N)"
 msgstr[1] "பெயர்கள்: (_N)"
 
-#: ../src/nautilus-properties-window.c:813
+#: ../src/nautilus-properties-window.c:824
 #, c-format
 msgid "Properties"
 msgstr "பண்புகள்"
 
-#: ../src/nautilus-properties-window.c:821
+#: ../src/nautilus-properties-window.c:832
 #, c-format
 msgid "%s Properties"
 msgstr "%s பண்புகள்"
 
-#: ../src/nautilus-properties-window.c:1146
+#: ../src/nautilus-properties-window.c:1221
 #, c-format
 msgctxt "MIME type description (MIME type)"
 msgid "%s (%s)"
 msgstr "%s (%s)"
 
-#: ../src/nautilus-properties-window.c:1354
+#: ../src/nautilus-properties-window.c:1429
 msgid "Cancel Group Change?"
 msgstr "குழு மாற்றத்தை ரத்து செய்ய வேண்டவேண்டுமா?"
 
-#: ../src/nautilus-properties-window.c:1769
+#: ../src/nautilus-properties-window.c:1844
 msgid "Cancel Owner Change?"
 msgstr "உரிமையாளர் மாற்றத்தை ரத்து செய்யவேண்டுமா?"
 
-#: ../src/nautilus-properties-window.c:2086
+#: ../src/nautilus-properties-window.c:2160
 msgid "nothing"
 msgstr "எதுவுமில்லை"
 
-#: ../src/nautilus-properties-window.c:2088
+#: ../src/nautilus-properties-window.c:2162
 msgid "unreadable"
 msgstr "படிக்கமுடியாத"
 
-#: ../src/nautilus-properties-window.c:2098
+#: ../src/nautilus-properties-window.c:2170
 #, c-format
 msgid "%'d item, with size %s"
 msgid_plural "%'d items, totalling %s"
 msgstr[0] "%'d உருப்படி,  %s அளவு "
 msgstr[1] "%'d உருப்படிகள், மொத்தம் %s அளவு "
 
-#: ../src/nautilus-properties-window.c:2107
+#: ../src/nautilus-properties-window.c:2179
 msgid "(some contents unreadable)"
 msgstr "(சில உள்ளடக்கங்களை படிக்க முடியவில்லை)"
 
@@ -3848,185 +3795,189 @@ msgstr "(சில உள்ளடக்கங்களை படிக்க �
 #. * 2-line value. Maybe there's a better way to do this, but I
 #. * couldn't think of one.
 #.
-#: ../src/nautilus-properties-window.c:2124
+#: ../src/nautilus-properties-window.c:2196
 msgid "Contents:"
 msgstr "உள்ளடக்கம்:"
 
 #. Translators: "used" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:2921
+#: ../src/nautilus-properties-window.c:3014
 msgid "used"
 msgstr "பயன்பட்டது"
 
 #. Translators: "free" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:2928
+#: ../src/nautilus-properties-window.c:3020
 msgid "free"
 msgstr "காலி"
 
-#: ../src/nautilus-properties-window.c:2930
+#: ../src/nautilus-properties-window.c:3022
 msgid "Total capacity:"
 msgstr "மொத்த கொள்ளளவு்:"
 
-#: ../src/nautilus-properties-window.c:2939
+#: ../src/nautilus-properties-window.c:3025
 msgid "Filesystem type:"
 msgstr "கோப்பு அமைப்பு முறை வகை:"
 
-#: ../src/nautilus-properties-window.c:3024
+#: ../src/nautilus-properties-window.c:3161
 msgid "Basic"
 msgstr "அடிப்படை"
 
-#: ../src/nautilus-properties-window.c:3089
+#: ../src/nautilus-properties-window.c:3226
 msgid "Link target:"
 msgstr "இணைக்கபப்ட்ட இலக்கு:"
 
-#: ../src/nautilus-properties-window.c:3114
+#: ../src/nautilus-properties-window.c:3245
+msgid "Location:"
+msgstr "இடம்:"
+
+#: ../src/nautilus-properties-window.c:3251
 msgid "Volume:"
 msgstr "நிறை:"
 
-#: ../src/nautilus-properties-window.c:3123
+#: ../src/nautilus-properties-window.c:3260
 msgid "Accessed:"
 msgstr "அலசப்பட்ட:"
 
-#: ../src/nautilus-properties-window.c:3127
+#: ../src/nautilus-properties-window.c:3264
 msgid "Modified:"
 msgstr "திருத்தப்பட்ட:"
 
-#: ../src/nautilus-properties-window.c:3137
+#: ../src/nautilus-properties-window.c:3274
 msgid "Free space:"
 msgstr "காலி இடம்:"
 
 #. translators: this gets concatenated to "no read",
 #. * "no access", etc. (see following strings)
 #.
-#: ../src/nautilus-properties-window.c:3788
-#: ../src/nautilus-properties-window.c:3799
-#: ../src/nautilus-properties-window.c:3811
+#: ../src/nautilus-properties-window.c:3925
+#: ../src/nautilus-properties-window.c:3936
+#: ../src/nautilus-properties-window.c:3948
 msgid "no "
 msgstr "இல்லை"
 
-#: ../src/nautilus-properties-window.c:3791
+#: ../src/nautilus-properties-window.c:3928
 msgid "list"
 msgstr "பட்டியல்"
 
-#: ../src/nautilus-properties-window.c:3793
+#: ../src/nautilus-properties-window.c:3930
 msgid "read"
 msgstr "படி"
 
-#: ../src/nautilus-properties-window.c:3802
+#: ../src/nautilus-properties-window.c:3939
 msgid "create/delete"
 msgstr "உருவாக்கு/அழி"
 
-#: ../src/nautilus-properties-window.c:3804
+#: ../src/nautilus-properties-window.c:3941
 msgid "write"
 msgstr "எழுது"
 
-#: ../src/nautilus-properties-window.c:3813
+#: ../src/nautilus-properties-window.c:3950
 msgid "access"
 msgstr "அணுகல்"
 
-#: ../src/nautilus-properties-window.c:3878
+#: ../src/nautilus-properties-window.c:4015
 msgid "List files only"
 msgstr "பட்டியல் கோப்புகள் மட்டும்"
 
-#: ../src/nautilus-properties-window.c:3884
+#: ../src/nautilus-properties-window.c:4021
 msgid "Access files"
 msgstr "கோப்புகளை அணுகு"
 
-#: ../src/nautilus-properties-window.c:3890
+#: ../src/nautilus-properties-window.c:4027
 msgid "Create and delete files"
 msgstr "கோப்புகளை உருவாக்கி அழி"
 
-#: ../src/nautilus-properties-window.c:3905
+#: ../src/nautilus-properties-window.c:4042
 msgid "Read-only"
 msgstr "வாசிக்க-மட்டும்"
 
-#: ../src/nautilus-properties-window.c:3911
+#: ../src/nautilus-properties-window.c:4048
 msgid "Read and write"
 msgstr "வாசிக்கவும் மற்றும் எழுதவும்"
 
-#: ../src/nautilus-properties-window.c:3938
+#: ../src/nautilus-properties-window.c:4075
 msgid "Access:"
 msgstr "அணுகல்:"
 
-#: ../src/nautilus-properties-window.c:3940
+#: ../src/nautilus-properties-window.c:4077
 msgid "Folder access:"
 msgstr "அடைவு அணுகல்:"
 
-#: ../src/nautilus-properties-window.c:3942
+#: ../src/nautilus-properties-window.c:4079
 msgid "File access:"
 msgstr "கோப்பு அணுகல்:"
 
-#: ../src/nautilus-properties-window.c:4031
+#: ../src/nautilus-properties-window.c:4168
 msgid "_Owner:"
 msgstr "உரிமையாளர் (_O):"
 
-#: ../src/nautilus-properties-window.c:4039
-#: ../src/nautilus-properties-window.c:4303
+#: ../src/nautilus-properties-window.c:4176
+#: ../src/nautilus-properties-window.c:4440
 msgid "Owner:"
 msgstr "உரிமையாளர்:"
 
-#: ../src/nautilus-properties-window.c:4061
+#: ../src/nautilus-properties-window.c:4198
 msgid "_Group:"
 msgstr "குழு: (_G)"
 
-#: ../src/nautilus-properties-window.c:4069
-#: ../src/nautilus-properties-window.c:4317
+#: ../src/nautilus-properties-window.c:4206
+#: ../src/nautilus-properties-window.c:4454
 msgid "Group:"
 msgstr "குழு:"
 
-#: ../src/nautilus-properties-window.c:4090
+#: ../src/nautilus-properties-window.c:4227
 msgid "Others"
 msgstr "மற்றவை"
 
-#: ../src/nautilus-properties-window.c:4105
+#: ../src/nautilus-properties-window.c:4242
 msgid "Execute:"
 msgstr "இயக்கு:"
 
-#: ../src/nautilus-properties-window.c:4108
+#: ../src/nautilus-properties-window.c:4245
 msgid "Allow _executing file as program"
 msgstr "இயங்கும் கோப்பினை நிரலாக அனுமதிக்கவும் (_e)"
 
-#: ../src/nautilus-properties-window.c:4284
+#: ../src/nautilus-properties-window.c:4421
 msgid "Change Permissions for Enclosed Files"
 msgstr "உடன் அடக்கிய கோப்புகளுக்கு அனுமதிகளை மாற்றுக"
 
-#: ../src/nautilus-properties-window.c:4288
+#: ../src/nautilus-properties-window.c:4425
 msgid "Change"
 msgstr "மாற்று"
 
-#: ../src/nautilus-properties-window.c:4331
+#: ../src/nautilus-properties-window.c:4468
 msgid "Others:"
 msgstr "மற்றவை:"
 
-#: ../src/nautilus-properties-window.c:4372
+#: ../src/nautilus-properties-window.c:4509
 msgid "You are not the owner, so you cannot change these permissions."
 msgstr "நீங்கள் உரிமையாளர் இல்லை, இந்த அனுமதிகளை மாற்ற முடியாது"
 
-#: ../src/nautilus-properties-window.c:4387
+#: ../src/nautilus-properties-window.c:4524
 msgid "Security context:"
 msgstr "பாதுகாப்பு சூழல்:"
 
-#: ../src/nautilus-properties-window.c:4402
+#: ../src/nautilus-properties-window.c:4539
 msgid "Change Permissions for Enclosed Files..."
 msgstr "உடன் அடக்கிய கோப்புகளுக்கு அனுமதிகளை மாற்றுக..."
 
-#: ../src/nautilus-properties-window.c:4412
+#: ../src/nautilus-properties-window.c:4549
 #, c-format
 msgid "The permissions of “%s” could not be determined."
 msgstr "\"%s\" இன் அனுமதியை நிர்ணயிக்க முடியவில்லை"
 
-#: ../src/nautilus-properties-window.c:4415
+#: ../src/nautilus-properties-window.c:4552
 msgid "The permissions of the selected file could not be determined."
 msgstr "தேர்வு செய்த கோப்பிற்கான அனுமதியை கண்டுபிடிக்க முடியவில்லை"
 
-#: ../src/nautilus-properties-window.c:4660
+#: ../src/nautilus-properties-window.c:4796
 msgid "Open With"
 msgstr "இதனால் திற"
 
-#: ../src/nautilus-properties-window.c:4983
+#: ../src/nautilus-properties-window.c:5119
 msgid "Creating Properties window."
 msgstr "பண்புகள் சாளரத்தை உருவாக்கு"
 
-#: ../src/nautilus-properties-window.c:5272
+#: ../src/nautilus-properties-window.c:5418
 msgid "Select Custom Icon"
 msgstr "தனிப்பயன் சின்னத்தை தேர்வு செய்"
 
@@ -4042,10 +3993,6 @@ msgstr "ஆவணங்கள்"
 msgid "Music"
 msgstr "இசை"
 
-#: ../src/nautilus-query-editor.c:418
-msgid "Video"
-msgstr "வீடியோ"
-
 #: ../src/nautilus-query-editor.c:434
 msgid "Picture"
 msgstr "படம்"
@@ -4053,14 +4000,6 @@ msgstr "படம்"
 #: ../src/nautilus-query-editor.c:454
 msgid "Illustration"
 msgstr "விளக்கம்"
-
-#: ../src/nautilus-query-editor.c:468
-msgid "Spreadsheet"
-msgstr "விரிதாள்"
-
-#: ../src/nautilus-query-editor.c:484
-msgid "Presentation"
-msgstr "காட்சி"
 
 #: ../src/nautilus-query-editor.c:493
 msgid "Pdf / Postscript"
@@ -4091,15 +4030,15 @@ msgid "Remove this criterion from the search"
 msgstr "தேடலிலிருந்து இந்த வகையை நீக்கு"
 
 #. create the Current/All Files selector
-#: ../src/nautilus-query-editor.c:1050
+#: ../src/nautilus-query-editor.c:1043
 msgid "Current"
 msgstr "நடப்பு"
 
-#: ../src/nautilus-query-editor.c:1053
+#: ../src/nautilus-query-editor.c:1046
 msgid "All Files"
 msgstr "அனைத்து கோப்புகளும்"
 
-#: ../src/nautilus-query-editor.c:1075
+#: ../src/nautilus-query-editor.c:1068
 msgid "Add a new criterion to this search"
 msgstr "இந்த தேடலுக்கு புதிய அளவை சேர்க்க"
 
@@ -4158,6 +4097,10 @@ msgstr "தேடலை இப்படி சேமிக்கவும்"
 msgid "Search _name:"
 msgstr "தேடல் பெயர்: (_n)"
 
+#: ../src/nautilus-view.c:1623
+msgid "_Folder:"
+msgstr "(_F)அடைவு:"
+
 #: ../src/nautilus-view.c:1628
 msgid "Select Folder to Save Search In"
 msgstr "தேடுதலில் சேமிக்க அடைவினை தேர்ந்தெடுக்கவும்"
@@ -4178,19 +4121,19 @@ msgstr "உள்ளடக்க காட்சி"
 msgid "View of the current folder"
 msgstr "தற்போதைய அடைவினை பார்வையிடு"
 
-#: ../src/nautilus-view.c:2892 ../src/nautilus-view.c:2927
+#: ../src/nautilus-view.c:2891 ../src/nautilus-view.c:2926
 #, c-format
 msgid "“%s” selected"
 msgstr "\"%s\" தேர்வு செய்யப்பட்டது"
 
-#: ../src/nautilus-view.c:2894
+#: ../src/nautilus-view.c:2893
 #, c-format
 msgid "%'d folder selected"
 msgid_plural "%'d folders selected"
 msgstr[0] "%'d அடைவு தேர்ந்தெடுக்கப்பட்டது"
 msgstr[1] "%'d அடைவுகள் தேர்ந்தெடுக்கப்பட்டன"
 
-#: ../src/nautilus-view.c:2904
+#: ../src/nautilus-view.c:2903
 #, c-format
 msgid "(containing %'d item)"
 msgid_plural "(containing %'d items)"
@@ -4198,14 +4141,14 @@ msgstr[0] "(%'d உருப்படி கொண்டது)"
 msgstr[1] "(%'d உருப்படிகள் கொண்டது)"
 
 #. translators: this is preceded with a string of form 'N folders' (N more than 1)
-#: ../src/nautilus-view.c:2915
+#: ../src/nautilus-view.c:2914
 #, c-format
 msgid "(containing a total of %'d item)"
 msgid_plural "(containing a total of %'d items)"
 msgstr[0] "(மொத்தம் %'d உருப்படி கொண்டது)"
 msgstr[1] "(மொத்தம் %'d உருப்படிகள் கொண்டது)"
 
-#: ../src/nautilus-view.c:2930
+#: ../src/nautilus-view.c:2929
 #, c-format
 msgid "%'d item selected"
 msgid_plural "%'d items selected"
@@ -4213,7 +4156,7 @@ msgstr[0] "%'d  உருப்படி தேர்ந்தெடுக்க
 msgstr[1] "%'d  உருப்படிகள் தேர்ந்தெடுக்கப்பட்டன"
 
 #. Folders selected also, use "other" terminology
-#: ../src/nautilus-view.c:2937
+#: ../src/nautilus-view.c:2936
 #, c-format
 msgid "%'d other item selected"
 msgid_plural "%'d other items selected"
@@ -4224,7 +4167,7 @@ msgstr[1] "%'d  மற்ற உருப்படிகள் தேர்ந�
 #. * needs to use something other than parentheses. The
 #. * the message in parentheses is the size of the selected items.
 #.
-#: ../src/nautilus-view.c:2951
+#: ../src/nautilus-view.c:2950
 #, c-format
 msgid "(%s)"
 msgstr "(%s)"
@@ -4236,125 +4179,125 @@ msgstr "(%s)"
 #. * message about the number of other items and the
 #. * total size of those items.
 #.
-#: ../src/nautilus-view.c:2975
+#: ../src/nautilus-view.c:2974
 #, c-format
 msgid "%s %s, %s %s"
 msgstr "%s %s, %s %s"
 
-#: ../src/nautilus-view.c:4371
+#: ../src/nautilus-view.c:4370
 #, c-format
 msgid "Open With %s"
 msgstr "இதனோடு திற %s"
 
-#: ../src/nautilus-view.c:4373
+#: ../src/nautilus-view.c:4372
 #, c-format
 msgid "Use “%s” to open the selected item"
 msgid_plural "Use “%s” to open the selected items"
 msgstr[0] "\"%s\" ஐ பயன்படுத்தி தேர்வு செய்த உருப்படியை திறக்கவும்"
 msgstr[1] "\"%s\" ஐ பயன்படுத்தி தேர்வு செய்த உருப்படிகளை திறக்கவும்"
 
-#: ../src/nautilus-view.c:5116
+#: ../src/nautilus-view.c:5115
 #, c-format
 msgid "Run “%s” on any selected items"
 msgstr "\"%s\" ஐ தேர்வு உருப்படி ஒன்றில் இயக்கு"
 
-#: ../src/nautilus-view.c:5370
+#: ../src/nautilus-view.c:5369
 #, c-format
 msgid "Create a new document from template “%s”"
 msgstr "\"%s\" வார்புருவிலிருந்து  புதிய ஆவணத்தை உருவாக்கு"
 
-#: ../src/nautilus-view.c:5970
+#: ../src/nautilus-view.c:5969
 msgid "Select Destination"
 msgstr "சேருமிடத்தை தேர்வு செய்"
 
-#: ../src/nautilus-view.c:5974
+#: ../src/nautilus-view.c:5973
 msgid "_Select"
 msgstr "(_S) தேர்ந்தெடு"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6488
+#: ../src/nautilus-view.c:6487
 #, c-format
 msgid "Unable to remove “%s”"
 msgstr "\"%s\" ஐ நீக்க முடியவில்லை "
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6515
+#: ../src/nautilus-view.c:6514
 #, c-format
 msgid "Unable to eject “%s”"
 msgstr "\"%s\" ஐ வெளியேற்ற முடியவில்லை"
 
-#: ../src/nautilus-view.c:6537
+#: ../src/nautilus-view.c:6536
 msgid "Unable to stop drive"
 msgstr "இயக்கியை நிறுத்த முடியவில்லை "
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6639
+#: ../src/nautilus-view.c:6638
 #, c-format
 msgid "Unable to start “%s”"
 msgstr "\"%s\" ஐ  துவக்க முடியவில்லை "
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7130
+#: ../src/nautilus-view.c:7129
 msgid "New _Document"
 msgstr "(_D) புதிய ஆவணம்"
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7131
+#: ../src/nautilus-view.c:7130
 msgid "Open Wit_h"
 msgstr "(_h)இதனால் திற"
 
-#: ../src/nautilus-view.c:7132
+#: ../src/nautilus-view.c:7131
 msgid "Choose a program with which to open the selected item"
 msgstr "தேர்வு செய்த உருப்படியை திறக்க வேறு பயன்பாட்டை தேர்வு செய்யவும்"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7134 ../src/nautilus-view.c:7392
+#: ../src/nautilus-view.c:7133 ../src/nautilus-view.c:7391
 #: ../src/nautilus-window-menus.c:574
 msgid "P_roperties"
 msgstr "_r பண்புகள்"
 
 #. tooltip
-#: ../src/nautilus-view.c:7135 ../src/nautilus-view.c:8712
+#: ../src/nautilus-view.c:7134 ../src/nautilus-view.c:8711
 msgid "View or modify the properties of each selected item"
 msgstr "தேர்வு செய்த கோப்புகளின் பண்புகளை பார் அல்லது மாற்று"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7142
+#: ../src/nautilus-view.c:7141
 msgid "New _Folder"
 msgstr "(_F) புதிய அடைவு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7143
+#: ../src/nautilus-view.c:7142
 msgid "Create a new empty folder inside this folder"
 msgstr "இந்த அடைவுக்குள் புதிய காலி அடைவை உருவாக்கு"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7146
+#: ../src/nautilus-view.c:7145
 msgid "New Folder with Selection"
 msgstr " தேர்வுடன் புதிய அடைவு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7147
+#: ../src/nautilus-view.c:7146
 msgid "Create a new folder containing the selected items"
 msgstr "தேர்வு செய்த உருப்படிகளுடன் ஒரு புதியஅடைவை உருவாக்கு"
 
 #. name, stock id
 #. translators: this is used to indicate that a document doesn't contain anything
 #. label, accelerator
-#: ../src/nautilus-view.c:7151
+#: ../src/nautilus-view.c:7150
 msgid "_Empty Document"
 msgstr "_E காலி ஆவணம் "
 
 #. tooltip
-#: ../src/nautilus-view.c:7152
+#: ../src/nautilus-view.c:7151
 msgid "Create a new empty document inside this folder"
 msgstr "இந்த அடைவுக்குள் புதிய காலி ஆவணத்தை உருவாக்கு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7156
+#: ../src/nautilus-view.c:7155
 msgid "Open the selected item in this window"
 msgstr "தேர்வு செய்த உருப்படியை இந்த சாளரத்தில் திற"
 
@@ -4363,66 +4306,66 @@ msgstr "தேர்வு செய்த உருப்படியை இந
 #. Location-specific actions
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7163 ../src/nautilus-view.c:7333
+#: ../src/nautilus-view.c:7162 ../src/nautilus-view.c:7332
 msgid "Open in Navigation Window"
 msgstr "வழிகாணும் சாளரத்தில் திற"
 
 #. tooltip
-#: ../src/nautilus-view.c:7164
+#: ../src/nautilus-view.c:7163
 msgid "Open each selected item in a navigation window"
 msgstr "தேர்வு செய்த உருப்படியை வழிகாணும் சாளரத்தில் திற"
 
 #. tooltip
-#: ../src/nautilus-view.c:7168
+#: ../src/nautilus-view.c:7167
 msgid "Open each selected item in a new tab"
 msgstr "ஒவ்வொரு தேர்ந்தெடுத்த உருப்படியையும் ஒரு புதிய சாளரத்தில் திற "
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7171
+#: ../src/nautilus-view.c:7170
 msgid "Other _Application..."
 msgstr "(_A) மற்றொரு பயன்பாடு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7172 ../src/nautilus-view.c:7176
+#: ../src/nautilus-view.c:7171 ../src/nautilus-view.c:7175
 msgid "Choose another application with which to open the selected item"
 msgstr "தேர்வு செய்த உருப்படியை திறக்க வேறு பயன்பாட்டை தேர்வு செய்யவும்"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7175
+#: ../src/nautilus-view.c:7174
 msgid "Open With Other _Application..."
 msgstr "(_A)மற்றொரு பயன்பாட்டால் திற..."
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7179
+#: ../src/nautilus-view.c:7178
 msgid "_Open Scripts Folder"
 msgstr "(_O)சிறுநிரல் அடைவை திற"
 
 #. tooltip
-#: ../src/nautilus-view.c:7180
+#: ../src/nautilus-view.c:7179
 msgid "Show the folder containing the scripts that appear in this menu"
 msgstr "இந்த மெனுவில் உள்ள சிறுநிரல்களை காட்டு"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7188
+#: ../src/nautilus-view.c:7187
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr "தேர்வு செய்த கோப்புகள் ஒட்டு கட்டளையோடு நகர ஏற்பாடு செய்"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7192
+#: ../src/nautilus-view.c:7191
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr "தேர்வு செய்த கோப்புகள் ஒட்டு கட்டளையோடு நகலெடுக்க ஏற்பாடு செய்"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7196
+#: ../src/nautilus-view.c:7195
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "ஏற்கெனவே தேர்வு செய்த ஒட்டு அல்லது பிரதியெடு கட்டளைப்படி கோப்புகளை நகர்த்தவும் அல்லது "
@@ -4432,12 +4375,12 @@ msgstr ""
 #. accelerator for paste
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7201 ../src/nautilus-view.c:7350
+#: ../src/nautilus-view.c:7200 ../src/nautilus-view.c:7349
 msgid "_Paste Into Folder"
 msgstr "கோப்புகளை அடைவுகளில் _ஒட்டு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7202
+#: ../src/nautilus-view.c:7201
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -4447,130 +4390,130 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7205
+#: ../src/nautilus-view.c:7204
 msgid "Copy To..."
 msgstr "இவருக்கு பிரதி அனுப்பு..."
 
 #. tooltip
-#: ../src/nautilus-view.c:7206
+#: ../src/nautilus-view.c:7205
 msgid "Copy selected files to another location"
 msgstr "தேர்வு செய்த கோப்புகளை வேறிடத்தில் பிரதியெடு"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7209
+#: ../src/nautilus-view.c:7208
 msgid "Move To..."
 msgstr "இங்கு நகர்த்துக..."
 
 #. tooltip
-#: ../src/nautilus-view.c:7210
+#: ../src/nautilus-view.c:7209
 msgid "Move selected files to another location"
 msgstr "தேர்வு செய்த கோப்புகளை வேறிடத்துக்கு நகர்த்துக"
 
 #. tooltip
-#: ../src/nautilus-view.c:7214
+#: ../src/nautilus-view.c:7213
 msgid "Select all items in this window"
 msgstr "இந்த சாளரத்தில் உள்ள அனைத்து உருப்படிகளையும் தேர்வு செய்"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7217
+#: ../src/nautilus-view.c:7216
 msgid "Select I_tems Matching..."
 msgstr "(_t) பொருந்தும் உருப்படிகளை தேர்ந்தெடு..."
 
 #. tooltip
-#: ../src/nautilus-view.c:7218
+#: ../src/nautilus-view.c:7217
 msgid "Select items in this window matching a given pattern"
 msgstr "கொடுக்கப்பட்ட மாதிரியில் பொருந்தக்கூடிய மறைந்த உருப்படிகளை தேர்வு செய்"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7221
+#: ../src/nautilus-view.c:7220
 msgid "_Invert Selection"
 msgstr "(_I) தேர்வை தலைகீழாக்கு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7222
+#: ../src/nautilus-view.c:7221
 msgid "Select all and only the items that are not currently selected"
 msgstr "அனைத்தயும் தேர்வு செய் மற்றும் இப்போது தேர்ந்தெடுக்காததை தவிர மற்றதை மட்டும்."
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7225 ../src/nautilus-view.c:8695
+#: ../src/nautilus-view.c:7224 ../src/nautilus-view.c:8694
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "இணைப்பினை உருவாக்கு (_k)"
 msgstr[1] "இணைப்புகளை உருவாக்கு (_k)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7226
+#: ../src/nautilus-view.c:7225
 msgid "Create a symbolic link for each selected item"
 msgstr "தேர்வு செய்த உருப்படிக்கு குறியீட்டு இணைப்பை உருவாக்கு"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7229
+#: ../src/nautilus-view.c:7228
 msgid "Rena_me..."
 msgstr "_ m மறுபெயரிடு..."
 
 #. tooltip
-#: ../src/nautilus-view.c:7230
+#: ../src/nautilus-view.c:7229
 msgid "Rename selected item"
 msgstr "தேர்வு செய்த உருப்படியின் பெயரை மாற்று"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7233
+#: ../src/nautilus-view.c:7232
 msgid "Set as Wallpaper"
 msgstr "திரை பின்படமாக அமைக்கவும்"
 
 #. tooltip
-#: ../src/nautilus-view.c:7234
+#: ../src/nautilus-view.c:7233
 msgid "Make item the wallpaper"
 msgstr "உருப்படியை திரைஒட்டியாக்கு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7242 ../src/nautilus-view.c:8653
+#: ../src/nautilus-view.c:7241 ../src/nautilus-view.c:8652
 msgid "Move each selected item to the Trash"
 msgstr "தேர்வு செய்த உருப்படிகளை குப்பைக்கு நகர்த்து"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7245 ../src/nautilus-view.c:7359
-#: ../src/nautilus-view.c:8679
+#: ../src/nautilus-view.c:7244 ../src/nautilus-view.c:7358
+#: ../src/nautilus-view.c:8678
 msgid "_Delete"
 msgstr "(_D)நீக்கு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7246
+#: ../src/nautilus-view.c:7245
 msgid "Delete each selected item, without moving to the Trash"
 msgstr "தேர்வு செய்த உருப்படிகளை குப்பை நகர்தாமல் நீக்கு"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7249 ../src/nautilus-view.c:7363
+#: ../src/nautilus-view.c:7248 ../src/nautilus-view.c:7362
 msgid "_Restore"
 msgstr "(_R)மீட்டு அமை"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7253
+#: ../src/nautilus-view.c:7252
 msgid "_Undo"
 msgstr "(_U)செயல் நீக்கு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7254
+#: ../src/nautilus-view.c:7253
 msgid "Undo the last action"
 msgstr "கடைசி செயலை ரத்து செய்க"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7257
+#: ../src/nautilus-view.c:7256
 msgid "_Redo"
 msgstr "(_R) மீட்டமை"
 
 #. tooltip
-#: ../src/nautilus-view.c:7258
+#: ../src/nautilus-view.c:7257
 msgid "Redo the last undone action"
 msgstr "கடைசியாக ரத்து செய்த செயலை மீட்டமை"
 
@@ -4582,125 +4525,125 @@ msgstr "கடைசியாக ரத்து செய்த செயலை
 #.
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7267
+#: ../src/nautilus-view.c:7266
 msgid "Reset View to _Defaults"
 msgstr "(_D)இயல்பான காட்சியாக மாற்று"
 
 #. tooltip
-#: ../src/nautilus-view.c:7268
+#: ../src/nautilus-view.c:7267
 msgid "Reset sorting order and zoom level to match preferences for this view"
 msgstr "இந்த காட்சிக்கு ஏற்ப அடுக்கும் முறை மற்றும் அளவு ஆகியவற்றை மாற்றி அமை"
 
 #. tooltip
-#: ../src/nautilus-view.c:7272
+#: ../src/nautilus-view.c:7271
 msgid "Mount the selected volume"
 msgstr "தேர்வு செய்த வன்பொருளை ஏற்றவும்"
 
 #. tooltip
-#: ../src/nautilus-view.c:7276
+#: ../src/nautilus-view.c:7275
 msgid "Unmount the selected volume"
 msgstr "தேர்வு செய்த பொருள்களை வெளியேற்று"
 
 #. tooltip
-#: ../src/nautilus-view.c:7280
+#: ../src/nautilus-view.c:7279
 msgid "Eject the selected volume"
 msgstr "தேர்வு செய்த தொகுப்பை வெளியேற்று"
 
 #. tooltip
-#: ../src/nautilus-view.c:7284
+#: ../src/nautilus-view.c:7283
 msgid "Start the selected volume"
 msgstr "தேர்வு செய்த தொகுதியை துவக்கு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7288 ../src/nautilus-view.c:8208
+#: ../src/nautilus-view.c:7287 ../src/nautilus-view.c:8207
 msgid "Stop the selected volume"
 msgstr "தேர்வு செய்த தொகுதியை நிறுத்து"
 
 #. tooltip
-#: ../src/nautilus-view.c:7292 ../src/nautilus-view.c:7316
-#: ../src/nautilus-view.c:7388
+#: ../src/nautilus-view.c:7291 ../src/nautilus-view.c:7315
+#: ../src/nautilus-view.c:7387
 msgid "Detect media in the selected drive"
 msgstr "தேர்வு செய்த இயக்கியில் ஊடகத்தை கண்டுபிடி"
 
 #. tooltip
-#: ../src/nautilus-view.c:7296
+#: ../src/nautilus-view.c:7295
 msgid "Mount the volume associated with the open folder"
 msgstr "திறக்கும் அடைவில் தொடர்புடைய தொகுதியை ஏற்றவும்"
 
 #. tooltip
-#: ../src/nautilus-view.c:7300
+#: ../src/nautilus-view.c:7299
 msgid "Unmount the volume associated with the open folder"
 msgstr "திறக்கும் அடைவில் தொடர்புடைய தொகுதியை ஏற்றம் நீக்கவும்"
 
 #. tooltip
-#: ../src/nautilus-view.c:7304
+#: ../src/nautilus-view.c:7303
 msgid "Eject the volume associated with the open folder"
 msgstr "திறந்துள்ள அடைவுடன் தொடர்புடைய தொகுதியை வெளியேற்றுக"
 
 #. tooltip
-#: ../src/nautilus-view.c:7308
+#: ../src/nautilus-view.c:7307
 msgid "Start the volume associated with the open folder"
 msgstr "திறந்துள்ள அடைவுடன் தொடர்புடைய தொகுதியை துவக்கவும்"
 
 #. tooltip
-#: ../src/nautilus-view.c:7312
+#: ../src/nautilus-view.c:7311
 msgid "Stop the volume associated with the open folder"
 msgstr "திறக்கும் அடைவில் தொடர்புடைய தொகுதியை நிறுத்தவும்"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7319
+#: ../src/nautilus-view.c:7318
 msgid "Open File and Close window"
 msgstr "கோப்பை திற மற்றும் மூடு சாளரம்"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7323
+#: ../src/nautilus-view.c:7322
 msgid "Sa_ve Search"
 msgstr "தேடலை சேமி (_v)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7324
+#: ../src/nautilus-view.c:7323
 msgid "Save the edited search"
 msgstr "தொகுப்பட்ட தேடலை சேமி"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7327
+#: ../src/nautilus-view.c:7326
 msgid "Sa_ve Search As..."
 msgstr "தேடலை மறுபெயரில் சேமி... (_v)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7328
+#: ../src/nautilus-view.c:7327
 msgid "Save the current search as a file"
 msgstr "நடப்பு தேடலை ஒரு கோப்பாக சேமி"
 
 #. tooltip
-#: ../src/nautilus-view.c:7334
+#: ../src/nautilus-view.c:7333
 msgid "Open this folder in a navigation window"
 msgstr "இந்த அடைவை வழிகாணும் சாளரத்தில் திற"
 
 #. tooltip
-#: ../src/nautilus-view.c:7338
+#: ../src/nautilus-view.c:7337
 msgid "Open this folder in a new tab"
 msgstr "இந்த அடைவை ஒரு புதிய சாளரத்தில் திற  "
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7343
+#: ../src/nautilus-view.c:7342
 msgid "Prepare this folder to be moved with a Paste command"
 msgstr "இந்த அடைவை ஒட்டு கட்டளையோடு நகர ஏற்பாடு செய்"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7347
+#: ../src/nautilus-view.c:7346
 msgid "Prepare this folder to be copied with a Paste command"
 msgstr "இந்த அடைவினை ஒரு ஒட்டு கட்டளையோடு நகலெடுக்க தயார் செய்யவும்"
 
 #. tooltip
-#: ../src/nautilus-view.c:7351
+#: ../src/nautilus-view.c:7350
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into this "
 "folder"
@@ -4709,264 +4652,264 @@ msgstr ""
 "அடைவிற்கு நகர்த்தவும் அல்லது பிரதி எடுக்கவும்"
 
 #. tooltip
-#: ../src/nautilus-view.c:7356
+#: ../src/nautilus-view.c:7355
 msgid "Move this folder to the Trash"
 msgstr "இந்த அடைவை குப்பைக்கு நகர்த்துகிறது"
 
 #. tooltip
-#: ../src/nautilus-view.c:7360
+#: ../src/nautilus-view.c:7359
 msgid "Delete this folder, without moving to the Trash"
 msgstr "இந்த அடைவை குப்பை நகர்த்தாமல் நீக்கு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7368
+#: ../src/nautilus-view.c:7367
 msgid "Mount the volume associated with this folder"
 msgstr "இந்த அடைவுடன் தொடர்புடைய தொகுதியை ஏற்றவும்"
 
 #. tooltip
-#: ../src/nautilus-view.c:7372
+#: ../src/nautilus-view.c:7371
 msgid "Unmount the volume associated with this folder"
 msgstr "இந்த அடைவில் தொடர்புடைய தொகுதியை ஏற்றம் நீக்கவும்"
 
 #. tooltip
-#: ../src/nautilus-view.c:7376
+#: ../src/nautilus-view.c:7375
 msgid "Eject the volume associated with this folder"
 msgstr "இந்த அடைவுடன் தொடர்புடைய தொகுதியை வெளியேற்றுக"
 
 #. tooltip
-#: ../src/nautilus-view.c:7380
+#: ../src/nautilus-view.c:7379
 msgid "Start the volume associated with this folder"
 msgstr "இந்த அடைவுடன் தொடர்புடைய தொகுதியை துவக்கவும்."
 
 #. tooltip
-#: ../src/nautilus-view.c:7384
+#: ../src/nautilus-view.c:7383
 msgid "Stop the volume associated with this folder"
 msgstr "இந்த அடைவுடன் தொடர்புடைய தொகுதியை நிறுத்தவும்"
 
 #. tooltip
-#: ../src/nautilus-view.c:7393 ../src/nautilus-window-menus.c:575
+#: ../src/nautilus-view.c:7392 ../src/nautilus-window-menus.c:575
 msgid "View or modify the properties of this folder"
 msgstr "இந்த அடைவின்  பண்புகளை பார் அல்லது மாற்று"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7399
+#: ../src/nautilus-view.c:7398
 msgid "Show _Hidden Files"
 msgstr "(_H)மறைந்த கோப்புகளை காட்டு"
 
 #. tooltip
-#: ../src/nautilus-view.c:7400
+#: ../src/nautilus-view.c:7399
 msgid "Toggle the display of hidden files in the current window"
 msgstr "மறைந்த கோப்புகளை தற்போதைய சாளர காட்சியிலிருந்து மாற்று"
 
-#: ../src/nautilus-view.c:7482
+#: ../src/nautilus-view.c:7481
 msgid "Run or manage scripts"
 msgstr "குறுநிரல்களை இயக்க அல்லது மேலாண்மை செய்ய."
 
 #. Create a script action here specially because its tooltip is dynamic
-#: ../src/nautilus-view.c:7484
+#: ../src/nautilus-view.c:7483
 msgid "_Scripts"
 msgstr "(_S)சிறுநிரல்கள்"
 
-#: ../src/nautilus-view.c:7837
+#: ../src/nautilus-view.c:7836
 #, c-format
 msgid "Move the open folder out of the trash to “%s”"
 msgstr "திறந்துள்ள அடைவை குப்பையிலிருந்து \"%s\" க்கு நகர்த்துக"
 
-#: ../src/nautilus-view.c:7841
+#: ../src/nautilus-view.c:7840
 #, c-format
 msgid "Move the selected folder out of the trash to “%s”"
 msgstr "தேர்ந்தெடுத்த அடைவை குப்பையிலிருந்து \"%s\" க்கு நகர்த்துக"
 
-#: ../src/nautilus-view.c:7844
+#: ../src/nautilus-view.c:7843
 #, c-format
 msgid "Move the selected folders out of the trash to “%s”"
 msgstr "தேர்ந்தெடுத்த அடைவுகளை குப்பையிலிருந்து \"%s\" க்கு நகர்த்துக"
 
-#: ../src/nautilus-view.c:7849
+#: ../src/nautilus-view.c:7848
 msgid "Move the selected folder out of the trash"
 msgstr "தேர்ந்தெடுத்த அடைவை குப்பையிலிருந்து வெளியே நகர்த்துக"
 
-#: ../src/nautilus-view.c:7851
+#: ../src/nautilus-view.c:7850
 msgid "Move the selected folders out of the trash"
 msgstr "தேர்ந்தெடுத்த அடைவுகளை குப்பையிலிருந்து வெளியே நகர்த்துக"
 
-#: ../src/nautilus-view.c:7857
+#: ../src/nautilus-view.c:7856
 #, c-format
 msgid "Move the selected file out of the trash to “%s”"
 msgstr "தேர்ந்தெடுத்த கோப்பை குப்பையிலிருந்து \"%s\" க்கு நகர்த்துக"
 
-#: ../src/nautilus-view.c:7860
+#: ../src/nautilus-view.c:7859
 #, c-format
 msgid "Move the selected files out of the trash to “%s”"
 msgstr "தேர்ந்தெடுத்த கோப்புகளை குப்பையிலிருந்து \"%s\" க்கு நகர்த்துக"
 
-#: ../src/nautilus-view.c:7865
+#: ../src/nautilus-view.c:7864
 msgid "Move the selected file out of the trash"
 msgstr "தேர்வு செய்த கோப்பை குப்பையிலிருந்து வெளியே நகர்த்துக"
 
-#: ../src/nautilus-view.c:7867
+#: ../src/nautilus-view.c:7866
 msgid "Move the selected files out of the trash"
 msgstr "தேர்வு செய்த கோப்புகளை குப்பையிலிருந்து வெளியே நகர்த்துக"
 
-#: ../src/nautilus-view.c:7873
+#: ../src/nautilus-view.c:7872
 #, c-format
 msgid "Move the selected item out of the trash to “%s”"
 msgstr "தேர்வு செய்த உருப்படியை குப்பையிலிருந்து \"%s\" க்கு நகர்த்துக"
 
-#: ../src/nautilus-view.c:7876
+#: ../src/nautilus-view.c:7875
 #, c-format
 msgid "Move the selected items out of the trash to “%s”"
 msgstr "தேர்வு செய்த உருப்படிகளை குப்பையிலிருந்து \"%s\" க்கு நகர்த்துக"
 
-#: ../src/nautilus-view.c:7881
+#: ../src/nautilus-view.c:7880
 msgid "Move the selected item out of the trash"
 msgstr "தேர்வு செய்த உருப்படியை குப்பையிலிருந்து வெளியே நகர்த்துக"
 
-#: ../src/nautilus-view.c:7883
+#: ../src/nautilus-view.c:7882
 msgid "Move the selected items out of the trash"
 msgstr "தேர்வு செய்த உருப்படிகளை குப்பையிலிருந்து வெளியே நகர்த்துக"
 
-#: ../src/nautilus-view.c:7990 ../src/nautilus-view.c:7994
-#: ../src/nautilus-view.c:8179 ../src/nautilus-view.c:8183
+#: ../src/nautilus-view.c:7989 ../src/nautilus-view.c:7993
+#: ../src/nautilus-view.c:8178 ../src/nautilus-view.c:8182
 msgid "Start the selected drive"
 msgstr "தேர்வு செய்த இயக்கியை துவக்கு"
 
-#: ../src/nautilus-view.c:7997 ../src/nautilus-view.c:8084
-#: ../src/nautilus-view.c:8186
+#: ../src/nautilus-view.c:7996 ../src/nautilus-view.c:8083
+#: ../src/nautilus-view.c:8185
 msgid "_Connect"
 msgstr "(_C)இணை"
 
-#: ../src/nautilus-view.c:7998 ../src/nautilus-view.c:8187
+#: ../src/nautilus-view.c:7997 ../src/nautilus-view.c:8186
 msgid "Connect to the selected drive"
 msgstr "தேர்வு செய்த இயக்கியை நிறுத்துக"
 
-#: ../src/nautilus-view.c:8001 ../src/nautilus-view.c:8088
-#: ../src/nautilus-view.c:8190
+#: ../src/nautilus-view.c:8000 ../src/nautilus-view.c:8087
+#: ../src/nautilus-view.c:8189
 msgid "_Start Multi-disk Drive"
 msgstr "(_S) பல் வட்டு இயக்கியை துவக்கு"
 
-#: ../src/nautilus-view.c:8002 ../src/nautilus-view.c:8191
+#: ../src/nautilus-view.c:8001 ../src/nautilus-view.c:8190
 msgid "Start the selected multi-disk drive"
 msgstr "தேர்வு செய்த பல்வட்டு இயக்கியை துவக்கு"
 
-#: ../src/nautilus-view.c:8005
+#: ../src/nautilus-view.c:8004
 msgid "U_nlock Drive"
 msgstr "(_n) இயக்கியின் பூட்டு திற"
 
-#: ../src/nautilus-view.c:8006 ../src/nautilus-view.c:8195
+#: ../src/nautilus-view.c:8005 ../src/nautilus-view.c:8194
 msgid "Unlock the selected drive"
 msgstr "தேர்வு செய்த இயக்கியை பூட்டு திற"
 
-#: ../src/nautilus-view.c:8019
+#: ../src/nautilus-view.c:8018
 msgid "Stop the selected drive"
 msgstr "தேர்வு செய்த இயக்கியை நிறுத்து"
 
-#: ../src/nautilus-view.c:8023 ../src/nautilus-view.c:8212
+#: ../src/nautilus-view.c:8022 ../src/nautilus-view.c:8211
 msgid "Safely remove the selected drive"
 msgstr "தேர்வு செய்த இயக்கியை பாதுகாப்பாக நீக்கு"
 
-#: ../src/nautilus-view.c:8026 ../src/nautilus-view.c:8113
-#: ../src/nautilus-view.c:8215
+#: ../src/nautilus-view.c:8025 ../src/nautilus-view.c:8112
+#: ../src/nautilus-view.c:8214
 msgid "_Disconnect"
 msgstr "(_D) இணைப்பு நீக்கு"
 
-#: ../src/nautilus-view.c:8027 ../src/nautilus-view.c:8216
+#: ../src/nautilus-view.c:8026 ../src/nautilus-view.c:8215
 msgid "Disconnect the selected drive"
 msgstr "தேர்வு செய்த இயக்கியை இணைப்பு நீக்கு"
 
-#: ../src/nautilus-view.c:8030 ../src/nautilus-view.c:8117
-#: ../src/nautilus-view.c:8219
+#: ../src/nautilus-view.c:8029 ../src/nautilus-view.c:8116
+#: ../src/nautilus-view.c:8218
 msgid "_Stop Multi-disk Drive"
 msgstr "(_S) பல்வட்டு இயக்கியை நிறுத்து"
 
-#: ../src/nautilus-view.c:8031 ../src/nautilus-view.c:8220
+#: ../src/nautilus-view.c:8030 ../src/nautilus-view.c:8219
 msgid "Stop the selected multi-disk drive"
 msgstr "தேர்வு செய்த பல்வட்டு இயக்கியை நிறுத்து"
 
-#: ../src/nautilus-view.c:8035 ../src/nautilus-view.c:8224
+#: ../src/nautilus-view.c:8034 ../src/nautilus-view.c:8223
 msgid "Lock the selected drive"
 msgstr "தேர்வு செய்த இயக்கியை பூட்டு"
 
-#: ../src/nautilus-view.c:8077 ../src/nautilus-view.c:8081
+#: ../src/nautilus-view.c:8076 ../src/nautilus-view.c:8080
 msgid "Start the drive associated with the open folder"
 msgstr "திறந்துள்ள அடைவுடன் தொடர்புடைய இயக்கியை துவக்கவும்"
 
-#: ../src/nautilus-view.c:8085
+#: ../src/nautilus-view.c:8084
 msgid "Connect to the drive associated with the open folder"
 msgstr "திறந்துள்ள அடைவுடன் தொடர்புடைய இயக்கியை இணைக்கவும்"
 
-#: ../src/nautilus-view.c:8089
+#: ../src/nautilus-view.c:8088
 msgid "Start the multi-disk drive associated with the open folder"
 msgstr "திறந்துள்ள அடைவுடன் தொடர்புடைய பல்வட்டு இயக்கியை துவக்கவும்"
 
-#: ../src/nautilus-view.c:8093
+#: ../src/nautilus-view.c:8092
 msgid "Unlock the drive associated with the open folder"
 msgstr "திறந்துள்ள அடைவுடன் தொடர்புடைய இயக்கியை பூட்டு திறக்கவும்"
 
-#: ../src/nautilus-view.c:8106
+#: ../src/nautilus-view.c:8105
 msgid "_Stop the drive associated with the open folder"
 msgstr "(_S) திறந்துள்ள அடைவுடன் தொடர்புடைய இயக்கியை நிறுத்தவும்"
 
-#: ../src/nautilus-view.c:8110
+#: ../src/nautilus-view.c:8109
 msgid "Safely remove the drive associated with the open folder"
 msgstr "திறந்துள்ள அடைவுடன் தொடர்புடைய இயக்கியை பாதுகாப்பாக நீக்கவும்"
 
-#: ../src/nautilus-view.c:8114
+#: ../src/nautilus-view.c:8113
 msgid "Disconnect the drive associated with the open folder"
 msgstr "திறந்துள்ள அடைவுடன் தொடர்புடைய இயக்கியை இணைப்பு நீக்கவும்"
 
-#: ../src/nautilus-view.c:8118
+#: ../src/nautilus-view.c:8117
 msgid "Stop the multi-disk drive associated with the open folder"
 msgstr "திறந்துள்ள அடைவுடன் தொடர்புடைய பல்வட்டு இயக்கியை நிறுத்தவும்"
 
-#: ../src/nautilus-view.c:8122
+#: ../src/nautilus-view.c:8121
 msgid "Lock the drive associated with the open folder"
 msgstr "திறந்துள்ள அடைவுடன் தொடர்புடைய இயக்கியை பூட்டுக"
 
-#: ../src/nautilus-view.c:8349 ../src/nautilus-view.c:8648
+#: ../src/nautilus-view.c:8348 ../src/nautilus-view.c:8647
 msgid "_Delete Permanently"
 msgstr "(_D) முழுமையாக நீக்குக"
 
-#: ../src/nautilus-view.c:8350
+#: ../src/nautilus-view.c:8349
 msgid "Delete the open folder permanently"
 msgstr "திறந்துள்ள அடைவை முழுமையாக நீக்குக"
 
-#: ../src/nautilus-view.c:8354
+#: ../src/nautilus-view.c:8353
 msgid "Move the open folder to the Trash"
 msgstr "திறந்துள்ள அடைவை குப்பைக்கு நகர்த்துக"
 
-#: ../src/nautilus-view.c:8524
+#: ../src/nautilus-view.c:8523
 #, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
 msgstr[0] "தேர்வுடன் புதிய அடைவு (%'d உருப்படி)"
 msgstr[1] "தேர்வுடன் புதிய அடைவு (%'d உருப்படிகள்)"
 
-#: ../src/nautilus-view.c:8564
+#: ../src/nautilus-view.c:8563
 #, c-format
 msgid "_Open With %s"
 msgstr "_O %s ஆல் திற"
 
-#: ../src/nautilus-view.c:8612
+#: ../src/nautilus-view.c:8611
 #, c-format
 msgid "Open in %'d New _Window"
 msgid_plural "Open in %'d New _Windows"
 msgstr[0] "(_W) %'d  புதிய சாளரத்தில் திற"
 msgstr[1] "(_W) %'d  புதிய சாளரங்களில் திற"
 
-#: ../src/nautilus-view.c:8632
+#: ../src/nautilus-view.c:8631
 #, c-format
 msgid "Open in %'d New _Tab"
 msgid_plural "Open in %'d New _Tabs"
 msgstr[0] "(_T) %'d  புதிய கீற்றில் திற"
 msgstr[1] "(_T) %'d  புதிய கீற்றுகளில் திற"
 
-#: ../src/nautilus-view.c:8649
+#: ../src/nautilus-view.c:8648
 msgid "Delete all selected items permanently"
 msgstr "தேர்வு செய்த உருப்படிகளை முழுமையாக நீக்கு"
 
-#: ../src/nautilus-view.c:8710
+#: ../src/nautilus-view.c:8709
 msgid "View or modify the properties of the open folder"
 msgstr "தேர்வு செய்த கோப்புகளின் பண்புகளை பார் அல்லது மாற்று"
 
@@ -5011,7 +4954,7 @@ msgstr "வலப்பக்கம் கீற்றை நகர்த்த�
 msgid "_Close Tab"
 msgstr "(_C ) கீற்றை  மூடு"
 
-#: ../src/nautilus-window.c:2161
+#: ../src/nautilus-window.c:2162
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5022,7 +4965,7 @@ msgstr ""
 "பொது அனுமதிக்கான இந்த 2ம் பதிப்பு அல்லது அடுத்த பதிப்புகள் விதிகளின் படி நீங்கள் "
 "(விருப்பப்படி) மாற்றலாம். அல்லது மீண்டும் பறிமாறலாம்"
 
-#: ../src/nautilus-window.c:2165
+#: ../src/nautilus-window.c:2166
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5033,7 +4976,7 @@ msgstr ""
 "குறிப்பிட்ட செயலுக்கான தகுதி உள்பட எந்த உத்திரவாதமும் அளிக்கப்படவில்லை. மேற் கொண்டு "
 "விவரங்களுக்கு ஜிஎன்யு பொது அனுமதிக்கான விதிகளை பார்க்கவும்"
 
-#: ../src/nautilus-window.c:2169
+#: ../src/nautilus-window.c:2170
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5046,11 +4989,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2184
+#: ../src/nautilus-window.c:2185
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "காப்புரிமை © %Id–%Id கோப்பு உருவாக்கியோர்."
 
-#: ../src/nautilus-window.c:2190
+#: ../src/nautilus-window.c:2191
 msgid "Access and organize your files."
 msgstr "உங்கள் கோப்புகளை அணுகுக மற்றும் ஒழுங்கு படுத்துக"
 
@@ -5058,48 +5001,48 @@ msgstr "உங்கள் கோப்புகளை அணுகுக மற
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2200
+#: ../src/nautilus-window.c:2201
 msgid "translator-credits"
 msgstr "I. Felix <ifelix@redhat.com> Dr. T. Vasudevan <agnihot3@gmail.com>"
 
-#: ../src/nautilus-window-manage-views.c:882
-#: ../src/nautilus-window-manage-views.c:1031
+#: ../src/nautilus-window-manage-views.c:881
+#: ../src/nautilus-window-manage-views.c:1046
 #, c-format
 msgid "Unable to load location"
 msgstr "இடத்தை ஏற்ற முடியவில்லை"
 
-#: ../src/nautilus-window-manage-views.c:1185
+#: ../src/nautilus-window-manage-views.c:1200
 msgid "Searching..."
 msgstr "தேடுகிறது..."
 
-#: ../src/nautilus-window-manage-views.c:1643
+#: ../src/nautilus-window-manage-views.c:1658
 msgid "Unable to display the contents of this folder."
 msgstr "இந்த அடைவின்  உள்ளடக்கங்களை காட்ட முடியவில்லை."
 
-#: ../src/nautilus-window-manage-views.c:1645
+#: ../src/nautilus-window-manage-views.c:1660
 msgid "This location doesn't appear to be a folder."
 msgstr "இந்த இடம் ஒரு அடைவு இல்லை என தோன்றுகிறது"
 
-#: ../src/nautilus-window-manage-views.c:1650
+#: ../src/nautilus-window-manage-views.c:1665
 msgid "Unable to find the requested file. Please check the spelling and try again."
 msgstr ""
 "வேண்டிய கோப்பை கண்டுபிடிக்க முடியவில்லை. எழுத்துப்பிழை உள்ளதா என சோதித்து மீண்டும் "
 "முயற்சி செய்யவும்"
 
-#: ../src/nautilus-window-manage-views.c:1655
+#: ../src/nautilus-window-manage-views.c:1670
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "“%s”  இடங்களுக்கு ஆதரவில்லை"
 
-#: ../src/nautilus-window-manage-views.c:1658
+#: ../src/nautilus-window-manage-views.c:1673
 msgid "Unable to handle this kind of location."
 msgstr "இது போன்ற இடங்களை கையாள இயலாது."
 
-#: ../src/nautilus-window-manage-views.c:1663
+#: ../src/nautilus-window-manage-views.c:1678
 msgid "Unable to access the requested location."
 msgstr "வேண்டிய இடத்தை அணுக முடியவில்லை"
 
-#: ../src/nautilus-window-manage-views.c:1666
+#: ../src/nautilus-window-manage-views.c:1681
 msgid "Don't have permission to access the requested location."
 msgstr "வேண்டிய இடத்தை அணுக உமக்கு அனுமதி இல்லை"
 
@@ -5108,7 +5051,7 @@ msgstr "வேண்டிய இடத்தை அணுக உமக்கு
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-manage-views.c:1674
+#: ../src/nautilus-window-manage-views.c:1689
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5116,7 +5059,7 @@ msgstr ""
 "வேண்டிய இடத்தை கண்டு பிடிக்க முடியவில்லை. தயை செய்து வலைப்பின்னல் அமைப்புகளில் "
 "எழுதுப்பிழைக்கு சோதிக்கவும்."
 
-#: ../src/nautilus-window-manage-views.c:1685
+#: ../src/nautilus-window-manage-views.c:1700
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "கையாள முடியாத பிழை செய்தி: %s"
@@ -5482,6 +5425,121 @@ msgstr "இசை மற்றும் படங்களை உள்ளடக
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "இதனால் திற:"
+
+#~ msgid "Security Context"
+#~ msgstr "பாதுகாப்பு சூழல்"
+
+#~ msgid "The security context of the file."
+#~ msgstr "கோப்பின் பாதுகாப்பு சூழல்."
+
+#~ msgid "unknown type"
+#~ msgstr "தெரியாத வகை"
+
+#~ msgid "unknown MIME type"
+#~ msgstr "தெரியாத மைம் வகை"
+
+#~ msgid "link"
+#~ msgstr "இணைப்பு"
+
+#~ msgid "by _Name"
+#~ msgstr "(_N)பெயர்வாரியாக"
+
+#~ msgid "by _Size"
+#~ msgstr "(_S)அளவு வாரியாக"
+
+#~ msgid "by _Type"
+#~ msgstr "(_T)வகைவாரியாக"
+
+#~ msgid "by Modification _Date"
+#~ msgstr "(_D)திருத்திய தேதியில்"
+
+#~ msgid "by T_rash Time"
+#~ msgstr "_r குப்பைக்கு நகர்த்திய நேரமடிப்படையில்"
+
+#~ msgid "Arran_ge Items"
+#~ msgstr "(_g)உருப்படிகளை அடுக்கு"
+
+#~ msgid "_Organize by Name"
+#~ msgstr "_O பெயரால் அடுக்குக "
+
+#~ msgid "SSH"
+#~ msgstr "SSH"
+
+#~ msgid "Public FTP"
+#~ msgstr "பொது FTP"
+
+#~ msgid "FTP (with login)"
+#~ msgstr "FTP (நுழைவு அனுமதி)"
+
+#~ msgid "Windows share"
+#~ msgstr "விண்டோஸ் பகிர்வுகள்"
+
+#~ msgid "WebDAV (HTTP)"
+#~ msgstr "WebDAV (HTTP)"
+
+#~ msgid "Secure WebDAV (HTTPS)"
+#~ msgstr "பாதுகாப்பான WebDAV (HTTPS)"
+
+#~ msgid "Apple Filing Protocol (AFP)"
+#~ msgstr "ஆப்பிள் கோப்பு நெறிமுறை (AFP)"
+
+#~ msgid "Connecting..."
+#~ msgstr "இணைக்கிறது..."
+
+#~ msgid ""
+#~ "Can't load the supported server method list.\n"
+#~ "Please check your gvfs installation."
+#~ msgstr ""
+#~ "ஆதரவுள்ள சேவையக பட்டியலை ஏற்ற முடியவில்லை\n"
+#~ "உங்கள் gvfs நிறுவலை சரி பார்க்கவும்"
+
+#~ msgid "The folder “%s” cannot be opened on “%s”."
+#~ msgstr "அடைவு \"%s\" ஐ \"%s\" இல் திறக்க முடியாது."
+
+#~ msgid "The server at “%s” cannot be found."
+#~ msgstr "\"%s\" இல் சேவையகத்தை கண்டுபிடிக்க முடியவில்லை."
+
+#~ msgid "Try Again"
+#~ msgstr "மீண்டும் முயல்க"
+
+#~ msgid "Please verify your user details."
+#~ msgstr "உங்கள் பயனர் விவரங்களை சரி பார்க்கவும்"
+
+#~ msgid "Continue"
+#~ msgstr "தொடர் "
+
+#~ msgid "_Server:"
+#~ msgstr "(_S)சேவகன்:"
+
+#~ msgid "_Port:"
+#~ msgstr "(_P)வழி:"
+
+#~ msgid "_Type:"
+#~ msgstr "_T வகை:"
+
+#~ msgid "Sh_are:"
+#~ msgstr "(_ a) பகிர்:"
+
+#~ msgid "User Details"
+#~ msgstr "பயனர் விவரங்கள்"
+
+#~ msgid "_Domain name:"
+#~ msgstr "_D களப்பெயர்:"
+
+#~ msgid "_User name:"
+#~ msgstr "(_U) பயனர் பெயர்:"
+
+#~ msgid "Pass_word:"
+#~ msgstr "_w கடவுச்சொல்:"
+
+#~ msgid "_Remember this password"
+#~ msgstr "(_R)  இந்த கடவுச்சொல்லை  நினைவில் கொள்க"
+
+#~ msgid "Operation cancelled"
+#~ msgstr "செயல்பாடு ரத்து செய்யப்பட்டது"
+
+#~ msgid "Go To:"
+#~ msgstr "கு செல்:"
 
 #~ msgid "Free space: %s"
 #~ msgstr "காலி இடம்: %s"
@@ -6660,14 +6718,8 @@ msgstr "இதனால் திற:"
 #~ msgid "Icon"
 #~ msgstr "சின்னம்"
 
-#~ msgid "Could not remove application"
-#~ msgstr "பயன்பாட்டை நீக்க முடியவில்லை"
-
 #~ msgid "No applications selected"
 #~ msgstr "பயன்பாடு ஏதும் தேர்ந்தெடுக்கப்பட இல்லை "
-
-#~ msgid "Unknown"
-#~ msgstr "தெரியாத"
 
 #~ msgid "Could not find '%s'"
 #~ msgstr "'%s' ஐ காணவில்லை"
@@ -6686,9 +6738,6 @@ msgstr "இதனால் திற:"
 
 #~ msgid "_Use a custom command"
 #~ msgstr "_U தனிப்பயன் கட்டளையை பயன்படுத்து "
-
-#~ msgid "_Browse..."
-#~ msgstr "_B மேலோடு..."
 
 #~ msgid "Open %s and other %s document with:"
 #~ msgstr "%s  மற்றும் மற்ற \"%s\"  ஆவணைங்களை இதில் திற:"
