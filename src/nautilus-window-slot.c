@@ -381,6 +381,14 @@ view_end_loading_cb (NautilusView       *view,
 		nautilus_window_slot_queue_reload (slot);
 		slot->needs_reload = FALSE;
 	}
+
+	if (slot->loading_timeout_id != 0) {
+		g_source_remove (slot->loading_timeout_id);
+		slot->loading_timeout_id = 0;
+	}
+
+	gtk_widget_hide (slot->floating_bar);
+	nautilus_floating_bar_cleanup_actions (NAUTILUS_FLOATING_BAR (slot->floating_bar));
 }
 
 static void
