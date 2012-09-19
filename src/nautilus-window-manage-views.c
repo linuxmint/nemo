@@ -30,7 +30,6 @@
 
 #include "nautilus-actions.h"
 #include "nautilus-application.h"
-#include "nautilus-floating-bar.h"
 #include "nautilus-pathbar.h"
 #include "nautilus-window-private.h"
 #include "nautilus-window-slot.h"
@@ -1181,62 +1180,6 @@ nautilus_window_report_location_change (NautilusWindow *window)
 	}
 }
 
-static void
-real_setup_loading_floating_bar (NautilusWindowSlot *slot)
-{
-	gboolean disable_chrome;
-
-	g_object_get (nautilus_window_slot_get_window (slot),
-		      "disable-chrome", &disable_chrome,
-		      NULL);
-
-	if (disable_chrome) {
-		gtk_widget_hide (slot->floating_bar);
-		return;
-	}
-
-	nautilus_floating_bar_set_primary_label (NAUTILUS_FLOATING_BAR (slot->floating_bar),
-						 NAUTILUS_IS_SEARCH_DIRECTORY (nautilus_view_get_model (slot->content_view)) ?
-						 _("Searching...") : _("Loading..."));
-	nautilus_floating_bar_set_show_spinner (NAUTILUS_FLOATING_BAR (slot->floating_bar),
-						TRUE);
-	nautilus_floating_bar_add_action (NAUTILUS_FLOATING_BAR (slot->floating_bar),
-					  GTK_STOCK_STOP,
-					  NAUTILUS_FLOATING_BAR_ACTION_ID_STOP);
-
-	gtk_widget_set_halign (slot->floating_bar, GTK_ALIGN_END);
-	gtk_widget_show (slot->floating_bar);
-}
-
-static gboolean
-setup_loading_floating_bar_timeout_cb (gpointer user_data)
-{
-	NautilusWindowSlot *slot = user_data;
-
-	slot->loading_timeout_id = 0;
-	real_setup_loading_floating_bar (slot);
-
-	return FALSE;
-}
-
-static void
-setup_loading_floating_bar (NautilusWindowSlot *slot)
-{
-	/* setup loading overlay */
-	if (slot->set_status_timeout_id != 0) {
-		g_source_remove (slot->set_status_timeout_id);
-		slot->set_status_timeout_id = 0;
-	}
-
-	if (slot->loading_timeout_id != 0) {
-		g_source_remove (slot->loading_timeout_id);
-		slot->loading_timeout_id = 0;
-	}
-
-	slot->loading_timeout_id =
-		g_timeout_add (500, setup_loading_floating_bar_timeout_cb, slot);
-}
-
 /* This is called when we have decided we can actually change to the new view/location situation. */
 static void
 location_has_really_changed (NautilusWindowSlot *slot)
@@ -1276,8 +1219,6 @@ location_has_really_changed (NautilusWindowSlot *slot)
 
 		g_object_unref (location_copy);
 	}
-
-	setup_loading_floating_bar (slot);
 }
 
 static void
@@ -1543,18 +1484,6 @@ nautilus_window_report_load_complete (NautilusWindow *window,
 }
 
 static void
-remove_loading_floating_bar (NautilusWindowSlot *slot)
-{
-	if (slot->loading_timeout_id != 0) {
-		g_source_remove (slot->loading_timeout_id);
-		slot->loading_timeout_id = 0;
-	}
-
-	gtk_widget_hide (slot->floating_bar);
-	nautilus_floating_bar_cleanup_actions (NAUTILUS_FLOATING_BAR (slot->floating_bar));
-}
-
-static void
 end_location_change (NautilusWindowSlot *slot)
 {
 	char *uri;
@@ -1566,7 +1495,6 @@ end_location_change (NautilusWindowSlot *slot)
 	}
 
 	nautilus_window_slot_set_allow_stop (slot, FALSE);
-	remove_loading_floating_bar (slot);
 
         /* Now we can free pending_scroll_to, since the load_complete
          * callback already has been emitted.
