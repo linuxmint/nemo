@@ -2578,9 +2578,10 @@ should_show_free_space (NautilusPropertiesWindow *window)
 static gboolean
 should_show_volume_usage (NautilusPropertiesWindow *window)
 {
-	NautilusFile 		*file;
-	gboolean 		success = FALSE;
-	
+	NautilusFile *file;
+	GFile *location;
+	gboolean success = FALSE;
+
 	if (is_multi_file_window (window)) {
 		return FALSE;
 	}
@@ -2595,9 +2596,14 @@ should_show_volume_usage (NautilusPropertiesWindow *window)
 		return TRUE;
 	}
 
+	location = nautilus_file_get_location (file);
+	success = nautilus_is_root_directory (location);
+	g_object_unref (location);
+
 #ifdef TODO_GIO
 	/* Look at is_mountpoint for activation uri */
 #endif
+
 	return success;
 }
 
