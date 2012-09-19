@@ -1,3 +1,9 @@
+nemo (1.0.1) maya; urgency=low
+
+  * 1.0.1
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 19 Sep 2012 10:32:29 +0100
+
 nemo (1.0.0) maya; urgency=low
 
   * Initial version, based on nautilus 3.4.2-0ubuntu3
