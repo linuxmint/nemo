@@ -235,10 +235,6 @@ visit_directory (GFile *dir, SearchThreadData *data)
 	}
 
 	while ((info = g_file_enumerator_next_file (enumerator, data->cancellable, NULL)) != NULL) {
-		if (g_file_info_get_is_hidden (info)) {
-			goto next;
-		}
-		
 		display_name = g_file_info_get_display_name (info);
 		if (display_name == NULL) {
 			goto next;
