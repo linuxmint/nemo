@@ -1417,6 +1417,8 @@ nautilus_application_startup (GApplication *app)
 	 */
 	G_APPLICATION_CLASS (nautilus_application_parent_class)->startup (app);
 
+	gtk_window_set_default_icon_name ("system-file-manager");
+
 	/* initialize the previewer singleton */
 	nautilus_previewer_get_singleton ();
 
