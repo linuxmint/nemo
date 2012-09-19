@@ -17,8 +17,8 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-09-14 07:54+0000\n"
-"PO-Revision-Date: 2012-09-14 14:58+0700\n"
+"POT-Creation-Date: 2012-09-14 23:06+0000\n"
+"PO-Revision-Date: 2012-09-19 12:10+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@linux.thai.net>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
 "Language: th\n"
@@ -61,7 +61,8 @@ msgstr "X"
 msgid "Y"
 msgstr "Y"
 
-#: ../eel/eel-editable-label.c:311
+#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6170
+#: ../libnautilus-private/nautilus-file.c:6171
 msgid "Text"
 msgstr "ข้อความ"
 
@@ -127,7 +128,7 @@ msgstr "ถ้าต้องการเลิกปฏิบัติการ
 msgid " (invalid Unicode)"
 msgstr " (ยูนิโค้ดผิดรูปแบบ)"
 
-#: ../libnautilus-private/nautilus-bookmark.c:101
+#: ../libnautilus-private/nautilus-bookmark.c:103
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:274
 #: ../src/nautilus-pathbar.c:298 ../src/nautilus-places-sidebar.c:566
@@ -330,50 +331,50 @@ msgstr "_ตั้งเป็นพื้นหลัง"
 msgid "Cancel"
 msgstr "ยกเลิก"
 
-#: ../libnautilus-private/nautilus-file.c:1219
+#: ../libnautilus-private/nautilus-file.c:1221
 #: ../libnautilus-private/nautilus-vfs-file.c:356
 msgid "This file cannot be mounted"
 msgstr "ไม่สามารถเมานท์แฟ้มนี้ได้"
 
-#: ../libnautilus-private/nautilus-file.c:1264
+#: ../libnautilus-private/nautilus-file.c:1266
 msgid "This file cannot be unmounted"
 msgstr "ไม่สามารถเลิกเมานท์แฟ้มนี้ได้"
 
-#: ../libnautilus-private/nautilus-file.c:1298
+#: ../libnautilus-private/nautilus-file.c:1300
 msgid "This file cannot be ejected"
 msgstr "ไม่สามารถดันแฟ้มนี้ออกได้"
 
-#: ../libnautilus-private/nautilus-file.c:1331
+#: ../libnautilus-private/nautilus-file.c:1333
 #: ../libnautilus-private/nautilus-vfs-file.c:534
 msgid "This file cannot be started"
 msgstr "ไม่สามารถเริ่มทำงานแฟ้มนี้ได้"
 
-#: ../libnautilus-private/nautilus-file.c:1383
-#: ../libnautilus-private/nautilus-file.c:1414
+#: ../libnautilus-private/nautilus-file.c:1385
+#: ../libnautilus-private/nautilus-file.c:1416
 msgid "This file cannot be stopped"
 msgstr "ไม่สามารถหยุดแฟ้มนี้ได้"
 
-#: ../libnautilus-private/nautilus-file.c:1825
+#: ../libnautilus-private/nautilus-file.c:1827
 #, c-format
 msgid "Slashes are not allowed in filenames"
 msgstr "ห้ามใช้ขีดทับในชื่อแฟ้ม"
 
-#: ../libnautilus-private/nautilus-file.c:1843
+#: ../libnautilus-private/nautilus-file.c:1845
 #, c-format
 msgid "File not found"
 msgstr "ไม่พบแฟ้ม"
 
-#: ../libnautilus-private/nautilus-file.c:1871
+#: ../libnautilus-private/nautilus-file.c:1873
 #, c-format
 msgid "Toplevel files cannot be renamed"
 msgstr "ไม่สามารถเปลี่ยนชื่อแฟ้มระดับบนสุดได้"
 
-#: ../libnautilus-private/nautilus-file.c:1894
+#: ../libnautilus-private/nautilus-file.c:1896
 #, c-format
 msgid "Unable to rename desktop icon"
 msgstr "ไม่สามารถเปลี่ยนชื่อไอคอนพื้นโต๊ะ"
 
-#: ../libnautilus-private/nautilus-file.c:1923
+#: ../libnautilus-private/nautilus-file.c:1925
 #, c-format
 msgid "Unable to rename desktop file"
 msgstr "ไม่สามารถเปลี่ยนชื่อแฟ้มเดสก์ท็อป"
@@ -390,112 +391,167 @@ msgstr "ไม่สามารถเปลี่ยนชื่อแฟ้ม
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4439
+#: ../libnautilus-private/nautilus-file.c:4441
 msgid "%R"
 msgstr "%R"
 
-#: ../libnautilus-private/nautilus-file.c:4440
+#: ../libnautilus-private/nautilus-file.c:4442
 msgid "%-I:%M %P"
 msgstr "%-I:%M %P"
 
-#: ../libnautilus-private/nautilus-file.c:4441
-#: ../libnautilus-private/nautilus-file.c:4442
+#: ../libnautilus-private/nautilus-file.c:4443
+#: ../libnautilus-private/nautilus-file.c:4444
 msgid "%b %-e"
 msgstr "%-e %b"
 
-#: ../libnautilus-private/nautilus-file.c:4443
+#: ../libnautilus-private/nautilus-file.c:4445
 msgid "%b %-d %Y"
 msgstr "%-d %b %Ey"
 
-#: ../libnautilus-private/nautilus-file.c:4444
+#: ../libnautilus-private/nautilus-file.c:4446
 msgid "%a, %b %e %Y %I:%M:%S %p"
 msgstr "%a %e %b %Ey, %I:%M:%S %p"
 
-#: ../libnautilus-private/nautilus-file.c:4445
+#: ../libnautilus-private/nautilus-file.c:4447
 msgid "%a, %b %e %Y %T"
 msgstr "%a %e %b %Ey %T"
 
-#: ../libnautilus-private/nautilus-file.c:4944
+#: ../libnautilus-private/nautilus-file.c:4946
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "ไม่มีสิทธิ์กำหนดการอนุญาตสิทธิ์"
 
-#: ../libnautilus-private/nautilus-file.c:5239
+#: ../libnautilus-private/nautilus-file.c:5241
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "ไม่มีสิทธิ์กำหนดเจ้าของ"
 
-#: ../libnautilus-private/nautilus-file.c:5257
+#: ../libnautilus-private/nautilus-file.c:5259
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "ไม่มีผู้ใช้ '%s' ที่ระบุ"
 
-#: ../libnautilus-private/nautilus-file.c:5521
+#: ../libnautilus-private/nautilus-file.c:5523
 #, c-format
 msgid "Not allowed to set group"
 msgstr "ไม่มีสิทธิ์กำหนดกลุ่มเจ้าของ"
 
-#: ../libnautilus-private/nautilus-file.c:5539
+#: ../libnautilus-private/nautilus-file.c:5541
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "ไม่มีกลุ่ม '%s' ที่ระบุ"
 
 #. Translators: "Me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5673
+#: ../libnautilus-private/nautilus-file.c:5675
 msgid "Me"
 msgstr "ฉัน"
 
-#: ../libnautilus-private/nautilus-file.c:5697
+#: ../libnautilus-private/nautilus-file.c:5699
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
 msgstr[0] "%'u รายการ"
 
-#: ../libnautilus-private/nautilus-file.c:5698
+#: ../libnautilus-private/nautilus-file.c:5700
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] "%'u โฟลเดอร์"
 
-#: ../libnautilus-private/nautilus-file.c:5699
+#: ../libnautilus-private/nautilus-file.c:5701
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
 msgstr[0] "%'u แฟ้ม"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6092
-#: ../libnautilus-private/nautilus-file.c:6108
+#: ../libnautilus-private/nautilus-file.c:6097
+#: ../libnautilus-private/nautilus-file.c:6113
 msgid "? items"
 msgstr "? รายการ"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6098
+#: ../libnautilus-private/nautilus-file.c:6103
 msgid "? bytes"
 msgstr "? ไบต์"
 
-#: ../libnautilus-private/nautilus-file.c:6113
-msgid "unknown type"
-msgstr "ชนิดที่ไม่รู้จัก"
-
-#: ../libnautilus-private/nautilus-file.c:6116
-msgid "unknown MIME type"
-msgstr "ชนิด MIME ที่ไม่รู้จัก"
+#: ../libnautilus-private/nautilus-file.c:6120
+#: ../libnautilus-private/nautilus-file.c:6200
+msgid "Unknown"
+msgstr "ไม่ทราบ"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6130
+#: ../libnautilus-private/nautilus-file.c:6134
 #: ../src/nautilus-properties-window.c:1173
 msgid "unknown"
 msgstr "ไม่ทราบ"
 
-#: ../libnautilus-private/nautilus-file.c:6181
-msgid "program"
+#: ../libnautilus-private/nautilus-file.c:6164
+#: ../libnautilus-private/nautilus-file.c:6172
+#: ../libnautilus-private/nautilus-file.c:6223
+msgid "Program"
 msgstr "โปรแกรม"
 
-#: ../libnautilus-private/nautilus-file.c:6201
-msgid "link"
+#: ../libnautilus-private/nautilus-file.c:6165
+msgid "Audio"
+msgstr "เพลง"
+
+#: ../libnautilus-private/nautilus-file.c:6166
+msgid "Font"
+msgstr "แบบอักษร"
+
+#: ../libnautilus-private/nautilus-file.c:6167
+#: ../src/nautilus-image-properties-page.c:716
+msgid "Image"
+msgstr "รูปภาพ"
+
+#: ../libnautilus-private/nautilus-file.c:6168
+msgid "Archive"
+msgstr "แฟ้มจัดเก็บ"
+
+#: ../libnautilus-private/nautilus-file.c:6169
+msgid "Markup"
+msgstr "มาร์กอัป"
+
+#: ../libnautilus-private/nautilus-file.c:6173
+#: ../src/nautilus-query-editor.c:418
+msgid "Video"
+msgstr "วีดิทัศน์"
+
+#: ../libnautilus-private/nautilus-file.c:6174
+msgid "Contacts"
+msgstr "ที่อยู่ติดต่อ"
+
+#: ../libnautilus-private/nautilus-file.c:6175
+msgid "Calendar"
+msgstr "ปฏิทิน"
+
+#: ../libnautilus-private/nautilus-file.c:6176
+msgid "Document"
+msgstr "เอกสาร"
+
+#: ../libnautilus-private/nautilus-file.c:6177
+#: ../src/nautilus-query-editor.c:484
+msgid "Presentation"
+msgstr "งานนำเสนอ"
+
+#: ../libnautilus-private/nautilus-file.c:6178
+#: ../src/nautilus-query-editor.c:468
+msgid "Spreadsheet"
+msgstr "ตารางคำนวณ"
+
+#: ../libnautilus-private/nautilus-file.c:6225
+msgid "Binary"
+msgstr "ไบนารี"
+
+#: ../libnautilus-private/nautilus-file.c:6229
+msgid "Folder"
+msgstr "โฟลเดอร์"
+
+#: ../libnautilus-private/nautilus-file.c:6260
+msgid "Link"
 msgstr "จุดเชื่อมโยง"
 
 #. Note to localizers: convert file type string for file
@@ -503,15 +559,16 @@ msgstr "จุดเชื่อมโยง"
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6207
+#: ../libnautilus-private/nautilus-file.c:6266
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:124
 #, c-format
 msgid "Link to %s"
 msgstr "เชื่อมโยงไปยัง %s"
 
-#: ../libnautilus-private/nautilus-file.c:6223
-msgid "link (broken)"
+#: ../libnautilus-private/nautilus-file.c:6282
+#: ../libnautilus-private/nautilus-file.c:6296
+msgid "Link (broken)"
 msgstr "จุดเชื่อมโยง (ขาด)"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:141
@@ -2482,7 +2539,7 @@ msgstr "เ_รียกใช้"
 msgid "No bookmarks defined"
 msgstr "ยังไม่มีที่คั่นหน้า"
 
-#: ../src/nautilus-bookmarks-window.c:711 ../src/nautilus-places-sidebar.c:274
+#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:274
 msgid "Bookmarks"
 msgstr "ที่คั่นหน้า"
 
@@ -3229,10 +3286,6 @@ msgstr "โหลดข้อมูลภาพไม่สำเร็จ"
 msgid "Loading..."
 msgstr "กำลังโหลด..."
 
-#: ../src/nautilus-image-properties-page.c:716
-msgid "Image"
-msgstr "ภาพ"
-
 #: ../src/nautilus-list-model.c:376
 msgid "(Empty)"
 msgstr "(ว่าง)"
@@ -3915,10 +3968,6 @@ msgstr "เอกสาร"
 msgid "Music"
 msgstr "ดนตรี"
 
-#: ../src/nautilus-query-editor.c:418
-msgid "Video"
-msgstr "วีดิทัศน์"
-
 #: ../src/nautilus-query-editor.c:434
 msgid "Picture"
 msgstr "รูปภาพ"
@@ -3926,14 +3975,6 @@ msgstr "รูปภาพ"
 #: ../src/nautilus-query-editor.c:454
 msgid "Illustration"
 msgstr "ภาพเวกเตอร์"
-
-#: ../src/nautilus-query-editor.c:468
-msgid "Spreadsheet"
-msgstr "สเปรดชีต"
-
-#: ../src/nautilus-query-editor.c:484
-msgid "Presentation"
-msgstr "การนำเสนอ"
 
 #: ../src/nautilus-query-editor.c:493
 msgid "Pdf / Postscript"
@@ -5333,6 +5374,15 @@ msgstr "มีภาพถ่ายและเพลง"
 msgid "Open with:"
 msgstr "เปิดด้วย:"
 
+#~ msgid "unknown type"
+#~ msgstr "ชนิดที่ไม่รู้จัก"
+
+#~ msgid "unknown MIME type"
+#~ msgstr "ชนิด MIME ที่ไม่รู้จัก"
+
+#~ msgid "link"
+#~ msgstr "จุดเชื่อมโยง"
+
 #~ msgid "Date Accessed"
 #~ msgstr "วันที่เข้าถึง"
 
@@ -5357,38 +5407,20 @@ msgstr "เปิดด้วย:"
 #~ msgid "There is %S available, but %S is required."
 #~ msgstr "มีที่ว่าง %S แต่ต้องการ %S"
 
-#~ msgid "today at 00:00:00 PM"
-#~ msgstr "วันนี้ เวลา 00:00:00 น."
-
 #~ msgid "today at %-I:%M:%S %p"
 #~ msgstr "วันนี้ เวลา %H:%M:%S น."
-
-#~ msgid "today at 00:00 PM"
-#~ msgstr "วันนี้ เวลา 00:00 น."
 
 #~ msgid "today at %-I:%M %p"
 #~ msgstr "วันนี้ เวลา %H:%M น."
 
-#~ msgid "today, 00:00 PM"
-#~ msgstr "วันนี้, 00:00 น."
-
 #~ msgid "today"
 #~ msgstr "วันนี้"
-
-#~ msgid "yesterday at 00:00:00 PM"
-#~ msgstr "เมื่อวาน เวลา 00:00:00 น."
 
 #~ msgid "yesterday at %-I:%M:%S %p"
 #~ msgstr "เมื่อวาน เวลา %H:%M:%S น."
 
-#~ msgid "yesterday at 00:00 PM"
-#~ msgstr "เมื่อวาน เวลา 00:00 น."
-
 #~ msgid "yesterday at %-I:%M %p"
 #~ msgstr "เมื่อวาน เวลา %H:%M น."
-
-#~ msgid "yesterday, 00:00 PM"
-#~ msgstr "เมื่อวาน, 00:00 น."
 
 #~ msgid "yesterday, %-I:%M %p"
 #~ msgstr "เมื่อวาน, %H:%M น."
@@ -5404,29 +5436,11 @@ msgstr "เปิดด้วย:"
 #~ msgid "%A, %B %-d %Y at %-I:%M:%S %p"
 #~ msgstr "%Aที่ %-d %B %Ey เวลา %H:%M:%S น."
 
-#~ msgid "Mon, Oct 00 0000 at 00:00:00 PM"
-#~ msgstr "อา. 13 มิ.ย. 2542, 22:48:32"
-
-#~ msgid "Mon, Oct 00 0000 at 00:00 PM"
-#~ msgstr "อา. 13 มิ.ย. 2542, 22:48"
-
-#~ msgid "Oct 00 0000 at 00:00 PM"
-#~ msgstr "13 มิ.ย. 2542, 22:48"
-
 #~ msgid "%b %-d %Y at %-I:%M %p"
 #~ msgstr "%-d %b %Ey, %H:%M"
 
-#~ msgid "Oct 00 0000, 00:00 PM"
-#~ msgstr "13 มิ.ย. 2542, 22:48"
-
-#~ msgid "00/00/00, 00:00 PM"
-#~ msgstr "00/00/0000, 00:00"
-
 #~ msgid "%m/%-d/%y, %-I:%M %p"
 #~ msgstr "%-d/%m/%Ey, %H:%M"
-
-#~ msgid "00/00/00"
-#~ msgstr "00/00/0000"
 
 #~ msgid "%m/%d/%y"
 #~ msgstr "%d/%m/%Ey"
@@ -5436,9 +5450,6 @@ msgstr "เปิดด้วย:"
 
 #~ msgid "Edit"
 #~ msgstr "แก้ไข"
-
-#~ msgid "Undo Edit"
-#~ msgstr "ยกเลิกการแก้ไข"
 
 #~ msgid "All columns have same width"
 #~ msgstr "ทุกคอลัมน์กว้างเท่ากันหมด"
@@ -5846,9 +5857,6 @@ msgstr "เปิดด้วย:"
 #~ msgid "Free space: %s"
 #~ msgstr "เนื้อที่ว่าง: %s"
 
-#~ msgid "%s, Free space: %s"
-#~ msgstr "%s, เนื้อที่ว่าง: %s"
-
 #~ msgid ""
 #~ "Choosing a script from the menu will run that script with any selected "
 #~ "items as input."
@@ -5955,13 +5963,6 @@ msgstr "เปิดด้วย:"
 #~ "Check that the spelling is correct and that your proxy settings are "
 #~ "correct."
 #~ msgstr "กรุณาตรวจว่าตัวสะกดชื่อโฮสต์ถูกต้อง และค่าตั้งพร็อกซีถูกต้อง"
-
-#~ msgid ""
-#~ "Error: %s\n"
-#~ "Please select another viewer and try again."
-#~ msgstr ""
-#~ "ผิดพลาด: %s\n"
-#~ "กรุณาเลือกโปรแกรมอื่นแล้วลองใหม่"
 
 #~ msgid ""
 #~ "Nautilus lets you organize files and folders, both on your computer and "
@@ -6253,9 +6254,6 @@ msgstr "เปิดด้วย:"
 #~ msgid "Fossil"
 #~ msgstr "ฟอสซิล"
 
-#~ msgid "GNOME"
-#~ msgstr "GNOME"
-
 #~ msgid "Granite"
 #~ msgstr "แกรนิต"
 
@@ -6376,13 +6374,6 @@ msgstr "เปิดด้วย:"
 
 #~ msgid "The buttons shown in the alert dialog"
 #~ msgstr "ปุ่มต่างๆ ที่แสดงในหน้าต่างแจ้งเตือน"
-
-#~ msgid ""
-#~ "GConf error:\n"
-#~ "  %s"
-#~ msgstr ""
-#~ "เกิดข้อผิดพลาดใน GConf:\n"
-#~ "  %s"
 
 #~ msgid "GConf error: %s"
 #~ msgstr "เกิดข้อผิดพลาดใน GConf:%s"
@@ -6760,9 +6751,6 @@ msgstr "เปิดด้วย:"
 #~ msgid "No applications selected"
 #~ msgstr "ไม่ได้เลือกโปรแกรมไว้"
 
-#~ msgid "Unknown"
-#~ msgstr "ไม่ทราบ"
-
 #~ msgid "Could not find '%s'"
 #~ msgstr "ไม่พบ '%s'"
 
@@ -6950,9 +6938,6 @@ msgstr "เปิดด้วย:"
 #~ msgid "Cannot display location \"%s\""
 #~ msgstr "ไม่สามารถแสดงตำแหน่ง \"%s\""
 
-#~ msgid "[URI]"
-#~ msgstr "[URI]"
-
 #~ msgid "Custom Location"
 #~ msgstr "ตำแหน่งกำหนดเอง"
 
@@ -7121,9 +7106,6 @@ msgstr "เปิดด้วย:"
 #~ msgid "Change the visibility of this window's location bar"
 #~ msgstr "แสดง/ซ่อน แถบตำแหน่งของหน้าต่างนี้"
 
-#~ msgid "_Zoom"
-#~ msgstr "_ขยาย"
-
 #~ msgid "_View As"
 #~ msgstr "แ_สดงเป็น"
 
@@ -7275,18 +7257,6 @@ msgstr "เปิดด้วย:"
 #~ "Display patterns, colors, and emblems that can be used to customize "
 #~ "appearance"
 #~ msgstr "แสดงลวดลาย สี และตรา ที่ใช้ตกแต่ง Nautilus ได้"
-
-#~ msgid "Zoom In"
-#~ msgstr "ขยายเข้า"
-
-#~ msgid "Zoom Out"
-#~ msgstr "ขยายออก"
-
-#~ msgid "Zoom to Default"
-#~ msgstr "ขยายอยู่ที่ขนาดปริยาย"
-
-#~ msgid "Zoom"
-#~ msgstr "ขยายเข้า/ออก"
 
 #~ msgid "Set the zoom level of the current view"
 #~ msgstr "ตั้งขนาดย่อขยายสำหรับมุมมองปัจจุบัน"
