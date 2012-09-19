@@ -52,6 +52,7 @@
 #include <libnautilus-private/nautilus-entry.h>
 #include <libnautilus-private/nautilus-file-attributes.h>
 #include <libnautilus-private/nautilus-file-operations.h>
+#include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-desktop-icon-file.h>
 #include <libnautilus-private/nautilus-global-preferences.h>
 #include <libnautilus-private/nautilus-link.h>
@@ -2442,6 +2443,19 @@ is_computer_directory (NautilusFile *file)
 }
 
 static gboolean
+is_root_directory (NautilusFile *file)
+{
+	GFile *location;
+	gboolean result;
+
+	location = nautilus_file_get_location (file);
+	result = nautilus_is_root_directory (location);
+	g_object_unref (location);
+
+	return result;
+}
+
+static gboolean
 is_network_directory (NautilusFile *file)
 {
 	char *file_uri;
@@ -2506,10 +2520,11 @@ should_show_file_type (NautilusPropertiesWindow *window)
 }
 
 static gboolean
-should_show_location_info (NautilusPropertiesWindow *window) 
+should_show_location_info (NautilusPropertiesWindow *window)
 {
-	if (!is_multi_file_window (window) 
+	if (!is_multi_file_window (window)
 	    && (is_merged_trash_directory (get_target_file (window)) ||
+		is_root_directory (get_target_file (window)) ||
 		is_computer_directory (get_target_file (window)) ||
 		is_network_directory (get_target_file (window)) ||
 		is_burn_directory (get_target_file (window)))) {
@@ -2558,7 +2573,6 @@ location_show_original (NautilusPropertiesWindow *window)
 static gboolean
 should_show_free_space (NautilusPropertiesWindow *window)
 {
-
 	if (!is_multi_file_window (window)
 	    && (is_merged_trash_directory (get_target_file (window)) ||
 		is_computer_directory (get_target_file (window)) ||
@@ -2569,6 +2583,28 @@ should_show_free_space (NautilusPropertiesWindow *window)
 	}
 
 	if (file_list_all_directories (window->details->target_files)) {
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static gboolean
+should_show_volume_info (NautilusPropertiesWindow *window)
+{
+	NautilusFile *file;
+
+	if (is_multi_file_window (window)) {
+		return FALSE;
+	}
+
+	file = get_original_file (window);
+
+	if (file == NULL) {
+		return FALSE;
+	}
+
+	if (nautilus_file_can_unmount (file)) {
 		return TRUE;
 	}
 
@@ -3248,13 +3284,15 @@ create_basic_page (NautilusPropertiesWindow *window)
 	append_blank_row (grid);
 
 	if (should_show_location_info (window)) {
-		append_title_and_ellipsizing_value (window, grid, _("Location:"), 
+		append_title_and_ellipsizing_value (window, grid, _("Location:"),
 						    "where",
 						    INCONSISTENT_STATE_STRING,
 						    location_show_original (window));
-		
-		append_title_and_ellipsizing_value (window, grid, 
-						    _("Volume:"), 
+	}
+
+	if (should_show_volume_info (window)) {
+		append_title_and_ellipsizing_value (window, grid,
+						    _("Volume:"),
 						    "volume",
 						    INCONSISTENT_STATE_STRING,
 						    FALSE);
