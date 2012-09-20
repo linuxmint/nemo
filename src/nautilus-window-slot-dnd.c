@@ -26,6 +26,7 @@
 
 #include <config.h>
 
+#include "nautilus-notebook.h"
 #include "nautilus-view-dnd.h"
 #include "nautilus-window-slot-dnd.h"
 
@@ -44,7 +45,67 @@ typedef struct {
 
   NautilusFile *target_file;
   NautilusWindowSlot *target_slot;
+
+  gboolean is_notebook;
+  guint switch_tab_timer;
 } NautilusDragSlotProxyInfo;
+
+static gboolean
+slot_proxy_switch_tab_timer (gpointer user_data)
+{
+  NautilusDragSlotProxyInfo *drag_info = user_data;
+  GtkWidget *notebook, *slot;
+  gint idx, n_pages;
+
+  drag_info->switch_tab_timer = 0;
+
+  notebook = gtk_widget_get_ancestor (GTK_WIDGET (drag_info->target_slot), NAUTILUS_TYPE_NOTEBOOK);
+  n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
+
+  for (idx = 0; idx < n_pages; idx++)
+    {
+      slot = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), idx);
+      if (NAUTILUS_WINDOW_SLOT (slot) == drag_info->target_slot)
+        {
+          gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), idx);
+          break;
+        }
+    }
+
+  return FALSE;
+}
+
+static void
+slot_proxy_check_switch_tab_timer (NautilusDragSlotProxyInfo *drag_info,
+                                   GtkWidget *widget)
+{
+  GtkSettings *settings;
+  guint timeout;
+
+  if (!drag_info->is_notebook)
+    return;
+
+  if (drag_info->switch_tab_timer)
+    return;
+
+  settings = gtk_widget_get_settings (widget);
+  g_object_get (settings, "gtk-timeout-expand", &timeout, NULL);
+
+  drag_info->switch_tab_timer =
+    gdk_threads_add_timeout (timeout,
+                             slot_proxy_switch_tab_timer,
+                             drag_info);
+}
+
+static void
+slot_proxy_remove_switch_tab_timer (NautilusDragSlotProxyInfo *drag_info)
+{
+  if (drag_info->switch_tab_timer != 0)
+    {
+      g_source_remove (drag_info->switch_tab_timer);
+      drag_info->switch_tab_timer = 0;
+    }
+}
 
 static gboolean
 slot_proxy_drag_motion (GtkWidget          *widget,
@@ -127,8 +188,10 @@ slot_proxy_drag_motion (GtkWidget          *widget,
  out:
   if (action != 0) {
     gtk_drag_highlight (widget);
+    slot_proxy_check_switch_tab_timer (drag_info, widget);
   } else {
     gtk_drag_unhighlight (widget);
+    slot_proxy_remove_switch_tab_timer (drag_info);
   }
 
   gdk_drag_status (context, action, time);
@@ -150,6 +213,8 @@ drag_info_free (gpointer user_data)
 static void
 drag_info_clear (NautilusDragSlotProxyInfo *drag_info)
 {
+  slot_proxy_remove_switch_tab_timer (drag_info);
+
   if (!drag_info->have_data) {
     goto out;
   }
@@ -345,6 +410,8 @@ nautilus_drag_slot_proxy_init (GtkWidget *widget,
 
   g_object_set_data_full (G_OBJECT (widget), "drag-slot-proxy-data", drag_info,
                           drag_info_free);
+
+  drag_info->is_notebook = (g_object_get_data (G_OBJECT (widget), "nautilus-notebook-tab") != NULL);
 
   if (target_file != NULL)
     drag_info->target_file = g_object_ref (target_file);
