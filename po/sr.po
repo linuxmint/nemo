@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautil"
 "us&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-09-13 16:11+0000\n"
-"PO-Revision-Date: 2012-09-14 09:56+0200\n"
+"POT-Creation-Date: 2012-09-14 23:06+0000\n"
+"PO-Revision-Date: 2012-09-20 20:31+0200\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
 "Language: sr\n"
@@ -57,7 +57,8 @@ msgstr "X"
 msgid "Y"
 msgstr "Y"
 
-#: ../eel/eel-editable-label.c:311
+#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6170
+#: ../libnautilus-private/nautilus-file.c:6171
 msgid "Text"
 msgstr "Текст"
 
@@ -126,7 +127,7 @@ msgid " (invalid Unicode)"
 msgstr " (неисправан Уникод)"
 
 # ako je za "home directory", onda bi bilo dobro "licni direktorijum", ako je za "home page", onda za "licna stranica"
-#: ../libnautilus-private/nautilus-bookmark.c:101
+#: ../libnautilus-private/nautilus-bookmark.c:103
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:274
 #: ../src/nautilus-pathbar.c:298 ../src/nautilus-places-sidebar.c:566
@@ -334,50 +335,50 @@ msgstr "Постави за _позадину"
 msgid "Cancel"
 msgstr "Откажи"
 
-#: ../libnautilus-private/nautilus-file.c:1219
+#: ../libnautilus-private/nautilus-file.c:1221
 #: ../libnautilus-private/nautilus-vfs-file.c:356
 msgid "This file cannot be mounted"
 msgstr "Ова датотека не може бити прикачена"
 
-#: ../libnautilus-private/nautilus-file.c:1264
+#: ../libnautilus-private/nautilus-file.c:1266
 msgid "This file cannot be unmounted"
 msgstr "Ова датотека не може бити откачена"
 
-#: ../libnautilus-private/nautilus-file.c:1298
+#: ../libnautilus-private/nautilus-file.c:1300
 msgid "This file cannot be ejected"
 msgstr "Ова датотека не може бити избачена"
 
-#: ../libnautilus-private/nautilus-file.c:1331
+#: ../libnautilus-private/nautilus-file.c:1333
 #: ../libnautilus-private/nautilus-vfs-file.c:534
 msgid "This file cannot be started"
 msgstr "Ова датотека не може бити покренута"
 
-#: ../libnautilus-private/nautilus-file.c:1383
-#: ../libnautilus-private/nautilus-file.c:1414
+#: ../libnautilus-private/nautilus-file.c:1385
+#: ../libnautilus-private/nautilus-file.c:1416
 msgid "This file cannot be stopped"
 msgstr "Ова датотека не може бити заустављена"
 
-#: ../libnautilus-private/nautilus-file.c:1825
+#: ../libnautilus-private/nautilus-file.c:1827
 #, c-format
 msgid "Slashes are not allowed in filenames"
 msgstr "Косе црте нису дозвољене у називу датотека"
 
-#: ../libnautilus-private/nautilus-file.c:1843
+#: ../libnautilus-private/nautilus-file.c:1845
 #, c-format
 msgid "File not found"
 msgstr "Датотека није нађена"
 
-#: ../libnautilus-private/nautilus-file.c:1871
+#: ../libnautilus-private/nautilus-file.c:1873
 #, c-format
 msgid "Toplevel files cannot be renamed"
 msgstr "Не можете да преименујете датотеке највишег нивоа"
 
-#: ../libnautilus-private/nautilus-file.c:1894
+#: ../libnautilus-private/nautilus-file.c:1896
 #, c-format
 msgid "Unable to rename desktop icon"
 msgstr "Не могу да преименујем иконицу радне површи"
 
-#: ../libnautilus-private/nautilus-file.c:1923
+#: ../libnautilus-private/nautilus-file.c:1925
 #, c-format
 msgid "Unable to rename desktop file"
 msgstr "Не могу да преименујем датотеку радне површи"
@@ -394,62 +395,62 @@ msgstr "Не могу да преименујем датотеку радне п
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4439
+#: ../libnautilus-private/nautilus-file.c:4441
 msgid "%R"
 msgstr "%R"
 
-#: ../libnautilus-private/nautilus-file.c:4440
+#: ../libnautilus-private/nautilus-file.c:4442
 msgid "%-I:%M %P"
 msgstr "%-H:%M"
 
-#: ../libnautilus-private/nautilus-file.c:4441
-#: ../libnautilus-private/nautilus-file.c:4442
+#: ../libnautilus-private/nautilus-file.c:4443
+#: ../libnautilus-private/nautilus-file.c:4444
 msgid "%b %-e"
 msgstr "%b. %e"
 
-#: ../libnautilus-private/nautilus-file.c:4443
+#: ../libnautilus-private/nautilus-file.c:4445
 msgid "%b %-d %Y"
 msgstr "%-d. %b %Y"
 
-#: ../libnautilus-private/nautilus-file.c:4444
+#: ../libnautilus-private/nautilus-file.c:4446
 msgid "%a, %b %e %Y %I:%M:%S %p"
 msgstr "%a, %-d. %b %Y. у %-H:%M:%S"
 
-#: ../libnautilus-private/nautilus-file.c:4445
+#: ../libnautilus-private/nautilus-file.c:4447
 msgid "%a, %b %e %Y %T"
 msgstr "%a, %-d. %b %Y. у %-H:%M:%S"
 
-#: ../libnautilus-private/nautilus-file.c:4944
+#: ../libnautilus-private/nautilus-file.c:4946
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "Немате дозволу да поставите овлашћења"
 
-#: ../libnautilus-private/nautilus-file.c:5239
+#: ../libnautilus-private/nautilus-file.c:5241
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "Немате дозволу да мењате власништво"
 
-#: ../libnautilus-private/nautilus-file.c:5257
+#: ../libnautilus-private/nautilus-file.c:5259
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "Изабрани власник „%s“ не постоји"
 
-#: ../libnautilus-private/nautilus-file.c:5521
+#: ../libnautilus-private/nautilus-file.c:5523
 #, c-format
 msgid "Not allowed to set group"
 msgstr "Немате дозволу да поставите групу"
 
-#: ../libnautilus-private/nautilus-file.c:5539
+#: ../libnautilus-private/nautilus-file.c:5541
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "Изабрана група „%s“ не постоји"
 
 #. Translators: "Me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5673
+#: ../libnautilus-private/nautilus-file.c:5675
 msgid "Me"
 msgstr "Ја"
 
-#: ../libnautilus-private/nautilus-file.c:5697
+#: ../libnautilus-private/nautilus-file.c:5699
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
@@ -458,7 +459,7 @@ msgstr[1] "%'u ставке"
 msgstr[2] "%'u ставки"
 msgstr[3] "једна ставка"
 
-#: ../libnautilus-private/nautilus-file.c:5698
+#: ../libnautilus-private/nautilus-file.c:5700
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
@@ -467,7 +468,7 @@ msgstr[1] "%'u фасцикле"
 msgstr[2] "%'u фасцикли"
 msgstr[3] "једна фасцикла"
 
-#: ../libnautilus-private/nautilus-file.c:5699
+#: ../libnautilus-private/nautilus-file.c:5701
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
@@ -477,39 +478,100 @@ msgstr[2] "%'u датотека"
 msgstr[3] "једна датотека"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6092
-#: ../libnautilus-private/nautilus-file.c:6108
+#: ../libnautilus-private/nautilus-file.c:6097
+#: ../libnautilus-private/nautilus-file.c:6113
 msgid "? items"
 msgstr "? ставки"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6098
+#: ../libnautilus-private/nautilus-file.c:6103
 msgid "? bytes"
 msgstr "? бајтова"
 
-#: ../libnautilus-private/nautilus-file.c:6113
-msgid "unknown type"
-msgstr "непозната врста"
-
-#: ../libnautilus-private/nautilus-file.c:6116
-msgid "unknown MIME type"
-msgstr "непозната МИМЕ врста"
+#: ../libnautilus-private/nautilus-file.c:6120
+#: ../libnautilus-private/nautilus-file.c:6200
+#| msgid "unknown"
+msgid "Unknown"
+msgstr "Непознато"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6130
+#: ../libnautilus-private/nautilus-file.c:6134
 #: ../src/nautilus-properties-window.c:1173
 msgid "unknown"
 msgstr "непознато"
 
-#: ../libnautilus-private/nautilus-file.c:6181
-msgid "program"
-msgstr "програм"
+#: ../libnautilus-private/nautilus-file.c:6164
+#: ../libnautilus-private/nautilus-file.c:6172
+#: ../libnautilus-private/nautilus-file.c:6223
+#| msgid "program"
+msgid "Program"
+msgstr "Програм"
 
-#: ../libnautilus-private/nautilus-file.c:6201
-msgid "link"
-msgstr "веза"
+#: ../libnautilus-private/nautilus-file.c:6165
+#| msgid "Audio CD"
+msgid "Audio"
+msgstr "Звук"
+
+#: ../libnautilus-private/nautilus-file.c:6166
+msgid "Font"
+msgstr "Слова"
+
+#: ../libnautilus-private/nautilus-file.c:6167
+#: ../src/nautilus-image-properties-page.c:716
+msgid "Image"
+msgstr "Слика"
+
+#: ../libnautilus-private/nautilus-file.c:6168
+msgid "Archive"
+msgstr "Архива"
+
+#: ../libnautilus-private/nautilus-file.c:6169
+msgid "Markup"
+msgstr "Означавање"
+
+#: ../libnautilus-private/nautilus-file.c:6173
+#: ../src/nautilus-query-editor.c:418
+msgid "Video"
+msgstr "Видео"
+
+#: ../libnautilus-private/nautilus-file.c:6174
+#| msgid "Contents:"
+msgid "Contacts"
+msgstr "Контакти"
+
+#: ../libnautilus-private/nautilus-file.c:6175
+msgid "Calendar"
+msgstr "Календар"
+
+#: ../libnautilus-private/nautilus-file.c:6176
+#| msgid "Documents"
+msgid "Document"
+msgstr "Документ"
+
+#: ../libnautilus-private/nautilus-file.c:6177
+#: ../src/nautilus-query-editor.c:484
+msgid "Presentation"
+msgstr "Презентација"
+
+#: ../libnautilus-private/nautilus-file.c:6178
+#: ../src/nautilus-query-editor.c:468
+msgid "Spreadsheet"
+msgstr "Табела"
+
+#: ../libnautilus-private/nautilus-file.c:6225
+msgid "Binary"
+msgstr "Бинарни"
+
+#: ../libnautilus-private/nautilus-file.c:6229
+#| msgid "Folders"
+msgid "Folder"
+msgstr "Фасцикла"
+
+#: ../libnautilus-private/nautilus-file.c:6260
+msgid "Link"
+msgstr "Веза"
 
 # bug: string composition sucks! (веза на фасцикла)
 #. Note to localizers: convert file type string for file
@@ -517,7 +579,7 @@ msgstr "веза"
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6207
+#: ../libnautilus-private/nautilus-file.c:6266
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:124
 #, c-format
@@ -525,9 +587,11 @@ msgid "Link to %s"
 msgstr "Веза на %s"
 
 # Не показује на право место
-#: ../libnautilus-private/nautilus-file.c:6223
-msgid "link (broken)"
-msgstr "веза (неисправна)"
+#: ../libnautilus-private/nautilus-file.c:6282
+#: ../libnautilus-private/nautilus-file.c:6296
+#| msgid "link (broken)"
+msgid "Link (broken)"
+msgstr "Веза (неисправна)"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:141
 #, c-format
@@ -695,7 +759,7 @@ msgid_plural "%'d seconds"
 msgstr[0] "%'d секунда"
 msgstr[1] "%'d секунде"
 msgstr[2] "%'d секунди"
-msgstr[3] "Једна секунда"
+msgstr[3] "једна секунда"
 
 #: ../libnautilus-private/nautilus-file-operations.c:283
 #: ../libnautilus-private/nautilus-file-operations.c:294
@@ -705,7 +769,7 @@ msgid_plural "%'d minutes"
 msgstr[0] "%'d минут"
 msgstr[1] "%'d минута"
 msgstr[2] "%'d минута"
-msgstr[3] "Један минут"
+msgstr[3] "један минут"
 
 #: ../libnautilus-private/nautilus-file-operations.c:293
 #, c-format
@@ -714,7 +778,7 @@ msgid_plural "%'d hours"
 msgstr[0] "%'d сат"
 msgstr[1] "%'d сата"
 msgstr[2] "%'d сати"
-msgstr[3] "Један сат"
+msgstr[3] "један сат"
 
 #: ../libnautilus-private/nautilus-file-operations.c:301
 #, c-format
@@ -874,7 +938,7 @@ msgstr[1] ""
 msgstr[2] ""
 "Да ли сте сигурни да желите трајно да уклоните %'d изабраних ставки из смећа?"
 msgstr[3] ""
-"Да ли сте сигурни да желите трајно да уклоните ову једну изабрану ставкуиз "
+"Да ли сте сигурни да желите трајно да уклоните ову једну изабрану ставку из "
 "смећа?"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1336
@@ -2572,14 +2636,12 @@ msgstr ""
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
 #: ../src/nautilus-application.c:1103
-#| msgid "Could not set as default"
 msgid "Could not parse arguments"
 msgstr "Не могу да обрадим аргументе"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
 #: ../src/nautilus-application.c:1135
-#| msgid "Could not add application"
 msgid "Could not register the application"
 msgstr "Не могу да забележим програм"
 
@@ -2657,7 +2719,7 @@ msgstr "_Покрени"
 msgid "No bookmarks defined"
 msgstr "Нема обележивача"
 
-#: ../src/nautilus-bookmarks-window.c:711 ../src/nautilus-places-sidebar.c:274
+#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:274
 msgid "Bookmarks"
 msgstr "Обележивачи"
 
@@ -2753,12 +2815,10 @@ msgid "Keep icons sorted by trash time in rows"
 msgstr "Иконице уређене према датуму брисања у редовима"
 
 #: ../src/nautilus-canvas-view.c:1192
-#| msgid "Relevance"
 msgid "By Search Relevance"
 msgstr "Према значају претраге"
 
 #: ../src/nautilus-canvas-view.c:1193
-#| msgid "Keep icons sorted by size in rows"
 msgid "Keep icons sorted by search relevance in rows"
 msgstr "Иконице уређене према значају претраге у редовима"
 
@@ -3398,7 +3458,7 @@ msgid_plural "%d pixels"
 msgstr[0] "%d тачка"
 msgstr[1] "%d тачке"
 msgstr[2] "%d тачака"
-msgstr[3] ""
+msgstr[3] "једна тачка"
 
 #: ../src/nautilus-image-properties-page.c:373
 msgid "Width"
@@ -3417,10 +3477,6 @@ msgstr "Не могу да учитам податке о слици"
 #: ../src/nautilus-window-slot.c:372
 msgid "Loading..."
 msgstr "Учитавам..."
-
-#: ../src/nautilus-image-properties-page.c:716
-msgid "Image"
-msgstr "Слика"
 
 #: ../src/nautilus-list-model.c:376
 msgid "(Empty)"
@@ -3553,7 +3609,6 @@ msgstr "Није позната ова врста датотеке"
 
 #: ../src/nautilus-mime-actions.c:1216
 #, c-format
-#| msgid "There is no application installed for %s files"
 msgid "There is no application installed for “%s” files"
 msgstr "Није инсталиран програм за отварање „%s“ датотека"
 
@@ -3571,9 +3626,6 @@ msgstr "Не могу да нађем програм"
 
 #: ../src/nautilus-mime-actions.c:1388
 #, c-format
-#| msgid ""
-#| "There is no application installed for %s files.\n"
-#| "Do you want to search for an application to open this file?"
 msgid ""
 "There is no application installed for “%s” files.\n"
 "Do you want to search for an application to open this file?"
@@ -4131,10 +4183,6 @@ msgstr "Документа"
 msgid "Music"
 msgstr "Музика"
 
-#: ../src/nautilus-query-editor.c:418
-msgid "Video"
-msgstr "Видео"
-
 #: ../src/nautilus-query-editor.c:434
 msgid "Picture"
 msgstr "Слика"
@@ -4142,14 +4190,6 @@ msgstr "Слика"
 #: ../src/nautilus-query-editor.c:454
 msgid "Illustration"
 msgstr "Цртеж"
-
-#: ../src/nautilus-query-editor.c:468
-msgid "Spreadsheet"
-msgstr "Табела"
-
-#: ../src/nautilus-query-editor.c:484
-msgid "Presentation"
-msgstr "Презентација"
 
 #: ../src/nautilus-query-editor.c:493
 msgid "Pdf / Postscript"
@@ -5598,464 +5638,3 @@ msgstr "Садржи фотографије и музику"
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "Отвори са:"
-
-#~ msgid "Security Context"
-#~ msgstr "Безбедносни контекст"
-
-#~ msgid "The security context of the file."
-#~ msgstr "Безбедносни контекст датотеке."
-
-#~ msgid "by _Name"
-#~ msgstr "према _називу"
-
-#~ msgid "by _Size"
-#~ msgstr "према _величини"
-
-#~ msgid "by _Type"
-#~ msgstr "према в_рсти"
-
-#~ msgid "by Modification _Date"
-#~ msgstr "према датуму _измене"
-
-#~ msgid "by T_rash Time"
-#~ msgstr "према датуму _брисања"
-
-#~ msgid "Arran_ge Items"
-#~ msgstr "По_ређај ставке"
-
-#~ msgid "_Organize by Name"
-#~ msgstr "Поре_ђај према називу"
-
-#~ msgid "Go To:"
-#~ msgstr "Иди у:"
-
-#~ msgid "Octal Permissions"
-#~ msgstr "Октална овлашћења"
-
-#~ msgid "The permissions of the file, in octal notation."
-#~ msgstr "Овлашћења датотеке, у окталном запису."
-
-#~ msgid "Show other applications"
-#~ msgstr "Прикажи остале програме"
-
-#~ msgid "Show advanced permissions in the file property dialog"
-#~ msgstr ""
-#~ "Приказује напредне поставке дозвола у прозорчету са особинама датотеке"
-
-#~ msgid ""
-#~ "If set to true, then Nautilus lets you edit and display file permissions "
-#~ "in a more unix-like way, accessing some more esoteric options."
-#~ msgstr ""
-#~ "Уколико је изабрано, Наутилус ће вам омогућити да уредите и погледате "
-#~ "дозволе над датотекама на начин ближи униксу, дајући вам приступ "
-#~ "егзотичнијим опцијама."
-
-#~ msgid "Edit Bookmarks"
-#~ msgstr "Уредите обележиваче"
-
-#~ msgid "SSH"
-#~ msgstr "Безбедна шкољка (ССХ)"
-
-#~ msgid "Public FTP"
-#~ msgstr "Јавни ФТП"
-
-#~ msgid "FTP (with login)"
-#~ msgstr "ФТП (са пријавом)"
-
-#~ msgid "Windows share"
-#~ msgstr "Виндоуз дељење"
-
-#~ msgid "WebDAV (HTTP)"
-#~ msgstr "ВебДАВ (ХТТП)"
-
-#~ msgid "Secure WebDAV (HTTPS)"
-#~ msgstr "Безбедни ВебДАВ (ХТТПС)"
-
-#~ msgid "Apple Filing Protocol (AFP)"
-#~ msgstr "Епол протокол подношења (АФП)"
-
-#~ msgid "Connecting..."
-#~ msgstr "Повезујем се..."
-
-#~ msgid ""
-#~ "Can't load the supported server method list.\n"
-#~ "Please check your gvfs installation."
-#~ msgstr ""
-#~ "Не могу да учитам списак подржаних метода са сервера.\n"
-#~ "Проверите да ли је гвфс исправно инсталиран."
-
-#~| msgid "The folder \"%s\" cannot be opened on \"%s\"."
-#~ msgid "The folder “%s” cannot be opened on “%s”."
-#~ msgstr "Ме могу да отворим фасциклу „%s“ из „%s“."
-
-#~| msgid "The server at \"%s\" cannot be found."
-#~ msgid "The server at “%s” cannot be found."
-#~ msgstr "Не могу да нађем сервер на „%s“."
-
-#~ msgid "Try Again"
-#~ msgstr "Покушај поново"
-
-#~ msgid "Please verify your user details."
-#~ msgstr "Проверите ваше податке за овај налог."
-
-#~ msgid "Continue"
-#~ msgstr "Настави"
-
-#~ msgid "_Server:"
-#~ msgstr "_Сервер:"
-
-#~ msgid "_Port:"
-#~ msgstr "_Порт:"
-
-#~ msgid "_Type:"
-#~ msgstr "_Врста:"
-
-#~ msgid "Sh_are:"
-#~ msgstr "По_дели:"
-
-#~ msgid "User Details"
-#~ msgstr "Подаци о кориснику"
-
-#~ msgid "_Domain name:"
-#~ msgstr "_Назив домена:"
-
-#~ msgid "_User name:"
-#~ msgstr "_Корисничко име:"
-
-#~ msgid "Pass_word:"
-#~ msgstr "_Лозинка:"
-
-#~ msgid "_Remember this password"
-#~ msgstr "_Запамти ову лозинку"
-
-#~ msgid "Operation cancelled"
-#~ msgstr "Радња је отказана"
-
-#~ msgid "Unable to mount location"
-#~ msgstr "Ме могу да монтирам путању"
-
-#~ msgid "_Read"
-#~ msgstr "_Читање"
-
-#~ msgid "_Write"
-#~ msgstr "_Писање"
-
-#~ msgid "E_xecute"
-#~ msgstr "_Извршавање"
-
-#~ msgid "Special flags:"
-#~ msgstr "Нарочите ознаке:"
-
-#~ msgid "Set _user ID"
-#~ msgstr "Постави _ИБ корисника (SUID)"
-
-#~ msgid "Set gro_up ID"
-#~ msgstr "Постави ИБ _групе (SGID)"
-
-#~ msgid "_Sticky"
-#~ msgstr "_Лепљив"
-
-#~ msgid "Folder Permissions:"
-#~ msgstr "Овлашћења над фасциклом:"
-
-#~ msgid "File Permissions:"
-#~ msgstr "Овлашћења над датотеком:"
-
-#~ msgid "Text view:"
-#~ msgstr "Текстуални преглед:"
-
-#~ msgid "Free space: %s"
-#~ msgstr "Слободан простор: %s"
-
-#~ msgid "%s, Free space: %s"
-#~ msgstr "%s, слободан простор: %s"
-
-#~ msgid "%s, %s"
-#~ msgstr "%s, %s"
-
-#~ msgid "%s%s, %s"
-#~ msgstr "%s%s, %s"
-
-#~| msgid "\"%s\" will be moved if you select the Paste command"
-#~ msgid "“%s” will be moved if you select the Paste command"
-#~ msgstr "„%s“ ће бити премештено уколико изаберете наредбу Убаци"
-
-#~| msgid "\"%s\" will be copied if you select the Paste command"
-#~ msgid "“%s” will be copied if you select the Paste command"
-#~ msgstr "„%s“ ће бити умножено уколико изаберете наредбу Убаци"
-
-#~ msgid "The %'d selected item will be moved if you select the Paste command"
-#~ msgid_plural ""
-#~ "The %'d selected items will be moved if you select the Paste command"
-#~ msgstr[0] ""
-#~ "%'d изабрана ставка ће бити премештена уколико изаберете наредбу Убаци"
-#~ msgstr[1] ""
-#~ "%'d изабране ставке ће бити премештене уколико изаберете наредбу Убаци"
-#~ msgstr[2] ""
-#~ "%'d изабраних ставки ће бити премештено уколико изаберете наредбу Убаци"
-#~ msgstr[3] ""
-#~ "Једна изабрана ставка ће бити премештена уколико изаберете наредбу Убаци"
-
-#~ msgid "The %'d selected item will be copied if you select the Paste command"
-#~ msgid_plural ""
-#~ "The %'d selected items will be copied if you select the Paste command"
-#~ msgstr[0] ""
-#~ "%'d изабрана ставка ће бити умножена уколико изаберете наредбу Убаци"
-#~ msgstr[1] ""
-#~ "%'d изабране ставке ће бити умножене уколико изаберете наредбу Убаци"
-#~ msgstr[2] ""
-#~ "%'d изабраних ставки ће бити умножено уколико изаберете наредбу Убаци"
-#~ msgstr[3] ""
-#~ "Једна изабрана ставка ће бити умножена уколико изаберете наредбу Убаци"
-
-#~ msgid "There is nothing on the clipboard to paste."
-#~ msgstr "Нема ништа у списку исечака за убацивање."
-
-#~ msgid "Unable to unmount location"
-#~ msgstr "Ме могу да демонтирам путању"
-
-#~ msgid "Unable to eject location"
-#~ msgstr "Ме могу да избацим путању"
-
-#~ msgid "Connect to Server %s"
-#~ msgstr "Повежи се на сервер %s"
-
-#~ msgid "Link _name:"
-#~ msgstr "_Назив везе:"
-
-#~ msgid "No templates installed"
-#~ msgstr "Нису инсталирани шаблони"
-
-#~ msgid "D_uplicate"
-#~ msgstr "У_двостручи"
-
-#~ msgid "Duplicate each selected item"
-#~ msgstr "Удвостручите сваку изабрану ставку"
-
-#~ msgid "Connect To This Server"
-#~ msgstr "Повежи се на овај сервер"
-
-#~ msgid "Make a permanent connection to this server"
-#~ msgstr "Направите трајну везу са овим сервером"
-
-#~ msgid "_File"
-#~ msgstr "_Датотека"
-
-#~ msgid "_Edit"
-#~ msgstr "_Уређивање"
-
-#~ msgid "_View"
-#~ msgstr "П_реглед"
-
-#~ msgid "_Go"
-#~ msgstr "_Иди"
-
-#~ msgid "_Tabs"
-#~ msgstr "_Листови"
-
-#~ msgid "Sidebar"
-#~ msgstr "Бочна површ"
-
-#~ msgid "Back history"
-#~ msgstr "Назад у историјату"
-
-#~ msgid "Forward history"
-#~ msgstr "Напред у историјату"
-
-#~| msgid "_Icons"
-#~ msgid "Icons"
-#~ msgstr "Иконице"
-
-#~ msgid "Autorun Prompt"
-#~ msgstr "Аутоматско покретање"
-
-#~ msgid "me"
-#~ msgstr "моја"
-
-#~ msgid "The file \"%B\" cannot be moved to the trash."
-#~ msgstr "Ме могу да преместим датотеку „%B“ у смеће."
-
-#~ msgid ""
-#~ "Enables the classic Nautilus behavior, where all windows are browsers"
-#~ msgstr "Укључује обично понашање Наутилуса, где су сви прозори разгледачи"
-
-#~ msgid ""
-#~ "If set to true, then all Nautilus windows will be browser windows. This "
-#~ "is how Nautilus used to behave before version 2.6, and some people prefer "
-#~ "this behavior."
-#~ msgstr ""
-#~ "Уколико је изабрано, сви прозори Наутилуса ће бити разгледачки прозори. "
-#~ "Овако се Наутилус понашао пре издања 2.6, а неки људи више воле овакав "
-#~ "начин рада."
-
-#~ msgid "When to show preview text in icons"
-#~ msgstr "Када приказати садржај текста у иконицама"
-
-#~ msgid ""
-#~ "Speed tradeoff for when to show a preview of text file contents in the "
-#~ "file's icon. If set to \"always\" then always show previews, even if the "
-#~ "folder is on a remote server. If set to \"local-only\" then only show "
-#~ "previews for local file systems. If set to \"never\" then never bother to "
-#~ "read preview data."
-#~ msgstr ""
-#~ "Губитак брзине ради прегледа садржаја текстуалних датотека у иконици "
-#~ "датотеке. Уколико је постављено на „always“ увек се приказује преглед, "
-#~ "чак и ако је фасцикла на удаљеном рачунару. Уколико је постављено на "
-#~ "„local-only“, приказује се преглед само за локалне датотеке. Уколико је "
-#~ "постављено на „never“, никад се не приказује преглед."
-
-#~ msgid "Nautilus could not create the required folder \"%s\"."
-#~ msgstr "Не могу да створим неопходну фасциклу „%s“."
-
-#~ msgid "Nautilus could not create the following required folders: %s."
-#~ msgstr "Наутилус не може да направи следеће неопходне фасцикле: %s."
-
-#~ msgid ""
-#~ "Before running Nautilus, please create these folders, or set permissions "
-#~ "such that Nautilus can create them."
-#~ msgstr ""
-#~ "Пре покретања Наутилуса, направите ове фасцикле, или поставите овлашћења "
-#~ "тако да их Наутилус може направити."
-
-#~ msgid "Error starting autorun program: %s"
-#~ msgstr "Грешка при покретању програма са медијума: %s"
-
-#~ msgid "Cannot find the autorun program"
-#~ msgstr "Не могу да нађем програм за покретање на медијуму"
-
-#~ msgid "<big><b>Error autorunning software</b></big>"
-#~ msgstr "<big><b>Грешка при покретању програма са медијума</b></big>"
-
-#~ msgid ""
-#~ "The software will run directly from the medium \"%s\". You should never "
-#~ "run software that you don't trust.\n"
-#~ "\n"
-#~ "If in doubt, press Cancel."
-#~ msgstr ""
-#~ "Овај програм ће се сам покренути са медијума „%s“. Немојте покретати "
-#~ "програме у које немате поверења.\n"
-#~ "\n"
-#~ "Уколико се двоумите изаберите „Одустани“."
-
-#~ msgid "File Management Preferences"
-#~ msgstr "Поставке за управљање датотекама"
-
-#~ msgid "Open each _folder in its own window"
-#~ msgstr "Отварај _фасцикле у засебним прозорима"
-
-#~ msgid "Text Files"
-#~ msgstr "Текстуалне датотеке"
-
-#~ msgid "Show te_xt in icons:"
-#~ msgstr "Прикажи _текст са иконицама:"
-
-#~ msgid "Other Previewable Files"
-#~ msgstr "Остале датотеке за преглед"
-
-#~ msgid "<b>Width:</b> %d pixel"
-#~ msgid_plural "<b>Width:</b> %d pixels"
-#~ msgstr[0] "<b>Ширина:</b> %d пиксел"
-#~ msgstr[1] "<b>Ширина:</b> %d пиксела"
-#~ msgstr[2] "<b>Ширина:</b> %d пиксела"
-#~ msgstr[3] "<b>Ширина:</b> %d пиксел"
-
-#~ msgid "<b>Height:</b> %d pixel"
-#~ msgid_plural "<b>Height:</b> %d pixels"
-#~ msgstr[0] "<b>Висина:</b> %d пиксел"
-#~ msgstr[1] "<b>Висина:</b> %d пиксела"
-#~ msgstr[2] "<b>Висина:</b> %d пиксела"
-#~ msgstr[3] "<b>Висина:</b> %d пиксел"
-
-#~ msgid "loading..."
-#~ msgstr "учитавам..."
-
-#~ msgid "Restore Selected Items"
-#~ msgstr "Врати изабране ставке"
-
-#~ msgid ""
-#~ "Choosing a script from the menu will run that script with any selected "
-#~ "items as input."
-#~ msgstr ""
-#~ "Избором скрипте из изборника се она покреће, а све изабране ставке ће јој "
-#~ "бити улаз."
-
-#~ msgid ""
-#~ "All executable files in this folder will appear in the Scripts menu. "
-#~ "Choosing a script from the menu will run that script.\n"
-#~ "\n"
-#~ "When executed from a local folder, scripts will be passed the selected "
-#~ "file names. When executed from a remote folder (e.g. a folder showing web "
-#~ "or ftp content), scripts will be passed no parameters.\n"
-#~ "\n"
-#~ "In all cases, the following environment variables will be set by "
-#~ "Nautilus, which the scripts may use:\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected "
-#~ "files (only if local)\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_SELECTED_URIS: newline-delimited URIs for selected files\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_CURRENT_URI: URI for current location\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_WINDOW_GEOMETRY: position and size of current window\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Све извршне датотеке у овој фасцикли ће се појавити у изборнику за "
-#~ "Скрипте. Избор скрипте из изборника ће покренути ту скрипту.\n"
-#~ "\n"
-#~ "Када су извршене из месне фасцикле, скриптама ће бити прослеђени називи "
-#~ "изабраних датотека. Када су извршене из удаљених фасцикли (нпр. фасцикла "
-#~ "која приказује веб или фтп садржај), скриптама се не прослеђују никакви "
-#~ "параметри.\n"
-#~ "\n"
-#~ "У свим случајевима, Наутилус ће поставити следеће променљиве окружења, "
-#~ "које скрипте могу користити:\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_SELECTED_FILE_PATHS: путање изабраних датотека у засебним "
-#~ "редовима (само ако је локално)\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_SELECTED_URIS: путање изабраних датотека у засебним "
-#~ "редовима\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_CURRENT_URI: путања трнутног места\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_WINDOW_GEOMETRY: положај и величина текућег прозора\n"
-#~ "\n"
-
-#~ msgid "_Rename..."
-#~ msgstr "_Преименуј..."
-
-#~ msgid "Nautilus has no installed viewer capable of displaying the folder."
-#~ msgstr "Наутилус нема постављен прегледач за приказивање ове фасцикле."
-
-#~ msgid "Could not find \"%s\"."
-#~ msgstr "Не могу да нађем „%s“."
-
-#~ msgid "Nautilus cannot handle \"%s\" locations."
-#~ msgstr "Наутилус не подржава „%s“ места."
-
-#~ msgid "Access was denied."
-#~ msgstr "Приступ је одбијен."
-
-#~ msgid "Could not display \"%s\", because the host could not be found."
-#~ msgstr "Не могу да прикажем „%s“ зато што није пронађен домаћин."
-
-#~ msgid ""
-#~ "Check that the spelling is correct and that your proxy settings are "
-#~ "correct."
-#~ msgstr ""
-#~ "Проверите да ли сте добро укуцали и да ли су поставке вашег посредника "
-#~ "исправне."
-
-#~ msgid ""
-#~ "Error: %s\n"
-#~ "Please select another viewer and try again."
-#~ msgstr ""
-#~ "Грешка: %s\n"
-#~ "Изаберите неки други прегледач и покушајте поново."
-
-#~ msgid "_Edit Bookmarks..."
-#~ msgstr "_Уреди обележиваче..."
-
-#~ msgid "Display a window that allows editing the bookmarks in this menu"
-#~ msgstr "Прикажите прозор за уређивање обележивача из приложеног изборника"
