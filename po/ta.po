@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus.master.ta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-19 20:18+0530\n"
+"POT-Creation-Date: 2012-09-19 21:40+0530\n"
 "PO-Revision-Date: 2012-09-19 20:25+0530\n"
 "Last-Translator: Dr.T.Vasudevan <agnihot3@gmail.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -23,8 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Lokalize 1.1\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\\n"
-"\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\\n\n"
 "\n"
 "\n"
 "\n"
@@ -106,7 +105,8 @@ msgid "Selection Bound"
 msgstr "தேர்வு பிணைப்பு"
 
 #: ../eel/eel-editable-label.c:346
-msgid "The position of the opposite end of the selection from the cursor in chars."
+msgid ""
+"The position of the opposite end of the selection from the cursor in chars."
 msgstr "சுட்டி நிலையிலிருந்து தேர்வின் எதிர் நிலையின் தூரம் (எழுத்துகளில்)"
 
 #: ../eel/eel-editable-label.c:3051
@@ -909,8 +909,10 @@ msgid ""
 msgid_plural ""
 "Are you sure you want to permanently delete the %'d selected items from the "
 "trash?"
-msgstr[0] "தேர்ந்தெடுத்த %'d உருப்படியை குப்பையிலிருந்து நிச்சயமாக நிரந்தரமாக நீக்க வேண்டுமா?"
-msgstr[1] "தேர்ந்தெடுத்த %'d உருப்படிகளை குப்பையிலிருந்து நிச்சயமாக நிரந்தரமாக நீக்க வேண்டுமா?"
+msgstr[0] ""
+"தேர்ந்தெடுத்த %'d உருப்படியை குப்பையிலிருந்து நிச்சயமாக நிரந்தரமாக நீக்க வேண்டுமா?"
+msgstr[1] ""
+"தேர்ந்தெடுத்த %'d உருப்படிகளை குப்பையிலிருந்து நிச்சயமாக நிரந்தரமாக நீக்க வேண்டுமா?"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1336
 #: ../libnautilus-private/nautilus-file-operations.c:1402
@@ -939,7 +941,8 @@ msgstr "நிச்சயமாக  \"%B\" ஐ நிரந்தரமாக �
 #: ../libnautilus-private/nautilus-file-operations.c:1393
 #, c-format
 msgid "Are you sure you want to permanently delete the %'d selected item?"
-msgid_plural "Are you sure you want to permanently delete the %'d selected items?"
+msgid_plural ""
+"Are you sure you want to permanently delete the %'d selected items?"
 msgstr[0] "நிச்சயமாக தேர்ந்தெடுக்கப்பட்ட %'d  உருப்படியை நிரந்தரமாக நீக்க வேண்டுமா? "
 msgstr[1] "நிச்சயமாக தேர்ந்தெடுக்கப்பட்ட %'d  உருப்படிகளை நிரந்தரமாக நீக்க வேண்டுமா? "
 
@@ -980,7 +983,8 @@ msgstr "\"%B\" இல் கோப்புகளை காண உங்கள�
 #: ../libnautilus-private/nautilus-file-operations.c:1530
 #: ../libnautilus-private/nautilus-file-operations.c:2550
 #: ../libnautilus-private/nautilus-file-operations.c:3550
-msgid "There was an error getting information about the files in the folder “%B”."
+msgid ""
+"There was an error getting information about the files in the folder “%B”."
 msgstr "அடைவு \"%B\" இல் உள்ள  கோப்புகளின்  தகவலை பெறுவதில் பிழை"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1539
@@ -1124,13 +1128,15 @@ msgstr ""
 msgid ""
 "The folder “%B” cannot be handled because you do not have permissions to "
 "read it."
-msgstr "\"%B\" அடைவை  கையாள முடியாது. ஏனெனில் அதை படிக்க தேவையான அனுமதி உமக்கு இல்லை."
+msgstr ""
+"\"%B\" அடைவை  கையாள முடியாது. ஏனெனில் அதை படிக்க தேவையான அனுமதி உமக்கு இல்லை."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2663
 msgid ""
 "The file “%B” cannot be handled because you do not have permissions to read "
 "it."
-msgstr "\"%B\"  கோப்பை கையாள முடியாது. ஏனெனில் அதை படிக்க தேவையான அனுமதி உமக்கு இல்லை."
+msgstr ""
+"\"%B\"  கோப்பை கையாள முடியாது. ஏனெனில் அதை படிக்க தேவையான அனுமதி உமக்கு இல்லை."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2666
 msgid "There was an error getting information about “%B”."
@@ -1857,7 +1863,8 @@ msgid "This drop target only supports local files."
 msgstr "இந்த இலக்கு உள் கோப்புகளை மட்டுமே ஆதரிக்கும்"
 
 #: ../libnautilus-private/nautilus-program-choosing.c:350
-msgid "To open non-local files copy them to a local folder and then drop them again."
+msgid ""
+"To open non-local files copy them to a local folder and then drop them again."
 msgstr "உள்-இல்லாத கோப்புகளை திறக்க அவைகளை உங்கள் உள் அடைவிற்குள் நகலெடுக்கவும்"
 
 #: ../libnautilus-private/nautilus-program-choosing.c:361
@@ -2065,7 +2072,8 @@ msgstr ""
 "சொருகப்படும். \"முடிவு\" என அமைத்தால் பட்டியலின் கடைசியில் சேர்க்கப்படும்."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:28
-msgid "If set to true, newly opened windows will have the location bar visible."
+msgid ""
+"If set to true, newly opened windows will have the location bar visible."
 msgstr "உண்மை என அமைத்தால் , புதிதாக திறந்த சாளரங்களில் இடப்பட்டி தெரியும்."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:29
@@ -2106,7 +2114,8 @@ msgstr ""
 msgid ""
 "If set to true, then Nautilus will use a fade effect to change the desktop "
 "background."
-msgstr "உண்மை என அமைத்தால், நாடுலஸ்  மங்கலாகும் பாங்கை மேல்மேசை பின் புலத்துக்கு பயன்படுத்தும்."
+msgstr ""
+"உண்மை என அமைத்தால், நாடுலஸ்  மங்கலாகும் பாங்கை மேல்மேசை பின் புலத்துக்கு பயன்படுத்தும்."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:35
 msgid ""
@@ -2136,7 +2145,8 @@ msgstr ""
 msgid ""
 "If this is set to true, an icon linking to the Network Servers view will be "
 "put on the desktop."
-msgstr "உண்மை என அமைத்தால், பிணைய சேவையகங்களோடு தொடர்புடைய சின்னம் மேல்மேசையில் வந்து சேரும்"
+msgstr ""
+"உண்மை என அமைத்தால், பிணைய சேவையகங்களோடு தொடர்புடைய சின்னம் மேல்மேசையில் வந்து சேரும்"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:38
 msgid ""
@@ -2779,7 +2789,8 @@ msgstr "(_B)மேல்மேசையின் பின்னனியை ம
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:766
-msgid "Show a window that lets you set your desktop background's pattern or color"
+msgid ""
+"Show a window that lets you set your desktop background's pattern or color"
 msgstr "உங்கள் மேல்மேசையின் நிறம் மற்றும் மாதிரியை தேர்வு செய்யும் சாளரத்தை காட்டவும்"
 
 #. label, accelerator
@@ -2801,7 +2812,8 @@ msgstr "_O மேல்மேசையை பெயரால் அடுக்�
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:780
 msgid "Reposition icons to better fit in the window and avoid overlapping"
-msgstr "சின்னங்களை சாளரத்தில் பொருந்துமாறு மாற்றி அமைத்து ஒன்றின் மேல் ஒன்றாக அடுக்குவதை தவிர்க"
+msgstr ""
+"சின்னங்களை சாளரத்தில் பொருந்துமாறு மாற்றி அமைத்து ஒன்றின் மேல் ஒன்றாக அடுக்குவதை தவிர்க"
 
 #. label, accelerator
 #: ../src/nautilus-desktop-canvas-view.c:785
@@ -2905,13 +2917,15 @@ msgstr "அனுமதியை மாற்ற முடியாது"
 
 #: ../src/nautilus-error-reporting.c:204
 #, c-format
-msgid "The name “%s” is already used in this location. Please use a different name."
+msgid ""
+"The name “%s” is already used in this location. Please use a different name."
 msgstr ""
 "\"%s\" என்ற பெயர் இந்த இடத்தில் ஏற்கெனவே பயன்பாட்டில் உள்ளது. வேறு பெயரை பயன்படுத்தவும்."
 
 #: ../src/nautilus-error-reporting.c:209
 #, c-format
-msgid "There is no “%s” in this location. Perhaps it was just moved or deleted?"
+msgid ""
+"There is no “%s” in this location. Perhaps it was just moved or deleted?"
 msgstr "இந்த இடத்தில் \"%s\" இல்லை. ஒருவேலை நகர்ந்திருக்கலாம் அல்லது நீக்கப்பட்டிருக்கலாம்"
 
 #: ../src/nautilus-error-reporting.c:214
@@ -5024,7 +5038,8 @@ msgid "This location doesn't appear to be a folder."
 msgstr "இந்த இடம் ஒரு அடைவு இல்லை என தோன்றுகிறது"
 
 #: ../src/nautilus-window-manage-views.c:1665
-msgid "Unable to find the requested file. Please check the spelling and try again."
+msgid ""
+"Unable to find the requested file. Please check the spelling and try again."
 msgstr ""
 "வேண்டிய கோப்பை கண்டுபிடிக்க முடியவில்லை. எழுத்துப்பிழை உள்ளதா என சோதித்து மீண்டும் "
 "முயற்சி செய்யவும்"
@@ -5132,7 +5147,8 @@ msgstr "கோப்புகளை தேடுக"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:487
-msgid "Locate files based on file name and type. Save your searches for later use."
+msgid ""
+"Locate files based on file name and type. Save your searches for later use."
 msgstr ""
 "கோப்பு பெயர் மற்றும் வகை அடிப்படையில் கோப்புகளை கண்டுபிடிக்க. உங்கள் தேடல்களை பின்கால "
 "பயனுக்கு சேமிக்கவும்."
@@ -5146,7 +5162,8 @@ msgstr "கோப்புகளையும்  அடைவுகளையு�
 #. tooltip
 #: ../src/nautilus-window-menus.c:491
 msgid "Arrange files by name, size, type, or when they were changed."
-msgstr "கோப்புகளை பெயர், அளவு, வகை, அல்லது எப்போது மாற்றப்பட்டது என்ற அடிப்படையில் அடுக்குக"
+msgstr ""
+"கோப்புகளை பெயர், அளவு, வகை, அல்லது எப்போது மாற்றப்பட்டது என்ற அடிப்படையில் அடுக்குக"
 
 #. name, stock id
 #. label, accelerator
@@ -5169,8 +5186,10 @@ msgstr "கோப்புகளை பகிர் மற்றும் இட
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:499
-msgid "Easily transfer files to your contacts and devices from the file manager."
-msgstr "உங்கள் தொடர்புகள் மற்றும் சாஅதனங்களை கோப்பு மேலாளரில் இருந்து சுலபமாக இடம் மாற்றவும்."
+msgid ""
+"Easily transfer files to your contacts and devices from the file manager."
+msgstr ""
+"உங்கள் தொடர்புகள் மற்றும் சாஅதனங்களை கோப்பு மேலாளரில் இருந்து சுலபமாக இடம் மாற்றவும்."
 
 #. name, stock id
 #. label, accelerator
