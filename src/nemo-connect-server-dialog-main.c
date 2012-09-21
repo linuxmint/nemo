@@ -17,8 +17,8 @@
  *
  * You should have received a copy of the GNU General Public
  * License along with this program; see the file COPYING.  If not,
- * write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
+ * Boston, MA 02110-1335, USA.
  *
  * Authors:
  *   Vincent Untz <vincent@vuntz.net>
