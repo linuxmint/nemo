@@ -18,7 +18,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-09-14 23:06+0000\n"
-"PO-Revision-Date: 2012-09-15 18:39+0400\n"
+"PO-Revision-Date: 2012-09-23 20:43+0400\n"
 "Last-Translator: Yuri Myasoedov <omerta13@yandex.ru>\n"
 "Language-Team: русский <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
@@ -402,7 +402,7 @@ msgstr "Не удалось переименовать desktop-файл"
 #.
 #: ../libnautilus-private/nautilus-file.c:4441
 msgid "%R"
-msgstr ""
+msgstr "%R"
 
 #: ../libnautilus-private/nautilus-file.c:4442
 msgid "%-I:%M %P"
@@ -418,16 +418,14 @@ msgid "%b %-d %Y"
 msgstr "%b %-d %Y"
 
 #: ../libnautilus-private/nautilus-file.c:4446
-#, fuzzy
 #| msgid "%a, %b %-d %Y at %-I:%M:%S %p"
 msgid "%a, %b %e %Y %I:%M:%S %p"
-msgstr "%a, %b %e %Y %H:%M:%S"
+msgstr "%a, %e %b %Y %H:%M:%S"
 
 #: ../libnautilus-private/nautilus-file.c:4447
-#, fuzzy
 #| msgid "%a, %b %-d %Y at %-I:%M:%S %p"
 msgid "%a, %b %e %Y %T"
-msgstr "%a, %b %e %Y %H:%M:%S"
+msgstr "%a, %e %b %Y %T"
 
 #: ../libnautilus-private/nautilus-file.c:4946
 #, c-format
@@ -2112,7 +2110,6 @@ msgid "When to show thumbnails of files"
 msgstr "Когда показывать миниатюры файл"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:24
-#, fuzzy
 #| msgid ""
 #| "Speed tradeoff for when to show an image file as a thumbnail. If set to "
 #| "\"always\" then always thumbnail, even if the folder is on a remote "
@@ -2126,11 +2123,12 @@ msgid ""
 "\"never\" then never bother to thumbnail files, just use a generic icon. "
 "Despite what the name may suggest, this applies to any previewable file type."
 msgstr ""
-"Критерий отображения миниатюр. Если установлено \"always\", миниатюры будут "
+"Критерий отображения миниатюр. Если установлено «always», миниатюры будут "
 "отображаться всегда, даже если папка находится на удалённом сервере. Если "
-"установлено \"local_only\", миниатюры будут создаваться только для файлов на "
-"локальных файловых системах. Если установлено \"never\", вместо миниатюр "
-"всегда будет использоваться значок типа файла."
+"установлено «local_only», миниатюры будут создаваться только для файлов на "
+"локальных файловых системах. Если установлено «never», вместо миниатюр "
+"всегда будет использоваться значок типа файла. Этот параметр относится к "
+"любому типу файлов, для которых возможен предварительный просмотр."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:25
 msgid "Maximum image size for thumbnailing"
@@ -2839,10 +2837,9 @@ msgid "Unable to access location"
 msgstr "Не удалось получить доступ к местопложения"
 
 #: ../src/nautilus-connect-server.c:74
-#, fuzzy
 #| msgid "Unable to load location"
 msgid "Unable to display location"
-msgstr "Не удалось загрузить адрес"
+msgstr "Не удалось показать адрес"
 
 #: ../src/nautilus-connect-server.c:140
 msgid "Print but do not open the URI"
@@ -2867,7 +2864,7 @@ msgstr "При попытке показать справку произошла
 
 #: ../src/nautilus-connect-server-dialog.c:149
 msgid "Don't recognize this file server type."
-msgstr ""
+msgstr "Не удалось распознать тип этого файлового сервера."
 
 #: ../src/nautilus-connect-server-dialog.c:156
 msgid "This doesn't look like an address."
@@ -3615,7 +3612,7 @@ msgid "Unable to search for application"
 msgstr "Не удалось выполнить поиск приложения"
 
 #: ../src/nautilus-mime-actions.c:1388
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "There is no application installed for %s files.\n"
 #| "Do you want to search for an application to open this file?"
@@ -3623,7 +3620,7 @@ msgid ""
 "There is no application installed for “%s” files.\n"
 "Do you want to search for an application to open this file?"
 msgstr ""
-"Для файлов типа «%s» не установлено каких-либо приложений.\n"
+"Для файлов типа «%s» не установлено ни одного приложения.\n"
 "Найти подходящее приложение для открытия этого файла?"
 
 #: ../src/nautilus-mime-actions.c:1538
@@ -3656,9 +3653,8 @@ msgstr[1] "Откроется %d отдельных приложения."
 msgstr[2] "Откроется %d отдельных приложений."
 
 #: ../src/nautilus-mime-actions.c:2212
-#, fuzzy
 msgid "Unable to start location"
-msgstr "Не удалось запустить местоположение"
+msgstr "Не удалось запустить адрес"
 
 #: ../src/nautilus-mime-actions.c:2296
 #, c-format
@@ -4215,7 +4211,7 @@ msgstr "Удалить этот критерий из поиска"
 #. create the Current/All Files selector
 #: ../src/nautilus-query-editor.c:1043
 msgid "Current"
-msgstr ""
+msgstr "Текущий"
 
 #: ../src/nautilus-query-editor.c:1046
 msgid "All Files"
@@ -4226,16 +4222,14 @@ msgid "Add a new criterion to this search"
 msgstr "Добавить новый критерий в этот поиск"
 
 #: ../src/nautilus-special-location-bar.c:52
-#, fuzzy
 #| msgid "All executable files in this folder will appear in the Scripts menu."
 msgid "Files in this folder will appear in the Create Document menu."
-msgstr "Все исполняемые файлы из этой папки будут показаны в меню «Сценарии»."
+msgstr "Файлы этой папки появятся в меню создания документа."
 
 #: ../src/nautilus-special-location-bar.c:55
-#, fuzzy
 #| msgid "All executable files in this folder will appear in the Scripts menu."
 msgid "Executable files in this folder will appear in the Scripts menu."
-msgstr "Все исполняемые файлы из этой папки будут показаны в меню «Сценарии»."
+msgstr "Исполняемые файлы этой папки будут показаны в меню «Сценарии»."
 
 #: ../src/nautilus-trash-bar.c:202
 msgid "Restore"
@@ -4247,10 +4241,9 @@ msgstr "Восстановить выделенные объекты к исхо
 
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:209
-#, fuzzy
 #| msgid "(Empty)"
 msgid "Empty"
-msgstr "(Пусто)"
+msgstr "Пусто"
 
 #: ../src/nautilus-view.c:960
 #, c-format
@@ -4385,10 +4378,10 @@ msgstr "(%s)"
 #. * total size of those items.
 #.
 #: ../src/nautilus-view.c:2975
-#, fuzzy, c-format
+#, c-format
 #| msgid "%s%s, %s, %s"
 msgid "%s %s, %s %s"
-msgstr "%s%s, %s, %s"
+msgstr "%s %s, %s %s"
 
 # "Открыть с помощью программы "%s" -- это слишком длинно и не помешается
 # на боковую панель даже без распаковки `%s'.
@@ -4408,7 +4401,7 @@ msgstr[1] "Использовать приложение «%s» для откр�
 msgstr[2] "Использовать приложение «%s» для открытия выделенных объектов"
 
 #: ../src/nautilus-view.c:5116
-#, fuzzy, c-format
+#, c-format
 #| msgid "Run \"%s\" on any selected items"
 msgid "Run “%s” on any selected items"
 msgstr "Запустить приложение «%s» для всех выделенных объектов"
@@ -4490,10 +4483,9 @@ msgstr "Создать новую пустую папку в этой папке
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7146
-#, fuzzy
 #| msgid "_Invert Selection"
 msgid "New Folder with Selection"
-msgstr "Создать папку с выделенными объектами"
+msgstr "Создать папку из выделенных объектов"
 
 #. tooltip
 #: ../src/nautilus-view.c:7147
@@ -5104,9 +5096,9 @@ msgstr "Переместить открытую папку в корзину"
 #, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Создать папку из выделенных объектов (%'d объект)"
+msgstr[1] "Создать папку из выделенных объектов (%'d объекта)"
+msgstr[2] "Создать папку из выделенных объектов (%'d объектов)"
 
 # "Открыть с помощью программы "%s" -- это слишком длинно и не помешается
 # на боковую панель даже без распаковки `%s'.
