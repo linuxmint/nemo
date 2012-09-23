@@ -4561,7 +4561,7 @@ nemo_file_get_date_as_string (NemoFile *file, NemoDateType date_type, gboolean c
 		format = ANYTIME_TIME_FORMAT;
 	}
 
-	result = g_date_time_format (date_time, format);
+	result = g_date_time_format (date_time, _(format));
 
  out:
 	g_date_time_unref (date_time);
