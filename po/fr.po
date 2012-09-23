@@ -418,7 +418,7 @@ msgstr "%-I:%M %P"
 #: ../libnautilus-private/nautilus-file.c:4443
 #: ../libnautilus-private/nautilus-file.c:4444
 msgid "%b %-e"
-msgstr "%b %-e"
+msgstr "%-e %b"
 
 #: ../libnautilus-private/nautilus-file.c:4445
 msgid "%b %-d %Y"
