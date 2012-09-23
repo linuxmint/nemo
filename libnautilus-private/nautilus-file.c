@@ -4503,7 +4503,7 @@ nautilus_file_get_date_as_string (NautilusFile *file, NautilusDateType date_type
 		format = ANYTIME_TIME_FORMAT;
 	}
 
-	result = g_date_time_format (date_time, format);
+	result = g_date_time_format (date_time, _(format));
 
 	g_date_time_unref (date_time);
 
