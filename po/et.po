@@ -23,7 +23,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-09-22 23:23+0000\n"
-"PO-Revision-Date: 2012-09-23 12:39+0300\n"
+"PO-Revision-Date: 2012-09-24 10:46+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz@gmail.com>\n"
 "Language-Team: Estonian <gnome-et@linux.ee>\n"
 "Language: et\n"
@@ -215,10 +215,10 @@ msgid "Original location of file before moved to the Trash"
 msgstr "Faili esialgne asukoht enne prügikasti viskamist"
 
 msgid "Relevance"
-msgstr "Relevantsus"
+msgstr "Asjakohasus"
 
 msgid "Relevance rank for search"
-msgstr "Otsingu relevantsushinnang"
+msgstr "Otsingu asjakohasushinnang"
 
 msgid "on the desktop"
 msgstr "töölaual"
@@ -2132,10 +2132,10 @@ msgid "Keep icons sorted by trash time in rows"
 msgstr "Ikoone hoitakse kustutamise aja järgi sorditult ridades"
 
 msgid "By Search Relevance"
-msgstr "Relevantsuse järgi"
+msgstr "Asjakohasuse järgi"
 
 msgid "Keep icons sorted by search relevance in rows"
-msgstr "Ikoonide sortimine otsingule vastavuse järgi"
+msgstr "Ikoonide sortimine asjakohasuse järgi"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
