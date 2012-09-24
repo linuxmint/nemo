@@ -848,7 +848,11 @@ custom_size_to_string (char *format, va_list va)
 	goffset size;
 
 	size = va_arg (va, goffset);
-	return g_format_size (size);
+	
+	gint prefix;
+	prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+	
+	return g_format_size_full (size, prefix);
 }
 
 static void

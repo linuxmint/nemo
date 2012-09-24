@@ -50,6 +50,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_TEXT_WIDGET "preview_text_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_IMAGE_WIDGET "preview_image_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET "preview_folder_combobox"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SIZE_PREFIXES_WIDGET "size_prefixes_combobox"
 
 /* bool preferences */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LOCATION_ENTRY_WIDGET "show_location_entry_checkbutton"
@@ -140,6 +141,14 @@ static const char * const executable_text_values[] = {
 	"launch",
 	"display",
 	"ask",
+	NULL
+};
+
+static const char * const size_prefixes_values[] = {
+	"base-10",
+	"base-10-full",
+	"base-2",
+	"base-2-full",
 	NULL
 };
 
@@ -814,6 +823,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET,
 			   NEMO_PREFERENCES_SHOW_DIRECTORY_ITEM_COUNTS,
 			   (const char **) preview_values);
+	bind_builder_enum (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SIZE_PREFIXES_WIDGET,
+			   NEMO_PREFERENCES_SIZE_PREFIXES,
+			   (const char **) size_prefixes_values);
 	bind_builder_enum (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET,
 			   NEMO_PREFERENCES_DATE_FORMAT,

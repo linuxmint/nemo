@@ -5844,6 +5844,7 @@ nemo_file_get_size_as_string (NemoFile *file)
 {
 	guint item_count;
 	gboolean count_unreadable;
+	gint prefix;
 
 	if (file == NULL) {
 		return NULL;
@@ -5861,7 +5862,9 @@ nemo_file_get_size_as_string (NemoFile *file)
 	if (file->details->size == -1) {
 		return NULL;
 	}
-	return g_format_size (file->details->size);
+	
+	prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+	return g_format_size_full (file->details->size, prefix);
 }
 
 /**
@@ -5881,6 +5884,7 @@ nemo_file_get_size_as_string_with_real_size (NemoFile *file)
 {
 	guint item_count;
 	gboolean count_unreadable;
+	gint prefix;
 
 	if (file == NULL) {
 		return NULL;
@@ -5898,8 +5902,11 @@ nemo_file_get_size_as_string_with_real_size (NemoFile *file)
 	if (file->details->size == -1) {
 		return NULL;
 	}
-
-	return g_format_size_full (file->details->size, G_FORMAT_SIZE_LONG_FORMAT);
+	
+	/* If base-2 or base-2-full, then prefix will be 2 (i.e. base-2), if base-10 or base-10-long
+	   then prefix will be 0 (i.e. base-0). Prefix will be added to LONG_FORMAT */
+	prefix = (g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES) / 2) * 2;
+	return g_format_size_full (file->details->size, G_FORMAT_SIZE_LONG_FORMAT + prefix);
 }
 
 
@@ -5915,6 +5922,7 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 	guint unreadable_count;
 	guint total_count;
 	goffset total_size;
+	gint prefix;
 
 	/* Must ask for size or some kind of count, but not both. */
 	g_assert (!report_size || (!report_directory_count && !report_file_count));
@@ -5959,7 +5967,8 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 	 * directly if desired.
 	 */
 	if (report_size) {
-		return g_format_size (total_size);
+		prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+		return g_format_size_full (total_size, prefix);
 	}
 
 	return format_item_count_for_display (report_directory_count
@@ -6672,6 +6681,7 @@ nemo_file_get_volume_free_space (NemoFile *file)
 	GFile *location;
 	char *res;
 	time_t now;
+	gint prefix;
 
 	now = time (NULL);
 	/* Update first time and then every 2 seconds */
@@ -6689,7 +6699,8 @@ nemo_file_get_volume_free_space (NemoFile *file)
 
 	res = NULL;
 	if (file->details->free_space != (guint64)-1) {
-		res = g_format_size (file->details->free_space);
+		prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+		res = g_format_size_full (file->details->free_space, prefix);
 	}
 
 	return res;
