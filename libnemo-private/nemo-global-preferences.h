@@ -197,14 +197,6 @@ typedef enum
 /* File size unit prefix */
 #define NEMO_PREFERENCES_SIZE_PREFIXES			"size-prefixes"
 
-/* decided not to realize as FLAGS to make it easier and reduce complexity */
-typedef enum
-{
-	NEMO_PREFERENCES_SIZE_PREFIXES_BASE_10		= 0,
-	NEMO_PREFERENCES_SIZE_PREFIXES_BASE_10_FULL	= 1,
-	NEMO_PREFERENCES_SIZE_PREFIXES_BASE_2		= 2,
-	NEMO_PREFERENCES_SIZE_PREFIXES_BASE_2_FULL	= 3
-} NemoSizePrefixesMode;
 
 void nemo_global_preferences_init                      (void);
 char *nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void);
