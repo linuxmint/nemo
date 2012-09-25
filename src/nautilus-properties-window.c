@@ -2615,7 +2615,6 @@ static gboolean
 should_show_volume_usage (NautilusPropertiesWindow *window)
 {
 	NautilusFile *file;
-	GFile *location;
 	gboolean success = FALSE;
 
 	if (is_multi_file_window (window)) {
@@ -2632,9 +2631,7 @@ should_show_volume_usage (NautilusPropertiesWindow *window)
 		return TRUE;
 	}
 
-	location = nautilus_file_get_location (file);
-	success = nautilus_is_root_directory (location);
-	g_object_unref (location);
+	success = is_root_directory (file);
 
 #ifdef TODO_GIO
 	/* Look at is_mountpoint for activation uri */
