@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus-master-po-gl-54706\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-25 21:13+0200\n"
-"PO-Revision-Date: 2012-09-25 21:40+0200\n"
+"POT-Creation-Date: 2012-09-25 23:40+0200\n"
+"PO-Revision-Date: 2012-09-25 23:40+0200\n"
 "Last-Translator: Fran Dieguez <frandieguez@gnome.org>\n"
 "Language-Team: gnome-l10n-gl@gnome.org\n"
 "Language: gl\n"
@@ -3376,11 +3376,11 @@ msgstr "Responsabilidades"
 
 #: ../src/nautilus-image-properties-page.c:366
 msgid "Warning"
-msgstr ""
+msgstr "Advertencia"
 
 #: ../src/nautilus-image-properties-page.c:367
 msgid "Source"
-msgstr ""
+msgstr "Orixe"
 
 #: ../src/nautilus-image-properties-page.c:382
 msgid "Camera Brand"
