@@ -1919,16 +1919,16 @@
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Base-10</col>
+        <col id="0" translatable="yes">Decimal</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Base-10 long</col>
+        <col id="0" translatable="yes">Decimal (long format)</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Base-2</col>
+        <col id="0" translatable="yes">Binary</col>
       </row>
       <row>
-        <col id="0" translateable="yes">Base-2 long</col>
+        <col id="0" translatable="yes">Binary (long format)</col>
       </row>
     </data>
   </object>
