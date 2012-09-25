@@ -27,7 +27,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-09-15 16:09+0000\n"
-"PO-Revision-Date: 2012-09-15 20:07+0200\n"
+"PO-Revision-Date: 2012-09-25 17:00+0200\n"
 "Last-Translator: Alexandre Franke <alexandre.franke@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "Language: \n"
@@ -4228,7 +4228,7 @@ msgstr "Restaure chaque icône sélectionnée à sa taille initiale"
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:209
 msgid "Empty"
-msgstr "Vide"
+msgstr "Vider"
 
 #: ../src/nautilus-view.c:960
 #, c-format
