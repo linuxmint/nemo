@@ -2118,7 +2118,7 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 		}
 	} else {
 		char *size_str;
-		gint prefix;
+		int prefix;
 		prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
 		size_str = g_format_size_full (total_size, prefix);
 		text = g_strdup_printf (ngettext("%'d item, with size %s",
@@ -2880,7 +2880,7 @@ create_pie_widget (NemoPropertiesWindow *window)
 	gchar			*uri;
 	GFile *location;
 	GFileInfo *info;
-	gint prefix;
+	int prefix;
 	
 	prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
 	capacity = g_format_size_full (window->details->volume_capacity, prefix);

@@ -2848,7 +2848,7 @@ nemo_view_display_selection_info (NemoView *view)
 
 		if (non_folder_size_known) {
 			char *size_string;
-			gint prefix;
+			int prefix;
 			
 			prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
 			size_string = g_format_size_full (non_folder_size, prefix);

@@ -5844,7 +5844,7 @@ nemo_file_get_size_as_string (NemoFile *file)
 {
 	guint item_count;
 	gboolean count_unreadable;
-	gint prefix;
+	int prefix;
 
 	if (file == NULL) {
 		return NULL;
@@ -5884,7 +5884,7 @@ nemo_file_get_size_as_string_with_real_size (NemoFile *file)
 {
 	guint item_count;
 	gboolean count_unreadable;
-	gint prefix;
+	int prefix;
 
 	if (file == NULL) {
 		return NULL;
@@ -5922,7 +5922,7 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 	guint unreadable_count;
 	guint total_count;
 	goffset total_size;
-	gint prefix;
+	int prefix;
 
 	/* Must ask for size or some kind of count, but not both. */
 	g_assert (!report_size || (!report_directory_count && !report_file_count));
@@ -6681,7 +6681,7 @@ nemo_file_get_volume_free_space (NemoFile *file)
 	GFile *location;
 	char *res;
 	time_t now;
-	gint prefix;
+	int prefix;
 
 	now = time (NULL);
 	/* Update first time and then every 2 seconds */
