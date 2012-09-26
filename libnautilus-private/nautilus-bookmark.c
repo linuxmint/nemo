@@ -179,6 +179,43 @@ apply_warning_emblem (GIcon **base,
 	*base = emblemed_icon;
 }
 
+static GIcon *
+get_native_icon (NautilusBookmark *bookmark,
+		 gboolean symbolic)
+{
+	gint idx;
+	GIcon *icon = NULL;
+
+	if (bookmark->details->file == NULL) {
+		goto out;
+	}
+
+	for (idx = 0; idx < G_USER_N_DIRECTORIES; idx++) {
+		if (nautilus_file_is_user_special_directory (bookmark->details->file, idx)) {
+			break;
+		}
+	}
+
+	if (idx < G_USER_N_DIRECTORIES) {
+		if (symbolic) {
+			icon = nautilus_special_directory_get_symbolic_icon (idx);
+		} else {
+			icon = nautilus_special_directory_get_icon (idx);
+		}
+	}
+
+ out:
+	if (icon == NULL) {
+		if (symbolic) {
+			icon = g_themed_icon_new (NAUTILUS_ICON_FOLDER);
+		} else {
+			icon = g_themed_icon_new (NAUTILUS_ICON_FULLCOLOR_FOLDER);
+		}
+	}
+
+	return icon;
+}
+
 static void
 nautilus_bookmark_set_icon_to_default (NautilusBookmark *bookmark)
 {
@@ -186,8 +223,8 @@ nautilus_bookmark_set_icon_to_default (NautilusBookmark *bookmark)
 	char *uri;
 
 	if (g_file_is_native (bookmark->details->location)) {
-		symbolic_icon = g_themed_icon_new (NAUTILUS_ICON_FOLDER);
-		icon = g_themed_icon_new (NAUTILUS_ICON_FULLCOLOR_FOLDER);
+		symbolic_icon = get_native_icon (bookmark, TRUE);
+		icon = get_native_icon (bookmark, FALSE);
 	} else {
 		uri = nautilus_bookmark_get_uri (bookmark);
 		if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
