@@ -52,6 +52,13 @@
     <value nick="after-current-tab" value="0"/>
     <value nick="end" value="1"/>
   </enum>
+  
+  <enum id="org.nemo.SizePrefixes">
+    <value value="0" nick="base-10"/>
+    <value value="1" nick="base-10-full"/>
+    <value value="2" nick="base-2"/>
+    <value value="3" nick="base-2-full"/>
+  </enum>
 
   <schema id="org.nemo" path="/org/nemo/" gettext-domain="nemo">
     <child name="preferences" schema="org.nemo.preferences"/>
@@ -232,6 +239,11 @@
       <default>[]</default>
       <_summary>Bulk rename utility</_summary>
       <_description>If set, Nemo will append URIs of selected files and treat the result as a command line for bulk renaming. Bulk rename applications can register themselves in this key by setting the key to a space-separated string of their executable name and any command line options. If the executable name is not set to a full path, it will be searched for in the search path.</_description>
+    </key>
+    <key name="size-prefixes" enum="org.nemo.SizePrefixes">
+        <default>'base-10'</default>
+        <_summary>Prefixes used for file sizes</_summary>
+        <_description>Determines whether Nemo uses base-10, base-10 long, base-2 or base-2 long file size prefixes</_description>
     </key>
   </schema>
 
