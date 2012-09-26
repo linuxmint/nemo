@@ -2,8 +2,7 @@
 # Yuri Syrota <rasta@cvs.gnome.org>, 2001-2004.
 # Maxim Dziumanenko <dziumanenko@gmail.com>, 2004-2009
 # wanderlust <wanderlust@ukr.net>, 2009.
-# Korostil Daniel <ted.korostiled@gmail.com>, 2011, 2012.
-# Daniel Korostil <ted.korostiled@gmail.com>, 2012.
+# Daniel Korostil <ted.korostiled@gmail.com>, 2011, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
