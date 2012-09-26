@@ -61,6 +61,9 @@ char *	 nautilus_compute_title_for_location	     (GFile *file);
 
 gboolean nautilus_is_file_roller_installed           (void);
 
+GIcon *  nautilus_special_directory_get_icon         (GUserDirectory directory);
+GIcon *  nautilus_special_directory_get_symbolic_icon (GUserDirectory directory);
+
 gboolean nautilus_uri_parse                          (const char  *uri,
 						      char       **host,
 						      guint16     *port,
