@@ -26,6 +26,7 @@
 
 #include <gio/gio.h>
 #include <string.h>
+#include <glib/gi18n.h>
 
 #include <libnautilus-private/nautilus-file.h>
 #include <libnautilus-private/nautilus-file-utilities.h>
@@ -337,6 +338,42 @@ search_add_volumes_and_bookmarks (NautilusShellSearchProviderApp *self)
       nautilus_search_hit_compute_scores (hit, self->current_search->query);
       g_hash_table_replace (self->current_search->hits, uri, hit);
     }
+  }
+
+  /* Home dir */
+  found = TRUE;
+  prepared = prepare_string_for_compare (_("Home"));
+
+  for (j = 0; terms[j] != NULL; j++) {
+    if (strstr (prepared, terms[j]) == NULL) {
+      found = FALSE;
+      break;
+    }
+  }
+
+  if (found) {
+    uri = nautilus_get_home_directory_uri ();
+    hit = nautilus_search_hit_new (uri);
+    nautilus_search_hit_compute_scores (hit, self->current_search->query);
+    g_hash_table_replace (self->current_search->hits, uri, hit);
+  }
+
+  /* Trash */
+  found = TRUE;
+  prepared = prepare_string_for_compare (_("Trash"));
+
+  for (j = 0; terms[j] != NULL; j++) {
+    if (strstr (prepared, terms[j]) == NULL) {
+      found = FALSE;
+      break;
+    }
+  }
+
+  if (found) {
+    uri = g_strdup ("trash:///");
+    hit = nautilus_search_hit_new (uri);
+    nautilus_search_hit_compute_scores (hit, self->current_search->query);
+    g_hash_table_replace (self->current_search->hits, uri, hit);
   }
 
   /* now match mounts */
