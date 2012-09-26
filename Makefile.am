@@ -11,6 +11,7 @@ DIRS =				\
 	data 			\
 	icons 			\
 	docs			\
+	files			\
 	$(NULL)
 
 DIST_SUBDIRS = $(DIRS) nemo-sendto-extension

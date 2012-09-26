@@ -350,6 +350,7 @@ libnemo-extension/libnemo-extension-uninstalled.pc
 po/Makefile.in
 src/Makefile
 nemo-sendto-extension/Makefile
+files/Makefile
 test/Makefile
 ])
 
