@@ -30,8 +30,15 @@
 #define NAUTILUS_DESKTOP_ICON_NETWORK    "network-workgroup"
 
 /* Fullcolor icons */
-#define NAUTILUS_ICON_FULLCOLOR_FOLDER        "folder"
-#define NAUTILUS_ICON_FULLCOLOR_FOLDER_REMOTE "folder-remote"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER              "folder"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_REMOTE       "folder-remote"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_DOCUMENTS    "folder-documents"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_DOWNLOAD     "folder-download"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_MUSIC        "folder-music"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_PICTURES     "folder-pictures"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_PUBLIC_SHARE "folder-publicshare"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_TEMPLATES    "folder-templates"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_VIDEOS       "folder-videos"
 #define NAUTILUS_ICON_FULLCOLOR_FOLDER_SAVED_SEARCH "folder-saved-search"
 
 /* Other icons */
