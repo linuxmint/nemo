@@ -48,8 +48,7 @@
 
 struct NemoImagePropertiesPageDetails {
 	GCancellable *cancellable;
-	GtkWidget *vbox;
-	GtkWidget *loading_label;
+	GtkWidget *grid;
 	GdkPixbufLoader *loader;
 	gboolean got_size;
 	gboolean pixbuf_still_loading;
@@ -128,39 +127,32 @@ file_close_callback (GObject      *object,
 	page->details->cancellable = NULL;
 }
 
-static GtkWidget *
-append_label (GtkWidget *vbox,
-	      const char *str)
+static void
+append_item (NemoImagePropertiesPage *page,
+	     const char                  *name,
+	     const char                  *value)
 {
+	GtkWidget *name_label;
 	GtkWidget *label;
+	PangoAttrList *attrs;
 
-	label = gtk_label_new (NULL);
-	gtk_label_set_markup (GTK_LABEL (label), str);
-	gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
-	gtk_label_set_selectable (GTK_LABEL (label), TRUE);
+	name_label = gtk_label_new (name);
+	attrs = pango_attr_list_new ();
+	pango_attr_list_insert (attrs, pango_attr_weight_new (PANGO_WEIGHT_BOLD));
+	gtk_label_set_attributes (GTK_LABEL (name_label), attrs);
+	pango_attr_list_unref (attrs);
+	gtk_misc_set_alignment (GTK_MISC (name_label), 0, 0);
+	gtk_container_add (GTK_CONTAINER (page->details->grid), name_label);
+	gtk_widget_show (name_label);
 
-	/* setting can_focus to FALSE will allow to make the label
-	 * selectable but without the cursor showing.
-	 */
-	gtk_widget_set_can_focus (label, FALSE);
-	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
-
-	gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
-	gtk_widget_show (label);
-
-	return label;
-}
-
-static GtkWidget *
-append_label_take_str (GtkWidget *vbox,
-		       char *str)
-{
-	GtkWidget *retval;
-
-	retval = append_label (vbox, str);
-	g_free (str);
-
-	return retval;
+	if (value != NULL) {
+		label = gtk_label_new (value);
+		gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
+		gtk_grid_attach_next_to (GTK_GRID (page->details->grid), label,
+					 name_label, GTK_POS_RIGHT,
+					 1, 1);
+		gtk_widget_show (label);
+	}
 }
 
 #ifdef HAVE_EXIF
@@ -245,14 +237,13 @@ append_tag_value_pair (NemoImagePropertiesPage *page,
    		return FALSE;
 	}
 
-	append_label_take_str
-		(page->details->vbox,
-		 g_strdup_printf ("<b>%s:</b> %s",
-				  description ? description : utf_attribute,
-				  utf_value));
+	append_item (page,
+		     description ? description : utf_attribute,
+		     utf_value);
 
         g_free (utf_attribute);
         g_free (utf_value);
+
 	return TRUE;
 }
 
@@ -298,10 +289,7 @@ append_xmp_value_pair (NemoImagePropertiesPage *page,
 	value = xmp_string_new();
 	if (xmp_get_property (xmp, ns, propname, value, &options)) {
 		if (XMP_IS_PROP_SIMPLE (options)) {
-			append_label_take_str
-				(page->details->vbox,
-				 g_strdup_printf ("<b>%s:</b> %s",
-						  descr, xmp_string_cstr (value)));
+			append_item (page, descr, xmp_string_cstr (value));
 		}
 		else if (XMP_IS_PROP_ARRAY (options)) {
 			XmpIteratorPtr iter;
@@ -313,8 +301,6 @@ append_xmp_value_pair (NemoImagePropertiesPage *page,
 
 				str = g_string_new (NULL);
 
-				g_string_append_printf (str, "<b>%s:</b> ",
-							descr);
 				while (xmp_iterator_next (iter, NULL, NULL, value, &options) 
 				       && !XMP_IS_PROP_QUALIFIER(options)) {
 					if (!first) {
@@ -328,8 +314,7 @@ append_xmp_value_pair (NemoImagePropertiesPage *page,
 								xmp_string_cstr(value));
 				}
 				xmp_iterator_free(iter);
-				append_label_take_str (page->details->vbox,
-						       g_string_free (str, FALSE));
+				append_item (page, descr, g_string_free (str, FALSE));
 			}
 		}
 	}
@@ -355,9 +340,12 @@ static void
 load_finished (NemoImagePropertiesPage *page)
 {
 	GdkPixbufFormat *format;
+	GtkWidget *label;
 	char *name, *desc;
+	char *value;
 
-	gtk_widget_destroy (page->details->loading_label);
+	label = gtk_grid_get_child_at (GTK_GRID (page->details->grid), 0, 0);
+	gtk_container_remove (GTK_CONTAINER (page->details->grid), label);
 
 	if (page->details->loader != NULL) {
 		gdk_pixbuf_loader_close (page->details->loader, NULL);
@@ -372,25 +360,23 @@ load_finished (NemoImagePropertiesPage *page)
 	
 		name = gdk_pixbuf_format_get_name (format);
 		desc = gdk_pixbuf_format_get_description (format);
-		append_label_take_str
-			(page->details->vbox,
-			 g_strdup_printf ("<b>%s</b> %s (%s)",
-					  _("Image Type:"), name, desc));
-		append_label_take_str
-			(page->details->vbox,
-			 g_strdup_printf (ngettext ("<b>Width:</b> %d pixel",
-						    "<b>Width:</b> %d pixels",
-						    page->details->width),
-					  page->details->width));
-		append_label_take_str
-			(page->details->vbox,
-			 g_strdup_printf (ngettext ("<b>Height:</b> %d pixel",
-						    "<b>Height:</b> %d pixels",
-						    page->details->height),
-					  page->details->height));
+		value = g_strdup_printf ("%s (%s)", name, desc);
 		g_free (name);
 		g_free (desc);
-		
+		append_item (page, _("Image Type"), value);
+		g_free (value);
+		value = g_strdup_printf (ngettext ("%d pixel",
+						   "%d pixels",
+						   page->details->width),
+					 page->details->width);
+		append_item (page, _("Width"), value);
+		g_free (value);
+		value = g_strdup_printf (ngettext ("%d pixel",
+						   "%d pixels",
+						   page->details->height),
+					 page->details->height);
+		append_item (page, _("Height"), value);
+		g_free (value);
 #ifdef HAVE_EXIF
 		exif_data = exif_loader_get_data (page->details->exifldr);
                 append_exifdata_string (exif_data, page);
@@ -400,8 +386,7 @@ load_finished (NemoImagePropertiesPage *page)
 		append_xmpdata_string (page->details->xmp, page);
 #endif /*HAVE EXEMPI*/		
 	} else {
-		append_label (page->details->vbox,
-			      _("Failed to load image information"));
+		append_item (page, _("Failed to load image information"), NULL);
 	}
 
 	if (page->details->loader != NULL) {
@@ -416,7 +401,7 @@ load_finished (NemoImagePropertiesPage *page)
 #endif /*HAVE_EXIF*/
 #ifdef HAVE_EXEMPI
 	if (page->details->xmp != NULL) {
-		xmp_free(page->details->xmp);
+		xmp_free (page->details->xmp);
 		page->details->xmp = NULL;
 	}
 #endif
@@ -613,11 +598,13 @@ nemo_image_properties_page_init (NemoImagePropertiesPage *page)
 	gtk_box_set_spacing (GTK_BOX (page), 2);
 	gtk_container_set_border_width (GTK_CONTAINER (page), 6);
 
-	page->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-	page->details->loading_label =
-		append_label (page->details->vbox,_("loading..."));
+	page->details->grid = gtk_grid_new ();
+	gtk_orientable_set_orientation (GTK_ORIENTABLE (page->details->grid), GTK_ORIENTATION_VERTICAL);
+	gtk_grid_set_row_spacing (GTK_GRID (page->details->grid), 6);
+	gtk_grid_set_column_spacing (GTK_GRID (page->details->grid), 20);
+	append_item (page, _("Loading..."), NULL);
 	gtk_box_pack_start (GTK_BOX (page),
-			    page->details->vbox,
+			    page->details->grid,
 			    FALSE, TRUE, 2);
 
 	gtk_widget_show_all (GTK_WIDGET (page));
