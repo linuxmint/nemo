@@ -2848,8 +2848,10 @@ nemo_view_display_selection_info (NemoView *view)
 
 		if (non_folder_size_known) {
 			char *size_string;
-
-			size_string = g_format_size (non_folder_size);
+			int prefix;
+			
+			prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+			size_string = g_format_size_full (non_folder_size, prefix);
 			/* This is marked for translation in case a localiser
 			 * needs to use something other than parentheses. The
 			 * first message gives the number of items selected;
