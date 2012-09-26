@@ -287,6 +287,32 @@ search_error_cb (NautilusSearchEngine *engine,
   finish_current_search (self, search->invocation, g_variant_new ("(as)", NULL));
 }
 
+typedef struct {
+  gchar *uri;
+  gchar *string_for_compare;
+} SearchHitCandidate;
+
+static void
+search_hit_candidate_free (SearchHitCandidate *candidate)
+{
+  g_free (candidate->uri);
+  g_free (candidate->string_for_compare);
+
+  g_slice_free (SearchHitCandidate, candidate);
+}
+
+static SearchHitCandidate *
+search_hit_candidate_new (const gchar *uri,
+                          const gchar *name)
+{
+  SearchHitCandidate *candidate = g_slice_new0 (SearchHitCandidate);
+
+  candidate->uri = g_strdup (uri);
+  candidate->string_for_compare = prepare_string_for_compare (name);
+
+  return candidate;
+}
+
 static void
 search_add_volumes_and_bookmarks (NautilusShellSearchProviderApp *self)
 {
@@ -294,23 +320,25 @@ search_add_volumes_and_bookmarks (NautilusShellSearchProviderApp *self)
   NautilusBookmark *bookmark;
   const gchar *name;
   gint length, idx, j;
-  gchar *query_text, *prepared, *uri;
+  gchar *query_text, *string, *uri;
   gchar **terms;
   gboolean found;
-  GList *l, *m, *drives, *volumes, *mounts, *mounts_to_check;
+  GList *l, *m, *drives, *volumes, *mounts, *mounts_to_check, *candidates;
   GDrive *drive;
   GVolume *volume;
   GMount *mount;
   GFile *location;
+  SearchHitCandidate *candidate;
 
+  candidates = NULL;
   query_text = nautilus_query_get_text (self->current_search->query);
-  prepared = prepare_string_for_compare (query_text);
-  terms = g_strsplit (prepared, " ", -1);
+  string = prepare_string_for_compare (query_text);
+  terms = g_strsplit (string, " ", -1);
 
-  g_free (prepared);
+  g_free (string);
   g_free (query_text);
 
-  /* first match bookmarks */
+  /* first add bookmarks */
   length = nautilus_bookmark_list_length (self->bookmarks);
   for (idx = 0; idx < length; idx++) {
     bookmark = nautilus_bookmark_list_item_at (self->bookmarks, idx);
@@ -319,64 +347,24 @@ search_add_volumes_and_bookmarks (NautilusShellSearchProviderApp *self)
     if (name == NULL)
       continue;
 
-    prepared = prepare_string_for_compare (name);
+    uri = nautilus_bookmark_get_uri (bookmark);
+    candidate = search_hit_candidate_new (uri, name);
+    candidates = g_list_prepend (candidates, candidate);
 
-    found = TRUE;
-
-    for (j = 0; terms[j] != NULL; j++) {
-      if (strstr (prepared, terms[j]) == NULL) {
-        found = FALSE;
-        break;
-      }
-    }
-
-    g_free (prepared);
-
-    if (found) {
-      uri = nautilus_bookmark_get_uri (bookmark);
-      hit = nautilus_search_hit_new (uri);
-      nautilus_search_hit_compute_scores (hit, self->current_search->query);
-      g_hash_table_replace (self->current_search->hits, uri, hit);
-    }
+    g_free (uri);
   }
 
-  /* Home dir */
-  found = TRUE;
-  prepared = prepare_string_for_compare (_("Home"));
+  /* home dir */
+  uri = nautilus_get_home_directory_uri ();
+  candidate = search_hit_candidate_new (uri, _("Home"));
+  candidates = g_list_prepend (candidates, candidate);
+  g_free (uri);
 
-  for (j = 0; terms[j] != NULL; j++) {
-    if (strstr (prepared, terms[j]) == NULL) {
-      found = FALSE;
-      break;
-    }
-  }
+  /* trash */
+  candidate = search_hit_candidate_new ("trash:///", _("Trash"));
+  candidates = g_list_prepend (candidates, candidate);
 
-  if (found) {
-    uri = nautilus_get_home_directory_uri ();
-    hit = nautilus_search_hit_new (uri);
-    nautilus_search_hit_compute_scores (hit, self->current_search->query);
-    g_hash_table_replace (self->current_search->hits, uri, hit);
-  }
-
-  /* Trash */
-  found = TRUE;
-  prepared = prepare_string_for_compare (_("Trash"));
-
-  for (j = 0; terms[j] != NULL; j++) {
-    if (strstr (prepared, terms[j]) == NULL) {
-      found = FALSE;
-      break;
-    }
-  }
-
-  if (found) {
-    uri = g_strdup ("trash:///");
-    hit = nautilus_search_hit_new (uri);
-    nautilus_search_hit_compute_scores (hit, self->current_search->query);
-    g_hash_table_replace (self->current_search->hits, uri, hit);
-  }
-
-  /* now match mounts */
+  /* now add mounts */
   mounts_to_check = NULL;
 
   /* first check all connected drives */
@@ -428,40 +416,46 @@ search_add_volumes_and_bookmarks (NautilusShellSearchProviderApp *self)
   }
   g_list_free_full (mounts, g_object_unref);
 
-  /* now do the actual string matching */
+  /* actually add mounts to candidates */
   for (l = mounts_to_check; l != NULL; l = l->next) {
     mount = l->data;
 
-    query_text = g_mount_get_name (mount);
-    if (query_text == NULL)
+    string = g_mount_get_name (mount);
+    if (string == NULL)
       continue;
 
-    prepared = prepare_string_for_compare (query_text);
-    g_free (query_text);
+    location = g_mount_get_default_location (mount);
+    uri = g_file_get_uri (location);
+    candidate = search_hit_candidate_new (uri, string);
+    candidates = g_list_prepend (candidates, candidate);
 
+    g_free (uri);
+    g_free (string);
+    g_object_unref (location);
+  }
+  g_list_free_full (mounts_to_check, g_object_unref);
+
+  /* now do the actual string matching */
+  candidates = g_list_reverse (candidates);
+
+  for (l = candidates; l != NULL; l = l->next) {
+    candidate = l->data;
     found = TRUE;
 
     for (j = 0; terms[j] != NULL; j++) {
-      if (strstr (prepared, terms[j]) == NULL) {
+      if (strstr (candidate->string_for_compare, terms[j]) == NULL) {
         found = FALSE;
         break;
       }
     }
 
-    g_free (prepared);
-
     if (found) {
-      location = g_mount_get_default_location (mount);
-      uri = g_file_get_uri (location);
-      hit = nautilus_search_hit_new (uri);
-
+      hit = nautilus_search_hit_new (candidate->uri);
       nautilus_search_hit_compute_scores (hit, self->current_search->query);
-      g_hash_table_replace (self->current_search->hits, uri, hit);
-
-      g_object_unref (location);
+      g_hash_table_replace (self->current_search->hits, g_strdup (candidate->uri), hit);
     }
   }
-  g_list_free_full (mounts_to_check, g_object_unref);
+  g_list_free_full (candidates, (GDestroyNotify) search_hit_candidate_free);
 
   g_strfreev (terms);
 }
