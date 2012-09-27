@@ -247,34 +247,8 @@ append_tag_value_pair (NemoImagePropertiesPage *page,
 
 	return TRUE;
 }
-
-static void
-append_exifdata_string (ExifData *exifdata, NemoImagePropertiesPage *page)
-{
-	if (exifdata && exifdata->ifd[0] && exifdata->ifd[0]->count) {
-                append_tag_value_pair (page, exifdata, EXIF_TAG_MAKE, _("Camera Brand"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_MODEL, _("Camera Model"));
-
-                /* Choose which date to show in order of relevance */
-                if (!append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME_ORIGINAL, _("Date Taken")))
-                {
-                        if (!append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME_DIGITIZED, _("Date Digitized")))
-                        {
-                                append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME, _("Date Modified"));
-                        }
-                }
-
-                append_tag_value_pair (page, exifdata, EXIF_TAG_EXPOSURE_TIME, _("Exposure Time"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_APERTURE_VALUE, _("Aperture Value"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_ISO_SPEED_RATINGS, _("ISO Speed Rating"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_FLASH,_("Flash Fired"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_METERING_MODE, _("Metering Mode"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_EXPOSURE_PROGRAM, _("Exposure Program"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_FOCAL_LENGTH,_("Focal Length"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_SOFTWARE, _("Software"));
-	}
-}
 #endif /*HAVE_EXIF*/
+
 
 #ifdef HAVE_EXEMPI
 static void
@@ -321,29 +295,95 @@ append_xmp_value_pair (NemoImagePropertiesPage *page,
 	}
 	xmp_string_free(value);
 }
+#endif /*HAVE EXEMPI*/
 
 static void
-append_xmpdata_string (XmpPtr xmp, NemoImagePropertiesPage *page)
+append_basic_info (NemoImagePropertiesPage *page)
 {
-	if (xmp != NULL) {
-		append_xmp_value_pair (page, xmp, NS_IPTC4XMP, "Location", _("Location"));
-		append_xmp_value_pair (page, xmp, NS_DC, "description", _("Description"));
-		append_xmp_value_pair (page, xmp, NS_DC, "subject", _("Keywords"));
-		append_xmp_value_pair (page, xmp, NS_DC, "creator", _("Creator"));
-		append_xmp_value_pair (page, xmp, NS_DC, "rights", _("Copyright"));
-		append_xmp_value_pair (page, xmp, NS_XAP,"Rating", _("Rating"));
-		/* TODO add CC licenses */
-	}
+	GdkPixbufFormat *format;
+	char *name;
+	char *desc;
+	char *value;
+
+	format = gdk_pixbuf_loader_get_format (page->details->loader);
+
+	name = gdk_pixbuf_format_get_name (format);
+	desc = gdk_pixbuf_format_get_description (format);
+	value = g_strdup_printf ("%s (%s)", name, desc);
+	g_free (name);
+	g_free (desc);
+	append_item (page, _("Image Type"), value);
+	g_free (value);
+	value = g_strdup_printf (ngettext ("%d pixel",
+					   "%d pixels",
+					   page->details->width),
+				 page->details->width);
+	append_item (page, _("Width"), value);
+	g_free (value);
+	value = g_strdup_printf (ngettext ("%d pixel",
+					   "%d pixels",
+					   page->details->height),
+				 page->details->height);
+	append_item (page, _("Height"), value);
+	g_free (value);
 }
+
+static void
+append_exif_info (NemoImagePropertiesPage *page)
+{
+#ifdef HAVE_EXIF
+	ExifData *exifdata;
+
+	exifdata = exif_loader_get_data (page->details->exifldr);
+	if (exifdata == NULL)
+		return;
+
+	if (exifdata->ifd[0] && exifdata->ifd[0]->count) {
+                append_tag_value_pair (page, exifdata, EXIF_TAG_MAKE, _("Camera Brand"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_MODEL, _("Camera Model"));
+
+                /* Choose which date to show in order of relevance */
+                if (!append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME_ORIGINAL, _("Date Taken"))) {
+			if (!append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME_DIGITIZED, _("Date Digitized"))) {
+				append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME, _("Date Modified"));
+			}
+		}
+
+                append_tag_value_pair (page, exifdata, EXIF_TAG_EXPOSURE_TIME, _("Exposure Time"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_APERTURE_VALUE, _("Aperture Value"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_ISO_SPEED_RATINGS, _("ISO Speed Rating"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_FLASH,_("Flash Fired"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_METERING_MODE, _("Metering Mode"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_EXPOSURE_PROGRAM, _("Exposure Program"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_FOCAL_LENGTH,_("Focal Length"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_SOFTWARE, _("Software"));
+	}
+
+	exif_data_unref (exifdata);
 #endif
+}
+
+static void
+append_xmp_info (NemoImagePropertiesPage *page)
+{
+#ifdef HAVE_EXEMPI
+	if (page->details->xmp == NULL)
+		return;
+
+	append_xmp_value_pair (page, page->details->xmp, NS_IPTC4XMP, "Location", _("Location"));
+	append_xmp_value_pair (page, page->details->xmp, NS_DC, "description", _("Description"));
+	append_xmp_value_pair (page, page->details->xmp, NS_DC, "subject", _("Keywords"));
+	append_xmp_value_pair (page, page->details->xmp, NS_DC, "creator", _("Creator"));
+	append_xmp_value_pair (page, page->details->xmp, NS_DC, "rights", _("Copyright"));
+	append_xmp_value_pair (page, page->details->xmp, NS_XAP,"Rating", _("Rating"));
+	/* TODO add CC licenses */
+#endif /*HAVE EXEMPI*/
+}
 
 static void
 load_finished (NemoImagePropertiesPage *page)
 {
-	GdkPixbufFormat *format;
 	GtkWidget *label;
-	char *name, *desc;
-	char *value;
 
 	label = gtk_grid_get_child_at (GTK_GRID (page->details->grid), 0, 0);
 	gtk_container_remove (GTK_CONTAINER (page->details->grid), label);
@@ -353,39 +393,9 @@ load_finished (NemoImagePropertiesPage *page)
 	}
 
 	if (page->details->got_size) {
-#ifdef HAVE_EXIF
-                ExifData *exif_data;
-#endif
-
-		format = gdk_pixbuf_loader_get_format (page->details->loader);
-	
-		name = gdk_pixbuf_format_get_name (format);
-		desc = gdk_pixbuf_format_get_description (format);
-		value = g_strdup_printf ("%s (%s)", name, desc);
-		g_free (name);
-		g_free (desc);
-		append_item (page, _("Image Type"), value);
-		g_free (value);
-		value = g_strdup_printf (ngettext ("%d pixel",
-						   "%d pixels",
-						   page->details->width),
-					 page->details->width);
-		append_item (page, _("Width"), value);
-		g_free (value);
-		value = g_strdup_printf (ngettext ("%d pixel",
-						   "%d pixels",
-						   page->details->height),
-					 page->details->height);
-		append_item (page, _("Height"), value);
-		g_free (value);
-#ifdef HAVE_EXIF
-		exif_data = exif_loader_get_data (page->details->exifldr);
-                append_exifdata_string (exif_data, page);
-                exif_data_unref (exif_data);
-#endif /*HAVE_EXIF*/
-#ifdef HAVE_EXEMPI
-		append_xmpdata_string (page->details->xmp, page);
-#endif /*HAVE EXEMPI*/		
+		append_basic_info (page);
+		append_exif_info (page);
+		append_xmp_info (page);
 	} else {
 		append_item (page, _("Failed to load image information"), NULL);
 	}
