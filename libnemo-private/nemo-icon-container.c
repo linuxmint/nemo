@@ -8382,8 +8382,13 @@ nemo_icon_container_set_is_desktop (NemoIconContainer *container,
 	if (is_desktop) {
 		GtkStyleContext *context;
 
-		context = gtk_widget_get_style_context (GTK_WIDGET (container));
-		gtk_style_context_add_class (context, "nemo-desktop");
+		context = gtk_widget_get_style_context (GTK_WIDGET (container));		
+		if (gtk_style_context_has_class (context, "nemo-desktop")) {
+			gtk_style_context_add_class (context, "nemo-desktop");
+		}
+		else {
+			gtk_style_context_add_class (context, "nautilus-desktop");
+		}				
 	}
 }
 
