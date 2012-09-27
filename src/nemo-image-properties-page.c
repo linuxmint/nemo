@@ -147,6 +147,7 @@ append_item (NemoImagePropertiesPage *page,
 
 	if (value != NULL) {
 		label = gtk_label_new (value);
+		gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
 		gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
 		gtk_grid_attach_next_to (GTK_GRID (page->details->grid), label,
 					 name_label, GTK_POS_RIGHT,
@@ -627,23 +628,32 @@ nemo_image_properties_page_class_init (NemoImagePropertiesPageClass *class)
 static void
 nemo_image_properties_page_init (NemoImagePropertiesPage *page)
 {
+	GtkWidget *sw;
+	
 	page->details = G_TYPE_INSTANCE_GET_PRIVATE (page,
 						     NEMO_TYPE_IMAGE_PROPERTIES_PAGE,
 						     NemoImagePropertiesPageDetails);
 
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (page), GTK_ORIENTATION_VERTICAL);
 	gtk_box_set_homogeneous (GTK_BOX (page), FALSE);
-	gtk_box_set_spacing (GTK_BOX (page), 2);
-	gtk_container_set_border_width (GTK_CONTAINER (page), 6);
+	gtk_box_set_spacing (GTK_BOX (page), 0);
+	gtk_container_set_border_width (GTK_CONTAINER (page), 0);
+
+	sw = gtk_scrolled_window_new (NULL, NULL);
+	gtk_container_set_border_width (GTK_CONTAINER (sw), 0);
+	gtk_widget_set_vexpand (GTK_WIDGET (sw), TRUE);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
+	                                GTK_POLICY_NEVER,
+	                                GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start (GTK_BOX (page), sw, FALSE, TRUE, 2);
 
 	page->details->grid = gtk_grid_new ();
+	gtk_container_set_border_width (GTK_CONTAINER (page->details->grid), 6);
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (page->details->grid), GTK_ORIENTATION_VERTICAL);
 	gtk_grid_set_row_spacing (GTK_GRID (page->details->grid), 6);
 	gtk_grid_set_column_spacing (GTK_GRID (page->details->grid), 20);
 	append_item (page, _("Loading..."), NULL);
-	gtk_box_pack_start (GTK_BOX (page),
-			    page->details->grid,
-			    FALSE, TRUE, 2);
+	gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (sw), page->details->grid);
 
 	gtk_widget_show_all (GTK_WIDGET (page));
 }
