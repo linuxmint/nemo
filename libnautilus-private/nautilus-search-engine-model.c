@@ -28,6 +28,7 @@
 #include "nautilus-directory.h"
 #include "nautilus-directory-private.h"
 #include "nautilus-file.h"
+#include "nautilus-ui-utilities.h"
 
 #include <string.h>
 #include <glib.h>
@@ -88,24 +89,12 @@ emit_finished_idle_cb (gpointer user_data)
 }
 
 static gchar *
-prepare_string_for_compare (const gchar *string)
-{
-	gchar *normalized, *res;
-
-	normalized = g_utf8_normalize (string, -1, G_NORMALIZE_NFD);
-	res = g_utf8_strdown (normalized, -1);
-	g_free (normalized);
-
-	return res;
-}
-
-static gchar *
 prepare_pattern_for_comparison (NautilusSearchEngineModel *model)
 {
 	gchar *text, *prepared, *pattern;
 
 	text = nautilus_query_get_text (model->details->query);
-	prepared = prepare_string_for_compare (text);
+	prepared = nautilus_search_prepare_string_for_compare (text);
 	pattern = g_strdup_printf ("*%s*", prepared);
 
 	g_free (prepared);
@@ -132,7 +121,7 @@ model_directory_ready_cb (NautilusDirectory	*directory,
 	for (l = files; l != NULL; l = l->next) {
 		file = l->data;
 		display_name = nautilus_file_get_display_name (file);
-		prepared = prepare_string_for_compare (display_name);
+		prepared = nautilus_search_prepare_string_for_compare (display_name);
 
 		if (g_pattern_match_simple (pattern, prepared)) {
 			uri = nautilus_file_get_uri (file);

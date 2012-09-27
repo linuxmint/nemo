@@ -25,6 +25,7 @@
 #include "nautilus-search-hit.h"
 #include "nautilus-search-provider.h"
 #include "nautilus-search-engine-simple.h"
+#include "nautilus-ui-utilities.h"
 
 #include <string.h>
 #include <glib.h>
@@ -94,7 +95,7 @@ search_thread_data_new (NautilusSearchEngineSimple *engine,
 			NautilusQuery *query)
 {
 	SearchThreadData *data;
-	char *text, *lower, *normalized, *uri;
+	char *text, *prepared, *uri;
 	GFile *location;
 	
 	data = g_new0 (SearchThreadData, 1);
@@ -114,12 +115,10 @@ search_thread_data_new (NautilusSearchEngineSimple *engine,
 	g_queue_push_tail (data->directories, location);
 	
 	text = nautilus_query_get_text (query);
-	normalized = g_utf8_normalize (text, -1, G_NORMALIZE_NFD);
-	lower = g_utf8_strdown (normalized, -1);
-	data->words = g_strsplit (lower, " ", -1);
+	prepared = nautilus_search_prepare_string_for_compare (text);
+	data->words = g_strsplit (prepared, " ", -1);
 	g_free (text);
-	g_free (lower);
-	g_free (normalized);
+	g_free (prepared);
 
 	data->mime_types = nautilus_query_get_mime_types (query);
 
@@ -214,7 +213,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 	GFileInfo *info;
 	GFile *child;
 	const char *mime_type, *display_name;
-	char *lower_name, *normalized;
+	char *prepared;
 	gboolean found;
 	int i;
 	GList *l;
@@ -239,19 +238,17 @@ visit_directory (GFile *dir, SearchThreadData *data)
 		if (display_name == NULL) {
 			goto next;
 		}
-		
-		normalized = g_utf8_normalize (display_name, -1, G_NORMALIZE_NFD);
-		lower_name = g_utf8_strdown (normalized, -1);
-		g_free (normalized);
-		
+
+		prepared = nautilus_search_prepare_string_for_compare (display_name);
+
 		found = TRUE;
 		for (i = 0; data->words[i] != NULL; i++) {
-			if (strstr (lower_name, data->words[i]) == NULL) {
+			if (strstr (prepared, data->words[i]) == NULL) {
 				found = FALSE;
 				break;
 			}
 		}
-		g_free (lower_name);
+		g_free (prepared);
 		
 		if (found && data->mime_types) {
 			mime_type = g_file_info_get_content_type (info);
