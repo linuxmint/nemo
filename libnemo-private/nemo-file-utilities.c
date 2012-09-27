@@ -955,13 +955,25 @@ nemo_find_file_insensitive_next (GFile *parent, const gchar *name)
 	return NULL;
 }
 
+static gboolean
+have_program_in_path (const char *name)
+{
+	char *path;
+	gboolean result;
+
+	path = g_find_program_in_path (name);
+	result = (path != NULL);
+	g_free (path);
+	return result;
+}
+
 gboolean
 nemo_is_file_roller_installed (void)
 {
 	static int installed = - 1;
 
 	if (installed < 0) {
-		if (g_find_program_in_path ("file-roller")) {
+		if (have_program_in_path ("file-roller")) {
 			installed = 1;
 		} else {
 			installed = 0;
@@ -1168,7 +1180,7 @@ nemo_trashed_files_get_original_directories (GList *files,
 			if (directories == NULL) {
 				directories = g_hash_table_new_full (g_direct_hash, g_direct_equal,
 								     (GDestroyNotify) nemo_file_unref,
-								     (GDestroyNotify) nemo_file_list_unref);
+								     (GDestroyNotify) nemo_file_list_free);
 			}
 			nemo_file_ref (original_dir);
 			m = g_hash_table_lookup (directories, original_dir);
