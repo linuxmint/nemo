@@ -61,6 +61,18 @@ nautilus_ui_prepare_merge_ui (GtkUIManager *ui_manager,
 	g_object_unref (*action_group); /* owned by ui manager */
 }
 
+gchar *
+nautilus_search_prepare_string_for_compare (const gchar *string)
+{
+	gchar *normalized, *res;
+
+	normalized = g_utf8_normalize (string, -1, G_NORMALIZE_NFD);
+	res = g_utf8_strdown (normalized, -1);
+	g_free (normalized);
+
+	return res;
+}
+
 static void
 extension_action_callback (GtkAction *action,
 			   gpointer callback_data)

@@ -36,6 +36,8 @@ void        nautilus_ui_prepare_merge_ui           (GtkUIManager      *ui_manage
 						    GtkActionGroup   **action_group);
 GtkAction * nautilus_action_from_menu_item         (NautilusMenuItem  *item);
 
+gchar * nautilus_search_prepare_string_for_compare (const gchar *string);
+
 GdkPixbuf * nautilus_ui_get_menu_icon              (const char        *icon_name);
 
 char * nautilus_escape_action_name                 (const char        *action_name,
