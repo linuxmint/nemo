@@ -29,6 +29,7 @@
 #include "nemo-window-pane.h"
 
 #include "nemo-actions.h"
+#include "nemo-application.h"
 #include "nemo-location-bar.h"
 #include "nemo-notebook.h"
 #include "nemo-pathbar.h"
@@ -613,6 +614,99 @@ notebook_switch_page_cb (GtkNotebook *notebook,
 }
 
 static void
+notebook_page_removed_cb (GtkNotebook *notebook,
+			  GtkWidget *page,
+			  guint page_num,
+			  gpointer user_data)
+{
+	NemoWindowPane *pane = user_data;
+	NemoWindowSlot *slot = NEMO_WINDOW_SLOT (page), *next_slot;
+	gboolean dnd_slot;
+	
+	dnd_slot = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (slot), "dnd-window-slot"));
+	if (!dnd_slot) {
+		return;
+	}
+	
+	if (pane->active_slot == slot) {
+		next_slot = get_first_inactive_slot (pane);
+		nemo_window_set_active_slot (pane->window, next_slot);
+	}
+}
+
+static void
+notebook_page_added_cb (GtkNotebook *notebook,
+			GtkWidget *page,
+			guint page_num,
+			gpointer user_data)
+{
+	NemoWindowPane *pane;
+	NemoWindowSlot *slot;
+	NemoWindowSlot *dummy_slot;
+	gboolean dnd_slot;
+	
+	pane = NEMO_WINDOW_PANE (user_data);
+	slot = NEMO_WINDOW_SLOT (page);
+	
+	//Slot has been dropped onto another pane (window or tab bar of other window)
+	//So reassociate the pane if needed.
+	if (slot->pane != pane) {
+		slot->pane->slots = g_list_remove (slot->pane->slots, slot);
+		slot->pane = pane;
+		pane->slots = g_list_append (pane->slots, slot);
+		nemo_window_set_active_slot (pane->window, slot);
+	}
+	
+	dnd_slot = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (slot), "dnd-window-slot"));
+
+	//Slot does not come from dnd window creation.
+	if (!dnd_slot) {
+		return;
+	}
+	
+	g_object_set_data (G_OBJECT (page), "dnd-window-slot",
+		   GINT_TO_POINTER (FALSE));
+	
+	dummy_slot = g_list_nth_data (pane->slots, 0);
+	if (dummy_slot != NULL) {
+		nemo_window_pane_close_slot (dummy_slot->pane, dummy_slot);
+	}
+	
+	gtk_widget_show (GTK_WIDGET (pane));
+	gtk_widget_show (GTK_WIDGET (pane->window));
+}
+
+static GtkNotebook *
+notebook_create_window_cb (GtkNotebook *notebook,
+			   GtkWidget *page,
+			   gint x,
+			   gint y,
+			   gpointer user_data)
+{
+	NemoApplication *app;
+	NemoWindow *new_window;
+	NemoWindowPane *new_pane;
+	NemoWindowSlot *slot;
+	
+	if (!NEMO_IS_WINDOW_SLOT (page)) {
+		return NULL;
+	}
+	
+	app = NEMO_APPLICATION (g_application_get_default ());
+	new_window = nemo_application_create_window
+		(app, gtk_widget_get_screen (GTK_WIDGET (notebook)));
+	
+	slot = NEMO_WINDOW_SLOT (page);
+	g_object_set_data (G_OBJECT (slot), "dnd-window-slot",
+			   GINT_TO_POINTER (TRUE));
+	
+	gtk_window_set_position (GTK_WINDOW (new_window), GTK_WIN_POS_MOUSE);
+	
+	new_pane = nemo_window_get_active_pane (new_window);
+	return GTK_NOTEBOOK (new_pane->notebook);
+}
+
+static void
 action_show_hide_search_callback (GtkAction *action,
 				  gpointer user_data)
 {
@@ -820,9 +914,19 @@ nemo_window_pane_constructed (GObject *obj)
 			  "switch-page",
 			  G_CALLBACK (notebook_switch_page_cb),
 			  pane);
+	g_signal_connect (pane->notebook, "create-window",
+			  G_CALLBACK (notebook_create_window_cb),
+			  pane);
+	g_signal_connect (pane->notebook, "page-added",
+			  G_CALLBACK (notebook_page_added_cb),
+			  pane);
+	g_signal_connect (pane->notebook, "page-removed",
+			  G_CALLBACK (notebook_page_removed_cb),
+			  pane);
 
 	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (pane->notebook), FALSE);
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (pane->notebook), FALSE);
+	gtk_notebook_set_group_name (GTK_NOTEBOOK (pane->notebook), "nemo-slots");
 	gtk_widget_show (pane->notebook);
 	gtk_container_set_border_width (GTK_CONTAINER (pane->notebook), 0);
 
