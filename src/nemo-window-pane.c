@@ -648,19 +648,20 @@ notebook_page_added_cb (GtkNotebook *notebook,
 	pane = NEMO_WINDOW_PANE (user_data);
 	slot = NEMO_WINDOW_SLOT (page);
 	
-	//Slot has been dropped onto another pane (window or tab bar of other window)
+	//Slot has been dropped onto another pane (new window or tab bar of other window)
 	//So reassociate the pane if needed.
 	if (slot->pane != pane) {
 		slot->pane->slots = g_list_remove (slot->pane->slots, slot);
 		slot->pane = pane;
 		pane->slots = g_list_append (pane->slots, slot);
-		nemo_window_set_active_slot (pane->window, slot);
+		g_signal_emit_by_name (slot, "changed-pane");
+		nemo_window_set_active_slot (nemo_window_slot_get_window (slot), slot);
 	}
 	
 	dnd_slot = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (slot), "dnd-window-slot"));
-
-	//Slot does not come from dnd window creation.
+	
 	if (!dnd_slot) {
+		//Slot does not come from dnd window creation.
 		return;
 	}
 	

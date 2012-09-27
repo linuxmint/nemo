@@ -47,8 +47,9 @@ struct NemoWindowSlotClass {
 	GtkBoxClass parent_class;
 
 	/* wrapped NemoWindowInfo signals, for overloading */
-	void (* active)   (NemoWindowSlot *slot);
-	void (* inactive) (NemoWindowSlot *slot);
+	void (* active)		(NemoWindowSlot *slot);
+	void (* inactive)	(NemoWindowSlot *slot);
+	void (* changed_pane)	(NemoWindowSlot *slot);
 };
 
 /* Each NemoWindowSlot corresponds to

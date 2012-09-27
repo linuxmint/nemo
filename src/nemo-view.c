@@ -2343,6 +2343,22 @@ slot_inactive (NemoWindowSlot *slot,
 	remove_update_menus_timeout_callback (view);
 }
 
+static void slot_changed_pane (NemoWindowSlot *slot,
+			       NemoView *view)
+{
+	g_signal_handlers_disconnect_matched (view->details->window,
+					      G_SIGNAL_MATCH_DATA, 0, 0,
+					      NULL, NULL, view);
+	
+	view->details->window = nemo_window_slot_get_window (slot);
+	schedule_update_menus (view);
+	
+	g_signal_connect_object (view->details->window,
+		"hidden-files-mode-changed", G_CALLBACK (hidden_files_mode_changed),
+		view, 0);
+	hidden_files_mode_changed (view->details->window, view);
+}
+
 void
 nemo_view_grab_focus (NemoView *view)
 {
@@ -9538,6 +9554,9 @@ nemo_view_set_property (GObject         *object,
 					 directory_view, 0);
 		g_signal_connect_object (directory_view->details->slot,
 					 "inactive", G_CALLBACK (slot_inactive),
+					 directory_view, 0);
+		g_signal_connect_object (directory_view->details->slot,
+					 "changed-pane", G_CALLBACK (slot_changed_pane),
 					 directory_view, 0);
 
 		g_signal_connect_object (directory_view->details->window,
