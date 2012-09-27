@@ -297,6 +297,22 @@ append_xmp_value_pair (NemoImagePropertiesPage *page,
 }
 #endif /*HAVE EXEMPI*/
 
+static gboolean
+append_option_value_pair (NemoImagePropertiesPage *page,
+			  GdkPixbuf                   *pixbuf,
+			  const char                  *key,
+			  char                        *description)
+{
+	const char *value;
+
+	value = gdk_pixbuf_get_option (pixbuf, key);
+	if (value == NULL)
+		return FALSE;
+
+	append_item (page, description, value);
+	return TRUE;
+}
+
 static void
 append_basic_info (NemoImagePropertiesPage *page)
 {
@@ -326,6 +342,30 @@ append_basic_info (NemoImagePropertiesPage *page)
 				 page->details->height);
 	append_item (page, _("Height"), value);
 	g_free (value);
+}
+
+static void
+append_options_info (NemoImagePropertiesPage *page)
+{
+	GdkPixbuf *pixbuf;
+
+	pixbuf = gdk_pixbuf_loader_get_pixbuf (page->details->loader);
+	if (pixbuf == NULL)
+		return;
+
+	if (!append_option_value_pair (page, pixbuf, "Title", _("Title")))
+		append_option_value_pair (page, pixbuf, "tEXt::Title", _("Title"));
+	if (!append_option_value_pair (page, pixbuf, "Author", _("Author")))
+		append_option_value_pair (page, pixbuf, "tEXt::Author", _("Author"));
+
+	append_option_value_pair (page, pixbuf, "tEXt::Description", _("Description"));
+	append_option_value_pair (page, pixbuf, "tEXt::Copyright", _("Copyright"));
+	append_option_value_pair (page, pixbuf, "tEXt::Creation Time", _("Created On"));
+	append_option_value_pair (page, pixbuf, "tEXt::Software", _("Created By"));
+	append_option_value_pair (page, pixbuf, "tEXt::Disclaimer", _("Disclaimer"));
+	append_option_value_pair (page, pixbuf, "tEXt::Warning", _("Warning"));
+	append_option_value_pair (page, pixbuf, "tEXt::Source", _("Source"));
+	append_option_value_pair (page, pixbuf, "tEXt::Comment", _("Comment"));
 }
 
 static void
@@ -394,6 +434,7 @@ load_finished (NemoImagePropertiesPage *page)
 
 	if (page->details->got_size) {
 		append_basic_info (page);
+		append_options_info (page);
 		append_exif_info (page);
 		append_xmp_info (page);
 	} else {
