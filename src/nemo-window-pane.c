@@ -632,6 +632,9 @@ notebook_page_removed_cb (GtkNotebook *notebook,
 		next_slot = get_first_inactive_slot (pane);
 		nemo_window_set_active_slot (pane->window, next_slot);
 	}
+
+	nemo_window_manage_views_close_slot (slot);
+	pane->slots = g_list_remove (pane->slots, slot);
 }
 
 static void
