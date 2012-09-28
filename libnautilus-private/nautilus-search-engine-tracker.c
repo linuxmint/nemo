@@ -212,6 +212,15 @@ query_callback (GObject      *object,
 	cursor_next (tracker, cursor);
 }
 
+static gboolean
+search_finished_idle (gpointer user_data)
+{
+	NautilusSearchProvider *provider = user_data;
+	nautilus_search_provider_finished (provider);
+
+	return FALSE;
+}
+
 static void
 nautilus_search_engine_tracker_start (NautilusSearchProvider *provider)
 {
@@ -227,6 +236,10 @@ nautilus_search_engine_tracker_start (NautilusSearchProvider *provider)
 		return;
 	}
 
+	if (tracker->details->connection == NULL) {
+		g_idle_add (search_finished_idle, provider);
+		return;
+	}
 
 	query_text = nautilus_query_get_text (tracker->details->query);
 	downcase = g_utf8_strdown (query_text, -1);
@@ -338,29 +351,23 @@ nautilus_search_engine_tracker_class_init (NautilusSearchEngineTrackerClass *cla
 static void
 nautilus_search_engine_tracker_init (NautilusSearchEngineTracker *engine)
 {
+	GError *error = NULL;
+
 	engine->details = G_TYPE_INSTANCE_GET_PRIVATE (engine, NAUTILUS_TYPE_SEARCH_ENGINE_TRACKER,
 						       NautilusSearchEngineTrackerDetails);
 	engine->details->hits_pending = g_queue_new ();
+
+	engine->details->connection = tracker_sparql_connection_get (NULL, &error);
+
+	if (error) {
+		g_warning ("Could not establish a connection to Tracker: %s", error->message);
+		g_error_free (error);
+	}
 }
 
 
 NautilusSearchEngineTracker *
 nautilus_search_engine_tracker_new (void)
 {
-	NautilusSearchEngineTracker *engine;
-	TrackerSparqlConnection *connection;
-	GError *error = NULL;
-
-	connection = tracker_sparql_connection_get (NULL, &error);
-
-	if (error) {
-		g_warning ("Could not establish a connection to Tracker: %s", error->message);
-		g_error_free (error);
-		return NULL;
-	}
-
-	engine = g_object_new (NAUTILUS_TYPE_SEARCH_ENGINE_TRACKER, NULL);
-	engine->details->connection = connection;
-
-	return engine;
+	return g_object_new (NAUTILUS_TYPE_SEARCH_ENGINE_TRACKER, NULL);
 }
