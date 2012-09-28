@@ -81,11 +81,7 @@ finalize (GObject *object)
 	NautilusSearchEngineSimple *simple;
 
 	simple = NAUTILUS_SEARCH_ENGINE_SIMPLE (object);
-	
-	if (simple->details->query) {
-		g_object_unref (simple->details->query);
-		simple->details->query = NULL;
-	}
+	g_clear_object (&simple->details->query);
 
 	G_OBJECT_CLASS (nautilus_search_engine_simple_parent_class)->finalize (object);
 }
@@ -358,10 +354,6 @@ nautilus_search_engine_simple_start (NautilusSearchProvider *provider)
 	if (simple->details->active_search != NULL) {
 		return;
 	}
-
-	if (simple->details->query == NULL) {
-		return;
-	}
 	
 	data = search_thread_data_new (simple, simple->details->query);
 
@@ -392,14 +384,8 @@ nautilus_search_engine_simple_set_query (NautilusSearchProvider *provider,
 
 	simple = NAUTILUS_SEARCH_ENGINE_SIMPLE (provider);
 
-	if (query) {
-		g_object_ref (query);
-	}
-
-	if (simple->details->query) {
-		g_object_unref (simple->details->query);
-	}
-
+	g_object_ref (query);
+	g_clear_object (&simple->details->query);
 	simple->details->query = query;
 }
 

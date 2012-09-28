@@ -115,6 +115,7 @@ nautilus_search_provider_set_query (NautilusSearchProvider *provider, NautilusQu
 {
 	g_return_if_fail (NAUTILUS_IS_SEARCH_PROVIDER (provider));
 	g_return_if_fail (NAUTILUS_SEARCH_PROVIDER_GET_IFACE (provider)->set_query != NULL);
+	g_return_if_fail (NAUTILUS_IS_QUERY (query));
 
 	NAUTILUS_SEARCH_PROVIDER_GET_IFACE (provider)->set_query (provider, query);
 }
