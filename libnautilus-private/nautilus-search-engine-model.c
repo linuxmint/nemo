@@ -151,8 +151,7 @@ nautilus_search_engine_model_start (NautilusSearchProvider *provider)
 		return;
 	}
 
-	if (model->details->query == NULL ||
-	    model->details->directory == NULL) {
+	if (model->details->directory == NULL) {
 		g_idle_add (emit_finished_idle_cb, model);
 		return;
 	}
@@ -187,14 +186,8 @@ nautilus_search_engine_model_set_query (NautilusSearchProvider *provider,
 
 	model = NAUTILUS_SEARCH_ENGINE_MODEL (provider);
 
-	if (query) {
-		g_object_ref (query);
-	}
-
-	if (model->details->query) {
-		g_object_unref (model->details->query);
-	}
-
+	g_object_ref (query);
+	g_clear_object (&model->details->query);
 	model->details->query = query;
 }
 

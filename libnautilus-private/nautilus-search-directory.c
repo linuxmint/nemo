@@ -763,10 +763,7 @@ search_dispose (GObject *object)
 		search->details->pending_callback_list = NULL;
 	}
 
-	if (search->details->query) {
-		g_object_unref (search->details->query);
-		search->details->query = NULL;
-	}
+	g_clear_object (&search->details->query);
 
 	if (search->details->engine) {
 		if (search->details->search_running) {
@@ -904,10 +901,7 @@ nautilus_search_directory_set_query (NautilusSearchDirectory *search,
 	if (search->details->query != query) {
 		search->details->modified = TRUE;
 
-		if (query) {
-			g_object_ref (query);
-		}
-
+		g_object_ref (query);
 		g_clear_object (&search->details->query);
 		search->details->query = query;
 

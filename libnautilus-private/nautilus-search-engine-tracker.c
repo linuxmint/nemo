@@ -227,9 +227,6 @@ nautilus_search_engine_tracker_start (NautilusSearchProvider *provider)
 		return;
 	}
 
-	if (tracker->details->query == NULL) {
-		return;
-	}
 
 	query_text = nautilus_query_get_text (tracker->details->query);
 	downcase = g_utf8_strdown (query_text, -1);
@@ -314,14 +311,8 @@ nautilus_search_engine_tracker_set_query (NautilusSearchProvider *provider,
 
 	tracker = NAUTILUS_SEARCH_ENGINE_TRACKER (provider);
 
-	if (query) {
-		g_object_ref (query);
-	}
-
-	if (tracker->details->query) {
-		g_object_unref (tracker->details->query);
-	}
-
+	g_object_ref (query);
+	g_clear_object (&tracker->details->query);
 	tracker->details->query = query;
 }
 
