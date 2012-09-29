@@ -69,6 +69,10 @@ struct NautilusBookmarkDetails
 	NautilusFile *file;
 	
 	char *scroll_file;
+
+	gboolean exists;
+	guint exists_id;
+	GCancellable *cancellable;
 };
 
 static void	  nautilus_bookmark_disconnect_file	  (NautilusBookmark	 *file);
@@ -237,7 +241,7 @@ nautilus_bookmark_set_icon_to_default (NautilusBookmark *bookmark)
 		g_free (uri);
 	}
 
-	if (nautilus_bookmark_uri_known_not_to_exist (bookmark)) {
+	if (!bookmark->details->exists) {
 		DEBUG ("%s: file does not exist, add emblem", nautilus_bookmark_get_name (bookmark));
 
 		apply_warning_emblem (&icon, FALSE);
@@ -267,6 +271,16 @@ nautilus_bookmark_disconnect_file (NautilusBookmark *bookmark)
 						      bookmark);
 		g_clear_object (&bookmark->details->file);
 	}
+
+	if (bookmark->details->cancellable != NULL) {
+		g_cancellable_cancel (bookmark->details->cancellable);
+		g_clear_object (&bookmark->details->cancellable);
+	}
+
+	if (bookmark->details->exists_id != 0) {
+		g_source_remove (bookmark->details->exists_id);
+		bookmark->details->exists_id = 0;
+	}
 }
 
 static void
@@ -278,7 +292,7 @@ nautilus_bookmark_connect_file (NautilusBookmark *bookmark)
 		return;
 	}
 
-	if (!nautilus_bookmark_uri_known_not_to_exist (bookmark)) {
+	if (bookmark->details->exists) {
 		DEBUG ("%s: creating file", nautilus_bookmark_get_name (bookmark));
 
 		bookmark->details->file = nautilus_file_get (bookmark->details->location);
@@ -301,6 +315,83 @@ nautilus_bookmark_connect_file (NautilusBookmark *bookmark)
 	if (bookmark->details->name == NULL) {
 		bookmark->details->name = nautilus_compute_title_for_location (bookmark->details->location);
 	}
+}
+
+static void
+nautilus_bookmark_set_exists (NautilusBookmark *bookmark,
+			      gboolean exists)
+{
+	if (bookmark->details->exists == exists) {
+		return;
+	}
+
+	bookmark->details->exists = exists;
+	DEBUG ("%s: setting bookmark to exist: %d\n",
+	       nautilus_bookmark_get_name (bookmark), exists);
+
+	/* refresh icon */
+	nautilus_bookmark_set_icon_to_default (bookmark);
+}
+
+static gboolean
+exists_non_native_idle_cb (gpointer user_data)
+{
+	NautilusBookmark *bookmark = user_data;
+	nautilus_bookmark_set_exists (bookmark, FALSE);
+
+	return FALSE;
+}
+
+static void
+exists_query_info_ready_cb (GObject *source,
+			    GAsyncResult *res,
+			    gpointer user_data)
+{
+	GFileInfo *info;
+	NautilusBookmark *bookmark;
+	GError *error = NULL;
+	gboolean exists = FALSE;
+
+	info = g_file_query_info_finish (G_FILE (source), res, &error);
+	if (!info && g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+		g_clear_error (&error);
+		return;
+	}
+
+	g_clear_error (&error);
+	bookmark = user_data;
+
+	if (info) {
+		exists = TRUE;
+
+		g_object_unref (info);
+		g_clear_object (&bookmark->details->cancellable);
+	}
+
+	nautilus_bookmark_set_exists (bookmark, exists);
+}
+
+static void
+nautilus_bookmark_update_exists (NautilusBookmark *bookmark)
+{
+	/* Convert to a path, returning FALSE if not local. */
+	if (!g_file_is_native (bookmark->details->location) &&
+	    bookmark->details->exists_id == 0) {
+		bookmark->details->exists_id =
+			g_idle_add (exists_non_native_idle_cb, bookmark);
+		return;
+	}
+
+	if (bookmark->details->cancellable != NULL) {
+		return;
+	}
+
+	bookmark->details->cancellable = g_cancellable_new ();
+	g_file_query_info_async (bookmark->details->location,
+				 G_FILE_ATTRIBUTE_STANDARD_TYPE,
+				 0, G_PRIORITY_DEFAULT,
+				 bookmark->details->cancellable,
+				 exists_query_info_ready_cb, bookmark);
 }
 
 /* GObject methods */
@@ -405,6 +496,7 @@ nautilus_bookmark_constructed (GObject *obj)
 	NautilusBookmark *self = NAUTILUS_BOOKMARK (obj);
 
 	nautilus_bookmark_connect_file (self);
+	nautilus_bookmark_update_exists (self);
 }
 
 static void
@@ -471,6 +563,8 @@ nautilus_bookmark_init (NautilusBookmark *bookmark)
 {
 	bookmark->details = G_TYPE_INSTANCE_GET_PRIVATE (bookmark, NAUTILUS_TYPE_BOOKMARK,
 							 NautilusBookmarkDetails);
+
+	bookmark->details->exists = TRUE;
 }
 
 const gchar *
@@ -708,25 +802,6 @@ nautilus_bookmark_menu_item_new (NautilusBookmark *bookmark)
 	return menu_item;
 }
 
-gboolean
-nautilus_bookmark_uri_known_not_to_exist (NautilusBookmark *bookmark)
-{
-	char *path_name;
-	gboolean exists;
-
-	/* Convert to a path, returning FALSE if not local. */
-	if (!g_file_is_native (bookmark->details->location)) {
-		return FALSE;
-	}
-	path_name = g_file_get_path (bookmark->details->location);
-
-	/* Now check if the file exists (sync. call OK because it is local). */
-	exists = g_file_test (path_name, G_FILE_TEST_EXISTS);
-	g_free (path_name);
-
-	return !exists;
-}
-
 void
 nautilus_bookmark_set_scroll_pos (NautilusBookmark      *bookmark,
 				  const char            *uri)
@@ -739,4 +814,10 @@ char *
 nautilus_bookmark_get_scroll_pos (NautilusBookmark      *bookmark)
 {
 	return g_strdup (bookmark->details->scroll_file);
+}
+
+gboolean
+nautilus_bookmark_get_exists (NautilusBookmark *bookmark)
+{
+	return bookmark->details->exists;
 }
