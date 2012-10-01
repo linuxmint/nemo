@@ -147,6 +147,7 @@ append_item (NemoImagePropertiesPage *page,
 
 	if (value != NULL) {
 		label = gtk_label_new (value);
+		gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
 		gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
 		gtk_grid_attach_next_to (GTK_GRID (page->details->grid), label,
 					 name_label, GTK_POS_RIGHT,
@@ -246,34 +247,8 @@ append_tag_value_pair (NemoImagePropertiesPage *page,
 
 	return TRUE;
 }
-
-static void
-append_exifdata_string (ExifData *exifdata, NemoImagePropertiesPage *page)
-{
-	if (exifdata && exifdata->ifd[0] && exifdata->ifd[0]->count) {
-                append_tag_value_pair (page, exifdata, EXIF_TAG_MAKE, _("Camera Brand"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_MODEL, _("Camera Model"));
-
-                /* Choose which date to show in order of relevance */
-                if (!append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME_ORIGINAL, _("Date Taken")))
-                {
-                        if (!append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME_DIGITIZED, _("Date Digitized")))
-                        {
-                                append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME, _("Date Modified"));
-                        }
-                }
-
-                append_tag_value_pair (page, exifdata, EXIF_TAG_EXPOSURE_TIME, _("Exposure Time"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_APERTURE_VALUE, _("Aperture Value"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_ISO_SPEED_RATINGS, _("ISO Speed Rating"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_FLASH,_("Flash Fired"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_METERING_MODE, _("Metering Mode"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_EXPOSURE_PROGRAM, _("Exposure Program"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_FOCAL_LENGTH,_("Focal Length"));
-                append_tag_value_pair (page, exifdata, EXIF_TAG_SOFTWARE, _("Software"));
-	}
-}
 #endif /*HAVE_EXIF*/
+
 
 #ifdef HAVE_EXEMPI
 static void
@@ -320,29 +295,135 @@ append_xmp_value_pair (NemoImagePropertiesPage *page,
 	}
 	xmp_string_free(value);
 }
+#endif /*HAVE EXEMPI*/
+
+static gboolean
+append_option_value_pair (NemoImagePropertiesPage *page,
+			  GdkPixbuf                   *pixbuf,
+			  const char                  *key,
+			  char                        *description)
+{
+	const char *value;
+
+	value = gdk_pixbuf_get_option (pixbuf, key);
+	if (value == NULL)
+		return FALSE;
+
+	append_item (page, description, value);
+	return TRUE;
+}
 
 static void
-append_xmpdata_string (XmpPtr xmp, NemoImagePropertiesPage *page)
+append_basic_info (NemoImagePropertiesPage *page)
 {
-	if (xmp != NULL) {
-		append_xmp_value_pair (page, xmp, NS_IPTC4XMP, "Location", _("Location"));
-		append_xmp_value_pair (page, xmp, NS_DC, "description", _("Description"));
-		append_xmp_value_pair (page, xmp, NS_DC, "subject", _("Keywords"));
-		append_xmp_value_pair (page, xmp, NS_DC, "creator", _("Creator"));
-		append_xmp_value_pair (page, xmp, NS_DC, "rights", _("Copyright"));
-		append_xmp_value_pair (page, xmp, NS_XAP,"Rating", _("Rating"));
-		/* TODO add CC licenses */
-	}
+	GdkPixbufFormat *format;
+	char *name;
+	char *desc;
+	char *value;
+
+	format = gdk_pixbuf_loader_get_format (page->details->loader);
+
+	name = gdk_pixbuf_format_get_name (format);
+	desc = gdk_pixbuf_format_get_description (format);
+	value = g_strdup_printf ("%s (%s)", name, desc);
+	g_free (name);
+	g_free (desc);
+	append_item (page, _("Image Type"), value);
+	g_free (value);
+	value = g_strdup_printf (ngettext ("%d pixel",
+					   "%d pixels",
+					   page->details->width),
+				 page->details->width);
+	append_item (page, _("Width"), value);
+	g_free (value);
+	value = g_strdup_printf (ngettext ("%d pixel",
+					   "%d pixels",
+					   page->details->height),
+				 page->details->height);
+	append_item (page, _("Height"), value);
+	g_free (value);
 }
+
+static void
+append_options_info (NemoImagePropertiesPage *page)
+{
+	GdkPixbuf *pixbuf;
+
+	pixbuf = gdk_pixbuf_loader_get_pixbuf (page->details->loader);
+	if (pixbuf == NULL)
+		return;
+
+	if (!append_option_value_pair (page, pixbuf, "Title", _("Title")))
+		append_option_value_pair (page, pixbuf, "tEXt::Title", _("Title"));
+	if (!append_option_value_pair (page, pixbuf, "Author", _("Author")))
+		append_option_value_pair (page, pixbuf, "tEXt::Author", _("Author"));
+
+	append_option_value_pair (page, pixbuf, "tEXt::Description", _("Description"));
+	append_option_value_pair (page, pixbuf, "tEXt::Copyright", _("Copyright"));
+	append_option_value_pair (page, pixbuf, "tEXt::Creation Time", _("Created On"));
+	append_option_value_pair (page, pixbuf, "tEXt::Software", _("Created By"));
+	append_option_value_pair (page, pixbuf, "tEXt::Disclaimer", _("Disclaimer"));
+	append_option_value_pair (page, pixbuf, "tEXt::Warning", _("Warning"));
+	append_option_value_pair (page, pixbuf, "tEXt::Source", _("Source"));
+	append_option_value_pair (page, pixbuf, "tEXt::Comment", _("Comment"));
+}
+
+static void
+append_exif_info (NemoImagePropertiesPage *page)
+{
+#ifdef HAVE_EXIF
+	ExifData *exifdata;
+
+	exifdata = exif_loader_get_data (page->details->exifldr);
+	if (exifdata == NULL)
+		return;
+
+	if (exifdata->ifd[0] && exifdata->ifd[0]->count) {
+                append_tag_value_pair (page, exifdata, EXIF_TAG_MAKE, _("Camera Brand"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_MODEL, _("Camera Model"));
+
+                /* Choose which date to show in order of relevance */
+                if (!append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME_ORIGINAL, _("Date Taken"))) {
+			if (!append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME_DIGITIZED, _("Date Digitized"))) {
+				append_tag_value_pair (page, exifdata, EXIF_TAG_DATE_TIME, _("Date Modified"));
+			}
+		}
+
+                append_tag_value_pair (page, exifdata, EXIF_TAG_EXPOSURE_TIME, _("Exposure Time"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_APERTURE_VALUE, _("Aperture Value"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_ISO_SPEED_RATINGS, _("ISO Speed Rating"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_FLASH,_("Flash Fired"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_METERING_MODE, _("Metering Mode"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_EXPOSURE_PROGRAM, _("Exposure Program"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_FOCAL_LENGTH,_("Focal Length"));
+                append_tag_value_pair (page, exifdata, EXIF_TAG_SOFTWARE, _("Software"));
+	}
+
+	exif_data_unref (exifdata);
 #endif
+}
+
+static void
+append_xmp_info (NemoImagePropertiesPage *page)
+{
+#ifdef HAVE_EXEMPI
+	if (page->details->xmp == NULL)
+		return;
+
+	append_xmp_value_pair (page, page->details->xmp, NS_IPTC4XMP, "Location", _("Location"));
+	append_xmp_value_pair (page, page->details->xmp, NS_DC, "description", _("Description"));
+	append_xmp_value_pair (page, page->details->xmp, NS_DC, "subject", _("Keywords"));
+	append_xmp_value_pair (page, page->details->xmp, NS_DC, "creator", _("Creator"));
+	append_xmp_value_pair (page, page->details->xmp, NS_DC, "rights", _("Copyright"));
+	append_xmp_value_pair (page, page->details->xmp, NS_XAP,"Rating", _("Rating"));
+	/* TODO add CC licenses */
+#endif /*HAVE EXEMPI*/
+}
 
 static void
 load_finished (NemoImagePropertiesPage *page)
 {
-	GdkPixbufFormat *format;
 	GtkWidget *label;
-	char *name, *desc;
-	char *value;
 
 	label = gtk_grid_get_child_at (GTK_GRID (page->details->grid), 0, 0);
 	gtk_container_remove (GTK_CONTAINER (page->details->grid), label);
@@ -352,39 +433,10 @@ load_finished (NemoImagePropertiesPage *page)
 	}
 
 	if (page->details->got_size) {
-#ifdef HAVE_EXIF
-                ExifData *exif_data;
-#endif
-
-		format = gdk_pixbuf_loader_get_format (page->details->loader);
-	
-		name = gdk_pixbuf_format_get_name (format);
-		desc = gdk_pixbuf_format_get_description (format);
-		value = g_strdup_printf ("%s (%s)", name, desc);
-		g_free (name);
-		g_free (desc);
-		append_item (page, _("Image Type"), value);
-		g_free (value);
-		value = g_strdup_printf (ngettext ("%d pixel",
-						   "%d pixels",
-						   page->details->width),
-					 page->details->width);
-		append_item (page, _("Width"), value);
-		g_free (value);
-		value = g_strdup_printf (ngettext ("%d pixel",
-						   "%d pixels",
-						   page->details->height),
-					 page->details->height);
-		append_item (page, _("Height"), value);
-		g_free (value);
-#ifdef HAVE_EXIF
-		exif_data = exif_loader_get_data (page->details->exifldr);
-                append_exifdata_string (exif_data, page);
-                exif_data_unref (exif_data);
-#endif /*HAVE_EXIF*/
-#ifdef HAVE_EXEMPI
-		append_xmpdata_string (page->details->xmp, page);
-#endif /*HAVE EXEMPI*/		
+		append_basic_info (page);
+		append_options_info (page);
+		append_exif_info (page);
+		append_xmp_info (page);
 	} else {
 		append_item (page, _("Failed to load image information"), NULL);
 	}
@@ -466,6 +518,13 @@ file_read_callback (GObject      *object,
 		done_reading = TRUE;
 	}
 
+	if (error != NULL) {
+		char *uri = g_file_get_uri (G_FILE (object));
+		g_warning ("Error reading %s: %s", uri, error->message);
+		g_free (uri);
+		g_clear_error (&error);
+	}
+
 	if (done_reading) {
 		load_finished (page);
 		g_input_stream_close_async (stream,
@@ -492,29 +551,44 @@ size_prepared_callback (GdkPixbufLoader *loader,
 	page->details->pixbuf_still_loading = FALSE;
 }
 
+typedef struct {
+	NemoImagePropertiesPage *page;
+	NemoFileInfo            *info;
+} FileOpenData;
+
 static void
 file_open_callback (GObject      *object,
 		    GAsyncResult *res,
-		    gpointer      data)
+		    gpointer      user_data)
 {
-	NemoImagePropertiesPage *page;
+	FileOpenData *data = user_data;
+	NemoImagePropertiesPage *page = data->page;
 	GFile *file;
 	GFileInputStream *stream;
 	GError *error;
+	char *uri;
 
-	page = NEMO_IMAGE_PROPERTIES_PAGE (data);
 	file = G_FILE (object);
-
+	uri = g_file_get_uri (file);
+	
 	error = NULL;
 	stream = g_file_read_finish (file, res, &error);
 	if (stream) {
-		page->details->loader = gdk_pixbuf_loader_new ();
+		char *mime_type;
+
+		mime_type = nemo_file_info_get_mime_type (data->info);
+		page->details->loader = gdk_pixbuf_loader_new_with_mime_type (mime_type, &error);
+		if (error != NULL) {
+			g_warning ("Error creating loader for %s: %s", uri, error->message);
+			g_clear_error (&error);
+		}
 		page->details->pixbuf_still_loading = TRUE;
 		page->details->width = 0;
 		page->details->height = 0;
 #ifdef HAVE_EXIF
 		page->details->exifldr = exif_loader_new ();
 #endif /*HAVE_EXIF*/
+		g_free (mime_type);
 
 		g_signal_connect (page->details->loader,
 				  "size_prepared",
@@ -530,20 +604,31 @@ file_open_callback (GObject      *object,
 					   page);
 
 		g_object_unref (stream);
+	} else {
+		g_warning ("Error reading %s: %s", uri, error->message);
+		g_clear_error (&error);
+		load_finished (page);
 	}
+
+	g_free (uri);
+	g_free (data);
 }
 
 static void
 load_location (NemoImagePropertiesPage *page,
-	       const char                  *location)
+	       NemoFileInfo	       *info)
 {
 	GFile *file;
+	char *uri;
+	FileOpenData *data;
 
 	g_assert (NEMO_IS_IMAGE_PROPERTIES_PAGE (page));
-	g_assert (location != NULL);
+	g_assert (info != NULL);
 
 	page->details->cancellable = g_cancellable_new ();
-	file = g_file_new_for_uri (location);
+
+	uri = nemo_file_info_get_uri (info);
+	file = g_file_new_for_uri (uri);
 
 #ifdef HAVE_EXEMPI
 	{
@@ -552,7 +637,7 @@ load_location (NemoImagePropertiesPage *page,
 		XmpFilePtr xf;
 		char *localname;
 
-		localname = g_filename_from_uri (location, NULL, NULL);
+		localname = g_filename_from_uri (uri, NULL, NULL);
 		if (localname) {
 			xf = xmp_files_open_new (localname, 0);
 			page->details->xmp = xmp_files_get_new_xmp (xf); /* only load when loading */
@@ -565,13 +650,18 @@ load_location (NemoImagePropertiesPage *page,
 	}
 #endif /*HAVE_EXEMPI*/
 
+	data = g_new0 (FileOpenData, 1);
+	data->page = page;
+	data->info = info;
+	
 	g_file_read_async (file,
 			   0,
 			   page->details->cancellable,
 			   file_open_callback,
-			   page);
+			   data);
 
 	g_object_unref (file);
+	g_free (uri);
 }
 
 static void
@@ -589,25 +679,62 @@ nemo_image_properties_page_class_init (NemoImagePropertiesPageClass *class)
 static void
 nemo_image_properties_page_init (NemoImagePropertiesPage *page)
 {
+	GtkWidget *sw;
+	
 	page->details = G_TYPE_INSTANCE_GET_PRIVATE (page,
 						     NEMO_TYPE_IMAGE_PROPERTIES_PAGE,
 						     NemoImagePropertiesPageDetails);
 
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (page), GTK_ORIENTATION_VERTICAL);
 	gtk_box_set_homogeneous (GTK_BOX (page), FALSE);
-	gtk_box_set_spacing (GTK_BOX (page), 2);
-	gtk_container_set_border_width (GTK_CONTAINER (page), 6);
+	gtk_box_set_spacing (GTK_BOX (page), 0);
+	gtk_container_set_border_width (GTK_CONTAINER (page), 0);
+
+	sw = gtk_scrolled_window_new (NULL, NULL);
+	gtk_container_set_border_width (GTK_CONTAINER (sw), 0);
+	gtk_widget_set_vexpand (GTK_WIDGET (sw), TRUE);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
+	                                GTK_POLICY_NEVER,
+	                                GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start (GTK_BOX (page), sw, FALSE, TRUE, 2);
 
 	page->details->grid = gtk_grid_new ();
+	gtk_container_set_border_width (GTK_CONTAINER (page->details->grid), 6);
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (page->details->grid), GTK_ORIENTATION_VERTICAL);
 	gtk_grid_set_row_spacing (GTK_GRID (page->details->grid), 6);
 	gtk_grid_set_column_spacing (GTK_GRID (page->details->grid), 20);
 	append_item (page, _("Loading..."), NULL);
-	gtk_box_pack_start (GTK_BOX (page),
-			    page->details->grid,
-			    FALSE, TRUE, 2);
+	gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (sw), page->details->grid);
 
 	gtk_widget_show_all (GTK_WIDGET (page));
+}
+
+static gboolean
+is_mime_type_supported (const char *mime_type)
+{
+	gboolean supported;
+	GSList *formats;
+	GSList *l;
+
+	supported = FALSE;
+	formats = gdk_pixbuf_get_formats ();
+
+	for (l = formats; supported == FALSE && l != NULL; l = l->next) {
+		GdkPixbufFormat *format = l->data;
+		char **mime_types = gdk_pixbuf_format_get_mime_types (format);
+		int i;
+
+		for (i = 0; mime_types[i] != NULL; i++) {
+			if (strcmp (mime_types[i], mime_type) == 0) {
+				supported = TRUE;
+				break;
+			}
+		}
+		g_strfreev (mime_types);
+	}
+	g_slist_free (formats);
+
+	return supported;
 }
 
 static GList *
@@ -615,48 +742,34 @@ get_property_pages (NemoPropertyPageProvider *provider,
                     GList *files)
 {
 	GList *pages;
-	NemoPropertyPage *real_page;
 	NemoFileInfo *file;
-        char *uri;
-	NemoImagePropertiesPage *page;
+
+	char *mime_type;
 	
 	/* Only show the property page if 1 file is selected */
 	if (!files || files->next != NULL) {
 		return NULL;
 	}
 
-	file = NEMO_FILE_INFO (files->data);
-	
-	if (!
-	    (nemo_file_info_is_mime_type (file, "image/x-bmp") ||
-	     nemo_file_info_is_mime_type (file, "image/x-ico") ||
-	     nemo_file_info_is_mime_type (file, "image/jpeg") ||
-	     nemo_file_info_is_mime_type (file, "image/gif") ||
-	     nemo_file_info_is_mime_type (file, "image/png") ||
-	     nemo_file_info_is_mime_type (file, "image/pnm") ||
-	     nemo_file_info_is_mime_type (file, "image/ras") ||
-	     nemo_file_info_is_mime_type (file, "image/tga") ||
-	     nemo_file_info_is_mime_type (file, "image/tiff") ||
-	     nemo_file_info_is_mime_type (file, "image/wbmp") ||
-	     nemo_file_info_is_mime_type (file, "image/x-xbitmap") ||
-	     nemo_file_info_is_mime_type (file, "image/x-xpixmap"))) {
-		return NULL;
-	}
-	
 	pages = NULL;
 	
-        uri = nemo_file_info_get_uri (file);
+        file = NEMO_FILE_INFO (files->data);
 
-	page = g_object_new (nemo_image_properties_page_get_type (), NULL);
-	load_location (page, uri);
+	mime_type = nemo_file_info_get_mime_type (file);
+	if (mime_type != NULL && is_mime_type_supported (mime_type)) {
+		NemoImagePropertiesPage *page;
+		NemoPropertyPage *real_page;
 
-	g_free (uri);
+		page = g_object_new (nemo_image_properties_page_get_type (), NULL);
+		load_location (page, file);
 
-        real_page = nemo_property_page_new
-                ("NemoImagePropertiesPage::property_page", 
-                 gtk_label_new (_("Image")),
-                 GTK_WIDGET (page));
-        pages = g_list_append (pages, real_page);
+		real_page = nemo_property_page_new ("NemoImagePropertiesPage::property_page",
+		                            	    gtk_label_new (_("Image")),
+		                                    GTK_WIDGET (page));
+		pages = g_list_append (pages, real_page);
+	}
+
+        g_free (mime_type);
 
 	return pages;
 }
