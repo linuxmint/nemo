@@ -190,6 +190,8 @@ nemo_search_directory_file_update_display_name (NemoSearchDirectoryFile *search_
 	if (changed) {
 		nemo_file_emit_changed (file);
 	}
+
+	g_free (display_name);
 }
 
 static void
