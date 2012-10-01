@@ -41,6 +41,7 @@ G_DEFINE_TYPE (NemoWindowSlot, nemo_window_slot, GTK_TYPE_BOX);
 enum {
 	ACTIVE,
 	INACTIVE,
+	CHANGED_PANE,
 	LAST_SIGNAL
 };
 
@@ -296,6 +297,15 @@ nemo_window_slot_class_init (NemoWindowSlotClass *klass)
 			      NULL, NULL,
 			      g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
+	
+	signals[CHANGED_PANE] =
+		g_signal_new ("changed-pane",
+			G_TYPE_FROM_CLASS (klass),
+			G_SIGNAL_RUN_LAST,
+			G_STRUCT_OFFSET (NemoWindowSlotClass, changed_pane),
+			NULL, NULL,
+			g_cclosure_marshal_VOID__VOID,
+			G_TYPE_NONE, 0);
 }
 
 GFile *
