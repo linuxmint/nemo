@@ -47,6 +47,7 @@ finalize (GObject *object)
 
 	query = NEMO_QUERY (object);
 	g_free (query->details->text);
+	g_free (query->details->location_uri);
 
 	G_OBJECT_CLASS (nemo_query_parent_class)->finalize (object);
 }

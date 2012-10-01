@@ -3789,7 +3789,7 @@ copy_file_progress_callback (goffset current_num_bytes,
 static gboolean
 test_dir_is_parent (GFile *child, GFile *root)
 {
-	GFile *f;
+	GFile *f, *tmp;
 	
 	f = g_file_dup (child);
 	while (f) {
@@ -3797,7 +3797,9 @@ test_dir_is_parent (GFile *child, GFile *root)
 			g_object_unref (f);
 			return TRUE;
 		}
+		tmp = f;
 		f = g_file_get_parent (f);
+		g_object_unref (tmp);
 	}
 	if (f) {
 		g_object_unref (f);
@@ -4806,6 +4808,7 @@ move_file_prepare (CopyMoveJob *move_job,
 
 	if (IS_IO_ERROR (error, INVALID_FILENAME) &&
 	    !handled_invalid_filename) {
+		g_error_free (error);
 		handled_invalid_filename = TRUE;
 
 		g_assert (*dest_fs_type == NULL);
@@ -5772,7 +5775,7 @@ nemo_file_operations_copy_move (const GList *item_uris,
 
 	locations = location_list_from_uri_list (item_uris);
 	
-	for (p = location_list_from_uri_list (item_uris); p != NULL; p = p->next) {
+	for (p = locations; p != NULL; p = p->next) {
 		if (!g_file_has_uri_scheme ((GFile* )p->data, "burn")) {                
 			have_nonmapping_source = TRUE;
 		}

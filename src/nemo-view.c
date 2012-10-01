@@ -1046,6 +1046,8 @@ nemo_view_preview_files (NemoView *view,
 
 	xid = gdk_x11_window_get_xid (gtk_widget_get_window (toplevel));
 	nemo_previewer_call_show_file (previewer, uri, xid, TRUE);
+
+	g_free (uri);
 }
 
 void
@@ -7806,7 +7808,8 @@ update_restore_from_trash_action (GtkAction *action,
 		g_free (original_name);
 
 		g_object_set (action, "tooltip", tooltip, NULL);
-
+		g_free (tooltip);
+		
 		if (original_location != NULL) {
 			g_object_unref (original_location);
 		}

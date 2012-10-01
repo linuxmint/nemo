@@ -599,6 +599,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
 		if (!g_file_is_native (root)) {
 			network_mounts = g_list_prepend (network_mounts, mount);
+			g_object_unref (root);
 			continue;
 		}
 

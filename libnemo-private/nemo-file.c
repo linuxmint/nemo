@@ -813,6 +813,7 @@ finalize (GObject *object)
 	}
 
 	eel_ref_str_unref (file->details->filesystem_id);
+	g_free (file->details->trash_orig_path);
 
 	g_list_free_full (file->details->mime_list, g_free);
 	g_list_free_full (file->details->pending_extension_emblems, g_free);
