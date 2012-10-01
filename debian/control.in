@@ -44,7 +44,8 @@ Depends: ${shlibs:Depends},
 Recommends: eject,
             brasero (>= 2.26),
             librsvg2-common,
-            gvfs-backends            
+            gvfs-backends,
+	    nemo-fileroller
 Suggests: eog,
           evince | pdf-viewer,
           totem | mp3-decoder,
