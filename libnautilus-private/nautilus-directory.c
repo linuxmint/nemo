@@ -49,7 +49,13 @@ enum {
 	LAST_SIGNAL
 };
 
+enum {
+	PROP_LOCATION = 1,
+	NUM_PROPERTIES
+};
+
 static guint signals[LAST_SIGNAL];
+static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 static GHashTable *directories;
 
@@ -63,6 +69,42 @@ static void               set_directory_location              (NautilusDirectory
 G_DEFINE_TYPE (NautilusDirectory, nautilus_directory, G_TYPE_OBJECT);
 
 static void
+nautilus_directory_set_property (GObject *object,
+				 guint property_id,
+				 const GValue *value,
+				 GParamSpec *pspec)
+{
+	NautilusDirectory *directory = NAUTILUS_DIRECTORY (object);
+
+	switch (property_id) {
+	case PROP_LOCATION:
+		set_directory_location (directory, g_value_get_object (value));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+		break;
+	}
+}
+
+static void
+nautilus_directory_get_property (GObject *object,
+				 guint property_id,
+				 GValue *value,
+				 GParamSpec *pspec)
+{
+	NautilusDirectory *directory = NAUTILUS_DIRECTORY (object);
+
+	switch (property_id) {
+	case PROP_LOCATION:
+		g_value_set_object (value, directory->details->location);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+		break;
+	}
+}
+
+static void
 nautilus_directory_class_init (NautilusDirectoryClass *klass)
 {
 	GObjectClass *object_class;
@@ -70,6 +112,8 @@ nautilus_directory_class_init (NautilusDirectoryClass *klass)
 	object_class = G_OBJECT_CLASS (klass);
 	
 	object_class->finalize = nautilus_directory_finalize;
+	object_class->set_property = nautilus_directory_set_property;
+	object_class->get_property = nautilus_directory_get_property;
 
 	signals[FILES_ADDED] =
 		g_signal_new ("files_added",
@@ -104,10 +148,18 @@ nautilus_directory_class_init (NautilusDirectoryClass *klass)
 		              g_cclosure_marshal_VOID__POINTER,
 		              G_TYPE_NONE, 1, G_TYPE_POINTER);
 
+	properties[PROP_LOCATION] =
+		g_param_spec_object ("location",
+				     "The location",
+				     "The location of this directory",
+				     G_TYPE_FILE,
+				     G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+
 	klass->get_file_list = real_get_file_list;
 	klass->is_editable = real_is_editable;
 
 	g_type_class_add_private (klass, sizeof (NautilusDirectoryDetails));
+	g_object_class_install_properties (object_class, NUM_PROPERTIES, properties);
 }
 
 static void
@@ -507,16 +559,14 @@ nautilus_directory_new (GFile *location)
 	uri = g_file_get_uri (location);
 	
 	if (eel_uri_is_desktop (uri)) {
-		directory = NAUTILUS_DIRECTORY (g_object_new (NAUTILUS_TYPE_DESKTOP_DIRECTORY, NULL));
+		directory = NAUTILUS_DIRECTORY (g_object_new (NAUTILUS_TYPE_DESKTOP_DIRECTORY, "location", location, NULL));
 	} else if (eel_uri_is_search (uri)) {
-		directory = NAUTILUS_DIRECTORY (g_object_new (NAUTILUS_TYPE_SEARCH_DIRECTORY, NULL));
+		directory = NAUTILUS_DIRECTORY (g_object_new (NAUTILUS_TYPE_SEARCH_DIRECTORY, "location", location, NULL));
 	} else if (g_str_has_suffix (uri, NAUTILUS_SAVED_SEARCH_EXTENSION)) {
 		directory = NAUTILUS_DIRECTORY (nautilus_search_directory_new_from_saved_search (uri));
 	} else {
-		directory = NAUTILUS_DIRECTORY (g_object_new (NAUTILUS_TYPE_VFS_DIRECTORY, NULL));
+		directory = NAUTILUS_DIRECTORY (g_object_new (NAUTILUS_TYPE_VFS_DIRECTORY, "location", location, NULL));
 	}
-
-	set_directory_location (directory, location);
 
 	g_free (uri);
 	
@@ -1158,7 +1208,8 @@ set_directory_location (NautilusDirectory *directory,
 		g_object_unref (directory->details->location);
 	}
 	directory->details->location = g_object_ref (location);
-	
+
+	g_object_notify_by_pspec (G_OBJECT (directory), properties[PROP_LOCATION]);
 }
 
 static void

@@ -931,12 +931,15 @@ nautilus_search_directory_new_from_saved_search (const char *uri)
 	NautilusSearchDirectory *search;
 	NautilusQuery *query;
 	char *file;
-	
-	search = NAUTILUS_SEARCH_DIRECTORY (g_object_new (NAUTILUS_TYPE_SEARCH_DIRECTORY, NULL));
+	GFile *location;
+
+	location = g_file_new_for_uri (uri);
+	search = NAUTILUS_SEARCH_DIRECTORY (g_object_new (NAUTILUS_TYPE_SEARCH_DIRECTORY, "location", location, NULL));
 
 	search->details->saved_search_uri = g_strdup (uri);
-	
-	file = g_filename_from_uri (uri, NULL, NULL);
+	file = g_file_get_path (location);
+	g_object_unref (location);
+
 	if (file != NULL) {
 		query = nautilus_query_load (file);
 		if (query != NULL) {
