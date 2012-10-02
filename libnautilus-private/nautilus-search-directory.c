@@ -909,10 +909,10 @@ nautilus_search_directory_set_query (NautilusSearchDirectory *search,
 	}
 
 	file = nautilus_directory_get_existing_corresponding_file (NAUTILUS_DIRECTORY (search));
-	if (file != NULL) {
+	if ((file != NULL) && (search->details->saved_search_uri == NULL)) {
 		nautilus_search_directory_file_update_display_name (NAUTILUS_SEARCH_DIRECTORY_FILE (file));
-		g_object_unref (file);
 	}
+	nautilus_file_unref (file);
 }
 
 NautilusQuery *
