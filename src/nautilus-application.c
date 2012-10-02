@@ -710,6 +710,7 @@ go_to_server_cb (NautilusWindow *window,
 		 gpointer        user_data)
 {
 	GFile *location = user_data;
+	gboolean retval;
 
 	if (error == NULL) {
 		GBookmarkFile *bookmarks;
@@ -754,13 +755,15 @@ go_to_server_cb (NautilusWindow *window,
 
 		g_free (filename);
 		g_bookmark_file_free (bookmarks);
+
+		retval = TRUE;
 	} else {
-		g_warning ("Unable to connect to server: %s\n", error->message);
+		retval = FALSE;
 	}
 
 	g_object_unref (location);
 
-	return TRUE;
+	return retval;
 }
 
 static void
