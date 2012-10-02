@@ -190,8 +190,21 @@ update_query_editor (NautilusWindowSlot *slot)
 {
 	NautilusDirectory *directory;
 	NautilusSearchDirectory *search_directory;
+	GFile *location;
 
-	directory = nautilus_directory_get (slot->location);
+	/* This might be called while we're still loading the location.
+	 * In such a case, just set slot->load_with_search to TRUE, to stop
+	 * nautilus_window_sync_search_widgets() from hiding it again when
+	 * loading has completed.
+	 */
+	if (slot->location) {
+		location = slot->location;
+	} else {
+		location = slot->pending_location;
+		slot->load_with_search = TRUE;
+	}
+
+	directory = nautilus_directory_get (location);
 
 	if (NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
 		NautilusQuery *query;
@@ -203,7 +216,7 @@ update_query_editor (NautilusWindowSlot *slot)
 			g_object_unref (query);
 		}
 	} else {
-		nautilus_query_editor_set_location (slot->query_editor, slot->location);
+		nautilus_query_editor_set_location (slot->query_editor, location);
 	}
 
 	nautilus_directory_unref (directory);
