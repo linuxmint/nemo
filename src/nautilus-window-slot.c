@@ -239,12 +239,20 @@ nautilus_window_slot_set_query_editor_visible (NautilusWindowSlot *slot,
 
 	} else {
 		gtk_widget_hide (GTK_WIDGET (slot->query_editor));
-		g_signal_handler_disconnect (slot->query_editor, slot->qe_changed_id);
-		slot->qe_changed_id = 0;
-		g_signal_handler_disconnect (slot->query_editor, slot->qe_cancel_id);
-		slot->qe_cancel_id = 0;
-		g_signal_handler_disconnect (slot->query_editor, slot->qe_activated_id);
-		slot->qe_activated_id = 0;
+
+		if (slot->qe_changed_id > 0) {
+			g_signal_handler_disconnect (slot->query_editor, slot->qe_changed_id);
+			slot->qe_changed_id = 0;
+		}
+		if (slot->qe_cancel_id > 0) {
+			g_signal_handler_disconnect (slot->query_editor, slot->qe_cancel_id);
+			slot->qe_cancel_id = 0;
+		}
+		if (slot->qe_activated_id > 0) {
+			g_signal_handler_disconnect (slot->query_editor, slot->qe_activated_id);
+			slot->qe_activated_id = 0;
+		}
+
 		nautilus_query_editor_set_query (slot->query_editor, NULL);
 	}
 }
