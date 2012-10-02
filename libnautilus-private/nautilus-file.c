@@ -639,9 +639,7 @@ nautilus_file_new_from_info (NautilusDirectory *directory,
 	g_return_val_if_fail (info != NULL, NULL);
 
 	mime_type = g_file_info_get_content_type (info);
-	if (mime_type &&
-	    strcmp (mime_type, NAUTILUS_SAVED_SEARCH_MIMETYPE) == 0) {
-		g_file_info_set_file_type (info, G_FILE_TYPE_DIRECTORY);
+	if (g_strcmp0 (mime_type, NAUTILUS_SAVED_SEARCH_MIMETYPE) == 0) {
 		file = NAUTILUS_FILE (g_object_new (NAUTILUS_TYPE_SAVED_SEARCH_FILE, NULL));
 	} else {
 		file = NAUTILUS_FILE (g_object_new (NAUTILUS_TYPE_VFS_FILE, NULL));
@@ -2154,7 +2152,12 @@ update_info_internal (NautilusFile *file,
 						  g_file_info_get_display_name (info),
 						  g_file_info_get_edit_name (info),
 						  FALSE);
-	
+
+	mime_type = g_file_info_get_content_type (info);
+	if (g_strcmp0 (mime_type, NAUTILUS_SAVED_SEARCH_MIMETYPE) == 0) {
+		g_file_info_set_file_type (info, G_FILE_TYPE_DIRECTORY);
+	}
+
 	file_type = g_file_info_get_file_type (info);
 	if (file->details->type != file_type) {
 		changed = TRUE;
