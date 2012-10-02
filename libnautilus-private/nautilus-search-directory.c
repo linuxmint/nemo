@@ -925,20 +925,15 @@ nautilus_search_directory_get_query (NautilusSearchDirectory *search)
 	return NULL;
 }
 
-NautilusSearchDirectory *
-nautilus_search_directory_new_from_saved_search (const char *uri)
+void
+nautilus_search_directory_set_saved_search (NautilusSearchDirectory *search,
+					    GFile *saved_search)
 {
-	NautilusSearchDirectory *search;
 	NautilusQuery *query;
 	char *file;
-	GFile *location;
 
-	location = g_file_new_for_uri (uri);
-	search = NAUTILUS_SEARCH_DIRECTORY (g_object_new (NAUTILUS_TYPE_SEARCH_DIRECTORY, "location", location, NULL));
-
-	search->details->saved_search_uri = g_strdup (uri);
-	file = g_file_get_path (location);
-	g_object_unref (location);
+	search->details->saved_search_uri = g_file_get_uri (saved_search);
+	file = g_file_get_path (saved_search);
 
 	if (file != NULL) {
 		query = nautilus_query_load (file);
@@ -952,7 +947,6 @@ nautilus_search_directory_new_from_saved_search (const char *uri)
 	}
 
 	search->details->modified = FALSE;
-	return search;
 }
 
 gboolean

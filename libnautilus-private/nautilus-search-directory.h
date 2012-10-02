@@ -55,8 +55,8 @@ GType   nautilus_search_directory_get_type             (void);
 
 char   *nautilus_search_directory_generate_new_uri     (void);
 
-NautilusSearchDirectory *nautilus_search_directory_new_from_saved_search (const char *uri);
-
+void           nautilus_search_directory_set_saved_search (NautilusSearchDirectory *search,
+							   GFile                   *saved_search);
 gboolean       nautilus_search_directory_is_saved_search (NautilusSearchDirectory *search);
 gboolean       nautilus_search_directory_is_modified     (NautilusSearchDirectory *search);
 void           nautilus_search_directory_save_search     (NautilusSearchDirectory *search);
