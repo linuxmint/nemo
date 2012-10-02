@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: nautilus.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-09-25 23:13+0000\n"
-"PO-Revision-Date: 2012-10-02 15:37+0300\n"
+"POT-Creation-Date: 2012-10-02 12:42+0000\n"
+"PO-Revision-Date: 2012-10-02 15:41+0300\n"
 "Last-Translator: Ihar Hrachyshka <ihar.hrachyshka@gmail.com>\n"
 "Language-Team: Belarusian <i18n-bel-gnome@googlegroups.com>\n"
 "Language: be\n"
@@ -122,9 +122,10 @@ msgstr " (хібны Унікод)"
 
 #: ../libnautilus-private/nautilus-bookmark.c:103
 #: ../libnautilus-private/nautilus-desktop-link.c:134
-#: ../libnautilus-private/nautilus-file-utilities.c:274
-#: ../src/nautilus-pathbar.c:298 ../src/nautilus-places-sidebar.c:566
+#: ../libnautilus-private/nautilus-file-utilities.c:275
+#: ../src/nautilus-pathbar.c:298 ../src/nautilus-places-sidebar.c:541
 #: ../src/nautilus-query-editor.c:1168
+#: ../src/nautilus-shell-search-provider.c:349
 msgid "Home"
 msgstr "Дамашняя папка"
 
@@ -931,7 +932,7 @@ msgstr "Усё змесціва сметніцы будзе выдалена н�
 #. Empty Trash menu item
 #: ../libnautilus-private/nautilus-file-operations.c:1363
 #: ../libnautilus-private/nautilus-file-operations.c:2229
-#: ../src/nautilus-places-sidebar.c:2734
+#: ../src/nautilus-places-sidebar.c:2709
 msgid "Empty _Trash"
 msgstr "_Ачысціць сметніцу"
 
@@ -1819,12 +1820,12 @@ msgstr "_Адрабіць змяненне ўласніка"
 msgid "_Redo Change Owner"
 msgstr "_Паўтарыць змяненне ўласніка"
 
-#: ../libnautilus-private/nautilus-file-utilities.c:1145
+#: ../libnautilus-private/nautilus-file-utilities.c:1184
 #, c-format
 msgid "Could not determine original location of “%s” "
 msgstr "Не ўдалося вызначыць арыгінальнае размяшчэнне \"%s\""
 
-#: ../libnautilus-private/nautilus-file-utilities.c:1149
+#: ../libnautilus-private/nautilus-file-utilities.c:1188
 msgid "The item cannot be restored from trash"
 msgstr "Не ўдалося аднавіць элемент са сметніцы"
 
@@ -2104,13 +2105,13 @@ msgid ""
 "\"never\" then never bother to thumbnail files, just use a generic icon. "
 "Despite what the name may suggest, this applies to any previewable file type."
 msgstr ""
-"Гэта опцыя ўплывае на хуткасць паказу мініяцюр файлаў. Калі ключ мае значэнне "
-"\"always\", аглядальнік будзе заўсёды паказваць мініяцюры, нават калі папка "
-"месціцца на аддаленым серверы. Калі ключ мае значэнне \"local-only\", "
-"мініяцюры паказваюцца толькі для мясцовых файлавых сістэм. Калі ж ён мае "
+"Гэта опцыя ўплывае на хуткасць паказу мініяцюр файлаў. Калі ключ мае "
+"значэнне \"always\", аглядальнік будзе заўсёды паказваць мініяцюры, нават "
+"калі папка месціцца на аддаленым серверы. Калі ключ мае значэнне \"local-only"
+"\", мініяцюры паказваюцца толькі для мясцовых файлавых сістэм. Калі ж ён мае "
 "значэнне \"never\", тады мініяцюры ніколі не паказваюцца, а замест іх "
-"ужываецца звычайны значок. Нягледзячы на назву ключа, гэта настройка ўплывае на "
-"ўсе тыпы файлаў з магчымасцю папярэдняга агляду."
+"ужываецца звычайны значок. Нягледзячы на назву ключа, гэта настройка ўплывае "
+"на ўсе тыпы файлаў з магчымасцю папярэдняга агляду."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:25
 msgid "Maximum image size for thumbnailing"
@@ -2135,8 +2136,8 @@ msgid ""
 "If set to true, then Nautilus shows folders prior to showing files in the "
 "icon and list views."
 msgstr ""
-"Калі ўключана, Наўтылус у рэжыме спіса і значкоў будзе паказваць папкі "
-"перад файламі."
+"Калі ўключана, Наўтылус у рэжыме спіса і значкоў будзе паказваць папкі перад "
+"файламі."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:29
 msgid "Default sort order"
@@ -2162,11 +2163,11 @@ msgid ""
 "sorted from \"z\" to \"a\"; if sorted by size, instead of being "
 "incrementally they will be sorted decrementally."
 msgstr ""
-"Калі ўключана, файлы ў новых вокнах будуць адсартаваныя ў адваротным парадку. "
-"Напрыклад, калі ўжыта сартаванне паводле назвы, замест звычайнага парадку "
-"ад \"а\" да \"я\" яны будуць упарадкаваныя ад \"я\" да \"а\". Калі ж ужыта "
-"сартаванне паводле памеру, замест упарадкавання ў накірунку павелічэння памеру "
-"яны будуць адсартаваныя ў накірунку іх памяншэння."
+"Калі ўключана, файлы ў новых вокнах будуць адсартаваныя ў адваротным "
+"парадку. Напрыклад, калі ўжыта сартаванне паводле назвы, замест звычайнага "
+"парадку ад \"а\" да \"я\" яны будуць упарадкаваныя ад \"я\" да \"а\". Калі ж "
+"ужыта сартаванне паводле памеру, замест упарадкавання ў накірунку "
+"павелічэння памеру яны будуць адсартаваныя ў накірунку іх памяншэння."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:33
 msgid "Default folder viewer"
@@ -2179,8 +2180,8 @@ msgid ""
 "and \"icon-view\"."
 msgstr ""
 "Пры наведванні папкі будзе ўжыты гэты аглядальнік, калі іншае не было "
-"адмыслова вызначана для гэтай папкі. Магчымыя значэнні: \"list-view\" (рэжым спіса) "
-"і \"icon-view\" (рэжым значкоў)."
+"адмыслова вызначана для гэтай папкі. Магчымыя значэнні: \"list-view\" (рэжым "
+"спіса) і \"icon-view\" (рэжым значкоў)."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:35
 msgid "Whether to show hidden files"
@@ -2193,9 +2194,9 @@ msgid ""
 "backup files ending with a tilde (~)."
 msgstr ""
 "Калі ўключана, схаваныя файлы будуць прадвызначана паказвацца ў кіраўніку "
-"файлаў. Схаваныя файлы - гэта такія файлы, у якіх назва пачынаецца кропкай, або "
-"запасныя копіі файлаў, у якіх назва канчаецца тыльдай (~), а таксама файлы, "
-"пералічаныя ў файле \".hidden\" адпаведнай папкі."
+"файлаў. Схаваныя файлы - гэта такія файлы, у якіх назва пачынаецца кропкай, "
+"або запасныя копіі файлаў, у якіх назва канчаецца тыльдай (~), а таксама "
+"файлы, пералічаныя ў файле \".hidden\" адпаведнай папкі."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
 msgid "Bulk rename utility"
@@ -2209,14 +2210,14 @@ msgid ""
 "their executable name and any command line options. If the executable name "
 "is not set to a full path, it will be searched for in the search path."
 msgstr ""
-"Калі ключ мае значэнне, Наўтылус дадасць URI-адрасы вылучаных файлаў "
-"у канец загаду і выкарыстае вынік працы прылады як загадны радок для "
-"пакетнага змянення назваў. Праграмы пакетнага змянення назваў могуць "
-"быць зарэгістраваныя з дапамогай значэння гэтага ключа, у форме "
-"тэкставага ланцужка, які змяшчае назву выканальнага файла і патрэбныя "
-"параметры загаднага радка, падзеленыя прабеламі. Калі назва выканальнага "
-"файла не з'яўляецца поўнай сцежкай да файла, ён будзе адшуканы ў сцежках "
-"пошуку такіх файлаў."
+"Калі ключ мае значэнне, Наўтылус дадасць URI-адрасы вылучаных файлаў у канец "
+"загаду і выкарыстае вынік працы прылады як загадны радок для пакетнага "
+"змянення назваў. Праграмы пакетнага змянення назваў могуць быць "
+"зарэгістраваныя з дапамогай значэння гэтага ключа, у форме тэкставага "
+"ланцужка, які змяшчае назву выканальнага файла і патрэбныя параметры "
+"загаднага радка, падзеленыя прабеламі. Калі назва выканальнага файла не "
+"з'яўляецца поўнай сцежкай да файла, ён будзе адшуканы ў сцежках пошуку такіх "
+"файлаў."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:39
 msgid "List of possible captions on icons"
@@ -2230,10 +2231,10 @@ msgid ""
 "\"permissions\", and \"mime_type\"."
 msgstr ""
 "Спіс подпісаў пад значком ў рэжыме значкоў і на стале. Сапраўдная колькасць "
-"подпісаў залежыць ад узроўню маштабавання. Вось некаторыя з магчымых значэнняў: "
-"\"size\" (памер), \"type\" (тып), \"date_modified\" (дата апошняй мадыфікацыі), "
-"\"owner\" (уласнік), \"group\" (група), \"permissions\" (дазволы) і \"mime_type\" "
-"(MIME-тып)."
+"подпісаў залежыць ад узроўню маштабавання. Вось некаторыя з магчымых "
+"значэнняў: \"size\" (памер), \"type\" (тып), \"date_modified\" (дата апошняй "
+"мадыфікацыі), \"owner\" (уласнік), \"group\" (група), \"permissions"
+"\" (дазволы) і \"mime_type\" (MIME-тып)."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:41
 msgid "Default icon zoom level"
@@ -2274,20 +2275,21 @@ msgid ""
 "larger (200%), largest (400%)"
 msgstr ""
 "Тэкставае значэнне, якое вызначае, як трэба замяняць часткі надта доўгіх "
-"назваў файлаў на шматкроп'і, у залежнасці ад узроўню маштабавання. "
-"Кожны элемент спіса мусіць мець наступную форму: \"Узровень маштабавання:Цэлы лік\". "
-"Для кожнага з узроўняў маштабавання, калі цэлы лік большы за 0, "
-"назва файла не зойме месца больш за вызначаную колькасць радкоў. "
-"Калі ж гэты лік роўны 0 ці меншы, для гэтага ўзроўню маштабавання не будзе "
-"ўжыта ніякіх абмежаванняў. Таксама прымаецца прадзвызначаны элемент у форме \"Цэлы лік\", "
-"без вызначэння пэўнага ўзроўню маштабавання. Такі элемент вызначае максімальную "
-"колькасць радкоў для ўсіх узроўняў маштабавання. Напрыклад, 0: заўсёды паказваць надта доўгія назвы файлаў; "
-"3: скарачаць назвы, калі яны займаюць больш за тры радкі; smallest:5,smaller:4,0: "
-"скарачаць назвы, калі яны займаюць больш за пяць радкоў для ўзроўню маштабавання \"smallest\", "
-"а таксама скарачаць іх, калі яны займаюць больш за чатыры радкі для ўзроўню \"smaller\". "
-"Прытым не трэба скарачаць назвы для іншых узроўняў маштабавання. Магчымыя ўзроўні маштабавання: "
-"smallest (33%), smaller (50%), small (66%), standard (100%), large (150%), "
-"larger (200%), largest (400%)"
+"назваў файлаў на шматкроп'і, у залежнасці ад узроўню маштабавання. Кожны "
+"элемент спіса мусіць мець наступную форму: \"Узровень маштабавання:Цэлы лік"
+"\". Для кожнага з узроўняў маштабавання, калі цэлы лік большы за 0, назва "
+"файла не зойме месца больш за вызначаную колькасць радкоў. Калі ж гэты лік "
+"роўны 0 ці меншы, для гэтага ўзроўню маштабавання не будзе ўжыта ніякіх "
+"абмежаванняў. Таксама прымаецца прадзвызначаны элемент у форме \"Цэлы лік\", "
+"без вызначэння пэўнага ўзроўню маштабавання. Такі элемент вызначае "
+"максімальную колькасць радкоў для ўсіх узроўняў маштабавання. Напрыклад, 0: "
+"заўсёды паказваць надта доўгія назвы файлаў; 3: скарачаць назвы, калі яны "
+"займаюць больш за тры радкі; smallest:5,smaller:4,0: скарачаць назвы, калі "
+"яны займаюць больш за пяць радкоў для ўзроўню маштабавання \"smallest\", а "
+"таксама скарачаць іх, калі яны займаюць больш за чатыры радкі для ўзроўню "
+"\"smaller\". Прытым не трэба скарачаць назвы для іншых узроўняў "
+"маштабавання. Магчымыя ўзроўні маштабавання: smallest (33%), smaller (50%), "
+"small (66%), standard (100%), large (150%), larger (200%), largest (400%)"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:48
 msgid "Default list zoom level"
@@ -2340,8 +2342,7 @@ msgstr "Значок сметніцы на стале"
 msgid ""
 "If this is set to true, an icon linking to the trash will be put on the "
 "desktop."
-msgstr ""
-"Калі ўключана, значок, звязаны са сметніцай, будзе змешчаны на стале."
+msgstr "Калі ўключана, значок, звязаны са сметніцай, будзе змешчаны на стале."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:60
 msgid "Show mounted volumes on the desktop"
@@ -2352,7 +2353,8 @@ msgid ""
 "If this is set to true, icons linking to mounted volumes will be put on the "
 "desktop."
 msgstr ""
-"Калі ўключана, значкі, звязаныя з прымацаванымі дыскавымі тамамі, будзе змешчаны на стале."
+"Калі ўключана, значкі, звязаныя з прымацаванымі дыскавымі тамамі, будзе "
+"змешчаны на стале."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:62
 msgid "Network Servers icon visible on the desktop"
@@ -2363,7 +2365,8 @@ msgid ""
 "If this is set to true, an icon linking to the Network Servers view will be "
 "put on the desktop."
 msgstr ""
-"Калі ўключана, значок, звязаны з сеткавымі серверамі, будзе змешчаны на стале."
+"Калі ўключана, значок, звязаны з сеткавымі серверамі, будзе змешчаны на "
+"стале."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:64
 msgid "Desktop home icon name"
@@ -2374,7 +2377,8 @@ msgid ""
 "This name can be set if you want a custom name for the home icon on the "
 "desktop."
 msgstr ""
-"Гэту назву можна вызначыць, калі вы хочаце бачыць незвычайны подпіс значка \"Дадому\" на стале."
+"Гэту назву можна вызначыць, калі вы хочаце бачыць незвычайны подпіс значка "
+"\"Дадому\" на стале."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:66
 msgid "Desktop trash icon name"
@@ -2385,7 +2389,8 @@ msgid ""
 "This name can be set if you want a custom name for the trash icon on the "
 "desktop."
 msgstr ""
-"Гэту назву можна вызначыць, калі вы хочаце бачыць незвычайны подпіс значка сметніцы на стале."
+"Гэту назву можна вызначыць, калі вы хочаце бачыць незвычайны подпіс значка "
+"сметніцы на стале."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:68
 msgid "Network servers icon name"
@@ -2396,7 +2401,8 @@ msgid ""
 "This name can be set if you want a custom name for the network servers icon "
 "on the desktop."
 msgstr ""
-"Гэту назву можна вызначыць, калі вы хочаце бачыць незвычайны подпіс значка сеткавых сервераў на стале."
+"Гэту назву можна вызначыць, калі вы хочаце бачыць незвычайны подпіс значка "
+"сеткавых сервераў на стале."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:70
 msgid ""
@@ -2405,9 +2411,11 @@ msgid ""
 "not exceed the given number of lines. If the number is 0 or smaller, no "
 "limit is imposed on the number of displayed lines."
 msgstr ""
-"Цэлы лік, які вызначае, як трэба скарачаць надта доўгія назвы файлаў на стале (з дапамогай шматкроп'яў). "
-"Калі гэты лік большы за 0, назва файла не будзе займаць больш радкоў, чым вызначана гэтым значэннем. "
-"Калі ж гэты лік роўны 0 ці меншы, для колькасці занятых радкоў не будуць ужытыя хоць якія абмежаванні."
+"Цэлы лік, які вызначае, як трэба скарачаць надта доўгія назвы файлаў на "
+"стале (з дапамогай шматкроп'яў). Калі гэты лік большы за 0, назва файла не "
+"будзе займаць больш радкоў, чым вызначана гэтым значэннем. Калі ж гэты лік "
+"роўны 0 ці меншы, для колькасці занятых радкоў не будуць ужытыя хоць якія "
+"абмежаванні."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:71
 msgid "Fade the background on change"
@@ -2417,8 +2425,7 @@ msgstr "Зацямняць фон пры яго змяненні"
 msgid ""
 "If set to true, then Nautilus will use a fade effect to change the desktop "
 "background."
-msgstr ""
-"Калі ўключана, Наўтылус будзе зацямняць фон стала пры яго змяненні."
+msgstr "Калі ўключана, Наўтылус будзе зацямняць фон стала пры яго змяненні."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:73
 msgid "The geometry string for a navigation window."
@@ -2671,7 +2678,7 @@ msgid "Bookmarks"
 msgstr "Закладкі"
 
 #: ../src/nautilus-bookmarks-window.ui.h:1
-#: ../src/nautilus-places-sidebar.c:2669
+#: ../src/nautilus-places-sidebar.c:2644
 msgid "Remove"
 msgstr "Выдаліць"
 
@@ -2958,7 +2965,7 @@ msgstr "Загад"
 
 #. hardcode "Desktop"
 #: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:270
-#: ../src/nautilus-places-sidebar.c:578
+#: ../src/nautilus-places-sidebar.c:553
 msgid "Desktop"
 msgstr "Стол"
 
@@ -3145,8 +3152,10 @@ msgstr "Пры адкрыцці паказваць _выканальныя тэ�
 msgid "_Ask each time"
 msgstr "_Штораз пытацца"
 
+#. trash
 #: ../src/nautilus-file-management-properties.ui.h:19
-#: ../src/nautilus-places-sidebar.c:592 ../src/nautilus-trash-bar.c:194
+#: ../src/nautilus-places-sidebar.c:567
+#: ../src/nautilus-shell-search-provider.c:354 ../src/nautilus-trash-bar.c:194
 msgid "Trash"
 msgstr "Сметніца"
 
@@ -3625,57 +3634,57 @@ msgstr "Закрыць картку"
 msgid "Devices"
 msgstr "Прыстасаванні"
 
-#: ../src/nautilus-places-sidebar.c:548
+#: ../src/nautilus-places-sidebar.c:523
 msgid "Places"
 msgstr "Месцы"
 
-#: ../src/nautilus-places-sidebar.c:555
+#: ../src/nautilus-places-sidebar.c:530
 msgid "Recent"
 msgstr "Нядаўняе"
 
-#: ../src/nautilus-places-sidebar.c:557
+#: ../src/nautilus-places-sidebar.c:532
 msgid "Recent files"
 msgstr "Нядаўнія файлы"
 
 #. tooltip
-#: ../src/nautilus-places-sidebar.c:568 ../src/nautilus-window-menus.c:535
+#: ../src/nautilus-places-sidebar.c:543 ../src/nautilus-window-menus.c:535
 msgid "Open your personal folder"
 msgstr "Адкрыць асабістую папку"
 
-#: ../src/nautilus-places-sidebar.c:580
+#: ../src/nautilus-places-sidebar.c:555
 msgid "Open the contents of your desktop in a folder"
 msgstr "Адкрыць змесціва стала ў рэжыме папкі"
 
-#: ../src/nautilus-places-sidebar.c:594
+#: ../src/nautilus-places-sidebar.c:569
 msgid "Open the trash"
 msgstr "Адкрыць сметніцу"
 
-#: ../src/nautilus-places-sidebar.c:646 ../src/nautilus-places-sidebar.c:671
-#: ../src/nautilus-places-sidebar.c:849
+#: ../src/nautilus-places-sidebar.c:621 ../src/nautilus-places-sidebar.c:646
+#: ../src/nautilus-places-sidebar.c:824
 #, c-format
 msgid "Mount and open %s"
 msgstr "Прымацаваць і адкрыць %s"
 
-#: ../src/nautilus-places-sidebar.c:746
+#: ../src/nautilus-places-sidebar.c:721
 msgid "Open the contents of the File System"
 msgstr "Адкрыць файлавую сістэму"
 
-#: ../src/nautilus-places-sidebar.c:827
+#: ../src/nautilus-places-sidebar.c:802
 msgid "Network"
 msgstr "Сетка"
 
-#: ../src/nautilus-places-sidebar.c:833
+#: ../src/nautilus-places-sidebar.c:808
 msgid "Browse Network"
 msgstr "Агляд сеткі"
 
-#: ../src/nautilus-places-sidebar.c:835
+#: ../src/nautilus-places-sidebar.c:810
 msgid "Browse the contents of the network"
 msgstr "Агляд змесціва сеткі"
 
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1656 ../src/nautilus-places-sidebar.c:2718
+#: ../src/nautilus-places-sidebar.c:1631 ../src/nautilus-places-sidebar.c:2693
 #: ../src/nautilus-view.c:7282 ../src/nautilus-view.c:7306
 #: ../src/nautilus-view.c:7378 ../src/nautilus-view.c:7988
 #: ../src/nautilus-view.c:7992 ../src/nautilus-view.c:8075
@@ -3686,7 +3695,7 @@ msgstr "_Запусціць"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1657 ../src/nautilus-places-sidebar.c:2725
+#: ../src/nautilus-places-sidebar.c:1632 ../src/nautilus-places-sidebar.c:2700
 #: ../src/nautilus-view.c:7286 ../src/nautilus-view.c:7310
 #: ../src/nautilus-view.c:7382 ../src/nautilus-view.c:8017
 #: ../src/nautilus-view.c:8104 ../src/nautilus-view.c:8206
@@ -3695,124 +3704,124 @@ msgid "_Stop"
 msgstr "_Спыніць"
 
 #. start() for type G_DRIVE_START_STOP_TYPE_SHUTDOWN is normally not used
-#: ../src/nautilus-places-sidebar.c:1662
+#: ../src/nautilus-places-sidebar.c:1637
 msgid "_Power On"
 msgstr "_Уключыць"
 
-#: ../src/nautilus-places-sidebar.c:1663 ../src/nautilus-view.c:8021
+#: ../src/nautilus-places-sidebar.c:1638 ../src/nautilus-view.c:8021
 #: ../src/nautilus-view.c:8108 ../src/nautilus-view.c:8210
 msgid "_Safely Remove Drive"
 msgstr "_Карэктна адлучыць прывод"
 
-#: ../src/nautilus-places-sidebar.c:1666
+#: ../src/nautilus-places-sidebar.c:1641
 msgid "_Connect Drive"
 msgstr "_Далучыць прывод"
 
-#: ../src/nautilus-places-sidebar.c:1667
+#: ../src/nautilus-places-sidebar.c:1642
 msgid "_Disconnect Drive"
 msgstr "_Адлучыць прывод"
 
-#: ../src/nautilus-places-sidebar.c:1670
+#: ../src/nautilus-places-sidebar.c:1645
 msgid "_Start Multi-disk Device"
 msgstr "_Запусціць шматдыскавы прывод"
 
-#: ../src/nautilus-places-sidebar.c:1671
+#: ../src/nautilus-places-sidebar.c:1646
 msgid "_Stop Multi-disk Device"
 msgstr "_Спыніць шматдыскавы прывод"
 
 #. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
-#: ../src/nautilus-places-sidebar.c:1675 ../src/nautilus-view.c:8091
+#: ../src/nautilus-places-sidebar.c:1650 ../src/nautilus-view.c:8091
 #: ../src/nautilus-view.c:8193
 msgid "_Unlock Drive"
 msgstr "_Разблакіраваць прывод"
 
-#: ../src/nautilus-places-sidebar.c:1676 ../src/nautilus-view.c:8033
+#: ../src/nautilus-places-sidebar.c:1651 ../src/nautilus-view.c:8033
 #: ../src/nautilus-view.c:8120 ../src/nautilus-view.c:8222
 msgid "_Lock Drive"
 msgstr "_Заблакіраваць прывод"
 
-#: ../src/nautilus-places-sidebar.c:1753 ../src/nautilus-places-sidebar.c:2352
+#: ../src/nautilus-places-sidebar.c:1728 ../src/nautilus-places-sidebar.c:2327
 #, c-format
 msgid "Unable to start %s"
 msgstr "Не ўдалося запусціць %s"
 
-#: ../src/nautilus-places-sidebar.c:2106 ../src/nautilus-places-sidebar.c:2134
-#: ../src/nautilus-places-sidebar.c:2162
+#: ../src/nautilus-places-sidebar.c:2081 ../src/nautilus-places-sidebar.c:2109
+#: ../src/nautilus-places-sidebar.c:2137
 #, c-format
 msgid "Unable to eject %s"
 msgstr "Не ўдалося выняць %s"
 
-#: ../src/nautilus-places-sidebar.c:2307
+#: ../src/nautilus-places-sidebar.c:2282
 #, c-format
 msgid "Unable to poll %s for media changes"
 msgstr "Не ўдалося апытаць %s аб магчымых зменах"
 
-#: ../src/nautilus-places-sidebar.c:2407
+#: ../src/nautilus-places-sidebar.c:2382
 #, c-format
 msgid "Unable to stop %s"
 msgstr "Не ўдалося спыніць %s"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2640 ../src/nautilus-view.c:7154
+#: ../src/nautilus-places-sidebar.c:2615 ../src/nautilus-view.c:7154
 #: ../src/nautilus-view.c:8576
 msgid "_Open"
 msgstr "_Адкрыць"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2648 ../src/nautilus-view.c:7166
+#: ../src/nautilus-places-sidebar.c:2623 ../src/nautilus-view.c:7166
 #: ../src/nautilus-view.c:7336 ../src/nautilus-view.c:8301
 #: ../src/nautilus-view.c:8629
 msgid "Open in New _Tab"
 msgstr "Адкрыць у _новай картцы"
 
-#: ../src/nautilus-places-sidebar.c:2655 ../src/nautilus-view.c:8293
+#: ../src/nautilus-places-sidebar.c:2630 ../src/nautilus-view.c:8293
 #: ../src/nautilus-view.c:8609
 msgid "Open in New _Window"
 msgstr "Адкрыць у н_овым акне"
 
-#: ../src/nautilus-places-sidebar.c:2663
+#: ../src/nautilus-places-sidebar.c:2638
 msgid "_Add Bookmark"
 msgstr "_Дадаць закладку"
 
-#: ../src/nautilus-places-sidebar.c:2678
+#: ../src/nautilus-places-sidebar.c:2653
 msgid "Rename..."
 msgstr "Пераназваць..."
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2690 ../src/nautilus-view.c:7270
+#: ../src/nautilus-places-sidebar.c:2665 ../src/nautilus-view.c:7270
 #: ../src/nautilus-view.c:7294 ../src/nautilus-view.c:7366
 msgid "_Mount"
 msgstr "_Прымацаваць"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2697 ../src/nautilus-view.c:7274
+#: ../src/nautilus-places-sidebar.c:2672 ../src/nautilus-view.c:7274
 #: ../src/nautilus-view.c:7298 ../src/nautilus-view.c:7370
 msgid "_Unmount"
 msgstr "_Адмацаваць"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2704 ../src/nautilus-view.c:7278
+#: ../src/nautilus-places-sidebar.c:2679 ../src/nautilus-view.c:7278
 #: ../src/nautilus-view.c:7302 ../src/nautilus-view.c:7374
 msgid "_Eject"
 msgstr "_Выняць"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2711 ../src/nautilus-view.c:7290
+#: ../src/nautilus-places-sidebar.c:2686 ../src/nautilus-view.c:7290
 #: ../src/nautilus-view.c:7314 ../src/nautilus-view.c:7386
 msgid "_Detect Media"
 msgstr "_Апазнаць носьбіт"
 
-#: ../src/nautilus-places-sidebar.c:2746
+#: ../src/nautilus-places-sidebar.c:2721
 msgid "_Properties"
 msgstr "_Уласцівасці"
 
-#: ../src/nautilus-places-sidebar.c:3275
+#: ../src/nautilus-places-sidebar.c:3250
 msgid "Computer"
 msgstr "Камп'ютар"
 
@@ -5020,9 +5029,9 @@ msgstr "Выкінуць адкрытую папку ў сметніцу"
 #, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Новая папка з вылучаным (%'d элемент)"
+msgstr[1] "Новая папка з вылучаным (%'d элементы)"
+msgstr[2] "Новая папка з вылучаным (%'d элементаў)"
 
 #: ../src/nautilus-view.c:8563
 #, c-format
