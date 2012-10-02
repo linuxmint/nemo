@@ -19,8 +19,8 @@ msgstr ""
 "Project-Id-Version: nautilus master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-09-14 23:06+0000\n"
-"PO-Revision-Date: 2012-09-24 21:51+0900\n"
-"Last-Translator: Jiro Matsuzawa <jmatsuzawa@gnome.org>\n"
+"PO-Revision-Date: 2012-10-02 21:09+0900\n"
+"Last-Translator: Yasumichi Akahoshi <yasumichi@vinelinux.org>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -401,7 +401,7 @@ msgstr "%Y年%b%d日"
 
 #: ../libnautilus-private/nautilus-file.c:4446
 msgid "%a, %b %e %Y %I:%M:%S %p"
-msgstr "%Y年%b%e日(%a) %H:%M:%S"
+msgstr "%Y年%b%e日(%a) %p%I:%M:%S"
 
 #: ../libnautilus-private/nautilus-file.c:4447
 msgid "%a, %b %e %Y %T"
