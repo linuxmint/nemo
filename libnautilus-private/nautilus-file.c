@@ -47,7 +47,6 @@
 #include "nautilus-vfs-file.h"
 #include "nautilus-file-undo-operations.h"
 #include "nautilus-file-undo-manager.h"
-#include "nautilus-saved-search-file.h"
 #include <eel/eel-debug.h>
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-gtk-extensions.h>
@@ -529,8 +528,6 @@ nautilus_file_new_from_filename (NautilusDirectory *directory,
 			 * that references a file like this. (See #349840) */
 			file = NAUTILUS_FILE (g_object_new (NAUTILUS_TYPE_VFS_FILE, NULL));
 		}
-	} else if (g_str_has_suffix (filename, NAUTILUS_SAVED_SEARCH_EXTENSION)) {
-		file = NAUTILUS_FILE (g_object_new (NAUTILUS_TYPE_SAVED_SEARCH_FILE, NULL));
 	} else {
 		file = NAUTILUS_FILE (g_object_new (NAUTILUS_TYPE_VFS_FILE, NULL));
 	}
@@ -633,18 +630,11 @@ nautilus_file_new_from_info (NautilusDirectory *directory,
 			     GFileInfo *info)
 {
 	NautilusFile *file;
-	const char *mime_type;
 
 	g_return_val_if_fail (NAUTILUS_IS_DIRECTORY (directory), NULL);
 	g_return_val_if_fail (info != NULL, NULL);
 
-	mime_type = g_file_info_get_content_type (info);
-	if (g_strcmp0 (mime_type, NAUTILUS_SAVED_SEARCH_MIMETYPE) == 0) {
-		file = NAUTILUS_FILE (g_object_new (NAUTILUS_TYPE_SAVED_SEARCH_FILE, NULL));
-	} else {
-		file = NAUTILUS_FILE (g_object_new (NAUTILUS_TYPE_VFS_FILE, NULL));
-	}
-
+	file = NAUTILUS_FILE (g_object_new (NAUTILUS_TYPE_VFS_FILE, NULL));
 	file->details->directory = nautilus_directory_ref (directory);
 
 	update_info_and_name (file, info);

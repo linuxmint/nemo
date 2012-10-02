@@ -152,8 +152,6 @@ libnautilus_private_la_SOURCES = \
 	nautilus-program-choosing.h \
 	nautilus-recent.c \
 	nautilus-recent.h \
-	nautilus-saved-search-file.c \
-	nautilus-saved-search-file.h \
 	nautilus-search-directory.c \
 	nautilus-search-directory.h \
 	nautilus-search-directory-file.c \
