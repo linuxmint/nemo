@@ -1731,6 +1731,8 @@ stop_cell_editing (NautilusListView *list_view)
 	    GTK_IS_CELL_EDITABLE (list_view->details->editable_widget)) {
 		gtk_cell_editable_editing_done (list_view->details->editable_widget);
 	}
+
+	g_clear_object (&list_view->details->renaming_file);
 }
 
 static void
