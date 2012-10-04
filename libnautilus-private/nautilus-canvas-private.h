@@ -210,9 +210,6 @@ struct NautilusCanvasContainerDetails {
 	gboolean single_click_mode;
 	gboolean auto_layout;
 
-	/* Layout mode */
-	NautilusCanvasLayoutMode layout_mode;
-
 	/* Label position */
 	NautilusCanvasLabelPosition label_position;
 

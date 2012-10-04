@@ -1195,43 +1195,6 @@ lay_down_one_line (NautilusCanvasContainer *container,
 }
 
 static void
-lay_down_one_column (NautilusCanvasContainer *container,
-		     GList *line_start,
-		     GList *line_end,
-		     double x,
-		     double y_start,
-		     double y_iter,
-		     GArray *positions)
-{
-	GList *p;
-	NautilusCanvasIcon *icon;
-	double y;
-	IconPositions *position;
-	int i;
-	gboolean is_rtl;
-
-        is_rtl = nautilus_canvas_container_is_layout_rtl (container);
-
-	/* Lay out the icons along the baseline. */
-	y = y_start;
-	i = 0;
-	for (p = line_start; p != line_end; p = p->next) {
-		icon = p->data;
-
-		position = &g_array_index (positions, IconPositions, i++);
-
-		icon_set_position
-			(icon,
-			 is_rtl ? get_mirror_x_position (container, icon, x + position->x_offset) : x + position->x_offset,
-			 y + position->y_offset);
-
-		icon->saved_ltr_x = is_rtl ? get_mirror_x_position (container, icon, icon->x) : icon->x;
-
-		y += y_iter;
-	}
-}
-
-static void
 lay_down_icons_horizontal (NautilusCanvasContainer *container,
 			     GList *icons,
 			     double start_y)
@@ -1330,171 +1293,6 @@ lay_down_icons_horizontal (NautilusCanvasContainer *container,
 		y += ICON_PAD_TOP + max_height_above;
 
 		lay_down_one_line (container, line_start, NULL, y, max_height_above, positions, TRUE);
-	}
-
-	g_array_free (positions, TRUE);
-}
-
-static void
-get_max_icon_dimensions (GList *icon_start,
-			 GList *icon_end,
-			 double *max_icon_width,
-			 double *max_icon_height,
-			 double *max_text_width,
-			 double *max_text_height,
-			 double *max_bounds_height)
-{
-	NautilusCanvasIcon *icon;
-	EelDRect icon_bounds;
-	EelDRect text_bounds;
-	GList *p;
-	double y1, y2;
-
-	*max_icon_width = *max_text_width = 0.0;
-	*max_icon_height = *max_text_height = 0.0;
-	*max_bounds_height = 0.0;
-
-	/* Would it be worth caching these bounds for the next loop? */
-	for (p = icon_start; p != icon_end; p = p->next) {
-		icon = p->data;
-
-		icon_bounds = nautilus_canvas_item_get_icon_rectangle (icon->item);
-		*max_icon_width = MAX (*max_icon_width, ceil (icon_bounds.x1 - icon_bounds.x0));
-		*max_icon_height = MAX (*max_icon_height, ceil (icon_bounds.y1 - icon_bounds.y0));
-
-		text_bounds = nautilus_canvas_item_get_text_rectangle (icon->item, TRUE);
-		*max_text_width = MAX (*max_text_width, ceil (text_bounds.x1 - text_bounds.x0));
-		*max_text_height = MAX (*max_text_height, ceil (text_bounds.y1 - text_bounds.y0));
-
-		nautilus_canvas_item_get_bounds_for_layout (icon->item,
-								   NULL, &y1,
-								   NULL, &y2);
-		*max_bounds_height = MAX (*max_bounds_height, y2 - y1);
-	}
-}
-
-static void
-lay_down_icons_vertical (NautilusCanvasContainer *container,
-			   GList *icons,
-			   double start_y)
-{
-	GList *p, *line_start;
-	NautilusCanvasIcon *icon;
-	double x, canvas_height;
-	GArray *positions;
-	IconPositions *position;
-	EelDRect icon_bounds;
-	EelDRect text_bounds;
-	GtkAllocation allocation;
-
-	double line_height;
-
-	double max_height;
-	double max_height_with_borders;
-	double max_width;
-	double max_width_in_column;
-
-	double max_bounds_height;
-	double max_bounds_height_with_borders;
-
-	double max_text_width, max_icon_width;
-	double max_text_height, max_icon_height;
-	int height;
-	int i;
-
-	g_assert (NAUTILUS_IS_CANVAS_CONTAINER (container));
-
-	if (icons == NULL) {
-		return;
-	}
-
-	positions = g_array_new (FALSE, FALSE, sizeof (IconPositions));
-	gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
-
-	/* Lay out icons a column at a time. */
-	canvas_height = CANVAS_HEIGHT(container, allocation);
-
-	max_icon_width = max_text_width = 0.0;
-	max_icon_height = max_text_height = 0.0;
-	max_bounds_height = 0.0;
-
-	get_max_icon_dimensions (icons, NULL,
-				   &max_icon_width, &max_icon_height,
-				   &max_text_width, &max_text_height,
-				   &max_bounds_height);
-
-	max_width = max_icon_width + max_text_width;
-	max_height = MAX (max_icon_height, max_text_height);
-	max_height_with_borders = ICON_PAD_TOP + max_height;
-
-	max_bounds_height_with_borders = ICON_PAD_TOP + max_bounds_height;
-
-	line_height = ICON_PAD_TOP;
-	line_start = icons;
-	x = 0;
-	i = 0;
-
-	max_width_in_column = 0.0;
-
-	for (p = icons; p != NULL; p = p->next) {
-		icon = p->data;
-
-		/* If this icon doesn't fit, it's time to lay out the column that's queued up. */
-
-		/* We use the bounds height here, since for wrapping we also want to consider
-		 * overlapping emblems at the bottom. We may wrap a little bit too early since
-		 * the icon with the max. bounds height may actually not be in the last row, but
-		 * it is better than visual glitches
-		 */
-		if (line_start != p && line_height + (max_bounds_height_with_borders-1) >= canvas_height ) {
-			x += ICON_PAD_LEFT;
-
-			/* correctly set (per-column) width */
-			for (i = 0; i < (int) positions->len; i++) {
-				position = &g_array_index (positions, IconPositions, i);
-				position->width = max_width_in_column;
-			}
-
-			lay_down_one_column (container, line_start, p, x, CONTAINER_PAD_TOP, max_height_with_borders, positions);
-
-			/* Advance to next column. */
-			x += max_width_in_column + ICON_PAD_RIGHT;
-
-			line_height = ICON_PAD_TOP;
-			line_start = p;
-			i = 0;
-
-			max_width_in_column = 0;
-		}
-
-		icon_bounds = nautilus_canvas_item_get_icon_rectangle (icon->item);
-		text_bounds = nautilus_canvas_item_get_text_rectangle (icon->item, TRUE);
-
-		max_width_in_column = MAX (max_width_in_column,
-					   ceil (icon_bounds.x1 - icon_bounds.x0) +
-					   ceil (text_bounds.x1 - text_bounds.x0));
-
-		g_array_set_size (positions, i + 1);
-		position = &g_array_index (positions, IconPositions, i++);
-
-		position->width = max_width;
-		position->height = max_height;
-		position->y_offset = ICON_PAD_TOP;
-		position->x_offset = ICON_PAD_LEFT;
-
-		position->x_offset += max_icon_width - ceil (icon_bounds.x1 - icon_bounds.x0);
-
-		height = MAX (ceil (icon_bounds.y1 - icon_bounds.y0), ceil(text_bounds.y1 - text_bounds.y0));
-		position->y_offset += (max_height - height) / 2;
-
-		/* Add this icon. */
-		line_height += max_height_with_borders;
-	}
-
-	/* Lay down that last column of icons. */
-	if (line_start != NULL) {
-		x += ICON_PAD_LEFT;
-		lay_down_one_column (container, line_start, NULL, x, CONTAINER_PAD_TOP, max_height_with_borders, positions);
 	}
 
 	g_array_free (positions, TRUE);
@@ -2046,25 +1844,11 @@ lay_down_icons_vertical_desktop (NautilusCanvasContainer *container, GList *icon
 static void
 lay_down_icons (NautilusCanvasContainer *container, GList *icons, double start_y)
 {
-	switch (container->details->layout_mode)
-		{
-		case NAUTILUS_CANVAS_LAYOUT_L_R_T_B:
-		case NAUTILUS_CANVAS_LAYOUT_R_L_T_B:
-			lay_down_icons_horizontal (container, icons, start_y);
-			break;
-		
-		case NAUTILUS_CANVAS_LAYOUT_T_B_L_R:
-		case NAUTILUS_CANVAS_LAYOUT_T_B_R_L:
-			if (nautilus_canvas_container_get_is_desktop (container)) {
-				lay_down_icons_vertical_desktop (container, icons);
-			} else {
-				lay_down_icons_vertical (container, icons, start_y);
-			}
-			break;
-		
-		default:
-			g_assert_not_reached ();
-		}
+	if (container->details->is_desktop) {
+		lay_down_icons_vertical_desktop (container, icons);
+	} else {
+		lay_down_icons_horizontal (container, icons, start_y);
+	}
 }
 
 static void
@@ -7281,21 +7065,6 @@ nautilus_canvas_container_set_keep_aligned (NautilusCanvasContainer *container,
 }
 
 void
-nautilus_canvas_container_set_layout_mode (NautilusCanvasContainer *container,
-					   NautilusCanvasLayoutMode mode)
-{
-	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
-
-	container->details->layout_mode = mode;
-	invalidate_labels (container);
-
-	container->details->needs_resort = TRUE;
-	redo_layout (container);
-
-	g_signal_emit (container, signals[LAYOUT_CHANGED], 0);
-}
-
-void
 nautilus_canvas_container_set_label_position (NautilusCanvasContainer *container,
 					      NautilusCanvasLabelPosition position)
 {
@@ -8362,8 +8131,7 @@ nautilus_canvas_container_is_layout_rtl (NautilusCanvasContainer *container)
 {
 	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), 0);
 
-	return container->details->layout_mode == NAUTILUS_CANVAS_LAYOUT_T_B_R_L ||
-		container->details->layout_mode == NAUTILUS_CANVAS_LAYOUT_R_L_T_B;
+	return (gtk_widget_get_direction (GTK_WIDGET (container)) == GTK_TEXT_DIR_RTL);
 }
 
 gboolean
@@ -8371,8 +8139,8 @@ nautilus_canvas_container_is_layout_vertical (NautilusCanvasContainer *container
 {
 	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), FALSE);
 
-	return (container->details->layout_mode == NAUTILUS_CANVAS_LAYOUT_T_B_L_R ||
-		container->details->layout_mode == NAUTILUS_CANVAS_LAYOUT_T_B_R_L);
+	/* we only do vertical layout in the desktop nowadays */
+	return container->details->is_desktop;
 }
 
 int

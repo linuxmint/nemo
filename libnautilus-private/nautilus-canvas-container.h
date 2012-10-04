@@ -57,13 +57,6 @@ typedef struct {
 } NautilusCanvasPosition;
 
 typedef enum {
-	NAUTILUS_CANVAS_LAYOUT_L_R_T_B,
-	NAUTILUS_CANVAS_LAYOUT_R_L_T_B,
-	NAUTILUS_CANVAS_LAYOUT_T_B_L_R,
-	NAUTILUS_CANVAS_LAYOUT_T_B_R_L
-} NautilusCanvasLayoutMode;
-
-typedef enum {
 	NAUTILUS_CANVAS_LABEL_POSITION_UNDER,
 } NautilusCanvasLabelPosition;
 
@@ -273,8 +266,6 @@ void              nautilus_canvas_container_set_auto_layout               (Nauti
 gboolean          nautilus_canvas_container_is_keep_aligned               (NautilusCanvasContainer  *container);
 void              nautilus_canvas_container_set_keep_aligned              (NautilusCanvasContainer  *container,
 									   gboolean                keep_aligned);
-void              nautilus_canvas_container_set_layout_mode               (NautilusCanvasContainer  *container,
-									   NautilusCanvasLayoutMode  mode);
 void              nautilus_canvas_container_set_label_position            (NautilusCanvasContainer  *container,
 									   NautilusCanvasLabelPosition pos);
 void              nautilus_canvas_container_sort                          (NautilusCanvasContainer  *container);

@@ -2202,12 +2202,6 @@ nautilus_canvas_view_init (NautilusCanvasView *canvas_view)
 
 	canvas_container = create_canvas_container (canvas_view);
 
-	/* Set our default layout mode */
-	nautilus_canvas_container_set_layout_mode (canvas_container,
-						 gtk_widget_get_direction (GTK_WIDGET(canvas_container)) == GTK_TEXT_DIR_RTL ?
-						 NAUTILUS_CANVAS_LAYOUT_R_L_T_B :
-						 NAUTILUS_CANVAS_LAYOUT_L_R_T_B);
-
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_DEFAULT_SORT_ORDER,
 				  G_CALLBACK (default_sort_order_changed_callback),
@@ -2226,13 +2220,13 @@ nautilus_canvas_view_init (NautilusCanvasView *canvas_view)
 				  G_CALLBACK (text_attribute_names_changed_callback),
 				  canvas_view);
 
-	g_signal_connect_object (get_canvas_container (canvas_view), "handle_netscape_url",
+	g_signal_connect_object (canvas_container, "handle_netscape_url",
 				 G_CALLBACK (canvas_view_handle_netscape_url), canvas_view, 0);
-	g_signal_connect_object (get_canvas_container (canvas_view), "handle_uri_list",
+	g_signal_connect_object (canvas_container, "handle_uri_list",
 				 G_CALLBACK (canvas_view_handle_uri_list), canvas_view, 0);
-	g_signal_connect_object (get_canvas_container (canvas_view), "handle_text",
+	g_signal_connect_object (canvas_container, "handle_text",
 				 G_CALLBACK (canvas_view_handle_text), canvas_view, 0);
-	g_signal_connect_object (get_canvas_container (canvas_view), "handle_raw",
+	g_signal_connect_object (canvas_container, "handle_raw",
 				 G_CALLBACK (canvas_view_handle_raw), canvas_view, 0);
 
 	canvas_view->details->clipboard_handler_id =

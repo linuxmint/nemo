@@ -582,12 +582,6 @@ nautilus_desktop_canvas_view_init (NautilusDesktopCanvasView *desktop_canvas_vie
 	nautilus_view_set_show_foreign (NAUTILUS_VIEW (desktop_canvas_view),
 					FALSE);
 	
-	/* Set our default layout mode */
-	nautilus_canvas_container_set_layout_mode (canvas_container,
-						 gtk_widget_get_direction (GTK_WIDGET(canvas_container)) == GTK_TEXT_DIR_RTL ?
-						 NAUTILUS_CANVAS_LAYOUT_T_B_R_L :
-						 NAUTILUS_CANVAS_LAYOUT_T_B_L_R);
-
 	g_signal_connect_object (canvas_container, "middle_click",
 				 G_CALLBACK (nautilus_desktop_canvas_view_handle_middle_click), desktop_canvas_view, 0);
 	g_signal_connect_object (desktop_canvas_view, "realize",
