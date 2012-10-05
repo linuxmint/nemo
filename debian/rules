@@ -7,8 +7,10 @@ include /usr/share/cdbs/1/class/gnome.mk
 include /usr/share/gnome-pkg-tools/1/rules/gnome-version.mk
 include /usr/share/gnome-pkg-tools/1/rules/gnome-get-source.mk
 
+DEB_DH_AUTORECONF_ARGS=./autogen.sh
 DEB_CONFIGURE_EXTRA_FLAGS += --libexecdir=/usr/lib/nemo \
                              --disable-update-mimedb \
+                             --enable-gtk-doc
 #                             --disable-packagekit \
                              --enable-introspection \
                              --disable-appindicator
