@@ -1,1 +1,1 @@
-usr/lib/libnemo-extension*.so.*
+usr/lib/*/libnemo-extension*.so.*

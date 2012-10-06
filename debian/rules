@@ -1,10 +1,10 @@
 #!/usr/bin/make -f
 
-CONFIGURE_EXTRA_FLAGS = --libexecdir=/usr/lib/nemo \
+CONFIGURE_EXTRA_FLAGS = --libexecdir=/usr/lib/$(DEB_HOST_MULTIARCH)/nemo \
                         --disable-update-mimedb \
 			--enable-gtk-doc
 
-export LDFLAGS+=-Wl,-z,defs -Wl,-O1 -Wl,--as-needed
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,-z,defs -Wl,-O1 -Wl,--as-needed
 
 
 %:
