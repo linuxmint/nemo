@@ -83,23 +83,37 @@ Description: file manager and graphical shell for GNOME - debugging version
  This development package contains unstripped binaries compiled with
  debugging symbols needed by gdb.
 
-Package: libnemo-extension1a
+Package: libnemo-extension1
 Architecture: any
 Section: libs
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends},
          ${shlibs:Depends}
-Replaces: libnemo-extension1
+Replaces: libnemo-extension1a (<< 1.0.3+nmu1)
+breaks: libnemo-extension1a (<< 1.0.3+nmu1)
 Description: libraries for nemo components - runtime version
  Nemo is the official file manager and graphical shell for the
  GNOME desktop.
  .
  This package contains a few runtime libraries needed by nemo' extensions.
 
+Package: libnemo-extension1a
+Architecture: any
+Section: oldlibs
+Depends: ${misc:Depends}, libnemo-extension1 (= ${binary:Version})
+Description: libraries for nemo components - runtime (transitional package)
+ Nemo is the official file manager and graphical shell for the
+ GNOME desktop.
+ .
+ This package is an empty package to make the ease the transition to the use
+ of libnemo-extension1 package. This package can be safely removed if the
+ packages providing nemo extensions stop depending on libnemo-extension1a
+ and use libnemo-extension1 instead. 
+
 Package: libnemo-extension-dev
 Architecture: any
 Section: libdevel
-Depends: libnemo-extension1a (= ${binary:Version}),
+Depends: libnemo-extension1 (= ${binary:Version}),
          gir1.2-nemo-3.0 (= ${binary:Version}),
          libglib2.0-dev (>= 2.31.9),
          libgtk-3-dev (>= 3.3.18),
