@@ -13,18 +13,18 @@
 # Kamil Páral <ripper42@gmail.com>, 2008.
 # Petr Kovar <pknbe@volny.cz>, 2008, 2009.
 # Tomas Bzatek <tbzatek@redhat.com>, 2009.
-# Marek Černocký <marek@manet.cz>, 2010.
 # Lucas Lommer <llommer@svn.gnome.org>, 2008, 2009, 2010, 2011, 2012.
 # Adam Matoušek <adydas95@gmail.com>, 2012
+# Marek Černocký <marek@manet.cz>, 2010, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: nautilus\n"
+"Project-Id-Version: nautilus gnome-3.6\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-09-18 17:03+0000\n"
-"PO-Revision-Date: 2012-09-18 02:03+0100\n"
-"Last-Translator: Lucas Lommer <llommer@svn.gnome.org>\n"
+"POT-Creation-Date: 2012-09-25 23:13+0000\n"
+"PO-Revision-Date: 2012-10-07 12:54+0200\n"
+"Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
@@ -46,8 +46,8 @@ msgstr "Připojit se k serveru"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:27
-#: ../src/nautilus-properties-window.c:4433 ../src/nautilus-window.c:1978
-#: ../src/nautilus-window.c:2189
+#: ../src/nautilus-properties-window.c:4433 ../src/nautilus-window.c:1976
+#: ../src/nautilus-window.c:2187
 msgid "Files"
 msgstr "Soubory"
 
@@ -403,34 +403,28 @@ msgstr "Nelze přejmenovat soubor plochy"
 #.
 #: ../libnautilus-private/nautilus-file.c:4449
 msgid "%R"
-msgstr ""
+msgstr "%-H:%M"
 
 #: ../libnautilus-private/nautilus-file.c:4450
-#, fuzzy
-#| msgid "today, %-I:%M %p"
 msgid "%-I:%M %P"
 msgstr "%-H:%M"
 
 #: ../libnautilus-private/nautilus-file.c:4451
 #: ../libnautilus-private/nautilus-file.c:4452
 msgid "%b %-e"
-msgstr ""
+msgstr "%-e. %b"
 
 #: ../libnautilus-private/nautilus-file.c:4453
 msgid "%b %-d %Y"
 msgstr "%-d. %b %Y"
 
 #: ../libnautilus-private/nautilus-file.c:4454
-#, fuzzy
-#| msgid "%a, %b %-d %Y at %-I:%M:%S %p"
 msgid "%a, %b %e %Y %I:%M:%S %p"
-msgstr "%a, %-d. %b %Y v %-H:%M:%S"
+msgstr "%a, %-d. %b %Y %-H:%M:%S"
 
 #: ../libnautilus-private/nautilus-file.c:4455
-#, fuzzy
-#| msgid "%a, %b %-d %Y at %-I:%M %p"
 msgid "%a, %b %e %Y %T"
-msgstr "%a, %-d. %b %Y v %-H:%M"
+msgstr "%a, %-d. %b %Y %-H:%M"
 
 #: ../libnautilus-private/nautilus-file.c:4954
 #, c-format
@@ -535,7 +529,7 @@ msgstr "Archiv"
 
 #: ../libnautilus-private/nautilus-file.c:6177
 msgid "Markup"
-msgstr ""
+msgstr "Strukturovaný text"
 
 #: ../libnautilus-private/nautilus-file.c:6181
 #: ../src/nautilus-query-editor.c:418
@@ -2492,7 +2486,7 @@ msgstr "Odeslat soubory elektronickou poštou, systémem rychlých zpráv…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
 #: ../src/nautilus-application.c:227
-#: ../src/nautilus-window-manage-views.c:1654
+#: ../src/nautilus-window-manage-views.c:1582
 msgid "Oops! Something went wrong."
 msgstr "Jejda! Někde došlo k chybě."
 
@@ -3429,8 +3423,8 @@ msgid "Failed to load image information"
 msgstr "Nelze načíst informace o obrázku"
 
 #: ../src/nautilus-image-properties-page.c:655
-#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-manage-views.c:1200
-#: ../src/nautilus-window-slot.c:365
+#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-slot.c:371
+#: ../src/nautilus-window-slot.c:423
 msgid "Loading..."
 msgstr "Načítá se…"
 
@@ -4244,16 +4238,12 @@ msgid "Select Folder to Save Search In"
 msgstr "Vybrat složku pro uložení hledání"
 
 #: ../src/nautilus-view.c:2267
-#, fuzzy
-#| msgid ""
-#| "Nautilus 3.0 deprecated this directory and tried migrating this "
-#| "configuration to ~/.config/nautilus"
 msgid ""
 "Nautilus 3.6 deprecated this directory and tried migrating this "
 "configuration to ~/.local/share/nautilus"
 msgstr ""
 "V aplikaci Nautilus 3.6 je zavrženo použití této složky a bude proveden "
-"pokus o převedení konfigurace do ~/.config/nautilus"
+"pokus o převedení nastavení do ~/.local/share/nautilus"
 
 #: ../src/nautilus-view.c:2695
 msgid "Content View"
@@ -4424,10 +4414,8 @@ msgstr "Vytvořit novou prázdnou složku v této složce"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7145
-#, fuzzy
-#| msgid "_Invert Selection"
 msgid "New Folder with Selection"
-msgstr "_Invertovat výběr"
+msgstr "Nová složka s vybranými"
 
 #. tooltip
 #: ../src/nautilus-view.c:7146
@@ -5032,12 +5020,12 @@ msgid "Move the open folder to the Trash"
 msgstr "Přesunout otevřenou složku do koše"
 
 #: ../src/nautilus-view.c:8523
-#, fuzzy, c-format
+#, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
-msgstr[0] "Nová složka s výběrem (%'d položka)"
-msgstr[1] "Nová složka s výběrem (%'d položky)"
-msgstr[2] "Nová složka s výběrem (%'d položek)"
+msgstr[0] "Nová složka s vybranými (%'d položka)"
+msgstr[1] "Nová složka s výbranými (%'d položky)"
+msgstr[2] "Nová složka s výbranými (%'d položek)"
 
 #: ../src/nautilus-view.c:8563
 #, c-format
@@ -5093,23 +5081,23 @@ msgstr "Upuštěný text.txt"
 msgid "dropped data"
 msgstr "upuštěná data"
 
-#: ../src/nautilus-window.c:877
+#: ../src/nautilus-window.c:875
 msgid "_New Tab"
 msgstr "_Nová karta"
 
-#: ../src/nautilus-window.c:887 ../src/nautilus-window-menus.c:567
+#: ../src/nautilus-window.c:885 ../src/nautilus-window-menus.c:567
 msgid "Move Tab _Left"
 msgstr "Přesunout kartu v_levo"
 
-#: ../src/nautilus-window.c:895 ../src/nautilus-window-menus.c:570
+#: ../src/nautilus-window.c:893 ../src/nautilus-window-menus.c:570
 msgid "Move Tab _Right"
 msgstr "Přesunout kartu vp_ravo"
 
-#: ../src/nautilus-window.c:906
+#: ../src/nautilus-window.c:904
 msgid "_Close Tab"
 msgstr "_Zavřít kartu"
 
-#: ../src/nautilus-window.c:2162
+#: ../src/nautilus-window.c:2160
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5121,7 +5109,7 @@ msgstr ""
 "verze 2 této licence anebo (podle vlastního uvážení) kterékoliv pozdější "
 "verze."
 
-#: ../src/nautilus-window.c:2166
+#: ../src/nautilus-window.c:2164
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5132,7 +5120,7 @@ msgstr ""
 "neposkytují se ani odvozené záruky PRODEJNOSTI anebo VHODNOSTI PRO URČITÝ "
 "ÚČEL. Další podrobnosti hledejte v GNU General Public License."
 
-#: ../src/nautilus-window.c:2170
+#: ../src/nautilus-window.c:2168
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5145,11 +5133,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2185
+#: ../src/nautilus-window.c:2183
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "Copyright © %Id – %Id autoři programu Files"
 
-#: ../src/nautilus-window.c:2191
+#: ../src/nautilus-window.c:2189
 msgid "Access and organize your files."
 msgstr "Přístup a organizace vašich souborů"
 
@@ -5157,7 +5145,7 @@ msgstr "Přístup a organizace vašich souborů"
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2201
+#: ../src/nautilus-window.c:2199
 msgid "translator-credits"
 msgstr ""
 "Michal Bukovjan <bukm@centrum.cz>\n"
@@ -5172,45 +5160,41 @@ msgstr ""
 "Marek Černocký <marek@manet.cz>\n"
 "Adam Matoušek <adydas95@gmail.com>"
 
-#: ../src/nautilus-window-manage-views.c:881
-#: ../src/nautilus-window-manage-views.c:1046
+#: ../src/nautilus-window-manage-views.c:880
+#: ../src/nautilus-window-manage-views.c:1045
 #, c-format
 msgid "Unable to load location"
 msgstr "Nelze nahrát umístění"
 
-#: ../src/nautilus-window-manage-views.c:1200
-msgid "Searching..."
-msgstr "Hledá se…"
-
-#: ../src/nautilus-window-manage-views.c:1658
+#: ../src/nautilus-window-manage-views.c:1586
 msgid "Unable to display the contents of this folder."
 msgstr "Nelze zobrazit obsah této složky"
 
-#: ../src/nautilus-window-manage-views.c:1660
+#: ../src/nautilus-window-manage-views.c:1588
 msgid "This location doesn't appear to be a folder."
 msgstr "Toto umístění se nezdá být složkou."
 
-#: ../src/nautilus-window-manage-views.c:1665
+#: ../src/nautilus-window-manage-views.c:1593
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr ""
 "Nelze nalézt požadovaný soubor. Zkontrolujte prosím překlepy a zkuste to "
 "znovu."
 
-#: ../src/nautilus-window-manage-views.c:1670
+#: ../src/nautilus-window-manage-views.c:1598
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "Umístění typu „%s“ není podporováno."
 
-#: ../src/nautilus-window-manage-views.c:1673
+#: ../src/nautilus-window-manage-views.c:1601
 msgid "Unable to handle this kind of location."
 msgstr "Nelze obsloužit tento druh umístění."
 
-#: ../src/nautilus-window-manage-views.c:1678
+#: ../src/nautilus-window-manage-views.c:1606
 msgid "Unable to access the requested location."
 msgstr "Nelze přistupovat k požadovanému místění."
 
-#: ../src/nautilus-window-manage-views.c:1681
+#: ../src/nautilus-window-manage-views.c:1609
 msgid "Don't have permission to access the requested location."
 msgstr "Nemáte oprávnění přistupovat k požadovanému místění."
 
@@ -5219,7 +5203,7 @@ msgstr "Nemáte oprávnění přistupovat k požadovanému místění."
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-manage-views.c:1689
+#: ../src/nautilus-window-manage-views.c:1617
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5227,7 +5211,7 @@ msgstr ""
 "Nelze nalézt požadované umístění. Zkontrolujte prosím překlepy nebo "
 "nastavení připojení."
 
-#: ../src/nautilus-window-manage-views.c:1700
+#: ../src/nautilus-window-manage-views.c:1628
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "Neobsloužené chybové hlášení: %s"
@@ -5392,7 +5376,7 @@ msgstr "Připojit se ke vzdálenému počítači nebo sdílenému disku"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:534 ../src/nautilus-window-menus.c:725
+#: ../src/nautilus-window-menus.c:534 ../src/nautilus-window-menus.c:706
 msgid "_Home"
 msgstr "_Domů"
 
@@ -5522,9 +5506,13 @@ msgstr "Zobrazit položky jako seznam"
 msgid "View items as a grid of icons"
 msgstr "Zobrazit položky jako mřížku s ikonami"
 
-#: ../src/nautilus-window-menus.c:722
+#: ../src/nautilus-window-menus.c:703
 msgid "_Up"
 msgstr "_Nahoru"
+
+#: ../src/nautilus-window-slot.c:423
+msgid "Searching..."
+msgstr "Hledá se…"
 
 #: ../src/nautilus-x-content-bar.c:93
 msgid "Audio CD"
