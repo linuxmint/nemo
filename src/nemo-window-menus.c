@@ -699,7 +699,7 @@ static const char* icon_entries[] = {
 	"/MenuBar/Other Menus/Go/Go to Templates",
 	"/MenuBar/Other Menus/Go/Go to Trash",
 	"/MenuBar/Other Menus/Go/Go to Network",
-	"/MenuBar/Other Menus/Go/Go to Location"
+	"/MenuBar/Other Menus/Go/Edit Location"
 };
 
 /**
@@ -754,7 +754,7 @@ action_new_tab_callback (GtkAction *action,
 }
 
 static void
-action_go_to_location_callback (GtkAction *action,
+action_edit_location_callback (GtkAction *action,
 				gpointer user_data)
 {
 	NemoWindow *window = user_data;
@@ -968,9 +968,9 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { NEMO_ACTION_FORWARD, GTK_STOCK_GO_FORWARD, N_("_Forward"),
 				 "<alt>Right", N_("Go to the next visited location"),
 				 G_CALLBACK (action_forward_callback) },
-  /* name, stock id, label */  { "Edit Location", NULL, N_("_Location..."),
-                                 NULL, N_("Specify a location to open"),
-                                 G_CALLBACK (action_go_to_location_callback) },
+  /* name, stock id, label */  { NEMO_ACTION_EDIT_LOCATION, NULL, N_("_Location..."),
+                                 "<control>L", N_("Specify a location to open"),
+                                 G_CALLBACK (action_edit_location_callback) },
   /* name, stock id, label */  { "SplitViewNextPane", NULL, N_("S_witch to Other Pane"),
 				 "F6", N_("Move focus to the other pane in a split view window"),
 				 G_CALLBACK (action_split_view_switch_next_pane_callback) },
@@ -1029,8 +1029,8 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* tooltip */              N_("Open an extra folder view side-by-side"),
                              G_CALLBACK (action_split_view_callback),
   /* is_active */            FALSE },
-  /* name, stock id */     { "Edit Location", NULL,
-  /* label, accelerator */   N_("Loca_tion entry"), NULL,
+  /* name, stock id */     { "Show Hide Location Entry", NULL,
+  /* label, accelerator */   N_("Loca_tion entry"), "<control>l",
   /* tooltip */              N_("Change the visibility of this window's location entry"),
                              NULL,
   /* is_active */            TRUE },
@@ -1053,13 +1053,6 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 	NemoNavigationState *navigation_state;
 	GtkActionGroup *action_group;
 	GtkAction *action;
-    
-    GtkUIManager *ui_manager;
-
-	if (window->details->ui_manager == NULL){
-        window->details->ui_manager = gtk_ui_manager_new ();
-    }
-	ui_manager = window->details->ui_manager;
 
 	action_group = gtk_action_group_new ("ToolbarActions");
 	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
@@ -1165,8 +1158,8 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
     			       "direction", NEMO_NAVIGATION_DIRECTION_EDIT,
    			       NULL);
    	g_signal_connect (action, "activate",
-   			  G_CALLBACK (action_go_to_location_callback), window);
-   	gtk_action_group_add_action_with_accel (action_group, action, "<control>l");
+   			  G_CALLBACK (action_edit_location_callback), window);
+   	gtk_action_group_add_action (action_group, action);
   
    	g_object_unref (action);
 
@@ -1182,8 +1175,6 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
  	gtk_action_set_is_important (GTK_ACTION (action), show_label_search_icon_toolbar);
   
   	g_object_unref (action);
-    
-    gtk_ui_manager_insert_action_group (ui_manager, action_group, 0);
 
 	navigation_state = nemo_window_get_navigation_state (window);
 	nemo_navigation_state_add_group (navigation_state, action_group);
