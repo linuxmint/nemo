@@ -27,7 +27,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-09-25 23:13+0000\n"
-"PO-Revision-Date: 2012-10-01 09:25+0200\n"
+"PO-Revision-Date: 2012-10-08 14:07+0200\n"
 "Last-Translator: Alexandre Franke <alexandre.franke@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "Language: \n"
@@ -4223,7 +4223,7 @@ msgstr "Restaurer"
 
 #: ../src/nautilus-trash-bar.c:205
 msgid "Restore selected items to their original position"
-msgstr "Restaure les éléments sélectionnés à son emplacement initial"
+msgstr "Restaure les éléments sélectionnés à leurs emplacements initiaux"
 
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:209
