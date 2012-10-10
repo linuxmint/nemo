@@ -720,7 +720,9 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 			    ((event->state & GDK_CONTROL_MASK) != 0 ||
 			     (event->state & GDK_SHIFT_MASK) == 0)) {			
 				view->details->row_selected_on_button_down = gtk_tree_selection_path_is_selected (selection, path);
-				if ((event->state & GDK_CONTROL_MASK) != 0) {
+				if (view->details->row_selected_on_button_down) {
+					call_parent = FALSE;
+				} else if ((event->state & GDK_CONTROL_MASK) != 0) {
 					GList *selected_rows;
 					GList *l;
 
