@@ -66,9 +66,6 @@ typedef struct {
 	NautilusFile *file;
 	unsigned int file_changed_signal_id;
 
-	/* custom icon */ 
-	GdkPixbuf *custom_icon;
-
         GtkWidget *image;
         GtkWidget *label;
 	GtkWidget *bold_label;
@@ -1296,6 +1293,19 @@ button_drag_begin_cb (GtkWidget *widget,
 }
 
 static GIcon *
+get_gicon_for_mount (ButtonData *button_data)
+{
+	GIcon *icon;
+	GMount *mount;
+
+	mount = nautilus_get_mounted_mount_for_root (button_data->path);
+	icon = g_mount_get_symbolic_icon (mount);
+	g_object_unref (mount);
+
+	return icon;
+}
+
+static GIcon *
 get_gicon (ButtonData *button_data)
 {
 	switch (button_data->type)
@@ -1304,6 +1314,8 @@ get_gicon (ButtonData *button_data)
 			return g_themed_icon_new (NAUTILUS_ICON_FILESYSTEM);
 		case HOME_BUTTON:
 			return g_themed_icon_new (NAUTILUS_ICON_HOME);
+		case MOUNT_BUTTON:
+			return get_gicon_for_mount (button_data);
 		default:
 			return NULL;
         }
@@ -1316,9 +1328,6 @@ button_data_free (ButtonData *button_data)
 {
         g_object_unref (button_data->path);
         g_free (button_data->dir_name);
-	if (button_data->custom_icon) {
-		g_object_unref (button_data->custom_icon);
-	}
 	if (button_data->file != NULL) {
 		g_signal_handler_disconnect (button_data->file,
 					     button_data->file_changed_signal_id);
@@ -1333,6 +1342,7 @@ static void
 nautilus_path_bar_update_button_appearance (ButtonData *button_data)
 {
         const gchar *dir_name = get_dir_name (button_data);
+	GIcon *icon;
 
         if (button_data->label != NULL) {
 		char *markup;
@@ -1349,20 +1359,13 @@ nautilus_path_bar_update_button_appearance (ButtonData *button_data)
 		g_free (markup);
         }
 
-	if (button_data->custom_icon) {
-		gtk_image_set_from_pixbuf (GTK_IMAGE (button_data->image), button_data->custom_icon);  
+	icon = get_gicon (button_data);
+	if (icon != NULL) {
+		gtk_image_set_from_gicon (GTK_IMAGE (button_data->image), icon, GTK_ICON_SIZE_MENU);
 		gtk_widget_show (GTK_WIDGET (button_data->image));
+		g_object_unref (icon);
 	} else {
-		GIcon *icon;
-
-		icon = get_gicon (button_data);
-		if (icon != NULL) {
-			gtk_image_set_from_gicon (GTK_IMAGE (button_data->image), icon, GTK_ICON_SIZE_MENU);
-			gtk_widget_show (GTK_WIDGET (button_data->image));
-			g_object_unref (icon);
-		} else {
-			gtk_widget_hide (GTK_WIDGET (button_data->image));
-		}
+		gtk_widget_hide (GTK_WIDGET (button_data->image));
 	}
 }
 
@@ -1385,51 +1388,24 @@ nautilus_path_bar_update_button_state (ButtonData *button_data,
         }
 }
 
-static gboolean
-setup_file_path_mounted_mount (GFile *location, 
-			       ButtonData *button_data)
-{
-	NautilusIconInfo *info;
-	GIcon *icon;
-	GMount *mount;
-
-	mount = nautilus_get_mounted_mount_for_root (location);
-	if (mount == NULL) {
-		return FALSE;
-	}
-
-	icon = g_mount_get_icon (mount);
-
-	if (icon == NULL) {
-		icon = g_themed_icon_new (NAUTILUS_ICON_FOLDER);
-	}
-
-	info = nautilus_icon_info_lookup (icon, NAUTILUS_PATH_BAR_ICON_SIZE);
-	button_data->custom_icon = nautilus_icon_info_get_pixbuf_at_size (info, NAUTILUS_PATH_BAR_ICON_SIZE);
-
-	button_data->dir_name = g_mount_get_name (mount);
-	button_data->type = MOUNT_BUTTON;
-	button_data->is_root = TRUE;
-
-	g_object_unref (icon);
-	g_object_unref (info);
-	g_object_unref (mount);
-
-	return TRUE;
-}
-
 static void
 setup_button_type (ButtonData       *button_data,
 		   NautilusPathBar  *path_bar,
 		   GFile *location)
 {
+	GMount *mount;
+
 	if (nautilus_is_root_directory (location)) {
 		button_data->type = ROOT_BUTTON;
 	} else if (nautilus_is_home_directory (location)) {
 		button_data->type = HOME_BUTTON;
 		button_data->is_root = TRUE;
-	} else if (setup_file_path_mounted_mount (location, button_data)) {
-		/* already setup */
+	} else if ((mount = nautilus_get_mounted_mount_for_root (location)) != NULL) {
+		button_data->dir_name = g_mount_get_name (mount);
+		button_data->type = MOUNT_BUTTON;
+		button_data->is_root = TRUE;
+
+		g_object_unref (mount);
 	} else {
 		button_data->type = NORMAL_BUTTON;
 	}
