@@ -1,22 +1,29 @@
 #!/usr/bin/make -f
 
-include /usr/share/cdbs/1/rules/autoreconf.mk
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/rules/utils.mk
-include /usr/share/cdbs/1/class/gnome.mk
-include /usr/share/gnome-pkg-tools/1/rules/gnome-version.mk
-include /usr/share/gnome-pkg-tools/1/rules/gnome-get-source.mk
+CONFIGURE_EXTRA_FLAGS = --libexecdir=/usr/lib/$(DEB_HOST_MULTIARCH)/nemo \
+                        --disable-update-mimedb \
+			--enable-gtk-doc
 
-DEB_CONFIGURE_EXTRA_FLAGS += --libexecdir=/usr/lib/nemo \
-                             --disable-update-mimedb \
-#                             --disable-packagekit \
-                             --enable-introspection \
-                             --disable-appindicator
-LDFLAGS += -Wl,-z,defs -Wl,-O1 -Wl,--as-needed
-DEB_DH_MAKESHLIBS_ARGS_libnemo-extension1a += -V 'libnemo-extension1a'
-DEB_DH_MAKESHLIBS_ARGS_nemo += -Xusr/lib/nemo/extensions-3.0/
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,-z,defs -Wl,-O1 -Wl,--as-needed
 
-binary-post-install/nemo-data::
-	dh_installmime -p$(cdbs_curpkg)
 
-common-binary-post-install-arch:: list-missing
+%:
+	dh $@ --with autoreconf
+
+override_dh_autoreconf:
+	NOCONFIGURE=yes dh_autoreconf --as-needed -- ./autogen.sh
+
+override_dh_auto_configure:
+	dh_auto_configure -- $(CONFIGURE_EXTRA_FLAGS)
+
+override_dh_auto_test:
+
+override_dh_strip:
+	dh_strip --dbg-package=nemo-dbg
+
+override_dh_makeshlibs:
+	dh_makeshlibs -Xusr/lib/nemo/extensions-3.0/
+
+override_dh_installmime:
+	dh_installmime -pnemo-data
+

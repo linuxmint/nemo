@@ -1,9 +1,0 @@
-[Desktop Entry]
-_Name=Home Folder
-_Comment=Open your personal folder
-Actions=Window;
-
-[Desktop Action Window]
-_Name=Open a New Window
-Exec=nemo
-OnlyShowIn=Unity;

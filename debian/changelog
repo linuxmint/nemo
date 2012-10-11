@@ -1,3 +1,11 @@
+nemo (1.0.3+nmu1) UNRELEASED; urgency=low
+
+  * Tempory version to make sure the transition to libnemo-extension1 does
+    not break developers test environment. For cleanliness purpose, remove
+    this version from this changelog file just before the next release.
+
+ -- Nicolas Bourdaud <nicolas.bourdaud@gmail.com>  Sun, 07 Oct 2012 13:30:57 +0200
+
 nemo (1.0.3) maya; urgency=low
 
   * 1.0.3
