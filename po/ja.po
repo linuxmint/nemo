@@ -18,9 +18,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-09-14 23:06+0000\n"
-"PO-Revision-Date: 2012-10-02 21:09+0900\n"
-"Last-Translator: Yasumichi Akahoshi <yasumichi@vinelinux.org>\n"
+"POT-Creation-Date: 2012-10-09 18:58+0000\n"
+"PO-Revision-Date: 2012-10-11 22:19+0900\n"
+"Last-Translator: Takayuki KUSANO <AE5T-KSN@asahi-net.or.jp>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -1958,10 +1958,8 @@ msgid "List of possible captions on icons"
 msgstr "アイコンの下に表示する見出し"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:40
-#, fuzzy
-#| msgid "A list of captions below an icon in the icon view and the desktop. The actual number of captions shown depends on the zoom level. Some possible values are: \"size\", \"type\", \"date_modified\", \"owner\", \"group\", \"permissions\", \"octal_permissions\" and \"mime_type\"."
 msgid "A list of captions below an icon in the icon view and the desktop. The actual number of captions shown depends on the zoom level. Some possible values are: \"size\", \"type\", \"date_modified\", \"owner\", \"group\", \"permissions\", and \"mime_type\"."
-msgstr "デスクトップとアイコン表示でアイコンの下に表示する見出しの一覧です。実際に表示できる見出しの数はズームレベルに依存します。利用可能な値: \"size\", \"type\", \"date_modified\", \"owner\", \"group\", \"permissions\", \"octal_permissions\", \"mime_type\""
+msgstr "デスクトップとアイコン表示でアイコンの下に表示する見出しの一覧です。実際に表示できる見出しの数はズームレベルに依存します。利用可能な値: \"size\", \"type\", \"date_modified\", \"owner\", \"group\", \"permissions\", \"mime_type\""
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:41
 msgid "Default icon zoom level"
