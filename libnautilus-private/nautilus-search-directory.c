@@ -49,7 +49,6 @@ struct NautilusSearchDirectoryDetails {
 	gboolean search_finished;
 
 	GList *files;
-	GHashTable *file_hash;
 
 	GList *monitor_list;
 	GList *callback_list;
@@ -97,26 +96,6 @@ static void search_callback_file_ready_callback (NautilusFile *file, gpointer da
 static void file_changed (NautilusFile *file, NautilusSearchDirectory *search);
 
 static void
-ensure_search_engine (NautilusSearchDirectory *search)
-{
-	if (!search->details->engine) {
-		search->details->engine = nautilus_search_engine_new ();
-		g_signal_connect (search->details->engine, "hits-added",
-				  G_CALLBACK (search_engine_hits_added),
-				  search);
-		g_signal_connect (search->details->engine, "hits-subtracted",
-				  G_CALLBACK (search_engine_hits_subtracted),
-				  search);
-		g_signal_connect (search->details->engine, "finished",
-				  G_CALLBACK (search_engine_finished),
-				  search);
-		g_signal_connect (search->details->engine, "error",
-				  G_CALLBACK (search_engine_error),
-				  search);
-	}
-}
-
-static void
 reset_file_list (NautilusSearchDirectory *search)
 {
 	GList *list, *monitor_list;
@@ -143,37 +122,48 @@ reset_file_list (NautilusSearchDirectory *search)
 }
 
 static void
-start_or_stop_search_engine (NautilusSearchDirectory *search, gboolean adding)
+start_search (NautilusSearchDirectory *search)
 {
-	if (adding && (search->details->monitor_list ||
-	    search->details->pending_callback_list) &&
-	    search->details->query &&
-	    !search->details->search_running) {
-		NautilusSearchEngineModel *model_provider;
+	NautilusSearchEngineModel *model_provider;
 
-		/* We need to start the search engine */
-		search->details->search_running = TRUE;
-		search->details->search_finished = FALSE;
-		ensure_search_engine (search);
-		nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (search->details->engine),
-						    search->details->query);
-
-		model_provider = nautilus_search_engine_get_model_provider (search->details->engine);
-		nautilus_search_engine_model_set_model (model_provider, search->details->base_model);
-
-		reset_file_list (search);
-
-		nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (search->details->engine));
-	} else if (!adding && (!search->details->monitor_list ||
-		   !search->details->pending_callback_list) &&
-		   search->details->engine &&
-		   search->details->search_running) {
-		search->details->search_running = FALSE;
-		nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (search->details->engine));
-
-		reset_file_list (search);
+	if (!search->details->query) {
+		return;
 	}
 
+	if (search->details->search_running) {
+		return;
+	}
+
+	if (!search->details->monitor_list && !search->details->pending_callback_list) {
+		return;
+	}
+
+	/* We need to start the search engine */
+	search->details->search_running = TRUE;
+	search->details->search_finished = FALSE;
+
+	nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (search->details->engine),
+					    search->details->query);
+
+	model_provider = nautilus_search_engine_get_model_provider (search->details->engine);
+	nautilus_search_engine_model_set_model (model_provider, search->details->base_model);
+
+	reset_file_list (search);
+
+	nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (search->details->engine));
+}
+
+static void
+stop_search (NautilusSearchDirectory *search)
+{
+	if (!search->details->search_running) {
+		return;
+	}
+
+	search->details->search_running = FALSE;
+	nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (search->details->engine));
+
+	reset_file_list (search);
 }
 
 static void
@@ -220,7 +210,7 @@ search_monitor_add (NautilusDirectory *directory,
 		nautilus_file_monitor_add (file, monitor, file_attributes);
 	}
 
-	start_or_stop_search_engine (search, TRUE);
+	start_search (search);
 }
 
 static void
@@ -266,7 +256,9 @@ search_monitor_remove (NautilusDirectory *directory,
 		}
 	}
 
-	start_or_stop_search_engine (search, FALSE);
+	if (!search->details->monitor_list) {
+		stop_search (search);
+	}
 }
 
 static void
@@ -430,7 +422,7 @@ search_call_when_ready (NautilusDirectory *directory,
 			g_list_prepend (search->details->pending_callback_list, search_callback);
 
 		/* We might need to start the search engine */
-		start_or_stop_search_engine (search, TRUE);
+		start_search (search);
 	} else {
 		search_callback->file_list = nautilus_file_list_copy (search->details->files);
 		search_callback->non_ready_hash = file_list_to_hash_table (search->details->files);
@@ -474,8 +466,9 @@ search_cancel_callback (NautilusDirectory *directory,
 
 		search_callback_destroy (search_callback);
 
-		/* We might need to stop the search engine now */
-		start_or_stop_search_engine (search, FALSE);
+		if (!search->details->pending_callback_list) {
+			stop_search (search);
+		}
 	}
 }
 
@@ -621,17 +614,9 @@ search_force_reload (NautilusDirectory *directory)
 	
 	search->details->search_finished = FALSE;
 
-	if (!search->details->engine) {
-		return;
-	}
-
 	/* Remove file monitors */
 	reset_file_list (search);
-	
-	if (search->details->search_running) {
-		nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (search->details->engine));
-		search->details->search_running = FALSE;
-	}
+	stop_search (search);
 }
 
 static gboolean
@@ -764,15 +749,9 @@ search_dispose (GObject *object)
 	}
 
 	g_clear_object (&search->details->query);
+	stop_search (search);
 
-	if (search->details->engine) {
-		if (search->details->search_running) {
-			nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (search->details->engine));
-		}
-		
-		g_object_unref (search->details->engine);
-		search->details->engine = NULL;
-	}
+	g_clear_object (&search->details->engine);
 	
 	G_OBJECT_CLASS (nautilus_search_directory_parent_class)->dispose (object);
 }
@@ -793,6 +772,20 @@ nautilus_search_directory_init (NautilusSearchDirectory *search)
 {
 	search->details = G_TYPE_INSTANCE_GET_PRIVATE (search, NAUTILUS_TYPE_SEARCH_DIRECTORY,
 						       NautilusSearchDirectoryDetails);
+
+	search->details->engine = nautilus_search_engine_new ();
+	g_signal_connect (search->details->engine, "hits-added",
+			  G_CALLBACK (search_engine_hits_added),
+			  search);
+	g_signal_connect (search->details->engine, "hits-subtracted",
+			  G_CALLBACK (search_engine_hits_subtracted),
+			  search);
+	g_signal_connect (search->details->engine, "finished",
+			  G_CALLBACK (search_engine_finished),
+			  search);
+	g_signal_connect (search->details->engine, "error",
+			  G_CALLBACK (search_engine_error),
+			  search);
 }
 
 static void
