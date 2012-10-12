@@ -474,6 +474,7 @@ execute_search (NautilusShellSearchProviderApp *self,
   home_uri = nautilus_get_home_directory_uri ();
 
   query = nautilus_query_new ();
+  nautilus_query_set_show_hidden_files (query, FALSE);
   nautilus_query_set_text (query, terms_joined);
   nautilus_query_set_location (query, home_uri);
 

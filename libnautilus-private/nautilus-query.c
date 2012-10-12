@@ -33,6 +33,7 @@ struct NautilusQueryDetails {
 	char *text;
 	char *location_uri;
 	GList *mime_types;
+	gboolean show_hidden;
 };
 
 static void  nautilus_query_class_init       (NautilusQueryClass *class);
@@ -68,6 +69,7 @@ nautilus_query_init (NautilusQuery *query)
 {
 	query->details = G_TYPE_INSTANCE_GET_PRIVATE (query, NAUTILUS_TYPE_QUERY,
 						      NautilusQueryDetails);
+	query->details->show_hidden = TRUE;
 }
 
 NautilusQuery *
@@ -121,6 +123,18 @@ nautilus_query_add_mime_type (NautilusQuery *query, const char *mime_type)
 {
 	query->details->mime_types = g_list_append (query->details->mime_types,
 						    g_strdup (mime_type));
+}
+
+gboolean
+nautilus_query_get_show_hidden_files (NautilusQuery *query)
+{
+	return query->details->show_hidden;
+}
+
+void
+nautilus_query_set_show_hidden_files (NautilusQuery *query, gboolean show_hidden)
+{
+	query->details->show_hidden = show_hidden;
 }
 
 char *
