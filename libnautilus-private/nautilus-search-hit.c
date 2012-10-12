@@ -22,6 +22,7 @@
 #include <config.h>
 
 #include <string.h>
+#include <gio/gio.h>
 
 #include "nautilus-search-hit.h"
 #include "nautilus-query.h"
@@ -54,8 +55,8 @@ nautilus_search_hit_compute_scores (NautilusSearchHit *hit,
 {
 	GDateTime *now;
 	char *query_uri;
-	char *query_path;
-	int i;
+	GFile *query_location;
+	GFile *hit_location;
 	GTimeSpan m_diff = G_MAXINT64;
 	GTimeSpan a_diff = G_MAXINT64;
 	GTimeSpan t_diff = G_MAXINT64;
@@ -64,33 +65,28 @@ nautilus_search_hit_compute_scores (NautilusSearchHit *hit,
 	gdouble match_bonus = 0.0;
 
 	query_uri = nautilus_query_get_location (query);
-	query_path = g_filename_from_uri (query_uri, NULL, NULL);
-	g_free (query_uri);
-	if (query_path != NULL) {
-		char *hit_path;
-		char *hit_parent;
-		guint dir_count;
+	query_location = g_file_new_for_uri (query_uri);
+	hit_location = g_file_new_for_uri (hit->details->uri);
 
-		hit_path = g_filename_from_uri (hit->details->uri, NULL, NULL);
-		if (hit_path != NULL) {
-			hit_parent = g_path_get_dirname (hit_path);
-			g_free (hit_path);
+	if (g_file_has_prefix (hit_location, query_location)) {
+		GFile *parent, *location;
+		guint dir_count = 0;
 
-			dir_count = 0;
-			for (i = strlen (query_path); hit_parent[i] != '\0'; i++) {
-				if (G_IS_DIR_SEPARATOR (hit_parent[i]))
-					dir_count++;
-			}
-			g_free (hit_parent);
+		parent = g_file_get_parent (hit_location);
 
-			if (dir_count < 10) {
-				proximity_bonus = 100.0 - 10 * dir_count;
-			} else {
-				proximity_bonus = 0.0;
-			}
+		while (!g_file_equal (parent, query_location)) {
+			dir_count++;
+			location = parent;
+			parent = g_file_get_parent (location);
+			g_object_unref (location);
+		}
+		g_object_unref (parent);
+
+		if (dir_count < 10) {
+			proximity_bonus = 10000.0 - 1000.0 * dir_count;
 		}
 	}
-	g_free (query_path);
+	g_object_unref (hit_location);
 
 	now = g_date_time_new_now_local ();
 	if (hit->details->modification_time != NULL)
