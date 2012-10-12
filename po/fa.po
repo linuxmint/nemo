@@ -15,7 +15,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-09-14 23:06+0000\n"
-"PO-Revision-Date: 2012-10-12 01:02+0330\n"
+"PO-Revision-Date: 2012-10-12 23:35+0330\n"
 "Last-Translator: Arash Mousavi <mousavi.arash@gmail.com>\n"
 "Language-Team: Persian\n"
 "Language: fa\n"
@@ -3762,7 +3762,7 @@ msgstr "دستگاه‌ها"
 
 #: ../src/nautilus-places-sidebar.c:548
 msgid "Places"
-msgstr "_محل‌ها"
+msgstr "محل‌ها"
 
 #: ../src/nautilus-places-sidebar.c:555
 msgid "Recent"
