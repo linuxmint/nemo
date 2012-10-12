@@ -210,7 +210,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 	GFile *child;
 	const char *mime_type, *display_name;
 	char *prepared;
-	gboolean found;
+	gboolean found, is_hidden;
 	int i;
 	GList *l;
 	const char *id;
@@ -232,6 +232,11 @@ visit_directory (GFile *dir, SearchThreadData *data)
 	while ((info = g_file_enumerator_next_file (enumerator, data->cancellable, NULL)) != NULL) {
 		display_name = g_file_info_get_display_name (info);
 		if (display_name == NULL) {
+			goto next;
+		}
+
+		is_hidden = g_file_info_get_is_hidden (info) || g_file_info_get_is_backup (info);
+		if (is_hidden && !nautilus_query_get_show_hidden_files (data->engine->details->query)) {
 			goto next;
 		}
 
