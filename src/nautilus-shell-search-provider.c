@@ -192,28 +192,6 @@ search_hits_added_cb (NautilusSearchEngine *engine,
   }
 }
 
-static void
-search_hits_subtracted_cb (NautilusSearchEngine *engine,
-                           GList                *hits,
-                           gpointer              user_data)
-{
-  NautilusShellSearchProviderApp *self = user_data;
-  PendingSearch *search = self->current_search;
-  GList *l;
-  NautilusSearchHit *hit;
-  const gchar *hit_uri;
-
-  g_debug ("*** Search engine hits subtracted");
-
-  for (l = hits; l != NULL; l = l->next) {
-    hit = l->data;
-    hit_uri = nautilus_search_hit_get_uri (hit);
-    g_debug ("    %s", hit_uri);
-
-    g_hash_table_remove (search->hits, hit_uri);
-  }
-}
-
 static gint
 search_hit_compare_relevance (gconstpointer a,
                               gconstpointer b)
@@ -473,8 +451,6 @@ execute_search (NautilusShellSearchProviderApp *self,
 
   g_signal_connect (pending_search->engine, "hits-added",
                     G_CALLBACK (search_hits_added_cb), self);
-  g_signal_connect (pending_search->engine, "hits-subtracted",
-                    G_CALLBACK (search_hits_subtracted_cb), self);
   g_signal_connect (pending_search->engine, "finished",
                     G_CALLBACK (search_finished_cb), self);
   g_signal_connect (pending_search->engine, "error",

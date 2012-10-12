@@ -90,7 +90,6 @@ G_DEFINE_TYPE (NautilusSearchDirectory, nautilus_search_directory,
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 static void search_engine_hits_added (NautilusSearchEngine *engine, GList *hits, NautilusSearchDirectory *search);
-static void search_engine_hits_subtracted (NautilusSearchEngine *engine, GList *hits, NautilusSearchDirectory *search);
 static void search_engine_finished (NautilusSearchEngine *engine, NautilusSearchDirectory *search);
 static void search_engine_error (NautilusSearchEngine *engine, const char *error, NautilusSearchDirectory *search);
 static void search_callback_file_ready_callback (NautilusFile *file, gpointer data);
@@ -546,48 +545,6 @@ search_engine_hits_added (NautilusSearchEngine *engine, GList *hits,
 }
 
 static void
-search_engine_hits_subtracted (NautilusSearchEngine *engine, GList *hits, 
-			       NautilusSearchDirectory *search)
-{
-	GList *hit_list;
-	GList *monitor_list;
-	SearchMonitor *monitor;
-	GList *file_list;
-	NautilusFile *file;
-
-	file_list = NULL;
-
-	for (hit_list = hits; hit_list != NULL; hit_list = hit_list->next) {
-		NautilusSearchHit *hit = hit_list->data;
-		const char *uri;
-
-		uri = nautilus_search_hit_get_uri (hit);
-		file = nautilus_file_get_by_uri (uri);
-
-		for (monitor_list = search->details->monitor_list; monitor_list; 
-		     monitor_list = monitor_list->next) {
-			monitor = monitor_list->data;
-			/* Remove monitors */
-			nautilus_file_monitor_remove (file, monitor);
-		}
-		
-		g_signal_handlers_disconnect_by_func (file, file_changed, search);
-
-		search->details->files = g_list_remove (search->details->files, file);
-
-		file_list = g_list_prepend (file_list, file);
-	}
-	
-	nautilus_directory_emit_files_changed (NAUTILUS_DIRECTORY (search), file_list);
-
-	nautilus_file_list_free (file_list);
-
-	file = nautilus_directory_get_corresponding_file (NAUTILUS_DIRECTORY (search));
-	nautilus_file_emit_changed (file);
-	nautilus_file_unref (file);
-}
-
-static void
 search_callback_add_pending_file_callbacks (SearchCallback *callback)
 {
 	callback->file_list = nautilus_file_list_copy (callback->search_directory->details->files);
@@ -802,9 +759,6 @@ nautilus_search_directory_init (NautilusSearchDirectory *search)
 	search->details->engine = nautilus_search_engine_new ();
 	g_signal_connect (search->details->engine, "hits-added",
 			  G_CALLBACK (search_engine_hits_added),
-			  search);
-	g_signal_connect (search->details->engine, "hits-subtracted",
-			  G_CALLBACK (search_engine_hits_subtracted),
 			  search);
 	g_signal_connect (search->details->engine, "finished",
 			  G_CALLBACK (search_engine_finished),
