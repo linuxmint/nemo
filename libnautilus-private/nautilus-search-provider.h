@@ -43,7 +43,6 @@ struct _NautilusSearchProviderIface {
 
         /* Signals */
         void (*hits_added) (NautilusSearchProvider *provider, GList *hits);
-        void (*hits_subtracted) (NautilusSearchProvider *provider, GList *hits);
         void (*finished) (NautilusSearchProvider *provider);
         void (*error) (NautilusSearchProvider *provider, const char *error_message);
 };
@@ -57,8 +56,6 @@ void           nautilus_search_provider_start           (NautilusSearchProvider 
 void           nautilus_search_provider_stop            (NautilusSearchProvider *provider);
 
 void           nautilus_search_provider_hits_added      (NautilusSearchProvider *provider,
-                                                         GList *hits);
-void           nautilus_search_provider_hits_subtracted (NautilusSearchProvider *provider,
                                                          GList *hits);
 void           nautilus_search_provider_finished        (NautilusSearchProvider *provider);
 void           nautilus_search_provider_error           (NautilusSearchProvider *provider,
