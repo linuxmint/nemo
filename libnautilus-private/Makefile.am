@@ -132,8 +132,6 @@ libnautilus_private_la_SOURCES = \
 	nautilus-lib-self-check-functions.h \
 	nautilus-link.c \
 	nautilus-link.h \
-	nautilus-merged-directory.c \
-	nautilus-merged-directory.h \
 	nautilus-metadata.h \
 	nautilus-metadata.c \
 	nautilus-mime-application-chooser.c \
