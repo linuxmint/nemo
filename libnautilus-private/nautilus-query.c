@@ -24,10 +24,11 @@
 #include <config.h>
 #include <string.h>
 
-#include "nautilus-query.h"
 #include <eel/eel-glib-extensions.h>
 #include <glib/gi18n.h>
-#include <libnautilus-private/nautilus-file-utilities.h>
+
+#include "nautilus-file-utilities.h"
+#include "nautilus-query.h"
 
 struct NautilusQueryDetails {
 	char *text;
