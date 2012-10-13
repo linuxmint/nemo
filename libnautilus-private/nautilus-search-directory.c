@@ -122,6 +122,25 @@ reset_file_list (NautilusSearchDirectory *search)
 }
 
 static void
+set_hidden_files (NautilusSearchDirectory *search)
+{
+	GList *l;
+	SearchMonitor *monitor;
+	gboolean monitor_hidden = FALSE;
+
+	for (l = search->details->monitor_list; l != NULL; l = l->next) {
+		monitor = l->data;
+		monitor_hidden |= monitor->monitor_hidden_files;
+
+		if (monitor_hidden) {
+			break;
+		}
+	}
+
+	nautilus_query_set_show_hidden_files (search->details->query, monitor_hidden);
+}
+
+static void
 start_search (NautilusSearchDirectory *search)
 {
 	NautilusSearchEngineModel *model_provider;
@@ -142,6 +161,7 @@ start_search (NautilusSearchDirectory *search)
 	search->details->search_running = TRUE;
 	search->details->search_finished = FALSE;
 
+	set_hidden_files (search);
 	nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (search->details->engine),
 					    search->details->query);
 
