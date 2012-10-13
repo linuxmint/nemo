@@ -49,6 +49,7 @@ struct NautilusSearchDirectoryDetails {
 	gboolean search_finished;
 
 	GList *files;
+	GHashTable *files_hash;
 
 	GList *monitor_list;
 	GList *callback_list;
@@ -119,6 +120,8 @@ reset_file_list (NautilusSearchDirectory *search)
 	
 	nautilus_file_list_free (search->details->files);
 	search->details->files = NULL;
+
+	g_hash_table_remove_all (search->details->files_hash);
 }
 
 static void
@@ -530,6 +533,7 @@ search_engine_hits_added (NautilusSearchEngine *engine, GList *hits,
 		g_signal_connect (file, "changed", G_CALLBACK (file_changed), search),
 
 		file_list = g_list_prepend (file_list, file);
+		g_hash_table_replace (search->details->files_hash, file, GINT_TO_POINTER (1));
 	}
 	
 	search->details->files = g_list_concat (search->details->files, file_list);
@@ -657,9 +661,7 @@ search_contains_file (NautilusDirectory *directory,
 	NautilusSearchDirectory *search;
 
 	search = NAUTILUS_SEARCH_DIRECTORY (directory);
-
-	/* FIXME: Maybe put the files in a hash */
-	return (g_list_find (search->details->files, file) != NULL);
+	return (g_hash_table_lookup (search->details->files_hash, file) != NULL);
 }
 
 static GList *
@@ -784,6 +786,8 @@ search_finalize (GObject *object)
 	search = NAUTILUS_SEARCH_DIRECTORY (object);
 	g_free (search->details->saved_search_uri);
 
+	g_hash_table_destroy (search->details->files_hash);
+
 	G_OBJECT_CLASS (nautilus_search_directory_parent_class)->finalize (object);
 }
 
@@ -792,6 +796,8 @@ nautilus_search_directory_init (NautilusSearchDirectory *search)
 {
 	search->details = G_TYPE_INSTANCE_GET_PRIVATE (search, NAUTILUS_TYPE_SEARCH_DIRECTORY,
 						       NautilusSearchDirectoryDetails);
+
+	search->details->files_hash = g_hash_table_new (g_direct_hash, g_direct_equal);
 
 	search->details->engine = nautilus_search_engine_new ();
 	g_signal_connect (search->details->engine, "hits-added",
