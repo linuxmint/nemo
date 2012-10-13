@@ -158,6 +158,28 @@ search_provider_hits_subtracted (NautilusSearchProvider *provider,
 }
 
 static void
+check_providers_status (NautilusSearchEngine *engine)
+{
+	gint num_finished = engine->details->providers_error + engine->details->providers_finished;
+
+	if (num_finished < engine->details->providers_running) {
+		return;
+	}
+
+	g_object_ref (engine);
+
+	if (num_finished == engine->details->providers_error) {
+		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (engine),
+						_("Unable to complete the requested search"));
+	} else {
+		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (engine));
+	}
+
+	g_hash_table_remove_all (engine->details->uris);
+	g_object_unref (engine);
+}
+
+static void
 search_provider_error (NautilusSearchProvider *provider,
 		       const char             *error_message,
 		       NautilusSearchEngine   *engine)
@@ -165,13 +187,8 @@ search_provider_error (NautilusSearchProvider *provider,
 {
 	DEBUG ("Search provider error: %s", error_message);
 	engine->details->providers_error++;
-	if (engine->details->providers_error == engine->details->providers_running) {
-		g_object_ref (engine);
-		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (engine),
-						_("Unable to complete the requested search"));
-		g_hash_table_remove_all (engine->details->uris);
-		g_object_unref (engine);
-	}
+
+	check_providers_status (engine);
 }
 
 static void
@@ -179,13 +196,10 @@ search_provider_finished (NautilusSearchProvider *provider,
 			  NautilusSearchEngine   *engine)
 
 {
+	DEBUG ("Search provider finished");
 	engine->details->providers_finished++;
-	if (engine->details->providers_finished == engine->details->providers_running) {
-		g_object_ref (engine);
-		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (engine));
-		g_hash_table_remove_all (engine->details->uris);
-		g_object_unref (engine);
-	}
+
+	check_providers_status (engine);
 }
 
 static void
