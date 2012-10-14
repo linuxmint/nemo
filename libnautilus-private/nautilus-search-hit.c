@@ -111,7 +111,7 @@ nautilus_search_hit_compute_scores (NautilusSearchHit *hit,
 	}
 
 	if (hit->details->fts_rank > 0) {
-		match_bonus = 10.0 * hit->details->fts_rank;
+		match_bonus = MIN (500, 10.0 * hit->details->fts_rank);
 	} else {
 		match_bonus = 0.0;
 	}
