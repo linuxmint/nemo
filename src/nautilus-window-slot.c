@@ -442,6 +442,7 @@ real_setup_loading_floating_bar (NautilusWindowSlot *slot)
 	nautilus_floating_bar_set_primary_label (NAUTILUS_FLOATING_BAR (slot->details->floating_bar),
 						 NAUTILUS_IS_SEARCH_DIRECTORY (nautilus_view_get_model (slot->content_view)) ?
 						 _("Searching...") : _("Loading..."));
+	nautilus_floating_bar_set_details_label (NAUTILUS_FLOATING_BAR (slot->details->floating_bar), NULL);
 	nautilus_floating_bar_set_show_spinner (NAUTILUS_FLOATING_BAR (slot->details->floating_bar),
 						TRUE);
 	nautilus_floating_bar_add_action (NAUTILUS_FLOATING_BAR (slot->details->floating_bar),
