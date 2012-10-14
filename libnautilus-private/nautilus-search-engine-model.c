@@ -81,8 +81,8 @@ emit_finished_idle_cb (gpointer user_data)
 		model->details->hits = NULL;
 	}
 
-	nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (model));
 	model->details->query_pending = FALSE;
+	nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (model));
 	g_object_unref (model);
 
 	return FALSE;
