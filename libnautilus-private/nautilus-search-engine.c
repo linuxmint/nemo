@@ -81,6 +81,8 @@ search_engine_start_real (NautilusSearchEngine *engine)
 
 	engine->details->restart = FALSE;
 
+	DEBUG ("Search engine start real");
+
 #ifdef ENABLE_TRACKER
 	nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->tracker));
 	engine->details->providers_running++;
@@ -99,6 +101,8 @@ nautilus_search_engine_start (NautilusSearchProvider *provider)
 {
 	NautilusSearchEngine *engine = NAUTILUS_SEARCH_ENGINE (provider);
 	gint num_finished;
+
+	DEBUG ("Search engine start");
 
 	num_finished = engine->details->providers_error + engine->details->providers_finished;
 
@@ -124,6 +128,9 @@ static void
 nautilus_search_engine_stop (NautilusSearchProvider *provider)
 {
 	NautilusSearchEngine *engine = NAUTILUS_SEARCH_ENGINE (provider);
+
+	DEBUG ("Search engine stop");
+
 #ifdef ENABLE_TRACKER
 	nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (engine->details->tracker));
 #endif
@@ -143,6 +150,8 @@ search_provider_hits_added (NautilusSearchProvider *provider,
 	GList *l;
 
 	if (!engine->details->running || engine->details->restart) {
+		DEBUG ("Ignoring hits-added, since engine is %s",
+		       !engine->details->running ? "not running" : "waiting to restart");
 		return;
 	}
 
@@ -205,9 +214,11 @@ check_providers_status (NautilusSearchEngine *engine)
 	g_object_ref (engine);
 
 	if (num_finished == engine->details->providers_error) {
+		DEBUG ("Search engine error");
 		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (engine),
 						_("Unable to complete the requested search"));
 	} else {
+		DEBUG ("Search engine finished");
 		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (engine));
 	}
 
@@ -216,6 +227,7 @@ check_providers_status (NautilusSearchEngine *engine)
 	g_object_unref (engine);
 
 	if (engine->details->restart) {
+		DEBUG ("Restarting engine");
 		nautilus_search_engine_start (NAUTILUS_SEARCH_PROVIDER (engine));
 	}
 }

@@ -49,6 +49,7 @@ static GDebugKey keys[] = {
   { "Places", NAUTILUS_DEBUG_PLACES },
   { "Previewer", NAUTILUS_DEBUG_PREVIEWER },
   { "Search", NAUTILUS_DEBUG_SEARCH },
+  { "SearchHit", NAUTILUS_DEBUG_SEARCH_HIT },
   { "Smclient", NAUTILUS_DEBUG_SMCLIENT },
   { "Window", NAUTILUS_DEBUG_WINDOW },
   { "Undo", NAUTILUS_DEBUG_UNDO },
