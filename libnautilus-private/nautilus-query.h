@@ -61,6 +61,8 @@ GList *        nautilus_query_get_mime_types     (NautilusQuery *query);
 void           nautilus_query_set_mime_types     (NautilusQuery *query, GList *mime_types);
 void           nautilus_query_add_mime_type      (NautilusQuery *query, const char *mime_type);
 
+gdouble        nautilus_query_matches_string     (NautilusQuery *query, const gchar *string);
+
 char *         nautilus_query_to_readable_string (NautilusQuery *query);
 NautilusQuery *nautilus_query_load               (char *file);
 gboolean       nautilus_query_save               (NautilusQuery *query, char *file);

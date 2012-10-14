@@ -88,48 +88,34 @@ emit_finished_idle_cb (gpointer user_data)
 	return FALSE;
 }
 
-static gchar *
-prepare_pattern_for_comparison (NautilusSearchEngineModel *model)
-{
-	gchar *text, *prepared, *pattern;
-
-	text = nautilus_query_get_text (model->details->query);
-	prepared = nautilus_search_prepare_string_for_compare (text);
-	pattern = g_strdup_printf ("*%s*", prepared);
-
-	g_free (prepared);
-	g_free (text);
-
-	return pattern;
-}
-
 static void
 model_directory_ready_cb (NautilusDirectory	*directory,
 			  GList			*list,
 			  gpointer		 user_data)
 {
 	NautilusSearchEngineModel *model = user_data;
-	gchar *uri, *pattern;
-	gchar *display_name, *prepared;
+	gchar *uri, *display_name;
 	GList *files, *l, *hits;
 	NautilusFile *file;
+	gdouble match;
+	NautilusSearchHit *hit;
 
-	pattern = prepare_pattern_for_comparison (model);
 	files = nautilus_directory_get_file_list (directory);
 	hits = NULL;
 
 	for (l = files; l != NULL; l = l->next) {
 		file = l->data;
 		display_name = nautilus_file_get_display_name (file);
-		prepared = nautilus_search_prepare_string_for_compare (display_name);
+		match = nautilus_query_matches_string (model->details->query, display_name);
 
-		if (g_pattern_match_simple (pattern, prepared)) {
+		if (match > -1) {
 			uri = nautilus_file_get_uri (file);
-			hits = g_list_prepend (hits, nautilus_search_hit_new (uri));
+			hit = nautilus_search_hit_new (uri);
+			nautilus_search_hit_set_fts_rank (hit, match);
+			hits = g_list_prepend (hits, hit);
 			g_free (uri);
 		}
 
-		g_free (prepared);
 		g_free (display_name);
 	}
 
