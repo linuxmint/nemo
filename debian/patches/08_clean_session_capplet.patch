@@ -1,9 +1,0 @@
-Index: nemo-3.3.92/data/nemo-autostart.desktop.in
-===================================================================
---- nemo-3.3.92.orig/data/nemo-autostart.desktop.in	2012-02-06 20:44:45.000000000 +0100
-+++ nemo-3.3.92/data/nemo-autostart.desktop.in	2012-03-20 11:19:28.619758145 +0100
-@@ -4,3 +4,4 @@
- Exec=nemo -n
- OnlyShowIn=GNOME;Unity;
- AutostartCondition=GSettings org.gnome.desktop.background show-desktop-icons
-+NoDisplay=true
