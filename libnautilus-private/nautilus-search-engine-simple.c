@@ -318,7 +318,10 @@ search_thread_func (gpointer user_data)
 		visit_directory (dir, data);
 		g_object_unref (dir);
 	}
-	send_batch (data);
+
+	if (!g_cancellable_is_cancelled (data->cancellable)) {
+		send_batch (data);
+	}
 
 	g_idle_add (search_thread_done_idle, data);
 	
