@@ -134,12 +134,13 @@ static gboolean
 search_thread_done_idle (gpointer user_data)
 {
 	SearchThreadData *data = user_data;
+	NautilusSearchEngineSimple *engine = data->engine;
 
-	nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (data->engine));
-	data->engine->details->active_search = NULL;
-	
+	engine->details->active_search = NULL;
+	nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (engine));
+
 	search_thread_data_free (data);
-	
+
 	return FALSE;
 }
 
