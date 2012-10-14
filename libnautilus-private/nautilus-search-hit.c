@@ -26,6 +26,8 @@
 
 #include "nautilus-search-hit.h"
 #include "nautilus-query.h"
+#define DEBUG_FLAG NAUTILUS_DEBUG_SEARCH_HIT
+#include "nautilus-debug.h"
 
 struct NautilusSearchHitDetails
 {
@@ -117,6 +119,8 @@ nautilus_search_hit_compute_scores (NautilusSearchHit *hit,
 	}
 
 	hit->details->relevance = recent_bonus + proximity_bonus + match_bonus;
+	DEBUG ("Hit %s computed relevance %.2f (%.2f + %.2f + %.2f)", hit->details->uri, hit->details->relevance,
+	       proximity_bonus, recent_bonus, match_bonus);
 
 	g_date_time_unref (now);
 }

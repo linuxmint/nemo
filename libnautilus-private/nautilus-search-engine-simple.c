@@ -26,6 +26,8 @@
 #include "nautilus-search-provider.h"
 #include "nautilus-search-engine-simple.h"
 #include "nautilus-ui-utilities.h"
+#define DEBUG_FLAG NAUTILUS_DEBUG_SEARCH
+#include "nautilus-debug.h"
 
 #include <string.h>
 #include <glib.h>
@@ -136,6 +138,8 @@ search_thread_done_idle (gpointer user_data)
 	SearchThreadData *data = user_data;
 	NautilusSearchEngineSimple *engine = data->engine;
 
+	DEBUG ("Simple engine done");
+
 	engine->details->active_search = NULL;
 	nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (engine));
 
@@ -154,6 +158,8 @@ static gboolean
 search_thread_add_hits_idle (gpointer user_data)
 {
 	SearchHitsData *data = user_data;
+
+	DEBUG ("Simple engine add hits");
 
 	if (!g_cancellable_is_cancelled (data->thread_data->cancellable)) {
 		nautilus_search_provider_hits_added (NAUTILUS_SEARCH_PROVIDER (data->thread_data->engine),
@@ -340,6 +346,8 @@ nautilus_search_engine_simple_start (NautilusSearchProvider *provider)
 	if (simple->details->active_search != NULL) {
 		return;
 	}
+
+	DEBUG ("Simple engine start");
 	
 	data = search_thread_data_new (simple, simple->details->query);
 
@@ -357,6 +365,7 @@ nautilus_search_engine_simple_stop (NautilusSearchProvider *provider)
 	simple = NAUTILUS_SEARCH_ENGINE_SIMPLE (provider);
 
 	if (simple->details->active_search != NULL) {
+		DEBUG ("Simple engine stop");
 		g_cancellable_cancel (simple->details->active_search->cancellable);
 		simple->details->active_search = NULL;
 	}
