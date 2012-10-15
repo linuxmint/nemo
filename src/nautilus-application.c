@@ -1033,6 +1033,8 @@ static void
 do_perform_self_checks (gint *exit_status)
 {
 #ifndef NAUTILUS_OMIT_SELF_CHECK
+	gtk_init (NULL, NULL);
+
 	nautilus_profile_start (NULL);
 	/* Run the checks (each twice) for nautilus and libnautilus-private. */
 
