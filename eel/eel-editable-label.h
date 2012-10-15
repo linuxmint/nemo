@@ -74,6 +74,7 @@ struct _EelEditableLabel
   
   GtkWidget *popup_menu;
 
+  GdkWindow *text_area;
   GtkIMContext *im_context;
   gboolean need_im_reset;
   int preedit_length;	/* length of preedit string, in bytes */

@@ -602,6 +602,7 @@ eel_editable_label_init (EelEditableLabel *label)
   label->n_bytes = 0;
   
   gtk_widget_set_can_focus (GTK_WIDGET (label), TRUE);
+  gtk_widget_set_has_window (GTK_WIDGET (label), FALSE);
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (label)),
                                GTK_STYLE_CLASS_ENTRY);
 
@@ -1172,7 +1173,12 @@ static void
 eel_editable_label_size_allocate (GtkWidget     *widget,
 				  GtkAllocation *allocation)
 {
+  EelEditableLabel *label = EEL_EDITABLE_LABEL (widget);
+
   (* GTK_WIDGET_CLASS (eel_editable_label_parent_class)->size_allocate) (widget, allocation);
+
+  gdk_window_move_resize (label->text_area, allocation->x, allocation->y,
+                          allocation->width, allocation->height);
 }
 
 static void
@@ -1590,23 +1596,24 @@ eel_editable_label_realize (GtkWidget *widget)
   gint attributes_mask;
   GtkAllocation allocation;
   GdkWindow *window;
-  GtkStyleContext *style;
 
   gtk_widget_set_realized (widget, TRUE);
+  window = gtk_widget_get_parent_window (widget);
+  gtk_widget_set_window (widget, window);
+  g_object_ref (window);
+
   label = EEL_EDITABLE_LABEL (widget);
   gtk_widget_get_allocation (widget, &allocation);
 
-  attributes.wclass = GDK_INPUT_OUTPUT;
+  attributes.wclass = GDK_INPUT_ONLY;
   attributes.window_type = GDK_WINDOW_CHILD;
   attributes.x = allocation.x;
   attributes.y = allocation.y;
   attributes.width = allocation.width;
   attributes.height = allocation.height;
-  attributes.visual = gtk_widget_get_visual (widget);
   attributes.cursor = gdk_cursor_new (GDK_XTERM);
   attributes.event_mask = gtk_widget_get_events (widget) |
-    (GDK_EXPOSURE_MASK |
-     GDK_BUTTON_PRESS_MASK |
+    (GDK_BUTTON_PRESS_MASK |
      GDK_BUTTON_RELEASE_MASK |
      GDK_BUTTON1_MOTION_MASK |
      GDK_BUTTON3_MOTION_MASK |
@@ -1615,18 +1622,14 @@ eel_editable_label_realize (GtkWidget *widget)
      GDK_ENTER_NOTIFY_MASK |
      GDK_LEAVE_NOTIFY_MASK);
 
-  attributes_mask = GDK_WA_X | GDK_WA_Y  | GDK_WA_VISUAL | GDK_WA_CURSOR;
+  attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_CURSOR;
 
-  window = gdk_window_new (gtk_widget_get_parent_window (widget),
-			   &attributes, attributes_mask);
-  gtk_widget_set_window (widget, window);
-  gdk_window_set_user_data (window, widget);
+  label->text_area = gdk_window_new (gtk_widget_get_window (widget),
+                                     &attributes, attributes_mask);
+  gdk_window_set_user_data (label->text_area, widget);
+  gtk_im_context_set_client_window (label->im_context, label->text_area);
 
   g_object_unref (attributes.cursor);
-
-  style = gtk_widget_get_style_context (widget);
-  gtk_style_context_set_background (style, gtk_widget_get_window (widget));
-  gtk_im_context_set_client_window (label->im_context, gtk_widget_get_window (widget));
 }
 
 static void
@@ -1636,8 +1639,14 @@ eel_editable_label_unrealize (GtkWidget *widget)
 
   label = EEL_EDITABLE_LABEL (widget);
 
-  /* Strange. Copied from GtkEntry, should be NULL? */
   gtk_im_context_set_client_window (label->im_context, NULL);
+
+  if (label->text_area)
+    {
+      gdk_window_set_user_data (label->text_area, NULL);
+      gdk_window_destroy (label->text_area);
+      label->text_area = NULL;
+    }
   
   (* GTK_WIDGET_CLASS (eel_editable_label_parent_class)->unrealize) (widget);
 }
@@ -1645,12 +1654,21 @@ eel_editable_label_unrealize (GtkWidget *widget)
 static void
 eel_editable_label_map (GtkWidget *widget)
 {
+  EelEditableLabel *label = EEL_EDITABLE_LABEL (widget);
+
   (* GTK_WIDGET_CLASS (eel_editable_label_parent_class)->map) (widget);
+
+  gdk_window_show (label->text_area);
 }
 
 static void
 eel_editable_label_unmap (GtkWidget *widget)
+
 {
+  EelEditableLabel *label = EEL_EDITABLE_LABEL (widget);
+
+  gdk_window_hide (label->text_area);
+
   (* GTK_WIDGET_CLASS (eel_editable_label_parent_class)->unmap) (widget);
 }
 
@@ -1848,7 +1866,7 @@ eel_editable_label_motion (GtkWidget      *widget,
   if ((event->state & GDK_BUTTON1_MASK) == 0)
     return FALSE;
 
-  gdk_window_get_device_position (gtk_widget_get_window (widget),
+  gdk_window_get_device_position (label->text_area,
                                   event->device,
                                   &x, &y, NULL);
 
@@ -2984,7 +3002,7 @@ popup_position_func (GtkMenu   *menu,
 
   g_assert (gtk_widget_get_realized (widget));
 
-  gdk_window_get_origin (gtk_widget_get_window (widget), x, y);
+  gdk_window_get_origin (label->text_area, x, y);
 
   /*gtk_widget_size_request (label->popup_menu, &req);*/
   gtk_widget_get_requisition (widget, &req);
