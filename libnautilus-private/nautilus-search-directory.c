@@ -533,7 +533,7 @@ search_engine_hits_added (NautilusSearchEngine *engine, GList *hits,
 		g_signal_connect (file, "changed", G_CALLBACK (file_changed), search),
 
 		file_list = g_list_prepend (file_list, file);
-		g_hash_table_replace (search->details->files_hash, file, GINT_TO_POINTER (1));
+		g_hash_table_add (search->details->files_hash, file);
 	}
 	
 	search->details->files = g_list_concat (search->details->files, file_list);
