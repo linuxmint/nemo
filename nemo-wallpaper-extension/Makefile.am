@@ -9,7 +9,6 @@ libdir = @libdir@/nemo/extensions-3.0
 
 AM_CFLAGS =\
 	`pkg-config --cflags libnemo-extension`\
-	`pkg-config --cflags gconf-2.0`\
 	 -Wall
 
 lib_LTLIBRARIES = libnemo-wallpaper.la
@@ -21,7 +20,6 @@ libnemo_wallpaper_la_SOURCES = \
 
 libnemo_wallpaper_la_LDFLAGS = \
 	`pkg-config --libs libnemo-extension`\
-	`pkg-config --libs gconf-2.0`\
 	-module -avoid-version -no-undefined
 
 libnemo_wallpaper_la_LIBADD = 
