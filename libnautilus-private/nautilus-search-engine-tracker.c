@@ -89,6 +89,28 @@ check_pending_hits (NautilusSearchEngineTracker *tracker,
 	g_list_free_full (hits, g_object_unref);
 }
 
+static void
+search_finished (NautilusSearchEngineTracker *tracker,
+		 GError *error)
+{
+	if (error == NULL) {
+		check_pending_hits (tracker, TRUE);
+	} else {
+		g_queue_foreach (tracker->details->hits_pending, (GFunc) g_object_unref, NULL);
+		g_queue_clear (tracker->details->hits_pending);
+	}
+
+	tracker->details->query_pending = FALSE;
+
+	if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (tracker), error->message);
+	} else {
+		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (tracker));
+	}
+
+	g_object_unref (tracker);
+}
+
 static void cursor_callback (GObject      *object,
 			     GAsyncResult *result,
 			     gpointer      user_data);
@@ -117,34 +139,19 @@ cursor_callback (GObject      *object,
 	const char *atime_str;
 	GTimeVal tv;
 	gdouble rank, match;
-	gboolean success, has_error;
+	gboolean success;
 	gchar *basename;
 
 	tracker = NAUTILUS_SEARCH_ENGINE_TRACKER (user_data);
 
 	cursor = TRACKER_SPARQL_CURSOR (object);
-	has_error = FALSE;
 	success = tracker_sparql_cursor_next_finish (cursor, result, &error);
 
-	if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (tracker), error->message);
-		has_error = TRUE;
-	}
-
-	g_clear_error (&error);
-
 	if (!success) {
-		if (!has_error) {
-			check_pending_hits (tracker, TRUE);
-		} else {
-			g_queue_foreach (tracker->details->hits_pending,
-					 (GFunc) g_object_unref, NULL);
-			g_queue_clear (tracker->details->hits_pending);
-		}
+		search_finished (tracker, error);
 
-		tracker->details->query_pending = FALSE;
-		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (tracker));
-		g_object_unref (cursor);
+		g_clear_error (&error);
+		g_clear_object (&cursor);
 
 		return;
 	}
@@ -202,26 +209,20 @@ query_callback (GObject      *object,
 	                                                 result,
 	                                                 &error);
 
-	if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (tracker), error->message);
+	if (error != NULL) {
+		search_finished (tracker, error);
+		g_error_free (error);
+	} else {
+		cursor_next (tracker, cursor);
 	}
-
-	g_clear_error (&error);
-
-	if (!cursor) {
-		tracker->details->query_pending = FALSE;
-		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (tracker));
-		return;
-	}
-
-	cursor_next (tracker, cursor);
 }
 
 static gboolean
 search_finished_idle (gpointer user_data)
 {
-	NautilusSearchProvider *provider = user_data;
-	nautilus_search_provider_finished (provider);
+	NautilusSearchEngineTracker *tracker = user_data;
+
+	search_finished (tracker, NULL);
 
 	return FALSE;
 }
@@ -240,6 +241,9 @@ nautilus_search_engine_tracker_start (NautilusSearchProvider *provider)
 	if (tracker->details->query_pending) {
 		return;
 	}
+
+	g_object_ref (tracker);
+	tracker->details->query_pending = TRUE;
 
 	if (tracker->details->connection == NULL) {
 		g_idle_add (search_finished_idle, provider);
@@ -289,7 +293,6 @@ nautilus_search_engine_tracker_start (NautilusSearchProvider *provider)
 	g_string_append (sparql, ")} ORDER BY DESC (fts:rank(?urn))");
 
 	tracker->details->cancellable = g_cancellable_new ();
-	tracker->details->query_pending = TRUE;
 	tracker_sparql_connection_query_async (tracker->details->connection,
 					       sparql->str,
 					       tracker->details->cancellable,
@@ -309,7 +312,7 @@ nautilus_search_engine_tracker_stop (NautilusSearchProvider *provider)
 
 	tracker = NAUTILUS_SEARCH_ENGINE_TRACKER (provider);
 	
-	if (tracker->details->query && tracker->details->query_pending) {
+	if (tracker->details->query_pending) {
 		g_cancellable_cancel (tracker->details->cancellable);
 		g_clear_object (&tracker->details->cancellable);
 		tracker->details->query_pending = FALSE;
