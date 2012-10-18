@@ -6081,7 +6081,7 @@ open_as_root (NemoView *view,
 	g_assert (NEMO_IS_VIEW (view));
 	g_assert (NEMO_IS_FILE (target));
     argv[0] = "gksu";
-    argv[1] = "xdg-open";
+    argv[1] = "nemo";
     argv[2] = g_file_get_path(nemo_file_get_location (target));
     argv[3] = NULL;
     g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
