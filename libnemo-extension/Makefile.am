@@ -78,10 +78,10 @@ Nemo_3_0_gir_LIBS = libnemo-extension.la
 Nemo_3_0_gir_FILES = $(addprefix $(srcdir)/, $(introspection_files))
 INTROSPECTION_GIRS += Nemo-3.0.gir
 
-girdir = $(datadir)/gir-1.0/
+girdir = @INTROSPECTION_GIRDIR@
 gir_DATA = $(INTROSPECTION_GIRS)
 
-typelibsdir = $(libdir)/girepository-1.0/
+typelibsdir = @INTROSPECTION_TYPELIBDIR@
 typelibs_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelibs_DATA)
