@@ -89,8 +89,8 @@ Section: libs
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends},
          ${shlibs:Depends}
-Replaces: libnemo-extension1a (<< 1.0.3+nmu1)
-breaks: libnemo-extension1a (<< 1.0.3+nmu1)
+Replaces: libnemo-extension1a
+breaks: libnemo-extension1a
 Description: libraries for nemo components - runtime version
  Nemo is the official file manager and graphical shell for the
  GNOME desktop.

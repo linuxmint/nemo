@@ -1,10 +1,8 @@
-nemo (1.0.3+nmu1) UNRELEASED; urgency=low
+nemo (1.0.4) nadia; urgency=low
 
-  * Tempory version to make sure the transition to libnemo-extension1 does
-    not break developers test environment. For cleanliness purpose, remove
-    this version from this changelog file just before the next release.
+  * 1.0.4
 
- -- Nicolas Bourdaud <nicolas.bourdaud@gmail.com>  Sun, 07 Oct 2012 13:30:57 +0200
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 18 Oct 2012 13:43:14 +0100
 
 nemo (1.0.3) maya; urgency=low
 
