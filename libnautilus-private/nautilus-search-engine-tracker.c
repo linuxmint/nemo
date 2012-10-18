@@ -266,16 +266,11 @@ nautilus_search_engine_tracker_start (NautilusSearchProvider *provider)
 		g_string_append (sparql, "nie:mimeType ?mime ;");
 	}
 
-	g_string_append_printf (sparql, " fts:match '%s*'", search_text);
-	g_string_append (sparql, " . FILTER (");
-	
-	if (location_uri)  {
-		g_string_append_printf (sparql, " tracker:uri-is-descendant('%s', nie:url(?urn)) && ",
-					location_uri);
-	}
-
-	g_string_append_printf (sparql, "fn:contains(fn:lower-case(nfo:fileName(?urn)), '%s')",
-				search_text);
+	g_string_append_printf (sparql,
+				" fts:match '%s*' . FILTER ("
+				" tracker:uri-is-descendant('%s', nie:url(?urn)) &&"
+				" fn:contains(fn:lower-case(nfo:fileName(?urn)), '%s')",
+				search_text, location_uri, search_text);
 
 	if (mime_count > 0) {
 		g_string_append (sparql, " && (");

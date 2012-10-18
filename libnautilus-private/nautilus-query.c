@@ -74,6 +74,7 @@ nautilus_query_init (NautilusQuery *query)
 	query->details = G_TYPE_INSTANCE_GET_PRIVATE (query, NAUTILUS_TYPE_QUERY,
 						      NautilusQueryDetails);
 	query->details->show_hidden = TRUE;
+	query->details->location_uri = nautilus_get_home_directory_uri ();
 }
 
 static gchar *
@@ -417,11 +418,9 @@ nautilus_query_to_xml (NautilusQuery *query)
 	g_string_append_printf (xml, "   <text>%s</text>\n", text);
 	g_free (text);
 
-	if (query->details->location_uri) {
-		uri = encode_home_uri (query->details->location_uri);
-		g_string_append_printf (xml, "   <location>%s</location>\n", uri);
-		g_free (uri);
-	}
+	uri = encode_home_uri (query->details->location_uri);
+	g_string_append_printf (xml, "   <location>%s</location>\n", uri);
+	g_free (uri);
 
 	if (query->details->mime_types) {
 		g_string_append (xml, "   <mimetypes>\n");
