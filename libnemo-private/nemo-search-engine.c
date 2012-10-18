@@ -313,3 +313,9 @@ nemo_search_engine_get_model_provider (NemoSearchEngine *engine)
 {
 	return engine->details->model;
 }
+
+NemoSearchEngineSimple *
+nemo_search_engine_get_simple_provider (NemoSearchEngine *engine)
+{
+	return engine->details->simple;
+}

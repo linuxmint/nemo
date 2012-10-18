@@ -145,6 +145,7 @@ static void
 start_search (NemoSearchDirectory *search)
 {
 	NemoSearchEngineModel *model_provider;
+	NemoSearchEngineSimple *simple_provider;
 
 	if (!search->details->query) {
 		return;
@@ -168,6 +169,9 @@ start_search (NemoSearchDirectory *search)
 
 	model_provider = nemo_search_engine_get_model_provider (search->details->engine);
 	nemo_search_engine_model_set_model (model_provider, search->details->base_model);
+
+	simple_provider = nemo_search_engine_get_simple_provider (search->details->engine);
+	g_object_set (simple_provider, "recursive", TRUE, NULL);
 
 	reset_file_list (search);
 
