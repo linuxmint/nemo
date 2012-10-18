@@ -24,8 +24,6 @@
 #ifndef NAUTILUS_SEARCH_ENGINE_SIMPLE_H
 #define NAUTILUS_SEARCH_ENGINE_SIMPLE_H
 
-#include <libnautilus-private/nautilus-search-engine.h>
-
 #define NAUTILUS_TYPE_SEARCH_ENGINE_SIMPLE		(nautilus_search_engine_simple_get_type ())
 #define NAUTILUS_SEARCH_ENGINE_SIMPLE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_SEARCH_ENGINE_SIMPLE, NautilusSearchEngineSimple))
 #define NAUTILUS_SEARCH_ENGINE_SIMPLE_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), NAUTILUS_TYPE_SEARCH_ENGINE_SIMPLE, NautilusSearchEngineSimpleClass))

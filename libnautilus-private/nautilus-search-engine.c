@@ -313,3 +313,9 @@ nautilus_search_engine_get_model_provider (NautilusSearchEngine *engine)
 {
 	return engine->details->model;
 }
+
+NautilusSearchEngineSimple *
+nautilus_search_engine_get_simple_provider (NautilusSearchEngine *engine)
+{
+	return engine->details->simple;
+}
