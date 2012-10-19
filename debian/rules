@@ -8,7 +8,7 @@ export LDFLAGS+=-Wl,-z,defs -Wl,-O1 -Wl,--as-needed
 
 
 %:
-	dh $@ --with autoreconf
+	dh $@ --parallel --with autoreconf
 
 override_dh_autoreconf:
 	NOCONFIGURE=yes dh_autoreconf --as-needed -- ./autogen.sh
