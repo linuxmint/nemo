@@ -88,6 +88,7 @@ Architecture: any
 Section: libs
 Depends: ${misc:Depends},
          ${shlibs:Depends}
+Provides: libnemo-extension1a
 Replaces: libnemo-extension1a
 breaks: libnemo-extension1a
 Description: libraries for nemo components - runtime version
@@ -95,19 +96,6 @@ Description: libraries for nemo components - runtime version
  GNOME desktop.
  .
  This package contains a few runtime libraries needed by nemo' extensions.
-
-Package: libnemo-extension1a
-Architecture: any
-Section: oldlibs
-Depends: ${misc:Depends}, libnemo-extension1 (= ${binary:Version})
-Description: libraries for nemo components - runtime (transitional package)
- Nemo is the official file manager and graphical shell for the
- GNOME desktop.
- .
- This package is an empty package to make the ease the transition to the use
- of libnemo-extension1 package. This package can be safely removed if the
- packages providing nemo extensions stop depending on libnemo-extension1a
- and use libnemo-extension1 instead. 
 
 Package: libnemo-extension-dev
 Architecture: any
