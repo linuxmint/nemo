@@ -139,7 +139,7 @@ nautilus_monitor_directory (GFile *location)
 	GFileMonitor *dir_monitor;
 	NautilusMonitor *ret;
 
-	ret = g_new0 (NautilusMonitor, 1);
+	ret = g_slice_new0 (NautilusMonitor);
 	dir_monitor = g_file_monitor_directory (location, G_FILE_MONITOR_WATCH_MOUNTS, NULL, NULL);
 
 	if (dir_monitor != NULL) {
@@ -180,5 +180,5 @@ nautilus_monitor_cancel (NautilusMonitor *monitor)
 
 	g_clear_object (&monitor->location);
 	g_clear_object (&monitor->mount);
-	g_free (monitor);
+	g_slice_free (NautilusMonitor, monitor);
 }
