@@ -2,7 +2,7 @@ Source: nemo
 Section: gnome
 Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
-Build-Depends: debhelper (>= 9),
+Build-Depends: debhelper (>= 8),
                dh-autoreconf,
                gnome-pkg-tools (>= 0.13),
                libglib2.0-dev (>= 2.31.9),
@@ -86,7 +86,6 @@ Description: file manager and graphical shell for GNOME - debugging version
 Package: libnemo-extension1
 Architecture: any
 Section: libs
-Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends},
          ${shlibs:Depends}
 Replaces: libnemo-extension1a
