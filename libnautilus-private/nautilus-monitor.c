@@ -33,6 +33,9 @@
 
 struct NautilusMonitor {
 	GFileMonitor *monitor;
+	GVolumeMonitor *volume_monitor;
+	GMount *mount;
+	GFile *location;
 };
 
 gboolean
@@ -67,6 +70,28 @@ call_consume_changes_idle_cb (gpointer not_used)
 	nautilus_file_changes_consume_changes (TRUE);
 	call_consume_changes_idle_id = 0;
 	return FALSE;
+}
+
+static void
+schedule_call_consume_changes (void)
+{
+	if (call_consume_changes_idle_id == 0) {
+		call_consume_changes_idle_id =
+			g_idle_add (call_consume_changes_idle_cb, NULL);
+	}
+}
+
+static void
+mount_removed (GVolumeMonitor *volume_monitor,
+	       GMount *mount,
+	       gpointer user_data)
+{
+	NautilusMonitor *monitor = user_data;
+
+	if (mount == monitor->mount) {
+		nautilus_file_changes_queue_file_removed (monitor->location);
+		schedule_call_consume_changes ();
+	}
 }
 
 static void
@@ -105,10 +130,7 @@ dir_changed (GFileMonitor* monitor,
 	g_free (uri);
 	g_free (to_uri);
 
-	if (call_consume_changes_idle_id == 0) {
-		call_consume_changes_idle_id = 
-			g_idle_add (call_consume_changes_idle_cb, NULL);
-	}
+	schedule_call_consume_changes ();
 }
  
 NautilusMonitor *
@@ -117,13 +139,25 @@ nautilus_monitor_directory (GFile *location)
 	GFileMonitor *dir_monitor;
 	NautilusMonitor *ret;
 
+	ret = g_new0 (NautilusMonitor, 1);
 	dir_monitor = g_file_monitor_directory (location, G_FILE_MONITOR_WATCH_MOUNTS, NULL, NULL);
 
-	ret = g_new0 (NautilusMonitor, 1);
-	ret->monitor = dir_monitor;
+	if (dir_monitor != NULL) {
+		ret->monitor = dir_monitor;
+	} else if (!g_file_is_native (location)) {
+		ret->mount = nautilus_get_mounted_mount_for_root (location);
+		ret->location = g_object_ref (location);
+		ret->volume_monitor = g_volume_monitor_get ();
+	}
 
-	if (ret->monitor) {
-		g_signal_connect (ret->monitor, "changed", (GCallback)dir_changed, ret);
+	if (ret->monitor != NULL) {
+		g_signal_connect (ret->monitor, "changed",
+				  G_CALLBACK (dir_changed), ret);
+	}
+
+	if (ret->volume_monitor != NULL) {
+		g_signal_connect (ret->volume_monitor, "mount-removed",
+				  G_CALLBACK (mount_removed), ret);
 	}
 
 	/* We return a monitor even on failure, so we can avoid later trying again */
@@ -139,5 +173,12 @@ nautilus_monitor_cancel (NautilusMonitor *monitor)
 		g_object_unref (monitor->monitor);
 	}
 
+	if (monitor->volume_monitor != NULL) {
+		g_signal_handlers_disconnect_by_func (monitor->volume_monitor, mount_removed, monitor);
+		g_object_unref (monitor->volume_monitor);
+	}
+
+	g_clear_object (&monitor->location);
+	g_clear_object (&monitor->mount);
 	g_free (monitor);
 }
