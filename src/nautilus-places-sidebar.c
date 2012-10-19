@@ -753,12 +753,13 @@ update_places (NautilusPlacesSidebar *sidebar)
 
 	for (index = 0; index < bookmark_count; ++index) {
 		bookmark = nautilus_bookmark_list_item_at (sidebar->bookmarks, index);
+		root = nautilus_bookmark_get_location (bookmark);
 
-		if (!nautilus_bookmark_get_exists (bookmark)) {
+		if (!nautilus_bookmark_get_exists (bookmark) && g_file_is_native (root)) {
+			g_object_unref (root);
 			continue;
 		}
 
-		root = nautilus_bookmark_get_location (bookmark);
 		file = nautilus_file_get (root);
 
 		if (is_built_in_bookmark (file)) {
