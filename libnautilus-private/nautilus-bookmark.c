@@ -666,26 +666,6 @@ nautilus_bookmark_compare_uris (gconstpointer a, gconstpointer b)
 			      bookmark_b->details->location);
 }
 
-NautilusBookmark *
-nautilus_bookmark_copy (NautilusBookmark *bookmark)
-{
-	NautilusBookmark *retval;
-
-	g_return_val_if_fail (NAUTILUS_IS_BOOKMARK (bookmark), NULL);
-
-	retval = nautilus_bookmark_new (bookmark->details->location,
-					bookmark->details->has_custom_name ?
-					bookmark->details->name : NULL);
-	if (bookmark->details->icon) {
-		g_object_set (retval, "icon", bookmark->details->icon, NULL);
-	}
-	if (bookmark->details->symbolic_icon) {
-		g_object_set (retval, "symbolic-icon", bookmark->details->symbolic_icon, NULL);
-	}
-
-	return retval;
-}
-
 GIcon *
 nautilus_bookmark_get_symbolic_icon (NautilusBookmark *bookmark)
 {

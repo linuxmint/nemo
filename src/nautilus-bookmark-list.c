@@ -251,10 +251,7 @@ nautilus_bookmark_list_append (NautilusBookmarkList *bookmarks,
 	g_return_if_fail (NAUTILUS_IS_BOOKMARK_LIST (bookmarks));
 	g_return_if_fail (NAUTILUS_IS_BOOKMARK (bookmark));
 
-	insert_bookmark_internal (bookmarks, 
-				  nautilus_bookmark_copy (bookmark), 
-				  -1);
-
+	insert_bookmark_internal (bookmarks, g_object_ref (bookmark), -1);
 	nautilus_bookmark_list_save_file (bookmarks);
 }
 
@@ -391,10 +388,7 @@ nautilus_bookmark_list_insert_item (NautilusBookmarkList *bookmarks,
 	g_return_if_fail (NAUTILUS_IS_BOOKMARK_LIST (bookmarks));
 	g_return_if_fail (index <= g_list_length (bookmarks->list));
 
-	insert_bookmark_internal (bookmarks,
-				  nautilus_bookmark_copy (new_bookmark), 
-				  index);
-
+	insert_bookmark_internal (bookmarks, g_object_ref (new_bookmark), index);
 	nautilus_bookmark_list_save_file (bookmarks);
 }
 
