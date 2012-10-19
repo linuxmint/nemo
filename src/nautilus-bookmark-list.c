@@ -251,30 +251,13 @@ nautilus_bookmark_list_append (NautilusBookmarkList *bookmarks,
 	g_return_if_fail (NAUTILUS_IS_BOOKMARK_LIST (bookmarks));
 	g_return_if_fail (NAUTILUS_IS_BOOKMARK (bookmark));
 
+	if (g_list_find_custom (bookmarks->list, bookmark,
+				nautilus_bookmark_compare_with) != NULL) {
+		return;
+	}
+
 	insert_bookmark_internal (bookmarks, g_object_ref (bookmark), -1);
 	nautilus_bookmark_list_save_file (bookmarks);
-}
-
-/**
- * nautilus_bookmark_list_contains:
- *
- * Check whether a bookmark with matching name and url is already in the list.
- * @bookmarks: NautilusBookmarkList to check contents of.
- * @bookmark: NautilusBookmark to match against.
- * 
- * Return value: TRUE if matching bookmark is in list, FALSE otherwise
- **/
-gboolean
-nautilus_bookmark_list_contains (NautilusBookmarkList *bookmarks, 
-				 NautilusBookmark     *bookmark)
-{
-	g_return_val_if_fail (NAUTILUS_IS_BOOKMARK_LIST (bookmarks), FALSE);
-	g_return_val_if_fail (NAUTILUS_IS_BOOKMARK (bookmark), FALSE);
-
-	return g_list_find_custom (bookmarks->list,
-				   (gpointer)bookmark, 
-				   nautilus_bookmark_compare_with) 
-		!= NULL;
 }
 
 /**
@@ -332,44 +315,6 @@ nautilus_bookmark_list_move_item (NautilusBookmarkList *bookmarks,
 					 destination);
 
 	nautilus_bookmark_list_save_file (bookmarks);
-}
-
-/**
- * nautilus_bookmark_list_delete_items_with_uri:
- * 
- * Delete all bookmarks with the given uri.
- * @bookmarks: the list of bookmarks.
- * @uri: The uri to match.
- **/
-void
-nautilus_bookmark_list_delete_items_with_uri (NautilusBookmarkList *bookmarks, 
-				      	      const char           *uri)
-{
-	GList *node, *next;
-	gboolean list_changed;
-	char *bookmark_uri;
-
-	g_return_if_fail (NAUTILUS_IS_BOOKMARK_LIST (bookmarks));
-	g_return_if_fail (uri != NULL);
-
-	list_changed = FALSE;
-	for (node = bookmarks->list; node != NULL;  node = next) {
-		next = node->next;
-
-		bookmark_uri = nautilus_bookmark_get_uri (NAUTILUS_BOOKMARK (node->data));
-		if (g_strcmp0 (bookmark_uri, uri) == 0) {
-			bookmarks->list = g_list_remove_link (bookmarks->list, node);
-			stop_monitoring_bookmark (bookmarks, NAUTILUS_BOOKMARK (node->data));
-			g_object_unref (node->data);
-			g_list_free_1 (node);
-			list_changed = TRUE;
-		}
-		g_free (bookmark_uri);
-	}
-
-	if (list_changed) {
-		nautilus_bookmark_list_save_file (bookmarks);
-	}
 }
 
 /**

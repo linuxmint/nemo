@@ -63,12 +63,8 @@ GType                   nautilus_bookmark_list_get_type            (void);
 NautilusBookmarkList *  nautilus_bookmark_list_new                 (void);
 void                    nautilus_bookmark_list_append              (NautilusBookmarkList   *bookmarks,
 								    NautilusBookmark *bookmark);
-gboolean                nautilus_bookmark_list_contains            (NautilusBookmarkList   *bookmarks,
-								    NautilusBookmark *bookmark);
 void                    nautilus_bookmark_list_delete_item_at      (NautilusBookmarkList   *bookmarks,
 								    guint                   index);
-void                    nautilus_bookmark_list_delete_items_with_uri (NautilusBookmarkList *bookmarks,
-								    const char		   *uri);
 void                    nautilus_bookmark_list_insert_item         (NautilusBookmarkList   *bookmarks,
 								    NautilusBookmark *bookmark,
 								    guint                   index);

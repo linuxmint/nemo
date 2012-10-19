@@ -640,32 +640,6 @@ nautilus_bookmark_compare_with (gconstpointer a, gconstpointer b)
 	return 0;
 }
 
-/**
- * nautilus_bookmark_compare_uris:
- *
- * Check whether the uris of two bookmarks are for the same location.
- * @a: first NautilusBookmark*.
- * @b: second NautilusBookmark*.
- * 
- * Return value: 0 if @a and @b have matching uri, 1 otherwise 
- * (GCompareFunc style)
- **/
-int		    
-nautilus_bookmark_compare_uris (gconstpointer a, gconstpointer b)
-{
-	NautilusBookmark *bookmark_a;
-	NautilusBookmark *bookmark_b;
-
-	g_return_val_if_fail (NAUTILUS_IS_BOOKMARK (a), 1);
-	g_return_val_if_fail (NAUTILUS_IS_BOOKMARK (b), 1);
-
-	bookmark_a = NAUTILUS_BOOKMARK (a);
-	bookmark_b = NAUTILUS_BOOKMARK (b);
-
-	return !g_file_equal (bookmark_a->details->location,
-			      bookmark_b->details->location);
-}
-
 GIcon *
 nautilus_bookmark_get_symbolic_icon (NautilusBookmark *bookmark)
 {

@@ -318,9 +318,7 @@ action_add_bookmark_callback (GtkAction *action,
 	bookmark = slot->current_location_bookmark;
 	list = nautilus_application_get_bookmarks (app);
 
-	if (!nautilus_bookmark_list_contains (list, bookmark)) {
-		nautilus_bookmark_list_append (list, bookmark);
-	}
+	nautilus_bookmark_list_append (list, bookmark);
 }
 
 static void

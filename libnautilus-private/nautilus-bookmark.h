@@ -77,8 +77,6 @@ void                  nautilus_bookmark_set_custom_name        (NautilusBookmark
 								const char            *new_name);
 int                   nautilus_bookmark_compare_with           (gconstpointer          a,
 								gconstpointer          b);
-int                   nautilus_bookmark_compare_uris           (gconstpointer          a,
-								gconstpointer          b);
 
 void                  nautilus_bookmark_set_scroll_pos         (NautilusBookmark      *bookmark,
 								const char            *uri);
