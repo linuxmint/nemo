@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-09-25 16:54+0000\n"
-"PO-Revision-Date: 2012-09-25 19:27+0100\n"
+"PO-Revision-Date: 2012-10-20 00:07+0100\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: \n"
@@ -3560,7 +3560,7 @@ msgstr "Ni mogoče izvreči %s"
 #: ../src/nautilus-places-sidebar.c:2307
 #, c-format
 msgid "Unable to poll %s for media changes"
-msgstr "Ni mogoče preveriti %s za spremembe medija"
+msgstr "Ni mogoče preveriti %s za spremembe"
 
 #: ../src/nautilus-places-sidebar.c:2407
 #, c-format
@@ -3633,7 +3633,7 @@ msgstr "I_zvrzi"
 #: ../src/nautilus-view.c:7293
 #: ../src/nautilus-view.c:7365
 msgid "_Detect Media"
-msgstr "_Zaznaj medij"
+msgstr "_Zaznaj vrsto nosilca"
 
 #: ../src/nautilus-places-sidebar.c:2746
 msgid "_Properties"
@@ -4536,7 +4536,7 @@ msgstr "Zaustavi izbrani nosilec"
 #: ../src/nautilus-view.c:7294
 #: ../src/nautilus-view.c:7366
 msgid "Detect media in the selected drive"
-msgstr "Zazna medij v izbranem pogonu"
+msgstr "Zazna vrsto nosilca v izbranem pogonu"
 
 #. tooltip
 #: ../src/nautilus-view.c:7274
