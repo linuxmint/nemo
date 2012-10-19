@@ -151,6 +151,8 @@ pending_search_finish (PendingSearch         *search,
 {
   NautilusShellSearchProviderApp *self = search->self;
 
+  g_dbus_method_invocation_return_value (invocation, result);
+
   if (search == self->current_search)
     self->current_search = NULL;
 
