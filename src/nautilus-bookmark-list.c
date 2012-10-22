@@ -446,6 +446,7 @@ load_callback (GObject *source,
 	contents = g_simple_async_result_get_op_res_gpointer (G_SIMPLE_ASYNC_RESULT (res));
 
 	if (contents == NULL) {
+		op_processed_cb (self);
 		return;
 	}
 
