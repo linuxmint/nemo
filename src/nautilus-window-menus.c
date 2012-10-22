@@ -430,7 +430,11 @@ static void
 action_prompt_for_location_callback (GtkAction *action,
 				     NautilusWindow *window)
 {
-	nautilus_window_prompt_for_location (window, "/");
+	GFile *location;
+
+	location = g_file_new_for_path ("/");
+	nautilus_window_prompt_for_location (window, location);
+	g_object_unref (location);
 }
 
 static void

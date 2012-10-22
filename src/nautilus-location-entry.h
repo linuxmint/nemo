@@ -66,8 +66,8 @@ void       nautilus_location_entry_set_special_text     (NautilusLocationEntry *
 							 const char            *special_text);
 void       nautilus_location_entry_set_secondary_action (NautilusLocationEntry *entry,
 							 NautilusLocationEntryAction secondary_action);
-void       nautilus_location_entry_set_uri              (NautilusLocationEntry *entry,
-							 const char            *location);
+void       nautilus_location_entry_set_location         (NautilusLocationEntry *entry,
+							 GFile                 *location);
 void       nautilus_location_entry_focus                (NautilusLocationEntry *entry);
 
 #endif /* NAUTILUS_LOCATION_ENTRY_H */

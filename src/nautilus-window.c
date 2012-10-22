@@ -442,18 +442,15 @@ nautilus_window_sync_allow_stop (NautilusWindow *window,
 
 void
 nautilus_window_prompt_for_location (NautilusWindow *window,
-				     const char     *initial)
+				     GFile          *location)
 {
 	GtkWidget *entry;
 
 	g_return_if_fail (NAUTILUS_IS_WINDOW (window));
+	g_return_if_fail (G_IS_FILE (location));
 
 	entry = nautilus_window_ensure_location_entry (window);
-
-	if (initial) {
-		nautilus_location_entry_set_uri (NAUTILUS_LOCATION_ENTRY (entry),
-						 initial);
-	}
+	nautilus_location_entry_set_location (NAUTILUS_LOCATION_ENTRY (entry), location);
 }
 
 /* Code should never force the window taller than this size.
@@ -719,17 +716,13 @@ nautilus_window_sync_location_widgets (NautilusWindow *window)
 
 	/* Change the location bar and path bar to match the current location. */
 	if (slot->location != NULL) {
-		char *uri;
 		GtkWidget *location_entry;
 		GtkWidget *path_bar;
 
 		location_entry = nautilus_toolbar_get_location_entry (NAUTILUS_TOOLBAR (window->details->toolbar));
-		path_bar = nautilus_toolbar_get_path_bar (NAUTILUS_TOOLBAR (window->details->toolbar));
+		nautilus_location_entry_set_location (NAUTILUS_LOCATION_ENTRY (location_entry), slot->location);
 
-		/* this may be NULL if we just created the slot */
-		uri = nautilus_window_slot_get_location_uri (slot);
-		nautilus_location_entry_set_uri (NAUTILUS_LOCATION_ENTRY (location_entry), uri);
-		g_free (uri);
+		path_bar = nautilus_toolbar_get_path_bar (NAUTILUS_TOOLBAR (window->details->toolbar));
 		nautilus_path_bar_set_path (NAUTILUS_PATH_BAR (path_bar), slot->location);
 	}
 
