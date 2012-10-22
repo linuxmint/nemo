@@ -356,35 +356,35 @@ nautilus_bookmark_list_item_at (NautilusBookmarkList *bookmarks, guint index)
 }
 
 /**
- * nautilus_bookmark_list_item_with_uri:
+ * nautilus_bookmark_list_item_with_location:
  *
- * Get the bookmark with the specified URI, if any
+ * Get the bookmark with the specified location, if any
  * @bookmarks: the list of bookmarks.
- * @uri: an URI
+ * @location: a #GFile
  *
- * Return value: the bookmark with URI @uri, or %NULL.
+ * Return value: the bookmark with location @location, or %NULL.
  **/
 NautilusBookmark *
-nautilus_bookmark_list_item_with_uri (NautilusBookmarkList *bookmarks,
-				      const gchar	   *uri)
+nautilus_bookmark_list_item_with_location (NautilusBookmarkList *bookmarks,
+					   GFile                *location)
 {
 	GList *node;
-	gchar *bookmark_uri;
+	GFile *bookmark_location;
 	NautilusBookmark *bookmark;
 	gboolean found = FALSE;
 
 	g_return_val_if_fail (NAUTILUS_IS_BOOKMARK_LIST (bookmarks), NULL);
-	g_return_val_if_fail (uri != NULL, NULL);
+	g_return_val_if_fail (G_IS_FILE (location), NULL);
 
 	for (node = bookmarks->list; node != NULL; node = node->next) {
 		bookmark = node->data;
-		bookmark_uri = nautilus_bookmark_get_uri (bookmark);
+		bookmark_location = nautilus_bookmark_get_location (bookmark);
 
-		if (g_strcmp0 (uri, bookmark_uri) == 0) {
+		if (g_file_equal (location, bookmark_location)) {
 			found = TRUE;
 		}
 
-		g_free (bookmark_uri);
+		g_object_unref (bookmark_location);
 
 		if (found) {
 			return bookmark;

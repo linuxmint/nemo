@@ -104,12 +104,12 @@ static gchar *
 get_display_name (NautilusShellSearchProviderApp *self,
                   NautilusFile                   *file)
 {
-  gchar *uri;
+  GFile *location;
   NautilusBookmark *bookmark;
 
-  uri = nautilus_file_get_uri (file);
-  bookmark = nautilus_bookmark_list_item_with_uri (self->bookmarks, uri);
-  g_free (uri);
+  location = nautilus_file_get_location (file);
+  bookmark = nautilus_bookmark_list_item_with_location (self->bookmarks, location);
+  g_object_unref (location);
 
   if (bookmark)
     return g_strdup (nautilus_bookmark_get_name (bookmark));
@@ -121,12 +121,12 @@ static GIcon *
 get_gicon (NautilusShellSearchProviderApp *self,
            NautilusFile                   *file)
 {
-  gchar *uri;
+  GFile *location;
   NautilusBookmark *bookmark;
 
-  uri = nautilus_file_get_uri (file);
-  bookmark = nautilus_bookmark_list_item_with_uri (self->bookmarks, uri);
-  g_free (uri);
+  location = nautilus_file_get_location (file);
+  bookmark = nautilus_bookmark_list_item_with_location (self->bookmarks, location);
+  g_object_unref (location);
 
   if (bookmark)
     return nautilus_bookmark_get_icon (bookmark);
