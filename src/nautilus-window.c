@@ -597,7 +597,9 @@ static void
 places_sidebar_empty_trash_requested_cb (GtkPlacesSidebar *sidebar,
 					 gpointer          user_data)
 {
-	/* FIXME */
+	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
+
+	nautilus_file_operations_empty_trash (GTK_WIDGET (window));
 }
 
 /* Callback used when the places sidebar needs us to present an error message */
