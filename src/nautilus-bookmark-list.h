@@ -72,7 +72,8 @@ guint                   nautilus_bookmark_list_length              (NautilusBook
 NautilusBookmark *      nautilus_bookmark_list_item_at             (NautilusBookmarkList   *bookmarks,
 								    guint                   index);
 NautilusBookmark *      nautilus_bookmark_list_item_with_location  (NautilusBookmarkList *bookmarks,
-								    GFile                *location);
+								    GFile                *location,
+								    guint                *index);
 void                    nautilus_bookmark_list_move_item           (NautilusBookmarkList *bookmarks,
 								    guint                 index,
 								    guint                 destination);

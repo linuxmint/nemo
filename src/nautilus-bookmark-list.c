@@ -361,20 +361,25 @@ nautilus_bookmark_list_item_at (NautilusBookmarkList *bookmarks, guint index)
  * Get the bookmark with the specified location, if any
  * @bookmarks: the list of bookmarks.
  * @location: a #GFile
+ * @index: location where to store bookmark index, or %NULL
  *
  * Return value: the bookmark with location @location, or %NULL.
  **/
 NautilusBookmark *
 nautilus_bookmark_list_item_with_location (NautilusBookmarkList *bookmarks,
-					   GFile                *location)
+					   GFile                *location,
+					   guint                *index)
 {
 	GList *node;
 	GFile *bookmark_location;
 	NautilusBookmark *bookmark;
 	gboolean found = FALSE;
+	guint idx;
 
 	g_return_val_if_fail (NAUTILUS_IS_BOOKMARK_LIST (bookmarks), NULL);
 	g_return_val_if_fail (G_IS_FILE (location), NULL);
+
+	idx = 0;
 
 	for (node = bookmarks->list; node != NULL; node = node->next) {
 		bookmark = node->data;
@@ -387,8 +392,13 @@ nautilus_bookmark_list_item_with_location (NautilusBookmarkList *bookmarks,
 		g_object_unref (bookmark_location);
 
 		if (found) {
+			if (index) {
+				*index = idx;
+			}
 			return bookmark;
 		}
+
+		idx++;
 	}
 
 	return NULL;
@@ -659,7 +669,7 @@ gboolean
 nautilus_bookmark_list_can_bookmark_location (NautilusBookmarkList *list,
 					      GFile                *location)
 {
-	if (nautilus_bookmark_list_item_with_location (list, location)) {
+	if (nautilus_bookmark_list_item_with_location (list, location, NULL)) {
 		return FALSE;
 	}
 

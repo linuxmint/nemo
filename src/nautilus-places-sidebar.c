@@ -410,13 +410,12 @@ add_special_dirs (NautilusPlacesSidebar *sidebar)
 
 	dirs = NULL;
 	for (index = 0; index < G_USER_N_DIRECTORIES; index++) {
-		const char *path;
+		const char *path, *name;
 		GFile *root;
 		GIcon *icon;
-		char *name;
 		char *mount_uri;
-		char *tooltip;
 		NautilusBookmark *bookmark;
+		guint idx;
 
 		if (index == G_USER_DIRECTORY_DESKTOP ||
 		    index == G_USER_DIRECTORY_TEMPLATES ||
@@ -437,8 +436,6 @@ add_special_dirs (NautilusPlacesSidebar *sidebar)
 		}
 
 		root = g_file_new_for_path (path);
-		name = g_file_get_basename (root);
-		icon = nautilus_special_directory_get_symbolic_icon (index);
 
 		/* Don't add the bookmark to the sidebar if it was removed from
 		 * the user dir list, or if its location doesn't exist.
@@ -449,19 +446,26 @@ add_special_dirs (NautilusPlacesSidebar *sidebar)
 			continue;
 		}
 
+		if (bookmark) {
+			name = g_strdup (nautilus_bookmark_get_name (bookmark));
+			icon = nautilus_bookmark_get_symbolic_icon (bookmark);
+		} else {
+			name = g_file_get_basename (root);
+			icon = nautilus_special_directory_get_symbolic_icon (index);
+			idx = -1;
+		}
+
 		mount_uri = g_file_get_uri (root);
-		tooltip = g_file_get_parse_name (root);
 
 		add_place (sidebar, PLACES_XDG_DIR,
 			   SECTION_COMPUTER,
 			   name, icon, mount_uri,
-			   NULL, NULL, NULL, 0,
-			   tooltip);
-		g_free (name);
+			   NULL, NULL, NULL, idx,
+			   name);
+
 		g_object_unref (root);
 		g_object_unref (icon);
 		g_free (mount_uri);
-		g_free (tooltip);
 
 		dirs = g_list_prepend (dirs, (char *)path);
 	}
@@ -1589,7 +1593,7 @@ bookmarks_check_popup_sensitivity (NautilusPlacesSidebar *sidebar)
 	gtk_widget_set_visible (sidebar->popup_menu_add_shortcut_item, (type == PLACES_MOUNTED_VOLUME));
 
 	gtk_widget_set_sensitive (sidebar->popup_menu_remove_item, (type == PLACES_BOOKMARK));
-	gtk_widget_set_sensitive (sidebar->popup_menu_rename_item, (type == PLACES_BOOKMARK));
+	gtk_widget_set_sensitive (sidebar->popup_menu_rename_item, (type == PLACES_BOOKMARK || type == PLACES_XDG_DIR));
 	gtk_widget_set_sensitive (sidebar->popup_menu_empty_trash_item, !nautilus_trash_monitor_is_empty ());
 
  	check_visibility (mount, volume, drive,
@@ -1908,7 +1912,7 @@ rename_selected_bookmark (NautilusPlacesSidebar *sidebar)
 				    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &type,
 				    -1);
 
-		if (type != PLACES_BOOKMARK) {
+		if (type != PLACES_BOOKMARK && type != PLACES_XDG_DIR) {
 			return;
 		}
 
@@ -2829,22 +2833,46 @@ bookmarks_edited (GtkCellRenderer       *cell,
 {
 	GtkTreePath *path;
 	GtkTreeIter iter;
+	gchar *uri;
+	GFile *location;
 	NautilusBookmark *bookmark;
-	int index;
+	PlaceType type;
 
 	g_object_set (cell, "editable", FALSE, NULL);
 	
 	path = gtk_tree_path_new_from_string (path_string);
-	gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store), &iter, path);
+	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store), &iter, path)) {
+		goto out;
+	}
+
+	uri = NULL;
 	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
-		            PLACES_SIDEBAR_COLUMN_INDEX, &index,
+		            PLACES_SIDEBAR_COLUMN_URI, &uri,
+		            PLACES_SIDEBAR_COLUMN_ROW_TYPE, &type,
 		            -1);
-	gtk_tree_path_free (path);
-	bookmark = nautilus_bookmark_list_item_at (sidebar->bookmarks, index);
+	if (!uri) {
+		goto out;
+	}
+
+	location = g_file_new_for_uri (uri);
+	bookmark = nautilus_bookmark_list_item_with_location (sidebar->bookmarks, location, NULL);
 
 	if (bookmark != NULL) {
 		nautilus_bookmark_set_custom_name (bookmark, new_text);
+	} else if (type == PLACES_XDG_DIR) {
+		/* In case we're renaming a built-in bookmark, and it's not in the
+		 * list, add it with a custom name.
+		 */
+		bookmark = nautilus_bookmark_new (location, new_text);
+		nautilus_bookmark_list_append (sidebar->bookmarks, bookmark);
+		g_object_unref (bookmark);
 	}
+
+	g_object_unref (location);
+
+ out:
+	g_free (uri);
+	gtk_tree_path_free (path);
 }
 
 static void

@@ -108,7 +108,7 @@ get_display_name (NautilusShellSearchProviderApp *self,
   NautilusBookmark *bookmark;
 
   location = nautilus_file_get_location (file);
-  bookmark = nautilus_bookmark_list_item_with_location (self->bookmarks, location);
+  bookmark = nautilus_bookmark_list_item_with_location (self->bookmarks, location, NULL);
   g_object_unref (location);
 
   if (bookmark)
@@ -125,7 +125,7 @@ get_gicon (NautilusShellSearchProviderApp *self,
   NautilusBookmark *bookmark;
 
   location = nautilus_file_get_location (file);
-  bookmark = nautilus_bookmark_list_item_with_location (self->bookmarks, location);
+  bookmark = nautilus_bookmark_list_item_with_location (self->bookmarks, location, NULL);
   g_object_unref (location);
 
   if (bookmark)
