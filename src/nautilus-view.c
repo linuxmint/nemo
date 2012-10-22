@@ -3046,10 +3046,6 @@ done_loading (NautilusView *view,
 	 * is no NautilusWindow any more.
 	 */
 	if (window != NULL) {
-		if (all_files_seen) {
-			nautilus_window_report_load_complete (window, NAUTILUS_VIEW (view));
-		}
-
 		schedule_update_menus (view);
 		schedule_update_status (view);
 		reset_update_interval (view);
@@ -9156,12 +9152,8 @@ static void
 finish_loading (NautilusView *view)
 {
 	NautilusFileAttributes attributes;
-	NautilusWindow *window;
 
 	nautilus_profile_start (NULL);
-
-	window = nautilus_view_get_window (view);
-	nautilus_window_report_load_underway (window, NAUTILUS_VIEW (view));
 
 	/* Tell interested parties that we've begun loading this directory now.
 	 * Subclasses use this to know that the new metadata is now available.
@@ -9171,7 +9163,7 @@ finish_loading (NautilusView *view)
 	nautilus_profile_end ("BEGIN_LOADING");
 
 	/* Assume we have now all information to show window */
-	nautilus_window_view_visible  (window, NAUTILUS_VIEW (view));
+	nautilus_window_view_visible  (nautilus_view_get_window (view), NAUTILUS_VIEW (view));
 
 	if (nautilus_directory_are_all_files_seen (view->details->model)) {
 		/* Unschedule a pending update and schedule a new one with the minimal

@@ -36,7 +36,6 @@
 #include "nautilus-file-management-properties.h"
 #include "nautilus-list-view.h"
 #include "nautilus-notebook.h"
-#include "nautilus-window-manage-views.h"
 #include "nautilus-window-private.h"
 #include "nautilus-desktop-window.h"
 #include "nautilus-properties-window.h"

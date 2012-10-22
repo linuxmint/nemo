@@ -44,12 +44,6 @@ struct NautilusWindowDetails
         guint extensions_menu_merge_id;
         GtkActionGroup *extensions_menu_action_group;
 
-	/* Ensures that we do not react on signals of a
-	 * view that is re-used as new view when its loading
-	 * is cancelled
-	 */
-	gboolean temporarily_ignore_view_signals;
-
         GtkWidget *notebook;
 
         /* available slots, and active slot.

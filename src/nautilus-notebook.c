@@ -29,7 +29,6 @@
 #include "nautilus-notebook.h"
 
 #include "nautilus-window.h"
-#include "nautilus-window-manage-views.h"
 #include "nautilus-window-private.h"
 #include "nautilus-window-slot.h"
 #include "nautilus-window-slot-dnd.h"
@@ -291,6 +290,7 @@ nautilus_notebook_sync_tab_label (NautilusNotebook *notebook,
 {
 	GtkWidget *hbox, *label;
 	char *location_name;
+	GFile *location;
 
 	g_return_if_fail (NAUTILUS_IS_NOTEBOOK (notebook));
 	g_return_if_fail (NAUTILUS_IS_WINDOW_SLOT (slot));
@@ -301,13 +301,14 @@ nautilus_notebook_sync_tab_label (NautilusNotebook *notebook,
 	label = GTK_WIDGET (g_object_get_data (G_OBJECT (hbox), "label"));
 	g_return_if_fail (GTK_IS_WIDGET (label));
 
-	gtk_label_set_text (GTK_LABEL (label), slot->title);
+	gtk_label_set_text (GTK_LABEL (label), nautilus_window_slot_get_title (slot));
+	location = nautilus_window_slot_get_location (slot);
 
-	if (slot->location != NULL) {
+	if (location != NULL) {
 		/* Set the tooltip on the label's parent (the tab label hbox),
 		 * so it covers all of the tab label.
 		 */
-		location_name = g_file_get_parse_name (slot->location);
+		location_name = g_file_get_parse_name (location);
 		gtk_widget_set_tooltip_text (gtk_widget_get_parent (label), location_name);
 		g_free (location_name);
 	} else {

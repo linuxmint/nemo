@@ -42,7 +42,6 @@
 #include "nautilus-pathbar.h"
 #include "nautilus-toolbar.h"
 #include "nautilus-view-factory.h"
-#include "nautilus-window-manage-views.h"
 #include "nautilus-window-slot.h"
 #include "nautilus-list-view.h"
 #include "nautilus-canvas-view.h"
@@ -312,7 +311,6 @@ close_slot (NautilusWindow     *window,
 
 	DEBUG ("Closing slot %p", slot);
 
-	nautilus_window_manage_views_close_slot (slot);
 	window->details->slots = g_list_remove (window->details->slots, slot);
 
 	g_signal_emit (window, signals[SLOT_REMOVED], 0, slot);
@@ -379,10 +377,12 @@ nautilus_window_new_tab (NautilusWindow *window)
 		}
 
 		scheme = g_file_get_uri_scheme (location);
-		if (!strcmp (scheme, "x-nautilus-search")) {
-			g_object_unref (location);
+		if (strcmp (scheme, "x-nautilus-search") == 0) {
 			location = g_file_new_for_path (g_get_home_dir ());
+		} else {
+			g_object_ref (location);
 		}
+
 		g_free (scheme);
 
 		new_slot = nautilus_window_open_slot (window, flags);
@@ -675,13 +675,15 @@ nautilus_window_sync_bookmarks (NautilusWindow *window)
 	NautilusWindowSlot *slot;
 	NautilusBookmarkList *bookmarks;
 	GtkAction *action;
+	GFile *location;
 
 	slot = window->details->active_slot;
+	location = nautilus_window_slot_get_location (slot);
 
-	if (slot->location != NULL) {
+	if (location != NULL) {
 		bookmarks = nautilus_application_get_bookmarks
 			(NAUTILUS_APPLICATION (gtk_window_get_application (GTK_WINDOW (window))));
-		can_bookmark = nautilus_bookmark_list_can_bookmark_location (bookmarks, slot->location);
+		can_bookmark = nautilus_bookmark_list_can_bookmark_location (bookmarks, location);
 	}
 
 	action = gtk_action_group_get_action (nautilus_window_get_main_action_group (window),
@@ -707,11 +709,13 @@ nautilus_window_sync_search_widgets (NautilusWindow *window)
 	NautilusDirectory *directory;
 	NautilusSearchDirectory *search_directory;
 	NautilusWindowSlot *slot;
+	GFile *location;
 
 	search_directory = NULL;
 	slot = window->details->active_slot;
+	location = nautilus_window_slot_get_location (slot);
 
-	directory = nautilus_directory_get (slot->location);
+	directory = nautilus_directory_get (location);
 	if (NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
 		search_directory = NAUTILUS_SEARCH_DIRECTORY (directory);
 	}
@@ -731,21 +735,23 @@ void
 nautilus_window_sync_location_widgets (NautilusWindow *window)
 {
 	NautilusWindowSlot *slot, *active_slot;
+	GFile *location;
 	GtkActionGroup *action_group;
 	GtkAction *action;
 
 	slot = window->details->active_slot;
+	location = nautilus_window_slot_get_location (slot);
 
 	/* Change the location bar and path bar to match the current location. */
-	if (slot->location != NULL) {
+	if (location != NULL) {
 		GtkWidget *location_entry;
 		GtkWidget *path_bar;
 
 		location_entry = nautilus_toolbar_get_location_entry (NAUTILUS_TOOLBAR (window->details->toolbar));
-		nautilus_location_entry_set_location (NAUTILUS_LOCATION_ENTRY (location_entry), slot->location);
+		nautilus_location_entry_set_location (NAUTILUS_LOCATION_ENTRY (location_entry), location);
 
 		path_bar = nautilus_toolbar_get_path_bar (NAUTILUS_TOOLBAR (window->details->toolbar));
-		nautilus_path_bar_set_path (NAUTILUS_PATH_BAR (path_bar), slot->location);
+		nautilus_path_bar_set_path (NAUTILUS_PATH_BAR (path_bar), location);
 	}
 
 	nautilus_window_sync_up_button (window);
@@ -1417,6 +1423,38 @@ nautilus_window_close (NautilusWindow *window)
 	NAUTILUS_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->close (window);
 }
 
+/* reports location change to window's "loading-uri" clients, i.e.
+ * sidebar panels [used when switching tabs]. It will emit the pending
+ * location, or the existing location if none is pending.
+ */
+static void
+nautilus_window_report_location_change (NautilusWindow *window)
+{
+	NautilusWindowSlot *slot;
+	GFile *location;
+
+	slot = nautilus_window_get_active_slot (window);
+	g_assert (NAUTILUS_IS_WINDOW_SLOT (slot));
+
+	location = NULL;
+
+	if (slot->pending_location != NULL) {
+		location = slot->pending_location;
+	}
+
+	if (location == NULL) {
+		location = nautilus_window_slot_get_location (slot);
+	}
+
+	if (location != NULL) {
+		char *uri;
+
+		uri = g_file_get_uri (location);
+		g_signal_emit_by_name (window, "loading-uri", uri);
+		g_free (uri);
+	}
+}
+
 void
 nautilus_window_set_active_slot (NautilusWindow *window, NautilusWindowSlot *new_slot)
 {
@@ -1637,13 +1675,14 @@ nautilus_window_sync_up_button (NautilusWindow *window)
 	GtkActionGroup *action_group;
 	NautilusWindowSlot *slot;
 	gboolean allowed;
-	GFile *parent;
+	GFile *parent, *location;
 
 	slot = nautilus_window_get_active_slot (window);
+	location = nautilus_window_slot_get_location (slot);
 
 	allowed = FALSE;
-	if (slot->location != NULL) {
-		parent = g_file_get_parent (slot->location);
+	if (location != NULL) {
+		parent = g_file_get_parent (location);
 		allowed = parent != NULL;
 
 		g_clear_object (&parent);
@@ -1667,7 +1706,7 @@ nautilus_window_sync_title (NautilusWindow *window,
 	}
 
 	if (slot == nautilus_window_get_active_slot (window)) {
-		gtk_window_set_title (GTK_WINDOW (window), slot->title);
+		gtk_window_set_title (GTK_WINDOW (window), nautilus_window_slot_get_title (slot));
 	}
 
 	nautilus_notebook_sync_tab_label (NAUTILUS_NOTEBOOK (window->details->notebook), slot);
@@ -1836,34 +1875,6 @@ nautilus_window_get_main_action_group (NautilusWindow *window)
 	g_return_val_if_fail (NAUTILUS_IS_WINDOW (window), NULL);
 
 	return window->details->main_action_group;
-}
-
-void
-nautilus_window_slot_set_viewed_file (NautilusWindowSlot *slot,
-				      NautilusFile *file)
-{
-	NautilusFileAttributes attributes;
-
-	if (slot->viewed_file == file) {
-		return;
-	}
-
-	nautilus_file_ref (file);
-
-	if (slot->viewed_file != NULL) {
-		nautilus_file_monitor_remove (slot->viewed_file,
-					      slot);
-	}
-
-	if (file != NULL) {
-		attributes =
-			NAUTILUS_FILE_ATTRIBUTE_INFO |
-			NAUTILUS_FILE_ATTRIBUTE_LINK_INFO;
-		nautilus_file_monitor_add (file, slot, attributes);
-	}
-
-	nautilus_file_unref (slot->viewed_file);
-	slot->viewed_file = file;
 }
 
 NautilusWindowSlot *

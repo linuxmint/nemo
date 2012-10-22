@@ -106,11 +106,6 @@ void             nautilus_window_new_tab              (NautilusWindow    *window
 GtkUIManager *   nautilus_window_get_ui_manager       (NautilusWindow    *window);
 GtkActionGroup * nautilus_window_get_main_action_group (NautilusWindow   *window);
 
-void                 nautilus_window_report_load_complete     (NautilusWindow *window,
-                                                               NautilusView *view);
-
-void                 nautilus_window_report_load_underway  (NautilusWindow *window,
-                                                            NautilusView *view);
 void                 nautilus_window_view_visible          (NautilusWindow *window,
                                                             NautilusView *view);
 NautilusWindowSlot * nautilus_window_get_active_slot       (NautilusWindow *window);
