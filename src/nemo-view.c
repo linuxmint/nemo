@@ -6099,19 +6099,17 @@ open_in_terminal (gchar *location)
 static void
 send_email (NemoView *view)
 {
-    gchar *mail_command, *cmd;
+    gchar *cmd;
     gboolean first = TRUE;
-    GList *selection, *uris, *l;
+    GList *selection, *l;
     GString *attach;
 
-    mail_command = g_find_program_in_path ("thunderbird");
     attach = g_string_new ("");
     selection = nemo_view_get_selection_for_file_transfer (view);
     if (selection == NULL) {
         return;
     }
 
-    uris = NULL;
     for (l = selection; l != NULL; l = l->next) {
         if (!first) {
             g_string_append_printf(attach, ",");
@@ -6121,12 +6119,13 @@ send_email (NemoView *view)
             first = FALSE;
         }
     }
-    cmd = g_strdup_printf ("%s -compose to=,\"attachment='%s'\"", mail_command, attach->str);
+    cmd = g_strdup_printf ("thunderbird -compose to=,\"attachment='%s'\"", attach->str);
     g_spawn_command_line_async (cmd, NULL);
 
     g_free (cmd);
-    g_free (mail_command);
     g_string_free (attach, TRUE);
+    nemo_file_list_free (selection);
+    nemo_file_list_free (l);
 }
 
 static void
@@ -7138,7 +7137,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open as Root"), "",
   /* tooltip */                  N_("Open the folder with administration privileges"),
 				 G_CALLBACK (action_open_as_root_callback) },
-  /* name, stock id */         { "MailTo", GTK_STOCK_DND_MULTIPLE,
+  /* name, stock id */         { NEMO_ACTION_MAILTO_THUNDERBIRD, GTK_STOCK_DND_MULTIPLE,
   /* label, accelerator */       N_("Send with Thunderbird"), "",
   /* tooltip */                  N_("Send the selected file(s) as email attachments using Thunderbird"),
 				 G_CALLBACK (action_send_email_callback) },
@@ -8460,6 +8459,7 @@ real_update_menus (NemoView *view)
 	GtkWidget *menuitem;
 	gboolean next_pane_is_writable;
 	gboolean show_properties;
+	gboolean show_thunderbird_sendto;
 
 	selection = nemo_view_get_selection (view);
 	selection_count = g_list_length (selection);
@@ -8490,6 +8490,12 @@ real_update_menus (NemoView *view)
 					  selection_count == 1 &&
 					  nemo_view_can_rename_file (view, selection->data));
 	}
+
+    show_thunderbird_sendto = (g_find_program_in_path ("thunderbird") != NULL);
+
+    action = gtk_action_group_get_action (view->details->dir_action_group,
+                           NEMO_ACTION_MAILTO_THUNDERBIRD);
+    gtk_action_set_visible(action, show_thunderbird_sendto);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_FOLDER);
