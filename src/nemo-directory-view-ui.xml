@@ -179,6 +179,7 @@
 	<separator name="Advanced separator"/>
 	<menuitem name="OpenInTerminal" action="OpenInTerminal"/>
 	<menuitem name="OpenAsRoot" action="OpenAsRoot"/>
+	<menuitem name="MailTo" action="MailTo"/>
 	<separator name="Dangerous separator"/>
 	<placeholder name="Dangerous File Actions">
 		<menuitem name="Trash" action="Trash"/>

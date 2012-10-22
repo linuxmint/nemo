@@ -6097,6 +6097,39 @@ open_in_terminal (gchar *location)
 }
 
 static void
+send_email (NemoView *view)
+{
+    gchar *mail_command, *cmd;
+    gboolean first = TRUE;
+    GList *selection, *uris, *l;
+    GString *attach;
+
+    mail_command = g_find_program_in_path ("thunderbird");
+    attach = g_string_new ("");
+    selection = nemo_view_get_selection_for_file_transfer (view);
+    if (selection == NULL) {
+        return;
+    }
+
+    uris = NULL;
+    for (l = selection; l != NULL; l = l->next) {
+        if (!first) {
+            g_string_append_printf(attach, ",");
+        }
+        g_string_append_printf(attach, "%s", nemo_file_get_uri ((NemoFile *) l->data));
+        if (first) {
+            first = FALSE;
+        }
+    }
+    cmd = g_strdup_printf ("%s -compose to=,\"attachment='%s'\"", mail_command, attach->str);
+    g_spawn_command_line_async (cmd, NULL);
+
+    g_free (cmd);
+    g_free (mail_command);
+    g_string_free (attach, TRUE);
+}
+
+static void
 action_paste_files_into_callback (GtkAction *action,
 				  gpointer callback_data)
 {
@@ -6143,6 +6176,20 @@ action_open_in_terminal_callback(GtkAction *action,
 	} else {
         open_in_terminal (g_filename_from_uri(nemo_view_get_uri(view), NULL, NULL));
     }
+}
+
+static void
+action_send_email_callback(GtkAction *action,
+				  gpointer callback_data)
+{
+	NemoView *view;
+    GList *selection;
+	view = NEMO_VIEW (callback_data);
+    selection = nemo_view_get_selection (view);
+	if (selection != NULL) {
+        send_email (view);
+        nemo_file_list_free (selection);
+	}
 }
 
 static void
@@ -7091,6 +7138,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open as Root"), "",
   /* tooltip */                  N_("Open the folder with administration privileges"),
 				 G_CALLBACK (action_open_as_root_callback) },
+  /* name, stock id */         { "MailTo", GTK_STOCK_DND_MULTIPLE,
+  /* label, accelerator */       N_("Send with Thunderbird"), "",
+  /* tooltip */                  N_("Send the selected file(s) as email attachments using Thunderbird"),
+				 G_CALLBACK (action_send_email_callback) },
   /* name, stock id */         { "OtherApplication1", NULL,
   /* label, accelerator */       N_("Other _Application..."), NULL,
   /* tooltip */                  N_("Choose another application with which to open the selected item"),
