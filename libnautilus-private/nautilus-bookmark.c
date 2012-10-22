@@ -183,28 +183,59 @@ apply_warning_emblem (GIcon **base,
 	*base = emblemed_icon;
 }
 
+gboolean
+nautilus_bookmark_get_xdg_type (NautilusBookmark *bookmark,
+				GUserDirectory   *directory)
+{
+	gboolean match;
+	GFile *location;
+	const gchar *path;
+	GUserDirectory dir;
+
+	match = FALSE;
+
+	for (dir = 0; dir < G_USER_N_DIRECTORIES; dir++) {
+		path = g_get_user_special_dir (dir);
+		if (!path) {
+			continue;
+		}
+
+		location = g_file_new_for_path (path);
+		match = g_file_equal (location, bookmark->details->location);
+		g_object_unref (location);
+
+		if (match) {
+			break;
+		}
+	}
+
+	if (match && directory != NULL) {
+		*directory = dir;
+	}
+
+	return match;
+}
+
 static GIcon *
 get_native_icon (NautilusBookmark *bookmark,
 		 gboolean symbolic)
 {
-	gint idx;
+	GUserDirectory xdg_type;
 	GIcon *icon = NULL;
 
 	if (bookmark->details->file == NULL) {
 		goto out;
 	}
 
-	for (idx = 0; idx < G_USER_N_DIRECTORIES; idx++) {
-		if (nautilus_file_is_user_special_directory (bookmark->details->file, idx)) {
-			break;
-		}
+	if (!nautilus_bookmark_get_xdg_type (bookmark, &xdg_type)) {
+		goto out;
 	}
 
-	if (idx < G_USER_N_DIRECTORIES) {
+	if (xdg_type < G_USER_N_DIRECTORIES) {
 		if (symbolic) {
-			icon = nautilus_special_directory_get_symbolic_icon (idx);
+			icon = nautilus_special_directory_get_symbolic_icon (xdg_type);
 		} else {
-			icon = nautilus_special_directory_get_icon (idx);
+			icon = nautilus_special_directory_get_icon (xdg_type);
 		}
 	}
 

@@ -204,37 +204,6 @@ static GtkListStore *nautilus_shortcuts_model_new (NautilusPlacesSidebar *sideba
 
 G_DEFINE_TYPE (NautilusPlacesSidebar, nautilus_places_sidebar, GTK_TYPE_SCROLLED_WINDOW);
 
-static gboolean
-is_built_in_bookmark (NautilusFile *file)
-{
-	gboolean built_in;
-	gint idx;
-
-	if (nautilus_file_is_home (file)) {
-		return TRUE;
-	}
-
-	if (nautilus_file_is_desktop_directory (file) &&
-	    !g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
-		return FALSE;
-	}
-
-	built_in = FALSE;
-
-	for (idx = 0; idx < G_USER_N_DIRECTORIES; idx++) {
-		/* PUBLIC_SHARE and TEMPLATES are not in our built-in list */
-		if (nautilus_file_is_user_special_directory (file, idx)) {
-			if (idx != G_USER_DIRECTORY_PUBLIC_SHARE &&  idx != G_USER_DIRECTORY_TEMPLATES) {
-				built_in = TRUE;
-			}
-
-			break;
-		}
-	}
-
-	return built_in;
-}
-
 static GtkTreeIter
 add_heading (NautilusPlacesSidebar *sidebar,
 	     SectionType section_type,
@@ -473,6 +442,25 @@ add_special_dirs (NautilusPlacesSidebar *sidebar)
 	g_list_free (dirs);
 }
 
+static gboolean
+should_display_bookmark (NautilusBookmark *bookmark)
+{
+	GUserDirectory xdg_type;
+
+	/* if this is not an XDG dir, always display */
+	if (!nautilus_bookmark_get_xdg_type (bookmark, &xdg_type)) {
+		return TRUE;
+	}
+
+	/* show XDG locations which are not in our builtin list */
+	if (xdg_type == G_USER_DIRECTORY_DESKTOP &&
+	    !g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
+		return TRUE;
+	}
+
+	return (xdg_type == G_USER_DIRECTORY_TEMPLATES) || (xdg_type == G_USER_DIRECTORY_PUBLIC_SHARE);
+}
+
 static void
 update_places (NautilusPlacesSidebar *sidebar)
 {
@@ -495,7 +483,6 @@ update_places (NautilusPlacesSidebar *sidebar)
 	NautilusWindowSlot *slot;
 	char *tooltip;
 	GList *network_mounts, *network_volumes;
-	NautilusFile *file;
 
 	DEBUG ("Updating places sidebar");
 
@@ -775,14 +762,10 @@ update_places (NautilusPlacesSidebar *sidebar)
 			continue;
 		}
 
-		file = nautilus_file_get (root);
-
-		if (is_built_in_bookmark (file)) {
+		if (!should_display_bookmark (bookmark)) {
 			g_object_unref (root);
-			nautilus_file_unref (file);
 			continue;
 		}
-		nautilus_file_unref (file);
 
 		bookmark_name = nautilus_bookmark_get_name (bookmark);
 		icon = nautilus_bookmark_get_symbolic_icon (bookmark);
