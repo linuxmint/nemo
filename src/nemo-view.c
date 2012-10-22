@@ -4120,6 +4120,37 @@ desktop_or_home_dir_in_selection (NemoView *view)
 	return saw_desktop_or_home_dir;
 }
 
+/* directory_in_selection
+ *
+ * Return TRUE if selection contains a directory.
+ */
+
+static gboolean
+directory_in_selection (NemoView *view)
+{
+    gboolean has_dir;
+    GList *selection, *node;
+    NemoFile *file;
+
+    g_return_val_if_fail (NEMO_IS_VIEW (view), FALSE);
+
+    has_dir = FALSE;
+
+    selection = nemo_view_get_selection (NEMO_VIEW (view));
+
+    for (node = selection; node != NULL; node = node->next) {
+        file = NEMO_FILE (node->data);
+
+        has_dir = nemo_file_is_directory (file);
+        if (has_dir) {
+            break;
+        }
+    }
+    nemo_file_list_free (selection);
+
+    return has_dir;
+}
+
 static void
 trash_or_delete_done_cb (GHashTable *debuting_uris,
 			 gboolean user_cancel,
@@ -8483,6 +8514,7 @@ real_update_menus (NemoView *view)
 	char *label_with_underscore;
 	gboolean selection_contains_special_link;
 	gboolean selection_contains_desktop_or_home_dir;
+    gboolean selection_contains_directory;
 	gboolean can_create_files;
 	gboolean can_delete_files;
 	gboolean can_copy_files;
@@ -8510,7 +8542,7 @@ real_update_menus (NemoView *view)
 
 	selection_contains_special_link = special_link_in_selection (view);
 	selection_contains_desktop_or_home_dir = desktop_or_home_dir_in_selection (view);
-
+    selection_contains_directory = directory_in_selection (view);
 	can_create_files = nemo_view_supports_creating_files (view);
 	can_delete_files =
 		can_delete_all (selection) &&
@@ -8539,11 +8571,13 @@ real_update_menus (NemoView *view)
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                            NEMO_ACTION_MAILTO_THUNDERBIRD);
-    gtk_action_set_visible(action, show_thunderbird_sendto);
+    gtk_action_set_visible(action, show_thunderbird_sendto &&
+                                        !selection_contains_directory);
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                            NEMO_ACTION_MAILTO_OTHER);
-    gtk_action_set_visible(action, !show_thunderbird_sendto);
+    gtk_action_set_visible(action, !show_thunderbird_sendto &&
+                                        !selection_contains_directory);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_FOLDER);
