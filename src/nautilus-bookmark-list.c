@@ -655,6 +655,17 @@ nautilus_bookmark_list_save_file (NautilusBookmarkList *bookmarks)
 	}
 }
 
+gboolean
+nautilus_bookmark_list_can_bookmark_location (NautilusBookmarkList *list,
+					      GFile                *location)
+{
+	if (nautilus_bookmark_list_item_with_location (list, location)) {
+		return FALSE;
+	}
+
+	return !nautilus_is_home_directory (location);
+}
+
 /**
  * nautilus_bookmark_list_new:
  * 

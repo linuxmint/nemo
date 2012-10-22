@@ -76,5 +76,7 @@ NautilusBookmark *      nautilus_bookmark_list_item_with_location  (NautilusBook
 void                    nautilus_bookmark_list_move_item           (NautilusBookmarkList *bookmarks,
 								    guint                 index,
 								    guint                 destination);
+gboolean                nautilus_bookmark_list_can_bookmark_location (NautilusBookmarkList *list,
+								      GFile                *location);
 
 #endif /* NAUTILUS_BOOKMARK_LIST_H */
