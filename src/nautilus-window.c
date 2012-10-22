@@ -609,7 +609,9 @@ places_sidebar_show_error_message (GtkPlacesSidebar *sidebar,
 				   const char       *secondary,
 				   gpointer          user_data)
 {
-	/* FIXME */
+	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
+
+	eel_show_error_dialog (primary, secondary, GTK_WINDOW (window));
 }
 
 static void
