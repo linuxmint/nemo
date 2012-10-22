@@ -179,17 +179,21 @@ update_widgets_sensitivity (NautilusBookmarksWindow *self)
 	NautilusBookmark *selected;
 	int n_active;
 	int index = -1;
+	gboolean builtin;
 
 	selected = get_selected_bookmark (self);
 	n_active = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (self->priv->model), NULL);
 	if (selected != NULL) {
 		index = get_selected_row (self);
+		builtin = nautilus_bookmark_get_is_builtin (selected);
+	} else {
+		builtin = FALSE;
 	}
 
 	/* Set the sensitivity of widgets that require a selection */
-	gtk_widget_set_sensitive (self->priv->remove_button, index >= 0 && n_active > 1);
-	gtk_widget_set_sensitive (self->priv->up_button, index > 0);
-	gtk_widget_set_sensitive (self->priv->down_button, index >= 0 && index < n_active - 1);
+	gtk_widget_set_sensitive (self->priv->remove_button, !builtin && index >= 0 && n_active > 1);
+	gtk_widget_set_sensitive (self->priv->up_button, !builtin && index > 0);
+	gtk_widget_set_sensitive (self->priv->down_button, !builtin && index >= 0 && index < n_active - 1);
 	gtk_widget_set_sensitive (self->priv->name_field, selected != NULL);
 	gtk_widget_set_sensitive (self->priv->uri_field, selected != NULL);
 }
