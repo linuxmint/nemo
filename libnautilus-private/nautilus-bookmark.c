@@ -35,6 +35,7 @@
 
 #include <libnautilus-private/nautilus-file.h>
 #include <libnautilus-private/nautilus-file-utilities.h>
+#include <libnautilus-private/nautilus-global-preferences.h>
 #include <libnautilus-private/nautilus-icon-names.h>
 
 #define DEBUG_FLAG NAUTILUS_DEBUG_BOOKMARKS
@@ -181,6 +182,25 @@ apply_warning_emblem (GIcon **base,
 	g_object_unref (*base);
 
 	*base = emblemed_icon;
+}
+
+gboolean
+nautilus_bookmark_get_is_builtin (NautilusBookmark *bookmark)
+{
+	GUserDirectory xdg_type;
+
+	/* if this is not an XDG dir, it's never builtin */
+	if (!nautilus_bookmark_get_xdg_type (bookmark, &xdg_type)) {
+		return FALSE;
+	}
+
+	/* exclude XDG locations which are not in our builtin list */
+	if (xdg_type == G_USER_DIRECTORY_DESKTOP &&
+	    !g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
+		return FALSE;
+	}
+
+	return (xdg_type != G_USER_DIRECTORY_TEMPLATES) && (xdg_type != G_USER_DIRECTORY_PUBLIC_SHARE);
 }
 
 gboolean

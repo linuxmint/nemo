@@ -670,11 +670,22 @@ gboolean
 nautilus_bookmark_list_can_bookmark_location (NautilusBookmarkList *list,
 					      GFile                *location)
 {
+	NautilusBookmark *bookmark;
+	gboolean is_builtin;
+
 	if (nautilus_bookmark_list_item_with_location (list, location, NULL)) {
 		return FALSE;
 	}
 
-	return !nautilus_is_home_directory (location);
+	if (nautilus_is_home_directory (location)) {
+		return FALSE;
+	}
+
+	bookmark = nautilus_bookmark_new (location, NULL);
+	is_builtin = nautilus_bookmark_get_is_builtin (bookmark);
+	g_object_unref (bookmark);
+
+	return !is_builtin;
 }
 
 /**

@@ -442,25 +442,6 @@ add_special_dirs (NautilusPlacesSidebar *sidebar)
 	g_list_free (dirs);
 }
 
-static gboolean
-should_display_bookmark (NautilusBookmark *bookmark)
-{
-	GUserDirectory xdg_type;
-
-	/* if this is not an XDG dir, always display */
-	if (!nautilus_bookmark_get_xdg_type (bookmark, &xdg_type)) {
-		return TRUE;
-	}
-
-	/* show XDG locations which are not in our builtin list */
-	if (xdg_type == G_USER_DIRECTORY_DESKTOP &&
-	    !g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
-		return TRUE;
-	}
-
-	return (xdg_type == G_USER_DIRECTORY_TEMPLATES) || (xdg_type == G_USER_DIRECTORY_PUBLIC_SHARE);
-}
-
 static void
 update_places (NautilusPlacesSidebar *sidebar)
 {
@@ -762,7 +743,7 @@ update_places (NautilusPlacesSidebar *sidebar)
 			continue;
 		}
 
-		if (!should_display_bookmark (bookmark)) {
+		if (nautilus_bookmark_get_is_builtin (bookmark)) {
 			g_object_unref (root);
 			continue;
 		}
