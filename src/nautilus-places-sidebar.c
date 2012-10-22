@@ -416,6 +416,7 @@ add_special_dirs (NautilusPlacesSidebar *sidebar)
 		char *name;
 		char *mount_uri;
 		char *tooltip;
+		NautilusBookmark *bookmark;
 
 		if (index == G_USER_DIRECTORY_DESKTOP ||
 		    index == G_USER_DIRECTORY_TEMPLATES ||
@@ -438,6 +439,16 @@ add_special_dirs (NautilusPlacesSidebar *sidebar)
 		root = g_file_new_for_path (path);
 		name = g_file_get_basename (root);
 		icon = nautilus_special_directory_get_symbolic_icon (index);
+
+		/* Don't add the bookmark to the sidebar if it was removed from
+		 * the user dir list, or if its location doesn't exist.
+		 */
+		bookmark = nautilus_bookmark_list_item_with_location (sidebar->bookmarks, root, &idx);
+		if (bookmark && !nautilus_bookmark_get_exists (bookmark)) {
+			g_object_unref (root);
+			continue;
+		}
+
 		mount_uri = g_file_get_uri (root);
 		tooltip = g_file_get_parse_name (root);
 
