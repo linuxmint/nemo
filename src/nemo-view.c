@@ -8773,12 +8773,12 @@ real_update_menus (NemoView *view)
 	/* next pane: works if file is copyable, and next pane is writable */
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_COPY_TO_NEXT_PANE);
-	gtk_action_set_sensitive (action, can_copy_files && next_pane_is_writable);
+	gtk_action_set_visible (action, can_copy_files && next_pane_is_writable);
 
 	/* move to next pane: works if file is cuttable, and next pane is writable */
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_MOVE_TO_NEXT_PANE);
-	gtk_action_set_sensitive (action, can_delete_files && next_pane_is_writable);
+	gtk_action_set_visible (action, can_delete_files && next_pane_is_writable);
 
 
 	show_desktop_target =
