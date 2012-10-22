@@ -6097,7 +6097,7 @@ open_in_terminal (gchar *location)
 }
 
 static void
-send_email (NemoView *view)
+send_email_thunderbird (NemoView *view)
 {
     gchar *cmd;
     gboolean first = TRUE;
@@ -6120,6 +6120,32 @@ send_email (NemoView *view)
         }
     }
     cmd = g_strdup_printf ("thunderbird -compose to=,\"attachment='%s'\"", attach->str);
+    g_spawn_command_line_async (cmd, NULL);
+
+    g_free (cmd);
+    g_string_free (attach, TRUE);
+    nemo_file_list_free (selection);
+    nemo_file_list_free (l);
+}
+
+static void
+send_email_other (NemoView *view)
+{
+    gchar *cmd;
+    GList *selection, *l;
+    GString *attach;
+
+    attach = g_string_new ("");
+    selection = nemo_view_get_selection_for_file_transfer (view);
+    if (selection == NULL) {
+        return;
+    }
+
+    for (l = selection; l != NULL; l = l->next) {
+        g_string_append_printf(attach, " --attach \"%s\"",
+                        g_filename_from_uri(nemo_file_get_uri ((NemoFile *) l->data), NULL, NULL));
+    }
+    cmd = g_strdup_printf ("xdg-email %s", attach->str);
     g_spawn_command_line_async (cmd, NULL);
 
     g_free (cmd);
@@ -6178,7 +6204,7 @@ action_open_in_terminal_callback(GtkAction *action,
 }
 
 static void
-action_send_email_callback(GtkAction *action,
+action_send_email_thunderbird_callback(GtkAction *action,
 				  gpointer callback_data)
 {
 	NemoView *view;
@@ -6186,9 +6212,23 @@ action_send_email_callback(GtkAction *action,
 	view = NEMO_VIEW (callback_data);
     selection = nemo_view_get_selection (view);
 	if (selection != NULL) {
-        send_email (view);
+        send_email_thunderbird (view);
         nemo_file_list_free (selection);
 	}
+}
+
+static void
+action_send_email_other_callback(GtkAction *action,
+                  gpointer callback_data)
+{
+    NemoView *view;
+    GList *selection;
+    view = NEMO_VIEW (callback_data);
+    selection = nemo_view_get_selection (view);
+    if (selection != NULL) {
+        send_email_other (view);
+        nemo_file_list_free (selection);
+    }
 }
 
 static void
@@ -7140,7 +7180,11 @@ static const GtkActionEntry directory_view_entries[] = {
   /* name, stock id */         { NEMO_ACTION_MAILTO_THUNDERBIRD, GTK_STOCK_DND_MULTIPLE,
   /* label, accelerator */       N_("Send with Thunderbird"), "",
   /* tooltip */                  N_("Send the selected file(s) as email attachments using Thunderbird"),
-				 G_CALLBACK (action_send_email_callback) },
+				 G_CALLBACK (action_send_email_thunderbird_callback) },
+  /* name, stock id */         { NEMO_ACTION_MAILTO_OTHER, GTK_STOCK_DND_MULTIPLE,
+  /* label, accelerator */       N_("Send as email attachment"), "",
+  /* tooltip */                  N_("Send the selected file(s) as email attachments using your current email program"),
+                 G_CALLBACK (action_send_email_other_callback) },
   /* name, stock id */         { "OtherApplication1", NULL,
   /* label, accelerator */       N_("Other _Application..."), NULL,
   /* tooltip */                  N_("Choose another application with which to open the selected item"),
@@ -8496,6 +8540,10 @@ real_update_menus (NemoView *view)
     action = gtk_action_group_get_action (view->details->dir_action_group,
                            NEMO_ACTION_MAILTO_THUNDERBIRD);
     gtk_action_set_visible(action, show_thunderbird_sendto);
+
+    action = gtk_action_group_get_action (view->details->dir_action_group,
+                           NEMO_ACTION_MAILTO_OTHER);
+    gtk_action_set_visible(action, !show_thunderbird_sendto);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_FOLDER);

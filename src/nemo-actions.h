@@ -131,5 +131,6 @@
 #define NEMO_ACTION_ZOOM_ITEMS "Zoom Items"
 #define NEMO_ACTION_SORT_TRASH_TIME "Sort by Trash Time"
 #define NEMO_ACTION_MAILTO_THUNDERBIRD "MailToThunderbird"
+#define NEMO_ACTION_MAILTO_OTHER "MailToOther"
 
 #endif /* NEMO_ACTIONS_H */

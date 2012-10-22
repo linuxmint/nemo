@@ -180,6 +180,7 @@
 	<menuitem name="OpenInTerminal" action="OpenInTerminal"/>
 	<menuitem name="OpenAsRoot" action="OpenAsRoot"/>
 	<menuitem name="MailToThunderbird" action="MailToThunderbird"/>
+	<menuitem name="MailToOther" action="MailToOther"/>
 	<separator name="Dangerous separator"/>
 	<placeholder name="Dangerous File Actions">
 		<menuitem name="Trash" action="Trash"/>
