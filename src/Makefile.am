@@ -169,8 +169,6 @@ nautilus_SOURCES = \
 	nautilus-notebook.h			\
 	nautilus-pathbar.c			\
 	nautilus-pathbar.h			\
-	nautilus-places-sidebar.c		\
-	nautilus-places-sidebar.h		\
 	nautilus-previewer.c			\
 	nautilus-previewer.h			\
 	nautilus-progress-info-widget.c		\
