@@ -669,6 +669,27 @@ nautilus_window_slot_close (NautilusWindow     *window,
 }
 
 static void
+nautilus_window_sync_bookmarks (NautilusWindow *window)
+{
+	gboolean can_bookmark = FALSE;
+	NautilusWindowSlot *slot;
+	NautilusBookmarkList *bookmarks;
+	GtkAction *action;
+
+	slot = window->details->active_slot;
+
+	if (slot->location != NULL) {
+		bookmarks = nautilus_application_get_bookmarks
+			(NAUTILUS_APPLICATION (gtk_window_get_application (GTK_WINDOW (window))));
+		can_bookmark = nautilus_bookmark_list_can_bookmark_location (bookmarks, slot->location);
+	}
+
+	action = gtk_action_group_get_action (nautilus_window_get_main_action_group (window),
+					      NAUTILUS_ACTION_ADD_BOOKMARK);
+	gtk_action_set_sensitive (action, can_bookmark);
+}
+
+static void
 toggle_toolbar_search_button (NautilusWindow *window,
 			      gboolean        active)
 {
@@ -737,6 +758,8 @@ nautilus_window_sync_location_widgets (NautilusWindow *window)
 
 	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_FORWARD);
 	gtk_action_set_sensitive (action, active_slot->forward_list != NULL);
+
+	nautilus_window_sync_bookmarks (window);
 }
 
 GtkWidget *
@@ -1163,6 +1186,7 @@ nautilus_window_constructed (GObject *self)
 	NautilusWindow *window;
 	GtkWidget *grid;
 	NautilusWindowSlot *slot;
+	NautilusApplication *application;
 
 	window = NAUTILUS_WINDOW (self);
 
@@ -1209,6 +1233,11 @@ nautilus_window_constructed (GObject *self)
 
 	slot = nautilus_window_open_slot (window, 0);
 	nautilus_window_set_active_slot (window, slot);
+
+	application = NAUTILUS_APPLICATION (g_application_get_default ());
+	window->details->bookmarks_id =
+		g_signal_connect_swapped (nautilus_application_get_bookmarks (application), "changed",
+					  G_CALLBACK (nautilus_window_sync_bookmarks), window);
 
 	nautilus_profile_end (NULL);
 }
@@ -1264,6 +1293,7 @@ static void
 nautilus_window_destroy (GtkWidget *object)
 {
 	NautilusWindow *window;
+	NautilusApplication *application;
 	GList *slots_copy;
 
 	window = NAUTILUS_WINDOW (object);
@@ -1282,6 +1312,13 @@ nautilus_window_destroy (GtkWidget *object)
 	g_assert (window->details->slots == NULL);
 
 	window->details->active_slot = NULL;
+
+	if (window->details->bookmarks_id != 0) {
+		application = NAUTILUS_APPLICATION (gtk_window_get_application (GTK_WINDOW (window)));
+		g_signal_handler_disconnect (nautilus_application_get_bookmarks (application),
+					     window->details->bookmarks_id);
+		window->details->bookmarks_id = 0;
+	}
 
 	GTK_WIDGET_CLASS (nautilus_window_parent_class)->destroy (object);
 }

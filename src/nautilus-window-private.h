@@ -78,6 +78,7 @@ struct NautilusWindowDetails
 
         guint sidebar_width_handler_id;
         guint app_menu_visibility_id;
+        guint bookmarks_id;
 };
 
 /* window geometry */
