@@ -62,7 +62,8 @@ struct NautilusWindowDetails
         
         /* Side Pane */
         int side_pane_width;
-        GtkWidget *sidebar;
+        GtkWidget *sidebar;        /* container for the GtkPlacesSidebar */
+        GtkWidget *places_sidebar; /* the actual GtkPlacesSidebar */
 
         /* Main view */
         GtkWidget *main_view;

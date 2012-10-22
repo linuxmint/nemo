@@ -38,7 +38,6 @@
 #include "nautilus-location-entry.h"
 #include "nautilus-mime-actions.h"
 #include "nautilus-notebook.h"
-#include "nautilus-places-sidebar.h"
 #include "nautilus-pathbar.h"
 #include "nautilus-toolbar.h"
 #include "nautilus-view-factory.h"
@@ -550,6 +549,43 @@ setup_side_pane_width (NautilusWindow *window)
 				window->details->side_pane_width);
 }
 
+/* Callback used when the places sidebar changes location; we need to change the displayed folder */
+static void
+places_sidebar_location_selected_cb (GtkPlacesSidebar *sidebar,
+				     GFile            *location,
+				     GtkPlacesOpenMode open_mode,
+				     gpointer          user_data)
+{
+	/* FIXME */
+}
+
+/* Callback used when the places sidebar needs us to show the file properties dialog */
+static void
+places_sidebar_show_file_properties_cb (GtkPlacesSidebar *sidebar,
+					GFile            *file,
+					gpointer          user_data)
+{
+	/* FIXME */
+}
+
+/* Callback used when the places sidebar needs us to empty the trash */
+static void
+places_sidebar_empty_trash_requested_cb (GtkPlacesSidebar *sidebar,
+					 gpointer          user_data)
+{
+	/* FIXME */
+}
+
+/* Callback used when the places sidebar needs us to present an error message */
+static void
+places_sidebar_show_error_message (GtkPlacesSidebar *sidebar,
+				   const char       *primary,
+				   const char       *secondary,
+				   gpointer          user_data)
+{
+	/* FIXME */
+}
+
 static void
 nautilus_window_set_up_sidebar (NautilusWindow *window)
 {
@@ -569,10 +605,24 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 			  G_CALLBACK (side_pane_size_allocate_callback),
 			  window);
 
-	sidebar = nautilus_places_sidebar_new (window);
-	gtk_box_pack_start (GTK_BOX (window->details->sidebar), sidebar, TRUE, TRUE, 0);
-	gtk_widget_show (sidebar);
-	gtk_widget_show (GTK_WIDGET (window->details->sidebar));
+	window->details->places_sidebar = gtk_places_sidebar_new ();
+	gtk_places_sidebar_set_multiple_tabs_supported (window->details->places_sidebar, TRUE);
+	gtk_places_sidebar_set_multiple_windows_supported (window->details->places_sidebar, TRUE);
+	gtk_places_sidebar_set_show_properties (window->details->places_sidebar, TRUE);
+	gtk_places_sidebar_set_show_trash (window->details->places_sidebar, TRUE);
+
+	g_signal_connect (window->details->places_sidebar, "location-selected",
+			  G_CALLBACK (places_sidebar_location_selected_cb), window);
+	g_signal_connect (window->details->places_sidebar, "show-file-properties",
+			  G_CALLBACK (places_sidebar_show_file_properties_cb), window);
+	g_signal_connect (window->details->places_sidebar, "empty-trash-requested",
+			  G_CALLBACK (places_sidebar_empty_trash_requested_cb), window);
+	g_signal_connect (window->details->places_sidebar, "show-error-message",
+			  G_CALLBACK (places_sidebar_show_error_message), window);
+
+	gtk_box_pack_start (GTK_BOX (window->details->sidebar), window->details->places_sidebar, TRUE, TRUE, 0);
+	gtk_widget_show (window->details->places_sidebar);
+	gtk_widget_show (window->details->sidebar);
 }
 
 static void
@@ -583,6 +633,7 @@ nautilus_window_tear_down_sidebar (NautilusWindow *window)
 	if (window->details->sidebar != NULL) {
 		gtk_widget_destroy (GTK_WIDGET (window->details->sidebar));
 		window->details->sidebar = NULL;
+		window->details->places_sidebar = NULL;
 	}
 }
 
