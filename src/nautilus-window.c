@@ -556,7 +556,25 @@ places_sidebar_location_selected_cb (GtkPlacesSidebar *sidebar,
 				     GtkPlacesOpenMode open_mode,
 				     gpointer          user_data)
 {
-	/* FIXME */
+	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
+	NautilusWindowOpenFlags flags;
+
+	switch (open_mode) {
+	case GTK_PLACES_OPEN_MODE_NEW_TAB:
+		flags = NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB;
+		break;
+
+	case GTK_PLACES_OPEN_MODE_NEW_WINDOW:
+		flags = NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW;
+		break;
+
+	case GTK_PLACES_OPEN_MODE_NORMAL: /* fall-through */
+	default:
+		flags = 0;
+		break;
+	}
+
+	nautilus_window_slot_open_location (window->details->active_slot, location, flags);
 }
 
 /* Callback used when the places sidebar needs us to show the file properties dialog */
