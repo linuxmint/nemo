@@ -580,10 +580,16 @@ places_sidebar_location_selected_cb (GtkPlacesSidebar *sidebar,
 /* Callback used when the places sidebar needs us to show the file properties dialog */
 static void
 places_sidebar_show_file_properties_cb (GtkPlacesSidebar *sidebar,
-					GFile            *file,
+					GFile            *location,
 					gpointer          user_data)
 {
-	/* FIXME */
+	GList *list;
+	NautilusFile *file;
+
+	file = nautilus_file_get (location);
+	list = g_list_append (NULL, file);
+	nautilus_properties_window_present (list, GTK_WIDGET (sidebar), NULL);
+	nautilus_file_list_free (list);
 }
 
 /* Callback used when the places sidebar needs us to empty the trash */
