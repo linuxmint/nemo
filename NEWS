@@ -1,3 +1,45 @@
+Major changes in 3.7.1 are:
+* Turn on again recursive search for the simple engine
+* Enable incremental loading for search directories
+* Add extra information to image properties page
+* Show free space pie chart for the local root filesystem
+* Resolve symbolic links before launching a file
+* Avoid sync I/O when reading bookmark locations
+* Don't add non-existent XDG folders to the sidebar
+* Don't offer to remove built-in XDG folder bookmarks
+* Fix black input field when renaming a file in icon view with XIM enabled
+* Fix wrong return location when unmounting a remote mount
+* Fix notebook tabs not properly switching after timeout when hovered
+* Fix search toggle button state inconsistent when switching between tabs
+* Fix crasher when using the Tracker engine from the Shell search provider
+* Fix crasher in Shell search provider
+* Fix crasher when unmounting a volume under certain circumstances
+
+Major changes in 3.6.1 are:
+* Fix floating bar not disappearing on search finish
+* Fix fullcolor icons appearing in the pathbar for mount roots
+* Fix drag and drop of multiple rows in list view
+* Fix search relevance not being applied correctly when searching
+* Fix sidebar visibility switch applying to all windows
+* Fix search location when moving to a search directory in Back/Forward
+  history
+* Fix missing search results with non-ASCII characters
+* Fix Home/Trash not showing up in shell provider results
+* Fix startup notification not working when opening multiple windows
+* Fix search results not focusing when activated from the Shell
+* Fix error dialog not showing up when entering a non-existant location
+  in Connect to Server
+* Fix inability to open files after cancelling a rename in list view under
+  some circumstances
+* Fix desktop icons not following the primary monitor workarea when multihead
+  is used with the desktop enabled
+* Fix crasher when search string changes too fast
+* Fix crasher when enabling search while loading a directory
+* Fix crasher when trying to open a saved search file
+* Fix crasher when Tracker is installed but not running
+* Fix crasher in the shell search provider for bookmarks/mounts with an
+  empty name
+
 Major changes in 3.6.0 are:
 * Fix toggling of hidden files visibility in searches
 * Fix base directory appearing in search results
