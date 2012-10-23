@@ -4718,7 +4718,7 @@ nautilus_file_get_directory_item_mime_types (NautilusFile *file,
 		return FALSE;
 	}
 
-	*mime_list = eel_g_str_list_copy (file->details->mime_list);
+	*mime_list = g_list_copy_deep (file->details->mime_list, (GCopyFunc) g_strdup, NULL);
 	return TRUE;
 }
 
@@ -6472,8 +6472,8 @@ nautilus_file_get_keywords (NautilusFile *file)
 
 	g_return_val_if_fail (NAUTILUS_IS_FILE (file), NULL);
 
-	keywords = eel_g_str_list_copy (file->details->extension_emblems);
-	keywords = g_list_concat (keywords, eel_g_str_list_copy (file->details->pending_extension_emblems));
+	keywords = g_list_copy_deep (file->details->extension_emblems, (GCopyFunc) g_strdup, NULL);
+	keywords = g_list_concat (keywords, g_list_copy_deep (file->details->pending_extension_emblems, (GCopyFunc) g_strdup, NULL));
 
 	metadata_keywords = nautilus_file_get_metadata_list (file, NAUTILUS_METADATA_KEY_EMBLEMS);
 	clean_up_metadata_keywords (file, &metadata_keywords);

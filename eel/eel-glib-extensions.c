@@ -56,25 +56,6 @@ eel_g_str_list_equal (GList *list_a, GList *list_b)
 	return p == NULL && q == NULL;
 }
 
-/**
- * eel_g_str_list_copy
- *
- * @list: List of strings and/or NULLs to copy.
- * Return value: Deep copy of @list.
- **/
-GList *
-eel_g_str_list_copy (GList *list)
-{
-	GList *node, *result;
-
-	result = NULL;
-	
-	for (node = g_list_last (list); node != NULL; node = node->prev) {
-		result = g_list_prepend (result, g_strdup (node->data));
-	}
-	return result;
-}
-
 gboolean
 eel_g_strv_equal (char **a, char **b)
 {

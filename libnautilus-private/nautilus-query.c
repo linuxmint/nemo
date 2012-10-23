@@ -169,14 +169,14 @@ nautilus_query_set_location (NautilusQuery *query, const char *uri)
 GList *
 nautilus_query_get_mime_types (NautilusQuery *query)
 {
-	return eel_g_str_list_copy (query->details->mime_types);
+	return g_list_copy_deep (query->details->mime_types, (GCopyFunc) g_strdup, NULL);
 }
 
 void
 nautilus_query_set_mime_types (NautilusQuery *query, GList *mime_types)
 {
 	g_list_free_full (query->details->mime_types, g_free);
-	query->details->mime_types = eel_g_str_list_copy (mime_types);
+	query->details->mime_types = g_list_copy_deep (mime_types, (GCopyFunc) g_strdup, NULL);
 }
 
 void
