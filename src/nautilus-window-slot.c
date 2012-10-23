@@ -876,7 +876,7 @@ begin_location_change (NautilusWindowSlot *slot,
 	slot->details->location_change_type = type;
 	slot->details->location_change_distance = distance;
 	slot->details->tried_mount = FALSE;
-	slot->details->pending_selection = eel_g_object_list_copy (new_selection);
+	slot->details->pending_selection = g_list_copy_deep (new_selection, (GCopyFunc) g_object_ref, NULL);
 
 	slot->details->pending_scroll_to = g_strdup (scroll_pos);
 
@@ -1397,7 +1397,7 @@ load_new_location (NautilusWindowSlot *slot,
 	g_assert (slot != NULL);
 	g_assert (location != NULL);
 
-	selection_copy = eel_g_object_list_copy (selection);
+	selection_copy = g_list_copy_deep (selection, (GCopyFunc) g_object_ref, NULL);
 	view = NULL;
 
 	nautilus_profile_start (NULL);

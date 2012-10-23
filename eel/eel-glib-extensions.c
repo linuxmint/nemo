@@ -237,19 +237,6 @@ eel_g_hash_table_safe_for_each (GHashTable *hash_table,
 	g_list_free (flattened.values);
 }
 
-/**
- * eel_g_object_list_copy
- *
- * Copy the list of objects, ref'ing each one.
- * @list: GList of objects.
- **/
-GList *
-eel_g_object_list_copy (GList *list)
-{
-	g_list_foreach (list, (GFunc) g_object_ref, NULL);
-	return g_list_copy (list);
-}
-
 #if !defined (EEL_OMIT_SELF_CHECK)
 
 static gboolean

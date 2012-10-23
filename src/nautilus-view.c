@@ -2577,7 +2577,7 @@ nautilus_view_set_selection (NautilusView *nautilus_view,
 		 */
 		g_list_free_full (view->details->pending_selection, g_object_unref);
 		view->details->pending_selection =
-			eel_g_object_list_copy (selection);
+			g_list_copy_deep (selection, (GCopyFunc) g_object_ref, NULL);
 	}
 }
 
