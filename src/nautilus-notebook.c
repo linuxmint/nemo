@@ -254,7 +254,7 @@ nautilus_notebook_sync_loading (NautilusNotebook *notebook,
 				NautilusWindowSlot *slot)
 {
 	GtkWidget *tab_label, *spinner, *icon;
-	gboolean active;
+	gboolean active, allow_stop;
 
 	g_return_if_fail (NAUTILUS_IS_NOTEBOOK (notebook));
 	g_return_if_fail (NAUTILUS_IS_WINDOW_SLOT (slot));
@@ -269,11 +269,13 @@ nautilus_notebook_sync_loading (NautilusNotebook *notebook,
 
 	active = FALSE;
 	g_object_get (spinner, "active", &active, NULL);
-	if (active == slot->allow_stop)	{
+	allow_stop = nautilus_window_slot_get_allow_stop (slot);
+
+	if (active == allow_stop) {
 		return;
 	}
 
-	if (slot->allow_stop) {
+	if (allow_stop) {
 		gtk_widget_hide (icon);
 		gtk_widget_show (spinner);
 		gtk_spinner_start (GTK_SPINNER (spinner));

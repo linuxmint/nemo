@@ -309,15 +309,11 @@ action_add_bookmark_callback (GtkAction *action,
 {
 	NautilusWindow *window = user_data;
 	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
-	NautilusBookmark *bookmark;
 	NautilusWindowSlot *slot;
-	NautilusBookmarkList *list;
 
 	slot = nautilus_window_get_active_slot (window);
-	bookmark = slot->current_location_bookmark;
-	list = nautilus_application_get_bookmarks (app);
-
-	nautilus_bookmark_list_append (list, bookmark);
+	nautilus_bookmark_list_append (nautilus_application_get_bookmarks (app),
+				       nautilus_window_slot_get_bookmark (slot));
 }
 
 static void
@@ -755,6 +751,7 @@ nautilus_window_finalize_menus (NautilusWindow *window)
 static GList *
 get_extension_menus (NautilusWindow *window)
 {
+	NautilusFile *file;
 	NautilusWindowSlot *slot;
 	GList *providers;
 	GList *items;
@@ -764,6 +761,7 @@ get_extension_menus (NautilusWindow *window)
 	items = NULL;
 
 	slot = nautilus_window_get_active_slot (window);
+	file = nautilus_window_slot_get_file (slot);
 
 	for (l = providers; l != NULL; l = l->next) {
 		NautilusMenuProvider *provider;
@@ -772,7 +770,7 @@ get_extension_menus (NautilusWindow *window)
 		provider = NAUTILUS_MENU_PROVIDER (l->data);
 		file_items = nautilus_menu_provider_get_background_items (provider,
 									  GTK_WIDGET (window),
-									  slot->viewed_file);
+									  file);
 		items = g_list_concat (items, file_items);
 	}
 

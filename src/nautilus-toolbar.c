@@ -171,8 +171,9 @@ fill_menu (NautilusWindow *window,
 	GList *list;
 
 	slot = nautilus_window_get_active_slot (window);
+	list = back ? nautilus_window_slot_get_back_history (slot) :
+		nautilus_window_slot_get_forward_history (slot);
 
-	list = back ? slot->back_list : slot->forward_list;
 	index = 0;
 	while (list != NULL) {
 		menu_item = nautilus_bookmark_menu_item_new (NAUTILUS_BOOKMARK (list->data));

@@ -72,7 +72,6 @@ typedef struct {
 
         void   (* sync_title) (NautilusWindow *window,
 			       NautilusWindowSlot *slot);
-        void   (* sync_view_as_menus) (NautilusWindow *window);
         NautilusIconInfo * (* get_icon) (NautilusWindow *window,
                                          NautilusWindowSlot *slot);
 
@@ -118,7 +117,6 @@ void                 nautilus_window_slot_close            (NautilusWindow *wind
 GtkWidget *          nautilus_window_ensure_location_entry (NautilusWindow *window);
 void                 nautilus_window_sync_location_widgets (NautilusWindow *window);
 void                 nautilus_window_grab_focus            (NautilusWindow *window);
-void                 nautilus_window_sync_search_widgets   (NautilusWindow *window);
 
 void     nautilus_window_hide_sidebar         (NautilusWindow *window);
 void     nautilus_window_show_sidebar         (NautilusWindow *window);

@@ -60,98 +60,67 @@ struct NautilusWindowSlot {
 	GtkBox parent;
 
 	NautilusWindowSlotDetails *details;
-
-	NautilusView *content_view;
-	NautilusView *new_content_view;
-
-	/* Information about bookmarks */
-	NautilusBookmark *current_location_bookmark;
-	NautilusBookmark *last_location_bookmark;
-
-	NautilusFile *viewed_file;
-	gboolean viewed_file_seen;
-	gboolean viewed_file_in_trash;
-
-	gboolean allow_stop;
-
-	NautilusQueryEditor *query_editor;
-	gulong qe_changed_id;
-	gulong qe_cancel_id;
-	gulong qe_activated_id;
-
-	/* New location. */
-	NautilusLocationChangeType location_change_type;
-	guint location_change_distance;
-	GFile *pending_location;
-	char *pending_scroll_to;
-	GList *pending_selection;
-	NautilusFile *determine_view_file;
-	GCancellable *mount_cancellable;
-	GError *mount_error;
-	gboolean tried_mount;
-	NautilusWindowGoToCallback open_callback;
-	gpointer open_callback_user_data;
-	gboolean load_with_search;
-
-	gboolean visible;
-
-	/* Back/Forward chain, and history list. 
-	 * The data in these lists are NautilusBookmark pointers. 
-	 */
-	GList *back_list, *forward_list;
 };
 
 GType   nautilus_window_slot_get_type (void);
 
-NautilusWindowSlot * nautilus_window_slot_new              (NautilusWindow *window);
+NautilusWindowSlot * nautilus_window_slot_new              (NautilusWindow     *window);
 
 NautilusWindow * nautilus_window_slot_get_window           (NautilusWindowSlot *slot);
 void             nautilus_window_slot_set_window           (NautilusWindowSlot *slot,
 							    NautilusWindow     *window);
 
-void    nautilus_window_slot_update_title		   (NautilusWindowSlot *slot);
-void    nautilus_window_slot_set_query_editor_visible	   (NautilusWindowSlot *slot,
-							    gboolean            visible);
-gboolean nautilus_window_slot_handle_event       	   (NautilusWindowSlot *slot,
-							    GdkEventKey        *event);
-
-GFile * nautilus_window_slot_get_location		   (NautilusWindowSlot *slot);
-char *  nautilus_window_slot_get_location_uri		   (NautilusWindowSlot *slot);
-
-const gchar *nautilus_window_slot_get_title                (NautilusWindowSlot *slot);
-
-void    nautilus_window_slot_queue_reload		   (NautilusWindowSlot *slot);
-
 /* convenience wrapper without selection and callback/user_data */
 #define nautilus_window_slot_open_location(slot, location, flags)\
 	nautilus_window_slot_open_location_full(slot, location, flags, NULL, NULL, NULL)
 
-void nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
-					      GFile *location,
-					      NautilusWindowOpenFlags flags,
-					      GList *new_selection, /* NautilusFile list */
-					      NautilusWindowGoToCallback callback,
-					      gpointer user_data);
+void nautilus_window_slot_open_location_full              (NautilusWindowSlot *slot,
+							   GFile	      *location,
+							   NautilusWindowOpenFlags flags,
+							   GList	      *new_selection,
+							   NautilusWindowGoToCallback callback,
+							   gpointer	       user_data);
 
-void			nautilus_window_slot_stop_loading	      (NautilusWindowSlot	*slot);
+GFile * nautilus_window_slot_get_location		   (NautilusWindowSlot *slot);
+char *  nautilus_window_slot_get_location_uri		   (NautilusWindowSlot *slot);
 
-void			nautilus_window_slot_set_content_view	      (NautilusWindowSlot	*slot,
-								       const char		*id);
-gboolean		nautilus_window_slot_content_view_matches_iid (NautilusWindowSlot	*slot,
-								       const char		*iid);
+NautilusFile *    nautilus_window_slot_get_file            (NautilusWindowSlot *slot);
+NautilusBookmark *nautilus_window_slot_get_bookmark        (NautilusWindowSlot *slot);
+NautilusView *    nautilus_window_slot_get_view            (NautilusWindowSlot *slot);
+
+NautilusView * nautilus_window_slot_get_current_view       (NautilusWindowSlot *slot);
+char *         nautilus_window_slot_get_current_uri        (NautilusWindowSlot *slot);
+
+GList * nautilus_window_slot_get_back_history              (NautilusWindowSlot *slot);
+GList * nautilus_window_slot_get_forward_history           (NautilusWindowSlot *slot);
+
+void    nautilus_window_slot_set_query_editor_visible	   (NautilusWindowSlot *slot,
+							    gboolean            visible);
+GFile * nautilus_window_slot_get_query_editor_location     (NautilusWindowSlot *slot);
+
+gboolean nautilus_window_slot_get_allow_stop               (NautilusWindowSlot *slot);
+void     nautilus_window_slot_set_allow_stop		   (NautilusWindowSlot *slot,
+							    gboolean	        allow_stop);
+void     nautilus_window_slot_stop_loading                 (NautilusWindowSlot *slot);
+
+const gchar *nautilus_window_slot_get_title                (NautilusWindowSlot *slot);
+void         nautilus_window_slot_update_title		   (NautilusWindowSlot *slot);
+
+gboolean nautilus_window_slot_handle_event       	   (NautilusWindowSlot *slot,
+							    GdkEventKey        *event);
+
+void    nautilus_window_slot_queue_reload		   (NautilusWindowSlot *slot);
+
+void	 nautilus_window_slot_set_content_view	           (NautilusWindowSlot *slot,
+							    const char		*id);
 
 void    nautilus_window_slot_go_home			   (NautilusWindowSlot *slot,
 							    NautilusWindowOpenFlags flags);
 void    nautilus_window_slot_go_up                         (NautilusWindowSlot *slot,
 							    NautilusWindowOpenFlags flags);
 
-void    nautilus_window_slot_set_allow_stop		   (NautilusWindowSlot *slot,
-							    gboolean	    allow_stop);
 void    nautilus_window_slot_set_status			   (NautilusWindowSlot *slot,
 							    const char         *primary_status,
 							    const char         *detail_status);
-
-NautilusView * nautilus_window_slot_get_current_view     (NautilusWindowSlot *slot);
-char           * nautilus_window_slot_get_current_uri      (NautilusWindowSlot *slot);
 
 #endif /* NAUTILUS_WINDOW_SLOT_H */
