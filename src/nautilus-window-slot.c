@@ -1804,82 +1804,48 @@ check_last_bookmark_location_matches_slot (NautilusWindowSlot *slot)
 }
 
 static void
-handle_go_back (NautilusWindowSlot *slot,
-		GFile *location)
+handle_go_direction (NautilusWindowSlot *slot,
+		     GFile              *location,
+		     gboolean            forward)
 {
-	guint i;
-	GList *link;
+	GList **list_ptr, **other_list_ptr;
+	GList *list, *other_list, *link;
 	NautilusBookmark *bookmark;
+	gint i;
 
-	/* Going back. Move items from the back list to the forward list. */
-	g_assert (g_list_length (slot->details->back_list) > slot->details->location_change_distance);
-	check_bookmark_location_matches (NAUTILUS_BOOKMARK (g_list_nth_data (slot->details->back_list,
-									     slot->details->location_change_distance)),
+	list_ptr = (forward) ? (&slot->details->forward_list) : (&slot->details->back_list);
+	other_list_ptr = (forward) ? (&slot->details->back_list) : (&slot->details->forward_list);
+	list = *list_ptr;
+	other_list = *other_list_ptr;
+
+	/* Move items from the list to the other list. */
+	g_assert (g_list_length (list) > slot->details->location_change_distance);
+	check_bookmark_location_matches (g_list_nth_data (list, slot->details->location_change_distance),
 					 location);
 	g_assert (nautilus_window_slot_get_location (slot) != NULL);
 
-	/* Move current location to Forward list */
-
+	/* Move current location to list */
 	check_last_bookmark_location_matches_slot (slot);
 
 	/* Use the first bookmark in the history list rather than creating a new one. */
-	slot->details->forward_list = g_list_prepend (slot->details->forward_list,
-						      slot->details->last_location_bookmark);
-	g_object_ref (slot->details->forward_list->data);
+	other_list = g_list_prepend (other_list, slot->details->last_location_bookmark);
+	g_object_ref (other_list->data);
 
-	/* Move extra links from Back to Forward list */
+	/* Move extra links from the list to the other list */
 	for (i = 0; i < slot->details->location_change_distance; ++i) {
-		bookmark = NAUTILUS_BOOKMARK (slot->details->back_list->data);
-		slot->details->back_list =
-			g_list_remove (slot->details->back_list, bookmark);
-		slot->details->forward_list =
-			g_list_prepend (slot->details->forward_list, bookmark);
+		bookmark = NAUTILUS_BOOKMARK (list->data);
+		list = g_list_remove (list, bookmark);
+		other_list = g_list_prepend (other_list, bookmark);
 	}
 
 	/* One bookmark falls out of back/forward lists and becomes viewed location */
-	link = slot->details->back_list;
-	slot->details->back_list = g_list_remove_link (slot->details->back_list, link);
+	link = list;
+	list = g_list_remove_link (list, link);
 	g_object_unref (link->data);
 	g_list_free_1 (link);
-}
 
-static void
-handle_go_forward (NautilusWindowSlot *slot,
-		   GFile *location)
-{
-	guint i;
-	GList *link;
-	NautilusBookmark *bookmark;
-
-	/* Going forward. Move items from the forward list to the back list. */
-	g_assert (g_list_length (slot->details->forward_list) > slot->details->location_change_distance);
-	check_bookmark_location_matches (NAUTILUS_BOOKMARK (g_list_nth_data (slot->details->forward_list,
-									     slot->details->location_change_distance)),
-					 location);
-	g_assert (nautilus_window_slot_get_location (slot) != NULL);
-
-	/* Move current location to Back list */
-	check_last_bookmark_location_matches_slot (slot);
-
-	/* Use the first bookmark in the history list rather than creating a new one. */
-	slot->details->back_list = g_list_prepend (slot->details->back_list,
-						   slot->details->last_location_bookmark);
-	g_object_ref (slot->details->back_list->data);
-
-	/* Move extra links from Forward to Back list */
-	for (i = 0; i < slot->details->location_change_distance; ++i) {
-		bookmark = NAUTILUS_BOOKMARK (slot->details->forward_list->data);
-		slot->details->forward_list =
-			g_list_remove (slot->details->back_list, bookmark);
-		slot->details->back_list =
-			g_list_prepend (slot->details->forward_list, bookmark);
-	}
-
-	/* One bookmark falls out of back/forward lists and becomes viewed location */
-	link = slot->details->forward_list;
-	slot->details->forward_list = g_list_remove_link (slot->details->forward_list, link);
-	g_object_unref (link->data);
-	g_list_free_1 (link);
+	*list_ptr = list;
+	*other_list_ptr = other_list;
 }
 
 static void
@@ -1921,10 +1887,10 @@ update_history (NautilusWindowSlot *slot,
                 /* for reload there is no work to do */
                 return;
         case NAUTILUS_LOCATION_CHANGE_BACK:
-                handle_go_back (slot, new_location);
+                handle_go_direction (slot, new_location, FALSE);
                 return;
         case NAUTILUS_LOCATION_CHANGE_FORWARD:
-                handle_go_forward (slot, new_location);
+                handle_go_direction (slot, new_location, TRUE);
                 return;
         }
 	g_return_if_fail (FALSE);
