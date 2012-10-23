@@ -34,28 +34,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-/**
- * eel_g_str_list_equal
- *
- * Compares two lists of C strings to see if they are equal.
- * @list_a: First list.
- * @list_b: Second list.
- *
- * Return value: TRUE if the lists contain the same strings.
- **/
-gboolean
-eel_g_str_list_equal (GList *list_a, GList *list_b)
-{
-	GList *p, *q;
-
-	for (p = list_a, q = list_b; p != NULL && q != NULL; p = p->next, q = q->next) {
-		if (g_strcmp0 (p->data, q->data) != 0) {
-			return FALSE;
-		}
-	}
-	return p == NULL && q == NULL;
-}
-
 gboolean
 eel_g_strv_equal (char **a, char **b)
 {
@@ -221,6 +199,19 @@ eel_g_hash_table_safe_for_each (GHashTable *hash_table,
 #if !defined (EEL_OMIT_SELF_CHECK)
 
 static gboolean
+eel_test_str_list_equal (GList *list_a, GList *list_b)
+{
+       GList *p, *q;
+
+       for (p = list_a, q = list_b; p != NULL && q != NULL; p = p->next, q = q->next) {
+               if (g_strcmp0 (p->data, q->data) != 0) {
+                       return FALSE;
+               }
+       }
+       return p == NULL && q == NULL;
+}
+
+static gboolean
 eel_test_predicate (gpointer data,
 		    gpointer callback_data)
 {
@@ -230,57 +221,12 @@ eel_test_predicate (gpointer data,
 void
 eel_self_check_glib_extensions (void)
 {
-	GList *compare_list_1;
-	GList *compare_list_2;
-	GList *compare_list_3;
-	GList *compare_list_4;
-	GList *compare_list_5;
 	GList *list_to_partition;
 	GList *expected_passed;
 	GList *expected_failed;
 	GList *actual_passed;
 	GList *actual_failed;
 	
-	/* eel_g_str_list_equal */
-
-	/* We g_strdup because identical string constants can be shared. */
-
-	compare_list_1 = NULL;
-	compare_list_1 = g_list_append (compare_list_1, g_strdup ("Apple"));
-	compare_list_1 = g_list_append (compare_list_1, g_strdup ("zebra"));
-	compare_list_1 = g_list_append (compare_list_1, g_strdup ("!@#!@$#@$!"));
-
-	compare_list_2 = NULL;
-	compare_list_2 = g_list_append (compare_list_2, g_strdup ("Apple"));
-	compare_list_2 = g_list_append (compare_list_2, g_strdup ("zebra"));
-	compare_list_2 = g_list_append (compare_list_2, g_strdup ("!@#!@$#@$!"));
-
-	compare_list_3 = NULL;
-	compare_list_3 = g_list_append (compare_list_3, g_strdup ("Apple"));
-	compare_list_3 = g_list_append (compare_list_3, g_strdup ("zebra"));
-
-	compare_list_4 = NULL;
-	compare_list_4 = g_list_append (compare_list_4, g_strdup ("Apple"));
-	compare_list_4 = g_list_append (compare_list_4, g_strdup ("zebra"));
-	compare_list_4 = g_list_append (compare_list_4, g_strdup ("!@#!@$#@$!"));
-	compare_list_4 = g_list_append (compare_list_4, g_strdup ("foobar"));
-
-	compare_list_5 = NULL;
-	compare_list_5 = g_list_append (compare_list_5, g_strdup ("Apple"));
-	compare_list_5 = g_list_append (compare_list_5, g_strdup ("zzzzzebraaaaaa"));
-	compare_list_5 = g_list_append (compare_list_5, g_strdup ("!@#!@$#@$!"));
-
-	EEL_CHECK_BOOLEAN_RESULT (eel_g_str_list_equal (compare_list_1, compare_list_2), TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (eel_g_str_list_equal (compare_list_1, compare_list_3), FALSE);
-	EEL_CHECK_BOOLEAN_RESULT (eel_g_str_list_equal (compare_list_1, compare_list_4), FALSE);
-	EEL_CHECK_BOOLEAN_RESULT (eel_g_str_list_equal (compare_list_1, compare_list_5), FALSE);
-
-	g_list_free_full (compare_list_1, g_free);
-	g_list_free_full (compare_list_2, g_free);
-	g_list_free_full (compare_list_3, g_free);
-	g_list_free_full (compare_list_4, g_free);
-	g_list_free_full (compare_list_5, g_free);
-
 	/* eel_g_list_partition */
 
 	list_to_partition = NULL;
@@ -298,12 +244,12 @@ eel_self_check_glib_extensions (void)
 	expected_failed = g_list_append (expected_failed, "Range Rover");
 	
 	actual_passed = eel_g_list_partition (list_to_partition, 
-						   eel_test_predicate,
-						   "m",
-						   &actual_failed);
+					      eel_test_predicate,
+					      "m",
+					      &actual_failed);
 	
-	EEL_CHECK_BOOLEAN_RESULT (eel_g_str_list_equal (expected_passed, actual_passed), TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (eel_g_str_list_equal (expected_failed, actual_failed), TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (eel_test_str_list_equal (expected_passed, actual_passed), TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (eel_test_str_list_equal (expected_failed, actual_failed), TRUE);
 	
 	/* Don't free "list_to_partition", since it is consumed
 	 * by eel_g_list_partition.
