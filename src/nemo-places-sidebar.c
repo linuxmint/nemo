@@ -1074,11 +1074,12 @@ compute_drop_position (GtkTreeView *tree_view,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, &section_type,
 			    -1);
 
-	if (place_type == PLACES_HEADING && section_type != SECTION_BOOKMARKS) {
-		/* never drop on headings, but special case the bookmarks heading,
-		 * so we can drop bookmarks in between it and the first item.
+	if (place_type == PLACES_HEADING &&
+        section_type != SECTION_COMPUTER &&
+        section_type != SECTION_BOOKMARKS) {
+		/* never drop on headings, but special case the bookmarks or computer heading,
+		 * so we can create new bookmarks by dragging at the beginning or end of the bookmark list.
 		 */
-
 		gtk_tree_path_free (*path);
 		*path = NULL;
 		
@@ -1096,12 +1097,15 @@ compute_drop_position (GtkTreeView *tree_view,
 		return FALSE;
 	}
 
-	if (section_type == SECTION_BOOKMARKS) {
-		*pos = GTK_TREE_VIEW_DROP_AFTER;
-	} else {
-		/* non-bookmark shortcuts can only be dragged into */
-		*pos = GTK_TREE_VIEW_DROP_INTO_OR_BEFORE;
-	}
+        /* drag to top or bottom of bookmark list to add a bookmark */
+    if (place_type == PLACES_HEADING && section_type == SECTION_BOOKMARKS) {
+        *pos = GTK_TREE_VIEW_DROP_AFTER;
+    } else  if (place_type == PLACES_HEADING && section_type == SECTION_COMPUTER) {
+        *pos = GTK_TREE_VIEW_DROP_BEFORE;
+    } else {
+        /* or else you want to drag items INTO the existing bookmarks */
+        *pos = GTK_TREE_VIEW_DROP_INTO_OR_BEFORE;
+    }
 
 	if (*pos != GTK_TREE_VIEW_DROP_BEFORE &&
 	    sidebar->drag_data_received &&
@@ -1449,9 +1453,15 @@ drag_data_received_callback (GtkWidget *widget,
 				    PLACES_SIDEBAR_COLUMN_INDEX, &position,
 				    -1);
 
-		if (section_type != SECTION_BOOKMARKS) {
+		if (section_type != SECTION_BOOKMARKS &&
+                            !(section_type == SECTION_COMPUTER && place_type == PLACES_HEADING)) {
 			goto out;
 		}
+
+        if (section_type == SECTION_COMPUTER && place_type == PLACES_HEADING &&
+                                        tree_pos == GTK_TREE_VIEW_DROP_BEFORE) {
+            position = nemo_bookmark_list_length(sidebar->bookmarks);
+        }
 
 		if (tree_pos == GTK_TREE_VIEW_DROP_AFTER && place_type != PLACES_HEADING) {
 			/* heading already has position 0 */
