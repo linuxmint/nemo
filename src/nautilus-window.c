@@ -716,7 +716,8 @@ nautilus_window_sync_search_widgets (NautilusWindow *window)
 		search_directory = NAUTILUS_SEARCH_DIRECTORY (directory);
 	}
 
-	if (search_directory != NULL || slot->load_with_search) {
+	if (search_directory != NULL || slot->load_with_search ||
+	    gtk_widget_get_visible (GTK_WIDGET (slot->query_editor))) {
 		slot->load_with_search = FALSE;
 		toggle_toolbar_search_button (window, TRUE);
 	} else {
