@@ -4200,7 +4200,7 @@ msgstr "Grąžinti pasirinktus elementus į jų pradines vietas"
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:209
 msgid "Empty"
-msgstr "Tuščias"
+msgstr "Išvalyti"
 
 #: ../src/nautilus-view.c:960
 #, c-format
