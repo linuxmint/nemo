@@ -38,6 +38,8 @@
 #include "nemo-mime-actions.h"
 #include "nemo-previewer.h"
 #include "nemo-properties-window.h"
+#include "nemo-bookmark-list.h"
+
 
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
@@ -55,6 +57,7 @@
 #include <eel/eel-vfs-extensions.h>
 
 #include <libnemo-extension/nemo-menu-provider.h>
+#include <libnemo-private/nemo-bookmark.h>
 #include <libnemo-private/nemo-clipboard.h>
 #include <libnemo-private/nemo-clipboard-monitor.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
@@ -121,6 +124,11 @@
 
 #define NEMO_VIEW_POPUP_PATH_LOCATION			  "/location"
 
+#define NEMO_VIEW_POPUP_PATH_MOVETO_ENTRIES_PLACEHOLDER "/selection/File Actions/MoveToMenu/MoveToPlaceHolder"
+#define NEMO_VIEW_POPUP_PATH_COPYTO_ENTRIES_PLACEHOLDER "/selection/File Actions/CopyToMenu/CopyToPlaceHolder"
+#define NEMO_VIEW_MENU_PATH_MOVETO_ENTRIES_PLACEHOLDER "/MenuBar/Edit/File Items Placeholder/MoveToMenu/MoveToPlaceHolder"
+#define NEMO_VIEW_MENU_PATH_COPYTO_ENTRIES_PLACEHOLDER "/MenuBar/Edit/File Items Placeholder/CopyToMenu/CopyToPlaceHolder"
+
 #define MAX_MENU_LEVELS 5
 #define TEMPLATE_LIMIT 30
 
@@ -163,6 +171,7 @@ struct NemoViewDetails
 	NemoDirectory *model;
 	NemoFile *directory_as_file;
 	NemoFile *location_popup_directory_as_file;
+	NemoBookmarkList *bookmarks;
 	GdkEventButton *location_popup_event;
 	GtkActionGroup *dir_action_group;
 	guint dir_merge_id;
@@ -254,6 +263,10 @@ struct NemoViewDetails
 	guint open_with_merge_id;
 
 	GList *subdirectory_list;
+
+    guint copy_move_merge_ids[4];
+    GtkActionGroup *copy_move_action_groups[4];
+    guint bookmarks_changed_id;
 
 	GdkPoint context_menu_position;
 };
@@ -750,6 +763,32 @@ typedef struct {
 	NemoFile *file;
 	NemoView *directory_view;
 } CreateTemplateParameters;
+
+typedef struct {
+	NemoView *view;
+	char *dest_uri;
+} BookmarkCallbackData;
+
+
+static BookmarkCallbackData *
+bookmark_callback_data_new (NemoView *view,
+							   gchar *uri)
+{
+    BookmarkCallbackData *result;
+
+    result = g_new0 (BookmarkCallbackData, 1);
+    result->view = g_object_ref(view);
+    result->dest_uri = g_strdup(uri);
+    return result;
+}
+
+static void
+bookmark_callback_data_free (BookmarkCallbackData *data)
+{
+    g_object_unref (data->view);
+    g_strfreev ((char **)data->dest_uri);
+    g_free (data);
+}
 
 static ApplicationLaunchParameters *
 application_launch_parameters_new (GAppInfo *application,
@@ -2612,6 +2651,14 @@ nemo_view_init (NemoView *view)
 	atk_object = gtk_widget_get_accessible (GTK_WIDGET (view));
 	atk_object_set_name (atk_object, _("Content View"));
 	atk_object_set_description (atk_object, _("View of the current folder"));
+
+
+    view->details->bookmarks = nemo_bookmark_list_new ();
+
+    view->details->bookmarks_changed_id =
+        g_signal_connect_swapped (view->details->bookmarks, "changed",
+                      G_CALLBACK (schedule_update_menus),
+                      view);
 }
 
 static void
@@ -2640,6 +2687,12 @@ real_unmerge_menus (NemoView *view)
 	nemo_ui_unmerge_ui (ui_manager,
 				&view->details->templates_merge_id,
 				&view->details->templates_action_group);
+    int i;
+    for (i = 0; i < 4; i++) {
+        nemo_ui_unmerge_ui (ui_manager,
+                &view->details->copy_move_merge_ids[i],
+                &view->details->copy_move_action_groups[i]);
+    }
 }
 
 static void
@@ -2731,6 +2784,13 @@ nemo_view_finalize (GObject *object)
 	}
 
 	g_hash_table_destroy (view->details->non_ready_files);
+
+    if (view->details->bookmarks_changed_id != 0) {
+        g_signal_handler_disconnect (view->details->bookmarks,
+                         view->details->bookmarks_changed_id);
+        view->details->bookmarks_changed_id = 0;
+    }
+    g_clear_object (&view->details->bookmarks);
 
 	G_OBJECT_CLASS (nemo_view_parent_class)->finalize (object);
 }
@@ -4651,6 +4711,214 @@ reset_open_with_menu (NemoView *view, GList *selection)
 	}
 }
 
+static void
+move_copy_selection_to_location (NemoView *view,
+                 int copy_action,
+                 char *target_uri)
+{
+    GList *selection, *uris, *l;
+
+    selection = nemo_view_get_selection_for_file_transfer (view);
+    if (selection == NULL) {
+        return;
+    }
+
+    uris = NULL;
+    for (l = selection; l != NULL; l = l->next) {
+        uris = g_list_prepend (uris,
+                       nemo_file_get_uri ((NemoFile *) l->data));
+    }
+    uris = g_list_reverse (uris);
+
+    nemo_view_move_copy_items (view, uris, NULL, target_uri,
+                       copy_action,
+                       0, 0);
+
+    g_list_free_full (uris, g_free);
+    nemo_file_list_free (selection);
+}
+
+static void
+action_move_bookmark_callback (GtkAction *action, gpointer callback_data)
+{
+    NemoView *view;
+    BookmarkCallbackData *data;
+
+    data = (BookmarkCallbackData *) callback_data;
+    view = NEMO_VIEW(data->view);
+    move_copy_selection_to_location (view, GDK_ACTION_MOVE, data->dest_uri);
+}
+
+static void
+action_copy_bookmark_callback (GtkAction *action, gpointer callback_data)
+{
+    NemoView *view;
+    BookmarkCallbackData *data;
+
+    data = (BookmarkCallbackData *) callback_data;
+    view = NEMO_VIEW(data->view);
+    move_copy_selection_to_location (view, GDK_ACTION_COPY, data->dest_uri);
+}
+
+static void
+setup_bookmark_action(      char *action_name,
+                      const char *bookmark_name,
+                           GIcon *icon,
+                            char *mount_uri,
+                    GtkUIManager *ui_manager,
+                         gboolean move,
+                  GtkActionGroup *action_group,
+                             gint merge_id,
+                            char *path,
+                        NemoView *view)
+{
+
+    GtkAction *action;
+    GtkWidget *menuitem;
+
+    action = gtk_action_new (action_name,
+             bookmark_name,
+             NULL,
+             NULL);
+    gtk_action_set_gicon (action, icon);
+
+    if (move) {
+        g_signal_connect_data (action, "activate",
+               G_CALLBACK (action_move_bookmark_callback),
+               bookmark_callback_data_new(view, mount_uri),
+               (GClosureNotify)bookmark_callback_data_free, 0);
+    } else {
+        g_signal_connect_data (action, "activate",
+               G_CALLBACK (action_copy_bookmark_callback),
+               bookmark_callback_data_new(view, mount_uri),
+               (GClosureNotify)bookmark_callback_data_free, 0);
+    }
+
+    gtk_action_group_add_action (action_group, action);
+
+    gtk_ui_manager_add_ui ( ui_manager,
+                            merge_id,
+                            path,
+                            action_name,
+                            action_name,
+                            GTK_UI_MANAGER_MENUITEM,
+                            FALSE);
+
+    path = g_strdup_printf ("%s/%s", path, action_name);
+    menuitem = gtk_ui_manager_get_widget(ui_manager, path);
+    gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
+}
+
+static void
+reset_move_copy_to_menu (NemoView *view)
+{
+    GList *applications, *node;
+    NemoBookmark *bookmark;
+    NemoFile *file;
+    gboolean submenu_visible, filter_default;
+    int num_applications;
+    int bookmark_count, index;
+    gboolean other_applications_visible;
+    gboolean open_with_chooser_visible;
+    GtkUIManager *ui_manager;
+    GtkAction *action;
+    GAppInfo *default_app;
+    GFile *root;
+    const gchar *bookmark_name;
+    GIcon *icon;
+    char *mount_uri;
+    GtkWidget *menuitem;
+    num_applications = 0;
+
+    char *paths[4];
+
+    paths[0] = NEMO_VIEW_POPUP_PATH_MOVETO_ENTRIES_PLACEHOLDER;
+    paths[1] = NEMO_VIEW_POPUP_PATH_COPYTO_ENTRIES_PLACEHOLDER;
+    paths[2] = NEMO_VIEW_MENU_PATH_MOVETO_ENTRIES_PLACEHOLDER;
+    paths[3] = NEMO_VIEW_MENU_PATH_COPYTO_ENTRIES_PLACEHOLDER;
+
+    ui_manager = nemo_window_get_ui_manager (view->details->window);
+
+    int i;
+
+    for (i = 0; i < 4; i++) {
+        nemo_ui_unmerge_ui (ui_manager,
+                &view->details->copy_move_merge_ids[i],
+                &view->details->copy_move_action_groups[i]);
+
+        nemo_ui_prepare_merge_ui (ui_manager,
+                     g_strdup_printf ("MoveCopyMenuGroup_%d", i),
+                      &view->details->copy_move_merge_ids[i],
+                      &view->details->copy_move_action_groups[i]);
+    }
+
+    bookmark_count = nemo_bookmark_list_length (view->details->bookmarks);
+    for (index = 0; index < bookmark_count; ++index) {
+        bookmark = nemo_bookmark_list_item_at (view->details->bookmarks, index);
+
+        if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
+            continue;
+        }
+
+        root = nemo_bookmark_get_location (bookmark);
+        file = nemo_file_get (root);
+
+        nemo_file_unref (file);
+
+        bookmark_name = nemo_bookmark_get_name (bookmark);
+        icon = nemo_bookmark_get_icon (bookmark);
+        mount_uri = nemo_bookmark_get_uri (bookmark);
+
+        setup_bookmark_action(g_strdup_printf ("MOVETO_POPUP_%d", index),
+                                                bookmark_name,
+                                                icon,
+                                                mount_uri,
+                                                ui_manager,
+                                                TRUE,
+                                                view->details->copy_move_action_groups[0],
+                                                view->details->copy_move_merge_ids[0],
+                                                paths[0],
+                                                view);
+
+        setup_bookmark_action(g_strdup_printf ("COPYTO_POPUP_%d", index),
+                                                bookmark_name,
+                                                icon,
+                                                mount_uri,
+                                                ui_manager,
+                                                FALSE,
+                                                view->details->copy_move_action_groups[1],
+                                                view->details->copy_move_merge_ids[1],
+                                                paths[1],
+                                                view);
+
+        setup_bookmark_action(g_strdup_printf ("MOVETO_MENU_%d", index),
+                                                bookmark_name,
+                                                icon,
+                                                mount_uri,
+                                                ui_manager,
+                                                TRUE,
+                                                view->details->copy_move_action_groups[2],
+                                                view->details->copy_move_merge_ids[2],
+                                                paths[2],
+                                                view);
+
+        setup_bookmark_action(g_strdup_printf ("COPYTO_MENU_%d", index),
+                                                bookmark_name,
+                                                icon,
+                                                mount_uri,
+                                                ui_manager,
+                                                FALSE,
+                                                view->details->copy_move_action_groups[3],
+                                                view->details->copy_move_merge_ids[3],
+                                                paths[3],
+                                                view);
+
+        g_object_unref (root);
+        g_object_unref (icon);
+        g_free (mount_uri);
+    }
+}
+
 static GList *
 get_all_extension_menu_items (GtkWidget *window,
 			      GList *selection)
@@ -5851,33 +6119,6 @@ action_copy_files_callback (GtkAction *action,
 }
 
 static void
-move_copy_selection_to_location (NemoView *view,
-				 int copy_action,
-				 char *target_uri)
-{
-	GList *selection, *uris, *l;
-
-	selection = nemo_view_get_selection_for_file_transfer (view);
-	if (selection == NULL) {
-		return;
-	}
-
-	uris = NULL;
-	for (l = selection; l != NULL; l = l->next) {
-		uris = g_list_prepend (uris,
-				       nemo_file_get_uri ((NemoFile *) l->data));
-	}
-	uris = g_list_reverse (uris);
-
-	nemo_view_move_copy_items (view, uris, NULL, target_uri,
-				       copy_action,
-				       0, 0);
-
-	g_list_free_full (uris, g_free);
-	nemo_file_list_free (selection);
-}
-
-static void
 move_copy_selection_to_next_pane (NemoView *view,
 				  int copy_action)
 {
@@ -5972,6 +6213,7 @@ action_move_to_desktop_callback (GtkAction *action, gpointer callback_data)
 	move_copy_selection_to_location (view, GDK_ACTION_MOVE, dest_location);
 	g_free (dest_location);
 }
+
 
 static void
 action_cut_files_callback (GtkAction *action,
@@ -8707,6 +8949,7 @@ real_update_menus (NemoView *view)
 	/* Broken into its own function just for convenience */
 	reset_open_with_menu (view, selection);
 	reset_extension_actions_menu (view, selection);
+    reset_move_copy_to_menu (view);
 
 	if (all_selected_items_in_trash (view)) {
 		label = _("_Delete Permanently");
