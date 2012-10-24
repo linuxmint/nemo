@@ -83,7 +83,6 @@ src/nautilus-trash-bar.c
 src/nautilus-view.c
 src/nautilus-view-dnd.c
 src/nautilus-window.c
-src/nautilus-window-manage-views.c
 src/nautilus-window-menus.c
 src/nautilus-window-private.h
 src/nautilus-window-slot.c
