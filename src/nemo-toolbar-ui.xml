@@ -2,15 +2,19 @@
 <toolbar name="Toolbar">
 	<toolitem name="Back" action="Back"/>
 	<toolitem name="Forward" action="Forward"/>
-        <toolitem name="Up" action="Up"/>
+    <toolitem name="Up" action="Up"/>
  	<toolitem name="Reload" action="Reload"/>
 	<separator name="AfterNavigation" />        
         <toolitem name="Home" action="Home"/>
         <toolitem name="Computer" action="Computer"/>
 	<separator name="BeforeLocation" />
-	<toolitem name="Edit Location" action="Edit Location"/>	
+	<toolitem name="Edit Location" action="Edit Location"/>
 	<separator name="BeforeSearch" />
         <toolitem name="Search" action="Search"/>
-	<placeholder />
+        <toolitem name="Icon View" action="IconView"/>
+        <toolitem name="List View" action="ListView"/>
+        <toolitem name="Compact View" action="CompactView"/>
+    <separator name="After Views"/>
+
 </toolbar>
 </ui>

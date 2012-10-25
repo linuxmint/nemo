@@ -165,6 +165,7 @@ nemo_SOURCES = \
 	nemo-window-manage-views.c		\
 	nemo-window-manage-views.h		\
 	nemo-window-menus.c         	\
+	nemo-window-menus.h         \
 	nemo-window-pane.c	\
 	nemo-window-pane.h	\
 	nemo-window-private.h		\
