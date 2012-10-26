@@ -67,6 +67,7 @@
 #include <libnautilus-private/nautilus-clipboard.h>
 #include <libnautilus-private/nautilus-search-directory.h>
 #include <libnautilus-private/nautilus-signaller.h>
+#include <libnautilus-private/nautilus-trash-monitor.h>
 
 #define DEBUG_FLAG NAUTILUS_DEBUG_WINDOW
 #include <libnautilus-private/nautilus-debug.h>
@@ -627,6 +628,19 @@ window_loading_uri_cb (NautilusWindow *window,
 		gtk_places_sidebar_set_current_uri (GTK_PLACES_SIDEBAR (window->details->places_sidebar), location);
 }
 
+/* Callback used when the trash state changes; we update the places sidebar to reflect this */
+static void
+trash_state_changed_cb (NautilusTrashMonitor *trash_monitor,
+			gboolean              state,
+			gpointer              user_data)
+{
+	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
+
+	if (window->details->places_sidebar)
+		gtk_places_sidebar_set_trash_is_full (GTK_PLACES_SIDEBAR (window->details->places_sidebar),
+						      !nautilus_trash_monitor_is_empty ());
+}
+
 static void
 nautilus_window_set_up_sidebar (NautilusWindow *window)
 {
@@ -648,7 +662,10 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 	gtk_places_sidebar_set_multiple_tabs_supported (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
 	gtk_places_sidebar_set_multiple_windows_supported (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
 	gtk_places_sidebar_set_show_properties (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
+
 	gtk_places_sidebar_set_show_trash (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
+	g_signal_connect_object (nautilus_trash_monitor_get (), "trash_state_changed",
+				 G_CALLBACK (trash_state_changed_cb), window, 0);
 
 	g_signal_connect (window->details->places_sidebar, "location-selected",
 			  G_CALLBACK (places_sidebar_location_selected_cb), window);
