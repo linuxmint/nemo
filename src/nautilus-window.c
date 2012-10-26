@@ -614,6 +614,16 @@ places_sidebar_show_error_message (GtkPlacesSidebar *sidebar,
 	eel_show_error_dialog (primary, secondary, GTK_WINDOW (window));
 }
 
+/* Callback for our own loading_uri signal.  We update the sidebar's path. */
+static void
+window_loading_uri_cb (NautilusWindow *window,
+		       char           *location,
+		       gpointer        user_data)
+{
+	if (window->details->places_sidebar)
+		gtk_places_sidebar_set_current_uri (GTK_PLACES_SIDEBAR (window->details->places_sidebar), location);
+}
+
 static void
 nautilus_window_set_up_sidebar (NautilusWindow *window)
 {
@@ -647,6 +657,9 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 			  G_CALLBACK (places_sidebar_empty_trash_requested_cb), window);
 	g_signal_connect (window->details->places_sidebar, "show-error-message",
 			  G_CALLBACK (places_sidebar_show_error_message), window);
+
+	g_signal_connect (window, "loading-uri",
+			  G_CALLBACK (window_loading_uri_cb), window);
 
 	gtk_box_pack_start (GTK_BOX (window->details->sidebar), window->details->places_sidebar, TRUE, TRUE, 0);
 	gtk_widget_show (window->details->places_sidebar);
