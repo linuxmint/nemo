@@ -39,6 +39,7 @@
 #include "nautilus-mime-actions.h"
 #include "nautilus-notebook.h"
 #include "nautilus-pathbar.h"
+#include "nautilus-properties-window.h"
 #include "nautilus-toolbar.h"
 #include "nautilus-view-factory.h"
 #include "nautilus-window-manage-views.h"
@@ -48,6 +49,7 @@
 
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
+#include <eel/eel-stock-dialogs.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
@@ -58,6 +60,7 @@
 #endif
 #include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-file-attributes.h>
+#include <libnautilus-private/nautilus-file-operations.h>
 #include <libnautilus-private/nautilus-global-preferences.h>
 #include <libnautilus-private/nautilus-metadata.h>
 #include <libnautilus-private/nautilus-profile.h>
@@ -627,8 +630,6 @@ window_loading_uri_cb (NautilusWindow *window,
 static void
 nautilus_window_set_up_sidebar (NautilusWindow *window)
 {
-	GtkWidget *sidebar;
-
 	window->details->sidebar = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_style_context_add_class (gtk_widget_get_style_context (window->details->sidebar),
 				     GTK_STYLE_CLASS_SIDEBAR);
@@ -644,10 +645,10 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 			  window);
 
 	window->details->places_sidebar = gtk_places_sidebar_new ();
-	gtk_places_sidebar_set_multiple_tabs_supported (window->details->places_sidebar, TRUE);
-	gtk_places_sidebar_set_multiple_windows_supported (window->details->places_sidebar, TRUE);
-	gtk_places_sidebar_set_show_properties (window->details->places_sidebar, TRUE);
-	gtk_places_sidebar_set_show_trash (window->details->places_sidebar, TRUE);
+	gtk_places_sidebar_set_multiple_tabs_supported (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
+	gtk_places_sidebar_set_multiple_windows_supported (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
+	gtk_places_sidebar_set_show_properties (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
+	gtk_places_sidebar_set_show_trash (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
 
 	g_signal_connect (window->details->places_sidebar, "location-selected",
 			  G_CALLBACK (places_sidebar_location_selected_cb), window);
