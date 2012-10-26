@@ -128,6 +128,7 @@ toolbar_create_toolbutton (NautilusToolbar *self,
 		action = gtk_action_group_get_action (action_group, name);
 		gtk_activatable_set_related_action (GTK_ACTIVATABLE (button), action);
 		gtk_button_set_label (GTK_BUTTON (button), NULL);
+		gtk_widget_set_tooltip_text (button, gtk_action_get_tooltip (action));
 	}
 
 	return button;
