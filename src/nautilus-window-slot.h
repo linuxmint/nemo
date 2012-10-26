@@ -91,6 +91,7 @@ struct NautilusWindowSlot {
 	gulong qe_changed_id;
 	gulong qe_cancel_id;
 	gulong qe_activated_id;
+	gboolean search_active;
 
 	/* New location. */
 	NautilusLocationChangeType location_change_type;

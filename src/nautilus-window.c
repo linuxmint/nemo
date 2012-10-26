@@ -280,22 +280,7 @@ nautilus_window_set_search_visible (NautilusWindow *window,
 		remember_focus_widget (window);
 		nautilus_window_slot_set_query_editor_visible (slot, TRUE);
 	} else {
-		GFile *location = NULL;
-
 		restore_focus_widget (window);
-
-		/* Use the location bar as the return location */
-		if (slot->query_editor != NULL) {
-			location = nautilus_query_editor_get_location (slot->query_editor);
-			/* Last try: use the home directory as the return location */
-			if (location == NULL) {
-				location = g_file_new_for_path (g_get_home_dir ());
-			}
-
-			nautilus_window_go_to (window, location);
-			g_object_unref (location);
-		}
-
 		nautilus_window_slot_set_query_editor_visible (slot, FALSE);
 	}
 }
@@ -676,11 +661,38 @@ toggle_toolbar_search_button (NautilusWindow *window,
 			      gboolean        active)
 {
 	GtkAction *action;
+	NautilusWindowSlot *slot;
+	gboolean old_active;
+	GFile *location;
 
+	slot = nautilus_window_get_active_slot (window);
 	action = gtk_action_group_get_action (nautilus_window_get_main_action_group (window),
 					      NAUTILUS_ACTION_SEARCH);
 
+	old_active = slot->search_active;
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), active);
+	slot->search_active = active;
+
+	if (!active && old_active) {
+		/* Use the location bar as the return location */
+		if (slot->query_editor != NULL) {
+			location = nautilus_query_editor_get_location (slot->query_editor);
+			/* Last try: use the home directory as the return location */
+			if (location == NULL) {
+				location = g_file_new_for_path (g_get_home_dir ());
+			}
+
+			nautilus_window_go_to (window, location);
+			g_object_unref (location);
+		}
+	}
+}
+
+void
+nautilus_window_set_search_action_active (NautilusWindow *window,
+					  gboolean        active)
+{
+	toggle_toolbar_search_button (window, active);
 }
 
 void

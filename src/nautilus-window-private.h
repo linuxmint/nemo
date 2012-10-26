@@ -116,6 +116,8 @@ void nautilus_window_sync_zoom_widgets     (NautilusWindow *window);
 void nautilus_window_sync_up_button        (NautilusWindow *window);
 void nautilus_window_sync_view_as_menus    (NautilusWindow *window);
 
+void nautilus_window_set_search_action_active (NautilusWindow *window,
+                                               gboolean        active);
 
 void nautilus_window_set_search_visible   (NautilusWindow *window,
                                            gboolean        visible);
