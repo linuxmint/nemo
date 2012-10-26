@@ -205,7 +205,6 @@ nautilus_SOURCES = \
 	nautilus-window-slot-dnd.h		\
 	nautilus-window.c			\
 	nautilus-window.h			\
-	nautilus-window-types.h			\
 	nautilus-x-content-bar.c		\
 	nautilus-x-content-bar.h		\
 	$(NULL)

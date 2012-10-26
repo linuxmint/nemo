@@ -25,9 +25,14 @@
 #ifndef NAUTILUS_WINDOW_SLOT_H
 #define NAUTILUS_WINDOW_SLOT_H
 
-#include "nautilus-view.h"
-#include "nautilus-window-types.h"
 #include "nautilus-query-editor.h"
+
+typedef struct NautilusWindowSlot NautilusWindowSlot;
+typedef struct NautilusWindowSlotClass NautilusWindowSlotClass;
+typedef struct NautilusWindowSlotDetails NautilusWindowSlotDetails;
+
+#include "nautilus-view.h"
+#include "nautilus-window.h"
 
 #define NAUTILUS_TYPE_WINDOW_SLOT	 (nautilus_window_slot_get_type())
 #define NAUTILUS_WINDOW_SLOT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), NAUTILUS_TYPE_WINDOW_SLOT, NautilusWindowSlotClass))
@@ -50,8 +55,6 @@ struct NautilusWindowSlotClass {
 	void (* active)   (NautilusWindowSlot *slot);
 	void (* inactive) (NautilusWindowSlot *slot);
 };
-
-typedef struct NautilusWindowSlotDetails NautilusWindowSlotDetails;
 
 /* Each NautilusWindowSlot corresponds to a location in the window
  * for displaying a NautilusView, i.e. a tab.

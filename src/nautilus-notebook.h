@@ -29,6 +29,11 @@
 
 #include <glib.h>
 #include <gtk/gtk.h>
+
+typedef struct _NautilusNotebookClass	NautilusNotebookClass;
+typedef struct _NautilusNotebook	NautilusNotebook;
+typedef struct _NautilusNotebookPrivate	NautilusNotebookPrivate;
+
 #include "nautilus-window-slot.h"
 
 G_BEGIN_DECLS
@@ -39,10 +44,6 @@ G_BEGIN_DECLS
 #define NAUTILUS_IS_NOTEBOOK(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), NAUTILUS_TYPE_NOTEBOOK))
 #define NAUTILUS_IS_NOTEBOOK_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), NAUTILUS_TYPE_NOTEBOOK))
 #define NAUTILUS_NOTEBOOK_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), NAUTILUS_TYPE_NOTEBOOK, NautilusNotebookClass))
-
-typedef struct _NautilusNotebookClass	NautilusNotebookClass;
-typedef struct _NautilusNotebook		NautilusNotebook;
-typedef struct _NautilusNotebookPrivate	NautilusNotebookPrivate;
 
 struct _NautilusNotebook
 {
