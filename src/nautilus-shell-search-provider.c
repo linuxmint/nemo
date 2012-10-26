@@ -832,8 +832,6 @@ nautilus_shell_search_provider_app_class_init (NautilusShellSearchProviderAppCla
 static GApplication *
 nautilus_shell_search_provider_app_new (void)
 {
-  g_type_init ();
-
   return g_object_new (nautilus_shell_search_provider_app_get_type (),
                        NULL);
 }
