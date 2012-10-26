@@ -317,28 +317,31 @@ viewed_file_changed_callback (NautilusFile *file,
                          */
 			end_location_change (slot);
 
-			go_to_file = NULL;
 			parent = NULL;
-
 			location = nautilus_file_get_location (file);
-			mount = nautilus_get_mounted_mount_for_root (location);
-			if (mount != NULL) {
-				parent = g_file_get_parent (location);
-				g_object_unref (mount);
+
+			if (g_file_is_native (location)) {
+				mount = nautilus_get_mounted_mount_for_root (location);
+
+				if (mount == NULL) {
+					parent = g_file_get_parent (location);
+				}
+
+				g_clear_object (&mount);
 			}
-			g_object_unref (location);
 
 			if (parent != NULL) {
+				/* auto-show existing parent */
 				go_to_file = nautilus_find_existing_uri_in_hierarchy (parent);
-				g_object_unref (parent);
+			} else {
+				go_to_file = g_file_new_for_path (g_get_home_dir ());
 			}
 
-			if (go_to_file != NULL) {
-				nautilus_window_slot_open_location (slot, go_to_file, 0);
-				g_object_unref (go_to_file);
-			} else {
-				nautilus_window_slot_go_home (slot, FALSE);
-			}
+			nautilus_window_slot_open_location (slot, go_to_file, 0);
+
+			g_clear_object (&parent);
+			g_object_unref (go_to_file);
+			g_object_unref (location);
                 }
 	} else {
                 new_location = nautilus_file_get_location (file);
