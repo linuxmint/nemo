@@ -41,7 +41,8 @@ typedef struct NautilusWindowDetails NautilusWindowDetails;
 typedef enum {
         NAUTILUS_WINDOW_OPEN_FLAG_CLOSE_BEHIND = 1 << 0,
         NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW = 1 << 1,
-        NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB = 1 << 2
+        NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB = 1 << 2,
+        NAUTILUS_WINDOW_OPEN_FLAG_USE_DEFAULT_LOCATION = 1 << 3
 } NautilusWindowOpenFlags;
 
 typedef enum {
@@ -50,6 +51,7 @@ typedef enum {
 }  NautilusWindowOpenSlotFlags;
 
 typedef gboolean (* NautilusWindowGoToCallback) (NautilusWindow *window,
+                                                 GFile *location,
                                                  GError *error,
                                                  gpointer user_data);
 

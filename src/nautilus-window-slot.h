@@ -98,6 +98,7 @@ struct NautilusWindowSlot {
 	GFile *pending_location;
 	char *pending_scroll_to;
 	GList *pending_selection;
+	gboolean pending_use_default_location;
 	NautilusFile *determine_view_file;
 	GCancellable *mount_cancellable;
 	GError *mount_error;
