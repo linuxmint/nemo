@@ -282,21 +282,7 @@ nautilus_window_set_search_visible (NautilusWindow *window,
 		remember_focus_widget (window);
 		nautilus_window_slot_set_query_editor_visible (slot, TRUE);
 	} else {
-		GFile *location = NULL;
-
 		restore_focus_widget (window);
-
-		/* Use the location bar as the return location */
-		location = nautilus_window_slot_get_query_editor_location (slot);
-
-		/* Last try: use the home directory as the return location */
-		if (location == NULL) {
-			location = g_file_new_for_path (g_get_home_dir ());
-		}
-
-		nautilus_window_go_to (window, location);
-		g_object_unref (location);
-
 		nautilus_window_slot_set_query_editor_visible (slot, FALSE);
 	}
 }

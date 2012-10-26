@@ -101,6 +101,7 @@ struct NautilusWindowSlotDetails {
 	gulong qe_changed_id;
 	gulong qe_cancel_id;
 	gulong qe_activated_id;
+	gboolean search_active;
 
         /* Load state */
 	GCancellable *find_mount_cancellable;
@@ -142,11 +143,31 @@ toggle_toolbar_search_button (NautilusWindowSlot *slot,
 {
 	GtkActionGroup *action_group;
 	GtkAction *action;
+	gboolean old_active;
+	GFile *location;
 
 	action_group = nautilus_window_get_main_action_group (slot->details->window);
 	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_SEARCH);
 
+	old_active = slot->details->search_active;
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), active);
+	slot->details->search_active = active;
+
+	/* If search was active on this slot and became inactive, change
+	 * the slot location to the real directory.
+	 */
+	if (!active && old_active) {
+		/* Use the query editor search root if possible */
+		location = nautilus_window_slot_get_query_editor_location (slot);
+
+		/* Use the home directory as a fallback */
+		if (location == NULL) {
+			location = g_file_new_for_path (g_get_home_dir ());
+		}
+
+		nautilus_window_slot_open_location (slot, location, 0);
+		g_object_unref (location);
+	}
 }
 
 static void
