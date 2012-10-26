@@ -120,6 +120,7 @@ struct NautilusWindowSlotDetails {
 	guint location_change_distance;
 	char *pending_scroll_to;
 	GList *pending_selection;
+	gboolean pending_use_default_location;
 	NautilusFile *determine_view_file;
 	GCancellable *mount_cancellable;
 	GError *mount_error;
@@ -768,12 +769,13 @@ nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
 	    !is_desktop) {
 
 		if (callback != NULL) {
-			callback (window, NULL, user_data);
+			callback (window, location, NULL, user_data);
 		}
 
 		goto done;
         }
 
+	slot->details->pending_use_default_location = ((flags & NAUTILUS_WINDOW_OPEN_FLAG_USE_DEFAULT_LOCATION) != 0);
         begin_location_change (target_slot, location, old_location, new_selection,
 			       NAUTILUS_LOCATION_CHANGE_STANDARD, 0, NULL, callback, user_data);
 
@@ -788,6 +790,7 @@ report_callback (NautilusWindowSlot *slot,
 	if (slot->details->open_callback != NULL) {
 		gboolean res;
 		res = slot->details->open_callback (nautilus_window_slot_get_window (slot),
+						    slot->details->pending_location,
 						    error, slot->details->open_callback_user_data);
 		slot->details->open_callback = NULL;
 		slot->details->open_callback_user_data = NULL;
@@ -1083,7 +1086,8 @@ mount_not_mounted_callback (GObject *source_object,
 	} else {
 		nautilus_file_invalidate_all_attributes (slot->details->determine_view_file);
 		nautilus_file_call_when_ready (slot->details->determine_view_file,
-					       NAUTILUS_FILE_ATTRIBUTE_INFO,
+					       NAUTILUS_FILE_ATTRIBUTE_INFO |
+					       NAUTILUS_FILE_ATTRIBUTE_MOUNT,
 					       got_file_info_for_view_selection_callback,
 					       slot);
 	}
@@ -1101,10 +1105,11 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 	NautilusWindow *window;
 	NautilusWindowSlot *slot;
 	NautilusFile *viewed_file, *parent_file;
-	GFile *location;
+	GFile *location, *default_location;
 	GMountOperation *mount_op;
 	MountNotMountedData *data;
 	GtkApplication *app;
+	GMount *mount;
 
 	slot = callback_data;
 	window = nautilus_window_slot_get_window (slot);
@@ -1139,6 +1144,35 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 		goto done;
 	}
 
+	mount = NULL;
+	default_location = NULL;
+
+	if (slot->details->pending_use_default_location) {
+		mount = nautilus_file_get_mount (file);
+		slot->details->pending_use_default_location = FALSE;
+	}
+
+	if (mount != NULL) {
+		default_location = g_mount_get_default_location (mount);
+		g_object_unref (mount);
+	}
+
+	if (default_location != NULL &&
+	    !g_file_equal (slot->details->pending_location, default_location)) {
+		g_clear_object (&slot->details->pending_location);
+		slot->details->pending_location = default_location;
+		slot->details->determine_view_file = nautilus_file_get (default_location);
+
+		nautilus_file_invalidate_all_attributes (slot->details->determine_view_file);
+		nautilus_file_call_when_ready (slot->details->determine_view_file,
+					       NAUTILUS_FILE_ATTRIBUTE_INFO |
+					       NAUTILUS_FILE_ATTRIBUTE_MOUNT,
+					       got_file_info_for_view_selection_callback,
+					       slot);
+
+		goto done;
+	}
+
 	parent_file = nautilus_file_get_parent (file);
 	if ((parent_file != NULL) &&
 	    nautilus_file_get_file_type (file) == G_FILE_TYPE_REGULAR) {
@@ -1156,7 +1190,8 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 
 		nautilus_file_invalidate_all_attributes (slot->details->determine_view_file);
 		nautilus_file_call_when_ready (slot->details->determine_view_file,
-					       NAUTILUS_FILE_ATTRIBUTE_INFO,
+					       NAUTILUS_FILE_ATTRIBUTE_INFO |
+					       NAUTILUS_FILE_ATTRIBUTE_MOUNT,
 					       got_file_info_for_view_selection_callback,
 					       slot);
 

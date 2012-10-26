@@ -705,10 +705,10 @@ action_new_window (GSimpleAction *action,
 
 static gboolean
 go_to_server_cb (NautilusWindow *window,
+		 GFile          *location,
 		 GError         *error,
 		 gpointer        user_data)
 {
-	GFile *location = user_data;
 	gboolean retval;
 
 	if (error == NULL) {
@@ -760,8 +760,6 @@ go_to_server_cb (NautilusWindow *window,
 		retval = FALSE;
 	}
 
-	g_object_unref (location);
-
 	return retval;
 }
 
@@ -772,13 +770,14 @@ on_connect_server_response (GtkDialog      *dialog,
 {
 	if (response == GTK_RESPONSE_OK) {
 		GFile *location;
+		NautilusWindow *window = NAUTILUS_WINDOW (get_focus_window (application));
 
 		location = nautilus_connect_server_dialog_get_location (NAUTILUS_CONNECT_SERVER_DIALOG (dialog));
 		if (location != NULL) {
-			nautilus_window_go_to_full (NAUTILUS_WINDOW (get_focus_window (application)),
-						    location,
-						    go_to_server_cb,
-						    location);
+			nautilus_window_slot_open_location_full (nautilus_window_get_active_slot (window),
+								 location,
+								 NAUTILUS_WINDOW_OPEN_FLAG_USE_DEFAULT_LOCATION,
+								 NULL, go_to_server_cb, application);
 		}
 	}
 
