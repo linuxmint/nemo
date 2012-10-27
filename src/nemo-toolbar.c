@@ -89,32 +89,32 @@ toolbar_update_appearance (NemoToolbar *self)
 	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Up");
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_UP_ICON_TOOLBAR);
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
-	else {gtk_widget_show (widgetitem);}
+	else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 
 	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Reload");
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_RELOAD_ICON_TOOLBAR);
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
-	else {gtk_widget_show (widgetitem);}
+	else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 
-	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Edit Location");
+	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/SecondaryToolbar/Edit Location");
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR);
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
-	else {gtk_widget_show (widgetitem);}
+	else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 
 	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Home");
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HOME_ICON_TOOLBAR);
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
-	else {gtk_widget_show (widgetitem);}
+	else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 
 	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Computer");
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_COMPUTER_ICON_TOOLBAR);
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
-	else {gtk_widget_show (widgetitem);}
+	else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 
-	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Search");
+	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/SecondaryToolbar/Search");
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR);
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
-	else {gtk_widget_show (widgetitem);}
+	else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 }
 
 static void
@@ -335,7 +335,7 @@ nemo_toolbar_class_init (NemoToolbarClass *klass)
 	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
 
-GtkWidget *
+NemoToolbar *
 nemo_toolbar_new (GtkActionGroup *action_group)
 {
 	return g_object_new (NEMO_TYPE_TOOLBAR,

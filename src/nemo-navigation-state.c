@@ -69,6 +69,9 @@ update_bindings (NemoNavigationState *self)
 							     self->priv->action_names[idx]);
 		slave_action = gtk_action_group_get_action (self->priv->slave,
 							    self->priv->action_names[idx]);
+		if (!master_action || !slave_action) {
+			continue;
+		}
 		binding = g_object_bind_property (master_action, "sensitive",
 						  slave_action, "sensitive",
 						  G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
