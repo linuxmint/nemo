@@ -3210,7 +3210,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	GtkTreeSelection  *selection;
 
 	sidebar->volume_monitor = g_volume_monitor_get ();
-	
+	nemo_application_set_css_provider (GTK_SCROLLED_WINDOW (sidebar));
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sidebar),
 					GTK_POLICY_NEVER,
 					GTK_POLICY_AUTOMATIC);

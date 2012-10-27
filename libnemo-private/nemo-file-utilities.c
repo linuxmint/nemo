@@ -1353,6 +1353,24 @@ nemo_get_cached_x_content_types_for_mount (GMount *mount)
 	return NULL;
 }
 
+gchar *
+nemo_file_lookup (const gchar *filename, const gchar *subdir)
+{
+  gchar *path;
+
+  if (subdir == NULL)
+    subdir = ".";
+
+  path = g_build_filename (g_getenv ("NEMO_SRCDIR"), subdir, filename, NULL);
+  if (!g_file_test (path, G_FILE_TEST_EXISTS))
+    {
+      g_free (path);
+      path = g_build_filename (DATADIR, "nemo", filename, NULL);
+    }
+
+  return path;
+}
+
 #if !defined (NEMO_OMIT_SELF_CHECK)
 
 void

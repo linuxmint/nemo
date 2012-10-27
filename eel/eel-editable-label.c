@@ -600,7 +600,6 @@ eel_editable_label_init (EelEditableLabel *label)
   label->text = g_malloc (label->text_size);
   label->text[0] = '\0';
   label->n_bytes = 0;
-  
   gtk_widget_set_can_focus (GTK_WIDGET (label), TRUE);
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (label)),
                                GTK_STYLE_CLASS_ENTRY);
