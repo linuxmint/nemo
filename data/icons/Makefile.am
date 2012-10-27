@@ -10,6 +10,8 @@ public_icons = \
 	hicolor_apps_24x24_nemo.png \
 	hicolor_apps_32x32_nemo.png \
 	hicolor_apps_scalable_nemo.svg \
+	hicolor_actions_scalable_view-compact-symbolic.svg \
+	hicolor_actions_scalable_location-symbolic.svg \
 	$(NULL)
 
 private_icons = \
@@ -29,6 +31,7 @@ EXTRA_DIST = \
 	$(private_icons)	\
 	$(noinst_DATA)		\
 	$(NULL)
+
 
 ###############################################################################
 

@@ -1288,7 +1288,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_EDIT_LOCATION,
    			       "label", _("Location"),
-   			       "stock_id", GTK_STOCK_EDIT,
+   			       "icon_name", "location-symbolic",
    			       "tooltip", _("Toggle Location bar / Path bar"),
    			       "window", window,
     			       "direction", NEMO_NAVIGATION_DIRECTION_EDIT,
@@ -1330,7 +1330,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
                       G_CALLBACK (action_compact_view_callback),
                       window);
    	gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "format-justify-left-symbolic");
+    gtk_action_set_icon_name (GTK_ACTION (action), "view-compact-symbolic");
 
    	g_object_unref (action);
 

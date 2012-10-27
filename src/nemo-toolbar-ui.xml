@@ -9,7 +9,6 @@
         <toolitem name="Computer" action="Computer"/>
 	<separator name="BeforeLocation" />
 	<toolitem name="Edit Location" action="Edit Location"/>
-	<separator name="BeforeSearch" />
         <toolitem name="Search" action="Search"/>
         <toolitem name="Icon View" action="IconView"/>
         <toolitem name="List View" action="ListView"/>
