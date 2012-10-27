@@ -36,6 +36,9 @@
 #include "nemo-toolbar.h"
 #include "nemo-window-manage-views.h"
 #include "nemo-window-private.h"
+#include "nemo-window-menus.h"
+#include "nemo-icon-view.h"
+#include "nemo-list-view.h"
 
 #include <glib/gi18n.h>
 
@@ -840,6 +843,7 @@ nemo_window_pane_constructed (GObject *obj)
 
 	/* build the toolbar */
 	action_group = nemo_window_create_toolbar_action_group (window);
+	pane->toolbar_action_group = action_group;
 	pane->tool_bar = nemo_toolbar_new (action_group);
 	pane->action_group = action_group;
 
@@ -1023,9 +1027,16 @@ nemo_window_pane_set_active (NemoWindowPane *pane,
 		nav_state = nemo_window_get_navigation_state (pane->window);
 		nemo_navigation_state_set_master (nav_state, pane->action_group);
 	}
-
 	/* pane inactive style */
 	nemo_window_pane_set_active_style (pane, is_active);
+}
+
+GtkActionGroup *
+nemo_window_pane_get_toolbar_action_group (NemoWindowPane *pane)
+{
+	g_return_val_if_fail (NEMO_IS_WINDOW_PANE (pane), NULL);
+
+	return pane->toolbar_action_group;
 }
 
 void
@@ -1033,7 +1044,7 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 {
 	NemoWindowSlot *slot, *active_slot;
 	NemoNavigationState *nav_state;
-
+	gchar *view_id;
 	slot = pane->active_slot;
 
 	nemo_window_pane_hide_temporary_bars (pane);
@@ -1063,6 +1074,9 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 		nemo_navigation_state_set_boolean (nav_state,
 						       NEMO_ACTION_FORWARD,
 						       active_slot->forward_list != NULL);
+
+
+
 	}
 }
 

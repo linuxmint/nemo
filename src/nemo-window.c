@@ -44,6 +44,9 @@
 #include "nemo-window-manage-views.h"
 #include "nemo-window-bookmarks.h"
 #include "nemo-window-slot.h"
+#include "nemo-window-menus.h"
+#include "nemo-icon-view.h"
+#include "nemo-list-view.h"
 
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
@@ -1238,10 +1241,12 @@ static void
 nemo_window_sync_view_as_menus (NemoWindow *window)
 {
 	NemoWindowSlot *slot;
+    NemoWindowPane *pane;
 	int index;
 	char action_name[32];
 	GList *node;
 	GtkAction *action;
+	gchar *view_id;
 
 	g_assert (NEMO_IS_WINDOW (window));
 
@@ -1282,6 +1287,9 @@ nemo_window_sync_view_as_menus (NemoWindow *window)
 					   NULL,
 					   action_view_as_callback,
 					   NULL);
+    pane = nemo_window_get_active_pane(window);
+    view_id = nemo_window_slot_get_content_view_id(slot);
+    toolbar_set_view_button (toolbar_action_for_view_id(view_id), pane);
 }
 
 static void
