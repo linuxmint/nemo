@@ -40,6 +40,8 @@
 #include "nemo-window-private.h"
 #include "nemo-desktop-window.h"
 #include "nemo-search-bar.h"
+#include "nemo-icon-view.h"
+#include "nemo-list-view.h"
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 #include <glib/gi18n.h>
@@ -765,6 +767,140 @@ action_edit_location_callback (GtkAction *action,
 }
 
 static void
+action_icon_view_callback (GtkAction *action,
+                           gpointer user_data)
+{
+    NemoWindow *window;
+    NemoWindowSlot *slot;
+    window = NEMO_WINDOW (user_data);
+    slot = nemo_window_get_active_slot (window);
+    nemo_window_slot_set_content_view (slot, NEMO_ICON_VIEW_ID);
+    toolbar_set_view_button (NEMO_ACTION_ICON_VIEW, nemo_window_get_active_pane(window));
+}
+
+
+static void
+action_list_view_callback (GtkAction *action,
+                           gpointer user_data)
+{
+    NemoWindow *window;
+    NemoWindowSlot *slot;
+    window = NEMO_WINDOW (user_data);
+    slot = nemo_window_get_active_slot (window);
+    nemo_window_slot_set_content_view (slot, NEMO_LIST_VIEW_ID);
+    toolbar_set_view_button (NEMO_ACTION_LIST_VIEW, nemo_window_get_active_pane(window));
+}
+
+
+static void
+action_compact_view_callback (GtkAction *action,
+                           gpointer user_data)
+{
+    NemoWindow *window;
+    NemoWindowSlot *slot;
+    window = NEMO_WINDOW (user_data);
+    slot = nemo_window_get_active_slot (window);
+    nemo_window_slot_set_content_view (slot, FM_COMPACT_VIEW_ID);
+    toolbar_set_view_button (NEMO_ACTION_COMPACT_VIEW, nemo_window_get_active_pane(window));
+}
+
+
+gchar *
+toolbar_action_for_view_id (gchar *view_id)
+{
+    if (g_strcmp0(view_id, NEMO_ICON_VIEW_ID) == 0) {
+        return NEMO_ACTION_ICON_VIEW;
+    } else if (g_strcmp0(view_id, NEMO_LIST_VIEW_ID) == 0) {
+        return NEMO_ACTION_LIST_VIEW;
+    } else if (g_strcmp0(view_id, FM_COMPACT_VIEW_ID) == 0) {
+        return NEMO_ACTION_COMPACT_VIEW;
+    } else {
+        return NULL;
+    }
+}
+
+void
+toolbar_set_view_button (gchar *action_id, NemoWindowPane *pane)
+{
+    GtkAction *action, *action1, *action2;
+    GtkActionGroup *action_group;
+    if (action_id == NULL) {
+        return;
+    }
+    action_group = nemo_window_pane_get_toolbar_action_group (pane);
+
+
+    action = gtk_action_group_get_action(action_group,
+                                         NEMO_ACTION_ICON_VIEW);
+    action1 = gtk_action_group_get_action(action_group,
+                                         NEMO_ACTION_LIST_VIEW);
+    action2 = gtk_action_group_get_action(action_group,
+                                         NEMO_ACTION_COMPACT_VIEW);
+
+    g_signal_handlers_block_matched (action,
+                         G_SIGNAL_MATCH_FUNC,
+                         0, 0,
+                         NULL,
+                         action_icon_view_callback,
+                         NULL);
+
+    g_signal_handlers_block_matched (action1,
+                         G_SIGNAL_MATCH_FUNC,
+                         0, 0,
+                         NULL,
+                         action_list_view_callback,
+                         NULL);
+    g_signal_handlers_block_matched (action2,
+                         G_SIGNAL_MATCH_FUNC,
+                         0, 0,
+                         NULL,
+                         action_compact_view_callback,
+                         NULL);
+
+    if (g_strcmp0(action_id, NEMO_ACTION_ICON_VIEW) != 0) {
+        gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), FALSE);
+    } else {
+        gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), TRUE);
+    }
+
+    if (g_strcmp0(action_id, NEMO_ACTION_LIST_VIEW) != 0) {
+        gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action1), FALSE);
+    } else {
+        gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action1), TRUE);
+    }
+
+    if (g_strcmp0(action_id, NEMO_ACTION_COMPACT_VIEW) != 0) {
+        gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action2), FALSE);
+    } else {
+        gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action2), TRUE);
+    }
+
+    g_signal_handlers_unblock_matched (action,
+                           G_SIGNAL_MATCH_FUNC,
+                           0, 0,
+                           NULL,
+                           action_icon_view_callback,
+                           NULL);
+
+
+    g_signal_handlers_unblock_matched (action1,
+                           G_SIGNAL_MATCH_FUNC,
+                           0, 0,
+                           NULL,
+                           action_list_view_callback,
+                           NULL);
+
+
+    g_signal_handlers_unblock_matched (action2,
+                           G_SIGNAL_MATCH_FUNC,
+                           0, 0,
+                           NULL,
+                           action_compact_view_callback,
+                           NULL);
+
+}
+
+static void
 action_tabs_previous_callback (GtkAction *action,
 			       gpointer user_data)
 {
@@ -1152,7 +1288,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_EDIT_LOCATION,
    			       "label", _("Location"),
-   			       "stock_id", GTK_STOCK_EDIT,
+   			       "icon_name", "location-symbolic",
    			       "tooltip", _("Toggle Location bar / Path bar"),
    			       "window", window,
     			       "direction", NEMO_NAVIGATION_DIRECTION_EDIT,
@@ -1163,12 +1299,47 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
   
    	g_object_unref (action);
 
+    action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_ICON_VIEW,
+                         _("Icons"),
+                         _("Icon View"),
+                         NULL));
+    g_signal_connect (action, "activate",
+                      G_CALLBACK (action_icon_view_callback),
+                      window);
+   	gtk_action_group_add_action (action_group, action);
+    gtk_action_set_icon_name (GTK_ACTION (action), "view-grid-symbolic");
+   	g_object_unref (action);
+
+    action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_LIST_VIEW,
+                         _("List"),
+                         _("List View"),
+                         NULL));
+    g_signal_connect (action, "activate",
+                      G_CALLBACK (action_list_view_callback),
+                      window);
+   	gtk_action_group_add_action (action_group, action);
+    gtk_action_set_icon_name (GTK_ACTION (action), "view-list-symbolic");
+
+   	g_object_unref (action);
+
+    action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_COMPACT_VIEW,
+                         _("Compact"),
+                         _("Compact View"),
+                         NULL));
+   	g_signal_connect (action, "activate",
+                      G_CALLBACK (action_compact_view_callback),
+                      window);
+   	gtk_action_group_add_action (action_group, action);
+    gtk_action_set_icon_name (GTK_ACTION (action), "view-compact-symbolic");
+
+   	g_object_unref (action);
+
  	action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_SEARCH,
  				_("Search"),_("Search documents and folders by name"),
  				NULL));
  
   	gtk_action_group_add_action (action_group, action);
-  	gtk_action_set_icon_name (GTK_ACTION (action), "edit-find");
+    gtk_action_set_icon_name (GTK_ACTION (action), "edit-find-symbolic");
  
  
  	show_label_search_icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR);

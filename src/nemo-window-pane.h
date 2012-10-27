@@ -75,6 +75,7 @@ struct _NemoWindowPane {
 	GtkWidget *notebook;
 
 	GtkActionGroup *action_group;
+    GtkActionGroup *toolbar_action_group;
 
 	GtkWidget *last_focus_widget;
 };
@@ -92,7 +93,7 @@ void nemo_window_pane_sync_location_widgets (NemoWindowPane *pane);
 void nemo_window_pane_sync_search_widgets  (NemoWindowPane *pane);
 void nemo_window_pane_set_active (NemoWindowPane *pane, gboolean is_active);
 void nemo_window_pane_slot_close (NemoWindowPane *pane, NemoWindowSlot *slot);
-
+GtkActionGroup * nemo_window_pane_get_toolbar_action_group (NemoWindowPane   *pane);
 void nemo_window_pane_grab_focus (NemoWindowPane *pane);
 
 /* bars */
