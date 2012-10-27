@@ -1339,7 +1339,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
  				NULL));
  
   	gtk_action_group_add_action (action_group, action);
-  	gtk_action_set_icon_name (GTK_ACTION (action), "edit-find");
+    gtk_action_set_icon_name (GTK_ACTION (action), "edit-find-symbolic");
  
  
  	show_label_search_icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR);
