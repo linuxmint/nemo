@@ -101,4 +101,6 @@ void nemo_get_x_content_types_for_mount_async (GMount *mount,
 						   GCancellable *cancellable,
 						   gpointer user_data);
 
+gchar *nemo_file_lookup (const gchar *filename, const gchar *subdir);
+
 #endif /* NEMO_FILE_UTILITIES_H */

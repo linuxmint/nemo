@@ -227,6 +227,7 @@ nemo_toolbar_init (NemoToolbar *self)
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, NEMO_TYPE_TOOLBAR,
 						  NemoToolbarPriv);
 	self->priv->show_main_bar = TRUE;	
+	nemo_application_set_css_provider (GTK_WIDGET (self));
 }
 
 static void

@@ -19,6 +19,11 @@ autostart_DATA = $(autostart_in_files:.desktop.in=.desktop)
 mimedir = $(datadir)/mime/packages
 mime_DATA = $(xml_files)
 
+cssdir = $(datadir)/nemo
+css_DATA = \
+	nemo.css \
+	$(NULL)
+
 servicedir = $(datadir)/dbus-1/services
 service_DATA = $(service_in_files:.service.in=.service)
 service_in_files = 				\
@@ -47,12 +52,14 @@ EXTRA_DIST = $(nemodata_DATA) 	\
 	$(desktop_in_files)		\
 	$(service_in_files)		\
 	$(autostart_in_files)		\
+	$(css_DATA)		\
 	$(NULL)
 
 CLEANFILES = $(xml_files)	\
 	$(desktop_DATA)		\
 	$(service_DATA)		\
 	$(autostart_DATA)	\
+	$(css_DATA)		\
 	$(NULL)
 
 SUBDIRS = \

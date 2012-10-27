@@ -5600,6 +5600,7 @@ nemo_icon_container_constructor (GType                  type,
 		 construct_params);
 
 	container = NEMO_ICON_CONTAINER (object);
+	nemo_application_set_css_provider (GTK_WIDGET (container));
 	if (nemo_icon_container_get_is_desktop (container)) {
 		g_signal_connect_swapped (nemo_desktop_preferences,
 					  "changed::" NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT,

@@ -223,7 +223,7 @@ nemo_floating_bar_constructed (GObject *obj)
 	G_OBJECT_CLASS (nemo_floating_bar_parent_class)->constructed (obj);
 
 	box = GTK_WIDGET (obj);
-
+	nemo_application_set_css_provider (GTK_WIDGET(box));
 	w = gtk_spinner_new ();
 	gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
 	gtk_widget_set_visible (w, self->priv->show_spinner);
