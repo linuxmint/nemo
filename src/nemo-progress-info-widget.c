@@ -95,7 +95,7 @@ nemo_progress_info_widget_constructed (GObject *obj)
 {
 	GtkWidget *label, *progress_bar, *hbox, *box, *button, *image;
 	NemoProgressInfoWidget *self = NEMO_PROGRESS_INFO_WIDGET (obj);
-	nemo_application_set_css_provider (GTK_WIDGET (self));
+
 	G_OBJECT_CLASS (nemo_progress_info_widget_parent_class)->constructed (obj);
 
 	label = gtk_label_new ("status");

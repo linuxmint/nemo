@@ -459,7 +459,7 @@ nemo_location_bar_init (NemoLocationBar *bar)
 
 	bar->details = G_TYPE_INSTANCE_GET_PRIVATE (bar, NEMO_TYPE_LOCATION_BAR,
 						    NemoLocationBarDetails);
-	nemo_application_set_css_provider (GTK_WIDGET (bar));
+
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (bar),
 					GTK_ORIENTATION_HORIZONTAL);
 

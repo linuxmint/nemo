@@ -431,7 +431,7 @@ nemo_location_entry_new (void)
 	GtkWidget *entry;
 
 	entry = gtk_widget_new (NEMO_TYPE_LOCATION_ENTRY, NULL);
-	nemo_application_set_css_provider (GTK_WIDGET (entry));
+
 	return entry;
 }
 

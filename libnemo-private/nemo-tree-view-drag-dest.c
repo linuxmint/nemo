@@ -1143,7 +1143,7 @@ nemo_tree_view_drag_dest_new (GtkTreeView *tree_view)
 	GtkTargetList *targets;
 	
 	dest = g_object_new (NEMO_TYPE_TREE_VIEW_DRAG_DEST, NULL);
-	nemo_application_set_css_provider (GTK_WIDGET (tree_view));
+
 	dest->details->tree_view = tree_view;
 	g_object_weak_ref (G_OBJECT (dest->details->tree_view),
 			   tree_view_weak_notify, dest);

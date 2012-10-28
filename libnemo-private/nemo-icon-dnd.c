@@ -1677,7 +1677,7 @@ nemo_icon_dnd_init (NemoIconContainer *container)
 	g_return_if_fail (container != NULL);
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 
-	nemo_application_set_css_provider (GTK_WIDGET (container));
+
 	container->details->dnd_info = g_new0 (NemoIconDndInfo, 1);
 	nemo_drag_init (&container->details->dnd_info->drag_info,
 		drag_types, G_N_ELEMENTS (drag_types), TRUE);

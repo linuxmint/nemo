@@ -231,7 +231,6 @@ button_press_cb (NemoNotebook *notebook,
 static void
 nemo_notebook_init (NemoNotebook *notebook)
 {
-	nemo_application_set_css_provider (GTK_WIDGET (notebook));
 	gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook), TRUE);
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
 	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), FALSE);

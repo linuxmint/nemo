@@ -1053,39 +1053,6 @@ init_icons_and_styles (void)
 					   NEMO_DATADIR G_DIR_SEPARATOR_S "icons");
 }
 
-void
-nemo_application_set_css_provider (GtkWidget *widget)
-{
-  GtkCssProvider *provider;
-  gchar *filename;
-  GError *error = NULL;
-  GdkScreen *screen;
-
-  filename = nemo_file_lookup ("nemo.css", "data");
-
-  provider = gtk_css_provider_new ();
-
-  if (!gtk_css_provider_load_from_path (provider, filename, &error))
-    {
-      g_warning ("Failed to load css file '%s': %s", filename, error->message);
-      g_error_free (error);
-      goto out;
-    }
-
-  if (widget != NULL)
-    screen = gtk_widget_get_screen (widget);
-  else
-    screen = gdk_screen_get_default ();
-
-  gtk_style_context_add_provider_for_screen (screen,
-      GTK_STYLE_PROVIDER (provider),
-      GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-out:
-  g_free (filename);
-  g_object_unref (provider);
-}
-
 static void
 init_desktop (NemoApplication *self)
 {

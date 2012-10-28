@@ -283,7 +283,7 @@ static void
 nemo_path_bar_init (NemoPathBar *path_bar)
 {
 	char *p;
-    nemo_application_set_css_provider (GTK_WIDGET (path_bar));
+
 	gtk_widget_set_has_window (GTK_WIDGET (path_bar), FALSE);
         gtk_widget_set_redraw_on_allocate (GTK_WIDGET (path_bar), FALSE);
 

@@ -3270,7 +3270,6 @@ eel_canvas_draw_background (EelCanvas *canvas,
 
         cairo_save (cr);
 	/* By default, we use the style background. */
-    nemo_application_set_css_provider (GTK_WIDGET (canvas));
 	style_context = gtk_widget_get_style_context (GTK_WIDGET (canvas));
 	gtk_style_context_get_background_color (style_context, GTK_STATE_FLAG_NORMAL, &color);
 	gdk_cairo_set_source_rgba (cr, &color);
