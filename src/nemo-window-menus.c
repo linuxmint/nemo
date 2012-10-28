@@ -723,9 +723,10 @@ nemo_window_initialize_go_menu (NemoWindow *window)
 		menuitem = gtk_ui_manager_get_widget (
 				ui_manager,
 				icon_entries[i]);
-
-		gtk_image_menu_item_set_always_show_image (
-				GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
+		if (menuitem) {
+			gtk_image_menu_item_set_always_show_image (
+					GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
+		}
 	}
 }
 

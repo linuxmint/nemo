@@ -62,7 +62,7 @@ struct _NemoToolbarClass {
 
 GType nemo_toolbar_get_type (void);
 
-GtkWidget *nemo_toolbar_new (GtkActionGroup *action_group);
+NemoToolbar *nemo_toolbar_new (GtkActionGroup *action_group);
 
 gboolean  nemo_toolbar_get_show_location_entry (NemoToolbar *self);
 GtkWidget *nemo_toolbar_get_path_bar (NemoToolbar *self);
