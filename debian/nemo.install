@@ -3,7 +3,6 @@ debian/nemo-mount-archive.desktop usr/share/applications
 debian/nemo-folder-handler.desktop usr/share/applications
 usr/bin
 usr/lib/nemo/nemo-convert-metadata
-usr/lib/nemo/extensions-3.0/*.so
 usr/share/applications
 usr/share/dbus-1
 usr/share/man
