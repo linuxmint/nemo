@@ -4775,7 +4775,7 @@ setup_bookmark_action(      char *action_name,
 
     GtkAction *action;
     GtkWidget *menuitem;
-
+    gchar *full_path;
     action = gtk_action_new (action_name,
              bookmark_name,
              NULL,
@@ -4804,9 +4804,10 @@ setup_bookmark_action(      char *action_name,
                             GTK_UI_MANAGER_MENUITEM,
                             FALSE);
 
-    path = g_strdup_printf ("%s/%s", path, action_name);
-    menuitem = gtk_ui_manager_get_widget(ui_manager, path);
+    full_path = g_strdup_printf ("%s/%s", path, action_name);
+    menuitem = gtk_ui_manager_get_widget(ui_manager, full_path);
     gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
+    g_free (full_path);
 }
 
 static void
