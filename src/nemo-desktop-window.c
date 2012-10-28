@@ -69,7 +69,7 @@ nemo_desktop_window_constructed (GObject *obj)
 	NemoWindow *nwindow = NEMO_WINDOW (obj);
 
 	G_OBJECT_CLASS (nemo_desktop_window_parent_class)->constructed (obj);
-	
+	nemo_application_set_css_provider (GTK_WIDGET (window));
 	gtk_widget_hide (nwindow->details->statusbar);
 	gtk_widget_hide (nwindow->details->menubar);
 

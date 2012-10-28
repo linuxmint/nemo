@@ -173,7 +173,7 @@ static void
 nemo_window_slot_init (NemoWindowSlot *slot)
 {
 	GtkWidget *extras_vbox;
-
+	nemo_application_set_css_provider (GTK_WIDGET (slot));
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (slot),
 					GTK_ORIENTATION_VERTICAL);
 	gtk_widget_show (GTK_WIDGET (slot));

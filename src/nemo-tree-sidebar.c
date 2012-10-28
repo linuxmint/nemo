@@ -1489,7 +1489,7 @@ static void
 fm_tree_view_init (FMTreeView *view)
 {
 	view->details = g_new0 (FMTreeViewDetails, 1);
-	
+		nemo_application_set_css_provider (GTK_WIDGET (view));
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (view), 
 					GTK_POLICY_AUTOMATIC,
 					GTK_POLICY_AUTOMATIC);

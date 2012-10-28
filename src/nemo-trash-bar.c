@@ -180,7 +180,7 @@ nemo_trash_bar_init (NemoTrashBar *bar)
 {
 	GtkWidget *content_area, *action_area, *w;
 	GtkWidget *label;
-
+	nemo_application_set_css_provider (GTK_WIDGET (bar));
 	bar->priv = NEMO_TRASH_BAR_GET_PRIVATE (bar);
 	content_area = gtk_info_bar_get_content_area (GTK_INFO_BAR (bar));
 	action_area = gtk_info_bar_get_action_area (GTK_INFO_BAR (bar));

@@ -448,6 +448,7 @@ nemo_icon_canvas_item_get_drag_surface (NemoIconCanvasItem *item)
 
 	canvas = EEL_CANVAS_ITEM (item)->canvas;
 	screen = gtk_widget_get_screen (GTK_WIDGET (canvas));
+	nemo_application_set_css_provider (GTK_WIDGET (canvas));
 	context = gtk_widget_get_style_context (GTK_WIDGET (canvas));
 
 	gtk_style_context_save (context);

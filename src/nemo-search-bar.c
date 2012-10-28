@@ -140,7 +140,7 @@ nemo_search_bar_init (NemoSearchBar *bar)
 	bar->details =
 		G_TYPE_INSTANCE_GET_PRIVATE (bar, NEMO_TYPE_SEARCH_BAR,
 					     NemoSearchBarDetails);
-
+	nemo_application_set_css_provider (GTK_WIDGET (bar));
 	gtk_widget_set_redraw_on_allocate (GTK_WIDGET (bar), TRUE);
 
 	label = gtk_label_new (_("Search:"));

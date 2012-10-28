@@ -836,6 +836,7 @@ nemo_window_pane_constructed (GObject *obj)
 
 	G_OBJECT_CLASS (nemo_window_pane_parent_class)->constructed (obj);
 
+	nemo_application_set_css_provider (GTK_WIDGET (pane));
 	window = pane->window;
 
 	header_size_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
@@ -1000,7 +1001,6 @@ nemo_window_pane_set_active_style (NemoWindowPane *pane,
 {
 	GtkStyleContext *style;
 	gboolean has_inactive;
-
 	style = gtk_widget_get_style_context (GTK_WIDGET (pane));
 	has_inactive = gtk_style_context_has_class (style, "nemo-inactive-pane");
 
