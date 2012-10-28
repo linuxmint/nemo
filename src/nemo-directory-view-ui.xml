@@ -185,6 +185,7 @@
 	<menuitem name="OpenAsRoot" action="OpenAsRoot"/>
 	<menuitem name="MailToThunderbird" action="MailToThunderbird"/>
 	<menuitem name="MailToOther" action="MailToOther"/>
+	<menuitem name="SetAsWallPaper" action="SetAsWallPaper"/>
 	<separator name="Dangerous separator"/>
 	<placeholder name="Dangerous File Actions">
 		<menuitem name="Trash" action="Trash"/>

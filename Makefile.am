@@ -21,10 +21,6 @@ if ENABLE_NST_EXTENSION
 SUBDIRS += nemo-sendto-extension
 endif
 
-if ENABLE_NWP_EXTENSION
-SUBDIRS += nemo-wallpaper-extension
-endif
-
 EXTRA_DIST=					\
 	COPYING.LIB				\
 	COPYING.EXTENSIONS			\
