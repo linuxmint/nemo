@@ -6506,6 +6506,26 @@ action_send_email_other_callback(GtkAction *action,
 }
 
 static void
+action_set_as_wallpaper_callback(GtkAction *action,
+                   gpointer callback_data)
+{
+    NemoView *view;
+    GList *selection;
+    NemoFileInfo *file;
+    gchar            *uri;
+
+    view = NEMO_VIEW (callback_data);
+    selection = nemo_view_get_selection (view);
+    file = NEMO_FILE (selection->data);
+
+    uri = nemo_file_info_get_uri (file);
+
+    g_settings_set_string (gnome_background_preferences,
+                                    "picture-uri", uri);
+    g_free (uri);
+}
+
+static void
 invoke_external_bulk_rename_utility (NemoView *view,
 				     GList *selection)
 {
@@ -7459,6 +7479,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Send as email attachment"), "",
   /* tooltip */                  N_("Send the selected file(s) as email attachments using your current email program"),
                  G_CALLBACK (action_send_email_other_callback) },
+  /* name, stock id */         { NEMO_ACTION_SET_AS_WALLPAPER, "display",
+  /* label, accelerator */       N_("Set as Wallpaper..."), "",
+  /* tooltip */                  N_("Set the selected image as your desktop wallpaper"),
+                 G_CALLBACK (action_set_as_wallpaper_callback) },
   /* name, stock id */         { "OtherApplication1", NULL,
   /* label, accelerator */       N_("Other _Application..."), NULL,
   /* tooltip */                  N_("Choose another application with which to open the selected item"),
@@ -7809,6 +7833,13 @@ real_merge_menus (NemoView *view)
 	view->details->templates_invalid = TRUE;
 }
 
+static gboolean
+is_image (NemoFileInfo *file)
+{
+    gboolean isImage;
+    isImage = g_str_has_prefix (nemo_file_info_get_mime_type (file), "image/");
+    return isImage;
+}
 
 static gboolean
 can_paste_into_file (NemoFile *file)
@@ -8779,6 +8810,7 @@ real_update_menus (NemoView *view)
 	gboolean next_pane_is_writable;
 	gboolean show_properties;
 	gboolean show_thunderbird_sendto;
+    gboolean show_set_as_wallpaper;
 
 	selection = nemo_view_get_selection (view);
 	selection_count = g_list_length (selection);
@@ -9080,8 +9112,6 @@ real_update_menus (NemoView *view)
 
 	update_undo_actions (view);
 
-	nemo_file_list_free (selection);
-
 	if (view->details->scripts_invalid) {
 		update_scripts_menu (view);
 	}
@@ -9133,6 +9163,14 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      "MoveToMenu");
 	gtk_action_set_sensitive (action, can_delete_files);
+
+    action = gtk_action_group_get_action(view->details->dir_action_group,
+                                         NEMO_ACTION_SET_AS_WALLPAPER);
+    show_set_as_wallpaper = (selection_count == 1 &&
+                             is_image((NemoFileInfo*) selection->data ));
+    gtk_action_set_visible (action, show_set_as_wallpaper);
+
+    nemo_file_list_free (selection);
 }
 
 /**
