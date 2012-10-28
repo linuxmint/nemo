@@ -89,18 +89,6 @@ dnl ==========================================================================
 AC_CHECK_PROGS(PERL, perl5 perl)
 AC_PATH_PROG(GLIB_GENMARSHAL, glib-genmarshal)
 
-
-dnl ==========================================================================
-dnl Check whether to build the nemo-sendto extension
-
-AC_ARG_ENABLE(nst_extension,
-	AC_HELP_STRING([--disable-nst-extension],
-			[build without nemo-sendto extension]))
-if test "x$enable_nst_extension" != "xno"; then
-	enable_nst_extension=yes
-fi
-AM_CONDITIONAL(ENABLE_NST_EXTENSION, test "x$enable_nst_extension" != "xno")
-
 dnl ==========================================================================
 
 AC_CHECK_HEADERS(sys/mount.h sys/vfs.h sys/param.h malloc.h)
@@ -349,7 +337,6 @@ libnemo-extension/libnemo-extension.pc
 libnemo-extension/libnemo-extension-uninstalled.pc
 po/Makefile.in
 src/Makefile
-nemo-sendto-extension/Makefile
 files/Makefile
 test/Makefile
 ])
@@ -366,7 +353,6 @@ nemo-$VERSION:
 	libexif support:	$msg_libexif
 	libexempi support:	$msg_xmp
 	PackageKit support:     $msg_packagekit
-	nemo-sendto ext:	$enable_nst_extension
 	Tracker support:	$build_tracker
 
         debugging support:      ${enable_debug}

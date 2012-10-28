@@ -14,12 +14,9 @@ DIRS =				\
 	files			\
 	$(NULL)
 
-DIST_SUBDIRS = $(DIRS) nemo-sendto-extension
+DIST_SUBDIRS = $(DIRS)
 
 SUBDIRS = $(DIRS)
-if ENABLE_NST_EXTENSION
-SUBDIRS += nemo-sendto-extension
-endif
 
 EXTRA_DIST=					\
 	COPYING.LIB				\

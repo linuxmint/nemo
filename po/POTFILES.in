@@ -43,7 +43,6 @@ libnemo-private/nemo-tree-view-drag-dest.c
 libnemo-private/nemo-undo-signal-handlers.c
 libnemo-private/nemo-vfs-file.c
 libnemo-private/org.gnome.nemo.gschema.xml.in
-nemo-sendto-extension/nemo-nste.c
 src/nemo-application.c
 src/nemo-autorun-software.c
 src/nemo-bookmarks-window.c
