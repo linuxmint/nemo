@@ -35,8 +35,8 @@
 #include <libnemo-private/nemo-ui-utilities.h>
 
 struct _NemoToolbarPriv {
-	GtkWidget *toolbar;
-	GtkWidget *secondary_toolbar;
+	GtkToolbar *toolbar;
+	GtkToolbar *secondary_toolbar;
 
 	GtkActionGroup *action_group;
 	GtkUIManager *ui_manager;
@@ -74,7 +74,7 @@ toolbar_update_appearance (NemoToolbar *self)
 	show_location_entry = self->priv->show_location_entry ||
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY);
 
-	gtk_widget_set_visible (self->priv->toolbar,
+	gtk_widget_set_visible (GTK_WIDGET(self->priv->toolbar),
 				self->priv->show_main_bar);
 
 	gtk_widget_set_visible (self->priv->location_bar,
@@ -122,7 +122,9 @@ nemo_toolbar_constructed (GObject *obj)
 {
 	NemoToolbar *self = NEMO_TOOLBAR (obj);
 	GtkToolItem *item;
-	GtkWidget *hbox, *toolbar, *secondary_toolbar, *search;
+	GtkBox *hbox;
+	GtkToolbar *toolbar, *secondary_toolbar;
+	GtkWidget *search;
 	GtkStyleContext *context;
 
 	GtkWidget *sep_space;
@@ -137,39 +139,39 @@ nemo_toolbar_constructed (GObject *obj)
 	gtk_ui_manager_add_ui_from_resource (self->priv->ui_manager, "/org/nemo/nemo-toolbar-ui.xml", NULL);
 	gtk_ui_manager_insert_action_group (self->priv->ui_manager, self->priv->action_group, 0);
 
-	toolbar = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar");
+	toolbar = GTK_TOOLBAR (gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar"));
 	self->priv->toolbar = toolbar;
 	
-	secondary_toolbar = gtk_ui_manager_get_widget (self->priv->ui_manager, "/SecondaryToolbar");
+	secondary_toolbar = GTK_TOOLBAR (gtk_ui_manager_get_widget (self->priv->ui_manager, "/SecondaryToolbar"));
 	self->priv->secondary_toolbar = secondary_toolbar;
 		
 	gtk_toolbar_set_icon_size (GTK_TOOLBAR (toolbar), GTK_ICON_SIZE_BUTTON);
 	gtk_toolbar_set_icon_size (GTK_TOOLBAR (secondary_toolbar), GTK_ICON_SIZE_MENU);
 
-	context = gtk_widget_get_style_context (toolbar);
+	context = gtk_widget_get_style_context (GTK_WIDGET(toolbar));
 	gtk_style_context_add_class (context, GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
 	
-	context = gtk_widget_get_style_context (secondary_toolbar);
+	context = gtk_widget_get_style_context (GTK_WIDGET(secondary_toolbar));
 	gtk_style_context_add_class (context, GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
 	
 	//search = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Search");
 	//gtk_style_context_add_class (gtk_widget_get_style_context (search), GTK_STYLE_CLASS_RAISED);
 	//gtk_widget_set_name (search, "nemo-search-button");
     
-    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);     
-        			
-	gtk_box_pack_start (hbox, self->priv->toolbar, TRUE, TRUE, 0);
-	gtk_widget_show_all (self->priv->toolbar);		
+    hbox = GTK_BOX(gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0));
+
+	gtk_box_pack_start (hbox, GTK_WIDGET(self->priv->toolbar), TRUE, TRUE, 0);
+	gtk_widget_show_all (GTK_WIDGET(self->priv->toolbar));		
 	
 	gtk_toolbar_set_show_arrow (self->priv->secondary_toolbar, FALSE);
-	gtk_box_pack_start (hbox, self->priv->secondary_toolbar, FALSE, TRUE, 0);	
-	gtk_widget_show_all (self->priv->secondary_toolbar);	
+	gtk_box_pack_start (hbox, GTK_WIDGET(self->priv->secondary_toolbar), FALSE, TRUE, 0);	
+	gtk_widget_show_all (GTK_WIDGET(self->priv->secondary_toolbar));	
 
-	gtk_box_pack_start (GTK_BOX (self), hbox, TRUE, TRUE, 0);
-	gtk_widget_show_all (hbox);
+	gtk_box_pack_start (GTK_BOX (self), GTK_WIDGET(hbox), TRUE, TRUE, 0);
+	gtk_widget_show_all (GTK_WIDGET(hbox));
 
-	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-	gtk_widget_show (hbox);
+	hbox = GTK_BOX(gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0));
+	gtk_widget_show (GTK_WIDGET(hbox));
 
 	/* regular path bar */
 	self->priv->path_bar = g_object_new (NEMO_TYPE_PATH_BAR, NULL);
@@ -181,7 +183,7 @@ nemo_toolbar_constructed (GObject *obj)
 	
 	item = gtk_tool_item_new ();
 	gtk_tool_item_set_expand (item, TRUE);
-	gtk_container_add (GTK_CONTAINER (item), hbox);
+	gtk_container_add (GTK_CONTAINER (item), GTK_WIDGET(hbox));
 	/* append to the end of the toolbar so navigation buttons are at the beginning */
 	gtk_toolbar_insert (GTK_TOOLBAR (self->priv->toolbar), item, 8);
 	gtk_widget_show (GTK_WIDGET (item));
