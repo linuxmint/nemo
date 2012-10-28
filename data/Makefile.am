@@ -59,6 +59,7 @@ CLEANFILES = $(xml_files)	\
 	$(desktop_DATA)		\
 	$(service_DATA)		\
 	$(autostart_DATA)	\
+	$(css_DATA)		\
 	$(NULL)
 
 SUBDIRS = \
