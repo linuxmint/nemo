@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-10-27 12:00+0000\n"
-"PO-Revision-Date: 2012-10-27 21:46+0100\n"
+"POT-Creation-Date: 2012-10-27 23:35+0000\n"
+"PO-Revision-Date: 2012-10-28 08:09+0100\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: \n"
@@ -45,6 +45,10 @@ msgstr "Datoteke"
 #: ../data/nautilus.desktop.in.in.h:2
 msgid "Access and organize files"
 msgstr "Dostop in razvrščanje datotek"
+
+#: ../data/nautilus.desktop.in.in.h:3
+msgid "folder;manager;explore;disk;filesystem;"
+msgstr "mapa;upravljalnik;datoteke;raziskovalec;datotečni sistem;disk"
 
 #: ../data/nautilus.xml.in.h:1
 msgid "Saved search"
