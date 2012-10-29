@@ -22,8 +22,8 @@ msgstr ""
 "Project-Id-Version: nautilus MASTER\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-09-22 23:23+0000\n"
-"PO-Revision-Date: 2012-09-24 10:46+0300\n"
+"POT-Creation-Date: 2012-10-29 07:21+0000\n"
+"PO-Revision-Date: 2012-10-29 11:51+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz@gmail.com>\n"
 "Language-Team: Estonian <gnome-et@linux.ee>\n"
 "Language: et\n"
@@ -37,7 +37,7 @@ msgstr "Tarkvara käivitamine"
 
 #. set dialog properties
 msgid "Connect to Server"
-msgstr "Ühendumine serverisse"
+msgstr "Ühendumine serveriga"
 
 #. Set initial window title
 msgid "Files"
@@ -45,6 +45,10 @@ msgstr "Failid"
 
 msgid "Access and organize files"
 msgstr "Ligipääs failidele ning failipuu korrastamine"
+
+msgid "folder;manager;explore;disk;filesystem;"
+msgstr ""
+"kaust;kataloog;haldur;haldus;sirvija;sirvimine;ketas;kõvaketas;failisüsteem;"
 
 msgid "Saved search"
 msgstr "Salvestatud otsing"
@@ -2421,6 +2425,7 @@ msgstr "Käi_vitatavate tekstifailide avamisel näidatakse nende sisu"
 msgid "_Ask each time"
 msgstr "_Küsitakse iga kord"
 
+#. trash
 msgid "Trash"
 msgstr "Prügikast"
 
@@ -2556,6 +2561,47 @@ msgstr "2 GB"
 msgid "4 GB"
 msgstr "4 GB"
 
+msgid "Image Type"
+msgstr "Pildi liik"
+
+#, c-format
+msgid "%d pixel"
+msgid_plural "%d pixels"
+msgstr[0] "%d piksel"
+msgstr[1] "%d pikslit"
+
+msgid "Width"
+msgstr "Laius"
+
+msgid "Height"
+msgstr "Kõrgus"
+
+msgid "Title"
+msgstr "Pealkiri"
+
+msgid "Author"
+msgstr "Autor"
+
+msgid "Copyright"
+msgstr "Autoriõigused"
+
+msgid "Created On"
+msgstr "Loodud"
+
+msgid "Created By"
+msgstr "Looja"
+
+#. Translators: this refers to a legal disclaimer string embedded in
+#. * the metadata of an image
+msgid "Disclaimer"
+msgstr "Lahtiütlus"
+
+msgid "Warning"
+msgstr "Hoiatus"
+
+msgid "Source"
+msgstr "Allikas"
+
 msgid "Camera Brand"
 msgstr "Kaamera tootjafirma"
 
@@ -2602,26 +2648,8 @@ msgstr "Võtmesõnad"
 msgid "Creator"
 msgstr "Looja"
 
-msgid "Copyright"
-msgstr "Autoriõigused"
-
 msgid "Rating"
 msgstr "Hinnang"
-
-msgid "Image Type"
-msgstr "Pildi liik"
-
-#, c-format
-msgid "%d pixel"
-msgid_plural "%d pixels"
-msgstr[0] "%d piksel"
-msgstr[1] "%d pikslit"
-
-msgid "Width"
-msgstr "Laius"
-
-msgid "Height"
-msgstr "Kõrgus"
 
 msgid "Failed to load image information"
 msgstr "Tõrge pildi andmete laadimisel"
@@ -3185,15 +3213,22 @@ msgstr "Failid selles kataloogis ilmuvad “Loo dokument” menüüsse."
 msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr "Käivitatavad failid selles kataloogis ilmuvad Skriptide menüüsse."
 
+msgid "View options"
+msgstr "Kuvamise valikud"
+
+msgid "Location options"
+msgstr "Asukoha valikud"
+
 msgid "Restore"
 msgstr "Taasta"
 
 msgid "Restore selected items to their original position"
 msgstr "Kõigi valitud kirjete taastamine nende algsele asukohale"
 
+# Prügikastis tühjendamise nupul
 #. Translators: "Empty" is an action (for the trash) , not a state
 msgid "Empty"
-msgstr "Tühi"
+msgstr "Tühjenda"
 
 #, c-format
 msgid "This will open %'d separate tab."
@@ -3969,52 +4004,6 @@ msgstr ""
 "Ivar Smolin <okul linux ee>, 2005–2011.\n"
 "Mattias Põldaru <mahfiaz gmail com>, 2009–2012."
 
-#, c-format
-msgid "Unable to load location"
-msgstr "Asukoha laadimine pole võimalik"
-
-# Näidatakse otsimise ajal kollasel pisikesel ribal, tegevusnimi peaks õige olema.
-msgid "Searching..."
-msgstr "Otsimine..."
-
-msgid "Unable to display the contents of this folder."
-msgstr "Selle kataloogi sisu kuvamine pole võimalik."
-
-msgid "This location doesn't appear to be a folder."
-msgstr "Tundub, et see asukoht ei ole kataloog."
-
-msgid ""
-"Unable to find the requested file. Please check the spelling and try again."
-msgstr "Soovitud faili ei leitud. Palun kontrolli õigekirja ja proovi uuesti."
-
-#, c-format
-msgid "“%s” locations are not supported."
-msgstr "“%s” asukoht ei ole toetatud."
-
-msgid "Unable to handle this kind of location."
-msgstr "Seda liiki asukohta pole võimalik käsitleda."
-
-msgid "Unable to access the requested location."
-msgstr "Soovitud asukohale puudub ligipääs."
-
-msgid "Don't have permission to access the requested location."
-msgstr "Puuduvad õigused ligipääsuks soovitud asukohale."
-
-#. This case can be hit for user-typed strings like "foo" due to
-#. * the code that guesses web addresses when there's no initial "/".
-#. * But this case is also hit for legitimate web addresses when
-#. * the proxy is set up wrong.
-#.
-msgid ""
-"Unable to find the requested location. Please check the spelling or the "
-"network settings."
-msgstr ""
-"Küsitud asukohta ei leitud. Palun kontrolli õigekirja või võrgusätteid."
-
-#, c-format
-msgid "Unhandled error message: %s"
-msgstr "Käsitlematu veateade: %s"
-
 #. name, stock id
 #. label, accelerator
 msgid "_Close"
@@ -4138,7 +4127,7 @@ msgstr "Vaate hariliku suuruse kasutamine"
 #. name, stock id
 #. label, accelerator
 msgid "Connect to _Server..."
-msgstr "Ühendu _serverisse..."
+msgstr "Ühendu _serveriga..."
 
 #. tooltip
 msgid "Connect to a remote computer or shared disk"
@@ -4249,6 +4238,52 @@ msgstr "Kirjete kuvamine ikoonide ruudustikus"
 
 msgid "_Up"
 msgstr "_Üles"
+
+#, c-format
+msgid "Unable to load location"
+msgstr "Asukoha laadimine pole võimalik"
+
+msgid "Unable to display the contents of this folder."
+msgstr "Selle kataloogi sisu kuvamine pole võimalik."
+
+msgid "This location doesn't appear to be a folder."
+msgstr "Tundub, et see asukoht ei ole kataloog."
+
+msgid ""
+"Unable to find the requested file. Please check the spelling and try again."
+msgstr "Soovitud faili ei leitud. Palun kontrolli õigekirja ja proovi uuesti."
+
+#, c-format
+msgid "“%s” locations are not supported."
+msgstr "“%s” asukoht ei ole toetatud."
+
+msgid "Unable to handle this kind of location."
+msgstr "Seda liiki asukohta pole võimalik käsitleda."
+
+msgid "Unable to access the requested location."
+msgstr "Soovitud asukohale puudub ligipääs."
+
+msgid "Don't have permission to access the requested location."
+msgstr "Puuduvad õigused ligipääsuks soovitud asukohale."
+
+#. This case can be hit for user-typed strings like "foo" due to
+#. * the code that guesses web addresses when there's no initial "/".
+#. * But this case is also hit for legitimate web addresses when
+#. * the proxy is set up wrong.
+#.
+msgid ""
+"Unable to find the requested location. Please check the spelling or the "
+"network settings."
+msgstr ""
+"Küsitud asukohta ei leitud. Palun kontrolli õigekirja või võrgusätteid."
+
+#, c-format
+msgid "Unhandled error message: %s"
+msgstr "Käsitlematu veateade: %s"
+
+# Näidatakse otsimise ajal kollasel pisikesel ribal, tegevusnimi peaks õige olema.
+msgid "Searching..."
+msgstr "Otsimine..."
 
 msgid "Audio CD"
 msgstr "Audio-CD"
