@@ -62,7 +62,6 @@
 #include <libnautilus-private/nautilus-metadata.h>
 #include <libnautilus-private/nautilus-profile.h>
 #include <libnautilus-private/nautilus-clipboard.h>
-#include <libnautilus-private/nautilus-search-directory.h>
 #include <libnautilus-private/nautilus-signaller.h>
 
 #define DEBUG_FLAG NAUTILUS_DEBUG_WINDOW
@@ -280,10 +279,10 @@ nautilus_window_set_search_visible (NautilusWindow *window,
 
 	if (visible) {
 		remember_focus_widget (window);
-		nautilus_window_slot_set_query_editor_visible (slot, TRUE);
+		nautilus_window_slot_set_search_visible (slot, TRUE);
 	} else {
 		restore_focus_widget (window);
-		nautilus_window_slot_set_query_editor_visible (slot, FALSE);
+		nautilus_window_slot_set_search_visible (slot, FALSE);
 	}
 }
 

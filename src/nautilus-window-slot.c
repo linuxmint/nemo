@@ -101,7 +101,7 @@ struct NautilusWindowSlotDetails {
 	gulong qe_changed_id;
 	gulong qe_cancel_id;
 	gulong qe_activated_id;
-	gboolean search_active;
+	gboolean search_visible;
 
         /* Load state */
 	GCancellable *find_mount_cancellable;
@@ -138,39 +138,6 @@ static void location_has_really_changed (NautilusWindowSlot *slot);
 static void nautilus_window_slot_connect_new_content_view (NautilusWindowSlot *slot);
 
 static void
-toggle_toolbar_search_button (NautilusWindowSlot *slot,
-			      gboolean            active)
-{
-	GtkActionGroup *action_group;
-	GtkAction *action;
-	gboolean old_active;
-	GFile *location;
-
-	action_group = nautilus_window_get_main_action_group (slot->details->window);
-	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_SEARCH);
-
-	old_active = slot->details->search_active;
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), active);
-	slot->details->search_active = active;
-
-	/* If search was active on this slot and became inactive, change
-	 * the slot location to the real directory.
-	 */
-	if (!active && old_active) {
-		/* Use the query editor search root if possible */
-		location = nautilus_window_slot_get_query_editor_location (slot);
-
-		/* Use the home directory as a fallback */
-		if (location == NULL) {
-			location = g_file_new_for_path (g_get_home_dir ());
-		}
-
-		nautilus_window_slot_open_location (slot, location, 0);
-		g_object_unref (location);
-	}
-}
-
-static void
 nautilus_window_slot_sync_search_widgets (NautilusWindowSlot *slot)
 {
 	NautilusDirectory *directory;
@@ -180,19 +147,16 @@ nautilus_window_slot_sync_search_widgets (NautilusWindowSlot *slot)
 		return;
 	}
 
-	toggle = FALSE;
+	toggle = slot->details->search_visible;
 
-	if (slot->details->load_with_search) {
-		toggle = TRUE;
-	} else if (slot->details->content_view != NULL) {
+	if (slot->details->content_view != NULL) {
 		directory = nautilus_view_get_model (slot->details->content_view);
-		if (NAUTILUS_IS_SEARCH_DIRECTORY (directory) ||
-		    gtk_widget_get_visible (GTK_WIDGET (slot->details->query_editor))) {
+		if (NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
 			toggle = TRUE;
 		}
 	}
 
-	toggle_toolbar_search_button (slot, toggle);
+	nautilus_window_slot_set_search_visible (slot, toggle);
 }
 
 static gboolean
@@ -251,8 +215,9 @@ sync_search_directory (NautilusWindowSlot *slot)
 	text = nautilus_query_get_text (query);
 
 	if (!strlen (text)) {
-		location = nautilus_query_editor_get_location (slot->details->query_editor);
+		/* Prevent the location change from hiding the query editor in this case */
 		slot->details->load_with_search = TRUE;
+		location = nautilus_query_editor_get_location (slot->details->query_editor);
 		nautilus_window_slot_open_location (slot, location, 0);
 		g_object_unref (location);
 	} else {
@@ -295,7 +260,7 @@ static void
 query_editor_cancel_callback (NautilusQueryEditor *editor,
 			      NautilusWindowSlot *slot)
 {
-	toggle_toolbar_search_button (slot, FALSE);
+	nautilus_window_slot_set_search_visible (slot, FALSE);
 }
 
 static void
@@ -359,16 +324,10 @@ show_query_editor (NautilusWindowSlot *slot)
 	NautilusSearchDirectory *search_directory;
 	GFile *location;
 
-	/* This might be called while we're still loading the location.
-	 * In such a case, just set slot->details->load_with_search to TRUE, to stop
-	 * sync_search_widgets() from hiding it again when loading has
-	 * completed.
-	 */
 	if (slot->details->location) {
 		location = slot->details->location;
 	} else {
 		location = slot->details->pending_location;
-		slot->details->load_with_search = TRUE;
 	}
 
 	directory = nautilus_directory_get (location);
@@ -409,13 +368,47 @@ show_query_editor (NautilusWindowSlot *slot)
 }
 
 void
-nautilus_window_slot_set_query_editor_visible (NautilusWindowSlot *slot,
-					       gboolean            visible)
+nautilus_window_slot_set_search_visible (NautilusWindowSlot *slot,
+					 gboolean            visible)
 {
+	GtkActionGroup *action_group;
+	GtkAction *action;
+	gboolean old_visible;
+	GFile *location;
+
+	/* set search active state for the slot */
+	old_visible = slot->details->search_visible;
+	slot->details->search_visible = visible;
+
 	if (visible) {
 		show_query_editor (slot);
 	} else {
 		hide_query_editor (slot);
+	}
+
+	if (slot != nautilus_window_get_active_slot (slot->details->window)) {
+		return;
+	}
+
+	/* also synchronize the window action state */
+	action_group = nautilus_window_get_main_action_group (slot->details->window);
+	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_SEARCH);
+	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), visible);
+
+	/* If search was active on this slot and became inactive, change
+	 * the slot location to the real directory.
+	 */
+	if (!visible && old_visible) {
+		/* Use the query editor search root if possible */
+		location = nautilus_window_slot_get_query_editor_location (slot);
+
+		/* Use the home directory as a fallback */
+		if (location == NULL) {
+			location = g_file_new_for_path (g_get_home_dir ());
+		}
+
+		nautilus_window_slot_open_location (slot, location, 0);
+		g_object_unref (location);
 	}
 }
 
@@ -439,7 +432,7 @@ nautilus_window_slot_handle_event (NautilusWindowSlot *slot,
 	}
 
 	if (retval) {
-		toggle_toolbar_search_button (slot, TRUE);
+		nautilus_window_slot_set_search_visible (slot, TRUE);
 	}
 
 	return retval;
@@ -1396,9 +1389,20 @@ create_content_view (NautilusWindowSlot *slot,
 	}
 
 	if (NAUTILUS_IS_SEARCH_DIRECTORY (old_directory) &&
-	    !NAUTILUS_IS_SEARCH_DIRECTORY (new_directory) &&
-	    slot->details->pending_selection == NULL) {
-		slot->details->pending_selection = nautilus_view_get_selection (slot->details->content_view);
+	    !NAUTILUS_IS_SEARCH_DIRECTORY (new_directory)) {
+		/* Reset the search_active state when going out of a search directory,
+		 * before nautilus_window_slot_sync_search_widgets() is called
+		 * if we're not being loaded with search visible.
+		 */
+		if (!slot->details->load_with_search) {
+			slot->details->search_visible = FALSE;
+		}
+
+		slot->details->load_with_search = FALSE;
+
+		if (slot->details->pending_selection == NULL) {
+			slot->details->pending_selection = nautilus_view_get_selection (slot->details->content_view);
+		}
 	}
 
 	/* Actually load the pending location and selection: */

@@ -97,9 +97,9 @@ char *         nautilus_window_slot_get_current_uri        (NautilusWindowSlot *
 GList * nautilus_window_slot_get_back_history              (NautilusWindowSlot *slot);
 GList * nautilus_window_slot_get_forward_history           (NautilusWindowSlot *slot);
 
-void    nautilus_window_slot_set_query_editor_visible	   (NautilusWindowSlot *slot,
-							    gboolean            visible);
 GFile * nautilus_window_slot_get_query_editor_location     (NautilusWindowSlot *slot);
+void    nautilus_window_slot_set_search_visible            (NautilusWindowSlot *slot,
+							    gboolean            visible);
 
 gboolean nautilus_window_slot_get_allow_stop               (NautilusWindowSlot *slot);
 void     nautilus_window_slot_set_allow_stop		   (NautilusWindowSlot *slot,
