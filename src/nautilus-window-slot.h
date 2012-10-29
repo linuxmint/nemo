@@ -91,7 +91,7 @@ struct NautilusWindowSlot {
 	gulong qe_changed_id;
 	gulong qe_cancel_id;
 	gulong qe_activated_id;
-	gboolean search_active;
+	gboolean search_visible;
 
 	/* New location. */
 	NautilusLocationChangeType location_change_type;
@@ -129,8 +129,9 @@ void             nautilus_window_slot_set_window           (NautilusWindowSlot *
 							    NautilusWindow     *window);
 
 void    nautilus_window_slot_update_title		   (NautilusWindowSlot *slot);
-void    nautilus_window_slot_set_query_editor_visible	   (NautilusWindowSlot *slot,
+void    nautilus_window_slot_set_search_visible            (NautilusWindowSlot *slot,
 							    gboolean            visible);
+
 gboolean nautilus_window_slot_handle_event       	   (NautilusWindowSlot *slot,
 							    GdkEventKey        *event);
 

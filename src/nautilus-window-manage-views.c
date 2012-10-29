@@ -1050,9 +1050,20 @@ create_content_view (NautilusWindowSlot *slot,
 	}
 
 	if (NAUTILUS_IS_SEARCH_DIRECTORY (old_directory) &&
-	    !NAUTILUS_IS_SEARCH_DIRECTORY (new_directory) &&
-	    slot->pending_selection == NULL) {
-		slot->pending_selection = nautilus_view_get_selection (slot->content_view);
+	    !NAUTILUS_IS_SEARCH_DIRECTORY (new_directory)) {
+		/* Reset the search_visible state when going out of a search directory,
+		 * before nautilus_window_slot_sync_search_widgets() is called
+		 * if we're not being loaded with search visible.
+		 */
+		if (!slot->load_with_search) {
+			slot->search_visible = FALSE;
+		}
+
+		slot->load_with_search = FALSE;
+
+		if (slot->pending_selection == NULL) {
+			slot->pending_selection = nautilus_view_get_selection (slot->content_view);
+		}
 	}
 
 	/* Actually load the pending location and selection: */

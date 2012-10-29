@@ -97,8 +97,9 @@ sync_search_directory (NautilusWindowSlot *slot)
 	text = nautilus_query_get_text (query);
 
 	if (!strlen (text)) {
-		location = nautilus_query_editor_get_location (slot->query_editor);
+		/* Prevent the location change from hiding the query editor in this case */
 		slot->load_with_search = TRUE;
+		location = nautilus_query_editor_get_location (slot->query_editor);
 		nautilus_window_slot_open_location (slot, location, 0);
 		g_object_unref (location);
 	} else {
@@ -141,7 +142,7 @@ static void
 query_editor_cancel_callback (NautilusQueryEditor *editor,
 			      NautilusWindowSlot *slot)
 {
-	nautilus_window_set_search_action_active (slot->details->window, FALSE);
+	nautilus_window_slot_set_search_visible (slot, FALSE);
 }
 
 static void
@@ -205,16 +206,10 @@ show_query_editor (NautilusWindowSlot *slot)
 	NautilusSearchDirectory *search_directory;
 	GFile *location;
 
-	/* This might be called while we're still loading the location.
-	 * In such a case, just set slot->load_with_search to TRUE, to stop
-	 * nautilus_window_sync_search_widgets() from hiding it again when
-	 * loading has completed.
-	 */
 	if (slot->location) {
 		location = slot->location;
 	} else {
 		location = slot->pending_location;
-		slot->load_with_search = TRUE;
 	}
 
 	directory = nautilus_directory_get (location);
@@ -252,13 +247,42 @@ show_query_editor (NautilusWindowSlot *slot)
 }
 
 void
-nautilus_window_slot_set_query_editor_visible (NautilusWindowSlot *slot,
-					       gboolean            visible)
+nautilus_window_slot_set_search_visible (NautilusWindowSlot *slot,
+					 gboolean            visible)
 {
+	gboolean old_visible;
+	GFile *location;
+	GtkAction *action;
+
+	old_visible = slot->search_visible;
+	slot->search_visible = visible;
+
 	if (visible) {
 		show_query_editor (slot);
 	} else {
 		hide_query_editor (slot);
+	}
+
+	if (slot != nautilus_window_get_active_slot (slot->details->window)) {
+		return;
+	}
+
+	action = gtk_action_group_get_action (nautilus_window_get_main_action_group (slot->details->window),
+					      NAUTILUS_ACTION_SEARCH);
+	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), visible);
+
+	if (!visible && old_visible) {
+		/* Use the location bar as the return location */
+		if (slot->query_editor != NULL) {
+			location = nautilus_query_editor_get_location (slot->query_editor);
+			/* Last try: use the home directory as the return location */
+			if (location == NULL) {
+				location = g_file_new_for_path (g_get_home_dir ());
+			}
+
+			nautilus_window_go_to (slot->details->window, location);
+			g_object_unref (location);
+		}
 	}
 }
 
