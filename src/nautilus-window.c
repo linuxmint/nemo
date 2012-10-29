@@ -1230,6 +1230,12 @@ nautilus_window_constructed (GObject *self)
 	slot = nautilus_window_open_slot (window, 0);
 	nautilus_window_set_active_slot (window, slot);
 
+	if (g_settings_get_boolean (nautilus_window_state, NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR)) {
+		nautilus_window_show_sidebar (window);
+	} else {
+		nautilus_window_hide_sidebar (window);
+	}
+
 	nautilus_profile_end (NULL);
 }
 
@@ -1792,12 +1798,6 @@ nautilus_window_show (GtkWidget *widget)
 	NautilusWindow *window;
 
 	window = NAUTILUS_WINDOW (widget);
-
-	if (g_settings_get_boolean (nautilus_window_state, NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR)) {
-		nautilus_window_show_sidebar (window);
-	} else {
-		nautilus_window_hide_sidebar (window);
-	}
 
 	GTK_WIDGET_CLASS (nautilus_window_parent_class)->show (widget);	
 

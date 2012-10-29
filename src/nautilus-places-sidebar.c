@@ -1025,41 +1025,52 @@ desktop_setting_changed_callback (gpointer user_data)
 }
 
 static void
-loading_uri_callback (NautilusWindow *window,
-		      char *location,
-		      NautilusPlacesSidebar *sidebar)
+update_current_uri (NautilusPlacesSidebar *sidebar)
 {
 	GtkTreeSelection *selection;
 	GtkTreeIter 	 iter;
 	gboolean 	 valid;
 	char  		 *uri;
 
-        if (strcmp (sidebar->uri, location) != 0) {
+	if (sidebar->uri == NULL) {
+		return;
+	}
+
+	/* set selection if any place matches location */
+	selection = gtk_tree_view_get_selection (sidebar->tree_view);
+	gtk_tree_selection_unselect_all (selection);
+	valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (sidebar->store),
+					       &iter);
+
+	while (valid) {
+		gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+				    PLACES_SIDEBAR_COLUMN_URI, &uri,
+				    -1);
+
+		if (uri != NULL) {
+			if (strcmp (uri, sidebar->uri) == 0) {
+				g_free (uri);
+				gtk_tree_selection_select_iter (selection, &iter);
+				break;
+			}
+			g_free (uri);
+		}
+		valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (sidebar->store),
+						  &iter);
+	}
+}
+
+static void
+loading_uri_callback (NautilusWindow *window,
+		      char *location,
+		      NautilusPlacesSidebar *sidebar)
+{
+        if (g_strcmp0 (sidebar->uri, location) != 0) {
 		g_free (sidebar->uri);
                 sidebar->uri = g_strdup (location);
-  
-		/* set selection if any place matches location */
-		selection = gtk_tree_view_get_selection (sidebar->tree_view);
-		gtk_tree_selection_unselect_all (selection);
-  		valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (sidebar->store),
-						       &iter);
 
-		while (valid) {
-			gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter, 
-		 		       	    PLACES_SIDEBAR_COLUMN_URI, &uri,
-					    -1);
-			if (uri != NULL) {
-				if (strcmp (uri, location) == 0) {
-					g_free (uri);
-					gtk_tree_selection_select_iter (selection, &iter);
-					break;
-				}
-				g_free (uri);
-			}
-        	 	valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (sidebar->store),
-							  &iter);
-		}
-    	}
+		update_current_uri (sidebar);
+	}
 }
 
 /* Computes the appropriate row and position for dropping */
@@ -3352,17 +3363,11 @@ nautilus_places_sidebar_set_parent_window (NautilusPlacesSidebar *sidebar,
 	slot = nautilus_window_get_active_slot (window);
 
 	sidebar->bookmarks = nautilus_application_get_bookmarks (app);
-	sidebar->uri = nautilus_window_slot_get_current_uri (slot);
-
 	sidebar->bookmarks_changed_id =
 		g_signal_connect_swapped (sidebar->bookmarks, "changed",
 					  G_CALLBACK (update_places),
 					  sidebar);
 
-	g_signal_connect_object (window, "loading_uri",
-				 G_CALLBACK (loading_uri_callback),
-				 sidebar, 0);
-			 
 	g_signal_connect_object (sidebar->volume_monitor, "volume_added",
 				 G_CALLBACK (volume_added_callback), sidebar, 0);
 	g_signal_connect_object (sidebar->volume_monitor, "volume_removed",
@@ -3383,6 +3388,12 @@ nautilus_places_sidebar_set_parent_window (NautilusPlacesSidebar *sidebar,
 				 G_CALLBACK (drive_changed_callback), sidebar, 0);
 
 	update_places (sidebar);
+
+	g_signal_connect_object (window, "loading-uri",
+				 G_CALLBACK (loading_uri_callback),
+				 sidebar, 0);
+	sidebar->uri = nautilus_window_slot_get_current_uri (slot);
+	update_current_uri (sidebar);
 }
 
 static void

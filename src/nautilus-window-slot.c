@@ -878,7 +878,6 @@ nautilus_window_slot_get_current_uri (NautilusWindowSlot *slot)
 		return g_file_get_uri (slot->location);
 	}
 
-	g_assert_not_reached ();
 	return NULL;
 }
 
