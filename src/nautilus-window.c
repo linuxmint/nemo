@@ -206,7 +206,9 @@ remember_focus_widget (NautilusWindow *window)
 void
 nautilus_window_grab_focus (NautilusWindow *window)
 {
-	if (NAUTILUS_IS_WINDOW (window) && window->details->active_slot) {
+	if (NAUTILUS_IS_WINDOW (window) &&
+	    window->details->active_slot &&
+	    window->details->active_slot->content_view) {
 		nautilus_view_grab_focus (window->details->active_slot->content_view);
 	}
 }
@@ -266,23 +268,6 @@ notebook_switch_page_cb (GtkNotebook    *notebook,
 					 slot);
 
 	return FALSE;
-}
-
-void
-nautilus_window_set_search_visible (NautilusWindow *window,
-				    gboolean visible)
-{
-	NautilusWindowSlot *slot;
-
-	slot = window->details->active_slot;
-
-	if (visible) {
-		remember_focus_widget (window);
-	} else {
-		restore_focus_widget (window);
-	}
-
-	nautilus_window_slot_set_search_visible (slot, visible);
 }
 
 static void

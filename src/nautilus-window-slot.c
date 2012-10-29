@@ -274,6 +274,10 @@ nautilus_window_slot_set_search_visible (NautilusWindowSlot *slot,
 			}
 		}
 
+		if (active_slot) {
+			nautilus_window_grab_focus (slot->details->window);
+		}
+
 		hide_query_editor (slot);
 	}
 
