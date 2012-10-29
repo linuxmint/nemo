@@ -1,3 +1,18 @@
+Major changes in 3.6.2 are:
+* Open default location for remote shares when mounting
+* Resolve symbolic links before launching a file
+* Fix missing search results from Tracker for names that contain hyphens
+* Fix black input field when renaming a file in icon view with XIM enabled
+* Fix missing item selection in the sidebar when starting up
+* Fix wrong return location when unmounting local and remote mounts
+* Fix search tabs changing location to $HOME on tab switch
+* Fix search toggle button state inconsistent when switching between tabs
+* Fix search string being eaten by a hidden entry under certain circumstances
+* Fix missing tooltips on stock toolbar buttons
+* Fix crasher when using the Tracker engine from the Shell search provider
+* Fix crasher in Shell search provider
+* Fix crasher when unmounting a volume under certain circumstances
+
 Major changes in 3.6.1 are:
 * Fix floating bar not disappearing on search finish
 * Fix fullcolor icons appearing in the pathbar for mount roots
