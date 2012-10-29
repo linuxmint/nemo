@@ -1059,7 +1059,7 @@ msgstr ""
 msgid ""
 "There was an error getting information about the files in the folder “%B”."
 msgstr ""
-"\"%B\" ফোল্ডারের মধ্যে উপস্থিত ফাইলগুলি সম্বন্ধে তথ্য প্রাপ্ত করতে সমস্যা।"
+"“%B” ফোল্ডারের মধ্যে উপস্থিত ফাইলগুলি সম্বন্ধে তথ্য প্রাপ্ত করতে সমস্যা।"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1539
 #: ../libnautilus-private/nautilus-file-operations.c:3559
@@ -1744,8 +1744,8 @@ msgstr[1] "প্রতিলিপি করা %d-টি সামগ্রী
 #| msgid_plural "Duplicating %'d files (in \"%B\")"
 msgid "Duplicate %d item in '%s'"
 msgid_plural "Duplicate %d items in '%s'"
-msgstr[0] "'%s'-র মধ্যে %d-টি সামগ্রীর প্রতিলিপি করুন"
-msgstr[1] "'%s'-র মধ্যে %d-টি সামগ্রীর প্রতিলিপি করুন"
+msgstr[0] "%d-টি সামগ্রীর জন্য '%s'-র মধ্যে প্রতিলিপি করুন"
+msgstr[1] "%d-টি সামগ্রীর জন্য '%s'-র মধ্যে প্রতিলিপি করুন"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:433
 #, c-format
