@@ -1190,6 +1190,12 @@ nautilus_window_constructed (GObject *self)
 	slot = nautilus_window_open_slot (window, 0);
 	nautilus_window_set_active_slot (window, slot);
 
+	if (g_settings_get_boolean (nautilus_window_state, NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR)) {
+		nautilus_window_show_sidebar (window);
+	} else {
+		nautilus_window_hide_sidebar (window);
+	}
+
 	application = NAUTILUS_APPLICATION (g_application_get_default ());
 	window->details->bookmarks_id =
 		g_signal_connect_swapped (nautilus_application_get_bookmarks (application), "changed",
@@ -1389,7 +1395,7 @@ nautilus_window_report_location_change (NautilusWindow *window)
 	uri = nautilus_window_slot_get_current_uri (slot);
 
 	if (uri != NULL) {
-		g_signal_emit_by_name (window, "loading-uri", uri);
+		g_signal_emit (window, signals[LOADING_URI], 0, uri);
 		g_free (uri);
 	}
 }
@@ -1725,12 +1731,6 @@ nautilus_window_show (GtkWidget *widget)
 	NautilusWindow *window;
 
 	window = NAUTILUS_WINDOW (widget);
-
-	if (g_settings_get_boolean (nautilus_window_state, NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR)) {
-		nautilus_window_show_sidebar (window);
-	} else {
-		nautilus_window_hide_sidebar (window);
-	}
 
 	GTK_WIDGET_CLASS (nautilus_window_parent_class)->show (widget);	
 
