@@ -271,7 +271,7 @@ nautilus_search_engine_tracker_start (NautilusSearchProvider *provider)
 	}
 
 	g_string_append_printf (sparql,
-				" fts:match '%s*' . FILTER ("
+				" fts:match '\"%s*\"' . FILTER ("
 				" tracker:uri-is-descendant('%s', nie:url(?urn)) &&"
 				" fn:contains(fn:lower-case(nfo:fileName(?urn)), '%s')",
 				search_text, location_uri, search_text);
