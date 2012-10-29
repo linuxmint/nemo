@@ -400,6 +400,10 @@ nautilus_window_slot_set_search_visible (NautilusWindowSlot *slot,
 			}
 		}
 
+		if (active_slot) {
+			nautilus_window_grab_focus (slot->details->window);
+		}
+
 		/* Now hide the editor and clear its state */
 		hide_query_editor (slot);
 	}

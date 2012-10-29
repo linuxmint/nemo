@@ -416,9 +416,11 @@ action_show_hide_search_callback (GtkAction *action,
 				  NautilusWindow *window)
 {
 	gboolean active;
+	NautilusWindowSlot *slot;
 
 	active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
-	nautilus_window_set_search_visible (window, active);
+	slot = nautilus_window_get_active_slot (window);
+	nautilus_window_slot_set_search_visible (slot, active);
 }
 
 static void

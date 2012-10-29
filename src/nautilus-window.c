@@ -205,10 +205,13 @@ void
 nautilus_window_grab_focus (NautilusWindow *window)
 {
 	NautilusWindowSlot *slot;
+	NautilusView *view;
 
 	slot = nautilus_window_get_active_slot (window);
-	if (slot) {
-		nautilus_view_grab_focus (nautilus_window_slot_get_view (slot));
+	view = nautilus_window_slot_get_view (slot);
+
+	if (view) {
+		nautilus_view_grab_focus (view);
 	}
 }
 
@@ -267,23 +270,6 @@ notebook_switch_page_cb (GtkNotebook    *notebook,
 					 slot);
 
 	return FALSE;
-}
-
-void
-nautilus_window_set_search_visible (NautilusWindow *window,
-				    gboolean visible)
-{
-	NautilusWindowSlot *slot;
-
-	slot = window->details->active_slot;
-
-	if (visible) {
-		remember_focus_widget (window);
-		nautilus_window_slot_set_search_visible (slot, TRUE);
-	} else {
-		restore_focus_widget (window);
-		nautilus_window_slot_set_search_visible (slot, FALSE);
-	}
 }
 
 static void
