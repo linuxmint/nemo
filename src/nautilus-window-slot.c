@@ -374,19 +374,37 @@ nautilus_window_slot_set_search_visible (NautilusWindowSlot *slot,
 	GtkActionGroup *action_group;
 	GtkAction *action;
 	gboolean old_visible;
-	GFile *location;
+	GFile *return_location;
+	gboolean active_slot;
 
 	/* set search active state for the slot */
 	old_visible = slot->details->search_visible;
 	slot->details->search_visible = visible;
 
+	return_location = NULL;
+	active_slot = (slot == nautilus_window_get_active_slot (slot->details->window));
+
 	if (visible) {
 		show_query_editor (slot);
 	} else {
+		/* If search was active on this slot and became inactive, change
+		 * the slot location to the real directory.
+		 */
+		if (old_visible && active_slot) {
+			/* Use the query editor search root if possible */
+			return_location = nautilus_window_slot_get_query_editor_location (slot);
+
+			/* Use the home directory as a fallback */
+			if (return_location == NULL) {
+				return_location = g_file_new_for_path (g_get_home_dir ());
+			}
+		}
+
+		/* Now hide the editor and clear its state */
 		hide_query_editor (slot);
 	}
 
-	if (slot != nautilus_window_get_active_slot (slot->details->window)) {
+	if (!active_slot) {
 		return;
 	}
 
@@ -398,17 +416,9 @@ nautilus_window_slot_set_search_visible (NautilusWindowSlot *slot,
 	/* If search was active on this slot and became inactive, change
 	 * the slot location to the real directory.
 	 */
-	if (!visible && old_visible) {
-		/* Use the query editor search root if possible */
-		location = nautilus_window_slot_get_query_editor_location (slot);
-
-		/* Use the home directory as a fallback */
-		if (location == NULL) {
-			location = g_file_new_for_path (g_get_home_dir ());
-		}
-
-		nautilus_window_slot_open_location (slot, location, 0);
-		g_object_unref (location);
+	if (return_location != NULL) {
+		nautilus_window_slot_open_location (slot, return_location, 0);
+		g_object_unref (return_location);
 	}
 }
 
