@@ -8851,8 +8851,7 @@ real_update_menus (NemoView *view)
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                            NEMO_ACTION_MAILTO_OTHER);
-    gtk_action_set_visible(action, !show_thunderbird_sendto &&
-                                        !selection_contains_directory);
+    gtk_action_set_visible(action, !selection_contains_directory);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_FOLDER);
