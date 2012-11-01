@@ -30,7 +30,7 @@
 #include "nemo-location-bar.h"
 #include "nemo-pathbar.h"
 #include "nemo-window-private.h"
-
+#include <glib/gi18n.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-ui-utilities.h>
 
@@ -44,10 +44,12 @@ struct _NemoToolbarPriv {
 	GtkWidget *path_bar;
 	GtkWidget *location_bar;
 	GtkWidget *search_bar;
+    GtkWidget *root_bar;
 
 	gboolean show_main_bar;
 	gboolean show_location_entry;
 	gboolean show_search_bar;
+    gboolean show_root_bar;
 };
 
 enum {
@@ -62,6 +64,19 @@ static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 G_DEFINE_TYPE (NemoToolbar, nemo_toolbar, GTK_TYPE_BOX);
 
+void
+nemo_toolbar_update_root_state (NemoToolbar *self)
+{
+    gboolean show = geteuid() == 0;
+    if (geteuid() == 0) {
+        if (self->priv->show_root_bar != TRUE) {
+            self->priv->show_root_bar = TRUE;
+        }
+    } else {
+        self->priv->show_root_bar = FALSE;
+    }
+}
+
 static void
 toolbar_update_appearance (NemoToolbar *self)
 {
@@ -70,6 +85,8 @@ toolbar_update_appearance (NemoToolbar *self)
 	gboolean icon_toolbar;
 
 	gboolean show_location_entry;
+
+    nemo_toolbar_update_root_state (self);
 
 	show_location_entry = self->priv->show_location_entry ||
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY);
@@ -85,6 +102,8 @@ toolbar_update_appearance (NemoToolbar *self)
 	gtk_widget_set_visible (self->priv->search_bar,
 				self->priv->show_search_bar);
 
+    gtk_widget_set_visible (self->priv->root_bar,
+                self->priv->show_root_bar);
 
 	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Up");
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_UP_ICON_TOOLBAR);
@@ -115,6 +134,21 @@ toolbar_update_appearance (NemoToolbar *self)
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR);
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
 	else {gtk_widget_show (GTK_WIDGET(widgetitem));}
+}
+
+static void
+setup_root_info_bar (NemoToolbar *self) {
+
+    GtkWidget *root_bar = gtk_info_bar_new ();
+    gtk_info_bar_set_message_type (root_bar, GTK_MESSAGE_ERROR);
+    GtkWidget *content_area = gtk_info_bar_get_content_area (root_bar);
+
+    GtkWidget *label = gtk_label_new (_("Elevated Privileges"));
+    gtk_widget_show (label);
+    gtk_container_add (GTK_CONTAINER (content_area), label);
+
+    self->priv->root_bar = root_bar;
+    gtk_box_pack_start (GTK_BOX (self), self->priv->root_bar, TRUE, TRUE, 0);
 }
 
 static void
@@ -187,6 +221,8 @@ nemo_toolbar_constructed (GObject *obj)
 	/* append to the end of the toolbar so navigation buttons are at the beginning */
 	gtk_toolbar_insert (GTK_TOOLBAR (self->priv->toolbar), item, 8);
 	gtk_widget_show (GTK_WIDGET (item));
+
+    setup_root_info_bar (self);
 
 	/* search bar */
 	self->priv->search_bar = nemo_search_bar_new ();
@@ -332,7 +368,6 @@ nemo_toolbar_class_init (NemoToolbarClass *klass)
 				      "Whether to show the main toolbar",
 				      TRUE,
 				      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	
 	g_type_class_add_private (klass, sizeof (NemoToolbarClass));
 	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
