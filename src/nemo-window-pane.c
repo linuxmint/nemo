@@ -281,7 +281,6 @@ navigation_bar_location_changed_callback (GtkWidget *widget,
 {
 	GFile *location;
 
-	nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
 	nemo_window_pane_hide_search_bar (pane);
 	nemo_window_pane_hide_temporary_bars (pane);
 
