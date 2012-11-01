@@ -60,7 +60,7 @@ nemo_compute_title_for_location (GFile *location)
 {
 	NemoFile *file;
 	char *title;
-
+    char *builder;
 	/* TODO-gio: This doesn't really work all that great if the
 	   info about the file isn't known atm... */
 
@@ -68,21 +68,36 @@ nemo_compute_title_for_location (GFile *location)
 		return g_strdup (_("Home"));
 	}
 	
-	title = NULL;
+	builder = NULL;
 	if (location) {
 		file = nemo_file_get (location);
-		title = nemo_file_get_description (file);
-		if (title == NULL) {
-			title = nemo_file_get_display_name (file);
+		builder = nemo_file_get_description (file);
+		if (builder == NULL) {
+			builder = nemo_file_get_display_name (file);
 		}
 		nemo_file_unref (file);
 	}
 
-	if (title == NULL) {
-		title = g_file_get_basename (location);
+	if (builder == NULL) {
+		builder = g_file_get_basename (location);
 	}
-	
-	return title;
+
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_FULL_PATH_TITLES)) {
+        file = nemo_file_get (location);
+        char *path = g_filename_from_uri (nemo_file_get_uri (file), NULL, NULL);
+        if (path != NULL) {
+            title = g_strdup_printf("%s - %s", builder, path);
+        } else {
+            title = g_strdup(builder);
+        }
+        nemo_file_unref (file);
+        g_free (path);
+        g_free (builder);
+    } else {
+        title = g_strdup(builder);
+        g_free (builder);
+    }
+    return title;
 }
 
 

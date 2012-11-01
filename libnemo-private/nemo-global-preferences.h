@@ -104,6 +104,9 @@ typedef enum
 /* The default folder viewer - one of the two enums below */
 #define NEMO_PREFERENCES_DEFAULT_FOLDER_VIEWER		"default-folder-viewer"
 
+#define NEMO_PREFERENCES_SHOW_FULL_PATH_TITLES      "show-full-path-titles"
+
+
 enum
 {
 	NEMO_DEFAULT_FOLDER_VIEWER_ICON_VIEW,
