@@ -9,16 +9,9 @@ man_MANS = \
 
 EXTRA_DIST = \
 	$(man_MANS) \
-	architecture.txt \
 	dnd.txt \
-	load-states.dia \
-	nemo-internals.sxw \
-	nemo-internals.pdf \
 	nemo-io.txt \
-	nemo.faq \
-	recommended-books.html \
-	smoketests.html \
-	state-machines.txt \
+	load-states.dia \
 	style-guide.html \
 	key_mouse_navigation.txt \
 	$(NULL)
