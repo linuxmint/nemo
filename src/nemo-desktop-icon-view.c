@@ -730,8 +730,9 @@ real_update_menus (NemoView *view)
 	/* New Launcher */
 	action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
 					      NEMO_ACTION_NEW_LAUNCHER_DESKTOP);
-	gtk_action_set_visible (action,
-				TRUE);
+	if (action) {
+		gtk_action_set_visible (action, TRUE);
+	}
 
 	/* Empty Trash */
 	include_empty_trash = trash_link_is_selection (view);
