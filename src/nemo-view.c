@@ -7467,7 +7467,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open in Terminal"), "",
   /* tooltip */                  N_("Open terminal in the selected folder"),
 				 G_CALLBACK (action_open_in_terminal_callback) },
-  /* name, stock id */         { "OpenAsRoot", GTK_STOCK_DIALOG_AUTHENTICATION,
+  /* name, stock id */         { NEMO_ACTION_OPEN_AS_ROOT, GTK_STOCK_DIALOG_AUTHENTICATION,
   /* label, accelerator */       N_("Open as Root"), "",
   /* tooltip */                  N_("Open the folder with administration privileges"),
 				 G_CALLBACK (action_open_as_root_callback) },
@@ -8841,6 +8841,10 @@ real_update_menus (NemoView *view)
 					  selection_count == 1 &&
 					  nemo_view_can_rename_file (view, selection->data));
 	}
+
+    action = gtk_action_group_get_action(view->details->dir_action_group,
+                                         NEMO_ACTION_OPEN_AS_ROOT);
+    gtk_action_set_visible(action, geteuid() != 0);
 
     show_thunderbird_sendto = (g_find_program_in_path ("thunderbird") != NULL);
 
