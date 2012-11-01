@@ -1180,26 +1180,29 @@ nemo_window_pane_grab_focus (NemoWindowPane *pane)
 void
 nemo_window_pane_ensure_location_bar (NemoWindowPane *pane)
 {
- 	gboolean fl_active;
-	remember_focus_widget (pane);
+    gboolean fl_active, visible, always;
+    always = g_settings_get_boolean (nemo_window_state,
+                     NEMO_WINDOW_STATE_START_WITH_TOOLBAR);
+    visible = gtk_widget_get_visible(pane->location_bar);
+    nemo_toolbar_set_show_main_bar (NEMO_TOOLBAR (pane->tool_bar), TRUE);
 
-	nemo_toolbar_set_show_main_bar (NEMO_TOOLBAR (pane->tool_bar), TRUE);
-  
-  	fl_active = nemo_toolbar_get_show_location_entry (NEMO_TOOLBAR (pane->tool_bar));
-  	if (fl_active) {
-  		nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
- 	} else {
- 		nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), TRUE);
- 	}
+    fl_active = nemo_toolbar_get_show_location_entry (NEMO_TOOLBAR (pane->tool_bar));
 
-	if (!g_settings_get_boolean (nemo_window_state,
-				     NEMO_WINDOW_STATE_START_WITH_TOOLBAR)) {
+    if ((!visible && !fl_active) || (visible && pane->last_focus_widget == NULL))  {
+        remember_focus_widget (pane);
+        nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), TRUE);
+        nemo_location_bar_activate (NEMO_LOCATION_BAR (pane->location_bar));
+    } else {
+        restore_focus_widget (pane);
+        nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
+    }
+
+	if (always) {
 		gtk_widget_show (pane->tool_bar);
 		pane->temporary_navigation_bar = TRUE;
 	}
 
-	nemo_location_bar_activate
-		(NEMO_LOCATION_BAR (pane->location_bar));
+
 }
 
 void
