@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-09-16 15:49+0000\n"
-"PO-Revision-Date: 2012-10-29 05:04+0900\n"
+"PO-Revision-Date: 2012-11-03 01:52+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: GNOME Korea <gnome-kr@googlegroups.com>\n"
 "Language: Korean\n"
@@ -397,7 +397,7 @@ msgstr "%R"
 
 #: ../libnautilus-private/nautilus-file.c:4442
 msgid "%-I:%M %P"
-msgstr "오늘 %p %-I:%M"
+msgstr "%P %-I:%M"
 
 #: ../libnautilus-private/nautilus-file.c:4443
 #: ../libnautilus-private/nautilus-file.c:4444
@@ -2351,7 +2351,7 @@ msgstr "파일을 메일, 인스턴스 메시지 등으로 보내기..."
 #: ../src/nautilus-application.c:227
 #: ../src/nautilus-window-manage-views.c:1638
 msgid "Oops! Something went wrong."
-msgstr "이런! 뭔가가 잘못되었네요."
+msgstr "이런! 뭔가 잘못되었습니다."
 
 #: ../src/nautilus-application.c:229
 #, c-format
@@ -2360,8 +2360,7 @@ msgid ""
 "set permissions such that it can be created:\n"
 "%s"
 msgstr ""
-"필요한 폴더를 만들 수 없습니다. 다음 폴더를 만들거나 폴더를 만들 수 있는 권한"
-"으로 설정해주시기 바랍니다:\n"
+"필요한 폴더를 만들 수 없습니다. 다음 폴더를 만들거나 폴더를 만들 수 있는 권한으로 설정하십시오:\n"
 "%s"
 
 #: ../src/nautilus-application.c:234
@@ -2371,8 +2370,7 @@ msgid ""
 "set permissions such that they can be created:\n"
 "%s"
 msgstr ""
-"필요판 폴더를 만들 수 없습니다. 다음 폴더를 만들거나 폴더를 만들 수 있는 권한"
-"으로 설정해주시기 바랍니다:\n"
+"필요판 폴더를 만들 수 없습니다. 다음 폴더를 만들거나 폴더를 만들 수 있는 권한으로 설정하십시오:\n"
 "%s"
 
 #: ../src/nautilus-application.c:368
@@ -2514,7 +2512,7 @@ msgstr "프로그램 위치를 지정할 수 없습니다"
 
 #: ../src/nautilus-autorun-software.c:171
 msgid "Oops! There was a problem running this software."
-msgstr "이런! 이 프로그램을 실행하는 중에 문제가 생겼네요."
+msgstr "이런! 이 프로그램을 실행할 때 문제가 생겼습니다."
 
 #: ../src/nautilus-autorun-software.c:202
 #, c-format
@@ -2886,9 +2884,7 @@ msgstr "권한을 바꿀 수 없습니다."
 #, c-format
 msgid ""
 "The name “%s” is already used in this location. Please use a different name."
-msgstr ""
-" “%s” 이름을 이미 이 위치에서 사용하고 있습니다. 다른 이름을 사용해주시기 바"
-"랍니다."
+msgstr " “%s” 이름을 이미 이 위치에서 사용하고 있습니다. 다른 이름을 사용하십시오."
 
 #: ../src/nautilus-error-reporting.c:209
 #, c-format
@@ -2906,19 +2902,17 @@ msgstr "“%s”의 이름을 바꾸기 위한 권한이 없습니다."
 msgid ""
 "The name “%s” is not valid because it contains the character “/”. Please use "
 "a different name."
-msgstr ""
-"\"%s\" 이름은 \"/\" 문자가 들어있기 때문에 올바르지 않습니다. 다른 이름을 사"
-"용해주시기 바랍니다."
+msgstr "\"%s\" 이름은 \"/\" 문자가 들어있기 때문에 올바르지 않습니다. 다른 이름을 사용하십시오."
 
 #: ../src/nautilus-error-reporting.c:223
 #, c-format
 msgid "The name “%s” is not valid. Please use a different name."
-msgstr "\"%s\" 이름은 올바르지 않습니다. 다른 이름을 사용해주시기 바랍니다."
+msgstr "\"%s\" 이름은 올바르지 않습니다. 다른 이름을 사용하십시오."
 
 #: ../src/nautilus-error-reporting.c:229
 #, c-format
 msgid "The name “%s” is too long. Please use a different name."
-msgstr "\"%s\" 이름은 너무 깁니다. 다른 이름을 사용해주시기 바랍니다."
+msgstr "\"%s\" 이름은 너무 깁니다. 다른 이름을 사용하십시오."
 
 #. fall through
 #: ../src/nautilus-error-reporting.c:243
@@ -4988,8 +4982,7 @@ msgstr "이 위치는 폴더로 보이지 않습니다."
 #: ../src/nautilus-window-manage-views.c:1649
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
-msgstr ""
-"요청한 파일을 찾을 수 없습니다. 철자를 검사하고 다시 시도해주시기 바랍니다."
+msgstr "요청한 파일을 찾을 수 없습니다. 철자가 맞는지 확인하고 다시 시도하십시오."
 
 #: ../src/nautilus-window-manage-views.c:1654
 #, c-format
@@ -5017,9 +5010,7 @@ msgstr "요청할 위치에 접근하기 위한 권한이 없습니다."
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
-msgstr ""
-"요청한 위치를 찾을 수 없습니다. 철자 또는 네트워크 설정을 확인하시기 바랍니"
-"다."
+msgstr "요청한 위치를 찾을 수 없습니다. 철자 또는 네트워크 설정을 확인하십시오."
 
 #: ../src/nautilus-window-manage-views.c:1684
 #, c-format
