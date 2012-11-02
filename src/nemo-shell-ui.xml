@@ -111,10 +111,10 @@
 	</placeholder>
 	<menu action="Help">
 		<menuitem action="NemoHelp"/>
-		<menuitem action="NemoHelpSearch"/>
+<!--		<menuitem action="NemoHelpSearch"/>
 		<menuitem action="NemoHelpSort"/>
 		<menuitem action="NemoHelpLost"/>
-		<menuitem action="NemoHelpShare"/>
+		<menuitem action="NemoHelpShare"/>    -->
 		<separator/>
 		<menuitem name="About Nemo" action="About Nemo"/>
 	</menu>
