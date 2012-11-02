@@ -93,7 +93,7 @@ struct NemoWindowDetails
 
         /* Toolbar holder */
         GtkWidget *toolbar_holder;
-
+        GtkWidget *location_toolbar_holder;
         guint extensions_toolbar_merge_id;
         GtkActionGroup *extensions_toolbar_action_group;
 

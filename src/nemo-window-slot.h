@@ -95,7 +95,8 @@ struct NemoWindowSlot {
 	gboolean allow_stop;
 
 	NemoQueryEditor *query_editor;
-
+    GtkWidget *search_bar;
+    gboolean show_search_bar;
 	/* New location. */
 	NemoLocationChangeType location_change_type;
 	guint location_change_distance;
@@ -117,6 +118,8 @@ struct NemoWindowSlot {
 	 * The data in these lists are NemoBookmark pointers. 
 	 */
 	GList *back_list, *forward_list;
+    GtkWidget *last_focus_widget;
+    gboolean temporary_search_bar;
 };
 
 GType   nemo_window_slot_get_type (void);
@@ -191,5 +194,17 @@ gboolean nemo_window_slot_should_close_with_mount (NemoWindowSlot *slot,
 
 void nemo_window_slot_clear_forward_list (NemoWindowSlot *slot);
 void nemo_window_slot_clear_back_list    (NemoWindowSlot *slot);
+
+
+/* search bar */
+GtkWidget *nemo_window_slot_get_search_bar (NemoWindowSlot *self);
+
+void nemo_window_slot_set_show_search_bar (NemoWindowSlot *self,
+                      gboolean show_search_bar);
+void nemo_window_slot_sync_search_widgets  (NemoWindowSlot *slot);
+
+void nemo_window_slot_hide_search_bar (NemoWindowSlot *slot);
+
+
 
 #endif /* NEMO_WINDOW_SLOT_H */

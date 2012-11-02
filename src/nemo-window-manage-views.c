@@ -1446,7 +1446,7 @@ update_for_new_location (NemoWindowSlot *slot)
 		nemo_window_pane_sync_location_widgets (slot->pane);
 
 		if (location_really_changed) {
-			nemo_window_pane_sync_search_widgets (slot->pane);
+			nemo_window_slot_sync_search_widgets (slot);
 		}
 	}
 }

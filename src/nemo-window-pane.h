@@ -65,11 +65,10 @@ struct _NemoWindowPane {
 	/* location bar */
 	GtkWidget *location_bar;
 	GtkWidget *path_bar;
-	GtkWidget *search_bar;
 	GtkWidget *tool_bar;
+    GtkWidget *location_tool_bar;
 
 	gboolean temporary_navigation_bar;
-	gboolean temporary_search_bar;
 
 	/* notebook */
 	GtkWidget *notebook;
@@ -90,7 +89,7 @@ void                nemo_window_pane_close_slot (NemoWindowPane *pane,
 						     NemoWindowSlot *slot);
 
 void nemo_window_pane_sync_location_widgets (NemoWindowPane *pane);
-void nemo_window_pane_sync_search_widgets  (NemoWindowPane *pane);
+
 void nemo_window_pane_set_active (NemoWindowPane *pane, gboolean is_active);
 void nemo_window_pane_slot_close (NemoWindowPane *pane, NemoWindowSlot *slot);
 GtkActionGroup * nemo_window_pane_get_toolbar_action_group (NemoWindowPane   *pane);

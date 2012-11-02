@@ -37,25 +37,23 @@
 struct _NemoToolbarPriv {
 	GtkToolbar *toolbar;
 	GtkToolbar *secondary_toolbar;
+    GtkToolbar *location_toolbar;
 
 	GtkActionGroup *action_group;
 	GtkUIManager *ui_manager;
 
 	GtkWidget *path_bar;
 	GtkWidget *location_bar;
-	GtkWidget *search_bar;
     GtkWidget *root_bar;
 
 	gboolean show_main_bar;
 	gboolean show_location_entry;
-	gboolean show_search_bar;
     gboolean show_root_bar;
 };
 
 enum {
 	PROP_ACTION_GROUP = 1,
 	PROP_SHOW_LOCATION_ENTRY,
-	PROP_SHOW_SEARCH_BAR,
 	PROP_SHOW_MAIN_BAR,
 	NUM_PROPERTIES
 };
@@ -85,12 +83,10 @@ toolbar_update_appearance (NemoToolbar *self)
 	gboolean icon_toolbar;
 
 	gboolean show_location_entry;
-
     nemo_toolbar_update_root_state (self);
 
 	show_location_entry = self->priv->show_location_entry ||
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY);
-
 	gtk_widget_set_visible (GTK_WIDGET(self->priv->toolbar),
 				self->priv->show_main_bar);
 
@@ -98,9 +94,6 @@ toolbar_update_appearance (NemoToolbar *self)
 				show_location_entry);
 	gtk_widget_set_visible (self->priv->path_bar,
 				!show_location_entry);
-
-	gtk_widget_set_visible (self->priv->search_bar,
-				self->priv->show_search_bar);
 
     gtk_widget_set_visible (self->priv->root_bar,
                 self->priv->show_root_bar);
@@ -115,7 +108,7 @@ toolbar_update_appearance (NemoToolbar *self)
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
 	else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 
-	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/SecondaryToolbar/Edit Location");
+	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/LocationToolbar/Edit Location");
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR);
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
 	else {gtk_widget_show (GTK_WIDGET(widgetitem));}
@@ -157,8 +150,7 @@ nemo_toolbar_constructed (GObject *obj)
 	NemoToolbar *self = NEMO_TOOLBAR (obj);
 	GtkToolItem *item;
 	GtkBox *hbox;
-	GtkToolbar *toolbar, *secondary_toolbar;
-	GtkWidget *search;
+	GtkToolbar *toolbar, *secondary_toolbar, *location_toolbar;
 	GtkStyleContext *context;
 
 	GtkWidget *sep_space;
@@ -178,16 +170,24 @@ nemo_toolbar_constructed (GObject *obj)
 	
 	secondary_toolbar = GTK_TOOLBAR (gtk_ui_manager_get_widget (self->priv->ui_manager, "/SecondaryToolbar"));
 	self->priv->secondary_toolbar = secondary_toolbar;
+
+    location_toolbar = GTK_TOOLBAR (gtk_ui_manager_get_widget (self->priv->ui_manager, "/LocationToolbar"));
+    self->priv->location_toolbar = location_toolbar;
 		
 	gtk_toolbar_set_icon_size (GTK_TOOLBAR (toolbar), GTK_ICON_SIZE_BUTTON);
 	gtk_toolbar_set_icon_size (GTK_TOOLBAR (secondary_toolbar), GTK_ICON_SIZE_MENU);
+    gtk_toolbar_set_icon_size (GTK_TOOLBAR (location_toolbar), GTK_ICON_SIZE_BUTTON);
 
 	context = gtk_widget_get_style_context (GTK_WIDGET(toolbar));
 	gtk_style_context_add_class (context, GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
 	
 	context = gtk_widget_get_style_context (GTK_WIDGET(secondary_toolbar));
 	gtk_style_context_add_class (context, GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
-	
+
+    context = gtk_widget_get_style_context (GTK_WIDGET(location_toolbar));
+    gtk_style_context_add_class (context, GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
+    
+
 	//search = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Search");
 	//gtk_style_context_add_class (gtk_widget_get_style_context (search), GTK_STYLE_CLASS_RAISED);
 	//gtk_widget_set_name (search, "nemo-search-button");
@@ -218,15 +218,12 @@ nemo_toolbar_constructed (GObject *obj)
 	item = gtk_tool_item_new ();
 	gtk_tool_item_set_expand (item, TRUE);
 	gtk_container_add (GTK_CONTAINER (item), GTK_WIDGET(hbox));
-	/* append to the end of the toolbar so navigation buttons are at the beginning */
-	gtk_toolbar_insert (GTK_TOOLBAR (self->priv->toolbar), item, 8);
+
+    gtk_toolbar_insert (GTK_TOOLBAR (self->priv->location_toolbar), item, 0);
+
 	gtk_widget_show (GTK_WIDGET (item));
 
     setup_root_info_bar (self);
-
-	/* search bar */
-	self->priv->search_bar = nemo_search_bar_new ();
-	gtk_box_pack_start (GTK_BOX (self), self->priv->search_bar, TRUE, TRUE, 0);
 
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_SHOW_LOCATION_ENTRY,
@@ -279,9 +276,6 @@ nemo_toolbar_get_property (GObject *object,
 	case PROP_SHOW_LOCATION_ENTRY:
 		g_value_set_boolean (value, self->priv->show_location_entry);
 		break;
-	case PROP_SHOW_SEARCH_BAR:
-		g_value_set_boolean (value, self->priv->show_search_bar);
-		break;
 	case PROP_SHOW_MAIN_BAR:
 		g_value_set_boolean (value, self->priv->show_main_bar);
 		break;
@@ -305,9 +299,6 @@ nemo_toolbar_set_property (GObject *object,
 		break;
 	case PROP_SHOW_LOCATION_ENTRY:
 		nemo_toolbar_set_show_location_entry (self, g_value_get_boolean (value));
-		break;
-	case PROP_SHOW_SEARCH_BAR:
-		nemo_toolbar_set_show_search_bar (self, g_value_get_boolean (value));
 		break;
 	case PROP_SHOW_MAIN_BAR:
 		nemo_toolbar_set_show_main_bar (self, g_value_get_boolean (value));
@@ -356,12 +347,6 @@ nemo_toolbar_class_init (NemoToolbarClass *klass)
 				      "Whether to show the location entry instead of the pathbar",
 				      FALSE,
 				      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	properties[PROP_SHOW_SEARCH_BAR] =
-		g_param_spec_boolean ("show-search-bar",
-				      "Whether to show the search bar",
-				      "Whether to show the search bar beside the toolbar",
-				      FALSE,
-				      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 	properties[PROP_SHOW_MAIN_BAR] =
 		g_param_spec_boolean ("show-main-bar",
 				      "Whether to show the main bar",
@@ -391,12 +376,6 @@ GtkWidget *
 nemo_toolbar_get_location_bar (NemoToolbar *self)
 {
 	return self->priv->location_bar;
-}
-
-GtkWidget *
-nemo_toolbar_get_search_bar (NemoToolbar *self)
-{
-	return self->priv->search_bar;
 }
 
 gboolean
@@ -429,14 +408,8 @@ nemo_toolbar_set_show_location_entry (NemoToolbar *self,
 	}
 }
 
-void
-nemo_toolbar_set_show_search_bar (NemoToolbar *self,
-				      gboolean show_search_bar)
+GtkWidget *
+nemo_toolbar_get_location_toolbar (NemoToolbar *self)
 {
-	if (show_search_bar != self->priv->show_search_bar) {
-		self->priv->show_search_bar = show_search_bar;
-		toolbar_update_appearance (self);
-
-		g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SHOW_SEARCH_BAR]);
-	}
+    return self->priv->location_toolbar;
 }

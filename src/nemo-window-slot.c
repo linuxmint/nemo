@@ -22,7 +22,8 @@
    Author: Christian Neumair <cneumair@gnome.org>
 */
 #include "nemo-window-slot.h"
-
+#include "nemo-toolbar.h"
+#include "nemo-actions.h"
 #include "nemo-desktop-window.h"
 #include "nemo-floating-bar.h"
 #include "nemo-window-private.h"
@@ -45,7 +46,80 @@ enum {
 	LAST_SIGNAL
 };
 
+enum {
+    PROP_SHOW_SEARCH_BAR = 1,
+    NUM_PROPERTIES
+};
+
 static guint signals[LAST_SIGNAL] = { 0 };
+
+static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
+
+static void
+unset_focus_widget (NemoWindowSlot *slot)
+{
+    if (slot->last_focus_widget != NULL) {
+        g_object_remove_weak_pointer (G_OBJECT (slot->last_focus_widget),
+                          (gpointer *) &slot->last_focus_widget);
+        slot->last_focus_widget = NULL;
+    }
+}
+
+static void
+remember_focus_widget (NemoWindowSlot *slot)
+{
+    GtkWidget *focus_widget;
+
+    focus_widget = gtk_window_get_focus (GTK_WINDOW (slot->pane->window));
+    if (focus_widget != NULL) {
+        unset_focus_widget (slot);
+
+        slot->last_focus_widget = focus_widget;
+        g_object_add_weak_pointer (G_OBJECT (focus_widget),
+                       (gpointer *) &(slot->last_focus_widget));
+    }
+}
+
+static void
+restore_focus_widget (NemoWindowSlot *slot)
+{
+    if (slot->last_focus_widget != NULL) {
+        if (NEMO_IS_VIEW (slot->last_focus_widget)) {
+            nemo_view_grab_focus (NEMO_VIEW (slot->last_focus_widget));
+        } else {
+            gtk_widget_grab_focus (slot->last_focus_widget);
+        }
+
+        unset_focus_widget (slot);
+    }
+}
+
+void
+nemo_window_slot_hide_search_bar (NemoWindowSlot *slot)
+{
+    nemo_window_slot_set_show_search_bar (NEMO_WINDOW_SLOT (slot), FALSE);
+    restore_focus_widget (slot);
+}
+
+static void
+nemo_window_slot_ensure_search_bar (NemoWindowSlot *slot)
+{
+    remember_focus_widget (slot);
+    nemo_window_slot_set_show_search_bar (NEMO_WINDOW_SLOT (slot), TRUE);
+
+    nemo_search_bar_grab_focus (NEMO_SEARCH_BAR (slot->search_bar));
+}
+
+static gboolean
+toolbar_focus_in_callback (GtkWidget *widget,
+               GdkEventFocus *event,
+               gpointer user_data)
+{
+    NemoWindowSlot *slot = user_data;
+    nemo_window_set_active_pane (slot->pane->window, slot->pane);
+
+    return FALSE;
+}
 
 static void
 query_editor_changed_callback (NemoSearchBar *bar,
@@ -70,6 +144,106 @@ query_editor_changed_callback (NemoSearchBar *bar,
 }
 
 static void
+search_bar_activate_callback (NemoSearchBar *bar,
+                  NemoWindowSlot *slot)
+{
+    char *uri, *current_uri;
+    NemoDirectory *directory;
+    NemoSearchDirectory *search_directory;
+    NemoQuery *query;
+    GFile *location;
+
+    uri = nemo_search_directory_generate_new_uri ();
+    location = g_file_new_for_uri (uri);
+
+    directory = nemo_directory_get (location);
+    g_assert (NEMO_IS_SEARCH_DIRECTORY (directory));
+
+    search_directory = NEMO_SEARCH_DIRECTORY (directory);
+    query = nemo_search_bar_get_query (NEMO_SEARCH_BAR (slot->search_bar));
+
+    if (query != NULL) {
+        current_uri = nemo_window_slot_get_location_uri (slot);
+
+        nemo_query_set_location (query, current_uri);
+        nemo_search_directory_set_query (search_directory, query);
+
+        g_free (current_uri);
+        g_object_unref (query);
+    }
+
+    nemo_window_slot_go_to (slot, location, FALSE);
+
+    nemo_directory_unref (directory);
+    g_object_unref (location);  
+    g_free (uri);
+}
+
+static void
+action_show_hide_search_callback (GtkAction *action,
+                  gpointer user_data)
+{
+    NemoWindowSlot *slot = NEMO_WINDOW_SLOT (user_data);
+    NemoWindow *window = NEMO_WINDOW (slot->pane->window);
+
+    if (slot != nemo_window_get_active_slot (window)) {
+        return;
+    }
+
+    if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
+        nemo_window_slot_ensure_search_bar (slot);
+    } else {
+        GFile *location = NULL;
+        nemo_window_slot_hide_search_bar (slot);
+        /* Use the location bar as the return location */
+        if (slot->query_editor != NULL) {
+            NemoQuery *query;
+            char *uri;
+
+            query = nemo_query_editor_get_query (slot->query_editor);
+            if (query != NULL) {
+                uri = nemo_query_get_location (query);
+                if (uri != NULL) {
+                    location = g_file_new_for_uri (uri);
+                    g_free (uri);
+                }
+                g_object_unref (query);
+            }
+
+            /* Last try: use the home directory as the return location */
+            if (location == NULL) {
+                location = g_file_new_for_path (g_get_home_dir ());
+            }
+
+            nemo_window_go_to (window, location);
+            g_object_unref (location);
+        }
+    }
+}
+
+static void
+search_bar_cancel_callback (GtkWidget *widget,
+                NemoWindowSlot *slot)
+{
+    GtkAction *search;
+
+    search = gtk_action_group_get_action (slot->pane->action_group,
+                          NEMO_ACTION_SEARCH);
+
+    gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (search), FALSE);
+}
+
+static void
+setup_search_action (NemoWindowSlot *slot)
+{
+    GtkActionGroup *group = GTK_ACTION_GROUP (slot->pane->action_group);
+    GtkAction *action;
+    action = gtk_action_group_get_action (group, NEMO_ACTION_SEARCH);
+    g_signal_connect (action, "activate",
+              G_CALLBACK (action_show_hide_search_callback), slot);
+}
+
+static void
 real_update_query_editor (NemoWindowSlot *slot)
 {
 	NemoDirectory *directory;
@@ -89,11 +263,11 @@ real_update_query_editor (NemoWindowSlot *slot)
 
 		if (nemo_search_directory_is_saved_search (search_directory)) {
 			query_editor = nemo_query_editor_new (TRUE);
-			nemo_window_pane_sync_search_widgets (slot->pane);
+			nemo_window_slot_sync_search_widgets (slot);
 		} else {
 			query_editor = nemo_query_editor_new_with_bar (FALSE,
 									   slot_is_active,
-									   NEMO_SEARCH_BAR (slot->pane->search_bar),
+									   NEMO_SEARCH_BAR (slot->search_bar),
 									   slot);
 		}
 	}
@@ -142,7 +316,7 @@ real_active (NemoWindowSlot *slot)
 	nemo_window_sync_title (window, slot);
 	nemo_window_sync_zoom_widgets (window);
 	nemo_window_pane_sync_location_widgets (slot->pane);
-	nemo_window_pane_sync_search_widgets (slot->pane);
+	nemo_window_slot_sync_search_widgets (slot);
 
 	if (slot->viewed_file != NULL) {
 		nemo_window_load_view_as_menus (window);
@@ -200,6 +374,8 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 			  G_CALLBACK (floating_bar_action_cb), slot);
 
 	slot->title = g_strdup (_("Loading..."));
+
+    
 }
 
 static void
@@ -209,6 +385,12 @@ nemo_window_slot_dispose (GObject *object)
 	GtkWidget *widget;
 
 	slot = NEMO_WINDOW_SLOT (object);
+
+    GtkActionGroup *group = GTK_ACTION_GROUP (slot->pane->action_group);
+    GtkAction *action;
+    action = gtk_action_group_get_action (group, NEMO_ACTION_SEARCH);
+    g_signal_handlers_disconnect_by_func (action,
+                          action_show_hide_search_callback, slot);
 
 	nemo_window_slot_clear_forward_list (slot);
 	nemo_window_slot_clear_back_list (slot);
@@ -236,6 +418,14 @@ nemo_window_slot_dispose (GObject *object)
 		g_source_remove (slot->loading_timeout_id);
 		slot->loading_timeout_id = 0;
 	}
+
+    if (slot->search_bar) {
+        widget = GTK_WIDGET (slot->search_bar);
+        gtk_widget_destroy (widget);
+        slot->search_bar = NULL;
+    }
+
+    unset_focus_widget (slot);
 
 	nemo_window_slot_set_viewed_file (slot, NULL);
 	/* TODO? why do we unref here? the file is NULL.
@@ -271,6 +461,42 @@ nemo_window_slot_dispose (GObject *object)
 }
 
 static void
+nemo_window_slot_set_property (GObject *object,
+                   guint arg_id,
+                   const GValue *value,
+                   GParamSpec *pspec)
+{
+    NemoWindowSlot *self = NEMO_WINDOW_SLOT (object);
+
+    switch (arg_id) {
+    case PROP_SHOW_SEARCH_BAR:
+        nemo_window_slot_set_show_search_bar (self, g_value_get_boolean (value));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, arg_id, pspec);
+        break;
+    }
+}
+
+static void
+nemo_window_slot_get_property (GObject *object,
+                   guint arg_id,
+                   GValue *value,
+                   GParamSpec *pspec)
+{
+    NemoWindowSlot *self = NEMO_WINDOW_SLOT (object);
+
+    switch (arg_id) {
+    case PROP_SHOW_SEARCH_BAR:
+        g_value_set_boolean (value, self->show_search_bar);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, arg_id, pspec);
+        break;
+    }
+}
+
+static void
 nemo_window_slot_class_init (NemoWindowSlotClass *klass)
 {
 	GObjectClass *oclass = G_OBJECT_CLASS (klass);
@@ -279,6 +505,8 @@ nemo_window_slot_class_init (NemoWindowSlotClass *klass)
 	klass->inactive = real_inactive;
 
 	oclass->dispose = nemo_window_slot_dispose;
+    oclass->set_property = nemo_window_slot_set_property;
+    oclass->get_property = nemo_window_slot_get_property;
 
 	signals[ACTIVE] =
 		g_signal_new ("active",
@@ -306,6 +534,15 @@ nemo_window_slot_class_init (NemoWindowSlotClass *klass)
 			NULL, NULL,
 			g_cclosure_marshal_VOID__VOID,
 			G_TYPE_NONE, 0);
+
+    properties[PROP_SHOW_SEARCH_BAR] =
+        g_param_spec_boolean ("show-search-bar",
+                      "Whether to show the search bar",
+                      "Whether to show the search bar",
+                      FALSE,
+                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+    g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
 
 GFile *
@@ -750,9 +987,72 @@ NemoWindowSlot *
 nemo_window_slot_new (NemoWindowPane *pane)
 {
 	NemoWindowSlot *slot;
-
+    GtkWidget *search_bar;
 	slot = g_object_new (NEMO_TYPE_WINDOW_SLOT, NULL);
 	slot->pane = pane;
 
+
+
+/* search bar */
+    search_bar = nemo_search_bar_new ();
+
+    gtk_box_pack_start (GTK_BOX (slot), search_bar, FALSE, FALSE, 0);
+    gtk_box_reorder_child (GTK_BOX (slot), search_bar, 0);
+    slot->search_bar = search_bar;
+    /* connect to the search bar signals */
+
+    g_signal_connect_object (slot->search_bar, "activate",
+                 G_CALLBACK (search_bar_activate_callback), slot, 0);
+    g_signal_connect_object (slot->search_bar, "cancel",
+                 G_CALLBACK (search_bar_cancel_callback), slot, 0);
+    g_signal_connect_object (nemo_search_bar_get_entry (NEMO_SEARCH_BAR (slot->search_bar)), "focus-in-event",
+                 G_CALLBACK (toolbar_focus_in_callback), slot, 0);
+
+    setup_search_action (slot);
 	return slot;
+}
+
+static void
+toggle_toolbar_search_button (NemoWindowSlot *slot, gboolean active)
+{
+    GtkActionGroup *group;
+    GtkAction *action;
+    group = slot->pane->action_group;
+    action = gtk_action_group_get_action (group, NEMO_ACTION_SEARCH);
+
+    g_signal_handlers_block_by_func (action,
+                     action_show_hide_search_callback, slot);
+    gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), active);
+    g_signal_handlers_unblock_by_func (action,
+                       action_show_hide_search_callback, slot); 
+}
+
+void
+nemo_window_slot_sync_search_widgets (NemoWindowSlot *slot)
+{
+    gboolean active = slot->show_search_bar;
+    if (!active) {
+        nemo_window_slot_hide_search_bar(slot);
+    } else {
+        nemo_window_slot_ensure_search_bar(slot);
+    }
+    toggle_toolbar_search_button (slot, active);
+}
+
+GtkWidget *
+nemo_window_slot_get_search_bar (NemoWindowSlot *self)
+{
+    return self->search_bar;
+}
+
+void
+nemo_window_slot_set_show_search_bar (NemoWindowSlot *self,
+                      gboolean show_search_bar)
+{
+    if (show_search_bar != self->show_search_bar) {
+        self->show_search_bar = show_search_bar;
+        gtk_widget_set_visible (GTK_WIDGET (self->search_bar),
+                                self->show_search_bar);
+        g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SHOW_SEARCH_BAR]);
+    }
 }
