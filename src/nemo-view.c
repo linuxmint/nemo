@@ -6428,6 +6428,28 @@ send_email_other (NemoView *view)
     nemo_file_list_free (l);
 }
 
+static gboolean
+get_show_other_mail_info ()
+{
+    gboolean show = FALSE;
+        /* We can add more xdg-email-compliant clients here.
+           These 2 so far are the only ones I've confirmed work with xdg-email,
+           though balsa starts with the attach file-picker-dialog open,
+           with only the first attachment (if multiple) selected.
+
+           Tried sylpheed also, which did not work properly using
+           xdg-email - only started the client, didn't appear to use
+           any arguments (--attach ..., recipient)
+        */
+    if (g_find_program_in_path ("evolution")        != NULL ||
+        g_find_program_in_path ("balsa")            != NULL) {
+
+        show = TRUE;
+
+    }
+    return show;
+}
+
 static void
 action_paste_files_into_callback (GtkAction *action,
 				  gpointer callback_data)
@@ -8810,6 +8832,7 @@ real_update_menus (NemoView *view)
 	gboolean next_pane_is_writable;
 	gboolean show_properties;
 	gboolean show_thunderbird_sendto;
+    gboolean show_other_mail_sendto;
     gboolean show_set_as_wallpaper;
 
 	selection = nemo_view_get_selection (view);
@@ -8848,6 +8871,8 @@ real_update_menus (NemoView *view)
 
     show_thunderbird_sendto = (g_find_program_in_path ("thunderbird") != NULL);
 
+    show_other_mail_sendto = get_show_other_mail_info();
+
     action = gtk_action_group_get_action (view->details->dir_action_group,
                            NEMO_ACTION_MAILTO_THUNDERBIRD);
     gtk_action_set_visible(action, show_thunderbird_sendto &&
@@ -8855,7 +8880,7 @@ real_update_menus (NemoView *view)
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                            NEMO_ACTION_MAILTO_OTHER);
-    gtk_action_set_visible(action, !show_thunderbird_sendto &&
+    gtk_action_set_visible(action, show_other_mail_sendto &&
                                         !selection_contains_directory);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
