@@ -1185,7 +1185,7 @@ nemo_application_startup (GApplication *app)
 	/* Check the user's ~/.nemo directories and post warnings
 	 * if there are problems.
 	 */
-	//check_required_directories (self);
+	check_required_directories (self);
 	init_desktop (self);
 
 	do_upgrades_once (self);
