@@ -1045,12 +1045,61 @@ nemo_application_local_command_line (GApplication *application,
 	return TRUE;	
 }
 
+static gboolean
+css_provider_load_from_resource (GtkCssProvider *provider,
+                     const char     *resource_path,
+                     GError        **error)
+{
+   GBytes  *data;
+   gboolean retval;
+
+   data = g_resources_lookup_data (resource_path, 0, error);
+   if (!data)
+       return FALSE;
+
+   retval = gtk_css_provider_load_from_data (provider,
+                         g_bytes_get_data (data, NULL),
+                         g_bytes_get_size (data),
+                         error);
+   g_bytes_unref (data);
+
+   return retval;
+}
+
+static void
+nemo_application_add_app_css_provider (void)
+{
+  GtkCssProvider *provider;
+  GError *error = NULL;
+  GdkScreen *screen;
+
+  provider = gtk_css_provider_new ();
+
+  if (!css_provider_load_from_resource (provider, "/org/nemo/nemo-style.css", &error))
+    {
+      g_warning ("Failed to load css file: %s", error->message);
+      g_error_free (error);
+      goto out;
+    }
+
+    screen = gdk_screen_get_default ();
+
+  gtk_style_context_add_provider_for_screen (screen,
+      GTK_STYLE_PROVIDER (provider),
+      GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+out:
+  g_object_unref (provider);
+}
+
 static void
 init_icons_and_styles (void)
 {
 	/* initialize search path for custom icons */
 	gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
 					   NEMO_DATADIR G_DIR_SEPARATOR_S "icons");
+
+    nemo_application_add_app_css_provider ();
 }
 
 static void
