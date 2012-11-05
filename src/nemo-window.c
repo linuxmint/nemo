@@ -1485,25 +1485,25 @@ update_zoom_toolbar_widgets (NemoView *view, NemoWindow *window)
 
     switch (zoom_level) {
         case NEMO_ZOOM_LEVEL_SMALLEST:
-            level_string = _("  25\%");
+            level_string = _("  33\%");
             break;
         case NEMO_ZOOM_LEVEL_SMALLER:
             level_string = _("  50\%");
             break;
         case NEMO_ZOOM_LEVEL_SMALL:
-            level_string = _("  75\%");
+            level_string = _("  66\%");
             break;
         case NEMO_ZOOM_LEVEL_STANDARD:
             level_string = _("100\%");
             break;
         case NEMO_ZOOM_LEVEL_LARGE:
-            level_string = _("125\%");
-            break;
-        case NEMO_ZOOM_LEVEL_LARGER:
             level_string = _("150\%");
             break;
+        case NEMO_ZOOM_LEVEL_LARGER:
+            level_string = _("200\%");
+            break;
         case NEMO_ZOOM_LEVEL_LARGEST:
-            level_string = _("175\%");
+            level_string = _("400\%");
             break;
         default:
             level_string = "";
