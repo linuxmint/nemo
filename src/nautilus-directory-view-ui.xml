@@ -16,8 +16,6 @@
     <menuitem name="New Folder with Selection" action="New Folder with Selection"/>
     <menu action="New Documents">
       <placeholder name="New Documents Placeholder"/>
-      <separator name="After New Documents"/>
-      <menuitem name="New Empty Document" action="New Empty Document"/>
     </menu>
   </placeholder>
   <placeholder name="Global File Items Placeholder">
@@ -44,8 +42,6 @@
       <menuitem name="New Folder" action="New Folder"/>
       <menu action="New Documents">
         <placeholder name="New Documents Placeholder"/>
-        <separator name="After New Documents"/>
-        <menuitem name="New Empty Document" action="New Empty Document"/>
       </menu>
     </placeholder>
     <separator name="Clipboard separator"/>

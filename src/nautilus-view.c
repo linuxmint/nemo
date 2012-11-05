@@ -2097,15 +2097,6 @@ action_new_folder_with_selection_callback (GtkAction *action,
 }
 
 static void
-action_new_empty_file_callback (GtkAction *action,
-				gpointer callback_data)
-{                
-        g_assert (NAUTILUS_IS_VIEW (callback_data));
-
-	nautilus_view_new_file (NAUTILUS_VIEW (callback_data), NULL, NULL);
-}
-
-static void
 action_properties_callback (GtkAction *action,
 			    gpointer callback_data)
 {
@@ -7120,11 +7111,6 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("New Folder with Selection"), NULL,
   /* tooltip */                  N_("Create a new folder containing the selected items"),
 				 G_CALLBACK (action_new_folder_with_selection_callback) },
-  /* name, stock id */         { NAUTILUS_ACTION_NEW_EMPTY_DOCUMENT, NULL,
-    /* translators: this is used to indicate that a document doesn't contain anything */
-  /* label, accelerator */       N_("_Empty Document"), NULL,
-  /* tooltip */                  N_("Create a new empty document inside this folder"),
-				 G_CALLBACK (action_new_empty_file_callback) },
   /* name, stock id */         { NAUTILUS_ACTION_OPEN, NULL,
   /* label, accelerator */       N_("_Open"), "<control>o",
   /* tooltip */                  N_("Open the selected item in this window"),
@@ -7377,27 +7363,6 @@ static const GtkToggleActionEntry directory_view_toggle_entries[] = {
 };
 
 static void
-connect_proxy (NautilusView *view,
-	       GtkAction *action,
-	       GtkWidget *proxy,
-	       GtkActionGroup *action_group)
-{
-	GdkPixbuf *pixbuf;
-	GtkWidget *image;
-
-	if (strcmp (gtk_action_get_name (action), NAUTILUS_ACTION_NEW_EMPTY_DOCUMENT) == 0 &&
-	    GTK_IS_IMAGE_MENU_ITEM (proxy)) {
-		pixbuf = nautilus_ui_get_menu_icon ("text-x-generic");
-		if (pixbuf != NULL) {
-			image = gtk_image_new_from_pixbuf (pixbuf);
-			gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), image);
-
-			g_object_unref (pixbuf);
-		}
-	}
-}
-
-static void
 pre_activate (NautilusView *view,
 	      GtkAction *action,
 	      GtkActionGroup *action_group)
@@ -7460,9 +7425,6 @@ real_merge_menus (NautilusView *view)
 	g_object_unref (action);
 	g_free (tooltip);
 
-	g_signal_connect_object (action_group, "connect-proxy",
-				 G_CALLBACK (connect_proxy), G_OBJECT (view),
-				 G_CONNECT_SWAPPED);
 	g_signal_connect_object (action_group, "pre-activate",
 				 G_CALLBACK (pre_activate), G_OBJECT (view),
 				 G_CONNECT_SWAPPED);
