@@ -203,6 +203,8 @@ struct NemoViewClass {
          * to restore the zoom level of an object to a default setting. */
         void    (* restore_default_zoom_level) (NemoView *view);
 
+    /* return the default zoom level for the current view */
+        NemoZoomLevel  (* get_default_zoom_level)   (NemoView *view);
         /* can_zoom_in is a function pointer that subclasses must override to
          * return whether the view is at maximum size (furthest-in zoom level) */
         gboolean (* can_zoom_in)	 	(NemoView *view);

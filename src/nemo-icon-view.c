@@ -1111,6 +1111,14 @@ nemo_icon_view_restore_default_zoom_level (NemoView *view)
 		(view, get_default_zoom_level (icon_view));
 }
 
+static NemoZoomLevel
+nemo_icon_view_get_default_zoom_level (NemoView *view)
+{
+    g_return_if_fail (NEMO_IS_ICON_VIEW (view));
+
+    return get_default_zoom_level(NEMO_ICON_VIEW (view));
+}
+
 static gboolean 
 nemo_icon_view_can_zoom_in (NemoView *view) 
 {
@@ -2488,6 +2496,7 @@ nemo_icon_view_class_init (NemoIconViewClass *klass)
 	nemo_view_class->remove_file = nemo_icon_view_remove_file;
 	nemo_view_class->reset_to_defaults = nemo_icon_view_reset_to_defaults;
 	nemo_view_class->restore_default_zoom_level = nemo_icon_view_restore_default_zoom_level;
+    nemo_view_class->get_default_zoom_level = nemo_icon_view_get_default_zoom_level;
 	nemo_view_class->reveal_selection = nemo_icon_view_reveal_selection;
 	nemo_view_class->select_all = nemo_icon_view_select_all;
 	nemo_view_class->set_selection = nemo_icon_view_set_selection;

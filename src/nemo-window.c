@@ -1517,7 +1517,7 @@ update_zoom_toolbar_widgets (NemoView *view, NemoWindow *window)
     gtk_action_set_sensitive (GTK_ACTION (action), nemo_view_can_zoom_in (NEMO_VIEW(view)));
 
     action = gtk_action_group_get_action (action_group, NEMO_ACTION_TOOLBAR_ZOOM_NORMAL);
-    gtk_action_set_sensitive (GTK_ACTION (action), zoom_level != NEMO_ZOOM_LEVEL_STANDARD);
+    gtk_action_set_sensitive (GTK_ACTION (action), zoom_level != nemo_view_get_default_zoom_level(NEMO_VIEW (view)));
     gtk_action_set_label (GTK_ACTION (action), level_string);
 }
 
