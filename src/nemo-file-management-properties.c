@@ -529,12 +529,13 @@ nemo_file_management_properties_dialog_setup_list_column_page (GtkBuilder *build
 	GtkWidget *box;
 
 	chooser = nemo_column_chooser_new (NULL);
+
+	set_columns_from_settings (NEMO_COLUMN_CHOOSER (chooser));
+
 	g_signal_connect (chooser, "changed",
 			  G_CALLBACK (columns_changed_callback), chooser);
 	g_signal_connect (chooser, "use_default",
 			  G_CALLBACK (use_default_callback), chooser);
-
-	set_columns_from_settings (NEMO_COLUMN_CHOOSER (chooser));
 
 	gtk_widget_show (chooser);
 	box = GTK_WIDGET (gtk_builder_get_object (builder, "list_columns_vbox"));
