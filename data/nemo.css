@@ -1,0 +1,39 @@
+/* sidebar */
+
+NemoWindow .sidebar .view {
+	background-color: #3F3F3F;
+	color: #EEEEEE;
+	text-shadow: 1px 1px alpha (#000000, 0.8);
+}
+
+
+/* inactive pane */
+
+.nemo-inactive-pane .view {
+    background-color: shade(@theme_base_color, 0.9);
+}
+
+.nemo-toolbar-upperhalf.toolbar {
+    -GtkWidget-window-dragging: true;
+
+    background-image: -gtk-gradient(linear, left top, left bottom,
+                                     from (shade(@theme_bg_color, 1.0)),
+                                     to (shade(@theme_bg_color, 0.94)));
+    padding: 2px;
+    color: @theme_fg_color;
+}
+
+.nemo-toolbar-lowerhalf.toolbar {
+    -GtkWidget-window-dragging: true;
+
+    background-image: -gtk-gradient(linear, left top, left bottom,
+                                     from (shade(@theme_bg_color, .94)),
+                                     to (shade(@theme_bg_color, 0.88)));
+
+    border-color: shade(@theme_bg_color, 0.7);
+    border-style: solid;
+    border-width: 0px 0 1px 0;
+    padding: 2px;
+    color: @theme_fg_color;
+}
+
