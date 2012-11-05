@@ -1299,19 +1299,6 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
   
    	g_object_unref (action);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     action = GTK_ACTION (gtk_action_new (NEMO_ACTION_TOOLBAR_ZOOM_OUT,
                          _("Zoom Out"),
                          _("Zoom Out"),
@@ -1322,7 +1309,6 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
     gtk_action_group_add_action (action_group, action);
     gtk_action_set_icon_name (GTK_ACTION (action), "nemo-zoom-out-symbolic");
     g_object_unref (action);
-
 
     action = GTK_ACTION (gtk_action_new (NEMO_ACTION_TOOLBAR_ZOOM_NORMAL,
                          _("100\%"),
@@ -1345,21 +1331,6 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
     gtk_action_group_add_action (action_group, action);
     gtk_action_set_icon_name (GTK_ACTION (action), "nemo-zoom-in-symbolic");
     g_object_unref (action);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_ICON_VIEW,
                          _("Icons"),
