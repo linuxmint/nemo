@@ -8604,10 +8604,12 @@ real_update_menus (NautilusView *view)
 		      NAUTILUS_ICON_DELETE : NAUTILUS_ICON_TRASH_FULL,
 		      NULL);
 	/* if the backend supports delete but not trash then don't show trash */
-	if (!can_trash_files && can_delete_files)
+	if (!can_trash_files && can_delete_files) {
 		gtk_action_set_visible (action, FALSE);
-	else
+	} else {
+		gtk_action_set_visible (action, TRUE);
 		gtk_action_set_sensitive (action, can_trash_files);
+	}
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_DELETE);
