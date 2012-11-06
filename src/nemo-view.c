@@ -9216,7 +9216,7 @@ real_update_menus (NemoView *view)
 
 
 	show_desktop_target =
-		g_settings_get_boolean (gnome_background_preferences, NEMO_PREFERENCES_SHOW_DESKTOP) &&
+		g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP) &&
 		!g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,

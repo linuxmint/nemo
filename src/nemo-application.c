@@ -563,7 +563,7 @@ desktop_changed_callback (gpointer user_data)
 {
 	NemoApplication *application;
 	application = NEMO_APPLICATION (user_data);
-	if (g_settings_get_boolean (gnome_background_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
+	if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
 		nemo_application_open_desktop (application);
 	} else {
 		nemo_application_close_desktop ();
@@ -573,7 +573,7 @@ desktop_changed_callback (gpointer user_data)
 static void
 monitors_changed_callback (GdkScreen *screen, NemoApplication *application)
 {
-	if (g_settings_get_boolean (gnome_background_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
+	if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
 		nemo_application_close_desktop ();
 		nemo_application_open_desktop (application);
 	} else {
@@ -1111,7 +1111,7 @@ init_desktop (NemoApplication *self)
 	nemo_desktop_link_monitor_get ();
 
 	if (!self->priv->no_desktop &&
-	    !g_settings_get_boolean (gnome_background_preferences,
+	    !g_settings_get_boolean (nemo_desktop_preferences,
 				     NEMO_PREFERENCES_SHOW_DESKTOP)) {
 		self->priv->no_desktop = TRUE;
 	}
@@ -1121,7 +1121,7 @@ init_desktop (NemoApplication *self)
 	}
 
 	/* Monitor the preference to show or hide the desktop */
-	g_signal_connect_swapped (gnome_background_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
+	g_signal_connect_swapped (nemo_desktop_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
 				  G_CALLBACK (desktop_changed_callback),
 				  self);
 
