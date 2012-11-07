@@ -1167,10 +1167,7 @@ update_location (NautilusQueryEditor *editor)
 		if (nautilus_file_is_home (file)) {
 			name = g_strdup (_("Home"));
 		} else {
-			char *filename;
-			filename = nautilus_file_get_display_name (file);
-			name = g_strdup_printf ("\342\200\234%s\342\200\235", filename);
-			g_free (filename);
+			name = nautilus_file_get_display_name (file);
 		}
 		gtk_button_set_label (GTK_BUTTON (editor->details->search_current_button),
 				      name);
