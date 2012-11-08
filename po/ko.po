@@ -12,13 +12,14 @@
 # 주의:
 # - 이 프로그램의 이름인 Nautilus는 "노틸러스"로 음역.
 # - Home은 "내 폴더"로 통일
+# - "Translators: " 안내를 확인하고 동사로 상태인지 액션인지 확인하고 번역.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-09-16 15:49+0000\n"
-"PO-Revision-Date: 2012-11-03 01:52+0900\n"
+"PO-Revision-Date: 2012-11-08 11:20+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: GNOME Korea <gnome-kr@googlegroups.com>\n"
 "Language: Korean\n"
@@ -68,7 +69,7 @@ msgstr "글자"
 
 #: ../eel/eel-editable-label.c:312
 msgid "The text of the label."
-msgstr "라벨의 글자."
+msgstr "레이블의 글자."
 
 #: ../eel/eel-editable-label.c:318
 msgid "Justification"
@@ -95,7 +96,7 @@ msgstr "커서 위치"
 
 #: ../eel/eel-editable-label.c:336
 msgid "The current position of the insertion cursor in chars."
-msgstr "입력 커서의 현재 위치(char 단위)."
+msgstr "입력 커서의 현재 위치(문자 수 단위)."
 
 #: ../eel/eel-editable-label.c:345
 msgid "Selection Bound"
@@ -1053,35 +1054,35 @@ msgid "Unable to access “%s”"
 msgstr "'%s'에 접근할 수 없습니다"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2438
-#, c-format
+#, c-format, fuzzy
 msgid "Preparing to copy %'d file (%S)"
 msgid_plural "Preparing to copy %'d files (%S)"
-msgstr[0] "%'d 파일을 복사할 준비 중 (%S)"
+msgstr[0] "파일 %'d개(%S) 복사 준비 중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2444
-#, c-format
+#, c-format, fuzzy
 msgid "Preparing to move %'d file (%S)"
 msgid_plural "Preparing to move %'d files (%S)"
-msgstr[0] "%'d 파일을 옮길 준비 중 (%S)"
+msgstr[0] "파일 %'d개(%S) 옮길 준비 중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2450
 #, c-format
 msgid "Preparing to delete %'d file (%S)"
 msgid_plural "Preparing to delete %'d files (%S)"
-msgstr[0] "%'d 파일을 지울 준비 중 (%S)"
+msgstr[0] "파일 %'d개(%S) 삭제 준비 중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2456
 #, c-format
 msgid "Preparing to trash %'d file"
 msgid_plural "Preparing to trash %'d files"
-msgstr[0] "%'d 파일을 휴지통에 버릴 준비 중"
+msgstr[0] "파일 %'d개 휴지통에 버릴 준비 중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2487
 #: ../libnautilus-private/nautilus-file-operations.c:3410
 #: ../libnautilus-private/nautilus-file-operations.c:3542
 #: ../libnautilus-private/nautilus-file-operations.c:3587
 msgid "Error while copying."
-msgstr "복사중 오류."
+msgstr "복사 중 오류."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2489
 #: ../libnautilus-private/nautilus-file-operations.c:3540
@@ -1163,28 +1164,28 @@ msgstr "\"%B\" 복제중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2961
 msgid "Moving file %'d of %'d (in “%B”) to “%B”"
-msgstr "%'d개의 파일을 %'d개 중에서 (\"%B\"에서) \"%B\"(으)로 이동중"
+msgstr "파일 %'d개(전체 %'d개) (\"%B\"에서) \"%B\"(으)로 옮기는 중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2963
 msgid "Copying file %'d of %'d (in “%B”) to “%B”"
-msgstr "%'d개의 파일을 %'d개 중에서 (\"%B\"에서) \"%B\"(으)로 복사중"
+msgstr "파일 %'d개(전체 %'d개) (\"%B\"에서) \"%B\"(으)로 복사 중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2970
 msgid "Duplicating file %'d of %'d (in “%B”)"
-msgstr "%'d개의 파일을 %'d개 중에서 (\"%B\"에서) 복제중"
+msgstr "파일 %'d개(전체 %'d개) (\"%B\"에서) 복제 중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2979
 msgid "Moving file %'d of %'d to “%B”"
-msgstr "%'d개의 파일을 %'d개 중에서 \"%B\"(으)로 이동중"
+msgstr "파일 %'d개(전체 %'d개) \"%B\"(으)로 옮기는 중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2981
 msgid "Copying file %'d of %'d to “%B”"
-msgstr "%'d개의 파일을 %'d개 중에서 \"%B\"(으)로 복사중"
+msgstr "파일 %'d개(전체 %'d개) \"%B\"(으)로 복사 중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2987
 #, c-format
 msgid "Duplicating file %'d of %'d"
-msgstr "%'d개의 파일을 %'d개 중에서 복제 중"
+msgstr "파일 %'d개(전체 %'d개) 복제 중"
 
 #. To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "4 kb of 4 MB"
 #: ../libnautilus-private/nautilus-file-operations.c:3006
@@ -1305,7 +1306,7 @@ msgstr "\"%B\"(으)로 옮길 준비중"
 #, c-format
 msgid "Preparing to move %'d file"
 msgid_plural "Preparing to move %'d files"
-msgstr[0] "%'d개의 파일을 옮길 준비중"
+msgstr[0] "파일 %'d개 옮길 준비 중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:4946
 #, c-format
@@ -1324,7 +1325,7 @@ msgstr "\"%B\"의 링크를 만드는 중"
 #, c-format
 msgid "Making link to %'d file"
 msgid_plural "Making links to %'d files"
-msgstr[0] "%'d개의 파일에 대한 링크 만드는 중"
+msgstr[0] "파일 %'d개에 대한 링크 만드는 중"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5382
 msgid "Error while creating link to %B."
@@ -3683,7 +3684,7 @@ msgstr "자세히 보이기"
 #, c-format
 msgid "%'d file operation active"
 msgid_plural "%'d file operations active"
-msgstr[0] "%'d개 파일 동작 활성화"
+msgstr[0] "파일 동작 %'d개 활성화"
 
 #: ../src/nautilus-progress-ui-handler.c:273
 msgid "All file operations have been successfully completed"
@@ -4029,19 +4030,19 @@ msgstr "선택한 항목을 원래 위치로 복구합니다"
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:209
 msgid "Empty"
-msgstr "(비었음)"
+msgstr "비우기"
 
 #: ../src/nautilus-view.c:960
 #, c-format
 msgid "This will open %'d separate tab."
 msgid_plural "This will open %'d separate tabs."
-msgstr[0] "%'d개의 탭을 각각 엽니다."
+msgstr[0] "탭 %'d개를 각각 엽니다."
 
 #: ../src/nautilus-view.c:963
 #, c-format
 msgid "This will open %'d separate window."
 msgid_plural "This will open %'d separate windows."
-msgstr[0] "%'d개의 창을 각각 엽니다."
+msgstr[0] "창 %'d개를 각각 엽니다."
 
 #: ../src/nautilus-view.c:1461
 msgid "Select Items Matching"
@@ -4096,33 +4097,33 @@ msgstr "\"%s\"을(를) 선택했습니다"
 #, c-format
 msgid "%'d folder selected"
 msgid_plural "%'d folders selected"
-msgstr[0] "%'d개의 폴더를 선택했습니다"
+msgstr[0] "폴더 %'d개를 선택했습니다"
 
 #: ../src/nautilus-view.c:2904
 #, c-format
 msgid "(containing %'d item)"
 msgid_plural "(containing %'d items)"
-msgstr[0] " (%'d개의 항목 포함)"
+msgstr[0] "(항목 %'d개 들어 있음)"
 
 #. translators: this is preceded with a string of form 'N folders' (N more than 1)
 #: ../src/nautilus-view.c:2915
 #, c-format
 msgid "(containing a total of %'d item)"
 msgid_plural "(containing a total of %'d items)"
-msgstr[0] " (모두 %'d개의 항목 포함)"
+msgstr[0] "(항목 전체 %'d개 들어 있음)"
 
 #: ../src/nautilus-view.c:2930
 #, c-format
 msgid "%'d item selected"
 msgid_plural "%'d items selected"
-msgstr[0] "%'d개의 항목을 선택했습니다"
+msgstr[0] "항목 %'d개를 선택했습니다"
 
 #. Folders selected also, use "other" terminology
 #: ../src/nautilus-view.c:2937
 #, c-format
 msgid "%'d other item selected"
 msgid_plural "%'d other items selected"
-msgstr[0] "%'d개의 기타 항목을 선택했습니다"
+msgstr[0] "기타 항목 %'d개를 선택했습니다"
 
 #. This is marked for translation in case a localiser
 #. * needs to use something other than parentheses. The
@@ -4839,7 +4840,7 @@ msgstr "연 폴더를 휴지통에 버립니다"
 #, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
-msgstr[0] "선택한 내용으로 새 폴더 만들기 (%'d개 항목)"
+msgstr[0] "선택한 내용으로 새 폴더 만들기(항목 %'d개)"
 
 #: ../src/nautilus-view.c:8564
 #, c-format
@@ -5230,7 +5231,7 @@ msgstr "열 위치를 지정합니다"
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:555
 msgid "Bookmark this Location"
-msgstr "이 위치에 대한 책갈피 추가"
+msgstr "이 위치에 책갈피 추가"
 
 #: ../src/nautilus-window-menus.c:556
 msgid "Add a bookmark for the current location"
