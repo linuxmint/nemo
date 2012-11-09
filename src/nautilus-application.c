@@ -669,22 +669,6 @@ nautilus_application_open (GApplication *app,
 		      self->priv->geometry);
 }
 
-static GtkWindow *
-get_focus_window (GtkApplication *application)
-{
-	GList *windows;
-	GtkWindow *window = NULL;
-
-	/* the windows are ordered with the last focused first */
-	windows = gtk_application_get_windows (application);
-
-	if (windows != NULL) {
-		window = g_list_nth_data (windows, 0);
-	}
-
-	return window;
-}
-
 static void
 action_new_window (GSimpleAction *action,
 		   GVariant *parameter,
@@ -694,7 +678,7 @@ action_new_window (GSimpleAction *action,
 	NautilusWindow *window;
 	GtkWindow *cur_window;
 
-	cur_window = get_focus_window (application);
+	cur_window = gtk_application_get_active_window (application);
 	window = nautilus_application_create_window (NAUTILUS_APPLICATION (application),
 						     cur_window ?
 						     gtk_window_get_screen (cur_window) :
@@ -770,7 +754,7 @@ on_connect_server_response (GtkDialog      *dialog,
 {
 	if (response == GTK_RESPONSE_OK) {
 		GFile *location;
-		NautilusWindow *window = NAUTILUS_WINDOW (get_focus_window (application));
+		NautilusWindow *window = NAUTILUS_WINDOW (gtk_application_get_active_window (application));
 
 		location = nautilus_connect_server_dialog_get_location (NAUTILUS_CONNECT_SERVER_DIALOG (dialog));
 		if (location != NULL) {
@@ -813,7 +797,8 @@ action_connect_to_server (GSimpleAction *action,
 {
 	GtkApplication *application = user_data;
 
-	nautilus_application_connect_server (NAUTILUS_APPLICATION (application), NAUTILUS_WINDOW (get_focus_window (application)));
+	nautilus_application_connect_server (NAUTILUS_APPLICATION (application),
+					     NAUTILUS_WINDOW (gtk_application_get_active_window (application)));
 }
 
 static void
@@ -825,7 +810,7 @@ action_enter_location (GSimpleAction *action,
 	NautilusWindow *window;
 	GtkWindow *cur_window;
 
-	cur_window = get_focus_window (application);
+	cur_window = gtk_application_get_active_window (application);
 	window = NAUTILUS_WINDOW (cur_window);
 	nautilus_window_ensure_location_entry (window);
 }
@@ -837,7 +822,8 @@ action_bookmarks (GSimpleAction *action,
 {
 	GtkApplication *application = user_data;
 
-	nautilus_application_edit_bookmarks (NAUTILUS_APPLICATION (application), NAUTILUS_WINDOW (get_focus_window (application)));
+	nautilus_application_edit_bookmarks (NAUTILUS_APPLICATION (application),
+					     NAUTILUS_WINDOW (gtk_application_get_active_window (application)));
 }
 
 static void
@@ -846,7 +832,7 @@ action_preferences (GSimpleAction *action,
 		    gpointer user_data)
 {
 	GtkApplication *application = user_data;
-	nautilus_file_management_properties_dialog_show (get_focus_window (application));
+	nautilus_file_management_properties_dialog_show (gtk_application_get_active_window (application));
 }
 
 static void
@@ -856,7 +842,7 @@ action_about (GSimpleAction *action,
 {
 	GtkApplication *application = user_data;
 
-	nautilus_window_show_about_dialog (NAUTILUS_WINDOW (get_focus_window (application)));
+	nautilus_window_show_about_dialog (NAUTILUS_WINDOW (gtk_application_get_active_window (application)));
 }
 
 static void
@@ -869,7 +855,7 @@ action_help (GSimpleAction *action,
 	GtkApplication *application = user_data;
 	GError *error = NULL;
 
-	window = get_focus_window (application);	
+	window = gtk_application_get_active_window (application);
 	gtk_show_uri (window ? 
 		      gtk_window_get_screen (GTK_WINDOW (window)) :
 		      gdk_screen_get_default (),
