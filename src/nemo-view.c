@@ -6555,15 +6555,14 @@ action_send_to_mintstick_callback (GtkAction *action,
     GList *selection;
     NemoFileInfo *file;
 
-    gchar *argv[3];
+    gchar *argv[2];
 
     view = NEMO_VIEW (callback_data);
     selection = nemo_view_get_selection (view);
     file = NEMO_FILE (selection->data);
 
     argv[0] = "mintstick";
-    argv[1] = "sent-from-nemo";
-    argv[2] = g_filename_from_uri (nemo_file_info_get_uri (file), NULL, NULL);
+    argv[1] = g_filename_from_uri (nemo_file_info_get_uri (file), NULL, NULL);
     g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
 
     nemo_file_list_free (selection);
