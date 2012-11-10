@@ -4625,9 +4625,8 @@ reset_open_with_menu (NemoView *view, GList *selection)
 
 		file = NEMO_FILE (node->data);
 
-		other_applications_visible &= ((!nemo_mime_file_opens_in_view (file) &&
-						!nemo_file_is_nemo_link (file)) ||
-					       nemo_file_is_directory (file));
+		other_applications_visible &= (!nemo_mime_file_opens_in_view (file) ||
+                                        nemo_file_is_directory (file));
 	}
 
 	default_app = NULL;
