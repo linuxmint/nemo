@@ -47,8 +47,6 @@ typedef struct {
 	GtkWidget *combo;
 
 	GtkWidget *type_widget;
-	
-	void *data;
 } NautilusQueryEditorRow;
 
 
@@ -57,7 +55,6 @@ typedef struct {
 	GtkWidget * (*create_widgets)      (NautilusQueryEditorRow *row);
 	void        (*add_to_query)        (NautilusQueryEditorRow *row,
 					    NautilusQuery          *query);
-	void        (*free_data)           (NautilusQueryEditorRow *row);
 	void        (*add_rows_from_query) (NautilusQueryEditor *editor,
 					    NautilusQuery *query);
 } NautilusQueryEditorRowOps;
@@ -66,14 +63,12 @@ struct NautilusQueryEditorDetails {
 	GtkWidget *entry;
 	gboolean change_frozen;
 	guint typing_timeout_id;
-	gboolean is_visible;
 
 	GtkWidget *search_current_button;
 	GtkWidget *search_all_button;
 	char *current_uri;
 
 	GList *rows;
-	char *last_set_query_text;
 	gboolean got_preedit;
 };
 
@@ -97,7 +92,6 @@ static NautilusQueryEditorRow * nautilus_query_editor_add_row (NautilusQueryEdit
 static GtkWidget *type_row_create_widgets      (NautilusQueryEditorRow *row);
 static void       type_row_add_to_query        (NautilusQueryEditorRow *row,
 					        NautilusQuery          *query);
-static void       type_row_free_data           (NautilusQueryEditorRow *row);
 static void       type_add_rows_from_query     (NautilusQueryEditor    *editor,
 					        NautilusQuery          *query);
 
@@ -107,7 +101,6 @@ static NautilusQueryEditorRowOps row_type[] = {
 	{ N_("File Type"),
 	  type_row_create_widgets,
 	  type_row_add_to_query,
-	  type_row_free_data,
 	  type_add_rows_from_query
 	},
 };
@@ -721,11 +714,6 @@ type_row_add_to_query (NautilusQueryEditorRow *row,
 	}
 }
 
-static void
-type_row_free_data (NautilusQueryEditorRow *row)
-{
-}
-
 static gboolean
 all_group_types_in_list (char **group_types, GList *mime_types)
 {
@@ -872,8 +860,6 @@ remove_row_cb (GtkButton *clicked_button, NautilusQueryEditorRow *row)
 	gtk_container_remove (GTK_CONTAINER (editor), row->toolbar);
 	
 	editor->details->rows = g_list_remove (editor->details->rows, row);
-
-	row_type[row->type].free_data (row);
 	g_free (row);
 
 	nautilus_query_editor_changed (editor);
@@ -900,9 +886,6 @@ row_type_combo_changed_cb (GtkComboBox *combo_box, NautilusQueryEditorRow *row)
 		gtk_widget_destroy (row->type_widget);
 		row->type_widget = NULL;
 	}
-
-	row_type[row->type].free_data (row);
-	row->data = NULL;
 
 	row->type = type;
 	
@@ -1217,8 +1200,6 @@ nautilus_query_editor_set_query (NautilusQueryEditor	*editor,
 		}
 	}
 
-	g_free (editor->details->last_set_query_text);
-	editor->details->last_set_query_text = text;
 
 	editor->details->change_frozen = FALSE;
 }
