@@ -70,6 +70,8 @@ struct NautilusQueryEditorDetails {
 
 	GList *rows;
 	gboolean got_preedit;
+
+	NautilusQuery *query;
 };
 
 enum {
@@ -246,6 +248,8 @@ nautilus_query_editor_dispose (GObject *object)
 		g_source_remove (editor->details->typing_timeout_id);
 		editor->details->typing_timeout_id = 0;
 	}
+
+	g_clear_object (&editor->details->query);
 
 	G_OBJECT_CLASS (nautilus_query_editor_parent_class)->dispose (object);
 }
@@ -852,15 +856,20 @@ get_next_free_type (NautilusQueryEditor *editor)
 }
 
 static void
+row_destroy (NautilusQueryEditorRow *row)
+{
+	gtk_widget_destroy (row->toolbar);
+	g_free (row);
+}
+
+static void
 remove_row_cb (GtkButton *clicked_button, NautilusQueryEditorRow *row)
 {
 	NautilusQueryEditor *editor;
 
 	editor = row->editor;
-	gtk_container_remove (GTK_CONTAINER (editor), row->toolbar);
-	
 	editor->details->rows = g_list_remove (editor->details->rows, row);
-	g_free (row);
+	row_destroy (row);
 
 	nautilus_query_editor_changed (editor);
 }
@@ -1169,11 +1178,29 @@ nautilus_query_editor_set_location (NautilusQueryEditor *editor,
 	update_location (editor);
 }
 
+static void
+update_rows (NautilusQueryEditor *editor,
+	     NautilusQuery       *query)
+{
+	NautilusQueryEditorRowType type;
+
+	/* if we were just created, set the rows from query,
+	 * otherwise, re-use the query setting we have already.
+	 */
+	if (query != NULL && editor->details->query == NULL) {
+		for (type = 0; type < NAUTILUS_QUERY_EDITOR_ROW_LAST; type++) {
+			row_type[type].add_rows_from_query (editor, query);
+		}
+	} else if (query == NULL && editor->details->query != NULL) {
+		g_list_free_full (editor->details->rows, (GDestroyNotify) row_destroy);
+		editor->details->rows = NULL;
+	}
+}
+
 void
 nautilus_query_editor_set_query (NautilusQueryEditor	*editor,
 				 NautilusQuery		*query)
 {
-	NautilusQueryEditorRowType type;
 	char *text = NULL;
 
 	if (query != NULL) {
@@ -1190,16 +1217,14 @@ nautilus_query_editor_set_query (NautilusQueryEditor	*editor,
 	g_free (editor->details->current_uri);
 	editor->details->current_uri = NULL;
 
+	update_rows (editor, query);
+	g_clear_object (&editor->details->query);
+
 	if (query != NULL) {
+		editor->details->query = g_object_ref (query);
 		editor->details->current_uri = nautilus_query_get_location (query);
 		update_location (editor);
-
-
-		for (type = 0; type < NAUTILUS_QUERY_EDITOR_ROW_LAST; type++) {
-			row_type[type].add_rows_from_query (editor, query);
-		}
 	}
-
 
 	editor->details->change_frozen = FALSE;
 }
