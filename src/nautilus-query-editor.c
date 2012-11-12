@@ -238,6 +238,13 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 }
 
 static void
+row_destroy (NautilusQueryEditorRow *row)
+{
+	gtk_widget_destroy (row->toolbar);
+	g_free (row);
+}
+
+static void
 nautilus_query_editor_dispose (GObject *object)
 {
 	NautilusQueryEditor *editor;
@@ -250,6 +257,9 @@ nautilus_query_editor_dispose (GObject *object)
 	}
 
 	g_clear_object (&editor->details->query);
+
+	g_list_free_full (editor->details->rows, (GDestroyNotify) row_destroy);
+	editor->details->rows = NULL;
 
 	G_OBJECT_CLASS (nautilus_query_editor_parent_class)->dispose (object);
 }
@@ -853,13 +863,6 @@ get_next_free_type (NautilusQueryEditor *editor)
 		}
 	}
 	return NAUTILUS_QUERY_EDITOR_ROW_TYPE;
-}
-
-static void
-row_destroy (NautilusQueryEditorRow *row)
-{
-	gtk_widget_destroy (row->toolbar);
-	g_free (row);
 }
 
 static void
