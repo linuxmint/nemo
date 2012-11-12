@@ -1154,6 +1154,7 @@ static void
 update_location (NautilusQueryEditor *editor)
 {
 	NautilusFile *file;
+	GtkWidget *label;
 
 	file = nautilus_file_get_by_uri (editor->details->current_uri);
 
@@ -1164,9 +1165,13 @@ update_location (NautilusQueryEditor *editor)
 		} else {
 			name = nautilus_file_get_display_name (file);
 		}
-		gtk_button_set_label (GTK_BUTTON (editor->details->search_current_button),
-				      name);
+
+		gtk_button_set_label (GTK_BUTTON (editor->details->search_current_button), name);
 		g_free (name);
+
+		label = gtk_bin_get_child (GTK_BIN (editor->details->search_current_button));
+		gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_MIDDLE);
+		g_object_set (label, "max-width-chars", 30, NULL);
 
 		nautilus_file_unref (file);
 	}
