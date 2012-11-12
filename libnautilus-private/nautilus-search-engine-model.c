@@ -109,20 +109,35 @@ model_directory_ready_cb (NautilusDirectory	*directory,
 {
 	NautilusSearchEngineModel *model = user_data;
 	gchar *uri, *display_name;
-	GList *files, *l, *hits;
+	GList *files, *hits, *mime_types, *l, *m;
 	NautilusFile *file;
 	gdouble match;
+	gboolean found;
 	NautilusSearchHit *hit;
 
 	files = nautilus_directory_get_file_list (directory);
+	mime_types = nautilus_query_get_mime_types (model->details->query);
 	hits = NULL;
 
 	for (l = files; l != NULL; l = l->next) {
 		file = l->data;
+
 		display_name = nautilus_file_get_display_name (file);
 		match = nautilus_query_matches_string (model->details->query, display_name);
+		found = (match > -1);
 
-		if (match > -1) {
+		if (found && mime_types) {
+			found = FALSE;
+
+			for (m = mime_types; m != NULL; m = m->next) {
+				if (nautilus_file_is_mime_type (file, m->data)) {
+					found = TRUE;
+					break;
+				}
+			}
+		}
+
+		if (found) {
 			uri = nautilus_file_get_uri (file);
 			hit = nautilus_search_hit_new (uri);
 			nautilus_search_hit_set_fts_rank (hit, match);
@@ -133,6 +148,7 @@ model_directory_ready_cb (NautilusDirectory	*directory,
 		g_free (display_name);
 	}
 
+	g_list_free_full (mime_types, g_free);
 	nautilus_file_list_free (files);
 	model->details->hits = hits;
 
