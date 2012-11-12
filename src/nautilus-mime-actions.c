@@ -2079,13 +2079,6 @@ activation_get_activation_uris (ActivateParameters *parameters)
 			parameters->locations = g_list_delete_link (parameters->locations, l);
 			continue;
 		}
-		
-		if (nautilus_file_is_symbolic_link (file)) {
-			nautilus_file_invalidate_attributes 
-				(file,
-				 NAUTILUS_FILE_ATTRIBUTE_INFO |
-				 NAUTILUS_FILE_ATTRIBUTE_LINK_INFO);
-		}
 	}
 
 	if (parameters->locations == NULL) {
