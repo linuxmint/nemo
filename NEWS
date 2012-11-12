@@ -1,3 +1,11 @@
+Major changes in 3.6.3 are:
+* Fix symbolic links on remote volumes not activating default action
+* Fix duplicated query editor filter rows when changing search location
+* Fix search toolbar disappearing with very long folder names
+* Fix missing Trash action after "Recent" was visited
+* Fix missing frame around thumbnails for some zoom factors
+* Fix crash when unmounting remote volumes
+
 Major changes in 3.6.2 are:
 * Open default location for remote shares when mounting
 * Resolve symbolic links before launching a file
