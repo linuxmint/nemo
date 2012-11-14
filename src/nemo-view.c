@@ -324,6 +324,7 @@ static void     user_dirs_changed                              (NemoView *view);
 static gboolean file_list_all_are_folders                      (GList *file_list);
 
 static void unschedule_pop_up_location_context_menu (NemoView *view);
+static void disconnect_bookmark_signals (NemoView *view);
 
 G_DEFINE_TYPE (NemoView, nemo_view, GTK_TYPE_SCROLLED_WINDOW);
 #define parent_class nemo_view_parent_class
@@ -777,7 +778,7 @@ bookmark_callback_data_new (NemoView *view,
     BookmarkCallbackData *result;
 
     result = g_new0 (BookmarkCallbackData, 1);
-    result->view = g_object_ref(view);
+    result->view = view;
     result->dest_uri = g_strdup(uri);
     return result;
 }
@@ -785,8 +786,7 @@ bookmark_callback_data_new (NemoView *view,
 static void
 bookmark_callback_data_free (BookmarkCallbackData *data)
 {
-    g_object_unref (data->view);
-    g_strfreev ((char **)data->dest_uri);
+    g_free ((char *)data->dest_uri);
     g_free (data);
 }
 
@@ -2669,6 +2669,9 @@ real_unmerge_menus (NemoView *view)
 	if (view->details->window == NULL) {
 		return;
 	}
+    if (GTK_IS_ACTION_GROUP (view->details->copy_move_action_groups[0])) {
+        disconnect_bookmark_signals (view);
+    }
 
 	ui_manager = nemo_window_get_ui_manager (view->details->window);
 
@@ -2704,6 +2707,13 @@ nemo_view_destroy (GtkWidget *object)
 	view = NEMO_VIEW (object);
 
 	disconnect_model_handlers (view);
+
+    if (view->details->bookmarks_changed_id != 0) {
+        g_signal_handler_disconnect (view->details->bookmarks,
+                         view->details->bookmarks_changed_id);
+        view->details->bookmarks_changed_id = 0;
+    }
+    g_clear_object (&view->details->bookmarks);
 
 	nemo_view_unmerge_menus (view);
 	
@@ -2784,13 +2794,6 @@ nemo_view_finalize (GObject *object)
 	}
 
 	g_hash_table_destroy (view->details->non_ready_files);
-
-    if (view->details->bookmarks_changed_id != 0) {
-        g_signal_handler_disconnect (view->details->bookmarks,
-                         view->details->bookmarks_changed_id);
-        view->details->bookmarks_changed_id = 0;
-    }
-    g_clear_object (&view->details->bookmarks);
 
 	G_OBJECT_CLASS (nemo_view_parent_class)->finalize (object);
 }
@@ -4917,6 +4920,34 @@ reset_move_copy_to_menu (NemoView *view)
         g_object_unref (root);
         g_object_unref (icon);
         g_free (mount_uri);
+    }
+}
+
+
+
+static void
+disconnect_bookmark (gpointer data, gpointer callback_data)
+{
+    GtkAction *action = GTK_ACTION (data);
+    g_signal_handlers_disconnect_matched (action,
+                          G_SIGNAL_MATCH_FUNC, 0, 0,
+                          NULL, action_move_bookmark_callback, NULL);
+    g_signal_handlers_disconnect_matched (action,
+                          G_SIGNAL_MATCH_FUNC, 0, 0,
+                          NULL, action_copy_bookmark_callback, NULL);
+}
+
+static void
+disconnect_bookmark_signals (NemoView *view)
+{
+    int i;
+    GList *list;
+    GtkActionGroup *group;
+    for (i = 0; i < 4; i++) {
+        group = GTK_ACTION_GROUP (view->details->copy_move_action_groups[i]);
+        list = gtk_action_group_list_actions (group);
+        g_list_foreach (list, disconnect_bookmark, NULL);
+        g_list_free (list);
     }
 }
 
