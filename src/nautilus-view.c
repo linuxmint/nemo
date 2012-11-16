@@ -315,7 +315,6 @@ static gboolean file_list_all_are_folders                      (GList *file_list
 static void unschedule_pop_up_location_context_menu (NautilusView *view);
 
 G_DEFINE_TYPE (NautilusView, nautilus_view, GTK_TYPE_SCROLLED_WINDOW);
-#define parent_class nautilus_view_parent_class
 
 /* virtual methods (public and non-public) */
 
@@ -9632,7 +9631,7 @@ nautilus_view_scroll_event (GtkWidget *widget,
 		return TRUE;
 	}
 
-	return GTK_WIDGET_CLASS (parent_class)->scroll_event (widget, event);
+	return GTK_WIDGET_CLASS (nautilus_view_parent_class)->scroll_event (widget, event);
 }
 
 
@@ -9648,8 +9647,8 @@ nautilus_view_parent_set (GtkWidget *widget,
 	parent = gtk_widget_get_parent (widget);
 	g_assert (parent == NULL || old_parent == NULL);
 
-	if (GTK_WIDGET_CLASS (parent_class)->parent_set != NULL) {
-		GTK_WIDGET_CLASS (parent_class)->parent_set (widget, old_parent);
+	if (GTK_WIDGET_CLASS (nautilus_view_parent_class)->parent_set != NULL) {
+		GTK_WIDGET_CLASS (nautilus_view_parent_class)->parent_set (widget, old_parent);
 	}
 
 	if (parent != NULL) {
