@@ -72,7 +72,7 @@ headers =					\
 	nautilus-special-location-bar.h		\
 	$(NULL)
 
-nautilus-resources.c: nautilus.gresource.xml $(UI_FILES)
+nautilus-resources.c: nautilus.gresource.xml $(shell glib-compile-resources --generate-dependencies $(srcdir)/nautilus.gresource.xml)
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-source --c-name nautilus $(srcdir)/nautilus.gresource.xml
 
 nautilus-resources.h: nautilus.gresource.xml
