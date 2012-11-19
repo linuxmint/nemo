@@ -71,6 +71,8 @@ NemoApplication *nemo_application_get_singleton (void);
 
 void nemo_application_quit (NemoApplication *self);
 
+void nemo_application_set_css_provider (GtkWidget *widget);
+
 NemoWindow *     nemo_application_create_window (NemoApplication *application,
 							 GdkScreen           *screen);
 

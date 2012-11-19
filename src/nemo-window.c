@@ -548,6 +548,8 @@ nemo_window_constructed (GObject *self)
 
 	G_OBJECT_CLASS (nemo_window_parent_class)->constructed (self);
 
+    nemo_application_set_css_provider (GTK_WIDGET (window));
+
 	grid = gtk_grid_new ();
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (grid), GTK_ORIENTATION_VERTICAL);
 	gtk_widget_show (grid);
