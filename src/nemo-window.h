@@ -148,4 +148,14 @@ gboolean nemo_window_disable_chrome_mapping (GValue *value,
                                                  GVariant *variant,
                                                  gpointer user_data);
 
+void     nemo_window_set_sidebar_id (NemoWindow *window,
+                                    const gchar *id);
+
+const gchar *    nemo_window_get_sidebar_id (NemoWindow *window);
+
+void    nemo_window_set_show_sidebar (NemoWindow *window,
+                                      gboolean show);
+
+gboolean  nemo_window_get_show_sidebar (NemoWindow *window);
+
 #endif

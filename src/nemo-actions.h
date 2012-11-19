@@ -52,9 +52,6 @@
 #define NEMO_ACTION_ZOOM_IN "Zoom In"
 #define NEMO_ACTION_ZOOM_OUT "Zoom Out"
 #define NEMO_ACTION_ZOOM_NORMAL "Zoom Normal"
-#define NEMO_ACTION_TOOLBAR_ZOOM_IN "TB Zoom In"
-#define NEMO_ACTION_TOOLBAR_ZOOM_OUT "TB Zoom Out"
-#define NEMO_ACTION_TOOLBAR_ZOOM_NORMAL "TB Zoom Normal"
 #define NEMO_ACTION_SHOW_HIDDEN_FILES "Show Hidden Files"
 #define NEMO_ACTION_CLOSE "Close"
 #define NEMO_ACTION_SEARCH "Search"
@@ -142,5 +139,9 @@
 #define NEMO_ACTION_MAILTO_OTHER "MailToOther"
 #define NEMO_ACTION_SET_AS_WALLPAPER "SetAsWallPaper"
 #define NEMO_ACTION_OPEN_AS_ROOT "OpenAsRoot"
+
+#define NEMO_ACTION_STATUSBAR_PLACES "Statusbar Places"
+#define NEMO_ACTION_STATUSBAR_TREEVIEW "Statusbar Treeview"
+#define NEMO_ACTION_STATUSBAR_SIDEBAR_TOGGLE "Statusbar Sidebar Toggle"
 
 #endif /* NEMO_ACTIONS_H */

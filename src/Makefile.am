@@ -146,6 +146,8 @@ nemo_SOURCES = \
 	nemo-search-bar.h			\
 	nemo-self-check-functions.c 	\
 	nemo-self-check-functions.h 	\
+    nemo-statusbar.c    \
+    nemo-statusbar.h    \
 	nemo-toolbar.c			\
 	nemo-toolbar.h			\
 	nemo-tree-sidebar.c			\

@@ -48,6 +48,7 @@
 #include "nemo-window-manage-views.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
+#include "nemo-statusbar.h"
 
 #include <libnemo-private/nemo-dbus-manager.h>
 #include <libnemo-private/nemo-desktop-link-monitor.h>
@@ -1098,6 +1099,10 @@ init_icons_and_styles (void)
 	/* initialize search path for custom icons */
 	gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
 					   NEMO_DATADIR G_DIR_SEPARATOR_S "icons");
+
+    gtk_icon_size_register (NEMO_STATUSBAR_ICON_SIZE_NAME,
+                            NEMO_STATUSBAR_ICON_SIZE,
+                            NEMO_STATUSBAR_ICON_SIZE);
 
     nemo_application_add_app_css_provider ();
 }

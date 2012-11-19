@@ -634,6 +634,7 @@ nemo_window_slot_add_extra_location_widget (NemoWindowSlot *slot,
 char *
 nemo_window_slot_get_current_uri (NemoWindowSlot *slot)
 {
+
 	if (slot->pending_location != NULL) {
 		return g_file_get_uri (slot->pending_location);
 	}

@@ -12,11 +12,6 @@
 <toolbar name="SecondaryToolbar">		
 	<toolitem name="Edit Location" action="Edit Location"/>
         <toolitem name="Search" action="Search"/>
-        <separator/>
-        <toolitem name="Zoom Out" action="TB Zoom Out"/>
-        <toolitem name="Zoom Normal" action="TB Zoom Normal"/>
-        <toolitem name="Zoom In" action="TB Zoom In"/>
-        <separator/>
         <toolitem name="Icon View" action="IconView"/>
         <toolitem name="List View" action="ListView"/>
         <toolitem name="Compact View" action="CompactView"/>    
