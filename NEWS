@@ -1,3 +1,24 @@
+Major changes in 3.7.2 are:
+* Request to render larger thumbnails by default
+* Don't quote the current location name in search bar
+* Use "Run" in menus when launchine executables
+* Fix stray Empty Document item in New Document menu
+
+Major changes in 3.6.3 are:
+* Fix symbolic links on remote volumes not activating default action
+* Fix duplicated query editor filter rows when changing search location
+* Fix search toolbar disappearing with very long folder names
+* Fix missing Trash action after "Recent" was visited
+* Fix missing frame around thumbnails for some zoom factors
+* Fix crash when unmounting remote volumes
+
+Major changes in 3.6.2 are:
+* Open default location for remote shares when mounting
+* Fix missing search results from Tracker for names that contain hyphens
+* Fix missing item selection in the sidebar when starting up
+* Fix search string being eaten by a hidden entry under certain circumstances
+* Fix missing tooltips on stock toolbar buttons
+
 Major changes in 3.7.1 are:
 * Turn on again recursive search for the simple engine
 * Enable incremental loading for search directories
