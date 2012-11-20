@@ -200,6 +200,11 @@ typedef enum
 /* File size unit prefix */
 #define NEMO_PREFERENCES_SIZE_PREFIXES			"size-prefixes"
 
+/* media handling */
+
+#define GNOME_DESKTOP_MEDIA_HANDLING_AUTOMOUNT      "automount"
+#define GNOME_DESKTOP_MEDIA_HANDLING_AUTOMOUNT_OPEN "automount-open"
+#define GNOME_DESKTOP_MEDIA_HANDLING_AUTORUN        "autorun-never"
 
 void nemo_global_preferences_init                      (void);
 char *nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void);
@@ -213,6 +218,7 @@ GSettings *nemo_tree_sidebar_preferences;
 GSettings *nemo_window_state;
 GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
+GSettings *gnome_media_handling_preferences;
 
 G_END_DECLS
 
