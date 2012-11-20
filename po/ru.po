@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: nautilus trunk\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-09-15 14:40+0000\n"
-"PO-Revision-Date: 2012-11-21 00:33+0300\n"
+"PO-Revision-Date: 2012-11-21 00:45+0300\n"
 "Last-Translator: Yuri Myasoedov <omerta13@yandex.ru>\n"
 "Language-Team: русский <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
@@ -2905,15 +2905,15 @@ msgstr "Подписи к значкам"
 
 #: ../src/nautilus-file-management-properties.ui.h:23
 msgid "Choose the order of information to appear beneath icon names. More information will appear when zooming in closer."
-msgstr "Выберите порядок, в котором возникают сведения под именами значков. При увеличении масштаба появляются дополнительные сведеления."
+msgstr "Выберите порядок сведений, которые будут показаны под именами значков. Чем больше масштаб просмотра, тем больше показывается сведений."
 
 #: ../src/nautilus-file-management-properties.ui.h:24
 msgid "Display"
-msgstr "Отображение"
+msgstr "Просмотр"
 
 #: ../src/nautilus-file-management-properties.ui.h:25
 msgid "Choose the order of information to appear in the list view."
-msgstr "Выберите порядок, в котором появляются сведения при просмотре в виде списка."
+msgstr "Выберите порядок сведений, которые будут показаны при просмотре в виде списка."
 
 #: ../src/nautilus-file-management-properties.ui.h:26
 msgid "List Columns"
@@ -2938,7 +2938,7 @@ msgstr "Показывать _число объектов:"
 
 #: ../src/nautilus-file-management-properties.ui.h:32
 msgid "Preview"
-msgstr "Образцы"
+msgstr "Миниатюры"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
@@ -2962,27 +2962,27 @@ msgstr "Никогда"
 
 #: ../src/nautilus-file-management-properties.ui.h:38
 msgid "By Name"
-msgstr "по имени"
+msgstr "По имени"
 
 #: ../src/nautilus-file-management-properties.ui.h:39
 msgid "By Size"
-msgstr "по размеру"
+msgstr "По размеру"
 
 #: ../src/nautilus-file-management-properties.ui.h:40
 msgid "By Type"
-msgstr "по типу"
+msgstr "По типу"
 
 #: ../src/nautilus-file-management-properties.ui.h:41
 msgid "By Modification Date"
-msgstr "по дате изменения"
+msgstr "По дате изменения"
 
 #: ../src/nautilus-file-management-properties.ui.h:42
 msgid "By Access Date"
-msgstr "по дате обращения"
+msgstr "По дате обращения"
 
 #: ../src/nautilus-file-management-properties.ui.h:43
 msgid "By Trashed Date"
-msgstr "по дате удаления"
+msgstr "По дате удаления"
 
 #: ../src/nautilus-file-management-properties.ui.h:45
 #, no-c-format
@@ -3164,14 +3164,15 @@ msgstr "Загрузка…"
 msgid "(Empty)"
 msgstr "(Пусто)"
 
+# Заголовок диалогового окна.
 #: ../src/nautilus-list-view.c:2331
 #, c-format
 msgid "%s Visible Columns"
-msgstr "%s видимых столбцов"
+msgstr "Видимые столбцы «%s»"
 
 #: ../src/nautilus-list-view.c:2351
 msgid "Choose the order of information to appear in this folder:"
-msgstr "Выберите порядок, в котором в этой папке будут появляться сведения:"
+msgstr "Выберите порядок сведений, которые будут показаны в этой папке:"
 
 #. name, stock id
 #. label, accelerator
