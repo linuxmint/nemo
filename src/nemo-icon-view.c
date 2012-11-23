@@ -170,6 +170,9 @@ static void                 nemo_icon_view_set_zoom_level               (NemoIco
 									     NemoZoomLevel     new_level,
 									     gboolean              always_emit);
 static void                 nemo_icon_view_update_click_mode            (NemoIconView           *icon_view);
+static void                 nemo_icon_view_set_directory_tighter_layout (NemoIconView           *icon_view,
+                                        NemoFile         *file,
+                                        gboolean              tighter_layout);
 static gboolean             nemo_icon_view_supports_scaling	      (NemoIconView           *icon_view);
 static void                 nemo_icon_view_reveal_selection       (NemoView               *view);
 static const SortCriterion *get_sort_criterion_by_sort_type           (NemoFileSortType  sort_type);
@@ -377,11 +380,39 @@ action_clean_up_callback (GtkAction *action, gpointer callback_data)
 	nemo_icon_view_clean_up (NEMO_ICON_VIEW (callback_data));
 }
 
+static void
+set_tighter_layout (NemoIconView *icon_view, gboolean new_value)
+{
+   nemo_icon_view_set_directory_tighter_layout (icon_view,  
+                          nemo_view_get_directory_as_file 
+                          (NEMO_VIEW (icon_view)), 
+                          new_value);
+   nemo_icon_container_set_tighter_layout (get_icon_container (icon_view), 
+                           new_value); 
+}
+
+static void
+action_tighter_layout_callback (GtkAction *action,
+               gpointer user_data)
+{
+   g_assert (NEMO_IS_ICON_VIEW (user_data));
+
+   set_tighter_layout (NEMO_ICON_VIEW (user_data),
+               gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)));
+}
+
 static gboolean
 nemo_icon_view_using_auto_layout (NemoIconView *icon_view)
 {
 	return nemo_icon_container_is_auto_layout 
 		(get_icon_container (icon_view));
+}
+
+static gboolean
+nemo_icon_view_using_tighter_layout (NemoIconView *icon_view)
+{
+   return nemo_icon_container_is_tighter_layout 
+       (get_icon_container (icon_view));
 }
 
 static void
@@ -589,6 +620,12 @@ nemo_icon_view_supports_labels_beside_icons (NemoIconView *view)
 	return view->details->supports_labels_beside_icons;
 }
 
+static gboolean
+nemo_icon_view_supports_tighter_layout (NemoIconView *view)
+{
+   return !nemo_icon_view_is_compact (view);
+}
+
 static void
 update_layout_menus (NemoIconView *view)
 {
@@ -612,7 +649,14 @@ update_layout_menus (NemoIconView *view)
 		gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), TRUE);
 
 		action = gtk_action_group_get_action (view->details->icon_action_group,
-						      NEMO_ACTION_REVERSED_ORDER);
+                                              NEMO_ACTION_TIGHTER_LAYOUT);
+        gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
+                          nemo_icon_view_using_tighter_layout (view));
+        gtk_action_set_sensitive (action, nemo_icon_view_supports_tighter_layout (view));
+        gtk_action_set_visible (action, nemo_icon_view_supports_tighter_layout (view));
+
+        action = gtk_action_group_get_action (view->details->icon_action_group,
+                                              NEMO_ACTION_REVERSED_ORDER);
 		gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
 					      view->details->sort_reversed);
 		gtk_action_set_sensitive (action, is_auto_layout);
@@ -817,6 +861,43 @@ nemo_icon_view_set_directory_auto_layout (NemoIconView *icon_view,
 		 auto_layout);
 }
 
+/* maintainence of tighter layout boolean */
+
+static gboolean
+get_default_directory_tighter_layout (void)
+{
+    return g_settings_get_boolean (nemo_icon_view_preferences,
+                      NEMO_PREFERENCES_ICON_VIEW_DEFAULT_USE_TIGHTER_LAYOUT);
+}
+
+static gboolean
+nemo_icon_view_get_directory_tighter_layout (NemoIconView *icon_view,
+                        NemoFile *file)
+{
+    if (!nemo_icon_view_supports_tighter_layout (icon_view)) {
+        return FALSE;
+    }
+
+    return nemo_file_get_boolean_metadata (file,
+                                           NEMO_METADATA_KEY_ICON_VIEW_TIGHTER_LAYOUT,
+                                           get_default_directory_tighter_layout ());
+}
+
+static void
+nemo_icon_view_set_directory_tighter_layout (NemoIconView *icon_view,
+                        NemoFile *file,
+                        gboolean tighter_layout)
+{
+    if (!nemo_icon_view_supports_tighter_layout (icon_view)) {
+        return;
+    }
+
+    nemo_file_set_boolean_metadata
+       (file, NEMO_METADATA_KEY_ICON_VIEW_TIGHTER_LAYOUT,
+        get_default_directory_tighter_layout (),
+        tighter_layout);
+}
+
 static gboolean
 set_sort_reversed (NemoIconView *icon_view,
 		   gboolean new_value,
@@ -967,9 +1048,11 @@ nemo_icon_view_begin_loading (NemoView *view)
 	/* Set the sort direction from the metadata. */
 	set_sort_reversed (icon_view, nemo_icon_view_get_directory_sort_reversed (icon_view, file), FALSE);
 
-	nemo_icon_container_set_keep_aligned
-		(get_icon_container (icon_view), 
-		 nemo_icon_view_get_directory_keep_aligned (icon_view, file));
+	nemo_icon_container_set_keep_aligned (get_icon_container (icon_view),
+                    nemo_icon_view_get_directory_keep_aligned (icon_view, file));
+
+    nemo_icon_container_set_tighter_layout (get_icon_container (icon_view),
+                    nemo_icon_view_get_directory_tighter_layout (icon_view, file));
 
 	set_labels_beside_icons (icon_view);
 	set_columns_same_width (icon_view);
@@ -1265,6 +1348,11 @@ layout_changed_callback (NemoIconContainer *container,
 			(icon_view,
 			 file,
 			 nemo_icon_view_using_auto_layout (icon_view));
+
+        nemo_icon_view_set_directory_tighter_layout
+           (icon_view,
+            file,
+            nemo_icon_view_using_tighter_layout (icon_view));
 	}
 
 	update_layout_menus (icon_view);
@@ -1310,6 +1398,12 @@ static const GtkActionEntry icon_view_entries[] = {
 };
 
 static const GtkToggleActionEntry icon_view_toggle_entries[] = {
+
+  /* name, stock id */      { "Tighter Layout", NULL,
+  /* label, accelerator */    N_("Compact _Layout"), NULL,
+  /* tooltip */               N_("Toggle using a tighter layout scheme"),
+                              G_CALLBACK (action_tighter_layout_callback),
+                              0 },
   /* name, stock id */      { "Reversed Order", NULL,
   /* label, accelerator */    N_("Re_versed Order"), NULL,
   /* tooltip */               N_("Display icons in the opposite order"),
@@ -1492,6 +1586,8 @@ nemo_icon_view_reset_to_defaults (NemoView *view)
 	clear_sort_criterion (icon_view);
 	nemo_icon_container_set_keep_aligned 
 		(icon_container, get_default_directory_keep_aligned ());
+    nemo_icon_container_set_tighter_layout
+       (icon_container, get_default_directory_tighter_layout ());
 
 	nemo_icon_container_sort (icon_container);
 
@@ -2038,6 +2134,27 @@ default_sort_in_reverse_order_changed_callback (gpointer callback_data)
 }
 
 static void
+default_use_tighter_layout_changed_callback (gpointer callback_data)
+{
+   NemoIconView *icon_view;
+   NemoFile *file;
+   NemoIconContainer *icon_container;
+
+   g_return_if_fail (NEMO_IS_ICON_VIEW (callback_data));
+
+   icon_view = NEMO_ICON_VIEW (callback_data);
+
+   file = nemo_view_get_directory_as_file (NEMO_VIEW (icon_view));
+   icon_container = get_icon_container (icon_view);
+   g_return_if_fail (NEMO_IS_ICON_CONTAINER (icon_container));
+
+   nemo_icon_container_set_tighter_layout (icon_container,
+                           nemo_icon_view_get_directory_tighter_layout (icon_view, file));
+
+   nemo_icon_container_request_update_all (icon_container);
+}
+
+static void
 default_zoom_level_changed_callback (gpointer callback_data)
 {
 	NemoIconView *icon_view;
@@ -2435,6 +2552,10 @@ nemo_icon_view_finalize (GObject *object)
 					      image_display_policy_changed_callback,
 					      icon_view);
 
+    g_signal_handlers_disconnect_by_func (nemo_icon_view_preferences,
+                          default_use_tighter_layout_changed_callback,
+                          icon_view);
+
 	g_signal_handlers_disconnect_by_func (nemo_icon_view_preferences,
 					      default_zoom_level_changed_callback,
 					      icon_view);
@@ -2577,6 +2698,10 @@ nemo_icon_view_init (NemoIconView *icon_view)
 				  "changed::" NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
 				  G_CALLBACK (image_display_policy_changed_callback),
 				  icon_view);
+    g_signal_connect_swapped (nemo_icon_view_preferences,
+                 "changed::" NEMO_PREFERENCES_ICON_VIEW_DEFAULT_USE_TIGHTER_LAYOUT,
+                 G_CALLBACK (default_use_tighter_layout_changed_callback),
+                 icon_view);
 
 	g_signal_connect_swapped (nemo_icon_view_preferences,
 				  "changed::" NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
