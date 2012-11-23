@@ -27,8 +27,9 @@
  */
 #include <config.h>
 
-#include <locale.h> 
+#include <locale.h>
 
+#include "nemo-window-menus.h"
 #include "nemo-actions.h"
 #include "nemo-application.h"
 #include "nemo-connect-server-dialog.h"
@@ -767,6 +768,13 @@ action_edit_location_callback (GtkAction *action,
 	nemo_window_pane_ensure_location_bar (pane);
 }
 
+enum {
+    ICON_VIEW,
+    LIST_VIEW,
+    COMPACT_VIEW,
+    NULL_VIEW
+};
+
 static void
 action_icon_view_callback (GtkAction *action,
                            gpointer user_data)
@@ -776,7 +784,7 @@ action_icon_view_callback (GtkAction *action,
     window = NEMO_WINDOW (user_data);
     slot = nemo_window_get_active_slot (window);
     nemo_window_slot_set_content_view (slot, NEMO_ICON_VIEW_ID);
-    toolbar_set_view_button (NEMO_ACTION_ICON_VIEW, nemo_window_get_active_pane(window));
+    toolbar_set_view_button (ICON_VIEW, nemo_window_get_active_pane(window));
 }
 
 
@@ -789,7 +797,7 @@ action_list_view_callback (GtkAction *action,
     window = NEMO_WINDOW (user_data);
     slot = nemo_window_get_active_slot (window);
     nemo_window_slot_set_content_view (slot, NEMO_LIST_VIEW_ID);
-    toolbar_set_view_button (NEMO_ACTION_LIST_VIEW, nemo_window_get_active_pane(window));
+    toolbar_set_view_button (LIST_VIEW, nemo_window_get_active_pane(window));
 }
 
 
@@ -802,30 +810,29 @@ action_compact_view_callback (GtkAction *action,
     window = NEMO_WINDOW (user_data);
     slot = nemo_window_get_active_slot (window);
     nemo_window_slot_set_content_view (slot, FM_COMPACT_VIEW_ID);
-    toolbar_set_view_button (NEMO_ACTION_COMPACT_VIEW, nemo_window_get_active_pane(window));
+    toolbar_set_view_button (COMPACT_VIEW, nemo_window_get_active_pane(window));
 }
 
-
-gchar *
-toolbar_action_for_view_id (gchar *view_id)
+guint
+toolbar_action_for_view_id (const char *view_id)
 {
     if (g_strcmp0(view_id, NEMO_ICON_VIEW_ID) == 0) {
-        return NEMO_ACTION_ICON_VIEW;
+        return ICON_VIEW;
     } else if (g_strcmp0(view_id, NEMO_LIST_VIEW_ID) == 0) {
-        return NEMO_ACTION_LIST_VIEW;
+        return LIST_VIEW;
     } else if (g_strcmp0(view_id, FM_COMPACT_VIEW_ID) == 0) {
-        return NEMO_ACTION_COMPACT_VIEW;
+        return COMPACT_VIEW;
     } else {
-        return NULL;
+        return NULL_VIEW;
     }
 }
 
 void
-toolbar_set_view_button (gchar *action_id, NemoWindowPane *pane)
+toolbar_set_view_button (guint action_id, NemoWindowPane *pane)
 {
     GtkAction *action, *action1, *action2;
     GtkActionGroup *action_group;
-    if (action_id == NULL) {
+    if (action_id == NULL_VIEW) {
         return;
     }
     action_group = nemo_window_pane_get_toolbar_action_group (pane);
@@ -858,19 +865,19 @@ toolbar_set_view_button (gchar *action_id, NemoWindowPane *pane)
                          action_compact_view_callback,
                          NULL);
 
-    if (g_strcmp0(action_id, NEMO_ACTION_ICON_VIEW) != 0) {
+    if (action_id != ICON_VIEW) {
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), FALSE);
     } else {
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), TRUE);
     }
 
-    if (g_strcmp0(action_id, NEMO_ACTION_LIST_VIEW) != 0) {
+    if (action_id != LIST_VIEW) {
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action1), FALSE);
     } else {
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action1), TRUE);
     }
 
-    if (g_strcmp0(action_id, NEMO_ACTION_COMPACT_VIEW) != 0) {
+    if (action_id != COMPACT_VIEW) {
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action2), FALSE);
     } else {
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action2), TRUE);
