@@ -624,8 +624,13 @@ window_loading_uri_cb (NautilusWindow *window,
 		       char           *location,
 		       gpointer        user_data)
 {
-	if (window->details->places_sidebar)
-		gtk_places_sidebar_set_current_uri (GTK_PLACES_SIDEBAR (window->details->places_sidebar), location);
+	if (window->details->places_sidebar) {
+		GFile *file;
+
+		file = g_file_new_for_uri (location);
+		gtk_places_sidebar_set_current_location (GTK_PLACES_SIDEBAR (window->details->places_sidebar), file);
+		g_object_unref (file);
+	}
 }
 
 /* Callback used when the trash state changes; we update the places sidebar to reflect this */
