@@ -1,3 +1,8 @@
+###########################
+# Default .gitignore file for Nemo. 
+# By default this ignores the lint from the Eclipse IDE.
+
+##################
 # Eclipse Output #
 ##################
 *.pydevproject
@@ -26,80 +31,3 @@ local.properties
 
 # PDT-specific
 .buildpath
-
-# Ignore Autotools Output #
-###########################
-autom4te.cache/
-.autotools
-aclocal.m4
-config.guess
-config.h
-config.log
-config.status
-config.sub
-configure
-depcomp
-gtk-doc.make
-libtool
-ltmain.sh
-Makefile
-Makefile.in
-omf.make
-stamp-h1
-xmldocs.make
-
-# Build Output #
-################
-*.o
-*.Po
-*.Plo
-*.la
-*.lo
-*.gmo
-*.pc
-
-# Libtoolize output #
-.libs/
-.deps/
-
-# Specifically generated files #
-libnemo-private/org.nemo.gschema.valid
-libnemo-private/org.nemo.gschema.xml
-
-libnemo-extension/Nemo-3.0.gir
-libnemo-extension/Nemo-3.0.typelib
-
-libnemo-private/nemo-generated.c
-libnemo-private/nemo-generated.h
-
-docs/reference/libnemo-extension/version.xml
-
-eel/check-program
-
-po/.intltool-merge-cache
-po/POTFILES
-po/stamp-it
-
-data/org.Nemo.service
-data/org.freedesktop.NemoFileManager1.service
-data/nemo.xml
-data/nemo.desktop.in
-data/nemo.desktop
-data/nemo-autostart.desktop
-data/nemo-autorun-software.desktop.in
-data/nemo-autorun-software.desktop
-
-m4/libtool.m4
-
-src/nemo
-src/nemo-autorun-software
-src/nemo-connect-server
-src/nemo-convert-metadata
-src/nemo-freedesktop-generated.c
-src/nemo-freedesktop-generated.h
-src/nemo-resources.c
-src/nemo-resources.h
-test/test-eel-editable-label
-test/test-nemo-copy
-test/test-nemo-directory-async
-test/test-nemo-search-engine
