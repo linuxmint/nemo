@@ -38,6 +38,7 @@
 #include <libnemo-private/nemo-file-operations.h>
 #include <libnemo-private/nemo-trash-monitor.h>
 #include <libnemo-private/nemo-icon-names.h>
+#include <libnemo-private/nemo-cell-renderer-disk.h>
 
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
@@ -56,15 +57,20 @@
 #define DEBUG_FLAG NEMO_DEBUG_PLACES
 #include <libnemo-private/nemo-debug.h>
 
-#define EJECT_BUTTON_XPAD 6
 #define ICON_CELL_XPAD 6
+#define EXPANDER_COLUMN_WIDTH 14
+#define EJECT_COLUMN_WIDTH 18
+#define DRAG_EXPAND_CATEGORY_DELAY 500
+
+#define GB 1048576.0
+#define MB 1024.0
 
 typedef struct {
 	GtkScrolledWindow  parent;
 	GtkTreeView        *tree_view;
 	GtkCellRenderer    *eject_icon_cell_renderer;
 	char 	           *uri;
-	GtkListStore       *store;
+	GtkTreeStore       *store;
 	NemoWindow *window;
 	NemoBookmarkList *bookmarks;
 	GVolumeMonitor *volume_monitor;
@@ -102,6 +108,23 @@ typedef struct {
 	GtkTreePath *eject_highlight_path;
 
 	guint bookmarks_changed_id;
+
+    gboolean my_computer_expanded;
+    gboolean devices_expanded;
+    gboolean network_expanded;
+
+    gboolean updating_sidebar;
+
+    /* Store the positions of the last
+     * entry prior to bookmarks, and
+     * the first entry after bookmarks
+     * to allow drag and drop creation
+     * of new bookmarks */
+    gchar *top_bookend_uri;
+    gchar *bottom_bookend_uri;
+
+    guint expand_timeout_source;
+
 } NemoPlacesSidebar;
 
 typedef struct {
@@ -132,6 +155,8 @@ enum {
 	PLACES_SIDEBAR_COLUMN_EJECT_ICON,
 	PLACES_SIDEBAR_COLUMN_SECTION_TYPE,
 	PLACES_SIDEBAR_COLUMN_HEADING_TEXT,
+    PLACES_SIDEBAR_COLUMN_DF_PERCENT,
+    PLACES_SIDEBAR_COLUMN_SHOW_DF,
 
 	PLACES_SIDEBAR_COLUMN_COUNT
 };
@@ -145,11 +170,17 @@ typedef enum {
 } PlaceType;
 
 typedef enum {
+    SECTION_COMPUTER,
+    SECTION_BOOKMARKS,
 	SECTION_DEVICES,
-	SECTION_BOOKMARKS,
-	SECTION_COMPUTER,
 	SECTION_NETWORK,
 } SectionType;
+
+enum {
+    POSITION_UPPER,
+    POSITION_MIDDLE,
+    POSITION_LOWER
+};
 
 static void  open_selected_bookmark                    (NemoPlacesSidebar        *sidebar,
 							GtkTreeModel                 *model,
@@ -187,13 +218,13 @@ static const GtkTargetEntry nemo_shortcuts_drop_targets [] = {
 
 /* Drag and drop interface declarations */
 typedef struct {
-  GtkListStore parent;
+  GtkTreeStore parent;
 
   NemoPlacesSidebar *sidebar;
 } NemoShortcutsModel;
 
 typedef struct {
-  GtkListStoreClass parent_class;
+  GtkTreeStoreClass parent_class;
 } NemoShortcutsModelClass;
 
 #define NEMO_TYPE_SHORTCUTS_MODEL (_nemo_shortcuts_model_get_type ())
@@ -201,10 +232,10 @@ typedef struct {
 
 GType _nemo_shortcuts_model_get_type (void);
 static void _nemo_shortcuts_model_drag_source_init (GtkTreeDragSourceIface *iface);
-G_DEFINE_TYPE_WITH_CODE (NemoShortcutsModel, _nemo_shortcuts_model, GTK_TYPE_LIST_STORE,
+G_DEFINE_TYPE_WITH_CODE (NemoShortcutsModel, _nemo_shortcuts_model, GTK_TYPE_TREE_STORE,
 			 G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_SOURCE,
 						_nemo_shortcuts_model_drag_source_init));
-static GtkListStore *nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar);
+static GtkTreeStore *nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar);
 
 G_DEFINE_TYPE (NemoPlacesSidebar, nemo_places_sidebar, GTK_TYPE_SCROLLED_WINDOW);
 
@@ -300,47 +331,36 @@ add_heading (NemoPlacesSidebar *sidebar,
 	     SectionType section_type,
 	     const gchar *title)
 {
-	GtkTreeIter iter;
+	GtkTreeIter cat_iter;
 
-	gtk_list_store_append (sidebar->store, &iter);
-	gtk_list_store_set (sidebar->store, &iter,
+	gtk_tree_store_append (sidebar->store, &cat_iter, NULL);
+	gtk_tree_store_set (sidebar->store, &cat_iter,
 			    PLACES_SIDEBAR_COLUMN_ROW_TYPE, PLACES_HEADING,
-			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,	
+			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,
 			    PLACES_SIDEBAR_COLUMN_HEADING_TEXT, title,
 			    PLACES_SIDEBAR_COLUMN_EJECT, FALSE,
 			    PLACES_SIDEBAR_COLUMN_NO_EJECT, TRUE,
 			    -1);
 
-	return iter;
+	return cat_iter;
 }
 
-static void
-check_heading_for_section (NemoPlacesSidebar *sidebar,
-			   SectionType section_type)
+static GtkTreeIter
+check_heading_for_devices (NemoPlacesSidebar *sidebar,
+                           SectionType section_type,
+			               GtkTreeIter cat_iter)
 {
-	switch (section_type) {
-	case SECTION_DEVICES:
-		if (!sidebar->devices_header_added) {
-			add_heading (sidebar, SECTION_DEVICES,
-				     _("Devices"));
-			sidebar->devices_header_added = TRUE;
-		}
-
-		break;
-	case SECTION_BOOKMARKS:
-		if (!sidebar->bookmarks_header_added) {
-			add_heading (sidebar, SECTION_BOOKMARKS,
-				     _("Bookmarks"));
-			sidebar->bookmarks_header_added = TRUE;
-		}
-
-		break;
-	default:
-		break;
-	}
+    if (section_type == SECTION_DEVICES) {
+        if (!sidebar->devices_header_added) {
+            cat_iter = add_heading (sidebar, SECTION_DEVICES,
+                        _("Devices"));
+            sidebar->devices_header_added = TRUE;
+        }
+    }
+    return cat_iter;
 }
 
-static void
+static GtkTreeIter
 add_place (NemoPlacesSidebar *sidebar,
 	   PlaceType place_type,
 	   SectionType section_type,
@@ -351,7 +371,10 @@ add_place (NemoPlacesSidebar *sidebar,
 	   GVolume *volume,
 	   GMount *mount,
 	   const int index,
-	   const char *tooltip)
+	   const char *tooltip,
+       const int df_percent,
+       gboolean show_df_percent,
+       GtkTreeIter cat_iter)
 {
 	GdkPixbuf            *pixbuf;
 	GtkTreeIter           iter;
@@ -361,9 +384,10 @@ add_place (NemoPlacesSidebar *sidebar,
 	gboolean show_eject, show_unmount;
 	gboolean show_eject_button;
 
-	check_heading_for_section (sidebar, section_type);
+	cat_iter = check_heading_for_devices (sidebar, section_type, cat_iter);
 
 	icon_size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
+
 	icon_info = nemo_icon_info_lookup (icon, icon_size);
 
 	pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size);
@@ -388,8 +412,8 @@ add_place (NemoPlacesSidebar *sidebar,
 		eject = NULL;
 	}
 
-	gtk_list_store_append (sidebar->store, &iter);
-	gtk_list_store_set (sidebar->store, &iter,
+	gtk_tree_store_append (sidebar->store, &iter, &cat_iter);
+	gtk_tree_store_set (sidebar->store, &iter,
 			    PLACES_SIDEBAR_COLUMN_ICON, pixbuf,
 			    PLACES_SIDEBAR_COLUMN_NAME, name,
 			    PLACES_SIDEBAR_COLUMN_URI, uri,
@@ -404,11 +428,15 @@ add_place (NemoPlacesSidebar *sidebar,
 			    PLACES_SIDEBAR_COLUMN_TOOLTIP, tooltip,
 			    PLACES_SIDEBAR_COLUMN_EJECT_ICON, eject,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,
+                PLACES_SIDEBAR_COLUMN_DF_PERCENT, df_percent,
+                PLACES_SIDEBAR_COLUMN_SHOW_DF, show_df_percent,
 			    -1);
 
 	if (pixbuf != NULL) {
 		g_object_unref (pixbuf);
 	}
+
+    return cat_iter;
 }
 
 typedef struct {
@@ -430,7 +458,6 @@ restore_selection_foreach (GtkTreeModel *model,
 	gtk_tree_model_get (model, iter,
 			    PLACES_SIDEBAR_COLUMN_URI, &uri,
 			    -1);
-
 	if (g_strcmp0 (uri, data->last_uri) == 0 ||
 	    g_strcmp0 (uri, data->location) == 0) {
 		data->path = gtk_tree_path_copy (path);
@@ -439,6 +466,64 @@ restore_selection_foreach (GtkTreeModel *model,
 	g_free (uri);
 
 	return (data->path != NULL);
+}
+
+static gboolean
+restore_expand_state_foreach (GtkTreeModel *model,
+                              GtkTreePath *path,
+                              GtkTreeIter *iter,
+                              gpointer user_data)
+{
+    PlaceType place_type;
+    SectionType section_type;
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (user_data);
+
+    gtk_tree_model_get (model, iter,
+                PLACES_SIDEBAR_COLUMN_ROW_TYPE, &place_type,
+                PLACES_SIDEBAR_COLUMN_SECTION_TYPE, &section_type,
+                -1);
+
+    if (place_type == PLACES_HEADING) {
+        if (section_type == SECTION_COMPUTER) {
+            if (sidebar->my_computer_expanded)
+                gtk_tree_view_expand_to_path (sidebar->tree_view, path);
+        } else if (section_type == SECTION_DEVICES) {
+            if (sidebar->devices_expanded)
+                gtk_tree_view_expand_to_path (sidebar->tree_view, path);
+        } else if (section_type == SECTION_NETWORK) {
+            if (sidebar->network_expanded)
+                gtk_tree_view_expand_to_path (sidebar->tree_view, path);
+        }
+    }
+    return FALSE;
+}
+
+static void
+restore_expand_state (NemoPlacesSidebar *sidebar)
+{
+    gtk_tree_model_foreach (GTK_TREE_MODEL (sidebar->store),
+                restore_expand_state_foreach, sidebar);
+}
+
+
+static void expand_category (NemoPlacesSidebar *sidebar,
+                             SectionType section_type)
+{
+    switch (section_type) {
+        case SECTION_COMPUTER:
+            sidebar->my_computer_expanded = TRUE;
+            break;
+        case SECTION_DEVICES:
+            sidebar->devices_expanded = TRUE;
+            break;
+        case SECTION_NETWORK:
+            sidebar->network_expanded = TRUE;
+            break;
+        default:
+            break;
+    }
+
+    restore_expand_state (sidebar);
 }
 
 static void
@@ -464,12 +549,43 @@ sidebar_update_restore_selection (NemoPlacesSidebar *sidebar,
 	}
 }
 
+gint
+get_disk_full (GFile *file, gchar **tooltip_info)
+{
+    GFileInfo *info = g_file_query_filesystem_info (file,
+                                                    "filesystem::*",
+                                                    NULL,
+                                                    NULL);
+        guint64 k_used, k_total, k_free;
+        gint df_percent;
+        float fraction;
+        float free_val;
+        k_used = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED) / 1024;
+        k_total = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE) / 1024;
+        fraction = ((float) k_used / (float) k_total) * 100.0;
+        df_percent = (gint) rintf(fraction);
+
+        k_free = k_total - k_used;
+
+        if (k_free > GB) {
+            free_val = ((float) k_free / GB);
+            *tooltip_info = g_strdup_printf (_("Free space: %.2f GB"), free_val);
+        } else if (k_free > MB) {
+            free_val = ((float) k_free / MB);
+            *tooltip_info = g_strdup_printf (_("Free space: %.2f MB"), free_val);
+        } else {
+            free_val = (float) k_free;
+            *tooltip_info = g_strdup_printf (_("Free space: %.2f KB"), free_val);
+        }
+        return (df_percent > -1 && df_percent < 101) ? df_percent : 0;
+}
+
 static void
 update_places (NemoPlacesSidebar *sidebar)
 {
 	NemoBookmark *bookmark;
 	GtkTreeSelection *selection;
-	GtkTreeIter last_iter;
+	GtkTreeIter last_iter, cat_iter;
 	GtkTreeModel *model;
 	GVolumeMonitor *volume_monitor;
 	GList *mounts, *l, *ll;
@@ -485,10 +601,14 @@ update_places (NemoPlacesSidebar *sidebar)
 	GFile *root;
 	NemoWindowSlot *slot;
 	char *tooltip;
+    gchar *tooltip_info;
 	GList *network_mounts, *network_volumes;
 	NemoFile *file;
+    gint full;
 
 	DEBUG ("Updating places sidebar");
+
+    sidebar->updating_sidebar = TRUE;
 
 	model = NULL;
 	last_uri = NULL;
@@ -499,7 +619,7 @@ update_places (NemoPlacesSidebar *sidebar)
 				    &last_iter,
 				    PLACES_SIDEBAR_COLUMN_URI, &last_uri, -1);
 	}
-	gtk_list_store_clear (sidebar->store);
+	gtk_tree_store_clear (sidebar->store);
 
 	sidebar->devices_header_added = FALSE;
 	sidebar->bookmarks_header_added = FALSE;
@@ -508,280 +628,306 @@ update_places (NemoPlacesSidebar *sidebar)
 	location = nemo_window_slot_get_current_uri (slot);
 
 	network_mounts = network_volumes = NULL;
-	volume_monitor = sidebar->volume_monitor;	
-	
-	/* add bookmarks */
-	bookmark_count = nemo_bookmark_list_length (sidebar->bookmarks);
+	volume_monitor = sidebar->volume_monitor;
 
-	for (index = 0; index < bookmark_count; ++index) {
-		bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
+    cat_iter = add_heading (sidebar, SECTION_COMPUTER,
+                                    _("My Computer"));
+    /* add built in bookmarks */
 
-		if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
-			continue;
-		}
+    /* home folder */
+    mount_uri = nemo_get_home_directory_uri ();
+    icon = g_themed_icon_new (NEMO_ICON_HOME);
+    full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
+    tooltip = g_strdup_printf (_("Open your personal folder\n%s"), tooltip_info);
+    g_free (tooltip_info);
+    cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                           SECTION_COMPUTER,
+                           _("Home"), icon,
+                           mount_uri, NULL, NULL, NULL, 0,
+                           tooltip,
+                           full, TRUE,
+                           cat_iter);
+    g_object_unref (icon);
+    sidebar->top_bookend_uri = g_strdup (mount_uri);
+    g_free (mount_uri);
+    g_free (tooltip);
 
-		root = nemo_bookmark_get_location (bookmark);
-		file = nemo_file_get (root);
+    if (should_show_desktop ()) {
+        /* desktop */
+        desktop_path = nemo_get_desktop_directory ();
+        mount_uri = g_filename_to_uri (desktop_path, NULL, NULL);
+        icon = g_themed_icon_new (NEMO_ICON_DESKTOP);
+        cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                               SECTION_COMPUTER,
+                               _("Desktop"), icon,
+                               mount_uri, NULL, NULL, NULL, 0,
+                               _("Open the contents of your desktop in a folder"), 0, FALSE,
+                               cat_iter);
+        g_object_unref (icon);
+        g_free (sidebar->top_bookend_uri);
+        sidebar->top_bookend_uri = g_strdup (mount_uri);
+        g_free (mount_uri);
+        g_free (desktop_path);
+    }
 
-		//if (is_built_in_bookmark (file)) {
-		//	g_object_unref (root);
-		//	nemo_file_unref (file);
-		//	continue;
-		//}
-		nemo_file_unref (file);
+    /* add bookmarks */
+    bookmark_count = nemo_bookmark_list_length (sidebar->bookmarks);
+    for (index = 0; index < bookmark_count; ++index) {
+        bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
 
-		bookmark_name = nemo_bookmark_get_name (bookmark);
-		icon = nemo_bookmark_get_icon (bookmark);
-		mount_uri = nemo_bookmark_get_uri (bookmark);
-		tooltip = g_file_get_parse_name (root);
+        if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
+            continue;
+        }
 
-		add_place (sidebar, PLACES_BOOKMARK,
-			   SECTION_BOOKMARKS,
-			   bookmark_name, icon, mount_uri,
-			   NULL, NULL, NULL, index,
-			   tooltip);
-		g_object_unref (root);
-		g_object_unref (icon);
-		g_free (mount_uri);
-		g_free (tooltip);
-	}
+        root = nemo_bookmark_get_location (bookmark);
+        file = nemo_file_get (root);
 
-	add_heading (sidebar, SECTION_COMPUTER,
-		     _("Computer"));
+        //if (is_built_in_bookmark (file)) {
+        //  g_object_unref (root);
+        //  nemo_file_unref (file);
+        //  continue;
+        //}
+        nemo_file_unref (file);
 
-	/* add built in bookmarks */
+        bookmark_name = nemo_bookmark_get_name (bookmark);
+        icon = nemo_bookmark_get_icon (bookmark);
+        mount_uri = nemo_bookmark_get_uri (bookmark);
+        tooltip = g_file_get_parse_name (root);
 
-	/* home folder */
-	mount_uri = nemo_get_home_directory_uri ();
-	icon = g_themed_icon_new (NEMO_ICON_HOME);
-	add_place (sidebar, PLACES_BUILT_IN,
-		   SECTION_COMPUTER,
-		   _("Home"), icon,
-		   mount_uri, NULL, NULL, NULL, 0,
-		   _("Open your personal folder"));
-	g_object_unref (icon);
-	g_free (mount_uri);
+        cat_iter = add_place (sidebar, PLACES_BOOKMARK,
+                               SECTION_BOOKMARKS,
+                               bookmark_name, icon, mount_uri,
+                               NULL, NULL, NULL, index,
+                               tooltip, 0, FALSE,
+                               cat_iter);
+        g_object_unref (root);
+        g_object_unref (icon);
+        g_free (mount_uri);
+        g_free (tooltip);
+    }
 
-	if (should_show_desktop ()) {
-		/* desktop */
-		desktop_path = nemo_get_desktop_directory ();
-		mount_uri = g_filename_to_uri (desktop_path, NULL, NULL);
-		icon = g_themed_icon_new (NEMO_ICON_DESKTOP);
-		add_place (sidebar, PLACES_BUILT_IN,
-			   SECTION_COMPUTER,
-			   _("Desktop"), icon,
-			   mount_uri, NULL, NULL, NULL, 0,
-			   _("Open the contents of your desktop in a folder"));
-		g_object_unref (icon);
-		g_free (mount_uri);
-		g_free (desktop_path);
-	}
+    /* file system root */
+    mount_uri = "file:///"; /* No need to strdup */
+    icon = g_themed_icon_new (NEMO_ICON_FILESYSTEM);
+    full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
+    tooltip = g_strdup_printf (_("Open the contents of the File System\n%s"), tooltip_info);
+    g_free (tooltip_info);
+    cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                           SECTION_COMPUTER,
+                           _("File System"), icon,
+                           mount_uri, NULL, NULL, NULL, 0,
+                           tooltip,
+                           full, TRUE,
+                           cat_iter);
+    g_object_unref (icon);
+    g_free (tooltip);
 
-	
-	
+    sidebar->bottom_bookend_uri = g_strdup (mount_uri);
 
-	/* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
-	mounts = g_volume_monitor_get_mounts (volume_monitor);
+    mount_uri = "trash:///"; /* No need to strdup */
+    icon = nemo_trash_monitor_get_icon ();
+    cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                           SECTION_COMPUTER,
+                           _("Trash"), icon, mount_uri,
+                           NULL, NULL, NULL, 0,
+                           _("Open the trash"), 0, FALSE,
+                           cat_iter);
+    g_object_unref (icon);
 
-	for (l = mounts; l != NULL; l = l->next) {
-		mount = l->data;
-		if (g_mount_is_shadowed (mount)) {
-			g_object_unref (mount);
-			continue;
-		}
-		volume = g_mount_get_volume (mount);
-		if (volume != NULL) {
-		    	g_object_unref (volume);
-			g_object_unref (mount);
-			continue;
-		}
-		root = g_mount_get_default_location (mount);
+    /* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
+    mounts = g_volume_monitor_get_mounts (volume_monitor);
 
-		if (!g_file_is_native (root)) {
-			network_mounts = g_list_prepend (network_mounts, mount);
-			g_object_unref (root);
-			continue;
-		}
+    for (l = mounts; l != NULL; l = l->next) {
+        mount = l->data;
+        if (g_mount_is_shadowed (mount)) {
+            g_object_unref (mount);
+            continue;
+        }
+        volume = g_mount_get_volume (mount);
+        if (volume != NULL) {
+                g_object_unref (volume);
+            g_object_unref (mount);
+            continue;
+        }
+        root = g_mount_get_default_location (mount);
 
-		icon = g_mount_get_icon (mount);
-		mount_uri = g_file_get_uri (root);
-		name = g_mount_get_name (mount);
-		tooltip = g_file_get_parse_name (root);
-		add_place (sidebar, PLACES_MOUNTED_VOLUME,
-			   SECTION_COMPUTER,
-			   name, icon, mount_uri,
-			   NULL, NULL, mount, 0, tooltip);
-		g_object_unref (root);
-		g_object_unref (mount);
-		g_object_unref (icon);
-		g_free (name);
-		g_free (mount_uri);
-		g_free (tooltip);
-	}
-	g_list_free (mounts);
+        if (!g_file_is_native (root)) {
+            network_mounts = g_list_prepend (network_mounts, mount);
+            g_object_unref (root);
+            continue;
+        }
 
-	/* file system root */
- 	mount_uri = "file:///"; /* No need to strdup */
-	icon = g_themed_icon_new (NEMO_ICON_FILESYSTEM);
-	add_place (sidebar, PLACES_BUILT_IN,
-		   SECTION_COMPUTER,
-		   _("File System"), icon,
-		   mount_uri, NULL, NULL, NULL, 0,
-		   _("Open the contents of the File System"));
-	g_object_unref (icon);
+        icon = g_mount_get_icon (mount);
+        mount_uri = g_file_get_uri (root);
+        name = g_mount_get_name (mount);
+        tooltip = g_file_get_parse_name (root);
+        cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
+                               SECTION_COMPUTER,
+                               name, icon, mount_uri,
+                               NULL, NULL, mount, 0, tooltip, 0, FALSE,
+                               cat_iter);
+        g_object_unref (root);
+        g_object_unref (mount);
+        g_object_unref (icon);
+        g_free (name);
+        g_free (mount_uri);
+        g_free (tooltip);
 
-	mount_uri = "trash:///"; /* No need to strdup */
-	icon = nemo_trash_monitor_get_icon ();
-	add_place (sidebar, PLACES_BUILT_IN,
-		   SECTION_COMPUTER,
-		   _("Trash"), icon, mount_uri,
-		   NULL, NULL, NULL, 0,
-		   _("Open the trash"));
-	g_object_unref (icon);
-	
-	/* first go through all connected drives */
-	drives = g_volume_monitor_get_connected_drives (volume_monitor);
+    }
+    g_list_free (mounts);
 
-	for (l = drives; l != NULL; l = l->next) {
-		drive = l->data;
+    /* first go through all connected drives */
+    drives = g_volume_monitor_get_connected_drives (volume_monitor);
 
-		volumes = g_drive_get_volumes (drive);
-		if (volumes != NULL) {
-			for (ll = volumes; ll != NULL; ll = ll->next) {
-				volume = ll->data;
-				identifier = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_CLASS);
+    for (l = drives; l != NULL; l = l->next) {
+        drive = l->data;
 
-				if (g_strcmp0 (identifier, "network") == 0) {
-					g_free (identifier);
-					network_volumes = g_list_prepend (network_volumes, volume);
-					continue;
-				}
-				g_free (identifier);
+        volumes = g_drive_get_volumes (drive);
+        if (volumes != NULL) {
+            for (ll = volumes; ll != NULL; ll = ll->next) {
+                volume = ll->data;
+                identifier = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_CLASS);
 
-				mount = g_volume_get_mount (volume);
-				if (mount != NULL) {
-					/* Show mounted volume in the sidebar */
-					icon = g_mount_get_icon (mount);
-					root = g_mount_get_default_location (mount);
-					mount_uri = g_file_get_uri (root);
-					name = g_mount_get_name (mount);
-					tooltip = g_file_get_parse_name (root);
+                if (g_strcmp0 (identifier, "network") == 0) {
+                    g_free (identifier);
+                    network_volumes = g_list_prepend (network_volumes, volume);
+                    continue;
+                }
+                g_free (identifier);
 
-					add_place (sidebar, PLACES_MOUNTED_VOLUME,
-						   SECTION_DEVICES,
-						   name, icon, mount_uri,
-						   drive, volume, mount, 0, tooltip);
-					g_object_unref (root);
-					g_object_unref (mount);
-					g_object_unref (icon);
-					g_free (tooltip);
-					g_free (name);
-					g_free (mount_uri);
-				} else {
-					/* Do show the unmounted volumes in the sidebar;
-					 * this is so the user can mount it (in case automounting
-					 * is off).
-					 *
-					 * Also, even if automounting is enabled, this gives a visual
-					 * cue that the user should remember to yank out the media if
-					 * he just unmounted it.
-					 */
-					icon = g_volume_get_icon (volume);
-					name = g_volume_get_name (volume);
-					tooltip = g_strdup_printf (_("Mount and open %s"), name);
+                mount = g_volume_get_mount (volume);
+                if (mount != NULL) {
+                    /* Show mounted volume in the sidebar */
+                    icon = g_mount_get_icon (mount);
+                    root = g_mount_get_default_location (mount);
+                    mount_uri = g_file_get_uri (root);
+                    name = g_mount_get_name (mount);
+                    full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
+                    tooltip = g_strdup_printf (_("%s\n%s"),
+                                               g_file_get_parse_name (root),
+                                               tooltip_info);
+                    g_free (tooltip_info);
+                    cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
+                                           SECTION_DEVICES,
+                                           name, icon, mount_uri,
+                                           drive, volume, mount, 0, tooltip,
+                                           full, TRUE,
+                                           cat_iter);
+                    g_object_unref (root);
+                    g_object_unref (mount);
+                    g_object_unref (icon);
+                    g_free (tooltip);
+                    g_free (name);
+                    g_free (mount_uri);
+                } else {
+                    /* Do show the unmounted volumes in the sidebar;
+                     * this is so the user can mount it (in case automounting
+                     * is off).
+                     *
+                     * Also, even if automounting is enabled, this gives a visual
+                     * cue that the user should remember to yank out the media if
+                     * he just unmounted it.
+                     */
+                    icon = g_volume_get_icon (volume);
+                    name = g_volume_get_name (volume);
+                    tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
-					add_place (sidebar, PLACES_MOUNTED_VOLUME,
-						   SECTION_DEVICES,
-						   name, icon, NULL,
-						   drive, volume, NULL, 0, tooltip);
-					g_object_unref (icon);
-					g_free (name);
-					g_free (tooltip);
-				}
-				g_object_unref (volume);
-			}
-			g_list_free (volumes);
-		} else {
-			if (g_drive_is_media_removable (drive) && !g_drive_is_media_check_automatic (drive)) {
-				/* If the drive has no mountable volumes and we cannot detect media change.. we
-				 * display the drive in the sidebar so the user can manually poll the drive by
-				 * right clicking and selecting "Rescan..."
-				 *
-				 * This is mainly for drives like floppies where media detection doesn't
-				 * work.. but it's also for human beings who like to turn off media detection
-				 * in the OS to save battery juice.
-				 */
-				icon = g_drive_get_icon (drive);
-				name = g_drive_get_name (drive);
-				tooltip = g_strdup_printf (_("Mount and open %s"), name);
+                    cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
+                                           SECTION_DEVICES,
+                                           name, icon, NULL,
+                                           drive, volume, NULL, 0, tooltip, 0, FALSE,
+                                           cat_iter);
+                    g_object_unref (icon);
+                    g_free (name);
+                    g_free (tooltip);
+                }
+                g_object_unref (volume);
+            }
+            g_list_free (volumes);
+        } else {
+            if (g_drive_is_media_removable (drive) && !g_drive_is_media_check_automatic (drive)) {
+                /* If the drive has no mountable volumes and we cannot detect media change.. we
+                 * display the drive in the sidebar so the user can manually poll the drive by
+                 * right clicking and selecting "Rescan..."
+                 *
+                 * This is mainly for drives like floppies where media detection doesn't
+                 * work.. but it's also for human beings who like to turn off media detection
+                 * in the OS to save battery juice.
+                 */
+                icon = g_drive_get_icon (drive);
+                name = g_drive_get_name (drive);
+                tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
-				add_place (sidebar, PLACES_BUILT_IN,
-					   SECTION_DEVICES,
-					   name, icon, NULL,
-					   drive, NULL, NULL, 0, tooltip);
-				g_object_unref (icon);
-				g_free (tooltip);
-				g_free (name);
-			}
-		}
-		g_object_unref (drive);
-	}
-	g_list_free (drives);
+                cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                                       SECTION_DEVICES,
+                                       name, icon, NULL,
+                                       drive, NULL, NULL, 0, tooltip, 0, FALSE,
+                                       cat_iter);
+                g_object_unref (icon);
+                g_free (tooltip);
+                g_free (name);
+            }
+        }
+        g_object_unref (drive);
+    }
+    g_list_free (drives);
 
-	/* add all volumes that is not associated with a drive */
-	volumes = g_volume_monitor_get_volumes (volume_monitor);
-	for (l = volumes; l != NULL; l = l->next) {
-		volume = l->data;
-		drive = g_volume_get_drive (volume);
-		if (drive != NULL) {
-		    	g_object_unref (volume);
-			g_object_unref (drive);
-			continue;
-		}
+    /* add all volumes that is not associated with a drive */
+    volumes = g_volume_monitor_get_volumes (volume_monitor);
+    for (l = volumes; l != NULL; l = l->next) {
+        volume = l->data;
+        drive = g_volume_get_drive (volume);
+        if (drive != NULL) {
+                g_object_unref (volume);
+            g_object_unref (drive);
+            continue;
+        }
 
-		identifier = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_CLASS);
+        identifier = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_CLASS);
 
-		if (g_strcmp0 (identifier, "network") == 0) {
-			g_free (identifier);
-			network_volumes = g_list_prepend (network_volumes, volume);
-			continue;
-		}
-		g_free (identifier);
+        if (g_strcmp0 (identifier, "network") == 0) {
+            g_free (identifier);
+            network_volumes = g_list_prepend (network_volumes, volume);
+            continue;
+        }
+        g_free (identifier);
 
-		mount = g_volume_get_mount (volume);
-		if (mount != NULL) {
-			icon = g_mount_get_icon (mount);
-			root = g_mount_get_default_location (mount);
-			mount_uri = g_file_get_uri (root);
-			tooltip = g_file_get_parse_name (root);
-			g_object_unref (root);
-			name = g_mount_get_name (mount);
-			add_place (sidebar, PLACES_MOUNTED_VOLUME,
-				   SECTION_DEVICES,
-				   name, icon, mount_uri,
-				   NULL, volume, mount, 0, tooltip);
-			g_object_unref (mount);
-			g_object_unref (icon);
-			g_free (name);
-			g_free (tooltip);
-			g_free (mount_uri);
-		} else {
-			/* see comment above in why we add an icon for an unmounted mountable volume */
-			icon = g_volume_get_icon (volume);
-			name = g_volume_get_name (volume);
-			add_place (sidebar, PLACES_MOUNTED_VOLUME,
-				   SECTION_DEVICES,
-				   name, icon, NULL,
-				   NULL, volume, NULL, 0, name);
-			g_object_unref (icon);
-			g_free (name);
-		}
-		g_object_unref (volume);
-	}
-	g_list_free (volumes);
+        mount = g_volume_get_mount (volume);
+        if (mount != NULL) {
+            icon = g_mount_get_icon (mount);
+            root = g_mount_get_default_location (mount);
+            mount_uri = g_file_get_uri (root);
+            tooltip = g_file_get_parse_name (root);
+            g_object_unref (root);
+            name = g_mount_get_name (mount);
+            cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
+                                   SECTION_DEVICES,
+                                   name, icon, mount_uri,
+                                   NULL, volume, mount, 0, tooltip, 0, FALSE,
+                                   cat_iter);
+            g_object_unref (mount);
+            g_object_unref (icon);
+            g_free (name);
+            g_free (tooltip);
+            g_free (mount_uri);
+        } else {
+            /* see comment above in why we add an icon for an unmounted mountable volume */
+            icon = g_volume_get_icon (volume);
+            name = g_volume_get_name (volume);
+            cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
+                                   SECTION_DEVICES,
+                                   name, icon, NULL,
+                                   NULL, volume, NULL, 0, name, 0, FALSE,
+                                   cat_iter);
+            g_object_unref (icon);
+            g_free (name);
+        }
+        g_object_unref (volume);
+    }
+    g_list_free (volumes);
 
 	/* network */
-	add_heading (sidebar, SECTION_NETWORK,
+	cat_iter = add_heading (sidebar, SECTION_NETWORK,
 		     _("Network"));
 
 	network_volumes = g_list_reverse (network_volumes);
@@ -797,10 +943,11 @@ update_places (NemoPlacesSidebar *sidebar)
 			name = g_volume_get_name (volume);
 			tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
-			add_place (sidebar, PLACES_MOUNTED_VOLUME,
-				   SECTION_NETWORK,
-				   name, icon, NULL,
-				   NULL, volume, NULL, 0, tooltip);
+			cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
+                				   SECTION_NETWORK,
+                				   name, icon, NULL,
+                				   NULL, volume, NULL, 0, tooltip, 0, FALSE,
+                                   cat_iter);
 			g_object_unref (icon);
 			g_free (name);
 			g_free (tooltip);
@@ -817,10 +964,11 @@ update_places (NemoPlacesSidebar *sidebar)
 		mount_uri = g_file_get_uri (root);
 		name = g_mount_get_name (mount);
 		tooltip = g_file_get_parse_name (root);
-		add_place (sidebar, PLACES_MOUNTED_VOLUME,
-			   SECTION_NETWORK,
-			   name, icon, mount_uri,
-			   NULL, NULL, mount, 0, tooltip);
+		cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
+                			   SECTION_NETWORK,
+                			   name, icon, mount_uri,
+                			   NULL, NULL, mount, 0, tooltip, 0, FALSE,
+                               cat_iter);
 		g_object_unref (root);
 		g_object_unref (icon);
 		g_free (name);
@@ -833,15 +981,19 @@ update_places (NemoPlacesSidebar *sidebar)
 	/* network:// */
  	mount_uri = "network:///"; /* No need to strdup */
 	icon = g_themed_icon_new (NEMO_ICON_NETWORK);
-	add_place (sidebar, PLACES_BUILT_IN,
-		   SECTION_NETWORK,
-		   _("Network"), icon,
-		   mount_uri, NULL, NULL, NULL, 0,
-		   _("Browse the contents of the network"));
+	cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                		   SECTION_NETWORK,
+                		   _("Network"), icon,
+                		   mount_uri, NULL, NULL, NULL, 0,
+                		   _("Browse the contents of the network"), 0, FALSE,
+                           cat_iter);
 	g_object_unref (icon);
 
 	/* restore selection */
+    restore_expand_state (sidebar);
 	sidebar_update_restore_selection (sidebar, location, last_uri);
+
+    sidebar->updating_sidebar = FALSE;
 
 	g_free (location);
 	g_free (last_uri);
@@ -926,8 +1078,7 @@ over_eject_button (NemoPlacesSidebar *sidebar,
 		   GtkTreePath **path)
 {
 	GtkTreeViewColumn *column;
-	int width, x_offset, hseparator;
-	int eject_button_size;
+	int width, x_offset, x_col_offset;
 	gboolean show_eject;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -948,28 +1099,17 @@ over_eject_button (NemoPlacesSidebar *sidebar,
 			goto out;
 		}
 
-
-		gtk_widget_style_get (GTK_WIDGET (sidebar->tree_view),
-				      "horizontal-separator", &hseparator,
-				      NULL);
-
 		/* Reload cell attributes for this particular row */
 		gtk_tree_view_column_cell_set_cell_data (column,
 							 model, &iter, FALSE, FALSE);
 
+        x_col_offset = gtk_tree_view_column_get_x_offset (column);
 		gtk_tree_view_column_cell_get_position (column,
 							sidebar->eject_icon_cell_renderer,
 							&x_offset, &width);
 
-		eject_button_size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
-
-		/* This is kinda weird, but we have to do it to workaround gtk+ expanding
-		 * the eject cell renderer (even thought we told it not to) and we then
-		 * had to set it right-aligned */
-		x_offset += width - hseparator - EJECT_BUTTON_XPAD - eject_button_size;
-
-		if (x - x_offset >= 0 &&
-		    x - x_offset <= eject_button_size) {
+		if (x - x_col_offset >= 0 &&
+		    x - x_col_offset <= width) {
 			return TRUE;
 		}
 	}
@@ -1010,41 +1150,157 @@ desktop_setting_changed_callback (gpointer user_data)
 
 static void
 loading_uri_callback (NemoWindow *window,
-		      char *location,
-		      NemoPlacesSidebar *sidebar)
+                            char *location,
+               NemoPlacesSidebar *sidebar)
 {
-	GtkTreeSelection *selection;
-	GtkTreeIter 	 iter;
-	gboolean 	 valid;
-	char  		 *uri;
+    GtkTreeSelection *selection;
+    GtkTreeIter       iter_cat, iter_child;
+    gboolean          valid_cat, valid_child;
+    char              *uri;
+    gboolean found = FALSE;
 
-        if (strcmp (sidebar->uri, location) != 0) {
-		g_free (sidebar->uri);
+    if (strcmp (sidebar->uri, location) != 0) {
+        g_free (sidebar->uri);
                 sidebar->uri = g_strdup (location);
-  
-		/* set selection if any place matches location */
-		selection = gtk_tree_view_get_selection (sidebar->tree_view);
-		gtk_tree_selection_unselect_all (selection);
-  		valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (sidebar->store),
-						       &iter);
 
-		while (valid) {
-			gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter, 
-		 		       	    PLACES_SIDEBAR_COLUMN_URI, &uri,
-					    -1);
-			if (uri != NULL) {
-				if (strcmp (uri, location) == 0) {
-					g_free (uri);
-					gtk_tree_selection_select_iter (selection, &iter);
-					break;
-				}
-				g_free (uri);
-			}
-        	 	valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (sidebar->store),
-							  &iter);
+        /* set selection if any place matches location */
+        selection = gtk_tree_view_get_selection (sidebar->tree_view);
+        gtk_tree_selection_unselect_all (selection);
+        valid_cat = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (sidebar->store),
+                                                    &iter_cat);
+
+        while (valid_cat) {
+            valid_child = gtk_tree_model_iter_children (GTK_TREE_MODEL (sidebar->store),
+                                                        &iter_child,
+                                                        &iter_cat);
+            while (valid_child) {
+                gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter_child, 
+                               	    PLACES_SIDEBAR_COLUMN_URI, &uri,
+                                    -1);
+                if (uri != NULL) {
+                    if (strcmp (uri, location) == 0) {
+                        g_free (uri);
+                        gtk_tree_selection_select_iter (selection, &iter_child);
+                        found = TRUE;
+                        break;
+                    }
+                    g_free (uri);
+                }
+                valid_child = gtk_tree_model_iter_next (GTK_TREE_MODEL (sidebar->store),
+                                                        &iter_child);
+            }
+            if (found) {
+                break;
+            }
+            valid_cat = gtk_tree_model_iter_next (GTK_TREE_MODEL (sidebar->store),
+							                         &iter_cat);
 		}
-    	}
+    }
 }
+
+typedef struct {
+    NemoPlacesSidebar *sidebar;
+    GdkRectangle rect;
+    SectionType section_type;
+} CategoryExpandPayload;
+
+static gboolean
+pointer_is_still_in_cell (gint x,
+                          gint y,
+                  GdkRectangle rect)
+{
+    gint max_x = rect.x + rect.width;
+    gint max_y = rect.y + rect.height;
+
+    if ((x >= rect.x && x <= max_x) &&
+        (y >= rect.y && y <= max_y)) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static gboolean
+maybe_expand_category (gpointer data)
+{
+    CategoryExpandPayload *payload = (CategoryExpandPayload *) data;
+
+    GdkDeviceManager *manager;
+    GdkDevice *pointer;
+    GdkWindow *window;
+    int x, y;
+    g_assert (GTK_IS_WIDGET (payload->sidebar)); 
+    window = gtk_widget_get_window (GTK_WIDGET (payload->sidebar));
+
+    manager = gdk_display_get_device_manager (gtk_widget_get_display (GTK_WIDGET (payload->sidebar)));
+    pointer = gdk_device_manager_get_client_pointer (manager);
+    gdk_window_get_device_position (window, pointer,
+                                    &x, &y, NULL);
+
+    if (pointer_is_still_in_cell (x, y, payload->rect)) {
+        expand_category (payload->sidebar, payload->section_type);
+    }
+
+    g_source_remove (payload->sidebar->expand_timeout_source);
+    payload->sidebar->expand_timeout_source = 0;
+    return FALSE;
+}
+
+
+static gboolean
+cat_is_expanded (NemoPlacesSidebar *sidebar,
+                 SectionType section_type)
+{
+    switch (section_type) {
+        case SECTION_COMPUTER:
+            return sidebar->my_computer_expanded;
+        case SECTION_DEVICES:
+            return sidebar->devices_expanded;
+        case SECTION_NETWORK:
+            return sidebar->network_expanded;
+        default:
+            return TRUE;
+    }
+}
+
+
+static GtkTreeViewDropPosition
+get_drag_type (NemoPlacesSidebar *sidebar,
+                           gchar *drop_target_uri,
+                     GdkRectangle rect,
+                              int y,
+                      SectionType section_type)
+{
+    gint zone;
+    gint upper_bound = rect.y + (rect.height / 4);
+    gint lower_bound = rect.y + rect.height - (rect.height / 4);
+
+    if (y <= upper_bound) {
+        zone = POSITION_UPPER;
+    } else if (y > upper_bound && y < lower_bound) {
+        return GTK_TREE_VIEW_DROP_INTO_OR_BEFORE;
+    } else {
+        zone = POSITION_LOWER;
+    }
+
+    if (g_strcmp0 (drop_target_uri, sidebar->top_bookend_uri) == 0 &&
+        zone == POSITION_LOWER) {
+        return GTK_TREE_VIEW_DROP_AFTER;
+    } else  if (g_strcmp0 (drop_target_uri, sidebar->bottom_bookend_uri) == 0 &&
+        zone == POSITION_UPPER) {
+        return GTK_TREE_VIEW_DROP_BEFORE;
+    } 
+
+    if (section_type == SECTION_BOOKMARKS && zone == POSITION_UPPER) {
+        return GTK_TREE_VIEW_DROP_BEFORE;
+    } else if (section_type == SECTION_BOOKMARKS && zone == POSITION_LOWER) {
+        return GTK_TREE_VIEW_DROP_AFTER;
+    } else {
+        /* or else you want to drag items INTO the existing bookmarks */
+        return GTK_TREE_VIEW_DROP_INTO_OR_BEFORE;
+    }
+}
+
 
 /* Computes the appropriate row and position for dropping */
 static gboolean
@@ -1059,32 +1315,50 @@ compute_drop_position (GtkTreeView *tree_view,
 	GtkTreeIter iter;
 	PlaceType place_type;
 	SectionType section_type;
+    gchar *drop_target_uri;
 
 	if (!gtk_tree_view_get_dest_row_at_pos (tree_view,
 						x, y,
 						path, pos)) {
 		return FALSE;
 	}
-
 	model = gtk_tree_view_get_model (tree_view);
 
 	gtk_tree_model_get_iter (model, &iter, *path);
 	gtk_tree_model_get (model, &iter,
 			    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &place_type,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, &section_type,
+                PLACES_SIDEBAR_COLUMN_URI, &drop_target_uri,
 			    -1);
-
-	if (place_type == PLACES_HEADING &&
-        section_type != SECTION_COMPUTER &&
-        section_type != SECTION_BOOKMARKS) {
-		/* never drop on headings, but special case the bookmarks or computer heading,
-		 * so we can create new bookmarks by dragging at the beginning or end of the bookmark list.
-		 */
+	if (!cat_is_expanded (sidebar, section_type) && place_type == PLACES_HEADING) {
+        if (sidebar->expand_timeout_source > 0) {
+            gtk_tree_path_free (*path);
+            *path = NULL;
+            return FALSE;
+        }
+        CategoryExpandPayload *payload;
+        GtkTreeViewColumn *col;
+        col = gtk_tree_view_get_column (GTK_TREE_VIEW (tree_view), 1);
+        payload = g_new0 (CategoryExpandPayload, 1);
+        payload->sidebar = sidebar;
+        gtk_tree_view_get_cell_area (tree_view,
+                                     *path,
+                                     col,
+                                     &payload->rect);
+        payload->section_type = section_type;
+        sidebar->expand_timeout_source = g_timeout_add_full (G_PRIORITY_DEFAULT,
+                                                             DRAG_EXPAND_CATEGORY_DELAY,
+                                                             (GSourceFunc) maybe_expand_category,
+                                                             payload,
+                                                             (GDestroyNotify) g_free);
 		gtk_tree_path_free (*path);
 		*path = NULL;
-		
 		return FALSE;
-	}
+	} else if (place_type == PLACES_HEADING) {
+        gtk_tree_path_free (*path);
+        *path = NULL;
+        return FALSE;
+    }
 
 	if (section_type != SECTION_BOOKMARKS &&
 	    sidebar->drag_data_received &&
@@ -1097,15 +1371,16 @@ compute_drop_position (GtkTreeView *tree_view,
 		return FALSE;
 	}
 
-        /* drag to top or bottom of bookmark list to add a bookmark */
-    if (place_type == PLACES_HEADING && section_type == SECTION_BOOKMARKS) {
-        *pos = GTK_TREE_VIEW_DROP_AFTER;
-    } else  if (place_type == PLACES_HEADING && section_type == SECTION_COMPUTER) {
-        *pos = GTK_TREE_VIEW_DROP_BEFORE;
-    } else {
-        /* or else you want to drag items INTO the existing bookmarks */
-        *pos = GTK_TREE_VIEW_DROP_INTO_OR_BEFORE;
-    }
+
+    GdkRectangle rect;
+    GtkTreeViewColumn *col;
+    col = gtk_tree_view_get_column (GTK_TREE_VIEW (tree_view), 1);
+    gtk_tree_view_get_cell_area (tree_view,
+                                     *path,
+                                     col,
+                                     &rect);
+
+    *pos = get_drag_type (sidebar, drop_target_uri, rect, y, section_type);
 
 	if (*pos != GTK_TREE_VIEW_DROP_BEFORE &&
 	    sidebar->drag_data_received &&
@@ -1453,20 +1728,9 @@ drag_data_received_callback (GtkWidget *widget,
 				    PLACES_SIDEBAR_COLUMN_INDEX, &position,
 				    -1);
 
-		if (section_type != SECTION_BOOKMARKS &&
-                            !(section_type == SECTION_COMPUTER && place_type == PLACES_HEADING)) {
-			goto out;
-		}
-
-        if (section_type == SECTION_COMPUTER && place_type == PLACES_HEADING &&
-                                        tree_pos == GTK_TREE_VIEW_DROP_BEFORE) {
+        if (section_type == SECTION_COMPUTER && tree_pos == GTK_TREE_VIEW_DROP_BEFORE) {
             position = nemo_bookmark_list_length(sidebar->bookmarks);
         }
-
-		if (tree_pos == GTK_TREE_VIEW_DROP_AFTER && place_type != PLACES_HEADING) {
-			/* heading already has position 0 */
-			position++;
-		}
 
 		switch (info) {
 		case TEXT_URI_LIST:
@@ -1990,9 +2254,9 @@ rename_selected_bookmark (NemoPlacesSidebar *sidebar)
 		}
 
 		path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store), &iter);
-		column = gtk_tree_view_get_column (GTK_TREE_VIEW (sidebar->tree_view), 0);
+		column = gtk_tree_view_get_column (GTK_TREE_VIEW (sidebar->tree_view), 1);
 		renderers = gtk_cell_layout_get_cells (GTK_CELL_LAYOUT (column));
-		cell = g_list_nth_data (renderers, 6);
+		cell = g_list_nth_data (renderers, 5);
 		g_list_free (renderers);
 		g_object_set (cell, "editable", TRUE, NULL);
 		gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (sidebar->tree_view),
@@ -2551,14 +2815,14 @@ nemo_places_sidebar_focus (GtkWidget *widget,
 {
 	NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (widget);
 	GtkTreePath *path;
-	GtkTreeIter iter;
+	GtkTreeIter iter, child_iter;
 	gboolean res;
 
 	res = get_selected_iter (sidebar, &iter);
-
 	if (!res) {
 		gtk_tree_model_get_iter_first (GTK_TREE_MODEL (sidebar->store), &iter);
-		res = find_next_row (sidebar, &iter);
+        gtk_tree_model_iter_children (GTK_TREE_MODEL (sidebar->store), &child_iter, &iter);
+		res = find_next_row (sidebar, &child_iter);
 		if (res) {
 			path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store), &iter);
 			gtk_tree_view_set_cursor (sidebar->tree_view, path, NULL, FALSE);
@@ -2899,7 +3163,7 @@ update_eject_buttons (NemoPlacesSidebar *sidebar,
 						 &iter,
 						 sidebar->eject_highlight_path);
 
-			gtk_list_store_set (sidebar->store,
+			gtk_tree_store_set (sidebar->store,
 					    &iter,
 					    PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, FALSE),
 					    -1);
@@ -2920,7 +3184,7 @@ update_eject_buttons (NemoPlacesSidebar *sidebar,
 		gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store),
 					 &iter,
 					 path);
-		gtk_list_store_set (sidebar->store,
+		gtk_tree_store_set (sidebar->store,
 				    &iter,
 				    PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, TRUE),
 				    -1);
@@ -3010,6 +3274,63 @@ bookmarks_button_press_event_cb (GtkWidget             *widget,
 	return retval;
 }
 
+static void
+update_expanded_state (GtkTreeView *tree_view,
+                       GtkTreeIter *iter,
+                       GtkTreePath *path,
+                           gpointer user_data,
+                           gboolean expanded)
+{
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (user_data);
+
+    if (sidebar->updating_sidebar)
+        return;
+
+    SectionType type;
+    GtkTreeIter heading_iter;
+    GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (model), &heading_iter, path);
+    gtk_tree_model_get (model, iter,
+                    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, &type,
+                    -1);
+    if (type == SECTION_COMPUTER) {
+        sidebar->my_computer_expanded = expanded;
+        g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_MY_COMPUTER_EXPANDED, expanded);
+    } else if (type == SECTION_DEVICES) {
+        sidebar->devices_expanded = expanded;
+        g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_DEVICES_EXPANDED, expanded);
+    } else if (type == SECTION_NETWORK) {
+        sidebar->network_expanded = expanded;
+        g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_NETWORK_EXPANDED, expanded);
+    }
+}
+
+static void
+row_collapsed_cb (GtkTreeView *tree_view,
+                              GtkTreeIter *iter,
+                              GtkTreePath *path,
+                              gpointer user_data)
+{
+    update_expanded_state (tree_view,
+                           iter,
+                           path,
+                           user_data,
+                           FALSE);
+}
+
+
+static void
+row_expanded_cb (GtkTreeView *tree_view,
+                              GtkTreeIter *iter,
+                              GtkTreePath *path,
+                              gpointer user_data)
+{
+    update_expanded_state (tree_view,
+                           iter,
+                           path,
+                           user_data,
+                           TRUE);
+}
 
 static void
 bookmarks_edited (GtkCellRenderer       *cell,
@@ -3127,7 +3448,6 @@ padding_cell_renderer_func (GtkTreeViewColumn *column,
 	} else {
 		g_object_set (cell,
 			      "visible", TRUE,
-			      "xpad", 3,
 			      "ypad", 3,
 			      NULL);
 	}
@@ -3205,12 +3525,19 @@ static void
 nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 {
 	GtkTreeView       *tree_view;
-	GtkTreeViewColumn *col;
+	GtkTreeViewColumn *col, *expander_col, *eject_col;
 	GtkCellRenderer   *cell;
 	GtkTreeSelection  *selection;
 
 	sidebar->volume_monitor = g_volume_monitor_get ();
-	
+
+    sidebar->my_computer_expanded = g_settings_get_boolean (nemo_window_state,
+                                                            NEMO_WINDOW_STATE_MY_COMPUTER_EXPANDED);
+    sidebar->devices_expanded = g_settings_get_boolean (nemo_window_state,
+                                                        NEMO_WINDOW_STATE_DEVICES_EXPANDED);
+    sidebar->network_expanded = g_settings_get_boolean (nemo_window_state,
+                                                        NEMO_WINDOW_STATE_NETWORK_EXPANDED);
+
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sidebar),
 					GTK_POLICY_NEVER,
 					GTK_POLICY_AUTOMATIC);
@@ -3226,13 +3553,12 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	gtk_tree_view_set_headers_visible (tree_view, FALSE);
 
 	col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
+    expander_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
+    eject_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
 
 	/* initial padding */
 	cell = gtk_cell_renderer_text_new ();
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
-	g_object_set (cell,
-		      "xpad", 6,
-		      NULL);
 
 	/* headings */
 	cell = gtk_cell_renderer_text_new ();
@@ -3268,11 +3594,13 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 						 sidebar, NULL);
 
 	/* eject text renderer */
-	cell = gtk_cell_renderer_text_new ();
+	cell = nemo_cell_renderer_disk_new ();
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
 	gtk_tree_view_column_set_attributes (col, cell,
 					     "text", PLACES_SIDEBAR_COLUMN_NAME,
 					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
+                         "disk-full-percent", PLACES_SIDEBAR_COLUMN_DF_PERCENT,
+                         "show-disk-full-percent", PLACES_SIDEBAR_COLUMN_SHOW_DF,
 					     NULL);
 	g_object_set (cell,
 		      "ellipsize", PANGO_ELLIPSIZE_END,
@@ -3284,26 +3612,23 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	sidebar->eject_icon_cell_renderer = cell;
 	g_object_set (cell,
 		      "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE,
-		      "stock-size", GTK_ICON_SIZE_MENU,
-		      "xpad", EJECT_BUTTON_XPAD,
-		      /* align right, because for some reason gtk+ expands
-			 this even though we tell it not to. */
-		      "xalign", 1.0,
 		      NULL);
-	gtk_tree_view_column_pack_start (col, cell, FALSE);
-	gtk_tree_view_column_set_attributes (col, cell,
+	gtk_tree_view_column_pack_start (eject_col, cell, FALSE);
+	gtk_tree_view_column_set_attributes (eject_col, cell,
 					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
 					     "pixbuf", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
 					     NULL);
 
 	/* normal text renderer */
-	cell = gtk_cell_renderer_text_new ();
+	cell = nemo_cell_renderer_disk_new ();
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
 	g_object_set (G_OBJECT (cell), "editable", FALSE, NULL);
 	gtk_tree_view_column_set_attributes (col, cell,
 					     "text", PLACES_SIDEBAR_COLUMN_NAME,
 					     "visible", PLACES_SIDEBAR_COLUMN_NO_EJECT,
 					     "editable-set", PLACES_SIDEBAR_COLUMN_BOOKMARK,
+                         "disk-full-percent", PLACES_SIDEBAR_COLUMN_DF_PERCENT,
+                         "show-disk-full-percent", PLACES_SIDEBAR_COLUMN_SHOW_DF,
 					     NULL);
 	g_object_set (cell,
 		      "ellipsize", PANGO_ELLIPSIZE_END,
@@ -3317,7 +3642,18 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
 	/* this is required to align the eject buttons to the right */
 	gtk_tree_view_column_set_max_width (GTK_TREE_VIEW_COLUMN (col), NEMO_ICON_SIZE_SMALLER);
+
+    gtk_tree_view_column_set_sizing (expander_col, GTK_TREE_VIEW_COLUMN_FIXED);
+    gtk_tree_view_column_set_fixed_width (expander_col, EXPANDER_COLUMN_WIDTH);
+    gtk_tree_view_column_set_sizing (eject_col, GTK_TREE_VIEW_COLUMN_FIXED);
+    gtk_tree_view_column_set_fixed_width (eject_col, EJECT_COLUMN_WIDTH);
+    gtk_tree_view_column_set_expand (col, TRUE);
+
+    gtk_tree_view_append_column (tree_view, expander_col);
 	gtk_tree_view_append_column (tree_view, col);
+    gtk_tree_view_append_column (tree_view, eject_col);
+
+    gtk_tree_view_set_expander_column (tree_view, expander_col);
 
 	sidebar->store = nemo_shortcuts_model_new (sidebar);
 	gtk_tree_view_set_tooltip_column (tree_view, PLACES_SIDEBAR_COLUMN_TOOLTIP);
@@ -3377,6 +3713,10 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 			  G_CALLBACK (bookmarks_motion_event_cb), sidebar);
 	g_signal_connect (tree_view, "button-release-event",
 			  G_CALLBACK (bookmarks_button_release_event_cb), sidebar);
+    g_signal_connect (tree_view, "row-expanded",
+              G_CALLBACK (row_expanded_cb), sidebar);
+    g_signal_connect (tree_view, "row-collapsed",
+              G_CALLBACK (row_collapsed_cb), sidebar);
 
 	eel_gtk_tree_view_set_activate_on_single_click (sidebar->tree_view,
 							TRUE);
@@ -3516,7 +3856,6 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 
 	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_ALWAYS_USE_BROWSER,
 				  G_CALLBACK (bookmarks_popup_menu_detach_cb), sidebar);
-
 	update_places (sidebar);
 }
 
@@ -3527,7 +3866,6 @@ nemo_places_sidebar_style_set (GtkWidget *widget,
 	NemoPlacesSidebar *sidebar;
 
 	sidebar = NEMO_PLACES_SIDEBAR (widget);
-
 	update_places (sidebar);
 }
 
@@ -3588,7 +3926,7 @@ _nemo_shortcuts_model_drag_source_init (GtkTreeDragSourceIface *iface)
 	iface->row_draggable = nemo_shortcuts_model_row_draggable;
 }
 
-static GtkListStore *
+static GtkTreeStore *
 nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar)
 {
 	NemoShortcutsModel *model;
@@ -3607,15 +3945,17 @@ nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar)
 		G_TYPE_STRING,
 		GDK_TYPE_PIXBUF,
 		G_TYPE_INT,
-		G_TYPE_STRING
+		G_TYPE_STRING,
+        G_TYPE_INT,
+        G_TYPE_BOOLEAN
 	};
 
 	model = g_object_new (NEMO_TYPE_SHORTCUTS_MODEL, NULL);
 	model->sidebar = sidebar;
 
-	gtk_list_store_set_column_types (GTK_LIST_STORE (model),
+	gtk_tree_store_set_column_types (GTK_TREE_STORE (model),
 					 PLACES_SIDEBAR_COLUMN_COUNT,
 					 model_types);
 
-	return GTK_LIST_STORE (model);
+	return GTK_TREE_STORE (model);
 }
