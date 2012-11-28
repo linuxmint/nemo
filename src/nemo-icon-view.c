@@ -876,7 +876,7 @@ get_default_zoom_level (NemoIconView *icon_view)
 
 	default_zoom_level = g_settings_get_enum (nemo_icon_view_preferences,
 						  NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL);
-	default_compact_zoom_level = g_settings_get_enum (nemo_icon_view_preferences,
+	default_compact_zoom_level = g_settings_get_enum (nemo_compact_view_preferences,
 							  NEMO_PREFERENCES_COMPACT_VIEW_DEFAULT_ZOOM_LEVEL);
 
 	return CLAMP (DEFAULT_ZOOM_LEVEL(icon_view), NEMO_ZOOM_LEVEL_SMALLEST, NEMO_ZOOM_LEVEL_LARGEST);
