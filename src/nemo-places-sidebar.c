@@ -568,22 +568,21 @@ get_disk_full (GFile *file, gchar **tooltip_info)
         gint df_percent;
         float fraction;
         float free_val;
-        k_used = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED) / 1024;
-        k_total = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE) / 1024;
+        int prefix;
+        gchar *free_string;
+
+        k_used = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
+        k_total = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
+        k_free = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
         fraction = ((float) k_used / (float) k_total) * 100.0;
         df_percent = (gint) rintf(fraction);
-        k_free = k_total - k_used;
 
-        if (k_free > GB) {
-            free_val = ((float) k_free / GB);
-            *tooltip_info = g_strdup_printf (_("Free space: %.2f GB"), free_val);
-        } else if (k_free > MB) {
-            free_val = ((float) k_free / MB);
-            *tooltip_info = g_strdup_printf (_("Free space: %.2f MB"), free_val);
-        } else {
-            free_val = (float) k_free;
-            *tooltip_info = g_strdup_printf (_("Free space: %.2f KB"), free_val);
-        }
+        prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+        free_string = g_format_size_full (k_free, prefix);
+
+        *tooltip_info = g_strdup_printf (_("Free space: %s"), free_string);
+        g_free (free_string);
+
         return (df_percent > -1 && df_percent < 101) ? df_percent : 0;
 }
 
