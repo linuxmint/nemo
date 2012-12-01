@@ -59,6 +59,7 @@
 
 #define ICON_CELL_XPAD 6
 #define EXPANDER_COLUMN_WIDTH 14
+#define EXPANDER_PAD_COLUMN_WIDTH 4
 #define EJECT_COLUMN_WIDTH 18
 #define DRAG_EXPAND_CATEGORY_DELAY 500
 
@@ -3560,7 +3561,7 @@ static void
 nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 {
 	GtkTreeView       *tree_view;
-	GtkTreeViewColumn *col, *expander_col, *eject_col;
+	GtkTreeViewColumn *col, *expander_col, *eject_col, *expander_pad_col;
 	GtkCellRenderer   *cell;
 	GtkTreeSelection  *selection;
 
@@ -3590,6 +3591,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
     expander_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
     eject_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
+    expander_pad_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new());
 
 	/* initial padding */
 	cell = gtk_cell_renderer_text_new ();
@@ -3678,12 +3680,18 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	/* this is required to align the eject buttons to the right */
 	gtk_tree_view_column_set_max_width (GTK_TREE_VIEW_COLUMN (col), NEMO_ICON_SIZE_SMALLER);
 
+    gtk_tree_view_column_set_sizing (expander_pad_col, GTK_TREE_VIEW_COLUMN_FIXED);
+    gtk_tree_view_column_set_fixed_width (expander_pad_col, EXPANDER_PAD_COLUMN_WIDTH);
+
     gtk_tree_view_column_set_sizing (expander_col, GTK_TREE_VIEW_COLUMN_FIXED);
     gtk_tree_view_column_set_fixed_width (expander_col, EXPANDER_COLUMN_WIDTH);
+
     gtk_tree_view_column_set_sizing (eject_col, GTK_TREE_VIEW_COLUMN_FIXED);
     gtk_tree_view_column_set_fixed_width (eject_col, EJECT_COLUMN_WIDTH);
+
     gtk_tree_view_column_set_expand (col, TRUE);
 
+    gtk_tree_view_append_column (tree_view, expander_pad_col);
     gtk_tree_view_append_column (tree_view, expander_col);
 	gtk_tree_view_append_column (tree_view, col);
     gtk_tree_view_append_column (tree_view, eject_col);
