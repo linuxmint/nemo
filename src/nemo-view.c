@@ -6521,7 +6521,6 @@ action_open_in_terminal_callback(GtkAction *action,
 {
 	NemoView *view;
 	GList *selection;
-    GFile *location;
 
 	view = NEMO_VIEW (callback_data);
 	selection = nemo_view_get_selection (view);
