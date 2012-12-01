@@ -449,6 +449,21 @@
       <_summary>Show menu bar in new windows</_summary>
       <_description>If set to true, newly opened windows will have the menu bar visible.</_description>
     </key>
+    <key name="my-computer-expanded" type="b">
+      <default>true</default>
+      <_summary>Expand My Computer section in places sidebar</_summary>
+      <_description>View state storage for My Computer in places sidebar</_description>
+    </key>
+    <key name="devices-expanded" type="b">
+      <default>true</default>
+      <_summary>Expand Devices section in places sidebar</_summary>
+      <_description>View state storage for My Computer in places sidebar</_description>
+    </key>
+    <key name="network-expanded" type="b">
+      <default>true</default>
+      <_summary>Expand Network section in places sidebar</_summary>
+      <_description>View state storage for My Computer in places sidebar</_description>
+    </key>
     <key name="side-pane-view" type="s">
       <choices>
 	<choice value='places'/>
