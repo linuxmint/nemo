@@ -487,12 +487,18 @@ restore_expand_state_foreach (GtkTreeModel *model,
         if (section_type == SECTION_COMPUTER) {
             if (sidebar->my_computer_expanded)
                 gtk_tree_view_expand_to_path (sidebar->tree_view, path);
+            else
+                gtk_tree_view_collapse_row (sidebar->tree_view, path);
         } else if (section_type == SECTION_DEVICES) {
             if (sidebar->devices_expanded)
                 gtk_tree_view_expand_to_path (sidebar->tree_view, path);
+            else
+                gtk_tree_view_collapse_row (sidebar->tree_view, path);
         } else if (section_type == SECTION_NETWORK) {
             if (sidebar->network_expanded)
                 gtk_tree_view_expand_to_path (sidebar->tree_view, path);
+            else
+                gtk_tree_view_collapse_row (sidebar->tree_view, path);
         }
     }
     return FALSE;
@@ -506,18 +512,18 @@ restore_expand_state (NemoPlacesSidebar *sidebar)
 }
 
 
-static void expand_category (NemoPlacesSidebar *sidebar,
-                             SectionType section_type)
+static void expand_or_collapse_category (NemoPlacesSidebar *sidebar,
+                             SectionType section_type, gboolean expand)
 {
     switch (section_type) {
         case SECTION_COMPUTER:
-            sidebar->my_computer_expanded = TRUE;
+            sidebar->my_computer_expanded = expand;
             break;
         case SECTION_DEVICES:
-            sidebar->devices_expanded = TRUE;
+            sidebar->devices_expanded = expand;
             break;
         case SECTION_NETWORK:
-            sidebar->network_expanded = TRUE;
+            sidebar->network_expanded = expand;
             break;
         default:
             break;
@@ -1238,7 +1244,7 @@ maybe_expand_category (gpointer data)
                                     &x, &y, NULL);
 
     if (pointer_is_still_in_cell (x, y, payload->rect)) {
-        expand_category (payload->sidebar, payload->section_type);
+        expand_or_collapse_category (payload->sidebar, payload->section_type, TRUE);
     }
 
     g_source_remove (payload->sidebar->expand_timeout_source);
@@ -3333,6 +3339,35 @@ row_expanded_cb (GtkTreeView *tree_view,
 }
 
 static void
+row_activated_cb (GtkTreeView       *tree_view,
+                  GtkTreePath       *path,
+                  GtkTreeViewColumn *column,
+                  gpointer           user_data)
+{
+    GtkTreeIter iter;
+    SectionType section_type;
+    PlaceType place_type;
+
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (user_data);
+    GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (model), &iter, path);
+    gtk_tree_model_get (model, &iter,
+                    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, &section_type,
+                    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &place_type,
+                    -1);
+    if (place_type == PLACES_HEADING) {
+        if (section_type == SECTION_COMPUTER) {
+            sidebar->my_computer_expanded = !sidebar->my_computer_expanded;
+        } else if (section_type == SECTION_DEVICES) {
+            sidebar->devices_expanded = !sidebar->devices_expanded;
+        } else if (section_type == SECTION_NETWORK) {
+            sidebar->network_expanded = !sidebar->network_expanded;
+        }
+        restore_expand_state (sidebar);
+    }
+}
+
+static void
 bookmarks_edited (GtkCellRenderer       *cell,
 		  gchar                 *path_string,
 		  gchar                 *new_text,
@@ -3717,9 +3752,8 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
               G_CALLBACK (row_expanded_cb), sidebar);
     g_signal_connect (tree_view, "row-collapsed",
               G_CALLBACK (row_collapsed_cb), sidebar);
-
-	eel_gtk_tree_view_set_activate_on_single_click (sidebar->tree_view,
-							TRUE);
+    g_signal_connect (tree_view, "row-activated",
+              G_CALLBACK (row_activated_cb), sidebar);
 
 	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
 				  G_CALLBACK(desktop_setting_changed_callback),
