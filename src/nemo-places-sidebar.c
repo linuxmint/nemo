@@ -28,6 +28,7 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
+#include <math.h>
 
 #include <libnemo-private/nemo-dnd.h>
 #include <libnemo-private/nemo-bookmark.h>
@@ -571,7 +572,6 @@ get_disk_full (GFile *file, gchar **tooltip_info)
         k_total = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE) / 1024;
         fraction = ((float) k_used / (float) k_total) * 100.0;
         df_percent = (gint) rintf(fraction);
-
         k_free = k_total - k_used;
 
         if (k_free > GB) {
