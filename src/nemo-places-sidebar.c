@@ -1217,7 +1217,6 @@ pointer_is_still_in_cell (gint x,
 {
     gint max_x = rect.x + rect.width;
     gint max_y = rect.y + rect.height;
-
     if ((x >= rect.x && x <= max_x) &&
         (y >= rect.y && y <= max_y)) {
         return TRUE;
@@ -1230,7 +1229,6 @@ static gboolean
 maybe_expand_category (gpointer data)
 {
     CategoryExpandPayload *payload = (CategoryExpandPayload *) data;
-
     GdkDeviceManager *manager;
     GdkDevice *pointer;
     GdkWindow *window;
@@ -1344,7 +1342,7 @@ compute_drop_position (GtkTreeView *tree_view,
         }
         CategoryExpandPayload *payload;
         GtkTreeViewColumn *col;
-        col = gtk_tree_view_get_column (GTK_TREE_VIEW (tree_view), 1);
+        col = gtk_tree_view_get_column (GTK_TREE_VIEW (tree_view), 2);
         payload = g_new0 (CategoryExpandPayload, 1);
         payload->sidebar = sidebar;
         gtk_tree_view_get_cell_area (tree_view,
