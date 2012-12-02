@@ -6525,10 +6525,14 @@ action_open_in_terminal_callback(GtkAction *action,
 	view = NEMO_VIEW (callback_data);
 	selection = nemo_view_get_selection (view);
 	if (selection != NULL) {
-        open_in_terminal (g_file_get_path(nemo_file_get_location (NEMO_FILE (selection->data))));
+        open_in_terminal (g_file_get_path (g_file_get_parent (nemo_file_get_location (NEMO_FILE (selection->data)))));
 		nemo_file_list_free (selection);
 	} else {
-        open_in_terminal (g_filename_from_uri(nemo_view_get_uri(view), NULL, NULL));
+        if (g_file_has_uri_scheme (g_file_new_for_uri (nemo_view_get_uri (view)), "x-nemo-desktop")) {
+            open_in_terminal (nemo_get_desktop_directory ());
+        } else {
+            open_in_terminal (g_filename_from_uri(nemo_view_get_uri(view), NULL, NULL));
+        }
     }
 }
 
