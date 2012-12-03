@@ -350,7 +350,7 @@ add_preferences_callbacks (void)
 {
 	nautilus_global_preferences_init ();
 
-	g_signal_connect_swapped (nautilus_preferences,
+	g_signal_connect_swapped (gtk_filechooser_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES,
 				  G_CALLBACK(filtering_changed_callback),
 				  NULL);

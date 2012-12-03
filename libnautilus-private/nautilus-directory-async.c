@@ -827,7 +827,7 @@ static gboolean show_hidden_files = TRUE;
 static void
 show_hidden_files_changed_callback (gpointer callback_data)
 {
-	show_hidden_files = g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES);
+	show_hidden_files = g_settings_get_boolean (gtk_filechooser_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES);
 }
 
 static gboolean
@@ -837,7 +837,7 @@ should_skip_file (NautilusDirectory *directory, GFileInfo *info)
 
 	/* Add the callback once for the life of our process */
 	if (!show_hidden_files_changed_callback_installed) {
-		g_signal_connect_swapped (nautilus_preferences,
+		g_signal_connect_swapped (gtk_filechooser_preferences,
 					  "changed::" NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES,
 					  G_CALLBACK(show_hidden_files_changed_callback),
 					  NULL);

@@ -36,7 +36,7 @@ G_BEGIN_DECLS
 #define NAUTILUS_PREFERENCES_ENABLE_DELETE			"enable-delete"
 
 /* Display  */
-#define NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
+#define NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden"
 
 /* Mouse */
 #define NAUTILUS_PREFERENCES_MOUSE_USE_EXTRA_BUTTONS		"mouse-use-extra-buttons"
@@ -165,6 +165,7 @@ GSettings *nautilus_icon_view_preferences;
 GSettings *nautilus_list_view_preferences;
 GSettings *nautilus_desktop_preferences;
 GSettings *nautilus_window_state;
+GSettings *gtk_filechooser_preferences;
 GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
 GSettings *gnome_interface_preferences;

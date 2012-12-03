@@ -683,7 +683,7 @@ nautilus_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow
 	bind_builder_bool (builder, nautilus_preferences,
 			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_TRASH_DELETE_WIDGET,
 			   NAUTILUS_PREFERENCES_ENABLE_DELETE);
-	bind_builder_bool (builder, nautilus_preferences,
+	bind_builder_bool (builder, gtk_filechooser_preferences,
 			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_SHOW_HIDDEN_WIDGET,
 			   NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES);
 

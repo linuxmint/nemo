@@ -470,7 +470,7 @@ nautilus_view_reset_to_defaults (NautilusView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NAUTILUS_ACTION_SHOW_HIDDEN_FILES);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-				      g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES));
+				      g_settings_get_boolean (gtk_filechooser_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES));
 }
 
 static gboolean
@@ -2646,7 +2646,7 @@ nautilus_view_init (NautilusView *view)
 	view->details->sort_directories_first =
 		g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SORT_DIRECTORIES_FIRST);
 	view->details->show_hidden_files =
-		g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES);
+		g_settings_get_boolean (gtk_filechooser_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES);
 
 	g_signal_connect_object (nautilus_trash_monitor_get (), "trash_state_changed",
 				 G_CALLBACK (nautilus_view_trash_state_changed_callback), view, 0);
