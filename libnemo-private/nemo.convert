@@ -32,6 +32,7 @@ show-hidden-files = /desktop/gnome/file_views/show_hidden_files
 
 [org.nemo.icon-view]
 captions = /apps/nemo/icon_view/captions
+default-use-tighter-layout = /apps/nemo/icon_view/default_use_tighter_layout
 labels-beside-icons = /apps/nemo/icon_view/labels_beside_icons
 default-zoom-level = /apps/nemo/icon_view/default_zoom_level
 thumbnail-size = /apps/nemo/icon_view/thumbnail_size

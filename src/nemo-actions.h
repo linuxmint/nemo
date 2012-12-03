@@ -125,6 +125,7 @@
 #define NEMO_ACTION_NEW_EMPTY_DOCUMENT "New Empty Document"
 #define NEMO_ACTION_EMPTY_TRASH_CONDITIONAL "Empty Trash Conditional"
 #define NEMO_ACTION_MANUAL_LAYOUT "Manual Layout"
+#define NEMO_ACTION_TIGHTER_LAYOUT "Tighter Layout"
 #define NEMO_ACTION_REVERSED_ORDER "Reversed Order"
 #define NEMO_ACTION_CLEAN_UP "Clean Up"
 #define NEMO_ACTION_KEEP_ALIGNED "Keep Aligned"
