@@ -1,9 +1,0 @@
-TODO
-
-- fix bookmarks handling
-- fix about window
-- remove ctrl+l feature and make location entry visible by default, above breadcrumb, with the possibility for the user to hide it (just like statusbar)
-- improve default look and feel, white background, shadows, frame borders etc..
-- investigate re-adding views buttons
-- add actions framework similar to XDG desktop entries for easy context menu actions
-- make it easier for user to define mime associations
