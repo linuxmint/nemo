@@ -22,13 +22,14 @@
    Author: Holger Berndt <berndth@gmx.de>
 */
 
-#ifndef NEMO_WINDOW_PANE_H
-#define NEMO_WINDOW_PANE_H
+#ifndef NEMO_WINDOW_MENUS_H
+#define NEMO_WINDOW_MENUS_H
 
 #include "nemo-window.h"
+#include "nemo-window-pane.h"
 #include <gtk/gtk.h>
 
-gchar *         toolbar_action_for_view_id  (gchar *view_id                           );
-void            toolbar_set_view_button     (gchar *action_id,      NemoWindowPane *pane);
+guint         toolbar_action_for_view_id  (const char *view_id                           );
+void            toolbar_set_view_button     (guint action_id,      NemoWindowPane *pane);
 
 #endif /* NEMO_WINDOW_PANE_H */
