@@ -843,7 +843,7 @@ nemo_window_pane_constructed (GObject *obj)
 	/* build the toolbar */
 	action_group = nemo_window_create_toolbar_action_group (window);
 	pane->toolbar_action_group = action_group;
-	pane->tool_bar = nemo_toolbar_new (action_group);
+	pane->tool_bar = GTK_WIDGET (nemo_toolbar_new (action_group));
 	pane->action_group = action_group;
 
 	setup_search_action (pane);

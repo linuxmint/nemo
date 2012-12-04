@@ -140,8 +140,8 @@ static void
 setup_root_info_bar (NemoToolbar *self) {
 
     GtkWidget *root_bar = gtk_info_bar_new ();
-    gtk_info_bar_set_message_type (root_bar, GTK_MESSAGE_ERROR);
-    GtkWidget *content_area = gtk_info_bar_get_content_area (root_bar);
+    gtk_info_bar_set_message_type (GTK_INFO_BAR (root_bar), GTK_MESSAGE_ERROR);
+    GtkWidget *content_area = gtk_info_bar_get_content_area (GTK_INFO_BAR (root_bar));
 
     GtkWidget *label = gtk_label_new (_("Elevated Privileges"));
     gtk_widget_show (label);
