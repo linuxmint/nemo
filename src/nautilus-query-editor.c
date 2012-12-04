@@ -684,7 +684,7 @@ type_row_create_widgets (NautilusQueryEditorRow *row)
 	gtk_list_store_append (store, &iter);
 	gtk_list_store_set (store, &iter, 0, "---",  -1);
 	gtk_list_store_append (store, &iter);
-	gtk_list_store_set (store, &iter, 0, _("Other Type..."), 3, TRUE, -1);
+	gtk_list_store_set (store, &iter, 0, _("Other Type…"), 3, TRUE, -1);
 
 	gtk_combo_box_set_active (GTK_COMBO_BOX (combo), 0);
 	

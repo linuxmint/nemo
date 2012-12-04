@@ -761,7 +761,7 @@ static const GtkActionEntry desktop_view_entries[] = {
 	/* name, stock id */
          { "Stretch", NULL,
 	   /* label, accelerator */
-	   N_("Resize Icon..."), NULL,
+	   N_("Resize Icon…"), NULL,
 	   /* tooltip */
 	   N_("Make the selected icons resizable"),
 	   G_CALLBACK (action_stretch_callback) },

@@ -375,7 +375,7 @@ nautilus_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int 
 				if (file_entry->parent->loaded) {
 					g_value_set_string (value, _("(Empty)"));
 				} else {
-					g_value_set_string (value, _("Loading..."));
+					g_value_set_string (value, _("Loading…"));
 				}
 			}
 		} else {

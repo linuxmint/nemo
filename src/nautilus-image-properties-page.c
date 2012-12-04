@@ -705,7 +705,7 @@ nautilus_image_properties_page_init (NautilusImagePropertiesPage *page)
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (page->details->grid), GTK_ORIENTATION_VERTICAL);
 	gtk_grid_set_row_spacing (GTK_GRID (page->details->grid), 6);
 	gtk_grid_set_column_spacing (GTK_GRID (page->details->grid), 20);
-	append_item (page, _("Loading..."), NULL);
+	append_item (page, _("Loading…"), NULL);
 	gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (sw), page->details->grid);
 
 	gtk_widget_show_all (GTK_WIDGET (page));

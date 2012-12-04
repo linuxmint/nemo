@@ -2163,7 +2163,7 @@ directory_contents_value_field_update (NautilusPropertiesWindow *window)
 				text = g_strdup (_("unreadable"));
 			}
 		} else {
-			text = g_strdup ("...");
+			text = g_strdup ("…");
 		}
 	} else {
 		char *size_str;
@@ -4577,7 +4577,7 @@ create_permissions_page (NautilusPropertiesWindow *window)
 							   "width", 2,
 							   NULL);
 
-			button = gtk_button_new_with_mnemonic (_("Change Permissions for Enclosed Files..."));
+			button = gtk_button_new_with_mnemonic (_("Change Permissions for Enclosed Files…"));
 			gtk_widget_show (button);
 			gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 			g_signal_connect (button, "clicked",

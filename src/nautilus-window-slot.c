@@ -603,7 +603,7 @@ nautilus_window_slot_constructed (GObject *object)
 	g_signal_connect (slot->details->floating_bar, "action",
 			  G_CALLBACK (floating_bar_action_cb), slot);
 
-	slot->details->title = g_strdup (_("Loading..."));
+	slot->details->title = g_strdup (_("Loading…"));
 }
 
 static void
@@ -2241,7 +2241,7 @@ real_setup_loading_floating_bar (NautilusWindowSlot *slot)
 
 	nautilus_floating_bar_set_primary_label (NAUTILUS_FLOATING_BAR (slot->details->floating_bar),
 						 NAUTILUS_IS_SEARCH_DIRECTORY (nautilus_view_get_model (slot->details->content_view)) ?
-						 _("Searching...") : _("Loading..."));
+						 _("Searching…") : _("Loading…"));
 	nautilus_floating_bar_set_details_label (NAUTILUS_FLOATING_BAR (slot->details->floating_bar), NULL);
 	nautilus_floating_bar_set_show_spinner (NAUTILUS_FLOATING_BAR (slot->details->floating_bar),
 						TRUE);
