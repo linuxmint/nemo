@@ -262,6 +262,11 @@
       "size", "type", "date_modified", "date_changed", "date_accessed", "owner",
       "group", "permissions", "octal_permissions" and "mime_type".</_description>
     </key>
+    <key name="default-use-tighter-layout" type="b">
+      <default>false</default>
+      <_summary>Use tighter layout in new windows</_summary>
+      <_description>If true, icons will be laid out tighter by default in new windows.</_description>
+    </key>
     <key name="labels-beside-icons" type="b">
       <default>false</default>
       <_summary>Put labels beside icons</_summary>
