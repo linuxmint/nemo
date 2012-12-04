@@ -809,8 +809,10 @@ update_places (NemoPlacesSidebar *sidebar)
                     mount_uri = g_file_get_uri (root);
                     name = g_mount_get_name (mount);
                     full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
-                    tooltip = g_strdup_printf (_("%s\n%s"),
+                    tooltip = g_strdup_printf (_("%s (%s)\n%s"),
                                                g_file_get_parse_name (root),
+                                               g_volume_get_identifier (volume,
+                                                                        G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE),
                                                tooltip_info);
                     g_free (tooltip_info);
                     cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
@@ -836,7 +838,9 @@ update_places (NemoPlacesSidebar *sidebar)
                      */
                     icon = g_volume_get_icon (volume);
                     name = g_volume_get_name (volume);
-                    tooltip = g_strdup_printf (_("Mount and open %s"), name);
+                    tooltip = g_strdup_printf (_("Mount and open %s (%s)"), name,
+                                               g_volume_get_identifier (volume,
+                                                                        G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE));
 
                     cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
                                            SECTION_DEVICES,
