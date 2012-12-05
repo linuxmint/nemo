@@ -1104,7 +1104,6 @@ trash_retrieve_files_to_restore_thread (GSimpleAsyncResult *res,
 		GFileInfo *info;
 		gpointer lookupvalue;
 		GFile *item;
-		GTimeVal timeval;
 		glong trash_time, orig_trash_time;
 		const char *origpath;
 		GFile *origfile;
