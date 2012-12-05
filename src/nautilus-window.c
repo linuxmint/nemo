@@ -58,6 +58,7 @@
 #ifdef HAVE_X11_XF86KEYSYM_H
 #include <X11/XF86keysym.h>
 #endif
+#include <libnautilus-private/nautilus-dnd.h>
 #include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-file-attributes.h>
 #include <libnautilus-private/nautilus-file-operations.h>
@@ -608,14 +609,73 @@ places_sidebar_empty_trash_requested_cb (GtkPlacesSidebar *sidebar,
 
 /* Callback used when the places sidebar needs us to present an error message */
 static void
-places_sidebar_show_error_message (GtkPlacesSidebar *sidebar,
-				   const char       *primary,
-				   const char       *secondary,
-				   gpointer          user_data)
+places_sidebar_show_error_message_cb (GtkPlacesSidebar *sidebar,
+				      const char       *primary,
+				      const char       *secondary,
+				      gpointer          user_data)
 {
 	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
 
 	eel_show_error_dialog (primary, secondary, GTK_WINDOW (window));
+}
+
+static GList *
+build_selection_list_from_uri_list (GList *uri_list)
+{
+	GList *result;
+	GList *l;
+
+	result = NULL;
+	for (l = uri_list; l; l = l->next) {
+		const char *uri = l->data;
+		NautilusDragSelectionItem *item;
+
+		item = nautilus_drag_selection_item_new ();
+		item->uri = g_strdup (uri);
+		item->got_icon_position = FALSE;
+		result = g_list_prepend (result, item);
+	}
+
+	return g_list_reverse (result);
+}
+
+/* Callback used when the places sidebar needs to know the drag action to suggest */
+static void
+places_sidebar_drag_action_requested_cb (GtkPlacesSidebar *sidebar,
+					 GdkDragContext   *context,
+					 const char       *uri,
+					 GList            *uri_list,
+					 int              *action,
+					 gpointer          user_data)
+{
+	GList *items;
+
+	items = build_selection_list_from_uri_list (uri_list);
+
+	nautilus_drag_default_drop_action_for_icons (context, uri, items, action);
+
+	nautilus_drag_destroy_selection_list (items);
+}
+
+/* Callback used when the places sidebar needs us to pop up a menu with possible drag actions */
+static GdkDragAction
+places_sidebar_drag_action_ask_cb (GtkPlacesSidebar *sidebar,
+				   GdkDragAction     actions,
+				   gpointer          user_data)
+{
+	return nautilus_drag_drop_action_ask (GTK_WIDGET (sidebar), actions);
+}
+
+/* Callback used when the places sidebar has URIs dropped into it.  We do a normal file operation for them. */
+static void
+places_sidebar_drag_perform_drop_cb (GtkPlacesSidebar *sidebar,
+				     GList            *uris,
+				     const char       *drop_uri,
+				     GdkDragAction     action,
+				     gpointer          user_data)
+{
+	nautilus_file_operations_copy_move (uris, NULL, drop_uri, action, GTK_WIDGET (sidebar), NULL, NULL);
+	
 }
 
 /* Callback for our own loading_uri signal.  We update the sidebar's path. */
@@ -667,6 +727,7 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 	gtk_places_sidebar_set_multiple_tabs_supported (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
 	gtk_places_sidebar_set_multiple_windows_supported (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
 	gtk_places_sidebar_set_show_properties (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
+	gtk_places_sidebar_set_accept_uri_drops (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
 
 	gtk_places_sidebar_set_show_trash (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
 	g_signal_connect_object (nautilus_trash_monitor_get (), "trash_state_changed",
@@ -679,7 +740,13 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 	g_signal_connect (window->details->places_sidebar, "empty-trash-requested",
 			  G_CALLBACK (places_sidebar_empty_trash_requested_cb), window);
 	g_signal_connect (window->details->places_sidebar, "show-error-message",
-			  G_CALLBACK (places_sidebar_show_error_message), window);
+			  G_CALLBACK (places_sidebar_show_error_message_cb), window);
+	g_signal_connect (window->details->places_sidebar, "drag-action-requested",
+			  G_CALLBACK (places_sidebar_drag_action_requested_cb), window);
+	g_signal_connect (window->details->places_sidebar, "drag-action-ask",
+			  G_CALLBACK (places_sidebar_drag_action_ask_cb), window);
+	g_signal_connect (window->details->places_sidebar, "drag-perform-drop",
+			  G_CALLBACK (places_sidebar_drag_perform_drop_cb), window);
 
 	g_signal_connect (window, "loading-uri",
 			  G_CALLBACK (window_loading_uri_cb), window);
