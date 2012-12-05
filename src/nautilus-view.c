@@ -8616,9 +8616,18 @@ real_update_menus (NautilusView *view)
 	   show the delete option. or if the user set this  pref */
 	gtk_action_set_visible (action, (!can_trash_files && can_delete_files) || show_separate_delete_command);
 
+	if (selection_contains_recent) {
+		label = _("Remo_ve from Recent");
+		tip = _("Remove each selected item from the recenly used list");
+	} else {
+		label = _("_Delete");
+		tip = _("Delete each selected item, without moving to the Trash");
+	}
+
 	if ((!can_trash_files && can_delete_files) || show_separate_delete_command) {
 		g_object_set (action,
-			      "label", _("_Delete"),
+			      "label", label,
+			      "tooltip", tip,
 			      "icon-name", NAUTILUS_ICON_DELETE,
 			      NULL);
 	}
