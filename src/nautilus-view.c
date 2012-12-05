@@ -8618,7 +8618,7 @@ real_update_menus (NautilusView *view)
 
 	if (selection_contains_recent) {
 		label = _("Remo_ve from Recent");
-		tip = _("Remove each selected item from the recenly used list");
+		tip = _("Remove each selected item from the recently used list");
 	} else {
 		label = _("_Delete");
 		tip = _("Delete each selected item, without moving to the Trash");
