@@ -60,7 +60,7 @@ struct _NautilusShellSearchProviderApp {
 
   guint name_owner_id;
   GDBusObjectManagerServer *object_manager;
-  NautilusShellSearchProvider *skeleton;
+  NautilusShellSearchProvider2 *skeleton;
 
   PendingSearch *current_search;
 
@@ -469,10 +469,10 @@ execute_search (NautilusShellSearchProviderApp *self,
 }
 
 static void
-handle_get_initial_result_set (NautilusShellSearchProvider  *skeleton,
-                               GDBusMethodInvocation        *invocation,
-                               gchar                       **terms,
-                               gpointer                      user_data)
+handle_get_initial_result_set (NautilusShellSearchProvider2  *skeleton,
+                               GDBusMethodInvocation         *invocation,
+                               gchar                        **terms,
+                               gpointer                       user_data)
 {
   NautilusShellSearchProviderApp *self = user_data;
 
@@ -481,11 +481,11 @@ handle_get_initial_result_set (NautilusShellSearchProvider  *skeleton,
 }
 
 static void
-handle_get_subsearch_result_set (NautilusShellSearchProvider  *skeleton,
-                                 GDBusMethodInvocation        *invocation,
-                                 gchar                       **previous_results,
-                                 gchar                       **terms,
-                                 gpointer                      user_data)
+handle_get_subsearch_result_set (NautilusShellSearchProvider2  *skeleton,
+                                 GDBusMethodInvocation         *invocation,
+                                 gchar                        **previous_results,
+                                 gchar                        **terms,
+                                 gpointer                       user_data)
 {
   NautilusShellSearchProviderApp *self = user_data;
 
@@ -606,10 +606,10 @@ result_list_attributes_ready_cb (GList    *file_list,
 }
 
 static void
-handle_get_result_metas (NautilusShellSearchProvider  *skeleton,
-                         GDBusMethodInvocation        *invocation,
-                         gchar                       **results,
-                         gpointer                      user_data)
+handle_get_result_metas (NautilusShellSearchProvider2  *skeleton,
+                         GDBusMethodInvocation         *invocation,
+                         gchar                        **results,
+                         gpointer                       user_data)
 {
   NautilusShellSearchProviderApp *self = user_data;
   GList *missing_files = NULL;
@@ -647,69 +647,15 @@ handle_get_result_metas (NautilusShellSearchProvider  *skeleton,
   nautilus_file_list_free (missing_files);
 }
 
-/* taken from Epiphany's ephy-main.c */
-static Time
-slowly_and_stupidly_obtain_timestamp (Display *xdisplay)
-{
-  Window xwindow;
-  XEvent event;
-
-  {
-    XSetWindowAttributes attrs;
-    Atom atom_name;
-    Atom atom_type;
-    char* name;
-
-    attrs.override_redirect = True;
-    attrs.event_mask = PropertyChangeMask | StructureNotifyMask;
-
-    xwindow =
-      XCreateWindow (xdisplay,
-                     RootWindow (xdisplay, 0),
-                     -100, -100, 1, 1,
-                     0,
-                     CopyFromParent,
-                     CopyFromParent,
-                     CopyFromParent,
-                     CWOverrideRedirect | CWEventMask,
-                     &attrs);
-
-    atom_name = XInternAtom (xdisplay, "WM_NAME", TRUE);
-    g_assert (atom_name != None);
-    atom_type = XInternAtom (xdisplay, "STRING", TRUE);
-    g_assert (atom_type != None);
-
-    name = "Fake Window";
-    XChangeProperty (xdisplay,
-                     xwindow, atom_name,
-                     atom_type,
-                     8, PropModeReplace, (unsigned char *)name, strlen (name));
-  }
-
-  XWindowEvent (xdisplay,
-                xwindow,
-                PropertyChangeMask,
-                &event);
-
-  XDestroyWindow(xdisplay, xwindow);
-
-  return event.xproperty.time;
-}
-
 static void
-handle_activate_result (NautilusShellSearchProvider *skeleton,
-                        GDBusMethodInvocation       *invocation,
-                        gchar                       *result,
-                        gpointer                     user_data)
+handle_activate_result (NautilusShellSearchProvider2 *skeleton,
+                        GDBusMethodInvocation        *invocation,
+                        gchar                        *result,
+                        gchar                       **terms,
+                        guint32                       timestamp,
+                        gpointer                      user_data)
 {
   GError *error = NULL;
-  guint32 timestamp;
-
-  /* We need a timestamp here to get the correct WM focus.
-   * Ideally this would be given to us by the caller, but since it
-   * is not, get it ourselves.
-   */
-  timestamp = slowly_and_stupidly_obtain_timestamp (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()));
   gtk_show_uri (NULL, result, timestamp, &error);
 
   if (error != NULL) {
@@ -742,7 +688,7 @@ search_provider_bus_acquired_cb (GDBusConnection *connection,
   NautilusShellSearchProviderApp *self = user_data;
 
   self->object_manager = g_dbus_object_manager_server_new ("/org/gnome/Nautilus/SearchProvider");
-  self->skeleton = nautilus_shell_search_provider_skeleton_new ();
+  self->skeleton = nautilus_shell_search_provider2_skeleton_new ();
 
   g_signal_connect (self->skeleton, "handle-get-initial-result-set",
                     G_CALLBACK (handle_get_initial_result_set), self);
