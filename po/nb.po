@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus 3.7.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-04 19:24+0100\n"
-"PO-Revision-Date: 2012-12-04 19:28+0100\n"
+"POT-Creation-Date: 2012-12-05 20:10+0100\n"
+"PO-Revision-Date: 2012-12-05 20:11+0100\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian bokmål <i18n-nb@lister.ping.uio.no>\n"
 "Language: no\n"
@@ -1724,69 +1724,69 @@ msgstr "An_gre papirkurv"
 msgid "_Redo Trash"
 msgstr "Gjø_r om papirkurv"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1300
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1299
 #, c-format
 msgid "Restore original permissions of items enclosed in '%s'"
 msgstr "Gjenopprett opprinnelige rettigheter på oppføringene som ligger i «%s»"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1301
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1300
 #, c-format
 msgid "Set permissions of items enclosed in '%s'"
 msgstr "Sett rettigheter på oppføringer som ligger i «%s»"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1303
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1458
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1302
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1457
 msgid "_Undo Change Permissions"
 msgstr "An_gre endring av rettigheter"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1304
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1459
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1303
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1458
 msgid "_Redo Change Permissions"
 msgstr "Gjø_r om endring av rettigheter"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1455
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1454
 #, c-format
 msgid "Restore original permissions of '%s'"
 msgstr "Gjenopprett opprinnelige rettigheter på «%s»"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1456
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1455
 #, c-format
 msgid "Set permissions of '%s'"
 msgstr "Sett rettigheter på «%s»"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1566
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1565
 #, c-format
 msgid "Restore group of '%s' to '%s'"
 msgstr "Gjenopprett gruppe for «%s» til «%s»"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1568
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1567
 #, c-format
 msgid "Set group of '%s' to '%s'"
 msgstr "Sett gruppe for «%s» til «%s»"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1571
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1570
 msgid "_Undo Change Group"
 msgstr "An_gre endring av gruppe"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1572
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1571
 msgid "_Redo Change Group"
 msgstr "Gjø_r om endring av gruppe"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1574
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1573
 #, c-format
 msgid "Restore owner of '%s' to '%s'"
 msgstr "Gjenopprett eier av «%s» til «%s»"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1576
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1575
 #, c-format
 msgid "Set owner of '%s' to '%s'"
 msgstr "Sett eier av «%s» til «%s»"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1579
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1578
 msgid "_Undo Change Owner"
 msgstr "An_gre endring av eier"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1580
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1579
 msgid "_Redo Change Owner"
 msgstr "Gjø_r om endring av eier"
 
@@ -2793,7 +2793,7 @@ msgstr "K_oble til"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-desktop-canvas-view.c:706 ../src/nautilus-view.c:7142
-#: ../src/nautilus-view.c:8666
+#: ../src/nautilus-view.c:8675
 msgid "E_mpty Trash"
 msgstr "Tø_m papirkurv"
 
@@ -4348,7 +4348,7 @@ msgid "P_roperties"
 msgstr "E_genskaper"
 
 #. tooltip
-#: ../src/nautilus-view.c:7099 ../src/nautilus-view.c:8654
+#: ../src/nautilus-view.c:7099 ../src/nautilus-view.c:8663
 msgid "View or modify the properties of each selected item"
 msgstr "Vis eller modifiser egenskapene for hver av de valgte oppføringene"
 
@@ -4517,7 +4517,7 @@ msgstr "Velg alle oppføringer som ikke er valgt nå"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7184 ../src/nautilus-view.c:8637
+#: ../src/nautilus-view.c:7184 ../src/nautilus-view.c:8646
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Opprett len_ke"
@@ -4558,12 +4558,12 @@ msgstr "Flytt hver valgt oppføring til papirkurven"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7204 ../src/nautilus-view.c:7318
-#: ../src/nautilus-view.c:8621
+#: ../src/nautilus-view.c:8623
 msgid "_Delete"
 msgstr "Sle_tt"
 
 #. tooltip
-#: ../src/nautilus-view.c:7205
+#: ../src/nautilus-view.c:7205 ../src/nautilus-view.c:8624
 msgid "Delete each selected item, without moving to the Trash"
 msgstr "Slett hver valgt oppføring, uten å flytte dem til papirkurven"
 
@@ -4993,7 +4993,15 @@ msgstr[1] "Åpne i %'d nye _faner"
 msgid "Delete all selected items permanently"
 msgstr "Slett alle valgte oppføringer permanent"
 
-#: ../src/nautilus-view.c:8652
+#: ../src/nautilus-view.c:8620
+msgid "Remo_ve from Recent"
+msgstr "_Fjern fra nylig brukte"
+
+#: ../src/nautilus-view.c:8621
+msgid "Remove each selected item from the recently used list"
+msgstr "Fjern hver valgt oppføring fra listen over nylig brukte"
+
+#: ../src/nautilus-view.c:8661
 msgid "View or modify the properties of the open folder"
 msgstr "Vis eller endre egenskaper for åpen mappe"
 
