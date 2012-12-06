@@ -102,6 +102,8 @@ G_DEFINE_TYPE (NautilusApplication, nautilus_application, GTK_TYPE_APPLICATION);
 struct _NautilusApplicationPriv {
 	GVolumeMonitor *volume_monitor;
 	NautilusProgressUIHandler *progress_handler;
+	NautilusDBusManager *dbus_manager;
+	NautilusFreedesktopDBus *fdb_manager;
 
 	gboolean no_desktop;
 	gchar *geometry;
@@ -972,8 +974,9 @@ nautilus_application_finalize (GObject *object)
 
 	g_free (application->priv->geometry);
 
-	nautilus_dbus_manager_stop ();
-	nautilus_freedesktop_dbus_stop ();
+	g_clear_object (&application->priv->dbus_manager);
+	g_clear_object (&application->priv->fdb_manager);
+
 	notify_uninit ();
 
         G_OBJECT_CLASS (nautilus_application_parent_class)->finalize (object);
@@ -1412,8 +1415,8 @@ nautilus_application_startup (GApplication *app)
 	nautilus_previewer_get_singleton ();
 
 	/* create DBus manager */
-	nautilus_dbus_manager_start (app);
-	nautilus_freedesktop_dbus_start (self);
+	self->priv->dbus_manager = nautilus_dbus_manager_new ();
+	self->priv->fdb_manager = nautilus_freedesktop_dbus_new ();
 
 	/* initialize preferences and create the global GSettings objects */
 	nautilus_global_preferences_init ();

@@ -95,9 +95,16 @@ main (int argc, char *argv[])
 
 	/* Run the nautilus application. */
 	application = g_object_new (NAUTILUS_TYPE_APPLICATION,
-				    "application-id", "org.gnome.NautilusApplication",
-				    "flags", G_APPLICATION_HANDLES_OPEN,
+				    "application-id", "org.gnome.Nautilus",
+				    "flags", G_APPLICATION_HANDLES_OPEN | G_APPLICATION_IS_SERVICE,
+				    "inactivity-timeout", 12000,
 				    NULL);
+
+	/* hold indefinitely if we're asked to persist */
+	if (g_getenv ("NAUTILUS_PERSIST") != NULL) {
+		g_application_hold (G_APPLICATION (application));
+	}
+
 	retval = g_application_run (G_APPLICATION (application),
 				    argc, argv);
 

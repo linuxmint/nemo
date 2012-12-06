@@ -23,9 +23,12 @@
 #ifndef __NAUTILUS_FREEDESKTOP_DBUS_H__
 #define __NAUTILUS_FREEDESKTOP_DBUS_H__
 
-#include "nautilus-application.h"
+#include <glib-object.h>
 
-void nautilus_freedesktop_dbus_start (NautilusApplication *app);
-void nautilus_freedesktop_dbus_stop (void);
+typedef struct _NautilusFreedesktopDBus NautilusFreedesktopDBus;
+typedef struct _NautilusFreedesktopDBusClass NautilusFreedesktopDBusClass;
+
+GType nautilus_freedesktop_dbus_get_type (void);
+NautilusFreedesktopDBus * nautilus_freedesktop_dbus_new (void);
 
 #endif /* __NAUTILUS_FREEDESKTOP_DBUS_H__ */
