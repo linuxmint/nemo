@@ -94,14 +94,10 @@ static GList *nautilus_application_desktop_windows;
 static gboolean save_of_accel_map_requested = FALSE;
 
 static void     desktop_changed_callback          (gpointer                  user_data);
-static void     mount_added_callback              (GVolumeMonitor            *monitor,
-						   GMount                    *mount,
-						   NautilusApplication       *application);
 
 G_DEFINE_TYPE (NautilusApplication, nautilus_application, GTK_TYPE_APPLICATION);
 
 struct _NautilusApplicationPriv {
-	GVolumeMonitor *volume_monitor;
 	NautilusProgressUIHandler *progress_handler;
 	NautilusDBusManager *dbus_manager;
 	NautilusFreedesktopDBus *fdb_manager;
@@ -558,29 +554,6 @@ nautilus_application_create_window (NautilusApplication *application,
 }
 
 static void
-mount_added_callback (GVolumeMonitor *monitor,
-		      GMount *mount,
-		      NautilusApplication *application)
-{
-	NautilusDirectory *directory;
-	GFile *root;
-	gchar *uri;
-		
-	root = g_mount_get_root (mount);
-	uri = g_file_get_uri (root);
-
-	DEBUG ("Added mount at uri %s", uri);
-	g_free (uri);
-	
-	directory = nautilus_directory_get_existing (root);
-	g_object_unref (root);
-	if (directory != NULL) {
-		nautilus_directory_force_reload (directory);
-		nautilus_directory_unref (directory);
-	}
-}
-
-static void
 open_window (NautilusApplication *application,
 	     GFile *location, GdkScreen *screen, const char *geometry)
 {
@@ -1017,7 +990,6 @@ nautilus_application_finalize (GObject *object)
 
 	application = NAUTILUS_APPLICATION (object);
 
-	g_clear_object (&application->priv->volume_monitor);
 	g_clear_object (&application->priv->progress_handler);
 	g_clear_object (&application->priv->bookmark_list);
 
@@ -1499,10 +1471,6 @@ nautilus_application_startup (GApplication *app)
 	/* Initialize the UI handler singleton for file operations */
 	notify_init (GETTEXT_PACKAGE);
 	self->priv->progress_handler = nautilus_progress_ui_handler_new ();
-
-	self->priv->volume_monitor = g_volume_monitor_get ();
-	g_signal_connect_object (self->priv->volume_monitor, "mount_added",
-				 G_CALLBACK (mount_added_callback), self, 0);
 
 	/* Bookmarks and search */
 	self->priv->bookmark_list = nautilus_bookmark_list_new ();
