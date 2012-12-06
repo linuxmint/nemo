@@ -8,7 +8,6 @@ bin_PROGRAMS=					\
 
 libexec_PROGRAMS=				\
 	nautilus-convert-metadata		\
-	nautilus-shell-search-provider		\
 	$(NULL)
 
 INCLUDES =							\
@@ -55,6 +54,18 @@ $(dbus_freedesktop_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-d
 		--c-generate-object-manager						\
 		--generate-c-code nautilus-freedesktop-generated			\
 		$(top_srcdir)/data/freedesktop-dbus-interfaces.xml			\
+		$(NULL)
+
+dbus_shell_search_provider_built_sources =		\
+	nautilus-shell-search-provider-generated.c	\
+	nautilus-shell-search-provider-generated.h
+
+$(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml
+	gdbus-codegen									\
+		--interface-prefix org.gnome.						\
+		--c-namespace Nautilus							\
+		--generate-c-code nautilus-shell-search-provider-generated		\
+		$(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml		\
 		$(NULL)
 
 UI_FILES = \
@@ -119,6 +130,7 @@ nautilus-enum-types.c: $(headers) Makefile
 
 nautilus_built_sources = \
 	$(dbus_freedesktop_built_sources) \
+	$(dbus_shell_search_provider_built_sources) \
 	nautilus-resources.c \
 	nautilus-resources.h \
 	nautilus-enum-types.h \
@@ -183,6 +195,8 @@ nautilus_SOURCES = \
 	nautilus-query-editor.h			\
 	nautilus-self-check-functions.c 	\
 	nautilus-self-check-functions.h 	\
+	nautilus-shell-search-provider.h	\
+	nautilus-shell-search-provider.c	\
 	nautilus-special-location-bar.c		\
 	nautilus-special-location-bar.h		\
 	nautilus-toolbar.c			\
@@ -231,28 +245,6 @@ nautilus_connect_server_SOURCES= \
 
 nautilus_convert_metadata_SOURCES= \
 	nautilus-convert-metadata.c	\
-	$(NULL)
-
-dbus_shell_search_provider_built_sources =		\
-	nautilus-shell-search-provider-generated.c	\
-	nautilus-shell-search-provider-generated.h
-
-$(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml
-	gdbus-codegen									\
-		--interface-prefix org.gnome.						\
-		--c-namespace Nautilus							\
-		--generate-c-code nautilus-shell-search-provider-generated		\
-		$(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml		\
-		$(NULL)
-
-nautilus_shell_search_provider_SOURCES = 		\
-	nautilus-bookmark-list.h			\
-	nautilus-bookmark-list.c			\
-	nautilus-shell-search-provider.c		\
-	$(NULL)
-
-nodist_nautilus_shell_search_provider_SOURCES =		\
-	$(dbus_shell_search_provider_built_sources)	\
 	$(NULL)
 
 BUILT_SOURCES = 					\

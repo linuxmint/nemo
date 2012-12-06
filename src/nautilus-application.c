@@ -46,6 +46,7 @@
 #include "nautilus-previewer.h"
 #include "nautilus-progress-ui-handler.h"
 #include "nautilus-self-check-functions.h"
+#include "nautilus-shell-search-provider.h"
 #include "nautilus-window.h"
 #include "nautilus-window-private.h"
 #include "nautilus-window-slot.h"
@@ -113,6 +114,8 @@ struct _NautilusApplicationPriv {
 	NautilusBookmarkList *bookmark_list;
 
 	GtkWidget *connect_server_window;
+
+	NautilusShellSearchProvider *search_provider;
 };
 
 NautilusBookmarkList *
@@ -907,12 +910,58 @@ action_quit (GSimpleAction *action,
 	g_list_foreach (windows, (GFunc) nautilus_window_close, NULL);
 }
 
+static void
+action_search (GSimpleAction *action,
+	       GVariant *parameter,
+	       gpointer user_data)
+{
+	GtkApplication *application = user_data;
+	const gchar *string, *uri;
+	NautilusQuery *query;
+	NautilusDirectory *directory;
+	gchar *search_uri;
+	NautilusWindow *window;
+	GtkWindow *cur_window;
+	GFile *location;
+
+	g_variant_get (parameter, "(ss)", &uri, &string);
+
+	if (strlen (string) == 0 ||
+	    strlen (uri) == 0) {
+		return;
+	}
+
+	query = nautilus_query_new ();
+	nautilus_query_set_location (query, uri);
+	nautilus_query_set_text (query, string);
+
+	search_uri = nautilus_search_directory_generate_new_uri ();
+	location = g_file_new_for_uri (search_uri);
+	g_free (search_uri);
+
+	directory = nautilus_directory_get (location);
+	nautilus_search_directory_set_query (NAUTILUS_SEARCH_DIRECTORY (directory), query);
+
+	cur_window = gtk_application_get_active_window (application);
+	window = nautilus_application_create_window (NAUTILUS_APPLICATION (application),
+						     cur_window ?
+						     gtk_window_get_screen (cur_window) :
+						     gdk_screen_get_default ());
+
+	nautilus_window_slot_open_location (nautilus_window_get_active_slot (window), location, 0);
+
+	nautilus_directory_unref (directory);
+	g_object_unref (query);
+	g_object_unref (location);
+}
+
 static GActionEntry app_entries[] = {
 	{ "new-window", action_new_window, NULL, NULL, NULL },
 	{ "connect-to-server", action_connect_to_server, NULL, NULL, NULL },
 	{ "enter-location", action_enter_location, NULL, NULL, NULL },
 	{ "bookmarks", action_bookmarks, NULL, NULL, NULL },
 	{ "preferences", action_preferences, NULL, NULL, NULL },
+	{ "search", action_search, "(ss)", NULL, NULL },
 	{ "about", action_about, NULL, NULL, NULL },
 	{ "help", action_help, NULL, NULL, NULL },
 	{ "quit", action_quit, NULL, NULL, NULL },
@@ -976,6 +1025,7 @@ nautilus_application_finalize (GObject *object)
 
 	g_clear_object (&application->priv->dbus_manager);
 	g_clear_object (&application->priv->fdb_manager);
+	g_clear_object (&application->priv->search_provider);
 
 	notify_uninit ();
 
@@ -1454,7 +1504,9 @@ nautilus_application_startup (GApplication *app)
 	g_signal_connect_object (self->priv->volume_monitor, "mount_added",
 				 G_CALLBACK (mount_added_callback), self, 0);
 
+	/* Bookmarks and search */
 	self->priv->bookmark_list = nautilus_bookmark_list_new ();
+	self->priv->search_provider = nautilus_shell_search_provider_new ();
 
 	/* Check the user's .nautilus directories and post warnings
 	 * if there are problems.

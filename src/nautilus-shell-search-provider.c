@@ -35,16 +35,13 @@
 #include <libnautilus-private/nautilus-search-provider.h>
 #include <libnautilus-private/nautilus-ui-utilities.h>
 
+#include "nautilus-application.h"
 #include "nautilus-bookmark-list.h"
 #include "nautilus-shell-search-provider-generated.h"
-
-#define SEARCH_PROVIDER_INACTIVITY_TIMEOUT 12000 /* milliseconds */
-
-typedef GApplicationClass NautilusShellSearchProviderAppClass;
-typedef struct _NautilusShellSearchProviderApp NautilusShellSearchProviderApp;
+#include "nautilus-shell-search-provider.h"
 
 typedef struct {
-  NautilusShellSearchProviderApp *self;
+  NautilusShellSearchProvider *self;
 
   NautilusSearchEngine *engine;
   NautilusQuery *query;
@@ -55,8 +52,8 @@ typedef struct {
   gint64 start_time;
 } PendingSearch;
 
-struct _NautilusShellSearchProviderApp {
-  GApplication parent;
+struct _NautilusShellSearchProvider {
+  GObject parent;
 
   guint name_owner_id;
   GDBusObjectManagerServer *object_manager;
@@ -70,13 +67,7 @@ struct _NautilusShellSearchProviderApp {
   GVolumeMonitor *volumes;
 };
 
-GType nautilus_shell_search_provider_app_get_type (void);
-
-#define NAUTILUS_TYPE_SHELL_SEARCH_PROVIDER_APP nautilus_shell_search_provider_app_get_type()
-#define NAUTILUS_SHELL_SEARCH_PROVIDER_APP(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_SHELL_SEARCH_PROVIDER_APP, NautilusShellSearchProviderApp))
-
-G_DEFINE_TYPE (NautilusShellSearchProviderApp, nautilus_shell_search_provider_app, G_TYPE_APPLICATION)
+G_DEFINE_TYPE (NautilusShellSearchProvider, nautilus_shell_search_provider, G_TYPE_OBJECT)
 
 static GVariant *
 variant_from_pixbuf (GdkPixbuf *pixbuf)
@@ -101,7 +92,7 @@ variant_from_pixbuf (GdkPixbuf *pixbuf)
 }
 
 static gchar *
-get_display_name (NautilusShellSearchProviderApp *self,
+get_display_name (NautilusShellSearchProvider *self,
                   NautilusFile                   *file)
 {
   GFile *location;
@@ -118,7 +109,7 @@ get_display_name (NautilusShellSearchProviderApp *self,
 }
 
 static GIcon *
-get_gicon (NautilusShellSearchProviderApp *self,
+get_gicon (NautilusShellSearchProvider *self,
            NautilusFile                   *file)
 {
   GFile *location;
@@ -149,19 +140,19 @@ pending_search_finish (PendingSearch         *search,
                        GDBusMethodInvocation *invocation,
                        GVariant              *result)
 {
-  NautilusShellSearchProviderApp *self = search->self;
+  NautilusShellSearchProvider *self = search->self;
 
   g_dbus_method_invocation_return_value (invocation, result);
 
   if (search == self->current_search)
     self->current_search = NULL;
 
-  g_application_release (G_APPLICATION (self));
+  g_application_release (g_application_get_default ());
   pending_search_free (search);
 }
 
 static void
-cancel_current_search (NautilusShellSearchProviderApp *self)
+cancel_current_search (NautilusShellSearchProvider *self)
 {
   if (self->current_search != NULL)
     nautilus_search_provider_stop (NAUTILUS_SEARCH_PROVIDER (self->current_search->engine));
@@ -245,7 +236,7 @@ search_error_cb (NautilusSearchEngine *engine,
                  const gchar          *error_message,
                  gpointer              user_data)
 {
-  NautilusShellSearchProviderApp *self = user_data;
+  NautilusShellSearchProvider *self = user_data;
   PendingSearch *search = self->current_search;
 
   g_debug ("*** Search engine search error");
@@ -413,7 +404,7 @@ search_add_volumes_and_bookmarks (PendingSearch *search)
 }
 
 static void
-execute_search (NautilusShellSearchProviderApp *self,
+execute_search (NautilusShellSearchProvider *self,
                 GDBusMethodInvocation          *invocation,
                 gchar                         **terms)
 {
@@ -454,7 +445,7 @@ execute_search (NautilusShellSearchProviderApp *self,
                     G_CALLBACK (search_error_cb), pending_search);
 
   self->current_search = pending_search;
-  g_application_hold (G_APPLICATION (self));
+  g_application_hold (g_application_get_default ());
 
   search_add_volumes_and_bookmarks (pending_search);
 
@@ -474,7 +465,7 @@ handle_get_initial_result_set (NautilusShellSearchProvider2  *skeleton,
                                gchar                        **terms,
                                gpointer                       user_data)
 {
-  NautilusShellSearchProviderApp *self = user_data;
+  NautilusShellSearchProvider *self = user_data;
 
   g_debug ("****** GetInitialResultSet");
   execute_search (self, invocation, terms);
@@ -487,14 +478,14 @@ handle_get_subsearch_result_set (NautilusShellSearchProvider2  *skeleton,
                                  gchar                        **terms,
                                  gpointer                       user_data)
 {
-  NautilusShellSearchProviderApp *self = user_data;
+  NautilusShellSearchProvider *self = user_data;
 
   g_debug ("****** GetSubSearchResultSet");
   execute_search (self, invocation, terms);
 }
 
 typedef struct {
-  NautilusShellSearchProviderApp *self;
+  NautilusShellSearchProvider *self;
 
   gint64 start_time;
   GDBusMethodInvocation *invocation;
@@ -611,7 +602,7 @@ handle_get_result_metas (NautilusShellSearchProvider2  *skeleton,
                          gchar                        **results,
                          gpointer                       user_data)
 {
-  NautilusShellSearchProviderApp *self = user_data;
+  NautilusShellSearchProvider *self = user_data;
   GList *missing_files = NULL;
   const gchar *uri;
   ResultMetasData *data;
@@ -655,13 +646,30 @@ handle_activate_result (NautilusShellSearchProvider2 *skeleton,
                         guint32                       timestamp,
                         gpointer                      user_data)
 {
-  GError *error = NULL;
-  gtk_show_uri (NULL, result, timestamp, &error);
+  GFile *file = g_file_new_for_uri (result);
+  g_application_open (g_application_get_default (), &file, 1, "");
+  g_object_unref (file);
 
-  if (error != NULL) {
-    g_warning ("Unable to activate %s: %s", result, error->message);
-    g_error_free (error);
-  }
+  nautilus_shell_search_provider2_complete_activate_result (skeleton, invocation);
+}
+
+static void
+handle_launch_search (NautilusShellSearchProvider2 *skeleton,
+                      GDBusMethodInvocation *invocation,
+                      gchar **terms,
+                      gpointer user_data)
+{
+  GApplication *app = g_application_get_default ();
+  gchar *string = g_strjoinv (" ", terms);
+  gchar *uri = nautilus_get_home_directory_uri ();
+
+  g_action_group_activate_action (G_ACTION_GROUP (app), "search",
+                                  g_variant_new ("(ss)", uri, string));
+
+  g_free (string);
+  g_free (uri);
+
+  nautilus_shell_search_provider2_complete_launch_search (skeleton, invocation);
 }
 
 static void
@@ -685,7 +693,7 @@ search_provider_bus_acquired_cb (GDBusConnection *connection,
                                  const gchar *name,
                                  gpointer user_data)
 {
-  NautilusShellSearchProviderApp *self = user_data;
+  NautilusShellSearchProvider *self = user_data;
 
   self->object_manager = g_dbus_object_manager_server_new ("/org/gnome/Nautilus/SearchProvider");
   self->skeleton = nautilus_shell_search_provider2_skeleton_new ();
@@ -698,17 +706,21 @@ search_provider_bus_acquired_cb (GDBusConnection *connection,
                     G_CALLBACK (handle_get_result_metas), self);
   g_signal_connect (self->skeleton, "handle-activate-result",
                     G_CALLBACK (handle_activate_result), self);
+  g_signal_connect (self->skeleton, "handle-launch-search",
+                    G_CALLBACK (handle_launch_search), self);
 
   g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->skeleton),
                                     connection,
                                     "/org/gnome/Nautilus/SearchProvider", NULL);
   g_dbus_object_manager_server_set_connection (self->object_manager, connection);
+
+  g_application_release (g_application_get_default ());
 }
 
 static void
-search_provider_app_dispose (GObject *obj)
+search_provider_dispose (GObject *obj)
 {
-  NautilusShellSearchProviderApp *self = NAUTILUS_SHELL_SEARCH_PROVIDER_APP (obj);
+  NautilusShellSearchProvider *self = NAUTILUS_SHELL_SEARCH_PROVIDER (obj);
 
   if (self->name_owner_id != 0) {
     g_bus_unown_name (self->name_owner_id);
@@ -724,77 +736,40 @@ search_provider_app_dispose (GObject *obj)
   g_hash_table_destroy (self->metas_cache);
   cancel_current_search (self);
 
-  g_clear_object (&self->bookmarks);
   g_clear_object (&self->volumes);
 
-  G_OBJECT_CLASS (nautilus_shell_search_provider_app_parent_class)->dispose (obj);
+  G_OBJECT_CLASS (nautilus_shell_search_provider_parent_class)->dispose (obj);
 }
 
 static void
-search_provider_app_startup (GApplication *app)
+nautilus_shell_search_provider_init (NautilusShellSearchProvider *self)
 {
-  NautilusShellSearchProviderApp *self = NAUTILUS_SHELL_SEARCH_PROVIDER_APP (app);
+  self->metas_cache = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                             g_free, (GDestroyNotify) g_variant_unref);
+  self->bookmarks = nautilus_application_get_bookmarks (NAUTILUS_APPLICATION (g_application_get_default ()));
+  self->volumes = g_volume_monitor_get ();
 
-  G_APPLICATION_CLASS (nautilus_shell_search_provider_app_parent_class)->startup (app);
-
-  /* hold indefinitely if we're asked to persist */
-  if (g_getenv ("NAUTILUS_SEARCH_PROVIDER_PERSIST") != NULL)
-    g_application_hold (app);
-
+  g_application_hold (g_application_get_default ());
   self->name_owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
                                         "org.gnome.Nautilus.SearchProvider",
                                         G_BUS_NAME_OWNER_FLAGS_NONE,
                                         search_provider_bus_acquired_cb,
                                         search_provider_name_acquired_cb,
                                         search_provider_name_lost_cb,
-                                        app, NULL);
+                                        self, NULL);
 }
 
 static void
-nautilus_shell_search_provider_app_init (NautilusShellSearchProviderApp *self)
+nautilus_shell_search_provider_class_init (NautilusShellSearchProviderClass *klass)
 {
-  GApplication *app = G_APPLICATION (self);
-
-  g_application_set_inactivity_timeout (app, SEARCH_PROVIDER_INACTIVITY_TIMEOUT);
-  g_application_set_application_id (app, "org.gnome.Nautilus.SearchProvider");
-  g_application_set_flags (app, G_APPLICATION_IS_SERVICE);
-
-  self->metas_cache = g_hash_table_new_full (g_str_hash, g_str_equal,
-                                             g_free, (GDestroyNotify) g_variant_unref);
-  self->bookmarks = nautilus_bookmark_list_new ();
-  self->volumes = g_volume_monitor_get ();
-}
-
-static void
-nautilus_shell_search_provider_app_class_init (NautilusShellSearchProviderAppClass *klass)
-{
-  GApplicationClass *aclass = G_APPLICATION_CLASS (klass);
   GObjectClass *oclass = G_OBJECT_CLASS (klass);
 
-  aclass->startup = search_provider_app_startup;
-  oclass->dispose = search_provider_app_dispose;
+  oclass->dispose = search_provider_dispose;
 }
 
-static GApplication *
-nautilus_shell_search_provider_app_new (void)
+NautilusShellSearchProvider *
+nautilus_shell_search_provider_new (void)
 {
-  return g_object_new (nautilus_shell_search_provider_app_get_type (),
+  return g_object_new (nautilus_shell_search_provider_get_type (),
                        NULL);
 }
-
-int
-main (int   argc,
-      char *argv[])
-{
-  GApplication *app;
-  gint res;
-
-  gtk_init (&argc, &argv);
-
-  app = nautilus_shell_search_provider_app_new ();
-  res = g_application_run (app, argc, argv);
-  g_object_unref (app);
-
-  return res;
-}
-

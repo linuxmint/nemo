@@ -34,7 +34,7 @@ org.freedesktop.FileManager1.service: org.freedesktop.FileManager1.service.in Ma
 	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
 
 org.gnome.Nautilus.SearchProvider.service: org.gnome.Nautilus.SearchProvider.service.in Makefile
-	$(AM_V_GEN) sed -e "s|\@libexecdir\@|$(libexecdir)|" $< > $@
+	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
 
 searchproviderdir = $(datadir)/gnome-shell/search-providers
 searchprovider_DATA = nautilus-search-provider.ini
