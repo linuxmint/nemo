@@ -140,8 +140,6 @@ struct NemoDirectoryDetails
 	LinkInfoReadState *link_info_read_state;
 
 	GList *file_operations_in_progress; /* list of FileOperation * */
-
-	GHashTable *hidden_file_hash;
 };
 
 NemoDirectory *nemo_directory_get_existing                    (GFile                     *location);
@@ -239,9 +237,6 @@ void               nemo_directory_add_file_to_work_queue          (NemoDirectory
 void               nemo_directory_remove_file_from_work_queue     (NemoDirectory *directory,
 								       NemoFile *file);
 
-/* KDE compatibility hacks */
-
-void               nemo_set_kde_trash_name                        (const char *trash_dir);
 
 /* debugging functions */
 int                nemo_directory_number_outstanding              (void);
