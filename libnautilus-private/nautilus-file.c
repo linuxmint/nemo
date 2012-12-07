@@ -3329,15 +3329,6 @@ nautilus_file_is_hidden_file (NautilusFile *file)
 	return file->details->is_hidden;
 }
 
-static gboolean
-is_file_hidden (NautilusFile *file)
-{
-	return file->details->directory->details->hidden_file_hash != NULL &&
-		g_hash_table_lookup (file->details->directory->details->hidden_file_hash,
-				     eel_ref_str_peek (file->details->name)) != NULL;
-	
-}
-
 /**
  * nautilus_file_should_show:
  * @file: the file to check.
@@ -3357,7 +3348,7 @@ nautilus_file_should_show (NautilusFile *file,
 	if (nautilus_file_is_in_trash (file)) {
 		return TRUE;
 	} else {
-		return (show_hidden || (!nautilus_file_is_hidden_file (file) && !is_file_hidden (file))) &&
+		return (show_hidden || !nautilus_file_is_hidden_file (file)) &&
 			(show_foreign || !(nautilus_file_is_in_desktop (file) && nautilus_file_is_foreign_link (file)));
 	}
 }

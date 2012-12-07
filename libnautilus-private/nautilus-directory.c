@@ -234,10 +234,6 @@ nautilus_directory_finalize (GObject *object)
 	g_assert (directory->details->file_list == NULL);
 	g_hash_table_destroy (directory->details->file_hash);
 
-	if (directory->details->hidden_file_hash) {
-		g_hash_table_destroy (directory->details->hidden_file_hash);
-	}
-	
 	nautilus_file_queue_destroy (directory->details->high_priority_queue);
 	nautilus_file_queue_destroy (directory->details->low_priority_queue);
 	nautilus_file_queue_destroy (directory->details->extension_queue);
