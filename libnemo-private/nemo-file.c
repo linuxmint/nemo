@@ -3491,15 +3491,6 @@ nemo_file_is_hidden_file (NemoFile *file)
 	return file->details->is_hidden;
 }
 
-static gboolean
-is_file_hidden (NemoFile *file)
-{
-	return file->details->directory->details->hidden_file_hash != NULL &&
-		g_hash_table_lookup (file->details->directory->details->hidden_file_hash,
-				     eel_ref_str_peek (file->details->name)) != NULL;
-
-}
-
 /**
  * nemo_file_should_show:
  * @file: the file to check.
@@ -3519,7 +3510,7 @@ nemo_file_should_show (NemoFile *file,
 	if (nemo_file_is_in_trash (file)) {
 		return TRUE;
 	} else {
-		return (show_hidden || (!nemo_file_is_hidden_file (file) && !is_file_hidden (file))) &&
+		return (show_hidden || !nemo_file_is_hidden_file (file)) &&
 			(show_foreign || !(nemo_file_is_in_desktop (file) && nemo_file_is_foreign_link (file)));
 	}
 }

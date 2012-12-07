@@ -176,9 +176,6 @@ static GHashTable *waiting_directories;
 static GHashTable *async_jobs;
 #endif
 
-/* Hide kde trashcan directory */
-static char *kde_trash_dir_name = NULL;
-
 /* Forward declarations for functions that need them. */
 static void     deep_count_load                               (DeepCountState         *state,
 							       GFile                  *location);
@@ -201,13 +198,6 @@ static void     move_file_to_extension_queue                  (NemoDirectory    
 							       NemoFile           *file);
 static void     nemo_directory_invalidate_file_attributes (NemoDirectory      *directory,
 							       NemoFileAttributes  file_attributes);
-
-void
-nemo_set_kde_trash_name (const char *trash_dir)
-{
-	g_free (kde_trash_dir_name);
-	kde_trash_dir_name = g_strdup (trash_dir);
-}
 
 /* Some helpers for case-insensitive strings.
  * Move to nemo-glib-extensions?
@@ -846,10 +836,7 @@ should_skip_file (NemoDirectory *directory, GFileInfo *info)
 
 	if (!show_hidden_files &&
 	    (g_file_info_get_is_hidden (info) ||
-	     g_file_info_get_is_backup (info) ||
-	     (directory != NULL && directory->details->hidden_file_hash != NULL &&
-	      g_hash_table_lookup (directory->details->hidden_file_hash,
-				   g_file_info_get_name (info)) != NULL))) {
+	     g_file_info_get_is_backup (info))) {
 		return TRUE;
 	}
 
@@ -1091,10 +1078,6 @@ file_list_cancel (NemoDirectory *directory)
 	if (directory->details->pending_file_info != NULL) {
 		g_list_free_full (directory->details->pending_file_info, g_object_unref);
 		directory->details->pending_file_info = NULL;
-	}
-
-	if (directory->details->hidden_file_hash) {
-		g_hash_table_remove_all (directory->details->hidden_file_hash);
 	}
 }
 
@@ -1967,78 +1950,6 @@ mark_all_files_unconfirmed (NemoDirectory *directory)
 }
 
 static void
-read_dot_hidden_file (NemoDirectory *directory)
-{
-	gsize file_size;
-	char *file_contents;
-	GFile *child;
-	GFileInfo *info;
-	GFileType type;
-	guint i;
-
-
-	/* FIXME: We only support .hidden on file: uri's for the moment.
-	 * Need to figure out if we should do this async or sync to extend
-	 * it to all types of uris.
-	 */
-	if (directory->details->location == NULL ||
-	    !g_file_is_native (directory->details->location)) {
-		return;
-	}
-	
-	child = g_file_get_child (directory->details->location, ".hidden");
-
-	type = G_FILE_TYPE_UNKNOWN;
-	
-	info = g_file_query_info (child, G_FILE_ATTRIBUTE_STANDARD_TYPE, 0, NULL, NULL);
-	if (info != NULL) {
-		type = g_file_info_get_file_type (info);
-		g_object_unref (info);
-	}
-	
-	if (type != G_FILE_TYPE_REGULAR) {
-		g_object_unref (child);
-		return;
-	}
-
-	if (!g_file_load_contents (child, NULL, &file_contents, &file_size, NULL, NULL)) {
-		g_object_unref (child);
-		return;
-	}
-
-	g_object_unref (child);
-
-	if (directory->details->hidden_file_hash == NULL) {
-		directory->details->hidden_file_hash =
-			g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-	}
-	
-	/* Now parse the data */
-	i = 0;
-	while (i < file_size) {
-		guint start;
-
-		start = i;
-		while (i < file_size && file_contents[i] != '\n') {
-			i++;
-		}
-
-		if (i > start) {
-			char *hidden_filename;
-		
-			hidden_filename = g_strndup (file_contents + start, i - start);
-			g_hash_table_insert (directory->details->hidden_file_hash,
-					     hidden_filename, hidden_filename);
-		}
-
-		i++;
-		
-	}
-
-	g_free (file_contents);
-}
-
-static void
 directory_load_state_free (DirectoryLoadState *state)
 {
 	if (state->enumerator) {
@@ -2183,23 +2094,6 @@ start_monitoring_file_list (NemoDirectory *directory)
         state->load_directory_file =
 		nemo_directory_get_corresponding_file (directory);
 	state->load_directory_file->details->loading_directory = TRUE;
-
-	read_dot_hidden_file (directory);
-	
-	/* Hack to work around kde trash dir */
-	if (kde_trash_dir_name != NULL && nemo_directory_is_desktop_directory (directory)) {
-		char *fn;
-
-		if (directory->details->hidden_file_hash == NULL) {
-			directory->details->hidden_file_hash =
-				g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-		}
-		
-		fn = g_strdup (kde_trash_dir_name);
-		g_hash_table_insert (directory->details->hidden_file_hash,
-				     fn, fn);
-	}
-
 	
 #ifdef DEBUG_LOAD_DIRECTORY
 	g_message ("load_directory called to monitor file list of %p", directory->details->location);
