@@ -96,7 +96,7 @@ main (int argc, char *argv[])
 	/* Run the nautilus application. */
 	application = g_object_new (NAUTILUS_TYPE_APPLICATION,
 				    "application-id", "org.gnome.Nautilus",
-				    "flags", G_APPLICATION_HANDLES_OPEN | G_APPLICATION_IS_SERVICE,
+				    "flags", G_APPLICATION_HANDLES_OPEN,
 				    "inactivity-timeout", 12000,
 				    NULL);
 
