@@ -39,12 +39,12 @@ static void     nemo_cell_renderer_disk_set_property  (GObject                  
 
 static void     nemo_cell_renderer_disk_finalize (GObject *gobject);
 
-static void     nemo_cell_renderer_disk_render (GtkCellRenderer *cell,
-                                                cairo_t         *cr,
-                                                GtkWidget       *widget,
-                                                GdkRectangle    *background_area,
-                                                GdkRectangle    *cell_area,
-                                                guint            flags);
+static void     nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
+                                                cairo_t               *cr,
+                                                GtkWidget             *widget,
+                                                const GdkRectangle    *background_area,
+                                                const GdkRectangle    *cell_area,
+                                                GtkCellRendererState   flags);
 
 enum
 {
@@ -73,7 +73,7 @@ nemo_cell_renderer_disk_class_init (NemoCellRendererDiskClass *klass)
 
     object_class->get_property = nemo_cell_renderer_disk_get_property;
     object_class->set_property = nemo_cell_renderer_disk_set_property;
-    cell_class->render   = nemo_cell_renderer_disk_render;
+    cell_class->render = nemo_cell_renderer_disk_render;
 
     g_object_class_install_property (object_class,
                                      PROP_DISK_FULL_PERCENTAGE,
@@ -151,12 +151,12 @@ nemo_cell_renderer_disk_set_property (GObject      *object,
 #define BAR_HEIGHT 2
 
 static void
-nemo_cell_renderer_disk_render (GtkCellRenderer *cell,
-                                cairo_t         *cr,
-                                GtkWidget       *widget,
-                                GdkRectangle    *background_area,
-                                GdkRectangle    *cell_area,
-                                guint            flags)
+nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
+                                cairo_t               *cr,
+                                GtkWidget             *widget,
+                                const GdkRectangle    *background_area,
+                                const GdkRectangle    *cell_area,
+                                GtkCellRendererState   flags)
 {
     NemoCellRendererDisk *cellprogress = NEMO_CELL_RENDERER_DISK (cell);
     GtkCellRendererText *celltext = GTK_CELL_RENDERER_TEXT (cell);

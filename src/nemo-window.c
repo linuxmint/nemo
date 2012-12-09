@@ -1246,7 +1246,7 @@ nemo_window_sync_view_as_menus (NemoWindow *window)
 	char action_name[32];
 	GList *node;
 	GtkAction *action;
-	gchar *view_id;
+	const char *view_id;
 
 	g_assert (NEMO_IS_WINDOW (window));
 
