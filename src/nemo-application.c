@@ -678,7 +678,7 @@ mount_removed_callback (GVolumeMonitor *monitor,
 		slot = node->data;
 
 		if (slot != force_no_close_slot) {
-			nemo_window_pane_slot_close (slot->pane, slot);
+            nemo_window_slot_go_home (slot, FALSE);
 		} else {
 			computer = g_file_new_for_path (g_get_home_dir ());
 			nemo_window_slot_go_to (slot, computer, FALSE);
