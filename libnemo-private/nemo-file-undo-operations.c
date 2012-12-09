@@ -1562,7 +1562,7 @@ ownership_strings_func (NemoFileUndoInfo *info,
 
 	name = g_file_get_parse_name (self->priv->target_file);
 
-	if (op_type == NEMO_FILE_UNDO_OP_CHANGE_OWNER) {
+	if (op_type == NEMO_FILE_UNDO_OP_CHANGE_GROUP) {
 		*undo_description = g_strdup_printf (_("Restore group of '%s' to '%s'"),
 						     name, self->priv->original_ownership);
 		*redo_description = g_strdup_printf (_("Set group of '%s' to '%s'"),
@@ -1570,7 +1570,7 @@ ownership_strings_func (NemoFileUndoInfo *info,
 
 		*undo_label = g_strdup (_("_Undo Change Group"));
 		*redo_label = g_strdup (_("_Redo Change Group"));
-	} else if (op_type == NEMO_FILE_UNDO_OP_CHANGE_GROUP) {
+	} else if (op_type == NEMO_FILE_UNDO_OP_CHANGE_OWNER) {
 		*undo_description = g_strdup_printf (_("Restore owner of '%s' to '%s'"),
 						     name, self->priv->original_ownership);
 		*redo_description = g_strdup_printf (_("Set owner of '%s' to '%s'"),
