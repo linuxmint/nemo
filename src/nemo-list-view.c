@@ -2843,6 +2843,14 @@ nemo_list_view_restore_default_zoom_level (NemoView *view)
 	nemo_list_view_set_zoom_level (list_view, get_default_zoom_level (), FALSE);
 }
 
+static NemoZoomLevel
+nemo_list_view_get_default_zoom_level (NemoView *view)
+{
+    g_return_if_fail (NEMO_IS_LIST_VIEW (view));
+
+    return get_default_zoom_level();
+}
+
 static gboolean 
 nemo_list_view_can_zoom_in (NemoView *view) 
 {
@@ -3251,6 +3259,7 @@ nemo_list_view_class_init (NemoListViewClass *class)
 	nemo_view_class->update_menus = nemo_list_view_update_menus;
 	nemo_view_class->reset_to_defaults = nemo_list_view_reset_to_defaults;
 	nemo_view_class->restore_default_zoom_level = nemo_list_view_restore_default_zoom_level;
+    nemo_view_class->get_default_zoom_level = nemo_list_view_get_default_zoom_level;
 	nemo_view_class->reveal_selection = nemo_list_view_reveal_selection;
 	nemo_view_class->select_all = nemo_list_view_select_all;
 	nemo_view_class->set_selection = nemo_list_view_set_selection;

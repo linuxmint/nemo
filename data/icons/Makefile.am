@@ -12,6 +12,8 @@ public_icons = \
 	hicolor_apps_scalable_nemo.svg \
 	hicolor_actions_scalable_view-compact-symbolic.svg \
 	hicolor_actions_scalable_location-symbolic.svg \
+	hicolor_actions_scalable_nemo-zoom-in-symbolic.svg \
+	hicolor_actions_scalable_nemo-zoom-out-symbolic.svg
 	$(NULL)
 
 private_icons = \

@@ -668,6 +668,18 @@ nemo_view_restore_default_zoom_level (NemoView *view)
 	NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->restore_default_zoom_level (view);
 }
 
+NemoZoomLevel
+nemo_view_get_default_zoom_level (NemoView *view)
+{
+    g_return_if_fail (NEMO_IS_VIEW (view));
+
+    if (!nemo_view_supports_zooming (view)) {
+        return -1;
+    }
+
+    NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->get_default_zoom_level (view);
+}
+
 const char *
 nemo_view_get_view_id (NemoView *view)
 {

@@ -1473,6 +1473,54 @@ nemo_window_sync_title (NemoWindow *window,
 	nemo_notebook_sync_tab_label (notebook, slot);
 }
 
+static void
+update_zoom_toolbar_widgets (NemoView *view, NemoWindow *window)
+{
+    GtkActionGroup *action_group;
+    GtkAction *action;
+    NemoZoomLevel zoom_level = nemo_view_get_zoom_level (NEMO_VIEW (view));
+
+    action_group = nemo_window_pane_get_toolbar_action_group (nemo_window_get_active_pane(NEMO_WINDOW (window)));
+    gchar *level_string;
+
+    switch (zoom_level) {
+        case NEMO_ZOOM_LEVEL_SMALLEST:
+            level_string = _("  33\%");
+            break;
+        case NEMO_ZOOM_LEVEL_SMALLER:
+            level_string = _("  50\%");
+            break;
+        case NEMO_ZOOM_LEVEL_SMALL:
+            level_string = _("  66\%");
+            break;
+        case NEMO_ZOOM_LEVEL_STANDARD:
+            level_string = _("100\%");
+            break;
+        case NEMO_ZOOM_LEVEL_LARGE:
+            level_string = _("150\%");
+            break;
+        case NEMO_ZOOM_LEVEL_LARGER:
+            level_string = _("200\%");
+            break;
+        case NEMO_ZOOM_LEVEL_LARGEST:
+            level_string = _("400\%");
+            break;
+        default:
+            level_string = "";
+            break;
+    }
+
+    action = gtk_action_group_get_action (action_group, NEMO_ACTION_TOOLBAR_ZOOM_OUT);
+    gtk_action_set_sensitive (GTK_ACTION (action), nemo_view_can_zoom_out (NEMO_VIEW(view)));
+
+    action = gtk_action_group_get_action (action_group, NEMO_ACTION_TOOLBAR_ZOOM_IN);
+    gtk_action_set_sensitive (GTK_ACTION (action), nemo_view_can_zoom_in (NEMO_VIEW(view)));
+
+    action = gtk_action_group_get_action (action_group, NEMO_ACTION_TOOLBAR_ZOOM_NORMAL);
+    gtk_action_set_sensitive (GTK_ACTION (action), zoom_level != nemo_view_get_default_zoom_level(NEMO_VIEW (view)));
+    gtk_action_set_label (GTK_ACTION (action), level_string);
+}
+
 void
 nemo_window_sync_zoom_widgets (NemoWindow *window)
 {
@@ -1519,6 +1567,9 @@ nemo_window_sync_zoom_widgets (NemoWindow *window)
 					      NEMO_ACTION_ZOOM_NORMAL);
 	gtk_action_set_visible (action, supports_zooming);
 	gtk_action_set_sensitive (action, can_zoom);
+    if (view != NULL) {
+        update_zoom_toolbar_widgets (view, window);
+    }
 }
 
 static void
