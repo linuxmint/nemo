@@ -71,6 +71,8 @@ struct _NemoWindowPane {
 	gboolean temporary_navigation_bar;
 	gboolean temporary_search_bar;
 
+    gboolean show_location_entry;
+
 	/* notebook */
 	GtkWidget *notebook;
 

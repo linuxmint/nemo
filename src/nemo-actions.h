@@ -140,6 +140,7 @@
 #define NEMO_ACTION_MAILTO_OTHER "MailToOther"
 #define NEMO_ACTION_SET_AS_WALLPAPER "SetAsWallPaper"
 #define NEMO_ACTION_OPEN_AS_ROOT "OpenAsRoot"
+#define NEMO_ACTION_TOGGLE_LOCATION "Toggle Location Button"
 
 #define NEMO_ACTION_STATUSBAR_PLACES "Statusbar Places"
 #define NEMO_ACTION_STATUSBAR_TREEVIEW "Statusbar Treeview"

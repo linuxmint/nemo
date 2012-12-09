@@ -563,3 +563,9 @@ nemo_location_bar_get_entry (NemoLocationBar *location_bar)
 {
 	return location_bar->details->entry;
 }
+
+gboolean
+nemo_location_bar_has_focus (NemoLocationBar *location_bar)
+{
+    return gtk_widget_has_focus (GTK_WIDGET (location_bar->details->entry));
+}
