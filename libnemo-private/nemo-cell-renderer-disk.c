@@ -185,6 +185,7 @@ nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
         gtk_style_context_save (context);
         gtk_style_context_add_class (context, GTK_STYLE_CLASS_PROGRESSBAR);
         gtk_render_activity (context, cr, x, y, full, BAR_HEIGHT);
+        gtk_style_context_restore (context);
     }
 
     GTK_CELL_RENDERER_CLASS (parent_class)->render (cell,
