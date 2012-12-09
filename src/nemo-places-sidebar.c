@@ -1087,7 +1087,7 @@ over_eject_button (NemoPlacesSidebar *sidebar,
 		   gint y,
 		   GtkTreePath **path)
 {
-	GtkTreeViewColumn *column;
+	GtkTreeViewColumn *column, *eject_column;
 	int width, x_offset, x_col_offset;
 	gboolean show_eject;
 	GtkTreeIter iter;
@@ -1109,12 +1109,14 @@ over_eject_button (NemoPlacesSidebar *sidebar,
 			goto out;
 		}
 
+        eject_column = gtk_tree_view_get_column (GTK_TREE_VIEW (sidebar->tree_view), 3);
+        x_col_offset = gtk_tree_view_column_get_x_offset (eject_column);
+
 		/* Reload cell attributes for this particular row */
-		gtk_tree_view_column_cell_set_cell_data (column,
+		gtk_tree_view_column_cell_set_cell_data (eject_column,
 							 model, &iter, FALSE, FALSE);
 
-        x_col_offset = gtk_tree_view_column_get_x_offset (column);
-		gtk_tree_view_column_cell_get_position (column,
+		gtk_tree_view_column_cell_get_position (eject_column,
 							sidebar->eject_icon_cell_renderer,
 							&x_offset, &width);
 
