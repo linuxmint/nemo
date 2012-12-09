@@ -404,7 +404,7 @@ nemo_toolbar_set_show_location_entry (NemoToolbar *self,
 	}
 }
 
-GtkWidget *
+GtkToolbar *
 nemo_toolbar_get_location_toolbar (NemoToolbar *self)
 {
     return self->priv->location_toolbar;

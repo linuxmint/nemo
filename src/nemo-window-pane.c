@@ -721,7 +721,7 @@ nemo_window_pane_constructed (GObject *obj)
                              G_CALLBACK (location_entry_changed_cb),
                              pane, 0);
 
-    pane->location_tool_bar = nemo_toolbar_get_location_toolbar(NEMO_TOOLBAR (pane->tool_bar));
+    pane->location_tool_bar = GTK_WIDGET (nemo_toolbar_get_location_toolbar(NEMO_TOOLBAR (pane->tool_bar)));
 
 	pane->action_group = action_group;
 
