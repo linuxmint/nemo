@@ -212,8 +212,8 @@ nemo_toolbar_constructed (GObject *obj)
     
     /* entry-like location bar */
 	self->priv->location_bar = nemo_location_bar_new ();
-	gtk_box_pack_start (GTK_BOX (hbox), self->priv->location_bar, TRUE, TRUE, 0);    
-	gtk_box_pack_start (GTK_BOX (hbox), self->priv->path_bar, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), self->priv->location_bar, TRUE, TRUE, 4);
+	gtk_box_pack_start (GTK_BOX (hbox), self->priv->path_bar, TRUE, TRUE, 4);
 	
 	item = gtk_tool_item_new ();
 	gtk_tool_item_set_expand (item, TRUE);
