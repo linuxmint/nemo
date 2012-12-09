@@ -21,6 +21,6 @@
 </toolbar>
 <toolbar name="LocationToolbar">
         <placeholder name="LocationPathBar" />
-        <toolitem name="Edit Location" action="Edit Location"/>
+        <toolitem name="Edit Location" action="Toggle Location Button"/>
 </toolbar>
 </ui>
