@@ -12,10 +12,10 @@ msgstr ""
 "Project-Id-Version: as\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-12-04 03:11+0000\n"
-"PO-Revision-Date: 2012-12-04 16:01+0530\n"
+"POT-Creation-Date: 2012-12-10 11:57+0000\n"
+"PO-Revision-Date: 2012-12-10 18:51+0530\n"
 "Last-Translator: Nilamdyuti Goswami <ngoswami@redhat.com>\n"
-"Language-Team: as_IN <kde-i18n-doc@kde.org>\n"
+"Language-Team: Assamese <kde-i18n-doc@kde.org>\n"
 "Language: as_IN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -62,8 +62,8 @@ msgstr "X"
 msgid "Y"
 msgstr "Y"
 
-#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6184
-#: ../libnautilus-private/nautilus-file.c:6185
+#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6175
+#: ../libnautilus-private/nautilus-file.c:6176
 msgid "Text"
 msgstr "লিখনী"
 
@@ -139,7 +139,7 @@ msgstr " (অবৈধ ইউনিক'ড)"
 #: ../libnautilus-private/nautilus-file-utilities.c:275
 #: ../src/nautilus-pathbar.c:295 ../src/nautilus-places-sidebar.c:511
 #: ../src/nautilus-query-editor.c:1164
-#: ../src/nautilus-shell-search-provider.c:318
+#: ../src/nautilus-shell-search-provider.c:309
 msgid "Home"
 msgstr "ঘৰ"
 
@@ -319,7 +319,7 @@ msgstr ""
 "ব্যৱহাৰ কৰক।"
 
 #. Translators: this is of the format "hostname (uri-scheme)"
-#: ../libnautilus-private/nautilus-directory.c:527
+#: ../libnautilus-private/nautilus-directory.c:523
 #, c-format
 msgid "%s (%s)"
 msgstr "%s (%s)"
@@ -404,76 +404,76 @@ msgstr "ডেস্কটপ ফাইলৰ নাম পৰিবৰ্তন
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4455
+#: ../libnautilus-private/nautilus-file.c:4446
 msgid "%R"
 msgstr "%R"
 
-#: ../libnautilus-private/nautilus-file.c:4456
+#: ../libnautilus-private/nautilus-file.c:4447
 msgid "%-I:%M %P"
 msgstr "%-I:%M %P"
 
-#: ../libnautilus-private/nautilus-file.c:4457
-#: ../libnautilus-private/nautilus-file.c:4458
+#: ../libnautilus-private/nautilus-file.c:4448
+#: ../libnautilus-private/nautilus-file.c:4449
 msgid "%b %-e"
 msgstr "%b %-e"
 
-#: ../libnautilus-private/nautilus-file.c:4459
+#: ../libnautilus-private/nautilus-file.c:4450
 msgid "%b %-d %Y"
 msgstr "%b %-d %Y"
 
-#: ../libnautilus-private/nautilus-file.c:4460
+#: ../libnautilus-private/nautilus-file.c:4451
 msgid "%a, %b %e %Y %I:%M:%S %p"
 msgstr "%a, %b %e %Y %I:%M:%S %p"
 
-#: ../libnautilus-private/nautilus-file.c:4461
+#: ../libnautilus-private/nautilus-file.c:4452
 msgid "%a, %b %e %Y %T"
 msgstr "%a, %b %e %Y %T"
 
-#: ../libnautilus-private/nautilus-file.c:4960
+#: ../libnautilus-private/nautilus-file.c:4951
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "অনুমতি নিৰ্ধাৰণ কৰাৰ বাবে অনুমোদিত নহয়"
 
-#: ../libnautilus-private/nautilus-file.c:5255
+#: ../libnautilus-private/nautilus-file.c:5246
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "গৰাকী নিৰ্ধাৰণৰ বাবে অনুমোদিত নহয়"
 
-#: ../libnautilus-private/nautilus-file.c:5273
+#: ../libnautilus-private/nautilus-file.c:5264
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "উল্লিখিত গৰাকী \"%s\" বৰ্তমানে উপস্থিত নাই।"
 
-#: ../libnautilus-private/nautilus-file.c:5537
+#: ../libnautilus-private/nautilus-file.c:5528
 #, c-format
 msgid "Not allowed to set group"
 msgstr "দল নিৰ্ধাৰণ কৰাৰ অনুমতি নাই"
 
-#: ../libnautilus-private/nautilus-file.c:5555
+#: ../libnautilus-private/nautilus-file.c:5546
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "'%s' নাম চিহ্নিত দল অনুপস্থিত"
 
 #. Translators: "Me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5689
+#: ../libnautilus-private/nautilus-file.c:5680
 msgid "Me"
 msgstr "মই"
 
-#: ../libnautilus-private/nautilus-file.c:5713
+#: ../libnautilus-private/nautilus-file.c:5704
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
 msgstr[0] "%'u  বস্তু"
 msgstr[1] "%u বস্তুবোৰ"
 
-#: ../libnautilus-private/nautilus-file.c:5714
+#: ../libnautilus-private/nautilus-file.c:5705
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] "%'u ফোল্ডাৰ"
 msgstr[1] "%u ফোল্ডাৰসমূহ"
 
-#: ../libnautilus-private/nautilus-file.c:5715
+#: ../libnautilus-private/nautilus-file.c:5706
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
@@ -481,94 +481,94 @@ msgstr[0] "%'u ফাইল"
 msgstr[1] "%u ফাইলসমূহ"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6111
-#: ../libnautilus-private/nautilus-file.c:6127
+#: ../libnautilus-private/nautilus-file.c:6102
+#: ../libnautilus-private/nautilus-file.c:6118
 msgid "? items"
 msgstr "? বস্তুবোৰ"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6117
+#: ../libnautilus-private/nautilus-file.c:6108
 msgid "? bytes"
 msgstr "? বাইটসমূহ"
 
-#: ../libnautilus-private/nautilus-file.c:6134
-#: ../libnautilus-private/nautilus-file.c:6214
+#: ../libnautilus-private/nautilus-file.c:6125
+#: ../libnautilus-private/nautilus-file.c:6205
 msgid "Unknown"
 msgstr "অজ্ঞাত"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6148
+#: ../libnautilus-private/nautilus-file.c:6139
 #: ../src/nautilus-properties-window.c:1181
 msgid "unknown"
 msgstr "অজ্ঞাত"
 
-#: ../libnautilus-private/nautilus-file.c:6178
-#: ../libnautilus-private/nautilus-file.c:6186
-#: ../libnautilus-private/nautilus-file.c:6237
+#: ../libnautilus-private/nautilus-file.c:6169
+#: ../libnautilus-private/nautilus-file.c:6177
+#: ../libnautilus-private/nautilus-file.c:6228
 msgid "Program"
 msgstr "প্ৰগ্ৰাম"
 
-#: ../libnautilus-private/nautilus-file.c:6179
+#: ../libnautilus-private/nautilus-file.c:6170
 msgid "Audio"
 msgstr "অডিঅ'"
 
-#: ../libnautilus-private/nautilus-file.c:6180
+#: ../libnautilus-private/nautilus-file.c:6171
 msgid "Font"
 msgstr "ফন্ট"
 
-#: ../libnautilus-private/nautilus-file.c:6181
+#: ../libnautilus-private/nautilus-file.c:6172
 #: ../src/nautilus-image-properties-page.c:769
 msgid "Image"
 msgstr "ছবি"
 
-#: ../libnautilus-private/nautilus-file.c:6182
+#: ../libnautilus-private/nautilus-file.c:6173
 msgid "Archive"
 msgstr "আৰ্কাইভ"
 
-#: ../libnautilus-private/nautilus-file.c:6183
+#: ../libnautilus-private/nautilus-file.c:6174
 msgid "Markup"
 msgstr "মাৰ্কআপ"
 
-#: ../libnautilus-private/nautilus-file.c:6187
+#: ../libnautilus-private/nautilus-file.c:6178
 #: ../src/nautilus-query-editor.c:425
 msgid "Video"
 msgstr "ভিডিও"
 
-#: ../libnautilus-private/nautilus-file.c:6188
+#: ../libnautilus-private/nautilus-file.c:6179
 msgid "Contacts"
 msgstr "পৰিচয়সমূহ"
 
-#: ../libnautilus-private/nautilus-file.c:6189
+#: ../libnautilus-private/nautilus-file.c:6180
 msgid "Calendar"
 msgstr "কেলেন্ডাৰ"
 
-#: ../libnautilus-private/nautilus-file.c:6190
+#: ../libnautilus-private/nautilus-file.c:6181
 msgid "Document"
 msgstr "দস্তাবেজ"
 
 #
-#: ../libnautilus-private/nautilus-file.c:6191
+#: ../libnautilus-private/nautilus-file.c:6182
 #: ../src/nautilus-query-editor.c:491
 msgid "Presentation"
 msgstr "পৰিৱেশন"
 
 #
-#: ../libnautilus-private/nautilus-file.c:6192
+#: ../libnautilus-private/nautilus-file.c:6183
 #: ../src/nautilus-query-editor.c:475
 msgid "Spreadsheet"
 msgstr "স্প্ৰেডশ্বিট"
 
-#: ../libnautilus-private/nautilus-file.c:6239
+#: ../libnautilus-private/nautilus-file.c:6230
 msgid "Binary"
 msgstr "বাইনাৰি"
 
-#: ../libnautilus-private/nautilus-file.c:6243
+#: ../libnautilus-private/nautilus-file.c:6234
 msgid "Folder"
 msgstr "ফোল্ডাৰ"
 
-#: ../libnautilus-private/nautilus-file.c:6274
+#: ../libnautilus-private/nautilus-file.c:6265
 msgid "Link"
 msgstr "সংযোগ"
 
@@ -577,15 +577,15 @@ msgstr "সংযোগ"
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6280
+#: ../libnautilus-private/nautilus-file.c:6271
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:124
 #, c-format
 msgid "Link to %s"
 msgstr "%s লে সংযোগ"
 
-#: ../libnautilus-private/nautilus-file.c:6296
-#: ../libnautilus-private/nautilus-file.c:6310
+#: ../libnautilus-private/nautilus-file.c:6287
+#: ../libnautilus-private/nautilus-file.c:6301
 msgid "Link (broken)"
 msgstr "সংযোগ (ভঙা)"
 
@@ -1743,69 +1743,69 @@ msgstr "আৰ্বজনা বাতিল কৰক (_U)"
 msgid "_Redo Trash"
 msgstr "আবৰ্জনা পুনৰ কৰক (_R)"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1300
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1299
 #, c-format
 msgid "Restore original permissions of items enclosed in '%s'"
 msgstr "'%s' ত আবুৰ বস্তুবোৰৰ প্ৰকৃত অনুমতি পুনৰুদ্ধাৰ কৰক"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1301
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1300
 #, c-format
 msgid "Set permissions of items enclosed in '%s'"
 msgstr "'%s' ত আবুৰ বস্তুবোৰৰ অনুমতি সংহতি কৰক"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1303
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1458
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1302
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1457
 msgid "_Undo Change Permissions"
 msgstr "অনুমতি সলনি বাতিল কৰক (_U)"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1304
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1459
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1303
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1458
 msgid "_Redo Change Permissions"
 msgstr "অনুমতিসমূহ সলনি পুনৰ কৰক (_R)"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1455
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1454
 #, c-format
 msgid "Restore original permissions of '%s'"
 msgstr "'%s' ৰ প্ৰকৃত অনুমতিসমূহ পুনৰুদ্ধাৰ কৰক"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1456
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1455
 #, c-format
 msgid "Set permissions of '%s'"
 msgstr "'%s' ৰ অনুমতিসমূহ সংহতি কৰক"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1566
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1565
 #, c-format
 msgid "Restore group of '%s' to '%s'"
 msgstr "'%s' ৰ দল '%s' লে পুনৰুদ্ধাৰ কৰক"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1568
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1567
 #, c-format
 msgid "Set group of '%s' to '%s'"
 msgstr "'%s' ৰ দল '%s' লে সংহতি কৰক"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1571
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1570
 msgid "_Undo Change Group"
 msgstr "দল পৰিবৰ্তন বাতিল কৰক (_U)"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1572
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1571
 msgid "_Redo Change Group"
 msgstr "পুনৰ দল পৰিবৰ্তন কৰক (_R)"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1574
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1573
 #, c-format
 msgid "Restore owner of '%s' to '%s'"
 msgstr "'%s' ৰ গৰাকীক '%s' ত পুনৰুদ্ধাৰ কৰক"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1576
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1575
 #, c-format
 msgid "Set owner of '%s' to '%s'"
 msgstr "'%s' ৰ গৰাকীক '%s' ত সংহতি কৰক"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1579
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1578
 msgid "_Undo Change Owner"
 msgstr "গৰাকী পৰিবৰ্তন বাতিল কৰক (_U)"
 
-#: ../libnautilus-private/nautilus-file-undo-operations.c:1580
+#: ../libnautilus-private/nautilus-file-undo-operations.c:1579
 msgid "_Redo Change Owner"
 msgstr "গৰাকী পুনৰ পৰিবৰ্তন কৰক (_R)"
 
@@ -2195,14 +2195,12 @@ msgstr "লুকুৱা ফাইল প্ৰদৰ্শিত হ'ব ন�
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:36
 msgid ""
-"If set to true, then hidden files are shown by default in the file manager. "
-"Hidden files are either dotfiles, listed in the folder's .hidden file or "
-"backup files ending with a tilde (~)."
+"This key is deprecated and ignored. The \"show-hidden\" key from \"org.gtk."
+"Settings.FileChooser\" is now used instead."
 msgstr ""
-"মান সত্য (true) হলে, লুকাই তকা ফাইলসমূহ ফাইল ব্যৱস্থাপকত অবিকল্পিত হিচাপে "
-"দেখুৱা "
-"হব। লুকাই থকা ফাইলসমূহ হয়তো dotfile, ফোল্ডাৰৰ .hidden ফাইলত চিহ্নিত অথবা এটা "
-"টিল্ড (~) ৰে শেষ হোৱা বেকআপ ফাইল।"
+"এই কি' স্খলিত আৰু উপেক্ষিত। ইয়াৰ পৰিবৰ্তে \"org.gtk.Settings.FileChooser\" ৰ "
+"পৰা \"show-hidden\" "
+"কি' এতিয়া ব্যৱহাৰ কৰা হয়।"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
 msgid "Bulk rename utility"
@@ -2497,23 +2495,26 @@ msgstr "মান সত্য (true) হলে নতুন উইন্ডো�
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:80
 #: ../nautilus-sendto-extension/nautilus-nste.c:85
-msgid "Send To..."
-msgstr "পঠাওক..."
+#| msgid "Send To..."
+msgid "Send To…"
+msgstr "চিহ্নিত স্থানত পঠাওক…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:81
-msgid "Send file by mail, instant message..."
-msgstr "ফাইলক মেইলৰে পঠাওক, ক্ষণ বাৰ্তা..."
+#| msgid "Send file by mail, instant message..."
+msgid "Send file by mail, instant message…"
+msgstr "ফাইলক মেইলৰে পঠাওক, ক্ষণ বাৰ্তা…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:86
-msgid "Send files by mail, instant message..."
-msgstr "ফাইলসমূহক মেইলৰে পঠাওক, ক্ষণ বাৰ্তা..."
+#| msgid "Send files by mail, instant message..."
+msgid "Send files by mail, instant message…"
+msgstr "ফাইলসমূহক মেইলৰে পঠাওক, ক্ষণ বাৰ্তা…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:226 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:227 ../src/nautilus-window-slot.c:1597
 msgid "Oops! Something went wrong."
 msgstr "ইচচ! কিবা এটা ভুল হৈছে।"
 
-#: ../src/nautilus-application.c:228
+#: ../src/nautilus-application.c:229
 #, c-format
 msgid ""
 "Unable to create a required folder. Please create the following folder, or "
@@ -2525,7 +2526,7 @@ msgstr ""
 "অথবা অনুমতিসমূহ সংহতি কৰক যাতে ইয়াক সৃষ্টি কৰিব পাৰি:\n"
 "%s"
 
-#: ../src/nautilus-application.c:233
+#: ../src/nautilus-application.c:234
 #, c-format
 msgid ""
 "Unable to create required folders. Please create the following folders, or "
@@ -2537,7 +2538,7 @@ msgstr ""
 "অথবা অনুমতি সংহতি যাতে সিহতক সৃষ্টি কৰিব পাৰি:\n"
 "%s"
 
-#: ../src/nautilus-application.c:367
+#: ../src/nautilus-application.c:368
 msgid ""
 "Nautilus 3.0 deprecated this directory and tried migrating this "
 "configuration to ~/.config/nautilus"
@@ -2545,7 +2546,7 @@ msgstr ""
 "Nautilus 3.0 এ এই ডাইৰেকটৰি ডিপ্ৰিকেইট কৰিছে আৰু এই সংৰূপক ~/.config/nautilus "
 "লে প্ৰব্ৰজন কৰাৰ চেষ্টা কৰিছে"
 
-#: ../src/nautilus-application.c:870
+#: ../src/nautilus-application.c:848
 #: ../src/nautilus-file-management-properties.c:196
 #: ../src/nautilus-window-menus.c:253
 #, c-format
@@ -2556,54 +2557,54 @@ msgstr ""
 "সহায়ক তথ্য প্ৰদৰ্শনত ত্ৰুটি হৈছে: \n"
 "%s"
 
-#: ../src/nautilus-application.c:993
+#: ../src/nautilus-application.c:1018
 msgid "--check cannot be used with other options."
 msgstr "--check অন্য বিকল্পসমূহৰ লগত ব্যৱহাৰ কৰিব নোৱাৰি।"
 
-#: ../src/nautilus-application.c:999
+#: ../src/nautilus-application.c:1024
 msgid "--quit cannot be used with URIs."
 msgstr "--quit URIসমূহৰ লগত ব্যৱহাৰ কৰিব নোৱাৰি।"
 
-#: ../src/nautilus-application.c:1006
+#: ../src/nautilus-application.c:1031
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry এটাতকৈ বেছি URI ৰ লগত ব্যৱহাৰ কৰিব নোৱাৰি।"
 
-#: ../src/nautilus-application.c:1054
+#: ../src/nautilus-application.c:1079
 msgid "Perform a quick set of self-check tests."
 msgstr "সৰ্বমোট self."
 
-#: ../src/nautilus-application.c:1060
+#: ../src/nautilus-application.c:1085
 msgid "Show the version of the program."
 msgstr "প্ৰগ্ৰামৰ সংস্কৰণ সংখ্যা প্ৰদৰ্শন কৰা হ'ব।"
 
-#: ../src/nautilus-application.c:1062
+#: ../src/nautilus-application.c:1087
 msgid "Create the initial window with the given geometry."
 msgstr "প্ৰস্তুত কৰক."
 
-#: ../src/nautilus-application.c:1062
+#: ../src/nautilus-application.c:1087
 msgid "GEOMETRY"
 msgstr "GEOMETRY"
 
-#: ../src/nautilus-application.c:1064
+#: ../src/nautilus-application.c:1089
 msgid "Only create windows for explicitly specified URIs."
 msgstr "সুকীয়াভাৱে ধাৰ্য্যত URls ৰ বাবে কেৱল উইন্ডোসমূহ সৃষ্টি কৰিব।"
 
-#: ../src/nautilus-application.c:1066
+#: ../src/nautilus-application.c:1091
 msgid ""
 "Do not manage the desktop (ignore the preference set in the preferences "
 "dialog)."
 msgstr ""
 "ডেস্কটপ পৰিচালনা নকৰিব (পছন্দ ডায়লগেত নিৰ্ধাৰিত পছন্দসই মান উপেক্ষা কৰা হ'ব)।"
 
-#: ../src/nautilus-application.c:1068
+#: ../src/nautilus-application.c:1093
 msgid "Quit Nautilus."
 msgstr "Nautilus ৰ পৰা প্ৰস্থান কৰক।"
 
-#: ../src/nautilus-application.c:1069
+#: ../src/nautilus-application.c:1094
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:1082
+#: ../src/nautilus-application.c:1107
 msgid ""
 "\n"
 "\n"
@@ -2615,13 +2616,13 @@ msgstr ""
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1092
+#: ../src/nautilus-application.c:1117
 msgid "Could not parse arguments"
 msgstr "তৰ্কসমূহ বিশ্লেষণ কৰিব পৰা নগল"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1124
+#: ../src/nautilus-application.c:1149
 msgid "Could not register the application"
 msgstr "এপ্লিকেচন ৰেজিস্টাৰ কৰিব পৰা নগল"
 
@@ -2901,7 +2902,7 @@ msgstr "সংযোগ স্থাপন কৰক:(_o)"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-desktop-canvas-view.c:706 ../src/nautilus-view.c:7142
-#: ../src/nautilus-view.c:8666
+#: ../src/nautilus-view.c:8675
 msgid "E_mpty Trash"
 msgstr "আবৰ্জনাৰ বাকচ ৰিক্ত কৰক (_m)"
 
@@ -2950,7 +2951,6 @@ msgstr ""
 
 #. label, accelerator
 #: ../src/nautilus-desktop-canvas-view.c:764
-#| msgid "Resize Icon..."
 msgid "Resize Icon…"
 msgstr "আইকনক পুনৰ আকাৰ দিয়ক…"
 
@@ -3192,7 +3192,7 @@ msgstr "প্ৰতিবাৰ সোধক (_A)"
 #. trash
 #: ../src/nautilus-file-management-properties.ui.h:19
 #: ../src/nautilus-places-sidebar.c:537
-#: ../src/nautilus-shell-search-provider.c:323 ../src/nautilus-trash-bar.c:194
+#: ../src/nautilus-shell-search-provider.c:314 ../src/nautilus-trash-bar.c:194
 msgid "Trash"
 msgstr "আৰ্বজনা"
 
@@ -3499,7 +3499,6 @@ msgstr "ছবি তথ্য ল'ড কৰোতে ব্যৰ্থ"
 #: ../src/nautilus-image-properties-page.c:708
 #: ../src/nautilus-list-model.c:378 ../src/nautilus-window-slot.c:606
 #: ../src/nautilus-window-slot.c:2244
-#| msgid "Loading..."
 msgid "Loading…"
 msgstr "ল'ড কৰা হৈছে…"
 
@@ -3519,7 +3518,6 @@ msgstr "বৰ্তমান ফোল্ডাৰত প্ৰদৰ্শি�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-list-view.c:2328
-#| msgid "Visible _Columns..."
 msgid "Visible _Columns…"
 msgstr "দৃশ্যমান স্তম্ভসমূহ (_C)…"
 
@@ -3858,7 +3856,6 @@ msgid "_Add Bookmark"
 msgstr "পত্ৰচিহ্ন যোগ কৰক (_A)"
 
 #: ../src/nautilus-places-sidebar.c:2628
-#| msgid "Re_name"
 msgid "Rename…"
 msgstr "পুনঃ নামকৰণ কৰক…"
 
@@ -4161,7 +4158,6 @@ msgid "Security context:"
 msgstr "সুৰক্ষা পৰিপ্ৰেক্ষতিত:"
 
 #: ../src/nautilus-properties-window.c:4580
-#| msgid "Change Permissions for Enclosed Files"
 msgid "Change Permissions for Enclosed Files…"
 msgstr "অন্তৰ্ভুক্ত নথিপত্ৰসমূহৰ বাবে অনুমতি পৰিবৰ্তন কৰক…"
 
@@ -4230,7 +4226,6 @@ msgid "Any"
 msgstr "যিকোনো"
 
 #: ../src/nautilus-query-editor.c:687
-#| msgid "Other Type..."
 msgid "Other Type…"
 msgstr "অন্য ধৰণ…"
 
@@ -4477,7 +4472,7 @@ msgid "P_roperties"
 msgstr "বৈশিষ্ট্যসমূহ (_r)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7099 ../src/nautilus-view.c:8654
+#: ../src/nautilus-view.c:7099 ../src/nautilus-view.c:8663
 msgid "View or modify the properties of each selected item"
 msgstr "প্ৰতিটি নিৰ্বাচিত বস্তুৰ বৈশিষ্ট্য প্ৰদৰ্শন অথবা পৰিবৰ্তন কৰক"
 
@@ -4530,7 +4525,6 @@ msgstr "নিৰ্বাচিত প্ৰতিটি বস্তু এট
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7130
-#| msgid "Other _Application..."
 msgid "Other _Application…"
 msgstr "অন্য এপ্লিকেচন (_A)…"
 
@@ -4542,7 +4536,6 @@ msgstr "নিৰ্বাচিত বস্তুক খোলিবলে অ
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7134
-#| msgid "Open With Other _Application..."
 msgid "Open With Other _Application…"
 msgstr "অন্য এপ্লিকেচনৰ সৈতে খোলক (_A)…"
 
@@ -4601,7 +4594,6 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7164
-#| msgid "Copy To..."
 msgid "Copy To…"
 msgstr "লে কপি কৰক…"
 
@@ -4613,7 +4605,6 @@ msgstr "নিৰ্বাচিত ফাইলসমূহ অন্য অৱ
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7168
-#| msgid "Move To..."
 msgid "Move To…"
 msgstr "লে স্থানান্তৰ কৰক…"
 
@@ -4630,7 +4621,6 @@ msgstr "বৰ্তমান উইন্ডোত উপস্থিত সক
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7176
-#| msgid "Select Items Matching"
 msgid "Select I_tems Matching…"
 msgstr "মিল খোৱা বস্তুবোৰ বাছক (_t)…"
 
@@ -4653,7 +4643,7 @@ msgstr "কেৱল বৰ্তমানে নিৰ্বাচন না �
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7184 ../src/nautilus-view.c:8637
+#: ../src/nautilus-view.c:7184 ../src/nautilus-view.c:8646
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "সংযোগ সৃষ্টি কৰক (_k)"
@@ -4667,7 +4657,6 @@ msgstr "প্ৰতিটি নিৰ্মাচিত বস্তুৰ ব
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7188
-#| msgid "Rena_me..."
 msgid "Rena_me…"
 msgstr "পুনৰ নামকৰণ কৰক (_m)…"
 
@@ -4695,12 +4684,12 @@ msgstr "প্ৰতিটি নিৰ্বাচিত বস্তু আব
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7204 ../src/nautilus-view.c:7318
-#: ../src/nautilus-view.c:8621
+#: ../src/nautilus-view.c:8623
 msgid "_Delete"
 msgstr "মচি পেলাওক (_D)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7205
+#: ../src/nautilus-view.c:7205 ../src/nautilus-view.c:8624
 msgid "Delete each selected item, without moving to the Trash"
 msgstr "আবৰ্জনাৰ বাকচত স্থানান্তৰ নকৰি প্ৰতিটি নিৰ্বাচিত বস্তু মচি পেলাওক"
 
@@ -4827,7 +4816,6 @@ msgstr "সম্পাদিত সন্ধান সংৰক্ষণ কৰ
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7286
-#| msgid "Sa_ve Search As..."
 msgid "Sa_ve Search As…"
 msgstr "সন্ধানক এই ধৰণে সংৰক্ষণ কৰক (_v)… "
 
@@ -5132,7 +5120,16 @@ msgstr[1] "%d নতুন উইন্ডোসমূহত খোলক (_T)"
 msgid "Delete all selected items permanently"
 msgstr "নিৰ্বাচিত সকলো সামগ্ৰী স্থায়ীৰূপে মচি পেলাওক"
 
-#: ../src/nautilus-view.c:8652
+#: ../src/nautilus-view.c:8620
+msgid "Remo_ve from Recent"
+msgstr "শেহতীয়াৰ পৰা আতৰাওক (_v)"
+
+#: ../src/nautilus-view.c:8621
+#| msgid "Move each selected item to the Trash"
+msgid "Remove each selected item from the recently used list"
+msgstr "শেহতীয়াভাৱে ব্যৱহাৰ কৰা তালিকাৰ পৰা প্ৰতিটো নিৰ্বাচিত বস্তুক আতৰাওক"
+
+#: ../src/nautilus-view.c:8661
 msgid "View or modify the properties of the open folder"
 msgstr "বৰ্তমান ফোল্ডাৰৰ বৈশিষ্ট্য প্ৰদৰ্শন অথবা পৰিবৰ্তন কৰক"
 
@@ -5392,7 +5389,6 @@ msgstr "স্বাভাবিক দৰ্শনৰ আকাৰ ব্যব
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:529
-#| msgid "Connect to _Server"
 msgid "Connect to _Server…"
 msgstr "চাৰ্ভাৰৰ সৈতে সংযোগ কৰক (_S)…"
 
@@ -5450,7 +5446,6 @@ msgstr "পৰবৰ্তী ভ্ৰমণ কৰা অৱস্থানত
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:551
-#| msgid "Enter _Location"
 msgid "Enter _Location…"
 msgstr "অৱস্থান সুমুৱাওক (_L)…"
 
@@ -5469,7 +5464,6 @@ msgstr "বৰ্তমান অৱস্থানৰ বাবে এটা �
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:557
-#| msgid "_Bookmarks"
 msgid "_Bookmarks…"
 msgstr "পত্ৰচিহ্নসমূহ (_B)…"
 
@@ -5522,7 +5516,6 @@ msgstr "উইন্ডোৰ কাষবাৰৰ দৃশ্যমানত�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:589
-#| msgid "_Search for Files..."
 msgid "_Search for Files…"
 msgstr "ফাইলসমূহ সন্ধান কৰক (_S)…"
 
@@ -5605,7 +5598,6 @@ msgid "Unhandled error message: %s"
 msgstr "অব্যৱস্থাপিত ত্ৰুটি বাৰ্তা: %s"
 
 #: ../src/nautilus-window-slot.c:2244
-#| msgid "Searching..."
 msgid "Searching…"
 msgstr "সন্ধান কৰা হৈছে…"
 
@@ -5666,6 +5658,15 @@ msgstr "ফ'টো আৰু সংগিত অন্তৰ্ভুক্ত �
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "চিহ্নিত বস্তুৰ সৈতে খোলক:"
+
+#~ msgid ""
+#~ "If set to true, then hidden files are shown by default in the file "
+#~ "manager. Hidden files are either dotfiles, listed in the folder's .hidden "
+#~ "file or backup files ending with a tilde (~)."
+#~ msgstr ""
+#~ "মান সত্য (true) হলে, লুকাই তকা ফাইলসমূহ ফাইল ব্যৱস্থাপকত অবিকল্পিত হিচাপে দেখুৱা "
+#~ "হব। লুকাই থকা ফাইলসমূহ হয়তো dotfile, ফোল্ডাৰৰ .hidden ফাইলত চিহ্নিত অথবা এটা "
+#~ "টিল্ড (~) ৰে শেষ হোৱা বেকআপ ফাইল।"
 
 #
 #~ msgid "Rename..."
