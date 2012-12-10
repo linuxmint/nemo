@@ -655,9 +655,10 @@ handle_activate_result (NautilusShellSearchProvider2 *skeleton,
 
 static void
 handle_launch_search (NautilusShellSearchProvider2 *skeleton,
-                      GDBusMethodInvocation *invocation,
-                      gchar **terms,
-                      gpointer user_data)
+                      GDBusMethodInvocation        *invocation,
+                      gchar                       **terms,
+                      guint32                       timestamp,
+                      gpointer                      user_data)
 {
   GApplication *app = g_application_get_default ();
   gchar *string = g_strjoinv (" ", terms);
