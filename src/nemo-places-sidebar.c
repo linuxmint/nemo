@@ -3650,6 +3650,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	sidebar->eject_icon_cell_renderer = cell;
 	g_object_set (cell,
 		      "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE,
+		      "yalign", 0.8,
 		      NULL);
 	gtk_tree_view_column_pack_start (eject_col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (eject_col, cell,
