@@ -556,10 +556,10 @@ setup_side_pane_width (NautilusWindow *window)
 
 /* Callback used when the places sidebar changes location; we need to change the displayed folder */
 static void
-places_sidebar_location_selected_cb (GtkPlacesSidebar *sidebar,
-				     GFile            *location,
-				     GtkPlacesOpenMode open_mode,
-				     gpointer          user_data)
+places_sidebar_open_location_cb (GtkPlacesSidebar *sidebar,
+				 GFile            *location,
+				 GtkPlacesOpenMode open_mode,
+				 gpointer          user_data)
 {
 	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
 	NautilusWindowOpenFlags flags;
@@ -733,8 +733,8 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 	g_signal_connect_object (nautilus_trash_monitor_get (), "trash_state_changed",
 				 G_CALLBACK (trash_state_changed_cb), window, 0);
 
-	g_signal_connect (window->details->places_sidebar, "location-selected",
-			  G_CALLBACK (places_sidebar_location_selected_cb), window);
+	g_signal_connect (window->details->places_sidebar, "open-location",
+			  G_CALLBACK (places_sidebar_open_location_cb), window);
 	g_signal_connect (window->details->places_sidebar, "show-file-properties",
 			  G_CALLBACK (places_sidebar_show_file_properties_cb), window);
 	g_signal_connect (window->details->places_sidebar, "empty-trash-requested",
