@@ -148,7 +148,10 @@ nemo_cell_renderer_disk_set_property (GObject      *object,
   }
 }
 
-#define BAR_HEIGHT 2
+#define BG_BAR_HEIGHT 2
+#define FG_BAR_HEIGHT 2
+#define EXTRA_BOTTOM_GAP 1
+#define MAX_WIDTH 70
 
 static void
 nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
@@ -168,23 +171,58 @@ nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
     gboolean                    show = cellprogress->show_disk_full_percent;
     GtkStyleContext *context;
 
+
     if (show) {
         context = gtk_widget_get_style_context (widget);
+
+        GtkCssProvider *provider = gtk_css_provider_new ();
+        gtk_style_context_add_provider (context, GTK_STYLE_PROVIDER (provider),
+                                        GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+        gtk_css_provider_load_from_data (GTK_CSS_PROVIDER (provider),
+                                         ".nemo-disk-renderer-bg {"
+                                         "      border-radius: 1px;"
+                                         "      border-style: solid;"
+                                         "      border-width: 1px;"
+                                         "      border-color: shade(@theme_bg_color, .65);"
+                                         "}"
+                                         ".nemo-disk-renderer-bg row:selected {"
+                                         "      border-radius: 1px;"
+                                         "      border-style: solid;"
+                                         "      border-width: 1px;"
+                                         "      border-color: shade(@theme_bg_color, 2.0);"
+                                         "}"
+                                         ".nemo-disk-renderer-fg {"
+                                         "      border-radius: 1px;"
+                                         "      border-style: solid;"
+                                         "      border-width: 1px;"
+                                         "      border-color: shade(@theme_selected_bg_color, 1.0);"
+                                         "}"
+                                         ".nemo-disk-renderer-fg row:selected {"
+                                         "      border-radius: 1px;"
+                                         "      border-style: solid;"
+                                         "      border-width: 1px;"
+                                         "      border-color: shade(@theme_fg_color, 2.0);"
+                                         "}",
+                                         -1, NULL);
+        g_object_unref (provider);
+
         gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
         x = cell_area->x + xpad;
-        y = cell_area->y + cell_area->height - BAR_HEIGHT;
+        y = cell_area->y + cell_area->height - BG_BAR_HEIGHT - EXTRA_BOTTOM_GAP;
         w = cell_area->width - xpad * 2;
-        w = w < 100 ? w : 100;
+        w = w < MAX_WIDTH ? w : MAX_WIDTH;
         full = (int) (((float) cellprogress->disk_full_percent / 100.0) * (float) w);
 
         gtk_style_context_save (context);
-        gtk_style_context_add_class (context, GTK_STYLE_CLASS_TROUGH);
-        gtk_render_frame (context, cr, x, y, w, BAR_HEIGHT);
+        gtk_style_context_add_class (context, "nemo-disk-renderer-bg");
+        gtk_render_frame (context, cr, x, y, w, BG_BAR_HEIGHT);
         gtk_style_context_restore (context);
-
+        
         gtk_style_context_save (context);
-        gtk_style_context_add_class (context, GTK_STYLE_CLASS_PROGRESSBAR);
-        gtk_render_activity (context, cr, x, y, full, BAR_HEIGHT);
+        gtk_style_context_add_class (context, "nemo-disk-renderer-fg");
+        gtk_render_frame (context, cr, x, y, full, FG_BAR_HEIGHT);
+
         gtk_style_context_restore (context);
     }
 
