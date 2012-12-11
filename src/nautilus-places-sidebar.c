@@ -2011,13 +2011,55 @@ unmount_done (gpointer data)
 }
 
 static void
+show_unmount_progress_cb (GMountOperation *op,
+			  const gchar *message,
+			  gint64 time_left,
+			  gint64 bytes_left,
+			  gpointer user_data)
+{
+	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
+
+	if (bytes_left == 0) {
+		nautilus_application_notify_unmount_done (app, message);
+	} else {
+		nautilus_application_notify_unmount_show (app, message);
+	}
+}
+
+static void
+show_unmount_progress_aborted_cb (GMountOperation *op,
+				  gpointer user_data)
+{
+	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
+	nautilus_application_notify_unmount_done (app, NULL);
+}
+
+static GMountOperation *
+get_unmount_operation (NautilusPlacesSidebar *sidebar)
+{
+	GMountOperation *mount_op;
+
+	mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
+	g_signal_connect (mount_op, "show-unmount-progress",
+			  G_CALLBACK (show_unmount_progress_cb), sidebar);
+	g_signal_connect (mount_op, "aborted",
+			  G_CALLBACK (show_unmount_progress_aborted_cb), sidebar);
+
+	return mount_op;
+}
+
+static void
 do_unmount (GMount *mount,
 	    NautilusPlacesSidebar *sidebar)
 {
+	GMountOperation *mount_op;
+
 	if (mount != NULL) {
-		nautilus_file_operations_unmount_mount_full (NULL, mount, FALSE, TRUE,
+		mount_op = get_unmount_operation (sidebar);
+		nautilus_file_operations_unmount_mount_full (NULL, mount, mount_op, FALSE, TRUE,
 							     unmount_done,
 							     g_object_ref (sidebar->window));
+		g_object_unref (mount_op);
 	}
 }
 
@@ -2046,30 +2088,6 @@ unmount_shortcut_cb (GtkMenuItem           *item,
 		     NautilusPlacesSidebar *sidebar)
 {
 	do_unmount_selection (sidebar);
-}
-
-static void
-show_unmount_progress_cb (GMountOperation *op,
-			  const gchar *message,
-			  gint64 time_left,
-			  gint64 bytes_left,
-			  gpointer user_data)
-{
-	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
-
-	if (bytes_left == 0) {
-		nautilus_application_notify_unmount_done (app, message);
-	} else {
-		nautilus_application_notify_unmount_show (app, message);
-	}
-}
-
-static void
-show_unmount_progress_aborted_cb (GMountOperation *op,
-				  gpointer user_data)
-{
-	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
-	nautilus_application_notify_unmount_done (app, NULL);
 }
 
 static void
@@ -2162,9 +2180,8 @@ do_eject (GMount *mount,
 	  GDrive *drive,
 	  NautilusPlacesSidebar *sidebar)
 {
-	GMountOperation *mount_op;
+	GMountOperation *mount_op = get_unmount_operation (sidebar);
 
-	mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
 	if (mount != NULL) {
 		g_mount_eject_with_operation (mount, 0, mount_op, NULL, mount_eject_cb,
 					      g_object_ref (sidebar->window));
@@ -2176,10 +2193,6 @@ do_eject (GMount *mount,
 					      g_object_ref (sidebar->window));
 	}
 
-	g_signal_connect (mount_op, "show-unmount-progress",
-			  G_CALLBACK (show_unmount_progress_cb), sidebar);
-	g_signal_connect (mount_op, "aborted",
-			  G_CALLBACK (show_unmount_progress_aborted_cb), sidebar);
 	g_object_unref (mount_op);
 }
 
@@ -2417,9 +2430,7 @@ stop_shortcut_cb (GtkMenuItem           *item,
 			    -1);
 
 	if (drive != NULL) {
-		GMountOperation *mount_op;
-
-		mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
+		GMountOperation *mount_op = get_unmount_operation (sidebar);
 		g_drive_stop (drive, G_MOUNT_UNMOUNT_NONE, mount_op, NULL, drive_stop_cb,
 			      g_object_ref (sidebar->window));
 		g_object_unref (mount_op);

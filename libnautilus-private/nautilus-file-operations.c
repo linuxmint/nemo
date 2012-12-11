@@ -2028,10 +2028,24 @@ nautilus_file_operations_delete (GList                  *files,
 typedef struct {
 	gboolean eject;
 	GMount *mount;
+	GMountOperation *mount_operation;
 	GtkWindow *parent_window;
 	NautilusUnmountCallback callback;
 	gpointer callback_data;
 } UnmountData;
+
+static void
+unmount_data_free (UnmountData *data)
+{
+	if (data->parent_window) {
+		g_object_remove_weak_pointer (G_OBJECT (data->parent_window),
+					      (gpointer *) &data->parent_window);
+	}
+
+	g_clear_object (&data->mount_operation);
+	g_object_unref (data->mount);
+	g_free (data);
+}
 
 static void
 unmount_mount_callback (GObject *source_object,
@@ -2073,14 +2087,8 @@ unmount_mount_callback (GObject *source_object,
 	if (error != NULL) {
 		g_error_free (error);
 	}
-	
-	if (data->parent_window) {
-		g_object_remove_weak_pointer (G_OBJECT (data->parent_window),
-					      (gpointer *) &data->parent_window);
-	}
 
-	g_object_unref (data->mount);
-	g_free (data);
+	unmount_data_free (data);
 }
 
 static void
@@ -2088,7 +2096,11 @@ do_unmount (UnmountData *data)
 {
 	GMountOperation *mount_op;
 
-	mount_op = gtk_mount_operation_new (data->parent_window);
+	if (data->mount_operation) {
+		mount_op = g_object_ref (data->mount_operation);
+	} else {
+		mount_op = gtk_mount_operation_new (data->parent_window);
+	}
 	if (data->eject) {
 		g_mount_eject_with_operation (data->mount,
 					      0,
@@ -2260,6 +2272,7 @@ empty_trash_for_unmount_done (gboolean success,
 void
 nautilus_file_operations_unmount_mount_full (GtkWindow                      *parent_window,
 					     GMount                         *mount,
+					     GMountOperation                *mount_operation,
 					     gboolean                        eject,
 					     gboolean                        check_trash,
 					     NautilusUnmountCallback         callback,
@@ -2276,6 +2289,9 @@ nautilus_file_operations_unmount_mount_full (GtkWindow                      *par
 		g_object_add_weak_pointer (G_OBJECT (data->parent_window),
 					   (gpointer *) &data->parent_window);
 		
+	}
+	if (mount_operation) {
+		data->mount_operation = g_object_ref (mount_operation);
 	}
 	data->eject = eject;
 	data->mount = g_object_ref (mount);
@@ -2302,13 +2318,7 @@ nautilus_file_operations_unmount_mount_full (GtkWindow                      *par
 				callback (callback_data);
 			}
 
-			if (data->parent_window) {
-				g_object_remove_weak_pointer (G_OBJECT (data->parent_window),
-							      (gpointer *) &data->parent_window);
-			}
-
-			g_object_unref (data->mount);
-			g_free (data);
+			unmount_data_free (data);
 			return;
 		}
 	}
@@ -2322,7 +2332,7 @@ nautilus_file_operations_unmount_mount (GtkWindow                      *parent_w
 					gboolean                        eject,
 					gboolean                        check_trash)
 {
-	nautilus_file_operations_unmount_mount_full (parent_window, mount, eject,
+	nautilus_file_operations_unmount_mount_full (parent_window, mount, NULL, eject,
 						     check_trash, NULL, NULL);
 }
 
