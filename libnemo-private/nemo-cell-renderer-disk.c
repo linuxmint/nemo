@@ -150,7 +150,7 @@ nemo_cell_renderer_disk_set_property (GObject      *object,
 
 #define BG_BAR_HEIGHT 2
 #define FG_BAR_HEIGHT 2
-#define EXTRA_BOTTOM_GAP 0
+#define EXTRA_BOTTOM_GAP 1
 #define MAX_WIDTH 70
 
 static void
