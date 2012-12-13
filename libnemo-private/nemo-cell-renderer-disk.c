@@ -173,39 +173,8 @@ nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
 
 
     if (show) {
+
         context = gtk_widget_get_style_context (widget);
-
-        GtkCssProvider *provider = gtk_css_provider_new ();
-        gtk_style_context_add_provider (context, GTK_STYLE_PROVIDER (provider),
-                                        GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-        gtk_css_provider_load_from_data (GTK_CSS_PROVIDER (provider),
-                                         ".nemo-disk-renderer-bg {"
-                                         "      border-radius: 1px;"
-                                         "      border-style: solid;"
-                                         "      border-width: 1px;"
-                                         "      border-color: shade(@theme_bg_color, .65);"
-                                         "}"
-                                         ".nemo-disk-renderer-bg row:selected {"
-                                         "      border-radius: 1px;"
-                                         "      border-style: solid;"
-                                         "      border-width: 1px;"
-                                         "      border-color: shade(@theme_bg_color, 2.0);"
-                                         "}"
-                                         ".nemo-disk-renderer-fg {"
-                                         "      border-radius: 1px;"
-                                         "      border-style: solid;"
-                                         "      border-width: 1px;"
-                                         "      border-color: shade(@theme_selected_bg_color, 1.0);"
-                                         "}"
-                                         ".nemo-disk-renderer-fg row:selected {"
-                                         "      border-radius: 1px;"
-                                         "      border-style: solid;"
-                                         "      border-width: 1px;"
-                                         "      border-color: shade(@theme_fg_color, 2.0);"
-                                         "}",
-                                         -1, NULL);
-        g_object_unref (provider);
 
         gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
         x = cell_area->x + xpad;
