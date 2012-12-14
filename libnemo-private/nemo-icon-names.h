@@ -7,7 +7,7 @@
 #define NEMO_ICON_FILESYSTEM	"drive-harddisk"
 #define NEMO_ICON_FOLDER		"folder"
 #define NEMO_ICON_FOLDER_REMOTE	"folder-remote"
-#define NEMO_ICON_HOME		"user-home"
+#define NEMO_ICON_HOME		"folder_home"
 #define NEMO_ICON_NETWORK		"network-workgroup"
 #define NEMO_ICON_NETWORK_SERVER	"network-server"
 #define NEMO_ICON_SEARCH		"system-search"
