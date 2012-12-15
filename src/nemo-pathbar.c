@@ -33,6 +33,7 @@
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-trash-monitor.h>
 #include <libnemo-private/nemo-icon-dnd.h>
+#include <libnemo-private/nemo-pathbar-button.h>
 
 #include "nemo-window.h"
 #include "nemo-window-private.h"
@@ -568,169 +569,180 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
 				       &child_requisition, NULL);
 	width += child_requisition.width;
 
-        for (list = path_bar->button_list->next; list; list = list->next) {
-        	child = BUTTON_DATA (list->data)->button;
-		gtk_widget_get_preferred_size (child,
-					       &child_requisition, NULL);
-                width += child_requisition.width + path_bar->spacing;
+    for (list = path_bar->button_list->next; list; list = list->next) {
+    	child = BUTTON_DATA (list->data)->button;
+	gtk_widget_get_preferred_size (child,
+				       &child_requisition, NULL);
+            width += child_requisition.width + path_bar->spacing;
 
-		if (list == path_bar->fake_root) {
-			break;
-		}
+	if (list == path_bar->fake_root) {
+		break;
+	}
+    }
+
+    if (width <= allocation_width) {
+        if (path_bar->fake_root) {
+            first_button = path_bar->fake_root;
+        } else {
+            first_button = g_list_last (path_bar->button_list);
+        }
+    } else {
+        gboolean reached_end;
+        gint slider_space;
+        reached_end = FALSE;
+        slider_space = 2 * (path_bar->spacing + path_bar->slider_width);
+
+        if (path_bar->first_scrolled_button) {
+            first_button = path_bar->first_scrolled_button;
+        } else {
+            first_button = path_bar->button_list;
         }
 
-        if (width <= allocation_width) {
-                if (path_bar->fake_root) {
-			first_button = path_bar->fake_root;
-      		} else {
-			first_button = g_list_last (path_bar->button_list);
-		}
-        } else {
-                gboolean reached_end;
-                gint slider_space;
-		reached_end = FALSE;
-		slider_space = 2 * (path_bar->spacing + path_bar->slider_width);
-
-                if (path_bar->first_scrolled_button) {
-			first_button = path_bar->first_scrolled_button;
-		} else {
-			first_button = path_bar->button_list;
-                }        
-
-		need_sliders = TRUE;
+        need_sliders = TRUE;
       		/* To see how much space we have, and how many buttons we can display.
        		* We start at the first button, count forward until hit the new
        		* button, then count backwards.
        		*/
       		/* Count down the path chain towards the end. */
-		gtk_widget_get_preferred_size (BUTTON_DATA (first_button->data)->button,
-					       &child_requisition, NULL);
-                width = child_requisition.width;
-                list = first_button->prev;
-                while (list && !reached_end) {
-	  		child = BUTTON_DATA (list->data)->button;
-			gtk_widget_get_preferred_size (child,
-						       &child_requisition, NULL);
+    	gtk_widget_get_preferred_size (BUTTON_DATA (first_button->data)->button,
+                                        &child_requisition, NULL);
+        width = child_requisition.width;
+        list = first_button->prev;
+        while (list && !reached_end) {
+            child = BUTTON_DATA (list->data)->button;
+            gtk_widget_get_preferred_size (child,
+                                          &child_requisition, NULL);
 
-	  		if (width + child_requisition.width + path_bar->spacing + slider_space > allocation_width) {
-	    			reached_end = TRUE;
-	  		} else {
-				if (list == path_bar->fake_root) {
-					break;
-				} else {
-	    				width += child_requisition.width + path_bar->spacing;
-				}
-			}
-
-	  		list = list->prev;
-		}
-
-                /* Finally, we walk up, seeing how many of the previous buttons we can add*/
-
-                while (first_button->next && ! reached_end) {
-	  		child = BUTTON_DATA (first_button->next->data)->button;
-			gtk_widget_get_preferred_size (child,
-						       &child_requisition, NULL);
-
-	  		if (width + child_requisition.width + path_bar->spacing + slider_space > allocation_width) {
-	      			reached_end = TRUE;
-	    		} else {
-	      			width += child_requisition.width + path_bar->spacing;
-				if (first_button == path_bar->fake_root) {
-					break;
-				}
-	      			first_button = first_button->next;
-	    		}
-		}
+            if (width + child_requisition.width + path_bar->spacing + slider_space > allocation_width) {
+                reached_end = TRUE;
+            } else {
+                if (list == path_bar->fake_root) {
+                    break;
+                } else {
+                    width += child_requisition.width + path_bar->spacing;
+                }
+            }
+            list = list->prev;
         }
 
-        /* Now, we allocate space to the buttons */
-        child_allocation.y = allocation->y;
-        child_allocation.height = allocation->height;
+                    /* Finally, we walk up, seeing how many of the previous buttons we can add*/
+
+        while (first_button->next && ! reached_end) {
+            child = BUTTON_DATA (first_button->next->data)->button;
+            gtk_widget_get_preferred_size (child,
+                                          &child_requisition, NULL);
+
+            if (width + child_requisition.width + path_bar->spacing + slider_space > allocation_width) {
+                reached_end = TRUE;
+            } else {
+                width += child_requisition.width + path_bar->spacing;
+                if (first_button == path_bar->fake_root) {
+                    break;
+                }
+                first_button = first_button->next;
+            }
+        }
+    }
+
+    /* Now, we allocate space to the buttons */
+    child_allocation.y = allocation->y;
+    child_allocation.height = allocation->height;
+
+    if (direction == GTK_TEXT_DIR_RTL) {
+            child_allocation.x = allocation->x + allocation->width;
+            if (need_sliders || path_bar->fake_root) {
+  		child_allocation.x -= (path_bar->spacing + path_bar->slider_width);
+  		up_slider_offset = allocation->width - path_bar->slider_width;
+	}
+    } else {
+            child_allocation.x = allocation->x;
+            if (need_sliders || path_bar->fake_root) {
+  		up_slider_offset = 0;
+  		child_allocation.x += (path_bar->spacing + path_bar->slider_width);
+	}
+    }
+
+    gboolean first_element = TRUE;
+    for (list = first_button; list; list = list->prev) {
+        child = BUTTON_DATA (list->data)->button;
+        gtk_widget_get_preferred_size (child,
+                                        &child_requisition, NULL);
+
+        gtk_widget_get_allocation (widget, &widget_allocation);
+
+        child_allocation.width = child_requisition.width;
+        if (direction == GTK_TEXT_DIR_RTL) {
+            child_allocation.x -= child_allocation.width;
+        }
+            /* Check to see if we've don't have any more space to allocate buttons */
+        if (need_sliders && direction == GTK_TEXT_DIR_RTL) {
+            if (child_allocation.x - path_bar->spacing - path_bar->slider_width < widget_allocation.x) {
+                break;
+            }
+        } else {
+            if (need_sliders && direction == GTK_TEXT_DIR_LTR) {
+                if (child_allocation.x + child_allocation.width + path_bar->spacing + path_bar->slider_width > widget_allocation.x + allocation_width) {
+                    break;
+                }
+            }
+        }
+
+        gtk_widget_set_child_visible (BUTTON_DATA (list->data)->button, TRUE);
+        if (!first_element) {
+            nemo_pathbar_button_set_is_left_end (BUTTON_DATA (list->data)->button, FALSE);
+            if (direction == GTK_TEXT_DIR_RTL)
+                child_allocation.x += 13;  /* TODO: this needs to be a factor of height once the widget is ironed out */
+            else
+                child_allocation.x -= 13;
+        } else {
+            nemo_pathbar_button_set_is_left_end (BUTTON_DATA (list->data)->button, TRUE);
+            first_element = FALSE;
+        }
+
+        gtk_widget_size_allocate (child, &child_allocation);
 
         if (direction == GTK_TEXT_DIR_RTL) {
-                child_allocation.x = allocation->x + allocation->width;
-                if (need_sliders || path_bar->fake_root) {
-	  		child_allocation.x -= (path_bar->spacing + path_bar->slider_width);
-	  		up_slider_offset = allocation->width - path_bar->slider_width;
-		}
+            child_allocation.x -= path_bar->spacing;
+            down_slider_offset = child_allocation.x - widget_allocation.x - path_bar->slider_width;
+            down_slider_offset = 0;
         } else {
-                child_allocation.x = allocation->x;
-                if (need_sliders || path_bar->fake_root) {
-	  		up_slider_offset = 0;
-	  		child_allocation.x += (path_bar->spacing + path_bar->slider_width);
-		}
+            down_slider_offset = child_allocation.x - widget_allocation.x;
+            down_slider_offset = allocation->width - path_bar->slider_width;
+            child_allocation.x += child_allocation.width + path_bar->spacing;
         }
+    }
+    /* Now we go hide all the widgets that don't fit */
+    while (list) {
+        gtk_widget_set_child_visible (BUTTON_DATA (list->data)->button, FALSE);
+        list = list->prev;
+    }
+    for (list = first_button->next; list; list = list->next) {
+        gtk_widget_set_child_visible (BUTTON_DATA (list->data)->button, FALSE);
+    }
 
-        for (list = first_button; list; list = list->prev) {
-                child = BUTTON_DATA (list->data)->button;
-		gtk_widget_get_preferred_size (child,
-					       &child_requisition, NULL);
+    if (need_sliders || path_bar->fake_root) {
+        child_allocation.width = path_bar->slider_width;
+        child_allocation.x = up_slider_offset + allocation->x;
+        gtk_widget_size_allocate (path_bar->up_slider_button, &child_allocation);
 
-		gtk_widget_get_allocation (widget, &widget_allocation);
+        gtk_widget_set_child_visible (path_bar->up_slider_button, TRUE);
+        gtk_widget_show_all (path_bar->up_slider_button);
 
-                child_allocation.width = child_requisition.width;
-                if (direction == GTK_TEXT_DIR_RTL) {
-			child_allocation.x -= child_allocation.width;
-		}
-                /* Check to see if we've don't have any more space to allocate buttons */
-                if (need_sliders && direction == GTK_TEXT_DIR_RTL) {
-	  		if (child_allocation.x - path_bar->spacing - path_bar->slider_width < widget_allocation.x) {
-			    break;
-			}
-		} else {
-			if (need_sliders && direction == GTK_TEXT_DIR_LTR) {
-	  			if (child_allocation.x + child_allocation.width + path_bar->spacing + path_bar->slider_width > widget_allocation.x + allocation_width) {
-	    				break;	
-				}	
-			}
-		}
+    } else {
+        gtk_widget_set_child_visible (path_bar->up_slider_button, FALSE);
+    }
 
-                gtk_widget_set_child_visible (BUTTON_DATA (list->data)->button, TRUE);
-                gtk_widget_size_allocate (child, &child_allocation);
+    if (need_sliders) {
+        child_allocation.width = path_bar->slider_width;
+        child_allocation.x = down_slider_offset + allocation->x;
+        gtk_widget_size_allocate (path_bar->down_slider_button, &child_allocation);
 
-                if (direction == GTK_TEXT_DIR_RTL) {
-			child_allocation.x -= path_bar->spacing;
-	  		down_slider_offset = child_allocation.x - widget_allocation.x - path_bar->slider_width;
-	  		down_slider_offset = 0;
-		} else {
-			down_slider_offset = child_allocation.x - widget_allocation.x;
-	  		down_slider_offset = allocation->width - path_bar->slider_width;
-	  		child_allocation.x += child_allocation.width + path_bar->spacing;
-		}
-        }
-        /* Now we go hide all the widgets that don't fit */
-        while (list) {
-        	gtk_widget_set_child_visible (BUTTON_DATA (list->data)->button, FALSE);
-                list = list->prev;
-        }
-        for (list = first_button->next; list; list = list->next) {
- 	        gtk_widget_set_child_visible (BUTTON_DATA (list->data)->button, FALSE);
-        }
-
-        if (need_sliders || path_bar->fake_root) {
-                child_allocation.width = path_bar->slider_width;
-                child_allocation.x = up_slider_offset + allocation->x;
-                gtk_widget_size_allocate (path_bar->up_slider_button, &child_allocation);
-
-                gtk_widget_set_child_visible (path_bar->up_slider_button, TRUE);
-                gtk_widget_show_all (path_bar->up_slider_button);
-
-        } else {
-        	gtk_widget_set_child_visible (path_bar->up_slider_button, FALSE);
-        }
-	
-	if (need_sliders) {
-    	        child_allocation.width = path_bar->slider_width;
-        	child_allocation.x = down_slider_offset + allocation->x;
-        	gtk_widget_size_allocate (path_bar->down_slider_button, &child_allocation);
-
-      		gtk_widget_set_child_visible (path_bar->down_slider_button, TRUE);
-      		gtk_widget_show_all (path_bar->down_slider_button);
-      		nemo_path_bar_update_slider_buttons (path_bar);
-    	} else {
-    		gtk_widget_set_child_visible (path_bar->down_slider_button, FALSE);
-	}
+        gtk_widget_set_child_visible (path_bar->down_slider_button, TRUE);
+        gtk_widget_show_all (path_bar->down_slider_button);
+        nemo_path_bar_update_slider_buttons (path_bar);
+    } else {
+        gtk_widget_set_child_visible (path_bar->down_slider_button, FALSE);
+    }
 }
 
 static void
@@ -1169,17 +1181,15 @@ nemo_path_bar_slider_button_release (GtkWidget      *widget,
 static void
 reload_icons (NemoPathBar *path_bar)
 {
-        GList *list;
+    GList *list;
 
-        for (list = path_bar->button_list; list; list = list->next) {
-                ButtonData *button_data;
-
-                button_data = BUTTON_DATA (list->data);
-		if (button_data->type != NORMAL_BUTTON || button_data->is_base_dir) {
-                	nemo_path_bar_update_button_appearance (button_data);
-		}
-
+    for (list = path_bar->button_list; list; list = list->next) {
+        ButtonData *button_data;
+        button_data = BUTTON_DATA (list->data);
+        if (button_data->type != NORMAL_BUTTON || button_data->is_base_dir) {
+            nemo_path_bar_update_button_appearance (button_data);
         }
+    }
 }
 
 static void
@@ -1272,13 +1282,13 @@ get_type_icon_info (ButtonData *button_data)
 		case XDG_BUTTON:
 			return nemo_icon_info_lookup_from_name (button_data->xdg_icon,
 							    NEMO_PATH_BAR_ICON_SIZE);								
-                case NORMAL_BUTTON:
+        case NORMAL_BUTTON:
 			if (button_data->is_base_dir) {
 				return nemo_file_get_icon (button_data->file,
 							       NEMO_PATH_BAR_ICON_SIZE,
 							       NEMO_FILE_ICON_FLAGS_NONE);
 			}
-	    	default:
+	    default:
 			return NULL;
         }
   
@@ -1712,7 +1722,8 @@ make_directory_button (NemoPathBar  *path_bar,
         button_data = g_new0 (ButtonData, 1);
 
         setup_button_type (button_data, path_bar, path);
-        button_data->button = gtk_toggle_button_new ();
+        button_data->button = nemo_pathbar_button_new ();
+
 	gtk_button_set_focus_on_click (GTK_BUTTON (button_data->button), FALSE);
 	gtk_widget_add_events (button_data->button, GDK_SCROLL_MASK);
 	/* TODO update button type when xdg directories change */
@@ -1721,29 +1732,43 @@ make_directory_button (NemoPathBar  *path_bar,
 
         switch (button_data->type) {
                 case ROOT_BUTTON:
-                        child = button_data->image;
-                        button_data->label = NULL;
-                        break;
                 case HOME_BUTTON:
+                        child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
+                        gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 5);
+                        break;
                 case DESKTOP_BUTTON:
-		case MOUNT_BUTTON:
-		case DEFAULT_LOCATION_BUTTON:
+                case MOUNT_BUTTON:
+                case DEFAULT_LOCATION_BUTTON:
                         button_data->label = gtk_label_new (NULL);
                         button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
                         gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
                         child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
-                        gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 0);
+                        gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 5);
                         gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 0);
                         break;
-		case NORMAL_BUTTON:
-    		default:
-			button_data->label = gtk_label_new (NULL);
-			button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
-			gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
+                case XDG_BUTTON:
+                        button_data->label = gtk_label_new (NULL);
+                        button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
+                        gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
                         child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
-			gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 0);
-			gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 0);
-			button_data->is_base_dir = base_dir;
+                        gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 5);
+                        gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 0);
+                        button_data->is_base_dir = base_dir;
+                        break;
+                case NORMAL_BUTTON:
+                default:
+                        button_data->label = gtk_label_new (NULL);
+                        button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
+                        gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
+                        child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
+                        if (base_dir) {
+                            gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 5);
+                            gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 0);
+                        } else {
+                            gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 0);
+                            gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 6);
+                        }
+                        button_data->is_base_dir = base_dir;
         }
 
 	if (button_data->path == NULL) {
