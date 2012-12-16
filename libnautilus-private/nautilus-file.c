@@ -4223,7 +4223,6 @@ nautilus_file_get_icon (NautilusFile *file,
 {
 	NautilusIconInfo *icon;
 	GIcon *gicon;
-	gboolean custom_icon;
 	GdkPixbuf *raw_pixbuf, *scaled_pixbuf;
 	int modified_size;
 
@@ -4231,29 +4230,14 @@ nautilus_file_get_icon (NautilusFile *file,
 		return NULL;
 	}
 
-	custom_icon = FALSE;
 	gicon = get_custom_icon (file);
-
-	if (gicon) {
-		custom_icon = TRUE;
-	} else {
+	if (gicon == NULL) {
 		gicon = get_link_icon (file);
 	}
 
-	if (gicon) {
+	if (gicon != NULL) {
 		icon = nautilus_icon_info_lookup (gicon, size);
 		g_object_unref (gicon);
-
-		if (custom_icon) {
-			raw_pixbuf = nautilus_icon_info_get_pixbuf (icon);
-			if (raw_pixbuf != NULL) {
-				nautilus_ui_frame_image (&raw_pixbuf);
-				g_object_unref (icon);
-
-				icon = nautilus_icon_info_new_for_pixbuf (raw_pixbuf);
-				g_object_unref (raw_pixbuf);
-			}
-		}
 
 		return icon;
 	}
