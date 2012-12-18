@@ -582,31 +582,6 @@ places_sidebar_open_location_cb (GtkPlacesSidebar *sidebar,
 	nautilus_window_slot_open_location (window->details->active_slot, location, flags);
 }
 
-/* Callback used when the places sidebar needs us to show the file properties dialog */
-static void
-places_sidebar_show_file_properties_cb (GtkPlacesSidebar *sidebar,
-					GFile            *location,
-					gpointer          user_data)
-{
-	GList *list;
-	NautilusFile *file;
-
-	file = nautilus_file_get (location);
-	list = g_list_append (NULL, file);
-	nautilus_properties_window_present (list, GTK_WIDGET (sidebar), NULL);
-	nautilus_file_list_free (list);
-}
-
-/* Callback used when the places sidebar needs us to empty the trash */
-static void
-places_sidebar_empty_trash_requested_cb (GtkPlacesSidebar *sidebar,
-					 gpointer          user_data)
-{
-	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
-
-	nautilus_file_operations_empty_trash (GTK_WIDGET (window));
-}
-
 /* Callback used when the places sidebar needs us to present an error message */
 static void
 places_sidebar_show_error_message_cb (GtkPlacesSidebar *sidebar,
@@ -706,6 +681,114 @@ trash_state_changed_cb (NautilusTrashMonitor *trash_monitor,
 						      !nautilus_trash_monitor_is_empty ());
 }
 
+/* Callback used in the "open in new tab" menu item from the places sidebar */
+static void
+open_shortcut_in_new_tab_cb (GtkMenuItem *item,
+			     gpointer     user_data)
+{
+	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
+	GFile *location;
+
+	location = gtk_places_sidebar_get_selected_location (GTK_PLACES_SIDEBAR (window->details->sidebar));
+	if (location)
+		nautilus_window_slot_open_location (window->details->active_slot, location, NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB);
+
+	g_object_unref (location);
+	
+}
+
+/* Callback used in the "open in new tab" menu item from the places sidebar */
+static void
+open_shortcut_in_new_window_cb (GtkMenuItem *item,
+				gpointer     user_data)
+{
+	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
+	GFile *location;
+
+	location = gtk_places_sidebar_get_selected_location (GTK_PLACES_SIDEBAR (window->details->places_sidebar));
+	if (location)
+		nautilus_window_slot_open_location (window->details->active_slot, location, NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW);
+
+	g_object_unref (location);
+}
+
+/* Callback used in the "empty trash" menu item from the places sidebar */
+static void
+empty_trash_cb (GtkMenuItem *item,
+		gpointer     user_data)
+{
+	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
+
+	nautilus_file_operations_empty_trash (GTK_WIDGET (window));
+}
+
+/* Callback used for the "properties" menu item from the places sidebar */
+static void
+properties_cb (GtkMenuItem *item,
+	       gpointer     user_data)
+{
+	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
+	GFile *selected;
+	GList *list;
+	NautilusFile *file;
+
+	selected = gtk_places_sidebar_get_selected_location (GTK_PLACES_SIDEBAR (window->details->places_sidebar));
+	file = nautilus_file_get (selected);
+	g_object_unref (selected);
+
+	list = g_list_append (NULL, file);
+	nautilus_properties_window_present (list, GTK_WIDGET (window), NULL);
+	nautilus_file_list_free (list);
+}
+
+static void
+places_sidebar_populate_popup_cb (GtkPlacesSidebar *sidebar,
+				  GtkMenu          *menu,
+				  GFile            *selected_item,
+				  gpointer          user_data)
+{
+	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
+	GtkWidget *item;
+	GFile *trash;
+
+	item = gtk_menu_item_new_with_mnemonic (_("Open in New _Tab"));
+	g_signal_connect (item, "activate",
+			  G_CALLBACK (open_shortcut_in_new_tab_cb), window);
+	gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, 1);
+	gtk_widget_show (item);
+
+	item = gtk_menu_item_new_with_mnemonic (_("Open in New _Window"));
+	g_signal_connect (item, "activate",
+			  G_CALLBACK (open_shortcut_in_new_window_cb), window);
+	gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, 2);
+	gtk_widget_show (item);
+
+	trash = g_file_new_for_uri ("trash:///");
+	if (g_file_equal (trash, selected_item)) {
+		eel_gtk_menu_append_separator (menu);
+
+		item = gtk_menu_item_new_with_mnemonic (_("Empty _Trash"));
+		g_signal_connect (item, "activate",
+				  G_CALLBACK (empty_trash_cb), window);
+		gtk_widget_show (item);
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+		if (nautilus_trash_monitor_is_empty ())
+			gtk_widget_set_sensitive (item, FALSE);
+	}
+	g_object_unref (trash);
+
+	if (g_file_is_native (selected_item)) {
+		eel_gtk_menu_append_separator (menu);
+
+		item = gtk_menu_item_new_with_mnemonic (_("_Properties"));
+		g_signal_connect (item, "activate",
+				  G_CALLBACK (properties_cb), window);
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+		gtk_widget_show (item);
+	}
+}
+
 static void
 nautilus_window_set_up_sidebar (NautilusWindow *window)
 {
@@ -724,9 +807,6 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 			  window);
 
 	window->details->places_sidebar = gtk_places_sidebar_new ();
-	gtk_places_sidebar_set_multiple_tabs_supported (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
-	gtk_places_sidebar_set_multiple_windows_supported (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
-	gtk_places_sidebar_set_show_properties (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
 	gtk_places_sidebar_set_accept_uri_drops (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
 
 	gtk_places_sidebar_set_show_trash (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
@@ -735,10 +815,6 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 
 	g_signal_connect (window->details->places_sidebar, "open-location",
 			  G_CALLBACK (places_sidebar_open_location_cb), window);
-	g_signal_connect (window->details->places_sidebar, "show-file-properties",
-			  G_CALLBACK (places_sidebar_show_file_properties_cb), window);
-	g_signal_connect (window->details->places_sidebar, "empty-trash-requested",
-			  G_CALLBACK (places_sidebar_empty_trash_requested_cb), window);
 	g_signal_connect (window->details->places_sidebar, "show-error-message",
 			  G_CALLBACK (places_sidebar_show_error_message_cb), window);
 	g_signal_connect (window->details->places_sidebar, "drag-action-requested",
@@ -747,6 +823,8 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 			  G_CALLBACK (places_sidebar_drag_action_ask_cb), window);
 	g_signal_connect (window->details->places_sidebar, "drag-perform-drop",
 			  G_CALLBACK (places_sidebar_drag_perform_drop_cb), window);
+	g_signal_connect (window->details->places_sidebar, "populate-popup",
+			  G_CALLBACK (places_sidebar_populate_popup_cb), window);
 
 	g_signal_connect (window, "loading-uri",
 			  G_CALLBACK (window_loading_uri_cb), window);
