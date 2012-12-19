@@ -22,8 +22,8 @@ msgstr ""
 "Project-Id-Version: nautilus MASTER\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-10-29 07:21+0000\n"
-"PO-Revision-Date: 2012-10-29 11:51+0300\n"
+"POT-Creation-Date: 2012-12-19 15:29+0000\n"
+"PO-Revision-Date: 2012-12-18 18:27+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz@gmail.com>\n"
 "Language-Team: Estonian <gnome-et@linux.ee>\n"
 "Language: et\n"
@@ -1677,13 +1677,11 @@ msgid "Whether to show hidden files"
 msgstr "Kas peidetud faile näidatakse või mitte"
 
 msgid ""
-"If set to true, then hidden files are shown by default in the file manager. "
-"Hidden files are either dotfiles, listed in the folder's .hidden file or "
-"backup files ending with a tilde (~)."
+"This key is deprecated and ignored. The \"show-hidden\" key from \"org.gtk."
+"Settings.FileChooser\" is now used instead."
 msgstr ""
-"Kui tõene, siis vaikimisi näitab failihaldur peidetud faile. Peidetud failid "
-"algavad punktiga või on loetletud kataloogi failis nimega .hidden või on "
-"varundusfailid, mis lõppevad tildega (~)."
+"See võti on aegunud ja seda eiratakse. Nüüd kasutatakse selle asemel \"show-"
+"hidden\" võtit kohas  \"org.gtk.Settings.FileChooser\"."
 
 msgid "Bulk rename utility"
 msgstr "Nimede hulgimuutmise utiliit"
@@ -1903,14 +1901,14 @@ msgstr "Uutes akendes külgpaani näitamine"
 msgid "If set to true, newly opened windows will have the side pane visible."
 msgstr "Kui märgitud, siis uutel akendel näidatakse külgpaani."
 
-msgid "Send To..."
-msgstr "Saada..."
+msgid "Send To…"
+msgstr "Saatmine…"
 
-msgid "Send file by mail, instant message..."
-msgstr "Faili saatmine e-postiga, välksõnumiga..."
+msgid "Send file by mail, instant message…"
+msgstr "Faili saatmine e-postiga, välksõnumiga…"
 
-msgid "Send files by mail, instant message..."
-msgstr "Failide saatmine e-postiga, välksõnumiga..."
+msgid "Send files by mail, instant message…"
+msgstr "Failide saatmine e-postiga, välksõnumiga…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
 msgid "Oops! Something went wrong."
@@ -2250,8 +2248,8 @@ msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr "Aknas olevate ikoonide parem paigutus kattumise ärahoidmiseks"
 
 #. label, accelerator
-msgid "Resize Icon..."
-msgstr "Muuda ikooni suurust..."
+msgid "Resize Icon…"
+msgstr "Muuda ikooni suurust…"
 
 #. tooltip
 msgid "Make the selected icons resizable"
@@ -2654,8 +2652,8 @@ msgstr "Hinnang"
 msgid "Failed to load image information"
 msgstr "Tõrge pildi andmete laadimisel"
 
-msgid "Loading..."
-msgstr "Laadimine..."
+msgid "Loading…"
+msgstr "Laadimine…"
 
 msgid "(Empty)"
 msgstr "(Tühi)"
@@ -2669,8 +2667,8 @@ msgstr "Vali, mismoodi selles kataloogis andmeid järjestatakse:"
 
 #. name, stock id
 #. label, accelerator
-msgid "Visible _Columns..."
-msgstr "Nähtavad _veerud..."
+msgid "Visible _Columns…"
+msgstr "Nähtavad _veerud…"
 
 #. tooltip
 msgid "Select the columns visible in this folder"
@@ -2919,8 +2917,8 @@ msgstr "Ava uues _aknas"
 msgid "_Add Bookmark"
 msgstr "_Lisa järjehoidja"
 
-msgid "Rename..."
-msgstr "Muuda nime..."
+msgid "Rename…"
+msgstr "_Nime muutmine…"
 
 #. name, stock id
 #. label, accelerator
@@ -3142,8 +3140,8 @@ msgstr "Sa ei ole omanik, seega pole sul võimalik neid pääsuõigusi muuta."
 msgid "Security context:"
 msgstr "Turvakontekst:"
 
-msgid "Change Permissions for Enclosed Files..."
-msgstr "Muuda ka sisalduvate failide õigused..."
+msgid "Change Permissions for Enclosed Files…"
+msgstr "Muuda ka sisalduvate failide õiguseid…"
 
 #, c-format
 msgid "The permissions of “%s” could not be determined."
@@ -3191,8 +3189,8 @@ msgstr "Vali"
 msgid "Any"
 msgstr "Kõik"
 
-msgid "Other Type..."
-msgstr "Muu liik..."
+msgid "Other Type…"
+msgstr "Muu liik…"
 
 msgid "Remove this criterion from the search"
 msgstr "Otsingukriteeriumi eemaldamine otsingust"
@@ -3207,8 +3205,8 @@ msgstr "Kõik failid"
 msgid "Add a new criterion to this search"
 msgstr "Otsingule uue otsingukriteeriumi lisamine"
 
-msgid "Files in this folder will appear in the Create Document menu."
-msgstr "Failid selles kataloogis ilmuvad “Loo dokument” menüüsse."
+msgid "Files in this folder will appear in the New Document menu."
+msgstr "Failid selles kataloogis ilmuvad menüüsse „Uus dokument”."
 
 msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr "Käivitatavad failid selles kataloogis ilmuvad Skriptide menüüsse."
@@ -3411,16 +3409,6 @@ msgstr "Uus kataloog valikuga"
 msgid "Create a new folder containing the selected items"
 msgstr "Uue kausta loomine mis sisaldab valitud kirjeid"
 
-#. name, stock id
-#. translators: this is used to indicate that a document doesn't contain anything
-#. label, accelerator
-msgid "_Empty Document"
-msgstr "_Tühi Dokument"
-
-#. tooltip
-msgid "Create a new empty document inside this folder"
-msgstr "Selle kataloogi sisse uue tühja dokumendi loomine"
-
 #. tooltip
 msgid "Open the selected item in this window"
 msgstr "Valitud kirjete avamine praeguses aknas"
@@ -3443,8 +3431,8 @@ msgstr "Iga valitud kirje avamine uuel kaardil"
 
 #. name, stock id
 #. label, accelerator
-msgid "Other _Application..."
-msgstr "_Muu rakendus..."
+msgid "Other _Application…"
+msgstr "_Muu rakendus…"
 
 #. tooltip
 msgid "Choose another application with which to open the selected item"
@@ -3452,8 +3440,8 @@ msgstr "Valitud kirje avamiseks teise rakenduse valimine"
 
 #. name, stock id
 #. label, accelerator
-msgid "Open With Other _Application..."
-msgstr "_Ava mõne muu rakendusega..."
+msgid "Open With Other _Application…"
+msgstr "_Ava mõne muu rakendusega…"
 
 #. name, stock id
 #. label, accelerator
@@ -3501,8 +3489,8 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-msgid "Copy To..."
-msgstr "Kopeeri kohta..."
+msgid "Copy To…"
+msgstr "Kopeeri kohta…"
 
 #. tooltip
 msgid "Copy selected files to another location"
@@ -3510,8 +3498,8 @@ msgstr "Valitud failide kopeerimine teise kohta"
 
 #. name, stock id
 #. label, accelerator
-msgid "Move To..."
-msgstr "Liiguta kohta..."
+msgid "Move To…"
+msgstr "Liiguta kohta…"
 
 #. tooltip
 msgid "Move selected files to another location"
@@ -3523,8 +3511,8 @@ msgstr "Kõigi selles aknas olevate kirjete avamine"
 
 #. name, stock id
 #. label, accelerator
-msgid "Select I_tems Matching..."
-msgstr "Vali kirjed va_stavuse alusel..."
+msgid "Select I_tems Matching…"
+msgstr "_Kirjete valimine mustri järgi…"
 
 #. tooltip
 msgid "Select items in this window matching a given pattern"
@@ -3553,8 +3541,8 @@ msgstr "Igale valitud kirjele nimeviida loomine"
 
 #. name, stock id
 #. label, accelerator
-msgid "Rena_me..."
-msgstr "Muuda _nime..."
+msgid "Rena_me…"
+msgstr "Muuda _nime…"
 
 #. tooltip
 msgid "Rename selected item"
@@ -3682,8 +3670,8 @@ msgstr "Muudetud otsingu salvestamine"
 
 #. name, stock id
 #. label, accelerator
-msgid "Sa_ve Search As..."
-msgstr "S_alvesta otsing kui..."
+msgid "Sa_ve Search As…"
+msgstr "S_alvesta otsing kui…"
 
 #. tooltip
 msgid "Save the current search as a file"
@@ -3899,6 +3887,9 @@ msgstr[1] "Uus kataloog valikuga (%'d kirjet)"
 msgid "_Open With %s"
 msgstr "_Ava programmiga %s"
 
+msgid "Run"
+msgstr "Käivita"
+
 #, c-format
 msgid "Open in %'d New _Window"
 msgid_plural "Open in %'d New _Windows"
@@ -3913,6 +3904,12 @@ msgstr[1] "Ava %'d-l uuel _kaardil"
 
 msgid "Delete all selected items permanently"
 msgstr "Kõigi kirjete lõplik kustutamine"
+
+msgid "Remo_ve from Recent"
+msgstr "Eemalda _hiljutistest"
+
+msgid "Remove each selected item from the recently used list"
+msgstr "Kõigi märgitud kirjete eemaldamine hiljutiste loetelust"
 
 msgid "View or modify the properties of the open folder"
 msgstr "Avatud kataloogi omaduste vaatamine või muutmine"
@@ -4126,8 +4123,8 @@ msgstr "Vaate hariliku suuruse kasutamine"
 
 #. name, stock id
 #. label, accelerator
-msgid "Connect to _Server..."
-msgstr "Ühendu _serveriga..."
+msgid "Connect to _Server…"
+msgstr "Ühendumine _serveriga…"
 
 #. tooltip
 msgid "Connect to a remote computer or shared disk"
@@ -4170,8 +4167,8 @@ msgid "Go to the next visited location"
 msgstr "Järgmise külastatud koha avamine"
 
 #. name, stock id, label
-msgid "Enter _Location..."
-msgstr "Sisesta _asukoht..."
+msgid "Enter _Location…"
+msgstr "Sisesta _asukoht…"
 
 msgid "Specify a location to open"
 msgstr "Avatava asukoha määramine"
@@ -4184,8 +4181,8 @@ msgid "Add a bookmark for the current location"
 msgstr "Praeguse asukoha jaoks järjehoidja lisamine"
 
 #. name, stock id, label
-msgid "_Bookmarks..."
-msgstr "_Järjehoidjad..."
+msgid "_Bookmarks…"
+msgstr "_Järjehoidjad…"
 
 msgid "Display and edit bookmarks"
 msgstr "Järjehoidjate kuvamine ja muutmine"
@@ -4220,8 +4217,8 @@ msgstr "Selle akna külgpaani näitamine või peitmine"
 #. is_active
 #. name, stock id
 #. label, accelerator
-msgid "_Search for Files..."
-msgstr "_Failide otsing..."
+msgid "_Search for Files…"
+msgstr "_Failide otsing…"
 
 #. tooltip
 msgid "Search documents and folders by name"
@@ -4282,8 +4279,8 @@ msgid "Unhandled error message: %s"
 msgstr "Käsitlematu veateade: %s"
 
 # Näidatakse otsimise ajal kollasel pisikesel ribal, tegevusnimi peaks õige olema.
-msgid "Searching..."
-msgstr "Otsimine..."
+msgid "Searching…"
+msgstr "Otsimine…"
 
 msgid "Audio CD"
 msgstr "Audio-CD"
