@@ -39,7 +39,7 @@ G_BEGIN_DECLS
 #define NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR                "desktop-is-home-dir"
 
 /* Display  */
-#define NEMO_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
+#define NEMO_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden"
 #define NEMO_PREFERENCES_SHOW_ADVANCED_PERMISSIONS		"show-advanced-permissions"
 #define NEMO_PREFERENCES_DATE_FORMAT			"date-format"
 
@@ -222,6 +222,8 @@ GSettings *nemo_window_state;
 GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
 GSettings *gnome_media_handling_preferences;
+
+GSettings *gtk_filechooser_preferences;
 
 G_END_DECLS
 

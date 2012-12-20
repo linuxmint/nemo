@@ -795,7 +795,7 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_DELETE_WIDGET,
 			   NEMO_PREFERENCES_ENABLE_DELETE);
-	bind_builder_bool (builder, nemo_preferences,
+	bind_builder_bool (builder, gtk_filechooser_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_HIDDEN_WIDGET,
 			   NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
 	bind_builder_bool (builder, nemo_preferences,

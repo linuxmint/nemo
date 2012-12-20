@@ -1441,7 +1441,7 @@ update_filtering_from_preferences (FMTreeView *view)
 	if (mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_DEFAULT) {
 		fm_tree_model_set_show_hidden_files
 			(view->details->child_model,
-			 g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
+			 g_settings_get_boolean (gtk_filechooser_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
 	} else {
 		fm_tree_model_set_show_hidden_files
 			(view->details->child_model,
@@ -1506,7 +1506,7 @@ fm_tree_view_init (FMTreeView *view)
 	
 	view->details->selecting = FALSE;
 
-	g_signal_connect_swapped (nemo_preferences,
+	g_signal_connect_swapped (gtk_filechooser_preferences,
 				  "changed::" NEMO_PREFERENCES_SHOW_HIDDEN_FILES,
 				  G_CALLBACK(filtering_changed_callback),
 				  view);
