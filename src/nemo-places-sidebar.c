@@ -1742,6 +1742,10 @@ drag_data_received_callback (GtkWidget *widget,
             position = nemo_bookmark_list_length(sidebar->bookmarks);
         }
 
+        if (tree_pos == GTK_TREE_VIEW_DROP_AFTER && section_type == SECTION_BOOKMARKS) {
+            position++;
+        }
+
 		switch (info) {
 		case TEXT_URI_LIST:
 			bookmarks_drop_uris (sidebar, selection_data, position);
