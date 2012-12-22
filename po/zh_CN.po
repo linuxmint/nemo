@@ -4066,7 +4066,7 @@ msgstr "还原选中的项目到原始位置"
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:209
 msgid "Empty"
-msgstr "空"
+msgstr "清空"
 
 #: ../src/nautilus-view.c:960
 #, c-format
