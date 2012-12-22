@@ -19,7 +19,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2012-12-16 18:27+0000\n"
-"PO-Revision-Date: 2012-12-19 12:03+0400\n"
+"PO-Revision-Date: 2012-12-22 16:17+0400\n"
 "Last-Translator: Yuri Myasoedov <omerta13@yandex.ru>\n"
 "Language-Team: русский <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
@@ -56,9 +56,8 @@ msgid "Access and organize files"
 msgstr "Управление файлами"
 
 #: ../data/nautilus.desktop.in.in.h:3
-#, fuzzy
 msgid "folder;manager;explore;disk;filesystem;"
-msgstr "папка;менеджер;диск;файловая система;"
+msgstr "папка;менеджер;обзор;диск;файловая система;"
 
 #: ../data/nautilus.xml.in.h:1
 msgid "Saved search"
@@ -2212,6 +2211,8 @@ msgid ""
 "This key is deprecated and ignored. The \"show-hidden\" key from \"org.gtk."
 "Settings.FileChooser\" is now used instead."
 msgstr ""
+"Этот параметр устарел и игнорируется. Вместо него используется параметр "
+"«show-hidden» в «org.gtk.Settings.FileChooser»."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
 msgid "Bulk rename utility"
@@ -2494,19 +2495,16 @@ msgstr ""
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:80
 #: ../nautilus-sendto-extension/nautilus-nste.c:85
-#, fuzzy
 #| msgid "Send To..."
 msgid "Send To…"
 msgstr "Отправить…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:81
-#, fuzzy
 #| msgid "Send file by mail, instant message..."
 msgid "Send file by mail, instant message…"
 msgstr "Отправить файл по почте, мгновенным сообщением…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:86
-#, fuzzy
 #| msgid "Send files by mail, instant message..."
 msgid "Send files by mail, instant message…"
 msgstr "Отправить файлы по почте, мгновенным сообщением…"
@@ -2833,13 +2831,12 @@ msgstr "Просматривать этот адрес в виде значко�
 #: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1870
 #: ../src/nautilus-mime-actions.c:2142
 msgid "Unable to access location"
-msgstr "Не удалось получить доступ к местопложения"
+msgstr "Не удалось получить доступ к местопложению"
 
 #: ../src/nautilus-connect-server.c:74
-#, fuzzy
 #| msgid "Unable to load location"
 msgid "Unable to display location"
-msgstr "Не удалось загрузить адрес"
+msgstr "Не удалось открыть местоположение"
 
 #: ../src/nautilus-connect-server.c:140
 msgid "Print but do not open the URI"
@@ -2954,10 +2951,9 @@ msgstr ""
 
 #. label, accelerator
 #: ../src/nautilus-desktop-canvas-view.c:764
-#, fuzzy
 #| msgid "Resize Icon..."
 msgid "Resize Icon…"
-msgstr "Растянуть значок..."
+msgstr "Растянуть значок…"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:766
@@ -4265,25 +4261,22 @@ msgstr "Добавить новый критерий в этот поиск"
 #, fuzzy
 #| msgid "All executable files in this folder will appear in the Scripts menu."
 msgid "Files in this folder will appear in the New Document menu."
-msgstr "Все исполняемые файлы из этой папки будут показаны в меню «Сценарии»."
+msgstr "Файлы из этой папки появятся в меню «Новый документ»."
 
 #: ../src/nautilus-special-location-bar.c:55
-#, fuzzy
 #| msgid "All executable files in this folder will appear in the Scripts menu."
 msgid "Executable files in this folder will appear in the Scripts menu."
-msgstr "Все исполняемые файлы из этой папки будут показаны в меню «Сценарии»."
+msgstr "Исполняемые файлы из этой папки появятся в меню «Сценарии»."
 
 #: ../src/nautilus-toolbar.c:416
-#, fuzzy
 #| msgid "File Operations"
 msgid "View options"
-msgstr "Действия над файлами"
+msgstr "Параметры просмотра"
 
 #: ../src/nautilus-toolbar.c:433
-#, fuzzy
 #| msgid "Icon Captions"
 msgid "Location options"
-msgstr "Подписи к значкам"
+msgstr "Параметры местоположения"
 
 #: ../src/nautilus-trash-bar.c:202
 msgid "Restore"
@@ -4295,10 +4288,9 @@ msgstr "Восстановить выделенные объекты к исхо
 
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:209
-#, fuzzy
 #| msgid "(Empty)"
 msgid "Empty"
-msgstr "(Пусто)"
+msgstr "Очистить"
 
 #: ../src/nautilus-view.c:957
 #, c-format
@@ -4434,7 +4426,7 @@ msgstr "%s%s, %s, %s"
 #: ../src/nautilus-view.c:4335
 #, c-format
 msgid "Open With %s"
-msgstr "Открыть с помощью %s"
+msgstr "Открыть с помощью «%s»"
 
 #: ../src/nautilus-view.c:4337
 #, c-format
@@ -4562,7 +4554,6 @@ msgstr "Открыть каждый выделенный объект в отд�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7130
-#, fuzzy
 #| msgid "Other _Application..."
 msgid "Other _Application…"
 msgstr "_Другое приложение…"
@@ -4575,7 +4566,6 @@ msgstr "Выбрать другое приложение, чтобы откры�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7134
-#, fuzzy
 #| msgid "Open With Other _Application..."
 msgid "Open With Other _Application…"
 msgstr "Открыть в другой _программе…"
@@ -4636,7 +4626,6 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7164
-#, fuzzy
 #| msgid "Copy To..."
 msgid "Copy To…"
 msgstr "Копировать в…"
@@ -4649,7 +4638,6 @@ msgstr "Копировать выделенные файлы в другое м�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7168
-#, fuzzy
 #| msgid "Move To..."
 msgid "Move To…"
 msgstr "Переместить в…"
@@ -4667,10 +4655,9 @@ msgstr "Выделить все объекты в этом окне"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7176
-#, fuzzy
 #| msgid "Select Items Matching"
 msgid "Select I_tems Matching…"
-msgstr "Выделить объекты по шаблону"
+msgstr "Выделить объекты по _шаблону…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7177
@@ -4705,7 +4692,6 @@ msgstr "Создать символьную ссылку для каждого �
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7188
-#, fuzzy
 #| msgid "Rena_me..."
 msgid "Rena_me…"
 msgstr "_Переименовать…"
@@ -4866,10 +4852,9 @@ msgstr "Сохранить изменённый поиск"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7286
-#, fuzzy
 #| msgid "Sa_ve Search As..."
 msgid "Sa_ve Search As…"
-msgstr "Со_хранить поиск как..."
+msgstr "Со_хранить поиск как…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7287
@@ -5179,14 +5164,14 @@ msgid "Delete all selected items permanently"
 msgstr "Окончательно удалить все выделенные объекты"
 
 #: ../src/nautilus-view.c:8620
+#, fuzzy
 msgid "Remo_ve from Recent"
-msgstr ""
+msgstr "Удалить из _недавних объектов"
 
 #: ../src/nautilus-view.c:8621
-#, fuzzy
 #| msgid "Move each selected item to the Trash"
 msgid "Remove each selected item from the recently used list"
-msgstr "Переместить каждый выделенный объект в корзину"
+msgstr "Удалить все выделенные объекты из списка недавно использованных"
 
 #: ../src/nautilus-view.c:8661
 msgid "View or modify the properties of the open folder"
@@ -5447,10 +5432,9 @@ msgstr "Использовать обычный масштаб"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:529
-#, fuzzy
 #| msgid "Connect to _Server"
 msgid "Connect to _Server…"
-msgstr "Подключение к _серверу"
+msgstr "Подключиться к _серверу…"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:530
@@ -5505,10 +5489,9 @@ msgstr "Перейти к следующему посещённому адрес
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:551
-#, fuzzy
 #| msgid "Enter _Location"
 msgid "Enter _Location…"
-msgstr "Ввести _адрес"
+msgstr "Ввести _адрес…"
 
 #: ../src/nautilus-window-menus.c:552
 msgid "Specify a location to open"
