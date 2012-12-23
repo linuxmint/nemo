@@ -67,6 +67,16 @@ nemo_pathbar_button_finalize (GObject *object)
     G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
+#define A_A CAIRO_ANTIALIAS_SUBPIXEL
+#define RAD 5.0
+#define _270_DEG 270.0 * (M_PI/180.0)
+#define _180_DEG 180.0 * (M_PI/180.0)
+#define  _90_DEG  90.0 * (M_PI/180.0)
+#define H_RAD 1 /* Highlight radius */
+#define H_O 2  /*  Highlight offset */
+#define H_T_COMP H_O - 1 /* Highlight tangential compensation */
+
+static void
 do_draw_middle_element (GtkStyleContext  *context,
                                  cairo_t *cr,
                                    gint   x,
@@ -76,12 +86,11 @@ do_draw_middle_element (GtkStyleContext  *context,
                                gboolean   highlight)
 {
     cairo_save (cr);
-    if (highlight) {
-        cairo_set_source_rgb (cr, 0, 0, 0);
-    } else {
-        cairo_set_source_rgb (cr, .5, .5, .5);
-    }
-    cairo_set_antialias (cr, CAIRO_ANTIALIAS_GRAY);
+    cairo_set_antialias (cr, A_A);
+
+    cairo_set_source_rgb (cr, .5, .5, .5);
+    cairo_set_line_width (cr, 2.0);
+
     cairo_move_to (cr, x, y);
     cairo_line_to (cr, x+w-(h/3), y);
     cairo_line_to (cr, x+w-1, y+(h/2));
@@ -95,13 +104,30 @@ do_draw_middle_element (GtkStyleContext  *context,
 
     gtk_render_background (context, cr, x, y, w, h);
     cairo_restore (cr);
+
+    if (!highlight)
+        return;
+
+    cairo_save (cr);
+    cairo_set_antialias (cr, A_A);
+
+    cairo_set_source_rgb (cr, 0, 0, 0);
+    cairo_set_line_width (cr, .5);
+
+    cairo_move_to (cr, x+H_O+H_T_COMP, y+H_O);
+    cairo_line_to (cr, x+w-(h/3)-H_O+H_T_COMP, y+H_O);
+    cairo_line_to (cr, x+w-1-H_O, y+(h/2));
+    cairo_line_to (cr, x+w-(h/3)-H_O+H_T_COMP, y+h-H_O);
+    cairo_line_to (cr, x+H_O+H_T_COMP, y+h-H_O);
+    cairo_line_to (cr, x+(h/3)-1+H_O, y+(h/2));
+    cairo_line_to (cr, x+H_O+H_T_COMP, y+H_O);
+
+    cairo_stroke (cr);
+
+    cairo_restore (cr);
 }
 
-#define RAD 5.0
-#define _270_DEG 270.0 * (M_PI/180.0)
-#define _180_DEG 180.0 * (M_PI/180.0)
-#define  _90_DEG  90.0 * (M_PI/180.0)
-
+static void
 do_draw_end_element (GtkStyleContext *context,
                              cairo_t *cr,
                              gint     x,
@@ -111,12 +137,11 @@ do_draw_end_element (GtkStyleContext *context,
                          gboolean     highlight)
 {
     cairo_save (cr);
-    if (highlight) {
-        cairo_set_source_rgb (cr, 0, 0, 0);
-    } else {
-        cairo_set_source_rgb (cr, .5, .5, .5);
-    }
-    cairo_set_antialias (cr, CAIRO_ANTIALIAS_GRAY);
+    cairo_set_antialias (cr, A_A);
+
+    cairo_set_source_rgb (cr, .5, .5, .5);
+    cairo_set_line_width (cr, 2.0);
+
     cairo_move_to (cr, x+RAD, y);
     cairo_line_to (cr, x+w-(h/3), y);
     cairo_line_to (cr, x+w-1, y+(h/2));
@@ -130,6 +155,28 @@ do_draw_end_element (GtkStyleContext *context,
     cairo_clip (cr);
 
     gtk_render_background (context, cr, x, y, w, h);
+    cairo_restore (cr);
+
+    if (!highlight)
+        return;
+
+    cairo_save (cr);
+    cairo_set_antialias (cr, A_A);
+
+    cairo_set_source_rgb (cr, 0, 0, 0);
+    cairo_set_line_width (cr, .5);
+
+    cairo_move_to (cr, x+H_RAD+H_O, y+H_O);
+    cairo_line_to (cr, x+w-(h/3)-H_O+H_T_COMP, y+H_O);
+    cairo_line_to (cr, x+w-1-H_O, y+(h/2));
+    cairo_line_to (cr, x+w-(h/3)-H_O+H_T_COMP, y+h-H_O);
+    cairo_line_to (cr, x+H_RAD+H_O, y+h-H_O);
+    cairo_arc (cr, x+H_RAD+H_O, y+h-H_RAD-H_O, H_RAD, _90_DEG, _180_DEG);
+    cairo_line_to (cr, x+H_O, y+H_RAD+H_O);
+    cairo_arc (cr, x+H_RAD+H_O, y+H_RAD+H_O, H_RAD, _180_DEG, _270_DEG);
+
+    cairo_stroke (cr);
+
     cairo_restore (cr);
 }
 

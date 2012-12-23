@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
+#include <math.h>
 
 #include "nemo-pathbar.h"
 
@@ -690,10 +691,11 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         gtk_widget_set_child_visible (BUTTON_DATA (list->data)->button, TRUE);
         if (!first_element) {
             nemo_pathbar_button_set_is_left_end (BUTTON_DATA (list->data)->button, FALSE);
+            gint offset = rintf ((float) child_allocation.height / 2.75);
             if (direction == GTK_TEXT_DIR_RTL)
-                child_allocation.x += 12;  /* TODO: this needs to be a factor of height once the widget is ironed out */
+                child_allocation.x += offset;
             else
-                child_allocation.x -= 12;
+                child_allocation.x -= offset;
         } else {
             nemo_pathbar_button_set_is_left_end (BUTTON_DATA (list->data)->button, TRUE);
             first_element = FALSE;
