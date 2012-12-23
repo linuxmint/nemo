@@ -85,6 +85,8 @@ do_draw_middle_element (GtkStyleContext  *context,
                                    gint   h,
                                gboolean   highlight)
 {
+    gint offset = rintf ((float) h / 2.75);
+
     cairo_save (cr);
     cairo_set_antialias (cr, A_A);
 
@@ -92,11 +94,11 @@ do_draw_middle_element (GtkStyleContext  *context,
     cairo_set_line_width (cr, 2.0);
 
     cairo_move_to (cr, x, y);
-    cairo_line_to (cr, x+w-(h/3), y);
+    cairo_line_to (cr, x+w-offset, y);
     cairo_line_to (cr, x+w-1, y+(h/2));
-    cairo_line_to (cr, x+w-(h/3), y+h);
+    cairo_line_to (cr, x+w-offset, y+h);
     cairo_line_to (cr, x, y+h);
-    cairo_line_to (cr, x+(h/3)-1, y+(h/2));
+    cairo_line_to (cr, x+offset-1, y+(h/2));
     cairo_line_to (cr, x, y);
 
     cairo_stroke_preserve (cr);
@@ -115,11 +117,11 @@ do_draw_middle_element (GtkStyleContext  *context,
     cairo_set_line_width (cr, .5);
 
     cairo_move_to (cr, x+H_O+H_T_COMP, y+H_O);
-    cairo_line_to (cr, x+w-(h/3)-H_O+H_T_COMP, y+H_O);
+    cairo_line_to (cr, x+w-offset-H_O+H_T_COMP, y+H_O);
     cairo_line_to (cr, x+w-1-H_O, y+(h/2));
-    cairo_line_to (cr, x+w-(h/3)-H_O+H_T_COMP, y+h-H_O);
+    cairo_line_to (cr, x+w-offset-H_O+H_T_COMP, y+h-H_O);
     cairo_line_to (cr, x+H_O+H_T_COMP, y+h-H_O);
-    cairo_line_to (cr, x+(h/3)-1+H_O, y+(h/2));
+    cairo_line_to (cr, x+offset-1+H_O, y+(h/2));
     cairo_line_to (cr, x+H_O+H_T_COMP, y+H_O);
 
     cairo_stroke (cr);
@@ -136,6 +138,7 @@ do_draw_end_element (GtkStyleContext *context,
                              gint     h,
                          gboolean     highlight)
 {
+    gint offset = rintf ((float) h / 2.75);
     cairo_save (cr);
     cairo_set_antialias (cr, A_A);
 
@@ -143,9 +146,9 @@ do_draw_end_element (GtkStyleContext *context,
     cairo_set_line_width (cr, 2.0);
 
     cairo_move_to (cr, x+RAD, y);
-    cairo_line_to (cr, x+w-(h/3), y);
+    cairo_line_to (cr, x+w-offset, y);
     cairo_line_to (cr, x+w-1, y+(h/2));
-    cairo_line_to (cr, x+w-(h/3), y+h);
+    cairo_line_to (cr, x+w-offset, y+h);
     cairo_line_to (cr, x+RAD, y+h);
     cairo_arc (cr, x+RAD, y+h-RAD, RAD, _90_DEG, _180_DEG);
     cairo_line_to (cr, x, y+RAD);
@@ -167,9 +170,9 @@ do_draw_end_element (GtkStyleContext *context,
     cairo_set_line_width (cr, .5);
 
     cairo_move_to (cr, x+H_RAD+H_O, y+H_O);
-    cairo_line_to (cr, x+w-(h/3)-H_O+H_T_COMP, y+H_O);
+    cairo_line_to (cr, x+w-offset-H_O+H_T_COMP, y+H_O);
     cairo_line_to (cr, x+w-1-H_O, y+(h/2));
-    cairo_line_to (cr, x+w-(h/3)-H_O+H_T_COMP, y+h-H_O);
+    cairo_line_to (cr, x+w-offset-H_O+H_T_COMP, y+h-H_O);
     cairo_line_to (cr, x+H_RAD+H_O, y+h-H_O);
     cairo_arc (cr, x+H_RAD+H_O, y+h-H_RAD-H_O, H_RAD, _90_DEG, _180_DEG);
     cairo_line_to (cr, x+H_O, y+H_RAD+H_O);

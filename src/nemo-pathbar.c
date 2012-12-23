@@ -73,6 +73,7 @@ typedef struct _ButtonData ButtonData;
 struct _ButtonData
 {
         GtkWidget *button;
+        GtkWidget *pre_padding;
         ButtonType type;
         char *dir_name;
         GFile *path;
@@ -666,6 +667,12 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     gboolean first_element = TRUE;
     for (list = first_button; list; list = list->prev) {
         child = BUTTON_DATA (list->data)->button;
+
+        if (first_element)
+            gtk_label_set_width_chars (GTK_LABEL (BUTTON_DATA (list->data)->pre_padding), 0);
+        else
+            gtk_label_set_width_chars (GTK_LABEL (BUTTON_DATA (list->data)->pre_padding), 1);
+
         gtk_widget_get_preferred_size (child,
                                         &child_requisition, NULL);
 
@@ -691,7 +698,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         gtk_widget_set_child_visible (BUTTON_DATA (list->data)->button, TRUE);
         if (!first_element) {
             nemo_pathbar_button_set_is_left_end (BUTTON_DATA (list->data)->button, FALSE);
-            gint offset = rintf ((float) child_allocation.height / 2.75);
+            gint offset = rintf ((float) child_allocation.height / 2.75) + 2;
             if (direction == GTK_TEXT_DIR_RTL)
                 child_allocation.x += offset;
             else
@@ -1707,6 +1714,17 @@ button_data_file_changed (NemoFile *file,
 	nemo_path_bar_update_button_appearance (button_data);
 }
 
+static GtkWidget *
+get_padding_widget (gint width)
+{
+    GtkWidget *padding;
+
+    padding = gtk_label_new (NULL);
+    gtk_label_set_width_chars (GTK_LABEL (padding), width);
+
+    return GTK_WIDGET (padding);
+}
+
 static ButtonData *
 make_directory_button (NemoPathBar  *path_bar,
 		       NemoFile     *file,
@@ -1714,64 +1732,58 @@ make_directory_button (NemoPathBar  *path_bar,
 		       gboolean          base_dir)
 {
 	GFile *path;
-        GtkWidget *child;
-        ButtonData *button_data;
+    GtkWidget *child;
+    ButtonData *button_data;
 
 	path = nemo_file_get_location (file);
 	child = NULL;
 
         /* Is it a special button? */
-        button_data = g_new0 (ButtonData, 1);
+    button_data = g_new0 (ButtonData, 1);
 
-        setup_button_type (button_data, path_bar, path);
-        button_data->button = nemo_pathbar_button_new ();
+    setup_button_type (button_data, path_bar, path);
+    button_data->button = nemo_pathbar_button_new ();
 
 	gtk_button_set_focus_on_click (GTK_BUTTON (button_data->button), FALSE);
 	gtk_widget_add_events (button_data->button, GDK_SCROLL_MASK);
 	/* TODO update button type when xdg directories change */
 
 	button_data->image = gtk_image_new ();
-
-        switch (button_data->type) {
-                case ROOT_BUTTON:
-                case HOME_BUTTON:
-                        child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
-                        gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 5);
-                        break;
-                case DESKTOP_BUTTON:
-                case MOUNT_BUTTON:
-                case DEFAULT_LOCATION_BUTTON:
-                        button_data->label = gtk_label_new (NULL);
-                        button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
-                        gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
-                        child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
-                        gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 5);
-                        gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 0);
-                        break;
-                case XDG_BUTTON:
-                        button_data->label = gtk_label_new (NULL);
-                        button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
-                        gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
-                        child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
-                        gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 5);
-                        gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 0);
-                        button_data->is_base_dir = base_dir;
-                        break;
-                case NORMAL_BUTTON:
-                default:
-                        button_data->label = gtk_label_new (NULL);
-                        button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
-                        gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
-                        child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
-                        if (base_dir) {
-                            gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 5);
-                            gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 0);
-                        } else {
-                            gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 0);
-                            gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 6);
-                        }
-                        button_data->is_base_dir = base_dir;
-        }
+    child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 1);
+    button_data->pre_padding = get_padding_widget(0);
+    gtk_box_pack_start (GTK_BOX (child), button_data->pre_padding, FALSE, FALSE, 0);
+    switch (button_data->type) {
+            case ROOT_BUTTON:
+            case HOME_BUTTON:
+                    gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 1);
+                    break;
+            case DESKTOP_BUTTON:
+            case MOUNT_BUTTON:
+            case DEFAULT_LOCATION_BUTTON:
+                    button_data->label = gtk_label_new (NULL);
+                    button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
+                    gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
+                    gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 1);
+                    gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 1);
+                    break;
+            case XDG_BUTTON:
+                    button_data->label = gtk_label_new (NULL);
+                    button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
+                    gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
+                    gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 1);
+                    gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 1);
+                    button_data->is_base_dir = base_dir;
+                    break;
+            case NORMAL_BUTTON:
+            default:
+                    button_data->label = gtk_label_new (NULL);
+                    button_data->alignment = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
+                    gtk_container_add (GTK_CONTAINER (button_data->alignment), button_data->label);
+                    gtk_box_pack_start (GTK_BOX (child), button_data->image, FALSE, FALSE, 1);
+                    gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 1);
+                    button_data->is_base_dir = base_dir;
+    }
+    gtk_box_pack_start (GTK_BOX (child), get_padding_widget(1), FALSE, FALSE, 0);
 
 	if (button_data->path == NULL) {
         	button_data->path = g_object_ref (path);
