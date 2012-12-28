@@ -166,7 +166,7 @@ msgstr "انسخ النص المختار إلى الحافظة"
 #. tooltip
 #: ../libnautilus-private/nautilus-clipboard.c:367
 msgid "Paste the text stored on the clipboard"
-msgstr "الصق النص المخزن في الحافظة"
+msgstr "ألصق النص المخزن في الحافظة"
 
 #. name, stock id
 #. label, accelerator
@@ -4642,7 +4642,7 @@ msgstr "انقل أو انسخ الملفات المختارة سابقا بأم
 #. label, accelerator
 #: ../src/nautilus-view.c:7160 ../src/nautilus-view.c:7309
 msgid "_Paste Into Folder"
-msgstr "ال_صق في المجلد"
+msgstr "أل_صق في المجلد"
 
 #. tooltip
 #: ../src/nautilus-view.c:7161
