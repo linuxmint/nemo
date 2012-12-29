@@ -907,13 +907,17 @@ update_places (NemoPlacesSidebar *sidebar)
             icon = g_mount_get_icon (mount);
             root = g_mount_get_default_location (mount);
             mount_uri = g_file_get_uri (root);
-            tooltip = g_file_get_parse_name (root);
+            full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
+            tooltip = g_strdup_printf (_("%s\n%s"),
+                                       g_file_get_parse_name (root),
+                                       tooltip_info);
+            g_free (tooltip_info);
             g_object_unref (root);
             name = g_mount_get_name (mount);
             cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
                                    SECTION_DEVICES,
                                    name, icon, mount_uri,
-                                   NULL, volume, mount, 0, tooltip, 0, FALSE,
+                                   NULL, volume, mount, 0, tooltip, full, TRUE,
                                    cat_iter);
             g_object_unref (mount);
             g_object_unref (icon);
