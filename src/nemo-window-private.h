@@ -111,7 +111,7 @@ struct NemoWindowDetails
 
         guint sidebar_width_handler_id;
 
-        guint temporary_menu_bar;
+        gboolean temporary_menu_bar;
 };
 
 /* window geometry */

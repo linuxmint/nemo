@@ -550,7 +550,7 @@ nemo_window_constructed (GObject *self)
 
 	nemo_window_initialize_menus (window);
 
-    window->details->temporary_menu_bar = 0;
+    window->details->temporary_menu_bar = FALSE;
 
 	nemo_window_initialize_actions (window);
 
@@ -1045,13 +1045,13 @@ handle_alt_menu_key (NemoWindow *window,
 
     if (!visible) {
         gtk_widget_show (menu);
-        window->details->temporary_menu_bar = 1;
+        window->details->temporary_menu_bar = FALSE;
     } else if (visible && on_release) {
-        if (window->details->temporary_menu_bar < 2)
-            window->details->temporary_menu_bar++;
+        if (!window->details->temporary_menu_bar)
+            window->details->temporary_menu_bar = TRUE;
         else {
             gtk_widget_hide (menu);
-            window->details->temporary_menu_bar = 0;
+            window->details->temporary_menu_bar = FALSE;
         }
     }
 }
@@ -1480,7 +1480,7 @@ nemo_window_sync_menu_bar (NemoWindow *window)
         gtk_widget_hide (menu);
     }
 
-    window->details->temporary_menu_bar = 0;
+    window->details->temporary_menu_bar = FALSE;
 }
 
 void
