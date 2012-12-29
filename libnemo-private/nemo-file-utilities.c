@@ -44,11 +44,9 @@
 #include <stdlib.h>
 
 #define NEMO_USER_DIRECTORY_NAME "nemo"
-#define DEFAULT_NEMO_DIRECTORY_MODE (0755)
 
 #define DESKTOP_DIRECTORY_NAME "Desktop"
 #define LEGACY_DESKTOP_DIRECTORY_NAME ".gnome-desktop"
-#define DEFAULT_DESKTOP_DIRECTORY_MODE (0755)
 
 static void update_xdg_dir_cache (void);
 static void schedule_user_dirs_changed (void);

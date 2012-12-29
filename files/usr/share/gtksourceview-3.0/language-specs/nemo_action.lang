@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ This file is part of GtkSourceView
+
+ Author: Paolo Maggi <paolo.maggi@polito.it>
+ Copyright (C) 2003 Paolo Maggi <paolo.maggi@polito.it>
+ Copyright (C) 2006 Luca Cavalli <lcavalli@cvs.gnome.org>
+
+ GtkSourceView is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ GtkSourceView is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+-->
+<language id="nemo_action" _name="Nemo Action" version="2.0" _section="Others">
+  <metadata>
+    <property name="mimetypes">application/nemo-action</property>
+    <property name="globs">*.nemo_action</property>
+    <property name="line-comment-start">#</property>
+  </metadata>
+
+  <styles>
+    <style id="group" _name="Group" map-to="def:keyword"/>
+    <!-- Translators: "Key" here means key value, that is the left hand
+         side in a myoption=something line in a .desktop file -->
+    <style id="key" _name="Key" map-to="def:type"/>
+    <style id="language" _name="Translation" map-to="def:decimal"/>
+    <style id="number" _name="Number" map-to="def:floating-point"/>
+    <style id="boolean" _name="Boolean" map-to="def:floating-point"/>
+    <style id="exec-parameter" _name="Exec parameter" map-to="def:floating-point"/>
+    <style id="encoding" _name="Encoding" map-to="def:floating-point"/>
+  </styles>
+
+  <definitions>
+    <define-regex id="key-suffix">(?=(\[[a-zA-Z_]+\])?\s*=\s*)</define-regex>
+
+    <context id="group" style-ref="group">
+      <start>^\[</start>
+      <end>\]$</end>
+    </context>
+
+    <context id="language" style-ref="language">
+      <match>\[[a-zA-Z_]+\]</match>
+    </context>
+
+    <context id="boolean" style-ref="boolean">
+      <keyword>true</keyword>
+      <keyword>false</keyword>
+    </context>
+
+    <context id="exec-parameter" style-ref="exec-parameter">
+      <match>%[fFuUdDnNimckv%]</match>
+    </context>
+
+    <context id="encoding" style-ref="encoding">
+      <keyword>UTF\-8</keyword>
+      <keyword>Legacy\-Mixed</keyword>
+    </context>
+
+    <context id="number" style-ref="number">
+      <match>(.\b[0-9]+([Ll]?|[Ff]?)\b)|(b[0-9]*\.\W)</match>
+    </context>
+
+    <context id="standard-key" style-ref="key">
+      <prefix>^_?</prefix>
+      <suffix>\%{key-suffix}</suffix>
+      <keyword>Active</keyword>
+      <keyword>Name</keyword>
+      <keyword>Comment</keyword>
+      <keyword>Exec</keyword>
+      <keyword>Icon</keyword>
+      <keyword>Selection</keyword>
+      <keyword>Extensions</keyword>
+    </context>
+
+    <context id="non-standard-key" style-ref="key">
+      <match>^_?X\-[a-zA-Z\-]+\%{key-suffix}</match>
+    </context>
+
+    <context id="key">
+      <include>
+        <context ref="standard-key"/>
+        <context ref="non-standard-key"/>
+      </include>
+    </context>
+
+    <context id="nemo_action">
+      <include>
+        <context ref="def:shell-like-comment"/>
+        <context ref="group"/>
+        <context ref="key"/>
+        <context id="lang-and-value" end-at-line-end="true">
+          <start>(\[[a-zA-Z_]+\])?\s*=\s*</start>
+          <include>
+            <context sub-pattern="1" where="start" style-ref="language"/>
+            <context ref="boolean"/>
+            <context ref="exec-parameter"/>
+            <context ref="encoding"/>
+            <context ref="number"/>
+          </include>
+        </context>
+      </include>
+    </context>
+  </definitions>
+</language>
