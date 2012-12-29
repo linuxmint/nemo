@@ -111,6 +111,7 @@ struct NemoWindowDetails
 
         guint sidebar_width_handler_id;
 
+        guint temporary_menu_bar;
 };
 
 /* window geometry */
@@ -160,6 +161,7 @@ void nemo_window_sync_title            (NemoWindow *window,
 					    NemoWindowSlot *slot);
 void nemo_window_sync_zoom_widgets     (NemoWindow *window);
 void nemo_window_sync_up_button        (NemoWindow *window);
+void nemo_window_sync_menu_bar         (NemoWindow *window);
 
 /* window menus */
 GtkActionGroup *nemo_window_create_toolbar_action_group (NemoWindow *window);
