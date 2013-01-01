@@ -5236,11 +5236,9 @@ real_destroy (GtkWidget *object)
 		g_source_remove (window->details->deep_count_spinner_timeout_id);
 	}
 
-	for (l = window->details->deep_count_files; l != NULL; l = l->next) {
-		stop_deep_count_for_file (window, l->data);
+	while (window->details->deep_count_files) {
+		stop_deep_count_for_file (window, window->details->deep_count_files->data);
 	}
-	g_list_free (window->details->deep_count_files);
-	window->details->deep_count_files = NULL;
 
 	window->details->name_field = NULL;
 
