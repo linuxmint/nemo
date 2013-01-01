@@ -391,6 +391,7 @@ nemo_action_activate (NemoAction *action, GList *selection)
         arg_list = g_list_delete_link (arg_list, token);
     }
 
+    /* Now make our arg vector array for passing to the g_spawn_async function */
 
     gchar *argv[g_list_length (arg_list)+1];
     i = 0;
@@ -407,6 +408,8 @@ nemo_action_activate (NemoAction *action, GList *selection)
     }
 
     argv[i] = NULL;
+
+    /* Finally spawn the command */
 
     g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH,
                    NULL, NULL, NULL, NULL);
