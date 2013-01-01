@@ -2,7 +2,7 @@
 
 # Use this entry? Largely for troubleshooting.
 # Lack of this field assumes true
-Active=true
+Active=false
 
 # The name to show in the menu, locale supported with standard desktop spec
 Name=Test Action

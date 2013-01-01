@@ -5959,7 +5959,6 @@ add_action_to_action_menus (NemoView *directory_view,
     uri = nemo_file_get_uri (file);
 
     action_name = escape_action_name (uri, "action_");
-
     action = nemo_action_new (action_name, file);
 
     if (action == NULL)  /* First thing nemo-action will check is active key */
@@ -6010,13 +6009,13 @@ update_directory_in_actions_menu (NemoView *view, NemoDirectory *directory)
     char *menu_path, *popup_path, *popup_bg_path;
     GList *file_list, *node;
     NemoFile *file;
-    NemoDirectory *dir;
     char *uri;
     char *escaped_path;
     
     uri = nemo_directory_get_uri (directory);
-    escaped_path = escape_action_path (uri + actions_directory_uri_length);
+    escaped_path = escape_action_path (uri + strlen (uri));
     g_free (uri);
+
     menu_path = g_strconcat (NEMO_VIEW_MENU_PATH_ACTIONS_PLACEHOLDER,
                  escaped_path,
                  NULL);
@@ -6042,7 +6041,6 @@ update_directory_in_actions_menu (NemoView *view, NemoDirectory *directory)
     g_free (popup_path);
     g_free (popup_bg_path);
     g_free (menu_path);
-
 }
 
 static void
