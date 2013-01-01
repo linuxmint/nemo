@@ -55,6 +55,8 @@ static   gpointer parent_class;
 #define SELECTION_ANY_KEY "Any"
 #define SELECTION_NONE_KEY "None"
 
+#define TOKEN_FILE_LIST "%L"
+
 enum 
 {
   PROP_0,
@@ -357,30 +359,59 @@ nemo_action_get_property (GObject    *object,
 void
 nemo_action_activate (NemoAction *action, GList *selection)
 {
-    GList *iter;
-    guint arg_counter = 1;
+    GList *token, *iter;
+    GList *arg_list = NULL;
+    gchar **exec_args;
+    gint exec_arg_count;
 
-    guint count = g_list_length (selection);
+    g_shell_parse_argv (action->exec, &exec_arg_count, &exec_args, NULL);
 
-    gchar *argv[count + 2];
+    int i;
 
-    if (!action->use_parent_dir)
-        argv[0] = g_strdup (action->exec);
-    else {
-        argv[0] = g_build_filename (action->parent_dir, action->exec, NULL);
+    /* First, build the basic arg list based on action->exec */
+
+    for (i = 0; i < exec_arg_count; i++) {
+        arg_list = g_list_append (arg_list, g_strdup (exec_args[i]));
     }
 
-    for (iter = selection; iter != NULL; iter = iter->next) {
-        argv[arg_counter] = g_filename_from_uri (nemo_file_get_uri (NEMO_FILE (iter->data)), NULL, NULL);
-        arg_counter ++;
+    /* Now, find the file list token in the argument list, and insert our selection
+     * in front of it
+     */
+
+    for (token = arg_list; token != NULL; token = token->next) {
+        if (g_strcmp0 (token->data, TOKEN_FILE_LIST) == 0)
+            break;
     }
 
-    argv[arg_counter] = NULL;
+    if (token != NULL) {
+        for (iter = selection; iter != NULL; iter = iter->next) {
+            arg_list = g_list_insert_before (arg_list, token,
+                                             g_filename_from_uri (nemo_file_get_uri (NEMO_FILE (iter->data)), NULL, NULL));
+        }
+        arg_list = g_list_delete_link (arg_list, token);
+    }
+
+
+    gchar *argv[g_list_length (arg_list)+1];
+    i = 0;
+    if (action->use_parent_dir) {
+        argv[i] = g_build_filename (action->parent_dir, g_strdup (arg_list->data), NULL);
+    }
+    i++;
+
+    for (iter = arg_list->next; iter != NULL; iter = iter->next) {
+        argv[i] = g_strdup (iter->data);
+        i++;
+    }
+
+    argv[i] = NULL;
 
     g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH,
                    NULL, NULL, NULL, NULL);
 
     nemo_file_list_free (selection);
+    g_list_free (arg_list);
+    g_strfreev (exec_args);
 }
 
 SelectionType

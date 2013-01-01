@@ -10,10 +10,10 @@ Name=Test Custom Action
 # Tool tip, locale supported
 Comment=This is a test for Nemo actions
 
-# What to run, files will be passed as arguments.  Enclose in < > to run an executable
-# that resides in the actions folder.
-# (i.e. <myaction.py>)
-Exec=<myaction.py>
+# What to run.  Enclose in < > to run an executable that resides in the actions folder.
+# Use %L as the token where to insert the file list
+#Exec=gedit %L
+Exec=<myaction.py -r -g %L>
 
 # Icon to use in the menu
 Icon=folder
