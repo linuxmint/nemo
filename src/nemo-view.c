@@ -168,9 +168,6 @@ static GdkAtom copied_files_atom;
 static char *scripts_directory_uri = NULL;
 static int scripts_directory_uri_length;
 
-static char *actions_directory_uri = NULL;
-static int actions_directory_uri_length;
-
 struct NemoViewDetails
 {
 	NemoWindow *window;
@@ -2403,9 +2400,6 @@ remove_directory_from_templates_directory_list (NemoView *view,
 					      G_CALLBACK (templates_added_or_changed_callback));
 }
 
-
-
-
 static void
 set_up_actions_directories (NemoView *view)
 {
@@ -2435,18 +2429,11 @@ set_up_actions_directories (NemoView *view)
     add_directory_to_actions_directory_list (view, dir);
     nemo_directory_unref (dir);
 
-    actions_directory_uri = g_strdup (sys_uri);
-    actions_directory_uri_length = strlen (actions_directory_uri);
-
     g_free (sys_path);
     g_free (sys_uri);
     g_free (user_path);
     g_free (user_uri);
 }
-
-
-
-
 
 static void
 slot_active (NemoWindowSlot *slot,
@@ -5942,6 +5929,7 @@ update_actions_visibility (NemoView *view)
 {
     GList *actions = gtk_action_group_list_actions (view->details->actions_action_group);
     g_list_foreach (actions, determine_visibility, view);
+    g_list_free (actions);
 }
 
 static void
@@ -6049,7 +6037,6 @@ update_actions_menu (NemoView *view)
 {
     GList *node;
     NemoDirectory *directory;
-    char *uri;
     GtkUIManager *ui_manager;
     GtkAction *action;
 
@@ -6067,10 +6054,7 @@ update_actions_menu (NemoView *view)
 
     for (node = view->details->actions_directory_list; node != NULL; node = node->next) {
         directory = node->data;
-
-        uri = nemo_directory_get_uri (directory);
         update_directory_in_actions_menu (view, directory);
-        g_free (uri);
     }
 }
 
