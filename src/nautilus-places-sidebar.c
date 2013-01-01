@@ -380,7 +380,8 @@ add_special_dirs (NautilusPlacesSidebar *sidebar)
 
 	dirs = NULL;
 	for (index = 0; index < G_USER_N_DIRECTORIES; index++) {
-		const char *path, *name;
+		const char *path;
+		char *name;
 		GFile *root;
 		GIcon *icon;
 		char *mount_uri;
@@ -435,6 +436,7 @@ add_special_dirs (NautilusPlacesSidebar *sidebar)
 
 		g_object_unref (root);
 		g_object_unref (icon);
+		g_free (name);
 		g_free (mount_uri);
 
 		dirs = g_list_prepend (dirs, (char *)path);
