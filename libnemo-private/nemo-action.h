@@ -54,6 +54,8 @@ struct _NemoAction {
     gchar **extensions;
     guint ext_length;
     const gchar *exec;
+    const gchar *parent_dir;
+    gboolean use_parent_dir;
 };
 
 struct _NemoActionClass {

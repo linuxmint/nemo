@@ -62,7 +62,9 @@ enum
   PROP_SELECTION_TYPE,
   PROP_EXTENSIONS,
   PROP_EXT_LENGTH,
-  PROP_EXEC
+  PROP_EXEC,
+  PROP_PARENT_DIR,
+  PROP_USE_PARENT_DIR
 };
 
 static void
@@ -73,6 +75,8 @@ nemo_action_init (NemoAction *action)
     action->extensions = NULL;
     action->ext_length = 0;
     action->exec = NULL;
+    action->parent_dir = NULL;
+    action->use_parent_dir = FALSE;
 }
 
 static void
@@ -132,6 +136,23 @@ nemo_action_class_init (NemoActionClass *klass)
                                                           NULL,
                                                           G_PARAM_READWRITE)
                                      );
+
+    g_object_class_install_property (object_class,
+                                     PROP_PARENT_DIR,
+                                     g_param_spec_string ("parent-dir",
+                                                          "Parent directory",
+                                                          "The directory the action file resides in",
+                                                          NULL,
+                                                          G_PARAM_READWRITE)
+                                     );
+    g_object_class_install_property (object_class,
+                                     PROP_USE_PARENT_DIR,
+                                     g_param_spec_boolean ("use-parent-dir",
+                                                           "Use Parent Directory",
+                                                           "Execute using the full action path",
+                                                           FALSE,
+                                                           G_PARAM_READWRITE)
+                                     );
 }
 
 GtkAction *
@@ -169,7 +190,7 @@ nemo_action_new (const gchar *name,
                                               KEY_ICON,
                                               NULL);
 
-    gchar *exec = g_key_file_get_string (key_file,
+    gchar *exec_raw = g_key_file_get_string (key_file,
                                          ACTION_FILE_GROUP,
                                          KEY_EXEC,
                                          NULL);
@@ -202,6 +223,30 @@ nemo_action_new (const gchar *name,
                                               &count,
                                               NULL);
 
+    if (label == NULL || exec_raw == NULL || ext == NULL) {
+        g_printerr ("An action definition requires, at minimum, "
+                    "a Label field, and Exec field, and an Extensions field.\n"
+                    "Check the %s file for missing fields.\n", path);
+        g_free (path);
+        return NULL;
+    }
+
+    gchar *exec = NULL;
+    gboolean use_parent_dir = FALSE;
+
+    if (g_str_has_prefix (exec_raw, "<") && g_str_has_suffix (exec_raw, ">")) {
+        gchar **split = g_strsplit_set (exec_raw, "<>", 3);
+        exec = g_strdup (split[1]);
+        use_parent_dir = TRUE;
+        g_free (split);
+        g_free (exec_raw);
+    } else {
+        exec = g_strdup (exec_raw);
+        g_free (exec_raw);
+    }
+
+    gchar *parent_dir = g_filename_from_uri (nemo_file_get_parent_uri (file), NULL, NULL);
+
     return g_object_new (NEMO_TYPE_ACTION,
                          "name", name,
                          "key-file", key_file,
@@ -212,6 +257,8 @@ nemo_action_new (const gchar *name,
                          "selection-type", type,
                          "ext-length", count,
                          "extensions", ext,
+                         "parent-dir", parent_dir,
+                         "use-parent-dir", use_parent_dir,
                           NULL);
 }
 
@@ -249,6 +296,12 @@ nemo_action_set_property (GObject         *object,
     case PROP_EXEC:
       action->exec = g_strdup (g_value_get_string (value));
       break;
+    case PROP_PARENT_DIR:
+      action->parent_dir = g_strdup (g_value_get_string (value));
+      break;
+    case PROP_USE_PARENT_DIR:
+      action->use_parent_dir = g_value_get_boolean (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -282,6 +335,12 @@ nemo_action_get_property (GObject    *object,
     case PROP_EXEC:
       g_value_set_string (value, action->exec);
       break;
+    case PROP_PARENT_DIR:
+      g_value_set_string (value, action->parent_dir);
+      break;
+    case PROP_USE_PARENT_DIR:
+      g_value_set_boolean (value, action->use_parent_dir);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -298,7 +357,11 @@ nemo_action_activate (NemoAction *action, GList *selection)
 
     gchar *argv[count + 2];
 
-    argv[0] = g_strdup (action->exec);
+    if (!action->use_parent_dir)
+        argv[0] = g_strdup (action->exec);
+    else {
+        argv[0] = g_build_filename (action->parent_dir, action->exec, NULL);
+    }
 
     for (iter = selection; iter != NULL; iter = iter->next) {
         argv[arg_counter] = g_filename_from_uri (nemo_file_get_uri (NEMO_FILE (iter->data)), NULL, NULL);

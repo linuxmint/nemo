@@ -2,16 +2,18 @@
 
 # Use this entry? Largely for troubleshooting.
 # Lack of this field assumes true
-Active=false
+Active=true
 
 # The name to show in the menu, locale supported with standard desktop spec
-Name=Test Action
+Name=Test Custom Action
 
 # Tool tip, locale supported
 Comment=This is a test for Nemo actions
 
-# What to run, files passed as arguments
-Exec=gedit
+# What to run, files will be passed as arguments.  Enclose in < > to run an executable
+# that resides in the actions folder.
+# (i.e. <myaction.py>)
+Exec=<myaction.py>
 
 # Icon to use in the menu
 Icon=folder
