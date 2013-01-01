@@ -1235,4 +1235,6 @@ nautilus_query_editor_set_query (NautilusQueryEditor	*editor,
 	}
 
 	editor->details->change_frozen = FALSE;
+
+	g_free (text);
 }
