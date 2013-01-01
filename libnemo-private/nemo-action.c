@@ -239,11 +239,11 @@ nemo_action_new (const gchar *name,
         exec = g_strdup (split[1]);
         use_parent_dir = TRUE;
         g_free (split);
-        g_free (exec_raw);
     } else {
         exec = g_strdup (exec_raw);
-        g_free (exec_raw);
     }
+
+    g_free (exec_raw);
 
     gchar *parent_dir = g_filename_from_uri (nemo_file_get_parent_uri (file), NULL, NULL);
 
@@ -265,6 +265,13 @@ nemo_action_new (const gchar *name,
 static void
 nemo_action_finalize (GObject *object)
 {
+    NemoAction *action = NEMO_ACTION (object);
+
+    g_key_file_free (action->key_file);
+    g_strfreev (action->extensions);
+    g_free (action->exec);
+    g_free (action->parent_dir);
+
     G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
@@ -294,10 +301,10 @@ nemo_action_set_property (GObject         *object,
       action->ext_length = g_value_get_int (value);
       break;
     case PROP_EXEC:
-      action->exec = g_strdup (g_value_get_string (value));
+      nemo_action_set_exec (action, g_value_get_string (value));
       break;
     case PROP_PARENT_DIR:
-      action->parent_dir = g_strdup (g_value_get_string (value));
+      nemo_action_set_parent_dir (action, g_value_get_string (value));
       break;
     case PROP_USE_PARENT_DIR:
       action->use_parent_dir = g_value_get_boolean (value);
@@ -372,6 +379,8 @@ nemo_action_activate (NemoAction *action, GList *selection)
 
     g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH,
                    NULL, NULL, NULL, NULL);
+
+    nemo_file_list_free (selection);
 }
 
 SelectionType
@@ -390,4 +399,24 @@ guint
 nemo_action_get_extension_count (NemoAction *action)
 {
     return action->ext_length;
+}
+
+void
+nemo_action_set_exec (NemoAction *action, const gchar *exec)
+{
+    gchar *tmp;
+
+    tmp = action->exec;
+    action->exec = g_strdup (exec);
+    g_free (tmp);
+}
+
+void
+nemo_action_set_parent_dir (NemoAction *action, const gchar *parent_dir)
+{
+    gchar *tmp;
+
+    tmp = action->parent_dir;
+    action->parent_dir = g_strdup (parent_dir);
+    g_free (tmp);
 }

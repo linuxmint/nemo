@@ -53,8 +53,8 @@ struct _NemoAction {
     SelectionType selection_type;
     gchar **extensions;
     guint ext_length;
-    const gchar *exec;
-    const gchar *parent_dir;
+    gchar *exec;
+    gchar *parent_dir;
     gboolean use_parent_dir;
 };
 
@@ -68,5 +68,7 @@ void         nemo_action_activate (NemoAction *action, GList *selection);
 SelectionType nemo_action_get_selection_type (NemoAction *action);
 gchar      **nemo_action_get_extension_list (NemoAction *action);
 guint        nemo_action_get_extension_count (NemoAction *action);
+void         nemo_action_set_exec (NemoAction *action, const gchar *exec);
+void         nemo_action_set_parent_dir (NemoAction *action, const gchar *parent_dir);
 
 #endif /* NEMO_ACTION_H */
