@@ -1038,7 +1038,7 @@ handle_alt_menu_key (NemoWindow *window,
     gboolean default_visible = g_settings_get_boolean (nemo_window_state,
                                                       NEMO_WINDOW_STATE_START_WITH_MENU_BAR);
 
-    if (default_visible)
+    if (default_visible || window->details->disable_chrome)
         return;
 
     gboolean visible = gtk_widget_get_visible (menu);
@@ -1474,7 +1474,8 @@ nemo_window_sync_menu_bar (NemoWindow *window)
 {
     GtkWidget *menu = window->details->menubar;
 
-    if (g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_MENU_BAR)){
+    if (g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_MENU_BAR) &&
+                                !window->details->disable_chrome) {
         gtk_widget_show (menu);
     } else {
         gtk_widget_hide (menu);
