@@ -5968,6 +5968,7 @@ add_action_to_action_menus (NemoView *directory_view,
                                  GTK_ACTION (action));
 
     gtk_action_set_visible (GTK_ACTION (action), FALSE);
+    gtk_action_set_always_show_image (GTK_ACTION (action), TRUE);
 
     g_signal_connect (action, "activate",
                    G_CALLBACK (run_action_callback),
