@@ -396,6 +396,8 @@ nemo_action_activate (NemoAction *action, GList *selection)
     i = 0;
     if (action->use_parent_dir) {
         argv[i] = g_build_filename (action->parent_dir, g_strdup (arg_list->data), NULL);
+    } else {
+        argv[i] = g_strdup (arg_list->data);
     }
     i++;
 
@@ -410,7 +412,7 @@ nemo_action_activate (NemoAction *action, GList *selection)
                    NULL, NULL, NULL, NULL);
 
     nemo_file_list_free (selection);
-    g_list_free (arg_list);
+    g_list_free_full (arg_list, g_free);
     g_strfreev (exec_args);
 }
 
