@@ -2407,7 +2407,7 @@ set_up_actions_directories (NemoView *view)
     gchar *sys_path = g_build_filename (NEMO_DATADIR, "actions", NULL);
     gchar *sys_uri = g_filename_to_uri (sys_path, NULL, NULL);
 
-    gchar *user_path = g_build_filename (g_get_user_config_dir (), "nemo", "actions", NULL);
+    gchar *user_path = g_build_filename (g_get_user_data_dir (), "nemo", "actions", NULL);
 
     if (!g_file_test (user_path, G_FILE_TEST_EXISTS)) {
         g_mkdir_with_parents (user_path, DEFAULT_NEMO_DIRECTORY_MODE);
