@@ -25,6 +25,10 @@
 
 #include <glib-object.h>
 
+#define NAUTILUS_FDO_DBUS_IFACE "org.freedesktop.FileManager1"
+#define NAUTILUS_FDO_DBUS_NAME  "org.freedesktop.FileManager1"
+#define NAUTILUS_FDO_DBUS_PATH  "/org/freedesktop/FileManager1"
+
 typedef struct _NautilusFreedesktopDBus NautilusFreedesktopDBus;
 typedef struct _NautilusFreedesktopDBusClass NautilusFreedesktopDBusClass;
 
