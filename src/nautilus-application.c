@@ -558,14 +558,15 @@ open_window (NautilusApplication *application,
 	     GFile *location, GdkScreen *screen, const char *geometry)
 {
 	NautilusWindow *window;
-	gchar *uri;
 
-	uri = g_file_get_uri (location);
-	DEBUG ("Opening new window at uri %s", uri);
 	nautilus_profile_start (NULL);
-	window = nautilus_application_create_window (application,
-						     screen);
-	nautilus_window_go_to (window, location);
+	window = nautilus_application_create_window (application, screen);
+
+	if (location != NULL) {
+		nautilus_window_go_to (window, location);
+	} else {
+		nautilus_window_slot_go_home (nautilus_window_get_active_slot (window), 0);
+	}
 
 	if (geometry != NULL && !gtk_widget_get_visible (GTK_WIDGET (window))) {
 		/* never maximize windows opened from shell if a
@@ -580,8 +581,6 @@ open_window (NautilusApplication *application,
 	}
 
 	nautilus_profile_end (NULL);
-
-	g_free (uri);
 }
 
 static void
