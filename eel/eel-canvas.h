@@ -38,6 +38,7 @@
 #define EEL_CANVAS_H
 
 #include <gtk/gtk.h>
+#include <gtk/gtk-a11y.h>
 #include <gdk/gdk.h>
 #include <stdarg.h>
 
@@ -520,13 +521,13 @@ GType eel_canvas_accessible_get_type (void);
 typedef struct _EelCanvasAccessible EelCanvasAccessible;
 struct _EelCanvasAccessible
 {
-	GtkAccessible parent;
+	GtkContainerAccessible parent;
 };
 
 typedef struct _EelCanvasAccessibleClass EelCanvasAccessibleClass;
 struct _EelCanvasAccessibleClass
 {
-	GtkAccessibleClass parent_class;
+	GtkContainerAccessibleClass parent_class;
 };
 
 GType eel_canvas_item_accessible_get_type (void);
