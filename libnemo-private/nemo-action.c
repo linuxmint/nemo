@@ -60,7 +60,8 @@ enum
   PROP_EXEC,
   PROP_PARENT_DIR,
   PROP_USE_PARENT_DIR,
-  PROP_ORIG_LABEL
+  PROP_ORIG_LABEL,
+  PROP_ORIG_TT
 };
 
 static void
@@ -73,6 +74,8 @@ nemo_action_init (NemoAction *action)
     action->exec = NULL;
     action->parent_dir = NULL;
     action->use_parent_dir = FALSE;
+    action->orig_label = NULL;
+    action->orig_tt = NULL;
 }
 
 static void
@@ -157,6 +160,15 @@ nemo_action_class_init (NemoActionClass *klass)
                                                           NULL,
                                                           G_PARAM_READWRITE)
                                      );
+    g_object_class_install_property (object_class,
+                                     PROP_ORIG_TT,
+                                     g_param_spec_string ("orig-tooltip",
+                                                          "Original tooltip string",
+                                                          "The starting tooltip - with token",
+                                                          NULL,
+                                                          G_PARAM_READWRITE)
+                                     );
+
 }
 
 GtkAction *
@@ -183,7 +195,7 @@ nemo_action_new (const gchar *name,
                                                       NULL,
                                                       NULL);
 
-    gchar *tooltip = g_key_file_get_locale_string (key_file, 
+    gchar *orig_tt = g_key_file_get_locale_string (key_file,
                                                    ACTION_FILE_GROUP,
                                                    KEY_COMMENT,
                                                    NULL,
@@ -255,7 +267,7 @@ nemo_action_new (const gchar *name,
                          "name", name,
                          "key-file", key_file,
                          "label", orig_label,
-                         "tooltip", tooltip,
+                         "tooltip", orig_tt,
                          "icon-name", icon_name,
                          "exec", exec,
                          "selection-type", type,
@@ -264,6 +276,7 @@ nemo_action_new (const gchar *name,
                          "parent-dir", parent_dir,
                          "use-parent-dir", use_parent_dir,
                          "orig-label", orig_label,
+                         "orig-tooltip", orig_tt,
                           NULL);
 }
 
@@ -277,6 +290,7 @@ nemo_action_finalize (GObject *object)
     g_free (action->exec);
     g_free (action->parent_dir);
     g_free (action->orig_label);
+    g_free (action->orig_tt);
 
     G_OBJECT_CLASS (parent_class)->finalize (object);
 }
@@ -317,6 +331,9 @@ nemo_action_set_property (GObject         *object,
       break;
     case PROP_ORIG_LABEL:
       nemo_action_set_orig_label (action, g_value_get_string (value));
+      break;
+    case PROP_ORIG_TT:
+      nemo_action_set_orig_tt (action, g_value_get_string (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -359,6 +376,9 @@ nemo_action_get_property (GObject    *object,
       break;
     case PROP_ORIG_LABEL:
       g_value_set_string (value, action->orig_label);
+      break;
+    case PROP_ORIG_TT:
+      g_value_set_string (value, action->orig_tt);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -483,6 +503,22 @@ nemo_action_get_orig_label (NemoAction *action)
     return action->orig_label;
 }
 
+void
+nemo_action_set_orig_tt (NemoAction *action, const gchar *orig_tt)
+{
+    gchar *tmp;
+
+    tmp = action->orig_tt;
+    action->orig_tt = g_strdup (orig_tt);
+    g_free (tmp);
+}
+
+gchar *
+nemo_action_get_orig_tt (NemoAction *action)
+{
+    return action->orig_tt;
+}
+
 static gboolean
 test_string_for_label_token (const gchar *string)
 {
@@ -511,4 +547,28 @@ nemo_action_set_label (NemoAction *action, NemoFile *file) {
     g_strfreev (split);
     g_free (display_name);
     g_free (new_label);
+}
+
+void
+nemo_action_set_tt (NemoAction *action, NemoFile *file) {
+
+    const gchar *orig_tt = nemo_action_get_orig_tt (action);
+
+    if (!test_string_for_label_token (orig_tt) || file == NULL ||
+        action->selection_type > SELECTION_SINGLE) {
+        gtk_action_set_tooltip (GTK_ACTION (action), orig_tt);
+        return;
+    }
+
+    gchar *display_name = nemo_file_get_display_name (file);
+
+    gchar **split = g_strsplit (orig_tt, TOKEN_LABEL_FILE_NAME, 2);
+
+    gchar *new_tt = g_strconcat (split[0], display_name, split[1], NULL);
+
+    gtk_action_set_tooltip (GTK_ACTION (action), new_tt);
+
+    g_strfreev (split);
+    g_free (display_name);
+    g_free (new_tt);
 }

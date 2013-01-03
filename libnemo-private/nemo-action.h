@@ -64,6 +64,7 @@ struct _NemoAction {
     gchar *exec;
     gchar *parent_dir;
     gchar *orig_label;
+    gchar *orig_tt;
     gboolean use_parent_dir;
 };
 
@@ -80,6 +81,9 @@ guint        nemo_action_get_extension_count (NemoAction *action);
 void         nemo_action_set_exec (NemoAction *action, const gchar *exec);
 void         nemo_action_set_parent_dir (NemoAction *action, const gchar *parent_dir);
 void         nemo_action_set_orig_label (NemoAction *action, const gchar *orig_label);
+void         nemo_action_set_orig_tt (NemoAction *action, const gchar *orig_tt);
 gchar       *nemo_action_get_orig_label (NemoAction *action);
+gchar       *nemo_action_get_orig_tt (NemoAction *action);
 void         nemo_action_set_label (NemoAction *action, NemoFile *file);
+void         nemo_action_set_tt (NemoAction *action, NemoFile *file);
 #endif /* NEMO_ACTION_H */

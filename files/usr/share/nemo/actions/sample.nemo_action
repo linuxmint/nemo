@@ -6,6 +6,7 @@
 
 Active=false
 
+
 # The name to show in the menu, locale supported with standard desktop spec.
 # Use %N as an (optional) token to display the simple filename in the label.
 # If multiple are selected, then the arbitrary first selected name will be used.
@@ -14,9 +15,12 @@ Active=false
 
 Name=Test Custom Action applied to %N
 
-# Tool tip, locale supported (Appears in the status bar)
 
-Comment=This is a test for Nemo actions
+# Tool tip, locale supported (Appears in the status bar)
+# %N can be used as with the Name field, same rules apply
+
+Comment=This is a test for Nemo actions.  Action will be applied to %N
+
 
 # What to run.  Enclose in < > to run an executable that resides in the actions folder.
 # Use %L as the token where to insert the file list
@@ -25,14 +29,17 @@ Comment=This is a test for Nemo actions
 
 Exec=<myaction.py -r -g %L>
 
+
 # Icon to use in the menu - must be a theme icon name
 
 Icon=folder
+
 
 # What type selection: [S]ingle, [M]ultiple, Any, or None (background click)
 # Defaults to Single if this field is missing
 
 Selection=S
+
 
 # What extensions to display on - this is an array, end with a semicolon
 # Use "Dir" for directory selection and "None" for no extension
