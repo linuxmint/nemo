@@ -177,11 +177,11 @@ nemo_action_new (const gchar *name,
             return NULL;
     }
 
-    gchar *label = g_key_file_get_locale_string (key_file, 
-                                                 ACTION_FILE_GROUP,
-                                                 KEY_NAME,
-                                                 NULL,
-                                                 NULL);
+    gchar *orig_label = g_key_file_get_locale_string (key_file,
+                                                      ACTION_FILE_GROUP,
+                                                      KEY_NAME,
+                                                      NULL,
+                                                      NULL);
 
     gchar *tooltip = g_key_file_get_locale_string (key_file, 
                                                    ACTION_FILE_GROUP,
@@ -195,9 +195,9 @@ nemo_action_new (const gchar *name,
                                               NULL);
 
     gchar *exec_raw = g_key_file_get_string (key_file,
-                                         ACTION_FILE_GROUP,
-                                         KEY_EXEC,
-                                         NULL);
+                                             ACTION_FILE_GROUP,
+                                             KEY_EXEC,
+                                             NULL);
 
     gchar *selection_string = g_key_file_get_string (key_file,
                                                      ACTION_FILE_GROUP,
@@ -227,7 +227,7 @@ nemo_action_new (const gchar *name,
                                               &count,
                                               NULL);
 
-    if (label == NULL || exec_raw == NULL || ext == NULL) {
+    if (orig_label == NULL || exec_raw == NULL || ext == NULL) {
         g_printerr ("An action definition requires, at minimum, "
                     "a Label field, and Exec field, and an Extensions field.\n"
                     "Check the %s file for missing fields.\n", path);
@@ -254,7 +254,7 @@ nemo_action_new (const gchar *name,
     return g_object_new (NEMO_TYPE_ACTION,
                          "name", name,
                          "key-file", key_file,
-                         "label", label,
+                         "label", orig_label,
                          "tooltip", tooltip,
                          "icon-name", icon_name,
                          "exec", exec,
@@ -263,7 +263,7 @@ nemo_action_new (const gchar *name,
                          "extensions", ext,
                          "parent-dir", parent_dir,
                          "use-parent-dir", use_parent_dir,
-                         "orig-label", label,
+                         "orig-label", orig_label,
                           NULL);
 }
 
@@ -481,4 +481,34 @@ gchar *
 nemo_action_get_orig_label (NemoAction *action)
 {
     return action->orig_label;
+}
+
+static gboolean
+test_string_for_label_token (const gchar *string)
+{
+    return g_strstr_len (string, -1, TOKEN_LABEL_FILE_NAME) != NULL;
+}
+
+void
+nemo_action_set_label (NemoAction *action, NemoFile *file) {
+
+    const gchar *orig_label = nemo_action_get_orig_label (action);
+
+    if (!test_string_for_label_token (orig_label) || file == NULL ||
+        action->selection_type > SELECTION_MULTIPLE) {
+        gtk_action_set_label (GTK_ACTION (action), orig_label);
+        return;
+    }
+
+    gchar *display_name = nemo_file_get_display_name (file);
+
+    gchar **split = g_strsplit (orig_label, TOKEN_LABEL_FILE_NAME, 2);
+
+    gchar *new_label = g_strconcat (split[0], display_name, split[1], NULL);
+
+    gtk_action_set_label (GTK_ACTION (action), new_label);
+
+    g_strfreev (split);
+    g_free (display_name);
+    g_free (new_label);
 }

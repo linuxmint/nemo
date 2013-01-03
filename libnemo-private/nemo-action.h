@@ -81,4 +81,5 @@ void         nemo_action_set_exec (NemoAction *action, const gchar *exec);
 void         nemo_action_set_parent_dir (NemoAction *action, const gchar *parent_dir);
 void         nemo_action_set_orig_label (NemoAction *action, const gchar *orig_label);
 gchar       *nemo_action_get_orig_label (NemoAction *action);
+void         nemo_action_set_label (NemoAction *action, NemoFile *file);
 #endif /* NEMO_ACTION_H */
