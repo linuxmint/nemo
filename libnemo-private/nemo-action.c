@@ -495,7 +495,7 @@ nemo_action_set_label (NemoAction *action, NemoFile *file) {
     const gchar *orig_label = nemo_action_get_orig_label (action);
 
     if (!test_string_for_label_token (orig_label) || file == NULL ||
-        action->selection_type > SELECTION_MULTIPLE) {
+        action->selection_type > SELECTION_SINGLE) {
         gtk_action_set_label (GTK_ACTION (action), orig_label);
         return;
     }
