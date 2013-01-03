@@ -34,6 +34,7 @@
 #include <glib/gi18n-lib.h>
 #include <pango/pango.h>
 #include <gtk/gtk.h>
+#include <gtk/gtk-a11y.h>
 #include <gdk/gdkkeysyms.h>
 
 enum {
@@ -103,7 +104,6 @@ static gint     eel_editable_label_focus_in                (GtkWidget           
 							    GdkEventFocus         *event);
 static gint     eel_editable_label_focus_out               (GtkWidget             *widget,
 							    GdkEventFocus         *event);
-static AtkObject *eel_editable_label_get_accessible        (GtkWidget             *widget);
 static void     eel_editable_label_commit_cb               (GtkIMContext          *context,
 							    const gchar           *str,
 							    EelEditableLabel      *label);
@@ -147,6 +147,7 @@ static gint     eel_editable_label_move_backward_word      (EelEditableLabel    
 static void     eel_editable_label_reset_im_context        (EelEditableLabel      *label);
 static void     eel_editable_label_check_cursor_blink      (EelEditableLabel      *label);
 static void     eel_editable_label_pend_cursor_blink       (EelEditableLabel      *label);
+static GType    eel_editable_label_accessible_get_type     (void);
 
 /* Editable implementation: */
 static void     editable_insert_text_emit     (GtkEditable *editable,
@@ -232,7 +233,6 @@ eel_editable_label_class_init (EelEditableLabelClass *class)
   widget_class->key_release_event = eel_editable_label_key_release;
   widget_class->focus_in_event = eel_editable_label_focus_in;
   widget_class->focus_out_event = eel_editable_label_focus_out;
-  widget_class->get_accessible = eel_editable_label_get_accessible;
 
   class->move_cursor = eel_editable_label_move_cursor;
   class->delete_from_cursor = eel_editable_label_delete_from_cursor;
@@ -240,6 +240,8 @@ eel_editable_label_class_init (EelEditableLabelClass *class)
   class->cut_clipboard = eel_editable_label_cut_clipboard;
   class->paste_clipboard = eel_editable_label_paste_clipboard;
   class->toggle_overwrite = eel_editable_label_toggle_overwrite;
+
+  gtk_widget_class_set_accessible_type (widget_class, eel_editable_label_accessible_get_type ());
   
   signals[MOVE_CURSOR] = 
     g_signal_new ("move_cursor",
@@ -3353,21 +3355,30 @@ editable_get_position (GtkEditable *editable)
   return g_utf8_pointer_to_offset (label->text, label->text + label->selection_anchor);
 }
 
-
-static AtkObjectClass *a11y_parent_class = NULL;
-
-static const char* eel_editable_label_accessible_data = "eel-editable-label-accessible-data";
-
 /************ Accessible implementation ****************/
 
 typedef struct {
-	GailTextUtil *textutil;
-        gint         selection_anchor;
-        gint         selection_end;
-        gchar        *signal_name;
-        gint         position;
-        gint         length;
+  GailTextUtil *textutil;
+  gint         selection_anchor;
+  gint         selection_end;
+  gchar        *signal_name;
+  gint         position;
+  gint         length;
 } EelEditableLabelAccessiblePrivate;
+
+typedef struct {
+  GtkWidgetAccessible parent;
+  EelEditableLabelAccessiblePrivate *priv;
+} EelEditableLabelAccessible;
+
+typedef GtkWidgetAccessibleClass EelEditableLabelAccessibleClass;
+
+static void atk_text_interface_init (AtkTextIface *iface);
+static void atk_editable_text_interface_init (AtkEditableTextIface *iface);
+
+G_DEFINE_TYPE_WITH_CODE (EelEditableLabelAccessible, eel_editable_label_accessible, GTK_TYPE_WIDGET_ACCESSIBLE,
+                         G_IMPLEMENT_INTERFACE (ATK_TYPE_TEXT, atk_text_interface_init)
+                         G_IMPLEMENT_INTERFACE (ATK_TYPE_EDITABLE_TEXT, atk_editable_text_interface_init))
 
 typedef struct
 {
@@ -3375,21 +3386,19 @@ typedef struct
   gint position;
 } EelEditableLabelAccessiblePaste;
 
-
 static gchar*
 eel_editable_label_accessible_get_text (AtkText *text,
 					gint    start_pos,
 					gint    end_pos)
 {
   GtkWidget *widget;
-  EelEditableLabelAccessiblePrivate *priv;
+  EelEditableLabelAccessiblePrivate *priv = ((EelEditableLabelAccessible *) text)->priv;
 
   widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (text));
   if (widget == NULL)
   /* State is defunct */
     return NULL;
 
-  priv = g_object_get_data (G_OBJECT (text), eel_editable_label_accessible_data);
   return gail_text_util_get_substring (priv->textutil, start_pos, end_pos);
 }
 
@@ -3398,7 +3407,7 @@ eel_editable_label_accessible_get_character_at_offset (AtkText *text,
 						       gint     offset)
 {
   GtkWidget *widget;
-  EelEditableLabelAccessiblePrivate *priv;
+  EelEditableLabelAccessiblePrivate *priv = ((EelEditableLabelAccessible *) text)->priv;
   gchar *string;
   gchar *index;
   gunichar unichar;
@@ -3408,7 +3417,6 @@ eel_editable_label_accessible_get_character_at_offset (AtkText *text,
     /* State is defunct */
     return '\0';
 
-  priv = g_object_get_data (G_OBJECT (text), eel_editable_label_accessible_data);
   string = gail_text_util_get_substring (priv->textutil, 0, -1);
   if (offset >= g_utf8_strlen (string, -1))
     {
@@ -3434,7 +3442,7 @@ eel_editable_label_accessible_get_text_before_offset (AtkText         *text,
 {
   GtkWidget *widget;
   EelEditableLabel *label;
-  EelEditableLabelAccessiblePrivate *priv;
+  EelEditableLabelAccessiblePrivate *priv = ((EelEditableLabelAccessible *) text)->priv;
 
   widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (text));
   if (widget == NULL)
@@ -3442,8 +3450,6 @@ eel_editable_label_accessible_get_text_before_offset (AtkText         *text,
     return NULL;
 
   label = EEL_EDITABLE_LABEL (widget);
-  priv = g_object_get_data (G_OBJECT (text), eel_editable_label_accessible_data);
-
   return gail_text_util_get_text (priv->textutil,
                                   eel_editable_label_get_layout (label),
                                   GAIL_BEFORE_OFFSET, 
@@ -3460,16 +3466,14 @@ eel_editable_label_accessible_get_text_at_offset (AtkText          *text,
 {
   GtkWidget *widget;
   EelEditableLabel *label;
-  EelEditableLabelAccessiblePrivate *priv;
+  EelEditableLabelAccessiblePrivate *priv = ((EelEditableLabelAccessible *) text)->priv;
 
   widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (text));
   if (widget == NULL)
     /* State is defunct */
     return NULL;
 
-
   label = EEL_EDITABLE_LABEL (widget);
-  priv = g_object_get_data (G_OBJECT (text), eel_editable_label_accessible_data);
   return gail_text_util_get_text (priv->textutil,
                                   eel_editable_label_get_layout (label),
                                   GAIL_AT_OFFSET, 
@@ -3486,7 +3490,7 @@ eel_editable_label_accessible_get_text_after_offset  (AtkText          *text,
 {
   GtkWidget *widget;
   EelEditableLabel *label;
-  EelEditableLabelAccessiblePrivate *priv;
+  EelEditableLabelAccessiblePrivate *priv = ((EelEditableLabelAccessible *) text)->priv;
 
   widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (text));
   if (widget == NULL)
@@ -3494,7 +3498,6 @@ eel_editable_label_accessible_get_text_after_offset  (AtkText          *text,
     return NULL;
 
   label = EEL_EDITABLE_LABEL (widget);
-  priv = g_object_get_data (G_OBJECT (text), eel_editable_label_accessible_data);
   return gail_text_util_get_text (priv->textutil,
                                   eel_editable_label_get_layout (label),
                                   GAIL_AFTER_OFFSET, 
@@ -3999,9 +4002,8 @@ atk_editable_text_interface_init (AtkEditableTextIface *iface)
 static void
 eel_editable_label_accessible_notify_insert (AtkObject *accessible)
 {
-  EelEditableLabelAccessiblePrivate *priv;
+  EelEditableLabelAccessiblePrivate *priv = ((EelEditableLabelAccessible *) accessible)->priv;
 
-  priv = g_object_get_data (G_OBJECT (accessible), eel_editable_label_accessible_data);
   if (priv->signal_name)
     {
       g_signal_emit_by_name (accessible, 
@@ -4028,12 +4030,10 @@ eel_editable_label_accessible_insert_text_cb (EelEditableLabel *label,
                                               gint             arg2,
                                               gpointer         arg3)
 {
-  AtkObject *accessible;
-  EelEditableLabelAccessiblePrivate *priv;
+  AtkObject *accessible = gtk_widget_get_accessible (GTK_WIDGET (label));
+  EelEditableLabelAccessiblePrivate *priv = ((EelEditableLabelAccessible *) accessible)->priv;
   gint *position = (gint *) arg3;
 
-  accessible = gtk_widget_get_accessible (GTK_WIDGET (label));
-  priv = g_object_get_data (G_OBJECT (accessible), eel_editable_label_accessible_data);
   if (!priv->signal_name)
     {
       priv->signal_name = "text_changed::insert";
@@ -4071,11 +4071,9 @@ eel_editable_label_accessible_delete_text_cb (EelEditableLabel *label,
 static void
 eel_editable_label_accessible_changed_cb (EelEditableLabel *label)
 {
-  AtkObject *accessible;
-  EelEditableLabelAccessiblePrivate *priv;
+  AtkObject *accessible = gtk_widget_get_accessible (GTK_WIDGET (label));
+  EelEditableLabelAccessiblePrivate *priv = ((EelEditableLabelAccessible *) accessible)->priv;
 
-  accessible = gtk_widget_get_accessible (GTK_WIDGET (label));
-  priv = g_object_get_data (G_OBJECT (accessible), eel_editable_label_accessible_data);
   gail_text_util_text_setup (priv->textutil, eel_editable_label_get_text (label));
 }
 
@@ -4083,11 +4081,10 @@ static gboolean
 check_for_selection_change (AtkObject   *accessible,
                             GtkWidget   *widget)
 {
-  EelEditableLabelAccessiblePrivate *priv;
+  EelEditableLabelAccessiblePrivate *priv = ((EelEditableLabelAccessible *) accessible)->priv;
   EelEditableLabel *label;
   gboolean ret_val = FALSE;
 
-  priv = g_object_get_data (G_OBJECT (accessible), eel_editable_label_accessible_data);
   label = EEL_EDITABLE_LABEL (widget);
  
   if (label->selection_anchor != label->selection_end)
@@ -4151,18 +4148,17 @@ static void
 eel_editable_label_accessible_initialize (AtkObject *accessible,
                                           gpointer   widget)
 {
-  EelEditableLabelAccessiblePrivate *priv;
+  EelEditableLabelAccessiblePrivate *priv = ((EelEditableLabelAccessible *) accessible)->priv;
   EelEditableLabel *label;
 
-  a11y_parent_class->initialize (accessible, widget);
+  ATK_OBJECT_CLASS (eel_editable_label_accessible_parent_class)->initialize (accessible, widget);
 
   label = EEL_EDITABLE_LABEL (widget);
-  priv = g_new0 (EelEditableLabelAccessiblePrivate, 1);
   priv->textutil = gail_text_util_new ();
   gail_text_util_text_setup (priv->textutil, eel_editable_label_get_text (EEL_EDITABLE_LABEL (widget)));
   priv->selection_anchor = label->selection_anchor;
   priv->selection_end = label->selection_end;
-  g_object_set_data (G_OBJECT (accessible), eel_editable_label_accessible_data, priv);
+
   g_signal_connect (widget, "insert-text",
         G_CALLBACK (eel_editable_label_accessible_insert_text_cb), NULL);
   g_signal_connect (widget, "delete-text",
@@ -4202,7 +4198,7 @@ eel_editable_label_accessible_ref_state_set (AtkObject *accessible)
   AtkStateSet *state_set;
   GtkWidget *widget;
 
-  state_set = a11y_parent_class->ref_state_set (accessible);
+  state_set = ATK_OBJECT_CLASS (eel_editable_label_accessible_parent_class)->ref_state_set (accessible);
   widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible));
  
   if (widget == NULL)
@@ -4216,64 +4212,30 @@ eel_editable_label_accessible_ref_state_set (AtkObject *accessible)
 static void 
 eel_editable_label_accessible_finalize (GObject *object)
 {
-  EelEditableLabelAccessiblePrivate *priv;
-
-  priv = g_object_get_data (object, eel_editable_label_accessible_data);
+  EelEditableLabelAccessiblePrivate *priv = ((EelEditableLabelAccessible *) object)->priv;
   g_object_unref (priv->textutil);
-  g_free (priv);
-  G_OBJECT_CLASS (a11y_parent_class)->finalize (object);
+
+  G_OBJECT_CLASS (eel_editable_label_accessible_parent_class)->finalize (object);
 }
 
 static void
-eel_editable_label_accessible_class_init (AtkObjectClass *klass)
+eel_editable_label_accessible_init (EelEditableLabelAccessible *self)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-  a11y_parent_class = g_type_class_peek_parent (klass);
-
-  klass->initialize = eel_editable_label_accessible_initialize;
-  klass->get_name = eel_editable_label_accessible_get_name;
-  klass->ref_state_set = eel_editable_label_accessible_ref_state_set;
-  gobject_class->finalize = eel_editable_label_accessible_finalize;
+  self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, eel_editable_label_accessible_get_type (),
+                                            EelEditableLabelAccessiblePrivate);
 }
 
-static AtkObject *
-eel_editable_label_get_accessible (GtkWidget *widget)
+static void
+eel_editable_label_accessible_class_init (EelEditableLabelAccessibleClass *klass)
 {
-  static GType type = 0;
-  AtkObject *accessible;
+  AtkObjectClass *aclass = ATK_OBJECT_CLASS (klass);
+  GObjectClass *oclass = G_OBJECT_CLASS (klass);
 
-  if ((accessible = eel_accessibility_get_atk_object (widget)))
-    return accessible;
+  aclass->initialize = eel_editable_label_accessible_initialize;
+  aclass->get_name = eel_editable_label_accessible_get_name;
+  aclass->ref_state_set = eel_editable_label_accessible_ref_state_set;
 
-  if (!type)
-    {
-      const GInterfaceInfo atk_editable_text_info = 
-      {
-        (GInterfaceInitFunc) atk_editable_text_interface_init,
-        (GInterfaceFinalizeFunc) NULL,
-        NULL
-      };
-      const GInterfaceInfo atk_text_info =
-      {
-        (GInterfaceInitFunc) atk_text_interface_init,
-        (GInterfaceFinalizeFunc) NULL,
-        NULL
-      };
+  oclass->finalize = eel_editable_label_accessible_finalize;
 
-      type = eel_accessibility_create_accessible_gtype
-        ("EelEditableLabelAccessible",
-         widget,
-         (GClassInitFunc) eel_editable_label_accessible_class_init);
-
-      if (!type)
-        return NULL;
-
-      g_type_add_interface_static (type, ATK_TYPE_EDITABLE_TEXT, &atk_editable_text_info);
-      g_type_add_interface_static (type, ATK_TYPE_TEXT, &atk_text_info);
-    }
-
-  accessible = g_object_new (type, "widget", widget, NULL);
-
-  return eel_accessibility_set_atk_object_return (widget, accessible);
+  g_type_class_add_private (klass, sizeof (EelEditableLabelAccessiblePrivate));
 }
