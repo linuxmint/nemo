@@ -138,8 +138,7 @@ typedef struct {
 	char *action_descriptions[LAST_ACTION];
 } NautilusCanvasContainerAccessiblePrivate;
 
-static AtkObject *   get_accessible                                 (GtkWidget *widget);
-
+static GType         nautilus_canvas_container_accessible_get_type  (void);
 static void          preview_selected_items                         (NautilusCanvasContainer *container);
 static void          activate_selected_items                        (NautilusCanvasContainer *container);
 static void          activate_selected_items_alternate              (NautilusCanvasContainer *container,
@@ -5062,10 +5061,11 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 	widget_class->popup_menu = popup_menu;
 	widget_class->style_updated = style_updated;
 	widget_class->grab_notify = grab_notify_cb;
-	widget_class->get_accessible = get_accessible;
 
 	canvas_class = EEL_CANVAS_CLASS (class);
 	canvas_class->draw_background = draw_canvas_background;
+
+	gtk_widget_class_set_accessible_type (widget_class, nautilus_canvas_container_accessible_get_type ());
 
 	gtk_widget_class_install_style_property (widget_class,
 						 g_param_spec_boolean ("activate_prelight_icon_label",
@@ -8032,8 +8032,6 @@ nautilus_canvas_container_accessible_ref_child (AtkObject *accessible, int i)
         }
 }
 
-static GType nautilus_canvas_container_accessible_get_type (void);
-
 G_DEFINE_TYPE_WITH_CODE (NautilusCanvasContainerAccessible, nautilus_canvas_container_accessible,
 			 eel_canvas_accessible_get_type (),
 			 G_IMPLEMENT_INTERFACE (ATK_TYPE_ACTION, nautilus_canvas_container_accessible_action_interface_init)
@@ -8110,20 +8108,6 @@ nautilus_canvas_container_accessible_class_init (NautilusCanvasContainerAccessib
 	atk_class->initialize = nautilus_canvas_container_accessible_initialize;
 
 	g_type_class_add_private (klass, sizeof (NautilusCanvasContainerAccessiblePrivate));
-}
-
-static AtkObject *
-get_accessible (GtkWidget *widget)
-{
-	AtkObject *accessible;
-	
-	if ((accessible = eel_accessibility_get_atk_object (widget))) {
-		return accessible;
-	}
-
-	accessible = g_object_new (nautilus_canvas_container_accessible_get_type (), "widget", widget, NULL);
-
-	return eel_accessibility_set_atk_object_return (widget, accessible);
 }
 
 gboolean
