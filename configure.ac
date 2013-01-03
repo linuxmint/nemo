@@ -18,7 +18,7 @@ dnl Interface break is not allowed.
 m4_define(nautilus_extension_current,  5)
 m4_define(nautilus_extension_revision, 0)
 
-AC_INIT(nautilus, 3.7.3, http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus)
+AC_INIT([nautilus],[3.7.3],[http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus])
 
 dnl ===========================================================================
 
@@ -36,15 +36,16 @@ dnl the library was started with version "1:0:0" instead of "0:0:0"
 AC_SUBST(NAUTILUS_EXTENSION_VERSION_INFO, [nautilus_extension_current]:[nautilus_extension_revision]:`expr [nautilus_extension_current] - 1`)
 
 AC_C_BIGENDIAN
-AC_C_CONST
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AM_DISABLE_STATIC
-AC_LIBTOOL_WIN32_DLL
-AM_PROG_LIBTOOL
+
+# Initialize libtool
+LT_PREREQ([2.2])
+LT_INIT([disable-static])
+
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 
 AC_CHECK_LIB(m, floor)
@@ -70,7 +71,7 @@ GTK_DOC_CHECK([1.4])
 dnl ==========================================================================
 
 AC_ARG_ENABLE(debug,
-  AC_HELP_STRING([--disable-debug],[Disable debugging code]),
+  AS_HELP_STRING([--disable-debug],[Disable debugging code]),
   [
     case "${enableval}" in
       yes|no) enable_debug="${enableval}" ;;
@@ -89,8 +90,8 @@ dnl ==========================================================================
 dnl Enable Profiling
 
 AC_ARG_ENABLE(profiling,
-        [AC_HELP_STRING([--enable-profiling],
-        [turn on profiling])],
+        [AS_HELP_STRING([--enable-profiling],
+                        [turn on profiling])],
         , enable_profiling=yes)
 
 if test "x$enable_profiling" = "xyes"; then
@@ -108,7 +109,7 @@ dnl ==========================================================================
 dnl Check whether to build the nautilus-sendto extension
 
 AC_ARG_ENABLE(nst_extension,
-	AC_HELP_STRING([--disable-nst-extension],
+	AS_HELP_STRING([--disable-nst-extension],
 			[build without nautilus-sendto extension]))
 if test "x$enable_nst_extension" != "xno"; then
 	enable_nst_extension=yes
@@ -172,7 +173,7 @@ AC_SUBST(SELINUX_LIBS)
 
 
 AC_ARG_ENABLE(empty_view,
- AC_HELP_STRING([--enable-empty-view], [Enable empty view]),
+ AS_HELP_STRING([--enable-empty-view],[Enable empty view]),
  [ENABLE_EMPTY_VIEW=1
   AC_DEFINE(ENABLE_EMPTY_VIEW, 1, [define to enable the empty view that is used for performance measurement])])
 
@@ -182,7 +183,7 @@ AM_CONDITIONAL(ENABLE_EMPTY_VIEW, test "x$ENABLE_EMPTY_VIEW" = "x1")
 dnl ==========================================================================
 
 AC_ARG_ENABLE(packagekit, 
-	AC_HELP_STRING([--disable-packagekit], 
+	AS_HELP_STRING([--disable-packagekit],
 			[build without PackageKit support]))
 msg_packagekit=no
 if test "x$enable_packagekit" != "xno"; then
@@ -197,7 +198,7 @@ dnl Turn on the additional warnings last, so -Werror doesn't affect other tests.
 WARNING_CFLAGS=""
 
 AC_ARG_ENABLE(more-warnings,
-AC_HELP_STRING([--enable-more-warnings], [Maximum compiler warnings]),
+AS_HELP_STRING([--enable-more-warnings],[Maximum compiler warnings]),
 set_more_warnings="$enableval",[
 if test -d $srcdir/.git; then
 	is_cvs_version=true
@@ -219,9 +220,9 @@ if test "$GCC" = "yes" -a "$set_more_warnings" != "no"; then
 		SAVE_CFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS $option"
 		AC_MSG_CHECKING([whether gcc understands $option])
-		AC_TRY_COMPILE([], [],
-			has_option=yes,
-			has_option=no,)
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+		                  [has_option=yes],
+		                  [has_option=no])
 		if test $has_option = yes; then
 		   	WARNING_CFLAGS="$WARNING_CFLAGS $option"
 		fi
@@ -262,9 +263,6 @@ PKG_CHECK_MODULES(BASE, [
 	glib-2.0 >= glib_minver
 ])
 
-AC_SUBST(BASE_CFLAGS)
-AC_SUBST(BASE_LIBS)
-
 dnl common libs (eel, nautilus)
 PKG_CHECK_MODULES(COMMON, [
 	gail-3.0
@@ -272,9 +270,6 @@ PKG_CHECK_MODULES(COMMON, [
 	libxml-2.0 >= xml_minver
 	x11
 ])
-
-AC_SUBST(COMMON_CFLAGS)
-AC_SUBST(COMMON_LIBS)
 
 dnl additional nautilus libs
 PKG_CHECK_MODULES(NAUTILUS, [
@@ -285,9 +280,6 @@ PKG_CHECK_MODULES(NAUTILUS, [
 	gsettings-desktop-schemas
 	libnotify >= notify_minver
 ])
-
-AC_SUBST(NAUTILUS_CFLAGS)
-AC_SUBST(NAUTILUS_LIBS)
 
 dnl Multimedia keys
 AC_CHECK_HEADERS([X11/XF86keysym.h])
@@ -302,7 +294,7 @@ dnl ==========================================================================
 AC_PATH_PROG(UPDATE_MIME_DATABASE, update-mime-database, no)
 
 AC_ARG_ENABLE(update-mimedb,
-   AC_HELP_STRING([--disable-update-mimedb],
+   AS_HELP_STRING([--disable-update-mimedb],
                    [disable the update-mime-database after install [default=no]]),,
     enable_update_mimedb=yes)
 AM_CONDITIONAL(ENABLE_UPDATE_MIMEDB, test x$enable_update_mimedb = xyes)
