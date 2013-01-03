@@ -5848,6 +5848,27 @@ run_action_callback (NemoAction *action, gpointer callback_data)
 }
 
 static void
+set_action_label (NemoAction *action, NemoFile *file) {
+    gchar *display_name = nemo_file_get_display_name (file);
+    const gchar *orig_label = nemo_action_get_orig_label (action);
+
+    if (g_strstr_len (orig_label, -1, TOKEN_LABEL_FILE_NAME) == NULL) {
+        gtk_action_set_label (GTK_ACTION (action), orig_label);
+        return;
+    }
+
+    gchar **split = g_strsplit (orig_label, TOKEN_LABEL_FILE_NAME, 2);
+
+    gchar *new_label = g_strconcat (split[0], display_name, split[2], NULL);
+
+    gtk_action_set_label (GTK_ACTION (action), new_label);
+
+    g_strfreev (split);
+    g_free (display_name);
+    g_free (new_label);
+}
+
+static void
 determine_visibility (gpointer data, gpointer callback_data)
 {
     NemoAction *action = NEMO_ACTION (data);
@@ -5916,6 +5937,11 @@ determine_visibility (gpointer data, gpointer callback_data)
 out:
 
     extension_type_show = found_match;
+
+    if ((selection_type_show && extension_type_show) &&
+        selection_type <= SELECTION_MULTIPLE) {
+        set_action_label (action, selected_files->data);
+    }
 
     gtk_action_set_visible (GTK_ACTION (action), 
                             selection_type_show && extension_type_show);

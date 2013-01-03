@@ -2,11 +2,14 @@
 
 # Use this entry? Largely for troubleshooting.
 # Lack of this field assumes true
-Active=false
+Active=true
 
-# The name to show in the menu, locale supported with standard desktop spec
+# The name to show in the menu, locale supported with standard desktop spec.
+# Use %N as an (optional) token to display the simple filename in the label.
+# If multiple are selected, then the arbitrary first selected name will be used.
+# Token is inactive for selection type of None and Any (it will be ignored)
 # **** REQUIRED ****
-Name=Test Custom Action
+Name=Test Custom Action applied to %N
 
 # Tool tip, locale supported (Appears in the status bar)
 Comment=This is a test for Nemo actions
@@ -22,7 +25,7 @@ Icon=folder
 
 # What type selection: [S]ingle, [M]ultiple, Any, or None (background click)
 # Defaults to Single if this field is missing
-Selection=Any
+Selection=S
 
 # What extensions to display on - this is an array, end with a semicolon
 # Use "Dir" for directory selection and "None" for no extension

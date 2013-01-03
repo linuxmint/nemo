@@ -37,6 +37,14 @@
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_ACTION, NemoActionClass))
 
 
+#define SELECTION_SINGLE_KEY "S"
+#define SELECTION_MULTIPLE_KEY "M"
+#define SELECTION_ANY_KEY "Any"
+#define SELECTION_NONE_KEY "None"
+
+#define TOKEN_EXEC_FILE_LIST "%L"
+#define TOKEN_LABEL_FILE_NAME "%N"
+
 typedef struct _NemoAction NemoAction;
 typedef struct _NemoActionClass NemoActionClass;
 
@@ -55,6 +63,7 @@ struct _NemoAction {
     guint ext_length;
     gchar *exec;
     gchar *parent_dir;
+    gchar *orig_label;
     gboolean use_parent_dir;
 };
 
@@ -70,5 +79,6 @@ gchar      **nemo_action_get_extension_list (NemoAction *action);
 guint        nemo_action_get_extension_count (NemoAction *action);
 void         nemo_action_set_exec (NemoAction *action, const gchar *exec);
 void         nemo_action_set_parent_dir (NemoAction *action, const gchar *parent_dir);
-
+void         nemo_action_set_orig_label (NemoAction *action, const gchar *orig_label);
+gchar       *nemo_action_get_orig_label (NemoAction *action);
 #endif /* NEMO_ACTION_H */

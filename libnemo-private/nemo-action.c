@@ -50,13 +50,6 @@ static   gpointer parent_class;
 #define KEY_SELECTION "Selection"
 #define KEY_EXTENSIONS "Extensions"
 
-#define SELECTION_SINGLE_KEY "S"
-#define SELECTION_MULTIPLE_KEY "M"
-#define SELECTION_ANY_KEY "Any"
-#define SELECTION_NONE_KEY "None"
-
-#define TOKEN_FILE_LIST "%L"
-
 enum 
 {
   PROP_0,
@@ -66,7 +59,8 @@ enum
   PROP_EXT_LENGTH,
   PROP_EXEC,
   PROP_PARENT_DIR,
-  PROP_USE_PARENT_DIR
+  PROP_USE_PARENT_DIR,
+  PROP_ORIG_LABEL
 };
 
 static void
@@ -154,6 +148,14 @@ nemo_action_class_init (NemoActionClass *klass)
                                                            "Execute using the full action path",
                                                            FALSE,
                                                            G_PARAM_READWRITE)
+                                     );
+    g_object_class_install_property (object_class,
+                                     PROP_ORIG_LABEL,
+                                     g_param_spec_string ("orig-label",
+                                                          "Original label string",
+                                                          "The starting label - with token",
+                                                          NULL,
+                                                          G_PARAM_READWRITE)
                                      );
 }
 
@@ -261,6 +263,7 @@ nemo_action_new (const gchar *name,
                          "extensions", ext,
                          "parent-dir", parent_dir,
                          "use-parent-dir", use_parent_dir,
+                         "orig-label", label,
                           NULL);
 }
 
@@ -273,6 +276,7 @@ nemo_action_finalize (GObject *object)
     g_strfreev (action->extensions);
     g_free (action->exec);
     g_free (action->parent_dir);
+    g_free (action->orig_label);
 
     G_OBJECT_CLASS (parent_class)->finalize (object);
 }
@@ -310,6 +314,9 @@ nemo_action_set_property (GObject         *object,
       break;
     case PROP_USE_PARENT_DIR:
       action->use_parent_dir = g_value_get_boolean (value);
+      break;
+    case PROP_ORIG_LABEL:
+      nemo_action_set_orig_label (action, g_value_get_string (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -350,6 +357,9 @@ nemo_action_get_property (GObject    *object,
     case PROP_USE_PARENT_DIR:
       g_value_set_boolean (value, action->use_parent_dir);
       break;
+    case PROP_ORIG_LABEL:
+      g_value_set_string (value, action->orig_label);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -379,7 +389,7 @@ nemo_action_activate (NemoAction *action, GList *selection)
      */
 
     for (token = arg_list; token != NULL; token = token->next) {
-        if (g_strcmp0 (token->data, TOKEN_FILE_LIST) == 0)
+        if (g_strcmp0 (token->data, TOKEN_EXEC_FILE_LIST) == 0)
             break;
     }
 
@@ -455,4 +465,20 @@ nemo_action_set_parent_dir (NemoAction *action, const gchar *parent_dir)
     tmp = action->parent_dir;
     action->parent_dir = g_strdup (parent_dir);
     g_free (tmp);
+}
+
+void
+nemo_action_set_orig_label (NemoAction *action, const gchar *orig_label)
+{
+    gchar *tmp;
+
+    tmp = action->orig_label;
+    action->orig_label = g_strdup (orig_label);
+    g_free (tmp);
+}
+
+gchar *
+nemo_action_get_orig_label (NemoAction *action)
+{
+    return action->orig_label;
 }
