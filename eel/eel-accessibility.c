@@ -43,19 +43,6 @@ eel_accessibility_set_up_label_widget_relation (GtkWidget *label, GtkWidget *wid
 }
 
 static GQuark
-get_quark_accessible (void)
-{
-	static GQuark quark_accessible_object = 0;
-
-	if (!quark_accessible_object) {
-		quark_accessible_object = g_quark_from_static_string
-			("accessible-object");
-	}
-
-	return quark_accessible_object;
-}
-
-static GQuark
 get_quark_gobject (void)
 {
 	static GQuark quark_accessible_gobject = 0;
@@ -66,20 +53,6 @@ get_quark_gobject (void)
 	}
 
 	return quark_accessible_gobject;
-}
-
-/**
- * eel_accessibility_get_atk_object:
- * @object: a GObject of some sort
- * 
- * gets an AtkObject associated with a GObject
- * 
- * Return value: the associated accessible if one exists or NULL
- **/
-AtkObject *
-eel_accessibility_get_atk_object (gpointer object)
-{
-	return g_object_get_qdata (object, get_quark_accessible ());
 }
 
 /**
@@ -95,43 +68,6 @@ gpointer
 eel_accessibility_get_gobject (AtkObject *object)
 {
 	return g_object_get_qdata (G_OBJECT (object), get_quark_gobject ());
-}
-
-static void
-eel_accessibility_destroy (gpointer data,
-			   GObject *where_the_object_was)
-{
-	g_object_set_qdata
-		(G_OBJECT (data), get_quark_gobject (), NULL);
-	atk_object_notify_state_change
-		(ATK_OBJECT (data), ATK_STATE_DEFUNCT, TRUE);
-	g_object_unref (data);
-}
-
-/**
- * eel_accessibility_set_atk_object_return:
- * @object: a GObject
- * @atk_object: it's AtkObject
- * 
- * used to register and return a new accessible object for something
- * 
- * Return value: @atk_object.
- **/
-AtkObject *
-eel_accessibility_set_atk_object_return (gpointer   object,
-					 AtkObject *atk_object)
-{
-	atk_object_initialize (atk_object, object);
-
-	if (!ATK_IS_GOBJECT_ACCESSIBLE (atk_object)) {
-		g_object_set_qdata_full
-			(object, get_quark_accessible (), atk_object,
-			 (GDestroyNotify)eel_accessibility_destroy);
-		g_object_set_qdata
-			(G_OBJECT (atk_object), get_quark_gobject (), object);
-	}
-
-	return atk_object;
 }
 
 static GailTextUtil *
