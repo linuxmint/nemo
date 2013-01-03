@@ -18,6 +18,7 @@
 */
 
 #include "nemo-action.h"
+#include <eel/eel-string.h>
 
 G_DEFINE_TYPE (NemoAction, nemo_action,
 	       GTK_TYPE_ACTION);
@@ -542,11 +543,14 @@ nemo_action_set_label (NemoAction *action, NemoFile *file) {
 
     gchar *new_label = g_strconcat (split[0], display_name, split[1], NULL);
 
-    gtk_action_set_label (GTK_ACTION (action), new_label);
+    gchar *escaped = eel_str_double_underscores (new_label);
+
+    gtk_action_set_label (GTK_ACTION (action), escaped);
 
     g_strfreev (split);
     g_free (display_name);
     g_free (new_label);
+    g_free (escaped);
 }
 
 void
@@ -566,9 +570,12 @@ nemo_action_set_tt (NemoAction *action, NemoFile *file) {
 
     gchar *new_tt = g_strconcat (split[0], display_name, split[1], NULL);
 
-    gtk_action_set_tooltip (GTK_ACTION (action), new_tt);
+    gchar *escaped = eel_str_double_underscores (new_tt);
+
+    gtk_action_set_tooltip (GTK_ACTION (action), escaped);
 
     g_strfreev (split);
     g_free (display_name);
     g_free (new_tt);
+    g_free (escaped);
 }
