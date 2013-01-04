@@ -78,7 +78,8 @@
       <keyword>Name</keyword>
       <keyword>Comment</keyword>
       <keyword>Exec</keyword>
-      <keyword>Icon</keyword>
+      <keyword>Icon-Name</keyword>
+      <keyword>Stock-Id</keyword>
       <keyword>Selection</keyword>
       <keyword>Extensions</keyword>
     </context>

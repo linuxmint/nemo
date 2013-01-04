@@ -30,11 +30,15 @@ Comment=This is a test for Nemo actions.  Action will be applied to %N
 Exec=<myaction.py -r -g %L>
 
 
-# Icon to use in the menu - must be a theme icon name
-# Enclose in < > to use a stock id instead
-#Icon=folder
+# Icon name to use in the menu - must be a theme icon name
 
-Icon=<gtk-cdrom>
+Icon-Name=folder
+
+
+# Gtk Stock ID to use for the icon.  Note if both Icon-name and Stock-Id are
+# defined, the Stock-Id takes precedence.
+
+#Stock-Id=gtk-cdrom
 
 
 # What type selection: [S]ingle, [M]ultiple, Any, or None (background click)
