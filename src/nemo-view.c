@@ -5954,10 +5954,16 @@ add_action_to_action_menus (NemoView *directory_view,
     uri = nemo_file_get_uri (file);
 
     action_name = escape_action_name (uri, "action_");
-    action = nemo_action_new (action_name, file);
+    gchar *path = g_filename_from_uri (nemo_file_get_uri (file), NULL, NULL);
+
+    action = nemo_action_new (action_name, path);
+
+    g_free (path);
 
     if (action == NULL)  /* First thing nemo-action will check is active key */
         return;    /* and return null if the action is not active      */
+
+    nemo_action_construct (action);
 
     gtk_action_group_add_action (directory_view->details->actions_action_group,
                                  GTK_ACTION (action));

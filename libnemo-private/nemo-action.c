@@ -55,7 +55,7 @@ static   gpointer parent_class;
 enum 
 {
   PROP_0,
-  PROP_KEY_FILE,
+  PROP_KEY_FILE_PATH,
   PROP_SELECTION_TYPE,
   PROP_EXTENSIONS,
   PROP_EXT_LENGTH,
@@ -69,7 +69,7 @@ enum
 static void
 nemo_action_init (NemoAction *action)
 {
-    action->key_file = NULL;
+    action->key_file_path = NULL;
     action->selection_type = SELECTION_SINGLE;
     action->extensions = NULL;
     action->ext_length = 0;
@@ -90,24 +90,24 @@ nemo_action_class_init (NemoActionClass *klass)
     object_class->set_property = nemo_action_set_property;
     object_class->get_property = nemo_action_get_property;
 
-
     g_object_class_install_property (object_class,
-                                     PROP_KEY_FILE,
-                                     g_param_spec_pointer ("key-file",
-                                                           "Key File",
-                                                           "The key file associated with this action",
-                                                           G_PARAM_READWRITE)
+                                     PROP_KEY_FILE_PATH,
+                                     g_param_spec_string ("key-file-path",
+                                                          "Key File Path",
+                                                          "The key file path associated with this action",
+                                                          NULL,
+                                                          G_PARAM_READWRITE)
                                      );
 
     g_object_class_install_property (object_class,
                                      PROP_SELECTION_TYPE,
                                      g_param_spec_int ("selection-type",
-                                                        "Selection Type",
-                                                        "The action selection type",
-                                                        SELECTION_SINGLE,
-                                                        SELECTION_NONE,
-                                                        SELECTION_SINGLE,
-                                                        G_PARAM_READWRITE)
+                                                       "Selection Type",
+                                                       "The action selection type",
+                                                       SELECTION_SINGLE,
+                                                       SELECTION_NONE,
+                                                       SELECTION_SINGLE,
+                                                       G_PARAM_READWRITE)
                                      );
 
     g_object_class_install_property (object_class,
@@ -186,23 +186,12 @@ strip_custom_modifier (const gchar *raw, gboolean *custom, gchar **out)
     }
 }
 
-GtkAction *
-nemo_action_new (const gchar *name, 
-                 NemoFile    *file)
+void
+nemo_action_construct (NemoAction *action)
 {
     GKeyFile *key_file = g_key_file_new();
 
-    gchar *path = g_filename_from_uri (nemo_file_get_uri (file), NULL, NULL);
-
-    g_key_file_load_from_file (key_file, path, G_KEY_FILE_NONE, NULL);
-
-    if (!g_key_file_has_group (key_file, ACTION_FILE_GROUP))
-        return NULL;
-
-    if (g_key_file_has_key (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL)) {
-        if (!g_key_file_get_boolean (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL))
-            return NULL;
-    }
+    g_key_file_load_from_file (key_file, action->key_file_path, G_KEY_FILE_NONE, NULL);
 
     gchar *orig_label = g_key_file_get_locale_string (key_file,
                                                       ACTION_FILE_GROUP,
@@ -260,37 +249,92 @@ nemo_action_new (const gchar *name,
                                               &count,
                                               NULL);
 
-    if (orig_label == NULL || exec_raw == NULL || ext == NULL) {
-        g_printerr ("An action definition requires, at minimum, "
-                    "a Label field, and Exec field, and an Extensions field.\n"
-                    "Check the %s file for missing fields.\n", path);
-        g_free (path);
-        return NULL;
-    }
-
     gchar *exec = NULL;
     gboolean use_parent_dir = FALSE;
 
     strip_custom_modifier (exec_raw, &use_parent_dir, &exec);
     g_free (exec_raw);
 
-    gchar *parent_dir = g_filename_from_uri (nemo_file_get_parent_uri (file), NULL, NULL);
+    GFile *file = g_file_new_for_path (action->key_file_path);
+    GFile *parent = g_file_get_parent (file);
 
+    gchar *parent_dir = g_file_get_path (parent);
+
+    g_object_unref (file);
+    g_object_unref (parent);
+
+    g_object_set  (action,
+                   "label", orig_label,
+                   "tooltip", orig_tt,
+                   "icon-name", icon_name,
+                   "stock-id", stock_id,
+                   "exec", exec,
+                   "selection-type", type,
+                   "ext-length", count,
+                   "extensions", ext,
+                   "parent-dir", parent_dir,
+                   "use-parent-dir", use_parent_dir,
+                   "orig-label", orig_label,
+                   "orig-tooltip", orig_tt,
+                    NULL);
+
+    g_free (orig_label);
+    g_free (orig_tt);
+    g_free (icon_name);
+    g_free (stock_id);
+    g_free (exec);
+    g_strfreev (ext);
+    g_free (parent_dir);
+    g_key_file_free (key_file);
+}
+
+GtkAction *
+nemo_action_new (const gchar *name, 
+                 const gchar *path)
+{
+    GKeyFile *key_file = g_key_file_new();
+
+    g_key_file_load_from_file (key_file, path, G_KEY_FILE_NONE, NULL);
+
+    if (!g_key_file_has_group (key_file, ACTION_FILE_GROUP))
+        return NULL;
+
+    if (g_key_file_has_key (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL)) {
+        if (!g_key_file_get_boolean (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL))
+            return NULL;
+    }
+
+    gchar *orig_label = g_key_file_get_locale_string (key_file,
+                                                      ACTION_FILE_GROUP,
+                                                      KEY_NAME,
+                                                      NULL,
+                                                      NULL);
+
+    gchar *exec_raw = g_key_file_get_string (key_file,
+                                             ACTION_FILE_GROUP,
+                                             KEY_EXEC,
+                                             NULL);
+
+    gchar **ext = g_key_file_get_string_list (key_file,
+                                              ACTION_FILE_GROUP,
+                                              KEY_EXTENSIONS,
+                                              NULL,
+                                              NULL);
+
+    if (orig_label == NULL || exec_raw == NULL || ext == NULL) {
+        g_printerr ("An action definition requires, at minimum, "
+                    "a Label field, and Exec field, and an Extensions field.\n"
+                    "Check the %s file for missing fields.\n", path);
+        return NULL;
+    }
+
+    g_free (orig_label);
+    g_free (exec_raw);
+    g_strfreev (ext);
+    g_key_file_free (key_file);
     return g_object_new (NEMO_TYPE_ACTION,
                          "name", name,
-                         "key-file", key_file,
-                         "label", orig_label,
-                         "tooltip", orig_tt,
-                         "icon-name", icon_name,
-                         "stock-id", stock_id,
-                         "exec", exec,
-                         "selection-type", type,
-                         "ext-length", count,
-                         "extensions", ext,
-                         "parent-dir", parent_dir,
-                         "use-parent-dir", use_parent_dir,
-                         "orig-label", orig_label,
-                         "orig-tooltip", orig_tt,
+                         "key-file-path", path,
                           NULL);
 }
 
@@ -299,7 +343,7 @@ nemo_action_finalize (GObject *object)
 {
     NemoAction *action = NEMO_ACTION (object);
 
-    g_key_file_free (action->key_file);
+    g_free (action->key_file_path);
     g_strfreev (action->extensions);
     g_free (action->exec);
     g_free (action->parent_dir);
@@ -312,9 +356,9 @@ nemo_action_finalize (GObject *object)
 
 static void
 nemo_action_set_property (GObject         *object,
-             guint            prop_id,
-             const GValue    *value,
-             GParamSpec      *pspec)
+                          guint            prop_id,
+                          const GValue    *value,
+                          GParamSpec      *pspec)
 {
   NemoAction *action;
   
@@ -322,14 +366,14 @@ nemo_action_set_property (GObject         *object,
 
   switch (prop_id)
     {
-    case PROP_KEY_FILE:
-      action->key_file = g_value_get_pointer (value);
+    case PROP_KEY_FILE_PATH:
+      nemo_action_set_key_file_path (action, g_value_get_string (value));
       break;
     case PROP_SELECTION_TYPE:
       action->selection_type = g_value_get_int (value);
       break;
     case PROP_EXTENSIONS:
-      action->extensions = g_value_get_pointer (value);
+      nemo_action_set_extensions (action, g_value_get_pointer (value));
       break;
     case PROP_EXT_LENGTH:
       action->ext_length = g_value_get_int (value);
@@ -367,8 +411,8 @@ nemo_action_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_KEY_FILE:
-      g_value_set_pointer (value, action->key_file);
+    case PROP_KEY_FILE_PATH:
+      g_value_set_string (value, action->key_file_path);
       break;
     case PROP_SELECTION_TYPE:
       g_value_set_int (value, action->selection_type);
@@ -482,6 +526,15 @@ nemo_action_get_extension_count (NemoAction *action)
 }
 
 void
+nemo_action_set_key_file_path (NemoAction *action, const gchar *path)
+{
+    gchar *tmp;
+    tmp = action->key_file_path;
+    action->key_file_path = g_strdup (path);
+    g_free (tmp);
+}
+
+void
 nemo_action_set_exec (NemoAction *action, const gchar *exec)
 {
     gchar *tmp;
@@ -540,8 +593,8 @@ test_string_for_label_token (const gchar *string)
 }
 
 void
-nemo_action_set_label (NemoAction *action, NemoFile *file) {
-
+nemo_action_set_label (NemoAction *action, NemoFile *file)
+{
     const gchar *orig_label = nemo_action_get_orig_label (action);
 
     if (!test_string_for_label_token (orig_label) || file == NULL ||
@@ -567,8 +620,8 @@ nemo_action_set_label (NemoAction *action, NemoFile *file) {
 }
 
 void
-nemo_action_set_tt (NemoAction *action, NemoFile *file) {
-
+nemo_action_set_tt (NemoAction *action, NemoFile *file)
+{
     const gchar *orig_tt = nemo_action_get_orig_tt (action);
 
     if (!test_string_for_label_token (orig_tt) || file == NULL ||
@@ -591,4 +644,14 @@ nemo_action_set_tt (NemoAction *action, NemoFile *file) {
     g_free (display_name);
     g_free (new_tt);
     g_free (escaped);
+}
+
+void
+nemo_action_set_extensions (NemoAction *action, gchar **extensions)
+{
+    gchar **tmp;
+
+    tmp = action->extensions;
+    action->extensions = g_strdupv (extensions);
+    g_strfreev (tmp);
 }
