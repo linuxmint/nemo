@@ -62,7 +62,8 @@ enum
   PROP_PARENT_DIR,
   PROP_USE_PARENT_DIR,
   PROP_ORIG_LABEL,
-  PROP_ORIG_TT
+  PROP_ORIG_TT,
+  PROP_ICON_USE_STOCK_ID
 };
 
 static void
@@ -77,6 +78,7 @@ nemo_action_init (NemoAction *action)
     action->use_parent_dir = FALSE;
     action->orig_label = NULL;
     action->orig_tt = NULL;
+    action->icon_use_stock_id = FALSE;
 }
 
 static void
@@ -169,7 +171,29 @@ nemo_action_class_init (NemoActionClass *klass)
                                                           NULL,
                                                           G_PARAM_READWRITE)
                                      );
+    g_object_class_install_property (object_class,
+                                     PROP_ICON_USE_STOCK_ID,
+                                     g_param_spec_boolean ("icon-use-stock-id",
+                                                           "Use icon stock id",
+                                                           "Use a stock icon id",
+                                                           FALSE,
+                                                           G_PARAM_READWRITE)
+                                     );
 
+}
+
+static void
+strip_custom_modifier (const gchar *raw, gboolean *custom, gchar **out)
+{
+    if (g_str_has_prefix (raw, "<") && g_str_has_suffix (raw, ">")) {
+        gchar **split = g_strsplit_set (raw, "<>", 3);
+        *out = g_strdup (split[1]);
+        *custom = TRUE;
+        g_free (split);
+    } else {
+        *out = g_strdup (raw);
+        *custom = FALSE;
+    }
 }
 
 GtkAction *
@@ -202,10 +226,10 @@ nemo_action_new (const gchar *name,
                                                    NULL,
                                                    NULL);
 
-    gchar *icon_name = g_key_file_get_string (key_file,
-                                              ACTION_FILE_GROUP,
-                                              KEY_ICON,
-                                              NULL);
+    gchar *icon_name_raw = g_key_file_get_string (key_file,
+                                                  ACTION_FILE_GROUP,
+                                                  KEY_ICON,
+                                                  NULL);
 
     gchar *exec_raw = g_key_file_get_string (key_file,
                                              ACTION_FILE_GROUP,
@@ -251,16 +275,14 @@ nemo_action_new (const gchar *name,
     gchar *exec = NULL;
     gboolean use_parent_dir = FALSE;
 
-    if (g_str_has_prefix (exec_raw, "<") && g_str_has_suffix (exec_raw, ">")) {
-        gchar **split = g_strsplit_set (exec_raw, "<>", 3);
-        exec = g_strdup (split[1]);
-        use_parent_dir = TRUE;
-        g_free (split);
-    } else {
-        exec = g_strdup (exec_raw);
-    }
-
+    strip_custom_modifier (exec_raw, &use_parent_dir, &exec);
     g_free (exec_raw);
+
+    gchar *icon_name = NULL;
+    gboolean icon_use_stock_id = FALSE;
+
+    strip_custom_modifier (icon_name_raw, &icon_use_stock_id, &icon_name);
+    g_free (icon_name_raw);
 
     gchar *parent_dir = g_filename_from_uri (nemo_file_get_parent_uri (file), NULL, NULL);
 
@@ -269,7 +291,8 @@ nemo_action_new (const gchar *name,
                          "key-file", key_file,
                          "label", orig_label,
                          "tooltip", orig_tt,
-                         "icon-name", icon_name,
+                         "icon-name", !icon_use_stock_id ? icon_name : NULL,
+                         "stock-id", icon_use_stock_id ? icon_name : NULL,
                          "exec", exec,
                          "selection-type", type,
                          "ext-length", count,
@@ -336,6 +359,9 @@ nemo_action_set_property (GObject         *object,
     case PROP_ORIG_TT:
       nemo_action_set_orig_tt (action, g_value_get_string (value));
       break;
+    case PROP_ICON_USE_STOCK_ID:
+      action->icon_use_stock_id = g_value_get_boolean (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -380,6 +406,9 @@ nemo_action_get_property (GObject    *object,
       break;
     case PROP_ORIG_TT:
       g_value_set_string (value, action->orig_tt);
+      break;
+    case PROP_ICON_USE_STOCK_ID:
+      g_value_set_boolean (value, action->icon_use_stock_id);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

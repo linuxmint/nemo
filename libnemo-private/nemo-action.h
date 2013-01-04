@@ -66,6 +66,7 @@ struct _NemoAction {
     gchar *orig_label;
     gchar *orig_tt;
     gboolean use_parent_dir;
+    gboolean icon_use_stock_id;
 };
 
 struct _NemoActionClass {

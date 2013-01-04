@@ -31,8 +31,10 @@ Exec=<myaction.py -r -g %L>
 
 
 # Icon to use in the menu - must be a theme icon name
+# Enclose in < > to use a stock id instead
+#Icon=folder
 
-Icon=folder
+Icon=<gtk-cdrom>
 
 
 # What type selection: [S]ingle, [M]ultiple, Any, or None (background click)
