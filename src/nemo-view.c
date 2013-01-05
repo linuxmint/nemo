@@ -5949,7 +5949,7 @@ add_action_to_action_menus (NemoView *directory_view,
     char *uri;
     char *action_name;
     GtkUIManager *ui_manager;
-    GtkAction *action;
+    NemoAction *action;
 
     uri = nemo_file_get_uri (file);
 
@@ -5962,8 +5962,6 @@ add_action_to_action_menus (NemoView *directory_view,
 
     if (action == NULL)  /* First thing nemo-action will check is active key */
         return;    /* and return null if the action is not active      */
-
-    nemo_action_construct (NEMO_ACTION (action));
 
     gtk_action_group_add_action (directory_view->details->actions_action_group,
                                  GTK_ACTION (action));

@@ -73,8 +73,7 @@ struct _NemoActionClass {
 };
 
 GType         nemo_action_get_type             (void);
-GtkAction    *nemo_action_new                  (const gchar *name, const gchar *path);
-void          nemo_action_construct            (NemoAction *action);
+NemoAction   *nemo_action_new                  (const gchar *name, const gchar *path);
 void          nemo_action_activate             (NemoAction *action, GList *selection);
 SelectionType nemo_action_get_selection_type   (NemoAction *action);
 gchar       **nemo_action_get_extension_list   (NemoAction *action);

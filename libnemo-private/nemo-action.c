@@ -37,6 +37,8 @@ static void     nemo_action_set_property  (GObject                    *object,
                                            const GValue               *value,
                                            GParamSpec                 *pspec);
 
+static void     nemo_action_constructed (GObject *object);
+
 static void     nemo_action_finalize (GObject *gobject);
 
 static   gpointer parent_class;
@@ -89,6 +91,7 @@ nemo_action_class_init (NemoActionClass *klass)
     object_class->finalize = nemo_action_finalize;
     object_class->set_property = nemo_action_set_property;
     object_class->get_property = nemo_action_get_property;
+    object_class->constructed = nemo_action_constructed;
 
     g_object_class_install_property (object_class,
                                      PROP_KEY_FILE_PATH,
@@ -96,7 +99,7 @@ nemo_action_class_init (NemoActionClass *klass)
                                                           "Key File Path",
                                                           "The key file path associated with this action",
                                                           NULL,
-                                                          G_PARAM_READWRITE)
+                                                          G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
                                      );
 
     g_object_class_install_property (object_class,
@@ -121,12 +124,12 @@ nemo_action_class_init (NemoActionClass *klass)
     g_object_class_install_property (object_class,
                                      PROP_EXT_LENGTH,
                                      g_param_spec_int ("ext-length",
-                                                        "Extensions Length",
-                                                        "Number of extensions",
-                                                        0,
-                                                        999,
-                                                        0,
-                                                        G_PARAM_READWRITE)
+                                                       "Extensions Length",
+                                                       "Number of extensions",
+                                                       0,
+                                                       999,
+                                                       0,
+                                                       G_PARAM_READWRITE)
                                      );
 
     g_object_class_install_property (object_class,
@@ -187,8 +190,12 @@ strip_custom_modifier (const gchar *raw, gboolean *custom, gchar **out)
 }
 
 void
-nemo_action_construct (NemoAction *action)
+nemo_action_constructed (GObject *object)
 {
+    G_OBJECT_CLASS (parent_class)->constructed (object);
+
+    NemoAction *action = NEMO_ACTION (object);
+
     GKeyFile *key_file = g_key_file_new();
 
     g_key_file_load_from_file (key_file, action->key_file_path, G_KEY_FILE_NONE, NULL);
@@ -288,7 +295,7 @@ nemo_action_construct (NemoAction *action)
     g_key_file_free (key_file);
 }
 
-GtkAction *
+NemoAction *
 nemo_action_new (const gchar *name, 
                  const gchar *path)
 {
