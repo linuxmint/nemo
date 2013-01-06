@@ -60,4 +60,6 @@ void nemo_pathbar_button_set_is_left_end (GtkWidget *button, gboolean left_end);
 
 void nemo_pathbar_button_set_highlight (GtkWidget *button, gboolean highlight);
 
+void nemo_pathbar_button_get_preferred_size (GtkWidget *button, GtkRequisition *requisition);
+
 #endif /* NEMO_PATHBAR_BUTTON_H */
