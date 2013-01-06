@@ -5,4 +5,12 @@
      <_comment>Saved search</_comment>
      <glob pattern="*.savedSearch"/>
    </mime-type>
+
+
+   <mime-type type="application/nemo-action">
+     <_comment>A Nemo action definition file</_comment>
+     <sub-class-of type="application/x-desktop"/>
+     <generic-icon name="text-x-generic"/>
+     <glob pattern="*.nemo_action"/>
+   </mime-type>
 </mime-info>

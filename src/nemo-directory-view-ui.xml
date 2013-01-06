@@ -33,6 +33,7 @@
 				 <separator name="After Scripts"/>
 				 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 			</menu>
+            <placeholder name="ActionsPlaceholder"/>
 		</placeholder>
 		<placeholder name="File Items Placeholder">
 			<menuitem name="Self Mount Volume" action="Self Mount Volume"/>
@@ -112,6 +113,7 @@
 			 	<separator name="After Scripts"/>
 			 	<menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 			</menu>
+            <placeholder name="ActionsPlaceholder"/>
 		</placeholder>
 		<separator name="Open terminal separator"/>
         <menuitem name="OpenInTerminal" action="OpenInTerminal"/>
@@ -156,6 +158,7 @@
 			 <separator name="After Scripts"/>
 			 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 		</menu>
+        <placeholder name="ActionsPlaceholder"/>
 	</placeholder>
 	<separator name="Clipboard separator"/>
 	<placeholder name="File Clipboard Actions">

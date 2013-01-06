@@ -122,6 +122,7 @@
 #define NEMO_ACTION_LOCATION_STOP_VOLUME "Location Stop Volume"
 #define NEMO_ACTION_LOCATION_POLL "Location Poll"
 #define NEMO_ACTION_SCRIPTS "Scripts"
+#define NEMO_ACTION_ACTIONS "Actions"
 #define NEMO_ACTION_NEW_LAUNCHER "New Launcher"
 #define NEMO_ACTION_NEW_LAUNCHER_DESKTOP "New Launcher"
 #define NEMO_ACTION_NEW_DOCUMENTS "New Documents"

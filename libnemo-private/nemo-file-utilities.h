@@ -31,6 +31,9 @@
 #define NEMO_SAVED_SEARCH_EXTENSION ".savedSearch"
 #define NEMO_SAVED_SEARCH_MIMETYPE "application/x-gnome-saved-search"
 
+#define DEFAULT_NEMO_DIRECTORY_MODE (0755)
+#define DEFAULT_DESKTOP_DIRECTORY_MODE (0755)
+
 /* These functions all return something something that needs to be
  * freed with g_free, is not NULL, and is guaranteed to exist.
  */
