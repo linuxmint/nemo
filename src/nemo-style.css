@@ -35,23 +35,43 @@
 .nemo-pathbar-button {
     border-style: solid;
     border-width: 1px;
+
     background-image: -gtk-gradient(linear, left top, left bottom,
-                                     from (shade(@theme_bg_color, 0.95)),
-                                     to (shade(@theme_bg_color, 1.0)));
+                                     color-stop (0, shade(alpha(@theme_bg_color, 0.8), 1.1)),
+                                     color-stop (.3, shade(alpha(@theme_bg_color, 0.8), 0.95)),
+                                     color-stop (.7, shade(alpha(@theme_bg_color, 0.8), 0.95)),
+                                     color-stop (1, shade(alpha(@theme_bg_color, 0.8), 1.1)));
+    box-shadow: inset 1px 0 shade(@theme_bg_color, .9),
+                inset 0 1px shade(@theme_bg_color, .9),
+                inset -1px 0 shade(@theme_bg_color, .9),
+                inset 0 -1px shade(@theme_bg_color, .9);
 }
 
 .nemo-pathbar-button-active {
     border-style: solid;
     border-width: 1px;
     background-image: -gtk-gradient(linear, left top, left bottom,
-                                     from (shade(@theme_bg_color, .8)),
-                                     to (shade(@theme_bg_color, 0.85)));
+                                     color-stop (0, shade(alpha(@theme_bg_color, 0.8), 0.9)),
+                                     color-stop (.3, shade(alpha(@theme_bg_color, 0.8), 0.8)),
+                                     color-stop (.7, shade(alpha(@theme_bg_color, 0.8), 0.8)),
+                                     color-stop (1, shade(alpha(@theme_bg_color, 0.8), 0.9)));
+    box-shadow: inset 1px 0 shade(@theme_bg_color, 0.8),
+                inset 0 1px shade(@theme_bg_color, 0.8),
+                inset -1px 0 shade(@theme_bg_color, 0.8),
+                inset 0 -1px shade(@theme_bg_color, 0.8);
 }
 
 .nemo-pathbar-button-hover {
     border-style: solid;
     border-width: 1px;
+
     background-image: -gtk-gradient(linear, left top, left bottom,
-                                     from (shade(@theme_selected_bg_color, 1.25)),
-                                     to (shade(@theme_selected_bg_color, 0.95)));
+                                     color-stop (0, shade(alpha(@theme_selected_bg_color, 0.8), 1.25)),
+                                     color-stop (.3, shade(alpha(@theme_selected_bg_color, 0.8), 0.95)),
+                                     color-stop (.7, shade(alpha(@theme_selected_bg_color, 0.8), 0.95)),
+                                     color-stop (1, shade(alpha(@theme_selected_bg_color, 0.8), 1.25)));
+    box-shadow: inset 1px 0 shade(@theme_bg_color, 0.8),
+                inset 0 1px shade(@theme_bg_color, 0.8),
+                inset -1px 0 shade(@theme_bg_color, 0.8),
+                inset 0 -1px shade(@theme_bg_color, 0.8);
 }

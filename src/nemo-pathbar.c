@@ -544,7 +544,8 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
 	up_slider_offset = 0;
 	down_slider_offset = 0;
 	path_bar = NEMO_PATH_BAR (widget);
-
+    allocation->y += 5;
+    allocation->height -= 10;
 	gtk_widget_set_allocation (widget, allocation);
 
 	if (gtk_widget_get_realized (widget)) {
@@ -698,7 +699,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         gtk_widget_set_child_visible (BUTTON_DATA (list->data)->button, TRUE);
         if (!first_element) {
             nemo_pathbar_button_set_is_left_end (BUTTON_DATA (list->data)->button, FALSE);
-            gint offset = rintf ((float) child_allocation.height / 2.75) + 2;
+            gint offset = rintf ((float) child_allocation.height / 1.75) + 2;
             if (direction == GTK_TEXT_DIR_RTL)
                 child_allocation.x += offset;
             else
