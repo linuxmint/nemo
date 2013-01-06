@@ -32,6 +32,7 @@
     background-color: shade(@theme_base_color, 0.9);
 }
 
+
 .nemo-pathbar-button {
     border-style: solid;
     border-width: 1px;
@@ -74,4 +75,10 @@
                 inset 0 1px shade(@theme_bg_color, 0.8),
                 inset -1px 0 shade(@theme_bg_color, 0.8),
                 inset 0 -1px shade(@theme_bg_color, 0.8);
+}
+
+
+.no-displacement {
+    -GtkButton-child-displacement-x: 0;
+    -GtkButton-child-displacement-y: 0;
 }

@@ -699,7 +699,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         gtk_widget_set_child_visible (BUTTON_DATA (list->data)->button, TRUE);
         if (!first_element) {
             nemo_pathbar_button_set_is_left_end (BUTTON_DATA (list->data)->button, FALSE);
-            gint offset = rintf ((float) child_allocation.height / 1.75) + 2;
+            gint offset = rintf ((float) child_allocation.height / PATHBAR_BUTTON_OFFSET_FACTOR) + 2;
             if (direction == GTK_TEXT_DIR_RTL)
                 child_allocation.x += offset;
             else
@@ -1378,24 +1378,8 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data)
         const gchar *dir_name = get_dir_name (button_data);
 
         if (button_data->label != NULL) {
-                if (gtk_label_get_use_markup (GTK_LABEL (button_data->label))) {
-			char *markup;
-
-	  		markup = g_markup_printf_escaped ("<b>%s</b>", dir_name);
-	  		gtk_label_set_markup (GTK_LABEL (button_data->label), markup);
-	  		g_free (markup);
-		} else {
 			gtk_label_set_text (GTK_LABEL (button_data->label), dir_name);
 		}
-
-		/* FIXME: Maybe we dont need this alignment at all and we can
-		 * use GtkMisc aligments or even GtkWidget:halign/valign center.
-		 *
-		 * The following function ensures that the alignment will always
-		 * request the same size whether the button's text is bold or not.
-		 */
-		set_label_size_request (button_data);
-        }
 
         if (button_data->image != NULL) {
 		if (button_data->custom_icon) {
@@ -1429,7 +1413,6 @@ nemo_path_bar_update_button_state (ButtonData *button_data,
 {
 	if (button_data->label != NULL) {
 		gtk_label_set_label (GTK_LABEL (button_data->label), NULL);
-		gtk_label_set_use_markup (GTK_LABEL (button_data->label), current_dir);
 	}
 
 	nemo_path_bar_update_button_appearance (button_data);

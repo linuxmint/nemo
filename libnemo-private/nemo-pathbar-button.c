@@ -85,7 +85,7 @@ do_draw_middle_element (GtkStyleContext  *context,
                                    gint   h,
                                gboolean   highlight)
 {
-    gint offset = rintf ((float) h / 1.75);
+    gint offset = rintf ((float) h / PATHBAR_BUTTON_OFFSET_FACTOR);
 
     cairo_save (cr);
     cairo_set_antialias (cr, A_A);
@@ -138,7 +138,7 @@ do_draw_end_element (GtkStyleContext *context,
                              gint     h,
                          gboolean     highlight)
 {
-    gint offset = rintf ((float) h / 1.75);
+    gint offset = rintf ((float) h / PATHBAR_BUTTON_OFFSET_FACTOR);
     cairo_save (cr);
     cairo_set_antialias (cr, A_A);
 
@@ -231,6 +231,8 @@ nemo_pathbar_button_draw (GtkWidget                   *widget,
         do_draw_middle_element (context, cr, x, y, width, height, button->highlight);
 
     gtk_style_context_restore (context);
+
+    gtk_style_context_add_class (context, "no-displacement");
 
     return GTK_WIDGET_CLASS (draw_chain_class)->draw (widget, cr);
 
