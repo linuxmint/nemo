@@ -42,7 +42,8 @@
 #define SELECTION_ANY_KEY "Any"
 #define SELECTION_NONE_KEY "None"
 
-#define TOKEN_EXEC_FILE_LIST "%L"
+#define TOKEN_EXEC_URL_LIST "%U"
+#define TOKEN_EXEC_FILE_LIST "%F"
 #define TOKEN_LABEL_FILE_NAME "%N"
 
 typedef struct _NemoAction NemoAction;
