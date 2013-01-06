@@ -458,6 +458,7 @@ nemo_action_activate (NemoAction *action, GList *selection)
     GList *arg_list = NULL;
     gchar **exec_args;
     gint exec_arg_count;
+    gboolean use_url = FALSE;
 
     g_shell_parse_argv (action->exec, &exec_arg_count, &exec_args, NULL);
 
@@ -474,14 +475,25 @@ nemo_action_activate (NemoAction *action, GList *selection)
      */
 
     for (token = arg_list; token != NULL; token = token->next) {
-        if (g_strcmp0 (token->data, TOKEN_EXEC_FILE_LIST) == 0)
+        if (g_strcmp0 (token->data, TOKEN_EXEC_FILE_LIST) == 0) {
+            use_url = FALSE;
             break;
+        }
+        if (g_strcmp0 (token->data, TOKEN_EXEC_URL_LIST) == 0) {
+            use_url = TRUE;
+            break;
+        }
     }
 
     if (token != NULL) {
         for (iter = selection; iter != NULL; iter = iter->next) {
-            arg_list = g_list_insert_before (arg_list, token,
-                                             g_filename_from_uri (nemo_file_get_uri (NEMO_FILE (iter->data)), NULL, NULL));
+            if (use_url) {
+                arg_list = g_list_insert_before (arg_list, token,
+                                                 nemo_file_get_uri (NEMO_FILE (iter->data)));
+            } else {
+                arg_list = g_list_insert_before (arg_list, token,
+                                                 g_filename_from_uri (nemo_file_get_uri (NEMO_FILE (iter->data)), NULL, NULL));
+            }
         }
         arg_list = g_list_delete_link (arg_list, token);
     }

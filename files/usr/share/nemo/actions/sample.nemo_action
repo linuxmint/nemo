@@ -23,11 +23,11 @@ Comment=This is a test for Nemo actions.  Action will be applied to %N
 
 
 # What to run.  Enclose in < > to run an executable that resides in the actions folder.
-# Use %L as the token where to insert the file list
+# Use %U as a token where to insert a URL list, use %F as a token to insert a file list
 # **** REQUIRED ****
-#Exec=gedit %L
+#Exec=gedit %F
 
-Exec=<myaction.py -r -g %L>
+Exec=<myaction.py -r -g %F>
 
 
 # Icon name to use in the menu - must be a theme icon name
