@@ -256,7 +256,7 @@ nemo_pathbar_button_set_highlight (GtkWidget *button, gboolean highlight)
 }
 
 void
-nemo_pathbar_button_get_preferred_size (GtkWidget *button, GtkRequisition *requisition)
+nemo_pathbar_button_get_preferred_size (GtkWidget *button, GtkRequisition *requisition, gint height)
 {
     GtkRequisition req;
     gtk_widget_get_preferred_size (button, &req, NULL);
@@ -264,5 +264,6 @@ nemo_pathbar_button_get_preferred_size (GtkWidget *button, GtkRequisition *requi
     if (!NEMO_PATHBAR_BUTTON (button)->is_left_end) {
         req.width -= offset;
     }
+    req.height = height;
     *requisition = req;
 }
