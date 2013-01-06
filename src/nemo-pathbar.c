@@ -571,9 +571,9 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
 	nemo_pathbar_button_get_preferred_size (BUTTON_DATA (path_bar->button_list->data)->button,
                                             &child_requisition);
 
-    gint offset = rintf ((float) child_requisition.height / PATHBAR_BUTTON_OFFSET_FACTOR) + 2;
+    gint offset = rintf ((float) child_requisition.height / PATHBAR_BUTTON_OFFSET_FACTOR + 2);
 
-	width += child_requisition.width;
+    width += child_requisition.width;
 
     for (list = path_bar->button_list->next; list; list = list->next) {
         child = BUTTON_DATA (list->data)->button;
