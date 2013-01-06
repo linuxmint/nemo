@@ -261,7 +261,8 @@ nemo_pathbar_button_get_preferred_size (GtkWidget *button, GtkRequisition *requi
     GtkRequisition req;
     gtk_widget_get_preferred_size (button, &req, NULL);
     gint offset = rintf ((float) req.height / PATHBAR_BUTTON_OFFSET_FACTOR) + 2;
-    if (!NEMO_PATHBAR_BUTTON (button)->is_left_end)
+    if (!NEMO_PATHBAR_BUTTON (button)->is_left_end) {
         req.width -= offset;
+    }
     *requisition = req;
 }

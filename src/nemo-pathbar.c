@@ -651,17 +651,17 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     child_allocation.height = allocation->height;
 
     if (direction == GTK_TEXT_DIR_RTL) {
-            child_allocation.x = allocation->x + allocation->width;
-            if (need_sliders || path_bar->fake_root) {
-  		child_allocation.x -= (path_bar->spacing + path_bar->slider_width);
-  		up_slider_offset = allocation->width - path_bar->slider_width;
-	}
+        child_allocation.x = allocation->x + allocation->width;
+        if (need_sliders || path_bar->fake_root) {
+            child_allocation.x -= (path_bar->spacing + path_bar->slider_width) + (offset / 2);
+            up_slider_offset = allocation->width - path_bar->slider_width;
+        }
     } else {
             child_allocation.x = allocation->x;
             if (need_sliders || path_bar->fake_root) {
-  		up_slider_offset = 0;
-  		child_allocation.x += (path_bar->spacing + path_bar->slider_width);
-	}
+                up_slider_offset = 0;
+                child_allocation.x += (path_bar->spacing + path_bar->slider_width) - (offset / 2);
+            }
     }
 
     gboolean first_element = TRUE;
@@ -683,12 +683,12 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         }
             /* Check to see if we've don't have any more space to allocate buttons */
         if (need_sliders && direction == GTK_TEXT_DIR_RTL) {
-            if (child_allocation.x - path_bar->spacing - path_bar->slider_width < widget_allocation.x) {
+            if (child_allocation.x - path_bar->spacing - path_bar->slider_width + (offset / 2) < widget_allocation.x) {
                 break;
             }
         } else {
             if (need_sliders && direction == GTK_TEXT_DIR_LTR) {
-                if (child_allocation.x + child_allocation.width + path_bar->spacing + path_bar->slider_width > widget_allocation.x + allocation_width) {
+                if (child_allocation.x + child_allocation.width + path_bar->spacing + path_bar->slider_width - (offset / 2) > widget_allocation.x + allocation_width) {
                     break;
                 }
             }
