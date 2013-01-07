@@ -74,7 +74,7 @@ nemo_pathbar_button_finalize (GObject *object)
 #define  _90_DEG  90.0 * (M_PI/180.0)
 #define H_RAD 1 /* Highlight radius */
 #define H_O 2  /*  Highlight offset */
-#define H_T_COMP H_O - 1 /* Highlight tangential compensation */
+#define H_T_COMP H_O + 0 /* Highlight tangential compensation */
 
 static void
 do_draw_middle_element (GtkStyleContext  *context,
