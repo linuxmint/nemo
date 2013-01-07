@@ -52,10 +52,9 @@
     border-style: solid;
     border-width: 1px;
     background-image: -gtk-gradient(linear, left top, left bottom,
-                                     color-stop (0, shade(alpha(@theme_bg_color, 0.8), .7)),
+                                     color-stop (0, shade(alpha(@theme_bg_color, 0.8), .8)),
                                      color-stop (.3, shade(alpha(@theme_bg_color, 0.8), .9)),
-                                     color-stop (.7, shade(alpha(@theme_bg_color, 0.8), 1.05)),
-                                     color-stop (1, shade(alpha(@theme_bg_color, 0.8), 1.05)));
+                                     color-stop (1, shade(alpha(@theme_bg_color, 0.8), 1.0)));
     box-shadow: inset 1px 0 shade(@theme_bg_color, 0.8),
                 inset 0 1px shade(@theme_bg_color, 0.8),
                 inset -1px 0 shade(@theme_bg_color, 0.8),
@@ -82,9 +81,8 @@
     border-width: 1px;
 
     background-image: -gtk-gradient(linear, left top, left bottom,
-                                     color-stop (0, shade(alpha(@theme_selected_bg_color, 0.8), .7)),
-                                     color-stop (.3, shade(alpha(@theme_selected_bg_color, 0.8), .9)),
-                                     color-stop (.7, shade(alpha(@theme_selected_bg_color, 0.8), 1.25)),
+                                     color-stop (0, shade(alpha(@theme_selected_bg_color, 0.8), .80)),
+                                     color-stop (.3, shade(alpha(@theme_selected_bg_color, 0.8), .95)),
                                      color-stop (1, shade(alpha(@theme_selected_bg_color, 0.8), 1.25)));
     box-shadow: inset 1px 0 shade(@theme_bg_color, 0.8),
                 inset 0 1px shade(@theme_bg_color, 0.8),
