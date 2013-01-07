@@ -67,6 +67,21 @@
     border-width: 1px;
 
     background-image: -gtk-gradient(linear, left top, left bottom,
+                                     color-stop (0, shade(alpha(@theme_selected_bg_color, 0.8), 1.25)),
+                                     color-stop (.3, shade(alpha(@theme_selected_bg_color, 0.8), 1.25)),
+                                     color-stop (.7, shade(alpha(@theme_selected_bg_color, 0.8), 0.95)),
+                                     color-stop (1, shade(alpha(@theme_selected_bg_color, 0.8), 0.85)));
+    box-shadow: inset 1px 0 shade(@theme_bg_color, 0.8),
+                inset 0 1px shade(@theme_bg_color, 0.8),
+                inset -1px 0 shade(@theme_bg_color, 0.8),
+                inset 0 -1px shade(@theme_bg_color, 0.8);
+}
+
+.nemo-pathbar-button-active-hover {
+    border-style: solid;
+    border-width: 1px;
+
+    background-image: -gtk-gradient(linear, left top, left bottom,
                                      color-stop (0, shade(alpha(@theme_selected_bg_color, 0.8), .85)),
                                      color-stop (.3, shade(alpha(@theme_selected_bg_color, 0.8), .95)),
                                      color-stop (.7, shade(alpha(@theme_selected_bg_color, 0.8), 1.25)),

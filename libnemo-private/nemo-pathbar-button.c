@@ -204,6 +204,8 @@ nemo_pathbar_button_draw (GtkWidget                   *widget,
             gtk_style_context_add_class (context, "nemo-pathbar-button");
             break;
         case GTK_STATE_FLAG_ACTIVE | GTK_STATE_FLAG_PRELIGHT:
+            gtk_style_context_add_class (context, "nemo-pathbar-button-active-hover");
+            break;
         case GTK_STATE_FLAG_PRELIGHT:
         case GTK_STATE_FLAG_FOCUSED:
         case GTK_STATE_FLAG_ACTIVE | GTK_STATE_FLAG_FOCUSED:
