@@ -142,5 +142,6 @@
 #define NEMO_ACTION_MAILTO_OTHER "MailToOther"
 #define NEMO_ACTION_SET_AS_WALLPAPER "SetAsWallPaper"
 #define NEMO_ACTION_OPEN_AS_ROOT "OpenAsRoot"
+#define NEMO_ACTION_MINTSTICK "WriteUSBImage"
 
 #endif /* NEMO_ACTIONS_H */
