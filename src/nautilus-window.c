@@ -689,7 +689,7 @@ open_shortcut_in_new_tab_cb (GtkMenuItem *item,
 	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
 	GFile *location;
 
-	location = gtk_places_sidebar_get_selected_location (GTK_PLACES_SIDEBAR (window->details->sidebar));
+	location = gtk_places_sidebar_get_selected_location (GTK_PLACES_SIDEBAR (window->details->places_sidebar));
 	if (location)
 		nautilus_window_slot_open_location (window->details->active_slot, location, NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB);
 
