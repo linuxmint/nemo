@@ -251,9 +251,3 @@ nautilus_trash_monitor_get_icon (void)
 	}
 	return NULL;
 }
-
-void
-nautilus_trash_monitor_add_new_trash_directories (void)
-{
-	/* We trashed something... */
-}
