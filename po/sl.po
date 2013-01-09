@@ -4,15 +4,15 @@
 #
 # Andraž Tori <andraz.tori1@guest.arnes.si>, 2000.
 # Matjaž Horvat <m@owca.info>, 2006.
-# Matej Urbančič <mateju@svn.gnome.org> 2007- 2012.
+# Matej Urbančič <mateju@svn.gnome.org> 2007- 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nautilus master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-12-17 16:05+0000\n"
-"PO-Revision-Date: 2012-12-18 08:35+0100\n"
+"POT-Creation-Date: 2013-01-08 13:48+0000\n"
+"PO-Revision-Date: 2013-01-09 15:21+0100\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -62,20 +62,20 @@ msgstr "X"
 msgid "Y"
 msgstr "Y"
 
-#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6159
+#: ../eel/eel-editable-label.c:313 ../libnautilus-private/nautilus-file.c:6159
 #: ../libnautilus-private/nautilus-file.c:6160
 msgid "Text"
 msgstr "Besedilo"
 
-#: ../eel/eel-editable-label.c:312
+#: ../eel/eel-editable-label.c:314
 msgid "The text of the label."
 msgstr "Besedilo oznake."
 
-#: ../eel/eel-editable-label.c:318
+#: ../eel/eel-editable-label.c:320
 msgid "Justification"
 msgstr "Poravnava"
 
-#: ../eel/eel-editable-label.c:319
+#: ../eel/eel-editable-label.c:321
 msgid ""
 "The alignment of the lines in the text of the label relative to each other. "
 "This does NOT affect the alignment of the label within its allocation. See "
@@ -85,37 +85,37 @@ msgstr ""
 "vpliva na poravnavo nalepk znotraj dodelitve. Za več podrobnosti si oglejte "
 "GtkMisc:xalign"
 
-#: ../eel/eel-editable-label.c:327
+#: ../eel/eel-editable-label.c:329
 msgid "Line wrap"
 msgstr "Prelom vrstic"
 
-#: ../eel/eel-editable-label.c:328
+#: ../eel/eel-editable-label.c:330
 msgid "If set, wrap lines if the text becomes too wide."
 msgstr ""
 "Izbrana možnost določi prelom vrstic, kadar je besedilo širše od zaslona."
 
-#: ../eel/eel-editable-label.c:335
+#: ../eel/eel-editable-label.c:337
 msgid "Cursor Position"
 msgstr "Položaj kazalca"
 
-#: ../eel/eel-editable-label.c:336
+#: ../eel/eel-editable-label.c:338
 msgid "The current position of the insertion cursor in chars."
 msgstr "Trenutni položaj vstavitvenega kazalca v znakih."
 
-#: ../eel/eel-editable-label.c:345
+#: ../eel/eel-editable-label.c:347
 msgid "Selection Bound"
 msgstr "Drugi konec izbire"
 
-#: ../eel/eel-editable-label.c:346
+#: ../eel/eel-editable-label.c:348
 msgid ""
 "The position of the opposite end of the selection from the cursor in chars."
 msgstr "Mesto nasprotnega konca izbire od kazalca v znakih."
 
-#: ../eel/eel-editable-label.c:3086
+#: ../eel/eel-editable-label.c:3088
 msgid "Select All"
 msgstr "Izberi vse"
 
-#: ../eel/eel-editable-label.c:3097
+#: ../eel/eel-editable-label.c:3099
 msgid "Input Methods"
 msgstr "Načini vnosa"
 
@@ -136,11 +136,11 @@ msgstr " (neveljaven Unicode)"
 #: ../libnautilus-private/nautilus-file-utilities.c:275
 #: ../src/nautilus-pathbar.c:295 ../src/nautilus-places-sidebar.c:511
 #: ../src/nautilus-query-editor.c:1164
-#: ../src/nautilus-shell-search-provider.c:309
+#: ../src/nautilus-shell-search-provider.c:310
 msgid "Home"
 msgstr "Domača mapa"
 
-#: ../libnautilus-private/nautilus-canvas-container.c:2380
+#: ../libnautilus-private/nautilus-canvas-container.c:2379
 msgid "The selection rectangle"
 msgstr "Pravokotnik izbire"
 
@@ -2554,7 +2554,7 @@ msgstr ""
 "Z različico programa Nautilus 3.0 je ta mapa opuščena, vsebina pa je "
 "premaknjena v mapo ~/.config/nautilus"
 
-#: ../src/nautilus-application.c:848
+#: ../src/nautilus-application.c:847
 #: ../src/nautilus-file-management-properties.c:196
 #: ../src/nautilus-window-menus.c:253
 #, c-format
@@ -2577,42 +2577,50 @@ msgstr "možnosti --quit ni mogoče uporabiti naslovi URI."
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry ni mogoče uporabiti z več kot enim URI-jem."
 
-#: ../src/nautilus-application.c:1079
+#: ../src/nautilus-application.c:1037
+msgid "--select must be used with at least an URI."
+msgstr "--select mora biti uporabljen vsaj z enim naslovom URI."
+
+#: ../src/nautilus-application.c:1135
 msgid "Perform a quick set of self-check tests."
 msgstr "Opravi hitra samo-preverjanja."
 
-#: ../src/nautilus-application.c:1085
+#: ../src/nautilus-application.c:1141
 msgid "Show the version of the program."
 msgstr "Pokaži različico programa."
 
-#: ../src/nautilus-application.c:1087
+#: ../src/nautilus-application.c:1143
 msgid "Create the initial window with the given geometry."
 msgstr "Ustvari začetno okno s podano geometrijo."
 
-#: ../src/nautilus-application.c:1087
+#: ../src/nautilus-application.c:1143
 msgid "GEOMETRY"
 msgstr "GEOMETRIJA"
 
-#: ../src/nautilus-application.c:1089
+#: ../src/nautilus-application.c:1145
 msgid "Only create windows for explicitly specified URIs."
 msgstr "Ustvari le okna za posebej navedene URIje."
 
-#: ../src/nautilus-application.c:1091
+#: ../src/nautilus-application.c:1147
 msgid ""
 "Do not manage the desktop (ignore the preference set in the preferences "
 "dialog)."
 msgstr ""
 "Ne upravljaj namizja (prezri nastavitve v pogovornemu oknu nastavitev)."
 
-#: ../src/nautilus-application.c:1093
+#: ../src/nautilus-application.c:1149
 msgid "Quit Nautilus."
 msgstr "Končaj Nautilus."
 
-#: ../src/nautilus-application.c:1094
+#: ../src/nautilus-application.c:1151
+msgid "Select specified URI in parent folder."
+msgstr "Izberite določen naslov URI v nadrejeni mapi."
+
+#: ../src/nautilus-application.c:1152
 msgid "[URI...]"
 msgstr "[URI ...]"
 
-#: ../src/nautilus-application.c:1107
+#: ../src/nautilus-application.c:1165
 msgid ""
 "\n"
 "\n"
@@ -2624,13 +2632,13 @@ msgstr ""
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1117
+#: ../src/nautilus-application.c:1175
 msgid "Could not parse arguments"
 msgstr "Ni mogoče razčleniti argumentov"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1149
+#: ../src/nautilus-application.c:1207
 msgid "Could not register the application"
 msgstr "Ni mogoče vpisati programa"
 
@@ -3195,7 +3203,7 @@ msgstr "_Vsakič vprašaj"
 #. trash
 #: ../src/nautilus-file-management-properties.ui.h:19
 #: ../src/nautilus-places-sidebar.c:537
-#: ../src/nautilus-shell-search-provider.c:314 ../src/nautilus-trash-bar.c:194
+#: ../src/nautilus-shell-search-provider.c:315 ../src/nautilus-trash-bar.c:194
 msgid "Trash"
 msgstr "Smeti"
 
