@@ -556,24 +556,24 @@ setup_side_pane_width (NautilusWindow *window)
 
 /* Callback used when the places sidebar changes location; we need to change the displayed folder */
 static void
-places_sidebar_open_location_cb (GtkPlacesSidebar *sidebar,
-				 GFile            *location,
-				 GtkPlacesOpenMode open_mode,
-				 gpointer          user_data)
+places_sidebar_open_location_cb (GtkPlacesSidebar	*sidebar,
+				 GFile			*location,
+				 GtkPlacesOpenFlags	 open_flags,
+				 gpointer		 user_data)
 {
 	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
 	NautilusWindowOpenFlags flags;
 
-	switch (open_mode) {
-	case GTK_PLACES_OPEN_MODE_NEW_TAB:
+	switch (open_flags) {
+	case GTK_PLACES_OPEN_NEW_TAB:
 		flags = NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB;
 		break;
 
-	case GTK_PLACES_OPEN_MODE_NEW_WINDOW:
+	case GTK_PLACES_OPEN_NEW_WINDOW:
 		flags = NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW;
 		break;
 
-	case GTK_PLACES_OPEN_MODE_NORMAL: /* fall-through */
+	case GTK_PLACES_OPEN_NORMAL: /* fall-through */
 	default:
 		flags = 0;
 		break;
@@ -668,37 +668,6 @@ window_loading_uri_cb (NautilusWindow *window,
 	}
 }
 
-/* Callback used in the "open in new tab" menu item from the places sidebar */
-static void
-open_shortcut_in_new_tab_cb (GtkMenuItem *item,
-			     gpointer     user_data)
-{
-	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
-	GFile *location;
-
-	location = gtk_places_sidebar_get_selected_location (GTK_PLACES_SIDEBAR (window->details->places_sidebar));
-	if (location)
-		nautilus_window_slot_open_location (window->details->active_slot, location, NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB);
-
-	g_object_unref (location);
-	
-}
-
-/* Callback used in the "open in new tab" menu item from the places sidebar */
-static void
-open_shortcut_in_new_window_cb (GtkMenuItem *item,
-				gpointer     user_data)
-{
-	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
-	GFile *location;
-
-	location = gtk_places_sidebar_get_selected_location (GTK_PLACES_SIDEBAR (window->details->places_sidebar));
-	if (location)
-		nautilus_window_slot_open_location (window->details->active_slot, location, NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW);
-
-	g_object_unref (location);
-}
-
 /* Callback used in the "empty trash" menu item from the places sidebar */
 static void
 empty_trash_cb (GtkMenuItem *item,
@@ -737,18 +706,6 @@ places_sidebar_populate_popup_cb (GtkPlacesSidebar *sidebar,
 	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
 	GtkWidget *item;
 	GFile *trash;
-
-	item = gtk_menu_item_new_with_mnemonic (_("Open in New _Tab"));
-	g_signal_connect (item, "activate",
-			  G_CALLBACK (open_shortcut_in_new_tab_cb), window);
-	gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, 1);
-	gtk_widget_show (item);
-
-	item = gtk_menu_item_new_with_mnemonic (_("Open in New _Window"));
-	g_signal_connect (item, "activate",
-			  G_CALLBACK (open_shortcut_in_new_window_cb), window);
-	gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, 2);
-	gtk_widget_show (item);
 
 	trash = g_file_new_for_uri ("trash:///");
 	if (g_file_equal (trash, selected_item)) {
@@ -794,6 +751,10 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 			  window);
 
 	window->details->places_sidebar = gtk_places_sidebar_new ();
+	gtk_places_sidebar_set_open_flags (GTK_PLACES_SIDEBAR (window->details->places_sidebar),
+					   (GTK_PLACES_OPEN_NORMAL
+					    | GTK_PLACES_OPEN_NEW_TAB
+					    | GTK_PLACES_OPEN_NEW_WINDOW));
 	gtk_places_sidebar_set_accept_uri_drops (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
 
 	g_signal_connect (window->details->places_sidebar, "open-location",
