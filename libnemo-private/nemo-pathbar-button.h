@@ -38,7 +38,7 @@
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_PATHBAR_BUTTON, NemoPathbarButtonClass))
 
 
-#define PATHBAR_BUTTON_OFFSET_FACTOR 1.75
+#define PATHBAR_BUTTON_OFFSET_FACTOR 2.125
 
 typedef struct _NemoPathbarButton NemoPathbarButton;
 typedef struct _NemoPathbarButtonClass NemoPathbarButtonClass;
