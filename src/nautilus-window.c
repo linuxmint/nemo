@@ -663,7 +663,7 @@ window_loading_uri_cb (NautilusWindow *window,
 		GFile *file;
 
 		file = g_file_new_for_uri (location);
-		gtk_places_sidebar_set_current_location (GTK_PLACES_SIDEBAR (window->details->places_sidebar), file);
+		gtk_places_sidebar_set_location (GTK_PLACES_SIDEBAR (window->details->places_sidebar), file);
 		g_object_unref (file);
 	}
 }
@@ -688,7 +688,7 @@ properties_cb (GtkMenuItem *item,
 	GList *list;
 	NautilusFile *file;
 
-	selected = gtk_places_sidebar_get_selected_location (GTK_PLACES_SIDEBAR (window->details->places_sidebar));
+	selected = gtk_places_sidebar_get_location (GTK_PLACES_SIDEBAR (window->details->places_sidebar));
 	file = nautilus_file_get (selected);
 	g_object_unref (selected);
 
