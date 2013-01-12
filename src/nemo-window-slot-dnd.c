@@ -28,6 +28,7 @@
 
 #include "nemo-view-dnd.h"
 #include "nemo-window-slot-dnd.h"
+#include <libnemo-private/nemo-pathbar-button.h>
 
 typedef struct {
   gboolean have_data;
@@ -114,9 +115,17 @@ slot_proxy_drag_motion (GtkWidget          *widget,
 
  out:
   if (action != 0) {
-    gtk_drag_highlight (widget);
+    if (NEMO_IS_PATHBAR_BUTTON (widget)) {
+        nemo_pathbar_button_set_highlight (widget, TRUE);
+    } else {
+        gtk_drag_highlight (widget);
+    }
   } else {
-    gtk_drag_unhighlight (widget);
+    if (NEMO_IS_PATHBAR_BUTTON (widget)) {
+        nemo_pathbar_button_set_highlight (widget, FALSE);
+    } else {
+        gtk_drag_unhighlight (widget);
+    }
   }
 
   gdk_drag_status (context, action, time);
@@ -163,12 +172,17 @@ slot_proxy_drag_leave (GtkWidget          *widget,
 		       unsigned int        time,
 		       gpointer            user_data)
 {
-  NemoDragSlotProxyInfo *drag_info;
+    NemoDragSlotProxyInfo *drag_info;
 
-  drag_info = user_data;
+    drag_info = user_data;
 
-  gtk_drag_unhighlight (widget);
-  drag_info_clear (drag_info);
+    if (NEMO_IS_PATHBAR_BUTTON (widget)) {
+        nemo_pathbar_button_set_highlight (widget, FALSE);
+    } else {
+        gtk_drag_unhighlight (widget);
+    }
+
+    drag_info_clear (drag_info);
 }
 
 static gboolean
