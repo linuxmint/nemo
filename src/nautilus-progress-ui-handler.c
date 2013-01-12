@@ -112,6 +112,8 @@ progress_ui_handler_ensure_notification (NautilusProgressUIHandler *self)
 	notify_notification_set_category (notify, "transfer");
 	notify_notification_set_hint (notify, "resident",
 				      g_variant_new_boolean (TRUE));
+	notify_notification_set_hint (notify,
+				      "desktop-entry", g_variant_new_string ("nautilus"));
 
 	notify_notification_add_action (notify, ACTION_DETAILS,
 					_("Show Details"),
@@ -272,6 +274,8 @@ progress_ui_handler_show_complete_notification (NautilusProgressUIHandler *self)
 	complete_notification = notify_notification_new (_("File Operations"),
 							 _("All file operations have been successfully completed"),
 							 NULL);
+	notify_notification_set_hint (complete_notification,
+				      "desktop-entry", g_variant_new_string ("nautilus"));
 	notify_notification_show (complete_notification, NULL);
 
 	g_object_unref (complete_notification);

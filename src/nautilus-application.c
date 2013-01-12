@@ -146,6 +146,8 @@ nautilus_application_notify_unmount_done (NautilusApplication *application,
 		strings = g_strsplit (message, "\n", 0);
 		unplug = notify_notification_new (strings[0], strings[1],
 						  "media-removable");
+		notify_notification_set_hint (unplug,
+					      "desktop-entry", g_variant_new_string ("nautilus"));
 
 		notify_notification_show (unplug, NULL);
 		g_object_unref (unplug);
@@ -166,6 +168,8 @@ nautilus_application_notify_unmount_show (NautilusApplication *application,
 			notify_notification_new (strings[0], strings[1],
 						 "media-removable");
 
+		notify_notification_set_hint (application->priv->unmount_notify,
+					      "desktop-entry", g_variant_new_string ("nautilus"));
 		notify_notification_set_hint (application->priv->unmount_notify,
 					      "transient", g_variant_new_boolean (TRUE));
 		notify_notification_set_urgency (application->priv->unmount_notify,
