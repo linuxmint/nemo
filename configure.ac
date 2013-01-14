@@ -312,7 +312,6 @@ docs/reference/Makefile
 docs/reference/libnautilus-extension/Makefile
 docs/reference/libnautilus-extension/version.xml
 eel/Makefile
-icons/Makefile
 libnautilus-private/Makefile
 libnautilus-extension/Makefile
 libnautilus-extension/libnautilus-extension.pc

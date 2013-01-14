@@ -68,25 +68,14 @@ $(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/she
 		$(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml		\
 		$(NULL)
 
-UI_FILES = \
-	nautilus-app-menu.ui			\
-	nautilus-bookmarks-window.ui		\
-	nautilus-file-management-properties.ui	\
-	nautilus-canvas-view-ui.xml		\
-	nautilus-desktop-canvas-view-ui.xml	\
-	nautilus-directory-view-ui.xml		\
-	nautilus-list-view-ui.xml		\
-	nautilus-shell-ui.xml			\
-	$(NULL)
-
 headers =					\
 	nautilus-special-location-bar.h		\
 	$(NULL)
 
-nautilus-resources.c: nautilus.gresource.xml $(shell glib-compile-resources --generate-dependencies $(srcdir)/nautilus.gresource.xml)
+resource_files = $(shell glib-compile-resources --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/nautilus.gresource.xml)
+nautilus-resources.c: nautilus.gresource.xml $(resource_files)
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-source --c-name nautilus $(srcdir)/nautilus.gresource.xml
-
-nautilus-resources.h: nautilus.gresource.xml
+nautilus-resources.h: nautilus.gresource.xml $(resource_files)
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-header --c-name nautilus $(srcdir)/nautilus.gresource.xml
 
 nautilus-enum-types.h: stamp-nautilus-enum-types.h
@@ -263,8 +252,8 @@ CLEANFILES = \
 	$(NULL)
 
 EXTRA_DIST =					\
+	$(resource_files)			\
 	$(server_in_files)			\
-	$(UI_FILES)				\
 	nautilus.gresource.xml			\
 	check-nautilus				\
 	$(NULL)
