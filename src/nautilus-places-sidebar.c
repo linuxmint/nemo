@@ -99,6 +99,7 @@ typedef struct {
 	NautilusWindowOpenFlags go_to_after_mount_flags;
 
 	GDBusProxy *hostnamed_proxy;
+	GCancellable *hostnamed_cancellable;
 	char *hostname;
 
 	guint bookmarks_changed_id;
@@ -3061,6 +3062,8 @@ hostname_proxy_new_cb (GObject      *source_object,
 	GError *error = NULL;
 
 	sidebar->hostnamed_proxy = g_dbus_proxy_new_for_bus_finish (res, &error);
+	g_clear_object (&sidebar->hostnamed_cancellable);
+
 	if (error != NULL) {
 		g_debug ("Failed to create D-Bus proxy: %s", error->message);
 		g_error_free (error);
@@ -3261,13 +3264,14 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 				  sidebar);
 
 	sidebar->hostname = g_strdup (_("Computer"));
+	sidebar->hostnamed_cancellable = g_cancellable_new ();
 	g_dbus_proxy_new_for_bus (G_BUS_TYPE_SYSTEM,
 				  G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES,
 				  NULL,
 				  "org.freedesktop.hostname1",
 				  "/org/freedesktop/hostname1",
 				  "org.freedesktop.hostname1",
-				  NULL,
+				  sidebar->hostnamed_cancellable,
 				  hostname_proxy_new_cb,
 				  sidebar);
 
@@ -3335,6 +3339,11 @@ nautilus_places_sidebar_dispose (GObject *object)
 						      drive_changed_callback, sidebar);
 
 		g_clear_object (&sidebar->volume_monitor);
+	}
+
+	if (sidebar->hostnamed_cancellable != NULL) {
+		g_cancellable_cancel (sidebar->hostnamed_cancellable);
+		g_clear_object (&sidebar->hostnamed_cancellable);
 	}
 
 	g_clear_object (&sidebar->hostnamed_proxy);
