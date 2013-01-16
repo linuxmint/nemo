@@ -41,7 +41,9 @@ struct NemoWindowDetails
 {
         GtkWidget *statusbar;
         GtkWidget *menubar;
-        
+
+        GtkWidget *nemo_status_bar;
+
         GtkUIManager *ui_manager;
         GtkActionGroup *main_action_group; /* owned by ui_manager */
         guint help_message_cid;
@@ -87,7 +89,9 @@ struct NemoWindowDetails
         int side_pane_width;
         GtkWidget *sidebar;
         gchar *sidebar_id;
-        
+
+        gboolean show_sidebar;
+
         /* Toolbar */
         GtkWidget *toolbar;
 
@@ -106,6 +110,7 @@ struct NemoWindowDetails
         gboolean disable_chrome;
 
         guint sidebar_width_handler_id;
+
 };
 
 /* window geometry */

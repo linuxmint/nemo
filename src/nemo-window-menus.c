@@ -626,6 +626,23 @@ nemo_window_update_split_view_actions_sensitivity (NemoWindow *window)
 	g_clear_object (&next_pane_location);
 }
 
+static void
+sidebar_radio_entry_changed_cb (GtkAction *action,
+                GtkRadioAction *current,
+                gpointer user_data)
+{
+    gint current_value;
+    NemoWindow *window = NEMO_WINDOW (user_data);
+
+    current_value = gtk_radio_action_get_current_value (current);
+
+    if (current_value == SIDEBAR_PLACES) {
+        nemo_window_set_sidebar_id (window, NEMO_WINDOW_SIDEBAR_PLACES);
+    } else if (current_value == SIDEBAR_TREE) {
+        nemo_window_set_sidebar_id (window, NEMO_WINDOW_SIDEBAR_TREE);
+    }
+}
+
 /* TODO: bind all of this with g_settings_bind and GBinding */
 static guint
 sidebar_id_to_value (const gchar *sidebar_id)
@@ -638,12 +655,29 @@ sidebar_id_to_value (const gchar *sidebar_id)
 	return retval;
 }
 
+static void
+update_side_bar_radio_buttons (NemoWindow *window)
+{
+    GtkActionGroup *action_group;
+    GtkAction *action;
+    guint current_value;
+
+    action_group = nemo_window_get_main_action_group (window);
+
+    action = gtk_action_group_get_action (action_group,
+                          "Sidebar Places");
+    current_value = sidebar_id_to_value (nemo_window_get_sidebar_id (window));
+
+    g_signal_handlers_block_by_func (action, sidebar_radio_entry_changed_cb, window);
+    gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), current_value);
+    g_signal_handlers_unblock_by_func (action, sidebar_radio_entry_changed_cb, window);
+}
+
 void
 nemo_window_update_show_hide_menu_items (NemoWindow *window) 
 {
 	GtkActionGroup *action_group;
 	GtkAction *action;
-	guint current_value;
 
 	action_group = nemo_window_get_main_action_group (window);
 
@@ -653,10 +687,7 @@ nemo_window_update_show_hide_menu_items (NemoWindow *window)
 				      nemo_window_split_view_showing (window));
 	nemo_window_update_split_view_actions_sensitivity (window);
 
-	action = gtk_action_group_get_action (action_group,
-					      "Sidebar Places");
-	current_value = sidebar_id_to_value (window->details->sidebar_id);
-	gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), current_value);
+    update_side_bar_radio_buttons (window);
 }
 
 static void
@@ -966,26 +997,6 @@ action_tab_change_action_activate_callback (GtkAction *action,
 	num = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action), "num"));
 	if (num < gtk_notebook_get_n_pages (notebook)) {
 		gtk_notebook_set_current_page (notebook, num);
-	}
-}
-
-static void
-sidebar_radio_entry_changed_cb (GtkAction *action,
-				GtkRadioAction *current,
-				gpointer user_data)
-{
-	gint current_value;
-
-	current_value = gtk_radio_action_get_current_value (current);
-
-	if (current_value == SIDEBAR_PLACES) {
-		g_settings_set_string (nemo_window_state,
-				       NEMO_WINDOW_STATE_SIDE_PANE_VIEW,
-				       NEMO_WINDOW_SIDEBAR_PLACES);
-	} else if (current_value == SIDEBAR_TREE) {
-		g_settings_set_string (nemo_window_state,
-				       NEMO_WINDOW_STATE_SIDE_PANE_VIEW,
-				       NEMO_WINDOW_SIDEBAR_TREE);
 	}
 }
 
@@ -1306,39 +1317,6 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
   
    	g_object_unref (action);
 
-    action = GTK_ACTION (gtk_action_new (NEMO_ACTION_TOOLBAR_ZOOM_OUT,
-                         _("Zoom Out"),
-                         _("Zoom Out"),
-                         NULL));
-    g_signal_connect (action, "activate",
-                      G_CALLBACK (action_zoom_out_callback),
-                      window);
-    gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "nemo-zoom-out-symbolic");
-    g_object_unref (action);
-
-    action = GTK_ACTION (gtk_action_new (NEMO_ACTION_TOOLBAR_ZOOM_NORMAL,
-                         _("100\%"),
-                         _("Normal size"),
-                         NULL));
-    g_signal_connect (action, "activate",
-                      G_CALLBACK (action_zoom_normal_callback),
-                      window);
-    gtk_action_group_add_action (action_group, action);
-    gtk_action_set_is_important (GTK_ACTION (action), TRUE);
-    g_object_unref (action);
-
-    action = GTK_ACTION (gtk_action_new (NEMO_ACTION_TOOLBAR_ZOOM_IN,
-                         _("Zoom In"),
-                         _("Zoom In"),
-                         NULL));
-    g_signal_connect (action, "activate",
-                      G_CALLBACK (action_zoom_in_callback),
-                      window);
-    gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "nemo-zoom-in-symbolic");
-    g_object_unref (action);
-
     action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_ICON_VIEW,
                          _("Icons"),
                          _("Icon View"),
@@ -1420,14 +1398,14 @@ window_menus_set_bindings (NemoWindow *window)
 			 G_SETTINGS_BIND_DEFAULT);
 
 	action = gtk_action_group_get_action (action_group,
-					      NEMO_ACTION_SHOW_HIDE_SIDEBAR);	
+					      NEMO_ACTION_SHOW_HIDE_SIDEBAR);
 
-	g_settings_bind (nemo_window_state,
-			 NEMO_WINDOW_STATE_START_WITH_SIDEBAR,
-			 action,
-			 "active",
-			 G_SETTINGS_BIND_DEFAULT);
-    
+    g_object_bind_property (window,
+                            "show-sidebar",
+                            action,
+                            "active",
+                            G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+
     action = gtk_action_group_get_action (action_group,
 					      NEMO_ACTION_SHOW_HIDE_LOCATION_ENTRY);
 
@@ -1512,6 +1490,9 @@ nemo_window_initialize_menus (NemoWindow *window)
 	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_SHOW_HIDDEN_FILES,
 				  G_CALLBACK(show_hidden_files_preference_callback),
 				  window);
+
+    g_signal_connect_object ( NEMO_WINDOW (window), "notify::sidebar-view-id",
+                             G_CALLBACK (update_side_bar_radio_buttons), window, 0);
 
 	/* Alt+N for the first 10 tabs */
 	for (i = 0; i < 10; ++i) {
