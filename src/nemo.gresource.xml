@@ -9,6 +9,7 @@
     <file>nemo-desktop-icon-view-ui.xml</file>
     <file>nemo-list-view-ui.xml</file>
     <file>nemo-shell-ui.xml</file>
+    <file>nemo-statusbar-ui.xml</file>
     <file alias="icons/thumbnail_frame.png">../icons/thumbnail_frame.png</file>
     <file alias="icons/knob.png">../icons/knob.png</file>
     <file>nemo-style.css</file>

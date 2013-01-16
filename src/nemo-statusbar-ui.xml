@@ -1,0 +1,8 @@
+<ui>
+<toolbar name="Statusbar">
+    <toolitem name="Places" action="Statusbar Places"/>
+    <toolitem name="Treeview" action="Statusbar Treeview"/>
+    <separator name="Separator" />
+    <toolitem name="SidebarToggle" action="Statusbar Sidebar Toggle"/>
+</toolbar>
+</ui>
