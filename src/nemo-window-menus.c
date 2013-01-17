@@ -1173,6 +1173,11 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* tooltip */              N_("Change the visibility of this window's statusbar"),
                              NULL,
   /* is_active */            TRUE },
+  /* name, stock id */     { NEMO_ACTION_SHOW_HIDE_MENUBAR, NULL,
+  /* label, accelerator */   N_("M_enubar"), NULL,
+  /* tooltip */              N_("Change the default visibility of the menubar"),
+                             NULL,
+  /* is_active */            TRUE },
   /* name, stock id */     { "Search", "edit-find",
   /* label, accelerator */   N_("_Search for Files..."), "<control>f",
   /* tooltip */              N_("Search documents and folders by name"),
@@ -1396,6 +1401,15 @@ window_menus_set_bindings (NemoWindow *window)
 			 action,
 			 "active",
 			 G_SETTINGS_BIND_DEFAULT);
+
+    action = gtk_action_group_get_action (action_group,
+                          NEMO_ACTION_SHOW_HIDE_MENUBAR);
+
+    g_settings_bind (nemo_window_state,
+             NEMO_WINDOW_STATE_START_WITH_MENU_BAR,
+             action,
+             "active",
+             G_SETTINGS_BIND_DEFAULT);
 
 	action = gtk_action_group_get_action (action_group,
 					      NEMO_ACTION_SHOW_HIDE_SIDEBAR);

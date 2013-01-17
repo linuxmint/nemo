@@ -37,6 +37,7 @@
 #define NEMO_ACTION_SHOW_HIDE_TOOLBAR "Show Hide Toolbar"
 #define NEMO_ACTION_SHOW_HIDE_SIDEBAR "Show Hide Sidebar"
 #define NEMO_ACTION_SHOW_HIDE_STATUSBAR "Show Hide Statusbar"
+#define NEMO_ACTION_SHOW_HIDE_MENUBAR "Show Hide Menubar"
 #define NEMO_ACTION_SHOW_HIDE_LOCATION_BAR "Show Hide Location Bar"
 #define NEMO_ACTION_SHOW_HIDE_EXTRA_PANE "Show Hide Extra Pane"
 #define NEMO_ACTION_SHOW_HIDE_LOCATION_ENTRY "Show Hide Location Entry"

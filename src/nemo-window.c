@@ -549,6 +549,9 @@ nemo_window_constructed (GObject *self)
 	/* Statusbar is packed in the subclasses */
 
 	nemo_window_initialize_menus (window);
+
+    window->details->temporary_menu_bar = FALSE;
+
 	nemo_window_initialize_actions (window);
 
 	menu = gtk_ui_manager_get_widget (window->details->ui_manager, "/MenuBar");
@@ -559,6 +562,14 @@ nemo_window_constructed (GObject *self)
 	} else {
 		gtk_widget_hide (menu);
 	}
+
+    g_settings_bind_with_mapping (nemo_window_state,
+                      NEMO_WINDOW_STATE_START_WITH_MENU_BAR,
+                      window->details->menubar,
+                      "visible",
+                      G_SETTINGS_BIND_GET,
+                      nemo_window_disable_chrome_mapping, NULL,
+                      window, NULL);
 
 	gtk_container_add (GTK_CONTAINER (grid), menu);
 
@@ -1018,6 +1029,33 @@ nemo_window_realize (GtkWidget *widget)
 	update_cursor (NEMO_WINDOW (widget));
 }
 
+static void
+handle_alt_menu_key (NemoWindow *window,
+                     gboolean on_release)
+{
+    GtkWidget *menu = window->details->menubar;
+
+    gboolean default_visible = g_settings_get_boolean (nemo_window_state,
+                                                      NEMO_WINDOW_STATE_START_WITH_MENU_BAR);
+
+    if (default_visible || window->details->disable_chrome)
+        return;
+
+    gboolean visible = gtk_widget_get_visible (menu);
+
+    if (!visible) {
+        gtk_widget_show (menu);
+        window->details->temporary_menu_bar = FALSE;
+    } else if (visible && on_release) {
+        if (!window->details->temporary_menu_bar)
+            window->details->temporary_menu_bar = TRUE;
+        else {
+            gtk_widget_hide (menu);
+            window->details->temporary_menu_bar = FALSE;
+        }
+    }
+}
+
 static gboolean
 nemo_window_key_press_event (GtkWidget *widget,
 				 GdkEventKey *event)
@@ -1066,7 +1104,24 @@ nemo_window_key_press_event (GtkWidget *widget,
 		}
 	}
 
+    if (event->keyval == GDK_KEY_Alt_L || event->keyval == GDK_KEY_Alt_R) {
+        handle_alt_menu_key (window, FALSE);
+    }
+
 	return GTK_WIDGET_CLASS (nemo_window_parent_class)->key_press_event (widget, event);
+}
+
+static gboolean
+nemo_window_key_release_event (GtkWidget *widget,
+                             GdkEventKey *event)
+{
+    NemoWindow *window = NEMO_WINDOW (widget);
+
+    if (event->keyval == GDK_KEY_Alt_L || event->keyval == GDK_KEY_Alt_R) {
+        handle_alt_menu_key (window, TRUE);
+    }
+
+    return GTK_WIDGET_CLASS (nemo_window_parent_class)->key_release_event (widget, event);
 }
 
 /*
@@ -1412,6 +1467,21 @@ nemo_window_load_view_as_menus (NemoWindow *window)
 				       attributes, 
 				       load_view_as_menus_callback,
 				       slot);
+}
+
+void
+nemo_window_sync_menu_bar (NemoWindow *window)
+{
+    GtkWidget *menu = window->details->menubar;
+
+    if (g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_MENU_BAR) &&
+                                !window->details->disable_chrome) {
+        gtk_widget_show (menu);
+    } else {
+        gtk_widget_hide (menu);
+    }
+
+    window->details->temporary_menu_bar = FALSE;
 }
 
 void
@@ -1832,7 +1902,6 @@ static void
 nemo_window_reload (NemoWindow *window)
 {
 	NemoWindowSlot *active_slot;
-
 	active_slot = nemo_window_get_active_slot (window);
 	nemo_window_slot_reload (active_slot);
 }
@@ -1982,6 +2051,7 @@ nemo_window_class_init (NemoWindowClass *class)
 	wclass->get_preferred_height = nemo_window_get_preferred_height;
 	wclass->realize = nemo_window_realize;
 	wclass->key_press_event = nemo_window_key_press_event;
+    wclass->key_release_event = nemo_window_key_release_event;
 	wclass->window_state_event = nemo_window_state_event;
 	wclass->button_press_event = nemo_window_button_press_event;
 
