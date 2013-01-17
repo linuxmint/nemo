@@ -7777,7 +7777,7 @@ nemo_view_init_show_hidden_files (NemoView *view)
 	mode = nemo_window_get_hidden_files_mode (view->details->window);
 
 	if (mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_DEFAULT) {
-		show_hidden_default_setting = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
+		show_hidden_default_setting = g_settings_get_boolean (gtk_filechooser_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
 		if (show_hidden_default_setting != view->details->show_hidden_files) {
 			view->details->show_hidden_files = show_hidden_default_setting;
 			show_hidden_changed = TRUE;

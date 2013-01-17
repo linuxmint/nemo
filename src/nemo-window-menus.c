@@ -286,7 +286,7 @@ show_hidden_files_preference_callback (gpointer callback_data)
 		/* update button */
 		g_signal_handlers_block_by_func (action, action_show_hidden_files_callback, window);
 		gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-					      g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
+					      g_settings_get_boolean (gtk_filechooser_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
 		g_signal_handlers_unblock_by_func (action, action_show_hidden_files_callback, window);
 
 		/* inform views */
@@ -1497,11 +1497,11 @@ nemo_window_initialize_menus (NemoWindow *window)
 	action = gtk_action_group_get_action (action_group, NEMO_ACTION_SHOW_HIDDEN_FILES);
 	g_signal_handlers_block_by_func (action, action_show_hidden_files_callback, window);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-				      g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
+				      g_settings_get_boolean (gtk_filechooser_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
 	g_signal_handlers_unblock_by_func (action, action_show_hidden_files_callback, window);
 
 
-	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_SHOW_HIDDEN_FILES,
+	g_signal_connect_swapped (gtk_filechooser_preferences, "changed::" NEMO_PREFERENCES_SHOW_HIDDEN_FILES,
 				  G_CALLBACK(show_hidden_files_preference_callback),
 				  window);
 

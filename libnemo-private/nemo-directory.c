@@ -300,7 +300,7 @@ add_preferences_callbacks (void)
 {
 	nemo_global_preferences_init ();
 
-	g_signal_connect_swapped (nemo_preferences,
+	g_signal_connect_swapped (gtk_filechooser_preferences,
 				  "changed::" NEMO_PREFERENCES_SHOW_HIDDEN_FILES,
 				  G_CALLBACK(filtering_changed_callback),
 				  NULL);

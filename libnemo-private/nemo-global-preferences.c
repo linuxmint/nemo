@@ -78,4 +78,7 @@ nemo_global_preferences_init (void)
 	gnome_lockdown_preferences = g_settings_new("org.gnome.desktop.lockdown");
 	gnome_background_preferences = g_settings_new("org.gnome.desktop.background");
     gnome_media_handling_preferences = g_settings_new("org.gnome.desktop.media-handling");
+
+    gtk_filechooser_preferences = g_settings_new_with_path ("org.gtk.Settings.FileChooser",
+                                                            "/org/gtk/settings/file-chooser/");
 }
