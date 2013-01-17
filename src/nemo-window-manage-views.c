@@ -1449,6 +1449,8 @@ update_for_new_location (NemoWindowSlot *slot)
 			nemo_window_pane_sync_search_widgets (slot->pane);
 		}
 	}
+
+    nemo_window_sync_menu_bar (window);
 }
 
 /* A location load previously announced by load_underway
