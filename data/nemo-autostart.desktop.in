@@ -4,4 +4,5 @@ Name=Files
 Comment=Start Nemo desktop at log in
 Exec=nemo -n
 OnlyShowIn=GNOME;Unity;
+AutostartCondition=GSettings org.nemo.desktop show-desktop-icons
 NoDisplay=true

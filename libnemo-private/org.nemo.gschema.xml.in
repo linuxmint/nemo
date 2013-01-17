@@ -349,12 +349,16 @@
       <_description>If set to true, Nemo will only show folders in the tree side pane. Otherwise it will show both folders and files.</_description>
     </key>
   </schema>
-
   <schema id="org.nemo.desktop" path="/org/nemo/desktop/" gettext-domain="nemo">
     <key name="font" type="s">
       <default l10n="messages" context="desktop-font">''</default>
       <_summary>Desktop font</_summary>
       <_description>The font _description used for the icons on the desktop.</_description>
+    </key>
+    <key name="show-desktop-icons" type="b">
+      <default>true</default>
+      <_summary>Allow Nemo to manage the desktop</_summary>
+      <_description>If this is set to true, Nemo will autostart and manage the desktop</_description>
     </key>
     <key name="home-icon-visible" type="b">
       <default>true</default>

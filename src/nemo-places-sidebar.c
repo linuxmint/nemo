@@ -294,7 +294,7 @@ get_eject_icon (NemoPlacesSidebar *sidebar,
 static gboolean
 should_show_desktop (void)
 {
-	return g_settings_get_boolean (gnome_background_preferences, NEMO_PREFERENCES_SHOW_DESKTOP) &&
+	return g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP) &&
 	       !g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR);
 }
 
@@ -3778,7 +3778,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 				  G_CALLBACK(desktop_setting_changed_callback),
 				  sidebar);
 
-	g_signal_connect_swapped (gnome_background_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
+	g_signal_connect_swapped (nemo_desktop_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
 				  G_CALLBACK(desktop_setting_changed_callback),
 				  sidebar);
 
