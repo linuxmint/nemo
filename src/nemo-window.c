@@ -627,6 +627,10 @@ nemo_window_constructed (GObject *self)
                       nemo_window_disable_chrome_mapping, NULL,
                       window, NULL);
 
+    g_object_bind_property (window->details->nemo_status_bar, "visible",
+                            sep, "visible",
+                            G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
+
 	/* this has to be done after the location bar has been set up,
 	 * but before menu stuff is being called */
 	nemo_window_set_active_pane (window, pane);
