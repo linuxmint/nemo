@@ -5217,6 +5217,9 @@ real_destroy (GtkWidget *object)
 
 	remove_window (window);
 
+	unschedule_or_cancel_group_change (window);
+	unschedule_or_cancel_owner_change (window);
+
 	for (l = window->details->original_files; l != NULL; l = l->next) {
 		nautilus_file_monitor_remove (NAUTILUS_FILE (l->data), &window->details->original_files);
 	}
