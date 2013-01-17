@@ -111,8 +111,30 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	if (emblem_icons != NULL) {
 		l = emblem_icons;
 
-		emblem = g_emblem_new (l->data);
+
 		pixbuf = nemo_icon_info_get_pixbuf (icon_info);
+
+        gint w, h, s;
+        gboolean bad_ratio;
+
+        w = gdk_pixbuf_get_width (pixbuf);
+        h = gdk_pixbuf_get_height (pixbuf);
+
+        s = MAX (w, h);
+        if (s < size)
+            size = s;
+
+        bad_ratio = nemo_icon_get_emblem_size_for_icon_size (size) > w ||
+                    nemo_icon_get_emblem_size_for_icon_size (size) > h;
+
+        if (bad_ratio)
+            goto skip_emblem; /* Would prefer to not use goto, but
+                               * I don't want to do these checks on
+                               * non-emblemed icons (the majority)
+                               * as it would be too costly */
+
+        emblem = g_emblem_new (l->data);
+
 		emblemed_icon = g_emblemed_icon_new (G_ICON (pixbuf), emblem);
 		g_object_unref (emblem);
 
@@ -125,9 +147,11 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 
 		g_clear_object (&icon_info);
 		icon_info = nemo_icon_info_lookup (emblemed_icon, size);
+        g_object_unref (emblemed_icon);
 
+skip_emblem:
 		g_object_unref (pixbuf);
-		g_object_unref (emblemed_icon);
+
 	}
 
 	if (emblem_icons != NULL) {
