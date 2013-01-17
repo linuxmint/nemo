@@ -113,6 +113,15 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 
 		emblem = g_emblem_new (l->data);
 		pixbuf = nemo_icon_info_get_pixbuf (icon_info);
+
+        gint w, h, s;
+        w = gdk_pixbuf_get_width (pixbuf);
+        h = gdk_pixbuf_get_height (pixbuf);
+
+        s = MAX (w, h);
+        if (s < size)
+            size = s;
+
 		emblemed_icon = g_emblemed_icon_new (G_ICON (pixbuf), emblem);
 		g_object_unref (emblem);
 
