@@ -313,7 +313,21 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 				}
 			}
 
-			gicon = G_ICON (nemo_file_get_icon_pixbuf (file, icon_size, TRUE, flags));
+            GdkPixbuf *pixbuf = nemo_file_get_icon_pixbuf (file, icon_size, TRUE, flags);
+
+            gint w, h, s;
+            gboolean bad_ratio;
+            w = gdk_pixbuf_get_width (pixbuf);
+            h = gdk_pixbuf_get_height (pixbuf);
+
+            s = MAX (w, h);
+            if (s < icon_size)
+                icon_size = s;
+
+            bad_ratio = nemo_icon_get_emblem_size_for_icon_size (icon_size) > w ||
+                        nemo_icon_get_emblem_size_for_icon_size (icon_size) > h;
+
+			gicon = G_ICON (pixbuf);
 
 			/* render emblems with GEmblemedIcon */
 			parent_file = nemo_file_get_parent (file);
@@ -331,7 +345,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 								       emblems_to_ignore);
 
 			/* pick only the first emblem we can render for the list view */
-			for (l = emblem_icons; l != NULL; l = l->next) {
+			for (l = emblem_icons; !bad_ratio && l != NULL; l = l->next) {
 				emblem_icon = l->data;
 				if (nemo_icon_theme_can_render (G_THEMED_ICON (emblem_icon))) {
 					emblem = g_emblem_new (emblem_icon);
