@@ -109,6 +109,7 @@ typedef enum
 
 #define NEMO_PREFERENCES_SHOW_FULL_PATH_TITLES      "show-full-path-titles"
 
+#define NEMO_PREFERENCES_CLOSE_DEVICE_VIEW_ON_EJECT "close-device-view-on-device-eject"
 
 enum
 {
