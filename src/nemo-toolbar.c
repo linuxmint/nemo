@@ -83,13 +83,11 @@ toolbar_update_appearance (NemoToolbar *self)
 	GtkAction *action;
 	GtkWidget *widgetitem;
 	gboolean icon_toolbar;
-
 	gboolean show_location_entry;
 
     nemo_toolbar_update_root_state (self);
 
-	show_location_entry = self->priv->show_location_entry ||
-		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY);
+	show_location_entry = self->priv->show_location_entry;
 
 	gtk_widget_set_visible (GTK_WIDGET(self->priv->toolbar),
 				self->priv->show_main_bar);
@@ -168,6 +166,8 @@ nemo_toolbar_constructed (GObject *obj)
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (self)),
 					      GTK_JUNCTION_BOTTOM);
 
+    self->priv->show_location_entry = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY);
+
 	/* add the UI */
 	self->priv->ui_manager = gtk_ui_manager_new ();
 	gtk_ui_manager_add_ui_from_resource (self->priv->ui_manager, "/org/nemo/nemo-toolbar-ui.xml", NULL);
@@ -227,10 +227,6 @@ nemo_toolbar_constructed (GObject *obj)
 	/* search bar */
 	self->priv->search_bar = nemo_search_bar_new ();
 	gtk_box_pack_start (GTK_BOX (self), self->priv->search_bar, TRUE, TRUE, 0);
-
-	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_SHOW_LOCATION_ENTRY,
-				  G_CALLBACK (toolbar_update_appearance), self);
 
 	/* nemo patch */
 	g_signal_connect_swapped (nemo_preferences,

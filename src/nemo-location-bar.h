@@ -66,5 +66,6 @@ NemoEntry * nemo_location_bar_get_entry (NemoLocationBar *location_bar);
 void	nemo_location_bar_activate	 (NemoLocationBar *bar);
 void    nemo_location_bar_set_location     (NemoLocationBar *bar,
 						const char          *location);
+gboolean nemo_location_bar_has_focus (NemoLocationBar *location_bar);
 
 #endif /* NEMO_LOCATION_BAR_H */

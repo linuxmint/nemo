@@ -233,6 +233,13 @@ search_bar_cancel_callback (GtkWidget *widget,
 }
 
 static void
+location_entry_changed_cb (NemoToolbar *toolbar, gboolean val, gpointer data)
+{
+    NemoWindowPane *pane = NEMO_WINDOW_PANE (data);
+    nemo_window_pane_ensure_location_bar (pane);
+}
+
+static void
 navigation_bar_cancel_callback (GtkWidget *widget,
 				NemoWindowPane *pane)
 {
@@ -844,6 +851,11 @@ nemo_window_pane_constructed (GObject *obj)
 	action_group = nemo_window_create_toolbar_action_group (window);
 	pane->toolbar_action_group = action_group;
 	pane->tool_bar = GTK_WIDGET (nemo_toolbar_new (action_group));
+
+    g_signal_connect_object (pane->tool_bar, "notify::show-location-entry",
+                             G_CALLBACK (location_entry_changed_cb),
+                             pane, 0);
+
 	pane->action_group = action_group;
 
 	setup_search_action (pane);
@@ -1057,6 +1069,7 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 		nemo_location_bar_set_location (NEMO_LOCATION_BAR (pane->location_bar), uri);
 		g_free (uri);
 		nemo_path_bar_set_path (NEMO_PATH_BAR (pane->path_bar), slot->location);
+        restore_focus_widget (pane);
 	}
 
 	/* Update window global UI if this is the active pane */
@@ -1073,8 +1086,6 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 		nemo_navigation_state_set_boolean (nav_state,
 						       NEMO_ACTION_FORWARD,
 						       active_slot->forward_list != NULL);
-
-
 
 	}
 }
@@ -1180,26 +1191,23 @@ nemo_window_pane_grab_focus (NemoWindowPane *pane)
 void
 nemo_window_pane_ensure_location_bar (NemoWindowPane *pane)
 {
-    gboolean fl_active, visible, always;
-    always = !g_settings_get_boolean (nemo_window_state,
+    gboolean show_location, use_temp_toolbars;
+
+    use_temp_toolbars = !g_settings_get_boolean (nemo_window_state,
                      NEMO_WINDOW_STATE_START_WITH_TOOLBAR);
-    visible = gtk_widget_get_visible(pane->location_bar);
-    nemo_toolbar_set_show_main_bar (NEMO_TOOLBAR (pane->tool_bar), TRUE);
+    show_location = nemo_toolbar_get_show_location_entry (NEMO_TOOLBAR (pane->tool_bar));
 
-    if (always) {
-        gtk_widget_show (pane->tool_bar);
-        pane->temporary_navigation_bar = TRUE;
+    if (use_temp_toolbars) {
+        if (!pane->temporary_navigation_bar) {
+            gtk_widget_show (pane->tool_bar);
+            pane->temporary_navigation_bar = TRUE;
+        }
     }
-
-    fl_active = nemo_toolbar_get_show_location_entry (NEMO_TOOLBAR (pane->tool_bar));
-
-    if ((!visible && !fl_active) || (visible && pane->last_focus_widget == NULL))  {
+    if (show_location) {
         remember_focus_widget (pane);
-        nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), TRUE);
         nemo_location_bar_activate (NEMO_LOCATION_BAR (pane->location_bar));
     } else {
         restore_focus_widget (pane);
-        nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
     }
 }
 
