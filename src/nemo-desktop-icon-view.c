@@ -88,6 +88,7 @@ static void     font_changed_callback                             (gpointer     
 
 G_DEFINE_TYPE (NemoDesktopIconView, nemo_desktop_icon_view, NEMO_TYPE_ICON_VIEW)
 
+gboolean have_cinnamon_settings;
 static char *desktop_directory;
 static time_t desktop_dir_modify_time;
 
@@ -643,6 +644,8 @@ nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 				  "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
 				  G_CALLBACK (nemo_view_update_menus),
 				  desktop_icon_view);
+
+    have_cinnamon_settings = g_find_program_in_path ("cinnamon-settings") != NULL;
 }
 
 static void
@@ -655,6 +658,18 @@ action_change_background_callback (GtkAction *action,
 						  "cinnamon-settings",
 						  FALSE,
 						  "backgrounds", NULL);
+}
+
+static void
+action_add_desklets_callback (GtkAction *action,
+                   gpointer data)
+{
+    g_assert (NEMO_VIEW (data));
+
+    nemo_launch_application_from_command (gtk_widget_get_screen (GTK_WIDGET (data)),
+                          "cinnamon-settings",
+                          FALSE,
+                          "desklets", NULL);
 }
 
 static void
@@ -747,6 +762,10 @@ real_update_menus (NemoView *view)
 					  !nemo_trash_monitor_is_empty ());
 		g_free (label);
 	}
+
+    action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+                                          NEMO_ACTION_ADD_DESKLETS_DESKTOP);
+    gtk_action_set_visible (action, have_cinnamon_settings);
 }
 
 static const GtkActionEntry desktop_view_entries[] = {
@@ -771,6 +790,13 @@ static const GtkActionEntry desktop_view_entries[] = {
 	  /* tooltip */
 	  N_("Delete all items in the Trash"),
 	  G_CALLBACK (action_empty_trash_conditional_callback) },
+      /* name, stock id */
+    { NEMO_ACTION_ADD_DESKLETS_DESKTOP, NULL,
+      /* label, accelerator */
+      N_("Add Desklets"), NULL,
+      /* tooltip */
+      N_("Open Cinnamon Settings to add desklets"),
+      G_CALLBACK (action_add_desklets_callback) }
 };
 
 static void
