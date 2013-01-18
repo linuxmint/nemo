@@ -146,4 +146,6 @@
 #define NEMO_ACTION_STATUSBAR_TREEVIEW "Statusbar Treeview"
 #define NEMO_ACTION_STATUSBAR_SIDEBAR_TOGGLE "Statusbar Sidebar Toggle"
 
+#define NEMO_ACTION_ADD_DESKLETS_DESKTOP "Add Desklets"
+
 #endif /* NEMO_ACTIONS_H */

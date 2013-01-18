@@ -9,6 +9,7 @@
         </placeholder>
         <placeholder name="After Zoom Items">
                 <placeholder name="Background Items">
+                        <menuitem name="Add Desklets" action="Add Desklets"/>
                         <menuitem name="Change Background" action="Change Background"/>
                 </placeholder>
         </placeholder>
