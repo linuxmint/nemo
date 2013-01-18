@@ -2239,6 +2239,7 @@ real_setup_loading_floating_bar (NautilusWindowSlot *slot)
 		return;
 	}
 
+	nautilus_floating_bar_cleanup_actions (NAUTILUS_FLOATING_BAR (slot->details->floating_bar));
 	nautilus_floating_bar_set_primary_label (NAUTILUS_FLOATING_BAR (slot->details->floating_bar),
 						 NAUTILUS_IS_SEARCH_DIRECTORY (nautilus_view_get_model (slot->details->content_view)) ?
 						 _("Searching…") : _("Loading…"));
