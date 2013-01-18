@@ -73,6 +73,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_SEARCH_ICON_TOOLBAR_WIDGET "show_search_icon_toolbar_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LABEL_SEARCH_ICON_TOOLBAR_WIDGET "show_label_search_icon_toolbar_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_FULL_PATH_IN_TITLE_BARS_WIDGET "show_full_path_in_title_bars_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_CLOSE_DEVICE_VIEW_ON_EJECT_WIDGET "close_device_view_on_eject_checkbutton"
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_AUTOMOUNT_MEDIA_WIDGET "media_automount_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_AUTOOPEN_MEDIA_WIDGET "media_autoopen_checkbutton"
@@ -873,6 +874,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
     bind_builder_bool_inverted (builder, gnome_media_handling_preferences,
                NEMO_FILE_MANAGEMENT_PROPERTIES_AUTORUN_MEDIA_WIDGET,
                GNOME_DESKTOP_MEDIA_HANDLING_AUTORUN);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_CLOSE_DEVICE_VIEW_ON_EJECT_WIDGET,
+                       NEMO_PREFERENCES_CLOSE_DEVICE_VIEW_ON_EJECT);
 
 	nemo_file_management_properties_dialog_setup_icon_caption_page (builder);
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);

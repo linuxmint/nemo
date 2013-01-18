@@ -250,6 +250,11 @@
         <_summary>Prefixes used for file sizes</_summary>
         <_description>Determines whether Nemo uses base-10, base-10 long, base-2 or base-2 long file size prefixes</_description>
     </key>
+    <key name="close-device-view-on-device-eject" type="b">
+      <default>false</default>
+      <_summary>Whether to close a view of a removeable device instead of navigating Home</_summary>
+      <_description>If set to true, a view open for a removeable device will be closed instead of sent Home if the device is ejected</_description>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">
