@@ -40,6 +40,9 @@ nemo_pathbar_button_init (NemoPathbarButton *button)
 {
     button->is_left_end = FALSE;
     button->highlight = FALSE;
+
+    GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (button));
+    gtk_style_context_remove_class (context, GTK_STYLE_CLASS_BUTTON);
 }
 
 static void
@@ -68,7 +71,7 @@ nemo_pathbar_button_finalize (GObject *object)
 }
 
 #define A_A CAIRO_ANTIALIAS_SUBPIXEL
-#define RAD 5.0
+#define RAD 3.0
 #define _270_DEG 270.0 * (M_PI/180.0)
 #define _180_DEG 180.0 * (M_PI/180.0)
 #define  _90_DEG  90.0 * (M_PI/180.0)
@@ -91,7 +94,7 @@ do_draw_middle_element (GtkStyleContext  *context,
     cairo_set_antialias (cr, A_A);
 
     cairo_set_source_rgb (cr, .5, .5, .5);
-    cairo_set_line_width (cr, 2.0);
+    cairo_set_line_width (cr, 3.0);
 
     cairo_move_to (cr, x, y);
     cairo_line_to (cr, x+w-offset, y);
@@ -143,7 +146,7 @@ do_draw_end_element (GtkStyleContext *context,
     cairo_set_antialias (cr, A_A);
 
     cairo_set_source_rgb (cr, .5, .5, .5);
-    cairo_set_line_width (cr, 2.0);
+    cairo_set_line_width (cr, 3.0);
 
     cairo_move_to (cr, x+RAD, y);
     cairo_line_to (cr, x+w-offset, y);
@@ -222,10 +225,10 @@ nemo_pathbar_button_draw (GtkWidget                   *widget,
 
     gtk_widget_get_allocation (widget, &allocation);
 
-    x = 0;
-    y = 0;
-    width = allocation.width;
-    height = allocation.height;
+    x = 1;
+    y = 1;
+    width = allocation.width-2;
+    height = allocation.height-2;
 
     if (button->is_left_end)
         do_draw_end_element (context, cr, x, y, width, height, button->highlight);
@@ -262,7 +265,7 @@ nemo_pathbar_button_get_preferred_size (GtkWidget *button, GtkRequisition *requi
 {
     GtkRequisition req;
     gtk_widget_get_preferred_size (button, &req, NULL);
-    gint offset = rintf ((float) req.height / PATHBAR_BUTTON_OFFSET_FACTOR) + 2;
+    gint offset = rintf ((float) req.height / PATHBAR_BUTTON_OFFSET_FACTOR) + 4;
     if (!NEMO_PATHBAR_BUTTON (button)->is_left_end) {
         req.width -= offset;
     }

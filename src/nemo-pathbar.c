@@ -571,7 +571,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
 
 	nemo_pathbar_button_get_preferred_size (BUTTON_DATA (path_bar->button_list->data)->button,
                                             &child_requisition, allocation->height);
-    gint offset = rintf ((float) allocation->height / PATHBAR_BUTTON_OFFSET_FACTOR + 2);
+    gint offset = rintf ((float) allocation->height / PATHBAR_BUTTON_OFFSET_FACTOR + 4);
 
     width += child_requisition.width;
 
@@ -669,9 +669,9 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         child = BUTTON_DATA (list->data)->button;
 
         if (first_element)
-            gtk_label_set_width_chars (GTK_LABEL (BUTTON_DATA (list->data)->pre_padding), 0);
-        else
             gtk_label_set_width_chars (GTK_LABEL (BUTTON_DATA (list->data)->pre_padding), 1);
+        else
+            gtk_label_set_width_chars (GTK_LABEL (BUTTON_DATA (list->data)->pre_padding), 2);
 
         gtk_widget_get_preferred_size (child, &child_requisition, NULL);
 
@@ -1731,8 +1731,9 @@ make_directory_button (NemoPathBar  *path_bar,
 
 	button_data->image = gtk_image_new ();
     child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 1);
-    button_data->pre_padding = get_padding_widget(0);
-    gtk_box_pack_start (GTK_BOX (child), button_data->pre_padding, FALSE, FALSE, 0);
+    button_data->pre_padding = get_padding_widget(1);
+
+    gtk_box_pack_start (GTK_BOX (child), button_data->pre_padding, FALSE, FALSE, 1);
     switch (button_data->type) {
             case ROOT_BUTTON:
             case HOME_BUTTON:
@@ -1764,7 +1765,7 @@ make_directory_button (NemoPathBar  *path_bar,
                     gtk_box_pack_start (GTK_BOX (child), button_data->alignment, FALSE, FALSE, 1);
                     button_data->is_base_dir = base_dir;
     }
-    gtk_box_pack_start (GTK_BOX (child), get_padding_widget(1), FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (child), get_padding_widget(2), FALSE, FALSE, 0);
 
 	if (button_data->path == NULL) {
         	button_data->path = g_object_ref (path);
