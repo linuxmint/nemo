@@ -58,6 +58,8 @@ void nautilus_view_handle_raw_drop          (NautilusView  *view,
 					     GdkDragAction  action,
 					     int            x,
 					     int            y);
+void nautilus_view_handle_hover             (NautilusView  *view,
+					     const char    *target_uri);
 
 void nautilus_view_drop_proxy_received_uris (NautilusView  *view,
 					     const GList   *uris,

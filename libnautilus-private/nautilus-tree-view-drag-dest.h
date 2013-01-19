@@ -90,6 +90,8 @@ struct _NautilusTreeViewDragDestClass {
 				  GdkDragAction action,
 				  int x,
 				  int y);
+	void (* handle_hover)   (NautilusTreeViewDragDest *dest,
+				 const char *target_uri);
 };
 
 GType                     nautilus_tree_view_drag_dest_get_type (void);

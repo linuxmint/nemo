@@ -56,10 +56,12 @@ struct _NautilusTreeViewDragDestDetails {
 	GtkSelectionData *drag_data;
 	GList *drag_list;
 
+	guint hover_id;
 	guint highlight_id;
 	guint scroll_id;
 
 	char *direct_save_uri;
+	char *target_uri;
 };
 
 enum {
@@ -70,6 +72,7 @@ enum {
 	HANDLE_URI_LIST,
 	HANDLE_TEXT,
 	HANDLE_RAW,
+	HANDLE_HOVER,
 	LAST_SIGNAL
 };
 
@@ -248,6 +251,15 @@ get_drag_data (NautilusTreeViewDragDest *dest,
 }
 
 static void
+remove_hover_timer (NautilusTreeViewDragDest *dest)
+{
+	if (dest->details->hover_id != 0) {
+		g_source_remove (dest->details->hover_id);
+		dest->details->hover_id = 0;
+	}
+}
+
+static void
 free_drag_data (NautilusTreeViewDragDest *dest)
 {
 	dest->details->have_drag_data = FALSE;
@@ -264,6 +276,50 @@ free_drag_data (NautilusTreeViewDragDest *dest)
 
 	g_free (dest->details->direct_save_uri);
 	dest->details->direct_save_uri = NULL;
+
+	g_free (dest->details->target_uri);
+	dest->details->target_uri = NULL;
+
+	remove_hover_timer (dest);
+}
+
+static gboolean
+hover_timer (gpointer user_data)
+{
+	NautilusTreeViewDragDest *dest = user_data;
+
+	dest->details->hover_id = 0;
+
+	g_signal_emit (dest, signals[HANDLE_HOVER], 0, dest->details->target_uri);
+
+	return FALSE;
+}
+
+static void
+check_hover_timer (NautilusTreeViewDragDest *dest,
+		   const char               *uri)
+{
+	GtkSettings *settings;
+	guint timeout;
+
+	if (g_strcmp0 (uri, dest->details->target_uri) == 0) {
+		return;
+	}
+	remove_hover_timer (dest);
+
+	settings = gtk_widget_get_settings (GTK_WIDGET (dest->details->tree_view));
+	g_object_get (settings, "gtk-timeout-expand", &timeout, NULL);
+
+	g_free (dest->details->target_uri);
+	dest->details->target_uri = NULL;
+
+	if (uri != NULL) {
+		dest->details->target_uri = g_strdup (uri);
+		dest->details->hover_id =
+			gdk_threads_add_timeout (timeout,
+						 hover_timer,
+						 dest);
+	}
 }
 
 static char *
@@ -453,11 +509,16 @@ drag_motion_callback (GtkWidget *widget,
 					 NULL);
 	
 	if (action) {
+		char *uri;
 		set_drag_dest_row (dest, drop_path);
+		uri = get_drop_target_uri_for_path (dest, path);
+		check_hover_timer (dest, uri);
+		g_free (uri);
 	} else {
 		clear_drag_dest_row (dest);
+		remove_hover_timer (dest);
 	}
-	
+
 	if (path) {
 		gtk_tree_path_free (path);
 	}
@@ -1075,6 +1136,16 @@ nautilus_tree_view_drag_dest_class_init (NautilusTreeViewDragDestClass *class)
 			      GDK_TYPE_DRAG_ACTION,
 			      G_TYPE_INT,
 			      G_TYPE_INT);
+	signals[HANDLE_HOVER] =
+		g_signal_new ("handle_hover",
+			      G_TYPE_FROM_CLASS (class),
+			      G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (NautilusTreeViewDragDestClass,
+					       handle_hover),
+			      NULL, NULL,
+			      g_cclosure_marshal_generic,
+			      G_TYPE_NONE, 1,
+			      G_TYPE_STRING);
 }
 
 

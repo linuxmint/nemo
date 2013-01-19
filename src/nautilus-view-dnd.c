@@ -513,3 +513,17 @@ nautilus_view_drop_proxy_received_uris (NautilusView *view,
 
 	g_free (container_uri);
 }
+
+void
+nautilus_view_handle_hover (NautilusView *view,
+			    const char   *target_uri)
+{
+	NautilusWindowSlot *slot;
+	GFile *location;
+
+	slot = nautilus_view_get_nautilus_window_slot (view);
+
+	location = g_file_new_for_uri (target_uri);
+	nautilus_window_slot_open_location (slot, location, 0);
+	g_object_unref (location);
+}
