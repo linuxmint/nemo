@@ -76,6 +76,7 @@ typedef struct {
 	gboolean  drag_data_received;
 	int       drag_data_info;
 	gboolean  drop_occured;
+	char     *target_uri;
 
 	GtkWidget *popup_menu;
 	GtkWidget *popup_menu_open_in_new_tab_item;
@@ -103,6 +104,7 @@ typedef struct {
 	char *hostname;
 
 	guint bookmarks_changed_id;
+	guint switch_location_timer;
 } NautilusPlacesSidebar;
 
 typedef struct {
@@ -1126,6 +1128,15 @@ get_drag_data (GtkTreeView *tree_view,
 }
 
 static void
+remove_switch_location_timer (NautilusPlacesSidebar *sidebar)
+{
+	if (sidebar->switch_location_timer != 0) {
+		g_source_remove (sidebar->switch_location_timer);
+		sidebar->switch_location_timer = 0;
+	}
+}
+
+static void
 free_drag_data (NautilusPlacesSidebar *sidebar)
 {
 	sidebar->drag_data_received = FALSE;
@@ -1133,6 +1144,56 @@ free_drag_data (NautilusPlacesSidebar *sidebar)
 	if (sidebar->drag_list) {
 		nautilus_drag_destroy_selection_list (sidebar->drag_list);
 		sidebar->drag_list = NULL;
+	}
+
+	remove_switch_location_timer (sidebar);
+
+	g_free (sidebar->target_uri);
+	sidebar->target_uri = NULL;
+}
+
+static gboolean
+switch_location_timer (gpointer user_data)
+{
+	NautilusPlacesSidebar *sidebar = user_data;
+	GFile *location;
+	NautilusWindowSlot *target_slot;
+
+	sidebar->switch_location_timer = 0;
+
+	target_slot = nautilus_window_get_active_slot (NAUTILUS_WINDOW (sidebar->window));
+
+	location = g_file_new_for_uri (sidebar->target_uri);
+	nautilus_window_slot_open_location (target_slot, location, 0);
+	g_object_unref (location);
+
+	return FALSE;
+}
+
+static void
+check_switch_location_timer (NautilusPlacesSidebar *sidebar,
+			     const char            *uri)
+{
+	GtkSettings *settings;
+	guint timeout;
+
+	if (g_strcmp0 (uri, sidebar->target_uri) == 0) {
+		return;
+	}
+	remove_switch_location_timer (sidebar);
+
+	settings = gtk_widget_get_settings (GTK_WIDGET (sidebar));
+	g_object_get (settings, "gtk-timeout-expand", &timeout, NULL);
+
+	g_free (sidebar->target_uri);
+	sidebar->target_uri = NULL;
+
+	if (uri != NULL) {
+		sidebar->target_uri = g_strdup (uri);
+		sidebar->switch_location_timer =
+			gdk_threads_add_timeout (timeout,
+						 switch_location_timer,
+						 sidebar);
 	}
 }
 
@@ -1148,7 +1209,7 @@ drag_motion_callback (GtkTreeView *tree_view,
 	GtkTreeViewDropPosition pos;
 	int action;
 	GtkTreeIter iter;
-	char *uri;
+	char *target_uri = NULL;
 	gboolean res;
 
 	if (!sidebar->drag_data_received) {
@@ -1179,12 +1240,11 @@ drag_motion_callback (GtkTreeView *tree_view,
 						 &iter, path);
 			gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store),
 					    &iter,
-					    PLACES_SIDEBAR_COLUMN_URI, &uri,
+					    PLACES_SIDEBAR_COLUMN_URI, &target_uri,
 					    -1);
-			nautilus_drag_default_drop_action_for_icons (context, uri,
+			nautilus_drag_default_drop_action_for_icons (context, target_uri,
 								     sidebar->drag_list,
 								     &action);
-			g_free (uri);
 		}
 	}
 
@@ -1200,10 +1260,14 @@ drag_motion_callback (GtkTreeView *tree_view,
 	g_signal_stop_emission_by_name (tree_view, "drag-motion");
 
 	if (action != 0) {
+		check_switch_location_timer (sidebar, target_uri);
 		gdk_drag_status (context, action, time);
 	} else {
+		remove_switch_location_timer (sidebar);
 		gdk_drag_status (context, 0, time);
 	}
+
+	g_free (target_uri);
 
 	return TRUE;
 }
