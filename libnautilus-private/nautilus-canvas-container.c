@@ -241,6 +241,7 @@ enum {
 	HANDLE_URI_LIST,
 	HANDLE_TEXT,
 	HANDLE_RAW,
+	HANDLE_HOVER,
 	SELECTION_CHANGED,
 	ICON_ADDED,
 	ICON_REMOVED,
@@ -4935,6 +4936,16 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				GDK_TYPE_DRAG_ACTION,
 				G_TYPE_INT,
 				G_TYPE_INT);
+	signals[HANDLE_HOVER] =
+		g_signal_new ("handle_hover",
+			      G_TYPE_FROM_CLASS (class),
+			      G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (NautilusCanvasContainerClass,
+					       handle_hover),
+			      NULL, NULL,
+			      g_cclosure_marshal_generic,
+			      G_TYPE_NONE, 1,
+			      G_TYPE_STRING);
 	signals[GET_CONTAINER_URI] 
 		= g_signal_new ("get_container_uri",
 		                G_TYPE_FROM_CLASS (class),

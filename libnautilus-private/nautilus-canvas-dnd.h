@@ -37,9 +37,11 @@ typedef struct {
 	NautilusDragInfo drag_info;
 
 	gboolean highlighted;
-	
+	char *target_uri;
+
 	/* Shadow for the icons being dragged.  */
 	EelCanvasItem *shadow;
+	guint hover_id;
 } NautilusCanvasDndInfo;
 
 
