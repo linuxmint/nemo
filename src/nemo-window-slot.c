@@ -551,7 +551,7 @@ real_slot_set_short_status (NemoWindowSlot *slot,
     if (disable_chrome && status != NULL) {
         dispose_of_tooltip (slot);
         slot->desktop_tooltip = gtk_window_new (GTK_WINDOW_POPUP);
-        gtk_window_set_position (GTK_WINDOW (slot->desktop_tooltip), GTK_WIN_POS_MOUSE);
+        gtk_window_set_gravity (GTK_WINDOW (slot->desktop_tooltip), GDK_GRAVITY_STATIC);
         gtk_window_set_type_hint (GTK_WINDOW (slot->desktop_tooltip), GDK_WINDOW_TYPE_HINT_TOOLTIP);
         GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (slot->desktop_tooltip));
         gtk_style_context_add_class (context, GTK_STYLE_CLASS_TOOLTIP);
@@ -564,8 +564,32 @@ real_slot_set_short_status (NemoWindowSlot *slot,
         gtk_container_add (GTK_CONTAINER (slot->desktop_tooltip), box);
         gtk_box_pack_start (GTK_BOX (box), slot->tooltip_label, FALSE, FALSE, 0);
 
+        gint x, y, h, w, new_x, new_y, mouse_x, mouse_y;
+        gint win_x, win_y, win_w, win_h;
+
+        GdkDisplay *display = gtk_widget_get_display (GTK_WIDGET (slot));
+        GdkDevice *device = gdk_device_manager_get_client_pointer (gdk_display_get_device_manager (display));
+        GdkWindow *window = gtk_widget_get_window (GTK_WIDGET (slot));
+        gdk_window_get_geometry (window, &win_x, &win_y, &win_w, &win_h);
 
         gtk_widget_show_all (GTK_WIDGET (slot->desktop_tooltip));
+        gdk_window_get_device_position (window, device, &mouse_x, &mouse_y, NULL);
+        gtk_window_get_size (GTK_WINDOW (slot->desktop_tooltip), &w, &h);
+
+        new_x = mouse_x + 2;
+        new_y = mouse_y - h - 2;
+
+        if (new_x + w > win_x + win_w)
+            new_x = win_x + win_w - w;
+        else if (new_x < win_x)
+            new_x = win_x;
+
+        if (new_y < win_y)
+            new_y = win_y;
+        else if (new_y + h > win_y + win_h)
+            new_y = win_y - h;
+
+        gtk_window_move (GTK_WINDOW (slot->desktop_tooltip), new_x, new_y);
     } else {
         dispose_of_tooltip (slot);
     }
