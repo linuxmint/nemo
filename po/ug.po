@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-01-05 09:37+0000\n"
+"POT-Creation-Date: 2013-01-19 02:03+0000\n"
 "PO-Revision-Date: 2011-06-27 10:58+0600\n"
 "Last-Translator: Sahran <sahran.ug@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
@@ -20,7 +20,6 @@ msgstr ""
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../data/nautilus-autorun-software.desktop.in.in.h:1
-#| msgid "Software"
 msgid "Run Software"
 msgstr "يۇمشاق دېتالنى ئىجرا قىلىش"
 
@@ -126,7 +125,7 @@ msgstr " (ئىناۋەتسىز يۇنىكود)"
 #: ../libnautilus-private/nautilus-bookmark.c:108
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:275
-#: ../src/nautilus-pathbar.c:295 ../src/nautilus-places-sidebar.c:511
+#: ../src/nautilus-pathbar.c:295 ../src/nautilus-places-sidebar.c:514
 #: ../src/nautilus-query-editor.c:1164
 #: ../src/nautilus-shell-search-provider.c:310
 msgid "Home"
@@ -159,7 +158,7 @@ msgstr "چاپلاش تاختىسىدىكى تېكىستنى چاپلا"
 
 #. name, stock id
 #. label, accelerator
-#: ../libnautilus-private/nautilus-clipboard.c:370 ../src/nautilus-view.c:7172
+#: ../libnautilus-private/nautilus-clipboard.c:370 ../src/nautilus-view.c:7176
 msgid "Select _All"
 msgstr "ھەممىنى تاللا(_A)"
 
@@ -206,7 +205,6 @@ msgid "The type of the file."
 msgstr "ھۆججەتنىڭ تىپى."
 
 #: ../libnautilus-private/nautilus-column-utilities.c:78
-#| msgid "Modified:"
 msgid "Modified"
 msgstr "ئۆزگەرتىلدى"
 
@@ -287,23 +285,16 @@ msgstr "ئۈستەلئۈستىدە"
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:89
 #, c-format
-#| msgid "You cannot move the volume \"%s\" to the trash."
 msgid "You cannot move the volume “%s” to the trash."
 msgstr "سىز بۇ دىسكا «%s» نى ئەخلەتخانىغا يۆتكىيەلمەيسىز."
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:99
-#| msgid ""
-#| "If you want to eject the volume, please use \"Eject\" in the popup menu "
-#| "of the volume."
 msgid ""
 "If you want to eject the volume, please use Eject in the popup menu of the "
 "volume."
 msgstr "ئەگەر دىسكىنى چىقارماقچى بولسىڭىز، شۇ دىسكىنى ئوڭ چېكىپ تىزىملىكىدىن «چىقار» نى ئىشلىتىڭ."
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:108
-#| msgid ""
-#| "If you want to unmount the volume, please use \"Unmount Volume\" in the "
-#| "popup menu of the volume."
 msgid ""
 "If you want to unmount the volume, please use Unmount Volume in the popup "
 "menu of the volume."
@@ -396,12 +387,10 @@ msgstr "ئۈستەلئۈستى ھۆججەت ئاتىنى ئۆزگەرتكىلى 
 #. * space padding instead of zero padding.
 #.
 #: ../libnautilus-private/nautilus-file.c:4430
-#| msgid "%"
 msgid "%R"
 msgstr "%R"
 
 #: ../libnautilus-private/nautilus-file.c:4431
-#| msgid "today, %-I:%M %p"
 msgid "%-I:%M %P"
 msgstr "%-I:%M %P"
 
@@ -411,17 +400,14 @@ msgid "%b %-e"
 msgstr "%b %-e"
 
 #: ../libnautilus-private/nautilus-file.c:4434
-#| msgid "%b %-d %Y, %-I:%M %p"
 msgid "%b %-d %Y"
 msgstr "%b %-d %Y"
 
 #: ../libnautilus-private/nautilus-file.c:4435
-#| msgid "%a, %b %-d %Y at %-I:%M:%S %p"
 msgid "%a, %b %e %Y %I:%M:%S %p"
 msgstr "%a, %b %e %Y %I:%M:%S %p"
 
 #: ../libnautilus-private/nautilus-file.c:4436
-#| msgid "%a, %b %-d %Y at %-I:%M %p"
 msgid "%a, %b %e %Y %T"
 msgstr "%a، %b %e %Y %T"
 
@@ -500,12 +486,10 @@ msgstr "نامەلۇم"
 #: ../libnautilus-private/nautilus-file.c:6153
 #: ../libnautilus-private/nautilus-file.c:6161
 #: ../libnautilus-private/nautilus-file.c:6212
-#| msgid "program"
 msgid "Program"
 msgstr "پروگرامما"
 
 #: ../libnautilus-private/nautilus-file.c:6154
-#| msgid "CD _Audio:"
 msgid "Audio"
 msgstr "ئۈن"
 
@@ -519,7 +503,6 @@ msgid "Image"
 msgstr "سۈرەت"
 
 #: ../libnautilus-private/nautilus-file.c:6157
-#| msgid "Archive Mounter"
 msgid "Archive"
 msgstr "ئارخىپلاش"
 
@@ -533,7 +516,6 @@ msgid "Video"
 msgstr "سىن"
 
 #: ../libnautilus-private/nautilus-file.c:6163
-#| msgid "Contents:"
 msgid "Contacts"
 msgstr "ئالاقەداشلار"
 
@@ -542,7 +524,6 @@ msgid "Calendar"
 msgstr "يىلنامە"
 
 #: ../libnautilus-private/nautilus-file.c:6165
-#| msgid "Documents"
 msgid "Document"
 msgstr "پۈتۈك"
 
@@ -561,7 +542,6 @@ msgid "Binary"
 msgstr "ئىككىلىك"
 
 #: ../libnautilus-private/nautilus-file.c:6218
-#| msgid "Folder:"
 msgid "Folder"
 msgstr "قىسقۇچ"
 
@@ -583,13 +563,11 @@ msgstr "%s غا ئۇلا"
 
 #: ../libnautilus-private/nautilus-file.c:6271
 #: ../libnautilus-private/nautilus-file.c:6285
-#| msgid "link (broken)"
 msgid "Link (broken)"
 msgstr "ئۇلانما (ئۈزۈلگەن)"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:141
 #, c-format
-#| msgid "Merge folder \"%s\"?"
 msgid "Merge folder “%s”?"
 msgstr "قىسقۇچ «%s» نى بىرىكتۈرەمسىز؟"
 
@@ -601,19 +579,16 @@ msgstr "بىرلەشتۈرگەندە كۆچۈرۈلىدىغان ھۆججەت ب�
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:150
 #, c-format
-#| msgid "An older folder with the same name already exists in \"%s\"."
 msgid "An older folder with the same name already exists in “%s”."
 msgstr "«%s» دا ئوخشاش ئاتلىق كونىراق قىسقۇچ مەۋجۇت."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:154
 #, c-format
-#| msgid "A newer folder with the same name already exists in \"%s\"."
 msgid "A newer folder with the same name already exists in “%s”."
 msgstr "«%s» دا ئوخشاش ئاتلىق يېڭىراق قىسقۇچ مەۋجۇت."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:158
 #, c-format
-#| msgid "Another folder with the same name already exists in \"%s\"."
 msgid "Another folder with the same name already exists in “%s”."
 msgstr "«%s» دا ئوخشاش ئاتلىق باشقا قىسقۇچ مەۋجۇت."
 
@@ -623,19 +598,16 @@ msgstr "ئۇ ئالماشتۇرۇلسا بۇ قىسقۇچتىكى ھەممە ھ�
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:165
 #, c-format
-#| msgid "Replace folder \"%s\"?"
 msgid "Replace folder “%s”?"
 msgstr "قىسقۇچ «%s» نى ئالماشتۇرسۇنمۇ؟"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:167
 #, c-format
-#| msgid "A folder with the same name already exists in \"%s\"."
 msgid "A folder with the same name already exists in “%s”."
 msgstr "«%s» دا ئوخشاش ئاتلىق قىسقۇچ مەۋجۇت."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:172
 #, c-format
-#| msgid "Replace file \"%s\"?"
 msgid "Replace file “%s”?"
 msgstr "ھۆججەت «%s» نى ئالماشتۇرسۇنمۇ؟"
 
@@ -645,19 +617,16 @@ msgstr "ئۇ ئالماشتۇرۇلسا ئۇنىڭ مەزمۇنى قاپلىنى
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:178
 #, c-format
-#| msgid "An older file with the same name already exists in \"%s\"."
 msgid "An older file with the same name already exists in “%s”."
 msgstr "ئاتى ئوخشاش بولغان كونىراق ھۆججەت «%s» دا بار."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:182
 #, c-format
-#| msgid "A newer file with the same name already exists in \"%s\"."
 msgid "A newer file with the same name already exists in “%s”."
 msgstr "ئاتى ئوخشاش بولغان يېڭىراق ھۆججەت «%s» دا بار."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:186
 #, c-format
-#| msgid "Another file with the same name already exists in \"%s\"."
 msgid "Another file with the same name already exists in “%s”."
 msgstr "ئاتى ئوخشاش بولغان باشقا ھۆججەت «%s» دا بار."
 
@@ -910,9 +879,8 @@ msgid " (%'d"
 msgstr " (%'d"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1323
-#| msgid "Are you sure you want to permanently delete \"%B\" from the trash?"
 msgid "Are you sure you want to permanently delete “%B” from the trash?"
-msgstr ""
+msgstr "راستلا «%B» نى ئەخلەتخانىدىن مەڭگۈلۈك ئۆچۈرەمسىز؟"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1326
 #, c-format
@@ -922,7 +890,7 @@ msgid ""
 msgid_plural ""
 "Are you sure you want to permanently delete the %'d selected items from the "
 "trash?"
-msgstr[0] "سىز تاللانغان %'d تۈرنى ئەخلەتخانىدىن راستىنىلا مەڭگۈلۈك ئۆچۈرەمسىز؟"
+msgstr[0] "راستلا تاللانغان %'d تۈرنى ئەخلەتخانىدىن مەڭگۈلۈك ئۆچۈرەمسىز؟"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1336
 #: ../libnautilus-private/nautilus-file-operations.c:1402
@@ -940,21 +908,20 @@ msgstr "ئەخلەتخانىدىكى ھەممە تۈر مەڭگۈلۈك ئۆچۈ
 #. Empty Trash menu item
 #: ../libnautilus-private/nautilus-file-operations.c:1363
 #: ../libnautilus-private/nautilus-file-operations.c:2241
-#: ../src/nautilus-places-sidebar.c:2695
+#: ../src/nautilus-places-sidebar.c:2698
 msgid "Empty _Trash"
 msgstr "ئەخلەتخانىنى تازىلا(_T)"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1390
-#| msgid "Are you sure you want to permanently delete \"%B\"?"
 msgid "Are you sure you want to permanently delete “%B”?"
-msgstr ""
+msgstr "راستلا «%B» نى مەڭگۈلۈك ئۆچۈرەمسىز؟"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1393
 #, c-format
 msgid "Are you sure you want to permanently delete the %'d selected item?"
 msgid_plural ""
 "Are you sure you want to permanently delete the %'d selected items?"
-msgstr[0] "سىز تاللانغان %'d تۈرنى راستىنىلا مەڭگۈلۈك ئۆچۈرەمسىز؟"
+msgstr[0] "راستلا تاللانغان %'d تۈرنى مەڭگۈلۈك ئۆچۈرەمسىز؟"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1436
 #, c-format
@@ -983,23 +950,17 @@ msgid "Error while deleting."
 msgstr "ئۆچۈرۈۋاتقاندا خاتالىق كۆرۈلدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1527
-#| msgid ""
-#| "Files in the folder \"%B\" cannot be deleted because you do not have "
-#| "permissions to see them."
 msgid ""
 "Files in the folder “%B” cannot be deleted because you do not have "
 "permissions to see them."
-msgstr ""
+msgstr "كۆرۈش ئىمتىيازىڭىز بولمىغاچقا قىسقۇچ «%B» دىكى ھۆججەتلەرنى ئۆچۈرگىلى بولمىدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1530
 #: ../libnautilus-private/nautilus-file-operations.c:2560
 #: ../libnautilus-private/nautilus-file-operations.c:3570
-#| msgid ""
-#| "There was an error getting information about the files in the folder \"%B"
-#| "\"."
 msgid ""
 "There was an error getting information about the files in the folder “%B”."
-msgstr ""
+msgstr "قىسقۇچ «%B» دىكى ھۆججەتلەرنىڭ ئۇچۇرىغا ئېلىۋاتقاندا خاتالىق كۆرۈلدى"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1539
 #: ../libnautilus-private/nautilus-file-operations.c:3579
@@ -1007,28 +968,24 @@ msgid "_Skip files"
 msgstr "ھۆججەتتىن ئاتلا(_S)"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1560
-#| msgid ""
-#| "The folder \"%B\" cannot be deleted because you do not have permissions "
-#| "to read it."
 msgid ""
 "The folder “%B” cannot be deleted because you do not have permissions to "
 "read it."
-msgstr ""
+msgstr "كۆرۈش ئىمتىيازىڭىز بولمىغاچقا قىسقۇچ «%B» نى ئۆچۈرگىلى بولمىدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1563
 #: ../libnautilus-private/nautilus-file-operations.c:2599
 #: ../libnautilus-private/nautilus-file-operations.c:3615
-#| msgid "There was an error reading the folder \"%B\"."
 msgid "There was an error reading the folder “%B”."
-msgstr ""
+msgstr "قىسقۇچ «%B» نى ئوقۇۋاتقاندا خاتالىق كۆرۈلدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1597
 msgid "Could not remove the folder %B."
-msgstr "%B قىسقۇچنى چىقىرىۋېتەلمەيدۇ."
+msgstr "قىسقۇچ «%B» نى ئۆچۈرگىلى بولمايدۇ."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1674
 msgid "There was an error deleting %B."
-msgstr "%B ئۆچۈرگەندە خاتالىق كۆرۈلدى."
+msgstr "%B ئۆچۈرۈۋاتقاندا خاتالىق كۆرۈلدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1754
 msgid "Moving files to trash"
@@ -1042,9 +999,8 @@ msgstr[0] "ئەخلەتخانىغا يۆتكەيدىغان %'d ھۆججەت قا
 
 #. Translators: %B is a file name
 #: ../libnautilus-private/nautilus-file-operations.c:1808
-#| msgid "Cannot move file to trash, do you want to delete immediately?"
 msgid "“%B” can't be put in the trash. Do you want to delete it immediately?"
-msgstr ""
+msgstr "«%B» نى ئەخلەتخانىغا قويغىلى بولمىدى. ھازىرلا ئۆچۈرسۇنمۇ؟"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1814
 msgid "This remote location does not support sending items to the trash."
@@ -1082,11 +1038,10 @@ msgstr "ئەخلەتخانىنى تازىلىما(_M)"
 
 #. Translators: %s is a file name formatted for display
 #: ../libnautilus-private/nautilus-file-operations.c:2372
-#: ../src/nautilus-view.c:6425
+#: ../src/nautilus-view.c:6429
 #, c-format
-#| msgid "Unable to stop %s"
 msgid "Unable to access “%s”"
-msgstr ""
+msgstr "«%s» زىيارەت قىلغىلى بولمىدى"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2448
 #, c-format
@@ -1130,44 +1085,33 @@ msgid "Error while moving files to trash."
 msgstr "ھۆججەتنى ئەخلەتخانىغا يۆتكىگەندە خاتالىق كۆرۈلدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2557
-#| msgid ""
-#| "Files in the folder \"%B\" cannot be handled because you do not have "
-#| "permissions to see them."
 msgid ""
 "Files in the folder “%B” cannot be handled because you do not have "
 "permissions to see them."
-msgstr ""
+msgstr "ئوقۇش ئىمتىيازىڭىز بولمىغاچقا قىسقۇچ «%B» دىكى ھۆججەتلەرنى بىر تەرەپ قىلغىلى بولمىدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2596
-#| msgid ""
-#| "The folder \"%B\" cannot be handled because you do not have permissions "
-#| "to read it."
 msgid ""
 "The folder “%B” cannot be handled because you do not have permissions to "
 "read it."
-msgstr ""
+msgstr "ئوقۇش ئىمتىيازىڭىز بولمىغاچقا قىسقۇچ «%B» نى بىر تەرەپ قىلغىلى بولمىدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2673
-#| msgid ""
-#| "The file \"%B\" cannot be handled because you do not have permissions to "
-#| "read it."
 msgid ""
 "The file “%B” cannot be handled because you do not have permissions to read "
 "it."
-msgstr ""
+msgstr "ئوقۇش ئىمتىيازىڭىز بولمىغاچقا ھۆججەت «%B» نى بىر تەرەپ قىلغىلى بولمىدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2676
-#| msgid "There was an error getting information about \"%B\"."
 msgid "There was an error getting information about “%B”."
-msgstr ""
+msgstr "«%B» ھەققىدىكى ئۇچۇرغا ئېرىشىشتە خاتالىق كۆرۈلدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2778
 #: ../libnautilus-private/nautilus-file-operations.c:2826
 #: ../libnautilus-private/nautilus-file-operations.c:2865
 #: ../libnautilus-private/nautilus-file-operations.c:2895
-#| msgid "Error while copying to \"%B\"."
 msgid "Error while copying to “%B”."
-msgstr ""
+msgstr "«%B» غا كۆچۈرۈۋاتقاندا خاتالىق كۆرۈلدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2782
 msgid "You do not have permissions to access the destination folder."
@@ -1197,54 +1141,39 @@ msgid "The destination is read-only."
 msgstr "بۇ نىشاننى ئوقۇشقىلا بولىدۇ."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2955
-#| msgid "Moving \"%B\" to \"%B\""
 msgid "Moving “%B” to “%B”"
-msgstr ""
+msgstr "«%B» نى «%B» غا يۆتكەۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2956
-#| msgid "Copying \"%B\" to \"%B\""
 msgid "Copying “%B” to “%B”"
-msgstr ""
+msgstr "\"%B\" نى \"%B\" غا كۆچۈرۈۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2963
-#| msgid "Duplicating \"%B\""
 msgid "Duplicating “%B”"
-msgstr ""
+msgstr "\"%B\" نى كۆپەيتىۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2971
-#| msgid "Moving %'d file (in \"%B\") to \"%B\""
-#| msgid_plural "Moving %'d files (in \"%B\") to \"%B\""
 msgid "Moving file %'d of %'d (in “%B”) to “%B”"
-msgstr ""
+msgstr "ھۆججەت %'d (جەمئىي %'d) («%B» نىڭ ئىچىدە) نى «%B» غا يۆتكەۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2973
-#| msgid "Copying %'d file (in \"%B\") to \"%B\""
-#| msgid_plural "Copying %'d files (in \"%B\") to \"%B\""
 msgid "Copying file %'d of %'d (in “%B”) to “%B”"
-msgstr ""
+msgstr "ھۆججەت %'d (جەمئىي %'d) («%B» نىڭ ئىچىدە) نى «%B» غا كۆچۈرۈۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2980
-#| msgid "Duplicating %'d file (in \"%B\")"
-#| msgid_plural "Duplicating %'d files (in \"%B\")"
 msgid "Duplicating file %'d of %'d (in “%B”)"
-msgstr ""
+msgstr "ھۆججەت %'d (جەمئىي %'d) («%B» نىڭ ئىچىدە) نى كۆپەيتىۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2989
-#| msgid "Moving %'d file to \"%B\""
-#| msgid_plural "Moving %'d files to \"%B\""
 msgid "Moving file %'d of %'d to “%B”"
-msgstr ""
+msgstr "ھۆججەت %'d (جەمئىي %'d) نى «%B» غا يۆتكەۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2991
-#| msgid "Copying %'d file to \"%B\""
-#| msgid_plural "Copying %'d files to \"%B\""
 msgid "Copying file %'d of %'d to “%B”"
-msgstr ""
+msgstr "ھۆججەت %'d (جەمئىي %'d) نى «%B» غا كۆچۈرۈۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2997
 #, c-format
-#| msgid "Duplicating %'d file"
-#| msgid_plural "Duplicating %'d files"
 msgid "Duplicating file %'d of %'d"
 msgstr "ھۆججەت %'d (جەمئىي %'d) نى كۆپەيتىۋاتىدۇ"
 
@@ -1265,43 +1194,32 @@ msgid_plural "%S of %S — %T left (%S/sec)"
 msgstr[0] "%S جەمئىي %S — %T قالدى (%S/sec)"
 
 #: ../libnautilus-private/nautilus-file-operations.c:3434
-#| msgid ""
-#| "The folder \"%B\" cannot be copied because you do not have permissions to "
-#| "create it in the destination."
 msgid ""
 "The folder “%B” cannot be copied because you do not have permissions to "
 "create it in the destination."
-msgstr ""
+msgstr "نىشانغا قۇرۇش ئىمتىيازىڭىز بولمىغاچقا قىسقۇچ «%B» نى كۆچۈرگىلى بولمىدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3437
-#| msgid "There was an error creating the folder \"%B\"."
 msgid "There was an error creating the folder “%B”."
-msgstr ""
+msgstr "قىسقۇچ \"%B\" نى قۇرۇۋاتقاندا خاتالىق كۆرۈلدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3567
-#| msgid ""
-#| "Files in the folder \"%B\" cannot be copied because you do not have "
-#| "permissions to see them."
 msgid ""
 "Files in the folder “%B” cannot be copied because you do not have "
 "permissions to see them."
-msgstr ""
+msgstr "كۆرۈش ئىمتىيازىڭىز بولمىغاچقا قىسقۇچ «%B» دىكى ھۆججەتلەرنى كۆچۈرگىلى بولمىدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3612
-#| msgid ""
-#| "The folder \"%B\" cannot be copied because you do not have permissions to "
-#| "read it."
 msgid ""
 "The folder “%B” cannot be copied because you do not have permissions to read "
 "it."
-msgstr ""
+msgstr "ئوقۇش ئىمتىيازىڭىز بولمىغاچقا قىسقۇچ «%B» نى كۆچۈرگىلى بولمىدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3657
 #: ../libnautilus-private/nautilus-file-operations.c:4350
 #: ../libnautilus-private/nautilus-file-operations.c:4965
-#| msgid "Error while moving \"%B\"."
 msgid "Error while moving “%B”."
-msgstr ""
+msgstr "«%B» يۆتكەۋاتقاندا خاتالىق كۆرۈلدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3658
 msgid "Could not remove the source folder."
@@ -1311,9 +1229,8 @@ msgstr "ئەسلى قىسقۇچنى چىقىرىۋېتەلمىدى."
 #: ../libnautilus-private/nautilus-file-operations.c:3784
 #: ../libnautilus-private/nautilus-file-operations.c:4352
 #: ../libnautilus-private/nautilus-file-operations.c:4423
-#| msgid "Error while copying \"%B\"."
 msgid "Error while copying “%B”."
-msgstr ""
+msgstr "«%B» كۆچۈرۈۋاتقاندا خاتالىق كۆرۈلدى."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3744
 #, c-format
@@ -1370,9 +1287,8 @@ msgid "Copying Files"
 msgstr "ھۆججەت كۆچۈرۈۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:4718
-#| msgid "Preparing to Move to \"%B\""
 msgid "Preparing to Move to “%B”"
-msgstr ""
+msgstr "«%B» غا يۆتكەشكە تەييارلىنىۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:4722
 #, c-format
@@ -1390,15 +1306,14 @@ msgid "Moving Files"
 msgstr "ھۆججەت يۆتكەۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5263
-#| msgid "Creating links in \"%B\""
 msgid "Creating links in “%B”"
-msgstr ""
+msgstr "«%B» غا ئۇلانما قۇرۇۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5267
 #, c-format
 msgid "Making link to %'d file"
 msgid_plural "Making links to %'d files"
-msgstr[0] "%'d ھۆججەت ئۇلانمىسى قۇرۇۋاتىدۇ"
+msgstr[0] "ھۆججەت %'d غا ئۇلانما قۇرۇۋاتىدۇ"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5402
 msgid "Error while creating link to %B."
@@ -1463,26 +1378,23 @@ msgstr "قوزغاتقۇچقا ئىشەنچلىك بەلگىسى قويالمى�
 
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:135
-#: ../src/nautilus-view.c:2502
-#| msgid "_Undo"
+#: ../src/nautilus-view.c:2506
 msgid "Undo"
 msgstr "يېنىۋال"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:138
-#: ../src/nautilus-view.c:2503
-#| msgid "Unable to start location"
+#: ../src/nautilus-view.c:2507
 msgid "Undo last action"
 msgstr "ئەڭ ئاخىرقى مەشغۇلاتتىن يېنىۋالىدۇ"
 
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:142
-#: ../src/nautilus-view.c:2521
-#| msgid "Redo Edit"
+#: ../src/nautilus-view.c:2525
 msgid "Redo"
 msgstr "قايتىلا"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:145
-#: ../src/nautilus-view.c:2522
+#: ../src/nautilus-view.c:2526
 msgid "Redo last undone action"
 msgstr "ئاخىرقى يېنىۋالغان مەشغۇلاتنى قايتىلايدۇ"
 
@@ -1494,22 +1406,18 @@ msgstr[0] "%d دانە تۈرنى ‹%s› گە ئەسلىگە كەلتۈر"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:370
 #, c-format
-#| msgid "Moving %'d file to \"%B\""
-#| msgid_plural "Moving %'d files to \"%B\""
 msgid "Move %d item to '%s'"
 msgid_plural "Move %d items to '%s'"
 msgstr[0] "%d دانە تۈرنى ‹%s› گە يۆتكە"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:374
 #, c-format
-#| msgid "Undo the edit"
 msgid "_Undo Move %d item"
 msgid_plural "_Undo Move %d items"
 msgstr[0] "%d دانە تۈرنى يۆتكەشتىن يېنىۋال"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:377
 #, c-format
-#| msgid "Redo the edit"
 msgid "_Redo Move %d item"
 msgid_plural "_Redo Move %d items"
 msgstr[0] "%d دانە تۈرنى يۆتكەشنى قايتا قىل"
@@ -1525,7 +1433,6 @@ msgid "Move '%s' to '%s'"
 msgstr "‹%s› نى ‹%s› غا يۆتكە"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:384
-#| msgid "_Undo"
 msgid "_Undo Move"
 msgstr "يۆتكەشتىن يېنىۋال(_U)"
 
@@ -1534,18 +1441,15 @@ msgid "_Redo Move"
 msgstr "يۆتكەشنى تەكرارلا(_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:388
-#| msgid "The item cannot be restored from trash"
 msgid "_Undo Restore from Trash"
 msgstr "ئەخلەتخانىدىن ئەسلىگە قايتۇرۇشتىن يېنىۋال(_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:389
-#| msgid "The item cannot be restored from trash"
 msgid "_Redo Restore from Trash"
 msgstr "ئەخلەتخانىدىن ئەسلىگە قايتۇرۇشتىن يېنىۋال(_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:392
 #, c-format
-#| msgid "Move each selected item to the Trash"
 msgid "Move %d item back to trash"
 msgid_plural "Move %d items back to trash"
 msgstr[0] "%d دانە تۈرنى ئەخلەتخانىغا يەنە يۆتكە"
@@ -1553,14 +1457,12 @@ msgstr[0] "%d دانە تۈرنى ئەخلەتخانىغا يەنە يۆتكە"
 #: ../libnautilus-private/nautilus-file-undo-operations.c:395
 #: ../libnautilus-private/nautilus-file-undo-operations.c:981
 #, c-format
-#| msgid "Empty all items from Trash?"
 msgid "Restore %d item from trash"
 msgid_plural "Restore %d items from trash"
 msgstr[0] "%d دانە تۈرنى ئەخلەتخانىدىن ئەسلىگە كەلتۈر"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:399
 #, c-format
-#| msgid "Mo_ve to Trash"
 msgid "Move '%s' back to trash"
 msgstr "‹%s› نى ئەخلەتخانىغا قايتۇرۇپ يۆتكە"
 
@@ -1577,8 +1479,6 @@ msgstr[0] "كۆچۈرۈلگەن %d دانە تۈرنى ئۆچۈر"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:407
 #, c-format
-#| msgid "Copying %'d file to \"%B\""
-#| msgid_plural "Copying %'d files to \"%B\""
 msgid "Copy %d item to '%s'"
 msgid_plural "Copy %d items to '%s'"
 msgstr[0] "%d دانە تۈرنى ‹%s› غا كۆچۈر"
@@ -1599,7 +1499,6 @@ msgstr[0] "%d دانە تۈرنى كۆچۈرۈشنى قايتا قىل"
 #: ../libnautilus-private/nautilus-file-undo-operations.c:440
 #: ../libnautilus-private/nautilus-file-undo-operations.c:673
 #, c-format
-#| msgid "_Delete"
 msgid "Delete '%s'"
 msgstr "‹%s› نى ئۆچۈر"
 
@@ -1609,7 +1508,6 @@ msgid "Copy '%s' to '%s'"
 msgstr "‹%s› نى ‹%s› غا كۆچۈر"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:421
-#| msgid "_Undo"
 msgid "_Undo Copy"
 msgstr "كۆچۈرۈشتىن يېنىۋال(_U)"
 
@@ -1619,123 +1517,99 @@ msgstr "كۆچۈرۈشنى قايتىلا(_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:426
 #, c-format
-#| msgid "Duplicate each selected item"
 msgid "Delete %d duplicated item"
 msgid_plural "Delete %d duplicated items"
 msgstr[0] "تەكرارلانغان %d تۈرنى ئۆچۈر"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:429
 #, c-format
-#| msgid "Duplicating %'d file (in \"%B\")"
-#| msgid_plural "Duplicating %'d files (in \"%B\")"
 msgid "Duplicate %d item in '%s'"
 msgid_plural "Duplicate %d items in '%s'"
 msgstr[0] "%d تۈرنى ‹%s› گە كۆپەيت(كۆچۈر)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:433
 #, c-format
-#| msgid "Duplicating %'d file"
-#| msgid_plural "Duplicating %'d files"
 msgid "_Undo Duplicate %d item"
 msgid_plural "_Undo Duplicate %d items"
 msgstr[0] "%d تۈرنى كۆپەيتىشتىن(كۆچۈرۈشتىن) يېنىۋال(_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:436
 #, c-format
-#| msgid "Duplicating %'d file"
-#| msgid_plural "Duplicating %'d files"
 msgid "_Redo Duplicate %d item"
 msgid_plural "_Redo Duplicate %d items"
 msgstr[0] "%d تۈرنى كۆپەيتىشنى(كۆچۈرۈشنى) قايتا قىل(_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:441
 #, c-format
-#| msgid "Duplicating \"%B\""
 msgid "Duplicate '%s' in '%s'"
 msgstr "'%2$s' دىكى '%1$s'نى نۇسخىلا"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:444
-#| msgid "D_uplicate"
 msgid "_Undo Duplicate"
 msgstr "كۆپەيتىشتىن يېنىۋال(_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:445
-#| msgid "D_uplicate"
 msgid "_Redo Duplicate"
 msgstr "كۆپەيتىشنى قايتىلا(_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:449
 #, c-format
-#| msgid "_Double click to open items"
 msgid "Delete links to %d item"
 msgid_plural "Delete links to %d items"
 msgstr[0] "%d دانە تۈرگە بولغان ئۇلانمىنى ئۆچۈر"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:452
 #, c-format
-#| msgid "Making link to %'d file"
-#| msgid_plural "Making links to %'d files"
 msgid "Create links to %d item"
 msgid_plural "Create links to %d items"
 msgstr[0] "%d دانە تۈرگە بولغان ئۇلانمىنى قۇر"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:456
 #, c-format
-#| msgid "Another link to %s"
 msgid "Delete link to '%s'"
 msgstr "‹%s› غىچە ئۇلانمىنى ئۆچۈر"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:457
 #, c-format
-#| msgid "Another link to %s"
 msgid "Create link to '%s'"
 msgstr "‹%s› غىچە ئۇلانما قۇر"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:459
-#| msgid "Undo the edit"
 msgid "_Undo Create Link"
 msgstr "ئۇلانما قۇرۇشتىن يېنىۋال(_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:460
-#| msgid "Redo the edit"
 msgid "_Redo Create Link"
 msgstr "ئۇلانما قۇرۇشنى قايتىلا(_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:676
 #, c-format
-#| msgid "Create and delete files"
 msgid "Create an empty file '%s'"
 msgstr "‹%s› بىر بوش ھۆججەت قۇر"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:678
-#| msgid "_Empty File"
 msgid "_Undo Create Empty File"
 msgstr "بوش ھۆججەت قۇرۇشتىن يېنىۋال(_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:679
-#| msgid "_Empty File"
 msgid "_Redo Create Empty File"
 msgstr "بوش ھۆججەت قۇرۇشنى قايتىلا(_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:681
 #, c-format
-#| msgid "Create New _Folder"
 msgid "Create a new folder '%s'"
 msgstr "يېڭىدىن ‹%s› دېگەن قىسقۇچنى قۇرىدۇ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:683
-#| msgid "Create New _Folder"
 msgid "_Undo Create Folder"
 msgstr "قىسقۇچ قۇرۇشتىن يېنىۋال(_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:684
-#| msgid "Create New _Folder"
 msgid "_Redo Create Folder"
 msgstr "قىسقۇچ قۇرۇشنى قايتىلا(_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:686
 #, c-format
-#| msgid "Create a new document from template \"%s\""
 msgid "Create new file '%s' from template "
 msgstr "يېڭىدىن ‹%s› دېگەن ھۆججەتنى قېلىپ ئاساسىدا قۇرىدۇ "
 
@@ -1754,18 +1628,15 @@ msgid "Rename '%s' as '%s'"
 msgstr "‹%s› ئاتنى ‹%s› غا ئۆزگەرت"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:872
-#| msgid "Rename"
 msgid "_Undo Rename"
 msgstr "ئات ئۆزگەرتىشتىن يېنىۋال(_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:873
-#| msgid "Rename"
 msgid "_Redo Rename"
 msgstr "ئات ئۆزگەرتىشنى قايتىلا(_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:984
 #, c-format
-#| msgid "Moving files to trash"
 msgid "Move %d item to trash"
 msgid_plural "Move %d items to trash"
 msgstr[0] "%d دانە تۈرنى ئەخلەتخانىغا يۆتكە"
@@ -1777,17 +1648,14 @@ msgstr "‹%s› نى ‹%s› غا ئەسلىگە كەلتۈر"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1003
 #, c-format
-#| msgid "Mo_ve to Trash"
 msgid "Move '%s' to trash"
 msgstr "‹%s› نى ئەخلەتخانىغا يۆتكە"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1007
-#| msgid "_Trash"
 msgid "_Undo Trash"
 msgstr "ئەخلەتخانىدىن چىقار(_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1008
-#| msgid "Mo_ve to Trash"
 msgid "_Redo Trash"
 msgstr "ئەخلەتخانىغا قايتا تاشلا(_R)"
 
@@ -1798,19 +1666,16 @@ msgstr "‹%s› دىكى تاماملانغان تۈرنىڭ دەسلەپكى �
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1300
 #, c-format
-#| msgid "The permissions of the file."
 msgid "Set permissions of items enclosed in '%s'"
 msgstr "‹%s› دىكى تاماملانغان تۈرنىڭ ھوقۇقىنى تەڭشەيدۇ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1302
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1457
-#| msgid "Folder Permissions:"
 msgid "_Undo Change Permissions"
 msgstr "ھوقۇق ئۆزگەرتىشتىن يېنىۋال(_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1303
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1458
-#| msgid "Folder Permissions:"
 msgid "_Redo Change Permissions"
 msgstr "ھوقۇق ئۆزگەرتىشنى قايتىلا(_U)"
 
@@ -1821,7 +1686,6 @@ msgstr "‹%s› نىڭ دەسلەپكى ھوقۇقىنى ئەسلىگە كەل�
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1455
 #, c-format
-#| msgid "Setting permissions"
 msgid "Set permissions of '%s'"
 msgstr "‹%s› نىڭ ھوقۇق تەڭشىكى"
 
@@ -1863,9 +1727,8 @@ msgstr "ئىگىدار ئۆزگەرتىشنى قايتىلا(_R)"
 
 #: ../libnautilus-private/nautilus-file-utilities.c:1184
 #, c-format
-#| msgid "Could not determine original location of \"%s\" "
 msgid "Could not determine original location of “%s” "
-msgstr ""
+msgstr "«%s» نىڭ ئەسلى ئورنىنى جەزملىيەلمىدى "
 
 #: ../libnautilus-private/nautilus-file-utilities.c:1188
 msgid "The item cannot be restored from trash"
@@ -1873,9 +1736,8 @@ msgstr "تۈرنى ئەخلەتخانىدىن ئەسلىگە كەلتۈرەلم�
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:81
 #, c-format
-#| msgid "Error while adding \"%s\": %s"
 msgid "Error while adding “%s”: %s"
-msgstr ""
+msgstr "«%s» نى قوشۇۋاتقاندا خاتالىق كۆرۈلدى: %s"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:83
 msgid "Could not add application"
@@ -1891,9 +1753,8 @@ msgstr "ھەمكارلىقىنى ئۇنتۇ"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:173
 #, c-format
-#| msgid "Error while setting \"%s\" as default application: %s"
 msgid "Error while setting “%s” as default application: %s"
-msgstr ""
+msgstr "«%s» كۆڭۈلدىكى پروگرامما قىلىپ تەڭشەشتە خاتالىق كۆرۈلدى: %s"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:175
 msgid "Could not set as default"
@@ -1908,16 +1769,14 @@ msgstr "%s پۈتۈك"
 #. Translators; %s here is a mime-type description
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:260
 #, c-format
-#| msgid "Open all files of type \"%s\" with"
 msgid "Open all files of type “%s” with"
-msgstr ""
+msgstr "بۇ خىل  تىپتىكى ھەممە ھۆججەتنى «%s» بىلەن ئاچ:"
 
 #. Translators: first %s is filename, second %s is mime-type description
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:267
 #, c-format
-#| msgid "Select an application to open %s and other files of type \"%s\""
 msgid "Select an application to open “%s” and other files of type “%s”"
-msgstr ""
+msgstr "%s ۋە باشقا ھۆججەت تىپى «%s» نى ئېچىشقا پروگراممىدىن بىرنى تاللاڭ"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:333
 msgid "Set as default"
@@ -1970,13 +1829,12 @@ msgstr "ئىزدە"
 
 #: ../libnautilus-private/nautilus-query.c:208
 #, c-format
-#| msgid "Search for \"%s\""
 msgid "Search for “%s”"
 msgstr "«%s» نى ئىزدە"
 
 #: ../libnautilus-private/nautilus-search-engine.c:190
 msgid "Unable to complete the requested search"
-msgstr ""
+msgstr "تەلەپ قىلىنغان ئىزدەش تاماملانمىدى"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:1
 msgid "Where to position newly open tabs in browser windows."
@@ -2098,24 +1956,17 @@ msgid ""
 msgstr "«ئالدى» ۋە «كەينى» توپچا بار چاشقىنەك ئىشلىتىدىغان ئىشلەتكۈچىلەرگە نىسبەتەن بۇ كۇنۇپكا قايسى توپچىنىڭ بىر توركۆرگۈ كۆزنىكىنىڭ «كەينى» بۇيرۇقىنى ئاكتىپلاشنى بەلگىلەيدۇ. ئىشلەتكىلى بولىدىغان قىممەت دائىرىسى 6 دىن 14 كېچە."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:23
-#| msgid "When to show thumbnails of image files"
 msgid "When to show thumbnails of files"
-msgstr ""
+msgstr "قايسى ۋاقىتتا ھۆججەتنىڭ كىچىك سۈرىتى كۆرسىتىلىدۇ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:24
-#| msgid ""
-#| "Speed tradeoff for when to show an image file as a thumbnail. If set to "
-#| "\"always\" then always thumbnail, even if the folder is on a remote "
-#| "server. If set to \"local-only\" then only show thumbnails for local file "
-#| "systems. If set to \"never\" then never bother to thumbnail images, just "
-#| "use a generic icon."
 msgid ""
 "Speed tradeoff for when to show a file as a thumbnail. If set to \"always\" "
 "then always thumbnail, even if the folder is on a remote server. If set to "
 "\"local-only\" then only show thumbnails for local file systems. If set to "
 "\"never\" then never bother to thumbnail files, just use a generic icon. "
 "Despite what the name may suggest, this applies to any previewable file type."
-msgstr ""
+msgstr "ھۆججەتنى كىچىك سۈرەت شەكلىدە كۆرسەتكەندە سۈرئەت تەڭشىلىشى. ئەگەر «ھەمىشە» گە تەڭشەلسە ھۆججەت يىراقتىكى مۇلازىمېتىردا بولغان تەقدىردىمۇ كىچىك سۈرەتنى ھەمىشە كۆرسىتىدۇ. ئەگەر «يەرلىك ھۆججەتلا» گە تەڭشەلسە ئۇنداقتا يەرلىك ھۆججەت سىستېمىسىدا ھۆججەتنىڭ كىچىك سۈرىتىنى قۇرىدۇ. ئەگەر «ھەرگىز» گە تەڭشەلسە ئۇنداقتا ھېچقانداق ھۆججەتنى ئالدىن كۆزەتمەي ئورتاق سىنبەلگىنىلا ئىشلىتىدۇ."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:25
 msgid "Maximum image size for thumbnailing"
@@ -2165,15 +2016,11 @@ msgid "Default folder viewer"
 msgstr "كۆڭۈلدىكى قىسقۇچ كۆرگۈچ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:34
-#| msgid ""
-#| "When a folder is visited this viewer is used unless you have selected "
-#| "another view for that particular folder. Possible values are \"list-view"
-#| "\", \"icon-view\" and \"compact-view\"."
 msgid ""
 "When a folder is visited this viewer is used unless you have selected "
 "another view for that particular folder. Possible values are \"list-view\", "
 "and \"icon-view\"."
-msgstr ""
+msgstr "قىسقۇچنى زىيارەت قىلغاندا سىز بۇ قىسقۇچ ئۈچۈن باشقا كۆرۈنۈش ئىشلىتىشنى تاللىمىغانلا بولسىڭىز بۇ كۆرۈنۈشنى ئىشلىتىدۇ. تاللىغىلى بولىدىغان قىممىتى \"list-view\"(تىزىم كۆرۈنۈشى)، \"icon-view\"(سىنبەلگە كۆرۈنۈشى) ."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:35
 msgid "Whether to show hidden files"
@@ -2203,12 +2050,6 @@ msgid "List of possible captions on icons"
 msgstr "سىنبەلگە تاللىيالايدىغان تېما تىزىمى"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:40
-#| msgid ""
-#| "A list of captions below an icon in the icon view and the desktop. The "
-#| "actual number of captions shown depends on the zoom level. Some possible "
-#| "values are: \"size\", \"type\", \"date_modified\", \"date_changed\", "
-#| "\"date_accessed\", \"owner\", \"group\", \"permissions\", "
-#| "\"octal_permissions\" and \"mime_type\"."
 msgid ""
 "A list of captions below an icon in the icon view and the desktop. The "
 "actual number of captions shown depends on the zoom level. Some possible "
@@ -2420,54 +2261,45 @@ msgstr "ئەگەر true تەڭشەلسە، يېڭى ئېچىلغان كۆزنە�
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:80
 #: ../nautilus-sendto-extension/nautilus-nste.c:85
-#| msgid "Send To..."
 msgid "Send To…"
-msgstr ""
+msgstr "يوللاش ئورنى…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:81
-#| msgid "Send file by mail, instant message..."
 msgid "Send file by mail, instant message…"
-msgstr ""
+msgstr "ئېلخەت، مۇڭداشقۇدا ھۆججەت يوللا…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:86
-#| msgid "Send files by mail, instant message..."
 msgid "Send files by mail, instant message…"
-msgstr ""
+msgstr "ئېلخەت، مۇڭداشقۇدا ھۆججەت يوللا…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:227 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:231 ../src/nautilus-window-slot.c:1597
 msgid "Oops! Something went wrong."
 msgstr ""
 
-#: ../src/nautilus-application.c:229
+#: ../src/nautilus-application.c:233
 #, c-format
-#| msgid ""
-#| "Before running Nautilus, please create the following folder, or set "
-#| "permissions such that Nautilus can create it."
 msgid ""
 "Unable to create a required folder. Please create the following folder, or "
 "set permissions such that it can be created:\n"
 "%s"
 msgstr ""
 
-#: ../src/nautilus-application.c:234
+#: ../src/nautilus-application.c:238
 #, c-format
-#| msgid ""
-#| "Before running Nautilus, please create the following folder, or set "
-#| "permissions such that Nautilus can create it."
 msgid ""
 "Unable to create required folders. Please create the following folders, or "
 "set permissions such that they can be created:\n"
 "%s"
 msgstr ""
 
-#: ../src/nautilus-application.c:368
+#: ../src/nautilus-application.c:372
 msgid ""
 "Nautilus 3.0 deprecated this directory and tried migrating this "
 "configuration to ~/.config/nautilus"
 msgstr "Nautilus 3.0 بۇ مۇندەرىجىنى قوللىمايدۇ، بۇ سەپلىمىنى ~/.config/nautilus غا يۆتكەشنى سىناڭ"
 
-#: ../src/nautilus-application.c:847
+#: ../src/nautilus-application.c:851
 #: ../src/nautilus-file-management-properties.c:196
 #: ../src/nautilus-window-menus.c:253
 #, c-format
@@ -2477,63 +2309,61 @@ msgid ""
 msgstr "ياردەم كۆرسەتكەندە خاتالىق كۆرۈلدى: \n"
 "%s"
 
-#: ../src/nautilus-application.c:1018
+#: ../src/nautilus-application.c:1022
 msgid "--check cannot be used with other options."
 msgstr "--check نى باشقا تاللانمىلار بىلەن بىرگە ئىشلىتىشكە بولمايدۇ."
 
-#: ../src/nautilus-application.c:1024
+#: ../src/nautilus-application.c:1028
 msgid "--quit cannot be used with URIs."
 msgstr "--quit نى URI بىلەن بىللە ئىشلەتكىلى بولمايدۇ."
 
-#: ../src/nautilus-application.c:1031
+#: ../src/nautilus-application.c:1035
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry نى بىرقانچە URI بىلەن بىرگە ئىشلىتىشكە بولمايدۇ."
 
-#: ../src/nautilus-application.c:1037
-#| msgid "--geometry cannot be used with more than one URI."
+#: ../src/nautilus-application.c:1041
 msgid "--select must be used with at least an URI."
 msgstr ""
 
-#: ../src/nautilus-application.c:1135
+#: ../src/nautilus-application.c:1139
 msgid "Perform a quick set of self-check tests."
 msgstr "بىر گۇرۇپپا تېز سۈرئەتتە ئۆزىنى تەكشۈرۈشنى ئىجرا قىلىدۇ."
 
-#: ../src/nautilus-application.c:1141
+#: ../src/nautilus-application.c:1145
 msgid "Show the version of the program."
 msgstr "پروگراممىنىڭ نەشرىنى كۆرسەت."
 
-#: ../src/nautilus-application.c:1143
+#: ../src/nautilus-application.c:1147
 msgid "Create the initial window with the given geometry."
 msgstr "بېرىلگەن گېئومېتىرىيە خاسلىقىنى ئىشلىتىپ دەسلەپكى كۆزنەك قۇرىدۇ."
 
-#: ../src/nautilus-application.c:1143
+#: ../src/nautilus-application.c:1147
 msgid "GEOMETRY"
 msgstr "GEOMETRY"
 
-#: ../src/nautilus-application.c:1145
+#: ../src/nautilus-application.c:1149
 msgid "Only create windows for explicitly specified URIs."
 msgstr "پەقەت بەلگىلەنگەن URI ئۈچۈن كۆزنەك قۇرىدۇ"
 
-#: ../src/nautilus-application.c:1147
+#: ../src/nautilus-application.c:1151
 msgid ""
 "Do not manage the desktop (ignore the preference set in the preferences "
 "dialog)."
 msgstr "ئۈستەلئۈستىنى باشقۇرما (مايىللىق سۆزلەشكۈدە تەڭشەلگەن مايىللىققا پەرۋا قىلما)"
 
-#: ../src/nautilus-application.c:1149
+#: ../src/nautilus-application.c:1153
 msgid "Quit Nautilus."
 msgstr "Nautilus تىن چېكىنىدۇ"
 
-#: ../src/nautilus-application.c:1151
-#| msgid "Select the columns visible in this folder"
+#: ../src/nautilus-application.c:1155
 msgid "Select specified URI in parent folder."
 msgstr ""
 
-#: ../src/nautilus-application.c:1152
+#: ../src/nautilus-application.c:1156
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:1165
+#: ../src/nautilus-application.c:1169
 msgid ""
 "\n"
 "\n"
@@ -2544,15 +2374,13 @@ msgstr "\n"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1175
-#| msgid "Could not set as default"
+#: ../src/nautilus-application.c:1179
 msgid "Could not parse arguments"
 msgstr "پارامېتىرنى پارچىلىيالمىدى"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1207
-#| msgid "Could not remove application"
+#: ../src/nautilus-application.c:1211
 msgid "Could not register the application"
 msgstr ""
 
@@ -2562,12 +2390,10 @@ msgid "New _Window"
 msgstr "يېڭى كۆزنەك(_W)"
 
 #: ../src/nautilus-app-menu.ui.h:2
-#| msgid "Connect to Server"
 msgid "Connect to _Server"
-msgstr ""
+msgstr "مۇلازىمېتىرغا باغلا(_S)"
 
 #: ../src/nautilus-app-menu.ui.h:3
-#| msgid "_Location:"
 msgid "Enter _Location"
 msgstr ""
 
@@ -2580,9 +2406,8 @@ msgid "Prefere_nces"
 msgstr "مايىللىق(_N)"
 
 #: ../src/nautilus-app-menu.ui.h:6
-#| msgid "_About"
 msgid "_About Files"
-msgstr ""
+msgstr "ھۆججەتلەر ھەققىدە(_A)"
 
 #. name, stock id, label
 #: ../src/nautilus-app-menu.ui.h:7 ../src/nautilus-window-menus.c:456
@@ -2596,7 +2421,6 @@ msgstr "ئاخىرلاشتۇر(_Q)"
 #: ../src/nautilus-autorun-software.c:143
 #: ../src/nautilus-autorun-software.c:146
 #, c-format
-#| msgid "Unable to start %s"
 msgid ""
 "Unable to start the program:\n"
 "%s"
@@ -2604,7 +2428,6 @@ msgstr ""
 
 #: ../src/nautilus-autorun-software.c:149
 #, c-format
-#| msgid "Unable to mount the location."
 msgid "Unable to locate the program"
 msgstr ""
 
@@ -2614,9 +2437,6 @@ msgstr ""
 
 #: ../src/nautilus-autorun-software.c:202
 #, c-format
-#| msgid ""
-#| "<big><b>This medium contains software intended to be automatically "
-#| "started. Would you like to run it?</b></big>"
 msgid ""
 "“%s” contains software intended to be automatically started. Would you like "
 "to run it?"
@@ -2634,35 +2454,30 @@ msgstr "ئىجرا قىل(_R)"
 msgid "No bookmarks defined"
 msgstr "ھېچقانداق خەتكۈش بەلگىلەنمىگەن"
 
-#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:242
+#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:243
 msgid "Bookmarks"
 msgstr "خەتكۈشلەر"
 
 #: ../src/nautilus-bookmarks-window.ui.h:1
-#: ../src/nautilus-places-sidebar.c:2630
+#: ../src/nautilus-places-sidebar.c:2633
 msgid "Remove"
 msgstr "چىقىرىۋەت"
 
 #: ../src/nautilus-bookmarks-window.ui.h:2
-#| msgid "Move _Up"
 msgid "Move Up"
 msgstr "ئۈستىگە"
 
 #: ../src/nautilus-bookmarks-window.ui.h:3
-#| msgid "Move Dow_n"
 msgid "Move Down"
 msgstr "پەسكە"
 
 #: ../src/nautilus-bookmarks-window.ui.h:4
-#| msgid "_Name:"
-#| msgid_plural "_Names:"
 msgid "_Name"
 msgstr "ئاتى(_N)"
 
 #: ../src/nautilus-bookmarks-window.ui.h:5
-#| msgid "_Location:"
 msgid "_Location"
-msgstr ""
+msgstr "ئورنى(_L)"
 
 #. name, stock id
 #. label, accelerator
@@ -2736,10 +2551,9 @@ msgstr "سىنبەلگە تەرتىپىنى ئەخلەتخانىغا يۆتكى�
 
 #: ../src/nautilus-canvas-view.c:1192
 msgid "By Search Relevance"
-msgstr ""
+msgstr "مۇناسىۋەتلىكلىكى بويىچە"
 
 #: ../src/nautilus-canvas-view.c:1193
-#| msgid "Keep icons sorted by size in rows"
 msgid "Keep icons sorted by search relevance in rows"
 msgstr ""
 
@@ -2771,14 +2585,12 @@ msgstr "بۇ جاينى سىنبەلگە كۆرۈنۈشىدە كۆرسەت."
 #. if it wasn't cancelled show a dialog
 #: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1870
 #: ../src/nautilus-mime-actions.c:2142
-#| msgid "Unable to start location"
 msgid "Unable to access location"
-msgstr ""
+msgstr "ئورۇننى زىيارەت قىلغىلى بولمىدى"
 
 #: ../src/nautilus-connect-server.c:74
-#| msgid "Unable to start location"
 msgid "Unable to display location"
-msgstr ""
+msgstr "ئورۇننى كۆرسەتكىلى بولمىدى"
 
 #: ../src/nautilus-connect-server.c:140
 msgid "Print but do not open the URI"
@@ -2802,40 +2614,35 @@ msgstr "ياردەم كۆرسىتىشتە خاتالىق كۆرۈلدى."
 
 #: ../src/nautilus-connect-server-dialog.c:149
 msgid "Don't recognize this file server type."
-msgstr ""
+msgstr "ھۆججەت مۇلازىمېتىرىنىڭ تىپىنى بىلگىلى بولمىدى"
 
 #: ../src/nautilus-connect-server-dialog.c:156
 msgid "This doesn't look like an address."
-msgstr ""
+msgstr "بۇ ئادرېسقا ئوخشىمايدىكەن."
 
 #. Translators: %s is a URI of the form "smb://foo.example.com"
 #: ../src/nautilus-connect-server-dialog.c:265
 #, c-format
 msgid "For example, %s"
-msgstr ""
+msgstr "مەسىلەن: %s"
 
 #: ../src/nautilus-connect-server-dialog.c:533
-#| msgid "Remove"
 msgid "_Remove"
 msgstr "چىقىرىۋەت(_R)"
 
 #: ../src/nautilus-connect-server-dialog.c:542
-#| msgid "Select All"
 msgid "_Clear All"
-msgstr ""
+msgstr "ھەممىنى تازىلا(_C)"
 
 #: ../src/nautilus-connect-server-dialog.c:604
-#| msgid "Server Details"
 msgid "_Server Address"
-msgstr ""
+msgstr "مۇلازىمېتىر ئادرېسى(_S)"
 
 #: ../src/nautilus-connect-server-dialog.c:628
-#| msgid "Network Servers"
 msgid "_Recent Servers"
-msgstr ""
+msgstr "يېقىندا ئىشلەتكەن مۇلازىمېتىرلار(_R)"
 
 #: ../src/nautilus-connect-server-dialog.c:694
-#| msgid "_Browse..."
 msgid "_Browse"
 msgstr "كۆز يۈگۈرت(_B)"
 
@@ -2845,8 +2652,8 @@ msgstr "ئۇلا(_O)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:706 ../src/nautilus-view.c:7142
-#: ../src/nautilus-view.c:8675
+#: ../src/nautilus-desktop-canvas-view.c:706 ../src/nautilus-view.c:7146
+#: ../src/nautilus-view.c:8679
 msgid "E_mpty Trash"
 msgstr "ئەخلەتخانىنى تازىلا(_M)"
 
@@ -2877,8 +2684,8 @@ msgid "Empty Trash"
 msgstr "ئەخلەتخانىنى تازىلاش"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:752 ../src/nautilus-trash-bar.c:212
-#: ../src/nautilus-view.c:7143
+#: ../src/nautilus-desktop-canvas-view.c:752 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-view.c:7147
 msgid "Delete all items in the Trash"
 msgstr "ئەخلەتخانىدىكى ھەممە تۈرنى ئۆچۈر"
 
@@ -2894,19 +2701,16 @@ msgstr "كۆزنەكتىكى سىنبەلگىلەرنى قايتىدىن مۇۋ�
 
 #. label, accelerator
 #: ../src/nautilus-desktop-canvas-view.c:764
-#| msgid "Resize Icon..."
 msgid "Resize Icon…"
-msgstr ""
+msgstr "سىنبەلگە چوڭلۇقىنى ئۆزگەرت…"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:766
-#| msgid "Make the selected icon resizable"
 msgid "Make the selected icons resizable"
 msgstr ""
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:773
-#| msgid "Restore each selected icon to its original size"
 msgid "Restore each selected icons to its original size"
 msgstr ""
 
@@ -2941,47 +2745,39 @@ msgstr "بۇيرۇق"
 
 #. hardcode "Desktop"
 #: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:263
-#: ../src/nautilus-places-sidebar.c:523
+#: ../src/nautilus-places-sidebar.c:526
 msgid "Desktop"
 msgstr "ئۈستەلئۈستى"
 
 #: ../src/nautilus-error-reporting.c:68
 #, c-format
-#| msgid ""
-#| "You do not have the permissions necessary to view the contents of \"%s\"."
 msgid "You do not have the permissions necessary to view the contents of “%s”."
-msgstr ""
+msgstr "سىزنىڭ «%s» نىڭ مەزمۇنىنى كۆرۈش ئىمتىيازىڭىز يوق."
 
 #: ../src/nautilus-error-reporting.c:72
 #, c-format
-#| msgid "\"%s\" could not be found. Perhaps it has recently been deleted."
 msgid "“%s” could not be found. Perhaps it has recently been deleted."
-msgstr ""
+msgstr "«%s» نى تاپالمىدى. بەلكىم ئۇ بايىلا ئۆچۈرۈلگەن بولۇشى مۇمكىن."
 
 #: ../src/nautilus-error-reporting.c:76
 #, c-format
-#| msgid "Sorry, could not display all the contents of \"%s\": %s"
 msgid "Sorry, could not display all the contents of “%s”: %s"
-msgstr ""
+msgstr "كەچۈرۈڭ، «%s» نىڭ ھەممە مەزمۇنىنى كۆرسىتەلمىدى: %s"
 
 #: ../src/nautilus-error-reporting.c:83
-#| msgid "The folder contents could not be displayed."
 msgid "This location could not be displayed."
-msgstr ""
+msgstr "مەزكۇر ئورۇننى كۆرسەتكىلى بولمىدى."
 
 #: ../src/nautilus-error-reporting.c:107
 #, c-format
-#| msgid ""
-#| "You do not have the permissions necessary to change the group of \"%s\"."
 msgid "You do not have the permissions necessary to change the group of “%s”."
-msgstr ""
+msgstr "سىزنىڭ «%s» گۇرۇپپىنى ئۆزگەرتىشكە يېتەرلىك ئىمتىيازىڭىز يوق."
 
 #. fall through
 #: ../src/nautilus-error-reporting.c:120
 #, c-format
-#| msgid "Sorry, could not change the group of \"%s\": %s"
 msgid "Sorry, could not change the group of “%s”: %s"
-msgstr ""
+msgstr "كەچۈرۈڭ، «%s» گۇرۇپپىنى ئۆزگەرتەلمەيدۇ: %s"
 
 #: ../src/nautilus-error-reporting.c:125
 msgid "The group could not be changed."
@@ -2989,75 +2785,61 @@ msgstr "بۇ گۇرۇپپىنى ئۆزگەرتەلمەيدۇ."
 
 #: ../src/nautilus-error-reporting.c:145
 #, c-format
-#| msgid "Sorry, could not change the owner of \"%s\": %s"
 msgid "Sorry, could not change the owner of “%s”: %s"
-msgstr ""
+msgstr "كەچۈرۈڭ، «%s» نىڭ ئىگىسىنى ئۆزگەرتكىلى بولمىدى: %s"
 
 #: ../src/nautilus-error-reporting.c:147
 msgid "The owner could not be changed."
-msgstr "بۇ ئىگىدارنى ئۆزگەرتەلمەيدۇ."
+msgstr "ئىگىسىنى ئۆزگەرتكىلى بولمىدى."
 
 #: ../src/nautilus-error-reporting.c:167
 #, c-format
-#| msgid "Sorry, could not change the permissions of \"%s\": %s"
 msgid "Sorry, could not change the permissions of “%s”: %s"
-msgstr ""
+msgstr "كەچۈرۈڭ، «%s» نىڭ ئىمتىيازىنى  ئۆزگەرتكىلى بولمىدى: %s"
 
 #: ../src/nautilus-error-reporting.c:169
 msgid "The permissions could not be changed."
-msgstr "بۇ ھوقۇق چېكىنى ئۆزگەرتەلمەيدۇ."
+msgstr "ئىمتىيازىنى ئۆزگەرتكىلى بولمىدى."
 
 #: ../src/nautilus-error-reporting.c:204
 #, c-format
-#| msgid ""
-#| "The name \"%s\" is already used in this folder. Please use a different "
-#| "name."
 msgid ""
 "The name “%s” is already used in this location. Please use a different name."
-msgstr ""
+msgstr "ئات «%s» بۇ ئورۇندا ئىشلىتىلگەن. ئوخشىمايدىغان ئات ئىشلىتىڭ."
 
 #: ../src/nautilus-error-reporting.c:209
 #, c-format
-#| msgid ""
-#| "There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
 msgid ""
 "There is no “%s” in this location. Perhaps it was just moved or deleted?"
-msgstr ""
+msgstr "بۇ  ئورۇندا «%s» يوق. بەلكىم ئۇ بايىلا يۆتكەلگەن ياكى ئۆچۈرۈلگەن بولۇشى مۇمكىن."
 
 #: ../src/nautilus-error-reporting.c:214
 #, c-format
-#| msgid "You do not have the permissions necessary to rename \"%s\"."
 msgid "You do not have the permissions necessary to rename “%s”."
-msgstr ""
+msgstr "سىزنىڭ «%s» نىڭ ئاتىنى ئۆزگەرتىشكە يېتەرلىك ئىمتىيازىڭىز يوق."
 
 #: ../src/nautilus-error-reporting.c:219
 #, c-format
-#| msgid ""
-#| "The name \"%s\" is not valid because it contains the character \"/\". "
-#| "Please use a different name."
 msgid ""
 "The name “%s” is not valid because it contains the character “/”. Please use "
 "a different name."
-msgstr ""
+msgstr "«%s» ئات ئىناۋەتسىز چۈنكى ئۇنىڭدا \"/\" ھەرپ بار. باشقا ئات ئىشلىتىڭ."
 
 #: ../src/nautilus-error-reporting.c:223
 #, c-format
-#| msgid "The name \"%s\" is not valid. Please use a different name."
 msgid "The name “%s” is not valid. Please use a different name."
-msgstr ""
+msgstr "«%s» ئات ئىناۋەتسىز. باشقا ئات ئىشلىتىڭ."
 
 #: ../src/nautilus-error-reporting.c:229
 #, c-format
-#| msgid "The name \"%s\" is too long. Please use a different name."
 msgid "The name “%s” is too long. Please use a different name."
-msgstr ""
+msgstr "«%s» ئات بەك ئۇزۇن. باشقا ئات ئىشلىتىڭ."
 
 #. fall through
 #: ../src/nautilus-error-reporting.c:243
 #, c-format
-#| msgid "Sorry, could not rename \"%s\" to \"%s\": %s"
 msgid "Sorry, could not rename “%s” to “%s”: %s"
-msgstr ""
+msgstr "كەچۈرۈڭ، «%s» نىڭ ئاتىنى «%s» غا ئۆزگەرتەلمىدى: %s"
 
 #: ../src/nautilus-error-reporting.c:251
 msgid "The item could not be renamed."
@@ -3065,9 +2847,8 @@ msgstr "بۇ تۈرنىڭ ئاتىنى ئۆزگەرتەلمەيدۇ."
 
 #: ../src/nautilus-error-reporting.c:348
 #, c-format
-#| msgid "Renaming \"%s\" to \"%s\"."
 msgid "Renaming “%s” to “%s”."
-msgstr ""
+msgstr "«%s» نىڭ ئاتىنى «%s» غا ئۆزگەرتىدۇ."
 
 #. Translators: this is referred to captions under icons.
 #: ../src/nautilus-file-management-properties.c:280
@@ -3077,14 +2858,12 @@ msgid "None"
 msgstr "يوق"
 
 #: ../src/nautilus-file-management-properties.ui.h:1
-#| msgid "Prefere_nces"
 msgid "Files Preferences"
-msgstr ""
+msgstr "ھۆججەت مايىللىقلىرى"
 
 #: ../src/nautilus-file-management-properties.ui.h:2
-#| msgid "<b>Default View</b>"
 msgid "Default View"
-msgstr ""
+msgstr "كۆڭۈلدىكى كۆرۈنۈش"
 
 #: ../src/nautilus-file-management-properties.ui.h:3
 msgid "View _new folders using:"
@@ -3103,18 +2882,16 @@ msgid "Show hidden and _backup files"
 msgstr "يوشۇرۇن ۋە زاپاس ھۆججەتنى كۆرسەت(_B)"
 
 #: ../src/nautilus-file-management-properties.ui.h:7
-#| msgid "<b>Icon View Defaults</b>"
 msgid "Icon View Defaults"
-msgstr ""
+msgstr "سىنبەلگىلىك كۆرۈنۈشنىڭ كۆڭۈلدىكىلىرى"
 
 #: ../src/nautilus-file-management-properties.ui.h:8
 msgid "Default _zoom level:"
 msgstr "كۆڭۈلدىكى كېڭەيت تارايت دەرىجىسى(_Z)"
 
 #: ../src/nautilus-file-management-properties.ui.h:9
-#| msgid "<b>List View Defaults</b>"
 msgid "List View Defaults"
-msgstr ""
+msgstr "تىزىم كۆرۈنۈشنىڭ كۆڭۈلدىكىلىرى"
 
 #: ../src/nautilus-file-management-properties.ui.h:10
 msgid "D_efault zoom level:"
@@ -3137,9 +2914,8 @@ msgid "_Double click to open items"
 msgstr "قوش چېكىلسە تۈرنى ئاچ(_D)"
 
 #: ../src/nautilus-file-management-properties.ui.h:15
-#| msgid "<b>Executable Text Files</b>"
 msgid "Executable Text Files"
-msgstr ""
+msgstr "ئىجرا قىلغىلى بولىدىغان تېكىست ھۆججەتلىرى"
 
 #: ../src/nautilus-file-management-properties.ui.h:16
 msgid "_Run executable text files when they are opened"
@@ -3155,8 +2931,8 @@ msgstr "ھەر قېتىم سورا(_A)"
 
 #. trash
 #: ../src/nautilus-file-management-properties.ui.h:19
-#: ../src/nautilus-places-sidebar.c:537
-#: ../src/nautilus-shell-search-provider.c:315 ../src/nautilus-trash-bar.c:194
+#: ../src/nautilus-places-sidebar.c:540
+#: ../src/nautilus-shell-search-provider.c:315 ../src/nautilus-trash-bar.c:195
 msgid "Trash"
 msgstr "ئەخلەتخانا"
 
@@ -3169,9 +2945,8 @@ msgid "I_nclude a Delete command that bypasses Trash"
 msgstr "ئەخلەتخانىغا تاشلىماي ئۆچۈرۈش بۇيرۇقىمۇ ئىچىدە(_N)"
 
 #: ../src/nautilus-file-management-properties.ui.h:22
-#| msgid "<b>Icon Captions</b>"
 msgid "Icon Captions"
-msgstr ""
+msgstr "سىنبەلگە ماۋزۇسى"
 
 #: ../src/nautilus-file-management-properties.ui.h:23
 msgid ""
@@ -3201,7 +2976,6 @@ msgstr "بەلگىلەنگەن چوڭلۇقتىن كىچىك ھۆججەتنىل�
 
 #: ../src/nautilus-file-management-properties.ui.h:30
 #: ../src/nautilus-properties-window.c:4477
-#| msgid "Folder:"
 msgid "Folders"
 msgstr "قىسقۇچلار"
 
@@ -3332,7 +3106,6 @@ msgid "4 GB"
 msgstr "4 گىگابايت‏"
 
 #: ../src/nautilus-image-properties-page.c:331
-#| msgid "Image Type:"
 msgid "Image Type"
 msgstr "سۈرەت تىپى"
 
@@ -3341,7 +3114,7 @@ msgstr "سۈرەت تىپى"
 #, c-format
 msgid "%d pixel"
 msgid_plural "%d pixels"
-msgstr[0] ""
+msgstr[0] "%d پىكسېل"
 
 #: ../src/nautilus-image-properties-page.c:337
 msgid "Width"
@@ -3367,13 +3140,12 @@ msgid "Copyright"
 msgstr "نەشر ھوقۇقى"
 
 #: ../src/nautilus-image-properties-page.c:363
-#| msgid "Trashed On"
 msgid "Created On"
-msgstr ""
+msgstr "قۇرغان ۋاقتى"
 
 #: ../src/nautilus-image-properties-page.c:364
 msgid "Created By"
-msgstr ""
+msgstr "قۇرغۇچى"
 
 #. Translators: this refers to a legal disclaimer string embedded in
 #. * the metadata of an image
@@ -3460,8 +3232,7 @@ msgstr "سۈرەت ئۇچۇرىنى يۈكلىيەلمىدى"
 
 #: ../src/nautilus-image-properties-page.c:708
 #: ../src/nautilus-list-model.c:378 ../src/nautilus-window-slot.c:606
-#: ../src/nautilus-window-slot.c:2244
-#| msgid "Loading..."
+#: ../src/nautilus-window-slot.c:2245
 msgid "Loading…"
 msgstr "يۈكلەۋاتىدۇ…"
 
@@ -3481,9 +3252,8 @@ msgstr "بۇ قىسقۇچتا كۆرسىتىدىغان ئۇچۇرنىڭ تەرت
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-list-view.c:2328
-#| msgid "Visible _Columns..."
 msgid "Visible _Columns…"
-msgstr ""
+msgstr "كۆرۈنىدىغان ئىستونلار(_C)…"
 
 #. tooltip
 #: ../src/nautilus-list-view.c:2329
@@ -3521,46 +3291,40 @@ msgstr[0] "%d مۇستەقىل كۆزنەك ئاچىدۇ."
 
 #: ../src/nautilus-mime-actions.c:632
 #, c-format
-#| msgid "The Link \"%s\" is Broken. Move it to Trash?"
 msgid "The link “%s” is broken. Move it to Trash?"
-msgstr ""
+msgstr "ئۇلانما «%s» بۇزۇلغان. ئۇنى ئەخلەتخانىغا يۆتكەمسىز؟"
 
 #: ../src/nautilus-mime-actions.c:634
 #, c-format
-#| msgid "The Link \"%s\" is Broken."
 msgid "The link “%s” is broken."
-msgstr ""
+msgstr "ئۇلانما«%s»  بۇزۇلغان."
 
 #: ../src/nautilus-mime-actions.c:640
-#| msgid "This link cannot be used, because it has no target."
 msgid "This link cannot be used because it has no target."
-msgstr ""
+msgstr "بۇ ئۇلانمىنى ئىشلەتكىلى بولمايدۇ چۈنكى ئۇنىڭ نىشانى يوق."
 
 #: ../src/nautilus-mime-actions.c:642
 #, c-format
-#| msgid "This link cannot be used, because its target \"%s\" doesn't exist."
 msgid "This link cannot be used because its target “%s” doesn't exist."
-msgstr ""
+msgstr "بۇ ئۇلانمىنى ئىشلەتكىلى بولمايدۇ چۈنكى ئۇنىڭ نىشانى «%s» مەۋجۇت ئەمەس."
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-mime-actions.c:652 ../src/nautilus-view.c:7200
-#: ../src/nautilus-view.c:7314 ../src/nautilus-view.c:8288
-#: ../src/nautilus-view.c:8592
+#: ../src/nautilus-mime-actions.c:652 ../src/nautilus-view.c:7204
+#: ../src/nautilus-view.c:7318 ../src/nautilus-view.c:8292
+#: ../src/nautilus-view.c:8596
 msgid "Mo_ve to Trash"
 msgstr "ئەخلەتخانىغا يۆتكە(_V)"
 
 #: ../src/nautilus-mime-actions.c:712
 #, c-format
-#| msgid "Do you want to run \"%s\", or display its contents?"
 msgid "Do you want to run “%s”, or display its contents?"
-msgstr ""
+msgstr "سىز «%s» نى ئىجرا قىلامسىز ياكى ئۇنىڭ مەزمۇنىنى كۆرسىتەمسىز؟"
 
 #: ../src/nautilus-mime-actions.c:714
 #, c-format
-#| msgid "\"%s\" is an executable text file."
 msgid "“%s” is an executable text file."
-msgstr ""
+msgstr "«%s» ئىجرا قىلغىلى بولىدىغان تېكىست ھۆججەت."
 
 #: ../src/nautilus-mime-actions.c:720
 msgid "Run in _Terminal"
@@ -3583,9 +3347,8 @@ msgstr[0] "%d مۇستەقىل بەتكۈچ ئاچىدۇ."
 
 #: ../src/nautilus-mime-actions.c:1124
 #, c-format
-#| msgid "Could not display \"%s\"."
 msgid "Could not display “%s”."
-msgstr ""
+msgstr "«%s» كۆرسەتكىلى بولمىدى."
 
 #: ../src/nautilus-mime-actions.c:1222
 msgid "The file is of an unknown type"
@@ -3593,9 +3356,8 @@ msgstr "ھۆججەتنىڭ تىپى نامەلۇم"
 
 #: ../src/nautilus-mime-actions.c:1226
 #, c-format
-#| msgid "There is no application installed for %s files"
 msgid "There is no application installed for “%s” files"
-msgstr ""
+msgstr " ھۆججەت تىپى «%s» ھۆججەتلەرگە پروگرامما ئورنىتىلمىغان"
 
 #: ../src/nautilus-mime-actions.c:1241
 msgid "_Select Application"
@@ -3611,27 +3373,22 @@ msgstr "پروگرامما ئىزدىيەلمىدى"
 
 #: ../src/nautilus-mime-actions.c:1398
 #, c-format
-#| msgid ""
-#| "There is no application installed for %s files.\n"
-#| "Do you want to search for an application to open this file?"
 msgid ""
 "There is no application installed for “%s” files.\n"
 "Do you want to search for an application to open this file?"
-msgstr ""
+msgstr "ھۆججەت تىپى «%s» ھۆججەتلەرگە پروگرامما ئورنىتىلمىغان.\n"
+"بۇ ھۆججەتنى ئاچىدىغان پروگرامما ئىزدەمسىز؟"
 
 #: ../src/nautilus-mime-actions.c:1548
 msgid "Untrusted application launcher"
-msgstr "ئىشەنچسىز پروگرامما قوزغاتقۇچ"
+msgstr "ئىشەنچسىز پروگرامما ئىجراچى"
 
 #: ../src/nautilus-mime-actions.c:1551
 #, c-format
-#| msgid ""
-#| "The application launcher \"%s\" has not been marked as trusted. If you do "
-#| "not know the source of this file, launching it may be unsafe."
 msgid ""
 "The application launcher “%s” has not been marked as trusted. If you do not "
 "know the source of this file, launching it may be unsafe."
-msgstr ""
+msgstr "پروگرامما ئىجراچى «%s» غا تېخى ئىشەنچلىك بەلگىسى قويۇلمىغان. ئەگەر بۇ ھۆججەتنىڭ كېلىش مەنبەسىنى بىلمىسىڭىز، ئۇنى قوزغىتىش بىخەتەر بولماسلىقى مۇمكىن."
 
 #: ../src/nautilus-mime-actions.c:1566
 msgid "_Launch Anyway"
@@ -3653,9 +3410,8 @@ msgstr "ئورۇننى قوزغىتالمىدى"
 
 #: ../src/nautilus-mime-actions.c:2305
 #, c-format
-#| msgid "Opening \"%s\"."
 msgid "Opening “%s”."
-msgstr ""
+msgstr "«%s» نى ئېچىۋاتىدۇ."
 
 #: ../src/nautilus-mime-actions.c:2308
 #, c-format
@@ -3667,222 +3423,220 @@ msgstr[0] "%d تۈرنى ئېچىۋاتىدۇ."
 msgid "Close tab"
 msgstr "بەتكۈچ ياپ"
 
-#: ../src/nautilus-places-sidebar.c:234
+#: ../src/nautilus-places-sidebar.c:235
 msgid "Devices"
 msgstr "ئۈسكۈنىلەر"
 
-#: ../src/nautilus-places-sidebar.c:493
+#: ../src/nautilus-places-sidebar.c:496
 msgid "Places"
 msgstr "ئورۇنلار"
 
-#: ../src/nautilus-places-sidebar.c:500
+#: ../src/nautilus-places-sidebar.c:503
 msgid "Recent"
 msgstr "يېقىنقى"
 
-#: ../src/nautilus-places-sidebar.c:502
-#| msgid "Deleting files"
+#: ../src/nautilus-places-sidebar.c:505
 msgid "Recent files"
 msgstr "يېقىنقى ھۆججەتلەر"
 
 #. tooltip
-#: ../src/nautilus-places-sidebar.c:513 ../src/nautilus-window-menus.c:534
+#: ../src/nautilus-places-sidebar.c:516 ../src/nautilus-window-menus.c:534
 msgid "Open your personal folder"
 msgstr "شەخسىي قىسقۇچىڭىزنى ئاچىدۇ"
 
-#: ../src/nautilus-places-sidebar.c:525
+#: ../src/nautilus-places-sidebar.c:528
 msgid "Open the contents of your desktop in a folder"
 msgstr "بىر قىسقۇچتا ئۈستەلئۈستى مەزمۇنىنى ئاچ"
 
-#: ../src/nautilus-places-sidebar.c:539
+#: ../src/nautilus-places-sidebar.c:542
 msgid "Open the trash"
 msgstr "ئەخلەتخانا ئاچ"
 
-#: ../src/nautilus-places-sidebar.c:591 ../src/nautilus-places-sidebar.c:616
-#: ../src/nautilus-places-sidebar.c:791
+#: ../src/nautilus-places-sidebar.c:594 ../src/nautilus-places-sidebar.c:619
+#: ../src/nautilus-places-sidebar.c:794
 #, c-format
 msgid "Mount and open %s"
 msgstr "%s نى ئېگەرلەپ ئاچ"
 
-#: ../src/nautilus-places-sidebar.c:691
+#: ../src/nautilus-places-sidebar.c:694
 msgid "Open the contents of the File System"
 msgstr "ھۆججەت سىستېمىسىنىڭ مۇندەرىجىسىنى ئاچ"
 
-#: ../src/nautilus-places-sidebar.c:769
+#: ../src/nautilus-places-sidebar.c:772
 msgid "Network"
 msgstr "تور"
 
-#: ../src/nautilus-places-sidebar.c:775
+#: ../src/nautilus-places-sidebar.c:778
 msgid "Browse Network"
 msgstr "تورغا كۆز يۈگۈرت"
 
-#: ../src/nautilus-places-sidebar.c:777
+#: ../src/nautilus-places-sidebar.c:780
 msgid "Browse the contents of the network"
 msgstr "تور مۇندەرىجىسىگە كۆز يۈگۈرت"
 
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1609 ../src/nautilus-places-sidebar.c:2679
-#: ../src/nautilus-view.c:7242 ../src/nautilus-view.c:7266
-#: ../src/nautilus-view.c:7338 ../src/nautilus-view.c:7924
-#: ../src/nautilus-view.c:7928 ../src/nautilus-view.c:8011
-#: ../src/nautilus-view.c:8015 ../src/nautilus-view.c:8113
-#: ../src/nautilus-view.c:8117
+#: ../src/nautilus-places-sidebar.c:1612 ../src/nautilus-places-sidebar.c:2682
+#: ../src/nautilus-view.c:7246 ../src/nautilus-view.c:7270
+#: ../src/nautilus-view.c:7342 ../src/nautilus-view.c:7928
+#: ../src/nautilus-view.c:7932 ../src/nautilus-view.c:8015
+#: ../src/nautilus-view.c:8019 ../src/nautilus-view.c:8117
+#: ../src/nautilus-view.c:8121
 msgid "_Start"
 msgstr "باشلا(_S)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1610 ../src/nautilus-places-sidebar.c:2686
-#: ../src/nautilus-view.c:7246 ../src/nautilus-view.c:7270
-#: ../src/nautilus-view.c:7342 ../src/nautilus-view.c:7953
-#: ../src/nautilus-view.c:8040 ../src/nautilus-view.c:8142
+#: ../src/nautilus-places-sidebar.c:1613 ../src/nautilus-places-sidebar.c:2689
+#: ../src/nautilus-view.c:7250 ../src/nautilus-view.c:7274
+#: ../src/nautilus-view.c:7346 ../src/nautilus-view.c:7957
+#: ../src/nautilus-view.c:8044 ../src/nautilus-view.c:8146
 #: ../src/nautilus-window-menus.c:469
 msgid "_Stop"
 msgstr "توختا (&S)"
 
 #. start() for type G_DRIVE_START_STOP_TYPE_SHUTDOWN is normally not used
-#: ../src/nautilus-places-sidebar.c:1615
+#: ../src/nautilus-places-sidebar.c:1618
 msgid "_Power On"
 msgstr "مەنبەنى ئاچ(_P)"
 
-#: ../src/nautilus-places-sidebar.c:1616 ../src/nautilus-view.c:7957
-#: ../src/nautilus-view.c:8044 ../src/nautilus-view.c:8146
+#: ../src/nautilus-places-sidebar.c:1619 ../src/nautilus-view.c:7961
+#: ../src/nautilus-view.c:8048 ../src/nautilus-view.c:8150
 msgid "_Safely Remove Drive"
 msgstr "قوزغاتقۇچنى بىخەتەر چىقىرىۋەت(_S)"
 
-#: ../src/nautilus-places-sidebar.c:1619
+#: ../src/nautilus-places-sidebar.c:1622
 msgid "_Connect Drive"
 msgstr "قوزغاتقۇچقا باغلا(_C)"
 
-#: ../src/nautilus-places-sidebar.c:1620
+#: ../src/nautilus-places-sidebar.c:1623
 msgid "_Disconnect Drive"
 msgstr "قوزغاتقۇچنى ئۈز(_D)"
 
-#: ../src/nautilus-places-sidebar.c:1623
+#: ../src/nautilus-places-sidebar.c:1626
 msgid "_Start Multi-disk Device"
 msgstr "كۆپ دىسكا ئۈسكۈنىنى باشلا(_S)"
 
-#: ../src/nautilus-places-sidebar.c:1624
+#: ../src/nautilus-places-sidebar.c:1627
 msgid "_Stop Multi-disk Device"
 msgstr "كۆپ دىسكا ئۈسكۈنىنى توختات(_S)"
 
 #. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
-#: ../src/nautilus-places-sidebar.c:1628 ../src/nautilus-view.c:8027
-#: ../src/nautilus-view.c:8129
+#: ../src/nautilus-places-sidebar.c:1631 ../src/nautilus-view.c:8031
+#: ../src/nautilus-view.c:8133
 msgid "_Unlock Drive"
 msgstr "قوزغاتقۇچنى قۇلۇپسىزلا(_U)"
 
-#: ../src/nautilus-places-sidebar.c:1629 ../src/nautilus-view.c:7969
-#: ../src/nautilus-view.c:8056 ../src/nautilus-view.c:8158
+#: ../src/nautilus-places-sidebar.c:1632 ../src/nautilus-view.c:7973
+#: ../src/nautilus-view.c:8060 ../src/nautilus-view.c:8162
 msgid "_Lock Drive"
 msgstr "قوزغاتقۇچنى قۇلۇپلا(_L)"
 
-#: ../src/nautilus-places-sidebar.c:1706 ../src/nautilus-places-sidebar.c:2315
+#: ../src/nautilus-places-sidebar.c:1709 ../src/nautilus-places-sidebar.c:2318
 #, c-format
 msgid "Unable to start %s"
 msgstr "%s نى قوزغىتالمايدۇ"
 
-#: ../src/nautilus-places-sidebar.c:2074 ../src/nautilus-places-sidebar.c:2102
-#: ../src/nautilus-places-sidebar.c:2130
+#: ../src/nautilus-places-sidebar.c:2077 ../src/nautilus-places-sidebar.c:2105
+#: ../src/nautilus-places-sidebar.c:2133
 #, c-format
 msgid "Unable to eject %s"
 msgstr "%s قاڭقىتالمايدۇ"
 
-#: ../src/nautilus-places-sidebar.c:2270
+#: ../src/nautilus-places-sidebar.c:2273
 #, c-format
 msgid "Unable to poll %s for media changes"
 msgstr "%s نىڭ ۋاسىتە ئۆزگىرىشىنى سۈرۈشتۈرەلمەيدۇ"
 
-#: ../src/nautilus-places-sidebar.c:2370
+#: ../src/nautilus-places-sidebar.c:2373
 #, c-format
 msgid "Unable to stop %s"
 msgstr "%s نى توختىتالمايدۇ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2601 ../src/nautilus-view.c:7114
-#: ../src/nautilus-view.c:8516
+#: ../src/nautilus-places-sidebar.c:2604 ../src/nautilus-view.c:7118
+#: ../src/nautilus-view.c:8520
 msgid "_Open"
 msgstr "ئاچ(_O)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2609 ../src/nautilus-view.c:7126
-#: ../src/nautilus-view.c:7296 ../src/nautilus-view.c:8237
-#: ../src/nautilus-view.c:8570
+#: ../src/nautilus-places-sidebar.c:2612 ../src/nautilus-view.c:7130
+#: ../src/nautilus-view.c:7300 ../src/nautilus-view.c:8241
+#: ../src/nautilus-view.c:8574
 msgid "Open in New _Tab"
 msgstr "يېڭى بەتكۈچتە ئاچ(_T)"
 
-#: ../src/nautilus-places-sidebar.c:2616 ../src/nautilus-view.c:8229
-#: ../src/nautilus-view.c:8550
+#: ../src/nautilus-places-sidebar.c:2619 ../src/nautilus-view.c:8233
+#: ../src/nautilus-view.c:8554
 msgid "Open in New _Window"
 msgstr "يېڭى كۆزنەكتە ئاچ(_W)"
 
-#: ../src/nautilus-places-sidebar.c:2624
+#: ../src/nautilus-places-sidebar.c:2627
 msgid "_Add Bookmark"
 msgstr "خەتكۈش قوش(_A)"
 
-#: ../src/nautilus-places-sidebar.c:2639
-#| msgid "Rename"
+#: ../src/nautilus-places-sidebar.c:2642
 msgid "Rename…"
 msgstr "ئاتىنى ئۆزگەرت…"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2651 ../src/nautilus-view.c:7230
-#: ../src/nautilus-view.c:7254 ../src/nautilus-view.c:7326
+#: ../src/nautilus-places-sidebar.c:2654 ../src/nautilus-view.c:7234
+#: ../src/nautilus-view.c:7258 ../src/nautilus-view.c:7330
 msgid "_Mount"
 msgstr "ئېگەرلە(_M)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2658 ../src/nautilus-view.c:7234
-#: ../src/nautilus-view.c:7258 ../src/nautilus-view.c:7330
+#: ../src/nautilus-places-sidebar.c:2661 ../src/nautilus-view.c:7238
+#: ../src/nautilus-view.c:7262 ../src/nautilus-view.c:7334
 msgid "_Unmount"
 msgstr "ئېگەرسىزلە(_U)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2665 ../src/nautilus-view.c:7238
-#: ../src/nautilus-view.c:7262 ../src/nautilus-view.c:7334
+#: ../src/nautilus-places-sidebar.c:2668 ../src/nautilus-view.c:7242
+#: ../src/nautilus-view.c:7266 ../src/nautilus-view.c:7338
 msgid "_Eject"
 msgstr "دىسكىنى چىقىرىش(_E)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2672 ../src/nautilus-view.c:7250
-#: ../src/nautilus-view.c:7274 ../src/nautilus-view.c:7346
+#: ../src/nautilus-places-sidebar.c:2675 ../src/nautilus-view.c:7254
+#: ../src/nautilus-view.c:7278 ../src/nautilus-view.c:7350
 msgid "_Detect Media"
 msgstr "ۋاسىتە بايقا(_D)"
 
-#: ../src/nautilus-places-sidebar.c:2707
+#: ../src/nautilus-places-sidebar.c:2710
 msgid "_Properties"
 msgstr "خاسلىق(_P)"
 
-#: ../src/nautilus-places-sidebar.c:3263
+#: ../src/nautilus-places-sidebar.c:3268
 msgid "Computer"
 msgstr "كومپيۇتېر"
 
 #: ../src/nautilus-progress-ui-handler.c:108
-#: ../src/nautilus-progress-ui-handler.c:158
-#: ../src/nautilus-progress-ui-handler.c:216
-#: ../src/nautilus-progress-ui-handler.c:272
+#: ../src/nautilus-progress-ui-handler.c:160
+#: ../src/nautilus-progress-ui-handler.c:218
+#: ../src/nautilus-progress-ui-handler.c:274
 msgid "File Operations"
 msgstr "ھۆججەت مەشغۇلاتلىرى"
 
-#: ../src/nautilus-progress-ui-handler.c:117
+#: ../src/nautilus-progress-ui-handler.c:119
 msgid "Show Details"
 msgstr "تەپسىلاتلارنى كۆرسەت"
 
-#: ../src/nautilus-progress-ui-handler.c:152
-#: ../src/nautilus-progress-ui-handler.c:174
+#: ../src/nautilus-progress-ui-handler.c:154
+#: ../src/nautilus-progress-ui-handler.c:176
 #, c-format
 msgid "%'d file operation active"
 msgid_plural "%'d file operations active"
 msgstr[0] "%'d ھۆججەت مەشغۇلاتى ئاكتىپ"
 
-#: ../src/nautilus-progress-ui-handler.c:273
+#: ../src/nautilus-progress-ui-handler.c:275
 msgid "All file operations have been successfully completed"
 msgstr "ھەممە ھۆججەت مەشغۇلاتى مۇۋەپپەقىيەتلىك تاماملاندى"
 
@@ -4102,12 +3856,10 @@ msgid "Allow _executing file as program"
 msgstr "پروگرامما سۈپىتىدە ھۆججەت ئىجرا قىلىشقا يول قوي(_E)"
 
 #: ../src/nautilus-properties-window.c:4462
-#| msgid "Apply Permissions to Enclosed Files"
 msgid "Change Permissions for Enclosed Files"
 msgstr ""
 
 #: ../src/nautilus-properties-window.c:4466
-#| msgid "Orange"
 msgid "Change"
 msgstr "ئۆزگەرت"
 
@@ -4120,20 +3872,17 @@ msgid "You are not the owner, so you cannot change these permissions."
 msgstr "سىز ئىگىدار ئەمەس، شۇڭا بۇ ھوقۇقلارنى ئۆزگەرتەلمەيسىز."
 
 #: ../src/nautilus-properties-window.c:4565
-#| msgid "SELinux context:"
 msgid "Security context:"
 msgstr ""
 
 #: ../src/nautilus-properties-window.c:4580
-#| msgid "Apply Permissions to Enclosed Files"
 msgid "Change Permissions for Enclosed Files…"
 msgstr ""
 
 #: ../src/nautilus-properties-window.c:4590
 #, c-format
-#| msgid "The permissions of \"%s\" could not be determined."
 msgid "The permissions of “%s” could not be determined."
-msgstr ""
+msgstr "«%s» نىڭ ئىمتىيازىنى جەزملىيەلمىدى."
 
 #: ../src/nautilus-properties-window.c:4593
 msgid "The permissions of the selected file could not be determined."
@@ -4147,7 +3896,7 @@ msgstr "بۇنىڭدا ئېچىش"
 msgid "Creating Properties window."
 msgstr "خاسلىق كۆزنەك قۇرۇۋاتىدۇ."
 
-#: ../src/nautilus-properties-window.c:5459
+#: ../src/nautilus-properties-window.c:5460
 msgid "Select Custom Icon"
 msgstr "ئىختىيارى سىنبەلگە تاللا"
 
@@ -4184,7 +3933,6 @@ msgid "Select type"
 msgstr "تىپىنى تاللاڭ"
 
 #: ../src/nautilus-query-editor.c:591
-#| msgid "Select All"
 msgid "Select"
 msgstr "تاللا"
 
@@ -4193,9 +3941,8 @@ msgid "Any"
 msgstr "خالىغان"
 
 #: ../src/nautilus-query-editor.c:687
-#| msgid "Other Type..."
 msgid "Other Type…"
-msgstr ""
+msgstr "باشقا تىپ…"
 
 #: ../src/nautilus-query-editor.c:956
 msgid "Remove this criterion from the search"
@@ -4207,7 +3954,6 @@ msgid "Current"
 msgstr "نۆۋەتتىكى"
 
 #: ../src/nautilus-query-editor.c:1041
-#| msgid "Files"
 msgid "All Files"
 msgstr "بارلىق ھۆججەتلەر"
 
@@ -4216,37 +3962,31 @@ msgid "Add a new criterion to this search"
 msgstr "بۇ ئىزدەشكە يېڭى شەرتتىن بىرنى قوش"
 
 #: ../src/nautilus-special-location-bar.c:52
-#| msgid "All executable files in this folder will appear in the Scripts menu."
 msgid "Files in this folder will appear in the New Document menu."
-msgstr ""
+msgstr "بۇ مۇندەرىجىدىكى بارلىق ھۆججەتلەر «يېڭى پۈتۈك»تىزىملىكىدە كۆرۈنىدۇ."
 
 #: ../src/nautilus-special-location-bar.c:55
-#| msgid "All executable files in this folder will appear in the Scripts menu."
 msgid "Executable files in this folder will appear in the Scripts menu."
-msgstr ""
+msgstr "بۇ قىسقۇچتىكى ئىجرا قىلغىلى بولىدىغان ھۆججەتلەر قوليازما تىزىملىكىدە كۆرسىتىلىدۇ."
 
 #: ../src/nautilus-toolbar.c:416
-#| msgid "File Operations"
 msgid "View options"
-msgstr ""
+msgstr "كۆرۈنۈش تاللانمىلىرى"
 
 #: ../src/nautilus-toolbar.c:433
-#| msgid "Location"
 msgid "Location options"
-msgstr ""
+msgstr "ئورۇن تاللانمىلىرى"
 
-#: ../src/nautilus-trash-bar.c:202
-#| msgid "_Restore"
+#: ../src/nautilus-trash-bar.c:203
 msgid "Restore"
 msgstr "ئەسلىگە كەلتۈرۈش"
 
-#: ../src/nautilus-trash-bar.c:205
+#: ../src/nautilus-trash-bar.c:206
 msgid "Restore selected items to their original position"
 msgstr "تاللىغان تۈرلەرنى ئەسلى ئورنىغا قايتۇر"
 
 #. Translators: "Empty" is an action (for the trash) , not a state
-#: ../src/nautilus-trash-bar.c:209
-#| msgid "(Empty)"
+#: ../src/nautilus-trash-bar.c:210
 msgid "Empty"
 msgstr "بوش"
 
@@ -4290,60 +4030,52 @@ msgstr "قىسقۇچ(_F):"
 msgid "Select Folder to Save Search In"
 msgstr "ئىزدەشنى ساقلايدىغان قىسقۇچ تاللاڭ"
 
-#: ../src/nautilus-view.c:2255
-#| msgid ""
-#| "Nautilus 3.0 deprecated this directory and tried migrating this "
-#| "configuration to ~/.config/nautilus"
+#: ../src/nautilus-view.c:2259
 msgid ""
 "Nautilus 3.6 deprecated this directory and tried migrating this "
 "configuration to ~/.local/share/nautilus"
 msgstr ""
 
-#: ../src/nautilus-view.c:2683
+#: ../src/nautilus-view.c:2687
 msgid "Content View"
 msgstr "مەزمۇن كۆرۈنۈشى"
 
-#: ../src/nautilus-view.c:2684
+#: ../src/nautilus-view.c:2688
 msgid "View of the current folder"
 msgstr "نۆۋەتتىكى قىسقۇچ كۆرۈنۈشى"
 
-#: ../src/nautilus-view.c:2879 ../src/nautilus-view.c:2914
+#: ../src/nautilus-view.c:2883 ../src/nautilus-view.c:2918
 #, c-format
-#| msgid "\"%s\" selected"
 msgid "“%s” selected"
-msgstr ""
+msgstr "«%s» تاللاندى"
 
-#: ../src/nautilus-view.c:2881
+#: ../src/nautilus-view.c:2885
 #, c-format
 msgid "%'d folder selected"
 msgid_plural "%'d folders selected"
 msgstr[0] "%'d قىسقۇچ تاللاندى"
 
-#: ../src/nautilus-view.c:2891
+#: ../src/nautilus-view.c:2895
 #, c-format
-#| msgid " (containing %'d item)"
-#| msgid_plural " (containing %'d items)"
 msgid "(containing %'d item)"
 msgid_plural "(containing %'d items)"
 msgstr[0] "(%'d تۈر ئىچىدە)"
 
 #. translators: this is preceded with a string of form 'N folders' (N more than 1)
-#: ../src/nautilus-view.c:2902
+#: ../src/nautilus-view.c:2906
 #, c-format
-#| msgid " (containing a total of %'d item)"
-#| msgid_plural " (containing a total of %'d items)"
 msgid "(containing a total of %'d item)"
 msgid_plural "(containing a total of %'d items)"
 msgstr[0] "(جەمئىي %'d تۈر ئىچىدە)"
 
-#: ../src/nautilus-view.c:2917
+#: ../src/nautilus-view.c:2921
 #, c-format
 msgid "%'d item selected"
 msgid_plural "%'d items selected"
 msgstr[0] "%'d تۈر تاللاندى"
 
 #. Folders selected also, use "other" terminology
-#: ../src/nautilus-view.c:2924
+#: ../src/nautilus-view.c:2928
 #, c-format
 msgid "%'d other item selected"
 msgid_plural "%'d other items selected"
@@ -4353,9 +4085,8 @@ msgstr[0] "%'d باشقا تۈر تاللاندى"
 #. * needs to use something other than parentheses. The
 #. * the message in parentheses is the size of the selected items.
 #.
-#: ../src/nautilus-view.c:2938
+#: ../src/nautilus-view.c:2942
 #, c-format
-#| msgid "%s (%s)"
 msgid "(%s)"
 msgstr "(%s)"
 
@@ -4366,127 +4097,112 @@ msgstr "(%s)"
 #. * message about the number of other items and the
 #. * total size of those items.
 #.
-#: ../src/nautilus-view.c:2962
+#: ../src/nautilus-view.c:2966
 #, c-format
-#| msgid "%s%s, %s, %s"
 msgid "%s %s, %s %s"
-msgstr ""
+msgstr "%s %s، %s %s"
 
-#: ../src/nautilus-view.c:4335
+#: ../src/nautilus-view.c:4339
 #, c-format
 msgid "Open With %s"
 msgstr "ئاچىدىغان پروگرامما %s"
 
-#: ../src/nautilus-view.c:4337
+#: ../src/nautilus-view.c:4341
 #, c-format
-#| msgid "Use \"%s\" to open the selected item"
-#| msgid_plural "Use \"%s\" to open the selected items"
 msgid "Use “%s” to open the selected item"
 msgid_plural "Use “%s” to open the selected items"
-msgstr[0] ""
+msgstr[0] "تاللانغان تۈرلەرنى «%s» دا ئاچ"
 
-#: ../src/nautilus-view.c:5080
+#: ../src/nautilus-view.c:5084
 #, c-format
-#| msgid "Run \"%s\" on any selected items"
 msgid "Run “%s” on any selected items"
-msgstr ""
+msgstr "تاللانغان خالىغان تۈردە «%s» نى ئىجرا قىل"
 
-#: ../src/nautilus-view.c:5334
+#: ../src/nautilus-view.c:5338
 #, c-format
-#| msgid "Create a new document from template \"%s\""
 msgid "Create a new document from template “%s”"
-msgstr ""
-
-#: ../src/nautilus-view.c:5934
-#| msgid "_Select Application"
-msgid "Select Destination"
-msgstr ""
+msgstr "«%s» قېلىپتىن يېڭى بىر پۈتۈك قۇر"
 
 #: ../src/nautilus-view.c:5938
-#| msgid "Select All"
+msgid "Select Destination"
+msgstr "نىشاننى تاللاش"
+
+#: ../src/nautilus-view.c:5942
 msgid "_Select"
 msgstr "تاللا(_S)"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6452
+#: ../src/nautilus-view.c:6456
 #, c-format
-#| msgid "Unable to mount %s"
 msgid "Unable to remove “%s”"
-msgstr ""
+msgstr "\"%s\" نى ئۆچۈرەلمىدى"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6479
+#: ../src/nautilus-view.c:6483
 #, c-format
-#| msgid "Unable to eject %s"
 msgid "Unable to eject “%s”"
-msgstr ""
+msgstr "%s چىقارغىلى بولمىدى"
 
-#: ../src/nautilus-view.c:6501
+#: ../src/nautilus-view.c:6505
 msgid "Unable to stop drive"
 msgstr "قوزغاتقۇچنى توختاتقىلى بولمىدى"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6603
+#: ../src/nautilus-view.c:6607
 #, c-format
-#| msgid "Unable to start %s"
 msgid "Unable to start “%s”"
-msgstr ""
+msgstr "%s نى باشلىغىلى بولمىدى"
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7094
-#| msgid "Create New _Document"
+#: ../src/nautilus-view.c:7098
 msgid "New _Document"
-msgstr ""
+msgstr "يېڭى پۈتۈك(_D)"
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7095
+#: ../src/nautilus-view.c:7099
 msgid "Open Wit_h"
 msgstr "بۇنىڭ بىلەن ئاچ(_H)"
 
-#: ../src/nautilus-view.c:7096
+#: ../src/nautilus-view.c:7100
 msgid "Choose a program with which to open the selected item"
 msgstr "تاللىغان تۈرنى قايسى پروگراممىدا ئاچىدىغانلىقىنى تاللاڭ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7098 ../src/nautilus-view.c:7351
+#: ../src/nautilus-view.c:7102 ../src/nautilus-view.c:7355
 #: ../src/nautilus-window-menus.c:573
-#| msgid "Properties"
 msgid "P_roperties"
 msgstr "خاسلىق(_R)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7099 ../src/nautilus-view.c:8663
+#: ../src/nautilus-view.c:7103 ../src/nautilus-view.c:8667
 msgid "View or modify the properties of each selected item"
 msgstr "تاللىغان ھەر بىر تۈرنىڭ خاسلىقىنى كۆرسەت ياكى ئۆزگەرت"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7106
-#| msgid "Create New _Folder"
+#: ../src/nautilus-view.c:7110
 msgid "New _Folder"
 msgstr "يېڭى مۇندەرىجە(_F)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7107
+#: ../src/nautilus-view.c:7111
 msgid "Create a new empty folder inside this folder"
 msgstr "بۇ قىسقۇچقا يېڭى بوش قىسقۇچتىن بىرنى قۇرىدۇ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7110
-#| msgid "_Invert Selection"
+#: ../src/nautilus-view.c:7114
 msgid "New Folder with Selection"
 msgstr ""
 
 #. tooltip
-#: ../src/nautilus-view.c:7111
-#| msgid "Create a symbolic link for each selected item"
+#: ../src/nautilus-view.c:7115
 msgid "Create a new folder containing the selected items"
 msgstr ""
 
 #. tooltip
-#: ../src/nautilus-view.c:7115
+#: ../src/nautilus-view.c:7119
 msgid "Open the selected item in this window"
 msgstr "بۇ كۆزنەكتە تاللانغان تۈر ئېچىلىدۇ"
 
@@ -4495,68 +4211,66 @@ msgstr "بۇ كۆزنەكتە تاللانغان تۈر ئېچىلىدۇ"
 #. Location-specific actions
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7122 ../src/nautilus-view.c:7292
+#: ../src/nautilus-view.c:7126 ../src/nautilus-view.c:7296
 msgid "Open in Navigation Window"
 msgstr "يولباشچى كۆزنەكتە ئاچ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7123
+#: ../src/nautilus-view.c:7127
 msgid "Open each selected item in a navigation window"
 msgstr "تاللانغان ھەر بىر تۈر يولباشچى كۆزنەكتە ئېچىلىدۇ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7127
+#: ../src/nautilus-view.c:7131
 msgid "Open each selected item in a new tab"
 msgstr "تاللانغان ھەر بىر تۈر يېڭى بەتكۈچتە ئېچىلىدۇ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7130
-#| msgid "Other _Application..."
+#: ../src/nautilus-view.c:7134
 msgid "Other _Application…"
-msgstr ""
+msgstr "باشقا پروگراممىلار(_A)..."
 
 #. tooltip
-#: ../src/nautilus-view.c:7131 ../src/nautilus-view.c:7135
+#: ../src/nautilus-view.c:7135 ../src/nautilus-view.c:7139
 msgid "Choose another application with which to open the selected item"
 msgstr "تاللىغان تۈرنى ئاچىدىغان باشقا پروگرامما تاللىنىدۇ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7134
-#| msgid "Open With Other _Application..."
+#: ../src/nautilus-view.c:7138
 msgid "Open With Other _Application…"
-msgstr ""
+msgstr "باشقا پروگراممىدا ئاچ(_A)…"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7138
+#: ../src/nautilus-view.c:7142
 msgid "_Open Scripts Folder"
 msgstr "قوليازما قىسقۇچنى ئاچ(_O)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7139
+#: ../src/nautilus-view.c:7143
 msgid "Show the folder containing the scripts that appear in this menu"
 msgstr "بۇ تىزىملىكتە كۆرۈنگەن قوليازمىنى ئۆز ئىچىگە ئالغان قىسقۇچنى كۆرسەت"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7147
+#: ../src/nautilus-view.c:7151
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr "تاللانغان ھۆججەتنى چاپلا بۇيرۇقىدا يۆتكەشكە تەييارلىنىۋاتىدۇ"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7151
+#: ../src/nautilus-view.c:7155
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr "تاللانغان ھۆججەتنى چاپلا بۇيرۇقىدا كۆچۈرۈشكە تەييارلىنىۋاتىدۇ"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7155
+#: ../src/nautilus-view.c:7159
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "ئالدىدا كەس ياكى كۆچۈر بۇيرۇقىدا تاللانغان ھۆججەتنى يۆتكە ياكى كۆچۈر"
 
@@ -4564,12 +4278,12 @@ msgstr "ئالدىدا كەس ياكى كۆچۈر بۇيرۇقىدا تاللا�
 #. accelerator for paste
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7160 ../src/nautilus-view.c:7309
+#: ../src/nautilus-view.c:7164 ../src/nautilus-view.c:7313
 msgid "_Paste Into Folder"
 msgstr "قىسقۇچقا چاپلا(_P)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7161
+#: ../src/nautilus-view.c:7165
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -4577,138 +4291,129 @@ msgstr "ئالدىدا كەس ياكى كۆچۈر بۇيرۇقىدا تاللا�
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7164
-msgid "Copy To…"
-msgstr ""
-
-#. tooltip
-#: ../src/nautilus-view.c:7165
-#| msgid "Copy the selected text to the clipboard"
-msgid "Copy selected files to another location"
-msgstr ""
-
-#. name, stock id
-#. label, accelerator
 #: ../src/nautilus-view.c:7168
-#| msgid "M_ove to"
-msgid "Move To…"
-msgstr ""
+msgid "Copy To…"
+msgstr "كۆچۈر…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7169
-#| msgid "Move the selected file out of the trash"
-#| msgid_plural "Move the selected files out of the trash"
-msgid "Move selected files to another location"
-msgstr ""
+msgid "Copy selected files to another location"
+msgstr "تاللانغان ھۆججەتلەرنى باشقا ئورۇنغا كۆچۈرىدۇ"
+
+#. name, stock id
+#. label, accelerator
+#: ../src/nautilus-view.c:7172
+msgid "Move To…"
+msgstr "يۆتكە…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7173
+msgid "Move selected files to another location"
+msgstr "تاللانغان ھۆججەتلەرنى باشقا ئورۇنغا يۆتكەيدۇ"
+
+#. tooltip
+#: ../src/nautilus-view.c:7177
 msgid "Select all items in this window"
 msgstr "بۇ كۆزنەكتىكى ھەممە تۈرنى تاللايدۇ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7176
-#| msgid "Select Items Matching"
+#: ../src/nautilus-view.c:7180
 msgid "Select I_tems Matching…"
-msgstr ""
+msgstr "ماس كېلىدىغان تۈرلەرنى تاللا(_T)…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7177
+#: ../src/nautilus-view.c:7181
 msgid "Select items in this window matching a given pattern"
 msgstr "بېرىلگەن شەكىل بويىچە بۇ كۆزنەكتىكى تۈرلەرنى تاللايدۇ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7180
+#: ../src/nautilus-view.c:7184
 msgid "_Invert Selection"
 msgstr "ئەكسىچە تاللا(_I)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7181
+#: ../src/nautilus-view.c:7185
 msgid "Select all and only the items that are not currently selected"
 msgstr "نۆۋەتتە تاللانمىغان ھەممە تۈرلەرنى تاللا"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7184 ../src/nautilus-view.c:8646
+#: ../src/nautilus-view.c:7188 ../src/nautilus-view.c:8650
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "ئۇلانما ياسا(_K)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7185
-msgid "Create a symbolic link for each selected item"
-msgstr "تاللانغان ھەر بىر تۈرگە ئۇلانما قۇر"
-
-#. name, stock id
-#. label, accelerator
-#: ../src/nautilus-view.c:7188
-#| msgid "Rename"
-msgid "Rena_me…"
-msgstr ""
-
-#. tooltip
 #: ../src/nautilus-view.c:7189
-msgid "Rename selected item"
-msgstr "تاللانغان تۈرنىڭ ئاتىنى ئۆزگەرت"
+msgid "Create a symbolic link for each selected item"
+msgstr "تاللانغان ھەر بىر تۈرگە ئۇلانما قۇرىدۇ"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7192
-#| msgid "Set as default"
-msgid "Set as Wallpaper"
-msgstr ""
+msgid "Rena_me…"
+msgstr "ئاتىنى ئۆزگەرت(_M)…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7193
-msgid "Make item the wallpaper"
-msgstr ""
-
-#. tooltip
-#: ../src/nautilus-view.c:7201 ../src/nautilus-view.c:8593
-msgid "Move each selected item to the Trash"
-msgstr "تاللانغان ھەر بىر تۈرنى ئەخلەتخانىغا يۆتكە"
+msgid "Rename selected item"
+msgstr "تاللانغان تۈرنىڭ ئاتىنى ئۆزگەرتىدۇ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7204 ../src/nautilus-view.c:7318
-#: ../src/nautilus-view.c:8623
-msgid "_Delete"
-msgstr "ئۆچۈر(_D)"
+#: ../src/nautilus-view.c:7196
+msgid "Set as Wallpaper"
+msgstr "تام قەغىزى قىلىپ بەلگىلە"
 
 #. tooltip
-#: ../src/nautilus-view.c:7205 ../src/nautilus-view.c:8624
-msgid "Delete each selected item, without moving to the Trash"
-msgstr "تاللانغان ھەر بىر تۈرنى ئەخلەتخانىغا يۆتكىمەيلا ئۆچۈر"
+#: ../src/nautilus-view.c:7197
+msgid "Make item the wallpaper"
+msgstr "تاللانغان تۈرنى تام قەغىزى قىلىپ بەلگىلەيدۇ"
+
+#. tooltip
+#: ../src/nautilus-view.c:7205 ../src/nautilus-view.c:8597
+msgid "Move each selected item to the Trash"
+msgstr "تاللانغان ھەر بىر تۈرنى ئەخلەتخانىغا يۆتكەيدۇ"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7208 ../src/nautilus-view.c:7322
+#: ../src/nautilus-view.c:8627
+msgid "_Delete"
+msgstr "ئۆچۈر(_D)"
+
+#. tooltip
+#: ../src/nautilus-view.c:7209 ../src/nautilus-view.c:8628
+msgid "Delete each selected item, without moving to the Trash"
+msgstr "تاللانغان ھەر بىر تۈرنى ئەخلەتخانىغا يۆتكىمەيلا ئۆچۈرىدۇ"
+
+#. name, stock id
+#. label, accelerator
+#: ../src/nautilus-view.c:7212 ../src/nautilus-view.c:7326
 msgid "_Restore"
 msgstr "ئەسلىگە كەلتۈر(_R)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7212
+#: ../src/nautilus-view.c:7216
 msgid "_Undo"
 msgstr "يېنىۋال(_U)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7213
-#| msgid "Undo the last text change"
+#: ../src/nautilus-view.c:7217
 msgid "Undo the last action"
 msgstr "ئاخىرقى مەشغۇلاتتىن يېنىۋالىدۇ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7216
+#: ../src/nautilus-view.c:7220
 msgid "_Redo"
 msgstr "قايتىلا(_R)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7217
-#| msgid "Undo the last text change"
+#: ../src/nautilus-view.c:7221
 msgid "Redo the last undone action"
 msgstr "ئاخىرقى يېنىۋالغان مەشغۇلاتنى تەكرارلايدۇ"
 
@@ -4720,427 +4425,398 @@ msgstr "ئاخىرقى يېنىۋالغان مەشغۇلاتنى تەكرارل�
 #.
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7226
+#: ../src/nautilus-view.c:7230
 msgid "Reset View to _Defaults"
 msgstr "كۆرۈنۈشنى كۆڭۈلدىكىگە قايتۇر(_D)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7227
+#: ../src/nautilus-view.c:7231
 msgid "Reset sorting order and zoom level to match preferences for this view"
 msgstr "بۇ كۆرۈنۈشنىڭ مايىللىقىغا ماسلاشتۇرۇش ئۈچۈن تەرتىپلەش تەرتىپى ۋە كېڭەيت تارايت دەرىجىسىنى ئەسلىگە قايتۇر"
 
 #. tooltip
-#: ../src/nautilus-view.c:7231
+#: ../src/nautilus-view.c:7235
 msgid "Mount the selected volume"
 msgstr "تاللانغان دىسكىنى ئېگەرلەيدۇ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7235
+#: ../src/nautilus-view.c:7239
 msgid "Unmount the selected volume"
 msgstr "تاللانغان دىسكىنى ئېگەرسىزلەيدۇ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7239
+#: ../src/nautilus-view.c:7243
 msgid "Eject the selected volume"
 msgstr "تاللانغان دىسكىنى قاڭقىتىدۇ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7243
+#: ../src/nautilus-view.c:7247
 msgid "Start the selected volume"
 msgstr "تاللانغان دىسكىنى باشلا"
 
 #. tooltip
-#: ../src/nautilus-view.c:7247 ../src/nautilus-view.c:8143
+#: ../src/nautilus-view.c:7251 ../src/nautilus-view.c:8147
 msgid "Stop the selected volume"
 msgstr "تاللانغان دىسكىنى توختات"
 
 #. tooltip
-#: ../src/nautilus-view.c:7251 ../src/nautilus-view.c:7275
-#: ../src/nautilus-view.c:7347
+#: ../src/nautilus-view.c:7255 ../src/nautilus-view.c:7279
+#: ../src/nautilus-view.c:7351
 msgid "Detect media in the selected drive"
 msgstr "تاللىغان قوزغاتقۇچتىن ۋاسىتە بايقا"
 
 #. tooltip
-#: ../src/nautilus-view.c:7255
+#: ../src/nautilus-view.c:7259
 msgid "Mount the volume associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان دىسكىنى ئېگەرلەيدۇ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7259
+#: ../src/nautilus-view.c:7263
 msgid "Unmount the volume associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان دىسكىنى ئېگەرسىزلەيدۇ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7263
+#: ../src/nautilus-view.c:7267
 msgid "Eject the volume associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان دىسكىنى قاڭقىت"
 
 #. tooltip
-#: ../src/nautilus-view.c:7267
+#: ../src/nautilus-view.c:7271
 msgid "Start the volume associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان دىسكىنى قوزغات"
 
 #. tooltip
-#: ../src/nautilus-view.c:7271
+#: ../src/nautilus-view.c:7275
 msgid "Stop the volume associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان دىسكىنى توختات"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7278
+#: ../src/nautilus-view.c:7282
 msgid "Open File and Close window"
 msgstr "ھۆججەت ئېچىپ كۆزنەك ياپ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7282
+#: ../src/nautilus-view.c:7286
 msgid "Sa_ve Search"
 msgstr "ئىزدەشنى ساقلا(_V)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7283
+#: ../src/nautilus-view.c:7287
 msgid "Save the edited search"
 msgstr "تەھرىرلەنگەن ئىزدەشنى ساقلايدۇ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7286
-#| msgid "Sa_ve Search As..."
+#: ../src/nautilus-view.c:7290
 msgid "Sa_ve Search As…"
-msgstr ""
+msgstr "ئىزدەشنى باشقا ئاتتا ساقلا(_V)…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7287
+#: ../src/nautilus-view.c:7291
 msgid "Save the current search as a file"
 msgstr "نۆۋەتتىكى ئىزدەشنى ھۆججەتكە ساقلايدۇ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7293
+#: ../src/nautilus-view.c:7297
 msgid "Open this folder in a navigation window"
 msgstr "بۇ قىسقۇچنى يولباشچى كۆزنەكتە ئاچ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7297
+#: ../src/nautilus-view.c:7301
 msgid "Open this folder in a new tab"
 msgstr "بۇ قىسقۇچنى يېڭى بەتكۈچتە ئاچ"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7302
+#: ../src/nautilus-view.c:7306
 msgid "Prepare this folder to be moved with a Paste command"
 msgstr "بۇ قىسقۇچنى چاپلا بۇيرۇقىدا يۆتكەشكە تەييارلىنىۋاتىدۇ"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7306
+#: ../src/nautilus-view.c:7310
 msgid "Prepare this folder to be copied with a Paste command"
 msgstr "بۇ قىسقۇچنى چاپلا بۇيرۇقىدا كۆچۈرۈشكە تەييارلىنىۋاتىدۇ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7310
+#: ../src/nautilus-view.c:7314
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into this "
 "folder"
 msgstr "ئالدىدا كەس ياكى كۆچۈر بۇيرۇقىدا تاللانغان ھۆججەتنى بۇ تاللانغان قىسقۇچقا يۆتكە ياكى كۆچۈر"
 
 #. tooltip
-#: ../src/nautilus-view.c:7315
+#: ../src/nautilus-view.c:7319
 msgid "Move this folder to the Trash"
 msgstr "بۇ قىسقۇچنى ئەخلەتخانىغا يۆتكە"
 
 #. tooltip
-#: ../src/nautilus-view.c:7319
+#: ../src/nautilus-view.c:7323
 msgid "Delete this folder, without moving to the Trash"
 msgstr "بۇ قىسقۇچنى ئەخلەتخانىغا يۆتكىمەيلا ئۆچۈر"
 
 #. tooltip
-#: ../src/nautilus-view.c:7327
+#: ../src/nautilus-view.c:7331
 msgid "Mount the volume associated with this folder"
 msgstr "بۇ قىسقۇچ بىلەن باغلانغان دىسكىنى ئېگەرلەيدۇ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7331
+#: ../src/nautilus-view.c:7335
 msgid "Unmount the volume associated with this folder"
 msgstr "بۇ قىسقۇچ بىلەن باغلانغان دىسكىنى ئېگەرسىزلەيدۇ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7335
+#: ../src/nautilus-view.c:7339
 msgid "Eject the volume associated with this folder"
 msgstr "بۇ قىسقۇچ بىلەن باغلانغان دىسكىنى قاڭقىت"
 
 #. tooltip
-#: ../src/nautilus-view.c:7339
+#: ../src/nautilus-view.c:7343
 msgid "Start the volume associated with this folder"
 msgstr "بۇ قىسقۇچ بىلەن باغلانغان دىسكىنى قوزغات"
 
 #. tooltip
-#: ../src/nautilus-view.c:7343
+#: ../src/nautilus-view.c:7347
 msgid "Stop the volume associated with this folder"
 msgstr "بۇ قىسقۇچ بىلەن باغلانغان دىسكىنى توختات"
 
 #. tooltip
-#: ../src/nautilus-view.c:7352 ../src/nautilus-window-menus.c:574
+#: ../src/nautilus-view.c:7356 ../src/nautilus-window-menus.c:574
 msgid "View or modify the properties of this folder"
 msgstr "بۇ قىسقۇچنىڭ خاسلىقى كۆرسەت ياكى ئۆزگەرت"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7358
+#: ../src/nautilus-view.c:7362
 msgid "Show _Hidden Files"
 msgstr "يوشۇرۇن ھۆججەتلەرنى كۆرسەت(_H)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7359
+#: ../src/nautilus-view.c:7363
 msgid "Toggle the display of hidden files in the current window"
 msgstr "نۆۋەتتىكى كۆزنەكتە يوشۇرۇن ھۆججەت كۆرسىتىش كۆرسەتمەسلىكنى ئالماشتۇرىدۇ"
 
-#: ../src/nautilus-view.c:7420
-#| msgid "Run or manage scripts from %s"
+#: ../src/nautilus-view.c:7424
 msgid "Run or manage scripts"
-msgstr ""
+msgstr "قوليازمىلارنى باشقۇرۇش ۋە ئاجرا قىلىش"
 
 #. Create a script action here specially because its tooltip is dynamic
-#: ../src/nautilus-view.c:7422
+#: ../src/nautilus-view.c:7426
 msgid "_Scripts"
 msgstr "قوليازمىلار(_S)"
 
-#: ../src/nautilus-view.c:7772
-#, c-format
-#| msgid "Move the open folder out of the trash to \"%s\""
-msgid "Move the open folder out of the trash to “%s”"
-msgstr ""
-
 #: ../src/nautilus-view.c:7776
 #, c-format
-#| msgid "Move the selected folder out of the trash to \"%s\""
-#| msgid_plural "Move the selected folders out of the trash to \"%s\""
-msgid "Move the selected folder out of the trash to “%s”"
-msgstr ""
+msgid "Move the open folder out of the trash to “%s”"
+msgstr "ئوچۇق قىسقۇچنى ئەخلەتخانىدىن «%s» غا يۆتكە"
 
-#: ../src/nautilus-view.c:7779
+#: ../src/nautilus-view.c:7780
 #, c-format
-#| msgid "Move the selected folder out of the trash to \"%s\""
-#| msgid_plural "Move the selected folders out of the trash to \"%s\""
-msgid "Move the selected folders out of the trash to “%s”"
-msgstr ""
+msgid "Move the selected folder out of the trash to “%s”"
+msgstr "تاللانغان قىسقۇچنى ئەخلەتخانىدىن «%s» غا يۆتكە"
 
-#: ../src/nautilus-view.c:7784
-#| msgid "Move the selected folder out of the trash"
-#| msgid_plural "Move the selected folders out of the trash"
+#: ../src/nautilus-view.c:7783
+#, c-format
+msgid "Move the selected folders out of the trash to “%s”"
+msgstr "تاللانغان قىسقۇچنى ئەخلەتخانىدىن «%s» غا يۆتكە"
+
+#: ../src/nautilus-view.c:7788
 msgid "Move the selected folder out of the trash"
 msgstr "تاللانغان قىسقۇچنى ئەخلەتخانىدىن يۆتكىۋەت"
 
-#: ../src/nautilus-view.c:7786
-#| msgid "Move the selected folder out of the trash"
-#| msgid_plural "Move the selected folders out of the trash"
+#: ../src/nautilus-view.c:7790
 msgid "Move the selected folders out of the trash"
 msgstr "تاللانغان قىسقۇچنى ئەخلەتخانىدىن يۆتكىۋەت"
 
-#: ../src/nautilus-view.c:7792
+#: ../src/nautilus-view.c:7796
 #, c-format
-#| msgid "Move the selected file out of the trash to \"%s\""
-#| msgid_plural "Move the selected files out of the trash to \"%s\""
 msgid "Move the selected file out of the trash to “%s”"
-msgstr ""
+msgstr "تاللانغان ھۆججەتنى ئەخلەتخانىدىن «%s» غا يۆتكە"
 
-#: ../src/nautilus-view.c:7795
+#: ../src/nautilus-view.c:7799
 #, c-format
-#| msgid "Move the selected file out of the trash to \"%s\""
-#| msgid_plural "Move the selected files out of the trash to \"%s\""
 msgid "Move the selected files out of the trash to “%s”"
-msgstr ""
+msgstr "تاللانغان ھۆججەتنى ئەخلەتخانىدىن «%s» غا يۆتكە"
 
-#: ../src/nautilus-view.c:7800
-#| msgid "Move the selected file out of the trash"
-#| msgid_plural "Move the selected files out of the trash"
+#: ../src/nautilus-view.c:7804
 msgid "Move the selected file out of the trash"
 msgstr "تاللانغان ھۆججەتنى ئەخلەتخانىدىن يۆتكىۋەت"
 
-#: ../src/nautilus-view.c:7802
-#| msgid "Move the selected file out of the trash"
-#| msgid_plural "Move the selected files out of the trash"
+#: ../src/nautilus-view.c:7806
 msgid "Move the selected files out of the trash"
 msgstr "تاللانغان ھۆججەتنى ئەخلەتخانىدىن يۆتكىۋەت"
 
-#: ../src/nautilus-view.c:7808
+#: ../src/nautilus-view.c:7812
 #, c-format
-#| msgid "Move the selected item out of the trash to \"%s\""
-#| msgid_plural "Move the selected items out of the trash to \"%s\""
 msgid "Move the selected item out of the trash to “%s”"
-msgstr ""
+msgstr "تاللانغان تۈرنى ئەخلەتخانىدىن «%s» غا يۆتكە"
 
-#: ../src/nautilus-view.c:7811
+#: ../src/nautilus-view.c:7815
 #, c-format
-#| msgid "Move the selected item out of the trash to \"%s\""
-#| msgid_plural "Move the selected items out of the trash to \"%s\""
 msgid "Move the selected items out of the trash to “%s”"
-msgstr ""
+msgstr "تاللانغان تۈرنى ئەخلەتخانىدىن «%s» غا يۆتكە"
 
-#: ../src/nautilus-view.c:7816
-#| msgid "Move the selected item out of the trash"
-#| msgid_plural "Move the selected items out of the trash"
+#: ../src/nautilus-view.c:7820
 msgid "Move the selected item out of the trash"
 msgstr "تاللانغان تۈرنى ئەخلەتخانىدىن يۆتكىۋەت"
 
-#: ../src/nautilus-view.c:7818
-#| msgid "Move the selected item out of the trash"
-#| msgid_plural "Move the selected items out of the trash"
+#: ../src/nautilus-view.c:7822
 msgid "Move the selected items out of the trash"
 msgstr "تاللانغان تۈرنى ئەخلەتخانىدىن يۆتكىۋەت"
 
-#: ../src/nautilus-view.c:7925 ../src/nautilus-view.c:7929
-#: ../src/nautilus-view.c:8114 ../src/nautilus-view.c:8118
+#: ../src/nautilus-view.c:7929 ../src/nautilus-view.c:7933
+#: ../src/nautilus-view.c:8118 ../src/nautilus-view.c:8122
 msgid "Start the selected drive"
 msgstr "تاللانغان قوزغاتقۇچنى باشلا"
 
-#: ../src/nautilus-view.c:7932 ../src/nautilus-view.c:8019
-#: ../src/nautilus-view.c:8121
+#: ../src/nautilus-view.c:7936 ../src/nautilus-view.c:8023
+#: ../src/nautilus-view.c:8125
 msgid "_Connect"
 msgstr "باغلا(_C)"
 
-#: ../src/nautilus-view.c:7933 ../src/nautilus-view.c:8122
+#: ../src/nautilus-view.c:7937 ../src/nautilus-view.c:8126
 msgid "Connect to the selected drive"
 msgstr "تاللانغان قوزغاتقۇچقا باغلىنىدۇ"
 
-#: ../src/nautilus-view.c:7936 ../src/nautilus-view.c:8023
-#: ../src/nautilus-view.c:8125
+#: ../src/nautilus-view.c:7940 ../src/nautilus-view.c:8027
+#: ../src/nautilus-view.c:8129
 msgid "_Start Multi-disk Drive"
 msgstr "كۆپ دىسكا قوزغاتقۇچنى باشلا(_S)"
 
-#: ../src/nautilus-view.c:7937 ../src/nautilus-view.c:8126
+#: ../src/nautilus-view.c:7941 ../src/nautilus-view.c:8130
 msgid "Start the selected multi-disk drive"
 msgstr "تاللانغان كۆپ دىسكا قوزغاتقۇچنى باشلا"
 
-#: ../src/nautilus-view.c:7940
+#: ../src/nautilus-view.c:7944
 msgid "U_nlock Drive"
 msgstr "قوزغاتقۇچنى قۇلۇپسىزلا(_N)"
 
-#: ../src/nautilus-view.c:7941 ../src/nautilus-view.c:8130
+#: ../src/nautilus-view.c:7945 ../src/nautilus-view.c:8134
 msgid "Unlock the selected drive"
 msgstr "تاللانغان قوزغاتقۇچنى قۇلۇپلىما"
 
-#: ../src/nautilus-view.c:7954
+#: ../src/nautilus-view.c:7958
 msgid "Stop the selected drive"
 msgstr "تاللانغان قوزغاتقۇچنى توختات"
 
-#: ../src/nautilus-view.c:7958 ../src/nautilus-view.c:8147
+#: ../src/nautilus-view.c:7962 ../src/nautilus-view.c:8151
 msgid "Safely remove the selected drive"
 msgstr "تاللانغان قوزغاتقۇچنى بىخەتەر چىقىرىۋەت"
 
-#: ../src/nautilus-view.c:7961 ../src/nautilus-view.c:8048
-#: ../src/nautilus-view.c:8150
+#: ../src/nautilus-view.c:7965 ../src/nautilus-view.c:8052
+#: ../src/nautilus-view.c:8154
 msgid "_Disconnect"
 msgstr "ئۈز(_D)"
 
-#: ../src/nautilus-view.c:7962 ../src/nautilus-view.c:8151
+#: ../src/nautilus-view.c:7966 ../src/nautilus-view.c:8155
 msgid "Disconnect the selected drive"
 msgstr "تاللانغان قوزغاتقۇچنى ئۈز"
 
-#: ../src/nautilus-view.c:7965 ../src/nautilus-view.c:8052
-#: ../src/nautilus-view.c:8154
+#: ../src/nautilus-view.c:7969 ../src/nautilus-view.c:8056
+#: ../src/nautilus-view.c:8158
 msgid "_Stop Multi-disk Drive"
 msgstr "كۆپ دىسكا قوزغاتقۇچنى توختات(_S)"
 
-#: ../src/nautilus-view.c:7966 ../src/nautilus-view.c:8155
+#: ../src/nautilus-view.c:7970 ../src/nautilus-view.c:8159
 msgid "Stop the selected multi-disk drive"
 msgstr "تاللانغان كۆپ دىسكا قوزغاتقۇچنى توختات"
 
-#: ../src/nautilus-view.c:7970 ../src/nautilus-view.c:8159
+#: ../src/nautilus-view.c:7974 ../src/nautilus-view.c:8163
 msgid "Lock the selected drive"
 msgstr "تاللانغان قوزغاتقۇچنى قۇلۇپلا"
 
-#: ../src/nautilus-view.c:8012 ../src/nautilus-view.c:8016
+#: ../src/nautilus-view.c:8016 ../src/nautilus-view.c:8020
 msgid "Start the drive associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان قوزغاتقۇچنى قوزغات"
 
-#: ../src/nautilus-view.c:8020
+#: ../src/nautilus-view.c:8024
 msgid "Connect to the drive associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان قوزغاتقۇچقا ئۇلىنىدۇ"
 
-#: ../src/nautilus-view.c:8024
+#: ../src/nautilus-view.c:8028
 msgid "Start the multi-disk drive associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان كۆپ دىسكا قوزغاتقۇچنى قوزغات"
 
-#: ../src/nautilus-view.c:8028
+#: ../src/nautilus-view.c:8032
 msgid "Unlock the drive associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان قوزغاتقۇچنى قۇلۇپلىما"
 
-#: ../src/nautilus-view.c:8041
+#: ../src/nautilus-view.c:8045
 msgid "_Stop the drive associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان قوزغاتقۇچنى توختات(_S)"
 
-#: ../src/nautilus-view.c:8045
+#: ../src/nautilus-view.c:8049
 msgid "Safely remove the drive associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان قوزغاتقۇچنى بىخەتەر چىقىرىۋەت"
 
-#: ../src/nautilus-view.c:8049
+#: ../src/nautilus-view.c:8053
 msgid "Disconnect the drive associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان قوزغاتقۇچنى ئۈز"
 
-#: ../src/nautilus-view.c:8053
+#: ../src/nautilus-view.c:8057
 msgid "Stop the multi-disk drive associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان كۆپ دىسكا قوزغاتقۇچنى توختات"
 
-#: ../src/nautilus-view.c:8057
+#: ../src/nautilus-view.c:8061
 msgid "Lock the drive associated with the open folder"
 msgstr "ئېچىلغان قىسقۇچ بىلەن باغلانغان قوزغاتقۇچنى قۇلۇپلا"
 
-#: ../src/nautilus-view.c:8284 ../src/nautilus-view.c:8588
+#: ../src/nautilus-view.c:8288 ../src/nautilus-view.c:8592
 msgid "_Delete Permanently"
 msgstr "مەڭگۈلۈك ئۆچۈر(_D)"
 
-#: ../src/nautilus-view.c:8285
+#: ../src/nautilus-view.c:8289
 msgid "Delete the open folder permanently"
 msgstr "ئېچىلغان قىسقۇچنى مەڭگۈلۈك ئۆچۈر"
 
-#: ../src/nautilus-view.c:8289
+#: ../src/nautilus-view.c:8293
 msgid "Move the open folder to the Trash"
 msgstr "ئېچىلغان قىسقۇچنى ئەخلەتخانىغا يۆتكە"
 
-#: ../src/nautilus-view.c:8459
+#: ../src/nautilus-view.c:8463
 #, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
 msgstr[0] ""
 
-#: ../src/nautilus-view.c:8503
+#: ../src/nautilus-view.c:8507
 #, c-format
 msgid "_Open With %s"
 msgstr "ئاچىدىغان پروگرامما(_O) %s"
 
-#: ../src/nautilus-view.c:8514
-#| msgid "_Run"
+#: ../src/nautilus-view.c:8518
 msgid "Run"
 msgstr "ئىجرا"
 
-#: ../src/nautilus-view.c:8552
+#: ../src/nautilus-view.c:8556
 #, c-format
 msgid "Open in %'d New _Window"
 msgid_plural "Open in %'d New _Windows"
 msgstr[0] "%'d يېڭى كۆزنەكتە ئاچ(_W)"
 
-#: ../src/nautilus-view.c:8572
+#: ../src/nautilus-view.c:8576
 #, c-format
 msgid "Open in %'d New _Tab"
 msgid_plural "Open in %'d New _Tabs"
 msgstr[0] "%'d يېڭى بەتكۈچتە ئاچ(_T)"
 
-#: ../src/nautilus-view.c:8589
+#: ../src/nautilus-view.c:8593
 msgid "Delete all selected items permanently"
 msgstr "تاللانغان ھەممە تۈرنى مەڭگۈلۈك ئۆچۈر"
 
-#: ../src/nautilus-view.c:8620
+#: ../src/nautilus-view.c:8624
 msgid "Remo_ve from Recent"
-msgstr ""
+msgstr "يېقىنقىدىن چىقىرىۋەت(_V)"
 
-#: ../src/nautilus-view.c:8621
-#| msgid "Move each selected item to the Trash"
+#: ../src/nautilus-view.c:8625
 msgid "Remove each selected item from the recently used list"
-msgstr ""
+msgstr "ھەربىر تاللانغان تۈرنى يېقىندا ئىشلىتىلگەن تىزىمىدىن چىقىرىۋېتىدۇ"
 
-#: ../src/nautilus-view.c:8661
+#: ../src/nautilus-view.c:8665
 msgid "View or modify the properties of the open folder"
 msgstr "ئاچقان قىسقۇچنىڭ خاسلىقىنى كۆرسەت ياكى ئۆزگەرت"
 
@@ -5159,9 +4835,8 @@ msgstr "ئىناۋەتسىز سۆرەش تىپى ئىشلىتىلگەن."
 
 #. Translator: This is the filename used for when you dnd text to a directory
 #: ../src/nautilus-view-dnd.c:383
-#| msgid "dropped text.txt"
 msgid "Dropped Text.txt"
-msgstr ""
+msgstr "تاشلانغان Text.txt"
 
 #. Translator: This is the filename used for when you dnd raw
 #. * data to a directory, if the source didn't supply a name.
@@ -5187,30 +4862,20 @@ msgid "_Close Tab"
 msgstr "بەتكۈچ ياپ(_C)"
 
 #: ../src/nautilus-window.c:2031
-#| msgid ""
-#| "Nautilus is free software; you can redistribute it and/or modify it under "
-#| "the terms of the GNU General Public License as published by the Free "
-#| "Software Foundation; either version 2 of the License, or (at your option) "
-#| "any later version."
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
 "Foundation; either version 2 of the License, or (at your option) any later "
 "version."
-msgstr ""
+msgstr "ھۆججەتلەر(Files)  ئەركىن يۇمشاق دېتال بولۇپ، ئەركىن يۇمشاق دېتال ۋەخپىسى تارقاتقان GNU ئادەتتىكى ئاممىۋى ئىجازەت كېلىشىمىنىڭ ماددىلىرىغا ئەمەل قىلىپ بۇ يۇمشاق دېتالنى ئۆزگەرتىپ ۋە قايتا ئېلان قىلسىڭىز بولىدۇ. ياكى ئىجازەتنامىنىڭ 2- نەشرىنى ئىشلەتسىڭىز ۋە ياكى (تاللىشىڭىزغا ئاساسەن) خالىغان يېڭى نەشرىنى ئىشلەتسىڭىزمۇ بولىدۇ."
 
 #: ../src/nautilus-window.c:2035
-#| msgid ""
-#| "Nautilus is distributed in the hope that it will be useful, but WITHOUT "
-#| "ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
-#| "FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for "
-#| "more details."
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
 "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
 "details."
-msgstr ""
+msgstr "ھۆججەتلەر(Files) نى تارقىتىشنىڭ مەقسىتى ئۇنىڭ سىزگە كېرەكلىك بولۇشى ئۈچۈن، ئەمما ئۇنىڭ ھېچقانداق كاپالىتى يوق؛ ئۇنى ئىشلىتىپ كېلىپ چىققان ھەر قانداق بىۋاسىتە ياكى ۋاسىتىلىك ئاقىۋەتكە ھېچقانداق مەسئۇلىيەتنى ئۈستىگە ئالمايمىز. GNU ئادەتتىكى ئاممىۋى ئىجازەت كېلىشىمىدىكى تەپسىلاتنى كۆرۈڭ."
 
 #: ../src/nautilus-window.c:2039
 msgid ""
@@ -5223,14 +4888,12 @@ msgstr "سىز Nautilus نى تاپشۇرۇۋېلىش بىلەن بىللە GNU 
 #. * e.g. 1999-2011.
 #.
 #: ../src/nautilus-window.c:2054
-#| msgid "Copyright © %Id–%Id The Nautilus authors"
 msgid "Copyright © %Id–%Id The Files authors"
-msgstr ""
+msgstr "نەشر ھوقۇقى© %Id–%Id ھۆججەتلەر(Files) ئاپتورلىرىغا تەۋە"
 
 #: ../src/nautilus-window.c:2060
-#| msgid "Access and organize files"
 msgid "Access and organize your files."
-msgstr ""
+msgstr "ھۆججەتلەرنى تەشكىللەش ۋە زىيارەت قىلىش پروگراممىسى"
 
 #. Translators should localize the following string
 #. * which will be displayed at the bottom of the about
@@ -5302,7 +4965,6 @@ msgstr "Nautilus ياردەمنى كۆرسەت"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:485
-#| msgid "_Search for Files..."
 msgid "Search for files"
 msgstr "ھۆججەت ئىزدە"
 
@@ -5315,7 +4977,6 @@ msgstr "ھۆججەت ئاتى ۋە تىپىغا ئاساسەن ھۆججەتنى�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:489
-#| msgid "Sort _folders before files"
 msgid "Sort files and folders"
 msgstr "ھۆججەت ۋە قىسقۇچلارنى تەرتىپلەش"
 
@@ -5327,7 +4988,6 @@ msgstr "ھۆججەتنىڭ ئاتى، چوڭلۇقى، ياكى ئۆزگەرتى
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:493
-#| msgid "Original file"
 msgid "Find a lost file"
 msgstr "يوقالغان ھۆججەتنى ئىزدەش"
 
@@ -5339,7 +4999,6 @@ msgstr "قۇرغان ياكى چۈشۈرگەن ھۆججەتنى تاپالمىس
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:497
-#| msgid "Access and organize files"
 msgid "Share and transfer files"
 msgstr "ھۆججەتلەرنى ھەمبەھىر قىلىش ۋە يوللاش"
 
@@ -5396,9 +5055,8 @@ msgstr "ئادەتتىكى چوڭلۇقتىكى كۆرۈنۈشنى ئىشلەت"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:529
-#| msgid "Connect to Server"
 msgid "Connect to _Server…"
-msgstr ""
+msgstr "مۇلازىمېتىرغا باغلا(_S)…"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:530
@@ -5453,35 +5111,30 @@ msgstr "كېيىنكى زىيارەت قىلغان ئورۇنغا يۆتكەل"
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:551
-#| msgid "Open Location"
 msgid "Enter _Location…"
-msgstr ""
+msgstr "ئورۇننى كىرگۈزۈڭ(_L)…"
 
 #: ../src/nautilus-window-menus.c:552
 msgid "Specify a location to open"
-msgstr "ئاچىدىغان ئورۇننى بەلگىلە"
+msgstr "ئاچىدىغان ئورۇننى بەلگىلەيدۇ"
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:554
-#| msgid "Bookmark for Nonexistent Location"
 msgid "Bookmark this Location"
-msgstr ""
+msgstr "بۇ ئورۇننى خەتكۈچلە"
 
 #: ../src/nautilus-window-menus.c:555
-#| msgid "Add a bookmark for the current location to this menu"
 msgid "Add a bookmark for the current location"
-msgstr ""
+msgstr "نۆۋەتتىكى ئورۇننى خەتكۈچكە قوشىدۇ"
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:557
-#| msgid "_Bookmarks"
 msgid "_Bookmarks…"
-msgstr ""
+msgstr "خەتكۈچلەر(_B)…"
 
 #: ../src/nautilus-window-menus.c:558
-#| msgid "Edit Bookmarks"
 msgid "Display and edit bookmarks"
-msgstr ""
+msgstr "خەتكۈچلەرنى كۆرسىتىش ۋە تەھرىرلەش"
 
 #: ../src/nautilus-window-menus.c:560
 msgid "_Previous Tab"
@@ -5522,27 +5175,25 @@ msgstr "بۇ كۆزنەكنىڭ يان كۆزنەكچىنىڭ كۆرۈنۈشچا
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:589
-#| msgid "_Search for Files..."
 msgid "_Search for Files…"
-msgstr ""
+msgstr "ھۆججەتلەرنى ئىزدە(_S)…"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:590
 msgid "Search documents and folders by name"
-msgstr "ھۆججەت ۋە قىسقۇچنى ئاتى بويىچە ئىزدە"
+msgstr "ھۆججەت ۋە قىسقۇچنى ئاتى بويىچە ئىزدەيدۇ"
 
 #: ../src/nautilus-window-menus.c:596 ../src/nautilus-window-menus.c:598
-#| msgid "_List"
 msgid "List"
 msgstr "تىزىم"
 
 #: ../src/nautilus-window-menus.c:597
 msgid "View items as a list"
-msgstr ""
+msgstr "تۈرلەرنى تىزىم سۈپىتىدە كۆرسىتىدۇ"
 
 #: ../src/nautilus-window-menus.c:599
 msgid "View items as a grid of icons"
-msgstr ""
+msgstr "تۈرلەرنى سېتكا سىنبەلگىسى سۈپىتىدە كۆرسىتىدۇ"
 
 #: ../src/nautilus-window-menus.c:702
 msgid "_Up"
@@ -5550,22 +5201,18 @@ msgstr "ئۈستىگە(_U)"
 
 #: ../src/nautilus-window-slot.c:1272 ../src/nautilus-window-slot.c:1446
 #, c-format
-#| msgid "Unable to mount location"
 msgid "Unable to load location"
 msgstr ""
 
 #: ../src/nautilus-window-slot.c:1601
-#| msgid "View or modify the properties of this folder"
 msgid "Unable to display the contents of this folder."
 msgstr ""
 
 #: ../src/nautilus-window-slot.c:1603
-#| msgid "The location is not a folder."
 msgid "This location doesn't appear to be a folder."
 msgstr ""
 
 #: ../src/nautilus-window-slot.c:1608
-#| msgid "Please check the spelling and try again."
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr ""
@@ -5576,17 +5223,14 @@ msgid "“%s” locations are not supported."
 msgstr ""
 
 #: ../src/nautilus-window-slot.c:1616
-#| msgid "Nautilus cannot handle this kind of location."
 msgid "Unable to handle this kind of location."
 msgstr ""
 
 #: ../src/nautilus-window-slot.c:1621
-#| msgid "Unable to start location"
 msgid "Unable to access the requested location."
 msgstr ""
 
 #: ../src/nautilus-window-slot.c:1624
-#| msgid "You do not have permissions to access the destination folder."
 msgid "Don't have permission to access the requested location."
 msgstr ""
 
@@ -5606,10 +5250,9 @@ msgstr ""
 msgid "Unhandled error message: %s"
 msgstr ""
 
-#: ../src/nautilus-window-slot.c:2244
-#| msgid "Searching..."
+#: ../src/nautilus-window-slot.c:2245
 msgid "Searching…"
-msgstr ""
+msgstr "ئىزدەۋاتىدۇ…"
 
 #: ../src/nautilus-x-content-bar.c:93
 msgid "Audio CD"
@@ -5617,15 +5260,13 @@ msgstr "ئۈن CD"
 
 #: ../src/nautilus-x-content-bar.c:95
 msgid "Audio DVD"
-msgstr ""
+msgstr "ئۈن DVD"
 
 #: ../src/nautilus-x-content-bar.c:97
-#| msgid "Video"
 msgid "Video DVD"
 msgstr "سىن DVD"
 
 #: ../src/nautilus-x-content-bar.c:99
-#| msgid "Video"
 msgid "Video CD"
 msgstr "سىن CD"
 
@@ -5634,27 +5275,22 @@ msgid "Super Video CD"
 msgstr "ئالاھىدە سىن CD"
 
 #: ../src/nautilus-x-content-bar.c:103
-#| msgid "_Photos:"
 msgid "Photo CD"
-msgstr ""
+msgstr "سۈرەت CD"
 
 #: ../src/nautilus-x-content-bar.c:105
-#| msgid "Picture"
 msgid "Picture CD"
 msgstr "سۈرەت CD"
 
 #: ../src/nautilus-x-content-bar.c:107 ../src/nautilus-x-content-bar.c:140
-#| msgid "The media contains digital photos."
 msgid "Contains digital photos"
 msgstr ""
 
 #: ../src/nautilus-x-content-bar.c:109
-#| msgid "Continue"
 msgid "Contains music"
 msgstr ""
 
 #: ../src/nautilus-x-content-bar.c:111
-#| msgid "The media contains software."
 msgid "Contains software"
 msgstr ""
 
@@ -5673,7 +5309,6 @@ msgid "Contains photos and music"
 msgstr ""
 
 #: ../src/nautilus-x-content-bar.c:195
-#| msgid "Open %s with:"
 msgid "Open with:"
 msgstr "ئاچىدىغان پروگرامما:"
 
