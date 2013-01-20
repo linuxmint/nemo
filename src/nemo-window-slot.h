@@ -72,9 +72,12 @@ struct NemoWindowSlot {
 
 	GtkWidget *view_overlay;
 	GtkWidget *floating_bar;
+    GtkWidget *desktop_tooltip;
+    GtkWidget *tooltip_label;
 
 	guint set_status_timeout_id;
 	guint loading_timeout_id;
+    guint reshow_tooltip_timeout_id;
 
 	NemoView *content_view;
 	NemoView *new_content_view;
