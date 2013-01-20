@@ -29,6 +29,7 @@
 #include <math.h>
 #include "nemo-icon-container.h"
 
+#include "nemo-file.h"
 #include "nemo-global-preferences.h"
 #include "nemo-icon-private.h"
 #include "nemo-lib-self-check-functions.h"
@@ -6877,6 +6878,32 @@ handle_hadjustment_changed (GtkAdjustment *adjustment,
 	}
 }
 
+static void
+construct_tooltip (NemoFile *file, gchar **tooltip_text)
+{
+    gint item_count;
+    if (nemo_file_is_directory (file)) {
+        nemo_file_get_directory_item_count (file, &item_count, NULL);
+        if (item_count == 1)
+            *tooltip_text = g_strdup_printf ("Folder containing %d item", item_count);
+        else
+            *tooltip_text = g_strdup_printf ("Folder containing %d items", item_count);
+    } else {
+        gchar *scheme = nemo_file_get_uri_scheme (file);
+        if (g_strcmp0 (scheme, "x-nemo-desktop") != 0) {
+            gchar *size_string;
+            gint prefix;
+
+            prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+            size_string = g_format_size_full (nemo_file_get_size (file), prefix);
+            *tooltip_text = g_strdup (size_string);
+            g_free (size_string);
+        } else {
+            *tooltip_text = NULL;
+        }
+        g_free (scheme);
+    }
+}
 
 void 
 nemo_icon_container_update_icon (NemoIconContainer *container,
@@ -6951,6 +6978,15 @@ nemo_icon_container_update_icon (NemoIconContainer *container,
 					       &editable_text,
 					       &additional_text,
 					       FALSE);
+
+    NemoFile *file = NEMO_FILE (icon->data);
+    gchar *tooltip_text;
+    construct_tooltip (file, &tooltip_text);
+
+    nemo_icon_canvas_item_set_tooltip_text (icon->item, tooltip_text);
+
+    if (tooltip_text != NULL)
+        g_free (tooltip_text);
 
 	/* If name of icon being renamed was changed from elsewhere, end renaming mode. 
 	 * Alternatively, we could replace the characters in the editable text widget
