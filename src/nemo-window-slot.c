@@ -48,6 +48,51 @@ enum {
 static guint signals[LAST_SIGNAL] = { 0 };
 
 static void
+dispose_of_tooltip (NemoWindowSlot *slot)
+{
+    if (slot->desktop_tooltip != NULL) {
+        gtk_widget_destroy (slot->desktop_tooltip);
+        slot->tooltip_label = NULL;
+        slot->desktop_tooltip = NULL;
+    }
+}
+
+static gboolean
+handle_focus_out_event (GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
+{
+    NemoWindowSlot *slot = NEMO_WINDOW_SLOT (user_data);
+
+    if (slot->desktop_tooltip != NULL) {
+        gtk_widget_hide (slot->desktop_tooltip);
+    }
+    return FALSE;
+}
+
+static gboolean
+real_handle_focus_in_event_cb (gpointer user_data)
+{
+    NemoWindowSlot *slot = NEMO_WINDOW_SLOT (user_data);
+
+    if (slot->desktop_tooltip != NULL)
+        gtk_widget_show (slot->desktop_tooltip);
+    slot->reshow_tooltip_timeout_id = 0;
+    return FALSE;
+}
+
+static gboolean
+handle_focus_in_event (GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
+{
+    NemoWindowSlot *slot = NEMO_WINDOW_SLOT (user_data);
+
+    if (slot->desktop_tooltip != NULL) {
+        slot->reshow_tooltip_timeout_id = g_timeout_add (500,
+                                                         real_handle_focus_in_event_cb,
+                                                         slot);
+    }
+    return FALSE;
+}
+
+static void
 query_editor_changed_callback (NemoSearchBar *bar,
 			       NemoQuery *query,
 			       gboolean reload,
@@ -154,7 +199,6 @@ static void
 real_inactive (NemoWindowSlot *slot)
 {
 	NemoWindow *window;
-
 	window = nemo_window_slot_get_window (slot);
 	g_assert (slot == nemo_window_get_active_slot (window));
 }
@@ -456,6 +500,19 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 		/* connect new view */
 		nemo_window_connect_content_view (window, new_view);
 	}
+
+    gboolean disable_chrome;
+
+    g_object_get (window,
+                  "disable-chrome", &disable_chrome,
+                  NULL);
+
+    if (disable_chrome) {
+        g_signal_connect (GTK_WIDGET (window), "focus-out-event",
+                  G_CALLBACK (handle_focus_out_event), slot);
+        g_signal_connect (GTK_WIDGET (window), "focus-in-event",
+                  G_CALLBACK (handle_focus_in_event), slot);
+    }
 }
 
 void
@@ -490,6 +547,29 @@ real_slot_set_short_status (NemoWindowSlot *slot,
 	g_object_get (nemo_window_slot_get_window (slot),
 		      "disable-chrome", &disable_chrome,
 		      NULL);
+
+    if (disable_chrome && status != NULL) {
+        dispose_of_tooltip (slot);
+        slot->desktop_tooltip = gtk_window_new (GTK_WINDOW_POPUP);
+        gtk_window_set_position (GTK_WINDOW (slot->desktop_tooltip), GTK_WIN_POS_MOUSE);
+        gtk_window_set_type_hint (GTK_WINDOW (slot->desktop_tooltip), GDK_WINDOW_TYPE_HINT_TOOLTIP);
+        GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (slot->desktop_tooltip));
+        gtk_style_context_add_class (context, GTK_STYLE_CLASS_TOOLTIP);
+        GtkWidget *box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+        gtk_widget_set_margin_left (box, 6);
+        gtk_widget_set_margin_right (box, 6);
+        gtk_widget_set_margin_top (box, 6);
+        gtk_widget_set_margin_bottom (box, 6);
+        slot->tooltip_label = gtk_label_new (status);
+        gtk_container_add (GTK_CONTAINER (slot->desktop_tooltip), box);
+        gtk_box_pack_start (GTK_BOX (box), slot->tooltip_label, FALSE, FALSE, 0);
+
+
+        gtk_widget_show_all (GTK_WIDGET (slot->desktop_tooltip));
+    } else {
+        dispose_of_tooltip (slot);
+    }
+
 
 	if (status == NULL || show_statusbar || disable_chrome) {
 		gtk_widget_hide (slot->floating_bar);
