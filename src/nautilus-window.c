@@ -595,18 +595,20 @@ places_sidebar_show_error_message_cb (GtkPlacesSidebar *sidebar,
 }
 
 static GList *
-build_selection_list_from_uri_list (GList *uri_list)
+build_selection_list_from_gfile_list (GList *gfile_list)
 {
 	GList *result;
 	GList *l;
 
 	result = NULL;
-	for (l = uri_list; l; l = l->next) {
-		const char *uri = l->data;
+	for (l = gfile_list; l; l = l->next) {
+		GFile *file;
 		NautilusDragSelectionItem *item;
 
+		file = l->data;
+
 		item = nautilus_drag_selection_item_new ();
-		item->uri = g_strdup (uri);
+		item->uri = g_file_get_uri (file);
 		item->got_icon_position = FALSE;
 		result = g_list_prepend (result, item);
 	}
@@ -618,18 +620,21 @@ build_selection_list_from_uri_list (GList *uri_list)
 static void
 places_sidebar_drag_action_requested_cb (GtkPlacesSidebar *sidebar,
 					 GdkDragContext   *context,
-					 const char       *uri,
-					 GList            *uri_list,
+					 GFile            *dest_file,
+					 GList            *source_file_list,
 					 int              *action,
 					 gpointer          user_data)
 {
 	GList *items;
+	char *uri;
 
-	items = build_selection_list_from_uri_list (uri_list);
+	items = build_selection_list_from_gfile_list (source_file_list);
+	uri = g_file_get_uri (dest_file);
 
 	nautilus_drag_default_drop_action_for_icons (context, uri, items, action);
 
 	nautilus_drag_destroy_selection_list (items);
+	g_free (uri);
 }
 
 /* Callback used when the places sidebar needs us to pop up a menu with possible drag actions */
@@ -641,16 +646,44 @@ places_sidebar_drag_action_ask_cb (GtkPlacesSidebar *sidebar,
 	return nautilus_drag_drop_action_ask (GTK_WIDGET (sidebar), actions);
 }
 
+static GList *
+build_uri_list_from_gfile_list (GList *file_list)
+{
+	GList *result;
+	GList *l;
+
+	result = NULL;
+
+	for (l = file_list; l; l = l->next) {
+		GFile *file = l->data;
+		char *uri;
+
+		uri = g_file_get_uri (file);
+		result = g_list_prepend (result, uri);
+	}
+
+	return g_list_reverse (result);
+	
+}
+
 /* Callback used when the places sidebar has URIs dropped into it.  We do a normal file operation for them. */
 static void
 places_sidebar_drag_perform_drop_cb (GtkPlacesSidebar *sidebar,
-				     GList            *uris,
-				     const char       *drop_uri,
+				     GFile            *dest_file,
+				     GList            *source_file_list,
 				     GdkDragAction     action,
 				     gpointer          user_data)
 {
-	nautilus_file_operations_copy_move (uris, NULL, drop_uri, action, GTK_WIDGET (sidebar), NULL, NULL);
-	
+	char *dest_uri;
+	GList *source_uri_list;
+
+	dest_uri = g_file_get_uri (dest_file);
+	source_uri_list = build_uri_list_from_gfile_list (source_file_list);
+
+	nautilus_file_operations_copy_move (source_uri_list, NULL, dest_uri, action, GTK_WIDGET (sidebar), NULL, NULL);
+
+	g_free (dest_uri);
+	g_list_free_full (source_uri_list, g_free);
 }
 
 /* Callback for our own loading_uri signal.  We update the sidebar's path. */
