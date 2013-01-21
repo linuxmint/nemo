@@ -549,8 +549,6 @@ result_list_attributes_ready_cb (GList    *file_list,
 
     uri = nautilus_file_get_uri (file);
     display_name = get_display_name (data->self, file);
-    pix = nautilus_file_get_icon_pixbuf (file, 128, TRUE,
-                                         NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS);
 
     g_variant_builder_add (&meta, "{sv}",
                            "id", g_variant_new_string (uri));
