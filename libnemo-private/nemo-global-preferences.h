@@ -191,6 +191,7 @@ typedef enum
 #define NEMO_PREFERENCES_DESKTOP_NETWORK_VISIBLE       "network-icon-visible"
 #define NEMO_PREFERENCES_DESKTOP_NETWORK_NAME          "network-icon-name"
 #define NEMO_PREFERENCES_DESKTOP_BACKGROUND_FADE       "background-fade"
+#define NEMO_PREFERENCES_DESKTOP_SHOW_TOOLTIPS         "tooltips-on-desktop"
 
 /* bulk rename utility */
 #define NEMO_PREFERENCES_BULK_RENAME_TOOL              "bulk-rename-tool"

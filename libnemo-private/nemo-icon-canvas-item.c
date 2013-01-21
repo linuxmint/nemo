@@ -1586,6 +1586,7 @@ nemo_icon_canvas_item_event (EelCanvasItem *item, GdkEvent *event)
 
 	switch (event->type) {
 	case GDK_ENTER_NOTIFY:
+        gtk_widget_set_tooltip_text (GTK_WIDGET (item->canvas), icon_item->tooltip);
 		if (!icon_item->details->is_prelit) {
 			icon_item->details->is_prelit = TRUE;
 			nemo_icon_canvas_item_invalidate_label_size (icon_item);
@@ -1606,6 +1607,7 @@ nemo_icon_canvas_item_event (EelCanvasItem *item, GdkEvent *event)
 		return TRUE;
 		
 	case GDK_LEAVE_NOTIFY:
+        gtk_widget_set_tooltip_text (GTK_WIDGET (item->canvas), "");
 		if (icon_item->details->is_prelit 
 		    || icon_item->details->is_highlighted_for_drop) {
 			/* When leaving, turn of the prelight state and the
@@ -2916,4 +2918,10 @@ nemo_icon_canvas_item_accessible_factory_class_init (NemoIconCanvasItemAccessibl
 {
 	klass->create_accessible = nemo_icon_canvas_item_accessible_factory_create_accessible;
 	klass->get_accessible_type = nemo_icon_canvas_item_accessible_factory_get_accessible_type;
+}
+
+void
+nemo_icon_canvas_item_set_tooltip_text            (NemoIconCanvasItem *item, const gchar *text)
+{
+    item->tooltip = g_strdup (text);
 }

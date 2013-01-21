@@ -420,6 +420,11 @@
       <_summary>Fade the background on change</_summary>
       <_description>If set to true, then Nemo will use a fade effect to change the desktop background.</_description>
     </key>
+    <key name="tooltips-on-desktop" type="b">
+      <default>false</default>
+      <_summary>Show tooltips for desktop items</_summary>
+      <_description>If true, tooltips will be displayed for desktop items.</_description>
+    </key>
   </schema>
 
   <schema id="org.nemo.window-state" path="/org/nemo/window-state/" gettext-domain="nemo">

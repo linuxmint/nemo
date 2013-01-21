@@ -78,6 +78,8 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_AUTOOPEN_MEDIA_WIDGET "media_autoopen_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_AUTORUN_MEDIA_WIDGET "media_autorun_checkbutton"
 
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DESKTOP_TOOLTIPS_WIDGET "tooltips_on_desktop_checkbutton"
+
 /* int enums */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET "preview_image_size_combobox"
 
@@ -785,7 +787,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 	bind_builder_bool_inverted (builder, nemo_preferences,
 				    NEMO_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET,
 				    NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
-
+    bind_builder_bool (builder, nemo_desktop_preferences,
+               NEMO_FILE_MANAGEMENT_PROPERTIES_DESKTOP_TOOLTIPS_WIDGET,
+               NEMO_PREFERENCES_DESKTOP_SHOW_TOOLTIPS);
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET,
 			   NEMO_PREFERENCES_CONFIRM_TRASH);

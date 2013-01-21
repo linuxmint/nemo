@@ -50,6 +50,7 @@ struct NemoIconCanvasItem {
 	EelCanvasItem item;
 	NemoIconCanvasItemDetails *details;
 	gpointer user_data;
+    gchar *tooltip;
 };
 
 struct NemoIconCanvasItemClass {
@@ -109,6 +110,7 @@ void        nemo_icon_canvas_item_set_is_visible           (NemoIconCanvasItem  
 /* whether the entire label text must be visible at all times */
 void        nemo_icon_canvas_item_set_entire_text          (NemoIconCanvasItem       *icon_item,
 								gboolean                      entire_text);
+void        nemo_icon_canvas_item_set_tooltip_text         (NemoIconCanvasItem *item, const gchar *text);
 
 G_END_DECLS
 
