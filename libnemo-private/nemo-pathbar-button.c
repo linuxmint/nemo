@@ -56,6 +56,15 @@ nemo_pathbar_button_class_init (NemoPathbarButtonClass *klass)
 
     widget_class->draw = nemo_pathbar_button_draw;
 
+    gtk_widget_class_install_style_property (widget_class,
+                       g_param_spec_int ("border-radius",
+                                 "The border radius of the breadcrumbs border",
+                                 "The border radius of the breadcrumbs border",
+                                 G_MININT,
+                                 G_MAXINT,
+                                 0,
+                                 G_PARAM_READABLE));
+
 }
 
 GtkWidget *
@@ -71,12 +80,11 @@ nemo_pathbar_button_finalize (GObject *object)
 }
 
 #define A_A CAIRO_ANTIALIAS_SUBPIXEL
-#define RAD 3.0
 #define _270_DEG 270.0 * (M_PI/180.0)
 #define _180_DEG 180.0 * (M_PI/180.0)
 #define  _90_DEG  90.0 * (M_PI/180.0)
-#define H_RAD 1 /* Highlight radius */
-#define H_O 2  /*  Highlight offset */
+
+#define H_O 3  /*  Highlight offset */
 #define H_T_COMP H_O + 0 /* Highlight tangential compensation */
 
 static void
@@ -152,7 +160,9 @@ do_draw_end_element (GtkStyleContext *context,
 
     GtkStateFlags state = gtk_style_context_get_state (context);
     GdkRGBA border_color;
+    gint rad;
     gtk_style_context_get_border_color (context, state, &border_color);
+    gtk_style_context_get_style (context, "border-radius", &rad, NULL);
 
     gint offset = rintf ((float) h / PATHBAR_BUTTON_OFFSET_FACTOR);
     cairo_save (cr);
@@ -165,14 +175,14 @@ do_draw_end_element (GtkStyleContext *context,
 
     cairo_set_line_width (cr, 3.0);
 
-    cairo_move_to (cr, x+RAD, y);
+    cairo_move_to (cr, x+rad, y);
     cairo_line_to (cr, x+w-offset, y);
     cairo_line_to (cr, x+w-1, y+(h/2));
     cairo_line_to (cr, x+w-offset, y+h);
-    cairo_line_to (cr, x+RAD, y+h);
-    cairo_arc (cr, x+RAD, y+h-RAD, RAD, _90_DEG, _180_DEG);
-    cairo_line_to (cr, x, y+RAD);
-    cairo_arc (cr, x+RAD, y+RAD, RAD, _180_DEG, _270_DEG);
+    cairo_line_to (cr, x+rad, y+h);
+    cairo_arc (cr, x+rad, y+h-rad, rad, _90_DEG, _180_DEG);
+    cairo_line_to (cr, x, y+rad);
+    cairo_arc (cr, x+rad, y+rad, rad, _180_DEG, _270_DEG);
 
     cairo_stroke_preserve (cr);
     cairo_clip (cr);
@@ -189,14 +199,14 @@ do_draw_end_element (GtkStyleContext *context,
     cairo_set_source_rgb (cr, 0, 0, 0);
     cairo_set_line_width (cr, .5);
 
-    cairo_move_to (cr, x+H_RAD+H_O, y+H_O);
+    cairo_move_to (cr, x+(rad-H_O)+H_O, y+H_O);
     cairo_line_to (cr, x+w-offset-H_O+H_T_COMP, y+H_O);
     cairo_line_to (cr, x+w-1-H_O, y+(h/2));
     cairo_line_to (cr, x+w-offset-H_O+H_T_COMP, y+h-H_O);
-    cairo_line_to (cr, x+H_RAD+H_O, y+h-H_O);
-    cairo_arc (cr, x+H_RAD+H_O, y+h-H_RAD-H_O, H_RAD, _90_DEG, _180_DEG);
-    cairo_line_to (cr, x+H_O, y+H_RAD+H_O);
-    cairo_arc (cr, x+H_RAD+H_O, y+H_RAD+H_O, H_RAD, _180_DEG, _270_DEG);
+    cairo_line_to (cr, x+(rad-H_O)+H_O, y+h-H_O);
+    cairo_arc (cr, x+(rad-H_O)+H_O, y+h-(rad-H_O)-H_O, (rad-H_O), _90_DEG, _180_DEG);
+    cairo_line_to (cr, x+H_O, y+(rad-H_O)+H_O);
+    cairo_arc (cr, x+(rad-H_O)+H_O, y+(rad-H_O)+H_O, (rad-H_O), _180_DEG, _270_DEG);
 
     cairo_stroke (cr);
 
