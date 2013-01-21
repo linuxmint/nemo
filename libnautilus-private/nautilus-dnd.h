@@ -82,6 +82,9 @@ typedef struct {
 	 */
 	GList *selection_list;
 
+	/* cache of selected URIs, representing items being dragged */
+	GList *selection_cache;
+
 	/* has the drop occured ? */
 	gboolean drop_occured;
 
@@ -137,6 +140,13 @@ gboolean		    nautilus_drag_drag_data_get			(GtkWidget			      *widget,
 									 guint32			       time,
 									 gpointer			       container_context,
 									 NautilusDragEachSelectedItemIterator  each_selected_item_iterator);
+GList			   *nautilus_drag_create_selection_cache	(gpointer			       container_context,
+									 NautilusDragEachSelectedItemIterator  each_selected_item_iterator);
+gboolean		    nautilus_drag_drag_data_get_from_cache	(GList				      *cache,
+									 GdkDragContext			      *context,
+									 GtkSelectionData		      *selection_data,
+									 guint				       info,
+									 guint32			       time);
 int			    nautilus_drag_modifier_based_action		(int				       default_action,
 									 int				       non_default_action);
 

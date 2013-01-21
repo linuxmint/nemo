@@ -81,6 +81,7 @@ nautilus_drag_finalize (NautilusDragInfo *drag_info)
 {
 	gtk_target_list_unref (drag_info->target_list);
 	nautilus_drag_destroy_selection_list (drag_info->selection_list);
+	nautilus_drag_destroy_selection_list (drag_info->selection_cache);
 
 	g_free (drag_info);
 }
@@ -585,8 +586,80 @@ add_one_uri (const char *uri, int x, int y, int w, int h, gpointer data)
 	g_string_append (result, "\r\n");
 }
 
+static void
+cache_one_item (const char *uri,
+		int x, int y,
+		int w, int h,
+		gpointer data)
+{
+	GList **cache = data;
+	NautilusDragSelectionItem *item;
+
+	item = nautilus_drag_selection_item_new ();
+	item->uri = g_strdup (uri);
+	item->icon_x = x;
+	item->icon_y = y;
+	item->icon_width = w;
+	item->icon_height = h;
+	*cache = g_list_prepend (*cache, item);
+}
+
+GList *
+nautilus_drag_create_selection_cache (gpointer container_context,
+				      NautilusDragEachSelectedItemIterator each_selected_item_iterator)
+{
+	GList *cache = NULL;
+
+	(* each_selected_item_iterator) (cache_one_item, container_context, &cache);
+	cache = g_list_reverse (cache);
+
+	return cache;
+}
+
 /* Common function for drag_data_get_callback calls.
  * Returns FALSE if it doesn't handle drag data */
+gboolean
+nautilus_drag_drag_data_get_from_cache (GList *cache,
+					GdkDragContext *context,
+					GtkSelectionData *selection_data,
+					guint info,
+					guint32 time)
+{
+	GList *l;
+	GString *result;
+	NautilusDragEachSelectedItemDataGet func;
+
+	if (cache == NULL) {
+		return FALSE;
+	}
+
+	switch (info) {
+	case NAUTILUS_ICON_DND_GNOME_ICON_LIST:
+		func = add_one_gnome_icon;
+		break;
+	case NAUTILUS_ICON_DND_URI_LIST:
+	case NAUTILUS_ICON_DND_TEXT:
+		func = add_one_uri;
+		break;
+	default:
+		return FALSE;
+	}
+
+	result = g_string_new (NULL);
+
+	for (l = cache; l != NULL; l = l->next) {
+		NautilusDragSelectionItem *item = l->data;
+		(*func) (item->uri, item->icon_x, item->icon_y, item->icon_width, item->icon_height, result);
+	}
+
+	gtk_selection_data_set (selection_data,
+				gtk_selection_data_get_target (selection_data),
+				8, (guchar *) result->str, result->len);
+	g_string_free (result, TRUE);
+
+	return TRUE;
+}
+
 gboolean
 nautilus_drag_drag_data_get (GtkWidget *widget,
 			GdkDragContext *context,

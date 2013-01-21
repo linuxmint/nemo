@@ -40,7 +40,6 @@
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
-#include <libegg/eggtreemultidnd.h>
 #include <glib/gi18n.h>
 #include <glib-object.h>
 #include <libnautilus-extension/nautilus-column-provider.h>
@@ -354,7 +353,7 @@ drag_data_get_callback (GtkWidget *widget,
 {
 	GtkTreeView *tree_view;
 	GtkTreeModel *model;
-	GList *ref_list;
+	GList *selection_cache;
 
 	tree_view = GTK_TREE_VIEW (widget);
   
@@ -364,67 +363,12 @@ drag_data_get_callback (GtkWidget *widget,
 		return;
 	}
 
-	ref_list = g_object_get_data (G_OBJECT (context), "drag-info");
-
-	if (ref_list == NULL) {
+	selection_cache = g_object_get_data (G_OBJECT (context), "drag-info");
+	if (selection_cache == NULL) {
 		return;
 	}
 
-	if (EGG_IS_TREE_MULTI_DRAG_SOURCE (model)) {
-		egg_tree_multi_drag_source_drag_data_get (EGG_TREE_MULTI_DRAG_SOURCE (model),
-							  ref_list,
-							  selection_data);
-	}
-}
-
-static void
-filtered_selection_foreach (GtkTreeModel *model,
-			    GtkTreePath *path,
-			    GtkTreeIter *iter,
-			    gpointer data)
-{
-	struct SelectionForeachData *selection_data;
-	GtkTreeIter parent;
-	GtkTreeIter child;
-	
-	selection_data = data;
-
-	/* If the parent folder is also selected, don't include this file in the
-	 * file operation, since that would copy it to the toplevel target instead
-	 * of keeping it as a child of the copied folder
-	 */
-	child = *iter;
-	while (gtk_tree_model_iter_parent (model, &parent, &child)) {
-		if (gtk_tree_selection_iter_is_selected (selection_data->selection,
-							 &parent)) {
-			return;
-		}
-		child = parent;
-	}
-	
-	selection_data->list = g_list_prepend (selection_data->list, 
-					       gtk_tree_row_reference_new (model, path));
-}
-
-static GList *
-get_filtered_selection_refs (GtkTreeView *tree_view)
-{
-	struct SelectionForeachData selection_data;
-
-	selection_data.list = NULL;
-	selection_data.selection = gtk_tree_view_get_selection (tree_view);
-	
-	gtk_tree_selection_selected_foreach (selection_data.selection, 
-					     filtered_selection_foreach, 
-					     &selection_data);
-	return g_list_reverse (selection_data.list);
-}
-
-static void
-ref_list_free (GList *ref_list)
-{
-	g_list_foreach (ref_list, (GFunc) gtk_tree_row_reference_free, NULL);
-	g_list_free (ref_list);
+	nautilus_drag_drag_data_get_from_cache (selection_cache, context, selection_data, info, time);
 }
 
 static void
@@ -466,12 +410,80 @@ get_drag_pixbuf (NautilusListView *view)
 	return ret;
 }
 
+/* iteration glue struct */
+typedef struct {
+	NautilusListView *view;
+	NautilusDragEachSelectedItemDataGet iteratee;
+	gpointer iteratee_data;
+} ListGetDataBinderContext;
+
+static void
+item_get_data_binder (GtkTreeModel *model,
+		      GtkTreePath *path,
+		      GtkTreeIter *iter,
+		      gpointer data)
+{
+	ListGetDataBinderContext *context = data;
+	NautilusFile *file;
+	GtkTreeView *treeview;
+	GtkTreeViewColumn *column;
+	GdkRectangle cell_area;
+	int drag_begin_y  = 0;
+	char *uri;
+
+	treeview = nautilus_list_model_get_drag_view (context->view->details->model,
+						      NULL,
+						      &drag_begin_y);
+	column = gtk_tree_view_get_column (treeview, 0);
+
+	file = nautilus_list_model_file_for_path (NAUTILUS_LIST_MODEL (model), path);
+	if (file == NULL) {
+		return;
+	}
+
+	gtk_tree_view_get_cell_area (treeview,
+				     path,
+				     column,
+				     &cell_area);
+
+	uri = nautilus_file_get_uri (file);
+	nautilus_file_unref (file);
+
+	/* pass the uri, mouse-relative x/y and icon width/height */
+	context->iteratee (uri,
+			   0,
+			   cell_area.y - drag_begin_y,
+			   cell_area.width,
+			   cell_area.height,
+			   context->iteratee_data);
+
+	g_free (uri);
+}
+
+static void
+each_item_get_data_binder (NautilusDragEachSelectedItemDataGet iteratee,
+			   gpointer iterator_context,
+			   gpointer data)
+{
+	NautilusListView *view = NAUTILUS_LIST_VIEW (iterator_context);
+	ListGetDataBinderContext context;
+	GtkTreeSelection *selection;
+
+	context.view = view;
+	context.iteratee = iteratee;
+	context.iteratee_data = data;
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view->details->tree_view));
+	gtk_tree_selection_selected_foreach (selection, item_get_data_binder, &context);
+}
+
+
 static void
 drag_begin_callback (GtkWidget *widget,
 		     GdkDragContext *context,
 		     NautilusListView *view)
 {
-	GList *ref_list;
+	GList *selection_cache;
 	GdkPixbuf *pixbuf;
 
 	pixbuf = get_drag_pixbuf (view);
@@ -486,12 +498,14 @@ drag_begin_callback (GtkWidget *widget,
 
 	stop_drag_check (view);
 	view->details->drag_started = TRUE;
-	
-	ref_list = get_filtered_selection_refs (GTK_TREE_VIEW (widget));
+
+	selection_cache = nautilus_drag_create_selection_cache (view,
+								each_item_get_data_binder);
+
 	g_object_set_data_full (G_OBJECT (context),
 				"drag-info",
-				ref_list,
-				(GDestroyNotify)ref_list_free);
+				selection_cache,
+				(GDestroyNotify)nautilus_drag_destroy_selection_list);
 }
 
 static gboolean

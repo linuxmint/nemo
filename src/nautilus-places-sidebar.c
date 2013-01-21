@@ -1309,7 +1309,6 @@ build_selection_list (const char *data)
 	int i;
 
 	uris = g_uri_list_extract_uris (data);
-
 	result = NULL;
 	for (i = 0; uris[i]; i++) {
 		uri = uris[i];
@@ -1467,7 +1466,9 @@ drag_data_received_callback (GtkWidget *widget,
 			switch (info) {
 			case TEXT_URI_LIST:
 				selection_list = build_selection_list ((const gchar *) gtk_selection_data_get_data (selection_data));
+				g_assert (selection_list);
 				uris = uri_list_from_selection (selection_list);
+				g_assert (uris);
 				nautilus_file_operations_copy_move (uris, NULL, drop_uri,
 								    real_action, GTK_WIDGET (tree_view),
 								    NULL, NULL);

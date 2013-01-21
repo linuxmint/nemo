@@ -311,6 +311,8 @@ drag_data_get_callback (GtkWidget *widget,
 			guint32 time,
 			gpointer data)
 {
+	NautilusDragInfo *drag_info;
+
 	g_assert (widget != NULL);
 	g_assert (NAUTILUS_IS_CANVAS_CONTAINER (widget));
 	g_return_if_fail (context != NULL);
@@ -319,8 +321,8 @@ drag_data_get_callback (GtkWidget *widget,
 	 * the selection data in the right format. Pass it means to
 	 * iterate all the selected icons.
 	 */
-	nautilus_drag_drag_data_get (widget, context, selection_data,
-		info, time, widget, each_icon_get_data_binder);
+	drag_info = &(NAUTILUS_CANVAS_CONTAINER (widget)->details->dnd_info->drag_info);
+	nautilus_drag_drag_data_get_from_cache (drag_info->selection_cache, context, selection_data, info, time);
 }
 
 
@@ -1307,6 +1309,7 @@ drag_begin_callback (GtkWidget      *widget,
 		     gpointer        data)
 {
 	NautilusCanvasContainer *container;
+	NautilusDragInfo *drag_info;
 	cairo_surface_t *surface;
 	double x1, y1, x2, y2, winx, winy;
 	int x_offset, y_offset;
@@ -1333,6 +1336,12 @@ drag_begin_callback (GtkWidget      *widget,
         cairo_surface_set_device_offset (surface, -x_offset, -y_offset);
         gtk_drag_set_icon_surface (context, surface);
         cairo_surface_destroy (surface);
+
+	/* cache the data at the beginning since the view may change */
+	drag_info = &(container->details->dnd_info->drag_info);
+	drag_info->selection_cache = nautilus_drag_create_selection_cache (widget,
+									   each_icon_get_data_binder);
+
 }
 
 void
