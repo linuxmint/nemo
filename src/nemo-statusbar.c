@@ -218,7 +218,7 @@ nemo_status_bar_constructed (GObject *object)
     gtk_box_pack_start (GTK_BOX (bar), statusbar, TRUE, TRUE, 10);
 
     GtkWidget *zoom_slider = gtk_scale_new_with_range (GTK_ORIENTATION_HORIZONTAL, 0, 6.0, 1.0);
-    gtk_widget_set_tooltip_text (GTK_WIDGET (zoom_slider), _("Adjust view magnification"));
+    gtk_widget_set_tooltip_text (GTK_WIDGET (zoom_slider), _("Adjust zoom level"));
     bar->zoom_slider = zoom_slider;
 
     gtk_box_pack_start (GTK_BOX (bar), zoom_slider, FALSE, FALSE, 2);
