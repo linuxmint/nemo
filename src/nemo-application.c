@@ -1090,7 +1090,7 @@ nemo_application_add_app_css_provider (void)
 
   gtk_style_context_add_provider_for_screen (screen,
       GTK_STYLE_PROVIDER (provider),
-      GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+      GTK_STYLE_PROVIDER_PRIORITY_FALLBACK);
 
 out:
   g_object_unref (provider);

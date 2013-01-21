@@ -198,31 +198,6 @@ nemo_pathbar_button_draw (GtkWidget                   *widget,
     GtkStateFlags state;
 
     context = gtk_widget_get_style_context (widget);
-    state = gtk_style_context_get_state (context);
-
-    gtk_style_context_save (context);
-
-    switch (state) {
-        case GTK_STATE_FLAG_NORMAL:
-            gtk_style_context_add_class (context, "nemo-pathbar-button");
-            break;
-        case GTK_STATE_FLAG_ACTIVE | GTK_STATE_FLAG_PRELIGHT:
-            gtk_style_context_add_class (context, "nemo-pathbar-button-active-hover");
-            break;
-        case GTK_STATE_FLAG_PRELIGHT:
-        case GTK_STATE_FLAG_FOCUSED:
-        case GTK_STATE_FLAG_ACTIVE | GTK_STATE_FLAG_FOCUSED:
-            gtk_style_context_add_class (context, "nemo-pathbar-button-hover");
-            break;
-        case GTK_STATE_FLAG_ACTIVE:
-        case GTK_STATE_FLAG_ACTIVE | GTK_STATE_FLAG_BACKDROP:
-            gtk_style_context_add_class (context, "nemo-pathbar-button-active");
-            break;
-        default:
-            gtk_style_context_add_class (context, "nemo-pathbar-button");
-            break;
-    }
-
     gtk_widget_get_allocation (widget, &allocation);
 
     x = 1;
@@ -235,13 +210,7 @@ nemo_pathbar_button_draw (GtkWidget                   *widget,
     else
         do_draw_middle_element (context, cr, x, y, width, height, button->highlight);
 
-    gtk_style_context_restore (context);
-
-    gtk_style_context_add_class (context, "no-displacement");
-
     return GTK_WIDGET_CLASS (draw_chain_class)->draw (widget, cr);
-
-
 }
 
 void
