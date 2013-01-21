@@ -1079,11 +1079,11 @@ nemo_application_add_app_css_provider (void)
 
   provider = gtk_css_provider_new ();
 
-  if (!css_provider_load_from_resource (provider, "/org/nemo/nemo-style.css", &error))
+  if (!css_provider_load_from_resource (provider, "/org/nemo/nemo-style-fallback.css", &error))
     {
-      g_warning ("Failed to load css file: %s", error->message);
+      g_warning ("Failed to load fallback css file: %s", error->message);
       g_error_free (error);
-      goto out;
+      goto out_a;
     }
 
     screen = gdk_screen_get_default ();
@@ -1092,7 +1092,25 @@ nemo_application_add_app_css_provider (void)
       GTK_STYLE_PROVIDER (provider),
       GTK_STYLE_PROVIDER_PRIORITY_FALLBACK);
 
-out:
+out_a:
+  g_object_unref (provider);
+
+  provider = gtk_css_provider_new ();
+
+  if (!css_provider_load_from_resource (provider, "/org/nemo/nemo-style-application.css", &error))
+    {
+      g_warning ("Failed to load application css file: %s", error->message);
+      g_error_free (error);
+      goto out_b;
+    }
+
+    screen = gdk_screen_get_default ();
+
+  gtk_style_context_add_provider_for_screen (screen,
+      GTK_STYLE_PROVIDER (provider),
+      GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+out_b:
   g_object_unref (provider);
 }
 

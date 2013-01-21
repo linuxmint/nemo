@@ -210,6 +210,8 @@ nemo_pathbar_button_draw (GtkWidget                   *widget,
     else
         do_draw_middle_element (context, cr, x, y, width, height, button->highlight);
 
+    gtk_style_context_add_class (context, "breadcrumbs-no-displacement");
+
     return GTK_WIDGET_CLASS (draw_chain_class)->draw (widget, cr);
 }
 
