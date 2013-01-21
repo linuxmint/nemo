@@ -88,12 +88,20 @@ do_draw_middle_element (GtkStyleContext  *context,
                                    gint   h,
                                gboolean   highlight)
 {
+    GtkStateFlags state = gtk_style_context_get_state (context);
+    GdkRGBA border_color;
+    gtk_style_context_get_border_color (context, state, &border_color);
+
     gint offset = rintf ((float) h / PATHBAR_BUTTON_OFFSET_FACTOR);
 
     cairo_save (cr);
     cairo_set_antialias (cr, A_A);
 
-    cairo_set_source_rgb (cr, .5, .5, .5);
+    cairo_set_source_rgba (cr, border_color.red,
+                               border_color.green,
+                               border_color.blue,
+                               border_color.alpha);
+
     cairo_set_line_width (cr, 3.0);
 
     cairo_move_to (cr, x, y);
@@ -141,11 +149,20 @@ do_draw_end_element (GtkStyleContext *context,
                              gint     h,
                          gboolean     highlight)
 {
+
+    GtkStateFlags state = gtk_style_context_get_state (context);
+    GdkRGBA border_color;
+    gtk_style_context_get_border_color (context, state, &border_color);
+
     gint offset = rintf ((float) h / PATHBAR_BUTTON_OFFSET_FACTOR);
     cairo_save (cr);
     cairo_set_antialias (cr, A_A);
 
-    cairo_set_source_rgb (cr, .5, .5, .5);
+    cairo_set_source_rgba (cr, border_color.red,
+                               border_color.green,
+                               border_color.blue,
+                               border_color.alpha);
+
     cairo_set_line_width (cr, 3.0);
 
     cairo_move_to (cr, x+RAD, y);
@@ -195,7 +212,6 @@ nemo_pathbar_button_draw (GtkWidget                   *widget,
 
     GtkAllocation allocation;
     GtkStyleContext *context;
-    GtkStateFlags state;
 
     context = gtk_widget_get_style_context (widget);
     gtk_widget_get_allocation (widget, &allocation);
