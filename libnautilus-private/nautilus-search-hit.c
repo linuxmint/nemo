@@ -124,6 +124,7 @@ nautilus_search_hit_compute_scores (NautilusSearchHit *hit,
 
 	g_date_time_unref (now);
 	g_free (query_uri);
+	g_object_unref (query_location);
 }
 
 const char *
