@@ -6904,9 +6904,9 @@ construct_tooltip (NemoFile *file, gchar **tooltip_text)
     if (nemo_file_is_directory (file)) {
         nemo_file_get_directory_item_count (file, &item_count, NULL);
         if (item_count == 1)
-            *tooltip_text = g_strdup_printf (_("Folder containing %d item"), item_count);
+            *tooltip_text = g_strdup_printf (_("%d item"), item_count);
         else
-            *tooltip_text = g_strdup_printf (_("Folder containing %d items"), item_count);
+            *tooltip_text = g_strdup_printf (_("%d items"), item_count);
     } else {
         gchar *scheme = nemo_file_get_uri_scheme (file);
         if (g_strcmp0 (scheme, "x-nemo-desktop") != 0) {
