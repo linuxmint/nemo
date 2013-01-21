@@ -195,6 +195,8 @@ static double	     get_mirror_x_position                     (NemoIconContainer 
 								double x);
 static void         text_ellipsis_limit_changed_container_callback  (gpointer callback_data);
 
+static void         show_desktop_tooltips_changed_container_callback (gpointer callback_data);
+
 static int compare_icons_horizontal (NemoIconContainer *container,
 				     NemoIcon *icon_a,
 				     NemoIcon *icon_b);
@@ -4022,6 +4024,10 @@ finalize (GObject *object)
 					      text_ellipsis_limit_changed_container_callback,
 					      object);
 
+    g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
+                          show_desktop_tooltips_changed_container_callback,
+                          object);
+
 	g_hash_table_destroy (details->icon_set);
 	details->icon_set = NULL;
 
@@ -5599,6 +5605,19 @@ text_ellipsis_limit_changed_container_callback (gpointer callback_data)
 	schedule_redo_layout (container);
 }
 
+static void
+show_desktop_tooltips_changed_container_callback (gpointer callback_data)
+{
+    NemoIconContainer *container;
+    container = NEMO_ICON_CONTAINER (callback_data);
+
+    gboolean show_tooltips = g_settings_get_boolean (nemo_desktop_preferences,
+                                                     NEMO_PREFERENCES_DESKTOP_SHOW_TOOLTIPS);
+    nemo_icon_container_set_show_desktop_tooltips (container, show_tooltips);
+
+    nemo_icon_container_request_update_all (container);
+}
+
 static GObject*
 nemo_icon_container_constructor (GType                  type,
 				     guint                  n_construct_params,
@@ -6979,14 +6998,19 @@ nemo_icon_container_update_icon (NemoIconContainer *container,
 					       &additional_text,
 					       FALSE);
 
-    NemoFile *file = NEMO_FILE (icon->data);
-    gchar *tooltip_text;
-    construct_tooltip (file, &tooltip_text);
+    if (nemo_icon_container_get_is_desktop (container)) {
+        NemoFile *file = NEMO_FILE (icon->data);
+        gchar *tooltip_text;
+        construct_tooltip (file, &tooltip_text);
 
-    nemo_icon_canvas_item_set_tooltip_text (icon->item, tooltip_text);
-
-    if (tooltip_text != NULL)
-        g_free (tooltip_text);
+        if (nemo_icon_container_get_show_desktop_tooltips (container)) {
+            nemo_icon_canvas_item_set_tooltip_text (icon->item, tooltip_text);
+        } else {
+            nemo_icon_canvas_item_set_tooltip_text (icon->item, "");
+        }
+        if (tooltip_text != NULL)
+            g_free (tooltip_text);
+    }
 
 	/* If name of icon being renamed was changed from elsewhere, end renaming mode. 
 	 * Alternatively, we could replace the characters in the editable text widget
@@ -8475,6 +8499,23 @@ nemo_icon_container_set_is_desktop (NemoIconContainer *container,
 	}
 }
 
+gboolean
+nemo_icon_container_get_show_desktop_tooltips (NemoIconContainer *container)
+{
+    g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), FALSE);
+
+    return container->details->show_desktop_tooltips;
+}
+
+void
+nemo_icon_container_set_show_desktop_tooltips (NemoIconContainer *container,
+                                               gboolean show_tooltips)
+{
+    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+
+    container->details->show_desktop_tooltips = show_tooltips;
+}
+
 void
 nemo_icon_container_set_margins (NemoIconContainer *container,
 				     int left_margin,
@@ -8642,6 +8683,15 @@ nemo_icon_container_set_highlighted_for_clipboard (NemoIconContainer *container,
 				     NULL);
 	}
 
+}
+
+void
+nemo_icon_container_setup_tooltip_preference_callback (NemoIconContainer *container)
+{
+    g_signal_connect_swapped (nemo_desktop_preferences,
+                              "changed::" NEMO_PREFERENCES_DESKTOP_SHOW_TOOLTIPS,
+                              G_CALLBACK (show_desktop_tooltips_changed_container_callback),
+                              container);
 }
 
 /* NemoIconContainerAccessible */

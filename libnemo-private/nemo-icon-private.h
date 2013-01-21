@@ -241,6 +241,7 @@ struct NemoIconContainerDetails {
 	
 	/* Is the container for a desktop window */
 	gboolean is_desktop;
+    gboolean show_desktop_tooltips;
 
 	/* Ignore the visible area the next time the scroll region is recomputed */
 	gboolean reset_scroll_region_trigger;
