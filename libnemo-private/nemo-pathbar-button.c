@@ -43,6 +43,7 @@ nemo_pathbar_button_init (NemoPathbarButton *button)
 
     GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (button));
     gtk_style_context_remove_class (context, GTK_STYLE_CLASS_BUTTON);
+    gtk_style_context_add_class (context, "nemo-pathbar-button");
 }
 
 static void

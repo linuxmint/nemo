@@ -1,4 +1,5 @@
 
+.nemo-pathbar-button,
 NemoPathbarButton {
     background-image: -gtk-gradient(linear, left top, left bottom,
                                      color-stop (0, shade(alpha(@theme_bg_color, 0.8), 1.1)),
