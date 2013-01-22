@@ -40,6 +40,10 @@ nemo_pathbar_button_init (NemoPathbarButton *button)
 {
     button->is_left_end = FALSE;
     button->highlight = FALSE;
+
+    GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (button));
+    gtk_style_context_remove_class (context, GTK_STYLE_CLASS_BUTTON);
+    gtk_style_context_add_class (context, "nemo-pathbar-button");
 }
 
 static void
@@ -52,6 +56,15 @@ nemo_pathbar_button_class_init (NemoPathbarButtonClass *klass)
     object_class->finalize = nemo_pathbar_button_finalize;
 
     widget_class->draw = nemo_pathbar_button_draw;
+
+    gtk_widget_class_install_style_property (widget_class,
+                       g_param_spec_int ("border-radius",
+                                 "The border radius of the breadcrumbs border",
+                                 "The border radius of the breadcrumbs border",
+                                 G_MININT,
+                                 G_MAXINT,
+                                 0,
+                                 G_PARAM_READABLE));
 
 }
 
@@ -68,12 +81,11 @@ nemo_pathbar_button_finalize (GObject *object)
 }
 
 #define A_A CAIRO_ANTIALIAS_SUBPIXEL
-#define RAD 5.0
 #define _270_DEG 270.0 * (M_PI/180.0)
 #define _180_DEG 180.0 * (M_PI/180.0)
 #define  _90_DEG  90.0 * (M_PI/180.0)
-#define H_RAD 1 /* Highlight radius */
-#define H_O 2  /*  Highlight offset */
+
+#define H_O 3  /*  Highlight offset */
 #define H_T_COMP H_O + 0 /* Highlight tangential compensation */
 
 static void
@@ -85,13 +97,21 @@ do_draw_middle_element (GtkStyleContext  *context,
                                    gint   h,
                                gboolean   highlight)
 {
+    GtkStateFlags state = gtk_style_context_get_state (context);
+    GdkRGBA border_color;
+    gtk_style_context_get_border_color (context, state, &border_color);
+
     gint offset = rintf ((float) h / PATHBAR_BUTTON_OFFSET_FACTOR);
 
     cairo_save (cr);
     cairo_set_antialias (cr, A_A);
 
-    cairo_set_source_rgb (cr, .5, .5, .5);
-    cairo_set_line_width (cr, 2.0);
+    cairo_set_source_rgba (cr, border_color.red,
+                               border_color.green,
+                               border_color.blue,
+                               border_color.alpha);
+
+    cairo_set_line_width (cr, 3.0);
 
     cairo_move_to (cr, x, y);
     cairo_line_to (cr, x+w-offset, y);
@@ -138,21 +158,32 @@ do_draw_end_element (GtkStyleContext *context,
                              gint     h,
                          gboolean     highlight)
 {
+
+    GtkStateFlags state = gtk_style_context_get_state (context);
+    GdkRGBA border_color;
+    gint rad;
+    gtk_style_context_get_border_color (context, state, &border_color);
+    gtk_style_context_get_style (context, "border-radius", &rad, NULL);
+
     gint offset = rintf ((float) h / PATHBAR_BUTTON_OFFSET_FACTOR);
     cairo_save (cr);
     cairo_set_antialias (cr, A_A);
 
-    cairo_set_source_rgb (cr, .5, .5, .5);
-    cairo_set_line_width (cr, 2.0);
+    cairo_set_source_rgba (cr, border_color.red,
+                               border_color.green,
+                               border_color.blue,
+                               border_color.alpha);
 
-    cairo_move_to (cr, x+RAD, y);
+    cairo_set_line_width (cr, 3.0);
+
+    cairo_move_to (cr, x+rad, y);
     cairo_line_to (cr, x+w-offset, y);
     cairo_line_to (cr, x+w-1, y+(h/2));
     cairo_line_to (cr, x+w-offset, y+h);
-    cairo_line_to (cr, x+RAD, y+h);
-    cairo_arc (cr, x+RAD, y+h-RAD, RAD, _90_DEG, _180_DEG);
-    cairo_line_to (cr, x, y+RAD);
-    cairo_arc (cr, x+RAD, y+RAD, RAD, _180_DEG, _270_DEG);
+    cairo_line_to (cr, x+rad, y+h);
+    cairo_arc (cr, x+rad, y+h-rad, rad, _90_DEG, _180_DEG);
+    cairo_line_to (cr, x, y+rad);
+    cairo_arc (cr, x+rad, y+rad, rad, _180_DEG, _270_DEG);
 
     cairo_stroke_preserve (cr);
     cairo_clip (cr);
@@ -169,14 +200,14 @@ do_draw_end_element (GtkStyleContext *context,
     cairo_set_source_rgb (cr, 0, 0, 0);
     cairo_set_line_width (cr, .5);
 
-    cairo_move_to (cr, x+H_RAD+H_O, y+H_O);
+    cairo_move_to (cr, x+(rad-H_O)+H_O, y+H_O);
     cairo_line_to (cr, x+w-offset-H_O+H_T_COMP, y+H_O);
     cairo_line_to (cr, x+w-1-H_O, y+(h/2));
     cairo_line_to (cr, x+w-offset-H_O+H_T_COMP, y+h-H_O);
-    cairo_line_to (cr, x+H_RAD+H_O, y+h-H_O);
-    cairo_arc (cr, x+H_RAD+H_O, y+h-H_RAD-H_O, H_RAD, _90_DEG, _180_DEG);
-    cairo_line_to (cr, x+H_O, y+H_RAD+H_O);
-    cairo_arc (cr, x+H_RAD+H_O, y+H_RAD+H_O, H_RAD, _180_DEG, _270_DEG);
+    cairo_line_to (cr, x+(rad-H_O)+H_O, y+h-H_O);
+    cairo_arc (cr, x+(rad-H_O)+H_O, y+h-(rad-H_O)-H_O, (rad-H_O), _90_DEG, _180_DEG);
+    cairo_line_to (cr, x+H_O, y+(rad-H_O)+H_O);
+    cairo_arc (cr, x+(rad-H_O)+H_O, y+(rad-H_O)+H_O, (rad-H_O), _180_DEG, _270_DEG);
 
     cairo_stroke (cr);
 
@@ -192,53 +223,23 @@ nemo_pathbar_button_draw (GtkWidget                   *widget,
 
     GtkAllocation allocation;
     GtkStyleContext *context;
-    GtkStateFlags state;
 
     context = gtk_widget_get_style_context (widget);
-    state = gtk_style_context_get_state (context);
-
-    gtk_style_context_save (context);
-
-    switch (state) {
-        case GTK_STATE_FLAG_NORMAL:
-            gtk_style_context_add_class (context, "nemo-pathbar-button");
-            break;
-        case GTK_STATE_FLAG_ACTIVE | GTK_STATE_FLAG_PRELIGHT:
-            gtk_style_context_add_class (context, "nemo-pathbar-button-active-hover");
-            break;
-        case GTK_STATE_FLAG_PRELIGHT:
-        case GTK_STATE_FLAG_FOCUSED:
-        case GTK_STATE_FLAG_ACTIVE | GTK_STATE_FLAG_FOCUSED:
-            gtk_style_context_add_class (context, "nemo-pathbar-button-hover");
-            break;
-        case GTK_STATE_FLAG_ACTIVE:
-        case GTK_STATE_FLAG_ACTIVE | GTK_STATE_FLAG_BACKDROP:
-            gtk_style_context_add_class (context, "nemo-pathbar-button-active");
-            break;
-        default:
-            gtk_style_context_add_class (context, "nemo-pathbar-button");
-            break;
-    }
-
     gtk_widget_get_allocation (widget, &allocation);
 
-    x = 0;
-    y = 0;
-    width = allocation.width;
-    height = allocation.height;
+    x = 2;
+    y = 1;
+    width = allocation.width-3;
+    height = allocation.height-2;
 
     if (button->is_left_end)
         do_draw_end_element (context, cr, x, y, width, height, button->highlight);
     else
         do_draw_middle_element (context, cr, x, y, width, height, button->highlight);
 
-    gtk_style_context_restore (context);
-
-    gtk_style_context_add_class (context, "no-displacement");
+    gtk_style_context_add_class (context, "breadcrumbs-no-displacement");
 
     return GTK_WIDGET_CLASS (draw_chain_class)->draw (widget, cr);
-
-
 }
 
 void
@@ -262,7 +263,7 @@ nemo_pathbar_button_get_preferred_size (GtkWidget *button, GtkRequisition *requi
 {
     GtkRequisition req;
     gtk_widget_get_preferred_size (button, &req, NULL);
-    gint offset = rintf ((float) req.height / PATHBAR_BUTTON_OFFSET_FACTOR) + 2;
+    gint offset = rintf ((float) req.height / PATHBAR_BUTTON_OFFSET_FACTOR) + 4;
     if (!NEMO_PATHBAR_BUTTON (button)->is_left_end) {
         req.width -= offset;
     }

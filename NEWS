@@ -1,0 +1,4 @@
+Development: 1/22/2013:
+
+- Breadcrumbs:  Stylable by themes, see src/nemo-styles-fallback.css for default style information.
+                Border radius, color, background color, and text color can be customized through that.
