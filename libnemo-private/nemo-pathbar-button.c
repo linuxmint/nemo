@@ -227,9 +227,9 @@ nemo_pathbar_button_draw (GtkWidget                   *widget,
     context = gtk_widget_get_style_context (widget);
     gtk_widget_get_allocation (widget, &allocation);
 
-    x = 1;
+    x = 2;
     y = 1;
-    width = allocation.width-2;
+    width = allocation.width-3;
     height = allocation.height-2;
 
     if (button->is_left_end)
