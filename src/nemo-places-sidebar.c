@@ -58,14 +58,10 @@
 #define DEBUG_FLAG NEMO_DEBUG_PLACES
 #include <libnemo-private/nemo-debug.h>
 
-#define ICON_CELL_XPAD 6
 #define EXPANDER_COLUMN_WIDTH 14
 #define EXPANDER_PAD_COLUMN_WIDTH 4
 #define EJECT_COLUMN_WIDTH 22
 #define DRAG_EXPAND_CATEGORY_DELAY 500
-
-#define GB 1048576.0
-#define MB 1024.0
 
 typedef struct {
 	GtkScrolledWindow  parent;
@@ -3568,6 +3564,54 @@ places_sidebar_sort_func (GtkTreeModel *model,
 }
 
 static void
+add_disk_indicator_style_props (GtkTreeView *tree_view)
+{
+    GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (G_OBJECT_GET_CLASS (tree_view));
+
+    gtk_widget_class_install_style_property (widget_class,
+                         g_param_spec_boxed ("disk-full-bg-color",
+                                             "Unselected disk indicator background color",
+                                             "Unselected disk indicator background color",
+                                             GDK_TYPE_COLOR,
+                                             G_PARAM_READABLE));
+
+    gtk_widget_class_install_style_property (widget_class,
+                         g_param_spec_boxed ("disk-full-fg-color",
+                                             "Unselected disk indicator foreground color",
+                                             "Unselected disk indicator foreground color",
+                                             GDK_TYPE_COLOR,
+                                             G_PARAM_READABLE));
+
+    gtk_widget_class_install_style_property (widget_class,
+                           g_param_spec_int ("disk-full-bar-width",
+                                             "Disk indicator bar width",
+                                             "Disk indicator bar width",
+                                             0, G_MAXINT, 1,
+                                             G_PARAM_READABLE));
+
+    gtk_widget_class_install_style_property (widget_class,
+                           g_param_spec_int ("disk-full-bar-radius",
+                                             "Disk indicator bar radius (usually half the width)",
+                                             "Disk indicator bar radius (usually half the width)",
+                                             0, G_MAXINT, 1,
+                                             G_PARAM_READABLE));
+
+    gtk_widget_class_install_style_property (widget_class,
+                           g_param_spec_int ("disk-full-bottom-padding",
+                                             "Extra padding under the disk indicator",
+                                             "Extra padding under the disk indicator",
+                                             0, G_MAXINT, 1,
+                                             G_PARAM_READABLE));
+
+    gtk_widget_class_install_style_property (widget_class,
+                           g_param_spec_int ("disk-full-max-length",
+                                             "Maximum length of the disk indicator",
+                                             "Maximum length of the disk indicator",
+                                             0, G_MAXINT, 1,
+                                             G_PARAM_READABLE));
+}
+
+static void
 nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 {
 	GtkTreeView       *tree_view;
@@ -3596,6 +3640,9 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
   	/* tree view */
 	tree_view = GTK_TREE_VIEW (gtk_tree_view_new ());
+
+    add_disk_indicator_style_props (tree_view);
+
 	gtk_tree_view_set_headers_visible (tree_view, FALSE);
 
 	col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
@@ -3860,10 +3907,13 @@ nemo_places_sidebar_dispose (GObject *object)
 static void
 nemo_places_sidebar_class_init (NemoPlacesSidebarClass *class)
 {
+    GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
 	G_OBJECT_CLASS (class)->dispose = nemo_places_sidebar_dispose;
 
-	GTK_WIDGET_CLASS (class)->style_set = nemo_places_sidebar_style_set;
-	GTK_WIDGET_CLASS (class)->focus = nemo_places_sidebar_focus;
+	widget_class->style_set = nemo_places_sidebar_style_set;
+	widget_class->focus = nemo_places_sidebar_focus;
+
+ 
 }
 
 static void
