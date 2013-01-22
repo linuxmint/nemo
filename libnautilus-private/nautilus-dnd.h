@@ -28,6 +28,7 @@
 #define NAUTILUS_DND_H
 
 #include <gtk/gtk.h>
+#include "nautilus-file.h"
 
 /* Drag & Drop target names. */
 #define NAUTILUS_ICON_DND_GNOME_ICON_LIST_TYPE	"x-special/gnome-icon-list"
@@ -40,6 +41,7 @@
 
 /* Item of the drag selection list */
 typedef struct {
+	NautilusFile *file;
 	char *uri;
 	gboolean got_icon_position;
 	int icon_x, icon_y;

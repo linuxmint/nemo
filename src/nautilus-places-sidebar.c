@@ -1314,6 +1314,7 @@ build_selection_list (const char *data)
 		uri = uris[i];
 		item = nautilus_drag_selection_item_new ();
 		item->uri = g_strdup (uri);
+		item->file = nautilus_file_get_existing_by_uri (uri);
 		item->got_icon_position = FALSE;
 		result = g_list_prepend (result, item);
 	}

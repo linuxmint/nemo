@@ -98,6 +98,7 @@ nautilus_drag_selection_item_new (void)
 static void
 drag_selection_item_destroy (NautilusDragSelectionItem *item)
 {
+	g_clear_object (&item->file);
 	g_free (item->uri);
 	g_free (item);
 }
@@ -221,6 +222,7 @@ nautilus_drag_build_selection_list (GtkSelectionData *data)
 		item->uri = g_malloc (len + 1);
 		memcpy (item->uri, oldp, len);
 		item->uri[len] = 0;
+		item->file = nautilus_file_get_existing_by_uri (item->uri);
 
 		p++;
 		if (*p == '\n' || *p == '\0') {
@@ -456,9 +458,9 @@ nautilus_drag_default_drop_action_for_icons (GdkDragContext *context,
 	}
 	
 	dropped_uri = ((NautilusDragSelectionItem *)items->data)->uri;
-	dropped_file = nautilus_file_get_existing_by_uri (dropped_uri);
+	dropped_file = ((NautilusDragSelectionItem *)items->data)->file;
 	target_file = nautilus_file_get_existing_by_uri (target_uri_string);
-	
+
 	/*
 	 * Check for trash URI.  We do a find_directory for any Trash directory.
 	 * Passing 0 permissions as gnome-vfs would override the permissions
@@ -469,8 +471,6 @@ nautilus_drag_default_drop_action_for_icons (GdkDragContext *context,
 		if (actions & GDK_ACTION_MOVE) {
 			*action = GDK_ACTION_MOVE;
 		}
-
-		nautilus_file_unref (dropped_file);
 		nautilus_file_unref (target_file);
 		return;
 
@@ -478,7 +478,6 @@ nautilus_drag_default_drop_action_for_icons (GdkDragContext *context,
 		if (actions & GDK_ACTION_MOVE) {
 			*action = GDK_ACTION_MOVE;
 		}
-		nautilus_file_unref (dropped_file);
 		nautilus_file_unref (target_file);
 		return;
 	} else if (eel_uri_is_desktop (target_uri_string)) {
@@ -494,14 +493,12 @@ nautilus_drag_default_drop_action_for_icons (GdkDragContext *context,
 			}
 			
 			g_object_unref (target);
-			nautilus_file_unref (dropped_file);
 			nautilus_file_unref (target_file);
 			return;
 		}
 	} else if (target_file != NULL && nautilus_file_is_archive (target_file)) {
 		*action = GDK_ACTION_COPY;
 
-		nautilus_file_unref (dropped_file);
 		nautilus_file_unref (target_file);
 		return;
 	} else {
@@ -510,7 +507,6 @@ nautilus_drag_default_drop_action_for_icons (GdkDragContext *context,
 
 	same_fs = check_same_fs (target_file, dropped_file);
 
-	nautilus_file_unref (dropped_file);
 	nautilus_file_unref (target_file);
 	
 	/* Compare the first dropped uri with the target uri for same fs match. */
@@ -597,6 +593,7 @@ cache_one_item (const char *uri,
 
 	item = nautilus_drag_selection_item_new ();
 	item->uri = g_strdup (uri);
+	item->file = nautilus_file_get_existing_by_uri (uri);
 	item->icon_x = x;
 	item->icon_y = y;
 	item->icon_width = w;
