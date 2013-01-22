@@ -523,7 +523,7 @@ static gboolean
 emit_user_dirs_changed_idle (gpointer data)
 {
 	g_signal_emit_by_name (nautilus_signaller_get_current (),
-			       "user_dirs_changed");
+			       "user-dirs-changed");
 	user_dirs_changed_tag = 0;
 	return FALSE;
 }

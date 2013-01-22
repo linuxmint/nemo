@@ -2160,7 +2160,7 @@ nautilus_canvas_item_accessible_idle_do_action (gpointer data)
 				return FALSE;
 			}
 			g_list_free (selection);
-        		g_signal_emit_by_name (container, "context_click_selection", &button_event);
+        		g_signal_emit_by_name (container, "context-click-selection", &button_event);
 			break;
 		default :
 			g_assert_not_reached ();

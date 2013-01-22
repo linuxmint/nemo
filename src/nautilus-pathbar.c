@@ -213,10 +213,10 @@ nautilus_path_bar_init (NautilusPathBar *path_bar)
         g_signal_connect_swapped (path_bar->priv->up_slider_button, "clicked", G_CALLBACK (nautilus_path_bar_scroll_up), path_bar);
         g_signal_connect_swapped (path_bar->priv->down_slider_button, "clicked", G_CALLBACK (nautilus_path_bar_scroll_down), path_bar);
 
-        g_signal_connect (path_bar->priv->up_slider_button, "button_press_event", G_CALLBACK (nautilus_path_bar_slider_button_press), path_bar);
-        g_signal_connect (path_bar->priv->up_slider_button, "button_release_event", G_CALLBACK (nautilus_path_bar_slider_button_release), path_bar);
-        g_signal_connect (path_bar->priv->down_slider_button, "button_press_event", G_CALLBACK (nautilus_path_bar_slider_button_press), path_bar);
-        g_signal_connect (path_bar->priv->down_slider_button, "button_release_event", G_CALLBACK (nautilus_path_bar_slider_button_release), path_bar);
+        g_signal_connect (path_bar->priv->up_slider_button, "button-press-event", G_CALLBACK (nautilus_path_bar_slider_button_press), path_bar);
+        g_signal_connect (path_bar->priv->up_slider_button, "button-release-event", G_CALLBACK (nautilus_path_bar_slider_button_release), path_bar);
+        g_signal_connect (path_bar->priv->down_slider_button, "button-press-event", G_CALLBACK (nautilus_path_bar_slider_button_press), path_bar);
+        g_signal_connect (path_bar->priv->down_slider_button, "button-release-event", G_CALLBACK (nautilus_path_bar_slider_button_release), path_bar);
 
 	gtk_drag_dest_set (GTK_WIDGET (path_bar->priv->up_slider_button),
 			   0, NULL, 0, 0);

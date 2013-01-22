@@ -866,7 +866,7 @@ drag_data_received_callback (GtkWidget *widget,
 	/* appease GtkTreeView by preventing its drag_data_receive
 	 * from being called */
 	g_signal_stop_emission_by_name (dest->details->tree_view,
-					"drag_data_received");
+					"drag-data-received");
 
 	return TRUE;
 }
@@ -1045,7 +1045,7 @@ nautilus_tree_view_drag_dest_class_init (NautilusTreeViewDragDestClass *class)
 	g_type_class_add_private (class, sizeof (NautilusTreeViewDragDestDetails));
 
 	signals[GET_ROOT_URI] = 
-		g_signal_new ("get_root_uri",
+		g_signal_new ("get-root-uri",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (NautilusTreeViewDragDestClass,
@@ -1054,7 +1054,7 @@ nautilus_tree_view_drag_dest_class_init (NautilusTreeViewDragDestClass *class)
 			      g_cclosure_marshal_generic,
 			      G_TYPE_STRING, 0);
 	signals[GET_FILE_FOR_PATH] = 
-		g_signal_new ("get_file_for_path",
+		g_signal_new ("get-file-for-path",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (NautilusTreeViewDragDestClass,
@@ -1064,7 +1064,7 @@ nautilus_tree_view_drag_dest_class_init (NautilusTreeViewDragDestClass *class)
 			      NAUTILUS_TYPE_FILE, 1,
 			      GTK_TYPE_TREE_PATH);
 	signals[MOVE_COPY_ITEMS] =
-		g_signal_new ("move_copy_items",
+		g_signal_new ("move-copy-items",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (NautilusTreeViewDragDestClass,
@@ -1079,7 +1079,7 @@ nautilus_tree_view_drag_dest_class_init (NautilusTreeViewDragDestClass *class)
 			      G_TYPE_INT,
 			      G_TYPE_INT);
 	signals[HANDLE_NETSCAPE_URL] =
-		g_signal_new ("handle_netscape_url",
+		g_signal_new ("handle-netscape-url",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (NautilusTreeViewDragDestClass, 
@@ -1093,7 +1093,7 @@ nautilus_tree_view_drag_dest_class_init (NautilusTreeViewDragDestClass *class)
 			      G_TYPE_INT,
 			      G_TYPE_INT);
 	signals[HANDLE_URI_LIST] =
-		g_signal_new ("handle_uri_list",
+		g_signal_new ("handle-uri-list",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (NautilusTreeViewDragDestClass, 
@@ -1107,7 +1107,7 @@ nautilus_tree_view_drag_dest_class_init (NautilusTreeViewDragDestClass *class)
 			      G_TYPE_INT,
 			      G_TYPE_INT);
 	signals[HANDLE_TEXT] =
-		g_signal_new ("handle_text",
+		g_signal_new ("handle-text",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (NautilusTreeViewDragDestClass, 
@@ -1121,7 +1121,7 @@ nautilus_tree_view_drag_dest_class_init (NautilusTreeViewDragDestClass *class)
 			      G_TYPE_INT,
 			      G_TYPE_INT);
 	signals[HANDLE_RAW] =
-		g_signal_new ("handle_raw",
+		g_signal_new ("handle-raw",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (NautilusTreeViewDragDestClass,
@@ -1137,7 +1137,7 @@ nautilus_tree_view_drag_dest_class_init (NautilusTreeViewDragDestClass *class)
 			      G_TYPE_INT,
 			      G_TYPE_INT);
 	signals[HANDLE_HOVER] =
-		g_signal_new ("handle_hover",
+		g_signal_new ("handle-hover",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (NautilusTreeViewDragDestClass,
@@ -1170,19 +1170,19 @@ nautilus_tree_view_drag_dest_new (GtkTreeView *tree_view)
 	gtk_target_list_add_text_targets (targets, NAUTILUS_ICON_DND_TEXT);
 
 	g_signal_connect_object (tree_view,
-				 "drag_motion",
+				 "drag-motion",
 				 G_CALLBACK (drag_motion_callback),
 				 dest, 0);
 	g_signal_connect_object (tree_view,
-				 "drag_leave",
+				 "drag-leave",
 				 G_CALLBACK (drag_leave_callback),
 				 dest, 0);
 	g_signal_connect_object (tree_view,
-				 "drag_drop",
+				 "drag-drop",
 				 G_CALLBACK (drag_drop_callback),
 				 dest, 0);
 	g_signal_connect_object (tree_view, 
-				 "drag_data_received",
+				 "drag-data-received",
 				 G_CALLBACK (drag_data_received_callback),
 				 dest, 0);
 	

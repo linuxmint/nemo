@@ -539,7 +539,7 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 
 	setup_side_pane_width (window);
 	g_signal_connect (window->details->sidebar, 
-			  "size_allocate",
+			  "size-allocate",
 			  G_CALLBACK (side_pane_size_allocate_callback),
 			  window);
 
@@ -1149,7 +1149,7 @@ nautilus_window_constructed (GObject *self)
 	nautilus_window_initialize_actions (window);
 
 	/* Register to menu provider extension signal managing menu updates */
-	g_signal_connect_object (nautilus_signaller_get_current (), "popup_menu_changed",
+	g_signal_connect_object (nautilus_signaller_get_current (), "popup-menu-changed",
 			 G_CALLBACK (nautilus_window_load_extension_menus), window, G_CONNECT_SWAPPED);
 	window->details->toolbar = create_toolbar (window);
 	gtk_container_add (GTK_CONTAINER (grid), window->details->toolbar);
@@ -1902,7 +1902,7 @@ nautilus_window_class_init (NautilusWindowClass *class)
 				      G_PARAM_STATIC_STRINGS);
 
 	signals[LOADING_URI] =
-		g_signal_new ("loading_uri",
+		g_signal_new ("loading-uri",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      0,

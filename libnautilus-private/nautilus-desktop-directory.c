@@ -477,11 +477,11 @@ update_desktop_directory (NautilusDesktopDirectory *desktop)
 	g_free (desktop_uri);
 	g_free (desktop_path);
 
-	g_signal_connect_object (real_directory, "done_loading",
+	g_signal_connect_object (real_directory, "done-loading",
 				 G_CALLBACK (done_loading_callback), desktop, 0);
-	g_signal_connect_object (real_directory, "files_added",
+	g_signal_connect_object (real_directory, "files-added",
 				 G_CALLBACK (forward_files_added_cover), desktop, 0);
-	g_signal_connect_object (real_directory, "files_changed",
+	g_signal_connect_object (real_directory, "files-changed",
 				 G_CALLBACK (forward_files_changed_cover), desktop, 0);
 
 	desktop->details->real_directory = real_directory;

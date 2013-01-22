@@ -262,7 +262,7 @@ menu_provider_items_updated_handler (NautilusMenuProvider *provider, GtkWidget* 
 {
 
 	g_signal_emit_by_name (nautilus_signaller_get_current (),
-			       "popup_menu_changed");
+			       "popup-menu-changed");
 }
 
 static void
@@ -276,7 +276,7 @@ menu_provider_init_callback (void)
         for (l = providers; l != NULL; l = l->next) {
                 NautilusMenuProvider *provider = NAUTILUS_MENU_PROVIDER (l->data);
 
-		g_signal_connect_after (G_OBJECT (provider), "items_updated",
+		g_signal_connect_after (G_OBJECT (provider), "items-updated",
                            (GCallback)menu_provider_items_updated_handler,
                            NULL);
         }
@@ -429,7 +429,7 @@ get_desktop_manager_selection (GdkDisplay *display, int screen)
 						 selection_atom,
 						 gdk_x11_get_server_time (gtk_widget_get_window (selection_widget)))) {
 		
-		g_signal_connect (selection_widget, "selection_get",
+		g_signal_connect (selection_widget, "selection-get",
 				  G_CALLBACK (selection_get_cb), NULL);
 		return selection_widget;
 	}
@@ -479,7 +479,7 @@ nautilus_application_create_desktop_windows (NautilusApplication *application)
 			window = nautilus_desktop_window_new (GTK_APPLICATION (application),
 							      gdk_display_get_screen (display, i));
 
-			g_signal_connect (selection_widget, "selection_clear_event",
+			g_signal_connect (selection_widget, "selection-clear-event",
 					  G_CALLBACK (selection_clear_event_cb), window);
 			
 			g_signal_connect (window, "unrealize",

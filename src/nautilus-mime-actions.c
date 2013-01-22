@@ -1150,7 +1150,7 @@ open_with_response_cb (GtkDialog *dialog,
 
 	gtk_widget_destroy (GTK_WIDGET (dialog));
 
-	g_signal_emit_by_name (nautilus_signaller_get_current (), "mime_data_changed");
+	g_signal_emit_by_name (nautilus_signaller_get_current (), "mime-data-changed");
 
 	files.next = NULL;
 	files.prev = NULL;

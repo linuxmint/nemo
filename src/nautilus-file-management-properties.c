@@ -476,7 +476,7 @@ nautilus_file_management_properties_dialog_setup_list_column_page (GtkBuilder *b
 	chooser = nautilus_column_chooser_new (NULL);
 	g_signal_connect (chooser, "changed",
 			  G_CALLBACK (columns_changed_callback), chooser);
-	g_signal_connect (chooser, "use_default",
+	g_signal_connect (chooser, "use-default",
 			  G_CALLBACK (use_default_callback), chooser);
 
 	set_columns_from_settings (NAUTILUS_COLUMN_CHOOSER (chooser));

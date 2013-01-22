@@ -251,7 +251,7 @@ realize (GtkWidget *widget)
 	set_desktop_window_id (window, gtk_widget_get_window (widget));
 
 	details->size_changed_id =
-		g_signal_connect (gtk_window_get_screen (GTK_WINDOW (window)), "size_changed",
+		g_signal_connect (gtk_window_get_screen (GTK_WINDOW (window)), "size-changed",
 				  G_CALLBACK (nautilus_desktop_window_screen_size_changed), window);
 }
 

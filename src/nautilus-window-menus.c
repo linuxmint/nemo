@@ -733,7 +733,7 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 	gtk_window_add_accel_group (GTK_WINDOW (window),
 				    gtk_ui_manager_get_accel_group (ui_manager));
 	
-	g_signal_connect (ui_manager, "connect_proxy",
+	g_signal_connect (ui_manager, "connect-proxy",
 			  G_CALLBACK (connect_proxy_cb), window);
 
 	/* add the UI */

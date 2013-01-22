@@ -1403,49 +1403,49 @@ create_and_set_up_tree_view (NautilusListView *view)
 		nautilus_tree_view_drag_dest_new (view->details->tree_view);
 
 	g_signal_connect_object (view->details->drag_dest,
-				 "get_root_uri",
+				 "get-root-uri",
 				 G_CALLBACK (get_root_uri_callback),
 				 view, 0);
 	g_signal_connect_object (view->details->drag_dest,
-				 "get_file_for_path",
+				 "get-file-for-path",
 				 G_CALLBACK (get_file_for_path_callback),
 				 view, 0);
 	g_signal_connect_object (view->details->drag_dest,
-				 "move_copy_items",
+				 "move-copy-items",
 				 G_CALLBACK (move_copy_items_callback),
 				 view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_netscape_url",
+	g_signal_connect_object (view->details->drag_dest, "handle-netscape-url",
 				 G_CALLBACK (list_view_handle_netscape_url), view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_uri_list",
+	g_signal_connect_object (view->details->drag_dest, "handle-uri-list",
 				 G_CALLBACK (list_view_handle_uri_list), view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_text",
+	g_signal_connect_object (view->details->drag_dest, "handle-text",
 				 G_CALLBACK (list_view_handle_text), view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_raw",
+	g_signal_connect_object (view->details->drag_dest, "handle-raw",
 				 G_CALLBACK (list_view_handle_raw), view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_hover",
+	g_signal_connect_object (view->details->drag_dest, "handle-hover",
 				 G_CALLBACK (list_view_handle_hover), view, 0);
 
 	g_signal_connect_object (gtk_tree_view_get_selection (view->details->tree_view),
 				 "changed",
 				 G_CALLBACK (list_selection_changed_callback), view, 0);
 
-	g_signal_connect_object (view->details->tree_view, "drag_begin",
+	g_signal_connect_object (view->details->tree_view, "drag-begin",
 				 G_CALLBACK (drag_begin_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "drag_data_get",
+	g_signal_connect_object (view->details->tree_view, "drag-data-get",
 				 G_CALLBACK (drag_data_get_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "motion_notify_event",
+	g_signal_connect_object (view->details->tree_view, "motion-notify-event",
 				 G_CALLBACK (motion_notify_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "enter_notify_event",
+	g_signal_connect_object (view->details->tree_view, "enter-notify-event",
 				 G_CALLBACK (enter_notify_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "leave_notify_event",
+	g_signal_connect_object (view->details->tree_view, "leave-notify-event",
 				 G_CALLBACK (leave_notify_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "button_press_event",
+	g_signal_connect_object (view->details->tree_view, "button-press-event",
 				 G_CALLBACK (button_press_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "button_release_event",
+	g_signal_connect_object (view->details->tree_view, "button-release-event",
 				 G_CALLBACK (button_release_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "key_press_event",
+	g_signal_connect_object (view->details->tree_view, "key-press-event",
 				 G_CALLBACK (key_press_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "popup_menu",
+	g_signal_connect_object (view->details->tree_view, "popup-menu",
                                  G_CALLBACK (popup_menu_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "row-activated",
                                  G_CALLBACK (row_activated_callback), view, 0);
@@ -1456,10 +1456,10 @@ create_and_set_up_tree_view (NautilusListView *view)
 	nautilus_list_model_set_drag_view (NAUTILUS_LIST_MODEL (view->details->model),
 				     view->details->tree_view,  0, 0);
 
-	g_signal_connect_object (view->details->model, "sort_column_changed",
+	g_signal_connect_object (view->details->model, "sort-column-changed",
 				 G_CALLBACK (sort_column_changed_callback), view, 0);
 	
-	g_signal_connect_object (view->details->model, "subdirectory_unloaded",
+	g_signal_connect_object (view->details->model, "subdirectory-unloaded",
 				 G_CALLBACK (subdirectory_unloaded_callback), view, 0);
 
 	gtk_tree_selection_set_mode (gtk_tree_view_get_selection (view->details->tree_view), GTK_SELECTION_MULTIPLE);
@@ -2318,7 +2318,7 @@ create_column_editor (NautilusListView *view)
 	g_signal_connect (column_chooser, "changed",
 			  G_CALLBACK (column_chooser_changed_callback),
 			  view);
-	g_signal_connect (column_chooser, "use_default",
+	g_signal_connect (column_chooser, "use-default",
 			  G_CALLBACK (column_chooser_use_default_callback),
 			  view);
 
@@ -2456,13 +2456,13 @@ nautilus_list_view_set_zoom_level (NautilusListView *view,
 
 	if (view->details->zoom_level == new_level) {
 		if (always_emit) {
-			g_signal_emit_by_name (NAUTILUS_VIEW(view), "zoom_level_changed");
+			g_signal_emit_by_name (NAUTILUS_VIEW(view), "zoom-level-changed");
 		}
 		return;
 	}
 
 	view->details->zoom_level = new_level;
-	g_signal_emit_by_name (NAUTILUS_VIEW(view), "zoom_level_changed");
+	g_signal_emit_by_name (NAUTILUS_VIEW(view), "zoom-level-changed");
 
 	/* Select correctly scaled icons. */
 	column = nautilus_list_model_get_column_id_from_zoom_level (new_level);
@@ -2980,7 +2980,7 @@ nautilus_list_view_init (NautilusListView *list_view)
 	list_view->details->hover_path = NULL;
 	list_view->details->clipboard_handler_id =
 		g_signal_connect (nautilus_clipboard_monitor_get (),
-		                  "clipboard_info",
+		                  "clipboard-info",
 		                  G_CALLBACK (list_view_notify_clipboard_info), list_view);
 }
 

@@ -213,7 +213,7 @@ nautilus_trash_bar_init (NautilusTrashBar *bar)
 				     _("Delete all items in the Trash"));
 
 	g_signal_connect_object (nautilus_trash_monitor_get (),
-				 "trash_state_changed",
+				 "trash-state-changed",
 				 G_CALLBACK (nautilus_trash_bar_trash_state_changed),
 				 bar,
 				 0);

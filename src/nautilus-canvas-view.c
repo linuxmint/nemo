@@ -941,14 +941,14 @@ nautilus_canvas_view_set_zoom_level (NautilusCanvasView *view,
 	canvas_container = get_canvas_container (view);
 	if (nautilus_canvas_container_get_zoom_level (canvas_container) == new_level) {
 		if (always_emit) {
-			g_signal_emit_by_name (view, "zoom_level_changed");
+			g_signal_emit_by_name (view, "zoom-level-changed");
 		}
 		return;
 	}
 
 	nautilus_canvas_container_set_zoom_level (canvas_container, new_level);
 
-	g_signal_emit_by_name (view, "zoom_level_changed");
+	g_signal_emit_by_name (view, "zoom-level-changed");
 	
 	if (nautilus_view_get_active (NAUTILUS_VIEW (view))) {
 		nautilus_view_update_menus (NAUTILUS_VIEW (view));
@@ -1911,51 +1911,51 @@ create_canvas_container (NautilusCanvasView *canvas_view)
 	
 	g_signal_connect_object (canvas_container, "activate",	
 				 G_CALLBACK (canvas_container_activate_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "activate_alternate",	
+	g_signal_connect_object (canvas_container, "activate-alternate",	
 				 G_CALLBACK (canvas_container_activate_alternate_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "activate_previewer",
+	g_signal_connect_object (canvas_container, "activate-previewer",
 				 G_CALLBACK (canvas_container_activate_previewer_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "band_select_started",
+	g_signal_connect_object (canvas_container, "band-select-started",
 				 G_CALLBACK (band_select_started_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "band_select_ended",
+	g_signal_connect_object (canvas_container, "band-select-ended",
 				 G_CALLBACK (band_select_ended_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "context_click_selection",
+	g_signal_connect_object (canvas_container, "context-click-selection",
 				 G_CALLBACK (canvas_container_context_click_selection_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "context_click_background",
+	g_signal_connect_object (canvas_container, "context-click-background",
 				 G_CALLBACK (canvas_container_context_click_background_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "icon_position_changed",
+	g_signal_connect_object (canvas_container, "icon-position-changed",
 				 G_CALLBACK (icon_position_changed_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "selection_changed",
+	g_signal_connect_object (canvas_container, "selection-changed",
 				 G_CALLBACK (selection_changed_callback), canvas_view, 0);
 	/* FIXME: many of these should move into fm-canvas-container as virtual methods */
-	g_signal_connect_object (canvas_container, "get_icon_uri",
+	g_signal_connect_object (canvas_container, "get-icon-uri",
 				 G_CALLBACK (get_icon_uri_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "get_icon_drop_target_uri",
+	g_signal_connect_object (canvas_container, "get-icon-drop-target-uri",
 				 G_CALLBACK (get_icon_drop_target_uri_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "move_copy_items",
+	g_signal_connect_object (canvas_container, "move-copy-items",
 				 G_CALLBACK (canvas_view_move_copy_items), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "get_container_uri",
+	g_signal_connect_object (canvas_container, "get-container-uri",
 				 G_CALLBACK (canvas_view_get_container_uri), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "can_accept_item",
+	g_signal_connect_object (canvas_container, "can-accept-item",
 				 G_CALLBACK (canvas_view_can_accept_item), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "get_stored_icon_position",
+	g_signal_connect_object (canvas_container, "get-stored-icon-position",
 				 G_CALLBACK (get_stored_icon_position_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "layout_changed",
+	g_signal_connect_object (canvas_container, "layout-changed",
 				 G_CALLBACK (layout_changed_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "icon_rename_started",
+	g_signal_connect_object (canvas_container, "icon-rename-started",
 				 G_CALLBACK (icon_rename_started_cb), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "icon_rename_ended",
+	g_signal_connect_object (canvas_container, "icon-rename-ended",
 				 G_CALLBACK (icon_rename_ended_cb), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "icon_stretch_started",
+	g_signal_connect_object (canvas_container, "icon-stretch-started",
 				 G_CALLBACK (nautilus_view_update_menus), canvas_view,
 				 G_CONNECT_SWAPPED);
-	g_signal_connect_object (canvas_container, "icon_stretch_ended",
+	g_signal_connect_object (canvas_container, "icon-stretch-ended",
 				 G_CALLBACK (nautilus_view_update_menus), canvas_view,
 				 G_CONNECT_SWAPPED);
 
-	g_signal_connect_object (canvas_container, "get_stored_layout_timestamp",
+	g_signal_connect_object (canvas_container, "get-stored-layout-timestamp",
 				 G_CALLBACK (get_stored_layout_timestamp), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "store_layout_timestamp",
+	g_signal_connect_object (canvas_container, "store-layout-timestamp",
 				 G_CALLBACK (store_layout_timestamp), canvas_view, 0);
 
 	gtk_container_add (GTK_CONTAINER (canvas_view),
@@ -2228,20 +2228,20 @@ nautilus_canvas_view_init (NautilusCanvasView *canvas_view)
 				  G_CALLBACK (text_attribute_names_changed_callback),
 				  canvas_view);
 
-	g_signal_connect_object (canvas_container, "handle_netscape_url",
+	g_signal_connect_object (canvas_container, "handle-netscape-url",
 				 G_CALLBACK (canvas_view_handle_netscape_url), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "handle_uri_list",
+	g_signal_connect_object (canvas_container, "handle-uri-list",
 				 G_CALLBACK (canvas_view_handle_uri_list), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "handle_text",
+	g_signal_connect_object (canvas_container, "handle-text",
 				 G_CALLBACK (canvas_view_handle_text), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "handle_raw",
+	g_signal_connect_object (canvas_container, "handle-raw",
 				 G_CALLBACK (canvas_view_handle_raw), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "handle_hover",
+	g_signal_connect_object (canvas_container, "handle-hover",
 				 G_CALLBACK (canvas_view_handle_hover), canvas_view, 0);
 
 	canvas_view->details->clipboard_handler_id =
 		g_signal_connect (nautilus_clipboard_monitor_get (),
-		                  "clipboard_info",
+		                  "clipboard-info",
 		                  G_CALLBACK (canvas_view_notify_clipboard_info), canvas_view);
 }
 

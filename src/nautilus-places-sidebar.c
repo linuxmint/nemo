@@ -3344,7 +3344,7 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 				  sidebar);
 
 	g_signal_connect_object (nautilus_trash_monitor_get (),
-				 "trash_state_changed",
+				 "trash-state-changed",
 				 G_CALLBACK (trash_state_changed_cb),
 				 sidebar, 0);
 }
@@ -3447,23 +3447,23 @@ nautilus_places_sidebar_set_parent_window (NautilusPlacesSidebar *sidebar,
 					  G_CALLBACK (update_places),
 					  sidebar);
 
-	g_signal_connect_object (sidebar->volume_monitor, "volume_added",
+	g_signal_connect_object (sidebar->volume_monitor, "volume-added",
 				 G_CALLBACK (volume_added_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "volume_removed",
+	g_signal_connect_object (sidebar->volume_monitor, "volume-removed",
 				 G_CALLBACK (volume_removed_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "volume_changed",
+	g_signal_connect_object (sidebar->volume_monitor, "volume-changed",
 				 G_CALLBACK (volume_changed_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "mount_added",
+	g_signal_connect_object (sidebar->volume_monitor, "mount-added",
 				 G_CALLBACK (mount_added_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "mount_removed",
+	g_signal_connect_object (sidebar->volume_monitor, "mount-removed",
 				 G_CALLBACK (mount_removed_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "mount_changed",
+	g_signal_connect_object (sidebar->volume_monitor, "mount-changed",
 				 G_CALLBACK (mount_changed_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "drive_disconnected",
+	g_signal_connect_object (sidebar->volume_monitor, "drive-disconnected",
 				 G_CALLBACK (drive_disconnected_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "drive_connected",
+	g_signal_connect_object (sidebar->volume_monitor, "drive-connected",
 				 G_CALLBACK (drive_connected_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "drive_changed",
+	g_signal_connect_object (sidebar->volume_monitor, "drive-changed",
 				 G_CALLBACK (drive_changed_callback), sidebar, 0);
 
 	update_places (sidebar);

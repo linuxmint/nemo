@@ -212,7 +212,7 @@ static void
 editable_connect_callbacks (GObject *object,
 			    TargetCallbackData *target_data)
 {
-	g_signal_connect_after (object, "selection_changed",
+	g_signal_connect_after (object, "selection-changed",
 				G_CALLBACK (selection_changed_callback), target_data);
 	selection_changed_callback (GTK_WIDGET (object),
 				    target_data);
@@ -244,7 +244,7 @@ merge_in_clipboard_menu_items (GObject *widget_as_object,
 
 	set_paste_sensitive_if_clipboard_contains_data (target_data->action_group);
 	
-	g_signal_connect (gtk_clipboard_get (GDK_SELECTION_CLIPBOARD), "owner_change",
+	g_signal_connect (gtk_clipboard_get (GDK_SELECTION_CLIPBOARD), "owner-change",
 			  G_CALLBACK (owner_change_callback), target_data);
 	
 	if (add_selection_callback) {
@@ -426,9 +426,9 @@ nautilus_clipboard_real_set_up (gpointer target,
 		 connect_callbacks,
 		 disconnect_callbacks);
 
-	g_signal_connect (target, "focus_in_event",
+	g_signal_connect (target, "focus-in-event",
 			  G_CALLBACK (focus_changed_callback), target_data);
-	g_signal_connect (target, "focus_out_event",
+	g_signal_connect (target, "focus-out-event",
 			  G_CALLBACK (focus_changed_callback), target_data);
 	g_signal_connect (target, "destroy",
 			  G_CALLBACK (target_destroy_callback), target_data);

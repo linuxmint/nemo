@@ -384,7 +384,7 @@ widget_realize_cb (GtkWidget *widget,
 					     self->details->screen_size_handler);
 	}
 	self->details->screen_size_handler = 
-		g_signal_connect (screen, "size_changed",
+		g_signal_connect (screen, "size-changed",
 				  G_CALLBACK (screen_size_changed), self);
 
 	if (self->details->screen_monitors_handler > 0) {

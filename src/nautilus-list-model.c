@@ -1428,7 +1428,7 @@ nautilus_list_model_class_init (NautilusListModelClass *klass)
 	object_class->dispose = nautilus_list_model_dispose;
 
       list_model_signals[SUBDIRECTORY_UNLOADED] =
-        g_signal_new ("subdirectory_unloaded",
+        g_signal_new ("subdirectory-unloaded",
                       NAUTILUS_TYPE_LIST_MODEL,
                       G_SIGNAL_RUN_FIRST,
                       G_STRUCT_OFFSET (NautilusListModelClass, subdirectory_unloaded),
