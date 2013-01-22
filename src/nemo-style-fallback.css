@@ -2,35 +2,35 @@
 .nemo-pathbar-button,
 NemoPathbarButton {
     background-image: -gtk-gradient(linear, left top, left bottom,
-                                     color-stop (0, shade(alpha(@theme_bg_color, 0.8), 1.1)),
-                                     color-stop (.3, shade(alpha(@theme_bg_color, 0.8), 1.1)),
-                                     color-stop (.7, shade(alpha(@theme_bg_color, 0.8), 0.90)),
-                                     color-stop (1, shade(alpha(@theme_bg_color, 0.8), 0.80)));
+                                     color-stop (0, shade(alpha(@bg_color, 0.8), 1.1)),
+                                     color-stop (.3, shade(alpha(@bg_color, 0.8), 1.1)),
+                                     color-stop (.7, shade(alpha(@bg_color, 0.8), 0.90)),
+                                     color-stop (1, shade(alpha(@bg_color, 0.8), 0.80)));
     border-color: #808080;
     -NemoPathbarButton-border-radius: 3px;
 }
 
 NemoPathbarButton:active {
     background-image: -gtk-gradient(linear, left top, left bottom,
-                                     color-stop (0, shade(alpha(@theme_bg_color, 0.8), .8)),
-                                     color-stop (.3, shade(alpha(@theme_bg_color, 0.8), .9)),
-                                     color-stop (1, shade(alpha(@theme_bg_color, 0.8), 1.0)));
+                                     color-stop (0, shade(alpha(@bg_color, 0.8), .8)),
+                                     color-stop (.3, shade(alpha(@bg_color, 0.8), .9)),
+                                     color-stop (1, shade(alpha(@bg_color, 0.8), 1.0)));
     border-color: #808080;
 }
 
 NemoPathbarButton:hover {
     background-image: -gtk-gradient(linear, left top, left bottom,
-                                     color-stop (0, shade(alpha(@theme_selected_bg_color, 0.8), 1.25)),
-                                     color-stop (.3, shade(alpha(@theme_selected_bg_color, 0.8), 1.25)),
-                                     color-stop (.7, shade(alpha(@theme_selected_bg_color, 0.8), 0.95)),
-                                     color-stop (1, shade(alpha(@theme_selected_bg_color, 0.8), 0.85)));
+                                     color-stop (0, shade(alpha(@selected_bg_color, 0.8), 1.25)),
+                                     color-stop (.3, shade(alpha(@selected_bg_color, 0.8), 1.25)),
+                                     color-stop (.7, shade(alpha(@selected_bg_color, 0.8), 0.95)),
+                                     color-stop (1, shade(alpha(@selected_bg_color, 0.8), 0.85)));
     border-color: #808080;
 }
 
 NemoPathbarButton:active:hover {
     background-image: -gtk-gradient(linear, left top, left bottom,
-                                     color-stop (0, shade(alpha(@theme_selected_bg_color, 0.8), .80)),
-                                     color-stop (.3, shade(alpha(@theme_selected_bg_color, 0.8), .95)),
-                                     color-stop (1, shade(alpha(@theme_selected_bg_color, 0.8), 1.25)));
+                                     color-stop (0, shade(alpha(@selected_bg_color, 0.8), .80)),
+                                     color-stop (.3, shade(alpha(@selected_bg_color, 0.8), .95)),
+                                     color-stop (1, shade(alpha(@selected_bg_color, 0.8), 1.25)));
     border-color: #808080;
 }
