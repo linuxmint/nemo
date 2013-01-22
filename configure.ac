@@ -301,8 +301,6 @@ AM_CONDITIONAL(ENABLE_UPDATE_MIMEDB, test x$enable_update_mimedb = xyes)
 
 AC_CONFIG_FILES([
 Makefile
-cut-n-paste-code/Makefile
-cut-n-paste-code/libegg/Makefile
 data/Makefile
 data/nautilus.desktop.in
 data/nautilus-autorun-software.desktop.in

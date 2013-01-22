@@ -3,7 +3,6 @@ include $(top_srcdir)/Makefile.shared
 DIRS =				\
 	eel			\
 	libnautilus-extension	\
-	cut-n-paste-code 	\
 	libnautilus-private 	\
 	src 			\
 	test 			\
