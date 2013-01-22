@@ -6,7 +6,7 @@ NemoPathbarButton {
                                      color-stop (.7, shade(alpha(@theme_bg_color, 0.8), 0.90)),
                                      color-stop (1, shade(alpha(@theme_bg_color, 0.8), 0.80)));
     border-color: #808080;
-    -NemoPathbarButton-border-radius: 5px;
+    -NemoPathbarButton-border-radius: 3px;
 }
 
 NemoPathbarButton:active {
