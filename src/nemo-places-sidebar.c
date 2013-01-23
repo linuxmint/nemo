@@ -3586,7 +3586,7 @@ add_disk_indicator_style_props (GtkTreeView *tree_view)
                            g_param_spec_int ("disk-full-bar-width",
                                              "Disk indicator bar width",
                                              "Disk indicator bar width",
-                                             0, G_MAXINT, 1,
+                                             0, G_MAXINT, 2,
                                              G_PARAM_READABLE));
 
     gtk_widget_class_install_style_property (widget_class,
@@ -3607,7 +3607,7 @@ add_disk_indicator_style_props (GtkTreeView *tree_view)
                            g_param_spec_int ("disk-full-max-length",
                                              "Maximum length of the disk indicator",
                                              "Maximum length of the disk indicator",
-                                             0, G_MAXINT, 1,
+                                             0, G_MAXINT, 70,
                                              G_PARAM_READABLE));
 }
 
