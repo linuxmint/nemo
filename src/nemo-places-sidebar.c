@@ -40,6 +40,7 @@
 #include <libnemo-private/nemo-trash-monitor.h>
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-cell-renderer-disk.h>
+#include <libnemo-private/nemo-places-tree-view.h>
 
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
@@ -3564,54 +3565,6 @@ places_sidebar_sort_func (GtkTreeModel *model,
 }
 
 static void
-add_disk_indicator_style_props (GtkTreeView *tree_view)
-{
-    GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (G_OBJECT_GET_CLASS (tree_view));
-
-    gtk_widget_class_install_style_property (widget_class,
-                         g_param_spec_boxed ("disk-full-bg-color",
-                                             "Unselected disk indicator background color",
-                                             "Unselected disk indicator background color",
-                                             GDK_TYPE_COLOR,
-                                             G_PARAM_READABLE));
-
-    gtk_widget_class_install_style_property (widget_class,
-                         g_param_spec_boxed ("disk-full-fg-color",
-                                             "Unselected disk indicator foreground color",
-                                             "Unselected disk indicator foreground color",
-                                             GDK_TYPE_COLOR,
-                                             G_PARAM_READABLE));
-
-    gtk_widget_class_install_style_property (widget_class,
-                           g_param_spec_int ("disk-full-bar-width",
-                                             "Disk indicator bar width",
-                                             "Disk indicator bar width",
-                                             0, G_MAXINT, 2,
-                                             G_PARAM_READABLE));
-
-    gtk_widget_class_install_style_property (widget_class,
-                           g_param_spec_int ("disk-full-bar-radius",
-                                             "Disk indicator bar radius (usually half the width)",
-                                             "Disk indicator bar radius (usually half the width)",
-                                             0, G_MAXINT, 1,
-                                             G_PARAM_READABLE));
-
-    gtk_widget_class_install_style_property (widget_class,
-                           g_param_spec_int ("disk-full-bottom-padding",
-                                             "Extra padding under the disk indicator",
-                                             "Extra padding under the disk indicator",
-                                             0, G_MAXINT, 1,
-                                             G_PARAM_READABLE));
-
-    gtk_widget_class_install_style_property (widget_class,
-                           g_param_spec_int ("disk-full-max-length",
-                                             "Maximum length of the disk indicator",
-                                             "Maximum length of the disk indicator",
-                                             0, G_MAXINT, 70,
-                                             G_PARAM_READABLE));
-}
-
-static void
 nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 {
 	GtkTreeView       *tree_view;
@@ -3639,9 +3592,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 					      GTK_JUNCTION_RIGHT | GTK_JUNCTION_LEFT);
 
   	/* tree view */
-	tree_view = GTK_TREE_VIEW (gtk_tree_view_new ());
-
-    add_disk_indicator_style_props (tree_view);
+	tree_view = GTK_TREE_VIEW (nemo_places_tree_view_new ());
 
 	gtk_tree_view_set_headers_visible (tree_view, FALSE);
 
