@@ -2807,6 +2807,22 @@ bookmarks_popup_menu_cb (GtkWidget *widget,
 	return TRUE;
 }
 
+static void
+bookmarks_row_activated_cb (GtkWidget *widget,
+			    GtkTreePath *path,
+			    GtkTreeViewColumn *column,
+			    NautilusPlacesSidebar *sidebar)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
+
+	if (!gtk_tree_model_get_iter (model, &iter, path)) {
+		return;
+	}
+
+	open_selected_bookmark (sidebar, model, &iter, 0);
+}
+
 static gboolean
 bookmarks_button_release_event_cb (GtkWidget *widget,
 				   GdkEventButton *event,
@@ -2832,6 +2848,10 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 		return FALSE;
 	}
 
+	if (event->button == 1) {
+		return FALSE;
+	}
+
 	tree_view = GTK_TREE_VIEW (widget);
 	model = gtk_tree_view_get_model (tree_view);
 
@@ -2852,9 +2872,7 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 		return FALSE;
 	}
 
-	if (event->button == 1) {
-		open_selected_bookmark (sidebar, model, &iter, 0);
-	} else if (event->button == 2) {
+	if (event->button == 2) {
 		NautilusWindowOpenFlags flags = 0;
 
 		flags = (event->state & GDK_CONTROL_MASK) ?
@@ -3323,9 +3341,10 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 			  G_CALLBACK (bookmarks_popup_menu_cb), sidebar);
 	g_signal_connect (tree_view, "button-release-event",
 			  G_CALLBACK (bookmarks_button_release_event_cb), sidebar);
+	g_signal_connect (tree_view, "row-activated",
+			  G_CALLBACK (bookmarks_row_activated_cb), sidebar);
 
-	eel_gtk_tree_view_set_activate_on_single_click (sidebar->tree_view,
-							TRUE);
+	gtk_tree_view_set_activate_on_single_click (sidebar->tree_view, TRUE);
 
 	g_signal_connect_swapped (gnome_background_preferences, "changed::" NAUTILUS_PREFERENCES_SHOW_DESKTOP,
 				  G_CALLBACK(desktop_setting_changed_callback),
