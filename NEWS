@@ -2,3 +2,8 @@ Development: 1/22/2013:
 
 - Breadcrumbs:  Stylable by themes, see src/nemo-styles-fallback.css for default style information.
                 Border radius, color, background color, and text color can be customized through that.
+
+- Sidebar Disk Indicators:  Stylable by themes, again, see src/nemo-styles-fallback.css for default
+                style information - you can customize the two colors (fore- and background), the
+                thickness of the bar, the corner radius, the maximum length of the bar, and an amount
+                of extra padding from the bottom of the cell.

@@ -1082,7 +1082,8 @@ nemo_application_add_app_css_provider (void)
   if (!css_provider_load_from_resource (provider, "/org/nemo/nemo-style-fallback.css", &error))
     {
       g_warning ("Failed to load fallback css file: %s", error->message);
-      g_error_free (error);
+      if (error->message != NULL)
+        g_error_free (error);
       goto out_a;
     }
 
@@ -1100,7 +1101,8 @@ out_a:
   if (!css_provider_load_from_resource (provider, "/org/nemo/nemo-style-application.css", &error))
     {
       g_warning ("Failed to load application css file: %s", error->message);
-      g_error_free (error);
+      if (error->message != NULL)
+        g_error_free (error);
       goto out_b;
     }
 

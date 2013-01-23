@@ -1,3 +1,4 @@
+/* for breadcrumbs path bar */
 
 .nemo-pathbar-button,
 NemoPathbarButton {
@@ -33,4 +34,27 @@ NemoPathbarButton:active:hover {
                                      color-stop (.3, shade(alpha(@selected_bg_color, 0.8), .95)),
                                      color-stop (1, shade(alpha(@selected_bg_color, 0.8), 1.25)));
     border-color: #808080;
+}
+
+
+/* For Places Sidebar diskfull indicators */
+
+NemoPlacesTreeView {
+    -NemoPlacesTreeView-disk-full-bg-color: shade(@bg_color, .65);
+    -NemoPlacesTreeView-disk-full-fg-color: shade(@selected_bg_color, 1.0);
+    -NemoPlacesTreeView-disk-full-bar-width: 2px;
+    -NemoPlacesTreeView-disk-full-bar-radius: 1px;
+    -NemoPlacesTreeView-disk-full-bottom-padding: 1px;
+    -NemoPlacesTreeView-disk-full-max-length: 70px;
+}
+
+NemoPlacesTreeView:selected {
+    -NemoPlacesTreeView-disk-full-bg-color: shade(@bg_color, 2.0);
+    -NemoPlacesTreeView-disk-full-fg-color: shade(@fg_color, 2.0);
+}
+
+NemoPlacesTreeView:hover {
+}
+
+NemoPlacesTreeView:selected:hover {
 }

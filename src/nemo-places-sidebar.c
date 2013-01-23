@@ -40,6 +40,7 @@
 #include <libnemo-private/nemo-trash-monitor.h>
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-cell-renderer-disk.h>
+#include <libnemo-private/nemo-places-tree-view.h>
 
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
@@ -58,14 +59,10 @@
 #define DEBUG_FLAG NEMO_DEBUG_PLACES
 #include <libnemo-private/nemo-debug.h>
 
-#define ICON_CELL_XPAD 6
 #define EXPANDER_COLUMN_WIDTH 14
 #define EXPANDER_PAD_COLUMN_WIDTH 4
 #define EJECT_COLUMN_WIDTH 22
 #define DRAG_EXPAND_CATEGORY_DELAY 500
-
-#define GB 1048576.0
-#define MB 1024.0
 
 typedef struct {
 	GtkScrolledWindow  parent;
@@ -3595,7 +3592,8 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 					      GTK_JUNCTION_RIGHT | GTK_JUNCTION_LEFT);
 
   	/* tree view */
-	tree_view = GTK_TREE_VIEW (gtk_tree_view_new ());
+	tree_view = GTK_TREE_VIEW (nemo_places_tree_view_new ());
+
 	gtk_tree_view_set_headers_visible (tree_view, FALSE);
 
 	col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
@@ -3860,10 +3858,13 @@ nemo_places_sidebar_dispose (GObject *object)
 static void
 nemo_places_sidebar_class_init (NemoPlacesSidebarClass *class)
 {
+    GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
 	G_OBJECT_CLASS (class)->dispose = nemo_places_sidebar_dispose;
 
-	GTK_WIDGET_CLASS (class)->style_set = nemo_places_sidebar_style_set;
-	GTK_WIDGET_CLASS (class)->focus = nemo_places_sidebar_focus;
+	widget_class->style_set = nemo_places_sidebar_style_set;
+	widget_class->focus = nemo_places_sidebar_focus;
+
+ 
 }
 
 static void

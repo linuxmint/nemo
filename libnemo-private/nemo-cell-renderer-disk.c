@@ -18,6 +18,7 @@
 */
 
 #include "nemo-cell-renderer-disk.h"
+#include <math.h>
 
 G_DEFINE_TYPE (NemoCellRendererDisk, nemo_cell_renderer_disk,
 	       GTK_TYPE_CELL_RENDERER_TEXT);
@@ -95,7 +96,7 @@ nemo_cell_renderer_disk_class_init (NemoCellRendererDiskClass *klass)
 GtkCellRenderer *
 nemo_cell_renderer_disk_new (void)
 {
-	return g_object_new (NEMO_TYPE_CELL_RENDERER_DISK, NULL);
+    return g_object_new (NEMO_TYPE_CELL_RENDERER_DISK, NULL);
 }
 
 static void
@@ -148,10 +149,47 @@ nemo_cell_renderer_disk_set_property (GObject      *object,
   }
 }
 
-#define BG_BAR_HEIGHT 2
-#define FG_BAR_HEIGHT 2
-#define EXTRA_BOTTOM_GAP 1
-#define MAX_WIDTH 70
+static void
+convert_color (GdkColor *style_color, GdkRGBA *color)
+{
+    color->red = style_color->red / 65535.0;
+    color->green = style_color->green / 65535.0;
+    color->blue = style_color->blue / 65535.0;
+    color->alpha = 1;
+}
+
+static void
+use_default_color (GdkRGBA *color)
+{
+    color->red = .5;
+    color->green = .5;
+    color->blue = .5;
+    color->alpha = 1;
+}
+
+#define _270_DEG 270.0 * (M_PI/180.0)
+#define _180_DEG 180.0 * (M_PI/180.0)
+#define  _90_DEG  90.0 * (M_PI/180.0)
+#define   _0_DEG 0.0
+
+static void
+cairo_rectangle_with_radius_corners (cairo_t *cr,
+                                     gint x,
+                                     gint y,
+                                     gint w,
+                                     gint h,
+                                     gint rad)
+{
+    cairo_move_to (cr, x+rad, y);
+    cairo_line_to (cr, x+w-rad, y);
+    cairo_arc (cr, x+w-rad, y+rad, rad, _270_DEG, _0_DEG);
+    cairo_line_to (cr, x+w, y+h-rad);
+    cairo_arc (cr, x+w-rad, y+h-rad, rad, _0_DEG, _90_DEG);
+    cairo_line_to (cr, x+rad, y+h);
+    cairo_arc (cr, x+rad, y+h-rad, rad, _90_DEG, _180_DEG);
+    cairo_line_to (cr, x, y-rad);
+    cairo_arc (cr, x+rad, y+rad, rad, _180_DEG, _270_DEG);
+}
 
 static void
 nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
@@ -162,35 +200,63 @@ nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
                                 GtkCellRendererState   flags)
 {
     NemoCellRendererDisk *cellprogress = NEMO_CELL_RENDERER_DISK (cell);
-    GtkCellRendererText *celltext = GTK_CELL_RENDERER_TEXT (cell);
-    GtkCellRendererTextPrivate *priv = celltext->priv;
-    GtkStateType                state;
     gint                        x, y, w;
     gint                        xpad, ypad;
     gint                        full;
     gboolean                    show = cellprogress->show_disk_full_percent;
     GtkStyleContext *context;
 
-
     if (show) {
-
         context = gtk_widget_get_style_context (widget);
+        GdkColor *gdk_bg_color, *gdk_fg_color;
+        GdkRGBA bg_color, fg_color;
+        gint bar_width, bar_radius, bottom_padding, max_length;
+
+        gtk_style_context_get_style (context,
+                                     "disk-full-bg-color",       &gdk_bg_color,
+                                     "disk-full-fg-color",       &gdk_fg_color,
+                                     "disk-full-bar-width",      &bar_width,
+                                     "disk-full-bar-radius",     &bar_radius,
+                                     "disk-full-bottom-padding", &bottom_padding,
+                                     "disk-full-max-length",     &max_length,
+                                     NULL);
+
+        if (gdk_bg_color) {
+            convert_color (gdk_bg_color, &bg_color);
+            gdk_color_free (gdk_bg_color);
+        } else {
+            use_default_color (&bg_color);
+        }
+        if (gdk_fg_color) {
+            convert_color (gdk_fg_color, &fg_color);
+            gdk_color_free (gdk_fg_color);
+        } else {
+            use_default_color (&fg_color);
+        }
 
         gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
         x = cell_area->x + xpad;
-        y = cell_area->y + cell_area->height - BG_BAR_HEIGHT - EXTRA_BOTTOM_GAP;
+        y = cell_area->y + cell_area->height - bar_width - bottom_padding;
         w = cell_area->width - xpad * 2;
-        w = w < MAX_WIDTH ? w : MAX_WIDTH;
+        w = w < max_length ? w : max_length;
         full = (int) (((float) cellprogress->disk_full_percent / 100.0) * (float) w);
 
         gtk_style_context_save (context);
-        gtk_style_context_add_class (context, "nemo-disk-renderer-bg");
-        gtk_render_frame (context, cr, x, y, w, BG_BAR_HEIGHT);
-        gtk_style_context_restore (context);
-        
-        gtk_style_context_save (context);
-        gtk_style_context_add_class (context, "nemo-disk-renderer-fg");
-        gtk_render_frame (context, cr, x, y, full, FG_BAR_HEIGHT);
+
+        cairo_save (cr);
+
+        gdk_cairo_set_source_rgba (cr, &bg_color);
+        cairo_rectangle_with_radius_corners (cr, x, y, w, bar_width, bar_radius);
+        cairo_fill (cr);
+
+        cairo_restore (cr);
+        cairo_save (cr);
+
+        gdk_cairo_set_source_rgba (cr, &fg_color);
+        cairo_rectangle_with_radius_corners (cr, x, y, full, bar_width, bar_radius);
+        cairo_fill (cr);
+
+        cairo_restore (cr);
 
         gtk_style_context_restore (context);
     }
