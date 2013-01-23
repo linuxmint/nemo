@@ -158,6 +158,15 @@ convert_color (GdkColor *style_color, GdkRGBA *color)
     color->alpha = 1;
 }
 
+static void
+use_default_color (GdkRGBA *color)
+{
+    color->red = .5;
+    color->green = .5;
+    color->blue = .5;
+    color->alpha = 1;
+}
+
 #define _270_DEG 270.0 * (M_PI/180.0)
 #define _180_DEG 180.0 * (M_PI/180.0)
 #define  _90_DEG  90.0 * (M_PI/180.0)
@@ -200,7 +209,7 @@ nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
     if (show) {
         context = gtk_widget_get_style_context (widget);
         GdkColor *gdk_bg_color, *gdk_fg_color;
-        GdkRGBA *bg_color, *fg_color;
+        GdkRGBA bg_color, fg_color;
         gint bar_width, bar_radius, bottom_padding, max_length;
 
         gtk_style_context_get_style (context,
@@ -212,11 +221,18 @@ nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
                                      "disk-full-max-length",     &max_length,
                                      NULL);
 
-        convert_color (gdk_bg_color, bg_color);
-        convert_color (gdk_fg_color, fg_color);
-
-        gdk_color_free (gdk_bg_color);
-        gdk_color_free (gdk_fg_color);
+        if (gdk_bg_color) {
+            convert_color (gdk_bg_color, &bg_color);
+            gdk_color_free (gdk_bg_color);
+        } else {
+            use_default_color (&bg_color);
+        }
+        if (gdk_fg_color) {
+            convert_color (gdk_fg_color, &fg_color);
+            gdk_color_free (gdk_fg_color);
+        } else {
+            use_default_color (&fg_color);
+        }
 
         gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
         x = cell_area->x + xpad;
@@ -229,31 +245,18 @@ nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
 
         cairo_save (cr);
 
-        cairo_set_source_rgba (cr,
-                               bg_color->red,
-                               bg_color->green,
-                               bg_color->blue,
-                               bg_color->alpha);
-
+        gdk_cairo_set_source_rgba (cr, &bg_color);
         cairo_rectangle_with_radius_corners (cr, x, y, w, bar_width, bar_radius);
         cairo_fill (cr);
 
         cairo_restore (cr);
         cairo_save (cr);
 
-        cairo_set_source_rgba (cr,
-                               fg_color->red,
-                               fg_color->green,
-                               fg_color->blue,
-                               fg_color->alpha);
-
+        gdk_cairo_set_source_rgba (cr, &fg_color);
         cairo_rectangle_with_radius_corners (cr, x, y, full, bar_width, bar_radius);
         cairo_fill (cr);
 
         cairo_restore (cr);
-
-        gdk_rgba_free (bg_color);
-        gdk_rgba_free (fg_color);
 
         gtk_style_context_restore (context);
     }
