@@ -148,4 +148,6 @@
 
 #define NEMO_ACTION_ADD_DESKLETS_DESKTOP "Add Desklets"
 
+#define NEMO_ACTION_FOLLOW_SYMLINK "FollowSymbolicLink"
+
 #endif /* NEMO_ACTIONS_H */
