@@ -195,17 +195,77 @@ fill_menu (NautilusWindow *window,
 	}
 }
 
+/* adapted from gtk/gtkmenubutton.c */
+static void
+menu_position_func (GtkMenu       *menu,
+		    gint          *x,
+		    gint          *y,
+		    gboolean      *push_in,
+		    GtkWidget     *widget)
+{
+	GtkWidget *toplevel;
+	GtkRequisition menu_req;
+	GdkRectangle monitor;
+	gint monitor_num;
+	GdkScreen *screen;
+	GdkWindow *window;
+	GtkAllocation allocation;
+
+	/* Set the dropdown menu hint on the toplevel, so the WM can omit the top side
+	 * of the shadows.
+	 */
+	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (menu));
+	gtk_window_set_type_hint (GTK_WINDOW (toplevel), GDK_WINDOW_TYPE_HINT_DROPDOWN_MENU);
+
+	window = gtk_widget_get_window (widget);
+	screen = gtk_widget_get_screen (GTK_WIDGET (menu));
+	monitor_num = gdk_screen_get_monitor_at_window (screen, window);
+	if (monitor_num < 0) {
+		monitor_num = 0;
+	}
+
+	gdk_screen_get_monitor_workarea (screen, monitor_num, &monitor);
+	gtk_widget_get_preferred_size (GTK_WIDGET (menu), &menu_req, NULL);
+	gtk_widget_get_allocation (widget, &allocation);
+	gdk_window_get_origin (window, x, y);
+
+	*x += allocation.x;
+	*y += allocation.y;
+
+	if (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) {
+		*x -= MAX (menu_req.width - allocation.width, 0);
+	} else {
+		*x += MAX (allocation.width - menu_req.width, 0);
+	}
+
+	if ((*y + allocation.height + menu_req.height) <= monitor.y + monitor.height) {
+		*y += allocation.height;
+	} else if ((*y - menu_req.height) >= monitor.y) {
+		*y -= menu_req.height;
+	} else if (monitor.y + monitor.height - (*y + allocation.height) > *y) {
+		*y += allocation.height;
+	} else {
+		*y -= menu_req.height;
+	}
+
+	*push_in = FALSE;
+}
+
 static void
 show_menu (NautilusToolbar *self,
-	   NautilusNavigationDirection direction,
+	   GtkWidget *widget,
            guint button,
            guint32 event_time)
 {
 	NautilusWindow *window;
 	GtkWidget *menu;
+	NautilusNavigationDirection direction;
 
 	window = self->priv->window;
 	menu = gtk_menu_new ();
+
+	direction = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (widget),
+							 "nav-direction"));
 
 	switch (direction) {
 	case NAUTILUS_NAVIGATION_DIRECTION_FORWARD:
@@ -219,7 +279,8 @@ show_menu (NautilusToolbar *self,
 		break;
 	}
 
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL,
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL,
+			(GtkMenuPositionFunc) menu_position_func, widget,
                         button, event_time);
 }
 
@@ -227,7 +288,7 @@ show_menu (NautilusToolbar *self,
 
 typedef struct {
 	NautilusToolbar *self;
-	NautilusNavigationDirection direction;
+	GtkWidget *widget;
 } ScheduleMenuData;
 
 static void
@@ -241,7 +302,7 @@ popup_menu_timeout_cb (gpointer user_data)
 {
 	ScheduleMenuData *data = user_data;
 
-        show_menu (data->self, data->direction,
+        show_menu (data->self, data->widget,
 		   1, gtk_get_current_event_time ());
 
         return FALSE;
@@ -258,7 +319,7 @@ unschedule_menu_popup_timeout (NautilusToolbar *self)
 
 static void
 schedule_menu_popup_timeout (NautilusToolbar *self,
-			     NautilusNavigationDirection direction)
+			     GtkWidget *widget)
 {
 	ScheduleMenuData *data;
 
@@ -267,7 +328,7 @@ schedule_menu_popup_timeout (NautilusToolbar *self,
 
 	data = g_slice_new0 (ScheduleMenuData);
 	data->self = self;
-	data->direction = direction;
+	data->widget = widget;
 
         self->priv->popup_timeout_id =
                 g_timeout_add_full (G_PRIORITY_DEFAULT, MENU_POPUP_TIMEOUT,
@@ -281,19 +342,15 @@ tool_button_press_cb (GtkButton *button,
                       gpointer user_data)
 {
         NautilusToolbar *self = user_data;
-	NautilusNavigationDirection direction;
-
-	direction = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (button),
-							 "nav-direction"));
 
         if (event->button == 3) {
                 /* right click */
-                show_menu (self, direction, event->button, event->time);
+                show_menu (self, GTK_WIDGET (button), event->button, event->time);
                 return TRUE;
         }
 
         if (event->button == 1) {
-                schedule_menu_popup_timeout (self, direction);
+                schedule_menu_popup_timeout (self, GTK_WIDGET (button));
         }
 
 	return FALSE;
