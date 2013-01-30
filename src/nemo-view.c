@@ -6834,6 +6834,24 @@ action_open_as_root_callback (GtkAction *action,
 }
 
 static void
+action_follow_symlink_callback (GtkAction *action,
+                                gpointer callback_data)
+{
+    NemoView *view;
+    GList *selection;
+
+    view = NEMO_VIEW (callback_data);
+    selection = nemo_view_get_selection (view);
+    if (nemo_file_is_symbolic_link (selection->data)) {
+        gchar *uri = nemo_file_get_symbolic_link_target_uri (selection->data);
+        GFile *location = g_file_new_for_uri (uri);
+        g_free (uri);
+        nemo_window_slot_go_to (view->details->slot, location, FALSE);
+    }
+    nemo_file_list_free (selection);
+}
+
+static void
 action_open_in_terminal_callback(GtkAction *action,
 				  gpointer callback_data)
 {
@@ -7848,6 +7866,12 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open as Root"), "",
   /* tooltip */                  N_("Open the folder with administration privileges"),
 				 G_CALLBACK (action_open_as_root_callback) },
+
+  /* name, stock id */         { NEMO_ACTION_FOLLOW_SYMLINK, GTK_STOCK_JUMP_TO,
+  /* label, accelerator */       N_("Follow link to original file"), "",
+  /* tooltip */                  N_("Navigate to the original file that this symbolic link points to"),
+                 G_CALLBACK (action_follow_symlink_callback) },
+
   /* name, stock id */         { NEMO_ACTION_MAILTO_THUNDERBIRD, GTK_STOCK_DND_MULTIPLE,
   /* label, accelerator */       N_("Send with Thunderbird"), "",
   /* tooltip */                  N_("Send the selected file(s) as email attachments using Thunderbird"),
@@ -9560,6 +9584,12 @@ real_update_menus (NemoView *view)
     show_set_as_wallpaper = (selection_count == 1 &&
                              is_image((NemoFileInfo*) selection->data ));
     gtk_action_set_visible (action, show_set_as_wallpaper);
+
+    action = gtk_action_group_get_action (view->details->dir_action_group,
+                                          NEMO_ACTION_FOLLOW_SYMLINK);
+    gtk_action_set_visible (action,
+                            selection_count == 1 &&
+                            nemo_file_is_symbolic_link (selection->data));
 
     nemo_file_list_free (selection);
 }
