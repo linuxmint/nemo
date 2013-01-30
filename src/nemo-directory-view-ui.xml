@@ -186,6 +186,7 @@
 	<separator name="Advanced separator"/>
 	<menuitem name="OpenInTerminal" action="OpenInTerminal"/>
 	<menuitem name="OpenAsRoot" action="OpenAsRoot"/>
+    <menuitem name="FollowSymbolicLink" action="FollowSymbolicLink"/>
 	<menuitem name="MailToThunderbird" action="MailToThunderbird"/>
 	<menuitem name="MailToOther" action="MailToOther"/>
 	<menuitem name="SetAsWallPaper" action="SetAsWallPaper"/>
