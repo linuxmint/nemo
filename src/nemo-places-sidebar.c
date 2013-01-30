@@ -1949,8 +1949,8 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 
 	gtk_widget_set_visible (sidebar->popup_menu_add_shortcut_item, (type == PLACES_MOUNTED_VOLUME));
 
-	gtk_widget_set_sensitive (sidebar->popup_menu_remove_item, (type == PLACES_BOOKMARK));
-	gtk_widget_set_sensitive (sidebar->popup_menu_rename_item, (type == PLACES_BOOKMARK));
+	gtk_widget_set_visible (sidebar->popup_menu_remove_item, (type == PLACES_BOOKMARK));
+	gtk_widget_set_visible (sidebar->popup_menu_rename_item, (type == PLACES_BOOKMARK));
 	gtk_widget_set_sensitive (sidebar->popup_menu_empty_trash_item, !nemo_trash_monitor_is_empty ());
 
  	check_visibility (mount, volume, drive,
