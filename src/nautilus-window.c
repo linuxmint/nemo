@@ -788,7 +788,6 @@ nautilus_window_set_up_sidebar (NautilusWindow *window)
 					   (GTK_PLACES_OPEN_NORMAL
 					    | GTK_PLACES_OPEN_NEW_TAB
 					    | GTK_PLACES_OPEN_NEW_WINDOW));
-	gtk_places_sidebar_set_accept_uri_drops (GTK_PLACES_SIDEBAR (window->details->places_sidebar), TRUE);
 
 	g_signal_connect (window->details->places_sidebar, "open-location",
 			  G_CALLBACK (places_sidebar_open_location_cb), window);
