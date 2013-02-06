@@ -103,6 +103,7 @@ struct _NautilusApplicationPriv {
 	NautilusFreedesktopDBus *fdb_manager;
 
 	gboolean no_desktop;
+	gboolean force_desktop;
 	gchar *geometry;
 
 	NotifyNotification *unmount_notify;
@@ -1042,6 +1043,12 @@ do_cmdline_sanity_checks (NautilusApplication *self,
 		goto out;
 	}
 
+	if (self->priv->no_desktop && self->priv->force_desktop) {
+		g_printerr ("%s\n",
+			    _("--no-desktop and --force-desktop cannot be used together."));
+		goto out;
+	}
+
 	retval = TRUE;
 
  out:
@@ -1148,7 +1155,9 @@ nautilus_application_local_command_line (GApplication *application,
 		{ "no-default-window", 'n', 0, G_OPTION_ARG_NONE, &no_default_window,
 		  N_("Only create windows for explicitly specified URIs."), NULL },
 		{ "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &self->priv->no_desktop,
-		  N_("Do not manage the desktop (ignore the preference set in the preferences dialog)."), NULL },
+		  N_("Never manage the desktop (ignore the GSettings preference)."), NULL },
+		{ "force-desktop", '\0', 0, G_OPTION_ARG_NONE, &self->priv->force_desktop,
+		  N_("Always manage the desktop (ignore the GSettings preference)."), NULL },
 		{ "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
 		  N_("Quit Nautilus."), NULL },
 		{ "select", 's', 0, G_OPTION_ARG_NONE, &select_uris,
@@ -1200,8 +1209,9 @@ nautilus_application_local_command_line (GApplication *application,
 	}
 
 	DEBUG ("Parsing local command line, no_default_window %d, quit %d, "
-	       "self checks %d, no_desktop %d",
-	       no_default_window, kill_shell, perform_self_check, self->priv->no_desktop);
+	       "self checks %d, no_desktop %d, show_desktop %d",
+	       no_default_window, kill_shell, perform_self_check,
+	       self->priv->no_desktop, self->priv->force_desktop);
 
 	g_application_register (application, NULL, &error);
 
@@ -1326,13 +1336,20 @@ desktop_changed_callback (gpointer user_data)
 static void
 init_desktop (NautilusApplication *self)
 {
-	if (!self->priv->no_desktop &&
-	    !g_settings_get_boolean (gnome_background_preferences,
-				     NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
-		self->priv->no_desktop = TRUE;
+	gboolean should_show;
+
+	/* by default, take the GSettings value */
+	should_show = g_settings_get_boolean (gnome_background_preferences,
+					      NAUTILUS_PREFERENCES_SHOW_DESKTOP);
+
+	/* the command line switches take over the setting */
+	if (self->priv->no_desktop) {
+		should_show = FALSE;
+	} else if (self->priv->force_desktop) {
+		should_show = TRUE;
 	}
 
-	if (!self->priv->no_desktop) {
+	if (should_show) {
 		nautilus_application_open_desktop (self);
 	}
 
