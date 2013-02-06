@@ -1,3 +1,15 @@
+Major changes in 3.7.5 are:
+* Switch to hovered locations on DnD (William Jon McCann)
+* Support a --force-desktop commandline option for classic mode
+* Add a separate desktop file for classic mode integration
+* Use a better position for navigation button popup menus
+* Fix many memory leaks (Pavel Vasin)
+* Fix a crasher when a file in trash has reserved characters in the filename
+* Fix a crasher when closing the sidebar immediately after construction
+* Fix a crasher closing the properties dialog while calculating folder size
+* Fix backup files showing up in search provider results
+* Fix floating bar buttons being added twice
+
 Major changes in 3.7.4 are:
 * Support a --select commandline option to force selection of the passed-in URI
 * Add source hints to notifications (Matthias Clasen)
