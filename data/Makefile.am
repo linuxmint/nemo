@@ -5,7 +5,9 @@ xml_files = $(xml_in_files:.xml.in=.xml)
 @INTLTOOL_XML_RULE@
 
 desktopdir       = $(datadir)/applications
-desktop_DATA     = $(desktop_in_files:.desktop.in=.desktop)
+desktop_DATA     = 					\
+	$(desktop_in_files:.desktop.in=.desktop)	\
+	nautilus-classic.desktop
 desktop_in_files = 					\
 	nautilus.desktop.in				\
 	nautilus-autorun-software.desktop.in		\

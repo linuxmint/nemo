@@ -304,6 +304,7 @@ Makefile
 data/Makefile
 data/nautilus.desktop.in
 data/nautilus-autorun-software.desktop.in
+data/nautilus-classic.desktop
 data/nautilus-connect-server.desktop.in
 docs/Makefile
 docs/reference/Makefile
