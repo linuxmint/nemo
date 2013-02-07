@@ -381,6 +381,21 @@ navigation_button_setup_menu (NautilusToolbar *self,
 			  G_CALLBACK (tool_button_release_cb), self);
 }
 
+static gboolean
+gear_menu_key_press (GtkWidget *widget,
+                     GdkEventKey *event,
+                     gpointer user_data)
+{
+        GdkModifierType mask = gtk_accelerator_get_default_mod_mask ();
+
+        if ((event->state & mask) == 0 && (event->keyval == GDK_KEY_F10)) {
+            gtk_menu_shell_deactivate (GTK_MENU_SHELL (widget));
+            return TRUE;
+        }
+
+        return FALSE;
+}
+
 static void
 nautilus_toolbar_constructed (GObject *obj)
 {
@@ -492,6 +507,7 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_widget_set_halign (menu, GTK_ALIGN_END);
 	gtk_menu_button_set_popup (GTK_MENU_BUTTON (tool_button), menu);
 	gtk_actionable_set_action_name (GTK_ACTIONABLE (tool_button), "win.gear-menu");
+        g_signal_connect (menu, "key-press-event", G_CALLBACK (gear_menu_key_press), self);
 
 	gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
 	gtk_container_add (GTK_CONTAINER (toolbar), GTK_WIDGET (tool_item));
