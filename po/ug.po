@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-01-31 19:38+0000\n"
-"PO-Revision-Date: 2013-02-03 09:56+0900\n"
+"POT-Creation-Date: 2013-02-06 21:23+0000\n"
+"PO-Revision-Date: 2013-02-09 10:43+0900\n"
 "Last-Translator: Gheyret Kenji <gheyret@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
 "Language: \n"
@@ -2273,11 +2273,11 @@ msgid "Send files by mail, instant message…"
 msgstr "ئېلخەت، مۇڭداشقۇدا ھۆججەت يوللا…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:231 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1597
 msgid "Oops! Something went wrong."
 msgstr "ئاپلا! خاتالىق كۆرۈلدى."
 
-#: ../src/nautilus-application.c:233
+#: ../src/nautilus-application.c:234
 #, c-format
 msgid ""
 "Unable to create a required folder. Please create the following folder, or "
@@ -2286,7 +2286,7 @@ msgid ""
 msgstr "تەلەپ قىلغان قىسقۇچنى قۇرغىلى بولمىدى. تۆۋەندىكى قىسقۇچنى قۇرۇڭ، ياكى ئۇنىڭغا قۇرغىلى بولىدىغان ئىمتىيازلارنى بېرىڭ:\n"
 "%s"
 
-#: ../src/nautilus-application.c:238
+#: ../src/nautilus-application.c:239
 #, c-format
 msgid ""
 "Unable to create required folders. Please create the following folders, or "
@@ -2295,13 +2295,13 @@ msgid ""
 msgstr "تەلەپ قىلغان قىسقۇچلارنى قۇرغىلى بولمىدى. تۆۋەندىكى قىسقۇچلارنى قۇرۇڭ، ياكى ئۇنىڭغا قۇرغىلى بولىدىغان ئىمتىيازلارنى بېرىڭ:\n"
 "%s"
 
-#: ../src/nautilus-application.c:372
+#: ../src/nautilus-application.c:373
 msgid ""
 "Nautilus 3.0 deprecated this directory and tried migrating this "
 "configuration to ~/.config/nautilus"
 msgstr "بۇ مۇندەرىجە Nautilus 3.0 دا تاشلىۋېتىلگەن، بۇ سەپلىمىنى ~/.config/nautilus غا يۆتكەشنى سىناڭ"
 
-#: ../src/nautilus-application.c:851
+#: ../src/nautilus-application.c:852
 #: ../src/nautilus-file-management-properties.c:196
 #: ../src/nautilus-window-menus.c:253
 #, c-format
@@ -2311,61 +2311,73 @@ msgid ""
 msgstr "ياردەم كۆرسەتكەندە خاتالىق كۆرۈلدى: \n"
 "%s"
 
-#: ../src/nautilus-application.c:1022
+#: ../src/nautilus-application.c:1023
 msgid "--check cannot be used with other options."
 msgstr "--check نى باشقا تاللانمىلار بىلەن بىرگە ئىشلىتىشكە بولمايدۇ."
 
-#: ../src/nautilus-application.c:1028
+#: ../src/nautilus-application.c:1029
 msgid "--quit cannot be used with URIs."
 msgstr "--quit نى URI بىلەن بىللە ئىشلەتكىلى بولمايدۇ."
 
-#: ../src/nautilus-application.c:1035
+#: ../src/nautilus-application.c:1036
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry نى بىرقانچە URI بىلەن بىرگە ئىشلىتىشكە بولمايدۇ."
 
-#: ../src/nautilus-application.c:1041
+#: ../src/nautilus-application.c:1042
 msgid "--select must be used with at least an URI."
 msgstr "--select نى ئاز دېگەندە بىر URI بىلەن ئىشلىتىش كېرەك."
 
-#: ../src/nautilus-application.c:1139
+#: ../src/nautilus-application.c:1048
+msgid "--no-desktop and --force-desktop cannot be used together."
+msgstr "--no-desktop بىلەن --force-desktop نى بىرگە ئىشلىتىشكە بولمايدۇ."
+
+#: ../src/nautilus-application.c:1146
 msgid "Perform a quick set of self-check tests."
 msgstr "بىر گۇرۇپپا تېز سۈرئەتتە ئۆزىنى تەكشۈرۈشنى ئىجرا قىلىدۇ."
 
-#: ../src/nautilus-application.c:1145
+#: ../src/nautilus-application.c:1152
 msgid "Show the version of the program."
 msgstr "پروگراممىنىڭ نەشرىنى كۆرسەت."
 
-#: ../src/nautilus-application.c:1147
+#: ../src/nautilus-application.c:1154
 msgid "Create the initial window with the given geometry."
 msgstr "بېرىلگەن گېئومېتىرىيە خاسلىقىنى ئىشلىتىپ دەسلەپكى كۆزنەك قۇرىدۇ."
 
-#: ../src/nautilus-application.c:1147
+#: ../src/nautilus-application.c:1154
 msgid "GEOMETRY"
 msgstr "GEOMETRY"
 
-#: ../src/nautilus-application.c:1149
+#: ../src/nautilus-application.c:1156
 msgid "Only create windows for explicitly specified URIs."
 msgstr "پەقەت بەلگىلەنگەن URI ئۈچۈن كۆزنەك قۇرىدۇ"
 
-#: ../src/nautilus-application.c:1151
-msgid ""
-"Do not manage the desktop (ignore the preference set in the preferences "
-"dialog)."
-msgstr "ئۈستەلئۈستىنى باشقۇرما (مايىللىق سۆزلەشكۈدە تەڭشەلگەن مايىللىققا پەرۋا قىلما)"
+#: ../src/nautilus-application.c:1158
+#| msgid ""
+#| "Do not manage the desktop (ignore the preference set in the preferences "
+#| "dialog)."
+msgid "Never manage the desktop (ignore the GSettings preference)."
+msgstr "ئۈستەلئۈستىنى زادىلا باشقۇرمىسۇن(GSettings مايىللىقىغا پەرۋا قىلمايدۇ)."
 
-#: ../src/nautilus-application.c:1153
+#: ../src/nautilus-application.c:1160
+#| msgid ""
+#| "Do not manage the desktop (ignore the preference set in the preferences "
+#| "dialog)."
+msgid "Always manage the desktop (ignore the GSettings preference)."
+msgstr "ئۈستەلئۈستىنى ھەمىشە باشقۇرسۇن(GSettings مايىللىقىغا پەرۋا قىلمايدۇ)."
+
+#: ../src/nautilus-application.c:1162
 msgid "Quit Nautilus."
 msgstr "Nautilus تىن چېكىنىدۇ"
 
-#: ../src/nautilus-application.c:1155
+#: ../src/nautilus-application.c:1164
 msgid "Select specified URI in parent folder."
 msgstr "ئاتا مۇندەرىجە ئىچىدە كۆرسىتىلگەن URI نى تاللاڭ."
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1165
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:1169
+#: ../src/nautilus-application.c:1178
 msgid ""
 "\n"
 "\n"
@@ -2376,13 +2388,13 @@ msgstr "\n"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1179
+#: ../src/nautilus-application.c:1188
 msgid "Could not parse arguments"
 msgstr "پارامېتىرنى پارچىلىيالمىدى"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1211
+#: ../src/nautilus-application.c:1221
 msgid "Could not register the application"
 msgstr "پروگراممىنى خەتلەتكىلى بولمىدى"
 
