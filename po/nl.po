@@ -1,8 +1,7 @@
 # Dutch Translation for Nautilus
+#
 # This file is distributed under the same license as the Nautilus package.
-# Op 15 september 2006 is het cd/dvd-gedoe definitief beslist: het is vanaf
-# heden "cd/dvd branden". (Wouter Bolsterlee)
-# sorted - geordend/gesorteerd/gerangschikt
+#
 # Dennis Smit <synap@area101.penguin.nl>, 2001.
 # Dirk-Jan C. Binnema <dirkjan@gnome.org>, 2001.
 # Mendel Mobach <mendel@mobach.nl>, 2000.
@@ -12,18 +11,24 @@
 # Ronald Hummelink <ronald@hummelink.xs4all.nl>, 2002.
 # Jordi Bosveld <jotti@jotti.dhs.org>, 2002.
 # Elros Cyriatan <cyriatan@fastmail.fm>, 2004.
-# Reinout van Schouwen <reinouts@gnome.org>, 2002–2008, 2012, 2013.
+# Reinout van Schouwen <reinouts@gnome.org>, 2002‒2008, 2012, 2013.
 # Tino Meinen <a.t.meinen@chello.nl>, 2006, 2008.
 # Ronald van Engelen <ronalde@lacocina.nl>, 2007.
-# Wouter Bolsterlee <wbolster@gnome.org>, 2006–2011.
-# Hannie Dumoleyn <hannie@ubuntu-nl.org>, 2010-2012.
+# Wouter Bolsterlee <wbolster@gnome.org>, 2006‒2013.
+# Hannie Dumoleyn <hannie@ubuntu-nl.org>, 2010‒2012.
+#
+# Op 15 september 2006 is het cd/dvd-gedoe definitief beslist: het is vanaf
+# heden "cd/dvd branden". (Wouter Bolsterlee)
+#
+# sorted - geordend/gesorteerd/gerangschikt
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-30 21:04+0100\n"
-"PO-Revision-Date: 2013-01-31 00:22+0200\n"
-"Last-Translator: Reinout van Schouwen <reinouts@gnome.org>\n"
+"POT-Creation-Date: 2013-02-09 17:53+0100\n"
+"PO-Revision-Date: 2013-02-09 17:53+0100\n"
+"Last-Translator: Wouter Bolsterlee <wbolster@gnome.org>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -57,8 +62,8 @@ msgstr "Bestanden gebruiken en organiseren"
 #: ../data/nautilus.desktop.in.in.h:3
 msgid "folder;manager;explore;disk;filesystem;"
 msgstr ""
-"folder;manager;explore;disk;filesystem;map;beheer;verkenner;schijf;bestandss"
-"ysteem;"
+"folder;manager;explore;disk;filesystem;map;beheer;verkenner;schijf;"
+"bestandssysteem;"
 
 #: ../data/nautilus.xml.in.h:1
 msgid "Saved search"
@@ -964,7 +969,8 @@ msgstr "Weet u zeker dat u ‘%B’ permanent wilt verwijderen?"
 msgid "Are you sure you want to permanently delete the %'d selected item?"
 msgid_plural ""
 "Are you sure you want to permanently delete the %'d selected items?"
-msgstr[0] "Weet u zeker dat u het geselecteerde item permanent wilt verwijderen?"
+msgstr[0] ""
+"Weet u zeker dat u het geselecteerde item permanent wilt verwijderen?"
 msgstr[1] ""
 "Weet u zeker dat u de %'d geselecteerde items permanent wilt verwijderen?"
 
@@ -2118,8 +2124,8 @@ msgid ""
 "Despite what the name may suggest, this applies to any previewable file type."
 msgstr ""
 "Instelling voor het tonen van een bestand als miniatuur. Indien ingesteld op "
-"‘always’ wordt er altijd een miniatuur gemaakt, zelfs als de map zich op "
-"een server op afstand bevindt. Indien ingesteld op ‘local_only’ worden "
+"‘always’ wordt er altijd een miniatuur gemaakt, zelfs als de map zich op een "
+"server op afstand bevindt. Indien ingesteld op ‘local_only’ worden "
 "miniaturen alleen voor lokale bestandssystemen getoond. Indien ingesteld op "
 "‘never’ wordt er nooit een miniatuur van een afbeelding gemaakt, maar "
 "slechts een algemeen pictogram gebruikt. Ondanks wat de naam suggereert, is "
@@ -2500,11 +2506,11 @@ msgid "Send files by mail, instant message…"
 msgstr "Bestanden versturen via e-mail, chatbericht, …"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:231 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1597
 msgid "Oops! Something went wrong."
 msgstr "Oeps! Er ging iets mis."
 
-#: ../src/nautilus-application.c:233
+#: ../src/nautilus-application.c:234
 #, c-format
 msgid ""
 "Unable to create a required folder. Please create the following folder, or "
@@ -2515,7 +2521,7 @@ msgstr ""
 "maken, of de rechten zodanig in te stellen dat deze kan worden aangemaakt:\n"
 "%s"
 
-#: ../src/nautilus-application.c:238
+#: ../src/nautilus-application.c:239
 #, c-format
 msgid ""
 "Unable to create required folders. Please create the following folders, or "
@@ -2527,7 +2533,7 @@ msgstr ""
 "aangemaakt:\n"
 "%s"
 
-#: ../src/nautilus-application.c:372
+#: ../src/nautilus-application.c:373
 msgid ""
 "Nautilus 3.0 deprecated this directory and tried migrating this "
 "configuration to ~/.config/nautilus"
@@ -2535,7 +2541,7 @@ msgstr ""
 "Nautilus 3.0 beschouwt deze map als achterhaald en heeft geprobeerd deze "
 "configuratie te verhuizen naar ~/.config/nautilus"
 
-#: ../src/nautilus-application.c:851
+#: ../src/nautilus-application.c:852
 #: ../src/nautilus-file-management-properties.c:196
 #: ../src/nautilus-window-menus.c:253
 #, c-format
@@ -2546,62 +2552,67 @@ msgstr ""
 "Er is een fout opgetreden bij het weergeven van de hulptekst:\n"
 "%s"
 
-#: ../src/nautilus-application.c:1022
+#: ../src/nautilus-application.c:1023
 msgid "--check cannot be used with other options."
 msgstr "--check kan niet gebruik worden met andere opties."
 
-#: ../src/nautilus-application.c:1028
+#: ../src/nautilus-application.c:1029
 msgid "--quit cannot be used with URIs."
 msgstr "--quit kan niet gebruikt worden met URI's."
 
-#: ../src/nautilus-application.c:1035
+#: ../src/nautilus-application.c:1036
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry kan niet worden gebruik met meer dan één URI."
 
-#: ../src/nautilus-application.c:1041
+#: ../src/nautilus-application.c:1042
 msgid "--select must be used with at least an URI."
 msgstr "--select moet worden gebruikt met tenminste één URI."
 
-#: ../src/nautilus-application.c:1139
+#: ../src/nautilus-application.c:1048
+msgid "--no-desktop and --force-desktop cannot be used together."
+msgstr "--no-desktop en --force-desktop kunnen niet tegelijk gebruikt worden."
+
+#: ../src/nautilus-application.c:1146
 msgid "Perform a quick set of self-check tests."
 msgstr "Enkele snelle zelf-tests uitvoeren."
 
-#: ../src/nautilus-application.c:1145
+#: ../src/nautilus-application.c:1152
 msgid "Show the version of the program."
 msgstr "Toepassingsversie tonen."
 
-#: ../src/nautilus-application.c:1147
+#: ../src/nautilus-application.c:1154
 msgid "Create the initial window with the given geometry."
 msgstr "Initieel venster met de gegeven afmetingen creëren."
 
-#: ../src/nautilus-application.c:1147
+#: ../src/nautilus-application.c:1154
 msgid "GEOMETRY"
 msgstr "AFMETINGEN"
 
-#: ../src/nautilus-application.c:1149
+#: ../src/nautilus-application.c:1156
 msgid "Only create windows for explicitly specified URIs."
 msgstr "Vensters slechts creëren voor expliciet gegeven URI's."
 
-#: ../src/nautilus-application.c:1151
-msgid ""
-"Do not manage the desktop (ignore the preference set in the preferences "
-"dialog)."
-msgstr ""
-"Het bureaublad niet beheren (de voorkeuren in het voorkeurenvenster negeren)."
+#: ../src/nautilus-application.c:1158
+msgid "Never manage the desktop (ignore the GSettings preference)."
+msgstr "Het bureaublad niet beheren (voorkeuren uit GSettings negeren)."
 
-#: ../src/nautilus-application.c:1153
+#: ../src/nautilus-application.c:1160
+msgid "Always manage the desktop (ignore the GSettings preference)."
+msgstr "Het bureaublad beheren (voorkeuren uit GSettings negeren)."
+
+#: ../src/nautilus-application.c:1162
 msgid "Quit Nautilus."
 msgstr "Nautilus afsluiten"
 
-#: ../src/nautilus-application.c:1155
+#: ../src/nautilus-application.c:1164
 msgid "Select specified URI in parent folder."
 msgstr "De opgegeven URI in de bovenliggende map selecteren."
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1165
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:1169
+#: ../src/nautilus-application.c:1178
 msgid ""
 "\n"
 "\n"
@@ -2613,13 +2624,13 @@ msgstr ""
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1179
+#: ../src/nautilus-application.c:1188
 msgid "Could not parse arguments"
 msgstr "Kon argumenten niet ontleden"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1211
+#: ../src/nautilus-application.c:1221
 msgid "Could not register the application"
 msgstr "Kon de toepassing niet registreren"
 
@@ -3670,8 +3681,7 @@ msgid ""
 "know the source of this file, launching it may be unsafe."
 msgstr ""
 "De toepassingsstarter ‘%s’ is niet als vertrouwd gemarkeerd. Als u de "
-"herkomst van dit bestand niet kent, is het uitvoeren ervan mogelijk "
-"onveilig."
+"herkomst van dit bestand niet kent, is het uitvoeren ervan mogelijk onveilig."
 
 #: ../src/nautilus-mime-actions.c:1566
 msgid "_Launch Anyway"
@@ -5266,6 +5276,8 @@ msgstr "Bestanden benaderen en organiseren"
 #: ../src/nautilus-window.c:2070
 msgid "translator-credits"
 msgstr ""
+"Gnome-NL\n"
+"\n"
 "Wouter Bolsterlee\n"
 "Reinout van Schouwen\n"
 "Tino Meinen\n"
@@ -5277,9 +5289,7 @@ msgstr ""
 "Ludootje\n"
 "Ronald Hummelink\n"
 "Jordi Bosveld\n"
-"Hannie Dumoleyn\n"
-"\n"
-"Kijk voor meer informatie op http://nl.gnome.org/"
+"Hannie Dumoleyn"
 
 #. name, stock id
 #. label, accelerator
