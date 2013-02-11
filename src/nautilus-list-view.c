@@ -644,8 +644,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	static gint64 last_click_time = 0;
 	static int click_count = 0;
 	int double_click_time;
-	int expander_size, horizontal_separator;
-	gboolean call_parent, on_expander;
+	gboolean call_parent, on_expander, show_expanders;
 	gboolean is_simple_click, path_selected;
 	NautilusFile *file;
 
@@ -713,18 +712,24 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	}
 
 	call_parent = TRUE;
+	on_expander = FALSE;
 	path_selected = gtk_tree_selection_path_is_selected (selection, path);
+	show_expanders = g_settings_get_boolean (nautilus_list_view_preferences,
+						 NAUTILUS_PREFERENCES_LIST_VIEW_USE_TREE);
 
-	gtk_widget_style_get (widget,
-			      "expander-size", &expander_size,
-			      "horizontal-separator", &horizontal_separator,
-			      NULL);
-	/* TODO we should not hardcode this extra padding. It is
-	 * EXPANDER_EXTRA_PADDING from GtkTreeView.
-	 */
-	expander_size += 4;
-	on_expander = (event->x <= horizontal_separator / 2 +
-		       gtk_tree_path_get_depth (path) * expander_size);
+	if (show_expanders) {
+		int expander_size, horizontal_separator;
+		gtk_widget_style_get (widget,
+				      "expander-size", &expander_size,
+				      "horizontal-separator", &horizontal_separator,
+				      NULL);
+		/* TODO we should not hardcode this extra padding. It is
+		 * EXPANDER_EXTRA_PADDING from GtkTreeView.
+		 */
+		expander_size += 4;
+		on_expander = (event->x <= horizontal_separator / 2 +
+			       gtk_tree_path_get_depth (path) * expander_size);
+	}
 
 	/* Keep track of path of last click so double clicks only happen
 	 * on the same item */
@@ -1113,6 +1118,16 @@ key_press_callback (GtkWidget *widget, GdkEventKey *event, gpointer callback_dat
 	}
 
 	return handled;
+}
+
+static gboolean
+test_expand_row_callback (GtkTreeView *tree_view,
+			  GtkTreeIter *iter,
+			  GtkTreePath *path,
+			  gboolean user_data)
+{
+	return !g_settings_get_boolean (nautilus_list_view_preferences,
+					NAUTILUS_PREFERENCES_LIST_VIEW_USE_TREE);
 }
 
 static void
@@ -1623,6 +1638,8 @@ create_and_set_up_tree_view (NautilusListView *view)
 				 G_CALLBACK (button_release_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "key-press-event",
 				 G_CALLBACK (key_press_callback), view, 0);
+	g_signal_connect_object (view->details->tree_view, "test-expand-row",
+				 G_CALLBACK (test_expand_row_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "popup-menu",
                                  G_CALLBACK (popup_menu_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "row-expanded",
@@ -1646,6 +1663,10 @@ create_and_set_up_tree_view (NautilusListView *view)
 
 	gtk_tree_selection_set_mode (gtk_tree_view_get_selection (view->details->tree_view), GTK_SELECTION_MULTIPLE);
 	gtk_tree_view_set_rules_hint (view->details->tree_view, TRUE);
+
+	g_settings_bind (nautilus_list_view_preferences, NAUTILUS_PREFERENCES_LIST_VIEW_USE_TREE,
+			 view->details->tree_view, "show-expanders",
+			 G_SETTINGS_BIND_DEFAULT);
 
 	nautilus_columns = nautilus_get_all_columns ();
 
@@ -1673,10 +1694,6 @@ create_and_set_up_tree_view (NautilusListView *view)
 		 * has the icon in it.*/
 		if (!strcmp (name, "name")) {
 			/* Create the file name column */
-			cell = gtk_cell_renderer_pixbuf_new ();
-			view->details->pixbuf_cell = (GtkCellRendererPixbuf *)cell;
-			set_up_pixbuf_size (view);
-			
 			view->details->file_name_column = gtk_tree_view_column_new ();
 			g_object_ref_sink (view->details->file_name_column);
 			view->details->file_name_column_num = column_num;
@@ -1691,6 +1708,19 @@ create_and_set_up_tree_view (NautilusListView *view)
 			gtk_tree_view_column_set_title (view->details->file_name_column, _("Name"));
 			gtk_tree_view_column_set_resizable (view->details->file_name_column, TRUE);
 			gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
+
+			/* Initial padding */
+			cell = gtk_cell_renderer_text_new ();
+			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
+			g_object_set (cell, "xpad", 6, NULL);
+			g_settings_bind (nautilus_list_view_preferences, NAUTILUS_PREFERENCES_LIST_VIEW_USE_TREE,
+					 cell, "visible",
+					 G_SETTINGS_BIND_INVERT_BOOLEAN | G_SETTINGS_BIND_GET);
+
+			/* File icon */
+			cell = gtk_cell_renderer_pixbuf_new ();
+			view->details->pixbuf_cell = (GtkCellRendererPixbuf *)cell;
+			set_up_pixbuf_size (view);
 
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
 			gtk_tree_view_column_set_attributes (view->details->file_name_column,
