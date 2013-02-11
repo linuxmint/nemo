@@ -227,6 +227,11 @@
       <_summary>Default column order in the list view</_summary>
       <_description>Default column order in the list view.</_description>
     </key>
+    <key name="use-tree-view" type="b">
+      <default>false</default>
+      <_summary>Use tree view</_summary>
+      <_description>Whether a tree should be used for list view navigation instead of a flat list</_description>
+    </key>
   </schema>
 
   <schema id="org.gnome.nautilus.desktop" path="/org/gnome/nautilus/desktop/" gettext-domain="nautilus">
