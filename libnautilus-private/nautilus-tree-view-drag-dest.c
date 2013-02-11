@@ -34,6 +34,7 @@
 
 #include "nautilus-file-dnd.h"
 #include "nautilus-file-changes-queue.h"
+#include "nautilus-global-preferences.h"
 #include "nautilus-link.h"
 
 #include <gtk/gtk.h>
@@ -45,6 +46,7 @@
 #include "nautilus-debug.h"
 
 #define AUTO_SCROLL_MARGIN 20
+#define HOVER_EXPAND_TIMEOUT 1
 
 struct _NautilusTreeViewDragDestDetails {
 	GtkTreeView *tree_view;
@@ -59,6 +61,7 @@ struct _NautilusTreeViewDragDestDetails {
 	guint hover_id;
 	guint highlight_id;
 	guint scroll_id;
+	guint expand_id;
 
 	char *direct_save_uri;
 	char *target_uri;
@@ -145,6 +148,33 @@ remove_scroll_timeout (NautilusTreeViewDragDest *dest)
 		g_source_remove (dest->details->scroll_id);
 		dest->details->scroll_id = 0;
 	}
+}
+
+static int
+expand_timeout (gpointer data)
+{
+       GtkTreeView *tree_view;
+       GtkTreePath *drop_path;
+
+       tree_view = GTK_TREE_VIEW (data);
+
+       gtk_tree_view_get_drag_dest_row (tree_view, &drop_path, NULL);
+
+       if (drop_path) {
+               gtk_tree_view_expand_row (tree_view, drop_path, FALSE);
+               gtk_tree_path_free (drop_path);
+       }
+
+       return FALSE;
+}
+
+static void
+remove_expand_timer (NautilusTreeViewDragDest *dest)
+{
+       if (dest->details->expand_id) {
+               g_source_remove (dest->details->expand_id);
+               dest->details->expand_id = 0;
+       }
 }
 
 static gboolean
@@ -281,6 +311,7 @@ free_drag_data (NautilusTreeViewDragDest *dest)
 	dest->details->target_uri = NULL;
 
 	remove_hover_timer (dest);
+	remove_expand_timer (dest);
 }
 
 static gboolean
@@ -322,6 +353,33 @@ check_hover_timer (NautilusTreeViewDragDest *dest,
 	}
 }
 
+static void
+check_expand_timer (NautilusTreeViewDragDest *dest,
+		    GtkTreePath *drop_path,
+		    GtkTreePath *old_drop_path)
+{
+	GtkTreeModel *model;
+	GtkTreeIter drop_iter;
+
+	model = gtk_tree_view_get_model (dest->details->tree_view);
+
+	if (drop_path == NULL ||
+	    (old_drop_path != NULL && gtk_tree_path_compare (old_drop_path, drop_path) != 0)) {
+		remove_expand_timer (dest);
+	}
+
+	if (dest->details->expand_id == 0 &&
+	    drop_path != NULL) {
+		gtk_tree_model_get_iter (model, &drop_iter, drop_path);
+		if (gtk_tree_model_iter_has_child (model, &drop_iter)) {
+			dest->details->expand_id =
+				g_timeout_add_seconds (HOVER_EXPAND_TIMEOUT,
+						       expand_timeout,
+						       dest->details->tree_view);
+		}
+	}
+}
+
 static char *
 get_root_uri (NautilusTreeViewDragDest *dest)
 {
@@ -352,6 +410,48 @@ file_for_path (NautilusTreeViewDragDest *dest, GtkTreePath *path)
 	}
 	
 	return file;
+}
+
+static char *
+get_drop_target_uri_for_path (NautilusTreeViewDragDest *dest,
+			      GtkTreePath *path)
+{
+	NautilusFile *file;
+	char *target = NULL;
+	gboolean can;
+
+	file = file_for_path (dest, path);
+	if (file == NULL) {
+		return NULL;
+	}
+	can = nautilus_drag_can_accept_info (file,
+					     dest->details->drag_type,
+					     dest->details->drag_list);
+	if (can) {
+		target = nautilus_file_get_drop_target_uri (file);
+	}
+	nautilus_file_unref (file);
+
+	return target;
+}
+
+static void
+check_hover_expand_timer (NautilusTreeViewDragDest *dest,
+			  GtkTreePath *path,
+			  GtkTreePath *drop_path,
+			  GtkTreePath *old_drop_path)
+{
+	gboolean use_tree = g_settings_get_boolean (nautilus_list_view_preferences,
+						    NAUTILUS_PREFERENCES_LIST_VIEW_USE_TREE);
+
+	if (use_tree) {
+		check_expand_timer (dest, drop_path, old_drop_path);
+	} else {
+		char *uri;
+		uri = get_drop_target_uri_for_path (dest, path);
+		check_hover_timer (dest, uri);
+		g_free (uri);
+	}
 }
 
 static GtkTreePath *
@@ -387,29 +487,6 @@ get_drop_path (NautilusTreeViewDragDest *dest,
 	nautilus_file_unref (file);
 	
 	return ret;
-}
-
-static char *
-get_drop_target_uri_for_path (NautilusTreeViewDragDest *dest,
-			      GtkTreePath *path)
-{
-	NautilusFile *file;
-	char *target = NULL;
-	gboolean can;
-
-	file = file_for_path (dest, path);
-	if (file == NULL) {
-		return NULL;
-	}
-	can = nautilus_drag_can_accept_info (file,
-					     dest->details->drag_type,
-					     dest->details->drag_list);
-	if (can) {
-		target = nautilus_file_get_drop_target_uri (file);
-	}
-	nautilus_file_unref (file);
-	
-	return target;
 }
 
 static guint
@@ -509,14 +586,12 @@ drag_motion_callback (GtkWidget *widget,
 					 NULL);
 	
 	if (action) {
-		char *uri;
 		set_drag_dest_row (dest, drop_path);
-		uri = get_drop_target_uri_for_path (dest, path);
-		check_hover_timer (dest, uri);
-		g_free (uri);
+		check_hover_expand_timer (dest, path, drop_path, old_drop_path);
 	} else {
 		clear_drag_dest_row (dest);
 		remove_hover_timer (dest);
+		remove_expand_timer (dest);
 	}
 
 	if (path) {
