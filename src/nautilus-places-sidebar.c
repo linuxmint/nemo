@@ -513,8 +513,8 @@ update_places (NautilusPlacesSidebar *sidebar)
 	icon = g_themed_icon_new (NAUTILUS_ICON_HOME);
 	add_place (sidebar, PLACES_BUILT_IN,
 		   SECTION_COMPUTER,
-		   _("Home"), icon,
-		   mount_uri, NULL, NULL, NULL, 0,
+		   _("Home"), icon, mount_uri,
+		   NULL, NULL, NULL, 0,
 		   _("Open your personal folder"));
 	g_object_unref (icon);
 	g_free (mount_uri);
@@ -525,8 +525,8 @@ update_places (NautilusPlacesSidebar *sidebar)
 		icon = g_themed_icon_new (NAUTILUS_ICON_FOLDER);
 		add_place (sidebar, PLACES_BUILT_IN,
 			   SECTION_COMPUTER,
-			   _("Desktop"), icon,
-			   mount_uri, NULL, NULL, NULL, 0,
+			   _("Desktop"), icon, mount_uri,
+			   NULL, NULL, NULL, 0,
 			   _("Open the contents of your desktop in a folder"));
 		g_object_unref (icon);
 		g_free (mount_uri);
@@ -691,8 +691,8 @@ update_places (NautilusPlacesSidebar *sidebar)
 	icon = g_themed_icon_new (NAUTILUS_ICON_FILESYSTEM);
 	add_place (sidebar, PLACES_BUILT_IN,
 		   SECTION_DEVICES,
-		   sidebar->hostname, icon,
-		   mount_uri, NULL, NULL, NULL, 0,
+		   sidebar->hostname, icon, mount_uri,
+		   NULL, NULL, NULL, 0,
 		   _("Open the contents of the File System"));
 	g_object_unref (icon);
 
@@ -777,8 +777,8 @@ update_places (NautilusPlacesSidebar *sidebar)
 	icon = g_themed_icon_new (NAUTILUS_ICON_NETWORK);
 	add_place (sidebar, PLACES_BUILT_IN,
 		   SECTION_NETWORK,
-		   _("Browse Network"), icon,
-		   mount_uri, NULL, NULL, NULL, 0,
+		   _("Browse Network"), icon, mount_uri,
+		   NULL, NULL, NULL, 0,
 		   _("Browse the contents of the network"));
 	g_object_unref (icon);
 
@@ -2784,16 +2784,10 @@ bookmarks_build_popup_menu (NautilusPlacesSidebar *sidebar)
 }
 
 static void
-bookmarks_update_popup_menu (NautilusPlacesSidebar *sidebar)
-{
-	bookmarks_build_popup_menu (sidebar);  
-}
-
-static void
 bookmarks_popup_menu (NautilusPlacesSidebar *sidebar,
 		      GdkEventButton        *event)
 {
-	bookmarks_update_popup_menu (sidebar);
+	bookmarks_build_popup_menu (sidebar);
 	eel_pop_up_context_menu (GTK_MENU(sidebar->popup_menu),
 				 event);
 }
