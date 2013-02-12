@@ -78,4 +78,7 @@ NautilusBookmarkList *
 void nautilus_application_edit_bookmarks (NautilusApplication *application,
 					  NautilusWindow      *window);
 
+GtkWidget * nautilus_application_connect_server (NautilusApplication *application,
+						 NautilusWindow      *window);
+
 #endif /* __NAUTILUS_APPLICATION_H__ */

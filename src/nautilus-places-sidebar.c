@@ -144,6 +144,7 @@ typedef enum {
 	PLACES_MOUNTED_VOLUME,
 	PLACES_BOOKMARK,
 	PLACES_HEADING,
+	PLACES_CONNECT_SERVER
 } PlaceType;
 
 typedef enum {
@@ -780,6 +781,14 @@ update_places (NautilusPlacesSidebar *sidebar)
 		   _("Browse Network"), icon, mount_uri,
 		   NULL, NULL, NULL, 0,
 		   _("Browse the contents of the network"));
+	g_object_unref (icon);
+
+	icon = g_themed_icon_new (NAUTILUS_ICON_NETWORK_SERVER);
+	add_place (sidebar, PLACES_CONNECT_SERVER,
+		   SECTION_NETWORK,
+		   _("Connect to Server"), icon, NULL,
+		   NULL, NULL, NULL, 0,
+		   _("Connect to a network server address"));
 	g_object_unref (icon);
 
 	network_volumes = g_list_reverse (network_volumes);
@@ -1784,79 +1793,114 @@ drive_start_from_bookmark_cb (GObject      *source_object,
 }
 
 static void
+open_selected_volume (NautilusPlacesSidebar *sidebar,
+		      GtkTreeModel *model,
+		      GtkTreeIter *iter,
+		      NautilusWindowOpenFlags flags)
+{
+	GDrive *drive;
+	GVolume *volume;
+	NautilusWindowSlot *slot;
+
+	gtk_tree_model_get (model, iter,
+			    PLACES_SIDEBAR_COLUMN_DRIVE, &drive,
+			    PLACES_SIDEBAR_COLUMN_VOLUME, &volume,
+			    -1);
+
+	if (volume != NULL && !sidebar->mounting) {
+		sidebar->mounting = TRUE;
+
+		g_assert (sidebar->go_to_after_mount_slot == NULL);
+
+		slot = nautilus_window_get_active_slot (sidebar->window);
+		sidebar->go_to_after_mount_slot = slot;
+		g_object_add_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
+					   (gpointer *) &sidebar->go_to_after_mount_slot);
+
+		sidebar->go_to_after_mount_flags = flags;
+
+		nautilus_file_operations_mount_volume_full (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))),
+							    volume,
+							    volume_mounted_cb,
+							    G_OBJECT (sidebar));
+	} else if (volume == NULL && drive != NULL &&
+		   (g_drive_can_start (drive) || g_drive_can_start_degraded (drive))) {
+		GMountOperation *mount_op;
+
+		mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
+		g_drive_start (drive, G_DRIVE_START_NONE, mount_op, NULL, drive_start_from_bookmark_cb, NULL);
+		g_object_unref (mount_op);
+	}
+
+	if (drive != NULL)
+		g_object_unref (drive);
+	if (volume != NULL)
+		g_object_unref (volume);
+}
+
+static void
+open_selected_uri (NautilusPlacesSidebar *sidebar,
+		   const gchar *uri,
+		   NautilusWindowOpenFlags flags)
+{
+	NautilusWindowSlot *slot;
+	GFile *location;
+
+	DEBUG ("Activating bookmark %s", uri);
+
+	location = g_file_new_for_uri (uri);
+
+	/* Navigate to the clicked location */
+	if ((flags & NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW) == 0) {
+		slot = nautilus_window_get_active_slot (sidebar->window);
+		nautilus_window_slot_open_location (slot, location, flags);
+	} else {
+		NautilusWindow *cur, *new;
+
+		cur = NAUTILUS_WINDOW (sidebar->window);
+		new = nautilus_application_create_window (NAUTILUS_APPLICATION (g_application_get_default ()),
+							  gtk_window_get_screen (GTK_WINDOW (cur)));
+		nautilus_window_go_to (new, location);
+	}
+
+	g_object_unref (location);
+}
+
+static void
+open_connect_to_server (NautilusPlacesSidebar *sidebar)
+{
+	NautilusApplication *application = NAUTILUS_APPLICATION (g_application_get_default ());
+	GtkWidget *dialog;
+
+	dialog = nautilus_application_connect_server (application, sidebar->window);
+	gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+}
+
+static void
 open_selected_bookmark (NautilusPlacesSidebar *sidebar,
 			GtkTreeModel	      *model,
 			GtkTreeIter	      *iter,
 			NautilusWindowOpenFlags	      flags)
 {
-	NautilusWindowSlot *slot;
-	GFile *location;
 	char *uri;
+	PlaceType row_type;
 
 	if (!iter) {
 		return;
 	}
 
-	gtk_tree_model_get (model, iter, PLACES_SIDEBAR_COLUMN_URI, &uri, -1);
+	gtk_tree_model_get (model, iter,
+			    PLACES_SIDEBAR_COLUMN_URI, &uri,
+			    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &row_type,
+			    -1);
 
 	if (uri != NULL) {
-		DEBUG ("Activating bookmark %s", uri);
-
-		location = g_file_new_for_uri (uri);
-		/* Navigate to the clicked location */
-		if ((flags & NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW) == 0) {
-			slot = nautilus_window_get_active_slot (sidebar->window);
-			nautilus_window_slot_open_location (slot, location, flags);
-		} else {
-			NautilusWindow *cur, *new;
-			
-			cur = NAUTILUS_WINDOW (sidebar->window);
-			new = nautilus_application_create_window (NAUTILUS_APPLICATION (g_application_get_default ()),
-								  gtk_window_get_screen (GTK_WINDOW (cur)));
-			nautilus_window_go_to (new, location);
-		}
-		g_object_unref (location);
+		open_selected_uri (sidebar, uri, flags);
 		g_free (uri);
-
+	} else if (row_type == PLACES_CONNECT_SERVER) {
+		open_connect_to_server (sidebar);
 	} else {
-		GDrive *drive;
-		GVolume *volume;
-		NautilusWindowSlot *slot;
-
-		gtk_tree_model_get (model, iter,
-				    PLACES_SIDEBAR_COLUMN_DRIVE, &drive,
-				    PLACES_SIDEBAR_COLUMN_VOLUME, &volume,
-				    -1);
-
-		if (volume != NULL && !sidebar->mounting) {
-			sidebar->mounting = TRUE;
-
-			g_assert (sidebar->go_to_after_mount_slot == NULL);
-
-			slot = nautilus_window_get_active_slot (sidebar->window);
-			sidebar->go_to_after_mount_slot = slot;
-			g_object_add_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
-						   (gpointer *) &sidebar->go_to_after_mount_slot);
-
-			sidebar->go_to_after_mount_flags = flags;
-
-			nautilus_file_operations_mount_volume_full (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))),
-								    volume,
-								    volume_mounted_cb,
-								    G_OBJECT (sidebar));
-		} else if (volume == NULL && drive != NULL &&
-			   (g_drive_can_start (drive) || g_drive_can_start_degraded (drive))) {
-			GMountOperation *mount_op;
-
-			mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
-			g_drive_start (drive, G_DRIVE_START_NONE, mount_op, NULL, drive_start_from_bookmark_cb, NULL);
-			g_object_unref (mount_op);
-		}
-
-		if (drive != NULL)
-			g_object_unref (drive);
-		if (volume != NULL)
-			g_object_unref (volume);
+		open_selected_volume (sidebar, model, iter, flags);
 	}
 }
 
@@ -2882,7 +2926,8 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 				    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &row_type,
 				    -1);
 
-		if (row_type != PLACES_HEADING) {
+		if (row_type != PLACES_HEADING &&
+		    row_type != PLACES_CONNECT_SERVER) {
 			bookmarks_popup_menu (sidebar, event);
 		}
 	}
@@ -3101,6 +3146,8 @@ places_sidebar_sort_func (GtkTreeModel *model,
 
 		g_free (name_a);
 		g_free (name_b);
+	} else if (place_type_a == PLACES_CONNECT_SERVER) {
+		retval = 1;
 	}
 
 	return retval;
