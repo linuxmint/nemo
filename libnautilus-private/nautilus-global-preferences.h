@@ -157,6 +157,9 @@ typedef enum
 /* Desktop background */
 #define NAUTILUS_PREFERENCES_SHOW_DESKTOP		   "show-desktop-icons"
 
+/* Recent files */
+#define NAUTILUS_PREFERENCES_RECENT_FILES_ENABLED          "remember-recent-files"
+
 
 void nautilus_global_preferences_init                      (void);
 char *nautilus_global_preferences_get_default_folder_viewer_preference_as_iid (void);
@@ -170,6 +173,7 @@ GSettings *gtk_filechooser_preferences;
 GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
 GSettings *gnome_interface_preferences;
+GSettings *gnome_privacy_preferences;
 
 G_END_DECLS
 

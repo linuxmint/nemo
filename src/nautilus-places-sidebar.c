@@ -360,7 +360,15 @@ static gboolean
 recent_is_supported (void)
 {
 	const char * const *supported;
+	gboolean enabled;
 	int i;
+
+	enabled = g_settings_get_boolean (gnome_privacy_preferences,
+					  NAUTILUS_PREFERENCES_RECENT_FILES_ENABLED);
+
+	if (!enabled) {
+		return FALSE;
+	}
 
 	supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
 	if (!supported) {
@@ -993,16 +1001,6 @@ clicked_eject_button (NautilusPlacesSidebar *sidebar,
 	}
 
 	return FALSE;
-}
-
-static void
-desktop_setting_changed_callback (gpointer user_data)
-{
-	NautilusPlacesSidebar *sidebar;
-
-	sidebar = NAUTILUS_PLACES_SIDEBAR (user_data);
-
-	update_places (sidebar);
 }
 
 static void
@@ -3388,7 +3386,10 @@ nautilus_places_sidebar_init (NautilusPlacesSidebar *sidebar)
 	gtk_tree_view_set_activate_on_single_click (sidebar->tree_view, TRUE);
 
 	g_signal_connect_swapped (gnome_background_preferences, "changed::" NAUTILUS_PREFERENCES_SHOW_DESKTOP,
-				  G_CALLBACK(desktop_setting_changed_callback),
+				  G_CALLBACK (update_places),
+				  sidebar);
+	g_signal_connect_swapped (gnome_privacy_preferences, "changed::" NAUTILUS_PREFERENCES_RECENT_FILES_ENABLED,
+				  G_CALLBACK (update_places),
 				  sidebar);
 
 	sidebar->hostname = g_strdup (_("Computer"));
@@ -3443,7 +3444,11 @@ nautilus_places_sidebar_dispose (GObject *object)
 					      sidebar);
 
 	g_signal_handlers_disconnect_by_func (gnome_background_preferences,
-					      desktop_setting_changed_callback,
+					      update_places,
+					      sidebar);
+
+	g_signal_handlers_disconnect_by_func (gnome_privacy_preferences,
+					      update_places,
 					      sidebar);
 
 	if (sidebar->volume_monitor != NULL) {
