@@ -1,5 +1,5 @@
 <ui>
-  <popup name="ViewMenu">
+  <popup name="ViewMenu" accelerators="true">
     <placeholder name="Layout Options">
       <menuitem name="Manual Layout" action="Manual Layout"/>
       <placeholder name="Auto Layout">
