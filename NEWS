@@ -1,3 +1,12 @@
+Major changes in 3.7.90 are:
+* Add back a Treeview option for list view. This is off by default, and
+  is backed by a checkbox in the Preferences dialog
+* Add a "Connect to Server" item in the Network section of the sidebar
+* Add a "Format..." item in volume context menus in the sidebar
+* Fix accelerators not showing up in gear and view menus
+* Use G_APP_INFO_CREATE_NEEDS_TERMINAL instead of handrolled
+  code (William Jon McCann)
+
 Major changes in 3.7.5 are:
 * Switch to hovered locations on DnD (William Jon McCann)
 * Support a --force-desktop commandline option for classic mode
