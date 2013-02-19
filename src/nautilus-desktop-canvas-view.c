@@ -41,7 +41,6 @@
 #include <fcntl.h>
 #include <gdk/gdkx.h>
 #include <glib/gi18n.h>
-#include <libnautilus-private/nautilus-desktop-background.h>
 #include <libnautilus-private/nautilus-desktop-icon-file.h>
 #include <libnautilus-private/nautilus-directory-notify.h>
 #include <libnautilus-private/nautilus-file-changes-queue.h>
@@ -76,8 +75,6 @@ struct NautilusDesktopCanvasViewDetails
 	gulong delayed_init_signal;
 	guint reload_desktop_timeout;
 	gboolean pending_rescan;
-
-	NautilusDesktopBackground *background;
 };
 
 static void     default_zoom_level_changed                        (gpointer                user_data);
@@ -234,22 +231,6 @@ desktop_canvas_view_property_filter (GdkXEvent *gdk_xevent,
 	return GDK_FILTER_CONTINUE;
 }
 
-static void
-real_begin_loading (NautilusView *object)
-{
-	NautilusCanvasContainer *canvas_container;
-	NautilusDesktopCanvasView *view;
-
-	view = NAUTILUS_DESKTOP_CANVAS_VIEW (object);
-
-	canvas_container = get_canvas_container (view);
-	if (view->details->background == NULL) {
-		view->details->background = nautilus_desktop_background_new (canvas_container);
-	}
-
-	NAUTILUS_VIEW_CLASS (nautilus_desktop_canvas_view_parent_class)->begin_loading (object);
-}
-
 static const char *
 real_get_id (NautilusView *view)
 {
@@ -287,11 +268,6 @@ nautilus_desktop_canvas_view_dispose (GObject *object)
 					      nautilus_view_update_menus,
 					      canvas_view);
 
-	if (canvas_view->details->background != NULL) {
-		g_object_unref (canvas_view->details->background);
-		canvas_view->details->background = NULL;
-	}
-
 	G_OBJECT_CLASS (nautilus_desktop_canvas_view_parent_class)->dispose (object);
 }
 
@@ -304,7 +280,6 @@ nautilus_desktop_canvas_view_class_init (NautilusDesktopCanvasViewClass *class)
 
 	G_OBJECT_CLASS (class)->dispose = nautilus_desktop_canvas_view_dispose;
 
-	vclass->begin_loading = real_begin_loading;
 	vclass->merge_menus = real_merge_menus;
 	vclass->update_menus = real_update_menus;
 	vclass->get_view_id = real_get_id;
