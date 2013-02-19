@@ -417,6 +417,17 @@ realized_callback (GtkWidget *widget, NautilusDesktopCanvasView *desktop_canvas_
 			       desktop_canvas_view);
 }
 
+static void
+desktop_canvas_container_realize (GtkWidget *widget,
+				  NautilusDesktopCanvasView *desktop_canvas_view)
+{
+	GdkWindow *bin_window;
+	GdkRGBA transparent = { 0, 0, 0, 0 };
+
+	bin_window = gtk_layout_get_bin_window (GTK_LAYOUT (widget));
+	gdk_window_set_background_rgba (bin_window, &transparent);
+}
+
 static NautilusZoomLevel
 get_default_zoom_level (void)
 {
@@ -584,6 +595,9 @@ nautilus_desktop_canvas_view_init (NautilusDesktopCanvasView *desktop_canvas_vie
 	
 	g_signal_connect_object (canvas_container, "middle-click",
 				 G_CALLBACK (nautilus_desktop_canvas_view_handle_middle_click), desktop_canvas_view, 0);
+	g_signal_connect_object (canvas_container, "realize",
+				 G_CALLBACK (desktop_canvas_container_realize), desktop_canvas_view, 0);
+
 	g_signal_connect_object (desktop_canvas_view, "realize",
 				 G_CALLBACK (realized_callback), desktop_canvas_view, 0);
 	g_signal_connect_object (desktop_canvas_view, "unrealize",
