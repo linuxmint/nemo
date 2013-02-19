@@ -76,8 +76,6 @@ libnautilus_private_la_SOURCES = \
 	nautilus-debug.h \
 	nautilus-default-file-icon.c \
 	nautilus-default-file-icon.h \
-	nautilus-desktop-background.c \
-	nautilus-desktop-background.h \
 	nautilus-desktop-directory-file.c \
 	nautilus-desktop-directory-file.h \
 	nautilus-desktop-directory.c \
