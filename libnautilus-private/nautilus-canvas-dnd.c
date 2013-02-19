@@ -37,6 +37,7 @@
 
 #include "nautilus-file-dnd.h"
 #include "nautilus-canvas-private.h"
+#include "nautilus-global-preferences.h"
 #include "nautilus-link.h"
 #include "nautilus-metadata.h"
 #include "nautilus-selection-canvas-item.h"
@@ -51,8 +52,10 @@
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
+#define GNOME_DESKTOP_USE_UNSTABLE_API
+#include <libgnome-desktop/gnome-bg.h>
+#include <gdesktop-enums.h>
 
-#include <libnautilus-private/nautilus-desktop-background.h>
 #include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-file-changes-queue.h>
 #include <stdio.h>
@@ -1040,6 +1043,31 @@ selection_is_image_file (GList *selection_list)
 	return result;
 }
 
+static void
+receive_dropped_background_image (const gchar *image_uri)
+{
+	GnomeBG *bg;
+	char *filename;
+
+	if (image_uri != NULL) {
+		filename = g_filename_from_uri (image_uri, NULL, NULL);
+	} else {
+		filename = NULL;
+	}
+
+	bg = gnome_bg_new ();
+
+	/* Currently, we only support tiled images. So we set the placement.
+	 */
+	gnome_bg_set_placement (bg, G_DESKTOP_BACKGROUND_STYLE_WALLPAPER);
+	gnome_bg_set_filename (bg, filename);
+	gnome_bg_set_draw_background (bg, TRUE);
+
+	gnome_bg_save_to_preferences (bg, gnome_background_preferences);
+
+	g_free (filename);
+	g_object_unref (bg);
+}
 
 static void
 nautilus_canvas_container_receive_dropped_icons (NautilusCanvasContainer *container,
@@ -1083,15 +1111,8 @@ nautilus_canvas_container_receive_dropped_icons (NautilusCanvasContainer *contai
 	}
 	
 	if (real_action == (GdkDragAction) NAUTILUS_DND_ACTION_SET_AS_BACKGROUND) {
-		NautilusDesktopBackground *background;
-
-		background = nautilus_desktop_background_new (container);
 		selected_item = container->details->dnd_info->drag_info.selection_list->data;
-
-		nautilus_desktop_background_receive_dropped_background_image (background,
-									      selected_item->uri);
-
-		g_object_unref (background);
+		receive_dropped_background_image (selected_item->uri);
 
 		return;
 	}
