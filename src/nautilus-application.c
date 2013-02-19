@@ -874,6 +874,9 @@ action_kill (GSimpleAction *action,
 	/* this will also destroy the desktop windows */
 	windows = gtk_application_get_windows (application);
 	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
+
+	/* we have been asked to force quit */
+	g_application_quit (G_APPLICATION (application));
 }
 
 static void
