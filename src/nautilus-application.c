@@ -1570,11 +1570,11 @@ nautilus_application_startup (GApplication *app)
 	 * if there are problems.
 	 */
 	check_required_directories (self);
-	init_desktop (self);
 
 	do_upgrades_once (self);
 
 	nautilus_application_init_actions (self);
+	init_desktop (self);
 
 	nautilus_profile_end (NULL);
 }
