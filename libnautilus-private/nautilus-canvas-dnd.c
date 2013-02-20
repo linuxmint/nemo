@@ -1527,6 +1527,11 @@ check_hover_timer (NautilusCanvasContainer *container,
 	if (g_strcmp0 (uri, dnd_info->target_uri) == 0) {
 		return;
 	}
+
+	if (nautilus_canvas_container_get_is_desktop (container)) {
+		return;
+	}
+
 	remove_hover_timer (dnd_info);
 
 	settings = gtk_widget_get_settings (GTK_WIDGET (container));
