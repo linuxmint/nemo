@@ -1061,7 +1061,6 @@ receive_dropped_background_image (const gchar *image_uri)
 	 */
 	gnome_bg_set_placement (bg, G_DESKTOP_BACKGROUND_STYLE_WALLPAPER);
 	gnome_bg_set_filename (bg, filename);
-	gnome_bg_set_draw_background (bg, TRUE);
 
 	gnome_bg_save_to_preferences (bg, gnome_background_preferences);
 
