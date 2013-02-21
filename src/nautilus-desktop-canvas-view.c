@@ -288,76 +288,6 @@ nautilus_desktop_canvas_view_class_init (NautilusDesktopCanvasViewClass *class)
 }
 
 static void
-nautilus_desktop_canvas_view_handle_middle_click (NautilusCanvasContainer *canvas_container,
-						GdkEventButton *event,
-						NautilusDesktopCanvasView *desktop_canvas_view)
-{
-	XButtonEvent x_event;
-	GdkDevice *keyboard = NULL, *pointer = NULL, *cur;
-	GdkDeviceManager *manager;
-	GList *list, *l;
-
-	manager = gdk_display_get_device_manager (gtk_widget_get_display (GTK_WIDGET (canvas_container)));
-	list = gdk_device_manager_list_devices (manager, GDK_DEVICE_TYPE_MASTER);
-
-	for (l = list; l != NULL; l = l->next) {
-		cur = l->data;
-
-		if (pointer == NULL && (gdk_device_get_source (cur) == GDK_SOURCE_MOUSE)) {
-			pointer = cur;
-		}
-
-		if (keyboard == NULL && (gdk_device_get_source (cur) == GDK_SOURCE_KEYBOARD)) {
-			keyboard = cur;
-		}
-
-		if (pointer != NULL && keyboard != NULL) {
-			break;
-		}
-	}
-
-	g_list_free (list);
-
-	/* During a mouse click we have the pointer and keyboard grab.
-	 * We will send a fake event to the root window which will cause it
-	 * to try to get the grab so we need to let go ourselves.
-	 */
-
-	if (pointer != NULL) {
-		gdk_device_ungrab (pointer, GDK_CURRENT_TIME);
-	}
-
-	
-	if (keyboard != NULL) {
-		gdk_device_ungrab (keyboard, GDK_CURRENT_TIME);
-	}
-
-	/* Stop the event because we don't want anyone else dealing with it. */	
-	gdk_flush ();
-	g_signal_stop_emission_by_name (canvas_container, "middle-click");
-
-	/* build an X event to represent the middle click. */
-	x_event.type = ButtonPress;
-	x_event.send_event = True;
-	x_event.display = GDK_DISPLAY_XDISPLAY (gdk_display_get_default ());
-	x_event.window = GDK_ROOT_WINDOW ();
-	x_event.root = GDK_ROOT_WINDOW ();
-	x_event.subwindow = 0;
-	x_event.time = event->time;
-	x_event.x = event->x;
-	x_event.y = event->y;
-	x_event.x_root = event->x_root;
-	x_event.y_root = event->y_root;
-	x_event.state = event->state;
-	x_event.button = event->button;
-	x_event.same_screen = True;
-	
-	/* Send it to the root window, the window manager will handle it. */
-	XSendEvent (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), True,
-		    ButtonPressMask, (XEvent *) &x_event);
-}
-
-static void
 unrealized_callback (GtkWidget *widget, NautilusDesktopCanvasView *desktop_canvas_view)
 {
 	g_return_if_fail (desktop_canvas_view->details->root_window != NULL);
@@ -567,9 +497,7 @@ nautilus_desktop_canvas_view_init (NautilusDesktopCanvasView *desktop_canvas_vie
 
 	nautilus_view_set_show_foreign (NAUTILUS_VIEW (desktop_canvas_view),
 					FALSE);
-	
-	g_signal_connect_object (canvas_container, "middle-click",
-				 G_CALLBACK (nautilus_desktop_canvas_view_handle_middle_click), desktop_canvas_view, 0);
+
 	g_signal_connect_object (canvas_container, "realize",
 				 G_CALLBACK (desktop_canvas_container_realize), desktop_canvas_view, 0);
 
