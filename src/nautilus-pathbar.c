@@ -1595,6 +1595,8 @@ make_button_data (NautilusPathBar  *path_bar,
 
         setup_button_type (button_data, path_bar, path);
         button_data->button = gtk_toggle_button_new ();
+	gtk_style_context_add_class (gtk_widget_get_style_context (button_data->button),
+				     "text-button");
 	gtk_button_set_focus_on_click (GTK_BUTTON (button_data->button), FALSE);
 	gtk_widget_add_events (button_data->button, GDK_SCROLL_MASK);
 	/* TODO update button type when xdg directories change */
