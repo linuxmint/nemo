@@ -5906,7 +5906,7 @@ determine_visibility (gpointer data, gpointer callback_data)
                     break;
                 }
             } else {
-                if (g_str_has_suffix (filename, g_ascii_strdown (extensions[i]))) {
+                if (g_str_has_suffix (filename, g_ascii_strdown (extensions[i], -1))) {
                     found_match = TRUE;
                     break;
                 }
