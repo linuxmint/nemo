@@ -5885,26 +5885,28 @@ determine_visibility (gpointer data, gpointer callback_data)
 
     gboolean found_match = TRUE;
 
-    if (ext_count == 1 && g_strcmp0 (extensions[0], "Any") ==0)
+    if (ext_count == 1 && g_strcmp0 (extensions[0], "any") ==0)
         goto out;
 
     for (iter = selected_files; iter != NULL && found_match; iter = iter->next) {
         found_match = FALSE;
-        gchar *filename = g_filename_from_uri (nemo_file_get_uri (NEMO_FILE (iter->data)), NULL, NULL);
+        gchar *raw_fn = g_filename_from_uri (nemo_file_get_uri (NEMO_FILE (iter->data)), NULL, NULL);
+        gchar *filename = g_ascii_strdown (raw_fn, -1);
+        g_free (raw_fn);
         int i;
         for (i = 0; i < ext_count; i++) {
-            if (g_strcmp0 (extensions[i], "Dir") == 0) {
+            if (g_strcmp0 (extensions[i], "dir") == 0) {
                 if (g_file_test (filename, G_FILE_TEST_IS_DIR)) {
                     found_match = TRUE;
                     break;
                 }
-            } else if (g_strcmp0 (extensions[i], "None") == 0) {
+            } else if (g_strcmp0 (extensions[i], "none") == 0) {
                 if (g_strrstr (filename, ".") == NULL) {
                     found_match = TRUE;
                     break;
                 }
             } else {
-                if (g_str_has_suffix (filename, extensions[i])) {
+                if (g_str_has_suffix (filename, g_ascii_strdown (extensions[i]))) {
                     found_match = TRUE;
                     break;
                 }
