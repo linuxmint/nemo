@@ -88,7 +88,7 @@
 #include <libnemo-private/nemo-debug.h>
 
 /* Minimum starting update inverval */
-#define UPDATE_INTERVAL_MIN 100
+#define UPDATE_INTERVAL_MIN 200
 /* Maximum update interval */
 #define UPDATE_INTERVAL_MAX 2000
 /* Amount of miliseconds the update interval is increased */
@@ -3710,7 +3710,6 @@ static gboolean
 update_menus_timeout_callback (gpointer data)
 {
 	NemoView *view;
-
 	view = NEMO_VIEW (data);
 
 	g_object_ref (G_OBJECT (view));
@@ -3840,7 +3839,6 @@ changes_timeout_callback (gpointer data)
 	gint64 time_delta;
 	gboolean ret;
 	NemoView *view;
-
 	view = NEMO_VIEW (data);
 
 	g_object_ref (G_OBJECT (view));
@@ -9756,7 +9754,6 @@ static void
 schedule_update_menus (NemoView *view) 
 {
 	g_assert (NEMO_IS_VIEW (view));
-
 	/* Don't schedule updates after destroy (#349551),
  	 * or if we are not active.
 	 */
@@ -9766,12 +9763,14 @@ schedule_update_menus (NemoView *view)
 	}
 	
 	view->details->menu_states_untrustworthy = TRUE;
-
 	/* Schedule a menu update with the current update interval */
-	if (view->details->update_menus_timeout_id == 0) {
-		view->details->update_menus_timeout_id
-			= g_timeout_add (view->details->update_interval, update_menus_timeout_callback, view);
-	}
+    if (view->details->update_menus_timeout_id != 0) {
+        g_source_remove (view->details->update_menus_timeout_id);
+        view->details->update_menus_timeout_id = 0;
+    }
+    view->details->update_menus_timeout_id = g_timeout_add (view->details->update_interval,
+                                                            update_menus_timeout_callback,
+                                                            view);
 }
 
 static void
@@ -9844,11 +9843,14 @@ nemo_view_notify_selection_changed (NemoView *view)
 	}
 
 	/* Schedule a display of the new selection. */
-	if (view->details->display_selection_idle_id == 0) {
-		view->details->display_selection_idle_id
-			= g_idle_add (display_selection_info_idle_callback,
-				      view);
-	}
+    if (view->details->display_selection_idle_id != 0) {
+        g_source_remove (view->details->display_selection_idle_id);
+        view->details->display_selection_idle_id = 0;
+        nemo_window_slot_set_status (view->details->slot, "", "");
+    }
+    view->details->display_selection_idle_id = g_timeout_add (100,
+                                                              display_selection_info_idle_callback,
+                                                              view);
 
 	if (view->details->batching_selection_level != 0) {
 		view->details->selection_changed_while_batched = TRUE;
