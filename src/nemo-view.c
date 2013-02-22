@@ -278,6 +278,9 @@ struct NemoViewDetails
     guint bookmarks_changed_id;
 
 	GdkPoint context_menu_position;
+
+    gboolean has_thunderbird;
+    gboolean has_other_mail;
 };
 
 typedef struct {
@@ -2666,6 +2669,11 @@ nemo_view_init (NemoView *view)
 
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (view)),
 					      GTK_JUNCTION_TOP | GTK_JUNCTION_LEFT);
+
+    view->details->has_thunderbird = g_find_program_in_path ("thunderbird") != NULL;
+
+    view->details->has_other_mail = g_find_program_in_path ("evolution") != NULL ||
+                                    g_find_program_in_path ("balsa")     != NULL;
 
 	if (set_up_scripts_directory_global ()) {
 		scripts_directory = nemo_directory_get_by_uri (scripts_directory_uri);
@@ -6777,27 +6785,6 @@ send_email_other (NemoView *view)
     nemo_file_list_free (l);
 }
 
-static gboolean
-get_show_other_mail_info ()
-{
-    gboolean show = FALSE;
-        /* We can add more xdg-email-compliant clients here.
-           These 2 so far are the only ones I've confirmed work with xdg-email,
-           though balsa starts with the attach file-picker-dialog open,
-           with only the first attachment (if multiple) selected.
-
-           Tried sylpheed also, which did not work properly using
-           xdg-email - only started the client, didn't appear to use
-           any arguments (--attach ..., recipient)
-        */
-    if (g_find_program_in_path ("evolution")        != NULL ||
-        g_find_program_in_path ("balsa")            != NULL) {
-
-        show = TRUE;
-
-    }
-    return show;
-}
 
 static void
 action_paste_files_into_callback (GtkAction *action,
@@ -9209,8 +9196,6 @@ real_update_menus (NemoView *view)
 	GtkWidget *menuitem;
 	gboolean next_pane_is_writable;
 	gboolean show_properties;
-	gboolean show_thunderbird_sendto;
-    gboolean show_other_mail_sendto;
     gboolean show_set_as_wallpaper;
 
 	selection = nemo_view_get_selection (view);
@@ -9247,18 +9232,14 @@ real_update_menus (NemoView *view)
                                          NEMO_ACTION_OPEN_AS_ROOT);
     gtk_action_set_visible(action, geteuid() != 0);
 
-    show_thunderbird_sendto = (g_find_program_in_path ("thunderbird") != NULL);
-
-    show_other_mail_sendto = get_show_other_mail_info();
-
     action = gtk_action_group_get_action (view->details->dir_action_group,
                            NEMO_ACTION_MAILTO_THUNDERBIRD);
-    gtk_action_set_visible(action, show_thunderbird_sendto &&
+    gtk_action_set_visible(action, view->details->has_thunderbird &&
                                         !selection_contains_directory);
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                            NEMO_ACTION_MAILTO_OTHER);
-    gtk_action_set_visible(action, show_other_mail_sendto &&
+    gtk_action_set_visible(action, view->details->has_other_mail &&
                                         !selection_contains_directory);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
