@@ -88,7 +88,7 @@
 #include <libnemo-private/nemo-debug.h>
 
 /* Minimum starting update inverval */
-#define UPDATE_INTERVAL_MIN 100
+#define UPDATE_INTERVAL_MIN 200
 /* Maximum update interval */
 #define UPDATE_INTERVAL_MAX 2000
 /* Amount of miliseconds the update interval is increased */
@@ -278,6 +278,9 @@ struct NemoViewDetails
     guint bookmarks_changed_id;
 
 	GdkPoint context_menu_position;
+
+    gboolean has_thunderbird;
+    gboolean has_other_mail;
 };
 
 typedef struct {
@@ -2644,7 +2647,6 @@ nemo_view_init (NemoView *view)
 	NemoDirectory *templates_directory;
 	char *templates_uri;
 	NemoFileUndoManager* manager;
-
 	view->details = G_TYPE_INSTANCE_GET_PRIVATE (view, NEMO_TYPE_VIEW,
 						     NemoViewDetails);
 
@@ -2666,6 +2668,11 @@ nemo_view_init (NemoView *view)
 
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (view)),
 					      GTK_JUNCTION_TOP | GTK_JUNCTION_LEFT);
+
+    view->details->has_thunderbird = g_find_program_in_path ("thunderbird") != NULL;
+
+    view->details->has_other_mail = g_find_program_in_path ("evolution") != NULL ||
+                                    g_find_program_in_path ("balsa")     != NULL;
 
 	if (set_up_scripts_directory_global ()) {
 		scripts_directory = nemo_directory_get_by_uri (scripts_directory_uri);
@@ -3710,7 +3717,6 @@ static gboolean
 update_menus_timeout_callback (gpointer data)
 {
 	NemoView *view;
-
 	view = NEMO_VIEW (data);
 
 	g_object_ref (G_OBJECT (view));
@@ -3840,7 +3846,6 @@ changes_timeout_callback (gpointer data)
 	gint64 time_delta;
 	gboolean ret;
 	NemoView *view;
-
 	view = NEMO_VIEW (data);
 
 	g_object_ref (G_OBJECT (view));
@@ -6781,27 +6786,6 @@ send_email_other (NemoView *view)
     nemo_file_list_free (l);
 }
 
-static gboolean
-get_show_other_mail_info ()
-{
-    gboolean show = FALSE;
-        /* We can add more xdg-email-compliant clients here.
-           These 2 so far are the only ones I've confirmed work with xdg-email,
-           though balsa starts with the attach file-picker-dialog open,
-           with only the first attachment (if multiple) selected.
-
-           Tried sylpheed also, which did not work properly using
-           xdg-email - only started the client, didn't appear to use
-           any arguments (--attach ..., recipient)
-        */
-    if (g_find_program_in_path ("evolution")        != NULL ||
-        g_find_program_in_path ("balsa")            != NULL) {
-
-        show = TRUE;
-
-    }
-    return show;
-}
 
 static void
 action_paste_files_into_callback (GtkAction *action,
@@ -9213,8 +9197,6 @@ real_update_menus (NemoView *view)
 	GtkWidget *menuitem;
 	gboolean next_pane_is_writable;
 	gboolean show_properties;
-	gboolean show_thunderbird_sendto;
-    gboolean show_other_mail_sendto;
     gboolean show_set_as_wallpaper;
 
 	selection = nemo_view_get_selection (view);
@@ -9251,18 +9233,14 @@ real_update_menus (NemoView *view)
                                          NEMO_ACTION_OPEN_AS_ROOT);
     gtk_action_set_visible(action, geteuid() != 0);
 
-    show_thunderbird_sendto = (g_find_program_in_path ("thunderbird") != NULL);
-
-    show_other_mail_sendto = get_show_other_mail_info();
-
     action = gtk_action_group_get_action (view->details->dir_action_group,
                            NEMO_ACTION_MAILTO_THUNDERBIRD);
-    gtk_action_set_visible(action, show_thunderbird_sendto &&
+    gtk_action_set_visible(action, view->details->has_thunderbird &&
                                         !selection_contains_directory);
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                            NEMO_ACTION_MAILTO_OTHER);
-    gtk_action_set_visible(action, show_other_mail_sendto &&
+    gtk_action_set_visible(action, view->details->has_other_mail &&
                                         !selection_contains_directory);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
@@ -9758,7 +9736,6 @@ static void
 schedule_update_menus (NemoView *view) 
 {
 	g_assert (NEMO_IS_VIEW (view));
-
 	/* Don't schedule updates after destroy (#349551),
  	 * or if we are not active.
 	 */
@@ -9768,12 +9745,14 @@ schedule_update_menus (NemoView *view)
 	}
 	
 	view->details->menu_states_untrustworthy = TRUE;
-
 	/* Schedule a menu update with the current update interval */
-	if (view->details->update_menus_timeout_id == 0) {
-		view->details->update_menus_timeout_id
-			= g_timeout_add (view->details->update_interval, update_menus_timeout_callback, view);
-	}
+    if (view->details->update_menus_timeout_id != 0) {
+        g_source_remove (view->details->update_menus_timeout_id);
+        view->details->update_menus_timeout_id = 0;
+    }
+    view->details->update_menus_timeout_id = g_timeout_add (view->details->update_interval,
+                                                            update_menus_timeout_callback,
+                                                            view);
 }
 
 static void
@@ -9846,11 +9825,14 @@ nemo_view_notify_selection_changed (NemoView *view)
 	}
 
 	/* Schedule a display of the new selection. */
-	if (view->details->display_selection_idle_id == 0) {
-		view->details->display_selection_idle_id
-			= g_idle_add (display_selection_info_idle_callback,
-				      view);
-	}
+    if (view->details->display_selection_idle_id != 0) {
+        g_source_remove (view->details->display_selection_idle_id);
+        view->details->display_selection_idle_id = 0;
+        nemo_window_slot_set_status (view->details->slot, "", "");
+    }
+    view->details->display_selection_idle_id = g_timeout_add (100,
+                                                              display_selection_info_idle_callback,
+                                                              view);
 
 	if (view->details->batching_selection_level != 0) {
 		view->details->selection_changed_while_batched = TRUE;
