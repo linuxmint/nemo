@@ -451,28 +451,11 @@ nemo_action_get_property (GObject    *object,
     }
 }
 
-void
-nemo_action_activate (NemoAction *action, GList *selection)
+static GList *
+replace_token (GList *arg_list, GList *selection, gboolean *success)
 {
     GList *token, *iter;
-    GList *arg_list = NULL;
-    gchar **exec_args;
-    gint exec_arg_count;
-    gboolean use_url = FALSE;
-
-    g_shell_parse_argv (action->exec, &exec_arg_count, &exec_args, NULL);
-
-    int i;
-
-    /* First, build the basic arg list based on action->exec */
-
-    for (i = 0; i < exec_arg_count; i++) {
-        arg_list = g_list_append (arg_list, g_strdup (exec_args[i]));
-    }
-
-    /* Now, find the file list token in the argument list, and insert our selection
-     * in front of it
-     */
+    gboolean use_url;
 
     for (token = arg_list; token != NULL; token = token->next) {
         if (g_strcmp0 (token->data, TOKEN_EXEC_FILE_LIST) == 0) {
@@ -496,7 +479,67 @@ nemo_action_activate (NemoAction *action, GList *selection)
             }
         }
         arg_list = g_list_delete_link (arg_list, token);
+        *success = TRUE;
     }
+    return arg_list;
+}
+
+
+void
+nemo_action_activate (NemoAction *action, GList *selection)
+{
+    GList *iter;
+    GList *arg_list = NULL;
+    gchar **exec_args;
+    gint exec_arg_count;
+    gint i;
+
+    g_shell_parse_argv (action->exec, &exec_arg_count, &exec_args, NULL);
+
+    for (i = 0; i < exec_arg_count; i++) {
+        arg_list = g_list_append (arg_list, g_strdup (exec_args[i]));
+    }
+
+    gboolean success = FALSE;
+
+    arg_list = replace_token (arg_list, selection, &success);
+
+    if (!success) {
+        for (iter = arg_list; iter != NULL; iter = iter->next) {
+            gchar *unquoted = g_shell_unquote (iter->data, NULL);
+            if (g_strstr_len (unquoted, -1, TOKEN_EXEC_FILE_LIST) != NULL ||
+                g_strstr_len (unquoted, -1, TOKEN_EXEC_URL_LIST) != NULL) {
+                gchar **sub_args;
+                gint sub_arg_count;
+                GList *sub_list = NULL;
+                g_shell_parse_argv (unquoted, &sub_arg_count, &sub_args, NULL);
+
+                for (i = 0; i < sub_arg_count; i++) {
+                    sub_list = g_list_append (sub_list, g_strdup (sub_args[i]));
+                }
+                sub_list = replace_token (sub_list, selection, &success);
+                if (success) {
+                    GList *l;
+                    gchar *subv[g_list_length (sub_list)+1];
+                    i = 0;
+                    sub_list = g_list_first (sub_list);
+                    for (l = sub_list; l != NULL; l = l->next) {
+                        subv[i] = g_strdup (l->data);
+                        i++;
+                    }
+                    subv[i] = NULL;
+                    gchar *new_str = g_strjoinv (" ", subv);
+                    iter->data = g_strdup (new_str);
+                    g_free (new_str);
+                }
+                g_list_free_full (sub_list, g_free);
+                g_strfreev (sub_args);
+            }
+            g_free (unquoted);
+        }
+    }
+
+    arg_list = g_list_first (arg_list);
 
     /* Now make our arg vector array for passing to the g_spawn_async function */
 
