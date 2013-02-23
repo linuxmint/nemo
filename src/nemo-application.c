@@ -1150,14 +1150,13 @@ static void
 nemo_application_startup (GApplication *app)
 {
 	NemoApplication *self = NEMO_APPLICATION (app);
-    g_printerr ("start\n");
 	/* chain up to the GTK+ implementation early, so gtk_init()
 	 * is called for us.
 	 */
 	G_APPLICATION_CLASS (nemo_application_parent_class)->startup (app);
 
 	/* initialize the previewer singleton */
-	nemo_previewer_get_singleton ();
+	//nemo_previewer_get_singleton ();
 
 	/* create an undo manager */
 	self->undo_manager = nemo_undo_manager_new ();
@@ -1208,8 +1207,6 @@ nemo_application_startup (GApplication *app)
 	 */
 	check_required_directories (self);
 	init_desktop (self);
-
-    g_printerr ("END START\n");
 }
 
 static void

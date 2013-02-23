@@ -2647,7 +2647,6 @@ nemo_view_init (NemoView *view)
 	NemoDirectory *templates_directory;
 	char *templates_uri;
 	NemoFileUndoManager* manager;
-
 	view->details = G_TYPE_INSTANCE_GET_PRIVATE (view, NEMO_TYPE_VIEW,
 						     NemoViewDetails);
 
