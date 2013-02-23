@@ -262,62 +262,6 @@ mark_desktop_files_trusted (void)
 	g_free (do_once_file);
 }
 
-static void
-do_upgrades_once (NemoApplication *self)
-{
-	char *metafile_dir, *updated, *nemo_dir, *xdg_dir;
-	const gchar *message;
-	int fd, res;
-
-	if (!self->priv->no_desktop) {
-		mark_desktop_files_trusted ();
-	}
-
-	metafile_dir = g_build_filename (g_get_home_dir (),
-					 ".nemo/metafiles", NULL);
-	if (g_file_test (metafile_dir, G_FILE_TEST_IS_DIR)) {
-		updated = g_build_filename (metafile_dir, "migrated-to-gvfs", NULL);
-		if (!g_file_test (updated, G_FILE_TEST_EXISTS)) {
-			g_spawn_command_line_async (LIBEXECDIR"/nemo-convert-metadata --quiet", NULL);
-			fd = g_creat (updated, 0600);
-			if (fd != -1) {
-				close (fd);
-			}
-		}
-		g_free (updated);
-	}
-	g_free (metafile_dir);
-
-	nemo_dir = g_build_filename (g_get_home_dir (),
-					 ".nemo", NULL);
-	xdg_dir = nemo_get_user_directory ();
-	if (g_file_test (nemo_dir, G_FILE_TEST_IS_DIR)) {
-		/* test if we already attempted to migrate first */
-		updated = g_build_filename (nemo_dir, "DEPRECATED-DIRECTORY", NULL);
-		message = _("Nemo 3.0 deprecated this directory and tried migrating "
-			    "this configuration to ~/.config/nemo");
-		if (!g_file_test (updated, G_FILE_TEST_EXISTS)) {
-			/* rename() works fine if the destination directory is
-			 * empty.
-			 */
-			res = g_rename (nemo_dir, xdg_dir);
-
-			if (res == -1) {
-				fd = g_creat (updated, 0600);
-				if (fd != -1) {
-					res = write (fd, message, strlen (message));
-					close (fd);
-				}
-			}
-		}
-
-		g_free (updated);
-	}
-
-	g_free (nemo_dir);
-	g_free (xdg_dir);
-}
-
 static void 
 selection_get_cb (GtkWidget          *widget,
 		  GtkSelectionData   *selection_data,
@@ -1206,7 +1150,7 @@ static void
 nemo_application_startup (GApplication *app)
 {
 	NemoApplication *self = NEMO_APPLICATION (app);
-
+    g_printerr ("start\n");
 	/* chain up to the GTK+ implementation early, so gtk_init()
 	 * is called for us.
 	 */
@@ -1265,7 +1209,7 @@ nemo_application_startup (GApplication *app)
 	check_required_directories (self);
 	init_desktop (self);
 
-	do_upgrades_once (self);
+    g_printerr ("END START\n");
 }
 
 static void
