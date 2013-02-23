@@ -330,6 +330,7 @@ selection_get_cb (GtkWidget          *widget,
 static GtkWidget *
 get_desktop_manager_selection (GdkDisplay *display, int screen)
 {
+    return NULL; // For now, this function crashes nemo with broadway
 	char selection_name[32];
 	GdkAtom selection_atom;
 	Window selection_owner;
@@ -915,6 +916,7 @@ nemo_application_local_command_line (GApplication *application,
 	gboolean version = FALSE;
 	gboolean browser = FALSE;
 	gboolean kill_shell = FALSE;
+	gboolean new_instance = FALSE;
 	gboolean no_default_window = FALSE;
 	gchar **remaining = NULL;
 	NemoApplication *self = NEMO_APPLICATION (application);
@@ -937,6 +939,8 @@ nemo_application_local_command_line (GApplication *application,
 		  N_("Do not manage the desktop (ignore the preference set in the preferences dialog)."), NULL },
 		{ "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
 		  N_("Quit Nemo."), NULL },
+		{ "new-instance", '\0', 0, G_OPTION_ARG_NONE, &new_instance, 
+		  N_("Run a new instance of Nemo."), NULL },
 		{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, &remaining, NULL,  N_("[URI...]") },
 
 		{ NULL }
@@ -962,6 +966,10 @@ nemo_application_local_command_line (GApplication *application,
 		*exit_status = EXIT_FAILURE;
 		goto out;
 	}
+    
+    if (new_instance) {
+        g_application_set_application_id(application, NULL);
+    }
 
 	if (version) {
 		g_print ("nemo " PACKAGE_VERSION "\n");
