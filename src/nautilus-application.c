@@ -631,6 +631,7 @@ open_window (NautilusApplication *application,
 
 static void
 open_windows (NautilusApplication *application,
+	      gboolean force_new,
 	      GFile **files,
 	      gint n_files,
 	      GdkScreen *screen,
@@ -644,7 +645,10 @@ open_windows (NautilusApplication *application,
 	} else {
 		/* Open windows at each requested location. */
 		for (i = 0; i < n_files; ++i) {
-			NautilusWindowSlot *slot = slot = get_window_slot_for_location (application, files[i]);
+			NautilusWindowSlot *slot = NULL;
+
+			if (!force_new)
+				slot = get_window_slot_for_location (application, files[i]);
 
 			if (!slot) {
 				open_window (application, files[i], screen, geometry);
@@ -707,7 +711,9 @@ nautilus_application_open (GApplication *app,
 
 	DEBUG ("Open called on the GApplication instance; %d files", n_files);
 
-	open_windows (self, files, n_files,
+	gboolean force_new = (g_strcmp0 (hint, "new-window") == 0);
+
+	open_windows (self, force_new, files, n_files,
 		      gdk_screen_get_default (),
 		      self->priv->geometry);
 }
@@ -1201,6 +1207,7 @@ nautilus_application_local_command_line (GApplication *application,
 	gboolean version = FALSE;
 	gboolean browser = FALSE;
 	gboolean kill_shell = FALSE;
+	gboolean open_new_window = FALSE;
 	gboolean no_default_window = FALSE;
 	gboolean select_uris = FALSE;
 	gchar **remaining = NULL;
@@ -1218,6 +1225,8 @@ nautilus_application_local_command_line (GApplication *application,
 		  N_("Show the version of the program."), NULL },
 		{ "geometry", 'g', 0, G_OPTION_ARG_STRING, &self->priv->geometry,
 		  N_("Create the initial window with the given geometry."), N_("GEOMETRY") },
+		{ "new-window", 'w', 0, G_OPTION_ARG_NONE, &open_new_window,
+		  N_("Always open a new window for browsing specified URIs"), NULL },
 		{ "no-default-window", 'n', 0, G_OPTION_ARG_NONE, &no_default_window,
 		  N_("Only create windows for explicitly specified URIs."), NULL },
 		{ "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &self->priv->no_desktop,
@@ -1236,7 +1245,6 @@ nautilus_application_local_command_line (GApplication *application,
 	GError *error = NULL;
 	gint argc = 0;
 	gchar **argv = NULL;
-
 	*exit_status = EXIT_SUCCESS;
 
 	nautilus_profile_start (NULL);
@@ -1274,9 +1282,9 @@ nautilus_application_local_command_line (GApplication *application,
 		goto out;
 	}
 
-	DEBUG ("Parsing local command line, no_default_window %d, quit %d, "
-	       "self checks %d, no_desktop %d, show_desktop %d",
-	       no_default_window, kill_shell, perform_self_check,
+	DEBUG ("Parsing local command line: open_new_window %d, no_default_window %d, "
+	       "quit %d, self checks %d, no_desktop %d, show_desktop %d",
+	       open_new_window, no_default_window, kill_shell, perform_self_check,
 	       self->priv->no_desktop, self->priv->force_desktop);
 
 	g_application_register (application, NULL, &error);
@@ -1339,7 +1347,7 @@ nautilus_application_local_command_line (GApplication *application,
 		nautilus_application_select (self, files, len);
 	} else {
 		/* Invoke "Open" to create new windows */
-		g_application_open (application, files, len, "");
+		g_application_open (application, files, len, open_new_window ? "new-window" : "");
 	}
 
 	for (idx = 0; idx < len; idx++) {

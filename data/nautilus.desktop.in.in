@@ -2,7 +2,7 @@
 _Name=Files
 _Comment=Access and organize files
 _Keywords=folder;manager;explore;disk;filesystem;
-Exec=nautilus %U
+Exec=nautilus --new-window %U
 Icon=system-file-manager
 Terminal=false
 Type=Application
