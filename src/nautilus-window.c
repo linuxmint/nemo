@@ -617,24 +617,26 @@ build_selection_list_from_gfile_list (GList *gfile_list)
 }
 
 /* Callback used when the places sidebar needs to know the drag action to suggest */
-static void
+static GdkDragAction
 places_sidebar_drag_action_requested_cb (GtkPlacesSidebar *sidebar,
 					 GdkDragContext   *context,
 					 GFile            *dest_file,
 					 GList            *source_file_list,
-					 int              *action,
 					 gpointer          user_data)
 {
 	GList *items;
 	char *uri;
+	GdkDragAction action = 0;
 
 	items = build_selection_list_from_gfile_list (source_file_list);
 	uri = g_file_get_uri (dest_file);
 
-	nautilus_drag_default_drop_action_for_icons (context, uri, items, action);
+	nautilus_drag_default_drop_action_for_icons (context, uri, items, &action);
 
 	nautilus_drag_destroy_selection_list (items);
 	g_free (uri);
+
+	return action;
 }
 
 /* Callback used when the places sidebar needs us to pop up a menu with possible drag actions */
