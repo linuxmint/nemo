@@ -558,6 +558,47 @@ nautilus_application_create_window (NautilusApplication *application,
 	return window;
 }
 
+static NautilusWindowSlot *
+get_window_slot_for_location (NautilusApplication *application, GFile *location)
+{
+	NautilusWindowSlot *slot;
+	GList *l, *sl;
+
+	slot = NULL;
+
+	if (g_file_query_file_type (location, G_FILE_QUERY_INFO_NONE, NULL) != G_FILE_TYPE_DIRECTORY) {
+		location = g_file_get_parent (location);
+	} else {
+		g_object_ref (location);
+	}
+
+	for (l = gtk_application_get_windows (GTK_APPLICATION (application)); l; l = l->next) {
+		NautilusWindow *win = NAUTILUS_WINDOW (l->data);
+
+		if (NAUTILUS_IS_DESKTOP_WINDOW (win))
+			continue;
+
+		for (sl = nautilus_window_get_slots (win); sl; sl = sl->next) {
+			NautilusWindowSlot *current = NAUTILUS_WINDOW_SLOT (sl->data);
+			GFile *slot_location = nautilus_window_slot_get_location (current);
+
+			if (g_file_equal (slot_location, location)) {
+				slot = current;
+				break;
+			}
+		}
+
+		if (slot) {
+			break;
+		}
+	}
+
+	g_object_unref (location);
+
+	return slot;
+}
+
+
 static void
 open_window (NautilusApplication *application,
 	     GFile *location, GdkScreen *screen, const char *geometry)
@@ -602,8 +643,19 @@ open_windows (NautilusApplication *application,
 		open_window (application, NULL, screen, geometry);
 	} else {
 		/* Open windows at each requested location. */
-		for (i = 0; i < n_files; i++) {
-			open_window (application, files[i], screen, geometry);
+		for (i = 0; i < n_files; ++i) {
+			NautilusWindowSlot *slot = slot = get_window_slot_for_location (application, files[i]);
+
+			if (!slot) {
+				open_window (application, files[i], screen, geometry);
+			} else {
+				/* We open the location again to update any possible selection */
+				nautilus_window_slot_open_location (slot, files[i], 0);
+
+				NautilusWindow *window = nautilus_window_slot_get_window (slot);
+				nautilus_window_set_active_slot (window, slot);
+				gtk_window_present (GTK_WINDOW (window));
+			}
 		}
 	}
 }
@@ -615,19 +667,28 @@ nautilus_application_open_location (NautilusApplication *application,
 				    const char *startup_id)
 {
 	NautilusWindow *window;
+	NautilusWindowSlot *slot;
 	GList *sel_list = NULL;
 
 	nautilus_profile_start (NULL);
 
-	window = nautilus_application_create_window (application, gdk_screen_get_default ());
-	gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
+	slot = get_window_slot_for_location (application, location);
+
+	if (!slot) {
+		window = nautilus_application_create_window (application, gdk_screen_get_default ());
+		slot = nautilus_window_get_active_slot (window);
+	} else {
+		window = nautilus_window_slot_get_window (slot);
+		nautilus_window_set_active_slot (window, slot);
+		gtk_window_present (GTK_WINDOW (window));
+	}
 
 	if (selection != NULL) {
 		sel_list = g_list_prepend (sel_list, nautilus_file_get (selection));
 	}
 
-	nautilus_window_slot_open_location_full (nautilus_window_get_active_slot (window), location,
-						 0, sel_list, NULL, NULL);
+	gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
+	nautilus_window_slot_open_location_full (slot, location, 0, sel_list, NULL, NULL);
 
 	if (sel_list != NULL) {
 		nautilus_file_list_free (sel_list);
