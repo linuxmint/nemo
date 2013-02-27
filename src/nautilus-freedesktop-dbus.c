@@ -220,6 +220,15 @@ nautilus_freedesktop_dbus_init (NautilusFreedesktopDBus *fdb)
 					NULL);
 }
 
+void
+nautilus_freedesktop_dbus_set_open_locations (NautilusFreedesktopDBus *fdb,
+					      const gchar **locations)
+{
+	g_return_if_fail (NAUTILUS_IS_FREEDESKTOP_DBUS (fdb));
+
+	nautilus_freedesktop_file_manager1_set_open_locations (fdb->skeleton, locations);
+}
+
 /* Tries to own the org.freedesktop.FileManager1 service name */
 NautilusFreedesktopDBus *
 nautilus_freedesktop_dbus_new (void)
