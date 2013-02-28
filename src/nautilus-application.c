@@ -1629,3 +1629,13 @@ nautilus_application_class_init (NautilusApplicationClass *class)
 
 	g_type_class_add_private (class, sizeof (NautilusApplicationPriv));
 }
+
+NautilusApplication *
+nautilus_application_new (void)
+{
+	return g_object_new (NAUTILUS_TYPE_APPLICATION,
+			     "application-id", "org.gnome.Nautilus",
+			     "flags", G_APPLICATION_HANDLES_OPEN,
+			     "inactivity-timeout", 12000,
+			     NULL);
+}
