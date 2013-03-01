@@ -525,7 +525,7 @@ nautilus_application_create_window (NautilusApplication *application,
 	g_return_val_if_fail (NAUTILUS_IS_APPLICATION (application), NULL);
 	nautilus_profile_start (NULL);
 
-	window = nautilus_window_new (GTK_APPLICATION (application), screen);
+	window = nautilus_window_new (screen);
 
 	maximized = g_settings_get_boolean
 		(nautilus_window_state, NAUTILUS_WINDOW_STATE_MAXIMIZED);

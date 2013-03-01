@@ -89,8 +89,7 @@ struct NautilusWindow {
 };
 
 GType            nautilus_window_get_type             (void);
-NautilusWindow * nautilus_window_new                  (GtkApplication    *application,
-                                                       GdkScreen         *screen);
+NautilusWindow * nautilus_window_new                  (GdkScreen         *screen);
 void             nautilus_window_close                (NautilusWindow    *window);
 
 void             nautilus_window_connect_content_view (NautilusWindow    *window,

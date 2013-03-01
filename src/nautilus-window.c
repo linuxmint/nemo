@@ -1135,6 +1135,9 @@ nautilus_window_constructed (GObject *self)
 
 	G_OBJECT_CLASS (nautilus_window_parent_class)->constructed (self);
 
+	application = NAUTILUS_APPLICATION (g_application_get_default ());
+	gtk_window_set_application (GTK_WINDOW (window), GTK_APPLICATION (application));
+
 	/* disable automatic menubar handling, since we show our regular
 	 * menubar together with the app menu.
 	 */
@@ -1181,7 +1184,6 @@ nautilus_window_constructed (GObject *self)
 		nautilus_window_hide_sidebar (window);
 	}
 
-	application = NAUTILUS_APPLICATION (g_application_get_default ());
 	window->details->bookmarks_id =
 		g_signal_connect_swapped (nautilus_application_get_bookmarks (application), "changed",
 					  G_CALLBACK (nautilus_window_sync_bookmarks), window);
@@ -1947,11 +1949,9 @@ nautilus_window_class_init (NautilusWindowClass *class)
 }
 
 NautilusWindow *
-nautilus_window_new (GtkApplication *application,
-		     GdkScreen      *screen)
+nautilus_window_new (GdkScreen *screen)
 {
 	return g_object_new (NAUTILUS_TYPE_WINDOW,
-			     "application", application,
 			     "screen", screen,
 			     NULL);
 }
