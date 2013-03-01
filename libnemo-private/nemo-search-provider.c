@@ -150,5 +150,7 @@ nemo_search_provider_error (NemoSearchProvider *provider, const char *error_mess
 {
 	g_return_if_fail (NEMO_IS_SEARCH_PROVIDER (provider));
 
+	g_warning ("Provider %s failed with error %s\n",
+		   G_OBJECT_TYPE_NAME (provider), error_message);
 	g_signal_emit (provider, signals[ERROR], 0, error_message);
 }
