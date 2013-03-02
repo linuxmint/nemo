@@ -1662,6 +1662,104 @@ nautilus_application_quit_mainloop (GApplication *app)
 }
 
 static void
+update_dbus_opened_locations (NautilusApplication *app)
+{
+	gint i;
+	GList *l, *sl;
+	GList *locations = NULL;
+	gsize locations_size = 0;
+	gchar **locations_array;
+
+	g_return_if_fail (NAUTILUS_IS_APPLICATION (app));
+
+	for (l = gtk_application_get_windows (GTK_APPLICATION (app)); l; l = l->next) {
+		NautilusWindow *win = NAUTILUS_WINDOW (l->data);
+
+		if (NAUTILUS_IS_DESKTOP_WINDOW (win)) {
+			continue;
+		}
+
+		for (sl = nautilus_window_get_slots (win); sl; sl = sl->next) {
+			NautilusWindowSlot *slot = NAUTILUS_WINDOW_SLOT (sl->data);
+			gchar *uri = nautilus_window_slot_get_location_uri (slot);
+
+			if (uri) {
+				GList *found = g_list_find_custom (locations, uri, (GCompareFunc) g_strcmp0);
+
+				if (!found) {
+					locations = g_list_prepend (locations, uri);
+					++locations_size;
+				} else {
+					g_free (uri);
+				}
+			}
+		}
+	}
+
+	locations_array = g_new (gchar*, locations_size + 1);
+
+	for (i = 0, l = locations; l; l = l->next, ++i) {
+		/* We reuse the locations string locations saved on list */
+		locations_array[i] = l->data;
+	}
+
+	locations_array[locations_size] = NULL;
+
+	nautilus_freedesktop_dbus_set_open_locations (app->priv->fdb_manager,
+		                                      (const gchar**) locations_array);
+
+	g_free (locations_array);
+	g_list_free_full (locations, g_free);
+}
+
+static void
+on_slot_location_changed (NautilusWindowSlot *slot,
+			  const char         *from,
+ 			  const char         *to,
+			  NautilusApplication *application)
+{
+	update_dbus_opened_locations (application);
+}
+
+static void
+on_slot_added (NautilusWindow      *window,
+	       NautilusWindowSlot  *slot,
+	       NautilusApplication *application)
+{
+	if (nautilus_window_slot_get_location (slot)) {
+		update_dbus_opened_locations (application);
+	}
+
+	g_signal_connect (slot, "location-changed", G_CALLBACK (on_slot_location_changed), application);
+}
+
+static void
+on_slot_removed (NautilusWindow      *window,
+		 NautilusWindowSlot  *slot,
+		 NautilusApplication *application)
+{
+	update_dbus_opened_locations (application);
+
+	g_signal_handlers_disconnect_by_func (slot, on_slot_location_changed, application);
+}
+
+static void
+nautilus_application_window_added (GtkApplication *app,
+				   GtkWindow *window)
+{
+	NautilusWindow *win;
+	GList *sl;
+
+	/* chain to parent */
+	GTK_APPLICATION_CLASS (nautilus_application_parent_class)->window_added (app, window);
+
+	win = NAUTILUS_WINDOW (window);
+
+	g_signal_connect (window, "slot-added", G_CALLBACK (on_slot_added), app);
+	g_signal_connect (window, "slot-removed", G_CALLBACK (on_slot_removed), app);
+}
+
+static void
 nautilus_application_window_removed (GtkApplication *app,
 				     GtkWindow *window)
 {
@@ -1675,6 +1773,9 @@ nautilus_application_window_removed (GtkApplication *app,
 		previewer = nautilus_previewer_get_singleton ();
 		nautilus_previewer_call_close (previewer);
 	}
+
+	g_signal_handlers_disconnect_by_func (window, on_slot_added, app);
+	g_signal_handlers_disconnect_by_func (window, on_slot_removed, app);
 }
 
 static void
@@ -1694,6 +1795,7 @@ nautilus_application_class_init (NautilusApplicationClass *class)
 	application_class->local_command_line = nautilus_application_local_command_line;
 
 	gtkapp_class = GTK_APPLICATION_CLASS (class);
+	gtkapp_class->window_added = nautilus_application_window_added;
 	gtkapp_class->window_removed = nautilus_application_window_removed;
 
 	g_type_class_add_private (class, sizeof (NautilusApplicationPriv));
