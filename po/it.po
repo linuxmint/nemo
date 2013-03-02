@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-18 15:00+0100\n"
-"PO-Revision-Date: 2013-02-18 15:35+0100\n"
+"POT-Creation-Date: 2013-03-02 15:57+0100\n"
+"PO-Revision-Date: 2013-03-02 15:57+0100\n"
 "Last-Translator: Luca Ferretti <lferrett@gnome.org>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "Language: it\n"
@@ -27,7 +27,7 @@ msgstr "Esegui software"
 #. set dialog properties
 #: ../data/nautilus-connect-server.desktop.in.in.h:1
 #: ../src/nautilus-connect-server-dialog.c:588
-#: ../src/nautilus-places-sidebar.c:797
+#: ../src/nautilus-places-sidebar.c:800
 msgid "Connect to Server"
 msgstr "Connessione al server"
 
@@ -134,7 +134,7 @@ msgstr " (Unicode non valido)"
 #: ../libnautilus-private/nautilus-bookmark.c:108
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:275
-#: ../src/nautilus-pathbar.c:295 ../src/nautilus-places-sidebar.c:525
+#: ../src/nautilus-pathbar.c:295 ../src/nautilus-places-sidebar.c:528
 #: ../src/nautilus-query-editor.c:1164
 #: ../src/nautilus-shell-search-provider.c:310
 msgid "Home"
@@ -946,7 +946,7 @@ msgstr "Tutti gli oggetti nel cestino verranno eliminati in modo definitivo."
 #. Empty Trash menu item
 #: ../libnautilus-private/nautilus-file-operations.c:1363
 #: ../libnautilus-private/nautilus-file-operations.c:2241
-#: ../src/nautilus-places-sidebar.c:2806
+#: ../src/nautilus-places-sidebar.c:2880
 msgid "Empty _Trash"
 msgstr "Sv_uota cestino"
 
@@ -2207,7 +2207,9 @@ msgstr "Indica se mostrare i file nascosti"
 msgid ""
 "This key is deprecated and ignored. The \"show-hidden\" key from \"org.gtk."
 "Settings.FileChooser\" is now used instead."
-msgstr "Questa chiave è deprecata e ignorata. Al suo posto è ora usata la chiave \"show-hidden\" di \"org.gtk.Settings.FileChooser\"."
+msgstr ""
+"Questa chiave è deprecata e ignorata. Al suo posto è ora usata la chiave "
+"\"show-hidden\" di \"org.gtk.Settings.FileChooser\"."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
 msgid "Bulk rename utility"
@@ -2333,7 +2335,9 @@ msgstr "Usa vista ad albero"
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:55
 msgid ""
 "Whether a tree should be used for list view navigation instead of a flat list"
-msgstr "Indica se usare la vista ad albero invece dell'elenco piatto per la navigazione nella vista a elenco"
+msgstr ""
+"Indica se usare la vista ad albero invece dell'elenco piatto per la "
+"navigazione nella vista a elenco"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
 msgid "Desktop font"
@@ -2564,67 +2568,67 @@ msgstr ""
 "Si è verificato un errore nel visualizzare la documentazione:\n"
 "%s"
 
-#: ../src/nautilus-application.c:1025
+#: ../src/nautilus-application.c:1028
 msgid "--check cannot be used with other options."
 msgstr "--check non può essere usato con altre opzioni."
 
-#: ../src/nautilus-application.c:1031
+#: ../src/nautilus-application.c:1034
 msgid "--quit cannot be used with URIs."
 msgstr "--quit non può essere usato con degli URI."
 
-#: ../src/nautilus-application.c:1038
+#: ../src/nautilus-application.c:1041
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry non può essere usato con più di un URI."
 
-#: ../src/nautilus-application.c:1044
+#: ../src/nautilus-application.c:1047
 msgid "--select must be used with at least an URI."
 msgstr "--select deve essere usato acon almeno un URI."
 
-#: ../src/nautilus-application.c:1050
+#: ../src/nautilus-application.c:1053
 msgid "--no-desktop and --force-desktop cannot be used together."
 msgstr "--no-desktop e --force-desktop non possono essere usati insieme."
 
-#: ../src/nautilus-application.c:1148
+#: ../src/nautilus-application.c:1151
 msgid "Perform a quick set of self-check tests."
 msgstr "Effettua un rapido insieme di test diagnostici."
 
-#: ../src/nautilus-application.c:1154
+#: ../src/nautilus-application.c:1157
 msgid "Show the version of the program."
 msgstr "Mostra la versione del programma."
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1159
 msgid "Create the initial window with the given geometry."
 msgstr "Crea la finestra iniziale con la geometria indicata."
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1159
 msgid "GEOMETRY"
 msgstr "GEOMETRIA"
 
-#: ../src/nautilus-application.c:1158
+#: ../src/nautilus-application.c:1161
 msgid "Only create windows for explicitly specified URIs."
 msgstr "Crea solo le finestre per gli URI esplicitamente specificati."
 
-#: ../src/nautilus-application.c:1160
+#: ../src/nautilus-application.c:1163
 msgid "Never manage the desktop (ignore the GSettings preference)."
 msgstr "Non gestisce la scrivania (ignorando la preferenza GSettings)."
 
-#: ../src/nautilus-application.c:1162
+#: ../src/nautilus-application.c:1165
 msgid "Always manage the desktop (ignore the GSettings preference)."
 msgstr "Gestisce sempre la scrivania (ignorando la preferenza GSettings)."
 
-#: ../src/nautilus-application.c:1164
+#: ../src/nautilus-application.c:1167
 msgid "Quit Nautilus."
 msgstr "Esce da Nautilus."
 
-#: ../src/nautilus-application.c:1166
+#: ../src/nautilus-application.c:1169
 msgid "Select specified URI in parent folder."
 msgstr "Seleziona gli URI specificati nella cartella di livello superiore."
 
-#: ../src/nautilus-application.c:1167
+#: ../src/nautilus-application.c:1170
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:1180
+#: ../src/nautilus-application.c:1183
 msgid ""
 "\n"
 "\n"
@@ -2636,13 +2640,13 @@ msgstr ""
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1190
+#: ../src/nautilus-application.c:1193
 msgid "Could not parse arguments"
 msgstr "Impossibile analizzare gli argomenti"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1223
+#: ../src/nautilus-application.c:1226
 msgid "Could not register the application"
 msgstr "Impossibile registrare l'applicazione"
 
@@ -2720,12 +2724,12 @@ msgstr "_Esegui"
 msgid "No bookmarks defined"
 msgstr "Nessun segnalibro definito"
 
-#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:246
+#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:249
 msgid "Bookmarks"
 msgstr "Segnalibri"
 
 #: ../src/nautilus-bookmarks-window.ui.h:1
-#: ../src/nautilus-places-sidebar.c:2741
+#: ../src/nautilus-places-sidebar.c:2809
 msgid "Remove"
 msgstr "Rimuovi"
 
@@ -2922,28 +2926,28 @@ msgstr "C_onnetti"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:706 ../src/nautilus-view.c:7146
+#: ../src/nautilus-desktop-canvas-view.c:623 ../src/nautilus-view.c:7146
 #: ../src/nautilus-view.c:8679
 msgid "E_mpty Trash"
 msgstr "Sv_uota cestino"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:730
-#: ../src/nautilus-desktop-canvas-view.c:771
+#: ../src/nautilus-desktop-canvas-view.c:647
+#: ../src/nautilus-desktop-canvas-view.c:688
 msgid "Restore Icons' Original Si_zes"
 msgstr "Icone alle dimensioni _originali"
 
-#: ../src/nautilus-desktop-canvas-view.c:731
+#: ../src/nautilus-desktop-canvas-view.c:648
 msgid "Restore Icon's Original Si_ze"
 msgstr "Icona alla dimensione _originale"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:743
+#: ../src/nautilus-desktop-canvas-view.c:660
 msgid "Change Desktop _Background"
 msgstr "Ca_mbia sfondo scrivania"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:745
+#: ../src/nautilus-desktop-canvas-view.c:662
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr ""
@@ -2953,48 +2957,48 @@ msgstr ""
 # FIXME
 # missing accelerator
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:750
+#: ../src/nautilus-desktop-canvas-view.c:667
 msgid "Empty Trash"
 msgstr "Svuota cestino"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:752 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:669 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7147
 msgid "Delete all items in the Trash"
 msgstr "Elimina tutti gli oggetti nel cestino"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:757
+#: ../src/nautilus-desktop-canvas-view.c:674
 msgid "_Organize Desktop by Name"
 msgstr "_Ordina icone per nome"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:759
+#: ../src/nautilus-desktop-canvas-view.c:676
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr ""
 "Riposiziona le icone per migliorare la disposizione nella finestra e per "
 "evitare la loro sovrapposizione"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:764
+#: ../src/nautilus-desktop-canvas-view.c:681
 msgid "Resize Icon…"
 msgstr "Ridimensiona icona…"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:766
+#: ../src/nautilus-desktop-canvas-view.c:683
 msgid "Make the selected icons resizable"
 msgstr "Rende ridimensionabile l'icona selezionata"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:773
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore each selected icons to its original size"
 msgstr "Ripristina ogni icona selezionata alle sue dimensioni originali"
 
-#: ../src/nautilus-desktop-canvas-view.c:851
+#: ../src/nautilus-desktop-canvas-view.c:768
 msgid "The desktop view encountered an error."
 msgstr "La vista scrivania ha riscontrato un errore."
 
-#: ../src/nautilus-desktop-canvas-view.c:852
+#: ../src/nautilus-desktop-canvas-view.c:769
 msgid "The desktop view encountered an error while starting up."
 msgstr "La vista scrivania ha riscontrato un errore durante l'avvio."
 
@@ -3020,8 +3024,8 @@ msgid "Command"
 msgstr "Comando"
 
 #. hardcode "Desktop"
-#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:263
-#: ../src/nautilus-places-sidebar.c:537
+#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:240
+#: ../src/nautilus-places-sidebar.c:540
 msgid "Desktop"
 msgstr "Scrivania"
 
@@ -3211,7 +3215,7 @@ msgstr "C_hiedere ogni volta"
 
 #. trash
 #: ../src/nautilus-file-management-properties.ui.h:19
-#: ../src/nautilus-places-sidebar.c:551
+#: ../src/nautilus-places-sidebar.c:554
 #: ../src/nautilus-shell-search-provider.c:315 ../src/nautilus-trash-bar.c:195
 msgid "Trash"
 msgstr "Cestino"
@@ -3740,65 +3744,65 @@ msgstr[1] "Apertura di %d oggetti."
 msgid "Close tab"
 msgstr "Chiude la scheda"
 
-#: ../src/nautilus-places-sidebar.c:238
+#: ../src/nautilus-places-sidebar.c:241
 msgid "Devices"
 msgstr "Dispositivi"
 
-#: ../src/nautilus-places-sidebar.c:507
+#: ../src/nautilus-places-sidebar.c:510
 msgid "Places"
 msgstr "Risorse"
 
-#: ../src/nautilus-places-sidebar.c:514
+#: ../src/nautilus-places-sidebar.c:517
 msgid "Recent"
 msgstr "Recenti"
 
-#: ../src/nautilus-places-sidebar.c:516
+#: ../src/nautilus-places-sidebar.c:519
 msgid "Recent files"
 msgstr "File recenti"
 
 #. tooltip
-#: ../src/nautilus-places-sidebar.c:527 ../src/nautilus-window-menus.c:534
+#: ../src/nautilus-places-sidebar.c:530 ../src/nautilus-window-menus.c:534
 msgid "Open your personal folder"
 msgstr "Apre la propria cartella personale"
 
-#: ../src/nautilus-places-sidebar.c:539
+#: ../src/nautilus-places-sidebar.c:542
 msgid "Open the contents of your desktop in a folder"
 msgstr "Apre il contenuto della scrivania in una cartella"
 
-#: ../src/nautilus-places-sidebar.c:553
+#: ../src/nautilus-places-sidebar.c:556
 msgid "Open the trash"
 msgstr "Apre il cestino"
 
-#: ../src/nautilus-places-sidebar.c:605 ../src/nautilus-places-sidebar.c:630
-#: ../src/nautilus-places-sidebar.c:813
+#: ../src/nautilus-places-sidebar.c:608 ../src/nautilus-places-sidebar.c:633
+#: ../src/nautilus-places-sidebar.c:816
 #, c-format
 msgid "Mount and open %s"
 msgstr "Monta e apre «%s»"
 
-#: ../src/nautilus-places-sidebar.c:705
+#: ../src/nautilus-places-sidebar.c:708
 msgid "Open the contents of the File System"
 msgstr "Apre il contenuto del file system"
 
-#: ../src/nautilus-places-sidebar.c:783
+#: ../src/nautilus-places-sidebar.c:786
 msgid "Network"
 msgstr "Rete"
 
-#: ../src/nautilus-places-sidebar.c:789
+#: ../src/nautilus-places-sidebar.c:792
 msgid "Browse Network"
 msgstr "Esplora rete"
 
-#: ../src/nautilus-places-sidebar.c:791
+#: ../src/nautilus-places-sidebar.c:794
 msgid "Browse the contents of the network"
 msgstr "Esplora il contenuto di una rete"
 
-#: ../src/nautilus-places-sidebar.c:799
+#: ../src/nautilus-places-sidebar.c:802
 msgid "Connect to a network server address"
 msgstr "Connette a un indirizzo di server di rete"
 
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1685 ../src/nautilus-places-sidebar.c:2790
+#: ../src/nautilus-places-sidebar.c:1712 ../src/nautilus-places-sidebar.c:2858
 #: ../src/nautilus-view.c:7246 ../src/nautilus-view.c:7270
 #: ../src/nautilus-view.c:7342 ../src/nautilus-view.c:7928
 #: ../src/nautilus-view.c:7932 ../src/nautilus-view.c:8015
@@ -3809,7 +3813,7 @@ msgstr "_Avvia"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1686 ../src/nautilus-places-sidebar.c:2797
+#: ../src/nautilus-places-sidebar.c:1713 ../src/nautilus-places-sidebar.c:2865
 #: ../src/nautilus-view.c:7250 ../src/nautilus-view.c:7274
 #: ../src/nautilus-view.c:7346 ../src/nautilus-view.c:7957
 #: ../src/nautilus-view.c:8044 ../src/nautilus-view.c:8146
@@ -3818,125 +3822,129 @@ msgid "_Stop"
 msgstr "_Ferma"
 
 #. start() for type G_DRIVE_START_STOP_TYPE_SHUTDOWN is normally not used
-#: ../src/nautilus-places-sidebar.c:1691
+#: ../src/nautilus-places-sidebar.c:1718
 msgid "_Power On"
 msgstr "_Accendi"
 
-#: ../src/nautilus-places-sidebar.c:1692 ../src/nautilus-view.c:7961
+#: ../src/nautilus-places-sidebar.c:1719 ../src/nautilus-view.c:7961
 #: ../src/nautilus-view.c:8048 ../src/nautilus-view.c:8150
 msgid "_Safely Remove Drive"
 msgstr "Rimuovi unità in _sicurezza"
 
-#: ../src/nautilus-places-sidebar.c:1695
+#: ../src/nautilus-places-sidebar.c:1722
 msgid "_Connect Drive"
 msgstr "_Connetti unità"
 
-#: ../src/nautilus-places-sidebar.c:1696
+#: ../src/nautilus-places-sidebar.c:1723
 msgid "_Disconnect Drive"
 msgstr "_Disconnetti unità"
 
-#: ../src/nautilus-places-sidebar.c:1699
+#: ../src/nautilus-places-sidebar.c:1726
 msgid "_Start Multi-disk Device"
 msgstr "_Avvia dispositivo multi-disco"
 
-#: ../src/nautilus-places-sidebar.c:1700
+#: ../src/nautilus-places-sidebar.c:1727
 msgid "_Stop Multi-disk Device"
 msgstr "_Ferma dispositivo multi-disco"
 
 #. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
-#: ../src/nautilus-places-sidebar.c:1704 ../src/nautilus-view.c:8031
+#: ../src/nautilus-places-sidebar.c:1731 ../src/nautilus-view.c:8031
 #: ../src/nautilus-view.c:8133
 msgid "_Unlock Drive"
 msgstr "_Sblocca unità"
 
-#: ../src/nautilus-places-sidebar.c:1705 ../src/nautilus-view.c:7973
+#: ../src/nautilus-places-sidebar.c:1732 ../src/nautilus-view.c:7973
 #: ../src/nautilus-view.c:8060 ../src/nautilus-view.c:8162
 msgid "_Lock Drive"
 msgstr "_Blocca unità"
 
-#: ../src/nautilus-places-sidebar.c:1782 ../src/nautilus-places-sidebar.c:2426
+#: ../src/nautilus-places-sidebar.c:1809 ../src/nautilus-places-sidebar.c:2453
 #, c-format
 msgid "Unable to start %s"
 msgstr "Impossibile avviare «%s»"
 
-#: ../src/nautilus-places-sidebar.c:2185 ../src/nautilus-places-sidebar.c:2213
-#: ../src/nautilus-places-sidebar.c:2241
+#: ../src/nautilus-places-sidebar.c:2212 ../src/nautilus-places-sidebar.c:2240
+#: ../src/nautilus-places-sidebar.c:2268
 #, c-format
 msgid "Unable to eject %s"
 msgstr "Impossibile espellere «%s»"
 
 # versione migliore??
-#: ../src/nautilus-places-sidebar.c:2381
+#: ../src/nautilus-places-sidebar.c:2408
 #, c-format
 msgid "Unable to poll %s for media changes"
 msgstr "Impossibile interrogare «%s» per cambiamenti ai supporti"
 
-#: ../src/nautilus-places-sidebar.c:2481
+#: ../src/nautilus-places-sidebar.c:2508
 #, c-format
 msgid "Unable to stop %s"
 msgstr "Impossibile fermare «%s»"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2712 ../src/nautilus-view.c:7118
+#: ../src/nautilus-places-sidebar.c:2780 ../src/nautilus-view.c:7118
 #: ../src/nautilus-view.c:8520
 msgid "_Open"
 msgstr "_Apri"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2720 ../src/nautilus-view.c:7130
+#: ../src/nautilus-places-sidebar.c:2788 ../src/nautilus-view.c:7130
 #: ../src/nautilus-view.c:7300 ../src/nautilus-view.c:8241
 #: ../src/nautilus-view.c:8574
 msgid "Open in New _Tab"
 msgstr "Apri in nuova sc_heda"
 
-#: ../src/nautilus-places-sidebar.c:2727 ../src/nautilus-view.c:8233
+#: ../src/nautilus-places-sidebar.c:2795 ../src/nautilus-view.c:8233
 #: ../src/nautilus-view.c:8554
 msgid "Open in New _Window"
 msgstr "Apri in nuova _finestra"
 
-#: ../src/nautilus-places-sidebar.c:2735
+#: ../src/nautilus-places-sidebar.c:2803
 msgid "_Add Bookmark"
 msgstr "A_ggiungi segnalibro"
 
-#: ../src/nautilus-places-sidebar.c:2750
+#: ../src/nautilus-places-sidebar.c:2818
 msgid "Rename…"
 msgstr "Rinomina…"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2762 ../src/nautilus-view.c:7234
+#: ../src/nautilus-places-sidebar.c:2830 ../src/nautilus-view.c:7234
 #: ../src/nautilus-view.c:7258 ../src/nautilus-view.c:7330
 msgid "_Mount"
 msgstr "_Monta"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2769 ../src/nautilus-view.c:7238
+#: ../src/nautilus-places-sidebar.c:2837 ../src/nautilus-view.c:7238
 #: ../src/nautilus-view.c:7262 ../src/nautilus-view.c:7334
 msgid "_Unmount"
 msgstr "_Smonta"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2776 ../src/nautilus-view.c:7242
+#: ../src/nautilus-places-sidebar.c:2844 ../src/nautilus-view.c:7242
 #: ../src/nautilus-view.c:7266 ../src/nautilus-view.c:7338
 msgid "_Eject"
 msgstr "_Espelli"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2783 ../src/nautilus-view.c:7254
+#: ../src/nautilus-places-sidebar.c:2851 ../src/nautilus-view.c:7254
 #: ../src/nautilus-view.c:7278 ../src/nautilus-view.c:7350
 msgid "_Detect Media"
 msgstr "_Rileva supporto"
 
-#: ../src/nautilus-places-sidebar.c:2818
+#: ../src/nautilus-places-sidebar.c:2872
+msgid "_Format…"
+msgstr "_Formatta…"
+
+#: ../src/nautilus-places-sidebar.c:2892
 msgid "_Properties"
 msgstr "Pr_oprietà"
 
-#: ../src/nautilus-places-sidebar.c:3395
+#: ../src/nautilus-places-sidebar.c:3469
 msgid "Computer"
 msgstr "Computer"
 
@@ -4310,11 +4318,11 @@ msgstr "I file in questa cartella appariranno nel menù «Nuovo documento»."
 msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr "I file eseguibili in questa cartella appariranno nel menù «Script»."
 
-#: ../src/nautilus-toolbar.c:473
+#: ../src/nautilus-toolbar.c:488
 msgid "View options"
 msgstr "Opzioni di visualizzazione"
 
-#: ../src/nautilus-toolbar.c:490
+#: ../src/nautilus-toolbar.c:505
 msgid "Location options"
 msgstr "Opzioni di posizione"
 
