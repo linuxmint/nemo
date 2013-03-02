@@ -136,6 +136,7 @@ static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 static void nautilus_window_slot_force_reload (NautilusWindowSlot *slot);
 static void location_has_really_changed (NautilusWindowSlot *slot);
 static void nautilus_window_slot_connect_new_content_view (NautilusWindowSlot *slot);
+static void nautilus_window_slot_emit_location_change (NautilusWindowSlot *slot, GFile *from, GFile *to);
 
 static void
 nautilus_window_slot_sync_search_widgets (NautilusWindowSlot *slot)
@@ -968,19 +969,25 @@ static void
 nautilus_window_slot_set_location (NautilusWindowSlot *slot,
 				   GFile *location)
 {
+	GFile *old_location;
+
 	if (slot->details->location &&
 	    g_file_equal (location, slot->details->location)) {
 		return;
 	}
 
-	if (slot->details->location) {
-		g_object_unref (slot->details->location);
-	}
+	old_location = slot->details->location;
 	slot->details->location = g_object_ref (location);
 
 	if (slot == nautilus_window_get_active_slot (slot->details->window)) {
 		nautilus_window_sync_location_widgets (slot->details->window);
 		nautilus_window_slot_update_title (slot);
+	}
+
+	nautilus_window_slot_emit_location_change (slot, old_location, location);
+
+	if (old_location) {
+		g_object_unref (old_location);
 	}
 }
 
@@ -2135,7 +2142,6 @@ nautilus_window_slot_update_for_new_location (NautilusWindowSlot *slot)
 	slot->details->viewed_file_in_trash = nautilus_file_is_in_trash (file);
         nautilus_file_unref (file);
 
-	nautilus_window_slot_emit_location_change (slot, old_location, new_location);
 	nautilus_window_slot_set_location (slot, new_location);
 
 	if (slot == nautilus_window_get_active_slot (window)) {
