@@ -2,12 +2,12 @@
 # Copyright © 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Nautilus
 # Distributed under the same licence as the nautilus package
 # Duarte Loreto <happyguy_pt@hotmail.com>, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: 3.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-03 13:04+0000\n"
+"POT-Creation-Date: 2013-03-03 13:28+0000\n"
 "PO-Revision-Date: 2013-03-03 13:15+0000\n"
 "Last-Translator: Duarte Loreto <happyguy_pt@hotmail.com>\n"
 "Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
@@ -944,8 +944,7 @@ msgid_plural ""
 msgstr[0] ""
 "Tem a certeza de que deseja apagar definitivamente %'d item selecionado?"
 msgstr[1] ""
-"Tem a certeza de que deseja apagar definitivamente os %'d itens "
-"selecionados?"
+"Tem a certeza de que deseja apagar definitivamente os %'d itens selecionados?"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1436
 #, c-format
@@ -2001,8 +2000,8 @@ msgid ""
 "\"ask\" to ask what to do via a dialog, and \"display\" to display them as "
 "text files."
 msgstr ""
-"O que fazer com ficheiros de texto executáveis ao ativá-los (clique único "
-"ou duplo). Valores possíveis são \"launch\" para os iniciar como aplicações, "
+"O que fazer com ficheiros de texto executáveis ao ativá-los (clique único ou "
+"duplo). Valores possíveis são \"launch\" para os iniciar como aplicações, "
 "\"ask\" para perguntar o que fazer através de um diálogo e \"display\" para "
 "os apresentar como ficheiros de texto."
 
@@ -2037,8 +2036,7 @@ msgstr ""
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:19
 msgid "Mouse button to activate the \"Forward\" command in browser window"
-msgstr ""
-"Botão do rato para ativar o comando \"Avançar\" na janela de navegação"
+msgstr "Botão do rato para ativar o comando \"Avançar\" na janela de navegação"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:20
 msgid ""
@@ -2062,8 +2060,8 @@ msgid ""
 "Possible values range between 6 and 14."
 msgstr ""
 "Para utilizadores com ratos que têm botões \"Avançar\" e \"Retroceder\", "
-"esta chave determina que botão ativa o comando \"Retroceder\" numa janela "
-"de navegador. Valores possíveis estão no intervalo entre 6 e 14."
+"esta chave determina que botão ativa o comando \"Retroceder\" numa janela de "
+"navegador. Valores possíveis estão no intervalo entre 6 e 14."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:23
 msgid "When to show thumbnails of files"
@@ -2149,8 +2147,8 @@ msgid ""
 "and \"icon-view\"."
 msgstr ""
 "Quando uma pasta é visitada este visualizador é utilizado exceto se tiver "
-"selecionado outro visualizador para essa pasta específica. Valores "
-"possíveis são \"list-view\" e \"icon-view\"."
+"selecionado outro visualizador para essa pasta específica. Valores possíveis "
+"são \"list-view\" e \"icon-view\"."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:35
 msgid "Whether to show hidden files"
@@ -2190,7 +2188,7 @@ msgstr "Lista de legendas possíveis nos ícones"
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:40
 msgid ""
 "A list of captions below an icon in the icon view and the desktop. The "
-"atual number of captions shown depends on the zoom level. Some possible "
+"actual number of captions shown depends on the zoom level. Some possible "
 "values are: \"size\", \"type\", \"date_modified\", \"owner\", \"group\", "
 "\"permissions\", and \"mime_type\"."
 msgstr ""
@@ -2286,7 +2284,8 @@ msgstr "Utilizar vista de árvore"
 msgid ""
 "Whether a tree should be used for list view navigation instead of a flat list"
 msgstr ""
-"Se deverá ser utilizada uma árvore para navegação em vista de lista em vez de uma lista simples"
+"Se deverá ser utilizada uma árvore para navegação em vista de lista em vez "
+"de uma lista simples"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
 msgid "Desktop font"
@@ -2554,13 +2553,11 @@ msgstr "Apenas criar janelas para URIs explicitamente especificados."
 
 #: ../src/nautilus-application.c:1163
 msgid "Never manage the desktop (ignore the GSettings preference)."
-msgstr ""
-"Nunca gerir a área de trabalho (ignorar as preferências GSettings)."
+msgstr "Nunca gerir a área de trabalho (ignorar as preferências GSettings)."
 
 #: ../src/nautilus-application.c:1165
 msgid "Always manage the desktop (ignore the GSettings preference)."
-msgstr ""
-"Gerir sempre a área de trabalho (ignorar as preferências GSettings)."
+msgstr "Gerir sempre a área de trabalho (ignorar as preferências GSettings)."
 
 #: ../src/nautilus-application.c:1167
 msgid "Quit Nautilus."
@@ -3763,11 +3760,11 @@ msgid "_Disconnect Drive"
 msgstr "_Desligar a Unidade"
 
 #: ../src/nautilus-places-sidebar.c:1726
-msgid "_Start Multidisk Device"
+msgid "_Start Multi-disk Device"
 msgstr "_Iniciar Unidade Multidisco"
 
 #: ../src/nautilus-places-sidebar.c:1727
-msgid "_Stop Multidisk Device"
+msgid "_Stop Multi-disk Device"
 msgstr "_Parar Unidade Multidisco"
 
 #. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
@@ -3884,8 +3881,8 @@ msgstr "Apresentar Detalhes"
 #: ../src/nautilus-progress-ui-handler.c:154
 #: ../src/nautilus-progress-ui-handler.c:176
 #, c-format
-msgid "%'d file operation ative"
-msgid_plural "%'d file operations ative"
+msgid "%'d file operation active"
+msgid_plural "%'d file operations active"
 msgstr[0] "%'d operação de ficheiro ativa"
 msgstr[1] "%'d operações de ficheiro ativas"
 
@@ -4203,7 +4200,7 @@ msgstr "Outro Tipo…"
 msgid "Remove this criterion from the search"
 msgstr "Remover este critério da procura"
 
-#. create the Current/All Files seletor
+#. create the Current/All Files selector
 #: ../src/nautilus-query-editor.c:1038
 msgid "Current"
 msgstr "Atual"
@@ -4963,11 +4960,11 @@ msgstr "Ligar-se à unidade selecionada"
 
 #: ../src/nautilus-view.c:7940 ../src/nautilus-view.c:8027
 #: ../src/nautilus-view.c:8129
-msgid "_Start Multidisk Drive"
+msgid "_Start Multi-disk Drive"
 msgstr "_Iniciar Unidade Multidisco"
 
 #: ../src/nautilus-view.c:7941 ../src/nautilus-view.c:8130
-msgid "Start the selected multidisk drive"
+msgid "Start the selected multi-disk drive"
 msgstr "Iniciar a unidade multidisco selecionada"
 
 #: ../src/nautilus-view.c:7944
@@ -4997,11 +4994,11 @@ msgstr "Desligar a unidade selecionada"
 
 #: ../src/nautilus-view.c:7969 ../src/nautilus-view.c:8056
 #: ../src/nautilus-view.c:8158
-msgid "_Stop Multidisk Drive"
+msgid "_Stop Multi-disk Drive"
 msgstr "_Parar Unidade Multidisco"
 
 #: ../src/nautilus-view.c:7970 ../src/nautilus-view.c:8159
-msgid "Stop the selected multidisk drive"
+msgid "Stop the selected multi-disk drive"
 msgstr "Parar a unidade multidisco selecionada"
 
 #: ../src/nautilus-view.c:7974 ../src/nautilus-view.c:8163
@@ -5017,7 +5014,7 @@ msgid "Connect to the drive associated with the open folder"
 msgstr "Ligar-se à unidade associada à pasta aberta"
 
 #: ../src/nautilus-view.c:8028
-msgid "Start the multidisk drive associated with the open folder"
+msgid "Start the multi-disk drive associated with the open folder"
 msgstr "Iniciar a unidade multidisco associada à pasta aberta"
 
 #: ../src/nautilus-view.c:8032
@@ -5037,7 +5034,7 @@ msgid "Disconnect the drive associated with the open folder"
 msgstr "Desligar a unidade associada à pasta aberta"
 
 #: ../src/nautilus-view.c:8057
-msgid "Stop the multidisk drive associated with the open folder"
+msgid "Stop the multi-disk drive associated with the open folder"
 msgstr "Parar a unidade multidisco associada à pasta aberta"
 
 #: ../src/nautilus-view.c:8061
@@ -5463,7 +5460,7 @@ msgstr "Apresentar a _Barra Lateral"
 msgid "Change the visibility of this window's side pane"
 msgstr "Alterar a visibilidade do painel lateral desta janela"
 
-#. is_ative
+#. is_active
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:589
@@ -5945,8 +5942,8 @@ msgstr "Abrir com:"
 #~ "\n"
 #~ "If in doubt, press Cancel."
 #~ msgstr ""
-#~ "A aplicação irá ser executada diretamente a partir do media \"%s\". "
-#~ "Nunca deverá executar aplicações nas quais não tem confiança.\n"
+#~ "A aplicação irá ser executada diretamente a partir do media \"%s\". Nunca "
+#~ "deverá executar aplicações nas quais não tem confiança.\n"
 #~ "\n"
 #~ "Se em dúvida, prima Cancelar."
 
@@ -6223,8 +6220,8 @@ msgstr "Abrir com:"
 #~ "Choosing a script from the menu will run that script with any selected "
 #~ "items as input."
 #~ msgstr ""
-#~ "Selecionar um script do menu irá executar esse script com quaisquer "
-#~ "itens selecionados como parâmetros de entrada."
+#~ "Selecionar um script do menu irá executar esse script com quaisquer itens "
+#~ "selecionados como parâmetros de entrada."
 
 #~ msgid ""
 #~ "All executable files in this folder will appear in the Scripts menu. "
@@ -6260,8 +6257,8 @@ msgstr "Abrir com:"
 #~ "Scripts. Selecionar um script desse menu irá executá-lo.\n"
 #~ "\n"
 #~ "Quando executados de uma pasta local, ser-lhes-ão indicados os nomes dos "
-#~ "ficheiros selecionados. Quando executado de uma pasta remota (por ex. "
-#~ "uma pasta que apresente conteúdo web ou ftp), não lhes serão indicados "
+#~ "ficheiros selecionados. Quando executado de uma pasta remota (por ex. uma "
+#~ "pasta que apresente conteúdo web ou ftp), não lhes serão indicados "
 #~ "parâmetros.\n"
 #~ "\n"
 #~ "Em qualquer caso, serão definidas pelo Nautilus as seguintes variáveis de "
@@ -6282,11 +6279,11 @@ msgstr "Abrir com:"
 #~ "dividida (apenas se locais)\n"
 #~ "\n"
 #~ "NAUTILUS_SCRIPT_NEXT_PANE_SELECTED_URIS: URIs, um por linha, dos "
-#~ "ficheiros selecionados no painel inativo de uma janela em vista "
-#~ "dividida (apenas se locais)\n"
+#~ "ficheiros selecionados no painel inativo de uma janela em vista dividida "
+#~ "(apenas se locais)\n"
 #~ "\n"
-#~ "NAUTILUS_SCRIPT_NEXT_PANE_CURRENT_URI: URI da localização atual no "
-#~ "painel inativo de uma janela em vista dividida"
+#~ "NAUTILUS_SCRIPT_NEXT_PANE_CURRENT_URI: URI da localização atual no painel "
+#~ "inativo de uma janela em vista dividida"
 
 #~ msgid "The %'d selected item will be moved if you select the Paste command"
 #~ msgid_plural ""
@@ -6765,8 +6762,8 @@ msgstr "Abrir com:"
 #~ "Select how to open \"%s\" and whether to perform this action in the "
 #~ "future for other media of type \"%s\"."
 #~ msgstr ""
-#~ "Selecione como abrir \"%s\" e se realizar esta ação no futuro para "
-#~ "outro media do tipo \"%s\"."
+#~ "Selecione como abrir \"%s\" e se realizar esta ação no futuro para outro "
+#~ "media do tipo \"%s\"."
 
 #~ msgid "_Always perform this action"
 #~ msgstr "_Realizar sempre esta ação"
@@ -7481,8 +7478,8 @@ msgstr "Abrir com:"
 #~ "Filename for the default folder background. Only used if background_set "
 #~ "is true."
 #~ msgstr ""
-#~ "Nome do ficheiro para o fundo por omissão de diretórios. Apenas "
-#~ "utilizado se background_set for verdadeiro."
+#~ "Nome do ficheiro para o fundo por omissão de diretórios. Apenas utilizado "
+#~ "se background_set for verdadeiro."
 
 #~ msgid ""
 #~ "Folders over this size will be truncated to around this size. The purpose "
@@ -8117,11 +8114,11 @@ msgstr "Abrir com:"
 #~ msgstr "Reiniciar o Nautilus."
 
 #~ msgid ""
-#~ "Load a saved session from the specified file. Implies \"--no-default"
-#~ "window\"."
+#~ "Load a saved session from the specified file. Implies \"--no-defaultwindow"
+#~ "\"."
 #~ msgstr ""
-#~ "Ler uma sessão gravada do ficheiro especificado. Implica \"--no-default"
-#~ "window\"."
+#~ "Ler uma sessão gravada do ficheiro especificado. Implica \"--no-"
+#~ "defaultwindow\"."
 
 #~ msgid "Sorry, but \"%s\" is not a valid file name."
 #~ msgstr "\"%s\" não é um nome de ficheiro válido."
@@ -8561,9 +8558,9 @@ msgstr "Abrir com:"
 #~ "The location of the desktop directory has changed in GNOME 2.4. You can "
 #~ "open the link and move over the files you want, then delete the link."
 #~ msgstr ""
-#~ "A localização do diretório de área de trabalho foi alterada no GNOME "
-#~ "2.4. Pode abrir o atalho acima, mover os ficheiros que deseja e depois "
-#~ "apagar o atalho."
+#~ "A localização do diretório de área de trabalho foi alterada no GNOME 2.4. "
+#~ "Pode abrir o atalho acima, mover os ficheiros que deseja e depois apagar "
+#~ "o atalho."
 
 #~ msgid "Can't Connect to Server. \"%s\" is not a valid location."
 #~ msgstr ""
@@ -8600,8 +8597,7 @@ msgstr "Abrir com:"
 #~ msgstr "<span weight=\"bold\">Lixo</span>"
 
 #~ msgid "Check that your proxy settings are correct."
-#~ msgstr ""
-#~ "Certifique-se de que as suas configurações de proxy estão corretas."
+#~ msgstr "Certifique-se de que as suas configurações de proxy estão corretas."
 
 #~ msgid ""
 #~ "Couldn't display \"%s\", because Nautilus cannot contact the SMB master "
@@ -10071,8 +10067,8 @@ msgstr "Abrir com:"
 #~ "You can check the spelling on your selections or add more criteria to "
 #~ "narrow your results."
 #~ msgstr ""
-#~ "Pode verificar a ortografia das suas seleções ou adicionar mais "
-#~ "critérios para reduzir o âmbito dos resultados."
+#~ "Pode verificar a ortografia das suas seleções ou adicionar mais critérios "
+#~ "para reduzir o âmbito dos resultados."
 
 #~ msgid "Error During Search"
 #~ msgstr "Erro Durante a Procura"
@@ -10145,9 +10141,9 @@ msgstr "Abrir com:"
 #~ "To do a content search, Find requires an index of the content on your "
 #~ "system.  Your computer is currently creating that index."
 #~ msgstr ""
-#~ "Para efetuar uma procura por conteúdo, a Procura necessita de um "
-#~ "ficheiro de índice do conteúdo do seu sistema.  De momento, o seu "
-#~ "computador está a criar esse índice."
+#~ "Para efetuar uma procura por conteúdo, a Procura necessita de um ficheiro "
+#~ "de índice do conteúdo do seu sistema.  De momento, o seu computador está "
+#~ "a criar esse índice."
 
 #~ msgid ""
 #~ "Because Find cannot use an index, this search may take several minutes."
@@ -10266,8 +10262,8 @@ msgstr "Abrir com:"
 #~ "index right now."
 #~ msgstr ""
 #~ "Quando a Procura Rápida está ativa, a Procura cria um índice para "
-#~ "acelerar as procuras.  A procura rápida não está ativa no seu "
-#~ "computador, pelo que de momento não possui um índice."
+#~ "acelerar as procuras.  A procura rápida não está ativa no seu computador, "
+#~ "pelo que de momento não possui um índice."
 
 #~ msgid "No Index of Files"
 #~ msgstr "Nenhum Índice dos Ficheiros"
