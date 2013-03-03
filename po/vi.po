@@ -16,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-02-18 16:25+0000\n"
-"PO-Revision-Date: 2013-03-03 10:42+0700\n"
+"PO-Revision-Date: 2013-03-03 10:43+0700\n"
 "Last-Translator: Nguyễn Thái Ngọc Duy <pclouds@gmail.com>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
 "Language: vi\n"
@@ -3124,7 +3124,7 @@ msgstr "Danh sách"
 
 #: ../src/nautilus-file-management-properties.ui.h:25
 msgid "Navigate folders in a tree"
-msgstr "Khám phá thư mục dạng cây"
+msgstr "Duyệt thư mục dạng cây"
 
 #: ../src/nautilus-file-management-properties.ui.h:26
 msgid "Display"
