@@ -95,4 +95,6 @@ void nautilus_get_x_content_types_for_mount_async (GMount *mount,
 						   GCancellable *cancellable,
 						   gpointer user_data);
 
+gboolean nautilus_file_selection_equal (GList *selection_a, GList *selection_b);
+
 #endif /* NAUTILUS_FILE_UTILITIES_H */
