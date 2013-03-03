@@ -148,7 +148,7 @@ action_location_properties_callback (GtkAction *action,
 
 	nautilus_properties_window_present (files, GTK_WIDGET (view), NULL);
 
-	nautilus_file_list_free (files);
+	g_list_free (files);
 }
 
 static NautilusView *
