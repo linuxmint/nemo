@@ -2,7 +2,7 @@
 # Copyright © 2009 GNOME i18n Project for Vietnamese.
 # Hoang Ngoc Tu <hntu@gmx.de>, 2001-2002.
 # Joern v. Kattchee <kattchee@gmx.net>, 2001-2002.
-# Nguyễn Thái Ngọc Duy <pclouds@gmail.com>, 2002, 2004, 2007-2008, 2011-2012.
+# Nguyễn Thái Ngọc Duy <pclouds@gmail.com>, 2002, 2004, 2007-2008, 2011-2013.
 # Trinh Minh Thanh <tmthanh@yahoo.com>, 2002-2003, 2005.
 # Phạm Thành Long <lngt@ngonngu.net>, 2007.
 # Clytie Siddall <clytie@riverland.net.au>, 2005-2009.
@@ -16,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-02-18 16:25+0000\n"
-"PO-Revision-Date: 2013-03-03 10:25+0700\n"
+"PO-Revision-Date: 2013-03-03 10:42+0700\n"
 "Last-Translator: Nguyễn Thái Ngọc Duy <pclouds@gmail.com>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
 "Language: vi\n"
@@ -35,7 +35,7 @@ msgstr "Chạy phần mềm"
 #: ../src/nautilus-connect-server-dialog.c:588
 #: ../src/nautilus-places-sidebar.c:800
 msgid "Connect to Server"
-msgstr "Kết nối đến máy phục vụ"
+msgstr "Kết nối đến máy chủ"
 
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
@@ -52,6 +52,8 @@ msgstr "Truy cập và tổ chức tập tin"
 #: ../data/nautilus.desktop.in.in.h:3
 msgid "folder;manager;explore;disk;filesystem;"
 msgstr ""
+"folder;thư;mục;thu;muc;;manager;quản;lý;quan;lý;;explore;khám;phá;kham;pha;;"
+"disk;đĩa;dia;;filesystem;hệ;thống;tập;tin;he;thong;tap;tin;"
 
 #: ../data/nautilus.xml.in.h:1
 msgid "Saved search"
@@ -501,20 +503,16 @@ msgstr "không rõ"
 #: ../libnautilus-private/nautilus-file.c:6153
 #: ../libnautilus-private/nautilus-file.c:6161
 #: ../libnautilus-private/nautilus-file.c:6212
-#, fuzzy
-#| msgid "program"
 msgid "Program"
-msgstr "chương trình"
+msgstr "Chương trình"
 
 #: ../libnautilus-private/nautilus-file.c:6154
-#, fuzzy
-#| msgid "Audio CD"
 msgid "Audio"
-msgstr "CD Nhạc"
+msgstr "Nhạc"
 
 #: ../libnautilus-private/nautilus-file.c:6155
 msgid "Font"
-msgstr ""
+msgstr "Phông"
 
 #: ../libnautilus-private/nautilus-file.c:6156
 #: ../src/nautilus-image-properties-page.c:769
@@ -522,14 +520,12 @@ msgid "Image"
 msgstr "Ảnh"
 
 #: ../libnautilus-private/nautilus-file.c:6157
-#, fuzzy
-#| msgid "Archive Mounter"
 msgid "Archive"
-msgstr "Kết kho lưu trữ"
+msgstr "Kho lưu trữ"
 
 #: ../libnautilus-private/nautilus-file.c:6158
 msgid "Markup"
-msgstr ""
+msgstr "Mã đánh dấu"
 
 #: ../libnautilus-private/nautilus-file.c:6162
 #: ../src/nautilus-query-editor.c:425
@@ -537,18 +533,14 @@ msgid "Video"
 msgstr "Phim"
 
 #: ../libnautilus-private/nautilus-file.c:6163
-#, fuzzy
-#| msgid "Contents:"
 msgid "Contacts"
-msgstr "Nội dung:"
+msgstr "Liên lạc"
 
 #: ../libnautilus-private/nautilus-file.c:6164
 msgid "Calendar"
-msgstr ""
+msgstr "Lịch"
 
 #: ../libnautilus-private/nautilus-file.c:6165
-#, fuzzy
-#| msgid "Documents"
 msgid "Document"
 msgstr "Tài liệu"
 
@@ -564,17 +556,15 @@ msgstr "Bảng tính"
 
 #: ../libnautilus-private/nautilus-file.c:6214
 msgid "Binary"
-msgstr ""
+msgstr "Nhị phân"
 
 #: ../libnautilus-private/nautilus-file.c:6218
-#, fuzzy
-#| msgid "Folders"
 msgid "Folder"
 msgstr "Thư mục"
 
 #: ../libnautilus-private/nautilus-file.c:6249
 msgid "Link"
-msgstr ""
+msgstr "Liên kết"
 
 #. Note to localizers: convert file type string for file
 #. * (e.g. "folder", "plain text") to file type for symbolic link
@@ -590,10 +580,8 @@ msgstr "Liên kết đến %s"
 
 #: ../libnautilus-private/nautilus-file.c:6271
 #: ../libnautilus-private/nautilus-file.c:6285
-#, fuzzy
-#| msgid "link (broken)"
 msgid "Link (broken)"
-msgstr "liên kết (hư)"
+msgstr "Liên kết (hư)"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:141
 #, c-format
@@ -2243,10 +2231,8 @@ msgid "Default column order in the list view."
 msgstr "Thứ tự cột mặc định trong kiểu trình bày danh sách."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:54
-#, fuzzy
-#| msgid "Text view:"
 msgid "Use tree view"
-msgstr "Xem chữ:"
+msgstr "Xem dạng cây"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:55
 msgid ""
@@ -2299,15 +2285,15 @@ msgstr ""
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:64
 msgid "Network Servers icon visible on the desktop"
-msgstr "Hiển thị biểu tượng Máy phục vụ mạng trên màn hình nền"
+msgstr "Hiển thị biểu tượng máy chủ mạng trên màn hình nền"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:65
 msgid ""
 "If this is set to true, an icon linking to the Network Servers view will be "
 "put on the desktop."
 msgstr ""
-"Nếu đặt là true (đúng) thì biểu tượng liên kết đến Máy phục vụ mạng sẽ được "
-"đặt lên màn hình nền."
+"Nếu đặt là true (đúng) thì biểu tượng liên kết đến máy chủ mạng sẽ được đặt "
+"lên màn hình nền."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:66
 msgid "Desktop home icon name"
@@ -2335,15 +2321,15 @@ msgstr ""
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:70
 msgid "Network servers icon name"
-msgstr "Tên biểu tượng máy phục vụ mạng"
+msgstr "Tên biểu tượng máy chủ mạng"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:71
 msgid ""
 "This name can be set if you want a custom name for the network servers icon "
 "on the desktop."
 msgstr ""
-"Có thể đặt tên này nếu bạn muốn tự chọn tên cho biểu tượng của Máy phục vụ "
-"mạng trên màn hình nền."
+"Có thể đặt tên này nếu bạn muốn tự chọn tên cho biểu tượng của máy chủ mạng "
+"trên màn hình nền."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:72
 msgid ""
@@ -2413,22 +2399,16 @@ msgstr "Nếu đặt là đúng, cửa sổ mới mở sẽ xuất hiện khung 
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:80
 #: ../nautilus-sendto-extension/nautilus-nste.c:85
-#, fuzzy
-#| msgid "Send To..."
 msgid "Send To…"
-msgstr "Gửi đến..."
+msgstr "Gửi đến…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:81
-#, fuzzy
-#| msgid "Send file by mail, instant message..."
 msgid "Send file by mail, instant message…"
-msgstr "Gửi tập tin qua thư hoặc tin nhắn..."
+msgstr "Gửi tập tin qua thư hoặc tin nhắn…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:86
-#, fuzzy
-#| msgid "Send files by mail, instant message..."
 msgid "Send files by mail, instant message…"
-msgstr "Gửi tập tin qua thư hoặc tin nhắn..."
+msgstr "Gửi tập tin qua thư hoặc tin nhắn…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
 #: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1597
@@ -2489,14 +2469,12 @@ msgid "--geometry cannot be used with more than one URI."
 msgstr "không thể dùng --geometry với nhiều URI."
 
 #: ../src/nautilus-application.c:1044
-#, fuzzy
-#| msgid "--geometry cannot be used with more than one URI."
 msgid "--select must be used with at least an URI."
-msgstr "không thể dùng --geometry với nhiều URI."
+msgstr "phải dùng --select với ít nhất một URI."
 
 #: ../src/nautilus-application.c:1050
 msgid "--no-desktop and --force-desktop cannot be used together."
-msgstr ""
+msgstr "không thể dùng --no-dekstop< với --force-desktop."
 
 #: ../src/nautilus-application.c:1148
 msgid "Perform a quick set of self-check tests."
@@ -2519,34 +2497,20 @@ msgid "Only create windows for explicitly specified URIs."
 msgstr "Chỉ tạo cửa sổ cho URI đã ghi rõ dứt khoát."
 
 #: ../src/nautilus-application.c:1160
-#, fuzzy
-#| msgid ""
-#| "Do not manage the desktop (ignore the preference set in the preferences "
-#| "dialog)."
 msgid "Never manage the desktop (ignore the GSettings preference)."
-msgstr ""
-"Không được quản trị màn hình nền (bỏ qua phần tùy thích trong hội thoại tùy "
-"thích)."
+msgstr "Không bao giờ quản lý màn hình nền (bỏ qua tùy thích GSettings)."
 
 #: ../src/nautilus-application.c:1162
-#, fuzzy
-#| msgid ""
-#| "Do not manage the desktop (ignore the preference set in the preferences "
-#| "dialog)."
 msgid "Always manage the desktop (ignore the GSettings preference)."
-msgstr ""
-"Không được quản trị màn hình nền (bỏ qua phần tùy thích trong hội thoại tùy "
-"thích)."
+msgstr "Luông luôn quản lý màn hình nền (bỏ qua tùy thích GSettings)."
 
 #: ../src/nautilus-application.c:1164
 msgid "Quit Nautilus."
 msgstr "Thoát khỏi Nautilus."
 
 #: ../src/nautilus-application.c:1166
-#, fuzzy
-#| msgid "Select the columns visible in this folder"
 msgid "Select specified URI in parent folder."
-msgstr "Chọn những cột được hiển thị trong thư mục này"
+msgstr "Chọn URI xác định trong thư mục cha."
 
 #: ../src/nautilus-application.c:1167
 msgid "[URI...]"
@@ -2565,18 +2529,14 @@ msgstr ""
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
 #: ../src/nautilus-application.c:1190
-#, fuzzy
-#| msgid "Could not set as default"
 msgid "Could not parse arguments"
-msgstr "Không thể đặt làm mặc định"
+msgstr "Không thể phân tích đối số"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
 #: ../src/nautilus-application.c:1223
-#, fuzzy
-#| msgid "Could not remove application"
 msgid "Could not register the application"
-msgstr "Không thể gỡ bỏ ứng dụng"
+msgstr "Không thể đăng ký ứng dụng"
 
 #. name, stock id, label
 #: ../src/nautilus-app-menu.ui.h:1 ../src/nautilus-window-menus.c:536
@@ -2585,7 +2545,7 @@ msgstr "Cửa _sổ mới"
 
 #: ../src/nautilus-app-menu.ui.h:2
 msgid "Connect to _Server"
-msgstr "Kết nối đến _máy phục vụ"
+msgstr "Kết nối đến _máy chủ"
 
 #: ../src/nautilus-app-menu.ui.h:3
 msgid "Enter _Location"
@@ -2746,16 +2706,12 @@ msgid "Keep icons sorted by trash time in rows"
 msgstr "Sắp biểu tưởng theo hàng dựa theo lúc bỏ"
 
 #: ../src/nautilus-canvas-view.c:1192
-#, fuzzy
-#| msgid "Relevance"
 msgid "By Search Relevance"
-msgstr "Mức độ liên quan"
+msgstr "Theo mức liên quan"
 
 #: ../src/nautilus-canvas-view.c:1193
-#, fuzzy
-#| msgid "Keep icons sorted by size in rows"
 msgid "Keep icons sorted by search relevance in rows"
-msgstr "Sắp xếp các biểu tượng theo kích thước với biểu diễn hàng"
+msgstr "Sắp xếp các biểu tượng trong hàng theo mức độ liên quan tìm kiếm"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
@@ -2789,10 +2745,8 @@ msgid "Unable to access location"
 msgstr "Không thể truy cập vị trí"
 
 #: ../src/nautilus-connect-server.c:74
-#, fuzzy
-#| msgid "Unable to load location"
 msgid "Unable to display location"
-msgstr "Không thể nạp vị trí"
+msgstr "Không thể hiện vị trí"
 
 #: ../src/nautilus-connect-server.c:140
 msgid "Print but do not open the URI"
@@ -2817,47 +2771,37 @@ msgstr "Gặp lỗi khi hiển thị trợ giúp."
 
 #: ../src/nautilus-connect-server-dialog.c:149
 msgid "Don't recognize this file server type."
-msgstr ""
+msgstr "Không nhận ra loại máy chủ tập tin này."
 
 #: ../src/nautilus-connect-server-dialog.c:156
 msgid "This doesn't look like an address."
-msgstr ""
+msgstr "Cái này trông không giống địa chỉ."
 
 #. Translators: %s is a URI of the form "smb://foo.example.com"
 #: ../src/nautilus-connect-server-dialog.c:265
 #, c-format
 msgid "For example, %s"
-msgstr ""
+msgstr "Ví dụ, %s"
 
 #: ../src/nautilus-connect-server-dialog.c:533
-#, fuzzy
-#| msgid "Remove"
 msgid "_Remove"
-msgstr "Bỏ"
+msgstr "_Bỏ"
 
 #: ../src/nautilus-connect-server-dialog.c:542
-#, fuzzy
-#| msgid "Select All"
 msgid "_Clear All"
-msgstr "Chọn tất cả"
+msgstr "_Xoá trắng tất cả"
 
 #: ../src/nautilus-connect-server-dialog.c:604
-#, fuzzy
-#| msgid "Server Details"
 msgid "_Server Address"
-msgstr "Chi tiết máy phục vụ"
+msgstr "Địa chỉ _máy chủ"
 
 #: ../src/nautilus-connect-server-dialog.c:628
-#, fuzzy
-#| msgid "Network Servers"
 msgid "_Recent Servers"
-msgstr "Máy phục vụ mạng"
+msgstr "Máy chủ _gần đây"
 
 #: ../src/nautilus-connect-server-dialog.c:694
-#, fuzzy
-#| msgid "_Browse..."
 msgid "_Browse"
-msgstr "_Duyệt..."
+msgstr "_Duyệt"
 
 #: ../src/nautilus-connect-server-dialog.c:704
 msgid "C_onnect"
@@ -2916,10 +2860,8 @@ msgstr ""
 
 #. label, accelerator
 #: ../src/nautilus-desktop-canvas-view.c:764
-#, fuzzy
-#| msgid "Resize Icon..."
 msgid "Resize Icon…"
-msgstr "Co giãn biểu tượng..."
+msgstr "Co giãn biểu tượng…"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:766
@@ -3182,7 +3124,7 @@ msgstr "Danh sách"
 
 #: ../src/nautilus-file-management-properties.ui.h:25
 msgid "Navigate folders in a tree"
-msgstr ""
+msgstr "Khám phá thư mục dạng cây"
 
 #: ../src/nautilus-file-management-properties.ui.h:26
 msgid "Display"
@@ -3350,12 +3292,12 @@ msgstr "Cao"
 #: ../src/nautilus-image-properties-page.c:356
 #: ../src/nautilus-image-properties-page.c:357
 msgid "Title"
-msgstr ""
+msgstr "Tựa"
 
 #: ../src/nautilus-image-properties-page.c:358
 #: ../src/nautilus-image-properties-page.c:359
 msgid "Author"
-msgstr ""
+msgstr "Tác giả"
 
 #: ../src/nautilus-image-properties-page.c:362
 #: ../src/nautilus-image-properties-page.c:419
@@ -3363,14 +3305,12 @@ msgid "Copyright"
 msgstr "Tác quyền"
 
 #: ../src/nautilus-image-properties-page.c:363
-#, fuzzy
-#| msgid "Trashed On"
 msgid "Created On"
-msgstr "Bị xóa vào"
+msgstr "Tạo vào"
 
 #: ../src/nautilus-image-properties-page.c:364
 msgid "Created By"
-msgstr ""
+msgstr "Tạo bởi"
 
 #. Translators: this refers to a legal disclaimer string embedded in
 #. * the metadata of an image
@@ -3380,11 +3320,11 @@ msgstr ""
 
 #: ../src/nautilus-image-properties-page.c:368
 msgid "Warning"
-msgstr ""
+msgstr "Cảnh báo"
 
 #: ../src/nautilus-image-properties-page.c:369
 msgid "Source"
-msgstr ""
+msgstr "Nguồn"
 
 #: ../src/nautilus-image-properties-page.c:384
 msgid "Camera Brand"
@@ -3458,10 +3398,8 @@ msgstr "Lỗi nạp thông tin về ảnh"
 #: ../src/nautilus-image-properties-page.c:708
 #: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:606
 #: ../src/nautilus-window-slot.c:2245
-#, fuzzy
-#| msgid "Loading..."
 msgid "Loading…"
-msgstr "Đang nạp..."
+msgstr "Đang nạp…"
 
 #: ../src/nautilus-list-model.c:370
 msgid "(Empty)"
@@ -3479,10 +3417,8 @@ msgstr "Chọn thứ tự thông tin hiển thị trong thư mục này:"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-list-view.c:2654
-#, fuzzy
-#| msgid "Visible _Columns..."
 msgid "Visible _Columns…"
-msgstr "_Cột hiển thị..."
+msgstr "_Cột hiển thị…"
 
 #. tooltip
 #: ../src/nautilus-list-view.c:2655
@@ -3584,10 +3520,9 @@ msgid "The file is of an unknown type"
 msgstr "Tập tin này có dạng không rõ"
 
 #: ../src/nautilus-mime-actions.c:1226
-#, fuzzy, c-format
-#| msgid "There is no application installed for %s files"
+#, c-format
 msgid "There is no application installed for “%s” files"
-msgstr "Không có ứng dụng nào được cài đặt để xử lý tập tin dạng %s"
+msgstr "Không có ứng dụng nào được cài đặt để xử lý tập tin “%s”"
 
 #: ../src/nautilus-mime-actions.c:1241
 msgid "_Select Application"
@@ -3602,16 +3537,13 @@ msgid "Unable to search for application"
 msgstr "Không thể tìm kiếm ứng dụng"
 
 #: ../src/nautilus-mime-actions.c:1398
-#, fuzzy, c-format
-#| msgid ""
-#| "There is no application installed for %s files.\n"
-#| "Do you want to search for an application to open this file?"
+#, c-format
 msgid ""
 "There is no application installed for “%s” files.\n"
 "Do you want to search for an application to open this file?"
 msgstr ""
-"Không có ứng dụng nào được cài đặt để xử lý tập tin dạng %s.\n"
-"Bạn có muốn tìm kiếm một ứng dụng có khả năng mở tập tin này không?"
+"Không có ứng dụng nào được cài đặt để xử lý tập tin “%s”.\n"
+"Bạn có muốn tìm kiếm ứng dụng có khả năng mở tập tin này không?"
 
 #: ../src/nautilus-mime-actions.c:1548
 msgid "Untrusted application launcher"
@@ -3711,10 +3643,8 @@ msgid "Browse the contents of the network"
 msgstr "Duyệt nội dung bên trong của mạng"
 
 #: ../src/nautilus-places-sidebar.c:802
-#, fuzzy
-#| msgid "Connect to Server %s"
 msgid "Connect to a network server address"
-msgstr "Kết nối đến máy phục vụ %s"
+msgstr "Kết nối đến địa chỉ máy chủ mạng"
 
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
@@ -3821,10 +3751,8 @@ msgid "_Add Bookmark"
 msgstr "T_hêm đánh dấu"
 
 #: ../src/nautilus-places-sidebar.c:2818
-#, fuzzy
-#| msgid "Re_name"
 msgid "Rename…"
-msgstr "Đổ_i tên"
+msgstr "Đổi tên…"
 
 #. name, stock id
 #. label, accelerator
@@ -3855,10 +3783,8 @@ msgid "_Detect Media"
 msgstr "_Phát hiện phương tiện"
 
 #: ../src/nautilus-places-sidebar.c:2872
-#, fuzzy
-#| msgid "_Format"
 msgid "_Format…"
-msgstr "Định _dạng"
+msgstr "Định _dạng…"
 
 #: ../src/nautilus-places-sidebar.c:2892
 msgid "_Properties"
@@ -4126,10 +4052,8 @@ msgid "Security context:"
 msgstr "Ngữ cảnh An ninh:"
 
 #: ../src/nautilus-properties-window.c:4580
-#, fuzzy
-#| msgid "Change Permissions for Enclosed Files"
 msgid "Change Permissions for Enclosed Files…"
-msgstr "Thay đổi quyền hạn cho các tập tin bên trong"
+msgstr "Thay đổi quyền hạn cho các tập tin bên trong…"
 
 #: ../src/nautilus-properties-window.c:4590
 #, c-format
@@ -4193,10 +4117,8 @@ msgid "Any"
 msgstr "Bất kỳ"
 
 #: ../src/nautilus-query-editor.c:687
-#, fuzzy
-#| msgid "Other Type..."
 msgid "Other Type…"
-msgstr "Kiểu khác..."
+msgstr "Kiểu khác…"
 
 #: ../src/nautilus-query-editor.c:956
 msgid "Remove this criterion from the search"
@@ -4216,10 +4138,8 @@ msgid "Add a new criterion to this search"
 msgstr "Thêm tiêu chuẩn mới vào việc tìm kiếm này"
 
 #: ../src/nautilus-special-location-bar.c:52
-#, fuzzy
-#| msgid "Files in this folder will appear in the Create Document menu."
 msgid "Files in this folder will appear in the New Document menu."
-msgstr "Tập tin trong thư mục này xuất hiện trong trình đơn Tạo tài liệu."
+msgstr "Tập tin trong thư mục này xuất hiện trong trình đơn Tài liệu mới."
 
 #: ../src/nautilus-special-location-bar.c:55
 msgid "Executable files in this folder will appear in the Scripts menu."
@@ -4227,16 +4147,12 @@ msgstr ""
 "Các tập tin thực thi trong thư mục này sẽ xuất hiện trong trình đơn tập lệnh."
 
 #: ../src/nautilus-toolbar.c:473
-#, fuzzy
-#| msgid "File Operations"
 msgid "View options"
-msgstr "Thao tác tập tin"
+msgstr "Tuỳ chọn hiển thị"
 
 #: ../src/nautilus-toolbar.c:490
-#, fuzzy
-#| msgid "Icon Captions"
 msgid "Location options"
-msgstr "Tên biểu tượng"
+msgstr "Tuỳ chọn vị trí"
 
 #: ../src/nautilus-trash-bar.c:203
 msgid "Restore"
@@ -4492,10 +4408,8 @@ msgstr "Mở mỗi mục được chọn trong một thanh mới"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7134
-#, fuzzy
-#| msgid "Other _Application..."
 msgid "Other _Application…"
-msgstr "Các ứng dụng _khác..."
+msgstr "Ứng dụng _khác…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7135 ../src/nautilus-view.c:7139
@@ -4505,10 +4419,8 @@ msgstr "Chọn ứng dụng khác để mở mục đã chọn"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7138
-#, fuzzy
-#| msgid "Open With Other _Application..."
 msgid "Open With Other _Application…"
-msgstr "Mở bằng ứng dụng _khác..."
+msgstr "Mở bằng ứng dụng _khác…"
 
 #. name, stock id
 #. label, accelerator
@@ -4564,10 +4476,8 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7168
-#, fuzzy
-#| msgid "Copy To..."
 msgid "Copy To…"
-msgstr "Chép đến..."
+msgstr "Chép đến…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7169
@@ -4577,10 +4487,8 @@ msgstr "Chép tập tin được chọn đến vị trí khác"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7172
-#, fuzzy
-#| msgid "Move To..."
 msgid "Move To…"
-msgstr "Chuyển đến..."
+msgstr "Chuyển đến…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7173
@@ -4595,10 +4503,8 @@ msgstr "Chọn tất cả các mục trong cửa sổ này"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7180
-#, fuzzy
-#| msgid "Select Items Matching"
 msgid "Select I_tems Matching…"
-msgstr "Chọn các mục tương ứng"
+msgstr "Chọn các _mục khớp…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7181
@@ -4631,10 +4537,8 @@ msgstr "Tạo một liên kết biểu tượng cho mỗi mục đã chọn"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7192
-#, fuzzy
-#| msgid "Rena_me..."
 msgid "Rena_me…"
-msgstr "Đổ_i tên..."
+msgstr "Đổ_i tên…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7193
@@ -4792,10 +4696,8 @@ msgstr "Lưu việc tìm kiếm đã sửa đổi"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7290
-#, fuzzy
-#| msgid "Sa_ve Search As..."
 msgid "Sa_ve Search As…"
-msgstr "Lưu tìm kiếm _dạng..."
+msgstr "Lưu tìm kiếm _dạng…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7291
@@ -5075,10 +4977,8 @@ msgid "_Open With %s"
 msgstr "_Mở bằng %s"
 
 #: ../src/nautilus-view.c:8518
-#, fuzzy
-#| msgid "_Run"
 msgid "Run"
-msgstr "_Chạy"
+msgstr "Chạy"
 
 #: ../src/nautilus-view.c:8556
 #, c-format
@@ -5098,13 +4998,11 @@ msgstr "Xóa bỏ vĩnh viễn mọi mục được chọn"
 
 #: ../src/nautilus-view.c:8624
 msgid "Remo_ve from Recent"
-msgstr ""
+msgstr "_Bỏ khỏi Gần đây"
 
 #: ../src/nautilus-view.c:8625
-#, fuzzy
-#| msgid "Move each selected item to the Trash"
 msgid "Remove each selected item from the recently used list"
-msgstr "Bỏ các mục được chọn vào Sọt rác"
+msgstr "Bỏ các mục được chọn khỏi danh mục sử dụng gần đây"
 
 #: ../src/nautilus-view.c:8665
 msgid "View or modify the properties of the open folder"
@@ -5353,10 +5251,8 @@ msgstr "Dùng cỡ xem bình thường"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:529
-#, fuzzy
-#| msgid "Connect to _Server"
 msgid "Connect to _Server…"
-msgstr "Kết nối đến _máy phục vụ"
+msgstr "Kết nối đến _máy chủ…"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:530
@@ -5411,10 +5307,8 @@ msgstr "Đến địa chỉ đã đến kế tiếp"
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:551
-#, fuzzy
-#| msgid "Enter _Location"
 msgid "Enter _Location…"
-msgstr "Nhập đị_a chỉ"
+msgstr "Nhập đị_a chỉ…"
 
 #: ../src/nautilus-window-menus.c:552
 msgid "Specify a location to open"
@@ -5431,10 +5325,8 @@ msgstr "Thêm đánh dấu cho địa chỉ hiện thời"
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:557
-#, fuzzy
-#| msgid "_Bookmarks"
 msgid "_Bookmarks…"
-msgstr "Đánh _dấu"
+msgstr "Đánh _dấu…"
 
 #: ../src/nautilus-window-menus.c:558
 msgid "Display and edit bookmarks"
@@ -5479,10 +5371,8 @@ msgstr "Hiện/Ẩn khung bên của cửa sổ này"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:589
-#, fuzzy
-#| msgid "_Search for Files..."
 msgid "_Search for Files…"
-msgstr "_Tìm tập tin..."
+msgstr "_Tìm tập tin…"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:590
@@ -5561,10 +5451,8 @@ msgid "Unhandled error message: %s"
 msgstr "Thông báo lỗi không được xử lý: %s"
 
 #: ../src/nautilus-window-slot.c:2245
-#, fuzzy
-#| msgid "Searching..."
 msgid "Searching…"
-msgstr "Tìm kiếm..."
+msgstr "Tìm kiếm…"
 
 #: ../src/nautilus-x-content-bar.c:93
 msgid "Audio CD"
