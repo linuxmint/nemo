@@ -695,6 +695,7 @@ nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
         NautilusWindowSlot *target_slot;
 	NautilusWindowOpenFlags slot_flags;
 	GFile *old_location;
+	GList *old_selection;
 	char *old_uri, *new_uri;
 	int new_slot_position;
 	gboolean use_same;
@@ -793,7 +794,10 @@ nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
 		}
 	}
 
-	GList *old_selection = nautilus_view_get_selection (slot->details->content_view);
+	old_selection = NULL;
+	if (slot->details->content_view != NULL) {
+		old_selection = nautilus_view_get_selection (slot->details->content_view);
+	}
 
 	if (target_window == window && target_slot == slot && !is_desktop &&
 	    old_location && g_file_equal (old_location, location) &&
