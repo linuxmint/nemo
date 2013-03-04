@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus-master-po-gl-54706\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-20 11:40+0100\n"
-"PO-Revision-Date: 2013-02-20 11:42+0200\n"
+"POT-Creation-Date: 2013-03-04 13:50+0100\n"
+"PO-Revision-Date: 2013-03-04 13:51+0200\n"
 "Last-Translator: Fran Dieguez <frandieguez@gnome.org>\n"
 "Language-Team: gnome-l10n-gl@gnome.org\n"
 "Language: gl\n"
@@ -41,7 +41,7 @@ msgstr "Conectar a un servidor"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4474 ../src/nautilus-window.c:1858
+#: ../src/nautilus-properties-window.c:4474 ../src/nautilus-window.c:1860
 #: ../src/nautilus-window.c:2058
 msgid "Files"
 msgstr "Ficheiros"
@@ -2492,7 +2492,7 @@ msgid "Send files by mail, instant message…"
 msgstr "Enviar ficheiros por correo, mensaxaría instantánea…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1606
 msgid "Oops! Something went wrong."
 msgstr "Ups! Algo foi mal."
 
@@ -2526,7 +2526,7 @@ msgstr ""
 "Nautilus 3.0 fixo obsoleto este cartafol e tentou migrar a súa configuración "
 "a ~/.config/nautilus"
 
-#: ../src/nautilus-application.c:854
+#: ../src/nautilus-application.c:921
 #: ../src/nautilus-file-management-properties.c:197
 #: ../src/nautilus-window-menus.c:253
 #, c-format
@@ -2537,67 +2537,71 @@ msgstr ""
 "Produciuse un erro ao mostrar a axuda: \n"
 "%s"
 
-#: ../src/nautilus-application.c:1028
+#: ../src/nautilus-application.c:1095
 msgid "--check cannot be used with other options."
 msgstr "Non é posíbel usar --check con outras opcións."
 
-#: ../src/nautilus-application.c:1034
+#: ../src/nautilus-application.c:1101
 msgid "--quit cannot be used with URIs."
 msgstr "Non é posíbel usar --quit con URIs."
 
-#: ../src/nautilus-application.c:1041
+#: ../src/nautilus-application.c:1108
 msgid "--geometry cannot be used with more than one URI."
 msgstr "Non é posíbel usar --geometry con máis dun URI."
 
-#: ../src/nautilus-application.c:1047
+#: ../src/nautilus-application.c:1114
 msgid "--select must be used with at least an URI."
 msgstr "--select debe usarse con cando menos unha URI."
 
-#: ../src/nautilus-application.c:1053
+#: ../src/nautilus-application.c:1120
 msgid "--no-desktop and --force-desktop cannot be used together."
 msgstr "--no-desktop e --force-desktop non pode usarse á vez."
 
-#: ../src/nautilus-application.c:1151
+#: ../src/nautilus-application.c:1219
 msgid "Perform a quick set of self-check tests."
 msgstr "Levar a cabo un conxunto conxunto rápido de verificacións de proba."
 
-#: ../src/nautilus-application.c:1157
+#: ../src/nautilus-application.c:1225
 msgid "Show the version of the program."
 msgstr "Mostrar a versión do programa."
 
-#: ../src/nautilus-application.c:1159
+#: ../src/nautilus-application.c:1227
 msgid "Create the initial window with the given geometry."
 msgstr "Crear unha xanela inicial coa xeometría proporcionada."
 
-#: ../src/nautilus-application.c:1159
+#: ../src/nautilus-application.c:1227
 msgid "GEOMETRY"
 msgstr "XEOMETRÍA"
 
-#: ../src/nautilus-application.c:1161
+#: ../src/nautilus-application.c:1229
+msgid "Always open a new window for browsing specified URIs"
+msgstr "Sempre abrir unha nova xanela para os URI especificados ao navegar"
+
+#: ../src/nautilus-application.c:1231
 msgid "Only create windows for explicitly specified URIs."
 msgstr "Só crea xanelas para as URIs explicitamente especificadas."
 
-#: ../src/nautilus-application.c:1163
+#: ../src/nautilus-application.c:1233
 msgid "Never manage the desktop (ignore the GSettings preference)."
 msgstr "Non xestionar nunca o escritorio (ignora a preferencias de GSettings)."
 
-#: ../src/nautilus-application.c:1165
+#: ../src/nautilus-application.c:1235
 msgid "Always manage the desktop (ignore the GSettings preference)."
 msgstr "Xestionar sempre o escritorio (ignora a preferencia de GSettings)."
 
-#: ../src/nautilus-application.c:1167
+#: ../src/nautilus-application.c:1237
 msgid "Quit Nautilus."
 msgstr "Saír de Nautilus."
 
-#: ../src/nautilus-application.c:1169
+#: ../src/nautilus-application.c:1239
 msgid "Select specified URI in parent folder."
 msgstr "Seleccionar as URI especificadas no cartafol superior."
 
-#: ../src/nautilus-application.c:1170
+#: ../src/nautilus-application.c:1240
 msgid "[URI...]"
 msgstr "[URI…]"
 
-#: ../src/nautilus-application.c:1183
+#: ../src/nautilus-application.c:1252
 msgid ""
 "\n"
 "\n"
@@ -2609,13 +2613,13 @@ msgstr ""
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1193
+#: ../src/nautilus-application.c:1262
 msgid "Could not parse arguments"
 msgstr "Non foi posíbel analizar os argumentos"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1226
+#: ../src/nautilus-application.c:1295
 msgid "Could not register the application"
 msgstr "Non é posíbel rexistrar o aplicativo"
 
@@ -2891,28 +2895,28 @@ msgstr "C_onectar"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:695 ../src/nautilus-view.c:7146
+#: ../src/nautilus-desktop-canvas-view.c:623 ../src/nautilus-view.c:7146
 #: ../src/nautilus-view.c:8679
 msgid "E_mpty Trash"
 msgstr "Baleirar _lixo"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:719
-#: ../src/nautilus-desktop-canvas-view.c:760
+#: ../src/nautilus-desktop-canvas-view.c:647
+#: ../src/nautilus-desktop-canvas-view.c:688
 msgid "Restore Icons' Original Si_zes"
 msgstr "Restaurar os tamaños ori_xinais das iconas"
 
-#: ../src/nautilus-desktop-canvas-view.c:720
+#: ../src/nautilus-desktop-canvas-view.c:648
 msgid "Restore Icon's Original Si_ze"
 msgstr "Restaurar o tamaño orixinal das iconas"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:732
+#: ../src/nautilus-desktop-canvas-view.c:660
 msgid "Change Desktop _Background"
 msgstr "Cambiar o _fondo do escritorio"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:734
+#: ../src/nautilus-desktop-canvas-view.c:662
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr ""
@@ -2920,48 +2924,48 @@ msgstr ""
 "de escritorio"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:739
+#: ../src/nautilus-desktop-canvas-view.c:667
 msgid "Empty Trash"
 msgstr "Baleirar lixo"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:741 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:669 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7147
 msgid "Delete all items in the Trash"
 msgstr "Eliminar todos os elementos do lixo"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:746
+#: ../src/nautilus-desktop-canvas-view.c:674
 msgid "_Organize Desktop by Name"
 msgstr "_Organizar o escritorio por nome"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:748
+#: ../src/nautilus-desktop-canvas-view.c:676
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr ""
 "Iconas de reposición para que se axusten mellor na xanela e evitar "
 "superposición"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:753
+#: ../src/nautilus-desktop-canvas-view.c:681
 msgid "Resize Icon…"
 msgstr "Redimensionar icona…"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:755
+#: ../src/nautilus-desktop-canvas-view.c:683
 msgid "Make the selected icons resizable"
 msgstr "Facer que as iconas seleccionadas sexan redimensionábeis"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:762
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore each selected icons to its original size"
 msgstr "Restaurar cada unha das iconas seleccionadas ao seu tamaño orixinal"
 
-#: ../src/nautilus-desktop-canvas-view.c:840
+#: ../src/nautilus-desktop-canvas-view.c:768
 msgid "The desktop view encountered an error."
 msgstr "A visualización do escritorio atopou un erro."
 
-#: ../src/nautilus-desktop-canvas-view.c:841
+#: ../src/nautilus-desktop-canvas-view.c:769
 msgid "The desktop view encountered an error while starting up."
 msgstr "Produciuse un erro ao iniciar a visualización do escritorio."
 
@@ -3485,8 +3489,8 @@ msgid "Failed to load image information"
 msgstr "Produciuse un erro ao cargar a información da imaxe"
 
 #: ../src/nautilus-image-properties-page.c:708
-#: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:606
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:607
+#: ../src/nautilus-window-slot.c:2253
 msgid "Loading…"
 msgstr "Cargando…"
 
@@ -4244,11 +4248,11 @@ msgstr "Os ficheiros deste cartafol aparecerán no menú «Novo documento»."
 msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr "Os ficheiros executábeis deste cartafol aparecerán no menú Scripts."
 
-#: ../src/nautilus-toolbar.c:473
+#: ../src/nautilus-toolbar.c:488
 msgid "View options"
 msgstr "Ver opcións"
 
-#: ../src/nautilus-toolbar.c:490
+#: ../src/nautilus-toolbar.c:505
 msgid "Location options"
 msgstr "Opcións de localización"
 
@@ -5518,40 +5522,40 @@ msgstr "Ver elementos como unha grade de iconas"
 msgid "_Up"
 msgstr "_Arriba"
 
-#: ../src/nautilus-window-slot.c:1272 ../src/nautilus-window-slot.c:1446
+#: ../src/nautilus-window-slot.c:1281 ../src/nautilus-window-slot.c:1455
 #, c-format
 msgid "Unable to load location"
 msgstr "Non é posíbel cargar a localización"
 
-#: ../src/nautilus-window-slot.c:1601
+#: ../src/nautilus-window-slot.c:1610
 msgid "Unable to display the contents of this folder."
 msgstr "Non foi posíbel mostrar os contidos deste cartafol."
 
-#: ../src/nautilus-window-slot.c:1603
+#: ../src/nautilus-window-slot.c:1612
 msgid "This location doesn't appear to be a folder."
 msgstr "Semella que esta localización non é un cartafol."
 
-#: ../src/nautilus-window-slot.c:1608
+#: ../src/nautilus-window-slot.c:1617
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr ""
 "Non foi posíbel atopar o ficheiro solicitado. Comprobe se o escribiu ben e "
 "ténteo de novo."
 
-#: ../src/nautilus-window-slot.c:1613
+#: ../src/nautilus-window-slot.c:1622
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "Non se admiten as localizacións «%s»."
 
-#: ../src/nautilus-window-slot.c:1616
+#: ../src/nautilus-window-slot.c:1625
 msgid "Unable to handle this kind of location."
 msgstr "Non é posíbel xestionar este tipo de localización."
 
-#: ../src/nautilus-window-slot.c:1621
+#: ../src/nautilus-window-slot.c:1630
 msgid "Unable to access the requested location."
 msgstr "Non é posíbel acceder á localización solicitada."
 
-#: ../src/nautilus-window-slot.c:1624
+#: ../src/nautilus-window-slot.c:1633
 msgid "Don't have permission to access the requested location."
 msgstr "Non ten permisos para acceder o cartafol solicitado."
 
@@ -5560,7 +5564,7 @@ msgstr "Non ten permisos para acceder o cartafol solicitado."
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-slot.c:1632
+#: ../src/nautilus-window-slot.c:1641
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5568,12 +5572,12 @@ msgstr ""
 "Non foi posíbel atopar a localización solicitada. Comprobe se o escribiu ben "
 "ou a configuración da rede."
 
-#: ../src/nautilus-window-slot.c:1643
+#: ../src/nautilus-window-slot.c:1652
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "Mensaxe de erro non xestionada: %s"
 
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-window-slot.c:2253
 msgid "Searching…"
 msgstr "Buscando…"
 
