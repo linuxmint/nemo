@@ -1747,13 +1747,8 @@ static void
 nautilus_application_window_added (GtkApplication *app,
 				   GtkWindow *window)
 {
-	NautilusWindow *win;
-	GList *sl;
-
 	/* chain to parent */
 	GTK_APPLICATION_CLASS (nautilus_application_parent_class)->window_added (app, window);
-
-	win = NAUTILUS_WINDOW (window);
 
 	g_signal_connect (window, "slot-added", G_CALLBACK (on_slot_added), app);
 	g_signal_connect (window, "slot-removed", G_CALLBACK (on_slot_removed), app);
