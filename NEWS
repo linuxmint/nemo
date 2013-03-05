@@ -1,3 +1,14 @@
+Major changes in 3.7.91 are:
+* Export an OpenLocations property over DBus (Marco Trevisan)
+* Add a way to reuse and raise existing windows already opened to a
+  given location (Marco Trevisan)
+* Use an ARGB window for the desktop (Matthias Clasen)
+* Stop drawing the desktop background
+* Register our GtkApplication with gnome-session
+* Fix Tracker search not working correctly
+* Fix activation of search provider results
+* Fix nautilus --quit from terminal not working
+
 Major changes in 3.7.90 are:
 * Add back a Treeview option for list view. This is off by default, and
   is backed by a checkbox in the Preferences dialog
