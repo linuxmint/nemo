@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: eel.HEAD\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-02-18 16:25+0000\n"
-"PO-Revision-Date: 2013-02-22 03:33+0000\n"
+"POT-Creation-Date: 2013-03-04 09:51+0000\n"
+"PO-Revision-Date: 2013-03-06 17:44+0530\n"
 "Last-Translator: A S Alam <aalam@users.sf.net>\n"
 "Language-Team: Punjabi/Panjabi <punjabi-users@lists.sf.net>\n"
 "Language: pa\n"
@@ -2180,8 +2180,8 @@ msgid ""
 "Settings.FileChooser\" is now used instead."
 msgstr ""
 "ਇਹ ਕੁੰਜੀ ਨੂੰ ਬਰਤਰਫ਼ ਕੀਤਾ ਗਿਆ ਹੈ ਅਤੇ ਅਣਡਿੱਠਾ ਕੀਤਾ ਜਾਂਦਾ ਹੈ। ਇਸ ਦੀ ਬਜਾਏ ਹੁਣ "
-"\"org.gtk.Settings.FileChooser\" ਤੋਂ \"show-hidden\" (ਲੁਕਵੇਂ ਵੇਖੋ) ਨੂੰ ਵਰਤਿਆ "
-"ਜਾਂਦਾ ਹੈ।"
+"\"org.gtk."
+"Settings.FileChooser\" ਤੋਂ \"show-hidden\" (ਲੁਕਵੇਂ ਵੇਖੋ) ਨੂੰ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ।"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
 msgid "Bulk rename utility"
@@ -2306,7 +2306,6 @@ msgid "Default column order in the list view."
 msgstr "ਲਿਸਟ ਝਲਕ ਵਿੱਚ ਡਿਫਾਲਟ ਕਾਲਮ ਕ੍ਰਮ ਹੈ।"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:54
-#| msgid "Text view:"
 msgid "Use tree view"
 msgstr "ਟਰੀ ਝਲਕ ਵਰਤੋਂ"
 
@@ -2484,7 +2483,7 @@ msgid "Send files by mail, instant message…"
 msgstr "...ਫਾਇਲਾਂ ਮੇਲ, ਤੁਰੰਤ ਸੁਨੇਹੇ ਰਹੀਂ ਭੇਜੋ"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1599
 msgid "Oops! Something went wrong."
 msgstr "ਓਹ ਹੋ! ਕੁਝ ਗਲਤ ਹੋਇਆ।"
 
@@ -2520,7 +2519,7 @@ msgstr ""
 "ਨਟੀਲਸ ੩.੦ ਵਿੱਚ ਇਹ ਡਰਾਇਕੈਟਰੀ ਬਰਤਰਫ਼ ਕੀਤੀ ਗਈ ਹੈ ਅਤੇ ਇਸ ਦੀ ਸੰਰਚਨਾ ਨੂੰ  ~/.config/"
 "nautilus ਵਿੱਚ ਮਾਈਗਰੇਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕੀਤੀ ਗਈ ਹੈ।"
 
-#: ../src/nautilus-application.c:854
+#: ../src/nautilus-application.c:921
 #: ../src/nautilus-file-management-properties.c:197
 #: ../src/nautilus-window-menus.c:253
 #, c-format
@@ -2531,75 +2530,72 @@ msgstr ""
 "ਮੱਦਦ ਵੇਖਾਉਣ ਵਿੱਚ ਸਮੱਸਿਆ ਆਈ ਹੈ:\n"
 "%s "
 
-#: ../src/nautilus-application.c:1025
+#: ../src/nautilus-application.c:1095
 msgid "--check cannot be used with other options."
 msgstr "--check ਕਿਸ ਹੋਰ ਚੋਣ ਨਾਲ ਵਰਤੀ ਨਹੀਂ ਜਾ ਸਕਦੀ ਹੈ।"
 
-#: ../src/nautilus-application.c:1031
+#: ../src/nautilus-application.c:1101
 msgid "--quit cannot be used with URIs."
 msgstr "--quit ਨੂੰ URI ਨਾਲ ਨਹੀਂ ਵਰਤਿਆ ਜਾ ਸਕਦਾ ਹੈ।"
 
-#: ../src/nautilus-application.c:1038
+#: ../src/nautilus-application.c:1108
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry ਇੱਕ ਤੋਂ ਵਧੇਰੇ URI ਨਾਲ ਨਹੀਂ ਵਰਤੀਂ ਜਾ ਸਕਦੀ ਹੈ।"
 
-#: ../src/nautilus-application.c:1044
-#| msgid "--geometry cannot be used with more than one URI."
+#: ../src/nautilus-application.c:1114
 msgid "--select must be used with at least an URI."
 msgstr "--select ਇੱਕ URI ਨਾਲ ਵਰਤਿਆ ਜਾਣਾ ਚਾਹੀਦਾ ਹੈ।"
 
-#: ../src/nautilus-application.c:1050
+#: ../src/nautilus-application.c:1120
 msgid "--no-desktop and --force-desktop cannot be used together."
 msgstr "--no-desktop ਅਤੇ --force-desktop ਨੂੰ ਇੱਕਠੇ ਨਹੀਂ ਵਰਤਿਆ ਜਾ ਸਕਦਾ ਹੈ।"
 
-#: ../src/nautilus-application.c:1148
+#: ../src/nautilus-application.c:1219
 msgid "Perform a quick set of self-check tests."
 msgstr "ਇੱਕ ਤੁਰੰਤ ਸਵੈ-ਪੜਤਾਲ ਟੈਸਟ ਚਲਾਓ।"
 
-#: ../src/nautilus-application.c:1154
+#: ../src/nautilus-application.c:1225
 msgid "Show the version of the program."
 msgstr "ਪਰੋਗਰਾਮ ਦਾ ਵਰਜਨ ਵੇਖੋ।"
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1227
 msgid "Create the initial window with the given geometry."
 msgstr "ਦਿੱਤੀ ਜੁਮੈਟਰੀ ਨਾਲ ਸ਼ੁਰੂਆਤੀ ਵਿੰਡੋ ਬਣਾਓ।"
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1227
 msgid "GEOMETRY"
 msgstr "ਜੁਮੈਟਰੀ"
 
-#: ../src/nautilus-application.c:1158
+#: ../src/nautilus-application.c:1229
+#| msgid "Only create windows for explicitly specified URIs."
+msgid "Always open a new window for browsing specified URIs"
+msgstr "ਦਿੱਤੇ URI ਨੂੰ ਬਰਾਊਜ਼ਰ ਕਰਨ ਲਈ ਨਵੀਂ ਵਿੰਡੋ ਹਮੇਸ਼ਾ ਖੋਲ੍ਹੋ"
+
+#: ../src/nautilus-application.c:1231
 msgid "Only create windows for explicitly specified URIs."
 msgstr "ਦਿੱਤੇ URI ਲਈ ਹੀ ਖਾਸ ਵਿੰਡੋ ਬਣਾਓ।"
 
-#: ../src/nautilus-application.c:1160
-#| msgid ""
-#| "Do not manage the desktop (ignore the preference set in the preferences "
-#| "dialog)."
+#: ../src/nautilus-application.c:1233
 msgid "Never manage the desktop (ignore the GSettings preference)."
 msgstr "ਡੈਸਕਟਾਪ ਦਾ ਕਦੇ ਪਰਬੰਧ ਨਾ ਕਰੋ (GSettings ਪਸੰਦ ਨੂੰ ਰੱਦ ਕਰੋ)।"
 
-#: ../src/nautilus-application.c:1162
-#| msgid ""
-#| "Do not manage the desktop (ignore the preference set in the preferences "
-#| "dialog)."
+#: ../src/nautilus-application.c:1235
 msgid "Always manage the desktop (ignore the GSettings preference)."
 msgstr "ਡੈਸਕਟਾਪ ਦਾ ਹਮੇਸ਼ਾ ਪਰਬੰਧ ਕਰੋ (GSettings ਪਸੰਦ ਨੂੰ ਰੱਦ ਕਰੋ)।"
 
-#: ../src/nautilus-application.c:1164
+#: ../src/nautilus-application.c:1237
 msgid "Quit Nautilus."
 msgstr "ਨਟੀਲਸ ਤੋਂ ਬਾਹਰ ਜਾਓ।"
 
-#: ../src/nautilus-application.c:1166
-#| msgid "Select the columns visible in this folder"
+#: ../src/nautilus-application.c:1239
 msgid "Select specified URI in parent folder."
 msgstr "ਮੁੱਢਲੇ ਫੋਲਡਰ ਵਿੱਚ ਦਿੱਤਾ URI ਚੁਣੋ।"
 
-#: ../src/nautilus-application.c:1167
+#: ../src/nautilus-application.c:1240
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:1180
+#: ../src/nautilus-application.c:1252
 msgid ""
 "\n"
 "\n"
@@ -2611,13 +2607,13 @@ msgstr ""
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1190
+#: ../src/nautilus-application.c:1262
 msgid "Could not parse arguments"
 msgstr "ਆਰਗੂਮੈਂਟ ਪਾਰਸ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1223
+#: ../src/nautilus-application.c:1295
 msgid "Could not register the application"
 msgstr "ਐਪਲੀਕੇਸ਼ਨ ਰਜਿਸਟਰ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ"
 
@@ -2895,73 +2891,73 @@ msgstr "ਕੁਨੈਕਟ ਕਰੋ(_o)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:706 ../src/nautilus-view.c:7146
+#: ../src/nautilus-desktop-canvas-view.c:623 ../src/nautilus-view.c:7146
 #: ../src/nautilus-view.c:8679
 msgid "E_mpty Trash"
 msgstr "ਰੱਦੀ ਖਾਲੀ ਕਰੋ(_m)"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:730
-#: ../src/nautilus-desktop-canvas-view.c:771
+#: ../src/nautilus-desktop-canvas-view.c:647
+#: ../src/nautilus-desktop-canvas-view.c:688
 msgid "Restore Icons' Original Si_zes"
 msgstr "ਆਈਕਾਨ ਅਸਲੀ ਸਾਈਜ਼ ਦੇ ਕਰੋ(_z)"
 
-#: ../src/nautilus-desktop-canvas-view.c:731
+#: ../src/nautilus-desktop-canvas-view.c:648
 msgid "Restore Icon's Original Si_ze"
 msgstr "ਆਈਕਾਨ ਦਾ ਅਸਲੀ ਸਾਈਜ਼ ਰੀ-ਸਟੋਰ ਕਰੋ(_z)"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:743
+#: ../src/nautilus-desktop-canvas-view.c:660
 msgid "Change Desktop _Background"
 msgstr "ਡੈਸਕਟਾਪ ਬੈਕਗਰਾਊਂਡ ਬਦਲੋ(_B)"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:745
+#: ../src/nautilus-desktop-canvas-view.c:662
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr "ਉਹ ਵਿੰਡੋ ਖੋਲ੍ਹੋ, ਜੋ ਡੈਸਕਟਾਪ ਬੈਕ-ਗਰਾਊਂਡ ਦਾ ਪੈਟਰਨ ਜਾਂ ਰੰਗ ਬਦਲ ਸਕੇ"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:750
+#: ../src/nautilus-desktop-canvas-view.c:667
 msgid "Empty Trash"
 msgstr "ਰੱਦੀ ਖਾਲੀ ਕਰੋ"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:752 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:669 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7147
 msgid "Delete all items in the Trash"
 msgstr "ਰੱਦੀ 'ਚੋਂ ਸਭ ਆਈਟਮਾਂ ਹਟਾਓ"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:757
+#: ../src/nautilus-desktop-canvas-view.c:674
 msgid "_Organize Desktop by Name"
 msgstr "ਡੈਸਕਟਾਪ ਨਾਂ ਮੁਤਾਬਕ ਸੈੱਟ ਕਰੋ(_O)"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:759
+#: ../src/nautilus-desktop-canvas-view.c:676
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr "ਆਈਕਾਨਾਂ ਨੂੰ ਵਿੰਡੋ ਵਿੱਚ ਮੁੜ-ਟਿਕਾਉ ਤਾਂ ਕਿ ਇਹ ਇੱਕ ਦੂਜੇ ਵਿੱਚ ਲੁੱਕ ਨਾ ਜਾਣ"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:764
+#: ../src/nautilus-desktop-canvas-view.c:681
 msgid "Resize Icon…"
 msgstr "...ਆਈਕਾਨ ਮੁੜ-ਆਕਾਰ"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:766
+#: ../src/nautilus-desktop-canvas-view.c:683
 msgid "Make the selected icons resizable"
 msgstr "ਚੁਣੇ ਆਈਕਾਨ ਨੂੰ ਮੁੜ-ਆਕਾਰ ਦੇਣ ਯੋਗ ਬਣਾਓ"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:773
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore each selected icons to its original size"
 msgstr "ਹਰੇਕ ਚੁਣੇ ਆਈਕਾਨ ਨੂੰ ਆਪਣੇ ਡਿਫਾਲਟ ਸਾਈਜ਼ ਅਨੁਸਾਰ ਕਰੋ"
 
-#: ../src/nautilus-desktop-canvas-view.c:851
+#: ../src/nautilus-desktop-canvas-view.c:768
 msgid "The desktop view encountered an error."
 msgstr "ਡੈਸਕਟਾਪ ਝਲਕ 'ਚ ਇੱਕ ਸਮੱਸਿਆ ਆਈ ਹੈ।"
 
-#: ../src/nautilus-desktop-canvas-view.c:852
+#: ../src/nautilus-desktop-canvas-view.c:769
 msgid "The desktop view encountered an error while starting up."
 msgstr "ਡੈਸਕਟਾਪ ਝਲਕ ਸ਼ੁਰੂ ਕਰਨ ਸਮੇਂ ਸਮੱਸਿਆ ਆਈ ਹੈ।"
 
@@ -2987,7 +2983,7 @@ msgid "Command"
 msgstr "ਕਮਾਂਡ"
 
 #. hardcode "Desktop"
-#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:263
+#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:240
 #: ../src/nautilus-places-sidebar.c:540
 msgid "Desktop"
 msgstr "ਡੈਸਕਟਾਪ"
@@ -3482,7 +3478,7 @@ msgstr "ਚਿੱਤਰ ਦੀ ਜਾਣਕਾਰੀ ਲੋਡ ਕਰਨ ਲਈ 
 
 #: ../src/nautilus-image-properties-page.c:708
 #: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:606
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-window-slot.c:2247
 msgid "Loading…"
 msgstr "...ਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
@@ -3735,7 +3731,6 @@ msgid "Browse the contents of the network"
 msgstr "ਨੈੱਟਵਰਕ ਦੀ ਸਮੱਗਰੀ ਦੀ ਝਲਕ ਵੇਖੋ"
 
 #: ../src/nautilus-places-sidebar.c:802
-#| msgid "Connect to Server %s"
 msgid "Connect to a network server address"
 msgstr "ਨੈੱਟਵਰਕ ਸਰਵਰ ਐਡਰੈਸ ਨਾਲ ਕੁਨੈਕਟ"
 
@@ -3876,7 +3871,6 @@ msgid "_Detect Media"
 msgstr "ਮੀਡਿਆ ਖੋਜਿਆ(_D)"
 
 #: ../src/nautilus-places-sidebar.c:2872
-#| msgid "_Format"
 msgid "_Format…"
 msgstr "…ਫਾਰਮੈਟ(_F)"
 
@@ -4243,11 +4237,11 @@ msgstr "ਇਸ ਫੋਲਡਰ ਵਿਚਲੀਆਂ ਫਾਇਲਾਂ ਨਵ�
 msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr "ਇਸ ਫੋਲਡਰ ਵਿਚਲੀਆਂ ਚਲਣਯੋਗ ਫਾਇਲਾਂ ਸਕ੍ਰਿਪਟ ਮੇਨੂ ਵਿੱਚ ਉਪਬਲੱਧ ਹੋਣਗੀਆਂ।"
 
-#: ../src/nautilus-toolbar.c:473
+#: ../src/nautilus-toolbar.c:488
 msgid "View options"
 msgstr "ਵੇਖਣ ਚੋਣ"
 
-#: ../src/nautilus-toolbar.c:490
+#: ../src/nautilus-toolbar.c:505
 msgid "Location options"
 msgstr "ਟਿਕਾਣਾ ਚੋਣਾਂ"
 
@@ -5513,38 +5507,38 @@ msgstr "ਆਈਟਮਾਂ ਨੂੰ ਆਈਕਾਨ ਦੇ ਗਰਿੱਡ ਵ�
 msgid "_Up"
 msgstr "ਉੱਤੇ(_U)"
 
-#: ../src/nautilus-window-slot.c:1272 ../src/nautilus-window-slot.c:1446
+#: ../src/nautilus-window-slot.c:1274 ../src/nautilus-window-slot.c:1448
 #, c-format
 msgid "Unable to load location"
 msgstr "ਟਿਕਾਣਾ ਲੋਡ ਕਰਨ ਲਈ ਅਸਮਰੱਥ"
 
-#: ../src/nautilus-window-slot.c:1601
+#: ../src/nautilus-window-slot.c:1603
 msgid "Unable to display the contents of this folder."
 msgstr "ਇਸ ਫੋਲਡਰ ਦੀ ਸਮੱਗਰੀ ਵੇਖਾਉਣ ਲਈ ਅਸਮਰੱਥ ਹੈ।"
 
-#: ../src/nautilus-window-slot.c:1603
+#: ../src/nautilus-window-slot.c:1605
 msgid "This location doesn't appear to be a folder."
 msgstr "ਇਹ ਟਿਕਾਣਾ ਫੋਲਡਰ ਨਹੀਂ ਜਾਪਦਾ ਹੈ।"
 
-#: ../src/nautilus-window-slot.c:1608
+#: ../src/nautilus-window-slot.c:1610
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr "ਮੰਗੀ ਫਾਇਲ ਲੱਭਣ ਲਈ ਅਸਮਰੱਥ। ਸ਼ਬਦ ਜਾਂਚ ਕੇ ਮੁੜ-ਕੋਸ਼ਿਸ ਕਰੋ ਜੀ।"
 
-#: ../src/nautilus-window-slot.c:1613
+#: ../src/nautilus-window-slot.c:1615
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "“%s” ਟਿਕਾਣੇ ਸਹਾਇਕ ਨਹੀਂ ਹਨ।"
 
-#: ../src/nautilus-window-slot.c:1616
+#: ../src/nautilus-window-slot.c:1618
 msgid "Unable to handle this kind of location."
 msgstr "ਇਸ ਟਾਈਪ ਦੇ ਟਿਕਾਣੇ ਨੂੰ ਹੈਂਡਲ ਕਰਨ ਲਈ ਅਸਮਰੱਥ।"
 
-#: ../src/nautilus-window-slot.c:1621
+#: ../src/nautilus-window-slot.c:1623
 msgid "Unable to access the requested location."
 msgstr "ਮੰਗੇ ਟਿਕਾਣਾ ਨੂੰ ਵਰਤੋਂ ਲਈ ਅਸਮਰੱਥ।"
 
-#: ../src/nautilus-window-slot.c:1624
+#: ../src/nautilus-window-slot.c:1626
 msgid "Don't have permission to access the requested location."
 msgstr "ਮੰਗੇ ਗਏ ਟਿਕਾਣੇ ਦੀ ਵਰਤੋਂ ਲਈ ਅਧਿਕਾਰ ਨਹੀਂ ਹਨ।"
 
@@ -5553,7 +5547,7 @@ msgstr "ਮੰਗੇ ਗਏ ਟਿਕਾਣੇ ਦੀ ਵਰਤੋਂ ਲਈ ਅ
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-slot.c:1632
+#: ../src/nautilus-window-slot.c:1634
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5561,12 +5555,12 @@ msgstr ""
 "ਮੰਗੇ ਟਿਕਾਣੇ ਨੂੰ ਲੱਭਣ ਲਈ ਅਸਮਰੱਥ। ਸ਼ਬਦ ਜਾਂਚ ਕਰੋ ਜਾਂ ਨੈੱਟਵਰਕ ਸੈਟਿੰਗ ਦੀ ਜਾਂਚ ਕਰੋ "
 "ਜੀ।"
 
-#: ../src/nautilus-window-slot.c:1643
+#: ../src/nautilus-window-slot.c:1645
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "ਗਲਤੀ ਸੁਨੇਹਾ ਨਾ-ਹੈਂਡਲ: %s"
 
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-window-slot.c:2247
 msgid "Searching…"
 msgstr "...ਖੋਜ ਜਾਰੀ ਹੈ"
 
