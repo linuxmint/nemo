@@ -180,6 +180,8 @@ typedef struct {
 						     NautilusCanvasPosition *position);
 	char *       (* get_icon_uri)             (NautilusCanvasContainer *container,
 						     NautilusCanvasIconData *data);
+	char *       (* get_icon_activation_uri)  (NautilusCanvasContainer *container,
+						     NautilusCanvasIconData *data);
 	char *       (* get_icon_drop_target_uri) (NautilusCanvasContainer *container,
 						     NautilusCanvasIconData *data);
 

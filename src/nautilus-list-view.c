@@ -450,7 +450,7 @@ item_get_data_binder (GtkTreeModel *model,
 				     column,
 				     &cell_area);
 
-	uri = nautilus_file_get_uri (file);
+	uri = nautilus_file_get_activation_uri (file);
 	nautilus_file_unref (file);
 
 	/* pass the uri, mouse-relative x/y and icon width/height */

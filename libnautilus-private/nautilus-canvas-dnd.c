@@ -238,7 +238,7 @@ icon_get_data_binder (NautilusCanvasIcon *icon, gpointer data)
 
 	canvas_rect_world_to_widget (EEL_CANVAS (container), &world_rect, &widget_rect);
 
-	uri = nautilus_canvas_container_get_icon_uri (container, icon);
+	uri = nautilus_canvas_container_get_icon_activation_uri (container, icon);
 	if (uri == NULL) {
 		g_warning ("no URI for one of the iterated icons");
 		return TRUE;

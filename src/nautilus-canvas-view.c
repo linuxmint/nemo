@@ -1699,6 +1699,18 @@ get_icon_uri_callback (NautilusCanvasContainer *container,
 }
 
 static char *
+get_icon_activation_uri_callback (NautilusCanvasContainer *container,
+				  NautilusFile *file,
+				  NautilusCanvasView *canvas_view)
+{
+	g_assert (NAUTILUS_IS_CANVAS_CONTAINER (container));
+	g_assert (NAUTILUS_IS_FILE (file));
+	g_assert (NAUTILUS_IS_CANVAS_VIEW (canvas_view));
+
+	return nautilus_file_get_activation_uri (file);
+}
+
+static char *
 get_icon_drop_target_uri_callback (NautilusCanvasContainer *container,
 		       		   NautilusFile *file,
 		       		   NautilusCanvasView *canvas_view)
@@ -1930,6 +1942,8 @@ create_canvas_container (NautilusCanvasView *canvas_view)
 	/* FIXME: many of these should move into fm-canvas-container as virtual methods */
 	g_signal_connect_object (canvas_container, "get-icon-uri",
 				 G_CALLBACK (get_icon_uri_callback), canvas_view, 0);
+	g_signal_connect_object (canvas_container, "get-icon-activation-uri",
+				 G_CALLBACK (get_icon_activation_uri_callback), canvas_view, 0);
 	g_signal_connect_object (canvas_container, "get-icon-drop-target-uri",
 				 G_CALLBACK (get_icon_drop_target_uri_callback), canvas_view, 0);
 	g_signal_connect_object (canvas_container, "move-copy-items",
