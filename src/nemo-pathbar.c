@@ -121,13 +121,20 @@ get_slider_button (NemoPathBar  *path_bar,
 		   GtkArrowType arrow_type)
 {
         GtkWidget *button;
-
+        GtkWidget *arrow;
         gtk_widget_push_composite_child ();
 
         button = gtk_button_new ();
-	gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
-	gtk_widget_add_events (button, GDK_SCROLL_MASK);
-        gtk_container_add (GTK_CONTAINER (button), gtk_arrow_new (arrow_type, GTK_SHADOW_OUT));
+        gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
+        gtk_widget_add_events (button, GDK_SCROLL_MASK);
+
+        arrow = gtk_arrow_new (arrow_type, GTK_SHADOW_OUT);
+
+        GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (arrow));
+
+        gtk_style_context_add_class (context, "nemo-big-arrow");
+
+        gtk_container_add (GTK_CONTAINER (button), arrow);
         gtk_container_add (GTK_CONTAINER (path_bar), button);
         gtk_widget_show_all (button);
 
@@ -452,7 +459,7 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
 	/* Theoretically, the slider could be bigger than the other button.  But we're
 	 * not going to worry about that now.
 	 */
-	path_bar->slider_width = MIN (height * 2 / 3 + 5, height);
+	path_bar->slider_width = MIN (height * 2 / 3 + 10, height + 10);
 
 	if (path_bar->button_list && path_bar->button_list->next != NULL) {
 		*minimum += (path_bar->spacing + path_bar->slider_width) * 2;
