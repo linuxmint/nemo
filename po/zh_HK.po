@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus 3.1.90\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-27 23:04+0800\n"
-"PO-Revision-Date: 2013-02-27 23:04+0800\n"
+"POT-Creation-Date: 2013-03-06 19:15+0800\n"
+"PO-Revision-Date: 2013-03-06 19:15+0800\n"
 "Last-Translator: Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
 "Language: \n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.5.3\n"
 
 #: ../data/nautilus-autorun-software.desktop.in.in.h:1
 msgid "Run Software"
@@ -36,7 +36,7 @@ msgstr "連接伺服器"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4474 ../src/nautilus-window.c:1858
+#: ../src/nautilus-properties-window.c:4474 ../src/nautilus-window.c:1860
 #: ../src/nautilus-window.c:2058
 msgid "Files"
 msgstr "檔案"
@@ -2293,7 +2293,7 @@ msgid "Send files by mail, instant message…"
 msgstr "經電子郵件、即時訊息傳送檔案…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1610
 msgid "Oops! Something went wrong."
 msgstr "糟糕！有些地方出問題了。"
 
@@ -2323,7 +2323,7 @@ msgid ""
 "configuration to ~/.config/nautilus"
 msgstr "Nautilus 3.0 已廢棄這個目錄並且嘗試將這個組態轉移到 ~/.config/nautilus"
 
-#: ../src/nautilus-application.c:854
+#: ../src/nautilus-application.c:921
 #: ../src/nautilus-file-management-properties.c:197
 #: ../src/nautilus-window-menus.c:253
 #, c-format
@@ -2334,67 +2334,71 @@ msgstr ""
 "顯示說明文件時發生錯誤：\n"
 "%s"
 
-#: ../src/nautilus-application.c:1028
+#: ../src/nautilus-application.c:1095
 msgid "--check cannot be used with other options."
 msgstr "--check 不可配合其他選項使用。"
 
-#: ../src/nautilus-application.c:1034
+#: ../src/nautilus-application.c:1101
 msgid "--quit cannot be used with URIs."
 msgstr "--quit 不能與 URIs 一起使用。"
 
-#: ../src/nautilus-application.c:1041
+#: ../src/nautilus-application.c:1108
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry 不適用於多於一個 URI。"
 
-#: ../src/nautilus-application.c:1047
+#: ../src/nautilus-application.c:1114
 msgid "--select must be used with at least an URI."
 msgstr "--select 必須它至少有一個 URI。"
 
-#: ../src/nautilus-application.c:1053
+#: ../src/nautilus-application.c:1120
 msgid "--no-desktop and --force-desktop cannot be used together."
 msgstr "--no-desktop 和 --force-desktop 不能一起使用。"
 
-#: ../src/nautilus-application.c:1151
+#: ../src/nautilus-application.c:1219
 msgid "Perform a quick set of self-check tests."
 msgstr "執行快速自動檢查測試。"
 
-#: ../src/nautilus-application.c:1157
+#: ../src/nautilus-application.c:1225
 msgid "Show the version of the program."
 msgstr "顯示此程式的版本。"
 
-#: ../src/nautilus-application.c:1159
+#: ../src/nautilus-application.c:1227
 msgid "Create the initial window with the given geometry."
 msgstr "以指定尺寸顯示初始視窗。"
 
-#: ../src/nautilus-application.c:1159
+#: ../src/nautilus-application.c:1227
 msgid "GEOMETRY"
 msgstr "位置大小"
 
-#: ../src/nautilus-application.c:1161
+#: ../src/nautilus-application.c:1229
+msgid "Always open a new window for browsing specified URIs"
+msgstr "瀏覽指定 URI 時永遠開啟新的視窗"
+
+#: ../src/nautilus-application.c:1231
 msgid "Only create windows for explicitly specified URIs."
 msgstr "只有特別指定 URI 時才會開啟新的視窗。"
 
-#: ../src/nautilus-application.c:1163
+#: ../src/nautilus-application.c:1233
 msgid "Never manage the desktop (ignore the GSettings preference)."
 msgstr "不管理桌面 (會忽略 GSettings 偏好設定)。"
 
-#: ../src/nautilus-application.c:1165
+#: ../src/nautilus-application.c:1235
 msgid "Always manage the desktop (ignore the GSettings preference)."
 msgstr "永遠管理桌面 (會忽略 GSettings 偏好設定)。"
 
-#: ../src/nautilus-application.c:1167
+#: ../src/nautilus-application.c:1237
 msgid "Quit Nautilus."
 msgstr "離開 Nautilus。"
 
-#: ../src/nautilus-application.c:1169
+#: ../src/nautilus-application.c:1239
 msgid "Select specified URI in parent folder."
 msgstr "請選擇上層資料夾的指定 URI。"
 
-#: ../src/nautilus-application.c:1170
+#: ../src/nautilus-application.c:1240
 msgid "[URI...]"
 msgstr "[URI…]"
 
-#: ../src/nautilus-application.c:1183
+#: ../src/nautilus-application.c:1252
 msgid ""
 "\n"
 "\n"
@@ -2406,13 +2410,13 @@ msgstr ""
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1193
+#: ../src/nautilus-application.c:1262
 msgid "Could not parse arguments"
 msgstr "無法分析引數"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1226
+#: ../src/nautilus-application.c:1295
 msgid "Could not register the application"
 msgstr "無法註冊應用程式"
 
@@ -3272,8 +3276,8 @@ msgid "Failed to load image information"
 msgstr "無法獲取圖片的資訊"
 
 #: ../src/nautilus-image-properties-page.c:708
-#: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:606
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:607
+#: ../src/nautilus-window-slot.c:2257
 msgid "Loading…"
 msgstr "載入中…"
 
@@ -5249,38 +5253,38 @@ msgstr "以圖示來顯示項目"
 msgid "_Up"
 msgstr "上層(_U)"
 
-#: ../src/nautilus-window-slot.c:1272 ../src/nautilus-window-slot.c:1446
+#: ../src/nautilus-window-slot.c:1285 ../src/nautilus-window-slot.c:1459
 #, c-format
 msgid "Unable to load location"
 msgstr "無法載入位置"
 
-#: ../src/nautilus-window-slot.c:1601
+#: ../src/nautilus-window-slot.c:1614
 msgid "Unable to display the contents of this folder."
 msgstr "無法顯示這個資料夾的內容。"
 
-#: ../src/nautilus-window-slot.c:1603
+#: ../src/nautilus-window-slot.c:1616
 msgid "This location doesn't appear to be a folder."
 msgstr "這個位置似乎不是資料夾。"
 
-#: ../src/nautilus-window-slot.c:1608
+#: ../src/nautilus-window-slot.c:1621
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr "找不到要求的檔案。請檢查拼字是否正確並再試一次。"
 
-#: ../src/nautilus-window-slot.c:1613
+#: ../src/nautilus-window-slot.c:1626
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "“%s”位置是不支援的。"
 
-#: ../src/nautilus-window-slot.c:1616
+#: ../src/nautilus-window-slot.c:1629
 msgid "Unable to handle this kind of location."
 msgstr "無法處理此類型的位置。"
 
-#: ../src/nautilus-window-slot.c:1621
+#: ../src/nautilus-window-slot.c:1634
 msgid "Unable to access the requested location."
 msgstr "無法存取要求的位置。"
 
-#: ../src/nautilus-window-slot.c:1624
+#: ../src/nautilus-window-slot.c:1637
 msgid "Don't have permission to access the requested location."
 msgstr "你沒有存取要求位置的權限。"
 
@@ -5289,18 +5293,18 @@ msgstr "你沒有存取要求位置的權限。"
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-slot.c:1632
+#: ../src/nautilus-window-slot.c:1645
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
 msgstr "無法尋找要求的位置。請檢查拼字或網絡設定值。"
 
-#: ../src/nautilus-window-slot.c:1643
+#: ../src/nautilus-window-slot.c:1656
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "未處理的錯誤訊息：%s"
 
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-window-slot.c:2257
 msgid "Searching…"
 msgstr "搜尋…"
 
