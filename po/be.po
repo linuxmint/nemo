@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: nautilus.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-12-16 20:03+0000\n"
+"POT-Creation-Date: 2013-03-04 09:51+0000\n"
 "PO-Revision-Date: 2012-10-02 15:37+0300\n"
 "Last-Translator: Ihar Hrachyshka <ihar.hrachyshka@gmail.com>\n"
 "Language-Team: Belarusian <i18n-bel-gnome@googlegroups.com>\n"
@@ -25,12 +25,13 @@ msgstr "Запуск апраграмавання"
 #. set dialog properties
 #: ../data/nautilus-connect-server.desktop.in.in.h:1
 #: ../src/nautilus-connect-server-dialog.c:588
+#: ../src/nautilus-places-sidebar.c:800
 msgid "Connect to Server"
 msgstr "Злучэнне з серверам"
 
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
-#: ../src/nautilus-file-management-properties.ui.h:27
+#: ../src/nautilus-file-management-properties.ui.h:29
 #: ../src/nautilus-properties-window.c:4474 ../src/nautilus-window.c:1858
 #: ../src/nautilus-window.c:2058
 msgid "Files"
@@ -56,20 +57,20 @@ msgstr "X"
 msgid "Y"
 msgstr "Y"
 
-#: ../eel/eel-editable-label.c:311 ../libnautilus-private/nautilus-file.c:6159
+#: ../eel/eel-editable-label.c:313 ../libnautilus-private/nautilus-file.c:6159
 #: ../libnautilus-private/nautilus-file.c:6160
 msgid "Text"
 msgstr "Тэкст"
 
-#: ../eel/eel-editable-label.c:312
+#: ../eel/eel-editable-label.c:314
 msgid "The text of the label."
 msgstr "Тэкст надпісу."
 
-#: ../eel/eel-editable-label.c:318
+#: ../eel/eel-editable-label.c:320
 msgid "Justification"
 msgstr "Раўнаванне"
 
-#: ../eel/eel-editable-label.c:319
+#: ../eel/eel-editable-label.c:321
 msgid ""
 "The alignment of the lines in the text of the label relative to each other. "
 "This does NOT affect the alignment of the label within its allocation. See "
@@ -79,40 +80,40 @@ msgstr ""
 "раўнаванне самога элемента надпісу ў выдзеленых для яго межах. Для гэтага "
 "выкарыстоўваюць GtkMisc::xalign."
 
-#: ../eel/eel-editable-label.c:327
+#: ../eel/eel-editable-label.c:329
 msgid "Line wrap"
 msgstr "Перанос радкоў"
 
-#: ../eel/eel-editable-label.c:328
+#: ../eel/eel-editable-label.c:330
 msgid "If set, wrap lines if the text becomes too wide."
 msgstr "Калі ўключана, пераносіць радкі ў надта доўгім тэксце."
 
-#: ../eel/eel-editable-label.c:335
+#: ../eel/eel-editable-label.c:337
 msgid "Cursor Position"
 msgstr "Пазіцыя курсора"
 
-#: ../eel/eel-editable-label.c:336
+#: ../eel/eel-editable-label.c:338
 msgid "The current position of the insertion cursor in chars."
 msgstr "Бягучая пазіцыя курсора ўстаўкі, у знаках."
 
-#: ../eel/eel-editable-label.c:345
+#: ../eel/eel-editable-label.c:347
 msgid "Selection Bound"
 msgstr "Граніца вылучэння"
 
-#: ../eel/eel-editable-label.c:346
+#: ../eel/eel-editable-label.c:348
 msgid ""
 "The position of the opposite end of the selection from the cursor in chars."
 msgstr "Пазіцыя супрацьлеглага канца вылучэння адносна курсора, у знаках."
 
-#: ../eel/eel-editable-label.c:3086
+#: ../eel/eel-editable-label.c:3088
 msgid "Select All"
 msgstr "Вылучыць усё"
 
-#: ../eel/eel-editable-label.c:3097
+#: ../eel/eel-editable-label.c:3099
 msgid "Input Methods"
 msgstr "Метады ўводу"
 
-#: ../eel/eel-gtk-extensions.c:378
+#: ../eel/eel-gtk-extensions.c:327
 msgid "Show more _details"
 msgstr "_Паказаць падрабязнасці"
 
@@ -127,9 +128,9 @@ msgstr " (хібны Унікод)"
 #: ../libnautilus-private/nautilus-bookmark.c:108
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:275
-#: ../src/nautilus-pathbar.c:295 ../src/nautilus-places-sidebar.c:511
+#: ../src/nautilus-pathbar.c:295 ../src/nautilus-places-sidebar.c:528
 #: ../src/nautilus-query-editor.c:1164
-#: ../src/nautilus-shell-search-provider.c:309
+#: ../src/nautilus-shell-search-provider.c:310
 msgid "Home"
 msgstr "Дамашняя папка"
 
@@ -160,7 +161,7 @@ msgstr "Уставіць тэкст з буфера абмену"
 
 #. name, stock id
 #. label, accelerator
-#: ../libnautilus-private/nautilus-clipboard.c:370 ../src/nautilus-view.c:7172
+#: ../libnautilus-private/nautilus-clipboard.c:370 ../src/nautilus-view.c:7176
 msgid "Select _All"
 msgstr "Вылучыць _усё"
 
@@ -182,7 +183,7 @@ msgid "Use De_fault"
 msgstr "_Прадвызначана"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:56
-#: ../src/nautilus-list-view.c:1485
+#: ../src/nautilus-list-view.c:1708
 msgid "Name"
 msgstr "Назва"
 
@@ -312,23 +313,23 @@ msgstr ""
 msgid "%s (%s)"
 msgstr "%s (%s)"
 
-#: ../libnautilus-private/nautilus-dnd.c:697
+#: ../libnautilus-private/nautilus-dnd.c:767
 msgid "_Move Here"
 msgstr "Пера_мясціць сюды"
 
-#: ../libnautilus-private/nautilus-dnd.c:702
+#: ../libnautilus-private/nautilus-dnd.c:772
 msgid "_Copy Here"
 msgstr "С_капіраваць сюды"
 
-#: ../libnautilus-private/nautilus-dnd.c:707
+#: ../libnautilus-private/nautilus-dnd.c:777
 msgid "_Link Here"
 msgstr "С_тварыць спасылку"
 
-#: ../libnautilus-private/nautilus-dnd.c:712
+#: ../libnautilus-private/nautilus-dnd.c:782
 msgid "Set as _Background"
 msgstr "Зрабіць _фонам"
 
-#: ../libnautilus-private/nautilus-dnd.c:719
+#: ../libnautilus-private/nautilus-dnd.c:789
 msgid "Cancel"
 msgstr "Скасаваць"
 
@@ -936,7 +937,7 @@ msgstr "Усё змесціва сметніцы будзе выдалена н�
 #. Empty Trash menu item
 #: ../libnautilus-private/nautilus-file-operations.c:1363
 #: ../libnautilus-private/nautilus-file-operations.c:2241
-#: ../src/nautilus-places-sidebar.c:2695
+#: ../src/nautilus-places-sidebar.c:2880
 msgid "Empty _Trash"
 msgstr "_Ачысціць сметніцу"
 
@@ -1078,7 +1079,7 @@ msgstr "Не а_чышчаць сметніцу"
 
 #. Translators: %s is a file name formatted for display
 #: ../libnautilus-private/nautilus-file-operations.c:2372
-#: ../src/nautilus-view.c:6425
+#: ../src/nautilus-view.c:6429
 #, c-format
 msgid "Unable to access “%s”"
 msgstr "Не ўдалося атрымаць доступ да \"%s\""
@@ -1443,23 +1444,23 @@ msgstr "Не ўдалося зрабіць стартар давераным (в
 
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:135
-#: ../src/nautilus-view.c:2502
+#: ../src/nautilus-view.c:2506
 msgid "Undo"
 msgstr "Адрабіць"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:138
-#: ../src/nautilus-view.c:2503
+#: ../src/nautilus-view.c:2507
 msgid "Undo last action"
 msgstr "Адрабіць апошняе дзеянне"
 
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:142
-#: ../src/nautilus-view.c:2521
+#: ../src/nautilus-view.c:2525
 msgid "Redo"
 msgstr "Паўтарыць скасаванае"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:145
-#: ../src/nautilus-view.c:2522
+#: ../src/nautilus-view.c:2526
 msgid "Redo last undone action"
 msgstr "Паўтарыць апошняе скасаванае дзеянне"
 
@@ -2196,8 +2197,8 @@ msgid ""
 "This key is deprecated and ignored. The \"show-hidden\" key from \"org.gtk."
 "Settings.FileChooser\" is now used instead."
 msgstr ""
-"Гэты ключ састарэлы і таму ігнаруецца. Цяпер замест яго выкарыстоўваецца настройка "
-"\"show-hidden\" з \"org.gtk.Settings.FileChooser\"."
+"Гэты ключ састарэлы і таму ігнаруецца. Цяпер замест яго выкарыстоўваецца "
+"настройка \"show-hidden\" з \"org.gtk.Settings.FileChooser\"."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
 msgid "Bulk rename utility"
@@ -2317,39 +2318,49 @@ msgid "Default column order in the list view."
 msgstr "Прадвызначаны парадак слупкоў у рэжыме спіса."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:54
+msgid "Use tree view"
+msgstr "Ужыць іерархічны рэжым"
+
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:55
+msgid ""
+"Whether a tree should be used for list view navigation instead of a flat list"
+msgstr ""
+"Ці трэба паказваць іерархію ў рэжыме спіса замест аднамернага спіса"
+
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
 msgid "Desktop font"
 msgstr "Шрыфт стала"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:55
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
 msgid "The font _description used for the icons on the desktop."
 msgstr "_Апісанне шрыфту значкоў стала."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:58
 msgid "Home icon visible on desktop"
 msgstr "Значок \"Дадому\" на стале"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:59
 msgid ""
 "If this is set to true, an icon linking to the home folder will be put on "
 "the desktop."
 msgstr ""
 "Калі ўключана, значок, звязаны з дамашняй папкай, будзе змешчаны на стале."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:58
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:60
 msgid "Trash icon visible on desktop"
 msgstr "Значок сметніцы на стале"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:59
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:61
 msgid ""
 "If this is set to true, an icon linking to the trash will be put on the "
 "desktop."
 msgstr "Калі ўключана, значок, звязаны са сметніцай, будзе змешчаны на стале."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:60
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:62
 msgid "Show mounted volumes on the desktop"
 msgstr "Паказваць прымацаваныя дыскавыя тамы на стале"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:61
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:63
 msgid ""
 "If this is set to true, icons linking to mounted volumes will be put on the "
 "desktop."
@@ -2357,11 +2368,11 @@ msgstr ""
 "Калі ўключана, значкі, звязаныя з прымацаванымі дыскавымі тамамі, будзе "
 "змешчаны на стале."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:62
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:64
 msgid "Network Servers icon visible on the desktop"
 msgstr "Значок сеткавых сервераў на стале"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:63
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:65
 msgid ""
 "If this is set to true, an icon linking to the Network Servers view will be "
 "put on the desktop."
@@ -2369,11 +2380,11 @@ msgstr ""
 "Калі ўключана, значок, звязаны з сеткавымі серверамі, будзе змешчаны на "
 "стале."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:64
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:66
 msgid "Desktop home icon name"
 msgstr "Назва значка \"Дадому\" на стале"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:65
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:67
 msgid ""
 "This name can be set if you want a custom name for the home icon on the "
 "desktop."
@@ -2381,11 +2392,11 @@ msgstr ""
 "Гэту назву можна вызначыць, калі вы хочаце бачыць незвычайны подпіс значка "
 "\"Дадому\" на стале."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:66
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:68
 msgid "Desktop trash icon name"
 msgstr "Назва значка сметніцы на стале"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:67
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:69
 msgid ""
 "This name can be set if you want a custom name for the trash icon on the "
 "desktop."
@@ -2393,11 +2404,11 @@ msgstr ""
 "Гэту назву можна вызначыць, калі вы хочаце бачыць незвычайны подпіс значка "
 "сметніцы на стале."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:68
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:70
 msgid "Network servers icon name"
 msgstr "Назва значка сеткавых сервераў"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:69
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:71
 msgid ""
 "This name can be set if you want a custom name for the network servers icon "
 "on the desktop."
@@ -2405,7 +2416,7 @@ msgstr ""
 "Гэту назву можна вызначыць, калі вы хочаце бачыць незвычайны подпіс значка "
 "сеткавых сервераў на стале."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:70
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:72
 msgid ""
 "An integer specifying how parts of overlong file names should be replaced by "
 "ellipses on the desktop. If the number is larger than 0, the file name will "
@@ -2418,56 +2429,56 @@ msgstr ""
 "роўны 0 ці меншы, для колькасці занятых радкоў не будуць ужытыя хоць якія "
 "абмежаванні."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:71
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:73
 msgid "Fade the background on change"
 msgstr "Зацямняць фон пры яго змяненні"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:72
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:74
 msgid ""
 "If set to true, then Nautilus will use a fade effect to change the desktop "
 "background."
 msgstr "Калі ўключана, Наўтылус будзе зацямняць фон стала пры яго змяненні."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:73
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:75
 msgid "The geometry string for a navigation window."
 msgstr "Геаметрычныя даныя акна навігацыі."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:74
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:76
 msgid ""
 "A string containing the saved geometry and coordinates string for navigation "
 "windows."
 msgstr "Захаваныя геаметрычныя даныя і каардынаты вокнаў навігацыі."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:75
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:77
 msgid "Whether the navigation window should be maximized."
 msgstr "Ці трэба максімалізаваць навігацыйнае акно."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:76
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:78
 msgid "Whether the navigation window should be maximized by default."
 msgstr "Ці трэба прадвызначана максімалізаваць навігацыйнае акно."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:77
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:79
 msgid "Width of the side pane"
 msgstr "Шырыня бакавой паліцы"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:78
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:80
 msgid "The default width of the side pane in new windows."
 msgstr "Прадвызначаная шырыня бакавой паліцы ў новых вокнах."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:79
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:81
 msgid "Show location bar in new windows"
 msgstr "Паказваць адрасную паліцу ў новых вокнах"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:80
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:82
 msgid ""
 "If set to true, newly opened windows will have the location bar visible."
 msgstr "Калі ўключана, новыя вокны будуць мець адкрытую адрасную паліцу."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:81
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:83
 msgid "Show side pane in new windows"
 msgstr "Паказваць бакавую паліцу ў новых вокнах"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:82
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:84
 msgid "If set to true, newly opened windows will have the side pane visible."
 msgstr "Калі ўключана, новыя вокны будуць мець адкрытую бакавую паліцу."
 
@@ -2485,11 +2496,11 @@ msgid "Send files by mail, instant message…"
 msgstr "Паслаць файлы электроннай поштай, імгненным паведамленнем..."
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:227 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1599
 msgid "Oops! Something went wrong."
 msgstr "Нешта пайшло не так, як мае быць!"
 
-#: ../src/nautilus-application.c:229
+#: ../src/nautilus-application.c:234
 #, c-format
 msgid ""
 "Unable to create a required folder. Please create the following folder, or "
@@ -2500,7 +2511,7 @@ msgstr ""
 "дайце дазвол для яе стварэння:\n"
 "%s"
 
-#: ../src/nautilus-application.c:234
+#: ../src/nautilus-application.c:239
 #, c-format
 msgid ""
 "Unable to create required folders. Please create the following folders, or "
@@ -2511,7 +2522,7 @@ msgstr ""
 "дайце дазвол для іх стварэння:\n"
 "%s"
 
-#: ../src/nautilus-application.c:368
+#: ../src/nautilus-application.c:373
 msgid ""
 "Nautilus 3.0 deprecated this directory and tried migrating this "
 "configuration to ~/.config/nautilus"
@@ -2519,8 +2530,8 @@ msgstr ""
 "Наўтылус 3.0 больш не выкарыстоўвае гэты каталог і паспрабаваў перанесці "
 "канфігурацыю ў ~/.config/nautilus"
 
-#: ../src/nautilus-application.c:848
-#: ../src/nautilus-file-management-properties.c:196
+#: ../src/nautilus-application.c:921
+#: ../src/nautilus-file-management-properties.c:197
 #: ../src/nautilus-window-menus.c:253
 #, c-format
 msgid ""
@@ -2530,53 +2541,71 @@ msgstr ""
 "Узнікла памылка пры паказе даведкі: \n"
 "%s"
 
-#: ../src/nautilus-application.c:1018
+#: ../src/nautilus-application.c:1095
 msgid "--check cannot be used with other options."
 msgstr "нельга выкарыстоўваць опцыю --check з іншымі опцыямі."
 
-#: ../src/nautilus-application.c:1024
+#: ../src/nautilus-application.c:1101
 msgid "--quit cannot be used with URIs."
 msgstr "нельга выкарыстоўваць опцыю --quit з URI-адрасамі."
 
-#: ../src/nautilus-application.c:1031
+#: ../src/nautilus-application.c:1108
 msgid "--geometry cannot be used with more than one URI."
 msgstr "нельга выкарыстоўваць опцыю --geometry з больш як адным URI-адрасам."
 
-#: ../src/nautilus-application.c:1079
+#: ../src/nautilus-application.c:1114
+msgid "--select must be used with at least an URI."
+msgstr "--select мусіць атрымаць прынамсі адзін URI-адрас."
+
+#: ../src/nautilus-application.c:1120
+msgid "--no-desktop and --force-desktop cannot be used together."
+msgstr "Нельга адначасова ўжыць --no-desktop і --force-desktop."
+
+#: ../src/nautilus-application.c:1219
 msgid "Perform a quick set of self-check tests."
 msgstr "Выканаць колькі хуткіх тэстаў."
 
-#: ../src/nautilus-application.c:1085
+#: ../src/nautilus-application.c:1225
 msgid "Show the version of the program."
 msgstr "Паказаць нумар версіі праграмы."
 
-#: ../src/nautilus-application.c:1087
+#: ../src/nautilus-application.c:1227
 msgid "Create the initial window with the given geometry."
 msgstr "Стварыць першае акно з вызначаным памерам."
 
-#: ../src/nautilus-application.c:1087
+#: ../src/nautilus-application.c:1227
 msgid "GEOMETRY"
 msgstr "ПАМЕР"
 
-#: ../src/nautilus-application.c:1089
+#: ../src/nautilus-application.c:1229
+msgid "Always open a new window for browsing specified URIs"
+msgstr "Заўсёды адкрываць новае акно для прагляду вызначаных URI-адрасоў"
+
+#: ../src/nautilus-application.c:1231
 msgid "Only create windows for explicitly specified URIs."
 msgstr "Толькі стварыць вокны для непасрэдна вызначаных URI-адрасоў."
 
-#: ../src/nautilus-application.c:1091
-msgid ""
-"Do not manage the desktop (ignore the preference set in the preferences "
-"dialog)."
-msgstr "Не кіраваць сталом (праігнараваць настройкі з дыялогу)"
+#: ../src/nautilus-application.c:1233
+msgid "Never manage the desktop (ignore the GSettings preference)."
+msgstr "Ніколі не кіраваць сталом (праігнараваць GSettings-настройкі)."
 
-#: ../src/nautilus-application.c:1093
+#: ../src/nautilus-application.c:1235
+msgid "Always manage the desktop (ignore the GSettings preference)."
+msgstr "Заўсёды кіраваць сталом (праігнараваць GSettings-настройкі)."
+
+#: ../src/nautilus-application.c:1237
 msgid "Quit Nautilus."
 msgstr "Выйсці з Наўтылуса."
 
-#: ../src/nautilus-application.c:1094
+#: ../src/nautilus-application.c:1239
+msgid "Select specified URI in parent folder."
+msgstr "Выбраць вызначаны URI-адрас у папцы вышэйшага ўзроўню."
+
+#: ../src/nautilus-application.c:1240
 msgid "[URI...]"
 msgstr "[АДРАС...]"
 
-#: ../src/nautilus-application.c:1107
+#: ../src/nautilus-application.c:1252
 msgid ""
 "\n"
 "\n"
@@ -2588,13 +2617,13 @@ msgstr ""
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1117
+#: ../src/nautilus-application.c:1262
 msgid "Could not parse arguments"
 msgstr "Не ўдалося разабраць аргументы"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1149
+#: ../src/nautilus-application.c:1295
 msgid "Could not register the application"
 msgstr "Не ўдалося зарэгістраваць праграму"
 
@@ -2673,12 +2702,12 @@ msgstr "_Запусціць"
 msgid "No bookmarks defined"
 msgstr "Няма вызначаных закладак"
 
-#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:242
+#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:249
 msgid "Bookmarks"
 msgstr "Закладкі"
 
 #: ../src/nautilus-bookmarks-window.ui.h:1
-#: ../src/nautilus-places-sidebar.c:2630
+#: ../src/nautilus-places-sidebar.c:2809
 msgid "Remove"
 msgstr "Выдаліць"
 
@@ -2778,26 +2807,26 @@ msgstr "Парадкаваць значкі ў радкі паводле іх д
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
-#: ../src/nautilus-canvas-view.c:2282
+#: ../src/nautilus-canvas-view.c:2292
 #: ../src/nautilus-canvas-view-container.c:571
-#: ../src/nautilus-file-management-properties.ui.h:33
+#: ../src/nautilus-file-management-properties.ui.h:35
 msgid "Icon View"
 msgstr "Рэжым значкоў"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-canvas-view.c:2284
+#: ../src/nautilus-canvas-view.c:2294
 msgid "_Icons"
 msgstr "_Значкі"
 
-#: ../src/nautilus-canvas-view.c:2285
+#: ../src/nautilus-canvas-view.c:2295
 msgid "The icon view encountered an error."
 msgstr "Узнікла памылка рэжыму значкоў."
 
-#: ../src/nautilus-canvas-view.c:2286
+#: ../src/nautilus-canvas-view.c:2296
 msgid "The icon view encountered an error while starting up."
 msgstr "Пры запуску ўзнікла памылка рэжыму значкоў."
 
-#: ../src/nautilus-canvas-view.c:2287
+#: ../src/nautilus-canvas-view.c:2297
 msgid "Display this location with the icon view."
 msgstr "Паказаць гэтае месца ў рэжыме значкоў."
 
@@ -2872,75 +2901,75 @@ msgstr "_Злучыцца"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:706 ../src/nautilus-view.c:7142
-#: ../src/nautilus-view.c:8675
+#: ../src/nautilus-desktop-canvas-view.c:623 ../src/nautilus-view.c:7146
+#: ../src/nautilus-view.c:8679
 msgid "E_mpty Trash"
 msgstr "_Ачысціць сметніцу"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:730
-#: ../src/nautilus-desktop-canvas-view.c:771
+#: ../src/nautilus-desktop-canvas-view.c:647
+#: ../src/nautilus-desktop-canvas-view.c:688
 msgid "Restore Icons' Original Si_zes"
 msgstr "_Аднавіць арыгінальныя памеры значкоў"
 
-#: ../src/nautilus-desktop-canvas-view.c:731
+#: ../src/nautilus-desktop-canvas-view.c:648
 msgid "Restore Icon's Original Si_ze"
 msgstr "_Аднавіць арыгінальны памер значка"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:743
+#: ../src/nautilus-desktop-canvas-view.c:660
 msgid "Change Desktop _Background"
 msgstr "Змяніць _фон стала"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:745
+#: ../src/nautilus-desktop-canvas-view.c:662
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr "Паказаць акно настройкі фона стала"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:750
+#: ../src/nautilus-desktop-canvas-view.c:667
 msgid "Empty Trash"
 msgstr "Ачысціць сметніцу"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:752 ../src/nautilus-trash-bar.c:212
-#: ../src/nautilus-view.c:7143
+#: ../src/nautilus-desktop-canvas-view.c:669 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-view.c:7147
 msgid "Delete all items in the Trash"
 msgstr "Выдаліць усё змесціва сметніцы"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:757
+#: ../src/nautilus-desktop-canvas-view.c:674
 msgid "_Organize Desktop by Name"
 msgstr "_Упарадкаваць назвы са стала"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:759
+#: ../src/nautilus-desktop-canvas-view.c:676
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr ""
 "Упарадкаваць значкі для лепшага запаўнення акна і прадухілення заслоны "
 "аднаго значка іншым"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:764
+#: ../src/nautilus-desktop-canvas-view.c:681
 msgid "Resize Icon…"
 msgstr "Змяніць памер значка..."
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:766
+#: ../src/nautilus-desktop-canvas-view.c:683
 msgid "Make the selected icons resizable"
 msgstr "Дазволіць змяненне памераў вылучаных значкоў"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:773
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore each selected icons to its original size"
 msgstr "Аднавіць арыгінальны памер для ўсіх вылучаных значкоў"
 
-#: ../src/nautilus-desktop-canvas-view.c:851
+#: ../src/nautilus-desktop-canvas-view.c:768
 msgid "The desktop view encountered an error."
 msgstr "Узнікла памылка рэжыму стала."
 
-#: ../src/nautilus-desktop-canvas-view.c:852
+#: ../src/nautilus-desktop-canvas-view.c:769
 msgid "The desktop view encountered an error while starting up."
 msgstr "Падчас запуску ўзнікла памылка рэжыму стала."
 
@@ -2966,8 +2995,8 @@ msgid "Command"
 msgstr "Загад"
 
 #. hardcode "Desktop"
-#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:263
-#: ../src/nautilus-places-sidebar.c:523
+#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:240
+#: ../src/nautilus-places-sidebar.c:540
 msgid "Desktop"
 msgstr "Стол"
 
@@ -3076,7 +3105,7 @@ msgid "Renaming “%s” to “%s”."
 msgstr "Змяненне назвы \"%s\" на \"%s\"."
 
 #. Translators: this is referred to captions under icons.
-#: ../src/nautilus-file-management-properties.c:280
+#: ../src/nautilus-file-management-properties.c:281
 #: ../src/nautilus-properties-window.c:4049
 #: ../src/nautilus-properties-window.c:4076
 msgid "None"
@@ -3156,8 +3185,8 @@ msgstr "_Штораз пытацца"
 
 #. trash
 #: ../src/nautilus-file-management-properties.ui.h:19
-#: ../src/nautilus-places-sidebar.c:537
-#: ../src/nautilus-shell-search-provider.c:314 ../src/nautilus-trash-bar.c:194
+#: ../src/nautilus-places-sidebar.c:554
+#: ../src/nautilus-shell-search-provider.c:315 ../src/nautilus-trash-bar.c:195
 msgid "Trash"
 msgstr "Сметніца"
 
@@ -3181,154 +3210,158 @@ msgstr ""
 "Вызначыце парадак з'яўлення інфармацыі пад назвамі значкоў. Чым большае "
 "павелічэнне элементаў, тым болей будзе паказана інфармацыі."
 
+#. translators: this is used in the view selection dropdown
+#. * of navigation windows and in the preferences dialog
 #: ../src/nautilus-file-management-properties.ui.h:24
+#: ../src/nautilus-list-view.c:1790 ../src/nautilus-list-view.c:3325
+msgid "List View"
+msgstr "Рэжым спіса"
+
+#: ../src/nautilus-file-management-properties.ui.h:25
+msgid "Navigate folders in a tree"
+msgstr "Праглядаць папкі ў іерархіі"
+
+#: ../src/nautilus-file-management-properties.ui.h:26
 msgid "Display"
 msgstr "Від"
 
-#: ../src/nautilus-file-management-properties.ui.h:25
+#: ../src/nautilus-file-management-properties.ui.h:27
 msgid "Choose the order of information to appear in the list view."
 msgstr "Вызначыце парадак з'яўлення інфармацыі ў рэжыме спіса."
 
-#: ../src/nautilus-file-management-properties.ui.h:26
+#: ../src/nautilus-file-management-properties.ui.h:28
 msgid "List Columns"
 msgstr "Слупкі спіса"
 
-#: ../src/nautilus-file-management-properties.ui.h:28
+#: ../src/nautilus-file-management-properties.ui.h:30
 msgid "Show _thumbnails:"
 msgstr "Паказваць _мініяцюры:"
 
-#: ../src/nautilus-file-management-properties.ui.h:29
+#: ../src/nautilus-file-management-properties.ui.h:31
 msgid "_Only for files smaller than:"
 msgstr "_Толькі для файлаў, меншых за:"
 
-#: ../src/nautilus-file-management-properties.ui.h:30
+#: ../src/nautilus-file-management-properties.ui.h:32
 #: ../src/nautilus-properties-window.c:4477
 msgid "Folders"
 msgstr "Папкі"
 
-#: ../src/nautilus-file-management-properties.ui.h:31
+#: ../src/nautilus-file-management-properties.ui.h:33
 msgid "Count _number of items:"
 msgstr "Падлічваць _колькасць элементаў:"
 
-#: ../src/nautilus-file-management-properties.ui.h:32
+#: ../src/nautilus-file-management-properties.ui.h:34
 msgid "Preview"
 msgstr "Папярэдні агляд"
 
-#. translators: this is used in the view selection dropdown
-#. * of navigation windows and in the preferences dialog
-#: ../src/nautilus-file-management-properties.ui.h:34
-#: ../src/nautilus-list-view.c:1554 ../src/nautilus-list-view.c:2999
-msgid "List View"
-msgstr "Рэжым спіса"
-
-#: ../src/nautilus-file-management-properties.ui.h:35
+#: ../src/nautilus-file-management-properties.ui.h:36
 msgid "Always"
 msgstr "Заўсёды"
 
-#: ../src/nautilus-file-management-properties.ui.h:36
+#: ../src/nautilus-file-management-properties.ui.h:37
 msgid "Local Files Only"
 msgstr "Толькі для мясцовых файлаў"
 
-#: ../src/nautilus-file-management-properties.ui.h:37
+#: ../src/nautilus-file-management-properties.ui.h:38
 msgid "Never"
 msgstr "Ніколі"
 
-#: ../src/nautilus-file-management-properties.ui.h:38
+#: ../src/nautilus-file-management-properties.ui.h:39
 msgid "By Name"
 msgstr "Паводле назвы"
 
-#: ../src/nautilus-file-management-properties.ui.h:39
+#: ../src/nautilus-file-management-properties.ui.h:40
 msgid "By Size"
 msgstr "Паводле памеру"
 
-#: ../src/nautilus-file-management-properties.ui.h:40
+#: ../src/nautilus-file-management-properties.ui.h:41
 msgid "By Type"
 msgstr "Паводле тыпу"
 
-#: ../src/nautilus-file-management-properties.ui.h:41
+#: ../src/nautilus-file-management-properties.ui.h:42
 msgid "By Modification Date"
 msgstr "Паводле даты мадыфікацыі"
 
-#: ../src/nautilus-file-management-properties.ui.h:42
+#: ../src/nautilus-file-management-properties.ui.h:43
 msgid "By Access Date"
 msgstr "Паводле даты доступу"
 
-#: ../src/nautilus-file-management-properties.ui.h:43
+#: ../src/nautilus-file-management-properties.ui.h:44
 msgid "By Trashed Date"
 msgstr "Паводле даты выкіду ў сметніцу"
 
-#: ../src/nautilus-file-management-properties.ui.h:45
+#: ../src/nautilus-file-management-properties.ui.h:46
 #, no-c-format
 msgid "33%"
 msgstr "33%"
 
-#: ../src/nautilus-file-management-properties.ui.h:47
+#: ../src/nautilus-file-management-properties.ui.h:48
 #, no-c-format
 msgid "50%"
 msgstr "50%"
 
-#: ../src/nautilus-file-management-properties.ui.h:49
+#: ../src/nautilus-file-management-properties.ui.h:50
 #, no-c-format
 msgid "66%"
 msgstr "66%"
 
-#: ../src/nautilus-file-management-properties.ui.h:51
+#: ../src/nautilus-file-management-properties.ui.h:52
 #, no-c-format
 msgid "100%"
 msgstr "100%"
 
-#: ../src/nautilus-file-management-properties.ui.h:53
+#: ../src/nautilus-file-management-properties.ui.h:54
 #, no-c-format
 msgid "150%"
 msgstr "150%"
 
-#: ../src/nautilus-file-management-properties.ui.h:55
+#: ../src/nautilus-file-management-properties.ui.h:56
 #, no-c-format
 msgid "200%"
 msgstr "200%"
 
-#: ../src/nautilus-file-management-properties.ui.h:57
+#: ../src/nautilus-file-management-properties.ui.h:58
 #, no-c-format
 msgid "400%"
 msgstr "400%"
 
-#: ../src/nautilus-file-management-properties.ui.h:58
+#: ../src/nautilus-file-management-properties.ui.h:59
 msgid "100 KB"
 msgstr "100 кб"
 
-#: ../src/nautilus-file-management-properties.ui.h:59
+#: ../src/nautilus-file-management-properties.ui.h:60
 msgid "500 KB"
 msgstr "500 кб"
 
-#: ../src/nautilus-file-management-properties.ui.h:60
+#: ../src/nautilus-file-management-properties.ui.h:61
 msgid "1 MB"
 msgstr "1 Mб"
 
-#: ../src/nautilus-file-management-properties.ui.h:61
+#: ../src/nautilus-file-management-properties.ui.h:62
 msgid "3 MB"
 msgstr "3 Mб"
 
-#: ../src/nautilus-file-management-properties.ui.h:62
+#: ../src/nautilus-file-management-properties.ui.h:63
 msgid "5 MB"
 msgstr "5 Mб"
 
-#: ../src/nautilus-file-management-properties.ui.h:63
+#: ../src/nautilus-file-management-properties.ui.h:64
 msgid "10 MB"
 msgstr "10 Mб"
 
-#: ../src/nautilus-file-management-properties.ui.h:64
+#: ../src/nautilus-file-management-properties.ui.h:65
 msgid "100 MB"
 msgstr "100 Mб"
 
-#: ../src/nautilus-file-management-properties.ui.h:65
+#: ../src/nautilus-file-management-properties.ui.h:66
 msgid "1 GB"
 msgstr "1 Гб"
 
-#: ../src/nautilus-file-management-properties.ui.h:66
+#: ../src/nautilus-file-management-properties.ui.h:67
 msgid "2 GB"
 msgstr "2 Гб"
 
-#: ../src/nautilus-file-management-properties.ui.h:67
+#: ../src/nautilus-file-management-properties.ui.h:68
 msgid "4 GB"
 msgstr "4 Гб"
 
@@ -3460,49 +3493,49 @@ msgid "Failed to load image information"
 msgstr "Не ўдалося прачытаць звесткі аб выяве"
 
 #: ../src/nautilus-image-properties-page.c:708
-#: ../src/nautilus-list-model.c:378 ../src/nautilus-window-slot.c:606
-#: ../src/nautilus-window-slot.c:2244
+#: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:606
+#: ../src/nautilus-window-slot.c:2247
 msgid "Loading…"
 msgstr "Чытанне..."
 
-#: ../src/nautilus-list-model.c:376
+#: ../src/nautilus-list-model.c:370
 msgid "(Empty)"
 msgstr "(Пуста)"
 
-#: ../src/nautilus-list-view.c:2253
+#: ../src/nautilus-list-view.c:2579
 #, c-format
 msgid "%s Visible Columns"
 msgstr "%s: бачныя слупкі"
 
-#: ../src/nautilus-list-view.c:2273
+#: ../src/nautilus-list-view.c:2599
 msgid "Choose the order of information to appear in this folder:"
 msgstr "Вызначыце парадак з'яўлення інфармацыі ў гэтай папцы:"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-list-view.c:2328
+#: ../src/nautilus-list-view.c:2654
 msgid "Visible _Columns…"
 msgstr "_Бачныя слупкі..."
 
 #. tooltip
-#: ../src/nautilus-list-view.c:2329
+#: ../src/nautilus-list-view.c:2655
 msgid "Select the columns visible in this folder"
 msgstr "Выберыце слупкі, бачныя ў гэтай папцы"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-list-view.c:3001
+#: ../src/nautilus-list-view.c:3327
 msgid "_List"
 msgstr "_Спіс"
 
-#: ../src/nautilus-list-view.c:3002
+#: ../src/nautilus-list-view.c:3328
 msgid "The list view encountered an error."
 msgstr "Узнікла памылка рэжыму спіса."
 
-#: ../src/nautilus-list-view.c:3003
+#: ../src/nautilus-list-view.c:3329
 msgid "The list view encountered an error while starting up."
 msgstr "Пры запуску ўзнікла памылка рэжыму спіса."
 
-#: ../src/nautilus-list-view.c:3004
+#: ../src/nautilus-list-view.c:3330
 msgid "Display this location with the list view."
 msgstr "Паказаць гэтае месца ў рэжыме спіса."
 
@@ -3543,9 +3576,9 @@ msgstr "Гэтая спасылка бескарысная, бо яе месца
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-mime-actions.c:652 ../src/nautilus-view.c:7200
-#: ../src/nautilus-view.c:7314 ../src/nautilus-view.c:8288
-#: ../src/nautilus-view.c:8592
+#: ../src/nautilus-mime-actions.c:652 ../src/nautilus-view.c:7204
+#: ../src/nautilus-view.c:7318 ../src/nautilus-view.c:8292
+#: ../src/nautilus-view.c:8596
 msgid "Mo_ve to Trash"
 msgstr "_Выкінуць у сметніцу"
 
@@ -3665,214 +3698,222 @@ msgstr[2] "Адкрыццё %d элементаў."
 msgid "Close tab"
 msgstr "Закрыць картку"
 
-#: ../src/nautilus-places-sidebar.c:234
+#: ../src/nautilus-places-sidebar.c:241
 msgid "Devices"
 msgstr "Прыстасаванні"
 
-#: ../src/nautilus-places-sidebar.c:493
+#: ../src/nautilus-places-sidebar.c:510
 msgid "Places"
 msgstr "Месцы"
 
-#: ../src/nautilus-places-sidebar.c:500
+#: ../src/nautilus-places-sidebar.c:517
 msgid "Recent"
 msgstr "Нядаўняе"
 
-#: ../src/nautilus-places-sidebar.c:502
+#: ../src/nautilus-places-sidebar.c:519
 msgid "Recent files"
 msgstr "Нядаўнія файлы"
 
 #. tooltip
-#: ../src/nautilus-places-sidebar.c:513 ../src/nautilus-window-menus.c:534
+#: ../src/nautilus-places-sidebar.c:530 ../src/nautilus-window-menus.c:534
 msgid "Open your personal folder"
 msgstr "Адкрыць асабістую папку"
 
-#: ../src/nautilus-places-sidebar.c:525
+#: ../src/nautilus-places-sidebar.c:542
 msgid "Open the contents of your desktop in a folder"
 msgstr "Адкрыць змесціва стала ў рэжыме папкі"
 
-#: ../src/nautilus-places-sidebar.c:539
+#: ../src/nautilus-places-sidebar.c:556
 msgid "Open the trash"
 msgstr "Адкрыць сметніцу"
 
-#: ../src/nautilus-places-sidebar.c:591 ../src/nautilus-places-sidebar.c:616
-#: ../src/nautilus-places-sidebar.c:791
+#: ../src/nautilus-places-sidebar.c:608 ../src/nautilus-places-sidebar.c:633
+#: ../src/nautilus-places-sidebar.c:816
 #, c-format
 msgid "Mount and open %s"
 msgstr "Прымацаваць і адкрыць %s"
 
-#: ../src/nautilus-places-sidebar.c:691
+#: ../src/nautilus-places-sidebar.c:708
 msgid "Open the contents of the File System"
 msgstr "Адкрыць файлавую сістэму"
 
-#: ../src/nautilus-places-sidebar.c:769
+#: ../src/nautilus-places-sidebar.c:786
 msgid "Network"
 msgstr "Сетка"
 
-#: ../src/nautilus-places-sidebar.c:775
+#: ../src/nautilus-places-sidebar.c:792
 msgid "Browse Network"
 msgstr "Агляд сеткі"
 
-#: ../src/nautilus-places-sidebar.c:777
+#: ../src/nautilus-places-sidebar.c:794
 msgid "Browse the contents of the network"
 msgstr "Агляд змесціва сеткі"
+
+#: ../src/nautilus-places-sidebar.c:802
+msgid "Connect to a network server address"
+msgstr "Злучыцца з сеткавым серверам з дапамогай яго адрасу"
 
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1609 ../src/nautilus-places-sidebar.c:2679
-#: ../src/nautilus-view.c:7242 ../src/nautilus-view.c:7266
-#: ../src/nautilus-view.c:7338 ../src/nautilus-view.c:7924
-#: ../src/nautilus-view.c:7928 ../src/nautilus-view.c:8011
-#: ../src/nautilus-view.c:8015 ../src/nautilus-view.c:8113
-#: ../src/nautilus-view.c:8117
+#: ../src/nautilus-places-sidebar.c:1712 ../src/nautilus-places-sidebar.c:2858
+#: ../src/nautilus-view.c:7246 ../src/nautilus-view.c:7270
+#: ../src/nautilus-view.c:7342 ../src/nautilus-view.c:7928
+#: ../src/nautilus-view.c:7932 ../src/nautilus-view.c:8015
+#: ../src/nautilus-view.c:8019 ../src/nautilus-view.c:8117
+#: ../src/nautilus-view.c:8121
 msgid "_Start"
 msgstr "_Запусціць"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1610 ../src/nautilus-places-sidebar.c:2686
-#: ../src/nautilus-view.c:7246 ../src/nautilus-view.c:7270
-#: ../src/nautilus-view.c:7342 ../src/nautilus-view.c:7953
-#: ../src/nautilus-view.c:8040 ../src/nautilus-view.c:8142
+#: ../src/nautilus-places-sidebar.c:1713 ../src/nautilus-places-sidebar.c:2865
+#: ../src/nautilus-view.c:7250 ../src/nautilus-view.c:7274
+#: ../src/nautilus-view.c:7346 ../src/nautilus-view.c:7957
+#: ../src/nautilus-view.c:8044 ../src/nautilus-view.c:8146
 #: ../src/nautilus-window-menus.c:469
 msgid "_Stop"
 msgstr "_Спыніць"
 
 #. start() for type G_DRIVE_START_STOP_TYPE_SHUTDOWN is normally not used
-#: ../src/nautilus-places-sidebar.c:1615
+#: ../src/nautilus-places-sidebar.c:1718
 msgid "_Power On"
 msgstr "_Уключыць"
 
-#: ../src/nautilus-places-sidebar.c:1616 ../src/nautilus-view.c:7957
-#: ../src/nautilus-view.c:8044 ../src/nautilus-view.c:8146
+#: ../src/nautilus-places-sidebar.c:1719 ../src/nautilus-view.c:7961
+#: ../src/nautilus-view.c:8048 ../src/nautilus-view.c:8150
 msgid "_Safely Remove Drive"
 msgstr "_Карэктна адлучыць прывод"
 
-#: ../src/nautilus-places-sidebar.c:1619
+#: ../src/nautilus-places-sidebar.c:1722
 msgid "_Connect Drive"
 msgstr "_Далучыць прывод"
 
-#: ../src/nautilus-places-sidebar.c:1620
+#: ../src/nautilus-places-sidebar.c:1723
 msgid "_Disconnect Drive"
 msgstr "_Адлучыць прывод"
 
-#: ../src/nautilus-places-sidebar.c:1623
+#: ../src/nautilus-places-sidebar.c:1726
 msgid "_Start Multi-disk Device"
 msgstr "_Запусціць шматдыскавы прывод"
 
-#: ../src/nautilus-places-sidebar.c:1624
+#: ../src/nautilus-places-sidebar.c:1727
 msgid "_Stop Multi-disk Device"
 msgstr "_Спыніць шматдыскавы прывод"
 
 #. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
-#: ../src/nautilus-places-sidebar.c:1628 ../src/nautilus-view.c:8027
-#: ../src/nautilus-view.c:8129
+#: ../src/nautilus-places-sidebar.c:1731 ../src/nautilus-view.c:8031
+#: ../src/nautilus-view.c:8133
 msgid "_Unlock Drive"
 msgstr "_Разблакіраваць прывод"
 
-#: ../src/nautilus-places-sidebar.c:1629 ../src/nautilus-view.c:7969
-#: ../src/nautilus-view.c:8056 ../src/nautilus-view.c:8158
+#: ../src/nautilus-places-sidebar.c:1732 ../src/nautilus-view.c:7973
+#: ../src/nautilus-view.c:8060 ../src/nautilus-view.c:8162
 msgid "_Lock Drive"
 msgstr "_Заблакіраваць прывод"
 
-#: ../src/nautilus-places-sidebar.c:1706 ../src/nautilus-places-sidebar.c:2315
+#: ../src/nautilus-places-sidebar.c:1809 ../src/nautilus-places-sidebar.c:2453
 #, c-format
 msgid "Unable to start %s"
 msgstr "Не ўдалося запусціць %s"
 
-#: ../src/nautilus-places-sidebar.c:2074 ../src/nautilus-places-sidebar.c:2102
-#: ../src/nautilus-places-sidebar.c:2130
+#: ../src/nautilus-places-sidebar.c:2212 ../src/nautilus-places-sidebar.c:2240
+#: ../src/nautilus-places-sidebar.c:2268
 #, c-format
 msgid "Unable to eject %s"
 msgstr "Не ўдалося выняць %s"
 
-#: ../src/nautilus-places-sidebar.c:2270
+#: ../src/nautilus-places-sidebar.c:2408
 #, c-format
 msgid "Unable to poll %s for media changes"
 msgstr "Не ўдалося апытаць %s аб магчымых зменах"
 
-#: ../src/nautilus-places-sidebar.c:2370
+#: ../src/nautilus-places-sidebar.c:2508
 #, c-format
 msgid "Unable to stop %s"
 msgstr "Не ўдалося спыніць %s"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2601 ../src/nautilus-view.c:7114
-#: ../src/nautilus-view.c:8516
+#: ../src/nautilus-places-sidebar.c:2780 ../src/nautilus-view.c:7118
+#: ../src/nautilus-view.c:8520
 msgid "_Open"
 msgstr "_Адкрыць"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2609 ../src/nautilus-view.c:7126
-#: ../src/nautilus-view.c:7296 ../src/nautilus-view.c:8237
-#: ../src/nautilus-view.c:8570
+#: ../src/nautilus-places-sidebar.c:2788 ../src/nautilus-view.c:7130
+#: ../src/nautilus-view.c:7300 ../src/nautilus-view.c:8241
+#: ../src/nautilus-view.c:8574
 msgid "Open in New _Tab"
 msgstr "Адкрыць у _новай картцы"
 
-#: ../src/nautilus-places-sidebar.c:2616 ../src/nautilus-view.c:8229
-#: ../src/nautilus-view.c:8550
+#: ../src/nautilus-places-sidebar.c:2795 ../src/nautilus-view.c:8233
+#: ../src/nautilus-view.c:8554
 msgid "Open in New _Window"
 msgstr "Адкрыць у н_овым акне"
 
-#: ../src/nautilus-places-sidebar.c:2624
+#: ../src/nautilus-places-sidebar.c:2803
 msgid "_Add Bookmark"
 msgstr "_Дадаць закладку"
 
-#: ../src/nautilus-places-sidebar.c:2639
+#: ../src/nautilus-places-sidebar.c:2818
 msgid "Rename…"
 msgstr "Пераназваць..."
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2651 ../src/nautilus-view.c:7230
-#: ../src/nautilus-view.c:7254 ../src/nautilus-view.c:7326
+#: ../src/nautilus-places-sidebar.c:2830 ../src/nautilus-view.c:7234
+#: ../src/nautilus-view.c:7258 ../src/nautilus-view.c:7330
 msgid "_Mount"
 msgstr "_Прымацаваць"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2658 ../src/nautilus-view.c:7234
-#: ../src/nautilus-view.c:7258 ../src/nautilus-view.c:7330
+#: ../src/nautilus-places-sidebar.c:2837 ../src/nautilus-view.c:7238
+#: ../src/nautilus-view.c:7262 ../src/nautilus-view.c:7334
 msgid "_Unmount"
 msgstr "_Адмацаваць"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2665 ../src/nautilus-view.c:7238
-#: ../src/nautilus-view.c:7262 ../src/nautilus-view.c:7334
+#: ../src/nautilus-places-sidebar.c:2844 ../src/nautilus-view.c:7242
+#: ../src/nautilus-view.c:7266 ../src/nautilus-view.c:7338
 msgid "_Eject"
 msgstr "_Выняць"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2672 ../src/nautilus-view.c:7250
-#: ../src/nautilus-view.c:7274 ../src/nautilus-view.c:7346
+#: ../src/nautilus-places-sidebar.c:2851 ../src/nautilus-view.c:7254
+#: ../src/nautilus-view.c:7278 ../src/nautilus-view.c:7350
 msgid "_Detect Media"
 msgstr "_Апазнаць носьбіт"
 
-#: ../src/nautilus-places-sidebar.c:2707
+#: ../src/nautilus-places-sidebar.c:2872
+msgid "_Format…"
+msgstr "_Адфарматаваць..."
+
+#: ../src/nautilus-places-sidebar.c:2892
 msgid "_Properties"
 msgstr "_Уласцівасці"
 
-#: ../src/nautilus-places-sidebar.c:3263
+#: ../src/nautilus-places-sidebar.c:3469
 msgid "Computer"
 msgstr "Камп'ютар"
 
 #: ../src/nautilus-progress-ui-handler.c:108
-#: ../src/nautilus-progress-ui-handler.c:158
-#: ../src/nautilus-progress-ui-handler.c:216
-#: ../src/nautilus-progress-ui-handler.c:272
+#: ../src/nautilus-progress-ui-handler.c:160
+#: ../src/nautilus-progress-ui-handler.c:218
+#: ../src/nautilus-progress-ui-handler.c:274
 msgid "File Operations"
 msgstr "Аперацыі з файламі"
 
-#: ../src/nautilus-progress-ui-handler.c:117
+#: ../src/nautilus-progress-ui-handler.c:119
 msgid "Show Details"
 msgstr "Паказаць падрабязнасці"
 
-#: ../src/nautilus-progress-ui-handler.c:152
-#: ../src/nautilus-progress-ui-handler.c:174
+#: ../src/nautilus-progress-ui-handler.c:154
+#: ../src/nautilus-progress-ui-handler.c:176
 #, c-format
 msgid "%'d file operation active"
 msgid_plural "%'d file operations active"
@@ -3880,7 +3921,7 @@ msgstr[0] "%'d актыўная аперацыя з файламі"
 msgstr[1] "%'d актыўныя аперацыі з файламі"
 msgstr[2] "%'d актыўных аперацый з файламі"
 
-#: ../src/nautilus-progress-ui-handler.c:273
+#: ../src/nautilus-progress-ui-handler.c:275
 msgid "All file operations have been successfully completed"
 msgstr "Усе аперацыі з файламі паспяхова скончаны"
 
@@ -4144,7 +4185,7 @@ msgstr "Адкрыць з дапамогай"
 msgid "Creating Properties window."
 msgstr "Стварэнне акна ўласцівасцяў."
 
-#: ../src/nautilus-properties-window.c:5459
+#: ../src/nautilus-properties-window.c:5460
 msgid "Select Custom Icon"
 msgstr "Вылучэнне ўласнага значка"
 
@@ -4217,24 +4258,24 @@ msgstr "Файлы з гэтай папкі паказваюцца ў меню \
 msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr "Выканальныя файлы з гэтай папкі паказваюцца ў меню \"Сцэнарыяў\"."
 
-#: ../src/nautilus-toolbar.c:416
+#: ../src/nautilus-toolbar.c:488
 msgid "View options"
 msgstr "Параметры прагляду"
 
-#: ../src/nautilus-toolbar.c:433
+#: ../src/nautilus-toolbar.c:505
 msgid "Location options"
 msgstr "Параметры месцапалажэння"
 
-#: ../src/nautilus-trash-bar.c:202
+#: ../src/nautilus-trash-bar.c:203
 msgid "Restore"
 msgstr "Аднавіць"
 
-#: ../src/nautilus-trash-bar.c:205
+#: ../src/nautilus-trash-bar.c:206
 msgid "Restore selected items to their original position"
 msgstr "Аднавіць вылучаныя элементы ў арыгінальным месцы"
 
 #. Translators: "Empty" is an action (for the trash) , not a state
-#: ../src/nautilus-trash-bar.c:209
+#: ../src/nautilus-trash-bar.c:210
 msgid "Empty"
 msgstr "Ачысціць"
 
@@ -4282,7 +4323,7 @@ msgstr "П_апка:"
 msgid "Select Folder to Save Search In"
 msgstr "Выбраць папку, каб захаваць пошук"
 
-#: ../src/nautilus-view.c:2255
+#: ../src/nautilus-view.c:2259
 msgid ""
 "Nautilus 3.6 deprecated this directory and tried migrating this "
 "configuration to ~/.local/share/nautilus"
@@ -4290,20 +4331,20 @@ msgstr ""
 "Наўтылус 3.6 больш не выкарыстоўвае гэты каталог і паспрабаваў перанесці "
 "канфігурацыю ў ~/.local/share/nautilus"
 
-#: ../src/nautilus-view.c:2683
+#: ../src/nautilus-view.c:2687
 msgid "Content View"
 msgstr "Прагляд змесціва"
 
-#: ../src/nautilus-view.c:2684
+#: ../src/nautilus-view.c:2688
 msgid "View of the current folder"
 msgstr "Прагляд гэтай папкі"
 
-#: ../src/nautilus-view.c:2879 ../src/nautilus-view.c:2914
+#: ../src/nautilus-view.c:2883 ../src/nautilus-view.c:2918
 #, c-format
 msgid "“%s” selected"
 msgstr "вылучана: \"%s\""
 
-#: ../src/nautilus-view.c:2881
+#: ../src/nautilus-view.c:2885
 #, c-format
 msgid "%'d folder selected"
 msgid_plural "%'d folders selected"
@@ -4311,7 +4352,7 @@ msgstr[0] "%'d папка вылучана"
 msgstr[1] "%'d папкі вылучаны"
 msgstr[2] "%'d папак вылучаны"
 
-#: ../src/nautilus-view.c:2891
+#: ../src/nautilus-view.c:2895
 #, c-format
 msgid "(containing %'d item)"
 msgid_plural "(containing %'d items)"
@@ -4320,7 +4361,7 @@ msgstr[1] "(змяшчае %'d элементы)"
 msgstr[2] "(змяшчае %'d элементаў)"
 
 #. translators: this is preceded with a string of form 'N folders' (N more than 1)
-#: ../src/nautilus-view.c:2902
+#: ../src/nautilus-view.c:2906
 #, c-format
 msgid "(containing a total of %'d item)"
 msgid_plural "(containing a total of %'d items)"
@@ -4328,7 +4369,7 @@ msgstr[0] "(змяшчаюць %'d элемент)"
 msgstr[1] "(змяшчаюць %'d элементы)"
 msgstr[2] "(змяшчаюць %'d элементаў)"
 
-#: ../src/nautilus-view.c:2917
+#: ../src/nautilus-view.c:2921
 #, c-format
 msgid "%'d item selected"
 msgid_plural "%'d items selected"
@@ -4337,7 +4378,7 @@ msgstr[1] "%'d элементы вылучаны"
 msgstr[2] "%'d элементаў вылучаны"
 
 #. Folders selected also, use "other" terminology
-#: ../src/nautilus-view.c:2924
+#: ../src/nautilus-view.c:2928
 #, c-format
 msgid "%'d other item selected"
 msgid_plural "%'d other items selected"
@@ -4349,7 +4390,7 @@ msgstr[2] "%'d іншых элементаў вылучаны"
 #. * needs to use something other than parentheses. The
 #. * the message in parentheses is the size of the selected items.
 #.
-#: ../src/nautilus-view.c:2938
+#: ../src/nautilus-view.c:2942
 #, c-format
 msgid "(%s)"
 msgstr "(%s)"
@@ -4361,17 +4402,17 @@ msgstr "(%s)"
 #. * message about the number of other items and the
 #. * total size of those items.
 #.
-#: ../src/nautilus-view.c:2962
+#: ../src/nautilus-view.c:2966
 #, c-format
 msgid "%s %s, %s %s"
 msgstr "%s %s, %s %s"
 
-#: ../src/nautilus-view.c:4335
+#: ../src/nautilus-view.c:4339
 #, c-format
 msgid "Open With %s"
 msgstr "Адкрыць з дапамогай %s"
 
-#: ../src/nautilus-view.c:4337
+#: ../src/nautilus-view.c:4341
 #, c-format
 msgid "Use “%s” to open the selected item"
 msgid_plural "Use “%s” to open the selected items"
@@ -4379,96 +4420,96 @@ msgstr[0] "Ужыць \"%s\", каб адкрыць вылучаны элеме�
 msgstr[1] "Ужыць \"%s\", каб адкрыць вылучаныя элементы"
 msgstr[2] "Ужыць \"%s\", каб адкрыць вылучаныя элементы"
 
-#: ../src/nautilus-view.c:5080
+#: ../src/nautilus-view.c:5084
 #, c-format
 msgid "Run “%s” on any selected items"
 msgstr "Запусціць \"%s\" для ўсіх вылучаных элементаў"
 
-#: ../src/nautilus-view.c:5334
+#: ../src/nautilus-view.c:5338
 #, c-format
 msgid "Create a new document from template “%s”"
 msgstr "Стварыць новы дакумент з шаблону \"%s\""
 
-#: ../src/nautilus-view.c:5934
+#: ../src/nautilus-view.c:5938
 msgid "Select Destination"
 msgstr "Выбар месца прызначэння"
 
-#: ../src/nautilus-view.c:5938
+#: ../src/nautilus-view.c:5942
 msgid "_Select"
 msgstr "_Вылучыць"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6452
+#: ../src/nautilus-view.c:6456
 #, c-format
 msgid "Unable to remove “%s”"
 msgstr "Не ўдалося выдаліць \"%s\""
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6479
+#: ../src/nautilus-view.c:6483
 #, c-format
 msgid "Unable to eject “%s”"
 msgstr "Не ўдалося выняць \"%s\""
 
-#: ../src/nautilus-view.c:6501
+#: ../src/nautilus-view.c:6505
 msgid "Unable to stop drive"
 msgstr "Не ўдалося спыніць прывод"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6603
+#: ../src/nautilus-view.c:6607
 #, c-format
 msgid "Unable to start “%s”"
 msgstr "Не ўдалося запусціць \"%s\""
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7094
+#: ../src/nautilus-view.c:7098
 msgid "New _Document"
 msgstr "Новы даку_мент"
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7095
+#: ../src/nautilus-view.c:7099
 msgid "Open Wit_h"
 msgstr "_Адкрыць з дапамогай"
 
-#: ../src/nautilus-view.c:7096
+#: ../src/nautilus-view.c:7100
 msgid "Choose a program with which to open the selected item"
 msgstr "Выбраць праграму, у якой трэба адкрыць вылучаны элемент"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7098 ../src/nautilus-view.c:7351
+#: ../src/nautilus-view.c:7102 ../src/nautilus-view.c:7355
 #: ../src/nautilus-window-menus.c:573
 msgid "P_roperties"
 msgstr "_Уласцівасці"
 
 #. tooltip
-#: ../src/nautilus-view.c:7099 ../src/nautilus-view.c:8663
+#: ../src/nautilus-view.c:7103 ../src/nautilus-view.c:8667
 msgid "View or modify the properties of each selected item"
 msgstr "Паглядзець ці мадыфікаваць уласцівасці кожнага вылучанага элемента"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7106
+#: ../src/nautilus-view.c:7110
 msgid "New _Folder"
 msgstr "Новая _папка"
 
 #. tooltip
-#: ../src/nautilus-view.c:7107
+#: ../src/nautilus-view.c:7111
 msgid "Create a new empty folder inside this folder"
 msgstr "Стварыць новую пустую папку ўнутры гэтай папкі"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7110
+#: ../src/nautilus-view.c:7114
 msgid "New Folder with Selection"
 msgstr "Новая папка з _вылучанымі элементамі"
 
 #. tooltip
-#: ../src/nautilus-view.c:7111
+#: ../src/nautilus-view.c:7115
 msgid "Create a new folder containing the selected items"
 msgstr "Стварыць новую папку, якая змяшчае вылучаныя элементы"
 
 #. tooltip
-#: ../src/nautilus-view.c:7115
+#: ../src/nautilus-view.c:7119
 msgid "Open the selected item in this window"
 msgstr "Адкрыць вылучаны элемент у гэтым акне"
 
@@ -4477,52 +4518,52 @@ msgstr "Адкрыць вылучаны элемент у гэтым акне"
 #. Location-specific actions
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7122 ../src/nautilus-view.c:7292
+#: ../src/nautilus-view.c:7126 ../src/nautilus-view.c:7296
 msgid "Open in Navigation Window"
 msgstr "Адкрыць у акне навігацыі"
 
 #. tooltip
-#: ../src/nautilus-view.c:7123
+#: ../src/nautilus-view.c:7127
 msgid "Open each selected item in a navigation window"
 msgstr "Адкрыць кожны вылучаны элемент у акне навігацыі"
 
 #. tooltip
-#: ../src/nautilus-view.c:7127
+#: ../src/nautilus-view.c:7131
 msgid "Open each selected item in a new tab"
 msgstr "Адкрыць кожны вылучаны элемент у новай картцы"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7130
+#: ../src/nautilus-view.c:7134
 msgid "Other _Application…"
 msgstr "Ін_шая праграма..."
 
 #. tooltip
-#: ../src/nautilus-view.c:7131 ../src/nautilus-view.c:7135
+#: ../src/nautilus-view.c:7135 ../src/nautilus-view.c:7139
 msgid "Choose another application with which to open the selected item"
 msgstr "Выбраць іншую праграму, у якой трэба адкрыць вылучаны элемент"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7134
+#: ../src/nautilus-view.c:7138
 msgid "Open With Other _Application…"
 msgstr "_Адкрыць у іншай праграме..."
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7138
+#: ../src/nautilus-view.c:7142
 msgid "_Open Scripts Folder"
 msgstr "Ад_крыць папку сцэнарыяў"
 
 #. tooltip
-#: ../src/nautilus-view.c:7139
+#: ../src/nautilus-view.c:7143
 msgid "Show the folder containing the scripts that appear in this menu"
 msgstr "Паказаць папку сцэнарыяў, паказаных у гэтым меню"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7147
+#: ../src/nautilus-view.c:7151
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr ""
 "Падрыхтаваць вылучаныя файлы да перамяшчэння з дапамогай загаду \"Уставіць\""
@@ -4530,7 +4571,7 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7151
+#: ../src/nautilus-view.c:7155
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr ""
 "Падрыхтаваць вылучаныя файлы да капіравання з дапамогай загаду \"Уставіць\""
@@ -4538,7 +4579,7 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7155
+#: ../src/nautilus-view.c:7159
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "Перамясціць ці скапіраваць файлы, адзначаныя раней загадам \"Выразаць\" ці "
@@ -4548,12 +4589,12 @@ msgstr ""
 #. accelerator for paste
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7160 ../src/nautilus-view.c:7309
+#: ../src/nautilus-view.c:7164 ../src/nautilus-view.c:7313
 msgid "_Paste Into Folder"
 msgstr "_Уставіць у папку"
 
 #. tooltip
-#: ../src/nautilus-view.c:7161
+#: ../src/nautilus-view.c:7165
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -4563,56 +4604,56 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7164
+#: ../src/nautilus-view.c:7168
 msgid "Copy To…"
 msgstr "Скапіраваць у..."
 
 #. tooltip
-#: ../src/nautilus-view.c:7165
+#: ../src/nautilus-view.c:7169
 msgid "Copy selected files to another location"
 msgstr "Скапіраваць вылучаныя файлы ў іншае месца"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7168
+#: ../src/nautilus-view.c:7172
 msgid "Move To…"
 msgstr "Перамясціць у..."
 
 #. tooltip
-#: ../src/nautilus-view.c:7169
+#: ../src/nautilus-view.c:7173
 msgid "Move selected files to another location"
 msgstr "Перамясціць вылучаныя файлы ў іншае месца"
 
 #. tooltip
-#: ../src/nautilus-view.c:7173
+#: ../src/nautilus-view.c:7177
 msgid "Select all items in this window"
 msgstr "Вылучыць усе элементы ў гэтым акне"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7176
+#: ../src/nautilus-view.c:7180
 msgid "Select I_tems Matching…"
 msgstr "_Вылучыць адпаведныя элементы..."
 
 #. tooltip
-#: ../src/nautilus-view.c:7177
+#: ../src/nautilus-view.c:7181
 msgid "Select items in this window matching a given pattern"
 msgstr "Вылучыць элементы ў гэтым акне, якія адпавядаюць узору"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7180
+#: ../src/nautilus-view.c:7184
 msgid "_Invert Selection"
 msgstr "Інвертаваць _вылучэнне"
 
 #. tooltip
-#: ../src/nautilus-view.c:7181
+#: ../src/nautilus-view.c:7185
 msgid "Select all and only the items that are not currently selected"
 msgstr "Вылучыць толькі тыя элементы, якія ў гэты момант не вылучаны"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7184 ../src/nautilus-view.c:8646
+#: ../src/nautilus-view.c:7188 ../src/nautilus-view.c:8650
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "С_тварыць спасылку"
@@ -4620,74 +4661,74 @@ msgstr[1] "С_тварыць спасылкі"
 msgstr[2] "С_тварыць спасылкі"
 
 #. tooltip
-#: ../src/nautilus-view.c:7185
+#: ../src/nautilus-view.c:7189
 msgid "Create a symbolic link for each selected item"
 msgstr "Стварыць сімвальную спасылку для кожнага вылучанага элемента"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7188
+#: ../src/nautilus-view.c:7192
 msgid "Rena_me…"
 msgstr "Пера_назваць..."
 
 #. tooltip
-#: ../src/nautilus-view.c:7189
+#: ../src/nautilus-view.c:7193
 msgid "Rename selected item"
 msgstr "Пераназваць вылучаны элемент"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7192
+#: ../src/nautilus-view.c:7196
 msgid "Set as Wallpaper"
 msgstr "Зрабіць абрусам"
 
 #. tooltip
-#: ../src/nautilus-view.c:7193
+#: ../src/nautilus-view.c:7197
 msgid "Make item the wallpaper"
 msgstr "Зрабіць файл абрусам стала"
 
 #. tooltip
-#: ../src/nautilus-view.c:7201 ../src/nautilus-view.c:8593
+#: ../src/nautilus-view.c:7205 ../src/nautilus-view.c:8597
 msgid "Move each selected item to the Trash"
 msgstr "Выкінуць вылучаныя элементы ў сметніцу"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7204 ../src/nautilus-view.c:7318
-#: ../src/nautilus-view.c:8623
+#: ../src/nautilus-view.c:7208 ../src/nautilus-view.c:7322
+#: ../src/nautilus-view.c:8627
 msgid "_Delete"
 msgstr "_Выдаліць"
 
 #. tooltip
-#: ../src/nautilus-view.c:7205 ../src/nautilus-view.c:8624
+#: ../src/nautilus-view.c:7209 ../src/nautilus-view.c:8628
 msgid "Delete each selected item, without moving to the Trash"
 msgstr "Выдаліць вылучаныя элементы, абмінуўшы сметніцу"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7208 ../src/nautilus-view.c:7322
+#: ../src/nautilus-view.c:7212 ../src/nautilus-view.c:7326
 msgid "_Restore"
 msgstr "_Аднавіць"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7212
+#: ../src/nautilus-view.c:7216
 msgid "_Undo"
 msgstr "_Адрабіць"
 
 #. tooltip
-#: ../src/nautilus-view.c:7213
+#: ../src/nautilus-view.c:7217
 msgid "Undo the last action"
 msgstr "Адрабіць назад апошняе дзеянне"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7216
+#: ../src/nautilus-view.c:7220
 msgid "_Redo"
 msgstr "_Паўтарыць скасаванае"
 
 #. tooltip
-#: ../src/nautilus-view.c:7217
+#: ../src/nautilus-view.c:7221
 msgid "Redo the last undone action"
 msgstr "Паўтарыць апошняе скасаванае дзеянне"
 
@@ -4699,114 +4740,114 @@ msgstr "Паўтарыць апошняе скасаванае дзеянне"
 #.
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7226
+#: ../src/nautilus-view.c:7230
 msgid "Reset View to _Defaults"
 msgstr "_Вярнуць прадвызначаныя настройкі рэжыму"
 
 #. tooltip
-#: ../src/nautilus-view.c:7227
+#: ../src/nautilus-view.c:7231
 msgid "Reset sorting order and zoom level to match preferences for this view"
 msgstr ""
 "Вярнуць парадак сартавання і ўзровень павелічэння, уласцівы гэтаму рэжыму"
 
 #. tooltip
-#: ../src/nautilus-view.c:7231
+#: ../src/nautilus-view.c:7235
 msgid "Mount the selected volume"
 msgstr "Прымацаваць вылучаны дыскавы том"
 
 #. tooltip
-#: ../src/nautilus-view.c:7235
+#: ../src/nautilus-view.c:7239
 msgid "Unmount the selected volume"
 msgstr "Адмацаваць вылучаны дыскавы том"
 
 #. tooltip
-#: ../src/nautilus-view.c:7239
+#: ../src/nautilus-view.c:7243
 msgid "Eject the selected volume"
 msgstr "Выняць вылучаны дыскавы том"
 
 #. tooltip
-#: ../src/nautilus-view.c:7243
+#: ../src/nautilus-view.c:7247
 msgid "Start the selected volume"
 msgstr "Запусціць вылучаны дыскавы том"
 
 #. tooltip
-#: ../src/nautilus-view.c:7247 ../src/nautilus-view.c:8143
+#: ../src/nautilus-view.c:7251 ../src/nautilus-view.c:8147
 msgid "Stop the selected volume"
 msgstr "Спыніць вылучаны дыскавы том"
 
 #. tooltip
-#: ../src/nautilus-view.c:7251 ../src/nautilus-view.c:7275
-#: ../src/nautilus-view.c:7347
+#: ../src/nautilus-view.c:7255 ../src/nautilus-view.c:7279
+#: ../src/nautilus-view.c:7351
 msgid "Detect media in the selected drive"
 msgstr "Апазнаць носьбіт у вылучаным прыводзе"
 
 #. tooltip
-#: ../src/nautilus-view.c:7255
+#: ../src/nautilus-view.c:7259
 msgid "Mount the volume associated with the open folder"
 msgstr "Прымацаваць дыскавы том, які змяшчае адкрытую папку"
 
 #. tooltip
-#: ../src/nautilus-view.c:7259
+#: ../src/nautilus-view.c:7263
 msgid "Unmount the volume associated with the open folder"
 msgstr "Адмацаваць дыскавы том, які змяшчае адкрытую папку"
 
 #. tooltip
-#: ../src/nautilus-view.c:7263
+#: ../src/nautilus-view.c:7267
 msgid "Eject the volume associated with the open folder"
 msgstr "Выняць дыскавы том, які змяшчае адкрытую папку"
 
 #. tooltip
-#: ../src/nautilus-view.c:7267
+#: ../src/nautilus-view.c:7271
 msgid "Start the volume associated with the open folder"
 msgstr "Запусціць дыскавы том, які змяшчае адкрытую папку"
 
 #. tooltip
-#: ../src/nautilus-view.c:7271
+#: ../src/nautilus-view.c:7275
 msgid "Stop the volume associated with the open folder"
 msgstr "Спыніць дыскавы том, які змяшчае адкрытую папку"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7278
+#: ../src/nautilus-view.c:7282
 msgid "Open File and Close window"
 msgstr "Адкрыць файл і закрыць акно"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7282
+#: ../src/nautilus-view.c:7286
 msgid "Sa_ve Search"
 msgstr "_Захаваць пошук"
 
 #. tooltip
-#: ../src/nautilus-view.c:7283
+#: ../src/nautilus-view.c:7287
 msgid "Save the edited search"
 msgstr "Захаваць адрэдагаваны пошук"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7286
+#: ../src/nautilus-view.c:7290
 msgid "Sa_ve Search As…"
 msgstr "_Захаваць пошук як..."
 
 #. tooltip
-#: ../src/nautilus-view.c:7287
+#: ../src/nautilus-view.c:7291
 msgid "Save the current search as a file"
 msgstr "Захаваць бягучы пошук у файле"
 
 #. tooltip
-#: ../src/nautilus-view.c:7293
+#: ../src/nautilus-view.c:7297
 msgid "Open this folder in a navigation window"
 msgstr "Адкрыць гэтую папку ў акне навігацыі"
 
 #. tooltip
-#: ../src/nautilus-view.c:7297
+#: ../src/nautilus-view.c:7301
 msgid "Open this folder in a new tab"
 msgstr "Адкрыць гэтую папку ў новай картцы"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7302
+#: ../src/nautilus-view.c:7306
 msgid "Prepare this folder to be moved with a Paste command"
 msgstr ""
 "Падрыхтаваць гэтую папку да перамяшчэння з дапамогай загаду \"Уставіць\""
@@ -4814,13 +4855,13 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7306
+#: ../src/nautilus-view.c:7310
 msgid "Prepare this folder to be copied with a Paste command"
 msgstr ""
 "Падрыхтаваць гэтую папку да капіравання з дапамогай загаду \"Уставіць\""
 
 #. tooltip
-#: ../src/nautilus-view.c:7310
+#: ../src/nautilus-view.c:7314
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into this "
 "folder"
@@ -4829,234 +4870,234 @@ msgstr ""
 "\"Выразаць\" ці \"Скапіраваць\""
 
 #. tooltip
-#: ../src/nautilus-view.c:7315
+#: ../src/nautilus-view.c:7319
 msgid "Move this folder to the Trash"
 msgstr "Выкінуць гэтую папку ў сметніцу"
 
 #. tooltip
-#: ../src/nautilus-view.c:7319
+#: ../src/nautilus-view.c:7323
 msgid "Delete this folder, without moving to the Trash"
 msgstr "Выдаліць гэтую папку, абмінуўшы сметніцу"
 
 #. tooltip
-#: ../src/nautilus-view.c:7327
+#: ../src/nautilus-view.c:7331
 msgid "Mount the volume associated with this folder"
 msgstr "Прымацаваць дыскавы том, які змяшчае гэтую папку"
 
 #. tooltip
-#: ../src/nautilus-view.c:7331
+#: ../src/nautilus-view.c:7335
 msgid "Unmount the volume associated with this folder"
 msgstr "Адмацаваць дыскавы том, які змяшчае гэтую папку"
 
 #. tooltip
-#: ../src/nautilus-view.c:7335
+#: ../src/nautilus-view.c:7339
 msgid "Eject the volume associated with this folder"
 msgstr "Выняць дыскавы том, які змяшчае гэтую папку"
 
 #. tooltip
-#: ../src/nautilus-view.c:7339
+#: ../src/nautilus-view.c:7343
 msgid "Start the volume associated with this folder"
 msgstr "Запусціць дыскавы том, які змяшчае гэтую папку"
 
 #. tooltip
-#: ../src/nautilus-view.c:7343
+#: ../src/nautilus-view.c:7347
 msgid "Stop the volume associated with this folder"
 msgstr "Спыніць дыскавы том, які змяшчае гэтую папку"
 
 #. tooltip
-#: ../src/nautilus-view.c:7352 ../src/nautilus-window-menus.c:574
+#: ../src/nautilus-view.c:7356 ../src/nautilus-window-menus.c:574
 msgid "View or modify the properties of this folder"
 msgstr "Паглядзець ці мадыфікаваць уласцівасці гэтай папкі"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7358
+#: ../src/nautilus-view.c:7362
 msgid "Show _Hidden Files"
 msgstr "Паказваць с_хаваныя файлы"
 
 #. tooltip
-#: ../src/nautilus-view.c:7359
+#: ../src/nautilus-view.c:7363
 msgid "Toggle the display of hidden files in the current window"
 msgstr "Пераключыць рэжым паказу схаваных файлаў у бягучым акне"
 
-#: ../src/nautilus-view.c:7420
+#: ../src/nautilus-view.c:7424
 msgid "Run or manage scripts"
 msgstr "Запуск і кіраванне сцэнарыямі"
 
 #. Create a script action here specially because its tooltip is dynamic
-#: ../src/nautilus-view.c:7422
+#: ../src/nautilus-view.c:7426
 msgid "_Scripts"
 msgstr "_Сцэнарыі"
 
-#: ../src/nautilus-view.c:7772
+#: ../src/nautilus-view.c:7776
 #, c-format
 msgid "Move the open folder out of the trash to “%s”"
 msgstr "Перамясціць адкрытую папку са сметніцы ў \"%s\""
 
-#: ../src/nautilus-view.c:7776
+#: ../src/nautilus-view.c:7780
 #, c-format
 msgid "Move the selected folder out of the trash to “%s”"
 msgstr "Перамясціць вылучаную папку са сметніцы ў \"%s\""
 
-#: ../src/nautilus-view.c:7779
+#: ../src/nautilus-view.c:7783
 #, c-format
 msgid "Move the selected folders out of the trash to “%s”"
 msgstr "Перамясціць вылучаныя папкі са сметніцы ў \"%s\""
 
-#: ../src/nautilus-view.c:7784
+#: ../src/nautilus-view.c:7788
 msgid "Move the selected folder out of the trash"
 msgstr "Перамясціць вылучаную папку са сметніцы"
 
-#: ../src/nautilus-view.c:7786
+#: ../src/nautilus-view.c:7790
 msgid "Move the selected folders out of the trash"
 msgstr "Перамясціць вылучаныя папкі са сметніцы"
 
-#: ../src/nautilus-view.c:7792
+#: ../src/nautilus-view.c:7796
 #, c-format
 msgid "Move the selected file out of the trash to “%s”"
 msgstr "Перамясціць вылучаны файл са сметніцы ў \"%s\""
 
-#: ../src/nautilus-view.c:7795
+#: ../src/nautilus-view.c:7799
 #, c-format
 msgid "Move the selected files out of the trash to “%s”"
 msgstr "Перамясціць вылучаныя файлы са сметніцы ў \"%s\""
 
-#: ../src/nautilus-view.c:7800
+#: ../src/nautilus-view.c:7804
 msgid "Move the selected file out of the trash"
 msgstr "Перамясціць вылучаны файл са сметніцы"
 
-#: ../src/nautilus-view.c:7802
+#: ../src/nautilus-view.c:7806
 msgid "Move the selected files out of the trash"
 msgstr "Перамясціць вылучаныя файлы са сметніцы"
 
-#: ../src/nautilus-view.c:7808
+#: ../src/nautilus-view.c:7812
 #, c-format
 msgid "Move the selected item out of the trash to “%s”"
 msgstr "Перамясціць вылучаны элемент са сметніцы ў \"%s\""
 
-#: ../src/nautilus-view.c:7811
+#: ../src/nautilus-view.c:7815
 #, c-format
 msgid "Move the selected items out of the trash to “%s”"
 msgstr "Перамясціць вылучаныя элементы са сметніцы ў \"%s\""
 
-#: ../src/nautilus-view.c:7816
+#: ../src/nautilus-view.c:7820
 msgid "Move the selected item out of the trash"
 msgstr "Перамясціць вылучаны элемент са сметніцы"
 
-#: ../src/nautilus-view.c:7818
+#: ../src/nautilus-view.c:7822
 msgid "Move the selected items out of the trash"
 msgstr "Перамясціць вылучаныя элементы са сметніцы"
 
-#: ../src/nautilus-view.c:7925 ../src/nautilus-view.c:7929
-#: ../src/nautilus-view.c:8114 ../src/nautilus-view.c:8118
+#: ../src/nautilus-view.c:7929 ../src/nautilus-view.c:7933
+#: ../src/nautilus-view.c:8118 ../src/nautilus-view.c:8122
 msgid "Start the selected drive"
 msgstr "Запусціць вылучаны прывод"
 
-#: ../src/nautilus-view.c:7932 ../src/nautilus-view.c:8019
-#: ../src/nautilus-view.c:8121
+#: ../src/nautilus-view.c:7936 ../src/nautilus-view.c:8023
+#: ../src/nautilus-view.c:8125
 msgid "_Connect"
 msgstr "_Злучыцца"
 
-#: ../src/nautilus-view.c:7933 ../src/nautilus-view.c:8122
+#: ../src/nautilus-view.c:7937 ../src/nautilus-view.c:8126
 msgid "Connect to the selected drive"
 msgstr "Злучыцца з вылучаным прыводам"
 
-#: ../src/nautilus-view.c:7936 ../src/nautilus-view.c:8023
-#: ../src/nautilus-view.c:8125
+#: ../src/nautilus-view.c:7940 ../src/nautilus-view.c:8027
+#: ../src/nautilus-view.c:8129
 msgid "_Start Multi-disk Drive"
 msgstr "_Запусціць шматдыскавы прывод"
 
-#: ../src/nautilus-view.c:7937 ../src/nautilus-view.c:8126
+#: ../src/nautilus-view.c:7941 ../src/nautilus-view.c:8130
 msgid "Start the selected multi-disk drive"
 msgstr "Запусціць вылучаны шматдыскавы прывод"
 
-#: ../src/nautilus-view.c:7940
+#: ../src/nautilus-view.c:7944
 msgid "U_nlock Drive"
 msgstr "_Адблакіраваць прывод"
 
-#: ../src/nautilus-view.c:7941 ../src/nautilus-view.c:8130
+#: ../src/nautilus-view.c:7945 ../src/nautilus-view.c:8134
 msgid "Unlock the selected drive"
 msgstr "Адблакіраваць вылучаны прывод"
 
-#: ../src/nautilus-view.c:7954
+#: ../src/nautilus-view.c:7958
 msgid "Stop the selected drive"
 msgstr "Спыніць вылучаны прывод"
 
-#: ../src/nautilus-view.c:7958 ../src/nautilus-view.c:8147
+#: ../src/nautilus-view.c:7962 ../src/nautilus-view.c:8151
 msgid "Safely remove the selected drive"
 msgstr "Карэктна адлучыць вылучаны прывод"
 
-#: ../src/nautilus-view.c:7961 ../src/nautilus-view.c:8048
-#: ../src/nautilus-view.c:8150
+#: ../src/nautilus-view.c:7965 ../src/nautilus-view.c:8052
+#: ../src/nautilus-view.c:8154
 msgid "_Disconnect"
 msgstr "_Адлучыць"
 
-#: ../src/nautilus-view.c:7962 ../src/nautilus-view.c:8151
+#: ../src/nautilus-view.c:7966 ../src/nautilus-view.c:8155
 msgid "Disconnect the selected drive"
 msgstr "Адлучыць вылучаны прывод"
 
-#: ../src/nautilus-view.c:7965 ../src/nautilus-view.c:8052
-#: ../src/nautilus-view.c:8154
+#: ../src/nautilus-view.c:7969 ../src/nautilus-view.c:8056
+#: ../src/nautilus-view.c:8158
 msgid "_Stop Multi-disk Drive"
 msgstr "_Спыніць шматдыскавы прывод"
 
-#: ../src/nautilus-view.c:7966 ../src/nautilus-view.c:8155
+#: ../src/nautilus-view.c:7970 ../src/nautilus-view.c:8159
 msgid "Stop the selected multi-disk drive"
 msgstr "Спыніць вылучаны шматдыскавы прывод"
 
-#: ../src/nautilus-view.c:7970 ../src/nautilus-view.c:8159
+#: ../src/nautilus-view.c:7974 ../src/nautilus-view.c:8163
 msgid "Lock the selected drive"
 msgstr "Заблакіраваць вылучаны прывод"
 
-#: ../src/nautilus-view.c:8012 ../src/nautilus-view.c:8016
+#: ../src/nautilus-view.c:8016 ../src/nautilus-view.c:8020
 msgid "Start the drive associated with the open folder"
 msgstr "Запусціць прывод, які змяшчае адкрытую папку"
 
-#: ../src/nautilus-view.c:8020
+#: ../src/nautilus-view.c:8024
 msgid "Connect to the drive associated with the open folder"
 msgstr "Злучыцца з прыводам, які змяшчае адкрытую папку"
 
-#: ../src/nautilus-view.c:8024
+#: ../src/nautilus-view.c:8028
 msgid "Start the multi-disk drive associated with the open folder"
 msgstr "Запусціць шматдыскавы прывод, які змяшчае адкрытую папку"
 
-#: ../src/nautilus-view.c:8028
+#: ../src/nautilus-view.c:8032
 msgid "Unlock the drive associated with the open folder"
 msgstr "Адблакіраваць прывод, які змяшчае адкрытую папку"
 
-#: ../src/nautilus-view.c:8041
+#: ../src/nautilus-view.c:8045
 msgid "_Stop the drive associated with the open folder"
 msgstr "_Спыніць прывод, які змяшчае адкрытую папку"
 
-#: ../src/nautilus-view.c:8045
+#: ../src/nautilus-view.c:8049
 msgid "Safely remove the drive associated with the open folder"
 msgstr "Карэктна адлучыць прывод, які змяшчае адкрытую папку"
 
-#: ../src/nautilus-view.c:8049
+#: ../src/nautilus-view.c:8053
 msgid "Disconnect the drive associated with the open folder"
 msgstr "Адлучыць прывод, які змяшчае адкрытую папку"
 
-#: ../src/nautilus-view.c:8053
+#: ../src/nautilus-view.c:8057
 msgid "Stop the multi-disk drive associated with the open folder"
 msgstr "Спыніць шматдыскавы прывод, які змяшчае адкрытую папку"
 
-#: ../src/nautilus-view.c:8057
+#: ../src/nautilus-view.c:8061
 msgid "Lock the drive associated with the open folder"
 msgstr "Заблакіраваць прывод, які змяшчае адкрытую папку"
 
-#: ../src/nautilus-view.c:8284 ../src/nautilus-view.c:8588
+#: ../src/nautilus-view.c:8288 ../src/nautilus-view.c:8592
 msgid "_Delete Permanently"
 msgstr "_Незваротна выдаліць"
 
-#: ../src/nautilus-view.c:8285
+#: ../src/nautilus-view.c:8289
 msgid "Delete the open folder permanently"
 msgstr "Незваротна выдаліць адкрытую папку"
 
-#: ../src/nautilus-view.c:8289
+#: ../src/nautilus-view.c:8293
 msgid "Move the open folder to the Trash"
 msgstr "Выкінуць адкрытую папку ў сметніцу"
 
-#: ../src/nautilus-view.c:8459
+#: ../src/nautilus-view.c:8463
 #, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
@@ -5064,16 +5105,16 @@ msgstr[0] "Новая папка з вылучаным (%'d элемент)"
 msgstr[1] "Новая папка з вылучаным (%'d элементы)"
 msgstr[2] "Новая папка з вылучаным (%'d элементаў)"
 
-#: ../src/nautilus-view.c:8503
+#: ../src/nautilus-view.c:8507
 #, c-format
 msgid "_Open With %s"
 msgstr "_Адкрыць у %s"
 
-#: ../src/nautilus-view.c:8514
+#: ../src/nautilus-view.c:8518
 msgid "Run"
 msgstr "Запусціць"
 
-#: ../src/nautilus-view.c:8552
+#: ../src/nautilus-view.c:8556
 #, c-format
 msgid "Open in %'d New _Window"
 msgid_plural "Open in %'d New _Windows"
@@ -5081,7 +5122,7 @@ msgstr[0] "_Адкрыць у %'d новым акне"
 msgstr[1] "_Адкрыць у %'d новых вокнах"
 msgstr[2] "_Адкрыць у %'d новых вокнах"
 
-#: ../src/nautilus-view.c:8572
+#: ../src/nautilus-view.c:8576
 #, c-format
 msgid "Open in %'d New _Tab"
 msgid_plural "Open in %'d New _Tabs"
@@ -5089,19 +5130,19 @@ msgstr[0] "Адкрыць у %'d новай картцы"
 msgstr[1] "Адкрыць у %'d новых картках"
 msgstr[2] "Адкрыць у %'d новых картках"
 
-#: ../src/nautilus-view.c:8589
+#: ../src/nautilus-view.c:8593
 msgid "Delete all selected items permanently"
 msgstr "Незваротна выдаліць вылучанае"
 
-#: ../src/nautilus-view.c:8620
+#: ../src/nautilus-view.c:8624
 msgid "Remo_ve from Recent"
 msgstr "В_ыдаліць са спіса нядаўніх файлаў"
 
-#: ../src/nautilus-view.c:8621
+#: ../src/nautilus-view.c:8625
 msgid "Remove each selected item from the recently used list"
 msgstr "Прыбраць вылучаныя элементы са спіса нядаўніх файлаў"
 
-#: ../src/nautilus-view.c:8661
+#: ../src/nautilus-view.c:8665
 msgid "View or modify the properties of the open folder"
 msgstr "Паглядзець ці мадыфікаваць уласцівасці адкрытай папкі"
 
@@ -5495,40 +5536,40 @@ msgstr "Паказваць элементы як сетку значкоў"
 msgid "_Up"
 msgstr "_Уверх"
 
-#: ../src/nautilus-window-slot.c:1272 ../src/nautilus-window-slot.c:1446
+#: ../src/nautilus-window-slot.c:1274 ../src/nautilus-window-slot.c:1448
 #, c-format
 msgid "Unable to load location"
 msgstr "Не ўдалося адкрыць месцапалажэнне"
 
-#: ../src/nautilus-window-slot.c:1601
+#: ../src/nautilus-window-slot.c:1603
 msgid "Unable to display the contents of this folder."
 msgstr "Не ўдалося паказаць змесціва гэтай папкі."
 
-#: ../src/nautilus-window-slot.c:1603
+#: ../src/nautilus-window-slot.c:1605
 msgid "This location doesn't appear to be a folder."
 msgstr "Гэтае месцапалажэнне не з'яўляецца папкай."
 
-#: ../src/nautilus-window-slot.c:1608
+#: ../src/nautilus-window-slot.c:1610
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr ""
 "Не ўдалося адшукаць запатрабаваны файл. Праверце правільнасць яго напісання "
 "і паўтарыце спробу."
 
-#: ../src/nautilus-window-slot.c:1613
+#: ../src/nautilus-window-slot.c:1615
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "Адрасы “%s” не падтрымліваюцца."
 
-#: ../src/nautilus-window-slot.c:1616
+#: ../src/nautilus-window-slot.c:1618
 msgid "Unable to handle this kind of location."
 msgstr "Не ўдалося апрацаваць такі від месца."
 
-#: ../src/nautilus-window-slot.c:1621
+#: ../src/nautilus-window-slot.c:1623
 msgid "Unable to access the requested location."
 msgstr "Не ўдалося атрымаць доступ да запатрабаванага месца."
 
-#: ../src/nautilus-window-slot.c:1624
+#: ../src/nautilus-window-slot.c:1626
 msgid "Don't have permission to access the requested location."
 msgstr "Вы не маеце дазволу на доступ да запатрабаванага месца."
 
@@ -5537,7 +5578,7 @@ msgstr "Вы не маеце дазволу на доступ да запатр�
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-slot.c:1632
+#: ../src/nautilus-window-slot.c:1634
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5545,12 +5586,12 @@ msgstr ""
 "Не ўдалося адшукаць запатрабаванае месца. Праверце правільнасць яго "
 "напісання і настройкі сеткі."
 
-#: ../src/nautilus-window-slot.c:1643
+#: ../src/nautilus-window-slot.c:1645
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "Тэкст неапрацаванай памылкі: %s"
 
-#: ../src/nautilus-window-slot.c:2244
+#: ../src/nautilus-window-slot.c:2247
 msgid "Searching…"
 msgstr "Пошук..."
 
@@ -5611,4 +5652,3 @@ msgstr "Змяшчае фатаграфіі і музыку"
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "Адкрыць з дапамогай:"
-
