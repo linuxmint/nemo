@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-02-18 16:25+0000\n"
-"PO-Revision-Date: 2013-02-24 12:58+0900\n"
+"POT-Creation-Date: 2013-03-04 09:51+0000\n"
+"PO-Revision-Date: 2013-03-07 20:34+0900\n"
 "Last-Translator: Gheyret Kenji <gheyret@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
 "Language: \n"
@@ -2283,7 +2283,7 @@ msgid "Send files by mail, instant message…"
 msgstr "ئېلخەت، مۇڭداشقۇدا ھۆججەت يوللا…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1599
 msgid "Oops! Something went wrong."
 msgstr "ئاپلا! خاتالىق كۆرۈلدى."
 
@@ -2311,7 +2311,7 @@ msgid ""
 "configuration to ~/.config/nautilus"
 msgstr "بۇ مۇندەرىجە Nautilus 3.0 دا تاشلىۋېتىلگەن، بۇ سەپلىمىنى ~/.config/nautilus غا يۆتكەشنى سىناڭ"
 
-#: ../src/nautilus-application.c:854
+#: ../src/nautilus-application.c:921
 #: ../src/nautilus-file-management-properties.c:197
 #: ../src/nautilus-window-menus.c:253
 #, c-format
@@ -2321,67 +2321,72 @@ msgid ""
 msgstr "ياردەم كۆرسەتكەندە خاتالىق كۆرۈلدى: \n"
 "%s"
 
-#: ../src/nautilus-application.c:1025
+#: ../src/nautilus-application.c:1095
 msgid "--check cannot be used with other options."
 msgstr "--check نى باشقا تاللانمىلار بىلەن بىرگە ئىشلىتىشكە بولمايدۇ."
 
-#: ../src/nautilus-application.c:1031
+#: ../src/nautilus-application.c:1101
 msgid "--quit cannot be used with URIs."
 msgstr "--quit نى URI بىلەن بىللە ئىشلەتكىلى بولمايدۇ."
 
-#: ../src/nautilus-application.c:1038
+#: ../src/nautilus-application.c:1108
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry نى بىرقانچە URI بىلەن بىرگە ئىشلىتىشكە بولمايدۇ."
 
-#: ../src/nautilus-application.c:1044
+#: ../src/nautilus-application.c:1114
 msgid "--select must be used with at least an URI."
 msgstr "--select نى ئاز دېگەندە بىر URI بىلەن ئىشلىتىش كېرەك."
 
-#: ../src/nautilus-application.c:1050
+#: ../src/nautilus-application.c:1120
 msgid "--no-desktop and --force-desktop cannot be used together."
 msgstr "--no-desktop بىلەن --force-desktop نى بىرگە ئىشلىتىشكە بولمايدۇ."
 
-#: ../src/nautilus-application.c:1148
+#: ../src/nautilus-application.c:1219
 msgid "Perform a quick set of self-check tests."
 msgstr "بىر گۇرۇپپا تېز سۈرئەتتە ئۆزىنى تەكشۈرۈشنى ئىجرا قىلىدۇ."
 
-#: ../src/nautilus-application.c:1154
+#: ../src/nautilus-application.c:1225
 msgid "Show the version of the program."
 msgstr "پروگراممىنىڭ نەشرىنى كۆرسەت."
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1227
 msgid "Create the initial window with the given geometry."
 msgstr "بېرىلگەن گېئومېتىرىيە خاسلىقىنى ئىشلىتىپ دەسلەپكى كۆزنەك قۇرىدۇ."
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1227
 msgid "GEOMETRY"
 msgstr "GEOMETRY"
 
-#: ../src/nautilus-application.c:1158
+#: ../src/nautilus-application.c:1229
+#| msgid "Only create windows for explicitly specified URIs."
+msgid "Always open a new window for browsing specified URIs"
+msgstr "ئالاھىدە URI لارنى كۆرۈش ئۈچۈن ھەمىشە يېڭى كۆزنەك ئاچسۇن"
+
+#: ../src/nautilus-application.c:1231
 msgid "Only create windows for explicitly specified URIs."
 msgstr "پەقەت بەلگىلەنگەن URI ئۈچۈن كۆزنەك قۇرىدۇ"
 
-#: ../src/nautilus-application.c:1160
+#: ../src/nautilus-application.c:1233
 msgid "Never manage the desktop (ignore the GSettings preference)."
 msgstr "ئۈستەلئۈستىنى زادىلا باشقۇرمىسۇن(GSettings مايىللىقىغا پەرۋا قىلمايدۇ)."
 
-#: ../src/nautilus-application.c:1162
+#: ../src/nautilus-application.c:1235
 msgid "Always manage the desktop (ignore the GSettings preference)."
 msgstr "ئۈستەلئۈستىنى ھەمىشە باشقۇرسۇن(GSettings مايىللىقىغا پەرۋا قىلمايدۇ)."
 
-#: ../src/nautilus-application.c:1164
+#: ../src/nautilus-application.c:1237
 msgid "Quit Nautilus."
 msgstr "Nautilus تىن چېكىنىدۇ"
 
-#: ../src/nautilus-application.c:1166
+#: ../src/nautilus-application.c:1239
 msgid "Select specified URI in parent folder."
 msgstr "ئاتا مۇندەرىجە ئىچىدە كۆرسىتىلگەن URI نى تاللاڭ."
 
-#: ../src/nautilus-application.c:1167
+#: ../src/nautilus-application.c:1240
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:1180
+#: ../src/nautilus-application.c:1252
 msgid ""
 "\n"
 "\n"
@@ -2392,13 +2397,13 @@ msgstr "\n"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1190
+#: ../src/nautilus-application.c:1262
 msgid "Could not parse arguments"
 msgstr "پارامېتىرنى پارچىلىيالمىدى"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1223
+#: ../src/nautilus-application.c:1295
 msgid "Could not register the application"
 msgstr "پروگراممىنى خەتلەتكىلى بولمىدى"
 
@@ -2671,73 +2676,73 @@ msgstr "ئۇلا(_O)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:706 ../src/nautilus-view.c:7146
+#: ../src/nautilus-desktop-canvas-view.c:623 ../src/nautilus-view.c:7146
 #: ../src/nautilus-view.c:8679
 msgid "E_mpty Trash"
 msgstr "ئەخلەتخانىنى تازىلا(_M)"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:730
-#: ../src/nautilus-desktop-canvas-view.c:771
+#: ../src/nautilus-desktop-canvas-view.c:647
+#: ../src/nautilus-desktop-canvas-view.c:688
 msgid "Restore Icons' Original Si_zes"
 msgstr "سىنبەلگە چوڭلۇقىنى ئەسلىگە كەلتۈر(_Z)"
 
-#: ../src/nautilus-desktop-canvas-view.c:731
+#: ../src/nautilus-desktop-canvas-view.c:648
 msgid "Restore Icon's Original Si_ze"
 msgstr "سىنبەلگە چوڭلۇقىنى ئەسلىگە كەلتۈر(_Z)"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:743
+#: ../src/nautilus-desktop-canvas-view.c:660
 msgid "Change Desktop _Background"
 msgstr "ئۈستەلئۈستى تەگلىكىنى ئۆزگەرت(_B)"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:745
+#: ../src/nautilus-desktop-canvas-view.c:662
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr "ئۈستەلئۈستى تەگلىك نۇسخىسى ياكى رەڭگىنى تەڭشەشكە يول قويىدىغان كۆزنەكنى كۆرسىتىدۇ"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:750
+#: ../src/nautilus-desktop-canvas-view.c:667
 msgid "Empty Trash"
 msgstr "ئەخلەتخانىنى تازىلاش"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:752 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:669 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7147
 msgid "Delete all items in the Trash"
 msgstr "ئەخلەتخانىدىكى ھەممە تۈرنى ئۆچۈر"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:757
+#: ../src/nautilus-desktop-canvas-view.c:674
 msgid "_Organize Desktop by Name"
 msgstr "ئۈستەلئۈستىنى ئاتى بويىچە تەشكىللە(_O)"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:759
+#: ../src/nautilus-desktop-canvas-view.c:676
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr "كۆزنەكتىكى سىنبەلگىلەرنى قايتىدىن مۇۋاپىق جايلاشتۇرۇپ دەستىلىنىشتىن ساقلىنىدۇ"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:764
+#: ../src/nautilus-desktop-canvas-view.c:681
 msgid "Resize Icon…"
 msgstr "سىنبەلگە چوڭلۇقىنى ئۆزگەرت…"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:766
+#: ../src/nautilus-desktop-canvas-view.c:683
 msgid "Make the selected icons resizable"
 msgstr "تاللانغان سىنبەلگىنىڭ چوڭلۇقىنى ئۆزگەرتكىلى بولىدىغان قىلىدۇ"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:773
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore each selected icons to its original size"
 msgstr "تاللانغان ھەر بىر سىنبەلگە چوڭلۇقىنى ئەسلىگە كەلتۈرىدۇ"
 
-#: ../src/nautilus-desktop-canvas-view.c:851
+#: ../src/nautilus-desktop-canvas-view.c:768
 msgid "The desktop view encountered an error."
 msgstr "ئۈستەلئۈستى كۆرۈنۈش خاتالىققا يولۇقتى."
 
-#: ../src/nautilus-desktop-canvas-view.c:852
+#: ../src/nautilus-desktop-canvas-view.c:769
 msgid "The desktop view encountered an error while starting up."
 msgstr "ئۈستەلئۈستى كۆرۈنۈش قوزغىلىۋاتقاندا خاتالىققا يولۇقتى."
 
@@ -2763,7 +2768,7 @@ msgid "Command"
 msgstr "بۇيرۇق"
 
 #. hardcode "Desktop"
-#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:263
+#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:240
 #: ../src/nautilus-places-sidebar.c:540
 msgid "Desktop"
 msgstr "ئۈستەلئۈستى"
@@ -3255,7 +3260,7 @@ msgstr "سۈرەت ئۇچۇرىنى يۈكلىيەلمىدى"
 
 #: ../src/nautilus-image-properties-page.c:708
 #: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:606
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-window-slot.c:2247
 msgid "Loading…"
 msgstr "ئوقۇۋاتىدۇ…"
 
@@ -3638,7 +3643,6 @@ msgid "_Detect Media"
 msgstr "ۋاسىتە بايقا(_D)"
 
 #: ../src/nautilus-places-sidebar.c:2872
-#| msgid "_Format"
 msgid "_Format…"
 msgstr "پىچ(_F)…"
 
@@ -4001,11 +4005,11 @@ msgstr "بۇ مۇندەرىجىدىكى بارلىق ھۆججەتلەر «يېڭ
 msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr "بۇ قىسقۇچتىكى ئىجرا قىلغىلى بولىدىغان ھۆججەتلەر قوليازما تىزىملىكىدە كۆرسىتىلىدۇ."
 
-#: ../src/nautilus-toolbar.c:473
+#: ../src/nautilus-toolbar.c:488
 msgid "View options"
 msgstr "كۆرۈنۈش تاللانمىلىرى"
 
-#: ../src/nautilus-toolbar.c:490
+#: ../src/nautilus-toolbar.c:505
 msgid "Location options"
 msgstr "ئورۇن تاللانمىلىرى"
 
@@ -5225,38 +5229,38 @@ msgstr "تۈرلەرنى سېتكا سىنبەلگىسى سۈپىتىدە كۆر
 msgid "_Up"
 msgstr "ئۈستىگە(_U)"
 
-#: ../src/nautilus-window-slot.c:1272 ../src/nautilus-window-slot.c:1446
+#: ../src/nautilus-window-slot.c:1274 ../src/nautilus-window-slot.c:1448
 #, c-format
 msgid "Unable to load location"
 msgstr "ئورۇننى ئوقۇغىلى بولمىدى"
 
-#: ../src/nautilus-window-slot.c:1601
+#: ../src/nautilus-window-slot.c:1603
 msgid "Unable to display the contents of this folder."
 msgstr "قىسقۇچنىڭ مەزمۇنىنى كۆرسەتكىلى بولمىدى."
 
-#: ../src/nautilus-window-slot.c:1603
+#: ../src/nautilus-window-slot.c:1605
 msgid "This location doesn't appear to be a folder."
 msgstr "مەزكۇر ئورۇن قىسقۇچ ئەمەستەك قىلىدۇ."
 
-#: ../src/nautilus-window-slot.c:1608
+#: ../src/nautilus-window-slot.c:1610
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr "تەلەپ قىلغان ھۆججەتنى تاپقىلى بولمىدى. ئىملاسىنى تەكشۈرۈپ كۆرۈپ قايتا سىناڭ."
 
-#: ../src/nautilus-window-slot.c:1613
+#: ../src/nautilus-window-slot.c:1615
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "ئورۇنلار «%s» نى قوللىمايدۇ."
 
-#: ../src/nautilus-window-slot.c:1616
+#: ../src/nautilus-window-slot.c:1618
 msgid "Unable to handle this kind of location."
 msgstr "بۇ خىلدىكى ئورۇننى بىر تەرەپ قىلغىلى بولمىدى."
 
-#: ../src/nautilus-window-slot.c:1621
+#: ../src/nautilus-window-slot.c:1623
 msgid "Unable to access the requested location."
 msgstr "تەلەپ قىلغان ئورۇننى زىيارەت قىلغىلى بولمىدى."
 
-#: ../src/nautilus-window-slot.c:1624
+#: ../src/nautilus-window-slot.c:1626
 msgid "Don't have permission to access the requested location."
 msgstr "تەلەپ قىلغان ئورۇننى زىيارەت قىلغۇدەك ئىمتىياز يوق."
 
@@ -5265,18 +5269,18 @@ msgstr "تەلەپ قىلغان ئورۇننى زىيارەت قىلغۇدەك �
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-slot.c:1632
+#: ../src/nautilus-window-slot.c:1634
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
 msgstr "تەلەپ قىلغان ئورۇننى تاپقىلى بولمىدى. ئىملاسىنى ياكى تور تەڭشىكىنى تەكشۈرۈپ كۆرۈڭ."
 
-#: ../src/nautilus-window-slot.c:1643
+#: ../src/nautilus-window-slot.c:1645
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "باشقۇرۇلمىغان خاتالىق ئۇچۇرى: %s"
 
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-window-slot.c:2247
 msgid "Searching…"
 msgstr "ئىزدەۋاتىدۇ…"
 
