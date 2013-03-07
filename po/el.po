@@ -67,8 +67,8 @@ msgstr ""
 "Project-Id-Version: el\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautil"
 "us&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-02-18 16:25+0000\n"
-"PO-Revision-Date: 2013-02-25 17:37+0300\n"
+"POT-Creation-Date: 2013-03-04 09:51+0000\n"
+"PO-Revision-Date: 2013-03-07 15:59+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: team@gnome.gr\n"
 "Language: el\n"
@@ -2246,8 +2246,8 @@ msgid ""
 msgstr ""
 "Αν οριστεί σε αληθές, τα αρχεία στα νέα παράθυρα θα ταξινομούνται σε "
 "αντίστροφη σειρά. π.χ. στην ταξινόμηση κατά όνομα αντί για ταξινόμηση από το "
-"\"α\" στο \"ω\", θα γίνεται ταξινόμηση από το \"ω\" στο \"α\"· στην ταξινόμηση κατά "
-"μέγεθος η ταξινόμηση θα είναι φθίνουσα και όχι αύξουσα."
+"\"α\" στο \"ω\", θα γίνεται ταξινόμηση από το \"ω\" στο \"α\"· στην "
+"ταξινόμηση κατά μέγεθος η ταξινόμηση θα είναι φθίνουσα και όχι αύξουσα."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:33
 msgid "Default folder viewer"
@@ -2354,8 +2354,8 @@ msgid ""
 msgstr ""
 "Ένα αλφαριθμητικό που καθορίζει τον τρόπο αντικατάστασης από αποσιωπητικά "
 "μέρους των μεγάλων ονομάτων αρχείων, ανάλογα με το επίπεδο εστίασης. Κάθε "
-"καταχώρηση της λίστας είναι της μορφής \"Επίπεδο εστίασης:Ακέραιος\". Για κάθε "
-"επίπεδο εστίασης, αν ο ακέραιος που δόθηκε είναι μεγαλύτερος του 0, το "
+"καταχώρηση της λίστας είναι της μορφής \"Επίπεδο εστίασης:Ακέραιος\". Για "
+"κάθε επίπεδο εστίασης, αν ο ακέραιος που δόθηκε είναι μεγαλύτερος του 0, το "
 "όνομα αρχείου δε θα ξεπερνά τον αριθμό γραμμών που δόθηκε. Αν ο ακέραιος "
 "είναι 0 ή μικρότερος, δε θα ισχύουν περιορισμοί για το συγκεκριμένο επίπεδο "
 "εστίασης. Επίσης, επιτρέπεται μια προεπιλεγμένη καταχώρηση της μορφής "
@@ -2364,10 +2364,10 @@ msgstr ""
 "μεγάλα ονόματα αρχείων προβάλλονται πάντα· 3 - συντόμευση ονομάτων αρχείων "
 "αν ξεπερνούν τις τρεις γραμμές· ελάχιστο:5, μικρότερο:4,0 - συντόμευση "
 "ονομάτων αρχείων αν ξεπερνούν τις πέντε ή τις τέσσερις γραμμές στα επίπεδα "
-"εστίασης \"ελάχιστο\" και \"μικρότερο\", αντίστοιχα. Όχι συντόμευση των ονομάτων "
-"αρχείων στα υπόλοιπα επίπεδα εστίασης. Τα διαθέσιμα επίπεδα εστίασης είναι: "
-"ελάχιστο (33%), μικρότερο (50%), μικρό (66%), τυπικό (100%), μεγάλο (150%), "
-"μεγαλύτερο (200%), μέγιστο (400%)"
+"εστίασης \"ελάχιστο\" και \"μικρότερο\", αντίστοιχα. Όχι συντόμευση των "
+"ονομάτων αρχείων στα υπόλοιπα επίπεδα εστίασης. Τα διαθέσιμα επίπεδα "
+"εστίασης είναι: ελάχιστο (33%), μικρότερο (50%), μικρό (66%), τυπικό (100%), "
+"μεγάλο (150%), μεγαλύτερο (200%), μέγιστο (400%)"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:48
 msgid "Default list zoom level"
@@ -2394,7 +2394,6 @@ msgid "Default column order in the list view."
 msgstr "Προεπιλεγμένη ταξινόμηση στηλών στην προβολή λίστας."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:54
-#| msgid "Preview"
 msgid "Use tree view"
 msgstr "Χρήση προβολής δένδρου"
 
@@ -2590,7 +2589,7 @@ msgid "Send files by mail, instant message…"
 msgstr "Αποστολή αρχείων με ταχυδρομείο, άμεσο μήνυμα…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1599
 msgid "Oops! Something went wrong."
 msgstr "Ωχ όχι! Κάτι πήγε στραβά."
 
@@ -2626,7 +2625,7 @@ msgstr ""
 "Στον Ναυτίλο 3.0 αυτός ο φάκελος είναι παρωχημένος και έγινε προσπάθεια "
 "μεταφοράς αυτής της ρύθμισης στο ~/.config/nautilus"
 
-#: ../src/nautilus-application.c:854
+#: ../src/nautilus-application.c:921
 #: ../src/nautilus-file-management-properties.c:197
 #: ../src/nautilus-window-menus.c:253
 #, c-format
@@ -2637,81 +2636,78 @@ msgstr ""
 "Παρουσιάστηκε σφάλμα κατά την εμφάνιση της βοήθειας: \n"
 "%s"
 
-#: ../src/nautilus-application.c:1025
+#: ../src/nautilus-application.c:1095
 msgid "--check cannot be used with other options."
 msgstr "το --check δε χρησιμοποιείται μαζί με άλλες επιλογές."
 
-#: ../src/nautilus-application.c:1031
+#: ../src/nautilus-application.c:1101
 msgid "--quit cannot be used with URIs."
 msgstr "το --quit δεν μπορεί να χρησιμοποιηθεί με URI."
 
-#: ../src/nautilus-application.c:1038
+#: ../src/nautilus-application.c:1108
 msgid "--geometry cannot be used with more than one URI."
 msgstr "το --geometry χρησιμοποιείται μόνο με ένα URI."
 
-#: ../src/nautilus-application.c:1044
-#| msgid "--geometry cannot be used with more than one URI."
+#: ../src/nautilus-application.c:1114
 msgid "--select must be used with at least an URI."
 msgstr "το --select πρέπει να χρησιμοποιηθεί με τουλάχιστον ένα URI."
 
-#: ../src/nautilus-application.c:1050
+#: ../src/nautilus-application.c:1120
 msgid "--no-desktop and --force-desktop cannot be used together."
 msgstr ""
 "τα --no-desktop και --force-desktop δεν μπορούν να χρησιμοποιηθούν μαζί."
 
-#: ../src/nautilus-application.c:1148
+#: ../src/nautilus-application.c:1219
 msgid "Perform a quick set of self-check tests."
 msgstr "Εκτέλεση ενός συνόλου γρήγορων δοκιμών αυτοελέγχων."
 
-#: ../src/nautilus-application.c:1154
+#: ../src/nautilus-application.c:1225
 msgid "Show the version of the program."
 msgstr "Εμφάνιση της έκδοσης του προγράμματος."
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1227
 msgid "Create the initial window with the given geometry."
 msgstr "Δημιουργία του αρχικού παραθύρου με τη δοσμένη γεωμετρία."
 
 #
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1227
 msgid "GEOMETRY"
 msgstr "ΓΕΩΜΕΤΡΙΑ"
 
-#: ../src/nautilus-application.c:1158
+#: ../src/nautilus-application.c:1229
+#| msgid "Only create windows for explicitly specified URIs."
+msgid "Always open a new window for browsing specified URIs"
+msgstr "Να ανοίγεται πάντα νέο παράθυρο για περιήγηση συγκεκριμένων URIs"
+
+#: ../src/nautilus-application.c:1231
 msgid "Only create windows for explicitly specified URIs."
 msgstr "Δημιουργία παραθύρων μόνο για τα URIs που έχουν οριστεί ρητά."
 
-#: ../src/nautilus-application.c:1160
-#| msgid ""
-#| "Do not manage the desktop (ignore the preference set in the preferences "
-#| "dialog)."
+#: ../src/nautilus-application.c:1233
 msgid "Never manage the desktop (ignore the GSettings preference)."
 msgstr ""
 "Να μη γίνεται ποτέ διαχείριση της επιφάνειας εργασίας (αγνοεί τις "
 "προτιμήσεις του GSettings)."
 
-#: ../src/nautilus-application.c:1162
-#| msgid ""
-#| "Do not manage the desktop (ignore the preference set in the preferences "
-#| "dialog)."
+#: ../src/nautilus-application.c:1235
 msgid "Always manage the desktop (ignore the GSettings preference)."
 msgstr ""
 "Να γίνεται πάντα διαχείριση της επιφάνειας εργασίας (αγνοεί τις προτιμήσεις "
 "του GSettings)."
 
-#: ../src/nautilus-application.c:1164
+#: ../src/nautilus-application.c:1237
 msgid "Quit Nautilus."
 msgstr "Τερματισμός του Ναυτίλου."
 
-#: ../src/nautilus-application.c:1166
-#| msgid "Select the columns visible in this folder"
+#: ../src/nautilus-application.c:1239
 msgid "Select specified URI in parent folder."
 msgstr "Επιλέξτε τις συγκεκριμένες URI στο γονικό φάκελο."
 
-#: ../src/nautilus-application.c:1167
+#: ../src/nautilus-application.c:1240
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:1180
+#: ../src/nautilus-application.c:1252
 msgid ""
 "\n"
 "\n"
@@ -2724,13 +2720,13 @@ msgstr ""
 #
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1190
+#: ../src/nautilus-application.c:1262
 msgid "Could not parse arguments"
 msgstr "Αδυναμία ανάλυσης των ορισμάτων"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1223
+#: ../src/nautilus-application.c:1295
 msgid "Could not register the application"
 msgstr "Αδυναμία εγγραφής της εφαρμογής"
 
@@ -3022,28 +3018,28 @@ msgstr "Σύν_δεση"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:706 ../src/nautilus-view.c:7146
+#: ../src/nautilus-desktop-canvas-view.c:623 ../src/nautilus-view.c:7146
 #: ../src/nautilus-view.c:8679
 msgid "E_mpty Trash"
 msgstr "Ά_δειασμα απορριμμάτων"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:730
-#: ../src/nautilus-desktop-canvas-view.c:771
+#: ../src/nautilus-desktop-canvas-view.c:647
+#: ../src/nautilus-desktop-canvas-view.c:688
 msgid "Restore Icons' Original Si_zes"
 msgstr "Επαναφορά αρ_χικών διαστάσεων εικονιδίων"
 
-#: ../src/nautilus-desktop-canvas-view.c:731
+#: ../src/nautilus-desktop-canvas-view.c:648
 msgid "Restore Icon's Original Si_ze"
 msgstr "Επαναφορά αρ_χικών διαστάσεων εικονιδίου"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:743
+#: ../src/nautilus-desktop-canvas-view.c:660
 msgid "Change Desktop _Background"
 msgstr "Α_λλαγή παρασκηνίου επιφάνειας εργασίας"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:745
+#: ../src/nautilus-desktop-canvas-view.c:662
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr ""
@@ -3051,48 +3047,48 @@ msgstr ""
 "παρασκηνίου της επιφάνειας εργασίας"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:750
+#: ../src/nautilus-desktop-canvas-view.c:667
 msgid "Empty Trash"
 msgstr "Άδειασμα απορριμμάτων"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:752 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:669 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7147
 msgid "Delete all items in the Trash"
 msgstr "Διαγραφή όλων των στοιχείων στα απορρίμματα"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:757
+#: ../src/nautilus-desktop-canvas-view.c:674
 msgid "_Organize Desktop by Name"
 msgstr "_Οργάνωση επιφάνειας εργασίας κατά όνομα"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:759
+#: ../src/nautilus-desktop-canvas-view.c:676
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr ""
 "Αναταξινόμηση εικονιδίων, έτσι ώστε να ταιριάζουν καλύτερα στο παράθυρο και "
 "να μην επικαλύπτονται"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:764
+#: ../src/nautilus-desktop-canvas-view.c:681
 msgid "Resize Icon…"
 msgstr "Αυξομείωση εικονιδίου…"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:766
+#: ../src/nautilus-desktop-canvas-view.c:683
 msgid "Make the selected icons resizable"
 msgstr "Δυνατότητα αλλαγής διαστάσεων των επιλεγμένων εικονιδίων"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:773
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore each selected icons to its original size"
 msgstr "Επαναφορά κάθε επιλεγμένου εικονιδίου στις αρχικές του διαστάσεις"
 
-#: ../src/nautilus-desktop-canvas-view.c:851
+#: ../src/nautilus-desktop-canvas-view.c:768
 msgid "The desktop view encountered an error."
 msgstr "Η προβολή επιφάνειας εργασίας παρουσίασε σφάλμα."
 
-#: ../src/nautilus-desktop-canvas-view.c:852
+#: ../src/nautilus-desktop-canvas-view.c:769
 msgid "The desktop view encountered an error while starting up."
 msgstr ""
 "Παρουσιάστηκε σφάλμα κατά την εκκίνηση της προβολής επιφάνειας εργασίας."
@@ -3119,7 +3115,7 @@ msgid "Command"
 msgstr "Εντολή"
 
 #. hardcode "Desktop"
-#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:263
+#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:240
 #: ../src/nautilus-places-sidebar.c:540
 msgid "Desktop"
 msgstr "Επιφάνεια εργασίας"
@@ -3632,7 +3628,7 @@ msgstr "Αποτυχία φόρτωσης πληροφοριών εικόνας"
 
 #: ../src/nautilus-image-properties-page.c:708
 #: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:606
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-window-slot.c:2247
 msgid "Loading…"
 msgstr "Φόρτωση…"
 
@@ -3886,7 +3882,6 @@ msgid "Browse the contents of the network"
 msgstr "Εξερεύνηση των περιεχομένων του δίκτυο"
 
 #: ../src/nautilus-places-sidebar.c:802
-#| msgid "Connect to the selected drive"
 msgid "Connect to a network server address"
 msgstr "Σύνδεση σε μια διεύθυνση δικτυακού εξυπηρετητή"
 
@@ -4411,11 +4406,11 @@ msgstr ""
 "Όλα τα εκτελέσιμα αρχεία σε αυτόν το φάκελο θα εμφανίζονται στο μενού "
 "σεναρίων εντολών."
 
-#: ../src/nautilus-toolbar.c:473
+#: ../src/nautilus-toolbar.c:488
 msgid "View options"
 msgstr "Επιλογές προβολής"
 
-#: ../src/nautilus-toolbar.c:490
+#: ../src/nautilus-toolbar.c:505
 msgid "Location options"
 msgstr "Επιλογές τοποθεσίας"
 
@@ -5718,40 +5713,40 @@ msgstr "Προβολή στοιχείων ως πλέγμα εικονιδίων
 msgid "_Up"
 msgstr "_Πάνω"
 
-#: ../src/nautilus-window-slot.c:1272 ../src/nautilus-window-slot.c:1446
+#: ../src/nautilus-window-slot.c:1274 ../src/nautilus-window-slot.c:1448
 #, c-format
 msgid "Unable to load location"
 msgstr "Αδυναμία φόρτωσης της τοποθεσίας"
 
-#: ../src/nautilus-window-slot.c:1601
+#: ../src/nautilus-window-slot.c:1603
 msgid "Unable to display the contents of this folder."
 msgstr "Αδυναμία προβολής των περιεχομένων αυτού του φακέλου."
 
-#: ../src/nautilus-window-slot.c:1603
+#: ../src/nautilus-window-slot.c:1605
 msgid "This location doesn't appear to be a folder."
 msgstr "Η τοποθεσία δεν φαίνεται να είναι φάκελος."
 
-#: ../src/nautilus-window-slot.c:1608
+#: ../src/nautilus-window-slot.c:1610
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr ""
 "Αδύνατη η εύρεση του ζητούμενου αρχείου. Παρακαλώ ελέγξτε την ορθογραφία και "
 "προσπαθήστε ξανά."
 
-#: ../src/nautilus-window-slot.c:1613
+#: ../src/nautilus-window-slot.c:1615
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "Δεν υποστηρίζονται οι τοποθεσίες “%s”."
 
-#: ../src/nautilus-window-slot.c:1616
+#: ../src/nautilus-window-slot.c:1618
 msgid "Unable to handle this kind of location."
 msgstr "Αδύνατος ο χειρισμός τέτοιου είδους τοποθεσιών."
 
-#: ../src/nautilus-window-slot.c:1621
+#: ../src/nautilus-window-slot.c:1623
 msgid "Unable to access the requested location."
 msgstr "Αδύνατη η πρόσβαση στη ζητούμενη τοποθεσία."
 
-#: ../src/nautilus-window-slot.c:1624
+#: ../src/nautilus-window-slot.c:1626
 msgid "Don't have permission to access the requested location."
 msgstr "Δεν έχετε δικαίωμα προσπέλασης της ζητούμενης τοποθεσίας."
 
@@ -5760,7 +5755,7 @@ msgstr "Δεν έχετε δικαίωμα προσπέλασης της ζητ�
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-slot.c:1632
+#: ../src/nautilus-window-slot.c:1634
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5768,12 +5763,12 @@ msgstr ""
 "Αδύνατη η εύρεση της ζητούμενης τοποθεσίας. Παρακαλώ ελέγξτε την ορθογραφία "
 "ή τις ρυθμίσεις δικτύου."
 
-#: ../src/nautilus-window-slot.c:1643
+#: ../src/nautilus-window-slot.c:1645
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "Μη διαχειρίσιμο μήνυμα σφάλματος: %s"
 
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-window-slot.c:2247
 msgid "Searching…"
 msgstr "Αναζήτηση…"
 
