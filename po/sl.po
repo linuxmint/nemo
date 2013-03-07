@@ -366,7 +366,7 @@ msgstr "Datoteke ni mogoče zaustaviti"
 #: ../libnautilus-private/nautilus-file.c:1823
 #, c-format
 msgid "Slashes are not allowed in filenames"
-msgstr "Poševnice v imenik datotek niso dovoljene"
+msgstr "Poševnice v imenih datotek niso dovoljene"
 
 #: ../libnautilus-private/nautilus-file.c:1841
 #, c-format
