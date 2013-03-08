@@ -28,8 +28,8 @@ msgstr ""
 "Project-Id-Version: nautilus.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-02-18 16:25+0000\n"
-"PO-Revision-Date: 2013-02-26 16:23+0100\n"
+"POT-Creation-Date: 2013-03-04 09:51+0000\n"
+"PO-Revision-Date: 2013-03-08 23:08+0100\n"
 "Last-Translator: Alain Lojewski <allomervan@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "Language: \n"
@@ -2524,7 +2524,7 @@ msgid "Send files by mail, instant message…"
 msgstr "Envoyer des fichiers par courriel, messagerie instantanée…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1599
 msgid "Oops! Something went wrong."
 msgstr "Oups ! Quelque chose s'est mal passé."
 
@@ -2559,7 +2559,7 @@ msgstr ""
 "Nautilus 3.0 abandonne ce répertoire et essaie de déplacer cette "
 "configuration vers ~/.config/nautilus"
 
-#: ../src/nautilus-application.c:854
+#: ../src/nautilus-application.c:921
 #: ../src/nautilus-file-management-properties.c:197
 #: ../src/nautilus-window-menus.c:253
 #, c-format
@@ -2570,67 +2570,71 @@ msgstr ""
 "Il y a eu une erreur lors de l'affichage de l'aide : \n"
 "%s"
 
-#: ../src/nautilus-application.c:1025
+#: ../src/nautilus-application.c:1095
 msgid "--check cannot be used with other options."
 msgstr "--check ne peut pas être utilisée avec d'autres options."
 
-#: ../src/nautilus-application.c:1031
+#: ../src/nautilus-application.c:1101
 msgid "--quit cannot be used with URIs."
 msgstr "--quit ne peut pas être utilisée avec des URI."
 
-#: ../src/nautilus-application.c:1038
+#: ../src/nautilus-application.c:1108
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry ne peut pas être utilisée avec plus d'un URI."
 
-#: ../src/nautilus-application.c:1044
+#: ../src/nautilus-application.c:1114
 msgid "--select must be used with at least an URI."
 msgstr "--select doit être utilisé avec au moins un URI."
 
-#: ../src/nautilus-application.c:1050
+#: ../src/nautilus-application.c:1120
 msgid "--no-desktop and --force-desktop cannot be used together."
 msgstr "--no-desktop et --force-desktop ne peuvent pas être utilisés ensemble."
 
-#: ../src/nautilus-application.c:1148
+#: ../src/nautilus-application.c:1219
 msgid "Perform a quick set of self-check tests."
 msgstr "Effectue de rapides tests de cohérence."
 
-#: ../src/nautilus-application.c:1154
+#: ../src/nautilus-application.c:1225
 msgid "Show the version of the program."
 msgstr "Affiche la version du programme."
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1227
 msgid "Create the initial window with the given geometry."
 msgstr "Crée la fenêtre initiale avec la géométrie indiquée."
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1227
 msgid "GEOMETRY"
 msgstr "GÉOMÉTRIE"
 
-#: ../src/nautilus-application.c:1158
+#: ../src/nautilus-application.c:1229
+msgid "Always open a new window for browsing specified URIs"
+msgstr "Toujours créer de nouvelles fenêtres pour la navigation des URI précisés."
+
+#: ../src/nautilus-application.c:1231
 msgid "Only create windows for explicitly specified URIs."
 msgstr "Ne crée de nouvelles fenêtres que pour les URI explicitement précisés."
 
-#: ../src/nautilus-application.c:1160
+#: ../src/nautilus-application.c:1233
 msgid "Never manage the desktop (ignore the GSettings preference)."
 msgstr "Ne jamais gérer le bureau (ignore l'option GSettings)."
 
-#: ../src/nautilus-application.c:1162
+#: ../src/nautilus-application.c:1235
 msgid "Always manage the desktop (ignore the GSettings preference)."
 msgstr "Toujours gérer le bureau (ignore l'option GSettings)."
 
-#: ../src/nautilus-application.c:1164
+#: ../src/nautilus-application.c:1237
 msgid "Quit Nautilus."
 msgstr "Quitte Nautilus."
 
-#: ../src/nautilus-application.c:1166
+#: ../src/nautilus-application.c:1239
 msgid "Select specified URI in parent folder."
 msgstr "Sélectionne l'URI spécifié dans le dossier parent."
 
-#: ../src/nautilus-application.c:1167
+#: ../src/nautilus-application.c:1240
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:1180
+#: ../src/nautilus-application.c:1252
 msgid ""
 "\n"
 "\n"
@@ -2642,13 +2646,13 @@ msgstr ""
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1190
+#: ../src/nautilus-application.c:1262
 msgid "Could not parse arguments"
 msgstr "Impossible d'analyser les arguments"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1223
+#: ../src/nautilus-application.c:1295
 msgid "Could not register the application"
 msgstr "Impossible d'enregistrer l'application"
 
@@ -2927,28 +2931,28 @@ msgstr "Se c_onnecter"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:706 ../src/nautilus-view.c:7146
+#: ../src/nautilus-desktop-canvas-view.c:623 ../src/nautilus-view.c:7146
 #: ../src/nautilus-view.c:8679
 msgid "E_mpty Trash"
 msgstr "_Vider la corbeille"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:730
-#: ../src/nautilus-desktop-canvas-view.c:771
+#: ../src/nautilus-desktop-canvas-view.c:647
+#: ../src/nautilus-desktop-canvas-view.c:688
 msgid "Restore Icons' Original Si_zes"
 msgstr "Restaurer la _taille initiale des icônes"
 
-#: ../src/nautilus-desktop-canvas-view.c:731
+#: ../src/nautilus-desktop-canvas-view.c:648
 msgid "Restore Icon's Original Si_ze"
 msgstr "Restaurer la taille _initiale de l'icône"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:743
+#: ../src/nautilus-desktop-canvas-view.c:660
 msgid "Change Desktop _Background"
 msgstr "Modifier l'arrière-plan du _bureau"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:745
+#: ../src/nautilus-desktop-canvas-view.c:662
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr ""
@@ -2956,48 +2960,48 @@ msgstr ""
 "l'arrière-plan de votre bureau"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:750
+#: ../src/nautilus-desktop-canvas-view.c:667
 msgid "Empty Trash"
 msgstr "Vider la corbeille"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:752 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:669 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7147
 msgid "Delete all items in the Trash"
 msgstr "Supprime tous les éléments de la corbeille"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:757
+#: ../src/nautilus-desktop-canvas-view.c:674
 msgid "_Organize Desktop by Name"
 msgstr "_Organiser le bureau par nom"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:759
+#: ../src/nautilus-desktop-canvas-view.c:676
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr ""
 "Replace les icônes pour les disposer au mieux dans la fenêtre et éviter tout "
 "chevauchement"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:764
+#: ../src/nautilus-desktop-canvas-view.c:681
 msgid "Resize Icon…"
 msgstr "Redimensionner l'icône…"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:766
+#: ../src/nautilus-desktop-canvas-view.c:683
 msgid "Make the selected icons resizable"
 msgstr "Autorise le changement de taille de l'icône sélectionnée"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:773
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore each selected icons to its original size"
 msgstr "Restaure chaque icône sélectionnée à sa taille initiale"
 
-#: ../src/nautilus-desktop-canvas-view.c:851
+#: ../src/nautilus-desktop-canvas-view.c:768
 msgid "The desktop view encountered an error."
 msgstr "La vue sous forme de bureau a rencontré une erreur."
 
-#: ../src/nautilus-desktop-canvas-view.c:852
+#: ../src/nautilus-desktop-canvas-view.c:769
 msgid "The desktop view encountered an error while starting up."
 msgstr ""
 "La vue sous forme de bureau a rencontré une erreur lors de son démarrage."
@@ -3024,7 +3028,7 @@ msgid "Command"
 msgstr "Commande"
 
 #. hardcode "Desktop"
-#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:263
+#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:240
 #: ../src/nautilus-places-sidebar.c:540
 msgid "Desktop"
 msgstr "Bureau"
@@ -3528,7 +3532,7 @@ msgstr "Impossible de charger les informations de l'image"
 
 #: ../src/nautilus-image-properties-page.c:708
 #: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:606
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-window-slot.c:2247
 msgid "Loading…"
 msgstr "Chargement…"
 
@@ -4293,11 +4297,11 @@ msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr ""
 "Les fichiers exécutables de ce dossier apparaîtront dans le menu Scripts."
 
-#: ../src/nautilus-toolbar.c:473
+#: ../src/nautilus-toolbar.c:488
 msgid "View options"
 msgstr "Options d'affichage"
 
-#: ../src/nautilus-toolbar.c:490
+#: ../src/nautilus-toolbar.c:505
 msgid "Location options"
 msgstr "Options d'emplacement"
 
@@ -5576,40 +5580,40 @@ msgstr "Voir les éléments sous forme d'une grille d'icônes"
 msgid "_Up"
 msgstr "_Haut"
 
-#: ../src/nautilus-window-slot.c:1272 ../src/nautilus-window-slot.c:1446
+#: ../src/nautilus-window-slot.c:1274 ../src/nautilus-window-slot.c:1448
 #, c-format
 msgid "Unable to load location"
 msgstr "Impossible de charger l'emplacement"
 
-#: ../src/nautilus-window-slot.c:1601
+#: ../src/nautilus-window-slot.c:1603
 msgid "Unable to display the contents of this folder."
 msgstr "Impossible d'afficher le contenu de ce dossier."
 
-#: ../src/nautilus-window-slot.c:1603
+#: ../src/nautilus-window-slot.c:1605
 msgid "This location doesn't appear to be a folder."
 msgstr "Cet emplacement n'est pas un dossier."
 
-#: ../src/nautilus-window-slot.c:1608
+#: ../src/nautilus-window-slot.c:1610
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr ""
 "Impossible de trouver le fichier demandé. Vérifiez l'orthographe et essayez "
 "à nouveau."
 
-#: ../src/nautilus-window-slot.c:1613
+#: ../src/nautilus-window-slot.c:1615
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "Les emplacements %s ne sont pas pris en charge."
 
-#: ../src/nautilus-window-slot.c:1616
+#: ../src/nautilus-window-slot.c:1618
 msgid "Unable to handle this kind of location."
 msgstr "Impossible de gérer ce type d'emplacement."
 
-#: ../src/nautilus-window-slot.c:1621
+#: ../src/nautilus-window-slot.c:1623
 msgid "Unable to access the requested location."
 msgstr "Impossible d'accéder à l'emplacement demandé."
 
-#: ../src/nautilus-window-slot.c:1624
+#: ../src/nautilus-window-slot.c:1626
 msgid "Don't have permission to access the requested location."
 msgstr "Vous n'avez pas la permission d'accéder au dossier demandé."
 
@@ -5618,7 +5622,7 @@ msgstr "Vous n'avez pas la permission d'accéder au dossier demandé."
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-slot.c:1632
+#: ../src/nautilus-window-slot.c:1634
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5626,12 +5630,12 @@ msgstr ""
 "Impossible de trouver l'emplacement demandé. Veuillez vérifier l'orthographe "
 "ou les paramètres réseau."
 
-#: ../src/nautilus-window-slot.c:1643
+#: ../src/nautilus-window-slot.c:1645
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "Message d'erreur non géré : %s"
 
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-window-slot.c:2247
 msgid "Searching…"
 msgstr "Recherche en cours…"
 
