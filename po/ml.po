@@ -15,20 +15,22 @@
 # Manu S Madhav <manusmad@gmail.com>, 2008.
 # Reviewed by മണിലാല്‍ കെ.എം|Manilal K M <libregeek@gmail.com>, 2008.
 # Anish A <aneesh.nl@gmail.com>, 2013.
+# Balasankar C <c.balasankar@gmail.com>, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: ml\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-02-09 21:24+0000\n"
-"PO-Revision-Date: 2013-02-10 22:13+0530\n"
-"Last-Translator: Anish A <aneesh.nl@gmail.com>\n"
+"POT-Creation-Date: 2013-03-11 10:44+0000\n"
+"PO-Revision-Date: 2013-03-12 00:05+0530\n"
+"Last-Translator: Balasankar C <c.balasankar@gmail.com>\n"
 "Language-Team: Swatantra Malayalam Computing\n"
 "Language: ml\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-DamnedLies-Scope: partial\n"
 "X-Generator: Virtaal 0.7.1\n"
 "X-Poedit-Country: INDIA\n"
 "X-Project-Style: gnome\n"
@@ -40,13 +42,14 @@ msgstr "സോഫ്റ്റ്‌വെയര്‍ പ്രവര്‍ത�
 #. set dialog properties
 #: ../data/nautilus-connect-server.desktop.in.in.h:1
 #: ../src/nautilus-connect-server-dialog.c:588
+#: ../src/nautilus-places-sidebar.c:800
 msgid "Connect to Server"
 msgstr "സര്‍വറിലേക്കു് കണക്ടു് ചെയ്യുക"
 
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
-#: ../src/nautilus-file-management-properties.ui.h:27
-#: ../src/nautilus-properties-window.c:4474 ../src/nautilus-window.c:1858
+#: ../src/nautilus-file-management-properties.ui.h:29
+#: ../src/nautilus-properties-window.c:4474 ../src/nautilus-window.c:1860
 #: ../src/nautilus-window.c:2058
 msgid "Files"
 msgstr "ഫയലുകള്‍"
@@ -141,13 +144,13 @@ msgstr "(അസാധുവായ യുണികോഡ്)"
 #: ../libnautilus-private/nautilus-bookmark.c:108
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:275
-#: ../src/nautilus-pathbar.c:295 ../src/nautilus-places-sidebar.c:516
+#: ../src/nautilus-pathbar.c:295 ../src/nautilus-places-sidebar.c:528
 #: ../src/nautilus-query-editor.c:1164
 #: ../src/nautilus-shell-search-provider.c:310
 msgid "Home"
 msgstr "ആസ്ഥാനം"
 
-#: ../libnautilus-private/nautilus-canvas-container.c:2380
+#: ../libnautilus-private/nautilus-canvas-container.c:2381
 msgid "The selection rectangle"
 msgstr "തെരഞ്ഞെടുക്കല്‍ ചതുരം"
 
@@ -196,7 +199,7 @@ msgid "Use De_fault"
 msgstr "സ്വതവേയുള്ളതു്  ഉപയോഗിക്കുക"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:56
-#: ../src/nautilus-list-view.c:1509
+#: ../src/nautilus-list-view.c:1708
 msgid "Name"
 msgstr "പേരു്"
 
@@ -940,7 +943,7 @@ msgstr "ചവറ്റ്കുട്ടയിലുള്ളവയെല്ല
 #. Empty Trash menu item
 #: ../libnautilus-private/nautilus-file-operations.c:1363
 #: ../libnautilus-private/nautilus-file-operations.c:2241
-#: ../src/nautilus-places-sidebar.c:2764
+#: ../src/nautilus-places-sidebar.c:2880
 msgid "Empty _Trash"
 msgstr "ചവറ്റുകുട്ട വെടിപ്പാക്കുക"
 
@@ -2264,18 +2267,29 @@ msgid "Default column order in the list view."
 msgstr "പട്ടികാ പ്രദര്‍ശനരീതിയില്‍ നിരകളുടെ സ്വതവേയുള്ള ക്രമം"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:54
+#, fuzzy
+#| msgid "Text view:"
+msgid "Use tree view"
+msgstr "വാചക കാഴ്ച:"
+
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:55
+msgid ""
+"Whether a tree should be used for list view navigation instead of a flat list"
+msgstr ""
+
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
 msgid "Desktop font"
 msgstr "പണിയിടത്തിലെ അക്ഷരരൂപം"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:55
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
 msgid "The font _description used for the icons on the desktop."
 msgstr "പണിയിടത്തിലുളള സൂചനാചിത്രങ്ങള്‍ക്കായി ഉപയോഗിക്കുന്ന അക്ഷരരൂപത്തിന്റെ വി_വരണം."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:58
 msgid "Home icon visible on desktop"
 msgstr "പണിയിടത്തില്‍ ദൃശ്യമായ ആസ്ഥാന സൂചനാചിത്രം"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:59
 msgid ""
 "If this is set to true, an icon linking to the home folder will be put on "
 "the desktop."
@@ -2283,22 +2297,22 @@ msgstr ""
 "ഇതു്  ശരി എന്നു ക്രമീകരിച്ചാല്‍, ആസ്ഥാന കൂടിനെ സൂചിപ്പിക്കുന്ന സൂചനാചിത്രങ്ങള്‍ പണിയിടത്തിലാവും "
 "കാണുക"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:58
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:60
 msgid "Trash icon visible on desktop"
 msgstr "പണിയിടത്തില്‍ ദൃശ്യമായ ചവറ്റുകുട്ടയുടെ സൂചനാചിത്രം"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:59
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:61
 msgid ""
 "If this is set to true, an icon linking to the trash will be put on the "
 "desktop."
 msgstr ""
 "ഇതു്  ശരി എന്നു ക്രമീകരിച്ചാല്‍, ചവറ്റുകുട്ടയെ സൂചിപ്പിക്കുന്ന സൂചനാചിത്രങ്ങള്‍ പണിയിടത്തിലാവും കാണുക"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:60
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:62
 msgid "Show mounted volumes on the desktop"
 msgstr "പണിയിടത്തില്‍ മൌണ്ടു് ചെയ്ത വോള്യമുകള്‍ കാണിക്കുക"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:61
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:63
 msgid ""
 "If this is set to true, icons linking to mounted volumes will be put on the "
 "desktop."
@@ -2306,11 +2320,11 @@ msgstr ""
 "ഇതു്  ശരി എന്നു ക്രമീകരിച്ചാല്‍, മൌണ്ടു് ചെയ്തിരിയ്ക്കുന്ന വോള്യമുകളെ സൂചിപ്പിക്കുന്ന സൂചനാചിത്രങ്ങള്‍ "
 "പണിയിടത്തിലാവും കാണുക"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:62
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:64
 msgid "Network Servers icon visible on the desktop"
 msgstr "പണിയിടത്തില്‍ ദൃശ്യമായ നെറ്റ്‌വര്‍ക്കു് സര്‍വറുകളുടെ സൂചനാചിത്രങ്ങള്‍"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:63
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:65
 msgid ""
 "If this is set to true, an icon linking to the Network Servers view will be "
 "put on the desktop."
@@ -2318,38 +2332,38 @@ msgstr ""
 "ഇതു്  ശരി എന്നു ക്രമീകരിച്ചാല്‍, നെറ്റ്‌വര്‍ക്കു് സര്‍വറുകളെ സൂചിപ്പിക്കുന്ന സൂചനാചിത്രങ്ങള്‍ "
 "പണിയിടത്തിലാവും കാണുക"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:64
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:66
 msgid "Desktop home icon name"
 msgstr "പണിയിടത്തിലെ ആസ്ഥാന സൂചനാചിത്രത്തിന്റെ പേരു്"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:65
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:67
 msgid ""
 "This name can be set if you want a custom name for the home icon on the "
 "desktop."
 msgstr "പണിയിടത്തിലുളള ആസ്ഥാനത്തിന്റെ സൂചനാചിത്രത്തിന് നിങ്ങള്‍ക്കു്  ക്രമീകരിക്കാവുന്ന പേരു്"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:66
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:68
 msgid "Desktop trash icon name"
 msgstr "പണിയിടത്തിലെ ചവറ്റുകുട്ട സൂചനാചിത്രത്തിന്റെ പേരു്"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:67
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:69
 msgid ""
 "This name can be set if you want a custom name for the trash icon on the "
 "desktop."
 msgstr "പണിയിടത്തിലുളള ചവറ്റുകുട്ടയുടെ സൂചനാചിത്രത്തിന് നിങ്ങള്‍ക്കു്  ക്രമീകരിക്കാവുന്ന പേരു്"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:68
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:70
 msgid "Network servers icon name"
 msgstr "നെറ്റ്‌വര്‍ക്കു് സര്‍വറുകളുടെ സൂചനാചിത്ര നാമം"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:69
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:71
 msgid ""
 "This name can be set if you want a custom name for the network servers icon "
 "on the desktop."
 msgstr ""
 "പണിയിടത്തിലുളള നെറ്റ്‌വര്‍ക്ക്​ സര്‍വറുകളുടെ സൂചനാചിത്രത്തിന് നിങ്ങള്‍ക്കു് പേരു് ക്രമീകരിക്കാവുന്ന പേരു്"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:70
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:72
 msgid ""
 "An integer specifying how parts of overlong file names should be replaced by "
 "ellipses on the desktop. If the number is larger than 0, the file name will "
@@ -2361,56 +2375,56 @@ msgstr ""
 "കൂടില്ല. സംഖ്യ പൂജ്യമോ അതില്‍ ചെറുതോ ആണെങ്കില്‍ കാണിയ്ക്കുന്ന വരികള്‍ക്കു് ഒരു പരിധിയും "
 "വയ്ക്കുന്നതായിരിയ്ക്കില്ല."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:71
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:73
 msgid "Fade the background on change"
 msgstr "മാറുമ്പോള്‍ പശ്ചാത്തലം മങ്ങിയതാക്കുക"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:72
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:74
 msgid ""
 "If set to true, then Nautilus will use a fade effect to change the desktop "
 "background."
 msgstr "ഇതു്  true എങ്കില്‍, നോട്ടിലസ് പണിയിടത്തില്‍ സൂചനാചിത്രങ്ങള്‍ സജ്ജമാക്കും."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:73
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:75
 msgid "The geometry string for a navigation window."
 msgstr "ഒരു നാവിഗേഷന്‍ ജാലകത്തിനുള്ള ജോമട്രി സ്ട്രിങ്."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:74
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:76
 msgid ""
 "A string containing the saved geometry and coordinates string for navigation "
 "windows."
 msgstr "സൂക്ഷിച്ച ജോമട്രിയും നാവിഗേഷന്‍ ജാലകങ്ങള്‍ക്കുള്ള കോര്‍ഡിനേറ്റ് സ്ട്രിങും അടങ്ങുന്നൊരു സ്ട്രിങ്."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:75
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:77
 msgid "Whether the navigation window should be maximized."
 msgstr "നാവിഗേഷന്‍ ജാലകം പൂര്‍ണ്ണവലിപ്പത്തില്‍ ആക്കണമോ വേണ്ടയോ എന്ന്."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:76
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:78
 msgid "Whether the navigation window should be maximized by default."
 msgstr "നാവിഗേഷന്‍ ജാലകം സ്വതവേ പൂര്‍ണ്ണവലിപ്പത്തില്‍ ആക്കണമോ വേണ്ടയോ എന്ന്."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:77
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:79
 msgid "Width of the side pane"
 msgstr "പാര്‍ശ്വ കളത്തിന്റെ വീതി"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:78
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:80
 msgid "The default width of the side pane in new windows."
 msgstr "പുതിയ ജാലകങ്ങളിലുളള പാര്‍ശ്വ കളത്തിന്റെ സ്വതവേയുള്ള വീതി."
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:79
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:81
 msgid "Show location bar in new windows"
 msgstr "പുതിയ ജാലകങ്ങളില്‍ സ്ഥാനപട്ട കാണിക്കുക"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:80
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:82
 msgid ""
 "If set to true, newly opened windows will have the location bar visible."
 msgstr "ഇതു്  ശരി എങ്കില്‍, പുതുതായി തുറന്ന ജാലകങ്ങളില്‍ സ്ഥാനസൂചനാപട്ട ദൃശ്യമായിരിയ്ക്കും"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:81
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:83
 msgid "Show side pane in new windows"
 msgstr "പുതിയ ജാലകങ്ങളില്‍ പാര്‍ശ്വ കളം കാണിക്കുക"
 
-#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:82
+#: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:84
 msgid "If set to true, newly opened windows will have the side pane visible."
 msgstr ""
 "ഇതു് ശരി എന്ന് ക്രമീകരിക്കുകയാണെങ്കില്‍, പുതുതായി തുറന്ന ജാലകങ്ങളില്‍ പാര്‍ശ്വ കളം ദൃശ്യമായിരിയ്ക്കും"
@@ -2429,7 +2443,7 @@ msgid "Send files by mail, instant message…"
 msgstr "മെയിലായോ ഇന്‍സ്റ്റന്റ് മെസ്സേജ് ആയോ ഫയലുകള്‍ അയക്കുക…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1597
+#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1610
 msgid "Oops! Something went wrong."
 msgstr "ഒരു പിശകുണ്ടായിരിയ്ക്കുന്നു...!!"
 
@@ -2463,8 +2477,8 @@ msgstr ""
 "നോട്ടിലസ് 3.0 ഈ ഡയറക്ടറി ഇല്ലാതാക്കി ഈ ക്രമീകരണം ~/.config/nautilus-ലേക്കു് നീക്കുവാന്‍ "
 "ശ്രമിച്ചു."
 
-#: ../src/nautilus-application.c:852
-#: ../src/nautilus-file-management-properties.c:196
+#: ../src/nautilus-application.c:921
+#: ../src/nautilus-file-management-properties.c:197
 #: ../src/nautilus-window-menus.c:253
 #, c-format
 msgid ""
@@ -2474,67 +2488,73 @@ msgstr ""
 "സഹായം ലഭിക്കുന്നതില്‍ തകരാറ്: \n"
 "%s"
 
-#: ../src/nautilus-application.c:1023
+#: ../src/nautilus-application.c:1095
 msgid "--check cannot be used with other options."
 msgstr "--.check മറ്റു ഐച്ഛികങ്ങളോടൊപ്പം ഉപയോഗിക്കാന്‍ കഴിയില്ല."
 
-#: ../src/nautilus-application.c:1029
+#: ../src/nautilus-application.c:1101
 msgid "--quit cannot be used with URIs."
 msgstr "യുആര്‍ഐയ്ക്കൊപ്പം --quit ഉപയോഗിക്കുവാന്‍ സാധ്യമല്ല."
 
-#: ../src/nautilus-application.c:1036
+#: ../src/nautilus-application.c:1108
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry ഒന്നില്‍ക്കൂടുതല്‍ URI യുടെ കൂടെ ഉപയോഗിക്കാന്‍ കഴിയില്ല."
 
-#: ../src/nautilus-application.c:1042
+#: ../src/nautilus-application.c:1114
 msgid "--select must be used with at least an URI."
 msgstr "--select ഒരു URI യുടെ എങ്കിലും കൂടെ ഉപയോഗിക്കണം."
 
-#: ../src/nautilus-application.c:1048
+#: ../src/nautilus-application.c:1120
 msgid "--no-desktop and --force-desktop cannot be used together."
 msgstr "--no-desktop, --force-desktop തുടങ്ങിയവ ഒന്നിച്ചുപയോഗിക്കാന്‍ പറ്റില്ല."
 
-#: ../src/nautilus-application.c:1146
+#: ../src/nautilus-application.c:1219
 msgid "Perform a quick set of self-check tests."
 msgstr "പെട്ടെന്നുളള ഒരു സ്വയം‌ പരിശോധന നടത്തുക."
 
-#: ../src/nautilus-application.c:1152
+#: ../src/nautilus-application.c:1225
 msgid "Show the version of the program."
 msgstr "പ്രോഗ്രാമിന്റെ പതിപ്പു് കാണിക്കുക."
 
-#: ../src/nautilus-application.c:1154
+#: ../src/nautilus-application.c:1227
 msgid "Create the initial window with the given geometry."
 msgstr "തന്നിരിയ്ക്കുന്ന ജ്യാമിതിയനുസരിച്ചു് ആദ്യ ജാലകം ഉണ്ടാക്കുക"
 
-#: ../src/nautilus-application.c:1154
+#: ../src/nautilus-application.c:1227
 msgid "GEOMETRY"
 msgstr "ജ്യാമിതി"
 
-#: ../src/nautilus-application.c:1156
+#: ../src/nautilus-application.c:1229
+#, fuzzy
+#| msgid "Only create windows for explicitly specified URIs."
+msgid "Always open a new window for browsing specified URIs"
+msgstr "പ്രത്യേകമായി പറഞ്ഞിരിയ്ക്കുന്ന URI-യ്ക്കു് മാത്രം ജാലകങ്ങള്‍ ഉണ്ടാക്കുക."
+
+#: ../src/nautilus-application.c:1231
 msgid "Only create windows for explicitly specified URIs."
 msgstr "പ്രത്യേകമായി പറഞ്ഞിരിയ്ക്കുന്ന URI-യ്ക്കു് മാത്രം ജാലകങ്ങള്‍ ഉണ്ടാക്കുക."
 
-#: ../src/nautilus-application.c:1158
+#: ../src/nautilus-application.c:1233
 msgid "Never manage the desktop (ignore the GSettings preference)."
 msgstr "പണിയിടം കൈകാര്യം ചെയ്യേണ്ടതില്ല (Gsettings മുന്‍ഗണനകള്‍ അവഗണിക്കുക)."
 
-#: ../src/nautilus-application.c:1160
+#: ../src/nautilus-application.c:1235
 msgid "Always manage the desktop (ignore the GSettings preference)."
 msgstr "എപ്പോഴും പണിയിടം കൈകാര്യം ചെയ്യുക (Gsettings മുന്‍ഗണനകള്‍ അവഗണിക്കുക)."
 
-#: ../src/nautilus-application.c:1162
+#: ../src/nautilus-application.c:1237
 msgid "Quit Nautilus."
 msgstr "നോട്ടിലസ് വിടുക."
 
-#: ../src/nautilus-application.c:1164
+#: ../src/nautilus-application.c:1239
 msgid "Select specified URI in parent folder."
 msgstr "മാതൃ അറയില്‍ നിന്ന് പറഞ്ഞ URI തിരഞ്ഞെടുക്കുക."
 
-#: ../src/nautilus-application.c:1165
+#: ../src/nautilus-application.c:1240
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: ../src/nautilus-application.c:1178
+#: ../src/nautilus-application.c:1252
 msgid ""
 "\n"
 "\n"
@@ -2546,13 +2566,13 @@ msgstr ""
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1188
+#: ../src/nautilus-application.c:1262
 msgid "Could not parse arguments"
 msgstr "ആര്‍ഗ്യുമെന്റുകള്‍ പാഴ്സ് ചെയ്യുവാന്‍ സാധ്യമല്ല"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1221
+#: ../src/nautilus-application.c:1295
 msgid "Could not register the application"
 msgstr "പ്രയോഗം രജിസ്ടര്‍ ചെയ്യുവാന്‍ സാധ്യമല്ല"
 
@@ -2629,12 +2649,12 @@ msgstr "നടപ്പിലാക്കുക"
 msgid "No bookmarks defined"
 msgstr "ഓര്‍മ്മക്കുറിപ്പുകള്‍ ഒന്നും ഇല്ല"
 
-#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:245
+#: ../src/nautilus-bookmarks-window.c:710 ../src/nautilus-places-sidebar.c:249
 msgid "Bookmarks"
 msgstr "അടയാളക്കുറിപ്പുകള്‍"
 
 #: ../src/nautilus-bookmarks-window.ui.h:1
-#: ../src/nautilus-places-sidebar.c:2699
+#: ../src/nautilus-places-sidebar.c:2809
 msgid "Remove"
 msgstr "നീക്കം ചെയ്യുക"
 
@@ -2734,26 +2754,26 @@ msgstr "ഒരു നിരയില്‍ തെരച്ചിലനുസര�
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
-#: ../src/nautilus-canvas-view.c:2292
+#: ../src/nautilus-canvas-view.c:2306
 #: ../src/nautilus-canvas-view-container.c:571
-#: ../src/nautilus-file-management-properties.ui.h:33
+#: ../src/nautilus-file-management-properties.ui.h:35
 msgid "Icon View"
 msgstr "സൂചക ദൃശ്യം"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-canvas-view.c:2294
+#: ../src/nautilus-canvas-view.c:2308
 msgid "_Icons"
 msgstr "_ചിഹ്നങ്ങള്‍"
 
-#: ../src/nautilus-canvas-view.c:2295
+#: ../src/nautilus-canvas-view.c:2309
 msgid "The icon view encountered an error."
 msgstr "സൂചനാചിത്രപ്രദര്‍ശനരീതിയില്‍ പിശക്."
 
-#: ../src/nautilus-canvas-view.c:2296
+#: ../src/nautilus-canvas-view.c:2310
 msgid "The icon view encountered an error while starting up."
 msgstr "സൂചനാചിത്രപ്രദര്‍ശനരീതി തുടങ്ങുമ്പോള്‍ പിശക്."
 
-#: ../src/nautilus-canvas-view.c:2297
+#: ../src/nautilus-canvas-view.c:2311
 msgid "Display this location with the icon view."
 msgstr "ഈ സ്ഥാനം സൂചനാചിത്രപ്രദര്‍ശനരീതിയില്‍ പ്രദര്‍ശിപ്പിക്കുക."
 
@@ -2828,73 +2848,73 @@ msgstr "കണക്ടു് ചെയ്യുക"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:706 ../src/nautilus-view.c:7146
+#: ../src/nautilus-desktop-canvas-view.c:623 ../src/nautilus-view.c:7146
 #: ../src/nautilus-view.c:8679
 msgid "E_mpty Trash"
 msgstr "ചവറ്റുകുട്ട കാലിയാക്കുക"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:730
-#: ../src/nautilus-desktop-canvas-view.c:771
+#: ../src/nautilus-desktop-canvas-view.c:647
+#: ../src/nautilus-desktop-canvas-view.c:688
 msgid "Restore Icons' Original Si_zes"
 msgstr "സൂചനാചിത്രങ്ങള്‍ യഥാര്‍ത്ഥ വലിപ്പത്തിലേക്കു് കൊണ്ടു വരിക"
 
-#: ../src/nautilus-desktop-canvas-view.c:731
+#: ../src/nautilus-desktop-canvas-view.c:648
 msgid "Restore Icon's Original Si_ze"
 msgstr "സൂചനാചിത്രം യഥാര്‍ത്ഥ വലുപ്പത്തില്‍ കൊണ്ടു വരിക"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:743
+#: ../src/nautilus-desktop-canvas-view.c:660
 msgid "Change Desktop _Background"
 msgstr "പണിയിടപശ്ചാത്തലം മാറ്റുക"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:745
+#: ../src/nautilus-desktop-canvas-view.c:662
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr "പണിയിടത്തിന്റെ നിറമോ പാറ്റേണോ മാറ്റാനുള്ള ജാലകം തുറക്കുക"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:750
+#: ../src/nautilus-desktop-canvas-view.c:667
 msgid "Empty Trash"
 msgstr "ചവറു് കളയുക"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:752 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:669 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7147
 msgid "Delete all items in the Trash"
 msgstr "ചവറ്റുകുട്ടയിലുള്ള എല്ലാ ഇനങ്ങളും നശിപ്പിക്കുക"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:757
+#: ../src/nautilus-desktop-canvas-view.c:674
 msgid "_Organize Desktop by Name"
 msgstr "പേരനുസരിച്ച് പണിയിടം _ക്രമീകരിക്കുക"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:759
+#: ../src/nautilus-desktop-canvas-view.c:676
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr "കൂടിക്കലരാതെ നന്നായി ഒരുമിച്ചിരിയ്ക്കും വിധം സൂചനാചിത്രങ്ങള്‍ വിന്യസിക്കുക"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:764
+#: ../src/nautilus-desktop-canvas-view.c:681
 msgid "Resize Icon…"
 msgstr "ചിഹ്നത്തിന്റെ വലിപ്പം മാറ്റുക…"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:766
+#: ../src/nautilus-desktop-canvas-view.c:683
 msgid "Make the selected icons resizable"
 msgstr "തെരഞ്ഞെടുത്ത സൂചനാചിത്രം വലിപ്പവ്യത്യാസം വരുത്താവുന്നതാക്കുക"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:773
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore each selected icons to its original size"
 msgstr "തെരഞ്ഞെടുത്ത സൂചനാചിത്രങ്ങള്‍ യഥാര്‍ത്ഥ വലിപ്പത്തിലാക്കുക"
 
-#: ../src/nautilus-desktop-canvas-view.c:851
+#: ../src/nautilus-desktop-canvas-view.c:768
 msgid "The desktop view encountered an error."
 msgstr "പണിയിട കാഴ്ചയില്‍ ഒരു തകരാറ് സംഭവിച്ചിരിയ്ക്കുന്നു."
 
-#: ../src/nautilus-desktop-canvas-view.c:852
+#: ../src/nautilus-desktop-canvas-view.c:769
 msgid "The desktop view encountered an error while starting up."
 msgstr "ആരംഭത്തില്‍ പണിയിട കാഴ്ചയില്‍ ഒരു തകരാറ് സംഭവിച്ചിരിയ്ക്കുന്നു."
 
@@ -2920,8 +2940,8 @@ msgid "Command"
 msgstr "നിര്‍ദ്ദേശം "
 
 #. hardcode "Desktop"
-#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:263
-#: ../src/nautilus-places-sidebar.c:528
+#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:240
+#: ../src/nautilus-places-sidebar.c:540
 msgid "Desktop"
 msgstr "പണിയിടം"
 
@@ -3028,7 +3048,7 @@ msgid "Renaming “%s” to “%s”."
 msgstr "\"%s\" നെ \"%s\"-ലേക്കു് പുനര്‍നാമകരണം ചെയ്യുന്നു."
 
 #. Translators: this is referred to captions under icons.
-#: ../src/nautilus-file-management-properties.c:280
+#: ../src/nautilus-file-management-properties.c:281
 #: ../src/nautilus-properties-window.c:4049
 #: ../src/nautilus-properties-window.c:4076
 msgid "None"
@@ -3108,7 +3128,7 @@ msgstr "ഓരോ പ്രാവശ്യവും ചോദിക്കുക"
 
 #. trash
 #: ../src/nautilus-file-management-properties.ui.h:19
-#: ../src/nautilus-places-sidebar.c:542
+#: ../src/nautilus-places-sidebar.c:554
 #: ../src/nautilus-shell-search-provider.c:315 ../src/nautilus-trash-bar.c:195
 msgid "Trash"
 msgstr "ചവറ്റുകുട്ട‌"
@@ -3135,154 +3155,158 @@ msgstr ""
 "സൂചനാചിത്രങ്ങളുടെ ശീര്‍ഷകങ്ങളുടെ അടിയില്‍ കാണിക്കുന്ന  വിവരങ്ങളുടെ ക്രമം. വലുതാക്കിയാല്‍ കുറേക്കൂടി "
 "വിവരങ്ങള്‍ കാണാം."
 
+#. translators: this is used in the view selection dropdown
+#. * of navigation windows and in the preferences dialog
 #: ../src/nautilus-file-management-properties.ui.h:24
+#: ../src/nautilus-list-view.c:1790 ../src/nautilus-list-view.c:3325
+msgid "List View"
+msgstr "നാമാവലി കാഴ്ച"
+
+#: ../src/nautilus-file-management-properties.ui.h:25
+msgid "Navigate folders in a tree"
+msgstr "വൃക്ഷത്തിലെ അറകൾ സന്ദർശിക്കുക"
+
+#: ../src/nautilus-file-management-properties.ui.h:26
 msgid "Display"
 msgstr "പ്രദര്‍ശനം "
 
-#: ../src/nautilus-file-management-properties.ui.h:25
+#: ../src/nautilus-file-management-properties.ui.h:27
 msgid "Choose the order of information to appear in the list view."
 msgstr "പട്ടികാപ്രദര്‍ശനരീതിയില്‍ കാണപ്പെടേണ്ട വിവരങ്ങളുടെ ക്രമം തിരഞ്ഞെടുക്കുക."
 
-#: ../src/nautilus-file-management-properties.ui.h:26
+#: ../src/nautilus-file-management-properties.ui.h:28
 msgid "List Columns"
 msgstr "നിരകള്‍ ലിസ്റ്റ് ചെയ്യുക"
 
-#: ../src/nautilus-file-management-properties.ui.h:28
+#: ../src/nautilus-file-management-properties.ui.h:30
 msgid "Show _thumbnails:"
 msgstr "നഖചിത്രങ്ങള്‍ പ്രദര്‍ശിപ്പിക്കുക:"
 
-#: ../src/nautilus-file-management-properties.ui.h:29
+#: ../src/nautilus-file-management-properties.ui.h:31
 msgid "_Only for files smaller than:"
 msgstr "ഇതിലും ചെറുതായ രചനകള്‍ക്കു് മാത്രം:"
 
-#: ../src/nautilus-file-management-properties.ui.h:30
+#: ../src/nautilus-file-management-properties.ui.h:32
 #: ../src/nautilus-properties-window.c:4477
 msgid "Folders"
 msgstr "ഫോള്‍ഡറുകള്‍:"
 
-#: ../src/nautilus-file-management-properties.ui.h:31
+#: ../src/nautilus-file-management-properties.ui.h:33
 msgid "Count _number of items:"
 msgstr "ഇനങ്ങളുടെ എണ്ണം തിട്ടപ്പെടുത്തുക:"
 
-#: ../src/nautilus-file-management-properties.ui.h:32
+#: ../src/nautilus-file-management-properties.ui.h:34
 msgid "Preview"
 msgstr "തിരനോട്ടം"
 
-#. translators: this is used in the view selection dropdown
-#. * of navigation windows and in the preferences dialog
-#: ../src/nautilus-file-management-properties.ui.h:34
-#: ../src/nautilus-list-view.c:1578 ../src/nautilus-list-view.c:3023
-msgid "List View"
-msgstr "നാമാവലി കാഴ്ച"
-
-#: ../src/nautilus-file-management-properties.ui.h:35
+#: ../src/nautilus-file-management-properties.ui.h:36
 msgid "Always"
 msgstr "എപ്പോഴും"
 
-#: ../src/nautilus-file-management-properties.ui.h:36
+#: ../src/nautilus-file-management-properties.ui.h:37
 msgid "Local Files Only"
 msgstr "പ്രാദേശിക ഫയലുകള്‍ മാത്രം"
 
-#: ../src/nautilus-file-management-properties.ui.h:37
+#: ../src/nautilus-file-management-properties.ui.h:38
 msgid "Never"
 msgstr "ഒരിയ്ക്കലുമില്ല"
 
-#: ../src/nautilus-file-management-properties.ui.h:38
+#: ../src/nautilus-file-management-properties.ui.h:39
 msgid "By Name"
 msgstr "നാമത്തിനനുസരിച്ച്‌"
 
-#: ../src/nautilus-file-management-properties.ui.h:39
+#: ../src/nautilus-file-management-properties.ui.h:40
 msgid "By Size"
 msgstr "വലുപ്പമനുസരിച്ച്‌"
 
-#: ../src/nautilus-file-management-properties.ui.h:40
+#: ../src/nautilus-file-management-properties.ui.h:41
 msgid "By Type"
 msgstr "ഇനത്തിനനുസരിച്ച്‌"
 
-#: ../src/nautilus-file-management-properties.ui.h:41
+#: ../src/nautilus-file-management-properties.ui.h:42
 msgid "By Modification Date"
 msgstr "രൂപാന്തരീകരണ തീയതിയാല്‍"
 
-#: ../src/nautilus-file-management-properties.ui.h:42
+#: ../src/nautilus-file-management-properties.ui.h:43
 msgid "By Access Date"
 msgstr "ഉപയോഗിച്ച തീയ്യതി പ്രകാരം"
 
-#: ../src/nautilus-file-management-properties.ui.h:43
+#: ../src/nautilus-file-management-properties.ui.h:44
 msgid "By Trashed Date"
 msgstr "ചവറ്റുകുട്ടയിലേക്ക് മാറ്റിയ തീയ്യതി പ്രകാരം"
 
-#: ../src/nautilus-file-management-properties.ui.h:45
+#: ../src/nautilus-file-management-properties.ui.h:46
 #, no-c-format
 msgid "33%"
 msgstr "33%"
 
-#: ../src/nautilus-file-management-properties.ui.h:47
+#: ../src/nautilus-file-management-properties.ui.h:48
 #, no-c-format
 msgid "50%"
 msgstr "50%"
 
-#: ../src/nautilus-file-management-properties.ui.h:49
+#: ../src/nautilus-file-management-properties.ui.h:50
 #, no-c-format
 msgid "66%"
 msgstr "66%"
 
-#: ../src/nautilus-file-management-properties.ui.h:51
+#: ../src/nautilus-file-management-properties.ui.h:52
 #, no-c-format
 msgid "100%"
 msgstr "100%"
 
-#: ../src/nautilus-file-management-properties.ui.h:53
+#: ../src/nautilus-file-management-properties.ui.h:54
 #, no-c-format
 msgid "150%"
 msgstr "150%"
 
-#: ../src/nautilus-file-management-properties.ui.h:55
+#: ../src/nautilus-file-management-properties.ui.h:56
 #, no-c-format
 msgid "200%"
 msgstr "200%"
 
-#: ../src/nautilus-file-management-properties.ui.h:57
+#: ../src/nautilus-file-management-properties.ui.h:58
 #, no-c-format
 msgid "400%"
 msgstr "400%"
 
-#: ../src/nautilus-file-management-properties.ui.h:58
+#: ../src/nautilus-file-management-properties.ui.h:59
 msgid "100 KB"
 msgstr "100 KB"
 
-#: ../src/nautilus-file-management-properties.ui.h:59
+#: ../src/nautilus-file-management-properties.ui.h:60
 msgid "500 KB"
 msgstr "500 KB"
 
-#: ../src/nautilus-file-management-properties.ui.h:60
+#: ../src/nautilus-file-management-properties.ui.h:61
 msgid "1 MB"
 msgstr "1 MB"
 
-#: ../src/nautilus-file-management-properties.ui.h:61
+#: ../src/nautilus-file-management-properties.ui.h:62
 msgid "3 MB"
 msgstr "3 MB"
 
-#: ../src/nautilus-file-management-properties.ui.h:62
+#: ../src/nautilus-file-management-properties.ui.h:63
 msgid "5 MB"
 msgstr "5 MB"
 
-#: ../src/nautilus-file-management-properties.ui.h:63
+#: ../src/nautilus-file-management-properties.ui.h:64
 msgid "10 MB"
 msgstr "10 MB"
 
-#: ../src/nautilus-file-management-properties.ui.h:64
+#: ../src/nautilus-file-management-properties.ui.h:65
 msgid "100 MB"
 msgstr "100 MB"
 
-#: ../src/nautilus-file-management-properties.ui.h:65
+#: ../src/nautilus-file-management-properties.ui.h:66
 msgid "1 GB"
 msgstr "1 GB"
 
-#: ../src/nautilus-file-management-properties.ui.h:66
+#: ../src/nautilus-file-management-properties.ui.h:67
 msgid "2 GB"
 msgstr "2 GB"
 
-#: ../src/nautilus-file-management-properties.ui.h:67
+#: ../src/nautilus-file-management-properties.ui.h:68
 msgid "4 GB"
 msgstr "4 GB"
 
@@ -3413,8 +3437,8 @@ msgid "Failed to load image information"
 msgstr "ചിത്ര-വിവരം ലഭിക്കുന്നതില്‍ പരാജയം"
 
 #: ../src/nautilus-image-properties-page.c:708
-#: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:606
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:607
+#: ../src/nautilus-window-slot.c:2257
 msgid "Loading…"
 msgstr "ലഭ്യമാക്കുന്നു…"
 
@@ -3422,40 +3446,40 @@ msgstr "ലഭ്യമാക്കുന്നു…"
 msgid "(Empty)"
 msgstr "(ഒഴിഞ്ഞ)"
 
-#: ../src/nautilus-list-view.c:2277
+#: ../src/nautilus-list-view.c:2579
 #, c-format
 msgid "%s Visible Columns"
 msgstr "%s ദൃശ്യമായ നിരകള്‍"
 
-#: ../src/nautilus-list-view.c:2297
+#: ../src/nautilus-list-view.c:2599
 msgid "Choose the order of information to appear in this folder:"
 msgstr "ഈ അറയില്‍ കാണുവാന്‍ ആഗ്രഹിക്കുന്ന വിവരങ്ങളുടെ ക്രമം തിരഞ്ഞെടുക്കുക:"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-list-view.c:2352
+#: ../src/nautilus-list-view.c:2654
 msgid "Visible _Columns…"
 msgstr "ദൃശ്യമായ _നിരകള്‍…"
 
 #. tooltip
-#: ../src/nautilus-list-view.c:2353
+#: ../src/nautilus-list-view.c:2655
 msgid "Select the columns visible in this folder"
 msgstr "ഈ കൂടില്‍ കാണുവാന്‍ സാധ്യമായ നിരകള്‍ തിരഞ്ഞെടുക്കുക"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-list-view.c:3025
+#: ../src/nautilus-list-view.c:3327
 msgid "_List"
 msgstr "_പട്ടിക"
 
-#: ../src/nautilus-list-view.c:3026
+#: ../src/nautilus-list-view.c:3328
 msgid "The list view encountered an error."
 msgstr "നാമാവലിയായി കാണിക്കുമ്പോള്‍ കാണുന്നതില്‍ പിശക്."
 
-#: ../src/nautilus-list-view.c:3027
+#: ../src/nautilus-list-view.c:3329
 msgid "The list view encountered an error while starting up."
 msgstr "നാമാവലിയായി കാണിക്കാന്‍ തുടങ്ങുമ്പോള്‍ പിശക്."
 
-#: ../src/nautilus-list-view.c:3028
+#: ../src/nautilus-list-view.c:3330
 msgid "Display this location with the list view."
 msgstr "ഈ സ്ഥാനം നാമാവലിയായി കാണിക്കുമ്പോള്‍ പ്രദര്‍ശിപ്പിക്കുക."
 
@@ -3613,61 +3637,67 @@ msgstr[1] "%d ഇനങ്ങള്‍ തുറക്കുന്നു"
 msgid "Close tab"
 msgstr "കിളിവാതില്‍ അടയ്ക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:237
+#: ../src/nautilus-places-sidebar.c:241
 msgid "Devices"
 msgstr "ഡിവൈസുകള്‍"
 
-#: ../src/nautilus-places-sidebar.c:498
+#: ../src/nautilus-places-sidebar.c:510
 msgid "Places"
 msgstr "സ്ഥലങ്ങള്‍"
 
-#: ../src/nautilus-places-sidebar.c:505
+#: ../src/nautilus-places-sidebar.c:517
 msgid "Recent"
 msgstr "ഏറ്റവും പുതിയതു്"
 
-#: ../src/nautilus-places-sidebar.c:507
+#: ../src/nautilus-places-sidebar.c:519
 msgid "Recent files"
 msgstr "ഏറ്റവും പുതിയ ഫയലുകള്‍"
 
 #. tooltip
-#: ../src/nautilus-places-sidebar.c:518 ../src/nautilus-window-menus.c:534
+#: ../src/nautilus-places-sidebar.c:530 ../src/nautilus-window-menus.c:534
 msgid "Open your personal folder"
 msgstr "നിങ്ങളുടെ സ്വകാര്യ അറ തുറക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:530
+#: ../src/nautilus-places-sidebar.c:542
 msgid "Open the contents of your desktop in a folder"
 msgstr "നിങ്ങളുടെ പണിയറയിലുള്ളവ ഒരു ഫോള്‍ഡറില്‍ തുറക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:544
+#: ../src/nautilus-places-sidebar.c:556
 msgid "Open the trash"
 msgstr "ചവറ്റുകുട്ട തുറക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:596 ../src/nautilus-places-sidebar.c:621
-#: ../src/nautilus-places-sidebar.c:796
+#: ../src/nautilus-places-sidebar.c:608 ../src/nautilus-places-sidebar.c:633
+#: ../src/nautilus-places-sidebar.c:816
 #, c-format
 msgid "Mount and open %s"
 msgstr "മൌണ്ട് ചെയ്തു് %s തുറക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:696
+#: ../src/nautilus-places-sidebar.c:708
 msgid "Open the contents of the File System"
 msgstr "ഫയല്‍ സിസ്റ്റത്തിലുള്ളവ തുറക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:774
+#: ../src/nautilus-places-sidebar.c:786
 msgid "Network"
 msgstr "നെറ്റ്‌വര്‍ക്ക്"
 
-#: ../src/nautilus-places-sidebar.c:780
+#: ../src/nautilus-places-sidebar.c:792
 msgid "Browse Network"
 msgstr "നെറ്റ്‌വര്‍ക്ക് തുറക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:782
+#: ../src/nautilus-places-sidebar.c:794
 msgid "Browse the contents of the network"
 msgstr "നെറ്റ്‌വര്‍ക്കിലുള്ളവ തെരയുക"
+
+#: ../src/nautilus-places-sidebar.c:802
+#, fuzzy
+#| msgid "Connect to Server %s"
+msgid "Connect to a network server address"
+msgstr "%s സര്‍വറിലേക്കു് കണക്ടു് ചെയ്യുക"
 
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1678 ../src/nautilus-places-sidebar.c:2748
+#: ../src/nautilus-places-sidebar.c:1712 ../src/nautilus-places-sidebar.c:2858
 #: ../src/nautilus-view.c:7246 ../src/nautilus-view.c:7270
 #: ../src/nautilus-view.c:7342 ../src/nautilus-view.c:7928
 #: ../src/nautilus-view.c:7932 ../src/nautilus-view.c:8015
@@ -3678,7 +3708,7 @@ msgstr "_ആരംഭിക്കുക"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:1679 ../src/nautilus-places-sidebar.c:2755
+#: ../src/nautilus-places-sidebar.c:1713 ../src/nautilus-places-sidebar.c:2865
 #: ../src/nautilus-view.c:7250 ../src/nautilus-view.c:7274
 #: ../src/nautilus-view.c:7346 ../src/nautilus-view.c:7957
 #: ../src/nautilus-view.c:8044 ../src/nautilus-view.c:8146
@@ -3687,124 +3717,130 @@ msgid "_Stop"
 msgstr "_നിര്‍‌ത്തുക"
 
 #. start() for type G_DRIVE_START_STOP_TYPE_SHUTDOWN is normally not used
-#: ../src/nautilus-places-sidebar.c:1684
+#: ../src/nautilus-places-sidebar.c:1718
 msgid "_Power On"
 msgstr "_പവര്‍ ഓണ്‍ ചെയ്യുക"
 
-#: ../src/nautilus-places-sidebar.c:1685 ../src/nautilus-view.c:7961
+#: ../src/nautilus-places-sidebar.c:1719 ../src/nautilus-view.c:7961
 #: ../src/nautilus-view.c:8048 ../src/nautilus-view.c:8150
 msgid "_Safely Remove Drive"
 msgstr "ഡ്രൈവ് _സുരക്ഷിതമായി നീക്കം ചെയ്യുക"
 
-#: ../src/nautilus-places-sidebar.c:1688
+#: ../src/nautilus-places-sidebar.c:1722
 msgid "_Connect Drive"
 msgstr "ഡ്രൈവ് _കണക്ടു് ചെയ്യുക"
 
-#: ../src/nautilus-places-sidebar.c:1689
+#: ../src/nautilus-places-sidebar.c:1723
 msgid "_Disconnect Drive"
 msgstr "ഡ്രൈവ് _വിഛേദിക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:1692
+#: ../src/nautilus-places-sidebar.c:1726
 msgid "_Start Multi-disk Device"
 msgstr "_മള്‍ട്ടി-ഡിസ്ക് ഡിവൈസ് ആരംഭിക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:1693
+#: ../src/nautilus-places-sidebar.c:1727
 msgid "_Stop Multi-disk Device"
 msgstr "_മള്‍ട്ടി-ഡിസ്ക് ഡിവൈസ് നിര്‍ത്തുക"
 
 #. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
-#: ../src/nautilus-places-sidebar.c:1697 ../src/nautilus-view.c:8031
+#: ../src/nautilus-places-sidebar.c:1731 ../src/nautilus-view.c:8031
 #: ../src/nautilus-view.c:8133
 msgid "_Unlock Drive"
 msgstr "ഡ്രൈവിന്റെ _പൂട്ട് തുറക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:1698 ../src/nautilus-view.c:7973
+#: ../src/nautilus-places-sidebar.c:1732 ../src/nautilus-view.c:7973
 #: ../src/nautilus-view.c:8060 ../src/nautilus-view.c:8162
 msgid "_Lock Drive"
 msgstr "ഡ്രൈവ് _പൂട്ടുക"
 
-#: ../src/nautilus-places-sidebar.c:1775 ../src/nautilus-places-sidebar.c:2384
+#: ../src/nautilus-places-sidebar.c:1809 ../src/nautilus-places-sidebar.c:2453
 #, c-format
 msgid "Unable to start %s"
 msgstr "%s ആരംഭിക്കുവാന്‍ സാധ്യമല്ല"
 
-#: ../src/nautilus-places-sidebar.c:2143 ../src/nautilus-places-sidebar.c:2171
-#: ../src/nautilus-places-sidebar.c:2199
+#: ../src/nautilus-places-sidebar.c:2212 ../src/nautilus-places-sidebar.c:2240
+#: ../src/nautilus-places-sidebar.c:2268
 #, c-format
 msgid "Unable to eject %s"
 msgstr "%s പുറത്തെടുക്കാന്‍ സാധിച്ചില്ല"
 
-#: ../src/nautilus-places-sidebar.c:2339
+#: ../src/nautilus-places-sidebar.c:2408
 #, c-format
 msgid "Unable to poll %s for media changes"
 msgstr "മാധ്യമത്തില്‍ മാറ്റമുണ്ടോ എന്നറിയാന്‍ %s ല്‍ നോക്കുവാന്‍ സാധിച്ചില്ല"
 
-#: ../src/nautilus-places-sidebar.c:2439
+#: ../src/nautilus-places-sidebar.c:2508
 #, c-format
 msgid "Unable to stop %s"
 msgstr "%s നിര്‍ത്തുവാന്‍ സാധ്യമല്ല"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2670 ../src/nautilus-view.c:7118
+#: ../src/nautilus-places-sidebar.c:2780 ../src/nautilus-view.c:7118
 #: ../src/nautilus-view.c:8520
 msgid "_Open"
 msgstr "തുറക്കുക"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2678 ../src/nautilus-view.c:7130
+#: ../src/nautilus-places-sidebar.c:2788 ../src/nautilus-view.c:7130
 #: ../src/nautilus-view.c:7300 ../src/nautilus-view.c:8241
 #: ../src/nautilus-view.c:8574
 msgid "Open in New _Tab"
 msgstr "പുതിയ _കിളിവാതിലില്‍ തുറക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:2685 ../src/nautilus-view.c:8233
+#: ../src/nautilus-places-sidebar.c:2795 ../src/nautilus-view.c:8233
 #: ../src/nautilus-view.c:8554
 msgid "Open in New _Window"
 msgstr "പുതിയ ജാലകത്തില്‍ തുറക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:2693
+#: ../src/nautilus-places-sidebar.c:2803
 msgid "_Add Bookmark"
 msgstr "ഓര്‍മ്മകുറിപ്പായി സൂക്ഷിക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:2708
+#: ../src/nautilus-places-sidebar.c:2818
 msgid "Rename…"
 msgstr "പേര് മാറ്റുക…‌"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2720 ../src/nautilus-view.c:7234
+#: ../src/nautilus-places-sidebar.c:2830 ../src/nautilus-view.c:7234
 #: ../src/nautilus-view.c:7258 ../src/nautilus-view.c:7330
 msgid "_Mount"
 msgstr "മൌണ്ടു് ചെയ്യുക"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2727 ../src/nautilus-view.c:7238
+#: ../src/nautilus-places-sidebar.c:2837 ../src/nautilus-view.c:7238
 #: ../src/nautilus-view.c:7262 ../src/nautilus-view.c:7334
 msgid "_Unmount"
 msgstr "അണ്‍മൌണ്ടു് ചെയ്യുക"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2734 ../src/nautilus-view.c:7242
+#: ../src/nautilus-places-sidebar.c:2844 ../src/nautilus-view.c:7242
 #: ../src/nautilus-view.c:7266 ../src/nautilus-view.c:7338
 msgid "_Eject"
 msgstr "പുറത്തെടുക്കുക"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2741 ../src/nautilus-view.c:7254
+#: ../src/nautilus-places-sidebar.c:2851 ../src/nautilus-view.c:7254
 #: ../src/nautilus-view.c:7278 ../src/nautilus-view.c:7350
 msgid "_Detect Media"
 msgstr "മീഡിയാ _കണ്ടുപിടിക്കുക"
 
-#: ../src/nautilus-places-sidebar.c:2776
+#: ../src/nautilus-places-sidebar.c:2872
+#, fuzzy
+#| msgid "_Format"
+msgid "_Format…"
+msgstr "ഫോര്‍മാറ്റ് ചെയ്യുക"
+
+#: ../src/nautilus-places-sidebar.c:2892
 msgid "_Properties"
 msgstr "ഗുണഗണങ്ങള്‍"
 
-#: ../src/nautilus-places-sidebar.c:3353
+#: ../src/nautilus-places-sidebar.c:3469
 msgid "Computer"
 msgstr "കമ്പ്യൂട്ടര്‍"
 
@@ -4162,11 +4198,11 @@ msgstr "രേഖ തയ്യാറാക്കല്‍ മെനുവില�
 msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr "സ്ക്രിപ്റ്റ്സ് പട്ടികയില്‍ ഈ കൂടിലുള്ള നടപ്പിലാക്കാവുന്ന എല്ലാ ഫയലുകളും കാണും."
 
-#: ../src/nautilus-toolbar.c:473
+#: ../src/nautilus-toolbar.c:488
 msgid "View options"
 msgstr "ഐച്ഛികം വീക്ഷിക്കുക"
 
-#: ../src/nautilus-toolbar.c:490
+#: ../src/nautilus-toolbar.c:505
 msgid "Location options"
 msgstr "സ്ഥലത്തിനുള്ള ഐച്ഛികങ്ങള്‍"
 
@@ -5127,7 +5163,8 @@ msgstr "നിങ്ങളുടെ ഫയലുകളിലേക്കു് �
 msgid "translator-credits"
 msgstr ""
 "സന്തോഷ് തോട്ടിങ്ങല്‍ <santhosh.thottingal@gmail.com>\n"
-"അനി പീറ്റര്‍ <peter.ani@gmail.com>"
+"അനി പീറ്റര്‍ <peter.ani@gmail.com>\n"
+"ബാലശങ്കർ സി <c.balasankar@gmail.com>"
 
 #. name, stock id
 #. label, accelerator
@@ -5425,38 +5462,38 @@ msgstr "പ്രതിരൂപങ്ങളുടെ ഒരു ഗ്രിഡ�
 msgid "_Up"
 msgstr "_മുകളിലേയ്ക്ക്"
 
-#: ../src/nautilus-window-slot.c:1272 ../src/nautilus-window-slot.c:1446
+#: ../src/nautilus-window-slot.c:1285 ../src/nautilus-window-slot.c:1459
 #, c-format
 msgid "Unable to load location"
 msgstr "സ്ഥാനം ലഭ്യമാക്കുവാന്‍ സാധ്യമല്ല"
 
-#: ../src/nautilus-window-slot.c:1601
+#: ../src/nautilus-window-slot.c:1614
 msgid "Unable to display the contents of this folder."
 msgstr "ഈ അറയില്‍ ഉള്ള വിവരങ്ങള്‍ കാണിയ്ക്കുവാന്‍ സാധ്യമല്ല."
 
-#: ../src/nautilus-window-slot.c:1603
+#: ../src/nautilus-window-slot.c:1616
 msgid "This location doesn't appear to be a folder."
 msgstr "സ്ഥാനം ഒരു അറ അല്ല."
 
-#: ../src/nautilus-window-slot.c:1608
+#: ../src/nautilus-window-slot.c:1621
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr "ആവശ്യപ്പെട്ട ഫയല്‍ ലഭ്യമായില്ല. ദയവായി അക്ഷരതെറ്റ് പരിശോധിച്ച ശേഷം വീണ്ടും ശ്രമിക്കുക."
 
-#: ../src/nautilus-window-slot.c:1613
+#: ../src/nautilus-window-slot.c:1626
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "“%s” സ്ഥാനങ്ങള്‍ പിന്തുണയ്ക്കുന്നില്ല."
 
-#: ../src/nautilus-window-slot.c:1616
+#: ../src/nautilus-window-slot.c:1629
 msgid "Unable to handle this kind of location."
 msgstr "ഇത്തരം സ്ഥാനം കൈകാര്യം ചെയ്യുവാന്‍ സാധ്യമല്ല."
 
-#: ../src/nautilus-window-slot.c:1621
+#: ../src/nautilus-window-slot.c:1634
 msgid "Unable to access the requested location."
 msgstr "ആവശ്യപ്പെട്ട സ്ഥാനിലേക്കു് പ്രവേശനം സാധ്യമല്ല."
 
-#: ../src/nautilus-window-slot.c:1624
+#: ../src/nautilus-window-slot.c:1637
 msgid "Don't have permission to access the requested location."
 msgstr "ആവശ്യപ്പെട്ട സ്ഥലത്തിലേക്കു് പ്രവേശിയ്ക്കുവാന്‍ നിങ്ങള്‍ക്കു് അനുവാദമില്ല."
 
@@ -5465,7 +5502,7 @@ msgstr "ആവശ്യപ്പെട്ട സ്ഥലത്തിലേക�
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-slot.c:1632
+#: ../src/nautilus-window-slot.c:1645
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5473,12 +5510,12 @@ msgstr ""
 "ആവശ്യപ്പെട്ട സ്ഥാനം കണ്ടുപിടിയ്ക്കുവാന്‍ സാധ്യമായില്ല. അക്ഷരത്തെറ്റ് അല്ലെങ്കില്‍ നെറ്റ്‌വര്‍ക്ക് "
 "സജ്ജീകരണങ്ങള്‍ ദയവായി പരിശോധിയ്ക്കുക."
 
-#: ../src/nautilus-window-slot.c:1643
+#: ../src/nautilus-window-slot.c:1656
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "കൈകാര്യം ചെയ്യാത്ത പിശക് സന്ദേശം: %s"
 
-#: ../src/nautilus-window-slot.c:2245
+#: ../src/nautilus-window-slot.c:2257
 msgid "Searching…"
 msgstr "തെരയുന്നു…"
 
@@ -6067,9 +6104,6 @@ msgstr "തുറക്കേണ്ട പ്രയോഗം:"
 #~ msgid "File Permissions:"
 #~ msgstr "ഫയലിന്റെ അനുവാദങ്ങള്‍:"
 
-#~ msgid "Text view:"
-#~ msgstr "വാചക കാഴ്ച:"
-
 #~ msgid "Last changed:"
 #~ msgstr "അവസാനം മാറ്റിയതു്:"
 
@@ -6209,9 +6243,6 @@ msgstr "തുറക്കേണ്ട പ്രയോഗം:"
 
 #~ msgid "Unable to eject location"
 #~ msgstr "സ്ഥാനം പുറത്തെടുക്കുവാന്‍ സാധ്യമല്ല"
-
-#~ msgid "Connect to Server %s"
-#~ msgstr "%s സര്‍വറിലേക്കു് കണക്ടു് ചെയ്യുക"
 
 #~ msgid "Link _name:"
 #~ msgstr "ലിങ്കിന്റെ പേരു്:"
@@ -7294,9 +7325,6 @@ msgstr "തുറക്കേണ്ട പ്രയോഗം:"
 
 #~ msgid "Open each selected item in a folder window"
 #~ msgstr "തിരഞ്ഞെടുത്ത ഓരോ ഇനവും ഫോള്‍ഡറിനുള്ള ജാലകത്തില്‍‌ തുറക്കുക"
-
-#~ msgid "_Format"
-#~ msgstr "ഫോര്‍മാറ്റ് ചെയ്യുക"
 
 #~ msgid "Format the selected volume"
 #~ msgstr "തെരഞ്ഞെടുത്ത വോള്യം ഫോര്‍മാറ്റ് ചെയ്യുക"
