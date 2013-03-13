@@ -15,15 +15,15 @@
 #
 # FIXME - selles tõlkes tuleks kontrollida, et failirekvisiitide "modified" ja
 # "changed" poleks omavahel sassi aetud.
-# Mattias Põldaru <mahfiaz@gmail.com>, 2009–2011, 2012.
+# Mattias Põldaru <mahfiaz@gmail.com>, 2009–2011, 2012, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nautilus MASTER\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2012-12-19 15:29+0000\n"
-"PO-Revision-Date: 2012-12-18 18:27+0300\n"
+"POT-Creation-Date: 2013-03-12 16:53+0000\n"
+"PO-Revision-Date: 2013-03-13 10:30+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz@gmail.com>\n"
 "Language-Team: Estonian <gnome-et@linux.ee>\n"
 "Language: et\n"
@@ -37,7 +37,7 @@ msgstr "Tarkvara käivitamine"
 
 #. set dialog properties
 msgid "Connect to Server"
-msgstr "Ühendumine serveriga"
+msgstr "Ühendu serveriga"
 
 #. Set initial window title
 msgid "Files"
@@ -150,7 +150,7 @@ msgid "Move Dow_n"
 msgstr "Liiguta _alla"
 
 msgid "Use De_fault"
-msgstr "Kasuta _vaikimisi"
+msgstr "_Lähtesta"
 
 msgid "Name"
 msgstr "Nimi"
@@ -1780,6 +1780,13 @@ msgstr "Nimekirjavaate vaikimisi veerujärjestus"
 msgid "Default column order in the list view."
 msgstr "Nimekirjavaate vaikimisi suurendus."
 
+msgid "Use tree view"
+msgstr "Puuvaate kasutamine"
+
+msgid ""
+"Whether a tree should be used for list view navigation instead of a flat list"
+msgstr "Kui märgitud, kasutatakse navigeerimiseks lameda loendi asemel puud"
+
 msgid "Desktop font"
 msgstr "Töölaua kirjatüüp"
 
@@ -1958,6 +1965,12 @@ msgstr "--quit võtit pole võimalik koos URI-dega kasutada."
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry võtit pole võimalik rohkem kui ühe URI-ga kasutada."
 
+msgid "--select must be used with at least an URI."
+msgstr "--select võti vajab vähemalt ühte URI-d."
+
+msgid "--no-desktop and --force-desktop cannot be used together."
+msgstr "--no-desktop ja --force-desktop võtit pole võimalik korraga kasutada."
+
 msgid "Perform a quick set of self-check tests."
 msgstr "Kiirete enesetestide läbiviimine."
 
@@ -1970,16 +1983,23 @@ msgstr "Esimese akna loomine näidatud suuruse ja asukohaga."
 msgid "GEOMETRY"
 msgstr "GEOMETRY"
 
+msgid "Always open a new window for browsing specified URIs"
+msgstr "Määratud URI-de sirvimiseks avatakse alati uus aken"
+
 msgid "Only create windows for explicitly specified URIs."
 msgstr "Aknad luuakse ainult määratud URI-dele."
 
-msgid ""
-"Do not manage the desktop (ignore the preference set in the preferences "
-"dialog)."
-msgstr "Töölaua tausta ei hallata (eirab eelistuste aknas valitud sätteid)."
+msgid "Never manage the desktop (ignore the GSettings preference)."
+msgstr "Töölaua tausta ei hallata kunagi (eirab GSettings eelistust)."
+
+msgid "Always manage the desktop (ignore the GSettings preference)."
+msgstr "Töölaua tausta hallatakse alati (eirab GSettings eelistust)."
 
 msgid "Quit Nautilus."
 msgstr "Nautilusest väljumine."
+
+msgid "Select specified URI in parent folder."
+msgstr "Valitud URI valimine ülemises kaustas."
 
 msgid "[URI...]"
 msgstr "[URI...]"
@@ -2366,7 +2386,7 @@ msgstr "“%s” ümbernimetamine “%s”-ks."
 
 #. Translators: this is referred to captions under icons.
 msgid "None"
-msgstr "Puuduvad"
+msgstr "Puudub"
 
 msgid "Files Preferences"
 msgstr "Failihalduri eelistused"
@@ -2375,7 +2395,7 @@ msgid "Default View"
 msgstr "Vaikimisi vaade"
 
 msgid "View _new folders using:"
-msgstr "_Uusi katalooge näidatakse kasutades:"
+msgstr "_Uute kataloogide vaade:"
 
 msgid "_Arrange items:"
 msgstr "Kir_jed järjestatakse:"
@@ -2387,13 +2407,13 @@ msgid "Show hidden and _backup files"
 msgstr "Peidetud- ja varuk_oopiafailid on nähtaval"
 
 msgid "Icon View Defaults"
-msgstr "Ikoonivaate vaikeväärtused"
+msgstr "Ikoonivaade"
 
 msgid "Default _zoom level:"
 msgstr "Vaikimisi _suurendus:"
 
 msgid "List View Defaults"
-msgstr "Nimekirjavaate vaikeväärtused"
+msgstr "Nimekirjavaade"
 
 msgid "D_efault zoom level:"
 msgstr "Vaikimisi suuren_dus:"
@@ -2406,16 +2426,16 @@ msgid "Behavior"
 msgstr "Käitumine"
 
 msgid "_Single click to open items"
-msgstr "Kirjed avatakse ü_he klõpsuga"
+msgstr "Avatakse ü_he klõpsuga"
 
 msgid "_Double click to open items"
-msgstr "Kirjed avatakse _topeltklõpsuga"
+msgstr "Avatakse _topeltklõpsuga"
 
 msgid "Executable Text Files"
 msgstr "Käivitatavad tekstifailid"
 
 msgid "_Run executable text files when they are opened"
-msgstr "Käivitatavade teksti_failide avamisel need käivitatakse"
+msgstr "Käivitatavate tekstifailide avamisel need käivitatakse"
 
 msgid "_View executable text files when they are opened"
 msgstr "Käi_vitatavate tekstifailide avamisel näidatakse nende sisu"
@@ -2445,6 +2465,14 @@ msgstr ""
 "Vali ikooni all olevate andmete järjekord. Täpsemad andmed ilmuvad ikoonide "
 "suurendamisel."
 
+#. translators: this is used in the view selection dropdown
+#. * of navigation windows and in the preferences dialog
+msgid "List View"
+msgstr "Nimekirjavaade"
+
+msgid "Navigate folders in a tree"
+msgstr "Kaustade kujutamine puuna"
+
 msgid "Display"
 msgstr "Kuvamine"
 
@@ -2468,11 +2496,6 @@ msgstr "_Kirjete arvu loendatakse:"
 
 msgid "Preview"
 msgstr "Eelvaatlemine"
-
-#. translators: this is used in the view selection dropdown
-#. * of navigation windows and in the preferences dialog
-msgid "List View"
-msgstr "Nimekirjavaade"
 
 msgid "Always"
 msgstr "Alati"
@@ -2848,6 +2871,9 @@ msgstr "Võrgu sirvimine"
 msgid "Browse the contents of the network"
 msgstr "Võrgus olevate ressursside sirvimine"
 
+msgid "Connect to a network server address"
+msgstr "Võrguserveriga ühendumine aadressi järgi"
+
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
 #. label, accelerator
@@ -2870,7 +2896,7 @@ msgid "_Connect Drive"
 msgstr "Ü_henda ketas"
 
 msgid "_Disconnect Drive"
-msgstr "_Ühenda ketas lahti"
+msgstr "Ü_henda ketas lahti"
 
 msgid "_Start Multi-disk Device"
 msgstr "_Käivita mitmekettaseade"
@@ -2928,7 +2954,7 @@ msgstr "Ü_henda"
 #. name, stock id
 #. label, accelerator
 msgid "_Unmount"
-msgstr "_Ühenda lahti"
+msgstr "Ü_henda lahti"
 
 #. name, stock id
 #. label, accelerator
@@ -2939,6 +2965,9 @@ msgstr "_Väljasta"
 #. label, accelerator
 msgid "_Detect Media"
 msgstr "_Tuvasta meedia"
+
+msgid "_Format…"
+msgstr "_Vorming…"
 
 msgid "_Properties"
 msgstr "_Omadused"
@@ -3009,11 +3038,11 @@ msgstr "loetamatu"
 #, c-format
 msgid "%'d item, with size %s"
 msgid_plural "%'d items, totalling %s"
-msgstr[0] "%'d kirje, suurusega %s"
-msgstr[1] "%'d kirjet, kogusuurusega %s"
+msgstr[0] "%'d kirje suurusega %s"
+msgstr[1] "%'d kirjet kogusuurusega %s"
 
 msgid "(some contents unreadable)"
-msgstr "(osa sisust on loetamatu)"
+msgstr "(osa sisust pole loetav)"
 
 #. Also set the title field here, with a trailing carriage return &
 #. * space if the value field has two lines. This is a hack to get the
@@ -3036,7 +3065,7 @@ msgid "Total capacity:"
 msgstr "Kogumahtuvus:"
 
 msgid "Filesystem type:"
-msgstr "Failisüsteemi liik: "
+msgstr "Failisüsteemi liik:"
 
 msgid "Basic"
 msgstr "Põhiline"
@@ -3081,7 +3110,7 @@ msgid "access"
 msgstr "ligipääs"
 
 msgid "List files only"
-msgstr "Ainult failide loendile"
+msgstr "Ainult failide loend"
 
 msgid "Access files"
 msgstr "Ligipääs failidele"
@@ -3175,7 +3204,7 @@ msgid "Illustration"
 msgstr "Illustratsioon"
 
 msgid "Pdf / Postscript"
-msgstr "Pdf / Postscript"
+msgstr "PDF / PostScript"
 
 msgid "Text File"
 msgstr "Tekstifail"
@@ -3203,7 +3232,7 @@ msgid "All Files"
 msgstr "Kõik failid"
 
 msgid "Add a new criterion to this search"
-msgstr "Otsingule uue otsingukriteeriumi lisamine"
+msgstr "Otsingule uue kriteeriumi lisamine"
 
 msgid "Files in this folder will appear in the New Document menu."
 msgstr "Failid selles kataloogis ilmuvad menüüsse „Uus dokument”."
@@ -4208,7 +4237,7 @@ msgstr "Käesoleva kaardi tõstmine paremale"
 #. name, stock id
 #. label, accelerator
 msgid "_Show Sidebar"
-msgstr "_Näita külgriba"
+msgstr "_Külgriba näitamine"
 
 #. tooltip
 msgid "Change the visibility of this window's side pane"
