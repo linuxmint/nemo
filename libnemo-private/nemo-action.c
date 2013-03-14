@@ -506,14 +506,13 @@ nemo_action_activate (NemoAction *action, GList *selection)
 
     if (!success) {
         for (iter = arg_list; iter != NULL; iter = iter->next) {
-            gchar *unquoted = g_shell_unquote (iter->data, NULL);
+            gchar *unquoted = g_strdup (iter->data);
             if (g_strstr_len (unquoted, -1, TOKEN_EXEC_FILE_LIST) != NULL ||
                 g_strstr_len (unquoted, -1, TOKEN_EXEC_URL_LIST) != NULL) {
-                gchar **sub_args;
                 gint sub_arg_count;
                 GList *sub_list = NULL;
-                g_shell_parse_argv (unquoted, &sub_arg_count, &sub_args, NULL);
-
+                gchar **sub_args = g_strsplit (unquoted, " ", -1);
+                sub_arg_count = g_strv_length(sub_args);
                 for (i = 0; i < sub_arg_count; i++) {
                     sub_list = g_list_append (sub_list, g_strdup (sub_args[i]));
                 }
