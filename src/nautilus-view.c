@@ -6296,7 +6296,6 @@ action_rename_select_all_callback (GtkAction *action,
 	real_action_rename (NAUTILUS_VIEW (callback_data), TRUE);
 }
 
-#define BG_KEY_DRAW_BACKGROUND    "draw-background"
 #define BG_KEY_PRIMARY_COLOR      "primary-color"
 #define BG_KEY_SECONDARY_COLOR    "secondary-color"
 #define BG_KEY_COLOR_TYPE         "color-shading-type"
@@ -6315,7 +6314,6 @@ set_uri_as_wallpaper (const char *uri)
 	if (uri == NULL)
 		uri = "";
 
-	g_settings_set_boolean (settings, BG_KEY_DRAW_BACKGROUND, TRUE);
 	g_settings_set_string (settings, BG_KEY_PICTURE_URI, uri);
 	g_settings_set_string (settings, BG_KEY_PRIMARY_COLOR, "#000000");
 	g_settings_set_string (settings, BG_KEY_SECONDARY_COLOR, "#000000");
