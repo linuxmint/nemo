@@ -655,7 +655,7 @@ real_update_menus (NautilusView *view)
 
 static const GtkActionEntry desktop_view_entries[] = {
 	/* name, stock id */
-	{ "Change Background", NULL,
+	{ NAUTILUS_ACTION_CHANGE_BACKGROUND, NULL,
 	  /* label, accelerator */
 	  N_("Change Desktop _Background"), NULL,
 	  /* tooltip */
@@ -697,6 +697,8 @@ real_merge_menus (NautilusView *view)
 	NautilusDesktopCanvasView *desktop_view;
 	GtkUIManager *ui_manager;
 	GtkActionGroup *action_group;
+	GtkAction *action;
+	gchar *control_center_path;
 
 	NAUTILUS_VIEW_CLASS (nautilus_desktop_canvas_view_parent_class)->merge_menus (view);
 
@@ -731,6 +733,14 @@ real_merge_menus (NautilusView *view)
 			       NAUTILUS_ACTION_UNSTRETCH,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
+
+	control_center_path = g_find_program_in_path ("gnome-control-center");
+	if (control_center_path == NULL) {
+		action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_CHANGE_BACKGROUND);
+		gtk_action_set_visible (action, FALSE);
+	}
+
+	g_free (control_center_path);
 }
 
 static NautilusView *
