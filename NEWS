@@ -1,3 +1,12 @@
+Major changes in 3.7.92 are:
+* Ensure target directories exist when restoring trash contents
+* Export non-VFS URIs to DnD selections
+* Hide Change Background desktop action g-c-c is not installed
+* Fix double tap not working on certain touchscreen devices
+* Fix for removal of org.gnome.desktop.background draw-background setting
+* Fix inability to move desktop icons to non-primary displays in certain
+  configurations
+
 Major changes in 3.7.91 are:
 * Export an OpenLocations property over DBus (Marco Trevisan)
 * Add a way to reuse and raise existing windows already opened to a
