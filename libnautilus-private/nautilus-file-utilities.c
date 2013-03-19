@@ -1137,13 +1137,8 @@ nautilus_trashed_files_get_original_directories (GList *files,
 			*unhandled_files = g_list_append (*unhandled_files, nautilus_file_ref (file));
 		}
 
-		if (original_file != NULL) {
-			nautilus_file_unref (original_file);
-		}
-
-		if (original_dir != NULL) {
-			nautilus_file_unref (original_dir);
-		}
+		nautilus_file_unref (original_file);
+		nautilus_file_unref (original_dir);
 	}
 
 	return directories;
