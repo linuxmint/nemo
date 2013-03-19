@@ -815,6 +815,7 @@ nautilus_window_slot_open_location_full (NautilusWindowSlot *slot,
 			       NAUTILUS_LOCATION_CHANGE_STANDARD, 0, NULL, callback, user_data);
 
  done:
+	nautilus_file_list_free (old_selection);
 	nautilus_profile_end (NULL);
 }
 
