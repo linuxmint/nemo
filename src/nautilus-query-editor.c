@@ -1210,6 +1210,7 @@ nautilus_query_editor_set_query (NautilusQueryEditor	*editor,
 				 NautilusQuery		*query)
 {
 	char *text = NULL;
+	char *current_text = NULL;
 
 	if (query != NULL) {
 		text = nautilus_query_get_text (query);
@@ -1220,7 +1221,12 @@ nautilus_query_editor_set_query (NautilusQueryEditor	*editor,
 	}
 
 	editor->details->change_frozen = TRUE;
-	gtk_entry_set_text (GTK_ENTRY (editor->details->entry), text);
+
+	current_text = g_strstrip (g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry))));
+	if (!g_str_equal (current_text, text)) {
+		gtk_entry_set_text (GTK_ENTRY (editor->details->entry), text);
+	}
+	g_free (current_text);
 
 	g_free (editor->details->current_uri);
 	editor->details->current_uri = NULL;
