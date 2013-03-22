@@ -18,7 +18,7 @@ dnl Interface break is not allowed.
 m4_define(nemo_extension_current,  5)
 m4_define(nemo_extension_revision, 0)
 
-AC_INIT(nemo, 1.7.1, http://bugzilla.gnome.org/enter_bug.cgi?product=nemo)
+AC_INIT(nemo, 1.7.2, http://bugzilla.gnome.org/enter_bug.cgi?product=nemo)
 
 dnl ===========================================================================
 
