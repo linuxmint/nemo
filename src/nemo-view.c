@@ -5876,12 +5876,17 @@ determine_visibility (gpointer data, gpointer callback_data)
         case SELECTION_MULTIPLE:
             selection_type_show = selected_count > 1;
             break;
+        case SELECTION_NOT_NONE:
+            selection_type_show = selected_count > 0;
+            break;
         case SELECTION_NONE:
             selection_type_show = selected_count == 0;
             break;
         case SELECTION_ANY:
-        default:
             selection_type_show = TRUE;
+            break;
+        default:
+            selection_type_show = selected_count == selection_type;
             break;
     }
 

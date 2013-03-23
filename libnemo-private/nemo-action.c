@@ -243,8 +243,12 @@ nemo_action_constructed (GObject *object)
         type = SELECTION_ANY;
     else if (g_strcmp0 (selection_string, SELECTION_NONE_KEY) == 0)
         type = SELECTION_NONE;
-    else
-        type = SELECTION_SINGLE;
+    else if (g_strcmp0 (selection_string, SELECTION_NOT_NONE_KEY) == 0)
+        type = SELECTION_NOT_NONE;
+    else {
+        gint val = (int) g_ascii_strtoll (selection_string, NULL, 10);
+        type = val > 0 ? val : SELECTION_SINGLE;
+    }
 
     g_free (selection_string);
 

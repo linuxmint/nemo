@@ -41,6 +41,7 @@
 #define SELECTION_MULTIPLE_KEY "M"
 #define SELECTION_ANY_KEY "Any"
 #define SELECTION_NONE_KEY "None"
+#define SELECTION_NOT_NONE_KEY "NotNone"
 
 #define TOKEN_EXEC_URL_LIST "%U"
 #define TOKEN_EXEC_FILE_LIST "%F"
@@ -50,8 +51,9 @@ typedef struct _NemoAction NemoAction;
 typedef struct _NemoActionClass NemoActionClass;
 
 typedef enum {
-    SELECTION_SINGLE,
+    SELECTION_SINGLE = 1000,
     SELECTION_MULTIPLE,
+    SELECTION_NOT_NONE,
     SELECTION_ANY,
     SELECTION_NONE
 } SelectionType;
