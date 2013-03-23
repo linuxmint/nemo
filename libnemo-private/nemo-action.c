@@ -107,7 +107,7 @@ nemo_action_class_init (NemoActionClass *klass)
                                      g_param_spec_int ("selection-type",
                                                        "Selection Type",
                                                        "The action selection type",
-                                                       SELECTION_SINGLE,
+                                                       0,
                                                        SELECTION_NONE,
                                                        SELECTION_SINGLE,
                                                        G_PARAM_READWRITE)
