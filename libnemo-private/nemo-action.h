@@ -51,7 +51,7 @@ typedef struct _NemoAction NemoAction;
 typedef struct _NemoActionClass NemoActionClass;
 
 typedef enum {
-    SELECTION_SINGLE = 1000,
+    SELECTION_SINGLE = G_MAXINT - 10,
     SELECTION_MULTIPLE,
     SELECTION_NOT_NONE,
     SELECTION_ANY,
