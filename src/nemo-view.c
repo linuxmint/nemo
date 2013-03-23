@@ -6723,7 +6723,8 @@ static void
 open_in_terminal (gchar *location)
 {	
     gchar *argv[2];
-    argv[0] = "x-terminal-emulator";
+    argv[0] = g_settings_get_string (gnome_terminal_preferences,
+				     GNOME_DESKTOP_TERMINAL_EXEC);
     argv[1] = NULL;
     g_spawn_async(location, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
 }
