@@ -185,6 +185,8 @@ gboolean
 nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 				    GdkEventKey         *event)
 {
+	GtkWidget *toplevel;
+	GtkWidget *old_focus;
 	GdkEvent *new_event;
 	gboolean handled = FALSE;
 	gulong id;
@@ -213,6 +215,16 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 		gtk_widget_realize (editor->details->entry);
 	}
 
+	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (editor));
+	if (gtk_widget_is_toplevel (toplevel)) {
+		old_focus = gtk_window_get_focus (GTK_WINDOW (toplevel));
+	} else {
+		old_focus = NULL;
+	}
+
+	/* input methods will typically only process events after getting focus */
+	gtk_widget_grab_focus (editor->details->entry);
+
 	old_text = g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry)));
 
 	id = g_signal_connect (editor->details->entry, "preedit-changed",
@@ -233,6 +245,10 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 
 	handled = (editor->details->got_preedit) || (retval && text_changed);
 	editor->details->got_preedit = FALSE;
+
+	if (!handled && old_focus) {
+		gtk_widget_grab_focus (old_focus);
+	}
 
 	return handled;
 }
