@@ -30,13 +30,19 @@
 #
 # script = komentojono
 #
+# Päiväyksien ja ajan muodot SFS 4175 / kielitoimisto
+# http://www.kotus.fi/index.phtml?i=519&s=2614#faq_519
+# http://www.kotus.fi/index.phtml?i=666&s=2614#faq_666
+# http://www.cs.tut.fi/~jkorpela/kielenopas/5.2.html#klo
+# https://help.gnome.org/users/gthumb/unstable/gthumb-date-formats.html.en
+#
 # Gnome 2012-03 Finnish translation sprint participants:
 # Jiri Grönroos
 # Niklas Laxström
 # Pauli Virtanen <pauli.virtanen@hut.fi>, 2000-2005.
 # Ilkka Tuohela <hile@iki.fi>, 2005-2009.
 # Tommi Vainikainen <thv@iki.fi>, 2010-2011.
-# Timo Jyrinki <timo.jyrinki@iki.fi>, 2008-2010.
+# Timo Jyrinki <timo.jyrinki@iki.fi>, 2008-2013.
 # Ville-Pekka Vainio <vpvainio@iki.fi>, 2011.
 # Jiri Grönroos <jiri.gronroos@iki.fi>, 2012, 2013.
 msgid ""
@@ -44,8 +50,8 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-03-24 19:22+0200\n"
-"PO-Revision-Date: 2013-03-24 15:41+0200\n"
-"Last-Translator: Jiri Grönroos <jiri.gronroos+l10n@iki.fi>\n"
+"PO-Revision-Date: 2013-03-24 19:55+0200\n"
+"Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
@@ -437,32 +443,28 @@ msgstr "Työpöytätiedostoa ei voi nimetä uudestaan"
 #.
 #: ../libnautilus-private/nautilus-file.c:4430
 msgid "%R"
-msgstr ""
+msgstr "%-H.%M"
 
 #: ../libnautilus-private/nautilus-file.c:4431
-#, fuzzy
 msgid "%-I:%M %P"
-msgstr "tänään %-H:%M"
+msgstr "%-I:%M %P"
 
 #: ../libnautilus-private/nautilus-file.c:4432
 #: ../libnautilus-private/nautilus-file.c:4433
 msgid "%b %-e"
-msgstr ""
+msgstr "%-e. %Bta"
 
 #: ../libnautilus-private/nautilus-file.c:4434
-#, fuzzy
 msgid "%b %-d %Y"
-msgstr "%-d. %b %Y, %-H:%M"
+msgstr "%-d. %Bta %Y"
 
 #: ../libnautilus-private/nautilus-file.c:4435
-#, fuzzy
 msgid "%a, %b %e %Y %I:%M:%S %p"
-msgstr "%a %-d. %b %Y, %-H:%M:%S"
+msgstr "%a %-d. %Bta %Y, %I:%M:%S %p"
 
 #: ../libnautilus-private/nautilus-file.c:4436
-#, fuzzy
 msgid "%a, %b %e %Y %T"
-msgstr "%a %-d. %b %Y, %-H:%M:%S"
+msgstr "%a %-d. %Bta %Y, %-H.%M.%S"
 
 #: ../libnautilus-private/nautilus-file.c:4935
 #, c-format
