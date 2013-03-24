@@ -66,7 +66,7 @@ msgstr "Acesse e organize arquivos"
 
 #: ../data/nautilus.desktop.in.in.h:3
 msgid "folder;manager;explore;disk;filesystem;"
-msgstr "pasta;gerenciador;explorar;disco;sistema de arquivos"
+msgstr "pasta;gerenciador;explorar;disco;sistema de arquivos;"
 
 #: ../data/nautilus.xml.in.h:1
 msgid "Saved search"

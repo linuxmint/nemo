@@ -107,7 +107,7 @@ msgstr "Προσπέλαση και οργάνωση αρχείων"
 
 #: ../data/nautilus.desktop.in.in.h:3
 msgid "folder;manager;explore;disk;filesystem;"
-msgstr "φάκελος,διαχειριστής,εξερεύνηση,δίσκος,σύστημα αρχείων·"
+msgstr "φάκελος;διαχειριστής;εξερεύνηση;δίσκος;σύστημα αρχείων;"
 
 #: ../data/nautilus.xml.in.h:1
 msgid "Saved search"

@@ -44,7 +44,7 @@ msgstr "Aksesser og organiser filer"
 
 #: ../data/nautilus.desktop.in.in.h:3
 msgid "folder;manager;explore;disk;filesystem;"
-msgstr "mappe;håndterer;utforsk;disk;filsystem"
+msgstr "mappe;håndterer;utforsk;disk;filsystem;"
 
 #: ../data/nautilus.xml.in.h:1
 msgid "Saved search"
