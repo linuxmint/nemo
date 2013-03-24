@@ -43,8 +43,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-19 13:01+0200\n"
-"PO-Revision-Date: 2013-03-16 15:45+0200\n"
+"POT-Creation-Date: 2013-03-24 19:22+0200\n"
+"PO-Revision-Date: 2013-03-24 15:41+0200\n"
 "Last-Translator: Jiri Grönroos <jiri.gronroos+l10n@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "Language: fi\n"
@@ -316,11 +316,11 @@ msgstr ""
 
 #: ../libnautilus-private/nautilus-column-utilities.c:186
 msgid "Relevance"
-msgstr ""
+msgstr "Relevanssi"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:187
 msgid "Relevance rank for search"
-msgstr ""
+msgstr "Relevanssiasema hauissa"
 
 #: ../libnautilus-private/nautilus-desktop-directory-file.c:435
 #: ../libnautilus-private/nautilus-desktop-icon-file.c:151
@@ -564,7 +564,7 @@ msgstr "Arkisto"
 
 #: ../libnautilus-private/nautilus-file.c:6158
 msgid "Markup"
-msgstr ""
+msgstr "Merkkaus"
 
 #: ../libnautilus-private/nautilus-file.c:6162
 #: ../src/nautilus-query-editor.c:425
@@ -1847,9 +1847,9 @@ msgid "The item cannot be restored from trash"
 msgstr "Kohdetta ei voi palauttaa roskakorista."
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:81
-#, fuzzy, c-format
+#, c-format
 msgid "Error while adding “%s”: %s"
-msgstr "Virhe lisättäessä ohjelmaa ”%s”: %s"
+msgstr "Virhe lisättäessä kohdetta ”%s”: %s"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:83
 msgid "Could not add application"
@@ -2322,9 +2322,8 @@ msgid "Default column order in the list view."
 msgstr "Luettelonäkymän oletusarvoinen sarakejärjestys."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:54
-#, fuzzy
 msgid "Use tree view"
-msgstr "Tekstinäkymä:"
+msgstr "Käytä puunäkymää"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:55
 msgid ""
@@ -2590,14 +2589,12 @@ msgid "Only create windows for explicitly specified URIs."
 msgstr "Luo Nautilus-ikkunoita vain erikseen annetuille URI:lle."
 
 #: ../src/nautilus-application.c:1233
-#, fuzzy
 msgid "Never manage the desktop (ignore the GSettings preference)."
-msgstr "Älä käytä työpöytää (sivuuta asetusikkunassa annettu oletus)"
+msgstr "Älä koskaan hallitse työpöytää (ohita GSettings-suositus)."
 
 #: ../src/nautilus-application.c:1235
-#, fuzzy
 msgid "Always manage the desktop (ignore the GSettings preference)."
-msgstr "Älä käytä työpöytää (sivuuta asetusikkunassa annettu oletus)"
+msgstr "Hallitse aina työpöytää (ohita GSettings-suositus)."
 
 #: ../src/nautilus-application.c:1237
 msgid "Quit Nautilus."
@@ -2701,7 +2698,7 @@ msgstr ""
 msgid "If you don't trust this location or aren't sure, press Cancel."
 msgstr "Jos et luota tähän sijaintiin tai olet muuten epävarma, paina Peru."
 
-#: ../src/nautilus-autorun-software.c:240 ../src/nautilus-mime-actions.c:724
+#: ../src/nautilus-autorun-software.c:240 ../src/nautilus-mime-actions.c:748
 msgid "_Run"
 msgstr "_Suorita"
 
@@ -2806,12 +2803,11 @@ msgstr "Pidä kuvakkeet lajiteltuna roskakoriin siirron ajan mukaan riveittäin"
 
 #: ../src/nautilus-canvas-view.c:1192
 msgid "By Search Relevance"
-msgstr ""
+msgstr "Hakurelevanttiuden mukaan"
 
 #: ../src/nautilus-canvas-view.c:1193
-#, fuzzy
 msgid "Keep icons sorted by search relevance in rows"
-msgstr "Pidä kuvakkeet riveissä koon mukaisessa järjestyksessä"
+msgstr "Pidä kuvakkeet riveissä hakurelevanttiuden mukaisessa järjestyksessä"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
@@ -2839,8 +2835,8 @@ msgid "Display this location with the icon view."
 msgstr "Näytä tämä sijainti kuvakenäkymässä."
 
 #. if it wasn't cancelled show a dialog
-#: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1870
-#: ../src/nautilus-mime-actions.c:2142
+#: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1894
+#: ../src/nautilus-mime-actions.c:2166
 msgid "Unable to access location"
 msgstr "Sijaintiin ei ole pääsyä"
 
@@ -2973,11 +2969,11 @@ msgstr "Tee valittujen kuvakkeiden koosta muutettava "
 msgid "Restore each selected icons to its original size"
 msgstr "Palauta jokaisen valitun kuvakkeen alkuperäinen koko"
 
-#: ../src/nautilus-desktop-canvas-view.c:768
+#: ../src/nautilus-desktop-canvas-view.c:778
 msgid "The desktop view encountered an error."
 msgstr "Työpöytänäkymässä tapahtui virhe."
 
-#: ../src/nautilus-desktop-canvas-view.c:769
+#: ../src/nautilus-desktop-canvas-view.c:779
 msgid "The desktop view encountered an error while starting up."
 msgstr "Työpöytänäkymää käynnistettäessä tapahtui virhe."
 
@@ -3397,7 +3393,7 @@ msgstr "Korkeus"
 #: ../src/nautilus-image-properties-page.c:356
 #: ../src/nautilus-image-properties-page.c:357
 msgid "Title"
-msgstr ""
+msgstr "Nimi"
 
 #: ../src/nautilus-image-properties-page.c:358
 #: ../src/nautilus-image-properties-page.c:359
@@ -3555,98 +3551,98 @@ msgid_plural "Do you want to view %d locations?"
 msgstr[0] "Haluatko katsella yhtä sijaintia?"
 msgstr[1] "Haluatko katsella useita (%d) sijainteja?"
 
-#: ../src/nautilus-location-entry.c:264 ../src/nautilus-mime-actions.c:1062
+#: ../src/nautilus-location-entry.c:264 ../src/nautilus-mime-actions.c:1086
 #, c-format
 msgid "This will open %d separate window."
 msgid_plural "This will open %d separate windows."
 msgstr[0] "Tämä avaisi %d erillisen ikkunan."
 msgstr[1] "Tämä avaisi %d erillistä ikkunaa."
 
-#: ../src/nautilus-mime-actions.c:632
+#: ../src/nautilus-mime-actions.c:656
 #, c-format
 msgid "The link “%s” is broken. Move it to Trash?"
 msgstr "Linkki ”%s” on rikki. Haluatko siirtää sen roskakoriin?"
 
-#: ../src/nautilus-mime-actions.c:634
+#: ../src/nautilus-mime-actions.c:658
 #, c-format
 msgid "The link “%s” is broken."
 msgstr "Linkki ”%s” on rikki."
 
-#: ../src/nautilus-mime-actions.c:640
+#: ../src/nautilus-mime-actions.c:664
 msgid "This link cannot be used because it has no target."
 msgstr "Tätä linkkiä ei voi käyttää, koska sillä ei ole kohdetta."
 
-#: ../src/nautilus-mime-actions.c:642
+#: ../src/nautilus-mime-actions.c:666
 #, c-format
 msgid "This link cannot be used because its target “%s” doesn't exist."
 msgstr "Tätä linkkiä ei voi käyttää, koska kohdetta ”%s” ei ole olemassa."
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-mime-actions.c:652 ../src/nautilus-view.c:7202
+#: ../src/nautilus-mime-actions.c:676 ../src/nautilus-view.c:7202
 #: ../src/nautilus-view.c:7316 ../src/nautilus-view.c:8290
 #: ../src/nautilus-view.c:8594
 msgid "Mo_ve to Trash"
 msgstr "Siirrä _roskakoriin"
 
-#: ../src/nautilus-mime-actions.c:712
+#: ../src/nautilus-mime-actions.c:736
 #, c-format
 msgid "Do you want to run “%s”, or display its contents?"
 msgstr "Haluatko suorittaa tiedoston ”%s” vai nähdä sen sisällön?"
 
-#: ../src/nautilus-mime-actions.c:714
+#: ../src/nautilus-mime-actions.c:738
 #, c-format
 msgid "“%s” is an executable text file."
 msgstr "”%s” on suoritettava tekstitiedosto."
 
-#: ../src/nautilus-mime-actions.c:720
+#: ../src/nautilus-mime-actions.c:744
 msgid "Run in _Terminal"
 msgstr "Suorita _päätteessä"
 
-#: ../src/nautilus-mime-actions.c:721
+#: ../src/nautilus-mime-actions.c:745
 msgid "_Display"
 msgstr "_Näytä"
 
-#: ../src/nautilus-mime-actions.c:1057 ../src/nautilus-mime-actions.c:1792
+#: ../src/nautilus-mime-actions.c:1081 ../src/nautilus-mime-actions.c:1816
 #: ../src/nautilus-view.c:955
 msgid "Are you sure you want to open all files?"
 msgstr "Haluatko varmasti avata kaikki tiedostot?"
 
-#: ../src/nautilus-mime-actions.c:1059
+#: ../src/nautilus-mime-actions.c:1083
 #, c-format
 msgid "This will open %d separate tab."
 msgid_plural "This will open %d separate tabs."
 msgstr[0] "Tämä avaa %d erillisen välilehteä."
 msgstr[1] "Tämä avaa %d erillistä välilehteä."
 
-#: ../src/nautilus-mime-actions.c:1124
+#: ../src/nautilus-mime-actions.c:1148
 #, c-format
 msgid "Could not display “%s”."
 msgstr "Kohdetta ”%s” ei voi näyttää."
 
-#: ../src/nautilus-mime-actions.c:1222
+#: ../src/nautilus-mime-actions.c:1246
 msgid "The file is of an unknown type"
 msgstr "Tiedoston tyyppi on tuntematon"
 
-#: ../src/nautilus-mime-actions.c:1226
+#: ../src/nautilus-mime-actions.c:1250
 #, c-format
 msgid "There is no application installed for “%s” files"
 msgstr ""
 "Tyyppiä \"%s\" oleville tiedostoille ei ole asennettu sopivaa sovellusta"
 
-#: ../src/nautilus-mime-actions.c:1241
+#: ../src/nautilus-mime-actions.c:1265
 msgid "_Select Application"
 msgstr "_Valitse sovellus"
 
-#: ../src/nautilus-mime-actions.c:1277
+#: ../src/nautilus-mime-actions.c:1301
 msgid "There was an internal error trying to search for applications:"
 msgstr "Tapahtui sisäinen virhe etsittäessä sovelluksia:"
 
-#: ../src/nautilus-mime-actions.c:1279
+#: ../src/nautilus-mime-actions.c:1303
 msgid "Unable to search for application"
 msgstr "Sovellusta ei voitu etsiä"
 
-#: ../src/nautilus-mime-actions.c:1398
+#: ../src/nautilus-mime-actions.c:1422
 #, c-format
 msgid ""
 "There is no application installed for “%s” files.\n"
@@ -3655,11 +3651,11 @@ msgstr ""
 "Tyyppiä \"%s\" oleville tiedostoille ei ole asennettu sopivaa sovellusta.\n"
 "Haluatko etsiä sovellusta, jolla avata tämän tiedoston?"
 
-#: ../src/nautilus-mime-actions.c:1548
+#: ../src/nautilus-mime-actions.c:1572
 msgid "Untrusted application launcher"
 msgstr "Sovelluksen käynnistin ei ole luotettu"
 
-#: ../src/nautilus-mime-actions.c:1551
+#: ../src/nautilus-mime-actions.c:1575
 #, c-format
 msgid ""
 "The application launcher “%s” has not been marked as trusted. If you do not "
@@ -3668,31 +3664,31 @@ msgstr ""
 "Sovelluksen käynnistintä ”%s” ei ole merkitty luotetuksi. Jos et tiedä mistä "
 "tämä käynnistin on peräisin, sen käynnistys voi olla turvatonta."
 
-#: ../src/nautilus-mime-actions.c:1566
+#: ../src/nautilus-mime-actions.c:1590
 msgid "_Launch Anyway"
 msgstr "_Käynnistä silti"
 
-#: ../src/nautilus-mime-actions.c:1569
+#: ../src/nautilus-mime-actions.c:1593
 msgid "Mark as _Trusted"
 msgstr "Merkitse luo_tetuksi"
 
-#: ../src/nautilus-mime-actions.c:1793
+#: ../src/nautilus-mime-actions.c:1817
 #, c-format
 msgid "This will open %d separate application."
 msgid_plural "This will open %d separate applications."
 msgstr[0] "Tämä avaa %d erillisen sovelluksen."
 msgstr[1] "Tämä avaa %d erillistä ohjelmaa."
 
-#: ../src/nautilus-mime-actions.c:2221
+#: ../src/nautilus-mime-actions.c:2245
 msgid "Unable to start location"
 msgstr "Sijaintia ei voi käynnistää"
 
-#: ../src/nautilus-mime-actions.c:2305
+#: ../src/nautilus-mime-actions.c:2329
 #, c-format
 msgid "Opening “%s”."
 msgstr "”%s” avautuu."
 
-#: ../src/nautilus-mime-actions.c:2308
+#: ../src/nautilus-mime-actions.c:2332
 #, c-format
 msgid "Opening %d item."
 msgid_plural "Opening %d items."
@@ -4148,7 +4144,7 @@ msgstr "Salli tiedoston suoritus ohjelmana"
 
 #: ../src/nautilus-properties-window.c:4462
 msgid "Change Permissions for Enclosed Files"
-msgstr "Muuta kansiossa olevien kohteiden oikeuksia"
+msgstr "Muuta sisällä olevien tiedostojen oikeuksia"
 
 #: ../src/nautilus-properties-window.c:4466
 msgid "Change"
@@ -4167,9 +4163,8 @@ msgid "Security context:"
 msgstr "Turvakonteksti:"
 
 #: ../src/nautilus-properties-window.c:4580
-#, fuzzy
 msgid "Change Permissions for Enclosed Files…"
-msgstr "Muuta kansiossa olevien kohteiden oikeuksia"
+msgstr "Muuta sisällä olevien tiedostojen oikeuksia…"
 
 #: ../src/nautilus-properties-window.c:4590
 #, c-format
@@ -4263,14 +4258,12 @@ msgstr ""
 "Tässä kansiossa olevat suoritettavat tiedostot näkyvät skriptivalikossa."
 
 #: ../src/nautilus-toolbar.c:488
-#, fuzzy
 msgid "View options"
-msgstr "Tiedostotoiminnot"
+msgstr "Näkymävalinnat"
 
 #: ../src/nautilus-toolbar.c:505
-#, fuzzy
 msgid "Location options"
-msgstr "Kuvakkeiden tekstit"
+msgstr "Sijaintivalinnat"
 
 #: ../src/nautilus-trash-bar.c:203
 msgid "Restore"
@@ -4402,9 +4395,9 @@ msgstr "(%s)"
 #. * total size of those items.
 #.
 #: ../src/nautilus-view.c:2966
-#, fuzzy, c-format
+#, c-format
 msgid "%s %s, %s %s"
-msgstr "%s%s, %s, %s"
+msgstr "%s %s, %s %s"
 
 #: ../src/nautilus-view.c:4339
 #, c-format
@@ -4438,15 +4431,15 @@ msgstr "_Valitse"
 
 #. Translators: %s is a file name formatted for display
 #: ../src/nautilus-view.c:6454
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to remove “%s”"
-msgstr "Kohteen %s liittäminen tiedostojärjestelmään epäonnistui."
+msgstr "Tiedoston \"%s\" poistaminen epäonnistui"
 
 #. Translators: %s is a file name formatted for display
 #: ../src/nautilus-view.c:6481
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to eject “%s”"
-msgstr "Asemaa %s ei voi avata"
+msgstr "Aseman %s poistaminen epäonnistui"
 
 #: ../src/nautilus-view.c:6503
 msgid "Unable to stop drive"
@@ -4533,7 +4526,6 @@ msgstr "Avaa kukin valittu kohde uudessa välilehdessä"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7132
-#, fuzzy
 msgid "Other _Application…"
 msgstr "Muu s_ovellus…"
 
@@ -4545,7 +4537,6 @@ msgstr "Valitse muu sovellus, jolla valittu kohde avataan"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7136
-#, fuzzy
 msgid "Open With Other _Application…"
 msgstr "Avaa _muussa sovelluksessa…"
 
@@ -4630,9 +4621,8 @@ msgstr "Valitse tämän ikkunan kaikki kohteet"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7178
-#, fuzzy
 msgid "Select I_tems Matching…"
-msgstr "Valitse täsmäävät kohteet"
+msgstr "Valitse tä_smäävät kohteet…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7179
@@ -5130,12 +5120,11 @@ msgstr "Poista kaikki valitut kohteet pysyvästi"
 
 #: ../src/nautilus-view.c:8622
 msgid "Remo_ve from Recent"
-msgstr ""
+msgstr "P_oista viimeisimmistä"
 
 #: ../src/nautilus-view.c:8623
-#, fuzzy
 msgid "Remove each selected item from the recently used list"
-msgstr "Siirrä jokainen valittu kohde roskakoriin"
+msgstr "Poista jokainen valittu kohta viimeksi käytettyjen luettelosta"
 
 #: ../src/nautilus-view.c:8663
 msgid "View or modify the properties of the open folder"
