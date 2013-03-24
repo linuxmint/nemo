@@ -29,7 +29,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-03-04 09:51+0000\n"
-"PO-Revision-Date: 2013-03-08 23:08+0100\n"
+"PO-Revision-Date: 2013-03-24 16:34+0100\n"
 "Last-Translator: Alain Lojewski <allomervan@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "Language: \n"
@@ -63,7 +63,7 @@ msgstr "Accéder aux fichiers et les organiser"
 
 #: ../data/nautilus.desktop.in.in.h:3
 msgid "folder;manager;explore;disk;filesystem;"
-msgstr "dossier;gestionnaire;explorer;disque;système de fichiers"
+msgstr "dossier;gestionnaire;explorer;disque;système de fichiers;"
 
 #: ../data/nautilus.xml.in.h:1
 msgid "Saved search"
