@@ -2390,7 +2390,7 @@ eel_editable_label_retrieve_surrounding_cb (GtkIMContext *context,
 {
   gtk_im_context_set_surrounding (context,
 				  label->text,
-				  strlen (label->text) + 1,
+				  strlen (label->text),
 				  label->selection_end);
 
   return TRUE;
