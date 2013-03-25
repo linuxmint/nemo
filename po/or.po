@@ -17,7 +17,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-03-04 09:51+0000\n"
-"PO-Revision-Date: 2013-03-21 20:06+0530\n"
+"PO-Revision-Date: 2013-03-25 23:53+0530\n"
 "Last-Translator: Manoj Kumar Giri <mgiri@redhat.com>\n"
 "Language-Team: Oriya <oriya-it@googlegroups.com>\n"
 "Language: or\n"
@@ -1753,40 +1753,38 @@ msgstr[0] "%d ଟି ବସ୍ତୁକୁ '%s' ରେ ନକଲ କରନ୍ତ
 msgstr[1] "%d ଟି ବସ୍ତୁକୁ '%s' ରେ ନକଲ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:433
-#, fuzzy, c-format
+#, c-format
 #| msgid "Duplicating %'d file"
 #| msgid_plural "Duplicating %'d files"
 msgid "_Undo Duplicate %d item"
 msgid_plural "_Undo Duplicate %d items"
-msgstr[0] "%'d ଫାଇଲକୁ ନକଲ ସଂରକ୍ଷଣ କରୁଅଛି"
-msgstr[1] "%'d ଫାଇଲକୁ ନକଲ ସଂରକ୍ଷଣ କରୁଅଛି"
+msgstr[0] "%d ବସ୍ତୁର ନକଲ ସଂରକ୍ଷଣ ପଦକ୍ଷେପ ବାତିଲ କରନ୍ତୁ (_U)"
+msgstr[1] "%d ବସ୍ତୁଗୁଡ଼ିକର ନକଲ ସଂରକ୍ଷଣ ପଦକ୍ଷେପ ବାତିଲ କରନ୍ତୁ (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:436
-#, fuzzy, c-format
+#, c-format
 #| msgid "Duplicating %'d file"
 #| msgid_plural "Duplicating %'d files"
 msgid "_Redo Duplicate %d item"
 msgid_plural "_Redo Duplicate %d items"
-msgstr[0] "%'d ଫାଇଲକୁ ନକଲ ସଂରକ୍ଷଣ କରୁଅଛି"
-msgstr[1] "%'d ଫାଇଲକୁ ନକଲ ସଂରକ୍ଷଣ କରୁଅଛି"
+msgstr[0] "%d ବସ୍ତୁର ନକଲ ସଂରକ୍ଷଣ ପଦକ୍ଷେପ  ପୁଣିକରନ୍ତୁ (_R)"
+msgstr[1] "%d ବସ୍ତୁଗୁଡ଼ିକର ନକଲ ସଂରକ୍ଷଣ ପଦକ୍ଷେପ  ପୁଣିକରନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:441
-#, fuzzy, c-format
+#, c-format
 #| msgid "Duplicating \"%B\""
 msgid "Duplicate '%s' in '%s'"
-msgstr "\"%B\"କୁ ନକଲ କରାଯାଉଛି"
+msgstr "'%s' କୁ  '%s' ରେ ନକଲ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:444
-#, fuzzy
 #| msgid "D_uplicate"
 msgid "_Undo Duplicate"
-msgstr "ନକଲ କରନ୍ତୁ (_u)"
+msgstr "ନକଲ କ୍ରିୟାକୁ ବାତିଲ କରନ୍ତୁ (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:445
-#, fuzzy
 #| msgid "D_uplicate"
 msgid "_Redo Duplicate"
-msgstr "ନକଲ କରନ୍ତୁ (_u)"
+msgstr "ନକଲ କ୍ରିୟାକୁ ପୁଣି କରନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:449
 #, fuzzy, c-format
@@ -1806,127 +1804,117 @@ msgstr[0] "%'d ଫାଇଲ ପାଇଁ ସଂଯୋଗ ସ୍ଥାପନ କ�
 msgstr[1] "%'d ଫାଇଲ ପାଇଁ ସଂଯୋଗ ସ୍ଥାପନ କରୁଅଛି"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:456
-#, fuzzy, c-format
+#, c-format
 #| msgid "Another link to %s"
 msgid "Delete link to '%s'"
-msgstr "%s ପାଇଁ ଅନ୍ଯ ଗୋଟିଏ ସଂଯୋଗ"
+msgstr "'%s' ରେ ସଂଯୋଗିକିକୁ ଅପସାରଣ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:457
-#, fuzzy, c-format
+#, c-format
 #| msgid "Another link to %s"
 msgid "Create link to '%s'"
-msgstr "%s ପାଇଁ ଅନ୍ଯ ଗୋଟିଏ ସଂଯୋଗ"
+msgstr "'%s' ରେ ସଂଯୋଗିକି ନିର୍ମାଣ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:459
-#, fuzzy
 #| msgid "Undo the edit"
 msgid "_Undo Create Link"
-msgstr "ସମ୍ପାଦନ କ୍ରିୟାର ପଦକ୍ଷେପ ବାତିଲ କରନ୍ତୁ"
+msgstr "ସଂଯୋଗିକି ନିର୍ମାଣ ପଦକ୍ଷେପକୁ ବାତିଲ କରନ୍ତୁ (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:460
-#, fuzzy
 #| msgid "Redo the edit"
 msgid "_Redo Create Link"
-msgstr "ସମ୍ପାଦନ କ୍ରିୟାକୁ ପୁଣିଥରେ କରନ୍ତୁ"
+msgstr "ସଂଯୋଗିକି ନିର୍ମାଣ ପଦକ୍ଷେପକୁ ପୁଣି କରନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:676
-#, fuzzy, c-format
+#, c-format
 #| msgid "Create and delete files"
 msgid "Create an empty file '%s'"
-msgstr "ଫାଇଲ ମାନଙ୍କୁ ସୃଷ୍ଟି କରନ୍ତୁ ଏବଂ ଅପସାରଣ କରନ୍ତୁ"
+msgstr "ଖାଲି ଫାଇଲ '%s' କୁ ନିର୍ମାଣ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:678
-#, fuzzy
 #| msgid "_Empty File"
 msgid "_Undo Create Empty File"
-msgstr "ଖାଲିଥିବା ଫାଇଲ (_E)"
+msgstr "ଖାଲି ଫାଇଲ ନିର୍ମାଣ ପଦକ୍ଷେପକୁ ବାତିଲ କରନ୍ତୁ (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:679
-#, fuzzy
 #| msgid "_Empty File"
 msgid "_Redo Create Empty File"
-msgstr "ଖାଲିଥିବା ଫାଇଲ (_E)"
+msgstr "ଖାଲି ଫାଇଲ ନିର୍ମାଣ ପଦକ୍ଷେପକୁ ପୁଣି କରନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:681
-#, fuzzy, c-format
+#, c-format
 #| msgid "Create New _Folder"
 msgid "Create a new folder '%s'"
-msgstr "ନୂତନ ଫୋଲଡର ସ୍ରୁଷ୍ଟି କରନ୍ତୁ (_F)"
+msgstr "ଏକ ନୂତନ ଫୋଲଡର '%s' କୁ ସୃଷ୍ଟି କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:683
-#, fuzzy
 #| msgid "Create New _Folder"
 msgid "_Undo Create Folder"
-msgstr "ନୂତନ ଫୋଲଡର ସ୍ରୁଷ୍ଟି କରନ୍ତୁ (_F)"
+msgstr "ଏକ ନୂତନ ଫୋଲଡର ସୃଷ୍ଟି ପଦକ୍ଷେପ ବାତିଲ କରନ୍ତୁ (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:684
-#, fuzzy
 #| msgid "Create New _Folder"
 msgid "_Redo Create Folder"
-msgstr "ନୂତନ ଫୋଲଡର ସ୍ରୁଷ୍ଟି କରନ୍ତୁ (_F)"
+msgstr "ଏକ ନୂତନ ଫୋଲଡର ସୃଷ୍ଟି ପଦକ୍ଷେପକୁ ପୁଣି କରନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:686
-#, fuzzy, c-format
+#, c-format
 #| msgid "Create a new document from template \"%s\""
 msgid "Create new file '%s' from template "
-msgstr "ନମୁନା \"%s\"ରୁ ନୂତନ ଦଲିଲ ନିର୍ମାଣ କରନ୍ତୁ"
+msgstr "ନମୁନାରୁ ନୂତନ ଫାଇଲ '%s' ନିର୍ମାଣ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:688
 msgid "_Undo Create from Template"
-msgstr ""
+msgstr "ନମୁନାରୁ ନିର୍ମାଣ କ୍ରିୟାକୁ ବାତିଲ କରନ୍ତୁ (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:689
 msgid "_Redo Create from Template"
-msgstr ""
+msgstr "ନମୁନାରୁ ନିର୍ମାଣ କ୍ରିୟାକୁ ପୁଣି କରନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:869
 #: ../libnautilus-private/nautilus-file-undo-operations.c:870
 #, c-format
 msgid "Rename '%s' as '%s'"
-msgstr ""
+msgstr "'%s' କୁ '%s' ନାମରେ ପରିବର୍ତ୍ତନ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:872
-#, fuzzy
 #| msgid "Rename"
 msgid "_Undo Rename"
-msgstr "ନାମ ବଦଳାନ୍ତୁ"
+msgstr "ନାମ ବଦଳାନ୍ତୁ ନାହିଁ (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:873
-#, fuzzy
 #| msgid "Rename"
 msgid "_Redo Rename"
-msgstr "ନାମ ବଦଳାନ୍ତୁ"
+msgstr "ନାମ ବଦଳା କ୍ରିୟାକୁ ପୁଣି କରନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:984
-#, fuzzy, c-format
+#, c-format
 #| msgid "Moving files to trash"
 msgid "Move %d item to trash"
 msgid_plural "Move %d items to trash"
-msgstr[0] "ଫାଇଲଗୁଡ଼ିକୁ ଆବର୍ଜନା ପାତ୍ର ମଧ୍ଯକୁ ପଠାଉଛି"
-msgstr[1] "ଫାଇଲଗୁଡ଼ିକୁ ଆବର୍ଜନା ପାତ୍ର ମଧ୍ଯକୁ ପଠାଉଛି"
+msgstr[0] "%d ବସ୍ତୁକୁ ଆବର୍ଜନା ପାତ୍ର ମଧ୍ଯକୁ ପଠାନ୍ତୁ"
+msgstr[1] "%d ବସ୍ତୁଗୁଡ଼ିକୁ ଆବର୍ଜନା ପାତ୍ର ମଧ୍ଯକୁ ପଠାନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:996
 #, c-format
 msgid "Restore '%s' to '%s'"
-msgstr ""
+msgstr "'%s' କୁ '%s' ରେ ପୁନଃସ୍ଥାପନ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1003
-#, fuzzy, c-format
+#, c-format
 #| msgid "Mo_ve to Trash"
 msgid "Move '%s' to trash"
-msgstr "ଆବର୍ଜନା ପାତ୍ରକୁ ପଠାନ୍ତୁ (_v)"
+msgstr "'%s' କୁ ଆବର୍ଜନା ପାତ୍ରକୁ ପଠାନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1007
-#, fuzzy
 #| msgid "_Trash"
 msgid "_Undo Trash"
-msgstr "ଆବର୍ଜନା ପାତ୍ର (_T)"
+msgstr "ଆବର୍ଜନା ପାତ୍ର ମଧ୍ଯକୁ ପଠାନ୍ତୁ ନାହିଁ (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1008
-#, fuzzy
 #| msgid "Mo_ve to Trash"
 msgid "_Redo Trash"
-msgstr "ଆବର୍ଜନା ପାତ୍ରକୁ ପଠାନ୍ତୁ (_v)"
+msgstr "ଆବର୍ଜନା ପାତ୍ରକୁ  ପୁଣି ପଠାନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1299
 #, c-format
@@ -1956,65 +1944,65 @@ msgstr "ଫୋଲଡର ଅଧିକାର:"
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1454
 #, c-format
 msgid "Restore original permissions of '%s'"
-msgstr ""
+msgstr "'%s' ର ପ୍ରକୃତ ଅନୁମତିଗୁଡ଼ିକୁ ପୁନଃସ୍ଥାପନ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1455
-#, fuzzy, c-format
+#, c-format
 #| msgid "Setting permissions"
 msgid "Set permissions of '%s'"
-msgstr "ଅନୁମତି ରଚନା କରାଯାଉଛି"
+msgstr "'%s' ର ଅନୁମତିକୁ ସେଟ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1565
 #, c-format
 msgid "Restore group of '%s' to '%s'"
-msgstr ""
+msgstr "'%s' ର ଶ୍ରେଣୀକୁ '%s' ରେ ପୁନଃସ୍ଥାପନ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1567
 #, c-format
 msgid "Set group of '%s' to '%s'"
-msgstr ""
+msgstr "'%s' ର ଶ୍ରେଣୀକୁ '%s' ରେ ସେଟ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1570
 msgid "_Undo Change Group"
-msgstr ""
+msgstr "ଶ୍ରେଣୀ ପରିବର୍ତ୍ତନ ପଦକ୍ଷେପକୁ ବାତିଲ କରନ୍ତୁ (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1571
 msgid "_Redo Change Group"
-msgstr ""
+msgstr "ଶ୍ରେଣୀ ପରିବର୍ତ୍ତନ ପଦକ୍ଷେପକୁ ପୁଣି କରନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1573
 #, c-format
 msgid "Restore owner of '%s' to '%s'"
-msgstr ""
+msgstr "'%s' ର ମାଲିକକୁ '%s' ରେ ପୁନଃସଂରକ୍ଷଣ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1575
 #, c-format
 msgid "Set owner of '%s' to '%s'"
-msgstr ""
+msgstr "'%s' ର ମାଲିକତ୍ତ୍ୱକୁ '%s' ରେ ସେଟ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1578
 msgid "_Undo Change Owner"
-msgstr ""
+msgstr "ମାଲିକତ୍ତ୍ୱ ପରିବର୍ତ୍ତନ ପଦକ୍ଷେପକୁ ବାତିଲ କରନ୍ତୁ (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1579
 msgid "_Redo Change Owner"
-msgstr ""
+msgstr "ମାଲିକତ୍ତ୍ୱ ପରିବର୍ତ୍ତନ ପଦକ୍ଷେପକୁ ପୁଣି କରନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-utilities.c:1184
-#, fuzzy, c-format
+#, c-format
 #| msgid "Could not determine original location of \"%s\" "
 msgid "Could not determine original location of “%s” "
-msgstr "\"%s\" ର ପ୍ରକୃତ ସ୍ଥାନ ନିର୍ଦ୍ଧାରଣ କରାଯାଇପାରିବ ନାହିଁ"
+msgstr " “%s”  ର ପ୍ରକୃତ ସ୍ଥାନ ନିର୍ଦ୍ଧାରଣ କରାଯାଇପାରିବ ନାହିଁ"
 
 #: ../libnautilus-private/nautilus-file-utilities.c:1188
 msgid "The item cannot be restored from trash"
 msgstr "ଆବର୍ଜନା ପାତ୍ରରୁ ଏହି ବସ୍ତୁକୁ ପୁନଃସ୍ଥାପନ କରାଯାଇପାରିବ ନାହିଁ"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:81
-#, fuzzy, c-format
+#, c-format
 #| msgid "Error while adding \"%s\": %s"
 msgid "Error while adding “%s”: %s"
-msgstr "\"%s\" କୁ ଯୋଗ କରିବା ସମୟରେ ତ୍ରୁଟି: %s"
+msgstr "“%s”  କୁ ଯୋଗ କରିବା ସମୟରେ ତ୍ରୁଟି: %s"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:83
 msgid "Could not add application"
@@ -2029,10 +2017,10 @@ msgid "Forget association"
 msgstr "ସଙ୍ଗଠନକୁ ଭୁଲିଯାଆନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:173
-#, fuzzy, c-format
+#, c-format
 #| msgid "Error while setting \"%s\" as default application: %s"
 msgid "Error while setting “%s” as default application: %s"
-msgstr "\"%s\" କୁ ପୂର୍ବନିର୍ଦ୍ଧାରିତ ପ୍ରୟୋଗ ଭାବରେ ବିନ୍ୟାସ କରିବା ସମୟରେ ତ୍ରୁଟି: %s"
+msgstr "“%s”  କୁ ପୂର୍ବନିର୍ଦ୍ଧାରିତ ପ୍ରୟୋଗ ଭାବରେ ବିନ୍ୟାସ କରିବା ସମୟରେ ତ୍ରୁଟି: %s"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:175
 msgid "Could not set as default"
@@ -2046,18 +2034,18 @@ msgstr "%s ଦଲିଲ"
 
 #. Translators; %s here is a mime-type description
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:260
-#, fuzzy, c-format
+#, c-format
 #| msgid "Open all files of type \"%s\" with"
 msgid "Open all files of type “%s” with"
-msgstr "\"%s\" ପ୍ରକାରର ସମସ୍ତ ଫାଇଲଗୁଡ଼ିକୁ ଖୋଲନ୍ତୁ"
+msgstr "“%s”  ପ୍ରକାରର ସମସ୍ତ ଫାଇଲଗୁଡ଼ିକୁ ଖୋଲନ୍ତୁ"
 
 #. Translators: first %s is filename, second %s is mime-type description
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:267
-#, fuzzy, c-format
+#, c-format
 #| msgid "Select an application to open %s and other files of type \"%s\""
 msgid "Select an application to open “%s” and other files of type “%s”"
 msgstr ""
-"%s ଏବଂ \"%s\" ପ୍ରକାରର ଅନ୍ୟ ଫାଇଲଗୁଡ଼ିକୁ ଖୋଲିବା ପାଇଁ ଗୋଟିଏ ପ୍ରୟୋଗ ବାଛନ୍ତୁ"
+"“%s”  ଏବଂ  “%s”  ପ୍ରକାରର ଅନ୍ୟ ଫାଇଲଗୁଡ଼ିକୁ ଖୋଲିବା ପାଇଁ ଗୋଟିଏ ପ୍ରୟୋଗ ବାଛନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:333
 msgid "Set as default"
@@ -2116,10 +2104,10 @@ msgid "Search"
 msgstr "ଖୋଜନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-query.c:208
-#, fuzzy, c-format
+#, c-format
 #| msgid "Search for \"%s\""
 msgid "Search for “%s”"
-msgstr "\"%s\"କୁ ଖୋଜନ୍ତୁ"
+msgstr "“%s”  କୁ ଖୋଜନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-search-engine.c:190
 msgid "Unable to complete the requested search"
@@ -2296,13 +2284,11 @@ msgstr ""
 "14 ମଧ୍ଯରେ ଥାଏ।"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:23
-#, fuzzy
 #| msgid "When to show thumbnails of image files"
 msgid "When to show thumbnails of files"
-msgstr "ଗୋଟିଏ ପ୍ରତିଛବି ଫାଇଲଗୁଡ଼ିକର କ୍ଷୁଦ୍ରଚିତ୍ରକୁ କେତେବେଳେ ଦର୍ଶାଯିବା ଉଚିତ"
+msgstr "ଗୋଟିଏ ଫାଇଲଗୁଡ଼ିକର କ୍ଷୁଦ୍ରଚିତ୍ରକୁ କେତେବେଳେ ଦର୍ଶାଯିବା ଉଚିତ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:24
-#, fuzzy
 #| msgid ""
 #| "Speed tradeoff for when to show an image file as a thumbnail. If set to "
 #| "\"always\" then always thumbnail, even if the folder is on a remote "
@@ -2325,7 +2311,8 @@ msgstr ""
 "ସେଟ "
 "କରାଯାଇଥାଏ ତେବେ ଏହା କଦାପି କ୍ଷୁଦ୍ରଚିତ୍ରକୁ ପ୍ରାକଦର୍ଶନ କରେନାହିଁ, କେବଳ ଗୋଟିଏ "
 "ସାଧାରଣ ଚିତ୍ରସଂକେତ "
-"ବ୍ୟବହାର କରିଥାଏ।"
+"ବ୍ୟବହାର କରିଥାଏ। ନାମ ଯାହା ଦର୍ଶାଉଥିଲେ ମଧ୍ଯ, ଏହା ଯେକୌଣସି ପ୍ରାକଦର୍ଶନଯୋଗ୍ୟ ଫାଇଲ "
+"ପ୍ରକାରରେ ପ୍ରୟୋଗ ହୋଇଥାଏ।"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:25
 msgid "Maximum image size for thumbnailing"
@@ -2393,7 +2380,6 @@ msgid "Default folder viewer"
 msgstr "ପୂର୍ବ ନିର୍ଦ୍ଧାରିତ ଫୋଲଡର ପ୍ରଦର୍ଶକ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:34
-#, fuzzy
 #| msgid ""
 #| "When a folder is visited this viewer is used unless you have selected "
 #| "another view for that particular folder. Possible values are \"list-view"
@@ -2405,8 +2391,7 @@ msgid ""
 msgstr ""
 "ଯେତେବେଳେ ଫୋଲଡରଟି ଏହି ଦୃଶ୍ୟକୁ ପରିଦର୍ଶନ କରିଥାଏ ଅନ୍ୟଥା ଆପଣ ସେହି ଫୋଲଡର ପାଇଁ ଅନ୍ୟ "
 "ଏକ ଦୃଶ୍ୟକୁ "
-"ବାଛିଥାଏ। ସମ୍ଭାବ୍ୟ ମୂଲ୍ୟଟି ହେଉଛି  \"list-view\", \"icon-view\" ଏବଂ "
-"\"compact-view\"."
+"ବାଛିଥାଏ। ସମ୍ଭାବ୍ୟ ମୂଲ୍ୟଟି ହେଉଛି  \"list-view\" ଏବଂ \"icon-view\"।"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:35
 msgid "Whether to show hidden files"
@@ -2445,7 +2430,6 @@ msgid "List of possible captions on icons"
 msgstr "ଚିତ୍ରସଙ୍କେତର ସମ୍ଭାବ୍ଯ ଶିରୋନାମା ମାନଙ୍କ ତାଲିକା"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:40
-#, fuzzy
 #| msgid ""
 #| "A list of captions below an icon in the icon view and the desktop. The "
 #| "actual number of captions shown depends on the zoom level. Some possible "
@@ -2462,8 +2446,8 @@ msgstr ""
 "ତଳେ। ପ୍ରକୃତ "
 "ସଂଖ୍ୟକ ଶୀର୍ଷକଗୁଡ଼ିକର ସଂଖ୍ୟା ଛୋଟବଡ଼ ସ୍ତର ଉପରେ ନିର୍ଭର କରିଥାଏ। ସମ୍ବାବ୍ୟ "
 "ମୂଲ୍ୟଗୁଡ଼ିକ ହେଉଛି: \"size"
-"\", \"type\", \"date_modified\", \"date_changed\", \"date_accessed\", \"owner"
-"\", \"group\", \"permissions\", \"octal_permissions\" ଏବଂ \"mime_type\"."
+"\", \"type\", \"date_modified\", \"owner"
+"\", \"group\", \"permissions\" ଏବଂ \"mime_type\"."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:41
 msgid "Default icon zoom level"
