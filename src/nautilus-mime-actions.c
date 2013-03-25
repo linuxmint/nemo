@@ -412,8 +412,8 @@ static int
 application_compare_by_name (const GAppInfo *app_a,
 			     const GAppInfo *app_b)
 {
-	return g_utf8_collate (g_app_info_get_display_name ((GAppInfo *)app_a),
-			       g_app_info_get_display_name ((GAppInfo *)app_b));
+	return g_utf8_collate (g_app_info_get_name ((GAppInfo *)app_a),
+			       g_app_info_get_name ((GAppInfo *)app_b));
 }
 
 static int
