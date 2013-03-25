@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-03-20 21:03+0100\n"
-"PO-Revision-Date: 2013-03-25 02:04+0100\n"
+"PO-Revision-Date: 2013-03-25 02:06+0100\n"
 "Last-Translator: Luca Ferretti <lferrett@gnome.org>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "Language: it\n"
@@ -3792,7 +3792,7 @@ msgstr "Rete"
 
 #: ../src/nautilus-places-sidebar.c:792
 msgid "Browse Network"
-msgstr "Esplora rete"
+msgstr "Esplora la rete"
 
 #: ../src/nautilus-places-sidebar.c:794
 msgid "Browse the contents of the network"
