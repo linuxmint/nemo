@@ -69,7 +69,6 @@ struct NautilusQueryEditorDetails {
 	char *current_uri;
 
 	GList *rows;
-	gboolean got_preedit;
 
 	NautilusQuery *query;
 };
@@ -173,14 +172,6 @@ entry_focus_hack (GtkWidget *entry,
 	send_focus_change (entry, device, TRUE);
 }
 
-static void
-entry_preedit_changed_cb (GtkEntry            *entry,
-			  gchar               *preedit,
-			  NautilusQueryEditor *editor)
-{
-	editor->details->got_preedit = TRUE;
-}
-
 gboolean
 nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 				    GdkEventKey         *event)
@@ -188,12 +179,7 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 	GtkWidget *toplevel;
 	GtkWidget *old_focus;
 	GdkEvent *new_event;
-	gboolean handled = FALSE;
-	gulong id;
 	gboolean retval;
-	gboolean text_changed;
-	char *old_text;
-	const char *new_text;
 
 	/* if we're focused already, no need to handle the event manually */
 	if (gtk_widget_has_focus (editor->details->entry)) {
@@ -210,7 +196,11 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 		return FALSE;
 	}
 
-	editor->details->got_preedit = FALSE;
+	/* if it's not printable we don't need it */
+	if (!g_unichar_isprint (gdk_keyval_to_unicode (event->keyval))) {
+		return FALSE;
+	}
+
 	if (!gtk_widget_get_realized (editor->details->entry)) {
 		gtk_widget_realize (editor->details->entry);
 	}
@@ -225,11 +215,6 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 	/* input methods will typically only process events after getting focus */
 	gtk_widget_grab_focus (editor->details->entry);
 
-	old_text = g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry)));
-
-	id = g_signal_connect (editor->details->entry, "preedit-changed",
-			       G_CALLBACK (entry_preedit_changed_cb), editor);
-
 	new_event = gdk_event_copy ((GdkEvent *) event);
 	g_object_unref (((GdkEventKey *) new_event)->window);
 	((GdkEventKey *) new_event)->window = g_object_ref
@@ -237,20 +222,11 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 	retval = gtk_widget_event (editor->details->entry, new_event);
 	gdk_event_free (new_event);
 
-	g_signal_handler_disconnect (editor->details->entry, id);
-
-	new_text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
-	text_changed = strcmp (old_text, new_text) != 0;
-	g_free (old_text);
-
-	handled = (editor->details->got_preedit) || (retval && text_changed);
-	editor->details->got_preedit = FALSE;
-
-	if (!handled && old_focus) {
+	if (!retval && old_focus) {
 		gtk_widget_grab_focus (old_focus);
 	}
 
-	return handled;
+	return retval;
 }
 
 static void
