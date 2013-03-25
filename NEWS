@@ -1,3 +1,7 @@
+Major changes in 3.8.0 are:
+* Fix inconsistency in handling of NoDisplay=true applications
+* Translation updates
+
 Major changes in 3.7.92 are:
 * Ensure target directories exist when restoring trash contents
 * Export non-VFS URIs to DnD selections
