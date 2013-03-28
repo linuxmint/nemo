@@ -17,7 +17,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-03-04 09:51+0000\n"
-"PO-Revision-Date: 2013-03-25 23:53+0530\n"
+"PO-Revision-Date: 2013-03-28 16:18+0530\n"
 "Last-Translator: Manoj Kumar Giri <mgiri@redhat.com>\n"
 "Language-Team: Oriya <oriya-it@googlegroups.com>\n"
 "Language: or\n"
@@ -1117,16 +1117,16 @@ msgstr[1] "%'d ଟି ଫାଇଲ ଆବର୍ଜନା ପାତ୍ରରେ �
 
 #. Translators: %B is a file name
 #: ../libnautilus-private/nautilus-file-operations.c:1808
-#, fuzzy
 #| msgid "Cannot move file to trash, do you want to delete immediately?"
 msgid "“%B” can't be put in the trash. Do you want to delete it immediately?"
 msgstr ""
-"ଫାଇଲକୁ ଆବର୍ଜନା ପାତ୍ର ମଧ୍ଯକୁ ପଠାଯାଇପାରିବ ନାହିଁ, ଆପଣ ସଙ୍ଗେ ସଙ୍ଗେ ଅପସାରଣ କରିବାକୁ "
+"“%B” କୁ ଆବର୍ଜନା ପାତ୍ର ମଧ୍ଯକୁ ପଠାଯାଇପାରିବ ନାହିଁ, ଆପଣ ସଙ୍ଗେ ସଙ୍ଗେ ଅପସାରଣ "
+"କରିବାକୁ "
 "ଚାହୁଛନ୍ତି କି?"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1814
 msgid "This remote location does not support sending items to the trash."
-msgstr ""
+msgstr "ଏହି ସୁଦୂର ଅବସ୍ଥାନଟି ବସ୍ତୁକୁ ଆବର୍ଜନା ପାତ୍ରକୁ ପଠାଇବାକୁ ସମର୍ଥନ କରିନଥାଏ।"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1988
 msgid "Trashing Files"
@@ -1787,21 +1787,21 @@ msgid "_Redo Duplicate"
 msgstr "ନକଲ କ୍ରିୟାକୁ ପୁଣି କରନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:449
-#, fuzzy, c-format
+#, c-format
 #| msgid "_Double click to open items"
 msgid "Delete links to %d item"
 msgid_plural "Delete links to %d items"
-msgstr[0] "ବସ୍ତୁ ମାନଙ୍କୁ ଖାଲିବା ପାଇଁ ଦୁଇଥର ଦବାନ୍ତୁ (_D)"
-msgstr[1] "ବସ୍ତୁ ମାନଙ୍କୁ ଖାଲିବା ପାଇଁ ଦୁଇଥର ଦବାନ୍ତୁ (_D)"
+msgstr[0] "%d ବସ୍ତୁକୁ ସଂଯୋଗିକୀ ଅପସାରଣ କରନ୍ତୁ"
+msgstr[1] "%d ବସ୍ତୁଗୁଡ଼ିକୁ ସଂଯୋଗିକୀ ଅପସାରଣ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:452
-#, fuzzy, c-format
+#, c-format
 #| msgid "Making link to %'d file"
 #| msgid_plural "Making links to %'d files"
 msgid "Create links to %d item"
 msgid_plural "Create links to %d items"
-msgstr[0] "%'d ଫାଇଲ ପାଇଁ ସଂଯୋଗ ସ୍ଥାପନ କରୁଅଛି"
-msgstr[1] "%'d ଫାଇଲ ପାଇଁ ସଂଯୋଗ ସ୍ଥାପନ କରୁଅଛି"
+msgstr[0] "%d ବସ୍ତୁକୁ ସଂଯୋଗିକୀ ସୃଷ୍ଟି କରନ୍ତୁ"
+msgstr[1] "%d ବସ୍ତୁଗୁଡ଼ିକୁ ସଂଯୋଗିକୀ ସୃଷ୍ଟି କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:456
 #, c-format
@@ -1919,27 +1919,25 @@ msgstr "ଆବର୍ଜନା ପାତ୍ରକୁ  ପୁଣି ପଠାନ�
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1299
 #, c-format
 msgid "Restore original permissions of items enclosed in '%s'"
-msgstr ""
+msgstr "'%s' ରେ ଥିବା ବସ୍ତୁଗୁଡ଼ିକର ପ୍ରକୃତ ଅନୁମତିଗୁଡ଼ିକୁ ସଂରକ୍ଷିତ ରଖନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1300
-#, fuzzy, c-format
+#, c-format
 #| msgid "The permissions of the file."
 msgid "Set permissions of items enclosed in '%s'"
-msgstr "ଫାଇଲର ଅନୁମତି।"
+msgstr "'%s' ରେ ଥିବା ବସ୍ତୁଗୁଡ଼ିକର ପ୍ରକୃତ ଅନୁମତି ସେଟ କରନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1302
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1457
-#, fuzzy
 #| msgid "Folder Permissions:"
 msgid "_Undo Change Permissions"
-msgstr "ଫୋଲଡର ଅଧିକାର:"
+msgstr "ଅନୁମତି ପରିବର୍ତ୍ତନକୁ ବାତିଲ କରନ୍ତୁ (_U)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1303
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1458
-#, fuzzy
 #| msgid "Folder Permissions:"
 msgid "_Redo Change Permissions"
-msgstr "ଫୋଲଡର ଅଧିକାର:"
+msgstr "ଅନୁମତି ପରିବର୍ତ୍ତନକୁ ପୁଣି କରନ୍ତୁ (_R)"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1454
 #, c-format
@@ -2111,7 +2109,7 @@ msgstr "“%s”  କୁ ଖୋଜନ୍ତୁ"
 
 #: ../libnautilus-private/nautilus-search-engine.c:190
 msgid "Unable to complete the requested search"
-msgstr ""
+msgstr "ଅନୁରୋଧ କରାଯାଇଥିବା ସନ୍ଧାନକୁ ସମ୍ପୂର୍ଣ୍ଣ କରିବାରେ ଅସମର୍ଥ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:1
 msgid "Where to position newly open tabs in browser windows."
@@ -2402,6 +2400,9 @@ msgid ""
 "This key is deprecated and ignored. The \"show-hidden\" key from \"org.gtk."
 "Settings.FileChooser\" is now used instead."
 msgstr ""
+"ଏହି କି ଟି ପୁରୁଣା ହୋଇଛି ଏବଂ ଅଗ୍ରହଣୀୟ।  \"org.gtk.Settings.FileChooser\" ରୁ "
+"\"ଲୁକ୍କାଇତକୁ ଦର୍ଶାନ୍ତୁ\" କି "
+"ବର୍ତ୍ତମାନ ଏହା ପରିବର୍ତ୍ତେ ବ୍ୟବହାର ହେଉଛି।"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:37
 msgid "Bulk rename utility"
@@ -2535,15 +2536,16 @@ msgid "Default column order in the list view."
 msgstr "ଏହି ତାଲିକା ପ୍ରଦର୍ଶନରେ ପୂର୍ବ ନିର୍ଦ୍ଧାରିତ ସ୍ତମ୍ଭ ଅନୁକ୍ରମ।"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:54
-#, fuzzy
 #| msgid "Text view:"
 msgid "Use tree view"
-msgstr "ପାଠ୍ଯ ଦୃଶ୍ଯ:"
+msgstr "ବୃକ୍ଷ ଦୃଶ୍ୟ ବ୍ୟବହାର କରନ୍ତୁ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:55
 msgid ""
 "Whether a tree should be used for list view navigation instead of a flat list"
 msgstr ""
+"ମସୃଣ ତାଲିକା ପରିବର୍ତ୍ତେ ଏକ ବୃକ୍ଷକୁ ତାଲିକା ଦୃଶ୍ୟ ଅନ୍ୱେଷଣ ପାଇଁ ବ୍ୟବହାର "
+"କରାଯାଇପାରିବ କି ନାହିଁ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
 msgid "Desktop font"
@@ -2721,30 +2723,27 @@ msgstr ""
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:80
 #: ../nautilus-sendto-extension/nautilus-nste.c:85
-#, fuzzy
 #| msgid "Send To..."
 msgid "Send To…"
-msgstr "ଏଠାକୁ ପଠାନ୍ତୁ..."
+msgstr "ଏଠାକୁ ପଠାନ୍ତୁ…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:81
-#, fuzzy
 #| msgid "Send file by mail, instant message..."
 msgid "Send file by mail, instant message…"
-msgstr "ମେଲ ମାଧ୍ଯମରେ ଫାଇଲ ପଠାନ୍ତୁ, କ୍ଷଣିକ ସନ୍ଦେଶ..."
+msgstr "ମେଲ ମାଧ୍ଯମରେ ଫାଇଲ ପଠାନ୍ତୁ, କ୍ଷଣିକ ସନ୍ଦେଶ…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:86
-#, fuzzy
 #| msgid "Send files by mail, instant message..."
 msgid "Send files by mail, instant message…"
-msgstr "ମେଲ ମାଧ୍ଯମରେ ଫାଇଲଗୁଡ଼ିକୁ ପଠାନ୍ତୁ, କ୍ଷଣିକ ସନ୍ଦେଶ..."
+msgstr "ମେଲ ମାଧ୍ଯମରେ ଫାଇଲଗୁଡ଼ିକୁ ପଠାନ୍ତୁ, କ୍ଷଣିକ ସନ୍ଦେଶ…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
 #: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1599
 msgid "Oops! Something went wrong."
-msgstr ""
+msgstr "ଆହା! କିଛି ଗୋଟିଏ ଭୁଲ ହୋଇଗଲା।"
 
 #: ../src/nautilus-application.c:234
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "Before running Nautilus, please create the following folder, or set "
 #| "permissions such that Nautilus can create it."
@@ -2753,12 +2752,13 @@ msgid ""
 "set permissions such that it can be created:\n"
 "%s"
 msgstr ""
-"Nautilus ଚଲାଇବା ପୂର୍ବରୁ, ଦୟାକରି ନିମ୍ନଲିଖିତ ଫୋଲଡ଼ର ନିର୍ମାଣ କରନ୍ତୁ, କିମ୍ବା "
-"ଅନୁମତି ବିନ୍ୟାସ କରନ୍ତୁ "
-"ଯେପରିକି Nautilus ଏହାକୁ ନିର୍ମାଣ କରିପାରିବ।"
+"ଆବଶ୍ୟକୀୟ ଫୋଲଡରଗୁଡ଼ିକୁ ନିର୍ମାଣ କରିବାରେ ଅସମର୍ଥ।  ଦୟାକରି ନିମ୍ନଲିଖିତ ଫୋଲଡ଼ର "
+"ନିର୍ମାଣ କରନ୍ତୁ, କିମ୍ବା "
+"ଅନୁମତି ବିନ୍ୟାସ କରନ୍ତୁ ଯେପରିକି ଏହାକୁ ନିର୍ମାଣ କରିପାରିବ:\n"
+"%s"
 
 #: ../src/nautilus-application.c:239
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "Before running Nautilus, please create the following folder, or set "
 #| "permissions such that Nautilus can create it."
@@ -2767,9 +2767,10 @@ msgid ""
 "set permissions such that they can be created:\n"
 "%s"
 msgstr ""
-"Nautilus ଚଲାଇବା ପୂର୍ବରୁ, ଦୟାକରି ନିମ୍ନଲିଖିତ ଫୋଲଡ଼ର ନିର୍ମାଣ କରନ୍ତୁ, କିମ୍ବା "
-"ଅନୁମତି ବିନ୍ୟାସ କରନ୍ତୁ "
-"ଯେପରିକି Nautilus ଏହାକୁ ନିର୍ମାଣ କରିପାରିବ।"
+"ଆବଶ୍ୟକୀୟ ଫୋଲଡରଗୁଡ଼ିକୁ ନିର୍ମାଣ କରିବାରେ ଅସମର୍ଥ।  ଦୟାକରି ନିମ୍ନଲିଖିତ ଫୋଲଡ଼ର "
+"ନିର୍ମାଣ କରନ୍ତୁ, କିମ୍ବା "
+"ଅନୁମତି ବିନ୍ୟାସ କରନ୍ତୁ ଯେପରିକି ଏହାକୁ ନିର୍ମାଣ କରିପାରିବ:\n"
+"%s"
 
 #: ../src/nautilus-application.c:373
 msgid ""
@@ -2804,14 +2805,13 @@ msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry କୁ ଏକାଧିକ URI ସହିତ ବ୍ଯବହାର କରିପାରିବେ ନାହିଁ।"
 
 #: ../src/nautilus-application.c:1114
-#, fuzzy
 #| msgid "--geometry cannot be used with more than one URI."
 msgid "--select must be used with at least an URI."
-msgstr "--geometry କୁ ଏକାଧିକ URI ସହିତ ବ୍ଯବହାର କରିପାରିବେ ନାହିଁ।"
+msgstr "--select କୁ ଅତିକମରେ ଗୋଟିଏ URI ସହିତ ବ୍ଯବହାର କରିବା ଉଚିତ।"
 
 #: ../src/nautilus-application.c:1120
 msgid "--no-desktop and --force-desktop cannot be used together."
-msgstr ""
+msgstr "--no-desktop ଏବଂ --force-desktop କୁ ଏକା ସହିତ ବ୍ୟବହାର କରିପାରିବେ ନାହିଁ।"
 
 #: ../src/nautilus-application.c:1219
 msgid "Perform a quick set of self-check tests."
@@ -2830,12 +2830,9 @@ msgid "GEOMETRY"
 msgstr "ଜ୍ଯାମିତି"
 
 #: ../src/nautilus-application.c:1229
-#, fuzzy
 #| msgid "Only create windows for explicitly specified URIs."
 msgid "Always open a new window for browsing specified URIs"
-msgstr ""
-"କେବଳ ସୁସ୍ପଷ୍ଟଭାବେ ଅଭିବ୍ଯକ୍ତ ୟୁ.ଆର.ଆଇ. ମାନଙ୍କ ପାଇଁ ୱିଣ୍ଡୋ ମାନଙ୍କୁ ସ୍ରୁଷ୍ଟି "
-"କରନ୍ତୁ।"
+msgstr "ଉଲ୍ଲିଖିତ URIs କୁ ବ୍ରାଉଜ କରିବା ପାଇଁ ସର୍ବଦା ନୂତନ ୱିଣ୍ଡୋ ଖୋଲନ୍ତୁ"
 
 #: ../src/nautilus-application.c:1231
 msgid "Only create windows for explicitly specified URIs."
@@ -2844,34 +2841,27 @@ msgstr ""
 "କରନ୍ତୁ।"
 
 #: ../src/nautilus-application.c:1233
-#, fuzzy
 #| msgid ""
 #| "Do not manage the desktop (ignore the preference set in the preferences "
 #| "dialog)."
 msgid "Never manage the desktop (ignore the GSettings preference)."
-msgstr ""
-"ଡେସ୍କଟପକୁ ପରାଚାଳନା କରନ୍ତୁ ନାହିଁ (ପସନ୍ଦ ସଂଳାପରେ ବିନ୍ଯାସ ହୋଇଥିବା ପସନ୍ଦକୁ ଏଡାଇ "
-"ଦିଅନ୍ତୁ)।"
+msgstr "ଡେସ୍କଟପକୁ ପରାଚାଳନା କରନ୍ତୁ ନାହିଁ (GSettings ପସନ୍ଦକୁ ଏଡାଇ ଦିଅନ୍ତୁ)।"
 
 #: ../src/nautilus-application.c:1235
-#, fuzzy
 #| msgid ""
 #| "Do not manage the desktop (ignore the preference set in the preferences "
 #| "dialog)."
 msgid "Always manage the desktop (ignore the GSettings preference)."
-msgstr ""
-"ଡେସ୍କଟପକୁ ପରାଚାଳନା କରନ୍ତୁ ନାହିଁ (ପସନ୍ଦ ସଂଳାପରେ ବିନ୍ଯାସ ହୋଇଥିବା ପସନ୍ଦକୁ ଏଡାଇ "
-"ଦିଅନ୍ତୁ)।"
+msgstr "ସର୍ବଦା ଡେସ୍କଟପକୁ ପରାଚାଳନା କରନ୍ତୁ (GSettings ପସନ୍ଦ କୁ ଏଡାଇ ଦିଅନ୍ତୁ)।"
 
 #: ../src/nautilus-application.c:1237
 msgid "Quit Nautilus."
 msgstr "ନଟଲସକୁ ବନ୍ଦ କରନ୍ତୁ।"
 
 #: ../src/nautilus-application.c:1239
-#, fuzzy
 #| msgid "Select the columns visible in this folder"
 msgid "Select specified URI in parent folder."
-msgstr "ଏହି ଫୋଲଡରରେ ଦେଖା ଯାଉଥିବା ସ୍ତମ୍ଭକୁ ଚୟନ କରନ୍ତୁ"
+msgstr "ମୂଖ୍ୟ ଫୋଲଡରରେ ଉଲ୍ଲିଖିତ URI କୁ ଚୟନ କରନ୍ତୁ।"
 
 #: ../src/nautilus-application.c:1240
 msgid "[URI...]"
@@ -2890,18 +2880,16 @@ msgstr ""
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
 #: ../src/nautilus-application.c:1262
-#, fuzzy
 #| msgid "Could not set as default"
 msgid "Could not parse arguments"
-msgstr "ପୂର୍ବନିର୍ଦ୍ଧାରିତ ଭାବରେ ସେଟ କରିପାରିଲା ନାହିଁ"
+msgstr "ସ୍ୱତନ୍ତ୍ରଚରଗୁଡ଼ିକୁ ବିଶ୍ଳେଷଣ କରିପାରିବେ ନାହିଁ"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
 #: ../src/nautilus-application.c:1295
-#, fuzzy
 #| msgid "Could not remove application"
 msgid "Could not register the application"
-msgstr "ପ୍ରୟୋଗକୁ କଢ଼ାଯାଇପାରିବ ନାହିଁ"
+msgstr "ପ୍ରୟୋଗକୁ ପଞ୍ଜିକୃତ କରି ପାରିବ ନାହିଁ"
 
 #. name, stock id, label
 #: ../src/nautilus-app-menu.ui.h:1 ../src/nautilus-window-menus.c:536
@@ -2909,16 +2897,14 @@ msgid "New _Window"
 msgstr "ନୂତନ ୱିଣ୍ଡୋ (_W)"
 
 #: ../src/nautilus-app-menu.ui.h:2
-#, fuzzy
 #| msgid "Connect to Server"
 msgid "Connect to _Server"
-msgstr "ସେବକ ସହିତ ସଂଯୋଗ କରନ୍ତୁ"
+msgstr "ସେବକ ସହିତ ସଂଯୋଗ କରନ୍ତୁ (_S) "
 
 #: ../src/nautilus-app-menu.ui.h:3
-#, fuzzy
 #| msgid "_Location:"
 msgid "Enter _Location"
-msgstr "ଅବସ୍ଥାନ (_L):"
+msgstr "ଅବସ୍ଥାନ ଭରଣ କରନ୍ତୁ (_L)"
 
 #: ../src/nautilus-app-menu.ui.h:4
 msgid "_Bookmarks"
@@ -2929,10 +2915,9 @@ msgid "Prefere_nces"
 msgstr "ପସନ୍ଦ (_n)"
 
 #: ../src/nautilus-app-menu.ui.h:6
-#, fuzzy
 #| msgid "_About"
 msgid "_About Files"
-msgstr "ବିବରଣୀ (_A)"
+msgstr "ଫାଇଲଗୁଡ଼ିକ ବିଷୟରେ (_A)"
 
 #. name, stock id, label
 #: ../src/nautilus-app-menu.ui.h:7 ../src/nautilus-window-menus.c:456
@@ -2941,29 +2926,31 @@ msgstr "ସହାୟତା (_H)"
 
 #: ../src/nautilus-app-menu.ui.h:8
 msgid "_Quit"
-msgstr ""
+msgstr "ବିଦାୟ ନିଅନ୍ତୁ (_Q)"
 
 #: ../src/nautilus-autorun-software.c:143
 #: ../src/nautilus-autorun-software.c:146
-#, fuzzy, c-format
+#, c-format
 #| msgid "Unable to start %s"
 msgid ""
 "Unable to start the program:\n"
 "%s"
-msgstr "%s କୁ ଆରମ୍ଭ କରିବାରେ ଅସମର୍ଥ"
+msgstr ""
+"ପ୍ରଗ୍ରାମକୁ ଆରମ୍ଭ କରିବାରେ ଅସମର୍ଥ:\n"
+"%s"
 
 #: ../src/nautilus-autorun-software.c:149
-#, fuzzy, c-format
+#, c-format
 #| msgid "Unable to mount the location."
 msgid "Unable to locate the program"
-msgstr "ଅବସ୍ଥାନକୁ ସ୍ଥାପନ କରିପାରିଲା ନାହିଁ।"
+msgstr "ପ୍ରଗ୍ରାମକୁ ଖୋଜିବାରେ ଅସମର୍ଥ"
 
 #: ../src/nautilus-autorun-software.c:171
 msgid "Oops! There was a problem running this software."
-msgstr ""
+msgstr "ଆହା! ଏହି ସଫ୍ଟୱେରକୁ ଚଲାଇବା ସମୟରେ ଏକ ସମସ୍ୟା ଦେଖା ଦେଇଛି।"
 
 #: ../src/nautilus-autorun-software.c:202
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "<big><b>This medium contains software intended to be automatically "
 #| "started. Would you like to run it?</b></big>"
@@ -2971,13 +2958,14 @@ msgid ""
 "“%s” contains software intended to be automatically started. Would you like "
 "to run it?"
 msgstr ""
-"<big><b>ଏହି ମାଧ୍ଯମଟି ସ୍ୱୟଂଚାଳିତ ଭାବରେ ଆରମ୍ଭ ହେବାକୁ ଥିବା ସଫ୍ଟୱେର ଧାରଣ କରିଅଛି। "
-"ଆପଣ ଏହାକୁ "
-"ଚଲାଇବାକୁ ପସନ୍ଦ କରିବେ କି?</b></big>"
+"“%s” ଟି ସ୍ୱୟଂଚାଳିତ ଭାବରେ ଆରମ୍ଭ ହେବାକୁ ଥିବା ସଫ୍ଟୱେର ଧାରଣ କରିଅଛି। ଆପଣ ଏହାକୁ "
+"ଚଲାଇବାକୁ ପସନ୍ଦ କରିବେ କି?"
 
 #: ../src/nautilus-autorun-software.c:206
 msgid "If you don't trust this location or aren't sure, press Cancel."
 msgstr ""
+"ଯଦି ଆପଣ ଏହି ସ୍ଥାନକୁ ବିଶ୍ୱସା ନକରନ୍ତି କିମ୍ବା ସୁନିଶ୍ଚିତ ନୁହଁନ୍ତି,  ତେବେ ବାତିଲ "
+"କରନ୍ତୁ।"
 
 #: ../src/nautilus-autorun-software.c:240 ../src/nautilus-mime-actions.c:724
 msgid "_Run"
@@ -2997,29 +2985,25 @@ msgid "Remove"
 msgstr "ଅପସାରଣ କରନ୍ତୁ"
 
 #: ../src/nautilus-bookmarks-window.ui.h:2
-#, fuzzy
 #| msgid "Move _Up"
 msgid "Move Up"
-msgstr "ଉପରକୁ ଯାଆନ୍ତୁ (_U)"
+msgstr "ଉପରକୁ ଯାଆନ୍ତୁ"
 
 #: ../src/nautilus-bookmarks-window.ui.h:3
-#, fuzzy
 #| msgid "Move Dow_n"
 msgid "Move Down"
-msgstr "ତଳକୁ ଯାଆନ୍ତୁ (_n)"
+msgstr "ତଳକୁ ଯାଆନ୍ତୁ"
 
 #: ../src/nautilus-bookmarks-window.ui.h:4
-#, fuzzy
 #| msgid "_Name:"
 #| msgid_plural "_Names:"
 msgid "_Name"
-msgstr "ନାମ (_N):"
+msgstr "ନାମ (_N)"
 
 #: ../src/nautilus-bookmarks-window.ui.h:5
-#, fuzzy
 #| msgid "_Location:"
 msgid "_Location"
-msgstr "ଅବସ୍ଥାନ (_L):"
+msgstr "ଅବସ୍ଥାନ (_L)"
 
 #. name, stock id
 #. label, accelerator
@@ -3096,13 +3080,12 @@ msgstr ""
 
 #: ../src/nautilus-canvas-view.c:1192
 msgid "By Search Relevance"
-msgstr ""
+msgstr "ସନ୍ଧାନ ଅନୁସାରେ"
 
 #: ../src/nautilus-canvas-view.c:1193
-#, fuzzy
 #| msgid "Keep icons sorted by size in rows"
 msgid "Keep icons sorted by search relevance in rows"
-msgstr "ଚିତ୍ରସଙ୍କେତ ମାନଙ୍କୁ ଆକାର ଅନୁଯାୟୀ ଧାଡିରେ କ୍ରମାନ୍ବୟରେ ରଖନ୍ତୁ"
+msgstr "ଚିତ୍ରସଙ୍କେତ ମାନଙ୍କୁ ସନ୍ଧାନ ଅନୁଯାୟୀ ଧାଡିରେ କ୍ରମାନ୍ବୟରେ ରଖନ୍ତୁ"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
@@ -3132,16 +3115,14 @@ msgstr "ଚିତ୍ରସଙ୍କେତ ଦୃଶ୍ଯ ସହିତ ଏହି
 #. if it wasn't cancelled show a dialog
 #: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1870
 #: ../src/nautilus-mime-actions.c:2142
-#, fuzzy
 #| msgid "Unable to start location"
 msgid "Unable to access location"
-msgstr "ଅବସ୍ଥାନ ଆରମ୍ଭ କରିବାରେ ଅସମର୍ଥ"
+msgstr "ଅବସ୍ଥାନ ଅଭିଗମ୍ୟ କରିବାରେ ଅସମର୍ଥ"
 
 #: ../src/nautilus-connect-server.c:74
-#, fuzzy
 #| msgid "Unable to start location"
 msgid "Unable to display location"
-msgstr "ଅବସ୍ଥାନ ଆରମ୍ଭ କରିବାରେ ଅସମର୍ଥ"
+msgstr "ଅବସ୍ଥାନ ପ୍ରଦର୍ଶନ କରିବାରେ ଅସମର୍ଥ"
 
 #: ../src/nautilus-connect-server.c:140
 msgid "Print but do not open the URI"
@@ -3166,47 +3147,42 @@ msgstr "ସହାୟତାକୁ ପ୍ରଦର୍ଶନ କରିବା ସମ
 
 #: ../src/nautilus-connect-server-dialog.c:149
 msgid "Don't recognize this file server type."
-msgstr ""
+msgstr "ଏହି ଫାଇଲ ସର୍ଭର ପ୍ରକାରକୁ ଚିହ୍ନି ପାରିବେ ନାହିଁ।"
 
 #: ../src/nautilus-connect-server-dialog.c:156
 msgid "This doesn't look like an address."
-msgstr ""
+msgstr "ଏହା ଏକ ଠିକଣା ପରି ଦେଖାଯାଉ ନାହିଁ।"
 
 #. Translators: %s is a URI of the form "smb://foo.example.com"
 #: ../src/nautilus-connect-server-dialog.c:265
 #, c-format
 msgid "For example, %s"
-msgstr ""
+msgstr "ଉଦାହରଣ ସ୍ବରୂପ, %s"
 
 #: ../src/nautilus-connect-server-dialog.c:533
-#, fuzzy
 #| msgid "Remove"
 msgid "_Remove"
-msgstr "ଅପସାରଣ କରନ୍ତୁ"
+msgstr "ଅପସାରଣ କରନ୍ତୁ (_R)"
 
 #: ../src/nautilus-connect-server-dialog.c:542
-#, fuzzy
 #| msgid "Select All"
 msgid "_Clear All"
-msgstr "ସବୁ ମନୋନୀତ କର"
+msgstr "ସମସ୍ତଙ୍କୁ ସଫା କରନ୍ତୁ (_C)"
 
 #: ../src/nautilus-connect-server-dialog.c:604
-#, fuzzy
 #| msgid "Server Details"
 msgid "_Server Address"
-msgstr "ସର୍ଭର ବିସ୍ତୃତ ବିବରଣୀ"
+msgstr "ସର୍ଭର ଠିକଣା (_S)"
 
 #: ../src/nautilus-connect-server-dialog.c:628
-#, fuzzy
 #| msgid "Network Servers"
 msgid "_Recent Servers"
-msgstr "ନେଟୱାର୍କ ସେବକ"
+msgstr "ପ୍ରଚଳିତ ସର୍ଭରଗୁଡ଼ିକ (_R)"
 
 #: ../src/nautilus-connect-server-dialog.c:694
-#, fuzzy
 #| msgid "_Browse..."
 msgid "_Browse"
-msgstr "ବ୍ରାଉଜ କରନ୍ତୁ (_B)..."
+msgstr "ବ୍ରାଉଜ କରନ୍ତୁ (_B)"
 
 #: ../src/nautilus-connect-server-dialog.c:704
 msgid "C_onnect"
@@ -3268,24 +3244,21 @@ msgstr ""
 
 #. label, accelerator
 #: ../src/nautilus-desktop-canvas-view.c:681
-#, fuzzy
 #| msgid "Resize Icon..."
 msgid "Resize Icon…"
-msgstr "ଚିତ୍ରସଙ୍କେତର ଆକାର ପରିବର୍ତ୍ତନ କରନ୍ତୁ..."
+msgstr "ଚିତ୍ରସଙ୍କେତର ଆକାର ପରିବର୍ତ୍ତନ କରନ୍ତୁ…"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:683
-#, fuzzy
 #| msgid "Make the selected icon resizable"
 msgid "Make the selected icons resizable"
-msgstr "ବଚ୍ଛିତ ଚିତ୍ରସଙ୍କେତକୁ ଆକାର ପରିବର୍ତ୍ତନଯୋଗ୍ଯ କରନ୍ତୁ"
+msgstr "ବଚ୍ଛିତ ଚିତ୍ରସଙ୍କେତଗୁଡ଼ିକୁ ଆକାର ପରିବର୍ତ୍ତନଯୋଗ୍ଯ କରନ୍ତୁ"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:690
-#, fuzzy
 #| msgid "Restore each selected icon to its original size"
 msgid "Restore each selected icons to its original size"
-msgstr "ପ୍ରତ୍ଯେକ ଚୟିତ ଚିତ୍ରସଙ୍କେତକୁ ସେମାନଙ୍କର ପ୍ରକୃତ ଆକାରକୁ ଆଣନ୍ତୁ"
+msgstr "ପ୍ରତ୍ଯେକ ଚୟିତ ଚିତ୍ରସଙ୍କେତଗୁଡ଼ିକୁ ସେମାନଙ୍କର ପ୍ରକୃତ ଆକାରକୁ ଆଣନ୍ତୁ"
 
 #: ../src/nautilus-desktop-canvas-view.c:768
 msgid "The desktop view encountered an error."
@@ -3323,96 +3296,96 @@ msgid "Desktop"
 msgstr "ଡେସ୍କଟପ"
 
 #: ../src/nautilus-error-reporting.c:68
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "You do not have the permissions necessary to view the contents of \"%s\"."
 msgid "You do not have the permissions necessary to view the contents of “%s”."
-msgstr "ଆପଣଙ୍କ ନିକଟରେ \"%s\" ର ବିଷୟବସ୍ତୁକୁ ଦେଖିବା ପାଇଁ ଆବଶ୍ଯକ ଅନୁମତି ନାହିଁ।"
+msgstr "ଆପଣଙ୍କ ନିକଟରେ  “%s”ର ବିଷୟବସ୍ତୁକୁ ଦେଖିବା ପାଇଁ ଆବଶ୍ଯକ ଅନୁମତି ନାହିଁ।"
 
 #: ../src/nautilus-error-reporting.c:72
-#, fuzzy, c-format
+#, c-format
 #| msgid "\"%s\" could not be found. Perhaps it has recently been deleted."
 msgid "“%s” could not be found. Perhaps it has recently been deleted."
-msgstr "\"%s\" ମିଳିଲା ନାହିଁ। ବୋଧହୁଏ ଏହାକୁ କିଛି ସମୟ ପୂର୍ବରୁ ଅପସାରଣ କରାଯାଇଛି।"
+msgstr "“%s” ମିଳିଲା ନାହିଁ। ବୋଧହୁଏ ଏହାକୁ କିଛି ସମୟ ପୂର୍ବରୁ ଅପସାରଣ କରାଯାଇଛି।"
 
 #: ../src/nautilus-error-reporting.c:76
-#, fuzzy, c-format
+#, c-format
 #| msgid "Sorry, could not display all the contents of \"%s\": %s"
 msgid "Sorry, could not display all the contents of “%s”: %s"
-msgstr "କ୍ଷମା କରିବେ, \"%s\" ର ସମସ୍ତ ବିଷୟବସ୍ତୁକୁ ପ୍ରଦର୍ଶନ କରିପାରିଲା ନାହିଁ: %s"
+msgstr "କ୍ଷମା କରିବେ, “%s”ର ସମସ୍ତ ବିଷୟବସ୍ତୁକୁ ପ୍ରଦର୍ଶନ କରିପାରିଲା ନାହିଁ: %s"
 
 #: ../src/nautilus-error-reporting.c:83
-#, fuzzy
 #| msgid "The folder contents could not be displayed."
 msgid "This location could not be displayed."
-msgstr "ଫୋଲଡରର ବିଷୟବସ୍ତୁକୁ ପ୍ରଦର୍ଶନ କରିହେଲା ନାହିଁ।"
+msgstr "ଏହି ସ୍ଥାନର ବିଷୟବସ୍ତୁକୁ ପ୍ରଦର୍ଶନ କରିହେଲା ନାହିଁ।"
 
 #: ../src/nautilus-error-reporting.c:107
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "You do not have the permissions necessary to change the group of \"%s\"."
 msgid "You do not have the permissions necessary to change the group of “%s”."
-msgstr "ଆପଣଙ୍କ ନିକଟରେ \"%s\" ର ସମୂହକୁ ବଦଳାଇବା ପାଇଁ ଆବଶ୍ଯକ ଅନୁମତି ନାହିଁ।"
+msgstr "ଆପଣଙ୍କ ନିକଟରେ “%s” ର ସମୂହକୁ ବଦଳାଇବା ପାଇଁ ଆବଶ୍ଯକ ଅନୁମତି ନାହିଁ।"
 
 #. fall through
 #: ../src/nautilus-error-reporting.c:120
-#, fuzzy, c-format
+#, c-format
 #| msgid "Sorry, could not change the group of \"%s\": %s"
 msgid "Sorry, could not change the group of “%s”: %s"
-msgstr "କ୍ଷମା କରିବେ, \"%s\" ର ସମୂହକୁ ବଦଳାଇ ହେଲା ନାହିଁ: %s"
+msgstr "କ୍ଷମା କରିବେ, “%s” ର ସମୂହକୁ ବଦଳାଇ ହେଲା ନାହିଁ: %s"
 
 #: ../src/nautilus-error-reporting.c:125
 msgid "The group could not be changed."
 msgstr "ସମୂହକୁ ବଦଳାଇ ହେଲା ନାହିଁ।"
 
 #: ../src/nautilus-error-reporting.c:145
-#, fuzzy, c-format
+#, c-format
 #| msgid "Sorry, could not change the owner of \"%s\": %s"
 msgid "Sorry, could not change the owner of “%s”: %s"
-msgstr "କ୍ଷମା କରିବେ, \"%s\" ର ମାଲିକକୁ ବଦଳାଇ ହେଲା ନାହିଁ: %s"
+msgstr "କ୍ଷମା କରିବେ, “%s” ର ମାଲିକକୁ ବଦଳାଇ ହେଲା ନାହିଁ: %s"
 
 #: ../src/nautilus-error-reporting.c:147
 msgid "The owner could not be changed."
 msgstr "ମାଲିକକୁ ବଦାଳାଇ ହେଲା ନାହିଁ।"
 
 #: ../src/nautilus-error-reporting.c:167
-#, fuzzy, c-format
+#, c-format
 #| msgid "Sorry, could not change the permissions of \"%s\": %s"
 msgid "Sorry, could not change the permissions of “%s”: %s"
-msgstr "କ୍ଷମା କରିବେ, \"%s\" ର ଅନୁମତିକୁ ବଦଳାଇ ହେଲା ନାହିଁ: %s"
+msgstr "କ୍ଷମା କରିବେ, “%s” ର ଅନୁମତିକୁ ବଦଳାଇ ହେଲା ନାହିଁ: %s"
 
 #: ../src/nautilus-error-reporting.c:169
 msgid "The permissions could not be changed."
 msgstr "ଅନୁମତିକୁ ବଦଳାଇ ହେଲା ନାହିଁ।"
 
 #: ../src/nautilus-error-reporting.c:204
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "The name \"%s\" is already used in this folder. Please use a different "
 #| "name."
 msgid ""
 "The name “%s” is already used in this location. Please use a different name."
 msgstr ""
-"\"%s\" ନାମ ପୂର୍ବରୁ ଏହି ଫୋଲଡରରେ ଅଛି। ଦୟାକରି ଗୋଟିଏ ଭିନ୍ନ ନାମ ବ୍ଯବହାର କରନ୍ତୁ।"
+"ନାମ “%s” କୁ ଏହି ସ୍ଥାନରେ ପୂର୍ବରୁ ବ୍ୟବହାର କରାଯାଇଛି। ଦୟାକରି ଭିନ୍ନ ଏକ ନାମ ବ୍ୟବହାର "
+"କରନ୍ତୁ।"
 
 #: ../src/nautilus-error-reporting.c:209
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
 msgid ""
 "There is no “%s” in this location. Perhaps it was just moved or deleted?"
 msgstr ""
-"ଏହି ଫୋଲଡରରେ କୌଣସି \"%s\" ନାହିଁ। ବୋଧହୁଏ ଏହାକୁ ବର୍ତ୍ତମାନ ଘୁଞ୍ଚାଯାଇଛି କିମ୍ବା "
+"ଏହି ସ୍ଥାନରେ କୌଣସି  “%s” ନାହିଁ। ବୋଧହୁଏ ଏହାକୁ ବର୍ତ୍ତମାନ ଘୁଞ୍ଚାଯାଇଛି କିମ୍ବା "
 "ଅପସାରଣ କରାଯାଇଛି?"
 
 #: ../src/nautilus-error-reporting.c:214
-#, fuzzy, c-format
+#, c-format
 #| msgid "You do not have the permissions necessary to rename \"%s\"."
 msgid "You do not have the permissions necessary to rename “%s”."
-msgstr "ଆପଣଙ୍କ ନିକଟରେ \"%s\" ର ନାମ ପରିବର୍ତ୍ତନ କରିବା ପାଇଁ ଆବଶ୍ଯକ ଅନୁମତି ନାହିଁ।"
+msgstr "ଆପଣଙ୍କ ନିକଟରେ  “%s” ର ନାମ ପରିବର୍ତ୍ତନ କରିବା ପାଇଁ ଆବଶ୍ଯକ ଅନୁମତି ନାହିଁ।"
 
 #: ../src/nautilus-error-reporting.c:219
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "The name \"%s\" is not valid because it contains the character \"/\". "
 #| "Please use a different name."
@@ -3420,38 +3393,38 @@ msgid ""
 "The name “%s” is not valid because it contains the character “/”. Please use "
 "a different name."
 msgstr ""
-"\"%s\" ନାମ ବୈଧ ନୁହେଁ କାରଣ ଏହା \"/\" ଅକ୍ଷରକୁ ଧାରଣ କରିଅଛି। ଦୟାକରି ଗୋଟିଏ ଭିନ୍ନ "
-"ନାମ ବ୍ଯବହାର "
+"“%s” ନାମ ବୈଧ ନୁହେଁ କାରଣ ଏହା “/” ଅକ୍ଷରକୁ ଧାରଣ କରିଅଛି। ଦୟାକରି ଗୋଟିଏ ଭିନ୍ନ ନାମ "
+"ବ୍ଯବହାର "
 "କରନ୍ତୁ।"
 
 #: ../src/nautilus-error-reporting.c:223
-#, fuzzy, c-format
+#, c-format
 #| msgid "The name \"%s\" is not valid. Please use a different name."
 msgid "The name “%s” is not valid. Please use a different name."
-msgstr "\"%s\" ନାମ ବୈଧ ନୁହେଁ। ଦୟାକରି ଗୋଟିଏ ଭିନ୍ନ ନାମ ବ୍ଯବହାର କରନ୍ତୁ।"
+msgstr "“%s” ନାମ ବୈଧ ନୁହେଁ। ଦୟାକରି ଗୋଟିଏ ଭିନ୍ନ ନାମ ବ୍ଯବହାର କରନ୍ତୁ।"
 
 #: ../src/nautilus-error-reporting.c:229
-#, fuzzy, c-format
+#, c-format
 #| msgid "The name \"%s\" is too long. Please use a different name."
 msgid "The name “%s” is too long. Please use a different name."
-msgstr "\"%s\" ନାମଟି ଅତ୍ୟଧିକ ବଡ଼ ଅଟେ। ଦୟାକରି ଗୋଟିଏ ଭିନ୍ନ ନାମ ବ୍ଯବହାର କରନ୍ତୁ।"
+msgstr "“%s” ନାମଟି ଅତ୍ୟଧିକ ବଡ଼ ଅଟେ। ଦୟାକରି ଗୋଟିଏ ଭିନ୍ନ ନାମ ବ୍ଯବହାର କରନ୍ତୁ।"
 
 #. fall through
 #: ../src/nautilus-error-reporting.c:243
-#, fuzzy, c-format
+#, c-format
 #| msgid "Sorry, could not rename \"%s\" to \"%s\": %s"
 msgid "Sorry, could not rename “%s” to “%s”: %s"
-msgstr "କ୍ଷମା କରିବେ, \"%s\" ନାମକୁ \"%s\" ଭାବରେ ବଦଳାଇ ହେଲା ନାହିଁ: %s"
+msgstr "କ୍ଷମା କରିବେ, “%s” ନାମକୁ “%s” ଭାବରେ ବଦଳାଇ ହେଲା ନାହିଁ: %s"
 
 #: ../src/nautilus-error-reporting.c:251
 msgid "The item could not be renamed."
 msgstr "ବସ୍ତୁର ନାମ ବଦଳାଇହେବ ନାହିଁ।"
 
 #: ../src/nautilus-error-reporting.c:348
-#, fuzzy, c-format
+#, c-format
 #| msgid "Renaming \"%s\" to \"%s\"."
 msgid "Renaming “%s” to “%s”."
-msgstr "\"%s\" ର ନାମକୁ \"%s\" ରେ ବଦଳାଉଛି।"
+msgstr "“%s” ର ନାମକୁ “%s” ରେ ବଦଳାଉଛି।"
 
 #. Translators: this is referred to captions under icons.
 #: ../src/nautilus-file-management-properties.c:281
@@ -3461,16 +3434,14 @@ msgid "None"
 msgstr "କିଛି ନୁହେଁ"
 
 #: ../src/nautilus-file-management-properties.ui.h:1
-#, fuzzy
 #| msgid "Prefere_nces"
 msgid "Files Preferences"
-msgstr "ପସନ୍ଦ (_n)"
+msgstr "ଫାଇଲ ପସନ୍ଦ"
 
 #: ../src/nautilus-file-management-properties.ui.h:2
-#, fuzzy
 #| msgid "<b>Default View</b>"
 msgid "Default View"
-msgstr "<b>ପୂର୍ବନିର୍ଦ୍ଧାରିତ ଦୃଶ୍ଯ</b>"
+msgstr "ପୂର୍ବନିର୍ଦ୍ଧାରିତ ଦୃଶ୍ଯ"
 
 #: ../src/nautilus-file-management-properties.ui.h:3
 msgid "View _new folders using:"
@@ -3489,20 +3460,18 @@ msgid "Show hidden and _backup files"
 msgstr "ଲୁକ୍କୟିତ ଫାଇଲ ଏବଂ ନକଲ ସଂରକ୍ଷଣ ଫାଇଲ ମାନଙ୍କୁ ଦେଖାନ୍ତୁ (_b)"
 
 #: ../src/nautilus-file-management-properties.ui.h:7
-#, fuzzy
 #| msgid "<b>Icon View Defaults</b>"
 msgid "Icon View Defaults"
-msgstr "<b>ପୂର୍ବନିର୍ଦ୍ଧାରିତ ତାଲିକା ଦୃଶ୍ଯ</b>"
+msgstr "ପୂର୍ବନିର୍ଦ୍ଧାରିତ ଚିତ୍ରସଂକେତ ଦୃଶ୍ଯ"
 
 #: ../src/nautilus-file-management-properties.ui.h:8
 msgid "Default _zoom level:"
 msgstr "ପୂର୍ବନିର୍ଦ୍ଧାରିତ ସାନବଡ କରିବା ପ୍ରକ୍ରିୟାର ସ୍ତର (_z):"
 
 #: ../src/nautilus-file-management-properties.ui.h:9
-#, fuzzy
 #| msgid "<b>List View Defaults</b>"
 msgid "List View Defaults"
-msgstr "<b>ପୂର୍ବନିର୍ଦ୍ଧାରିତ ତାଲିକା ଦୃଶ୍ଯ</b>"
+msgstr "ପୂର୍ବନିର୍ଦ୍ଧାରିତ ତାଲିକା ଦୃଶ୍ଯ"
 
 #: ../src/nautilus-file-management-properties.ui.h:10
 msgid "D_efault zoom level:"
@@ -3525,10 +3494,9 @@ msgid "_Double click to open items"
 msgstr "ବସ୍ତୁ ମାନଙ୍କୁ ଖାଲିବା ପାଇଁ ଦୁଇଥର ଦବାନ୍ତୁ (_D)"
 
 #: ../src/nautilus-file-management-properties.ui.h:15
-#, fuzzy
 #| msgid "<b>Executable Text Files</b>"
 msgid "Executable Text Files"
-msgstr "<b>ନିଷ୍ପାଦନୀୟ ପାଠ୍ଯ ଫାଇଲଗୁଡ଼ିକ</b>"
+msgstr "ନିଷ୍ପାଦନୀୟ ପାଠ୍ଯ ଫାଇଲଗୁଡ଼ିକ"
 
 #: ../src/nautilus-file-management-properties.ui.h:16
 msgid "_Run executable text files when they are opened"
@@ -3561,10 +3529,9 @@ msgstr ""
 "ଆବର୍ଜନା ପାତ୍ରକୁ ଏଡାଇ ଦେଉଥିବା ଗୋଟିଏ delete ନିର୍ଦ୍ଦେଶକୁ ଅନ୍ତର୍ଭୂକ୍ତ କରନ୍ତୁ (_n)"
 
 #: ../src/nautilus-file-management-properties.ui.h:22
-#, fuzzy
 #| msgid "<b>Icon Captions</b>"
 msgid "Icon Captions"
-msgstr "<b>ଚିତ୍ର ସଂକେତ ଶୀର୍ଷକଗୁଡ଼ିକ</b>"
+msgstr "ଚିତ୍ର ସଂକେତ ଶୀର୍ଷକଗୁଡ଼ିକ"
 
 #: ../src/nautilus-file-management-properties.ui.h:23
 msgid ""
@@ -3584,7 +3551,7 @@ msgstr "ତାଲିକା ପ୍ରଦର୍ଶନ"
 
 #: ../src/nautilus-file-management-properties.ui.h:25
 msgid "Navigate folders in a tree"
-msgstr ""
+msgstr "ବୃକ୍ଷରେ ଋଣାତ୍ମକ ଫୋଲଡରଗୁଡ଼ିକ"
 
 #: ../src/nautilus-file-management-properties.ui.h:26
 msgid "Display"
@@ -3608,10 +3575,9 @@ msgstr "କେବଳ ଏହାଠାରୁ ଛୋଟ ଫାଇଲ ମାନଙ�
 
 #: ../src/nautilus-file-management-properties.ui.h:32
 #: ../src/nautilus-properties-window.c:4477
-#, fuzzy
 #| msgid "_Folder:"
 msgid "Folders"
-msgstr "ଫୋଲଡର (_F):"
+msgstr "ଫୋଲଡରଗୁଡିକ"
 
 #: ../src/nautilus-file-management-properties.ui.h:33
 msgid "Count _number of items:"
@@ -3733,36 +3699,35 @@ msgid "4 GB"
 msgstr "4 GB"
 
 #: ../src/nautilus-image-properties-page.c:331
-#, fuzzy
 #| msgid "Image Type:"
 msgid "Image Type"
-msgstr "ପ୍ରତିଛବି ପ୍ରକାର:"
+msgstr "ପ୍ରତିଛବି ପ୍ରକାର"
 
 #: ../src/nautilus-image-properties-page.c:333
 #: ../src/nautilus-image-properties-page.c:339
 #, c-format
 msgid "%d pixel"
 msgid_plural "%d pixels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d ପିକ୍ସେଲ"
+msgstr[1] "%d ପିକ୍ସେଲ"
 
 #: ../src/nautilus-image-properties-page.c:337
 msgid "Width"
-msgstr ""
+msgstr "ଓସାର"
 
 #: ../src/nautilus-image-properties-page.c:343
 msgid "Height"
-msgstr ""
+msgstr "ଉଚ୍ଚତା"
 
 #: ../src/nautilus-image-properties-page.c:356
 #: ../src/nautilus-image-properties-page.c:357
 msgid "Title"
-msgstr ""
+msgstr "ଶୀର୍ଷକ"
 
 #: ../src/nautilus-image-properties-page.c:358
 #: ../src/nautilus-image-properties-page.c:359
 msgid "Author"
-msgstr ""
+msgstr "ଲେଖକ"
 
 #: ../src/nautilus-image-properties-page.c:362
 #: ../src/nautilus-image-properties-page.c:419
@@ -3770,28 +3735,27 @@ msgid "Copyright"
 msgstr "ସତ୍ତ୍ୱାଧୀକାର"
 
 #: ../src/nautilus-image-properties-page.c:363
-#, fuzzy
 #| msgid "Trashed On"
 msgid "Created On"
-msgstr "ଆବର୍ଜନା ପାତ୍ର"
+msgstr "ଏହି ତାରିଖରେ ନିର୍ମିତ"
 
 #: ../src/nautilus-image-properties-page.c:364
 msgid "Created By"
-msgstr ""
+msgstr "ଏହା ଦ୍ବାରା ସୃଷ୍ଟି"
 
 #. Translators: this refers to a legal disclaimer string embedded in
 #. * the metadata of an image
 #: ../src/nautilus-image-properties-page.c:367
 msgid "Disclaimer"
-msgstr ""
+msgstr "ସ୍ୱୀକାର"
 
 #: ../src/nautilus-image-properties-page.c:368
 msgid "Warning"
-msgstr ""
+msgstr "ଚେତାବନୀ"
 
 #: ../src/nautilus-image-properties-page.c:369
 msgid "Source"
-msgstr ""
+msgstr "ଉତ୍ସ"
 
 #: ../src/nautilus-image-properties-page.c:384
 msgid "Camera Brand"
@@ -3865,7 +3829,6 @@ msgstr "ପ୍ରତିଛବି ସୂଚନାକୁ ଧାରଣ କରିବ
 #: ../src/nautilus-image-properties-page.c:708
 #: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:606
 #: ../src/nautilus-window-slot.c:2247
-#, fuzzy
 #| msgid "Loading..."
 msgid "Loading…"
 msgstr "ଧାରଣ କରୁଅଛି..."
@@ -3886,10 +3849,9 @@ msgstr "ଏହି ଫୋଲଡରରେ ଦେଖାଯିବା ସୂଚନା
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-list-view.c:2654
-#, fuzzy
 #| msgid "Visible _Columns..."
 msgid "Visible _Columns…"
-msgstr "ଦୃଶ୍ଯମାନ ସ୍ତମ୍ଭ... (_C)"
+msgstr "ଦୃଶ୍ଯମାନ ସ୍ତମ୍ଭ (_C)..."
 
 #. tooltip
 #: ../src/nautilus-list-view.c:2655
@@ -3928,29 +3890,28 @@ msgstr[0] "ଏହା %d କୁ ଅଲଗା ୱିଣ୍ଡୋରେ ଖୋଲ�
 msgstr[1] "ଏହା %d କୁ ଅଲଗା ୱିଣ୍ଡୋରେ ଖୋଲିବ।"
 
 #: ../src/nautilus-mime-actions.c:632
-#, fuzzy, c-format
+#, c-format
 #| msgid "The Link \"%s\" is Broken. Move it to Trash?"
 msgid "The link “%s” is broken. Move it to Trash?"
-msgstr "ସଂଯୋଗ \"%s\"ଟି ଭାଙ୍ଗିଯାଇଛି। ଏହାକୁ ଆବର୍ଜନାପାତ୍ର ମଧ୍ଯକୁ ପଠାଇବେ କି?"
+msgstr "ସଂଯୋଗ “%s” ଟି ଭାଙ୍ଗିଯାଇଛି। ଏହାକୁ ଆବର୍ଜନାପାତ୍ର ମଧ୍ଯକୁ ପଠାଇବେ କି?"
 
 #: ../src/nautilus-mime-actions.c:634
-#, fuzzy, c-format
+#, c-format
 #| msgid "The Link \"%s\" is Broken."
 msgid "The link “%s” is broken."
-msgstr "ସଂଯୋଗ \"%s\"ଟି ଭାଙ୍ଗିଯାଇଛି।"
+msgstr "ସଂଯୋଗ “%s” ଟି ଭାଙ୍ଗିଯାଇଛି।"
 
 #: ../src/nautilus-mime-actions.c:640
-#, fuzzy
 #| msgid "This link cannot be used, because it has no target."
 msgid "This link cannot be used because it has no target."
 msgstr "ଏହି ସଂଯୋଗକୁ ବ୍ୟବହାର କରାଯାଇପାରିବ ନାହିଁ, କାରଣ ଏହାର କୌଣସି ଲକ୍ଷ୍ୟ ନାହିଁ।"
 
 #: ../src/nautilus-mime-actions.c:642
-#, fuzzy, c-format
+#, c-format
 #| msgid "This link cannot be used, because its target \"%s\" doesn't exist."
 msgid "This link cannot be used because its target “%s” doesn't exist."
 msgstr ""
-"ଏହି ସଂଯୋଗକୁ ବ୍ୟବହାର କରାଯାଇପାରିବ ନାହିଁ, କାରଣ ଏହାର ଲକ୍ଷ୍ୟ \"%s\" ଅବସ୍ଥିତ ନାହିଁ।"
+"ଏହି ସଂଯୋଗକୁ ବ୍ୟବହାର କରାଯାଇପାରିବ ନାହିଁ, କାରଣ ଏହାର ଲକ୍ଷ୍ୟ  “%s”  ଅବସ୍ଥିତ ନାହିଁ।"
 
 #. name, stock id
 #. label, accelerator
@@ -3961,18 +3922,18 @@ msgid "Mo_ve to Trash"
 msgstr "ଆବର୍ଜନା ପାତ୍ରକୁ ପଠାନ୍ତୁ (_v)"
 
 #: ../src/nautilus-mime-actions.c:712
-#, fuzzy, c-format
+#, c-format
 #| msgid "Do you want to run \"%s\", or display its contents?"
 msgid "Do you want to run “%s”, or display its contents?"
 msgstr ""
-"ଆପଣ \"%s\"କୁ ଚଲାଇବାକୁ ଚାହୁଁଛନ୍ତି ଅଥବା ଏହାର ବିଷୟବସ୍ତୁଗୁଡ଼ିକୁ ଦର୍ଶାଇବାକୁ "
+"ଆପଣ “%s” କୁ ଚଲାଇବାକୁ ଚାହୁଁଛନ୍ତି ଅଥବା ଏହାର ବିଷୟବସ୍ତୁଗୁଡ଼ିକୁ ଦର୍ଶାଇବାକୁ "
 "ଚାହୁଁଛନ୍ତି?"
 
 #: ../src/nautilus-mime-actions.c:714
-#, fuzzy, c-format
+#, c-format
 #| msgid "\"%s\" is an executable text file."
 msgid "“%s” is an executable text file."
-msgstr "\"%s\" ଟି ଗୋଟିଏ ନିଷ୍ପାଦ୍ୟ ପାଠ୍ୟ ଫାଇଲ।"
+msgstr "“%s”  ଟି ଗୋଟିଏ ନିଷ୍ପାଦ୍ୟ ପାଠ୍ୟ ଫାଇଲ।"
 
 #: ../src/nautilus-mime-actions.c:720
 msgid "Run in _Terminal"
@@ -3995,20 +3956,20 @@ msgstr[0] "ଏହା %d ଟି ପୃଥକ ଟ୍ୟାବ ଖୋଲିବ।"
 msgstr[1] "ଏହା %d ଟି ପୃଥକ ଟ୍ୟାବ ଖୋଲିବ।"
 
 #: ../src/nautilus-mime-actions.c:1124
-#, fuzzy, c-format
+#, c-format
 #| msgid "Could not display \"%s\"."
 msgid "Could not display “%s”."
-msgstr "Nautilus \"%s\"କୁ ପ୍ରଦର୍ଶନ କରି ପାରିବ ନାହିଁ।"
+msgstr "“%s” କୁ ପ୍ରଦର୍ଶନ କରି ପାରିବ ନାହିଁ।"
 
 #: ../src/nautilus-mime-actions.c:1222
 msgid "The file is of an unknown type"
 msgstr "ଫାଇଲଟି ଗୋଟିଏ ଅଜଣା ପ୍ରକାରର"
 
 #: ../src/nautilus-mime-actions.c:1226
-#, fuzzy, c-format
+#, c-format
 #| msgid "There is no application installed for %s files"
 msgid "There is no application installed for “%s” files"
-msgstr "%s ଫାଇଲଗୁଡ଼ିକ ପାଇଁ କୌଣସି ପ୍ରୟୋଗ ସ୍ଥାପିତ ହୋଇନାହିଁ"
+msgstr "“%s”  ଫାଇଲଗୁଡ଼ିକ ପାଇଁ କୌଣସି ପ୍ରୟୋଗ ସ୍ଥାପିତ ହୋଇନାହିଁ"
 
 #: ../src/nautilus-mime-actions.c:1241
 msgid "_Select Application"
@@ -4023,7 +3984,7 @@ msgid "Unable to search for application"
 msgstr "ପ୍ରୟୋଗ ସନ୍ଧାନ କରିବାରେ ଅସମର୍ଥ"
 
 #: ../src/nautilus-mime-actions.c:1398
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "There is no application installed for %s files.\n"
 #| "Do you want to search for an application to open this file?"
@@ -4031,7 +3992,7 @@ msgid ""
 "There is no application installed for “%s” files.\n"
 "Do you want to search for an application to open this file?"
 msgstr ""
-"%s ପାଇଲଗୁଡ଼ିକ ପାଇଁ କୌଣସି ପ୍ରୟୋଗ ସ୍ଥାପିତ ହୋଇନାହିଁ।\n"
+"“%s”  ପାଇଲଗୁଡ଼ିକ ପାଇଁ କୌଣସି ପ୍ରୟୋଗ ସ୍ଥାପିତ ହୋଇନାହିଁ।\n"
 "ଏହି ଫାଇଲକୁ ଖୋଲିବା ପାଇଁ ଆପଣ କୌଣସି ପ୍ରୟୋଗକୁ ଖୋଜୁଛନ୍ତି କି?"
 
 #: ../src/nautilus-mime-actions.c:1548
@@ -4039,7 +4000,7 @@ msgid "Untrusted application launcher"
 msgstr "ଅବିଶ୍ୱସ୍ଥ ପ୍ରୟୋଗ ଆରମ୍ଭକର୍ତ୍ତା"
 
 #: ../src/nautilus-mime-actions.c:1551
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "The application launcher \"%s\" has not been marked as trusted. If you do "
 #| "not know the source of this file, launching it may be unsafe."
@@ -4047,7 +4008,7 @@ msgid ""
 "The application launcher “%s” has not been marked as trusted. If you do not "
 "know the source of this file, launching it may be unsafe."
 msgstr ""
-"ଏହି ପ୍ରୟୋଗ ଆରମ୍ଭକର୍ତ୍ତା \"%s\" କୁ ବିଶ୍ୱସ୍ତ ଭାବରେ ଚିହ୍ନଟ କରାହୋଇନାହିଁ। ଯଦି ଆପଣ "
+"ଏହି ପ୍ରୟୋଗ ଆରମ୍ଭକର୍ତ୍ତା “%s”  କୁ ବିଶ୍ୱସ୍ତ ଭାବରେ ଚିହ୍ନଟ କରାହୋଇନାହିଁ। ଯଦି ଆପଣ "
 "ଏହି ଫାଇଲର ଉତ୍ସକୁ "
 "ଜାଣି ନାହାନ୍ତି ତେବେ, ଏହାକୁ ଆରମ୍ଭ କରିବା ଅସୁରକ୍ଷିତ ହୋଇପାରେ।"
 
@@ -4071,10 +4032,10 @@ msgid "Unable to start location"
 msgstr "ଅବସ୍ଥାନ ଆରମ୍ଭ କରିବାରେ ଅସମର୍ଥ"
 
 #: ../src/nautilus-mime-actions.c:2305
-#, fuzzy, c-format
+#, c-format
 #| msgid "Opening \"%s\"."
 msgid "Opening “%s”."
-msgstr "\"%s\" କୁ ଖୋଲୁଅଛି।"
+msgstr "“%s”  କୁ ଖୋଲୁଅଛି।"
 
 #: ../src/nautilus-mime-actions.c:2308
 #, c-format
@@ -4097,13 +4058,12 @@ msgstr "ସ୍ଥାନ"
 
 #: ../src/nautilus-places-sidebar.c:517
 msgid "Recent"
-msgstr ""
+msgstr "ସାମ୍ପ୍ରତିକ"
 
 #: ../src/nautilus-places-sidebar.c:519
-#, fuzzy
 #| msgid "Deleting files"
 msgid "Recent files"
-msgstr "ଫାଇଲ ମାନଙ୍କୁ ଅପସାରିତ କରୁଅଛି"
+msgstr "ସାମ୍ପ୍ରତିକ ଫାଇଲଗୁଡ଼ିକ"
 
 #. tooltip
 #: ../src/nautilus-places-sidebar.c:530 ../src/nautilus-window-menus.c:534
@@ -4141,10 +4101,9 @@ msgid "Browse the contents of the network"
 msgstr "ନେଟୱାର୍କର ବିଷୟବସ୍ତୁଗୁଡ଼ିକୁ ବ୍ରାଉଜ କରନ୍ତୁ"
 
 #: ../src/nautilus-places-sidebar.c:802
-#, fuzzy
 #| msgid "Connect to Server %s"
 msgid "Connect to a network server address"
-msgstr "ସର୍ଭର %s ସହିତ ସଂଯୋଗ କରନ୍ତୁ"
+msgstr "ନେଟୱର୍କ ସର୍ଭର ଠିକଣା ସହିତ ସଂଯୋଗ କରନ୍ତୁ"
 
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
@@ -4251,10 +4210,9 @@ msgid "_Add Bookmark"
 msgstr "ବୁକମାର୍କକୁ ଯୋଗ କରନ୍ତୁ (_A)"
 
 #: ../src/nautilus-places-sidebar.c:2818
-#, fuzzy
 #| msgid "Rename"
 msgid "Rename…"
-msgstr "ନାମ ବଦଳାନ୍ତୁ"
+msgstr "ନାମ ବଦଳାନ୍ତୁ..."
 
 #. name, stock id
 #. label, accelerator
@@ -4285,10 +4243,9 @@ msgid "_Detect Media"
 msgstr "ମେଡିଆ ଅପସାରଣ କରନ୍ତୁ (_D)"
 
 #: ../src/nautilus-places-sidebar.c:2872
-#, fuzzy
 #| msgid "_Format"
 msgid "_Format…"
-msgstr "ସଜ୍ଜିକରଣ ଶୈଳୀ (_F)"
+msgstr "ଫର୍ମାଟ କରନ୍ତୁ (_F)…"
 
 #: ../src/nautilus-places-sidebar.c:2892
 msgid "_Properties"
@@ -4544,16 +4501,14 @@ msgid "Allow _executing file as program"
 msgstr "ନିଷ୍ପଦନୀୟ ଫାଇଲକୁ ପ୍ରୋଗ୍ରାମ ଭାବରେ ସ୍ବୀକାର କରନ୍ତୁ (_e)"
 
 #: ../src/nautilus-properties-window.c:4462
-#, fuzzy
 #| msgid "Apply Permissions to Enclosed Files"
 msgid "Change Permissions for Enclosed Files"
-msgstr "ସଂଲଗ୍ନ ଫାଇଲ ମାନଙ୍କ ପାଇଁ ଅନୁମତି ପ୍ରୟୋଗ କରନ୍ତୁ"
+msgstr "ସଂଲଗ୍ନ ଫାଇଲ ମାନଙ୍କ ପାଇଁ ଅନୁମତି ପରିବର୍ତ୍ତନ କରନ୍ତୁ"
 
 #: ../src/nautilus-properties-window.c:4466
-#, fuzzy
 #| msgid "Orange"
 msgid "Change"
-msgstr "କମଳା"
+msgstr "ପରିବର୍ତ୍ତନ କରନ୍ତୁ"
 
 #: ../src/nautilus-properties-window.c:4509
 msgid "Others:"
@@ -4564,22 +4519,20 @@ msgid "You are not the owner, so you cannot change these permissions."
 msgstr "ଆପଣ ମାଲିକ ନୁହଁନ୍ତି, ତେଣୁ ଆପଣ ଏହି ଅଧିକାରକୁ ପରିବର୍ତ୍ତନ କରିପାରିବ ନାହିଁ।"
 
 #: ../src/nautilus-properties-window.c:4565
-#, fuzzy
 #| msgid "SELinux context:"
 msgid "Security context:"
-msgstr "SELinux ପ୍ରସଙ୍ଗ:"
+msgstr "ସୁରକ୍ଷା ପ୍ରସଙ୍ଗ:"
 
 #: ../src/nautilus-properties-window.c:4580
-#, fuzzy
 #| msgid "Apply Permissions to Enclosed Files"
 msgid "Change Permissions for Enclosed Files…"
-msgstr "ସଂଲଗ୍ନ ଫାଇଲ ମାନଙ୍କ ପାଇଁ ଅନୁମତି ପ୍ରୟୋଗ କରନ୍ତୁ"
+msgstr "ସଂଲଗ୍ନ ଫାଇଲ ମାନଙ୍କ ପାଇଁ ଅନୁମତି ପରିବର୍ତ୍ତନ କରନ୍ତୁ…"
 
 #: ../src/nautilus-properties-window.c:4590
-#, fuzzy, c-format
+#, c-format
 #| msgid "The permissions of \"%s\" could not be determined."
 msgid "The permissions of “%s” could not be determined."
-msgstr "\"%s\" ର ଅଧିକାରକୁ ସ୍ଥିର କରିପାରିଲା ନାହିଁ।"
+msgstr "“%s” ର ଅଧିକାରକୁ ସ୍ଥିର କରିପାରିଲା ନାହିଁ।"
 
 #: ../src/nautilus-properties-window.c:4593
 msgid "The permissions of the selected file could not be determined."
@@ -4630,17 +4583,15 @@ msgid "Select type"
 msgstr "ପ୍ରକାର ଚୟନ କରନ୍ତୁ"
 
 #: ../src/nautilus-query-editor.c:591
-#, fuzzy
 #| msgid "Select All"
 msgid "Select"
-msgstr "ସବୁ ମନୋନୀତ କର"
+msgstr "ବାଛନ୍ତୁ"
 
 #: ../src/nautilus-query-editor.c:672
 msgid "Any"
 msgstr "ଯେ କୌଣସି"
 
 #: ../src/nautilus-query-editor.c:687
-#, fuzzy
 #| msgid "Other Type..."
 msgid "Other Type…"
 msgstr "ଅନ୍ଯାନ୍ଯ ପ୍ରକାର ..."
@@ -4652,49 +4603,42 @@ msgstr "ଏହି ନିର୍ଦ୍ଧାରକକୁ ସନ୍ଧାନରୁ 
 #. create the Current/All Files selector
 #: ../src/nautilus-query-editor.c:1038
 msgid "Current"
-msgstr ""
+msgstr "ପ୍ରଚଳିତ"
 
 #: ../src/nautilus-query-editor.c:1041
-#, fuzzy
 #| msgid "Files"
 msgid "All Files"
-msgstr "ଫାଇଲଗୁଡିକ"
+msgstr "ସମସ୍ତ ଫାଇଲଗୁଡ଼ିକ"
 
 #: ../src/nautilus-query-editor.c:1063
 msgid "Add a new criterion to this search"
 msgstr "ଏହି ସନ୍ଧାନରେ ଗୋଟିଏ ନୂତନ ନିର୍ଦ୍ଧାରକକୁ ଯୋଗ କରନ୍ତୁ"
 
 #: ../src/nautilus-special-location-bar.c:52
-#, fuzzy
 #| msgid "All executable files in this folder will appear in the Scripts menu."
 msgid "Files in this folder will appear in the New Document menu."
-msgstr ""
-"ଏହି ଫୋଲଡ଼ରରେ ଥିବା ସମସ୍ତ ନିଷ୍ପାଦ୍ୟ ଫାଇଲଗୁଡ଼ିକ ସ୍କ୍ରିପ୍ଟ ତାଲିକାରେ ଦୃଶ୍ୟମାନ ହେବ।"
+msgstr "ଏହି ଫୋଲଡ଼ରରେ ଥିବା ସମସ୍ତ ଫାଇଲଗୁଡ଼ିକୁ ନୂତନ ଦଲିଲ ତାଲିକାରେ ଦର୍ଶାଯିବ।"
 
 #: ../src/nautilus-special-location-bar.c:55
-#, fuzzy
 #| msgid "All executable files in this folder will appear in the Scripts menu."
 msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr ""
 "ଏହି ଫୋଲଡ଼ରରେ ଥିବା ସମସ୍ତ ନିଷ୍ପାଦ୍ୟ ଫାଇଲଗୁଡ଼ିକ ସ୍କ୍ରିପ୍ଟ ତାଲିକାରେ ଦୃଶ୍ୟମାନ ହେବ।"
 
 #: ../src/nautilus-toolbar.c:488
-#, fuzzy
 #| msgid "File Operations"
 msgid "View options"
-msgstr "ଫାଇଲ ପ୍ରୟୋଗଗୁଡ଼ିକ"
+msgstr "ଦୃଶ୍ଯ ବିକଳ୍ପଗୁଡିକ"
 
 #: ../src/nautilus-toolbar.c:505
-#, fuzzy
 #| msgid "Location"
 msgid "Location options"
-msgstr "ଅବସ୍ଥାନ"
+msgstr "ଅବସ୍ଥାନ  ବିକଳ୍ପଗୁଡ଼ିକ"
 
 #: ../src/nautilus-trash-bar.c:203
-#, fuzzy
 #| msgid "_Restore"
 msgid "Restore"
-msgstr "ପୁନଃ ସ୍ଥାପନ କରନ୍ତୁ (_R)"
+msgstr "ପୁନଃସ୍ଥାପନ କରନ୍ତୁ"
 
 #: ../src/nautilus-trash-bar.c:206
 msgid "Restore selected items to their original position"
@@ -4702,10 +4646,9 @@ msgstr "ବଚ୍ଛିତ ବସ୍ତୁଗୁଡ଼ିକୁ ସେମାନ�
 
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:210
-#, fuzzy
 #| msgid "(Empty)"
 msgid "Empty"
-msgstr "(ଖାଲି)"
+msgstr "ଖାଲି"
 
 #: ../src/nautilus-view.c:957
 #, c-format
@@ -4750,7 +4693,6 @@ msgid "Select Folder to Save Search In"
 msgstr "ସନ୍ଧାନ ସଂରକ୍ଷଣ କରିବା ପାଇଁ ଫୋଲଡ଼ର ବଛାହୋଇଛି"
 
 #: ../src/nautilus-view.c:2259
-#, fuzzy
 #| msgid ""
 #| "Nautilus 3.0 deprecated this directory and tried migrating this "
 #| "configuration to ~/.config/nautilus"
@@ -4758,8 +4700,8 @@ msgid ""
 "Nautilus 3.6 deprecated this directory and tried migrating this "
 "configuration to ~/.local/share/nautilus"
 msgstr ""
-"Nautilus 3.0 ଏହି ଡିରେକ୍ଟୋରୀକୁ ଅନୁଚିତ ମାନି ଏହି ସଂରଚନାକୁ ~/.config/nautilus "
-"ଭାବରେ "
+"Nautilus 3.6 ଏହି ଡିରେକ୍ଟୋରୀକୁ ଅନୁଚିତ ମାନି ଏହି ସଂରଚନାକୁ "
+"~/.local/share/nautilus ଭାବରେ "
 "ପରିବର୍ତ୍ତନ କରିବା ପାଇଁ ଚେଷ୍ଟାକରିଛି"
 
 #: ../src/nautilus-view.c:2687
@@ -4771,10 +4713,10 @@ msgid "View of the current folder"
 msgstr "ସାମ୍ପ୍ରତିକ ଫୋଲଡର ର ଦୃଶ୍ଯ"
 
 #: ../src/nautilus-view.c:2883 ../src/nautilus-view.c:2918
-#, fuzzy, c-format
+#, c-format
 #| msgid "\"%s\" selected"
 msgid "“%s” selected"
-msgstr "\"%s\" ବଛାହୋଇଛି"
+msgstr "“%s” ବଛାହୋଇଛି"
 
 #: ../src/nautilus-view.c:2885
 #, c-format
@@ -4784,23 +4726,23 @@ msgstr[0] "%'d ଟି ଫୋଲଡ଼ର ବଛାହୋଇଛି"
 msgstr[1] "%'d ଟି ଫୋଲଡ଼ର ବଛାହୋଇଛି"
 
 #: ../src/nautilus-view.c:2895
-#, fuzzy, c-format
+#, c-format
 #| msgid " (containing %'d item)"
 #| msgid_plural " (containing %'d items)"
 msgid "(containing %'d item)"
 msgid_plural "(containing %'d items)"
-msgstr[0] " (%'d ଟି ବସ୍ତୁ ଧାରଣ କରିଅଛି)"
-msgstr[1] " (%'d ଟି ବସ୍ତୁ ଧାରଣ କରିଅଛି)"
+msgstr[0] "(%'d ଟି ବସ୍ତୁ ଧାରଣ କରିଅଛି)"
+msgstr[1] "(%'d ଟି ବସ୍ତୁଗୁଡ଼ିକୁ ଧାରଣ କରିଅଛି)"
 
 #. translators: this is preceded with a string of form 'N folders' (N more than 1)
 #: ../src/nautilus-view.c:2906
-#, fuzzy, c-format
+#, c-format
 #| msgid " (containing a total of %'d item)"
 #| msgid_plural " (containing a total of %'d items)"
 msgid "(containing a total of %'d item)"
 msgid_plural "(containing a total of %'d items)"
-msgstr[0] " (ସମୁଦାୟ %'d ଟି ବସ୍ତୁ ଧାରଣ କରିଅଛି)"
-msgstr[1] " (ସମୁଦାୟ %'d ଟି ବସ୍ତୁ ଧାରଣ କରିଅଛି)"
+msgstr[0] "(ସମୁଦାୟ %'d ଟି ବସ୍ତୁ ଧାରଣ କରିଅଛି)"
+msgstr[1] "(ସମୁଦାୟ %'d ଟି ବସ୍ତୁ ଧାରଣ କରିଅଛି)"
 
 #: ../src/nautilus-view.c:2921
 #, c-format
@@ -4822,10 +4764,10 @@ msgstr[1] "%'d ଅନ୍ୟାନ୍ୟ ବସ୍ତୁ ବଛାଯାଇଛି
 #. * the message in parentheses is the size of the selected items.
 #.
 #: ../src/nautilus-view.c:2942
-#, fuzzy, c-format
+#, c-format
 #| msgid "%s (%s)"
 msgid "(%s)"
-msgstr "%s (%s)"
+msgstr "(%s)"
 
 #. This is marked for translation in case a localizer
 #. * needs to change ", " to something else. The comma
@@ -4835,10 +4777,10 @@ msgstr "%s (%s)"
 #. * total size of those items.
 #.
 #: ../src/nautilus-view.c:2966
-#, fuzzy, c-format
+#, c-format
 #| msgid "%s%s, %s, %s"
 msgid "%s %s, %s %s"
-msgstr "%s%s, %s, %s"
+msgstr "%s %s, %s %s"
 
 #: ../src/nautilus-view.c:4339
 #, c-format
@@ -4846,51 +4788,49 @@ msgid "Open With %s"
 msgstr "%s ସହିତ ଖୋଲନ୍ତୁ"
 
 #: ../src/nautilus-view.c:4341
-#, fuzzy, c-format
+#, c-format
 #| msgid "Use \"%s\" to open the selected item"
 #| msgid_plural "Use \"%s\" to open the selected items"
 msgid "Use “%s” to open the selected item"
 msgid_plural "Use “%s” to open the selected items"
-msgstr[0] "ବଚ୍ଛିତ ବସ୍ତୁକୁ ଖୋଲିବା ପାଇଁ \"%s\" କୁ ବ୍ୟବହାର କରନ୍ତୁ"
-msgstr[1] "ବଚ୍ଛିତ ବସ୍ତୁକୁ ଖୋଲିବା ପାଇଁ \"%s\" କୁ ବ୍ୟବହାର କରନ୍ତୁ"
+msgstr[0] "ବଚ୍ଛିତ ବସ୍ତୁକୁ ଖୋଲିବା ପାଇଁ  “%s” କୁ ବ୍ୟବହାର କରନ୍ତୁ"
+msgstr[1] "ବଚ୍ଛିତ ବସ୍ତୁକୁ ଖୋଲିବା ପାଇଁ  “%s” କୁ ବ୍ୟବହାର କରନ୍ତୁ"
 
 #: ../src/nautilus-view.c:5084
-#, fuzzy, c-format
+#, c-format
 #| msgid "Run \"%s\" on any selected items"
 msgid "Run “%s” on any selected items"
-msgstr "ଯେକୌଣସି ବଚ୍ଛିତ ବସ୍ତୁଗୁଡ଼ିକ ଉପରେ \"%s\" କୁ ଚଲାନ୍ତୁ"
+msgstr "ଯେକୌଣସି ବଚ୍ଛିତ ବସ୍ତୁଗୁଡ଼ିକ ଉପରେ “%s” କୁ ଚଲାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:5338
-#, fuzzy, c-format
+#, c-format
 #| msgid "Create a new document from template \"%s\""
 msgid "Create a new document from template “%s”"
-msgstr "ନମୁନା \"%s\"ରୁ ନୂତନ ଦଲିଲ ନିର୍ମାଣ କରନ୍ତୁ"
+msgstr "ନମୁନା “%s”ରୁ ନୂତନ ଦଲିଲ ନିର୍ମାଣ କରନ୍ତୁ"
 
 #: ../src/nautilus-view.c:5938
-#, fuzzy
 #| msgid "_Select Application"
 msgid "Select Destination"
-msgstr "ପ୍ରୟୋଗ ଚୟନ କରନ୍ତୁ (_S)"
+msgstr "ଲକ୍ଷ୍ୟସ୍ଥଳ ବାଛନ୍ତୁ"
 
 #: ../src/nautilus-view.c:5942
-#, fuzzy
 #| msgid "Select All"
 msgid "_Select"
-msgstr "ସବୁ ମନୋନୀତ କର"
+msgstr "ଚୟନ କରନ୍ତୁ (_S)"
 
 #. Translators: %s is a file name formatted for display
 #: ../src/nautilus-view.c:6456
-#, fuzzy, c-format
+#, c-format
 #| msgid "Unable to mount %s"
 msgid "Unable to remove “%s”"
-msgstr "%sକୁ ସ୍ଥାପନ କରିବାରେ ଅସମର୍ଥ"
+msgstr "“%s” ଉତ୍ସକୁ ଅପସାରଣ କରିବାରେ ଅସମର୍ଥ"
 
 #. Translators: %s is a file name formatted for display
 #: ../src/nautilus-view.c:6483
-#, fuzzy, c-format
+#, c-format
 #| msgid "Unable to eject %s"
 msgid "Unable to eject “%s”"
-msgstr "%sକୁ ବାହାର କରିବରେ ଅସମର୍ଥ"
+msgstr "“%s”କୁ ବାହାର କରିବରେ ଅସମର୍ଥ"
 
 #: ../src/nautilus-view.c:6505
 msgid "Unable to stop drive"
@@ -4898,17 +4838,16 @@ msgstr "ଡ୍ରାଇଭକୁ ଅଟକାଇବାରେ ଅସମର୍ଥ"
 
 #. Translators: %s is a file name formatted for display
 #: ../src/nautilus-view.c:6607
-#, fuzzy, c-format
+#, c-format
 #| msgid "Unable to start %s"
 msgid "Unable to start “%s”"
-msgstr "%s କୁ ଆରମ୍ଭ କରିବାରେ ଅସମର୍ଥ"
+msgstr "“%s” କୁ ଆରମ୍ଭ କରିବାରେ ଅସମର୍ଥ"
 
 #. name, stock id, label
 #: ../src/nautilus-view.c:7098
-#, fuzzy
 #| msgid "Create New _Document"
 msgid "New _Document"
-msgstr "ନୂତନ ଦଲିଲ ନିର୍ମାଣ କରନ୍ତୁ (_D)"
+msgstr "ନୂତନ ଦଲିଲ (_D)"
 
 #. name, stock id, label
 #: ../src/nautilus-view.c:7099
@@ -4923,10 +4862,9 @@ msgstr "ବଚ୍ଛିତ ବସ୍ତୁକୁ କାହା ସାହାଯ୍
 #. label, accelerator
 #: ../src/nautilus-view.c:7102 ../src/nautilus-view.c:7355
 #: ../src/nautilus-window-menus.c:573
-#, fuzzy
 #| msgid "Properties"
 msgid "P_roperties"
-msgstr "ଗୁଣଧର୍ମ"
+msgstr "ଗୁଣଧର୍ମ (_r)"
 
 #. tooltip
 #: ../src/nautilus-view.c:7103 ../src/nautilus-view.c:8667
@@ -4936,10 +4874,9 @@ msgstr "ପ୍ରତ୍ୟେକ ବଚ୍ଛିତ ବସ୍ତୁର ଗୁଣ
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7110
-#, fuzzy
 #| msgid "Create New _Folder"
 msgid "New _Folder"
-msgstr "ନୂତନ ଫୋଲଡର ସ୍ରୁଷ୍ଟି କରନ୍ତୁ (_F)"
+msgstr "ନୂତନ ଫୋଲଡର (_F)"
 
 #. tooltip
 #: ../src/nautilus-view.c:7111
@@ -4949,17 +4886,15 @@ msgstr "ଏହି ଫୋଲଡ଼ର ମଧ୍ଯରେ ଗୋଟିଏ ନୂ�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7114
-#, fuzzy
 #| msgid "_Invert Selection"
 msgid "New Folder with Selection"
-msgstr "ବିପରୀତ ଚୟନ (_I)"
+msgstr "ଚୟନ ସହିତ ନୂତନ ଫୋଲଡର୍‌"
 
 #. tooltip
 #: ../src/nautilus-view.c:7115
-#, fuzzy
 #| msgid "Create a symbolic link for each selected item"
 msgid "Create a new folder containing the selected items"
-msgstr "ପ୍ରତ୍ୟେକ ବଚ୍ଛିତ ବସ୍ତୁ ପାଇଁ ଗୋଟିଏ ପ୍ରତୀକାତ୍ମକ ସଂଯୋଗ ନିର୍ମାଣ କରନ୍ତୁ"
+msgstr "ବଚ୍ଛିତ ବସ୍ତୁଗୁଡ଼ିକୁ ଧାରଣ କରିଥିବା ନୂତନ ଫୋଲଡର୍‌ ନିର୍ମାଣ କରନ୍ତୁ"
 
 #. tooltip
 #: ../src/nautilus-view.c:7119
@@ -4988,10 +4923,9 @@ msgstr "ପ୍ରତ୍ୟେକ ବଚ୍ଛିତ ବସ୍ତୁମାନଙ�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7134
-#, fuzzy
 #| msgid "Other _Application..."
 msgid "Other _Application…"
-msgstr "ଅନ୍ୟାନ୍ୟ ପ୍ରୟୋଗ (_A)..."
+msgstr "ଅନ୍ୟାନ୍ୟ ପ୍ରୟୋଗ (_A)…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7135 ../src/nautilus-view.c:7139
@@ -5001,10 +4935,9 @@ msgstr "ବଚ୍ଛିତ ବସ୍ତୁମାନଙ୍କୁ ଖୋଲିବ�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7138
-#, fuzzy
 #| msgid "Open With Other _Application..."
 msgid "Open With Other _Application…"
-msgstr "ଅନ୍ୟ ଏକ ପ୍ରୟୋଗ ଦ୍ୱାରା ଖୋଲନ୍ତୁ (_A)..."
+msgstr "ଅନ୍ୟ ଏକ ପ୍ରୟୋଗ ଦ୍ୱାରା ଖୋଲନ୍ତୁ (_A)…"
 
 #. name, stock id
 #. label, accelerator
@@ -5065,30 +4998,27 @@ msgstr ""
 #. label, accelerator
 #: ../src/nautilus-view.c:7168
 msgid "Copy To…"
-msgstr ""
+msgstr "ଏଠାକୁ ନକଲ କରନ୍ତୁ…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7169
-#, fuzzy
 #| msgid "Copy the selected text to the clipboard"
 msgid "Copy selected files to another location"
-msgstr "ଚୟିତ ପାଠ୍ଯକୁ କ୍ଲିପବୋର୍ଡରେ ନକଲ କରନ୍ତୁ"
+msgstr "ବଚ୍ଛିତ ଫାଇଲଗୁଡ଼ିକୁ ଅନ୍ୟ ଏକ ସ୍ଥାନକୁ ନକଲ କରନ୍ତୁ"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7172
-#, fuzzy
 #| msgid "M_ove to"
 msgid "Move To…"
-msgstr "ଏଠାକୁ ଘୁଞ୍ଚାନ୍ତୁ (_o)"
+msgstr "ଏଠାକୁ ଘୁଞ୍ଚାଅ…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7173
-#, fuzzy
 #| msgid "Move the selected file out of the trash"
 #| msgid_plural "Move the selected files out of the trash"
 msgid "Move selected files to another location"
-msgstr "ଚୟିତ ଫାଇଲକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରକୁ ପଠାନ୍ତୁ"
+msgstr "ବଚ୍ଛିତ ଫାଇଲଗୁଡ଼ିକୁ ଅନ୍ୟ ଏକ ସ୍ଥାନକୁ ଘୁଞ୍ଚାନ୍ତୁ"
 
 #. tooltip
 #: ../src/nautilus-view.c:7177
@@ -5098,10 +5028,9 @@ msgstr "ଏହି ୱିଣ୍ଡୋର ସମସ୍ତ ବସ୍ତୁଗୁଡ
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7180
-#, fuzzy
 #| msgid "Select Items Matching"
 msgid "Select I_tems Matching…"
-msgstr "ମେଳଖାଉଥିବା ବସ୍ତୁଗୁଡ଼ିକୁ ଚୟନ କରନ୍ତୁ"
+msgstr "ମେଳଖାଉଥିବା ବସ୍ତୁଗୁଡ଼ିକୁ ବାଛନ୍ତୁ (_t)…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7181
@@ -5137,10 +5066,9 @@ msgstr "ପ୍ରତ୍ୟେକ ବଚ୍ଛିତ ବସ୍ତୁ ପାଇଁ
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7192
-#, fuzzy
 #| msgid "Rename"
 msgid "Rena_me…"
-msgstr "ନାମ ବଦଳାନ୍ତୁ"
+msgstr "ନାମ ବଦଳାନ୍ତୁ (_m)..."
 
 #. tooltip
 #: ../src/nautilus-view.c:7193
@@ -5150,15 +5078,14 @@ msgstr "ବଚ୍ଛିତ ବସ୍ତୁର ପୁନଃ ନାମକରଣ �
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7196
-#, fuzzy
 #| msgid "Set as default"
 msgid "Set as Wallpaper"
-msgstr "ପୂର୍ବନିର୍ଦ୍ଧାରିତ ଭାବରେ ସେଟ କରନ୍ତୁ"
+msgstr "ଏକ ୱାଲପେପର୍‌ ସେଟ କରନ୍ତୁ"
 
 #. tooltip
 #: ../src/nautilus-view.c:7197
 msgid "Make item the wallpaper"
-msgstr ""
+msgstr "ଏହି ବସ୍ତୁକୁ  ୱାଲପେପର୍‌ କରନ୍ତୁ"
 
 #. tooltip
 #: ../src/nautilus-view.c:7205 ../src/nautilus-view.c:8597
@@ -5191,23 +5118,21 @@ msgstr "ପ୍ରତିକାର କରନ୍ତୁ (_U)"
 
 #. tooltip
 #: ../src/nautilus-view.c:7217
-#, fuzzy
 #| msgid "Undo the last text change"
 msgid "Undo the last action"
-msgstr "ଅନ୍ତିମ ପାଠ୍ଯ ପରିବର୍ତନକୁ ପ୍ରତିକାର କରନ୍ତୁ"
+msgstr "ପୂର୍ବବର୍ତ୍ତୀ କାର୍ଯ୍ଯକୁ ବାତିଲ କରନ୍ତୁ"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7220
 msgid "_Redo"
-msgstr ""
+msgstr "ପୁଣି କରନ୍ତୁ (_R)"
 
 #. tooltip
 #: ../src/nautilus-view.c:7221
-#, fuzzy
 #| msgid "Undo the last text change"
 msgid "Redo the last undone action"
-msgstr "ଅନ୍ତିମ ପାଠ୍ଯ ପରିବର୍ତନକୁ ପ୍ରତିକାର କରନ୍ତୁ"
+msgstr "ଶେଷ ପଦକ୍ଷେପ ବାତିଲ କାର୍ଯ୍ୟକୁ ପୁଣି କରନ୍ତୁ"
 
 #.
 #. * multiview-TODO: decide whether "Reset to Defaults" should
@@ -5303,10 +5228,9 @@ msgstr "ସମ୍ପାଦିତ ସନ୍ଧାନକୁ ସଂରକ୍ଷଣ 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7290
-#, fuzzy
 #| msgid "Sa_ve Search As..."
 msgid "Sa_ve Search As…"
-msgstr "ସନ୍ଧାନକୁ ଏହି ପରି ସଂରକ୍ଷଣ କରନ୍ତୁ (_v)..."
+msgstr "ସନ୍ଧାନକୁ ଏହି ପରି ସଂରକ୍ଷଣ କରନ୍ତୁ (_v)…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7291
@@ -5399,10 +5323,9 @@ msgid "Toggle the display of hidden files in the current window"
 msgstr "ପ୍ରଚଳିତ ୱିଣ୍ଡୋରେ ଲୁକ୍କାଇତ ଫାଇଲଗୁଡ଼ିକର ପ୍ରଦର୍ଶନକୁ ଆଗପଛ କରନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7424
-#, fuzzy
 #| msgid "Run or manage scripts from %s"
 msgid "Run or manage scripts"
-msgstr "%sରୁ ସ୍କ୍ରିପ୍ଟଗୁଡ଼ିକୁ ଚଲାନ୍ତୁ କିମ୍ବା ପରିଚାଳନା କରନ୍ତୁ"
+msgstr "ସ୍କ୍ରିପ୍ଟଗୁଡ଼ିକୁ ଚଲାନ୍ତୁ କିମ୍ବା ପରିଚାଳନା କରନ୍ତୁ"
 
 #. Create a script action here specially because its tooltip is dynamic
 #: ../src/nautilus-view.c:7426
@@ -5410,90 +5333,84 @@ msgid "_Scripts"
 msgstr "ସ୍କ୍ରିପ୍ଟଗୁଡ଼ିକ (_S)"
 
 #: ../src/nautilus-view.c:7776
-#, fuzzy, c-format
+#, c-format
 #| msgid "Move the open folder out of the trash to \"%s\""
 msgid "Move the open folder out of the trash to “%s”"
-msgstr "ଖୋଲାଥିବା ଫୋଲଡ଼ରକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ \"%s\"କୁ ପଠାନ୍ତୁ"
+msgstr "ଖୋଲାଥିବା ଫୋଲଡ଼ରକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ “%s” କୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7780
-#, fuzzy, c-format
+#, c-format
 #| msgid "Move the selected folder out of the trash to \"%s\""
 #| msgid_plural "Move the selected folders out of the trash to \"%s\""
 msgid "Move the selected folder out of the trash to “%s”"
-msgstr "ଚୟିତ ଫୋଲଡ଼ରକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ \"%s\"କୁ ପଠାନ୍ତୁ"
+msgstr "ଚୟିତ ଫୋଲଡ଼ରକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ “%s”କୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7783
-#, fuzzy, c-format
+#, c-format
 #| msgid "Move the selected folder out of the trash to \"%s\""
 #| msgid_plural "Move the selected folders out of the trash to \"%s\""
 msgid "Move the selected folders out of the trash to “%s”"
-msgstr "ଚୟିତ ଫୋଲଡ଼ରକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ \"%s\"କୁ ପଠାନ୍ତୁ"
+msgstr "ଚୟିତ ଫୋଲଡ଼ରକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ  “%s”କୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7788
-#, fuzzy
 #| msgid "Move the selected folder out of the trash"
 #| msgid_plural "Move the selected folders out of the trash"
 msgid "Move the selected folder out of the trash"
 msgstr "ଚୟିତ ଫୋଲଡ଼ରକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରକୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7790
-#, fuzzy
 #| msgid "Move the selected folder out of the trash"
 #| msgid_plural "Move the selected folders out of the trash"
 msgid "Move the selected folders out of the trash"
 msgstr "ଚୟିତ ଫୋଲଡ଼ରକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରକୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7796
-#, fuzzy, c-format
+#, c-format
 #| msgid "Move the selected file out of the trash to \"%s\""
 #| msgid_plural "Move the selected files out of the trash to \"%s\""
 msgid "Move the selected file out of the trash to “%s”"
-msgstr "ଚୟିତ ଫାଇଲକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ \"%s\"କୁ ପଠାନ୍ତୁ"
+msgstr "ଚୟିତ ଫାଇଲକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ  “%s”କୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7799
-#, fuzzy, c-format
+#, c-format
 #| msgid "Move the selected file out of the trash to \"%s\""
 #| msgid_plural "Move the selected files out of the trash to \"%s\""
 msgid "Move the selected files out of the trash to “%s”"
-msgstr "ଚୟିତ ଫାଇଲକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ \"%s\"କୁ ପଠାନ୍ତୁ"
+msgstr "ଚୟିତ ଫାଇଲକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ  “%s”କୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7804
-#, fuzzy
 #| msgid "Move the selected file out of the trash"
 #| msgid_plural "Move the selected files out of the trash"
 msgid "Move the selected file out of the trash"
 msgstr "ଚୟିତ ଫାଇଲକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରକୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7806
-#, fuzzy
 #| msgid "Move the selected file out of the trash"
 #| msgid_plural "Move the selected files out of the trash"
 msgid "Move the selected files out of the trash"
 msgstr "ଚୟିତ ଫାଇଲକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରକୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7812
-#, fuzzy, c-format
+#, c-format
 #| msgid "Move the selected item out of the trash to \"%s\""
 #| msgid_plural "Move the selected items out of the trash to \"%s\""
 msgid "Move the selected item out of the trash to “%s”"
-msgstr "ଚୟିତ ବସ୍ତୁକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ \"%s\"କୁ ପଠାନ୍ତୁ"
+msgstr "ଚୟିତ ବସ୍ତୁକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ  “%s”କୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7815
-#, fuzzy, c-format
+#, c-format
 #| msgid "Move the selected item out of the trash to \"%s\""
 #| msgid_plural "Move the selected items out of the trash to \"%s\""
 msgid "Move the selected items out of the trash to “%s”"
-msgstr "ଚୟିତ ବସ୍ତୁକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ \"%s\"କୁ ପଠାନ୍ତୁ"
+msgstr "ଚୟିତ ବସ୍ତୁକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରୁ  “%s” କୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7820
-#, fuzzy
 #| msgid "Move the selected item out of the trash"
 #| msgid_plural "Move the selected items out of the trash"
 msgid "Move the selected item out of the trash"
 msgstr "ଚୟିତ ବସ୍ତୁକୁ ଆବର୍ଜନା ପାତ୍ର ବାହାରକୁ ପଠାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:7822
-#, fuzzy
 #| msgid "Move the selected item out of the trash"
 #| msgid_plural "Move the selected items out of the trash"
 msgid "Move the selected items out of the trash"
@@ -5612,8 +5529,8 @@ msgstr "ଖୋଲାଥିବା ଫୋଲଡ଼ରକୁ ଆବର୍ଜନା�
 #, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ଚୟନ ସହିତ ନୂତନ ଫୋଲଡର୍‌ (%'d ଟି ବସ୍ତୁ)"
+msgstr[1] "ଚୟନ ସହିତ ନୂତନ ଫୋଲଡର୍‌ (%'d ଟି ବସ୍ତୁ)"
 
 #: ../src/nautilus-view.c:8507
 #, c-format
@@ -5621,10 +5538,9 @@ msgid "_Open With %s"
 msgstr "%s ସହିତ ଖୋଲନ୍ତୁ (_O)"
 
 #: ../src/nautilus-view.c:8518
-#, fuzzy
 #| msgid "_Run"
 msgid "Run"
-msgstr "ଚଳାନ୍ତୁ (_R)"
+msgstr "ଚଲାନ୍ତୁ"
 
 #: ../src/nautilus-view.c:8556
 #, c-format
@@ -5646,13 +5562,12 @@ msgstr "ସମସ୍ତ ବଚ୍ଛିତ ବସ୍ତୁଗୁଡ଼ିକୁ 
 
 #: ../src/nautilus-view.c:8624
 msgid "Remo_ve from Recent"
-msgstr ""
+msgstr "ପ୍ରଚଳିତରୁ ବାହାର କରନ୍ତୁ"
 
 #: ../src/nautilus-view.c:8625
-#, fuzzy
 #| msgid "Move each selected item to the Trash"
 msgid "Remove each selected item from the recently used list"
-msgstr "ପ୍ରତ୍ୟେକ ବଚ୍ଛିତ ବସ୍ତୁକୁ ଆବର୍ଜନା ପାତ୍ର ମଧ୍ଯକୁ ପଠାନ୍ତୁ"
+msgstr "ପ୍ରତ୍ୟେକ  ଚୟିତ ବସ୍ତୁକୁ ବର୍ତ୍ତମାନ ବ୍ୟବହୃତ ତାଲିକାରୁ ବାହାର କରନ୍ତୁ"
 
 #: ../src/nautilus-view.c:8665
 msgid "View or modify the properties of the open folder"
@@ -5673,10 +5588,9 @@ msgstr "ଗୋଟିଏ ଅବୈଧ ଟାଣିବା ପ୍ରକାରକୁ
 
 #. Translator: This is the filename used for when you dnd text to a directory
 #: ../src/nautilus-view-dnd.c:383
-#, fuzzy
 #| msgid "dropped text.txt"
 msgid "Dropped Text.txt"
-msgstr "ଖସିଯାଇଥିବା text.txt"
+msgstr "ଖସିଯାଇଥିବା  Text.txt"
 
 #. Translator: This is the filename used for when you dnd raw
 #. * data to a directory, if the source didn't supply a name.
@@ -5702,7 +5616,6 @@ msgid "_Close Tab"
 msgstr "ଟ୍ୟାବ ବନ୍ଦ କରନ୍ତୁ (_C)"
 
 #: ../src/nautilus-window.c:2031
-#, fuzzy
 #| msgid ""
 #| "Nautilus is free software; you can redistribute it and/or modify it under "
 #| "the terms of the GNU General Public License as published by the Free "
@@ -5714,13 +5627,12 @@ msgid ""
 "Foundation; either version 2 of the License, or (at your option) any later "
 "version."
 msgstr ""
-"Nautilus is free software; you can redistribute it and/or modify it under "
-"the terms of the GNU General Public License as published by the Free "
-"Software Foundation; either version 2 of the License, or (at your option) "
-"any later version."
+"Files is free software; you can redistribute it and/or modify it under the "
+"terms of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version."
 
 #: ../src/nautilus-window.c:2035
-#, fuzzy
 #| msgid ""
 #| "Nautilus is distributed in the hope that it will be useful, but WITHOUT "
 #| "ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
@@ -5732,7 +5644,7 @@ msgid ""
 "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
 "details."
 msgstr ""
-"Nautilus is distributed in the hope that it will be useful, but WITHOUT ANY "
+"Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
 "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
 "details."
@@ -5751,16 +5663,14 @@ msgstr ""
 #. * e.g. 1999-2011.
 #.
 #: ../src/nautilus-window.c:2054
-#, fuzzy
 #| msgid "Copyright © 1999-2010 The Nautilus authors"
 msgid "Copyright © %Id–%Id The Files authors"
-msgstr "Copyright © 1999-2010 The Nautilus authors"
+msgstr "Copyright © %Id–%Id The Files authors"
 
 #: ../src/nautilus-window.c:2060
-#, fuzzy
 #| msgid "Access and organize files"
 msgid "Access and organize your files."
-msgstr "ଫାଇଲମାନଙ୍କୁ ଅଭିଗମ କରନ୍ତୁ ଏବଂ ସଙ୍ଗଠନ କରନ୍ତୁ"
+msgstr "ଆପଣଙ୍କ ଫାଇଲଗୁଡ଼ିକୁ ଅଭିଗମ୍ୟ କରନ୍ତୁ ଏବଂ ସଙ୍ଗଠନ କରନ୍ତୁ।"
 
 #. Translators should localize the following string
 #. * which will be displayed at the bottom of the about
@@ -5814,7 +5724,7 @@ msgstr "ସାମ୍ପ୍ରତିକ ଅବସ୍ଥାନକୁ ପୁନର�
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:481
 msgid "_All Topics"
-msgstr ""
+msgstr "ସମସ୍ତ ବିଷୟଗୁଡ଼ିକ (_A)"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:482
@@ -5824,56 +5734,59 @@ msgstr "Nautilus ସହୟତାକୁ ପ୍ରଦର୍ଶନ କରନ୍ତ�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:485
-#, fuzzy
 #| msgid "_Search for Files..."
 msgid "Search for files"
-msgstr "ଫାଇଲ ମାନଙ୍କୁ ଖୋଜନ୍ତୁ (_S) ..."
+msgstr "ଫାଇଲଗୁଡ଼ିକୁ ଖୋଜନ୍ତୁ"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:486
 msgid ""
 "Locate files based on file name and type. Save your searches for later use."
 msgstr ""
+"ଫାଇଲନାମ ଉପରେ ଆଧାରିତ ଫାଇଲଗୁଡ଼ିକୁ ଖୋଜନ୍ତୁ ଏବଂ ଲେଖନ୍ତୁ। ଆପଣଙ୍କର ସନ୍ଧାନଗୁଡ଼ିକୁ "
+"ପରବର୍ତ୍ତୀ ବ୍ୟବହାର ପାଇଁ ସଂରକ୍ଷଣ କରନ୍ତୁ।"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:489
-#, fuzzy
 #| msgid "Sort _folders before files"
 msgid "Sort files and folders"
-msgstr "ଫାଇଲ ମାନଙ୍କ ପୂର୍ବରୁ ଫୋଲଡର ମାନଙ୍କୁ ସଜାଡନ୍ତୁ (_f)"
+msgstr "ଫାଇଲ ଏବଂ ଫୋଲଡରଗୁଡ଼ିକୁ ସଜାଡ଼ନ୍ତୁ"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:490
 msgid "Arrange files by name, size, type, or when they were changed."
 msgstr ""
+"ଫାଇଲଗୁଡ଼ିକୁ ନାମ, ଆକାର, ଅଥବା ସେମାନଙ୍କର ପରିବର୍ତ୍ତନ ସମୟ ଉପରେ ଆଧାର କରି ସଜାଡ଼ନ୍ତୁ।"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:493
-#, fuzzy
 #| msgid "Original file"
 msgid "Find a lost file"
-msgstr "ପ୍ରକୃତ ଫାଇଲ"
+msgstr "ଗୋଟିଏ ହଜିଯାଇଥିବା ଫାଇଲକୁ ଖୋଜନ୍ତୁ"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:494
 msgid "Follow these tips if you can't find a file you created or downloaded."
 msgstr ""
+"ଆପଣ ନିର୍ମାଣ କରିଥିବା କିମ୍ବା ଆହରଣ କରିଥିବା କୌଣସି ଫାଇଲ ପାଇଁ ନିମ୍ନଲିଖିତ "
+"ସୂଚନାଗୁଡ଼ିକୁ ଅନୁସରଣ କରନ୍ତୁ।"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:497
-#, fuzzy
 #| msgid "Access and organize files"
 msgid "Share and transfer files"
-msgstr "ଫାଇଲମାନଙ୍କୁ ଅଭିଗମ କରନ୍ତୁ ଏବଂ ସଙ୍ଗଠନ କରନ୍ତୁ"
+msgstr "ଫାଇଲଗୁଡ଼ିକୁ ସହଭାଗ କରନ୍ତୁ ଏବଂ ସ୍ଥାନାନ୍ତରିତ କରନ୍ତୁ"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:498
 msgid ""
 "Easily transfer files to your contacts and devices from the file manager."
 msgstr ""
+"ଆପଣଙ୍କ ସମ୍ପର୍କ ତାଲିକା ଏବଂ ଉପକରଣଗୁଡ଼ିକରେ ଥିବା ଫାଇଲଗୁଡ଼ିକୁ  ସହଜରେ ଫାଇଲ "
+"ପରିଚାଳକରୁ ସ୍ଥାନାନ୍ତରିତ କରନ୍ତୁ।"
 
 #. name, stock id
 #. label, accelerator
@@ -5922,10 +5835,9 @@ msgstr "ସାଧାରଣ ଦୃଶ୍ୟ ଆକାରକୁ ବ୍ୟବହା
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:529
-#, fuzzy
 #| msgid "Connect to Server"
 msgid "Connect to _Server…"
-msgstr "ସେବକ ସହିତ ସଂଯୋଗ କରନ୍ତୁ"
+msgstr "ସର୍ଭର ସହିତ ସଂଯୋଗ କରନ୍ତୁ (_S) …"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:530
@@ -5980,10 +5892,9 @@ msgstr "ପରବର୍ତ୍ତୀ ପରିଦର୍ଶିତ ଅବସ୍ଥ�
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:551
-#, fuzzy
 #| msgid "_Location:"
 msgid "Enter _Location…"
-msgstr "ଅବସ୍ଥାନ (_L):"
+msgstr "ଅବସ୍ଥାନ ଖୋଲନ୍ତୁ (_L)..."
 
 #: ../src/nautilus-window-menus.c:552
 msgid "Specify a location to open"
@@ -5991,29 +5902,25 @@ msgstr "ଖୋଲିବା ପାଇଁ ଗୋଟିଏ ଅବସ୍ଥାନକ
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:554
-#, fuzzy
 #| msgid "Bookmark for Nonexistent Location"
 msgid "Bookmark this Location"
-msgstr "ଗୋଟିଏ ଅନୁପସ୍ଥିତ ସ୍ଥାନକୁ ଚିହ୍ନିତ କରନ୍ତୁ"
+msgstr "ଏହି ସ୍ଥାନକୁ ଚିହ୍ନଟ କରନ୍ତୁ"
 
 #: ../src/nautilus-window-menus.c:555
-#, fuzzy
 #| msgid "Add a bookmark for the current location to this menu"
 msgid "Add a bookmark for the current location"
-msgstr "ଏହି ତାଲିକାରେ ଥିବା ବର୍ତମାନ ଅବସ୍ଥାନ ପାଇଁ  ଗୋଟିଏ ବୁକମାର୍କକୁ ଯୋଗ କରନ୍ତୁ"
+msgstr "ପ୍ରଚଳିତ ସ୍ଥାନ ପାଇଁ ଗୋଟିଏ ପୃଷ୍ଠା ସଂକେତ ଯୋଗ କରନ୍ତୁ"
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:557
-#, fuzzy
 #| msgid "_Bookmarks"
 msgid "_Bookmarks…"
-msgstr "ଚିହ୍ନିତ ସ୍ଥାନ (_B)"
+msgstr "ପୃଷ୍ଠା ସଂକେତ (_B)…"
 
 #: ../src/nautilus-window-menus.c:558
-#, fuzzy
 #| msgid "Edit Bookmarks"
 msgid "Display and edit bookmarks"
-msgstr "ଚିହ୍ନିତ ସ୍ଥାନକୁ ସମ୍ପାଦନ କରନ୍ତୁ"
+msgstr "ପୃଷ୍ଠା ସଂକେତକୁ ଦର୍ଶାନ୍ତୁ ଏବଂ ସମ୍ପାଦନ କରନ୍ତୁ"
 
 #: ../src/nautilus-window-menus.c:560
 msgid "_Previous Tab"
@@ -6054,10 +5961,9 @@ msgstr "ଏହି ୱିଣ୍ଡୋର ପାର୍ଶ୍ବ ପଟିର ଦ�
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:589
-#, fuzzy
 #| msgid "_Search for Files..."
 msgid "_Search for Files…"
-msgstr "ଫାଇଲ ମାନଙ୍କୁ ଖୋଜନ୍ତୁ (_S) ..."
+msgstr "ଫାଇଲ ମାନଙ୍କୁ ଖୋଜନ୍ତୁ (_S) …"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:590
@@ -6065,72 +5971,67 @@ msgid "Search documents and folders by name"
 msgstr "ନାମ ଅନୁସାରେ ଦଲିଲ ଏବଂ ଫୋଲଡରମାନଙ୍କୁ ସନ୍ଧାନ କରନ୍ତୁ"
 
 #: ../src/nautilus-window-menus.c:596 ../src/nautilus-window-menus.c:598
-#, fuzzy
 #| msgid "_List"
 msgid "List"
-msgstr "ତାଲିକା (_L)"
+msgstr "ତାଲିକା"
 
 #: ../src/nautilus-window-menus.c:597
 msgid "View items as a list"
-msgstr ""
+msgstr "ବସ୍ତୁଗୁଡିକୁ ତାଲିକା ଭାବରେ ଦେଖନ୍ତୁ"
 
 #: ../src/nautilus-window-menus.c:599
 msgid "View items as a grid of icons"
-msgstr ""
+msgstr "ବସ୍ତୁଗୁଡ଼ିକୁ ଚିତ୍ରସଂକେତ ଗ୍ରୀଡ଼ ଭାବରେ ଦେଖନ୍ତୁ"
 
 #: ../src/nautilus-window-menus.c:702
 msgid "_Up"
 msgstr "ଉପରକୁ (_U)"
 
 #: ../src/nautilus-window-slot.c:1274 ../src/nautilus-window-slot.c:1448
-#, fuzzy, c-format
+#, c-format
 #| msgid "Unable to mount location"
 msgid "Unable to load location"
-msgstr "ସ୍ଥାନ ନିରୁପଣ କରିବାରେ ଅସମର୍ଥ"
+msgstr "ଅବସ୍ଥାନ ଆରମ୍ଭ କରିବାରେ ଅସମର୍ଥ"
 
 #: ../src/nautilus-window-slot.c:1603
-#, fuzzy
 #| msgid "View or modify the properties of this folder"
 msgid "Unable to display the contents of this folder."
-msgstr "ଏହି ଫୋଲଡ଼ରର ଗୁଣଧର୍ମଗୁଡ଼ିକୁ ଦେଖନ୍ତୁ କିମ୍ବା ପରିବର୍ତ୍ତନ କରନ୍ତୁ"
+msgstr "ଏହି ଫୋଲଡରର ବିଷୟବସ୍ତୁଗୁଡ଼ିକୁ ଦର୍ଶାଇବାବାରେ ଅସମର୍ଥ।"
 
 #: ../src/nautilus-window-slot.c:1605
-#, fuzzy
 #| msgid "The location is not a folder."
 msgid "This location doesn't appear to be a folder."
-msgstr "ଅବସ୍ଥାନଟି ଗୋଟିଏ ଫୋଲଡର ନୁହେଁ।"
+msgstr "ଏହି ଅବସ୍ଥାନଟି ଗୋଟିଏ ଫୋଲଡର ନୁହେଁ।"
 
 #: ../src/nautilus-window-slot.c:1610
-#, fuzzy
 #| msgid "Please check the spelling and try again."
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
-msgstr "ଦୟାକରି ବନାନକୁ ଦେଖନ୍ତୁ ଏବଂ ପୁନର୍ବାର ପ୍ରଚେଷ୍ଟା କରନ୍ତୁ।"
+msgstr ""
+"ଅନୁରୋଧ କରାଯାଇଥିବା ଫାଇଲ ଖୋଜିବାରେ ଅସମର୍ଥ। ଦୟାକରି ବନାନକୁ ଦେଖନ୍ତୁ ଏବଂ ପୁନର୍ବାର "
+"ପ୍ରଚେଷ୍ଟା କରନ୍ତୁ।"
 
 #: ../src/nautilus-window-slot.c:1615
 #, c-format
 msgid "“%s” locations are not supported."
-msgstr ""
+msgstr "“%s” ଅବସ୍ଥାନଟି ସହାୟତାପ୍ରାପ୍ତ ନୁହଁ।"
 
 #: ../src/nautilus-window-slot.c:1618
-#, fuzzy
 #| msgid "Nautilus cannot handle this kind of location."
 msgid "Unable to handle this kind of location."
-msgstr "Nautilus ଏହି ପ୍ରକାର ସ୍ଥାନକୁ ନିୟନ୍ତ୍ରଣ କରିପାରିବ ନାହିଁ।"
+msgstr "ଏହି ପ୍ରକାର ସ୍ଥାନକୁ ନିୟନ୍ତ୍ରଣ କରିପାରିବ ନାହିଁ।"
 
 #: ../src/nautilus-window-slot.c:1623
-#, fuzzy
 #| msgid "Unable to start location"
 msgid "Unable to access the requested location."
-msgstr "ଅବସ୍ଥାନ ଆରମ୍ଭ କରିବାରେ ଅସମର୍ଥ"
+msgstr "ଅନୁରୋଧ କରାଯାଇଥିବା ଅବସ୍ଥାନ ଆରମ୍ଭ କରିବାରେ ଅସମର୍ଥ।"
 
 #: ../src/nautilus-window-slot.c:1626
-#, fuzzy
 #| msgid "You do not have permissions to access the destination folder."
 msgid "Don't have permission to access the requested location."
 msgstr ""
-"ଲକ୍ଷ୍ଯ ସ୍ଥାନରେ ଥିବା ଫୋଲଡର ମଧ୍ଯକୁ ପ୍ରବେଶ କରିବା ପାଇଁ ଆପଣଙ୍କ ନିକଟରେ ଉପଯୁକ୍ତ "
-"ଅନୁମତି ନାହିଁ।"
+"ଅନୁରୋଧ କରାଯାଇଥିବା ସ୍ଥାନରେ ଥିବା ଫୋଲଡର ମଧ୍ଯକୁ ପ୍ରବେଶ କରିବା ପାଇଁ ଉପଯୁକ୍ତ ଅନୁମତି "
+"ନାହିଁ।"
 
 #. This case can be hit for user-typed strings like "foo" due to
 #. * the code that guesses web addresses when there's no initial "/".
@@ -6142,91 +6043,84 @@ msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
 msgstr ""
+"ଅନୁରୋଧ କରାଯାଇଥିବା ସ୍ଥାନକୁ ଖୋଜିପାଇବାରେ ଅସମର୍ଥ। ଦୟାକରି ବନାନ କିମ୍ବା "
+"ନେଟୱର୍କ ସଂରଚନା ଯାଞ୍ଚ କରନ୍ତୁ।"
 
 #: ../src/nautilus-window-slot.c:1645
 #, c-format
 msgid "Unhandled error message: %s"
-msgstr ""
+msgstr "ଅନିୟନ୍ତ୍ରିତ ତ୍ରୁଟି ସନ୍ଦେଶ: %s"
 
 #: ../src/nautilus-window-slot.c:2247
-#, fuzzy
 #| msgid "Searching..."
 msgid "Searching…"
 msgstr "ସନ୍ଧାନ କରୁଅଛି..."
 
 #: ../src/nautilus-x-content-bar.c:93
 msgid "Audio CD"
-msgstr ""
+msgstr "ଧ୍ୱନୀ CD"
 
 #: ../src/nautilus-x-content-bar.c:95
 msgid "Audio DVD"
-msgstr ""
+msgstr "ଧ୍ୱନି DVD"
 
 #: ../src/nautilus-x-content-bar.c:97
-#, fuzzy
 #| msgid "Video"
 msgid "Video DVD"
-msgstr "ଭିଡିଓ"
+msgstr "ଭିଡ଼ିଓ DVD"
 
 #: ../src/nautilus-x-content-bar.c:99
-#, fuzzy
 #| msgid "Video"
 msgid "Video CD"
-msgstr "ଭିଡିଓ"
+msgstr "ଭିଡ଼ିଓ CD"
 
 #: ../src/nautilus-x-content-bar.c:101
 msgid "Super Video CD"
-msgstr ""
+msgstr "ଉତ୍ତମ ଭିଡ଼ିଓ CD"
 
 #: ../src/nautilus-x-content-bar.c:103
-#, fuzzy
 #| msgid "_Photos:"
 msgid "Photo CD"
-msgstr "ଫଟୋଗୁଡ଼ିକ (_P):"
+msgstr "ଫଟୋ CD"
 
 #: ../src/nautilus-x-content-bar.c:105
-#, fuzzy
 #| msgid "Picture"
 msgid "Picture CD"
-msgstr "ଛବି"
+msgstr "ଛବି CD"
 
 #: ../src/nautilus-x-content-bar.c:107 ../src/nautilus-x-content-bar.c:140
-#, fuzzy
 #| msgid "The media contains digital photos."
 msgid "Contains digital photos"
-msgstr "ସଞ୍ଚାର ମାଧ୍ଯମ ଡିଜିଟାଲ ଫଟୋଗୁଡ଼ିକୁ ଧାରଣ କରିଥାଏ।"
+msgstr "ଡିଜିଟାଲ ଫଟୋଗୁଡ଼ିକୁ ଧାରଣ କରିଥାଏ"
 
 #: ../src/nautilus-x-content-bar.c:109
-#, fuzzy
 #| msgid "Continue"
 msgid "Contains music"
-msgstr "ଅଗ୍ରସର ହୁଅନ୍ତୁ"
+msgstr "ସଂଗୀତ ଧାରଣ କରିଥାଏ"
 
 #: ../src/nautilus-x-content-bar.c:111
-#, fuzzy
 #| msgid "The media contains software."
 msgid "Contains software"
-msgstr "ସଞ୍ଚାର ମାଧ୍ଯମ ସଫ୍ଟୱେର ଧାରଣ କରିଥାଏ।"
+msgstr "ସଫ୍ଟୱେର ଧାରଣ କରିଥାଏ"
 
 #. fallback to generic greeting
 #: ../src/nautilus-x-content-bar.c:114
 #, c-format
 msgid "Detected as “%s”"
-msgstr ""
+msgstr "“%s” ଭାବରେ ଅପସାରଣ କରାଯାଇଥାଏ"
 
 #: ../src/nautilus-x-content-bar.c:136
 msgid "Contains music and photos"
-msgstr ""
+msgstr "ସଙ୍ଗୀତ ଏବଂ ଫୋଟୋଗୁଡ଼ିକୁ ଧାରଣ କରିଥାଏ"
 
 #: ../src/nautilus-x-content-bar.c:138
 msgid "Contains photos and music"
-msgstr ""
+msgstr "ଫୋଟୋ ଏବଂ ସଙ୍ଗୀତ ଧାରଣ କରିଥାଏ"
 
 #: ../src/nautilus-x-content-bar.c:195
-#, fuzzy
 #| msgid "Open %s with:"
 msgid "Open with:"
-msgstr "ଏହା ସହିତ %s କୁ ଖୋଲନ୍ତୁ:"
+msgstr "ଏହା ଦ୍ବାରା ଖୋଲନ୍ତୁ:"
 
 #~ msgid "Date Accessed"
 #~ msgstr "ଅଭିଗମ୍ଯ ତାରିଖ"
