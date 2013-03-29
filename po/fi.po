@@ -43,7 +43,7 @@
 # Ilkka Tuohela <hile@iki.fi>, 2005-2009.
 # Tommi Vainikainen <thv@iki.fi>, 2010-2011.
 # Timo Jyrinki <timo.jyrinki@iki.fi>, 2008-2013.
-# Ville-Pekka Vainio <vpvainio@iki.fi>, 2011.
+# Ville-Pekka Vainio <vpvainio@iki.fi>, 2011, 2013.
 # Jiri Grönroos <jiri.gronroos@iki.fi>, 2012, 2013.
 msgid ""
 msgstr ""
@@ -51,8 +51,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-03-24 17:56+0000\n"
-"PO-Revision-Date: 2013-03-26 20:16+0200\n"
-"Last-Translator: Jiri Grönroos <jiri.gronroos+l10n@iki.fi>\n"
+"PO-Revision-Date: 2013-03-29 20:32+0200\n"
+"Last-Translator: Ville-Pekka Vainio <vpvainio@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
@@ -4279,7 +4279,7 @@ msgstr "Palauta valitut kohteet niiden alkuperäisiin sijainteihin"
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:210
 msgid "Empty"
-msgstr "Tyhjä"
+msgstr "Tyhjennä"
 
 #: ../src/nautilus-view.c:957
 #, c-format
@@ -5228,7 +5228,7 @@ msgstr ""
 "Ilkka Tuohela, 2005-2009\n"
 "Timo Jyrinki, 2008\n"
 "Pauli Virtanen, 2000-2005\n"
-"Ville-Pekka Vainio, 2011\n"
+"Ville-Pekka Vainio, 2011, 2013\n"
 "Jiri Grönroos, 2011-2012\n"
 "\n"
 "http://gnome.fi/\n"
