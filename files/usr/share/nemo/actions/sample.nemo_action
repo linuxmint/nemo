@@ -41,7 +41,8 @@ Icon-Name=folder
 #Stock-Id=gtk-cdrom
 
 
-# What type selection: [S]ingle, [M]ultiple, Any, or None (background click)
+# What type selection: [S]ingle, [M]ultiple, Any, NotNone, None (background click), or
+# a number representing how many files must be selected to display.
 # Defaults to Single if this field is missing
 
 Selection=S

@@ -1608,6 +1608,22 @@ nemo_file_get_uri (NemoFile *file)
 	return uri;
 }
 
+/* Return the actual path associated with the passed-in file. */
+char *
+nemo_file_get_path (NemoFile *file)
+{
+    char *path;
+    GFile *loc;
+
+    g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
+
+    loc = nemo_file_get_location (file);
+    path = g_file_get_path (loc);
+    g_object_unref (loc);
+
+    return path;
+}
+
 char *
 nemo_file_get_uri_scheme (NemoFile *file)
 {
