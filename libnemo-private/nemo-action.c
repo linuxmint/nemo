@@ -475,11 +475,11 @@ replace_token (GList *arg_list, GList *selection, gboolean *success)
     if (token != NULL) {
         for (iter = selection; iter != NULL; iter = iter->next) {
             if (use_url) {
-                arg_list = g_list_insert_before (arg_list, token,
-                                                 nemo_file_get_uri (NEMO_FILE (iter->data)));
+                gchar *uri = nemo_file_get_uri (NEMO_FILE (iter->data));
+                arg_list = g_list_insert_before (arg_list, token, uri);
             } else {
-                arg_list = g_list_insert_before (arg_list, token,
-                                                 g_filename_from_uri (nemo_file_get_uri (NEMO_FILE (iter->data)), NULL, NULL));
+                gchar *path = nemo_file_get_path (NEMO_FILE (iter->data));
+                arg_list = g_list_insert_before (arg_list, token, path);
             }
         }
         arg_list = g_list_delete_link (arg_list, token);
