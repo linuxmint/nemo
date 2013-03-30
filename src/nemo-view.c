@@ -5900,13 +5900,13 @@ determine_visibility (gpointer data, gpointer callback_data)
 
     for (iter = selected_files; iter != NULL && found_match; iter = iter->next) {
         found_match = FALSE;
-        gchar *raw_fn = g_filename_from_uri (nemo_file_get_uri (NEMO_FILE (iter->data)), NULL, NULL);
+        gchar *raw_fn = nemo_file_get_name (NEMO_FILE (iter->data));
         gchar *filename = g_ascii_strdown (raw_fn, -1);
         g_free (raw_fn);
         int i;
         for (i = 0; i < ext_count; i++) {
             if (g_strcmp0 (extensions[i], "dir") == 0) {
-                if (g_file_test (filename, G_FILE_TEST_IS_DIR)) {
+                if (nemo_file_is_directory (NEMO_FILE (iter->data))) {
                     found_match = TRUE;
                     break;
                 }

@@ -663,7 +663,7 @@ nemo_action_set_label (NemoAction *action, NemoFile *file)
     const gchar *orig_label = nemo_action_get_orig_label (action);
 
     if (!test_string_for_label_token (orig_label) || file == NULL ||
-        action->selection_type > SELECTION_SINGLE) {
+        action->selection_type != SELECTION_SINGLE) {
         gtk_action_set_label (GTK_ACTION (action), orig_label);
         return;
     }
@@ -690,7 +690,7 @@ nemo_action_set_tt (NemoAction *action, NemoFile *file)
     const gchar *orig_tt = nemo_action_get_orig_tt (action);
 
     if (!test_string_for_label_token (orig_tt) || file == NULL ||
-        action->selection_type > SELECTION_SINGLE) {
+        action->selection_type != SELECTION_SINGLE) {
         gtk_action_set_tooltip (GTK_ACTION (action), orig_tt);
         return;
     }
