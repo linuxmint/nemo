@@ -33,6 +33,7 @@
 struct NemoSearchBarDetails {
 	GtkWidget *entry;
 	gboolean entry_borrowed;
+	guint search_mode;
 };
 
 enum {
@@ -40,6 +41,11 @@ enum {
        CANCEL,
        LAST_SIGNAL
 }; 
+
+enum {
+       FILENAME,
+       CONTENT
+};
 
 static guint signals[LAST_SIGNAL];
 
@@ -132,18 +138,37 @@ entry_activate_cb (GtkWidget *entry, NemoSearchBar *bar)
 }
 
 static void
+search_mode_toggle_filename (GtkToggleButton *togglebutton, NemoSearchBar *bar)
+{
+	if (gtk_toggle_button_get_active(togglebutton)==TRUE){
+	bar->details->search_mode=FILENAME;
+	}
+}
+
+static void
+search_mode_toggle_content (GtkToggleButton *togglebutton, NemoSearchBar *bar)
+{
+	if (gtk_toggle_button_get_active(togglebutton)==TRUE){
+	bar->details->search_mode=CONTENT;
+	}
+}
+
+static void
 nemo_search_bar_init (NemoSearchBar *bar)
 {
 	GtkWidget *label;
+    GtkWidget *filename;
+    GtkWidget *content;
 	GtkWidget *align;
 
 	bar->details =
 		G_TYPE_INSTANCE_GET_PRIVATE (bar, NEMO_TYPE_SEARCH_BAR,
 					     NemoSearchBarDetails);
+	bar->details->search_mode=FILENAME;
 
 	gtk_widget_set_redraw_on_allocate (GTK_WIDGET (bar), TRUE);
 
-	label = gtk_label_new (_("Search:"));
+    label = gtk_label_new (_("Search:"));
 	gtk_style_context_add_class (gtk_widget_get_style_context (label),
 				     "nemo-cluebar-label");
 	gtk_widget_show (label);
@@ -172,6 +197,36 @@ nemo_search_bar_init (NemoSearchBar *bar)
 			  G_CALLBACK (entry_icon_release_cb), bar);
 
 	gtk_widget_show (bar->details->entry);
+
+    //buttons to choose if the search searches in filenames or contents
+    filename = gtk_radio_button_new_with_label (NULL,_("filename"));
+	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (filename), FALSE);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (filename),TRUE);
+	g_signal_connect (filename, "toggled",
+                     G_CALLBACK (search_mode_toggle_filename), bar);
+  //  gtk_style_context_add_class (gtk_widget_get_style_context (filename),
+   //                  "nemo-cluebar-label");
+    gtk_widget_show (filename);
+
+    gtk_box_pack_start (GTK_BOX (bar), filename, FALSE, FALSE, 0);
+
+    g_object_set (filename,
+              "margin-left", 0,
+              NULL);
+
+    content = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (filename),_("content"));
+	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (content), FALSE);
+	g_signal_connect (content, "toggled",
+                     G_CALLBACK (search_mode_toggle_content), bar);   
+	// gtk_style_context_add_class (gtk_widget_get_style_context (content),
+    //                 "nemo-cluebar-label");
+    gtk_widget_show (content);
+
+    gtk_box_pack_start (GTK_BOX (bar), content, FALSE, FALSE, 0);
+
+    g_object_set (content,
+              "margin-left", 0,
+              NULL);
 }
 
 GtkWidget *
@@ -203,6 +258,12 @@ nemo_search_bar_return_entry (NemoSearchBar *bar)
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "cancel", 0);
 }
 
+int*
+nemo_search_bar_get_mode_ptr(NemoSearchBar *bar)
+{
+	return &bar->details->search_mode;
+}
+
 GtkWidget *
 nemo_search_bar_new (void)
 {
@@ -231,7 +292,7 @@ nemo_search_bar_get_query (NemoSearchBar *bar)
 	
 	query = nemo_query_new ();
 	nemo_query_set_text (query, query_text);
-
+	nemo_query_set_mode(query,bar->details->search_mode);
 	return query;
 }
 
@@ -244,5 +305,5 @@ nemo_search_bar_grab_focus (NemoSearchBar *bar)
 void
 nemo_search_bar_clear (NemoSearchBar *bar)
 {
-	gtk_entry_set_text (GTK_ENTRY (bar->details->entry), "");
+    gtk_entry_set_text (GTK_ENTRY (bar->details->entry), "");
 }

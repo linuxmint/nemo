@@ -58,6 +58,7 @@ GtkWidget* nemo_search_bar_new          	(void);
 
 GtkWidget *    nemo_search_bar_get_entry     (NemoSearchBar *bar);
 GtkWidget *    nemo_search_bar_borrow_entry  (NemoSearchBar *bar);
+int*           nemo_search_bar_get_mode_ptr  (NemoSearchBar *bar);
 void           nemo_search_bar_return_entry  (NemoSearchBar *bar);
 void           nemo_search_bar_grab_focus    (NemoSearchBar *bar);
 NemoQuery *nemo_search_bar_get_query     (NemoSearchBar *bar);
