@@ -55,6 +55,9 @@ void           nemo_query_set_text           (NemoQuery *query, const char *text
 char *         nemo_query_get_location       (NemoQuery *query);
 void           nemo_query_set_location       (NemoQuery *query, const char *uri);
 
+guint			nemo_query_get_mode			 (NemoQuery *query);
+void 			nemo_query_set_mode			 (NemoQuery *query, const guint mode);
+
 GList *        nemo_query_get_mime_types     (NemoQuery *query);
 void           nemo_query_set_mime_types     (NemoQuery *query, GList *mime_types);
 void           nemo_query_add_mime_type      (NemoQuery *query, const char *mime_type);
