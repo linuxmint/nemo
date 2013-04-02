@@ -217,7 +217,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 	GFile *child;
 	const char *mime_type, *display_name;
 	char *normalized_search_in, *lower_search_in;
-	gboolean hit=FALSE;
+	gboolean hit;
 	gint i;
 	GList *l;
 	const char *id;
@@ -247,6 +247,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 		if (display_name == NULL) {
 			goto next;
 		}
+		hit=FALSE;
 
 		//get child file/dir
 		child = g_file_get_child (dir, g_file_info_get_name (info));
@@ -305,7 +306,6 @@ visit_directory (GFile *dir, SearchThreadData *data)
 						}
 						bytes_read=g_input_stream_read (is,content,STREAM_BUFFER_SIZE,data->cancellable,&error);
 						//0=end of file, -1=error
-						//todo style! this is like while(TRUE) with some breaks currently
 						if (bytes_read==0 || bytes_read==-1) {
 							break;
 						}
@@ -316,8 +316,9 @@ visit_directory (GFile *dir, SearchThreadData *data)
 							//append current buffer		
 							search_in=g_string_append(search_in,content);
 							normalized_search_in=g_utf8_normalize (search_in->str, bytes_read, G_NORMALIZE_NFD);
+
 							if (normalized_search_in==NULL){
-								g_free (normalized_search_in);
+								g_free (normalized_search_in);								
 								break;
 							} else {				
 								//search for words		
@@ -327,46 +328,42 @@ visit_directory (GFile *dir, SearchThreadData *data)
 
 								//search for every input word 
 								for (i = 0; data->words[i] != NULL; i++) {
+									gboolean hit_i;
 									if (strstr (lower_search_in, data->words[i]) == NULL) {
-										gboolean hit=FALSE;
-										g_array_append_val(hits_in_cur_buf,hit);
+										hit_i=FALSE;
+										g_array_append_val(hits_in_cur_buf,hit_i);
 									} else {
-										gboolean hit=TRUE;
-										g_array_append_val(hits_in_cur_buf,hit);
+										hit_i=TRUE;
+										g_array_append_val(hits_in_cur_buf,hit_i);
 									}
 								}
 													
 								//g_free(lower_search_in); //todo sometimes double free or corruption
-								
+								hit=TRUE;
 								for (i = 0; data->words[i] != NULL; i++) {
 									//mark word i as found
 									if (g_array_index(hits_in_cur_buf,gboolean,i)==TRUE){
 										gboolean* hit_i=&g_array_index(hits,gboolean,i);
 										*hit_i=TRUE;
 									}
+									//check if all words hit already
+									if (g_array_index(hits,gboolean,i)==FALSE){
+										hit=FALSE;
+									}
 								}
-								g_array_free (hits_in_cur_buf, TRUE);		
+								g_array_free (hits_in_cur_buf, TRUE);	
 							}
 						}
 					} 
-					//0=end of file, -1=error
-					while (bytes_read!=0 && bytes_read!=-1);
+					while (!hit);
 					//g_string_free(search_in,TRUE); //todo sometimes double free or corruption
 					g_object_unref(is);
-					hit=TRUE;
-					//finally check matched words for whole file
-					//file is not matched if not all input words are matched
-					for (i = 0; data->words[i] != NULL; i++) {
-						if (g_array_index(hits,gboolean,i)==FALSE){
-							hit=FALSE;
-							break;
-						}
-					}
+					
 					g_array_free (hits, TRUE);
 				}
 			} 
 		}
-	
+
 		//check if mime-type fits if specified
 		if (hit && data->mime_types) {
 			mime_type = g_file_info_get_content_type (info);
