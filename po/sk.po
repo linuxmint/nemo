@@ -14,8 +14,8 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-03-04 09:55+0000\n"
-"PO-Revision-Date: 2013-02-06 22:12+0000\n"
+"POT-Creation-Date: 2013-03-29 18:33+0000\n"
+"PO-Revision-Date: 2013-03-24 20:17+0100\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
@@ -145,12 +145,12 @@ msgstr " (neplatný znak Unicode)"
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:275
 #: ../src/nautilus-pathbar.c:295 ../src/nautilus-places-sidebar.c:528
-#: ../src/nautilus-query-editor.c:1164
+#: ../src/nautilus-query-editor.c:1156
 #: ../src/nautilus-shell-search-provider.c:310
 msgid "Home"
 msgstr "Domov"
 
-#: ../libnautilus-private/nautilus-canvas-container.c:2380
+#: ../libnautilus-private/nautilus-canvas-container.c:2381
 msgid "The selection rectangle"
 msgstr "Obdĺžnik výberu"
 
@@ -177,7 +177,7 @@ msgstr "Vložiť text uložený v schránke"
 
 #. name, stock id
 #. label, accelerator
-#: ../libnautilus-private/nautilus-clipboard.c:370 ../src/nautilus-view.c:7176
+#: ../libnautilus-private/nautilus-clipboard.c:370 ../src/nautilus-view.c:7174
 msgid "Select _All"
 msgstr "Vybr_ať všetko"
 
@@ -289,15 +289,13 @@ msgstr "Pôvodné umiestnenie"
 msgid "Original location of file before moved to the Trash"
 msgstr "Pôvodné umiestnenie pred presunutím súboru do Koša"
 
-# PM: nejde to nahradiť niektorým zo slov vhodnosť, súvis? - viackrát
 #: ../libnautilus-private/nautilus-column-utilities.c:186
-#, fuzzy
 msgid "Relevance"
-msgstr "Relevantnosť"
+msgstr "Vhodnosť"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:187
 msgid "Relevance rank for search"
-msgstr "Relevantnosť radenia"
+msgstr "Známka vhodnosti pri vyhľadávaní"
 
 #: ../libnautilus-private/nautilus-desktop-directory-file.c:435
 #: ../libnautilus-private/nautilus-desktop-icon-file.c:151
@@ -549,7 +547,7 @@ msgstr "HTML"
 
 # mime_type_map
 #: ../libnautilus-private/nautilus-file.c:6162
-#: ../src/nautilus-query-editor.c:425
+#: ../src/nautilus-query-editor.c:417
 msgid "Video"
 msgstr "Video"
 
@@ -570,21 +568,19 @@ msgstr "Dokument"
 
 # mime_type_map
 #: ../libnautilus-private/nautilus-file.c:6166
-#: ../src/nautilus-query-editor.c:491
+#: ../src/nautilus-query-editor.c:483
 msgid "Presentation"
 msgstr "Prezentácia"
 
 # mime_type_map
 #: ../libnautilus-private/nautilus-file.c:6167
-#: ../src/nautilus-query-editor.c:475
+#: ../src/nautilus-query-editor.c:467
 msgid "Spreadsheet"
 msgstr "Tabuľka"
 
-# PM: Toto sa zobrazuje ked je mime typ neznámy - dal by som Binárny súbor
 #: ../libnautilus-private/nautilus-file.c:6214
-#, fuzzy
 msgid "Binary"
-msgstr "Binárny"
+msgstr "Binárny súbor"
 
 #: ../libnautilus-private/nautilus-file.c:6218
 msgid "Folder"
@@ -1079,11 +1075,9 @@ msgid "“%B” can't be put in the trash. Do you want to delete it immediately?
 msgstr ""
 "Nie je možné presunúť súbor „%B“ do Koša. Chcete ho odstrániť okamžite?"
 
-# PM: vzdialené umiestnenie
 #: ../libnautilus-private/nautilus-file-operations.c:1814
-#, fuzzy
 msgid "This remote location does not support sending items to the trash."
-msgstr "Táto vzdialená lokalita nepodporuje posielanie položiek do Koša."
+msgstr "Toto vzdialené umiestnenie nepodporuje posielanie položiek do Koša."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1988
 msgid "Trashing Files"
@@ -1119,7 +1113,7 @@ msgstr "_Nevyprázdňovať Kôš"
 
 #. Translators: %s is a file name formatted for display
 #: ../libnautilus-private/nautilus-file-operations.c:2372
-#: ../src/nautilus-view.c:6429
+#: ../src/nautilus-view.c:6427
 #, c-format
 msgid "Unable to access “%s”"
 msgstr "Nepodarilo sa získať prístup k „%s“"
@@ -1865,12 +1859,12 @@ msgstr "_Vrátiť zmenu vlastníka"
 msgid "_Redo Change Owner"
 msgstr "_Zopakovať zmenu vlastníka"
 
-#: ../libnautilus-private/nautilus-file-utilities.c:1184
+#: ../libnautilus-private/nautilus-file-utilities.c:1256
 #, c-format
 msgid "Could not determine original location of “%s” "
 msgstr "Nepodarilo sa určiť pôvodné umiestnenie pre „%s“"
 
-#: ../libnautilus-private/nautilus-file-utilities.c:1188
+#: ../libnautilus-private/nautilus-file-utilities.c:1260
 msgid "The item cannot be restored from trash"
 msgstr "Položku nie je možné obnoviť z Koša."
 
@@ -1925,7 +1919,7 @@ msgstr "Nastaviť ako predvolené"
 
 #: ../libnautilus-private/nautilus-program-choosing.c:311
 msgid "Sorry, but you cannot execute commands from a remote site."
-msgstr "Prepáčte, ale nemôžete spúšťať príkazy zo vzdialenej lokality."
+msgstr "Prepáčte, ale nemôžete spúšťať príkazy zo vzdialeného umiestnenia."
 
 #: ../libnautilus-private/nautilus-program-choosing.c:313
 msgid "This is disabled due to security considerations."
@@ -2346,16 +2340,18 @@ msgstr "Predvolené poradie stĺpcov v zobrazení zoznamu"
 msgid "Default column order in the list view."
 msgstr "Predvolené poradie stĺpcov v zobrazení zoznamu."
 
+# summary
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:54
-#, fuzzy
-#| msgid "Preview"
 msgid "Use tree view"
-msgstr "Náhľad"
+msgstr "Použiť stromové zobrazenie"
 
+# DK:viem ze flat neznamena klasicky, ale nic lepsie ma nenapadlo
+# description
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:55
 msgid ""
 "Whether a tree should be used for list view navigation instead of a flat list"
 msgstr ""
+"Určuje, či sa má použiť stromové alebo klasické prechádzanie priečinkov"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
 msgid "Desktop font"
@@ -2533,7 +2529,7 @@ msgid "Send files by mail, instant message…"
 msgstr "Odošle súbory emailom, okamžitou správou…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1606
+#: ../src/nautilus-application.c:232 ../src/nautilus-window-slot.c:1611
 msgid "Oops! Something went wrong."
 msgstr "Ups! Niečo sa pokazilo."
 
@@ -2580,25 +2576,23 @@ msgstr ""
 
 #: ../src/nautilus-application.c:1095
 msgid "--check cannot be used with other options."
-msgstr "--check nie je možné použiť s inými voľbami."
+msgstr "voľbu --check nie je možné použiť s inými voľbami."
 
 #: ../src/nautilus-application.c:1101
 msgid "--quit cannot be used with URIs."
-msgstr "--quit nie je možné použiť s URI."
+msgstr "voľbu --quit nie je možné použiť s URI."
 
 #: ../src/nautilus-application.c:1108
 msgid "--geometry cannot be used with more than one URI."
-msgstr "--geometry nie je možné použiť s viac ako jedným URI."
+msgstr "voľbu --geometry nie je možné použiť s viac ako jedným URI."
 
-# Voľba select ... použitá
 #: ../src/nautilus-application.c:1114
-#, fuzzy
 msgid "--select must be used with at least an URI."
-msgstr "--select musí byť použitý aspoň s jedným identifikátorom URI."
+msgstr "voľba --select musí byť použitá aspoň s jedným identifikátorom URI."
 
 #: ../src/nautilus-application.c:1120
 msgid "--no-desktop and --force-desktop cannot be used together."
-msgstr ""
+msgstr "voľby --no-desktop a --force-desktop nie je možné použiť zároveň."
 
 # cmd desc
 #: ../src/nautilus-application.c:1219
@@ -2621,10 +2615,8 @@ msgstr "GEOMETRIA"
 
 # cmd desc
 #: ../src/nautilus-application.c:1229
-#, fuzzy
-#| msgid "Only create windows for explicitly specified URIs."
 msgid "Always open a new window for browsing specified URIs"
-msgstr "Vytvorí okná iba pre explicitne zadané identifikátory URI."
+msgstr "Vždy otvorí nové okno na prehliadanie zadaných identifikátorov URI."
 
 # cmd desc
 #: ../src/nautilus-application.c:1231
@@ -2633,24 +2625,16 @@ msgstr "Vytvorí okná iba pre explicitne zadané identifikátory URI."
 
 # cmd desc
 #: ../src/nautilus-application.c:1233
-#, fuzzy
-#| msgid ""
-#| "Do not manage the desktop (ignore the preference set in the preferences "
-#| "dialog)."
 msgid "Never manage the desktop (ignore the GSettings preference)."
 msgstr ""
-"Nebude sa spravovať pracovná plocha (voľby z dialógového okna nastavení budú "
+"Nikdy sa nebude spravovať pracovná plocha (nastavenie GSettings bude "
 "ignorované)."
 
 # cmd desc
 #: ../src/nautilus-application.c:1235
-#, fuzzy
-#| msgid ""
-#| "Do not manage the desktop (ignore the preference set in the preferences "
-#| "dialog)."
 msgid "Always manage the desktop (ignore the GSettings preference)."
 msgstr ""
-"Nebude sa spravovať pracovná plocha (voľby z dialógového okna nastavení budú "
+"Vždy sa bude spravovať pracovná plocha (nastavenie GSettings bude "
 "ignorované)."
 
 # cmd desc
@@ -2743,23 +2727,21 @@ msgstr "Nepodarilo sa nájsť program"
 msgid "Oops! There was a problem running this software."
 msgstr "Ups! Nastal problém počas behu tohto programu."
 
-# PM: Dal by som Nosič %s, jednotka %s, oddiel %s - podľa toho čo je %s
 #: ../src/nautilus-autorun-software.c:202
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "“%s” contains software intended to be automatically started. Would you like "
 "to run it?"
 msgstr ""
-"„%s“ obsahuje softvér, ktorý bol určený na automatické spustenie. Želáte si "
-"ho spustiť?"
+"Nosič „%s“ obsahuje softvér, ktorý bol určený na automatické spustenie. "
+"Želáte si ho spustiť?"
 
-# PM: inde ako umiestnenie
 #: ../src/nautilus-autorun-software.c:206
-#, fuzzy
 msgid "If you don't trust this location or aren't sure, press Cancel."
-msgstr "Ak nedôverujete tejto lokalite alebo si nie ste istý, stlačte Zrušiť."
+msgstr ""
+"Ak nedôverujete tomuto umiestneniu alebo si nie ste istý, stlačte Zrušiť."
 
-#: ../src/nautilus-autorun-software.c:240 ../src/nautilus-mime-actions.c:724
+#: ../src/nautilus-autorun-software.c:240 ../src/nautilus-mime-actions.c:748
 msgid "_Run"
 msgstr "_Spustiť"
 
@@ -2867,40 +2849,40 @@ msgstr "Ponechať ikony zoradené podľa času presunutia do Koša v riadkoch"
 
 #: ../src/nautilus-canvas-view.c:1192
 msgid "By Search Relevance"
-msgstr "Podľa relevantnosti hľadania"
+msgstr "Podľa známky vhodnosti pri vyhľadávaní"
 
 #: ../src/nautilus-canvas-view.c:1193
 msgid "Keep icons sorted by search relevance in rows"
-msgstr "Udržiavať ikony zoradené podľa relevantnosti v riadkoch"
+msgstr "Udržiavať ikony zoradené podľa vhodnosti v riadkoch"
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
-#: ../src/nautilus-canvas-view.c:2292
+#: ../src/nautilus-canvas-view.c:2306
 #: ../src/nautilus-canvas-view-container.c:571
 #: ../src/nautilus-file-management-properties.ui.h:35
 msgid "Icon View"
 msgstr "Zobrazenie ikon"
 
 #. translators: this is used in the view menu
-#: ../src/nautilus-canvas-view.c:2294
+#: ../src/nautilus-canvas-view.c:2308
 msgid "_Icons"
 msgstr "_Ikony"
 
-#: ../src/nautilus-canvas-view.c:2295
+#: ../src/nautilus-canvas-view.c:2309
 msgid "The icon view encountered an error."
 msgstr "Vyskytla sa chyba pri zobrazení ikon."
 
-#: ../src/nautilus-canvas-view.c:2296
+#: ../src/nautilus-canvas-view.c:2310
 msgid "The icon view encountered an error while starting up."
 msgstr "Vyskytla sa chyba počas spúšťania zobrazenia ikon."
 
-#: ../src/nautilus-canvas-view.c:2297
+#: ../src/nautilus-canvas-view.c:2311
 msgid "Display this location with the icon view."
 msgstr "Zobraziť toto umiestnenie pomocou zobrazenia ikon."
 
 #. if it wasn't cancelled show a dialog
-#: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1870
-#: ../src/nautilus-mime-actions.c:2142
+#: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1894
+#: ../src/nautilus-mime-actions.c:2166
 msgid "Unable to access location"
 msgstr "Nepodarilo sa získať prístup k umiestneniu"
 
@@ -2957,7 +2939,7 @@ msgstr "Adresa _servera"
 
 #: ../src/nautilus-connect-server-dialog.c:628
 msgid "_Recent Servers"
-msgstr "Nedávne se_rvery"
+msgstr "Nedávno použité se_rvery"
 
 #: ../src/nautilus-connect-server-dialog.c:694
 msgid "_Browse"
@@ -2969,8 +2951,8 @@ msgstr "Prip_ojiť"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:623 ../src/nautilus-view.c:7146
-#: ../src/nautilus-view.c:8679
+#: ../src/nautilus-desktop-canvas-view.c:623 ../src/nautilus-view.c:7144
+#: ../src/nautilus-view.c:8677
 msgid "E_mpty Trash"
 msgstr "Vyp_rázdniť Kôš"
 
@@ -3003,7 +2985,7 @@ msgstr "Vyprázdniť Kôš"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:669 ../src/nautilus-trash-bar.c:213
-#: ../src/nautilus-view.c:7147
+#: ../src/nautilus-view.c:7145
 msgid "Delete all items in the Trash"
 msgstr "Odstrániť všetky položky v Koši"
 
@@ -3032,11 +3014,11 @@ msgstr "Umožní zmenu veľkosti vybraných ikon"
 msgid "Restore each selected icons to its original size"
 msgstr "Obnoví pôvodnú veľkosť každej vybranej ikony"
 
-#: ../src/nautilus-desktop-canvas-view.c:768
+#: ../src/nautilus-desktop-canvas-view.c:778
 msgid "The desktop view encountered an error."
 msgstr "Vyskytla sa chyba pri zobrazení pracovnej plochy."
 
-#: ../src/nautilus-desktop-canvas-view.c:769
+#: ../src/nautilus-desktop-canvas-view.c:779
 msgid "The desktop view encountered an error while starting up."
 msgstr "Vyskytla sa chyba počas spúšťania zobrazenia pracovnej plochy."
 
@@ -3067,20 +3049,23 @@ msgstr "Príkaz"
 msgid "Desktop"
 msgstr "Pracovná plocha"
 
+# %s-nazov suboru
 #: ../src/nautilus-error-reporting.c:68
 #, c-format
 msgid "You do not have the permissions necessary to view the contents of “%s”."
-msgstr "Nemáte potrebné oprávnenia na zobrazenie obsahu „%s“."
+msgstr "Nemáte potrebné oprávnenia na zobrazenie obsahu súboru „%s“."
 
+# %s-nazov suboru
 #: ../src/nautilus-error-reporting.c:72
 #, c-format
 msgid "“%s” could not be found. Perhaps it has recently been deleted."
-msgstr "„%s“ sa nepodarilo nájsť. Možno bol nedávno odstránený."
+msgstr "Súbor „%s“ sa nepodarilo nájsť. Možno bol nedávno odstránený."
 
+# %s-nazov suboru,%s-chybova hlaska
 #: ../src/nautilus-error-reporting.c:76
 #, c-format
 msgid "Sorry, could not display all the contents of “%s”: %s"
-msgstr "Prepáčte, nepodarilo sa zobraziť celý obsah „%s“: %s"
+msgstr "Prepáčte, nepodarilo sa zobraziť celý obsah súboru „%s“: %s"
 
 #: ../src/nautilus-error-reporting.c:83
 msgid "This location could not be displayed."
@@ -3179,11 +3164,9 @@ msgstr "Premenováva sa „%s“ na „%s“."
 msgid "None"
 msgstr "Žiadne"
 
-# PM: Nemá tu byť Nastavenia programu Súbory?
 #: ../src/nautilus-file-management-properties.ui.h:1
-#, fuzzy
 msgid "Files Preferences"
-msgstr "Nastavenia súborov"
+msgstr "Nastavenia programu Súbory"
 
 #: ../src/nautilus-file-management-properties.ui.h:2
 msgid "Default View"
@@ -3199,7 +3182,7 @@ msgstr "_Usporiadať položky:"
 
 #: ../src/nautilus-file-management-properties.ui.h:5
 msgid "Sort _folders before files"
-msgstr "P_riečinky pred súbormi"
+msgstr "Zoradiť p_riečinky pred súbormi"
 
 #: ../src/nautilus-file-management-properties.ui.h:6
 msgid "Show hidden and _backup files"
@@ -3288,9 +3271,10 @@ msgstr ""
 msgid "List View"
 msgstr "Zobrazenie zoznamu"
 
+# GtkCheckbutton label
 #: ../src/nautilus-file-management-properties.ui.h:25
 msgid "Navigate folders in a tree"
-msgstr ""
+msgstr "Prechádzať priečinkami v strome"
 
 #: ../src/nautilus-file-management-properties.ui.h:26
 msgid "Display"
@@ -3566,7 +3550,7 @@ msgstr "Nepodarilo sa načítať informácie o obrázku"
 
 #: ../src/nautilus-image-properties-page.c:708
 #: ../src/nautilus-list-model.c:372 ../src/nautilus-window-slot.c:607
-#: ../src/nautilus-window-slot.c:2253
+#: ../src/nautilus-window-slot.c:2258
 msgid "Loading…"
 msgstr "Načítava sa…"
 
@@ -3620,7 +3604,7 @@ msgstr[0] "Chcete zobraziť týchto %d miest?"
 msgstr[1] "Chcete zobraziť toto %d miesto?"
 msgstr[2] "Chcete zobraziť tieto %d miesta?"
 
-#: ../src/nautilus-location-entry.c:264 ../src/nautilus-mime-actions.c:1062
+#: ../src/nautilus-location-entry.c:264 ../src/nautilus-mime-actions.c:1086
 #, c-format
 msgid "This will open %d separate window."
 msgid_plural "This will open %d separate windows."
@@ -3628,58 +3612,58 @@ msgstr[0] "Týmto sa otvorí %d samostatných okien."
 msgstr[1] "Týmto sa otvorí %d samostatné okno."
 msgstr[2] "Týmto sa otvoria %d samostatné okná."
 
-#: ../src/nautilus-mime-actions.c:632
+#: ../src/nautilus-mime-actions.c:656
 #, c-format
 msgid "The link “%s” is broken. Move it to Trash?"
 msgstr "Odkaz „%s“ je poškodený. Presunúť ho do Koša?"
 
-#: ../src/nautilus-mime-actions.c:634
+#: ../src/nautilus-mime-actions.c:658
 #, c-format
 msgid "The link “%s” is broken."
 msgstr "Odkaz „%s“ je poškodený."
 
-#: ../src/nautilus-mime-actions.c:640
+#: ../src/nautilus-mime-actions.c:664
 msgid "This link cannot be used because it has no target."
 msgstr "Tento odkaz nie je možné použiť, pretože nemá cieľ."
 
-#: ../src/nautilus-mime-actions.c:642
+#: ../src/nautilus-mime-actions.c:666
 #, c-format
 msgid "This link cannot be used because its target “%s” doesn't exist."
 msgstr "Tento odkaz nie je možné použiť, pretože jeho cieľ „%s“ neexistuje."
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-mime-actions.c:652 ../src/nautilus-view.c:7204
-#: ../src/nautilus-view.c:7318 ../src/nautilus-view.c:8292
-#: ../src/nautilus-view.c:8596
+#: ../src/nautilus-mime-actions.c:676 ../src/nautilus-view.c:7202
+#: ../src/nautilus-view.c:7316 ../src/nautilus-view.c:8290
+#: ../src/nautilus-view.c:8594
 msgid "Mo_ve to Trash"
 msgstr "Presunúť do _Koša"
 
-#: ../src/nautilus-mime-actions.c:712
+#: ../src/nautilus-mime-actions.c:736
 #, c-format
 msgid "Do you want to run “%s”, or display its contents?"
 msgstr "Chcete „%s“ spustiť alebo zobraziť jeho obsah?"
 
-#: ../src/nautilus-mime-actions.c:714
+#: ../src/nautilus-mime-actions.c:738
 #, c-format
 msgid "“%s” is an executable text file."
 msgstr "„%s“ je spustiteľný textový súbor."
 
-#: ../src/nautilus-mime-actions.c:720
+#: ../src/nautilus-mime-actions.c:744
 msgid "Run in _Terminal"
 msgstr "Spustiť v _termináli"
 
 # accelerator conflict with stock button _Zrušiť
-#: ../src/nautilus-mime-actions.c:721
+#: ../src/nautilus-mime-actions.c:745
 msgid "_Display"
 msgstr "Z_obraziť"
 
-#: ../src/nautilus-mime-actions.c:1057 ../src/nautilus-mime-actions.c:1792
+#: ../src/nautilus-mime-actions.c:1081 ../src/nautilus-mime-actions.c:1816
 #: ../src/nautilus-view.c:955
 msgid "Are you sure you want to open all files?"
 msgstr "Naozaj chcete otvoriť všetky súbory?"
 
-#: ../src/nautilus-mime-actions.c:1059
+#: ../src/nautilus-mime-actions.c:1083
 #, c-format
 msgid "This will open %d separate tab."
 msgid_plural "This will open %d separate tabs."
@@ -3687,33 +3671,33 @@ msgstr[0] "Týmto sa otvorí %d samostatných kariet."
 msgstr[1] "Týmto sa otvorí %d samostatná karta."
 msgstr[2] "Týmto sa otvoria %d samostatné karty."
 
-#: ../src/nautilus-mime-actions.c:1124
+#: ../src/nautilus-mime-actions.c:1148
 #, c-format
 msgid "Could not display “%s”."
 msgstr "Nepodarilo sa zobraziť „%s“."
 
-#: ../src/nautilus-mime-actions.c:1222
+#: ../src/nautilus-mime-actions.c:1246
 msgid "The file is of an unknown type"
 msgstr "Súbor je neznámeho typu"
 
-#: ../src/nautilus-mime-actions.c:1226
+#: ../src/nautilus-mime-actions.c:1250
 #, c-format
 msgid "There is no application installed for “%s” files"
 msgstr "Pre súbory „%s“ nie je nainštalovaná žiadna aplikácia"
 
-#: ../src/nautilus-mime-actions.c:1241
+#: ../src/nautilus-mime-actions.c:1265
 msgid "_Select Application"
 msgstr "_Vyberte aplikáciu"
 
-#: ../src/nautilus-mime-actions.c:1277
+#: ../src/nautilus-mime-actions.c:1301
 msgid "There was an internal error trying to search for applications:"
 msgstr "Pri pokuse vyhľadať aplikácie nastala vnútorná chyba:"
 
-#: ../src/nautilus-mime-actions.c:1279
+#: ../src/nautilus-mime-actions.c:1303
 msgid "Unable to search for application"
 msgstr "Nepodarilo sa vyhľadať aplikáciu"
 
-#: ../src/nautilus-mime-actions.c:1398
+#: ../src/nautilus-mime-actions.c:1422
 #, c-format
 msgid ""
 "There is no application installed for “%s” files.\n"
@@ -3722,11 +3706,11 @@ msgstr ""
 "Pre súbory „%s“ nie je nainštalovaná žiadna aplikácia.\n"
 "Chcete hľadať aplikáciu, ktorá otvorí tento súbor?"
 
-#: ../src/nautilus-mime-actions.c:1548
+#: ../src/nautilus-mime-actions.c:1572
 msgid "Untrusted application launcher"
 msgstr "Nedôveryhodný spúšťač aplikácie"
 
-#: ../src/nautilus-mime-actions.c:1551
+#: ../src/nautilus-mime-actions.c:1575
 #, c-format
 msgid ""
 "The application launcher “%s” has not been marked as trusted. If you do not "
@@ -3735,15 +3719,15 @@ msgstr ""
 "Spúšťač aplikácie „%s“ nebol označený ako dôveryhodný. Ak nepoznáte zdroj "
 "tohto súboru, nemusí byť bezpečné ho spustiť."
 
-#: ../src/nautilus-mime-actions.c:1566
+#: ../src/nautilus-mime-actions.c:1590
 msgid "_Launch Anyway"
 msgstr "_Aj tak spustiť"
 
-#: ../src/nautilus-mime-actions.c:1569
+#: ../src/nautilus-mime-actions.c:1593
 msgid "Mark as _Trusted"
 msgstr "Označiť ako _dôveryhodné"
 
-#: ../src/nautilus-mime-actions.c:1793
+#: ../src/nautilus-mime-actions.c:1817
 #, c-format
 msgid "This will open %d separate application."
 msgid_plural "This will open %d separate applications."
@@ -3751,16 +3735,16 @@ msgstr[0] "Týmto sa otvorí %d samostatných aplikácií."
 msgstr[1] "Týmto sa otvorí %d samostatná aplikácia."
 msgstr[2] "Týmto sa otvoria %d samostatné aplikácie."
 
-#: ../src/nautilus-mime-actions.c:2221
+#: ../src/nautilus-mime-actions.c:2245
 msgid "Unable to start location"
 msgstr "Nepodarilo sa spustiť umiestnenie"
 
-#: ../src/nautilus-mime-actions.c:2305
+#: ../src/nautilus-mime-actions.c:2329
 #, c-format
 msgid "Opening “%s”."
 msgstr "Otvára sa „%s“."
 
-#: ../src/nautilus-mime-actions.c:2308
+#: ../src/nautilus-mime-actions.c:2332
 #, c-format
 msgid "Opening %d item."
 msgid_plural "Opening %d items."
@@ -3780,16 +3764,14 @@ msgstr "Zariadenia"
 msgid "Places"
 msgstr "Miesta"
 
-# PM: inde máš Recent len ako "Nedávne" - ujednoť
 #: ../src/nautilus-places-sidebar.c:517
-#, fuzzy
 msgid "Recent"
-msgstr "Nedávno použité"
+msgstr "Nedávno použité súbory"
 
 # tooltip
 #: ../src/nautilus-places-sidebar.c:519
 msgid "Recent files"
-msgstr "Nedávne súbory"
+msgstr "Nedávno použité súbory"
 
 # tooltip
 #. tooltip
@@ -3833,29 +3815,27 @@ msgid "Browse the contents of the network"
 msgstr "Prehliada obsah siete"
 
 #: ../src/nautilus-places-sidebar.c:802
-#, fuzzy
-#| msgid "Connect to the selected drive"
 msgid "Connect to a network server address"
-msgstr "Pripojí sa k vybranej jednotke"
+msgstr "Pripojí sa k adrese sieťového servera"
 
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-places-sidebar.c:1712 ../src/nautilus-places-sidebar.c:2858
-#: ../src/nautilus-view.c:7246 ../src/nautilus-view.c:7270
-#: ../src/nautilus-view.c:7342 ../src/nautilus-view.c:7928
-#: ../src/nautilus-view.c:7932 ../src/nautilus-view.c:8015
-#: ../src/nautilus-view.c:8019 ../src/nautilus-view.c:8117
-#: ../src/nautilus-view.c:8121
+#: ../src/nautilus-view.c:7244 ../src/nautilus-view.c:7268
+#: ../src/nautilus-view.c:7340 ../src/nautilus-view.c:7926
+#: ../src/nautilus-view.c:7930 ../src/nautilus-view.c:8013
+#: ../src/nautilus-view.c:8017 ../src/nautilus-view.c:8115
+#: ../src/nautilus-view.c:8119
 msgid "_Start"
 msgstr "_Spustiť"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-places-sidebar.c:1713 ../src/nautilus-places-sidebar.c:2865
-#: ../src/nautilus-view.c:7250 ../src/nautilus-view.c:7274
-#: ../src/nautilus-view.c:7346 ../src/nautilus-view.c:7957
-#: ../src/nautilus-view.c:8044 ../src/nautilus-view.c:8146
+#: ../src/nautilus-view.c:7248 ../src/nautilus-view.c:7272
+#: ../src/nautilus-view.c:7344 ../src/nautilus-view.c:7955
+#: ../src/nautilus-view.c:8042 ../src/nautilus-view.c:8144
 #: ../src/nautilus-window-menus.c:469
 msgid "_Stop"
 msgstr "_Stop"
@@ -3865,8 +3845,8 @@ msgstr "_Stop"
 msgid "_Power On"
 msgstr "Za_pnúť"
 
-#: ../src/nautilus-places-sidebar.c:1719 ../src/nautilus-view.c:7961
-#: ../src/nautilus-view.c:8048 ../src/nautilus-view.c:8150
+#: ../src/nautilus-places-sidebar.c:1719 ../src/nautilus-view.c:7959
+#: ../src/nautilus-view.c:8046 ../src/nautilus-view.c:8148
 msgid "_Safely Remove Drive"
 msgstr "_Bezpečne odobrať vybranú jednotku"
 
@@ -3887,13 +3867,13 @@ msgid "_Stop Multi-disk Device"
 msgstr "Za_staviť viacdiskovú jednotku"
 
 #. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
-#: ../src/nautilus-places-sidebar.c:1731 ../src/nautilus-view.c:8031
-#: ../src/nautilus-view.c:8133
+#: ../src/nautilus-places-sidebar.c:1731 ../src/nautilus-view.c:8029
+#: ../src/nautilus-view.c:8131
 msgid "_Unlock Drive"
 msgstr "_Odomknúť jednotku"
 
-#: ../src/nautilus-places-sidebar.c:1732 ../src/nautilus-view.c:7973
-#: ../src/nautilus-view.c:8060 ../src/nautilus-view.c:8162
+#: ../src/nautilus-places-sidebar.c:1732 ../src/nautilus-view.c:7971
+#: ../src/nautilus-view.c:8058 ../src/nautilus-view.c:8160
 msgid "_Lock Drive"
 msgstr "_Zamknúť jednotku"
 
@@ -3920,22 +3900,22 @@ msgstr "Nepodarilo sa zastaviť %s"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2780 ../src/nautilus-view.c:7118
-#: ../src/nautilus-view.c:8520
+#: ../src/nautilus-places-sidebar.c:2780 ../src/nautilus-view.c:7116
+#: ../src/nautilus-view.c:8518
 msgid "_Open"
 msgstr "_Otvoriť"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2788 ../src/nautilus-view.c:7130
-#: ../src/nautilus-view.c:7300 ../src/nautilus-view.c:8241
-#: ../src/nautilus-view.c:8574
+#: ../src/nautilus-places-sidebar.c:2788 ../src/nautilus-view.c:7128
+#: ../src/nautilus-view.c:7298 ../src/nautilus-view.c:8239
+#: ../src/nautilus-view.c:8572
 msgid "Open in New _Tab"
 msgstr "Otvoriť v novej kar_te"
 
 # accelerator conflict
-#: ../src/nautilus-places-sidebar.c:2795 ../src/nautilus-view.c:8233
-#: ../src/nautilus-view.c:8554
+#: ../src/nautilus-places-sidebar.c:2795 ../src/nautilus-view.c:8231
+#: ../src/nautilus-view.c:8552
 msgid "Open in New _Window"
 msgstr "Otvoriť v _novom okne"
 
@@ -3949,35 +3929,36 @@ msgstr "Premenovať…"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2830 ../src/nautilus-view.c:7234
-#: ../src/nautilus-view.c:7258 ../src/nautilus-view.c:7330
+#: ../src/nautilus-places-sidebar.c:2830 ../src/nautilus-view.c:7232
+#: ../src/nautilus-view.c:7256 ../src/nautilus-view.c:7328
 msgid "_Mount"
 msgstr "_Pripojiť"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2837 ../src/nautilus-view.c:7238
-#: ../src/nautilus-view.c:7262 ../src/nautilus-view.c:7334
+#: ../src/nautilus-places-sidebar.c:2837 ../src/nautilus-view.c:7236
+#: ../src/nautilus-view.c:7260 ../src/nautilus-view.c:7332
 msgid "_Unmount"
 msgstr "Od_pojiť"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2844 ../src/nautilus-view.c:7242
-#: ../src/nautilus-view.c:7266 ../src/nautilus-view.c:7338
+#: ../src/nautilus-places-sidebar.c:2844 ../src/nautilus-view.c:7240
+#: ../src/nautilus-view.c:7264 ../src/nautilus-view.c:7336
 msgid "_Eject"
 msgstr "Vy_sunúť"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-places-sidebar.c:2851 ../src/nautilus-view.c:7254
-#: ../src/nautilus-view.c:7278 ../src/nautilus-view.c:7350
+#: ../src/nautilus-places-sidebar.c:2851 ../src/nautilus-view.c:7252
+#: ../src/nautilus-view.c:7276 ../src/nautilus-view.c:7348
 msgid "_Detect Media"
 msgstr "_Detegovať médium"
 
+# menu item
 #: ../src/nautilus-places-sidebar.c:2872
 msgid "_Format…"
-msgstr ""
+msgstr "_Formátovať…"
 
 #: ../src/nautilus-places-sidebar.c:2892
 msgid "_Properties"
@@ -4234,12 +4215,10 @@ msgstr "Spustenie:"
 msgid "Allow _executing file as program"
 msgstr "Povoliť _spustenie súboru ako programu"
 
-# PM: skôr k obsiahnutým súborom
 # window title
 #: ../src/nautilus-properties-window.c:4462
-#, fuzzy
 msgid "Change Permissions for Enclosed Files"
-msgstr "Zmena oprávnení obsiahnutých súborov"
+msgstr "Zmena oprávnení k obsiahnutým súborom"
 
 #: ../src/nautilus-properties-window.c:4466
 msgid "Change"
@@ -4257,12 +4236,10 @@ msgstr "Nie ste vlastníkom, takže nemôžete meniť tieto oprávnenia."
 msgid "Security context:"
 msgstr "Bezpečnostný kontext:"
 
-# PM: k obsiahnutým...
 # button
 #: ../src/nautilus-properties-window.c:4580
-#, fuzzy
 msgid "Change Permissions for Enclosed Files…"
-msgstr "Zmeniť oprávnenia obsiahnutých súborov…"
+msgstr "Zmeniť oprávnenia k obsiahnutým súborom…"
 
 #: ../src/nautilus-properties-window.c:4590
 #, c-format
@@ -4285,64 +4262,64 @@ msgstr "Vytvára sa okno Vlastnosti."
 msgid "Select Custom Icon"
 msgstr "Vybrať vlastnú ikonu"
 
-#: ../src/nautilus-query-editor.c:103
+#: ../src/nautilus-query-editor.c:102
 msgid "File Type"
 msgstr "Typ súboru"
 
-#: ../src/nautilus-query-editor.c:392
+#: ../src/nautilus-query-editor.c:384
 msgid "Documents"
 msgstr "Dokumenty"
 
-#: ../src/nautilus-query-editor.c:410
+#: ../src/nautilus-query-editor.c:402
 msgid "Music"
 msgstr "Hudba"
 
-#: ../src/nautilus-query-editor.c:441
+#: ../src/nautilus-query-editor.c:433
 msgid "Picture"
 msgstr "Obrázok"
 
-#: ../src/nautilus-query-editor.c:461
+#: ../src/nautilus-query-editor.c:453
 msgid "Illustration"
 msgstr "Ilustrácia"
 
-#: ../src/nautilus-query-editor.c:500
+#: ../src/nautilus-query-editor.c:492
 msgid "Pdf / Postscript"
 msgstr "Pdf / Postscript"
 
-#: ../src/nautilus-query-editor.c:508
+#: ../src/nautilus-query-editor.c:500
 msgid "Text File"
 msgstr "Textový súbor"
 
-#: ../src/nautilus-query-editor.c:587
+#: ../src/nautilus-query-editor.c:579
 msgid "Select type"
 msgstr "Vybrať typ"
 
-#: ../src/nautilus-query-editor.c:591
+#: ../src/nautilus-query-editor.c:583
 msgid "Select"
 msgstr "Vybrať"
 
-#: ../src/nautilus-query-editor.c:672
+#: ../src/nautilus-query-editor.c:664
 msgid "Any"
 msgstr "Všetky"
 
-#: ../src/nautilus-query-editor.c:687
+#: ../src/nautilus-query-editor.c:679
 msgid "Other Type…"
 msgstr "Iný typ…"
 
-#: ../src/nautilus-query-editor.c:956
+#: ../src/nautilus-query-editor.c:948
 msgid "Remove this criterion from the search"
 msgstr "Odobrať toto kritérium z vyhľadávania"
 
 #. create the Current/All Files selector
-#: ../src/nautilus-query-editor.c:1038
+#: ../src/nautilus-query-editor.c:1030
 msgid "Current"
 msgstr "Aktuálne"
 
-#: ../src/nautilus-query-editor.c:1041
+#: ../src/nautilus-query-editor.c:1033
 msgid "All Files"
 msgstr "Všetky súbory"
 
-#: ../src/nautilus-query-editor.c:1063
+#: ../src/nautilus-query-editor.c:1055
 msgid "Add a new criterion to this search"
 msgstr "Pridať nové kritérium k tomuto vyhľadávaniu"
 
@@ -4539,77 +4516,77 @@ msgid "_Select"
 msgstr "_Vybrať"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6456
+#: ../src/nautilus-view.c:6454
 #, c-format
 msgid "Unable to remove “%s”"
 msgstr "Nepodarilo sa odstrániť „%s“"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6483
+#: ../src/nautilus-view.c:6481
 #, c-format
 msgid "Unable to eject “%s”"
 msgstr "Nepodarilo sa vysunúť „%s“"
 
-#: ../src/nautilus-view.c:6505
+#: ../src/nautilus-view.c:6503
 msgid "Unable to stop drive"
 msgstr "Nie je možné zastaviť jednotku"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6607
+#: ../src/nautilus-view.c:6605
 #, c-format
 msgid "Unable to start “%s”"
 msgstr "Nepodarilo sa spustiť „%s“"
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7098
+#: ../src/nautilus-view.c:7096
 msgid "New _Document"
 msgstr "Nový _dokument"
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7099
+#: ../src/nautilus-view.c:7097
 msgid "Open Wit_h"
 msgstr "Otvoriť _pomocou"
 
-#: ../src/nautilus-view.c:7100
+#: ../src/nautilus-view.c:7098
 msgid "Choose a program with which to open the selected item"
 msgstr "Vyberte program, ktorým chcete otvoriť vybranú položku"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7102 ../src/nautilus-view.c:7355
+#: ../src/nautilus-view.c:7100 ../src/nautilus-view.c:7353
 #: ../src/nautilus-window-menus.c:573
 msgid "P_roperties"
 msgstr "_Vlastnosti"
 
 #. tooltip
-#: ../src/nautilus-view.c:7103 ../src/nautilus-view.c:8667
+#: ../src/nautilus-view.c:7101 ../src/nautilus-view.c:8665
 msgid "View or modify the properties of each selected item"
 msgstr "Zobrazí alebo upraví vlastnosti každej vybranej položky"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7110
+#: ../src/nautilus-view.c:7108
 msgid "New _Folder"
 msgstr "Nový _priečinok"
 
 #. tooltip
-#: ../src/nautilus-view.c:7111
+#: ../src/nautilus-view.c:7109
 msgid "Create a new empty folder inside this folder"
 msgstr "Vytvorí nový prázdny priečinok v tomto priečinku"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7114
+#: ../src/nautilus-view.c:7112
 msgid "New Folder with Selection"
 msgstr "Nový priečinok s výberom"
 
 #. tooltip
-#: ../src/nautilus-view.c:7115
+#: ../src/nautilus-view.c:7113
 msgid "Create a new folder containing the selected items"
 msgstr "Vytvorí nový priečinok obsahujúci vybrané položky"
 
 #. tooltip
-#: ../src/nautilus-view.c:7119
+#: ../src/nautilus-view.c:7117
 msgid "Open the selected item in this window"
 msgstr "Otvorí vybranú položku v tomto okne"
 
@@ -4618,66 +4595,66 @@ msgstr "Otvorí vybranú položku v tomto okne"
 #. Location-specific actions
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7126 ../src/nautilus-view.c:7296
+#: ../src/nautilus-view.c:7124 ../src/nautilus-view.c:7294
 msgid "Open in Navigation Window"
 msgstr "Otvoriť v navigačnom okne"
 
 #. tooltip
-#: ../src/nautilus-view.c:7127
+#: ../src/nautilus-view.c:7125
 msgid "Open each selected item in a navigation window"
 msgstr "Otvorí všetky vybrané položky v navigačnom okne"
 
 #. tooltip
-#: ../src/nautilus-view.c:7131
+#: ../src/nautilus-view.c:7129
 msgid "Open each selected item in a new tab"
 msgstr "Otvorí všetky vybrané položky v novej karte"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7134
+#: ../src/nautilus-view.c:7132
 msgid "Other _Application…"
 msgstr "Iná _aplikácia…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7135 ../src/nautilus-view.c:7139
+#: ../src/nautilus-view.c:7133 ../src/nautilus-view.c:7137
 msgid "Choose another application with which to open the selected item"
 msgstr "Vyberte iný program, ktorým chcete otvoriť vybranú položku"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7138
+#: ../src/nautilus-view.c:7136
 msgid "Open With Other _Application…"
 msgstr "Otvoriť inou _aplikáciou…"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7142
+#: ../src/nautilus-view.c:7140
 msgid "_Open Scripts Folder"
 msgstr "_Otvoriť priečinok skriptov"
 
 #. tooltip
-#: ../src/nautilus-view.c:7143
+#: ../src/nautilus-view.c:7141
 msgid "Show the folder containing the scripts that appear in this menu"
 msgstr "Zobrazí priečinok obsahujúci skripty, ktoré sú v tejto ponuke"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7151
+#: ../src/nautilus-view.c:7149
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr "Pripraví vybrané súbory na presun príkazom Vložiť"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7155
+#: ../src/nautilus-view.c:7153
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr "Pripraví vybrané súbory na kopírovanie príkazom Vložiť"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7159
+#: ../src/nautilus-view.c:7157
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "Presunie alebo skopíruje súbory vybrané predchádzajúcim príkazom Vystrihnúť "
@@ -4687,12 +4664,12 @@ msgstr ""
 #. accelerator for paste
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7164 ../src/nautilus-view.c:7313
+#: ../src/nautilus-view.c:7162 ../src/nautilus-view.c:7311
 msgid "_Paste Into Folder"
 msgstr "V_ložiť do priečinka"
 
 #. tooltip
-#: ../src/nautilus-view.c:7165
+#: ../src/nautilus-view.c:7163
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -4702,57 +4679,57 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7168
+#: ../src/nautilus-view.c:7166
 msgid "Copy To…"
 msgstr "Skopírovať do…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7169
+#: ../src/nautilus-view.c:7167
 msgid "Copy selected files to another location"
 msgstr "Skopíruje vybrané súbory na iné miesto"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7172
+#: ../src/nautilus-view.c:7170
 msgid "Move To…"
 msgstr "Presunúť do…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7173
+#: ../src/nautilus-view.c:7171
 msgid "Move selected files to another location"
 msgstr "Presunie vybrané súbory na iné miesto"
 
 #. tooltip
-#: ../src/nautilus-view.c:7177
+#: ../src/nautilus-view.c:7175
 msgid "Select all items in this window"
 msgstr "Vyberie všetky položky v tomto okne"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7180
+#: ../src/nautilus-view.c:7178
 msgid "Select I_tems Matching…"
 msgstr "Vybrať zodpoveda_júce položky…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7181
+#: ../src/nautilus-view.c:7179
 msgid "Select items in this window matching a given pattern"
 msgstr "Vyberie všetky položky v tomto okne podľa vzoru"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7184
+#: ../src/nautilus-view.c:7182
 msgid "_Invert Selection"
 msgstr "_Invertovať výber"
 
 #. tooltip
-#: ../src/nautilus-view.c:7185
+#: ../src/nautilus-view.c:7183
 msgid "Select all and only the items that are not currently selected"
 msgstr "Vyberie všetky a iba tie položky, ktoré nie sú momentálne vybrané"
 
 # accelerator conflict with _Vlastnosti
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7188 ../src/nautilus-view.c:8650
+#: ../src/nautilus-view.c:7186 ../src/nautilus-view.c:8648
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Vytvoriť od_kazy"
@@ -4760,74 +4737,74 @@ msgstr[1] "Vytvoriť od_kaz"
 msgstr[2] "Vytvoriť od_kazy"
 
 #. tooltip
-#: ../src/nautilus-view.c:7189
+#: ../src/nautilus-view.c:7187
 msgid "Create a symbolic link for each selected item"
 msgstr "Vytvorí symbolický odkaz pre všetky vybrané položky"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7192
+#: ../src/nautilus-view.c:7190
 msgid "Rena_me…"
 msgstr "Pre_menovať…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7193
+#: ../src/nautilus-view.c:7191
 msgid "Rename selected item"
 msgstr "Premenuje vybranú položku"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7196
+#: ../src/nautilus-view.c:7194
 msgid "Set as Wallpaper"
 msgstr "Nastaviť ako pozadie plochy"
 
 #. tooltip
-#: ../src/nautilus-view.c:7197
+#: ../src/nautilus-view.c:7195
 msgid "Make item the wallpaper"
 msgstr "Nastaví položku ako pozadie pracovnej plochy"
 
 #. tooltip
-#: ../src/nautilus-view.c:7205 ../src/nautilus-view.c:8597
+#: ../src/nautilus-view.c:7203 ../src/nautilus-view.c:8595
 msgid "Move each selected item to the Trash"
 msgstr "Presunie všetky vybrané položky do Koša"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7208 ../src/nautilus-view.c:7322
-#: ../src/nautilus-view.c:8627
+#: ../src/nautilus-view.c:7206 ../src/nautilus-view.c:7320
+#: ../src/nautilus-view.c:8625
 msgid "_Delete"
 msgstr "O_dstrániť"
 
 #. tooltip
-#: ../src/nautilus-view.c:7209 ../src/nautilus-view.c:8628
+#: ../src/nautilus-view.c:7207 ../src/nautilus-view.c:8626
 msgid "Delete each selected item, without moving to the Trash"
 msgstr "Odstráni všetky vybrané položky bez presunu do Koša"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7212 ../src/nautilus-view.c:7326
+#: ../src/nautilus-view.c:7210 ../src/nautilus-view.c:7324
 msgid "_Restore"
 msgstr "_Obnoviť"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7216
+#: ../src/nautilus-view.c:7214
 msgid "_Undo"
 msgstr "_Späť"
 
 #. tooltip
-#: ../src/nautilus-view.c:7217
+#: ../src/nautilus-view.c:7215
 msgid "Undo the last action"
 msgstr "Vráti späť poslednú operáciu"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7220
+#: ../src/nautilus-view.c:7218
 msgid "_Redo"
 msgstr "_Zopakovať"
 
 #. tooltip
-#: ../src/nautilus-view.c:7221
+#: ../src/nautilus-view.c:7219
 msgid "Redo the last undone action"
 msgstr "Zopakuje poslednú vrátenú operáciu"
 
@@ -4839,128 +4816,128 @@ msgstr "Zopakuje poslednú vrátenú operáciu"
 #.
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7230
+#: ../src/nautilus-view.c:7228
 msgid "Reset View to _Defaults"
 msgstr "Nastaviť na pre_dvolené zobrazenie"
 
 #. tooltip
-#: ../src/nautilus-view.c:7231
+#: ../src/nautilus-view.c:7229
 msgid "Reset sorting order and zoom level to match preferences for this view"
 msgstr ""
 "Vráti k usporiadaniu a úrovni priblíženia, ktoré sú predvolené pre toto "
 "zobrazenie"
 
 #. tooltip
-#: ../src/nautilus-view.c:7235
+#: ../src/nautilus-view.c:7233
 msgid "Mount the selected volume"
 msgstr "Pripojí vybraný disk"
 
 #. tooltip
-#: ../src/nautilus-view.c:7239
+#: ../src/nautilus-view.c:7237
 msgid "Unmount the selected volume"
 msgstr "Odpojí vybraný disk"
 
 #. tooltip
-#: ../src/nautilus-view.c:7243
+#: ../src/nautilus-view.c:7241
 msgid "Eject the selected volume"
 msgstr "Vysunie vybraný disk"
 
 #. tooltip
-#: ../src/nautilus-view.c:7247
+#: ../src/nautilus-view.c:7245
 msgid "Start the selected volume"
 msgstr "Spustí vybraný zväzok"
 
 #. tooltip
-#: ../src/nautilus-view.c:7251 ../src/nautilus-view.c:8147
+#: ../src/nautilus-view.c:7249 ../src/nautilus-view.c:8145
 msgid "Stop the selected volume"
 msgstr "Zastaví vybraný zväzok"
 
 #. tooltip
-#: ../src/nautilus-view.c:7255 ../src/nautilus-view.c:7279
-#: ../src/nautilus-view.c:7351
+#: ../src/nautilus-view.c:7253 ../src/nautilus-view.c:7277
+#: ../src/nautilus-view.c:7349
 msgid "Detect media in the selected drive"
 msgstr "_Deteguje médium v zvolenej jednotke"
 
 # previazaný? aj ďalej...
 #. tooltip
-#: ../src/nautilus-view.c:7259
+#: ../src/nautilus-view.c:7257
 msgid "Mount the volume associated with the open folder"
 msgstr "Pripojí zväzok spätý s otvoreným priečinkom"
 
 #. tooltip
-#: ../src/nautilus-view.c:7263
+#: ../src/nautilus-view.c:7261
 msgid "Unmount the volume associated with the open folder"
 msgstr "Odpojí zväzok spätý s otvoreným priečinkom"
 
 #. tooltip
-#: ../src/nautilus-view.c:7267
+#: ../src/nautilus-view.c:7265
 msgid "Eject the volume associated with the open folder"
 msgstr "Vysunie médium späté s otvoreným priečinkom"
 
 #. tooltip
-#: ../src/nautilus-view.c:7271
+#: ../src/nautilus-view.c:7269
 msgid "Start the volume associated with the open folder"
 msgstr "Spustí zväzok spätý s otvoreným priečinkom"
 
 #. tooltip
-#: ../src/nautilus-view.c:7275
+#: ../src/nautilus-view.c:7273
 msgid "Stop the volume associated with the open folder"
 msgstr "Zastaví zväzok spätý s otvoreným priečinkom"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7282
+#: ../src/nautilus-view.c:7280
 msgid "Open File and Close window"
 msgstr "Otvoriť súbor a zatvoriť okno"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7286
+#: ../src/nautilus-view.c:7284
 msgid "Sa_ve Search"
 msgstr "Uložiť _vyhľadávanie"
 
 #. tooltip
-#: ../src/nautilus-view.c:7287
+#: ../src/nautilus-view.c:7285
 msgid "Save the edited search"
 msgstr "Uloží upravené vyhľadávanie"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7290
+#: ../src/nautilus-view.c:7288
 msgid "Sa_ve Search As…"
 msgstr "Uložiť _vyhľadávanie ako…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7291
+#: ../src/nautilus-view.c:7289
 msgid "Save the current search as a file"
 msgstr "Uloží aktuálne vyhľadávanie ako súbor"
 
 #. tooltip
-#: ../src/nautilus-view.c:7297
+#: ../src/nautilus-view.c:7295
 msgid "Open this folder in a navigation window"
 msgstr "Otvorí tento priečinok v navigačnom okne"
 
 #. tooltip
-#: ../src/nautilus-view.c:7301
+#: ../src/nautilus-view.c:7299
 msgid "Open this folder in a new tab"
 msgstr "Otvorí tento priečinok v novej karte"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7306
+#: ../src/nautilus-view.c:7304
 msgid "Prepare this folder to be moved with a Paste command"
 msgstr "Pripraví tento priečinok na presun príkazom Vložiť"
 
 #. name, stock id
 #. label, accelerator
 #. tooltip
-#: ../src/nautilus-view.c:7310
+#: ../src/nautilus-view.c:7308
 msgid "Prepare this folder to be copied with a Paste command"
 msgstr "Pripraví tento priečinok na kopírovanie príkazom Vložiť"
 
 #. tooltip
-#: ../src/nautilus-view.c:7314
+#: ../src/nautilus-view.c:7312
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into this "
 "folder"
@@ -4969,235 +4946,235 @@ msgstr ""
 "príkazom Vystrihnúť alebo Kopírovať"
 
 #. tooltip
-#: ../src/nautilus-view.c:7319
+#: ../src/nautilus-view.c:7317
 msgid "Move this folder to the Trash"
 msgstr "Presunie tento priečinok do Koša"
 
 #. tooltip
-#: ../src/nautilus-view.c:7323
+#: ../src/nautilus-view.c:7321
 msgid "Delete this folder, without moving to the Trash"
 msgstr "Odstráni tento priečinok bez presunu do Koša"
 
 #. tooltip
-#: ../src/nautilus-view.c:7331
+#: ../src/nautilus-view.c:7329
 msgid "Mount the volume associated with this folder"
 msgstr "Pripojí zväzok spätý s týmto priečinkom"
 
 #. tooltip
-#: ../src/nautilus-view.c:7335
+#: ../src/nautilus-view.c:7333
 msgid "Unmount the volume associated with this folder"
 msgstr "Odpojí zväzok spätý s týmto priečinkom"
 
 #. tooltip
-#: ../src/nautilus-view.c:7339
+#: ../src/nautilus-view.c:7337
 msgid "Eject the volume associated with this folder"
 msgstr "Vysunie zväzok spätý s týmto priečinkom"
 
 #. tooltip
-#: ../src/nautilus-view.c:7343
+#: ../src/nautilus-view.c:7341
 msgid "Start the volume associated with this folder"
 msgstr "Spustí zväzok spätý s týmto priečinkom"
 
 #. tooltip
-#: ../src/nautilus-view.c:7347
+#: ../src/nautilus-view.c:7345
 msgid "Stop the volume associated with this folder"
 msgstr "Zastaví zväzok spätý s týmto priečinkom"
 
 #. tooltip
-#: ../src/nautilus-view.c:7356 ../src/nautilus-window-menus.c:574
+#: ../src/nautilus-view.c:7354 ../src/nautilus-window-menus.c:574
 msgid "View or modify the properties of this folder"
 msgstr "Zobrazí alebo upraví vlastnosti tohto priečinka"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7362
+#: ../src/nautilus-view.c:7360
 msgid "Show _Hidden Files"
 msgstr "Zobraziť _skryté súbory"
 
 #. tooltip
-#: ../src/nautilus-view.c:7363
+#: ../src/nautilus-view.c:7361
 msgid "Toggle the display of hidden files in the current window"
 msgstr "Prepína zobrazovanie skrytých súborov v aktuálnom okne"
 
 # toto je tiež tooltip, ale nemá to význam v tvare "Spustí alebo spravuje ..." - mám pocit, že všetky tooltipy by mali byť v neurčitku -> ML
-#: ../src/nautilus-view.c:7424
+#: ../src/nautilus-view.c:7422
 msgid "Run or manage scripts"
 msgstr "Spustiť alebo spravovať skripty"
 
 #. Create a script action here specially because its tooltip is dynamic
-#: ../src/nautilus-view.c:7426
+#: ../src/nautilus-view.c:7424
 msgid "_Scripts"
 msgstr "_Skripty"
 
-#: ../src/nautilus-view.c:7776
+#: ../src/nautilus-view.c:7774
 #, c-format
 msgid "Move the open folder out of the trash to “%s”"
 msgstr "Presunie otvorený priečinok z Koša do „%s“"
 
-#: ../src/nautilus-view.c:7780
+#: ../src/nautilus-view.c:7778
 #, c-format
 msgid "Move the selected folder out of the trash to “%s”"
 msgstr "Presunie vybrané priečinky z Koša do „%s“"
 
-#: ../src/nautilus-view.c:7783
+#: ../src/nautilus-view.c:7781
 #, c-format
 msgid "Move the selected folders out of the trash to “%s”"
 msgstr "Presunie vybrané priečinky z Koša do „%s“"
 
-#: ../src/nautilus-view.c:7788
+#: ../src/nautilus-view.c:7786
 msgid "Move the selected folder out of the trash"
 msgstr "Presunie vybrané priečinky z Koša"
 
-#: ../src/nautilus-view.c:7790
+#: ../src/nautilus-view.c:7788
 msgid "Move the selected folders out of the trash"
 msgstr "Presunie vybrané priečinky z Koša"
 
-#: ../src/nautilus-view.c:7796
+#: ../src/nautilus-view.c:7794
 #, c-format
 msgid "Move the selected file out of the trash to “%s”"
 msgstr "Presunie vybrané súbory z Koša do „%s“"
 
-#: ../src/nautilus-view.c:7799
+#: ../src/nautilus-view.c:7797
 #, c-format
 msgid "Move the selected files out of the trash to “%s”"
 msgstr "Presunie vybrané súbory z Koša do „%s“"
 
-#: ../src/nautilus-view.c:7804
+#: ../src/nautilus-view.c:7802
 msgid "Move the selected file out of the trash"
 msgstr "Presunie vybrané súbory z Koša"
 
-#: ../src/nautilus-view.c:7806
+#: ../src/nautilus-view.c:7804
 msgid "Move the selected files out of the trash"
 msgstr "Presunie vybrané súbory z Koša"
 
-#: ../src/nautilus-view.c:7812
+#: ../src/nautilus-view.c:7810
 #, c-format
 msgid "Move the selected item out of the trash to “%s”"
 msgstr "Presunie vybrané položky z Koša do „%s“"
 
-#: ../src/nautilus-view.c:7815
+#: ../src/nautilus-view.c:7813
 #, c-format
 msgid "Move the selected items out of the trash to “%s”"
 msgstr "Presunie vybrané položky z Koša do „%s“"
 
-#: ../src/nautilus-view.c:7820
+#: ../src/nautilus-view.c:7818
 msgid "Move the selected item out of the trash"
 msgstr "Presunie vybrané položky z Koša"
 
-#: ../src/nautilus-view.c:7822
+#: ../src/nautilus-view.c:7820
 msgid "Move the selected items out of the trash"
 msgstr "Presunie vybrané položky z Koša"
 
-#: ../src/nautilus-view.c:7929 ../src/nautilus-view.c:7933
-#: ../src/nautilus-view.c:8118 ../src/nautilus-view.c:8122
+#: ../src/nautilus-view.c:7927 ../src/nautilus-view.c:7931
+#: ../src/nautilus-view.c:8116 ../src/nautilus-view.c:8120
 msgid "Start the selected drive"
 msgstr "Spustí vybranú jednotku"
 
-#: ../src/nautilus-view.c:7936 ../src/nautilus-view.c:8023
-#: ../src/nautilus-view.c:8125
+#: ../src/nautilus-view.c:7934 ../src/nautilus-view.c:8021
+#: ../src/nautilus-view.c:8123
 msgid "_Connect"
 msgstr "P_ripojiť"
 
-#: ../src/nautilus-view.c:7937 ../src/nautilus-view.c:8126
+#: ../src/nautilus-view.c:7935 ../src/nautilus-view.c:8124
 msgid "Connect to the selected drive"
 msgstr "Pripojí sa k vybranej jednotke"
 
-#: ../src/nautilus-view.c:7940 ../src/nautilus-view.c:8027
-#: ../src/nautilus-view.c:8129
+#: ../src/nautilus-view.c:7938 ../src/nautilus-view.c:8025
+#: ../src/nautilus-view.c:8127
 msgid "_Start Multi-disk Drive"
 msgstr "_Spustiť viacdiskovú jednotku"
 
-#: ../src/nautilus-view.c:7941 ../src/nautilus-view.c:8130
+#: ../src/nautilus-view.c:7939 ../src/nautilus-view.c:8128
 msgid "Start the selected multi-disk drive"
 msgstr "Spustí vybranú viacdiskovú jednotku"
 
-#: ../src/nautilus-view.c:7944
+#: ../src/nautilus-view.c:7942
 msgid "U_nlock Drive"
 msgstr "Odomk_núť jednotku"
 
-#: ../src/nautilus-view.c:7945 ../src/nautilus-view.c:8134
+#: ../src/nautilus-view.c:7943 ../src/nautilus-view.c:8132
 msgid "Unlock the selected drive"
 msgstr "Odomkne vybranú jednotku"
 
-#: ../src/nautilus-view.c:7958
+#: ../src/nautilus-view.c:7956
 msgid "Stop the selected drive"
 msgstr "Zastaví vybranú jednotku"
 
-#: ../src/nautilus-view.c:7962 ../src/nautilus-view.c:8151
+#: ../src/nautilus-view.c:7960 ../src/nautilus-view.c:8149
 msgid "Safely remove the selected drive"
 msgstr "Bezpečne odoberie vybranú jednotku"
 
-#: ../src/nautilus-view.c:7965 ../src/nautilus-view.c:8052
-#: ../src/nautilus-view.c:8154
+#: ../src/nautilus-view.c:7963 ../src/nautilus-view.c:8050
+#: ../src/nautilus-view.c:8152
 msgid "_Disconnect"
 msgstr "O_dpojiť"
 
-#: ../src/nautilus-view.c:7966 ../src/nautilus-view.c:8155
+#: ../src/nautilus-view.c:7964 ../src/nautilus-view.c:8153
 msgid "Disconnect the selected drive"
 msgstr "Odpojí vybranú jednotku"
 
-#: ../src/nautilus-view.c:7969 ../src/nautilus-view.c:8056
-#: ../src/nautilus-view.c:8158
+#: ../src/nautilus-view.c:7967 ../src/nautilus-view.c:8054
+#: ../src/nautilus-view.c:8156
 msgid "_Stop Multi-disk Drive"
 msgstr "Za_staviť viacdiskovú jednotku"
 
-#: ../src/nautilus-view.c:7970 ../src/nautilus-view.c:8159
+#: ../src/nautilus-view.c:7968 ../src/nautilus-view.c:8157
 msgid "Stop the selected multi-disk drive"
 msgstr "Zastaví vybranú viacdiskovú jednotku"
 
-#: ../src/nautilus-view.c:7974 ../src/nautilus-view.c:8163
+#: ../src/nautilus-view.c:7972 ../src/nautilus-view.c:8161
 msgid "Lock the selected drive"
 msgstr "Uzamkne vybranú jednotku"
 
-#: ../src/nautilus-view.c:8016 ../src/nautilus-view.c:8020
+#: ../src/nautilus-view.c:8014 ../src/nautilus-view.c:8018
 msgid "Start the drive associated with the open folder"
 msgstr "Spustí jednotku spätú s otvoreným priečinkom"
 
-#: ../src/nautilus-view.c:8024
+#: ../src/nautilus-view.c:8022
 msgid "Connect to the drive associated with the open folder"
 msgstr "Pripojí sa k jednotke spätej s otvoreným priečinkom"
 
-#: ../src/nautilus-view.c:8028
+#: ../src/nautilus-view.c:8026
 msgid "Start the multi-disk drive associated with the open folder"
 msgstr "Spustí viacdiskovú jednotku spätú s otvoreným priečinkom"
 
-#: ../src/nautilus-view.c:8032
+#: ../src/nautilus-view.c:8030
 msgid "Unlock the drive associated with the open folder"
 msgstr "Odomkne jednotku spätú s otvoreným priečinkom"
 
-#: ../src/nautilus-view.c:8045
+#: ../src/nautilus-view.c:8043
 msgid "_Stop the drive associated with the open folder"
 msgstr "Zastaví jednotku spätú s otvoreným priečinkom"
 
-#: ../src/nautilus-view.c:8049
+#: ../src/nautilus-view.c:8047
 msgid "Safely remove the drive associated with the open folder"
 msgstr "Bezpečne odoberie jednotku spätú s otvoreným priečinkom"
 
-#: ../src/nautilus-view.c:8053
+#: ../src/nautilus-view.c:8051
 msgid "Disconnect the drive associated with the open folder"
 msgstr "Odpojí jednotku spätú s otvoreným priečinkom"
 
-#: ../src/nautilus-view.c:8057
+#: ../src/nautilus-view.c:8055
 msgid "Stop the multi-disk drive associated with the open folder"
 msgstr "Zastaví jednotku spätú s otvoreným priečinkom"
 
-#: ../src/nautilus-view.c:8061
+#: ../src/nautilus-view.c:8059
 msgid "Lock the drive associated with the open folder"
 msgstr "Uzamkne jednotku spätú s otvoreným priečinkom"
 
-#: ../src/nautilus-view.c:8288 ../src/nautilus-view.c:8592
+#: ../src/nautilus-view.c:8286 ../src/nautilus-view.c:8590
 msgid "_Delete Permanently"
 msgstr "Trvale o_dstrániť"
 
-#: ../src/nautilus-view.c:8289
+#: ../src/nautilus-view.c:8287
 msgid "Delete the open folder permanently"
 msgstr "Trvale odstráni otvorený priečinok"
 
-#: ../src/nautilus-view.c:8293
+#: ../src/nautilus-view.c:8291
 msgid "Move the open folder to the Trash"
 msgstr "Presunie otvorený priečinok do Koša"
 
-#: ../src/nautilus-view.c:8463
+#: ../src/nautilus-view.c:8461
 #, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
@@ -5205,16 +5182,16 @@ msgstr[0] "Nový priečinok s výberom (%'d položiek)"
 msgstr[1] "Nový priečinok s výberom (%'d položka)"
 msgstr[2] "Nový priečinok s výberom (%'d položky)"
 
-#: ../src/nautilus-view.c:8507
+#: ../src/nautilus-view.c:8505
 #, c-format
 msgid "_Open With %s"
 msgstr "_Otvoriť aplikáciou %s"
 
-#: ../src/nautilus-view.c:8518
+#: ../src/nautilus-view.c:8516
 msgid "Run"
 msgstr "Spustiť"
 
-#: ../src/nautilus-view.c:8556
+#: ../src/nautilus-view.c:8554
 #, c-format
 msgid "Open in %'d New _Window"
 msgid_plural "Open in %'d New _Windows"
@@ -5222,7 +5199,7 @@ msgstr[0] "Otvoriť v %'d nových oknách"
 msgstr[1] "Otvoriť v %'d novom okne"
 msgstr[2] "Otvoriť v %'d nových oknách"
 
-#: ../src/nautilus-view.c:8576
+#: ../src/nautilus-view.c:8574
 #, c-format
 msgid "Open in %'d New _Tab"
 msgid_plural "Open in %'d New _Tabs"
@@ -5231,19 +5208,21 @@ msgstr[1] "Otvoriť v %'d novej karte"
 msgstr[2] "Otvoriť v %'d nových kartách"
 
 # tooltip
-#: ../src/nautilus-view.c:8593
+#: ../src/nautilus-view.c:8591
 msgid "Delete all selected items permanently"
 msgstr "Odstráni trvale všetky vybrané položky"
 
-#: ../src/nautilus-view.c:8624
+# label
+#: ../src/nautilus-view.c:8622
 msgid "Remo_ve from Recent"
-msgstr "Odstrániť z _nedávnych"
+msgstr "Odstrániť z _nedávno použitých súborov"
 
-#: ../src/nautilus-view.c:8625
+# tooltip
+#: ../src/nautilus-view.c:8623
 msgid "Remove each selected item from the recently used list"
 msgstr "Odstráni všetky vybrané položky zo zoznamu nedávno použitých"
 
-#: ../src/nautilus-view.c:8665
+#: ../src/nautilus-view.c:8663
 msgid "View or modify the properties of the open folder"
 msgstr "Zobrazí alebo upraví vlastnosti otvoreného priečinka"
 
@@ -5296,9 +5275,10 @@ msgid ""
 "version."
 msgstr ""
 "Program Súbory je slobodný softvér; môžete ho ďalej šíriť a/alebo upravovať "
-"podľa ustanovení GNU General Public License (Všeobecná zverejňovacia licencia) tak, ako ju vydala organizácia "
-"Free Software Foundation, a to buď verzie 2 tejto licencie alebo (podľa "
-"vášho uváženia) ktorejkoľvek neskoršej verzie."
+"podľa ustanovení GNU General Public License (Všeobecná zverejňovacia "
+"licencia) tak, ako ju vydala organizácia Free Software Foundation, a to buď "
+"verzie 2 tejto licencie alebo (podľa vášho uváženia) ktorejkoľvek neskoršej "
+"verzie."
 
 #: ../src/nautilus-window.c:2035
 msgid ""
@@ -5551,19 +5531,16 @@ msgstr "Dop_redu"
 msgid "Go to the next visited location"
 msgstr "Prejde na nasledujúce navštívené miesto"
 
-# PK: tu neviem kde to je
+# menu item
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:551
-#, fuzzy
 msgid "Enter _Location…"
 msgstr "Zadať _umiestnenie…"
 
-#  PK: neviem kde sa to zobrazuje
 # tooltip
 #: ../src/nautilus-window-menus.c:552
-#, fuzzy
 msgid "Specify a location to open"
-msgstr "Presunie kurzor do poľa na zadanie umiestnenia"
+msgstr "Určí umiestnenie, ktoré sa má otvoriť"
 
 #. name, stock id, label
 #: ../src/nautilus-window-menus.c:554
@@ -5649,42 +5626,40 @@ msgstr "Zobrazí položky ako mriežku ikon"
 msgid "_Up"
 msgstr "_Hore"
 
-#: ../src/nautilus-window-slot.c:1281 ../src/nautilus-window-slot.c:1455
+#: ../src/nautilus-window-slot.c:1286 ../src/nautilus-window-slot.c:1460
 #, c-format
 msgid "Unable to load location"
 msgstr "Nepodarilo sa načítať umiestnenie"
 
-#: ../src/nautilus-window-slot.c:1610
+#: ../src/nautilus-window-slot.c:1615
 msgid "Unable to display the contents of this folder."
 msgstr "Nepodarilo sa zobraziť obsah tohto priečinka."
 
-#: ../src/nautilus-window-slot.c:1612
+#: ../src/nautilus-window-slot.c:1617
 msgid "This location doesn't appear to be a folder."
 msgstr "Zdá sa, že toto umiestnenie nie je priečinkom."
 
-# PK: inde preklepy
-#: ../src/nautilus-window-slot.c:1617
-#, fuzzy
+#: ../src/nautilus-window-slot.c:1622
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr ""
-"Nepodarilo sa nájsť požadovaný súbor. Prosím, skontrolujte, či ste ho "
-"napísali správne a skúste to znovu."
+"Nepodarilo sa nájsť požadovaný súbor. Prosím, skontrolujte preklepy a skúste "
+"to znovu."
 
-#: ../src/nautilus-window-slot.c:1622
+#: ../src/nautilus-window-slot.c:1627
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "Umiestnenia „%s“ nie sú podporované."
 
-#: ../src/nautilus-window-slot.c:1625
+#: ../src/nautilus-window-slot.c:1630
 msgid "Unable to handle this kind of location."
 msgstr "Nautilus nedokáže pracovať s týmto typom umiestnenia."
 
-#: ../src/nautilus-window-slot.c:1630
+#: ../src/nautilus-window-slot.c:1635
 msgid "Unable to access the requested location."
 msgstr "Nepodarilo sa otvoriť požadované umiestnenie."
 
-#: ../src/nautilus-window-slot.c:1633
+#: ../src/nautilus-window-slot.c:1638
 msgid "Don't have permission to access the requested location."
 msgstr "Nemáte oprávnenia na prístup do cieľového umiestnenia."
 
@@ -5693,7 +5668,7 @@ msgstr "Nemáte oprávnenia na prístup do cieľového umiestnenia."
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-slot.c:1641
+#: ../src/nautilus-window-slot.c:1646
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5701,12 +5676,12 @@ msgstr ""
 "Nepodarilo sa nájsť požadované umiestnenie. Prosím, skontrolujte preklepy a "
 "nastavenia siete."
 
-#: ../src/nautilus-window-slot.c:1652
+#: ../src/nautilus-window-slot.c:1657
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "Neobslúžená chybová správa: %s"
 
-#: ../src/nautilus-window-slot.c:2253
+#: ../src/nautilus-window-slot.c:2258
 msgid "Searching…"
 msgstr "Hľadá sa…"
 
