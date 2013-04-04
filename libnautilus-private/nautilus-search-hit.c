@@ -191,6 +191,7 @@ nautilus_search_hit_set_property (GObject *object,
 	switch (arg_id) {
 	case PROP_RELEVANCE:
 		hit->details->relevance = g_value_get_double (value);
+		break;
 	case PROP_FTS_RANK:
 		nautilus_search_hit_set_fts_rank (hit, g_value_get_double (value));
 		break;
