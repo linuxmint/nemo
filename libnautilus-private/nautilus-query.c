@@ -96,7 +96,7 @@ nautilus_query_matches_string (NautilusQuery *query,
 	gchar *prepared_string, *ptr;
 	gboolean found;
 	gdouble retval;
-	gint idx;
+	gint idx, nonexact_malus;
 
 	if (!query->details->text) {
 		return -1;
@@ -111,12 +111,15 @@ nautilus_query_matches_string (NautilusQuery *query,
 	prepared_string = prepare_string_for_compare (string);
 	found = TRUE;
 	ptr = NULL;
+	nonexact_malus = 0;
 
 	for (idx = 0; query->details->prepared_words[idx] != NULL; idx++) {
 		if ((ptr = strstr (prepared_string, query->details->prepared_words[idx])) == NULL) {
 			found = FALSE;
 			break;
 		}
+
+		nonexact_malus += strlen (ptr) - strlen (query->details->prepared_words[idx]);
 	}
 
 	if (!found) {
@@ -124,7 +127,7 @@ nautilus_query_matches_string (NautilusQuery *query,
 		return -1;
 	}
 
-	retval = MAX (10.0, (50.0 / idx) - (gdouble) (ptr - prepared_string));
+	retval = MAX (10.0, 50.0 - (gdouble) (ptr - prepared_string) - nonexact_malus);
 	g_free (prepared_string);
 
 	return retval;
