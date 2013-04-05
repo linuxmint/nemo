@@ -3191,6 +3191,9 @@ nautilus_file_compare_for_sort (NautilusFile *file_1,
 			result = compare_by_search_relevance (file_1, file_2);
 			if (result == 0) {
 				result = compare_by_full_path (file_1, file_2);
+
+				/* ensure alphabetical order for files of the same relevance */
+				reversed = FALSE;
 			}
 			break;
 		default:
