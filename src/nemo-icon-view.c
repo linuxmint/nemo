@@ -2343,6 +2343,20 @@ focus_in_event_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_
 	return FALSE; 
 }
 
+static gboolean
+button_press_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
+{
+    NemoIconView *view = NEMO_ICON_VIEW (user_data);
+
+    if (!nemo_view_get_active (NEMO_VIEW (view))) {
+        NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (NEMO_VIEW (view));
+        nemo_window_slot_make_hosting_pane_active (slot);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 static NemoIconContainer *
 create_icon_container (NemoIconView *icon_view)
 {
@@ -2355,6 +2369,9 @@ create_icon_container (NemoIconView *icon_view)
 	
 	gtk_widget_set_can_focus (GTK_WIDGET (icon_container), TRUE);
 	
+
+    g_signal_connect_object (icon_container, "button_press_event",
+                 G_CALLBACK (button_press_callback), icon_view, 0);
 	g_signal_connect_object (icon_container, "focus_in_event",
 				 G_CALLBACK (focus_in_event_callback), icon_view, 0);
 	g_signal_connect_object (icon_container, "activate",	
