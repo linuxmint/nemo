@@ -107,7 +107,7 @@ nemo_action_class_init (NemoActionClass *klass)
                                      g_param_spec_int ("selection-type",
                                                        "Selection Type",
                                                        "The action selection type",
-                                                       SELECTION_SINGLE,
+                                                       0,
                                                        SELECTION_NONE,
                                                        SELECTION_SINGLE,
                                                        G_PARAM_READWRITE)
@@ -243,8 +243,12 @@ nemo_action_constructed (GObject *object)
         type = SELECTION_ANY;
     else if (g_strcmp0 (selection_string, SELECTION_NONE_KEY) == 0)
         type = SELECTION_NONE;
-    else
-        type = SELECTION_SINGLE;
+    else if (g_strcmp0 (selection_string, SELECTION_NOT_NONE_KEY) == 0)
+        type = SELECTION_NOT_NONE;
+    else {
+        gint val = (int) g_ascii_strtoll (selection_string, NULL, 10);
+        type = val > 0 ? val : SELECTION_SINGLE;
+    }
 
     g_free (selection_string);
 
@@ -471,11 +475,11 @@ replace_token (GList *arg_list, GList *selection, gboolean *success)
     if (token != NULL) {
         for (iter = selection; iter != NULL; iter = iter->next) {
             if (use_url) {
-                arg_list = g_list_insert_before (arg_list, token,
-                                                 nemo_file_get_uri (NEMO_FILE (iter->data)));
+                gchar *uri = nemo_file_get_uri (NEMO_FILE (iter->data));
+                arg_list = g_list_insert_before (arg_list, token, uri);
             } else {
-                arg_list = g_list_insert_before (arg_list, token,
-                                                 g_filename_from_uri (nemo_file_get_uri (NEMO_FILE (iter->data)), NULL, NULL));
+                gchar *path = nemo_file_get_path (NEMO_FILE (iter->data));
+                arg_list = g_list_insert_before (arg_list, token, path);
             }
         }
         arg_list = g_list_delete_link (arg_list, token);
@@ -659,7 +663,7 @@ nemo_action_set_label (NemoAction *action, NemoFile *file)
     const gchar *orig_label = nemo_action_get_orig_label (action);
 
     if (!test_string_for_label_token (orig_label) || file == NULL ||
-        action->selection_type > SELECTION_SINGLE) {
+        action->selection_type != SELECTION_SINGLE) {
         gtk_action_set_label (GTK_ACTION (action), orig_label);
         return;
     }
@@ -686,7 +690,7 @@ nemo_action_set_tt (NemoAction *action, NemoFile *file)
     const gchar *orig_tt = nemo_action_get_orig_tt (action);
 
     if (!test_string_for_label_token (orig_tt) || file == NULL ||
-        action->selection_type > SELECTION_SINGLE) {
+        action->selection_type != SELECTION_SINGLE) {
         gtk_action_set_tooltip (GTK_ACTION (action), orig_tt);
         return;
     }
