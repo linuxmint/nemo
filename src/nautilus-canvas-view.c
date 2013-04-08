@@ -98,9 +98,6 @@ struct NautilusCanvasViewDetails
 
 	GtkActionGroup *canvas_action_group;
 	guint canvas_merge_id;
-	
-	gboolean filter_by_screen;
-	int num_screens;
 
 	gulong clipboard_handler_id;
 
@@ -400,36 +397,6 @@ nautilus_canvas_view_clear (NautilusView *view)
 	g_slist_free (file_list);
 }
 
-static gboolean
-should_show_file_on_screen (NautilusView *view, NautilusFile *file)
-{
-	char *screen_string;
-	int screen_num;
-	NautilusCanvasView *canvas_view;
-	GdkScreen *screen;
-
-	canvas_view = NAUTILUS_CANVAS_VIEW (view);
-
-	if (!nautilus_view_should_show_file (view, file)) {
-		return FALSE;
-	}
-	
-	/* Get the screen for this canvas from the metadata. */
-	screen_string = nautilus_file_get_metadata
-		(file, NAUTILUS_METADATA_KEY_SCREEN, "0");
-	screen_num = atoi (screen_string);
-	g_free (screen_string);
-	screen = gtk_widget_get_screen (GTK_WIDGET (view));
-
-	if (screen_num != gdk_screen_get_number (screen) &&
-	    (screen_num < canvas_view->details->num_screens ||
-	     gdk_screen_get_number (screen) > 0)) {
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
 static void
 nautilus_canvas_view_remove_file (NautilusView *view, NautilusFile *file, NautilusDirectory *directory)
 {
@@ -475,11 +442,6 @@ nautilus_canvas_view_add_file (NautilusView *view, NautilusFile *file, NautilusD
 	canvas_view = NAUTILUS_CANVAS_VIEW (view);
 	canvas_container = get_canvas_container (canvas_view);
 
-	if (canvas_view->details->filter_by_screen &&
-	    !should_show_file_on_screen (view, file)) {
-		return;
-	}
-
 	/* Reset scroll region for the first canvas added when loading a directory. */
 	if (nautilus_view_get_loading (view) && nautilus_canvas_container_is_empty (canvas_container)) {
 		nautilus_canvas_container_reset_scroll_region (canvas_container);
@@ -501,21 +463,9 @@ nautilus_canvas_view_file_changed (NautilusView *view, NautilusFile *file, Nauti
 	g_return_if_fail (view != NULL);
 	canvas_view = NAUTILUS_CANVAS_VIEW (view);
 
-	if (!canvas_view->details->filter_by_screen) {
-		nautilus_canvas_container_request_update
-			(get_canvas_container (canvas_view),
-			 NAUTILUS_CANVAS_ICON_DATA (file));
-		return;
-	}
-	
-	if (!should_show_file_on_screen (view, file)) {
-		nautilus_canvas_view_remove_file (view, file, directory);
-	} else {
-
-		nautilus_canvas_container_request_update
-			(get_canvas_container (canvas_view),
-			 NAUTILUS_CANVAS_ICON_DATA (file));
-	}
+	nautilus_canvas_container_request_update
+		(get_canvas_container (canvas_view),
+		 NAUTILUS_CANVAS_ICON_DATA (file));
 }
 
 static gboolean
@@ -1505,54 +1455,6 @@ compare_files (NautilusView   *canvas_view,
 	return nautilus_canvas_view_compare_files ((NautilusCanvasView *)canvas_view, a, b);
 }
 
-
-void
-nautilus_canvas_view_filter_by_screen (NautilusCanvasView *canvas_view,
-				     gboolean filter)
-{
-	canvas_view->details->filter_by_screen = filter;
-	canvas_view->details->num_screens = gdk_display_get_n_screens (gtk_widget_get_display (GTK_WIDGET (canvas_view)));
-}
-
-static void
-nautilus_canvas_view_screen_changed (GtkWidget *widget,
-				   GdkScreen *previous_screen)
-{
-	NautilusView *view;
-	GList *files, *l;
-	NautilusFile *file;
-	NautilusDirectory *directory;
-	NautilusCanvasContainer *canvas_container;
-
-	if (GTK_WIDGET_CLASS (nautilus_canvas_view_parent_class)->screen_changed) {
-		GTK_WIDGET_CLASS (nautilus_canvas_view_parent_class)->screen_changed (widget, previous_screen);
-	}
-
-	view = NAUTILUS_VIEW (widget);
-	if (NAUTILUS_CANVAS_VIEW (view)->details->filter_by_screen) {
-		canvas_container = get_canvas_container (NAUTILUS_CANVAS_VIEW (view));
-
-		directory = nautilus_view_get_model (view);
-		files = nautilus_directory_get_file_list (directory);
-
-		for (l = files; l != NULL; l = l->next) {
-			file = l->data;
-			
-			if (!should_show_file_on_screen (view, file)) {
-				nautilus_canvas_view_remove_file (view, file, directory);
-			} else {
-				if (nautilus_canvas_container_add (canvas_container,
-								 NAUTILUS_CANVAS_ICON_DATA (file))) {
-					nautilus_file_ref (file);
-				}
-			}
-		}
-		
-		nautilus_file_list_unref (files);
-		g_list_free (files);
-	}
-}
-
 static void
 selection_changed_callback (NautilusCanvasContainer *container,
 			    NautilusCanvasView *canvas_view)
@@ -2140,7 +2042,6 @@ nautilus_canvas_view_class_init (NautilusCanvasViewClass *klass)
 	oclass->finalize = nautilus_canvas_view_finalize;
 
 	GTK_WIDGET_CLASS (klass)->destroy = nautilus_canvas_view_destroy;
-	GTK_WIDGET_CLASS (klass)->screen_changed = nautilus_canvas_view_screen_changed;
 	
 	nautilus_view_class->add_file = nautilus_canvas_view_add_file;
 	nautilus_view_class->begin_loading = nautilus_canvas_view_begin_loading;
@@ -2219,7 +2120,6 @@ nautilus_canvas_view_init (NautilusCanvasView *canvas_view)
 
 	canvas_view->details = g_new0 (NautilusCanvasViewDetails, 1);
 	canvas_view->details->sort = &sort_criteria[0];
-	canvas_view->details->filter_by_screen = FALSE;
 
 	canvas_container = create_canvas_container (canvas_view);
 
