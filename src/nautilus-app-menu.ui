@@ -4,6 +4,7 @@
       <item>
 	<attribute name="action">app.new-window</attribute>
 	<attribute name="label" translatable="yes">New _Window</attribute>
+	<attribute name="accel">&lt;Primary&gt;n</attribute>
       </item>
     </section>
     <section>
@@ -14,12 +15,14 @@
       <item>
 	<attribute name="action">app.enter-location</attribute>
 	<attribute name="label" translatable="yes">Enter _Location…</attribute>
+	<attribute name="accel">&lt;Primary&gt;l</attribute>
       </item>
     </section>
     <section>
       <item>
 	<attribute name="action">app.bookmarks</attribute>
 	<attribute name="label" translatable="yes">_Bookmarks</attribute>
+	<attribute name="accel">&lt;Primary&gt;b</attribute>
       </item>
     </section>
     <section>
@@ -36,10 +39,12 @@
       <item>
 	<attribute name="action">app.help</attribute>
 	<attribute name="label" translatable="yes">_Help</attribute>
+	<attribute name="accel">F1</attribute>
       </item>
       <item>
 	<attribute name="action">app.quit</attribute>
 	<attribute name="label" translatable="yes">_Quit</attribute>
+	<attribute name="accel">&lt;Primary&gt;q</attribute>
       </item>
     </section>
   </menu>
