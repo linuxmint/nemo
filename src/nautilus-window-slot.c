@@ -1382,9 +1382,7 @@ create_content_view (NautilusWindowSlot *slot,
 		view_id = NAUTILUS_DESKTOP_ICON_VIEW_IID;
 	}
 
-        if (slot->details->content_view != NULL &&
-	    g_strcmp0 (nautilus_view_get_view_id (slot->details->content_view),
-			view_id) == 0) {
+        if (nautilus_window_slot_content_view_matches_iid (slot, view_id)) {
                 /* reuse existing content view */
                 view = slot->details->content_view;
                 slot->details->new_content_view = view;
