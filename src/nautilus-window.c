@@ -41,7 +41,6 @@
 #include "nautilus-places-sidebar.h"
 #include "nautilus-pathbar.h"
 #include "nautilus-toolbar.h"
-#include "nautilus-view-factory.h"
 #include "nautilus-window-slot.h"
 #include "nautilus-list-view.h"
 #include "nautilus-canvas-view.h"

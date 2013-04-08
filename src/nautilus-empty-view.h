@@ -39,8 +39,6 @@
 #define NAUTILUS_EMPTY_VIEW_GET_CLASS(obj) \
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_TYPE_EMPTY_VIEW, NautilusEmptyViewClass))
 
-#define NAUTILUS_EMPTY_VIEW_ID "OAFIID:Nautilus_File_Manager_Empty_View"
-
 typedef struct NautilusEmptyViewDetails NautilusEmptyViewDetails;
 
 typedef struct {
@@ -53,6 +51,6 @@ typedef struct {
 } NautilusEmptyViewClass;
 
 GType nautilus_empty_view_get_type (void);
-void  nautilus_empty_view_register (void);
+NautilusView * nautilus_empty_view_new (NautilusWindowSlot *slot);
 
 #endif /* NAUTILUS_EMPTY_VIEW_H */

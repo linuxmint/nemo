@@ -41,8 +41,6 @@
 #define NAUTILUS_LIST_VIEW_GET_CLASS(obj) \
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_TYPE_LIST_VIEW, NautilusListViewClass))
 
-#define NAUTILUS_LIST_VIEW_ID "OAFIID:Nautilus_File_Manager_List_View"
-
 typedef struct NautilusListViewDetails NautilusListViewDetails;
 
 typedef struct {
@@ -55,7 +53,7 @@ typedef struct {
 } NautilusListViewClass;
 
 GType nautilus_list_view_get_type (void);
-void  nautilus_list_view_register (void);
+NautilusView * nautilus_list_view_new (NautilusWindowSlot *slot);
 GtkTreeView* nautilus_list_view_get_tree_view (NautilusListView *list_view);
 
 #endif /* NAUTILUS_LIST_VIEW_H */

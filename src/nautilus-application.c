@@ -30,19 +30,12 @@
 
 #include "nautilus-application.h"
 
-#if ENABLE_EMPTY_VIEW
-#include "nautilus-empty-view.h"
-#endif /* ENABLE_EMPTY_VIEW */
-
 #include "nautilus-bookmarks-window.h"
 #include "nautilus-connect-server-dialog.h"
-#include "nautilus-desktop-canvas-view.h"
 #include "nautilus-desktop-window.h"
 #include "nautilus-file-management-properties.h"
 #include "nautilus-freedesktop-dbus.h"
-#include "nautilus-canvas-view.h"
 #include "nautilus-image-properties-page.h"
-#include "nautilus-list-view.h"
 #include "nautilus-previewer.h"
 #include "nautilus-progress-ui-handler.h"
 #include "nautilus-self-check-functions.h"
@@ -1601,16 +1594,6 @@ nautilus_application_startup (GApplication *app)
 
 	/* initialize preferences and create the global GSettings objects */
 	nautilus_global_preferences_init ();
-
-	/* register views */
-	nautilus_profile_start ("Register views");
-	nautilus_canvas_view_register ();
-	nautilus_desktop_canvas_view_register ();
-	nautilus_list_view_register ();
-#if ENABLE_EMPTY_VIEW
-	nautilus_empty_view_register ();
-#endif
-	nautilus_profile_end ("Register views");
 
 	/* register property pages */
 	nautilus_image_properties_page_register ();

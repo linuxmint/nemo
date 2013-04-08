@@ -39,6 +39,10 @@
 #include "nautilus-previewer.h"
 #include "nautilus-properties-window.h"
 
+#if ENABLE_EMPTY_VIEW
+#include "nautilus-empty-view.h"
+#endif
+
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
@@ -9841,3 +9845,30 @@ nautilus_view_class_init (NautilusViewClass *klass)
 				      "delete", 0);
 }
 
+NautilusView *
+nautilus_view_new (const gchar		*id,
+		   NautilusWindowSlot	*slot)
+{
+	NautilusView *view = NULL;
+
+	if (g_strcmp0 (id, NAUTILUS_CANVAS_VIEW_ID) == 0) {
+		view = nautilus_canvas_view_new (slot);
+	} else if (g_strcmp0 (id, NAUTILUS_LIST_VIEW_ID) == 0) {
+		view = nautilus_list_view_new (slot);
+	} else if (g_strcmp0 (id, NAUTILUS_DESKTOP_CANVAS_VIEW_ID) == 0) {
+		view = nautilus_desktop_canvas_view_new (slot);
+	}
+#if ENABLE_EMPTY_VIEW
+	else if (g_strcmp0 (id, NAUTILUS_EMPTY_VIEW_ID) == 0) {
+		view = nautilus_empty_view_new (slot);
+	}
+#endif
+
+	if (view == NULL) {
+		g_critical ("Unknown view type ID: %s", id);
+	} else if (g_object_is_floating (view)) {
+		g_object_ref_sink (view);
+	}
+
+	return view;
+}

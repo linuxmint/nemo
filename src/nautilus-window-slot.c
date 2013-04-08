@@ -35,7 +35,6 @@
 #include "nautilus-special-location-bar.h"
 #include "nautilus-toolbar.h"
 #include "nautilus-trash-bar.h"
-#include "nautilus-view-factory.h"
 #include "nautilus-window-private.h"
 #include "nautilus-x-content-bar.h"
 
@@ -1389,7 +1388,7 @@ create_content_view (NautilusWindowSlot *slot,
 		g_object_ref (view);
         } else {
                 /* create a new content view */
-		view = nautilus_view_factory_create (view_id, slot);
+		view = nautilus_view_new (view_id, slot);
 
                 slot->details->new_content_view = view;
 		nautilus_window_slot_connect_new_content_view (slot);

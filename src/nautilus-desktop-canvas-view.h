@@ -39,8 +39,6 @@
 #define NAUTILUS_DESKTOP_CANVAS_VIEW_GET_CLASS(obj) \
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_TYPE_DESKTOP_CANVAS_VIEW, NautilusDesktopCanvasViewClass))
 
-#define NAUTILUS_DESKTOP_CANVAS_VIEW_ID "OAFIID:Nautilus_File_Manager_Desktop_Canvas_View"
-
 typedef struct NautilusDesktopCanvasViewDetails NautilusDesktopCanvasViewDetails;
 typedef struct {
 	NautilusCanvasView parent;
@@ -53,6 +51,6 @@ typedef struct {
 
 /* GObject support */
 GType   nautilus_desktop_canvas_view_get_type (void);
-void nautilus_desktop_canvas_view_register (void);
+NautilusView * nautilus_desktop_canvas_view_new (NautilusWindowSlot *slot);
 
 #endif /* NAUTILUS_DESKTOP_CANVAS_VIEW_H */

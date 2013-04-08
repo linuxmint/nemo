@@ -31,7 +31,6 @@
 #include "nautilus-desktop-canvas-view.h"
 #include "nautilus-error-reporting.h"
 #include "nautilus-view-dnd.h"
-#include "nautilus-view-factory.h"
 
 #include <stdlib.h>
 #include <eel/eel-vfs-extensions.h>
@@ -2259,42 +2258,10 @@ nautilus_canvas_view_init (NautilusCanvasView *canvas_view)
 		                  G_CALLBACK (canvas_view_notify_clipboard_info), canvas_view);
 }
 
-static NautilusView *
-nautilus_canvas_view_create (NautilusWindowSlot *slot)
+NautilusView *
+nautilus_canvas_view_new (NautilusWindowSlot *slot)
 {
-	NautilusCanvasView *view;
-
-	view = g_object_new (NAUTILUS_TYPE_CANVAS_VIEW,
+	return g_object_new (NAUTILUS_TYPE_CANVAS_VIEW,
 			     "window-slot", slot,
 			     NULL);
-	return NAUTILUS_VIEW (view);
 }
-
-#define TRANSLATE_VIEW_INFO(view_info)					\
-	view_info.view_combo_label = _(view_info.view_combo_label);	\
-	view_info.view_menu_label_with_mnemonic = _(view_info.view_menu_label_with_mnemonic); \
-	view_info.error_label = _(view_info.error_label);		\
-	view_info.startup_error_label = _(view_info.startup_error_label); \
-	view_info.display_location_label = _(view_info.display_location_label); \
-	
-
-static NautilusViewInfo nautilus_canvas_view = {
-	NAUTILUS_CANVAS_VIEW_ID,
-	/* translators: this is used in the view selection dropdown
-	 * of navigation windows and in the preferences dialog */
-	N_("Icon View"),
-	/* translators: this is used in the view menu */
-	N_("_Icons"),
-	N_("The icon view encountered an error."),
-	N_("The icon view encountered an error while starting up."),
-	N_("Display this location with the icon view."),
-	nautilus_canvas_view_create
-};
-
-void
-nautilus_canvas_view_register (void)
-{
-	TRANSLATE_VIEW_INFO (nautilus_canvas_view)
-		nautilus_view_factory_register (&nautilus_canvas_view);
-}
-

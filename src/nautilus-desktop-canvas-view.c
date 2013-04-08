@@ -30,7 +30,6 @@
 
 #include "nautilus-actions.h"
 #include "nautilus-canvas-view-container.h"
-#include "nautilus-view-factory.h"
 #include "nautilus-view.h"
 
 #include <X11/Xatom.h>
@@ -743,12 +742,10 @@ real_merge_menus (NautilusView *view)
 	g_free (control_center_path);
 }
 
-static NautilusView *
-nautilus_desktop_canvas_view_create (NautilusWindowSlot *slot)
+NautilusView *
+nautilus_desktop_canvas_view_new (NautilusWindowSlot *slot)
 {
-	NautilusCanvasView *view;
-
-	view = g_object_new (NAUTILUS_TYPE_DESKTOP_CANVAS_VIEW,
+	return g_object_new (NAUTILUS_TYPE_DESKTOP_CANVAS_VIEW,
 			     "window-slot", slot,
 			     "supports-zooming", FALSE,
 			     "supports-auto-layout", FALSE,
@@ -756,24 +753,4 @@ nautilus_desktop_canvas_view_create (NautilusWindowSlot *slot)
 			     "supports-scaling", TRUE,
 			     "supports-keep-aligned", TRUE,
 			     NULL);
-	return NAUTILUS_VIEW (view);
-}
-
-static NautilusViewInfo nautilus_desktop_canvas_view = {
-	NAUTILUS_DESKTOP_CANVAS_VIEW_ID,
-	"Desktop View",
-	"_Desktop",
-	N_("The desktop view encountered an error."),
-	N_("The desktop view encountered an error while starting up."),
-	"Display this location with the desktop view.",
-	nautilus_desktop_canvas_view_create
-};
-
-void
-nautilus_desktop_canvas_view_register (void)
-{
-	nautilus_desktop_canvas_view.error_label = _(nautilus_desktop_canvas_view.error_label);
-	nautilus_desktop_canvas_view.startup_error_label = _(nautilus_desktop_canvas_view.startup_error_label);
-	
-	nautilus_view_factory_register (&nautilus_desktop_canvas_view);
 }

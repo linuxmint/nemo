@@ -31,7 +31,6 @@
 #include "nautilus-list-model.h"
 #include "nautilus-error-reporting.h"
 #include "nautilus-view-dnd.h"
-#include "nautilus-view-factory.h"
 
 #include <string.h>
 #include <eel/eel-vfs-extensions.h>
@@ -3286,40 +3285,12 @@ nautilus_list_view_init (NautilusListView *list_view)
 		                  G_CALLBACK (list_view_notify_clipboard_info), list_view);
 }
 
-static NautilusView *
-nautilus_list_view_create (NautilusWindowSlot *slot)
+NautilusView *
+nautilus_list_view_new (NautilusWindowSlot *slot)
 {
-	NautilusListView *view;
-
-	view = g_object_new (NAUTILUS_TYPE_LIST_VIEW,
+	return g_object_new (NAUTILUS_TYPE_LIST_VIEW,
 			     "window-slot", slot,
 			     NULL);
-	return NAUTILUS_VIEW (view);
-}
-
-static NautilusViewInfo nautilus_list_view = {
-	NAUTILUS_LIST_VIEW_ID,
-	/* translators: this is used in the view selection dropdown
-	 * of navigation windows and in the preferences dialog */
-	N_("List View"),
-	/* translators: this is used in the view menu */
-	N_("_List"),
-	N_("The list view encountered an error."),
-	N_("The list view encountered an error while starting up."),
-	N_("Display this location with the list view."),
-	nautilus_list_view_create
-};
-
-void
-nautilus_list_view_register (void)
-{
-	nautilus_list_view.view_combo_label = _(nautilus_list_view.view_combo_label);
-	nautilus_list_view.view_menu_label_with_mnemonic = _(nautilus_list_view.view_menu_label_with_mnemonic);
-	nautilus_list_view.error_label = _(nautilus_list_view.error_label);
-	nautilus_list_view.startup_error_label = _(nautilus_list_view.startup_error_label);
-	nautilus_list_view.display_location_label = _(nautilus_list_view.display_location_label);
-
-	nautilus_view_factory_register (&nautilus_list_view);
 }
 
 GtkTreeView*

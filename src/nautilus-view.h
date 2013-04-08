@@ -41,6 +41,14 @@ typedef struct NautilusViewClass NautilusViewClass;
 #include "nautilus-window.h"
 #include "nautilus-window-slot.h"
 
+#if ENABLE_EMPTY_VIEW
+#define NAUTILUS_EMPTY_VIEW_ID "OAFIID:Nautilus_File_Manager_Empty_View"
+#endif
+
+#define NAUTILUS_CANVAS_VIEW_ID "OAFIID:Nautilus_File_Manager_Canvas_View"
+#define NAUTILUS_DESKTOP_CANVAS_VIEW_ID "OAFIID:Nautilus_File_Manager_Desktop_Canvas_View"
+#define NAUTILUS_LIST_VIEW_ID "OAFIID:Nautilus_File_Manager_List_View"
+
 #define NAUTILUS_TYPE_VIEW nautilus_view_get_type()
 #define NAUTILUS_VIEW(obj)\
 	(G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_VIEW, NautilusView))
@@ -294,8 +302,11 @@ struct NautilusViewClass {
 /* GObject support */
 GType               nautilus_view_get_type                         (void);
 
+NautilusView *      nautilus_view_new                              (const gchar *id,
+								    NautilusWindowSlot *slot);
+
 /* Functions callable from the user interface and elsewhere. */
-NautilusWindowSlot *nautilus_view_get_nautilus_window_slot     (NautilusView  *view);
+NautilusWindowSlot *nautilus_view_get_nautilus_window_slot         (NautilusView  *view);
 char *              nautilus_view_get_uri                          (NautilusView  *view);
 
 void                nautilus_view_display_selection_info           (NautilusView  *view);

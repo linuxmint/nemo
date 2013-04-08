@@ -195,8 +195,6 @@ nautilus_SOURCES = \
 	nautilus-view.h				\
 	nautilus-view-dnd.c			\
 	nautilus-view-dnd.h			\
-	nautilus-view-factory.c 		\
-	nautilus-view-factory.h 		\
 	nautilus-window-menus.c         	\
 	nautilus-window-private.h		\
 	nautilus-window-slot.c			\

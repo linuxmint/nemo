@@ -44,8 +44,6 @@ typedef struct NautilusCanvasViewClass NautilusCanvasViewClass;
 #define NAUTILUS_CANVAS_VIEW_GET_CLASS(obj) \
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_TYPE_CANVAS_VIEW, NautilusCanvasViewClass))
 
-#define NAUTILUS_CANVAS_VIEW_ID "OAFIID:Nautilus_File_Manager_Canvas_View"
-
 typedef struct NautilusCanvasViewDetails NautilusCanvasViewDetails;
 
 struct NautilusCanvasView {
@@ -66,7 +64,7 @@ void    nautilus_canvas_view_filter_by_screen (NautilusCanvasView *canvas_view,
 					     gboolean filter);
 void    nautilus_canvas_view_clean_up_by_name (NautilusCanvasView *canvas_view);
 
-void    nautilus_canvas_view_register         (void);
+NautilusView * nautilus_canvas_view_new (NautilusWindowSlot *slot);
 
 NautilusCanvasContainer * nautilus_canvas_view_get_canvas_container (NautilusCanvasView *view);
 
