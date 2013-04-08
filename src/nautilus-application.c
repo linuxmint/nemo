@@ -397,15 +397,18 @@ selection_get_cb (GtkWidget          *widget,
 }
 
 static GtkWidget *
-get_desktop_manager_selection (GdkDisplay *display, int screen)
+get_desktop_manager_selection (GdkScreen *screen)
 {
 	char selection_name[32];
 	GdkAtom selection_atom;
 	Window selection_owner;
+	GdkDisplay *display;
 	GtkWidget *selection_widget;
 
-	g_snprintf (selection_name, sizeof (selection_name), "_NET_DESKTOP_MANAGER_S%d", screen);
+	g_snprintf (selection_name, sizeof (selection_name),
+		    "_NET_DESKTOP_MANAGER_S%d", gdk_screen_get_number (screen));
 	selection_atom = gdk_atom_intern (selection_name, FALSE);
+	display = gdk_screen_get_display (screen);
 
 	selection_owner = XGetSelectionOwner (GDK_DISPLAY_XDISPLAY (display),
 					      gdk_x11_atom_to_xatom_for_display (display, 
@@ -414,7 +417,7 @@ get_desktop_manager_selection (GdkDisplay *display, int screen)
 		return NULL;
 	}
 	
-	selection_widget = gtk_invisible_new_for_screen (gdk_display_get_screen (display, screen));
+	selection_widget = gtk_invisible_new_for_screen (screen);
 	/* We need this for gdk_x11_get_server_time() */
 	gtk_widget_add_events (selection_widget, GDK_PROPERTY_CHANGE_MASK);
 
@@ -456,38 +459,32 @@ selection_clear_event_cb (GtkWidget	        *widget,
 static void
 nautilus_application_create_desktop_windows (NautilusApplication *application)
 {
-	GdkDisplay *display;
+	GdkScreen *screen;
 	NautilusDesktopWindow *window;
 	GtkWidget *selection_widget;
-	int screens, i;
 
-	display = gdk_display_get_default ();
-	screens = gdk_display_get_n_screens (display);
+	screen = gdk_screen_get_default ();
 
-	for (i = 0; i < screens; i++) {
-
-		DEBUG ("Creating a desktop window for screen %d", i);
+	DEBUG ("Creating desktop window");
 		
-		selection_widget = get_desktop_manager_selection (display, i);
-		if (selection_widget != NULL) {
-			window = nautilus_desktop_window_new (GTK_APPLICATION (application),
-							      gdk_display_get_screen (display, i));
+	selection_widget = get_desktop_manager_selection (screen);
+	if (selection_widget != NULL) {
+		window = nautilus_desktop_window_new (GTK_APPLICATION (application), screen);
 
-			g_signal_connect (selection_widget, "selection-clear-event",
-					  G_CALLBACK (selection_clear_event_cb), window);
-			
-			g_signal_connect (window, "unrealize",
-					  G_CALLBACK (desktop_unrealize_cb), selection_widget);
-			
-			/* We realize it immediately so that the NAUTILUS_DESKTOP_WINDOW_ID
-			   property is set so gnome-settings-daemon doesn't try to set the
-			   background. And we do a gdk_flush() to be sure X gets it. */
-			gtk_widget_realize (GTK_WIDGET (window));
-			gdk_flush ();
+		g_signal_connect (selection_widget, "selection-clear-event",
+				  G_CALLBACK (selection_clear_event_cb), window);
 
-			nautilus_application_desktop_windows =
-				g_list_prepend (nautilus_application_desktop_windows, window);
-		}
+		g_signal_connect (window, "unrealize",
+				  G_CALLBACK (desktop_unrealize_cb), selection_widget);
+
+		/* We realize it immediately so that the NAUTILUS_DESKTOP_WINDOW_ID
+		   property is set so gnome-settings-daemon doesn't try to set the
+		   background. And we do a gdk_flush() to be sure X gets it. */
+		gtk_widget_realize (GTK_WIDGET (window));
+		gdk_flush ();
+
+		nautilus_application_desktop_windows =
+			g_list_prepend (nautilus_application_desktop_windows, window);
 	}
 }
 
@@ -1369,20 +1366,17 @@ nautilus_application_open_desktop (NautilusApplication *application)
 	/* Initialize the desktop link monitor singleton */
 	nautilus_desktop_link_monitor_get ();
 
-	if (nautilus_application_desktop_windows == NULL) {
-		nautilus_application_create_desktop_windows (application);
-	}
+	nautilus_application_create_desktop_windows (application);
 }
 
 static void
 nautilus_application_close_desktop (void)
 {
-	if (nautilus_application_desktop_windows != NULL) {
-		g_list_foreach (nautilus_application_desktop_windows,
-				(GFunc) gtk_widget_destroy, NULL);
-		g_list_free (nautilus_application_desktop_windows);
-		nautilus_application_desktop_windows = NULL;
-	}
+	g_list_foreach (nautilus_application_desktop_windows,
+			(GFunc) gtk_widget_destroy, NULL);
+	g_list_free (nautilus_application_desktop_windows);
+	nautilus_application_desktop_windows = NULL;
+
 	nautilus_desktop_link_monitor_shutdown ();
 }
 
