@@ -96,12 +96,6 @@ nautilus_empty_view_get_selection_for_file_transfer (NautilusView *view)
 	return NULL;
 }
 
-static guint
-nautilus_empty_view_get_item_count (NautilusView *view)
-{
-	return NAUTILUS_EMPTY_VIEW (view)->details->number_of_files;
-}
-
 static gboolean
 nautilus_empty_view_is_empty (NautilusView *view)
 {
@@ -269,7 +263,6 @@ nautilus_empty_view_class_init (NautilusEmptyViewClass *class)
 	nautilus_view_class->file_changed = nautilus_empty_view_file_changed;
 	nautilus_view_class->get_selection = nautilus_empty_view_get_selection;
 	nautilus_view_class->get_selection_for_file_transfer = nautilus_empty_view_get_selection_for_file_transfer;
-	nautilus_view_class->get_item_count = nautilus_empty_view_get_item_count;
 	nautilus_view_class->is_empty = nautilus_empty_view_is_empty;
 	nautilus_view_class->remove_file = nautilus_empty_view_remove_file;
 	nautilus_view_class->merge_menus = nautilus_empty_view_merge_menus;
