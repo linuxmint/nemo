@@ -2270,27 +2270,6 @@ nautilus_canvas_view_create (NautilusWindowSlot *slot)
 	return NAUTILUS_VIEW (view);
 }
 
-static gboolean
-nautilus_canvas_view_supports_uri (const char *uri,
-			   GFileType file_type,
-			   const char *mime_type)
-{
-	if (file_type == G_FILE_TYPE_DIRECTORY) {
-		return TRUE;
-	}
-	if (strcmp (mime_type, NAUTILUS_SAVED_SEARCH_MIMETYPE) == 0){
-		return TRUE;
-	}
-	if (g_str_has_prefix (uri, "trash:")) {
-		return TRUE;
-	}
-	if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 #define TRANSLATE_VIEW_INFO(view_info)					\
 	view_info.view_combo_label = _(view_info.view_combo_label);	\
 	view_info.view_menu_label_with_mnemonic = _(view_info.view_menu_label_with_mnemonic); \
@@ -2309,8 +2288,7 @@ static NautilusViewInfo nautilus_canvas_view = {
 	N_("The icon view encountered an error."),
 	N_("The icon view encountered an error while starting up."),
 	N_("Display this location with the icon view."),
-	nautilus_canvas_view_create,
-	nautilus_canvas_view_supports_uri
+	nautilus_canvas_view_create
 };
 
 void

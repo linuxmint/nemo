@@ -44,10 +44,6 @@ struct _NautilusViewInfo {
 	char *startup_error_label;         /* The foo view encountered an error while starting up. */
 	char *display_location_label;      /* Display this location with the foo view. */
 	NautilusView * (*create) (NautilusWindowSlot *slot);
-	/* BONOBOTODO: More args here */
-	gboolean (*supports_uri) (const char *uri,
-				  GFileType file_type,
-				  const char *mime_type);
 };
 
 
@@ -55,16 +51,6 @@ void                    nautilus_view_factory_register          (NautilusViewInf
 const NautilusViewInfo *nautilus_view_factory_lookup            (const char         *id);
 NautilusView *          nautilus_view_factory_create            (const char         *id,
 								 NautilusWindowSlot *slot);
-gboolean                nautilus_view_factory_view_supports_uri (const char         *id,
-								 GFile              *location,
-								 GFileType          file_type,
-								 const char         *mime_type);
-GList *                 nautilus_view_factory_get_views_for_uri (const char         *uri,
-								 GFileType          file_type,
-								 const char         *mime_type);
-
-
-
 
 G_END_DECLS
 

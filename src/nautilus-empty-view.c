@@ -313,27 +313,6 @@ nautilus_empty_view_create (NautilusWindowSlot *slot)
 	return NAUTILUS_VIEW (view);
 }
 
-static gboolean
-nautilus_empty_view_supports_uri (const char *uri,
-				  GFileType file_type,
-				  const char *mime_type)
-{
-	if (file_type == G_FILE_TYPE_DIRECTORY) {
-		return TRUE;
-	}
-	if (strcmp (mime_type, NAUTILUS_SAVED_SEARCH_MIMETYPE) == 0){
-		return TRUE;
-	}
-	if (g_str_has_prefix (uri, "trash:")) {
-		return TRUE;
-	}
-	if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 static NautilusViewInfo nautilus_empty_view = {
 	NAUTILUS_EMPTY_VIEW_ID,
 	"Empty",
@@ -341,8 +320,7 @@ static NautilusViewInfo nautilus_empty_view = {
 	"_Empty View",
 	"The empty view encountered an error.",
 	"Display this location with the empty view.",
-	nautilus_empty_view_create,
-	nautilus_empty_view_supports_uri
+	nautilus_empty_view_create
 };
 
 void

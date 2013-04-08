@@ -759,18 +759,6 @@ nautilus_desktop_canvas_view_create (NautilusWindowSlot *slot)
 	return NAUTILUS_VIEW (view);
 }
 
-static gboolean
-nautilus_desktop_canvas_view_supports_uri (const char *uri,
-				   GFileType file_type,
-				   const char *mime_type)
-{
-	if (g_str_has_prefix (uri, EEL_DESKTOP_URI)) {
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 static NautilusViewInfo nautilus_desktop_canvas_view = {
 	NAUTILUS_DESKTOP_CANVAS_VIEW_ID,
 	"Desktop View",
@@ -778,8 +766,7 @@ static NautilusViewInfo nautilus_desktop_canvas_view = {
 	N_("The desktop view encountered an error."),
 	N_("The desktop view encountered an error while starting up."),
 	"Display this location with the desktop view.",
-	nautilus_desktop_canvas_view_create,
-	nautilus_desktop_canvas_view_supports_uri
+	nautilus_desktop_canvas_view_create
 };
 
 void

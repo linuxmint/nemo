@@ -1258,15 +1258,6 @@ got_file_info_for_view_selection_callback (NautilusFile *file,
 
 		if (view_id == NULL) {
 			view_id = nautilus_global_preferences_get_default_folder_viewer_preference_as_iid ();
-
-			if (view_id != NULL &&
-			    !nautilus_view_factory_view_supports_uri (view_id,
-								      location,
-								      nautilus_file_get_file_type (file),
-								      mimetype)) {
-				g_free (view_id);
-				view_id = NULL;
-			}
 		}
 
 		g_free (mimetype);
