@@ -3334,8 +3334,9 @@ nautilus_file_is_hidden_file (NautilusFile *file)
 
 /**
  * nautilus_file_should_show:
- * @file: the file to check.
- * @show_hidden: whether we want to show hidden files or not.
+ * @file: the file to check
+ * @show_hidden: whether we want to show hidden files or not
+ * @show_foreign: whether we want to show foreign files or not
  * 
  * Determines if a #NautilusFile should be shown. Note that when browsing
  * a trash directory, this function will always return %TRUE. 
@@ -3350,10 +3351,17 @@ nautilus_file_should_show (NautilusFile *file,
 	/* Never hide any files in trash. */
 	if (nautilus_file_is_in_trash (file)) {
 		return TRUE;
-	} else {
-		return (show_hidden || !nautilus_file_is_hidden_file (file)) &&
-			(show_foreign || !(nautilus_file_is_in_desktop (file) && nautilus_file_is_foreign_link (file)));
 	}
+
+	if (!show_hidden && nautilus_file_is_hidden_file (file)) {
+		return FALSE;
+	}
+
+	if (!show_foreign && nautilus_file_is_foreign_link (file)) {
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 gboolean
