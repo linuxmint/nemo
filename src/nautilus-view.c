@@ -471,6 +471,8 @@ nautilus_view_reset_to_defaults (NautilusView *view)
 					      NAUTILUS_ACTION_SHOW_HIDDEN_FILES);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
 				      g_settings_get_boolean (gtk_filechooser_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES));
+
+        NAUTILUS_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->reset_to_defaults (view);
 }
 
 static gboolean
