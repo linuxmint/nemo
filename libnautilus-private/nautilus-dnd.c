@@ -461,6 +461,13 @@ nautilus_drag_default_drop_action_for_icons (GdkDragContext *context,
 	dropped_file = ((NautilusDragSelectionItem *)items->data)->file;
 	target_file = nautilus_file_get_existing_by_uri (target_uri_string);
 
+	if (eel_uri_is_desktop (dropped_uri) &&
+	    !eel_uri_is_desktop (target_uri_string)) {
+		/* Desktop items only move on the desktop */
+		*action = 0;
+		return;
+	}
+
 	/*
 	 * Check for trash URI.  We do a find_directory for any Trash directory.
 	 * Passing 0 permissions as gnome-vfs would override the permissions
