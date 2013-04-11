@@ -1,0 +1,4807 @@
+# Basque translation for linuxmint
+# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
+# This file is distributed under the same license as the linuxmint package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxmint\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2013-01-21 13:19+0000\n"
+"PO-Revision-Date: 2012-12-22 21:36+0000\n"
+"Last-Translator: Asier Sarasua Garmendia <Unknown>\n"
+"Language-Team: Basque <eu@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Launchpad-Export-Date: 2013-04-11 14:39+0000\n"
+"X-Generator: Launchpad (build 16550)\n"
+
+#: src/nemo-application.c:158
+#, c-format
+msgid "Nemo could not create the required folder \"%s\"."
+msgstr "Nemok ezin izan du sortu beharrezko \"%s\" karpeta."
+
+#: src/nemo-application.c:160
+msgid ""
+"Before running Nemo, please create the following folder, or set permissions "
+"such that Nemo can create it."
+msgstr ""
+"Nemo exekutatu baino lehen, sortu karpeta, edo ezarri baimenak Nemok hura "
+"sortu ahal dezan."
+
+#: src/nemo-application.c:163
+#, c-format
+msgid "Nemo could not create the following required folders: %s."
+msgstr "Nemok ezin izan ditu sortu beharrezko \"%s\" karpetak."
+
+#: src/nemo-application.c:165
+msgid ""
+"Before running Nemo, please create these folders, or set permissions such "
+"that Nemo can create them."
+msgstr ""
+"Nemo exekutatu baino lehen, sortu karpeta horiek, edo ezarri baimenak Nemok "
+"haiek sortu ahal ditzan."
+
+#: src/nemo-application.c:297
+msgid ""
+"Nemo 3.0 deprecated this directory and tried migrating this configuration to "
+"~/.config/nemo"
+msgstr ""
+
+#: src/nemo-application.c:858
+msgid "--check cannot be used with other options."
+msgstr "--check ezin da beste aukerekin erabili."
+
+#: src/nemo-application.c:864
+msgid "--quit cannot be used with URIs."
+msgstr "--quit ezin da URIekin erabili."
+
+#: src/nemo-application.c:871
+msgid "--geometry cannot be used with more than one URI."
+msgstr "--geometry ezin da URI bat baino gehiagorekin erabili."
+
+#: src/nemo-application.c:925
+msgid "Perform a quick set of self-check tests."
+msgstr "Burutu auto-egiaztapen proba azkarrak."
+
+#: src/nemo-application.c:931
+msgid "Show the version of the program."
+msgstr "Erakutsi programaren bertsioa."
+
+#: src/nemo-application.c:933
+msgid "Create the initial window with the given geometry."
+msgstr "Sortu hasierako leihoa emandako geometriarekin."
+
+#: src/nemo-application.c:933
+msgid "GEOMETRY"
+msgstr "GEOMETRIA"
+
+#: src/nemo-application.c:935
+msgid "Only create windows for explicitly specified URIs."
+msgstr "Zehaztutako URIentzat soilik sortu leihoak."
+
+#: src/nemo-application.c:937
+msgid ""
+"Do not manage the desktop (ignore the preference set in the preferences "
+"dialog)."
+msgstr ""
+"Ez kudeatu mahaigaina (ez egin jaramonik hobespenen elkarrizketa-koadroan "
+"ezarritako hobespenei)."
+
+#: src/nemo-application.c:939
+msgid "Quit Nemo."
+msgstr "Irten Nemo-tik."
+
+#: src/nemo-application.c:940
+msgid "[URI...]"
+msgstr "[URIa...]"
+
+#: src/nemo-application.c:951
+msgid ""
+"\n"
+"\n"
+"Browse the file system with the file manager"
+msgstr ""
+"\n"
+"\n"
+"Arakatu fitxategi-sistema fitxategi-kudeatzailearekin"
+
+#: src/nemo-autorun-software.c:143 src/nemo-autorun-software.c:146
+#, c-format
+msgid "Error starting autorun program: %s"
+msgstr "Errorea automatikoki exekutatzeko programa abiaraztean: %s"
+
+#: src/nemo-autorun-software.c:149
+msgid "Cannot find the autorun program"
+msgstr "Ezin da automatikoki exekutatzeko programa aurkitu"
+
+#: src/nemo-autorun-software.c:171
+msgid "<big><b>Error autorunning software</b></big>"
+msgstr "<big><b>Errorea softwarea automatikoki exekutatzean</b></big>"
+
+#: src/nemo-autorun-software.c:197
+msgid ""
+"<big><b>This medium contains software intended to be automatically started. "
+"Would you like to run it?</b></big>"
+msgstr ""
+"<big><b>Euskarri honek automatikoki abiarazi izateko softwarea du. "
+"Exekutatzea nahi duzu?</b></big>"
+
+#: src/nemo-autorun-software.c:199
+#, c-format
+msgid ""
+"The software will run directly from the medium \"%s\". You should never run "
+"software that you don't trust.\n"
+"\n"
+"If in doubt, press Cancel."
+msgstr ""
+"Softwarea zuzenean \"%s\" euskarritik exekutatuko da. Fidatzen ez zaren "
+"softwarea inoiz ez zenuke exekutatu behar.\n"
+"\n"
+"Zalantza izanez gero, sakatu 'Utzi' botoia."
+
+#: src/nemo-autorun-software.c:233 src/nemo-mime-actions.c:718
+msgid "_Run"
+msgstr "_Exekutatu"
+
+#: src/nemo-bookmarks-window.c:158 src/nemo-file-management-properties.c:229
+#: src/nemo-window-menus.c:400
+#, c-format
+msgid ""
+"There was an error displaying help: \n"
+"%s"
+msgstr ""
+"Errorea gertatu da laguntza bistaratzean: \n"
+"%s"
+
+#: src/nemo-bookmarks-window.c:192
+msgid "No bookmarks defined"
+msgstr "Ez da laster-markarik definitu"
+
+#: src/nemo-connect-server-dialog.c:128
+msgid "SSH"
+msgstr "SSH"
+
+#: src/nemo-connect-server-dialog.c:131
+msgid "Public FTP"
+msgstr "FTP publikoa"
+
+#: src/nemo-connect-server-dialog.c:133
+msgid "FTP (with login)"
+msgstr "FTP (pasahitzarekin)"
+
+#: src/nemo-connect-server-dialog.c:136
+msgid "Windows share"
+msgstr "Windows-ek partekatua"
+
+#: src/nemo-connect-server-dialog.c:138
+msgid "WebDAV (HTTP)"
+msgstr "WebDAV (HTTP)"
+
+#: src/nemo-connect-server-dialog.c:140
+msgid "Secure WebDAV (HTTPS)"
+msgstr "WebDAV segurua (HTTPS)"
+
+#: src/nemo-connect-server-dialog.c:187
+msgid "Connecting..."
+msgstr "Konektatzen..."
+
+#: src/nemo-connect-server-dialog.c:211
+msgid ""
+"Can't load the supported server method list.\n"
+"Please check your gvfs installation."
+msgstr ""
+"Ezin da zerbitzariak onartutako metodoen zerrenda kargatu.\n"
+"Egiaztatu gvfs instalazioa."
+
+#: src/nemo-connect-server-dialog.c:289
+#, c-format
+msgid "The folder \"%s\" cannot be opened on \"%s\"."
+msgstr "Ezin da \"%s\" karpeta \"%s\"(e)n ireki."
+
+#: src/nemo-connect-server-dialog.c:299
+#, c-format
+msgid "The server at \"%s\" cannot be found."
+msgstr "Ezin da \"%s\" ostalariko zerbitzaria aurkitu."
+
+#: src/nemo-connect-server-dialog.c:334
+msgid "Try Again"
+msgstr "Saiatu berriro"
+
+#: src/nemo-connect-server-dialog.c:399
+msgid "Please verify your user details."
+msgstr "Egiaztatu zure erabiltzailearen xehetasunak."
+
+#: src/nemo-connect-server-dialog.c:429
+msgid "Continue"
+msgstr "Jarraitu"
+
+#: src/nemo-connect-server-dialog.c:701 src/nemo-properties-window.c:5125
+#: src/nemo-view.c:1519
+msgid "There was an error displaying help."
+msgstr "Errorea gertatu da laguntza bistaratzean."
+
+#: src/nemo-connect-server-dialog.c:719 src/nemo-connect-server-dialog.c:1109
+msgid "C_onnect"
+msgstr "K_onektatu"
+
+#: src/nemo-connect-server-dialog.c:844
+msgid "Connect to Server"
+msgstr "Konektatu zerbitzarira"
+
+#: src/nemo-connect-server-dialog.c:862
+msgid "Server Details"
+msgstr "Zerbitzariaren xehetasunak"
+
+#: src/nemo-connect-server-dialog.c:886
+msgid "_Server:"
+msgstr "_Zerbitzaria:"
+
+#: src/nemo-connect-server-dialog.c:906
+msgid "_Port:"
+msgstr "_Ataka:"
+
+#: src/nemo-connect-server-dialog.c:924
+msgid "_Type:"
+msgstr "_Mota:"
+
+#: src/nemo-connect-server-dialog.c:993
+msgid "Sh_are:"
+msgstr "P_artekatu:"
+
+#: src/nemo-connect-server-dialog.c:1008 src/nemo-view.c:1713
+msgid "_Folder:"
+msgstr "_Karpeta:"
+
+#: src/nemo-connect-server-dialog.c:1026
+msgid "User Details"
+msgstr "Erabiltzailearen xehetasunak"
+
+#: src/nemo-connect-server-dialog.c:1049
+msgid "_Domain name:"
+msgstr "_Domeinu-izena:"
+
+#: src/nemo-connect-server-dialog.c:1064
+msgid "_User name:"
+msgstr "_Erabiltzaile-izena:"
+
+#: src/nemo-connect-server-dialog.c:1079
+msgid "Pass_word:"
+msgstr "_Pasahitza:"
+
+#: src/nemo-connect-server-dialog.c:1095
+msgid "_Remember this password"
+msgstr "_Gogoratu pasahitz hau"
+
+#: src/nemo-connect-server-dialog.c:1195
+msgid "Operation cancelled"
+msgstr "Eragiketa bertan behera utzi da"
+
+#: src/nemo-connect-server-dialog-main.c:120
+msgid "Print but do not open the URI"
+msgstr "Inprimatu baina ez ireki URIa"
+
+#: src/nemo-connect-server-dialog-main.c:131
+msgid ""
+"\n"
+"\n"
+"Add connect to server mount"
+msgstr ""
+
+#: src/nemo-desktop-icon-view.c:766 src/nemo-view.c:7876 src/nemo-view.c:9445
+msgid "E_mpty Trash"
+msgstr "_Hustu zakarrontzia"
+
+#: src/nemo-desktop-icon-view.c:782 src/nemo-view.c:7824
+msgid "Create L_auncher..."
+msgstr "Sortu a_biarazlea..."
+
+#: src/nemo-desktop-icon-view.c:784 src/nemo-view.c:7825
+msgid "Create a new launcher"
+msgstr "Sortu abiarazle berria"
+
+#: src/nemo-desktop-icon-view.c:789
+msgid "Change Desktop _Background"
+msgstr "Aldatu _mahaigainaren atzeko planoa"
+
+#: src/nemo-desktop-icon-view.c:791
+msgid ""
+"Show a window that lets you set your desktop background's pattern or color"
+msgstr ""
+"Zure mahaigaineko atzeko planoaren eredua edo kolorea ezartzeko aukera "
+"ematen dizun leihoa erakusten du"
+
+#: src/nemo-desktop-icon-view.c:796
+msgid "Empty Trash"
+msgstr "Hustu zakarrontzia"
+
+#: src/nemo-desktop-icon-view.c:798 src/nemo-trash-bar.c:207
+#: src/nemo-view.c:7877
+msgid "Delete all items in the Trash"
+msgstr "Ezabatu zakarrontziko elementu guztiak"
+
+#: src/nemo-desktop-icon-view.c:803
+msgid "Add Desklets"
+msgstr ""
+
+#: src/nemo-desktop-icon-view.c:805
+msgid "Open Cinnamon Settings to add desklets"
+msgstr ""
+
+#: src/nemo-desktop-icon-view.c:868
+msgid "The desktop view encountered an error."
+msgstr "Mahaigainaren ikuspegiak errorea aurkitu du."
+
+#: src/nemo-desktop-icon-view.c:869
+msgid "The desktop view encountered an error while starting up."
+msgstr "Mahaigainaren ikuspegiak errorea aurkitu du abiaraztean."
+
+#: src/nemo-desktop-item-properties.c:405
+#: src/nemo-desktop-item-properties.c:415 src/nemo-image-properties-page.c:368
+msgid "Comment"
+msgstr "Iruzkina"
+
+#: src/nemo-desktop-item-properties.c:408
+msgid "URL"
+msgstr "URLa"
+
+#: src/nemo-desktop-item-properties.c:411
+#: src/nemo-desktop-item-properties.c:421 src/nemo-image-properties-page.c:361
+#: src/nemo-image-properties-page.c:414
+msgid "Description"
+msgstr "Deskribapena"
+
+#: src/nemo-desktop-item-properties.c:418
+msgid "Command"
+msgstr "Komandoa"
+
+#: src/nemo-desktop-window.c:92 src/nemo-desktop-window.c:290
+#: src/nemo-pathbar.c:1330 src/nemo-places-sidebar.c:668
+msgid "Desktop"
+msgstr "Mahaigaina"
+
+#: src/nemo-error-reporting.c:68
+#, c-format
+msgid ""
+"You do not have the permissions necessary to view the contents of \"%s\"."
+msgstr "Ez duzu behar adinako baimenik \"%s\"(r)en edukia ikusteko."
+
+#: src/nemo-error-reporting.c:72
+#, c-format
+msgid "\"%s\" could not be found. Perhaps it has recently been deleted."
+msgstr "Ezin izan da \"%s\" aurkitu. Baliteke duela gutxi ezabatu izana."
+
+#: src/nemo-error-reporting.c:76
+#, c-format
+msgid "Sorry, could not display all the contents of \"%s\": %s"
+msgstr "Ezin izan da \"%s\"(r)en eduki osoa bistaratu: %s"
+
+#: src/nemo-error-reporting.c:83
+msgid "The folder contents could not be displayed."
+msgstr "Ezin izan dira karpetaren edukiak bistaratu."
+
+#: src/nemo-error-reporting.c:107
+#, c-format
+msgid ""
+"You do not have the permissions necessary to change the group of \"%s\"."
+msgstr "Ez duzu behar adinako baimenik \"%s\"(r)en taldea aldatzeko."
+
+#: src/nemo-error-reporting.c:120
+#, c-format
+msgid "Sorry, could not change the group of \"%s\": %s"
+msgstr "Ezin izan da \"%s\"(r)en taldea aldatu: %s"
+
+#: src/nemo-error-reporting.c:125
+msgid "The group could not be changed."
+msgstr "Ezin izan da taldea aldatu."
+
+#: src/nemo-error-reporting.c:145
+#, c-format
+msgid "Sorry, could not change the owner of \"%s\": %s"
+msgstr "Ezin izan da \"%s\"(r)en jabea aldatu: %s"
+
+#: src/nemo-error-reporting.c:147
+msgid "The owner could not be changed."
+msgstr "Ezin izan da jabea aldatu."
+
+#: src/nemo-error-reporting.c:167
+#, c-format
+msgid "Sorry, could not change the permissions of \"%s\": %s"
+msgstr "Ezin izan dira \"%s\"(r)en baimenak aldatu: %s"
+
+#: src/nemo-error-reporting.c:169
+msgid "The permissions could not be changed."
+msgstr "Ezin izan dira baimenak aldatu."
+
+#: src/nemo-error-reporting.c:204
+#, c-format
+msgid ""
+"The name \"%s\" is already used in this folder. Please use a different name."
+msgstr ""
+"Karpeta honetan lehendik ere badago \"%s\" izeneko bat. Erabili beste izen "
+"bat."
+
+#: src/nemo-error-reporting.c:209
+#, c-format
+msgid ""
+"There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
+msgstr ""
+"Karpeta honetan ez dago \"%s\"(r)ik. Lekuz aldatu edo ezabatu egin duzu?"
+
+#: src/nemo-error-reporting.c:214
+#, c-format
+msgid "You do not have the permissions necessary to rename \"%s\"."
+msgstr "Ez duzu behar adina baimenik \"%s\"(r)i izena aldatzeko."
+
+#: src/nemo-error-reporting.c:219
+#, c-format
+msgid ""
+"The name \"%s\" is not valid because it contains the character \"/\". Please "
+"use a different name."
+msgstr ""
+"\"%s\"izena ez da baliozkoa, \"/\" karakterea duelako. Erabili beste izen "
+"bat."
+
+#: src/nemo-error-reporting.c:223
+#, c-format
+msgid "The name \"%s\" is not valid. Please use a different name."
+msgstr "\"%s\"izena ez da baliozkoa. Erabili beste izen bat."
+
+#: src/nemo-error-reporting.c:229
+#, c-format
+msgid "The name \"%s\" is too long. Please use a different name."
+msgstr "\"%s\" izena luzeegia da. Erabili beste izen bat."
+
+#: src/nemo-error-reporting.c:243
+#, c-format
+msgid "Sorry, could not rename \"%s\" to \"%s\": %s"
+msgstr "Ezin izan da \"%s\" izenaren ordez \"%s\" ipini: %s"
+
+#: src/nemo-error-reporting.c:251
+msgid "The item could not be renamed."
+msgstr "Ezin izan da elementua berrizendatu."
+
+#: src/nemo-error-reporting.c:348
+#, c-format
+msgid "Renaming \"%s\" to \"%s\"."
+msgstr "\"%s\" izenaren ordez \"%s\" jarriko da."
+
+#: src/nemo-file-management-properties.c:313 src/nemo-properties-window.c:3923
+#: src/nemo-properties-window.c:3934
+msgid "None"
+msgstr "Bat ere ez"
+
+#: src/nemo-file-management-properties.c:496 libnemo-private/nemo-file.c:4373
+msgid "today at %-I:%M:%S %p"
+msgstr "gaur, %-I:%M:%S %p"
+
+#: src/nemo-icon-view.c:133
+msgid "by _Name"
+msgstr "_Izenaren arabera"
+
+#: src/nemo-icon-view.c:134 src/nemo-icon-view.c:1434
+msgid "Keep icons sorted by name in rows"
+msgstr "Mantendu ikonoak errenkadetan izenaren arabera ordenatuta"
+
+#: src/nemo-icon-view.c:140
+msgid "by _Size"
+msgstr "_tamainaren arabera"
+
+#: src/nemo-icon-view.c:141 src/nemo-icon-view.c:1438
+msgid "Keep icons sorted by size in rows"
+msgstr "Mantendu ikonoak errenkadetan tamainaren arabera ordenatuta"
+
+#: src/nemo-icon-view.c:147
+msgid "by _Type"
+msgstr "_motaren arabera"
+
+#: src/nemo-icon-view.c:148 src/nemo-icon-view.c:1442
+msgid "Keep icons sorted by type in rows"
+msgstr "Mantendu ikonoak errenkadetan motaren arabera ordenatuta"
+
+#: src/nemo-icon-view.c:154
+msgid "by Modification _Date"
+msgstr "aldatze-_dataren arabera"
+
+#: src/nemo-icon-view.c:155 src/nemo-icon-view.c:1446
+msgid "Keep icons sorted by modification date in rows"
+msgstr "Mantendu ikonoak errenkadetan aldatze-dataren arabera ordenatuta"
+
+#: src/nemo-icon-view.c:161
+msgid "by T_rash Time"
+msgstr "zaka_rrontzira botatako orduaren arabera"
+
+#: src/nemo-icon-view.c:162 src/nemo-icon-view.c:1450
+msgid "Keep icons sorted by trash time in rows"
+msgstr ""
+"Ikonoak errenkadetan ipintzen ditu zakarrontzira botatako orduaren arabera "
+"antolatuta"
+
+#: src/nemo-icon-view.c:685
+msgid "_Organize Desktop by Name"
+msgstr "_Antolatu mahaigaina izenaren arabera"
+
+#: src/nemo-icon-view.c:1393
+msgid "Arran_ge Items"
+msgstr "_Antolatu elementuak"
+
+#: src/nemo-icon-view.c:1395
+msgid "Resize Icon..."
+msgstr "Aldatu ikonoaren tamaina..."
+
+#: src/nemo-icon-view.c:1396
+msgid "Make the selected icon resizable"
+msgstr "Hautatutako ikonoa tamainaz aldagarri egiten du"
+
+#: src/nemo-icon-view.c:1399 src/nemo-icon-view.c:1569
+msgid "Restore Icons' Original Si_zes"
+msgstr "Berrezarri ikonoen _jatorrizko tamainak"
+
+#: src/nemo-icon-view.c:1400
+msgid "Restore each selected icon to its original size"
+msgstr "Hautatutako ikonoak jatorrizko tamainara leheneratzen ditu"
+
+#: src/nemo-icon-view.c:1403
+msgid "_Organize by Name"
+msgstr "_Antolatu izenaren arabera"
+
+#: src/nemo-icon-view.c:1404
+msgid "Reposition icons to better fit in the window and avoid overlapping"
+msgstr ""
+"Ikonoak antolatzen ditu leihoari hobeto egokitzeko eta elkarren gainean ez "
+"teilakatzeko"
+
+#: src/nemo-icon-view.c:1411
+msgid "Compact _Layout"
+msgstr ""
+
+#: src/nemo-icon-view.c:1412
+msgid "Toggle using a tighter layout scheme"
+msgstr ""
+
+#: src/nemo-icon-view.c:1416
+msgid "Re_versed Order"
+msgstr "Al_derantzizko ordena"
+
+#: src/nemo-icon-view.c:1417
+msgid "Display icons in the opposite order"
+msgstr "Bistaratu ikonoak alderantzizko ordenan"
+
+#: src/nemo-icon-view.c:1421
+msgid "_Keep Aligned"
+msgstr "Edu_ki lerrokatuta"
+
+#: src/nemo-icon-view.c:1422
+msgid "Keep icons lined up on a grid"
+msgstr "Eduki ikonoak sareta batean lerrokatuta"
+
+#: src/nemo-icon-view.c:1429
+msgid "_Manually"
+msgstr "_Eskuz"
+
+#: src/nemo-icon-view.c:1430
+msgid "Leave icons wherever they are dropped"
+msgstr "Jaregiten zaien lekuan uzten ditu ikonoak"
+
+#: src/nemo-icon-view.c:1433
+msgid "By _Name"
+msgstr "_izenaren arabera"
+
+#: src/nemo-icon-view.c:1437
+msgid "By _Size"
+msgstr "_Tamainaren arabera"
+
+#: src/nemo-icon-view.c:1441
+msgid "By _Type"
+msgstr "_Motaren arabera"
+
+#: src/nemo-icon-view.c:1445
+msgid "By Modification _Date"
+msgstr "Aldatze-_dataren arabera"
+
+#: src/nemo-icon-view.c:1449
+msgid "By T_rash Time"
+msgstr "Zaka_rrontzira botatako orduaren arabera"
+
+#: src/nemo-icon-view.c:1570
+msgid "Restore Icon's Original Si_ze"
+msgstr "Berrezarri ikonoaren j_atorrizko tamaina"
+
+#: src/nemo-icon-view.c:2809 src/nemo-icon-view-container.c:588
+#: src/nemo-window-menus.c:1369
+msgid "Icon View"
+msgstr "Ikono-ikuspegia"
+
+#: src/nemo-icon-view.c:2811
+msgid "_Icons"
+msgstr "_Ikonoak"
+
+#: src/nemo-icon-view.c:2812
+msgid "The icon view encountered an error."
+msgstr "Ikono-ikuspegiak errorea aurkitu du."
+
+#: src/nemo-icon-view.c:2813
+msgid "The icon view encountered an error while starting up."
+msgstr "Ikono-ikuspegiak errorea aurkitu du abiaraztean."
+
+#: src/nemo-icon-view.c:2814
+msgid "Display this location with the icon view."
+msgstr "Bistaratu helbidea ikono-ikuspegiarekin."
+
+#: src/nemo-icon-view.c:2823 src/nemo-window-menus.c:1392
+msgid "Compact View"
+msgstr "Ikuspegi trinkoa"
+
+#: src/nemo-icon-view.c:2825
+msgid "_Compact"
+msgstr "_Trinkoa"
+
+#: src/nemo-icon-view.c:2826
+msgid "The compact view encountered an error."
+msgstr "Ikuspegi trinkoak errorea aurkitu du."
+
+#: src/nemo-icon-view.c:2827
+msgid "The compact view encountered an error while starting up."
+msgstr "Ikuspegi trinkoak errorea aurkitu du abiaraztean."
+
+#: src/nemo-icon-view.c:2828
+msgid "Display this location with the compact view."
+msgstr "Bistaratu helbidea ikuspegi trinkoarekin."
+
+#: src/nemo-image-properties-page.c:331
+msgid "Image Type"
+msgstr "Irudi-mota"
+
+#: src/nemo-image-properties-page.c:333 src/nemo-image-properties-page.c:339
+#, c-format
+msgid "%d pixel"
+msgid_plural "%d pixels"
+msgstr[0] "pixel %d"
+msgstr[1] "%d pixel"
+
+#: src/nemo-image-properties-page.c:337
+msgid "Width"
+msgstr "Zabalera"
+
+#: src/nemo-image-properties-page.c:343
+msgid "Height"
+msgstr "Altuera"
+
+#: src/nemo-image-properties-page.c:356 src/nemo-image-properties-page.c:357
+msgid "Title"
+msgstr "Izenburua"
+
+#: src/nemo-image-properties-page.c:358 src/nemo-image-properties-page.c:359
+msgid "Author"
+msgstr "Egilea"
+
+#: src/nemo-image-properties-page.c:362 src/nemo-image-properties-page.c:417
+msgid "Copyright"
+msgstr "Copyright-a"
+
+#: src/nemo-image-properties-page.c:363
+msgid "Created On"
+msgstr "Noiz sortua"
+
+#: src/nemo-image-properties-page.c:364
+msgid "Created By"
+msgstr "Nork sortua"
+
+#: src/nemo-image-properties-page.c:365
+msgid "Disclaimer"
+msgstr "Ezespena"
+
+#: src/nemo-image-properties-page.c:366
+msgid "Warning"
+msgstr "Abisua"
+
+#: src/nemo-image-properties-page.c:367
+msgid "Source"
+msgstr "Iturburua"
+
+#: src/nemo-image-properties-page.c:382
+msgid "Camera Brand"
+msgstr "Kamera-marka"
+
+#: src/nemo-image-properties-page.c:383
+msgid "Camera Model"
+msgstr "Kamera-modeloa"
+
+#: src/nemo-image-properties-page.c:386
+msgid "Date Taken"
+msgstr "Argazkiaren data"
+
+#: src/nemo-image-properties-page.c:387
+msgid "Date Digitized"
+msgstr "Digitalizatze-data"
+
+#: src/nemo-image-properties-page.c:388
+#: libnemo-private/nemo-column-utilities.c:65
+msgid "Date Modified"
+msgstr "Aldatze-data"
+
+#: src/nemo-image-properties-page.c:392
+msgid "Exposure Time"
+msgstr "Esposizio-denbora"
+
+#: src/nemo-image-properties-page.c:393
+msgid "Aperture Value"
+msgstr "Irekiduraren balioa"
+
+#: src/nemo-image-properties-page.c:394
+msgid "ISO Speed Rating"
+msgstr "ISO abiaduraren tasa"
+
+#: src/nemo-image-properties-page.c:395
+msgid "Flash Fired"
+msgstr "Flash-ekin"
+
+#: src/nemo-image-properties-page.c:396
+msgid "Metering Mode"
+msgstr "Neurtze-modua"
+
+#: src/nemo-image-properties-page.c:397
+msgid "Exposure Program"
+msgstr "Esposizio-programa"
+
+#: src/nemo-image-properties-page.c:398
+msgid "Focal Length"
+msgstr "Foku-luzera"
+
+#: src/nemo-image-properties-page.c:399
+msgid "Software"
+msgstr "Softwarea"
+
+#: src/nemo-image-properties-page.c:413 src/nemo-query-editor.c:112
+#: src/nemo-window-menus.c:1355 libnemo-private/nemo-column-utilities.c:129
+msgid "Location"
+msgstr "Kokapena"
+
+#: src/nemo-image-properties-page.c:415
+msgid "Keywords"
+msgstr "Gako-hitzak"
+
+#: src/nemo-image-properties-page.c:416
+msgid "Creator"
+msgstr "Sortzailea"
+
+#: src/nemo-image-properties-page.c:418
+msgid "Rating"
+msgstr "Balorazioa"
+
+#: src/nemo-image-properties-page.c:441
+msgid "Failed to load image information"
+msgstr "Huts egin du irudiaren informazioa kargatzean"
+
+#: src/nemo-image-properties-page.c:706 src/nemo-list-model.c:409
+#: src/nemo-tree-sidebar-model.c:1252 src/nemo-window-manage-views.c:1140
+#: src/nemo-window-slot.c:202
+msgid "Loading..."
+msgstr "Kargatzen..."
+
+#: src/nemo-image-properties-page.c:767
+msgid "Image"
+msgstr "Irudia"
+
+#: src/nemo-list-model.c:407 src/nemo-tree-sidebar-model.c:1252
+msgid "(Empty)"
+msgstr "(Hutsik)"
+
+#: src/nemo-list-view.c:1664 libnemo-private/nemo-column-utilities.c:43
+msgid "Name"
+msgstr "Izena"
+
+#: src/nemo-list-view.c:1722 src/nemo-list-view.c:3357
+#: src/nemo-window-menus.c:1380
+msgid "List View"
+msgstr "Zerrenda-ikuspegia"
+
+#: src/nemo-list-view.c:2539
+#, c-format
+msgid "%s Visible Columns"
+msgstr "%s zutabe ikusgai"
+
+#: src/nemo-list-view.c:2559
+msgid "Choose the order of information to appear in this folder:"
+msgstr "Aukeratu informazioaren ordena, karpeta honetan agertzeko:"
+
+#: src/nemo-list-view.c:2613
+msgid "Visible _Columns..."
+msgstr "_Zutabe ikusgaiak..."
+
+#: src/nemo-list-view.c:2614
+msgid "Select the columns visible in this folder"
+msgstr "Hautatu zutabe ikusgaiak karpeta honetan"
+
+#: src/nemo-list-view.c:3359
+msgid "_List"
+msgstr "_Zerrenda"
+
+#: src/nemo-list-view.c:3360
+msgid "The list view encountered an error."
+msgstr "Zerrenda-ikuspegiak errorea aurkitu du."
+
+#: src/nemo-list-view.c:3361
+msgid "The list view encountered an error while starting up."
+msgstr "Zerrenda-ikuspegiak errorea aurkitu du abiaraztean."
+
+#: src/nemo-list-view.c:3362
+msgid "Display this location with the list view."
+msgstr "Bistaratu helbidea zerrenda-ikuspegiarekin."
+
+#: src/nemo-location-bar.c:54 src/nemo-properties-window.c:3110
+msgid "Location:"
+msgstr "Kokapena:"
+
+#: src/nemo-location-bar.c:55
+msgid "Go To:"
+msgstr "Joan hona:"
+
+#: src/nemo-location-bar.c:180
+#, c-format
+msgid "Do you want to view %d location?"
+msgid_plural "Do you want to view %d locations?"
+msgstr[0] "Helbide %d ikusi nahi duzu?"
+msgstr[1] "%d helbide ikusi nahi dituzu?"
+
+#: src/nemo-location-bar.c:184 src/nemo-mime-actions.c:1046
+#, c-format
+msgid "This will open %d separate window."
+msgid_plural "This will open %d separate windows."
+msgstr[0] "Honek leiho bereizi %d irekiko du."
+msgstr[1] "Honek %d leiho bereizi irekiko ditu."
+
+#: src/nemo-mime-actions.c:626
+#, c-format
+msgid "The Link \"%s\" is Broken."
+msgstr "\"%s\" esteka hondatuta dago."
+
+#: src/nemo-mime-actions.c:628
+#, c-format
+msgid "The Link \"%s\" is Broken. Move it to Trash?"
+msgstr "\"%s\" esteka hondatua dago. Zakarrontzira bota nahi duzu?"
+
+#: src/nemo-mime-actions.c:634
+msgid "This link cannot be used, because it has no target."
+msgstr "Esteka hori ezin da erabili, helbururik ez duelako."
+
+#: src/nemo-mime-actions.c:636
+#, c-format
+msgid "This link cannot be used, because its target \"%s\" doesn't exist."
+msgstr "Esteka hori ezin da erabili, bere \"%s\" helburua ez dagoelako."
+
+#: src/nemo-mime-actions.c:646 src/nemo-tree-sidebar.c:1247
+#: src/nemo-view.c:7928 src/nemo-view.c:8046 src/nemo-view.c:9076
+#: src/nemo-view.c:9377
+msgid "Mo_ve to Trash"
+msgstr "_Bota zakarrontzira"
+
+#: src/nemo-mime-actions.c:706
+#, c-format
+msgid "Do you want to run \"%s\", or display its contents?"
+msgstr "\"%s\" exekutatu egin nahi duzu edo haren edukia bistaratu?"
+
+#: src/nemo-mime-actions.c:708
+#, c-format
+msgid "\"%s\" is an executable text file."
+msgstr "\"%s\" testu-fitxategi exekutagarria da."
+
+#: src/nemo-mime-actions.c:714
+msgid "Run in _Terminal"
+msgstr "Exekutatu _terminalean"
+
+#: src/nemo-mime-actions.c:715
+msgid "_Display"
+msgstr "_Bistaratu"
+
+#: src/nemo-mime-actions.c:1041 src/nemo-mime-actions.c:1786
+#: src/nemo-view.c:1017
+msgid "Are you sure you want to open all files?"
+msgstr "Ziur zaude fitxategi guztiak ireki nahi dituzula?"
+
+#: src/nemo-mime-actions.c:1043
+#, c-format
+msgid "This will open %d separate tab."
+msgid_plural "This will open %d separate tabs."
+msgstr[0] "Honek bereiztutako fitxa %d irekiko du."
+msgstr[1] "Honek bereiztutako %d fitxa irekiko ditu."
+
+#: src/nemo-mime-actions.c:1116 src/nemo-window-manage-views.c:1608
+#: src/nemo-window-manage-views.c:1614 src/nemo-window-manage-views.c:1631
+#: src/nemo-window-manage-views.c:1642 src/nemo-window-manage-views.c:1648
+#: src/nemo-window-manage-views.c:1674
+#, c-format
+msgid "Could not display \"%s\"."
+msgstr "Ezin izan da \"%s\" bistaratu."
+
+#: src/nemo-mime-actions.c:1213
+msgid "The file is of an unknown type"
+msgstr "Fitxategia mota ezezagunekoa da"
+
+#: src/nemo-mime-actions.c:1217
+#, c-format
+msgid "There is no application installed for %s files"
+msgstr "Ez dago aplikaziorik instalatuta %s fitxategientzako"
+
+#: src/nemo-mime-actions.c:1232
+msgid "_Select Application"
+msgstr "_Hautatu aplikazioa"
+
+#: src/nemo-mime-actions.c:1268
+msgid "There was an internal error trying to search for applications:"
+msgstr "Barneko errorea gertatu da aplikazioak bilatzen saiatzean:"
+
+#: src/nemo-mime-actions.c:1270
+msgid "Unable to search for application"
+msgstr "Ezin da aplikazioa bilatu"
+
+#: src/nemo-mime-actions.c:1389
+#, c-format
+msgid ""
+"There is no application installed for %s files.\n"
+"Do you want to search for an application to open this file?"
+msgstr ""
+"Ez dago aplikaziorik instalatuta %s fitxategientzako.\n"
+"Fitxategi hau irekitzeko aplikazio bat bilatzea nahi duzu?"
+
+#: src/nemo-mime-actions.c:1539
+msgid "Untrusted application launcher"
+msgstr "Aplikazio abiarazle ez-fidagarria"
+
+#: src/nemo-mime-actions.c:1542
+#, c-format
+msgid ""
+"The application launcher \"%s\" has not been marked as trusted. If you do "
+"not know the source of this file, launching it may be unsafe."
+msgstr ""
+"\"%s\" aplikazio abiarazlea ez da fidagarri gisa markatu. Fitxategi horren "
+"iturburua ez baduzu ezagutzen, hori abiaraztea arriskutsua iz<an daiteke."
+
+#: src/nemo-mime-actions.c:1558
+msgid "_Launch Anyway"
+msgstr "_Abiarazi dena den"
+
+#: src/nemo-mime-actions.c:1561
+msgid "Mark as _Trusted"
+msgstr "Markatu _fidagarri gisa"
+
+#: src/nemo-mime-actions.c:1787
+#, c-format
+msgid "This will open %d separate application."
+msgid_plural "This will open %d separate applications."
+msgstr[0] "Honek bereiztutako aplikazio %d irekiko du."
+msgstr[1] "Honek bereiztutako %d aplikazio irekiko ditu."
+
+#: src/nemo-mime-actions.c:1864 src/nemo-mime-actions.c:2138
+#: src/nemo-view.c:7024
+msgid "Unable to mount location"
+msgstr "Ezin da kokalekua muntatu"
+
+#: src/nemo-mime-actions.c:2217 src/nemo-view.c:7171
+msgid "Unable to start location"
+msgstr "Ezin da kokalekua abiatu"
+
+#: src/nemo-mime-actions.c:2301
+#, c-format
+msgid "Opening \"%s\"."
+msgstr "\"%s\" irekitzen."
+
+#: src/nemo-mime-actions.c:2304
+#, c-format
+msgid "Opening %d item."
+msgid_plural "Opening %d items."
+msgstr[0] "Elementu %d irekitzen."
+msgstr[1] "%d elementu irekitzen."
+
+#: src/nemo-notebook.c:370
+msgid "Close tab"
+msgstr "Itxi fitxa"
+
+#: src/nemo-places-sidebar.c:358
+msgid "Devices"
+msgstr "Gailuak"
+
+#: src/nemo-places-sidebar.c:583 src/nemo-view.c:3038
+#, c-format
+msgid "Free space: %s"
+msgstr "Leku librea: %s"
+
+#: src/nemo-places-sidebar.c:640
+msgid "My Computer"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:647
+#, c-format
+msgid ""
+"Open your personal folder\n"
+"%s"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:651 src/nemo-tree-sidebar.c:1343
+#: libnemo-private/nemo-bookmark.c:129 libnemo-private/nemo-desktop-link.c:120
+#: libnemo-private/nemo-file-utilities.c:66
+msgid "Home"
+msgstr "Karpeta nagusia"
+
+#: src/nemo-places-sidebar.c:670
+msgid "Open the contents of your desktop in a folder"
+msgstr "Ireki zure mahaigaineko edukiak karpeta batean"
+
+#: src/nemo-places-sidebar.c:719
+#, c-format
+msgid ""
+"Open the contents of the File System\n"
+"%s"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:723 src/nemo-tree-sidebar.c:1347
+msgid "File System"
+msgstr "Fitxategi-sistema"
+
+#: src/nemo-places-sidebar.c:737 src/nemo-trash-bar.c:191
+msgid "Trash"
+msgstr "Zakarrontzia"
+
+#: src/nemo-places-sidebar.c:739
+msgid "Open the trash"
+msgstr "Ireki zakarrontzia"
+
+#: src/nemo-places-sidebar.c:812
+#, c-format
+msgid ""
+"%s (%s)\n"
+"%s"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:841
+#, c-format
+msgid "Mount and open %s (%s)"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:869 src/nemo-places-sidebar.c:958
+#, c-format
+msgid "Mount and open %s"
+msgstr "Muntatu eta ireki %s"
+
+#: src/nemo-places-sidebar.c:911
+#, c-format
+msgid ""
+"%s\n"
+"%s"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:945 src/nemo-places-sidebar.c:1000
+#: src/nemo-tree-sidebar.c:1351
+msgid "Network"
+msgstr "Sarea"
+
+#: src/nemo-places-sidebar.c:1002
+msgid "Browse the contents of the network"
+msgstr "Arakatu sareko edukiak"
+
+#: src/nemo-places-sidebar.c:1994 src/nemo-places-sidebar.c:3028
+#: src/nemo-view.c:7974 src/nemo-view.c:7998 src/nemo-view.c:8070
+#: src/nemo-view.c:8712 src/nemo-view.c:8716 src/nemo-view.c:8799
+#: src/nemo-view.c:8803 src/nemo-view.c:8903 src/nemo-view.c:8907
+msgid "_Start"
+msgstr "_Abiarazi"
+
+#: src/nemo-places-sidebar.c:1995 src/nemo-places-sidebar.c:3035
+#: src/nemo-view.c:7978 src/nemo-view.c:8002 src/nemo-view.c:8074
+#: src/nemo-view.c:8741 src/nemo-view.c:8828 src/nemo-view.c:8932
+#: src/nemo-window-menus.c:1075
+msgid "_Stop"
+msgstr "_Gelditu"
+
+#: src/nemo-places-sidebar.c:2000
+msgid "_Power On"
+msgstr "_Piztu"
+
+#: src/nemo-places-sidebar.c:2001 src/nemo-view.c:8745 src/nemo-view.c:8832
+#: src/nemo-view.c:8936
+msgid "_Safely Remove Drive"
+msgstr "_Kendu unitatea modu seguruan"
+
+#: src/nemo-places-sidebar.c:2004
+msgid "_Connect Drive"
+msgstr "_Konektatu unitatea"
+
+#: src/nemo-places-sidebar.c:2005
+msgid "_Disconnect Drive"
+msgstr "_Deskonektatu unitatea"
+
+#: src/nemo-places-sidebar.c:2008
+msgid "_Start Multi-disk Device"
+msgstr "_Abiatu disko anitzeko gailua"
+
+#: src/nemo-places-sidebar.c:2009
+msgid "_Stop Multi-disk Device"
+msgstr "_Gelditu disko anitzeko gailua"
+
+#: src/nemo-places-sidebar.c:2013 src/nemo-view.c:8815 src/nemo-view.c:8919
+msgid "_Unlock Drive"
+msgstr "_Desblokeatu unitatea"
+
+#: src/nemo-places-sidebar.c:2014 src/nemo-view.c:8757 src/nemo-view.c:8844
+#: src/nemo-view.c:8948
+msgid "_Lock Drive"
+msgstr "_Blokeatu unitatea"
+
+#: src/nemo-places-sidebar.c:2088 src/nemo-places-sidebar.c:2652
+#, c-format
+msgid "Unable to start %s"
+msgstr "Ezin da %s abiarazi"
+
+#: src/nemo-places-sidebar.c:2411 src/nemo-places-sidebar.c:2439
+#: src/nemo-places-sidebar.c:2467
+#, c-format
+msgid "Unable to eject %s"
+msgstr "Ezin da %s egotzi"
+
+#: src/nemo-places-sidebar.c:2607
+#, c-format
+msgid "Unable to poll %s for media changes"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:2707
+#, c-format
+msgid "Unable to stop %s"
+msgstr "Ezin da %s gelditu"
+
+#: src/nemo-places-sidebar.c:2944 src/nemo-tree-sidebar.c:1158
+#: src/nemo-view.c:7828 src/nemo-view.c:9292
+msgid "_Open"
+msgstr "_Ireki"
+
+#: src/nemo-places-sidebar.c:2952 src/nemo-tree-sidebar.c:1169
+#: src/nemo-view.c:7840 src/nemo-view.c:8028 src/nemo-view.c:9029
+#: src/nemo-view.c:9354
+msgid "Open in New _Tab"
+msgstr "Ireki _fitxa berrian"
+
+#: src/nemo-places-sidebar.c:2962 src/nemo-tree-sidebar.c:1183
+#: src/nemo-view.c:9020 src/nemo-view.c:9334
+msgid "Open in New _Window"
+msgstr "Ireki leiho _berrian"
+
+#: src/nemo-places-sidebar.c:2973 src/nemo-window-menus.c:1181
+msgid "_Add Bookmark"
+msgstr "_Gehitu laster-marka"
+
+#: src/nemo-places-sidebar.c:2979
+msgid "Remove"
+msgstr "Kendu"
+
+#: src/nemo-places-sidebar.c:2988
+msgid "Rename..."
+msgstr "Berrizendatu..."
+
+#: src/nemo-places-sidebar.c:3000 src/nemo-view.c:7962 src/nemo-view.c:7986
+#: src/nemo-view.c:8058
+msgid "_Mount"
+msgstr "_Muntatu"
+
+#: src/nemo-places-sidebar.c:3007 src/nemo-tree-sidebar.c:1274
+#: src/nemo-view.c:7966 src/nemo-view.c:7990 src/nemo-view.c:8062
+msgid "_Unmount"
+msgstr "_Desmuntatu"
+
+#: src/nemo-places-sidebar.c:3014 src/nemo-tree-sidebar.c:1283
+#: src/nemo-view.c:7970 src/nemo-view.c:7994 src/nemo-view.c:8066
+msgid "_Eject"
+msgstr "_Egotzi"
+
+#: src/nemo-places-sidebar.c:3021 src/nemo-view.c:7982 src/nemo-view.c:8006
+#: src/nemo-view.c:8078
+msgid "_Detect Media"
+msgstr "_Detektatu euskarria"
+
+#: src/nemo-places-sidebar.c:3044 src/nemo-trash-bar.c:204
+#: libnemo-private/nemo-file-operations.c:1352
+#: libnemo-private/nemo-file-operations.c:2211
+msgid "Empty _Trash"
+msgstr "_Hustu zakarrontzia"
+
+#: src/nemo-places-sidebar.c:3056 src/nemo-view.c:7806 src/nemo-view.c:8083
+msgid "_Properties"
+msgstr "_Propietateak"
+
+#: src/nemo-progress-ui-handler.c:109 src/nemo-progress-ui-handler.c:159
+#: src/nemo-progress-ui-handler.c:218 src/nemo-progress-ui-handler.c:278
+msgid "File Operations"
+msgstr "Fitxategi-eragiketak"
+
+#: src/nemo-progress-ui-handler.c:118
+msgid "Show Details"
+msgstr "Erakutsi xehetasunak"
+
+#: src/nemo-progress-ui-handler.c:153 src/nemo-progress-ui-handler.c:175
+#, c-format
+msgid "%'d file operation active"
+msgid_plural "%'d file operations active"
+msgstr[0] "Fitxategien eragiketa %'d aktibo"
+msgstr[1] "Fitxategien %'d eragiketa aktibo"
+
+#: src/nemo-progress-ui-handler.c:279
+msgid "All file operations have been successfully completed"
+msgstr "Fitxategien eragiketa guztiak ondo burutu dira"
+
+#: src/nemo-progress-ui-handler.c:329
+#, c-format
+msgid "%d%% %s"
+msgstr "%d%% %s"
+
+#: src/nemo-properties-window.c:483
+msgid "You cannot assign more than one custom icon at a time!"
+msgstr ""
+"Ezin duzu ikono pertsonalizatu bat baino gehiago aldi berean esleitu!"
+
+#: src/nemo-properties-window.c:484
+msgid "Please drag just one image to set a custom icon."
+msgstr "Arrastatu irudi bakarra ikono pertsonalizatu bat ezartzeko."
+
+#: src/nemo-properties-window.c:495
+msgid "The file that you dropped is not local."
+msgstr "Jaregin duzun fitxategia ez da lokala."
+
+#: src/nemo-properties-window.c:496 src/nemo-properties-window.c:502
+msgid "You can only use local images as custom icons."
+msgstr "Irudi lokalak bakarrik erabil ditzakezu ikono pertsonal gisa."
+
+#: src/nemo-properties-window.c:501
+msgid "The file that you dropped is not an image."
+msgstr "Jaregin duzun fitxategia ez da irudia."
+
+#: src/nemo-properties-window.c:637
+msgid "_Name:"
+msgid_plural "_Names:"
+msgstr[0] "_Izena:"
+msgstr[1] "_Izenak:"
+
+#: src/nemo-properties-window.c:832
+msgid "Properties"
+msgstr "Propietateak"
+
+#: src/nemo-properties-window.c:840
+#, c-format
+msgid "%s Properties"
+msgstr "%s propietateak"
+
+#: src/nemo-properties-window.c:1122 libnemo-private/nemo-file.c:6258
+msgid "unknown"
+msgstr "ezezaguna"
+
+#: src/nemo-properties-window.c:1377
+msgid "Cancel Group Change?"
+msgstr "Talde-aldaketa bertan behera utzi?"
+
+#: src/nemo-properties-window.c:1792
+msgid "Cancel Owner Change?"
+msgstr "Jabe-aldaketa bertan behera utzi?"
+
+#: src/nemo-properties-window.c:2110
+msgid "nothing"
+msgstr "ezer ere ez"
+
+#: src/nemo-properties-window.c:2112
+msgid "unreadable"
+msgstr "irakurtezina"
+
+#: src/nemo-properties-window.c:2124
+#, c-format
+msgid "%'d item, with size %s"
+msgid_plural "%'d items, totalling %s"
+msgstr[0] "Elementu %'d, %s tamainakoa"
+msgstr[1] "%'d elementu, %s tamainakoak"
+
+#: src/nemo-properties-window.c:2133
+msgid "(some contents unreadable)"
+msgstr "(eduki batzuk irakurtezinak)"
+
+#: src/nemo-properties-window.c:2150
+msgid "Contents:"
+msgstr "Edukiak:"
+
+#: src/nemo-properties-window.c:2924
+msgid "used"
+msgstr "erabilia"
+
+#: src/nemo-properties-window.c:2931
+msgid "free"
+msgstr "libre"
+
+#: src/nemo-properties-window.c:2933
+msgid "Total capacity:"
+msgstr "Edukiera guztira:"
+
+#: src/nemo-properties-window.c:2942
+msgid "Filesystem type:"
+msgstr "Fitxategi-sistema mota:"
+
+#: src/nemo-properties-window.c:3026
+msgid "Basic"
+msgstr "Oinarrizkoa"
+
+#: src/nemo-properties-window.c:3083
+#: libnemo-private/nemo-file-conflict-dialog.c:256
+#: libnemo-private/nemo-file-conflict-dialog.c:287
+msgid "Type:"
+msgstr "Mota:"
+
+#: src/nemo-properties-window.c:3091
+msgid "Link target:"
+msgstr "Estekaren helburua:"
+
+#: src/nemo-properties-window.c:3101
+#: libnemo-private/nemo-file-conflict-dialog.c:253
+#: libnemo-private/nemo-file-conflict-dialog.c:284
+msgid "Size:"
+msgstr "Tamaina:"
+
+#: src/nemo-properties-window.c:3116
+msgid "Volume:"
+msgstr "Bolumena:"
+
+#: src/nemo-properties-window.c:3125
+msgid "Accessed:"
+msgstr "Atzitze-data:"
+
+#: src/nemo-properties-window.c:3129
+msgid "Modified:"
+msgstr "Aldatze-data:"
+
+#: src/nemo-properties-window.c:3138
+msgid "Free space:"
+msgstr "Leku librea:"
+
+#: src/nemo-properties-window.c:3559
+msgid "_Read"
+msgstr "_Irakurri"
+
+#: src/nemo-properties-window.c:3561
+msgid "_Write"
+msgstr "I_datzi"
+
+#: src/nemo-properties-window.c:3563
+msgid "E_xecute"
+msgstr "E_xekutatu"
+
+#: src/nemo-properties-window.c:3831 src/nemo-properties-window.c:3842
+#: src/nemo-properties-window.c:3854
+msgid "no "
+msgstr "ez "
+
+#: src/nemo-properties-window.c:3834
+msgid "list"
+msgstr "zerrenda"
+
+#: src/nemo-properties-window.c:3836
+msgid "read"
+msgstr "irakurri"
+
+#: src/nemo-properties-window.c:3845
+msgid "create/delete"
+msgstr "sortu/ezabatu"
+
+#: src/nemo-properties-window.c:3847
+msgid "write"
+msgstr "idatzi"
+
+#: src/nemo-properties-window.c:3856
+msgid "access"
+msgstr "atzitu"
+
+#: src/nemo-properties-window.c:3904
+msgid "Access:"
+msgstr "Atzipena:"
+
+#: src/nemo-properties-window.c:3906
+msgid "Folder access:"
+msgstr "Karpetaren sarbidea:"
+
+#: src/nemo-properties-window.c:3908
+msgid "File access:"
+msgstr "Fitxategiaren sarbidea:"
+
+#: src/nemo-properties-window.c:3926
+msgid "List files only"
+msgstr "Zerrendatu fitxategiak soilik"
+
+#: src/nemo-properties-window.c:3928
+msgid "Access files"
+msgstr "Atzitu fitxategiak"
+
+#: src/nemo-properties-window.c:3930
+msgid "Create and delete files"
+msgstr "Sortu eta ezabatu fitxategiak"
+
+#: src/nemo-properties-window.c:3937
+msgid "Read-only"
+msgstr "Irakurtzekoa soilik"
+
+#: src/nemo-properties-window.c:3939
+msgid "Read and write"
+msgstr "Irakurri eta idaztekoa"
+
+#: src/nemo-properties-window.c:4004
+msgid "Special flags:"
+msgstr "Bandera bereziak:"
+
+#: src/nemo-properties-window.c:4006
+msgid "Set _user ID"
+msgstr "Ezarri _erabiltzailearen IDa"
+
+#: src/nemo-properties-window.c:4007
+msgid "Set gro_up ID"
+msgstr "Ezarri _taldearen IDa"
+
+#: src/nemo-properties-window.c:4008
+msgid "_Sticky"
+msgstr "Itsas_korra"
+
+#: src/nemo-properties-window.c:4083 src/nemo-properties-window.c:4275
+msgid "_Owner:"
+msgstr "_Jabea:"
+
+#: src/nemo-properties-window.c:4091 src/nemo-properties-window.c:4180
+#: src/nemo-properties-window.c:4285
+msgid "Owner:"
+msgstr "Jabea:"
+
+#: src/nemo-properties-window.c:4113 src/nemo-properties-window.c:4297
+msgid "_Group:"
+msgstr "_Taldea:"
+
+#: src/nemo-properties-window.c:4121 src/nemo-properties-window.c:4181
+#: src/nemo-properties-window.c:4305
+msgid "Group:"
+msgstr "Taldea:"
+
+#: src/nemo-properties-window.c:4145
+msgid "Others"
+msgstr "Besteak"
+
+#: src/nemo-properties-window.c:4160
+msgid "Execute:"
+msgstr "Exekutatu:"
+
+#: src/nemo-properties-window.c:4163
+msgid "Allow _executing file as program"
+msgstr "Baimendu fitxategia programa bezala _exekutatzea"
+
+#: src/nemo-properties-window.c:4182
+msgid "Others:"
+msgstr "Besteak:"
+
+#: src/nemo-properties-window.c:4321
+msgid "Folder Permissions:"
+msgstr "Karpeta-baimenak:"
+
+#: src/nemo-properties-window.c:4329
+msgid "File Permissions:"
+msgstr "Fitxategi-baimenak:"
+
+#: src/nemo-properties-window.c:4338
+msgid "Text view:"
+msgstr "Testu-ikuspegia:"
+
+#: src/nemo-properties-window.c:4472
+#: libnemo-private/nemo-column-utilities.c:97
+msgid "Permissions"
+msgstr "Baimenak"
+
+#: src/nemo-properties-window.c:4486
+msgid "You are not the owner, so you cannot change these permissions."
+msgstr "Ez zara jabea, beraz ezin dituzu baimen hauek aldatu."
+
+#: src/nemo-properties-window.c:4506
+msgid "SELinux context:"
+msgstr "SELinux testuingurua:"
+
+#: src/nemo-properties-window.c:4511
+msgid "Last changed:"
+msgstr "Azken aldaketa:"
+
+#: src/nemo-properties-window.c:4523
+msgid "Apply Permissions to Enclosed Files"
+msgstr "Aplikatu baimenak fitxategi inguratuei"
+
+#: src/nemo-properties-window.c:4533
+#, c-format
+msgid "The permissions of \"%s\" could not be determined."
+msgstr "Ezin izan dira \"%s\"(r)en baimenak zehaztu."
+
+#: src/nemo-properties-window.c:4536
+msgid "The permissions of the selected file could not be determined."
+msgstr "Ezin izan dira hautatutako fitxategiaren baimenak zehaztu."
+
+#: src/nemo-properties-window.c:4769
+msgid "Open With"
+msgstr "Ireki honekin"
+
+#: src/nemo-properties-window.c:5093
+msgid "Creating Properties window."
+msgstr "Propietateen leihoa sortzen."
+
+#: src/nemo-properties-window.c:5379
+msgid "Select Custom Icon"
+msgstr "Hautatu ikono pertsonalizatua"
+
+#: src/nemo-query-editor.c:118
+msgid "File Type"
+msgstr "Fitxategi-mota"
+
+#: src/nemo-query-editor.c:276
+msgid "Select folder to search in"
+msgstr "Hautatu karpeta bertan bilatzeko"
+
+#: src/nemo-query-editor.c:366
+msgid "Documents"
+msgstr "Dokumentuak"
+
+#: src/nemo-query-editor.c:384
+msgid "Music"
+msgstr "Musika"
+
+#: src/nemo-query-editor.c:399
+msgid "Video"
+msgstr "Bideoa"
+
+#: src/nemo-query-editor.c:415
+msgid "Picture"
+msgstr "Irudia"
+
+#: src/nemo-query-editor.c:435
+msgid "Illustration"
+msgstr "Ilustrazioa"
+
+#: src/nemo-query-editor.c:449
+msgid "Spreadsheet"
+msgstr "Kalkulu-orria"
+
+#: src/nemo-query-editor.c:465
+msgid "Presentation"
+msgstr "Aurkezpena"
+
+#: src/nemo-query-editor.c:474
+msgid "Pdf / Postscript"
+msgstr "Pdf / Postscript"
+
+#: src/nemo-query-editor.c:482
+msgid "Text File"
+msgstr "Testu-fitxategia"
+
+#: src/nemo-query-editor.c:561
+msgid "Select type"
+msgstr "Hautatu mota"
+
+#: src/nemo-query-editor.c:645
+msgid "Any"
+msgstr "Edozein"
+
+#: src/nemo-query-editor.c:660
+msgid "Other Type..."
+msgstr "Bestelako mota..."
+
+#: src/nemo-query-editor.c:941
+msgid "Remove this criterion from the search"
+msgstr "Kendu irizpide hau bilaketatik"
+
+#: src/nemo-query-editor.c:991
+msgid "Search Folder"
+msgstr "Bilaketaren karpeta"
+
+#: src/nemo-query-editor.c:1001
+#: libnemo-private/nemo-undo-signal-handlers.c:173
+msgid "Edit"
+msgstr "Editatu"
+
+#: src/nemo-query-editor.c:1009
+msgid "Edit the saved search"
+msgstr "Editatu gordetako bilaketa"
+
+#: src/nemo-query-editor.c:1038
+msgid "Add a new criterion to this search"
+msgstr "Gehitu irizpide berria bilaketari"
+
+#: src/nemo-query-editor.c:1041
+msgid "Go"
+msgstr "Joan"
+
+#: src/nemo-query-editor.c:1043
+msgid "Reload"
+msgstr "Birkargatu"
+
+#: src/nemo-query-editor.c:1048
+msgid "Perform or update the search"
+msgstr "Landu edo eguneratu bilaketa"
+
+#: src/nemo-query-editor.c:1068
+msgid "_Search for:"
+msgstr "_Bilatu hau:"
+
+#: src/nemo-query-editor.c:1102
+msgid "Search results"
+msgstr "Bilaketaren emaitzak"
+
+#: src/nemo-search-bar.c:146
+msgid "Search:"
+msgstr "Bilatu:"
+
+#: src/nemo-statusbar.c:180
+msgid "Show Places"
+msgstr ""
+
+#: src/nemo-statusbar.c:189
+msgid "Show Treeview"
+msgstr ""
+
+#: src/nemo-statusbar.c:203
+msgid "Hide the Sidebar (F9)"
+msgstr ""
+
+#: src/nemo-statusbar.c:212
+msgid "Show the Sidebar (F9)"
+msgstr ""
+
+#: src/nemo-statusbar.c:221
+msgid "Adjust zoom level"
+msgstr ""
+
+#: src/nemo-toolbar.c:144
+msgid "Elevated Privileges"
+msgstr ""
+
+#: src/nemo-trash-bar.c:198
+msgid "Restore Selected Items"
+msgstr "Leheneratu hautatutako elementuak"
+
+#: src/nemo-trash-bar.c:201
+msgid "Restore selected items to their original position"
+msgstr "Leheneratu hautatutako elementuak beraien jatorrizko kokalekura"
+
+#: src/nemo-tree-sidebar.c:916 src/nemo-view.c:6427
+#, c-format
+msgid "\"%s\" will be moved if you select the Paste command"
+msgstr "\"%s\" lekuz aldatuko da 'Itsatsi' komandoa hautatzen baduzu"
+
+#: src/nemo-tree-sidebar.c:920 src/nemo-view.c:6431
+#, c-format
+msgid "\"%s\" will be copied if you select the Paste command"
+msgstr "\"%s\" kopiatu egingo da 'Itsatsi' komandoa hautatzen baduzu"
+
+#: src/nemo-tree-sidebar.c:959 src/nemo-view.c:6598
+msgid "There is nothing on the clipboard to paste."
+msgstr "Arbelean ez dago itsasteko ezer."
+
+#: src/nemo-tree-sidebar.c:1199 src/nemo-view.c:7814
+msgid "Create New _Folder"
+msgstr "Sortu _karpeta berria"
+
+#: src/nemo-tree-sidebar.c:1231 src/nemo-view.c:7894 src/nemo-view.c:8041
+msgid "_Paste Into Folder"
+msgstr "I_tsatsi karpetan"
+
+#: src/nemo-tree-sidebar.c:1261 src/nemo-view.c:7932 src/nemo-view.c:8050
+#: src/nemo-view.c:9398
+msgid "_Delete"
+msgstr "E_zabatu"
+
+#: src/nemo-tree-sidebar.c:1338
+msgid "Computer"
+msgstr "Ordenagailua"
+
+#: src/nemo-view.c:1019
+#, c-format
+msgid "This will open %'d separate tab."
+msgid_plural "This will open %'d separate tabs."
+msgstr[0] "Honek bereiztutako fitxa %'d irekiko du."
+msgstr[1] "Honek bereiztutako %'d fitxa irekiko ditu."
+
+#: src/nemo-view.c:1022
+#, c-format
+msgid "This will open %'d separate window."
+msgid_plural "This will open %'d separate windows."
+msgstr[0] "Honek leiho %'d irekiko du."
+msgstr[1] "Honek %'d leiho irekiko ditu."
+
+#: src/nemo-view.c:1539
+msgid "Select Items Matching"
+msgstr "Hautatu bat datozen elementuak"
+
+#: src/nemo-view.c:1554
+msgid "_Pattern:"
+msgstr "_Eredua:"
+
+#: src/nemo-view.c:1560
+msgid "Examples: "
+msgstr "Adibideak: "
+
+#: src/nemo-view.c:1673
+msgid "Save Search as"
+msgstr "Gorde bilaketa honela:"
+
+#: src/nemo-view.c:1696
+msgid "Search _name:"
+msgstr "Bilaketaren i_zena:"
+
+#: src/nemo-view.c:1718
+msgid "Select Folder to Save Search In"
+msgstr "Hautatu karpeta bertan bilaketa gordetzeko"
+
+#: src/nemo-view.c:2551 libnemo-private/nemo-file-undo-operations.c:135
+msgid "Undo"
+msgstr "Desegin"
+
+#: src/nemo-view.c:2552 libnemo-private/nemo-file-undo-operations.c:138
+msgid "Undo last action"
+msgstr "Desegin azken ekintza"
+
+#: src/nemo-view.c:2570 libnemo-private/nemo-file-undo-operations.c:142
+msgid "Redo"
+msgstr "Berregin"
+
+#: src/nemo-view.c:2571 libnemo-private/nemo-file-undo-operations.c:145
+msgid "Redo last undone action"
+msgstr "Berregin desegindako azken ekintza"
+
+#: src/nemo-view.c:2733
+msgid "Content View"
+msgstr "Eduki-ikuspegia"
+
+#: src/nemo-view.c:2734
+msgid "View of the current folder"
+msgstr "Uneko karpetaren ikuspegia"
+
+#: src/nemo-view.c:2961 src/nemo-view.c:2998
+#, c-format
+msgid "\"%s\" selected"
+msgstr "\"%s\" hautatuta"
+
+#: src/nemo-view.c:2963
+#, c-format
+msgid "%'d folder selected"
+msgid_plural "%'d folders selected"
+msgstr[0] "Karpeta %'d hautatuta"
+msgstr[1] "%'d karpeta hautatuta"
+
+#: src/nemo-view.c:2973
+#, c-format
+msgid " (containing %'d item)"
+msgid_plural " (containing %'d items)"
+msgstr[0] " (elementu %'d du)"
+msgstr[1] " (%'d elementu ditu)"
+
+#: src/nemo-view.c:2984
+#, c-format
+msgid " (containing a total of %'d item)"
+msgid_plural " (containing a total of %'d items)"
+msgstr[0] " (guztira elementu %'d du)"
+msgstr[1] " (guztira %'d elementu ditu)"
+
+#: src/nemo-view.c:3001
+#, c-format
+msgid "%'d item selected"
+msgid_plural "%'d items selected"
+msgstr[0] "Eementu %'d hautatuta"
+msgstr[1] "%'d elementu hautatuta"
+
+#: src/nemo-view.c:3008
+#, c-format
+msgid "%'d other item selected"
+msgid_plural "%'d other items selected"
+msgstr[0] "Beste elementu %'d hautatuta"
+msgstr[1] "Beste %'d elementu hautatuta"
+
+#: src/nemo-view.c:3025
+#, c-format
+msgid "%s (%s)"
+msgstr "%s (%s)"
+
+#: src/nemo-view.c:3046 libnemo-private/nemo-file.c:5827
+#, c-format
+msgid "%'u item"
+msgid_plural "%'u items"
+msgstr[0] "Elementu %'u"
+msgstr[1] "%'u elementu"
+
+#: src/nemo-view.c:3049
+#, c-format
+msgid "%s, Free space: %s"
+msgstr "%s, leku librea: %s"
+
+#: src/nemo-view.c:3064
+#, c-format
+msgid "%s, %s"
+msgstr "%s, %s"
+
+#: src/nemo-view.c:3083 src/nemo-view.c:3096
+#, c-format
+msgid "%s%s, %s"
+msgstr "%s%s, %s"
+
+#: src/nemo-view.c:3110
+#, c-format
+msgid "%s%s, %s, %s"
+msgstr "%s%s, %s, %s"
+
+#: src/nemo-view.c:4564
+#, c-format
+msgid "Open With %s"
+msgstr "Ireki honekin: %s"
+
+#: src/nemo-view.c:4566
+#, c-format
+msgid "Use \"%s\" to open the selected item"
+msgid_plural "Use \"%s\" to open the selected items"
+msgstr[0] "Erabili \"%s\" hautatutako elementua irekitzeko"
+msgstr[1] "Erabili \"%s\" hautatutako elementuak irekitzeko"
+
+#: src/nemo-view.c:5616
+#, c-format
+msgid "Run \"%s\" on any selected items"
+msgstr "Exekutatu \"%s\" hautatutako elementuetan"
+
+#: src/nemo-view.c:6101
+#, c-format
+msgid "Create a new document from template \"%s\""
+msgstr "Sortu dokumentu berria \"%s\" txantiloitik"
+
+#: src/nemo-view.c:6355
+msgid "All executable files in this folder will appear in the Scripts menu."
+msgstr ""
+"Karpeta honetako fitxategi exekutagarri guztiak agertuko dira Script-en "
+"menuan."
+
+#: src/nemo-view.c:6357
+msgid ""
+"Choosing a script from the menu will run that script with any selected items "
+"as input."
+msgstr ""
+"Menuko script bat aukeratzen baduzu, script hori exekutatuko da hautatutako "
+"edozein elementu sarrera moduan erabilita."
+
+#: src/nemo-view.c:6359
+msgid ""
+"All executable files in this folder will appear in the Scripts menu. "
+"Choosing a script from the menu will run that script.\n"
+"\n"
+"When executed from a local folder, scripts will be passed the selected file "
+"names. When executed from a remote folder (e.g. a folder showing web or ftp "
+"content), scripts will be passed no parameters.\n"
+"\n"
+"In all cases, the following environment variables will be set by Nemo, which "
+"the scripts may use:\n"
+"\n"
+"NEMO_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected files "
+"(only if local)\n"
+"\n"
+"NEMO_SCRIPT_SELECTED_URIS: newline-delimited URIs for selected files\n"
+"\n"
+"NEMO_SCRIPT_CURRENT_URI: URI for current location\n"
+"\n"
+"NEMO_SCRIPT_WINDOW_GEOMETRY: position and size of current window\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_SELECTED_FILE_PATHS: newline-delimited paths for "
+"selected files in the inactive pane of a split-view window (only if local)\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_SELECTED_URIS: newline-delimited URIs for selected "
+"files in the inactive pane of a split-view window\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_CURRENT_URI: URI for current location in the inactive "
+"pane of a split-view window"
+msgstr ""
+
+#: src/nemo-view.c:6438
+#, c-format
+msgid "The %'d selected item will be moved if you select the Paste command"
+msgid_plural ""
+"The %'d selected items will be moved if you select the Paste command"
+msgstr[0] ""
+"Hautatutako elementua (%'d) lekuz aldatuko da 'Itsatsi' komandoa hautatzen "
+"baduzu"
+msgstr[1] ""
+"Hautatutako %'d elementuak lekuz aldatuko dira 'Itsatsi' komandoa hautatzen "
+"baduzu"
+
+#: src/nemo-view.c:6445
+#, c-format
+msgid "The %'d selected item will be copied if you select the Paste command"
+msgid_plural ""
+"The %'d selected items will be copied if you select the Paste command"
+msgstr[0] ""
+"Hautatutako elementua (%'d) kopiatu egingo da 'Itsatsi' komandoa hautatzen "
+"baduzu"
+msgstr[1] ""
+"Hautatutako %'d elementuak kopiatu egingo dira 'Itsatsi' komandoa hautatzen "
+"baduzu"
+
+#: src/nemo-view.c:7044
+msgid "Unable to unmount location"
+msgstr "Ezin da kokalekua desmuntatu"
+
+#: src/nemo-view.c:7064
+msgid "Unable to eject location"
+msgstr "Ezin da kokalekua egotzi"
+
+#: src/nemo-view.c:7079
+msgid "Unable to stop drive"
+msgstr "Ezin da unitatea gelditu"
+
+#: src/nemo-view.c:7565
+#, c-format
+msgid "Connect to Server %s"
+msgstr "Konektatu %s zerbitzarira"
+
+#: src/nemo-view.c:7570 src/nemo-view.c:8720 src/nemo-view.c:8807
+#: src/nemo-view.c:8911
+msgid "_Connect"
+msgstr "_Konektatu"
+
+#: src/nemo-view.c:7584
+msgid "Link _name:"
+msgstr "Estekaren _izena:"
+
+#: src/nemo-view.c:7802
+msgid "Create New _Document"
+msgstr "Sortu _dokumentu berria"
+
+#: src/nemo-view.c:7803
+msgid "Open Wit_h"
+msgstr "I_reki honekin"
+
+#: src/nemo-view.c:7804
+msgid "Choose a program with which to open the selected item"
+msgstr "Aukeratu programa bat hautatutako elementua irekitzeko"
+
+#: src/nemo-view.c:7807 src/nemo-view.c:9432
+msgid "View or modify the properties of each selected item"
+msgstr "Ikusi edo aldatu hautatutako elementu guztien propietateak"
+
+#: src/nemo-view.c:7815
+msgid "Create a new empty folder inside this folder"
+msgstr "Sortu karpeta huts berria karpeta honen barruan"
+
+#: src/nemo-view.c:7817
+msgid "No templates installed"
+msgstr "Ez dago txantiloirik instalatuta"
+
+#: src/nemo-view.c:7820
+msgid "_Empty Document"
+msgstr "Dokumentu _hutsa"
+
+#: src/nemo-view.c:7821
+msgid "Create a new empty document inside this folder"
+msgstr "Sortu dokumentu huts berria karpeta honen barruan"
+
+#: src/nemo-view.c:7829
+msgid "Open the selected item in this window"
+msgstr "Ireki hautatutako elementua leiho honetan"
+
+#: src/nemo-view.c:7836 src/nemo-view.c:8024
+msgid "Open in Navigation Window"
+msgstr "Ireki nabigazio-leihoan"
+
+#: src/nemo-view.c:7837
+msgid "Open each selected item in a navigation window"
+msgstr "Ireki hautatutako elementu bakoitza nabigazio-leiho batean"
+
+#: src/nemo-view.c:7841
+msgid "Open each selected item in a new tab"
+msgstr "Ireki hautatutako elementu bakoitza fitxa berri batean"
+
+#: src/nemo-view.c:7844
+msgid "Open in Terminal"
+msgstr "Ireki terminalean"
+
+#: src/nemo-view.c:7845
+msgid "Open terminal in the selected folder"
+msgstr "Ireki terminala hautatutako karpetan"
+
+#: src/nemo-view.c:7848
+msgid "Open as Root"
+msgstr "Ireki erro modura"
+
+#: src/nemo-view.c:7849
+msgid "Open the folder with administration privileges"
+msgstr "Ireki karpeta administrazio-pribilegioekin"
+
+#: src/nemo-view.c:7852
+msgid "Send with Thunderbird"
+msgstr "Bidali Thunderbird bidez"
+
+#: src/nemo-view.c:7853
+msgid "Send the selected file(s) as email attachments using Thunderbird"
+msgstr ""
+"Bidali hautatutako fitxategia(k) posta elektronikoaren eranskin gisa "
+"Thunderbird erabiliz"
+
+#: src/nemo-view.c:7856
+msgid "Send as email attachment"
+msgstr "Bidali posta elektroniko baten eranskin gisa"
+
+#: src/nemo-view.c:7857
+msgid ""
+"Send the selected file(s) as email attachments using your current email "
+"program"
+msgstr ""
+"Bidali hautatutako fitxategia(k) posta elektronikoaren eranskin gisa zure "
+"uneko posta-programa erabiliz"
+
+#: src/nemo-view.c:7860
+msgid "Set as Wallpaper..."
+msgstr "Ezarri atzeko plano gisa..."
+
+#: src/nemo-view.c:7861
+msgid "Set the selected image as your desktop wallpaper"
+msgstr "Ezarri hautatutako irudia zure mahaigainaren atzeko plano gisa"
+
+#: src/nemo-view.c:7864
+msgid "Other _Application..."
+msgstr "Beste _aplikazio bat..."
+
+#: src/nemo-view.c:7865 src/nemo-view.c:7869
+msgid "Choose another application with which to open the selected item"
+msgstr "Aukeratu beste aplikazio bat hautatutako elementua irekitzeko"
+
+#: src/nemo-view.c:7868
+msgid "Open With Other _Application..."
+msgstr "Ireki beste _aplikazio batekin..."
+
+#: src/nemo-view.c:7872
+msgid "_Open Scripts Folder"
+msgstr "I_reki script-en karpeta"
+
+#: src/nemo-view.c:7873
+msgid "Show the folder containing the scripts that appear in this menu"
+msgstr "Erakutsi menu honetan agertzen diren script-ak dituen karpeta"
+
+#: src/nemo-view.c:7881
+msgid "Prepare the selected files to be moved with a Paste command"
+msgstr ""
+"Prestatu hautatutako fitxategiak \"Itsatsi\" komandoaren bidez lekuz "
+"aldatzeko"
+
+#: src/nemo-view.c:7885
+msgid "Prepare the selected files to be copied with a Paste command"
+msgstr ""
+"Prestatu hautatutako fitxategiak \"Itsatsi\" komandoaren bidez kopiatzeko"
+
+#: src/nemo-view.c:7889
+msgid "Move or copy files previously selected by a Cut or Copy command"
+msgstr ""
+"Aldatu lekuz edo kopiatu aurrez \"Ebaki\" edo \"Kopiatu\" komandoen bidez "
+"hautaturiko fitxategiak"
+
+#: src/nemo-view.c:7895
+msgid ""
+"Move or copy files previously selected by a Cut or Copy command into the "
+"selected folder"
+msgstr ""
+"Aldatu lekuz edo kopiatu hautatutako kapetan aurrez hautaturiko fitxategiak "
+"'Ebaki' edo 'Kopiatu' komandoen bidez"
+
+#: src/nemo-view.c:7897
+msgid "Cop_y to"
+msgstr "K_opiatu hona"
+
+#: src/nemo-view.c:7898
+msgid "M_ove to"
+msgstr "_Eraman hona"
+
+#: src/nemo-view.c:7900 libnemo-private/nemo-clipboard.c:444
+msgid "Select _All"
+msgstr "Hautatu _denak"
+
+#: src/nemo-view.c:7901
+msgid "Select all items in this window"
+msgstr "Hautatu leiho honetako elementu guztiak"
+
+#: src/nemo-view.c:7904
+msgid "Select I_tems Matching..."
+msgstr "Hautatu _bat datozen elementuak..."
+
+#: src/nemo-view.c:7905
+msgid "Select items in this window matching a given pattern"
+msgstr "Hautatu emandako ereduarekin bat datozen leiho honetako elementuak"
+
+#: src/nemo-view.c:7908
+msgid "_Invert Selection"
+msgstr "_Alderantzikatu hautapena"
+
+#: src/nemo-view.c:7909
+msgid "Select all and only the items that are not currently selected"
+msgstr "Hautatu guztiak eta unean hautatu gabe dauden elementuak soilik"
+
+#: src/nemo-view.c:7912
+msgid "D_uplicate"
+msgstr "Bikoizt_u"
+
+#: src/nemo-view.c:7913
+msgid "Duplicate each selected item"
+msgstr "Bikoiztu hautatutako elementu guztiak"
+
+#: src/nemo-view.c:7916 src/nemo-view.c:9417
+msgid "Ma_ke Link"
+msgid_plural "Ma_ke Links"
+msgstr[0] "_Sortu esteka"
+msgstr[1] "_Sortu estekak"
+
+#: src/nemo-view.c:7917
+msgid "Create a symbolic link for each selected item"
+msgstr "Sortu esteka sinboliko bat hautatutako elementu bakoitzerako"
+
+#: src/nemo-view.c:7920
+msgid "_Rename..."
+msgstr "_Berrizendatu"
+
+#: src/nemo-view.c:7921
+msgid "Rename selected item"
+msgstr "Berrizendatu hautatutako elementua"
+
+#: src/nemo-view.c:7929 src/nemo-view.c:9378
+msgid "Move each selected item to the Trash"
+msgstr "Bota hautatutako elementu guztiak zakarrontzira"
+
+#: src/nemo-view.c:7933
+msgid "Delete each selected item, without moving to the Trash"
+msgstr "Ezabatu hautatutako elementu bakoitza, zakarrontzira bota gabe"
+
+#: src/nemo-view.c:7936 src/nemo-view.c:8054
+msgid "_Restore"
+msgstr "_Leheneratu"
+
+#: src/nemo-view.c:7940 src/nemo-window-menus.c:1064
+msgid "_Undo"
+msgstr "_Desegin"
+
+#: src/nemo-view.c:7941
+msgid "Undo the last action"
+msgstr "Desegin azken ekintza"
+
+#: src/nemo-view.c:7944
+msgid "_Redo"
+msgstr "_Berregin"
+
+#: src/nemo-view.c:7945
+msgid "Redo the last undone action"
+msgstr "Berregin desegindako azken ekintza"
+
+#: src/nemo-view.c:7954
+msgid "Reset View to _Defaults"
+msgstr "Berrezarri ikuspegia _lehenetsietara"
+
+#: src/nemo-view.c:7955
+msgid "Reset sorting order and zoom level to match preferences for this view"
+msgstr ""
+"Ordenatzeko modua eta zoom-maila berrezartzen du ikuspegi honen hobespenekin "
+"bat etortzeko"
+
+#: src/nemo-view.c:7958
+msgid "Connect To This Server"
+msgstr "Konektatu zerbitzari honetara"
+
+#: src/nemo-view.c:7959
+msgid "Make a permanent connection to this server"
+msgstr "Egin konexio finkoa zerbitzari honetara"
+
+#: src/nemo-view.c:7963
+msgid "Mount the selected volume"
+msgstr "Muntatu hautatutako bolumena"
+
+#: src/nemo-view.c:7967
+msgid "Unmount the selected volume"
+msgstr "Desmuntatu hautatutako bolumena"
+
+#: src/nemo-view.c:7971
+msgid "Eject the selected volume"
+msgstr "Egotzi hautatutako bolumena"
+
+#: src/nemo-view.c:7975
+msgid "Start the selected volume"
+msgstr "Hasi hautatutako bolumena"
+
+#: src/nemo-view.c:7979 src/nemo-view.c:8933
+msgid "Stop the selected volume"
+msgstr "Gelditu hautatutako bolumena"
+
+#: src/nemo-view.c:7983 src/nemo-view.c:8007 src/nemo-view.c:8079
+msgid "Detect media in the selected drive"
+msgstr "Detektatu euskarria hautatutako unitatean"
+
+#: src/nemo-view.c:7987
+msgid "Mount the volume associated with the open folder"
+msgstr "Muntatu irekitako karpetarekin loturiko bolumena"
+
+#: src/nemo-view.c:7991
+msgid "Unmount the volume associated with the open folder"
+msgstr "Desmuntatu irekitako karpetarekin loturiko bolumena"
+
+#: src/nemo-view.c:7995
+msgid "Eject the volume associated with the open folder"
+msgstr "Egotzi irekitako karpetarekin loturiko bolumena"
+
+#: src/nemo-view.c:7999
+msgid "Start the volume associated with the open folder"
+msgstr "Abiatu irekitako karpetarekin loturiko bolumena"
+
+#: src/nemo-view.c:8003
+msgid "Stop the volume associated with the open folder"
+msgstr "Gelditu irekitako karpetarekin loturiko bolumena"
+
+#: src/nemo-view.c:8010
+msgid "Open File and Close window"
+msgstr "Ireki fitxategia eta itxi leihoa"
+
+#: src/nemo-view.c:8014
+msgid "Sa_ve Search"
+msgstr "_Gorde bilaketa"
+
+#: src/nemo-view.c:8015
+msgid "Save the edited search"
+msgstr "Gorde editatutako bilaketa"
+
+#: src/nemo-view.c:8018
+msgid "Sa_ve Search As..."
+msgstr "Gorde bilaketa _honela..."
+
+#: src/nemo-view.c:8019
+msgid "Save the current search as a file"
+msgstr "Gorde uneko bilaketa fitxategi bezala"
+
+#: src/nemo-view.c:8025
+msgid "Open this folder in a navigation window"
+msgstr "Ireki karpeta hau nabigazio-leiho batean"
+
+#: src/nemo-view.c:8029
+msgid "Open this folder in a new tab"
+msgstr "Ireki karpeta hau fitxa berri batean"
+
+#: src/nemo-view.c:8034
+msgid "Prepare this folder to be moved with a Paste command"
+msgstr "Prestatu karpeta hau Itsatsi komandoaren bidez lekuz aldatzeko"
+
+#: src/nemo-view.c:8038
+msgid "Prepare this folder to be copied with a Paste command"
+msgstr "Prestatu karpeta hau Itsatsi komandoaren bidez kopiatzeko"
+
+#: src/nemo-view.c:8042
+msgid ""
+"Move or copy files previously selected by a Cut or Copy command into this "
+"folder"
+msgstr ""
+"Aldatu lekuz edo kopiatu karpeta honetan aurrez hautaturiko fitxategiak "
+"'Ebaki' edo 'Kopiatu' aginduen bidez"
+
+#: src/nemo-view.c:8047
+msgid "Move this folder to the Trash"
+msgstr "Bota karpeta hau zakarrontzira"
+
+#: src/nemo-view.c:8051
+msgid "Delete this folder, without moving to the Trash"
+msgstr "Ezabatu karpeta hau, zakarrontzira bota gabe"
+
+#: src/nemo-view.c:8059
+msgid "Mount the volume associated with this folder"
+msgstr "Muntatu karpeta honekin loturiko bolumena"
+
+#: src/nemo-view.c:8063
+msgid "Unmount the volume associated with this folder"
+msgstr "Desmuntatu karpeta honekin loturiko bolumena"
+
+#: src/nemo-view.c:8067
+msgid "Eject the volume associated with this folder"
+msgstr "Egotzi karpeta honekin loturiko bolumena"
+
+#: src/nemo-view.c:8071
+msgid "Start the volume associated with this folder"
+msgstr "Abiatu karpeta honekin loturiko bolumena"
+
+#: src/nemo-view.c:8075
+msgid "Stop the volume associated with this folder"
+msgstr "Gelditu karpeta honekin loturiko bolumena"
+
+#: src/nemo-view.c:8084
+msgid "View or modify the properties of this folder"
+msgstr "Ikusi edo aldatu karpeta honen propietateak"
+
+#: src/nemo-view.c:8087 src/nemo-view.c:8090
+msgid "_Other pane"
+msgstr "_Beste panela"
+
+#: src/nemo-view.c:8088
+msgid "Copy the current selection to the other pane in the window"
+msgstr "Kopiatu uneko hautapena leihoko beste panelean"
+
+#: src/nemo-view.c:8091
+msgid "Move the current selection to the other pane in the window"
+msgstr "Eraman uneko hautapena leihoaren beste panelera"
+
+#: src/nemo-view.c:8094 src/nemo-view.c:8098 src/nemo-window-menus.c:1135
+#: src/nemo-window-menus.c:1328 src/nemo-window-menus.c:1525
+msgid "_Home"
+msgstr "_Karpeta nagusia"
+
+#: src/nemo-view.c:8095
+msgid "Copy the current selection to the home folder"
+msgstr "Kopiatu uneko hautapena karpeta nagusian"
+
+#: src/nemo-view.c:8099
+msgid "Move the current selection to the home folder"
+msgstr "Eraman uneko hautapena karpeta nagusira"
+
+#: src/nemo-view.c:8102 src/nemo-view.c:8106
+msgid "_Desktop"
+msgstr "_Mahaigaina"
+
+#: src/nemo-view.c:8103
+msgid "Copy the current selection to the desktop"
+msgstr "Kopiatu uneko hautapena mahaigainean"
+
+#: src/nemo-view.c:8107
+msgid "Move the current selection to the desktop"
+msgstr "Eraman uneko hautapena mahaigainera"
+
+#: src/nemo-view.c:8186
+#, c-format
+msgid "Run or manage scripts from %s"
+msgstr "Exekutatu edo kudeatu %s direktorioko script-ak"
+
+#: src/nemo-view.c:8188
+msgid "_Scripts"
+msgstr "_Script-ak"
+
+#: src/nemo-view.c:8569
+#, c-format
+msgid "Move the open folder out of the trash to \"%s\""
+msgstr "Eraman irekitako karpeta zakarrontzitik \"%s\" direktoriora"
+
+#: src/nemo-view.c:8572
+#, c-format
+msgid "Move the selected folder out of the trash to \"%s\""
+msgid_plural "Move the selected folders out of the trash to \"%s\""
+msgstr[0] "Eraman hautatutako karpeta zakarrontzitik \"%s\" direktoriora"
+msgstr[1] ""
+"Eraman hautatutako karpeta guztiak zakarrontzitik \"%s\" direktoriora"
+
+#: src/nemo-view.c:8576
+msgid "Move the selected folder out of the trash"
+msgid_plural "Move the selected folders out of the trash"
+msgstr[0] "Atera hautatutako karpeta zakarrontzitik kanpo"
+msgstr[1] "Atera hautatutako karpetak zakarrontzitik kanpo"
+
+#: src/nemo-view.c:8582
+#, c-format
+msgid "Move the selected file out of the trash to \"%s\""
+msgid_plural "Move the selected files out of the trash to \"%s\""
+msgstr[0] "Eraman hautatutako fitxategia zakarrontzitik \"%s\" direktoriora"
+msgstr[1] ""
+"Eraman hautatutako fitxategi guztiak zakarrontzitik \"%s\" direktoriora"
+
+#: src/nemo-view.c:8586
+msgid "Move the selected file out of the trash"
+msgid_plural "Move the selected files out of the trash"
+msgstr[0] "Atera hautatutako fitxategia zakarrontzitik kanpo"
+msgstr[1] "Atera hautatutako fitxategi guztiak zakarrontzitik kanpo"
+
+#: src/nemo-view.c:8592
+#, c-format
+msgid "Move the selected item out of the trash to \"%s\""
+msgid_plural "Move the selected items out of the trash to \"%s\""
+msgstr[0] "Eraman hautatutako elementua zakarrontzitik \"%s\" direktoriora"
+msgstr[1] ""
+"Eraman hautatutako elementu guztiak zakarrontzitik \"%s\" direktoriora"
+
+#: src/nemo-view.c:8596
+msgid "Move the selected item out of the trash"
+msgid_plural "Move the selected items out of the trash"
+msgstr[0] "Atera hautatutako elementua zakarrontzitik kanpo"
+msgstr[1] "Atera hautatutako elementu guztiak zakarrontzitik kanpo"
+
+#: src/nemo-view.c:8713 src/nemo-view.c:8717 src/nemo-view.c:8904
+#: src/nemo-view.c:8908
+msgid "Start the selected drive"
+msgstr "Abiatu hautatutako unitatea"
+
+#: src/nemo-view.c:8721 src/nemo-view.c:8912
+msgid "Connect to the selected drive"
+msgstr "Konektatu hautatutako unitatearekin"
+
+#: src/nemo-view.c:8724 src/nemo-view.c:8811 src/nemo-view.c:8915
+msgid "_Start Multi-disk Drive"
+msgstr "_Abiatu disko anitzeko unitatea"
+
+#: src/nemo-view.c:8725 src/nemo-view.c:8916
+msgid "Start the selected multi-disk drive"
+msgstr "Abiatu hautatutako disko anitzeko unitatea"
+
+#: src/nemo-view.c:8728
+msgid "U_nlock Drive"
+msgstr "_Desblokeatu unitatea"
+
+#: src/nemo-view.c:8729 src/nemo-view.c:8920
+msgid "Unlock the selected drive"
+msgstr "Desblokeatu hautatutako unitatea"
+
+#: src/nemo-view.c:8742
+msgid "Stop the selected drive"
+msgstr "Gelditu hautatutako unitatea"
+
+#: src/nemo-view.c:8746 src/nemo-view.c:8937
+msgid "Safely remove the selected drive"
+msgstr "Kendu hautatutako unitatea modu seguruan"
+
+#: src/nemo-view.c:8749 src/nemo-view.c:8836 src/nemo-view.c:8940
+msgid "_Disconnect"
+msgstr "_Deskonektatu"
+
+#: src/nemo-view.c:8750 src/nemo-view.c:8941
+msgid "Disconnect the selected drive"
+msgstr "Deskonektatu hautatutako unitatea"
+
+#: src/nemo-view.c:8753 src/nemo-view.c:8840 src/nemo-view.c:8944
+msgid "_Stop Multi-disk Drive"
+msgstr "_Gelditu disko anitzeko unitatea"
+
+#: src/nemo-view.c:8754 src/nemo-view.c:8945
+msgid "Stop the selected multi-disk drive"
+msgstr "Gelditu hautatutako disko anitzeko unitatea"
+
+#: src/nemo-view.c:8758 src/nemo-view.c:8949
+msgid "Lock the selected drive"
+msgstr "Blokeatu hautatutako unitatea"
+
+#: src/nemo-view.c:8800 src/nemo-view.c:8804
+msgid "Start the drive associated with the open folder"
+msgstr "Abiatu irekitako karpetarekin loturiko unitatea"
+
+#: src/nemo-view.c:8808
+msgid "Connect to the drive associated with the open folder"
+msgstr "Konektatu irekitako karpetarekin loturiko unitatera"
+
+#: src/nemo-view.c:8812
+msgid "Start the multi-disk drive associated with the open folder"
+msgstr "Abiatu irekitako karpetarekin loturiko disko anitzeko unitatea"
+
+#: src/nemo-view.c:8816
+msgid "Unlock the drive associated with the open folder"
+msgstr "Desblokeatu irekitako karpetarekin loturiko unitatea"
+
+#: src/nemo-view.c:8829
+msgid "_Stop the drive associated with the open folder"
+msgstr "_Gelditu irekitako karpetarekin loturiko unitatea"
+
+#: src/nemo-view.c:8833
+msgid "Safely remove the drive associated with the open folder"
+msgstr "Kendu irekitako karpetarekin loturiko unitatea modu seguruan"
+
+#: src/nemo-view.c:8837
+msgid "Disconnect the drive associated with the open folder"
+msgstr "Deskonektatu irekitako karpetarekin loturiko unitatea"
+
+#: src/nemo-view.c:8841
+msgid "Stop the multi-disk drive associated with the open folder"
+msgstr "Gelditu irekitako karpetarekin loturiko disko anitzeko unitatea"
+
+#: src/nemo-view.c:8845
+msgid "Lock the drive associated with the open folder"
+msgstr "Blokeatu irekitako karpetarekin loturiko unitatea"
+
+#: src/nemo-view.c:9072 src/nemo-view.c:9373
+msgid "_Delete Permanently"
+msgstr "_Ezabatu behin betiko"
+
+#: src/nemo-view.c:9073
+msgid "Delete the open folder permanently"
+msgstr "Ezabatu irekitako karpeta behin betiko"
+
+#: src/nemo-view.c:9077
+msgid "Move the open folder to the Trash"
+msgstr "Bota irekitako karpeta zakarrontzira"
+
+#: src/nemo-view.c:9279
+#, c-format
+msgid "_Open With %s"
+msgstr "_Ireki honekin: %s"
+
+#: src/nemo-view.c:9336
+#, c-format
+msgid "Open in %'d New _Window"
+msgid_plural "Open in %'d New _Windows"
+msgstr[0] "Ireki _leiho berri %'dean"
+msgstr[1] "Ireki %'d _leiho berritan"
+
+#: src/nemo-view.c:9356
+#, c-format
+msgid "Open in %'d New _Tab"
+msgid_plural "Open in %'d New _Tabs"
+msgstr[0] "Ireki fitxa _berri %'dean"
+msgstr[1] "Ireki %'d fitxa _berritan"
+
+#: src/nemo-view.c:9374
+msgid "Delete all selected items permanently"
+msgstr "Ezabatu hautatutako elementu guztiak behin betiko"
+
+#: src/nemo-view.c:9430
+msgid "View or modify the properties of the open folder"
+msgstr "Ikusi edo aldatu irekitako karpetaren propietateak"
+
+#: src/nemo-view-dnd.c:125 libnemo-private/nemo-file.c:6334
+#: libnemo-private/nemo-file-operations.c:377
+#, c-format
+msgid "Link to %s"
+msgstr "Estekatu hona: %s"
+
+#: src/nemo-view-dnd.c:172 src/nemo-view-dnd.c:206 src/nemo-view-dnd.c:297
+msgid "Drag and drop is not supported."
+msgstr "Arrastatu eta jaregitea ez dago onartuta."
+
+#: src/nemo-view-dnd.c:173
+msgid "Drag and drop is only supported on local file systems."
+msgstr ""
+"Arrastatu eta jaregitea fitxategi-sistema lokaletan soilik dago onartuta."
+
+#: src/nemo-view-dnd.c:207 src/nemo-view-dnd.c:298
+msgid "An invalid drag type was used."
+msgstr "Arrastatze-mota baliogabea erabili da."
+
+#: src/nemo-view-dnd.c:375
+msgid "dropped text.txt"
+msgstr "testua.txt jareginda"
+
+#: src/nemo-view-dnd.c:420
+msgid "dropped data"
+msgstr "datuak jareginda"
+
+#: src/nemo-window-bookmarks.c:83
+msgid ""
+"Do you want to remove any bookmarks with the non-existing location from your "
+"list?"
+msgstr ""
+"Existitzen ez diren helbideen laster-markak kendu nahi dituzu zerrendatik?"
+
+#: src/nemo-window-bookmarks.c:85
+#, c-format
+msgid "The location \"%s\" does not exist."
+msgstr "\"%s\" helbiderik ez dago."
+
+#: src/nemo-window-bookmarks.c:88
+msgid "Bookmark for Nonexistent Location"
+msgstr "Existitzen ez den helbidearen laster-marka"
+
+#: src/nemo-window-bookmarks.c:316
+msgid "Go to the location specified by this bookmark"
+msgstr "Joan laster-marka honek zehaztutako helbidera"
+
+#: src/nemo-window.c:1540
+#, c-format
+msgid "%s - File Browser"
+msgstr "%s - fitxategi-arakatzailea"
+
+#: src/nemo-window.c:2018 src/nemo-window-menus.c:336
+msgid "Nemo"
+msgstr "Nemo"
+
+#: src/nemo-window-manage-views.c:1140
+msgid "Searching..."
+msgstr "Bilatzen..."
+
+#: src/nemo-window-manage-views.c:1611
+msgid "Nemo has no installed viewer capable of displaying the folder."
+msgstr "Nemok ez dauka instalaturik karpeta erakusteko gai den ikustailerik."
+
+#: src/nemo-window-manage-views.c:1617
+msgid "The location is not a folder."
+msgstr "Helbidea ez da karpeta."
+
+#: src/nemo-window-manage-views.c:1623
+#, c-format
+msgid "Could not find \"%s\"."
+msgstr "Ezin izan da \"%s\" aurkitu."
+
+#: src/nemo-window-manage-views.c:1626
+msgid "Please check the spelling and try again."
+msgstr "Egiaztatu ondo idatzita dagoela eta saiatu berriro."
+
+#: src/nemo-window-manage-views.c:1634
+#, c-format
+msgid "Nemo cannot handle \"%s\" locations."
+msgstr "Nemok ezin ditu \"%s\" helbideak maneiatu."
+
+#: src/nemo-window-manage-views.c:1637
+msgid "Nemo cannot handle this kind of location."
+msgstr "Nemok ezin du maneiatu helbide-mota hau."
+
+#: src/nemo-window-manage-views.c:1644
+msgid "Unable to mount the location."
+msgstr "Ezin da helbidea muntatu."
+
+#: src/nemo-window-manage-views.c:1650
+msgid "Access was denied."
+msgstr "Atzipena ukatu da."
+
+#: src/nemo-window-manage-views.c:1659
+#, c-format
+msgid "Could not display \"%s\", because the host could not be found."
+msgstr "Ezin izan da \"%s\" bistaratu, ostalaria ez delako aurkitu."
+
+#: src/nemo-window-manage-views.c:1661
+msgid ""
+"Check that the spelling is correct and that your proxy settings are correct."
+msgstr ""
+"Egiaztatu ondo idatzita dagoela eta zure proxy-ezarpenak zuzenak direla."
+
+#: src/nemo-window-manage-views.c:1676
+#, c-format
+msgid ""
+"Error: %s\n"
+"Please select another viewer and try again."
+msgstr ""
+"Errorea: %s\n"
+"Hautatu beste ikustaile bat eta saiatu berriro."
+
+#: src/nemo-window-menus.c:315
+msgid ""
+"Nemo is free software; you can redistribute it and/or modify it under the "
+"terms of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version."
+msgstr ""
+
+#: src/nemo-window-menus.c:319
+msgid ""
+"Nemo is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details."
+msgstr ""
+
+#: src/nemo-window-menus.c:323
+msgid ""
+"You should have received a copy of the GNU General Public License along with "
+"Nemo; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"Street, Fifth Floor, Boston, MA 02110-1301 USA"
+msgstr ""
+
+#: src/nemo-window-menus.c:338
+msgid ""
+"Nemo lets you organize files and folders, both on your computer and online."
+msgstr ""
+
+#: src/nemo-window-menus.c:1051
+msgid "_File"
+msgstr "_Fitxategia"
+
+#: src/nemo-window-menus.c:1052
+msgid "_Edit"
+msgstr "_Editatu"
+
+#: src/nemo-window-menus.c:1053
+msgid "_View"
+msgstr "_Ikusi"
+
+#: src/nemo-window-menus.c:1054
+msgid "_Help"
+msgstr "_Laguntza"
+
+#: src/nemo-window-menus.c:1056
+msgid "_Close"
+msgstr "_Itxi"
+
+#: src/nemo-window-menus.c:1057
+msgid "Close this folder"
+msgstr "Itxi karpeta hau"
+
+#: src/nemo-window-menus.c:1060
+msgid "Prefere_nces"
+msgstr "Hobespe_nak"
+
+#: src/nemo-window-menus.c:1061
+msgid "Edit Nemo preferences"
+msgstr "Editatu Nemo-ren hobespenak"
+
+#: src/nemo-window-menus.c:1065
+msgid "Undo the last text change"
+msgstr "Desegin azken testu-aldaketa"
+
+#: src/nemo-window-menus.c:1068
+msgid "Open _Parent"
+msgstr "Ireki _gurasoa"
+
+#: src/nemo-window-menus.c:1069
+msgid "Open the parent folder"
+msgstr "Ireki karpeta gurasoa"
+
+#: src/nemo-window-menus.c:1076
+msgid "Stop loading the current location"
+msgstr "Gelditu uneko helbidea kargatzea"
+
+#: src/nemo-window-menus.c:1079 src/nemo-window-menus.c:1314
+msgid "_Reload"
+msgstr "_Birkargatu"
+
+#: src/nemo-window-menus.c:1080 src/nemo-window-menus.c:1316
+msgid "Reload the current location"
+msgstr "Birkargatu uneko kokalekua"
+
+#: src/nemo-window-menus.c:1083
+msgid "_All Topics"
+msgstr "Gai _guztiak"
+
+#: src/nemo-window-menus.c:1084
+msgid "Display Nemo help"
+msgstr "Bistaratu Nemo-ren laguntza"
+
+#: src/nemo-window-menus.c:1103
+msgid "_About"
+msgstr "_Honi buruz"
+
+#: src/nemo-window-menus.c:1104
+msgid "Display credits for the creators of Nemo"
+msgstr ""
+
+#: src/nemo-window-menus.c:1107
+msgid "Zoom _In"
+msgstr "_Handiagotu"
+
+#: src/nemo-window-menus.c:1108
+msgid "Increase the view size"
+msgstr "Handiagotu ikuspegiaren tamaina"
+
+#: src/nemo-window-menus.c:1119
+msgid "Zoom _Out"
+msgstr "_Txikiagotu"
+
+#: src/nemo-window-menus.c:1120
+msgid "Decrease the view size"
+msgstr "Txikiagotu ikuspegiaren tamaina"
+
+#: src/nemo-window-menus.c:1127
+msgid "Normal Si_ze"
+msgstr "Tamaina _normala"
+
+#: src/nemo-window-menus.c:1128
+msgid "Use the normal view size"
+msgstr "Erabili ikuspegi-tamaina normala"
+
+#: src/nemo-window-menus.c:1131
+msgid "Connect to _Server..."
+msgstr "Konektatu _zerbitzarira..."
+
+#: src/nemo-window-menus.c:1132
+msgid "Connect to a remote computer or shared disk"
+msgstr "Konektatu urruneko ordenagailu edo partekatutako diskora"
+
+#: src/nemo-window-menus.c:1136
+msgid "Open your personal folder"
+msgstr "Ireki zure karpeta pertsonala"
+
+#: src/nemo-window-menus.c:1139 src/nemo-window-menus.c:1342
+msgid "_Computer"
+msgstr "_Ordenagailua"
+
+#: src/nemo-window-menus.c:1140
+msgid ""
+"Browse all local and remote disks and folders accessible from this computer"
+msgstr ""
+"Arakatu ordenagailu honetatik atzigarriak diren lokaleko eta urruneko disko "
+"eta karpeta guztiak"
+
+#: src/nemo-window-menus.c:1143
+msgid "_Network"
+msgstr "_Sarea"
+
+#: src/nemo-window-menus.c:1144
+msgid "Browse bookmarked and local network locations"
+msgstr "Arakatu laster-markatutako eta sare lokaleko kokalekuak"
+
+#: src/nemo-window-menus.c:1147
+msgid "T_emplates"
+msgstr "_Txantiloiak"
+
+#: src/nemo-window-menus.c:1148
+msgid "Open your personal templates folder"
+msgstr "Ireki txantiloien karpeta pertsonala"
+
+#: src/nemo-window-menus.c:1151
+msgid "_Trash"
+msgstr "_Zakarrontzia"
+
+#: src/nemo-window-menus.c:1152
+msgid "Open your personal trash folder"
+msgstr "Ireki zure zakarrontzi pertsonala"
+
+#: src/nemo-window-menus.c:1154
+msgid "_Go"
+msgstr "_Joan"
+
+#: src/nemo-window-menus.c:1155
+msgid "_Bookmarks"
+msgstr "_Laster-markak"
+
+#: src/nemo-window-menus.c:1156
+msgid "_Tabs"
+msgstr "_Fitxak"
+
+#: src/nemo-window-menus.c:1157
+msgid "New _Window"
+msgstr "_Leiho berria"
+
+#: src/nemo-window-menus.c:1158
+msgid "Open another Nemo window for the displayed location"
+msgstr "Ireki beste Nemo leiho bat bistaratutako kokalekurako"
+
+#: src/nemo-window-menus.c:1160
+msgid "New _Tab"
+msgstr "_Fitxa berria"
+
+#: src/nemo-window-menus.c:1161
+msgid "Open another tab for the displayed location"
+msgstr "Ireki beste fitxa bat bistaratutako kokalekurako"
+
+#: src/nemo-window-menus.c:1163
+msgid "Close _All Windows"
+msgstr "Itxi leiho _guztiak"
+
+#: src/nemo-window-menus.c:1164
+msgid "Close all Navigation windows"
+msgstr "Itxi nabigazio-leiho guztiak"
+
+#: src/nemo-window-menus.c:1166 src/nemo-window-menus.c:1264
+msgid "_Back"
+msgstr "_Atzera"
+
+#: src/nemo-window-menus.c:1167 src/nemo-window-menus.c:1266
+msgid "Go to the previous visited location"
+msgstr "Joan bisitatutako aurreko kokalekura"
+
+#: src/nemo-window-menus.c:1169 src/nemo-window-menus.c:1280
+msgid "_Forward"
+msgstr "_Aurrera"
+
+#: src/nemo-window-menus.c:1170 src/nemo-window-menus.c:1282
+msgid "Go to the next visited location"
+msgstr "Joan bisitatutako hurrengo kokalekura"
+
+#: src/nemo-window-menus.c:1172
+msgid "_Location..."
+msgstr "_Kokalekua..."
+
+#: src/nemo-window-menus.c:1173
+msgid "Specify a location to open"
+msgstr "Zehaztu helbidea irekitzeko"
+
+#: src/nemo-window-menus.c:1175
+msgid "S_witch to Other Pane"
+msgstr "_Aldatu beste panelera"
+
+#: src/nemo-window-menus.c:1176
+msgid "Move focus to the other pane in a split view window"
+msgstr "Eraman fokua ikuspegi zatitutako leihoaren beste panelera"
+
+#: src/nemo-window-menus.c:1178
+msgid "Sa_me Location as Other Pane"
+msgstr "Beste panelaren kokaleku _bera"
+
+#: src/nemo-window-menus.c:1179
+msgid "Go to the same location as in the extra pane"
+msgstr "Joan panel gehigarrian dagoen kokaleku berera"
+
+#: src/nemo-window-menus.c:1182
+msgid "Add a bookmark for the current location to this menu"
+msgstr ""
+
+#: src/nemo-window-menus.c:1184
+msgid "_Edit Bookmarks..."
+msgstr "_Editatu laster-markak..."
+
+#: src/nemo-window-menus.c:1185
+msgid "Display a window that allows editing the bookmarks in this menu"
+msgstr ""
+
+#: src/nemo-window-menus.c:1187
+msgid "_Previous Tab"
+msgstr "_Aurreko fitxa"
+
+#: src/nemo-window-menus.c:1188
+msgid "Activate previous tab"
+msgstr "Aktibatu aurreko fitxa"
+
+#: src/nemo-window-menus.c:1190
+msgid "_Next Tab"
+msgstr "_Hurrengo fitxa"
+
+#: src/nemo-window-menus.c:1191
+msgid "Activate next tab"
+msgstr "Aktibatu hurrengo fitxa"
+
+#: src/nemo-window-menus.c:1193 src/nemo-window-pane.c:521
+msgid "Move Tab _Left"
+msgstr "Eraman fitxa e_zkerrera"
+
+#: src/nemo-window-menus.c:1194
+msgid "Move current tab to left"
+msgstr "Eraman uneko fitxa ezkerrera"
+
+#: src/nemo-window-menus.c:1196 src/nemo-window-pane.c:529
+msgid "Move Tab _Right"
+msgstr "Eraman fitxa e_skuinera"
+
+#: src/nemo-window-menus.c:1197
+msgid "Move current tab to right"
+msgstr "Eraman uneko fitxa eskuinera"
+
+#: src/nemo-window-menus.c:1199
+msgid "Sidebar"
+msgstr "Albo-barra"
+
+#: src/nemo-window-menus.c:1204
+msgid "Show _Hidden Files"
+msgstr "Erakutsi _ezkutuko fitxategiak"
+
+#: src/nemo-window-menus.c:1205
+msgid "Toggle the display of hidden files in the current window"
+msgstr "Txandakatu fitxategi ezkutuak bistaratzea uneko leihoan"
+
+#: src/nemo-window-menus.c:1209
+msgid "_Main Toolbar"
+msgstr "Tresna-barra _nagusia"
+
+#: src/nemo-window-menus.c:1210
+msgid "Change the visibility of this window's main toolbar"
+msgstr "Aldatu leiho honetako tresna-barra nagusiaren ikusgaitasuna"
+
+#: src/nemo-window-menus.c:1214
+msgid "_Show Sidebar"
+msgstr "_Erakutsi albo-barra"
+
+#: src/nemo-window-menus.c:1215
+msgid "Change the visibility of this window's side pane"
+msgstr "Aldatu leiho honen albo-panelaren ikusgarritasuna"
+
+#: src/nemo-window-menus.c:1219
+msgid "St_atusbar"
+msgstr "_Egoera-barra"
+
+#: src/nemo-window-menus.c:1220
+msgid "Change the visibility of this window's statusbar"
+msgstr "Aldatu leiho honen egoera-barraren ikusgarritasuna"
+
+#: src/nemo-window-menus.c:1224
+msgid "M_enubar"
+msgstr ""
+
+#: src/nemo-window-menus.c:1225
+msgid "Change the default visibility of the menubar"
+msgstr ""
+
+#: src/nemo-window-menus.c:1229
+msgid "_Search for Files..."
+msgstr "_Bilatu fitxategiak..."
+
+#: src/nemo-window-menus.c:1230 src/nemo-window-menus.c:1403
+msgid "Search documents and folders by name"
+msgstr "Bilatu dokumentuak eta karpetak izenaren arabera"
+
+#: src/nemo-window-menus.c:1234
+msgid "E_xtra Pane"
+msgstr "Panel _gehigarria"
+
+#: src/nemo-window-menus.c:1235
+msgid "Open an extra folder view side-by-side"
+msgstr "Ireki karpetaren ikuspegi gehigarria alboz albo"
+
+#: src/nemo-window-menus.c:1242
+msgid "Places"
+msgstr "Lekuak"
+
+#: src/nemo-window-menus.c:1242
+msgid "Select Places as the default sidebar"
+msgstr ""
+
+#: src/nemo-window-menus.c:1245
+msgid "Tree"
+msgstr "Zuhaitza"
+
+#: src/nemo-window-menus.c:1245
+msgid "Select Tree as the default sidebar"
+msgstr ""
+
+#: src/nemo-window-menus.c:1267
+msgid "Back history"
+msgstr ""
+
+#: src/nemo-window-menus.c:1283 src/nemo-window-menus.c:1302
+msgid "Forward history"
+msgstr ""
+
+#: src/nemo-window-menus.c:1299 src/nemo-window-menus.c:1522
+msgid "_Up"
+msgstr "_Gora"
+
+#: src/nemo-window-menus.c:1301
+msgid "Go to parent folder"
+msgstr "Joan karpeta gurasora"
+
+#: src/nemo-window-menus.c:1330
+msgid "Go to home directory"
+msgstr "Joan karpeta nagusira"
+
+#: src/nemo-window-menus.c:1344
+msgid "Go to Computer"
+msgstr ""
+
+#: src/nemo-window-menus.c:1356
+msgid "Use Location Entry"
+msgstr ""
+
+#: src/nemo-window-menus.c:1368
+msgid "Icons"
+msgstr "Ikonoak"
+
+#: src/nemo-window-menus.c:1379
+msgid "List"
+msgstr "Zerrenda"
+
+#: src/nemo-window-menus.c:1391
+msgid "Compact"
+msgstr "Trinkoa"
+
+#: src/nemo-window-menus.c:1403 libnemo-private/nemo-query.c:130
+#: libnemo-private/nemo-search-directory-file.c:160
+#: libnemo-private/nemo-search-directory-file.c:186
+#: libnemo-private/nemo-search-directory-file.c:220
+msgid "Search"
+msgstr "Bilatu"
+
+#: src/nemo-window-menus.c:1528
+msgid "_Location"
+msgstr "_Kokalekua"
+
+#: src/nemo-window-pane.c:511
+msgid "_New Tab"
+msgstr "_Fitxa berria"
+
+#: src/nemo-window-pane.c:540
+msgid "_Close Tab"
+msgstr "_Itxi fitxa"
+
+#: src/nemo-x-content-bar.c:96
+msgid "These files are on an Audio CD."
+msgstr ""
+
+#: src/nemo-x-content-bar.c:98
+msgid "These files are on an Audio DVD."
+msgstr ""
+
+#: src/nemo-x-content-bar.c:100
+msgid "These files are on a Video DVD."
+msgstr ""
+
+#: src/nemo-x-content-bar.c:102
+msgid "These files are on a Video CD."
+msgstr ""
+
+#: src/nemo-x-content-bar.c:104
+msgid "These files are on a Super Video CD."
+msgstr ""
+
+#: src/nemo-x-content-bar.c:106
+msgid "These files are on a Photo CD."
+msgstr ""
+
+#: src/nemo-x-content-bar.c:108
+msgid "These files are on a Picture CD."
+msgstr ""
+
+#: src/nemo-x-content-bar.c:110
+msgid "The media contains digital photos."
+msgstr ""
+
+#: src/nemo-x-content-bar.c:112
+msgid "These files are on a digital audio player."
+msgstr ""
+
+#: src/nemo-x-content-bar.c:114
+msgid "The media contains software."
+msgstr ""
+
+#: src/nemo-x-content-bar.c:117
+#, c-format
+msgid "The media has been detected as \"%s\"."
+msgstr ""
+
+#: src/nemo-x-content-bar.c:142
+#, c-format
+msgid "Open %s"
+msgstr "Ireki %s"
+
+#: libnemo-private/nemo-clipboard.c:433
+msgid "Cut the selected text to the clipboard"
+msgstr "Ebaki hautatutako testua arbelera"
+
+#: libnemo-private/nemo-clipboard.c:437
+msgid "Copy the selected text to the clipboard"
+msgstr "Kopiatu hautatutako testua arbelean"
+
+#: libnemo-private/nemo-clipboard.c:441
+msgid "Paste the text stored on the clipboard"
+msgstr "Itsatsi arbeleko testua"
+
+#: libnemo-private/nemo-clipboard.c:445
+msgid "Select all the text in a text field"
+msgstr ""
+
+#: libnemo-private/nemo-column-chooser.c:368
+msgid "Move _Up"
+msgstr "Mugitu _gora"
+
+#: libnemo-private/nemo-column-chooser.c:378
+msgid "Move Dow_n"
+msgstr "Mugitu _behera"
+
+#: libnemo-private/nemo-column-chooser.c:391
+msgid "Use De_fault"
+msgstr "_Erabili lehenetsia"
+
+#: libnemo-private/nemo-column-utilities.c:44
+msgid "The name and icon of the file."
+msgstr "Fitxategiaren izena eta ikonoa."
+
+#: libnemo-private/nemo-column-utilities.c:50
+msgid "Size"
+msgstr "Tamaina"
+
+#: libnemo-private/nemo-column-utilities.c:51
+msgid "The size of the file."
+msgstr "Fitxategiaren tamaina."
+
+#: libnemo-private/nemo-column-utilities.c:58
+msgid "Type"
+msgstr "Mota"
+
+#: libnemo-private/nemo-column-utilities.c:59
+msgid "The type of the file."
+msgstr "Fitxategi-mota."
+
+#: libnemo-private/nemo-column-utilities.c:66
+msgid "The date the file was modified."
+msgstr "Fitxategia aldatu zeneko data."
+
+#: libnemo-private/nemo-column-utilities.c:73
+msgid "Date Accessed"
+msgstr "Atzipen-data"
+
+#: libnemo-private/nemo-column-utilities.c:74
+msgid "The date the file was accessed."
+msgstr "Fitxategia atzitu zeneko data."
+
+#: libnemo-private/nemo-column-utilities.c:81
+msgid "Owner"
+msgstr "Jabea"
+
+#: libnemo-private/nemo-column-utilities.c:82
+msgid "The owner of the file."
+msgstr "Fitxategiaren jabea"
+
+#: libnemo-private/nemo-column-utilities.c:89
+msgid "Group"
+msgstr "Taldea"
+
+#: libnemo-private/nemo-column-utilities.c:90
+msgid "The group of the file."
+msgstr "Fitxategiaren taldea."
+
+#: libnemo-private/nemo-column-utilities.c:98
+msgid "The permissions of the file."
+msgstr "Fitxategiaren baimenak."
+
+#: libnemo-private/nemo-column-utilities.c:105
+msgid "Octal Permissions"
+msgstr "Baimen zortzitarrak"
+
+#: libnemo-private/nemo-column-utilities.c:106
+msgid "The permissions of the file, in octal notation."
+msgstr ""
+
+#: libnemo-private/nemo-column-utilities.c:113
+msgid "MIME Type"
+msgstr "MIME mota"
+
+#: libnemo-private/nemo-column-utilities.c:114
+msgid "The mime type of the file."
+msgstr "Fitxategiaren MIME mota."
+
+#: libnemo-private/nemo-column-utilities.c:121
+msgid "SELinux Context"
+msgstr "SELinux testuingurua"
+
+#: libnemo-private/nemo-column-utilities.c:122
+msgid "The SELinux security context of the file."
+msgstr "Fitxategiaren SELinux segurtasun-testuingurua."
+
+#: libnemo-private/nemo-column-utilities.c:130
+msgid "The location of the file."
+msgstr "Fitxategiaren kokalekua."
+
+#: libnemo-private/nemo-column-utilities.c:171
+msgid "Trashed On"
+msgstr ""
+
+#: libnemo-private/nemo-column-utilities.c:172
+msgid "Date when file was moved to the Trash"
+msgstr ""
+
+#: libnemo-private/nemo-column-utilities.c:178
+msgid "Original Location"
+msgstr "Jatorrizko kokalekua"
+
+#: libnemo-private/nemo-column-utilities.c:179
+msgid "Original location of file before moved to the Trash"
+msgstr ""
+
+#: libnemo-private/nemo-desktop-directory-file.c:435
+#: libnemo-private/nemo-desktop-icon-file.c:151
+msgid "on the desktop"
+msgstr "mahaigainean"
+
+#: libnemo-private/nemo-desktop-link-monitor.c:92
+#, c-format
+msgid "You cannot move the volume \"%s\" to the trash."
+msgstr "Ezin duzu \"%s\" bolumena zakarrontzira bota."
+
+#: libnemo-private/nemo-desktop-link-monitor.c:102
+msgid ""
+"If you want to eject the volume, please use \"Eject\" in the popup menu of "
+"the volume."
+msgstr ""
+"Bolumena egotzi nahi baduzu, erabili \"Egotzi\" bolumenaren laster-menuan."
+
+#: libnemo-private/nemo-desktop-link-monitor.c:111
+msgid ""
+"If you want to unmount the volume, please use \"Unmount Volume\" in the "
+"popup menu of the volume."
+msgstr ""
+"Bolumena desmuntatu nahi baduzu, erabili \"Desmuntatu bolumena\" bolumenaren "
+"laster-menuan."
+
+#: libnemo-private/nemo-dnd.c:771
+msgid "_Move Here"
+msgstr ""
+
+#: libnemo-private/nemo-dnd.c:776
+msgid "_Copy Here"
+msgstr "_Kopiatu hemen"
+
+#: libnemo-private/nemo-dnd.c:781
+msgid "_Link Here"
+msgstr "_Estekatu hemen"
+
+#: libnemo-private/nemo-dnd.c:786
+msgid "Set as _Background"
+msgstr "Ezarri _atzeko plano bezala"
+
+#: libnemo-private/nemo-dnd.c:793
+msgid "Cancel"
+msgstr "Utzi"
+
+#: libnemo-private/nemo-file.c:1220 libnemo-private/nemo-vfs-file.c:382
+msgid "This file cannot be mounted"
+msgstr "Fitxategi hau ezin da muntatu"
+
+#: libnemo-private/nemo-file.c:1265
+msgid "This file cannot be unmounted"
+msgstr "Fitxategi hau ezin da desmuntatu"
+
+#: libnemo-private/nemo-file.c:1299
+msgid "This file cannot be ejected"
+msgstr "Fitxategi hau ezin da egotzi"
+
+#: libnemo-private/nemo-file.c:1332 libnemo-private/nemo-vfs-file.c:560
+msgid "This file cannot be started"
+msgstr "Fitxategi hau ezin da abiarazi"
+
+#: libnemo-private/nemo-file.c:1384 libnemo-private/nemo-file.c:1415
+msgid "This file cannot be stopped"
+msgstr "Fitxategi hau ezin da gelditu"
+
+#: libnemo-private/nemo-file.c:1826
+msgid "Slashes are not allowed in filenames"
+msgstr "Ez da onartzen barrarik fitxategi-izenetan"
+
+#: libnemo-private/nemo-file.c:1844
+msgid "File not found"
+msgstr "Ez da fitxategia aurkitu"
+
+#: libnemo-private/nemo-file.c:1872
+msgid "Toplevel files cannot be renamed"
+msgstr "Maila goreneko fitxategiak ezin dira berrizendatu"
+
+#: libnemo-private/nemo-file.c:1895
+msgid "Unable to rename desktop icon"
+msgstr "Ezin da mahaigaineko ikonoa berrizendatu"
+
+#: libnemo-private/nemo-file.c:1924
+msgid "Unable to rename desktop file"
+msgstr "Ezin da mahaigaineko fitxategia berrizendatu"
+
+#: libnemo-private/nemo-file.c:4372
+msgid "today at 00:00:00 PM"
+msgstr "gaur 00:00:00 PM-tan"
+
+#: libnemo-private/nemo-file.c:4375
+msgid "today at 00:00 PM"
+msgstr "gaur 00:00 PM-tan"
+
+#: libnemo-private/nemo-file.c:4376
+msgid "today at %-I:%M %p"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4378
+msgid "today, 00:00 PM"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4379
+msgid "today, %-I:%M %p"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4381 libnemo-private/nemo-file.c:4382
+msgid "today"
+msgstr "gaur"
+
+#: libnemo-private/nemo-file.c:4391
+msgid "yesterday at 00:00:00 PM"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4392
+msgid "yesterday at %-I:%M:%S %p"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4394
+msgid "yesterday at 00:00 PM"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4395
+msgid "yesterday at %-I:%M %p"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4397
+msgid "yesterday, 00:00 PM"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4398
+msgid "yesterday, %-I:%M %p"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4400 libnemo-private/nemo-file.c:4401
+msgid "yesterday"
+msgstr "atzo"
+
+#: libnemo-private/nemo-file.c:4412
+msgid "Wednesday, September 00 0000 at 00:00:00 PM"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4413
+msgid "%A, %B %-d %Y at %-I:%M:%S %p"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4415
+msgid "Mon, Oct 00 0000 at 00:00:00 PM"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4416
+msgid "%a, %b %-d %Y at %-I:%M:%S %p"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4418
+msgid "Mon, Oct 00 0000 at 00:00 PM"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4419
+msgid "%a, %b %-d %Y at %-I:%M %p"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4421
+msgid "Oct 00 0000 at 00:00 PM"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4422
+msgid "%b %-d %Y at %-I:%M %p"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4424
+msgid "Oct 00 0000, 00:00 PM"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4425
+msgid "%b %-d %Y, %-I:%M %p"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4427
+msgid "00/00/00, 00:00 PM"
+msgstr "00/00/00, 00:00 PM"
+
+#: libnemo-private/nemo-file.c:4428
+msgid "%m/%-d/%y, %-I:%M %p"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:4430
+msgid "00/00/00"
+msgstr "00/00/00"
+
+#: libnemo-private/nemo-file.c:4431
+msgid "%m/%d/%y"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:5075
+msgid "Not allowed to set permissions"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:5370
+msgid "Not allowed to set owner"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:5388
+#, c-format
+msgid "Specified owner '%s' doesn't exist"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:5652
+msgid "Not allowed to set group"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:5670
+#, c-format
+msgid "Specified group '%s' doesn't exist"
+msgstr ""
+
+#: libnemo-private/nemo-file.c:5828
+#, c-format
+msgid "%'u folder"
+msgid_plural "%'u folders"
+msgstr[0] "Karpeta %'u"
+msgstr[1] "%'u karpeta"
+
+#: libnemo-private/nemo-file.c:5829
+#, c-format
+msgid "%'u file"
+msgid_plural "%'u files"
+msgstr[0] "Fitxategi %'u"
+msgstr[1] "%'u fitxategi"
+
+#: libnemo-private/nemo-file.c:6220 libnemo-private/nemo-file.c:6236
+msgid "? items"
+msgstr "? elementu"
+
+#: libnemo-private/nemo-file.c:6226
+msgid "? bytes"
+msgstr "? byte"
+
+#: libnemo-private/nemo-file.c:6241
+msgid "unknown type"
+msgstr "mota ezezaguna"
+
+#: libnemo-private/nemo-file.c:6244
+msgid "unknown MIME type"
+msgstr "MIME mota ezezaguna"
+
+#: libnemo-private/nemo-file.c:6308
+msgid "program"
+msgstr "programa"
+
+#: libnemo-private/nemo-file.c:6328
+msgid "link"
+msgstr "esteka"
+
+#: libnemo-private/nemo-file.c:6350
+msgid "link (broken)"
+msgstr "esteka (hautsita)"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:141
+#, c-format
+msgid "Merge folder \"%s\"?"
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:145
+msgid ""
+"Merging will ask for confirmation before replacing any files in the folder "
+"that conflict with the files being copied."
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:150
+#, c-format
+msgid "An older folder with the same name already exists in \"%s\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:154
+#, c-format
+msgid "A newer folder with the same name already exists in \"%s\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:158
+#, c-format
+msgid "Another folder with the same name already exists in \"%s\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:163
+msgid "Replacing it will remove all files in the folder."
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:165
+#, c-format
+msgid "Replace folder \"%s\"?"
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:167
+#, c-format
+msgid "A folder with the same name already exists in \"%s\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:172
+#, c-format
+msgid "Replace file \"%s\"?"
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:174
+msgid "Replacing it will overwrite its content."
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:178
+#, c-format
+msgid "An older file with the same name already exists in \"%s\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:182
+#, c-format
+msgid "A newer file with the same name already exists in \"%s\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:186
+#, c-format
+msgid "Another file with the same name already exists in \"%s\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:252
+msgid "Original file"
+msgstr "Jatorrizko fitxategia"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:259
+#: libnemo-private/nemo-file-conflict-dialog.c:290
+msgid "Last modified:"
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:283
+msgid "Replace with"
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:312
+msgid "Merge"
+msgstr "Batu"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:505
+msgid "_Select a new name for the destination"
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:519
+#: libnemo-private/nemo-mime-application-chooser.c:379
+msgid "Reset"
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:531
+msgid "Apply this action to all files"
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:542
+#: libnemo-private/nemo-file-operations.c:185
+msgid "_Skip"
+msgstr "_Saltatu"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:547
+msgid "Re_name"
+msgstr "_Berrizendatu"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:553
+msgid "Replace"
+msgstr "Ordeztu"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:625
+msgid "File conflict"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:186
+msgid "S_kip All"
+msgstr "Saltatu _guztiak"
+
+#: libnemo-private/nemo-file-operations.c:187
+msgid "_Retry"
+msgstr "_Saiatu berriro"
+
+#: libnemo-private/nemo-file-operations.c:188
+msgid "Delete _All"
+msgstr "Ezabatu _guztiak"
+
+#: libnemo-private/nemo-file-operations.c:189
+msgid "_Replace"
+msgstr "_Ordeztu"
+
+#: libnemo-private/nemo-file-operations.c:190
+msgid "Replace _All"
+msgstr "Ordeztu _guztiak"
+
+#: libnemo-private/nemo-file-operations.c:191
+msgid "_Merge"
+msgstr "_Batu"
+
+#: libnemo-private/nemo-file-operations.c:192
+msgid "Merge _All"
+msgstr "Batu _guztiak"
+
+#: libnemo-private/nemo-file-operations.c:193
+msgid "Copy _Anyway"
+msgstr "Kopiatu _dena den"
+
+#: libnemo-private/nemo-file-operations.c:278
+#, c-format
+msgid "%'d second"
+msgid_plural "%'d seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:283
+#: libnemo-private/nemo-file-operations.c:294
+#, c-format
+msgid "%'d minute"
+msgid_plural "%'d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:293
+#, c-format
+msgid "%'d hour"
+msgid_plural "%'d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:301
+#, c-format
+msgid "approximately %'d hour"
+msgid_plural "approximately %'d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:381
+#, c-format
+msgid "Another link to %s"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:397
+#, c-format
+msgid "%'dst link to %s"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:401
+#, c-format
+msgid "%'dnd link to %s"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:405
+#, c-format
+msgid "%'drd link to %s"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:409
+#, c-format
+msgid "%'dth link to %s"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:448
+msgid " (copy)"
+msgstr " (kopia)"
+
+#: libnemo-private/nemo-file-operations.c:450
+msgid " (another copy)"
+msgstr " (beste kopia bat)"
+
+#: libnemo-private/nemo-file-operations.c:453
+#: libnemo-private/nemo-file-operations.c:455
+#: libnemo-private/nemo-file-operations.c:457
+#: libnemo-private/nemo-file-operations.c:467
+msgid "th copy)"
+msgstr "garren kopia)"
+
+#: libnemo-private/nemo-file-operations.c:460
+msgid "st copy)"
+msgstr "garren kopia)"
+
+#: libnemo-private/nemo-file-operations.c:462
+msgid "nd copy)"
+msgstr "garren kopia)"
+
+#: libnemo-private/nemo-file-operations.c:464
+msgid "rd copy)"
+msgstr "garren kopia)"
+
+#: libnemo-private/nemo-file-operations.c:481
+#, c-format
+msgid "%s (copy)%s"
+msgstr "%s (kopia)%s"
+
+#: libnemo-private/nemo-file-operations.c:483
+#, c-format
+msgid "%s (another copy)%s"
+msgstr "%s (beste kopia bat)%s"
+
+#: libnemo-private/nemo-file-operations.c:486
+#: libnemo-private/nemo-file-operations.c:488
+#: libnemo-private/nemo-file-operations.c:490
+#: libnemo-private/nemo-file-operations.c:504
+#, c-format
+msgid "%s (%'dth copy)%s"
+msgstr "%s (%'dgarren kopia)%s"
+
+#: libnemo-private/nemo-file-operations.c:498
+#, c-format
+msgid "%s (%'dst copy)%s"
+msgstr "%s (%'dgarren kopia)%s"
+
+#: libnemo-private/nemo-file-operations.c:500
+#, c-format
+msgid "%s (%'dnd copy)%s"
+msgstr "%s (%'dgarren kopia)%s"
+
+#: libnemo-private/nemo-file-operations.c:502
+#, c-format
+msgid "%s (%'drd copy)%s"
+msgstr "%s (%'dgarren kopia)%s"
+
+#: libnemo-private/nemo-file-operations.c:603
+msgid " ("
+msgstr " ("
+
+#: libnemo-private/nemo-file-operations.c:611
+#, c-format
+msgid " (%'d"
+msgstr " (%'d"
+
+#: libnemo-private/nemo-file-operations.c:1312
+msgid "Are you sure you want to permanently delete \"%B\" from the trash?"
+msgstr "Ziur zaude \"%B\" zakarrontzitik behin betiko ezabatu nahi duzula?"
+
+#: libnemo-private/nemo-file-operations.c:1315
+#, c-format
+msgid ""
+"Are you sure you want to permanently delete the %'d selected item from the "
+"trash?"
+msgid_plural ""
+"Are you sure you want to permanently delete the %'d selected items from the "
+"trash?"
+msgstr[0] ""
+"Ziur zaude hautatutako elementu %'d zakarrontzitik behin betiko ezabatu nahi "
+"duzula?"
+msgstr[1] ""
+"Ziur zaude hautatutako %'d elementu zakarrontzitik behin betiko ezabatu nahi "
+"dituzula?"
+
+#: libnemo-private/nemo-file-operations.c:1325
+#: libnemo-private/nemo-file-operations.c:1391
+msgid "If you delete an item, it will be permanently lost."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:1345
+msgid "Empty all items from Trash?"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:1349
+msgid "All items in the Trash will be permanently deleted."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:1379
+msgid "Are you sure you want to permanently delete \"%B\"?"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:1382
+#, c-format
+msgid "Are you sure you want to permanently delete the %'d selected item?"
+msgid_plural ""
+"Are you sure you want to permanently delete the %'d selected items?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:1425
+#, c-format
+msgid "%'d file left to delete"
+msgid_plural "%'d files left to delete"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:1431
+msgid "Deleting files"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:1445
+msgid "%T left"
+msgid_plural "%T left"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:1512
+#: libnemo-private/nemo-file-operations.c:1546
+#: libnemo-private/nemo-file-operations.c:1585
+#: libnemo-private/nemo-file-operations.c:1662
+#: libnemo-private/nemo-file-operations.c:2464
+msgid "Error while deleting."
+msgstr "Errorea ezabatzean."
+
+#: libnemo-private/nemo-file-operations.c:1516
+msgid ""
+"Files in the folder \"%B\" cannot be deleted because you do not have "
+"permissions to see them."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:1519
+#: libnemo-private/nemo-file-operations.c:2523
+#: libnemo-private/nemo-file-operations.c:3511
+msgid ""
+"There was an error getting information about the files in the folder \"%B\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:1528
+#: libnemo-private/nemo-file-operations.c:3520
+msgid "_Skip files"
+msgstr "_Saltatu fitxategiak"
+
+#: libnemo-private/nemo-file-operations.c:1549
+msgid ""
+"The folder \"%B\" cannot be deleted because you do not have permissions to "
+"read it."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:1552
+#: libnemo-private/nemo-file-operations.c:2562
+#: libnemo-private/nemo-file-operations.c:3556
+msgid "There was an error reading the folder \"%B\"."
+msgstr "Errore bat gertatu da \"%B\" karpeta irakurtzean."
+
+#: libnemo-private/nemo-file-operations.c:1586
+msgid "Could not remove the folder %B."
+msgstr "Ezin izan da %B karpeta ezabatu."
+
+#: libnemo-private/nemo-file-operations.c:1663
+msgid "There was an error deleting %B."
+msgstr "Errore bat gertatu da %B ezabatzean."
+
+#: libnemo-private/nemo-file-operations.c:1743
+msgid "Moving files to trash"
+msgstr "Fitxategiak zakarrontzira botatzen"
+
+#: libnemo-private/nemo-file-operations.c:1745
+#, c-format
+msgid "%'d file left to trash"
+msgid_plural "%'d files left to trash"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:1796
+msgid "Cannot move file to trash, do you want to delete immediately?"
+msgstr "Ezin da fitxategia zakarrontzira bota, berehala ezabatu nahi duzu?"
+
+#: libnemo-private/nemo-file-operations.c:1797
+msgid "The file \"%B\" cannot be moved to the trash."
+msgstr "Ezin da \"%B\" fitxategia zakarrontzira bota."
+
+#: libnemo-private/nemo-file-operations.c:1974
+msgid "Trashing Files"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:1976
+msgid "Deleting Files"
+msgstr "Fitxategiak ezabatzen"
+
+#: libnemo-private/nemo-file-operations.c:2044
+msgid "Unable to eject %V"
+msgstr "Ezin da %V egotzi"
+
+#: libnemo-private/nemo-file-operations.c:2046
+msgid "Unable to unmount %V"
+msgstr "Ezin da %V desmuntatu"
+
+#: libnemo-private/nemo-file-operations.c:2201
+msgid "Do you want to empty the trash before you unmount?"
+msgstr "Zakarrontzia hustu nahi duzu desmuntatu aurretik?"
+
+#: libnemo-private/nemo-file-operations.c:2203
+msgid ""
+"In order to regain the free space on this volume the trash must be emptied. "
+"All trashed items on the volume will be permanently lost."
+msgstr ""
+"Gailu honetako leku erabilgarria handitzeko zakarrontzia hustu behar da. "
+"Bolumeneko zakarrontziko elementu guztiak betirako galduko dira."
+
+#: libnemo-private/nemo-file-operations.c:2209
+msgid "Do _not Empty Trash"
+msgstr "_Ez hustu zakarrontzia"
+
+#: libnemo-private/nemo-file-operations.c:2335
+#, c-format
+msgid "Unable to mount %s"
+msgstr "Ezin da %s muntatu"
+
+#: libnemo-private/nemo-file-operations.c:2411
+#, c-format
+msgid "Preparing to copy %'d file (%S)"
+msgid_plural "Preparing to copy %'d files (%S)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:2417
+#, c-format
+msgid "Preparing to move %'d file (%S)"
+msgid_plural "Preparing to move %'d files (%S)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:2423
+#, c-format
+msgid "Preparing to delete %'d file (%S)"
+msgid_plural "Preparing to delete %'d files (%S)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:2429
+#, c-format
+msgid "Preparing to trash %'d file"
+msgid_plural "Preparing to trash %'d files"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:2460
+#: libnemo-private/nemo-file-operations.c:3371
+#: libnemo-private/nemo-file-operations.c:3503
+#: libnemo-private/nemo-file-operations.c:3548
+msgid "Error while copying."
+msgstr "Errorea kopiatzean."
+
+#: libnemo-private/nemo-file-operations.c:2462
+#: libnemo-private/nemo-file-operations.c:3501
+#: libnemo-private/nemo-file-operations.c:3546
+msgid "Error while moving."
+msgstr "Errorea lekuz aldatzean."
+
+#: libnemo-private/nemo-file-operations.c:2466
+msgid "Error while moving files to trash."
+msgstr "Errorea fitxategiak zakarrontzira botatzean."
+
+#: libnemo-private/nemo-file-operations.c:2520
+msgid ""
+"Files in the folder \"%B\" cannot be handled because you do not have "
+"permissions to see them."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2559
+msgid ""
+"The folder \"%B\" cannot be handled because you do not have permissions to "
+"read it."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2636
+msgid ""
+"The file \"%B\" cannot be handled because you do not have permissions to "
+"read it."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2639
+msgid "There was an error getting information about \"%B\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2740
+#: libnemo-private/nemo-file-operations.c:2782
+#: libnemo-private/nemo-file-operations.c:2816
+#: libnemo-private/nemo-file-operations.c:2846
+msgid "Error while copying to \"%B\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2744
+msgid "You do not have permissions to access the destination folder."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2746
+msgid "There was an error getting information about the destination."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2783
+msgid "The destination is not a folder."
+msgstr "Helburua ez da karpeta bat."
+
+#: libnemo-private/nemo-file-operations.c:2817
+msgid ""
+"There is not enough space on the destination. Try to remove files to make "
+"space."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2819
+#, c-format
+msgid "%S more space is required to copy to the destination."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2847
+msgid "The destination is read-only."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2906
+msgid "Moving \"%B\" to \"%B\""
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2907
+msgid "Copying \"%B\" to \"%B\""
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2914
+msgid "Duplicating \"%B\""
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2922
+msgid "Moving file %'d of %'d (in \"%B\") to \"%B\""
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2924
+msgid "Copying file %'d of %'d (in \"%B\") to \"%B\""
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2931
+msgid "Duplicating file %'d of %'d (in \"%B\")"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2940
+msgid "Moving file %'d of %'d to \"%B\""
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2942
+msgid "Copying file %'d of %'d to \"%B\""
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2948
+#, c-format
+msgid "Duplicating file %'d of %'d"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2967
+#, c-format
+msgid "%S of %S"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:2978
+msgid "%S of %S — %T left (%S/sec)"
+msgid_plural "%S of %S — %T left (%S/sec)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:3375
+msgid ""
+"The folder \"%B\" cannot be copied because you do not have permissions to "
+"create it in the destination."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:3378
+msgid "There was an error creating the folder \"%B\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:3508
+msgid ""
+"Files in the folder \"%B\" cannot be copied because you do not have "
+"permissions to see them."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:3553
+msgid ""
+"The folder \"%B\" cannot be copied because you do not have permissions to "
+"read it."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:3598
+#: libnemo-private/nemo-file-operations.c:4291
+#: libnemo-private/nemo-file-operations.c:4904
+msgid "Error while moving \"%B\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:3599
+msgid "Could not remove the source folder."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:3684
+#: libnemo-private/nemo-file-operations.c:3725
+#: libnemo-private/nemo-file-operations.c:4293
+#: libnemo-private/nemo-file-operations.c:4364
+msgid "Error while copying \"%B\"."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:3685
+#, c-format
+msgid "Could not remove files from the already existing folder %F."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:3726
+#, c-format
+msgid "Could not remove the already existing file %F."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:4046
+#: libnemo-private/nemo-file-operations.c:4749
+msgid "You cannot move a folder into itself."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:4047
+#: libnemo-private/nemo-file-operations.c:4750
+msgid "You cannot copy a folder into itself."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:4048
+#: libnemo-private/nemo-file-operations.c:4751
+msgid "The destination folder is inside the source folder."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:4079
+msgid "You cannot move a file over itself."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:4080
+msgid "You cannot copy a file over itself."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:4081
+msgid "The source file would be overwritten by the destination."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:4295
+#, c-format
+msgid "Could not remove the already existing file with the same name in %F."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:4365
+#, c-format
+msgid "There was an error copying the file into %F."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:4597
+#: libnemo-private/nemo-file-operations.c:4631
+msgid "Copying Files"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:4659
+msgid "Preparing to Move to \"%B\""
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:4663
+#, c-format
+msgid "Preparing to move %'d file"
+msgid_plural "Preparing to move %'d files"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:4905
+#, c-format
+msgid "There was an error moving the file into %F."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:5167
+msgid "Moving Files"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:5202
+msgid "Creating links in \"%B\""
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:5206
+#, c-format
+msgid "Making link to %'d file"
+msgid_plural "Making links to %'d files"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-operations.c:5341
+msgid "Error while creating link to %B."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:5343
+msgid "Symbolic links only supported for local files"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:5346
+msgid "The target doesn't support symbolic links."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:5349
+#, c-format
+msgid "There was an error creating the symlink in %F."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:5668
+msgid "Setting permissions"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:5933
+msgid "Untitled Folder"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:5939
+#, c-format
+msgid "Untitled %s"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:5945
+msgid "Untitled Document"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:6123
+msgid "Error while creating directory %B."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:6125
+msgid "Error while creating file %B."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:6127
+#, c-format
+msgid "There was an error creating the directory in %F."
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:6396
+msgid "Emptying Trash"
+msgstr ""
+
+#: libnemo-private/nemo-file-operations.c:6444
+#: libnemo-private/nemo-file-operations.c:6485
+#: libnemo-private/nemo-file-operations.c:6520
+#: libnemo-private/nemo-file-operations.c:6555
+msgid "Unable to mark launcher trusted (executable)"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:367
+#, c-format
+msgid "Move %d item back to '%s'"
+msgid_plural "Move %d items back to '%s'"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-undo-operations.c:370
+#, c-format
+msgid "Move %d item to '%s'"
+msgid_plural "Move %d items to '%s'"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-undo-operations.c:374
+#, c-format
+msgid "_Undo Move %d item"
+msgid_plural "_Undo Move %d items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-undo-operations.c:377
+#, c-format
+msgid "_Redo Move %d item"
+msgid_plural "_Redo Move %d items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-undo-operations.c:381
+#, c-format
+msgid "Move '%s' back to '%s'"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:382
+#, c-format
+msgid "Move '%s' to '%s'"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:384
+msgid "_Undo Move"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:385
+msgid "_Redo Move"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:388
+msgid "_Undo Restore from Trash"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:389
+msgid "_Redo Restore from Trash"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:392
+#, c-format
+msgid "Move %d item back to trash"
+msgid_plural "Move %d items back to trash"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-undo-operations.c:395
+#: libnemo-private/nemo-file-undo-operations.c:981
+#, c-format
+msgid "Restore %d item from trash"
+msgid_plural "Restore %d items from trash"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-undo-operations.c:399
+#, c-format
+msgid "Move '%s' back to trash"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:400
+#, c-format
+msgid "Restore '%s' from trash"
+msgstr "Berrezarri '%s' zakarrontzitik"
+
+#: libnemo-private/nemo-file-undo-operations.c:404
+#, c-format
+msgid "Delete %d copied item"
+msgid_plural "Delete %d copied items"
+msgstr[0] "Ezabatu kopiatutako elementu %d"
+msgstr[1] "Ezabatu kopiatutako %d elementu"
+
+#: libnemo-private/nemo-file-undo-operations.c:407
+#, c-format
+msgid "Copy %d item to '%s'"
+msgid_plural "Copy %d items to '%s'"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-undo-operations.c:411
+#, c-format
+msgid "_Undo Copy %d item"
+msgid_plural "_Undo Copy %d items"
+msgstr[0] "_Desegin elementu %d kopiatzea"
+msgstr[1] "_Desegin %d elementu kopiatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:414
+#, c-format
+msgid "_Redo Copy %d item"
+msgid_plural "_Redo Copy %d items"
+msgstr[0] "_Berregin elementu %d kopiatzea"
+msgstr[1] "_Berregin %d elementu kopiatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:418
+#: libnemo-private/nemo-file-undo-operations.c:440
+#: libnemo-private/nemo-file-undo-operations.c:673
+#, c-format
+msgid "Delete '%s'"
+msgstr "Ezabatu '%s'"
+
+#: libnemo-private/nemo-file-undo-operations.c:419
+#, c-format
+msgid "Copy '%s' to '%s'"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:421
+msgid "_Undo Copy"
+msgstr "_Desegin kopiatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:422
+msgid "_Redo Copy"
+msgstr "_Berregin kopiatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:426
+#, c-format
+msgid "Delete %d duplicated item"
+msgid_plural "Delete %d duplicated items"
+msgstr[0] "Ezabatu bikoiztutako elementu %d"
+msgstr[1] "Ezabatu bikoiztutako %d elementu"
+
+#: libnemo-private/nemo-file-undo-operations.c:429
+#, c-format
+msgid "Duplicate %d item in '%s'"
+msgid_plural "Duplicate %d items in '%s'"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-undo-operations.c:433
+#, c-format
+msgid "_Undo Duplicate %d item"
+msgid_plural "_Undo Duplicate %d items"
+msgstr[0] "_Desegin elementu %d bikoiztea"
+msgstr[1] "_Desegin %d elementu bikoiztea"
+
+#: libnemo-private/nemo-file-undo-operations.c:436
+#, c-format
+msgid "_Redo Duplicate %d item"
+msgid_plural "_Redo Duplicate %d items"
+msgstr[0] "_Berregin elementu %d bikoiztea"
+msgstr[1] "_Berregin %d elementu bikoiztea"
+
+#: libnemo-private/nemo-file-undo-operations.c:441
+#, c-format
+msgid "Duplicate '%s' in '%s'"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:444
+msgid "_Undo Duplicate"
+msgstr "_Desegin bikoiztea"
+
+#: libnemo-private/nemo-file-undo-operations.c:445
+msgid "_Redo Duplicate"
+msgstr "_Berregin bikoiztea"
+
+#: libnemo-private/nemo-file-undo-operations.c:449
+#, c-format
+msgid "Delete links to %d item"
+msgid_plural "Delete links to %d items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-undo-operations.c:452
+#, c-format
+msgid "Create links to %d item"
+msgid_plural "Create links to %d items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-file-undo-operations.c:456
+#, c-format
+msgid "Delete link to '%s'"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:457
+#, c-format
+msgid "Create link to '%s'"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:459
+msgid "_Undo Create Link"
+msgstr "_Desegin esteka sortzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:460
+msgid "_Redo Create Link"
+msgstr "_Berregin esteka sortzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:676
+#, c-format
+msgid "Create an empty file '%s'"
+msgstr "Sortu '%s' fitxategi huts bat"
+
+#: libnemo-private/nemo-file-undo-operations.c:678
+msgid "_Undo Create Empty File"
+msgstr "_Desegin fitxategi hutsa sortzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:679
+msgid "_Redo Create Empty File"
+msgstr "_Berregin fitxategi hutsa sortzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:681
+#, c-format
+msgid "Create a new folder '%s'"
+msgstr "Sortu '%s' karpeta berri bat"
+
+#: libnemo-private/nemo-file-undo-operations.c:683
+msgid "_Undo Create Folder"
+msgstr "_Desegin karpeta sortzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:684
+msgid "_Redo Create Folder"
+msgstr "_Berregin karpeta sortzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:686
+#, c-format
+msgid "Create new file '%s' from template "
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:688
+msgid "_Undo Create from Template"
+msgstr "_Desegin txantiloitik sortzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:689
+msgid "_Redo Create from Template"
+msgstr "_Berregin txantiloitik sortzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:869
+#: libnemo-private/nemo-file-undo-operations.c:870
+#, c-format
+msgid "Rename '%s' as '%s'"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:872
+msgid "_Undo Rename"
+msgstr "_Desegin berrizendatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:873
+msgid "_Redo Rename"
+msgstr "_Berregin berrizendatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:984
+#, c-format
+msgid "Move %d item to trash"
+msgid_plural "Move %d items to trash"
+msgstr[0] "Bota elementu %d zakarrontzira"
+msgstr[1] "Bota %d elementu zakarrontzira"
+
+#: libnemo-private/nemo-file-undo-operations.c:996
+#, c-format
+msgid "Restore '%s' to '%s'"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:1003
+#, c-format
+msgid "Move '%s' to trash"
+msgstr "Bota '%s' zakarrontzira"
+
+#: libnemo-private/nemo-file-undo-operations.c:1007
+msgid "_Undo Trash"
+msgstr "_Desegin zakarrontzira botatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:1008
+msgid "_Redo Trash"
+msgstr "_Berregin zakarrontzira botatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:1300
+#, c-format
+msgid "Restore original permissions of items enclosed in '%s'"
+msgstr "Berrezarri jatorrizko baimenak '%s' barneko elementuei"
+
+#: libnemo-private/nemo-file-undo-operations.c:1301
+#, c-format
+msgid "Set permissions of items enclosed in '%s'"
+msgstr "Ezarri '%s' barneko elementuen baimenak"
+
+#: libnemo-private/nemo-file-undo-operations.c:1303
+#: libnemo-private/nemo-file-undo-operations.c:1458
+msgid "_Undo Change Permissions"
+msgstr "_Desegin baimenak aldatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:1304
+#: libnemo-private/nemo-file-undo-operations.c:1459
+msgid "_Redo Change Permissions"
+msgstr "_Berregin baimenak aldatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:1455
+#, c-format
+msgid "Restore original permissions of '%s'"
+msgstr "Berrezarri '%s'(r)en jatorrizko baimenak"
+
+#: libnemo-private/nemo-file-undo-operations.c:1456
+#, c-format
+msgid "Set permissions of '%s'"
+msgstr "Ezarri '%s'(r)en baimenak"
+
+#: libnemo-private/nemo-file-undo-operations.c:1566
+#, c-format
+msgid "Restore group of '%s' to '%s'"
+msgstr "Berrezarri '%s'(r)en taldea '%s'(e)ra"
+
+#: libnemo-private/nemo-file-undo-operations.c:1568
+#, c-format
+msgid "Set group of '%s' to '%s'"
+msgstr ""
+
+#: libnemo-private/nemo-file-undo-operations.c:1571
+msgid "_Undo Change Group"
+msgstr "_Desegin taldea aldatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:1572
+msgid "_Redo Change Group"
+msgstr "_Berregin taldea aldatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:1574
+#, c-format
+msgid "Restore owner of '%s' to '%s'"
+msgstr "Berrezarri '%s'(r)en jabetzat '%s'"
+
+#: libnemo-private/nemo-file-undo-operations.c:1576
+#, c-format
+msgid "Set owner of '%s' to '%s'"
+msgstr "Ezarri '%s'(r)en jabetzat '%s'"
+
+#: libnemo-private/nemo-file-undo-operations.c:1579
+msgid "_Undo Change Owner"
+msgstr "_Desegin jabea aldatzea"
+
+#: libnemo-private/nemo-file-undo-operations.c:1580
+msgid "_Redo Change Owner"
+msgstr "_Berregin jabea aldatzea"
+
+#: libnemo-private/nemo-file-utilities.c:1254
+#, c-format
+msgid "Could not determine original location of \"%s\" "
+msgstr "Ezin izan da \"%s\"(r)en jatorrizko kokalekua zehaztu "
+
+#: libnemo-private/nemo-file-utilities.c:1258
+msgid "The item cannot be restored from trash"
+msgstr "Ezin da elementua zakarrontzitik berreskuratu"
+
+#: libnemo-private/nemo-icon-container.c:2679
+msgid "The selection rectangle"
+msgstr ""
+
+#: libnemo-private/nemo-icon-container.c:6906
+#, c-format
+msgid "%d item"
+msgid_plural "%d items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-mime-application-chooser.c:83
+#, c-format
+msgid "Error while adding \"%s\": %s"
+msgstr "Errorea \"%s\" gehitzean: %s"
+
+#: libnemo-private/nemo-mime-application-chooser.c:85
+msgid "Could not add application"
+msgstr "Ezin izan da aplikazioa gehitu"
+
+#: libnemo-private/nemo-mime-application-chooser.c:113
+msgid "Could not forget association"
+msgstr ""
+
+#: libnemo-private/nemo-mime-application-chooser.c:137
+msgid "Forget association"
+msgstr ""
+
+#: libnemo-private/nemo-mime-application-chooser.c:175
+#, c-format
+msgid "Error while setting \"%s\" as default application: %s"
+msgstr "Errorea \"%s\" aplikazio lehenetsi bezala ezartzean: %s"
+
+#: libnemo-private/nemo-mime-application-chooser.c:177
+msgid "Could not set as default"
+msgstr "Ezin izan da lehenetsi bezala ezarri"
+
+#: libnemo-private/nemo-mime-application-chooser.c:279
+#: libnemo-private/nemo-mime-application-chooser.c:297
+#, c-format
+msgid "%s document"
+msgstr "%s dokumentua"
+
+#: libnemo-private/nemo-mime-application-chooser.c:284
+#, c-format
+msgid "Open all files of type \"%s\" with"
+msgstr ""
+
+#: libnemo-private/nemo-mime-application-chooser.c:304
+#, c-format
+msgid "Select an application to open %s and other files of type \"%s\""
+msgstr ""
+
+#: libnemo-private/nemo-mime-application-chooser.c:366
+msgid "Show other applications"
+msgstr "Erakutsi beste aplikazioak"
+
+#: libnemo-private/nemo-mime-application-chooser.c:395
+msgid "Set as default"
+msgstr "Ezarri lehenetsi bezala"
+
+#: libnemo-private/nemo-program-choosing.c:311
+msgid "Sorry, but you cannot execute commands from a remote site."
+msgstr "Ezin duzu urruneko gune batetik komandorik exekutatu."
+
+#: libnemo-private/nemo-program-choosing.c:313
+msgid "This is disabled due to security considerations."
+msgstr ""
+
+#: libnemo-private/nemo-program-choosing.c:324
+#: libnemo-private/nemo-program-choosing.c:392
+msgid "There was an error launching the application."
+msgstr "Errore bat gertatu da aplikazioa abiaraztean."
+
+#: libnemo-private/nemo-program-choosing.c:349
+#: libnemo-private/nemo-program-choosing.c:360
+msgid "This drop target only supports local files."
+msgstr "Jaregiteko helburu honek fitxategi lokalak soilik onartzen ditu."
+
+#: libnemo-private/nemo-program-choosing.c:350
+msgid ""
+"To open non-local files copy them to a local folder and then drop them again."
+msgstr ""
+"Lokalak ez diren fitxategiak irekitzeko, kopia itzazu karpeta lokal batera "
+"eta berriro jaregin."
+
+#: libnemo-private/nemo-program-choosing.c:361
+msgid ""
+"To open non-local files copy them to a local folder and then drop them "
+"again. The local files you dropped have already been opened."
+msgstr ""
+"Lokalak ez diren fitxategiak irekitzeko, kopia itzazu karpeta lokal batera "
+"eta berriro jaregin. Zuk jaregindako fitxategi lokalak dagoeneko ireki dira."
+
+#: libnemo-private/nemo-program-choosing.c:390
+msgid "Details: "
+msgstr "Xehetasunak: "
+
+#: libnemo-private/nemo-progress-info.c:192
+#: libnemo-private/nemo-progress-info.c:210
+msgid "Preparing"
+msgstr "Prestatzen"
+
+#: libnemo-private/nemo-query.c:133
+#, c-format
+msgid "Search for \"%s\""
+msgstr "Bilatu \"%s\""
+
+#: libnemo-private/nemo-undo-signal-handlers.c:174
+msgid "Undo Edit"
+msgstr "Desegin edizioa"
+
+#: libnemo-private/nemo-undo-signal-handlers.c:175
+msgid "Undo the edit"
+msgstr "Desegin edizioa"
+
+#: libnemo-private/nemo-undo-signal-handlers.c:176
+msgid "Redo Edit"
+msgstr "Berregin edizioa"
+
+#: libnemo-private/nemo-undo-signal-handlers.c:177
+msgid "Redo the edit"
+msgstr "Berregin edizioa"
+
+#: eel/eel-canvas.c:1255 eel/eel-canvas.c:1256
+msgid "X"
+msgstr "X"
+
+#: eel/eel-canvas.c:1262 eel/eel-canvas.c:1263
+msgid "Y"
+msgstr "Y"
+
+#: eel/eel-editable-label.c:311
+msgid "Text"
+msgstr "Testua"
+
+#: eel/eel-editable-label.c:312
+msgid "The text of the label."
+msgstr "Etiketaren testua."
+
+#: eel/eel-editable-label.c:318
+msgid "Justification"
+msgstr "Lerrokadura"
+
+#: eel/eel-editable-label.c:319
+msgid ""
+"The alignment of the lines in the text of the label relative to each other. "
+"This does NOT affect the alignment of the label within its allocation. See "
+"GtkMisc::xalign for that."
+msgstr ""
+
+#: eel/eel-editable-label.c:327
+msgid "Line wrap"
+msgstr ""
+
+#: eel/eel-editable-label.c:328
+msgid "If set, wrap lines if the text becomes too wide."
+msgstr ""
+
+#: eel/eel-editable-label.c:335
+msgid "Cursor Position"
+msgstr "Kurtsorearen posizioa"
+
+#: eel/eel-editable-label.c:336
+msgid "The current position of the insertion cursor in chars."
+msgstr ""
+
+#: eel/eel-editable-label.c:345
+msgid "Selection Bound"
+msgstr ""
+
+#: eel/eel-editable-label.c:346
+msgid ""
+"The position of the opposite end of the selection from the cursor in chars."
+msgstr ""
+
+#: eel/eel-editable-label.c:3104
+msgid "Select All"
+msgstr "Hautatu dena"
+
+#: eel/eel-editable-label.c:3115
+msgid "Input Methods"
+msgstr "Sarrera metodoak"
+
+#: eel/eel-gtk-extensions.c:404
+msgid "Show more _details"
+msgstr "Erakutsi _xehetasun gehiago"
+
+#: eel/eel-stock-dialogs.c:205
+msgid "You can stop this operation by clicking cancel."
+msgstr "Eragiketa hau geldiarazi dezakezu Utzi botoian klik eginez."
+
+#: eel/eel-vfs-extensions.c:93
+msgid " (invalid Unicode)"
+msgstr " (Unicode baliogabea)"

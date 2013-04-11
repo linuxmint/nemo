@@ -1,0 +1,4927 @@
+# Malayalam translation for linuxmint
+# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
+# This file is distributed under the same license as the linuxmint package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxmint\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2013-01-21 13:19+0000\n"
+"PO-Revision-Date: 2012-11-08 03:00+0000\n"
+"Last-Translator: praveenp <Unknown>\n"
+"Language-Team: Malayalam <ml@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Launchpad-Export-Date: 2013-04-11 14:39+0000\n"
+"X-Generator: Launchpad (build 16550)\n"
+
+#: src/nemo-application.c:158
+#, c-format
+msgid "Nemo could not create the required folder \"%s\"."
+msgstr "ആവശ്യമായ ഫോൾഡറായ \"%s\" നിർമ്മിക്കാൻ നെമോയ്ക്ക് കഴിഞ്ഞില്ല."
+
+#: src/nemo-application.c:160
+msgid ""
+"Before running Nemo, please create the following folder, or set permissions "
+"such that Nemo can create it."
+msgstr ""
+"നെമോ പ്രവർത്തിപ്പിക്കുന്നതിന് മുമ്പ് താഴെക്കൊടുക്കുന്ന ഫോൾഡർ നിർമ്മിക്കുക, "
+"അല്ലെങ്കിൽ നെമോയ്ക്ക് അത് നിർമ്മിക്കാനുള്ള അനുമതികൾ സജ്ജീകരിക്കുക."
+
+#: src/nemo-application.c:163
+#, c-format
+msgid "Nemo could not create the following required folders: %s."
+msgstr ""
+"താഴെക്കൊടുക്കുന്ന ആവശ്യമുള്ള ഫോൾഡറുകൾ നിർമ്മിക്കാൻ നെമോയ്ക്ക് കഴിഞ്ഞില്ല:  "
+"%s."
+
+#: src/nemo-application.c:165
+msgid ""
+"Before running Nemo, please create these folders, or set permissions such "
+"that Nemo can create them."
+msgstr ""
+"നെമോ പ്രവർത്തിപ്പിക്കുന്നതിന് മുമ്പ് താഴെക്കൊടുക്കുന്ന ഫോൾഡറുകൾ "
+"നിർമ്മിക്കുക, അല്ലെങ്കിൽ നെമോയ്ക്ക് അവ നിർമ്മിക്കാനുള്ള അനുമതികൾ "
+"സജ്ജീകരിക്കുക."
+
+#: src/nemo-application.c:297
+msgid ""
+"Nemo 3.0 deprecated this directory and tried migrating this configuration to "
+"~/.config/nemo"
+msgstr ""
+"നെമോ 3.0 ഈ ഡയറക്ടറി ഒഴിവാക്കുകയും ഈ ക്രമീകരണം ~/.config/nemo എന്നതിലേയ്ക്ക് "
+"മാറ്റാൻ ശ്രമിക്കുകയും ചെയ്തു."
+
+#: src/nemo-application.c:858
+msgid "--check cannot be used with other options."
+msgstr "--check മറ്റ് ഐച്ഛികങ്ങളോടൊപ്പം ഉപയോഗിക്കാൻ കഴിയില്ല."
+
+#: src/nemo-application.c:864
+msgid "--quit cannot be used with URIs."
+msgstr "യു.ആർ.ഐ.യ്ക്കൊപ്പം --quit ഉപയോഗിക്കാൻ കഴിയില്ല."
+
+#: src/nemo-application.c:871
+msgid "--geometry cannot be used with more than one URI."
+msgstr "--geometry ഒന്നിലധികം  യു.ആർ.ഐ.യുടെ കൂടെ ഉപയോഗിക്കാൻ കഴിയില്ല."
+
+#: src/nemo-application.c:925
+msgid "Perform a quick set of self-check tests."
+msgstr "സ്വയം-പരിശോധനാ പരീക്ഷണങ്ങൾ പെട്ടന്ന് നടത്തുക."
+
+#: src/nemo-application.c:931
+msgid "Show the version of the program."
+msgstr "പ്രോഗ്രാമിന്റെ പതിപ്പ് പ്രദർശിപ്പിക്കുക."
+
+#: src/nemo-application.c:933
+msgid "Create the initial window with the given geometry."
+msgstr "നൽകിയിരിക്കുന്ന ജ്യാമിതി പ്രകാരം പ്രാഥമിക ജാലകം സൃഷ്ടിക്കുക."
+
+#: src/nemo-application.c:933
+msgid "GEOMETRY"
+msgstr "ജ്യാമിതി"
+
+#: src/nemo-application.c:935
+msgid "Only create windows for explicitly specified URIs."
+msgstr ""
+"പ്രത്യേകം വ്യക്തമാക്കിയിരിക്കുന്ന യു.ആർ.ഐ.കളിൽ മാത്രം ജാലകങ്ങൾ സൃഷ്ടിക്കുക."
+
+#: src/nemo-application.c:937
+msgid ""
+"Do not manage the desktop (ignore the preference set in the preferences "
+"dialog)."
+msgstr ""
+"ഡെസ്ക്‌ടോപ്പ് കൈകാര്യം ചെയ്യേണ്ടതില്ല (ഐച്ഛികങ്ങളുടെ ഡയലോഗിൽ "
+"സജ്ജീകരിച്ചിരിക്കുന്നവ അവഗണിക്കുക)."
+
+#: src/nemo-application.c:939
+msgid "Quit Nemo."
+msgstr "നെമോ നിർത്തുക."
+
+#: src/nemo-application.c:940
+msgid "[URI...]"
+msgstr "[യു.ആർ.ഐ...]"
+
+#: src/nemo-application.c:951
+msgid ""
+"\n"
+"\n"
+"Browse the file system with the file manager"
+msgstr ""
+"\n"
+"\n"
+"ഫയൽ മാനേജർ ഉപയോഗിച്ച് ഫയൽ സിസ്റ്റം ബ്രൗസ് ചെയ്യുക"
+
+#: src/nemo-autorun-software.c:143 src/nemo-autorun-software.c:146
+#, c-format
+msgid "Error starting autorun program: %s"
+msgstr "സ്വയം പ്രവർത്തിക്കുന്ന പ്രോഗ്രാം തുടങ്ങുന്നതിൽ പിഴവുണ്ടായി:  %s"
+
+#: src/nemo-autorun-software.c:149
+msgid "Cannot find the autorun program"
+msgstr "സ്വയം തുടങ്ങേണ്ട പ്രോഗ്രാം കണ്ടുപിടിയ്ക്കാന്‍ സാധിച്ചില്ല"
+
+#: src/nemo-autorun-software.c:171
+msgid "<big><b>Error autorunning software</b></big>"
+msgstr ""
+"<big><b>സോഫ്റ്റ്‌വേർ സ്വയം പ്രവര്‍ത്തിപ്പിയ്ക്കുന്നതില്‍ "
+"പിഴവുണ്ടായി</b></big>"
+
+#: src/nemo-autorun-software.c:197
+msgid ""
+"<big><b>This medium contains software intended to be automatically started. "
+"Would you like to run it?</b></big>"
+msgstr ""
+"<big><b>ഈ മാദ്ധ്യമത്തിൽ സ്വയം പ്രവർത്തിച്ചുതുടങ്ങാനുദ്ദേശിച്ചുള്ള "
+"സോഫ്റ്റ്‌വേറുണ്ട്. അത് പ്രവർത്തിപ്പിക്കാൻ താങ്കളാഗ്രഹിക്കുന്നുണ്ടോ? "
+"</b></big>"
+
+#: src/nemo-autorun-software.c:199
+#, c-format
+msgid ""
+"The software will run directly from the medium \"%s\". You should never run "
+"software that you don't trust.\n"
+"\n"
+"If in doubt, press Cancel."
+msgstr ""
+"ഈ സോഫ്റ്റ്‌വേർ \"%s\" എന്ന മാദ്ധ്യമത്തില്‍ നിന്നും നേരിട്ട് "
+"പ്രവര്‍ത്തിയ്ക്കും. താങ്കള്‍ക്കു് വിശ്വാസമില്ലാത്ത സോഫ്റ്വേർ താങ്കളൊരിക്കലും "
+"പ്രവര്‍ത്തിപ്പിക്കരുതു്.\n"
+"\n"
+"സംശയമാണെങ്കിൽ, റദ്ദാക്കുക."
+
+#: src/nemo-autorun-software.c:233 src/nemo-mime-actions.c:718
+msgid "_Run"
+msgstr "_നടപ്പിലാക്കുക"
+
+#: src/nemo-bookmarks-window.c:158 src/nemo-file-management-properties.c:229
+#: src/nemo-window-menus.c:400
+#, c-format
+msgid ""
+"There was an error displaying help: \n"
+"%s"
+msgstr ""
+"സഹായം പ്രദർശിപ്പിക്കുന്നതിൽ പിഴവുണ്ടായി: \n"
+"%s"
+
+#: src/nemo-bookmarks-window.c:192
+msgid "No bookmarks defined"
+msgstr "ബുക്ക്മാർക്കുകളൊന്നും നിർവചിച്ചിട്ടില്ല"
+
+#: src/nemo-connect-server-dialog.c:128
+msgid "SSH"
+msgstr "എസ്.എസ്.എച്ച്."
+
+#: src/nemo-connect-server-dialog.c:131
+msgid "Public FTP"
+msgstr "പൊതു എഫ്.ടി.പി."
+
+#: src/nemo-connect-server-dialog.c:133
+msgid "FTP (with login)"
+msgstr "എഫ്.ടി.പി.  (പ്രവേശനത്തോടൊപ്പം)"
+
+#: src/nemo-connect-server-dialog.c:136
+msgid "Windows share"
+msgstr "വിൻഡോസ് പങ്ക് വെയ്ക്കുന്നത്"
+
+#: src/nemo-connect-server-dialog.c:138
+msgid "WebDAV (HTTP)"
+msgstr "വെബ്ഡിഎവി (എച്ച്.റ്റി.റ്റി.പി.)"
+
+#: src/nemo-connect-server-dialog.c:140
+msgid "Secure WebDAV (HTTPS)"
+msgstr "സെക്യുർ വെബ്ഡിഎവി (എച്ച്.റ്റി.റ്റി.പി.എസ്.)"
+
+#: src/nemo-connect-server-dialog.c:187
+msgid "Connecting..."
+msgstr "ബന്ധിപ്പിക്കുന്നു..."
+
+#: src/nemo-connect-server-dialog.c:211
+msgid ""
+"Can't load the supported server method list.\n"
+"Please check your gvfs installation."
+msgstr ""
+"പിന്തുണയുള്ള സെർവർ മാർഗ്ഗ പട്ടികയെടുക്കാൻ കഴിഞ്ഞില്ല.\n"
+"ദയവായി താങ്കളുടെ ജി.വി.എഫ്.എസ്. ഇൻസ്റ്റലേഷൻ പരിശോധിക്കുക."
+
+#: src/nemo-connect-server-dialog.c:289
+#, c-format
+msgid "The folder \"%s\" cannot be opened on \"%s\"."
+msgstr "\"%s\" എന്ന ഫോൾഡർ \"%s\" ഉപയോഗിച്ച് തുറക്കാൻ കഴിയില്ല."
+
+#: src/nemo-connect-server-dialog.c:299
+#, c-format
+msgid "The server at \"%s\" cannot be found."
+msgstr "\"%s\" എന്നതിലെ സെർവർ കണ്ടെത്താനായില്ല."
+
+#: src/nemo-connect-server-dialog.c:334
+msgid "Try Again"
+msgstr "വീണ്ടും ശ്രമിക്കുക"
+
+#: src/nemo-connect-server-dialog.c:399
+msgid "Please verify your user details."
+msgstr "ദയവായി താങ്കളുടെ ഉപയോക്തൃവിവരങ്ങൾ പരിശോധിക്കുക."
+
+#: src/nemo-connect-server-dialog.c:429
+msgid "Continue"
+msgstr "തുടരുക"
+
+#: src/nemo-connect-server-dialog.c:701 src/nemo-properties-window.c:5125
+#: src/nemo-view.c:1519
+msgid "There was an error displaying help."
+msgstr "സഹായം പ്രദർശിപ്പിക്കുന്നതിൽ പിഴവുണ്ടായി."
+
+#: src/nemo-connect-server-dialog.c:719 src/nemo-connect-server-dialog.c:1109
+msgid "C_onnect"
+msgstr "_കണക്ട് ചെയ്യുക"
+
+#: src/nemo-connect-server-dialog.c:844
+msgid "Connect to Server"
+msgstr "സെർവറിലേയ്ക്ക് ബന്ധപ്പെടുക"
+
+#: src/nemo-connect-server-dialog.c:862
+msgid "Server Details"
+msgstr "സെർവർ വിശദാംശങ്ങൾ"
+
+#: src/nemo-connect-server-dialog.c:886
+msgid "_Server:"
+msgstr "_സെര്‍വര്‍:"
+
+#: src/nemo-connect-server-dialog.c:906
+msgid "_Port:"
+msgstr "_പോര്‍ട്ട്:"
+
+#: src/nemo-connect-server-dialog.c:924
+msgid "_Type:"
+msgstr "_തരം:"
+
+#: src/nemo-connect-server-dialog.c:993
+msgid "Sh_are:"
+msgstr "_ഷെയര്‍:"
+
+#: src/nemo-connect-server-dialog.c:1008 src/nemo-view.c:1713
+msgid "_Folder:"
+msgstr "_ഫോള്‍ഡര്‍:"
+
+#: src/nemo-connect-server-dialog.c:1026
+msgid "User Details"
+msgstr "ഉപയോക്തൃവിവരങ്ങൾ"
+
+#: src/nemo-connect-server-dialog.c:1049
+msgid "_Domain name:"
+msgstr "_ഡൊമൈൻ നാമം:"
+
+#: src/nemo-connect-server-dialog.c:1064
+msgid "_User name:"
+msgstr "_ഉപയോക്തൃനാമം:"
+
+#: src/nemo-connect-server-dialog.c:1079
+msgid "Pass_word:"
+msgstr "രഹസ്യ_വാക്ക്"
+
+#: src/nemo-connect-server-dialog.c:1095
+msgid "_Remember this password"
+msgstr "ഈ രഹസ്യവാക്ക് _ഓർത്തുവെയ്ക്കുക"
+
+#: src/nemo-connect-server-dialog.c:1195
+msgid "Operation cancelled"
+msgstr "പ്രവൃത്തി റദ്ദാക്കിയിരിക്കുന്നു"
+
+#: src/nemo-connect-server-dialog-main.c:120
+msgid "Print but do not open the URI"
+msgstr "അച്ചടിക്കുക, പക്ഷേ യു.ആർ.ഐ. തുറക്കേണ്ടതില്ല"
+
+#: src/nemo-connect-server-dialog-main.c:131
+msgid ""
+"\n"
+"\n"
+"Add connect to server mount"
+msgstr ""
+"\n"
+"\n"
+"സെർവർ മൗണ്ടിലേയ്ക്ക് ബന്ധപ്പെടുക"
+
+#: src/nemo-desktop-icon-view.c:766 src/nemo-view.c:7876 src/nemo-view.c:9445
+msgid "E_mpty Trash"
+msgstr "ട്രാഷ് _ശൂന്യമാക്കുക"
+
+#: src/nemo-desktop-icon-view.c:782 src/nemo-view.c:7824
+msgid "Create L_auncher..."
+msgstr "_ലോഞ്ചർ സൃഷ്ടിക്കുക..."
+
+#: src/nemo-desktop-icon-view.c:784 src/nemo-view.c:7825
+msgid "Create a new launcher"
+msgstr "പുതിയ ഒരു ലോഞ്ചർ സൃഷ്ടിക്കുക"
+
+#: src/nemo-desktop-icon-view.c:789
+msgid "Change Desktop _Background"
+msgstr "ഡെസ്ക്ടോപ്പിന്റെ _പശ്ചാത്തലം മാറ്റുക"
+
+#: src/nemo-desktop-icon-view.c:791
+msgid ""
+"Show a window that lets you set your desktop background's pattern or color"
+msgstr "ഡെസ്ക്‌ടോപ്പിലെ ശ്രേണിയോ നിറമോ മാറ്റാനുള്ള ജാലകം പ്രദർശിപ്പിക്കുക"
+
+#: src/nemo-desktop-icon-view.c:796
+msgid "Empty Trash"
+msgstr "ട്രാഷ് ശൂന്യമാക്കുക"
+
+#: src/nemo-desktop-icon-view.c:798 src/nemo-trash-bar.c:207
+#: src/nemo-view.c:7877
+msgid "Delete all items in the Trash"
+msgstr "ട്രാഷിലുള്ള എല്ലാം മായ്ക്കുക"
+
+#: src/nemo-desktop-icon-view.c:803
+msgid "Add Desklets"
+msgstr ""
+
+#: src/nemo-desktop-icon-view.c:805
+msgid "Open Cinnamon Settings to add desklets"
+msgstr ""
+
+#: src/nemo-desktop-icon-view.c:868
+msgid "The desktop view encountered an error."
+msgstr "ഡെസ്ക്‌ടോപ്പ് പ്രദർശനത്തിൽ പിഴവുണ്ടായിരിക്കുന്നു."
+
+#: src/nemo-desktop-icon-view.c:869
+msgid "The desktop view encountered an error while starting up."
+msgstr "ഡെസ്ക്‌ടോപ്പ് പ്രദർശനം തുടങ്ങുന്നതിനിടെ ഒരു പിഴവുണ്ടായി."
+
+#: src/nemo-desktop-item-properties.c:405
+#: src/nemo-desktop-item-properties.c:415 src/nemo-image-properties-page.c:368
+msgid "Comment"
+msgstr "അഭിപ്രായം"
+
+#: src/nemo-desktop-item-properties.c:408
+msgid "URL"
+msgstr "യു.ആർ.എൽ."
+
+#: src/nemo-desktop-item-properties.c:411
+#: src/nemo-desktop-item-properties.c:421 src/nemo-image-properties-page.c:361
+#: src/nemo-image-properties-page.c:414
+msgid "Description"
+msgstr "വിവരണം"
+
+#: src/nemo-desktop-item-properties.c:418
+msgid "Command"
+msgstr "നിർദ്ദേശം"
+
+#: src/nemo-desktop-window.c:92 src/nemo-desktop-window.c:290
+#: src/nemo-pathbar.c:1330 src/nemo-places-sidebar.c:668
+msgid "Desktop"
+msgstr "ഡെസ്ക്‌ടോപ്പ്"
+
+#: src/nemo-error-reporting.c:68
+#, c-format
+msgid ""
+"You do not have the permissions necessary to view the contents of \"%s\"."
+msgstr "\"%s\" എന്നതിലെ ഉള്ളടക്കം കാണാനാവശ്യമുള്ള അനുമതി താങ്കൾക്കില്ല."
+
+#: src/nemo-error-reporting.c:72
+#, c-format
+msgid "\"%s\" could not be found. Perhaps it has recently been deleted."
+msgstr "\"%s\" കണ്ടെത്താനായില്ല. ചിലപ്പോളത് അടുത്തിടെ മായ്ച്ചിട്ടുണ്ടാവാം."
+
+#: src/nemo-error-reporting.c:76
+#, c-format
+msgid "Sorry, could not display all the contents of \"%s\": %s"
+msgstr ""
+"ക്ഷമിക്കുക, \"%s\"-ന്റെ എല്ലാ ഉള്ളടക്കങ്ങളും പ്രദര്‍ശിപ്പിക്കാന്‍ "
+"കഴിഞ്ഞില്ല: %s"
+
+#: src/nemo-error-reporting.c:83
+msgid "The folder contents could not be displayed."
+msgstr "ഫോൾഡറിന്റെ ഉള്ളടക്കം പ്രദർശിപ്പിക്കാൻ കഴിയില്ല."
+
+#: src/nemo-error-reporting.c:107
+#, c-format
+msgid ""
+"You do not have the permissions necessary to change the group of \"%s\"."
+msgstr "ഗണം  \"%s\" മാറ്റാനാവശ്യമുള്ള അനുമതികൾ താങ്കൾക്കില്ല."
+
+#: src/nemo-error-reporting.c:120
+#, c-format
+msgid "Sorry, could not change the group of \"%s\": %s"
+msgstr "ക്ഷമിക്കുക, \"%s\"-നുള്ള ഗണം മാറ്റാന്‍‌ കഴിഞ്ഞില്ല: %s"
+
+#: src/nemo-error-reporting.c:125
+msgid "The group could not be changed."
+msgstr "ഗണം മാറ്റാൻ കഴിയില്ല."
+
+#: src/nemo-error-reporting.c:145
+#, c-format
+msgid "Sorry, could not change the owner of \"%s\": %s"
+msgstr "ക്ഷമിക്കുക, \"%s\"-ന്റെ ഉടമയെ മാറ്റാന്‍‌ കഴിഞ്ഞില്ല: %s"
+
+#: src/nemo-error-reporting.c:147
+msgid "The owner could not be changed."
+msgstr "ഉടമയെ മാറ്റാൻ കഴിയില്ല."
+
+#: src/nemo-error-reporting.c:167
+#, c-format
+msgid "Sorry, could not change the permissions of \"%s\": %s"
+msgstr "ക്ഷമിക്കുക, \"%s\"-നുള്ള അനുമതികള്‍ മാറ്റാന്‍‌ കഴിഞ്ഞില്ല: %s"
+
+#: src/nemo-error-reporting.c:169
+msgid "The permissions could not be changed."
+msgstr "അനുമതികൾ മാറ്റാൻ കഴിയില്ല."
+
+#: src/nemo-error-reporting.c:204
+#, c-format
+msgid ""
+"The name \"%s\" is already used in this folder. Please use a different name."
+msgstr ""
+"\"%s\" എന്ന പേര് ഈ ഫോൾഡറിൽ നിലവിൽ ഉപയോഗത്തിലുണ്ട്. ദയവായി മറ്റൊരു പേര് "
+"ഉപയോഗിക്കുക."
+
+#: src/nemo-error-reporting.c:209
+#, c-format
+msgid ""
+"There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
+msgstr ""
+"ഈ ഫോൾഡറിൽ \"%s\" ലഭ്യമല്ല. ചിലപ്പോള്‍ അതു്  മാറ്റുകയോ മായ്ക്കുകയോ "
+"ചെയ്തിരിക്കാം?"
+
+#: src/nemo-error-reporting.c:214
+#, c-format
+msgid "You do not have the permissions necessary to rename \"%s\"."
+msgstr "\"%s\" പുനർനാമകരണം ചെയ്യാനാവശ്യമുള്ള അനുമതി താങ്കൾക്കില്ല."
+
+#: src/nemo-error-reporting.c:219
+#, c-format
+msgid ""
+"The name \"%s\" is not valid because it contains the character \"/\". Please "
+"use a different name."
+msgstr ""
+"\"/\" ഉളളതിനാല്‍ \"%s\" എന്ന പേര് അസാധുവാണ്. ദയവായി മറ്റൊരു പേര് ഉപയോഗിക്കുക."
+
+#: src/nemo-error-reporting.c:223
+#, c-format
+msgid "The name \"%s\" is not valid. Please use a different name."
+msgstr "\"%s\" എന്ന പേര് അസാധുവാണ്. ദയവായി മറ്റൊരു പേര് ഉപയോഗിക്കുക."
+
+#: src/nemo-error-reporting.c:229
+#, c-format
+msgid "The name \"%s\" is too long. Please use a different name."
+msgstr "\"%s\" എന്ന പേരിന് നീളം കൂടുതലാണ്. ദയവായി മറ്റൊരു പേരു് ഉപയോഗിക്കുക."
+
+#: src/nemo-error-reporting.c:243
+#, c-format
+msgid "Sorry, could not rename \"%s\" to \"%s\": %s"
+msgstr ""
+"ക്ഷമിക്കുക, \"%s\" എന്നതിനെ \"%s\" എന്ന് പുനർനാമകരണം ചെയ്യാൻ കഴിഞ്ഞില്ല: %s"
+
+#: src/nemo-error-reporting.c:251
+msgid "The item could not be renamed."
+msgstr "ഇതിനെ പുനർനാമകരണം ചെയ്യാൻ കഴിയില്ല."
+
+#: src/nemo-error-reporting.c:348
+#, c-format
+msgid "Renaming \"%s\" to \"%s\"."
+msgstr "\"%s\" -നെ \"%s\" എന്ന് പുനര്‍നാമകരണം ചെയ്യുന്നു."
+
+#: src/nemo-file-management-properties.c:313 src/nemo-properties-window.c:3923
+#: src/nemo-properties-window.c:3934
+msgid "None"
+msgstr "ഒന്നുമില്ല"
+
+#: src/nemo-file-management-properties.c:496 libnemo-private/nemo-file.c:4373
+msgid "today at %-I:%M:%S %p"
+msgstr "ഇന്ന് %-I:%M:%S %p-നു്"
+
+#: src/nemo-icon-view.c:133
+msgid "by _Name"
+msgstr "_നാമാനുസൃതം"
+
+#: src/nemo-icon-view.c:134 src/nemo-icon-view.c:1434
+msgid "Keep icons sorted by name in rows"
+msgstr "ഐകോണുകൾ പേരിനനുസരിച്ച് ക്രമപ്പെടുത്തുക"
+
+#: src/nemo-icon-view.c:140
+msgid "by _Size"
+msgstr "_വലിപ്പമനുസരിച്ച്"
+
+#: src/nemo-icon-view.c:141 src/nemo-icon-view.c:1438
+msgid "Keep icons sorted by size in rows"
+msgstr "ഐകോണുകൾ നിരയിൽ വലിപ്പമനുസരിച്ച് ക്രമപ്പെടുത്തുക"
+
+#: src/nemo-icon-view.c:147
+msgid "by _Type"
+msgstr "_തരമനുസരിച്ച്"
+
+#: src/nemo-icon-view.c:148 src/nemo-icon-view.c:1442
+msgid "Keep icons sorted by type in rows"
+msgstr "ഐകോണുകൾ നിരയിൽ തരമനുസരിച്ച് ക്രമപ്പെടുത്തുക"
+
+#: src/nemo-icon-view.c:154
+msgid "by Modification _Date"
+msgstr "പുതുക്കിയ _തീയതിയനുസരിച്ച്"
+
+#: src/nemo-icon-view.c:155 src/nemo-icon-view.c:1446
+msgid "Keep icons sorted by modification date in rows"
+msgstr "ഐകോണുകൾ നിരയിൽ പുതുക്കിയ തീയതിയനുസരിച്ച് ക്രമപ്പെടുത്തുക"
+
+#: src/nemo-icon-view.c:161
+msgid "by T_rash Time"
+msgstr "ട്രാ_ഷിലേക്ക് മാറ്റിയ സമയമനുസരിച്ച്"
+
+#: src/nemo-icon-view.c:162 src/nemo-icon-view.c:1450
+msgid "Keep icons sorted by trash time in rows"
+msgstr "ഐകോണുകൾ നിരയിൽ ട്രാഷിലോട്ട് മാറ്റിയ സമയമനുസരിച്ച് ക്രമപ്പെടുത്തുക"
+
+#: src/nemo-icon-view.c:685
+msgid "_Organize Desktop by Name"
+msgstr "പേരനുസരിച്ച് ഡെസ്ക്ടോപ്പ് _ക്രമീകരിക്കുക"
+
+#: src/nemo-icon-view.c:1393
+msgid "Arran_ge Items"
+msgstr "ഇനങ്ങൾ ക്ര_മീകരിക്കുക"
+
+#: src/nemo-icon-view.c:1395
+msgid "Resize Icon..."
+msgstr "ഐകോണിന്റെ വലിപ്പം പുനഃക്രമീകരിക്കുക...."
+
+#: src/nemo-icon-view.c:1396
+msgid "Make the selected icon resizable"
+msgstr "തിരഞ്ഞെടുത്ത ഐകോൺ വലിപ്പം മാറ്റാവുന്നതാക്കുക"
+
+#: src/nemo-icon-view.c:1399 src/nemo-icon-view.c:1569
+msgid "Restore Icons' Original Si_zes"
+msgstr "ഐകോണുകളുടെ യ_ഥാർത്ഥ വലിപ്പം പുനഃസ്ഥാപിക്കുക"
+
+#: src/nemo-icon-view.c:1400
+msgid "Restore each selected icon to its original size"
+msgstr "തിരഞ്ഞെടുത്ത ഓരോ ഐകോണുകളുടെയും യഥാർത്ഥ വലിപ്പം പുനഃസ്ഥാപിക്കുക"
+
+#: src/nemo-icon-view.c:1403
+msgid "_Organize by Name"
+msgstr "പേരനുസരിച്ച് _ക്രമീകരിക്കുക"
+
+#: src/nemo-icon-view.c:1404
+msgid "Reposition icons to better fit in the window and avoid overlapping"
+msgstr ""
+"ഐകോണുകൾ ജാലകത്തിൽ ഒന്നിനു മേൽ മറ്റൊന്നു കേറാതെ ഒത്തിണങ്ങിയിരിക്കും വിധം "
+"മാറ്റിസ്ഥാപിക്കുക"
+
+#: src/nemo-icon-view.c:1411
+msgid "Compact _Layout"
+msgstr ""
+
+#: src/nemo-icon-view.c:1412
+msgid "Toggle using a tighter layout scheme"
+msgstr ""
+
+#: src/nemo-icon-view.c:1416
+msgid "Re_versed Order"
+msgstr "വിപരീത ക്ര_മം"
+
+#: src/nemo-icon-view.c:1417
+msgid "Display icons in the opposite order"
+msgstr "ഐകോണുകൾ വിപരീതക്രമത്തിൽ പ്രദർശിപ്പിക്കുക"
+
+#: src/nemo-icon-view.c:1421
+msgid "_Keep Aligned"
+msgstr "അണിനിരത്തി _നിർത്തുക"
+
+#: src/nemo-icon-view.c:1422
+msgid "Keep icons lined up on a grid"
+msgstr "ചട്ടകൂടിൽ ഐകോണുകൾ വരിയൊപ്പിച്ചു നിർത്തുക"
+
+#: src/nemo-icon-view.c:1429
+msgid "_Manually"
+msgstr "_സ്വയം ചെയ്യുക"
+
+#: src/nemo-icon-view.c:1430
+msgid "Leave icons wherever they are dropped"
+msgstr "ഐകോണുകൾ എവിടെയാണോ വെച്ചത് അവിടെത്തന്നെ നിലനിർത്തുക"
+
+#: src/nemo-icon-view.c:1433
+msgid "By _Name"
+msgstr "_നാമാനുസൃതം"
+
+#: src/nemo-icon-view.c:1437
+msgid "By _Size"
+msgstr "_വലിപ്പമനുസരിച്ച്"
+
+#: src/nemo-icon-view.c:1441
+msgid "By _Type"
+msgstr "_തരമനുസരിച്ച്"
+
+#: src/nemo-icon-view.c:1445
+msgid "By Modification _Date"
+msgstr "മാറ്റം വരുത്തിയ _തീയതിക്കനുസരിച്ച്"
+
+#: src/nemo-icon-view.c:1449
+msgid "By T_rash Time"
+msgstr "ട്രാ_ഷിലേക്ക് മാറ്റിയ സമയമനുസരിച്ച്"
+
+#: src/nemo-icon-view.c:1570
+msgid "Restore Icon's Original Si_ze"
+msgstr "ഐകണിന്റെ യഥാർത്ഥ വ_ലിപ്പം പുനഃസ്ഥാപിക്കുക"
+
+#: src/nemo-icon-view.c:2809 src/nemo-icon-view-container.c:588
+#: src/nemo-window-menus.c:1369
+msgid "Icon View"
+msgstr "ഐകണിന്റെ രൂപം"
+
+#: src/nemo-icon-view.c:2811
+msgid "_Icons"
+msgstr "_ഐകോണുകൾ"
+
+#: src/nemo-icon-view.c:2812
+msgid "The icon view encountered an error."
+msgstr "ഐകോൺ പ്രദർശനത്തിൽ പിഴവുണ്ടായി."
+
+#: src/nemo-icon-view.c:2813
+msgid "The icon view encountered an error while starting up."
+msgstr "ഐകോൺ പ്രദർശനം തുടങ്ങുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: src/nemo-icon-view.c:2814
+msgid "Display this location with the icon view."
+msgstr "ഈ സ്ഥാനം ഐകോൺ പ്രദർശനരീതി ഉപയോഗിച്ച് കാണിക്കുക."
+
+#: src/nemo-icon-view.c:2823 src/nemo-window-menus.c:1392
+msgid "Compact View"
+msgstr "ലഘുരൂപദർശനം"
+
+#: src/nemo-icon-view.c:2825
+msgid "_Compact"
+msgstr "_ലഘു"
+
+#: src/nemo-icon-view.c:2826
+msgid "The compact view encountered an error."
+msgstr "ഒതുങ്ങിയ പ്രദർശരീതിയിൽ പിഴവുണ്ടായി."
+
+#: src/nemo-icon-view.c:2827
+msgid "The compact view encountered an error while starting up."
+msgstr "ഒതുങ്ങിയ പ്രദർശനരീതി ആരംഭിച്ചപ്പോൾ ഒരു പിഴവുണ്ടായി."
+
+#: src/nemo-icon-view.c:2828
+msgid "Display this location with the compact view."
+msgstr "ഈ സ്ഥാനം ഒതുങ്ങിയ പ്രദർശനരീതിയിൽ പ്രദർശിപ്പിക്കുക."
+
+#: src/nemo-image-properties-page.c:331
+msgid "Image Type"
+msgstr "ചിത്രത്തിന്റെ തരം"
+
+#: src/nemo-image-properties-page.c:333 src/nemo-image-properties-page.c:339
+#, c-format
+msgid "%d pixel"
+msgid_plural "%d pixels"
+msgstr[0] "%d പിക്സൽ"
+msgstr[1] "%d പിക്സലുകൾ"
+
+#: src/nemo-image-properties-page.c:337
+msgid "Width"
+msgstr "വീതി"
+
+#: src/nemo-image-properties-page.c:343
+msgid "Height"
+msgstr "ഉയരം"
+
+#: src/nemo-image-properties-page.c:356 src/nemo-image-properties-page.c:357
+msgid "Title"
+msgstr "ശീർഷകം"
+
+#: src/nemo-image-properties-page.c:358 src/nemo-image-properties-page.c:359
+msgid "Author"
+msgstr "രചയിതാവ്"
+
+#: src/nemo-image-properties-page.c:362 src/nemo-image-properties-page.c:417
+msgid "Copyright"
+msgstr "പകർപ്പവകാശം"
+
+#: src/nemo-image-properties-page.c:363
+msgid "Created On"
+msgstr "സൃഷ്ടിച്ച സമയം"
+
+#: src/nemo-image-properties-page.c:364
+msgid "Created By"
+msgstr "സൃഷ്ടിച്ച ആൾ"
+
+#: src/nemo-image-properties-page.c:365
+msgid "Disclaimer"
+msgstr "നിരാകരണം"
+
+#: src/nemo-image-properties-page.c:366
+msgid "Warning"
+msgstr "മുന്നറിയിപ്പ്"
+
+#: src/nemo-image-properties-page.c:367
+msgid "Source"
+msgstr "സ്രോതസ്സ്"
+
+#: src/nemo-image-properties-page.c:382
+msgid "Camera Brand"
+msgstr "കാമറ ബ്രാൻഡ്"
+
+#: src/nemo-image-properties-page.c:383
+msgid "Camera Model"
+msgstr "കാമറ മോഡൽ"
+
+#: src/nemo-image-properties-page.c:386
+msgid "Date Taken"
+msgstr "എടുത്ത തീയതി"
+
+#: src/nemo-image-properties-page.c:387
+msgid "Date Digitized"
+msgstr "ഡിജിറ്റൈസ് ചെയ്ത തീയതി"
+
+#: src/nemo-image-properties-page.c:388
+#: libnemo-private/nemo-column-utilities.c:65
+msgid "Date Modified"
+msgstr "പുതുക്കിയ തീയതി"
+
+#: src/nemo-image-properties-page.c:392
+msgid "Exposure Time"
+msgstr "എക്സ്പോഷര്‍ സമയം"
+
+#: src/nemo-image-properties-page.c:393
+msgid "Aperture Value"
+msgstr "അപേർച്ചർ വില"
+
+#: src/nemo-image-properties-page.c:394
+msgid "ISO Speed Rating"
+msgstr "ഐ.എസ്.ഒ. സ്പീഡ് റേറ്റിങ്"
+
+#: src/nemo-image-properties-page.c:395
+msgid "Flash Fired"
+msgstr "ഫ്ലാഷ് ഉപയോഗിച്ചു"
+
+#: src/nemo-image-properties-page.c:396
+msgid "Metering Mode"
+msgstr "മീറ്ററിങ് മോഡ്"
+
+#: src/nemo-image-properties-page.c:397
+msgid "Exposure Program"
+msgstr "എക്സ്പോഷര്‍ പ്രോഗ്രാം"
+
+#: src/nemo-image-properties-page.c:398
+msgid "Focal Length"
+msgstr "ഫോക്കൽ ലെങ്ത്"
+
+#: src/nemo-image-properties-page.c:399
+msgid "Software"
+msgstr "സോഫ്റ്റ്‌വേർ"
+
+#: src/nemo-image-properties-page.c:413 src/nemo-query-editor.c:112
+#: src/nemo-window-menus.c:1355 libnemo-private/nemo-column-utilities.c:129
+msgid "Location"
+msgstr "സ്ഥാനം"
+
+#: src/nemo-image-properties-page.c:415
+msgid "Keywords"
+msgstr "അടയാളവാക്കുകൾ"
+
+#: src/nemo-image-properties-page.c:416
+msgid "Creator"
+msgstr "സ്രഷ്ടാവ്"
+
+#: src/nemo-image-properties-page.c:418
+msgid "Rating"
+msgstr "നിലവാരമിടലുകൾ"
+
+#: src/nemo-image-properties-page.c:441
+msgid "Failed to load image information"
+msgstr "ചിത്രത്തെ സംബന്ധിച്ച് വിവരങ്ങൾ ശേഖരിക്കുന്നതിൽ പരാജയപ്പെട്ടു"
+
+#: src/nemo-image-properties-page.c:706 src/nemo-list-model.c:409
+#: src/nemo-tree-sidebar-model.c:1252 src/nemo-window-manage-views.c:1140
+#: src/nemo-window-slot.c:202
+msgid "Loading..."
+msgstr "ശേഖരിക്കുന്നു..."
+
+#: src/nemo-image-properties-page.c:767
+msgid "Image"
+msgstr "ചിത്രം"
+
+#: src/nemo-list-model.c:407 src/nemo-tree-sidebar-model.c:1252
+msgid "(Empty)"
+msgstr "(ശൂന്യം)"
+
+#: src/nemo-list-view.c:1664 libnemo-private/nemo-column-utilities.c:43
+msgid "Name"
+msgstr "പേര്"
+
+#: src/nemo-list-view.c:1722 src/nemo-list-view.c:3357
+#: src/nemo-window-menus.c:1380
+msgid "List View"
+msgstr "നാമവലി ദൃശ്യരൂപം"
+
+#: src/nemo-list-view.c:2539
+#, c-format
+msgid "%s Visible Columns"
+msgstr "%s ദൃശ്യമായ നിരകള്‍"
+
+#: src/nemo-list-view.c:2559
+msgid "Choose the order of information to appear in this folder:"
+msgstr "ഈ ഫോൾഡറിൽ കാണാനാഗ്രഹിക്കുന്ന വിവരങ്ങളുടെ ക്രമം തിരഞ്ഞെടുക്കുക:"
+
+#: src/nemo-list-view.c:2613
+msgid "Visible _Columns..."
+msgstr "ദൃശ്യമായ _നിരകൾ...."
+
+#: src/nemo-list-view.c:2614
+msgid "Select the columns visible in this folder"
+msgstr "ഈ ഫോൾഡറിൽ കാണേണ്ട നിരകൾ തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-list-view.c:3359
+msgid "_List"
+msgstr "_പട്ടിക"
+
+#: src/nemo-list-view.c:3360
+msgid "The list view encountered an error."
+msgstr "പ്രട്ടിക പ്രദർശരീതിയിൽ ഒരു പിഴവുണ്ടായി."
+
+#: src/nemo-list-view.c:3361
+msgid "The list view encountered an error while starting up."
+msgstr "പട്ടിക പ്രദർശനരീതി തുടങ്ങിയപ്പോൾ ഒരു പിഴവുണ്ടായി."
+
+#: src/nemo-list-view.c:3362
+msgid "Display this location with the list view."
+msgstr "ഈ സ്ഥാനം പട്ടിക പ്രദർശനരീതിയിൽ പ്രദർശിപ്പിക്കുക."
+
+#: src/nemo-location-bar.c:54 src/nemo-properties-window.c:3110
+msgid "Location:"
+msgstr "സ്ഥാനം:"
+
+#: src/nemo-location-bar.c:55
+msgid "Go To:"
+msgstr "പോകൂ:"
+
+#: src/nemo-location-bar.c:180
+#, c-format
+msgid "Do you want to view %d location?"
+msgid_plural "Do you want to view %d locations?"
+msgstr[0] "താങ്കള്‍ക്കു് %d സ്ഥാനം കാണണോ?"
+msgstr[1] "താങ്കള്‍ക്കു് %d സ്ഥാനങ്ങൾ കാണണോ?"
+
+#: src/nemo-location-bar.c:184 src/nemo-mime-actions.c:1046
+#, c-format
+msgid "This will open %d separate window."
+msgid_plural "This will open %d separate windows."
+msgstr[0] "ഇത് %d വ്യത്യസ്ത ജാലകത്തിൽ തുറക്കുന്നതാണ്."
+msgstr[1] "ഇത് %d വ്യത്യസ്ത ജാലകങ്ങളിൽ തുറക്കുന്നതാണ്."
+
+#: src/nemo-mime-actions.c:626
+#, c-format
+msgid "The Link \"%s\" is Broken."
+msgstr "\"%s\" എന്ന കണ്ണി തകരാറിലാണ്."
+
+#: src/nemo-mime-actions.c:628
+#, c-format
+msgid "The Link \"%s\" is Broken. Move it to Trash?"
+msgstr "\"%s\" എന്ന കണ്ണി തകരാറിലാണ്. അത് ട്രാഷിലോട്ട് നീക്കട്ടെ?"
+
+#: src/nemo-mime-actions.c:634
+msgid "This link cannot be used, because it has no target."
+msgstr "ഈ കണ്ണി, ലക്ഷ്യമൊന്നും ഉൾക്കൊള്ളാത്തതിനാൽ ഉപയോഗിക്കാനാവില്ല."
+
+#: src/nemo-mime-actions.c:636
+#, c-format
+msgid "This link cannot be used, because its target \"%s\" doesn't exist."
+msgstr "ലക്ഷ്യമായ \"%s\" നിലവിലില്ലാത്തതിനാൽ ഈ കണ്ണി ഉപയോഗിക്കാനാവില്ല."
+
+#: src/nemo-mime-actions.c:646 src/nemo-tree-sidebar.c:1247
+#: src/nemo-view.c:7928 src/nemo-view.c:8046 src/nemo-view.c:9076
+#: src/nemo-view.c:9377
+msgid "Mo_ve to Trash"
+msgstr "ട്രാഷിലോട്ട് _മാറ്റുക"
+
+#: src/nemo-mime-actions.c:706
+#, c-format
+msgid "Do you want to run \"%s\", or display its contents?"
+msgstr "\"%s\" പ്രവർത്തിപ്പിക്കണോ അതോ അതിന്റെ ഉള്ളടക്കം പ്രദർശിപ്പിക്കണോ?"
+
+#: src/nemo-mime-actions.c:708
+#, c-format
+msgid "\"%s\" is an executable text file."
+msgstr "\"%s\" ഒരു പ്രവര്‍ത്തിപ്പിക്കാവുന്ന നിർദ്ദേശങ്ങളുള്ള ഫയലാണ്."
+
+#: src/nemo-mime-actions.c:714
+msgid "Run in _Terminal"
+msgstr "_ടെർമിനൽ ഉപയോഗിച്ച് പ്രവർത്തിപ്പിക്കുക"
+
+#: src/nemo-mime-actions.c:715
+msgid "_Display"
+msgstr "_ദൃശ്യത"
+
+#: src/nemo-mime-actions.c:1041 src/nemo-mime-actions.c:1786
+#: src/nemo-view.c:1017
+msgid "Are you sure you want to open all files?"
+msgstr "എല്ലാ ഫയലുകളും തുറക്കണമെന്ന് താങ്കൾക്കുറപ്പാണോ?"
+
+#: src/nemo-mime-actions.c:1043
+#, c-format
+msgid "This will open %d separate tab."
+msgid_plural "This will open %d separate tabs."
+msgstr[0] "ഇത് %d മറ്റൊരു റ്റാബിൽ തുറക്കുന്നതാണ്."
+msgstr[1] "ഇത് %d മറ്റൊരു റ്റാബുകളിൽ തുറക്കുന്നതാണ്."
+
+#: src/nemo-mime-actions.c:1116 src/nemo-window-manage-views.c:1608
+#: src/nemo-window-manage-views.c:1614 src/nemo-window-manage-views.c:1631
+#: src/nemo-window-manage-views.c:1642 src/nemo-window-manage-views.c:1648
+#: src/nemo-window-manage-views.c:1674
+#, c-format
+msgid "Could not display \"%s\"."
+msgstr "\"%s\" പ്രദര്‍ശിപ്പിക്കാൻ കഴിഞ്ഞില്ല."
+
+#: src/nemo-mime-actions.c:1213
+msgid "The file is of an unknown type"
+msgstr "ഫയല്‍ അപരിചിതമായ തരത്തിലുള്ളതാണു്"
+
+#: src/nemo-mime-actions.c:1217
+#, c-format
+msgid "There is no application installed for %s files"
+msgstr "%s ഫയലുകള്‍ക്കുള്ള ആപ്ലിക്കേഷനുകളൊന്നും ഇന്‍സ്റ്റോള്‍ ചെയ്തിട്ടില്ല"
+
+#: src/nemo-mime-actions.c:1232
+msgid "_Select Application"
+msgstr "ആപ്ലിക്കേഷൻ _തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-mime-actions.c:1268
+msgid "There was an internal error trying to search for applications:"
+msgstr "ആപ്ലിക്കേഷനുകൾ തിരയാൻ ശ്രമിച്ചപ്പോൾ ആന്തരികപിഴവുണ്ടായിരിക്കുന്നു:"
+
+#: src/nemo-mime-actions.c:1270
+msgid "Unable to search for application"
+msgstr "ആപ്ലിക്കേഷൻ തിരയാൻ സാധ്യമല്ല"
+
+#: src/nemo-mime-actions.c:1389
+#, c-format
+msgid ""
+"There is no application installed for %s files.\n"
+"Do you want to search for an application to open this file?"
+msgstr ""
+"%s ഫയലുകള്‍ക്കുള്ള ആപ്ലിക്കേഷൻ ഇന്‍സ്റ്റോള്‍ ചെയ്തിട്ടില്ല.\n"
+"താങ്കൾക്ക്, ഈ ഫയല്‍ തുറക്കാനുള്ള ആപ്ലിക്കേഷൻ തിരയണോ?"
+
+#: src/nemo-mime-actions.c:1539
+msgid "Untrusted application launcher"
+msgstr "വിശ്വസനീയമല്ലാത്ത ആപ്ലിക്കേഷൻ ലോഞ്ചർ"
+
+#: src/nemo-mime-actions.c:1542
+#, c-format
+msgid ""
+"The application launcher \"%s\" has not been marked as trusted. If you do "
+"not know the source of this file, launching it may be unsafe."
+msgstr ""
+"\"%s\" എന്ന ആപ്ലിക്കേഷൻ ലോഞ്ചർ വിശ്വസനീയമായി അടയാളപ്പെടുത്തിയിട്ടില്ല. "
+"താങ്കൾക്ക് ഈ ഫയലിന്റെ സ്രോതസ്സ് അറിയില്ലെങ്കിൽ, ഇത് പ്രവർത്തിപ്പിക്കുന്നത് "
+"സുരക്ഷിതമല്ലായിരിക്കാം."
+
+#: src/nemo-mime-actions.c:1558
+msgid "_Launch Anyway"
+msgstr "എന്തായാലും _പ്രവർത്തിപ്പിക്കുക"
+
+#: src/nemo-mime-actions.c:1561
+msgid "Mark as _Trusted"
+msgstr "_വിശ്വസനീയമായി അടയാളപ്പെടുത്തുക"
+
+#: src/nemo-mime-actions.c:1787
+#, c-format
+msgid "This will open %d separate application."
+msgid_plural "This will open %d separate applications."
+msgstr[0] "ഇത് %d മറ്റൊരു ആപ്ലിക്കേഷനിൽ തുറക്കും"
+msgstr[1] "ഇത് %d മറ്റ് ആപ്ലിക്കേഷനുകളിൽ തുറക്കും"
+
+#: src/nemo-mime-actions.c:1864 src/nemo-mime-actions.c:2138
+#: src/nemo-view.c:7024
+msgid "Unable to mount location"
+msgstr "സ്ഥാനം മൗണ്ട് ചെയ്യാൻ സാദ്ധ്യമല്ല."
+
+#: src/nemo-mime-actions.c:2217 src/nemo-view.c:7171
+msgid "Unable to start location"
+msgstr "സ്ഥാനം എടുക്കാൻ കഴിയില്ല."
+
+#: src/nemo-mime-actions.c:2301
+#, c-format
+msgid "Opening \"%s\"."
+msgstr "\"%s\" തുറക്കുന്നു."
+
+#: src/nemo-mime-actions.c:2304
+#, c-format
+msgid "Opening %d item."
+msgid_plural "Opening %d items."
+msgstr[0] "%d ഇനം തുറക്കുന്നു"
+msgstr[1] "%d ഇനങ്ങള്‍ തുറക്കുന്നു"
+
+#: src/nemo-notebook.c:370
+msgid "Close tab"
+msgstr "റ്റാബ് അടയ്ക്കുക"
+
+#: src/nemo-places-sidebar.c:358
+msgid "Devices"
+msgstr "ഉപകരണങ്ങള്‍"
+
+#: src/nemo-places-sidebar.c:583 src/nemo-view.c:3038
+#, c-format
+msgid "Free space: %s"
+msgstr "കാലിയായ ഇട: %s"
+
+#: src/nemo-places-sidebar.c:640
+msgid "My Computer"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:647
+#, c-format
+msgid ""
+"Open your personal folder\n"
+"%s"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:651 src/nemo-tree-sidebar.c:1343
+#: libnemo-private/nemo-bookmark.c:129 libnemo-private/nemo-desktop-link.c:120
+#: libnemo-private/nemo-file-utilities.c:66
+msgid "Home"
+msgstr "ആസ്ഥാനം"
+
+#: src/nemo-places-sidebar.c:670
+msgid "Open the contents of your desktop in a folder"
+msgstr "താങ്കളുടെ ഡെസ്ക്ടോപ്പിലെ ഉള്ളടക്കം ഒരു ഫോൾഡറിൽ തുറക്കുക"
+
+#: src/nemo-places-sidebar.c:719
+#, c-format
+msgid ""
+"Open the contents of the File System\n"
+"%s"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:723 src/nemo-tree-sidebar.c:1347
+msgid "File System"
+msgstr "ഫയൽ സിസ്റ്റം"
+
+#: src/nemo-places-sidebar.c:737 src/nemo-trash-bar.c:191
+msgid "Trash"
+msgstr "ട്രാഷ്"
+
+#: src/nemo-places-sidebar.c:739
+msgid "Open the trash"
+msgstr "ട്രാഷ് തുറക്കുക"
+
+#: src/nemo-places-sidebar.c:812
+#, c-format
+msgid ""
+"%s (%s)\n"
+"%s"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:841
+#, c-format
+msgid "Mount and open %s (%s)"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:869 src/nemo-places-sidebar.c:958
+#, c-format
+msgid "Mount and open %s"
+msgstr "മൗണ്ട് ചെയ്തു് %s തുറക്കുക"
+
+#: src/nemo-places-sidebar.c:911
+#, c-format
+msgid ""
+"%s\n"
+"%s"
+msgstr ""
+
+#: src/nemo-places-sidebar.c:945 src/nemo-places-sidebar.c:1000
+#: src/nemo-tree-sidebar.c:1351
+msgid "Network"
+msgstr "നെറ്റ്‌വർക്ക്"
+
+#: src/nemo-places-sidebar.c:1002
+msgid "Browse the contents of the network"
+msgstr "നെറ്റ്‌വർക്കിലുള്ളവ തിരയുക"
+
+#: src/nemo-places-sidebar.c:1994 src/nemo-places-sidebar.c:3028
+#: src/nemo-view.c:7974 src/nemo-view.c:7998 src/nemo-view.c:8070
+#: src/nemo-view.c:8712 src/nemo-view.c:8716 src/nemo-view.c:8799
+#: src/nemo-view.c:8803 src/nemo-view.c:8903 src/nemo-view.c:8907
+msgid "_Start"
+msgstr "_ആരംഭിക്കുക"
+
+#: src/nemo-places-sidebar.c:1995 src/nemo-places-sidebar.c:3035
+#: src/nemo-view.c:7978 src/nemo-view.c:8002 src/nemo-view.c:8074
+#: src/nemo-view.c:8741 src/nemo-view.c:8828 src/nemo-view.c:8932
+#: src/nemo-window-menus.c:1075
+msgid "_Stop"
+msgstr "_നിര്‍ത്തുക"
+
+#: src/nemo-places-sidebar.c:2000
+msgid "_Power On"
+msgstr "_പവര്‍ ഓണ്‍ ചെയ്യുക"
+
+#: src/nemo-places-sidebar.c:2001 src/nemo-view.c:8745 src/nemo-view.c:8832
+#: src/nemo-view.c:8936
+msgid "_Safely Remove Drive"
+msgstr "ഡ്രൈവ് _സുരക്ഷിതമായി നീക്കം ചെയ്യുക"
+
+#: src/nemo-places-sidebar.c:2004
+msgid "_Connect Drive"
+msgstr "ഡ്രൈവ് _കണക്ടു് ചെയ്യുക"
+
+#: src/nemo-places-sidebar.c:2005
+msgid "_Disconnect Drive"
+msgstr "ഡ്രൈവ് _വിഛേദിക്കുക"
+
+#: src/nemo-places-sidebar.c:2008
+msgid "_Start Multi-disk Device"
+msgstr "_മള്‍ട്ടി-ഡിസ്ക് ഡിവൈസ് ആരംഭിക്കുക"
+
+#: src/nemo-places-sidebar.c:2009
+msgid "_Stop Multi-disk Device"
+msgstr "_മള്‍ട്ടി-ഡിസ്ക് ഡിവൈസ് നിര്‍ത്തുക"
+
+#: src/nemo-places-sidebar.c:2013 src/nemo-view.c:8815 src/nemo-view.c:8919
+msgid "_Unlock Drive"
+msgstr "ഡ്രൈവിന്റെ _പൂട്ട് തുറക്കുക"
+
+#: src/nemo-places-sidebar.c:2014 src/nemo-view.c:8757 src/nemo-view.c:8844
+#: src/nemo-view.c:8948
+msgid "_Lock Drive"
+msgstr "ഡ്രൈവ് _പൂട്ടുക"
+
+#: src/nemo-places-sidebar.c:2088 src/nemo-places-sidebar.c:2652
+#, c-format
+msgid "Unable to start %s"
+msgstr "%s ആരംഭിക്കാൻ സാധ്യമല്ല"
+
+#: src/nemo-places-sidebar.c:2411 src/nemo-places-sidebar.c:2439
+#: src/nemo-places-sidebar.c:2467
+#, c-format
+msgid "Unable to eject %s"
+msgstr "%s പുറത്തെടുക്കാന്‍ സാധിച്ചില്ല"
+
+#: src/nemo-places-sidebar.c:2607
+#, c-format
+msgid "Unable to poll %s for media changes"
+msgstr "മാദ്ധ്യമത്തിൽ മാറ്റമുണ്ടോ എന്നറിയാന്‍ %s ല്‍ നോക്കാൻ സാധിച്ചില്ല"
+
+#: src/nemo-places-sidebar.c:2707
+#, c-format
+msgid "Unable to stop %s"
+msgstr "%s നിർത്താൻ സാധ്യമല്ല"
+
+#: src/nemo-places-sidebar.c:2944 src/nemo-tree-sidebar.c:1158
+#: src/nemo-view.c:7828 src/nemo-view.c:9292
+msgid "_Open"
+msgstr "_തുറക്കുക"
+
+#: src/nemo-places-sidebar.c:2952 src/nemo-tree-sidebar.c:1169
+#: src/nemo-view.c:7840 src/nemo-view.c:8028 src/nemo-view.c:9029
+#: src/nemo-view.c:9354
+msgid "Open in New _Tab"
+msgstr "പുതിയ _റ്റാബിൽ തുറക്കുക"
+
+#: src/nemo-places-sidebar.c:2962 src/nemo-tree-sidebar.c:1183
+#: src/nemo-view.c:9020 src/nemo-view.c:9334
+msgid "Open in New _Window"
+msgstr "പുതിയ _ജാലകത്തിൽ തുറക്കുക"
+
+#: src/nemo-places-sidebar.c:2973 src/nemo-window-menus.c:1181
+msgid "_Add Bookmark"
+msgstr "ബൿമാർക്ക് _ചേര്‍ക്കുക"
+
+#: src/nemo-places-sidebar.c:2979
+msgid "Remove"
+msgstr "നീക്കം ചെയ്യുക"
+
+#: src/nemo-places-sidebar.c:2988
+msgid "Rename..."
+msgstr "പുനർനാമകരണം..."
+
+#: src/nemo-places-sidebar.c:3000 src/nemo-view.c:7962 src/nemo-view.c:7986
+#: src/nemo-view.c:8058
+msgid "_Mount"
+msgstr "_മൗണ്ട് ചെയ്യുക"
+
+#: src/nemo-places-sidebar.c:3007 src/nemo-tree-sidebar.c:1274
+#: src/nemo-view.c:7966 src/nemo-view.c:7990 src/nemo-view.c:8062
+msgid "_Unmount"
+msgstr "_അൺമൗണ്ട് ചെയ്യുക"
+
+#: src/nemo-places-sidebar.c:3014 src/nemo-tree-sidebar.c:1283
+#: src/nemo-view.c:7970 src/nemo-view.c:7994 src/nemo-view.c:8066
+msgid "_Eject"
+msgstr "_പുറത്തെടുക്കുക"
+
+#: src/nemo-places-sidebar.c:3021 src/nemo-view.c:7982 src/nemo-view.c:8006
+#: src/nemo-view.c:8078
+msgid "_Detect Media"
+msgstr "മീഡിയ _കണ്ടുപിടിക്കുക"
+
+#: src/nemo-places-sidebar.c:3044 src/nemo-trash-bar.c:204
+#: libnemo-private/nemo-file-operations.c:1352
+#: libnemo-private/nemo-file-operations.c:2211
+msgid "Empty _Trash"
+msgstr "_ട്രാഷ് കാലിയാക്കുക"
+
+#: src/nemo-places-sidebar.c:3056 src/nemo-view.c:7806 src/nemo-view.c:8083
+msgid "_Properties"
+msgstr "_വിശേഷതകൾ"
+
+#: src/nemo-progress-ui-handler.c:109 src/nemo-progress-ui-handler.c:159
+#: src/nemo-progress-ui-handler.c:218 src/nemo-progress-ui-handler.c:278
+msgid "File Operations"
+msgstr "ഫയല്‍ ക്രിയകള്‍"
+
+#: src/nemo-progress-ui-handler.c:118
+msgid "Show Details"
+msgstr "വിശദാംശങ്ങൾ കാണിക്കുക"
+
+#: src/nemo-progress-ui-handler.c:153 src/nemo-progress-ui-handler.c:175
+#, c-format
+msgid "%'d file operation active"
+msgid_plural "%'d file operations active"
+msgstr[0] "%'d ഫയല്‍ ക്രിയ സജീവം"
+msgstr[1] "%'d ഫയല്‍ ക്രിയകള്‍ സജീവം"
+
+#: src/nemo-progress-ui-handler.c:279
+msgid "All file operations have been successfully completed"
+msgstr "മുഴുവന്‍ ഫയല്‍ പ്രവൃത്തികളും വിജയകരമായി പൂര്‍ത്തീകരിച്ചിരിക്കുന്നു"
+
+#: src/nemo-progress-ui-handler.c:329
+#, c-format
+msgid "%d%% %s"
+msgstr "%d%% %s"
+
+#: src/nemo-properties-window.c:483
+msgid "You cannot assign more than one custom icon at a time!"
+msgstr "താങ്കൾക്ക് ഒരേ സമയം ഒന്നിലധികം ഐച്ഛിക ഐകോണുകൾ നൽകാൻ പറ്റില്ല!"
+
+#: src/nemo-properties-window.c:484
+msgid "Please drag just one image to set a custom icon."
+msgstr "ഐച്ഛിക ഐകോൺ സജ്ജീകരിക്കാൻ ഒരു ചിത്രം മാത്രം വലിച്ചിടുക."
+
+#: src/nemo-properties-window.c:495
+msgid "The file that you dropped is not local."
+msgstr "താങ്കൾ നല്‍കിയ ഫയല്‍ പ്രാദേശികം അല്ല."
+
+#: src/nemo-properties-window.c:496 src/nemo-properties-window.c:502
+msgid "You can only use local images as custom icons."
+msgstr ""
+"ഐച്ഛിക ഐകോണുകൾക്കായി പ്രാദേശിക ചിത്രങ്ങൾ മാത്രമേ താങ്കൾക്ക് "
+"ഉപയോഗിക്കാനാവുകയുള്ളു."
+
+#: src/nemo-properties-window.c:501
+msgid "The file that you dropped is not an image."
+msgstr "താങ്കൾ വലിച്ചിട്ട ഫയൽ ചിത്രമല്ല."
+
+#: src/nemo-properties-window.c:637
+msgid "_Name:"
+msgid_plural "_Names:"
+msgstr[0] "_പേര്:"
+msgstr[1] "_പേരുകൾ:"
+
+#: src/nemo-properties-window.c:832
+msgid "Properties"
+msgstr "വിശേഷതകള്‍"
+
+#: src/nemo-properties-window.c:840
+#, c-format
+msgid "%s Properties"
+msgstr "%s വിശേഷതകള്‍"
+
+#: src/nemo-properties-window.c:1122 libnemo-private/nemo-file.c:6258
+msgid "unknown"
+msgstr "അപരിചിതം"
+
+#: src/nemo-properties-window.c:1377
+msgid "Cancel Group Change?"
+msgstr "ഗണം മാറ്റുന്നത് റദ്ദാക്കണോ?"
+
+#: src/nemo-properties-window.c:1792
+msgid "Cancel Owner Change?"
+msgstr "ഉടമമാറ്റം റദ്ദാക്കണോ?"
+
+#: src/nemo-properties-window.c:2110
+msgid "nothing"
+msgstr "ഒന്നുമില്ല"
+
+#: src/nemo-properties-window.c:2112
+msgid "unreadable"
+msgstr "വായിക്കാനാവാത്ത"
+
+#: src/nemo-properties-window.c:2124
+#, c-format
+msgid "%'d item, with size %s"
+msgid_plural "%'d items, totalling %s"
+msgstr[0] "%'d വസ്തു, വലിപ്പം %s"
+msgstr[1] "%'d വസ്തുക്കള്‍, ആകെ %s"
+
+#: src/nemo-properties-window.c:2133
+msgid "(some contents unreadable)"
+msgstr "(ചില ഉള്ളടക്കങ്ങള്‍ വായിക്കാന്‍ കഴിയാത്തവയാണ്)"
+
+#: src/nemo-properties-window.c:2150
+msgid "Contents:"
+msgstr "ഉള്ളടക്കങ്ങള്‍‌:"
+
+#: src/nemo-properties-window.c:2924
+msgid "used"
+msgstr "ഉപയോഗിച്ചത്"
+
+#: src/nemo-properties-window.c:2931
+msgid "free"
+msgstr "സ്വതന്ത്രം"
+
+#: src/nemo-properties-window.c:2933
+msgid "Total capacity:"
+msgstr "അകെ ശേഷി:"
+
+#: src/nemo-properties-window.c:2942
+msgid "Filesystem type:"
+msgstr "ഫയൽസിസ്റ്റം തരം:"
+
+#: src/nemo-properties-window.c:3026
+msgid "Basic"
+msgstr "അടിസ്ഥാനം"
+
+#: src/nemo-properties-window.c:3083
+#: libnemo-private/nemo-file-conflict-dialog.c:256
+#: libnemo-private/nemo-file-conflict-dialog.c:287
+msgid "Type:"
+msgstr "തരം:"
+
+#: src/nemo-properties-window.c:3091
+msgid "Link target:"
+msgstr "കണ്ണിയുടെ ലക്ഷ്യം:"
+
+#: src/nemo-properties-window.c:3101
+#: libnemo-private/nemo-file-conflict-dialog.c:253
+#: libnemo-private/nemo-file-conflict-dialog.c:284
+msgid "Size:"
+msgstr "വലിപ്പം:"
+
+#: src/nemo-properties-window.c:3116
+msgid "Volume:"
+msgstr "വോള്യം:"
+
+#: src/nemo-properties-window.c:3125
+msgid "Accessed:"
+msgstr "സന്ദര്‍ശിച്ചത്:"
+
+#: src/nemo-properties-window.c:3129
+msgid "Modified:"
+msgstr "പരിഷ്കരിച്ചത്:"
+
+#: src/nemo-properties-window.c:3138
+msgid "Free space:"
+msgstr "കാലി ഇട:കുക"
+
+#: src/nemo-properties-window.c:3559
+msgid "_Read"
+msgstr "_വായിക്കുക"
+
+#: src/nemo-properties-window.c:3561
+msgid "_Write"
+msgstr "_എഴുതുക"
+
+#: src/nemo-properties-window.c:3563
+msgid "E_xecute"
+msgstr "_നിര്‍വ്വഹിക്കുക"
+
+#: src/nemo-properties-window.c:3831 src/nemo-properties-window.c:3842
+#: src/nemo-properties-window.c:3854
+msgid "no "
+msgstr "ഇല്ല "
+
+#: src/nemo-properties-window.c:3834
+msgid "list"
+msgstr "നാമാവലി"
+
+#: src/nemo-properties-window.c:3836
+msgid "read"
+msgstr "വായിക്കുക"
+
+#: src/nemo-properties-window.c:3845
+msgid "create/delete"
+msgstr "സൃഷ്ടിക്കുക/മായ്ക്കുക"
+
+#: src/nemo-properties-window.c:3847
+msgid "write"
+msgstr "എഴുതുക"
+
+#: src/nemo-properties-window.c:3856
+msgid "access"
+msgstr "അഭ്യഗമ്യത"
+
+#: src/nemo-properties-window.c:3904
+msgid "Access:"
+msgstr "അഭിഗമ്യത"
+
+#: src/nemo-properties-window.c:3906
+msgid "Folder access:"
+msgstr "ഫോൾഡർ അഭിഗമ്യത:"
+
+#: src/nemo-properties-window.c:3908
+msgid "File access:"
+msgstr "ഫയൽ അഭിഗമ്യത:"
+
+#: src/nemo-properties-window.c:3926
+msgid "List files only"
+msgstr "ഫയലുകൾ മാത്രം കാണിക്കുക"
+
+#: src/nemo-properties-window.c:3928
+msgid "Access files"
+msgstr "ഫയലുകൾ ലഭ്യമാക്കുക"
+
+#: src/nemo-properties-window.c:3930
+msgid "Create and delete files"
+msgstr "ഫയലുകൾ സൃഷ്ടിക്കുകയും മായ്ക്കുകയും ചെയ്യുക"
+
+#: src/nemo-properties-window.c:3937
+msgid "Read-only"
+msgstr "കാണൽ-മാത്രം"
+
+#: src/nemo-properties-window.c:3939
+msgid "Read and write"
+msgstr "കാണുക മാറ്റം വരുത്തുക"
+
+#: src/nemo-properties-window.c:4004
+msgid "Special flags:"
+msgstr "പ്രത്യേക പതാകകൾ:"
+
+#: src/nemo-properties-window.c:4006
+msgid "Set _user ID"
+msgstr "ഉപയോക്തൃ ഐ.ഡി സ്ഥാപിക്കുക"
+
+#: src/nemo-properties-window.c:4007
+msgid "Set gro_up ID"
+msgstr "_ഗണത്തിന്റെ ഐ.ഡി. സജ്ജീകരിക്കുക"
+
+#: src/nemo-properties-window.c:4008
+msgid "_Sticky"
+msgstr "_ഒട്ടിപ്പോ"
+
+#: src/nemo-properties-window.c:4083 src/nemo-properties-window.c:4275
+msgid "_Owner:"
+msgstr "_ഉടമ:"
+
+#: src/nemo-properties-window.c:4091 src/nemo-properties-window.c:4180
+#: src/nemo-properties-window.c:4285
+msgid "Owner:"
+msgstr "ഉടമ:"
+
+#: src/nemo-properties-window.c:4113 src/nemo-properties-window.c:4297
+msgid "_Group:"
+msgstr "_ഗണം:"
+
+#: src/nemo-properties-window.c:4121 src/nemo-properties-window.c:4181
+#: src/nemo-properties-window.c:4305
+msgid "Group:"
+msgstr "ഗണം"
+
+#: src/nemo-properties-window.c:4145
+msgid "Others"
+msgstr "മറ്റുള്ളവ"
+
+#: src/nemo-properties-window.c:4160
+msgid "Execute:"
+msgstr "പ്രവർത്തിപ്പിക്കുക:"
+
+#: src/nemo-properties-window.c:4163
+msgid "Allow _executing file as program"
+msgstr "ഫയൽ പ്രോഗ്രാമായി _പ്രവർത്തിപ്പിക്കാൻ അനുവദിക്കുക"
+
+#: src/nemo-properties-window.c:4182
+msgid "Others:"
+msgstr "മറ്റുള്ളവ"
+
+#: src/nemo-properties-window.c:4321
+msgid "Folder Permissions:"
+msgstr "ഫോൾഡർ അനുമതികൾ:"
+
+#: src/nemo-properties-window.c:4329
+msgid "File Permissions:"
+msgstr "ഫയൽ അനുമതികൾ:"
+
+#: src/nemo-properties-window.c:4338
+msgid "Text view:"
+msgstr "എഴുത്തിന്റെ പ്രത്യക്ഷപ്പെടൽ:"
+
+#: src/nemo-properties-window.c:4472
+#: libnemo-private/nemo-column-utilities.c:97
+msgid "Permissions"
+msgstr "അനുമതികൾ"
+
+#: src/nemo-properties-window.c:4486
+msgid "You are not the owner, so you cannot change these permissions."
+msgstr "താങ്കൾ ഉടമയല്ല, അതിനാൽ ഈ അനുമതികൾ താങ്കൾക്ക് മാറ്റാനാവില്ല."
+
+#: src/nemo-properties-window.c:4506
+msgid "SELinux context:"
+msgstr "എസ്.ഇ.ലിനക്സ് കോണ്ടെക്സ്റ്റ്:"
+
+#: src/nemo-properties-window.c:4511
+msgid "Last changed:"
+msgstr "അവസാനം മാറ്റിയത്:"
+
+#: src/nemo-properties-window.c:4523
+msgid "Apply Permissions to Enclosed Files"
+msgstr "ഉൾപ്പെട്ടിട്ടുള്ള ഫയലുകളും അനുമതികൾ ബാധകമാക്കുക"
+
+#: src/nemo-properties-window.c:4533
+#, c-format
+msgid "The permissions of \"%s\" could not be determined."
+msgstr "\"%s\"  എന്നതിന്റെ അനുമതികൾ നിർണ്ണയിക്കാൻ കഴിഞ്ഞില്ല."
+
+#: src/nemo-properties-window.c:4536
+msgid "The permissions of the selected file could not be determined."
+msgstr "തിരഞ്ഞെടുക്കപ്പെട്ട ഫയലിന്റെ അനുമതികൾ നിർണ്ണയിക്കാൻ കഴിഞ്ഞില്ല."
+
+#: src/nemo-properties-window.c:4769
+msgid "Open With"
+msgstr "ഇതുപയോഗിച്ച് തുറക്കുക"
+
+#: src/nemo-properties-window.c:5093
+msgid "Creating Properties window."
+msgstr "വിശേഷതകളുടെ ജാലകം സൃഷ്ടിക്കുന്നു."
+
+#: src/nemo-properties-window.c:5379
+msgid "Select Custom Icon"
+msgstr "ഐച്ഛിക ഐകോൺ തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-query-editor.c:118
+msgid "File Type"
+msgstr "ഫയൽ തരം"
+
+#: src/nemo-query-editor.c:276
+msgid "Select folder to search in"
+msgstr "തിരയുവാനുള്ള ഫോൾഡർ തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-query-editor.c:366
+msgid "Documents"
+msgstr "പ്രമാണങ്ങൾ"
+
+#: src/nemo-query-editor.c:384
+msgid "Music"
+msgstr "സംഗീതം"
+
+#: src/nemo-query-editor.c:399
+msgid "Video"
+msgstr "ചലച്ചിത്രം"
+
+#: src/nemo-query-editor.c:415
+msgid "Picture"
+msgstr "ചിത്രം"
+
+#: src/nemo-query-editor.c:435
+msgid "Illustration"
+msgstr "ചിത്രീകരണം"
+
+#: src/nemo-query-editor.c:449
+msgid "Spreadsheet"
+msgstr "സ്പ്രെഡ്ഷീറ്റ്"
+
+#: src/nemo-query-editor.c:465
+msgid "Presentation"
+msgstr "പ്രെസന്റേഷൻ"
+
+#: src/nemo-query-editor.c:474
+msgid "Pdf / Postscript"
+msgstr "പി.ഡി.എഫ്. / പോസ്റ്റ്സ്ക്രിപ്റ്റ്"
+
+#: src/nemo-query-editor.c:482
+msgid "Text File"
+msgstr "എഴുത്ത് ഫയൽ"
+
+#: src/nemo-query-editor.c:561
+msgid "Select type"
+msgstr "തരം തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-query-editor.c:645
+msgid "Any"
+msgstr "ഏതെങ്കിലും"
+
+#: src/nemo-query-editor.c:660
+msgid "Other Type..."
+msgstr "മറ്റ് തരം..."
+
+#: src/nemo-query-editor.c:941
+msgid "Remove this criterion from the search"
+msgstr "തിരച്ചിലിൽ നിന്നും ഈ മാനദണ്ഡം ഒഴിവാക്കുക"
+
+#: src/nemo-query-editor.c:991
+msgid "Search Folder"
+msgstr "ഫോൾഡറിൽ തിരയുക"
+
+#: src/nemo-query-editor.c:1001
+#: libnemo-private/nemo-undo-signal-handlers.c:173
+msgid "Edit"
+msgstr "മാറ്റം വരുത്തുക"
+
+#: src/nemo-query-editor.c:1009
+msgid "Edit the saved search"
+msgstr "സൂക്ഷിച്ചുവെച്ചിട്ടുള്ള തിരച്ചിലിൽ മാറ്റം വരുത്തുക"
+
+#: src/nemo-query-editor.c:1038
+msgid "Add a new criterion to this search"
+msgstr "ഈ തിരച്ചിലിലേക്ക് പുതിയ മാനദണ്ഡം ചേർക്കുക"
+
+#: src/nemo-query-editor.c:1041
+msgid "Go"
+msgstr "പോകുക"
+
+#: src/nemo-query-editor.c:1043
+msgid "Reload"
+msgstr "പുനഃശേഖരിക്കുക"
+
+#: src/nemo-query-editor.c:1048
+msgid "Perform or update the search"
+msgstr "തിരച്ചിൽ നടത്തുക അല്ലെങ്കിൽ പുതുക്കുക"
+
+#: src/nemo-query-editor.c:1068
+msgid "_Search for:"
+msgstr "ഇത് _തിരയുക:"
+
+#: src/nemo-query-editor.c:1102
+msgid "Search results"
+msgstr "അന്വേഷണഫലങ്ങൾ"
+
+#: src/nemo-search-bar.c:146
+msgid "Search:"
+msgstr "തിരയുക:"
+
+#: src/nemo-statusbar.c:180
+msgid "Show Places"
+msgstr ""
+
+#: src/nemo-statusbar.c:189
+msgid "Show Treeview"
+msgstr ""
+
+#: src/nemo-statusbar.c:203
+msgid "Hide the Sidebar (F9)"
+msgstr ""
+
+#: src/nemo-statusbar.c:212
+msgid "Show the Sidebar (F9)"
+msgstr ""
+
+#: src/nemo-statusbar.c:221
+msgid "Adjust zoom level"
+msgstr ""
+
+#: src/nemo-toolbar.c:144
+msgid "Elevated Privileges"
+msgstr ""
+
+#: src/nemo-trash-bar.c:198
+msgid "Restore Selected Items"
+msgstr "തിരഞ്ഞെടുത്ത ഇനങ്ങൾ പുനഃസ്ഥാപിക്കുക"
+
+#: src/nemo-trash-bar.c:201
+msgid "Restore selected items to their original position"
+msgstr "തിരഞ്ഞെടുത്ത ഇനങ്ങൾ അവയുടെ യഥാർത്ഥ സ്ഥാനങ്ങളിൽ പുനഃസ്ഥാപിക്കുക"
+
+#: src/nemo-tree-sidebar.c:916 src/nemo-view.c:6427
+#, c-format
+msgid "\"%s\" will be moved if you select the Paste command"
+msgstr ""
+"താങ്കൾ ഒട്ടിക്കുന്നതിനുള്ള നിർദ്ദേശം നൽകിയാൽ \"%s\" "
+"മാറ്റിസ്ഥാപിക്കപ്പെടുന്നതാണ്."
+
+#: src/nemo-tree-sidebar.c:920 src/nemo-view.c:6431
+#, c-format
+msgid "\"%s\" will be copied if you select the Paste command"
+msgstr ""
+"താങ്കൾ ഒട്ടിക്കുന്നതിനുള്ള നിർദ്ദേശം നൽകിയാൽ \"%s\" പകർത്തി "
+"സ്ഥാപിക്കപ്പെടുന്നതാണ്."
+
+#: src/nemo-tree-sidebar.c:959 src/nemo-view.c:6598
+msgid "There is nothing on the clipboard to paste."
+msgstr "ഒട്ടിക്കാൻ ക്ലിപ്ബോർഡിൽ യാതൊന്നുമില്ല."
+
+#: src/nemo-tree-sidebar.c:1199 src/nemo-view.c:7814
+msgid "Create New _Folder"
+msgstr "പുതിയൊരു _ഫോൾഡർ സൃഷ്ടിക്കുക"
+
+#: src/nemo-tree-sidebar.c:1231 src/nemo-view.c:7894 src/nemo-view.c:8041
+msgid "_Paste Into Folder"
+msgstr "ഫോൾഡറിൽ _ഒട്ടിക്കുക"
+
+#: src/nemo-tree-sidebar.c:1261 src/nemo-view.c:7932 src/nemo-view.c:8050
+#: src/nemo-view.c:9398
+msgid "_Delete"
+msgstr "_മായ്ക്കുക"
+
+#: src/nemo-tree-sidebar.c:1338
+msgid "Computer"
+msgstr "കമ്പ്യൂട്ടർ"
+
+#: src/nemo-view.c:1019
+#, c-format
+msgid "This will open %'d separate tab."
+msgid_plural "This will open %'d separate tabs."
+msgstr[0] "ഇത് മറ്റൊരു റ്റാബിൽ %'d തുറക്കുന്നതാണ്."
+msgstr[1] "ഇത് മറ്റ് റ്റാബുകളിൽ %'d തുറക്കുന്നതാണ്."
+
+#: src/nemo-view.c:1022
+#, c-format
+msgid "This will open %'d separate window."
+msgid_plural "This will open %'d separate windows."
+msgstr[0] "ഇത് മറ്റൊരു ജാലകത്തിൽ %'d തുറക്കുന്നതാണ്."
+msgstr[1] "ഇത് മറ്റ് ജാലകങ്ങളിൽ %'d തുറക്കുന്നതാണ്."
+
+#: src/nemo-view.c:1539
+msgid "Select Items Matching"
+msgstr "ചേർച്ചയുള്ള ഇനങ്ങൾ തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-view.c:1554
+msgid "_Pattern:"
+msgstr "_ശ്രേണി"
+
+#: src/nemo-view.c:1560
+msgid "Examples: "
+msgstr "ഉദാഹരണങ്ങൾ: "
+
+#: src/nemo-view.c:1673
+msgid "Save Search as"
+msgstr "ഈ പേരിൽ തിരച്ചിൽ സൂക്ഷിച്ചുവെയ്ക്കുക"
+
+#: src/nemo-view.c:1696
+msgid "Search _name:"
+msgstr "തിരച്ചിലിന്റെ _പേര്:"
+
+#: src/nemo-view.c:1718
+msgid "Select Folder to Save Search In"
+msgstr "തിരച്ചിൽ സൂക്ഷിച്ചുവെക്കേണ്ട ഫോൾഡർ തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-view.c:2551 libnemo-private/nemo-file-undo-operations.c:135
+msgid "Undo"
+msgstr "തിരസ്കരിക്കുക"
+
+#: src/nemo-view.c:2552 libnemo-private/nemo-file-undo-operations.c:138
+msgid "Undo last action"
+msgstr "അവസാനത്തെ പ്രവൃത്തി തിരസ്കരിക്കുക"
+
+#: src/nemo-view.c:2570 libnemo-private/nemo-file-undo-operations.c:142
+msgid "Redo"
+msgstr "വീണ്ടുംചെയ്യുക"
+
+#: src/nemo-view.c:2571 libnemo-private/nemo-file-undo-operations.c:145
+msgid "Redo last undone action"
+msgstr "അവസാനം തിരസ്കരിച്ച പ്രവൃത്തി വീണ്ടും ചെയ്യുക"
+
+#: src/nemo-view.c:2733
+msgid "Content View"
+msgstr "ഉള്ളടക്കത്തിന്റെ ദൃശ്യത"
+
+#: src/nemo-view.c:2734
+msgid "View of the current folder"
+msgstr "ഇപ്പോഴത്തെ ഫോൾഡറിന്റെ ദൃശ്യത"
+
+#: src/nemo-view.c:2961 src/nemo-view.c:2998
+#, c-format
+msgid "\"%s\" selected"
+msgstr "\"%s\" തിരഞ്ഞെടുത്തിരിക്കുന്നു"
+
+#: src/nemo-view.c:2963
+#, c-format
+msgid "%'d folder selected"
+msgid_plural "%'d folders selected"
+msgstr[0] "ഫോൾഡർ  %'d തിരഞ്ഞെടുത്തു"
+msgstr[1] "ഫോൾഡറുകൾ %'d തിരഞ്ഞെടുത്തു"
+
+#: src/nemo-view.c:2973
+#, c-format
+msgid " (containing %'d item)"
+msgid_plural " (containing %'d items)"
+msgstr[0] " (%'d ഇനം ഉൾക്കൊള്ളുന്നു)"
+msgstr[1] " (%'d ഇനങ്ങൾ ഉൾക്കൊള്ളുന്നു)"
+
+#: src/nemo-view.c:2984
+#, c-format
+msgid " (containing a total of %'d item)"
+msgid_plural " (containing a total of %'d items)"
+msgstr[0] " (ആകെ %'d ഇനം ഉൾക്കൊള്ളുന്നു)"
+msgstr[1] " (ആകെ %'d ഇനങ്ങൾ ഉൾക്കൊള്ളുന്നു)"
+
+#: src/nemo-view.c:3001
+#, c-format
+msgid "%'d item selected"
+msgid_plural "%'d items selected"
+msgstr[0] "%'d ഇനം തിരഞ്ഞെടുത്തിരിക്കുന്നു"
+msgstr[1] "%'d ഇനങ്ങള്‍ തിരഞ്ഞെടുത്തിരിക്കുന്നു"
+
+#: src/nemo-view.c:3008
+#, c-format
+msgid "%'d other item selected"
+msgid_plural "%'d other items selected"
+msgstr[0] "%'d മറ്റിനം തിരഞ്ഞെടുത്തിരിക്കുന്നു"
+msgstr[1] "%'d മറ്റിനങ്ങൾ തിരഞ്ഞെടുത്തിരിക്കുന്നു"
+
+#: src/nemo-view.c:3025
+#, c-format
+msgid "%s (%s)"
+msgstr "%s (%s)"
+
+#: src/nemo-view.c:3046 libnemo-private/nemo-file.c:5827
+#, c-format
+msgid "%'u item"
+msgid_plural "%'u items"
+msgstr[0] "%'u ഇനം"
+msgstr[1] "%'u ഇനങ്ങൾ"
+
+#: src/nemo-view.c:3049
+#, c-format
+msgid "%s, Free space: %s"
+msgstr "%s, കാലി ഇട: %s"
+
+#: src/nemo-view.c:3064
+#, c-format
+msgid "%s, %s"
+msgstr "%s, %s"
+
+#: src/nemo-view.c:3083 src/nemo-view.c:3096
+#, c-format
+msgid "%s%s, %s"
+msgstr "%s%s, %s"
+
+#: src/nemo-view.c:3110
+#, c-format
+msgid "%s%s, %s, %s"
+msgstr "%s%s, %s, %s"
+
+#: src/nemo-view.c:4564
+#, c-format
+msgid "Open With %s"
+msgstr "%s ഉപയോഗിച്ച് തുറക്കുക"
+
+#: src/nemo-view.c:4566
+#, c-format
+msgid "Use \"%s\" to open the selected item"
+msgid_plural "Use \"%s\" to open the selected items"
+msgstr[0] "തിരഞ്ഞെടുത്ത ഇനം തുറക്കുന്നതിന് \"%s\"  ഉപയോഗിക്കുക"
+msgstr[1] "തിരഞ്ഞെടുത്ത ഇനങ്ങൾ തുറക്കുന്നതിന് \"%s\"  ഉപയോഗിക്കുക"
+
+#: src/nemo-view.c:5616
+#, c-format
+msgid "Run \"%s\" on any selected items"
+msgstr "തിരഞ്ഞെടുത്ത ഇനങ്ങളിലേതിലെങ്കിലും \"%s\" പ്രവർത്തിപ്പിക്കുക"
+
+#: src/nemo-view.c:6101
+#, c-format
+msgid "Create a new document from template \"%s\""
+msgstr "\"%s\" ഫലകമുപയോഗിച്ച് പുതിയ പ്രമാണം സൃഷ്ടിക്കുക"
+
+#: src/nemo-view.c:6355
+msgid "All executable files in this folder will appear in the Scripts menu."
+msgstr ""
+"ഈ ഫോൾഡറിലെ എല്ലാ പണിയെടുപ്പിക്കാവുന്ന ഫയലുകളും സ്ക്രിപ്റ്റ് മെനുവിൽ "
+"കാണാനാവുന്നതാണ്."
+
+#: src/nemo-view.c:6357
+msgid ""
+"Choosing a script from the menu will run that script with any selected items "
+"as input."
+msgstr ""
+"മെനുവിൽ നിന്ന് സ്ക്രിപ്റ്റ് എടുക്കുമ്പോൾ, തിരഞ്ഞെടുത്ത ഇനം ഇൻപുട്ടായി "
+"ഉപയോഗിച്ച് ആ സ്ക്രിപ്റ്റ് പ്രവർത്തിക്കുന്നതാണ്."
+
+#: src/nemo-view.c:6359
+msgid ""
+"All executable files in this folder will appear in the Scripts menu. "
+"Choosing a script from the menu will run that script.\n"
+"\n"
+"When executed from a local folder, scripts will be passed the selected file "
+"names. When executed from a remote folder (e.g. a folder showing web or ftp "
+"content), scripts will be passed no parameters.\n"
+"\n"
+"In all cases, the following environment variables will be set by Nemo, which "
+"the scripts may use:\n"
+"\n"
+"NEMO_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected files "
+"(only if local)\n"
+"\n"
+"NEMO_SCRIPT_SELECTED_URIS: newline-delimited URIs for selected files\n"
+"\n"
+"NEMO_SCRIPT_CURRENT_URI: URI for current location\n"
+"\n"
+"NEMO_SCRIPT_WINDOW_GEOMETRY: position and size of current window\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_SELECTED_FILE_PATHS: newline-delimited paths for "
+"selected files in the inactive pane of a split-view window (only if local)\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_SELECTED_URIS: newline-delimited URIs for selected "
+"files in the inactive pane of a split-view window\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_CURRENT_URI: URI for current location in the inactive "
+"pane of a split-view window"
+msgstr ""
+"ഈ ഫോൾഡറിലെ എല്ലാ പ്രവർത്തിപ്പിക്കാവുന്ന ഫയലുകളും സ്ക്രിപ്റ്റ്സ് മെനുവിൽ "
+"ദൃശ്യമാകുന്നതാണ്. മെനുവിൽ നിന്ന് സ്ക്രിപ്റ്റ് തിരഞ്ഞെടുക്കുമ്പോൾ "
+"സ്ക്രിപ്റ്റ് പ്രവർത്തിക്കുന്നതാണ്.\n"
+"\n"
+"ഒരു പ്രാദേശിക ഫോൾഡറിൽ നിന്ന് പ്രവർത്തിപ്പിക്കുമ്പോൾ, തിരഞ്ഞെടുത്തിരിക്കുന്ന "
+"ഫയലുകളുകൾടെ പേരുകൾ സ്ക്രിപ്റ്റ് ഉപയോഗിക്കുന്നതാണ്. ഒരു വിദൂര ഫോൾഡറിൽ "
+"പ്രവർത്തിപ്പിക്കുമ്പോൾ (ഉദാ: വെബ് അല്ലെങ്കിൽ എഫ്.റ്റി.പി. ഉള്ളടക്കം "
+"പ്രദർശിപ്പിക്കുന്ന ഫോൾഡർ), സ്ക്രിപ്റ്റ് ചരങ്ങളൊന്നും ഉപയോഗിക്കുന്നതല്ല.\n"
+"\n"
+"എല്ലാ അവസരങ്ങളിലും, താഴെക്കൊടുത്തിരിക്കുന്ന പരിതസ്ഥിതി ചരങ്ങൾ നെമോ "
+"സജ്ജീകരിക്കുന്നതാണ്, സ്ക്രിപ്റ്റ് അവ ഉപയോഗിക്കുന്നുണ്ടാകാം:\n"
+"\n"
+"NEMO_SCRIPT_SELECTED_FILE_PATHS: തിരഞ്ഞെടുത്ത ഫയലുകളുടെ newline-delimited "
+"പഥങ്ങൾ (പ്രാദേശികമെങ്കിൽ മാത്രം)\n"
+"\n"
+"NEMO_SCRIPT_SELECTED_URIS: തിരഞ്ഞെടുത്ത ഫയലുകളുടെ newline-delimited "
+"യു.ആർ.ഐ.കൾ\n"
+"\n"
+"NEMO_SCRIPT_CURRENT_URI: ഇപ്പോഴത്തെ സ്ഥാനത്തിന്റെ യൂ.ആർ.ഐ.\n"
+"\n"
+"NEMO_SCRIPT_WINDOW_GEOMETRY: ഇപ്പോഴത്തെ ജാലകത്തിന്റെ സ്ഥാനവും വലിപ്പവും\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_SELECTED_FILE_PATHS: ദ്വിരൂപത്തിലുള്ള ജാലകത്തിന്റെ "
+"സജീവമല്ലാത്ത തലത്തിലെ തിരഞ്ഞെടുത്ത ഫയലുകളുടെ newline-delimited പഥങ്ങൾ "
+"(പ്രാദേശികമെങ്കിൽ മാത്രം)\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_SELECTED_URIS: ദ്വിരൂപത്തിലുള്ള ജാലകത്തിന്റെ "
+"സജീവമല്ലാത്ത തലത്തിലെ തിരഞ്ഞെടുത്ത ഫയലുകളുടെ newline-delimited യൂ.ആർ.ഐ.കൾ\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_CURRENT_URI: ദ്വിരൂപത്തിലുള്ള ജാലകത്തിന്റെ "
+"സജീവമല്ലാത്ത തലത്തിലെ ഇപ്പോഴത്തെ സ്ഥാനത്തിന്റെ യു.ആർ.ഐ."
+
+#: src/nemo-view.c:6438
+#, c-format
+msgid "The %'d selected item will be moved if you select the Paste command"
+msgid_plural ""
+"The %'d selected items will be moved if you select the Paste command"
+msgstr[0] ""
+"താങ്കൾ ഒട്ടിക്കുന്നതിനുള്ള നിർദ്ദേശം നൽകിയാൽ  %'d തിരഞ്ഞെടുത്ത ഇനം "
+"മാറ്റുന്നതാണ്"
+msgstr[1] ""
+"താങ്കൾ ഒട്ടിക്കുന്നതിനുള്ള നിർദ്ദേശം നൽകിയാൽ  %'d തിരഞ്ഞെടുത്ത ഇനങ്ങൾ "
+"മാറ്റുന്നതാണ്"
+
+#: src/nemo-view.c:6445
+#, c-format
+msgid "The %'d selected item will be copied if you select the Paste command"
+msgid_plural ""
+"The %'d selected items will be copied if you select the Paste command"
+msgstr[0] ""
+"താങ്കൾ ഒട്ടിക്കുന്നതിനുള്ള നിർദ്ദേശം നൽകിയാൽ  %'d തിരഞ്ഞെടുത്ത ഇനം "
+"പകർത്തുന്നതാണ്"
+msgstr[1] ""
+"താങ്കൾ ഒട്ടിക്കുന്നതിനുള്ള നിർദ്ദേശം നൽകിയാൽ  %'d തിരഞ്ഞെടുത്ത ഇനങ്ങൾ "
+"പകർത്തുന്നതാണ്"
+
+#: src/nemo-view.c:7044
+msgid "Unable to unmount location"
+msgstr "സ്ഥാനം അൺമൗണ്ട് ചെയ്യാനായില്ല."
+
+#: src/nemo-view.c:7064
+msgid "Unable to eject location"
+msgstr "സ്ഥാനം പുറത്തെടുക്കാനായില്ല"
+
+#: src/nemo-view.c:7079
+msgid "Unable to stop drive"
+msgstr "ഡ്രൈവ് നിർത്താനായില്ല"
+
+#: src/nemo-view.c:7565
+#, c-format
+msgid "Connect to Server %s"
+msgstr "%s സെർവറിലേക്ക് കണക്ട് ചെയ്യുക"
+
+#: src/nemo-view.c:7570 src/nemo-view.c:8720 src/nemo-view.c:8807
+#: src/nemo-view.c:8911
+msgid "_Connect"
+msgstr "_കണക്ട് ചെയ്യുക"
+
+#: src/nemo-view.c:7584
+msgid "Link _name:"
+msgstr "ലിങ്കിന്റെ _പേര്:"
+
+#: src/nemo-view.c:7802
+msgid "Create New _Document"
+msgstr "പുതിയ _പ്രമാണം സൃഷ്ടിക്കുക"
+
+#: src/nemo-view.c:7803
+msgid "Open Wit_h"
+msgstr "ഇതുപയോഗിച്ച് തുറക്കു_ക"
+
+#: src/nemo-view.c:7804
+msgid "Choose a program with which to open the selected item"
+msgstr "തിരഞ്ഞെടുത്ത ഇനം തുറക്കുന്നതിനായി ഒരു പ്രോഗ്രാം എടുക്കുക"
+
+#: src/nemo-view.c:7807 src/nemo-view.c:9432
+msgid "View or modify the properties of each selected item"
+msgstr ""
+"തിരഞ്ഞെടുത്ത ഓരോ ഇനത്തിന്റെയും പ്രത്യേകതകൾ കാണുകയോ മാറ്റം വരുത്തുകയോ ചെയ്യുക"
+
+#: src/nemo-view.c:7815
+msgid "Create a new empty folder inside this folder"
+msgstr "ഈ ഫോൾഡറിനുള്ളിൽ പുതിയൊരു കാലിയായ ഫോൾഡർ സൃഷ്ടിക്കുക"
+
+#: src/nemo-view.c:7817
+msgid "No templates installed"
+msgstr "ഫലകങ്ങളൊന്നും ഇൻസ്റ്റോൾ ചെയ്തിട്ടില്ല"
+
+#: src/nemo-view.c:7820
+msgid "_Empty Document"
+msgstr "_ശൂന്യമായ പ്രമാണം"
+
+#: src/nemo-view.c:7821
+msgid "Create a new empty document inside this folder"
+msgstr "ഈ ഫോൾഡറിനുള്ളിൽ കാലിയായ ഒരു പ്രമാണം സൃഷ്ടിക്കുക"
+
+#: src/nemo-view.c:7829
+msgid "Open the selected item in this window"
+msgstr "തിരഞ്ഞെടുത്ത ഇനം ഈ ജാലകത്തിൽ തുറക്കുക"
+
+#: src/nemo-view.c:7836 src/nemo-view.c:8024
+msgid "Open in Navigation Window"
+msgstr "ഗമനോപാധീ ജാലകത്തിൽ തുറക്കുക"
+
+#: src/nemo-view.c:7837
+msgid "Open each selected item in a navigation window"
+msgstr "തിരഞ്ഞെടുത്ത ഓരോ ഇനവും ഗമനോപാധീ ജാലകത്തിൽ തുറക്കുക"
+
+#: src/nemo-view.c:7841
+msgid "Open each selected item in a new tab"
+msgstr "തിരഞ്ഞെടുത്ത ഓരോ ഇനവും പുതിയ ടാബിൽ തുറക്കുക"
+
+#: src/nemo-view.c:7844
+msgid "Open in Terminal"
+msgstr "ടെർമിനലിൽ തുറക്കുക"
+
+#: src/nemo-view.c:7845
+msgid "Open terminal in the selected folder"
+msgstr "തിരഞ്ഞെടുത്ത ഫോൾഡറിൽ ടെർമിനൽ തുറക്കുക"
+
+#: src/nemo-view.c:7848
+msgid "Open as Root"
+msgstr "റൂട്ട് ആയി തുറക്കുക"
+
+#: src/nemo-view.c:7849
+msgid "Open the folder with administration privileges"
+msgstr "ഫോൾഡർ കാര്യനിർവാഹക അവകാശത്തോടെ തുറക്കുക"
+
+#: src/nemo-view.c:7852
+msgid "Send with Thunderbird"
+msgstr "തണ്ടർബേർഡ് ഉപയോഗിച്ച് അയയ്ക്കുക"
+
+#: src/nemo-view.c:7853
+msgid "Send the selected file(s) as email attachments using Thunderbird"
+msgstr ""
+"തിരഞ്ഞെറ്റുത്ത ഫയൽ(ഫയലുകൾ) തണ്ടർബേർഡിൽ ഇമെയിൽ അറ്റാച്ച്മെന്റുകളായി അയയ്ക്കുക"
+
+#: src/nemo-view.c:7856
+msgid "Send as email attachment"
+msgstr "ഇമെയിൽ അറ്റാച്ച്മെന്റ് ആയി അയയ്ക്കുക"
+
+#: src/nemo-view.c:7857
+msgid ""
+"Send the selected file(s) as email attachments using your current email "
+"program"
+msgstr ""
+"തിരഞ്ഞെടുത്ത ഫയൽ (ഫയലുകൾ) താങ്കളുടെ ഇമെയിൽ പ്രോഗ്രാമുപയോഗിച്ച് "
+"അറ്റാച്ച്മെന്റുകൾ ആയി അയയ്ക്കുക"
+
+#: src/nemo-view.c:7860
+msgid "Set as Wallpaper..."
+msgstr "പശ്ചാത്തലചിത്രമായി സജ്ജീകരിക്കുക..."
+
+#: src/nemo-view.c:7861
+msgid "Set the selected image as your desktop wallpaper"
+msgstr ""
+"തിരഞ്ഞെടുത്ത ചിത്രം താങ്കളുടെ ഡെസ്ക്‌ടോപ്പിന്റെ പശ്ചാത്തലചിത്രമായി "
+"സജ്ജീകരിക്കുക"
+
+#: src/nemo-view.c:7864
+msgid "Other _Application..."
+msgstr "മറ്റൊരു _ആപ്ലിക്കേഷൻ"
+
+#: src/nemo-view.c:7865 src/nemo-view.c:7869
+msgid "Choose another application with which to open the selected item"
+msgstr "തിരഞ്ഞെടുത്ത ഇനം തുറക്കാൻ മറ്റൊരു ആപ്ലിക്കേഷൻ എടുക്കുക"
+
+#: src/nemo-view.c:7868
+msgid "Open With Other _Application..."
+msgstr "മറ്റൊരു _ആപ്ലിക്കേഷൻ ഉപയോഗിച്ച് തുറക്കുക..."
+
+#: src/nemo-view.c:7872
+msgid "_Open Scripts Folder"
+msgstr "സ്ക്രിപ്റ്റുകളുടെ ഫോൾഡർ _തുറക്കുക"
+
+#: src/nemo-view.c:7873
+msgid "Show the folder containing the scripts that appear in this menu"
+msgstr ""
+"ഈ മെനുവിൽ പ്രത്യക്ഷപ്പെടുന്ന സ്ക്രിപ്റ്റുകളെ ഉൾക്കൊള്ളുന്ന ഫോൾഡർ "
+"പ്രദർശിപ്പിക്കുക"
+
+#: src/nemo-view.c:7881
+msgid "Prepare the selected files to be moved with a Paste command"
+msgstr ""
+"തിരഞ്ഞെടുത്ത ഫയലുകൾ ഒട്ടിക്കാനുള്ള നിർദ്ദേശം ഉപയോഗിച്ച് മാറ്റാൻ തയ്യാറാക്കുക"
+
+#: src/nemo-view.c:7885
+msgid "Prepare the selected files to be copied with a Paste command"
+msgstr ""
+"തിരഞ്ഞെടുത്ത ഫയലുകൾ ഒട്ടിക്കാനുള്ള നിർദ്ദേശം ഉപയോഗിച്ച് പകർത്താൻ തയ്യാറാക്കുക"
+
+#: src/nemo-view.c:7889
+msgid "Move or copy files previously selected by a Cut or Copy command"
+msgstr ""
+"വെട്ടിയെടുക്കാൻ അല്ലെങ്കിൽ പകർത്താനുള്ള നിർദ്ദേശം ഉപയോഗിച്ച് മുമ്പ് "
+"തിരഞ്ഞെടുത്ത ഫയലുകൾ നീക്കുകയോ പകർത്തുകയോ ചെയ്യുക"
+
+#: src/nemo-view.c:7895
+msgid ""
+"Move or copy files previously selected by a Cut or Copy command into the "
+"selected folder"
+msgstr ""
+"വെട്ടിയെടുക്കാൻ അല്ലെങ്കിൽ പകർത്താനുള്ള നിർദ്ദേശം ഉപയോഗിച്ച് മുമ്പ് "
+"തിരഞ്ഞെടുത്ത ഫയലുകൾ തിരഞ്ഞെടുത്ത ഫോൾഡറിലേയ്ക്ക് നീക്കുകയോ പകർത്തുകയോ ചെയ്യുക"
+
+#: src/nemo-view.c:7897
+msgid "Cop_y to"
+msgstr "ഇവിടേയ്ക്ക് പ_കർത്തുക"
+
+#: src/nemo-view.c:7898
+msgid "M_ove to"
+msgstr "ഇവിടേയ്ക്ക് _മാറ്റുക"
+
+#: src/nemo-view.c:7900 libnemo-private/nemo-clipboard.c:444
+msgid "Select _All"
+msgstr "_എല്ലാം തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-view.c:7901
+msgid "Select all items in this window"
+msgstr "ഈ ജാലകത്തിലെ ഇനങ്ങൾ എല്ലാം തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-view.c:7904
+msgid "Select I_tems Matching..."
+msgstr "പൊരുത്തമുള്ള ഇ_നങ്ങൾ തിരഞ്ഞെടുക്കുക..."
+
+#: src/nemo-view.c:7905
+msgid "Select items in this window matching a given pattern"
+msgstr ""
+"നൽകിയിരിക്കുന്ന ശ്രേണിയുമായി ഈ ജാലകത്തിൽ പൊരുത്തപ്പെടുന്ന ഇനങ്ങൾ  "
+"തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-view.c:7908
+msgid "_Invert Selection"
+msgstr "_വിപരീതം തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-view.c:7909
+msgid "Select all and only the items that are not currently selected"
+msgstr "ഇപ്പോൾ തിരഞ്ഞെടുത്തവയൊഴിച്ചുള്ള എല്ലാ ഇനങ്ങളും തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-view.c:7912
+msgid "D_uplicate"
+msgstr "_തനിപ്പകർപ്പുണ്ടാക്കുക"
+
+#: src/nemo-view.c:7913
+msgid "Duplicate each selected item"
+msgstr "തിരഞ്ഞെടുത്ത എല്ലാ ഇനങ്ങളുടെയും തനിപ്പകർപ്പുണ്ടാക്കുക"
+
+#: src/nemo-view.c:7916 src/nemo-view.c:9417
+msgid "Ma_ke Link"
+msgid_plural "Ma_ke Links"
+msgstr[0] "കണ്ണി _സൃഷ്ടിക്കുക"
+msgstr[1] "കണ്ണികൾ _സൃഷ്ടിക്കുക"
+
+#: src/nemo-view.c:7917
+msgid "Create a symbolic link for each selected item"
+msgstr "തിരഞ്ഞെടുത്ത ഓരോ ഇനത്തിനും പ്രതീകാത്മക കണ്ണിയുണ്ടാക്കുക"
+
+#: src/nemo-view.c:7920
+msgid "_Rename..."
+msgstr "പേര് _മാറ്റുക..."
+
+#: src/nemo-view.c:7921
+msgid "Rename selected item"
+msgstr "തിരഞ്ഞെടുത്ത ഇനത്തിന്റെ പേര് മാറ്റുക"
+
+#: src/nemo-view.c:7929 src/nemo-view.c:9378
+msgid "Move each selected item to the Trash"
+msgstr "തിരഞ്ഞെടുത്ത ഓരോ ഇനങ്ങളും ട്രാഷിലേക്ക് നീക്കുക"
+
+#: src/nemo-view.c:7933
+msgid "Delete each selected item, without moving to the Trash"
+msgstr "തിരഞ്ഞെടുത്ത ഓരോ ഇനവും, ട്രാഷിലേക്ക് മാറ്റാതെ മായ്ക്കുക"
+
+#: src/nemo-view.c:7936 src/nemo-view.c:8054
+msgid "_Restore"
+msgstr "_പുനഃസ്ഥാപിയ്ക്കുക"
+
+#: src/nemo-view.c:7940 src/nemo-window-menus.c:1064
+msgid "_Undo"
+msgstr "_തിരസ്കരിക്കുക"
+
+#: src/nemo-view.c:7941
+msgid "Undo the last action"
+msgstr "അവസാനം ചെയ്ത പ്രവൃത്തി തിരസ്കരിക്കുക"
+
+#: src/nemo-view.c:7944
+msgid "_Redo"
+msgstr "_വീണ്ടും ചെയ്യുക"
+
+#: src/nemo-view.c:7945
+msgid "Redo the last undone action"
+msgstr "അവസാനം തിരസ്കരിച്ച പ്രവൃത്തി വീണ്ടും ചെയ്യുക"
+
+#: src/nemo-view.c:7954
+msgid "Reset View to _Defaults"
+msgstr "_സ്വതേയുള്ള പ്രദർശനരീതിയിലേക്ക് പുനഃക്രമീകരിക്കുക"
+
+#: src/nemo-view.c:7955
+msgid "Reset sorting order and zoom level to match preferences for this view"
+msgstr ""
+"ക്രമപ്പെടുത്തൽ രീതിയും വലിപ്പവും ഈ പ്രദർശനരീതിയ്ക്ക് പൊരുത്തപ്പെടുന്ന "
+"വിധത്തിലേക്ക് പുനഃക്രമീകരിക്കുക"
+
+#: src/nemo-view.c:7958
+msgid "Connect To This Server"
+msgstr "ഈ സെർവറിലേക്ക് ബന്ധിക്കുക"
+
+#: src/nemo-view.c:7959
+msgid "Make a permanent connection to this server"
+msgstr "ഈ സെർവറിലേക്ക് ഒരു സ്ഥിര ബന്ധം ഉണ്ടാക്കുക"
+
+#: src/nemo-view.c:7963
+msgid "Mount the selected volume"
+msgstr "തിരഞ്ഞെടുത്ത വോള്യം മൗണ്ട് ചെയ്യുക"
+
+#: src/nemo-view.c:7967
+msgid "Unmount the selected volume"
+msgstr "തിരഞ്ഞെടുത്ത വോള്യം അൺമൗണ്ട് ചെയ്യുക"
+
+#: src/nemo-view.c:7971
+msgid "Eject the selected volume"
+msgstr "തിരഞ്ഞെടുത്ത വോള്യം പുറത്തെടുക്കുക"
+
+#: src/nemo-view.c:7975
+msgid "Start the selected volume"
+msgstr "തിരഞ്ഞെടുത്ത വോള്യം തുടങ്ങുക"
+
+#: src/nemo-view.c:7979 src/nemo-view.c:8933
+msgid "Stop the selected volume"
+msgstr "തിരഞ്ഞെടുത്ത വോള്യം നിര്‍ത്തുക"
+
+#: src/nemo-view.c:7983 src/nemo-view.c:8007 src/nemo-view.c:8079
+msgid "Detect media in the selected drive"
+msgstr "തിരഞ്ഞെടുത്ത ഡ്രൈവിലുള്ള മീഡിയ എന്താണെന്ന് കണ്ടെത്തുക"
+
+#: src/nemo-view.c:7987
+msgid "Mount the volume associated with the open folder"
+msgstr "തുറന്ന ഫോൾഡറുമായി ബന്ധമുള്ള വോള്യം മൗണ്ട് ചെയ്യുക"
+
+#: src/nemo-view.c:7991
+msgid "Unmount the volume associated with the open folder"
+msgstr "തുറന്ന ഫോൾഡറുമായി ബന്ധമുള്ള വോള്യം അൺമൗണ്ട് ചെയ്യുക"
+
+#: src/nemo-view.c:7995
+msgid "Eject the volume associated with the open folder"
+msgstr "തുറന്നിരിക്കുന്ന ഫോൾഡറുമായി ബന്ധമുള്ള വോള്യം പുറത്തെടുക്കുക"
+
+#: src/nemo-view.c:7999
+msgid "Start the volume associated with the open folder"
+msgstr "തുറന്നിരിക്കുന്ന ഫോൾഡറുമായി ബന്ധമുള്ള വോള്യം തുടങ്ങുക"
+
+#: src/nemo-view.c:8003
+msgid "Stop the volume associated with the open folder"
+msgstr "തുറന്നിരിക്കുന്ന ഫോൾഡറുമായി ബന്ധമുള്ള വോള്യം നിർത്തുക"
+
+#: src/nemo-view.c:8010
+msgid "Open File and Close window"
+msgstr "ഫയൽ തുറക്കുക, ജാലകം അടയ്ക്കുക"
+
+#: src/nemo-view.c:8014
+msgid "Sa_ve Search"
+msgstr "തിരച്ചിൽ _സേവ് ചെയ്യുക"
+
+#: src/nemo-view.c:8015
+msgid "Save the edited search"
+msgstr "മാറ്റം വരുത്തിയ തിരച്ചിൽ സേവ് ചെയ്യുക"
+
+#: src/nemo-view.c:8018
+msgid "Sa_ve Search As..."
+msgstr "തിരച്ചിൽ ഇങ്ങനെ _സേ‌വ് ചെയ്യുക..."
+
+#: src/nemo-view.c:8019
+msgid "Save the current search as a file"
+msgstr "ഇപ്പോഴത്തെ തിരച്ചിൽ ഫയലായി സേവ് ചെയ്യുക"
+
+#: src/nemo-view.c:8025
+msgid "Open this folder in a navigation window"
+msgstr "ഈ ഫോൾഡർ ഗമന ജാലകത്തിൽ തുറക്കുക"
+
+#: src/nemo-view.c:8029
+msgid "Open this folder in a new tab"
+msgstr "ഈ ഫോൾഡർ പുതിയ റ്റാബിൽ തുറക്കുക"
+
+#: src/nemo-view.c:8034
+msgid "Prepare this folder to be moved with a Paste command"
+msgstr "ഈ ഫോൾഡർ ഒട്ടിക്കാനുള്ള കമാൻഡ് ഉപയോഗിച്ച് മാറ്റാൻ തയ്യാറാക്കുക"
+
+#: src/nemo-view.c:8038
+msgid "Prepare this folder to be copied with a Paste command"
+msgstr "ഈ ഫോൾഡർ ഒട്ടിക്കാനുള്ള കമാൻഡ് ഉപയോഗിച്ച് പകർത്താൻ തയ്യാറാക്കുക"
+
+#: src/nemo-view.c:8042
+msgid ""
+"Move or copy files previously selected by a Cut or Copy command into this "
+"folder"
+msgstr ""
+"വെട്ടിയെടുക്കാനോ പകർത്താനോ ഉള്ള കമാൻഡ് ഉപയോഗിച്ച് മുമ്പ് തിരഞ്ഞെടുത്ത ഫയലുകൾ "
+"ഈ ഫോൾഡറിലേക്ക് മാറ്റുക അല്ലെങ്കിൽ പകർത്തുക"
+
+#: src/nemo-view.c:8047
+msgid "Move this folder to the Trash"
+msgstr "ഈ ഫോൾഡർ ട്രാഷിലേക്ക് മാറ്റുക"
+
+#: src/nemo-view.c:8051
+msgid "Delete this folder, without moving to the Trash"
+msgstr "ഈ ഫോൾഡർ ട്രാഷിലേക്ക് മാറ്റാതെ മായ്ക്കുക"
+
+#: src/nemo-view.c:8059
+msgid "Mount the volume associated with this folder"
+msgstr "ഈ ഫോൾഡറുമായി ബന്ധമുള്ള വോള്യം മൗണ്ട് ചെയ്യുക"
+
+#: src/nemo-view.c:8063
+msgid "Unmount the volume associated with this folder"
+msgstr "ഈ ഫോൾഡറുമായി ബന്ധമുള്ള വോള്യം അൺമൗണ്ട് ചെയ്യുക"
+
+#: src/nemo-view.c:8067
+msgid "Eject the volume associated with this folder"
+msgstr "ഈ ഫോൾഡറുമായി ബന്ധമുള്ള വോള്യം പുറത്തെടുക്കുക"
+
+#: src/nemo-view.c:8071
+msgid "Start the volume associated with this folder"
+msgstr "ഈ ഫോൾഡറുമായി ബന്ധമുള്ള വോള്യം തുടങ്ങുക"
+
+#: src/nemo-view.c:8075
+msgid "Stop the volume associated with this folder"
+msgstr "ഈ ഫോൾഡറുമായി ബന്ധമുള്ള വോള്യം നിർത്തുക"
+
+#: src/nemo-view.c:8084
+msgid "View or modify the properties of this folder"
+msgstr "ഈ ഫോൾഡറിന്റെ വിശേഷതകൾ കാണുക അല്ലെങ്കിൽ മാറ്റം വരുത്തുക"
+
+#: src/nemo-view.c:8087 src/nemo-view.c:8090
+msgid "_Other pane"
+msgstr "_മറ്റൊരു കളം"
+
+#: src/nemo-view.c:8088
+msgid "Copy the current selection to the other pane in the window"
+msgstr "ഇപ്പോൾ തിരഞ്ഞെടുത്തിട്ടുള്ളവ ജാലകത്തിൽ മറ്റൊരു കളത്തിലേക്ക് പകർത്തുക"
+
+#: src/nemo-view.c:8091
+msgid "Move the current selection to the other pane in the window"
+msgstr "ഇപ്പോൾ തിരഞ്ഞെടുത്തിട്ടുള്ളവ ജാലകത്തിൽ മറ്റൊരു കളത്തിലേക്ക് മാറ്റുക"
+
+#: src/nemo-view.c:8094 src/nemo-view.c:8098 src/nemo-window-menus.c:1135
+#: src/nemo-window-menus.c:1328 src/nemo-window-menus.c:1525
+msgid "_Home"
+msgstr "_ആസ്ഥാനം"
+
+#: src/nemo-view.c:8095
+msgid "Copy the current selection to the home folder"
+msgstr "ഇപ്പോൾ തിരഞ്ഞെടുത്തിട്ടുള്ളവ ഹോം ഫോൾഡറിലേക്ക് പകർത്തുക"
+
+#: src/nemo-view.c:8099
+msgid "Move the current selection to the home folder"
+msgstr "ഇപ്പോൾ തിരഞ്ഞെടുത്തിട്ടുള്ളവ ഹോം ഫോൾഡറിലേക്ക് മാറ്റുക"
+
+#: src/nemo-view.c:8102 src/nemo-view.c:8106
+msgid "_Desktop"
+msgstr "_ഡെസ്ക്ടോപ്പ്"
+
+#: src/nemo-view.c:8103
+msgid "Copy the current selection to the desktop"
+msgstr "ഇപ്പോൾ തിരഞ്ഞെടുത്തിട്ടുള്ളവ ഡെസ്ക്ടോപ്പിലേക്ക് പകർത്തുക"
+
+#: src/nemo-view.c:8107
+msgid "Move the current selection to the desktop"
+msgstr "ഇപ്പോൾ തിരഞ്ഞെടുത്തിട്ടുള്ളവ ഡെസ്ക്ടോപ്പിലേക്ക് മാറ്റുക"
+
+#: src/nemo-view.c:8186
+#, c-format
+msgid "Run or manage scripts from %s"
+msgstr ""
+"%s-ൽ നിന്നുള്ള സ്ക്രിപ്റ്റുകൾ പ്രവർത്തിപ്പിക്കുകയും കൈകാര്യം ചെയ്യുകയും "
+"ചെയ്യുക"
+
+#: src/nemo-view.c:8188
+msgid "_Scripts"
+msgstr "_സ്ക്രിപ്റ്റ്സ്"
+
+#: src/nemo-view.c:8569
+#, c-format
+msgid "Move the open folder out of the trash to \"%s\""
+msgstr "തുറന്ന ഫോൾഡർ ട്രാഷിൽ നിന്നും \"%s\" എന്നതിലേക്ക് മാറ്റുക"
+
+#: src/nemo-view.c:8572
+#, c-format
+msgid "Move the selected folder out of the trash to \"%s\""
+msgid_plural "Move the selected folders out of the trash to \"%s\""
+msgstr[0] "തിരഞ്ഞെടുത്ത ഫോൾഡർ ട്രാഷിൽ നിന്നും \"%s\" എന്നതിലേക്ക് മാറ്റുക"
+msgstr[1] "തിരഞ്ഞെടുത്ത ഫോൾഡറുകൾ ട്രാഷിൽ നിന്നും \"%s\" എന്നതിലേക്ക് മാറ്റുക"
+
+#: src/nemo-view.c:8576
+msgid "Move the selected folder out of the trash"
+msgid_plural "Move the selected folders out of the trash"
+msgstr[0] "തിരഞ്ഞെടുത്ത ഫോൾഡർ ട്രാഷിൽ നിന്നും പുറത്തേക്ക് മാറ്റുക"
+msgstr[1] "തിരഞ്ഞെടുത്ത ഫോൾഡറുകൾ ട്രാഷിൽ നിന്നും പുറത്തേക്ക് മാറ്റുക"
+
+#: src/nemo-view.c:8582
+#, c-format
+msgid "Move the selected file out of the trash to \"%s\""
+msgid_plural "Move the selected files out of the trash to \"%s\""
+msgstr[0] "തിരഞ്ഞെടുത്ത ഫയൽ ട്രാഷിൽ നിന്നും \"%s\" എന്നതിലേക്കു് മാറ്റുക"
+msgstr[1] "തിരഞ്ഞെടുത്ത ഫയലുകൾ ട്രാഷിൽ നിന്നും \"%s\" എന്നതിലേക്കു് മാറ്റുക"
+
+#: src/nemo-view.c:8586
+msgid "Move the selected file out of the trash"
+msgid_plural "Move the selected files out of the trash"
+msgstr[0] "തിരഞ്ഞെടുത്ത ഫയൽ ട്രാഷിൽ നിന്നും പുറത്തേക്ക് മാറ്റുക"
+msgstr[1] "തിരഞ്ഞെടുത്ത ഫയലുകൾ ട്രാഷിൽ നിന്നും  പുറത്തേക്ക് മാറ്റുക"
+
+#: src/nemo-view.c:8592
+#, c-format
+msgid "Move the selected item out of the trash to \"%s\""
+msgid_plural "Move the selected items out of the trash to \"%s\""
+msgstr[0] "തിരഞ്ഞെടുത്ത ഇനം ട്രാഷിൽ നിന്നും  \"%s\" എന്നതിലേക്ക് മാറ്റുക"
+msgstr[1] "തിരഞ്ഞെടുത്ത ഇനങ്ങൾ ട്രാഷിൽ നിന്നും  \"%s\" എന്നതിലേക്ക് മാറ്റുക"
+
+#: src/nemo-view.c:8596
+msgid "Move the selected item out of the trash"
+msgid_plural "Move the selected items out of the trash"
+msgstr[0] "തിരഞ്ഞെടുത്ത ഇനം ട്രാഷിൽ നിന്നും  പുറത്തേക്ക് മാറ്റുക"
+msgstr[1] "തിരഞ്ഞെടുത്ത ഇനങ്ങൾ ട്രാഷിൽ നിന്നും  പുറത്തേക്ക് മാറ്റുക"
+
+#: src/nemo-view.c:8713 src/nemo-view.c:8717 src/nemo-view.c:8904
+#: src/nemo-view.c:8908
+msgid "Start the selected drive"
+msgstr "തിരഞ്ഞെടുത്ത ഡ്രൈവ് ആരംഭിക്കുക"
+
+#: src/nemo-view.c:8721 src/nemo-view.c:8912
+msgid "Connect to the selected drive"
+msgstr "തിരഞ്ഞെടുത്ത ഡ്രൈവിലേക്ക് കണക്റ്റ് ചെയ്യുക"
+
+#: src/nemo-view.c:8724 src/nemo-view.c:8811 src/nemo-view.c:8915
+msgid "_Start Multi-disk Drive"
+msgstr "മൾട്ടി-ഡിസ്ക് ഡ്രൈവ് _തുടങ്ങുക"
+
+#: src/nemo-view.c:8725 src/nemo-view.c:8916
+msgid "Start the selected multi-disk drive"
+msgstr "തിരഞ്ഞെടുത്ത മൾട്ടി-ഡിസ്ക് ഡ്രൈവ് തുടങ്ങുക"
+
+#: src/nemo-view.c:8728
+msgid "U_nlock Drive"
+msgstr "ഡ്രൈവിന്റെ പൂട്ട് _തുറക്കുക"
+
+#: src/nemo-view.c:8729 src/nemo-view.c:8920
+msgid "Unlock the selected drive"
+msgstr "തിരഞ്ഞെടുത്ത ഡ്രൈവിന്റെ പൂട്ട് തുറക്കുക"
+
+#: src/nemo-view.c:8742
+msgid "Stop the selected drive"
+msgstr "തിരഞ്ഞെടുത്ത ഡ്രൈവ് നിര്‍ത്തുക"
+
+#: src/nemo-view.c:8746 src/nemo-view.c:8937
+msgid "Safely remove the selected drive"
+msgstr "തിരഞ്ഞെടുത്ത ഡ്രൈവ് സുരക്ഷിതമായി നീക്കം ചെയ്യുക"
+
+#: src/nemo-view.c:8749 src/nemo-view.c:8836 src/nemo-view.c:8940
+msgid "_Disconnect"
+msgstr "_വിഛേദിക്കുക"
+
+#: src/nemo-view.c:8750 src/nemo-view.c:8941
+msgid "Disconnect the selected drive"
+msgstr "തിരഞ്ഞെടുത്ത ഡ്രൈവ് വിഛേദിക്കുക"
+
+#: src/nemo-view.c:8753 src/nemo-view.c:8840 src/nemo-view.c:8944
+msgid "_Stop Multi-disk Drive"
+msgstr "മള്‍ട്ടി-ഡിസ്ക് ഡ്രൈവ് _നിര്‍ത്തുക"
+
+#: src/nemo-view.c:8754 src/nemo-view.c:8945
+msgid "Stop the selected multi-disk drive"
+msgstr "തിരഞ്ഞെടുത്ത മള്‍ട്ടി-ഡിസ്ക് ഡ്രൈവ് നിര്‍ത്തുക"
+
+#: src/nemo-view.c:8758 src/nemo-view.c:8949
+msgid "Lock the selected drive"
+msgstr "തിരഞ്ഞെടുത്ത ഡ്രൈവ് ബന്ധിക്കുക"
+
+#: src/nemo-view.c:8800 src/nemo-view.c:8804
+msgid "Start the drive associated with the open folder"
+msgstr "തുറന്ന ഫോൾഡറുമായി ബന്ധമുള്ള ഡ്രൈവ് പ്രവർത്തിപ്പിക്കുക"
+
+#: src/nemo-view.c:8808
+msgid "Connect to the drive associated with the open folder"
+msgstr "തുറന്ന ഫോൾഡറുമായി ബന്ധമുള്ള ഡ്രൈവിലേക്ക് കണക്റ്റ് ചെയ്യുക"
+
+#: src/nemo-view.c:8812
+msgid "Start the multi-disk drive associated with the open folder"
+msgstr ""
+"തുറന്ന ഫോള്‍ഡറുമായി ബന്ധമുളള മള്‍ട്ടി-ഡിസ്ക് ഡ്രൈവ് പ്രവർത്തിപ്പിച്ചു "
+"തുടങ്ങുക"
+
+#: src/nemo-view.c:8816
+msgid "Unlock the drive associated with the open folder"
+msgstr "തുറന്ന ഫോള്‍ഡറുമായി ബന്ധമുളള ഡ്രൈവിന്റെ ബന്ധനം നീക്കുക"
+
+#: src/nemo-view.c:8829
+msgid "_Stop the drive associated with the open folder"
+msgstr "തുറന്ന ഫോള്‍ഡറുമായി ബന്ധമുളള ഡ്രൈവ് _നിര്‍ത്തുക"
+
+#: src/nemo-view.c:8833
+msgid "Safely remove the drive associated with the open folder"
+msgstr "തുറന്ന ഫോള്‍ഡറുമായി ബന്ധമുള്ള ഡ്രൈവ് സുരക്ഷിതമായി നീക്കം ചെയ്യുക"
+
+#: src/nemo-view.c:8837
+msgid "Disconnect the drive associated with the open folder"
+msgstr "തുറന്ന ഫോള്‍ഡറുമായി ബന്ധമുളള ഡ്രൈവ് വിഛേദിക്കുക"
+
+#: src/nemo-view.c:8841
+msgid "Stop the multi-disk drive associated with the open folder"
+msgstr "തുറന്ന ഫോള്‍ഡറുമായി ബന്ധമുളള മള്‍ട്ടി-ഡിസ്ക് ഡ്രൈവ് നിര്‍ത്തുക"
+
+#: src/nemo-view.c:8845
+msgid "Lock the drive associated with the open folder"
+msgstr "തുറന്ന ഫോള്‍ഡറുമായി ബന്ധമുളള ഡ്രൈവ് ബന്ധിക്കുക"
+
+#: src/nemo-view.c:9072 src/nemo-view.c:9373
+msgid "_Delete Permanently"
+msgstr "എന്നേക്കുമായി _നീക്കം ചെയ്യുക"
+
+#: src/nemo-view.c:9073
+msgid "Delete the open folder permanently"
+msgstr "തുറന്നിരിയ്ക്കുന്ന ഫോൾഡർ എന്നേക്കുമായി നീക്കം ചെയ്യുക"
+
+#: src/nemo-view.c:9077
+msgid "Move the open folder to the Trash"
+msgstr "തുറന്നിരിയ്ക്കുന്ന കൂട  ട്രാഷിലേക്ക് നീക്കുക"
+
+#: src/nemo-view.c:9279
+#, c-format
+msgid "_Open With %s"
+msgstr "%s ഉപയോഗിച്ച് _തുറക്കുക"
+
+#: src/nemo-view.c:9336
+#, c-format
+msgid "Open in %'d New _Window"
+msgid_plural "Open in %'d New _Windows"
+msgstr[0] "%'d പുതിയ _ജാലകത്തില്‍ തുറക്കുക"
+msgstr[1] "%'d പുതിയ _ജാലകങ്ങളില്‍ തുറക്കുക"
+
+#: src/nemo-view.c:9356
+#, c-format
+msgid "Open in %'d New _Tab"
+msgid_plural "Open in %'d New _Tabs"
+msgstr[0] "%'d പുതിയ _റ്റാബിൽ തുറക്കുക"
+msgstr[1] "%'d പുതിയ _റ്റാബുകളിൽ തുറക്കുക"
+
+#: src/nemo-view.c:9374
+msgid "Delete all selected items permanently"
+msgstr "തിരഞ്ഞെടുത്ത എല്ലാ ഇനങ്ങളും എന്നേക്കുമായി നീക്കം ചെയ്യുക"
+
+#: src/nemo-view.c:9430
+msgid "View or modify the properties of the open folder"
+msgstr ""
+"തുറന്നിരിക്കുന്ന ഫോൾഡറിന്റെ പ്രത്യേകതകൾ കാണുകയോ മാറ്റം വരുത്തുകയോ ചെയ്യുക"
+
+#: src/nemo-view-dnd.c:125 libnemo-private/nemo-file.c:6334
+#: libnemo-private/nemo-file-operations.c:377
+#, c-format
+msgid "Link to %s"
+msgstr "%s എന്നതിലേക്ക് കണ്ണിയിടുക"
+
+#: src/nemo-view-dnd.c:172 src/nemo-view-dnd.c:206 src/nemo-view-dnd.c:297
+msgid "Drag and drop is not supported."
+msgstr "വലിച്ചിടുന്ന സംവിധാനം പിന്തുണയ്ക്കുന്നില്ല."
+
+#: src/nemo-view-dnd.c:173
+msgid "Drag and drop is only supported on local file systems."
+msgstr ""
+"പ്രാദേശിക ഫയൽ സിസ്റ്റങ്ങളിൽ മാത്രമേ വലിച്ചിടുന്ന സംവിധാനത്തിന് പിന്തുണയുള്ളു."
+
+#: src/nemo-view-dnd.c:207 src/nemo-view-dnd.c:298
+msgid "An invalid drag type was used."
+msgstr "അസാധുവായ വലിച്ചിടൽ തരമാണ് ഉപയോഗിച്ചത്."
+
+#: src/nemo-view-dnd.c:375
+msgid "dropped text.txt"
+msgstr "dropped text.txt"
+
+#: src/nemo-view-dnd.c:420
+msgid "dropped data"
+msgstr "വലിച്ചിട്ട ഡേറ്റ"
+
+#: src/nemo-window-bookmarks.c:83
+msgid ""
+"Do you want to remove any bookmarks with the non-existing location from your "
+"list?"
+msgstr ""
+"താങ്കളുടെ പട്ടികയിൽ നിന്നും ബുക്ക്മാർക്കുകളോ നിലവിലില്ലാത്ത സ്ഥാനങ്ങളോ "
+"നീക്കം ചെയ്യണോ?"
+
+#: src/nemo-window-bookmarks.c:85
+#, c-format
+msgid "The location \"%s\" does not exist."
+msgstr "സ്ഥാനം \"%s\" നിലവിലില്ല."
+
+#: src/nemo-window-bookmarks.c:88
+msgid "Bookmark for Nonexistent Location"
+msgstr "നിലവിലില്ലാത്ത സ്ഥാനത്തിനുവേണ്ടിയുള്ള ബുക്ക്മാർക്ക്"
+
+#: src/nemo-window-bookmarks.c:316
+msgid "Go to the location specified by this bookmark"
+msgstr "ഈ ബുക്ക്മാർക്കിൽ വ്യക്തമാക്കിയിട്ടുള്ള സ്ഥാനത്ത് ചെല്ലുക"
+
+#: src/nemo-window.c:1540
+#, c-format
+msgid "%s - File Browser"
+msgstr "%s - ഫയൽ ബ്രൗസർ"
+
+#: src/nemo-window.c:2018 src/nemo-window-menus.c:336
+msgid "Nemo"
+msgstr "നെമോ"
+
+#: src/nemo-window-manage-views.c:1140
+msgid "Searching..."
+msgstr "തിരയുന്നു..."
+
+#: src/nemo-window-manage-views.c:1611
+msgid "Nemo has no installed viewer capable of displaying the folder."
+msgstr ""
+"ഫോൾഡർ പ്രദർശിപ്പിക്കാൻ ശേഷിയുള്ള ദർശിനി നെമോ ഇൻസ്റ്റോൾ ചെയ്തിട്ടില്ല."
+
+#: src/nemo-window-manage-views.c:1617
+msgid "The location is not a folder."
+msgstr "സ്ഥാനം ഒരു ഫോൾഡറല്ല."
+
+#: src/nemo-window-manage-views.c:1623
+#, c-format
+msgid "Could not find \"%s\"."
+msgstr "\"%s\" കണ്ടുപിടിയ്ക്കാന്‍ സാധിച്ചില്ല."
+
+#: src/nemo-window-manage-views.c:1626
+msgid "Please check the spelling and try again."
+msgstr "ദയവായി അക്ഷരതെറ്റുണ്ടോയെന്ന് പരിശോധിച്ച ശേഷം വീണ്ടും ശ്രമിക്കുക."
+
+#: src/nemo-window-manage-views.c:1634
+#, c-format
+msgid "Nemo cannot handle \"%s\" locations."
+msgstr "നെമോയ്ക്ക് \"%s\" എന്ന സ്ഥാനങ്ങൾ കൈകാര്യം ചെയ്യാനാവില്ല."
+
+#: src/nemo-window-manage-views.c:1637
+msgid "Nemo cannot handle this kind of location."
+msgstr "നെമോയ്ക്ക് ഇത്തരത്തിലുള്ള സ്ഥാനങ്ങൾ കൈകാര്യം ചെയ്യാനാവില്ല."
+
+#: src/nemo-window-manage-views.c:1644
+msgid "Unable to mount the location."
+msgstr "സ്ഥാനം മൗണ്ട് ചെയ്യാനാവില്ല."
+
+#: src/nemo-window-manage-views.c:1650
+msgid "Access was denied."
+msgstr "പ്രവേശനം നിഷിദ്ധം."
+
+#: src/nemo-window-manage-views.c:1659
+#, c-format
+msgid "Could not display \"%s\", because the host could not be found."
+msgstr ""
+"ഹോസ്റ്റ് കണ്ടുപിടിയ്ക്കാന്‍ സാധിക്കാത്തതിനാൽ \"%s\" പ്രദര്‍ശിപ്പിക്കാന്‍ "
+"സാധ്യമായില്ല."
+
+#: src/nemo-window-manage-views.c:1661
+msgid ""
+"Check that the spelling is correct and that your proxy settings are correct."
+msgstr ""
+"അക്ഷരത്തെറ്റുണ്ടോയെന്നും താങ്കളുടെ പ്രോക്സി സജ്ജീകരണങ്നൾ ശരിയാണോയെന്നും "
+"പരിശോധിക്കുക."
+
+#: src/nemo-window-manage-views.c:1676
+#, c-format
+msgid ""
+"Error: %s\n"
+"Please select another viewer and try again."
+msgstr ""
+"പിഴവ്: %s\n"
+"ദയവായി മറ്റൊരു ദർശിനി തിരഞ്ഞെടുത്ത് വീണ്ടും ശ്രമിക്കുക."
+
+#: src/nemo-window-menus.c:315
+msgid ""
+"Nemo is free software; you can redistribute it and/or modify it under the "
+"terms of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version."
+msgstr ""
+"നെമോ ഒരു സ്വതന്ത്ര സോഫ്റ്റ്‌വേറാണ്; ഫ്രീ സോഫ്റ്റ്‌വേർ ഫൗണ്ടേഷൻ "
+"പ്രസിദ്ധീകരിക്കുന്ന ഗ്നു സാർവ്വജനിക അനുവാദപത്രം, പതിപ്പ് 2 അല്ലെങ്കിൽ "
+"(താങ്കളുടെ ഇച്ചാനുസരണം) മറ്റേതെങ്കിലും പുതിയ പതിപ്പ്, പ്രകാരം താങ്കൾക്കത് "
+"പുനർവിതരണമോ കൂടെ/അല്ലെങ്കിൽ മാറ്റം വരുത്തുകയോ ചെയ്യാവുന്നതാണ്."
+
+#: src/nemo-window-menus.c:319
+msgid ""
+"Nemo is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details."
+msgstr ""
+"നെമോ വിതരണം ചെയ്യുന്നത് ഇത് ഉപകാരപ്പെടുമെന്ന പ്രതീക്ഷയിലാണ്, പക്ഷേ യാതൊരു "
+"ഗുണമേന്മാ ഉത്തരവാദിത്തവും വഹിക്കുന്നില്ല; ഇത് വ്യാപാരയോഗ്യമെന്നോ പ്രത്യേക "
+"ഉപയോഗത്തിന് അനുയോജ്യമെന്നോ ഉള്ള യാതൊരു ഗുണമേന്മാ ഉത്തരവാദിത്തവും "
+"ഉൾക്കൊള്ളുന്നില്ല. കൂടുതൽ വിവരങ്ങൾക്ക് ഗ്നു സാർവ്വജനിക അനുവാദപത്രം കാണുക."
+
+#: src/nemo-window-menus.c:323
+msgid ""
+"You should have received a copy of the GNU General Public License along with "
+"Nemo; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"Street, Fifth Floor, Boston, MA 02110-1301 USA"
+msgstr ""
+"നെമോയോടൊപ്പം ഗ്നു സാർവ്വജനിക അനുവാദപത്രത്തിന്റെ ഒരു പകർപ്പ് താങ്കൾക്ക് "
+"ലഭിച്ചിട്ടുണ്ടാകണം; ഇല്ലെങ്കിൽ ഫ്രീ സോഫ്റ്റ്‌വേർ ഫൗണ്ടെഷൻ, ഇൻക്., 51 "
+"ഫ്രാങ്ക്‌ലിൻ തെരുവ്, അഞ്ചാം നില, ബോസ്റ്റൺ, എം.എ. 02110-1301, അമേരിക്കൻ "
+"ഐക്യനാടുകൾ എന്ന വിലാസത്തിൽ എഴുതുക"
+
+#: src/nemo-window-menus.c:338
+msgid ""
+"Nemo lets you organize files and folders, both on your computer and online."
+msgstr ""
+"താങ്കളുടെ കമ്പ്യൂട്ടറിലുള്ളതും ഓൺലൈനിലുള്ളതുമായ താങ്കളുടെ ഫോൾഡറുകളും "
+"ഫയലുകളും കൈകാര്യം ചെയ്യാൻ നെമോ അനുവദിക്കുന്നു."
+
+#: src/nemo-window-menus.c:1051
+msgid "_File"
+msgstr "_ഫയല്‍"
+
+#: src/nemo-window-menus.c:1052
+msgid "_Edit"
+msgstr "‌_തിരുത്തുക"
+
+#: src/nemo-window-menus.c:1053
+msgid "_View"
+msgstr "_‌കാണുക"
+
+#: src/nemo-window-menus.c:1054
+msgid "_Help"
+msgstr "_സഹായം"
+
+#: src/nemo-window-menus.c:1056
+msgid "_Close"
+msgstr "അ_ടയ്ക്കുക"
+
+#: src/nemo-window-menus.c:1057
+msgid "Close this folder"
+msgstr "ഈ ഫോൾഡർ അടയ്ക്കുക"
+
+#: src/nemo-window-menus.c:1060
+msgid "Prefere_nces"
+msgstr "മുൻ_ഗണനകൾ"
+
+#: src/nemo-window-menus.c:1061
+msgid "Edit Nemo preferences"
+msgstr "നെമോയിലെ മുൻഗണനകളിൽ മാറ്റം വരുത്തുക"
+
+#: src/nemo-window-menus.c:1065
+msgid "Undo the last text change"
+msgstr "അവസാനം വരുത്തിയ വാക്യമാറ്റം തിരസ്കരിക്കുക"
+
+#: src/nemo-window-menus.c:1068
+msgid "Open _Parent"
+msgstr "താവഴി തുറക്കുക"
+
+#: src/nemo-window-menus.c:1069
+msgid "Open the parent folder"
+msgstr "മാതൃ ഫോൾഡർ തുറക്കുക"
+
+#: src/nemo-window-menus.c:1076
+msgid "Stop loading the current location"
+msgstr "നിലവിലുള്ള സ്ഥാനം എടുക്കുന്നത് അവസാനിപ്പിക്കുക"
+
+#: src/nemo-window-menus.c:1079 src/nemo-window-menus.c:1314
+msgid "_Reload"
+msgstr "_വീണ്ടും എടുക്കുക"
+
+#: src/nemo-window-menus.c:1080 src/nemo-window-menus.c:1316
+msgid "Reload the current location"
+msgstr "നിലവിലുളള സ്ഥാനം പുതുക്കി എടുക്കുക"
+
+#: src/nemo-window-menus.c:1083
+msgid "_All Topics"
+msgstr "_എല്ലാ വിഷയങ്ങളും"
+
+#: src/nemo-window-menus.c:1084
+msgid "Display Nemo help"
+msgstr "നെമോ സഹായം പ്രദർശിപ്പിക്കുക"
+
+#: src/nemo-window-menus.c:1103
+msgid "_About"
+msgstr "_വിവരണം"
+
+#: src/nemo-window-menus.c:1104
+msgid "Display credits for the creators of Nemo"
+msgstr "നിമോയുടെ നിർമ്മാതാക്കൾ"
+
+#: src/nemo-window-menus.c:1107
+msgid "Zoom _In"
+msgstr "_വലുതാക്കുക"
+
+#: src/nemo-window-menus.c:1108
+msgid "Increase the view size"
+msgstr "കാഴ്ചയുടെ വലിപ്പം കൂട്ടുക"
+
+#: src/nemo-window-menus.c:1119
+msgid "Zoom _Out"
+msgstr "_ചെറുതാക്കുക"
+
+#: src/nemo-window-menus.c:1120
+msgid "Decrease the view size"
+msgstr "കാഴ്ചയുടെ വലിപ്പം കുറയ്ക്കുക"
+
+#: src/nemo-window-menus.c:1127
+msgid "Normal Si_ze"
+msgstr "_സാധാരണ വലിപ്പം"
+
+#: src/nemo-window-menus.c:1128
+msgid "Use the normal view size"
+msgstr "സാധാരണ കാഴ്ചയ്ക്കുള്ള വലിപ്പമുപയോഗിയ്ക്കുക"
+
+#: src/nemo-window-menus.c:1131
+msgid "Connect to _Server..."
+msgstr "സെര്‍വറിലേയ്ക്കു് _കണക്ടു് ചെയ്യുക..."
+
+#: src/nemo-window-menus.c:1132
+msgid "Connect to a remote computer or shared disk"
+msgstr ""
+"ഒരു വിദൂര  കമ്പ്യൂട്ടറിലേയ്ക്കു് അല്ലെങ്കില്‍ ഷെയേര്‍ഡ് ഡിസ്കിലേക്കു് "
+"കണക്ടു് ചെയ്യുക"
+
+#: src/nemo-window-menus.c:1136
+msgid "Open your personal folder"
+msgstr "താങ്കളുടെ സ്വകാര്യ ഫോൾഡർ തുറക്കുക"
+
+#: src/nemo-window-menus.c:1139 src/nemo-window-menus.c:1342
+msgid "_Computer"
+msgstr "_കമ്പ്യൂട്ടർ"
+
+#: src/nemo-window-menus.c:1140
+msgid ""
+"Browse all local and remote disks and folders accessible from this computer"
+msgstr ""
+"ഈ കമ്പ്യൂട്ടറിൽ ലഭ്യമായ എല്ലാ പ്രാദേശികവും വിദൂരസ്ഥവുമായ ഡിസ്കുകളും "
+"ഫോൾഡറുകളും എടുക്കുക"
+
+#: src/nemo-window-menus.c:1143
+msgid "_Network"
+msgstr "_നെറ്റ്‌വര്‍ക്ക്"
+
+#: src/nemo-window-menus.c:1144
+msgid "Browse bookmarked and local network locations"
+msgstr ""
+"ബുക്ക്‌മാർക്ക് ചെയ്തിട്ടുള്ളതും പ്രാദേശികമായതുമായ നെറ്റ്‌വർക്ക് സ്ഥാനങ്ങൾ "
+"എടുക്കുക"
+
+#: src/nemo-window-menus.c:1147
+msgid "T_emplates"
+msgstr "ഫ_ലകങ്ങൾ"
+
+#: src/nemo-window-menus.c:1148
+msgid "Open your personal templates folder"
+msgstr "താങ്കളുടെ സ്വന്തം ഫലകങ്ങളുടെ ഫോൾഡർ തുറക്കുക"
+
+#: src/nemo-window-menus.c:1151
+msgid "_Trash"
+msgstr "_ട്രാഷ്"
+
+#: src/nemo-window-menus.c:1152
+msgid "Open your personal trash folder"
+msgstr "താങ്കളുടെ സ്വന്തം ട്രാഷ് തുറക്കുക"
+
+#: src/nemo-window-menus.c:1154
+msgid "_Go"
+msgstr "_പോകുക"
+
+#: src/nemo-window-menus.c:1155
+msgid "_Bookmarks"
+msgstr "_ബുക്ക്മാര്‍ക്കുകള്‍"
+
+#: src/nemo-window-menus.c:1156
+msgid "_Tabs"
+msgstr "_ടാബുകൾ"
+
+#: src/nemo-window-menus.c:1157
+msgid "New _Window"
+msgstr "പുതിയ _ജാലകം"
+
+#: src/nemo-window-menus.c:1158
+msgid "Open another Nemo window for the displayed location"
+msgstr ""
+"പ്രദർശിക്കപ്പെട്ടിരിക്കുന്ന സ്ഥാനത്തിനായി നെമോയുടെ മറ്റൊരു ജാലകം തുറക്കുക"
+
+#: src/nemo-window-menus.c:1160
+msgid "New _Tab"
+msgstr "പുതിയ _ടാബ്"
+
+#: src/nemo-window-menus.c:1161
+msgid "Open another tab for the displayed location"
+msgstr "പ്രദർശിപ്പിച്ചിരിക്കുന്ന സ്ഥാനം മറ്റൊരു ടാബിൽ തുറക്കുക"
+
+#: src/nemo-window-menus.c:1163
+msgid "Close _All Windows"
+msgstr "_എല്ലാ ജാലകങ്ങളും അടയ്ക്കുക"
+
+#: src/nemo-window-menus.c:1164
+msgid "Close all Navigation windows"
+msgstr "എല്ലാ ഗമന ജാലകങ്ങളും അടയ്ക്കുക"
+
+#: src/nemo-window-menus.c:1166 src/nemo-window-menus.c:1264
+msgid "_Back"
+msgstr "_പിന്നോട്ട്"
+
+#: src/nemo-window-menus.c:1167 src/nemo-window-menus.c:1266
+msgid "Go to the previous visited location"
+msgstr "മുമ്പ് സന്ദര്‍ശിച്ച സ്ഥാനത്തേക്ക് പോകുക"
+
+#: src/nemo-window-menus.c:1169 src/nemo-window-menus.c:1280
+msgid "_Forward"
+msgstr "_മുന്നോട്ട്"
+
+#: src/nemo-window-menus.c:1170 src/nemo-window-menus.c:1282
+msgid "Go to the next visited location"
+msgstr "സന്ദർശിച്ച സ്ഥാനങ്ങളിൽ അടുത്തിടത്തേയ്ക്ക് പോവുക"
+
+#: src/nemo-window-menus.c:1172
+msgid "_Location..."
+msgstr "_സ്ഥാനം..."
+
+#: src/nemo-window-menus.c:1173
+msgid "Specify a location to open"
+msgstr "തുറക്കുന്നതിനായി ഒരു സ്ഥാനം വ്യക്തമാക്കുക"
+
+#: src/nemo-window-menus.c:1175
+msgid "S_witch to Other Pane"
+msgstr "മറ്റൊരു കളത്തിലേക്ക് മാ_റുക"
+
+#: src/nemo-window-menus.c:1176
+msgid "Move focus to the other pane in a split view window"
+msgstr "വിഘടിത ജാലകത്തിൽ മറുകളത്തിലേക്ക് ഫോക്കസ് മാറ്റുക"
+
+#: src/nemo-window-menus.c:1178
+msgid "Sa_me Location as Other Pane"
+msgstr "മറുകളത്തിലും അ_തേ സ്ഥാനം"
+
+#: src/nemo-window-menus.c:1179
+msgid "Go to the same location as in the extra pane"
+msgstr "കൂടുതലായുള്ള കളത്തിലും അതേ സ്ഥാനത്തേയ്ക്ക് പോവുക"
+
+#: src/nemo-window-menus.c:1182
+msgid "Add a bookmark for the current location to this menu"
+msgstr "ഈ മെനുവിലെ ഇപ്പോഴത്തെ സ്ഥാനത്തിന് ബുക്ക്മാർക്ക് ചേർക്കുക"
+
+#: src/nemo-window-menus.c:1184
+msgid "_Edit Bookmarks..."
+msgstr "ബുക്ക്മാർക്കുകൾ _തിരുത്തുക"
+
+#: src/nemo-window-menus.c:1185
+msgid "Display a window that allows editing the bookmarks in this menu"
+msgstr "ഈ മെനുവിലെ ബുക്ക്മാർക്കുകൾ തിരുത്തുവാൻ ഒരു ജാലകം കാണിക്കുക"
+
+#: src/nemo-window-menus.c:1187
+msgid "_Previous Tab"
+msgstr "_മുമ്പത്തെ ടാബ്"
+
+#: src/nemo-window-menus.c:1188
+msgid "Activate previous tab"
+msgstr "പഴയ ടാബ് സജീവമാക്കുക"
+
+#: src/nemo-window-menus.c:1190
+msgid "_Next Tab"
+msgstr "_അടുത്ത ടാബ്"
+
+#: src/nemo-window-menus.c:1191
+msgid "Activate next tab"
+msgstr "അടുത്ത ടാബ് സജീവമാക്കുക"
+
+#: src/nemo-window-menus.c:1193 src/nemo-window-pane.c:521
+msgid "Move Tab _Left"
+msgstr "റ്റാബ് _ഇടത്തോട്ട് മാറ്റുക"
+
+#: src/nemo-window-menus.c:1194
+msgid "Move current tab to left"
+msgstr "ഇപ്പോഴത്തെ ടാബ് ഇടത്തോട്ട് മാറ്റുക"
+
+#: src/nemo-window-menus.c:1196 src/nemo-window-pane.c:529
+msgid "Move Tab _Right"
+msgstr "റ്റാബ് _വലത്തോട്ട് മാറ്റുക"
+
+#: src/nemo-window-menus.c:1197
+msgid "Move current tab to right"
+msgstr "ഇപ്പോഴത്തെ ടാബ് വലത്തോട്ട് മാറ്റുക"
+
+#: src/nemo-window-menus.c:1199
+msgid "Sidebar"
+msgstr "സൈഡ്ബാര്‍"
+
+#: src/nemo-window-menus.c:1204
+msgid "Show _Hidden Files"
+msgstr "_മറഞ്ഞിരിക്കുന്ന ഫയലുകൾ പ്രദർശിപ്പിക്കുക"
+
+#: src/nemo-window-menus.c:1205
+msgid "Toggle the display of hidden files in the current window"
+msgstr "ഇപ്പോഴത്തെ ജാലകത്തിൽ മറഞ്ഞിരിക്കുന്ന ഫയലുകളുടെ ദൃശ്യത മാറ്റുക"
+
+#: src/nemo-window-menus.c:1209
+msgid "_Main Toolbar"
+msgstr "_പ്രധാന ഉപകരണങ്ങൾ"
+
+#: src/nemo-window-menus.c:1210
+msgid "Change the visibility of this window's main toolbar"
+msgstr "ഈ ജാലകത്തിലെ പ്രധാന ഉപകരണങ്ങളുടെ ദൃശ്യത മാറ്റുക"
+
+#: src/nemo-window-menus.c:1214
+msgid "_Show Sidebar"
+msgstr "സൈഡ്‌ബാർ _പ്രദർശിപ്പിക്കുക"
+
+#: src/nemo-window-menus.c:1215
+msgid "Change the visibility of this window's side pane"
+msgstr "ഈ ജാലകത്തിന്റെ പാർശ്വ കളത്തിന്റെ ദൃശ്യത മാറ്റം വരുത്തുക"
+
+#: src/nemo-window-menus.c:1219
+msgid "St_atusbar"
+msgstr "അവ_സ്ഥാപട്ട"
+
+#: src/nemo-window-menus.c:1220
+msgid "Change the visibility of this window's statusbar"
+msgstr "ഈ ജാലകത്തിന്റെ അവസ്ഥാപട്ടയുടെ ദൃശ്യത മാറ്റുക"
+
+#: src/nemo-window-menus.c:1224
+msgid "M_enubar"
+msgstr ""
+
+#: src/nemo-window-menus.c:1225
+msgid "Change the default visibility of the menubar"
+msgstr ""
+
+#: src/nemo-window-menus.c:1229
+msgid "_Search for Files..."
+msgstr "ഫയലുകൾക്കായി _തിരയുക..."
+
+#: src/nemo-window-menus.c:1230 src/nemo-window-menus.c:1403
+msgid "Search documents and folders by name"
+msgstr "പേരനുസരിച്ച് പ്രമാണങ്ങളും ഫോൾഡറുകളും തിരയുക"
+
+#: src/nemo-window-menus.c:1234
+msgid "E_xtra Pane"
+msgstr "അ_ധിക കളം"
+
+#: src/nemo-window-menus.c:1235
+msgid "Open an extra folder view side-by-side"
+msgstr "ഒരു അധിക ഫോൾഡർ വശത്തായി കാണാവുന്ന വിധം തുറക്കുക"
+
+#: src/nemo-window-menus.c:1242
+msgid "Places"
+msgstr "സ്ഥാനങ്ങൾ"
+
+#: src/nemo-window-menus.c:1242
+msgid "Select Places as the default sidebar"
+msgstr "സ്വതേയുള്ള പാര്‍ശ്വപ്പട്ടയായി  സ്ഥാനങ്ങൾ തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-window-menus.c:1245
+msgid "Tree"
+msgstr "വൃക്ഷം"
+
+#: src/nemo-window-menus.c:1245
+msgid "Select Tree as the default sidebar"
+msgstr "സ്വതേയുള്ള പാർശ്വപട്ടയായി വൃക്ഷരൂപം തിരഞ്ഞെടുക്കുക"
+
+#: src/nemo-window-menus.c:1267
+msgid "Back history"
+msgstr "പിന്നോട്ടെടുത്തതിന്റെ നാൾവഴി"
+
+#: src/nemo-window-menus.c:1283 src/nemo-window-menus.c:1302
+msgid "Forward history"
+msgstr "മുന്നോട്ട് പോയതിന്റെ നാൾവഴി"
+
+#: src/nemo-window-menus.c:1299 src/nemo-window-menus.c:1522
+msgid "_Up"
+msgstr "_മുകളിലേക്ക്"
+
+#: src/nemo-window-menus.c:1301
+msgid "Go to parent folder"
+msgstr "മാതൃഫോൾഡറിലേക്ക് പോവുക"
+
+#: src/nemo-window-menus.c:1330
+msgid "Go to home directory"
+msgstr "ഹോം ഡയറക്റ്ററിയിലേക്ക് പോവുക"
+
+#: src/nemo-window-menus.c:1344
+msgid "Go to Computer"
+msgstr "കമ്പ്യൂട്ടറിലേക്ക് പോവുക"
+
+#: src/nemo-window-menus.c:1356
+msgid "Use Location Entry"
+msgstr ""
+
+#: src/nemo-window-menus.c:1368
+msgid "Icons"
+msgstr "ഐകോണുകൾ"
+
+#: src/nemo-window-menus.c:1379
+msgid "List"
+msgstr "നാമാവലി"
+
+#: src/nemo-window-menus.c:1391
+msgid "Compact"
+msgstr "ലഘു"
+
+#: src/nemo-window-menus.c:1403 libnemo-private/nemo-query.c:130
+#: libnemo-private/nemo-search-directory-file.c:160
+#: libnemo-private/nemo-search-directory-file.c:186
+#: libnemo-private/nemo-search-directory-file.c:220
+msgid "Search"
+msgstr "തിരയുക"
+
+#: src/nemo-window-menus.c:1528
+msgid "_Location"
+msgstr "_സ്ഥാനം"
+
+#: src/nemo-window-pane.c:511
+msgid "_New Tab"
+msgstr "_പുതിയ റ്റാബ്"
+
+#: src/nemo-window-pane.c:540
+msgid "_Close Tab"
+msgstr "റ്റാബ് _അടയ്ക്കുക"
+
+#: src/nemo-x-content-bar.c:96
+msgid "These files are on an Audio CD."
+msgstr "ഈ ഫയലുകൾ‌ ഒരു ഓഡിയോ സിഡിയിലുള്ളവയാണ്."
+
+#: src/nemo-x-content-bar.c:98
+msgid "These files are on an Audio DVD."
+msgstr "ഈ ഫയലുകൾ‌ ഒരു ഓഡിയോ സിഡിയിലുള്ളവയാണ്."
+
+#: src/nemo-x-content-bar.c:100
+msgid "These files are on a Video DVD."
+msgstr "ഈ ഫയലുകൾ‌ ഒരു വീഡിയോ സിഡിയിലുള്ളവയാണ്."
+
+#: src/nemo-x-content-bar.c:102
+msgid "These files are on a Video CD."
+msgstr "ഈ ഫയലുകൾ‌ ഒരു വീഡിയോ സിഡിയിലുള്ളവയാണ്."
+
+#: src/nemo-x-content-bar.c:104
+msgid "These files are on a Super Video CD."
+msgstr "ഈ ഫയലുകൾ‌ ഒരു സൂപ്പർ വീഡിയോ സിഡിയിലുള്ളവയാണ്."
+
+#: src/nemo-x-content-bar.c:106
+msgid "These files are on a Photo CD."
+msgstr "ഈ ഫയലുകൾ‌ ഒരു ഫോട്ടോ സിഡിയിലുള്ളവയാണ്."
+
+#: src/nemo-x-content-bar.c:108
+msgid "These files are on a Picture CD."
+msgstr "ഈ ഫയലുകൾ‌ ഒരു ചിത്ര സിഡിയിലുള്ളവയാണ്."
+
+#: src/nemo-x-content-bar.c:110
+msgid "The media contains digital photos."
+msgstr "മാദ്ധ്യമം ഡിജിറ്റൽ ഫോട്ടോകൾ ഉൾക്കൊള്ളുന്നു."
+
+#: src/nemo-x-content-bar.c:112
+msgid "These files are on a digital audio player."
+msgstr "ഈ ഫയലുകൾ ഒരു ഡിജിറ്റൽ ഓഡിയോ പ്ലേയറിലുള്ളവയാണ്."
+
+#: src/nemo-x-content-bar.c:114
+msgid "The media contains software."
+msgstr "മാദ്ധ്യമത്തിൽ സോഫ്റ്റ്‌വേർ ഉൾക്കൊള്ളുന്നു."
+
+#: src/nemo-x-content-bar.c:117
+#, c-format
+msgid "The media has been detected as \"%s\"."
+msgstr "മാദ്ധ്യമം \"%s\" ആയി തിരിച്ചറിഞ്ഞിരിക്കുന്നു."
+
+#: src/nemo-x-content-bar.c:142
+#, c-format
+msgid "Open %s"
+msgstr "%s തുറക്കുക"
+
+#: libnemo-private/nemo-clipboard.c:433
+msgid "Cut the selected text to the clipboard"
+msgstr "തിരഞ്ഞെടുത്ത എഴുത്ത് ക്ലിപ്പ്ബോർഡിലേക്ക് വെട്ടിയെടുക്കുക"
+
+#: libnemo-private/nemo-clipboard.c:437
+msgid "Copy the selected text to the clipboard"
+msgstr "തിരഞ്ഞെടുത്ത എഴുത്ത് ക്ലിപ്പ്‌ബോർഡിലേക്ക് പകർത്തുക"
+
+#: libnemo-private/nemo-clipboard.c:441
+msgid "Paste the text stored on the clipboard"
+msgstr "ക്ലിപ്പ്‌ബോർഡിൽ സൂക്ഷിച്ചിട്ടുള്ള എഴുത്ത് ഒട്ടിച്ചുചേർക്കുക"
+
+#: libnemo-private/nemo-clipboard.c:445
+msgid "Select all the text in a text field"
+msgstr "ടെക്സ്റ്റ്‌ഫീൽഡിലെ മുഴുവൻ എഴുത്തും തിരഞ്ഞെടുക്കുക"
+
+#: libnemo-private/nemo-column-chooser.c:368
+msgid "Move _Up"
+msgstr "_മുകളിലേക്ക് നീക്കുക"
+
+#: libnemo-private/nemo-column-chooser.c:378
+msgid "Move Dow_n"
+msgstr "_താഴേക്ക് നീക്കുക"
+
+#: libnemo-private/nemo-column-chooser.c:391
+msgid "Use De_fault"
+msgstr "സ്വ_തേയുള്ളത് ഉപയോഗിക്കുക"
+
+#: libnemo-private/nemo-column-utilities.c:44
+msgid "The name and icon of the file."
+msgstr "ഫയലിന്റെ പേരും ഐകോണും."
+
+#: libnemo-private/nemo-column-utilities.c:50
+msgid "Size"
+msgstr "വലിപ്പം"
+
+#: libnemo-private/nemo-column-utilities.c:51
+msgid "The size of the file."
+msgstr "ഫയലിന്റെ വലിപ്പം."
+
+#: libnemo-private/nemo-column-utilities.c:58
+msgid "Type"
+msgstr "തരം"
+
+#: libnemo-private/nemo-column-utilities.c:59
+msgid "The type of the file."
+msgstr "ഫയലിന്റെ തരം"
+
+#: libnemo-private/nemo-column-utilities.c:66
+msgid "The date the file was modified."
+msgstr "ഫയൽ പുതുക്കപ്പെട്ട തീയതി."
+
+#: libnemo-private/nemo-column-utilities.c:73
+msgid "Date Accessed"
+msgstr "ഉപയോഗിച്ച തീയതി"
+
+#: libnemo-private/nemo-column-utilities.c:74
+msgid "The date the file was accessed."
+msgstr "ഫയൽ ഉപയോഗിക്കപ്പെട്ട തീയതി."
+
+#: libnemo-private/nemo-column-utilities.c:81
+msgid "Owner"
+msgstr "ഉടമ"
+
+#: libnemo-private/nemo-column-utilities.c:82
+msgid "The owner of the file."
+msgstr "ഫയലിന്റെ ഉടമ."
+
+#: libnemo-private/nemo-column-utilities.c:89
+msgid "Group"
+msgstr "ഗണം"
+
+#: libnemo-private/nemo-column-utilities.c:90
+msgid "The group of the file."
+msgstr "ഫയലിന്റെ ഗണം."
+
+#: libnemo-private/nemo-column-utilities.c:98
+msgid "The permissions of the file."
+msgstr "ഫയലിന്റെ അനുമതികൾ."
+
+#: libnemo-private/nemo-column-utilities.c:105
+msgid "Octal Permissions"
+msgstr "ഒക്റ്റൽ അനുമതികൾ"
+
+#: libnemo-private/nemo-column-utilities.c:106
+msgid "The permissions of the file, in octal notation."
+msgstr "ഫയലിന്റെ അനുമതികൾ, ഒക്റ്റൽ രീതിയിൽ."
+
+#: libnemo-private/nemo-column-utilities.c:113
+msgid "MIME Type"
+msgstr "മൈം തരം"
+
+#: libnemo-private/nemo-column-utilities.c:114
+msgid "The mime type of the file."
+msgstr "ഫയലിന്റെ മൈം തരം."
+
+#: libnemo-private/nemo-column-utilities.c:121
+msgid "SELinux Context"
+msgstr "എസ്.ഇ.ലിനക്സ് കോണ്ടെക്സ്റ്റ്"
+
+#: libnemo-private/nemo-column-utilities.c:122
+msgid "The SELinux security context of the file."
+msgstr "ഫയലിന്റെ എസ്.ഇ.ലിനക്സ് സുരക്ഷാ കോണ്ടെക്സ്റ്റ്."
+
+#: libnemo-private/nemo-column-utilities.c:130
+msgid "The location of the file."
+msgstr "ഫയലിന്റെ സ്ഥാനം"
+
+#: libnemo-private/nemo-column-utilities.c:171
+msgid "Trashed On"
+msgstr "ട്രാഷിലേക്ക് മാറ്റിയത്"
+
+#: libnemo-private/nemo-column-utilities.c:172
+msgid "Date when file was moved to the Trash"
+msgstr "ഫയൽ ട്രാഷിലേക്ക് മാറ്റിയ തീയതി"
+
+#: libnemo-private/nemo-column-utilities.c:178
+msgid "Original Location"
+msgstr "യഥാർത്ഥ സ്ഥാനം"
+
+#: libnemo-private/nemo-column-utilities.c:179
+msgid "Original location of file before moved to the Trash"
+msgstr "ഫയൽ ട്രാഷിലേക്ക് മാറ്റുന്നതിനു മുമ്പത്തെ യഥാർത്ഥ സ്ഥാനം"
+
+#: libnemo-private/nemo-desktop-directory-file.c:435
+#: libnemo-private/nemo-desktop-icon-file.c:151
+msgid "on the desktop"
+msgstr "ഡെസ്ക്ടോപ്പിൽ"
+
+#: libnemo-private/nemo-desktop-link-monitor.c:92
+#, c-format
+msgid "You cannot move the volume \"%s\" to the trash."
+msgstr "താങ്കൾക്ക് വോള്യം \"%s\" ട്രാഷിലേക്ക് നീക്കാൻ കഴിയില്ല."
+
+#: libnemo-private/nemo-desktop-link-monitor.c:102
+msgid ""
+"If you want to eject the volume, please use \"Eject\" in the popup menu of "
+"the volume."
+msgstr ""
+"താങ്കൾക്ക് വോള്യം പുറത്തെടുക്കണമെങ്കിൽ, ദയവായി പോപ് അപ് മെനുവിലെ "
+"\"പുറത്തെടുക്കുക\" ഉപയോഗിക്കുക."
+
+#: libnemo-private/nemo-desktop-link-monitor.c:111
+msgid ""
+"If you want to unmount the volume, please use \"Unmount Volume\" in the "
+"popup menu of the volume."
+msgstr ""
+"താങ്കൾക്ക് വോള്യം അൺമൗണ്ട് ചെയ്യണമെങ്കിൽ, ദയവായി പോപ് അപ് മെനുവിലെ "
+"\"അൺമൗണ്ട് വോള്യം\" ഉപയോഗിക്കുക."
+
+#: libnemo-private/nemo-dnd.c:771
+msgid "_Move Here"
+msgstr "ഇവിടേക്ക് _മാറ്റുക"
+
+#: libnemo-private/nemo-dnd.c:776
+msgid "_Copy Here"
+msgstr "ഇവിടേക്ക് _പകർത്തുക"
+
+#: libnemo-private/nemo-dnd.c:781
+msgid "_Link Here"
+msgstr "ഇവിടേക്ക് _കണ്ണിചേർക്കുക"
+
+#: libnemo-private/nemo-dnd.c:786
+msgid "Set as _Background"
+msgstr "_പശ്ചാത്തലമായി സജ്ജീകരിക്കുക"
+
+#: libnemo-private/nemo-dnd.c:793
+msgid "Cancel"
+msgstr "റദ്ദാക്കുക"
+
+#: libnemo-private/nemo-file.c:1220 libnemo-private/nemo-vfs-file.c:382
+msgid "This file cannot be mounted"
+msgstr "ഫയൽ മൗണ്ട് ചെയ്യാനാവില്ല"
+
+#: libnemo-private/nemo-file.c:1265
+msgid "This file cannot be unmounted"
+msgstr "ഈ ഫയൽ അൺ‌മൗണ്ട് ചെയ്യാനാവില്ല"
+
+#: libnemo-private/nemo-file.c:1299
+msgid "This file cannot be ejected"
+msgstr "ഈ ഫയൽ പുറത്തെടുക്കാനാവില്ല"
+
+#: libnemo-private/nemo-file.c:1332 libnemo-private/nemo-vfs-file.c:560
+msgid "This file cannot be started"
+msgstr "ഈ ഫയൽ പ്രവർത്തിപ്പിച്ചുതുടങ്ങാനാവില്ല"
+
+#: libnemo-private/nemo-file.c:1384 libnemo-private/nemo-file.c:1415
+msgid "This file cannot be stopped"
+msgstr "ഈ ഫയൽ നിര്‍ത്താൻ സാദ്ധ്യമല്ല"
+
+#: libnemo-private/nemo-file.c:1826
+msgid "Slashes are not allowed in filenames"
+msgstr "ഫയലുകളുടെ പേരിൽ സ്ലാഷുകൾ അനുവദനീയമല്ല"
+
+#: libnemo-private/nemo-file.c:1844
+msgid "File not found"
+msgstr "ഫയൽ കണ്ടെത്താനായില്ല"
+
+#: libnemo-private/nemo-file.c:1872
+msgid "Toplevel files cannot be renamed"
+msgstr "മുൻനിര ഫയലുകളുടെ പേര് മാറ്റാനാവില്ല"
+
+#: libnemo-private/nemo-file.c:1895
+msgid "Unable to rename desktop icon"
+msgstr "ഡെസ്ക്‌ടോപ്പിലെ ഐകോണിന്റെ പേര് മാറ്റാൻ കഴിഞ്ഞില്ല"
+
+#: libnemo-private/nemo-file.c:1924
+msgid "Unable to rename desktop file"
+msgstr "ഡെസ്ക് ടോപ് ഫയലിന്റെ പേര് മാറ്റാനാകുന്നില്ല"
+
+#: libnemo-private/nemo-file.c:4372
+msgid "today at 00:00:00 PM"
+msgstr "ഇന്ന് 00:00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4375
+msgid "today at 00:00 PM"
+msgstr "ഇന്ന് 00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4376
+msgid "today at %-I:%M %p"
+msgstr "ഇന്ന് %-I:%M %p"
+
+#: libnemo-private/nemo-file.c:4378
+msgid "today, 00:00 PM"
+msgstr "ഇന്ന്, 00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4379
+msgid "today, %-I:%M %p"
+msgstr "ഇന്ന്, %-I:%M %p"
+
+#: libnemo-private/nemo-file.c:4381 libnemo-private/nemo-file.c:4382
+msgid "today"
+msgstr "ഇന്ന്"
+
+#: libnemo-private/nemo-file.c:4391
+msgid "yesterday at 00:00:00 PM"
+msgstr "ഇന്നലെ 00:00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4392
+msgid "yesterday at %-I:%M:%S %p"
+msgstr "ഇന്നലെ %-I:%M:%S %p"
+
+#: libnemo-private/nemo-file.c:4394
+msgid "yesterday at 00:00 PM"
+msgstr "ഇന്നലെ 00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4395
+msgid "yesterday at %-I:%M %p"
+msgstr "ഇന്നലെ %-I:%M %p"
+
+#: libnemo-private/nemo-file.c:4397
+msgid "yesterday, 00:00 PM"
+msgstr "ഇന്നലെ, 00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4398
+msgid "yesterday, %-I:%M %p"
+msgstr "ഇന്നലെ, %-I:%M %p"
+
+#: libnemo-private/nemo-file.c:4400 libnemo-private/nemo-file.c:4401
+msgid "yesterday"
+msgstr "ഇന്നലെ"
+
+#: libnemo-private/nemo-file.c:4412
+msgid "Wednesday, September 00 0000 at 00:00:00 PM"
+msgstr "ബുധനാഴ്ച, സെപ്റ്റംബർ 00 0000 00:00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4413
+msgid "%A, %B %-d %Y at %-I:%M:%S %p"
+msgstr "%A, %B %-d %Y at %-I:%M:%S %p"
+
+#: libnemo-private/nemo-file.c:4415
+msgid "Mon, Oct 00 0000 at 00:00:00 PM"
+msgstr "തിങ്കൾ, ഒക്ടോ 00 0000 00:00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4416
+msgid "%a, %b %-d %Y at %-I:%M:%S %p"
+msgstr "%a, %b %-d %Y at %-I:%M:%S %p"
+
+#: libnemo-private/nemo-file.c:4418
+msgid "Mon, Oct 00 0000 at 00:00 PM"
+msgstr "തിങ്കൾ, ഒക്ടോ 00 0000 00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4419
+msgid "%a, %b %-d %Y at %-I:%M %p"
+msgstr "%a, %b %-d %Y at %-I:%M %p"
+
+#: libnemo-private/nemo-file.c:4421
+msgid "Oct 00 0000 at 00:00 PM"
+msgstr "ഒക്ടോ 00 0000 00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4422
+msgid "%b %-d %Y at %-I:%M %p"
+msgstr "%b %-d %Y at %-I:%M %p"
+
+#: libnemo-private/nemo-file.c:4424
+msgid "Oct 00 0000, 00:00 PM"
+msgstr "ഒക്ടോ 00 0000, 00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4425
+msgid "%b %-d %Y, %-I:%M %p"
+msgstr "%b %-d %Y, %-I:%M %p"
+
+#: libnemo-private/nemo-file.c:4427
+msgid "00/00/00, 00:00 PM"
+msgstr "00/00/00, 00:00 പി.എം."
+
+#: libnemo-private/nemo-file.c:4428
+msgid "%m/%-d/%y, %-I:%M %p"
+msgstr "%m/%-d/%y, %-I:%M %p"
+
+#: libnemo-private/nemo-file.c:4430
+msgid "00/00/00"
+msgstr "00/00/00"
+
+#: libnemo-private/nemo-file.c:4431
+msgid "%m/%d/%y"
+msgstr "%m/%d/%y"
+
+#: libnemo-private/nemo-file.c:5075
+msgid "Not allowed to set permissions"
+msgstr "അനുമതികൾ സജ്ജീകരിക്കൽ അനുവദിക്കുന്നില്ല"
+
+#: libnemo-private/nemo-file.c:5370
+msgid "Not allowed to set owner"
+msgstr "ഉടമയെ സജ്ജീകരിക്കാൻ അനുവാദമില്ല"
+
+#: libnemo-private/nemo-file.c:5388
+#, c-format
+msgid "Specified owner '%s' doesn't exist"
+msgstr "വ്യക്തമാക്കിയ ഉടമ  '%s' നിലവിലില്ല"
+
+#: libnemo-private/nemo-file.c:5652
+msgid "Not allowed to set group"
+msgstr "ഗണം സജ്ജീകരിക്കാൻ അനുവാദമില്ല"
+
+#: libnemo-private/nemo-file.c:5670
+#, c-format
+msgid "Specified group '%s' doesn't exist"
+msgstr "വ്യക്തമാക്കിയ ഗണം '%s' നിലവിലില്ല"
+
+#: libnemo-private/nemo-file.c:5828
+#, c-format
+msgid "%'u folder"
+msgid_plural "%'u folders"
+msgstr[0] "%'u ഫോൾഡർ"
+msgstr[1] "%'u ഫോൾഡറുകൾ"
+
+#: libnemo-private/nemo-file.c:5829
+#, c-format
+msgid "%'u file"
+msgid_plural "%'u files"
+msgstr[0] "%'u ഫയൽ"
+msgstr[1] "%'u ഫയലുകൾ"
+
+#: libnemo-private/nemo-file.c:6220 libnemo-private/nemo-file.c:6236
+msgid "? items"
+msgstr "? ഇനങ്ങൾ"
+
+#: libnemo-private/nemo-file.c:6226
+msgid "? bytes"
+msgstr "? ബൈറ്റുകൾ"
+
+#: libnemo-private/nemo-file.c:6241
+msgid "unknown type"
+msgstr "അപരിചിതമായ തരം"
+
+#: libnemo-private/nemo-file.c:6244
+msgid "unknown MIME type"
+msgstr "അപരിചിതമായ മൈം തരം"
+
+#: libnemo-private/nemo-file.c:6308
+msgid "program"
+msgstr "പ്രോഗ്രാം"
+
+#: libnemo-private/nemo-file.c:6328
+msgid "link"
+msgstr "കണ്ണി"
+
+#: libnemo-private/nemo-file.c:6350
+msgid "link (broken)"
+msgstr "കണ്ണി (തകർന്നതാണ്)"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:141
+#, c-format
+msgid "Merge folder \"%s\"?"
+msgstr "\"%s\" ഫോൾഡർ കൂട്ടിച്ചേര്‍ക്കണോ?"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:145
+msgid ""
+"Merging will ask for confirmation before replacing any files in the folder "
+"that conflict with the files being copied."
+msgstr ""
+"കൂട്ടിച്ചേർക്കൽ പ്രക്രിയയ്ക്കിടെ പകർത്തുന്ന ഫയലുകളുമായി ഫോൾഡറിൽ ഉള്ള "
+"ഏതെങ്കിലും ഫയലുകളുമായി കൂട്ടിയിടി നടക്കുകയും അവ മാറ്റിച്ചേർക്കുകയും "
+"വേണമെങ്കിൽ താങ്കളോട് സ്ഥിരീകരണം ആവശ്യപ്പെടുന്നതാണ്."
+
+#: libnemo-private/nemo-file-conflict-dialog.c:150
+#, c-format
+msgid "An older folder with the same name already exists in \"%s\"."
+msgstr "\"%s\" -ല്‍  ഇതേ പേരിൽ പഴയ ഫോൾഡർ നിലവിലുണ്ട്."
+
+#: libnemo-private/nemo-file-conflict-dialog.c:154
+#, c-format
+msgid "A newer folder with the same name already exists in \"%s\"."
+msgstr "\"%s\" -ല്‍  ഇതേ പേരിൽ പുതിയൊരു ഫോൾഡർ നിലവിലുണ്ട്."
+
+#: libnemo-private/nemo-file-conflict-dialog.c:158
+#, c-format
+msgid "Another folder with the same name already exists in \"%s\"."
+msgstr "\"%s\" -ല്‍ ഇതേ പേരിൽ മറ്റൊരു ഫോൾഡർ നിലവിലുണ്ട്."
+
+#: libnemo-private/nemo-file-conflict-dialog.c:163
+msgid "Replacing it will remove all files in the folder."
+msgstr ""
+"ഇത് മാറ്റിച്ചേർക്കുമ്പോൾ ഫോൾഡറിലെ മുഴുവൻ ഫയലുകളും നീക്കം ചെയ്യപ്പെടുന്നതാണ്."
+
+#: libnemo-private/nemo-file-conflict-dialog.c:165
+#, c-format
+msgid "Replace folder \"%s\"?"
+msgstr "\"%s\" എന്ന ഫോൾഡർ മാറ്റിച്ചേർക്കണോ?"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:167
+#, c-format
+msgid "A folder with the same name already exists in \"%s\"."
+msgstr "\"%s\" -ൽ ഇതേ പേരിൽ ഒരു ഫോൾഡർ നിലവിലുണ്ട്"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:172
+#, c-format
+msgid "Replace file \"%s\"?"
+msgstr "\"%s\" ഫയൽ മാറ്റിച്ചേർക്കണോ?"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:174
+msgid "Replacing it will overwrite its content."
+msgstr "ഇതു് മാറ്റിയാല്‍ അതിന്റെ ഉളളടക്കം മാറ്റി എഴുതപ്പെടും."
+
+#: libnemo-private/nemo-file-conflict-dialog.c:178
+#, c-format
+msgid "An older file with the same name already exists in \"%s\"."
+msgstr "\"%s\" -ല്‍ ഇതേ പേരില്‍ പഴയ ഒരു ഫയല്‍ നിലവിലുണ്ട്."
+
+#: libnemo-private/nemo-file-conflict-dialog.c:182
+#, c-format
+msgid "A newer file with the same name already exists in \"%s\"."
+msgstr "\"%s\" -ല്‍ ഇതേ പേരില്‍ പുതിയൊരു ഫയൽ നിലവിലുണ്ട്."
+
+#: libnemo-private/nemo-file-conflict-dialog.c:186
+#, c-format
+msgid "Another file with the same name already exists in \"%s\"."
+msgstr "\"%s\" -ല്‍ ഇതേ പേരില്‍ മറ്റൊരു ഫയല്‍ നിലവിലുണ്ട്."
+
+#: libnemo-private/nemo-file-conflict-dialog.c:252
+msgid "Original file"
+msgstr "യഥാർത്ഥ ഫയൽ"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:259
+#: libnemo-private/nemo-file-conflict-dialog.c:290
+msgid "Last modified:"
+msgstr "അവസാനം മാറ്റം വരുത്തിയത്:"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:283
+msgid "Replace with"
+msgstr "ഇതുപയോഗിച്ച് മാറ്റിച്ചേർക്കുക"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:312
+msgid "Merge"
+msgstr "ലയിപ്പിക്കുക"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:505
+msgid "_Select a new name for the destination"
+msgstr "ലക്ഷ്യസ്ഥാനത്തിന് പുതിയൊരു പേര് _തിരഞ്ഞെടുക്കുക"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:519
+#: libnemo-private/nemo-mime-application-chooser.c:379
+msgid "Reset"
+msgstr "പുനക്രമീകരിക്കുക"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:531
+msgid "Apply this action to all files"
+msgstr "എല്ലാ ഫയലുകള്‍ക്കും ഇതേ നടപടി ബാധകമാക്കുക"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:542
+#: libnemo-private/nemo-file-operations.c:185
+msgid "_Skip"
+msgstr "_വഴുതുക"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:547
+msgid "Re_name"
+msgstr "പുനർ_നാമകരണം ചെയ്യുക"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:553
+msgid "Replace"
+msgstr "മാറ്റിച്ചേർക്കുക"
+
+#: libnemo-private/nemo-file-conflict-dialog.c:625
+msgid "File conflict"
+msgstr "ഫയലുകള്‍ തമ്മില്‍ പൊരുത്തക്കേട്"
+
+#: libnemo-private/nemo-file-operations.c:186
+msgid "S_kip All"
+msgstr "എല്ലാം _വഴുതുക"
+
+#: libnemo-private/nemo-file-operations.c:187
+msgid "_Retry"
+msgstr "_വീണ്ടും ശ്രമിക്കുക"
+
+#: libnemo-private/nemo-file-operations.c:188
+msgid "Delete _All"
+msgstr "_എല്ലാം മായ്ക്കുക"
+
+#: libnemo-private/nemo-file-operations.c:189
+msgid "_Replace"
+msgstr "_മാറ്റിച്ചേർക്കുക"
+
+#: libnemo-private/nemo-file-operations.c:190
+msgid "Replace _All"
+msgstr "_എല്ലാം മാറ്റിച്ചേർക്കുക"
+
+#: libnemo-private/nemo-file-operations.c:191
+msgid "_Merge"
+msgstr "_ലയിപ്പിക്കുക"
+
+#: libnemo-private/nemo-file-operations.c:192
+msgid "Merge _All"
+msgstr "_എല്ലാം മാറ്റിച്ചേർക്കുക"
+
+#: libnemo-private/nemo-file-operations.c:193
+msgid "Copy _Anyway"
+msgstr "_എന്തായാലും പകർത്തുക"
+
+#: libnemo-private/nemo-file-operations.c:278
+#, c-format
+msgid "%'d second"
+msgid_plural "%'d seconds"
+msgstr[0] "%'d സെക്കന്‍ഡ്"
+msgstr[1] "%'d സെക്കന്‍ഡുകള്‍"
+
+#: libnemo-private/nemo-file-operations.c:283
+#: libnemo-private/nemo-file-operations.c:294
+#, c-format
+msgid "%'d minute"
+msgid_plural "%'d minutes"
+msgstr[0] "%'d മിനിറ്റ്"
+msgstr[1] "%'d മിനിറ്റുകള്‍"
+
+#: libnemo-private/nemo-file-operations.c:293
+#, c-format
+msgid "%'d hour"
+msgid_plural "%'d hours"
+msgstr[0] "%'d മണിക്കൂര്‍"
+msgstr[1] "%'d മണിക്കൂറുകള്‍"
+
+#: libnemo-private/nemo-file-operations.c:301
+#, c-format
+msgid "approximately %'d hour"
+msgid_plural "approximately %'d hours"
+msgstr[0] "ഏകദേശം %'d മണിക്കൂര്‍"
+msgstr[1] "ഏകദേശം %'d മണിക്കൂറുകള്‍"
+
+#: libnemo-private/nemo-file-operations.c:381
+#, c-format
+msgid "Another link to %s"
+msgstr "%s-ലേക്കു് മറ്റൊരു കണ്ണി"
+
+#: libnemo-private/nemo-file-operations.c:397
+#, c-format
+msgid "%'dst link to %s"
+msgstr "കണ്ണി %'d,  %s എന്നതിലേക്ക്"
+
+#: libnemo-private/nemo-file-operations.c:401
+#, c-format
+msgid "%'dnd link to %s"
+msgstr "കണ്ണി %'d,  %s എന്നതിലേക്ക്"
+
+#: libnemo-private/nemo-file-operations.c:405
+#, c-format
+msgid "%'drd link to %s"
+msgstr "കണ്ണി %'d,  %s എന്നതിലേക്ക്"
+
+#: libnemo-private/nemo-file-operations.c:409
+#, c-format
+msgid "%'dth link to %s"
+msgstr "കണ്ണി %'d,  %s എന്നതിലേക്ക്"
+
+#: libnemo-private/nemo-file-operations.c:448
+msgid " (copy)"
+msgstr " (പകർപ്പ്)"
+
+#: libnemo-private/nemo-file-operations.c:450
+msgid " (another copy)"
+msgstr " (മറ്റൊരു പകർപ്പ്)"
+
+#: libnemo-private/nemo-file-operations.c:453
+#: libnemo-private/nemo-file-operations.c:455
+#: libnemo-private/nemo-file-operations.c:457
+#: libnemo-private/nemo-file-operations.c:467
+msgid "th copy)"
+msgstr "മതു്  പകർപ്പ്)"
+
+#: libnemo-private/nemo-file-operations.c:460
+msgid "st copy)"
+msgstr "മതു്  പകർപ്പ്)"
+
+#: libnemo-private/nemo-file-operations.c:462
+msgid "nd copy)"
+msgstr "മതു്  പകർപ്പ്)"
+
+#: libnemo-private/nemo-file-operations.c:464
+msgid "rd copy)"
+msgstr "മതു്  പകർപ്പ്)"
+
+#: libnemo-private/nemo-file-operations.c:481
+#, c-format
+msgid "%s (copy)%s"
+msgstr "%s (പകർപ്പ്)%s"
+
+#: libnemo-private/nemo-file-operations.c:483
+#, c-format
+msgid "%s (another copy)%s"
+msgstr "%s (മറ്റൊരു പകർപ്പ്)%s"
+
+#: libnemo-private/nemo-file-operations.c:486
+#: libnemo-private/nemo-file-operations.c:488
+#: libnemo-private/nemo-file-operations.c:490
+#: libnemo-private/nemo-file-operations.c:504
+#, c-format
+msgid "%s (%'dth copy)%s"
+msgstr "%s (%'d മത്  പകര്‍പ്പു്)%s"
+
+#: libnemo-private/nemo-file-operations.c:498
+#, c-format
+msgid "%s (%'dst copy)%s"
+msgstr "%s (%'dമത് പകർപ്പ്)%s"
+
+#: libnemo-private/nemo-file-operations.c:500
+#, c-format
+msgid "%s (%'dnd copy)%s"
+msgstr "%s (%'dമത് പകർപ്പ്)%s"
+
+#: libnemo-private/nemo-file-operations.c:502
+#, c-format
+msgid "%s (%'drd copy)%s"
+msgstr "%s (%'dമത് പകർപ്പ്)%s"
+
+#: libnemo-private/nemo-file-operations.c:603
+msgid " ("
+msgstr " ("
+
+#: libnemo-private/nemo-file-operations.c:611
+#, c-format
+msgid " (%'d"
+msgstr " (%'d"
+
+#: libnemo-private/nemo-file-operations.c:1312
+msgid "Are you sure you want to permanently delete \"%B\" from the trash?"
+msgstr "താങ്കൾക്ക് \"%B\" ട്രാഷിൽ നിന്നും സ്ഥിരമായി മായ്ക്കണം എന്നുറപ്പാണോ?"
+
+#: libnemo-private/nemo-file-operations.c:1315
+#, c-format
+msgid ""
+"Are you sure you want to permanently delete the %'d selected item from the "
+"trash?"
+msgid_plural ""
+"Are you sure you want to permanently delete the %'d selected items from the "
+"trash?"
+msgstr[0] ""
+"താങ്കൾക്ക് ട്രാഷിൽ നിന്നും തിരഞ്ഞെടുത്ത %'d ഇനം സ്ഥിരമായി "
+"മായ്ക്കണമെന്നുറപ്പാണോ?"
+msgstr[1] ""
+"താങ്കൾക്ക് ട്രാഷിൽ നിന്നും തിരഞ്ഞെടുത്ത %'d ഇനങ്ങൾ സ്ഥിരമായി "
+"മായ്ക്കണമെന്നുറപ്പാണോ?"
+
+#: libnemo-private/nemo-file-operations.c:1325
+#: libnemo-private/nemo-file-operations.c:1391
+msgid "If you delete an item, it will be permanently lost."
+msgstr "താങ്കളൊരു ഇനം മായ്ച്ചാൽ, അത് സ്ഥിരമായി നഷ്ടപ്പെടുന്നതാണ്."
+
+#: libnemo-private/nemo-file-operations.c:1345
+msgid "Empty all items from Trash?"
+msgstr "ട്രാഷ് ശൂന്യമാക്കണോ?"
+
+#: libnemo-private/nemo-file-operations.c:1349
+msgid "All items in the Trash will be permanently deleted."
+msgstr "ട്രാഷിലുള്ള ഇനങ്ങളെല്ലാം സ്ഥിരമായി മായ്ക്കപ്പെടുന്നതാണ്."
+
+#: libnemo-private/nemo-file-operations.c:1379
+msgid "Are you sure you want to permanently delete \"%B\"?"
+msgstr "താങ്കള്‍ക്കു് \"%B\" സ്ഥിരമായി മായ്ക്കണം എന്നുറപ്പാണോ?"
+
+#: libnemo-private/nemo-file-operations.c:1382
+#, c-format
+msgid "Are you sure you want to permanently delete the %'d selected item?"
+msgid_plural ""
+"Are you sure you want to permanently delete the %'d selected items?"
+msgstr[0] "താങ്കൾക്ക് തിരഞ്ഞെടുത്ത %'d ഇനം സ്ഥിരമായി മായ്ക്കണം എന്നുറപ്പാണോ?"
+msgstr[1] ""
+"താങ്കൾക്ക് തിരഞ്ഞെടുത്ത %'d ഇനങ്ങൾ സ്ഥിരമായി മായ്ക്കണം എന്നുറപ്പാണോ?"
+
+#: libnemo-private/nemo-file-operations.c:1425
+#, c-format
+msgid "%'d file left to delete"
+msgid_plural "%'d files left to delete"
+msgstr[0] "%'d ഫയൽ മായ്ക്കാനായി ഉണ്ട്"
+msgstr[1] "%'d ഫയലുകൾ മായ്ക്കാനായി ഉണ്ട്"
+
+#: libnemo-private/nemo-file-operations.c:1431
+msgid "Deleting files"
+msgstr "ഫയലുകൾ‌ മായ്ക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:1445
+msgid "%T left"
+msgid_plural "%T left"
+msgstr[0] "%T അവശേഷിക്കുന്നു"
+msgstr[1] "%T അവശേഷിക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:1512
+#: libnemo-private/nemo-file-operations.c:1546
+#: libnemo-private/nemo-file-operations.c:1585
+#: libnemo-private/nemo-file-operations.c:1662
+#: libnemo-private/nemo-file-operations.c:2464
+msgid "Error while deleting."
+msgstr "മായ്ക്കുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:1516
+msgid ""
+"Files in the folder \"%B\" cannot be deleted because you do not have "
+"permissions to see them."
+msgstr ""
+"\"%B\" എന്ന ഫോൾഡറിലെ ഫയലുകൾ താങ്കൾക്ക് കാണാനുള്ള  അനുമതി ഇല്ലാത്തതിനാൽ "
+"മായ്ക്കാനാവില്ല."
+
+#: libnemo-private/nemo-file-operations.c:1519
+#: libnemo-private/nemo-file-operations.c:2523
+#: libnemo-private/nemo-file-operations.c:3511
+msgid ""
+"There was an error getting information about the files in the folder \"%B\"."
+msgstr ""
+"\"%B\" എന്ന ഫോൾഡറിലെ ഫയലുകളുടെ വിവരങ്ങൾ എടുക്കുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:1528
+#: libnemo-private/nemo-file-operations.c:3520
+msgid "_Skip files"
+msgstr "ഫയലുകൾ _വഴുതുക"
+
+#: libnemo-private/nemo-file-operations.c:1549
+msgid ""
+"The folder \"%B\" cannot be deleted because you do not have permissions to "
+"read it."
+msgstr ""
+"\"%B\" എന്ന ഫോൾഡർ വായിക്കുവാനുളള അനുമതികൾ താങ്കൾക്കില്ലാത്തതിനാല്‍ ഇതു്  "
+"മായ്ക്കാൻ സാധ്യമല്ല."
+
+#: libnemo-private/nemo-file-operations.c:1552
+#: libnemo-private/nemo-file-operations.c:2562
+#: libnemo-private/nemo-file-operations.c:3556
+msgid "There was an error reading the folder \"%B\"."
+msgstr "\"%B\" എന്ന ഫോൾഡർ വായിക്കുന്നതിൽ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:1586
+msgid "Could not remove the folder %B."
+msgstr "%B എന്ന ഫോൾഡർ നീക്കം ചെയ്യാൻ കഴിഞ്ഞില്ല."
+
+#: libnemo-private/nemo-file-operations.c:1663
+msgid "There was an error deleting %B."
+msgstr "\"%B\" എന്ന ഫോൾഡർ നീക്കം ചെയ്യുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:1743
+msgid "Moving files to trash"
+msgstr "ഫയലുകൾ ട്രാഷിലേക്ക് നീക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:1745
+#, c-format
+msgid "%'d file left to trash"
+msgid_plural "%'d files left to trash"
+msgstr[0] "%'d ഫയല്‍ ട്രാഷിലേക്ക് വിട്ടു"
+msgstr[1] "%'d ഫയലുകള്‍ ട്രാഷിലേക്ക് വിട്ടു"
+
+#: libnemo-private/nemo-file-operations.c:1796
+msgid "Cannot move file to trash, do you want to delete immediately?"
+msgstr ""
+"ഫയൽ ട്രാഷിലേക്ക് നീക്കാനാവില്ല, താങ്കൾക്ക് ഇത് ഉടൻ മായ്ക്കേണ്ടതുണ്ടോ?"
+
+#: libnemo-private/nemo-file-operations.c:1797
+msgid "The file \"%B\" cannot be moved to the trash."
+msgstr "ഫയല്‍ \"%B\" ട്രാഷിലേക്ക് നീക്കാനാവില്ല."
+
+#: libnemo-private/nemo-file-operations.c:1974
+msgid "Trashing Files"
+msgstr "ഫയലുകൾ ട്രാഷിലേക്കാക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:1976
+msgid "Deleting Files"
+msgstr "ഫയലുകൾ മായ്ക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:2044
+msgid "Unable to eject %V"
+msgstr "%V പുറത്തെടുക്കാന്‍ കഴിഞ്ഞില്ല."
+
+#: libnemo-private/nemo-file-operations.c:2046
+msgid "Unable to unmount %V"
+msgstr "%V അൺമൗണ്ട് ചെയ്യാൻ കഴിഞ്ഞില്ല."
+
+#: libnemo-private/nemo-file-operations.c:2201
+msgid "Do you want to empty the trash before you unmount?"
+msgstr "അൺമൗണ്ട് ചെയ്യുന്നതിനു മുമ്പായി ട്രാഷ് ശൂന്യമാക്കേണ്ടതുണ്ടോ?"
+
+#: libnemo-private/nemo-file-operations.c:2203
+msgid ""
+"In order to regain the free space on this volume the trash must be emptied. "
+"All trashed items on the volume will be permanently lost."
+msgstr ""
+"ഈ വോള്യത്തിലെ ശൂന്യമായ സ്ഥലം വീണ്ടെടുക്കാൻ ട്രാഷ് ശുദ്ധീകരിക്കേണ്ടതുണ്ട്. "
+"വോള്യത്തിന്റെ ട്രാഷിലുള്ള എല്ലാ ഇനങ്ങളും സ്ഥിരമായി നഷ്ടപ്പെടും."
+
+#: libnemo-private/nemo-file-operations.c:2209
+msgid "Do _not Empty Trash"
+msgstr "ട്രാഷ് ശൂന്യമാക്ക_രുത്"
+
+#: libnemo-private/nemo-file-operations.c:2335
+#, c-format
+msgid "Unable to mount %s"
+msgstr "%s മൗണ്ട് ചെയ്യാൻ സാധ്യമല്ല"
+
+#: libnemo-private/nemo-file-operations.c:2411
+#, c-format
+msgid "Preparing to copy %'d file (%S)"
+msgid_plural "Preparing to copy %'d files (%S)"
+msgstr[0] "%'d ഫയല്‍ (%S) പകര്‍ത്താന്‍ തയ്യാറെടുക്കുന്നു..."
+msgstr[1] "%'d ഫയലുകള്‍ (%S) പകര്‍ത്താന്‍ തയ്യാറെടുക്കുന്നു..."
+
+#: libnemo-private/nemo-file-operations.c:2417
+#, c-format
+msgid "Preparing to move %'d file (%S)"
+msgid_plural "Preparing to move %'d files (%S)"
+msgstr[0] "%'d ഫയല്‍ (%S) നീക്കാന്‍ തയ്യാറെടുക്കുന്നു..."
+msgstr[1] "%'d ഫയലുകള്‍ (%S) നീക്കാന്‍ തയ്യാറെടുക്കുന്നു..."
+
+#: libnemo-private/nemo-file-operations.c:2423
+#, c-format
+msgid "Preparing to delete %'d file (%S)"
+msgid_plural "Preparing to delete %'d files (%S)"
+msgstr[0] "%'d ഫയല്‍ (%S) മായ്ക്കാന്‍ തയ്യാറെടുക്കുന്നു..."
+msgstr[1] "%'d ഫയലുകള്‍ (%S) മായ്ക്കാന്‍ തയ്യാറെടുക്കുന്നു..."
+
+#: libnemo-private/nemo-file-operations.c:2429
+#, c-format
+msgid "Preparing to trash %'d file"
+msgid_plural "Preparing to trash %'d files"
+msgstr[0] "%'d ഫയൽ ട്രാഷിലേക്ക് മാറ്റാൻ തയ്യാറെടുക്കുന്നു..."
+msgstr[1] "%'d ഫയലുകൾ ട്രാഷിലേക്ക് മാറ്റാൻ തയ്യാറെടുക്കുന്നു..."
+
+#: libnemo-private/nemo-file-operations.c:2460
+#: libnemo-private/nemo-file-operations.c:3371
+#: libnemo-private/nemo-file-operations.c:3503
+#: libnemo-private/nemo-file-operations.c:3548
+msgid "Error while copying."
+msgstr "പകർത്തുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:2462
+#: libnemo-private/nemo-file-operations.c:3501
+#: libnemo-private/nemo-file-operations.c:3546
+msgid "Error while moving."
+msgstr "മാറ്റുന്നതിനിടെ പിഴവുണ്ടായി"
+
+#: libnemo-private/nemo-file-operations.c:2466
+msgid "Error while moving files to trash."
+msgstr "ഫയലുകൾ ട്രാഷിലേക്ക് മാറ്റുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:2520
+msgid ""
+"Files in the folder \"%B\" cannot be handled because you do not have "
+"permissions to see them."
+msgstr ""
+"\"%B\" എന്ന ഫോൾഡറിലെ ഫയലുകൾ, കാണുന്നതിനുള്ള അനുമതി താങ്കൾക്കില്ലാത്തതിനാൽ, "
+"താങ്കൾക്ക് കൈകാര്യം ചെയ്യാനാവില്ല."
+
+#: libnemo-private/nemo-file-operations.c:2559
+msgid ""
+"The folder \"%B\" cannot be handled because you do not have permissions to "
+"read it."
+msgstr ""
+"\"%B\" എന്ന ഫോൾഡർ വായിക്കുന്നതിനുള്ള അനുമതി താങ്കൾക്കില്ലാത്തതിനാൽ, "
+"താങ്കൾക്ക് കൈകാര്യം ചെയ്യാനാവില്ല."
+
+#: libnemo-private/nemo-file-operations.c:2636
+msgid ""
+"The file \"%B\" cannot be handled because you do not have permissions to "
+"read it."
+msgstr ""
+"\"%B\" എന്ന ഫയൽ വായിക്കുന്നതിനുള്ള അനുമതി താങ്കൾക്കില്ലാത്തതിനാൽ, താങ്കൾക്ക് "
+"കൈകാര്യം ചെയ്യാനാവില്ല."
+
+#: libnemo-private/nemo-file-operations.c:2639
+msgid "There was an error getting information about \"%B\"."
+msgstr "\"%B\"-യെ സംബന്ധിച്ച വിവരങ്ങൾ എടുക്കുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:2740
+#: libnemo-private/nemo-file-operations.c:2782
+#: libnemo-private/nemo-file-operations.c:2816
+#: libnemo-private/nemo-file-operations.c:2846
+msgid "Error while copying to \"%B\"."
+msgstr "\"%B\"-ലേയ്ക്കു് പകർത്തുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:2744
+msgid "You do not have permissions to access the destination folder."
+msgstr "ലക്ഷ്യ ഫോൾഡർ എടുക്കാൻ താങ്കൾക്ക് അനുമതികളിലില്ല."
+
+#: libnemo-private/nemo-file-operations.c:2746
+msgid "There was an error getting information about the destination."
+msgstr "ലക്ഷ്യത്തെക്കുറിച്ചുള്ള വിവരം എടുക്കുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:2783
+msgid "The destination is not a folder."
+msgstr "ലക്ഷ്യം ഒരു ഫോൾഡർ അല്ല."
+
+#: libnemo-private/nemo-file-operations.c:2817
+msgid ""
+"There is not enough space on the destination. Try to remove files to make "
+"space."
+msgstr ""
+"ലക്ഷ്യത്തിൽ ആവശ്യത്തിനുള്ള സ്ഥലമില്ല. ഫയലുകൾ കളഞ്ഞ് ഇടയുണ്ടാക്കാൻ ശ്രമിക്കുക."
+
+#: libnemo-private/nemo-file-operations.c:2819
+#, c-format
+msgid "%S more space is required to copy to the destination."
+msgstr "%S ലക്ഷ്യത്തിലേക്ക് പകർത്തുന്നതിന് കൂടുതൽ സ്ഥലം ആവശ്യമാണ്."
+
+#: libnemo-private/nemo-file-operations.c:2847
+msgid "The destination is read-only."
+msgstr "ലക്ഷ്യം റീഡ്-ഒൺലി ആണ്."
+
+#: libnemo-private/nemo-file-operations.c:2906
+msgid "Moving \"%B\" to \"%B\""
+msgstr "\"%B\" യെ  \"%B\" ലേയ്ക്കു് മാറ്റുന്നു."
+
+#: libnemo-private/nemo-file-operations.c:2907
+msgid "Copying \"%B\" to \"%B\""
+msgstr "\"%B\" യെ  \"%B\" ലേയ്ക്കു് പകര്‍ത്തുന്നു."
+
+#: libnemo-private/nemo-file-operations.c:2914
+msgid "Duplicating \"%B\""
+msgstr "\"%B\" എന്നതിന്റെ തനിപ്പകര്‍പ്പുണ്ടാക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:2922
+msgid "Moving file %'d of %'d (in \"%B\") to \"%B\""
+msgstr ""
+"ഫയൽ  %'d,  %'d എന്നതിൽ നിന്ന് (\"%B\"-ൽ നിന്ന്) \"%B\"-ലേക്ക് മാറ്റുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:2924
+msgid "Copying file %'d of %'d (in \"%B\") to \"%B\""
+msgstr ""
+"ഫയൽ  %'d, %'d എന്നതിൽ നിന്ന് (\"%B\"-ൽ നിന്ന്) \"%B\"-ലേക്ക് പകർത്തുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:2931
+msgid "Duplicating file %'d of %'d (in \"%B\")"
+msgstr ""
+"%'d പ്രമാണത്തിന്റെ %'d-മത്തെ  (\"%B\"-യിൽ നിന്നും) തനിപ്പകർപ്പെടുക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:2940
+msgid "Moving file %'d of %'d to \"%B\""
+msgstr "%'d പ്രമാണം %'d  \"%B\"-യിലേക്ക് മാറ്റുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:2942
+msgid "Copying file %'d of %'d to \"%B\""
+msgstr "%'d പ്രമാണം %'d  \"%B\"-യിലേക്ക് പകർത്തുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:2948
+#, c-format
+msgid "Duplicating file %'d of %'d"
+msgstr "%'d ല്‍ %'d മത്തെ ഫയലിന്റെ തനിപ്പകര്‍പ്പെടുത്തുകൊണ്ടിരിയ്ക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:2967
+#, c-format
+msgid "%S of %S"
+msgstr "%S എന്നതിന്റെ  %S-മത്തെ"
+
+#: libnemo-private/nemo-file-operations.c:2978
+msgid "%S of %S — %T left (%S/sec)"
+msgid_plural "%S of %S — %T left (%S/sec)"
+msgstr[0] "%S  %S-മത്തെ — %T അവശേഷിക്കുന്നു  (%S/സെ)"
+msgstr[1] "%S  %S-മത്തെ — %T അവശേഷിക്കുന്നു  (%S/സെ)"
+
+#: libnemo-private/nemo-file-operations.c:3375
+msgid ""
+"The folder \"%B\" cannot be copied because you do not have permissions to "
+"create it in the destination."
+msgstr ""
+"ലക്ഷ്യസ്ഥാനത്തു് എഴുതുവാനുള്ള അനുമതി ഇല്ലാത്തതിനാല്‍ \"%B\"  "
+"പകര്‍ത്താനാവില്ല."
+
+#: libnemo-private/nemo-file-operations.c:3378
+msgid "There was an error creating the folder \"%B\"."
+msgstr "\"%B\" എന്ന ഫോൾഡർ സൃഷ്ടിക്കുന്നതിൽ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:3508
+msgid ""
+"Files in the folder \"%B\" cannot be copied because you do not have "
+"permissions to see them."
+msgstr ""
+"\"%B\"എന്ന ഫോൾഡറിലെ ഫയലുകൾ കാണാനുള്ള അനുമതി താങ്കൾക്കില്ലാത്തതിനാൽ "
+"പകർത്താനാവില്ല."
+
+#: libnemo-private/nemo-file-operations.c:3553
+msgid ""
+"The folder \"%B\" cannot be copied because you do not have permissions to "
+"read it."
+msgstr ""
+"\"%B\"എന്ന ഫോൾഡറിലെ ഫയലുകൾ വായിക്കാനുള്ള അനുമതി താങ്കൾക്കില്ലാത്തതിനാൽ "
+"പകർത്താനാവില്ല."
+
+#: libnemo-private/nemo-file-operations.c:3598
+#: libnemo-private/nemo-file-operations.c:4291
+#: libnemo-private/nemo-file-operations.c:4904
+msgid "Error while moving \"%B\"."
+msgstr "\"%B\" നീക്കുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:3599
+msgid "Could not remove the source folder."
+msgstr "സ്രോതസ്സ് ഫോൾഡർ നീക്കം ചെയ്യാനായില്ല."
+
+#: libnemo-private/nemo-file-operations.c:3684
+#: libnemo-private/nemo-file-operations.c:3725
+#: libnemo-private/nemo-file-operations.c:4293
+#: libnemo-private/nemo-file-operations.c:4364
+msgid "Error while copying \"%B\"."
+msgstr "\"%B\" പകർത്തുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:3685
+#, c-format
+msgid "Could not remove files from the already existing folder %F."
+msgstr ""
+"നിലവിലുള്ള  %F എന്ന ഫോൾഡറിൽ നിന്നും ഫയലുകൾ നീക്കം ചെയ്യാൻ കഴിഞ്ഞില്ല."
+
+#: libnemo-private/nemo-file-operations.c:3726
+#, c-format
+msgid "Could not remove the already existing file %F."
+msgstr "നിലവിലുള്ള  %F എന്ന ഫയൽ നീക്കം ചെയ്യാൻ കഴിഞ്ഞില്ല."
+
+#: libnemo-private/nemo-file-operations.c:4046
+#: libnemo-private/nemo-file-operations.c:4749
+msgid "You cannot move a folder into itself."
+msgstr "ഒരു ഫോൾഡർ അതിനുള്ളിലേക്ക് തന്നെ മാറ്റാൻ കഴിയില്ല."
+
+#: libnemo-private/nemo-file-operations.c:4047
+#: libnemo-private/nemo-file-operations.c:4750
+msgid "You cannot copy a folder into itself."
+msgstr "ഒരു ഫോൾഡർ തിനുള്ളിലേക്ക് തന്നെ പകർത്താൻ കഴിയില്ല."
+
+#: libnemo-private/nemo-file-operations.c:4048
+#: libnemo-private/nemo-file-operations.c:4751
+msgid "The destination folder is inside the source folder."
+msgstr "ലക്ഷ്യ ഫോൾഡർ സ്രോതസ്സ് ഫോൾഡറിന്റെ ഉള്ളിലാണ്."
+
+#: libnemo-private/nemo-file-operations.c:4079
+msgid "You cannot move a file over itself."
+msgstr "താങ്കൾക്ക് ഒരു ഫയൽ അതിനു മുകളിലേക്ക് തന്നെ മാറ്റാൻ കഴിയില്ല."
+
+#: libnemo-private/nemo-file-operations.c:4080
+msgid "You cannot copy a file over itself."
+msgstr "താങ്കൾക്ക് ഒരു ഫയൽ അതിനു മുകളിലേക്ക് തന്നെ പകർത്താൻ കഴിയില്ല."
+
+#: libnemo-private/nemo-file-operations.c:4081
+msgid "The source file would be overwritten by the destination."
+msgstr "സ്രോതസ് ഫയൽ ലക്ഷ്യം കൊണ്ട് തിരുത്തിയെഴുതപ്പെടുന്നതാണ്."
+
+#: libnemo-private/nemo-file-operations.c:4295
+#, c-format
+msgid "Could not remove the already existing file with the same name in %F."
+msgstr "%F ല്‍ അതേ പേരില്‍ നിലവിലുള്ള ഫയൽ കൊണ്ട് നീക്കം ചെയ്യാനായില്ല."
+
+#: libnemo-private/nemo-file-operations.c:4365
+#, c-format
+msgid "There was an error copying the file into %F."
+msgstr "%F-ലേക്ക് ഫയൽ പകർത്തുന്നതിൽ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:4597
+#: libnemo-private/nemo-file-operations.c:4631
+msgid "Copying Files"
+msgstr "ഫയലുകള്‍ പകര്‍ത്തുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:4659
+msgid "Preparing to Move to \"%B\""
+msgstr "\"%B\"-ലേക്ക് നീക്കുവാന്‍ തയ്യാറെടുക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:4663
+#, c-format
+msgid "Preparing to move %'d file"
+msgid_plural "Preparing to move %'d files"
+msgstr[0] "%'d ഫയല്‍ നീക്കുവാന്‍ തയ്യാറെടുക്കുന്നു"
+msgstr[1] "%'d ഫയലുകള്‍ നീക്കുവാന്‍ തയ്യാറെടുക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:4905
+#, c-format
+msgid "There was an error moving the file into %F."
+msgstr "%F-ലേക്ക് ഫയല്‍ നീക്കുന്നതില്‍ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:5167
+msgid "Moving Files"
+msgstr "ഫയലുകള്‍ നീക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:5202
+msgid "Creating links in \"%B\""
+msgstr "\"%B\"-ല്‍ കണ്ണികൾ സൃഷ്ടിക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:5206
+#, c-format
+msgid "Making link to %'d file"
+msgid_plural "Making links to %'d files"
+msgstr[0] "%'d  ഫയലിലേക്ക് കണ്ണികളുണ്ടാക്കുന്നു"
+msgstr[1] "%'d  ഫയലുകളിലേക്ക് കണ്ണികളുണ്ടാക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:5341
+msgid "Error while creating link to %B."
+msgstr "%B കണ്ണിയുണ്ടാക്കുന്നതിൽ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:5343
+msgid "Symbolic links only supported for local files"
+msgstr "പ്രാദേശിക ഫയലുകളിൽ മാത്രമേ സിംബോളിക് കണ്ണികൾ പിന്തുണയ്ക്കുന്നുള്ളു."
+
+#: libnemo-private/nemo-file-operations.c:5346
+msgid "The target doesn't support symbolic links."
+msgstr "ലക്ഷ്യം സിംബോളിക് കണ്ണികൾ പിന്തുണയ്ക്കുന്നില്ല."
+
+#: libnemo-private/nemo-file-operations.c:5349
+#, c-format
+msgid "There was an error creating the symlink in %F."
+msgstr "%F-ല്‍ സിംലിങ്കുണ്ടാക്കുന്നതില്‍ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:5668
+msgid "Setting permissions"
+msgstr "അനുമതികൾ സജ്ജീകരിക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:5933
+msgid "Untitled Folder"
+msgstr "ശീർഷകമില്ലാത്ത ഫോൾഡർ"
+
+#: libnemo-private/nemo-file-operations.c:5939
+#, c-format
+msgid "Untitled %s"
+msgstr "ശീർഷകമില്ലാത്ത %s"
+
+#: libnemo-private/nemo-file-operations.c:5945
+msgid "Untitled Document"
+msgstr "ശീര്‍ഷകമില്ലാത്ത പ്രമാണം"
+
+#: libnemo-private/nemo-file-operations.c:6123
+msgid "Error while creating directory %B."
+msgstr "%B എന്ന ഡയറക്ടറി ഉണ്ടാക്കുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:6125
+msgid "Error while creating file %B."
+msgstr "%B എന്ന ഫയൽ ഉണ്ടാക്കുന്നതിനിടെ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:6127
+#, c-format
+msgid "There was an error creating the directory in %F."
+msgstr "%F-ല്‍ ഡയറക്ടറി സൃഷ്ടിക്കുന്നതിൽ പിഴവുണ്ടായി."
+
+#: libnemo-private/nemo-file-operations.c:6396
+msgid "Emptying Trash"
+msgstr "ട്രാഷ് കാലിയാക്കുന്നു"
+
+#: libnemo-private/nemo-file-operations.c:6444
+#: libnemo-private/nemo-file-operations.c:6485
+#: libnemo-private/nemo-file-operations.c:6520
+#: libnemo-private/nemo-file-operations.c:6555
+msgid "Unable to mark launcher trusted (executable)"
+msgstr "ലോഞ്ചർ വിശ്വസനീയമെന്ന് അടയാളപ്പെടുത്തുവാൻ കഴിയില്ല (എക്സിക്യൂട്ടബിൾ)"
+
+#: libnemo-private/nemo-file-undo-operations.c:367
+#, c-format
+msgid "Move %d item back to '%s'"
+msgid_plural "Move %d items back to '%s'"
+msgstr[0] "%d ഇനം '%s' -ലേക്ക് തിരികെ മാറ്റുക"
+msgstr[1] "%d ഇനങ്ങള്‍ '%s' -ലേക്ക് തിരികെ മാറ്റുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:370
+#, c-format
+msgid "Move %d item to '%s'"
+msgid_plural "Move %d items to '%s'"
+msgstr[0] "%d ഇനം '%s'-ലേക്ക് മാറ്റുക"
+msgstr[1] "%d ഇനങ്ങള്‍ '%s'-ലേക്ക് മാറ്റുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:374
+#, c-format
+msgid "_Undo Move %d item"
+msgid_plural "_Undo Move %d items"
+msgstr[0] "%d ഇനം മാറ്റിയത് _തിരസ്കരിക്കുക"
+msgstr[1] "%d ഇനങ്ങൾ  മാറ്റിയത് _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:377
+#, c-format
+msgid "_Redo Move %d item"
+msgid_plural "_Redo Move %d items"
+msgstr[0] "%d ഇനം മാറ്റിയത് _വീണ്ടും ചെയ്യുക"
+msgstr[1] "%d ഇനങ്ങൾ മാറ്റിയത് _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:381
+#, c-format
+msgid "Move '%s' back to '%s'"
+msgstr "'%s' തിരിച്ച് '%s'-ലേക്ക് മാറ്റുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:382
+#, c-format
+msgid "Move '%s' to '%s'"
+msgstr "‌'%s'-നെ '%s' -ലേക്ക് മാറ്റുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:384
+msgid "_Undo Move"
+msgstr "മാറ്റൽ _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:385
+msgid "_Redo Move"
+msgstr "മാറ്റം _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:388
+msgid "_Undo Restore from Trash"
+msgstr "ട്രാഷിൽ നിന്നും പ്നനഃസ്ഥാപിച്ചത് _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:389
+msgid "_Redo Restore from Trash"
+msgstr "ട്രാഷിൽ നിന്നും പ്നനഃസ്ഥാപിച്ചത് _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:392
+#, c-format
+msgid "Move %d item back to trash"
+msgid_plural "Move %d items back to trash"
+msgstr[0] "%d ഇനം ട്രാഷിലേക്ക് തിരികെ നീക്കുക"
+msgstr[1] "%d ഇനങ്ങൾ ട്രാഷിലേക്ക് തിരികെ നീക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:395
+#: libnemo-private/nemo-file-undo-operations.c:981
+#, c-format
+msgid "Restore %d item from trash"
+msgid_plural "Restore %d items from trash"
+msgstr[0] "%d ഇനം ട്രാഷിൽ നിന്നും പുനഃസ്ഥാപിക്കുക"
+msgstr[1] "%d ഇനങ്ങൾ ട്രാഷിൽ നിന്നും പുനഃസ്ഥാപിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:399
+#, c-format
+msgid "Move '%s' back to trash"
+msgstr "'%s' ട്രാഷിലേക്ക് തിരികെ നീക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:400
+#, c-format
+msgid "Restore '%s' from trash"
+msgstr "'%s' ട്രാഷിൽ നിന്ന് പുനഃസ്ഥാപിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:404
+#, c-format
+msgid "Delete %d copied item"
+msgid_plural "Delete %d copied items"
+msgstr[0] "പകര്‍ത്തിയ %d ഇനം മായ്ക്കുക"
+msgstr[1] "പകര്‍ത്തിയ %d ഇനങ്ങൾ മായ്ക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:407
+#, c-format
+msgid "Copy %d item to '%s'"
+msgid_plural "Copy %d items to '%s'"
+msgstr[0] "%d ഇനം '%s'-ലേക്ക് പകര്‍ത്തുക"
+msgstr[1] "%d ഇനങ്ങള്‍ '%s'-ലേക്ക് പകര്‍ത്തുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:411
+#, c-format
+msgid "_Undo Copy %d item"
+msgid_plural "_Undo Copy %d items"
+msgstr[0] "%d ഇനം പകര്‍ത്തിയത് _തിരസ്കരിക്കുക"
+msgstr[1] "%d ഇനങ്ങൾ പകര്‍ത്തിയത് _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:414
+#, c-format
+msgid "_Redo Copy %d item"
+msgid_plural "_Redo Copy %d items"
+msgstr[0] "%d ഇനം പകര്‍ത്തിയത് _വീണ്ടും ചെയ്യുക"
+msgstr[1] "%d ഇനങ്ങൾ പകര്‍ത്തിയത് _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:418
+#: libnemo-private/nemo-file-undo-operations.c:440
+#: libnemo-private/nemo-file-undo-operations.c:673
+#, c-format
+msgid "Delete '%s'"
+msgstr "'%s' മായ്ക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:419
+#, c-format
+msgid "Copy '%s' to '%s'"
+msgstr "'%s'-നെ '%s' -ലേക്ക് പകര്‍ത്തുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:421
+msgid "_Undo Copy"
+msgstr "പകർത്തൽ _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:422
+msgid "_Redo Copy"
+msgstr "പകർത്തൽ _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:426
+#, c-format
+msgid "Delete %d duplicated item"
+msgid_plural "Delete %d duplicated items"
+msgstr[0] "തനിപ്പകർപ്പെടുത്ത ഇനം %d മായ്ക്കുക"
+msgstr[1] "തനിപ്പകർപ്പെടുത്ത ഇനങ്ങൾ %d മായ്ക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:429
+#, c-format
+msgid "Duplicate %d item in '%s'"
+msgid_plural "Duplicate %d items in '%s'"
+msgstr[0] "%d ഇനത്തിന്റെ തനിപ്പകർപ്പ് '%s'-ൽ ഉണ്ടാക്കുക"
+msgstr[1] "%d ഇനങ്ങളുടെ തനിപ്പകർപ്പ് '%s'-ൽ ഉണ്ടാക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:433
+#, c-format
+msgid "_Undo Duplicate %d item"
+msgid_plural "_Undo Duplicate %d items"
+msgstr[0] "%d ഇനത്തിന് തനിപ്പകര്‍പ്പുണ്ടാക്കിയത് _തിരസ്കരിക്കുക"
+msgstr[1] "%d ഇനങ്ങള്‍ക്ക് തനിപ്പകര്‍പ്പുണ്ടാക്കിയത് _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:436
+#, c-format
+msgid "_Redo Duplicate %d item"
+msgid_plural "_Redo Duplicate %d items"
+msgstr[0] "%d ഇനത്തിന് തനിപ്പകര്‍പ്പുണ്ടാക്കിയത് _വീണ്ടും ചെയ്യുക"
+msgstr[1] "%d ഇനങ്ങള്‍ക്ക് തനിപ്പകര്‍പ്പുണ്ടാക്കിയത് _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:441
+#, c-format
+msgid "Duplicate '%s' in '%s'"
+msgstr "'%s'-ന്റെ തനിപ്പകർപ്പ് '%s'-ൽ ഉണ്ടാക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:444
+msgid "_Undo Duplicate"
+msgstr "തനിപ്പകർപ്പുണ്ടാക്കൽ _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:445
+msgid "_Redo Duplicate"
+msgstr "തനിപ്പകർപ്പുണ്ടാക്കൽ _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:449
+#, c-format
+msgid "Delete links to %d item"
+msgid_plural "Delete links to %d items"
+msgstr[0] "%d ഇനത്തിലേക്കുള്ള കണ്ണികള്‍ നീക്കം ചെയ്യുക"
+msgstr[1] "%d ഇനങ്ങളിലേക്കുള്ള കണ്ണികള്‍ നീക്കം ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:452
+#, c-format
+msgid "Create links to %d item"
+msgid_plural "Create links to %d items"
+msgstr[0] "%d ഇനത്തിലേക്ക് കണ്ണികള്‍ നിര്‍മ്മിക്കുക"
+msgstr[1] "%d ഇനങ്ങളിലേക്ക് കണ്ണികള്‍ നിര്‍മ്മിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:456
+#, c-format
+msgid "Delete link to '%s'"
+msgstr "'%s' -ലേക്കുള്ള കണ്ണി മായ്ക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:457
+#, c-format
+msgid "Create link to '%s'"
+msgstr "'%s' -ലേക്ക് കണ്ണി സൃഷ്ടിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:459
+msgid "_Undo Create Link"
+msgstr "കണ്ണി സൃഷ്ടിച്ചത് _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:460
+msgid "_Redo Create Link"
+msgstr "കണ്ണി സൃഷ്ടിച്ചത് _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:676
+#, c-format
+msgid "Create an empty file '%s'"
+msgstr "'%s' എന്ന ഒരു ഒഴിഞ്ഞ ഫയല്‍ നിര്‍മ്മിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:678
+msgid "_Undo Create Empty File"
+msgstr "ഒഴിഞ്ഞ ഫയല്‍ നിര്‍മ്മിച്ചത് _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:679
+msgid "_Redo Create Empty File"
+msgstr "ശൂന്യമായ ഫയൽ സൃഷ്ടിക്കൽ _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:681
+#, c-format
+msgid "Create a new folder '%s'"
+msgstr "പുതിയ ഫോൾഡർ '%s' സൃഷ്ടിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:683
+msgid "_Undo Create Folder"
+msgstr "ഫോൾഡർ സൃഷ്ടിച്ചത് _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:684
+msgid "_Redo Create Folder"
+msgstr "ഫോൾഡർ സൃഷ്ടിച്ചത് _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:686
+#, c-format
+msgid "Create new file '%s' from template "
+msgstr "പുതിയ ഫയൽ '%s'ഫലകത്തിൽ നിന്ന് സൃഷ്ടിക്കുക "
+
+#: libnemo-private/nemo-file-undo-operations.c:688
+msgid "_Undo Create from Template"
+msgstr "ഫലകത്തിൽ നിന്ന് സൃഷ്ടിച്ചത് _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:689
+msgid "_Redo Create from Template"
+msgstr "ഫലകത്തിൽ നിന്ന് സൃഷ്ടിച്ചത് _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:869
+#: libnemo-private/nemo-file-undo-operations.c:870
+#, c-format
+msgid "Rename '%s' as '%s'"
+msgstr "'%s'-നെ '%s' -ആയി പേര് മാറ്റുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:872
+msgid "_Undo Rename"
+msgstr "പേര് മാറ്റിയത് _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:873
+msgid "_Redo Rename"
+msgstr "പേര് മാറ്റിയത് _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:984
+#, c-format
+msgid "Move %d item to trash"
+msgid_plural "Move %d items to trash"
+msgstr[0] "%d ഇനം ട്രാഷിലേക്ക് നീക്കുക"
+msgstr[1] "%d ഇനങ്ങൾ ട്രാഷിലേക്ക് നീക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:996
+#, c-format
+msgid "Restore '%s' to '%s'"
+msgstr "'%s'-നെ '%s'-ൽ പുനഃസ്ഥാപിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1003
+#, c-format
+msgid "Move '%s' to trash"
+msgstr "'%s' ട്രാഷിലേക്ക് നീക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1007
+msgid "_Undo Trash"
+msgstr "ട്രാഷിലേക്ക് നീക്കിയത് _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1008
+msgid "_Redo Trash"
+msgstr "ട്രാഷിലേക്ക് നീക്കിയത് _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1300
+#, c-format
+msgid "Restore original permissions of items enclosed in '%s'"
+msgstr ""
+"'%s'-ല്‍ ഉൾപ്പെട്ടിരിക്കുന്ന ഇനങ്ങളുടെ യഥാർത്ഥ അനുമതികൾ പുനഃസ്ഥാപിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1301
+#, c-format
+msgid "Set permissions of items enclosed in '%s'"
+msgstr "'%s'-ല്‍ ഉൾപ്പെട്ടിരിക്കുന്ന ഇനങ്ങളുടെ അനുമതികൾ സജ്ജീകരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1303
+#: libnemo-private/nemo-file-undo-operations.c:1458
+msgid "_Undo Change Permissions"
+msgstr "അനുമതികളുടെ മാറ്റം _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1304
+#: libnemo-private/nemo-file-undo-operations.c:1459
+msgid "_Redo Change Permissions"
+msgstr "അനുമതികളുടെ മാറ്റം _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1455
+#, c-format
+msgid "Restore original permissions of '%s'"
+msgstr "'%s'-ന്റെ യഥാർത്ഥ അനുമതികൾ പുനഃസ്ഥാപിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1456
+#, c-format
+msgid "Set permissions of '%s'"
+msgstr "'%s'-ന്റെ അനുമതികൾ സജ്ജീകരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1566
+#, c-format
+msgid "Restore group of '%s' to '%s'"
+msgstr "'%s'-ന്റെ ഗണം '%s' ആയി പുനഃസ്ഥാപിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1568
+#, c-format
+msgid "Set group of '%s' to '%s'"
+msgstr "'%s'-ഗണം '%s' ആക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1571
+msgid "_Undo Change Group"
+msgstr "ഗണത്തിന്റെ മാറ്റം _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1572
+msgid "_Redo Change Group"
+msgstr "ഗണത്തിന്റെ മാറ്റം _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1574
+#, c-format
+msgid "Restore owner of '%s' to '%s'"
+msgstr "'%s'-ന്റെ ഉടമ '%s' ആയി പുനഃസ്ഥാപിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1576
+#, c-format
+msgid "Set owner of '%s' to '%s'"
+msgstr "'%s'-ന്റെ ഉടമ '%s' ആയി സജ്ജീകരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1579
+msgid "_Undo Change Owner"
+msgstr "ഉടമസ്ഥ മാറ്റം _തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-file-undo-operations.c:1580
+msgid "_Redo Change Owner"
+msgstr "ഉടമസ്ഥ മാറ്റം _വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-file-utilities.c:1254
+#, c-format
+msgid "Could not determine original location of \"%s\" "
+msgstr "\"%s\"-ന്റെ യഥാർത്ഥ സ്ഥാനം നിർണ്ണയിക്കാൻ കഴിഞ്ഞില്ല "
+
+#: libnemo-private/nemo-file-utilities.c:1258
+msgid "The item cannot be restored from trash"
+msgstr "ഇനം ട്രാഷിൽ നിന്നും പുനഃസ്ഥാപിക്കാൻ കഴിയില്ല"
+
+#: libnemo-private/nemo-icon-container.c:2679
+msgid "The selection rectangle"
+msgstr "തിരഞ്ഞെടുക്കൽ ചതുരം"
+
+#: libnemo-private/nemo-icon-container.c:6906
+#, c-format
+msgid "%d item"
+msgid_plural "%d items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: libnemo-private/nemo-mime-application-chooser.c:83
+#, c-format
+msgid "Error while adding \"%s\": %s"
+msgstr "\"%s\" കൂട്ടിച്ചേർക്കുന്നതിൽ പിഴവുണ്ടായി: %s"
+
+#: libnemo-private/nemo-mime-application-chooser.c:85
+msgid "Could not add application"
+msgstr "ആപ്ലിക്കേഷൻ കൂട്ടിച്ചേർക്കാൻ കഴിഞ്ഞില്ല"
+
+#: libnemo-private/nemo-mime-application-chooser.c:113
+msgid "Could not forget association"
+msgstr "ബന്ധം മറക്കാൻ കഴിയില്ല"
+
+#: libnemo-private/nemo-mime-application-chooser.c:137
+msgid "Forget association"
+msgstr "ബന്ധം മറക്കുക"
+
+#: libnemo-private/nemo-mime-application-chooser.c:175
+#, c-format
+msgid "Error while setting \"%s\" as default application: %s"
+msgstr "സ്വതേയുള്ള ആപ്ലിക്കേഷനായി \"%s\" സജ്ജീകരിക്കുന്നതിൽ പിഴവുണ്ടായി: %s"
+
+#: libnemo-private/nemo-mime-application-chooser.c:177
+msgid "Could not set as default"
+msgstr "സ്വതേയുള്ളതായി സജ്ജീകരിക്കാൻ കഴിയില്ല"
+
+#: libnemo-private/nemo-mime-application-chooser.c:279
+#: libnemo-private/nemo-mime-application-chooser.c:297
+#, c-format
+msgid "%s document"
+msgstr "%s പ്രമാണം"
+
+#: libnemo-private/nemo-mime-application-chooser.c:284
+#, c-format
+msgid "Open all files of type \"%s\" with"
+msgstr "\"%s\" തരത്തിലുള്ള എല്ലാ ഫയലുകളും ഇതുപയോഗിച്ച് തുറക്കുക"
+
+#: libnemo-private/nemo-mime-application-chooser.c:304
+#, c-format
+msgid "Select an application to open %s and other files of type \"%s\""
+msgstr ""
+"%s തുറക്കാനും \"%s\" തരത്തിലുള്ള മറ്റ് ഫയലുകളും തുറക്കാനുള്ള  ആപ്ലിക്കേഷൻ "
+"തിരഞ്ഞെടുക്കുക"
+
+#: libnemo-private/nemo-mime-application-chooser.c:366
+msgid "Show other applications"
+msgstr "മറ്റ് ആപ്ലിക്കേഷനുകൾ പ്രദർശിപ്പിക്കുക"
+
+#: libnemo-private/nemo-mime-application-chooser.c:395
+msgid "Set as default"
+msgstr "സ്വതേ വേണ്ടതായി സജ്ജീകരിക്കുക"
+
+#: libnemo-private/nemo-program-choosing.c:311
+msgid "Sorry, but you cannot execute commands from a remote site."
+msgstr ""
+"ക്ഷമിക്കുക, വിദൂര സൈറ്റിൽ നിന്നുമുള്ള കമാൻഡുകൾ പ്രവർത്തിപ്പിക്കാൻ താങ്കൾക്ക് "
+"കഴിയില്ല"
+
+#: libnemo-private/nemo-program-choosing.c:313
+msgid "This is disabled due to security considerations."
+msgstr "സുരക്ഷയുടെ ഭാഗമായി ഇത് പ്രവർത്തനരഹിതമാക്കിയിരിക്കുന്നു"
+
+#: libnemo-private/nemo-program-choosing.c:324
+#: libnemo-private/nemo-program-choosing.c:392
+msgid "There was an error launching the application."
+msgstr "ആപ്ലിക്കേഷൻ പ്രവർത്തിപ്പിക്കുന്നതിനിടെ ഒരു പിഴവുണ്ടായിരിക്കുന്നു."
+
+#: libnemo-private/nemo-program-choosing.c:349
+#: libnemo-private/nemo-program-choosing.c:360
+msgid "This drop target only supports local files."
+msgstr "വലിച്ചിടുന്ന ലക്ഷ്യം ലോക്കൽ ഫയലുകളെ മാത്രം പിന്തുണയ്ക്കുന്നു."
+
+#: libnemo-private/nemo-program-choosing.c:350
+msgid ""
+"To open non-local files copy them to a local folder and then drop them again."
+msgstr ""
+"പ്രാദേശികമല്ലാത്ത ഫയലുകള്‍ തുറക്കാന്‍ ആദ്യം അവയെ പ്രാദേശിക ഫോൾഡറുകളിലേക്ക് "
+"പകര്‍ത്തുക. എന്നിട്ടു് വലിച്ചിടുക."
+
+#: libnemo-private/nemo-program-choosing.c:361
+msgid ""
+"To open non-local files copy them to a local folder and then drop them "
+"again. The local files you dropped have already been opened."
+msgstr ""
+"പ്രാദേശികമല്ലാത്ത ഫയലുകള്‍ തുറക്കാന്‍ ആദ്യം അവയെ പ്രാദേശിക ഫോൾഡറിലേക്ക് "
+"പകര്‍ത്തുക. എന്നിട്ടു് വലിച്ചിടുക. താങ്കൾ വലിച്ചിട്ടിട്ടുള്ള ഫയലുകള്‍ "
+"തുറന്നിട്ടുണ്ട്."
+
+#: libnemo-private/nemo-program-choosing.c:390
+msgid "Details: "
+msgstr "വിശദവിവരങ്ങള്‍: "
+
+#: libnemo-private/nemo-progress-info.c:192
+#: libnemo-private/nemo-progress-info.c:210
+msgid "Preparing"
+msgstr "തയ്യാറാക്കുന്നു"
+
+#: libnemo-private/nemo-query.c:133
+#, c-format
+msgid "Search for \"%s\""
+msgstr "\"%s\"വേണ്ടി തിരയുക"
+
+#: libnemo-private/nemo-undo-signal-handlers.c:174
+msgid "Undo Edit"
+msgstr "തിരുത്ത്  തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-undo-signal-handlers.c:175
+msgid "Undo the edit"
+msgstr "തിരുത്ത്  തിരസ്കരിക്കുക"
+
+#: libnemo-private/nemo-undo-signal-handlers.c:176
+msgid "Redo Edit"
+msgstr "തിരുത്ത് വീണ്ടും ചെയ്യുക"
+
+#: libnemo-private/nemo-undo-signal-handlers.c:177
+msgid "Redo the edit"
+msgstr "തിരുത്ത് വീണ്ടും ചെയ്യുക"
+
+#: eel/eel-canvas.c:1255 eel/eel-canvas.c:1256
+msgid "X"
+msgstr "എക്സ്"
+
+#: eel/eel-canvas.c:1262 eel/eel-canvas.c:1263
+msgid "Y"
+msgstr "വൈ"
+
+#: eel/eel-editable-label.c:311
+msgid "Text"
+msgstr "എഴുത്ത്"
+
+#: eel/eel-editable-label.c:312
+msgid "The text of the label."
+msgstr "ലേബലിന്റെ എഴുത്ത്"
+
+#: eel/eel-editable-label.c:318
+msgid "Justification"
+msgstr "ഇട ക്രമീകരണം"
+
+#: eel/eel-editable-label.c:319
+msgid ""
+"The alignment of the lines in the text of the label relative to each other. "
+"This does NOT affect the alignment of the label within its allocation. See "
+"GtkMisc::xalign for that."
+msgstr ""
+"ലേബലിന്റെ എഴുത്തുകൾ തമ്മിൽ തമ്മിലുള്ള സ്ഥാനക്രമീകരണം. ഇത് ലേബലിന്റെ "
+"സ്ഥാനക്രമീകരണത്തെ ബാധിക്കുന്നതല്ല. അതിനായി GtkMisc::xalign കാണുക"
+
+#: eel/eel-editable-label.c:327
+msgid "Line wrap"
+msgstr "വരി വേർപെടുത്തൽ"
+
+#: eel/eel-editable-label.c:328
+msgid "If set, wrap lines if the text becomes too wide."
+msgstr ""
+"സജ്ജമാക്കിയാൽ, എഴുത്ത് വളരെ വീതിയുള്ളതാണെങ്കിൽ മുറിച്ചു കാണിക്കുന്നതാണ്."
+
+#: eel/eel-editable-label.c:335
+msgid "Cursor Position"
+msgstr "കഴ്സറിന്റെ സ്ഥാനം"
+
+#: eel/eel-editable-label.c:336
+msgid "The current position of the insertion cursor in chars."
+msgstr "അക്ഷരങ്ങളുടെ ഇടയില്‍ ചേര്‍ക്കുന്നതിന് കഴ്സറിന്റെ സ്ഥാനം."
+
+#: eel/eel-editable-label.c:345
+msgid "Selection Bound"
+msgstr "തിരഞ്ഞെടുക്കല്‍‌ പരിധി"
+
+#: eel/eel-editable-label.c:346
+msgid ""
+"The position of the opposite end of the selection from the cursor in chars."
+msgstr ""
+"കഴ്സറില്‍ നിന്നും, തിരഞ്ഞെടുത്തതിന്റെ എതിര്‍വശത്തേയ്ക്കുള്ള സ്ഥാനം "
+"അക്ഷരങ്ങളുടെ തോതില്‍."
+
+#: eel/eel-editable-label.c:3104
+msgid "Select All"
+msgstr "എല്ലാം തിരഞ്ഞെടുക്കുക"
+
+#: eel/eel-editable-label.c:3115
+msgid "Input Methods"
+msgstr "ഇന്‍പുട്ട് രീതികള്‍"
+
+#: eel/eel-gtk-extensions.c:404
+msgid "Show more _details"
+msgstr "കൂടുതല്‍ _വിവരങ്ങള്‍ കാണിക്കുക"
+
+#: eel/eel-stock-dialogs.c:205
+msgid "You can stop this operation by clicking cancel."
+msgstr "റദ്ദാക്കുക ഞെക്കി, ഈ പ്രവർത്തനം താങ്കൾക്ക് നിർത്താവുന്നതാണ്."
+
+#: eel/eel-vfs-extensions.c:93
+msgid " (invalid Unicode)"
+msgstr " (അസാധുവായ യുണികോഡ്)"
