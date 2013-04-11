@@ -2234,6 +2234,41 @@ sort_directories_first_changed_callback (gpointer callback_data)
 	}
 }
 
+static void
+swap_delete_keybinding_changed_callback (gpointer callback_data)
+{
+    NemoView *view = NEMO_VIEW (callback_data);
+
+    GtkBindingSet *binding_set = gtk_binding_set_find ("NemoView");
+
+    gboolean swap_keys = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SWAP_TRASH_DELETE);
+
+    gtk_binding_entry_remove (binding_set, GDK_KEY_Delete, 0);
+    gtk_binding_entry_remove (binding_set, GDK_KEY_KP_Delete, 0);
+    gtk_binding_entry_remove (binding_set, GDK_KEY_KP_Delete, GDK_SHIFT_MASK);
+    gtk_binding_entry_remove (binding_set, GDK_KEY_Delete, GDK_SHIFT_MASK);
+
+    if (swap_keys) {
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, 0,
+                          "delete", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, 0,
+                          "delete", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, GDK_SHIFT_MASK,
+                          "trash", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, GDK_SHIFT_MASK,
+                          "trash", 0);
+    } else {
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, 0,
+                          "trash", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, 0,
+                          "trash", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, GDK_SHIFT_MASK,
+                          "delete", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, GDK_SHIFT_MASK,
+                          "delete", 0);
+    }
+}
+
 static gboolean
 set_up_scripts_directory_global (void)
 {
@@ -2716,6 +2751,9 @@ nemo_view_init (NemoView *view)
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_ENABLE_DELETE,
 				  G_CALLBACK (schedule_update_menus_callback), view);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_SWAP_TRASH_DELETE,
+                  G_CALLBACK (swap_delete_keybinding_changed_callback), view);
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_CLICK_POLICY,
 				  G_CALLBACK(click_policy_changed_callback),
@@ -7945,7 +7983,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Move each selected item to the Trash"),
 				 G_CALLBACK (action_trash_callback) },
   /* name, stock id */         { "Delete", NULL,
-  /* label, accelerator */       N_("_Delete"), "<shift>Delete",
+  /* label, accelerator */       N_("_Delete"), NULL,
   /* tooltip */                  N_("Delete each selected item, without moving to the Trash"),
 				 G_CALLBACK (action_delete_callback) },
   /* name, stock id */         { "Restore From Trash", NULL,
@@ -10673,10 +10711,26 @@ nemo_view_class_init (NemoViewClass *klass)
 	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 
 	binding_set = gtk_binding_set_by_class (klass);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, 0,
-				      "trash", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, 0,
-				      "trash", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, GDK_SHIFT_MASK,
-				      "delete", 0);
+
+    gboolean swap_keys = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SWAP_TRASH_DELETE);
+
+    if (swap_keys) {
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, 0,
+                          "delete", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, 0,
+                          "delete", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, GDK_SHIFT_MASK,
+                          "trash", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, GDK_SHIFT_MASK,
+                          "trash", 0);
+    } else {
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, 0,
+                          "trash", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, 0,
+                          "trash", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, GDK_SHIFT_MASK,
+                          "delete", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, GDK_SHIFT_MASK,
+                          "delete", 0);
+    }
 }

@@ -254,8 +254,9 @@ create_bookmarks_window (NemoBookmarkList *list, GObject *undo_manager_source)
 	bookmarks = list;
 
 	builder = gtk_builder_new ();
+    gtk_builder_set_translation_domain (builder, GETTEXT_PACKAGE);
 	if (!gtk_builder_add_from_resource (builder,
-					    "/org/nemo/nemo-bookmarks-window.ui",
+					    "/org/nemo/nemo-bookmarks-window.glade",
 					    NULL)) {
 		return NULL;
 	}

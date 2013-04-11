@@ -134,6 +134,11 @@
       <_summary>Whether to enable immediate deletion</_summary>
       <_description>If set to true, then Nemo will have a feature allowing you to delete a file immediately and in-place, instead of moving it  to the trash. This feature can be dangerous, so use caution.</_description>
     </key>
+    <key name="swap-trash-delete" type="b">
+      <default>false</default>
+      <_summary>Whether to swap the hotkeys for Trash and Delete</_summary>
+      <_description>If set to true, the Delete key will permanently delete a file, and the Shift-Delete key will only trash a file.</_description>
+    </key>
     <key name="show-icon-text" enum="org.nemo.SpeedTradeoff">
       <aliases><alias value='local_only' target='local-only'/></aliases>
       <default>'local-only'</default>

@@ -60,6 +60,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET "always_use_browser_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET "trash_confirm_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_DELETE_WIDGET "trash_delete_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SWAP_TRASH_DELETE "swap_trash_binding_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_OPEN_NEW_WINDOW_WIDGET "new_window_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_HIDDEN_WIDGET "hidden_files_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TREE_VIEW_FOLDERS_WIDGET "treeview_folders_checkbutton"
@@ -796,6 +797,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_DELETE_WIDGET,
 			   NEMO_PREFERENCES_ENABLE_DELETE);
+    bind_builder_bool (builder, nemo_preferences,
+               NEMO_FILE_MANAGEMENT_PROPERTIES_SWAP_TRASH_DELETE,
+               NEMO_PREFERENCES_SWAP_TRASH_DELETE);
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_HIDDEN_WIDGET,
 			   NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
@@ -914,9 +918,9 @@ nemo_file_management_properties_dialog_show (GtkWindow *window)
 	}
 
 	builder = gtk_builder_new ();
-
+    gtk_builder_set_translation_domain (builder, GETTEXT_PACKAGE);
 	gtk_builder_add_from_resource (builder,
-				       "/org/nemo/nemo-file-management-properties.ui",
+				       "/org/nemo/nemo-file-management-properties.glade",
 				       NULL);
 
 	nemo_file_management_properties_dialog_setup (builder, window);
