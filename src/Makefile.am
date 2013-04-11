@@ -54,8 +54,8 @@ $(dbus_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-dbus-interfac
 		$(NULL)
 
 UI_FILES = \
-	nemo-bookmarks-window.ui		\
-	nemo-file-management-properties.ui	\
+	nemo-bookmarks-window.glade		\
+	nemo-file-management-properties.glade	\
 	nemo-icon-view-ui.xml		\
 	nemo-toolbar-ui.xml			\
 	nemo-directory-view-ui.xml		\

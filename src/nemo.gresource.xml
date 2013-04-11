@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/org/nemo">
-    <file compressed="true">nemo-bookmarks-window.ui</file>
-    <file compressed="true">nemo-file-management-properties.ui</file>
+    <file compressed="true">nemo-bookmarks-window.glade</file>
+    <file compressed="true">nemo-file-management-properties.glade</file>
     <file>nemo-icon-view-ui.xml</file>
     <file>nemo-toolbar-ui.xml</file>
     <file>nemo-directory-view-ui.xml</file>

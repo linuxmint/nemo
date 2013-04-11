@@ -1,6 +1,5 @@
 usr/share/icons/hicolor
 usr/share/nemo
-usr/share/locale
 usr/share/mime/packages/nemo.xml
 usr/share/GConf
 usr/share/glib-2.0/schemas/org.nemo.gschema.xml
