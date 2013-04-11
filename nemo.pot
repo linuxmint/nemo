@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-11 09:01-0400\n"
+"POT-Creation-Date: 2013-04-11 09:31-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4721,4 +4721,288 @@ msgstr ""
 
 #: eel/eel-vfs-extensions.c:93
 msgid " (invalid Unicode)"
+msgstr ""
+
+#: src/nemo-bookmarks-window.glade:7
+msgid "Edit Bookmarks"
+msgstr ""
+
+#: src/nemo-bookmarks-window.glade:111
+msgid "<b>_Bookmarks</b>"
+msgstr ""
+
+#: src/nemo-bookmarks-window.glade:200
+msgid "<b>_Name</b>"
+msgstr ""
+
+#: src/nemo-bookmarks-window.glade:267
+msgid "<b>_Location</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:7
+msgid "File Management Preferences"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:82
+msgid "<b>Default View</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:112
+msgid "View _new folders using:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:157
+msgid "_Arrange items:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:194
+msgid "Sort _folders before files"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:210
+msgid "Show hidden and _backup files"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:251
+msgid "<b>Icon View Defaults</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:281
+msgid "Default _zoom level:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:318
+msgid "_Text beside icons"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:334
+msgid "_Use compact layout"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:350
+msgid "Show tooltips for desktop items"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:391
+msgid "<b>Compact View Defaults</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:421
+msgid "_Default zoom level:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:458
+msgid "A_ll columns have the same width"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:499
+msgid "<b>List View Defaults</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:529
+msgid "D_efault zoom level:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:591
+msgid "<b>Tree View Defaults</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:613
+msgid "Show _only folders"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:649
+msgid "Views"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:673
+msgid "<b>Behavior</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:694
+msgid "_Single click to open items"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:710
+msgid "_Double click to open items"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:728
+msgid "Open each _folder in its own window"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:769
+msgid "<b>Executable Text Files</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:791
+msgid "_Run executable text files when they are opened"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:807
+msgid "_View executable text files when they are opened"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:824
+msgid "_Ask each time"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:866
+msgid "<b>Trash</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:888
+msgid "Ask before _emptying the Trash or deleting files"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:904
+msgid "I_nclude a Delete command that bypasses Trash"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:920
+msgid "Bypass the Trash when the Delete key is pressed"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:960
+msgid "<b>Media Handling</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:982
+msgid "Automatically mount removeable media when inserted and on startup"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:998
+msgid "Automatically open a folder for automounted media"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1014
+msgid "Prompt or autorun/autostart programs when media are inserted"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1030
+msgid ""
+"Automatically close the device's tab, pane, or window when a device is "
+"unmounted or ejected"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1069
+msgid "Behavior"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1094
+msgid "<b>Icon Captions</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1119
+msgid ""
+"Choose the order of information to appear beneath icon names. More "
+"information will appear when zooming in closer."
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1258
+msgid "<b>Date</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1281
+msgid "_Format:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1330
+msgid "<b>File Size</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1353
+msgid "_Prefixes:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1408
+msgid "<b>Window and Tab Titles</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1430
+msgid "Show the full p_ath in the title bar and tab bars"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1469
+msgid "Display"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1494
+msgid "<b>List Columns</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1519
+msgid "Choose the order of information to appear in the list view."
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1556
+msgid "List Columns"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1581
+msgid "<b>Text Files</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1611
+msgid "Show te_xt in icons:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1673
+msgid "<b>Other Previewable Files</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1703
+msgid "Show _thumbnails:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1748
+msgid "_Only for files smaller than:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1810
+msgid "<b>Folders</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1840
+msgid "Count _number of items:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1900
+msgid "Preview"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1925
+msgid "<b>Options</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1947
+msgid "Show up icon"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1963
+msgid "Show refresh icon"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1979
+msgid "Show toggle button location bar/bar path"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1995
+msgid "Show home icon"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:2011
+msgid "Show computer icon"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:2027
+msgid "Show search icon"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:2043
+msgid "Show label on search icon (need to restart nemo)"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:2082
+msgid "Toolbar"
 msgstr ""
