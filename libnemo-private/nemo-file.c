@@ -2673,7 +2673,7 @@ get_item_count (NemoFile *file,
 	gboolean known, unreadable;
 
 	known = nemo_file_get_directory_item_count
-		(file, count, &unreadable);
+		(file, count, &unreadable, NULL);
 	if (!known) {
 		return UNKNOWN;
 	}
@@ -4763,7 +4763,8 @@ nemo_file_should_get_top_left_text (NemoFile *file)
 gboolean
 nemo_file_get_directory_item_count (NemoFile *file, 
 					guint *count,
-					gboolean *count_unreadable)
+					gboolean *count_unreadable,
+                    gboolean *has_hidden)
 {
 	if (count != NULL) {
 		*count = 0;
@@ -4771,7 +4772,9 @@ nemo_file_get_directory_item_count (NemoFile *file,
 	if (count_unreadable != NULL) {
 		*count_unreadable = FALSE;
 	}
-	
+	if (has_hidden != NULL) {
+        *has_hidden = FALSE;
+    }
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
 	if (!nemo_file_is_directory (file)) {
@@ -4783,7 +4786,7 @@ nemo_file_get_directory_item_count (NemoFile *file,
 	}
 
 	return NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->get_item_count 
-		(file, count, count_unreadable);
+		(file, count, count_unreadable, has_hidden);
 }
 
 /**
@@ -4809,6 +4812,7 @@ nemo_file_get_deep_counts (NemoFile *file,
 			       guint *file_count,
 			       guint *unreadable_directory_count,
 			       goffset *total_size,
+                   gboolean *has_hidden,
 			       gboolean force)
 {
 	if (directory_count != NULL) {
@@ -4836,7 +4840,7 @@ nemo_file_get_deep_counts (NemoFile *file,
 
 	return NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->get_deep_counts 
 		(file, directory_count, file_count,
-		 unreadable_directory_count, total_size);
+		 unreadable_directory_count, total_size, has_hidden);
 }
 
 void
@@ -5834,15 +5838,24 @@ nemo_file_get_owner_as_string (NemoFile *file, gboolean include_real_name)
 static char *
 format_item_count_for_display (guint item_count, 
 			       gboolean includes_directories, 
-			       gboolean includes_files)
+			       gboolean includes_files,
+                   gboolean has_hidden)
 {
 	g_assert (includes_directories || includes_files);
 
-	return g_strdup_printf (includes_directories
-			? (includes_files 
-			   ? ngettext ("%'u item", "%'u items", item_count) 
-			   : ngettext ("%'u folder", "%'u folders", item_count))
-			: ngettext ("%'u file", "%'u files", item_count), item_count);
+    gchar *ret;
+
+	gchar *temp = g_strdup_printf (includes_directories
+			                         ? (includes_files 
+			                             ? ngettext ("%'u item", "%'u items", item_count) 
+			                             : ngettext ("%'u folder", "%'u folders", item_count))
+			                         : ngettext ("%'u file", "%'u files", item_count), item_count);
+    if (has_hidden) {
+        ret = g_strconcat (temp, _(" (some hidden)"), NULL);
+    } else {
+        ret = temp;
+    }
+    return ret;
 }
 
 /**
@@ -5861,6 +5874,7 @@ nemo_file_get_size_as_string (NemoFile *file)
 {
 	guint item_count;
 	gboolean count_unreadable;
+    gboolean has_hidden;
 	int prefix;
 
 	if (file == NULL) {
@@ -5870,10 +5884,10 @@ nemo_file_get_size_as_string (NemoFile *file)
 	g_assert (NEMO_IS_FILE (file));
 	
 	if (nemo_file_is_directory (file)) {
-		if (!nemo_file_get_directory_item_count (file, &item_count, &count_unreadable)) {
+		if (!nemo_file_get_directory_item_count (file, &item_count, &count_unreadable, &has_hidden)) {
 			return NULL;
 		}
-		return format_item_count_for_display (item_count, TRUE, TRUE);
+		return format_item_count_for_display (item_count, TRUE, TRUE, has_hidden);
 	}
 	
 	if (file->details->size == -1) {
@@ -5902,7 +5916,7 @@ nemo_file_get_size_as_string_with_real_size (NemoFile *file)
 	guint item_count;
 	gboolean count_unreadable;
 	int prefix;
-
+    gboolean has_hidden;
 	if (file == NULL) {
 		return NULL;
 	}
@@ -5910,10 +5924,10 @@ nemo_file_get_size_as_string_with_real_size (NemoFile *file)
 	g_assert (NEMO_IS_FILE (file));
 	
 	if (nemo_file_is_directory (file)) {
-		if (!nemo_file_get_directory_item_count (file, &item_count, &count_unreadable)) {
+		if (!nemo_file_get_directory_item_count (file, &item_count, &count_unreadable, &has_hidden)) {
 			return NULL;
 		}
-		return format_item_count_for_display (item_count, TRUE, TRUE);
+		return format_item_count_for_display (item_count, TRUE, TRUE, has_hidden);
 	}
 	
 	if (file->details->size == -1) {
@@ -5939,6 +5953,7 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 	guint unreadable_count;
 	guint total_count;
 	goffset total_size;
+    gboolean has_hidden;
 	int prefix;
 
 	/* Must ask for size or some kind of count, but not both. */
@@ -5953,7 +5968,7 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 	g_assert (nemo_file_is_directory (file));
 
 	status = nemo_file_get_deep_counts 
-		(file, &directory_count, &file_count, &unreadable_count, &total_size, FALSE);
+		(file, &directory_count, &file_count, &unreadable_count, &total_size, &has_hidden, FALSE);
 
 	/* Check whether any info is available. */
 	if (status == NEMO_REQUEST_NOT_STARTED) {
@@ -5991,7 +6006,7 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 	return format_item_count_for_display (report_directory_count
 		? (report_file_count ? total_count : directory_count)
 		: file_count,
-		report_directory_count, report_file_count);
+		report_directory_count, report_file_count, has_hidden);
 }
 
 /**
@@ -6231,12 +6246,12 @@ nemo_file_get_string_attribute_with_default_q (NemoFile *file, GQuark attribute_
 		}
 		count_unreadable = FALSE;
 		if (nemo_file_is_directory (file)) {
-			nemo_file_get_directory_item_count (file, &item_count, &count_unreadable);
+			nemo_file_get_directory_item_count (file, &item_count, &count_unreadable, NULL);
 		}
 		return g_strdup (count_unreadable ? _("? items") : "...");
 	}
 	if (attribute_q == attribute_deep_size_q) {
-		status = nemo_file_get_deep_counts (file, NULL, NULL, NULL, NULL, FALSE);
+		status = nemo_file_get_deep_counts (file, NULL, NULL, NULL, NULL, NULL, FALSE);
 		if (status == NEMO_REQUEST_DONE) {
 			/* This means no contents at all were readable */
 			return g_strdup (_("? bytes"));
@@ -6246,7 +6261,7 @@ nemo_file_get_string_attribute_with_default_q (NemoFile *file, GQuark attribute_
 	if (attribute_q == attribute_deep_file_count_q
 	    || attribute_q == attribute_deep_directory_count_q
 	    || attribute_q == attribute_deep_total_count_q) {
-		status = nemo_file_get_deep_counts (file, NULL, NULL, NULL, NULL, FALSE);
+		status = nemo_file_get_deep_counts (file, NULL, NULL, NULL, NULL, NULL, FALSE);
 		if (status == NEMO_REQUEST_DONE) {
 			/* This means no contents at all were readable */
 			return g_strdup (_("? items"));

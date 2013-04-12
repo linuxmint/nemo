@@ -98,7 +98,8 @@ desktop_icon_file_check_if_ready (NemoFile *file,
 static gboolean
 desktop_icon_file_get_item_count (NemoFile *file, 
 				  guint *count,
-				  gboolean *count_unreadable)
+				  gboolean *count_unreadable,
+                  gboolean *has_hidden)
 {
 	if (count != NULL) {
 		*count = 0;
@@ -106,6 +107,9 @@ desktop_icon_file_get_item_count (NemoFile *file,
 	if (count_unreadable != NULL) {
 		*count_unreadable = FALSE;
 	}
+    if (has_hidden != NULL) {
+        *has_hidden = FALSE;
+    }
 	return TRUE;
 }
 
@@ -114,7 +118,8 @@ desktop_icon_file_get_deep_counts (NemoFile *file,
 				   guint *directory_count,
 				   guint *file_count,
 				   guint *unreadable_directory_count,
-				   goffset *total_size)
+				   goffset *total_size,
+                   gboolean *has_hidden)
 {
 	if (directory_count != NULL) {
 		*directory_count = 0;
@@ -128,6 +133,9 @@ desktop_icon_file_get_deep_counts (NemoFile *file,
 	if (total_size != NULL) {
 		*total_size = 0;
 	}
+    if (has_hidden != NULL) {
+        *has_hidden = FALSE;
+    }
 
 	return NEMO_REQUEST_DONE;
 }

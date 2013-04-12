@@ -95,7 +95,10 @@ struct NemoFileDetails
 	guint deep_directory_count;
 	guint deep_file_count;
 	guint deep_unreadable_count;
+    gboolean deep_has_hidden;
 	goffset deep_size;
+
+    gboolean has_hidden;
 
 	GIcon *icon;
 	

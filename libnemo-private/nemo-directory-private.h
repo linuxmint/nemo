@@ -136,6 +136,8 @@ struct NemoDirectoryDetails
 	GList *file_operations_in_progress; /* list of FileOperation * */
 
 	GHashTable *hidden_file_hash;
+
+    gboolean has_hidden;
 };
 
 NemoDirectory *nemo_directory_get_existing                    (GFile                     *location);
