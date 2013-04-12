@@ -3,10 +3,6 @@
     -GtkButton-child-displacement-y: 0;
 }
 
-.nemo-inactive-pane .view {
-    background-color: shade(@theme_base_color, 0.9);
-}
-
 .nemo-big-arrow {
     -GtkArrow-arrow-scaling: 1.0;
 }
