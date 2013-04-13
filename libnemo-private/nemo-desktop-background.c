@@ -573,15 +573,26 @@ void
 nemo_desktop_background_receive_dropped_background_image (NemoDesktopBackground *self,
                                                               const char *image_uri)
 {
-	/* Currently, we only support tiled images. So we set the placement.
-	 */
-	gnome_bg_set_placement (self->details->bg,
-				G_DESKTOP_BACKGROUND_STYLE_WALLPAPER);
-	gnome_bg_set_draw_background (self->details->bg, TRUE);
-	nemo_desktop_background_set_image_uri (self, image_uri);
+        GnomeBG *bg;
+        char *filename;
 
-	gnome_bg_save_to_preferences (self->details->bg,
-				      gnome_background_preferences);
+        if (image_uri != NULL) {
+                filename = g_filename_from_uri (image_uri, NULL, NULL);
+        } else {
+                filename = NULL;
+        }
+
+        bg = gnome_bg_new ();
+
+        /* Currently, we only support tiled images. So we set the placement.
+         */
+        gnome_bg_set_placement (bg, G_DESKTOP_BACKGROUND_STYLE_WALLPAPER);
+        gnome_bg_set_filename (bg, filename);
+
+        gnome_bg_save_to_preferences (bg, gnome_background_preferences);
+
+        g_free (filename);
+        g_object_unref (bg);
 }
 
 NemoDesktopBackground *
