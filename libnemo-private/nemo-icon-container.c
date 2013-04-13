@@ -6901,9 +6901,16 @@ static void
 construct_tooltip (NemoFile *file, gchar **tooltip_text)
 {
     gint item_count;
+    gboolean has_hidden;
+    gchar *temp;
     if (nemo_file_is_directory (file)) {
-        nemo_file_get_directory_item_count (file, &item_count, NULL);
-        *tooltip_text = g_strdup_printf (ngettext ("%d item", "%d items", item_count), item_count);
+        nemo_file_get_directory_item_count (file, &item_count, NULL, &has_hidden);
+        temp = g_strdup_printf (ngettext ("%d item", "%d items", item_count), item_count);
+        if (has_hidden) {
+            *tooltip_text = g_strconcat (temp, "\n", _("(some hidden)"), NULL);
+        } else {
+            *tooltip_text = temp;
+        }
     } else {
         gchar *scheme = nemo_file_get_uri_scheme (file);
         if (g_strcmp0 (scheme, "x-nemo-desktop") != 0) {
@@ -6912,12 +6919,13 @@ construct_tooltip (NemoFile *file, gchar **tooltip_text)
 
             prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
             size_string = g_format_size_full (nemo_file_get_size (file), prefix);
-            *tooltip_text = g_strdup (size_string);
+            temp = g_strdup (size_string);
             g_free (size_string);
         } else {
-            *tooltip_text = NULL;
+            temp = NULL;
         }
         g_free (scheme);
+        *tooltip_text = temp;
     }
 }
 

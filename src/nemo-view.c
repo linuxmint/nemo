@@ -2942,6 +2942,7 @@ nemo_view_display_selection_info (NemoView *view)
 	gboolean non_folder_size_known;
 	guint non_folder_count, folder_count, folder_item_count;
 	gboolean folder_item_count_known;
+    gboolean has_hidden, overall_hidden;
 	guint file_item_count;
 	GList *p;
 	char *first_item_name;
@@ -2957,7 +2958,8 @@ nemo_view_display_selection_info (NemoView *view)
 	g_return_if_fail (NEMO_IS_VIEW (view));
 
 	selection = nemo_view_get_selection (view);
-	
+	has_hidden = FALSE;
+    overall_hidden = FALSE;
 	folder_item_count_known = TRUE;
 	folder_count = 0;
 	folder_item_count = 0;
@@ -2977,7 +2979,7 @@ nemo_view_display_selection_info (NemoView *view)
 		file = p->data;
 		if (nemo_file_is_directory (file)) {
 			folder_count++;
-			if (nemo_file_get_directory_item_count (file, &file_item_count, NULL)) {
+			if (nemo_file_get_directory_item_count (file, &file_item_count, NULL, &has_hidden)) {
 				folder_item_count += file_item_count;
 			} else {
 				folder_item_count_known = FALSE;
@@ -2993,6 +2995,7 @@ nemo_view_display_selection_info (NemoView *view)
 		if (first_item_name == NULL) {
 			first_item_name = nemo_file_get_display_name (file);
 		}
+        overall_hidden = overall_hidden || has_hidden;
 	}
 	
 	nemo_file_list_free (selection);
@@ -3010,15 +3013,21 @@ nemo_view_display_selection_info (NemoView *view)
 								     folder_count), 
 							    folder_count);
 		}
+        gchar *hidden_suffix;
+        if (overall_hidden) {
+            hidden_suffix = g_strdup_printf (_(" - some hidden)"));
+        } else {
+            hidden_suffix = g_strdup_printf (")");
+        }
 
 		if (folder_count == 1) {
 			if (!folder_item_count_known) {
 				folder_item_count_str = g_strdup ("");
 			} else {
-				folder_item_count_str = g_strdup_printf (ngettext(" (containing %'d item)",
-										  " (containing %'d items)",
+				folder_item_count_str = g_strdup_printf (ngettext(" (containing %'d item%s",
+										  " (containing %'d items%s",
 										  folder_item_count), 
-									 folder_item_count);
+									 folder_item_count, hidden_suffix);
 			}
 		}
 		else {
@@ -3026,13 +3035,14 @@ nemo_view_display_selection_info (NemoView *view)
 				folder_item_count_str = g_strdup ("");
 			} else {
 				/* translators: this is preceded with a string of form 'N folders' (N more than 1) */
-				folder_item_count_str = g_strdup_printf (ngettext(" (containing a total of %'d item)",
-										  " (containing a total of %'d items)",
+				folder_item_count_str = g_strdup_printf (ngettext(" (containing a total of %'d item%s",
+										  " (containing a total of %'d items%s",
 										  folder_item_count), 
-									 folder_item_count);
+									 folder_item_count, hidden_suffix);
 			}
 			
 		}
+        g_free (hidden_suffix);
 	}
 
 	if (non_folder_count != 0) {

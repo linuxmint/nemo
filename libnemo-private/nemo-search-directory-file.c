@@ -95,7 +95,8 @@ search_directory_file_check_if_ready (NemoFile *file,
 static gboolean
 search_directory_file_get_item_count (NemoFile *file, 
 				      guint *count,
-				      gboolean *count_unreadable)
+				      gboolean *count_unreadable,
+                      gboolean *has_hidden)
 {
 	GList *file_list;
 
@@ -115,7 +116,8 @@ search_directory_file_get_deep_counts (NemoFile *file,
 				       guint *directory_count,
 				       guint *file_count,
 				       guint *unreadable_directory_count,
-				       goffset *total_size)
+				       goffset *total_size,
+                       gboolean *has_hidden)
 {
 	NemoFile *dir_file;
 	GList *file_list, *l;
@@ -148,6 +150,9 @@ search_directory_file_get_deep_counts (NemoFile *file,
 		/* FIXME: Maybe we want to calculate this? */
 		*total_size = 0;
 	}
+    if (has_hidden != NULL) {
+        *has_hidden = FALSE;
+    }
 	
 	nemo_file_list_free (file_list);
 	

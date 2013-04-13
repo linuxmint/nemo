@@ -371,7 +371,8 @@ desktop_directory_file_check_if_ready (NemoFile *file,
 static gboolean
 desktop_directory_file_get_item_count (NemoFile *file, 
 				       guint *count,
-				       gboolean *count_unreadable)
+				       gboolean *count_unreadable,
+                       gboolean *has_hidden)
 {
 	NemoDesktopDirectoryFile *desktop_file;
 	gboolean got_count;
@@ -380,7 +381,8 @@ desktop_directory_file_get_item_count (NemoFile *file,
 	
 	got_count = nemo_file_get_directory_item_count (desktop_file->details->real_dir_file,
 							    count,
-							    count_unreadable);
+							    count_unreadable,
+                                has_hidden);
 
 	if (count) {
 		*count += g_list_length (file->details->directory->details->file_list);
@@ -394,7 +396,8 @@ desktop_directory_file_get_deep_counts (NemoFile *file,
 					guint *directory_count,
 					guint *file_count,
 					guint *unreadable_directory_count,
-					goffset *total_size)
+					goffset *total_size,
+                    gboolean *has_hidden)
 {
 	NemoDesktopDirectoryFile *desktop_file;
 	NemoRequestStatus status;
@@ -406,6 +409,7 @@ desktop_directory_file_get_deep_counts (NemoFile *file,
 						file_count,
 						unreadable_directory_count,
 						total_size,
+                        has_hidden,
 						TRUE);
 
 	if (file_count) {

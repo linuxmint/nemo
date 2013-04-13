@@ -98,6 +98,7 @@ struct DirectoryLoadState {
 	GHashTable *load_mime_list_hash;
 	NemoFile *load_directory_file;
 	int load_file_count;
+    gboolean has_hidden;
 };
 
 struct MimeListState {
@@ -125,6 +126,7 @@ struct DirectoryCountState {
 	GCancellable *cancellable;
 	GFileEnumerator *enumerator;
 	int file_count;
+    gboolean has_hidden;
 };
 
 struct DeepCountState {
@@ -904,10 +906,9 @@ dequeue_pending_idle_callback (gpointer callback_data)
 		 * moving this into the actual callback instead of
 		 * waiting for the idle function.
 		 */
-		if (dir_load_state &&
-		    !should_skip_file (directory, file_info)) {
+		if (dir_load_state) {
 			dir_load_state->load_file_count += 1;
-
+            dir_load_state->has_hidden = dir_load_state->has_hidden || should_skip_file (directory, file_info);
 			/* Add the MIME type to the set. */
 			mimetype = g_file_info_get_content_type (file_info);
 			if (mimetype != NULL) {
@@ -979,7 +980,7 @@ dequeue_pending_idle_callback (gpointer callback_data)
 			file->details->directory_count = dir_load_state->load_file_count;
 			file->details->directory_count_is_up_to_date = TRUE;
 			file->details->got_directory_count = TRUE;
-
+            file->details->has_hidden = dir_load_state->has_hidden;
 			file->details->got_mime_list = TRUE;
 			file->details->mime_list_is_up_to_date = TRUE;
 			g_list_free_full (file->details->mime_list, g_free);
@@ -2399,27 +2400,28 @@ directory_count_stop (NemoDirectory *directory)
 }
 
 static guint
-count_non_skipped_files (GList *list)
+count_non_skipped_files (GList *list, gboolean *has_hidden)
 {
 	guint count;
 	GList *node;
 	GFileInfo *info;
-
-	count = 0;
-	for (node = list; node != NULL; node = node->next) {
-		info = node->data;
-		if (!should_skip_file (NULL, info)) {
-			count += 1;
-		}
-	}
-	return count;
+    gboolean hidden = FALSE;
+    count = 0;
+    for (node = list; node != NULL; node = node->next) {
+        info = node->data;
+        hidden = hidden || should_skip_file (NULL, info);
+        count += 1;
+    }
+    *has_hidden = hidden;
+    return count;
 }
 
 static void
 count_children_done (NemoDirectory *directory,
 		     NemoFile *count_file,
 		     gboolean succeeded,
-		     int count)
+		     int count,
+             gboolean has_hidden)
 {
 	g_assert (NEMO_IS_FILE (count_file));
 
@@ -2430,10 +2432,12 @@ count_children_done (NemoDirectory *directory,
 		count_file->details->directory_count_failed = TRUE;
 		count_file->details->got_directory_count = FALSE;
 		count_file->details->directory_count = 0;
+        count_file->details->has_hidden = FALSE;
 	} else {
 		count_file->details->directory_count_failed = FALSE;
 		count_file->details->got_directory_count = TRUE;
 		count_file->details->directory_count = count;
+        count_file->details->has_hidden = has_hidden;
 	}
 	directory->details->count_in_progress = NULL;
 
@@ -2471,7 +2475,7 @@ count_more_files_callback (GObject *source_object,
 	NemoDirectory *directory;
 	GError *error;
 	GList *files;
-
+    gboolean has_hidden;
 	state = user_data;
 	directory = state->directory;
 	
@@ -2494,11 +2498,11 @@ count_more_files_callback (GObject *source_object,
 	files = g_file_enumerator_next_files_finish (state->enumerator,
 						     res, &error);
 
-	state->file_count += count_non_skipped_files (files);
-	
+	state->file_count += count_non_skipped_files (files, &has_hidden);
+    state->has_hidden = state->has_hidden || has_hidden;
 	if (files == NULL) {
 		count_children_done (directory, state->count_file,
-				     TRUE, state->file_count);
+				     TRUE, state->file_count, state->has_hidden);
 		directory_count_state_free (state);
 	} else {
 		g_file_enumerator_next_files_async (state->enumerator,
@@ -2548,7 +2552,7 @@ count_children_callback (GObject *source_object,
 	if (enumerator == NULL) {
 		count_children_done (state->directory,
 				     state->count_file,
-				     FALSE, 0);
+				     FALSE, 0, FALSE);
 		g_error_free (error);
 		directory_count_state_free (state);
 		return;
@@ -2667,16 +2671,16 @@ deep_count_one (DeepCountState *state,
 	GFile *subdir;
 	gboolean is_seen_inode;
 
-	if (should_skip_file (NULL, info)) {
-		return;
-	}
-
 	is_seen_inode = seen_inode (state, info);
 	if (!is_seen_inode) {
 		mark_inode_as_seen (state, info);
 	}
 
 	file = state->directory->details->deep_count_file;
+
+    if (should_skip_file (NULL, info)) {
+        file->details->deep_has_hidden = TRUE;
+    }
 
 	if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY) {
 		/* Count the directory. */
@@ -2925,6 +2929,7 @@ deep_count_start (NemoDirectory *directory,
 	file->details->deep_counts_status = NEMO_REQUEST_IN_PROGRESS;
 	file->details->deep_directory_count = 0;
 	file->details->deep_file_count = 0;
+    file->details->deep_has_hidden = FALSE;
 	file->details->deep_unreadable_count = 0;
 	file->details->deep_size = 0;
 	directory->details->deep_count_file = file;

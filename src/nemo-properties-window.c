@@ -2046,12 +2046,13 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 	guint total_count;
 	guint unreadable_directory_count;
 	goffset total_size;
-	gboolean used_two_lines;
+	gboolean used_two_lines, used_three_lines;
 	NemoFile *file;
 	GList *l;
 	guint file_unreadable;
 	goffset file_size;
-
+    gboolean has_hidden = FALSE;
+    gboolean overall_hidden = FALSE;
 	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
 
 	status = NEMO_REQUEST_DONE;
@@ -2074,6 +2075,7 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 					 &file_count, 
 					 &file_unreadable,
 					 &file_size,
+                     &has_hidden,
 					 TRUE);
 			total_count += (file_count + directory_count);
 			total_size += file_size;
@@ -2089,6 +2091,7 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 			++total_count;
 			total_size += nemo_file_get_size (file);
 		}
+        overall_hidden = overall_hidden || has_hidden;
 	}
 	
 	/* If we've already displayed the total once, don't do another visible
@@ -2102,6 +2105,7 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 
 	text = NULL;
 	used_two_lines = FALSE;
+    used_three_lines = FALSE;
 	
 	if (total_count == 0) {
 		switch (status) {
@@ -2135,6 +2139,19 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 			g_free (temp);
 			used_two_lines = TRUE;
 		}
+
+        if (overall_hidden) {
+            temp = text;
+            text = g_strconcat (temp, "\n",
+                        _("(some files hidden)"),
+                        NULL);
+            g_free (temp);
+            if (used_two_lines) {
+                used_three_lines = TRUE;
+            } else {
+                used_two_lines = TRUE;
+            }
+        }
 	}
 
 	gtk_label_set_text (window->details->directory_contents_value_field,
@@ -2153,6 +2170,11 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 		text = g_strconcat (temp, "\n ", NULL);
 		g_free (temp);
 	}
+    if (used_three_lines) {
+        temp = text;
+        text = g_strconcat (temp, "\n ", NULL);
+        g_free (temp);
+    }
 	gtk_label_set_text (window->details->directory_contents_title_field,
 			    text);
 	g_free (text);
@@ -4794,6 +4816,8 @@ create_properties_window (StartupData *startup_data)
 	}
 
 	gtk_window_set_type_hint (GTK_WINDOW (window), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+    gtk_window_set_default_size (GTK_WINDOW (window), 500, -1);
 
 	/* Set initial window title */
 	update_properties_window_title (window);

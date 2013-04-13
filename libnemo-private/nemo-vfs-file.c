@@ -201,7 +201,8 @@ vfs_file_set_metadata_as_list (NemoFile           *file,
 static gboolean
 vfs_file_get_item_count (NemoFile *file, 
 			 guint *count,
-			 gboolean *count_unreadable)
+			 gboolean *count_unreadable,
+             gboolean *has_hidden)
 {
 	if (count_unreadable != NULL) {
 		*count_unreadable = file->details->directory_count_failed;
@@ -215,6 +216,9 @@ vfs_file_get_item_count (NemoFile *file,
 	if (count != NULL) {
 		*count = file->details->directory_count;
 	}
+    if (has_hidden != NULL) {
+        *has_hidden = file->details->has_hidden;
+    }
 	return TRUE;
 }
 
@@ -223,7 +227,8 @@ vfs_file_get_deep_counts (NemoFile *file,
 			  guint *directory_count,
 			  guint *file_count,
 			  guint *unreadable_directory_count,
-			  goffset *total_size)
+			  goffset *total_size,
+              gboolean *has_hidden)
 {
 	GFileType type;
 
@@ -239,6 +244,10 @@ vfs_file_get_deep_counts (NemoFile *file,
 	if (total_size != NULL) {
 		*total_size = 0;
 	}
+
+    if (has_hidden != NULL) {
+        *has_hidden = FALSE;
+    }
 
 	if (!nemo_file_is_directory (file)) {
 		return NEMO_REQUEST_DONE;
@@ -257,6 +266,9 @@ vfs_file_get_deep_counts (NemoFile *file,
 		if (total_size != NULL) {
 			*total_size = file->details->deep_size;
 		}
+        if (has_hidden != NULL) {
+            *has_hidden = file->details->deep_has_hidden;
+        }
 		return file->details->deep_counts_status;
 	}
 

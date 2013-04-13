@@ -196,13 +196,15 @@ gboolean                nemo_file_is_desktop_directory              (NemoFile   
 GError *                nemo_file_get_file_info_error               (NemoFile                   *file);
 gboolean                nemo_file_get_directory_item_count          (NemoFile                   *file,
 									 guint                          *count,
-									 gboolean                       *count_unreadable);
+									 gboolean                       *count_unreadable,
+                                     gboolean                       *has_hidden);
 void                    nemo_file_recompute_deep_counts             (NemoFile                   *file);
 NemoRequestStatus   nemo_file_get_deep_counts                   (NemoFile                   *file,
 									 guint                          *directory_count,
 									 guint                          *file_count,
 									 guint                          *unreadable_directory_count,
-									 goffset               *total_size,
+									 goffset                        *total_size,
+                                     gboolean                       *has_hidden,
 									 gboolean                        force);
 gboolean                nemo_file_should_show_thumbnail             (NemoFile                   *file);
 gboolean                nemo_file_should_show_directory_item_count  (NemoFile                   *file);
@@ -518,12 +520,14 @@ typedef struct {
 							  NemoFileAttributes  attributes);
 	gboolean              (* get_item_count)         (NemoFile           *file,
 							  guint                  *count,
-							  gboolean               *count_unreadable);
+							  gboolean               *count_unreadable,
+                              gboolean               *has_hidden);
 	NemoRequestStatus (* get_deep_counts)        (NemoFile           *file,
 							  guint                  *directory_count,
 							  guint                  *file_count,
 							  guint                  *unreadable_directory_count,
-							  goffset       *total_size);
+							  goffset       *total_size,
+                              gboolean               *has_hidden);
 	gboolean              (* get_date)               (NemoFile           *file,
 							  NemoDateType        type,
 							  time_t                 *date);
