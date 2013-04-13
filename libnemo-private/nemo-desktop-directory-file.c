@@ -394,6 +394,7 @@ desktop_directory_file_get_deep_counts (NemoFile *file,
 					guint *directory_count,
 					guint *file_count,
 					guint *unreadable_directory_count,
+                    guint *hidden_count,
 					goffset *total_size)
 {
 	NemoDesktopDirectoryFile *desktop_file;
@@ -405,6 +406,7 @@ desktop_directory_file_get_deep_counts (NemoFile *file,
 						directory_count,
 						file_count,
 						unreadable_directory_count,
+                        hidden_count,
 						total_size,
 						TRUE);
 

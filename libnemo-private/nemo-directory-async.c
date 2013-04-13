@@ -2666,11 +2666,7 @@ deep_count_one (DeepCountState *state,
 	NemoFile *file;
 	GFile *subdir;
 	gboolean is_seen_inode;
-
-	if (should_skip_file (NULL, info)) {
-		return;
-	}
-
+    gboolean hidden;
 	is_seen_inode = seen_inode (state, info);
 	if (!is_seen_inode) {
 		mark_inode_as_seen (state, info);
@@ -2678,10 +2674,15 @@ deep_count_one (DeepCountState *state,
 
 	file = state->directory->details->deep_count_file;
 
+    hidden = should_skip_file (NULL, info);
+
 	if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY) {
 		/* Count the directory. */
-		file->details->deep_directory_count += 1;
-
+        if (hidden) {
+            file->details->deep_hidden_count += 1;
+        } else {
+            file->details->deep_directory_count += 1;
+        }
 		/* Record the fact that we have to descend into this directory. */
 
 		subdir = g_file_get_child (state->deep_count_location, g_file_info_get_name (info));
@@ -2689,10 +2690,14 @@ deep_count_one (DeepCountState *state,
 			(state->deep_count_subdirectories, subdir);
 	} else {
 		/* Even non-regular files count as files. */
-		file->details->deep_file_count += 1;
+        if (hidden) {
+            file->details->deep_hidden_count += 1;
+        } else {
+            file->details->deep_file_count += 1;
+        }
 	}
 
-	/* Count the size. */
+	/* Count the size, hidden or not */
 	if (!is_seen_inode && g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_STANDARD_SIZE)) {
 		file->details->deep_size += g_file_info_get_size (info);
 	}
@@ -2926,6 +2931,7 @@ deep_count_start (NemoDirectory *directory,
 	file->details->deep_directory_count = 0;
 	file->details->deep_file_count = 0;
 	file->details->deep_unreadable_count = 0;
+    file->details->deep_hidden_count = 0;
 	file->details->deep_size = 0;
 	directory->details->deep_count_file = file;
 
