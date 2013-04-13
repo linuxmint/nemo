@@ -4808,6 +4808,7 @@ nemo_file_get_deep_counts (NemoFile *file,
 			       guint *directory_count,
 			       guint *file_count,
 			       guint *unreadable_directory_count,
+                   guint *hidden_count,
 			       goffset *total_size,
 			       gboolean force)
 {
@@ -4824,6 +4825,10 @@ nemo_file_get_deep_counts (NemoFile *file,
 		*total_size = 0;
 	}
 
+    if (hidden_count != NULL) {
+        *hidden_count = 0;
+    }
+
 	g_return_val_if_fail (NEMO_IS_FILE (file), NEMO_REQUEST_DONE);
 
 	if (!force && !nemo_file_should_show_directory_item_count (file)) {
@@ -4836,7 +4841,7 @@ nemo_file_get_deep_counts (NemoFile *file,
 
 	return NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->get_deep_counts 
 		(file, directory_count, file_count,
-		 unreadable_directory_count, total_size);
+		 unreadable_directory_count, hidden_count, total_size);
 }
 
 void
@@ -5937,6 +5942,7 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 	guint directory_count;
 	guint file_count;
 	guint unreadable_count;
+    guint hidden_count;
 	guint total_count;
 	goffset total_size;
 	int prefix;
@@ -5953,7 +5959,7 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 	g_assert (nemo_file_is_directory (file));
 
 	status = nemo_file_get_deep_counts 
-		(file, &directory_count, &file_count, &unreadable_count, &total_size, FALSE);
+		(file, &directory_count, &file_count, &unreadable_count, &hidden_count, &total_size, FALSE);
 
 	/* Check whether any info is available. */
 	if (status == NEMO_REQUEST_NOT_STARTED) {
@@ -6236,7 +6242,7 @@ nemo_file_get_string_attribute_with_default_q (NemoFile *file, GQuark attribute_
 		return g_strdup (count_unreadable ? _("? items") : "...");
 	}
 	if (attribute_q == attribute_deep_size_q) {
-		status = nemo_file_get_deep_counts (file, NULL, NULL, NULL, NULL, FALSE);
+		status = nemo_file_get_deep_counts (file, NULL, NULL, NULL, NULL, NULL, FALSE);
 		if (status == NEMO_REQUEST_DONE) {
 			/* This means no contents at all were readable */
 			return g_strdup (_("? bytes"));
@@ -6246,7 +6252,7 @@ nemo_file_get_string_attribute_with_default_q (NemoFile *file, GQuark attribute_
 	if (attribute_q == attribute_deep_file_count_q
 	    || attribute_q == attribute_deep_directory_count_q
 	    || attribute_q == attribute_deep_total_count_q) {
-		status = nemo_file_get_deep_counts (file, NULL, NULL, NULL, NULL, FALSE);
+		status = nemo_file_get_deep_counts (file, NULL, NULL, NULL, NULL, NULL, FALSE);
 		if (status == NEMO_REQUEST_DONE) {
 			/* This means no contents at all were readable */
 			return g_strdup (_("? items"));

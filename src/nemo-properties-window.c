@@ -128,6 +128,7 @@ struct NemoPropertiesWindowDetails {
 
 	guint total_count;
 	goffset total_size;
+    guint hidden_count;
 
 	guint long_operation_underway;
 
@@ -2045,6 +2046,8 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 	guint file_count;
 	guint total_count;
 	guint unreadable_directory_count;
+    guint hidden_count;
+    guint total_hidden;
 	goffset total_size;
 	gboolean used_two_lines;
 	NemoFile *file;
@@ -2058,6 +2061,7 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 	file_status = NEMO_REQUEST_NOT_STARTED;
 	total_count = window->details->total_count;
 	total_size = window->details->total_size;
+    total_hidden = window->details->hidden_count;
 	unreadable_directory_count = FALSE;
 
 	for (l = window->details->target_files; l; l = l->next) {
@@ -2073,11 +2077,12 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 					 &directory_count,
 					 &file_count, 
 					 &file_unreadable,
+                     &hidden_count,
 					 &file_size,
 					 TRUE);
 			total_count += (file_count + directory_count);
 			total_size += file_size;
-			
+			total_hidden += hidden_count;
 			if (file_unreadable) {
 				unreadable_directory_count = TRUE;
 			}
@@ -2118,14 +2123,21 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 		}
 	} else {
 		char *size_str;
+        char *hidden_str;
 		int prefix;
 		prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
 		size_str = g_format_size_full (total_size, prefix);
-		text = g_strdup_printf (ngettext("%'d item, with size %s",
-						 "%'d items, totalling %s",
+        if (total_hidden > 0) {
+            hidden_str = g_strdup_printf (_(" (and %d hidden)"), total_hidden);
+        } else {
+            hidden_str = g_strdup_printf ("");
+        }
+		text = g_strdup_printf (ngettext("%'d item%s, with size %s",
+						 "%'d items%s, totalling %s",
 						 total_count),
-					total_count, size_str);
+					total_count, hidden_str, size_str);
 		g_free (size_str);
+        g_free (hidden_str);
 
 		if (unreadable_directory_count != 0) {
 			temp = text;
@@ -4783,6 +4795,8 @@ create_properties_window (StartupData *startup_data)
 	window->details->target_files = nemo_file_list_copy (startup_data->target_files);
 
 	gtk_window_set_wmclass (GTK_WINDOW (window), "file_properties", "Nemo");
+
+    gtk_window_set_default_size (GTK_WINDOW (window), 500, -1);
 
 	if (startup_data->parent_widget) {
 		gtk_window_set_screen (GTK_WINDOW (window),

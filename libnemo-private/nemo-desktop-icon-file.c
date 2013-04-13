@@ -114,6 +114,7 @@ desktop_icon_file_get_deep_counts (NemoFile *file,
 				   guint *directory_count,
 				   guint *file_count,
 				   guint *unreadable_directory_count,
+                   guint *hidden_count,
 				   goffset *total_size)
 {
 	if (directory_count != NULL) {
@@ -128,7 +129,9 @@ desktop_icon_file_get_deep_counts (NemoFile *file,
 	if (total_size != NULL) {
 		*total_size = 0;
 	}
-
+    if (hidden_count != NULL) {
+        *hidden_count = 0;
+    }
 	return NEMO_REQUEST_DONE;
 }
 

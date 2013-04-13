@@ -1430,27 +1430,20 @@ create_tree (FMTreeView *view)
 static void
 update_filtering_from_preferences (FMTreeView *view)
 {
-	NemoWindowShowHiddenFilesMode mode;
+    NemoWindowShowHiddenFilesMode mode;
 
-	if (view->details->child_model == NULL) {
-		return;
-	}
+    if (view->details->child_model == NULL) {
+        return;
+    }
 
-	mode = nemo_window_get_hidden_files_mode (view->details->window);
+    mode = nemo_window_get_hidden_files_mode (view->details->window);
 
-	if (mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_DEFAULT) {
-		fm_tree_model_set_show_hidden_files
-			(view->details->child_model,
-			 g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
-	} else {
-		fm_tree_model_set_show_hidden_files
-			(view->details->child_model,
-			 mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE);
-	}
-	fm_tree_model_set_show_only_directories
-		(view->details->child_model,
-		 g_settings_get_boolean (nemo_tree_sidebar_preferences,
-					 NEMO_PREFERENCES_TREE_SHOW_ONLY_DIRECTORIES));
+    fm_tree_model_set_show_hidden_files (view->details->child_model,
+                                         mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE);
+
+    fm_tree_model_set_show_only_directories (view->details->child_model,
+                                             g_settings_get_boolean (nemo_tree_sidebar_preferences,
+                                                                     NEMO_PREFERENCES_TREE_SHOW_ONLY_DIRECTORIES));
 }
 
 static void
@@ -1506,10 +1499,11 @@ fm_tree_view_init (FMTreeView *view)
 	
 	view->details->selecting = FALSE;
 
-	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_SHOW_HIDDEN_FILES,
-				  G_CALLBACK(filtering_changed_callback),
-				  view);
+    g_signal_connect_object (view->details->window,
+                             "hidden-files-mode-changed",
+                             G_CALLBACK (filtering_changed_callback),
+                             view,
+                             0);
 
 	g_signal_connect_swapped (nemo_tree_sidebar_preferences,
 				  "changed::" NEMO_PREFERENCES_TREE_SHOW_ONLY_DIRECTORIES,
