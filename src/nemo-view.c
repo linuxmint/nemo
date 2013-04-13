@@ -482,17 +482,17 @@ nemo_view_reveal_selection (NemoView *view)
 static void
 nemo_view_reset_to_defaults (NemoView *view)
 {
-	NemoWindowShowHiddenFilesMode mode;
+    g_return_if_fail (NEMO_IS_VIEW (view));
 
-	g_return_if_fail (NEMO_IS_VIEW (view));
+    NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->reset_to_defaults (view);
 
-	NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->reset_to_defaults (view);
+    gboolean show_hidden = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
 
-	mode = nemo_window_get_hidden_files_mode (view->details->window);
-	if (mode != NEMO_WINDOW_SHOW_HIDDEN_FILES_DEFAULT) {
-		nemo_window_set_hidden_files_mode (view->details->window,
-						       NEMO_WINDOW_SHOW_HIDDEN_FILES_DEFAULT);
-	}
+    if (show_hidden) {
+        nemo_window_set_hidden_files_mode (view->details->window, NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE);
+    } else {
+        nemo_window_set_hidden_files_mode (view->details->window, NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE);
+    }
 }
 
 static gboolean
@@ -7824,26 +7824,17 @@ nemo_view_init_show_hidden_files (NemoView *view)
 	show_hidden_changed = FALSE;
 	mode = nemo_window_get_hidden_files_mode (view->details->window);
 
-	if (mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_DEFAULT) {
-		show_hidden_default_setting = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
-		if (show_hidden_default_setting != view->details->show_hidden_files) {
-			view->details->show_hidden_files = show_hidden_default_setting;
-			show_hidden_changed = TRUE;
-		}
-	} else {
-		if (mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE) {
-			show_hidden_changed = !view->details->show_hidden_files;
-			view->details->show_hidden_files = TRUE;
-		} else {
-			show_hidden_changed = view->details->show_hidden_files;
-			view->details->show_hidden_files = FALSE;
-		}
-	}
+    if (mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE) {
+        show_hidden_changed = !view->details->show_hidden_files;
+        view->details->show_hidden_files = TRUE;
+    } else {
+        show_hidden_changed = view->details->show_hidden_files;
+        view->details->show_hidden_files = FALSE;
+    }
 
-	if (show_hidden_changed && (view->details->model != NULL)) {
-		load_directory (view, view->details->model);	
-	}
-
+    if (show_hidden_changed && (view->details->model != NULL)) {
+        load_directory (view, view->details->model);	
+    }
 }
 
 static const GtkActionEntry directory_view_entries[] = {

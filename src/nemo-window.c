@@ -1810,7 +1810,8 @@ nemo_window_set_hidden_files_mode (NemoWindow *window,
 				       NemoWindowShowHiddenFilesMode  mode)
 {
 	window->details->show_hidden_files_mode = mode;
-
+    g_settings_set_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES,
+                            mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE);
 	g_signal_emit_by_name (window, "hidden_files_mode_changed");
 }
 
@@ -2009,7 +2010,10 @@ nemo_window_init (NemoWindow *window)
 	window->details->panes = NULL;
 	window->details->active_pane = NULL;
 
-	window->details->show_hidden_files_mode = NEMO_WINDOW_SHOW_HIDDEN_FILES_DEFAULT;
+    gboolean show_hidden = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
+
+    window->details->show_hidden_files_mode = show_hidden ? NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE :
+                                                            NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE;
 
     window->details->show_sidebar = g_settings_get_boolean (nemo_window_state,
                                                             NEMO_WINDOW_STATE_START_WITH_SIDEBAR);
