@@ -223,6 +223,7 @@ vfs_file_get_deep_counts (NemoFile *file,
 			  guint *directory_count,
 			  guint *file_count,
 			  guint *unreadable_directory_count,
+              guint *hidden_count,
 			  goffset *total_size)
 {
 	GFileType type;
@@ -239,6 +240,9 @@ vfs_file_get_deep_counts (NemoFile *file,
 	if (total_size != NULL) {
 		*total_size = 0;
 	}
+    if (hidden_count != NULL) {
+        *hidden_count = 0;
+    }
 
 	if (!nemo_file_is_directory (file)) {
 		return NEMO_REQUEST_DONE;
@@ -257,6 +261,9 @@ vfs_file_get_deep_counts (NemoFile *file,
 		if (total_size != NULL) {
 			*total_size = file->details->deep_size;
 		}
+        if (hidden_count != NULL) {
+            *hidden_count = file->details->deep_hidden_count;
+        }
 		return file->details->deep_counts_status;
 	}
 
