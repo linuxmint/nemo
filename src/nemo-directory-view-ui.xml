@@ -118,8 +118,8 @@
 		<separator name="Open terminal separator"/>
         <menuitem name="OpenInTerminal" action="OpenInTerminal"/>
 		<separator name="View items separator"/>
-        <menuitem name="Show Hidden Files" action="Show Hidden Files"/>
 		<placeholder name="View Items"/>
+        <menuitem name="Show Hidden Files" action="Show Hidden Files"/>
 		<separator name="Clipboard separator"/>
 		<placeholder name="File Clipboard Actions">
 			<menuitem name="Paste" action="Paste"/>
@@ -184,8 +184,6 @@
 			<placeholder name="MoveToPlaceHolder"/>
 		</menu>
 	</placeholder>
-    <separator name="Show Hidden Separator"/>
-    <menuitem name="Show Hidden Files" action="Show Hidden Files"/>
 	<separator name="Advanced separator"/>
 	<menuitem name="OpenInTerminal" action="OpenInTerminal"/>
 	<menuitem name="OpenAsRoot" action="OpenAsRoot"/>
