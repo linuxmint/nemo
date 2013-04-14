@@ -1058,33 +1058,10 @@ nemo_icon_container_receive_dropped_icons (NemoIconContainer *container,
 			action = GDK_ACTION_MOVE;
 		} else {
 			action = GDK_ACTION_MOVE | GDK_ACTION_COPY | GDK_ACTION_LINK;
-			container_uri = get_container_uri (container);
-			
-			if (eel_uri_is_desktop (container_uri) &&
-			    selection_is_image_file (container->details->dnd_info->drag_info.selection_list)) {
-				action |= NEMO_DND_ACTION_SET_AS_BACKGROUND;
-			}
-
-			g_free (container_uri);
 		}
-		real_action = nemo_drag_drop_action_ask
-			(GTK_WIDGET (container), action);
+		real_action = nemo_drag_drop_action_ask (GTK_WIDGET (container), action);
 	}
-	
-	if (real_action == (GdkDragAction) NEMO_DND_ACTION_SET_AS_BACKGROUND) {
-		NemoDesktopBackground *background;
 
-		background = nemo_desktop_background_new (container);
-		selected_item = container->details->dnd_info->drag_info.selection_list->data;
-
-		nemo_desktop_background_receive_dropped_background_image (background,
-									      selected_item->uri);
-
-		g_object_unref (background);
-
-		return;
-	}
-		
 	if (real_action > 0) {
 		eel_canvas_window_to_world (EEL_CANVAS (container),
 					    x + gtk_adjustment_get_value (gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (container))),
