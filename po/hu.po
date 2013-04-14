@@ -4232,7 +4232,7 @@ msgstr "Kijelölt elemek helyreállítása az eredeti helyükre"
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:210
 msgid "Empty"
-msgstr "Üres"
+msgstr "Ürítés"
 
 #: ../src/nautilus-view.c:957
 #, c-format
