@@ -51,9 +51,6 @@ typedef struct NemoDesktopBackgroundClass NemoDesktopBackgroundClass;
 GType nemo_desktop_background_get_type (void);
 NemoDesktopBackground * nemo_desktop_background_new (NemoIconContainer *container);
 
-void nemo_desktop_background_receive_dropped_background_image (NemoDesktopBackground *self,
-								   const gchar *image_uri);
-
 typedef struct NemoDesktopBackgroundDetails NemoDesktopBackgroundDetails;
 
 struct NemoDesktopBackground {
