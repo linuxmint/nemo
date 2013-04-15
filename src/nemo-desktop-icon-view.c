@@ -243,16 +243,6 @@ desktop_icon_view_property_filter (GdkXEvent *gdk_xevent,
 static void
 real_begin_loading (NemoView *object)
 {
-	NemoIconContainer *icon_container;
-	NemoDesktopIconView *view;
-
-	view = NEMO_DESKTOP_ICON_VIEW (object);
-
-	icon_container = get_icon_container (view);
-	if (view->details->background == NULL) {
-		view->details->background = nemo_desktop_background_new (icon_container);
-	}
-
 	NEMO_VIEW_CLASS (nemo_desktop_icon_view_parent_class)->begin_loading (object);
 }
 
@@ -297,11 +287,6 @@ nemo_desktop_icon_view_dispose (GObject *object)
 	g_signal_handlers_disconnect_by_func (gnome_lockdown_preferences,
 					      nemo_view_update_menus,
 					      icon_view);
-
-	if (icon_view->details->background != NULL) {
-		g_object_unref (icon_view->details->background);
-		icon_view->details->background = NULL;
-	}
 
 	G_OBJECT_CLASS (nemo_desktop_icon_view_parent_class)->dispose (object);
 }
@@ -651,6 +636,9 @@ nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 				  "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
 				  G_CALLBACK (nemo_view_update_menus),
 				  desktop_icon_view);
+
+    GdkRGBA transparent = { 0, 0, 0, 0 };
+    gtk_widget_override_background_color (GTK_WIDGET (icon_container), GTK_STATE_FLAG_NORMAL, &transparent);
 
     have_cinnamon_settings = g_find_program_in_path ("cinnamon-settings") != NULL;
 }
