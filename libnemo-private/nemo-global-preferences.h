@@ -226,7 +226,7 @@ GSettings *nemo_desktop_preferences;
 GSettings *nemo_tree_sidebar_preferences;
 GSettings *nemo_window_state;
 GSettings *gnome_lockdown_preferences;
-GSettings *gnome_background_preferences;
+GSettings *cinnamon_background_preferences;
 GSettings *gnome_media_handling_preferences;
 GSettings *gnome_terminal_preferences;
 
