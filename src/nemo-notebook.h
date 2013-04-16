@@ -42,14 +42,10 @@ G_BEGIN_DECLS
 
 typedef struct _NemoNotebookClass	NemoNotebookClass;
 typedef struct _NemoNotebook		NemoNotebook;
-typedef struct _NemoNotebookPrivate	NemoNotebookPrivate;
 
 struct _NemoNotebook
 {
 	GtkNotebook parent;
-
-	/*< private >*/
-        NemoNotebookPrivate *priv;
 };
 
 struct _NemoNotebookClass
