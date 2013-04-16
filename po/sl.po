@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: nautilus master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-03-07 15:34+0000\n"
-"PO-Revision-Date: 2013-03-29 17:53+0100\n"
+"PO-Revision-Date: 2013-04-12 13:35+0100\n"
 "Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -4066,7 +4066,7 @@ msgstr "Obnovi"
 
 #: ../src/nautilus-trash-bar.c:206
 msgid "Restore selected items to their original position"
-msgstr "Obnovi izvorne velikosti na njihov izvirni položaj"
+msgstr "Obnovi izbrane predmete na njihov izvirni položaj"
 
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:210
