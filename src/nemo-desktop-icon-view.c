@@ -41,7 +41,6 @@
 #include <fcntl.h>
 #include <gdk/gdkx.h>
 #include <glib/gi18n.h>
-#include <libnemo-private/nemo-desktop-background.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
 #include <libnemo-private/nemo-directory-notify.h>
 #include <libnemo-private/nemo-file-changes-queue.h>
@@ -76,8 +75,6 @@ struct NemoDesktopIconViewDetails
 	gulong delayed_init_signal;
 	guint reload_desktop_timeout;
 	gboolean pending_rescan;
-
-	NemoDesktopBackground *background;
 };
 
 static void     default_zoom_level_changed                        (gpointer                user_data);
@@ -240,12 +237,6 @@ desktop_icon_view_property_filter (GdkXEvent *gdk_xevent,
 	return GDK_FILTER_CONTINUE;
 }
 
-static void
-real_begin_loading (NemoView *object)
-{
-	NEMO_VIEW_CLASS (nemo_desktop_icon_view_parent_class)->begin_loading (object);
-}
-
 static const char *
 real_get_id (NemoView *view)
 {
@@ -300,7 +291,6 @@ nemo_desktop_icon_view_class_init (NemoDesktopIconViewClass *class)
 
 	G_OBJECT_CLASS (class)->dispose = nemo_desktop_icon_view_dispose;
 
-	vclass->begin_loading = real_begin_loading;
 	vclass->merge_menus = real_merge_menus;
 	vclass->update_menus = real_update_menus;
 	vclass->get_view_id = real_get_id;
@@ -426,6 +416,17 @@ realized_callback (GtkWidget *widget, NemoDesktopIconView *desktop_icon_view)
 	gdk_window_add_filter (root_window,
 			       desktop_icon_view_property_filter,
 			       desktop_icon_view);
+}
+
+static void
+desktop_icon_container_realize (GtkWidget *widget,
+                                NemoDesktopIconView *desktop_icon_view)
+{
+    GdkWindow *bin_window;
+    GdkRGBA transparent = { 0, 0, 0, 0 };
+
+    bin_window = gtk_layout_get_bin_window (GTK_LAYOUT (widget));
+    gdk_window_set_background_rgba (bin_window, &transparent);
 }
 
 static NemoZoomLevel
@@ -614,6 +615,8 @@ nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 
 	g_signal_connect_object (icon_container, "middle_click",
 				 G_CALLBACK (nemo_desktop_icon_view_handle_middle_click), desktop_icon_view, 0);
+    g_signal_connect_object (icon_container, "realize",
+                 G_CALLBACK (desktop_icon_container_realize), desktop_icon_view, 0);
 	g_signal_connect_object (desktop_icon_view, "realize",
 				 G_CALLBACK (realized_callback), desktop_icon_view, 0);
 	g_signal_connect_object (desktop_icon_view, "unrealize",
@@ -636,9 +639,6 @@ nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 				  "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
 				  G_CALLBACK (nemo_view_update_menus),
 				  desktop_icon_view);
-
-    GdkRGBA transparent = { 0, 0, 0, 0 };
-    gtk_widget_override_background_color (GTK_WIDGET (icon_container), GTK_STATE_FLAG_NORMAL, &transparent);
 
     have_cinnamon_settings = g_find_program_in_path ("cinnamon-settings") != NULL;
 }
