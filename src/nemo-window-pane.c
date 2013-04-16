@@ -584,10 +584,18 @@ notebook_button_press_cb (GtkWidget *widget,
 {
 	NemoWindowPane *pane;
 
-	pane = user_data;
-	if (GDK_BUTTON_PRESS == event->type && 3 == event->button) {
-		notebook_popup_menu_show (pane, event);
-		return TRUE;
+	if (event->type == GDK_BUTTON_PRESS) {
+		pane = NEMO_WINDOW_PANE (user_data);
+
+		if (event->button == 2) {
+			notebook_tab_close_requested (NEMO_NOTEBOOK (pane->notebook), 
+										  pane->active_slot, pane);
+			return TRUE;
+		}
+		if (event->button == 3) {
+			notebook_popup_menu_show (pane, event);
+			return TRUE;
+		}
 	}
 
 	return FALSE;
