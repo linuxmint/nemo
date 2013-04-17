@@ -197,7 +197,7 @@ nautilus_query_editor_grab_focus (GtkWidget *widget)
 {
 	NautilusQueryEditor *editor = NAUTILUS_QUERY_EDITOR (widget);
 
-	if (gtk_widget_get_visible (widget)) {
+	if (gtk_widget_get_visible (widget) && !gtk_widget_is_focus (editor->details->entry)) {
 		/* avoid selecting the entry text */
 		gtk_widget_grab_focus (editor->details->entry);
 		gtk_editable_set_position (GTK_EDITABLE (editor->details->entry), -1);
