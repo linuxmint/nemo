@@ -744,14 +744,22 @@ action_new_window_callback (GtkAction *action,
 {
 	NemoApplication *application;
 	NemoWindow *current_window, *new_window;
+    gchar *uri;
 
 	current_window = NEMO_WINDOW (user_data);
+
+    uri = nemo_window_slot_get_current_uri (nemo_window_get_active_slot (current_window));
+    GFile *loc = g_file_new_for_uri (uri);
+
 	application = nemo_application_get_singleton ();
 
 	new_window = nemo_application_create_window (
 				application,
 				gtk_window_get_screen (GTK_WINDOW (current_window)));
-	nemo_window_slot_go_home (nemo_window_get_active_slot (new_window), FALSE);
+
+    nemo_window_slot_open_location (nemo_window_get_active_slot (new_window), loc, 0, NULL);
+    g_object_unref (loc);
+    g_free (uri);
 }
 
 static void
