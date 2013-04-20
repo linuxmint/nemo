@@ -157,7 +157,7 @@
     <key name="show-hidden-files" type="b">
       <default>false</default>
       <_summary>Whether to show hidden files</_summary>
-      <_description>If set to true, then hidden files are shown by default in the file manager.  Hidden files are either dotfiles, listed in the folder's .hidden file or backup files ending with a tilde (~).</_description>
+      <_description>This key is deprecated and ignored. The "show-hidden" key from "org.gtk.Settings.FileChooser" is now used instead.</_description>
     </key>
     <key name="bulk-rename-tool" type="ay">
       <default>[]</default>
@@ -227,6 +227,11 @@
       <_summary>Default column order in the list view</_summary>
       <_description>Default column order in the list view.</_description>
     </key>
+    <key name="use-tree-view" type="b">
+      <default>false</default>
+      <_summary>Use tree view</_summary>
+      <_description>Whether a tree should be used for list view navigation instead of a flat list</_description>
+    </key>
   </schema>
 
   <schema id="org.gnome.nautilus.desktop" path="/org/gnome/nautilus/desktop/" gettext-domain="nautilus">
@@ -294,7 +299,7 @@
       <_description>Whether the navigation window should be maximized by default.</_description>
     </key>
     <key name="sidebar-width" type="i">
-      <default>148</default>
+      <default>188</default>
       <_summary>Width of the side pane</_summary>
       <_description>The default width of the side pane in new windows.</_description>
     </key>

@@ -36,7 +36,7 @@ G_BEGIN_DECLS
 #define NAUTILUS_PREFERENCES_ENABLE_DELETE			"enable-delete"
 
 /* Display  */
-#define NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
+#define NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden"
 
 /* Mouse */
 #define NAUTILUS_PREFERENCES_MOUSE_USE_EXTRA_BUTTONS		"mouse-use-extra-buttons"
@@ -106,6 +106,7 @@ enum
 #define NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_ZOOM_LEVEL		"default-zoom-level"
 #define NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS		"default-visible-columns"
 #define NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER		"default-column-order"
+#define NAUTILUS_PREFERENCES_LIST_VIEW_USE_TREE                         "use-tree-view"
 
 enum
 {
@@ -156,6 +157,9 @@ typedef enum
 /* Desktop background */
 #define NAUTILUS_PREFERENCES_SHOW_DESKTOP		   "show-desktop-icons"
 
+/* Recent files */
+#define NAUTILUS_PREFERENCES_RECENT_FILES_ENABLED          "remember-recent-files"
+
 
 void nautilus_global_preferences_init                      (void);
 char *nautilus_global_preferences_get_default_folder_viewer_preference_as_iid (void);
@@ -165,9 +169,11 @@ GSettings *nautilus_icon_view_preferences;
 GSettings *nautilus_list_view_preferences;
 GSettings *nautilus_desktop_preferences;
 GSettings *nautilus_window_state;
+GSettings *gtk_filechooser_preferences;
 GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
 GSettings *gnome_interface_preferences;
+GSettings *gnome_privacy_preferences;
 
 G_END_DECLS
 

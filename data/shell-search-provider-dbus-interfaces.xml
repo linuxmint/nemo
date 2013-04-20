@@ -19,7 +19,7 @@
  Boston, MA 02111-1307, USA.
 -->
 <node name="/" xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
-  <interface name='org.gnome.Shell.SearchProvider'>
+  <interface name='org.gnome.Shell.SearchProvider2'>
     <method name='GetInitialResultSet'>
       <arg type='as' name='Terms' direction='in' />
       <arg type='as' name='Results' direction='out' />
@@ -35,6 +35,12 @@
     </method>
     <method name = 'ActivateResult'>
       <arg type='s' name='Result' direction='in' />
+      <arg type='as' name='Terms' direction='in' />
+      <arg type='u' name='Timestamp' direction='in' />
+    </method>
+    <method name = 'LaunchSearch'>
+      <arg type='as' name='Terms' direction='in' />
+      <arg type='u' name='Timestamp' direction='in' />
     </method>
   </interface>
 </node>

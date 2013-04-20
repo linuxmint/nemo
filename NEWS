@@ -1,3 +1,130 @@
+Major changes in 3.8.0 are:
+* Fix inconsistency in handling of NoDisplay=true applications
+* Translation updates
+
+Major changes in 3.7.92 are:
+* Ensure target directories exist when restoring trash contents
+* Export non-VFS URIs to DnD selections
+* Hide Change Background desktop action g-c-c is not installed
+* Fix double tap not working on certain touchscreen devices
+* Fix for removal of org.gnome.desktop.background draw-background setting
+* Fix inability to move desktop icons to non-primary displays in certain
+  configurations
+
+Major changes in 3.7.91 are:
+* Export an OpenLocations property over DBus (Marco Trevisan)
+* Add a way to reuse and raise existing windows already opened to a
+  given location (Marco Trevisan)
+* Use an ARGB window for the desktop (Matthias Clasen)
+* Stop drawing the desktop background
+* Register our GtkApplication with gnome-session
+* Fix Tracker search not working correctly
+* Fix activation of search provider results
+* Fix nautilus --quit from terminal not working
+
+Major changes in 3.7.90 are:
+* Add back a Treeview option for list view. This is off by default, and
+  is backed by a checkbox in the Preferences dialog
+* Add a "Connect to Server" item in the Network section of the sidebar
+* Add a "Format..." item in volume context menus in the sidebar
+* Fix accelerators not showing up in gear and view menus
+* Use G_APP_INFO_CREATE_NEEDS_TERMINAL instead of handrolled
+  code (William Jon McCann)
+
+Major changes in 3.7.5 are:
+* Switch to hovered locations on DnD (William Jon McCann)
+* Support a --force-desktop commandline option for classic mode
+* Add a separate desktop file for classic mode integration
+* Use a better position for navigation button popup menus
+* Fix many memory leaks (Pavel Vasin)
+* Fix a crasher when a file in trash has reserved characters in the filename
+* Fix a crasher when closing the sidebar immediately after construction
+* Fix a crasher closing the properties dialog while calculating folder size
+* Fix backup files showing up in search provider results
+* Fix floating bar buttons being added twice
+
+Major changes in 3.7.4 are:
+* Support a --select commandline option to force selection of the passed-in URI
+* Add source hints to notifications (Matthias Clasen)
+* Modernize build infrastructure (Javier Jardon)
+* Use public GTK-a11y support instead of our own hacks
+* Fix a crasher in the Shell search provider
+
+Major changes in 3.7.3 are:
+* Update search provider to org.gnome.Shell.SearchProvider2 interface
+* Rely on GIO to parse ".hidden" files
+* Consistently use unicode ellipsis instead of three periods (Jeremy Bicha)
+* Use a different label for removing a file from "Recent" (Paolo Borelli)
+* Restore the previous behavior wrt. framing for custom icons
+* Share the "show hidden" GSetting option with the GTK+
+  file chooser (Timothy Arceri)
+* Fix missing unmount sync notification under some circumstances
+* Fix infinite loop while deep counting the size of "/" (Phillip Susi)
+* Fix wrong filename when restoring file from trash (Timothy Arceri)
+
+Major changes in 3.7.2 are:
+* Request to render larger thumbnails by default
+* Don't quote the current location name in search bar
+* Use "Run" in menus when launchine executables
+* Fix stray Empty Document item in New Document menu
+
+Major changes in 3.6.3 are:
+* Fix symbolic links on remote volumes not activating default action
+* Fix duplicated query editor filter rows when changing search location
+* Fix search toolbar disappearing with very long folder names
+* Fix missing Trash action after "Recent" was visited
+* Fix missing frame around thumbnails for some zoom factors
+* Fix crash when unmounting remote volumes
+
+Major changes in 3.6.2 are:
+* Open default location for remote shares when mounting
+* Fix missing search results from Tracker for names that contain hyphens
+* Fix missing item selection in the sidebar when starting up
+* Fix search string being eaten by a hidden entry under certain circumstances
+* Fix missing tooltips on stock toolbar buttons
+
+Major changes in 3.7.1 are:
+* Turn on again recursive search for the simple engine
+* Enable incremental loading for search directories
+* Add extra information to image properties page
+* Show free space pie chart for the local root filesystem
+* Resolve symbolic links before launching a file
+* Avoid sync I/O when reading bookmark locations
+* Don't add non-existent XDG folders to the sidebar
+* Don't offer to remove built-in XDG folder bookmarks
+* Fix black input field when renaming a file in icon view with XIM enabled
+* Fix wrong return location when unmounting a remote mount
+* Fix notebook tabs not properly switching after timeout when hovered
+* Fix search toggle button state inconsistent when switching between tabs
+* Fix crasher when using the Tracker engine from the Shell search provider
+* Fix crasher in Shell search provider
+* Fix crasher when unmounting a volume under certain circumstances
+
+Major changes in 3.6.1 are:
+* Fix floating bar not disappearing on search finish
+* Fix fullcolor icons appearing in the pathbar for mount roots
+* Fix drag and drop of multiple rows in list view
+* Fix search relevance not being applied correctly when searching
+* Fix sidebar visibility switch applying to all windows
+* Fix search location when moving to a search directory in Back/Forward
+  history
+* Fix missing search results with non-ASCII characters
+* Fix Home/Trash not showing up in shell provider results
+* Fix startup notification not working when opening multiple windows
+* Fix search results not focusing when activated from the Shell
+* Fix error dialog not showing up when entering a non-existant location
+  in Connect to Server
+* Fix inability to open files after cancelling a rename in list view under
+  some circumstances
+* Fix desktop icons not following the primary monitor workarea when multihead
+  is used with the desktop enabled
+* Fix crasher when search string changes too fast
+* Fix crasher when enabling search while loading a directory
+* Fix crasher when trying to open a saved search file
+* Fix crasher when Tracker is installed but not running
+* Fix crasher in the shell search provider for bookmarks/mounts with an
+  empty name
+
 Major changes in 3.6.0 are:
 * Fix toggling of hidden files visibility in searches
 * Fix base directory appearing in search results

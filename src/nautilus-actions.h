@@ -118,7 +118,6 @@
 #define NAUTILUS_ACTION_SCRIPTS "Scripts"
 #define NAUTILUS_ACTION_OPEN_SCRIPTS_FOLDER "Open Scripts Folder"
 #define NAUTILUS_ACTION_NEW_DOCUMENTS "New Documents"
-#define NAUTILUS_ACTION_NEW_EMPTY_DOCUMENT "New Empty Document"
 #define NAUTILUS_ACTION_EMPTY_TRASH_CONDITIONAL "Empty Trash Conditional"
 #define NAUTILUS_ACTION_MANUAL_LAYOUT "Manual Layout"
 #define NAUTILUS_ACTION_REVERSED_ORDER "Reversed Order"
@@ -130,5 +129,6 @@
 #define NAUTILUS_ACTION_ZOOM_ITEMS "Zoom Items"
 #define NAUTILUS_ACTION_SORT_TRASH_TIME "Sort by Trash Time"
 #define NAUTILUS_ACTION_SORT_SEARCH_RELEVANCE "Sort by Search Relevance"
+#define NAUTILUS_ACTION_CHANGE_BACKGROUND "Change Background"
 
 #endif /* NAUTILUS_ACTIONS_H */

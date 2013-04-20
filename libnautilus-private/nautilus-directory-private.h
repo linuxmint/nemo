@@ -134,8 +134,6 @@ struct NautilusDirectoryDetails
 	LinkInfoReadState *link_info_read_state;
 
 	GList *file_operations_in_progress; /* list of FileOperation * */
-
-	GHashTable *hidden_file_hash;
 };
 
 NautilusDirectory *nautilus_directory_get_existing                    (GFile                     *location);
@@ -235,9 +233,6 @@ void               nautilus_directory_add_file_to_work_queue          (NautilusD
 void               nautilus_directory_remove_file_from_work_queue     (NautilusDirectory *directory,
 								       NautilusFile *file);
 
-/* KDE compatibility hacks */
-
-void               nautilus_set_kde_trash_name                        (const char *trash_dir);
 
 /* debugging functions */
 int                nautilus_directory_number_outstanding              (void);

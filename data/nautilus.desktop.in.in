@@ -1,7 +1,8 @@
 [Desktop Entry]
 _Name=Files
 _Comment=Access and organize files
-Exec=nautilus %U
+_Keywords=folder;manager;explore;disk;filesystem;
+Exec=nautilus --new-window %U
 Icon=system-file-manager
 Terminal=false
 Type=Application
@@ -13,3 +14,4 @@ X-GNOME-Bugzilla-Bugzilla=GNOME
 X-GNOME-Bugzilla-Product=nautilus
 X-GNOME-Bugzilla-Component=general
 X-GNOME-Bugzilla-Version=@VERSION@
+X-GNOME-UsesNotifications=true

@@ -191,6 +191,7 @@ send_batch (SearchThreadData *thread_data)
 #define STD_ATTRIBUTES \
 	G_FILE_ATTRIBUTE_STANDARD_NAME "," \
 	G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME "," \
+	G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP "," \
 	G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN "," \
 	G_FILE_ATTRIBUTE_STANDARD_TYPE "," \
 	G_FILE_ATTRIBUTE_TIME_MODIFIED "," \
@@ -216,7 +217,8 @@ visit_directory (GFile *dir, SearchThreadData *data)
 						:
 						STD_ATTRIBUTES
 						,
-						0, data->cancellable, NULL);
+						G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+						data->cancellable, NULL);
 	
 	if (enumerator == NULL) {
 		return;
@@ -242,7 +244,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 			found = FALSE;
 			
 			for (l = data->mime_types; mime_type != NULL && l != NULL; l = l->next) {
-				if (g_content_type_equals (mime_type, l->data)) {
+				if (g_content_type_is_a (mime_type, l->data)) {
 					found = TRUE;
 					break;
 				}

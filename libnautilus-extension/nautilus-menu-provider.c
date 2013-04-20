@@ -36,7 +36,7 @@ nautilus_menu_provider_base_init (gpointer g_class)
 	if (!initialized)
 	{
 		/* This signal should be emited each time the extension modify the list of menu items */
-		g_signal_new ("items_updated",
+		g_signal_new ("items-updated",
 			NAUTILUS_TYPE_MENU_PROVIDER,
 			G_SIGNAL_RUN_LAST,
 			0,
@@ -127,6 +127,6 @@ nautilus_menu_provider_emit_items_updated_signal (NautilusMenuProvider* provider
 {
 	g_return_if_fail (NAUTILUS_IS_MENU_PROVIDER (provider));
 
-	g_signal_emit_by_name (provider, "items_updated");
+	g_signal_emit_by_name (provider, "items-updated");
 }
 

@@ -37,6 +37,7 @@
 
 #include "nautilus-file-dnd.h"
 #include "nautilus-canvas-private.h"
+#include "nautilus-global-preferences.h"
 #include "nautilus-link.h"
 #include "nautilus-metadata.h"
 #include "nautilus-selection-canvas-item.h"
@@ -51,8 +52,10 @@
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
+#define GNOME_DESKTOP_USE_UNSTABLE_API
+#include <libgnome-desktop/gnome-bg.h>
+#include <gdesktop-enums.h>
 
-#include <libnautilus-private/nautilus-desktop-background.h>
 #include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-file-changes-queue.h>
 #include <stdio.h>
@@ -236,6 +239,11 @@ icon_get_data_binder (NautilusCanvasIcon *icon, gpointer data)
 	canvas_rect_world_to_widget (EEL_CANVAS (container), &world_rect, &widget_rect);
 
 	uri = nautilus_canvas_container_get_icon_uri (container, icon);
+	if (!eel_uri_is_desktop (uri)) {
+		g_free (uri);
+		uri = nautilus_canvas_container_get_icon_activation_uri (container, icon);
+	}
+
 	if (uri == NULL) {
 		g_warning ("no URI for one of the iterated icons");
 		return TRUE;
@@ -311,6 +319,8 @@ drag_data_get_callback (GtkWidget *widget,
 			guint32 time,
 			gpointer data)
 {
+	NautilusDragInfo *drag_info;
+
 	g_assert (widget != NULL);
 	g_assert (NAUTILUS_IS_CANVAS_CONTAINER (widget));
 	g_return_if_fail (context != NULL);
@@ -319,8 +329,8 @@ drag_data_get_callback (GtkWidget *widget,
 	 * the selection data in the right format. Pass it means to
 	 * iterate all the selected icons.
 	 */
-	nautilus_drag_drag_data_get (widget, context, selection_data,
-		info, time, widget, each_icon_get_data_binder);
+	drag_info = &(NAUTILUS_CANVAS_CONTAINER (widget)->details->dnd_info->drag_info);
+	nautilus_drag_drag_data_get_from_cache (drag_info->selection_cache, context, selection_data, info, time);
 }
 
 
@@ -573,7 +583,7 @@ get_container_uri (NautilusCanvasContainer *container)
 
 	/* get the URI associated with the container */
 	uri = NULL;
-	g_signal_emit_by_name (container, "get_container_uri", &uri);
+	g_signal_emit_by_name (container, "get-container-uri", &uri);
 	return uri;
 }
 
@@ -612,7 +622,7 @@ receive_dropped_netscape_url (NautilusCanvasContainer *container, const char *en
 
 	drop_target = nautilus_canvas_container_find_drop_target (container, context, x, y, NULL, TRUE);
 
-	g_signal_emit_by_name (container, "handle_netscape_url",
+	g_signal_emit_by_name (container, "handle-netscape-url",
 			       encoded_url,
 			       drop_target,
 			       gdk_drag_context_get_selected_action (context),
@@ -633,7 +643,7 @@ receive_dropped_uri_list (NautilusCanvasContainer *container, const char *uri_li
 
 	drop_target = nautilus_canvas_container_find_drop_target (container, context, x, y, NULL, TRUE);
 
-	g_signal_emit_by_name (container, "handle_uri_list",
+	g_signal_emit_by_name (container, "handle-uri-list",
 				 uri_list,
 				 drop_target,
 				 gdk_drag_context_get_selected_action (context),
@@ -654,7 +664,7 @@ receive_dropped_text (NautilusCanvasContainer *container, const char *text, GdkD
 
 	drop_target = nautilus_canvas_container_find_drop_target (container, context, x, y, NULL, TRUE);
 	
-	g_signal_emit_by_name (container, "handle_text",
+	g_signal_emit_by_name (container, "handle-text",
 			       text,
 			       drop_target,
 			       gdk_drag_context_get_selected_action (context),
@@ -675,7 +685,7 @@ receive_dropped_raw (NautilusCanvasContainer *container, const char *raw_data, i
 
 	drop_target = nautilus_canvas_container_find_drop_target (container, context, x, y, NULL, TRUE);
 
-	g_signal_emit_by_name (container, "handle_raw",
+	g_signal_emit_by_name (container, "handle-raw",
 			       raw_data,
 			       length,
 			       drop_target,
@@ -902,7 +912,7 @@ handle_nonlocal_move (NautilusCanvasContainer *container,
 	}
 
 	/* start the copy */
-	g_signal_emit_by_name (container, "move_copy_items",
+	g_signal_emit_by_name (container, "move-copy-items",
 			       source_uris,
 			       source_item_locations,
 			       target_uri,
@@ -1038,6 +1048,30 @@ selection_is_image_file (GList *selection_list)
 	return result;
 }
 
+static void
+receive_dropped_background_image (const gchar *image_uri)
+{
+	GnomeBG *bg;
+	char *filename;
+
+	if (image_uri != NULL) {
+		filename = g_filename_from_uri (image_uri, NULL, NULL);
+	} else {
+		filename = NULL;
+	}
+
+	bg = gnome_bg_new ();
+
+	/* Currently, we only support tiled images. So we set the placement.
+	 */
+	gnome_bg_set_placement (bg, G_DESKTOP_BACKGROUND_STYLE_WALLPAPER);
+	gnome_bg_set_filename (bg, filename);
+
+	gnome_bg_save_to_preferences (bg, gnome_background_preferences);
+
+	g_free (filename);
+	g_object_unref (bg);
+}
 
 static void
 nautilus_canvas_container_receive_dropped_icons (NautilusCanvasContainer *container,
@@ -1081,15 +1115,8 @@ nautilus_canvas_container_receive_dropped_icons (NautilusCanvasContainer *contai
 	}
 	
 	if (real_action == (GdkDragAction) NAUTILUS_DND_ACTION_SET_AS_BACKGROUND) {
-		NautilusDesktopBackground *background;
-
-		background = nautilus_desktop_background_new (container);
 		selected_item = container->details->dnd_info->drag_info.selection_list->data;
-
-		nautilus_desktop_background_receive_dropped_background_image (background,
-									      selected_item->uri);
-
-		g_object_unref (background);
+		receive_dropped_background_image (selected_item->uri);
 
 		return;
 	}
@@ -1243,6 +1270,15 @@ nautilus_canvas_dnd_update_drop_target (NautilusCanvasContainer *container,
 }
 
 static void
+remove_hover_timer (NautilusCanvasDndInfo *dnd_info)
+{
+	if (dnd_info->hover_id != 0) {
+		g_source_remove (dnd_info->hover_id);
+		dnd_info->hover_id = 0;
+	}
+}
+
+static void
 nautilus_canvas_container_free_drag_data (NautilusCanvasContainer *container)
 {
 	NautilusCanvasDndInfo *dnd_info;
@@ -1265,6 +1301,11 @@ nautilus_canvas_container_free_drag_data (NautilusCanvasContainer *container)
 		g_free (dnd_info->drag_info.direct_save_uri);
 		dnd_info->drag_info.direct_save_uri = NULL;
 	}
+
+	g_free (dnd_info->target_uri);
+	dnd_info->target_uri = NULL;
+
+	remove_hover_timer (dnd_info);
 }
 
 static void
@@ -1293,6 +1334,7 @@ drag_begin_callback (GtkWidget      *widget,
 		     gpointer        data)
 {
 	NautilusCanvasContainer *container;
+	NautilusDragInfo *drag_info;
 	cairo_surface_t *surface;
 	double x1, y1, x2, y2, winx, winy;
 	int x_offset, y_offset;
@@ -1319,6 +1361,12 @@ drag_begin_callback (GtkWidget      *widget,
         cairo_surface_set_device_offset (surface, -x_offset, -y_offset);
         gtk_drag_set_icon_surface (context, surface);
         cairo_surface_destroy (surface);
+
+	/* cache the data at the beginning since the view may change */
+	drag_info = &(container->details->dnd_info->drag_info);
+	drag_info->selection_cache = nautilus_drag_create_selection_cache (widget,
+									   each_icon_get_data_binder);
+
 }
 
 void
@@ -1456,6 +1504,56 @@ stop_dnd_highlight (GtkWidget *widget)
 }
 
 static gboolean
+hover_timer (gpointer user_data)
+{
+	NautilusCanvasContainer *container = user_data;
+	NautilusCanvasDndInfo *dnd_info;
+
+	dnd_info = container->details->dnd_info;
+
+	dnd_info->hover_id = 0;
+
+	g_signal_emit_by_name (container, "handle-hover", dnd_info->target_uri);
+
+	return FALSE;
+}
+
+static void
+check_hover_timer (NautilusCanvasContainer *container,
+		   const char              *uri)
+{
+	NautilusCanvasDndInfo *dnd_info;
+	GtkSettings *settings;
+	guint timeout;
+
+	dnd_info = container->details->dnd_info;
+
+	if (g_strcmp0 (uri, dnd_info->target_uri) == 0) {
+		return;
+	}
+
+	if (nautilus_canvas_container_get_is_desktop (container)) {
+		return;
+	}
+
+	remove_hover_timer (dnd_info);
+
+	settings = gtk_widget_get_settings (GTK_WIDGET (container));
+	g_object_get (settings, "gtk-timeout-expand", &timeout, NULL);
+
+	g_free (dnd_info->target_uri);
+	dnd_info->target_uri = NULL;
+
+	if (uri != NULL) {
+		dnd_info->target_uri = g_strdup (uri);
+		dnd_info->hover_id =
+			gdk_threads_add_timeout (timeout,
+						 hover_timer,
+						 container);
+	}
+}
+
+static gboolean
 drag_motion_callback (GtkWidget *widget,
 		      GdkDragContext *context,
 		      int x, int y,
@@ -1474,7 +1572,14 @@ drag_motion_callback (GtkWidget *widget,
 	nautilus_canvas_container_get_drop_action (NAUTILUS_CANVAS_CONTAINER (widget), context, x, y,
 						 &action);
 	if (action != 0) {
+		char *uri;
+		uri = nautilus_canvas_container_find_drop_target (NAUTILUS_CANVAS_CONTAINER (widget),
+								  context, x, y, NULL, TRUE);
+		check_hover_timer (NAUTILUS_CANVAS_CONTAINER (widget), uri);
+		g_free (uri);
 		start_dnd_highlight (widget);
+	} else {
+		remove_hover_timer (NAUTILUS_CANVAS_CONTAINER (widget)->details->dnd_info);
 	}
 	  
 	gdk_drag_status (context, action, time);
@@ -1707,21 +1812,21 @@ nautilus_canvas_dnd_init (NautilusCanvasContainer *container)
 
 	
 	/* Messages for outgoing drag. */
-	g_signal_connect (container, "drag_begin", 
+	g_signal_connect (container, "drag-begin", 
 			  G_CALLBACK (drag_begin_callback), NULL);
-	g_signal_connect (container, "drag_data_get",
+	g_signal_connect (container, "drag-data-get",
 			  G_CALLBACK (drag_data_get_callback), NULL);
-	g_signal_connect (container, "drag_end",
+	g_signal_connect (container, "drag-end",
 			  G_CALLBACK (drag_end_callback), NULL);
 	
 	/* Messages for incoming drag. */
-	g_signal_connect (container, "drag_data_received",
+	g_signal_connect (container, "drag-data-received",
 			  G_CALLBACK (drag_data_received_callback), NULL);
-	g_signal_connect (container, "drag_motion",
+	g_signal_connect (container, "drag-motion",
 			  G_CALLBACK (drag_motion_callback), NULL);
-	g_signal_connect (container, "drag_drop",
+	g_signal_connect (container, "drag-drop",
 			  G_CALLBACK (drag_drop_callback), NULL);
-	g_signal_connect (container, "drag_leave",
+	g_signal_connect (container, "drag-leave",
 			  G_CALLBACK (drag_leave_callback), NULL);
 }
 

@@ -539,7 +539,7 @@ create_image_widget (NautilusPropertiesWindow *window,
 				   target_table, G_N_ELEMENTS (target_table),
 				   GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
-		g_signal_connect (image, "drag_data_received",
+		g_signal_connect (image, "drag-data-received",
 				  G_CALLBACK (nautilus_properties_window_drag_data_received), NULL);
 		g_signal_connect (button, "clicked",
 				  G_CALLBACK (select_image_button_callback), window);
@@ -594,7 +594,7 @@ set_name_field (NautilusPropertiesWindow *window,
 						 GTK_POS_RIGHT, 1, 1);
 			gtk_label_set_mnemonic_widget (GTK_LABEL (window->details->name_label), window->details->name_field);
 
-			g_signal_connect_object (window->details->name_field, "focus_out_event",
+			g_signal_connect_object (window->details->name_field, "focus-out-event",
 						 G_CALLBACK (name_field_focus_out), window, 0);
 			g_signal_connect_object (window->details->name_field, "activate",
 						 G_CALLBACK (name_field_activate), window, 0);
@@ -1001,7 +1001,7 @@ start_deep_count_for_file (NautilusPropertiesWindow *window,
 		nautilus_file_recompute_deep_counts (file);
 		if (!window->details->deep_count_finished) {
 			g_signal_connect_object (file,
-						 "updated_deep_count_in_progress",
+						 "updated-deep-count-in-progress",
 						 G_CALLBACK (schedule_directory_contents_update),
 						 window, G_CONNECT_SWAPPED);
 			schedule_start_spinner (window);
@@ -2163,7 +2163,7 @@ directory_contents_value_field_update (NautilusPropertiesWindow *window)
 				text = g_strdup (_("unreadable"));
 			}
 		} else {
-			text = g_strdup ("...");
+			text = g_strdup ("…");
 		}
 	} else {
 		char *size_str;
@@ -4577,7 +4577,7 @@ create_permissions_page (NautilusPropertiesWindow *window)
 							   "width", 2,
 							   NULL);
 
-			button = gtk_button_new_with_mnemonic (_("Change Permissions for Enclosed Files..."));
+			button = gtk_button_new_with_mnemonic (_("Change Permissions for Enclosed Files…"));
 			gtk_widget_show (button);
 			gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 			g_signal_connect (button, "clicked",
@@ -5217,6 +5217,9 @@ real_destroy (GtkWidget *object)
 
 	remove_window (window);
 
+	unschedule_or_cancel_group_change (window);
+	unschedule_or_cancel_owner_change (window);
+
 	for (l = window->details->original_files; l != NULL; l = l->next) {
 		nautilus_file_monitor_remove (NAUTILUS_FILE (l->data), &window->details->original_files);
 	}
@@ -5236,11 +5239,9 @@ real_destroy (GtkWidget *object)
 		g_source_remove (window->details->deep_count_spinner_timeout_id);
 	}
 
-	for (l = window->details->deep_count_files; l != NULL; l = l->next) {
-		stop_deep_count_for_file (window, l->data);
+	while (window->details->deep_count_files) {
+		stop_deep_count_for_file (window, window->details->deep_count_files->data);
 	}
-	g_list_free (window->details->deep_count_files);
-	window->details->deep_count_files = NULL;
 
 	window->details->name_field = NULL;
 

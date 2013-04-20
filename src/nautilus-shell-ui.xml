@@ -15,7 +15,7 @@
 <accelerator action="ZoomOutAccel"/>
 <accelerator action="PromptLocationAccel"/>
 <accelerator action="ReloadAccel"/>
-<popup name="ViewMenu">
+<popup name="ViewMenu" accelerators="true">
   <placeholder name="Zoom Items Placeholder">
     <menuitem name="Zoom In" action="Zoom In"/>
     <menuitem name="Zoom Out" action="Zoom Out"/>
@@ -33,7 +33,7 @@
   <separator/>
   <placeholder name="View Details"/>
 </popup>
-<popup name="ActionMenu">
+<popup name="ActionMenu" accelerators="true">
   <placeholder name="New Items Placeholder">
     <menuitem name="New Tab" action="New Tab"/>
     <menuitem name="New Window" action="New Window"/>

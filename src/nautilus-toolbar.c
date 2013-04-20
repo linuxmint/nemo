@@ -34,6 +34,7 @@
 #include <libnautilus-private/nautilus-global-preferences.h>
 #include <libnautilus-private/nautilus-ui-utilities.h>
 
+#include <glib/gi18n.h>
 #include <math.h>
 
 typedef enum {
@@ -100,7 +101,8 @@ static GtkWidget *
 toolbar_create_toolbutton (NautilusToolbar *self,
 			   gboolean create_menu,
 			   gboolean create_toggle,
-			   const gchar *name)
+			   const gchar *name,
+			   const gchar *tooltip)
 {
 	GtkWidget *button, *image;
 	GtkActionGroup *action_group;
@@ -124,10 +126,12 @@ toolbar_create_toolbutton (NautilusToolbar *self,
 	if (create_menu) {
 		gtk_image_set_from_icon_name (GTK_IMAGE (image), name,
 					      GTK_ICON_SIZE_MENU);
+		gtk_widget_set_tooltip_text (button, tooltip);
 	} else {
 		action = gtk_action_group_get_action (action_group, name);
 		gtk_activatable_set_related_action (GTK_ACTIVATABLE (button), action);
 		gtk_button_set_label (GTK_BUTTON (button), NULL);
+		gtk_widget_set_tooltip_text (button, gtk_action_get_tooltip (action));
 	}
 
 	return button;
@@ -171,8 +175,9 @@ fill_menu (NautilusWindow *window,
 	GList *list;
 
 	slot = nautilus_window_get_active_slot (window);
+	list = back ? nautilus_window_slot_get_back_history (slot) :
+		nautilus_window_slot_get_forward_history (slot);
 
-	list = back ? slot->back_list : slot->forward_list;
 	index = 0;
 	while (list != NULL) {
 		menu_item = nautilus_bookmark_menu_item_new (NAUTILUS_BOOKMARK (list->data));
@@ -190,17 +195,77 @@ fill_menu (NautilusWindow *window,
 	}
 }
 
+/* adapted from gtk/gtkmenubutton.c */
+static void
+menu_position_func (GtkMenu       *menu,
+		    gint          *x,
+		    gint          *y,
+		    gboolean      *push_in,
+		    GtkWidget     *widget)
+{
+	GtkWidget *toplevel;
+	GtkRequisition menu_req;
+	GdkRectangle monitor;
+	gint monitor_num;
+	GdkScreen *screen;
+	GdkWindow *window;
+	GtkAllocation allocation;
+
+	/* Set the dropdown menu hint on the toplevel, so the WM can omit the top side
+	 * of the shadows.
+	 */
+	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (menu));
+	gtk_window_set_type_hint (GTK_WINDOW (toplevel), GDK_WINDOW_TYPE_HINT_DROPDOWN_MENU);
+
+	window = gtk_widget_get_window (widget);
+	screen = gtk_widget_get_screen (GTK_WIDGET (menu));
+	monitor_num = gdk_screen_get_monitor_at_window (screen, window);
+	if (monitor_num < 0) {
+		monitor_num = 0;
+	}
+
+	gdk_screen_get_monitor_workarea (screen, monitor_num, &monitor);
+	gtk_widget_get_preferred_size (GTK_WIDGET (menu), &menu_req, NULL);
+	gtk_widget_get_allocation (widget, &allocation);
+	gdk_window_get_origin (window, x, y);
+
+	*x += allocation.x;
+	*y += allocation.y;
+
+	if (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) {
+		*x -= MAX (menu_req.width - allocation.width, 0);
+	} else {
+		*x += MAX (allocation.width - menu_req.width, 0);
+	}
+
+	if ((*y + allocation.height + menu_req.height) <= monitor.y + monitor.height) {
+		*y += allocation.height;
+	} else if ((*y - menu_req.height) >= monitor.y) {
+		*y -= menu_req.height;
+	} else if (monitor.y + monitor.height - (*y + allocation.height) > *y) {
+		*y += allocation.height;
+	} else {
+		*y -= menu_req.height;
+	}
+
+	*push_in = FALSE;
+}
+
 static void
 show_menu (NautilusToolbar *self,
-	   NautilusNavigationDirection direction,
+	   GtkWidget *widget,
            guint button,
            guint32 event_time)
 {
 	NautilusWindow *window;
 	GtkWidget *menu;
+	NautilusNavigationDirection direction;
 
 	window = self->priv->window;
 	menu = gtk_menu_new ();
+
+	direction = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (widget),
+							 "nav-direction"));
 
 	switch (direction) {
 	case NAUTILUS_NAVIGATION_DIRECTION_FORWARD:
@@ -214,7 +279,8 @@ show_menu (NautilusToolbar *self,
 		break;
 	}
 
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL,
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL,
+			(GtkMenuPositionFunc) menu_position_func, widget,
                         button, event_time);
 }
 
@@ -222,7 +288,7 @@ show_menu (NautilusToolbar *self,
 
 typedef struct {
 	NautilusToolbar *self;
-	NautilusNavigationDirection direction;
+	GtkWidget *widget;
 } ScheduleMenuData;
 
 static void
@@ -236,7 +302,7 @@ popup_menu_timeout_cb (gpointer user_data)
 {
 	ScheduleMenuData *data = user_data;
 
-        show_menu (data->self, data->direction,
+        show_menu (data->self, data->widget,
 		   1, gtk_get_current_event_time ());
 
         return FALSE;
@@ -253,7 +319,7 @@ unschedule_menu_popup_timeout (NautilusToolbar *self)
 
 static void
 schedule_menu_popup_timeout (NautilusToolbar *self,
-			     NautilusNavigationDirection direction)
+			     GtkWidget *widget)
 {
 	ScheduleMenuData *data;
 
@@ -262,7 +328,7 @@ schedule_menu_popup_timeout (NautilusToolbar *self,
 
 	data = g_slice_new0 (ScheduleMenuData);
 	data->self = self;
-	data->direction = direction;
+	data->widget = widget;
 
         self->priv->popup_timeout_id =
                 g_timeout_add_full (G_PRIORITY_DEFAULT, MENU_POPUP_TIMEOUT,
@@ -276,19 +342,15 @@ tool_button_press_cb (GtkButton *button,
                       gpointer user_data)
 {
         NautilusToolbar *self = user_data;
-	NautilusNavigationDirection direction;
-
-	direction = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (button),
-							 "nav-direction"));
 
         if (event->button == 3) {
                 /* right click */
-                show_menu (self, direction, event->button, event->time);
+                show_menu (self, GTK_WIDGET (button), event->button, event->time);
                 return TRUE;
         }
 
         if (event->button == 1) {
-                schedule_menu_popup_timeout (self, direction);
+                schedule_menu_popup_timeout (self, GTK_WIDGET (button));
         }
 
 	return FALSE;
@@ -317,6 +379,21 @@ navigation_button_setup_menu (NautilusToolbar *self,
 			  G_CALLBACK (tool_button_press_cb), self);
 	g_signal_connect (button, "button-release-event",
 			  G_CALLBACK (tool_button_release_cb), self);
+}
+
+static gboolean
+gear_menu_key_press (GtkWidget *widget,
+                     GdkEventKey *event,
+                     gpointer user_data)
+{
+        GdkModifierType mask = gtk_accelerator_get_default_mod_mask ();
+
+        if ((event->state & mask) == 0 && (event->keyval == GDK_KEY_F10)) {
+            gtk_menu_shell_deactivate (GTK_MENU_SHELL (widget));
+            return TRUE;
+        }
+
+        return FALSE;
 }
 
 static void
@@ -355,12 +432,12 @@ nautilus_toolbar_constructed (GObject *obj)
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
 	/* Back */
-	tool_button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_BACK);
+	tool_button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_BACK, NULL);
 	navigation_button_setup_menu (self, tool_button, NAUTILUS_NAVIGATION_DIRECTION_BACK);
 	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
 
 	/* Forward */
-	tool_button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_FORWARD);
+	tool_button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_FORWARD, NULL);
 	navigation_button_setup_menu (self, tool_button, NAUTILUS_NAVIGATION_DIRECTION_FORWARD);
 	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
 
@@ -394,7 +471,7 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	/* search */
 	tool_item = gtk_tool_item_new ();
-	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_SEARCH);
+	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_SEARCH, NULL);
 	gtk_container_add (GTK_CONTAINER (tool_item), GTK_WIDGET (tool_button));
 	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_item));
 	gtk_widget_show_all (GTK_WIDGET (tool_item));
@@ -404,11 +481,11 @@ nautilus_toolbar_constructed (GObject *obj)
 	tool_item = gtk_tool_item_new ();
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
-	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_VIEW_LIST);
+	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_VIEW_LIST, NULL);
 	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
-	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_VIEW_GRID);
+	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_VIEW_GRID, NULL);
 	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
-	tool_button = toolbar_create_toolbutton (self, TRUE, FALSE, "go-down-symbolic");
+	tool_button = toolbar_create_toolbutton (self, TRUE, FALSE, "go-down-symbolic", _("View options"));
 	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
 	menu = gtk_ui_manager_get_widget (ui_manager, "/ViewMenu");
 	gtk_menu_button_set_popup (GTK_MENU_BUTTON (tool_button), menu);
@@ -425,11 +502,12 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	/* Action Menu */
 	tool_item = gtk_tool_item_new ();
-	tool_button = toolbar_create_toolbutton (self, TRUE, FALSE, "emblem-system-symbolic");
+	tool_button = toolbar_create_toolbutton (self, TRUE, FALSE, "emblem-system-symbolic", _("Location options"));
 	menu = gtk_ui_manager_get_widget (ui_manager, "/ActionMenu");
 	gtk_widget_set_halign (menu, GTK_ALIGN_END);
 	gtk_menu_button_set_popup (GTK_MENU_BUTTON (tool_button), menu);
 	gtk_actionable_set_action_name (GTK_ACTIONABLE (tool_button), "win.gear-menu");
+        g_signal_connect (menu, "key-press-event", G_CALLBACK (gear_menu_key_press), self);
 
 	gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
 	gtk_container_add (GTK_CONTAINER (toolbar), GTK_WIDGET (tool_item));

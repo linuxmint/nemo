@@ -138,8 +138,7 @@ typedef struct {
 	char *action_descriptions[LAST_ACTION];
 } NautilusCanvasContainerAccessiblePrivate;
 
-static AtkObject *   get_accessible                                 (GtkWidget *widget);
-
+static GType         nautilus_canvas_container_accessible_get_type  (void);
 static void          preview_selected_items                         (NautilusCanvasContainer *container);
 static void          activate_selected_items                        (NautilusCanvasContainer *container);
 static void          activate_selected_items_alternate              (NautilusCanvasContainer *container,
@@ -227,6 +226,7 @@ enum {
 	MIDDLE_CLICK,
 	GET_CONTAINER_URI,
 	GET_ICON_URI,
+	GET_ICON_ACTIVATION_URI,
 	GET_ICON_DROP_TARGET_URI,
 	GET_STORED_ICON_POSITION,
 	ICON_POSITION_CHANGED,
@@ -242,6 +242,7 @@ enum {
 	HANDLE_URI_LIST,
 	HANDLE_TEXT,
 	HANDLE_RAW,
+	HANDLE_HOVER,
 	SELECTION_CHANGED,
 	ICON_ADDED,
 	ICON_REMOVED,
@@ -3862,21 +3863,15 @@ realize (GtkWidget *widget)
 
 	container = NAUTILUS_CANVAS_CONTAINER (widget);
 
-	/* Ensure that the desktop window is native so the background
-	   set on it is drawn by X. */
-	if (container->details->is_desktop) {
-		gdk_x11_window_get_xid (gtk_layout_get_bin_window (GTK_LAYOUT (widget)));
-	}
-
 	/* Set up DnD.  */
 	nautilus_canvas_dnd_init (container);
 
 	hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (widget));
-	g_signal_connect (hadj, "value_changed",
+	g_signal_connect (hadj, "value-changed",
 			  G_CALLBACK (handle_hadjustment_changed), widget);
 
 	vadj = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (widget));
-	g_signal_connect (vadj, "value_changed",
+	g_signal_connect (vadj, "value-changed",
 			  G_CALLBACK (handle_vadjustment_changed), widget);
 
 }
@@ -4713,7 +4708,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 	/* Signals.  */
 
 	signals[SELECTION_CHANGED]
-		= g_signal_new ("selection_changed",
+		= g_signal_new ("selection-changed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4722,7 +4717,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                g_cclosure_marshal_VOID__VOID,
 		                G_TYPE_NONE, 0);
 	signals[BUTTON_PRESS]
-		= g_signal_new ("button_press",
+		= g_signal_new ("button-press",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4742,7 +4737,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ACTIVATE_ALTERNATE]
-		= g_signal_new ("activate_alternate",
+		= g_signal_new ("activate-alternate",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4752,7 +4747,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ACTIVATE_PREVIEWER]
-		= g_signal_new ("activate_previewer",
+		= g_signal_new ("activate-previewer",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4762,7 +4757,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                G_TYPE_NONE, 2,
 				G_TYPE_POINTER, G_TYPE_POINTER);
 	signals[CONTEXT_CLICK_SELECTION]
-		= g_signal_new ("context_click_selection",
+		= g_signal_new ("context-click-selection",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4772,7 +4767,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[CONTEXT_CLICK_BACKGROUND]
-		= g_signal_new ("context_click_background",
+		= g_signal_new ("context-click-background",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4782,7 +4777,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[MIDDLE_CLICK]
-		= g_signal_new ("middle_click",
+		= g_signal_new ("middle-click",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4792,7 +4787,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ICON_POSITION_CHANGED]
-		= g_signal_new ("icon_position_changed",
+		= g_signal_new ("icon-position-changed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4803,7 +4798,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_POINTER);
 	signals[ICON_STRETCH_STARTED]
-		= g_signal_new ("icon_stretch_started",
+		= g_signal_new ("icon-stretch-started",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4813,7 +4808,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ICON_STRETCH_ENDED]
-		= g_signal_new ("icon_stretch_ended",
+		= g_signal_new ("icon-stretch-ended",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4823,7 +4818,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ICON_RENAME_STARTED]
-		= g_signal_new ("icon_rename_started",
+		= g_signal_new ("icon-rename-started",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4833,7 +4828,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ICON_RENAME_ENDED]
-		= g_signal_new ("icon_rename_ended",
+		= g_signal_new ("icon-rename-ended",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4844,7 +4839,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_STRING);
 	signals[GET_ICON_URI]
-		= g_signal_new ("get_icon_uri",
+		= g_signal_new ("get-icon-uri",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4853,8 +4848,18 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                g_cclosure_marshal_generic,
 		                G_TYPE_STRING, 1,
 				G_TYPE_POINTER);
+	signals[GET_ICON_ACTIVATION_URI]
+		= g_signal_new ("get-icon-activation-uri",
+		                G_TYPE_FROM_CLASS (class),
+		                G_SIGNAL_RUN_LAST,
+		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
+						 get_icon_activation_uri),
+		                NULL, NULL,
+		                g_cclosure_marshal_generic,
+		                G_TYPE_STRING, 1,
+				G_TYPE_POINTER);
 	signals[GET_ICON_DROP_TARGET_URI]
-		= g_signal_new ("get_icon_drop_target_uri",
+		= g_signal_new ("get-icon-drop-target-uri",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4864,7 +4869,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                G_TYPE_STRING, 1,
 				G_TYPE_POINTER);
 	signals[MOVE_COPY_ITEMS] 
-		= g_signal_new ("move_copy_items",
+		= g_signal_new ("move-copy-items",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
@@ -4879,7 +4884,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				G_TYPE_INT,
 				G_TYPE_INT);
 	signals[HANDLE_NETSCAPE_URL]
-		= g_signal_new ("handle_netscape_url",
+		= g_signal_new ("handle-netscape-url",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
@@ -4893,7 +4898,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				G_TYPE_INT,
 				G_TYPE_INT);
 	signals[HANDLE_URI_LIST] 
-		= g_signal_new ("handle_uri_list",
+		= g_signal_new ("handle-uri-list",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
@@ -4907,7 +4912,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				G_TYPE_INT,
 				G_TYPE_INT);
 	signals[HANDLE_TEXT]
-		= g_signal_new ("handle_text",
+		= g_signal_new ("handle-text",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
@@ -4921,7 +4926,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				G_TYPE_INT,
 				G_TYPE_INT);
 	signals[HANDLE_RAW]
-		= g_signal_new ("handle_raw",
+		= g_signal_new ("handle-raw",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4936,8 +4941,18 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				GDK_TYPE_DRAG_ACTION,
 				G_TYPE_INT,
 				G_TYPE_INT);
+	signals[HANDLE_HOVER] =
+		g_signal_new ("handle-hover",
+			      G_TYPE_FROM_CLASS (class),
+			      G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (NautilusCanvasContainerClass,
+					       handle_hover),
+			      NULL, NULL,
+			      g_cclosure_marshal_generic,
+			      G_TYPE_NONE, 1,
+			      G_TYPE_STRING);
 	signals[GET_CONTAINER_URI] 
-		= g_signal_new ("get_container_uri",
+		= g_signal_new ("get-container-uri",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
@@ -4946,7 +4961,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                g_cclosure_marshal_generic,
 		                G_TYPE_STRING, 0);
 	signals[CAN_ACCEPT_ITEM] 
-		= g_signal_new ("can_accept_item",
+		= g_signal_new ("can-accept-item",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass, 
@@ -4957,7 +4972,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_STRING);
 	signals[GET_STORED_ICON_POSITION]
-		= g_signal_new ("get_stored_icon_position",
+		= g_signal_new ("get-stored-icon-position",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4968,7 +4983,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_POINTER);
 	signals[GET_STORED_LAYOUT_TIMESTAMP]
-		= g_signal_new ("get_stored_layout_timestamp",
+		= g_signal_new ("get-stored-layout-timestamp",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4979,7 +4994,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_POINTER);
 	signals[STORE_LAYOUT_TIMESTAMP]
-		= g_signal_new ("store_layout_timestamp",
+		= g_signal_new ("store-layout-timestamp",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4990,7 +5005,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_POINTER);
 	signals[LAYOUT_CHANGED]
-		= g_signal_new ("layout_changed",
+		= g_signal_new ("layout-changed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -4999,7 +5014,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                g_cclosure_marshal_VOID__VOID,
 		                G_TYPE_NONE, 0);
 	signals[BAND_SELECT_STARTED]
-		= g_signal_new ("band_select_started",
+		= g_signal_new ("band-select-started",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -5008,7 +5023,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                g_cclosure_marshal_VOID__VOID,
 		                G_TYPE_NONE, 0);
 	signals[BAND_SELECT_ENDED]
-		= g_signal_new ("band_select_ended",
+		= g_signal_new ("band-select-ended",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -5017,7 +5032,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                g_cclosure_marshal_VOID__VOID,
 		                G_TYPE_NONE, 0);
 	signals[ICON_ADDED]
-		= g_signal_new ("icon_added",
+		= g_signal_new ("icon-added",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -5026,7 +5041,7 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 		                g_cclosure_marshal_VOID__POINTER,
 		                G_TYPE_NONE, 1, G_TYPE_POINTER);
 	signals[ICON_REMOVED]
-		= g_signal_new ("icon_removed",
+		= g_signal_new ("icon-removed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NautilusCanvasContainerClass,
@@ -5062,10 +5077,11 @@ nautilus_canvas_container_class_init (NautilusCanvasContainerClass *class)
 	widget_class->popup_menu = popup_menu;
 	widget_class->style_updated = style_updated;
 	widget_class->grab_notify = grab_notify_cb;
-	widget_class->get_accessible = get_accessible;
 
 	canvas_class = EEL_CANVAS_CLASS (class);
 	canvas_class->draw_background = draw_canvas_background;
+
+	gtk_widget_class_set_accessible_type (widget_class, nautilus_canvas_container_accessible_get_type ());
 
 	gtk_widget_class_install_style_property (widget_class,
 						 g_param_spec_boolean ("activate_prelight_icon_label",
@@ -6959,6 +6975,20 @@ nautilus_canvas_container_get_icon_uri (NautilusCanvasContainer *container,
 }
 
 char *
+nautilus_canvas_container_get_icon_activation_uri (NautilusCanvasContainer *container,
+						   NautilusCanvasIcon *icon)
+{
+	char *uri;
+
+	uri = NULL;
+	g_signal_emit (container,
+		       signals[GET_ICON_ACTIVATION_URI], 0,
+		       icon->data,
+		       &uri);
+	return uri;
+}
+
+char *
 nautilus_canvas_container_get_icon_drop_target_uri (NautilusCanvasContainer *container,
 						      NautilusCanvasIcon *icon)
 {
@@ -7716,7 +7746,7 @@ static void
 nautilus_canvas_container_accessible_selection_changed_cb (NautilusCanvasContainer *container,
 							   gpointer data)
 {
-	g_signal_emit_by_name (data, "selection_changed");
+	g_signal_emit_by_name (data, "selection-changed");
 }
 
 static void
@@ -7736,7 +7766,7 @@ nautilus_canvas_container_accessible_icon_added_cb (NautilusCanvasContainer *con
 			(G_OBJECT (icon->item));
 		index = g_list_index (container->details->icons, icon);
 		
-		g_signal_emit_by_name (atk_parent, "children_changed::add",
+		g_signal_emit_by_name (atk_parent, "children-changed::add",
 				       index, atk_child, NULL);
 	}
 }
@@ -7758,7 +7788,7 @@ nautilus_canvas_container_accessible_icon_removed_cb (NautilusCanvasContainer *c
 			(G_OBJECT (icon->item));
 		index = g_list_index (container->details->icons, icon);
 		
-		g_signal_emit_by_name (atk_parent, "children_changed::remove",
+		g_signal_emit_by_name (atk_parent, "children-changed::remove",
 				       index, atk_child, NULL);
 	}
 }
@@ -7767,7 +7797,7 @@ static void
 nautilus_canvas_container_accessible_cleared_cb (NautilusCanvasContainer *container, 
 						 gpointer data)
 {
-	g_signal_emit_by_name (data, "children_changed", 0, NULL, NULL);
+	g_signal_emit_by_name (data, "children-changed", 0, NULL, NULL);
 }
 
 static gboolean 
@@ -8032,8 +8062,6 @@ nautilus_canvas_container_accessible_ref_child (AtkObject *accessible, int i)
         }
 }
 
-static GType nautilus_canvas_container_accessible_get_type (void);
-
 G_DEFINE_TYPE_WITH_CODE (NautilusCanvasContainerAccessible, nautilus_canvas_container_accessible,
 			 eel_canvas_accessible_get_type (),
 			 G_IMPLEMENT_INTERFACE (ATK_TYPE_ACTION, nautilus_canvas_container_accessible_action_interface_init)
@@ -8054,13 +8082,13 @@ nautilus_canvas_container_accessible_initialize (AtkObject *accessible,
 			(ATK_OBJECT (accessible));
 		
 		container = NAUTILUS_CANVAS_CONTAINER (gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible)));
-		g_signal_connect (container, "selection_changed",
+		g_signal_connect (container, "selection-changed",
 				  G_CALLBACK (nautilus_canvas_container_accessible_selection_changed_cb), 
 				  accessible);
-		g_signal_connect (container, "icon_added",
+		g_signal_connect (container, "icon-added",
 				  G_CALLBACK (nautilus_canvas_container_accessible_icon_added_cb), 
 				  accessible);
-		g_signal_connect (container, "icon_removed",
+		g_signal_connect (container, "icon-removed",
 				  G_CALLBACK (nautilus_canvas_container_accessible_icon_removed_cb), 
 				  accessible);
 		g_signal_connect (container, "cleared",
@@ -8110,20 +8138,6 @@ nautilus_canvas_container_accessible_class_init (NautilusCanvasContainerAccessib
 	atk_class->initialize = nautilus_canvas_container_accessible_initialize;
 
 	g_type_class_add_private (klass, sizeof (NautilusCanvasContainerAccessiblePrivate));
-}
-
-static AtkObject *
-get_accessible (GtkWidget *widget)
-{
-	AtkObject *accessible;
-	
-	if ((accessible = eel_accessibility_get_atk_object (widget))) {
-		return accessible;
-	}
-
-	accessible = g_object_new (nautilus_canvas_container_accessible_get_type (), "widget", widget, NULL);
-
-	return eel_accessibility_set_atk_object_return (widget, accessible);
 }
 
 gboolean

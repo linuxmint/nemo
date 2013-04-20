@@ -213,10 +213,10 @@ nautilus_path_bar_init (NautilusPathBar *path_bar)
         g_signal_connect_swapped (path_bar->priv->up_slider_button, "clicked", G_CALLBACK (nautilus_path_bar_scroll_up), path_bar);
         g_signal_connect_swapped (path_bar->priv->down_slider_button, "clicked", G_CALLBACK (nautilus_path_bar_scroll_down), path_bar);
 
-        g_signal_connect (path_bar->priv->up_slider_button, "button_press_event", G_CALLBACK (nautilus_path_bar_slider_button_press), path_bar);
-        g_signal_connect (path_bar->priv->up_slider_button, "button_release_event", G_CALLBACK (nautilus_path_bar_slider_button_release), path_bar);
-        g_signal_connect (path_bar->priv->down_slider_button, "button_press_event", G_CALLBACK (nautilus_path_bar_slider_button_press), path_bar);
-        g_signal_connect (path_bar->priv->down_slider_button, "button_release_event", G_CALLBACK (nautilus_path_bar_slider_button_release), path_bar);
+        g_signal_connect (path_bar->priv->up_slider_button, "button-press-event", G_CALLBACK (nautilus_path_bar_slider_button_press), path_bar);
+        g_signal_connect (path_bar->priv->up_slider_button, "button-release-event", G_CALLBACK (nautilus_path_bar_slider_button_release), path_bar);
+        g_signal_connect (path_bar->priv->down_slider_button, "button-press-event", G_CALLBACK (nautilus_path_bar_slider_button_press), path_bar);
+        g_signal_connect (path_bar->priv->down_slider_button, "button-release-event", G_CALLBACK (nautilus_path_bar_slider_button_release), path_bar);
 
 	gtk_drag_dest_set (GTK_WIDGET (path_bar->priv->up_slider_button),
 			   0, NULL, 0, 0);
@@ -1595,6 +1595,8 @@ make_button_data (NautilusPathBar  *path_bar,
 
         setup_button_type (button_data, path_bar, path);
         button_data->button = gtk_toggle_button_new ();
+	gtk_style_context_add_class (gtk_widget_get_style_context (button_data->button),
+				     "text-button");
 	gtk_button_set_focus_on_click (GTK_BUTTON (button_data->button), FALSE);
 	gtk_widget_add_events (button_data->button, GDK_SCROLL_MASK);
 	/* TODO update button type when xdg directories change */

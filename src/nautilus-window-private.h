@@ -44,12 +44,6 @@ struct NautilusWindowDetails
         guint extensions_menu_merge_id;
         GtkActionGroup *extensions_menu_action_group;
 
-	/* Ensures that we do not react on signals of a
-	 * view that is re-used as new view when its loading
-	 * is cancelled
-	 */
-	gboolean temporarily_ignore_view_signals;
-
         GtkWidget *notebook;
 
         /* available slots, and active slot.
@@ -98,9 +92,6 @@ typedef void (*NautilusBookmarkFailedCallback) (NautilusWindow *window,
 
 void               nautilus_window_load_extension_menus                  (NautilusWindow    *window);
 
-NautilusWindowSlot *nautilus_window_get_slot_for_view                    (NautilusWindow *window,
-									  NautilusView   *view);
-
 void                 nautilus_window_set_active_slot                     (NautilusWindow    *window,
 									  NautilusWindowSlot *slot);
 
@@ -116,11 +107,6 @@ void nautilus_window_sync_title            (NautilusWindow *window,
 					    NautilusWindowSlot *slot);
 void nautilus_window_sync_zoom_widgets     (NautilusWindow *window);
 void nautilus_window_sync_up_button        (NautilusWindow *window);
-void nautilus_window_sync_view_as_menus    (NautilusWindow *window);
-
-
-void nautilus_window_set_search_visible   (NautilusWindow *window,
-                                           gboolean        visible);
 
 /* window menus */
 void               nautilus_window_initialize_actions                    (NautilusWindow    *window);

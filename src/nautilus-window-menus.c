@@ -36,7 +36,6 @@
 #include "nautilus-file-management-properties.h"
 #include "nautilus-list-view.h"
 #include "nautilus-notebook.h"
-#include "nautilus-window-manage-views.h"
 #include "nautilus-window-private.h"
 #include "nautilus-desktop-window.h"
 #include "nautilus-properties-window.h"
@@ -149,7 +148,7 @@ action_location_properties_callback (GtkAction *action,
 
 	nautilus_properties_window_present (files, GTK_WIDGET (view), NULL);
 
-	nautilus_file_list_free (files);
+	g_list_free (files);
 }
 
 static NautilusView *
@@ -310,15 +309,11 @@ action_add_bookmark_callback (GtkAction *action,
 {
 	NautilusWindow *window = user_data;
 	NautilusApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
-	NautilusBookmark *bookmark;
 	NautilusWindowSlot *slot;
-	NautilusBookmarkList *list;
 
 	slot = nautilus_window_get_active_slot (window);
-	bookmark = slot->current_location_bookmark;
-	list = nautilus_application_get_bookmarks (app);
-
-	nautilus_bookmark_list_append (list, bookmark);
+	nautilus_bookmark_list_append (nautilus_application_get_bookmarks (app),
+				       nautilus_window_slot_get_bookmark (slot));
 }
 
 static void
@@ -421,9 +416,11 @@ action_show_hide_search_callback (GtkAction *action,
 				  NautilusWindow *window)
 {
 	gboolean active;
+	NautilusWindowSlot *slot;
 
 	active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
-	nautilus_window_set_search_visible (window, active);
+	slot = nautilus_window_get_active_slot (window);
+	nautilus_window_slot_set_search_visible (slot, active);
 }
 
 static void
@@ -529,7 +526,7 @@ static const GtkActionEntry main_entries[] = {
   /* tooltip */                  N_("Use the normal view size"),
                                  G_CALLBACK (action_zoom_normal_callback) },
   /* name, stock id */         { NAUTILUS_ACTION_CONNECT_TO_SERVER, NULL, 
-  /* label, accelerator */       N_("Connect to _Server..."), NULL,
+  /* label, accelerator */       N_("Connect to _Server…"), NULL,
   /* tooltip */                  N_("Connect to a remote computer or shared disk"),
                                  G_CALLBACK (action_connect_to_server_callback) },
   /* name, stock id */         { NAUTILUS_ACTION_GO_HOME, NAUTILUS_ICON_HOME,
@@ -551,13 +548,13 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { NAUTILUS_ACTION_FORWARD, "go-next-symbolic", N_("_Forward"),
 				 "<alt>Right", N_("Go to the next visited location"),
 				 G_CALLBACK (action_forward_callback) },
-  /* name, stock id, label */  { NAUTILUS_ACTION_ENTER_LOCATION, NULL, N_("Enter _Location..."),
+  /* name, stock id, label */  { NAUTILUS_ACTION_ENTER_LOCATION, NULL, N_("Enter _Location…"),
                                  "<control>L", N_("Specify a location to open"),
                                  G_CALLBACK (action_enter_location_callback) },
   /* name, stock id, label */  { NAUTILUS_ACTION_ADD_BOOKMARK, GTK_STOCK_ADD, N_("Bookmark this Location"),
                                  "<control>d", N_("Add a bookmark for the current location"),
                                  G_CALLBACK (action_add_bookmark_callback) },
-  /* name, stock id, label */  { NAUTILUS_ACTION_EDIT_BOOKMARKS, NULL, N_("_Bookmarks..."),
+  /* name, stock id, label */  { NAUTILUS_ACTION_EDIT_BOOKMARKS, NULL, N_("_Bookmarks…"),
                                  "<control>b", N_("Display and edit bookmarks"),
                                  G_CALLBACK (action_bookmarks_callback) },
   { "TabsPrevious", NULL, N_("_Previous Tab"), "<control>Page_Up",
@@ -589,7 +586,7 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
                              G_CALLBACK (action_show_hide_sidebar_callback),
   /* is_active */            TRUE },
   /* name, stock id */     { NAUTILUS_ACTION_SEARCH, "edit-find-symbolic",
-  /* label, accelerator */   N_("_Search for Files..."), "<control>f",
+  /* label, accelerator */   N_("_Search for Files…"), "<control>f",
   /* tooltip */              N_("Search documents and folders by name"),
 			     G_CALLBACK (action_show_hide_search_callback),
   /* is_active */            FALSE },
@@ -736,7 +733,7 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 	gtk_window_add_accel_group (GTK_WINDOW (window),
 				    gtk_ui_manager_get_accel_group (ui_manager));
 	
-	g_signal_connect (ui_manager, "connect_proxy",
+	g_signal_connect (ui_manager, "connect-proxy",
 			  G_CALLBACK (connect_proxy_cb), window);
 
 	/* add the UI */
@@ -756,6 +753,7 @@ nautilus_window_finalize_menus (NautilusWindow *window)
 static GList *
 get_extension_menus (NautilusWindow *window)
 {
+	NautilusFile *file;
 	NautilusWindowSlot *slot;
 	GList *providers;
 	GList *items;
@@ -765,6 +763,7 @@ get_extension_menus (NautilusWindow *window)
 	items = NULL;
 
 	slot = nautilus_window_get_active_slot (window);
+	file = nautilus_window_slot_get_file (slot);
 
 	for (l = providers; l != NULL; l = l->next) {
 		NautilusMenuProvider *provider;
@@ -773,7 +772,7 @@ get_extension_menus (NautilusWindow *window)
 		provider = NAUTILUS_MENU_PROVIDER (l->data);
 		file_items = nautilus_menu_provider_get_background_items (provider,
 									  GTK_WIDGET (window),
-									  slot->viewed_file);
+									  file);
 		items = g_list_concat (items, file_items);
 	}
 

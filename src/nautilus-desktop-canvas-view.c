@@ -30,7 +30,6 @@
 
 #include "nautilus-actions.h"
 #include "nautilus-canvas-view-container.h"
-#include "nautilus-view-factory.h"
 #include "nautilus-view.h"
 
 #include <X11/Xatom.h>
@@ -41,7 +40,6 @@
 #include <fcntl.h>
 #include <gdk/gdkx.h>
 #include <glib/gi18n.h>
-#include <libnautilus-private/nautilus-desktop-background.h>
 #include <libnautilus-private/nautilus-desktop-icon-file.h>
 #include <libnautilus-private/nautilus-directory-notify.h>
 #include <libnautilus-private/nautilus-file-changes-queue.h>
@@ -76,8 +74,6 @@ struct NautilusDesktopCanvasViewDetails
 	gulong delayed_init_signal;
 	guint reload_desktop_timeout;
 	gboolean pending_rescan;
-
-	NautilusDesktopBackground *background;
 };
 
 static void     default_zoom_level_changed                        (gpointer                user_data);
@@ -102,27 +98,27 @@ canvas_container_set_workarea (NautilusCanvasContainer *canvas_container,
 			     int                    n_items)
 {
 	int left, right, top, bottom;
+	int screen_width, screen_height;
 	int i;
-	GdkRectangle geometry;
 
 	left = right = top = bottom = 0;
-	gdk_screen_get_monitor_geometry (screen, gdk_screen_get_primary_monitor (screen), &geometry);
+
+	screen_width  = gdk_screen_get_width (screen);
+	screen_height = gdk_screen_get_height (screen);
 
 	for (i = 0; i < n_items; i += 4) {
-		GdkRectangle workarea;
+		int x      = workareas [i];
+		int y      = workareas [i + 1];
+		int width  = workareas [i + 2];
+		int height = workareas [i + 3];
 
-		workarea.x = workareas[i];
-		workarea.y = workareas[i + 1];
-		workarea.width = workareas[i + 2];
-		workarea.height = workareas[i + 3];
-
-		if (!gdk_rectangle_intersect (&geometry, &workarea, &workarea))
+		if ((x + width) > screen_width || (y + height) > screen_height)
 			continue;
 
-		left   = MAX (left, workarea.x);
-		right  = MAX (right, (geometry.x + geometry.width) - (workarea.x + workarea.width));
-		top    = MAX (top, workarea.y);
-		bottom = MAX (bottom, (geometry.y + geometry.height) - (workarea.y + workarea.height));
+		left   = MAX (left, x);
+		right  = MAX (right, screen_width - width - x);
+		top    = MAX (top, y);
+		bottom = MAX (bottom, screen_height - height - y);
 	}
 
 	nautilus_canvas_container_set_margins (canvas_container,
@@ -234,22 +230,6 @@ desktop_canvas_view_property_filter (GdkXEvent *gdk_xevent,
 	return GDK_FILTER_CONTINUE;
 }
 
-static void
-real_begin_loading (NautilusView *object)
-{
-	NautilusCanvasContainer *canvas_container;
-	NautilusDesktopCanvasView *view;
-
-	view = NAUTILUS_DESKTOP_CANVAS_VIEW (object);
-
-	canvas_container = get_canvas_container (view);
-	if (view->details->background == NULL) {
-		view->details->background = nautilus_desktop_background_new (canvas_container);
-	}
-
-	NAUTILUS_VIEW_CLASS (nautilus_desktop_canvas_view_parent_class)->begin_loading (object);
-}
-
 static const char *
 real_get_id (NautilusView *view)
 {
@@ -287,11 +267,6 @@ nautilus_desktop_canvas_view_dispose (GObject *object)
 					      nautilus_view_update_menus,
 					      canvas_view);
 
-	if (canvas_view->details->background != NULL) {
-		g_object_unref (canvas_view->details->background);
-		canvas_view->details->background = NULL;
-	}
-
 	G_OBJECT_CLASS (nautilus_desktop_canvas_view_parent_class)->dispose (object);
 }
 
@@ -304,82 +279,11 @@ nautilus_desktop_canvas_view_class_init (NautilusDesktopCanvasViewClass *class)
 
 	G_OBJECT_CLASS (class)->dispose = nautilus_desktop_canvas_view_dispose;
 
-	vclass->begin_loading = real_begin_loading;
 	vclass->merge_menus = real_merge_menus;
 	vclass->update_menus = real_update_menus;
 	vclass->get_view_id = real_get_id;
 
 	g_type_class_add_private (class, sizeof (NautilusDesktopCanvasViewDetails));
-}
-
-static void
-nautilus_desktop_canvas_view_handle_middle_click (NautilusCanvasContainer *canvas_container,
-						GdkEventButton *event,
-						NautilusDesktopCanvasView *desktop_canvas_view)
-{
-	XButtonEvent x_event;
-	GdkDevice *keyboard = NULL, *pointer = NULL, *cur;
-	GdkDeviceManager *manager;
-	GList *list, *l;
-
-	manager = gdk_display_get_device_manager (gtk_widget_get_display (GTK_WIDGET (canvas_container)));
-	list = gdk_device_manager_list_devices (manager, GDK_DEVICE_TYPE_MASTER);
-
-	for (l = list; l != NULL; l = l->next) {
-		cur = l->data;
-
-		if (pointer == NULL && (gdk_device_get_source (cur) == GDK_SOURCE_MOUSE)) {
-			pointer = cur;
-		}
-
-		if (keyboard == NULL && (gdk_device_get_source (cur) == GDK_SOURCE_KEYBOARD)) {
-			keyboard = cur;
-		}
-
-		if (pointer != NULL && keyboard != NULL) {
-			break;
-		}
-	}
-
-	g_list_free (list);
-
-	/* During a mouse click we have the pointer and keyboard grab.
-	 * We will send a fake event to the root window which will cause it
-	 * to try to get the grab so we need to let go ourselves.
-	 */
-
-	if (pointer != NULL) {
-		gdk_device_ungrab (pointer, GDK_CURRENT_TIME);
-	}
-
-	
-	if (keyboard != NULL) {
-		gdk_device_ungrab (keyboard, GDK_CURRENT_TIME);
-	}
-
-	/* Stop the event because we don't want anyone else dealing with it. */	
-	gdk_flush ();
-	g_signal_stop_emission_by_name (canvas_container, "middle_click");
-
-	/* build an X event to represent the middle click. */
-	x_event.type = ButtonPress;
-	x_event.send_event = True;
-	x_event.display = GDK_DISPLAY_XDISPLAY (gdk_display_get_default ());
-	x_event.window = GDK_ROOT_WINDOW ();
-	x_event.root = GDK_ROOT_WINDOW ();
-	x_event.subwindow = 0;
-	x_event.time = event->time;
-	x_event.x = event->x;
-	x_event.y = event->y;
-	x_event.x_root = event->x_root;
-	x_event.y_root = event->y_root;
-	x_event.state = event->state;
-	x_event.button = event->button;
-	x_event.same_screen = True;
-	
-	/* Send it to the root window, the window manager will handle it. */
-	XSendEvent (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), True,
-		    ButtonPressMask, (XEvent *) &x_event);
 }
 
 static void
@@ -415,6 +319,17 @@ realized_callback (GtkWidget *widget, NautilusDesktopCanvasView *desktop_canvas_
 	gdk_window_add_filter (root_window,
 			       desktop_canvas_view_property_filter,
 			       desktop_canvas_view);
+}
+
+static void
+desktop_canvas_container_realize (GtkWidget *widget,
+				  NautilusDesktopCanvasView *desktop_canvas_view)
+{
+	GdkWindow *bin_window;
+	GdkRGBA transparent = { 0, 0, 0, 0 };
+
+	bin_window = gtk_layout_get_bin_window (GTK_LAYOUT (widget));
+	gdk_window_set_background_rgba (bin_window, &transparent);
 }
 
 static NautilusZoomLevel
@@ -491,7 +406,7 @@ delayed_init (NautilusDesktopCanvasView *desktop_canvas_view)
 {
 	/* Keep track of the load time. */
 	g_signal_connect_object (nautilus_view_get_model (NAUTILUS_VIEW (desktop_canvas_view)),
-				 "done_loading",
+				 "done-loading",
 				 G_CALLBACK (done_loading), desktop_canvas_view, 0);
 
 	/* Monitor desktop directory. */
@@ -544,7 +459,6 @@ nautilus_desktop_canvas_view_init (NautilusDesktopCanvasView *desktop_canvas_vie
 		desktop_directory = nautilus_get_desktop_directory ();
 	}
 
-	nautilus_canvas_view_filter_by_screen (NAUTILUS_CANVAS_VIEW (desktop_canvas_view), TRUE);
 	canvas_container = get_canvas_container (desktop_canvas_view);
 	nautilus_canvas_container_set_use_drop_shadows (canvas_container, TRUE);
 	nautilus_canvas_view_container_set_sort_desktop (NAUTILUS_CANVAS_VIEW_CONTAINER (canvas_container), TRUE);
@@ -554,7 +468,7 @@ nautilus_desktop_canvas_view_init (NautilusDesktopCanvasView *desktop_canvas_vie
 	 */
 	if (!nautilus_monitor_active ()) {
 		desktop_canvas_view->details->delayed_init_signal = g_signal_connect_object
-			(desktop_canvas_view, "begin_loading",
+			(desktop_canvas_view, "begin-loading",
 			 G_CALLBACK (delayed_init), desktop_canvas_view, 0);
 	}
 	
@@ -581,9 +495,10 @@ nautilus_desktop_canvas_view_init (NautilusDesktopCanvasView *desktop_canvas_vie
 
 	nautilus_view_set_show_foreign (NAUTILUS_VIEW (desktop_canvas_view),
 					FALSE);
-	
-	g_signal_connect_object (canvas_container, "middle_click",
-				 G_CALLBACK (nautilus_desktop_canvas_view_handle_middle_click), desktop_canvas_view, 0);
+
+	g_signal_connect_object (canvas_container, "realize",
+				 G_CALLBACK (desktop_canvas_container_realize), desktop_canvas_view, 0);
+
 	g_signal_connect_object (desktop_canvas_view, "realize",
 				 G_CALLBACK (realized_callback), desktop_canvas_view, 0);
 	g_signal_connect_object (desktop_canvas_view, "unrealize",
@@ -738,7 +653,7 @@ real_update_menus (NautilusView *view)
 
 static const GtkActionEntry desktop_view_entries[] = {
 	/* name, stock id */
-	{ "Change Background", NULL,
+	{ NAUTILUS_ACTION_CHANGE_BACKGROUND, NULL,
 	  /* label, accelerator */
 	  N_("Change Desktop _Background"), NULL,
 	  /* tooltip */
@@ -761,7 +676,7 @@ static const GtkActionEntry desktop_view_entries[] = {
 	/* name, stock id */
          { "Stretch", NULL,
 	   /* label, accelerator */
-	   N_("Resize Icon..."), NULL,
+	   N_("Resize Icon…"), NULL,
 	   /* tooltip */
 	   N_("Make the selected icons resizable"),
 	   G_CALLBACK (action_stretch_callback) },
@@ -780,6 +695,8 @@ real_merge_menus (NautilusView *view)
 	NautilusDesktopCanvasView *desktop_view;
 	GtkUIManager *ui_manager;
 	GtkActionGroup *action_group;
+	GtkAction *action;
+	gchar *control_center_path;
 
 	NAUTILUS_VIEW_CLASS (nautilus_desktop_canvas_view_parent_class)->merge_menus (view);
 
@@ -814,14 +731,20 @@ real_merge_menus (NautilusView *view)
 			       NAUTILUS_ACTION_UNSTRETCH,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
+
+	control_center_path = g_find_program_in_path ("gnome-control-center");
+	if (control_center_path == NULL) {
+		action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_CHANGE_BACKGROUND);
+		gtk_action_set_visible (action, FALSE);
+	}
+
+	g_free (control_center_path);
 }
 
-static NautilusView *
-nautilus_desktop_canvas_view_create (NautilusWindowSlot *slot)
+NautilusView *
+nautilus_desktop_canvas_view_new (NautilusWindowSlot *slot)
 {
-	NautilusCanvasView *view;
-
-	view = g_object_new (NAUTILUS_TYPE_DESKTOP_CANVAS_VIEW,
+	return g_object_new (NAUTILUS_TYPE_DESKTOP_CANVAS_VIEW,
 			     "window-slot", slot,
 			     "supports-zooming", FALSE,
 			     "supports-auto-layout", FALSE,
@@ -829,37 +752,4 @@ nautilus_desktop_canvas_view_create (NautilusWindowSlot *slot)
 			     "supports-scaling", TRUE,
 			     "supports-keep-aligned", TRUE,
 			     NULL);
-	return NAUTILUS_VIEW (view);
-}
-
-static gboolean
-nautilus_desktop_canvas_view_supports_uri (const char *uri,
-				   GFileType file_type,
-				   const char *mime_type)
-{
-	if (g_str_has_prefix (uri, EEL_DESKTOP_URI)) {
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-static NautilusViewInfo nautilus_desktop_canvas_view = {
-	NAUTILUS_DESKTOP_CANVAS_VIEW_ID,
-	"Desktop View",
-	"_Desktop",
-	N_("The desktop view encountered an error."),
-	N_("The desktop view encountered an error while starting up."),
-	"Display this location with the desktop view.",
-	nautilus_desktop_canvas_view_create,
-	nautilus_desktop_canvas_view_supports_uri
-};
-
-void
-nautilus_desktop_canvas_view_register (void)
-{
-	nautilus_desktop_canvas_view.error_label = _(nautilus_desktop_canvas_view.error_label);
-	nautilus_desktop_canvas_view.startup_error_label = _(nautilus_desktop_canvas_view.startup_error_label);
-	
-	nautilus_view_factory_register (&nautilus_desktop_canvas_view);
 }

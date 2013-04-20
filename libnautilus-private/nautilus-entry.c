@@ -358,7 +358,7 @@ nautilus_entry_class_init (NautilusEntryClass *class)
 
 	/* Set up signals */
 	signals[SELECTION_CHANGED] = g_signal_new
-		("selection_changed",
+		("selection-changed",
 		 G_TYPE_FROM_CLASS (class),
 		 G_SIGNAL_RUN_LAST,
 		 G_STRUCT_OFFSET (NautilusEntryClass, selection_changed),

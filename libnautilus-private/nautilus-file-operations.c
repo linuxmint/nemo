@@ -1978,7 +1978,7 @@ trash_or_delete_internal (GList                  *files,
 	/* TODO: special case desktop icon link files ... */
 
 	job = op_job_new (DeleteJob, parent_window);
-	job->files = eel_g_object_list_copy (files);
+	job->files = g_list_copy_deep (files, (GCopyFunc) g_object_ref, NULL);
 	job->try_trash = try_trash;
 	job->user_cancel = FALSE;
 	job->done_callback = done_callback;
@@ -2028,10 +2028,24 @@ nautilus_file_operations_delete (GList                  *files,
 typedef struct {
 	gboolean eject;
 	GMount *mount;
+	GMountOperation *mount_operation;
 	GtkWindow *parent_window;
 	NautilusUnmountCallback callback;
 	gpointer callback_data;
 } UnmountData;
+
+static void
+unmount_data_free (UnmountData *data)
+{
+	if (data->parent_window) {
+		g_object_remove_weak_pointer (G_OBJECT (data->parent_window),
+					      (gpointer *) &data->parent_window);
+	}
+
+	g_clear_object (&data->mount_operation);
+	g_object_unref (data->mount);
+	g_free (data);
+}
 
 static void
 unmount_mount_callback (GObject *source_object,
@@ -2073,14 +2087,8 @@ unmount_mount_callback (GObject *source_object,
 	if (error != NULL) {
 		g_error_free (error);
 	}
-	
-	if (data->parent_window) {
-		g_object_remove_weak_pointer (G_OBJECT (data->parent_window),
-					      (gpointer *) &data->parent_window);
-	}
 
-	g_object_unref (data->mount);
-	g_free (data);
+	unmount_data_free (data);
 }
 
 static void
@@ -2088,7 +2096,11 @@ do_unmount (UnmountData *data)
 {
 	GMountOperation *mount_op;
 
-	mount_op = gtk_mount_operation_new (data->parent_window);
+	if (data->mount_operation) {
+		mount_op = g_object_ref (data->mount_operation);
+	} else {
+		mount_op = gtk_mount_operation_new (data->parent_window);
+	}
 	if (data->eject) {
 		g_mount_eject_with_operation (data->mount,
 					      0,
@@ -2260,6 +2272,7 @@ empty_trash_for_unmount_done (gboolean success,
 void
 nautilus_file_operations_unmount_mount_full (GtkWindow                      *parent_window,
 					     GMount                         *mount,
+					     GMountOperation                *mount_operation,
 					     gboolean                        eject,
 					     gboolean                        check_trash,
 					     NautilusUnmountCallback         callback,
@@ -2276,6 +2289,9 @@ nautilus_file_operations_unmount_mount_full (GtkWindow                      *par
 		g_object_add_weak_pointer (G_OBJECT (data->parent_window),
 					   (gpointer *) &data->parent_window);
 		
+	}
+	if (mount_operation) {
+		data->mount_operation = g_object_ref (mount_operation);
 	}
 	data->eject = eject;
 	data->mount = g_object_ref (mount);
@@ -2302,13 +2318,7 @@ nautilus_file_operations_unmount_mount_full (GtkWindow                      *par
 				callback (callback_data);
 			}
 
-			if (data->parent_window) {
-				g_object_remove_weak_pointer (G_OBJECT (data->parent_window),
-							      (gpointer *) &data->parent_window);
-			}
-
-			g_object_unref (data->mount);
-			g_free (data);
+			unmount_data_free (data);
 			return;
 		}
 	}
@@ -2322,7 +2332,7 @@ nautilus_file_operations_unmount_mount (GtkWindow                      *parent_w
 					gboolean                        eject,
 					gboolean                        check_trash)
 {
-	nautilus_file_operations_unmount_mount_full (parent_window, mount, eject,
+	nautilus_file_operations_unmount_mount_full (parent_window, mount, NULL, eject,
 						     check_trash, NULL, NULL);
 }
 
@@ -3258,18 +3268,28 @@ get_target_file_with_custom_name (GFile *src,
 
 	if (dest == NULL && !same_fs) {
 		info = g_file_query_info (src,
-					  G_FILE_ATTRIBUTE_STANDARD_COPY_NAME,
+					  G_FILE_ATTRIBUTE_STANDARD_COPY_NAME ","
+					  G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
 					  0, NULL, NULL);
 		
 		if (info) {
-			copyname = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+			copyname = NULL;
+
+			/* if file is being restored from trash make sure it uses its original name */
+			if (g_file_has_uri_scheme (src, "trash")) {
+				copyname = g_strdup (g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH));
+			}
+
+			if (copyname == NULL) {
+				copyname = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+			}
 
 			if (copyname) {
 				make_file_name_valid_for_dest_fs (copyname, dest_fs_type);
 				dest = g_file_get_child_for_display_name (dest_dir, copyname, NULL);
 				g_free (copyname);
 			}
-			
+
 			g_object_unref (info);
 		}
 	}
@@ -4656,7 +4676,7 @@ nautilus_file_operations_copy (GList *files,
 	job->desktop_location = nautilus_get_desktop_location ();
 	job->done_callback = done_callback;
 	job->done_callback_data = done_callback_data;
-	job->files = eel_g_object_list_copy (files);
+	job->files = g_list_copy_deep (files, (GCopyFunc) g_object_ref, NULL);
 	job->destination = g_object_ref (target_dir);
 	if (relative_item_points != NULL &&
 	    relative_item_points->len > 0) {
@@ -5194,7 +5214,7 @@ nautilus_file_operations_move (GList *files,
 	job->is_move = TRUE;
 	job->done_callback = done_callback;
 	job->done_callback_data = done_callback_data;
-	job->files = eel_g_object_list_copy (files);
+	job->files = g_list_copy_deep (files, (GCopyFunc) g_object_ref, NULL);
 	job->destination = g_object_ref (target_dir);
 	if (relative_item_points != NULL &&
 	    relative_item_points->len > 0) {
@@ -5520,7 +5540,7 @@ nautilus_file_operations_link (GList *files,
 	job = op_job_new (CopyMoveJob, parent_window);
 	job->done_callback = done_callback;
 	job->done_callback_data = done_callback_data;
-	job->files = eel_g_object_list_copy (files);
+	job->files = g_list_copy_deep (files, (GCopyFunc) g_object_ref, NULL);
 	job->destination = g_object_ref (target_dir);
 	if (relative_item_points != NULL &&
 	    relative_item_points->len > 0) {
@@ -5561,7 +5581,7 @@ nautilus_file_operations_duplicate (GList *files,
 	job = op_job_new (CopyMoveJob, parent_window);
 	job->done_callback = done_callback;
 	job->done_callback_data = done_callback_data;
-	job->files = eel_g_object_list_copy (files);
+	job->files = g_list_copy_deep (files, (GCopyFunc) g_object_ref, NULL);
 	job->destination = NULL;
 	if (relative_item_points != NULL &&
 	    relative_item_points->len > 0) {

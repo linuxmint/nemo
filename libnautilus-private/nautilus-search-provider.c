@@ -150,5 +150,7 @@ nautilus_search_provider_error (NautilusSearchProvider *provider, const char *er
 {
 	g_return_if_fail (NAUTILUS_IS_SEARCH_PROVIDER (provider));
 
+	g_warning ("Provider %s failed with error %s\n",
+		   G_OBJECT_TYPE_NAME (provider), error_message);
 	g_signal_emit (provider, signals[ERROR], 0, error_message);
 }

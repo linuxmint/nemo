@@ -50,6 +50,7 @@
 
 /* bool preferences */
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET "sort_folders_first_checkbutton"
+#define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_LIST_VIEW_USE_TREE_WIDGET "use_tree_view_checkbutton"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET "trash_confirm_checkbutton"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_TRASH_DELETE_WIDGET "trash_delete_checkbutton"
 #define NAUTILUS_FILE_MANAGEMENT_PROPERTIES_OPEN_NEW_WINDOW_WIDGET "new_window_checkbutton"
@@ -476,7 +477,7 @@ nautilus_file_management_properties_dialog_setup_list_column_page (GtkBuilder *b
 	chooser = nautilus_column_chooser_new (NULL);
 	g_signal_connect (chooser, "changed",
 			  G_CALLBACK (columns_changed_callback), chooser);
-	g_signal_connect (chooser, "use_default",
+	g_signal_connect (chooser, "use-default",
 			  G_CALLBACK (use_default_callback), chooser);
 
 	set_columns_from_settings (NAUTILUS_COLUMN_CHOOSER (chooser));
@@ -683,9 +684,12 @@ nautilus_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow
 	bind_builder_bool (builder, nautilus_preferences,
 			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_TRASH_DELETE_WIDGET,
 			   NAUTILUS_PREFERENCES_ENABLE_DELETE);
-	bind_builder_bool (builder, nautilus_preferences,
+	bind_builder_bool (builder, gtk_filechooser_preferences,
 			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_SHOW_HIDDEN_WIDGET,
 			   NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES);
+	bind_builder_bool (builder, nautilus_list_view_preferences,
+			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_LIST_VIEW_USE_TREE_WIDGET,
+			   NAUTILUS_PREFERENCES_LIST_VIEW_USE_TREE);
 
 	bind_builder_enum (builder, nautilus_preferences,
 			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_DEFAULT_VIEW_WIDGET,

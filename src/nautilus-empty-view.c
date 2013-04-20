@@ -27,7 +27,6 @@
 #include "nautilus-empty-view.h"
 
 #include "nautilus-view.h"
-#include "nautilus-view-factory.h"
 
 #include <string.h>
 #include <libnautilus-private/nautilus-file-utilities.h>
@@ -94,12 +93,6 @@ static GList *
 nautilus_empty_view_get_selection_for_file_transfer (NautilusView *view)
 {
 	return NULL;
-}
-
-static guint
-nautilus_empty_view_get_item_count (NautilusView *view)
-{
-	return NAUTILUS_EMPTY_VIEW (view)->details->number_of_files;
 }
 
 static gboolean
@@ -269,7 +262,6 @@ nautilus_empty_view_class_init (NautilusEmptyViewClass *class)
 	nautilus_view_class->file_changed = nautilus_empty_view_file_changed;
 	nautilus_view_class->get_selection = nautilus_empty_view_get_selection;
 	nautilus_view_class->get_selection_for_file_transfer = nautilus_empty_view_get_selection_for_file_transfer;
-	nautilus_view_class->get_item_count = nautilus_empty_view_get_item_count;
 	nautilus_view_class->is_empty = nautilus_empty_view_is_empty;
 	nautilus_view_class->remove_file = nautilus_empty_view_remove_file;
 	nautilus_view_class->merge_menus = nautilus_empty_view_merge_menus;
@@ -299,60 +291,10 @@ nautilus_empty_view_init (NautilusEmptyView *empty_view)
 							   NautilusEmptyViewDetails);
 }
 
-static NautilusView *
-nautilus_empty_view_create (NautilusWindowSlot *slot)
+NautilusView *
+nautilus_empty_view_new (NautilusWindowSlot *slot)
 {
-	NautilusEmptyView *view;
-
-	g_assert (NAUTILUS_IS_WINDOW_SLOT (slot));
-
-	view = g_object_new (NAUTILUS_TYPE_EMPTY_VIEW,
+	return g_object_new (NAUTILUS_TYPE_EMPTY_VIEW,
 			     "window-slot", slot,
 			     NULL);
-
-	return NAUTILUS_VIEW (view);
-}
-
-static gboolean
-nautilus_empty_view_supports_uri (const char *uri,
-				  GFileType file_type,
-				  const char *mime_type)
-{
-	if (file_type == G_FILE_TYPE_DIRECTORY) {
-		return TRUE;
-	}
-	if (strcmp (mime_type, NAUTILUS_SAVED_SEARCH_MIMETYPE) == 0){
-		return TRUE;
-	}
-	if (g_str_has_prefix (uri, "trash:")) {
-		return TRUE;
-	}
-	if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-static NautilusViewInfo nautilus_empty_view = {
-	NAUTILUS_EMPTY_VIEW_ID,
-	"Empty",
-	"Empty View",
-	"_Empty View",
-	"The empty view encountered an error.",
-	"Display this location with the empty view.",
-	nautilus_empty_view_create,
-	nautilus_empty_view_supports_uri
-};
-
-void
-nautilus_empty_view_register (void)
-{
-	nautilus_empty_view.id = nautilus_empty_view.id;
-	nautilus_empty_view.view_combo_label = nautilus_empty_view.view_combo_label;
-	nautilus_empty_view.view_menu_label_with_mnemonic = nautilus_empty_view.view_menu_label_with_mnemonic;
-	nautilus_empty_view.error_label = nautilus_empty_view.error_label;
-	nautilus_empty_view.display_location_label = nautilus_empty_view.display_location_label;
-
-	nautilus_view_factory_register (&nautilus_empty_view);
 }

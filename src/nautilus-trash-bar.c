@@ -107,6 +107,7 @@ nautilus_trash_bar_dispose (GObject *obj)
 
 	if (bar->priv->selection_handler_id) {
 		g_signal_handler_disconnect (bar->priv->view, bar->priv->selection_handler_id);
+		bar->priv->selection_handler_id = 0;
 	}
 
 	G_OBJECT_CLASS (nautilus_trash_bar_parent_class)->dispose (obj);
@@ -212,7 +213,7 @@ nautilus_trash_bar_init (NautilusTrashBar *bar)
 				     _("Delete all items in the Trash"));
 
 	g_signal_connect_object (nautilus_trash_monitor_get (),
-				 "trash_state_changed",
+				 "trash-state-changed",
 				 G_CALLBACK (nautilus_trash_bar_trash_state_changed),
 				 bar,
 				 0);

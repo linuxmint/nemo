@@ -77,7 +77,7 @@ nautilus_trash_monitor_class_init (NautilusTrashMonitorClass *klass)
 	object_class->finalize = nautilus_trash_monitor_finalize;
 
 	signals[TRASH_STATE_CHANGED] = g_signal_new
-		("trash_state_changed",
+		("trash-state-changed",
 		 G_TYPE_FROM_CLASS (object_class),
 		 G_SIGNAL_RUN_LAST,
 		 G_STRUCT_OFFSET (NautilusTrashMonitorClass, trash_state_changed),

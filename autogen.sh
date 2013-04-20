@@ -6,7 +6,7 @@ test -z "$srcdir" && srcdir=.
 
 PKG_NAME="nautilus"
 
-(test -f $srcdir/configure.in \
+(test -f $srcdir/configure.ac \
   && test -f $srcdir/README \
   && test -d $srcdir/libnautilus-private) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"

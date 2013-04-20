@@ -109,7 +109,7 @@ nautilus_column_chooser_class_init (NautilusColumnChooserClass *chooser_class)
 		 G_TYPE_NONE, 0);
 
 	signals[USE_DEFAULT] = g_signal_new
-		("use_default",
+		("use-default",
 		 G_TYPE_FROM_CLASS (chooser_class),
 		 G_SIGNAL_RUN_LAST,
 		 G_STRUCT_OFFSET (NautilusColumnChooserClass,
@@ -455,7 +455,7 @@ nautilus_column_chooser_constructed (GObject *object)
 
 	populate_tree (chooser);
 
-	g_signal_connect (chooser->details->store, "row_deleted", 
+	g_signal_connect (chooser->details->store, "row-deleted", 
 			  G_CALLBACK (row_deleted_callback), chooser);
 }
 
@@ -536,6 +536,8 @@ get_column_names (NautilusColumnChooser *chooser, gboolean only_visible)
 			if (!only_visible || visible) {
 				/* give ownership to the array */
 				g_ptr_array_add (ret, name);
+			} else {
+				g_free (name);
 			}
 
 		} while (gtk_tree_model_iter_next (GTK_TREE_MODEL (chooser->details->store), &iter));

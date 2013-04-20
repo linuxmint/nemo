@@ -261,7 +261,7 @@ nautilus_search_engine_tracker_start (NautilusSearchProvider *provider)
 
 	mime_count = g_list_length (mimetypes);
 
-	sparql = g_string_new ("SELECT DISTINCT nie:url(?urn) fts:rank(?urn) tracker:coalesce(nfo:fileLastModified(?urn), nie:contentLastModified(?urn)) AS ?mtime tracker:coalesce(nfo:fileLastAccessed(?urn), nie:contentAccessed(?urn)) AS ?atime "
+	sparql = g_string_new ("SELECT DISTINCT nie:url(?urn) fts:rank(?urn) tracker:coalesce(nfo:fileLastModified(?urn), nie:contentLastModified(?urn)) tracker:coalesce(nfo:fileLastAccessed(?urn), nie:contentAccessed(?urn)) "
 			       "WHERE {"
 			       "  ?urn a nfo:FileDataObject ;"
 			       "  tracker:available true ; ");
@@ -271,7 +271,7 @@ nautilus_search_engine_tracker_start (NautilusSearchProvider *provider)
 	}
 
 	g_string_append_printf (sparql,
-				" fts:match '%s*' . FILTER ("
+				" fts:match '\"%s*\"' . FILTER ("
 				" tracker:uri-is-descendant('%s', nie:url(?urn)) &&"
 				" fn:contains(fn:lower-case(nfo:fileName(?urn)), '%s')",
 				search_text, location_uri, search_text);

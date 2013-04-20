@@ -5,12 +5,11 @@ noinst_LTLIBRARIES=libnautilus-private.la
 INCLUDES = 						\
 	-I$(top_srcdir) 				\
 	-I$(top_builddir) 				\
-	-I$(top_srcdir)/cut-n-paste-code		\
 	$(BASE_CFLAGS)					\
 	$(COMMON_CFLAGS)				\
 	$(NAUTILUS_CFLAGS)				\
 	$(WARNING_CFLAGS)				\
-	$(DISABLE_DEPRECATED_CFLAGS)			\
+	$(DISABLE_DEPRECATED)				\
 	$(TRACKER_CFLAGS)				\
 	-DDATADIR=\""$(datadir)"\" 			\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
@@ -38,16 +37,11 @@ nautilus_tracker_engine_sources = \
 	nautilus-search-engine-tracker.h
 endif
 
-dependency_static_libs = \
-	$(top_builddir)/cut-n-paste-code/libegg/libegg.la \
-	$(NULL)
-
 libnautilus_private_la_LDFLAGS =	\
 	-no-undefined			\
 	$(NULL)
 
 libnautilus_private_la_LIBADD =		\
-	$(dependency_static_libs)	\
 	$(SELINUX_LIBS)			\
 	$(TRACKER_LIBS)			\
 	$(top_builddir)/eel/libeel-2.la \
@@ -82,8 +76,6 @@ libnautilus_private_la_SOURCES = \
 	nautilus-debug.h \
 	nautilus-default-file-icon.c \
 	nautilus-default-file-icon.h \
-	nautilus-desktop-background.c \
-	nautilus-desktop-background.h \
 	nautilus-desktop-directory-file.c \
 	nautilus-desktop-directory-file.h \
 	nautilus-desktop-directory.c \
@@ -192,8 +184,6 @@ libnautilus_private_la_SOURCES = \
 nodist_libnautilus_private_la_SOURCES =\
 	$(BUILT_SOURCES) \
 	$(NULL)
-
-$(lib_LTLIBRARIES): $(dependency_static_libs)
 
 gsettingsschema_in_files = org.gnome.nautilus.gschema.xml.in
 gsettings_SCHEMAS = $(gsettingsschema_in_files:.xml.in=.xml)

@@ -433,7 +433,6 @@ nautilus_canvas_item_get_drag_surface (NautilusCanvasItem *item)
 {
 	cairo_surface_t *surface;
 	EelCanvas *canvas;
-	GdkScreen *screen;
 	int width, height;
 	int item_offset_x, item_offset_y;
 	EelIRect icon_rect;
@@ -444,7 +443,6 @@ nautilus_canvas_item_get_drag_surface (NautilusCanvasItem *item)
 	g_return_val_if_fail (NAUTILUS_IS_CANVAS_ITEM (item), NULL);
 
 	canvas = EEL_CANVAS_ITEM (item)->canvas;
-	screen = gtk_widget_get_screen (GTK_WIDGET (canvas));
 	context = gtk_widget_get_style_context (GTK_WIDGET (canvas));
 
 	gtk_style_context_save (context);
@@ -465,9 +463,8 @@ nautilus_canvas_item_get_drag_surface (NautilusCanvasItem *item)
 	width = EEL_CANVAS_ITEM (item)->x2 - EEL_CANVAS_ITEM (item)->x1;
 	height = EEL_CANVAS_ITEM (item)->y2 - EEL_CANVAS_ITEM (item)->y1;
 
-        surface = gdk_window_create_similar_surface (gdk_screen_get_root_window (screen),
-                                                     CAIRO_CONTENT_COLOR_ALPHA,
-                                                     width, height);
+        surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
+					      width, height);
 
 	cr = cairo_create (surface);
 
@@ -2160,7 +2157,7 @@ nautilus_canvas_item_accessible_idle_do_action (gpointer data)
 				return FALSE;
 			}
 			g_list_free (selection);
-        		g_signal_emit_by_name (container, "context_click_selection", &button_event);
+        		g_signal_emit_by_name (container, "context-click-selection", &button_event);
 			break;
 		default :
 			g_assert_not_reached ();

@@ -176,16 +176,9 @@ unrealize (GtkWidget *widget)
 {
 	NautilusDesktopWindow *window;
 	NautilusDesktopWindowDetails *details;
-	GdkWindow *root_window;
 
 	window = NAUTILUS_DESKTOP_WINDOW (widget);
 	details = window->details;
-
-	root_window = gdk_screen_get_root_window (
-				gtk_window_get_screen (GTK_WINDOW (window)));
-
-	gdk_property_delete (root_window,
-			     gdk_atom_intern ("NAUTILUS_DESKTOP_WINDOW_ID", TRUE));
 
 	if (details->size_changed_id != 0) {
 		g_signal_handler_disconnect (gtk_window_get_screen (GTK_WINDOW (window)),
@@ -210,30 +203,11 @@ set_wmspec_desktop_hint (GdkWindow *window)
 }
 
 static void
-set_desktop_window_id (NautilusDesktopWindow *window,
-		       GdkWindow             *gdkwindow)
-{
-	/* Tuck the desktop windows xid in the root to indicate we own the desktop.
-	 */
-	Window window_xid;
-	GdkWindow *root_window;
-
-	root_window = gdk_screen_get_root_window (
-				gtk_window_get_screen (GTK_WINDOW (window)));
-
-	window_xid = GDK_WINDOW_XID (gdkwindow);
-
-	gdk_property_change (root_window,
-			     gdk_atom_intern ("NAUTILUS_DESKTOP_WINDOW_ID", FALSE),
-			     gdk_x11_xatom_to_atom (XA_WINDOW), 32,
-			     GDK_PROP_MODE_REPLACE, (guchar *) &window_xid, 1);
-}
-
-static void
 realize (GtkWidget *widget)
 {
 	NautilusDesktopWindow *window;
 	NautilusDesktopWindowDetails *details;
+	GdkVisual *visual;
 
 	window = NAUTILUS_DESKTOP_WINDOW (widget);
 	details = window->details;
@@ -242,24 +216,20 @@ realize (GtkWidget *widget)
 	gtk_widget_set_events (widget, gtk_widget_get_events (widget) 
 			      | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
 			      
+	visual = gdk_screen_get_rgba_visual (gtk_widget_get_screen (widget));
+	if (visual) {
+		gtk_widget_set_visual (widget, visual);
+	}
+
 	/* Do the work of realizing. */
 	GTK_WIDGET_CLASS (nautilus_desktop_window_parent_class)->realize (widget);
 
 	/* This is the new way to set up the desktop window */
 	set_wmspec_desktop_hint (gtk_widget_get_window (widget));
 
-	set_desktop_window_id (window, gtk_widget_get_window (widget));
-
 	details->size_changed_id =
-		g_signal_connect (gtk_window_get_screen (GTK_WINDOW (window)), "size_changed",
+		g_signal_connect (gtk_window_get_screen (GTK_WINDOW (window)), "size-changed",
 				  G_CALLBACK (nautilus_desktop_window_screen_size_changed), window);
-}
-
-static NautilusIconInfo *
-real_get_icon (NautilusWindow *window,
-	       NautilusWindowSlot *slot)
-{
-	return nautilus_icon_info_lookup_from_name (NAUTILUS_DESKTOP_ICON_DESKTOP, 48);
 }
 
 static void
@@ -272,13 +242,6 @@ real_sync_title (NautilusWindow *window,
 
 static void
 real_window_close (NautilusWindow *window)
-{
-	/* stub, does nothing */
-	return;
-}
-
-static void
-real_sync_view_as_menus (NautilusWindow *window)
 {
 	/* stub, does nothing */
 	return;
@@ -299,8 +262,6 @@ nautilus_desktop_window_class_init (NautilusDesktopWindowClass *klass)
 	wclass->delete_event = nautilus_desktop_window_delete_event;
 
 	nclass->sync_title = real_sync_title;
-	nclass->sync_view_as_menus = real_sync_view_as_menus;
-	nclass->get_icon = real_get_icon;
 	nclass->close = real_window_close;
 
 	g_type_class_add_private (klass, sizeof (NautilusDesktopWindowDetails));

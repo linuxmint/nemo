@@ -200,7 +200,7 @@ nautilus_desktop_link_new (NautilusDesktopLinkType type)
 					  link);
 		link->details->signal_handler_obj = G_OBJECT (nautilus_trash_monitor_get ());
 		link->details->signal_handler =
-			g_signal_connect_object (nautilus_trash_monitor_get (), "trash_state_changed",
+			g_signal_connect_object (nautilus_trash_monitor_get (), "trash-state-changed",
 						 G_CALLBACK (trash_state_changed_callback), link, 0);
 		break;
 

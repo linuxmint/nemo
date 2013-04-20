@@ -123,6 +123,8 @@ typedef struct {
 						   GdkDragAction action,
 						   int x,
 						   int y);
+	void	     (* handle_hover)		  (NautilusCanvasContainer *container,
+						   const char *target_uri);
 
 	/* Queries on the container for subclass/client.
 	 * These must be implemented. The default "do nothing" is not good enough.
@@ -177,6 +179,8 @@ typedef struct {
 						     NautilusCanvasIconData *data,
 						     NautilusCanvasPosition *position);
 	char *       (* get_icon_uri)             (NautilusCanvasContainer *container,
+						     NautilusCanvasIconData *data);
+	char *       (* get_icon_activation_uri)  (NautilusCanvasContainer *container,
 						     NautilusCanvasIconData *data);
 	char *       (* get_icon_drop_target_uri) (NautilusCanvasContainer *container,
 						     NautilusCanvasIconData *data);

@@ -217,7 +217,7 @@ application_launch_parameters_new (GAppInfo *application,
 
 	result = g_new0 (ApplicationLaunchParameters, 1);
 	result->application = g_object_ref (application);
-	result->uris = eel_g_str_list_copy (uris);
+	result->uris = g_list_copy_deep (uris, (GCopyFunc) g_strdup, NULL);
 
 	return result;
 }
@@ -249,6 +249,28 @@ filter_nautilus_handler (GList *apps)
 			    "nautilus.desktop") == 0) {
 			g_object_unref (application);
 			apps = g_list_delete_link (apps, l); 
+		}
+
+		l = next;
+	}
+
+	return apps;
+}
+
+static GList*
+filter_no_show_apps (GList *apps)
+{
+	GList *l, *next;
+	GAppInfo *application;
+
+	l = apps;
+	while (l != NULL) {
+		application = (GAppInfo *) l->data;
+		next = l->next;
+
+		if (!g_app_info_should_show (application)) {
+			g_object_unref (application);
+			apps = g_list_delete_link (apps, l);
 		}
 
 		l = next;
@@ -390,8 +412,8 @@ static int
 application_compare_by_name (const GAppInfo *app_a,
 			     const GAppInfo *app_b)
 {
-	return g_utf8_collate (g_app_info_get_display_name ((GAppInfo *)app_a),
-			       g_app_info_get_display_name ((GAppInfo *)app_b));
+	return g_utf8_collate (g_app_info_get_name ((GAppInfo *)app_a),
+			       g_app_info_get_name ((GAppInfo *)app_b));
 }
 
 static int
@@ -447,6 +469,8 @@ nautilus_mime_get_applications_for_file (NautilusFile *file)
 		}
 		g_free (uri_scheme);
 	}
+
+	result = filter_no_show_apps (result);
 
 	/* Filter out non-uri supporting apps */
 	result = filter_non_uri_apps (result, file_has_local_path (file));
@@ -811,6 +835,16 @@ get_activation_action (NautilusFile *file)
 }
 
 gboolean
+nautilus_mime_file_launches (NautilusFile *file)
+{
+	ActivationAction activation_action;
+
+	activation_action = get_activation_action (file);
+
+	return (activation_action == ACTIVATION_ACTION_LAUNCH);
+}
+
+gboolean
 nautilus_mime_file_opens_in_external_app (NautilusFile *file)
 {
   ActivationAction activation_action;
@@ -1140,7 +1174,7 @@ open_with_response_cb (GtkDialog *dialog,
 
 	gtk_widget_destroy (GTK_WIDGET (dialog));
 
-	g_signal_emit_by_name (nautilus_signaller_get_current (), "mime_data_changed");
+	g_signal_emit_by_name (nautilus_signaller_get_current (), "mime-data-changed");
 
 	files.next = NULL;
 	files.prev = NULL;
@@ -1923,7 +1957,7 @@ activation_mount_not_mounted (ActivateParameters *parameters)
 	files = get_file_list_for_launch_locations (parameters->locations);
 	nautilus_file_list_call_when_ready
 		(files,
-		 nautilus_mime_actions_get_required_file_attributes () | NAUTILUS_FILE_ATTRIBUTE_LINK_INFO,
+		 nautilus_mime_actions_get_required_file_attributes (),
 		 &parameters->files_handle,
 		 activate_callback, parameters);
 	nautilus_file_list_free (files);
@@ -2046,7 +2080,7 @@ activate_activation_uris_ready_callback (GList *files_ignore,
 	files = get_file_list_for_launch_locations (parameters->locations);
 	nautilus_file_list_call_when_ready
 		(files,
-		 nautilus_mime_actions_get_required_file_attributes () | NAUTILUS_FILE_ATTRIBUTE_LINK_INFO,
+		 nautilus_mime_actions_get_required_file_attributes (),
 		 &parameters->files_handle,
 		 activate_callback, parameters);
 	nautilus_file_list_free (files);
@@ -2069,13 +2103,6 @@ activation_get_activation_uris (ActivateParameters *parameters)
 			parameters->locations = g_list_delete_link (parameters->locations, l);
 			continue;
 		}
-		
-		if (nautilus_file_is_symbolic_link (file)) {
-			nautilus_file_invalidate_attributes 
-				(file,
-				 NAUTILUS_FILE_ATTRIBUTE_INFO |
-				 NAUTILUS_FILE_ATTRIBUTE_LINK_INFO);
-		}
 	}
 
 	if (parameters->locations == NULL) {
@@ -2085,9 +2112,7 @@ activation_get_activation_uris (ActivateParameters *parameters)
 
 	files = get_file_list_for_launch_locations (parameters->locations);
 	nautilus_file_list_call_when_ready
-		(files,
-		 NAUTILUS_FILE_ATTRIBUTE_INFO |
-		 NAUTILUS_FILE_ATTRIBUTE_LINK_INFO,
+		(files, nautilus_mime_actions_get_required_file_attributes (),
 		 &parameters->files_handle,
 		 activate_activation_uris_ready_callback, parameters);
 	nautilus_file_list_free (files);

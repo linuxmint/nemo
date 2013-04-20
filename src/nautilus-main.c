@@ -75,8 +75,6 @@ main (int argc, char *argv[])
 	mallopt (M_MMAP_THRESHOLD, 128 *1024);
 #endif
 
-	g_type_init ();
-
 	/* This will be done by gtk+ later, but for now, force it to GNOME */
 	g_desktop_app_info_set_desktop_env ("GNOME");
 
@@ -96,10 +94,13 @@ main (int argc, char *argv[])
 #endif
 
 	/* Run the nautilus application. */
-	application = g_object_new (NAUTILUS_TYPE_APPLICATION,
-				    "application-id", "org.gnome.NautilusApplication",
-				    "flags", G_APPLICATION_HANDLES_OPEN,
-				    NULL);
+	application = nautilus_application_new ();
+
+	/* hold indefinitely if we're asked to persist */
+	if (g_getenv ("NAUTILUS_PERSIST") != NULL) {
+		g_application_hold (G_APPLICATION (application));
+	}
+
 	retval = g_application_run (G_APPLICATION (application),
 				    argc, argv);
 

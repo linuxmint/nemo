@@ -34,8 +34,29 @@
 #include <libnautilus-private/nautilus-bookmark.h>
 #include <libnautilus-private/nautilus-search-directory.h>
 
+typedef struct NautilusWindow NautilusWindow;
+typedef struct NautilusWindowClass NautilusWindowClass;
+typedef struct NautilusWindowDetails NautilusWindowDetails;
+
+typedef enum {
+        NAUTILUS_WINDOW_OPEN_FLAG_CLOSE_BEHIND = 1 << 0,
+        NAUTILUS_WINDOW_OPEN_FLAG_NEW_WINDOW = 1 << 1,
+        NAUTILUS_WINDOW_OPEN_FLAG_NEW_TAB = 1 << 2,
+        NAUTILUS_WINDOW_OPEN_FLAG_USE_DEFAULT_LOCATION = 1 << 3
+} NautilusWindowOpenFlags;
+
+typedef enum {
+	NAUTILUS_WINDOW_OPEN_SLOT_NONE = 0,
+	NAUTILUS_WINDOW_OPEN_SLOT_APPEND = 1
+}  NautilusWindowOpenSlotFlags;
+
+typedef gboolean (* NautilusWindowGoToCallback) (NautilusWindow *window,
+                                                 GFile *location,
+                                                 GError *error,
+                                                 gpointer user_data);
+
 #include "nautilus-view.h"
-#include "nautilus-window-types.h"
+#include "nautilus-window-slot.h"
 
 #define NAUTILUS_TYPE_WINDOW nautilus_window_get_type()
 #define NAUTILUS_WINDOW(obj) \
@@ -49,35 +70,17 @@
 #define NAUTILUS_WINDOW_GET_CLASS(obj) \
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_TYPE_WINDOW, NautilusWindowClass))
 
-typedef enum {
-        NAUTILUS_WINDOW_NOT_SHOWN,
-        NAUTILUS_WINDOW_POSITION_SET,
-        NAUTILUS_WINDOW_SHOULD_SHOW
-} NautilusWindowShowState;
-
-typedef enum {
-	NAUTILUS_WINDOW_OPEN_SLOT_NONE = 0,
-	NAUTILUS_WINDOW_OPEN_SLOT_APPEND = 1
-}  NautilusWindowOpenSlotFlags;
-
 #define NAUTILUS_WINDOW_SIDEBAR_PLACES "places"
 #define NAUTILUS_WINDOW_SIDEBAR_TREE "tree"
 
-typedef struct NautilusWindowDetails NautilusWindowDetails;
-
-typedef struct {
+struct NautilusWindowClass {
         GtkApplicationWindowClass parent_spot;
 
 	/* Function pointers for overriding, without corresponding signals */
-
         void   (* sync_title) (NautilusWindow *window,
 			       NautilusWindowSlot *slot);
-        void   (* sync_view_as_menus) (NautilusWindow *window);
-        NautilusIconInfo * (* get_icon) (NautilusWindow *window,
-                                         NautilusWindowSlot *slot);
-
         void   (* close) (NautilusWindow *window);
-} NautilusWindowClass;
+};
 
 struct NautilusWindow {
         GtkApplicationWindow parent_object;
@@ -86,8 +89,7 @@ struct NautilusWindow {
 };
 
 GType            nautilus_window_get_type             (void);
-NautilusWindow * nautilus_window_new                  (GtkApplication    *application,
-                                                       GdkScreen         *screen);
+NautilusWindow * nautilus_window_new                  (GdkScreen         *screen);
 void             nautilus_window_close                (NautilusWindow    *window);
 
 void             nautilus_window_connect_content_view (NautilusWindow    *window,
@@ -106,11 +108,6 @@ void             nautilus_window_new_tab              (NautilusWindow    *window
 GtkUIManager *   nautilus_window_get_ui_manager       (NautilusWindow    *window);
 GtkActionGroup * nautilus_window_get_main_action_group (NautilusWindow   *window);
 
-void                 nautilus_window_report_load_complete     (NautilusWindow *window,
-                                                               NautilusView *view);
-
-void                 nautilus_window_report_load_underway  (NautilusWindow *window,
-                                                            NautilusView *view);
 void                 nautilus_window_view_visible          (NautilusWindow *window,
                                                             NautilusView *view);
 NautilusWindowSlot * nautilus_window_get_active_slot       (NautilusWindow *window);
@@ -123,7 +120,6 @@ void                 nautilus_window_slot_close            (NautilusWindow *wind
 GtkWidget *          nautilus_window_ensure_location_entry (NautilusWindow *window);
 void                 nautilus_window_sync_location_widgets (NautilusWindow *window);
 void                 nautilus_window_grab_focus            (NautilusWindow *window);
-void                 nautilus_window_sync_search_widgets   (NautilusWindow *window);
 
 void     nautilus_window_hide_sidebar         (NautilusWindow *window);
 void     nautilus_window_show_sidebar         (NautilusWindow *window);

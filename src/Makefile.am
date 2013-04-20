@@ -8,12 +8,10 @@ bin_PROGRAMS=					\
 
 libexec_PROGRAMS=				\
 	nautilus-convert-metadata		\
-	nautilus-shell-search-provider		\
 	$(NULL)
 
 INCLUDES =							\
 	-I$(top_srcdir) 					\
-	-I$(top_srcdir)/cut-n-paste-code			\
 	-I$(top_builddir)/libnautilus-private 			\
 	$(BASE_CFLAGS) 						\
 	$(COMMON_CFLAGS)					\
@@ -30,7 +28,7 @@ INCLUDES =							\
 	-DPREFIX=\""$(prefix)"\" 				\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
 	-DVERSION="\"$(VERSION)\"" 				\
-	$(DISABLE_DEPRECATED_CFLAGS)                            \
+	$(DISABLE_DEPRECATED) 		                        \
 	$(NULL)
 
 LDADD =\
@@ -57,25 +55,26 @@ $(dbus_freedesktop_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-d
 		$(top_srcdir)/data/freedesktop-dbus-interfaces.xml			\
 		$(NULL)
 
-UI_FILES = \
-	nautilus-app-menu.ui			\
-	nautilus-bookmarks-window.ui		\
-	nautilus-file-management-properties.ui	\
-	nautilus-canvas-view-ui.xml		\
-	nautilus-desktop-canvas-view-ui.xml	\
-	nautilus-directory-view-ui.xml		\
-	nautilus-list-view-ui.xml		\
-	nautilus-shell-ui.xml			\
-	$(NULL)
+dbus_shell_search_provider_built_sources =		\
+	nautilus-shell-search-provider-generated.c	\
+	nautilus-shell-search-provider-generated.h
+
+$(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml
+	gdbus-codegen									\
+		--interface-prefix org.gnome.						\
+		--c-namespace Nautilus							\
+		--generate-c-code nautilus-shell-search-provider-generated		\
+		$(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml		\
+		$(NULL)
 
 headers =					\
 	nautilus-special-location-bar.h		\
 	$(NULL)
 
-nautilus-resources.c: nautilus.gresource.xml $(UI_FILES)
+resource_files = $(shell glib-compile-resources --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/nautilus.gresource.xml)
+nautilus-resources.c: nautilus.gresource.xml $(resource_files)
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-source --c-name nautilus $(srcdir)/nautilus.gresource.xml
-
-nautilus-resources.h: nautilus.gresource.xml
+nautilus-resources.h: nautilus.gresource.xml $(resource_files)
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-header --c-name nautilus $(srcdir)/nautilus.gresource.xml
 
 nautilus-enum-types.h: stamp-nautilus-enum-types.h
@@ -119,6 +118,7 @@ nautilus-enum-types.c: $(headers) Makefile
 
 nautilus_built_sources = \
 	$(dbus_freedesktop_built_sources) \
+	$(dbus_shell_search_provider_built_sources) \
 	nautilus-resources.c \
 	nautilus-resources.h \
 	nautilus-enum-types.h \
@@ -181,6 +181,8 @@ nautilus_SOURCES = \
 	nautilus-query-editor.h			\
 	nautilus-self-check-functions.c 	\
 	nautilus-self-check-functions.h 	\
+	nautilus-shell-search-provider.h	\
+	nautilus-shell-search-provider.c	\
 	nautilus-special-location-bar.c		\
 	nautilus-special-location-bar.h		\
 	nautilus-toolbar.c			\
@@ -191,10 +193,6 @@ nautilus_SOURCES = \
 	nautilus-view.h				\
 	nautilus-view-dnd.c			\
 	nautilus-view-dnd.h			\
-	nautilus-view-factory.c 		\
-	nautilus-view-factory.h 		\
-	nautilus-window-manage-views.c		\
-	nautilus-window-manage-views.h		\
 	nautilus-window-menus.c         	\
 	nautilus-window-private.h		\
 	nautilus-window-slot.c			\
@@ -203,7 +201,6 @@ nautilus_SOURCES = \
 	nautilus-window-slot-dnd.h		\
 	nautilus-window.c			\
 	nautilus-window.h			\
-	nautilus-window-types.h			\
 	nautilus-x-content-bar.c		\
 	nautilus-x-content-bar.h		\
 	$(NULL)
@@ -234,28 +231,6 @@ nautilus_convert_metadata_SOURCES= \
 	nautilus-convert-metadata.c	\
 	$(NULL)
 
-dbus_shell_search_provider_built_sources =		\
-	nautilus-shell-search-provider-generated.c	\
-	nautilus-shell-search-provider-generated.h
-
-$(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml
-	gdbus-codegen									\
-		--interface-prefix org.gnome.						\
-		--c-namespace Nautilus							\
-		--generate-c-code nautilus-shell-search-provider-generated		\
-		$(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml		\
-		$(NULL)
-
-nautilus_shell_search_provider_SOURCES = 		\
-	nautilus-bookmark-list.h			\
-	nautilus-bookmark-list.c			\
-	nautilus-shell-search-provider.c		\
-	$(NULL)
-
-nodist_nautilus_shell_search_provider_SOURCES =		\
-	$(dbus_shell_search_provider_built_sources)	\
-	$(NULL)
-
 BUILT_SOURCES = 					\
 	$(nautilus_built_sources) 			\
 	$(dbus_shell_search_provider_built_sources) 	\
@@ -272,8 +247,8 @@ CLEANFILES = \
 	$(NULL)
 
 EXTRA_DIST =					\
+	$(resource_files)			\
 	$(server_in_files)			\
-	$(UI_FILES)				\
 	nautilus.gresource.xml			\
 	check-nautilus				\
 	$(NULL)

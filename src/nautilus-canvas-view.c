@@ -31,7 +31,6 @@
 #include "nautilus-desktop-canvas-view.h"
 #include "nautilus-error-reporting.h"
 #include "nautilus-view-dnd.h"
-#include "nautilus-view-factory.h"
 
 #include <stdlib.h>
 #include <eel/eel-vfs-extensions.h>
@@ -99,9 +98,6 @@ struct NautilusCanvasViewDetails
 
 	GtkActionGroup *canvas_action_group;
 	guint canvas_merge_id;
-	
-	gboolean filter_by_screen;
-	int num_screens;
 
 	gulong clipboard_handler_id;
 
@@ -401,36 +397,6 @@ nautilus_canvas_view_clear (NautilusView *view)
 	g_slist_free (file_list);
 }
 
-static gboolean
-should_show_file_on_screen (NautilusView *view, NautilusFile *file)
-{
-	char *screen_string;
-	int screen_num;
-	NautilusCanvasView *canvas_view;
-	GdkScreen *screen;
-
-	canvas_view = NAUTILUS_CANVAS_VIEW (view);
-
-	if (!nautilus_view_should_show_file (view, file)) {
-		return FALSE;
-	}
-	
-	/* Get the screen for this canvas from the metadata. */
-	screen_string = nautilus_file_get_metadata
-		(file, NAUTILUS_METADATA_KEY_SCREEN, "0");
-	screen_num = atoi (screen_string);
-	g_free (screen_string);
-	screen = gtk_widget_get_screen (GTK_WIDGET (view));
-
-	if (screen_num != gdk_screen_get_number (screen) &&
-	    (screen_num < canvas_view->details->num_screens ||
-	     gdk_screen_get_number (screen) > 0)) {
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
 static void
 nautilus_canvas_view_remove_file (NautilusView *view, NautilusFile *file, NautilusDirectory *directory)
 {
@@ -476,11 +442,6 @@ nautilus_canvas_view_add_file (NautilusView *view, NautilusFile *file, NautilusD
 	canvas_view = NAUTILUS_CANVAS_VIEW (view);
 	canvas_container = get_canvas_container (canvas_view);
 
-	if (canvas_view->details->filter_by_screen &&
-	    !should_show_file_on_screen (view, file)) {
-		return;
-	}
-
 	/* Reset scroll region for the first canvas added when loading a directory. */
 	if (nautilus_view_get_loading (view) && nautilus_canvas_container_is_empty (canvas_container)) {
 		nautilus_canvas_container_reset_scroll_region (canvas_container);
@@ -502,21 +463,9 @@ nautilus_canvas_view_file_changed (NautilusView *view, NautilusFile *file, Nauti
 	g_return_if_fail (view != NULL);
 	canvas_view = NAUTILUS_CANVAS_VIEW (view);
 
-	if (!canvas_view->details->filter_by_screen) {
-		nautilus_canvas_container_request_update
-			(get_canvas_container (canvas_view),
-			 NAUTILUS_CANVAS_ICON_DATA (file));
-		return;
-	}
-	
-	if (!should_show_file_on_screen (view, file)) {
-		nautilus_canvas_view_remove_file (view, file, directory);
-	} else {
-
-		nautilus_canvas_container_request_update
-			(get_canvas_container (canvas_view),
-			 NAUTILUS_CANVAS_ICON_DATA (file));
-	}
+	nautilus_canvas_container_request_update
+		(get_canvas_container (canvas_view),
+		 NAUTILUS_CANVAS_ICON_DATA (file));
 }
 
 static gboolean
@@ -941,14 +890,14 @@ nautilus_canvas_view_set_zoom_level (NautilusCanvasView *view,
 	canvas_container = get_canvas_container (view);
 	if (nautilus_canvas_container_get_zoom_level (canvas_container) == new_level) {
 		if (always_emit) {
-			g_signal_emit_by_name (view, "zoom_level_changed");
+			g_signal_emit_by_name (view, "zoom-level-changed");
 		}
 		return;
 	}
 
 	nautilus_canvas_container_set_zoom_level (canvas_container, new_level);
 
-	g_signal_emit_by_name (view, "zoom_level_changed");
+	g_signal_emit_by_name (view, "zoom-level-changed");
 	
 	if (nautilus_view_get_active (NAUTILUS_VIEW (view))) {
 		nautilus_view_update_menus (NAUTILUS_VIEW (view));
@@ -1506,54 +1455,6 @@ compare_files (NautilusView   *canvas_view,
 	return nautilus_canvas_view_compare_files ((NautilusCanvasView *)canvas_view, a, b);
 }
 
-
-void
-nautilus_canvas_view_filter_by_screen (NautilusCanvasView *canvas_view,
-				     gboolean filter)
-{
-	canvas_view->details->filter_by_screen = filter;
-	canvas_view->details->num_screens = gdk_display_get_n_screens (gtk_widget_get_display (GTK_WIDGET (canvas_view)));
-}
-
-static void
-nautilus_canvas_view_screen_changed (GtkWidget *widget,
-				   GdkScreen *previous_screen)
-{
-	NautilusView *view;
-	GList *files, *l;
-	NautilusFile *file;
-	NautilusDirectory *directory;
-	NautilusCanvasContainer *canvas_container;
-
-	if (GTK_WIDGET_CLASS (nautilus_canvas_view_parent_class)->screen_changed) {
-		GTK_WIDGET_CLASS (nautilus_canvas_view_parent_class)->screen_changed (widget, previous_screen);
-	}
-
-	view = NAUTILUS_VIEW (widget);
-	if (NAUTILUS_CANVAS_VIEW (view)->details->filter_by_screen) {
-		canvas_container = get_canvas_container (NAUTILUS_CANVAS_VIEW (view));
-
-		directory = nautilus_view_get_model (view);
-		files = nautilus_directory_get_file_list (directory);
-
-		for (l = files; l != NULL; l = l->next) {
-			file = l->data;
-			
-			if (!should_show_file_on_screen (view, file)) {
-				nautilus_canvas_view_remove_file (view, file, directory);
-			} else {
-				if (nautilus_canvas_container_add (canvas_container,
-								 NAUTILUS_CANVAS_ICON_DATA (file))) {
-					nautilus_file_ref (file);
-				}
-			}
-		}
-		
-		nautilus_file_list_unref (files);
-		g_list_free (files);
-	}
-}
-
 static void
 selection_changed_callback (NautilusCanvasContainer *container,
 			    NautilusCanvasView *canvas_view)
@@ -1696,6 +1597,18 @@ get_icon_uri_callback (NautilusCanvasContainer *container,
 	g_assert (NAUTILUS_IS_CANVAS_VIEW (canvas_view));
 
 	return nautilus_file_get_uri (file);
+}
+
+static char *
+get_icon_activation_uri_callback (NautilusCanvasContainer *container,
+				  NautilusFile *file,
+				  NautilusCanvasView *canvas_view)
+{
+	g_assert (NAUTILUS_IS_CANVAS_CONTAINER (container));
+	g_assert (NAUTILUS_IS_FILE (file));
+	g_assert (NAUTILUS_IS_CANVAS_VIEW (canvas_view));
+
+	return nautilus_file_get_activation_uri (file);
 }
 
 static char *
@@ -1911,51 +1824,53 @@ create_canvas_container (NautilusCanvasView *canvas_view)
 	
 	g_signal_connect_object (canvas_container, "activate",	
 				 G_CALLBACK (canvas_container_activate_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "activate_alternate",	
+	g_signal_connect_object (canvas_container, "activate-alternate",	
 				 G_CALLBACK (canvas_container_activate_alternate_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "activate_previewer",
+	g_signal_connect_object (canvas_container, "activate-previewer",
 				 G_CALLBACK (canvas_container_activate_previewer_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "band_select_started",
+	g_signal_connect_object (canvas_container, "band-select-started",
 				 G_CALLBACK (band_select_started_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "band_select_ended",
+	g_signal_connect_object (canvas_container, "band-select-ended",
 				 G_CALLBACK (band_select_ended_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "context_click_selection",
+	g_signal_connect_object (canvas_container, "context-click-selection",
 				 G_CALLBACK (canvas_container_context_click_selection_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "context_click_background",
+	g_signal_connect_object (canvas_container, "context-click-background",
 				 G_CALLBACK (canvas_container_context_click_background_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "icon_position_changed",
+	g_signal_connect_object (canvas_container, "icon-position-changed",
 				 G_CALLBACK (icon_position_changed_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "selection_changed",
+	g_signal_connect_object (canvas_container, "selection-changed",
 				 G_CALLBACK (selection_changed_callback), canvas_view, 0);
 	/* FIXME: many of these should move into fm-canvas-container as virtual methods */
-	g_signal_connect_object (canvas_container, "get_icon_uri",
+	g_signal_connect_object (canvas_container, "get-icon-uri",
 				 G_CALLBACK (get_icon_uri_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "get_icon_drop_target_uri",
+	g_signal_connect_object (canvas_container, "get-icon-activation-uri",
+				 G_CALLBACK (get_icon_activation_uri_callback), canvas_view, 0);
+	g_signal_connect_object (canvas_container, "get-icon-drop-target-uri",
 				 G_CALLBACK (get_icon_drop_target_uri_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "move_copy_items",
+	g_signal_connect_object (canvas_container, "move-copy-items",
 				 G_CALLBACK (canvas_view_move_copy_items), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "get_container_uri",
+	g_signal_connect_object (canvas_container, "get-container-uri",
 				 G_CALLBACK (canvas_view_get_container_uri), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "can_accept_item",
+	g_signal_connect_object (canvas_container, "can-accept-item",
 				 G_CALLBACK (canvas_view_can_accept_item), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "get_stored_icon_position",
+	g_signal_connect_object (canvas_container, "get-stored-icon-position",
 				 G_CALLBACK (get_stored_icon_position_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "layout_changed",
+	g_signal_connect_object (canvas_container, "layout-changed",
 				 G_CALLBACK (layout_changed_callback), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "icon_rename_started",
+	g_signal_connect_object (canvas_container, "icon-rename-started",
 				 G_CALLBACK (icon_rename_started_cb), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "icon_rename_ended",
+	g_signal_connect_object (canvas_container, "icon-rename-ended",
 				 G_CALLBACK (icon_rename_ended_cb), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "icon_stretch_started",
+	g_signal_connect_object (canvas_container, "icon-stretch-started",
 				 G_CALLBACK (nautilus_view_update_menus), canvas_view,
 				 G_CONNECT_SWAPPED);
-	g_signal_connect_object (canvas_container, "icon_stretch_ended",
+	g_signal_connect_object (canvas_container, "icon-stretch-ended",
 				 G_CALLBACK (nautilus_view_update_menus), canvas_view,
 				 G_CONNECT_SWAPPED);
 
-	g_signal_connect_object (canvas_container, "get_stored_layout_timestamp",
+	g_signal_connect_object (canvas_container, "get-stored-layout-timestamp",
 				 G_CALLBACK (get_stored_layout_timestamp), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "store_layout_timestamp",
+	g_signal_connect_object (canvas_container, "store-layout-timestamp",
 				 G_CALLBACK (store_layout_timestamp), canvas_view, 0);
 
 	gtk_container_add (GTK_CONTAINER (canvas_view),
@@ -2005,6 +1920,14 @@ canvas_view_handle_raw (NautilusCanvasContainer *container, const char *raw_data
 {
 	nautilus_view_handle_raw_drop (NAUTILUS_VIEW (view),
 				       raw_data, length, target_uri, direct_save_uri, action, x, y);
+}
+
+static void
+canvas_view_handle_hover (NautilusCanvasContainer *container,
+			  const char *target_uri,
+			  NautilusCanvasView *view)
+{
+	nautilus_view_handle_hover (NAUTILUS_VIEW (view), target_uri);
 }
 
 static char *
@@ -2119,7 +2042,6 @@ nautilus_canvas_view_class_init (NautilusCanvasViewClass *klass)
 	oclass->finalize = nautilus_canvas_view_finalize;
 
 	GTK_WIDGET_CLASS (klass)->destroy = nautilus_canvas_view_destroy;
-	GTK_WIDGET_CLASS (klass)->screen_changed = nautilus_canvas_view_screen_changed;
 	
 	nautilus_view_class->add_file = nautilus_canvas_view_add_file;
 	nautilus_view_class->begin_loading = nautilus_canvas_view_begin_loading;
@@ -2198,7 +2120,6 @@ nautilus_canvas_view_init (NautilusCanvasView *canvas_view)
 
 	canvas_view->details = g_new0 (NautilusCanvasViewDetails, 1);
 	canvas_view->details->sort = &sort_criteria[0];
-	canvas_view->details->filter_by_screen = FALSE;
 
 	canvas_container = create_canvas_container (canvas_view);
 
@@ -2220,79 +2141,27 @@ nautilus_canvas_view_init (NautilusCanvasView *canvas_view)
 				  G_CALLBACK (text_attribute_names_changed_callback),
 				  canvas_view);
 
-	g_signal_connect_object (canvas_container, "handle_netscape_url",
+	g_signal_connect_object (canvas_container, "handle-netscape-url",
 				 G_CALLBACK (canvas_view_handle_netscape_url), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "handle_uri_list",
+	g_signal_connect_object (canvas_container, "handle-uri-list",
 				 G_CALLBACK (canvas_view_handle_uri_list), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "handle_text",
+	g_signal_connect_object (canvas_container, "handle-text",
 				 G_CALLBACK (canvas_view_handle_text), canvas_view, 0);
-	g_signal_connect_object (canvas_container, "handle_raw",
+	g_signal_connect_object (canvas_container, "handle-raw",
 				 G_CALLBACK (canvas_view_handle_raw), canvas_view, 0);
+	g_signal_connect_object (canvas_container, "handle-hover",
+				 G_CALLBACK (canvas_view_handle_hover), canvas_view, 0);
 
 	canvas_view->details->clipboard_handler_id =
 		g_signal_connect (nautilus_clipboard_monitor_get (),
-		                  "clipboard_info",
+		                  "clipboard-info",
 		                  G_CALLBACK (canvas_view_notify_clipboard_info), canvas_view);
 }
 
-static NautilusView *
-nautilus_canvas_view_create (NautilusWindowSlot *slot)
+NautilusView *
+nautilus_canvas_view_new (NautilusWindowSlot *slot)
 {
-	NautilusCanvasView *view;
-
-	view = g_object_new (NAUTILUS_TYPE_CANVAS_VIEW,
+	return g_object_new (NAUTILUS_TYPE_CANVAS_VIEW,
 			     "window-slot", slot,
 			     NULL);
-	return NAUTILUS_VIEW (view);
 }
-
-static gboolean
-nautilus_canvas_view_supports_uri (const char *uri,
-			   GFileType file_type,
-			   const char *mime_type)
-{
-	if (file_type == G_FILE_TYPE_DIRECTORY) {
-		return TRUE;
-	}
-	if (strcmp (mime_type, NAUTILUS_SAVED_SEARCH_MIMETYPE) == 0){
-		return TRUE;
-	}
-	if (g_str_has_prefix (uri, "trash:")) {
-		return TRUE;
-	}
-	if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-#define TRANSLATE_VIEW_INFO(view_info)					\
-	view_info.view_combo_label = _(view_info.view_combo_label);	\
-	view_info.view_menu_label_with_mnemonic = _(view_info.view_menu_label_with_mnemonic); \
-	view_info.error_label = _(view_info.error_label);		\
-	view_info.startup_error_label = _(view_info.startup_error_label); \
-	view_info.display_location_label = _(view_info.display_location_label); \
-	
-
-static NautilusViewInfo nautilus_canvas_view = {
-	NAUTILUS_CANVAS_VIEW_ID,
-	/* translators: this is used in the view selection dropdown
-	 * of navigation windows and in the preferences dialog */
-	N_("Icon View"),
-	/* translators: this is used in the view menu */
-	N_("_Icons"),
-	N_("The icon view encountered an error."),
-	N_("The icon view encountered an error while starting up."),
-	N_("Display this location with the icon view."),
-	nautilus_canvas_view_create,
-	nautilus_canvas_view_supports_uri
-};
-
-void
-nautilus_canvas_view_register (void)
-{
-	TRANSLATE_VIEW_INFO (nautilus_canvas_view)
-		nautilus_view_factory_register (&nautilus_canvas_view);
-}
-

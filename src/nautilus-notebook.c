@@ -29,7 +29,6 @@
 #include "nautilus-notebook.h"
 
 #include "nautilus-window.h"
-#include "nautilus-window-manage-views.h"
 #include "nautilus-window-private.h"
 #include "nautilus-window-slot.h"
 #include "nautilus-window-slot-dnd.h"
@@ -255,7 +254,7 @@ nautilus_notebook_sync_loading (NautilusNotebook *notebook,
 				NautilusWindowSlot *slot)
 {
 	GtkWidget *tab_label, *spinner, *icon;
-	gboolean active;
+	gboolean active, allow_stop;
 
 	g_return_if_fail (NAUTILUS_IS_NOTEBOOK (notebook));
 	g_return_if_fail (NAUTILUS_IS_WINDOW_SLOT (slot));
@@ -270,11 +269,13 @@ nautilus_notebook_sync_loading (NautilusNotebook *notebook,
 
 	active = FALSE;
 	g_object_get (spinner, "active", &active, NULL);
-	if (active == slot->allow_stop)	{
+	allow_stop = nautilus_window_slot_get_allow_stop (slot);
+
+	if (active == allow_stop) {
 		return;
 	}
 
-	if (slot->allow_stop) {
+	if (allow_stop) {
 		gtk_widget_hide (icon);
 		gtk_widget_show (spinner);
 		gtk_spinner_start (GTK_SPINNER (spinner));
@@ -291,6 +292,7 @@ nautilus_notebook_sync_tab_label (NautilusNotebook *notebook,
 {
 	GtkWidget *hbox, *label;
 	char *location_name;
+	GFile *location;
 
 	g_return_if_fail (NAUTILUS_IS_NOTEBOOK (notebook));
 	g_return_if_fail (NAUTILUS_IS_WINDOW_SLOT (slot));
@@ -301,13 +303,14 @@ nautilus_notebook_sync_tab_label (NautilusNotebook *notebook,
 	label = GTK_WIDGET (g_object_get_data (G_OBJECT (hbox), "label"));
 	g_return_if_fail (GTK_IS_WIDGET (label));
 
-	gtk_label_set_text (GTK_LABEL (label), slot->title);
+	gtk_label_set_text (GTK_LABEL (label), nautilus_window_slot_get_title (slot));
+	location = nautilus_window_slot_get_location (slot);
 
-	if (slot->location != NULL) {
+	if (location != NULL) {
 		/* Set the tooltip on the label's parent (the tab label hbox),
 		 * so it covers all of the tab label.
 		 */
-		location_name = g_file_get_parse_name (slot->location);
+		location_name = g_file_get_parse_name (location);
 		gtk_widget_set_tooltip_text (gtk_widget_get_parent (label), location_name);
 		g_free (location_name);
 	} else {
@@ -375,6 +378,7 @@ build_tab_label (NautilusNotebook *nb, NautilusWindowSlot *slot)
 	gtk_box_pack_start (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
 	gtk_widget_show (close_button);
 
+	g_object_set_data (G_OBJECT (hbox), "nautilus-notebook-tab", GINT_TO_POINTER (1));
 	nautilus_drag_slot_proxy_init (hbox, NULL, slot);
 
 	g_object_set_data (G_OBJECT (hbox), "label", label);

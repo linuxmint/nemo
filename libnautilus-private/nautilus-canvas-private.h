@@ -272,6 +272,8 @@ void          nautilus_canvas_container_select_list_unselect_others (NautilusCan
 								     GList                 *icons);
 char *        nautilus_canvas_container_get_icon_uri                (NautilusCanvasContainer *container,
 								       NautilusCanvasIcon          *canvas);
+char *        nautilus_canvas_container_get_icon_activation_uri     (NautilusCanvasContainer *container,
+								     NautilusCanvasIcon          *canvas);
 char *        nautilus_canvas_container_get_icon_drop_target_uri    (NautilusCanvasContainer *container,
 								       NautilusCanvasIcon          *canvas);
 void          nautilus_canvas_container_update_icon                 (NautilusCanvasContainer *container,

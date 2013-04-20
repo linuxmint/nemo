@@ -1262,7 +1262,7 @@ nautilus_file_unmount (NautilusFile                   *file,
 		data->file = nautilus_file_ref (file);
 		data->callback = callback;
 		data->callback_data = callback_data;
-		nautilus_file_operations_unmount_mount_full (NULL, file->details->mount, FALSE, TRUE, unmount_done, data);
+		nautilus_file_operations_unmount_mount_full (NULL, file->details->mount, NULL, FALSE, TRUE, unmount_done, data);
 	} else if (callback) {
 		callback (file, NULL, NULL, callback_data);
 	}
@@ -1296,7 +1296,7 @@ nautilus_file_eject (NautilusFile                   *file,
 		data->file = nautilus_file_ref (file);
 		data->callback = callback;
 		data->callback_data = callback_data;
-		nautilus_file_operations_unmount_mount_full (NULL, file->details->mount, TRUE, TRUE, unmount_done, data);
+		nautilus_file_operations_unmount_mount_full (NULL, file->details->mount, NULL, TRUE, TRUE, unmount_done, data);
 	} else if (callback) {
 		callback (file, NULL, NULL, callback_data);
 	}
@@ -3191,6 +3191,9 @@ nautilus_file_compare_for_sort (NautilusFile *file_1,
 			result = compare_by_search_relevance (file_1, file_2);
 			if (result == 0) {
 				result = compare_by_full_path (file_1, file_2);
+
+				/* ensure alphabetical order for files of the same relevance */
+				reversed = FALSE;
 			}
 			break;
 		default:
@@ -3329,19 +3332,11 @@ nautilus_file_is_hidden_file (NautilusFile *file)
 	return file->details->is_hidden;
 }
 
-static gboolean
-is_file_hidden (NautilusFile *file)
-{
-	return file->details->directory->details->hidden_file_hash != NULL &&
-		g_hash_table_lookup (file->details->directory->details->hidden_file_hash,
-				     eel_ref_str_peek (file->details->name)) != NULL;
-	
-}
-
 /**
  * nautilus_file_should_show:
- * @file: the file to check.
- * @show_hidden: whether we want to show hidden files or not.
+ * @file: the file to check
+ * @show_hidden: whether we want to show hidden files or not
+ * @show_foreign: whether we want to show foreign files or not
  * 
  * Determines if a #NautilusFile should be shown. Note that when browsing
  * a trash directory, this function will always return %TRUE. 
@@ -3356,10 +3351,17 @@ nautilus_file_should_show (NautilusFile *file,
 	/* Never hide any files in trash. */
 	if (nautilus_file_is_in_trash (file)) {
 		return TRUE;
-	} else {
-		return (show_hidden || (!nautilus_file_is_hidden_file (file) && !is_file_hidden (file))) &&
-			(show_foreign || !(nautilus_file_is_in_desktop (file) && nautilus_file_is_foreign_link (file)));
 	}
+
+	if (!show_hidden && nautilus_file_is_hidden_file (file)) {
+		return FALSE;
+	}
+
+	if (!show_foreign && nautilus_file_is_foreign_link (file)) {
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 gboolean
@@ -3953,6 +3955,18 @@ get_custom_icon_metadata_name (NautilusFile *file)
 }
 
 static GIcon *
+get_link_icon (NautilusFile *file)
+{
+	GIcon *icon = NULL;
+
+	if (file->details->got_link_info && file->details->custom_icon != NULL) {
+		icon = g_object_ref (file->details->custom_icon);
+	}
+
+	return icon;
+}
+
+static GIcon *
 get_custom_icon (NautilusFile *file)
 {
 	char *custom_icon_uri, *custom_icon_name;
@@ -3985,11 +3999,7 @@ get_custom_icon (NautilusFile *file)
 			g_free (custom_icon_name);
 		}
 	}
- 
-	if (icon == NULL && file->details->got_link_info && file->details->custom_icon != NULL) {
-		icon = g_object_ref (file->details->custom_icon);
- 	}
- 
+
 	return icon;
 }
 
@@ -4081,6 +4091,12 @@ nautilus_file_get_gicon (NautilusFile *file,
 	}
 
 	icon = get_custom_icon (file);
+
+	if (icon != NULL) {
+		return icon;
+	}
+
+	icon = get_link_icon (file);
 
 	if (icon != NULL) {
 		return icon;
@@ -4224,22 +4240,15 @@ nautilus_file_get_icon (NautilusFile *file,
 	if (file == NULL) {
 		return NULL;
 	}
-	
-	gicon = get_custom_icon (file);
-	if (gicon) {
-		GdkPixbuf *pixbuf;
 
+	gicon = get_custom_icon (file);
+	if (gicon == NULL) {
+		gicon = get_link_icon (file);
+	}
+
+	if (gicon != NULL) {
 		icon = nautilus_icon_info_lookup (gicon, size);
 		g_object_unref (gicon);
-
-		pixbuf = nautilus_icon_info_get_pixbuf (icon);
-		if (pixbuf != NULL) {
-			nautilus_ui_frame_image (&pixbuf);
-			g_object_unref (icon);
-
-			icon = nautilus_icon_info_new_for_pixbuf (pixbuf);
-			g_object_unref (pixbuf);
-		}
 
 		return icon;
 	}
@@ -4284,7 +4293,11 @@ nautilus_file_get_icon (NautilusFile *file,
 								 MAX (h * scale, 1),
 								 GDK_INTERP_BILINEAR);
 
-			nautilus_ui_frame_image (&scaled_pixbuf);
+			/* We don't want frames around small icons */
+			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128) {
+				nautilus_ui_frame_image (&scaled_pixbuf);
+			}
+
 			g_object_unref (raw_pixbuf);
 
 			/* Don't scale up if more than 25%, then read the original
@@ -4718,7 +4731,7 @@ nautilus_file_get_directory_item_mime_types (NautilusFile *file,
 		return FALSE;
 	}
 
-	*mime_list = eel_g_str_list_copy (file->details->mime_list);
+	*mime_list = g_list_copy_deep (file->details->mime_list, (GCopyFunc) g_strdup, NULL);
 	return TRUE;
 }
 
@@ -6472,8 +6485,8 @@ nautilus_file_get_keywords (NautilusFile *file)
 
 	g_return_val_if_fail (NAUTILUS_IS_FILE (file), NULL);
 
-	keywords = eel_g_str_list_copy (file->details->extension_emblems);
-	keywords = g_list_concat (keywords, eel_g_str_list_copy (file->details->pending_extension_emblems));
+	keywords = g_list_copy_deep (file->details->extension_emblems, (GCopyFunc) g_strdup, NULL);
+	keywords = g_list_concat (keywords, g_list_copy_deep (file->details->pending_extension_emblems, (GCopyFunc) g_strdup, NULL));
 
 	metadata_keywords = nautilus_file_get_metadata_list (file, NAUTILUS_METADATA_KEY_EMBLEMS);
 	clean_up_metadata_keywords (file, &metadata_keywords);
@@ -7042,17 +7055,13 @@ nautilus_file_get_trash_original_file (NautilusFile *file)
 {
 	GFile *location;
 	NautilusFile *original_file;
-	char *filename;
 
 	original_file = NULL;
 
 	if (file->details->trash_orig_path != NULL) {
-		/* file name is stored in URL encoding */
-		filename = g_uri_unescape_string (file->details->trash_orig_path, "");
-		location = g_file_new_for_path (filename);
+		location = g_file_new_for_path (file->details->trash_orig_path);
 		original_file = nautilus_file_get (location);
-		g_object_unref (G_OBJECT (location));
-		g_free (filename);
+		g_object_unref (location);
 	}
 
 	return original_file;
@@ -8081,7 +8090,7 @@ nautilus_file_class_init (NautilusFileClass *class)
 		              G_TYPE_NONE, 0);
 
 	signals[UPDATED_DEEP_COUNT_IN_PROGRESS] =
-		g_signal_new ("updated_deep_count_in_progress",
+		g_signal_new ("updated-deep-count-in-progress",
 		              G_TYPE_FROM_CLASS (class),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NautilusFileClass, updated_deep_count_in_progress),
@@ -8114,7 +8123,7 @@ nautilus_file_class_init (NautilusFileClass *class)
 				 NULL, 0);
 
 	g_signal_connect (nautilus_signaller_get_current (),
-			  "mime_data_changed",
+			  "mime-data-changed",
 			  G_CALLBACK (mime_type_data_changed_callback),
 			  NULL);
 }

@@ -27,7 +27,10 @@
 #include <glib-object.h>
 #include <gio/gio.h>
 
-void nautilus_dbus_manager_start (GApplication *application);
-void nautilus_dbus_manager_stop (void);
+typedef struct _NautilusDBusManager NautilusDBusManager;
+typedef struct _NautilusDBusManagerClass NautilusDBusManagerClass;
+
+GType nautilus_dbus_manager_get_type (void);
+NautilusDBusManager * nautilus_dbus_manager_new (void);
 
 #endif /* __NAUTILUS_DBUS_MANAGER_H__ */

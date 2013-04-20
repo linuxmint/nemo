@@ -123,6 +123,8 @@ nautilus_search_hit_compute_scores (NautilusSearchHit *hit,
 	       proximity_bonus, recent_bonus, match_bonus);
 
 	g_date_time_unref (now);
+	g_free (query_uri);
+	g_object_unref (query_location);
 }
 
 const char *
@@ -189,6 +191,7 @@ nautilus_search_hit_set_property (GObject *object,
 	switch (arg_id) {
 	case PROP_RELEVANCE:
 		hit->details->relevance = g_value_get_double (value);
+		break;
 	case PROP_FTS_RANK:
 		nautilus_search_hit_set_fts_rank (hit, g_value_get_double (value));
 		break;

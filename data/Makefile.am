@@ -5,7 +5,9 @@ xml_files = $(xml_in_files:.xml.in=.xml)
 @INTLTOOL_XML_RULE@
 
 desktopdir       = $(datadir)/applications
-desktop_DATA     = $(desktop_in_files:.desktop.in=.desktop)
+desktop_DATA     = 					\
+	$(desktop_in_files:.desktop.in=.desktop)	\
+	nautilus-classic.desktop
 desktop_in_files = 					\
 	nautilus.desktop.in				\
 	nautilus-autorun-software.desktop.in		\
@@ -34,7 +36,7 @@ org.freedesktop.FileManager1.service: org.freedesktop.FileManager1.service.in Ma
 	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
 
 org.gnome.Nautilus.SearchProvider.service: org.gnome.Nautilus.SearchProvider.service.in Makefile
-	$(AM_V_GEN) sed -e "s|\@libexecdir\@|$(libexecdir)|" $< > $@
+	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
 
 searchproviderdir = $(datadir)/gnome-shell/search-providers
 searchprovider_DATA = nautilus-search-provider.ini

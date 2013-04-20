@@ -116,7 +116,7 @@ nautilus_directory_class_init (NautilusDirectoryClass *klass)
 	object_class->get_property = nautilus_directory_get_property;
 
 	signals[FILES_ADDED] =
-		g_signal_new ("files_added",
+		g_signal_new ("files-added",
 		              G_TYPE_FROM_CLASS (object_class),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NautilusDirectoryClass, files_added),
@@ -124,7 +124,7 @@ nautilus_directory_class_init (NautilusDirectoryClass *klass)
 		              g_cclosure_marshal_VOID__POINTER,
 		              G_TYPE_NONE, 1, G_TYPE_POINTER);
 	signals[FILES_CHANGED] =
-		g_signal_new ("files_changed",
+		g_signal_new ("files-changed",
 		              G_TYPE_FROM_CLASS (object_class),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NautilusDirectoryClass, files_changed),
@@ -132,7 +132,7 @@ nautilus_directory_class_init (NautilusDirectoryClass *klass)
 		              g_cclosure_marshal_VOID__POINTER,
 		              G_TYPE_NONE, 1, G_TYPE_POINTER);
 	signals[DONE_LOADING] =
-		g_signal_new ("done_loading",
+		g_signal_new ("done-loading",
 		              G_TYPE_FROM_CLASS (object_class),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NautilusDirectoryClass, done_loading),
@@ -140,7 +140,7 @@ nautilus_directory_class_init (NautilusDirectoryClass *klass)
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
 	signals[LOAD_ERROR] =
-		g_signal_new ("load_error",
+		g_signal_new ("load-error",
 		              G_TYPE_FROM_CLASS (object_class),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NautilusDirectoryClass, load_error),
@@ -234,10 +234,6 @@ nautilus_directory_finalize (GObject *object)
 	g_assert (directory->details->file_list == NULL);
 	g_hash_table_destroy (directory->details->file_hash);
 
-	if (directory->details->hidden_file_hash) {
-		g_hash_table_destroy (directory->details->hidden_file_hash);
-	}
-	
 	nautilus_file_queue_destroy (directory->details->high_priority_queue);
 	nautilus_file_queue_destroy (directory->details->low_priority_queue);
 	nautilus_file_queue_destroy (directory->details->extension_queue);
@@ -354,7 +350,7 @@ add_preferences_callbacks (void)
 {
 	nautilus_global_preferences_init ();
 
-	g_signal_connect_swapped (nautilus_preferences,
+	g_signal_connect_swapped (gtk_filechooser_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES,
 				  G_CALLBACK(filtering_changed_callback),
 				  NULL);

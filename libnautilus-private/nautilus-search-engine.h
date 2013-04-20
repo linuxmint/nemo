@@ -28,6 +28,7 @@
 
 #include <libnautilus-private/nautilus-directory.h>
 #include <libnautilus-private/nautilus-search-engine-model.h>
+#include <libnautilus-private/nautilus-search-engine-simple.h>
 
 #define NAUTILUS_TYPE_SEARCH_ENGINE		(nautilus_search_engine_get_type ())
 #define NAUTILUS_SEARCH_ENGINE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_SEARCH_ENGINE, NautilusSearchEngine))
@@ -52,5 +53,7 @@ GType                 nautilus_search_engine_get_type           (void);
 NautilusSearchEngine *nautilus_search_engine_new                (void);
 NautilusSearchEngineModel *
                       nautilus_search_engine_get_model_provider (NautilusSearchEngine *engine);
+NautilusSearchEngineSimple *
+                      nautilus_search_engine_get_simple_provider (NautilusSearchEngine *engine);
 
 #endif /* NAUTILUS_SEARCH_ENGINE_H */

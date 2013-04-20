@@ -47,8 +47,6 @@ typedef struct {
 	GtkWidget *combo;
 
 	GtkWidget *type_widget;
-	
-	void *data;
 } NautilusQueryEditorRow;
 
 
@@ -57,7 +55,6 @@ typedef struct {
 	GtkWidget * (*create_widgets)      (NautilusQueryEditorRow *row);
 	void        (*add_to_query)        (NautilusQueryEditorRow *row,
 					    NautilusQuery          *query);
-	void        (*free_data)           (NautilusQueryEditorRow *row);
 	void        (*add_rows_from_query) (NautilusQueryEditor *editor,
 					    NautilusQuery *query);
 } NautilusQueryEditorRowOps;
@@ -66,15 +63,14 @@ struct NautilusQueryEditorDetails {
 	GtkWidget *entry;
 	gboolean change_frozen;
 	guint typing_timeout_id;
-	gboolean is_visible;
 
 	GtkWidget *search_current_button;
 	GtkWidget *search_all_button;
 	char *current_uri;
 
 	GList *rows;
-	char *last_set_query_text;
-	gboolean got_preedit;
+
+	NautilusQuery *query;
 };
 
 enum {
@@ -97,7 +93,6 @@ static NautilusQueryEditorRow * nautilus_query_editor_add_row (NautilusQueryEdit
 static GtkWidget *type_row_create_widgets      (NautilusQueryEditorRow *row);
 static void       type_row_add_to_query        (NautilusQueryEditorRow *row,
 					        NautilusQuery          *query);
-static void       type_row_free_data           (NautilusQueryEditorRow *row);
 static void       type_add_rows_from_query     (NautilusQueryEditor    *editor,
 					        NautilusQuery          *query);
 
@@ -107,96 +102,20 @@ static NautilusQueryEditorRowOps row_type[] = {
 	{ N_("File Type"),
 	  type_row_create_widgets,
 	  type_row_add_to_query,
-	  type_row_free_data,
 	  type_add_rows_from_query
 	},
 };
 
 G_DEFINE_TYPE (NautilusQueryEditor, nautilus_query_editor, GTK_TYPE_BOX);
 
-/* taken from gtk/gtktreeview.c */
-static void
-send_focus_change (GtkWidget *widget,
-                   GdkDevice *device,
-		   gboolean   in)
-{
-	GdkDeviceManager *device_manager;
-	GList *devices, *d;
-
-	device_manager = gdk_display_get_device_manager (gtk_widget_get_display (widget));
-	devices = gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_MASTER);
-	devices = g_list_concat (devices, gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_SLAVE));
-	devices = g_list_concat (devices, gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_FLOATING));
-
-	for (d = devices; d; d = d->next) {
-		GdkDevice *dev = d->data;
-		GdkEvent *fevent;
-		GdkWindow *window;
-
-		if (gdk_device_get_source (dev) != GDK_SOURCE_KEYBOARD)
-			continue;
-
-		window = gtk_widget_get_window (widget);
-
-		/* Skip non-master keyboards that haven't
-		 * selected for events from this window
-		 */
-		if (gdk_device_get_device_type (dev) != GDK_DEVICE_TYPE_MASTER &&
-		    !gdk_window_get_device_events (window, dev))
-			continue;
-
-		fevent = gdk_event_new (GDK_FOCUS_CHANGE);
-
-		fevent->focus_change.type = GDK_FOCUS_CHANGE;
-		fevent->focus_change.window = g_object_ref (window);
-		fevent->focus_change.in = in;
-		gdk_event_set_device (fevent, device);
-
-		gtk_widget_send_focus_change (widget, fevent);
-
-		gdk_event_free (fevent);
-	}
-
-	g_list_free (devices);
-}
-
-static void
-entry_focus_hack (GtkWidget *entry,
-		  GdkDevice *device)
-{
-	GtkEntryClass *entry_class;
-	GtkWidgetClass *entry_parent_class;
-
-	/* Grab focus will select all the text.  We don't want that to happen, so we
-	 * call the parent instance and bypass the selection change.  This is probably
-	 * really non-kosher. */
-	entry_class = g_type_class_peek (GTK_TYPE_ENTRY);
-	entry_parent_class = g_type_class_peek_parent (entry_class);
-	(entry_parent_class->grab_focus) (entry);
-
-	/* send focus-in event */
-	send_focus_change (entry, device, TRUE);
-}
-
-static void
-entry_preedit_changed_cb (GtkEntry            *entry,
-			  gchar               *preedit,
-			  NautilusQueryEditor *editor)
-{
-	editor->details->got_preedit = TRUE;
-}
-
 gboolean
 nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 				    GdkEventKey         *event)
 {
+	GtkWidget *toplevel;
+	GtkWidget *old_focus;
 	GdkEvent *new_event;
-	gboolean handled = FALSE;
-	gulong id;
 	gboolean retval;
-	gboolean text_changed;
-	char *old_text;
-	const char *new_text;
 
 	/* if we're focused already, no need to handle the event manually */
 	if (gtk_widget_has_focus (editor->details->entry)) {
@@ -213,15 +132,24 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 		return FALSE;
 	}
 
-	editor->details->got_preedit = FALSE;
+	/* if it's not printable we don't need it */
+	if (!g_unichar_isprint (gdk_keyval_to_unicode (event->keyval))) {
+		return FALSE;
+	}
+
 	if (!gtk_widget_get_realized (editor->details->entry)) {
 		gtk_widget_realize (editor->details->entry);
 	}
 
-	old_text = g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry)));
+	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (editor));
+	if (gtk_widget_is_toplevel (toplevel)) {
+		old_focus = gtk_window_get_focus (GTK_WINDOW (toplevel));
+	} else {
+		old_focus = NULL;
+	}
 
-	id = g_signal_connect (editor->details->entry, "preedit-changed",
-			       G_CALLBACK (entry_preedit_changed_cb), editor);
+	/* input methods will typically only process events after getting focus */
+	gtk_widget_grab_focus (editor->details->entry);
 
 	new_event = gdk_event_copy ((GdkEvent *) event);
 	g_object_unref (((GdkEventKey *) new_event)->window);
@@ -230,16 +158,18 @@ nautilus_query_editor_handle_event (NautilusQueryEditor *editor,
 	retval = gtk_widget_event (editor->details->entry, new_event);
 	gdk_event_free (new_event);
 
-	g_signal_handler_disconnect (editor->details->entry, id);
+	if (!retval && old_focus) {
+		gtk_widget_grab_focus (old_focus);
+	}
 
-	new_text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
-	text_changed = strcmp (old_text, new_text) != 0;
-	g_free (old_text);
+	return retval;
+}
 
-	handled = (editor->details->got_preedit) || (retval && text_changed);
-	editor->details->got_preedit = FALSE;
-
-	return handled;
+static void
+row_destroy (NautilusQueryEditorRow *row)
+{
+	gtk_widget_destroy (row->toolbar);
+	g_free (row);
 }
 
 static void
@@ -254,6 +184,11 @@ nautilus_query_editor_dispose (GObject *object)
 		editor->details->typing_timeout_id = 0;
 	}
 
+	g_clear_object (&editor->details->query);
+
+	g_list_free_full (editor->details->rows, (GDestroyNotify) row_destroy);
+	editor->details->rows = NULL;
+
 	G_OBJECT_CLASS (nautilus_query_editor_parent_class)->dispose (object);
 }
 
@@ -262,8 +197,10 @@ nautilus_query_editor_grab_focus (GtkWidget *widget)
 {
 	NautilusQueryEditor *editor = NAUTILUS_QUERY_EDITOR (widget);
 
-	if (gtk_widget_get_visible (widget)) {
-		entry_focus_hack (editor->details->entry, gtk_get_current_event_device ());
+	if (gtk_widget_get_visible (widget) && !gtk_widget_is_focus (editor->details->entry)) {
+		/* avoid selecting the entry text */
+		gtk_widget_grab_focus (editor->details->entry);
+		gtk_editable_set_position (GTK_EDITABLE (editor->details->entry), -1);
 	}
 }
 
@@ -677,7 +614,7 @@ type_row_create_widgets (NautilusQueryEditorRow *row)
 	gtk_list_store_append (store, &iter);
 	gtk_list_store_set (store, &iter, 0, "---",  -1);
 	gtk_list_store_append (store, &iter);
-	gtk_list_store_set (store, &iter, 0, _("Other Type..."), 3, TRUE, -1);
+	gtk_list_store_set (store, &iter, 0, _("Other Type…"), 3, TRUE, -1);
 
 	gtk_combo_box_set_active (GTK_COMBO_BOX (combo), 0);
 	
@@ -719,11 +656,6 @@ type_row_add_to_query (NautilusQueryEditorRow *row,
 		nautilus_query_add_mime_type (query, mimetype);
 		g_free (mimetype);
 	}
-}
-
-static void
-type_row_free_data (NautilusQueryEditorRow *row)
-{
 }
 
 static gboolean
@@ -869,12 +801,8 @@ remove_row_cb (GtkButton *clicked_button, NautilusQueryEditorRow *row)
 	NautilusQueryEditor *editor;
 
 	editor = row->editor;
-	gtk_container_remove (GTK_CONTAINER (editor), row->toolbar);
-	
 	editor->details->rows = g_list_remove (editor->details->rows, row);
-
-	row_type[row->type].free_data (row);
-	g_free (row);
+	row_destroy (row);
 
 	nautilus_query_editor_changed (editor);
 }
@@ -900,9 +828,6 @@ row_type_combo_changed_cb (GtkComboBox *combo_box, NautilusQueryEditorRow *row)
 		gtk_widget_destroy (row->type_widget);
 		row->type_widget = NULL;
 	}
-
-	row_type[row->type].free_data (row);
-	row->data = NULL;
 
 	row->type = type;
 	
@@ -1159,6 +1084,7 @@ static void
 update_location (NautilusQueryEditor *editor)
 {
 	NautilusFile *file;
+	GtkWidget *label;
 
 	file = nautilus_file_get_by_uri (editor->details->current_uri);
 
@@ -1167,14 +1093,15 @@ update_location (NautilusQueryEditor *editor)
 		if (nautilus_file_is_home (file)) {
 			name = g_strdup (_("Home"));
 		} else {
-			char *filename;
-			filename = nautilus_file_get_display_name (file);
-			name = g_strdup_printf ("\342\200\234%s\342\200\235", filename);
-			g_free (filename);
+			name = nautilus_file_get_display_name (file);
 		}
-		gtk_button_set_label (GTK_BUTTON (editor->details->search_current_button),
-				      name);
+
+		gtk_button_set_label (GTK_BUTTON (editor->details->search_current_button), name);
 		g_free (name);
+
+		label = gtk_bin_get_child (GTK_BIN (editor->details->search_current_button));
+		gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_MIDDLE);
+		g_object_set (label, "max-width-chars", 30, NULL);
 
 		nautilus_file_unref (file);
 	}
@@ -1189,12 +1116,31 @@ nautilus_query_editor_set_location (NautilusQueryEditor *editor,
 	update_location (editor);
 }
 
+static void
+update_rows (NautilusQueryEditor *editor,
+	     NautilusQuery       *query)
+{
+	NautilusQueryEditorRowType type;
+
+	/* if we were just created, set the rows from query,
+	 * otherwise, re-use the query setting we have already.
+	 */
+	if (query != NULL && editor->details->query == NULL) {
+		for (type = 0; type < NAUTILUS_QUERY_EDITOR_ROW_LAST; type++) {
+			row_type[type].add_rows_from_query (editor, query);
+		}
+	} else if (query == NULL && editor->details->query != NULL) {
+		g_list_free_full (editor->details->rows, (GDestroyNotify) row_destroy);
+		editor->details->rows = NULL;
+	}
+}
+
 void
 nautilus_query_editor_set_query (NautilusQueryEditor	*editor,
 				 NautilusQuery		*query)
 {
-	NautilusQueryEditorRowType type;
 	char *text = NULL;
+	char *current_text = NULL;
 
 	if (query != NULL) {
 		text = nautilus_query_get_text (query);
@@ -1205,23 +1151,26 @@ nautilus_query_editor_set_query (NautilusQueryEditor	*editor,
 	}
 
 	editor->details->change_frozen = TRUE;
-	gtk_entry_set_text (GTK_ENTRY (editor->details->entry), text);
+
+	current_text = g_strstrip (g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry))));
+	if (!g_str_equal (current_text, text)) {
+		gtk_entry_set_text (GTK_ENTRY (editor->details->entry), text);
+	}
+	g_free (current_text);
 
 	g_free (editor->details->current_uri);
 	editor->details->current_uri = NULL;
 
+	update_rows (editor, query);
+	g_clear_object (&editor->details->query);
+
 	if (query != NULL) {
+		editor->details->query = g_object_ref (query);
 		editor->details->current_uri = nautilus_query_get_location (query);
 		update_location (editor);
-
-
-		for (type = 0; type < NAUTILUS_QUERY_EDITOR_ROW_LAST; type++) {
-			row_type[type].add_rows_from_query (editor, query);
-		}
 	}
 
-	g_free (editor->details->last_set_query_text);
-	editor->details->last_set_query_text = text;
-
 	editor->details->change_frozen = FALSE;
+
+	g_free (text);
 }

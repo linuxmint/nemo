@@ -28,6 +28,7 @@
 #define NAUTILUS_DND_H
 
 #include <gtk/gtk.h>
+#include "nautilus-file.h"
 
 /* Drag & Drop target names. */
 #define NAUTILUS_ICON_DND_GNOME_ICON_LIST_TYPE	"x-special/gnome-icon-list"
@@ -40,6 +41,7 @@
 
 /* Item of the drag selection list */
 typedef struct {
+	NautilusFile *file;
 	char *uri;
 	gboolean got_icon_position;
 	int icon_x, icon_y;
@@ -81,6 +83,9 @@ typedef struct {
 	 * if data about them has not been received from the source yet.
 	 */
 	GList *selection_list;
+
+	/* cache of selected URIs, representing items being dragged */
+	GList *selection_cache;
 
 	/* has the drop occured ? */
 	gboolean drop_occured;
@@ -137,6 +142,13 @@ gboolean		    nautilus_drag_drag_data_get			(GtkWidget			      *widget,
 									 guint32			       time,
 									 gpointer			       container_context,
 									 NautilusDragEachSelectedItemIterator  each_selected_item_iterator);
+GList			   *nautilus_drag_create_selection_cache	(gpointer			       container_context,
+									 NautilusDragEachSelectedItemIterator  each_selected_item_iterator);
+gboolean		    nautilus_drag_drag_data_get_from_cache	(GList				      *cache,
+									 GdkDragContext			      *context,
+									 GtkSelectionData		      *selection_data,
+									 guint				       info,
+									 guint32			       time);
 int			    nautilus_drag_modifier_based_action		(int				       default_action,
 									 int				       non_default_action);
 

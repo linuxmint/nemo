@@ -45,14 +45,6 @@ GList *     eel_g_list_partition                        (GList                 *
 							 gpointer               user_data,
 							 GList                **removed);
 
-/* List functions for lists of C strings. */
-gboolean    eel_g_str_list_equal                        (GList                 *str_list_a,
-							 GList                 *str_list_b);
-GList *     eel_g_str_list_copy                         (GList                 *str_list);
-
-/* List functions for lists of objects */
-GList *     eel_g_object_list_copy                      (GList                 *list);
-
 /* GHashTable functions */
 void        eel_g_hash_table_safe_for_each              (GHashTable            *hash_table,
 							 GHFunc                 callback,

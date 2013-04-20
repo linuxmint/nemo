@@ -92,10 +92,10 @@ search_engine_start_real (NautilusSearchEngine *engine)
 	if (nautilus_search_engine_model_get_model (engine->details->model)) {
 		nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->model));
 		engine->details->providers_running++;
-	} else {
-		nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->simple));
-		engine->details->providers_running++;
 	}
+
+	nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (engine->details->simple));
+	engine->details->providers_running++;
 }
 
 static void
@@ -312,4 +312,10 @@ NautilusSearchEngineModel *
 nautilus_search_engine_get_model_provider (NautilusSearchEngine *engine)
 {
 	return engine->details->model;
+}
+
+NautilusSearchEngineSimple *
+nautilus_search_engine_get_simple_provider (NautilusSearchEngine *engine)
+{
+	return engine->details->simple;
 }

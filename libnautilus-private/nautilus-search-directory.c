@@ -46,7 +46,7 @@ struct NautilusSearchDirectoryDetails {
 	NautilusSearchEngine *engine;
 
 	gboolean search_running;
-	gboolean search_finished;
+	gboolean search_loaded;
 
 	GList *files;
 	GHashTable *files_hash;
@@ -90,7 +90,6 @@ G_DEFINE_TYPE (NautilusSearchDirectory, nautilus_search_directory,
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 static void search_engine_hits_added (NautilusSearchEngine *engine, GList *hits, NautilusSearchDirectory *search);
-static void search_engine_finished (NautilusSearchEngine *engine, NautilusSearchDirectory *search);
 static void search_engine_error (NautilusSearchEngine *engine, const char *error, NautilusSearchDirectory *search);
 static void search_callback_file_ready_callback (NautilusFile *file, gpointer data);
 static void file_changed (NautilusFile *file, NautilusSearchDirectory *search);
@@ -146,6 +145,7 @@ static void
 start_search (NautilusSearchDirectory *search)
 {
 	NautilusSearchEngineModel *model_provider;
+	NautilusSearchEngineSimple *simple_provider;
 
 	if (!search->details->query) {
 		return;
@@ -161,7 +161,7 @@ start_search (NautilusSearchDirectory *search)
 
 	/* We need to start the search engine */
 	search->details->search_running = TRUE;
-	search->details->search_finished = FALSE;
+	search->details->search_loaded = FALSE;
 
 	set_hidden_files (search);
 	nautilus_search_provider_set_query (NAUTILUS_SEARCH_PROVIDER (search->details->engine),
@@ -169,6 +169,9 @@ start_search (NautilusSearchDirectory *search)
 
 	model_provider = nautilus_search_engine_get_model_provider (search->details->engine);
 	nautilus_search_engine_model_set_model (model_provider, search->details->base_model);
+
+	simple_provider = nautilus_search_engine_get_simple_provider (search->details->engine);
+	g_object_set (simple_provider, "recursive", TRUE, NULL);
 
 	reset_file_list (search);
 
@@ -436,7 +439,7 @@ search_call_when_ready (NautilusDirectory *directory,
 	search_callback->wait_for_attributes = file_attributes;
 	search_callback->wait_for_file_list = wait_for_file_list;
 
-	if (wait_for_file_list && !search->details->search_finished) {
+	if (wait_for_file_list && !search->details->search_loaded) {
 		/* Add it to the pending callback list, which will be
 		 * processed when the directory has finished loading
 		 */
@@ -494,6 +497,34 @@ search_cancel_callback (NautilusDirectory *directory,
 	}
 }
 
+static void
+search_callback_add_pending_file_callbacks (SearchCallback *callback)
+{
+	callback->file_list = nautilus_file_list_copy (callback->search_directory->details->files);
+	callback->non_ready_hash = file_list_to_hash_table (callback->search_directory->details->files);
+
+	search_callback_add_file_callbacks (callback);
+}
+
+static void
+search_directory_ensure_loaded (NautilusSearchDirectory *search)
+{
+	if (search->details->search_loaded) {
+		return;
+	}
+
+	search->details->search_loaded = TRUE;
+	nautilus_directory_emit_done_loading (NAUTILUS_DIRECTORY (search));
+
+	/* Add all file callbacks */
+	g_list_foreach (search->details->pending_callback_list,
+			(GFunc)search_callback_add_pending_file_callbacks, NULL);
+	search->details->callback_list = g_list_concat (search->details->callback_list,
+							search->details->pending_callback_list);
+
+	g_list_free (search->details->pending_callback_list);
+	search->details->pending_callback_list = NULL;
+}
 
 static void
 search_engine_hits_added (NautilusSearchEngine *engine, GList *hits, 
@@ -542,15 +573,8 @@ search_engine_hits_added (NautilusSearchEngine *engine, GList *hits,
 	file = nautilus_directory_get_corresponding_file (NAUTILUS_DIRECTORY (search));
 	nautilus_file_emit_changed (file);
 	nautilus_file_unref (file);
-}
 
-static void
-search_callback_add_pending_file_callbacks (SearchCallback *callback)
-{
-	callback->file_list = nautilus_file_list_copy (callback->search_directory->details->files);
-	callback->non_ready_hash = file_list_to_hash_table (callback->search_directory->details->files);
-
-	search_callback_add_file_callbacks (callback);
+	search_directory_ensure_loaded (search);
 }
 
 static void
@@ -568,18 +592,7 @@ search_engine_error (NautilusSearchEngine *engine, const char *error_message, Na
 static void
 search_engine_finished (NautilusSearchEngine *engine, NautilusSearchDirectory *search)
 {
-	search->details->search_finished = TRUE;
-
-	nautilus_directory_emit_done_loading (NAUTILUS_DIRECTORY (search));
-
-	/* Add all file callbacks */
-	g_list_foreach (search->details->pending_callback_list, 
-			(GFunc)search_callback_add_pending_file_callbacks, NULL);
-	search->details->callback_list = g_list_concat (search->details->callback_list,
-							search->details->pending_callback_list);
-
-	g_list_free (search->details->pending_callback_list);
-	search->details->pending_callback_list = NULL;
+	search_directory_ensure_loaded (search);
 }
 
 static void
@@ -593,7 +606,7 @@ search_force_reload (NautilusDirectory *directory)
 		return;
 	}
 	
-	search->details->search_finished = FALSE;
+	search->details->search_loaded = FALSE;
 
 	/* Remove file monitors */
 	reset_file_list (search);
@@ -608,7 +621,7 @@ search_are_all_files_seen (NautilusDirectory *directory)
 	search = NAUTILUS_SEARCH_DIRECTORY (directory);
 
 	return (!search->details->query ||
-		search->details->search_finished);
+		search->details->search_loaded);
 }
 
 static gboolean
@@ -760,11 +773,11 @@ nautilus_search_directory_init (NautilusSearchDirectory *search)
 	g_signal_connect (search->details->engine, "hits-added",
 			  G_CALLBACK (search_engine_hits_added),
 			  search);
-	g_signal_connect (search->details->engine, "finished",
-			  G_CALLBACK (search_engine_finished),
-			  search);
 	g_signal_connect (search->details->engine, "error",
 			  G_CALLBACK (search_engine_error),
+			  search);
+	g_signal_connect (search->details->engine, "finished",
+			  G_CALLBACK (search_engine_finished),
 			  search);
 }
 

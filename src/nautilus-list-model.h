@@ -114,6 +114,9 @@ void              nautilus_list_model_set_drag_view (NautilusListModel *model,
 						     GtkTreeView *view,
 						     int begin_x, 
 						     int begin_y);
+GtkTreeView *     nautilus_list_model_get_drag_view (NautilusListModel *model,
+						     int *drag_begin_x,
+						     int *drag_begin_y);
 
 GtkTargetList *   nautilus_list_model_get_drag_target_list (void);
 

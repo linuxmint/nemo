@@ -718,7 +718,7 @@ nautilus_location_entry_init (NautilusLocationEntry *entry)
 
 	nautilus_entry_set_special_tab_handling (NAUTILUS_ENTRY (entry), TRUE);
 
-	g_signal_connect (entry, "event_after",
+	g_signal_connect (entry, "event-after",
 		          G_CALLBACK (editable_event_after_callback), entry);
 
 	g_signal_connect (entry, "notify::text",
@@ -727,11 +727,11 @@ nautilus_location_entry_init (NautilusLocationEntry *entry)
 	g_signal_connect (entry, "icon-release",
 			  G_CALLBACK (nautilus_location_entry_icon_release), NULL);
 
-	g_signal_connect (entry->details->completer, "got_completion_data",
+	g_signal_connect (entry->details->completer, "got-completion-data",
 		          G_CALLBACK (got_completion_data_callback), entry);
 
 	/* Drag source */
-	g_signal_connect_object (entry, "drag_data_get",
+	g_signal_connect_object (entry, "drag-data-get",
 				 G_CALLBACK (drag_data_get_callback), entry, 0);
 
 	/* Drag dest. */
@@ -739,7 +739,7 @@ nautilus_location_entry_init (NautilusLocationEntry *entry)
 			   GTK_DEST_DEFAULT_ALL,
 			   drop_types, G_N_ELEMENTS (drop_types),
 			   GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
-	g_signal_connect (entry, "drag_data_received",
+	g_signal_connect (entry, "drag-data-received",
 			  G_CALLBACK (drag_data_received_callback), NULL);
 
 	g_signal_connect_object (entry, "activate",
