@@ -72,7 +72,6 @@ src/nautilus-main.c
 src/nautilus-mime-actions.c
 src/nautilus-notebook.c
 src/nautilus-pathbar.c
-src/nautilus-places-sidebar.c
 src/nautilus-progress-ui-handler.c
 src/nautilus-properties-window.c
 src/nautilus-query-editor.c
