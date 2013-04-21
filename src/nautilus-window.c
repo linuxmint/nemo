@@ -718,39 +718,121 @@ properties_cb (GtkMenuItem *item,
 	nautilus_file_list_free (list);
 }
 
+static gboolean
+check_have_gnome_disks (void)
+{
+	gchar *disks_path;
+	gboolean res;
+
+	disks_path = g_find_program_in_path ("gnome-disks");
+	res = (disks_path != NULL);
+	g_free (disks_path);
+
+	return res;
+}
+
+static gboolean
+should_show_format_command (GVolume *volume)
+{
+	gchar *unix_device_id;
+	gboolean show_format;
+
+	unix_device_id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+	show_format = (unix_device_id != NULL) && check_have_gnome_disks ();
+	g_free (unix_device_id);
+
+	return show_format;
+}
+
+static void
+format_cb (GtkMenuItem *item,
+	   gpointer     user_data)
+{
+	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
+	GAppInfo *app_info;
+	gchar *cmdline, *device_identifier, *xid_string;
+	GVolume *volume;
+	gint xid;
+
+	volume = g_object_get_data (G_OBJECT (item), "nautilus-volume");
+
+	g_assert (volume != NULL && G_IS_VOLUME (volume));
+
+	device_identifier = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+	xid = (gint) gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET (window)));
+	xid_string = g_strdup_printf ("%d", xid);
+
+	cmdline = g_strconcat ("gnome-disks ",
+			       "--block-device ", device_identifier, " ",
+			       "--format-device ",
+			       "--xid ", xid_string,
+			       NULL);
+	app_info = g_app_info_create_from_commandline (cmdline, NULL, 0, NULL);
+	g_app_info_launch (app_info, NULL, NULL, NULL);
+
+	g_free (cmdline);
+	g_free (device_identifier);
+	g_free (xid_string);
+	g_clear_object (&app_info);
+}
+
+/* Destroy notification function used from g_object_set_data_full() */
+static void
+menu_item_destroy_notify_cb (gpointer data)
+{
+	GVolume *volume;
+
+	volume = G_VOLUME (data);
+	g_object_unref (volume);
+}
+
 static void
 places_sidebar_populate_popup_cb (GtkPlacesSidebar *sidebar,
 				  GtkMenu          *menu,
 				  GFile            *selected_item,
+				  GVolume          *selected_volume,
 				  gpointer          user_data)
 {
 	NautilusWindow *window = NAUTILUS_WINDOW (user_data);
 	GtkWidget *item;
 	GFile *trash;
 
-	trash = g_file_new_for_uri ("trash:///");
-	if (g_file_equal (trash, selected_item)) {
-		eel_gtk_menu_append_separator (menu);
+	if (selected_item) {
+		trash = g_file_new_for_uri ("trash:///");
+		if (g_file_equal (trash, selected_item)) {
+			eel_gtk_menu_append_separator (menu);
 
-		item = gtk_menu_item_new_with_mnemonic (_("Empty _Trash"));
-		g_signal_connect (item, "activate",
-				  G_CALLBACK (empty_trash_cb), window);
-		gtk_widget_show (item);
-		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+			item = gtk_menu_item_new_with_mnemonic (_("Empty _Trash"));
+			g_signal_connect (item, "activate",
+					  G_CALLBACK (empty_trash_cb), window);
+			gtk_widget_show (item);
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
-		if (nautilus_trash_monitor_is_empty ())
-			gtk_widget_set_sensitive (item, FALSE);
-	}
-	g_object_unref (trash);
+			if (nautilus_trash_monitor_is_empty ())
+				gtk_widget_set_sensitive (item, FALSE);
+		}
+		g_object_unref (trash);
 
-	if (g_file_is_native (selected_item)) {
-		eel_gtk_menu_append_separator (menu);
+		if (g_file_is_native (selected_item)) {
+			eel_gtk_menu_append_separator (menu);
 
-		item = gtk_menu_item_new_with_mnemonic (_("_Properties"));
-		g_signal_connect (item, "activate",
-				  G_CALLBACK (properties_cb), window);
-		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-		gtk_widget_show (item);
+			item = gtk_menu_item_new_with_mnemonic (_("_Properties"));
+			g_signal_connect (item, "activate",
+					  G_CALLBACK (properties_cb), window);
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+			gtk_widget_show (item);
+		}
+	} else if (selected_volume) {
+		if (should_show_format_command (selected_volume)) {
+			item = gtk_menu_item_new_with_mnemonic (_("_Format…"));
+			g_object_set_data_full (G_OBJECT (item), "nautilus-volume",
+						g_object_ref (selected_volume),
+						menu_item_destroy_notify_cb);
+			g_signal_connect (item, "activate",
+					  G_CALLBACK (format_cb), window);
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+			gtk_widget_show (item);
+		}
 	}
 }
 
