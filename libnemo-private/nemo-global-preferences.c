@@ -79,20 +79,9 @@ nemo_global_preferences_init (void)
 	gnome_media_handling_preferences = g_settings_new("org.gnome.desktop.media-handling");
 	gnome_terminal_preferences = g_settings_new("org.gnome.desktop.default-applications.terminal");
 
-    const gchar * const *schema_list = g_settings_list_schemas ();
-    int i = 0;
-    gboolean has_cinnamon = FALSE;
-    if (schema_list != NULL) {
-        while (schema_list[i] != NULL) {
-            if (g_strcmp0 (schema_list[i], "org.cinnamon.background") == 0) {
-                has_cinnamon = TRUE;
-                break;
-            }
-            i++;
-        }
-    }
-
-    if (has_cinnamon) {
+    GSettingsSchemaSource *schema_source;
+    schema_source = g_settings_schema_source_get_default();
+    if (g_settings_schema_source_lookup (schema_source, "org.cinnamon.background", FALSE)) {
         cinnamon_background_preferences = g_settings_new ("org.cinnamon.background");
     } else {
         cinnamon_background_preferences = g_settings_new ("org.gnome.desktop.background");
