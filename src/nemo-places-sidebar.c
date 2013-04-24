@@ -579,8 +579,45 @@ get_disk_full (GFile *file, gchar **tooltip_info)
 
         *tooltip_info = g_strdup_printf (_("Free space: %s"), free_string);
         g_free (free_string);
-
+        if (info != NULL)
+            g_object_unref (info);
         return (df_percent > -1 && df_percent < 101) ? df_percent : 0;
+}
+
+static gboolean
+home_on_different_fs (const gchar *home_uri)
+{
+    GFile *home = g_file_new_for_uri (home_uri);
+    GFile *root = g_file_new_for_uri ("file:///");
+    GFileInfo *home_info, *root_info;
+    const gchar *home_id, *root_id;
+    gboolean res;
+
+    res = FALSE;
+    home_info = g_file_query_info (home,
+                                   G_FILE_ATTRIBUTE_ID_FILESYSTEM,
+                                   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                   NULL, NULL);
+    root_info = g_file_query_info (root,
+                                   G_FILE_ATTRIBUTE_ID_FILESYSTEM,
+                                   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                   NULL, NULL);
+
+    if (home_info && root_info) {
+        home_id = g_file_info_get_attribute_string (home_info, G_FILE_ATTRIBUTE_ID_FILESYSTEM);
+        root_id = g_file_info_get_attribute_string (root_info, G_FILE_ATTRIBUTE_ID_FILESYSTEM);
+        res = g_strcmp0 (home_id, root_id) != 0;
+        g_object_unref (home_info);
+        g_object_unref (root_info);
+    } else {
+        if (home_info)
+            g_object_unref (home_info);
+        if (root_info)
+            g_object_unref (root_info);
+    }
+    g_object_unref (home);
+    g_object_unref (root);
+    return res;
 }
 
 static void
@@ -648,7 +685,7 @@ update_places (NemoPlacesSidebar *sidebar)
                            _("Home"), icon,
                            mount_uri, NULL, NULL, NULL, 0,
                            tooltip,
-                           full, TRUE,
+                           full, home_on_different_fs (mount_uri),
                            cat_iter);
     g_object_unref (icon);
     sidebar->top_bookend_uri = g_strdup (mount_uri);
