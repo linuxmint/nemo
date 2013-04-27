@@ -792,9 +792,26 @@ update_places (NemoPlacesSidebar *sidebar)
         root = g_mount_get_default_location (mount);
 
         if (!g_file_is_native (root)) {
-            network_mounts = g_list_prepend (network_mounts, mount);
-            g_object_unref (root);
-            continue;
+            gboolean really_network = FALSE;
+            gchar *path = g_file_get_path (root);
+            gchar *escaped1 = g_uri_unescape_string (path, "");
+            gchar *escaped2 = g_uri_unescape_string (escaped1, "");
+            gchar *ptr = g_strrstr (escaped2, "file://");
+            if (ptr != NULL) {
+                GFile *actual_file = g_file_new_for_uri (ptr);
+                if (!g_file_is_native(actual_file)) {
+                    really_network = TRUE;
+                    network_mounts = g_list_prepend (network_mounts, mount);
+                }
+                g_object_unref(actual_file);
+            }
+            g_free (path);
+            g_free (escaped1);
+            g_free (escaped2);
+            if (really_network) {
+                g_object_unref (root);
+                continue;
+            }
         }
 
         icon = g_mount_get_icon (mount);
@@ -802,7 +819,7 @@ update_places (NemoPlacesSidebar *sidebar)
         name = g_mount_get_name (mount);
         tooltip = g_file_get_parse_name (root);
         cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
-                               SECTION_COMPUTER,
+                               SECTION_DEVICES,
                                name, icon, mount_uri,
                                NULL, NULL, mount, 0, tooltip, 0, FALSE,
                                cat_iter);
