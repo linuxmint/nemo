@@ -525,7 +525,7 @@ nautilus_window_slot_add_extra_location_widget (NautilusWindowSlot *slot,
 						GtkWidget *widget)
 {
 	gtk_box_pack_start (GTK_BOX (slot->details->extra_location_widgets),
-			    widget, TRUE, TRUE, 0);
+			    widget, FALSE, TRUE, 0);
 	gtk_widget_show (slot->details->extra_location_widgets);
 }
 
