@@ -530,10 +530,10 @@ load_file_async (NemoBookmarkList *self,
 {
 	GFile *file;
 
-	file = nemo_bookmark_list_get_file ();
+	file = nemo_bookmark_list_get_legacy_file ();
 
     if (!g_file_query_exists (file, NULL)) {
-        file = nemo_bookmark_list_get_legacy_file ();
+        file = nemo_bookmark_list_get_file ();
     }
 
 	/* Wipe out old list. */
