@@ -207,21 +207,22 @@ button_press_cb (NemoNotebook *notebook,
 {
 	int tab_clicked;
 
-	tab_clicked = find_tab_num_at_pos (notebook, event->x_root, event->y_root);
+	tab_clicked = find_tab_num_at_pos (
+		notebook, event->x_root, event->y_root);
 
 	if (event->type == GDK_BUTTON_PRESS &&
-	    event->button == 3 &&
-		   (event->state & gtk_accelerator_get_default_mod_mask ()) == 0)
-	{
-		if (tab_clicked == -1)
-		{
-			/* consume event, so that we don't pop up the context menu when
-			 * the mouse if not over a tab label
+	    (event->button == 2 || event->button == 3) &&
+		(event->state & gtk_accelerator_get_default_mod_mask ()) == 0) {
+		if (tab_clicked == -1) {
+			/* Consume event so that we don't pop up the context menu for 
+			 * events with event->button == 2 when the mouse if not over a tab 
+			 * label.
 			 */
 			return TRUE;
 		}
 
-		/* switch to the page the mouse is over, but don't consume the event */
+		/* Switch to the page the mouse is over, but don't consume the 
+		 * event. */
 		gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), tab_clicked);
 	}
 
