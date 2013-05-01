@@ -395,26 +395,6 @@
       <_summary>Network Servers icon visible on the desktop</_summary>
       <_description>If this is set to true, an icon linking to the Network Servers view will be put on the desktop.</_description>
     </key>
-    <key name="computer-icon-name" type="s">
-      <default l10n="messages" context="computer-icon-name">'Computer'</default>
-      <_summary>Desktop computer icon name</_summary>
-      <_description>This name can be set if you want a custom name for the computer icon on the desktop.</_description>
-    </key>
-    <key name="home-icon-name" type="s">
-      <default>''</default>
-      <_summary>Desktop home icon name</_summary>
-      <_description>This name can be set if you want a custom name for the home icon on the desktop.</_description>
-    </key>
-    <key name="trash-icon-name" type="s">
-      <default l10n="messages" context="trash-icon-name">'Trash'</default>
-      <_summary>Desktop trash icon name</_summary>
-      <_description>This name can be set if you want a custom name for the trash icon on the desktop.</_description>
-    </key>
-    <key name="network-icon-name" type="s">
-      <default l10n="messages" context="network-icon-name">'Network Servers'</default>
-      <_summary>Network servers icon name</_summary>
-      <_description>This name can be set if you want a custom name for the network servers icon on the desktop.</_description>
-    </key>
     <key name="text-ellipsis-limit" type="i">
       <default>3</default>
       <_summary>Text Ellipsis Limit</_summary>

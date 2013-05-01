@@ -104,68 +104,6 @@ trash_state_changed_callback (NemoTrashMonitor *trash_monitor,
 	nemo_desktop_link_changed (link);
 }
 
-static void
-home_name_changed (gpointer callback_data)
-{
-	NemoDesktopLink *link;
-
-	link = NEMO_DESKTOP_LINK (callback_data);
-	g_assert (link->details->type == NEMO_DESKTOP_LINK_HOME);
-
-	g_free (link->details->display_name);
-	link->details->display_name = g_settings_get_string (nemo_desktop_preferences,
-							     NEMO_PREFERENCES_DESKTOP_HOME_NAME);
-	if (link->details->display_name[0] == 0) {
-		g_free (link->details->display_name);
-		link->details->display_name = g_strdup (_("Home"));
-	}
-
-	nemo_desktop_link_changed (link);
-}
-
-static void
-computer_name_changed (gpointer callback_data)
-{
-	NemoDesktopLink *link;
-
-	link = NEMO_DESKTOP_LINK (callback_data);
-	g_assert (link->details->type == NEMO_DESKTOP_LINK_COMPUTER);
-
-	g_free (link->details->display_name);
-	link->details->display_name = g_settings_get_string (nemo_desktop_preferences,
-							     NEMO_PREFERENCES_DESKTOP_COMPUTER_NAME);
-
-	nemo_desktop_link_changed (link);
-}
-
-static void
-trash_name_changed (gpointer callback_data)
-{
-	NemoDesktopLink *link;
-
-	link = NEMO_DESKTOP_LINK (callback_data);
-	g_assert (link->details->type == NEMO_DESKTOP_LINK_TRASH);
-
-	g_free (link->details->display_name);
-	link->details->display_name = g_settings_get_string (nemo_desktop_preferences,
-							     NEMO_PREFERENCES_DESKTOP_TRASH_NAME);
-	nemo_desktop_link_changed (link);
-}
-
-static void
-network_name_changed (gpointer callback_data)
-{
-	NemoDesktopLink *link;
-
-	link = NEMO_DESKTOP_LINK (callback_data);
-	g_assert (link->details->type == NEMO_DESKTOP_LINK_NETWORK);
-
-	g_free (link->details->display_name);
-	link->details->display_name = g_settings_get_string (nemo_desktop_preferences,
-							     NEMO_PREFERENCES_DESKTOP_NETWORK_NAME);
-	nemo_desktop_link_changed (link);
-}
-
 NemoDesktopLink *
 nemo_desktop_link_new (NemoDesktopLinkType type)
 {
@@ -177,42 +115,27 @@ nemo_desktop_link_new (NemoDesktopLinkType type)
 	switch (type) {
 	case NEMO_DESKTOP_LINK_HOME:
 		link->details->filename = g_strdup ("home");
-		link->details->display_name = g_settings_get_string (nemo_desktop_preferences,
-								     NEMO_PREFERENCES_DESKTOP_HOME_NAME);
+		link->details->display_name = g_strdup (_("Home"));
 		link->details->activation_location = g_file_new_for_path (g_get_home_dir ());
 		link->details->icon = g_themed_icon_new (NEMO_ICON_HOME);
-
-		g_signal_connect_swapped (nemo_desktop_preferences,
-					  "changed::" NEMO_PREFERENCES_DESKTOP_HOME_NAME,
-					  G_CALLBACK (home_name_changed),
-					  link);
+		
 		break;
 
 	case NEMO_DESKTOP_LINK_COMPUTER:
 		link->details->filename = g_strdup ("computer");
-		link->details->display_name = g_settings_get_string (nemo_desktop_preferences,
-								     NEMO_PREFERENCES_DESKTOP_COMPUTER_NAME);
+		link->details->display_name = g_strdup (_("Computer"));
 		link->details->activation_location = g_file_new_for_uri ("computer:///");
 		/* TODO: This might need a different icon: */
 		link->details->icon = g_themed_icon_new (NEMO_ICON_COMPUTER);
 
-		g_signal_connect_swapped (nemo_desktop_preferences,
-					  "changed::" NEMO_PREFERENCES_DESKTOP_COMPUTER_NAME,
-					  G_CALLBACK (computer_name_changed),
-					  link);
 		break;
 
 	case NEMO_DESKTOP_LINK_TRASH:
 		link->details->filename = g_strdup ("trash");
-		link->details->display_name = g_settings_get_string (nemo_desktop_preferences,
-								     NEMO_PREFERENCES_DESKTOP_TRASH_NAME);
+		link->details->display_name = g_strdup (_("Trash"));
 		link->details->activation_location = g_file_new_for_uri (EEL_TRASH_URI);
 		link->details->icon = nemo_trash_monitor_get_icon ();
 
-		g_signal_connect_swapped (nemo_desktop_preferences,
-					  "changed::" NEMO_PREFERENCES_DESKTOP_TRASH_NAME,
-					  G_CALLBACK (trash_name_changed),
-					  link);
 		link->details->signal_handler_obj = G_OBJECT (nemo_trash_monitor_get ());
 		link->details->signal_handler =
 			g_signal_connect_object (nemo_trash_monitor_get (), "trash_state_changed",
@@ -221,15 +144,10 @@ nemo_desktop_link_new (NemoDesktopLinkType type)
 
 	case NEMO_DESKTOP_LINK_NETWORK:
 		link->details->filename = g_strdup ("network");
-		link->details->display_name = g_settings_get_string (nemo_desktop_preferences,
-								     NEMO_PREFERENCES_DESKTOP_NETWORK_NAME);
+		link->details->display_name = g_strdup (_("Network"));
 		link->details->activation_location = g_file_new_for_uri ("network:///");
 		link->details->icon = g_themed_icon_new (NEMO_ICON_NETWORK);
-
-		g_signal_connect_swapped (nemo_desktop_preferences,
-					  "changed::" NEMO_PREFERENCES_DESKTOP_NETWORK_NAME,
-					  G_CALLBACK (network_name_changed),
-					  link);
+		
 		break;
 
 	default:
@@ -365,26 +283,6 @@ nemo_desktop_link_rename (NemoDesktopLink     *link,
 			      const char              *name)
 {
 	switch (link->details->type) {
-	case NEMO_DESKTOP_LINK_HOME:
-		g_settings_set_string (nemo_desktop_preferences,
-				       NEMO_PREFERENCES_DESKTOP_HOME_NAME,
-				       name);
-		break;
-	case NEMO_DESKTOP_LINK_COMPUTER:
-		g_settings_set_string (nemo_desktop_preferences,
-				       NEMO_PREFERENCES_DESKTOP_COMPUTER_NAME,
-				       name);
-		break;
-	case NEMO_DESKTOP_LINK_TRASH:
-		g_settings_set_string (nemo_desktop_preferences,
-				       NEMO_PREFERENCES_DESKTOP_TRASH_NAME,
-				       name);
-		break;
-	case NEMO_DESKTOP_LINK_NETWORK:
-		g_settings_set_string (nemo_desktop_preferences,
-				       NEMO_PREFERENCES_DESKTOP_NETWORK_NAME,
-				       name);
-		break;
 	default:
 		g_assert_not_reached ();
 		/* FIXME: Do we want volume renaming?
@@ -419,30 +317,6 @@ desktop_link_finalize (GObject *object)
 		nemo_desktop_icon_file_remove (link->details->icon_file);
 		nemo_file_unref (NEMO_FILE (link->details->icon_file));
 		link->details->icon_file = NULL;
-	}
-
-	if (link->details->type == NEMO_DESKTOP_LINK_HOME) {
-		g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
-						 home_name_changed,
-						 link);
-	}
-
-	if (link->details->type == NEMO_DESKTOP_LINK_COMPUTER) {
-		g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
-						      computer_name_changed,
-						      link);
-	}
-
-	if (link->details->type == NEMO_DESKTOP_LINK_TRASH) {
-		g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
-						      trash_name_changed,
-						      link);
-	}
-
-	if (link->details->type == NEMO_DESKTOP_LINK_NETWORK) {
-		g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
-						      network_name_changed,
-						      link);
 	}
 
 	if (link->details->type == NEMO_DESKTOP_LINK_MOUNT) {
