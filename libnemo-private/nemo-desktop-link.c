@@ -282,14 +282,7 @@ gboolean
 nemo_desktop_link_rename (NemoDesktopLink     *link,
 			      const char              *name)
 {
-	switch (link->details->type) {
-	default:
-		g_assert_not_reached ();
-		/* FIXME: Do we want volume renaming?
-		 * We didn't support that before. */
-		break;
-	}
-
+	/* Do we want volume renaming? */
 	return TRUE;
 }
 
