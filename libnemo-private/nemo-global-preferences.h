@@ -183,14 +183,10 @@ typedef enum
 
 #define NEMO_PREFERENCES_DESKTOP_FONT		   "font"
 #define NEMO_PREFERENCES_DESKTOP_HOME_VISIBLE          "home-icon-visible"
-#define NEMO_PREFERENCES_DESKTOP_HOME_NAME             "home-icon-name"
 #define NEMO_PREFERENCES_DESKTOP_COMPUTER_VISIBLE      "computer-icon-visible"
-#define NEMO_PREFERENCES_DESKTOP_COMPUTER_NAME         "computer-icon-name"
 #define NEMO_PREFERENCES_DESKTOP_TRASH_VISIBLE         "trash-icon-visible"
-#define NEMO_PREFERENCES_DESKTOP_TRASH_NAME            "trash-icon-name"
 #define NEMO_PREFERENCES_DESKTOP_VOLUMES_VISIBLE	   "volumes-visible"
 #define NEMO_PREFERENCES_DESKTOP_NETWORK_VISIBLE       "network-icon-visible"
-#define NEMO_PREFERENCES_DESKTOP_NETWORK_NAME          "network-icon-name"
 #define NEMO_PREFERENCES_DESKTOP_BACKGROUND_FADE       "background-fade"
 #define NEMO_PREFERENCES_DESKTOP_SHOW_TOOLTIPS         "tooltips-on-desktop"
 

@@ -57,10 +57,6 @@ computer-icon-visible = /apps/nemo/desktop/computer_icon_visible
 trash-icon-visible = /apps/nemo/desktop/trash_icon_visible
 volumes-visible = /apps/nemo/desktop/volumes_visible
 network-icon-visible = /apps/nemo/desktop/network_icon_visible
-computer-icon-name = /apps/nemo/desktop/computer_icon_name
-home-icon-name = /apps/nemo/desktop/home_icon_name
-trash-icon-name = /apps/nemo/desktop/trash_icon_name
-network-icon-name = /apps/nemo/desktop/network_icon_name
 text-ellipsis-limit = /apps/nemo/desktop/text_ellipsis_limit
 
 [org.nemo.window-state]
