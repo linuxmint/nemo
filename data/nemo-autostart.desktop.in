@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Files
+Name=Nemo
 Comment=Start Nemo desktop at log in
 Exec=nemo -n
 OnlyShowIn=GNOME;Unity;
