@@ -104,6 +104,12 @@ nemo_bookmark_list_get_file (void)
                                  NULL);
     file = g_file_new_for_path (filename);
 
+    if (!g_file_query_exists (file, NULL)) {
+        g_object_unref (file);
+        g_free(filename);
+        return nemo_bookmark_list_get_legacy_file ();
+    }
+
     g_free (filename);
 
     return file;
@@ -530,11 +536,7 @@ load_file_async (NemoBookmarkList *self,
 {
 	GFile *file;
 
-	file = nemo_bookmark_list_get_legacy_file ();
-
-    if (!g_file_query_exists (file, NULL)) {
-        file = nemo_bookmark_list_get_file ();
-    }
+	file = nemo_bookmark_list_get_file ();
 
 	/* Wipe out old list. */
 	clear (self);
