@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: linuxmint\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2013-01-21 13:19+0000\n"
+"POT-Creation-Date: 2013-04-11 09:31-0400\n"
 "PO-Revision-Date: 2013-03-07 14:58+0000\n"
 "Last-Translator: Wylmer Wang <Unknown>\n"
 "Language-Team: Chinese (Simplified) <zh_CN@li.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Launchpad-Export-Date: 2013-04-11 14:39+0000\n"
-"X-Generator: Launchpad (build 16550)\n"
+"X-Launchpad-Export-Date: 2013-05-04 16:23+0000\n"
+"X-Generator: Launchpad (build 16598)\n"
 
 #: src/nemo-application.c:158
 #, c-format
@@ -40,59 +40,53 @@ msgid ""
 "that Nemo can create them."
 msgstr "在运行 Nemo 前，请创建收下文件夹或设置权限以便 Nemo 能够创建它们。"
 
-#: src/nemo-application.c:297
-msgid ""
-"Nemo 3.0 deprecated this directory and tried migrating this configuration to "
-"~/.config/nemo"
-msgstr "Nemo 3.0 废弃了此目录，并尝试将此配置迁移到了 ~/.config/nemo"
-
-#: src/nemo-application.c:858
+#: src/nemo-application.c:802
 msgid "--check cannot be used with other options."
 msgstr "--check 无法和其它选项一起使用。"
 
-#: src/nemo-application.c:864
+#: src/nemo-application.c:808
 msgid "--quit cannot be used with URIs."
 msgstr "--quit 不能与 URI 一起使用。"
 
-#: src/nemo-application.c:871
+#: src/nemo-application.c:815
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry 无法和多个 URI 一起使用。"
 
-#: src/nemo-application.c:925
+#: src/nemo-application.c:869
 msgid "Perform a quick set of self-check tests."
 msgstr "执行一组快速自检测试。"
 
-#: src/nemo-application.c:931
+#: src/nemo-application.c:875
 msgid "Show the version of the program."
 msgstr "显示程序的版本。"
 
-#: src/nemo-application.c:933
+#: src/nemo-application.c:877
 msgid "Create the initial window with the given geometry."
 msgstr "用给定的几何属性创建初始窗口。"
 
-#: src/nemo-application.c:933
+#: src/nemo-application.c:877
 msgid "GEOMETRY"
 msgstr "几何属性"
 
-#: src/nemo-application.c:935
+#: src/nemo-application.c:879
 msgid "Only create windows for explicitly specified URIs."
 msgstr "仅为显式指定的 URI 创建窗口。"
 
-#: src/nemo-application.c:937
+#: src/nemo-application.c:881
 msgid ""
 "Do not manage the desktop (ignore the preference set in the preferences "
 "dialog)."
 msgstr "不管理桌面(忽略首选项对话中设置的首选项)。"
 
-#: src/nemo-application.c:939
+#: src/nemo-application.c:883
 msgid "Quit Nemo."
 msgstr "退出 Nemo。"
 
-#: src/nemo-application.c:940
+#: src/nemo-application.c:884
 msgid "[URI...]"
 msgstr "[URI...]"
 
-#: src/nemo-application.c:951
+#: src/nemo-application.c:895
 msgid ""
 "\n"
 "\n"
@@ -137,7 +131,7 @@ msgstr ""
 msgid "_Run"
 msgstr "运行(_R)"
 
-#: src/nemo-bookmarks-window.c:158 src/nemo-file-management-properties.c:229
+#: src/nemo-bookmarks-window.c:158 src/nemo-file-management-properties.c:230
 #: src/nemo-window-menus.c:400
 #, c-format
 msgid ""
@@ -210,7 +204,7 @@ msgid "Continue"
 msgstr "继续"
 
 #: src/nemo-connect-server-dialog.c:701 src/nemo-properties-window.c:5125
-#: src/nemo-view.c:1519
+#: src/nemo-view.c:1522
 msgid "There was an error displaying help."
 msgstr "显示帮助时出错。"
 
@@ -242,7 +236,7 @@ msgstr "类型(_T)："
 msgid "Sh_are:"
 msgstr "共享(_A)："
 
-#: src/nemo-connect-server-dialog.c:1008 src/nemo-view.c:1713
+#: src/nemo-connect-server-dialog.c:1008 src/nemo-view.c:1716
 msgid "_Folder:"
 msgstr "文件夹(_F)："
 
@@ -284,15 +278,15 @@ msgstr ""
 "\n"
 "添加到服务器挂载的连接"
 
-#: src/nemo-desktop-icon-view.c:766 src/nemo-view.c:7876 src/nemo-view.c:9445
+#: src/nemo-desktop-icon-view.c:766 src/nemo-view.c:7930 src/nemo-view.c:9493
 msgid "E_mpty Trash"
 msgstr "清空回收站(_M)"
 
-#: src/nemo-desktop-icon-view.c:782 src/nemo-view.c:7824
+#: src/nemo-desktop-icon-view.c:782 src/nemo-view.c:7872
 msgid "Create L_auncher..."
 msgstr "创建启动器(_A)..."
 
-#: src/nemo-desktop-icon-view.c:784 src/nemo-view.c:7825
+#: src/nemo-desktop-icon-view.c:784 src/nemo-view.c:7873
 msgid "Create a new launcher"
 msgstr "创建新启动器"
 
@@ -310,7 +304,7 @@ msgid "Empty Trash"
 msgstr "清空回收站"
 
 #: src/nemo-desktop-icon-view.c:798 src/nemo-trash-bar.c:207
-#: src/nemo-view.c:7877
+#: src/nemo-view.c:7931
 msgid "Delete all items in the Trash"
 msgstr "删除回收站中的所有项目"
 
@@ -350,7 +344,7 @@ msgid "Command"
 msgstr "命令"
 
 #: src/nemo-desktop-window.c:92 src/nemo-desktop-window.c:290
-#: src/nemo-pathbar.c:1330 src/nemo-places-sidebar.c:668
+#: src/nemo-pathbar.c:1337 src/nemo-places-sidebar.c:665
 msgid "Desktop"
 msgstr "桌面"
 
@@ -455,12 +449,12 @@ msgstr "无法重命名该项目。"
 msgid "Renaming \"%s\" to \"%s\"."
 msgstr "将“%s”重命名为“%s”。"
 
-#: src/nemo-file-management-properties.c:313 src/nemo-properties-window.c:3923
+#: src/nemo-file-management-properties.c:314 src/nemo-properties-window.c:3923
 #: src/nemo-properties-window.c:3934
 msgid "None"
 msgstr "无"
 
-#: src/nemo-file-management-properties.c:496 libnemo-private/nemo-file.c:4373
+#: src/nemo-file-management-properties.c:497 libnemo-private/nemo-file.c:4389
 msgid "today at %-I:%M:%S %p"
 msgstr "今天 %H:%M:%S"
 
@@ -592,44 +586,44 @@ msgstr "按删除时间(_R)"
 msgid "Restore Icon's Original Si_ze"
 msgstr "恢复图标的初始大小(_Z)"
 
-#: src/nemo-icon-view.c:2809 src/nemo-icon-view-container.c:588
+#: src/nemo-icon-view.c:2826 src/nemo-icon-view-container.c:588
 #: src/nemo-window-menus.c:1369
 msgid "Icon View"
 msgstr "图标视图"
 
-#: src/nemo-icon-view.c:2811
+#: src/nemo-icon-view.c:2828
 msgid "_Icons"
 msgstr "图标(_I)"
 
-#: src/nemo-icon-view.c:2812
+#: src/nemo-icon-view.c:2829
 msgid "The icon view encountered an error."
 msgstr "图标视图遇到了错误。"
 
-#: src/nemo-icon-view.c:2813
+#: src/nemo-icon-view.c:2830
 msgid "The icon view encountered an error while starting up."
 msgstr "图标视图在启动时遇到错误。"
 
-#: src/nemo-icon-view.c:2814
+#: src/nemo-icon-view.c:2831
 msgid "Display this location with the icon view."
 msgstr "用图标视图显示该位置。"
 
-#: src/nemo-icon-view.c:2823 src/nemo-window-menus.c:1392
+#: src/nemo-icon-view.c:2840 src/nemo-window-menus.c:1392
 msgid "Compact View"
 msgstr "紧凑视图"
 
-#: src/nemo-icon-view.c:2825
+#: src/nemo-icon-view.c:2842
 msgid "_Compact"
 msgstr "紧凑(_C)"
 
-#: src/nemo-icon-view.c:2826
+#: src/nemo-icon-view.c:2843
 msgid "The compact view encountered an error."
 msgstr "紧凑视图遇到了错误。"
 
-#: src/nemo-icon-view.c:2827
+#: src/nemo-icon-view.c:2844
 msgid "The compact view encountered an error while starting up."
 msgstr "紧凑视图在启动时遇到错误。"
 
-#: src/nemo-icon-view.c:2828
+#: src/nemo-icon-view.c:2845
 msgid "Display this location with the compact view."
 msgstr "用紧凑视图显示该位置。"
 
@@ -771,45 +765,45 @@ msgstr "图像"
 msgid "(Empty)"
 msgstr "(空)"
 
-#: src/nemo-list-view.c:1664 libnemo-private/nemo-column-utilities.c:43
+#: src/nemo-list-view.c:1670 libnemo-private/nemo-column-utilities.c:43
 msgid "Name"
 msgstr "名称"
 
-#: src/nemo-list-view.c:1722 src/nemo-list-view.c:3357
+#: src/nemo-list-view.c:1728 src/nemo-list-view.c:3363
 #: src/nemo-window-menus.c:1380
 msgid "List View"
 msgstr "列表视图"
 
-#: src/nemo-list-view.c:2539
+#: src/nemo-list-view.c:2545
 #, c-format
 msgid "%s Visible Columns"
 msgstr "%s 可见列"
 
-#: src/nemo-list-view.c:2559
+#: src/nemo-list-view.c:2565
 msgid "Choose the order of information to appear in this folder:"
 msgstr "为此文件夹中要显示的信息选择顺序："
 
-#: src/nemo-list-view.c:2613
+#: src/nemo-list-view.c:2619
 msgid "Visible _Columns..."
 msgstr "可见列(_C)..."
 
-#: src/nemo-list-view.c:2614
+#: src/nemo-list-view.c:2620
 msgid "Select the columns visible in this folder"
 msgstr "选择此文件夹中可见的列"
 
-#: src/nemo-list-view.c:3359
+#: src/nemo-list-view.c:3365
 msgid "_List"
 msgstr "列表(_L)"
 
-#: src/nemo-list-view.c:3360
+#: src/nemo-list-view.c:3366
 msgid "The list view encountered an error."
 msgstr "列表视图遇到了错误。"
 
-#: src/nemo-list-view.c:3361
+#: src/nemo-list-view.c:3367
 msgid "The list view encountered an error while starting up."
 msgstr "列表视图在启动时遇到错误。"
 
-#: src/nemo-list-view.c:3362
+#: src/nemo-list-view.c:3368
 msgid "Display this location with the list view."
 msgstr "用列表视图显示该位置。"
 
@@ -853,8 +847,8 @@ msgid "This link cannot be used, because its target \"%s\" doesn't exist."
 msgstr "无法使用此链接，因为其目标“%s”不存在。"
 
 #: src/nemo-mime-actions.c:646 src/nemo-tree-sidebar.c:1247
-#: src/nemo-view.c:7928 src/nemo-view.c:8046 src/nemo-view.c:9076
-#: src/nemo-view.c:9377
+#: src/nemo-view.c:7982 src/nemo-view.c:8100 src/nemo-view.c:9130
+#: src/nemo-view.c:9425
 msgid "Mo_ve to Trash"
 msgstr "移动到回收站(_V)"
 
@@ -877,7 +871,7 @@ msgid "_Display"
 msgstr "显示(_D)"
 
 #: src/nemo-mime-actions.c:1041 src/nemo-mime-actions.c:1786
-#: src/nemo-view.c:1017
+#: src/nemo-view.c:1020
 msgid "Are you sure you want to open all files?"
 msgstr "您确定要打开全部文件吗？"
 
@@ -951,11 +945,11 @@ msgid_plural "This will open %d separate applications."
 msgstr[0] "这将打开 %d 个独立的应用程序。"
 
 #: src/nemo-mime-actions.c:1864 src/nemo-mime-actions.c:2138
-#: src/nemo-view.c:7024
+#: src/nemo-view.c:7072
 msgid "Unable to mount location"
 msgstr "无法挂载位置"
 
-#: src/nemo-mime-actions.c:2217 src/nemo-view.c:7171
+#: src/nemo-mime-actions.c:2217 src/nemo-view.c:7219
 msgid "Unable to start location"
 msgstr "无法启动位置"
 
@@ -974,20 +968,20 @@ msgstr[0] "正在打开 %d 项。"
 msgid "Close tab"
 msgstr "关闭标签"
 
-#: src/nemo-places-sidebar.c:358
+#: src/nemo-places-sidebar.c:355
 msgid "Devices"
 msgstr "设备"
 
-#: src/nemo-places-sidebar.c:583 src/nemo-view.c:3038
+#: src/nemo-places-sidebar.c:580 src/nemo-view.c:3083
 #, c-format
 msgid "Free space: %s"
 msgstr "可用空间：%s"
 
-#: src/nemo-places-sidebar.c:640
+#: src/nemo-places-sidebar.c:637
 msgid "My Computer"
 msgstr "我的电脑"
 
-#: src/nemo-places-sidebar.c:647
+#: src/nemo-places-sidebar.c:644
 #, c-format
 msgid ""
 "Open your personal folder\n"
@@ -996,17 +990,17 @@ msgstr ""
 "在您的个人文件夹中打开\n"
 "%s"
 
-#: src/nemo-places-sidebar.c:651 src/nemo-tree-sidebar.c:1343
+#: src/nemo-places-sidebar.c:648 src/nemo-tree-sidebar.c:1343
 #: libnemo-private/nemo-bookmark.c:129 libnemo-private/nemo-desktop-link.c:120
 #: libnemo-private/nemo-file-utilities.c:66
 msgid "Home"
 msgstr "主目录"
 
-#: src/nemo-places-sidebar.c:670
+#: src/nemo-places-sidebar.c:667
 msgid "Open the contents of your desktop in a folder"
 msgstr "将桌面以文件夹形式打开"
 
-#: src/nemo-places-sidebar.c:719
+#: src/nemo-places-sidebar.c:716
 #, c-format
 msgid ""
 "Open the contents of the File System\n"
@@ -1015,19 +1009,19 @@ msgstr ""
 "打开文件系统的内容\n"
 "%s"
 
-#: src/nemo-places-sidebar.c:723 src/nemo-tree-sidebar.c:1347
+#: src/nemo-places-sidebar.c:720 src/nemo-tree-sidebar.c:1347
 msgid "File System"
 msgstr "文件系统"
 
-#: src/nemo-places-sidebar.c:737 src/nemo-trash-bar.c:191
+#: src/nemo-places-sidebar.c:734 src/nemo-trash-bar.c:191
 msgid "Trash"
 msgstr "回收站"
 
-#: src/nemo-places-sidebar.c:739
+#: src/nemo-places-sidebar.c:736
 msgid "Open the trash"
 msgstr "打开回收站"
 
-#: src/nemo-places-sidebar.c:812
+#: src/nemo-places-sidebar.c:809
 #, c-format
 msgid ""
 "%s (%s)\n"
@@ -1036,17 +1030,17 @@ msgstr ""
 "%s (%s)\n"
 "%s"
 
-#: src/nemo-places-sidebar.c:841
+#: src/nemo-places-sidebar.c:838
 #, c-format
 msgid "Mount and open %s (%s)"
 msgstr "挂载并打开 %s(%s)"
 
-#: src/nemo-places-sidebar.c:869 src/nemo-places-sidebar.c:958
+#: src/nemo-places-sidebar.c:866 src/nemo-places-sidebar.c:955
 #, c-format
 msgid "Mount and open %s"
 msgstr "挂载并打开 %s"
 
-#: src/nemo-places-sidebar.c:911
+#: src/nemo-places-sidebar.c:908
 #, c-format
 msgid ""
 "%s\n"
@@ -1055,139 +1049,139 @@ msgstr ""
 "%s\n"
 "%s"
 
-#: src/nemo-places-sidebar.c:945 src/nemo-places-sidebar.c:1000
+#: src/nemo-places-sidebar.c:942 src/nemo-places-sidebar.c:997
 #: src/nemo-tree-sidebar.c:1351
 msgid "Network"
 msgstr "网络"
 
-#: src/nemo-places-sidebar.c:1002
+#: src/nemo-places-sidebar.c:999
 msgid "Browse the contents of the network"
 msgstr "浏览网络内容"
 
-#: src/nemo-places-sidebar.c:1994 src/nemo-places-sidebar.c:3028
-#: src/nemo-view.c:7974 src/nemo-view.c:7998 src/nemo-view.c:8070
-#: src/nemo-view.c:8712 src/nemo-view.c:8716 src/nemo-view.c:8799
-#: src/nemo-view.c:8803 src/nemo-view.c:8903 src/nemo-view.c:8907
+#: src/nemo-places-sidebar.c:1991 src/nemo-places-sidebar.c:3025
+#: src/nemo-view.c:8028 src/nemo-view.c:8052 src/nemo-view.c:8124
+#: src/nemo-view.c:8766 src/nemo-view.c:8770 src/nemo-view.c:8853
+#: src/nemo-view.c:8857 src/nemo-view.c:8957 src/nemo-view.c:8961
 msgid "_Start"
 msgstr "开始(_S)"
 
-#: src/nemo-places-sidebar.c:1995 src/nemo-places-sidebar.c:3035
-#: src/nemo-view.c:7978 src/nemo-view.c:8002 src/nemo-view.c:8074
-#: src/nemo-view.c:8741 src/nemo-view.c:8828 src/nemo-view.c:8932
+#: src/nemo-places-sidebar.c:1992 src/nemo-places-sidebar.c:3032
+#: src/nemo-view.c:8032 src/nemo-view.c:8056 src/nemo-view.c:8128
+#: src/nemo-view.c:8795 src/nemo-view.c:8882 src/nemo-view.c:8986
 #: src/nemo-window-menus.c:1075
 msgid "_Stop"
 msgstr "停止(_S)"
 
-#: src/nemo-places-sidebar.c:2000
+#: src/nemo-places-sidebar.c:1997
 msgid "_Power On"
 msgstr "开电源(_P)"
 
-#: src/nemo-places-sidebar.c:2001 src/nemo-view.c:8745 src/nemo-view.c:8832
-#: src/nemo-view.c:8936
+#: src/nemo-places-sidebar.c:1998 src/nemo-view.c:8799 src/nemo-view.c:8886
+#: src/nemo-view.c:8990
 msgid "_Safely Remove Drive"
 msgstr "安全移除驱动器(_S)"
 
-#: src/nemo-places-sidebar.c:2004
+#: src/nemo-places-sidebar.c:2001
 msgid "_Connect Drive"
 msgstr "连接驱动器(_C)"
 
-#: src/nemo-places-sidebar.c:2005
+#: src/nemo-places-sidebar.c:2002
 msgid "_Disconnect Drive"
 msgstr "断开驱动器(_D)"
 
-#: src/nemo-places-sidebar.c:2008
+#: src/nemo-places-sidebar.c:2005
 msgid "_Start Multi-disk Device"
 msgstr "启动多磁盘设备(_S)"
 
-#: src/nemo-places-sidebar.c:2009
+#: src/nemo-places-sidebar.c:2006
 msgid "_Stop Multi-disk Device"
 msgstr "停止多磁盘设备(_S)"
 
-#: src/nemo-places-sidebar.c:2013 src/nemo-view.c:8815 src/nemo-view.c:8919
+#: src/nemo-places-sidebar.c:2010 src/nemo-view.c:8869 src/nemo-view.c:8973
 msgid "_Unlock Drive"
 msgstr "解锁驱动器(_U)"
 
-#: src/nemo-places-sidebar.c:2014 src/nemo-view.c:8757 src/nemo-view.c:8844
-#: src/nemo-view.c:8948
+#: src/nemo-places-sidebar.c:2011 src/nemo-view.c:8811 src/nemo-view.c:8898
+#: src/nemo-view.c:9002
 msgid "_Lock Drive"
 msgstr "锁定驱动器(_L)"
 
-#: src/nemo-places-sidebar.c:2088 src/nemo-places-sidebar.c:2652
+#: src/nemo-places-sidebar.c:2085 src/nemo-places-sidebar.c:2649
 #, c-format
 msgid "Unable to start %s"
 msgstr "无法启动 %s"
 
-#: src/nemo-places-sidebar.c:2411 src/nemo-places-sidebar.c:2439
-#: src/nemo-places-sidebar.c:2467
+#: src/nemo-places-sidebar.c:2408 src/nemo-places-sidebar.c:2436
+#: src/nemo-places-sidebar.c:2464
 #, c-format
 msgid "Unable to eject %s"
 msgstr "无法弹出 %s"
 
-#: src/nemo-places-sidebar.c:2607
+#: src/nemo-places-sidebar.c:2604
 #, c-format
 msgid "Unable to poll %s for media changes"
 msgstr "无法查询 %s 的介质更改"
 
-#: src/nemo-places-sidebar.c:2707
+#: src/nemo-places-sidebar.c:2704
 #, c-format
 msgid "Unable to stop %s"
 msgstr "无法停止 %s"
 
-#: src/nemo-places-sidebar.c:2944 src/nemo-tree-sidebar.c:1158
-#: src/nemo-view.c:7828 src/nemo-view.c:9292
+#: src/nemo-places-sidebar.c:2941 src/nemo-tree-sidebar.c:1158
+#: src/nemo-view.c:7876 src/nemo-view.c:9340
 msgid "_Open"
 msgstr "打开(_O)"
 
-#: src/nemo-places-sidebar.c:2952 src/nemo-tree-sidebar.c:1169
-#: src/nemo-view.c:7840 src/nemo-view.c:8028 src/nemo-view.c:9029
-#: src/nemo-view.c:9354
+#: src/nemo-places-sidebar.c:2949 src/nemo-tree-sidebar.c:1169
+#: src/nemo-view.c:7888 src/nemo-view.c:8082 src/nemo-view.c:9083
+#: src/nemo-view.c:9402
 msgid "Open in New _Tab"
 msgstr "在新标签中打开(_T)"
 
-#: src/nemo-places-sidebar.c:2962 src/nemo-tree-sidebar.c:1183
-#: src/nemo-view.c:9020 src/nemo-view.c:9334
+#: src/nemo-places-sidebar.c:2959 src/nemo-tree-sidebar.c:1183
+#: src/nemo-view.c:9074 src/nemo-view.c:9382
 msgid "Open in New _Window"
 msgstr "在新窗口中打开(_W)"
 
-#: src/nemo-places-sidebar.c:2973 src/nemo-window-menus.c:1181
+#: src/nemo-places-sidebar.c:2970 src/nemo-window-menus.c:1181
 msgid "_Add Bookmark"
 msgstr "添加书签(_A)"
 
-#: src/nemo-places-sidebar.c:2979
+#: src/nemo-places-sidebar.c:2976
 msgid "Remove"
 msgstr "移除"
 
-#: src/nemo-places-sidebar.c:2988
+#: src/nemo-places-sidebar.c:2985
 msgid "Rename..."
 msgstr "重命名..."
 
-#: src/nemo-places-sidebar.c:3000 src/nemo-view.c:7962 src/nemo-view.c:7986
-#: src/nemo-view.c:8058
+#: src/nemo-places-sidebar.c:2997 src/nemo-view.c:8016 src/nemo-view.c:8040
+#: src/nemo-view.c:8112
 msgid "_Mount"
 msgstr "挂载(_M)"
 
-#: src/nemo-places-sidebar.c:3007 src/nemo-tree-sidebar.c:1274
-#: src/nemo-view.c:7966 src/nemo-view.c:7990 src/nemo-view.c:8062
+#: src/nemo-places-sidebar.c:3004 src/nemo-tree-sidebar.c:1274
+#: src/nemo-view.c:8020 src/nemo-view.c:8044 src/nemo-view.c:8116
 msgid "_Unmount"
 msgstr "卸载(_U)"
 
-#: src/nemo-places-sidebar.c:3014 src/nemo-tree-sidebar.c:1283
-#: src/nemo-view.c:7970 src/nemo-view.c:7994 src/nemo-view.c:8066
+#: src/nemo-places-sidebar.c:3011 src/nemo-tree-sidebar.c:1283
+#: src/nemo-view.c:8024 src/nemo-view.c:8048 src/nemo-view.c:8120
 msgid "_Eject"
 msgstr "弹出(_E)"
 
-#: src/nemo-places-sidebar.c:3021 src/nemo-view.c:7982 src/nemo-view.c:8006
-#: src/nemo-view.c:8078
+#: src/nemo-places-sidebar.c:3018 src/nemo-view.c:8036 src/nemo-view.c:8060
+#: src/nemo-view.c:8132
 msgid "_Detect Media"
 msgstr "删除媒体(_D)"
 
-#: src/nemo-places-sidebar.c:3044 src/nemo-trash-bar.c:204
+#: src/nemo-places-sidebar.c:3041 src/nemo-trash-bar.c:204
 #: libnemo-private/nemo-file-operations.c:1352
 #: libnemo-private/nemo-file-operations.c:2211
 msgid "Empty _Trash"
 msgstr "清空回收站(_T)"
 
-#: src/nemo-places-sidebar.c:3056 src/nemo-view.c:7806 src/nemo-view.c:8083
+#: src/nemo-places-sidebar.c:3053 src/nemo-view.c:7854 src/nemo-view.c:8137
 msgid "_Properties"
 msgstr "属性(_P)"
 
@@ -1249,7 +1243,7 @@ msgstr "属性"
 msgid "%s Properties"
 msgstr "%s 属性"
 
-#: src/nemo-properties-window.c:1122 libnemo-private/nemo-file.c:6258
+#: src/nemo-properties-window.c:1122 libnemo-private/nemo-file.c:6274
 msgid "unknown"
 msgstr "未知"
 
@@ -1641,30 +1635,30 @@ msgstr "还原选中的项目"
 msgid "Restore selected items to their original position"
 msgstr "还原选中的项目到原始位置"
 
-#: src/nemo-tree-sidebar.c:916 src/nemo-view.c:6427
+#: src/nemo-tree-sidebar.c:916 src/nemo-view.c:6477
 #, c-format
 msgid "\"%s\" will be moved if you select the Paste command"
 msgstr "如果您选择了粘贴命令，“%s”将被移动"
 
-#: src/nemo-tree-sidebar.c:920 src/nemo-view.c:6431
+#: src/nemo-tree-sidebar.c:920 src/nemo-view.c:6481
 #, c-format
 msgid "\"%s\" will be copied if you select the Paste command"
 msgstr "如果您选择了粘贴命令，“%s”将被复制"
 
-#: src/nemo-tree-sidebar.c:959 src/nemo-view.c:6598
+#: src/nemo-tree-sidebar.c:959 src/nemo-view.c:6648
 msgid "There is nothing on the clipboard to paste."
 msgstr "剪贴板中没有东西可以粘贴。"
 
-#: src/nemo-tree-sidebar.c:1199 src/nemo-view.c:7814
+#: src/nemo-tree-sidebar.c:1199 src/nemo-view.c:7862
 msgid "Create New _Folder"
 msgstr "创建文件夹(_F)"
 
-#: src/nemo-tree-sidebar.c:1231 src/nemo-view.c:7894 src/nemo-view.c:8041
+#: src/nemo-tree-sidebar.c:1231 src/nemo-view.c:7948 src/nemo-view.c:8095
 msgid "_Paste Into Folder"
 msgstr "粘贴到文件夹(_P)"
 
-#: src/nemo-tree-sidebar.c:1261 src/nemo-view.c:7932 src/nemo-view.c:8050
-#: src/nemo-view.c:9398
+#: src/nemo-tree-sidebar.c:1261 src/nemo-view.c:7986 src/nemo-view.c:8104
+#: src/nemo-view.c:9446
 msgid "_Delete"
 msgstr "删除(_D)"
 
@@ -1672,164 +1666,164 @@ msgstr "删除(_D)"
 msgid "Computer"
 msgstr "计算机"
 
-#: src/nemo-view.c:1019
+#: src/nemo-view.c:1022
 #, c-format
 msgid "This will open %'d separate tab."
 msgid_plural "This will open %'d separate tabs."
 msgstr[0] "这将打开 %'d 个独立的标签。"
 
-#: src/nemo-view.c:1022
+#: src/nemo-view.c:1025
 #, c-format
 msgid "This will open %'d separate window."
 msgid_plural "This will open %'d separate windows."
 msgstr[0] "这将打开 %'d 个独立的窗口。"
 
-#: src/nemo-view.c:1539
+#: src/nemo-view.c:1542
 msgid "Select Items Matching"
 msgstr "选择匹配的项目"
 
-#: src/nemo-view.c:1554
+#: src/nemo-view.c:1557
 msgid "_Pattern:"
 msgstr "模式(_P)："
 
-#: src/nemo-view.c:1560
+#: src/nemo-view.c:1563
 msgid "Examples: "
 msgstr "示例： "
 
-#: src/nemo-view.c:1673
+#: src/nemo-view.c:1676
 msgid "Save Search as"
 msgstr "搜索另存为"
 
-#: src/nemo-view.c:1696
+#: src/nemo-view.c:1699
 msgid "Search _name:"
 msgstr "搜索名称(_N)："
 
-#: src/nemo-view.c:1718
+#: src/nemo-view.c:1721
 msgid "Select Folder to Save Search In"
 msgstr "选择用来保存搜索的文件夹"
 
-#: src/nemo-view.c:2551 libnemo-private/nemo-file-undo-operations.c:135
+#: src/nemo-view.c:2589 libnemo-private/nemo-file-undo-operations.c:135
 msgid "Undo"
 msgstr "撤消"
 
-#: src/nemo-view.c:2552 libnemo-private/nemo-file-undo-operations.c:138
+#: src/nemo-view.c:2590 libnemo-private/nemo-file-undo-operations.c:138
 msgid "Undo last action"
 msgstr "撤消上一步操作"
 
-#: src/nemo-view.c:2570 libnemo-private/nemo-file-undo-operations.c:142
+#: src/nemo-view.c:2608 libnemo-private/nemo-file-undo-operations.c:142
 msgid "Redo"
 msgstr "重做"
 
-#: src/nemo-view.c:2571 libnemo-private/nemo-file-undo-operations.c:145
+#: src/nemo-view.c:2609 libnemo-private/nemo-file-undo-operations.c:145
 msgid "Redo last undone action"
 msgstr "重做最近撤消的动作"
 
-#: src/nemo-view.c:2733
+#: src/nemo-view.c:2778
 msgid "Content View"
 msgstr "内容视图"
 
-#: src/nemo-view.c:2734
+#: src/nemo-view.c:2779
 msgid "View of the current folder"
 msgstr "当前文件夹的视图"
 
-#: src/nemo-view.c:2961 src/nemo-view.c:2998
+#: src/nemo-view.c:3006 src/nemo-view.c:3043
 #, c-format
 msgid "\"%s\" selected"
 msgstr "选中了“%s”"
 
-#: src/nemo-view.c:2963
+#: src/nemo-view.c:3008
 #, c-format
 msgid "%'d folder selected"
 msgid_plural "%'d folders selected"
 msgstr[0] "选中了 %'d 个文件夹"
 
-#: src/nemo-view.c:2973
+#: src/nemo-view.c:3018
 #, c-format
 msgid " (containing %'d item)"
 msgid_plural " (containing %'d items)"
 msgstr[0] " (含有 %'d 项)"
 
-#: src/nemo-view.c:2984
+#: src/nemo-view.c:3029
 #, c-format
 msgid " (containing a total of %'d item)"
 msgid_plural " (containing a total of %'d items)"
 msgstr[0] " (总共有 %'d 项)"
 
-#: src/nemo-view.c:3001
+#: src/nemo-view.c:3046
 #, c-format
 msgid "%'d item selected"
 msgid_plural "%'d items selected"
 msgstr[0] "选中了 %'d 项"
 
-#: src/nemo-view.c:3008
+#: src/nemo-view.c:3053
 #, c-format
 msgid "%'d other item selected"
 msgid_plural "%'d other items selected"
 msgstr[0] "又选中了 %'d 项"
 
-#: src/nemo-view.c:3025
+#: src/nemo-view.c:3070
 #, c-format
 msgid "%s (%s)"
 msgstr "%s (%s)"
 
-#: src/nemo-view.c:3046 libnemo-private/nemo-file.c:5827
+#: src/nemo-view.c:3091 libnemo-private/nemo-file.c:5843
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
 msgstr[0] "%'u 项"
 
-#: src/nemo-view.c:3049
+#: src/nemo-view.c:3094
 #, c-format
 msgid "%s, Free space: %s"
 msgstr "%s，剩余空间：%s"
 
-#: src/nemo-view.c:3064
+#: src/nemo-view.c:3109
 #, c-format
 msgid "%s, %s"
 msgstr "%s, %s"
 
-#: src/nemo-view.c:3083 src/nemo-view.c:3096
+#: src/nemo-view.c:3128 src/nemo-view.c:3141
 #, c-format
 msgid "%s%s, %s"
 msgstr "%s%s, %s"
 
-#: src/nemo-view.c:3110
+#: src/nemo-view.c:3155
 #, c-format
 msgid "%s%s, %s, %s"
 msgstr "%s%s, %s, %s"
 
-#: src/nemo-view.c:4564
+#: src/nemo-view.c:4607
 #, c-format
 msgid "Open With %s"
 msgstr "用 %s 打开"
 
-#: src/nemo-view.c:4566
+#: src/nemo-view.c:4609
 #, c-format
 msgid "Use \"%s\" to open the selected item"
 msgid_plural "Use \"%s\" to open the selected items"
 msgstr[0] "用“%s”打开选中的项目"
 
-#: src/nemo-view.c:5616
+#: src/nemo-view.c:5659
 #, c-format
 msgid "Run \"%s\" on any selected items"
 msgstr "在任意选中的项目上运行“%s”"
 
-#: src/nemo-view.c:6101
+#: src/nemo-view.c:6151
 #, c-format
 msgid "Create a new document from template \"%s\""
 msgstr "根据模板“%s”创建新文档"
 
-#: src/nemo-view.c:6355
+#: src/nemo-view.c:6405
 msgid "All executable files in this folder will appear in the Scripts menu."
 msgstr "该文件夹中所有的可执行文件都将显示在脚本菜单中。"
 
-#: src/nemo-view.c:6357
+#: src/nemo-view.c:6407
 msgid ""
 "Choosing a script from the menu will run that script with any selected items "
 "as input."
 msgstr "从该菜单中选择某脚本将会用任意选中项目作为输入来执行那个脚本。"
 
-#: src/nemo-view.c:6359
+#: src/nemo-view.c:6409
 msgid ""
 "All executable files in this folder will appear in the Scripts menu. "
 "Choosing a script from the menu will run that script.\n"
@@ -1860,604 +1854,612 @@ msgid ""
 "pane of a split-view window"
 msgstr ""
 
-#: src/nemo-view.c:6438
+#: src/nemo-view.c:6488
 #, c-format
 msgid "The %'d selected item will be moved if you select the Paste command"
 msgid_plural ""
 "The %'d selected items will be moved if you select the Paste command"
 msgstr[0] "如果您选择了粘贴命令，将移动选中的 %'d 个项目"
 
-#: src/nemo-view.c:6445
+#: src/nemo-view.c:6495
 #, c-format
 msgid "The %'d selected item will be copied if you select the Paste command"
 msgid_plural ""
 "The %'d selected items will be copied if you select the Paste command"
 msgstr[0] "如果您选择了粘贴命令，将复制选中的 %'d 个项目"
 
-#: src/nemo-view.c:7044
+#: src/nemo-view.c:7092
 msgid "Unable to unmount location"
 msgstr "无法卸载位置"
 
-#: src/nemo-view.c:7064
+#: src/nemo-view.c:7112
 msgid "Unable to eject location"
 msgstr "无法弹出位置"
 
-#: src/nemo-view.c:7079
+#: src/nemo-view.c:7127
 msgid "Unable to stop drive"
 msgstr "无法停止驱动器"
 
-#: src/nemo-view.c:7565
+#: src/nemo-view.c:7613
 #, c-format
 msgid "Connect to Server %s"
 msgstr "连接到服务器 %s"
 
-#: src/nemo-view.c:7570 src/nemo-view.c:8720 src/nemo-view.c:8807
-#: src/nemo-view.c:8911
+#: src/nemo-view.c:7618 src/nemo-view.c:8774 src/nemo-view.c:8861
+#: src/nemo-view.c:8965
 msgid "_Connect"
 msgstr "连接(_C)"
 
-#: src/nemo-view.c:7584
+#: src/nemo-view.c:7632
 msgid "Link _name:"
 msgstr "链接名称(_N)："
 
-#: src/nemo-view.c:7802
+#: src/nemo-view.c:7850
 msgid "Create New _Document"
 msgstr "创建新文档(_D)"
 
-#: src/nemo-view.c:7803
+#: src/nemo-view.c:7851
 msgid "Open Wit_h"
 msgstr "打开方式(_H)"
 
-#: src/nemo-view.c:7804
+#: src/nemo-view.c:7852
 msgid "Choose a program with which to open the selected item"
 msgstr "选择用来打开选中项目的程序"
 
-#: src/nemo-view.c:7807 src/nemo-view.c:9432
+#: src/nemo-view.c:7855 src/nemo-view.c:9480
 msgid "View or modify the properties of each selected item"
 msgstr "查看或修改每个选中项目的属性"
 
-#: src/nemo-view.c:7815
+#: src/nemo-view.c:7863
 msgid "Create a new empty folder inside this folder"
 msgstr "在该文件夹中创建新的空文件夹"
 
-#: src/nemo-view.c:7817
+#: src/nemo-view.c:7865
 msgid "No templates installed"
 msgstr "没有安装模板"
 
-#: src/nemo-view.c:7820
+#: src/nemo-view.c:7868
 msgid "_Empty Document"
 msgstr "空白文档(_E)"
 
-#: src/nemo-view.c:7821
+#: src/nemo-view.c:7869
 msgid "Create a new empty document inside this folder"
 msgstr "在该文件夹中创建新的空文档"
 
-#: src/nemo-view.c:7829
+#: src/nemo-view.c:7877
 msgid "Open the selected item in this window"
 msgstr "在本窗口中打开选中的项目"
 
-#: src/nemo-view.c:7836 src/nemo-view.c:8024
+#: src/nemo-view.c:7884 src/nemo-view.c:8078
 msgid "Open in Navigation Window"
 msgstr "在导航窗口中打开"
 
-#: src/nemo-view.c:7837
+#: src/nemo-view.c:7885
 msgid "Open each selected item in a navigation window"
 msgstr "在导航窗口中打开每个选中的项目"
 
-#: src/nemo-view.c:7841
+#: src/nemo-view.c:7889
 msgid "Open each selected item in a new tab"
 msgstr "在新标签中打开每个选中的项目"
 
-#: src/nemo-view.c:7844
+#: src/nemo-view.c:7892
 msgid "Open in Terminal"
 msgstr "在终端中打开"
 
-#: src/nemo-view.c:7845
+#: src/nemo-view.c:7893
 msgid "Open terminal in the selected folder"
 msgstr "在所选的文件夹中打开终端"
 
-#: src/nemo-view.c:7848
+#: src/nemo-view.c:7896
 msgid "Open as Root"
 msgstr "以 Root 身份打开"
 
-#: src/nemo-view.c:7849
+#: src/nemo-view.c:7897
 msgid "Open the folder with administration privileges"
 msgstr "以管理员权限打开文件夹"
 
-#: src/nemo-view.c:7852
+#: src/nemo-view.c:7901
+msgid "Follow link to original file"
+msgstr ""
+
+#: src/nemo-view.c:7902
+msgid "Navigate to the original file that this symbolic link points to"
+msgstr ""
+
+#: src/nemo-view.c:7906
 msgid "Send with Thunderbird"
 msgstr "用 Thunderbird 发送"
 
-#: src/nemo-view.c:7853
+#: src/nemo-view.c:7907
 msgid "Send the selected file(s) as email attachments using Thunderbird"
 msgstr "用 Thunderbird 将所选文件作为电子邮件附件发送"
 
-#: src/nemo-view.c:7856
+#: src/nemo-view.c:7910
 msgid "Send as email attachment"
 msgstr "作为电子邮件附件发送"
 
-#: src/nemo-view.c:7857
+#: src/nemo-view.c:7911
 msgid ""
 "Send the selected file(s) as email attachments using your current email "
 "program"
 msgstr "使用您当前的电子邮件程序将所选文件作为电子邮件发送"
 
-#: src/nemo-view.c:7860
+#: src/nemo-view.c:7914
 msgid "Set as Wallpaper..."
 msgstr "设置为壁纸..."
 
-#: src/nemo-view.c:7861
+#: src/nemo-view.c:7915
 msgid "Set the selected image as your desktop wallpaper"
 msgstr "将所选图像设置为您的桌面壁纸"
 
-#: src/nemo-view.c:7864
+#: src/nemo-view.c:7918
 msgid "Other _Application..."
 msgstr "其他程序(_A)..."
 
-#: src/nemo-view.c:7865 src/nemo-view.c:7869
+#: src/nemo-view.c:7919 src/nemo-view.c:7923
 msgid "Choose another application with which to open the selected item"
 msgstr "选择其他程序打开选中项目"
 
-#: src/nemo-view.c:7868
+#: src/nemo-view.c:7922
 msgid "Open With Other _Application..."
 msgstr "用其他程序打开(_A)..."
 
-#: src/nemo-view.c:7872
+#: src/nemo-view.c:7926
 msgid "_Open Scripts Folder"
 msgstr "打开脚本文件夹(_O)"
 
-#: src/nemo-view.c:7873
+#: src/nemo-view.c:7927
 msgid "Show the folder containing the scripts that appear in this menu"
 msgstr "显示包含出现在该菜单中的脚本的文件夹"
 
-#: src/nemo-view.c:7881
+#: src/nemo-view.c:7935
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr "准备将选中的文件用粘贴命令移动"
 
-#: src/nemo-view.c:7885
+#: src/nemo-view.c:7939
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr "准备将选中的文件用粘贴命令复制"
 
-#: src/nemo-view.c:7889
+#: src/nemo-view.c:7943
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "移动或复制由前面的剪切或复制命令所选中的文件"
 
-#: src/nemo-view.c:7895
+#: src/nemo-view.c:7949
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr "将先前由剪切或复制命令所选中的文件移动或复制到选中文件夹中"
 
-#: src/nemo-view.c:7897
+#: src/nemo-view.c:7951
 msgid "Cop_y to"
 msgstr "复制到(_Y)"
 
-#: src/nemo-view.c:7898
+#: src/nemo-view.c:7952
 msgid "M_ove to"
 msgstr "移动到(_O)"
 
-#: src/nemo-view.c:7900 libnemo-private/nemo-clipboard.c:444
+#: src/nemo-view.c:7954 libnemo-private/nemo-clipboard.c:444
 msgid "Select _All"
 msgstr "全选(_A)"
 
-#: src/nemo-view.c:7901
+#: src/nemo-view.c:7955
 msgid "Select all items in this window"
 msgstr "选择该窗口中的所有项目"
 
-#: src/nemo-view.c:7904
+#: src/nemo-view.c:7958
 msgid "Select I_tems Matching..."
 msgstr "选择匹配的项目(_T)..."
 
-#: src/nemo-view.c:7905
+#: src/nemo-view.c:7959
 msgid "Select items in this window matching a given pattern"
 msgstr "按给定模式选择此窗口中的项目"
 
-#: src/nemo-view.c:7908
+#: src/nemo-view.c:7962
 msgid "_Invert Selection"
 msgstr "反选(_I)"
 
-#: src/nemo-view.c:7909
+#: src/nemo-view.c:7963
 msgid "Select all and only the items that are not currently selected"
 msgstr "全选那些目前没有选中的项目"
 
-#: src/nemo-view.c:7912
+#: src/nemo-view.c:7966
 msgid "D_uplicate"
 msgstr "就地复制(_U)"
 
-#: src/nemo-view.c:7913
+#: src/nemo-view.c:7967
 msgid "Duplicate each selected item"
 msgstr "复制每个选中的项"
 
-#: src/nemo-view.c:7916 src/nemo-view.c:9417
+#: src/nemo-view.c:7970 src/nemo-view.c:9465
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "创建链接(_K)"
 
-#: src/nemo-view.c:7917
+#: src/nemo-view.c:7971
 msgid "Create a symbolic link for each selected item"
 msgstr "为每个选中的项目创建链接"
 
-#: src/nemo-view.c:7920
+#: src/nemo-view.c:7974
 msgid "_Rename..."
 msgstr "重命名(_R)..."
 
-#: src/nemo-view.c:7921
+#: src/nemo-view.c:7975
 msgid "Rename selected item"
 msgstr "重命名选中的项目"
 
-#: src/nemo-view.c:7929 src/nemo-view.c:9378
+#: src/nemo-view.c:7983 src/nemo-view.c:9426
 msgid "Move each selected item to the Trash"
 msgstr "把每个选中项目都移到回收站"
 
-#: src/nemo-view.c:7933
+#: src/nemo-view.c:7987
 msgid "Delete each selected item, without moving to the Trash"
 msgstr "不经回收站直接删除选中项"
 
-#: src/nemo-view.c:7936 src/nemo-view.c:8054
+#: src/nemo-view.c:7990 src/nemo-view.c:8108
 msgid "_Restore"
 msgstr "恢复(_R)"
 
-#: src/nemo-view.c:7940 src/nemo-window-menus.c:1064
+#: src/nemo-view.c:7994 src/nemo-window-menus.c:1064
 msgid "_Undo"
 msgstr "撤消(_U)"
 
-#: src/nemo-view.c:7941
+#: src/nemo-view.c:7995
 msgid "Undo the last action"
 msgstr "撤消上次操作"
 
-#: src/nemo-view.c:7944
+#: src/nemo-view.c:7998
 msgid "_Redo"
 msgstr "重做(_R)"
 
-#: src/nemo-view.c:7945
+#: src/nemo-view.c:7999
 msgid "Redo the last undone action"
 msgstr "重做上次撤消的操作"
 
-#: src/nemo-view.c:7954
+#: src/nemo-view.c:8008
 msgid "Reset View to _Defaults"
 msgstr "将视图重置为默认值(_D)"
 
-#: src/nemo-view.c:7955
+#: src/nemo-view.c:8009
 msgid "Reset sorting order and zoom level to match preferences for this view"
 msgstr "重置排序和缩放级别以符合该视图的首选项"
 
-#: src/nemo-view.c:7958
+#: src/nemo-view.c:8012
 msgid "Connect To This Server"
 msgstr "连接到此服务器"
 
-#: src/nemo-view.c:7959
+#: src/nemo-view.c:8013
 msgid "Make a permanent connection to this server"
 msgstr "永久连接到此服务器"
 
-#: src/nemo-view.c:7963
+#: src/nemo-view.c:8017
 msgid "Mount the selected volume"
 msgstr "挂载选中的卷"
 
-#: src/nemo-view.c:7967
+#: src/nemo-view.c:8021
 msgid "Unmount the selected volume"
 msgstr "卸载选中的文件卷"
 
-#: src/nemo-view.c:7971
+#: src/nemo-view.c:8025
 msgid "Eject the selected volume"
 msgstr "弹出选中的卷"
 
-#: src/nemo-view.c:7975
+#: src/nemo-view.c:8029
 msgid "Start the selected volume"
 msgstr "启动选中的卷"
 
-#: src/nemo-view.c:7979 src/nemo-view.c:8933
+#: src/nemo-view.c:8033 src/nemo-view.c:8987
 msgid "Stop the selected volume"
 msgstr "停止选中的卷"
 
-#: src/nemo-view.c:7983 src/nemo-view.c:8007 src/nemo-view.c:8079
+#: src/nemo-view.c:8037 src/nemo-view.c:8061 src/nemo-view.c:8133
 msgid "Detect media in the selected drive"
 msgstr "检测选定驱动器中的媒体"
 
-#: src/nemo-view.c:7987
+#: src/nemo-view.c:8041
 msgid "Mount the volume associated with the open folder"
 msgstr "挂载与所打开文件夹关联的卷"
 
-#: src/nemo-view.c:7991
+#: src/nemo-view.c:8045
 msgid "Unmount the volume associated with the open folder"
 msgstr "卸载与所打开文件夹关联的卷"
 
-#: src/nemo-view.c:7995
+#: src/nemo-view.c:8049
 msgid "Eject the volume associated with the open folder"
 msgstr "弹出与所打开文件夹关联的卷"
 
-#: src/nemo-view.c:7999
+#: src/nemo-view.c:8053
 msgid "Start the volume associated with the open folder"
 msgstr "启动与所打开文件夹关联的卷"
 
-#: src/nemo-view.c:8003
+#: src/nemo-view.c:8057
 msgid "Stop the volume associated with the open folder"
 msgstr "停止与所打开文件夹关联的卷"
 
-#: src/nemo-view.c:8010
+#: src/nemo-view.c:8064
 msgid "Open File and Close window"
 msgstr "打开文件并关闭窗口"
 
-#: src/nemo-view.c:8014
+#: src/nemo-view.c:8068
 msgid "Sa_ve Search"
 msgstr "保存搜索(_V)"
 
-#: src/nemo-view.c:8015
+#: src/nemo-view.c:8069
 msgid "Save the edited search"
 msgstr "保存所编辑的搜索"
 
-#: src/nemo-view.c:8018
+#: src/nemo-view.c:8072
 msgid "Sa_ve Search As..."
 msgstr "搜索另存为(_V)..."
 
-#: src/nemo-view.c:8019
+#: src/nemo-view.c:8073
 msgid "Save the current search as a file"
 msgstr "将当前搜索另存为文件"
 
-#: src/nemo-view.c:8025
+#: src/nemo-view.c:8079
 msgid "Open this folder in a navigation window"
 msgstr "在导航窗口中打开此文件夹"
 
-#: src/nemo-view.c:8029
+#: src/nemo-view.c:8083
 msgid "Open this folder in a new tab"
 msgstr "在新标签中打开此文件夹"
 
-#: src/nemo-view.c:8034
+#: src/nemo-view.c:8088
 msgid "Prepare this folder to be moved with a Paste command"
 msgstr "准备将此文件夹用粘贴命令移动"
 
-#: src/nemo-view.c:8038
+#: src/nemo-view.c:8092
 msgid "Prepare this folder to be copied with a Paste command"
 msgstr "准备将此文件夹用粘贴命令复制"
 
-#: src/nemo-view.c:8042
+#: src/nemo-view.c:8096
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into this "
 "folder"
 msgstr "将先前由剪切或复制命令所选中的文件移动或复制到此文件夹中"
 
-#: src/nemo-view.c:8047
+#: src/nemo-view.c:8101
 msgid "Move this folder to the Trash"
 msgstr "将此文件夹移动到回收站"
 
-#: src/nemo-view.c:8051
+#: src/nemo-view.c:8105
 msgid "Delete this folder, without moving to the Trash"
 msgstr "删除此文件夹，而不移动到回收站"
 
-#: src/nemo-view.c:8059
+#: src/nemo-view.c:8113
 msgid "Mount the volume associated with this folder"
 msgstr "挂载与此文件夹关联的卷"
 
-#: src/nemo-view.c:8063
+#: src/nemo-view.c:8117
 msgid "Unmount the volume associated with this folder"
 msgstr "卸载与此文件夹关联的卷"
 
-#: src/nemo-view.c:8067
+#: src/nemo-view.c:8121
 msgid "Eject the volume associated with this folder"
 msgstr "弹出与此文件夹关联的卷"
 
-#: src/nemo-view.c:8071
+#: src/nemo-view.c:8125
 msgid "Start the volume associated with this folder"
 msgstr "启动与此文件夹关联的卷"
 
-#: src/nemo-view.c:8075
+#: src/nemo-view.c:8129
 msgid "Stop the volume associated with this folder"
 msgstr "停止与此文件夹关联的卷"
 
-#: src/nemo-view.c:8084
+#: src/nemo-view.c:8138
 msgid "View or modify the properties of this folder"
 msgstr "查看或修改此文件夹的属性"
 
-#: src/nemo-view.c:8087 src/nemo-view.c:8090
+#: src/nemo-view.c:8141 src/nemo-view.c:8144
 msgid "_Other pane"
 msgstr "其他窗格(_O)"
 
-#: src/nemo-view.c:8088
+#: src/nemo-view.c:8142
 msgid "Copy the current selection to the other pane in the window"
 msgstr "复制所选内容到窗口的其他窗格中"
 
-#: src/nemo-view.c:8091
+#: src/nemo-view.c:8145
 msgid "Move the current selection to the other pane in the window"
 msgstr "移动所选内容到窗口的其他窗格中"
 
-#: src/nemo-view.c:8094 src/nemo-view.c:8098 src/nemo-window-menus.c:1135
+#: src/nemo-view.c:8148 src/nemo-view.c:8152 src/nemo-window-menus.c:1135
 #: src/nemo-window-menus.c:1328 src/nemo-window-menus.c:1525
 msgid "_Home"
 msgstr "主目录(_H)"
 
-#: src/nemo-view.c:8095
+#: src/nemo-view.c:8149
 msgid "Copy the current selection to the home folder"
 msgstr "将当前选中项目复制到主目录中"
 
-#: src/nemo-view.c:8099
+#: src/nemo-view.c:8153
 msgid "Move the current selection to the home folder"
 msgstr "移动当前选中项目到主目录"
 
-#: src/nemo-view.c:8102 src/nemo-view.c:8106
+#: src/nemo-view.c:8156 src/nemo-view.c:8160
 msgid "_Desktop"
 msgstr "桌面(_D)"
 
-#: src/nemo-view.c:8103
+#: src/nemo-view.c:8157
 msgid "Copy the current selection to the desktop"
 msgstr "复制选中内容到桌面"
 
-#: src/nemo-view.c:8107
+#: src/nemo-view.c:8161
 msgid "Move the current selection to the desktop"
 msgstr "移动选中内容到桌面"
 
-#: src/nemo-view.c:8186
+#: src/nemo-view.c:8240
 #, c-format
 msgid "Run or manage scripts from %s"
 msgstr "在 %s 中运行或管理脚本"
 
-#: src/nemo-view.c:8188
+#: src/nemo-view.c:8242
 msgid "_Scripts"
 msgstr "脚本(_S)"
 
-#: src/nemo-view.c:8569
+#: src/nemo-view.c:8623
 #, c-format
 msgid "Move the open folder out of the trash to \"%s\""
 msgstr "将打开的文件夹从回收站移至“%s”"
 
-#: src/nemo-view.c:8572
+#: src/nemo-view.c:8626
 #, c-format
 msgid "Move the selected folder out of the trash to \"%s\""
 msgid_plural "Move the selected folders out of the trash to \"%s\""
 msgstr[0] "将选中的文件夹从回收站移至“%s”"
 
-#: src/nemo-view.c:8576
+#: src/nemo-view.c:8630
 msgid "Move the selected folder out of the trash"
 msgid_plural "Move the selected folders out of the trash"
 msgstr[0] "将选中的文件夹移出回收站"
 
-#: src/nemo-view.c:8582
+#: src/nemo-view.c:8636
 #, c-format
 msgid "Move the selected file out of the trash to \"%s\""
 msgid_plural "Move the selected files out of the trash to \"%s\""
 msgstr[0] "将选中的文件从回收站移至“%s”"
 
-#: src/nemo-view.c:8586
+#: src/nemo-view.c:8640
 msgid "Move the selected file out of the trash"
 msgid_plural "Move the selected files out of the trash"
 msgstr[0] "将选中的文件移出回收站"
 
-#: src/nemo-view.c:8592
+#: src/nemo-view.c:8646
 #, c-format
 msgid "Move the selected item out of the trash to \"%s\""
 msgid_plural "Move the selected items out of the trash to \"%s\""
 msgstr[0] "将选中项从回收站移至“%s”"
 
-#: src/nemo-view.c:8596
+#: src/nemo-view.c:8650
 msgid "Move the selected item out of the trash"
 msgid_plural "Move the selected items out of the trash"
 msgstr[0] "将选中项移出回收站"
 
-#: src/nemo-view.c:8713 src/nemo-view.c:8717 src/nemo-view.c:8904
-#: src/nemo-view.c:8908
+#: src/nemo-view.c:8767 src/nemo-view.c:8771 src/nemo-view.c:8958
+#: src/nemo-view.c:8962
 msgid "Start the selected drive"
 msgstr "启动选中的驱动器"
 
-#: src/nemo-view.c:8721 src/nemo-view.c:8912
+#: src/nemo-view.c:8775 src/nemo-view.c:8966
 msgid "Connect to the selected drive"
 msgstr "连接到选中的驱动器"
 
-#: src/nemo-view.c:8724 src/nemo-view.c:8811 src/nemo-view.c:8915
+#: src/nemo-view.c:8778 src/nemo-view.c:8865 src/nemo-view.c:8969
 msgid "_Start Multi-disk Drive"
 msgstr "启动多磁盘驱动器(_S)"
 
-#: src/nemo-view.c:8725 src/nemo-view.c:8916
+#: src/nemo-view.c:8779 src/nemo-view.c:8970
 msgid "Start the selected multi-disk drive"
 msgstr "启动选中的多磁盘驱动器"
 
-#: src/nemo-view.c:8728
+#: src/nemo-view.c:8782
 msgid "U_nlock Drive"
 msgstr "解锁驱动器(_N)"
 
-#: src/nemo-view.c:8729 src/nemo-view.c:8920
+#: src/nemo-view.c:8783 src/nemo-view.c:8974
 msgid "Unlock the selected drive"
 msgstr "解锁选中的驱动器"
 
-#: src/nemo-view.c:8742
+#: src/nemo-view.c:8796
 msgid "Stop the selected drive"
 msgstr "停止选中的驱动器"
 
-#: src/nemo-view.c:8746 src/nemo-view.c:8937
+#: src/nemo-view.c:8800 src/nemo-view.c:8991
 msgid "Safely remove the selected drive"
 msgstr "安全地移除选中的驱动器"
 
-#: src/nemo-view.c:8749 src/nemo-view.c:8836 src/nemo-view.c:8940
+#: src/nemo-view.c:8803 src/nemo-view.c:8890 src/nemo-view.c:8994
 msgid "_Disconnect"
 msgstr "断开"
 
-#: src/nemo-view.c:8750 src/nemo-view.c:8941
+#: src/nemo-view.c:8804 src/nemo-view.c:8995
 msgid "Disconnect the selected drive"
 msgstr "断开到选中驱动器的连接"
 
-#: src/nemo-view.c:8753 src/nemo-view.c:8840 src/nemo-view.c:8944
+#: src/nemo-view.c:8807 src/nemo-view.c:8894 src/nemo-view.c:8998
 msgid "_Stop Multi-disk Drive"
 msgstr "停止多磁盘驱动器(_S)"
 
-#: src/nemo-view.c:8754 src/nemo-view.c:8945
+#: src/nemo-view.c:8808 src/nemo-view.c:8999
 msgid "Stop the selected multi-disk drive"
 msgstr "停止选择的多磁盘驱动器"
 
-#: src/nemo-view.c:8758 src/nemo-view.c:8949
+#: src/nemo-view.c:8812 src/nemo-view.c:9003
 msgid "Lock the selected drive"
 msgstr "锁定选中的驱动器"
 
-#: src/nemo-view.c:8800 src/nemo-view.c:8804
+#: src/nemo-view.c:8854 src/nemo-view.c:8858
 msgid "Start the drive associated with the open folder"
 msgstr "启动与所打开文件夹关联的驱动器"
 
-#: src/nemo-view.c:8808
+#: src/nemo-view.c:8862
 msgid "Connect to the drive associated with the open folder"
 msgstr "连接到与所打开文件夹关联的驱动器"
 
-#: src/nemo-view.c:8812
+#: src/nemo-view.c:8866
 msgid "Start the multi-disk drive associated with the open folder"
 msgstr "启动与所打开文件夹关联的多磁盘驱动器"
 
-#: src/nemo-view.c:8816
+#: src/nemo-view.c:8870
 msgid "Unlock the drive associated with the open folder"
 msgstr "取消与所打开文件夹相关联的驱动器的锁定"
 
-#: src/nemo-view.c:8829
+#: src/nemo-view.c:8883
 msgid "_Stop the drive associated with the open folder"
 msgstr "停止与所打开文件夹关联的驱动器(_S)"
 
-#: src/nemo-view.c:8833
+#: src/nemo-view.c:8887
 msgid "Safely remove the drive associated with the open folder"
 msgstr "安全移除与所打开文件夹关联的驱动器"
 
-#: src/nemo-view.c:8837
+#: src/nemo-view.c:8891
 msgid "Disconnect the drive associated with the open folder"
 msgstr "断开与所打开文件夹相关联的驱动器的连接"
 
-#: src/nemo-view.c:8841
+#: src/nemo-view.c:8895
 msgid "Stop the multi-disk drive associated with the open folder"
 msgstr "停止与所打开文件夹关联的多磁盘驱动器"
 
-#: src/nemo-view.c:8845
+#: src/nemo-view.c:8899
 msgid "Lock the drive associated with the open folder"
 msgstr "锁定与所打开文件夹关联的驱动器"
 
-#: src/nemo-view.c:9072 src/nemo-view.c:9373
+#: src/nemo-view.c:9126 src/nemo-view.c:9421
 msgid "_Delete Permanently"
 msgstr "永久删除(_D)"
 
-#: src/nemo-view.c:9073
+#: src/nemo-view.c:9127
 msgid "Delete the open folder permanently"
 msgstr "永久删除打开的文件夹"
 
-#: src/nemo-view.c:9077
+#: src/nemo-view.c:9131
 msgid "Move the open folder to the Trash"
 msgstr "将打开的文件夹移动到回收站"
 
-#: src/nemo-view.c:9279
+#: src/nemo-view.c:9327
 #, c-format
 msgid "_Open With %s"
 msgstr "使用 %s 打开(_O)"
 
-#: src/nemo-view.c:9336
+#: src/nemo-view.c:9384
 #, c-format
 msgid "Open in %'d New _Window"
 msgid_plural "Open in %'d New _Windows"
 msgstr[0] "在 %'d 个新窗口中打开(_W)"
 
-#: src/nemo-view.c:9356
+#: src/nemo-view.c:9404
 #, c-format
 msgid "Open in %'d New _Tab"
 msgid_plural "Open in %'d New _Tabs"
 msgstr[0] "在 %'d 个新标签中打开(_T)"
 
-#: src/nemo-view.c:9374
+#: src/nemo-view.c:9422
 msgid "Delete all selected items permanently"
 msgstr "永久删除所有选中的项目"
 
-#: src/nemo-view.c:9430
+#: src/nemo-view.c:9478
 msgid "View or modify the properties of the open folder"
 msgstr "查看或修改打开的文件夹的属性"
 
-#: src/nemo-view-dnd.c:125 libnemo-private/nemo-file.c:6334
+#: src/nemo-view-dnd.c:125 libnemo-private/nemo-file.c:6350
 #: libnemo-private/nemo-file-operations.c:377
 #, c-format
 msgid "Link to %s"
@@ -3239,193 +3241,193 @@ msgstr "无法启动此文件"
 msgid "This file cannot be stopped"
 msgstr "无法停止此文件"
 
-#: libnemo-private/nemo-file.c:1826
+#: libnemo-private/nemo-file.c:1842
 msgid "Slashes are not allowed in filenames"
 msgstr "文件名中不能出现斜线"
 
-#: libnemo-private/nemo-file.c:1844
+#: libnemo-private/nemo-file.c:1860
 msgid "File not found"
 msgstr "找不到文件"
 
-#: libnemo-private/nemo-file.c:1872
+#: libnemo-private/nemo-file.c:1888
 msgid "Toplevel files cannot be renamed"
 msgstr "无法重命名顶级文件"
 
-#: libnemo-private/nemo-file.c:1895
+#: libnemo-private/nemo-file.c:1911
 msgid "Unable to rename desktop icon"
 msgstr "无法重命名桌面图标"
 
-#: libnemo-private/nemo-file.c:1924
+#: libnemo-private/nemo-file.c:1940
 msgid "Unable to rename desktop file"
 msgstr "无法重命名桌面文件"
 
-#: libnemo-private/nemo-file.c:4372
+#: libnemo-private/nemo-file.c:4388
 msgid "today at 00:00:00 PM"
 msgstr "今天下午 00:00:00"
 
-#: libnemo-private/nemo-file.c:4375
+#: libnemo-private/nemo-file.c:4391
 msgid "today at 00:00 PM"
 msgstr "今天下午 00:00"
 
-#: libnemo-private/nemo-file.c:4376
+#: libnemo-private/nemo-file.c:4392
 msgid "today at %-I:%M %p"
 msgstr "今天%p %-H:%M"
 
-#: libnemo-private/nemo-file.c:4378
+#: libnemo-private/nemo-file.c:4394
 msgid "today, 00:00 PM"
 msgstr "今天，00:00"
 
-#: libnemo-private/nemo-file.c:4379
+#: libnemo-private/nemo-file.c:4395
 msgid "today, %-I:%M %p"
 msgstr "今天%p，%H:%M"
 
-#: libnemo-private/nemo-file.c:4381 libnemo-private/nemo-file.c:4382
+#: libnemo-private/nemo-file.c:4397 libnemo-private/nemo-file.c:4398
 msgid "today"
 msgstr "今天"
 
-#: libnemo-private/nemo-file.c:4391
+#: libnemo-private/nemo-file.c:4407
 msgid "yesterday at 00:00:00 PM"
 msgstr "昨天下午 00:00:00"
 
-#: libnemo-private/nemo-file.c:4392
+#: libnemo-private/nemo-file.c:4408
 msgid "yesterday at %-I:%M:%S %p"
 msgstr "昨天%p %-H:%M:%S"
 
-#: libnemo-private/nemo-file.c:4394
+#: libnemo-private/nemo-file.c:4410
 msgid "yesterday at 00:00 PM"
 msgstr "昨天下午 00:00"
 
-#: libnemo-private/nemo-file.c:4395
+#: libnemo-private/nemo-file.c:4411
 msgid "yesterday at %-I:%M %p"
 msgstr "昨天 %H:%M"
 
-#: libnemo-private/nemo-file.c:4397
+#: libnemo-private/nemo-file.c:4413
 msgid "yesterday, 00:00 PM"
 msgstr "昨天下午，00:00"
 
-#: libnemo-private/nemo-file.c:4398
+#: libnemo-private/nemo-file.c:4414
 msgid "yesterday, %-I:%M %p"
 msgstr "昨天，%H:%M"
 
-#: libnemo-private/nemo-file.c:4400 libnemo-private/nemo-file.c:4401
+#: libnemo-private/nemo-file.c:4416 libnemo-private/nemo-file.c:4417
 msgid "yesterday"
 msgstr "昨天"
 
-#: libnemo-private/nemo-file.c:4412
+#: libnemo-private/nemo-file.c:4428
 msgid "Wednesday, September 00 0000 at 00:00:00 PM"
 msgstr "0000年9月0日星期三，下午 00:00:00"
 
-#: libnemo-private/nemo-file.c:4413
+#: libnemo-private/nemo-file.c:4429
 msgid "%A, %B %-d %Y at %-I:%M:%S %p"
 msgstr "%Y年%-m月%-d日%A，%-H:%M:%S"
 
-#: libnemo-private/nemo-file.c:4415
+#: libnemo-private/nemo-file.c:4431
 msgid "Mon, Oct 00 0000 at 00:00:00 PM"
 msgstr "0000年10月0日星期一，下午 00:00:00"
 
-#: libnemo-private/nemo-file.c:4416
+#: libnemo-private/nemo-file.c:4432
 msgid "%a, %b %-d %Y at %-I:%M:%S %p"
 msgstr "%Y年%-m月%-d日%A，%-H:%M:%S"
 
-#: libnemo-private/nemo-file.c:4418
+#: libnemo-private/nemo-file.c:4434
 msgid "Mon, Oct 00 0000 at 00:00 PM"
 msgstr "0000年10月0日周一，下午 00:00"
 
-#: libnemo-private/nemo-file.c:4419
+#: libnemo-private/nemo-file.c:4435
 msgid "%a, %b %-d %Y at %-I:%M %p"
 msgstr "%Y年%-m月%-d日%a，%-H:%M"
 
-#: libnemo-private/nemo-file.c:4421
+#: libnemo-private/nemo-file.c:4437
 msgid "Oct 00 0000 at 00:00 PM"
 msgstr "0000年10月0日，下午 00:00:00"
 
-#: libnemo-private/nemo-file.c:4422
+#: libnemo-private/nemo-file.c:4438
 msgid "%b %-d %Y at %-I:%M %p"
 msgstr "%Y年%-m月%-d日，%H:%M"
 
-#: libnemo-private/nemo-file.c:4424
+#: libnemo-private/nemo-file.c:4440
 msgid "Oct 00 0000, 00:00 PM"
 msgstr "0000年0月0日，下午 00:00"
 
-#: libnemo-private/nemo-file.c:4425
+#: libnemo-private/nemo-file.c:4441
 msgid "%b %-d %Y, %-I:%M %p"
 msgstr "%Y年%-m月%-d日，%H:%M"
 
-#: libnemo-private/nemo-file.c:4427
+#: libnemo-private/nemo-file.c:4443
 msgid "00/00/00, 00:00 PM"
 msgstr "00-00-00，下午 00:00"
 
-#: libnemo-private/nemo-file.c:4428
+#: libnemo-private/nemo-file.c:4444
 msgid "%m/%-d/%y, %-I:%M %p"
 msgstr "%Y-%-m-%-d，%H:%M"
 
-#: libnemo-private/nemo-file.c:4430
+#: libnemo-private/nemo-file.c:4446
 msgid "00/00/00"
 msgstr "00/00/00"
 
-#: libnemo-private/nemo-file.c:4431
+#: libnemo-private/nemo-file.c:4447
 msgid "%m/%d/%y"
 msgstr "%m/%d/%y"
 
-#: libnemo-private/nemo-file.c:5075
+#: libnemo-private/nemo-file.c:5091
 msgid "Not allowed to set permissions"
 msgstr "不允许设定权限"
 
-#: libnemo-private/nemo-file.c:5370
+#: libnemo-private/nemo-file.c:5386
 msgid "Not allowed to set owner"
 msgstr "不允许设定所有者"
 
-#: libnemo-private/nemo-file.c:5388
+#: libnemo-private/nemo-file.c:5404
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "指定的所有者“%s”不存在"
 
-#: libnemo-private/nemo-file.c:5652
+#: libnemo-private/nemo-file.c:5668
 msgid "Not allowed to set group"
 msgstr "不允许设定群组"
 
-#: libnemo-private/nemo-file.c:5670
+#: libnemo-private/nemo-file.c:5686
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "指定组“%s”不存在"
 
-#: libnemo-private/nemo-file.c:5828
+#: libnemo-private/nemo-file.c:5844
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] "%'u 个文件夹"
 
-#: libnemo-private/nemo-file.c:5829
+#: libnemo-private/nemo-file.c:5845
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
 msgstr[0] "%'u 个文件"
 
-#: libnemo-private/nemo-file.c:6220 libnemo-private/nemo-file.c:6236
+#: libnemo-private/nemo-file.c:6236 libnemo-private/nemo-file.c:6252
 msgid "? items"
 msgstr "? 项"
 
-#: libnemo-private/nemo-file.c:6226
+#: libnemo-private/nemo-file.c:6242
 msgid "? bytes"
 msgstr "? 字节"
 
-#: libnemo-private/nemo-file.c:6241
+#: libnemo-private/nemo-file.c:6257
 msgid "unknown type"
 msgstr "未知类型"
 
-#: libnemo-private/nemo-file.c:6244
+#: libnemo-private/nemo-file.c:6260
 msgid "unknown MIME type"
 msgstr "未知 MIME 类型"
 
-#: libnemo-private/nemo-file.c:6308
+#: libnemo-private/nemo-file.c:6324
 msgid "program"
 msgstr "程序"
 
-#: libnemo-private/nemo-file.c:6328
+#: libnemo-private/nemo-file.c:6344
 msgid "link"
 msgstr "链接"
 
-#: libnemo-private/nemo-file.c:6350
+#: libnemo-private/nemo-file.c:6366
 msgid "link (broken)"
 msgstr "链接 (已损坏)"
 
@@ -4691,3 +4693,287 @@ msgstr "你可以点击取消停止这个操作。"
 #: eel/eel-vfs-extensions.c:93
 msgid " (invalid Unicode)"
 msgstr " (无效的 Unicode)"
+
+#: src/nemo-bookmarks-window.glade:7
+msgid "Edit Bookmarks"
+msgstr ""
+
+#: src/nemo-bookmarks-window.glade:111
+msgid "<b>_Bookmarks</b>"
+msgstr ""
+
+#: src/nemo-bookmarks-window.glade:200
+msgid "<b>_Name</b>"
+msgstr ""
+
+#: src/nemo-bookmarks-window.glade:267
+msgid "<b>_Location</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:7
+msgid "File Management Preferences"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:82
+msgid "<b>Default View</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:112
+msgid "View _new folders using:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:157
+msgid "_Arrange items:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:194
+msgid "Sort _folders before files"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:210
+msgid "Show hidden and _backup files"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:251
+msgid "<b>Icon View Defaults</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:281
+msgid "Default _zoom level:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:318
+msgid "_Text beside icons"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:334
+msgid "_Use compact layout"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:350
+msgid "Show tooltips for desktop items"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:391
+msgid "<b>Compact View Defaults</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:421
+msgid "_Default zoom level:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:458
+msgid "A_ll columns have the same width"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:499
+msgid "<b>List View Defaults</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:529
+msgid "D_efault zoom level:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:591
+msgid "<b>Tree View Defaults</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:613
+msgid "Show _only folders"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:649
+msgid "Views"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:673
+msgid "<b>Behavior</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:694
+msgid "_Single click to open items"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:710
+msgid "_Double click to open items"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:728
+msgid "Open each _folder in its own window"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:769
+msgid "<b>Executable Text Files</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:791
+msgid "_Run executable text files when they are opened"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:807
+msgid "_View executable text files when they are opened"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:824
+msgid "_Ask each time"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:866
+msgid "<b>Trash</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:888
+msgid "Ask before _emptying the Trash or deleting files"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:904
+msgid "I_nclude a Delete command that bypasses Trash"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:920
+msgid "Bypass the Trash when the Delete key is pressed"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:960
+msgid "<b>Media Handling</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:982
+msgid "Automatically mount removeable media when inserted and on startup"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:998
+msgid "Automatically open a folder for automounted media"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1014
+msgid "Prompt or autorun/autostart programs when media are inserted"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1030
+msgid ""
+"Automatically close the device's tab, pane, or window when a device is "
+"unmounted or ejected"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1069
+msgid "Behavior"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1094
+msgid "<b>Icon Captions</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1119
+msgid ""
+"Choose the order of information to appear beneath icon names. More "
+"information will appear when zooming in closer."
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1258
+msgid "<b>Date</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1281
+msgid "_Format:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1330
+msgid "<b>File Size</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1353
+msgid "_Prefixes:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1408
+msgid "<b>Window and Tab Titles</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1430
+msgid "Show the full p_ath in the title bar and tab bars"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1469
+msgid "Display"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1494
+msgid "<b>List Columns</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1519
+msgid "Choose the order of information to appear in the list view."
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1556
+msgid "List Columns"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1581
+msgid "<b>Text Files</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1611
+msgid "Show te_xt in icons:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1673
+msgid "<b>Other Previewable Files</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1703
+msgid "Show _thumbnails:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1748
+msgid "_Only for files smaller than:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1810
+msgid "<b>Folders</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1840
+msgid "Count _number of items:"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1900
+msgid "Preview"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1925
+msgid "<b>Options</b>"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1947
+msgid "Show up icon"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1963
+msgid "Show refresh icon"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1979
+msgid "Show toggle button location bar/bar path"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:1995
+msgid "Show home icon"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:2011
+msgid "Show computer icon"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:2027
+msgid "Show search icon"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:2043
+msgid "Show label on search icon (need to restart nemo)"
+msgstr ""
+
+#: src/nemo-file-management-properties.glade:2082
+msgid "Toolbar"
+msgstr ""
