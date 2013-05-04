@@ -1,94 +1,90 @@
-# Slovak translation for linuxmint
-# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
+# Norwegian Bokmal translation for linuxmint
+# Copyright (c) 2013 Rosetta Contributors and Canonical Ltd 2013
 # This file is distributed under the same license as the linuxmint package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: linuxmint\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2013-04-11 09:31-0400\n"
-"PO-Revision-Date: 2012-12-25 20:14+0000\n"
-"Last-Translator: Milan Slovák <Unknown>\n"
-"Language-Team: Slovak <sk@li.org>\n"
+"PO-Revision-Date: 2013-05-01 10:19+0000\n"
+"Last-Translator: Thomas Amland <Unknown>\n"
+"Language-Team: Norwegian Bokmal <nb@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Launchpad-Export-Date: 2013-05-04 16:23+0000\n"
 "X-Generator: Launchpad (build 16598)\n"
 
 #: src/nemo-application.c:158
 #, c-format
 msgid "Nemo could not create the required folder \"%s\"."
-msgstr "Nemo nemohol vytvoriť požadovaný priečinok \"%s\"."
+msgstr ""
 
 #: src/nemo-application.c:160
 msgid ""
 "Before running Nemo, please create the following folder, or set permissions "
 "such that Nemo can create it."
 msgstr ""
-"Pred spustením Nemo, vytvorte nasledujúci priečinok, alebo nastavte "
-"oprávnenia tak, aby ho Nemo mohol vytvoriť."
 
 #: src/nemo-application.c:163
 #, c-format
 msgid "Nemo could not create the following required folders: %s."
-msgstr "Nemo nemohol vytvoriť požadované priečinky: %s."
+msgstr ""
 
 #: src/nemo-application.c:165
 msgid ""
 "Before running Nemo, please create these folders, or set permissions such "
 "that Nemo can create them."
 msgstr ""
-"Pred spustením Nemo, vytvorte tieto priečinky, alebo nastavte oprávnenia "
-"tak, aby ich Nemo mohol vytvoriť."
 
 #: src/nemo-application.c:802
 msgid "--check cannot be used with other options."
-msgstr "--check nie je možné použiť s inými voľbami."
+msgstr ""
 
 #: src/nemo-application.c:808
 msgid "--quit cannot be used with URIs."
-msgstr "--quit nie je možné použiť s URI."
+msgstr ""
 
 #: src/nemo-application.c:815
 msgid "--geometry cannot be used with more than one URI."
-msgstr "--geometry nie je možné použiť s viac ako jedným URI."
+msgstr ""
 
 #: src/nemo-application.c:869
 msgid "Perform a quick set of self-check tests."
-msgstr "Vykonať rýchlu sadu testov."
+msgstr ""
 
 #: src/nemo-application.c:875
 msgid "Show the version of the program."
-msgstr "Zobraziť verziu programu."
+msgstr ""
 
 #: src/nemo-application.c:877
 msgid "Create the initial window with the given geometry."
-msgstr "Vytvoriť počiatočné okno s danou geometriou."
+msgstr ""
 
 #: src/nemo-application.c:877
 msgid "GEOMETRY"
-msgstr "GEOMETRIA"
+msgstr ""
 
 #: src/nemo-application.c:879
 msgid "Only create windows for explicitly specified URIs."
-msgstr "Vytvárať okná len pre explicitne zadané URI."
+msgstr ""
 
 #: src/nemo-application.c:881
 msgid ""
 "Do not manage the desktop (ignore the preference set in the preferences "
 "dialog)."
-msgstr "Nespravovať plochu (ignorovať voľby z dialógu nastavení)"
+msgstr ""
 
 #: src/nemo-application.c:883
 msgid "Quit Nemo."
-msgstr "Ukončiť Nemo"
+msgstr ""
 
 #: src/nemo-application.c:884
 msgid "[URI...]"
-msgstr "[URI...]"
+msgstr ""
 
 #: src/nemo-application.c:895
 msgid ""
@@ -96,30 +92,25 @@ msgid ""
 "\n"
 "Browse the file system with the file manager"
 msgstr ""
-"\n"
-"\n"
-"Prehliadať súborový systém správcom súborov"
 
 #: src/nemo-autorun-software.c:143 src/nemo-autorun-software.c:146
 #, c-format
 msgid "Error starting autorun program: %s"
-msgstr "Chyba pri automatickom spúšťaní programu: %s"
+msgstr ""
 
 #: src/nemo-autorun-software.c:149
 msgid "Cannot find the autorun program"
-msgstr "Nepodarilo sa nájsť program na automatické spustenie"
+msgstr ""
 
 #: src/nemo-autorun-software.c:171
 msgid "<big><b>Error autorunning software</b></big>"
-msgstr "<big><b>Chyba pri automatickom spúšťaní softvéru</b></big>"
+msgstr ""
 
 #: src/nemo-autorun-software.c:197
 msgid ""
 "<big><b>This medium contains software intended to be automatically started. "
 "Would you like to run it?</b></big>"
 msgstr ""
-"<big><b>Toto médium obsahuje softvér, ktorý bol určený na automatické "
-"spustenie. Želáte si ho spustiť?</b></big>"
 
 #: src/nemo-autorun-software.c:199
 #, c-format
@@ -129,14 +120,10 @@ msgid ""
 "\n"
 "If in doubt, press Cancel."
 msgstr ""
-"Softvér pobeží priamo z média „%s“. Nikdy by ste nemali spúšťať softvér, "
-"ktorému nedôverujete.\n"
-"\n"
-"Ak máte pochybnosti, stlačte Zrušiť."
 
 #: src/nemo-autorun-software.c:233 src/nemo-mime-actions.c:718
 msgid "_Run"
-msgstr "_Spustiť"
+msgstr ""
 
 #: src/nemo-bookmarks-window.c:158 src/nemo-file-management-properties.c:230
 #: src/nemo-window-menus.c:400
@@ -145,135 +132,133 @@ msgid ""
 "There was an error displaying help: \n"
 "%s"
 msgstr ""
-"Počas zobrazovania Pomocníka nastala chyba:\n"
+"Det oppstod en feil under visning av hjelp:\n"
 "%s"
 
 #: src/nemo-bookmarks-window.c:192
 msgid "No bookmarks defined"
-msgstr "Neboli definované žiadne záložky"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:128
 msgid "SSH"
-msgstr "SSH"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:131
 msgid "Public FTP"
-msgstr "Verejné FTP"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:133
 msgid "FTP (with login)"
-msgstr "FTP (s prihlásením)"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:136
 msgid "Windows share"
-msgstr "Sieťový disk Windows"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:138
 msgid "WebDAV (HTTP)"
-msgstr "WebDAV (HTTP)"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:140
 msgid "Secure WebDAV (HTTPS)"
-msgstr "Zabezpečený WebDAV (HTTPS)"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:187
 msgid "Connecting..."
-msgstr "Pripája sa…"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:211
 msgid ""
 "Can't load the supported server method list.\n"
 "Please check your gvfs installation."
 msgstr ""
-"Nie je možné načítať zoznam podporovaných metód servera.\n"
-"Prosím, skontrolujte svoju inštaláciu gvfs."
 
 #: src/nemo-connect-server-dialog.c:289
 #, c-format
 msgid "The folder \"%s\" cannot be opened on \"%s\"."
-msgstr "Priečinok „%s“ nie je možné otvoriť na „%s“."
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:299
 #, c-format
 msgid "The server at \"%s\" cannot be found."
-msgstr "Server na „%s“ sa nedá nájsť."
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:334
 msgid "Try Again"
-msgstr "Skúsiť znova"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:399
 msgid "Please verify your user details."
-msgstr "Prosím, overte svoje používateľské údaje."
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:429
 msgid "Continue"
-msgstr "Pokračovať"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:701 src/nemo-properties-window.c:5125
 #: src/nemo-view.c:1522
 msgid "There was an error displaying help."
-msgstr "Pri zobrazení Pomocníka nastala chyba."
+msgstr "Det oppstod en feil under visning av hjelp:"
 
 #: src/nemo-connect-server-dialog.c:719 src/nemo-connect-server-dialog.c:1109
 msgid "C_onnect"
-msgstr "Prip_ojiť"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:844
 msgid "Connect to Server"
-msgstr "Pripojiť na server"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:862
 msgid "Server Details"
-msgstr "Podrobnosti servera"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:886
 msgid "_Server:"
-msgstr "_Server:"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:906
 msgid "_Port:"
-msgstr "_Port:"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:924
 msgid "_Type:"
-msgstr "_Typ:"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:993
 msgid "Sh_are:"
-msgstr "Zdieľ_anie:"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:1008 src/nemo-view.c:1716
 msgid "_Folder:"
-msgstr "_Priečinok:"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:1026
 msgid "User Details"
-msgstr "Informácie o užívateľovi"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:1049
 msgid "_Domain name:"
-msgstr "_Názov domény:"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:1064
 msgid "_User name:"
-msgstr "_Meno používateľa:"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:1079
 msgid "Pass_word:"
-msgstr "He_slo:"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:1095
 msgid "_Remember this password"
-msgstr "_Zapamätať heslo"
+msgstr ""
 
 #: src/nemo-connect-server-dialog.c:1195
 msgid "Operation cancelled"
-msgstr "Operácia bola zrušená"
+msgstr ""
 
 #: src/nemo-connect-server-dialog-main.c:120
 msgid "Print but do not open the URI"
-msgstr "Vytlačiť, ale neotvárať URI"
+msgstr ""
 
 #: src/nemo-connect-server-dialog-main.c:131
 msgid ""
@@ -281,40 +266,36 @@ msgid ""
 "\n"
 "Add connect to server mount"
 msgstr ""
-"\n"
-"\n"
-"Pridať pripojenie k zväzku na serveri"
 
 #: src/nemo-desktop-icon-view.c:766 src/nemo-view.c:7930 src/nemo-view.c:9493
 msgid "E_mpty Trash"
-msgstr "V_yprázdniť kôš"
+msgstr ""
 
 #: src/nemo-desktop-icon-view.c:782 src/nemo-view.c:7872
 msgid "Create L_auncher..."
-msgstr "Vytvoriť s_púšťač..."
+msgstr ""
 
 #: src/nemo-desktop-icon-view.c:784 src/nemo-view.c:7873
 msgid "Create a new launcher"
-msgstr "Vytvoriť nový spúšťač"
+msgstr ""
 
 #: src/nemo-desktop-icon-view.c:789
 msgid "Change Desktop _Background"
-msgstr "Zmeniť _pozadie plochy"
+msgstr ""
 
 #: src/nemo-desktop-icon-view.c:791
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr ""
-"Zobrazí okno, ktoré umožní nastaviť vzorku alebo farbu pozadia plochy"
 
 #: src/nemo-desktop-icon-view.c:796
 msgid "Empty Trash"
-msgstr "Vyprázdniť kôš"
+msgstr ""
 
 #: src/nemo-desktop-icon-view.c:798 src/nemo-trash-bar.c:207
 #: src/nemo-view.c:7931
 msgid "Delete all items in the Trash"
-msgstr "Odstrániť všetky položky v koši"
+msgstr ""
 
 #: src/nemo-desktop-icon-view.c:803
 msgid "Add Desklets"
@@ -326,108 +307,105 @@ msgstr ""
 
 #: src/nemo-desktop-icon-view.c:868
 msgid "The desktop view encountered an error."
-msgstr "Vyskytla sa chyba pri zobrazení pracovnej plochy."
+msgstr ""
 
 #: src/nemo-desktop-icon-view.c:869
 msgid "The desktop view encountered an error while starting up."
-msgstr "Vyskytla sa chyba počas spúšťania zobrazenia pracovnej plochy."
+msgstr ""
 
 #: src/nemo-desktop-item-properties.c:405
 #: src/nemo-desktop-item-properties.c:415 src/nemo-image-properties-page.c:368
 msgid "Comment"
-msgstr "Poznámka"
+msgstr ""
 
 #: src/nemo-desktop-item-properties.c:408
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: src/nemo-desktop-item-properties.c:411
 #: src/nemo-desktop-item-properties.c:421 src/nemo-image-properties-page.c:361
 #: src/nemo-image-properties-page.c:414
 msgid "Description"
-msgstr "Popis"
+msgstr ""
 
 #: src/nemo-desktop-item-properties.c:418
 msgid "Command"
-msgstr "Príkaz"
+msgstr ""
 
 #: src/nemo-desktop-window.c:92 src/nemo-desktop-window.c:290
 #: src/nemo-pathbar.c:1337 src/nemo-places-sidebar.c:665
 msgid "Desktop"
-msgstr "Plocha"
+msgstr ""
 
 #: src/nemo-error-reporting.c:68
 #, c-format
 msgid ""
 "You do not have the permissions necessary to view the contents of \"%s\"."
-msgstr "Nemáte potrebné oprávnenia na zobrazenie obsahu „%s“."
+msgstr ""
 
 #: src/nemo-error-reporting.c:72
 #, c-format
 msgid "\"%s\" could not be found. Perhaps it has recently been deleted."
-msgstr "„%s“ sa nepodarilo nájsť. Možno bol nedávno odstránený."
+msgstr ""
 
 #: src/nemo-error-reporting.c:76
 #, c-format
 msgid "Sorry, could not display all the contents of \"%s\": %s"
-msgstr "Prepáčte, nepodarilo sa zobraziť celý obsah „%s“: %s"
+msgstr ""
 
 #: src/nemo-error-reporting.c:83
 msgid "The folder contents could not be displayed."
-msgstr "Obsah priečinka sa nepodarilo zobraziť."
+msgstr ""
 
 #: src/nemo-error-reporting.c:107
 #, c-format
 msgid ""
 "You do not have the permissions necessary to change the group of \"%s\"."
-msgstr "Nemáte potrebné oprávnenia na zmenu skupiny „%s“."
+msgstr ""
 
 #: src/nemo-error-reporting.c:120
 #, c-format
 msgid "Sorry, could not change the group of \"%s\": %s"
-msgstr "Prepáčte, nepodarilo sa zmeniť skupinu pre „%s“: %s"
+msgstr ""
 
 #: src/nemo-error-reporting.c:125
 msgid "The group could not be changed."
-msgstr "Skupinu sa nepodarilo zmeniť."
+msgstr ""
 
 #: src/nemo-error-reporting.c:145
 #, c-format
 msgid "Sorry, could not change the owner of \"%s\": %s"
-msgstr "Prepáčte, nepodarilo sa zmeniť vlastníka „%s“: %s"
+msgstr ""
 
 #: src/nemo-error-reporting.c:147
 msgid "The owner could not be changed."
-msgstr "Vlastníka sa nepodarilo zmeniť."
+msgstr ""
 
 #: src/nemo-error-reporting.c:167
 #, c-format
 msgid "Sorry, could not change the permissions of \"%s\": %s"
-msgstr "Prepáčte, nepodarilo sa zmeniť oprávnenia k „%s“: %s"
+msgstr ""
 
 #: src/nemo-error-reporting.c:169
 msgid "The permissions could not be changed."
-msgstr "Oprávnenia sa nepodarilo zmeniť."
+msgstr ""
 
 #: src/nemo-error-reporting.c:204
 #, c-format
 msgid ""
 "The name \"%s\" is already used in this folder. Please use a different name."
 msgstr ""
-"Názov \"%s\" je už v tomto priečinku použitý. Prosím, zadajte iný názov."
 
 #: src/nemo-error-reporting.c:209
 #, c-format
 msgid ""
 "There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
 msgstr ""
-"„%s“ sa v tomto priečinku nenachádza. Možno bol práve presunutý alebo "
-"odstránený."
 
 #: src/nemo-error-reporting.c:214
 #, c-format
 msgid "You do not have the permissions necessary to rename \"%s\"."
-msgstr "Nemáte potrebné oprávnenia na premenovanie „%s“."
+msgstr ""
 
 #: src/nemo-error-reporting.c:219
 #, c-format
@@ -435,113 +413,111 @@ msgid ""
 "The name \"%s\" is not valid because it contains the character \"/\". Please "
 "use a different name."
 msgstr ""
-"Názov „%s“ nie je platný, pretože obsahuje znak \"/\". Prosím, použite iný "
-"názov."
 
 #: src/nemo-error-reporting.c:223
 #, c-format
 msgid "The name \"%s\" is not valid. Please use a different name."
-msgstr "Názov „%s“ nie je platný. Prosím, vyberte iný názov."
+msgstr ""
 
 #: src/nemo-error-reporting.c:229
 #, c-format
 msgid "The name \"%s\" is too long. Please use a different name."
-msgstr "Názov „%s“ je príliš dlhý. Prosím, použite iný názov."
+msgstr ""
 
 #: src/nemo-error-reporting.c:243
 #, c-format
 msgid "Sorry, could not rename \"%s\" to \"%s\": %s"
-msgstr "Prepáčte, nedá sa premenovať \"%s\" na \"%s\": %s"
+msgstr ""
 
 #: src/nemo-error-reporting.c:251
 msgid "The item could not be renamed."
-msgstr "Položku nie je možné premenovať."
+msgstr ""
 
 #: src/nemo-error-reporting.c:348
 #, c-format
 msgid "Renaming \"%s\" to \"%s\"."
-msgstr "Premenovávam \"%s\" na \"%s\"."
+msgstr ""
 
 #: src/nemo-file-management-properties.c:314 src/nemo-properties-window.c:3923
 #: src/nemo-properties-window.c:3934
 msgid "None"
-msgstr "Žiadne"
+msgstr ""
 
 #: src/nemo-file-management-properties.c:497 libnemo-private/nemo-file.c:4389
 msgid "today at %-I:%M:%S %p"
-msgstr "dnes o %-I:%M:%S %p"
+msgstr ""
 
 #: src/nemo-icon-view.c:133
 msgid "by _Name"
-msgstr "podľa _názvu"
+msgstr "etter _navn"
 
 #: src/nemo-icon-view.c:134 src/nemo-icon-view.c:1434
 msgid "Keep icons sorted by name in rows"
-msgstr "Udržiavať ikony zoradené podľa názvu v riadkoch"
+msgstr ""
 
 #: src/nemo-icon-view.c:140
 msgid "by _Size"
-msgstr "podľa _veľkosti"
+msgstr "etter _størrelse"
 
 #: src/nemo-icon-view.c:141 src/nemo-icon-view.c:1438
 msgid "Keep icons sorted by size in rows"
-msgstr "Udržiavať ikony zoradené podľa veľkosti v riadkoch"
+msgstr ""
 
 #: src/nemo-icon-view.c:147
 msgid "by _Type"
-msgstr "podľa _typu"
+msgstr "etter _type"
 
 #: src/nemo-icon-view.c:148 src/nemo-icon-view.c:1442
 msgid "Keep icons sorted by type in rows"
-msgstr "Udržiavať ikony zoradené podľa typu v riadkoch"
+msgstr ""
 
 #: src/nemo-icon-view.c:154
 msgid "by Modification _Date"
-msgstr "podľa dátumu _zmeny"
+msgstr "etter endrings_dato"
 
 #: src/nemo-icon-view.c:155 src/nemo-icon-view.c:1446
 msgid "Keep icons sorted by modification date in rows"
-msgstr "Udržiavať ikony zoradené podľa dátum zmeny v riadkoch"
+msgstr ""
 
 #: src/nemo-icon-view.c:161
 msgid "by T_rash Time"
-msgstr "podľa času p_resunutia do Koša"
+msgstr ""
 
 #: src/nemo-icon-view.c:162 src/nemo-icon-view.c:1450
 msgid "Keep icons sorted by trash time in rows"
-msgstr "Ponechať ikony zoradené podľa času presunutia do Koša v riadkoch"
+msgstr ""
 
 #: src/nemo-icon-view.c:685
 msgid "_Organize Desktop by Name"
-msgstr "_Organizovať plochu podľa názvu"
+msgstr ""
 
 #: src/nemo-icon-view.c:1393
 msgid "Arran_ge Items"
-msgstr "_Usporiadať položky"
+msgstr ""
 
 #: src/nemo-icon-view.c:1395
 msgid "Resize Icon..."
-msgstr "Zmeniť veľkosť ikony..."
+msgstr ""
 
 #: src/nemo-icon-view.c:1396
 msgid "Make the selected icon resizable"
-msgstr "Umožniť zmenu veľkosti vybranej ikony"
+msgstr ""
 
 #: src/nemo-icon-view.c:1399 src/nemo-icon-view.c:1569
 msgid "Restore Icons' Original Si_zes"
-msgstr "Obnoviť pôvodné _veľkosti ikon"
+msgstr ""
 
 #: src/nemo-icon-view.c:1400
 msgid "Restore each selected icon to its original size"
-msgstr "Obnoví pre každú vybranú ikonu jej pôvodnú veľkosť"
+msgstr ""
 
 #: src/nemo-icon-view.c:1403
 msgid "_Organize by Name"
-msgstr "_Organizovať podľa názvu"
+msgstr "_Organiser etter navn"
 
 #: src/nemo-icon-view.c:1404
 msgid "Reposition icons to better fit in the window and avoid overlapping"
-msgstr "Popresúvať ikony tak, aby lepšie zodpovedali oknu a neprekrývali sa"
+msgstr ""
 
 #: src/nemo-icon-view.c:1411
 msgid "Compact _Layout"
@@ -553,96 +529,96 @@ msgstr ""
 
 #: src/nemo-icon-view.c:1416
 msgid "Re_versed Order"
-msgstr "_Opačné poradie"
+msgstr "Om_vendt rekkefølge"
 
 #: src/nemo-icon-view.c:1417
 msgid "Display icons in the opposite order"
-msgstr "Zobraziť ikony v opačnom poradí"
+msgstr ""
 
 #: src/nemo-icon-view.c:1421
 msgid "_Keep Aligned"
-msgstr "_Udržiavať zoradené"
+msgstr ""
 
 #: src/nemo-icon-view.c:1422
 msgid "Keep icons lined up on a grid"
-msgstr "Udržiava ikony zarovnané podľa mriežky"
+msgstr ""
 
 #: src/nemo-icon-view.c:1429
 msgid "_Manually"
-msgstr "_Ručne"
+msgstr ""
 
 #: src/nemo-icon-view.c:1430
 msgid "Leave icons wherever they are dropped"
-msgstr "Nechať ikony tam, kde budú pustené"
+msgstr ""
 
 #: src/nemo-icon-view.c:1433
 msgid "By _Name"
-msgstr "Podľa _názvu"
+msgstr "Etter _navn"
 
 #: src/nemo-icon-view.c:1437
 msgid "By _Size"
-msgstr "Podľa _veľkosti"
+msgstr "Etter _størrelse"
 
 #: src/nemo-icon-view.c:1441
 msgid "By _Type"
-msgstr "Podľa _typu"
+msgstr "Etter _type"
 
 #: src/nemo-icon-view.c:1445
 msgid "By Modification _Date"
-msgstr "Podľa _dátumu zmeny"
+msgstr "Etter endrings_dato"
 
 #: src/nemo-icon-view.c:1449
 msgid "By T_rash Time"
-msgstr "Podľa času p_resunutia do Koša"
+msgstr ""
 
 #: src/nemo-icon-view.c:1570
 msgid "Restore Icon's Original Si_ze"
-msgstr "Obnoviť pôvodnú veľkosť ikony"
+msgstr ""
 
 #: src/nemo-icon-view.c:2826 src/nemo-icon-view-container.c:588
 #: src/nemo-window-menus.c:1369
 msgid "Icon View"
-msgstr "Zobrazenie s ikonami"
+msgstr "Ikonvisning"
 
 #: src/nemo-icon-view.c:2828
 msgid "_Icons"
-msgstr "_Ikony"
+msgstr ""
 
 #: src/nemo-icon-view.c:2829
 msgid "The icon view encountered an error."
-msgstr "Vyskytla sa chyba pri zobrazení ikon."
+msgstr ""
 
 #: src/nemo-icon-view.c:2830
 msgid "The icon view encountered an error while starting up."
-msgstr "Vyskytla sa chyba počas spúšťania zobrazenia ikon."
+msgstr ""
 
 #: src/nemo-icon-view.c:2831
 msgid "Display this location with the icon view."
-msgstr "Zobraziť toto umiestnenie pomocou zobrazenia ikon."
+msgstr ""
 
 #: src/nemo-icon-view.c:2840 src/nemo-window-menus.c:1392
 msgid "Compact View"
-msgstr "Kompaktné zobrazenie"
+msgstr "Kompakt visning"
 
 #: src/nemo-icon-view.c:2842
 msgid "_Compact"
-msgstr "_Kompaktné"
+msgstr ""
 
 #: src/nemo-icon-view.c:2843
 msgid "The compact view encountered an error."
-msgstr "Vyskytla sa chyba pri kompaktnnom zobrazení."
+msgstr ""
 
 #: src/nemo-icon-view.c:2844
 msgid "The compact view encountered an error while starting up."
-msgstr "Vyskytla sa chyba počas spúšťania kompaktného zobrazenia."
+msgstr ""
 
 #: src/nemo-icon-view.c:2845
 msgid "Display this location with the compact view."
-msgstr "Zobraziť toto umiestnenie v kompaktnom zobrazení."
+msgstr ""
 
 #: src/nemo-image-properties-page.c:331
 msgid "Image Type"
-msgstr "Typ obrázka"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:333 src/nemo-image-properties-page.c:339
 #, c-format
@@ -653,254 +629,250 @@ msgstr[1] ""
 
 #: src/nemo-image-properties-page.c:337
 msgid "Width"
-msgstr "Šírka"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:343
 msgid "Height"
-msgstr "Výška"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:356 src/nemo-image-properties-page.c:357
 msgid "Title"
-msgstr "Názov"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:358 src/nemo-image-properties-page.c:359
 msgid "Author"
-msgstr "Autor"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:362 src/nemo-image-properties-page.c:417
 msgid "Copyright"
-msgstr "Autorské práva"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:363
 msgid "Created On"
-msgstr "Vytvorené"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:364
 msgid "Created By"
-msgstr "Vytvoril"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:365
 msgid "Disclaimer"
-msgstr "Podmienky"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:366
 msgid "Warning"
-msgstr "Upozornenie"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:367
 msgid "Source"
-msgstr "Zdroj"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:382
 msgid "Camera Brand"
-msgstr "Značka fotoaparátu"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:383
 msgid "Camera Model"
-msgstr "Model fotoaparátu"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:386
 msgid "Date Taken"
-msgstr "Dátum fotky"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:387
 msgid "Date Digitized"
-msgstr "Dátum digitalizácie"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:388
 #: libnemo-private/nemo-column-utilities.c:65
 msgid "Date Modified"
-msgstr "Dátum zmeny"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:392
 msgid "Exposure Time"
-msgstr "Čas expozície"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:393
 msgid "Aperture Value"
-msgstr "Hodnota clony"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:394
 msgid "ISO Speed Rating"
-msgstr "Citlivosť ISO"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:395
 msgid "Flash Fired"
-msgstr "Blesk"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:396
 msgid "Metering Mode"
-msgstr "Režim merania"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:397
 msgid "Exposure Program"
-msgstr "Režim expozície"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:398
 msgid "Focal Length"
-msgstr "Ohnisková vzdialenosť"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:399
 msgid "Software"
-msgstr "Program"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:413 src/nemo-query-editor.c:112
 #: src/nemo-window-menus.c:1355 libnemo-private/nemo-column-utilities.c:129
 msgid "Location"
-msgstr "Umiestnenie"
+msgstr "Plassering"
 
 #: src/nemo-image-properties-page.c:415
 msgid "Keywords"
-msgstr "Kľúčové slová"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:416
 msgid "Creator"
-msgstr "Vytvoril"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:418
 msgid "Rating"
-msgstr "Hodnotenie"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:441
 msgid "Failed to load image information"
-msgstr "Nepodarilo sa načítať informácie o obrázku"
+msgstr ""
 
 #: src/nemo-image-properties-page.c:706 src/nemo-list-model.c:409
 #: src/nemo-tree-sidebar-model.c:1252 src/nemo-window-manage-views.c:1140
 #: src/nemo-window-slot.c:202
 msgid "Loading..."
-msgstr "Načítava sa..."
+msgstr ""
 
 #: src/nemo-image-properties-page.c:767
 msgid "Image"
-msgstr "Obrázok"
+msgstr ""
 
 #: src/nemo-list-model.c:407 src/nemo-tree-sidebar-model.c:1252
 msgid "(Empty)"
-msgstr "(Prázdny)"
+msgstr ""
 
 #: src/nemo-list-view.c:1670 libnemo-private/nemo-column-utilities.c:43
 msgid "Name"
-msgstr "Názov"
+msgstr ""
 
 #: src/nemo-list-view.c:1728 src/nemo-list-view.c:3363
 #: src/nemo-window-menus.c:1380
 msgid "List View"
-msgstr "Pohľad zoznam"
+msgstr "Listevisning"
 
 #: src/nemo-list-view.c:2545
 #, c-format
 msgid "%s Visible Columns"
-msgstr "Viditeľné stĺpce %s"
+msgstr ""
 
 #: src/nemo-list-view.c:2565
 msgid "Choose the order of information to appear in this folder:"
 msgstr ""
-"Vyberte poradie, v akom sa budú zobrazovať informácie v tomto priečinku."
 
 #: src/nemo-list-view.c:2619
 msgid "Visible _Columns..."
-msgstr "Zobrazené _stĺpce..."
+msgstr ""
 
 #: src/nemo-list-view.c:2620
 msgid "Select the columns visible in this folder"
-msgstr "Vyberte stĺpce zobrazené v tomto priečinku"
+msgstr ""
 
 #: src/nemo-list-view.c:3365
 msgid "_List"
-msgstr "_Zoznam"
+msgstr ""
 
 #: src/nemo-list-view.c:3366
 msgid "The list view encountered an error."
-msgstr "Vyskytla sa chyba pri zobrazení zoznamu."
+msgstr ""
 
 #: src/nemo-list-view.c:3367
 msgid "The list view encountered an error while starting up."
-msgstr "Vyskytla sa chyba počas spúšťania zobrazenia zoznamu."
+msgstr ""
 
 #: src/nemo-list-view.c:3368
 msgid "Display this location with the list view."
-msgstr "Zobraziť toto umiestnenie pomocou pohľadu zoznamu."
+msgstr ""
 
 #: src/nemo-location-bar.c:54 src/nemo-properties-window.c:3110
 msgid "Location:"
-msgstr "Umiestnenie:"
+msgstr "Plassering:"
 
 #: src/nemo-location-bar.c:55
 msgid "Go To:"
-msgstr "Prejsť na:"
+msgstr "Gå til:"
 
 #: src/nemo-location-bar.c:180
 #, c-format
 msgid "Do you want to view %d location?"
 msgid_plural "Do you want to view %d locations?"
-msgstr[0] "Chcete zobraziť týchto %d miest?"
-msgstr[1] "Chcete zobraziť toto %d miesto?"
-msgstr[2] "Chcete zobraziť tieto %d miesta?"
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/nemo-location-bar.c:184 src/nemo-mime-actions.c:1046
 #, c-format
 msgid "This will open %d separate window."
 msgid_plural "This will open %d separate windows."
-msgstr[0] "Toto otvorí %d samostatných okien."
-msgstr[1] "Toto otvorí %d samostatné okno."
-msgstr[2] "Toto otvorí %d samostatné okná."
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/nemo-mime-actions.c:626
 #, c-format
 msgid "The Link \"%s\" is Broken."
-msgstr "Odkaz \"%s\" je poškodený."
+msgstr ""
 
 #: src/nemo-mime-actions.c:628
 #, c-format
 msgid "The Link \"%s\" is Broken. Move it to Trash?"
-msgstr "Odkaz \"%s\" je poškodený. Presunúť ho do koša?"
+msgstr ""
 
 #: src/nemo-mime-actions.c:634
 msgid "This link cannot be used, because it has no target."
-msgstr "Tento odkaz nie je možné použiť, pretože nemá cieľ."
+msgstr ""
 
 #: src/nemo-mime-actions.c:636
 #, c-format
 msgid "This link cannot be used, because its target \"%s\" doesn't exist."
-msgstr "Tento odkaz nie je možné použiť, pretože jeho cieľ „%s“ neexistuje."
+msgstr ""
 
 #: src/nemo-mime-actions.c:646 src/nemo-tree-sidebar.c:1247
 #: src/nemo-view.c:7982 src/nemo-view.c:8100 src/nemo-view.c:9130
 #: src/nemo-view.c:9425
 msgid "Mo_ve to Trash"
-msgstr "Presunúť do _Koša"
+msgstr "Flytt til _papirkurv"
 
 #: src/nemo-mime-actions.c:706
 #, c-format
 msgid "Do you want to run \"%s\", or display its contents?"
-msgstr "Chcete \"%s\" spustiť, alebo zobraziť jeho obsah?"
+msgstr ""
 
 #: src/nemo-mime-actions.c:708
 #, c-format
 msgid "\"%s\" is an executable text file."
-msgstr "\"%s\" je spustiteľný textový súbor."
+msgstr ""
 
 #: src/nemo-mime-actions.c:714
 msgid "Run in _Terminal"
-msgstr "Spustiť v _termináli"
+msgstr "Kjør i _Terminal"
 
 #: src/nemo-mime-actions.c:715
 msgid "_Display"
-msgstr "_Zobraziť"
+msgstr ""
 
 #: src/nemo-mime-actions.c:1041 src/nemo-mime-actions.c:1786
 #: src/nemo-view.c:1020
 msgid "Are you sure you want to open all files?"
-msgstr "Naozaj chcete otvoriť všetky súbory?"
+msgstr ""
 
 #: src/nemo-mime-actions.c:1043
 #, c-format
 msgid "This will open %d separate tab."
 msgid_plural "This will open %d separate tabs."
-msgstr[0] "Týmto sa otvorí %d samostatných kariet."
-msgstr[1] "Týmto sa otvorí %d samostatná karta."
-msgstr[2] "Týmto sa otvoria %d samostatné karty."
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/nemo-mime-actions.c:1116 src/nemo-window-manage-views.c:1608
 #: src/nemo-window-manage-views.c:1614 src/nemo-window-manage-views.c:1631
@@ -908,28 +880,28 @@ msgstr[2] "Týmto sa otvoria %d samostatné karty."
 #: src/nemo-window-manage-views.c:1674
 #, c-format
 msgid "Could not display \"%s\"."
-msgstr "Nepodarilo sa zobraziť „%s“."
+msgstr ""
 
 #: src/nemo-mime-actions.c:1213
 msgid "The file is of an unknown type"
-msgstr "Súbor je neznámeho typu"
+msgstr ""
 
 #: src/nemo-mime-actions.c:1217
 #, c-format
 msgid "There is no application installed for %s files"
-msgstr "Pre súbory %s nie je nainštalovaná žiadna aplikácia"
+msgstr ""
 
 #: src/nemo-mime-actions.c:1232
 msgid "_Select Application"
-msgstr "_Vyberte aplikáciu"
+msgstr ""
 
 #: src/nemo-mime-actions.c:1268
 msgid "There was an internal error trying to search for applications:"
-msgstr "Pri pokuse vyhľadať aplikácie nastala vnútorná chyba:"
+msgstr ""
 
 #: src/nemo-mime-actions.c:1270
 msgid "Unable to search for application"
-msgstr "Nepodarilo sa vyhľadať aplikáciu"
+msgstr ""
 
 #: src/nemo-mime-actions.c:1389
 #, c-format
@@ -937,12 +909,10 @@ msgid ""
 "There is no application installed for %s files.\n"
 "Do you want to search for an application to open this file?"
 msgstr ""
-"Pre súbory %s nie je nainštalovaná žiadna aplikácia.\n"
-"Chcete hľadať aplikáciu, ktorá otvorí tento súbor?"
 
 #: src/nemo-mime-actions.c:1539
 msgid "Untrusted application launcher"
-msgstr "Neoverený spúšťač aplikácie"
+msgstr ""
 
 #: src/nemo-mime-actions.c:1542
 #, c-format
@@ -950,63 +920,59 @@ msgid ""
 "The application launcher \"%s\" has not been marked as trusted. If you do "
 "not know the source of this file, launching it may be unsafe."
 msgstr ""
-"Spúšťač aplikácie „%s“ nebol označený ako dôveryhodný. Ak nepoznáte zdroj "
-"tohto súboru, nemusí byť bezpečné ho spustiť."
 
 #: src/nemo-mime-actions.c:1558
 msgid "_Launch Anyway"
-msgstr "Spustiť n_apriek tomu"
+msgstr ""
 
 #: src/nemo-mime-actions.c:1561
 msgid "Mark as _Trusted"
-msgstr "Označiť ako _dôveryhodné"
+msgstr ""
 
 #: src/nemo-mime-actions.c:1787
 #, c-format
 msgid "This will open %d separate application."
 msgid_plural "This will open %d separate applications."
-msgstr[0] "Týmto sa otvorí %d samostatných aplikácií."
-msgstr[1] "Týmto sa otvorí %d samostatná aplikácia."
-msgstr[2] "Týmto sa otvoria %d samostatné aplikácie."
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/nemo-mime-actions.c:1864 src/nemo-mime-actions.c:2138
 #: src/nemo-view.c:7072
 msgid "Unable to mount location"
-msgstr "Nepodarilo sa pripojiť umiestnenie"
+msgstr "Kan ikke montere plassering"
 
 #: src/nemo-mime-actions.c:2217 src/nemo-view.c:7219
 msgid "Unable to start location"
-msgstr "Nepodarilo sa spustiť umiestnenie"
+msgstr ""
 
 #: src/nemo-mime-actions.c:2301
 #, c-format
 msgid "Opening \"%s\"."
-msgstr "Otváranie \"%s\"."
+msgstr ""
 
 #: src/nemo-mime-actions.c:2304
 #, c-format
 msgid "Opening %d item."
 msgid_plural "Opening %d items."
-msgstr[0] "Otváranie %d položiek."
-msgstr[1] "Otváranie %d položky."
-msgstr[2] "Otváranie %d položiek."
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/nemo-notebook.c:370
 msgid "Close tab"
-msgstr "Zavrieť kartu"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:355
 msgid "Devices"
-msgstr "Zariadenia"
+msgstr "Enheter"
 
 #: src/nemo-places-sidebar.c:580 src/nemo-view.c:3083
 #, c-format
 msgid "Free space: %s"
-msgstr ""
+msgstr "Ledig plass: %s"
 
 #: src/nemo-places-sidebar.c:637
 msgid "My Computer"
-msgstr ""
+msgstr "Min datamaskin"
 
 #: src/nemo-places-sidebar.c:644
 #, c-format
@@ -1019,11 +985,11 @@ msgstr ""
 #: libnemo-private/nemo-bookmark.c:129 libnemo-private/nemo-desktop-link.c:120
 #: libnemo-private/nemo-file-utilities.c:66
 msgid "Home"
-msgstr "Domov"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:667
 msgid "Open the contents of your desktop in a folder"
-msgstr "Otvorit obsah pracovnej plochy v priečinku"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:716
 #, c-format
@@ -1034,15 +1000,15 @@ msgstr ""
 
 #: src/nemo-places-sidebar.c:720 src/nemo-tree-sidebar.c:1347
 msgid "File System"
-msgstr "Súborový systém"
+msgstr "Filsystemet"
 
 #: src/nemo-places-sidebar.c:734 src/nemo-trash-bar.c:191
 msgid "Trash"
-msgstr "Kôš"
+msgstr "Papirkurv"
 
 #: src/nemo-places-sidebar.c:736
 msgid "Open the trash"
-msgstr "Otvoriť kôš"
+msgstr "Åpne papirkurven"
 
 #: src/nemo-places-sidebar.c:809
 #, c-format
@@ -1054,12 +1020,12 @@ msgstr ""
 #: src/nemo-places-sidebar.c:838
 #, c-format
 msgid "Mount and open %s (%s)"
-msgstr ""
+msgstr "Monter og åpne %s (%s)"
 
 #: src/nemo-places-sidebar.c:866 src/nemo-places-sidebar.c:955
 #, c-format
 msgid "Mount and open %s"
-msgstr "Pripojiť a otvoriť %s"
+msgstr "Monter og åpne %s"
 
 #: src/nemo-places-sidebar.c:908
 #, c-format
@@ -1071,147 +1037,147 @@ msgstr ""
 #: src/nemo-places-sidebar.c:942 src/nemo-places-sidebar.c:997
 #: src/nemo-tree-sidebar.c:1351
 msgid "Network"
-msgstr "Sieť"
+msgstr "Nettverk"
 
 #: src/nemo-places-sidebar.c:999
 msgid "Browse the contents of the network"
-msgstr "Prehliadať obsah siete"
+msgstr "Bla gjennom nettverket"
 
 #: src/nemo-places-sidebar.c:1991 src/nemo-places-sidebar.c:3025
 #: src/nemo-view.c:8028 src/nemo-view.c:8052 src/nemo-view.c:8124
 #: src/nemo-view.c:8766 src/nemo-view.c:8770 src/nemo-view.c:8853
 #: src/nemo-view.c:8857 src/nemo-view.c:8957 src/nemo-view.c:8961
 msgid "_Start"
-msgstr "_Štart"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:1992 src/nemo-places-sidebar.c:3032
 #: src/nemo-view.c:8032 src/nemo-view.c:8056 src/nemo-view.c:8128
 #: src/nemo-view.c:8795 src/nemo-view.c:8882 src/nemo-view.c:8986
 #: src/nemo-window-menus.c:1075
 msgid "_Stop"
-msgstr "_Zastaviť"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:1997
 msgid "_Power On"
-msgstr "_Zapnúť"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:1998 src/nemo-view.c:8799 src/nemo-view.c:8886
 #: src/nemo-view.c:8990
 msgid "_Safely Remove Drive"
-msgstr "_Bezpečne odobrať vybranú jednotku"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2001
 msgid "_Connect Drive"
-msgstr "_Pripojiť jednotku"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2002
 msgid "_Disconnect Drive"
-msgstr "_Odpojiť jednotku"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2005
 msgid "_Start Multi-disk Device"
-msgstr "_Spustiť viac-diskovú jednotku"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2006
 msgid "_Stop Multi-disk Device"
-msgstr "_Zastaviť viac-diskovú jednotku"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2010 src/nemo-view.c:8869 src/nemo-view.c:8973
 msgid "_Unlock Drive"
-msgstr "_Odomknúť jednotku"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2011 src/nemo-view.c:8811 src/nemo-view.c:8898
 #: src/nemo-view.c:9002
 msgid "_Lock Drive"
-msgstr "_Zamknúť jednotku"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2085 src/nemo-places-sidebar.c:2649
 #, c-format
 msgid "Unable to start %s"
-msgstr "Nepodarilo sa spustiť %s"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2408 src/nemo-places-sidebar.c:2436
 #: src/nemo-places-sidebar.c:2464
 #, c-format
 msgid "Unable to eject %s"
-msgstr "Nepodarilo sa vysunúť %s"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2604
 #, c-format
 msgid "Unable to poll %s for media changes"
-msgstr "Nepodarilo sa periodicky kontrolovať zmenu média v %s"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2704
 #, c-format
 msgid "Unable to stop %s"
-msgstr "Nepodarilo sa zastaviť %s"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2941 src/nemo-tree-sidebar.c:1158
 #: src/nemo-view.c:7876 src/nemo-view.c:9340
 msgid "_Open"
-msgstr "_Otvoriť"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2949 src/nemo-tree-sidebar.c:1169
 #: src/nemo-view.c:7888 src/nemo-view.c:8082 src/nemo-view.c:9083
 #: src/nemo-view.c:9402
 msgid "Open in New _Tab"
-msgstr "Otvoriť na novej _karte"
+msgstr "Åpne i ny _fane"
 
 #: src/nemo-places-sidebar.c:2959 src/nemo-tree-sidebar.c:1183
 #: src/nemo-view.c:9074 src/nemo-view.c:9382
 msgid "Open in New _Window"
-msgstr "Otvoriť v novom _okne"
+msgstr "Åpne i nytt _vindu"
 
 #: src/nemo-places-sidebar.c:2970 src/nemo-window-menus.c:1181
 msgid "_Add Bookmark"
-msgstr "_Pridať záložku"
+msgstr "_Legg til bokmerke"
 
 #: src/nemo-places-sidebar.c:2976
 msgid "Remove"
-msgstr "Odstrániť"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:2985
 msgid "Rename..."
-msgstr "Premenovať..."
+msgstr "Gi nytt navn..."
 
 #: src/nemo-places-sidebar.c:2997 src/nemo-view.c:8016 src/nemo-view.c:8040
 #: src/nemo-view.c:8112
 msgid "_Mount"
-msgstr "_Pripojiť"
+msgstr "_Monter"
 
 #: src/nemo-places-sidebar.c:3004 src/nemo-tree-sidebar.c:1274
 #: src/nemo-view.c:8020 src/nemo-view.c:8044 src/nemo-view.c:8116
 msgid "_Unmount"
-msgstr "_Odpojiť"
+msgstr "_Avmonter"
 
 #: src/nemo-places-sidebar.c:3011 src/nemo-tree-sidebar.c:1283
 #: src/nemo-view.c:8024 src/nemo-view.c:8048 src/nemo-view.c:8120
 msgid "_Eject"
-msgstr "_Vysunúť"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:3018 src/nemo-view.c:8036 src/nemo-view.c:8060
 #: src/nemo-view.c:8132
 msgid "_Detect Media"
-msgstr "_Zistiť médium"
+msgstr ""
 
 #: src/nemo-places-sidebar.c:3041 src/nemo-trash-bar.c:204
 #: libnemo-private/nemo-file-operations.c:1352
 #: libnemo-private/nemo-file-operations.c:2211
 msgid "Empty _Trash"
-msgstr "Vyprázdniť _kôš"
+msgstr "_Tøm papirkurven"
 
 #: src/nemo-places-sidebar.c:3053 src/nemo-view.c:7854 src/nemo-view.c:8137
 msgid "_Properties"
-msgstr "_Vlastnosti"
+msgstr "_Egenskaper"
 
 #: src/nemo-progress-ui-handler.c:109 src/nemo-progress-ui-handler.c:159
 #: src/nemo-progress-ui-handler.c:218 src/nemo-progress-ui-handler.c:278
 msgid "File Operations"
-msgstr "Operácie so súborom"
+msgstr ""
 
 #: src/nemo-progress-ui-handler.c:118
 msgid "Show Details"
-msgstr "Zobraziť podrobnosti"
+msgstr ""
 
 #: src/nemo-progress-ui-handler.c:153 src/nemo-progress-ui-handler.c:175
 #, c-format
@@ -1222,70 +1188,67 @@ msgstr[1] ""
 
 #: src/nemo-progress-ui-handler.c:279
 msgid "All file operations have been successfully completed"
-msgstr "Všetky operácie so súbormi boli úspešne dokončené"
+msgstr ""
 
 #: src/nemo-progress-ui-handler.c:329
 #, c-format
 msgid "%d%% %s"
-msgstr "%d%% %s"
+msgstr ""
 
 #: src/nemo-properties-window.c:483
 msgid "You cannot assign more than one custom icon at a time!"
-msgstr "Nie je možné naraz priradiť viac ako jednu vlastnú ikonu!"
+msgstr ""
 
 #: src/nemo-properties-window.c:484
 msgid "Please drag just one image to set a custom icon."
 msgstr ""
-"Aby ste nastavili vlastnú ikonu, pretiahnite a pusťte iba jeden obrázok, "
-"prosím."
 
 #: src/nemo-properties-window.c:495
 msgid "The file that you dropped is not local."
-msgstr "Súbor, ktorý ste pustili, nie je lokálny."
+msgstr ""
 
 #: src/nemo-properties-window.c:496 src/nemo-properties-window.c:502
 msgid "You can only use local images as custom icons."
-msgstr "Ako vlastné ikony môžete použiť iba lokálne obrázky."
+msgstr ""
 
 #: src/nemo-properties-window.c:501
 msgid "The file that you dropped is not an image."
-msgstr "Súbor, ktorý ste pustili, nie je obrázok."
+msgstr ""
 
 #: src/nemo-properties-window.c:637
 msgid "_Name:"
 msgid_plural "_Names:"
-msgstr[0] "_Názov:"
-msgstr[1] "_Názov:"
-msgstr[2] "_Názvy:"
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/nemo-properties-window.c:832
 msgid "Properties"
-msgstr "Vlastnosti"
+msgstr "Egenskaper"
 
 #: src/nemo-properties-window.c:840
 #, c-format
 msgid "%s Properties"
-msgstr "Vlastnosti %s"
+msgstr "Egenskaper for %s"
 
 #: src/nemo-properties-window.c:1122 libnemo-private/nemo-file.c:6274
 msgid "unknown"
-msgstr "neznámy"
+msgstr ""
 
 #: src/nemo-properties-window.c:1377
 msgid "Cancel Group Change?"
-msgstr "Zrušiť zmenu skupiny?"
+msgstr ""
 
 #: src/nemo-properties-window.c:1792
 msgid "Cancel Owner Change?"
-msgstr "Zrušiť zmenu vlastníka?"
+msgstr ""
 
 #: src/nemo-properties-window.c:2110
 msgid "nothing"
-msgstr "nič"
+msgstr ""
 
 #: src/nemo-properties-window.c:2112
 msgid "unreadable"
-msgstr "nečitateľné"
+msgstr ""
 
 #: src/nemo-properties-window.c:2124
 #, c-format
@@ -1296,11 +1259,11 @@ msgstr[1] ""
 
 #: src/nemo-properties-window.c:2133
 msgid "(some contents unreadable)"
-msgstr "(niektorý obsah je nečitateľný)"
+msgstr ""
 
 #: src/nemo-properties-window.c:2150
 msgid "Contents:"
-msgstr ""
+msgstr "Innhold:"
 
 #: src/nemo-properties-window.c:2924
 msgid "used"
@@ -1320,7 +1283,7 @@ msgstr ""
 
 #: src/nemo-properties-window.c:3026
 msgid "Basic"
-msgstr ""
+msgstr "Grunnleggende"
 
 #: src/nemo-properties-window.c:3083
 #: libnemo-private/nemo-file-conflict-dialog.c:256
@@ -1340,7 +1303,7 @@ msgstr ""
 
 #: src/nemo-properties-window.c:3116
 msgid "Volume:"
-msgstr ""
+msgstr "Lagringsenhet:"
 
 #: src/nemo-properties-window.c:3125
 msgid "Accessed:"
@@ -1352,15 +1315,15 @@ msgstr ""
 
 #: src/nemo-properties-window.c:3138
 msgid "Free space:"
-msgstr ""
+msgstr "Ledig plass:"
 
 #: src/nemo-properties-window.c:3559
 msgid "_Read"
-msgstr ""
+msgstr "_Lese"
 
 #: src/nemo-properties-window.c:3561
 msgid "_Write"
-msgstr ""
+msgstr "_Skrive"
 
 #: src/nemo-properties-window.c:3563
 msgid "E_xecute"
@@ -1377,7 +1340,7 @@ msgstr ""
 
 #: src/nemo-properties-window.c:3836
 msgid "read"
-msgstr ""
+msgstr "lese"
 
 #: src/nemo-properties-window.c:3845
 msgid "create/delete"
@@ -1385,7 +1348,7 @@ msgstr ""
 
 #: src/nemo-properties-window.c:3847
 msgid "write"
-msgstr ""
+msgstr "skrive"
 
 #: src/nemo-properties-window.c:3856
 msgid "access"
@@ -1417,7 +1380,7 @@ msgstr ""
 
 #: src/nemo-properties-window.c:3937
 msgid "Read-only"
-msgstr ""
+msgstr "Skrivebeskyttet"
 
 #: src/nemo-properties-window.c:3939
 msgid "Read and write"
@@ -1441,29 +1404,29 @@ msgstr ""
 
 #: src/nemo-properties-window.c:4083 src/nemo-properties-window.c:4275
 msgid "_Owner:"
-msgstr ""
+msgstr "_Eier:"
 
 #: src/nemo-properties-window.c:4091 src/nemo-properties-window.c:4180
 #: src/nemo-properties-window.c:4285
 msgid "Owner:"
-msgstr ""
+msgstr "Eier:"
 
 #: src/nemo-properties-window.c:4113 src/nemo-properties-window.c:4297
 msgid "_Group:"
-msgstr ""
+msgstr "_Gruppe:"
 
 #: src/nemo-properties-window.c:4121 src/nemo-properties-window.c:4181
 #: src/nemo-properties-window.c:4305
 msgid "Group:"
-msgstr ""
+msgstr "Gruppe:"
 
 #: src/nemo-properties-window.c:4145
 msgid "Others"
-msgstr ""
+msgstr "Andre"
 
 #: src/nemo-properties-window.c:4160
 msgid "Execute:"
-msgstr ""
+msgstr "Kjøre:"
 
 #: src/nemo-properties-window.c:4163
 msgid "Allow _executing file as program"
@@ -1471,15 +1434,15 @@ msgstr ""
 
 #: src/nemo-properties-window.c:4182
 msgid "Others:"
-msgstr ""
+msgstr "Andre:"
 
 #: src/nemo-properties-window.c:4321
 msgid "Folder Permissions:"
-msgstr ""
+msgstr "Rettigheter for mappe:"
 
 #: src/nemo-properties-window.c:4329
 msgid "File Permissions:"
-msgstr ""
+msgstr "Rettigheter for filer:"
 
 #: src/nemo-properties-window.c:4338
 msgid "Text view:"
@@ -1488,7 +1451,7 @@ msgstr ""
 #: src/nemo-properties-window.c:4472
 #: libnemo-private/nemo-column-utilities.c:97
 msgid "Permissions"
-msgstr ""
+msgstr "Rettigheter"
 
 #: src/nemo-properties-window.c:4486
 msgid "You are not the owner, so you cannot change these permissions."
@@ -1517,7 +1480,7 @@ msgstr ""
 
 #: src/nemo-properties-window.c:4769
 msgid "Open With"
-msgstr ""
+msgstr "Åpne med..."
 
 #: src/nemo-properties-window.c:5093
 msgid "Creating Properties window."
@@ -1529,7 +1492,7 @@ msgstr ""
 
 #: src/nemo-query-editor.c:118
 msgid "File Type"
-msgstr ""
+msgstr "Filtype"
 
 #: src/nemo-query-editor.c:276
 msgid "Select folder to search in"
@@ -1537,7 +1500,7 @@ msgstr ""
 
 #: src/nemo-query-editor.c:366
 msgid "Documents"
-msgstr ""
+msgstr "Dokumenter"
 
 #: src/nemo-query-editor.c:384
 msgid "Music"
@@ -1610,7 +1573,7 @@ msgstr ""
 
 #: src/nemo-query-editor.c:1043
 msgid "Reload"
-msgstr ""
+msgstr "Oppdater"
 
 #: src/nemo-query-editor.c:1048
 msgid "Perform or update the search"
@@ -1622,11 +1585,11 @@ msgstr ""
 
 #: src/nemo-query-editor.c:1102
 msgid "Search results"
-msgstr ""
+msgstr "Søkeresultater"
 
 #: src/nemo-search-bar.c:146
 msgid "Search:"
-msgstr ""
+msgstr "Søk:"
 
 #: src/nemo-statusbar.c:180
 msgid "Show Places"
@@ -1680,16 +1643,16 @@ msgstr ""
 
 #: src/nemo-tree-sidebar.c:1231 src/nemo-view.c:7948 src/nemo-view.c:8095
 msgid "_Paste Into Folder"
-msgstr ""
+msgstr "_Lim inn i mappe"
 
 #: src/nemo-tree-sidebar.c:1261 src/nemo-view.c:7986 src/nemo-view.c:8104
 #: src/nemo-view.c:9446
 msgid "_Delete"
-msgstr ""
+msgstr "_Slett"
 
 #: src/nemo-tree-sidebar.c:1338
 msgid "Computer"
-msgstr "Počítač"
+msgstr "Datamaskin"
 
 #: src/nemo-view.c:1022
 #, c-format
@@ -1808,7 +1771,7 @@ msgstr[1] ""
 #: src/nemo-view.c:3094
 #, c-format
 msgid "%s, Free space: %s"
-msgstr ""
+msgstr "%s, ledig plass: %s"
 
 #: src/nemo-view.c:3109
 #, c-format
@@ -1828,7 +1791,7 @@ msgstr ""
 #: src/nemo-view.c:4607
 #, c-format
 msgid "Open With %s"
-msgstr ""
+msgstr "Åpne med %s"
 
 #: src/nemo-view.c:4609
 #, c-format
@@ -1906,7 +1869,7 @@ msgstr[1] ""
 
 #: src/nemo-view.c:7092
 msgid "Unable to unmount location"
-msgstr ""
+msgstr "Kan ikke avmontere plassering"
 
 #: src/nemo-view.c:7112
 msgid "Unable to eject location"
@@ -1932,7 +1895,7 @@ msgstr ""
 
 #: src/nemo-view.c:7850
 msgid "Create New _Document"
-msgstr ""
+msgstr "Opprett nytt _dokument"
 
 #: src/nemo-view.c:7851
 msgid "Open Wit_h"
@@ -1956,7 +1919,7 @@ msgstr ""
 
 #: src/nemo-view.c:7868
 msgid "_Empty Document"
-msgstr ""
+msgstr "_Tomt dokument"
 
 #: src/nemo-view.c:7869
 msgid "Create a new empty document inside this folder"
@@ -1980,7 +1943,7 @@ msgstr ""
 
 #: src/nemo-view.c:7892
 msgid "Open in Terminal"
-msgstr ""
+msgstr "Åpne i Terminal"
 
 #: src/nemo-view.c:7893
 msgid "Open terminal in the selected folder"
@@ -1988,7 +1951,7 @@ msgstr ""
 
 #: src/nemo-view.c:7896
 msgid "Open as Root"
-msgstr ""
+msgstr "Åpen som Root"
 
 #: src/nemo-view.c:7897
 msgid "Open the folder with administration privileges"
@@ -2030,7 +1993,7 @@ msgstr ""
 
 #: src/nemo-view.c:7918
 msgid "Other _Application..."
-msgstr ""
+msgstr "Et _annet program..."
 
 #: src/nemo-view.c:7919 src/nemo-view.c:7923
 msgid "Choose another application with which to open the selected item"
@@ -2109,8 +2072,8 @@ msgstr ""
 #: src/nemo-view.c:7970 src/nemo-view.c:9465
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Opprett _lenke"
+msgstr[1] "Opprett _lenker"
 
 #: src/nemo-view.c:7971
 msgid "Create a symbolic link for each selected item"
@@ -2118,7 +2081,7 @@ msgstr ""
 
 #: src/nemo-view.c:7974
 msgid "_Rename..."
-msgstr ""
+msgstr "_Gi nytt navn..."
 
 #: src/nemo-view.c:7975
 msgid "Rename selected item"
@@ -2170,11 +2133,11 @@ msgstr ""
 
 #: src/nemo-view.c:8017
 msgid "Mount the selected volume"
-msgstr ""
+msgstr "Monter valgt dataområde"
 
 #: src/nemo-view.c:8021
 msgid "Unmount the selected volume"
-msgstr ""
+msgstr "Avmonter valgt dataområde"
 
 #: src/nemo-view.c:8025
 msgid "Eject the selected volume"
@@ -2284,7 +2247,7 @@ msgstr ""
 
 #: src/nemo-view.c:8138
 msgid "View or modify the properties of this folder"
-msgstr ""
+msgstr "Vis eller endre egenskaper for denne mappen"
 
 #: src/nemo-view.c:8141 src/nemo-view.c:8144
 msgid "_Other pane"
@@ -2480,7 +2443,7 @@ msgstr ""
 #: src/nemo-view.c:9327
 #, c-format
 msgid "_Open With %s"
-msgstr ""
+msgstr "_Åpne med %s"
 
 #: src/nemo-view.c:9384
 #, c-format
@@ -2508,7 +2471,7 @@ msgstr ""
 #: libnemo-private/nemo-file-operations.c:377
 #, c-format
 msgid "Link to %s"
-msgstr ""
+msgstr "Lenke til %s"
 
 #: src/nemo-view-dnd.c:172 src/nemo-view-dnd.c:206 src/nemo-view-dnd.c:297
 msgid "Drag and drop is not supported."
@@ -2643,19 +2606,19 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1051
 msgid "_File"
-msgstr ""
+msgstr "_Fil"
 
 #: src/nemo-window-menus.c:1052
 msgid "_Edit"
-msgstr ""
+msgstr "_Rediger"
 
 #: src/nemo-window-menus.c:1053
 msgid "_View"
-msgstr ""
+msgstr "_Vis"
 
 #: src/nemo-window-menus.c:1054
 msgid "_Help"
-msgstr ""
+msgstr "_Hjelp"
 
 #: src/nemo-window-menus.c:1056
 msgid "_Close"
@@ -2691,7 +2654,7 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1079 src/nemo-window-menus.c:1314
 msgid "_Reload"
-msgstr ""
+msgstr "_Oppdater"
 
 #: src/nemo-window-menus.c:1080 src/nemo-window-menus.c:1316
 msgid "Reload the current location"
@@ -2707,7 +2670,7 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1103
 msgid "_About"
-msgstr ""
+msgstr "_Om"
 
 #: src/nemo-window-menus.c:1104
 msgid "Display credits for the creators of Nemo"
@@ -2715,7 +2678,7 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1107
 msgid "Zoom _In"
-msgstr ""
+msgstr "Zoom _inn"
 
 #: src/nemo-window-menus.c:1108
 msgid "Increase the view size"
@@ -2723,7 +2686,7 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1119
 msgid "Zoom _Out"
-msgstr ""
+msgstr "Zoom _ut"
 
 #: src/nemo-window-menus.c:1120
 msgid "Decrease the view size"
@@ -2731,7 +2694,7 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1127
 msgid "Normal Si_ze"
-msgstr ""
+msgstr "_Normal størrelse"
 
 #: src/nemo-window-menus.c:1128
 msgid "Use the normal view size"
@@ -2747,11 +2710,11 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1136
 msgid "Open your personal folder"
-msgstr "Otvoriť domáci priečinok"
+msgstr ""
 
 #: src/nemo-window-menus.c:1139 src/nemo-window-menus.c:1342
 msgid "_Computer"
-msgstr ""
+msgstr "_Datamaskin"
 
 #: src/nemo-window-menus.c:1140
 msgid ""
@@ -2760,7 +2723,7 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1143
 msgid "_Network"
-msgstr ""
+msgstr "_Nettverk"
 
 #: src/nemo-window-menus.c:1144
 msgid "Browse bookmarked and local network locations"
@@ -2784,11 +2747,11 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1154
 msgid "_Go"
-msgstr ""
+msgstr "_Gå til"
 
 #: src/nemo-window-menus.c:1155
 msgid "_Bookmarks"
-msgstr ""
+msgstr "_Bookmarks"
 
 #: src/nemo-window-menus.c:1156
 msgid "_Tabs"
@@ -2824,7 +2787,7 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1167 src/nemo-window-menus.c:1266
 msgid "Go to the previous visited location"
-msgstr ""
+msgstr "Gå til forrige plassering"
 
 #: src/nemo-window-menus.c:1169 src/nemo-window-menus.c:1280
 msgid "_Forward"
@@ -2864,7 +2827,7 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1184
 msgid "_Edit Bookmarks..."
-msgstr ""
+msgstr "_Rediger bokmerker..."
 
 #: src/nemo-window-menus.c:1185
 msgid "Display a window that allows editing the bookmarks in this menu"
@@ -2908,7 +2871,7 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1204
 msgid "Show _Hidden Files"
-msgstr ""
+msgstr "Vis _skjulte filer"
 
 #: src/nemo-window-menus.c:1205
 msgid "Toggle the display of hidden files in the current window"
@@ -3149,7 +3112,7 @@ msgstr ""
 
 #: libnemo-private/nemo-column-utilities.c:81
 msgid "Owner"
-msgstr ""
+msgstr "Eier"
 
 #: libnemo-private/nemo-column-utilities.c:82
 msgid "The owner of the file."
@@ -3157,7 +3120,7 @@ msgstr ""
 
 #: libnemo-private/nemo-column-utilities.c:89
 msgid "Group"
-msgstr ""
+msgstr "Gruppe"
 
 #: libnemo-private/nemo-column-utilities.c:90
 msgid "The group of the file."
@@ -3586,7 +3549,7 @@ msgstr ""
 
 #: libnemo-private/nemo-file-operations.c:188
 msgid "Delete _All"
-msgstr ""
+msgstr "Slett _alle"
 
 #: libnemo-private/nemo-file-operations.c:189
 msgid "_Replace"
@@ -4191,7 +4154,7 @@ msgstr ""
 
 #: libnemo-private/nemo-file-operations.c:5945
 msgid "Untitled Document"
-msgstr ""
+msgstr "Dokument uten navn"
 
 #: libnemo-private/nemo-file-operations.c:6123
 msgid "Error while creating directory %B."
@@ -4764,11 +4727,11 @@ msgstr ""
 
 #: src/nemo-bookmarks-window.glade:7
 msgid "Edit Bookmarks"
-msgstr ""
+msgstr "Rediger bokmerker"
 
 #: src/nemo-bookmarks-window.glade:111
 msgid "<b>_Bookmarks</b>"
-msgstr ""
+msgstr "<b>_Bokmerker</b>"
 
 #: src/nemo-bookmarks-window.glade:200
 msgid "<b>_Name</b>"
@@ -4792,7 +4755,7 @@ msgstr ""
 
 #: src/nemo-file-management-properties.glade:157
 msgid "_Arrange items:"
-msgstr ""
+msgstr "_Ordne elementer..."
 
 #: src/nemo-file-management-properties.glade:194
 msgid "Sort _folders before files"
