@@ -716,8 +716,13 @@ reveal_icon (NemoIconContainer *container,
 	if (bounds.x0 < gtk_adjustment_get_value (hadj)) {
 		gtk_adjustment_set_value (hadj, bounds.x0);
 	} else if (bounds.x1 > gtk_adjustment_get_value (hadj) + allocation.width) {
-		gtk_adjustment_set_value
-			(hadj, bounds.x1 - allocation.width);
+        if (bounds.x1 - allocation.width > bounds.x0) {
+            gtk_adjustment_set_value
+                (hadj, bounds.x0);
+        } else {
+            gtk_adjustment_set_value
+                (hadj, bounds.x1 - allocation.width);
+        }
 	}
 }
 
