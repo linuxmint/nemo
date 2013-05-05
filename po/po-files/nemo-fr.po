@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: linuxmint\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2013-04-11 09:31-0400\n"
-"PO-Revision-Date: 2013-05-04 07:45+0000\n"
-"Last-Translator: GHOSTnew <ghostnew@team-mondial.net>\n"
+"PO-Revision-Date: 2013-05-06 00:01+0100\n"
+"Last-Translator: RyDroid <rydroid_trans@yahoo.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Launchpad-Export-Date: 2013-05-04 16:23+0000\n"
-"X-Generator: Launchpad (build 16598)\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: src/nemo-application.c:158
 #, c-format
@@ -932,8 +932,7 @@ msgstr "_Sélectionner une application"
 
 #: src/nemo-mime-actions.c:1268
 msgid "There was an internal error trying to search for applications:"
-msgstr ""
-"Une erreur interne est survenue lors de la recherche d'applications :"
+msgstr "Une erreur interne est survenue lors de la recherche d'applications :"
 
 #: src/nemo-mime-actions.c:1270
 msgid "Unable to search for application"
@@ -1530,8 +1529,7 @@ msgstr "Les permissions de « %s » n'ont pas pu être déterminées."
 
 #: src/nemo-properties-window.c:4536
 msgid "The permissions of the selected file could not be determined."
-msgstr ""
-"Les permissions du fichier sélectionné n'ont pas pu être déterminées."
+msgstr "Les permissions du fichier sélectionné n'ont pas pu être déterminées."
 
 #: src/nemo-properties-window.c:4769
 msgid "Open With"
@@ -2120,8 +2118,7 @@ msgstr ""
 
 #: src/nemo-view.c:7939
 msgid "Prepare the selected files to be copied with a Paste command"
-msgstr ""
-"Prépare la copie des fichiers sélectionnés avec la commande « Coller »"
+msgstr "Prépare la copie des fichiers sélectionnés avec la commande « Coller »"
 
 #: src/nemo-view.c:7943
 msgid "Move or copy files previously selected by a Cut or Copy command"
@@ -4116,8 +4113,7 @@ msgstr ""
 #: libnemo-private/nemo-file-operations.c:2819
 #, c-format
 msgid "%S more space is required to copy to the destination."
-msgstr ""
-"%S d'espace supplémentaire est requis pour copier vers la destination."
+msgstr "%S d'espace supplémentaire est requis pour copier vers la destination."
 
 #: libnemo-private/nemo-file-operations.c:2847
 msgid "The destination is read-only."
@@ -4965,7 +4961,7 @@ msgstr ""
 
 #: src/nemo-file-management-properties.glade:281
 msgid "Default _zoom level:"
-msgstr "Niveau de _zoom par défaut:"
+msgstr "Niveau de _zoom par défaut :"
 
 #: src/nemo-file-management-properties.glade:318
 msgid "_Text beside icons"
@@ -5005,11 +5001,11 @@ msgstr "<b>Réglages par défaut de la vue arborescente</b>"
 
 #: src/nemo-file-management-properties.glade:613
 msgid "Show _only folders"
-msgstr ""
+msgstr "Montrer _seulement les dossiers"
 
 #: src/nemo-file-management-properties.glade:649
 msgid "Views"
-msgstr ""
+msgstr "Vues"
 
 #: src/nemo-file-management-properties.glade:673
 msgid "<b>Behavior</b>"
@@ -5025,7 +5021,7 @@ msgstr ""
 
 #: src/nemo-file-management-properties.glade:728
 msgid "Open each _folder in its own window"
-msgstr ""
+msgstr "Ouvrir chaque _dossier dans sa propre fenêtre"
 
 #: src/nemo-file-management-properties.glade:769
 msgid "<b>Executable Text Files</b>"
@@ -5041,15 +5037,15 @@ msgstr ""
 
 #: src/nemo-file-management-properties.glade:824
 msgid "_Ask each time"
-msgstr ""
+msgstr "_Demander à chaque fois"
 
 #: src/nemo-file-management-properties.glade:866
 msgid "<b>Trash</b>"
-msgstr ""
+msgstr "<b>Corbeille</b>"
 
 #: src/nemo-file-management-properties.glade:888
 msgid "Ask before _emptying the Trash or deleting files"
-msgstr ""
+msgstr "Demander avant de _vider la corbeille ou supprimer des fichiers"
 
 #: src/nemo-file-management-properties.glade:904
 msgid "I_nclude a Delete command that bypasses Trash"
@@ -5102,7 +5098,7 @@ msgstr "<b>Date</b>"
 
 #: src/nemo-file-management-properties.glade:1281
 msgid "_Format:"
-msgstr ""
+msgstr "_Format :"
 
 #: src/nemo-file-management-properties.glade:1330
 msgid "<b>File Size</b>"
@@ -5110,7 +5106,7 @@ msgstr "<b>Taille du fichier</b>"
 
 #: src/nemo-file-management-properties.glade:1353
 msgid "_Prefixes:"
-msgstr ""
+msgstr "_Préfixes :"
 
 #: src/nemo-file-management-properties.glade:1408
 msgid "<b>Window and Tab Titles</b>"
@@ -5122,7 +5118,7 @@ msgstr ""
 
 #: src/nemo-file-management-properties.glade:1469
 msgid "Display"
-msgstr ""
+msgstr "Affichage"
 
 #: src/nemo-file-management-properties.glade:1494
 msgid "<b>List Columns</b>"
@@ -5130,7 +5126,7 @@ msgstr ""
 
 #: src/nemo-file-management-properties.glade:1519
 msgid "Choose the order of information to appear in the list view."
-msgstr ""
+msgstr "Choississez l'ordre d'apparition des informations dans la vue liste"
 
 #: src/nemo-file-management-properties.glade:1556
 msgid "List Columns"
@@ -5138,7 +5134,7 @@ msgstr ""
 
 #: src/nemo-file-management-properties.glade:1581
 msgid "<b>Text Files</b>"
-msgstr ""
+msgstr "<b>Fichiers texte</b>"
 
 #: src/nemo-file-management-properties.glade:1611
 msgid "Show te_xt in icons:"
@@ -5150,27 +5146,27 @@ msgstr ""
 
 #: src/nemo-file-management-properties.glade:1703
 msgid "Show _thumbnails:"
-msgstr ""
+msgstr "Afficher les _vignettes :"
 
 #: src/nemo-file-management-properties.glade:1748
 msgid "_Only for files smaller than:"
-msgstr ""
+msgstr "_Seulement pour les fichiers plus petit que :"
 
 #: src/nemo-file-management-properties.glade:1810
 msgid "<b>Folders</b>"
-msgstr ""
+msgstr "<b>Dossiers</b>"
 
 #: src/nemo-file-management-properties.glade:1840
 msgid "Count _number of items:"
-msgstr ""
+msgstr "Compter le _nombre d'éléments :"
 
 #: src/nemo-file-management-properties.glade:1900
 msgid "Preview"
-msgstr ""
+msgstr "Vignette"
 
 #: src/nemo-file-management-properties.glade:1925
 msgid "<b>Options</b>"
-msgstr ""
+msgstr "<b>Options</b>"
 
 #: src/nemo-file-management-properties.glade:1947
 msgid "Show up icon"
@@ -5178,7 +5174,7 @@ msgstr ""
 
 #: src/nemo-file-management-properties.glade:1963
 msgid "Show refresh icon"
-msgstr ""
+msgstr "Afficher l'icone actualiser"
 
 #: src/nemo-file-management-properties.glade:1979
 msgid "Show toggle button location bar/bar path"
@@ -5186,15 +5182,15 @@ msgstr ""
 
 #: src/nemo-file-management-properties.glade:1995
 msgid "Show home icon"
-msgstr ""
+msgstr "Afficher l'icone maison"
 
 #: src/nemo-file-management-properties.glade:2011
 msgid "Show computer icon"
-msgstr ""
+msgstr "Afficher l'icone du poste de travail"
 
 #: src/nemo-file-management-properties.glade:2027
 msgid "Show search icon"
-msgstr ""
+msgstr "Afficher l'icone de recherche"
 
 #: src/nemo-file-management-properties.glade:2043
 msgid "Show label on search icon (need to restart nemo)"
@@ -5202,4 +5198,4 @@ msgstr ""
 
 #: src/nemo-file-management-properties.glade:2082
 msgid "Toolbar"
-msgstr ""
+msgstr "Barre d'outils"
