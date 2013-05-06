@@ -2657,8 +2657,7 @@ nemo_view_set_selection (NemoView *nemo_view,
 static char *
 get_bulk_rename_tool ()
 {
-	char *bulk_rename_tool;
-	g_settings_get (nemo_preferences, NEMO_PREFERENCES_BULK_RENAME_TOOL, "^ay", &bulk_rename_tool);
+	char *bulk_rename_tool = g_settings_get_string (nemo_preferences, NEMO_PREFERENCES_BULK_RENAME_TOOL);
 	return g_strstrip (bulk_rename_tool);
 }
 
@@ -2669,7 +2668,7 @@ have_bulk_rename_tool ()
 	gboolean have_tool;
 
 	bulk_rename_tool = get_bulk_rename_tool ();
-	have_tool = ((bulk_rename_tool != NULL) && (*bulk_rename_tool != '\0'));
+	have_tool = g_strcmp0 (bulk_rename_tool, "") != 0;
 	g_free (bulk_rename_tool);
 	return have_tool;
 }
