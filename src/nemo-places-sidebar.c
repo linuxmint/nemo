@@ -805,6 +805,8 @@ update_places (NemoPlacesSidebar *sidebar)
                     network_mounts = g_list_prepend (network_mounts, mount);
                 }
                 g_object_unref(actual_file);
+            } else {
+                network_mounts = g_list_prepend (network_mounts, mount);
             }
             g_free (path);
             g_free (escaped1);
