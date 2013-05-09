@@ -801,8 +801,6 @@ update_places (NemoPlacesSidebar *sidebar)
                 GFile *actual_file = g_file_new_for_uri (ptr);
                 if (g_file_is_native(actual_file)) {
                     really_network = FALSE;
-                } else {
-                    network_mounts = g_list_prepend (network_mounts, mount);
                 }
                 g_object_unref(actual_file);
             }
@@ -810,6 +808,7 @@ update_places (NemoPlacesSidebar *sidebar)
             g_free (escaped1);
             g_free (escaped2);
             if (really_network) {
+                network_mounts = g_list_prepend (network_mounts, mount);
                 g_object_unref (root);
                 continue;
             }
