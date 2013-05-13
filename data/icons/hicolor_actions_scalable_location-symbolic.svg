@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" version="1.1">
- <defs>
-  <linearGradient id="a" y2="16.588" gradientUnits="userSpaceOnUse" x2="11.162" gradientTransform="matrix(.90164 0 0 .70484 1.8591 2.2637)" y1="-1.131" x1="11.162">
-   <stop stop-color="#f0f0f0" offset="0"/>
-   <stop stop-color="#aaa" offset="1"/>
-  </linearGradient>
- </defs>
- <path d="m9.8808 1.4665v1.6193h1.5695c1.3322 0 1.5944 0.28708 1.5944 1.6193v3.6206c0 1.3322-0.26217 1.6193-1.5944 1.6193h-1.5695v-2.3666l-4.8329 3.1887 4.8329 3.1887v-2.3916h2.3916c1.3249 0 2.3916-1.0666 2.3916-2.3916v-5.3146c0-1.3249-1.0666-2.3916-2.3916-2.3916-0.60224-0.0000281-2.3916 0.0001-2.3916 0.0001zm-7.2245 7.9719c-0.73379 0-1.3286 0.59485-1.3286 1.3286 0 0.73379 0.59485 1.3286 1.3286 1.3286 0.73379 0 1.3286-0.59485 1.3286-1.3286 0-0.73379-0.59485-1.3286-1.3286-1.3286z" fill="url(#a)"/>
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" height="16" width="16" version="1.1" id="svg6629" inkscape:version="0.48.4 r9939" sodipodi:docname="hicolor_actions_scalable_location-symbolic.svg">
+   <metadata id="metadata6642">
+      <rdf:RDF>
+         <cc:Work rdf:about="">
+            <dc:format>image/svg+xml</dc:format>
+            <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+         </cc:Work>
+      </rdf:RDF>
+   </metadata>
+   <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1366" inkscape:window-height="716" id="namedview6640" showgrid="true" inkscape:snap-bbox="true" inkscape:zoom="14.75" inkscape:cx="12.994164" inkscape:cy="10.702695" inkscape:window-x="0" inkscape:window-y="27" inkscape:window-maximized="1" inkscape:current-layer="svg6629">
+      <inkscape:grid type="xygrid" id="grid6644" />
+   </sodipodi:namedview>
+   <defs id="defs6631">
+      <linearGradient id="a" y2="16.588" gradientUnits="userSpaceOnUse" x2="11.162" gradientTransform="matrix(0.90164,0,0,0.70484,19.621812,2.2637)" y1="-1.131" x1="11.162">
+         <stop stop-color="#f0f0f0" offset="0" id="stop6634" />
+         <stop stop-color="#aaa" offset="1" id="stop6636" />
+      </linearGradient>
+      <linearGradient inkscape:collect="always" xlink:href="#a" id="linearGradient7457" x1="12" y1="1" x2="12" y2="13" gradientUnits="userSpaceOnUse" />
+   </defs>
+   <path style="color:black;fill:url(#linearGradient7457);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:8;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" d="M 9 1 L 9 3 L 13 3 L 13 11 L 9 11 L 9 9 L 8.46875 9 L 6.15625 11.59375 C 6.06295 11.67625 6 11.83128 6 12 C 6 12.168732 6.062938 12.32375 6.15625 12.40625 L 8.40625 15 L 9 15 L 9 13 L 13 13 C 14.108 13 15 12.108 15 11 L 15 3 C 15 1.892 14.108 1 13 1 L 9 1 z " id="rect6646" />
+   <path sodipodi:type="arc" style="color:black;fill:#bebebe;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:8;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" id="path6681" sodipodi:cx="2.5" sodipodi:cy="12.5" sodipodi:rx="1.5" sodipodi:ry="1.5" d="m 4,12.5 a 1.5,1.5 0 1 1 -3,0 1.5,1.5 0 1 1 3,0 z" transform="matrix(1.3333333,0,0,1.3333333,-0.33333333,-4.6666667)" />
 </svg>
