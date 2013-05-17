@@ -9,11 +9,8 @@
       </rdf:RDF>
    </metadata>
    <defs id="defs6428" />
-   <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1366" inkscape:window-height="716" id="namedview6426" showgrid="true" inkscape:snap-page="true" inkscape:snap-bbox="true" inkscape:zoom="20.85965" inkscape:cx="19.787639" inkscape:cy="6.9730306" inkscape:window-x="0" inkscape:window-y="27" inkscape:window-maximized="1" inkscape:current-layer="svg6422">
+   <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1366" inkscape:window-height="714" id="namedview6426" showgrid="true" inkscape:snap-page="true" inkscape:snap-bbox="true" inkscape:zoom="20.85965" inkscape:cx="19.787639" inkscape:cy="6.9730306" inkscape:window-x="0" inkscape:window-y="27" inkscape:window-maximized="1" inkscape:current-layer="svg6422">
       <inkscape:grid type="xygrid" id="grid6432" />
    </sodipodi:namedview>
-   <g inkscape:label="folder" transform="translate(-208,-996)" id="g6528">
-      <path style="fill:#bebebe;fill-opacity:1" sodipodi:nodetypes="ccccccccccscccccccccc" d="m 208.94925,998 c -1.001,0 -0.94915,0.71087 -0.94915,1 l -1e-4,11 c 0,0.9765 0.4641,1 1,1 l 14,0 c 0.53589,0 1,-0.074 1,-1 l 1e-4,-6 c 0,-1 -0.41426,-1 -1,-1 l -11.00015,0 -1e-4,5 c 0,0.277 0.0508,1 -0.44915,1 -0.5,0 -0.5,-0.723 -0.5,-1 L 211,1003 c 0,-1 0.44334,-1 1,-1 l 10.0001,0 0,-1 c 0,-0.5984 0,-1 -1,-1 l -7.0001,0 0,-1 c 0,-0.28915 -0.0244,-1 -1,-1 z" inkscape:connector-curvature="0" id="path6530" />
-      <rect style="color:#2e3436;fill:none" height="16" width="16" y="996" x="208" id="rect6532" />
-   </g>
+   <path id="path6530" inkscape:connector-curvature="0" d="M 0.94925,2 C -0.05175,2 1e-4,2.71087 1e-4,3 L 0,14 c 0,0.9765 0.4641,1 1,1 l 14,0 c 0.53589,0 1,-0.074 1,-1 l 10e-5,-6 c 0,-1 -0.41426,-1 -1,-1 l -11.00015,0 -1e-4,5 c 0,0.277 0.0508,1 -0.44915,1 -0.5,0 -0.5,-0.723 -0.5,-1 L 3,7 C 3,6 3.44334,6 4,6 l 10.0001,0 0,-1 c 0,-0.5984 0,-1 -1,-1 L 6,4 6,3 C 6,2.71085 5.9756,2 5,2 z" sodipodi:nodetypes="ccccccccccscccccccccc" style="fill:#bebebe;fill-opacity:1" />
 </svg>
