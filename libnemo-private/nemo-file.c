@@ -7607,7 +7607,7 @@ static gboolean
 get_attributes_for_default_sort_type (NemoFile *file,
                                       gboolean *is_trash)
 {
-	gboolean is_download_dir, is_trash_dir, retval;
+	gboolean is_desktop_dir, is_trash_dir, retval;
 
 	*is_trash = FALSE;
 	retval = FALSE;
