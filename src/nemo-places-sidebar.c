@@ -2322,7 +2322,7 @@ rename_selected_bookmark (NemoPlacesSidebar *sidebar)
 		}
 
 		path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store), &iter);
-		column = gtk_tree_view_get_column (GTK_TREE_VIEW (sidebar->tree_view), 1);
+		column = gtk_tree_view_get_column (GTK_TREE_VIEW (sidebar->tree_view), 2);
 		renderers = gtk_cell_layout_get_cells (GTK_CELL_LAYOUT (column));
 		cell = g_list_nth_data (renderers, 5);
 		g_list_free (renderers);
