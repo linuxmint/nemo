@@ -439,7 +439,7 @@
       <_description>If set to true, newly opened windows will have the location bar visible.</_description>
     </key>
     <key name="start-with-status-bar" type="b">
-      <default>false</default>
+      <default>true</default>
       <_summary>Show status bar in new windows</_summary>
       <_description>If set to true, newly opened windows will have the status bar visible.</_description>
     </key>
