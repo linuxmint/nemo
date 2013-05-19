@@ -8,6 +8,7 @@ NemoPathbarButton {
                                      color-stop (.7, shade(alpha(@bg_color, 0.8), 0.90)),
                                      color-stop (1, shade(alpha(@bg_color, 0.8), 0.80)));
     border-color: #808080;
+    color: @fg_color;
     -NemoPathbarButton-border-radius: 3px;
 }
 
