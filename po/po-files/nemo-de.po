@@ -902,7 +902,7 @@ msgstr "Im _Terminal ausführen"
 
 #: src/nemo-mime-actions.c:715
 msgid "_Display"
-msgstr "A_nzeige"
+msgstr "A_nzeigen"
 
 #: src/nemo-mime-actions.c:1041 src/nemo-mime-actions.c:1786
 #: src/nemo-view.c:1020
