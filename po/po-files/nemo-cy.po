@@ -2,28 +2,28 @@
 # Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
 # This file is distributed under the same license as the linuxmint package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
-# Rhoslyn Prys <post@meddal.com>, 2012.
+# Rhoslyn Prys <post@meddal.com>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: linuxmint\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2013-04-11 09:31-0400\n"
-"PO-Revision-Date: 2013-03-06 12:58+0000\n"
-"Last-Translator: Rhos <rprys@yahoo.com>\n"
+"PO-Revision-Date: 2013-05-28 21:52+0000\n"
+"Last-Translator: Rhoslyn Prys <Unknown>\n"
 "Language-Team: Cymraeg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n==1 ? 0 : n==2 ? 1 : (n != 8 && n != 11) ? "
 "2 : 3;\n"
-"X-Launchpad-Export-Date: 2013-05-04 16:23+0000\n"
-"X-Generator: Launchpad (build 16598)\n"
+"X-Launchpad-Export-Date: 2013-06-01 10:22+0000\n"
+"X-Generator: Launchpad (build 16660)\n"
 "Language: cy\n"
 
 #: src/nemo-application.c:158
 #, c-format
 msgid "Nemo could not create the required folder \"%s\"."
-msgstr "Methodd Nautilus greu'r ffolder angenrheidiol  \"%s\"."
+msgstr "Methodd Nemo greu'r ffolder angenrheidiol \"%s\"."
 
 #: src/nemo-application.c:160
 msgid ""
@@ -64,11 +64,11 @@ msgstr "Perfformio set gyflym o brofion hunan-wirio."
 
 #: src/nemo-application.c:875
 msgid "Show the version of the program."
-msgstr "Dangos fersiwn y rhaglen"
+msgstr "Dangos fersiwn y rhaglen."
 
 #: src/nemo-application.c:877
 msgid "Create the initial window with the given geometry."
-msgstr "Creu'r ffenestr wreiddiol gyda'r geometreg a roddwyd"
+msgstr "Creu'r ffenestr wreiddiol gyda'r geometreg a roddwyd."
 
 #: src/nemo-application.c:877
 msgid "GEOMETRY"
@@ -89,7 +89,7 @@ msgstr ""
 
 #: src/nemo-application.c:883
 msgid "Quit Nemo."
-msgstr "Gadael Nemo"
+msgstr "Gadael Nemo."
 
 #: src/nemo-application.c:884
 msgid "[URI...]"
@@ -429,7 +429,7 @@ msgstr ""
 msgid ""
 "There is no \"%s\" in this folder. Perhaps it was just moved or deleted?"
 msgstr ""
-"Nid oes \"%s\" yn y ffolder yma. Efallai ei bod newydd ei symud neu ei dileu."
+"Nid oes \"%s\" yn y ffolder yma. Efallai ei bod newydd ei symud neu ei dileu?"
 
 #: src/nemo-error-reporting.c:214
 #, c-format
@@ -617,11 +617,11 @@ msgstr "_Eiconau"
 
 #: src/nemo-icon-view.c:2829
 msgid "The icon view encountered an error."
-msgstr "Gwall golwg eicon"
+msgstr "Gwall golwg eicon."
 
 #: src/nemo-icon-view.c:2830
 msgid "The icon view encountered an error while starting up."
-msgstr "Gwall golwg eicon wrth gychwyn"
+msgstr "Gwall golwg eicon wrth gychwyn."
 
 #: src/nemo-icon-view.c:2831
 msgid "Display this location with the icon view."
@@ -637,15 +637,15 @@ msgstr "_Cynnil"
 
 #: src/nemo-icon-view.c:2843
 msgid "The compact view encountered an error."
-msgstr "Digwyddodd gwall yn y cynllun cynnil"
+msgstr "Digwyddodd gwall yn y cynllun cynnil."
 
 #: src/nemo-icon-view.c:2844
 msgid "The compact view encountered an error while starting up."
-msgstr "Digwyddodd gwall wrth gychwyn y cynllun cynnil"
+msgstr "Digwyddodd gwall wrth gychwyn y cynllun cynnil."
 
 #: src/nemo-icon-view.c:2845
 msgid "Display this location with the compact view."
-msgstr "Dangos y lleoliad gyda'r cynllun cynnil"
+msgstr "Dangos y lleoliad gyda'r cynllun cynnil."
 
 #: src/nemo-image-properties-page.c:331
 msgid "Image Type"
@@ -820,15 +820,15 @@ msgstr "_Rhestr"
 
 #: src/nemo-list-view.c:3366
 msgid "The list view encountered an error."
-msgstr "Digwyddod gwall y y golwg rhestr"
+msgstr "Digwyddod gwall yn y golwg rhestr."
 
 #: src/nemo-list-view.c:3367
 msgid "The list view encountered an error while starting up."
-msgstr "Digwyddodd gwall wrth gychyn y golwg rhestr"
+msgstr "Digwyddodd gwall wrth gychyn y golwg rhestr."
 
 #: src/nemo-list-view.c:3368
 msgid "Display this location with the list view."
-msgstr "Dangos y lleoliad hwn gyda'r golwg rhestr"
+msgstr "Dangos y lleoliad hwn gyda'r golwg rhestr."
 
 #: src/nemo-location-bar.c:54 src/nemo-properties-window.c:3110
 msgid "Location:"
@@ -1048,6 +1048,8 @@ msgid ""
 "Open the contents of the File System\n"
 "%s"
 msgstr ""
+"Agor cynnwys y System Ffeiliau\n"
+"%s"
 
 #: src/nemo-places-sidebar.c:720 src/nemo-tree-sidebar.c:1347
 msgid "File System"
@@ -1067,11 +1069,13 @@ msgid ""
 "%s (%s)\n"
 "%s"
 msgstr ""
+"%s (%s)\n"
+"%s"
 
 #: src/nemo-places-sidebar.c:838
 #, c-format
 msgid "Mount and open %s (%s)"
-msgstr ""
+msgstr "Arosod ac agor %s (%s)"
 
 #: src/nemo-places-sidebar.c:866 src/nemo-places-sidebar.c:955
 #, c-format
@@ -1084,6 +1088,8 @@ msgid ""
 "%s\n"
 "%s"
 msgstr ""
+"%s\n"
+"%s"
 
 #: src/nemo-places-sidebar.c:942 src/nemo-places-sidebar.c:997
 #: src/nemo-tree-sidebar.c:1351
@@ -1234,8 +1240,10 @@ msgstr "Dangos Manylion"
 #, c-format
 msgid "%'d file operation active"
 msgid_plural "%'d file operations active"
-msgstr[0] "%'d gweithred ffeiliau'n weithredol"
-msgstr[1] "%'d gweithred ffeiliau'n weithredol"
+msgstr[0] "%'d gweithred ffeil weithredol"
+msgstr[1] "%'d gweithred ffeil weithredol"
+msgstr[2] "%d gweithred ffeiliau'n weithredol"
+msgstr[3] "%d gweithred ffeiliau'n weithredol"
 
 #: src/nemo-progress-ui-handler.c:279
 msgid "All file operations have been successfully completed"
@@ -1271,6 +1279,8 @@ msgid "_Name:"
 msgid_plural "_Names:"
 msgstr[0] "_Enw:"
 msgstr[1] "_Enwau:"
+msgstr[2] "_Enwau:"
+msgstr[3] "_Enwau:"
 
 #: src/nemo-properties-window.c:832
 msgid "Properties"
@@ -1305,8 +1315,10 @@ msgstr "annarllenadwy"
 #, c-format
 msgid "%'d item, with size %s"
 msgid_plural "%'d items, totalling %s"
-msgstr[0] "%d eitem, o faint %s"
-msgstr[1] "%d eitem, o gyfanswm %s"
+msgstr[0] "%'d eitem, o faint %s"
+msgstr[1] "%'d eitem, o gyfanswm %s"
+msgstr[2] "%d eitem, o faint %s"
+msgstr[3] "%d eitem, o faint %s"
 
 #: src/nemo-properties-window.c:2133
 msgid "(some contents unreadable)"
@@ -1344,7 +1356,7 @@ msgstr "Math:"
 
 #: src/nemo-properties-window.c:3091
 msgid "Link target:"
-msgstr "Targed dolen"
+msgstr "Targed dolen:"
 
 #: src/nemo-properties-window.c:3101
 #: libnemo-private/nemo-file-conflict-dialog.c:253
@@ -1464,7 +1476,7 @@ msgstr "Perchennog:"
 
 #: src/nemo-properties-window.c:4113 src/nemo-properties-window.c:4297
 msgid "_Group:"
-msgstr "_Grŵp"
+msgstr "_Grŵp:"
 
 #: src/nemo-properties-window.c:4121 src/nemo-properties-window.c:4181
 #: src/nemo-properties-window.c:4305
@@ -1524,7 +1536,7 @@ msgstr "Gosod Caniatâd y Ffeiliau Amgaeedig"
 #: src/nemo-properties-window.c:4533
 #, c-format
 msgid "The permissions of \"%s\" could not be determined."
-msgstr "Nid oes modd canfod caniatâd \"%s\","
+msgstr "Nid oes modd canfod caniatâd \"%s\"."
 
 #: src/nemo-properties-window.c:4536
 msgid "The permissions of the selected file could not be determined."
@@ -1544,7 +1556,7 @@ msgstr "Dewis Eicon Cyfaddas"
 
 #: src/nemo-query-editor.c:118
 msgid "File Type"
-msgstr ""
+msgstr "Math Ffeil"
 
 #: src/nemo-query-editor.c:276
 msgid "Select folder to search in"
@@ -1552,39 +1564,39 @@ msgstr "Dewis ffolder i chwilio ynddi"
 
 #: src/nemo-query-editor.c:366
 msgid "Documents"
-msgstr ""
+msgstr "Dogfennau"
 
 #: src/nemo-query-editor.c:384
 msgid "Music"
-msgstr ""
+msgstr "Cerddoriaeth"
 
 #: src/nemo-query-editor.c:399
 msgid "Video"
-msgstr ""
+msgstr "Fideo"
 
 #: src/nemo-query-editor.c:415
 msgid "Picture"
-msgstr ""
+msgstr "Llun"
 
 #: src/nemo-query-editor.c:435
 msgid "Illustration"
-msgstr ""
+msgstr "Darlun"
 
 #: src/nemo-query-editor.c:449
 msgid "Spreadsheet"
-msgstr ""
+msgstr "Taenlen"
 
 #: src/nemo-query-editor.c:465
 msgid "Presentation"
-msgstr ""
+msgstr "Cyflwyniad"
 
 #: src/nemo-query-editor.c:474
 msgid "Pdf / Postscript"
-msgstr ""
+msgstr "Pdf / Postscript"
 
 #: src/nemo-query-editor.c:482
 msgid "Text File"
-msgstr ""
+msgstr "Ffeil Testun"
 
 #: src/nemo-query-editor.c:561
 msgid "Select type"
@@ -1645,27 +1657,27 @@ msgstr "Chwilio:"
 
 #: src/nemo-statusbar.c:180
 msgid "Show Places"
-msgstr ""
+msgstr "Dangos Mannau"
 
 #: src/nemo-statusbar.c:189
 msgid "Show Treeview"
-msgstr ""
+msgstr "Dangos Golwg Coeden"
 
 #: src/nemo-statusbar.c:203
 msgid "Hide the Sidebar (F9)"
-msgstr ""
+msgstr "Cuddio'r bar ochr (F9)"
 
 #: src/nemo-statusbar.c:212
 msgid "Show the Sidebar (F9)"
-msgstr ""
+msgstr "Dangos y Bar Ochr (F9)"
 
 #: src/nemo-statusbar.c:221
 msgid "Adjust zoom level"
-msgstr ""
+msgstr "Newid lefel chwyddo"
 
 #: src/nemo-toolbar.c:144
 msgid "Elevated Privileges"
-msgstr ""
+msgstr "Breintiau Uwch"
 
 #: src/nemo-trash-bar.c:198
 msgid "Restore Selected Items"
@@ -1710,15 +1722,19 @@ msgstr "Cyfrifiadur"
 #, c-format
 msgid "This will open %'d separate tab."
 msgid_plural "This will open %'d separate tabs."
-msgstr[0] "Bydd hyn yn agor %d tab gwahanol."
-msgstr[1] "Bydd hyn yn agor %d tab gwahanol."
+msgstr[0] "Bydd hyn yn agor %'d tab gwahanol."
+msgstr[1] "Bydd hyn yn agor %'d tab gwahanol."
+msgstr[2] "Bydd hyn yn agor %d tab gwahanol."
+msgstr[3] "Bydd hyn yn agor %d tab gwahanol."
 
 #: src/nemo-view.c:1025
 #, c-format
 msgid "This will open %'d separate window."
 msgid_plural "This will open %'d separate windows."
-msgstr[0] "Bydd hyn yn agor %d ffenest gwahanol."
-msgstr[1] "Bydd hyn yn agor %d ffenest gwahanol."
+msgstr[0] "Bydd hyn yn agor %'d ffenest gwahanol."
+msgstr[1] "Bydd hyn yn agor %'d ffenest gwahanol."
+msgstr[2] "Bydd hyn yn agor %d ffenest gwahanol."
+msgstr[3] "Bydd hyn yn agor %d ffenest gwahanol."
 
 #: src/nemo-view.c:1542
 msgid "Select Items Matching"
@@ -1779,20 +1795,26 @@ msgid "%'d folder selected"
 msgid_plural "%'d folders selected"
 msgstr[0] "Dewiswyd %'d ffolder"
 msgstr[1] "Dewiswyd %'d ffolder"
+msgstr[2] "Dewiswyd %d ffolder"
+msgstr[3] "Dewiswyd %d ffolder"
 
 #: src/nemo-view.c:3018
 #, c-format
 msgid " (containing %'d item)"
 msgid_plural " (containing %'d items)"
-msgstr[0] " (yn cynnwys %d eitem)"
-msgstr[1] " (yn cynnwys %d eitem)"
+msgstr[0] " (yn cynnwys %'d eitem)"
+msgstr[1] " (yn cynnwys %'d eitem)"
+msgstr[2] " (yn cynnwys %d eitem)"
+msgstr[3] " (yn cynnwys %d eitem)"
 
 #: src/nemo-view.c:3029
 #, c-format
 msgid " (containing a total of %'d item)"
 msgid_plural " (containing a total of %'d items)"
-msgstr[0] " (yn cynnwys cyfanswm o %d eitem)"
-msgstr[1] " (yn cynnwys cyfanswm o %d eitem)"
+msgstr[0] " (yn cynnwys cyfanswm o %'d eitem)"
+msgstr[1] " (yn cynnwys cyfanswm o %'d eitem)"
+msgstr[2] " (yn cynnwys cyfanswm o %d eitem)"
+msgstr[3] " (yn cynnwys cyfanswm o %d eitem)"
 
 #: src/nemo-view.c:3046
 #, c-format
@@ -1800,6 +1822,8 @@ msgid "%'d item selected"
 msgid_plural "%'d items selected"
 msgstr[0] "Dewiswyd %'d eitem"
 msgstr[1] "Dewiswyd %'d eitem"
+msgstr[2] "Dewiswyd %d eitem"
+msgstr[3] "Dewiswyd %d eitem"
 
 #: src/nemo-view.c:3053
 #, c-format
@@ -1807,6 +1831,8 @@ msgid "%'d other item selected"
 msgid_plural "%'d other items selected"
 msgstr[0] "Dewiswyd %'d eitem arall"
 msgstr[1] "Dewiswyd %'d eitem arall"
+msgstr[2] "Dewiswyd %d eitem arall"
+msgstr[3] "Dewiswyd %d eitem arall"
 
 #: src/nemo-view.c:3070
 #, c-format
@@ -1818,7 +1844,9 @@ msgstr "%s (%s)"
 msgid "%'u item"
 msgid_plural "%'u items"
 msgstr[0] "%'u eitem"
-msgstr[1] "%'u"
+msgstr[1] "%'u eitem"
+msgstr[2] "%u eitem"
+msgstr[3] "%u eitem"
 
 #: src/nemo-view.c:3094
 #, c-format
@@ -1849,8 +1877,10 @@ msgstr "Agor gyda %s"
 #, c-format
 msgid "Use \"%s\" to open the selected item"
 msgid_plural "Use \"%s\" to open the selected items"
-msgstr[0] "Defnyddio \"%s\" i agor yr eitemau a ddewiswyd"
+msgstr[0] "Defnyddio \"%s\" i agor yr eitem a ddewiswyd"
 msgstr[1] "Defnyddio \"%s\" i agor yr eitemau a ddewiswyd"
+msgstr[2] "Defnyddio \"%s\" i agor yr eitemau a ddewiswyd"
+msgstr[3] "Defnyddio \"%s\" i agor yr eitemau a ddewiswyd"
 
 #: src/nemo-view.c:5659
 #, c-format
@@ -1906,6 +1936,34 @@ msgid ""
 "NEMO_SCRIPT_NEXT_PANE_CURRENT_URI: URI for current location in the inactive "
 "pane of a split-view window"
 msgstr ""
+"Bydd pob ffeil gweithredadwy yn y ffolder hon yn ymddangos yn y ddewislen "
+"sgriptiau. Bydd dewis sgript o'r ddewislen yn rhedeg y sgript honno.\n"
+"\n"
+"\n"
+"Wedi eu gweithredu o ffolder leol bydd sgriptiau yn derbyn yr enwau ffeil "
+"dewiswyd. Pan yn cael eu gweithredu o ffolder pell (e.e. ffolder yn dangos "
+"cynnwys gwe neu ftp), ni fydd y sgriptiau'n derbyn unrhyw baramedrau.\n"
+"\n"
+"IYm mhob achos, bydd yr amrywiolion amgylcheddol canlynol yn cael eu gosod "
+"gan Nemo, y mae modd i'r sgriptiau eu defnyddio:\n"
+"\n"
+"NEMO_SCRIPT_SELECTED_FILE_PATHS: llwybrau newline-delimited ar gyfer "
+"ffeiliau penodol (dim ond os yn lleol)\n"
+"\n"
+"NEMO_SCRIPT_SELECTED_URIS: URI newline-delimited ar gyfer ffeiliau penodol\n"
+"NEMO_SCRIPT_CURRENT_URI: URI ar gyfer lleoliad cyfredol\n"
+"\n"
+"NEMO_SCRIPT_WINDOW_GEOMETRY: lleoliad a maint ffenestr gyfredol\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_SELECTED_FILE_PATHS: llwybrau newline-delimited ar "
+"gyfer ffeiliau penodol mewn paen anweithredol ffenestr hollt (dim ond os yn "
+"lleol)\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_SELECTED_URIS: URI newline-delimited ar gyfer ffeiliau "
+"penodol mewn paen anweithredol ffenestr golwg hollt\n"
+"\n"
+"NEMO_SCRIPT_NEXT_PANE_CURRENT_URI: URI ar gyfer golwg cyfredol mewn paen "
+"anweithredol mewn ffenestr golwg hollt"
 
 #: src/nemo-view.c:6488
 #, c-format
@@ -1913,9 +1971,13 @@ msgid "The %'d selected item will be moved if you select the Paste command"
 msgid_plural ""
 "The %'d selected items will be moved if you select the Paste command"
 msgstr[0] ""
-"Bydd y %d eitem ddewisedig yn cael ei symud os dewiswch y gorchymyn Gludo"
+"Bydd y %'d eitem hon yn cael ei symud os dewiswch y gorchymyn Gludo"
 msgstr[1] ""
-"Bydd y %d eitem ddewisedig yn cael eu symud os dewiswch y gorchymyn Gludo"
+"Bydd y %'d eitem hyn yn cael eu symud os dewiswch y gorchymyn Gludo"
+msgstr[2] ""
+"Bydd y %d eitem hyn yn cael eu symud os dewiswch y gorchymyn Gludo"
+msgstr[3] ""
+"Bydd y %d eitem hyn yn cael eu symud os dewiswch y gorchymyn Gludo"
 
 #: src/nemo-view.c:6495
 #, c-format
@@ -1923,9 +1985,13 @@ msgid "The %'d selected item will be copied if you select the Paste command"
 msgid_plural ""
 "The %'d selected items will be copied if you select the Paste command"
 msgstr[0] ""
-"Bydd y %'d eitem ddewisedig yn cael ei symud os dewiswch y gorchymyn Gludo"
+"Bydd y %'d eitem hon yn cael ei chopïo os dewiswch y gorchymyn Gludo"
 msgstr[1] ""
-"Bydd y %'d eitem ddewisedig yn cael eu symud os dewiswch y gorchymyn Gludo"
+"Bydd y %'d eitem hyn yn cael eu copïo os dewiswch y gorchymyn Gludo"
+msgstr[2] ""
+"Bydd y %d eitem hyn yn cael eu copïo os dewiswch y gorchymyn Gludo"
+msgstr[3] ""
+"Bydd y %d eitem hyn yn cael eu copïo os dewiswch y gorchymyn Gludo"
 
 #: src/nemo-view.c:7092
 msgid "Unable to unmount location"
@@ -1955,15 +2021,15 @@ msgstr "_Enw cyswllt:"
 
 #: src/nemo-view.c:7850
 msgid "Create New _Document"
-msgstr ""
+msgstr "Creu _Dogfen Newydd"
 
 #: src/nemo-view.c:7851
 msgid "Open Wit_h"
-msgstr ""
+msgstr "Agor _Gyda"
 
 #: src/nemo-view.c:7852
 msgid "Choose a program with which to open the selected item"
-msgstr ""
+msgstr "Dewiswch raglen i agor yr eitem hon"
 
 #: src/nemo-view.c:7855 src/nemo-view.c:9480
 msgid "View or modify the properties of each selected item"
@@ -1971,181 +2037,191 @@ msgstr "Edrych ar neu addasu priodweddau pob eitem dewisiwyd"
 
 #: src/nemo-view.c:7863
 msgid "Create a new empty folder inside this folder"
-msgstr ""
+msgstr "Crëwch ffolder wag newydd o fewn y ffolder hon"
 
 #: src/nemo-view.c:7865
 msgid "No templates installed"
-msgstr ""
+msgstr "Heb osod templedi"
 
 #: src/nemo-view.c:7868
 msgid "_Empty Document"
-msgstr ""
+msgstr "Dogfen _Wag"
 
 #: src/nemo-view.c:7869
 msgid "Create a new empty document inside this folder"
-msgstr ""
+msgstr "Crëwch dogfen wag newydd o fewn y ffolder hon"
 
 #: src/nemo-view.c:7877
 msgid "Open the selected item in this window"
-msgstr ""
+msgstr "Agor yr eitem hon yn y ffenestr hon"
 
 #: src/nemo-view.c:7884 src/nemo-view.c:8078
 msgid "Open in Navigation Window"
-msgstr ""
+msgstr "Agor mewn Ffenestr Llywio"
 
 #: src/nemo-view.c:7885
 msgid "Open each selected item in a navigation window"
-msgstr ""
+msgstr "Agor pob eitem mewn ffenestr llywio"
 
 #: src/nemo-view.c:7889
 msgid "Open each selected item in a new tab"
-msgstr ""
+msgstr "Agor pob eitem mewn tab newydd"
 
 #: src/nemo-view.c:7892
 msgid "Open in Terminal"
-msgstr ""
+msgstr "Agor mewn Terfynnell"
 
 #: src/nemo-view.c:7893
 msgid "Open terminal in the selected folder"
-msgstr ""
+msgstr "Agor terfynell mewn ffolder"
 
 #: src/nemo-view.c:7896
 msgid "Open as Root"
-msgstr ""
+msgstr "Agor fel Root"
 
 #: src/nemo-view.c:7897
 msgid "Open the folder with administration privileges"
-msgstr ""
+msgstr "Agor y ffolder gyda breintiau gweinyddol"
 
 #: src/nemo-view.c:7901
 msgid "Follow link to original file"
-msgstr ""
+msgstr "Dilynwch y ddolen i'r ffeil wreiddiol"
 
 #: src/nemo-view.c:7902
 msgid "Navigate to the original file that this symbolic link points to"
 msgstr ""
+"Symudwch at y ffeil wreiddiol y ma'r ddolen symbolaidd yn pwyntio tuag ati"
 
 #: src/nemo-view.c:7906
 msgid "Send with Thunderbird"
-msgstr ""
+msgstr "Anfonwch gyda Thunderbird"
 
 #: src/nemo-view.c:7907
 msgid "Send the selected file(s) as email attachments using Thunderbird"
-msgstr ""
+msgstr "Anfonwch y ffeil(iau) fel atodiad e-bost gyda Thunderbird"
 
 #: src/nemo-view.c:7910
 msgid "Send as email attachment"
-msgstr ""
+msgstr "Anfonwch fel atodiad e-bost"
 
 #: src/nemo-view.c:7911
 msgid ""
 "Send the selected file(s) as email attachments using your current email "
 "program"
 msgstr ""
+"Anfonwch y ffeil(iau) fel atodiad e-bost gan ddefnyddio eich rhaglen s-bost "
+"cyfredol"
 
 #: src/nemo-view.c:7914
 msgid "Set as Wallpaper..."
-msgstr ""
+msgstr "Gosod fel Papur Wal..."
 
 #: src/nemo-view.c:7915
 msgid "Set the selected image as your desktop wallpaper"
-msgstr ""
+msgstr "Gosod y ddelwedd fel papur wal eich bwrdd gwaith"
 
 #: src/nemo-view.c:7918
 msgid "Other _Application..."
-msgstr ""
+msgstr "Rhaglen _Arall..."
 
 #: src/nemo-view.c:7919 src/nemo-view.c:7923
 msgid "Choose another application with which to open the selected item"
-msgstr ""
+msgstr "Dewiswch raglen arall i agor yr eitem hon"
 
 #: src/nemo-view.c:7922
 msgid "Open With Other _Application..."
-msgstr ""
+msgstr "Agor gyda Rhaglen _Arall..."
 
 #: src/nemo-view.c:7926
 msgid "_Open Scripts Folder"
-msgstr ""
+msgstr "Agor Ffolder _Sgriptiau"
 
 #: src/nemo-view.c:7927
 msgid "Show the folder containing the scripts that appear in this menu"
 msgstr ""
+"Dangos y folder sy'n cynnwys y sgriptiau sy'n ymddangos yn y ddewislen hon"
 
 #: src/nemo-view.c:7935
 msgid "Prepare the selected files to be moved with a Paste command"
-msgstr ""
+msgstr "Paratewch y ffeiliau hyn er mwyn eu symud gyda'r gorchymyn Gludo"
 
 #: src/nemo-view.c:7939
 msgid "Prepare the selected files to be copied with a Paste command"
-msgstr ""
+msgstr "Paratowch y ffeiliau hyn i'w copïo gyda'r gorchymyn Gludo"
 
 #: src/nemo-view.c:7943
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
+"Symud neu gopïo'r ffeiliau a ddewiswyd ynghynt drwy'r gorchymyn Torri neu "
+"Copïo"
 
 #: src/nemo-view.c:7949
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr ""
+"Symudwch neu gopïo'r ffeiliau ddewiswyd ynghynt i'r ffolder drwy Dorri neu "
+"Gopïo"
 
 #: src/nemo-view.c:7951
 msgid "Cop_y to"
-msgstr ""
+msgstr "C_opïo i"
 
 #: src/nemo-view.c:7952
 msgid "M_ove to"
-msgstr ""
+msgstr "_Symud i"
 
 #: src/nemo-view.c:7954 libnemo-private/nemo-clipboard.c:444
 msgid "Select _All"
-msgstr ""
+msgstr "Dewis _Popeth"
 
 #: src/nemo-view.c:7955
 msgid "Select all items in this window"
-msgstr ""
+msgstr "Dewiswch bob eitem yn y ffenestr"
 
 #: src/nemo-view.c:7958
 msgid "Select I_tems Matching..."
-msgstr ""
+msgstr "Dewis _Eitemau sy'n Cydweddu..."
 
 #: src/nemo-view.c:7959
 msgid "Select items in this window matching a given pattern"
-msgstr ""
+msgstr "Dewis eitemau yn y ffenestr yma sy'n cydweddu â'r patrwm"
 
 #: src/nemo-view.c:7962
 msgid "_Invert Selection"
-msgstr ""
+msgstr "_Gwrthdroi'r Dewis"
 
 #: src/nemo-view.c:7963
 msgid "Select all and only the items that are not currently selected"
-msgstr ""
+msgstr "Dewiswch yn unig bob eitem nad yw wedi ei dewis hyd yma"
 
 #: src/nemo-view.c:7966
 msgid "D_uplicate"
-msgstr ""
+msgstr "D_yblygu"
 
 #: src/nemo-view.c:7967
 msgid "Duplicate each selected item"
-msgstr ""
+msgstr "Dyblygu pob eitem dewiswyd"
 
 #: src/nemo-view.c:7970 src/nemo-view.c:9465
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
-msgstr[0] "Creu _Cysylltiad"
+msgstr[0] "Creu _Cyswllt"
 msgstr[1] "Creu _Cysylltiadau"
+msgstr[2] "Creu _Cysylltiadau"
+msgstr[3] "Creu _Cysylltiadau"
 
 #: src/nemo-view.c:7971
 msgid "Create a symbolic link for each selected item"
-msgstr ""
+msgstr "Creu cyswllt symbolaidd ar gyfer pob eitem a ddewiswyd"
 
 #: src/nemo-view.c:7974
 msgid "_Rename..."
-msgstr ""
+msgstr "_Ailenwi..."
 
 #: src/nemo-view.c:7975
 msgid "Rename selected item"
-msgstr ""
+msgstr "Ailenwi'r eitemau dewiswyd"
 
 #: src/nemo-view.c:7983 src/nemo-view.c:9426
 msgid "Move each selected item to the Trash"
@@ -2153,59 +2229,61 @@ msgstr "Symud pob eitem a ddewiswyd i'r Sbwriel"
 
 #: src/nemo-view.c:7987
 msgid "Delete each selected item, without moving to the Trash"
-msgstr ""
+msgstr "Dileu pob eitem a ddewiswyd, heb eu symud i'r Sbwriel"
 
 #: src/nemo-view.c:7990 src/nemo-view.c:8108
 msgid "_Restore"
-msgstr ""
+msgstr "_Adfer"
 
 #: src/nemo-view.c:7994 src/nemo-window-menus.c:1064
 msgid "_Undo"
-msgstr ""
+msgstr "_Dadwneud"
 
 #: src/nemo-view.c:7995
 msgid "Undo the last action"
-msgstr ""
+msgstr "Dadwneud y weithred ddiwethaf"
 
 #: src/nemo-view.c:7998
 msgid "_Redo"
-msgstr ""
+msgstr "_Ailwneud"
 
 #: src/nemo-view.c:7999
 msgid "Redo the last undone action"
-msgstr ""
+msgstr "Ail-wneud y weithred gafodd ei dadwneud diwethaf"
 
 #: src/nemo-view.c:8008
 msgid "Reset View to _Defaults"
-msgstr ""
+msgstr "Ailosod y Golwg i'r _Rhagosodiadau"
 
 #: src/nemo-view.c:8009
 msgid "Reset sorting order and zoom level to match preferences for this view"
 msgstr ""
+"Ailosod y drefn trefnu a'r lefel chwyddo i fod yr un fath â dewisiadau'r "
+"olwg hon"
 
 #: src/nemo-view.c:8012
 msgid "Connect To This Server"
-msgstr ""
+msgstr "Cysylltu â'r Gweinydd"
 
 #: src/nemo-view.c:8013
 msgid "Make a permanent connection to this server"
-msgstr ""
+msgstr "Gwneud cysylltiad parhaol â'r gweinydd"
 
 #: src/nemo-view.c:8017
 msgid "Mount the selected volume"
-msgstr ""
+msgstr "Arosod y gyfrol hon"
 
 #: src/nemo-view.c:8021
 msgid "Unmount the selected volume"
-msgstr ""
+msgstr "Dadarosod y gyfrol hon"
 
 #: src/nemo-view.c:8025
 msgid "Eject the selected volume"
-msgstr ""
+msgstr "Bwrw allan y gyfrol hon"
 
 #: src/nemo-view.c:8029
 msgid "Start the selected volume"
-msgstr ""
+msgstr "Cychwyn y gyfrol hon"
 
 #: src/nemo-view.c:8033 src/nemo-view.c:8987
 msgid "Stop the selected volume"
@@ -2213,113 +2291,115 @@ msgstr "Atal y gyfrol hon"
 
 #: src/nemo-view.c:8037 src/nemo-view.c:8061 src/nemo-view.c:8133
 msgid "Detect media in the selected drive"
-msgstr ""
+msgstr "Canfod cyfrwng yn y gyfrol hon"
 
 #: src/nemo-view.c:8041
 msgid "Mount the volume associated with the open folder"
-msgstr ""
+msgstr "Arosod y gyfrol sy'n gysylltiedig â'r ffolder agored"
 
 #: src/nemo-view.c:8045
 msgid "Unmount the volume associated with the open folder"
-msgstr ""
+msgstr "Dadarosod y gyfrol sy'n gysylltiedig â'r ffolder agored"
 
 #: src/nemo-view.c:8049
 msgid "Eject the volume associated with the open folder"
-msgstr ""
+msgstr "Bwrw allan y gyfrol sy'n gysylltiedig a'r ffolder agored"
 
 #: src/nemo-view.c:8053
 msgid "Start the volume associated with the open folder"
-msgstr ""
+msgstr "Cychwyn y gyfrol sy'n gysylltiedig a'r ffolder agored"
 
 #: src/nemo-view.c:8057
 msgid "Stop the volume associated with the open folder"
-msgstr ""
+msgstr "Atal y gyfrol sy'n gysylltiedig a'r ffolder agored"
 
 #: src/nemo-view.c:8064
 msgid "Open File and Close window"
-msgstr ""
+msgstr "Agor Ffeil a Chau'r ffenest"
 
 #: src/nemo-view.c:8068
 msgid "Sa_ve Search"
-msgstr ""
+msgstr "_Cadw'r Chwilio"
 
 #: src/nemo-view.c:8069
 msgid "Save the edited search"
-msgstr ""
+msgstr "Cadw'r chwilio a olygwyd"
 
 #: src/nemo-view.c:8072
 msgid "Sa_ve Search As..."
-msgstr ""
+msgstr "_Cadw'r Chwilio Fel..."
 
 #: src/nemo-view.c:8073
 msgid "Save the current search as a file"
-msgstr ""
+msgstr "Cadw'r chwilio presennol fel ffeil"
 
 #: src/nemo-view.c:8079
 msgid "Open this folder in a navigation window"
-msgstr ""
+msgstr "Agor y ffolder mewn ffenestr lywio"
 
 #: src/nemo-view.c:8083
 msgid "Open this folder in a new tab"
-msgstr ""
+msgstr "Agor y ffolder mewn tab newydd"
 
 #: src/nemo-view.c:8088
 msgid "Prepare this folder to be moved with a Paste command"
-msgstr ""
+msgstr "Paratoi'r ffolder i'w symud gyda gorchymyn Gludo"
 
 #: src/nemo-view.c:8092
 msgid "Prepare this folder to be copied with a Paste command"
-msgstr ""
+msgstr "Paratoi'r ffolder i'w symud gyda gorchymyn Gludo"
 
 #: src/nemo-view.c:8096
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into this "
 "folder"
 msgstr ""
+"Symud neu gopïo ffeiliau dewiswyd ynghynt gyda gorchymyn Torri neu Gopïo i'r "
+"ffolder hon"
 
 #: src/nemo-view.c:8101
 msgid "Move this folder to the Trash"
-msgstr ""
+msgstr "Symud y ffolder i'r Sbwriel"
 
 #: src/nemo-view.c:8105
 msgid "Delete this folder, without moving to the Trash"
-msgstr ""
+msgstr "Dileu'r ffolder, heb ei symud i'r Sbwriel"
 
 #: src/nemo-view.c:8113
 msgid "Mount the volume associated with this folder"
-msgstr ""
+msgstr "Arosod y gyfrol cysylltiedig â'r ffolder hon"
 
 #: src/nemo-view.c:8117
 msgid "Unmount the volume associated with this folder"
-msgstr ""
+msgstr "Dadarosod y gyfrol cysylltiedig â'r ffolder hon"
 
 #: src/nemo-view.c:8121
 msgid "Eject the volume associated with this folder"
-msgstr ""
+msgstr "Bwrw allan y gyfrol cysylltiedig â'r ffolder hon"
 
 #: src/nemo-view.c:8125
 msgid "Start the volume associated with this folder"
-msgstr ""
+msgstr "Cychwyn y gyfrol cysylltiedig â'r ffolder hon"
 
 #: src/nemo-view.c:8129
 msgid "Stop the volume associated with this folder"
-msgstr ""
+msgstr "Atal y gyfrol cysylltiedig â'r ffolder hon"
 
 #: src/nemo-view.c:8138
 msgid "View or modify the properties of this folder"
-msgstr ""
+msgstr "Darllen neu newid priodweddau'r ffolder"
 
 #: src/nemo-view.c:8141 src/nemo-view.c:8144
 msgid "_Other pane"
-msgstr ""
+msgstr "Paen _arall"
 
 #: src/nemo-view.c:8142
 msgid "Copy the current selection to the other pane in the window"
-msgstr ""
+msgstr "Copiwch y dewis cyfredol i baen arall yn y ffenestr"
 
 #: src/nemo-view.c:8145
 msgid "Move the current selection to the other pane in the window"
-msgstr ""
+msgstr "Symudwch y dewis cyfredol i baen arall yn y ffenestr"
 
 #: src/nemo-view.c:8148 src/nemo-view.c:8152 src/nemo-window-menus.c:1135
 #: src/nemo-window-menus.c:1328 src/nemo-window-menus.c:1525
@@ -2328,23 +2408,23 @@ msgstr "_Cartref"
 
 #: src/nemo-view.c:8149
 msgid "Copy the current selection to the home folder"
-msgstr ""
+msgstr "Copiwch y dewis cyfredol i'r ffolder cartref"
 
 #: src/nemo-view.c:8153
 msgid "Move the current selection to the home folder"
-msgstr ""
+msgstr "Symudwch y dewis cyfredol i'r ffolder cartref"
 
 #: src/nemo-view.c:8156 src/nemo-view.c:8160
 msgid "_Desktop"
-msgstr ""
+msgstr "_Bwrdd Gwaith"
 
 #: src/nemo-view.c:8157
 msgid "Copy the current selection to the desktop"
-msgstr ""
+msgstr "Copiwch y dewis cyfredol i'r bwrdd gwaith"
 
 #: src/nemo-view.c:8161
 msgid "Move the current selection to the desktop"
-msgstr ""
+msgstr "Symudwch y dewis cyfredol i'r bwrdd gwaith"
 
 #: src/nemo-view.c:8240
 #, c-format
@@ -2364,14 +2444,18 @@ msgstr "Symud y ffolder agored o'r sbwriel i \"%s\""
 #, c-format
 msgid "Move the selected folder out of the trash to \"%s\""
 msgid_plural "Move the selected folders out of the trash to \"%s\""
-msgstr[0] "Symud y ffolder hwn o'r sbwriel i \"%s\""
+msgstr[0] "Copïwch y ffolder hon o'r sbwriel i \"%s\""
 msgstr[1] "Symud y ffolderi hyn o'r sbwriel i \"%s\""
+msgstr[2] "Symud y ffolderi hon o'r sbwriel i \"%s\""
+msgstr[3] "Symud y ffolderi hon o'r sbwriel i \"%s\""
 
 #: src/nemo-view.c:8630
 msgid "Move the selected folder out of the trash"
 msgid_plural "Move the selected folders out of the trash"
-msgstr[0] "Symud y ffolder hwn o'r sbwriel"
-msgstr[1] "Symud y ffolderi hyn o'r sbwriel"
+msgstr[0] "Symud y ffolder hon o'r sbwriel"
+msgstr[1] "Symud y ffolder hon o'r sbwriel"
+msgstr[2] "Symud y ffolderi hyn o'r sbwriel"
+msgstr[3] "Symud y ffolderi hyn o'r sbwriel"
 
 #: src/nemo-view.c:8636
 #, c-format
@@ -2379,12 +2463,16 @@ msgid "Move the selected file out of the trash to \"%s\""
 msgid_plural "Move the selected files out of the trash to \"%s\""
 msgstr[0] "Symud y ffeil hon o'r sbwriel i \"%s\""
 msgstr[1] "Symud y ffeiliau hyn o'r sbwriel i \"%s\""
+msgstr[2] "Symud y ffeiliau hyn o'r sbwriel i \"%s\""
+msgstr[3] "Symud y ffeiliau hyn o'r sbwriel i \"%s\""
 
 #: src/nemo-view.c:8640
 msgid "Move the selected file out of the trash"
 msgid_plural "Move the selected files out of the trash"
 msgstr[0] "Symud y ffeil hon o'r sbwriel"
 msgstr[1] "Symud y ffeiliau hyn o'r sbwriel"
+msgstr[2] "Symud y ffeiliau hyn o'r sbwriel"
+msgstr[3] "Symud y ffeiliau hyn o'r sbwriel"
 
 #: src/nemo-view.c:8646
 #, c-format
@@ -2392,12 +2480,16 @@ msgid "Move the selected item out of the trash to \"%s\""
 msgid_plural "Move the selected items out of the trash to \"%s\""
 msgstr[0] "Symud yr eitem hon o'r sbwriel i \"%s\""
 msgstr[1] "Symud yr eitemau hyn o'r sbwriel i \"%s\""
+msgstr[2] "Symud yr eitemau hyn o'r sbwriel i \"%s\""
+msgstr[3] "Symud yr eitemau hyn o'r sbwriel i \"%s\""
 
 #: src/nemo-view.c:8650
 msgid "Move the selected item out of the trash"
 msgid_plural "Move the selected items out of the trash"
 msgstr[0] "Symud yr eitem hon o'r sbwriel"
 msgstr[1] "Symud yr eitemau hyn o'r sbwriel"
+msgstr[2] "Symud yr eitemau hyn o'r sbwriel"
+msgstr[3] "Symud yr eitemau hyn o'r sbwriel"
 
 #: src/nemo-view.c:8767 src/nemo-view.c:8771 src/nemo-view.c:8958
 #: src/nemo-view.c:8962
@@ -2509,8 +2601,10 @@ msgstr "_Agor gyda %s"
 #, c-format
 msgid "Open in %'d New _Window"
 msgid_plural "Open in %'d New _Windows"
-msgstr[0] "Agor mewn %d Ffenestr Newydd"
-msgstr[1] "Agor mewn %d Ffenestr Newydd"
+msgstr[0] "Agor mewn %'d Ffenestr Newydd"
+msgstr[1] "Agor mewn %'d Ffenestr Newydd"
+msgstr[2] "Agor mewn %d Ffenestr Newydd"
+msgstr[3] "Agor mewn %d Ffenestr Newydd"
 
 #: src/nemo-view.c:9404
 #, c-format
@@ -2518,6 +2612,8 @@ msgid "Open in %'d New _Tab"
 msgid_plural "Open in %'d New _Tabs"
 msgstr[0] "Agor mewn %'d Tab Newydd"
 msgstr[1] "Agor mewn %'d Tab Newydd"
+msgstr[2] "Agor mewn %d Tab Newydd"
+msgstr[3] "Agor mewn %d Tab Newydd"
 
 #: src/nemo-view.c:9422
 msgid "Delete all selected items permanently"
@@ -2552,7 +2648,7 @@ msgstr "dropped text.txt"
 
 #: src/nemo-view-dnd.c:420
 msgid "dropped data"
-msgstr ""
+msgstr "data gollyngwyd"
 
 #: src/nemo-window-bookmarks.c:83
 msgid ""
@@ -2650,6 +2746,10 @@ msgid ""
 "Foundation; either version 2 of the License, or (at your option) any later "
 "version."
 msgstr ""
+"Mae Nemo yn feddalwedd rhydd; mae modd i chi ei ailddosbarthu a/neu ei newid "
+"o dan amodau Trwydded Gyhoeddus Gyffredinol GNU sy'n cael ei gyhoeddi gan y "
+"Software Foundation; un ai fersiwn 2 o'r Drwydded neu (eich dewis chi) "
+"unrhyw fersiwn diweddarach."
 
 #: src/nemo-window-menus.c:319
 msgid ""
@@ -2658,6 +2758,10 @@ msgid ""
 "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
 "details."
 msgstr ""
+"Mae Nemo'n cael ei ddosbarthu yn y gobaith y bydd yn ddefnyddiol ond heb "
+"UNRHYW WARANT O GWBL; heb unrhyw awgrym o warant o FASNACHEDD nac ADDASRWYDD "
+"AM UNRHYW BWRPAS ARBENNIG.  Gw. y Drwydded Gyhoeddus Gyffredinol am ragor o "
+"wybodaeth."
 
 #: src/nemo-window-menus.c:323
 msgid ""
@@ -2665,6 +2769,9 @@ msgid ""
 "Nemo; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "Street, Fifth Floor, Boston, MA 02110-1301 USA"
 msgstr ""
+"Dylech fod wedi derbyn copi o'r Drwydded Gyhoeddus Gyffredin (GNU) gyda a "
+"Nemo; os nad, ysgrifennwch at y  Free Software Foundation, Inc., 51 Franklin "
+"Street, Fifth Floor, Boston, MA 02110-1301 USA"
 
 #: src/nemo-window-menus.c:338
 msgid ""
@@ -2675,51 +2782,51 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1051
 msgid "_File"
-msgstr ""
+msgstr "_Ffeil"
 
 #: src/nemo-window-menus.c:1052
 msgid "_Edit"
-msgstr ""
+msgstr "_Golygu"
 
 #: src/nemo-window-menus.c:1053
 msgid "_View"
-msgstr ""
+msgstr "_Golwg"
 
 #: src/nemo-window-menus.c:1054
 msgid "_Help"
-msgstr ""
+msgstr "_Cymorth"
 
 #: src/nemo-window-menus.c:1056
 msgid "_Close"
-msgstr ""
+msgstr "_Cau"
 
 #: src/nemo-window-menus.c:1057
 msgid "Close this folder"
-msgstr ""
+msgstr "Cau'r ffolder hon"
 
 #: src/nemo-window-menus.c:1060
 msgid "Prefere_nces"
-msgstr ""
+msgstr "_Dewisiadau"
 
 #: src/nemo-window-menus.c:1061
 msgid "Edit Nemo preferences"
-msgstr ""
+msgstr "Golygu dewisiadau Nemo"
 
 #: src/nemo-window-menus.c:1065
 msgid "Undo the last text change"
-msgstr ""
+msgstr "Dadwneud y newid diwethaf yn y testun"
 
 #: src/nemo-window-menus.c:1068
 msgid "Open _Parent"
-msgstr ""
+msgstr "Agor _Rhiant"
 
 #: src/nemo-window-menus.c:1069
 msgid "Open the parent folder"
-msgstr ""
+msgstr "Agor y ffolder rhiant"
 
 #: src/nemo-window-menus.c:1076
 msgid "Stop loading the current location"
-msgstr ""
+msgstr "Atal llwytho'n y lleoliad cyfredol"
 
 #: src/nemo-window-menus.c:1079 src/nemo-window-menus.c:1314
 msgid "_Reload"
@@ -2731,51 +2838,51 @@ msgstr "Ail-lwytho'r lleoliad cyfredol"
 
 #: src/nemo-window-menus.c:1083
 msgid "_All Topics"
-msgstr ""
+msgstr "_Pob Pwnc"
 
 #: src/nemo-window-menus.c:1084
 msgid "Display Nemo help"
-msgstr ""
+msgstr "Dangos cymorth Nemo"
 
 #: src/nemo-window-menus.c:1103
 msgid "_About"
-msgstr ""
+msgstr "_Ynghylch"
 
 #: src/nemo-window-menus.c:1104
 msgid "Display credits for the creators of Nemo"
-msgstr ""
+msgstr "Dangos diolchiadau i grewyr Nemo"
 
 #: src/nemo-window-menus.c:1107
 msgid "Zoom _In"
-msgstr ""
+msgstr "Chwyddo i _Mewn"
 
 #: src/nemo-window-menus.c:1108
 msgid "Increase the view size"
-msgstr ""
+msgstr "Cynyddu maint y golwg"
 
 #: src/nemo-window-menus.c:1119
 msgid "Zoom _Out"
-msgstr ""
+msgstr "Chwyddo _Allan"
 
 #: src/nemo-window-menus.c:1120
 msgid "Decrease the view size"
-msgstr ""
+msgstr "Lleihau maint y golwg"
 
 #: src/nemo-window-menus.c:1127
 msgid "Normal Si_ze"
-msgstr ""
+msgstr "Maint _Arferol"
 
 #: src/nemo-window-menus.c:1128
 msgid "Use the normal view size"
-msgstr ""
+msgstr "Defnyddio maint golwg arferol"
 
 #: src/nemo-window-menus.c:1131
 msgid "Connect to _Server..."
-msgstr ""
+msgstr "Cysylltu â'r _Gweinydd..."
 
 #: src/nemo-window-menus.c:1132
 msgid "Connect to a remote computer or shared disk"
-msgstr ""
+msgstr "Cysylltu â chyfrifiadur pell neu ddisg rhannedig"
 
 #: src/nemo-window-menus.c:1136
 msgid "Open your personal folder"
@@ -2789,66 +2896,67 @@ msgstr "_Cyfrifiadur"
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr ""
+"Pori'r holl ddisgiau a ffolderi pell a lleol sydd ar gael i'r cyfrifiadur"
 
 #: src/nemo-window-menus.c:1143
 msgid "_Network"
-msgstr ""
+msgstr "_Rhwydwaith"
 
 #: src/nemo-window-menus.c:1144
 msgid "Browse bookmarked and local network locations"
-msgstr ""
+msgstr "Pori lleoliadau o fewn nodau tudalen ac ar y rhwydwaith leol"
 
 #: src/nemo-window-menus.c:1147
 msgid "T_emplates"
-msgstr ""
+msgstr "_Templedi"
 
 #: src/nemo-window-menus.c:1148
 msgid "Open your personal templates folder"
-msgstr ""
+msgstr "Agor eich ffolder templedi personol"
 
 #: src/nemo-window-menus.c:1151
 msgid "_Trash"
-msgstr ""
+msgstr "_Sbwriel"
 
 #: src/nemo-window-menus.c:1152
 msgid "Open your personal trash folder"
-msgstr ""
+msgstr "Agor eich ffolder sbwriel personol"
 
 #: src/nemo-window-menus.c:1154
 msgid "_Go"
-msgstr ""
+msgstr "_Mynd"
 
 #: src/nemo-window-menus.c:1155
 msgid "_Bookmarks"
-msgstr ""
+msgstr "_Nodau Tudalen"
 
 #: src/nemo-window-menus.c:1156
 msgid "_Tabs"
-msgstr ""
+msgstr "_Tabiau"
 
 #: src/nemo-window-menus.c:1157
 msgid "New _Window"
-msgstr ""
+msgstr "_Ffenestr Newydd"
 
 #: src/nemo-window-menus.c:1158
 msgid "Open another Nemo window for the displayed location"
-msgstr ""
+msgstr "Agor ffenestr Nemo arall ar gyfer y lleoliad dangoswyd"
 
 #: src/nemo-window-menus.c:1160
 msgid "New _Tab"
-msgstr ""
+msgstr "_Tab Newydd"
 
 #: src/nemo-window-menus.c:1161
 msgid "Open another tab for the displayed location"
-msgstr ""
+msgstr "Agor tab arall ar gyfer y lleoliad dangoswyd"
 
 #: src/nemo-window-menus.c:1163
 msgid "Close _All Windows"
-msgstr ""
+msgstr "Cau _Pob Ffenest"
 
 #: src/nemo-window-menus.c:1164
 msgid "Close all Navigation windows"
-msgstr ""
+msgstr "Cau pob ffenest Llywio"
 
 #: src/nemo-window-menus.c:1166 src/nemo-window-menus.c:1264
 msgid "_Back"
@@ -2868,55 +2976,56 @@ msgstr "Mynd i'r lleoliad ymwelwyd nesaf"
 
 #: src/nemo-window-menus.c:1172
 msgid "_Location..."
-msgstr ""
+msgstr "_Lleoliad..."
 
 #: src/nemo-window-menus.c:1173
 msgid "Specify a location to open"
-msgstr ""
+msgstr "Dewiswch leoliad i'w hagor"
 
 #: src/nemo-window-menus.c:1175
 msgid "S_witch to Other Pane"
-msgstr ""
+msgstr "S_ymud i Baen Arall"
 
 #: src/nemo-window-menus.c:1176
 msgid "Move focus to the other pane in a split view window"
-msgstr ""
+msgstr "Symud y canolbwynt i baen arlall mewn ffenestr golwg hollt"
 
 #: src/nemo-window-menus.c:1178
 msgid "Sa_me Location as Other Pane"
-msgstr ""
+msgstr "Yr _Un Lleoliad â Phaen Arall"
 
 #: src/nemo-window-menus.c:1179
 msgid "Go to the same location as in the extra pane"
-msgstr ""
+msgstr "Mynd i'r un lleoliad ag yn y paen ychwanegol"
 
 #: src/nemo-window-menus.c:1182
 msgid "Add a bookmark for the current location to this menu"
 msgstr ""
+"Ychwanegu nod tudalend ar gyfer y lleoliad cyfredol at y ddewislen hon"
 
 #: src/nemo-window-menus.c:1184
 msgid "_Edit Bookmarks..."
-msgstr ""
+msgstr "_Golygu Nodau Tudalen..."
 
 #: src/nemo-window-menus.c:1185
 msgid "Display a window that allows editing the bookmarks in this menu"
-msgstr ""
+msgstr "Dangos ffenest sy'n gadael i chi olygu nodau tudalen'r ddewislen hon"
 
 #: src/nemo-window-menus.c:1187
 msgid "_Previous Tab"
-msgstr ""
+msgstr "Tab _Blaenorol"
 
 #: src/nemo-window-menus.c:1188
 msgid "Activate previous tab"
-msgstr ""
+msgstr "Gweithredu'r tab blaenorol"
 
 #: src/nemo-window-menus.c:1190
 msgid "_Next Tab"
-msgstr ""
+msgstr "Tab _Nesaf"
 
 #: src/nemo-window-menus.c:1191
 msgid "Activate next tab"
-msgstr ""
+msgstr "Gweithredu'r tab nesaf"
 
 #: src/nemo-window-menus.c:1193 src/nemo-window-pane.c:521
 msgid "Move Tab _Left"
@@ -2924,7 +3033,7 @@ msgstr "Symud y Tab i'r _Chwith"
 
 #: src/nemo-window-menus.c:1194
 msgid "Move current tab to left"
-msgstr ""
+msgstr "Symud y tab cyfredol i'r chwith"
 
 #: src/nemo-window-menus.c:1196 src/nemo-window-pane.c:529
 msgid "Move Tab _Right"
@@ -2932,55 +3041,55 @@ msgstr "Symud y Tab i'r _Dde"
 
 #: src/nemo-window-menus.c:1197
 msgid "Move current tab to right"
-msgstr ""
+msgstr "Symud y tab cyfredol i'r dde"
 
 #: src/nemo-window-menus.c:1199
 msgid "Sidebar"
-msgstr ""
+msgstr "Bar Ochr"
 
 #: src/nemo-window-menus.c:1204
 msgid "Show _Hidden Files"
-msgstr ""
+msgstr "Dangos Ffeiliau _Cudd"
 
 #: src/nemo-window-menus.c:1205
 msgid "Toggle the display of hidden files in the current window"
-msgstr ""
+msgstr "Toglo dangosiad ffeiliau cudd yn y ffenest gyfredol"
 
 #: src/nemo-window-menus.c:1209
 msgid "_Main Toolbar"
-msgstr ""
+msgstr "_Prif Far Offer"
 
 #: src/nemo-window-menus.c:1210
 msgid "Change the visibility of this window's main toolbar"
-msgstr ""
+msgstr "Newid gwelededd prif far offer y ffenestr hon"
 
 #: src/nemo-window-menus.c:1214
 msgid "_Show Sidebar"
-msgstr ""
+msgstr "_Dangos Bar Ochr"
 
 #: src/nemo-window-menus.c:1215
 msgid "Change the visibility of this window's side pane"
-msgstr ""
+msgstr "Dangos gwelededd paen ochr y ffenestr"
 
 #: src/nemo-window-menus.c:1219
 msgid "St_atusbar"
-msgstr ""
+msgstr "Bar St_atws"
 
 #: src/nemo-window-menus.c:1220
 msgid "Change the visibility of this window's statusbar"
-msgstr ""
+msgstr "Newid gwelededd bar statws y ffenestr hon"
 
 #: src/nemo-window-menus.c:1224
 msgid "M_enubar"
-msgstr ""
+msgstr "Bar Dewislen"
 
 #: src/nemo-window-menus.c:1225
 msgid "Change the default visibility of the menubar"
-msgstr ""
+msgstr "Newid gwelededd rhagosodedig y bar dewislen"
 
 #: src/nemo-window-menus.c:1229
 msgid "_Search for Files..."
-msgstr ""
+msgstr "_Chwilio am Ffeiliau..."
 
 #: src/nemo-window-menus.c:1230 src/nemo-window-menus.c:1403
 msgid "Search documents and folders by name"
@@ -2988,27 +3097,27 @@ msgstr "Chwilio dogfennau a ffolderi yn ôl enw"
 
 #: src/nemo-window-menus.c:1234
 msgid "E_xtra Pane"
-msgstr ""
+msgstr "Paen _Ychwanegol"
 
 #: src/nemo-window-menus.c:1235
 msgid "Open an extra folder view side-by-side"
-msgstr ""
+msgstr "Agor golwg ffolder ychwanegol ochr yn ochr"
 
 #: src/nemo-window-menus.c:1242
 msgid "Places"
-msgstr ""
+msgstr "Mannau"
 
 #: src/nemo-window-menus.c:1242
 msgid "Select Places as the default sidebar"
-msgstr ""
+msgstr "Dewis Mannau fel y bar ochr rhagosodedig"
 
 #: src/nemo-window-menus.c:1245
 msgid "Tree"
-msgstr ""
+msgstr "Coeden"
 
 #: src/nemo-window-menus.c:1245
 msgid "Select Tree as the default sidebar"
-msgstr ""
+msgstr "Dewis coeden fel y bar ochr rhagosodedig"
 
 #: src/nemo-window-menus.c:1267
 msgid "Back history"
@@ -3024,7 +3133,7 @@ msgstr "I _Fyny"
 
 #: src/nemo-window-menus.c:1301
 msgid "Go to parent folder"
-msgstr "_Mynd i'r ffolder rhiant"
+msgstr "Mynd i'r ffolder rhiant"
 
 #: src/nemo-window-menus.c:1330
 msgid "Go to home directory"
@@ -3036,19 +3145,19 @@ msgstr "Mynd i'r Cyfrifiadur"
 
 #: src/nemo-window-menus.c:1356
 msgid "Use Location Entry"
-msgstr ""
+msgstr "Defnyddio Cofnod Lleoliad"
 
 #: src/nemo-window-menus.c:1368
 msgid "Icons"
-msgstr ""
+msgstr "Eiconau"
 
 #: src/nemo-window-menus.c:1379
 msgid "List"
-msgstr ""
+msgstr "Rhestr"
 
 #: src/nemo-window-menus.c:1391
 msgid "Compact"
-msgstr ""
+msgstr "Cywasgu"
 
 #: src/nemo-window-menus.c:1403 libnemo-private/nemo-query.c:130
 #: libnemo-private/nemo-search-directory-file.c:160
@@ -3112,7 +3221,7 @@ msgstr "Mae'r cyfrwng yn cynnwys meddalwedd."
 #: src/nemo-x-content-bar.c:117
 #, c-format
 msgid "The media has been detected as \"%s\"."
-msgstr "Wedi canfod y cyfrwng fel \"%s\""
+msgstr "Wedi canfod y cyfrwng fel \"%s\"."
 
 #: src/nemo-x-content-bar.c:142
 #, c-format
@@ -3121,19 +3230,19 @@ msgstr "Agor %s"
 
 #: libnemo-private/nemo-clipboard.c:433
 msgid "Cut the selected text to the clipboard"
-msgstr ""
+msgstr "Torri'r testun a ddewiswyd i'r clipfwrdd"
 
 #: libnemo-private/nemo-clipboard.c:437
 msgid "Copy the selected text to the clipboard"
-msgstr ""
+msgstr "Copïo'r testun a ddewiswyd i'r clipfwrdd"
 
 #: libnemo-private/nemo-clipboard.c:441
 msgid "Paste the text stored on the clipboard"
-msgstr ""
+msgstr "Gludo'r testun sydd ar y clipfwrdd"
 
 #: libnemo-private/nemo-clipboard.c:445
 msgid "Select all the text in a text field"
-msgstr ""
+msgstr "Dewis y holl destun mewn maes testun"
 
 #: libnemo-private/nemo-column-chooser.c:368
 msgid "Move _Up"
@@ -3213,7 +3322,7 @@ msgstr "Math MIME"
 
 #: libnemo-private/nemo-column-utilities.c:114
 msgid "The mime type of the file."
-msgstr "Math MIME y ffeil."
+msgstr "Math mime y ffeil."
 
 #: libnemo-private/nemo-column-utilities.c:121
 msgid "SELinux Context"
@@ -3330,111 +3439,111 @@ msgstr "Methu ailenwi ffeil bwrdd gwaith"
 
 #: libnemo-private/nemo-file.c:4388
 msgid "today at 00:00:00 PM"
-msgstr ""
+msgstr "heddiw am 00:00:00 PM"
 
 #: libnemo-private/nemo-file.c:4391
 msgid "today at 00:00 PM"
-msgstr ""
+msgstr "heddiw am 00:00 PM"
 
 #: libnemo-private/nemo-file.c:4392
 msgid "today at %-I:%M %p"
-msgstr ""
+msgstr "heddiw am %-I:%M %p"
 
 #: libnemo-private/nemo-file.c:4394
 msgid "today, 00:00 PM"
-msgstr ""
+msgstr "heddiw, 00:00 PM"
 
 #: libnemo-private/nemo-file.c:4395
 msgid "today, %-I:%M %p"
-msgstr ""
+msgstr "heddiw, %-I:%M %p"
 
 #: libnemo-private/nemo-file.c:4397 libnemo-private/nemo-file.c:4398
 msgid "today"
-msgstr ""
+msgstr "heddiw"
 
 #: libnemo-private/nemo-file.c:4407
 msgid "yesterday at 00:00:00 PM"
-msgstr ""
+msgstr "ddoe am 00:00:00 PM"
 
 #: libnemo-private/nemo-file.c:4408
 msgid "yesterday at %-I:%M:%S %p"
-msgstr ""
+msgstr "ddoe am %-I:%M:%S %p"
 
 #: libnemo-private/nemo-file.c:4410
 msgid "yesterday at 00:00 PM"
-msgstr ""
+msgstr "ddoe am 00:00 PM"
 
 #: libnemo-private/nemo-file.c:4411
 msgid "yesterday at %-I:%M %p"
-msgstr ""
+msgstr "ddoe am %-I:%M %p"
 
 #: libnemo-private/nemo-file.c:4413
 msgid "yesterday, 00:00 PM"
-msgstr ""
+msgstr "ddoe, 00:00 PM"
 
 #: libnemo-private/nemo-file.c:4414
 msgid "yesterday, %-I:%M %p"
-msgstr ""
+msgstr "ddoe, %-I:%M %p"
 
 #: libnemo-private/nemo-file.c:4416 libnemo-private/nemo-file.c:4417
 msgid "yesterday"
-msgstr ""
+msgstr "ddoe"
 
 #: libnemo-private/nemo-file.c:4428
 msgid "Wednesday, September 00 0000 at 00:00:00 PM"
-msgstr ""
+msgstr "Mercher, Medi 00 0000 am 00:00:00 PM"
 
 #: libnemo-private/nemo-file.c:4429
 msgid "%A, %B %-d %Y at %-I:%M:%S %p"
-msgstr ""
+msgstr "%A, %B %-d %Y am %-I:%M:%S %p"
 
 #: libnemo-private/nemo-file.c:4431
 msgid "Mon, Oct 00 0000 at 00:00:00 PM"
-msgstr ""
+msgstr "Llu, Hyd 00 0000 am 00:00:00 PM"
 
 #: libnemo-private/nemo-file.c:4432
 msgid "%a, %b %-d %Y at %-I:%M:%S %p"
-msgstr ""
+msgstr "%a, %b %-d %Y am %-I:%M:%S %p"
 
 #: libnemo-private/nemo-file.c:4434
 msgid "Mon, Oct 00 0000 at 00:00 PM"
-msgstr ""
+msgstr "Llu, Hyd 00 0000 am 00:00 PM"
 
 #: libnemo-private/nemo-file.c:4435
 msgid "%a, %b %-d %Y at %-I:%M %p"
-msgstr ""
+msgstr "%a, %b %-d %Y am %-I:%M %p"
 
 #: libnemo-private/nemo-file.c:4437
 msgid "Oct 00 0000 at 00:00 PM"
-msgstr ""
+msgstr "Hyd 00 0000 am 00:00 PM"
 
 #: libnemo-private/nemo-file.c:4438
 msgid "%b %-d %Y at %-I:%M %p"
-msgstr ""
+msgstr "%b %-d %Y am %-I:%M %p"
 
 #: libnemo-private/nemo-file.c:4440
 msgid "Oct 00 0000, 00:00 PM"
-msgstr ""
+msgstr "Hyd 00 0000, 00:00 PM"
 
 #: libnemo-private/nemo-file.c:4441
 msgid "%b %-d %Y, %-I:%M %p"
-msgstr ""
+msgstr "%b %-d %Y, %-I:%M %p"
 
 #: libnemo-private/nemo-file.c:4443
 msgid "00/00/00, 00:00 PM"
-msgstr ""
+msgstr "00/00/00, 00:00 PM"
 
 #: libnemo-private/nemo-file.c:4444
 msgid "%m/%-d/%y, %-I:%M %p"
-msgstr ""
+msgstr "%m/%-d/%y, %-I:%M %p"
 
 #: libnemo-private/nemo-file.c:4446
 msgid "00/00/00"
-msgstr ""
+msgstr "00/00/00"
 
 #: libnemo-private/nemo-file.c:4447
 msgid "%m/%d/%y"
-msgstr ""
+msgstr "%m/%d/%y"
 
 #: libnemo-private/nemo-file.c:5091
 msgid "Not allowed to set permissions"
@@ -3464,6 +3573,8 @@ msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] "%'u ffolder"
 msgstr[1] "%'u ffolder"
+msgstr[2] "%u ffolder"
+msgstr[3] "%u ffolder"
 
 #: libnemo-private/nemo-file.c:5845
 #, c-format
@@ -3471,6 +3582,8 @@ msgid "%'u file"
 msgid_plural "%'u files"
 msgstr[0] "%'u ffeil"
 msgstr[1] "%'u ffeil"
+msgstr[2] "%u ffeil"
+msgstr[3] "%u ffeil"
 
 #: libnemo-private/nemo-file.c:6236 libnemo-private/nemo-file.c:6252
 msgid "? items"
@@ -3510,6 +3623,8 @@ msgid ""
 "Merging will ask for confirmation before replacing any files in the folder "
 "that conflict with the files being copied."
 msgstr ""
+"Bydd cyfuno yn gofyn am gadarnhad cyn amnewid unrhyw ffeil yn y ffolder sy'n "
+"gwrthdaro gyda'r ffeiliau sy'n cael eu copïo."
 
 #: libnemo-private/nemo-file-conflict-dialog.c:150
 #, c-format
@@ -3649,6 +3764,8 @@ msgid "%'d second"
 msgid_plural "%'d seconds"
 msgstr[0] "%'d eiliad"
 msgstr[1] "%'d eiliad"
+msgstr[2] "%'d eiliad"
+msgstr[3] "%'d eiliad"
 
 #: libnemo-private/nemo-file-operations.c:283
 #: libnemo-private/nemo-file-operations.c:294
@@ -3657,6 +3774,8 @@ msgid "%'d minute"
 msgid_plural "%'d minutes"
 msgstr[0] "%'d munud"
 msgstr[1] "%'d munud"
+msgstr[2] "%d munud"
+msgstr[3] "%d munud"
 
 #: libnemo-private/nemo-file-operations.c:293
 #, c-format
@@ -3664,6 +3783,8 @@ msgid "%'d hour"
 msgid_plural "%'d hours"
 msgstr[0] "%'d awr"
 msgstr[1] "%'d awr"
+msgstr[2] "%'d awr"
+msgstr[3] "%'d awr"
 
 #: libnemo-private/nemo-file-operations.c:301
 #, c-format
@@ -3671,6 +3792,8 @@ msgid "approximately %'d hour"
 msgid_plural "approximately %'d hours"
 msgstr[0] "tua %'d awr"
 msgstr[1] "tua %'d awr"
+msgstr[2] "tua %d awr"
+msgstr[3] "tua %d awr"
 
 #: libnemo-private/nemo-file-operations.c:381
 #, c-format
@@ -3680,59 +3803,59 @@ msgstr "Cyswllt arall i %s"
 #: libnemo-private/nemo-file-operations.c:397
 #, c-format
 msgid "%'dst link to %s"
-msgstr "Cyswllt %'dst i %s"
+msgstr "Cyswllt %'d i %s"
 
 #: libnemo-private/nemo-file-operations.c:401
 #, c-format
 msgid "%'dnd link to %s"
-msgstr "Cyswllt %'dnd i %s"
+msgstr "Cyswllt %'d i %s"
 
 #: libnemo-private/nemo-file-operations.c:405
 #, c-format
 msgid "%'drd link to %s"
-msgstr "Cyswllt %'drd i %s"
+msgstr "Cyswllt %'d i %s"
 
 #: libnemo-private/nemo-file-operations.c:409
 #, c-format
 msgid "%'dth link to %s"
-msgstr "Cyswllt %'dth i %s"
+msgstr "Cyswllt %'d i %s"
 
 #: libnemo-private/nemo-file-operations.c:448
 msgid " (copy)"
-msgstr ""
+msgstr " (copi)"
 
 #: libnemo-private/nemo-file-operations.c:450
 msgid " (another copy)"
-msgstr ""
+msgstr " (copi arall)"
 
 #: libnemo-private/nemo-file-operations.c:453
 #: libnemo-private/nemo-file-operations.c:455
 #: libnemo-private/nemo-file-operations.c:457
 #: libnemo-private/nemo-file-operations.c:467
 msgid "th copy)"
-msgstr ""
+msgstr "fed copi)"
 
 #: libnemo-private/nemo-file-operations.c:460
 msgid "st copy)"
-msgstr ""
+msgstr "copi)"
 
 #: libnemo-private/nemo-file-operations.c:462
 msgid "nd copy)"
-msgstr ""
+msgstr "ail gopi)"
 
 #: libnemo-private/nemo-file-operations.c:464
 msgid "rd copy)"
-msgstr ""
+msgstr "ydd copi)"
 
 #: libnemo-private/nemo-file-operations.c:481
 #, c-format
 msgid "%s (copy)%s"
-msgstr ""
+msgstr "%s (copi)%s"
 
 #: libnemo-private/nemo-file-operations.c:483
 #, c-format
 msgid "%s (another copy)%s"
-msgstr ""
+msgstr "%s (copi arall)%s"
 
 #: libnemo-private/nemo-file-operations.c:486
 #: libnemo-private/nemo-file-operations.c:488
@@ -3740,22 +3863,22 @@ msgstr ""
 #: libnemo-private/nemo-file-operations.c:504
 #, c-format
 msgid "%s (%'dth copy)%s"
-msgstr ""
+msgstr "%s (copi rhif %'d)%s"
 
 #: libnemo-private/nemo-file-operations.c:498
 #, c-format
 msgid "%s (%'dst copy)%s"
-msgstr ""
+msgstr "%s (copi %'d)%s"
 
 #: libnemo-private/nemo-file-operations.c:500
 #, c-format
 msgid "%s (%'dnd copy)%s"
-msgstr ""
+msgstr "%s (copi %'d)%s"
 
 #: libnemo-private/nemo-file-operations.c:502
 #, c-format
 msgid "%s (%'drd copy)%s"
-msgstr ""
+msgstr "%s (copi %'d)%s"
 
 #: libnemo-private/nemo-file-operations.c:603
 msgid " ("
@@ -3780,6 +3903,8 @@ msgid_plural ""
 "trash?"
 msgstr[0] "Ydych chi'n siŵr eich bod am ddileu'r %'d eitem yma am byth?"
 msgstr[1] "Ydych chi'n siŵr eich bod am ddileu'r %'d eitem yma am byth?"
+msgstr[2] "Ydych chi'n siŵr eich bod am ddileu'r %d eitem yma am byth?"
+msgstr[3] "Ydych chi'n siŵr eich bod am ddileu'r %d eitem yma am byth?"
 
 #: libnemo-private/nemo-file-operations.c:1325
 #: libnemo-private/nemo-file-operations.c:1391
@@ -3803,8 +3928,10 @@ msgstr "Ydych chi'n siŵr eich bod am ddileu \"%B\" yn barhaol?"
 msgid "Are you sure you want to permanently delete the %'d selected item?"
 msgid_plural ""
 "Are you sure you want to permanently delete the %'d selected items?"
-msgstr[0] "Ydych chi'n siŵr eich bod am ddileu'r %'d eitem yma'n barhaol?"
-msgstr[1] "Ydych chi'n siŵr eich bod am ddileu'r %'d eitem yma'n barhaol?"
+msgstr[0] "Ydych chi'n siŵr eich bod am ddileu'r %'d eitem yma am byth?"
+msgstr[1] "Ydych chi'n siŵr eich bod am ddileu'r %'d eitem yma am byth?"
+msgstr[2] "Ydych chi'n siŵr eich bod am ddileu'r %d eitem yma am byth?"
+msgstr[3] "Ydych chi'n siŵr eich bod am ddileu'r %d eitem yma am byth?"
 
 #: libnemo-private/nemo-file-operations.c:1425
 #, c-format
@@ -3812,6 +3939,8 @@ msgid "%'d file left to delete"
 msgid_plural "%'d files left to delete"
 msgstr[0] "%'d ffeil ar ôl i'w dileu"
 msgstr[1] "%'d ffeil ar ôl i'w dileu"
+msgstr[2] "%d ffeil ar ôl i'w dileu"
+msgstr[3] "%d ffeil ar ôl i'w dileu"
 
 #: libnemo-private/nemo-file-operations.c:1431
 msgid "Deleting files"
@@ -3822,6 +3951,8 @@ msgid "%T left"
 msgid_plural "%T left"
 msgstr[0] "%T chwith"
 msgstr[1] "%T chwith"
+msgstr[2] "%T chwith"
+msgstr[3] "%T chwith"
 
 #: libnemo-private/nemo-file-operations.c:1512
 #: libnemo-private/nemo-file-operations.c:1546
@@ -3882,6 +4013,8 @@ msgid "%'d file left to trash"
 msgid_plural "%'d files left to trash"
 msgstr[0] "%'d ffeil ar ôl i'w dileu"
 msgstr[1] "%'d ffeil ar ôl i'w dileu"
+msgstr[2] "%d ffeil ar ôl i'w dileu"
+msgstr[3] "%d ffeil ar ôl i'w dileu"
 
 #: libnemo-private/nemo-file-operations.c:1796
 msgid "Cannot move file to trash, do you want to delete immediately?"
@@ -3901,7 +4034,7 @@ msgstr "Dileu Ffeiliau"
 
 #: libnemo-private/nemo-file-operations.c:2044
 msgid "Unable to eject %V"
-msgstr "Methu bwrw allan %s"
+msgstr "Methu bwrw allan %V"
 
 #: libnemo-private/nemo-file-operations.c:2046
 msgid "Unable to unmount %V"
@@ -3934,6 +4067,8 @@ msgid "Preparing to copy %'d file (%S)"
 msgid_plural "Preparing to copy %'d files (%S)"
 msgstr[0] "Paratoi i gopïo %'d ffeil (%S)"
 msgstr[1] "Paratoi i gopïo %'d ffeil (%S)"
+msgstr[2] "Paratoi i gopïo %'d ffeil (%S)"
+msgstr[3] "Paratoi i gopïo %'d ffeil (%S)"
 
 #: libnemo-private/nemo-file-operations.c:2417
 #, c-format
@@ -3941,6 +4076,8 @@ msgid "Preparing to move %'d file (%S)"
 msgid_plural "Preparing to move %'d files (%S)"
 msgstr[0] "Paratoi i symud %'d ffeil (%S)"
 msgstr[1] "Paratoi i symud %'d ffeil (%S)"
+msgstr[2] "Paratoi i symud %'d ffeil (%S)"
+msgstr[3] "Paratoi i symud %'d ffeil (%S)"
 
 #: libnemo-private/nemo-file-operations.c:2423
 #, c-format
@@ -3948,20 +4085,24 @@ msgid "Preparing to delete %'d file (%S)"
 msgid_plural "Preparing to delete %'d files (%S)"
 msgstr[0] "Paratoi i ddileu %'d ffeil (%S)"
 msgstr[1] "Paratoi i ddileu %'d ffeil (%S)"
+msgstr[2] "Paratoi i ddileu %'d ffeil (%S)"
+msgstr[3] "Paratoi i ddileu %'d ffeil (%S)"
 
 #: libnemo-private/nemo-file-operations.c:2429
 #, c-format
 msgid "Preparing to trash %'d file"
 msgid_plural "Preparing to trash %'d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Paratoi i symud %'d ffeil i'r sbwriel"
+msgstr[1] "Paratoi i symud %'d ffeil i'r sbwriel"
+msgstr[2] "Paratoi i symud %'d ffeil i'r sbwriel"
+msgstr[3] "Paratoi i symud %'d ffeil i'r sbwriel"
 
 #: libnemo-private/nemo-file-operations.c:2460
 #: libnemo-private/nemo-file-operations.c:3371
 #: libnemo-private/nemo-file-operations.c:3503
 #: libnemo-private/nemo-file-operations.c:3548
 msgid "Error while copying."
-msgstr "Gwall wrth gopïo"
+msgstr "Gwall wrth gopïo."
 
 #: libnemo-private/nemo-file-operations.c:2462
 #: libnemo-private/nemo-file-operations.c:3501
@@ -4028,7 +4169,7 @@ msgstr ""
 #: libnemo-private/nemo-file-operations.c:2819
 #, c-format
 msgid "%S more space is required to copy to the destination."
-msgstr "Mae angen %S yn fwy o le i gopïo i'r cyrchfa"
+msgstr "Mae angen %S yn fwy o le i gopïo i'r cyrchfa."
 
 #: libnemo-private/nemo-file-operations.c:2847
 msgid "The destination is read-only."
@@ -4081,6 +4222,8 @@ msgid "%S of %S — %T left (%S/sec)"
 msgid_plural "%S of %S — %T left (%S/sec)"
 msgstr[0] "%S o %S — %T chwith (%S/eil)"
 msgstr[1] "%S o %S — %T chwith (%S/eil)"
+msgstr[2] "%S o %S — %T ar ôl (%S/eil)"
+msgstr[3] "%S o %S — %T ar ôl (%S/eil)"
 
 #: libnemo-private/nemo-file-operations.c:3375
 msgid ""
@@ -4139,7 +4282,7 @@ msgstr "Methu tynnu'r ffeil gyfredol %F."
 #: libnemo-private/nemo-file-operations.c:4046
 #: libnemo-private/nemo-file-operations.c:4749
 msgid "You cannot move a folder into itself."
-msgstr "Nid oes modd symud ffolder iddo'i hun"
+msgstr "Nid oes modd symud ffolder iddo'i hun."
 
 #: libnemo-private/nemo-file-operations.c:4047
 #: libnemo-private/nemo-file-operations.c:4750
@@ -4186,8 +4329,10 @@ msgstr "Paratoi i'w Symud i \"%B\""
 #, c-format
 msgid "Preparing to move %'d file"
 msgid_plural "Preparing to move %'d files"
-msgstr[0] "Paratoi i symud %'d ffeil"
-msgstr[1] "Paratoi i symud %'d ffeil"
+msgstr[0] "Paratoi i symud i %'d ffeil"
+msgstr[1] "Paratoi i symud i %'d ffeil"
+msgstr[2] "Paratoi i symud i %d ffeil"
+msgstr[3] "Paratoi i symud i %d ffeil"
 
 #: libnemo-private/nemo-file-operations.c:4905
 #, c-format
@@ -4206,8 +4351,10 @@ msgstr "Creu cyswllt yn \"%B\""
 #, c-format
 msgid "Making link to %'d file"
 msgid_plural "Making links to %'d files"
-msgstr[0] "Creu cyswllt i %'d ffeil"
-msgstr[1] "Creu cyswllt i %'d ffeil"
+msgstr[0] "Creu dolen i %'d ffeil"
+msgstr[1] "Creu dolenni i %'d ffeil"
+msgstr[2] "Creu dolenni i %d ffeil"
+msgstr[3] "Creu dolenni i %d ffeil"
 
 #: libnemo-private/nemo-file-operations.c:5341
 msgid "Error while creating link to %B."
@@ -4272,7 +4419,9 @@ msgstr "Methu nodi cychwynnwr fel un ag ymddiriedaeth (gweithredol)"
 msgid "Move %d item back to '%s'"
 msgid_plural "Move %d items back to '%s'"
 msgstr[0] "Symud %d eitem nôl i '%s'"
-msgstr[1] "Symud %d eitem nôl i '%s'"
+msgstr[1] "Symud %d eitem yn ôl i '%s'"
+msgstr[2] "Symud %d eitem yn ôl i '%s'"
+msgstr[3] "Symud %d eitem yn ôl i '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:370
 #, c-format
@@ -4280,6 +4429,8 @@ msgid "Move %d item to '%s'"
 msgid_plural "Move %d items to '%s'"
 msgstr[0] "Symud %d eitem i '%s'"
 msgstr[1] "Symud %d eitem i '%s'"
+msgstr[2] "Symud %d eitem i '%s'"
+msgstr[3] "Symud %d eitem i '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:374
 #, c-format
@@ -4287,6 +4438,8 @@ msgid "_Undo Move %d item"
 msgid_plural "_Undo Move %d items"
 msgstr[0] "_Dadwneud Symud %d eitem"
 msgstr[1] "_Dadwneud Symud %d eitem"
+msgstr[2] "Dad-wneud Symud %d eitem"
+msgstr[3] "Dad-wneud Symud %d eitem"
 
 #: libnemo-private/nemo-file-undo-operations.c:377
 #, c-format
@@ -4294,6 +4447,8 @@ msgid "_Redo Move %d item"
 msgid_plural "_Redo Move %d items"
 msgstr[0] "_Ailwneud Symud %d eitem"
 msgstr[1] "_Ailwneud Symud %d eitem"
+msgstr[2] "Ail-wneud Symud %d eitem"
+msgstr[3] "Ail-wneud Symud %d eitem"
 
 #: libnemo-private/nemo-file-undo-operations.c:381
 #, c-format
@@ -4326,6 +4481,9 @@ msgstr "_Ailwneud Adfer o'r Sbwriel"
 msgid "Move %d item back to trash"
 msgid_plural "Move %d items back to trash"
 msgstr[0] "Symud %d eitem nôl i'r sbwriel"
+msgstr[1] "Symud %d eitem nôl i'r Sbwriel"
+msgstr[2] "Symud %d eitem yn ôl i'r Sbwriel"
+msgstr[3] "Symud %d eitem yn ôl i'r Sbwriel"
 
 #: libnemo-private/nemo-file-undo-operations.c:395
 #: libnemo-private/nemo-file-undo-operations.c:981
@@ -4333,6 +4491,9 @@ msgstr[0] "Symud %d eitem nôl i'r sbwriel"
 msgid "Restore %d item from trash"
 msgid_plural "Restore %d items from trash"
 msgstr[0] "Adfer %d eitem o'r Sbwriel"
+msgstr[1] "Adfer %d eitem o'r Sbwriel"
+msgstr[2] "Adfer %d eitem o'r Sbwriel"
+msgstr[3] "Adfer %d eitem o'r Sbwriel"
 
 #: libnemo-private/nemo-file-undo-operations.c:399
 #, c-format
@@ -4348,415 +4509,442 @@ msgstr "Adfer '%s' eitem o'r sbwriel"
 #, c-format
 msgid "Delete %d copied item"
 msgid_plural "Delete %d copied items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Dileu %d eitem a gopïwyd"
+msgstr[1] "Dileu %d eitem a gopïwyd"
+msgstr[2] "Dileu %d eitem a gopïwyd"
+msgstr[3] "Dileu %d eitem a gopïwyd"
 
 #: libnemo-private/nemo-file-undo-operations.c:407
 #, c-format
 msgid "Copy %d item to '%s'"
 msgid_plural "Copy %d items to '%s'"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Copïo %d eitem i '%s'"
+msgstr[1] "Copïo %d eitem i '%s'"
+msgstr[2] "Copïo %d eitem i '%s'"
+msgstr[3] "Copïo %d eitem i '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:411
 #, c-format
 msgid "_Undo Copy %d item"
 msgid_plural "_Undo Copy %d items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "_Dad-wneud Copïo %d eitem"
+msgstr[1] "_Dad-wneud Copïo %d eitem"
+msgstr[2] "Dad-wneud Copïo %d eitem"
+msgstr[3] "Dad-wneud Copïo %d eitem"
 
 #: libnemo-private/nemo-file-undo-operations.c:414
 #, c-format
 msgid "_Redo Copy %d item"
 msgid_plural "_Redo Copy %d items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "_Ail-wneud Copïo %d eitem"
+msgstr[1] "_Ail-wneud Copïo %d eitem"
+msgstr[2] "Ail-wneud Copïo %d eitem"
+msgstr[3] "Ail-wneud Copïo %d eitem"
 
 #: libnemo-private/nemo-file-undo-operations.c:418
 #: libnemo-private/nemo-file-undo-operations.c:440
 #: libnemo-private/nemo-file-undo-operations.c:673
 #, c-format
 msgid "Delete '%s'"
-msgstr ""
+msgstr "Dileu '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:419
 #, c-format
 msgid "Copy '%s' to '%s'"
-msgstr ""
+msgstr "Copïo '%s' i '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:421
 msgid "_Undo Copy"
-msgstr ""
+msgstr "_Dad-wneud Copïo"
 
 #: libnemo-private/nemo-file-undo-operations.c:422
 msgid "_Redo Copy"
-msgstr ""
+msgstr "_Ail-wneud Copïo"
 
 #: libnemo-private/nemo-file-undo-operations.c:426
 #, c-format
 msgid "Delete %d duplicated item"
 msgid_plural "Delete %d duplicated items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Dileu %d eitem ddyblyg"
+msgstr[1] "Dileu %d eitem ddyblyg"
+msgstr[2] "Dileu %d eitem ddyblyg"
+msgstr[3] "Dileu %d eitem ddyblyg"
 
 #: libnemo-private/nemo-file-undo-operations.c:429
 #, c-format
 msgid "Duplicate %d item in '%s'"
 msgid_plural "Duplicate %d items in '%s'"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d eitem dyblyg yn '%s'"
+msgstr[1] "%d eitem dyblyg yn '%s'"
+msgstr[2] "%d eitem dyblyg yn '%s'"
+msgstr[3] "%d eitem dyblyg yn '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:433
 #, c-format
 msgid "_Undo Duplicate %d item"
 msgid_plural "_Undo Duplicate %d items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "_Dad-wneud Dyblygu %d eitem"
+msgstr[1] "_Dad-wneud Dyblygu %d eitem"
+msgstr[2] "Dad-wneud Dyblygu %d eitem"
+msgstr[3] "Dad-wneud Dyblygu %d eitem"
 
 #: libnemo-private/nemo-file-undo-operations.c:436
 #, c-format
 msgid "_Redo Duplicate %d item"
 msgid_plural "_Redo Duplicate %d items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "_Ail-wneud Dyblygu %d eitem"
+msgstr[1] "_Ail-wneud Dyblygu %d eitem"
+msgstr[2] "Ail-wneud Dyblygu %d eitem"
+msgstr[3] "Ail-wneud Dyblygu %d eitem"
 
 #: libnemo-private/nemo-file-undo-operations.c:441
 #, c-format
 msgid "Duplicate '%s' in '%s'"
-msgstr ""
+msgstr "Dyblygu '%s' yn '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:444
 msgid "_Undo Duplicate"
-msgstr ""
+msgstr "_Dad-wneud Dyblygu"
 
 #: libnemo-private/nemo-file-undo-operations.c:445
 msgid "_Redo Duplicate"
-msgstr ""
+msgstr "_Ail-wneud Dyblygu"
 
 #: libnemo-private/nemo-file-undo-operations.c:449
 #, c-format
 msgid "Delete links to %d item"
 msgid_plural "Delete links to %d items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Dileu dolenni i %d eitem"
+msgstr[1] "Dileu dolenni i %d eitem"
+msgstr[2] "Dileu dolenni i %d eitem"
+msgstr[3] "Dileu dolenni i %d eitem"
 
 #: libnemo-private/nemo-file-undo-operations.c:452
 #, c-format
 msgid "Create links to %d item"
 msgid_plural "Create links to %d items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Creu dolenni i %d eitem"
+msgstr[1] "Creu dolenni i %d eitem"
+msgstr[2] "Creu dolenni i %d eitem"
+msgstr[3] "Creu dolenni i %d eitem"
 
 #: libnemo-private/nemo-file-undo-operations.c:456
 #, c-format
 msgid "Delete link to '%s'"
-msgstr ""
+msgstr "Dileu dolen i '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:457
 #, c-format
 msgid "Create link to '%s'"
-msgstr ""
+msgstr "Creu dolen i '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:459
 msgid "_Undo Create Link"
-msgstr ""
+msgstr "_Dad-wneud Creu Dolen"
 
 #: libnemo-private/nemo-file-undo-operations.c:460
 msgid "_Redo Create Link"
-msgstr ""
+msgstr "_Ail-wneud Creu Dolen"
 
 #: libnemo-private/nemo-file-undo-operations.c:676
 #, c-format
 msgid "Create an empty file '%s'"
-msgstr ""
+msgstr "Creu ffeil wag '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:678
 msgid "_Undo Create Empty File"
-msgstr ""
+msgstr "_Dad-wneud Creu Ffeil Wag"
 
 #: libnemo-private/nemo-file-undo-operations.c:679
 msgid "_Redo Create Empty File"
-msgstr ""
+msgstr "_Ail-wneud Creu Ffeil Wag"
 
 #: libnemo-private/nemo-file-undo-operations.c:681
 #, c-format
 msgid "Create a new folder '%s'"
-msgstr ""
+msgstr "Creu ffolder newydd '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:683
 msgid "_Undo Create Folder"
-msgstr ""
+msgstr "_Dad-wneud Creu Ffolder"
 
 #: libnemo-private/nemo-file-undo-operations.c:684
 msgid "_Redo Create Folder"
-msgstr ""
+msgstr "_Ail-wneud Creu Ffolder"
 
 #: libnemo-private/nemo-file-undo-operations.c:686
 #, c-format
 msgid "Create new file '%s' from template "
-msgstr ""
+msgstr "Creu ffeil newydd '%s' o dempled "
 
 #: libnemo-private/nemo-file-undo-operations.c:688
 msgid "_Undo Create from Template"
-msgstr ""
+msgstr "_Dad-wneud Creu o Dempled"
 
 #: libnemo-private/nemo-file-undo-operations.c:689
 msgid "_Redo Create from Template"
-msgstr ""
+msgstr "_Ail-wneud Creu o Dempled"
 
 #: libnemo-private/nemo-file-undo-operations.c:869
 #: libnemo-private/nemo-file-undo-operations.c:870
 #, c-format
 msgid "Rename '%s' as '%s'"
-msgstr ""
+msgstr "Ail-enwi '%s' fel '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:872
 msgid "_Undo Rename"
-msgstr ""
+msgstr "_Dad-wneud Ail-enwi"
 
 #: libnemo-private/nemo-file-undo-operations.c:873
 msgid "_Redo Rename"
-msgstr ""
+msgstr "_Ail-wneud Ail-enwi"
 
 #: libnemo-private/nemo-file-undo-operations.c:984
 #, c-format
 msgid "Move %d item to trash"
 msgid_plural "Move %d items to trash"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Symud %d eitem i'r Sbwriel"
+msgstr[1] "Symud %d eitem i'r Sbwriel"
+msgstr[2] "Symud %d eitem i'r Sbwriel"
+msgstr[3] "Symud %d eitem i'r Sbwriel"
 
 #: libnemo-private/nemo-file-undo-operations.c:996
 #, c-format
 msgid "Restore '%s' to '%s'"
-msgstr ""
+msgstr "Adfer '%s' i '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:1003
 #, c-format
 msgid "Move '%s' to trash"
-msgstr ""
+msgstr "Symud '%s' i'r Sbwriel"
 
 #: libnemo-private/nemo-file-undo-operations.c:1007
 msgid "_Undo Trash"
-msgstr ""
+msgstr "_Dad-wneud Sbwriel"
 
 #: libnemo-private/nemo-file-undo-operations.c:1008
 msgid "_Redo Trash"
-msgstr ""
+msgstr "_Ail-wneud Sbwriel"
 
 #: libnemo-private/nemo-file-undo-operations.c:1300
 #, c-format
 msgid "Restore original permissions of items enclosed in '%s'"
-msgstr ""
+msgstr "Adfer caniatâd gwreiddiol yr eitemau wedi eu hamgáu yn '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:1301
 #, c-format
 msgid "Set permissions of items enclosed in '%s'"
-msgstr ""
+msgstr "Gosod caniatâd yr eitemau wedi eu hamgáu yn '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:1303
 #: libnemo-private/nemo-file-undo-operations.c:1458
 msgid "_Undo Change Permissions"
-msgstr ""
+msgstr "_Dad-wneud Gosod Caniatâd"
 
 #: libnemo-private/nemo-file-undo-operations.c:1304
 #: libnemo-private/nemo-file-undo-operations.c:1459
 msgid "_Redo Change Permissions"
-msgstr ""
+msgstr "_Ail-wneud Gosod Caniatâd"
 
 #: libnemo-private/nemo-file-undo-operations.c:1455
 #, c-format
 msgid "Restore original permissions of '%s'"
-msgstr ""
+msgstr "Adfer y caniatâd gwreiddiol '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:1456
 #, c-format
 msgid "Set permissions of '%s'"
-msgstr ""
+msgstr "Gosod caniatâd '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:1566
 #, c-format
 msgid "Restore group of '%s' to '%s'"
-msgstr ""
+msgstr "Adfer grŵp '%s' i '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:1568
 #, c-format
 msgid "Set group of '%s' to '%s'"
-msgstr ""
+msgstr "Gosod grŵp '%s' i '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:1571
 msgid "_Undo Change Group"
-msgstr ""
+msgstr "_Dad-wneud Newid Grŵp"
 
 #: libnemo-private/nemo-file-undo-operations.c:1572
 msgid "_Redo Change Group"
-msgstr ""
+msgstr "_Ail-wneud Newid Grŵp"
 
 #: libnemo-private/nemo-file-undo-operations.c:1574
 #, c-format
 msgid "Restore owner of '%s' to '%s'"
-msgstr ""
+msgstr "Adfer perchennog '%s' i '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:1576
 #, c-format
 msgid "Set owner of '%s' to '%s'"
-msgstr ""
+msgstr "Gosod perchennog '%s' i '%s'"
 
 #: libnemo-private/nemo-file-undo-operations.c:1579
 msgid "_Undo Change Owner"
-msgstr ""
+msgstr "_Dad-wneud Newid Perchennog"
 
 #: libnemo-private/nemo-file-undo-operations.c:1580
 msgid "_Redo Change Owner"
-msgstr ""
+msgstr "_Ail-wneud Newid Perchennog"
 
 #: libnemo-private/nemo-file-utilities.c:1254
 #, c-format
 msgid "Could not determine original location of \"%s\" "
-msgstr ""
+msgstr "Methu darganfod lleoliad gwreiddiol \"%s\" "
 
 #: libnemo-private/nemo-file-utilities.c:1258
 msgid "The item cannot be restored from trash"
-msgstr ""
+msgstr "Nid oes modd adfer yr eitem o'r Sbwriel"
 
 #: libnemo-private/nemo-icon-container.c:2679
 msgid "The selection rectangle"
-msgstr ""
+msgstr "Y petryal dewis"
 
 #: libnemo-private/nemo-icon-container.c:6906
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d eitem"
+msgstr[1] "%d eitem"
+msgstr[2] "&d eitem"
+msgstr[3] "&d eitem"
 
 #: libnemo-private/nemo-mime-application-chooser.c:83
 #, c-format
 msgid "Error while adding \"%s\": %s"
-msgstr ""
+msgstr "Gwall wrth ychwanegu \"%s\": %s"
 
 #: libnemo-private/nemo-mime-application-chooser.c:85
 msgid "Could not add application"
-msgstr ""
+msgstr "Methu ychwanegu'r rhaglen"
 
 #: libnemo-private/nemo-mime-application-chooser.c:113
 msgid "Could not forget association"
-msgstr ""
+msgstr "Methu anghofio perthynas"
 
 #: libnemo-private/nemo-mime-application-chooser.c:137
 msgid "Forget association"
-msgstr ""
+msgstr "Anghofio perthynas"
 
 #: libnemo-private/nemo-mime-application-chooser.c:175
 #, c-format
 msgid "Error while setting \"%s\" as default application: %s"
-msgstr ""
+msgstr "Gwall wrth geisio gosod \"%s\" fel y rhaglen rhagosodedig: %s"
 
 #: libnemo-private/nemo-mime-application-chooser.c:177
 msgid "Could not set as default"
-msgstr ""
+msgstr "Wedi methu gosod fel y rhagosodedig"
 
 #: libnemo-private/nemo-mime-application-chooser.c:279
 #: libnemo-private/nemo-mime-application-chooser.c:297
 #, c-format
 msgid "%s document"
-msgstr ""
+msgstr "dogfen %s"
 
 #: libnemo-private/nemo-mime-application-chooser.c:284
 #, c-format
 msgid "Open all files of type \"%s\" with"
-msgstr ""
+msgstr "Agor pob ffeil o fath \"%s\" gyda"
 
 #: libnemo-private/nemo-mime-application-chooser.c:304
 #, c-format
 msgid "Select an application to open %s and other files of type \"%s\""
-msgstr ""
+msgstr "Dewiswchraglen i agor %s a ffeiliau eraill o fath \"%s\""
 
 #: libnemo-private/nemo-mime-application-chooser.c:366
 msgid "Show other applications"
-msgstr ""
+msgstr "Dangos rhaglenni eraill"
 
 #: libnemo-private/nemo-mime-application-chooser.c:395
 msgid "Set as default"
-msgstr ""
+msgstr "Gosod fel rhagosodiad"
 
 #: libnemo-private/nemo-program-choosing.c:311
 msgid "Sorry, but you cannot execute commands from a remote site."
-msgstr ""
+msgstr "Ymddiheuriadau ond nid oes modd gweithredu gorchmynion o wefan pell."
 
 #: libnemo-private/nemo-program-choosing.c:313
 msgid "This is disabled due to security considerations."
-msgstr ""
+msgstr "Mae hwn wedi ei analluogi oherwydd ystyriaethau diogelwch."
 
 #: libnemo-private/nemo-program-choosing.c:324
 #: libnemo-private/nemo-program-choosing.c:392
 msgid "There was an error launching the application."
-msgstr ""
+msgstr "Bu gwall wrth gychwyn y rhaglen."
 
 #: libnemo-private/nemo-program-choosing.c:349
 #: libnemo-private/nemo-program-choosing.c:360
 msgid "This drop target only supports local files."
-msgstr ""
+msgstr "Mae'r targed gollwng yma yn cynnal ffeiliau lleol yn unig."
 
 #: libnemo-private/nemo-program-choosing.c:350
 msgid ""
 "To open non-local files copy them to a local folder and then drop them again."
 msgstr ""
+"I agor ffeiliau pell, copïwch nhw at ffolder lleol a'u gollwng nhw eto."
 
 #: libnemo-private/nemo-program-choosing.c:361
 msgid ""
 "To open non-local files copy them to a local folder and then drop them "
 "again. The local files you dropped have already been opened."
 msgstr ""
+"I agor ffeiliau pell, copïwch nhw at ffolder lleol a cheisiwch eu gollwng "
+"nhw eto. Mae'r ffeiliau lleol a ollyngwyd wedi eu hagor eisoes."
 
 #: libnemo-private/nemo-program-choosing.c:390
 msgid "Details: "
-msgstr ""
+msgstr "Manylion: "
 
 #: libnemo-private/nemo-progress-info.c:192
 #: libnemo-private/nemo-progress-info.c:210
 msgid "Preparing"
-msgstr ""
+msgstr "Paratoi"
 
 #: libnemo-private/nemo-query.c:133
 #, c-format
 msgid "Search for \"%s\""
-msgstr ""
+msgstr "Chwilio am \"%s\""
 
 #: libnemo-private/nemo-undo-signal-handlers.c:174
 msgid "Undo Edit"
-msgstr ""
+msgstr "Dadwneud Golygu"
 
 #: libnemo-private/nemo-undo-signal-handlers.c:175
 msgid "Undo the edit"
-msgstr ""
+msgstr "Dadwneud y golygu"
 
 #: libnemo-private/nemo-undo-signal-handlers.c:176
 msgid "Redo Edit"
-msgstr ""
+msgstr "Ail-wneud Golygu"
 
 #: libnemo-private/nemo-undo-signal-handlers.c:177
 msgid "Redo the edit"
-msgstr ""
+msgstr "Ail-wneud y golygu"
 
 #: eel/eel-canvas.c:1255 eel/eel-canvas.c:1256
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: eel/eel-canvas.c:1262 eel/eel-canvas.c:1263
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #: eel/eel-editable-label.c:311
 msgid "Text"
-msgstr ""
+msgstr "Testun"
 
 #: eel/eel-editable-label.c:312
 msgid "The text of the label."
-msgstr ""
+msgstr "Testun y label."
 
 #: eel/eel-editable-label.c:318
 msgid "Justification"
-msgstr ""
+msgstr "Unioni"
 
 #: eel/eel-editable-label.c:319
 msgid ""
@@ -4764,332 +4952,340 @@ msgid ""
 "This does NOT affect the alignment of the label within its allocation. See "
 "GtkMisc::xalign for that."
 msgstr ""
+"Aluniad y llinellau yn nhestun y label yn gymharol i'w gilydd. NID yw hyn yn "
+"effeithio ar aliniad y label o fewn ei leoliad. Gweler GtkMisc::xalign ar "
+"gyfer hynny."
 
 #: eel/eel-editable-label.c:327
 msgid "Line wrap"
-msgstr ""
+msgstr "Amlapio llinellau"
 
 #: eel/eel-editable-label.c:328
 msgid "If set, wrap lines if the text becomes too wide."
-msgstr ""
+msgstr "Os wedi ei osod, amlapio llinell os yw'r testun yn rhy llydan."
 
 #: eel/eel-editable-label.c:335
 msgid "Cursor Position"
-msgstr ""
+msgstr "Safle'r Cyrchydd"
 
 #: eel/eel-editable-label.c:336
 msgid "The current position of the insertion cursor in chars."
-msgstr ""
+msgstr "Lleoliad cyfredol y cyrchwr mewnosod mewn nodau."
 
 #: eel/eel-editable-label.c:345
 msgid "Selection Bound"
-msgstr ""
+msgstr "Cyfwng y Dewis"
 
 #: eel/eel-editable-label.c:346
 msgid ""
 "The position of the opposite end of the selection from the cursor in chars."
-msgstr ""
+msgstr "Lleoliad ochr pell y dewis o'r cyrchwr mewn nodau."
 
 #: eel/eel-editable-label.c:3104
 msgid "Select All"
-msgstr ""
+msgstr "Dewis Popeth"
 
 #: eel/eel-editable-label.c:3115
 msgid "Input Methods"
-msgstr ""
+msgstr "Dulliau Mewnbwn"
 
 #: eel/eel-gtk-extensions.c:404
 msgid "Show more _details"
-msgstr ""
+msgstr "Dangos mwy o _fanylion"
 
 #: eel/eel-stock-dialogs.c:205
 msgid "You can stop this operation by clicking cancel."
-msgstr ""
+msgstr "Gallwch atal y weithred hon drwy glicio Diddymu."
 
 #: eel/eel-vfs-extensions.c:93
 msgid " (invalid Unicode)"
-msgstr ""
+msgstr " (Unicode annilys)"
 
 #: src/nemo-bookmarks-window.glade:7
 msgid "Edit Bookmarks"
-msgstr ""
+msgstr "Golygu Nodau Tudalen"
 
 #: src/nemo-bookmarks-window.glade:111
 msgid "<b>_Bookmarks</b>"
-msgstr ""
+msgstr "<b>_Nodau Tudalen</b>"
 
 #: src/nemo-bookmarks-window.glade:200
 msgid "<b>_Name</b>"
-msgstr ""
+msgstr "<b>_Enw</b>"
 
 #: src/nemo-bookmarks-window.glade:267
 msgid "<b>_Location</b>"
-msgstr ""
+msgstr "<b>_Lleoliad</b>"
 
 #: src/nemo-file-management-properties.glade:7
 msgid "File Management Preferences"
-msgstr ""
+msgstr "Dewisiadau Rheoli Ffeiliau"
 
 #: src/nemo-file-management-properties.glade:82
 msgid "<b>Default View</b>"
-msgstr ""
+msgstr "<b>Golwg Ragosodedig</b>"
 
 #: src/nemo-file-management-properties.glade:112
 msgid "View _new folders using:"
-msgstr ""
+msgstr "Gweld ffeiliau _newydd gan ddefnyddio:"
 
 #: src/nemo-file-management-properties.glade:157
 msgid "_Arrange items:"
-msgstr ""
+msgstr "_Trefnu eitemau:"
 
 #: src/nemo-file-management-properties.glade:194
 msgid "Sort _folders before files"
-msgstr ""
+msgstr "Trefnu _ffolderi cyn trefnu ffeiliau"
 
 #: src/nemo-file-management-properties.glade:210
 msgid "Show hidden and _backup files"
-msgstr ""
+msgstr "Dangos ffeiliau cudd a chopïau wrth _gefn"
 
 #: src/nemo-file-management-properties.glade:251
 msgid "<b>Icon View Defaults</b>"
-msgstr ""
+msgstr "<b>Rhagosodiadau Golg Eiconau</b>"
 
 #: src/nemo-file-management-properties.glade:281
 msgid "Default _zoom level:"
-msgstr ""
+msgstr "Lefel _chwyddo rhagosodedig:"
 
 #: src/nemo-file-management-properties.glade:318
 msgid "_Text beside icons"
-msgstr ""
+msgstr "_Testun wrth eiconau"
 
 #: src/nemo-file-management-properties.glade:334
 msgid "_Use compact layout"
-msgstr ""
+msgstr "_Defnyddio cynllun cryno"
 
 #: src/nemo-file-management-properties.glade:350
 msgid "Show tooltips for desktop items"
-msgstr ""
+msgstr "Dangos cynhorion ar gyfer eitemau bwrdd gwaith"
 
 #: src/nemo-file-management-properties.glade:391
 msgid "<b>Compact View Defaults</b>"
-msgstr ""
+msgstr "<b>Rhagosodiadau Golwg Cryno</b>"
 
 #: src/nemo-file-management-properties.glade:421
 msgid "_Default zoom level:"
-msgstr ""
+msgstr "_Rhagosodiad lefel chwyddo:"
 
 #: src/nemo-file-management-properties.glade:458
 msgid "A_ll columns have the same width"
-msgstr ""
+msgstr "_Yr un lled i bob colofn"
 
 #: src/nemo-file-management-properties.glade:499
 msgid "<b>List View Defaults</b>"
-msgstr ""
+msgstr "<b>Rhagosodiadau Golwg Rhestr</b>"
 
 #: src/nemo-file-management-properties.glade:529
 msgid "D_efault zoom level:"
-msgstr ""
+msgstr "Lefel chwyddo _rhagosodedig:"
 
 #: src/nemo-file-management-properties.glade:591
 msgid "<b>Tree View Defaults</b>"
-msgstr ""
+msgstr "<b>Rhagosodiadau Golwg Coeden</b>"
 
 #: src/nemo-file-management-properties.glade:613
 msgid "Show _only folders"
-msgstr ""
+msgstr "Dangos ffolderi'n _unig"
 
 #: src/nemo-file-management-properties.glade:649
 msgid "Views"
-msgstr ""
+msgstr "Golygon"
 
 #: src/nemo-file-management-properties.glade:673
 msgid "<b>Behavior</b>"
-msgstr ""
+msgstr "<b>Ymddygiad</b>"
 
 #: src/nemo-file-management-properties.glade:694
 msgid "_Single click to open items"
-msgstr ""
+msgstr "_Un clic i agor eitemau"
 
 #: src/nemo-file-management-properties.glade:710
 msgid "_Double click to open items"
-msgstr ""
+msgstr "_Clic dwbl i agor eitemau"
 
 #: src/nemo-file-management-properties.glade:728
 msgid "Open each _folder in its own window"
-msgstr ""
+msgstr "Agor pob _ffolder yn ei ffensetr ei hun"
 
 #: src/nemo-file-management-properties.glade:769
 msgid "<b>Executable Text Files</b>"
-msgstr ""
+msgstr "<b>Ffeiliau Testun Gweithredadwy</b>"
 
 #: src/nemo-file-management-properties.glade:791
 msgid "_Run executable text files when they are opened"
-msgstr ""
+msgstr "_Rhedeg ffeiliau testun gweithredadwy pan fyddant wedi eu hagor"
 
 #: src/nemo-file-management-properties.glade:807
 msgid "_View executable text files when they are opened"
-msgstr ""
+msgstr "_Gweld ffeiliau testun gweithredadwy pan fyddant wedi eu hagor"
 
 #: src/nemo-file-management-properties.glade:824
 msgid "_Ask each time"
-msgstr ""
+msgstr "_Gofyn bob tro"
 
 #: src/nemo-file-management-properties.glade:866
 msgid "<b>Trash</b>"
-msgstr ""
+msgstr "<b>Sbwriel</b>"
 
 #: src/nemo-file-management-properties.glade:888
 msgid "Ask before _emptying the Trash or deleting files"
-msgstr ""
+msgstr "Gofyn cyn g_wagio'r Sbwriel neu ddileu ffeiliau"
 
 #: src/nemo-file-management-properties.glade:904
 msgid "I_nclude a Delete command that bypasses Trash"
-msgstr ""
+msgstr "C_ynnwys gorchymyn dileu sy'n osgoi'r Sbwriel"
 
 #: src/nemo-file-management-properties.glade:920
 msgid "Bypass the Trash when the Delete key is pressed"
-msgstr ""
+msgstr "Osgoi'r Sbwriel pan fydd y fydell Delete yn cael ei phwyso"
 
 #: src/nemo-file-management-properties.glade:960
 msgid "<b>Media Handling</b>"
-msgstr ""
+msgstr "<b>Trin Cyfryngau</b>"
 
 #: src/nemo-file-management-properties.glade:982
 msgid "Automatically mount removeable media when inserted and on startup"
-msgstr ""
+msgstr "Arosod cyfrwng tynadwy yn awtomatig wrth ei fewnosod ac wrth gychwyn"
 
 #: src/nemo-file-management-properties.glade:998
 msgid "Automatically open a folder for automounted media"
-msgstr ""
+msgstr "Agor ffolder yn awtomatig ar gyfer cyfrwng sydd wedi ei awtoarosod"
 
 #: src/nemo-file-management-properties.glade:1014
 msgid "Prompt or autorun/autostart programs when media are inserted"
 msgstr ""
+"Annog neu awtoredeg/awtogychwyn rhaglenni pan fydd cyfrwng wedi ei fewnosod"
 
 #: src/nemo-file-management-properties.glade:1030
 msgid ""
 "Automatically close the device's tab, pane, or window when a device is "
 "unmounted or ejected"
 msgstr ""
+"Cau tab, paen neu ffenestr y ddyfais yn awtomatig wedi i ddyfais gael ei "
+"ddadarosod neu ei bwrw allan"
 
 #: src/nemo-file-management-properties.glade:1069
 msgid "Behavior"
-msgstr ""
+msgstr "Ymddygiad"
 
 #: src/nemo-file-management-properties.glade:1094
 msgid "<b>Icon Captions</b>"
-msgstr ""
+msgstr "<b>Cyfarwyddid Eiconau</b>"
 
 #: src/nemo-file-management-properties.glade:1119
 msgid ""
 "Choose the order of information to appear beneath icon names. More "
 "information will appear when zooming in closer."
 msgstr ""
+"Dewiswch ym mha drefn bydd gwybodaeth yn ymddangos o dan enwau eiconau. Bydd "
+"mwy o wybodaeth yn ymddangos wrth chwyddo mewn yn agosach."
 
 #: src/nemo-file-management-properties.glade:1258
 msgid "<b>Date</b>"
-msgstr ""
+msgstr "<b>Dyddiad</b>"
 
 #: src/nemo-file-management-properties.glade:1281
 msgid "_Format:"
-msgstr ""
+msgstr "_Fformat:"
 
 #: src/nemo-file-management-properties.glade:1330
 msgid "<b>File Size</b>"
-msgstr ""
+msgstr "<b>Maint Ffeil</b>"
 
 #: src/nemo-file-management-properties.glade:1353
 msgid "_Prefixes:"
-msgstr ""
+msgstr "_Rhagosodiadau:"
 
 #: src/nemo-file-management-properties.glade:1408
 msgid "<b>Window and Tab Titles</b>"
-msgstr ""
+msgstr "<b>Teitlau Ffenestr a Thab</b>"
 
 #: src/nemo-file-management-properties.glade:1430
 msgid "Show the full p_ath in the title bar and tab bars"
-msgstr ""
+msgstr "Dangos y _llwybr llawn yn y bar teitl a bar tabiau"
 
 #: src/nemo-file-management-properties.glade:1469
 msgid "Display"
-msgstr ""
+msgstr "Dangos"
 
 #: src/nemo-file-management-properties.glade:1494
 msgid "<b>List Columns</b>"
-msgstr ""
+msgstr "<b>Rhestri Colofnau</b>"
 
 #: src/nemo-file-management-properties.glade:1519
 msgid "Choose the order of information to appear in the list view."
-msgstr ""
+msgstr "Dewis ym mha drefn bydd gwybodaeth yn ymddangos yn yr olwg rhestr."
 
 #: src/nemo-file-management-properties.glade:1556
 msgid "List Columns"
-msgstr ""
+msgstr "Rhestri Colofnau"
 
 #: src/nemo-file-management-properties.glade:1581
 msgid "<b>Text Files</b>"
-msgstr ""
+msgstr "<b>Ffeiliau Testun</b>"
 
 #: src/nemo-file-management-properties.glade:1611
 msgid "Show te_xt in icons:"
-msgstr ""
+msgstr "Dangos te_stun mewn eiconau:"
 
 #: src/nemo-file-management-properties.glade:1673
 msgid "<b>Other Previewable Files</b>"
-msgstr ""
+msgstr "<b>Ffeiliau Rhagweladwy Eraill</b>"
 
 #: src/nemo-file-management-properties.glade:1703
 msgid "Show _thumbnails:"
-msgstr ""
+msgstr "Dangos _lluniau bach:"
 
 #: src/nemo-file-management-properties.glade:1748
 msgid "_Only for files smaller than:"
-msgstr ""
+msgstr "_Dim ond ar gyfer _ffeiliau llai na,:"
 
 #: src/nemo-file-management-properties.glade:1810
 msgid "<b>Folders</b>"
-msgstr ""
+msgstr "<b>Ffolderi</b>"
 
 #: src/nemo-file-management-properties.glade:1840
 msgid "Count _number of items:"
-msgstr ""
+msgstr "Cyfri'r _nifer o eitemau:"
 
 #: src/nemo-file-management-properties.glade:1900
 msgid "Preview"
-msgstr ""
+msgstr "Rhagolwg"
 
 #: src/nemo-file-management-properties.glade:1925
 msgid "<b>Options</b>"
-msgstr ""
+msgstr "<b>Dewisiadau</b>"
 
 #: src/nemo-file-management-properties.glade:1947
 msgid "Show up icon"
-msgstr ""
+msgstr "Dangos eicon i fyny"
 
 #: src/nemo-file-management-properties.glade:1963
 msgid "Show refresh icon"
-msgstr ""
+msgstr "Dangos eicon adnewyddu"
 
 #: src/nemo-file-management-properties.glade:1979
 msgid "Show toggle button location bar/bar path"
-msgstr ""
+msgstr "Dangos llwybr bar lleoliad botwm toglo"
 
 #: src/nemo-file-management-properties.glade:1995
 msgid "Show home icon"
-msgstr ""
+msgstr "Dangos eicon cartref"
 
 #: src/nemo-file-management-properties.glade:2011
 msgid "Show computer icon"
-msgstr ""
+msgstr "Dangos eicon cyfrifiadur"
 
 #: src/nemo-file-management-properties.glade:2027
 msgid "Show search icon"
-msgstr ""
+msgstr "Dangos eicon chwilio"
 
 #: src/nemo-file-management-properties.glade:2043
 msgid "Show label on search icon (need to restart nemo)"
-msgstr ""
+msgstr "Dangos label eicon chwilio (angen ailgychwyn Nemo)"
 
 #: src/nemo-file-management-properties.glade:2082
 msgid "Toolbar"
-msgstr ""
+msgstr "Bar Offer"
