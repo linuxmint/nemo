@@ -7,10 +7,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: nautilus 3.8.x\n"
+"Project-Id-Version: nautilus 3.9.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-16 14:38+0200\n"
-"PO-Revision-Date: 2013-05-16 14:39+0200\n"
+"POT-Creation-Date: 2013-06-03 12:12+0200\n"
+"PO-Revision-Date: 2013-06-03 12:13+0200\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian bokmål <i18n-nb@lister.ping.uio.no>\n"
 "Language: no\n"
