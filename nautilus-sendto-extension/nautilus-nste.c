@@ -56,6 +56,20 @@ sendto_callback (NautilusMenuItem *item,
 	g_string_free (cmd, TRUE);
 }
 
+static gboolean
+check_available_mailer ()
+{
+	GAppInfo *app_info;
+
+	app_info = g_app_info_get_default_for_uri_scheme ("mailto");
+	if (app_info) {
+		g_clear_object (&app_info);
+		return TRUE;
+	}
+	else
+		return FALSE;
+}
+
 static GList *
 nautilus_nste_get_file_items (NautilusMenuProvider *provider,
 			      GtkWidget            *window,
@@ -71,6 +85,9 @@ nautilus_nste_get_file_items (NautilusMenuProvider *provider,
 		return NULL;
 
 	if (files == NULL)
+		return NULL;
+  
+	if (!check_available_mailer ())
 		return NULL;
 
 	one_item = (files != NULL) && (files->next == NULL);
@@ -161,4 +178,3 @@ nautilus_nste_register_type (GTypeModule *module)
 				     NAUTILUS_TYPE_MENU_PROVIDER,
 				     &menu_provider_iface_info);
 }
-
