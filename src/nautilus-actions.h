@@ -56,6 +56,7 @@
 #define NAUTILUS_ACTION_HELP "NautilusHelp"
 
 #define NAUTILUS_ACTION_OPEN "Open"
+#define NAUTILUS_ACTION_OPEN_ITEM_LOCATION "OpenItemLocation"
 #define NAUTILUS_ACTION_OPEN_WITH "Open With"
 #define NAUTILUS_ACTION_OPEN_ALTERNATE "OpenAlternate"
 #define NAUTILUS_ACTION_OPEN_IN_NEW_TAB "OpenInNewTab"

@@ -1130,6 +1130,33 @@ action_open_close_parent_callback (GtkAction *action,
 	nautilus_file_list_free (selection);
 }
 
+static void
+action_open_item_location_callback (GtkAction *action,
+				    gpointer callback_data)
+{
+	NautilusView *view;
+	GList *selection;
+	NautilusFile *item;
+	GFile *activation_location;
+	NautilusFile *activation_file;
+	NautilusFile *location;
+
+	view = NAUTILUS_VIEW (callback_data);
+	selection = nautilus_view_get_selection (view);
+
+	item = NAUTILUS_FILE (selection->data);
+	activation_location = nautilus_file_get_activation_location (item);
+	activation_file = nautilus_file_get (activation_location);
+	location = nautilus_file_get_parent (activation_file);
+
+	nautilus_view_activate_file (view, location, 0);
+
+	nautilus_file_unref (location);
+	nautilus_file_unref (activation_file);
+	g_object_unref (activation_location);
+	nautilus_file_list_free (selection);
+}
+
 
 static void
 action_open_alternate_callback (GtkAction *action,
@@ -7126,6 +7153,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       "OpenAccel", "<alt>Down",
   /* tooltip */                  NULL,
 				 G_CALLBACK (action_open_callback) },
+  /* name, stock id */         { NAUTILUS_ACTION_OPEN_ITEM_LOCATION, NULL,
+  /* label, accelerator */       N_("Open _Item Location"), "<control><alt>o",
+  /* tooltip */                  N_("Open the selected item's location in this window"),
+				 G_CALLBACK (action_open_item_location_callback) },
   /* name, stock id */         { NAUTILUS_ACTION_OPEN_ALTERNATE, NULL,
   /* label, accelerator */       N_("Open in Navigation Window"), "<control><shift>o",
   /* tooltip */                  N_("Open each selected item in a navigation window"),
@@ -8390,6 +8421,7 @@ real_update_menus (NautilusView *view)
 	gboolean selection_contains_special_link;
 	gboolean selection_contains_desktop_or_home_dir;
 	gboolean selection_contains_recent;
+	gboolean selection_contains_search;
 	gboolean can_create_files;
 	gboolean can_delete_files;
 	gboolean can_move_files;
@@ -8416,6 +8448,8 @@ real_update_menus (NautilusView *view)
 	selection_contains_special_link = special_link_in_selection (view);
 	selection_contains_desktop_or_home_dir = desktop_or_home_dir_in_selection (view);
 	selection_contains_recent = showing_recent_directory (view);
+	selection_contains_search = view->details->model &&
+		NAUTILUS_IS_SEARCH_DIRECTORY (view->details->model);
 
 	can_create_files = nautilus_view_supports_creating_files (view);
 	can_delete_files =
@@ -8451,6 +8485,16 @@ real_update_menus (NautilusView *view)
 					      NAUTILUS_ACTION_SET_AS_WALLPAPER);
 	/* rename sensitivity depending on selection */
 	if (can_set_wallpaper (selection)) {
+		gtk_action_set_visible (action, TRUE);
+	} else {
+		gtk_action_set_visible (action, FALSE);
+	}
+
+	action = gtk_action_group_get_action (view->details->dir_action_group,
+					      NAUTILUS_ACTION_OPEN_ITEM_LOCATION);
+	if (selection_count == 1 &&
+	    (selection_contains_recent || selection_contains_search))
+	{
 		gtk_action_set_visible (action, TRUE);
 	} else {
 		gtk_action_set_visible (action, FALSE);
@@ -8689,8 +8733,7 @@ real_update_menus (NautilusView *view)
 	show_save_search = FALSE;
 	save_search_sensitive = FALSE;
 	show_save_search_as = FALSE;
-	if (view->details->model &&
-	    NAUTILUS_IS_SEARCH_DIRECTORY (view->details->model)) {
+	if (selection_contains_search) {
 		NautilusSearchDirectory *search;
 
 		search = NAUTILUS_SEARCH_DIRECTORY (view->details->model);
