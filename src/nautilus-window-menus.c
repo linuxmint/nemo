@@ -35,6 +35,7 @@
 #include "nautilus-connect-server-dialog.h"
 #include "nautilus-file-management-properties.h"
 #include "nautilus-list-view.h"
+#include "nautilus-location-entry.h"
 #include "nautilus-notebook.h"
 #include "nautilus-window-private.h"
 #include "nautilus-desktop-window.h"
@@ -424,14 +425,26 @@ action_show_hide_search_callback (GtkAction *action,
 }
 
 static void
-action_prompt_for_location_callback (GtkAction *action,
-				     NautilusWindow *window)
+action_prompt_for_location_slash_callback (GtkAction *action,
+					   NautilusWindow *window)
 {
 	GFile *location;
 
 	location = g_file_new_for_path ("/");
 	nautilus_window_prompt_for_location (window, location);
 	g_object_unref (location);
+}
+
+static void
+action_prompt_for_location_tilde_callback (GtkAction *action,
+					   NautilusWindow *window)
+{
+	GtkWidget *entry;
+
+	entry = nautilus_window_ensure_location_entry (window);
+	nautilus_location_entry_set_special_text (NAUTILUS_LOCATION_ENTRY (entry),
+	                                          "~");
+	gtk_editable_set_position (GTK_EDITABLE (entry), -1);
 }
 
 static void
@@ -573,10 +586,14 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("P_roperties"), NULL,
   /* tooltip */                  N_("View or modify the properties of this folder"),
 				 G_CALLBACK (action_location_properties_callback) },
-  /* name, stock id */         { "PromptLocationAccel", NULL,
-  /* label, accelerator */       "PromptLocationAccel", "slash",
+  /* name, stock id */         { "PromptLocationSlashAccel", NULL,
+  /* label, accelerator */       "PromptLocationSlashAccel", "slash",
   /* tooltip */                  NULL,
-				 G_CALLBACK (action_prompt_for_location_callback) },
+				 G_CALLBACK (action_prompt_for_location_slash_callback) },
+  /* name, stock id */         { "PromptLocationTildeAccel", NULL,
+  /* label, accelerator */       "PromptLocationTildeAccel", "asciitilde",
+  /* tooltip */                  NULL,
+				 G_CALLBACK (action_prompt_for_location_tilde_callback) },
 };
 
 static const GtkToggleActionEntry main_toggle_entries[] = {

@@ -13,7 +13,8 @@
 <accelerator action="ZoomInAccel"/>
 <accelerator action="ZoomInAccel2"/>
 <accelerator action="ZoomOutAccel"/>
-<accelerator action="PromptLocationAccel"/>
+<accelerator action="PromptLocationSlashAccel"/>
+<accelerator action="PromptLocationTildeAccel"/>
 <accelerator action="ReloadAccel"/>
 <popup name="ViewMenu" accelerators="true">
   <placeholder name="Zoom Items Placeholder">
