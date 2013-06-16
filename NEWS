@@ -1,3 +1,10 @@
+Major changes in 3.8.2:
+* Don't grab focus to search entry needlessly (Rui Matos)
+* Increase default size to fit 4 columns of icons (Michael Catanzaro)
+* Remove no-longer-existing keys from GConf conversion
+* Change 'x-nautilus-search:' To 'Search' in tooltips (Ting-Wei Lan)
+* Translation updates
+
 Major changes in 3.8.1 are:
 * Use a consistent name for applications in the Open With context menu
 * Don't follow symbolic links when searching recursively
