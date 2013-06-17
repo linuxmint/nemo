@@ -2334,7 +2334,7 @@ get_rubber_color (NautilusCanvasContainer *container,
                   GdkRGBA *bordercolor)
 {
 	Atom         real_type;
-	gint         result;
+	gint         result = -1;
 	gint         real_format;
 	gulong       items_read = 0;
 	gulong       items_left = 0;
