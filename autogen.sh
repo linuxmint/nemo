@@ -15,7 +15,7 @@ PKG_NAME="nautilus"
 }
 
 which gnome-autogen.sh || {
-    echo "You need to install gnome-common from the GNOME CVS"
+    echo "gnome-autogen.sh not found, you need to install gnome-common"
     exit 1
 }
 REQUIRED_AUTOMAKE_VERSION=1.9 . gnome-autogen.sh
