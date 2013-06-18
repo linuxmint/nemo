@@ -1,6 +1,6 @@
 include $(top_srcdir)/Makefile.shared
 
-INCLUDES=\
+AM_CPPFLAGS=\
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
 	$(BASE_CFLAGS) \
