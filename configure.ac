@@ -295,7 +295,9 @@ AC_CHECK_HEADERS([X11/XF86keysym.h])
 ##################################################
 # Check for introspection
 ##################################################
-GOBJECT_INTROSPECTION_CHECK([0.6.4])
+m4_ifdef([GOBJECT_INTROSPECTION_CHECK],
+	[GOBJECT_INTROSPECTION_CHECK([0.6.4])],
+	[AM_CONDITIONAL(HAVE_INTROSPECTION, false)])
 
 dnl ==========================================================================
 
