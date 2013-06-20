@@ -2418,6 +2418,8 @@ nautilus_window_slot_dispose (GObject *object)
 	nautilus_window_slot_clear_forward_list (slot);
 	nautilus_window_slot_clear_back_list (slot);
 
+	nautilus_window_slot_remove_extra_location_widgets (slot);
+
 	if (slot->details->content_view) {
 		nautilus_window_disconnect_content_view (nautilus_window_slot_get_window (slot),
 							 slot->details->content_view);
