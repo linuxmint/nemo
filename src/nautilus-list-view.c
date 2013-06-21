@@ -1802,17 +1802,27 @@ nautilus_list_view_add_file (NautilusView *view, NautilusFile *file, NautilusDir
 }
 
 static char **
+get_default_visible_columns (NautilusListView *list_view)
+{
+	NautilusFile *file;
+
+	file = nautilus_view_get_directory_as_file (NAUTILUS_VIEW (list_view));
+
+	return nautilus_file_is_in_trash (file) ?
+		g_strdupv ((gchar **) default_trash_visible_columns) :
+		g_settings_get_strv (nautilus_list_view_preferences,
+				     NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS);
+}
+
+static char **
 get_visible_columns (NautilusListView *list_view)
 {
 	NautilusFile *file;
 	GList *visible_columns;
-	char **ret;
-
-	ret = NULL;
 
 	file = nautilus_view_get_directory_as_file (NAUTILUS_VIEW (list_view));
 
-	visible_columns = nautilus_file_get_metadata_list 
+	visible_columns = nautilus_file_get_metadata_list
 		(file,
 		 NAUTILUS_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS);
 
@@ -1826,18 +1836,25 @@ get_visible_columns (NautilusListView *list_view)
 		}
 		g_ptr_array_add (res, NULL);
 
-		ret = (char **) g_ptr_array_free (res, FALSE);
 		g_list_free (visible_columns);
+
+		return (char **) g_ptr_array_free (res, FALSE);
 	}
 
-	if (ret != NULL) {
-		return ret;
-	}
+	return get_default_visible_columns (list_view);
+}
+
+static char **
+get_default_column_order (NautilusListView *list_view)
+{
+	NautilusFile *file;
+
+	file = nautilus_view_get_directory_as_file (NAUTILUS_VIEW (list_view));
 
 	return nautilus_file_is_in_trash (file) ?
-		g_strdupv ((gchar **) default_trash_visible_columns) :
+		g_strdupv ((gchar **) default_trash_columns_order) :
 		g_settings_get_strv (nautilus_list_view_preferences,
-				     NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS);
+				     NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER);
 }
 
 static char **
@@ -1845,13 +1862,10 @@ get_column_order (NautilusListView *list_view)
 {
 	NautilusFile *file;
 	GList *column_order;
-	char **ret;
-
-	ret = NULL;
 
 	file = nautilus_view_get_directory_as_file (NAUTILUS_VIEW (list_view));
 
-	column_order = nautilus_file_get_metadata_list 
+	column_order = nautilus_file_get_metadata_list
 		(file,
 		 NAUTILUS_METADATA_KEY_LIST_VIEW_COLUMN_ORDER);
 
@@ -1865,18 +1879,12 @@ get_column_order (NautilusListView *list_view)
 		}
 		g_ptr_array_add (res, NULL);
 
-		ret = (char **) g_ptr_array_free (res, FALSE);
 		g_list_free (column_order);
+
+		return (char **) g_ptr_array_free (res, FALSE);
 	}
 
-	if (ret != NULL) {
-		return ret;
-	}
-
-	return nautilus_file_is_in_trash (file) ?
-		g_strdupv ((gchar **) default_trash_columns_order) :
-		g_settings_get_strv (nautilus_list_view_preferences,
-				     NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER);
+	return get_default_column_order (list_view);
 }
 
 static void
@@ -2542,15 +2550,8 @@ column_chooser_use_default_callback (NautilusColumnChooser *chooser,
 	/* set view values ourselves, as new metadata could not have been
 	 * updated yet.
 	 */
-	default_columns = nautilus_file_is_in_trash (file) ?
-		g_strdupv ((gchar **) default_trash_visible_columns) :
-		g_settings_get_strv (nautilus_list_view_preferences,
-				     NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS);
-
-	default_order = nautilus_file_is_in_trash (file) ?
-		g_strdupv ((gchar **) default_trash_columns_order) :
-		g_settings_get_strv (nautilus_list_view_preferences,
-				     NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER);
+	default_columns = get_default_visible_columns (view);
+	default_order = get_default_column_order (view);
 
 	apply_columns_settings (view, default_order, default_columns);
 	column_chooser_set_from_arrays (chooser, view,
@@ -2724,6 +2725,8 @@ nautilus_list_view_reset_to_defaults (NautilusView *view)
 	NautilusFile *file;
 	const gchar *default_sort_order;
 	gboolean default_sort_reversed;
+	char **default_columns;
+	char **default_order;
 
 	file = nautilus_view_get_directory_as_file (view);
 
@@ -2741,7 +2744,14 @@ nautilus_list_view_reset_to_defaults (NautilusView *view)
 		 default_sort_reversed ? GTK_SORT_DESCENDING : GTK_SORT_ASCENDING);
 
 	nautilus_list_view_set_zoom_level (NAUTILUS_LIST_VIEW (view), get_default_zoom_level (), FALSE);
-	set_columns_settings_from_metadata_and_preferences (NAUTILUS_LIST_VIEW (view));
+
+	default_columns = get_default_visible_columns (NAUTILUS_LIST_VIEW (view));
+	default_order = get_default_column_order (NAUTILUS_LIST_VIEW (view));
+
+	apply_columns_settings (NAUTILUS_LIST_VIEW (view), default_order, default_columns);
+
+	g_strfreev (default_columns);
+	g_strfreev (default_order);
 }
 
 static void
