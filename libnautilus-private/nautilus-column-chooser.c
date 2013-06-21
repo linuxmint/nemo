@@ -182,26 +182,41 @@ list_changed (NautilusColumnChooser *chooser)
 }
 
 static void
-visible_toggled_callback (GtkCellRendererToggle *cell, 
-			  char *path_string,
-			  gpointer user_data)
+toggle_path (NautilusColumnChooser *chooser,
+             GtkTreePath *path)
 {
-	NautilusColumnChooser *chooser;
-	GtkTreePath *path;
 	GtkTreeIter iter;
 	gboolean visible;
 	
-	chooser = NAUTILUS_COLUMN_CHOOSER (user_data);
-
-	path = gtk_tree_path_new_from_string (path_string);
-	gtk_tree_model_get_iter (GTK_TREE_MODEL (chooser->details->store), 
+	gtk_tree_model_get_iter (GTK_TREE_MODEL (chooser->details->store),
 				 &iter, path);
 	gtk_tree_model_get (GTK_TREE_MODEL (chooser->details->store),
 			    &iter, COLUMN_VISIBLE, &visible, -1);
 	gtk_list_store_set (chooser->details->store,
 			    &iter, COLUMN_VISIBLE, !visible, -1);
-	gtk_tree_path_free (path);
 	list_changed (chooser);
+}
+
+
+static void
+visible_toggled_callback (GtkCellRendererToggle *cell,
+			  char *path_string,
+			  gpointer user_data)
+{
+	GtkTreePath *path;
+	
+	path = gtk_tree_path_new_from_string (path_string);
+	toggle_path (NAUTILUS_COLUMN_CHOOSER (user_data), path);
+	gtk_tree_path_free (path);
+}
+
+static void
+view_row_activated_callback (GtkTreeView *tree_view,
+                             GtkTreePath *path,
+                             GtkTreeViewColumn *column,
+                             gpointer user_data)
+{
+	toggle_path (NAUTILUS_COLUMN_CHOOSER (user_data), path);
 }
 
 static void
@@ -241,7 +256,10 @@ add_tree_view (NautilusColumnChooser *chooser)
 	g_object_unref (store);
 
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (view), TRUE);
-	
+
+	g_signal_connect (view, "row-activated",
+	                  G_CALLBACK (view_row_activated_callback), chooser);
+
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
 	g_signal_connect (selection, "changed", 
 			  G_CALLBACK (selection_changed_callback), chooser);
