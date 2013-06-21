@@ -311,7 +311,22 @@ vfs_file_get_date (NautilusFile *file,
 static char *
 vfs_file_get_where_string (NautilusFile *file)
 {
-	return nautilus_file_get_parent_uri_for_display (file);
+	GFile *activation_location;
+	NautilusFile *location;
+	char *where_string;
+
+	if (!nautilus_file_is_in_recent (file)) {
+		location = nautilus_file_ref (file);
+	} else {
+		activation_location = nautilus_file_get_activation_location (file);
+		location = nautilus_file_get (activation_location);
+		g_object_unref (activation_location);
+	}
+
+	where_string = nautilus_file_get_parent_uri_for_display (location);
+
+	nautilus_file_unref (location);
+	return where_string;
 }
 
 static void
