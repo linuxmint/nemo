@@ -143,6 +143,14 @@ static void   nautilus_list_view_rename_callback                 (NautilusFile  
 
 G_DEFINE_TYPE (NautilusListView, nautilus_list_view, NAUTILUS_TYPE_VIEW);
 
+static const char * default_search_visible_columns[] = {
+	"name", "size", "type", "where", NULL
+};
+
+static const char * default_search_columns_order[] = {
+	"name", "size", "type", "where", NULL
+};
+
 static const char * default_trash_visible_columns[] = {
 	"name", "size", "type", "trashed_on", "trash_orig_path", NULL
 };
@@ -1805,13 +1813,21 @@ static char **
 get_default_visible_columns (NautilusListView *list_view)
 {
 	NautilusFile *file;
+	NautilusDirectory *directory;
 
 	file = nautilus_view_get_directory_as_file (NAUTILUS_VIEW (list_view));
 
-	return nautilus_file_is_in_trash (file) ?
-		g_strdupv ((gchar **) default_trash_visible_columns) :
-		g_settings_get_strv (nautilus_list_view_preferences,
-				     NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS);
+	if (nautilus_file_is_in_trash (file)) {
+		return g_strdupv ((gchar **) default_trash_visible_columns);
+	}
+
+	directory = nautilus_view_get_model (NAUTILUS_VIEW (list_view));
+	if (NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
+		return g_strdupv ((gchar **) default_search_visible_columns);
+	}
+
+	return g_settings_get_strv (nautilus_list_view_preferences,
+	                            NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS);
 }
 
 static char **
@@ -1848,13 +1864,21 @@ static char **
 get_default_column_order (NautilusListView *list_view)
 {
 	NautilusFile *file;
+	NautilusDirectory *directory;
 
 	file = nautilus_view_get_directory_as_file (NAUTILUS_VIEW (list_view));
 
-	return nautilus_file_is_in_trash (file) ?
-		g_strdupv ((gchar **) default_trash_columns_order) :
-		g_settings_get_strv (nautilus_list_view_preferences,
-				     NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER);
+	if (nautilus_file_is_in_trash (file)) {
+		return g_strdupv ((gchar **) default_trash_columns_order);
+	}
+
+	directory = nautilus_view_get_model (NAUTILUS_VIEW (list_view));
+	if (NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
+		return g_strdupv ((gchar **) default_search_columns_order);
+	}
+
+	return g_settings_get_strv (nautilus_list_view_preferences,
+	                            NAUTILUS_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER);
 }
 
 static char **
