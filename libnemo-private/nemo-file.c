@@ -99,6 +99,8 @@
 
 #define METADATA_ID_IS_LIST_MASK (1<<31)
 
+#define MAX_THUMBNAIL_TRIES 5
+
 typedef enum {
 	SHOW_HIDDEN = 1 << 0,
 } FilterOptions;
@@ -438,6 +440,7 @@ nemo_file_clear_info (NemoFile *file)
 	g_free (file->details->thumbnail_path);
 	file->details->thumbnail_path = NULL;
 	file->details->thumbnailing_failed = FALSE;
+    file->details->thumbnail_try_count = 0;
 	
 	file->details->is_launcher = FALSE;
 	file->details->is_foreign_link = FALSE;
@@ -4287,7 +4290,8 @@ nemo_file_get_icon (NemoFile *file,
 		} else if (file->details->thumbnail_path == NULL &&
 			   file->details->can_read &&				
 			   !file->details->is_thumbnailing &&
-			   !file->details->thumbnailing_failed) {
+			   !file->details->thumbnailing_failed &&
+               file->details->thumbnail_try_count <= MAX_THUMBNAIL_TRIES) {
 			if (nemo_can_thumbnail (file)) {
 				nemo_create_thumbnail (file);
 			}
@@ -7433,6 +7437,13 @@ nemo_file_set_is_thumbnailing (NemoFile *file,
 	file->details->is_thumbnailing = is_thumbnailing;
 }
 
+void
+nemo_file_increment_thumbnail_try_count (NemoFile *file)
+{
+    g_return_if_fail (NEMO_IS_FILE (file));
+
+    file->details->thumbnail_try_count++;
+}
 
 /**
  * nemo_file_invalidate_attributes
@@ -7479,7 +7490,7 @@ void
 nemo_file_invalidate_all_attributes (NemoFile *file)
 {
 	NemoFileAttributes all_attributes;
-
+    file->details->thumbnail_try_count = 0;
 	all_attributes = nemo_file_get_all_attributes ();
 	nemo_file_invalidate_attributes (file, all_attributes);
 }
