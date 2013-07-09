@@ -99,7 +99,7 @@
 
 #define METADATA_ID_IS_LIST_MASK (1<<31)
 
-#define MAX_THUMBNAIL_TRIES 5
+#define MAX_THUMBNAIL_TRIES 1
 
 typedef enum {
 	SHOW_HIDDEN = 1 << 0,
@@ -2146,6 +2146,8 @@ update_info_internal (NemoFile *file,
 	}
 
 	file->details->file_info_is_up_to_date = TRUE;
+
+    file->details->thumbnail_try_count = 0;
 
 	/* FIXME bugzilla.gnome.org 42044: Need to let links that
 	 * point to the old name know that the file has been renamed.
