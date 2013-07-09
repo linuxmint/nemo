@@ -152,6 +152,8 @@ void                    nemo_file_invalidate_attributes             (NemoFile   
 									 NemoFileAttributes          attributes);
 void                    nemo_file_invalidate_all_attributes         (NemoFile                   *file);
 
+void                    nemo_file_increment_thumbnail_try_count     (NemoFile                   *file);
+
 /* Basic attributes for file objects. */
 gboolean                nemo_file_contains_text                     (NemoFile                   *file);
 char *                  nemo_file_get_display_name                  (NemoFile                   *file);
