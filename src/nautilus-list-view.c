@@ -1568,6 +1568,49 @@ filename_cell_data_func (GtkTreeViewColumn *column,
 }
 
 static void
+where_cell_data_func (GtkTreeViewColumn *column,
+                      GtkCellRenderer   *renderer,
+                      GtkTreeModel      *model,
+                      GtkTreeIter       *iter,
+                      NautilusListView  *view)
+{
+	NautilusDirectory *directory;
+	NautilusQuery *query;
+	NautilusFile *file;
+	GFile *location, *file_location;
+	char *location_uri, *relative, *relative_utf8;
+
+	directory = nautilus_view_get_model (NAUTILUS_VIEW (view));
+	if (!NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
+		return;
+	}
+
+	query = nautilus_search_directory_get_query (NAUTILUS_SEARCH_DIRECTORY (directory));
+	location_uri = nautilus_query_get_location (query);
+	location = g_file_new_for_uri (location_uri);
+
+	gtk_tree_model_get (model, iter,
+	                    NAUTILUS_LIST_MODEL_FILE_COLUMN, &file,
+	                    -1);
+	file_location = nautilus_file_get_location (file);
+
+	relative = g_file_get_relative_path (location, file_location);
+	relative_utf8 = g_filename_display_name (relative);
+
+	g_object_set (G_OBJECT (renderer),
+	              "text", relative_utf8,
+	              NULL);
+
+	g_free (relative_utf8);
+	g_free (relative);
+	g_object_unref (file_location);
+	nautilus_file_unref (file);
+	g_object_unref (location);
+	g_free (location_uri);
+	g_object_unref (query);
+}
+
+static void
 set_up_pixbuf_size (NautilusListView *view)
 {
 	int icon_size;
@@ -1772,6 +1815,12 @@ create_and_set_up_tree_view (NautilusListView *view)
 			gtk_tree_view_column_set_resizable (column, TRUE);
 			gtk_tree_view_column_set_visible (column, TRUE);
 			gtk_tree_view_column_set_sort_order (column, sort_order);
+
+			if (!strcmp (name, "where")) {
+				gtk_tree_view_column_set_cell_data_func (column, cell,
+				                                         (GtkTreeCellDataFunc) where_cell_data_func,
+				                                         view, NULL);
+			}
 		}
 		g_free (name);
 		g_free (label);
