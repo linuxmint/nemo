@@ -25,8 +25,8 @@ msgstr ""
 "Project-Id-Version: nautilus.master.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-06-16 01:10+0000\n"
-"PO-Revision-Date: 2013-06-17 17:26+0200\n"
+"POT-Creation-Date: 2013-07-12 01:06+0000\n"
+"PO-Revision-Date: 2013-07-12 14:52+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -134,10 +134,6 @@ msgstr ""
 msgid "Select All"
 msgstr "Seleccionar todo"
 
-#: ../eel/eel-editable-label.c:3099
-msgid "Input Methods"
-msgstr "Métodos de entrada"
-
 #: ../eel/eel-gtk-extensions.c:327
 msgid "Show more _details"
 msgstr "Mostrar más _detalles"
@@ -198,16 +194,16 @@ msgstr "Seleccionar t_odo"
 msgid "Select all the text in a text field"
 msgstr "Selecciona todo el texto en un campo de texto"
 
-#: ../libnautilus-private/nautilus-column-chooser.c:372
+#: ../libnautilus-private/nautilus-column-chooser.c:390
 msgid "Move _Up"
 msgstr "_Subir"
 
-#: ../libnautilus-private/nautilus-column-chooser.c:382
+#: ../libnautilus-private/nautilus-column-chooser.c:400
 msgid "Move Dow_n"
 msgstr "_Bajar"
 
 # src/nautilus-sidebar.c:424
-#: ../libnautilus-private/nautilus-column-chooser.c:395
+#: ../libnautilus-private/nautilus-column-chooser.c:413
 msgid "Use De_fault"
 msgstr "Usar _predeterminado"
 
@@ -217,12 +213,12 @@ msgstr "Usar _predeterminado"
 # src/file-manager/fm-list-view.c:1581
 # src/file-manager/fm-search-list-view.c:140
 # src/nautilus-bookmarks-window.c:172
-#: ../libnautilus-private/nautilus-column-utilities.c:56
-#: ../src/nautilus-list-view.c:1707
+#: ../libnautilus-private/nautilus-column-utilities.c:57
+#: ../src/nautilus-list-view.c:1758
 msgid "Name"
 msgstr "Nombre"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:57
+#: ../libnautilus-private/nautilus-column-utilities.c:58
 msgid "The name and icon of the file."
 msgstr "El nombre e icono del archivo."
 
@@ -230,11 +226,11 @@ msgstr "El nombre e icono del archivo."
 # libnautilus-private/nautilus-search-bar-criterion.c:46
 # src/file-manager/fm-list-view.c:1587
 # src/file-manager/fm-search-list-view.c:146
-#: ../libnautilus-private/nautilus-column-utilities.c:63
+#: ../libnautilus-private/nautilus-column-utilities.c:64
 msgid "Size"
 msgstr "Tamaño"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:64
+#: ../libnautilus-private/nautilus-column-utilities.c:65
 msgid "The size of the file."
 msgstr "El tamaño del archivo."
 
@@ -242,97 +238,106 @@ msgstr "El tamaño del archivo."
 # libnautilus-private/nautilus-search-bar-criterion.c:44
 # src/file-manager/fm-list-view.c:1593
 # src/file-manager/fm-search-list-view.c:152
-#: ../libnautilus-private/nautilus-column-utilities.c:71
+#: ../libnautilus-private/nautilus-column-utilities.c:72
 msgid "Type"
 msgstr "Tipo"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:72
+#: ../libnautilus-private/nautilus-column-utilities.c:73
 msgid "The type of the file."
 msgstr "El tipo de archivo."
 
 # src/file-manager/fm-properties-window.c:1103
-#: ../libnautilus-private/nautilus-column-utilities.c:78
+#: ../libnautilus-private/nautilus-column-utilities.c:79
 msgid "Modified"
 msgstr "Modificado"
 
 # src/nautilus-window-manage-views.c:1287
-#: ../libnautilus-private/nautilus-column-utilities.c:79
+#: ../libnautilus-private/nautilus-column-utilities.c:80
 msgid "The date the file was modified."
 msgstr "La fecha en que el archivo fue modificado."
 
-# src/file-manager/fm-properties-window.c:1554
+# src/file-manager/fm-properties-window.c:1105
 #: ../libnautilus-private/nautilus-column-utilities.c:87
+msgid "Accessed"
+msgstr "Accedido"
+
+#: ../libnautilus-private/nautilus-column-utilities.c:88
+msgid "The date the file was accessed."
+msgstr "La fecha en que el archivo fue accedido."
+
+# src/file-manager/fm-properties-window.c:1554
+#: ../libnautilus-private/nautilus-column-utilities.c:96
 msgid "Owner"
 msgstr "Propietario"
 
 # src/file-manager/fm-properties-window.c:1641
-#: ../libnautilus-private/nautilus-column-utilities.c:88
+#: ../libnautilus-private/nautilus-column-utilities.c:97
 msgid "The owner of the file."
 msgstr "El propietario del archivo."
 
 # src/file-manager/fm-properties-window.c:1557
-#: ../libnautilus-private/nautilus-column-utilities.c:95
+#: ../libnautilus-private/nautilus-column-utilities.c:104
 msgid "Group"
 msgstr "Grupo"
 
 # src/file-manager/fm-properties-window.c:1641
-#: ../libnautilus-private/nautilus-column-utilities.c:96
+#: ../libnautilus-private/nautilus-column-utilities.c:105
 msgid "The group of the file."
 msgstr "El grupo del archivo."
 
 # src/file-manager/fm-properties-window.c:1493
-#: ../libnautilus-private/nautilus-column-utilities.c:103
+#: ../libnautilus-private/nautilus-column-utilities.c:112
 #: ../src/nautilus-properties-window.c:4536
 msgid "Permissions"
 msgstr "Permisos"
 
 # src/file-manager/fm-properties-window.c:1641
-#: ../libnautilus-private/nautilus-column-utilities.c:104
+#: ../libnautilus-private/nautilus-column-utilities.c:113
 msgid "The permissions of the file."
 msgstr "Los permisos del archivo."
 
 # src/file-manager/fm-icon-text-window.c:84
-#: ../libnautilus-private/nautilus-column-utilities.c:111
+#: ../libnautilus-private/nautilus-column-utilities.c:120
 msgid "MIME Type"
 msgstr "Tipo MIME"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:112
+#: ../libnautilus-private/nautilus-column-utilities.c:121
 msgid "The mime type of the file."
 msgstr "El tipo MIME del archivo."
 
 # src/nautilus-location-bar.c:401
-#: ../libnautilus-private/nautilus-column-utilities.c:119
+#: ../libnautilus-private/nautilus-column-utilities.c:128
 #: ../src/nautilus-image-properties-page.c:415
 msgid "Location"
 msgstr "Lugar"
 
 # src/file-manager/fm-properties-window.c:1641
-#: ../libnautilus-private/nautilus-column-utilities.c:120
+#: ../libnautilus-private/nautilus-column-utilities.c:129
 msgid "The location of the file."
 msgstr "La ubicación del archivo."
 
-#: ../libnautilus-private/nautilus-column-utilities.c:161
+#: ../libnautilus-private/nautilus-column-utilities.c:170
 msgid "Trashed On"
 msgstr "Movido a la papelera en"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:162
+#: ../libnautilus-private/nautilus-column-utilities.c:171
 msgid "Date when file was moved to the Trash"
 msgstr "La fecha en la que el archivo se movió a la papelera"
 
 # libnautilus-private/nautilus-global-preferences.c:693
-#: ../libnautilus-private/nautilus-column-utilities.c:168
+#: ../libnautilus-private/nautilus-column-utilities.c:177
 msgid "Original Location"
 msgstr "Lugar original"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:169
+#: ../libnautilus-private/nautilus-column-utilities.c:178
 msgid "Original location of file before moved to the Trash"
 msgstr "Lugar original del archivo antes de moverlo a la papelera"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:186
+#: ../libnautilus-private/nautilus-column-utilities.c:195
 msgid "Relevance"
 msgstr "Relevancia"
 
-#: ../libnautilus-private/nautilus-column-utilities.c:187
+#: ../libnautilus-private/nautilus-column-utilities.c:196
 msgid "Relevance rank for search"
 msgstr "Relevancia del rango de búsqueda"
 
@@ -395,7 +400,7 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: ../libnautilus-private/nautilus-file.c:1209
-#: ../libnautilus-private/nautilus-vfs-file.c:356
+#: ../libnautilus-private/nautilus-vfs-file.c:371
 msgid "This file cannot be mounted"
 msgstr "Este archivo no se puede montar"
 
@@ -408,7 +413,7 @@ msgid "This file cannot be ejected"
 msgstr "Este archivo no se puede expulsar"
 
 #: ../libnautilus-private/nautilus-file.c:1321
-#: ../libnautilus-private/nautilus-vfs-file.c:534
+#: ../libnautilus-private/nautilus-vfs-file.c:549
 msgid "This file cannot be started"
 msgstr "Este archivo no se puede iniciar"
 
@@ -2751,7 +2756,7 @@ msgstr ""
 
 #: ../src/nautilus-application.c:911
 #: ../src/nautilus-file-management-properties.c:197
-#: ../src/nautilus-window-menus.c:253
+#: ../src/nautilus-window-menus.c:254
 #, c-format
 msgid ""
 "There was an error displaying help: \n"
@@ -2857,20 +2862,20 @@ msgstr "No se pudo registrar la aplicación"
 
 # src/file-manager/fm-directory-view.c:2126
 #. name, stock id, label
-#: ../src/nautilus-app-menu.ui.h:1 ../src/nautilus-window-menus.c:536
+#: ../src/nautilus-app-menu.ui.h:1 ../src/nautilus-window-menus.c:549
 msgid "New _Window"
 msgstr "_Ventana nueva"
 
 # libnautilus-private/nautilus-global-preferences.c:592
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-app-menu.ui.h:2 ../src/nautilus-window-menus.c:529
+#: ../src/nautilus-app-menu.ui.h:2 ../src/nautilus-window-menus.c:542
 msgid "Connect to _Server…"
 msgstr "Conectar al _servidor…"
 
 # src/nautilus-location-bar.c:401
 #. name, stock id, label
-#: ../src/nautilus-app-menu.ui.h:3 ../src/nautilus-window-menus.c:551
+#: ../src/nautilus-app-menu.ui.h:3 ../src/nautilus-window-menus.c:564
 msgid "Enter _Location…"
 msgstr "Introducir _lugar…"
 
@@ -2881,7 +2886,7 @@ msgstr "_Marcadores"
 
 # #-#-#-#-#  nautilus-es.po (Nautilus)  #-#-#-#-#
 # src/nautilus-first-time-druid.c:272
-#: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-window-menus.c:462
+#: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-window-menus.c:475
 msgid "Prefere_nces"
 msgstr "Prefere_ncias"
 
@@ -2892,7 +2897,7 @@ msgstr "Acerca _de Archivos"
 # #-#-#-#-#  nautilus-es.po (Nautilus)  #-#-#-#-#
 # src/nautilus-window-menus.c:1325
 #. name, stock id, label
-#: ../src/nautilus-app-menu.ui.h:7 ../src/nautilus-window-menus.c:456
+#: ../src/nautilus-app-menu.ui.h:7 ../src/nautilus-window-menus.c:469
 msgid "_Help"
 msgstr "Ay_uda"
 
@@ -2979,94 +2984,106 @@ msgstr "_Lugar"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-canvas-view.c:1104
+#: ../src/nautilus-canvas-view.c:1109
 msgid "Re_versed Order"
 msgstr "Orden in_verso"
 
 #. tooltip
-#: ../src/nautilus-canvas-view.c:1105
+#: ../src/nautilus-canvas-view.c:1110
 msgid "Display icons in the opposite order"
 msgstr "Muestra los iconos en orden inverso"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-canvas-view.c:1109
+#: ../src/nautilus-canvas-view.c:1114
 msgid "_Keep Aligned"
 msgstr "_Mantener alineados"
 
 # src/file-manager/fm-icon-view.c:110
 #. tooltip
-#: ../src/nautilus-canvas-view.c:1110
+#: ../src/nautilus-canvas-view.c:1115
 msgid "Keep icons lined up on a grid"
 msgstr "Mantiene los iconos alineados en una rejilla"
 
 # components/help/hyperbola-filefmt.c:396
-#: ../src/nautilus-canvas-view.c:1117
+#: ../src/nautilus-canvas-view.c:1122
 msgid "_Manually"
 msgstr "_Manualmente"
 
-#: ../src/nautilus-canvas-view.c:1118
+#: ../src/nautilus-canvas-view.c:1123
 msgid "Leave icons wherever they are dropped"
 msgstr "Deja los iconos en donde se suelten"
 
 # src/file-manager/fm-icon-view.c:109
-#: ../src/nautilus-canvas-view.c:1121
+#: ../src/nautilus-canvas-view.c:1126
 msgid "By _Name"
 msgstr "Por _nombre"
 
 # src/file-manager/fm-icon-view.c:110
-#: ../src/nautilus-canvas-view.c:1122
+#: ../src/nautilus-canvas-view.c:1127
 msgid "Keep icons sorted by name in rows"
 msgstr "Mantiene los iconos ordenados por nombre en filas"
 
 # src/file-manager/fm-icon-view.c:116
-#: ../src/nautilus-canvas-view.c:1125
+#: ../src/nautilus-canvas-view.c:1130
 msgid "By _Size"
 msgstr "Por tama_ño"
 
 # src/file-manager/fm-icon-view.c:117
-#: ../src/nautilus-canvas-view.c:1126
+#: ../src/nautilus-canvas-view.c:1131
 msgid "Keep icons sorted by size in rows"
 msgstr "Mantiene los iconos ordenados por tamaño en filas"
 
 # src/file-manager/fm-icon-view.c:123
-#: ../src/nautilus-canvas-view.c:1129
+#: ../src/nautilus-canvas-view.c:1134
 msgid "By _Type"
 msgstr "Por _tipo"
 
 # src/file-manager/fm-icon-view.c:124
-#: ../src/nautilus-canvas-view.c:1130
+#: ../src/nautilus-canvas-view.c:1135
 msgid "Keep icons sorted by type in rows"
 msgstr "Mantiene los iconos ordenados por tipo en filas"
 
 # src/file-manager/fm-icon-view.c:130
-#: ../src/nautilus-canvas-view.c:1133
+#: ../src/nautilus-canvas-view.c:1138
 msgid "By Modification _Date"
 msgstr "Por _fecha de modificación"
 
 # src/file-manager/fm-icon-view.c:131
-#: ../src/nautilus-canvas-view.c:1134
+#: ../src/nautilus-canvas-view.c:1139
 msgid "Keep icons sorted by modification date in rows"
 msgstr "Mantiene los iconos ordenados por fecha de modificación en filas"
 
+# src/file-manager/fm-properties-window.c:1105
+#: ../src/nautilus-canvas-view.c:1142
+#| msgid "By Access Date"
+msgid "By _Access Date"
+msgstr "Por fecha de _acceso"
+
+# src/file-manager/fm-icon-view.c:110
+#: ../src/nautilus-canvas-view.c:1143
+#| msgid "Keep icons sorted by trash time in rows"
+msgid "Keep icons sorted by access date in rows"
+msgstr "Mantener los iconos ordenados en filas por fecha de acceso"
+
 # src/file-manager/fm-icon-view.c:109
-#: ../src/nautilus-canvas-view.c:1137
+#: ../src/nautilus-canvas-view.c:1146
 msgid "By T_rash Time"
 msgstr "Por _hora movido a la papelera"
 
 # src/file-manager/fm-icon-view.c:110
-#: ../src/nautilus-canvas-view.c:1138
+#: ../src/nautilus-canvas-view.c:1147
 msgid "Keep icons sorted by trash time in rows"
 msgstr ""
 "Mantener los iconos ordenados en filas por hora en la que se movieron a la "
 "papelera"
 
-#: ../src/nautilus-canvas-view.c:1141
+#: ../src/nautilus-canvas-view.c:1150
 msgid "By Search Relevance"
 msgstr "Por relevancia de la búsqueda"
 
 # src/file-manager/fm-icon-view.c:117
-#: ../src/nautilus-canvas-view.c:1142
+#: ../src/nautilus-canvas-view.c:1151
 msgid "Keep icons sorted by search relevance in rows"
 msgstr "Mantener los iconos ordenados en filas por relevancia de la búsqueda"
 
@@ -3490,7 +3507,7 @@ msgstr ""
 # src/file-manager/fm-directory-view.c:2403
 # src/file-manager/fm-directory-view.c:2646
 #: ../src/nautilus-file-management-properties.ui.h:24
-#: ../src/nautilus-list-view.c:1789
+#: ../src/nautilus-list-view.c:1846
 msgid "List View"
 msgstr "Vista de lista"
 
@@ -3820,24 +3837,24 @@ msgstr "Cargando…"
 msgid "(Empty)"
 msgstr "(Vacío)"
 
-#: ../src/nautilus-list-view.c:2578
+#: ../src/nautilus-list-view.c:2652
 #, c-format
 msgid "%s Visible Columns"
 msgstr "%s columnas visibles"
 
 # src/file-manager/fm-icon-text-window.c:267
-#: ../src/nautilus-list-view.c:2598
+#: ../src/nautilus-list-view.c:2672
 msgid "Choose the order of information to appear in this folder:"
 msgstr "Seleccione el orden en que aparecerá la información en esta carpeta:"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-list-view.c:2653
+#: ../src/nautilus-list-view.c:2727
 msgid "Visible _Columns…"
 msgstr "_Columnas visibles…"
 
 #. tooltip
-#: ../src/nautilus-list-view.c:2654
+#: ../src/nautilus-list-view.c:2728
 msgid "Select the columns visible in this folder"
 msgstr "Seleccione las columnas visibles en esta carpeta"
 
@@ -4000,7 +4017,7 @@ msgid_plural "Opening %d items."
 msgstr[0] "Abriendo %d elemento."
 msgstr[1] "Abriendo %d elementos."
 
-#: ../src/nautilus-notebook.c:371
+#: ../src/nautilus-notebook.c:378
 msgid "Close tab"
 msgstr "Cerrar pestaña"
 
@@ -4661,7 +4678,7 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7133 ../src/nautilus-view.c:7390
-#: ../src/nautilus-window-menus.c:573
+#: ../src/nautilus-window-menus.c:586
 msgid "P_roperties"
 msgstr "P_ropiedades"
 
@@ -4713,14 +4730,12 @@ msgstr "Abrir el elemento seleccionado en esta ventana"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7157
-#| msgid "Open Location"
 msgid "Open _Item Location"
 msgstr "Abrir la ub_icación del elemento"
 
 # libnautilus-private/nautilus-global-preferences.c:622
 #. tooltip
 #: ../src/nautilus-view.c:7158
-#| msgid "Open the selected item in this window"
 msgid "Open the selected item's location in this window"
 msgstr "Abrir la ubicación del elemento seleccionado en esta ventana"
 
@@ -5058,7 +5073,7 @@ msgstr "Iniciar el volumen seleccionado"
 #: ../src/nautilus-view.c:7285 ../src/nautilus-view.c:7309
 #: ../src/nautilus-view.c:7381 ../src/nautilus-view.c:7992
 #: ../src/nautilus-view.c:8079 ../src/nautilus-view.c:8181
-#: ../src/nautilus-window-menus.c:469
+#: ../src/nautilus-window-menus.c:482
 msgid "_Stop"
 msgstr "_Detener"
 
@@ -5209,7 +5224,7 @@ msgid "Stop the volume associated with this folder"
 msgstr "Parar el volumen asociado con esta carpeta"
 
 #. tooltip
-#: ../src/nautilus-view.c:7391 ../src/nautilus-window-menus.c:574
+#: ../src/nautilus-view.c:7391 ../src/nautilus-window-menus.c:587
 msgid "View or modify the properties of this folder"
 msgstr "Ver o modificar las propiedades de esta carpeta"
 
@@ -5529,11 +5544,11 @@ msgstr "_Formatear…"
 msgid "_New Tab"
 msgstr "_Pestaña nueva"
 
-#: ../src/nautilus-window.c:1177 ../src/nautilus-window-menus.c:566
+#: ../src/nautilus-window.c:1177 ../src/nautilus-window-menus.c:579
 msgid "Move Tab _Left"
 msgstr "Mover pestaña a la _izquierda"
 
-#: ../src/nautilus-window.c:1185 ../src/nautilus-window-menus.c:569
+#: ../src/nautilus-window.c:1185 ../src/nautilus-window-menus.c:582
 msgid "Move Tab _Right"
 msgstr "Mover pestaña a la _derecha"
 
@@ -5603,51 +5618,51 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:458
+#: ../src/nautilus-window-menus.c:471
 msgid "_Close"
 msgstr "_Cerrar"
 
 # libnautilus-private/nautilus-global-preferences.c:165
 #. tooltip
-#: ../src/nautilus-window-menus.c:459
+#: ../src/nautilus-window-menus.c:472
 msgid "Close this folder"
 msgstr "Cerrar esta carpeta"
 
 # src/nautilus-first-time-druid.c:272
-#: ../src/nautilus-window-menus.c:463
+#: ../src/nautilus-window-menus.c:476
 msgid "Edit Nautilus preferences"
 msgstr "Editar las preferencias de Nautilus"
 
 #. name, stock id, label
-#: ../src/nautilus-window-menus.c:465
+#: ../src/nautilus-window-menus.c:478
 msgid "Open _Parent"
 msgstr "Abrir cont_enedora"
 
 # libnautilus-private/nautilus-file.c:2586
-#: ../src/nautilus-window-menus.c:466
+#: ../src/nautilus-window-menus.c:479
 msgid "Open the parent folder"
 msgstr "Abrir la carpeta contenedora"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:470
+#: ../src/nautilus-window-menus.c:483
 msgid "Stop loading the current location"
 msgstr "Dejar de cargar el lugar actual"
 
 # src/file-manager/fm-properties-window.c:1573
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:473
+#: ../src/nautilus-window-menus.c:486
 msgid "_Reload"
 msgstr "Re_cargar"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:474
+#: ../src/nautilus-window-menus.c:487
 msgid "Reload the current location"
 msgstr "Recargar el lugar actual"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:481
+#: ../src/nautilus-window-menus.c:494
 msgid "_All Topics"
 msgstr "_Todos los temas"
 
@@ -5655,19 +5670,19 @@ msgstr "_Todos los temas"
 # src/nautilus-window-manage-views.c:217
 # src/nautilus-window-manage-views.c:218 src/nautilus-window-menus.c:437
 #. tooltip
-#: ../src/nautilus-window-menus.c:482
+#: ../src/nautilus-window-menus.c:495
 msgid "Display Nautilus help"
 msgstr "Mostrar la ayuda de Nautilus"
 
 # libnautilus-private/nautilus-global-preferences.c:727
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:485
+#: ../src/nautilus-window-menus.c:498
 msgid "Search for files"
 msgstr "Buscar archivos"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:486
+#: ../src/nautilus-window-menus.c:499
 msgid ""
 "Locate files based on file name and type. Save your searches for later use."
 msgstr ""
@@ -5676,24 +5691,24 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:489
+#: ../src/nautilus-window-menus.c:502
 msgid "Sort files and folders"
 msgstr "Organizar archivos y carpetas"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:490
+#: ../src/nautilus-window-menus.c:503
 msgid "Arrange files by name, size, type, or when they were changed."
 msgstr ""
 "Organizar archivos por nombre, tamaño, tipo o por su fecha de modificación."
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:493
+#: ../src/nautilus-window-menus.c:506
 msgid "Find a lost file"
 msgstr "Buscar un archivo perdido"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:494
+#: ../src/nautilus-window-menus.c:507
 msgid "Follow these tips if you can't find a file you created or downloaded."
 msgstr ""
 "Siga estas sugerencias si no puede encontrar un archivo que creó o descargó."
@@ -5701,12 +5716,12 @@ msgstr ""
 # src/file-manager/fm-properties-window.c:1105
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:497
+#: ../src/nautilus-window-menus.c:510
 msgid "Share and transfer files"
 msgstr "Compartir y transferir archivos"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:498
+#: ../src/nautilus-window-menus.c:511
 msgid ""
 "Easily transfer files to your contacts and devices from the file manager."
 msgstr ""
@@ -5715,168 +5730,168 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:501
+#: ../src/nautilus-window-menus.c:514
 msgid "_About"
 msgstr "Acerca _de"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:502
+#: ../src/nautilus-window-menus.c:515
 msgid "Display credits for the creators of Nautilus"
 msgstr "Mostrar los créditos de los creadores de Nautilus"
 
 # src/file-manager/fm-directory-view.c:2268
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:505
+#: ../src/nautilus-window-menus.c:518
 msgid "Zoom _In"
 msgstr "_Ampliar"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:506
+#: ../src/nautilus-window-menus.c:519
 msgid "Increase the view size"
 msgstr "Aumentar el tamaño de la vista"
 
 # src/file-manager/fm-directory-view.c:2270
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:517
+#: ../src/nautilus-window-menus.c:530
 msgid "Zoom _Out"
 msgstr "_Reducir"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:518
+#: ../src/nautilus-window-menus.c:531
 msgid "Decrease the view size"
 msgstr "Disminuir el tamaño de la vista"
 
 # src/nautilus-window-menus.c:1314
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:525
+#: ../src/nautilus-window-menus.c:538
 msgid "Normal Si_ze"
 msgstr "Tamaño _normal"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:526
+#: ../src/nautilus-window-menus.c:539
 msgid "Use the normal view size"
 msgstr "Usar el tamaño de vista normal"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:530
+#: ../src/nautilus-window-menus.c:543
 msgid "Connect to a remote computer or shared disk"
 msgstr "Conectar con un equipo remoto o disco compartido"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:533 ../src/nautilus-window-menus.c:705
+#: ../src/nautilus-window-menus.c:546 ../src/nautilus-window-menus.c:722
 msgid "_Home"
 msgstr "_Carpeta personal"
 
 # libnautilus-private/nautilus-file.c:2586
 #. tooltip
-#: ../src/nautilus-window-menus.c:534
+#: ../src/nautilus-window-menus.c:547
 msgid "Open your personal folder"
 msgstr "Abrir su carpeta personal"
 
-#: ../src/nautilus-window-menus.c:537
+#: ../src/nautilus-window-menus.c:550
 msgid "Open another Nautilus window for the displayed location"
 msgstr "Abrir otra ventana de Nautilus para el lugar mostrado"
 
 #. name, stock id, label
-#: ../src/nautilus-window-menus.c:539
+#: ../src/nautilus-window-menus.c:552
 msgid "New _Tab"
 msgstr "_Pestaña nueva"
 
-#: ../src/nautilus-window-menus.c:540
+#: ../src/nautilus-window-menus.c:553
 msgid "Open another tab for the displayed location"
 msgstr "Abrir otra pestaña para el lugar mostrado"
 
 #. name, stock id, label
-#: ../src/nautilus-window-menus.c:542
+#: ../src/nautilus-window-menus.c:555
 msgid "Close _All Windows"
 msgstr "Cerrar _todas las ventanas"
 
-#: ../src/nautilus-window-menus.c:543
+#: ../src/nautilus-window-menus.c:556
 msgid "Close all Navigation windows"
 msgstr "Cierra todas las ventanas de navegación"
 
 # src/file-manager/fm-properties-window.c:1031
 #. name, stock id, label
-#: ../src/nautilus-window-menus.c:545
+#: ../src/nautilus-window-menus.c:558
 msgid "_Back"
 msgstr "A_trás"
 
 # src/nautilus-window-menus.c:670
-#: ../src/nautilus-window-menus.c:546
+#: ../src/nautilus-window-menus.c:559
 msgid "Go to the previous visited location"
 msgstr "Ir al lugar anterior visitado"
 
 #. name, stock id, label
-#: ../src/nautilus-window-menus.c:548
+#: ../src/nautilus-window-menus.c:561
 msgid "_Forward"
 msgstr "A_delante"
 
 # src/nautilus-window-menus.c:670
-#: ../src/nautilus-window-menus.c:549
+#: ../src/nautilus-window-menus.c:562
 msgid "Go to the next visited location"
 msgstr "Ir al siguiente lugar visitado"
 
-#: ../src/nautilus-window-menus.c:552
+#: ../src/nautilus-window-menus.c:565
 msgid "Specify a location to open"
 msgstr "Especifique un lugar para abrir"
 
 # src/nautilus-window-menus.c:599
 #. name, stock id, label
-#: ../src/nautilus-window-menus.c:554
+#: ../src/nautilus-window-menus.c:567
 msgid "Bookmark this Location"
 msgstr "Añadir este lugar a marcadores"
 
-#: ../src/nautilus-window-menus.c:555
+#: ../src/nautilus-window-menus.c:568
 msgid "Add a bookmark for the current location"
 msgstr "Añade un marcador para el lugar actual"
 
 # src/nautilus-window-menus.c:1235
 #. name, stock id, label
-#: ../src/nautilus-window-menus.c:557
+#: ../src/nautilus-window-menus.c:570
 msgid "_Bookmarks…"
 msgstr "_Marcadores…"
 
 # src/nautilus-bookmarks-window.c:136
-#: ../src/nautilus-window-menus.c:558
+#: ../src/nautilus-window-menus.c:571
 msgid "Display and edit bookmarks"
 msgstr "Mostrar y editar los marcadores"
 
-#: ../src/nautilus-window-menus.c:560
+#: ../src/nautilus-window-menus.c:573
 msgid "_Previous Tab"
 msgstr "Pestaña _anterior"
 
-#: ../src/nautilus-window-menus.c:561
+#: ../src/nautilus-window-menus.c:574
 msgid "Activate previous tab"
 msgstr "Activar la pestaña anterior"
 
-#: ../src/nautilus-window-menus.c:563
+#: ../src/nautilus-window-menus.c:576
 msgid "_Next Tab"
 msgstr "_Siguiente pestaña"
 
-#: ../src/nautilus-window-menus.c:564
+#: ../src/nautilus-window-menus.c:577
 msgid "Activate next tab"
 msgstr "Activar la siguiente pestaña"
 
-#: ../src/nautilus-window-menus.c:567
+#: ../src/nautilus-window-menus.c:580
 msgid "Move current tab to left"
 msgstr "Mover la pestaña actual a la izquierda"
 
-#: ../src/nautilus-window-menus.c:570
+#: ../src/nautilus-window-menus.c:583
 msgid "Move current tab to right"
 msgstr "Mover la pestaña actual a la derecha"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:584
+#: ../src/nautilus-window-menus.c:601
 msgid "_Show Sidebar"
 msgstr "_Mostrar barra lateral"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:585
+#: ../src/nautilus-window-menus.c:602
 msgid "Change the visibility of this window's side pane"
 msgstr "Cambia la visibilidad del panel lateral de esta ventana"
 
@@ -5884,12 +5899,12 @@ msgstr "Cambia la visibilidad del panel lateral de esta ventana"
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:589
+#: ../src/nautilus-window-menus.c:606
 msgid "_Search for Files…"
 msgstr "_Buscar archivos…"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:590
+#: ../src/nautilus-window-menus.c:607
 msgid "Search documents and folders by name"
 msgstr "Buscar documentos y carpetas por nombre"
 
@@ -5897,19 +5912,19 @@ msgstr "Buscar documentos y carpetas por nombre"
 # libnautilus-private/nautilus-search-bar-criterion.c:71
 # libnautilus-private/nautilus-search-bar-criterion.c:86
 # libnautilus-private/nautilus-search-bar-criterion.c:141
-#: ../src/nautilus-window-menus.c:596 ../src/nautilus-window-menus.c:598
+#: ../src/nautilus-window-menus.c:613 ../src/nautilus-window-menus.c:615
 msgid "List"
 msgstr "Lista"
 
-#: ../src/nautilus-window-menus.c:597
+#: ../src/nautilus-window-menus.c:614
 msgid "View items as a list"
 msgstr "Ver elementos como lista"
 
-#: ../src/nautilus-window-menus.c:599
+#: ../src/nautilus-window-menus.c:616
 msgid "View items as a grid of icons"
 msgstr "Ver elementos como rejilla de iconos"
 
-#: ../src/nautilus-window-menus.c:702
+#: ../src/nautilus-window-menus.c:719
 msgid "_Up"
 msgstr "S_ubir"
 
@@ -6035,6 +6050,9 @@ msgstr "Contiene fotos y música"
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "Abrir con:"
+
+#~ msgid "Input Methods"
+#~ msgstr "Métodos de entrada"
 
 #~ msgid "Send To…"
 #~ msgstr "Enviar a…"
@@ -6748,13 +6766,6 @@ msgstr "Abrir con:"
 #~| msgid "The date the file was accessed."
 #~ msgid "The date the file was last used."
 #~ msgstr "La fecha en la que el archivo se uso por última vez."
-
-# src/file-manager/fm-properties-window.c:1105
-#~ msgid "Accessed"
-#~ msgstr "Accedido"
-
-#~ msgid "The date the file was accessed."
-#~ msgstr "La fecha en que el archivo fue accedido."
 
 # src/file-manager/fm-properties-window.c:1569
 #~ msgid "Last changed:"
