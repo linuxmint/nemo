@@ -140,6 +140,14 @@ static void   nautilus_list_view_rename_callback                 (NautilusFile  
 								  GError            *error,
 								  gpointer           callback_data);
 
+static void   apply_columns_settings                             (NautilusListView *list_view,
+                                                                  char **column_order,
+                                                                  char **visible_columns);
+static char **get_visible_columns                                (NautilusListView *list_view);
+static char **get_default_visible_columns                        (NautilusListView *list_view);
+static char **get_column_order                                   (NautilusListView *list_view);
+static char **get_default_column_order                           (NautilusListView *list_view);
+
 
 G_DEFINE_TYPE (NautilusListView, nautilus_list_view, NAUTILUS_TYPE_VIEW);
 
@@ -1443,6 +1451,186 @@ move_copy_items_callback (NautilusTreeViewDragDest *dest,
 }
 
 static void
+column_header_menu_toggled (GtkCheckMenuItem *menu_item,
+                            NautilusListView *list_view)
+{
+	NautilusFile *file;
+	char **visible_columns;
+	char **column_order;
+	const char *column;
+	GList *list = NULL;
+	GList *l;
+	int i;
+
+	file = nautilus_view_get_directory_as_file (NAUTILUS_VIEW (list_view));
+	visible_columns = get_visible_columns (list_view);
+	column_order = get_column_order (list_view);
+	column = g_object_get_data (G_OBJECT (menu_item), "column-name");
+
+	for (i = 0; visible_columns[i] != NULL; ++i) {
+		list = g_list_prepend (list, visible_columns[i]);
+	}
+
+	if (gtk_check_menu_item_get_active (menu_item)) {
+		list = g_list_prepend (list, g_strdup (column));
+	} else {
+		l = g_list_find_custom (list, column, (GCompareFunc) g_strcmp0);
+		list = g_list_delete_link (list, l);
+	}
+
+	list = g_list_reverse (list);
+	nautilus_file_set_metadata_list (file,
+	                                 NAUTILUS_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS,
+	                                 list);
+
+	g_free (visible_columns);
+
+	visible_columns = g_new0 (char *, g_list_length (list) + 1);
+	for (i = 0, l = list; l != NULL; ++i, l = l->next) {
+		visible_columns[i] = l->data;
+	}
+
+	/* set view values ourselves, as new metadata could not have been
+	 * updated yet.
+	 */
+	apply_columns_settings (list_view, column_order, visible_columns);
+
+	g_list_free (list);
+	g_strfreev (column_order);
+	g_strfreev (visible_columns);
+}
+
+static void
+column_header_menu_use_default (GtkMenuItem *menu_item,
+                                NautilusListView *list_view)
+{
+	NautilusFile *file;
+	char **default_columns;
+	char **default_order;
+
+	file = nautilus_view_get_directory_as_file (NAUTILUS_VIEW (list_view));
+
+	nautilus_file_set_metadata_list (file, NAUTILUS_METADATA_KEY_LIST_VIEW_COLUMN_ORDER, NULL);
+	nautilus_file_set_metadata_list (file, NAUTILUS_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS, NULL);
+
+	default_columns = get_default_visible_columns (list_view);
+	default_order = get_default_column_order (list_view);
+
+	/* set view values ourselves, as new metadata could not have been
+	 * updated yet.
+	 */
+	apply_columns_settings (list_view, default_order, default_columns);
+
+	g_strfreev (default_columns);
+	g_strfreev (default_order);
+}
+
+static gboolean
+column_header_clicked (GtkWidget *column_button,
+                       GdkEventButton *event,
+                       NautilusListView *list_view)
+{
+	NautilusFile *file;
+	char **visible_columns;
+	char **column_order;
+	GList *all_columns;
+	GHashTable *visible_columns_hash;
+	int i;
+	GList *l;
+	GtkWidget *menu;
+	GtkWidget *menu_item;
+
+	if (event->button != GDK_BUTTON_SECONDARY) {
+		return FALSE;
+	}
+
+	file = nautilus_view_get_directory_as_file (NAUTILUS_VIEW (list_view));
+
+	visible_columns = get_visible_columns (list_view);
+	column_order = get_column_order (list_view);
+
+	all_columns = nautilus_get_columns_for_file (file);
+	all_columns = nautilus_sort_columns (all_columns, column_order);
+
+	/* hash table to lookup if a given column should be visible */
+	visible_columns_hash = g_hash_table_new_full (g_str_hash,
+	                                              g_str_equal,
+	                                              (GDestroyNotify) g_free,
+	                                              (GDestroyNotify) g_free);
+	/* always show name column */
+	g_hash_table_insert (visible_columns_hash, g_strdup ("name"), g_strdup ("name"));
+	if (visible_columns != NULL) {
+		for (i = 0; visible_columns[i] != NULL; ++i) {
+			g_hash_table_insert (visible_columns_hash,
+			                     g_ascii_strdown (visible_columns[i], -1),
+			                     g_ascii_strdown (visible_columns[i], -1));
+		}
+	}
+
+	menu = gtk_menu_new ();
+
+	for (l = all_columns; l != NULL; l = l->next) {
+		char *name;
+		char *label;
+		char *lowercase;
+
+		g_object_get (G_OBJECT (l->data),
+		              "name", &name,
+		              "label", &label,
+		              NULL);
+		lowercase = g_ascii_strdown (name, -1);
+
+		menu_item = gtk_check_menu_item_new_with_label (label);
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
+
+		g_object_set_data_full (G_OBJECT (menu_item),
+		                        "column-name", name, g_free);
+
+		/* name is always visible */
+		if (strcmp (lowercase, "name") == 0) {
+			gtk_widget_set_sensitive (menu_item, FALSE);
+		}
+
+		if (g_hash_table_lookup (visible_columns_hash, lowercase) != NULL) {
+			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item),
+			                                TRUE);
+		}
+
+		g_signal_connect (menu_item,
+		                  "toggled",
+		                  G_CALLBACK (column_header_menu_toggled),
+		                  list_view);
+
+		g_free (lowercase);
+		g_free (label);
+	}
+
+	menu_item = gtk_separator_menu_item_new ();
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
+
+	menu_item = gtk_menu_item_new_with_label (_("Use Default"));
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
+
+	g_signal_connect (menu_item,
+	                  "activate",
+	                  G_CALLBACK (column_header_menu_use_default),
+	                  list_view);
+
+	gtk_widget_show_all (menu);
+	gtk_menu_popup_for_device (GTK_MENU (menu),
+	                           gdk_event_get_device ((GdkEvent *) event),
+	                           NULL, NULL, NULL, NULL, NULL,
+	                           event->button, event->time);
+
+	g_hash_table_destroy (visible_columns_hash);
+	nautilus_column_list_free (all_columns);
+	g_strfreev (column_order);
+	g_strfreev (visible_columns);
+
+	return TRUE;
+}
+
+static void
 apply_columns_settings (NautilusListView *list_view,
 			char **column_order,
 			char **visible_columns)
@@ -1749,6 +1937,11 @@ create_and_set_up_tree_view (NautilusListView *view)
 					     g_strdup ("name"), 
 					     view->details->file_name_column);
 
+			g_signal_connect (gtk_tree_view_column_get_button (view->details->file_name_column),
+			                  "button-press-event",
+			                  G_CALLBACK (column_header_clicked),
+			                  view);
+
 			gtk_tree_view_set_search_column (view->details->tree_view, column_num);
 
 			gtk_tree_view_column_set_sort_column_id (view->details->file_name_column, column_num);
@@ -1808,6 +2001,11 @@ create_and_set_up_tree_view (NautilusListView *view)
 			g_hash_table_insert (view->details->columns, 
 					     g_strdup (name), 
 					     column);
+
+			g_signal_connect (gtk_tree_view_column_get_button (column),
+			                  "button-press-event",
+			                  G_CALLBACK (column_header_clicked),
+			                  view);
 			
 			gtk_tree_view_column_set_resizable (column, TRUE);
 			gtk_tree_view_column_set_sort_order (column, sort_order);
