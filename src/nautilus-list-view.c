@@ -1503,23 +1503,19 @@ apply_columns_settings (NautilusListView *list_view,
 
 	view_columns = g_list_reverse (view_columns);
 
-	/* remove columns that are not present in the configuration */
+	/* hide columns that are not present in the configuration */
 	old_view_columns = gtk_tree_view_get_columns (list_view->details->tree_view);
 	for (l = old_view_columns; l != NULL; l = l->next) {
 		if (g_list_find (view_columns, l->data) == NULL) {
-			gtk_tree_view_remove_column (list_view->details->tree_view, l->data);
+			gtk_tree_view_column_set_visible (l->data, FALSE);
 		}
 	}
 	g_list_free (old_view_columns);
 
-	/* append new columns from the configuration */
-	old_view_columns = gtk_tree_view_get_columns (list_view->details->tree_view);
+	/* show new columns from the configuration */
 	for (l = view_columns; l != NULL; l = l->next) {
-		if (g_list_find (old_view_columns, l->data) == NULL) {
-			gtk_tree_view_append_column (list_view->details->tree_view, l->data);
-		}
+		gtk_tree_view_column_set_visible (l->data, TRUE);
 	}
-	g_list_free (old_view_columns);
 
 	/* place columns in the correct order */
 	prev_view_column = NULL;
@@ -1638,8 +1634,8 @@ create_and_set_up_tree_view (NautilusListView *view)
 	view->details->tree_view = GTK_TREE_VIEW (gtk_tree_view_new ());
 	view->details->columns = g_hash_table_new_full (g_str_hash, 
 							g_str_equal,
-							(GDestroyNotify)g_free,
-							(GDestroyNotify) g_object_unref);
+							(GDestroyNotify) g_free,
+							NULL);
 	gtk_tree_view_set_enable_search (view->details->tree_view, FALSE);
 
 	view->details->drag_dest = 
@@ -1745,7 +1741,8 @@ create_and_set_up_tree_view (NautilusListView *view)
 		if (!strcmp (name, "name")) {
 			/* Create the file name column */
 			view->details->file_name_column = gtk_tree_view_column_new ();
-			g_object_ref_sink (view->details->file_name_column);
+			gtk_tree_view_append_column (view->details->tree_view,
+			                             view->details->file_name_column);
 			view->details->file_name_column_num = column_num;
 			
 			g_hash_table_insert (view->details->columns,
@@ -1806,14 +1803,13 @@ create_and_set_up_tree_view (NautilusListView *view)
 									   cell,
 									   "text", column_num,
 									   NULL);
-			g_object_ref_sink (column);
+			gtk_tree_view_append_column (view->details->tree_view, column);
 			gtk_tree_view_column_set_sort_column_id (column, column_num);
 			g_hash_table_insert (view->details->columns, 
 					     g_strdup (name), 
 					     column);
 			
 			gtk_tree_view_column_set_resizable (column, TRUE);
-			gtk_tree_view_column_set_visible (column, TRUE);
 			gtk_tree_view_column_set_sort_order (column, sort_order);
 
 			if (!strcmp (name, "where")) {
