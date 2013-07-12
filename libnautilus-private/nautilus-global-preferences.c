@@ -34,6 +34,17 @@
 #include <eel/eel-string.h>
 #include <glib/gi18n.h>
 
+GSettings *nautilus_preferences;
+GSettings *nautilus_icon_view_preferences;
+GSettings *nautilus_list_view_preferences;
+GSettings *nautilus_desktop_preferences;
+GSettings *nautilus_window_state;
+GSettings *gtk_filechooser_preferences;
+GSettings *gnome_lockdown_preferences;
+GSettings *gnome_background_preferences;
+GSettings *gnome_interface_preferences;
+GSettings *gnome_privacy_preferences;
+
 /*
  * Public functions
  */
