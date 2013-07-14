@@ -773,6 +773,9 @@ real_update_menus (NemoView *view)
     action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
                                           NEMO_ACTION_ADD_DESKLETS_DESKTOP);
     gtk_action_set_visible (action, have_cinnamon_settings);
+    action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+                                          NEMO_ACTION_CHANGE_BACKGROUND_DESKTOP);
+    gtk_action_set_visible (action, have_cinnamon_settings);
 }
 
 static const GtkActionEntry desktop_view_entries[] = {
@@ -784,7 +787,7 @@ static const GtkActionEntry desktop_view_entries[] = {
 	  N_("Create a new launcher"),
 	  G_CALLBACK (action_new_launcher_callback) },
 	/* name, stock id */
-	{ "Change Background", NULL,
+	{ NEMO_ACTION_CHANGE_BACKGROUND_DESKTOP, NULL,
 	  /* label, accelerator */
 	  N_("Change Desktop _Background"), NULL,
 	  /* tooltip */
