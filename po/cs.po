@@ -22,8 +22,8 @@ msgstr ""
 "Project-Id-Version: nautilus master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-07-12 01:06+0000\n"
-"PO-Revision-Date: 2013-07-12 19:29+0200\n"
+"POT-Creation-Date: 2013-07-13 21:59+0000\n"
+"PO-Revision-Date: 2013-07-13 08:33+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -195,7 +195,7 @@ msgid "Use De_fault"
 msgstr "_Používat výchozí"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:57
-#: ../src/nautilus-list-view.c:1758
+#: ../src/nautilus-list-view.c:1948
 msgid "Name"
 msgstr "Název"
 
@@ -3198,7 +3198,7 @@ msgstr ""
 "zvětšení, tím více se objeví informací."
 
 #: ../src/nautilus-file-management-properties.ui.h:24
-#: ../src/nautilus-list-view.c:1846
+#: ../src/nautilus-list-view.c:2040
 msgid "List View"
 msgstr "Zobrazení v seznamu"
 
@@ -3487,23 +3487,27 @@ msgstr "Načítá se…"
 msgid "(Empty)"
 msgstr "(Prázdné)"
 
-#: ../src/nautilus-list-view.c:2652
+#: ../src/nautilus-list-view.c:1611
+msgid "Use Default"
+msgstr "Používat výchozí"
+
+#: ../src/nautilus-list-view.c:2846
 #, c-format
 msgid "%s Visible Columns"
 msgstr "Viditelné sloupce %s"
 
-#: ../src/nautilus-list-view.c:2672
+#: ../src/nautilus-list-view.c:2866
 msgid "Choose the order of information to appear in this folder:"
 msgstr "Zvolte pořadí informací, které se objeví v této složce:"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-list-view.c:2727
+#: ../src/nautilus-list-view.c:2921
 msgid "Visible _Columns…"
 msgstr "Viditelné _sloupce…"
 
 #. tooltip
-#: ../src/nautilus-list-view.c:2728
+#: ../src/nautilus-list-view.c:2922
 msgid "Select the columns visible in this folder"
 msgstr "Vyberte sloupce viditelné v této složce"
 
