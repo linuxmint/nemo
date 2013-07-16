@@ -89,6 +89,7 @@ static void     font_changed_callback                             (gpointer     
 G_DEFINE_TYPE (NemoDesktopIconView, nemo_desktop_icon_view, NEMO_TYPE_ICON_VIEW)
 
 gboolean have_cinnamon_settings;
+gboolean have_launcher_creator;
 static char *desktop_directory;
 static time_t desktop_dir_modify_time;
 
@@ -653,6 +654,7 @@ nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 				  desktop_icon_view);
 
     have_cinnamon_settings = g_find_program_in_path ("cinnamon-settings") != NULL;
+    have_launcher_creator = g_find_program_in_path ("cinnamon-launcher-creator") != NULL;
 }
 
 static void
@@ -698,9 +700,9 @@ action_new_launcher_callback (GtkAction *action, gpointer data)
 	desktop_directory = nemo_get_desktop_directory ();
 
 	nemo_launch_application_from_command (gtk_widget_get_screen (GTK_WIDGET (data)),
-						  "gnome-desktop-item-edit", 
+						  "cinnamon-launcher-creator", 
 						  FALSE,
-						  "--create-new", desktop_directory, NULL);
+						  desktop_directory, NULL);
 	g_free (desktop_directory);
 
 }
@@ -748,12 +750,11 @@ real_update_menus (NemoView *view)
 
 	desktop_view = NEMO_DESKTOP_ICON_VIEW (view);
 
-
 	/* New Launcher */
 	action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
 					      NEMO_ACTION_NEW_LAUNCHER_DESKTOP);
 	if (action) {
-		gtk_action_set_visible (action, TRUE);
+		gtk_action_set_visible (action, have_launcher_creator);
 	}
 
 	/* Empty Trash */
@@ -776,11 +777,12 @@ real_update_menus (NemoView *view)
     action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
                                           NEMO_ACTION_CHANGE_BACKGROUND_DESKTOP);
     gtk_action_set_visible (action, have_cinnamon_settings);
+
 }
 
 static const GtkActionEntry desktop_view_entries[] = {
 	/* name, stock id */
-	{ "New Launcher Desktop", NULL,
+	{ NEMO_ACTION_NEW_LAUNCHER_DESKTOP, NULL,
 	  /* label, accelerator */
 	  N_("Create L_auncher..."), NULL,
 	  /* tooltip */
