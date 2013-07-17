@@ -1267,6 +1267,37 @@ run_question (CommonJob *job,
 	return res;
 }
 
+static int
+run_cancel_or_skip_warning (CommonJob *job,
+			    char *primary_text,
+			    char *secondary_text,
+			    const char *details_text,
+			    int total_operations,
+			    int operations_remaining)
+{
+	int response;
+
+	if (total_operations == 1) {
+		response = run_warning (job,
+					primary_text,
+					secondary_text,
+					details_text,
+					FALSE,
+					CANCEL,
+					NULL);
+	} else {
+		response = run_warning (job,
+					primary_text,
+					secondary_text,
+					details_text,
+					operations_remaining > 1,
+					CANCEL, SKIP_ALL, SKIP,
+					NULL);
+	}
+
+	return response;
+}
+
 static void
 inhibit_power_manager (CommonJob *job, const char *message)
 {
@@ -1598,14 +1629,13 @@ delete_dir (CommonJob *job, GFile *dir,
 			primary = f (_("Error while deleting."));
 			secondary = f (_("Could not remove the folder %B."), dir);
 			details = error->message;
-			
-			response = run_warning (job,
-						primary,
-						secondary,
-						details,
-						(source_info->num_files - transfer_info->num_files) > 1,
-						CANCEL, SKIP_ALL, SKIP,
-						NULL);
+
+			response = run_cancel_or_skip_warning (job,
+			                                       primary,
+			                                       secondary,
+			                                       details,
+			                                       source_info->num_files,
+			                                       source_info->num_files - transfer_info->num_files);
 			
 			if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
 				abort_job (job);
@@ -1676,13 +1706,12 @@ delete_file (CommonJob *job, GFile *file,
 		secondary = f (_("There was an error deleting %B."), file);
 		details = error->message;
 		
-		response = run_warning (job,
-					primary,
-					secondary,
-					details,
-					(source_info->num_files - transfer_info->num_files) > 1,
-					CANCEL, SKIP_ALL, SKIP,
-					NULL);
+		response = run_cancel_or_skip_warning (job,
+		                                       primary,
+		                                       secondary,
+		                                       details,
+		                                       source_info->num_files,
+		                                       source_info->num_files - transfer_info->num_files);
 
 		if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
 			abort_job (job);
@@ -3660,14 +3689,13 @@ copy_move_directory (CopyMoveJob *copy_job,
 			secondary = f (_("Could not remove the source folder."));
 			details = error->message;
 			
-			response = run_warning (job,
-						primary,
-						secondary,
-						details,
-						(source_info->num_files - transfer_info->num_files) > 1,
-						CANCEL, SKIP_ALL, SKIP,
-						NULL);
-			
+			response = run_cancel_or_skip_warning (job,
+			                                       primary,
+			                                       secondary,
+			                                       details,
+			                                       source_info->num_files,
+			                                       source_info->num_files - transfer_info->num_files);
+
 			if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
 				abort_job (job);
 			} else if (response == 1) { /* skip all */
@@ -4108,13 +4136,12 @@ copy_move_file (CopyMoveJob *copy_job,
 					    : g_strdup (_("You cannot copy a folder into itself."));
 		secondary = g_strdup (_("The destination folder is inside the source folder."));
 		
-		response = run_warning (job,
-					primary,
-					secondary,
-					NULL,
-					(source_info->num_files - transfer_info->num_files) > 1,
-					CANCEL, SKIP_ALL, SKIP,
-					NULL);
+		response = run_cancel_or_skip_warning (job,
+		                                       primary,
+		                                       secondary,
+		                                       NULL,
+		                                       source_info->num_files,
+		                                       source_info->num_files - transfer_info->num_files);
 
 		if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
 			abort_job (job);
@@ -4141,13 +4168,12 @@ copy_move_file (CopyMoveJob *copy_job,
 					    : g_strdup (_("You cannot copy a file over itself."));
 		secondary = g_strdup (_("The source file would be overwritten by the destination."));
 		
-		response = run_warning (job,
-					primary,
-					secondary,
-					NULL,
-					(source_info->num_files - transfer_info->num_files) > 1,
-					CANCEL, SKIP_ALL, SKIP,
-					NULL);
+		response = run_cancel_or_skip_warning (job,
+		                                       primary,
+		                                       secondary,
+		                                       NULL,
+		                                       source_info->num_files,
+		                                       source_info->num_files - transfer_info->num_files);
 
 		if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
 			abort_job (job);
@@ -4426,13 +4452,12 @@ copy_move_file (CopyMoveJob *copy_job,
 		secondary = f (_("There was an error copying the file into %F."), dest_dir);
 		details = error->message;
 		
-		response = run_warning (job,
-					primary,
-					secondary,
-					details,
-					(source_info->num_files - transfer_info->num_files) > 1,
-					CANCEL, SKIP_ALL, SKIP,
-					NULL);
+		response = run_cancel_or_skip_warning (job,
+		                                       primary,
+		                                       secondary,
+		                                       details,
+		                                       source_info->num_files,
+		                                       source_info->num_files - transfer_info->num_files);
 
 		g_error_free (error);
 		
