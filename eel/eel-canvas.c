@@ -2593,6 +2593,7 @@ pick_current_item (EelCanvas *canvas, GdkEvent *event)
 	/* new_current_item may have been set to NULL during the call to emit_event() above */
 
 	if ((canvas->new_current_item != canvas->current_item) && button_down) {
+		canvas->current_item = canvas->new_current_item;	
 		canvas->left_grabbed_item = TRUE;
 		return retval;
 	}
