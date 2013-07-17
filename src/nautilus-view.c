@@ -2225,6 +2225,20 @@ sort_directories_first_changed_callback (gpointer callback_data)
 	}
 }
 
+static void
+show_hidden_files_changed_callback (gpointer callback_data)
+{
+	NautilusView *view;
+	gboolean preference_value;
+
+	view = NAUTILUS_VIEW (callback_data);
+
+	preference_value =
+		g_settings_get_boolean (gtk_filechooser_preferences, NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES);
+
+	nautilus_view_set_show_hidden_files (view, preference_value);
+}
+
 static gboolean
 set_up_scripts_directory_global (void)
 {
@@ -2672,11 +2686,14 @@ nautilus_view_init (NautilusView *view)
 				  G_CALLBACK (schedule_update_menus), view);
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_CLICK_POLICY,
-				  G_CALLBACK(click_policy_changed_callback),
+				  G_CALLBACK (click_policy_changed_callback),
 				  view);
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_SORT_DIRECTORIES_FIRST, 
-				  G_CALLBACK(sort_directories_first_changed_callback), view);
+				  G_CALLBACK (sort_directories_first_changed_callback), view);
+	g_signal_connect_swapped (gtk_filechooser_preferences,
+				  "changed::" NAUTILUS_PREFERENCES_SHOW_HIDDEN_FILES, 
+				  G_CALLBACK (show_hidden_files_changed_callback), view);
 	g_signal_connect_swapped (gnome_lockdown_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_LOCKDOWN_COMMAND_LINE,
 				  G_CALLBACK (schedule_update_menus), view);
@@ -2794,6 +2811,8 @@ nautilus_view_finalize (GObject *object)
 					      click_policy_changed_callback, view);
 	g_signal_handlers_disconnect_by_func (nautilus_preferences,
 					      sort_directories_first_changed_callback, view);
+	g_signal_handlers_disconnect_by_func (gtk_filechooser_preferences,
+					      show_hidden_files_changed_callback, view);
 	g_signal_handlers_disconnect_by_func (nautilus_window_state,
 					      nautilus_view_display_selection_info, view);
 
