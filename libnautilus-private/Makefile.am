@@ -120,6 +120,8 @@ libnautilus_private_la_SOURCES = \
 	nautilus-icon-info.c \
 	nautilus-icon-info.h \
 	nautilus-icon-names.h \
+	nautilus-keyfile-metadata.c \
+	nautilus-keyfile-metadata.h \
 	nautilus-lib-self-check-functions.c \
 	nautilus-lib-self-check-functions.h \
 	nautilus-link.c \
