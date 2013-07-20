@@ -1752,47 +1752,124 @@ filename_cell_data_func (GtkTreeViewColumn *column,
 }
 
 static void
+location_cell_data_func (GtkTreeViewColumn *column,
+                         GtkCellRenderer   *renderer,
+                         GtkTreeModel      *model,
+                         GtkTreeIter       *iter,
+                         NautilusListView  *view,
+                         gboolean           show_trash_orig)
+{
+	NautilusDirectory *directory;
+	GFile *home_location;
+	NautilusFile *file;
+	GFile *dir_location;
+	GFile *base_location;
+	gchar *where = NULL;
+
+	directory = nautilus_view_get_model (NAUTILUS_VIEW (view));
+
+	home_location = g_file_new_for_path (g_get_home_dir ());
+
+	gtk_tree_model_get (model, iter,
+	                    NAUTILUS_LIST_MODEL_FILE_COLUMN, &file,
+	                    -1);
+
+	if (show_trash_orig && nautilus_file_is_in_trash (file)) {
+		NautilusFile *orig_file;
+
+		orig_file = nautilus_file_get_trash_original_file (file);
+
+		if (orig_file != NULL) {
+			nautilus_file_unref (file);
+			file = orig_file;
+		}
+	}
+
+	if (!nautilus_file_is_in_recent (file)) {
+		dir_location = nautilus_file_get_parent_location (file);
+	} else {
+		GFile *activation_location;
+
+		activation_location = nautilus_file_get_activation_location (file);
+		dir_location = g_file_get_parent (activation_location);
+
+		g_object_unref (activation_location);
+	}
+
+	if (!NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
+		base_location = g_object_ref (home_location);
+	} else {
+		NautilusQuery *query;
+		gchar *base_uri;
+		NautilusFile *base;
+
+		query = nautilus_search_directory_get_query (NAUTILUS_SEARCH_DIRECTORY (directory));
+		base_uri = nautilus_query_get_location (query);
+		base = nautilus_file_get_by_uri (base_uri);
+
+		if (!nautilus_file_is_in_recent (base)) {
+			base_location = nautilus_file_get_location (base);
+		} else {
+			base_location = g_object_ref (home_location);
+		}
+
+		nautilus_file_unref (base);
+		g_free (base_uri);
+		g_object_unref (query);
+	}
+
+	if (g_file_equal (home_location, dir_location)) {
+		where = g_strdup (_("Home"));
+	} else if (g_file_equal (base_location, dir_location)) {
+		/* Only occurs when search result is
+		 * a direct child of the base location
+		 */
+		where = g_strdup ("");
+	} else if (g_file_has_prefix (dir_location, base_location)) {
+		gchar *relative_path;
+
+		relative_path = g_file_get_relative_path (base_location,
+		                                          dir_location);
+		where = g_filename_display_name (relative_path);
+
+		g_free (relative_path);
+	}
+
+	if (where != NULL) {
+		g_object_set (G_OBJECT (renderer),
+		              "text", where,
+		              NULL);
+
+		g_free (where);
+	}
+
+	g_object_unref (base_location);
+	g_object_unref (dir_location);
+	nautilus_file_unref (file);
+	g_object_unref (home_location);
+}
+
+
+static void
 where_cell_data_func (GtkTreeViewColumn *column,
                       GtkCellRenderer   *renderer,
                       GtkTreeModel      *model,
                       GtkTreeIter       *iter,
                       NautilusListView  *view)
 {
-	NautilusDirectory *directory;
-	NautilusQuery *query;
-	NautilusFile *file;
-	GFile *location, *file_location;
-	char *location_uri, *relative, *relative_utf8;
-
-	directory = nautilus_view_get_model (NAUTILUS_VIEW (view));
-	if (!NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
-		return;
-	}
-
-	query = nautilus_search_directory_get_query (NAUTILUS_SEARCH_DIRECTORY (directory));
-	location_uri = nautilus_query_get_location (query);
-	location = g_file_new_for_uri (location_uri);
-
-	gtk_tree_model_get (model, iter,
-	                    NAUTILUS_LIST_MODEL_FILE_COLUMN, &file,
-	                    -1);
-	file_location = nautilus_file_get_location (file);
-
-	relative = g_file_get_relative_path (location, file_location);
-	relative_utf8 = g_filename_display_name (relative);
-
-	g_object_set (G_OBJECT (renderer),
-	              "text", relative_utf8,
-	              NULL);
-
-	g_free (relative_utf8);
-	g_free (relative);
-	g_object_unref (file_location);
-	nautilus_file_unref (file);
-	g_object_unref (location);
-	g_free (location_uri);
-	g_object_unref (query);
+	location_cell_data_func (column, renderer, model, iter, view, FALSE);
 }
+
+static void
+trash_orig_path_cell_data_func (GtkTreeViewColumn *column,
+                                GtkCellRenderer   *renderer,
+                                GtkTreeModel      *model,
+                                GtkTreeIter       *iter,
+                                NautilusListView  *view)
+{
+	location_cell_data_func (column, renderer, model, iter, view, TRUE);
+}
+
 
 static void
 set_up_pixbuf_size (NautilusListView *view)
@@ -2013,6 +2090,10 @@ create_and_set_up_tree_view (NautilusListView *view)
 			if (!strcmp (name, "where")) {
 				gtk_tree_view_column_set_cell_data_func (column, cell,
 				                                         (GtkTreeCellDataFunc) where_cell_data_func,
+				                                         view, NULL);
+			} else if (!strcmp (name, "trash_orig_path")) {
+				gtk_tree_view_column_set_cell_data_func (column, cell,
+				                                         (GtkTreeCellDataFunc) trash_orig_path_cell_data_func,
 				                                         view, NULL);
 			}
 		}
