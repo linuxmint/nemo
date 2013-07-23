@@ -243,8 +243,12 @@ static void
 navigation_bar_cancel_callback (GtkWidget *widget,
 				NemoWindowPane *pane)
 {
-	nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
+	GtkAction *location;
 
+	location = gtk_action_group_get_action (pane->action_group,
+					      NEMO_ACTION_TOGGLE_LOCATION);
+	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (location), FALSE);
+	
 	nemo_window_pane_hide_temporary_bars (pane);
 	restore_focus_widget (pane);
 }
