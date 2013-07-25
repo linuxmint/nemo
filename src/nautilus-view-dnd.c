@@ -352,6 +352,7 @@ get_drop_filename (const char *text)
 	int last_nonspace = -1;
 	int num_attrs;
 	PangoLogAttr *attrs;
+	gchar *current_char;
 
 	num_attrs = MIN (g_utf8_strlen (text, -1) + 1, MAX_LEN_FILENAME);
 	attrs = g_new (PangoLogAttr, num_attrs);
@@ -381,6 +382,15 @@ get_drop_filename (const char *text)
 	} else {
 		/* Translator: This is the filename used for when you dnd text to a directory */
 		filename = g_strdup (_("Dropped Text.txt"));
+	}
+
+	/* Remove any invalid characters */
+	for (current_char = filename;
+	     *current_char;
+	     current_char = g_utf8_next_char (current_char)) {
+		if ( G_IS_DIR_SEPARATOR ( g_utf8_get_char (current_char))) {
+			*current_char = '-';
+		}
 	}
 
 	return filename;
