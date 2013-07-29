@@ -530,10 +530,14 @@ nautilus_view_handle_hover (NautilusView *view,
 {
 	NautilusWindowSlot *slot;
 	GFile *location;
+	GFile *current_location;
 
 	slot = nautilus_view_get_nautilus_window_slot (view);
 
 	location = g_file_new_for_uri (target_uri);
-	nautilus_window_slot_open_location (slot, location, 0);
+	current_location = nautilus_window_slot_get_location (slot);
+	if (! (current_location != NULL && g_file_equal(location, current_location))) {
+		nautilus_window_slot_open_location (slot, location, 0);
+	}
 	g_object_unref (location);
 }
