@@ -53,7 +53,7 @@ static gpointer parent_class;
 #define KEY_STOCK_ID "Stock-Id"
 #define KEY_SELECTION "Selection"
 #define KEY_EXTENSIONS "Extensions"
-#define KEY_MIME_TYPE "Mimetype"
+#define KEY_MIME_TYPES "Mimetypes"
 
 enum 
 {
@@ -61,7 +61,9 @@ enum
   PROP_KEY_FILE_PATH,
   PROP_SELECTION_TYPE,
   PROP_EXTENSIONS,
+  PROP_MIMES,
   PROP_EXT_LENGTH,
+  PROP_MIME_LENGTH,
   PROP_EXEC,
   PROP_PARENT_DIR,
   PROP_USE_PARENT_DIR,
@@ -75,7 +77,9 @@ nemo_action_init (NemoAction *action)
     action->key_file_path = NULL;
     action->selection_type = SELECTION_SINGLE;
     action->extensions = NULL;
+    action->mimetypes = NULL;
     action->ext_length = 0;
+    action->mime_length = 0;
     action->exec = NULL;
     action->parent_dir = NULL;
     action->use_parent_dir = FALSE;
@@ -123,10 +127,29 @@ nemo_action_class_init (NemoActionClass *klass)
                                      );
 
     g_object_class_install_property (object_class,
+                                     PROP_MIMES,
+                                     g_param_spec_pointer ("mimetypes",
+                                                           "Mimetypes",
+                                                           "String array of file mimetypes",
+                                                           G_PARAM_READWRITE)
+                                     );
+
+    g_object_class_install_property (object_class,
                                      PROP_EXT_LENGTH,
                                      g_param_spec_int ("ext-length",
                                                        "Extensions Length",
                                                        "Number of extensions",
+                                                       0,
+                                                       999,
+                                                       0,
+                                                       G_PARAM_READWRITE)
+                                     );
+
+    g_object_class_install_property (object_class,
+                                     PROP_MIME_LENGTH,
+                                     g_param_spec_int ("mime-length",
+                                                       "Mimetypes Length",
+                                                       "Number of mimetypes",
                                                        0,
                                                        999,
                                                        0,
@@ -261,6 +284,14 @@ nemo_action_constructed (GObject *object)
                                               &count,
                                               NULL);
 
+    gsize mime_count;
+
+    gchar **mimes = g_key_file_get_string_list (key_file,
+                                                ACTION_FILE_GROUP,
+                                                KEY_MIME_TYPES,
+                                                &mime_count,
+                                                NULL);
+
     gchar *exec = NULL;
     gboolean use_parent_dir = FALSE;
 
@@ -284,6 +315,8 @@ nemo_action_constructed (GObject *object)
                    "selection-type", type,
                    "ext-length", count,
                    "extensions", ext,
+                   "mime-length", mime_count,
+                   "mimetypes", mimes,
                    "parent-dir", parent_dir,
                    "use-parent-dir", use_parent_dir,
                    "orig-label", orig_label,
@@ -333,21 +366,29 @@ nemo_action_new (const gchar *name,
                                               NULL,
                                               NULL);
 
+    gchar **mimes = g_key_file_get_string_list (key_file,
+                                                ACTION_FILE_GROUP,
+                                                KEY_MIME_TYPES,
+                                                NULL,
+                                                NULL);
+
     gchar *selection_string = g_key_file_get_string (key_file,
                                                      ACTION_FILE_GROUP,
                                                      KEY_SELECTION,
                                                      NULL);
 
-    if (orig_label == NULL || exec_raw == NULL || ext == NULL || selection_string == NULL) {
+    if (orig_label == NULL || exec_raw == NULL || (ext == NULL && mimes == NULL) || selection_string == NULL) {
         g_printerr ("An action definition requires, at minimum, "
-                    "a Label field, an Exec field, a Selection field, and an Extensions field.\n"
+                    "a Label field, an Exec field, a Selection field, and an either an Extensions or Mimetypes field.\n"
                     "Check the %s file for missing fields.\n", path);
         return NULL;
     }
 
     g_free (orig_label);
     g_free (exec_raw);
+    g_free (selection_string);
     g_strfreev (ext);
+    g_strfreev (mimes);
     g_key_file_free (key_file);
     return g_object_new (NEMO_TYPE_ACTION,
                          "name", name,
@@ -392,8 +433,14 @@ nemo_action_set_property (GObject         *object,
     case PROP_EXTENSIONS:
       nemo_action_set_extensions (action, g_value_get_pointer (value));
       break;
+    case PROP_MIMES:
+      nemo_action_set_mimetypes (action, g_value_get_pointer (value));
+      break;
     case PROP_EXT_LENGTH:
       action->ext_length = g_value_get_int (value);
+      break;
+    case PROP_MIME_LENGTH:
+      action->mime_length = g_value_get_int (value);
       break;
     case PROP_EXEC:
       nemo_action_set_exec (action, g_value_get_string (value));
@@ -437,8 +484,14 @@ nemo_action_get_property (GObject    *object,
     case PROP_EXTENSIONS:
       g_value_set_pointer (value, action->extensions);
       break;
+    case PROP_MIMES:
+      g_value_set_pointer (value, action->mimetypes);
+      break;
     case PROP_EXT_LENGTH:
       g_value_set_int (value, action->ext_length);
+      break;
+    case PROP_MIME_LENGTH:
+      g_value_set_int (value, action->mime_length);
       break;
     case PROP_EXEC:
       g_value_set_string (value, action->exec);
@@ -584,16 +637,28 @@ nemo_action_get_selection_type (NemoAction *action)
     return action->selection_type;
 }
 
-gchar **
+const gchar **
 nemo_action_get_extension_list (NemoAction *action)
 {
     return action->extensions;
+}
+
+const gchar **
+nemo_action_get_mimetypes_list (NemoAction *action)
+{
+    return action->mimetypes;
 }
 
 guint
 nemo_action_get_extension_count (NemoAction *action)
 {
     return action->ext_length;
+}
+
+guint
+nemo_action_get_mimetypes_count (NemoAction *action)
+{
+    return action->mime_length;
 }
 
 void
@@ -635,7 +700,7 @@ nemo_action_set_orig_label (NemoAction *action, const gchar *orig_label)
     g_free (tmp);
 }
 
-gchar *
+const gchar *
 nemo_action_get_orig_label (NemoAction *action)
 {
     return action->orig_label;
@@ -651,7 +716,7 @@ nemo_action_set_orig_tt (NemoAction *action, const gchar *orig_tt)
     g_free (tmp);
 }
 
-gchar *
+const gchar *
 nemo_action_get_orig_tt (NemoAction *action)
 {
     return action->orig_tt;
@@ -724,5 +789,15 @@ nemo_action_set_extensions (NemoAction *action, gchar **extensions)
 
     tmp = action->extensions;
     action->extensions = g_strdupv (extensions);
+    g_strfreev (tmp);
+}
+
+void
+nemo_action_set_mimetypes (NemoAction *action, gchar **mimetypes)
+{
+    gchar **tmp;
+
+    tmp = action->mimetypes;
+    action->mimetypes = g_strdupv (mimetypes);
     g_strfreev (tmp);
 }

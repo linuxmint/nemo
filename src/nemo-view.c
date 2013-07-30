@@ -5928,12 +5928,14 @@ determine_visibility (gpointer data, gpointer callback_data)
             break;
     }
 
-    gchar **extensions = nemo_action_get_extension_list (action);
-    gint ext_count = nemo_action_get_extension_count (action);
+    const gchar **extensions = nemo_action_get_extension_list (action);
+    const gchar **mimetypes = nemo_action_get_mimetypes_list (action);
 
+    guint ext_count = nemo_action_get_extension_count (action);
+    guint mime_count = nemo_action_get_mimetypes_count (action);
     gboolean found_match = TRUE;
 
-    if (ext_count == 1 && g_strcmp0 (extensions[0], "any") ==0)
+    if (ext_count == 1 && g_strcmp0 (extensions[0], "any") == 0)
         goto out;
 
     for (iter = selected_files; iter != NULL && found_match; iter = iter->next) {
@@ -5942,25 +5944,36 @@ determine_visibility (gpointer data, gpointer callback_data)
         gchar *filename = g_ascii_strdown (raw_fn, -1);
         g_free (raw_fn);
         int i;
-        for (i = 0; i < ext_count; i++) {
-            if (g_strcmp0 (extensions[i], "dir") == 0) {
-                if (nemo_file_is_directory (NEMO_FILE (iter->data))) {
-                    found_match = TRUE;
-                    break;
+        if (ext_count > 0) {
+            for (i = 0; i < ext_count; i++) {
+                if (g_strcmp0 (extensions[i], "dir") == 0) {
+                    if (nemo_file_is_directory (NEMO_FILE (iter->data))) {
+                        found_match = TRUE;
+                        break;
+                    }
+                } else if (g_strcmp0 (extensions[i], "none") == 0) {
+                    if (g_strrstr (filename, ".") == NULL) {
+                        found_match = TRUE;
+                        break;
+                    }
+                } else {
+                    if (g_str_has_suffix (filename, g_ascii_strdown (extensions[i], -1))) {
+                        found_match = TRUE;
+                        break;
+                    }
                 }
-            } else if (g_strcmp0 (extensions[i], "none") == 0) {
-                if (g_strrstr (filename, ".") == NULL) {
-                    found_match = TRUE;
-                    break;
-                }
-            } else {
-                if (g_str_has_suffix (filename, g_ascii_strdown (extensions[i], -1))) {
+            }
+            g_free (filename);
+        }
+
+        if (mime_count > 0) {
+            for (i = 0; i < mime_count; i++) {
+                if (nemo_file_is_mime_type (NEMO_FILE (iter->data), mimetypes[i])) {
                     found_match = TRUE;
                     break;
                 }
             }
         }
-        g_free (filename);
     }
 
 out:
