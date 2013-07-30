@@ -43,8 +43,9 @@
 #define SELECTION_NONE_KEY "None"
 #define SELECTION_NOT_NONE_KEY "NotNone"
 
-#define TOKEN_EXEC_URL_LIST "%U"
+#define TOKEN_EXEC_URI_LIST "%U"
 #define TOKEN_EXEC_FILE_LIST "%F"
+#define TOKEN_EXEC_PARENT "%P"
 #define TOKEN_LABEL_FILE_NAME "%N"
 
 typedef struct _NemoAction NemoAction;
@@ -79,10 +80,10 @@ struct _NemoActionClass {
 
 GType         nemo_action_get_type             (void);
 NemoAction   *nemo_action_new                  (const gchar *name, const gchar *path);
-void          nemo_action_activate             (NemoAction *action, GList *selection);
+void          nemo_action_activate             (NemoAction *action, GList *selection, NemoFile *parent);
 SelectionType nemo_action_get_selection_type   (NemoAction *action);
-const gchar **nemo_action_get_extension_list   (NemoAction *action);
-const gchar **nemo_action_get_mimetypes_list   (NemoAction *action);
+gchar **nemo_action_get_extension_list   (NemoAction *action);
+gchar **nemo_action_get_mimetypes_list   (NemoAction *action);
 guint         nemo_action_get_extension_count  (NemoAction *action);
 guint         nemo_action_get_mimetypes_count  (NemoAction *action);
 void          nemo_action_set_key_file_path    (NemoAction *action, const gchar *path);

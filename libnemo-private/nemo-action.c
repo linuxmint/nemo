@@ -514,121 +514,108 @@ nemo_action_get_property (GObject    *object,
     }
 }
 
-static GList *
-replace_token (GList *arg_list, GList *selection, gboolean *success)
+typedef enum {
+    TOKEN_NONE = 0,
+    TOKEN_PATH_LIST,
+    TOKEN_URI_LIST,
+    TOKEN_PARENT
+} TokenType;
+
+static gchar *
+find_token_type (const gchar *str, TokenType *token_type)
 {
-    GList *token, *iter;
-    gboolean use_url;
+    gchar *ptr = NULL;
+    *token_type = TOKEN_NONE;
 
-    for (token = arg_list; token != NULL; token = token->next) {
-        if (g_strcmp0 (token->data, TOKEN_EXEC_FILE_LIST) == 0) {
-            use_url = FALSE;
-            break;
-        }
-        if (g_strcmp0 (token->data, TOKEN_EXEC_URL_LIST) == 0) {
-            use_url = TRUE;
-            break;
-        }
+    ptr = g_strstr_len (str, -1, TOKEN_EXEC_FILE_LIST);
+    if (ptr != NULL) {
+        *token_type = TOKEN_PATH_LIST;
+        return ptr;
     }
-
-    if (token != NULL) {
-        for (iter = selection; iter != NULL; iter = iter->next) {
-            if (use_url) {
-                gchar *uri = nemo_file_get_uri (NEMO_FILE (iter->data));
-                arg_list = g_list_insert_before (arg_list, token, uri);
-            } else {
-                gchar *path = nemo_file_get_path (NEMO_FILE (iter->data));
-                arg_list = g_list_insert_before (arg_list, token, path);
-            }
-        }
-        arg_list = g_list_delete_link (arg_list, token);
-        *success = TRUE;
+    ptr = g_strstr_len (str, -1, TOKEN_EXEC_URI_LIST);
+    if (ptr != NULL) {
+        *token_type = TOKEN_URI_LIST;
+        return ptr;
     }
-    return arg_list;
+    ptr = g_strstr_len (str, -1, TOKEN_EXEC_PARENT);
+    if (ptr != NULL) {
+        *token_type = TOKEN_PARENT;
+        return ptr;
+    }
+    return NULL;
 }
 
+static gchar *
+get_insertion_string (TokenType token_type, GList *selection, NemoFile *parent)
+{
+    GList *l;
+
+    GString *str = g_string_new("");
+    gboolean first = TRUE;
+
+    switch (token_type) {
+        case TOKEN_PATH_LIST:
+            for (l = selection; l != NULL; l = l->next) {
+                if (!first)
+                    str = g_string_append (str, " ");
+                gchar *path = nemo_file_get_path (NEMO_FILE (l->data));
+                str = g_string_append (str, path);
+                g_free (path);
+                first = FALSE;
+            }
+            break;
+        case TOKEN_URI_LIST:
+            for (l = selection; l != NULL; l = l->next) {
+                if (!first)
+                    str = g_string_append (str, " ");
+                gchar *uri = nemo_file_get_uri (NEMO_FILE (l->data));
+                str = g_string_append (str, uri);
+                g_free (uri);
+                first = FALSE;
+            }
+            break;
+        case TOKEN_PARENT:
+            ;
+            gchar *path = nemo_file_get_path (parent);
+            str = g_string_append (str, path);
+            g_free (path);
+            break;
+    }
+
+    gchar *ret = str->str;
+
+    g_string_free (str, FALSE);
+
+    return ret;
+}
 
 void
-nemo_action_activate (NemoAction *action, GList *selection)
+nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
 {
-    GList *iter;
-    GList *arg_list = NULL;
-    gchar **exec_args;
-    gint exec_arg_count;
-    gint i;
+    GList *l;
+    GString *exec = g_string_new (action->exec);
 
-    g_shell_parse_argv (action->exec, &exec_arg_count, &exec_args, NULL);
+    gchar *ptr;
+    TokenType token_type;
 
-    for (i = 0; i < exec_arg_count; i++) {
-        arg_list = g_list_append (arg_list, g_strdup (exec_args[i]));
+    ptr = find_token_type (exec->str, &token_type);
+
+    while (ptr != NULL) {
+        gint shift = ptr - exec->str;
+
+        gchar *insertion = get_insertion_string (token_type, selection, parent);
+        exec = g_string_erase (exec, shift, 2);
+        exec = g_string_insert (exec, shift, insertion);
+
+        token_type = TOKEN_NONE;
+        g_free  (insertion);
+        ptr = find_token_type (exec->str, &token_type);
     }
 
-    gboolean success = FALSE;
-
-    arg_list = replace_token (arg_list, selection, &success);
-
-    if (!success) {
-        for (iter = arg_list; iter != NULL; iter = iter->next) {
-            gchar *unquoted = g_strdup (iter->data);
-            if (g_strstr_len (unquoted, -1, TOKEN_EXEC_FILE_LIST) != NULL ||
-                g_strstr_len (unquoted, -1, TOKEN_EXEC_URL_LIST) != NULL) {
-                gint sub_arg_count;
-                GList *sub_list = NULL;
-                gchar **sub_args = g_strsplit (unquoted, " ", -1);
-                sub_arg_count = g_strv_length(sub_args);
-                for (i = 0; i < sub_arg_count; i++) {
-                    sub_list = g_list_append (sub_list, g_strdup (sub_args[i]));
-                }
-                sub_list = replace_token (sub_list, selection, &success);
-                if (success) {
-                    GList *l;
-                    gchar *subv[g_list_length (sub_list)+1];
-                    i = 0;
-                    sub_list = g_list_first (sub_list);
-                    for (l = sub_list; l != NULL; l = l->next) {
-                        subv[i] = g_strdup (l->data);
-                        i++;
-                    }
-                    subv[i] = NULL;
-                    gchar *new_str = g_strjoinv (" ", subv);
-                    iter->data = g_strdup (new_str);
-                    g_free (new_str);
-                }
-                g_list_free_full (sub_list, g_free);
-                g_strfreev (sub_args);
-            }
-            g_free (unquoted);
-        }
-    }
-
-    arg_list = g_list_first (arg_list);
-
-    /* Now make our arg vector array for passing to the g_spawn_async function */
-
-    gchar *argv[g_list_length (arg_list)+1];
-    i = 0;
-    if (action->use_parent_dir) {
-        argv[i] = g_build_filename (action->parent_dir, g_strdup (arg_list->data), NULL);
-    } else {
-        argv[i] = g_strdup (arg_list->data);
-    }
-    i++;
-
-    for (iter = arg_list->next; iter != NULL; iter = iter->next) {
-        argv[i] = g_strdup (iter->data);
-        i++;
-    }
-
-    argv[i] = NULL;
-
-    /* Finally spawn the command */
-
-    g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH,
-                   NULL, NULL, NULL, NULL);
+    g_spawn_command_line_async (exec->str, NULL);
 
     nemo_file_list_free (selection);
-    g_list_free_full (arg_list, g_free);
-    g_strfreev (exec_args);
+    g_string_free (exec, TRUE);
 }
 
 SelectionType
@@ -637,13 +624,13 @@ nemo_action_get_selection_type (NemoAction *action)
     return action->selection_type;
 }
 
-const gchar **
+gchar **
 nemo_action_get_extension_list (NemoAction *action)
 {
     return action->extensions;
 }
 
-const gchar **
+gchar **
 nemo_action_get_mimetypes_list (NemoAction *action)
 {
     return action->mimetypes;

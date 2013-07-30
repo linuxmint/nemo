@@ -5886,8 +5886,9 @@ run_action_callback (NemoAction *action, gpointer callback_data)
     GList *selected_files;
 
     selected_files = nemo_view_get_selection (view);
+    NemoFile *parent = nemo_view_get_directory_as_file (view);
 
-    nemo_action_activate (action, selected_files);
+    nemo_action_activate (action, selected_files, parent);
 }
 
 static void
