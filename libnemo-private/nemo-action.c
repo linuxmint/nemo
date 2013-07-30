@@ -41,7 +41,7 @@ static void     nemo_action_constructed (GObject *object);
 
 static void     nemo_action_finalize (GObject *gobject);
 
-static   gpointer parent_class;
+static gpointer parent_class;
 
 #define ACTION_FILE_GROUP "Nemo Action"
 
@@ -53,6 +53,7 @@ static   gpointer parent_class;
 #define KEY_STOCK_ID "Stock-Id"
 #define KEY_SELECTION "Selection"
 #define KEY_EXTENSIONS "Extensions"
+#define KEY_MIME_TYPE "Mimetype"
 
 enum 
 {
@@ -332,9 +333,14 @@ nemo_action_new (const gchar *name,
                                               NULL,
                                               NULL);
 
-    if (orig_label == NULL || exec_raw == NULL || ext == NULL) {
+    gchar *selection_string = g_key_file_get_string (key_file,
+                                                     ACTION_FILE_GROUP,
+                                                     KEY_SELECTION,
+                                                     NULL);
+
+    if (orig_label == NULL || exec_raw == NULL || ext == NULL || selection_string == NULL) {
         g_printerr ("An action definition requires, at minimum, "
-                    "a Label field, and Exec field, and an Extensions field.\n"
+                    "a Label field, an Exec field, a Selection field, and an Extensions field.\n"
                     "Check the %s file for missing fields.\n", path);
         return NULL;
     }
