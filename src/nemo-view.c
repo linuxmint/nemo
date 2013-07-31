@@ -5929,8 +5929,8 @@ determine_visibility (gpointer data, gpointer callback_data)
             break;
     }
 
-    const gchar **extensions = nemo_action_get_extension_list (action);
-    const gchar **mimetypes = nemo_action_get_mimetypes_list (action);
+    gchar **extensions = nemo_action_get_extension_list (action);
+    gchar **mimetypes = nemo_action_get_mimetypes_list (action);
 
     guint ext_count = nemo_action_get_extension_count (action);
     guint mime_count = nemo_action_get_mimetypes_count (action);
