@@ -59,7 +59,7 @@
     </context>
 
     <context id="exec-parameter" style-ref="exec-parameter">
-      <match>%[fFuUdDnNimckv%]</match>
+      <match>%[FUNP%]</match>
     </context>
 
     <context id="encoding" style-ref="encoding">
@@ -82,6 +82,7 @@
       <keyword>Stock-Id</keyword>
       <keyword>Selection</keyword>
       <keyword>Extensions</keyword>
+      <keyword>Mimetypes</keyword>
     </context>
 
     <context id="non-standard-key" style-ref="key">

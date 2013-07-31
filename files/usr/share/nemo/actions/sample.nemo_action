@@ -24,10 +24,11 @@ Comment=This is a test for Nemo actions.  Action will be applied to %N
 
 # What to run.  Enclose in < > to run an executable that resides in the actions folder.
 # Use %U as a token where to insert a URL list, use %F as a token to insert a file list
+# Use %P to insert the selection's parent directory name
 # **** REQUIRED ****
 #Exec=gedit %F
 
-Exec=<myaction.py -r -g %F>
+Exec=<myaction.py -r -g %P %F %U>
 
 
 # Icon name to use in the menu - must be a theme icon name
@@ -43,7 +44,7 @@ Icon-Name=folder
 
 # What type selection: [S]ingle, [M]ultiple, Any, NotNone, None (background click), or
 # a number representing how many files must be selected to display.
-# Defaults to Single if this field is missing
+# ****** REQUIRED *******
 
 Selection=S
 
@@ -52,6 +53,11 @@ Selection=S
 # Use "dir" for directory selection and "none" for no extension
 # Use "any" by itself, semi-colon-terminated, for any file type
 # Extensions are NOT case sensitive.  jpg will match JPG, jPg, jpg, etc..
-# **** REQUIRED ****
+# **** EITHER EXTENSIONS OR MIMETYPES IS REQUIRED *****
 
 Extensions=any;
+
+# What mime-types to display on - this is an array, end with a semicolon
+# **** EITHER EXTENSIONS OR MIMETYPES IS REQUIRED *****
+
+#Mimetypes=text/plain;
