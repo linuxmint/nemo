@@ -50,6 +50,7 @@ static GDebugKey keys[] = {
   { "Smclient", NEMO_DEBUG_SMCLIENT },
   { "Window", NEMO_DEBUG_WINDOW },
   { "Undo", NEMO_DEBUG_UNDO },
+  { "Actions", NEMO_DEBUG_ACTIONS },
   { 0, }
 };
 

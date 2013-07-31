@@ -20,6 +20,9 @@
 #include "nemo-action.h"
 #include <eel/eel-string.h>
 
+#define DEBUG_FLAG NEMO_DEBUG_ACTIONS
+#include <libnemo-private/nemo-debug.h>
+
 G_DEFINE_TYPE (NemoAction, nemo_action,
 	       GTK_TYPE_ACTION);
 
@@ -612,6 +615,12 @@ nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
         ptr = find_token_type (exec->str, &token_type);
     }
 
+    if (action->use_parent_dir) {
+        exec = g_string_prepend (exec, G_DIR_SEPARATOR_S);
+        exec = g_string_prepend (exec, action->parent_dir);
+    }
+
+    DEBUG ("Spawning: %s\n", exec->str);
     g_spawn_command_line_async (exec->str, NULL);
 
     nemo_file_list_free (selection);
