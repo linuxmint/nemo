@@ -53,13 +53,17 @@ typedef struct _NautilusIconInfoClass NautilusIconInfoClass;
 
 GType    nautilus_icon_info_get_type (void) G_GNUC_CONST;
 
-NautilusIconInfo *    nautilus_icon_info_new_for_pixbuf               (GdkPixbuf         *pixbuf);
+NautilusIconInfo *    nautilus_icon_info_new_for_pixbuf               (GdkPixbuf         *pixbuf,
+								       int                scale);
 NautilusIconInfo *    nautilus_icon_info_lookup                       (GIcon             *icon,
-								       int                size);
+								       int                size,
+								       int                scale);
 NautilusIconInfo *    nautilus_icon_info_lookup_from_name             (const char        *name,
-								       int                size);
+								       int                size,
+								       int                scale);
 NautilusIconInfo *    nautilus_icon_info_lookup_from_path             (const char        *path,
-								       int                size);
+								       int                size,
+								       int                scale);
 gboolean              nautilus_icon_info_is_fallback                  (NautilusIconInfo  *icon);
 GdkPixbuf *           nautilus_icon_info_get_pixbuf                   (NautilusIconInfo  *icon);
 GdkPixbuf *           nautilus_icon_info_get_pixbuf_nodefault         (NautilusIconInfo  *icon);

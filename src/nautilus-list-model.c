@@ -32,12 +32,14 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <cairo-gobject.h>
 
 #include <eel/eel-graphic-effects.h>
 #include <libnautilus-private/nautilus-dnd.h>
 
 enum {
 	SUBDIRECTORY_UNLOADED,
+	GET_ICON_SCALE,
 	LAST_SIGNAL
 };
 
@@ -150,7 +152,7 @@ nautilus_list_model_get_column_type (GtkTreeModel *tree_model, int index)
 	case NAUTILUS_LIST_MODEL_LARGE_ICON_COLUMN:
 	case NAUTILUS_LIST_MODEL_LARGER_ICON_COLUMN:
 	case NAUTILUS_LIST_MODEL_LARGEST_ICON_COLUMN:
-		return GDK_TYPE_PIXBUF;
+		return CAIRO_GOBJECT_TYPE_SURFACE;
 	case NAUTILUS_LIST_MODEL_FILE_NAME_IS_EDITABLE_COLUMN:
 		return G_TYPE_BOOLEAN;
 	default:
@@ -235,6 +237,21 @@ nautilus_list_model_get_path (GtkTreeModel *tree_model, GtkTreeIter *iter)
 	return path;
 }
 
+static gint
+nautilus_list_model_get_icon_scale (NautilusListModel *model)
+{
+	gint retval = -1;
+
+	g_signal_emit (model, list_model_signals[GET_ICON_SCALE], 0,
+		       &retval);
+
+	if (retval == -1) {
+		retval = gdk_screen_get_monitor_scale_factor (gdk_screen_get_default (), 0);
+	}
+
+	return retval;
+}
+
 static void
 nautilus_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int column, GValue *value)
 {
@@ -247,9 +264,10 @@ nautilus_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int 
 	NautilusIconInfo *icon_info;
 	GEmblem *emblem;
 	GList *emblem_icons, *l;
-	int icon_size;
+	int icon_size, icon_scale;
 	NautilusZoomLevel zoom_level;
 	NautilusFileIconFlags flags;
+	cairo_surface_t *surface;
 	
 	model = (NautilusListModel *)tree_model;
 
@@ -277,11 +295,12 @@ nautilus_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int 
 	case NAUTILUS_LIST_MODEL_LARGE_ICON_COLUMN:
 	case NAUTILUS_LIST_MODEL_LARGER_ICON_COLUMN:
 	case NAUTILUS_LIST_MODEL_LARGEST_ICON_COLUMN:
-		g_value_init (value, GDK_TYPE_PIXBUF);
+		g_value_init (value, CAIRO_GOBJECT_TYPE_SURFACE);
 
 		if (file != NULL) {
 			zoom_level = nautilus_list_model_get_zoom_level_from_column_id (column);
 			icon_size = nautilus_get_icon_size_for_zoom_level (zoom_level);
+			icon_scale = nautilus_list_model_get_icon_scale (model);
 
 			flags = NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS |
 				NAUTILUS_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE |
@@ -304,7 +323,7 @@ nautilus_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int 
 				}
 			}
 
-			gicon = G_ICON (nautilus_file_get_icon_pixbuf (file, icon_size, TRUE, flags));
+			gicon = G_ICON (nautilus_file_get_icon_pixbuf (file, icon_size, TRUE, icon_scale, flags));
 			emblem_icons = nautilus_file_get_emblem_icons (file);
 
 			/* pick only the first emblem we can render for the list view */
@@ -324,7 +343,7 @@ nautilus_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int 
 
 			g_list_free_full (emblem_icons, g_object_unref);
 
-			icon_info = nautilus_icon_info_lookup (gicon, icon_size);
+			icon_info = nautilus_icon_info_lookup (gicon, icon_size, icon_scale);
 			icon = nautilus_icon_info_get_pixbuf_at_size (icon_info, icon_size);
 
 			g_object_unref (icon_info);
@@ -342,7 +361,8 @@ nautilus_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int 
 				}
 			}
 
-			g_value_set_object (value, icon);
+			surface = gdk_cairo_surface_create_from_pixbuf (icon, icon_scale, NULL);
+			g_value_take_boxed (value, surface);
 			g_object_unref (icon);
 		}
 		break;
@@ -1459,6 +1479,14 @@ nautilus_list_model_class_init (NautilusListModelClass *klass)
                       g_cclosure_marshal_VOID__OBJECT,
                       G_TYPE_NONE, 1,
                       NAUTILUS_TYPE_DIRECTORY);
+
+      list_model_signals[GET_ICON_SCALE] =
+	      g_signal_new ("get-icon-scale",
+			    NAUTILUS_TYPE_LIST_MODEL,
+			    G_SIGNAL_RUN_FIRST | G_SIGNAL_RUN_LAST,
+			    0, NULL, NULL,
+			    NULL,
+			    G_TYPE_INT, 0);
 }
 
 static void

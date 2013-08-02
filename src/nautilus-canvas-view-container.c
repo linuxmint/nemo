@@ -67,6 +67,7 @@ nautilus_canvas_view_container_get_icon_images (NautilusCanvasContainer *contain
 	GIcon *emblemed_icon;
 	GEmblem *emblem;
 	GList *emblem_icons, *l;
+	gint scale;
 
 	file = (NautilusFile *) data;
 
@@ -92,7 +93,8 @@ nautilus_canvas_view_container_get_icon_images (NautilusCanvasContainer *contain
 		flags |= NAUTILUS_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
 	}
 
-	icon_info = nautilus_file_get_icon (file, size, flags);
+	scale = gtk_widget_get_scale_factor (GTK_WIDGET (canvas_view));
+	icon_info = nautilus_file_get_icon (file, size, scale, flags);
 	emblem_icons = nautilus_file_get_emblem_icons (file);
 
 	/* apply emblems */
@@ -112,7 +114,7 @@ nautilus_canvas_view_container_get_icon_images (NautilusCanvasContainer *contain
 		}
 
 		g_clear_object (&icon_info);
-		icon_info = nautilus_icon_info_lookup (emblemed_icon, size);
+		icon_info = nautilus_icon_info_lookup (emblemed_icon, size, scale);
 
 		g_object_unref (pixbuf);
 		g_object_unref (emblemed_icon);

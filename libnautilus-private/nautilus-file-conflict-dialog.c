@@ -78,6 +78,7 @@ file_icons_changed (NautilusFile *file,
 	pixbuf = nautilus_file_get_icon_pixbuf (fcd->details->destination,
 						NAUTILUS_ICON_SIZE_LARGE,
 						TRUE,
+						gtk_widget_get_scale_factor (fcd->details->dest_image),
 						NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS);
 
 	gtk_image_set_from_pixbuf (GTK_IMAGE (fcd->details->dest_image), pixbuf);
@@ -86,6 +87,7 @@ file_icons_changed (NautilusFile *file,
 	pixbuf = nautilus_file_get_icon_pixbuf (fcd->details->source,
 						NAUTILUS_ICON_SIZE_LARGE,
 						TRUE,
+						gtk_widget_get_scale_factor (fcd->details->src_image),
 						NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS);
 
 	gtk_image_set_from_pixbuf (GTK_IMAGE (fcd->details->src_image), pixbuf);
@@ -221,6 +223,7 @@ file_list_ready_cb (GList *files,
 	pixbuf = nautilus_file_get_icon_pixbuf (dest,
 						NAUTILUS_ICON_SIZE_LARGE,
 						TRUE,
+						gtk_widget_get_scale_factor (fcd->details->titles_vbox),
 						NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS);
 	details->dest_image = gtk_image_new_from_pixbuf (pixbuf);
 	gtk_box_pack_start (GTK_BOX (details->first_hbox),
@@ -231,6 +234,7 @@ file_list_ready_cb (GList *files,
 	pixbuf = nautilus_file_get_icon_pixbuf (src,
 						NAUTILUS_ICON_SIZE_LARGE,
 						TRUE,
+						gtk_widget_get_scale_factor (fcd->details->titles_vbox),
 						NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS);
 	details->src_image = gtk_image_new_from_pixbuf (pixbuf);
 	gtk_box_pack_start (GTK_BOX (details->second_hbox),

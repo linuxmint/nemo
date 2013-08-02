@@ -4230,6 +4230,7 @@ nautilus_file_get_thumbnail_path (NautilusFile *file)
 NautilusIconInfo *
 nautilus_file_get_icon (NautilusFile *file,
 			int size,
+			int scale,
 			NautilusFileIconFlags flags)
 {
 	NautilusIconInfo *icon;
@@ -4247,7 +4248,7 @@ nautilus_file_get_icon (NautilusFile *file,
 	}
 
 	if (gicon != NULL) {
-		icon = nautilus_icon_info_lookup (gicon, size);
+		icon = nautilus_icon_info_lookup (gicon, size, scale);
 		g_object_unref (gicon);
 
 		return icon;
@@ -4268,7 +4269,7 @@ nautilus_file_get_icon (NautilusFile *file,
 	    nautilus_file_should_show_thumbnail (file)) {
 		if (file->details->thumbnail) {
 			int w, h, s;
-			double scale;
+			double thumb_scale;
 
 			raw_pixbuf = g_object_ref (file->details->thumbnail);
 
@@ -4278,19 +4279,19 @@ nautilus_file_get_icon (NautilusFile *file,
 			s = MAX (w, h);			
 			/* Don't scale up small thumbnails in the standard view */
 			if (s <= cached_thumbnail_size) {
-				scale = (double)size / NAUTILUS_ICON_SIZE_STANDARD;
+				thumb_scale = (double)size / NAUTILUS_ICON_SIZE_STANDARD;
 			}
 			else {
-				scale = (double)modified_size / s;
+				thumb_scale = (double)modified_size / s;
 			}
 			/* Make sure that icons don't get smaller than NAUTILUS_ICON_SIZE_SMALLEST */
-			if (s*scale <= NAUTILUS_ICON_SIZE_SMALLEST) {
-				scale = (double) NAUTILUS_ICON_SIZE_SMALLEST / s;
+			if (s*thumb_scale <= NAUTILUS_ICON_SIZE_SMALLEST) {
+				thumb_scale = (double) NAUTILUS_ICON_SIZE_SMALLEST / s;
 			}
 
 			scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
-								 MAX (w * scale, 1),
-								 MAX (h * scale, 1),
+								 MAX (w * thumb_scale, 1),
+								 MAX (h * thumb_scale, 1),
 								 GDK_INTERP_BILINEAR);
 
 			/* We don't want frames around small icons */
@@ -4313,9 +4314,9 @@ nautilus_file_get_icon (NautilusFile *file,
 			}
 
 			DEBUG ("Returning thumbnailed image, at size %d %d",
-			       (int) (w * scale), (int) (h * scale));
+			       (int) (w * thumb_scale), (int) (h * thumb_scale));
 			
-			icon = nautilus_icon_info_new_for_pixbuf (scaled_pixbuf);
+			icon = nautilus_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
 			g_object_unref (scaled_pixbuf);
 			return icon;
 		} else if (file->details->thumbnail_path == NULL &&
@@ -4335,15 +4336,15 @@ nautilus_file_get_icon (NautilusFile *file,
 		gicon = nautilus_file_get_gicon (file, flags);
 	
 	if (gicon) {
-		icon = nautilus_icon_info_lookup (gicon, size);
+		icon = nautilus_icon_info_lookup (gicon, size, scale);
 		if (nautilus_icon_info_is_fallback (icon)) {
 			g_object_unref (icon);
-			icon = nautilus_icon_info_lookup (get_default_file_icon (flags), size);
+			icon = nautilus_icon_info_lookup (get_default_file_icon (flags), size, scale);
 		}
 		g_object_unref (gicon);
 		return icon;
 	} else {
-		return nautilus_icon_info_lookup (get_default_file_icon (flags), size);
+		return nautilus_icon_info_lookup (get_default_file_icon (flags), size, scale);
 	}
 }
 
@@ -4351,12 +4352,13 @@ GdkPixbuf *
 nautilus_file_get_icon_pixbuf (NautilusFile *file,
 			       int size,
 			       gboolean force_size,
+			       int scale,
 			       NautilusFileIconFlags flags)
 {
 	NautilusIconInfo *info;
 	GdkPixbuf *pixbuf;
 
-	info = nautilus_file_get_icon (file, size, flags);
+	info = nautilus_file_get_icon (file, size, scale, flags);
 	if (force_size) {
 		pixbuf =  nautilus_icon_info_get_pixbuf_at_size (info, size);
 	} else {

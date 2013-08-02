@@ -364,17 +364,24 @@ get_image_for_properties_window (NautilusPropertiesWindow *window,
 {
 	NautilusIconInfo *icon, *new_icon;
 	GList *l;
+	gint icon_scale;
 	
 	icon = NULL;
+	icon_scale = gtk_widget_get_scale_factor (GTK_WIDGET (window->details->notebook));
+
 	for (l = window->details->original_files; l != NULL; l = l->next) {
 		NautilusFile *file;
 		
 		file = NAUTILUS_FILE (l->data);
 		
 		if (!icon) {
-			icon = nautilus_file_get_icon (file, NAUTILUS_ICON_SIZE_STANDARD, NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS | NAUTILUS_FILE_ICON_FLAGS_IGNORE_VISITING);
+			icon = nautilus_file_get_icon (file, NAUTILUS_ICON_SIZE_STANDARD, icon_scale,
+						       NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS |
+						       NAUTILUS_FILE_ICON_FLAGS_IGNORE_VISITING);
 		} else {
-			new_icon = nautilus_file_get_icon (file, NAUTILUS_ICON_SIZE_STANDARD, NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS | NAUTILUS_FILE_ICON_FLAGS_IGNORE_VISITING);
+			new_icon = nautilus_file_get_icon (file, NAUTILUS_ICON_SIZE_STANDARD, icon_scale,
+							   NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS |
+							   NAUTILUS_FILE_ICON_FLAGS_IGNORE_VISITING);
 			if (!new_icon || new_icon != icon) {
 				g_object_unref (icon);
 				g_object_unref (new_icon);
@@ -386,7 +393,9 @@ get_image_for_properties_window (NautilusPropertiesWindow *window,
 	}
 
 	if (!icon) {
-		icon = nautilus_icon_info_lookup_from_name ("text-x-generic", NAUTILUS_ICON_SIZE_STANDARD);
+		icon = nautilus_icon_info_lookup_from_name ("text-x-generic",
+							    NAUTILUS_ICON_SIZE_STANDARD,
+							    icon_scale);
 	}
 
 	if (icon_name != NULL) {

@@ -435,10 +435,12 @@ GIcon *                 nautilus_file_get_gicon                         (Nautilu
 									 NautilusFileIconFlags           flags);
 NautilusIconInfo *      nautilus_file_get_icon                          (NautilusFile                   *file,
 									 int                             size,
+									 int                             scale,
 									 NautilusFileIconFlags           flags);
 GdkPixbuf *             nautilus_file_get_icon_pixbuf                   (NautilusFile                   *file,
 									 int                             size,
 									 gboolean                        force_size,
+									 int                             scale,
 									 NautilusFileIconFlags           flags);
 
 gboolean                nautilus_file_has_open_window                   (NautilusFile                   *file);

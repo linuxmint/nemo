@@ -520,6 +520,9 @@ result_list_attributes_ready_cb (GList    *file_list,
   GIcon *gicon;
   GFile *location;
   GVariant *meta_variant;
+  gint icon_scale;
+
+  icon_scale = gdk_screen_get_monitor_scale_factor (gdk_screen_get_default (), 0);
 
   for (l = file_list; l != NULL; l = l->next) {
     file = l->data;
@@ -548,6 +551,7 @@ result_list_attributes_ready_cb (GList    *file_list,
 
     if (gicon == NULL) {
       gicon = G_ICON (nautilus_file_get_icon_pixbuf (file, 128, TRUE,
+						     icon_scale,
                                                      NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS));
     }
 

@@ -1886,6 +1886,13 @@ set_up_pixbuf_size (NautilusListView *view)
 	gtk_tree_view_columns_autosize (view->details->tree_view);
 }
 
+static gint
+get_icon_scale_callback (NautilusListModel *model,
+			 NautilusListView  *view)
+{
+	return gtk_widget_get_scale_factor (GTK_WIDGET (view->details->tree_view));
+}
+
 static void
 create_and_set_up_tree_view (NautilusListView *view)
 {
@@ -1972,6 +1979,9 @@ create_and_set_up_tree_view (NautilusListView *view)
 	g_signal_connect_object (view->details->model, "subdirectory-unloaded",
 				 G_CALLBACK (subdirectory_unloaded_callback), view, 0);
 
+	g_signal_connect_object (view->details->model, "get-icon-scale",
+				 G_CALLBACK (get_icon_scale_callback), view, 0);
+
 	gtk_tree_selection_set_mode (gtk_tree_view_get_selection (view->details->tree_view), GTK_SELECTION_MULTIPLE);
 	gtk_tree_view_set_rules_hint (view->details->tree_view, TRUE);
 
@@ -2042,7 +2052,7 @@ create_and_set_up_tree_view (NautilusListView *view)
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
 			gtk_tree_view_column_set_attributes (view->details->file_name_column,
 							     cell,
-							     "pixbuf", nautilus_list_model_get_column_id_from_zoom_level (view->details->zoom_level),
+							     "surface", nautilus_list_model_get_column_id_from_zoom_level (view->details->zoom_level),
 							     NULL);
 			
 			cell = gtk_cell_renderer_text_new ();
@@ -3127,7 +3137,7 @@ nautilus_list_view_set_zoom_level (NautilusListView *view,
 	column = nautilus_list_model_get_column_id_from_zoom_level (new_level);
 	gtk_tree_view_column_set_attributes (view->details->file_name_column,
 					     GTK_CELL_RENDERER (view->details->pixbuf_cell),
-					     "pixbuf", column,
+					     "surface", column,
 					     NULL);
 
 	nautilus_view_update_menus (NAUTILUS_VIEW (view));

@@ -34,9 +34,11 @@ void        nautilus_ui_prepare_merge_ui           (GtkUIManager      *ui_manage
 						    const char        *name,
 						    guint             *merge_id,
 						    GtkActionGroup   **action_group);
-GtkAction * nautilus_action_from_menu_item         (NautilusMenuItem  *item);
+GtkAction * nautilus_action_from_menu_item         (NautilusMenuItem  *item,
+						    GtkWidget         *parent_widget);
 
-GdkPixbuf * nautilus_ui_get_menu_icon              (const char        *icon_name);
+GdkPixbuf * nautilus_ui_get_menu_icon              (const char        *icon_name,
+						    GtkWidget         *parent_widget);
 
 char * nautilus_escape_action_name                 (const char        *action_name,
 						    const char        *prefix);

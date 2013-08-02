@@ -136,7 +136,9 @@ nautilus_launch_application_by_uri (GAppInfo *application,
 	}
 
 	file = nautilus_file_get_by_uri (uris->data);
-	icon = nautilus_file_get_icon (file, 48, 0);
+	icon = nautilus_file_get_icon (file,
+				       48, gtk_widget_get_scale_factor (GTK_WIDGET (parent_window)),
+				       0);
 	nautilus_file_unref (file);
 	if (icon) {
 		gdk_app_launch_context_set_icon_name (launch_context,

@@ -4714,15 +4714,17 @@ extension_action_callback (GtkAction *action,
 }
 
 static GdkPixbuf *
-get_menu_icon_for_file (NautilusFile *file)
+get_menu_icon_for_file (NautilusFile *file,
+			GtkWidget    *widget)
 {
 	NautilusIconInfo *info;
 	GdkPixbuf *pixbuf;
-	int size;
+	int size, scale;
 
 	size = nautilus_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
+	scale = gtk_widget_get_scale_factor (widget);
 	
-	info = nautilus_file_get_icon (file, size, 0);
+	info = nautilus_file_get_icon (file, size, scale, 0);
 	pixbuf = nautilus_icon_info_get_pixbuf_nodefault_at_size (info, size);
 	g_object_unref (info);
 	
@@ -4753,7 +4755,7 @@ add_extension_action_for_files (NautilusView *view,
 				 NULL);
 
 	if (icon != NULL) {
-		pixbuf = nautilus_ui_get_menu_icon (icon);
+		pixbuf = nautilus_ui_get_menu_icon (icon, GTK_WIDGET (view));
 		if (pixbuf != NULL) {
 			gtk_action_set_gicon (action, G_ICON (pixbuf));
 			g_object_unref (pixbuf);
@@ -5145,7 +5147,7 @@ add_script_to_scripts_menus (NautilusView *directory_view,
 				 tip,
 				 NULL);
 
-	pixbuf = get_menu_icon_for_file (file);
+	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	if (pixbuf != NULL) {
 		gtk_action_set_gicon (action, G_ICON (pixbuf));
 		g_object_unref (pixbuf);
@@ -5212,7 +5214,7 @@ add_submenu_to_directory_menus (NautilusView *directory_view,
 	ui_manager = nautilus_view_get_ui_manager (directory_view);
 	uri = nautilus_file_get_uri (file);
 	name = nautilus_file_get_display_name (file);
-	pixbuf = get_menu_icon_for_file (file);
+	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	add_submenu (ui_manager, action_group, merge_id, menu_path, uri, name, pixbuf, TRUE);
 	add_submenu (ui_manager, action_group, merge_id, popup_path, uri, name, pixbuf, FALSE);
 	add_submenu (ui_manager, action_group, merge_id, popup_bg_path, uri, name, pixbuf, FALSE);
@@ -5399,7 +5401,7 @@ add_template_to_templates_menus (NautilusView *directory_view,
 				 tip,
 				 NULL);
 	
-	pixbuf = get_menu_icon_for_file (file);
+	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	if (pixbuf != NULL) {
 		gtk_action_set_gicon (action, G_ICON (pixbuf));
 		g_object_unref (pixbuf);
