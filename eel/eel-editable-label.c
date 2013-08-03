@@ -3092,10 +3092,6 @@ popup_targets_received (GtkClipboard     *clipboard,
       gtk_widget_show (menuitem);
       gtk_menu_shell_append (GTK_MENU_SHELL (label->popup_menu), menuitem);
 
-      menuitem = gtk_separator_menu_item_new ();
-      gtk_widget_show (menuitem);
-      gtk_menu_shell_append (GTK_MENU_SHELL (label->popup_menu), menuitem);
-  
       g_signal_emit (label,
 		     signals[POPULATE_POPUP], 0,
 		     label->popup_menu);
