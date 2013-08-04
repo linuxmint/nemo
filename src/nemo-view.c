@@ -5897,6 +5897,7 @@ determine_visibility (gpointer data, gpointer callback_data)
     NemoAction *action = NEMO_ACTION (data);
     NemoView *view = NEMO_VIEW (callback_data);
 
+    NemoFile *parent = nemo_view_get_directory_as_file (view);
 
     gboolean selection_type_show = FALSE;
     gboolean extension_type_show = TRUE;
@@ -5982,10 +5983,8 @@ out:
     extension_type_show = found_match;
 
     if (selection_type_show && extension_type_show) {
-        nemo_action_set_label (action,
-                               selected_files != NULL ? selected_files->data : NULL);
-        nemo_action_set_tt (action,
-                            selected_files != NULL ? selected_files->data : NULL);
+        nemo_action_set_label (action, selected_files, parent);
+        nemo_action_set_tt (action, selected_files, parent);
         gtk_action_set_visible (GTK_ACTION (action), TRUE);
     } else {
         gtk_action_set_visible (GTK_ACTION (action), FALSE);

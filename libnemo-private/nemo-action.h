@@ -46,7 +46,10 @@
 #define TOKEN_EXEC_URI_LIST "%U"
 #define TOKEN_EXEC_FILE_LIST "%F"
 #define TOKEN_EXEC_PARENT "%P"
-#define TOKEN_LABEL_FILE_NAME "%N"
+#define TOKEN_EXEC_FILE_NAME "%f"
+#define TOKEN_EXEC_PARENT_NAME "%p"
+
+#define TOKEN_LABEL_FILE_NAME "%N" // Leave in for compatibility, same as TOKEN_EXEC_FILE_NAME
 
 typedef struct _NemoAction NemoAction;
 typedef struct _NemoActionClass NemoActionClass;
@@ -59,6 +62,22 @@ typedef enum {
     SELECTION_NONE
 } SelectionType;
 
+typedef enum {
+    QUOTE_TYPE_SINGLE = 0,
+    QUOTE_TYPE_DOUBLE,
+    QUOTE_TYPE_BACKTICK,
+    QUOTE_TYPE_NONE
+} QuoteType;
+
+typedef enum {
+    TOKEN_NONE = 0,
+    TOKEN_PATH_LIST,
+    TOKEN_URI_LIST,
+    TOKEN_FILE_DISPLAY_NAME,
+    TOKEN_PARENT_DISPLAY_NAME,
+    TOKEN_PARENT_PATH
+} TokenType;
+
 struct _NemoAction {
     GtkAction parent;
     gchar *key_file_path;
@@ -69,9 +88,12 @@ struct _NemoAction {
     guint mime_length;
     gchar *exec;
     gchar *parent_dir;
+    gchar *separator;
+    QuoteType quote_type;
     gchar *orig_label;
     gchar *orig_tt;
     gboolean use_parent_dir;
+    gboolean log_output;
 };
 
 struct _NemoActionClass {
@@ -82,19 +104,20 @@ GType         nemo_action_get_type             (void);
 NemoAction   *nemo_action_new                  (const gchar *name, const gchar *path);
 void          nemo_action_activate             (NemoAction *action, GList *selection, NemoFile *parent);
 SelectionType nemo_action_get_selection_type   (NemoAction *action);
-gchar **nemo_action_get_extension_list   (NemoAction *action);
-gchar **nemo_action_get_mimetypes_list   (NemoAction *action);
+gchar       **nemo_action_get_extension_list   (NemoAction *action);
+gchar       **nemo_action_get_mimetypes_list   (NemoAction *action);
 guint         nemo_action_get_extension_count  (NemoAction *action);
 guint         nemo_action_get_mimetypes_count  (NemoAction *action);
 void          nemo_action_set_key_file_path    (NemoAction *action, const gchar *path);
 void          nemo_action_set_exec             (NemoAction *action, const gchar *exec);
 void          nemo_action_set_parent_dir       (NemoAction *action, const gchar *parent_dir);
+void          nemo_action_set_separator        (NemoAction *action, const gchar *separator);
 void          nemo_action_set_orig_label       (NemoAction *action, const gchar *orig_label);
 void          nemo_action_set_orig_tt          (NemoAction *action, const gchar *orig_tt);
 const gchar  *nemo_action_get_orig_label       (NemoAction *action);
 const gchar  *nemo_action_get_orig_tt          (NemoAction *action);
-void          nemo_action_set_label            (NemoAction *action, NemoFile *file);
-void          nemo_action_set_tt               (NemoAction *action, NemoFile *file);
+void          nemo_action_set_label            (NemoAction *action, GList *selection, NemoFile *parent);
+void          nemo_action_set_tt               (NemoAction *action, GList *selection, NemoFile *parent);
 void          nemo_action_set_extensions       (NemoAction *action, gchar **extensions);
 void          nemo_action_set_mimetypes        (NemoAction *action, gchar **mimetypes);
 

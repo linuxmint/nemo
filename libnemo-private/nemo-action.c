@@ -57,6 +57,8 @@ static gpointer parent_class;
 #define KEY_SELECTION "Selection"
 #define KEY_EXTENSIONS "Extensions"
 #define KEY_MIME_TYPES "Mimetypes"
+#define KEY_SEPARATOR "Separator"
+#define KEY_QUOTE_TYPE "Quote"
 
 enum 
 {
@@ -72,6 +74,8 @@ enum
   PROP_USE_PARENT_DIR,
   PROP_ORIG_LABEL,
   PROP_ORIG_TT,
+  PROP_SEPARATOR,
+  PROP_QUOTE_TYPE
 };
 
 static void
@@ -88,6 +92,9 @@ nemo_action_init (NemoAction *action)
     action->use_parent_dir = FALSE;
     action->orig_label = NULL;
     action->orig_tt = NULL;
+    action->quote_type = QUOTE_TYPE_NONE;
+    action->separator = NULL;
+    action->log_output = g_getenv ("NEMO_ACTION_VERBOSE") != NULL;
 }
 
 static void
@@ -115,7 +122,7 @@ nemo_action_class_init (NemoActionClass *klass)
                                      g_param_spec_int ("selection-type",
                                                        "Selection Type",
                                                        "The action selection type",
-                                                       0,
+                                                       SELECTION_SINGLE,
                                                        SELECTION_NONE,
                                                        SELECTION_SINGLE,
                                                        G_PARAM_READWRITE)
@@ -200,6 +207,26 @@ nemo_action_class_init (NemoActionClass *klass)
                                                           NULL,
                                                           G_PARAM_READWRITE)
                                      );
+
+    g_object_class_install_property (object_class,
+                                     PROP_SEPARATOR,
+                                     g_param_spec_string ("separator",
+                                                          "Separator to insert between files in the exec line",
+                                                          "Separator to use between files, like comma, space, etc",
+                                                          NULL,
+                                                          G_PARAM_READWRITE)
+                                     );
+
+    g_object_class_install_property (object_class,
+                                     PROP_QUOTE_TYPE,
+                                     g_param_spec_int ("quote-type",
+                                                       "Type of quotes to use to enclose individual file names",
+                                                       "Type of quotes to use to enclose individual file names - none, single or double",
+                                                       QUOTE_TYPE_SINGLE,
+                                                       QUOTE_TYPE_NONE,
+                                                       QUOTE_TYPE_SINGLE,
+                                                       G_PARAM_READWRITE)
+                                     );
 }
 
 static void
@@ -259,6 +286,27 @@ nemo_action_constructed (GObject *object)
                                                      ACTION_FILE_GROUP,
                                                      KEY_SELECTION,
                                                      NULL);
+
+    gchar *separator = g_key_file_get_string (key_file,
+                                              ACTION_FILE_GROUP,
+                                              KEY_SEPARATOR,
+                                              NULL);
+
+    gchar *quote_type_string = g_key_file_get_string (key_file,
+                                                      ACTION_FILE_GROUP,
+                                                      KEY_QUOTE_TYPE,
+                                                      NULL);
+
+    QuoteType quote_type = QUOTE_TYPE_NONE;
+
+    if (quote_type_string != NULL) {
+        if (g_strcmp0 (quote_type_string, "single") == 0)
+            quote_type = QUOTE_TYPE_SINGLE;
+        else if (g_strcmp0 (quote_type_string, "double") == 0)
+            quote_type = QUOTE_TYPE_DOUBLE;
+        else if (g_strcmp0 (quote_type_string, "backtick") == 0)
+            quote_type = QUOTE_TYPE_BACKTICK;
+    }
 
     SelectionType type;
 
@@ -324,6 +372,8 @@ nemo_action_constructed (GObject *object)
                    "use-parent-dir", use_parent_dir,
                    "orig-label", orig_label,
                    "orig-tooltip", orig_tt,
+                   "quote-type", quote_type,
+                   "separator", separator,
                     NULL);
 
     g_free (orig_label);
@@ -333,6 +383,8 @@ nemo_action_constructed (GObject *object)
     g_free (exec);
     g_strfreev (ext);
     g_free (parent_dir);
+    g_free (quote_type_string);
+    g_free (separator);
     g_key_file_free (key_file);
 }
 
@@ -460,6 +512,12 @@ nemo_action_set_property (GObject         *object,
     case PROP_ORIG_TT:
       nemo_action_set_orig_tt (action, g_value_get_string (value));
       break;
+    case PROP_QUOTE_TYPE:
+      action->quote_type = g_value_get_int (value);
+      break;
+    case PROP_SEPARATOR:
+      nemo_action_set_separator (action, g_value_get_string (value));
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -511,18 +569,17 @@ nemo_action_get_property (GObject    *object,
     case PROP_ORIG_TT:
       g_value_set_string (value, action->orig_tt);
       break;
+    case PROP_QUOTE_TYPE:
+      g_value_set_int (value, action->quote_type);
+      break;
+    case PROP_SEPARATOR:
+      g_value_set_string (value, action->separator);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
 }
-
-typedef enum {
-    TOKEN_NONE = 0,
-    TOKEN_PATH_LIST,
-    TOKEN_URI_LIST,
-    TOKEN_PARENT
-} TokenType;
 
 static gchar *
 find_token_type (const gchar *str, TokenType *token_type)
@@ -542,14 +599,60 @@ find_token_type (const gchar *str, TokenType *token_type)
     }
     ptr = g_strstr_len (str, -1, TOKEN_EXEC_PARENT);
     if (ptr != NULL) {
-        *token_type = TOKEN_PARENT;
+        *token_type = TOKEN_PARENT_PATH;
+        return ptr;
+    }
+    ptr = g_strstr_len (str, -1, TOKEN_EXEC_FILE_NAME);
+    if (ptr != NULL) {
+        *token_type = TOKEN_FILE_DISPLAY_NAME;
+        return ptr;
+    }
+    ptr = g_strstr_len (str, -1, TOKEN_EXEC_PARENT_NAME);
+    if (ptr != NULL) {
+        *token_type = TOKEN_PARENT_DISPLAY_NAME;
+        return ptr;
+    }
+    ptr = g_strstr_len (str, -1, TOKEN_LABEL_FILE_NAME);
+    if (ptr != NULL) {
+        *token_type = TOKEN_FILE_DISPLAY_NAME;
         return ptr;
     }
     return NULL;
 }
 
+static GString *
+insert_separator (NemoAction *action, GString *str)
+{
+    if (action->separator == NULL)
+        str = g_string_append (str, " ");
+    else
+        str = g_string_append (str, action->separator);
+
+    return str;
+}
+
+static GString *
+insert_quote (NemoAction *action, GString *str)
+{
+    switch (action->quote_type) {
+        case QUOTE_TYPE_SINGLE:
+            str = g_string_append (str, "'");
+            break;
+        case QUOTE_TYPE_DOUBLE:
+            str = g_string_append (str, "\"");
+            break;
+        case QUOTE_TYPE_BACKTICK:
+            str = g_string_append (str, "`");
+            break;
+        case QUOTE_TYPE_NONE:
+            break;
+    }
+
+    return str;
+}
+
 static gchar *
-get_insertion_string (TokenType token_type, GList *selection, NemoFile *parent)
+get_insertion_string (NemoAction *action, TokenType token_type, GList *selection, NemoFile *parent)
 {
     GList *l;
 
@@ -560,28 +663,49 @@ get_insertion_string (TokenType token_type, GList *selection, NemoFile *parent)
         case TOKEN_PATH_LIST:
             for (l = selection; l != NULL; l = l->next) {
                 if (!first)
-                    str = g_string_append (str, " ");
+                    str = insert_separator (action, str);
+                str = insert_quote (action, str);
                 gchar *path = nemo_file_get_path (NEMO_FILE (l->data));
                 str = g_string_append (str, path);
                 g_free (path);
+                str = insert_quote (action, str);
                 first = FALSE;
             }
             break;
         case TOKEN_URI_LIST:
             for (l = selection; l != NULL; l = l->next) {
                 if (!first)
-                    str = g_string_append (str, " ");
+                    str = insert_separator (action, str);
+                str = insert_quote (action, str);
                 gchar *uri = nemo_file_get_uri (NEMO_FILE (l->data));
                 str = g_string_append (str, uri);
                 g_free (uri);
+                str = insert_quote (action, str);
                 first = FALSE;
             }
             break;
-        case TOKEN_PARENT:
+        case TOKEN_PARENT_PATH:
             ;
             gchar *path = nemo_file_get_path (parent);
+            str = insert_quote (action, str);
             str = g_string_append (str, path);
+            str = insert_quote (action, str);
             g_free (path);
+            break;
+        case TOKEN_FILE_DISPLAY_NAME:
+            if (selection != NULL) {
+                gchar *file_display_name = nemo_file_get_display_name (NEMO_FILE (selection->data));
+                str = g_string_append (str, file_display_name);
+                g_free (file_display_name);
+            }
+            break;
+        case TOKEN_PARENT_DISPLAY_NAME:
+            ;
+            gchar *parent_display_name = nemo_file_get_display_name (parent);
+            str = insert_quote (action, str);
+            str = g_string_append (str, parent_display_name);
+            str = insert_quote (action, str);
+            g_free (parent_display_name);
             break;
     }
 
@@ -592,35 +716,45 @@ get_insertion_string (TokenType token_type, GList *selection, NemoFile *parent)
     return ret;
 }
 
-void
-nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
+static GString *
+expand_action_string (NemoAction *action, GList *selection, NemoFile *parent, GString *str)
 {
-    GList *l;
-    GString *exec = g_string_new (action->exec);
-
     gchar *ptr;
     TokenType token_type;
 
-    ptr = find_token_type (exec->str, &token_type);
+    ptr = find_token_type (str->str, &token_type);
 
     while (ptr != NULL) {
-        gint shift = ptr - exec->str;
+        gint shift = ptr - str->str;
 
-        gchar *insertion = get_insertion_string (token_type, selection, parent);
-        exec = g_string_erase (exec, shift, 2);
-        exec = g_string_insert (exec, shift, insertion);
+        gchar *insertion = get_insertion_string (action, token_type, selection, parent);
+        str = g_string_erase (str, shift, 2);
+        str = g_string_insert (str, shift, insertion);
 
         token_type = TOKEN_NONE;
         g_free  (insertion);
-        ptr = find_token_type (exec->str, &token_type);
+        ptr = find_token_type (str->str, &token_type);
     }
+
+    return str;
+}
+
+void
+nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
+{
+    GString *exec = g_string_new (action->exec);
+
+    exec = expand_action_string (action, selection, parent, exec);
 
     if (action->use_parent_dir) {
         exec = g_string_prepend (exec, G_DIR_SEPARATOR_S);
         exec = g_string_prepend (exec, action->parent_dir);
     }
 
-    DEBUG ("Spawning: %s\n", exec->str);
+    DEBUG ("Action Spawning: %s", exec->str);
+    if (action->log_output)
+        g_printerr ("Action Spawning: %s\n", exec->str);
+
     g_spawn_command_line_async (exec->str, NULL);
 
     nemo_file_list_free (selection);
@@ -687,6 +821,16 @@ nemo_action_set_parent_dir (NemoAction *action, const gchar *parent_dir)
 }
 
 void
+nemo_action_set_separator (NemoAction *action, const gchar *separator)
+{
+    gchar *tmp;
+
+    tmp = action->separator;
+    action->separator = g_strdup (separator);
+    g_free (tmp);
+}
+
+void
 nemo_action_set_orig_label (NemoAction *action, const gchar *orig_label)
 {
     gchar *tmp;
@@ -725,57 +869,42 @@ test_string_for_label_token (const gchar *string)
 }
 
 void
-nemo_action_set_label (NemoAction *action, NemoFile *file)
+nemo_action_set_label (NemoAction *action, GList *selection, NemoFile *parent)
 {
     const gchar *orig_label = nemo_action_get_orig_label (action);
 
-    if (!test_string_for_label_token (orig_label) || file == NULL ||
-        action->selection_type != SELECTION_SINGLE) {
-        gtk_action_set_label (GTK_ACTION (action), orig_label);
+    if (orig_label == NULL)
         return;
-    }
 
-    gchar *display_name = nemo_file_get_display_name (file);
+    GString *str = g_string_new (orig_label);
 
-    gchar **split = g_strsplit (orig_label, TOKEN_LABEL_FILE_NAME, 2);
+    str = expand_action_string (action, selection, parent, str);
 
-    gchar *new_label = g_strconcat (split[0], display_name, split[1], NULL);
+    DEBUG ("Action Label: %s", str->str);
+    if (action->log_output)
+        g_printerr ("Action Label: %s\n", str->str);
 
-    gchar *escaped = eel_str_double_underscores (new_label);
-
-    gtk_action_set_label (GTK_ACTION (action), escaped);
-
-    g_strfreev (split);
-    g_free (display_name);
-    g_free (new_label);
-    g_free (escaped);
+    gtk_action_set_label (GTK_ACTION (action), str->str);
 }
 
 void
-nemo_action_set_tt (NemoAction *action, NemoFile *file)
+nemo_action_set_tt (NemoAction *action, GList *selection, NemoFile *parent)
 {
     const gchar *orig_tt = nemo_action_get_orig_tt (action);
 
-    if (!test_string_for_label_token (orig_tt) || file == NULL ||
-        action->selection_type != SELECTION_SINGLE) {
-        gtk_action_set_tooltip (GTK_ACTION (action), orig_tt);
+    if (orig_tt == NULL)
         return;
-    }
 
-    gchar *display_name = nemo_file_get_display_name (file);
+    GString *str = g_string_new (orig_tt);
 
-    gchar **split = g_strsplit (orig_tt, TOKEN_LABEL_FILE_NAME, 2);
+    str = expand_action_string (action, selection, parent, str);
 
-    gchar *new_tt = g_strconcat (split[0], display_name, split[1], NULL);
+    DEBUG ("Action Tooltip: %s", str->str);
+    if (action->log_output)
+        g_printerr ("Action Tooltip: %s\n", str->str);
 
-    gchar *escaped = eel_str_double_underscores (new_tt);
 
-    gtk_action_set_tooltip (GTK_ACTION (action), escaped);
-
-    g_strfreev (split);
-    g_free (display_name);
-    g_free (new_tt);
-    g_free (escaped);
+    gtk_action_set_tooltip (GTK_ACTION (action), str->str);
 }
 
 void
