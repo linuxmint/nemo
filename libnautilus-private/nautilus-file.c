@@ -4258,9 +4258,9 @@ nautilus_file_get_icon (NautilusFile *file,
 	       flags & NAUTILUS_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE);
 	
 	if (flags & NAUTILUS_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
-		modified_size = size;
+		modified_size = size * scale;
 	} else {
-		modified_size = size * cached_thumbnail_size / NAUTILUS_ICON_SIZE_STANDARD;
+		modified_size = size * scale * cached_thumbnail_size / NAUTILUS_ICON_SIZE_STANDARD;
 		DEBUG ("Modifying icon size to %d, as our cached thumbnail size is %d",
 		       modified_size, cached_thumbnail_size);
 	}
@@ -4295,7 +4295,7 @@ nautilus_file_get_icon (NautilusFile *file,
 								 GDK_INTERP_BILINEAR);
 
 			/* We don't want frames around small icons */
-			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128) {
+			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
 				nautilus_ui_frame_image (&scaled_pixbuf);
 			}
 
@@ -4305,7 +4305,7 @@ nautilus_file_get_icon (NautilusFile *file,
 			   image instead. We don't want to compare to exactly 100%,
 			   since the zoom level 150% gives thumbnails at 144, which is
 			   ok to scale up from 128. */
-			if (modified_size > 128*1.25 &&
+			if (modified_size > 128 * 1.25 * scale &&
 			    !file->details->thumbnail_wants_original &&
 			    nautilus_can_thumbnail_internally (file)) {
 				/* Invalidate if we resize upward */
