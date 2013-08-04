@@ -278,9 +278,6 @@ struct NemoViewDetails
     guint bookmarks_changed_id;
 
 	GdkPoint context_menu_position;
-
-    gboolean has_thunderbird;
-    gboolean has_other_mail;
 };
 
 typedef struct {
@@ -2703,11 +2700,6 @@ nemo_view_init (NemoView *view)
 
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (view)),
 					      GTK_JUNCTION_TOP | GTK_JUNCTION_LEFT);
-
-    view->details->has_thunderbird = g_find_program_in_path ("thunderbird") != NULL;
-
-    view->details->has_other_mail = g_find_program_in_path ("evolution") != NULL ||
-                                    g_find_program_in_path ("balsa")     != NULL;
 
 	if (set_up_scripts_directory_global ()) {
 		scripts_directory = nemo_directory_get_by_uri (scripts_directory_uri);
@@ -6791,65 +6783,6 @@ open_in_terminal (gchar *location)
 }
 
 static void
-send_email_thunderbird (NemoView *view)
-{
-    gchar *cmd;
-    gboolean first = TRUE;
-    GList *selection, *l;
-    GString *attach;
-
-    attach = g_string_new ("");
-    selection = nemo_view_get_selection_for_file_transfer (view);
-    if (selection == NULL) {
-        return;
-    }
-
-    for (l = selection; l != NULL; l = l->next) {
-        if (!first) {
-            g_string_append_printf(attach, ",");
-        }
-        g_string_append_printf(attach, "%s", nemo_file_get_uri ((NemoFile *) l->data));
-        if (first) {
-            first = FALSE;
-        }
-    }
-    cmd = g_strdup_printf ("thunderbird -compose to=,\"attachment='%s'\"", attach->str);
-    g_spawn_command_line_async (cmd, NULL);
-
-    g_free (cmd);
-    g_string_free (attach, TRUE);
-    nemo_file_list_free (selection);
-    nemo_file_list_free (l);
-}
-
-static void
-send_email_other (NemoView *view)
-{
-    gchar *cmd;
-    GList *selection, *l;
-    GString *attach;
-
-    attach = g_string_new ("");
-    selection = nemo_view_get_selection_for_file_transfer (view);
-    if (selection == NULL) {
-        return;
-    }
-
-    for (l = selection; l != NULL; l = l->next) {
-        g_string_append_printf(attach, " --attach \"%s\"",
-                        g_filename_from_uri(nemo_file_get_uri ((NemoFile *) l->data), NULL, NULL));
-    }
-    cmd = g_strdup_printf ("xdg-email %s", attach->str);
-    g_spawn_command_line_async (cmd, NULL);
-
-    g_free (cmd);
-    g_string_free (attach, TRUE);
-    nemo_file_list_free (selection);
-    nemo_file_list_free (l);
-}
-
-
-static void
 action_paste_files_into_callback (GtkAction *action,
 				  gpointer callback_data)
 {
@@ -6917,34 +6850,6 @@ action_open_in_terminal_callback(GtkAction *action,
         } else {
             open_in_terminal (g_filename_from_uri(nemo_view_get_uri(view), NULL, NULL));
         }
-    }
-}
-
-static void
-action_send_email_thunderbird_callback(GtkAction *action,
-				  gpointer callback_data)
-{
-	NemoView *view;
-    GList *selection;
-	view = NEMO_VIEW (callback_data);
-    selection = nemo_view_get_selection (view);
-	if (selection != NULL) {
-        send_email_thunderbird (view);
-        nemo_file_list_free (selection);
-	}
-}
-
-static void
-action_send_email_other_callback(GtkAction *action,
-                  gpointer callback_data)
-{
-    NemoView *view;
-    GList *selection;
-    view = NEMO_VIEW (callback_data);
-    selection = nemo_view_get_selection (view);
-    if (selection != NULL) {
-        send_email_other (view);
-        nemo_file_list_free (selection);
     }
 }
 
@@ -7910,15 +7815,6 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Follow link to original file"), "",
   /* tooltip */                  N_("Navigate to the original file that this symbolic link points to"),
                  G_CALLBACK (action_follow_symlink_callback) },
-
-  /* name, stock id */         { NEMO_ACTION_MAILTO_THUNDERBIRD, GTK_STOCK_DND_MULTIPLE,
-  /* label, accelerator */       N_("Send with Thunderbird"), "",
-  /* tooltip */                  N_("Send the selected file(s) as email attachments using Thunderbird"),
-				 G_CALLBACK (action_send_email_thunderbird_callback) },
-  /* name, stock id */         { NEMO_ACTION_MAILTO_OTHER, GTK_STOCK_DND_MULTIPLE,
-  /* label, accelerator */       N_("Send as email attachment"), "",
-  /* tooltip */                  N_("Send the selected file(s) as email attachments using your current email program"),
-                 G_CALLBACK (action_send_email_other_callback) },
   /* name, stock id */         { NEMO_ACTION_SET_AS_WALLPAPER, "display",
   /* label, accelerator */       N_("Set as Wallpaper..."), "",
   /* tooltip */                  N_("Set the selected image as your desktop wallpaper"),
@@ -9285,16 +9181,6 @@ real_update_menus (NemoView *view)
     action = gtk_action_group_get_action(view->details->dir_action_group,
                                          NEMO_ACTION_OPEN_AS_ROOT);
     gtk_action_set_visible(action, geteuid() != 0);
-
-    action = gtk_action_group_get_action (view->details->dir_action_group,
-                           NEMO_ACTION_MAILTO_THUNDERBIRD);
-    gtk_action_set_visible(action, view->details->has_thunderbird &&
-                                        !selection_contains_directory);
-
-    action = gtk_action_group_get_action (view->details->dir_action_group,
-                           NEMO_ACTION_MAILTO_OTHER);
-    gtk_action_set_visible(action, view->details->has_other_mail &&
-                                        !selection_contains_directory);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_FOLDER);
