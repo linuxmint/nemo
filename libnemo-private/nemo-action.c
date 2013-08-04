@@ -19,6 +19,8 @@
 
 #include "nemo-action.h"
 #include <eel/eel-string.h>
+#include <glib/gi18n.h>
+#include "nemo-file-utilities.h"
 
 #define DEBUG_FLAG NEMO_DEBUG_ACTIONS
 #include <libnemo-private/nemo-debug.h>
@@ -123,7 +125,7 @@ nemo_action_class_init (NemoActionClass *klass)
                                      g_param_spec_int ("selection-type",
                                                        "Selection Type",
                                                        "The action selection type",
-                                                       SELECTION_SINGLE,
+                                                       0,
                                                        SELECTION_NONE,
                                                        SELECTION_SINGLE,
                                                        G_PARAM_READWRITE)
@@ -686,47 +688,75 @@ get_insertion_string (NemoAction *action, TokenType token_type, GList *selection
 
     switch (token_type) {
         case TOKEN_PATH_LIST:
-            for (l = selection; l != NULL; l = l->next) {
-                if (!first)
-                    str = insert_separator (action, str);
-                str = insert_quote (action, str);
-                gchar *path = nemo_file_get_path (NEMO_FILE (l->data));
-                str = g_string_append (str, path);
-                g_free (path);
-                str = insert_quote (action, str);
-                first = FALSE;
+            if (g_list_length (selection) > 0) {
+                for (l = selection; l != NULL; l = l->next) {
+                    if (!first)
+                        str = insert_separator (action, str);
+                    str = insert_quote (action, str);
+                    gchar *path = nemo_file_get_path (NEMO_FILE (l->data));
+                    str = g_string_append (str, path);
+                    g_free (path);
+                    str = insert_quote (action, str);
+                    first = FALSE;
+                }
+            } else {
+                goto default_parent_path;
             }
             break;
         case TOKEN_URI_LIST:
-            for (l = selection; l != NULL; l = l->next) {
-                if (!first)
-                    str = insert_separator (action, str);
-                str = insert_quote (action, str);
-                gchar *uri = nemo_file_get_uri (NEMO_FILE (l->data));
-                str = g_string_append (str, uri);
-                g_free (uri);
-                str = insert_quote (action, str);
-                first = FALSE;
+            if (g_list_length (selection) > 0) {
+                for (l = selection; l != NULL; l = l->next) {
+                    if (!first)
+                        str = insert_separator (action, str);
+                    str = insert_quote (action, str);
+                    gchar *uri = nemo_file_get_uri (NEMO_FILE (l->data));
+                    str = g_string_append (str, uri);
+                    g_free (uri);
+                    str = insert_quote (action, str);
+                    first = FALSE;
+                }
+            } else {
+                goto default_parent_path;
             }
             break;
         case TOKEN_PARENT_PATH:
             ;
+default_parent_path:
+            ;
             gchar *path = nemo_file_get_path (parent);
+            if (path == NULL) {
+                gchar *name = nemo_file_get_display_name (parent);
+                if (g_strcmp0 (name, "x-nemo-desktop") == 0)
+                    path = nemo_get_desktop_directory ();
+                else
+                    path = g_strdup_printf ("");
+                g_free (name);
+            }
             str = insert_quote (action, str);
             str = g_string_append (str, path);
             str = insert_quote (action, str);
             g_free (path);
             break;
         case TOKEN_FILE_DISPLAY_NAME:
-            if (selection != NULL) {
+            if (g_list_length (selection) > 0) {
                 gchar *file_display_name = nemo_file_get_display_name (NEMO_FILE (selection->data));
                 str = g_string_append (str, file_display_name);
                 g_free (file_display_name);
+            } else {
+                goto default_parent_display_name;
             }
             break;
         case TOKEN_PARENT_DISPLAY_NAME:
             ;
-            gchar *parent_display_name = nemo_file_get_display_name (parent);
+default_parent_display_name:
+            ;
+            gchar *parent_display_name;
+            gchar *real_display_name = nemo_file_get_display_name (parent);
+            if (g_strcmp0 (real_display_name, "x-nemo-desktop") == 0)
+                parent_display_name = g_strdup_printf (_("Desktop"));
+            else
+                parent_display_name = nemo_file_get_display_name (parent);
+            g_free (real_display_name);
             str = insert_quote (action, str);
             str = g_string_append (str, parent_display_name);
             str = insert_quote (action, str);
