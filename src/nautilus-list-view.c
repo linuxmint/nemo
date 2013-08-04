@@ -1774,6 +1774,13 @@ location_cell_data_func (GtkTreeViewColumn *column,
 	                    NAUTILUS_LIST_MODEL_FILE_COLUMN, &file,
 	                    -1);
 
+	/* The file might be NULL if we just toggled an expander
+	 * and we're still loading the subdirectory.
+	 */
+	if (file == NULL) {
+		return;
+	}
+
 	if (show_trash_orig && nautilus_file_is_in_trash (file)) {
 		NautilusFile *orig_file;
 
