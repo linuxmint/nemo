@@ -5958,6 +5958,11 @@ determine_visibility (gpointer data, gpointer callback_data)
                         found_match = TRUE;
                         break;
                     }
+                } else if (g_strcmp0 (extensions[i], "nodirs") == 0) {
+                    if (!nemo_file_is_directory (NEMO_FILE (iter->data))) {
+                        found_match = TRUE;
+                        break;
+                    }
                 } else {
                     if (g_str_has_suffix (filename, g_ascii_strdown (extensions[i], -1))) {
                         found_match = TRUE;

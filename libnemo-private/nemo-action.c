@@ -447,7 +447,7 @@ nemo_action_new (const gchar *name,
             gchar *path = g_find_program_in_path (deps[i]);
             if (path == NULL) {
                 finish = FALSE;
-                DEBUG ("Missing action dependency: %s", deps[i]);
+                g_printerr ("Missing action dependency: %s", deps[i]);
                 g_free (path);
                 break;
             }

@@ -38,8 +38,12 @@ Icon-Name=folder
 Selection=S
 
 # What extensions to display on - this is an array, end with a semicolon
-# Use "dir" for directory selection and "none" for no extension
-# Use "any" by itself, semi-colon-terminated, for any file type
+# Single entry options, ending in a semicolon:
+#     "dir" for directory selection
+#     "none" for no extension.
+#     "nodirs" for any selection, but not including directories.
+#     "any" for any file type, including directories.
+# Individual specific extensions can be a semicolon-terminated list
 # Extensions are NOT case sensitive.  jpg will match JPG, jPg, jpg, etc..
 # **** EITHER EXTENSIONS OR MIMETYPES IS REQUIRED *****
 Extensions=any;
