@@ -85,6 +85,7 @@
       <keyword>Mimetypes</keyword>
       <keyword>Separator</keyword>
       <keyword>Quote</quote>
+      <keyword>Dependencies</quote>
     </context>
 
     <context id="non-standard-key" style-ref="key">

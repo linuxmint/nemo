@@ -57,3 +57,8 @@ Extensions=any;
 # to no quotes.  
 # Can be:  single, double, backtick
 #Quote=none
+
+# Dependencies - program executables required for this action to work.  Nemo will
+# Search in the path for these program(s) and not display the action if any are missing.
+# This is an array, separate entries with semi-colon, and terminate with a semicolon.
+#Dependencies=gedit;

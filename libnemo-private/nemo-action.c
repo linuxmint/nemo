@@ -59,6 +59,7 @@ static gpointer parent_class;
 #define KEY_MIME_TYPES "Mimetypes"
 #define KEY_SEPARATOR "Separator"
 #define KEY_QUOTE_TYPE "Quote"
+#define KEY_DEPENDENCIES "Dependencies"
 
 enum 
 {
@@ -427,16 +428,38 @@ nemo_action_new (const gchar *name,
                                                 NULL,
                                                 NULL);
 
+    gchar **deps  = g_key_file_get_string_list (key_file,
+                                                ACTION_FILE_GROUP,
+                                                KEY_DEPENDENCIES,
+                                                NULL,
+                                                NULL);
+
     gchar *selection_string = g_key_file_get_string (key_file,
                                                      ACTION_FILE_GROUP,
                                                      KEY_SELECTION,
                                                      NULL);
 
+    gboolean finish = TRUE;
+
+    if (deps != NULL) {
+        gint i = 0;
+        for (i = 0; i < g_strv_length (deps); i++) {
+            gchar *path = g_find_program_in_path (deps[i]);
+            if (path == NULL) {
+                finish = FALSE;
+                DEBUG ("Missing action dependency: %s", deps[i]);
+                g_free (path);
+                break;
+            }
+            g_free (path);
+        }
+    }
+
     if (orig_label == NULL || exec_raw == NULL || (ext == NULL && mimes == NULL) || selection_string == NULL) {
         g_printerr ("An action definition requires, at minimum, "
                     "a Label field, an Exec field, a Selection field, and an either an Extensions or Mimetypes field.\n"
                     "Check the %s file for missing fields.\n", path);
-        return NULL;
+        finish = FALSE;
     }
 
     g_free (orig_label);
@@ -444,11 +467,13 @@ nemo_action_new (const gchar *name,
     g_free (selection_string);
     g_strfreev (ext);
     g_strfreev (mimes);
+    g_strfreev (deps);
     g_key_file_free (key_file);
-    return g_object_new (NEMO_TYPE_ACTION,
-                         "name", name,
-                         "key-file-path", path,
-                          NULL);
+
+    return finish ? g_object_new (NEMO_TYPE_ACTION,
+                                  "name", name,
+                                  "key-file-path", path,
+                                  NULL): NULL;
 }
 
 static void
