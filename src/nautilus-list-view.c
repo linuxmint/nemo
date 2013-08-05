@@ -832,7 +832,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 			gtk_widget_grab_focus (widget);
 		}
 
-		if (is_simple_click) {
+		if (is_simple_click && !on_expander) {
 			view->details->drag_started = FALSE;
 			view->details->drag_button = event->button;
 			view->details->drag_x = event->x;
