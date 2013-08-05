@@ -79,6 +79,7 @@ static void
 switch_location (NautilusDragSlotProxyInfo *drag_info)
 {
   GFile *location;
+  GFile *current_location;
   NautilusWindowSlot *target_slot;
   GtkWidget *window;
 
@@ -91,8 +92,11 @@ switch_location (NautilusDragSlotProxyInfo *drag_info)
 
   target_slot = nautilus_window_get_active_slot (NAUTILUS_WINDOW (window));
 
+  current_location = nautilus_window_slot_get_location (target_slot);
   location = nautilus_file_get_location (drag_info->target_file);
-  nautilus_window_slot_open_location (target_slot, location, 0);
+  if (! (current_location != NULL && g_file_equal (location, current_location))) {
+	nautilus_window_slot_open_location (target_slot, location, 0);
+  }
   g_object_unref (location);
 }
 
