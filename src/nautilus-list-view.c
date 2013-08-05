@@ -396,13 +396,13 @@ stop_drag_check (NautilusListView *view)
 	view->details->drag_button = 0;
 }
 
-static GdkPixbuf *
-get_drag_pixbuf (NautilusListView *view)
+static cairo_surface_t *
+get_drag_surface (NautilusListView *view)
 {
 	GtkTreeModel *model;
 	GtkTreePath *path;
 	GtkTreeIter iter;
-	GdkPixbuf *ret;
+        cairo_surface_t *ret;
 	GdkRectangle cell_area;
 	
 	ret = NULL;
@@ -503,14 +503,12 @@ drag_begin_callback (GtkWidget *widget,
 		     NautilusListView *view)
 {
 	GList *selection_cache;
-	GdkPixbuf *pixbuf;
+	cairo_surface_t *surface;
 
-	pixbuf = get_drag_pixbuf (view);
-	if (pixbuf) {
-		gtk_drag_set_icon_pixbuf (context,
-					  pixbuf,
-					  0, 0);
-		g_object_unref (pixbuf);
+	surface = get_drag_surface (view);
+	if (surface) {
+		gtk_drag_set_icon_surface (context, surface);
+		cairo_surface_destroy (surface);
 	} else {
 		gtk_drag_set_icon_default (context);
 	}
