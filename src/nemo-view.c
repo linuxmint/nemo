@@ -281,6 +281,7 @@ struct NemoViewDetails
 
     gboolean has_thunderbird;
     gboolean has_other_mail;
+    gboolean have_launcher_creator;
 };
 
 typedef struct {
@@ -2103,7 +2104,7 @@ static void
 action_new_launcher_callback (GtkAction *action,
 			      gpointer callback_data)
 {
-	char *parent_uri;
+	char *parent_uri, *parent_path;
 	NemoView *view;
 	GtkWindow *window;
 
@@ -2112,14 +2113,16 @@ action_new_launcher_callback (GtkAction *action,
 	view = NEMO_VIEW (callback_data);
 
 	parent_uri = nemo_view_get_backing_uri (view);
+    parent_path = g_filename_from_uri (parent_uri, NULL, NULL);
 
 	window = nemo_view_get_containing_window (view);
 	nemo_launch_application_from_command (gtk_widget_get_screen (GTK_WIDGET (view)),
-						  "gnome-desktop-item-edit", 
+						  "cinnamon-launcher-creator", 
 						  FALSE,
-						  "--create-new", parent_uri, NULL);
+						  parent_path, NULL);
 
 	g_free (parent_uri);
+    g_free (parent_path);
 }
 
 static void
@@ -2708,6 +2711,8 @@ nemo_view_init (NemoView *view)
 
     view->details->has_other_mail = g_find_program_in_path ("evolution") != NULL ||
                                     g_find_program_in_path ("balsa")     != NULL;
+
+    view->details->have_launcher_creator = g_find_program_in_path ("cinnamon-launcher-creator") != NULL;
 
 	if (set_up_scripts_directory_global ()) {
 		scripts_directory = nemo_directory_get_by_uri (scripts_directory_uri);
@@ -7873,7 +7878,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("_Empty Document"), NULL,
   /* tooltip */                  N_("Create a new empty document inside this folder"),
 				 G_CALLBACK (action_new_empty_file_callback) },
-  /* name, stock id */         { "New Launcher", NULL,
+  /* name, stock id */         { NEMO_ACTION_NEW_LAUNCHER, NULL,
   /* label, accelerator */       N_("Create L_auncher..."), NULL,
   /* tooltip */                  N_("Create a new launcher"),
                                  G_CALLBACK (action_new_launcher_callback) },
@@ -9619,6 +9624,11 @@ real_update_menus (NemoView *view)
     gtk_action_set_visible (action,
                             selection_count == 1 &&
                             nemo_file_is_symbolic_link (selection->data));
+
+    action = gtk_action_group_get_action (view->details->dir_action_group,
+                                          NEMO_ACTION_NEW_LAUNCHER);
+
+    gtk_action_set_visible (action, view->details->have_launcher_creator);
 
     nemo_file_list_free (selection);
 }
