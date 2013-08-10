@@ -476,8 +476,8 @@ nautilus_file_conflict_dialog_init (NautilusFileConflictDialog *fcd)
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
 
 	/* Setup the dialog image */
-	widget = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING,
-					   GTK_ICON_SIZE_DIALOG);
+	widget = gtk_image_new_from_icon_name ("dialog-warning",
+					       GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start (GTK_BOX (hbox), widget, FALSE, FALSE, 0);
 	gtk_misc_set_alignment (GTK_MISC (widget), 0.5, 0.0);
 
@@ -522,8 +522,8 @@ nautilus_file_conflict_dialog_init (NautilusFileConflictDialog *fcd)
 
 	widget = gtk_button_new_with_label (_("Reset"));
 	gtk_button_set_image (GTK_BUTTON (widget),
-			      gtk_image_new_from_stock (GTK_STOCK_UNDO,
-							GTK_ICON_SIZE_MENU));
+			      gtk_image_new_from_icon_name ("edit-undo",
+							    GTK_ICON_SIZE_MENU));
 	gtk_box_pack_start (GTK_BOX (hbox), widget, FALSE, FALSE, 6);
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (reset_button_clicked_cb), dialog);
@@ -541,7 +541,7 @@ nautilus_file_conflict_dialog_init (NautilusFileConflictDialog *fcd)
 
 	/* Add buttons */
 	gtk_dialog_add_buttons (dialog,
-				GTK_STOCK_CANCEL,
+				_("_Cancel"),
 				GTK_RESPONSE_CANCEL,
 				_("_Skip"),
 				CONFLICT_RESPONSE_SKIP,

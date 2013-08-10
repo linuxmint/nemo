@@ -363,20 +363,6 @@ use_default_clicked_callback (GtkWidget *button, gpointer user_data)
 		       signals[USE_DEFAULT], 0);
 }
 
-static GtkWidget *
-button_new_with_mnemonic (const gchar *stockid, const gchar *str)
-{
-	GtkWidget *image;
-	GtkWidget *button;
-	
-	button = gtk_button_new_with_mnemonic (str);
-	image = gtk_image_new_from_stock (stockid, GTK_ICON_SIZE_BUTTON);
-	
-	gtk_button_set_image (GTK_BUTTON (button), image);
-
-	return button;
-}
-
 static void
 add_buttons (NautilusColumnChooser *chooser)
 {
@@ -386,8 +372,7 @@ add_buttons (NautilusColumnChooser *chooser)
 	box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 8);
 	gtk_widget_show (box);
 	
-	chooser->details->move_up_button = button_new_with_mnemonic (GTK_STOCK_GO_UP,
-								     _("Move _Up"));
+	chooser->details->move_up_button = gtk_button_new_with_mnemonic (_("Move _Up"));
 	g_signal_connect (chooser->details->move_up_button, 
 			  "clicked",  G_CALLBACK (move_up_clicked_callback),
 			  chooser);
@@ -396,8 +381,7 @@ add_buttons (NautilusColumnChooser *chooser)
 	gtk_box_pack_start (GTK_BOX (box), chooser->details->move_up_button,
 			    FALSE, FALSE, 0);
 
-	chooser->details->move_down_button = button_new_with_mnemonic (GTK_STOCK_GO_DOWN,
-								       _("Move Dow_n"));
+	chooser->details->move_down_button = gtk_button_new_with_mnemonic (_("Move Dow_n"));
 	g_signal_connect (chooser->details->move_down_button, 
 			  "clicked",  G_CALLBACK (move_down_clicked_callback),
 			  chooser);

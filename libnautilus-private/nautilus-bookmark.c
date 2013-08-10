@@ -171,7 +171,7 @@ apply_warning_emblem (GIcon **base,
 	if (symbolic) {
 		warning = g_themed_icon_new ("dialog-warning-symbolic");
 	} else {
-		warning = g_themed_icon_new (GTK_STOCK_DIALOG_WARNING);
+		warning = g_themed_icon_new ("dialog-warning");
 	}
 
 	emblem = g_emblem_new (warning);
@@ -762,19 +762,6 @@ nautilus_bookmark_new (GFile *location,
 	return new_bookmark;
 }				 
 
-static GtkWidget *
-create_image_widget_for_bookmark (NautilusBookmark *bookmark)
-{
-	GIcon *icon;
-	GtkWidget *widget;
-
-	icon = nautilus_bookmark_get_symbolic_icon (bookmark);
-        widget = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
-	g_object_unref (icon);
-
-	return widget;
-}
-
 /**
  * nautilus_bookmark_menu_item_new:
  * 
@@ -786,23 +773,15 @@ GtkWidget *
 nautilus_bookmark_menu_item_new (NautilusBookmark *bookmark)
 {
 	GtkWidget *menu_item;
-	GtkWidget *image_widget;
 	GtkLabel *label;
 	const char *name;
 
 	name = nautilus_bookmark_get_name (bookmark);
-	menu_item = gtk_image_menu_item_new_with_label (name);
+	menu_item = gtk_menu_item_new_with_label (name);
 	label = GTK_LABEL (gtk_bin_get_child (GTK_BIN (menu_item)));
 	gtk_label_set_use_underline (label, FALSE);
 	gtk_label_set_ellipsize (label, PANGO_ELLIPSIZE_END);
 	gtk_label_set_max_width_chars (label, ELLIPSISED_MENU_ITEM_MIN_CHARS);
-
-	image_widget = create_image_widget_for_bookmark (bookmark);
-	if (image_widget != NULL) {
-		gtk_widget_show (image_widget);
-		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (menu_item),
-					       image_widget);
-	}
 
 	return menu_item;
 }

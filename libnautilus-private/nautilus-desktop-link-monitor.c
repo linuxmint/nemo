@@ -98,7 +98,7 @@ volume_delete_dialog (GtkWidget *parent_view,
 				 dialog_str,
 				 _("If you want to eject the volume, please use Eject in the "
 				   "popup menu of the volume."),
-				 GTK_STOCK_OK, NULL);
+				 _("_OK"), NULL);
 		} else {
 			eel_run_simple_dialog
 				(parent_view, 
@@ -107,7 +107,7 @@ volume_delete_dialog (GtkWidget *parent_view,
 				 dialog_str,
 				 _("If you want to unmount the volume, please use Unmount Volume in the "
 				   "popup menu of the volume."),
-				 GTK_STOCK_OK, NULL);
+				 _("_OK"), NULL);
 		}
 
 		g_object_unref (mount);

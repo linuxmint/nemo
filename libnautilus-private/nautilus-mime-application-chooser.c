@@ -322,7 +322,7 @@ nautilus_mime_application_chooser_build_ui (NautilusMimeApplicationChooser *choo
 	gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
 	gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (box), button, TRUE);
 
-	button = gtk_button_new_from_stock (GTK_STOCK_ADD);
+	button = gtk_button_new_with_mnemonic (_("_Add"));
 	g_signal_connect (button, "clicked", 
 			  G_CALLBACK (add_clicked_cb),
 			  chooser);
