@@ -1,0 +1,16 @@
+[Nemo Action]
+
+Name=Create a new launcher
+
+Comment=Create a new launcher in this folder
+
+Exec=cinnamon-desktop-editor -mnemo-launcher -d%P
+
+Stock-Id=gnome-panel-launcher
+
+Selection=None
+
+Extensions=any;
+
+Dependencies=cinnamon-desktop-editor;
+
