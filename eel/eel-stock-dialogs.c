@@ -193,7 +193,7 @@ timed_wait_callback (gpointer callback_data)
 	wait = callback_data;
 
 	/* Put up the timed wait window. */
-	button = wait->cancel_callback != NULL ? GTK_STOCK_CANCEL : GTK_STOCK_OK;
+	button = wait->cancel_callback != NULL ? _("_Cancel") : ("_OK");
 	dialog = GTK_DIALOG (gtk_message_dialog_new (wait->parent_window,
 						     0,
 						     GTK_MESSAGE_INFO,

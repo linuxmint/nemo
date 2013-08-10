@@ -2978,11 +2978,11 @@ activate_cb (GtkWidget *menuitem,
 static void
 append_action_signal (EelEditableLabel     *label,
 		      GtkWidget    *menu,
-		      const gchar  *stock_id,
+                      const gchar  *mnemonic_label,
 		      const gchar  *signal,
                       gboolean      sensitive)
 {
-  GtkWidget *menuitem = gtk_image_menu_item_new_from_stock (stock_id, NULL);
+  GtkWidget *menuitem = gtk_menu_item_new_with_mnemonic (mnemonic_label);
 
   g_object_set_data (G_OBJECT (menuitem), "gtk-signal", (char *)signal);
   g_signal_connect (menuitem, "activate",
@@ -3023,8 +3023,7 @@ popup_position_func (GtkMenu   *menu,
 
   gdk_window_get_origin (label->text_area, x, y);
 
-  /*gtk_widget_size_request (label->popup_menu, &req);*/
-  gtk_widget_get_requisition (widget, &req);
+  gtk_widget_get_preferred_size (widget, &req, NULL);
   gtk_widget_get_allocation (widget, &allocation);
   
   *x += allocation.width / 2;
@@ -3078,11 +3077,11 @@ popup_targets_received (GtkClipboard     *clipboard,
   
       clipboard_contains_text = gtk_selection_data_targets_include_text (data);
 
-      append_action_signal (label, label->popup_menu, GTK_STOCK_CUT, "cut-clipboard",
+      append_action_signal (label, label->popup_menu, _("Cu_t"), "cut-clipboard",
 			    have_selection);
-      append_action_signal (label, label->popup_menu, GTK_STOCK_COPY, "copy-clipboard",
+      append_action_signal (label, label->popup_menu, _("_Copy"), "copy-clipboard",
 			    have_selection);
-      append_action_signal (label, label->popup_menu, GTK_STOCK_PASTE, "paste-clipboard",
+      append_action_signal (label, label->popup_menu, _("_Paste"), "paste-clipboard",
 			    clipboard_contains_text);
   
       menuitem = gtk_menu_item_new_with_label (_("Select All"));
