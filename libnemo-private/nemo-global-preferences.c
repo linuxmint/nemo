@@ -76,7 +76,14 @@ nemo_global_preferences_init (void)
 	nemo_desktop_preferences = g_settings_new("org.nemo.desktop");
 	nemo_tree_sidebar_preferences = g_settings_new("org.nemo.sidebar-panels.tree");
 	gnome_lockdown_preferences = g_settings_new("org.gnome.desktop.lockdown");
-	gnome_background_preferences = g_settings_new("org.gnome.desktop.background");
 	gnome_media_handling_preferences = g_settings_new("org.gnome.desktop.media-handling");
 	gnome_terminal_preferences = g_settings_new("org.gnome.desktop.default-applications.terminal");
+
+    GSettingsSchemaSource *schema_source;
+    schema_source = g_settings_schema_source_get_default();
+    if (g_settings_schema_source_lookup (schema_source, "org.cinnamon.background", FALSE)) {
+        cinnamon_background_preferences = g_settings_new ("org.cinnamon.background");
+    } else {
+        cinnamon_background_preferences = g_settings_new ("org.gnome.desktop.background");
+    }
 }

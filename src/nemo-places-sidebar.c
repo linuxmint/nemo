@@ -3879,7 +3879,7 @@ nemo_places_sidebar_dispose (GObject *object)
 					      bookmarks_popup_menu_detach_cb,
 					      sidebar);
 
-	g_signal_handlers_disconnect_by_func (gnome_background_preferences,
+	g_signal_handlers_disconnect_by_func (cinnamon_background_preferences,
 					      desktop_setting_changed_callback,
 					      sidebar);
 

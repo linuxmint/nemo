@@ -6959,7 +6959,7 @@ action_set_as_wallpaper_callback(GtkAction *action,
 
     uri = nemo_file_info_get_uri (file);
 
-    g_settings_set_string (gnome_background_preferences,
+    g_settings_set_string (cinnamon_background_preferences,
                                     "picture-uri", uri);
     g_free (uri);
 }
