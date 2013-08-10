@@ -121,8 +121,6 @@
 #define NEMO_ACTION_LOCATION_POLL "Location Poll"
 #define NEMO_ACTION_SCRIPTS "Scripts"
 #define NEMO_ACTION_ACTIONS "Actions"
-#define NEMO_ACTION_NEW_LAUNCHER "New Launcher"
-#define NEMO_ACTION_NEW_LAUNCHER_DESKTOP "New Launcher"
 #define NEMO_ACTION_NEW_DOCUMENTS "New Documents"
 #define NEMO_ACTION_NEW_EMPTY_DOCUMENT "New Empty Document"
 #define NEMO_ACTION_EMPTY_TRASH_CONDITIONAL "Empty Trash Conditional"
