@@ -124,8 +124,8 @@ nautilus_progress_info_widget_constructed (GObject *obj)
 			   TRUE, TRUE,
 			   0);
 
-	image = gtk_image_new_from_stock (GTK_STOCK_CANCEL,
-					  GTK_ICON_SIZE_BUTTON);
+	image = gtk_image_new_from_icon_name ("gtk-cancel",
+					      GTK_ICON_SIZE_BUTTON);
 	button = gtk_button_new ();
 	gtk_container_add (GTK_CONTAINER (button), image);
 	gtk_box_pack_start (GTK_BOX (hbox),

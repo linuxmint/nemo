@@ -1152,7 +1152,6 @@ notebook_popup_menu_show (NautilusWindow *window,
 {
 	GtkWidget *popup;
 	GtkWidget *item;
-	GtkWidget *image;
 	int button, event_time;
 	gboolean can_move_left, can_move_right;
 	NautilusNotebook *notebook;
@@ -1193,9 +1192,7 @@ notebook_popup_menu_show (NautilusWindow *window,
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup),
 			       gtk_separator_menu_item_new ());
 
-	item = gtk_image_menu_item_new_with_mnemonic (_("_Close Tab"));
-	image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-	gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+	item = gtk_menu_item_new_with_mnemonic (_("_Close Tab"));
 	g_signal_connect (item, "activate",
 			  G_CALLBACK (notebook_popup_menu_close_cb), window);
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup),

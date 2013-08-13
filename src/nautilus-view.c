@@ -967,7 +967,7 @@ nautilus_view_confirm_multiple (GtkWindow *parent_window,
 						   "This will open %'d separate windows.", count), count);
 	}
 	dialog = eel_show_yes_no_dialog (prompt, detail, 
-					 GTK_STOCK_OK, GTK_STOCK_CANCEL,
+					 _("_OK"), _("_Cancel"),
 					 parent_window);
 	g_free (detail);
 
@@ -1491,11 +1491,11 @@ select_pattern (NautilusView *view)
 	dialog = gtk_dialog_new_with_buttons (_("Select Items Matching"),
 					      nautilus_view_get_containing_window (view),
 					      GTK_DIALOG_DESTROY_WITH_PARENT,
-					      GTK_STOCK_HELP,
+					      _("_Help"),
 					      GTK_RESPONSE_HELP,
-					      GTK_STOCK_CANCEL,
+					      _("_Cancel"),
 					      GTK_RESPONSE_CANCEL,
-					      GTK_STOCK_OK,
+					      _("_OK"),
 					      GTK_RESPONSE_OK,
 					      NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG (dialog),
@@ -1613,10 +1613,10 @@ action_save_search_as_callback (GtkAction *action,
 		dialog = gtk_dialog_new_with_buttons (_("Save Search as"),
 						      nautilus_view_get_containing_window (directory_view),
 						      0,
-						      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						      _("_Cancel"), GTK_RESPONSE_CANCEL,
 						      NULL);
 		save_button = gtk_dialog_add_button (GTK_DIALOG (dialog),
-						     GTK_STOCK_SAVE, GTK_RESPONSE_OK);
+						     _("_Save"), GTK_RESPONSE_OK);
 		gtk_dialog_set_default_response (GTK_DIALOG (dialog),
 						 GTK_RESPONSE_OK);
 		gtk_container_set_border_width (GTK_CONTAINER (dialog), 5);
@@ -5992,7 +5992,7 @@ copy_or_move_selection (NautilusView *view,
 	dialog = gtk_file_chooser_dialog_new (_("Select Destination"),
 					      GTK_WINDOW (nautilus_view_get_window (view)),
 					      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-					      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					      _("_Cancel"), GTK_RESPONSE_CANCEL,
 					      _("_Select"), GTK_RESPONSE_OK,
 					      NULL);
 	gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
@@ -7150,7 +7150,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* name, stock id, label */  { NAUTILUS_ACTION_NEW_DOCUMENTS, "document-new", N_("New _Document") },
   /* name, stock id, label */  { NAUTILUS_ACTION_OPEN_WITH, NULL, N_("Open Wit_h"),
 				 NULL, N_("Choose a program with which to open the selected item") },
-  /* name, stock id */         { NAUTILUS_ACTION_PROPERTIES, GTK_STOCK_PROPERTIES,
+  /* name, stock id */         { NAUTILUS_ACTION_PROPERTIES, NULL,
   /* label, accelerator */       N_("P_roperties"), "<alt>Return",
   /* tooltip */                  N_("View or modify the properties of each selected item"),
 				 G_CALLBACK (action_properties_callback) },
@@ -7202,21 +7202,21 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("E_mpty Trash"), NULL,
   /* tooltip */                  N_("Delete all items in the Trash"),
 				 G_CALLBACK (action_empty_trash_callback) },
-  /* name, stock id */         { NAUTILUS_ACTION_CUT, GTK_STOCK_CUT,
-  /* label, accelerator */       NULL, NULL,
+  /* name, stock id */         { NAUTILUS_ACTION_CUT, NULL,
+  /* label, accelerator */       N_("Cu_t"), NULL,
   /* tooltip */                  N_("Prepare the selected files to be moved with a Paste command"),
 				 G_CALLBACK (action_cut_files_callback) },
-  /* name, stock id */         { NAUTILUS_ACTION_COPY, GTK_STOCK_COPY,
-  /* label, accelerator */       NULL, NULL,
+  /* name, stock id */         { NAUTILUS_ACTION_COPY, NULL,
+  /* label, accelerator */       N_("_Copy"), NULL,
   /* tooltip */                  N_("Prepare the selected files to be copied with a Paste command"),
 				 G_CALLBACK (action_copy_files_callback) },
-  /* name, stock id */         { NAUTILUS_ACTION_PASTE, GTK_STOCK_PASTE,
-  /* label, accelerator */       NULL, NULL,
+  /* name, stock id */         { NAUTILUS_ACTION_PASTE, NULL,
+  /* label, accelerator */       N_("_Paste"), NULL,
   /* tooltip */                  N_("Move or copy files previously selected by a Cut or Copy command"),
 				 G_CALLBACK (action_paste_files_callback) },
   /* We make accelerator "" instead of null here to not inherit the stock
      accelerator for paste */
-  /* name, stock id */         { NAUTILUS_ACTION_PASTE_FILES_INTO, GTK_STOCK_PASTE,
+  /* name, stock id */         { NAUTILUS_ACTION_PASTE_FILES_INTO, NULL,
   /* label, accelerator */       N_("_Paste Into Folder"), "",
   /* tooltip */                  N_("Move or copy files previously selected by a Cut or Copy command into the selected folder"),
 				 G_CALLBACK (action_paste_files_into_callback) },
@@ -7268,11 +7268,11 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("_Restore"), NULL,
 				 NULL,
                  G_CALLBACK (action_restore_from_trash_callback) },
- /* name, stock id */          { NAUTILUS_ACTION_UNDO, GTK_STOCK_UNDO,
+ /* name, stock id */          { NAUTILUS_ACTION_UNDO, NULL,
  /* label, accelerator */        N_("_Undo"), "<control>Z",
  /* tooltip */                   N_("Undo the last action"),
                                  G_CALLBACK (action_undo_callback) },
- /* name, stock id */	       { NAUTILUS_ACTION_REDO, GTK_STOCK_REDO,
+ /* name, stock id */	       { NAUTILUS_ACTION_REDO, NULL,
  /* label, accelerator */        N_("_Redo"), "<shift><control>Z",
  /* tooltip */                   N_("Redo the last undone action"),
                                  G_CALLBACK (action_redo_callback) },
@@ -7357,15 +7357,15 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Open this folder in a new tab"),
 				 G_CALLBACK (action_location_open_in_new_tab_callback) },
 
-  /* name, stock id */         { NAUTILUS_ACTION_LOCATION_CUT, GTK_STOCK_CUT,
-  /* label, accelerator */       NULL, "",
+  /* name, stock id */         { NAUTILUS_ACTION_LOCATION_CUT, NULL,
+  /* label, accelerator */       N_("Cu_t"), "",
   /* tooltip */                  N_("Prepare this folder to be moved with a Paste command"),
 				 G_CALLBACK (action_location_cut_callback) },
-  /* name, stock id */         { NAUTILUS_ACTION_LOCATION_COPY, GTK_STOCK_COPY,
-  /* label, accelerator */       NULL, "",
+  /* name, stock id */         { NAUTILUS_ACTION_LOCATION_COPY, NULL,
+  /* label, accelerator */       N_("_Copy"), "",
   /* tooltip */                  N_("Prepare this folder to be copied with a Paste command"),
 				 G_CALLBACK (action_location_copy_callback) },
-  /* name, stock id */         { NAUTILUS_ACTION_LOCATION_PASTE_FILES_INTO, GTK_STOCK_PASTE,
+  /* name, stock id */         { NAUTILUS_ACTION_LOCATION_PASTE_FILES_INTO, NULL,
   /* label, accelerator */       N_("_Paste Into Folder"), "",
   /* tooltip */                  N_("Move or copy files previously selected by a Cut or Copy command into this folder"),
 				 G_CALLBACK (action_location_paste_files_into_callback) },
@@ -7407,7 +7407,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Detect media in the selected drive"),
 				 G_CALLBACK (action_location_detect_media_callback) },
 
-  /* name, stock id */         { NAUTILUS_ACTION_LOCATION_PROPERTIES, GTK_STOCK_PROPERTIES,
+  /* name, stock id */         { NAUTILUS_ACTION_LOCATION_PROPERTIES, NULL,
   /* label, accelerator */       N_("P_roperties"), NULL,
   /* tooltip */                  N_("View or modify the properties of this folder"),
 				 G_CALLBACK (action_location_properties_callback) },
@@ -8602,7 +8602,7 @@ real_update_menus (NautilusView *view)
 						   GTK_IMAGE_MENU_ITEM (menuitem), app_icon != NULL);
 
 	if (app_icon == NULL) {
-		app_icon = g_themed_icon_new (GTK_STOCK_OPEN);
+		app_icon = g_themed_icon_new ("gtk-open");
 	}
 
 	gtk_action_set_gicon (action, app_icon);

@@ -4464,9 +4464,9 @@ on_change_permissions_clicked (GtkWidget                *button,
 	dialog = gtk_dialog_new_with_buttons (_("Change Permissions for Enclosed Files"),
 					       GTK_WINDOW (window),
 					       GTK_DIALOG_MODAL,
-					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					       _("Change"), GTK_RESPONSE_OK,
-					       NULL);
+					      _("_Cancel"), GTK_RESPONSE_CANCEL,
+					      _("Change"), GTK_RESPONSE_OK,
+					      NULL);
 
 	grid = GTK_GRID (create_grid_with_standard_properties ());
 	gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
@@ -4942,8 +4942,8 @@ create_properties_window (StartupData *startup_data)
 	append_extension_pages (window);
 
 	gtk_dialog_add_buttons (GTK_DIALOG (window),
-				GTK_STOCK_HELP, GTK_RESPONSE_HELP,
-				GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+				_("_Help"), GTK_RESPONSE_HELP,
+				_("_Close"), GTK_RESPONSE_CLOSE,
 				NULL);
 
 	/* FIXME - HIGificiation, should be done inside GTK+ */
@@ -5461,9 +5461,9 @@ select_image_button_callback (GtkWidget *widget,
 	if (dialog == NULL) {
 		dialog = gtk_file_chooser_dialog_new (_("Select Custom Icon"), GTK_WINDOW (window),
 						      GTK_FILE_CHOOSER_ACTION_OPEN,
-						      GTK_STOCK_REVERT_TO_SAVED, GTK_RESPONSE_NO,
-						      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-						      GTK_STOCK_OPEN, GTK_RESPONSE_OK,
+						      _("_Revert"), GTK_RESPONSE_NO,
+						      _("_Cancel"), GTK_RESPONSE_CANCEL,
+						      _("_Open"), GTK_RESPONSE_OK,
 						      NULL);
 		gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (dialog),
 						      g_get_user_special_dir (G_USER_DIRECTORY_PICTURES),

@@ -272,7 +272,7 @@ drag_data_received_callback (GtkWidget *widget,
 								GTK_MESSAGE_QUESTION,
 								prompt,
 								detail,
-								GTK_STOCK_CANCEL, GTK_STOCK_OK,
+								_("_Cancel"), _("_OK"),
 								NULL) != 0 /* GNOME_OK */;
 
 		g_free (prompt);

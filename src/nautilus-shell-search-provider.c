@@ -515,7 +515,6 @@ result_list_attributes_ready_cb (GList    *file_list,
   NautilusFile *file;
   GList *l;
   gchar *uri, *display_name;
-  GdkPixbuf *pix;
   gchar *thumbnail_path;
   GIcon *gicon;
   GFile *location;
