@@ -3948,7 +3948,7 @@ msgstr "Oprávnění vybraného souboru nebylo možné zjistit."
 
 #: ../src/nautilus-properties-window.c:4837
 msgid "Open With"
-msgstr "Otevřít s"
+msgstr "Otevřít pomocí"
 
 #: ../src/nautilus-properties-window.c:5160
 msgid "Creating Properties window."
@@ -4179,7 +4179,7 @@ msgstr "%s %s, %s %s"
 #: ../src/nautilus-view.c:4372
 #, c-format
 msgid "Open With %s"
-msgstr "Otevřít s %s"
+msgstr "Otevřít pomocí %s"
 
 #: ../src/nautilus-view.c:4374
 #, c-format
@@ -4962,7 +4962,7 @@ msgstr[2] "Nová složka s vybranými %'d položkami"
 #: ../src/nautilus-view.c:8556
 #, c-format
 msgid "_Open With %s"
-msgstr "_Otevřít s %s"
+msgstr "_Otevřít pomocí %s"
 
 #: ../src/nautilus-view.c:8567
 msgid "Run"
