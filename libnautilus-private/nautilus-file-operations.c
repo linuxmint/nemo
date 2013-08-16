@@ -6107,8 +6107,6 @@ create_job (GIOSchedulerJob *io_job,
 			g_assert (dest_fs_type == NULL);
 			dest_fs_type = query_fs_type (job->dest_dir, common->cancellable);
 
-			g_object_unref (dest);
-
 			if (count == 1) {
 				new_filename = g_strdup (filename);
 			} else {
@@ -6146,7 +6144,9 @@ create_job (GIOSchedulerJob *io_job,
 				goto retry;
 			}
 			g_free (new_filename);
-		} else if (IS_IO_ERROR (error, EXISTS)) {
+		}
+
+		if (IS_IO_ERROR (error, EXISTS)) {
 			g_object_unref (dest);
 			dest = NULL;
 			filename_base = eel_filename_strip_extension (filename);
