@@ -1,0 +1,17 @@
+[Nemo Action]
+
+Name=Send with Evolution
+
+Comment=Send the selected file(s) as email attachments using Evolution
+
+Exec=xdg-email --attach "%F"
+
+Stock-Id=gtk-dnd-multiple
+
+Selection=NotNone
+
+Extensions=nodirs;
+
+Dependencies=evolution;
+
+Separator=" --attach "

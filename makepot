@@ -1,3 +1,4 @@
 #!/bin/bash
-xgettext --from-code=UTF-8 --keyword=_ --keyword=N_ --output=nemo.pot src/*.c libnemo-extension/*.c libnemo-private/*.c eel/*.c src/*.glade
+data/extract_action_strings
+xgettext --from-code=UTF-8 --keyword=_ --keyword=N_ --output=nemo.pot src/*.c libnemo-extension/*.c libnemo-private/*.c eel/*.c src/*.glade data/action_i18n_strings.py
 
