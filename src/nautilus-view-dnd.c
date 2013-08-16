@@ -354,9 +354,9 @@ get_drop_filename (const char *text)
 	PangoLogAttr *attrs;
 	gchar *current_char;
 
-	num_attrs = MIN (g_utf8_strlen (text, -1) + 1, MAX_LEN_FILENAME);
+	num_attrs = MIN (g_utf8_strlen (text, -1), MAX_LEN_FILENAME) + 1;
 	attrs = g_new (PangoLogAttr, num_attrs);
-	g_utf8_strncpy (trimmed, text, num_attrs);
+	g_utf8_strncpy (trimmed, text, num_attrs - 1);
 	pango_get_log_attrs (trimmed, -1, -1, pango_language_get_default (), attrs, num_attrs);
 
 	/* since the end of the text will always match a word boundary don't include it */
