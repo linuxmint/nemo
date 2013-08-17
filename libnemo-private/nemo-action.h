@@ -84,8 +84,6 @@ struct _NemoAction {
     SelectionType selection_type;
     gchar **extensions;
     gchar **mimetypes;
-    guint ext_length;
-    guint mime_length;
     gchar *exec;
     gchar *parent_dir;
     gchar *separator;
@@ -106,8 +104,6 @@ void          nemo_action_activate             (NemoAction *action, GList *selec
 SelectionType nemo_action_get_selection_type   (NemoAction *action);
 gchar       **nemo_action_get_extension_list   (NemoAction *action);
 gchar       **nemo_action_get_mimetypes_list   (NemoAction *action);
-guint         nemo_action_get_extension_count  (NemoAction *action);
-guint         nemo_action_get_mimetypes_count  (NemoAction *action);
 void          nemo_action_set_key_file_path    (NemoAction *action, const gchar *path);
 void          nemo_action_set_exec             (NemoAction *action, const gchar *exec);
 void          nemo_action_set_parent_dir       (NemoAction *action, const gchar *parent_dir);

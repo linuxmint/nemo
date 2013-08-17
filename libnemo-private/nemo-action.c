@@ -70,8 +70,6 @@ enum
   PROP_SELECTION_TYPE,
   PROP_EXTENSIONS,
   PROP_MIMES,
-  PROP_EXT_LENGTH,
-  PROP_MIME_LENGTH,
   PROP_EXEC,
   PROP_PARENT_DIR,
   PROP_USE_PARENT_DIR,
@@ -88,8 +86,6 @@ nemo_action_init (NemoAction *action)
     action->selection_type = SELECTION_SINGLE;
     action->extensions = NULL;
     action->mimetypes = NULL;
-    action->ext_length = 0;
-    action->mime_length = 0;
     action->exec = NULL;
     action->parent_dir = NULL;
     action->use_parent_dir = FALSE;
@@ -145,28 +141,6 @@ nemo_action_class_init (NemoActionClass *klass)
                                                            "Mimetypes",
                                                            "String array of file mimetypes",
                                                            G_PARAM_READWRITE)
-                                     );
-
-    g_object_class_install_property (object_class,
-                                     PROP_EXT_LENGTH,
-                                     g_param_spec_int ("ext-length",
-                                                       "Extensions Length",
-                                                       "Number of extensions",
-                                                       0,
-                                                       999,
-                                                       0,
-                                                       G_PARAM_READWRITE)
-                                     );
-
-    g_object_class_install_property (object_class,
-                                     PROP_MIME_LENGTH,
-                                     g_param_spec_int ("mime-length",
-                                                       "Mimetypes Length",
-                                                       "Number of mimetypes",
-                                                       0,
-                                                       999,
-                                                       0,
-                                                       G_PARAM_READWRITE)
                                      );
 
     g_object_class_install_property (object_class,
@@ -367,9 +341,7 @@ nemo_action_constructed (GObject *object)
                    "stock-id", stock_id,
                    "exec", exec,
                    "selection-type", type,
-                   "ext-length", count,
                    "extensions", ext,
-                   "mime-length", mime_count,
                    "mimetypes", mimes,
                    "parent-dir", parent_dir,
                    "use-parent-dir", use_parent_dir,
@@ -834,18 +806,6 @@ nemo_action_get_mimetypes_list (NemoAction *action)
     return action->mimetypes;
 }
 
-guint
-nemo_action_get_extension_count (NemoAction *action)
-{
-    return action->ext_length;
-}
-
-guint
-nemo_action_get_mimetypes_count (NemoAction *action)
-{
-    return action->mime_length;
-}
-
 void
 nemo_action_set_key_file_path (NemoAction *action, const gchar *path)
 {
@@ -1018,8 +978,8 @@ nemo_action_update_visibility (NemoAction *action, GList *selection, NemoFile *p
     gchar **extensions = nemo_action_get_extension_list (action);
     gchar **mimetypes = nemo_action_get_mimetypes_list (action);
 
-    guint ext_count = nemo_action_get_extension_count (action);
-    guint mime_count = nemo_action_get_mimetypes_count (action);
+    guint ext_count = g_strv_length (extensions);
+    guint mime_count = g_strv_length (mimetypes);
     gboolean found_match = TRUE;
 
     if (ext_count == 1 && g_strcmp0 (extensions[0], "any") == 0)
