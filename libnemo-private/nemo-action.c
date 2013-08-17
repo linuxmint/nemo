@@ -494,12 +494,6 @@ nemo_action_set_property (GObject         *object,
     case PROP_MIMES:
       nemo_action_set_mimetypes (action, g_value_get_pointer (value));
       break;
-    case PROP_EXT_LENGTH:
-      action->ext_length = g_value_get_int (value);
-      break;
-    case PROP_MIME_LENGTH:
-      action->mime_length = g_value_get_int (value);
-      break;
     case PROP_EXEC:
       nemo_action_set_exec (action, g_value_get_string (value));
       break;
@@ -550,12 +544,6 @@ nemo_action_get_property (GObject    *object,
       break;
     case PROP_MIMES:
       g_value_set_pointer (value, action->mimetypes);
-      break;
-    case PROP_EXT_LENGTH:
-      g_value_set_int (value, action->ext_length);
-      break;
-    case PROP_MIME_LENGTH:
-      g_value_set_int (value, action->mime_length);
       break;
     case PROP_EXEC:
       g_value_set_string (value, action->exec);
