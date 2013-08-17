@@ -259,10 +259,14 @@ nemo_action_constructed (GObject *object)
                                              KEY_EXEC,
                                              NULL);
 
-    gchar *selection_string = g_key_file_get_string (key_file,
-                                                     ACTION_FILE_GROUP,
-                                                     KEY_SELECTION,
-                                                     NULL);
+    gchar *selection_string_raw = g_key_file_get_string (key_file,
+                                                         ACTION_FILE_GROUP,
+                                                         KEY_SELECTION,
+                                                         NULL);
+
+    gchar *selection_string = g_ascii_strdown (selection_string_raw, -1);
+
+    g_free (selection_string_raw);
 
     gchar *separator = g_key_file_get_string (key_file,
                                               ACTION_FILE_GROUP,

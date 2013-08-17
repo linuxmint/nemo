@@ -37,11 +37,11 @@
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_ACTION, NemoActionClass))
 
 
-#define SELECTION_SINGLE_KEY "S"
-#define SELECTION_MULTIPLE_KEY "M"
-#define SELECTION_ANY_KEY "Any"
-#define SELECTION_NONE_KEY "None"
-#define SELECTION_NOT_NONE_KEY "NotNone"
+#define SELECTION_SINGLE_KEY "s"
+#define SELECTION_MULTIPLE_KEY "m"
+#define SELECTION_ANY_KEY "any"
+#define SELECTION_NONE_KEY "none"
+#define SELECTION_NOT_NONE_KEY "notnone"
 
 #define TOKEN_EXEC_URI_LIST "%U"
 #define TOKEN_EXEC_FILE_LIST "%F"
