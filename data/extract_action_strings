@@ -3,14 +3,17 @@
 import os
 import glob
 import datetime
+import sys
 from gi.repository import GLib
 
 GROUP = "Nemo Action"
 
 class Main:
     def __init__(self):
-
-        action_files = glob.glob(os.path.join(os.getcwd(), "*.nemo_action.in"))
+        if len(sys.argv) > 1:
+            action_files = glob.glob(os.path.join(sys.argv[1], "*.nemo_action.in"))
+        else:
+            action_files = glob.glob(os.path.join(os.getcwd(), "*.nemo_action.in"))
         if len(action_files) > 0:
             dt = datetime.datetime
             outstring = """
@@ -38,7 +41,10 @@ class Main:
                         except GLib.GError:
                             tooltip = None
 
-            outfilename = os.path.join(os.getcwd(), "action_i18n_strings.py")
+            if len(sys.argv) > 1:
+                outfilename = os.path.join(sys.argv[1], "action_i18n_strings.py")
+            else:
+                outfilename = os.path.join(os.getcwd(), "action_i18n_strings.py")
             if os.path.exists(outfilename):
                 os.remove(outfilename)
             outfile = open(outfilename, 'w')
