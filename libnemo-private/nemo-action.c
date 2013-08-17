@@ -970,8 +970,8 @@ nemo_action_update_visibility (NemoAction *action, GList *selection, NemoFile *p
     gchar **extensions = nemo_action_get_extension_list (action);
     gchar **mimetypes = nemo_action_get_mimetypes_list (action);
 
-    guint ext_count = g_strv_length (extensions);
-    guint mime_count = g_strv_length (mimetypes);
+    guint ext_count = extensions != NULL ? g_strv_length (extensions) : 0;
+    guint mime_count = mimetypes != NULL ? g_strv_length (mimetypes) : 0;
     gboolean found_match = TRUE;
 
     if (ext_count == 1 && g_strcmp0 (extensions[0], "any") == 0)
