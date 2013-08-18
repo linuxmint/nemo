@@ -86,12 +86,15 @@ struct _NemoAction {
     gchar **mimetypes;
     gchar *exec;
     gchar *parent_dir;
+    gchar **conditions;
     gchar *separator;
     QuoteType quote_type;
     gchar *orig_label;
     gchar *orig_tt;
     gboolean use_parent_dir;
     gboolean log_output;
+    GList *dbus;
+    gboolean dbus_satisfied;
 };
 
 struct _NemoActionClass {
@@ -108,14 +111,17 @@ void          nemo_action_set_key_file_path    (NemoAction *action, const gchar 
 void          nemo_action_set_exec             (NemoAction *action, const gchar *exec);
 void          nemo_action_set_parent_dir       (NemoAction *action, const gchar *parent_dir);
 void          nemo_action_set_separator        (NemoAction *action, const gchar *separator);
+void          nemo_action_set_conditions       (NemoAction *action, gchar **conditions);
 void          nemo_action_set_orig_label       (NemoAction *action, const gchar *orig_label);
 void          nemo_action_set_orig_tt          (NemoAction *action, const gchar *orig_tt);
 const gchar  *nemo_action_get_orig_label       (NemoAction *action);
 const gchar  *nemo_action_get_orig_tt          (NemoAction *action);
+gchar       **nemo_action_get_conditions       (NemoAction *action);
 void          nemo_action_set_label            (NemoAction *action, GList *selection, NemoFile *parent);
 void          nemo_action_set_tt               (NemoAction *action, GList *selection, NemoFile *parent);
 void          nemo_action_set_extensions       (NemoAction *action, gchar **extensions);
 void          nemo_action_set_mimetypes        (NemoAction *action, gchar **mimetypes);
+gboolean      nemo_action_get_dbus_satisfied   (NemoAction *action);
 void          nemo_action_update_visibility    (NemoAction *action, GList *selection, NemoFile *parent);
 
 #endif /* NEMO_ACTION_H */

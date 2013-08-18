@@ -62,6 +62,7 @@ static gpointer parent_class;
 #define KEY_SEPARATOR "Separator"
 #define KEY_QUOTE_TYPE "Quote"
 #define KEY_DEPENDENCIES "Dependencies"
+#define KEY_CONDITIONS "Conditions"
 
 enum 
 {
@@ -76,8 +77,24 @@ enum
   PROP_ORIG_LABEL,
   PROP_ORIG_TT,
   PROP_SEPARATOR,
-  PROP_QUOTE_TYPE
+  PROP_QUOTE_TYPE,
+  PROP_CONDITIONS
 };
+
+typedef struct {
+    NemoAction *action;
+    gchar *name;
+    guint watch_id;
+    gboolean exists;
+} DBusCondition;
+
+static void
+dbus_condition_free (gpointer data)
+{
+    DBusCondition *cond = (DBusCondition *) data;
+    g_free (cond->name);
+    g_bus_unwatch_name (cond->watch_id);
+}
 
 static void
 nemo_action_init (NemoAction *action)
@@ -93,6 +110,9 @@ nemo_action_init (NemoAction *action)
     action->orig_tt = NULL;
     action->quote_type = QUOTE_TYPE_NONE;
     action->separator = NULL;
+    action->conditions = NULL;
+    action->dbus = NULL;
+    action->dbus_satisfied = TRUE;
     action->log_output = g_getenv ("NEMO_ACTION_VERBOSE") != NULL;
 }
 
@@ -204,6 +224,85 @@ nemo_action_class_init (NemoActionClass *klass)
                                                        QUOTE_TYPE_SINGLE,
                                                        G_PARAM_READWRITE)
                                      );
+
+    g_object_class_install_property (object_class,
+                                     PROP_CONDITIONS,
+                                     g_param_spec_pointer ("conditions",
+                                                           "Special show conditions",
+                                                           "Special conditions, like a bool gsettings key, or 'desktop'",
+                                                           G_PARAM_READWRITE)
+                                     );
+}
+
+static void
+recalc_dbus_conditions (NemoAction *action)
+{
+    GList *l;
+    DBusCondition *c;
+    gboolean cumul_found = TRUE;
+
+    for (l = action->dbus; l != NULL; l = l->next) {
+        c = l->data;
+        if (!c->exists) {
+            cumul_found = FALSE;
+            break;
+        }
+    }
+
+    action->dbus_satisfied = cumul_found;
+}
+
+static void
+on_dbus_appeared (GDBusConnection *connection,
+                  const gchar     *name,
+                  const gchar     *name_owner,
+                  gpointer         user_data)
+{
+    DBusCondition *cond = user_data;
+
+    cond->exists = TRUE;
+    recalc_dbus_conditions (cond->action);
+}
+
+static void
+on_dbus_disappeared (GDBusConnection *connection,
+                     const gchar     *name,
+                     gpointer         user_data)
+{
+    DBusCondition *cond = user_data;
+
+    cond->exists = FALSE;
+    recalc_dbus_conditions (cond->action);
+}
+
+static void
+setup_dbus_condition (NemoAction *action, const gchar *condition)
+{
+    gchar **split = g_strsplit (condition, " ", 2);
+
+    if (g_strv_length (split) != 2) {
+        g_strfreev (split);
+        return;
+    }
+
+    if (g_strcmp0 (split[0], "dbus") != 0) {
+        g_strfreev (split);
+        return;
+    }
+
+    DBusCondition *cond = g_new0 (DBusCondition, 1);
+
+    cond->name = g_strdup (split[0]);
+    cond->exists = FALSE;
+    cond->action = action;
+    action->dbus = g_list_append (action->dbus, cond);
+    cond->watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
+                                       split[1],
+                                       0,
+                                       on_dbus_appeared,
+                                       on_dbus_disappeared,
+                                       cond,
+                                       NULL);
 }
 
 static void
@@ -324,6 +423,25 @@ nemo_action_constructed (GObject *object)
                                                 &mime_count,
                                                 NULL);
 
+    gsize condition_count;
+
+    gchar **conditions = g_key_file_get_string_list (key_file,
+                                                     ACTION_FILE_GROUP,
+                                                     KEY_CONDITIONS,
+                                                     &condition_count,
+                                                     NULL);
+
+    if (conditions && condition_count > 0) {
+        int j;
+        gchar *condition;
+        for (j = 0; j < condition_count; j++) {
+            condition = conditions[j];
+            if (g_str_has_prefix (condition, "dbus")) {
+                setup_dbus_condition (action, condition);
+            }
+        }
+    }
+
     gchar *exec = NULL;
     gboolean use_parent_dir = FALSE;
 
@@ -353,6 +471,7 @@ nemo_action_constructed (GObject *object)
                    "orig-tooltip", orig_tt,
                    "quote-type", quote_type,
                    "separator", separator,
+                   "conditions", conditions,
                     NULL);
 
     g_free (orig_label);
@@ -364,6 +483,7 @@ nemo_action_constructed (GObject *object)
     g_free (parent_dir);
     g_free (quote_type_string);
     g_free (separator);
+    g_strfreev (conditions);
     g_key_file_free (key_file);
 }
 
@@ -461,10 +581,16 @@ nemo_action_finalize (GObject *object)
 
     g_free (action->key_file_path);
     g_strfreev (action->extensions);
+    g_strfreev (action->mimetypes);
+    g_strfreev (action->conditions);
     g_free (action->exec);
     g_free (action->parent_dir);
     g_free (action->orig_label);
     g_free (action->orig_tt);
+
+    if (action->dbus) {
+        g_list_free_full (action->dbus, (GDestroyNotify) dbus_condition_free);
+    }
 
     G_OBJECT_CLASS (parent_class)->finalize (object);
 }
@@ -514,6 +640,9 @@ nemo_action_set_property (GObject         *object,
       break;
     case PROP_SEPARATOR:
       nemo_action_set_separator (action, g_value_get_string (value));
+      break;
+    case PROP_CONDITIONS:
+      nemo_action_set_conditions (action, g_value_get_pointer (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -565,6 +694,9 @@ nemo_action_get_property (GObject    *object,
       break;
     case PROP_SEPARATOR:
       g_value_set_string (value, action->separator);
+      break;
+    case PROP_CONDITIONS:
+      g_value_set_pointer (value, action->conditions);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -838,6 +970,16 @@ nemo_action_set_separator (NemoAction *action, const gchar *separator)
 }
 
 void
+nemo_action_set_conditions (NemoAction *action, gchar **conditions)
+{
+    gchar **tmp;
+
+    tmp = action->conditions;
+    action->conditions = g_strdupv (conditions);
+    g_strfreev (tmp);
+}
+
+void
 nemo_action_set_orig_label (NemoAction *action, const gchar *orig_label)
 {
     gchar *tmp;
@@ -867,6 +1009,12 @@ const gchar *
 nemo_action_get_orig_tt (NemoAction *action)
 {
     return action->orig_tt;
+}
+
+gchar **
+nemo_action_get_conditions (NemoAction *action)
+{
+    return action->conditions;
 }
 
 static gboolean
@@ -934,12 +1082,111 @@ nemo_action_set_mimetypes (NemoAction *action, gchar **mimetypes)
     g_strfreev (tmp);
 }
 
+gboolean
+nemo_action_get_dbus_satisfied (NemoAction *action)
+{
+    return action->dbus_satisfied;
+}
+
+
+static gboolean
+check_gsettings_condition (NemoAction *action, const gchar *condition)
+{
+
+    gchar **split = g_strsplit (condition, " ", 3);
+
+    if (g_strv_length (split) != 3) {
+        g_strfreev (split);
+        return FALSE;
+    }
+
+    if (g_strcmp0 (split[0], "gsettings") != 0) {
+        g_strfreev (split);
+        return FALSE;
+    }
+
+    GSettingsSchemaSource *schema_source;
+
+    schema_source = g_settings_schema_source_get_default();
+
+    if (g_settings_schema_source_lookup (schema_source, split[1], TRUE)) {
+        GSettings *s = g_settings_new (split[1]);
+        gchar **keys = g_settings_list_keys (s);
+        gboolean ret = FALSE;
+        gint i;
+        for (i = 0; i < g_strv_length (keys); i++) {
+            if (g_strcmp0 (keys[i], split[2]) == 0) {
+                GVariant *var = g_settings_get_value (s, split[2]);
+                const GVariantType *type = g_variant_get_type (var);
+                if (g_variant_type_equal (type, G_VARIANT_TYPE_BOOLEAN))
+                    ret = g_variant_get_boolean (var);
+                g_variant_unref (var);
+            }
+        }
+        g_strfreev (keys);
+        g_object_unref (s);
+        g_strfreev (split);
+        return ret;
+    } else {
+        g_strfreev (split);
+        return FALSE;
+    }
+}
+
 void
 nemo_action_update_visibility (NemoAction *action, GList *selection, NemoFile *parent)
 {
 
     gboolean selection_type_show = FALSE;
     gboolean extension_type_show = TRUE;
+    gboolean condition_type_show = TRUE;
+
+    recalc_dbus_conditions (action);
+
+    if (!nemo_action_get_dbus_satisfied (action))
+        goto out;
+
+    gchar **conditions = nemo_action_get_conditions (action);
+
+    guint condition_count = conditions != NULL ? g_strv_length (conditions) : 0;
+
+    if (condition_count > 0) {
+        int j;
+        gchar *condition;
+        for (j = 0; j < condition_count; j++) {
+            condition = conditions[j];
+            if (g_strcmp0 (condition, "desktop") == 0) {
+                gchar *name = nemo_file_get_display_name (parent);
+                if (g_strcmp0 (name, "x-nemo-desktop") != 0)
+                    condition_type_show = FALSE;
+                g_free (name);
+                break;
+            } else if (g_strcmp0 (condition, "removable") == 0) {
+                gboolean is_removable = FALSE;
+                if (g_list_length (selection) > 0) {
+                    GMount *mount = nemo_file_get_mount (selection->data);
+                    if (mount) {
+                        GDrive *drive = g_mount_get_drive (mount);
+                        if (drive) {
+                            if (g_drive_is_media_removable (drive))
+                                is_removable = TRUE;
+                            g_object_unref (drive);
+                        }
+                    }
+                }
+                condition_type_show = is_removable;
+            } else if (g_str_has_prefix (condition, "gsettings")) {
+                condition_type_show = check_gsettings_condition (action, condition);
+                if (!condition_type_show)
+                    break;
+            }
+            if (!condition_type_show)
+                break;
+        }
+    }
+
+    if (!condition_type_show)
+        goto out;
 
     SelectionType selection_type = nemo_action_get_selection_type (action);
     GList *iter;
@@ -972,10 +1219,11 @@ nemo_action_update_visibility (NemoAction *action, GList *selection, NemoFile *p
 
     guint ext_count = extensions != NULL ? g_strv_length (extensions) : 0;
     guint mime_count = mimetypes != NULL ? g_strv_length (mimetypes) : 0;
-    gboolean found_match = TRUE;
 
     if (ext_count == 1 && g_strcmp0 (extensions[0], "any") == 0)
         goto out;
+
+    gboolean found_match = TRUE;
 
     for (iter = selection; iter != NULL && found_match; iter = iter->next) {
         found_match = FALSE;
@@ -1020,11 +1268,11 @@ nemo_action_update_visibility (NemoAction *action, GList *selection, NemoFile *p
         }
     }
 
-out:
-
     extension_type_show = found_match;
 
-    if (selection_type_show && extension_type_show) {
+out:
+
+    if (selection_type_show && extension_type_show && condition_type_show) {
         nemo_action_set_label (action, selection, parent);
         nemo_action_set_tt (action, selection, parent);
         gtk_action_set_visible (GTK_ACTION (action), TRUE);
