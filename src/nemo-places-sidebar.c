@@ -3738,8 +3738,6 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
     sidebar->action_items = NULL;
 
-   // sidebar->action_widgets = NULL;
-
 	sidebar->volume_monitor = g_volume_monitor_get ();
 
     sidebar->my_computer_expanded = g_settings_get_boolean (nemo_window_state,
@@ -3982,6 +3980,14 @@ nemo_places_sidebar_dispose (GObject *object)
 
 	g_clear_object (&sidebar->store);
 	g_clear_object (&sidebar->bookmarks);
+
+    if (sidebar->action_manager_changed_id != 0) {
+        g_signal_handler_disconnect (sidebar->action_manager,
+                                     sidebar->action_manager_changed_id);
+        sidebar->action_manager_changed_id = 0;
+    }
+
+    g_clear_object (&sidebar->action_manager);
 
 	eel_remove_weak_pointer (&(sidebar->go_to_after_mount_slot));
 
