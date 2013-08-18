@@ -117,8 +117,8 @@ void          nemo_action_set_orig_tt          (NemoAction *action, const gchar 
 const gchar  *nemo_action_get_orig_label       (NemoAction *action);
 const gchar  *nemo_action_get_orig_tt          (NemoAction *action);
 gchar       **nemo_action_get_conditions       (NemoAction *action);
-void          nemo_action_set_label            (NemoAction *action, GList *selection, NemoFile *parent);
-void          nemo_action_set_tt               (NemoAction *action, GList *selection, NemoFile *parent);
+gchar        *nemo_action_get_label            (NemoAction *action, GList *selection, NemoFile *parent);
+gchar        *nemo_action_get_tt               (NemoAction *action, GList *selection, NemoFile *parent);
 void          nemo_action_set_extensions       (NemoAction *action, gchar **extensions);
 void          nemo_action_set_mimetypes        (NemoAction *action, gchar **mimetypes);
 gboolean      nemo_action_get_dbus_satisfied   (NemoAction *action);

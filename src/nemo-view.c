@@ -5821,6 +5821,8 @@ run_action_callback (NemoAction *action, gpointer callback_data)
     NemoFile *parent = nemo_view_get_directory_as_file (view);
 
     nemo_action_activate (action, selected_files, parent);
+
+    nemo_file_list_free (selected_files);
 }
 
 static void
@@ -5833,8 +5835,12 @@ determine_visibility (gpointer data, gpointer callback_data)
     NemoFile *parent = nemo_view_get_directory_as_file (view);
 
     if (nemo_action_get_visibility (action, selected_files, parent)) {
-        nemo_action_set_label (action, selected_files, parent);
-        nemo_action_set_tt (action, selected_files, parent);
+        gtk_action_set_label (GTK_ACTION (action), nemo_action_get_label (action,
+                                                                          selected_files,
+                                                                          parent));
+        gtk_action_set_tooltip (GTK_ACTION (action), nemo_action_get_tt (action,
+                                                                         selected_files,
+                                                                         parent));
         gtk_action_set_visible (GTK_ACTION (action), TRUE);
     } else {
         gtk_action_set_visible (GTK_ACTION (action), FALSE);

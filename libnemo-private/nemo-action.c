@@ -790,7 +790,8 @@ get_insertion_string (NemoAction *action, TokenType token_type, GList *selection
                         str = insert_separator (action, str);
                     str = insert_quote (action, str);
                     gchar *path = nemo_file_get_path (NEMO_FILE (l->data));
-                    str = g_string_append (str, path);
+                    if (path)
+                        str = g_string_append (str, path);
                     g_free (path);
                     str = insert_quote (action, str);
                     first = FALSE;
@@ -806,7 +807,8 @@ get_insertion_string (NemoAction *action, TokenType token_type, GList *selection
                         str = insert_separator (action, str);
                     str = insert_quote (action, str);
                     gchar *uri = nemo_file_get_uri (NEMO_FILE (l->data));
-                    str = g_string_append (str, uri);
+                    if (uri)
+                        str = g_string_append (str, uri);
                     g_free (uri);
                     str = insert_quote (action, str);
                     first = FALSE;
@@ -908,7 +910,6 @@ nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
 
     g_spawn_command_line_async (exec->str, NULL);
 
-    nemo_file_list_free (selection);
     g_string_free (exec, TRUE);
 }
 
@@ -1023,8 +1024,8 @@ test_string_for_label_token (const gchar *string)
     return g_strstr_len (string, -1, TOKEN_LABEL_FILE_NAME) != NULL;
 }
 
-void
-nemo_action_set_label (NemoAction *action, GList *selection, NemoFile *parent)
+gchar *
+nemo_action_get_label (NemoAction *action, GList *selection, NemoFile *parent)
 {
     const gchar *orig_label = nemo_action_get_orig_label (action);
 
@@ -1039,11 +1040,13 @@ nemo_action_set_label (NemoAction *action, GList *selection, NemoFile *parent)
     if (action->log_output)
         g_printerr ("Action Label: %s\n", str->str);
 
-    gtk_action_set_label (GTK_ACTION (action), str->str);
+    gchar *ret = str->str;
+    g_string_free (str, FALSE);
+    return ret;
 }
 
-void
-nemo_action_set_tt (NemoAction *action, GList *selection, NemoFile *parent)
+gchar *
+nemo_action_get_tt (NemoAction *action, GList *selection, NemoFile *parent)
 {
     const gchar *orig_tt = nemo_action_get_orig_tt (action);
 
@@ -1058,8 +1061,9 @@ nemo_action_set_tt (NemoAction *action, GList *selection, NemoFile *parent)
     if (action->log_output)
         g_printerr ("Action Tooltip: %s\n", str->str);
 
-
-    gtk_action_set_tooltip (GTK_ACTION (action), str->str);
+    gchar *ret = str->str;
+    g_string_free (str, FALSE);
+    return ret;
 }
 
 void
