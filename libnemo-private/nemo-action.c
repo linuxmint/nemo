@@ -542,14 +542,14 @@ nemo_action_new (const gchar *name,
     if (deps != NULL) {
         gint i = 0;
         for (i = 0; i < g_strv_length (deps); i++) {
-            gchar *path = g_find_program_in_path (deps[i]);
-            if (path == NULL) {
+            gchar *p = g_find_program_in_path (deps[i]);
+            if (p == NULL) {
                 finish = FALSE;
                 DEBUG ("Missing action dependency: %s", deps[i]);
-                g_free (path);
+                g_free (p);
                 break;
             }
-            g_free (path);
+            g_free (p);
         }
     }
 
@@ -1133,8 +1133,8 @@ check_gsettings_condition (NemoAction *action, const gchar *condition)
     }
 }
 
-void
-nemo_action_update_visibility (NemoAction *action, GList *selection, NemoFile *parent)
+gboolean
+nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *parent)
 {
 
     gboolean selection_type_show = FALSE;
@@ -1272,11 +1272,5 @@ nemo_action_update_visibility (NemoAction *action, GList *selection, NemoFile *p
 
 out:
 
-    if (selection_type_show && extension_type_show && condition_type_show) {
-        nemo_action_set_label (action, selection, parent);
-        nemo_action_set_tt (action, selection, parent);
-        gtk_action_set_visible (GTK_ACTION (action), TRUE);
-    } else {
-        gtk_action_set_visible (GTK_ACTION (action), FALSE);
-    }
+    return selection_type_show && extension_type_show && condition_type_show;
 }

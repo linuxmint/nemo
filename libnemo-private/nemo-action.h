@@ -122,6 +122,6 @@ void          nemo_action_set_tt               (NemoAction *action, GList *selec
 void          nemo_action_set_extensions       (NemoAction *action, gchar **extensions);
 void          nemo_action_set_mimetypes        (NemoAction *action, gchar **mimetypes);
 gboolean      nemo_action_get_dbus_satisfied   (NemoAction *action);
-void          nemo_action_update_visibility    (NemoAction *action, GList *selection, NemoFile *parent);
+gboolean      nemo_action_get_visibility       (NemoAction *action, GList *selection, NemoFile *parent);
 
 #endif /* NEMO_ACTION_H */

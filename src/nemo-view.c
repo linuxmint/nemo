@@ -83,6 +83,7 @@
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-file-undo-manager.h>
 #include <libnemo-private/nemo-action.h>
+#include <libnemo-private/nemo-action-manager.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_DIRECTORY_VIEW
 #include <libnemo-private/nemo-debug.h>
@@ -186,9 +187,10 @@ struct NemoViewDetails
 	GtkActionGroup *scripts_action_group;
 	guint scripts_merge_id;
 
-    GList *actions_directory_list;
     GtkActionGroup *actions_action_group;
     guint actions_merge_id;
+    guint action_manager_changed_id;
+    NemoActionManager *action_manager;
 
 	GList *templates_directory_list;
 	GtkActionGroup *templates_action_group;
@@ -2307,14 +2309,8 @@ templates_added_or_changed_callback (NemoDirectory *directory,
 }
 
 static void
-actions_added_or_changed_callback (NemoDirectory *directory,
-                   GList *files,
-                   gpointer callback_data)
+actions_added_or_changed_callback (NemoView *view)
 {
-    NemoView *view;
-
-    view = NEMO_VIEW (callback_data);
-
     view->details->actions_invalid = TRUE;
     if (view->details->active) {
         schedule_update_menus (view);
@@ -2368,15 +2364,6 @@ remove_directory_from_directory_list (NemoView *view,
 }
 
 static void
-add_directory_to_actions_directory_list (NemoView *view,
-                                    NemoDirectory *directory)
-{
-    add_directory_to_directory_list (view, directory,
-                     &view->details->actions_directory_list,
-                     G_CALLBACK (actions_added_or_changed_callback));
-}
-
-static void
 add_directory_to_scripts_directory_list (NemoView *view,
 					 NemoDirectory *directory)
 {
@@ -2410,41 +2397,6 @@ remove_directory_from_templates_directory_list (NemoView *view,
 	remove_directory_from_directory_list (view, directory,
 					      &view->details->templates_directory_list,
 					      G_CALLBACK (templates_added_or_changed_callback));
-}
-
-static void
-set_up_actions_directories (NemoView *view)
-{
-
-    gchar *sys_path = g_build_filename (NEMO_DATADIR, "actions", NULL);
-    gchar *sys_uri = g_filename_to_uri (sys_path, NULL, NULL);
-
-    gchar *user_path = g_build_filename (g_get_user_data_dir (), "nemo", "actions", NULL);
-
-    if (!g_file_test (user_path, G_FILE_TEST_EXISTS)) {
-        g_mkdir_with_parents (user_path, DEFAULT_NEMO_DIRECTORY_MODE);
-    }
-
-    gchar *user_uri = g_filename_to_uri (user_path, NULL, NULL);
-
-    if (view->details->actions_directory_list != NULL) {
-        nemo_directory_list_free (view->details->actions_directory_list);
-    }
-
-    NemoDirectory *dir;
-
-    dir = nemo_directory_get_by_uri (user_uri);
-    add_directory_to_actions_directory_list (view, dir);
-    nemo_directory_unref (dir);
-
-    dir = nemo_directory_get_by_uri (sys_uri);
-    add_directory_to_actions_directory_list (view, dir);
-    nemo_directory_unref (dir);
-
-    g_free (sys_path);
-    g_free (sys_uri);
-    g_free (user_path);
-    g_free (user_uri);
 }
 
 static void
@@ -2702,8 +2654,6 @@ nemo_view_init (NemoView *view)
 	view->details->sort_directories_first =
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
 
-    set_up_actions_directories (NEMO_VIEW (view));
-
 	g_signal_connect_object (nemo_trash_monitor_get (), "trash_state_changed",
 				 G_CALLBACK (nemo_view_trash_state_changed_callback), view, 0);
 
@@ -2747,6 +2697,12 @@ nemo_view_init (NemoView *view)
 	atk_object_set_name (atk_object, _("Content View"));
 	atk_object_set_description (atk_object, _("View of the current folder"));
 
+    view->details->action_manager = nemo_action_manager_new ();
+
+    view->details->action_manager_changed_id =
+        g_signal_connect_swapped (view->details->action_manager, "changed",
+                      G_CALLBACK (actions_added_or_changed_callback),
+                                  view);
 
     view->details->bookmarks = nemo_bookmark_list_new ();
 
@@ -2812,6 +2768,13 @@ nemo_view_destroy (GtkWidget *object)
         view->details->bookmarks_changed_id = 0;
     }
     g_clear_object (&view->details->bookmarks);
+
+    if (view->details->action_manager_changed_id != 0) {
+        g_signal_handler_disconnect (view->details->action_manager,
+                         view->details->action_manager_changed_id);
+        view->details->action_manager_changed_id = 0;
+    }
+    g_clear_object (&view->details->action_manager);
 
 	nemo_view_unmerge_menus (view);
 	
@@ -5869,7 +5832,13 @@ determine_visibility (gpointer data, gpointer callback_data)
     GList *selected_files = nemo_view_get_selection (view);
     NemoFile *parent = nemo_view_get_directory_as_file (view);
 
-    nemo_action_update_visibility (action, selected_files, parent);
+    if (nemo_action_get_visibility (action, selected_files, parent)) {
+        nemo_action_set_label (action, selected_files, parent);
+        nemo_action_set_tt (action, selected_files, parent);
+        gtk_action_set_visible (GTK_ACTION (action), TRUE);
+    } else {
+        gtk_action_set_visible (GTK_ACTION (action), FALSE);
+    }
 
     nemo_file_list_free (selected_files);
 }
@@ -5884,27 +5853,14 @@ update_actions_visibility (NemoView *view)
 
 static void
 add_action_to_action_menus (NemoView *directory_view,
-                            NemoFile *file,
+                            NemoAction *action,
                           const char *menu_path,
                           const char *popup_path, 
                           const char *popup_bg_path)
 {
-    char *uri;
-    char *action_name;
     GtkUIManager *ui_manager;
-    NemoAction *action;
 
-    uri = nemo_file_get_uri (file);
-
-    action_name = escape_action_name (uri, "action_");
-    gchar *path = g_filename_from_uri (nemo_file_get_uri (file), NULL, NULL);
-
-    action = nemo_action_new (action_name, path);
-
-    g_free (path);
-
-    if (action == NULL)  /* First thing nemo-action will check is active key */
-        return;    /* and return null if the action is not active      */
+    const gchar *action_name = gtk_action_get_name (GTK_ACTION (action));
 
     gtk_action_group_add_action (directory_view->details->actions_action_group,
                                  GTK_ACTION (action));
@@ -5915,8 +5871,6 @@ add_action_to_action_menus (NemoView *directory_view,
     g_signal_connect (action, "activate",
                    G_CALLBACK (run_action_callback),
                    directory_view);
-
-    g_object_unref (action);
 
     ui_manager = nemo_window_get_ui_manager (directory_view->details->window);
 
@@ -5941,49 +5895,22 @@ add_action_to_action_menus (NemoView *directory_view,
                    action_name,
                    GTK_UI_MANAGER_MENUITEM,
                    FALSE);
-
-    g_free (uri);
-    g_free (action_name);
 }
 
 static void
-update_directory_in_actions_menu (NemoView *view, NemoDirectory *directory)
+update_actions (NemoView *view)
 {
-    char *menu_path, *popup_path, *popup_bg_path;
-    GList *file_list, *node;
-    NemoFile *file;
-    char *uri;
-    char *escaped_path;
-    
-    uri = nemo_directory_get_uri (directory);
-    escaped_path = escape_action_path (uri + strlen (uri));
-    g_free (uri);
+    NemoAction *action;
+    GList *action_list, *node;
 
-    menu_path = g_strconcat (NEMO_VIEW_MENU_PATH_ACTIONS_PLACEHOLDER,
-                 escaped_path,
-                 NULL);
-    popup_path = g_strconcat (NEMO_VIEW_POPUP_PATH_ACTIONS_PLACEHOLDER,
-                  escaped_path,
-                  NULL);
-    popup_bg_path = g_strconcat (NEMO_VIEW_POPUP_PATH_BACKGROUND_ACTIONS_PLACEHOLDER,
-                     escaped_path,
-                     NULL);
-    g_free (escaped_path);
+    action_list = nemo_action_manager_list_actions (view->details->action_manager);
 
-    file_list = nemo_directory_get_file_list (directory);
-
-    for (node = file_list; node != NULL; node = node->next) {
-        file = node->data;
-
-        if (!g_str_has_suffix (nemo_file_get_name (file), ".nemo_action"))
-            continue;
-        add_action_to_action_menus (view, file, menu_path, popup_path, popup_bg_path);
+    for (node = action_list; node != NULL; node = node->next) {
+        action = node->data;
+        add_action_to_action_menus (view, action, NEMO_VIEW_MENU_PATH_ACTIONS_PLACEHOLDER,
+                                                  NEMO_VIEW_POPUP_PATH_ACTIONS_PLACEHOLDER,
+                                                  NEMO_VIEW_POPUP_PATH_BACKGROUND_ACTIONS_PLACEHOLDER);
     }
-    nemo_file_list_free (file_list);
-
-    g_free (popup_path);
-    g_free (popup_bg_path);
-    g_free (menu_path);
 }
 
 static void
@@ -6006,10 +5933,7 @@ update_actions_menu (NemoView *view)
                       &view->details->actions_merge_id,
                       &view->details->actions_action_group);
 
-    for (node = view->details->actions_directory_list; node != NULL; node = node->next) {
-        directory = node->data;
-        update_directory_in_actions_menu (view, directory);
-    }
+    update_actions (view);
 }
 
 static void
