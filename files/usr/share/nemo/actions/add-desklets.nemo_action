@@ -1,0 +1,71 @@
+[Nemo Action]
+
+Name=Add Desklets
+
+Comment=Open Cinnamon Settings to add desklets
+
+Exec=cinnamon-settings desklets
+
+Selection=None
+
+Extensions=any;
+
+Icon-Name=display
+
+Dependencies=cinnamon-settings;
+
+Conditions=desktop;dbus org.Cinnamon;
+Name[vi]=Thêm Tiểu trình màn hình
+Name[is]=Bæta við skjáborðsgræjum (desklets)
+Name[am]=ዴስክሌትስ መጨመሪያ
+Name[it]=Aggiungi Desklet
+Name[cy]=Ychwanegu Desgynau
+Name[ar]=أضف مربع عرض على سطح المكتب
+Name[ga]=Cuir le Deiscíní
+Name[cs]=Přidej Desklet
+Name[et]=Lisa Desklet
+Name[id]=Tambah Desklet
+Name[es]=Añadir Desklets
+Name[nl]=Desklets toevoegen
+Name[pt]=Adicionar Mini-Aplicações
+Name[tr]=Masaüstü Uygulamacıkları Ekle
+Name[en_AU]=Add Desklets
+Name[en_GB]=Add Desklets
+Name[fr]=Ajouter des desklets
+Name[de]=Desklets hinzufügen
+Name[uk]=Додати десклети
+Name[pt_BR]=Adicionar Desklets
+Name[sl]=Dodaj aplete namizja
+Name[hr]=Dodaj Desklet-e
+Name[bs]=Dodaj Desklet-e
+Name[ja]=デスクレットを追加
+Name[zh_CN]=添加桌面小工具
+Name[pl]=Dodaj Desklety
+Name[ms]=Tambah Desklet
+Comment[vi]=Mở  Thiết đặt Cinnamon để thêm tiểu trình màn hình
+Comment[is]=Opna stillingar fyrir Cinnamon til að bæta við skjáborðsgræjum (desklets)
+Comment[am]=ዴስክሌትስ ለመጨመር የሲናሞን ማሰናጃዎችን መክፈቻ
+Comment[it]=Apri le impostazioni di Cinnamon per aggiungere Desklet
+Comment[cy]=Agor Gosodiadau Cinnamon i chwanegu desgynau
+Comment[ar]=فتح اعدادات سينامون لإضافة مربع عرض على سطح المكتب
+Comment[ga]=Oscail Socruithe Cinnamon chun cur le deiscíní
+Comment[cs]=Otevřít nastavení Cinnamonu k přidání deskletů
+Comment[et]=Ava Cinnamaon seaded desklettide lisamiseks
+Comment[id]=Buka Cinnamon Settings untuk menambah desklet
+Comment[es]=Abra la configuración de Cinammon para añadir desklets
+Comment[nl]=Cinnamon-instellingen openen om desklets toe te voegen
+Comment[pt]=Abrir as configurações do Cinnamon para adicionar mini-aplicações
+Comment[tr]=Masaüstü Uygulamacıkları eklemek için Cinnamon Ayarlarını aç
+Comment[en_AU]=Open Cinnamon Settings to add desklets
+Comment[en_GB]=Open Cinnamon Settings to add desklets
+Comment[fr]=Ouvrir les paramètres de Cinnamon afin d'ajouter des desklets
+Comment[de]=Cinnamon Einstellungen öffnen um Desklets hinzuzufügen
+Comment[uk]=Відкрити налаштування Cinnamon для додавання десклетів
+Comment[pt_BR]=Abrir as Configurações do Cinnamon para adicionar desklets
+Comment[sl]=Odpri nastavitve Cinnamon za dodanje apletov namizja
+Comment[hr]=Otvorite Postavke Cinnamona da biste dodali Desklet-e
+Comment[bs]=Otvorite Postavke Cinnamona da biste dodali Desklet-e
+Comment[ja]=Cinnamon 設定を開いてデスクレットを追加
+Comment[zh_CN]=打开 Cinnamon 设置来添加桌面小工具
+Comment[pl]=Otwórz Ustawienia Cinnamon aby dodać Desklety
+Comment[ms]=Buka Tetapan Cinnamon untuk tambah dekslet

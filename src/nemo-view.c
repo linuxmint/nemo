@@ -6667,26 +6667,6 @@ action_open_in_terminal_callback(GtkAction *action,
 }
 
 static void
-action_set_as_wallpaper_callback(GtkAction *action,
-                   gpointer callback_data)
-{
-    NemoView *view;
-    GList *selection;
-    NemoFileInfo *file;
-    gchar            *uri;
-
-    view = NEMO_VIEW (callback_data);
-    selection = nemo_view_get_selection (view);
-    file = NEMO_FILE (selection->data);
-
-    uri = nemo_file_info_get_uri (file);
-
-    g_settings_set_string (gnome_background_preferences,
-                                    "picture-uri", uri);
-    g_free (uri);
-}
-
-static void
 invoke_external_bulk_rename_utility (NemoView *view,
 				     GList *selection)
 {
@@ -7624,10 +7604,6 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Follow link to original file"), "",
   /* tooltip */                  N_("Navigate to the original file that this symbolic link points to"),
                  G_CALLBACK (action_follow_symlink_callback) },
-  /* name, stock id */         { NEMO_ACTION_SET_AS_WALLPAPER, "display",
-  /* label, accelerator */       N_("Set as Wallpaper..."), "",
-  /* tooltip */                  N_("Set the selected image as your desktop wallpaper"),
-                 G_CALLBACK (action_set_as_wallpaper_callback) },
   /* name, stock id */         { "OtherApplication1", NULL,
   /* label, accelerator */       N_("Other _Application..."), NULL,
   /* tooltip */                  N_("Choose another application with which to open the selected item"),
@@ -9306,12 +9282,6 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      "MoveToMenu");
 	gtk_action_set_sensitive (action, can_delete_files);
-
-    action = gtk_action_group_get_action(view->details->dir_action_group,
-                                         NEMO_ACTION_SET_AS_WALLPAPER);
-    show_set_as_wallpaper = (selection_count == 1 &&
-                             is_image((NemoFileInfo*) selection->data ));
-    gtk_action_set_visible (action, show_set_as_wallpaper);
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                           NEMO_ACTION_FOLLOW_SYMLINK);

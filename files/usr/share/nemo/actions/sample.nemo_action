@@ -32,10 +32,10 @@ Icon-Name=folder
 # defined, the Stock-Id takes precedence.
 #Stock-Id=gtk-cdrom
 
-# What type selection: [S]ingle, [M]ultiple, Any, NotNone, None (background click), or
+# What type selection: [s]ingle, [s]ultiple, any, notnone, none (background click), or
 # a number representing how many files must be selected to display.
 # ****** REQUIRED *******
-Selection=S
+Selection=s
 
 # What extensions to display on - this is an array, end with a semicolon
 # Single entry options, ending in a semicolon:

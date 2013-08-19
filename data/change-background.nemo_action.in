@@ -1,0 +1,16 @@
+[Nemo Action]
+
+Name=Change Desktop _Background
+
+Comment=Open settings to allow you to select a different desktop background
+
+Exec=cinnamon-settings backgrounds
+
+Selection=None
+
+Extensions=any;
+
+Dependencies=cinnamon-settings;
+
+Conditions=desktop;dbus org.Cinnamon;
+
