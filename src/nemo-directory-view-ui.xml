@@ -33,6 +33,7 @@
 				 <separator name="After Scripts"/>
 				 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 			</menu>
+            <separator name="Before Actions"/>
             <placeholder name="ActionsPlaceholder"/>
 		</placeholder>
 		<placeholder name="File Items Placeholder">
@@ -112,6 +113,7 @@
 			 	<separator name="After Scripts"/>
 			 	<menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 			</menu>
+            <separator name="Before Actions"/>
             <placeholder name="ActionsPlaceholder"/>
 		</placeholder>
 		<separator name="Open terminal separator"/>
@@ -158,6 +160,7 @@
 			 <separator name="After Scripts"/>
 			 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 		</menu>
+        <separator name="Before Actions"/>
         <placeholder name="ActionsPlaceholder"/>
 	</placeholder>
 	<separator name="Clipboard separator"/>
