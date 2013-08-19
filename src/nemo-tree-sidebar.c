@@ -111,6 +111,7 @@ struct FMTreeViewDetails {
     NemoActionManager *action_manager;
     guint action_manager_changed_id;
     GList *action_items;
+    guint hidden_files_changed_id;
 };
 
 typedef struct {
@@ -717,7 +718,7 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 			return FALSE;
 		}
 		gtk_tree_view_get_cursor (view->details->tree_widget, &cursor_path, NULL);
-		gtk_tree_view_set_cursor (view->details->tree_widget, path, NULL, FALSE);
+
 		gtk_tree_path_free (path);
 
 		create_popup_menu (view);
@@ -1597,12 +1598,6 @@ fm_tree_view_init (FMTreeView *view)
 	
 	view->details->selecting = FALSE;
 
-    g_signal_connect_object (view->details->window,
-                             "hidden-files-mode-changed",
-                             G_CALLBACK (filtering_changed_callback),
-                             view,
-                             0);
-
 	g_signal_connect_swapped (nemo_tree_sidebar_preferences,
 				  "changed::" NEMO_PREFERENCES_TREE_SHOW_ONLY_DIRECTORIES,
 				  G_CALLBACK (filtering_changed_callback), view);
@@ -1613,6 +1608,13 @@ fm_tree_view_init (FMTreeView *view)
 		g_signal_connect (nemo_clipboard_monitor_get (),
 				  "clipboard_info",
 				  G_CALLBACK (notify_clipboard_info), view);
+}
+
+static void 
+hidden_files_mode_changed_callback (NemoWindow *window,
+                    FMTreeView *view)
+{
+    update_filtering_from_preferences (view);
 }
 
 static void
@@ -1676,11 +1678,14 @@ fm_tree_view_dispose (GObject *object)
         view->details->action_manager_changed_id = 0;
     }
 
+    if (view->details->hidden_files_changed_id != 0) {
+        g_signal_handler_disconnect (view->details->window,
+                                     view->details->hidden_files_changed_id);
+        view->details->hidden_files_changed_id = 0;
+    }
+
     g_clear_object (&view->details->action_manager);
 
-	g_signal_handlers_disconnect_by_func (nemo_preferences,
-					      G_CALLBACK(filtering_changed_callback),
-					      view);
 	g_signal_handlers_disconnect_by_func (nemo_tree_sidebar_preferences,
 					      G_CALLBACK(filtering_changed_callback),
 					      view);
@@ -1710,12 +1715,6 @@ fm_tree_view_class_init (FMTreeViewClass *class)
 
 	copied_files_atom = gdk_atom_intern ("x-special/gnome-copied-files", FALSE);
 }
-static void 
-hidden_files_mode_changed_callback (NemoWindow *window,
-				    FMTreeView *view)
-{
-	update_filtering_from_preferences (view);
-}
 
 static void
 fm_tree_view_set_parent_window (FMTreeView *sidebar,
@@ -1734,8 +1733,9 @@ fm_tree_view_set_parent_window (FMTreeView *sidebar,
 	loading_uri_callback (window, location, sidebar);
 	g_free (location);
 
-	g_signal_connect_object (window, "hidden_files_mode_changed",
-				 G_CALLBACK (hidden_files_mode_changed_callback), sidebar, 0);  
+	sidebar->details->hidden_files_changed_id = 
+                    g_signal_connect_object (window, "hidden-files-mode-changed",
+                                             G_CALLBACK (hidden_files_mode_changed_callback), sidebar, 0);
 
 }
 
