@@ -406,7 +406,7 @@ nautilus_toolbar_constructed (GObject *obj)
 				     "header-bar");
 
 	self->priv->toolbar = toolbar = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-	g_object_set (toolbar, "margin", 6, NULL);
+	g_object_set (toolbar, "margin", 8, NULL);
 	gtk_container_add (GTK_CONTAINER (self), toolbar);
 
 	rtl = gtk_widget_get_default_direction () == GTK_TEXT_DIR_RTL;
