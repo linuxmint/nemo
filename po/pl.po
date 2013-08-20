@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-20 21:40+0200\n"
-"PO-Revision-Date: 2013-08-20 21:42+0200\n"
+"POT-Creation-Date: 2013-08-20 23:14+0200\n"
+"PO-Revision-Date: 2013-08-20 23:15+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -131,6 +131,7 @@ msgstr "_Wytnij"
 #. label, accelerator
 #: ../eel/eel-editable-label.c:3082
 #: ../libnautilus-private/nautilus-clipboard.c:362 ../src/nautilus-view.c:7210
+#: ../src/nautilus-view.c:7365
 msgid "_Copy"
 msgstr "S_kopiuj"
 
@@ -453,7 +454,7 @@ msgstr "Nie można zmienić nazwy pliku pulpitu"
 #.
 #: ../libnautilus-private/nautilus-file.c:4443
 msgid "%R"
-msgstr "%R"
+msgstr "%-H∶%M"
 
 #: ../libnautilus-private/nautilus-file.c:4444
 msgid "%-I:%M %P"
@@ -474,7 +475,7 @@ msgstr "%a, %e %b %Y o %I∶%M∶%S %p"
 
 #: ../libnautilus-private/nautilus-file.c:4449
 msgid "%a, %b %e %Y %T"
-msgstr "%a, %e %b %Y o %T"
+msgstr "%a, %e %b %Y o %H∶%M∶%S"
 
 #: ../libnautilus-private/nautilus-file.c:4948
 #, c-format
