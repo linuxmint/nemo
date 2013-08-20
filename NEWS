@@ -1,3 +1,23 @@
+Major changes in 3.9.90:
+* Fix support for HiDpi displays
+* Replace control characters when fixing filenames for FAT
+* Fix crash while dragging an expander in list view
+* Don't use deprecated GtkStock and GtkImageMenuItem
+* Fix "Reset to Defaults" not resetting columns in List
+  view (Garret Regier)
+* Use more friendly strings in the Location column in
+  List view (Garret Regier)
+* Add Access Date column in Recent (Garret Regier)
+* Add Location column by default in search views (Garret Reiger)
+* Fix search not remembering per-view settings (Garret Reiger)
+* Use new GTK titlebar look (Yosef Or Boczko)
+* Fix hidden files setting not correctly refreshing on
+  change (Srinivasa Ragavan)
+* Fix incorrect click target in canvas view under certain
+  circumstances (Srinivasa Ragavan)
+* Fix DnD glitches on pathbar buttons (Nelson Benitez Leon)
+* Show invalid filename dialog when copying, if required (Nelson Benitez Leon)
+
 Major changes in 3.9.3:
 * Shade rubberbands on the desktop using the wallpaper color (Ted Gould)
 * Port to GtkPlacesSidebar (Federico Mena Quintero)
