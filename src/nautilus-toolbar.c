@@ -402,6 +402,9 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	G_OBJECT_CLASS (nautilus_toolbar_parent_class)->constructed (obj);
 
+	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (self)),
+				     "header-bar");
+
 	self->priv->toolbar = toolbar = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 	g_object_set (toolbar, "margin", 6, NULL);
 	gtk_container_add (GTK_CONTAINER (self), toolbar);
