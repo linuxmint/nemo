@@ -727,7 +727,7 @@ update_places (NemoPlacesSidebar *sidebar)
     for (index = 0; index < bookmark_count; ++index) {
         bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
 
-        if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
+        if (!nemo_bookmark_get_exists (bookmark)) {
             continue;
         }
 
