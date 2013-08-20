@@ -1486,11 +1486,9 @@ nautilus_window_constructed (GObject *self)
 	/* Register to menu provider extension signal managing menu updates */
 	g_signal_connect_object (nautilus_signaller_get_current (), "popup-menu-changed",
 			 G_CALLBACK (nautilus_window_load_extension_menus), window, G_CONNECT_SWAPPED);
+
 	window->details->toolbar = create_toolbar (window);
-	gtk_container_add (GTK_CONTAINER (grid), window->details->toolbar);
-	gtk_widget_set_hexpand (window->details->toolbar, TRUE);
-	gtk_widget_set_vexpand (window->details->toolbar, FALSE);
-	gtk_widget_show (window->details->toolbar);
+	gtk_window_set_titlebar (GTK_WINDOW (window), window->details->toolbar);
 
 	window->details->content_paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_set_hexpand (window->details->content_paned, TRUE);
@@ -2191,7 +2189,6 @@ nautilus_window_init (NautilusWindow *window)
 	/* Set initial window title */
 	gtk_window_set_title (GTK_WINDOW (window), _("Files"));
 	gtk_window_set_icon_name (GTK_WINDOW (window), "system-file-manager");
-	gtk_window_set_hide_titlebar_when_maximized (GTK_WINDOW (window), TRUE);
 }
 
 static void

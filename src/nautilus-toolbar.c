@@ -50,8 +50,6 @@ struct _NautilusToolbarPriv {
 	GtkWidget *path_bar;
 	GtkWidget *location_entry;
 
-	GtkToolItem *back_forward;
-
 	gboolean show_location_entry;
 
 	guint popup_timeout_id;
@@ -65,7 +63,7 @@ enum {
 
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
-G_DEFINE_TYPE (NautilusToolbar, nautilus_toolbar, GTK_TYPE_BOX);
+G_DEFINE_TYPE (NautilusToolbar, nautilus_toolbar, GTK_TYPE_FRAME);
 
 static void unschedule_menu_popup_timeout (NautilusToolbar *self);
 
@@ -81,20 +79,6 @@ toolbar_update_appearance (NautilusToolbar *self)
 				show_location_entry);
 	gtk_widget_set_visible (self->priv->path_bar,
 				!show_location_entry);
-}
-
-static gint
-get_icon_margin (NautilusToolbar *self)
-{
-	GtkIconSize toolbar_size;
-	gint toolbar_size_px, menu_size_px;
-
-	toolbar_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (self->priv->toolbar));
-
-	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &menu_size_px, NULL);
-	gtk_icon_size_lookup (toolbar_size, &toolbar_size_px, NULL);
-
-	return (gint) floor ((toolbar_size_px - menu_size_px) / 2.0);
 }
 
 static GtkWidget *
@@ -119,7 +103,6 @@ toolbar_create_toolbutton (NautilusToolbar *self,
 	}
 
 	image = gtk_image_new ();
-	g_object_set (image, "margin", get_icon_margin (self), NULL);
 
 	gtk_button_set_image (GTK_BUTTON (button), image);
 
@@ -397,20 +380,31 @@ gear_menu_key_press (GtkWidget *widget,
 }
 
 static void
+close_button_clicked (GtkButton *button,
+		      gpointer user_data)
+{
+	NautilusToolbar *self = user_data;
+
+	gtk_window_close (GTK_WINDOW (self->priv->window));
+}
+
+static void
 nautilus_toolbar_constructed (GObject *obj)
 {
 	NautilusToolbar *self = NAUTILUS_TOOLBAR (obj);
-	GtkWidget *hbox, *toolbar;
-	GtkStyleContext *context;
-	GtkWidget *tool_button;
+	GtkWidget *toolbar;
+	GtkWidget *button;
 	GtkWidget *menu;
 	GtkWidget *box;
-	GtkToolItem *back_forward;
-	GtkToolItem *tool_item;
+	GtkWidget *separator;
 	GtkUIManager *ui_manager;
 	gboolean rtl;
 
 	G_OBJECT_CLASS (nautilus_toolbar_parent_class)->constructed (obj);
+
+	self->priv->toolbar = toolbar = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	g_object_set (toolbar, "margin", 6, NULL);
+	gtk_container_add (GTK_CONTAINER (self), toolbar);
 
 	rtl = gtk_widget_get_default_direction () == GTK_TEXT_DIR_RTL;
 
@@ -419,112 +413,131 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (self)),
 					      GTK_JUNCTION_BOTTOM);
 
-	toolbar = gtk_toolbar_new ();
-	self->priv->toolbar = toolbar;
-
-	gtk_box_pack_start (GTK_BOX (self), self->priv->toolbar, TRUE, TRUE, 0);
-	gtk_widget_show_all (self->priv->toolbar);
-
-	context = gtk_widget_get_style_context (toolbar);
-	/* Set the MENUBAR style class so it's possible to drag the app
-	 * using the toolbar. */
-	gtk_style_context_add_class (context, GTK_STYLE_CLASS_MENUBAR);
-
 	/* Back and Forward */
-	back_forward = gtk_tool_item_new ();
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
 	/* Back */
-	tool_button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_BACK, NULL);
-	gtk_action_set_icon_name (gtk_activatable_get_related_action (tool_button),
+	button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_BACK, NULL);
+	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
+	gtk_action_set_icon_name (gtk_activatable_get_related_action (GTK_ACTIVATABLE (button)),
 				  rtl ? "go-previous-rtl-symbolic" : "go-previous-symbolic");
-	navigation_button_setup_menu (self, tool_button, NAUTILUS_NAVIGATION_DIRECTION_BACK);
-	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
+	navigation_button_setup_menu (self, button, NAUTILUS_NAVIGATION_DIRECTION_BACK);
+	gtk_container_add (GTK_CONTAINER (box), button);
 
 	/* Forward */
-	tool_button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_FORWARD, NULL);
-	gtk_action_set_icon_name (gtk_activatable_get_related_action (tool_button),
+	button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_FORWARD, NULL);
+	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
+	gtk_action_set_icon_name (gtk_activatable_get_related_action (GTK_ACTIVATABLE (button)),
 				  rtl ? "go-next-rtl-symbolic" : "go-next-symbolic");
-	navigation_button_setup_menu (self, tool_button, NAUTILUS_NAVIGATION_DIRECTION_FORWARD);
-	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
+	navigation_button_setup_menu (self, button, NAUTILUS_NAVIGATION_DIRECTION_FORWARD);
+	gtk_container_add (GTK_CONTAINER (box), button);
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (box),
 				     GTK_STYLE_CLASS_RAISED);
 	gtk_style_context_add_class (gtk_widget_get_style_context (box),
 				     GTK_STYLE_CLASS_LINKED);
 
-	gtk_container_add (GTK_CONTAINER (back_forward), box);
-	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (back_forward));
+	gtk_box_pack_start (GTK_BOX (toolbar), box, FALSE, FALSE, 0);
 
-	gtk_widget_show_all (GTK_WIDGET (back_forward));
-	gtk_widget_set_margin_right (GTK_WIDGET (back_forward), 12);
+	if (rtl) {
+		gtk_widget_set_margin_left (box, 12);
+	} else {
+		gtk_widget_set_margin_right (box, 12);
+	}
 
 	/* regular path bar */
-	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-	gtk_widget_show (hbox);
+	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
 	self->priv->path_bar = g_object_new (NAUTILUS_TYPE_PATH_BAR, NULL);
-	gtk_box_pack_start (GTK_BOX (hbox), self->priv->path_bar, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (box), self->priv->path_bar, TRUE, TRUE, 0);
 
 	/* entry-like location bar */
 	self->priv->location_entry = nautilus_location_entry_new ();
-	gtk_box_pack_start (GTK_BOX (hbox), self->priv->location_entry, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (box), self->priv->location_entry, TRUE, TRUE, 0);
 
-	tool_item = gtk_tool_item_new ();
-	gtk_tool_item_set_expand (tool_item, TRUE);
-	gtk_container_add (GTK_CONTAINER (tool_item), hbox);
-	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_item));
-	gtk_widget_show (GTK_WIDGET (tool_item));
+	gtk_box_pack_start (GTK_BOX (toolbar), box, TRUE, TRUE, 0);
 
 	/* search */
-	tool_item = gtk_tool_item_new ();
-	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_SEARCH, NULL);
-	gtk_container_add (GTK_CONTAINER (tool_item), GTK_WIDGET (tool_button));
-	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_item));
-	gtk_widget_show_all (GTK_WIDGET (tool_item));
-	gtk_widget_set_margin_left (GTK_WIDGET (tool_item), 12);
+	button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_SEARCH, NULL);
+	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
+	gtk_container_add (GTK_CONTAINER (toolbar), button);
+	if (rtl) {
+		gtk_widget_set_margin_right (button, 76);
+	} else {
+		gtk_widget_set_margin_left (button, 76);
+	}
 
 	/* View buttons */
-	tool_item = gtk_tool_item_new ();
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
-	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_VIEW_LIST, NULL);
-	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
-	tool_button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_VIEW_GRID, NULL);
-	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
-	tool_button = toolbar_create_toolbutton (self, TRUE, FALSE, "go-down-symbolic", _("View options"));
-	gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (tool_button));
+	button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_VIEW_LIST, NULL);
+	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
+	gtk_container_add (GTK_CONTAINER (box), button);
+	button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_VIEW_GRID, NULL);
+	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
+	gtk_container_add (GTK_CONTAINER (box), button);
+	button = toolbar_create_toolbutton (self, TRUE, FALSE, "go-down-symbolic", _("View options"));
+	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
+	gtk_container_add (GTK_CONTAINER (box), button);
 	menu = gtk_ui_manager_get_widget (ui_manager, "/ViewMenu");
-	gtk_menu_button_set_popup (GTK_MENU_BUTTON (tool_button), menu);
+	gtk_menu_button_set_popup (GTK_MENU_BUTTON (button), menu);
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (box),
 				     GTK_STYLE_CLASS_RAISED);
 	gtk_style_context_add_class (gtk_widget_get_style_context (box),
 				     GTK_STYLE_CLASS_LINKED);
 
-	gtk_container_add (GTK_CONTAINER (tool_item), box);
-	gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_item));
-	gtk_widget_show_all (GTK_WIDGET (tool_item));
-	gtk_widget_set_margin_left (GTK_WIDGET (tool_item), 12);
+	gtk_container_add (GTK_CONTAINER (toolbar), box);
+	if (rtl) {
+		gtk_widget_set_margin_right (box, 12);
+	} else {
+		gtk_widget_set_margin_left (box, 12);
+	}
 
 	/* Action Menu */
-	tool_item = gtk_tool_item_new ();
-	tool_button = toolbar_create_toolbutton (self, TRUE, FALSE, "emblem-system-symbolic", _("Location options"));
+	button = toolbar_create_toolbutton (self, TRUE, FALSE, "emblem-system-symbolic", _("Location options"));
+	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
 	menu = gtk_ui_manager_get_widget (ui_manager, "/ActionMenu");
 	gtk_widget_set_halign (menu, GTK_ALIGN_END);
-	gtk_menu_button_set_popup (GTK_MENU_BUTTON (tool_button), menu);
-	gtk_actionable_set_action_name (GTK_ACTIONABLE (tool_button), "win.gear-menu");
+	gtk_menu_button_set_popup (GTK_MENU_BUTTON (button), menu);
+	gtk_actionable_set_action_name (GTK_ACTIONABLE (button), "win.gear-menu");
         g_signal_connect (menu, "key-press-event", G_CALLBACK (gear_menu_key_press), self);
 
-	gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
-	gtk_container_add (GTK_CONTAINER (toolbar), GTK_WIDGET (tool_item));
-	gtk_widget_show_all (GTK_WIDGET (tool_item));
-	gtk_widget_set_margin_left (GTK_WIDGET (tool_item), 12);
+	gtk_container_add (GTK_CONTAINER (toolbar), button);
+	if (rtl) {
+		gtk_widget_set_margin_right (button, 12);
+	} else {
+		gtk_widget_set_margin_left (button, 12);
+	}
+
+	/* Separator and Close */
+	separator = gtk_separator_new (GTK_ORIENTATION_VERTICAL);
+	gtk_container_add (GTK_CONTAINER (toolbar), separator);
+
+	if (rtl) {
+		gtk_widget_set_margin_right (separator, 8);
+	} else {
+		gtk_widget_set_margin_left (separator, 8);
+	}
+
+	button = gtk_button_new_from_icon_name ("window-close-symbolic",
+						GTK_ICON_SIZE_MENU);
+	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
+	g_signal_connect (button, "clicked",
+			  G_CALLBACK (close_button_clicked), self);
+	gtk_container_add (GTK_CONTAINER (toolbar), button);
+
+	if (rtl) {
+		gtk_widget_set_margin_right (button, 6);
+	} else {
+		gtk_widget_set_margin_left (button, 6);
+	}
 
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY,
 				  G_CALLBACK (toolbar_update_appearance), self);
 
+	gtk_widget_show_all (toolbar);
 	toolbar_update_appearance (self);
 }
 
@@ -620,7 +633,6 @@ nautilus_toolbar_new (NautilusWindow *window)
 {
 	return g_object_new (NAUTILUS_TYPE_TOOLBAR,
 			     "window", window,
-			     "orientation", GTK_ORIENTATION_VERTICAL,
 			     NULL);
 }
 

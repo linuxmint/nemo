@@ -52,14 +52,14 @@ typedef enum {
 } NautilusToolbarMode;
 
 struct _NautilusToolbar {
-	GtkBox parent;
+	GtkFrame parent;
 
 	/* private */
 	NautilusToolbarPriv *priv;
 };
 
 struct _NautilusToolbarClass {
-	GtkBoxClass parent_class;
+	GtkFrameClass parent_class;
 };
 
 GType nautilus_toolbar_get_type (void);
