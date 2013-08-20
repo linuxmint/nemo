@@ -1137,6 +1137,17 @@ check_gsettings_condition (NemoAction *action, const gchar *condition)
     }
 }
 
+static gboolean
+get_is_dir_hack (NemoFile *file)
+{
+    gboolean ret = FALSE;
+
+    GFile *f = nemo_file_get_location (file);
+    GFileType type = g_file_query_file_type (f, 0, NULL);
+    ret = type == G_FILE_TYPE_DIRECTORY;
+    return ret;
+}
+
 gboolean
 nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *parent)
 {
@@ -1235,10 +1246,11 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
         gchar *filename = g_ascii_strdown (raw_fn, -1);
         g_free (raw_fn);
         int i;
+        gboolean is_dir = get_is_dir_hack (iter->data);
         if (ext_count > 0) {
             for (i = 0; i < ext_count; i++) {
                 if (g_strcmp0 (extensions[i], "dir") == 0) {
-                    if (nemo_file_is_directory (NEMO_FILE (iter->data))) {
+                    if (is_dir) {
                         found_match = TRUE;
                         break;
                     }
@@ -1248,7 +1260,7 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
                         break;
                     }
                 } else if (g_strcmp0 (extensions[i], "nodirs") == 0) {
-                    if (!nemo_file_is_directory (NEMO_FILE (iter->data))) {
+                    if (!is_dir) {
                         found_match = TRUE;
                         break;
                     }
