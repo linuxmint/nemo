@@ -1,0 +1,71 @@
+#!/usr/bin/python
+
+import os
+import glob
+import polib
+from gi.repository import GLib
+
+GROUP = "Nemo Action"
+
+class Main:
+    def __init__(self):
+        self.in_keyfiles = {}
+        self.mo_files = {}
+        action_files = glob.glob(os.path.join(os.getcwd(), "*.nemo_action.in"))
+        if len(action_files) > 0:
+            for fn in action_files:
+                keyfile = GLib.KeyFile.new()
+                if keyfile.load_from_file(fn, GLib.KeyFileFlags.KEEP_COMMENTS):
+                    if keyfile.has_group(GROUP):
+                        self.in_keyfiles[fn] = keyfile
+
+        if len(self.in_keyfiles) > 0:
+            for root, subFolders, files in os.walk("/usr/share/locale"):
+                for file in files:
+                    if file == "nemo.mo":
+                        path, junk = os.path.split(root)
+                        path, locale = os.path.split(path)
+                        self.mo_files[locale] = polib.mofile(os.path.join(root, file))
+
+        if len(self.mo_files) > 0:
+            for locale in self.mo_files.keys():
+                for entry in self.mo_files[locale]:
+                    self.check_name(locale, entry)
+            for locale in self.mo_files.keys():
+                for entry in self.mo_files[locale]:
+                    self.check_comment(locale, entry)
+
+        for fn in self.in_keyfiles.keys():
+            action_fn = os.path.split(fn)[1].replace(".in", "")
+            action_path = os.path.join("..", "files", "usr", "share", "nemo", "actions", action_fn)
+            outstring, length = self.in_keyfiles[fn].to_data()
+            if os.path.exists(action_path):
+                os.remove(action_path)
+            outfile = open(action_path, 'w')
+            outfile.write(outstring)
+            outfile.close()
+
+        print "Merge complete - .nemo_action files in ../files/usr/share/nemo/actions should contain translations now."
+
+    def check_name(self, locale, entry):
+        if entry.msgstr != '':
+            for kf in self.in_keyfiles.keys():
+                try:
+                    name = self.in_keyfiles[kf].get_string(GROUP, "Name")
+                    if name == entry.msgid:
+                        self.in_keyfiles[kf].set_locale_string(GROUP, "Name", locale, entry.msgstr)
+                except GLib.GError:
+                    pass
+
+    def check_comment(self, locale, entry):
+        if entry.msgstr != '':
+            for kf in self.in_keyfiles.keys():
+                try:
+                    name = self.in_keyfiles[kf].get_string(GROUP, "Comment")
+                    if name == entry.msgid:
+                        self.in_keyfiles[kf].set_locale_string(GROUP, "Comment", locale, entry.msgstr)
+                except GLib.GError:
+                    pass
+
+if __name__ == "__main__":
+    Main()

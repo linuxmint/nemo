@@ -61,6 +61,8 @@ libnemo_private_la_LIBADD =		\
 libnemo_private_la_SOURCES = \
     nemo-action.c \
     nemo-action.h \
+    nemo-action-manager.c \
+    nemo-action-manager.h \
 	nemo-bookmark.c \
 	nemo-bookmark.h \
     nemo-cell-renderer-disk.c \

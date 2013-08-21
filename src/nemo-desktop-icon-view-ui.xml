@@ -4,13 +4,10 @@
                 <placeholder name="New Window Items">
                 </placeholder>
                 <placeholder name="New Object Items">
-                        <menuitem name="New Launcher" action="New Launcher Desktop"/>
                 </placeholder>
         </placeholder>
         <placeholder name="After Zoom Items">
                 <placeholder name="Background Items">
-                        <menuitem name="Add Desklets" action="Add Desklets"/>
-                        <menuitem name="Change Background" action="Change Background"/>
                 </placeholder>
         </placeholder>
 </popup>

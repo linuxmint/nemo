@@ -1,0 +1,17 @@
+[Nemo Action]
+
+Name=Add Desklets
+
+Comment=Open Cinnamon Settings to add desklets
+
+Exec=cinnamon-settings desklets
+
+Selection=None
+
+Extensions=any;
+
+Icon-Name=display
+
+Dependencies=cinnamon-settings;
+
+Conditions=desktop;dbus org.Cinnamon;

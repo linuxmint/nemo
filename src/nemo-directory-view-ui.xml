@@ -33,6 +33,7 @@
 				 <separator name="After Scripts"/>
 				 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 			</menu>
+            <separator name="Before Actions"/>
             <placeholder name="ActionsPlaceholder"/>
 		</placeholder>
 		<placeholder name="File Items Placeholder">
@@ -101,7 +102,6 @@
 	<placeholder name="Before Zoom Items">
 		<placeholder name="New Object Items">
 			<menuitem name="New Folder" action="New Folder"/>
-			<menuitem name="New Launcher" action="New Launcher"/>
 			<menu action="New Documents">
 		         	<menuitem name="No Templates" action="No Templates"/>
 			 	<placeholder name="New Documents Placeholder"/>
@@ -113,6 +113,7 @@
 			 	<separator name="After Scripts"/>
 			 	<menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 			</menu>
+            <separator name="Before Actions"/>
             <placeholder name="ActionsPlaceholder"/>
 		</placeholder>
 		<separator name="Open terminal separator"/>
@@ -159,6 +160,7 @@
 			 <separator name="After Scripts"/>
 			 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 		</menu>
+        <separator name="Before Actions"/>
         <placeholder name="ActionsPlaceholder"/>
 	</placeholder>
 	<separator name="Clipboard separator"/>
@@ -188,9 +190,6 @@
 	<menuitem name="OpenInTerminal" action="OpenInTerminal"/>
 	<menuitem name="OpenAsRoot" action="OpenAsRoot"/>
     <menuitem name="FollowSymbolicLink" action="FollowSymbolicLink"/>
-	<menuitem name="MailToThunderbird" action="MailToThunderbird"/>
-	<menuitem name="MailToOther" action="MailToOther"/>
-	<menuitem name="SetAsWallPaper" action="SetAsWallPaper"/>
 	<separator name="Dangerous separator"/>
 	<placeholder name="Dangerous File Actions">
 		<menuitem name="Trash" action="Trash"/>

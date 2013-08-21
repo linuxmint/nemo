@@ -1,0 +1,58 @@
+[Nemo Action]
+
+Name=Change Desktop _Background
+
+Comment=Open settings to allow you to select a different desktop background
+
+Exec=cinnamon-settings backgrounds
+
+Selection=None
+
+Icon-Name=desktop
+
+Extensions=any;
+
+Dependencies=cinnamon-settings;
+
+Conditions=desktop;dbus org.Cinnamon;
+
+Name[el]=Αλλαγή _εικόνας επιφάνειας εργασίας
+Name[vi]=Đổi Ảnh _nền Màn hình
+Name[is]=Breyta _bakgrunni skjáborðs
+Name[am]=የዴስክቶፕ _መደብ መቀየሪያ
+Name[it]=Ca_mbia sfondo scrivania
+Name[eu]=Aldatu _mahaigainaren atzeko planoa
+Name[cy]=Newid Cefndir y _Bwrdd Gwaith
+Name[ar]=تغيير _خلفية سطح المكتب
+Name[ga]=Athraigh Cúl_ra na Deisce
+Name[cs]=Změnit _pozadí plochy
+Name[et]=Vaheta töölaua _taust
+Name[id]=Ubah Latar _Belakang Desktop
+Name[es]=Cambiar el _fondo del escritorio
+Name[ru]=_Изменить фон рабочего стола
+Name[nl]=Werk_bladachtergrond wijzigen
+Name[pt]=Alterar _fundo da área de trabalho
+Name[tr]=Masaüstü _Arkaplanını Değiştir
+Name[en_AU]=Change Desktop _Background
+Name[lt]=Keisti darbalaukio _foną
+Name[ca]=Canvia el _fons de l'escriptori
+Name[en_GB]=Change Desktop _Background
+Name[fr]=Modifier l'arrière-plan du _bureau
+Name[de]=_Hintergrund der Arbeitsfläche ändern
+Name[uk]=Змінити т_ло стільниці
+Name[pt_BR]=Alterar plano de _Fundo
+Name[sl]=Spremeni _ozadje namizja
+Name[hr]=Promijeni _pozadinu desktopa
+Name[sr@latin]=Iz_meni pozadinu
+Name[hu]=Asztal _hátterének módosítása
+Name[bs]=Promijeni _pozadinu desktopa
+Name[ja]=背景を変更 (_B)
+Name[fr_CA]=Changer l'_arrière-plan du bureau
+Name[zh_CN]=更改桌面背景(_B)
+Name[ml]=ഡെസ്ക്ടോപ്പിന്റെ _പശ്ചാത്തലം മാറ്റുക
+Name[sv]=Byt skrivbordsbak_grund
+Name[sk]=Zmeniť _pozadie plochy
+Name[pl]=Zmień _tło pulpitu
+Name[ms]=Tukar Latar _Belakang Desktop
+Name[sr]=Из_мени позадину
+Name[nds]=Desktop_Hintergrund ändern

@@ -1,0 +1,13 @@
+[Nemo Action]
+
+Name=Set as Wallpaper...
+
+Comment=Set the selected image as your desktop wallpaper
+
+Exec=gsettings set org.gnome.desktop.background picture-uri %U
+
+Selection=s
+
+Mimetypes=image/*;
+
+Conditions=dbus org.Cinnamon;
