@@ -8,6 +8,8 @@ Exec=cinnamon-settings backgrounds
 
 Selection=None
 
+Icon-Name=desktop
+
 Extensions=any;
 
 Dependencies=cinnamon-settings;
