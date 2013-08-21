@@ -121,8 +121,6 @@
 #define NEMO_ACTION_LOCATION_POLL "Location Poll"
 #define NEMO_ACTION_SCRIPTS "Scripts"
 #define NEMO_ACTION_ACTIONS "Actions"
-#define NEMO_ACTION_NEW_LAUNCHER "New Launcher"
-#define NEMO_ACTION_NEW_LAUNCHER_DESKTOP "New Launcher"
 #define NEMO_ACTION_NEW_DOCUMENTS "New Documents"
 #define NEMO_ACTION_NEW_EMPTY_DOCUMENT "New Empty Document"
 #define NEMO_ACTION_EMPTY_TRASH_CONDITIONAL "Empty Trash Conditional"
@@ -136,18 +134,12 @@
 #define NEMO_ACTION_UNSTRETCH "Unstretch"
 #define NEMO_ACTION_ZOOM_ITEMS "Zoom Items"
 #define NEMO_ACTION_SORT_TRASH_TIME "Sort by Trash Time"
-#define NEMO_ACTION_MAILTO_THUNDERBIRD "MailToThunderbird"
-#define NEMO_ACTION_MAILTO_OTHER "MailToOther"
-#define NEMO_ACTION_SET_AS_WALLPAPER "SetAsWallPaper"
 #define NEMO_ACTION_OPEN_AS_ROOT "OpenAsRoot"
 #define NEMO_ACTION_TOGGLE_LOCATION "Toggle Location Button"
 
 #define NEMO_ACTION_STATUSBAR_PLACES "Statusbar Places"
 #define NEMO_ACTION_STATUSBAR_TREEVIEW "Statusbar Treeview"
 #define NEMO_ACTION_STATUSBAR_SIDEBAR_TOGGLE "Statusbar Sidebar Toggle"
-
-#define NEMO_ACTION_CHANGE_BACKGROUND_DESKTOP "Change Background"
-#define NEMO_ACTION_ADD_DESKLETS_DESKTOP "Add Desklets"
 
 #define NEMO_ACTION_FOLLOW_SYMLINK "FollowSymbolicLink"
 

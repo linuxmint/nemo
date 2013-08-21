@@ -59,7 +59,7 @@
     </context>
 
     <context id="exec-parameter" style-ref="exec-parameter">
-      <match>%[FUNP%]</match>
+      <match>%[FUNPfp%]</match>
     </context>
 
     <context id="encoding" style-ref="encoding">
@@ -83,6 +83,10 @@
       <keyword>Selection</keyword>
       <keyword>Extensions</keyword>
       <keyword>Mimetypes</keyword>
+      <keyword>Separator</keyword>
+      <keyword>Quote</keyword>
+      <keyword>Dependencies</keyword>
+      <keyword>Conditions</keyword>
     </context>
 
     <context id="non-standard-key" style-ref="key">

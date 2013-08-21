@@ -72,6 +72,7 @@ const char *          nemo_bookmark_get_name               (NemoBookmark      *b
 GFile *               nemo_bookmark_get_location           (NemoBookmark      *bookmark);
 char *                nemo_bookmark_get_uri                (NemoBookmark      *bookmark);
 GIcon *               nemo_bookmark_get_icon               (NemoBookmark      *bookmark);
+gboolean              nemo_bookmark_get_exists             (NemoBookmark      *bookmark);
 gboolean	      nemo_bookmark_get_has_custom_name    (NemoBookmark      *bookmark);		
 void                  nemo_bookmark_set_custom_name        (NemoBookmark      *bookmark,
 								const char            *new_name);		

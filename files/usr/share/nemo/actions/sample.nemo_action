@@ -1,63 +1,77 @@
 [Nemo Action]
 
-
-# Use this entry? Largely for troubleshooting.
-# Lack of this field assumes true
-
+# Whether this action is active.  For troubleshooting.
+# Optional - if this field is omitted, the action will be active
 Active=false
+
+# Standard tokens that can be used in the Name, Comment (tooltip) and Exec fields:
+#
+# %U - insert URI list of selection
+# %F - insert path list of selection
+# %P - insert path of parent (current) directory
+# %f or %N (deprecated) - insert display name of first selected file
+# %p - insert display name of parent directory
 
 
 # The name to show in the menu, locale supported with standard desktop spec.
-# Use %N as an (optional) token to display the simple filename in the label.
-# If multiple are selected, then the arbitrary first selected name will be used.
-# Token is inactive for selection type of Multiple, None and Any (it will be treated literally)
 # **** REQUIRED ****
-
 Name=Test Custom Action applied to %N
 
-
 # Tool tip, locale supported (Appears in the status bar)
-# %N can be used as with the Name field, same rules apply
-
 Comment=This is a test for Nemo actions.  Action will be applied to %N
 
-
 # What to run.  Enclose in < > to run an executable that resides in the actions folder.
-# Use %U as a token where to insert a URL list, use %F as a token to insert a file list
-# Use %P to insert the selection's parent directory name
 # **** REQUIRED ****
 #Exec=gedit %F
-
 Exec=<myaction.py -r -g %P %F %U>
 
-
 # Icon name to use in the menu - must be a theme icon name
-
 Icon-Name=folder
-
 
 # Gtk Stock ID to use for the icon.  Note if both Icon-name and Stock-Id are
 # defined, the Stock-Id takes precedence.
-
 #Stock-Id=gtk-cdrom
 
-
-# What type selection: [S]ingle, [M]ultiple, Any, NotNone, None (background click), or
+# What type selection: [s]ingle, [s]ultiple, any, notnone, none (background click), or
 # a number representing how many files must be selected to display.
 # ****** REQUIRED *******
-
-Selection=S
-
+Selection=s
 
 # What extensions to display on - this is an array, end with a semicolon
-# Use "dir" for directory selection and "none" for no extension
-# Use "any" by itself, semi-colon-terminated, for any file type
+# Single entry options, ending in a semicolon:
+#     "dir" for directory selection
+#     "none" for no extension.
+#     "nodirs" for any selection, but not including directories.
+#     "any" for any file type, including directories.
+# Individual specific extensions can be a semicolon-terminated list
 # Extensions are NOT case sensitive.  jpg will match JPG, jPg, jpg, etc..
 # **** EITHER EXTENSIONS OR MIMETYPES IS REQUIRED *****
-
 Extensions=any;
 
 # What mime-types to display on - this is an array, end with a semicolon
 # **** EITHER EXTENSIONS OR MIMETYPES IS REQUIRED *****
-
 #Mimetypes=text/plain;
+
+# Separator to use (if any) - add a string to insert between path/url entries
+# in the exec line.  Optional - if you leave this out, a space is inserted.
+# Note you can have trailing spaces here.
+#Separator=, 
+
+# Quote type to use (if any) - enclose paths/urls with quotes.  Optional - defaults
+# to no quotes.  
+# Can be:  single, double, backtick
+#Quote=none
+
+# Dependencies - program executables required for this action to work.  Nemo will
+# Search in the path for these program(s) and not display the action if any are missing.
+# This is an array, separate entries with semi-colon, and terminate with a semicolon.
+#Dependencies=gedit;
+
+# Conditions - semicolon-separated array of special conditions:
+#     "desktop" current (parent) folder is desktop
+#     "removable" target (first selection) is removable
+#     "gsettings <schema> <boolean key>"  is true
+#     "dbus <name>" exists
+
+#Conditions=desktop;
+
