@@ -134,6 +134,8 @@ static void  fm_tree_view_activate_file     (FMTreeView *view,
 
 static void create_popup_menu (FMTreeView *view);
 
+static void add_action_popup_items (FMTreeView *view);
+
 G_DEFINE_TYPE (FMTreeView, fm_tree_view, GTK_TYPE_SCROLLED_WINDOW)
 #define parent_class fm_tree_view_parent_class
 
@@ -1177,7 +1179,6 @@ action_payload_free (gpointer data)
 {
     ActionPayload *p = (ActionPayload *) data;
     gtk_widget_destroy (GTK_WIDGET (p->item));
-    g_object_unref (p->action);
 }
 
 static void
@@ -1186,6 +1187,8 @@ actions_added_or_changed_callback (FMTreeView *view)
     GList *tmp = view->details->action_items;
     view->details->action_items = NULL;
     g_list_free_full (tmp, action_payload_free);
+
+    add_action_popup_items (view);
 }
 
 static void
@@ -1206,6 +1209,32 @@ action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
     nemo_file_list_free (tmp);
 
     g_free (uri);
+}
+
+static void
+add_action_popup_items (FMTreeView *view)
+{
+    GList *action_list = nemo_action_manager_list_actions (view->details->action_manager);
+    GList *l;
+    GtkWidget *menu_item;
+    NemoAction *action;
+    ActionPayload *payload;
+
+    gint index = 13;
+
+    for (l = action_list; l != NULL; l = l->next) {
+        action = l->data;
+        payload = g_new0 (ActionPayload, 1);
+        payload->action = action;
+        payload->view = view;
+        menu_item = gtk_menu_item_new_with_mnemonic (nemo_action_get_orig_label (action));
+        payload->item = menu_item;
+        g_signal_connect (menu_item, "activate", G_CALLBACK (action_activated_callback), payload);
+        gtk_widget_show (menu_item);
+        gtk_menu_shell_insert (GTK_MENU_SHELL (view->details->popup), menu_item, index);
+        view->details->action_items = g_list_append (view->details->action_items, payload);
+        index ++;
+    }
 }
 
 static void
@@ -1347,24 +1376,6 @@ create_popup_menu (FMTreeView *view)
     view->details->popup_action_separator =
         GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (popup)));
 
-    GList *action_list = nemo_action_manager_list_actions (view->details->action_manager);
-    GList *l;
-    NemoAction *action;
-    ActionPayload *payload;
-
-    for (l = action_list; l != NULL; l = l->next) {
-        action = l->data;
-        payload = g_new0 (ActionPayload, 1);
-        payload->action = action;
-        payload->view = view;
-        menu_item = gtk_menu_item_new_with_mnemonic (nemo_action_get_orig_label (action));
-        payload->item = menu_item;
-        g_signal_connect (menu_item, "activate", G_CALLBACK (action_activated_callback), payload);
-        gtk_widget_show (menu_item);
-        gtk_menu_shell_append (GTK_MENU_SHELL (popup), menu_item);
-        view->details->action_items = g_list_append (view->details->action_items, payload);
-    }
-
 	eel_gtk_menu_append_separator (GTK_MENU (popup));
 
 	/* add the "Unmount" menu item */
@@ -1398,7 +1409,9 @@ create_popup_menu (FMTreeView *view)
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup), menu_item);
 	view->details->popup_properties = menu_item;
 
-	view->details->popup = popup;
+    view->details->popup = popup;
+
+    add_action_popup_items (view);
 }
 
 static void

@@ -132,6 +132,8 @@ typedef struct {
 
     guint expand_timeout_source;
 
+    guint popup_menu_action_index;
+
 } NemoPlacesSidebar;
 
 typedef struct {
@@ -211,6 +213,8 @@ static void  check_unmount_and_eject                   (GMount *mount,
 							gboolean *show_eject);
 
 static void bookmarks_check_popup_sensitivity          (NemoPlacesSidebar *sidebar);
+
+static void add_action_popup_items                     (NemoPlacesSidebar *sidebar);
 
 /* Identifiers for target types */
 enum {
@@ -2928,7 +2932,6 @@ action_payload_free (gpointer data)
 {
     ActionPayload *p = (ActionPayload *) data;
     gtk_widget_destroy (GTK_WIDGET (p->item));
-    g_object_unref (p->action);
 }
 
 static void
@@ -2937,6 +2940,8 @@ actions_added_or_changed_callback (NemoPlacesSidebar *sidebar)
     GList *tmp = sidebar->action_items;
     sidebar->action_items = NULL;
     g_list_free_full (tmp, action_payload_free);
+
+    add_action_popup_items (sidebar);
 }
 
 static gboolean
@@ -3065,6 +3070,31 @@ action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
     g_free (uri);
 }
 
+static void
+add_action_popup_items (NemoPlacesSidebar *sidebar)
+{
+    GList *action_list = nemo_action_manager_list_actions (sidebar->action_manager);
+    GtkWidget *item;
+    GList *l;
+    NemoAction *action;
+    ActionPayload *payload;
+
+    guint index = 8;
+
+    for (l = action_list; l != NULL; l = l->next) {
+        action = l->data;
+        payload = g_new0 (ActionPayload, 1);
+        payload->action = action;
+        payload->sidebar = sidebar;
+        item = gtk_menu_item_new_with_mnemonic (nemo_action_get_orig_label (action));
+        payload->item = item;
+        g_signal_connect (item, "activate", G_CALLBACK (action_activated_callback), payload);
+        gtk_widget_show (item);
+        gtk_menu_shell_insert (GTK_MENU_SHELL (sidebar->popup_menu), item, index);
+        sidebar->action_items = g_list_append (sidebar->action_items, payload);
+        index ++;
+    }
+}
 
 /* Constructs the popup menu for the file list if needed */
 static void
@@ -3140,24 +3170,6 @@ bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
     sidebar->popup_menu_action_separator_item =
         GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (sidebar->popup_menu)));
 
-    GList *action_list = nemo_action_manager_list_actions (sidebar->action_manager);
-    GList *l;
-    NemoAction *action;
-    ActionPayload *payload;
-
-    for (l = action_list; l != NULL; l = l->next) {
-        action = l->data;
-        payload = g_new0 (ActionPayload, 1);
-        payload->action = action;
-        payload->sidebar = sidebar;
-        item = gtk_menu_item_new_with_mnemonic (nemo_action_get_orig_label (action));
-        payload->item = item;
-        g_signal_connect (item, "activate", G_CALLBACK (action_activated_callback), payload);
-        gtk_widget_show (item);
-        gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-        sidebar->action_items = g_list_append (sidebar->action_items, payload);
-    }
-
 	/* Mount/Unmount/Eject menu items */
 
 	sidebar->popup_menu_separator_item =
@@ -3225,6 +3237,8 @@ bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
 			  G_CALLBACK (properties_cb), sidebar);
 	gtk_widget_show (item);
 	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
+
+    add_action_popup_items (sidebar);
 
 	bookmarks_check_popup_sensitivity (sidebar);
 }
