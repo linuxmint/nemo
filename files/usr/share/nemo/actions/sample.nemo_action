@@ -67,7 +67,7 @@ Extensions=any;
 # This is an array, separate entries with semi-colon, and terminate with a semicolon.
 #Dependencies=gedit;
 
-# Condition - semicolon-separated array of special conditions:
+# Conditions - semicolon-separated array of special conditions:
 #     "desktop" current (parent) folder is desktop
 #     "removable" target (first selection) is removable
 #     "gsettings <schema> <boolean key>"  is true
