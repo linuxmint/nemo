@@ -103,6 +103,7 @@ struct FMTreeViewDetails {
 	GtkWidget *popup_unmount_separator;
 	GtkWidget *popup_unmount;
 	GtkWidget *popup_eject;
+    GtkWidget *popup_action_separator;
 	NemoFile *popup_file;
 	guint popup_file_idle_handler;
 	
@@ -783,6 +784,8 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 			gtk_widget_hide (view->details->popup_unmount_separator);
 		}
 
+        gboolean actions_visible = FALSE;
+
         GList *l;
         NemoFile *file = view->details->popup_file;
         NemoFile *parent = nemo_file_get_parent (file);
@@ -795,10 +798,13 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
             if (nemo_action_get_visibility (p->action, tmp, parent)) {
                 gtk_menu_item_set_label (GTK_MENU_ITEM (p->item), nemo_action_get_label (p->action, tmp, parent));
                 gtk_widget_set_visible (p->item, TRUE);
+                actions_visible = TRUE;
             } else {
                 gtk_widget_set_visible (p->item, FALSE);
             }
         }
+
+        gtk_widget_set_visible (view->details->popup_action_separator, actions_visible);
 
         nemo_file_list_free (tmp);
 
@@ -1338,7 +1344,8 @@ create_popup_menu (FMTreeView *view)
 
     /* Nemo Actions */
 
-    eel_gtk_menu_append_separator (GTK_MENU (popup));
+    view->details->popup_action_separator =
+        GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (popup)));
 
     GList *action_list = nemo_action_manager_list_actions (view->details->action_manager);
     GList *l;

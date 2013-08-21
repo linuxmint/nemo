@@ -104,6 +104,8 @@ typedef struct {
 	GtkWidget *popup_menu_stop_item;
 	GtkWidget *popup_menu_properties_separator_item;
 	GtkWidget *popup_menu_properties_item;
+    GtkWidget *popup_menu_action_separator_item;
+    GtkWidget *popup_menu_remove_rename_separator_item;
 
 	/* volume mounting - delayed open process */
 	gboolean mounting;
@@ -1900,7 +1902,7 @@ bookmarks_popup_menu_detach_cb (GtkWidget *attach_widget,
 	
 	sidebar = NEMO_PLACES_SIDEBAR (attach_widget);
 	g_assert (NEMO_IS_PLACES_SIDEBAR (sidebar));
-	
+
 	sidebar->popup_menu = NULL;
 	sidebar->popup_menu_add_shortcut_item = NULL;
 	sidebar->popup_menu_remove_item = NULL;
@@ -1915,6 +1917,8 @@ bookmarks_popup_menu_detach_cb (GtkWidget *attach_widget,
 	sidebar->popup_menu_empty_trash_item = NULL;
 	sidebar->popup_menu_properties_separator_item = NULL;
 	sidebar->popup_menu_properties_item = NULL;
+    sidebar->popup_menu_action_separator_item = NULL;
+    sidebar->popup_menu_remove_rename_separator_item = NULL;
 }
 
 static void
@@ -2013,6 +2017,9 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 				    -1);
 	}
 
+    gtk_widget_set_visible (sidebar->popup_menu_remove_rename_separator_item, (type == PLACES_MOUNTED_VOLUME ||
+                                                                               type == PLACES_BOOKMARK));
+
 	gtk_widget_set_visible (sidebar->popup_menu_add_shortcut_item, (type == PLACES_MOUNTED_VOLUME));
 
 	gtk_widget_set_visible (sidebar->popup_menu_remove_item, (type == PLACES_BOOKMARK));
@@ -2088,6 +2095,8 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
         return;
     }
 
+    gboolean actions_visible = FALSE;
+
     GList *l;
     NemoFile *file = nemo_file_get_by_uri (uri);
     NemoFile *parent = nemo_file_get_parent (file);
@@ -2100,10 +2109,13 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
         if (nemo_action_get_visibility (p->action, tmp, parent)) {
             gtk_menu_item_set_label (GTK_MENU_ITEM (p->item), nemo_action_get_label (p->action, tmp, parent));
             gtk_widget_set_visible (p->item, TRUE);
+            actions_visible = TRUE;
         } else {
             gtk_widget_set_visible (p->item, FALSE);
         }
     }
+
+    gtk_widget_set_visible (sidebar->popup_menu_action_separator_item, actions_visible);
 
     nemo_file_list_free (tmp);
 
@@ -3099,8 +3111,8 @@ bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
 	if (use_browser) {
 		gtk_widget_show (item);
 	}
-
-	eel_gtk_menu_append_separator (GTK_MENU (sidebar->popup_menu));
+    sidebar->popup_menu_remove_rename_separator_item =
+        GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (sidebar->popup_menu)));
 
 	item = gtk_menu_item_new_with_mnemonic (_("_Add Bookmark"));
 	sidebar->popup_menu_add_shortcut_item = item;
@@ -3125,8 +3137,8 @@ bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
 	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
 
     /* Nemo Actions */
-
-    eel_gtk_menu_append_separator (GTK_MENU (sidebar->popup_menu));
+    sidebar->popup_menu_action_separator_item =
+        GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (sidebar->popup_menu)));
 
     GList *action_list = nemo_action_manager_list_actions (sidebar->action_manager);
     GList *l;
