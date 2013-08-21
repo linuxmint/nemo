@@ -95,6 +95,7 @@ struct _NemoAction {
     gboolean log_output;
     GList *dbus;
     gboolean dbus_satisfied;
+    gboolean escape_underscores;
 };
 
 struct _NemoActionClass {

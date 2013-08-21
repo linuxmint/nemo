@@ -113,6 +113,7 @@ nemo_action_init (NemoAction *action)
     action->conditions = NULL;
     action->dbus = NULL;
     action->dbus_satisfied = TRUE;
+    action->escape_underscores = FALSE;
     action->log_output = g_getenv ("NEMO_ACTION_VERBOSE") != NULL;
 }
 
@@ -744,12 +745,25 @@ find_token_type (const gchar *str, TokenType *token_type)
 }
 
 static GString *
+_score_append (NemoAction *action, GString *str, const gchar *c)
+{
+    if (action->escape_underscores) {
+        gchar *escaped = eel_str_double_underscores (c);
+        str = g_string_append (str, escaped);
+        g_free (escaped);
+        return str;
+    } else {
+        return g_string_append (str, c);
+    }
+}
+
+static GString *
 insert_separator (NemoAction *action, GString *str)
 {
     if (action->separator == NULL)
         str = g_string_append (str, " ");
     else
-        str = g_string_append (str, action->separator);
+        str = _score_append (action, str, action->separator);
 
     return str;
 }
@@ -791,7 +805,7 @@ get_insertion_string (NemoAction *action, TokenType token_type, GList *selection
                     str = insert_quote (action, str);
                     gchar *path = nemo_file_get_path (NEMO_FILE (l->data));
                     if (path)
-                        str = g_string_append (str, path);
+                        str = _score_append (action, str, path);
                     g_free (path);
                     str = insert_quote (action, str);
                     first = FALSE;
@@ -808,7 +822,7 @@ get_insertion_string (NemoAction *action, TokenType token_type, GList *selection
                     str = insert_quote (action, str);
                     gchar *uri = nemo_file_get_uri (NEMO_FILE (l->data));
                     if (uri)
-                        str = g_string_append (str, uri);
+                        str = _score_append (action, str, uri);
                     g_free (uri);
                     str = insert_quote (action, str);
                     first = FALSE;
@@ -831,14 +845,14 @@ default_parent_path:
                 g_free (name);
             }
             str = insert_quote (action, str);
-            str = g_string_append (str, path);
+            str = _score_append (action, str, path);
             str = insert_quote (action, str);
             g_free (path);
             break;
         case TOKEN_FILE_DISPLAY_NAME:
             if (g_list_length (selection) > 0) {
                 gchar *file_display_name = nemo_file_get_display_name (NEMO_FILE (selection->data));
-                str = g_string_append (str, file_display_name);
+                str = _score_append (action, str, file_display_name);
                 g_free (file_display_name);
             } else {
                 goto default_parent_display_name;
@@ -856,7 +870,7 @@ default_parent_display_name:
                 parent_display_name = nemo_file_get_display_name (parent);
             g_free (real_display_name);
             str = insert_quote (action, str);
-            str = g_string_append (str, parent_display_name);
+            str = _score_append (action, str, parent_display_name);
             str = insert_quote (action, str);
             g_free (parent_display_name);
             break;
@@ -896,6 +910,8 @@ void
 nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
 {
     GString *exec = g_string_new (action->exec);
+
+    action->escape_underscores = FALSE;
 
     exec = expand_action_string (action, selection, parent, exec);
 
@@ -1032,6 +1048,8 @@ nemo_action_get_label (NemoAction *action, GList *selection, NemoFile *parent)
     if (orig_label == NULL)
         return;
 
+    action->escape_underscores = TRUE;
+
     GString *str = g_string_new (orig_label);
 
     str = expand_action_string (action, selection, parent, str);
@@ -1052,6 +1070,8 @@ nemo_action_get_tt (NemoAction *action, GList *selection, NemoFile *parent)
 
     if (orig_tt == NULL)
         return;
+
+    action->escape_underscores = FALSE;
 
     GString *str = g_string_new (orig_tt);
 
