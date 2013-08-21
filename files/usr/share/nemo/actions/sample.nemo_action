@@ -11,6 +11,7 @@ Active=false
 # %P - insert path of parent (current) directory
 # %f or %N (deprecated) - insert display name of first selected file
 # %p - insert display name of parent directory
+# %D - insert device path of file (i.e. /dev/sdb1)
 
 
 # The name to show in the menu, locale supported with standard desktop spec.
