@@ -741,6 +741,11 @@ find_token_type (const gchar *str, TokenType *token_type)
         *token_type = TOKEN_FILE_DISPLAY_NAME;
         return ptr;
     }
+    ptr = g_strstr_len (str, -1, TOKEN_EXEC_DEVICE);
+    if (ptr != NULL) {
+        *token_type = TOKEN_DEVICE;
+        return ptr;
+    }
     return NULL;
 }
 
@@ -786,6 +791,19 @@ insert_quote (NemoAction *action, GString *str)
     }
 
     return str;
+}
+
+static gchar *
+get_device_path (NemoFile *file)
+{
+    GMount *mount = nemo_file_get_mount (file);
+    GVolume *volume = g_mount_get_volume (mount);
+    gchar *id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+
+    g_object_unref (mount);
+    g_object_unref (volume);
+
+    return id;
 }
 
 static gchar *
@@ -873,6 +891,23 @@ default_parent_display_name:
             str = _score_append (action, str, parent_display_name);
             str = insert_quote (action, str);
             g_free (parent_display_name);
+            break;
+        case TOKEN_DEVICE:
+            if (g_list_length (selection) > 0) {
+                for (l = selection; l != NULL; l = l->next) {
+                    if (!first)
+                        str = insert_separator (action, str);
+                    str = insert_quote (action, str);
+                    gchar *dev = get_device_path (NEMO_FILE (l->data));
+                    if (dev)
+                        str = _score_append (action, str, dev);
+                    g_free (dev);
+                    str = insert_quote (action, str);
+                    first = FALSE;
+                }
+            } else {
+                goto default_parent_path;
+            }
             break;
     }
 

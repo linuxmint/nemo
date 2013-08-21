@@ -48,6 +48,7 @@
 #define TOKEN_EXEC_PARENT "%P"
 #define TOKEN_EXEC_FILE_NAME "%f"
 #define TOKEN_EXEC_PARENT_NAME "%p"
+#define TOKEN_EXEC_DEVICE "%D"
 
 #define TOKEN_LABEL_FILE_NAME "%N" // Leave in for compatibility, same as TOKEN_EXEC_FILE_NAME
 
@@ -75,7 +76,8 @@ typedef enum {
     TOKEN_URI_LIST,
     TOKEN_FILE_DISPLAY_NAME,
     TOKEN_PARENT_DISPLAY_NAME,
-    TOKEN_PARENT_PATH
+    TOKEN_PARENT_PATH,
+    TOKEN_DEVICE
 } TokenType;
 
 struct _NemoAction {
