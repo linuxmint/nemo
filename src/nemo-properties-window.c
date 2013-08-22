@@ -2122,22 +2122,16 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 			text = g_strdup ("...");
 		}
 	} else {
-		char *size_str;
-        char *hidden_str;
+		char *size_str;        
 		int prefix;
 		prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
 		size_str = g_format_size_full (total_size, prefix);
         if (total_hidden > 0) {
-            hidden_str = g_strdup_printf (_(" (and %d hidden)"), total_hidden);
+        	text = g_strdup_printf (ngettext("%d item (and %d hidden), with size %s", "%d items (and %d hidden), totalling %s", total_count), total_count, total_hidden, size_str);            
         } else {
-            hidden_str = g_strdup_printf ("");
-        }
-		text = g_strdup_printf (ngettext("%'d item%s, with size %s",
-						 "%'d items%s, totalling %s",
-						 total_count),
-					total_count, hidden_str, size_str);
+        	text = g_strdup_printf (ngettext("%d item, with size %s", "%d items, totalling %s", total_count), total_count, size_str);
+        }		
 		g_free (size_str);
-        g_free (hidden_str);
 
 		if (unreadable_directory_count != 0) {
 			temp = text;
