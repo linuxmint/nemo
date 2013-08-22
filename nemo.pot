@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-22 21:32+0100\n"
+"POT-Creation-Date: 2013-08-22 22:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -193,7 +193,7 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
-#: src/nemo-connect-server-dialog.c:701 src/nemo-properties-window.c:5133
+#: src/nemo-connect-server-dialog.c:701 src/nemo-properties-window.c:5138
 #: src/nemo-view.c:1521
 msgid "There was an error displaying help."
 msgstr ""
@@ -412,8 +412,8 @@ msgstr ""
 msgid "Renaming \"%s\" to \"%s\"."
 msgstr ""
 
-#: src/nemo-file-management-properties.c:313 src/nemo-properties-window.c:3929
-#: src/nemo-properties-window.c:3940
+#: src/nemo-file-management-properties.c:313 src/nemo-properties-window.c:3934
+#: src/nemo-properties-window.c:3945
 msgid "None"
 msgstr ""
 
@@ -771,7 +771,7 @@ msgstr ""
 msgid "Display this location with the list view."
 msgstr ""
 
-#: src/nemo-location-bar.c:54 src/nemo-properties-window.c:3116
+#: src/nemo-location-bar.c:54 src/nemo-properties-window.c:3121
 msgid "Location:"
 msgstr ""
 
@@ -1227,248 +1227,248 @@ msgstr ""
 
 #: src/nemo-properties-window.c:2130
 #, c-format
-msgid "%1$'d item (and %2$'d hidden), with size %3$s"
-msgid_plural "%1$'d items (and %2$'d hidden), totalling %3$s"
+msgid "%1$s item (and %2$s hidden), with size %3$s"
+msgid_plural "%1$s items (and %2$s hidden), totalling %3$s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-properties-window.c:2132
+#: src/nemo-properties-window.c:2135
 #, c-format
-msgid "%1$'d item, with size %2$s"
-msgid_plural "%1$'d items, totalling %2$s"
+msgid "%1$s item, with size %2$s"
+msgid_plural "%1$s items, totalling %2$s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-properties-window.c:2139
+#: src/nemo-properties-window.c:2144
 msgid "(some contents unreadable)"
 msgstr ""
 
-#: src/nemo-properties-window.c:2156
+#: src/nemo-properties-window.c:2161
 msgid "Contents:"
 msgstr ""
 
-#: src/nemo-properties-window.c:2930
+#: src/nemo-properties-window.c:2935
 msgid "used"
 msgstr ""
 
-#: src/nemo-properties-window.c:2937
+#: src/nemo-properties-window.c:2942
 msgid "free"
 msgstr ""
 
-#: src/nemo-properties-window.c:2939
+#: src/nemo-properties-window.c:2944
 msgid "Total capacity:"
 msgstr ""
 
-#: src/nemo-properties-window.c:2948
+#: src/nemo-properties-window.c:2953
 msgid "Filesystem type:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3032
+#: src/nemo-properties-window.c:3037
 msgid "Basic"
 msgstr ""
 
-#: src/nemo-properties-window.c:3089
+#: src/nemo-properties-window.c:3094
 #: libnemo-private/nemo-file-conflict-dialog.c:256
 #: libnemo-private/nemo-file-conflict-dialog.c:287
 msgid "Type:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3097
+#: src/nemo-properties-window.c:3102
 msgid "Link target:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3107
+#: src/nemo-properties-window.c:3112
 #: libnemo-private/nemo-file-conflict-dialog.c:253
 #: libnemo-private/nemo-file-conflict-dialog.c:284
 msgid "Size:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3122
+#: src/nemo-properties-window.c:3127
 msgid "Volume:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3131
+#: src/nemo-properties-window.c:3136
 msgid "Accessed:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3135
+#: src/nemo-properties-window.c:3140
 msgid "Modified:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3144
+#: src/nemo-properties-window.c:3149
 msgid "Free space:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3565
+#: src/nemo-properties-window.c:3570
 msgid "_Read"
 msgstr ""
 
-#: src/nemo-properties-window.c:3567
+#: src/nemo-properties-window.c:3572
 msgid "_Write"
 msgstr ""
 
-#: src/nemo-properties-window.c:3569
+#: src/nemo-properties-window.c:3574
 msgid "E_xecute"
 msgstr ""
 
-#: src/nemo-properties-window.c:3837 src/nemo-properties-window.c:3848
-#: src/nemo-properties-window.c:3860
+#: src/nemo-properties-window.c:3842 src/nemo-properties-window.c:3853
+#: src/nemo-properties-window.c:3865
 msgid "no "
 msgstr ""
 
-#: src/nemo-properties-window.c:3840
+#: src/nemo-properties-window.c:3845
 msgid "list"
 msgstr ""
 
-#: src/nemo-properties-window.c:3842
+#: src/nemo-properties-window.c:3847
 msgid "read"
 msgstr ""
 
-#: src/nemo-properties-window.c:3851
+#: src/nemo-properties-window.c:3856
 msgid "create/delete"
 msgstr ""
 
-#: src/nemo-properties-window.c:3853
+#: src/nemo-properties-window.c:3858
 msgid "write"
 msgstr ""
 
-#: src/nemo-properties-window.c:3862
+#: src/nemo-properties-window.c:3867
 msgid "access"
 msgstr ""
 
-#: src/nemo-properties-window.c:3910
+#: src/nemo-properties-window.c:3915
 msgid "Access:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3912
+#: src/nemo-properties-window.c:3917
 msgid "Folder access:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3914
+#: src/nemo-properties-window.c:3919
 msgid "File access:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3932
+#: src/nemo-properties-window.c:3937
 msgid "List files only"
 msgstr ""
 
-#: src/nemo-properties-window.c:3934
+#: src/nemo-properties-window.c:3939
 msgid "Access files"
 msgstr ""
 
-#: src/nemo-properties-window.c:3936
+#: src/nemo-properties-window.c:3941
 msgid "Create and delete files"
 msgstr ""
 
-#: src/nemo-properties-window.c:3943
+#: src/nemo-properties-window.c:3948
 msgid "Read-only"
 msgstr ""
 
-#: src/nemo-properties-window.c:3945
+#: src/nemo-properties-window.c:3950
 msgid "Read and write"
 msgstr ""
 
-#: src/nemo-properties-window.c:4010
+#: src/nemo-properties-window.c:4015
 msgid "Special flags:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4012
+#: src/nemo-properties-window.c:4017
 msgid "Set _user ID"
 msgstr ""
 
-#: src/nemo-properties-window.c:4013
+#: src/nemo-properties-window.c:4018
 msgid "Set gro_up ID"
 msgstr ""
 
-#: src/nemo-properties-window.c:4014
+#: src/nemo-properties-window.c:4019
 msgid "_Sticky"
 msgstr ""
 
-#: src/nemo-properties-window.c:4089 src/nemo-properties-window.c:4281
+#: src/nemo-properties-window.c:4094 src/nemo-properties-window.c:4286
 msgid "_Owner:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4097 src/nemo-properties-window.c:4186
-#: src/nemo-properties-window.c:4291
+#: src/nemo-properties-window.c:4102 src/nemo-properties-window.c:4191
+#: src/nemo-properties-window.c:4296
 msgid "Owner:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4119 src/nemo-properties-window.c:4303
+#: src/nemo-properties-window.c:4124 src/nemo-properties-window.c:4308
 msgid "_Group:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4127 src/nemo-properties-window.c:4187
-#: src/nemo-properties-window.c:4311
+#: src/nemo-properties-window.c:4132 src/nemo-properties-window.c:4192
+#: src/nemo-properties-window.c:4316
 msgid "Group:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4151
+#: src/nemo-properties-window.c:4156
 msgid "Others"
 msgstr ""
 
-#: src/nemo-properties-window.c:4166
+#: src/nemo-properties-window.c:4171
 msgid "Execute:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4169
+#: src/nemo-properties-window.c:4174
 msgid "Allow _executing file as program"
 msgstr ""
 
-#: src/nemo-properties-window.c:4188
+#: src/nemo-properties-window.c:4193
 msgid "Others:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4327
+#: src/nemo-properties-window.c:4332
 msgid "Folder Permissions:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4335
+#: src/nemo-properties-window.c:4340
 msgid "File Permissions:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4344
+#: src/nemo-properties-window.c:4349
 msgid "Text view:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4478
+#: src/nemo-properties-window.c:4483
 #: libnemo-private/nemo-column-utilities.c:97
 msgid "Permissions"
 msgstr ""
 
-#: src/nemo-properties-window.c:4492
+#: src/nemo-properties-window.c:4497
 msgid "You are not the owner, so you cannot change these permissions."
 msgstr ""
 
-#: src/nemo-properties-window.c:4512
+#: src/nemo-properties-window.c:4517
 msgid "SELinux context:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4517
+#: src/nemo-properties-window.c:4522
 msgid "Last changed:"
 msgstr ""
 
-#: src/nemo-properties-window.c:4529
+#: src/nemo-properties-window.c:4534
 msgid "Apply Permissions to Enclosed Files"
 msgstr ""
 
-#: src/nemo-properties-window.c:4539
+#: src/nemo-properties-window.c:4544
 #, c-format
 msgid "The permissions of \"%s\" could not be determined."
 msgstr ""
 
-#: src/nemo-properties-window.c:4542
+#: src/nemo-properties-window.c:4547
 msgid "The permissions of the selected file could not be determined."
 msgstr ""
 
-#: src/nemo-properties-window.c:4775
+#: src/nemo-properties-window.c:4780
 msgid "Open With"
 msgstr ""
 
-#: src/nemo-properties-window.c:5101
+#: src/nemo-properties-window.c:5106
 msgid "Creating Properties window."
 msgstr ""
 
-#: src/nemo-properties-window.c:5387
+#: src/nemo-properties-window.c:5392
 msgid "Select Custom Icon"
 msgstr ""
 

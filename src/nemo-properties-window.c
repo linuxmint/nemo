@@ -2127,9 +2127,14 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 		prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
 		size_str = g_format_size_full (total_size, prefix);
         if (total_hidden > 0) {
-        	text = g_strdup_printf (ngettext("%1$'d item (and %2$'d hidden), with size %3$s", "%1$'d items (and %2$'d hidden), totalling %3$s", total_count), total_count, total_hidden, size_str);
+        	text = g_strdup_printf (ngettext("%1$s item (and %2$s hidden), with size %3$s", "%1$s items (and %2$s hidden), totalling %3$s", total_count), 
+        		g_strdup_printf("%'d", total_count),
+        		g_strdup_printf("%'d", total_hidden),
+        		size_str);
         } else {
-        	text = g_strdup_printf (ngettext("%1$'d item, with size %2$s", "%1$'d items, totalling %2$s", total_count), total_count, size_str);
+        	text = g_strdup_printf (ngettext("%1$s item, with size %2$s", "%1$s items, totalling %2$s", total_count), 
+        		g_strdup_printf("%'d", total_count),
+        		size_str);
         }		
 		g_free (size_str);
 
