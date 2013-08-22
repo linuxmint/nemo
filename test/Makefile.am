@@ -8,7 +8,7 @@ INCLUDES =\
 	$(WARNING_CFLAGS) \
 	-DVERSION="\"$(VERSION)\"" \
 	-DNEMO_DATADIR=\""$(datadir)/nemo"\" \
-	-DGNOMELOCALEDIR=\""$(prefix)/${DATADIRNAME}/locale"\"	\
+	-DLOCALEDIR=\""$(prefix)/${DATADIRNAME}/cinnamon/locale"\"	\
 	$(NULL)
 
 LDADD =\

@@ -12,7 +12,7 @@ INCLUDES =						\
 	$(DISABLE_DEPRECATED_CFLAGS)			\
 	-DDATADIR=\""$(datadir)"\"			\
 	-DSOURCE_DATADIR=\""$(top_srcdir)/data"\"	\
-	-DGNOMELOCALEDIR=\""$(prefix)/${DATADIRNAME}/locale"\"	\
+	-DLOCALEDIR=\""$(prefix)/${DATADIRNAME}/cinnamon/locale"\"	\
 	$(NULL)
 
 libeel_2_la_LDFLAGS =				\

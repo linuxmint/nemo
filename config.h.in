@@ -22,7 +22,7 @@
 #undef GETTEXT_PACKAGE
 
 /* Define the location where the catalogs will be installed */
-#undef GNOMELOCALEDIR
+#undef LOCALEDIR
 
 /* Define to 1 if you have the `bind_textdomain_codeset' function. */
 #undef HAVE_BIND_TEXTDOMAIN_CODESET
