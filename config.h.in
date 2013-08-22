@@ -21,9 +21,6 @@
 /* the gettext translation domain */
 #undef GETTEXT_PACKAGE
 
-/* Define the location where the catalogs will be installed */
-#undef LOCALEDIR
-
 /* Define to 1 if you have the `bind_textdomain_codeset' function. */
 #undef HAVE_BIND_TEXTDOMAIN_CODESET
 
@@ -104,6 +101,9 @@
 
 /* Define to 1 if you have the <X11/XF86keysym.h> header file. */
 #undef HAVE_X11_XF86KEYSYM_H
+
+/* Define the location where the catalogs will be installed */
+#undef LOCALEDIR
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
