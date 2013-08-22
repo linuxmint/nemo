@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus 3.9.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-14 15:00+0200\n"
+"POT-Creation-Date: 2013-08-22 15:42+0200\n"
 "PO-Revision-Date: 2013-08-14 15:02+0200\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian bokmål <i18n-nb@lister.ping.uio.no>\n"
@@ -32,8 +32,8 @@ msgstr "Koble til tjener"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4476 ../src/nautilus-window.c:2192
-#: ../src/nautilus-window.c:2390
+#: ../src/nautilus-properties-window.c:4476 ../src/nautilus-window.c:2190
+#: ../src/nautilus-window.c:2387
 msgid "Files"
 msgstr "Filer"
 
@@ -4003,11 +4003,12 @@ msgstr "Filer i denne mappen vil vises i menyen «Nytt dokument»."
 msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr "Kjørbare filer i denne mappen vil vises i Skript-menyen."
 
-#: ../src/nautilus-toolbar.c:495
+#: ../src/nautilus-toolbar.c:482
 msgid "View options"
 msgstr "Alternativer for visning"
 
-#: ../src/nautilus-toolbar.c:512
+#. Action Menu
+#: ../src/nautilus-toolbar.c:501
 msgid "Location options"
 msgstr "Alternativer for lokasjon"
 
@@ -4995,7 +4996,7 @@ msgstr "Flytt fane til høy_re"
 msgid "_Close Tab"
 msgstr "_Lukk fane"
 
-#: ../src/nautilus-window.c:2363
+#: ../src/nautilus-window.c:2360
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5007,7 +5008,7 @@ msgstr ""
 "Software Foundation; enten versjon 2 av lisensen, eller (hvis du ønsker det) "
 "enhver senere versjon."
 
-#: ../src/nautilus-window.c:2367
+#: ../src/nautilus-window.c:2364
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5018,7 +5019,7 @@ msgstr ""
 "ikke engang implisitt garanti om at det er SALGBART eller PASSER ET BESTEMT "
 "FORMÅL. Se GNU General Public License for detaljer."
 
-#: ../src/nautilus-window.c:2371
+#: ../src/nautilus-window.c:2368
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5031,11 +5032,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2386
+#: ../src/nautilus-window.c:2383
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "Opphavsrett © %Id-%Id Filer-utviklerene"
 
-#: ../src/nautilus-window.c:2392
+#: ../src/nautilus-window.c:2389
 msgid "Access and organize your files."
 msgstr "Aksesser og organiser dine filer."
 
@@ -5043,7 +5044,7 @@ msgstr "Aksesser og organiser dine filer."
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2402
+#: ../src/nautilus-window.c:2399
 msgid "translator-credits"
 msgstr "Kjartan Maraas <kmaraas@gnome.org>"
 
