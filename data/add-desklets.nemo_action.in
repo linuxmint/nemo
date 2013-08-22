@@ -2,7 +2,7 @@
 
 Name=Add Desklets
 
-Comment=Open Cinnamon Settings to add desklets
+Comment=Add Desklets
 
 Exec=cinnamon-settings desklets
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-22 22:46+0100\n"
+"POT-Creation-Date: 2013-08-23 00:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4973,18 +4973,10 @@ msgstr ""
 msgid "Set the selected image as your desktop wallpaper"
 msgstr ""
 
-#: data/action_i18n_strings.py:11
+#: data/action_i18n_strings.py:11 data/action_i18n_strings.py:12
 msgid "Add Desklets"
 msgstr ""
 
-#: data/action_i18n_strings.py:12
-msgid "Open Cinnamon Settings to add desklets"
-msgstr ""
-
-#: data/action_i18n_strings.py:13
+#: data/action_i18n_strings.py:13 data/action_i18n_strings.py:14
 msgid "Change Desktop _Background"
-msgstr ""
-
-#: data/action_i18n_strings.py:14
-msgid "Open settings to allow you to select a different desktop background"
 msgstr ""
