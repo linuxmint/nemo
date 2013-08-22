@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-22 21:12+0100\n"
+"POT-Creation-Date: 2013-08-22 21:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1227,15 +1227,15 @@ msgstr ""
 
 #: src/nemo-properties-window.c:2130
 #, c-format
-msgid "%d item (and %d hidden), with size %s"
-msgid_plural "%d items (and %d hidden), totalling %s"
+msgid "%1$'d item (and %2$'d hidden), with size %3$s"
+msgid_plural "%1$'d items (and %2$'d hidden), totalling %3$s"
 msgstr[0] ""
 msgstr[1] ""
 
 #: src/nemo-properties-window.c:2132
 #, c-format
-msgid "%d item, with size %s"
-msgid_plural "%d items, totalling %s"
+msgid "%1$'d item, with size %2$s"
+msgid_plural "%1$'d items, totalling %2$s"
 msgstr[0] ""
 msgstr[1] ""
 
