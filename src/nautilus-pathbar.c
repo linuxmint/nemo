@@ -1280,7 +1280,7 @@ button_event_cb (GtkWidget *button,
 
         g_signal_emit (path_bar, path_bar_signals [PATH_EVENT], 0, button_data->path, event);
 
-	return FALSE;
+	return (event->button != GDK_BUTTON_PRIMARY);
 }
 
 static void
