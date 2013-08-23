@@ -245,10 +245,10 @@
       <_summary>Whether to show the full path of the current view in the title bar and tab bars</_summary>
       <_description>If set to true, will show the normal title of a window or tab, followed by the full path to that location in parentheses.</_description>
     </key>
-    <key name="bulk-rename-tool" type="ay">
-      <default>[]</default>
+    <key name="bulk-rename-tool" type="s">
+      <default>''</default>
       <_summary>Bulk rename utility</_summary>
-      <_description>If set, Nemo will append URIs of selected files and treat the result as a command line for bulk renaming. Bulk rename applications can register themselves in this key by setting the key to a space-separated string of their executable name and any command line options. If the executable name is not set to a full path, it will be searched for in the search path.</_description>
+      <_description>If set, Nemo will append URIs of selected files and treat the result as a command line for bulk renaming. Bulk rename applications can register themselves in this key by setting the key to a string of their executable name and any command line options. If the executable name is not set to a full path, it will be searched for in the search path.</_description>
     </key>
     <key name="size-prefixes" enum="org.nemo.SizePrefixes">
         <default>'base-10'</default>

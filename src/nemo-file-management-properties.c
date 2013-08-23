@@ -80,6 +80,8 @@
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DESKTOP_TOOLTIPS_WIDGET "tooltips_on_desktop_checkbutton"
 
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_BULK_RENAME_TOOL_WIDGET "bulk_rename_entry"
+
 /* int enums */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET "preview_image_size_combobox"
 
@@ -550,6 +552,17 @@ nemo_file_management_properties_dialog_setup_list_column_page (GtkBuilder *build
 }
 
 static void
+bind_builder_string_entry (GtkBuilder *builder,
+                            GSettings *settings,
+                           const char *widget_name,
+                           const char *prefs)
+{
+    g_settings_bind (settings, prefs,
+                     gtk_builder_get_object (builder, widget_name),
+                     "text", G_SETTINGS_BIND_DEFAULT);
+}
+
+static void
 bind_builder_bool (GtkBuilder *builder,
 		   GSettings *settings,
 		   const char *widget_name,
@@ -878,6 +891,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
     bind_builder_bool (builder, nemo_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_CLOSE_DEVICE_VIEW_ON_EJECT_WIDGET,
                        NEMO_PREFERENCES_CLOSE_DEVICE_VIEW_ON_EJECT);
+
+    bind_builder_string_entry (builder, nemo_preferences,
+                         NEMO_FILE_MANAGEMENT_PROPERTIES_BULK_RENAME_TOOL_WIDGET,
+                         NEMO_PREFERENCES_BULK_RENAME_TOOL);
 
 	nemo_file_management_properties_dialog_setup_icon_caption_page (builder);
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);
