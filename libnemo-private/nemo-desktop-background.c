@@ -37,7 +37,7 @@
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
 #include <libcinnamon-desktop/gnome-bg.h>
-#include <gdesktop-enums.h>
+#include <libcinnamon-desktop/cdesktop-enums.h>
 
 #include <gtk/gtk.h>
 #include <string.h>
