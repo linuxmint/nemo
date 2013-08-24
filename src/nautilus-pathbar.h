@@ -1,3 +1,4 @@
+/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 /* nautilus-pathbar.h
  *
  * This library is free software; you can redistribute it and/or
