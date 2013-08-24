@@ -355,15 +355,15 @@ target_data_free (TargetCallbackData *target_data)
 
 static const GtkActionEntry clipboard_entries[] = {
   /* name, stock id */      { "Cut", NULL,
-  /* label, accelerator */    N_("Cu_t"), NULL,
+  /* label, accelerator */    N_("Cu_t"), "<control>X",
   /* tooltip */               N_("Cut the selected text to the clipboard"),
                               G_CALLBACK (action_cut_callback) },
   /* name, stock id */      { "Copy", NULL,
-  /* label, accelerator */    N_("_Copy"), NULL,
+  /* label, accelerator */    N_("_Copy"), "<control>C",
   /* tooltip */               N_("Copy the selected text to the clipboard"),
                               G_CALLBACK (action_copy_callback) },
   /* name, stock id */      { "Paste", NULL,
-  /* label, accelerator */    N_("_Paste"), NULL,
+  /* label, accelerator */    N_("_Paste"), "<control>V",
   /* tooltip */               N_("Paste the text stored on the clipboard"),
                               G_CALLBACK (action_paste_callback) },
   /* name, stock id */      { "Select All", NULL,
