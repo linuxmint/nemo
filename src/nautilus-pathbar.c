@@ -983,10 +983,10 @@ nautilus_path_bar_class_init (NautilusPathBarClass *path_bar_class)
         path_bar_signals [PATH_EVENT] =
                 g_signal_new ("path-event",
 		  G_OBJECT_CLASS_TYPE (path_bar_class),
-		  G_SIGNAL_RUN_FIRST,
+		  G_SIGNAL_RUN_FIRST | G_SIGNAL_RUN_LAST,
 		  G_STRUCT_OFFSET (NautilusPathBarClass, path_event),
 		  NULL, NULL, NULL,
-		  G_TYPE_NONE, 2,
+		  G_TYPE_BOOLEAN, 2,
 		  G_TYPE_FILE,
 		  GDK_TYPE_EVENT);
 
@@ -1260,6 +1260,7 @@ button_event_cb (GtkWidget *button,
         ButtonData *button_data;
         NautilusPathBar *path_bar;
         GList *button_list;
+	gboolean retval;
 
         button_data = BUTTON_DATA (data);
         path_bar = NAUTILUS_PATH_BAR (gtk_widget_get_parent (button));
@@ -1278,9 +1279,9 @@ button_event_cb (GtkWidget *button,
         button_list = g_list_find (path_bar->priv->button_list, button_data);
         g_assert (button_list != NULL);
 
-        g_signal_emit (path_bar, path_bar_signals [PATH_EVENT], 0, button_data->path, event);
+        g_signal_emit (path_bar, path_bar_signals [PATH_EVENT], 0, button_data->path, event, &retval);
 
-	return (event->button != GDK_BUTTON_PRIMARY);
+	return retval;
 }
 
 static void

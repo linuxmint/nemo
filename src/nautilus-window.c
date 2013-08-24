@@ -1071,7 +1071,7 @@ path_bar_location_changed_callback (GtkWidget      *widget,
 	}
 }
 
-static void
+static gboolean
 path_bar_path_event_callback (NautilusPathBar *path_bar,
 			      GFile           *location,
 			      GdkEventButton  *event,
@@ -1097,7 +1097,11 @@ path_bar_path_event_callback (NautilusPathBar *path_bar,
 			slot = nautilus_window_get_active_slot (window);
 			nautilus_window_slot_open_location (slot, location, flags);
 		}
-	} else if (event->button == 3) {
+
+		return FALSE;
+	}
+
+	if (event->button == 3) {
 		slot = nautilus_window_get_active_slot (window);
 		view = nautilus_window_slot_get_view (slot);
 		if (view != NULL) {
@@ -1105,7 +1109,11 @@ path_bar_path_event_callback (NautilusPathBar *path_bar,
 			nautilus_view_pop_up_location_context_menu (view, event, uri);
 			g_free (uri);
 		}
+
+		return TRUE;
 	}
+
+	return FALSE;
 }
 
 static void
