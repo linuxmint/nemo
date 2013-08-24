@@ -4921,7 +4921,7 @@ reset_move_copy_to_menu (NemoView *view)
     for (index = 0; index < bookmark_count; ++index) {
         bookmark = nemo_bookmark_list_item_at (view->details->bookmarks, index);
 
-        if (!nemo_bookmark_get_exists (bookmark)) {
+        if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
             continue;
         }
 

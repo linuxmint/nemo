@@ -67,10 +67,6 @@ struct NemoBookmarkDetails
 	NemoFile *file;
 	
 	char *scroll_file;
-
-    gboolean exists;
-    guint exists_id;
-    GCancellable *cancellable;
 };
 
 static void	  nemo_bookmark_disconnect_file	  (NemoBookmark	 *file);
@@ -206,7 +202,7 @@ nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark)
 		g_free (uri);
 	}
 
-	if (!bookmark->details->exists) {
+	if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
 		DEBUG ("%s: file does not exist, add emblem", nemo_bookmark_get_name (bookmark));
 
 		icon = g_themed_icon_new (GTK_STOCK_DIALOG_WARNING);
@@ -242,16 +238,6 @@ nemo_bookmark_disconnect_file (NemoBookmark *bookmark)
 						      bookmark);
 		g_clear_object (&bookmark->details->file);
 	}
-
-    if (bookmark->details->cancellable != NULL) {
-        g_cancellable_cancel (bookmark->details->cancellable);
-        g_clear_object (&bookmark->details->cancellable);
-    }
-
-    if (bookmark->details->exists_id != 0) {
-        g_source_remove (bookmark->details->exists_id);
-        bookmark->details->exists_id = 0;
-    }
 }
 
 static void
@@ -263,7 +249,7 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
 		return;
 	}
 
-	if (bookmark->details->exists) {
+	if (!nemo_bookmark_uri_known_not_to_exist (bookmark)) {
 		DEBUG ("%s: creating file", nemo_bookmark_get_name (bookmark));
 
 		bookmark->details->file = nemo_file_get (bookmark->details->location);
@@ -288,83 +274,6 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
 	if (bookmark->details->name == NULL) {
 		bookmark->details->name = nemo_compute_title_for_location (bookmark->details->location);
 	}
-}
-
-static void
-nemo_bookmark_set_exists (NemoBookmark *bookmark,
-                 gboolean exists)
-{
-   if (bookmark->details->exists == exists) {
-       return;
-   }
-
-   bookmark->details->exists = exists;
-   DEBUG ("%s: setting bookmark to exist: %d\n",
-          nemo_bookmark_get_name (bookmark), exists);
-
-   /* refresh icon */
-   nemo_bookmark_set_icon_to_default (bookmark);
-}
-
-static gboolean
-exists_non_native_idle_cb (gpointer user_data)
-{
-   NemoBookmark *bookmark = user_data;
-   nemo_bookmark_set_exists (bookmark, FALSE);
-
-   return FALSE;
-}
-
-static void
-exists_query_info_ready_cb (GObject *source,
-               GAsyncResult *res,
-               gpointer user_data)
-{
-   GFileInfo *info;
-   NemoBookmark *bookmark;
-   GError *error = NULL;
-   gboolean exists = FALSE;
-
-   info = g_file_query_info_finish (G_FILE (source), res, &error);
-   if (!info && g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-       g_clear_error (&error);
-       return;
-   }
-
-   g_clear_error (&error);
-   bookmark = user_data;
-
-   if (info) {
-       exists = TRUE;
-
-       g_object_unref (info);
-       g_clear_object (&bookmark->details->cancellable);
-   }
-
-   nemo_bookmark_set_exists (bookmark, exists);
-}
-
-static void
-nemo_bookmark_update_exists (NemoBookmark *bookmark)
-{
-   /* Convert to a path, returning FALSE if not local. */
-   if (!g_file_is_native (bookmark->details->location) &&
-       bookmark->details->exists_id == 0) {
-       bookmark->details->exists_id =
-           g_idle_add (exists_non_native_idle_cb, bookmark);
-       return;
-   }
-
-   if (bookmark->details->cancellable != NULL) {
-       return;
-   }
-
-   bookmark->details->cancellable = g_cancellable_new ();
-   g_file_query_info_async (bookmark->details->location,
-                G_FILE_ATTRIBUTE_STANDARD_TYPE,
-                0, G_PRIORITY_DEFAULT,
-                bookmark->details->cancellable,
-                exists_query_info_ready_cb, bookmark);
 }
 
 /* GObject methods */
@@ -456,7 +365,6 @@ nemo_bookmark_constructed (GObject *obj)
 	NemoBookmark *self = NEMO_BOOKMARK (obj);
 
 	nemo_bookmark_connect_file (self);
-    nemo_bookmark_update_exists (self);
 }
 
 static void
@@ -516,7 +424,6 @@ nemo_bookmark_init (NemoBookmark *bookmark)
 {
 	bookmark->details = G_TYPE_INSTANCE_GET_PRIVATE (bookmark, NEMO_TYPE_BOOKMARK,
 							 NemoBookmarkDetails);
-    bookmark->details->exists = TRUE;
 }
 
 const gchar *
@@ -741,6 +648,25 @@ nemo_bookmark_menu_item_new (NemoBookmark *bookmark)
 	return menu_item;
 }
 
+gboolean
+nemo_bookmark_uri_known_not_to_exist (NemoBookmark *bookmark)
+{
+	char *path_name;
+	gboolean exists;
+
+	/* Convert to a path, returning FALSE if not local. */
+	if (!g_file_is_native (bookmark->details->location)) {
+		return FALSE;
+	}
+	path_name = g_file_get_path (bookmark->details->location);
+
+	/* Now check if the file exists (sync. call OK because it is local). */
+	exists = g_file_test (path_name, G_FILE_TEST_EXISTS);
+	g_free (path_name);
+
+	return !exists;
+}
+
 void
 nemo_bookmark_set_scroll_pos (NemoBookmark      *bookmark,
 				  const char            *uri)
@@ -753,10 +679,4 @@ char *
 nemo_bookmark_get_scroll_pos (NemoBookmark      *bookmark)
 {
 	return g_strdup (bookmark->details->scroll_file);
-}
-
-gboolean
-nemo_bookmark_get_exists (NemoBookmark *bookmark)
-{
-   return bookmark->details->exists;
 }
