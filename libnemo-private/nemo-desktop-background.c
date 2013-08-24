@@ -36,7 +36,7 @@
 #include "nemo-global-preferences.h"
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libgnome-desktop/gnome-bg.h>
+#include <libcinnamon-desktop/gnome-bg.h>
 #include <gdesktop-enums.h>
 
 #include <gtk/gtk.h>
