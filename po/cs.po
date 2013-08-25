@@ -54,7 +54,7 @@ msgstr "Soubory"
 
 #: ../data/nautilus.desktop.in.in.h:2
 msgid "Access and organize files"
-msgstr "Přístup a organizace souborů"
+msgstr "Přístup k souborům a jejich správa"
 
 # Může zde být mezera?
 #: ../data/nautilus.desktop.in.in.h:3
