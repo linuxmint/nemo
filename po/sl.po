@@ -12,8 +12,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-08-16 16:39+0000\n"
-"PO-Revision-Date: 2013-08-19 22:27+0100\n"
-"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
+"PO-Revision-Date: 2013-08-23 08:45+0100\n"
+"Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
 "MIME-Version: 1.0\n"
@@ -1211,7 +1211,7 @@ msgstr "Napaka med premikanjem."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2505
 msgid "Error while moving files to trash."
-msgstr "Napaka medi premikanjem datotek v smeti."
+msgstr "Napaka med premikanjem datotek v smeti."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2559
 msgid ""
@@ -1357,7 +1357,7 @@ msgstr "Mape \"%B\" ni mogoče kopirati, ker ni ustreznih dovoljenj za branje."
 #: ../libnautilus-private/nautilus-file-operations.c:4352
 #: ../libnautilus-private/nautilus-file-operations.c:4967
 msgid "Error while moving “%B”."
-msgstr "Napaka medi premikanjem v “%B”."
+msgstr "Napaka med premikanjem v “%B”."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3660
 msgid "Could not remove the source folder."
@@ -2089,7 +2089,7 @@ msgid ""
 "file immediately and in-place, instead of moving it to the trash. This "
 "feature can be dangerous, so use caution."
 msgstr ""
-"Izbrana možnost omogoči, neposredno brisanje datoteke v Nautilusu namesto "
+"Izbrana možnost omogoči neposredno brisanje datoteke v Nautilusu namesto "
 "premika v smeti. Ta možnost je lahko nevarna, zato jo uporabljajte previdno."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:9
