@@ -120,7 +120,6 @@ nemo_action_init (NemoAction *action)
 static void
 nemo_action_class_init (NemoActionClass *klass)
 {
-	GtkActionClass *action_class = GTK_ACTION_CLASS (klass);
     GObjectClass         *object_class = G_OBJECT_CLASS(klass);
     parent_class           = g_type_class_peek_parent (klass);
     object_class->finalize = nemo_action_finalize;

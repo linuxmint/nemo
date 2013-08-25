@@ -157,11 +157,7 @@ nemo_status_bar_constructed (GObject *object)
     NemoStatusBar *bar = NEMO_STATUS_BAR (object);
     G_OBJECT_CLASS (nemo_status_bar_parent_class)->constructed (object);
 
-    GtkToolbar *toolbar;
-    GtkWidget *widget_box;
-    GtkToolItem *item;
     GtkWidget *statusbar = gtk_statusbar_new ();
-    GtkActionGroup *action_group;
     GtkStyleContext *context;
 
     bar->real_statusbar = statusbar;

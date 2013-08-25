@@ -1195,7 +1195,6 @@ static void
 action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
 {
     gchar *uri = NULL;
-    GtkTreeIter iter;
 
     FMTreeView *view = payload->view;
 

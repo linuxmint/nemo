@@ -997,12 +997,11 @@ nemo_icon_container_receive_dropped_icons (NemoIconContainer *container,
 					       GdkDragContext *context,
 					       int x, int y)
 {
-	char *drop_target, *container_uri;
+	char *drop_target;
 	gboolean local_move_only;
 	double world_x, world_y;
 	gboolean icon_hit;
 	GdkDragAction action, real_action;
-	NemoDragSelectionItem *selected_item;
 
 	drop_target = NULL;
 

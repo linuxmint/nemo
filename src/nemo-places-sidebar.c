@@ -582,7 +582,6 @@ get_disk_full (GFile *file, gchar **tooltip_info)
         guint64 k_used, k_total, k_free;
         gint df_percent;
         float fraction;
-        float free_val;
         int prefix;
         gchar *free_string;
 
@@ -654,7 +653,7 @@ update_places (NemoPlacesSidebar *sidebar)
 	GVolume *volume;
 	int bookmark_count, index;
 	char *location, *mount_uri, *name, *desktop_path, *last_uri, *identifier;
-	const gchar *path, *bookmark_name;
+	const gchar *bookmark_name;
 	GIcon *icon;
 	GFile *root;
 	NemoWindowSlot *slot;

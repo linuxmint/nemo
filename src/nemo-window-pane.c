@@ -1059,7 +1059,6 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 {
 	NemoWindowSlot *slot, *active_slot;
 	NemoNavigationState *nav_state;
-	gchar *view_id;
 	slot = pane->active_slot;
 
 	nemo_window_pane_hide_temporary_bars (pane);

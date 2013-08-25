@@ -67,7 +67,6 @@ G_DEFINE_TYPE (NemoToolbar, nemo_toolbar, GTK_TYPE_BOX);
 void
 nemo_toolbar_update_root_state (NemoToolbar *self)
 {
-    gboolean show = geteuid() == 0;
     if (geteuid() == 0) {
         if (self->priv->show_root_bar != TRUE) {
             self->priv->show_root_bar = TRUE;
@@ -80,7 +79,6 @@ nemo_toolbar_update_root_state (NemoToolbar *self)
 static void
 toolbar_update_appearance (NemoToolbar *self)
 {
-	GtkAction *action;
 	GtkWidget *widgetitem;
 	gboolean icon_toolbar;
 	gboolean show_location_entry;
@@ -156,10 +154,7 @@ nemo_toolbar_constructed (GObject *obj)
 	GtkToolItem *item;
 	GtkBox *hbox;
 	GtkToolbar *toolbar, *secondary_toolbar;
-	GtkWidget *search;
 	GtkStyleContext *context;
-
-	GtkWidget *sep_space;
 
 	G_OBJECT_CLASS (nemo_toolbar_parent_class)->constructed (obj);
 

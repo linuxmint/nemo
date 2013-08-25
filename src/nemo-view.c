@@ -2213,8 +2213,6 @@ sort_directories_first_changed_callback (gpointer callback_data)
 static void
 swap_delete_keybinding_changed_callback (gpointer callback_data)
 {
-    NemoView *view = NEMO_VIEW (callback_data);
-
     GtkBindingSet *binding_set = gtk_binding_set_find ("NemoView");
 
     gboolean swap_keys = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SWAP_TRASH_DELETE);
@@ -4877,22 +4875,15 @@ setup_bookmark_action(      char *action_name,
 static void
 reset_move_copy_to_menu (NemoView *view)
 {
-    GList *applications, *node;
     NemoBookmark *bookmark;
     NemoFile *file;
-    gboolean submenu_visible, filter_default;
     int num_applications;
     int bookmark_count, index;
-    gboolean other_applications_visible;
-    gboolean open_with_chooser_visible;
     GtkUIManager *ui_manager;
-    GtkAction *action;
-    GAppInfo *default_app;
     GFile *root;
     const gchar *bookmark_name;
     GIcon *icon;
     char *mount_uri;
-    GtkWidget *menuitem;
     num_applications = 0;
 
     char *paths[4];
@@ -5922,10 +5913,7 @@ update_actions (NemoView *view)
 static void
 update_actions_menu (NemoView *view)
 {
-    GList *node;
-    NemoDirectory *directory;
     GtkUIManager *ui_manager;
-    GtkAction *action;
 
     view->details->actions_invalid = FALSE;
 
@@ -7531,7 +7519,6 @@ nemo_view_init_show_hidden_files (NemoView *view)
 {
 	NemoWindowShowHiddenFilesMode mode;
 	gboolean show_hidden_changed;
-	gboolean show_hidden_default_setting;
 
 	if (view->details->ignore_hidden_file_preferences) {
 		return;
@@ -8923,7 +8910,6 @@ real_update_menus (NemoView *view)
 	GtkWidget *menuitem;
 	gboolean next_pane_is_writable;
 	gboolean show_properties;
-    gboolean show_set_as_wallpaper;
 
 	selection = nemo_view_get_selection (view);
 	selection_count = g_list_length (selection);
