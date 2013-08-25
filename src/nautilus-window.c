@@ -1111,6 +1111,8 @@ path_bar_path_event_callback (NautilusPathBar *path_bar,
 		}
 
 		return TRUE;
+	} else if (event->button == 2) {
+		return TRUE;
 	}
 
 	return FALSE;
