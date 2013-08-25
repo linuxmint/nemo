@@ -183,7 +183,8 @@ query_editor_changed_callback (NemoQueryEditor *editor,
 static void
 hide_query_editor (NemoWindowSlot *slot)
 {
-	gtk_widget_hide (GTK_WIDGET (slot->query_editor));
+	gtk_revealer_set_reveal_child (GTK_REVEALER (slot->query_editor_revealer),
+				       FALSE);
 
 	if (slot->qe_changed_id > 0) {
 		g_signal_handler_disconnect (slot->query_editor, slot->qe_changed_id);
@@ -231,7 +232,8 @@ show_query_editor (NemoWindowSlot *slot)
 
 	nemo_directory_unref (directory);
 
-	gtk_widget_show (GTK_WIDGET (slot->query_editor));
+	gtk_revealer_set_reveal_child (GTK_REVEALER (slot->query_editor_revealer),
+				       TRUE);
 	gtk_widget_grab_focus (GTK_WIDGET (slot->query_editor));
 
 	if (slot->qe_changed_id == 0) {
@@ -404,9 +406,11 @@ nemo_window_slot_constructed (GObject *object)
 	gtk_widget_show (extras_vbox);
 
 	slot->query_editor = NEMO_QUERY_EDITOR (nemo_query_editor_new ());
-	nemo_window_slot_add_extra_location_widget (slot, GTK_WIDGET (slot->query_editor));
-	g_object_add_weak_pointer (G_OBJECT (slot->query_editor),
-				   (gpointer *) &slot->query_editor);
+	slot->query_editor_revealer = gtk_revealer_new ();
+	gtk_container_add (GTK_CONTAINER (slot->query_editor_revealer),
+			   GTK_WIDGET (slot->query_editor));
+	gtk_widget_show_all (slot->query_editor_revealer);
+	nemo_window_slot_add_extra_location_widget (slot, slot->query_editor_revealer);
 
 	slot->details->view_overlay = gtk_overlay_new ();
 	gtk_widget_add_events (slot->details->view_overlay,
@@ -943,7 +947,7 @@ remove_all_extra_location_widgets (GtkWidget *widget,
 	NemoDirectory *directory;
 
 	directory = nemo_directory_get (slot->location);
-	if (widget != GTK_WIDGET (slot->query_editor)) {
+	if (widget != GTK_WIDGET (slot->query_editor_revealer)) {
 		gtk_container_remove (GTK_CONTAINER (slot->extra_location_widgets), widget);
 	}
 
