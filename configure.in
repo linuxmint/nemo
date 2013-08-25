@@ -317,6 +317,8 @@ AC_ARG_ENABLE(update-mimedb,
     enable_update_mimedb=yes)
 AM_CONDITIONAL(ENABLE_UPDATE_MIMEDB, test x$enable_update_mimedb = xyes)
 
+CFLAGS="$CFLAGS -Werror=unused-function"
+
 AC_CONFIG_FILES([
 Makefile
 cut-n-paste-code/Makefile

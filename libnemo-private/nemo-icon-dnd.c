@@ -992,44 +992,6 @@ nemo_icon_container_find_drop_target (NemoIconContainer *container,
 	return nemo_icon_container_get_icon_drop_target_uri (container, drop_target_icon);
 }
 
-static gboolean
-selection_is_image_file (GList *selection_list)
-{
-	const char *mime_type;
-	NemoDragSelectionItem *selected_item;
-	gboolean result;
-	GFile *location;
-	GFileInfo *info;
-
-	/* Make sure only one item is selected */
-	if (selection_list == NULL ||
-	    selection_list->next != NULL) {
-		return FALSE;
-	}
-
-	selected_item = selection_list->data;
-
-	mime_type = NULL;
-	
-	location = g_file_new_for_uri (selected_item->uri);
-	info = g_file_query_info (location,
-				  G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
-				  0, NULL, NULL);
-	if (info) {
-		mime_type = g_file_info_get_content_type (info);
-	}
-
-	result = eel_istr_has_prefix (mime_type, "image/");
-
-	if (info) {
-		g_object_unref (info);
-	}
-	g_object_unref (location);
-	
-	return result;
-}
-
-
 static void
 nemo_icon_container_receive_dropped_icons (NemoIconContainer *container,
 					       GdkDragContext *context,

@@ -1069,12 +1069,6 @@ nemo_action_get_conditions (NemoAction *action)
     return action->conditions;
 }
 
-static gboolean
-test_string_for_label_token (const gchar *string)
-{
-    return g_strstr_len (string, -1, TOKEN_LABEL_FILE_NAME) != NULL;
-}
-
 gchar *
 nemo_action_get_label (NemoAction *action, GList *selection, NemoFile *parent)
 {

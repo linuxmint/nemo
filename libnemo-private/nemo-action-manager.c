@@ -31,16 +31,6 @@ static void     nemo_action_manager_init       (NemoActionManager      *action_m
 
 static void     nemo_action_manager_class_init (NemoActionManagerClass *klass);
 
-static void     nemo_action_manager_get_property  (GObject                    *object,
-                                                   guint                       param_id,
-                                                   GValue                     *value,
-                                                   GParamSpec                 *pspec);
-
-static void     nemo_action_manager_set_property  (GObject                    *object,
-                                                   guint                       param_id,
-                                                   const GValue               *value,
-                                                   GParamSpec                 *pspec);
-
 static void     nemo_action_manager_constructed (GObject *object);
 
 static void     nemo_action_manager_finalize (GObject *gobject);

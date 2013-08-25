@@ -7956,14 +7956,6 @@ real_merge_menus (NemoView *view)
 }
 
 static gboolean
-is_image (NemoFileInfo *file)
-{
-    gboolean isImage;
-    isImage = g_str_has_prefix (nemo_file_info_get_mime_type (file), "image/");
-    return isImage;
-}
-
-static gboolean
 can_paste_into_file (NemoFile *file)
 {
 	if (nemo_file_is_directory (file) &&
