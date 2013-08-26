@@ -132,6 +132,7 @@ nautilus_desktop_window_new (GtkApplication *application,
 {
 	NautilusDesktopWindow *window;
 	int width_request, height_request;
+        GdkRGBA transparent = {0, 0, 0, 0};
 
 	width_request = gdk_screen_get_width (screen);
 	height_request = gdk_screen_get_height (screen);
@@ -151,6 +152,8 @@ nautilus_desktop_window_new (GtkApplication *application,
 	 * Note that nautilus_desktop_window_init is too early to do this.
 	 */
 	nautilus_desktop_window_update_directory (window);
+        gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
+
 
 	return window;
 }
