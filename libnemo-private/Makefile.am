@@ -83,8 +83,6 @@ libnemo_private_la_SOURCES = \
 	nemo-debug.h \
 	nemo-default-file-icon.c \
 	nemo-default-file-icon.h \
-	nemo-desktop-background.c \
-	nemo-desktop-background.h \
 	nemo-desktop-directory-file.c \
 	nemo-desktop-directory-file.h \
 	nemo-desktop-directory.c \
