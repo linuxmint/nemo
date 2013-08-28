@@ -49,6 +49,7 @@ enum {
 struct NemoTrashBarPrivate
 {
 	NemoView *view;
+	gulong selection_handler_id;
 };
 
 G_DEFINE_TYPE (NemoTrashBar, nemo_trash_bar, GTK_TYPE_INFO_BAR);
@@ -69,8 +70,9 @@ selection_changed_cb (NemoView *view,
 static void
 connect_view_and_update_button (NemoTrashBar *bar)
 {
-    g_signal_connect (bar->priv->view, "selection-changed",
-                      G_CALLBACK (selection_changed_cb), bar);
+	bar->priv->selection_handler_id =
+		g_signal_connect (bar->priv->view, "selection-changed",
+				  G_CALLBACK (selection_changed_cb), bar);
 
 	selection_changed_cb (bar->priv->view, bar);
 }
@@ -97,6 +99,20 @@ nemo_trash_bar_set_property (GObject      *object,
 }
 
 static void
+nemo_trash_bar_finalize (GObject *obj)
+{
+	NemoTrashBar *bar;
+
+	bar = NEMO_TRASH_BAR (obj);
+
+	if (bar->priv->selection_handler_id) {
+		g_signal_handler_disconnect (bar->priv->view, bar->priv->selection_handler_id);
+	}
+
+	G_OBJECT_CLASS (nemo_trash_bar_parent_class)->finalize (obj);
+}
+
+static void
 nemo_trash_bar_trash_state_changed (NemoTrashMonitor *trash_monitor,
 					gboolean              state,
 					gpointer              data)
@@ -118,6 +134,7 @@ nemo_trash_bar_class_init (NemoTrashBarClass *klass)
 	object_class = G_OBJECT_CLASS (klass);
 
 	object_class->set_property = nemo_trash_bar_set_property;
+	object_class->finalize = nemo_trash_bar_finalize;
 
 	g_object_class_install_property (object_class,
 					 PROP_VIEW,
