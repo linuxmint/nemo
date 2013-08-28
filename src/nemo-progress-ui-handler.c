@@ -71,8 +71,6 @@ G_DEFINE_TYPE (NemoProgressUIHandler, nemo_progress_ui_handler, G_TYPE_OBJECT);
 
 #define ACTION_DETAILS "details"
 
-static gboolean server_has_persistence (void);
-
 static void
 status_icon_activate_cb (GtkStatusIcon *icon,
 			 NemoProgressUIHandler *self)
@@ -124,45 +122,22 @@ progress_ui_handler_ensure_notification (NemoProgressUIHandler *self)
 static void
 progress_ui_handler_ensure_status_icon (NemoProgressUIHandler *self)
 {
-	GIcon *icon;
 	GtkStatusIcon *status_icon;
 
 	if (self->priv->status_icon != NULL) {
 		return;
 	}
 
-	icon = g_themed_icon_new_with_default_fallbacks ("system-run");
-	status_icon = gtk_status_icon_new_from_gicon (icon);
+    progress_ui_handler_ensure_notification (self);
+
+	status_icon = gtk_status_icon_new_from_stock (GTK_STOCK_COPY);
 	g_signal_connect (status_icon, "activate",
 			  (GCallback) status_icon_activate_cb,
 			  self);
 
 	gtk_status_icon_set_visible (status_icon, FALSE);
-	g_object_unref (icon);
 
 	self->priv->status_icon = status_icon;
-}
-
-static void
-progress_ui_handler_update_notification (NemoProgressUIHandler *self)
-{
-	gchar *body;
-
-	progress_ui_handler_ensure_notification (self);
-
-	body = g_strdup_printf (ngettext ("%'d file operation active",
-					  "%'d file operations active",
-					  self->priv->active_infos),
-				self->priv->active_infos);
-
-	notify_notification_update (self->priv->progress_notification,
-				    _("File Operations"),
-				    body,
-				    NULL);
-
-	notify_notification_show (self->priv->progress_notification, NULL);
-
-	g_free (body);
 }
 
 static void
@@ -187,15 +162,11 @@ progress_window_delete_event (GtkWidget *widget,
 			      GdkEvent *event,
 			      NemoProgressUIHandler *self)
 {
-	gtk_widget_hide (widget);
+    gtk_widget_hide (widget);
 
-	if (server_has_persistence ()) {
-		progress_ui_handler_update_notification (self);
-	} else {
-		progress_ui_handler_update_status_icon (self);
-	}
+    progress_ui_handler_update_status_icon (self);
 
-	return TRUE;
+    return TRUE;
 }
 
 static void
@@ -242,11 +213,7 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 static void
 progress_ui_handler_update_notification_or_status (NemoProgressUIHandler *self)
 {
-	if (server_has_persistence ()) {
-		progress_ui_handler_update_notification (self);
-	} else {
-		progress_ui_handler_update_status_icon (self);
-	}
+    progress_ui_handler_update_status_icon (self);
 }
 
 static void
@@ -269,11 +236,6 @@ static void
 progress_ui_handler_show_complete_notification (NemoProgressUIHandler *self)
 {
 	NotifyNotification *complete_notification;
-
-	/* don't display the notification if we'd be using a status icon */
-	if (!server_has_persistence ()) {
-		return;
-	}
 
 	complete_notification = notify_notification_new (_("File Operations"),
 							 _("All file operations have been successfully completed"),
@@ -459,31 +421,6 @@ nemo_progress_ui_handler_dispose (GObject *obj)
 	g_clear_object (&self->priv->manager);
 
 	G_OBJECT_CLASS (nemo_progress_ui_handler_parent_class)->dispose (obj);
-}
-
-static gboolean
-server_has_persistence (void)
-{
-        static gboolean retval = FALSE;
-        GList *caps, *l;
-        static gboolean initialized = FALSE;
-
-        if (initialized) {
-                return retval;
-        }
-        initialized = TRUE;
-
-        caps = notify_get_server_caps ();
-        if (caps == NULL) {
-                return FALSE;
-        }
-
-        l = g_list_find_custom (caps, "persistence", (GCompareFunc) g_strcmp0);
-        retval = (l != NULL);
-
-	g_list_free_full (caps, g_free);
-
-        return retval;
 }
 
 static void
