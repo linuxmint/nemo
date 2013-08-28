@@ -99,7 +99,7 @@ nemo_trash_bar_set_property (GObject      *object,
 }
 
 static void
-nemo_trash_bar_finalize (GObject *obj)
+nemo_trash_bar_dispose (GObject *obj)
 {
 	NemoTrashBar *bar;
 
@@ -109,7 +109,7 @@ nemo_trash_bar_finalize (GObject *obj)
 		g_signal_handler_disconnect (bar->priv->view, bar->priv->selection_handler_id);
 	}
 
-	G_OBJECT_CLASS (nemo_trash_bar_parent_class)->finalize (obj);
+	G_OBJECT_CLASS (nemo_trash_bar_parent_class)->dispose (obj);
 }
 
 static void
@@ -134,7 +134,7 @@ nemo_trash_bar_class_init (NemoTrashBarClass *klass)
 	object_class = G_OBJECT_CLASS (klass);
 
 	object_class->set_property = nemo_trash_bar_set_property;
-	object_class->finalize = nemo_trash_bar_finalize;
+	object_class->dispose = nemo_trash_bar_dispose;
 
 	g_object_class_install_property (object_class,
 					 PROP_VIEW,
