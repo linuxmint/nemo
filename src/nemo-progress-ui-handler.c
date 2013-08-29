@@ -73,7 +73,7 @@ progress_ui_handler_ensure_status_icon (NemoProgressUIHandler *self)
 		return;
 	}
 
-	status_icon = gtk_status_icon_new_from_stock (GTK_STOCK_COPY);
+	status_icon = gtk_status_icon_new_from_icon_name ("progress-0-symbolic");
 	g_signal_connect (status_icon, "activate",
 			  (GCallback) status_icon_activate_cb,
 			  self);
@@ -82,6 +82,24 @@ progress_ui_handler_ensure_status_icon (NemoProgressUIHandler *self)
 
 	self->priv->status_icon = status_icon;
 }
+
+static gchar *
+get_icon_name_from_percent (guint pct)
+{
+    gchar *icon_name;
+    guint rounded = 0;
+    gint ones = pct % 10;
+
+    if (ones < 5)
+        rounded = pct - ones;
+    else
+        rounded = pct + (10 - ones);
+
+    icon_name = g_strdup_printf ("progress-%d-symbolic", rounded);
+
+    return icon_name;
+}
+
 
 static void
 progress_ui_handler_update_status_icon (NemoProgressUIHandler *self)
@@ -94,6 +112,9 @@ progress_ui_handler_update_status_icon (NemoProgressUIHandler *self)
 					     self->priv->active_infos),
 				   self->priv->active_infos, self->priv->active_percent);
 	gtk_status_icon_set_tooltip_text (self->priv->status_icon, tooltip);
+    gchar *name = get_icon_name_from_percent (self->priv->active_percent);
+    gtk_status_icon_set_from_icon_name (self->priv->status_icon, name);
+    g_free (name);
 	g_free (tooltip);
 
 	gtk_status_icon_set_visible (self->priv->status_icon, self->priv->should_show_status_icon);
@@ -257,11 +278,8 @@ handle_new_progress_info (NemoProgressUIHandler *self,
 		gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), nemo_progress_info_get_details(info));
 		gtk_window_set_icon_name (GTK_WINDOW (self->priv->progress_window), "system-run");			     
 	} else {
-		if (gtk_widget_get_visible (self->priv->progress_window)) {
-			progress_ui_handler_add_to_window (self, info);
-		} else {
-			progress_ui_handler_update_status_icon (self);
-		}
+		progress_ui_handler_add_to_window (self, info);
+		progress_ui_handler_update_status_icon (self);
 	}
 }
 

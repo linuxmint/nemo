@@ -17,6 +17,17 @@ public_icons = \
 	hicolor_actions_scalable_sidebar-show-symbolic.svg \
 	hicolor_actions_scalable_sidebar-tree-symbolic.svg \
 	hicolor_actions_scalable_sidebar-places-symbolic.svg \
+	hicolor_status_scalable_progress-0-symbolic.svg \
+	hicolor_status_scalable_progress-10-symbolic.svg \
+	hicolor_status_scalable_progress-20-symbolic.svg \
+	hicolor_status_scalable_progress-30-symbolic.svg \
+	hicolor_status_scalable_progress-40-symbolic.svg \
+	hicolor_status_scalable_progress-50-symbolic.svg \
+	hicolor_status_scalable_progress-60-symbolic.svg \
+	hicolor_status_scalable_progress-70-symbolic.svg \
+	hicolor_status_scalable_progress-80-symbolic.svg \
+	hicolor_status_scalable_progress-90-symbolic.svg \
+	hicolor_status_scalable_progress-100-symbolic.svg \
 	$(NULL)
 
 private_icons = \
