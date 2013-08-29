@@ -525,6 +525,8 @@ nautilus_toolbar_constructed (GObject *obj)
 	button = gtk_button_new_from_icon_name ("window-close-symbolic",
 						GTK_ICON_SIZE_MENU);
 	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
+	gtk_style_context_add_class (gtk_widget_get_style_context (button),
+				     "titlebutton");
 	g_signal_connect (button, "clicked",
 			  G_CALLBACK (close_button_clicked), self);
 	gtk_container_add (GTK_CONTAINER (toolbar), button);
