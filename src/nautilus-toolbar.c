@@ -442,9 +442,9 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_box_pack_start (GTK_BOX (toolbar), box, FALSE, FALSE, 0);
 
 	if (rtl) {
-		gtk_widget_set_margin_left (box, 12);
+		gtk_widget_set_margin_left (box, 6);
 	} else {
-		gtk_widget_set_margin_right (box, 12);
+		gtk_widget_set_margin_right (box, 6);
 	}
 
 	/* regular path bar */
@@ -491,9 +491,9 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	gtk_container_add (GTK_CONTAINER (toolbar), box);
 	if (rtl) {
-		gtk_widget_set_margin_right (box, 12);
+		gtk_widget_set_margin_right (box, 6);
 	} else {
-		gtk_widget_set_margin_left (box, 12);
+		gtk_widget_set_margin_left (box, 6);
 	}
 
 	/* Action Menu */
@@ -507,9 +507,9 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	gtk_container_add (GTK_CONTAINER (toolbar), button);
 	if (rtl) {
-		gtk_widget_set_margin_right (button, 12);
+		gtk_widget_set_margin_right (button, 6);
 	} else {
-		gtk_widget_set_margin_left (button, 12);
+		gtk_widget_set_margin_left (button, 6);
 	}
 
 	/* Separator and Close */
@@ -517,9 +517,9 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_container_add (GTK_CONTAINER (toolbar), separator);
 
 	if (rtl) {
-		gtk_widget_set_margin_right (separator, 8);
+		gtk_widget_set_margin_right (separator, 6);
 	} else {
-		gtk_widget_set_margin_left (separator, 8);
+		gtk_widget_set_margin_left (separator, 6);
 	}
 
 	button = gtk_button_new_from_icon_name ("window-close-symbolic",
