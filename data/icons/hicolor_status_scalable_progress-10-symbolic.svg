@@ -31,9 +31,9 @@
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="995"
+     inkscape:window-height="1030"
      inkscape:window-x="0"
-     inkscape:window-y="30"
+     inkscape:window-y="25"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -55,9 +55,9 @@
      style="opacity:1">
     <path
        style="fill:#bebebe;fill-opacity:1;stroke:none"
-       d="M 24.4375 1 C 24.446378 1.4135491 24.440186 1.7647797 24.4375 4.84375 L 24.4375 9.65625 C 27.509735 9.7491088 30.327072 10.805794 32.625 12.53125 C 32.617276 12.482059 32.837913 12.16769 35.34375 8.71875 C 36.61746 6.9654694 37.363647 5.9724799 37.6875 5.53125 C 33.968686 2.7672306 29.400515 1.0925813 24.4375 1 z "
-       transform="translate(0,1004.3622)"
-       id="path2993" />
+       d="m 24.382812,1008.2372 c 0.0078,0.3618 0.0024,0.6692 0,3.3633 l 0,4.211 c 2.688206,0.081 5.153376,1.0058 7.164063,2.5156 -0.0067,-0.043 0.186299,-0.3182 2.378906,-3.336 1.114497,-1.5341 1.76741,-2.403 2.050781,-2.789 -3.253962,-2.4186 -7.251111,-3.8839 -11.59375,-3.9649 z"
+       id="path2993"
+       inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -63.134534,996.41356 0,-11.0888"
@@ -65,7 +65,7 @@
        inkscape:connector-curvature="0" />
     <g
        id="layer10"
-       transform="matrix(1.2857143,0,0,1.2857143,-220.28572,442.28756)">
+       transform="matrix(1.125,0,0,1.125,-189.75,515.54691)">
       <path
          inkscape:connector-curvature="0"
          id="rect42761"
