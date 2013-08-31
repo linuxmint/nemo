@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: nautilus.master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-08-30 12:26-0600\n"
-"PO-Revision-Date: 2013-08-30 12:53-0600\n"
+"PO-Revision-Date: 2013-08-30 21:09-0600\n"
 "Last-Translator: Seán de Búrca <leftmostcat@gmail.com>\n"
 "Language-Team: Irish <gaeilge-gnulinux@lists.sourceforge.net>\n"
 "Language: ga\n"
@@ -2089,7 +2089,7 @@ msgstr ""
 
 #: ../libnautilus-private/nautilus-program-choosing.c:392
 msgid "Details: "
-msgstr "Sonraí:"
+msgstr "Mionsonraí:"
 
 #: ../libnautilus-private/nautilus-progress-info.c:192
 #: ../libnautilus-private/nautilus-progress-info.c:210
