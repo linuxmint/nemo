@@ -2101,7 +2101,7 @@ msgstr ""
 "Reducció de velocitat per a quan es mostri un fitxer com a miniatura. Si "
 "s'estableix a «always» (sempre), sempre es miniaturitzarà, encara que el "
 "fitxer sigui a un servidor remot. Si s'estableix a «local-only» (només "
-"local) aleshores només es mostraran miniatures dels fitxes que estiguin en "
+"local) aleshores només es mostraran miniatures dels fitxers que estiguin en "
 "sistemes de fitxers locals. Si s'estableix a «never» (mai), no es fan "
 "miniatures i s'utilitzarà una icona genèrica. Tot i el que pot suggerir el "
 "nom, això s'aplica a qualsevol tipus de fitxer que es pugui previsualitzar."
@@ -2315,7 +2315,7 @@ msgid ""
 "Whether a tree should be used for list view navigation instead of a flat list"
 msgstr ""
 "Indica si s'hauria d'utilitzar un arbre per a la navegació de la vista de "
-"llista enlloc d'una llista plana"
+"llista en lloc d'una llista plana"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
 msgid "Desktop font"
@@ -4430,7 +4430,7 @@ msgstr[1] "Utilitza «%s» per obrir els elements seleccionats"
 #: ../src/nautilus-view.c:5084
 #, c-format
 msgid "Run “%s” on any selected items"
-msgstr "Executa «%s» a tots els elements seleccionat"
+msgstr "Executa «%s» a tots els elements seleccionats"
 
 #: ../src/nautilus-view.c:5338
 #, c-format
@@ -4479,7 +4479,7 @@ msgstr "Obre am_b"
 
 #: ../src/nautilus-view.c:7100
 msgid "Choose a program with which to open the selected item"
-msgstr "Trieu un programa amb el que s'obrirà l'element seleccionat"
+msgstr "Trieu un programa amb el qual s'obrirà l'element seleccionat"
 
 #. name, stock id
 #. label, accelerator
