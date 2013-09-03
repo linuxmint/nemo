@@ -1,3 +1,13 @@
+Major changes in 3.9.91:
+* Use a GtkRevealer for the search bar
+* Don't present redundant options for operations on single
+  files (William Kunkel)
+* Fix desktop window for newer GTK+ client side decorations
+  (Christian Hergert, Matthias Clasen)
+* Fix double menu when right clicking on the pathbar (Stefano Facchini)
+* Fix headerbar appearance with latest GTK+ (Yosef or Boczko)
+* Fix copy/cut/paste accels not working correctly
+
 Major changes in 3.9.90:
 * Fix support for HiDpi displays
 * Replace control characters when fixing filenames for FAT
