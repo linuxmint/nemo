@@ -1395,13 +1395,13 @@ nautilus_canvas_dnd_begin_drag (NautilusCanvasContainer *container,
 		gtk_adjustment_get_value (gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (container)));	
 
 	/* start the drag */
-	gtk_drag_begin_full (GTK_WIDGET (container),
-			     dnd_info->drag_info.target_list,
-			     actions,
-			     button,
-			     (GdkEvent *) event,
-			     dnd_info->drag_info.start_x,
-			     dnd_info->drag_info.start_y);
+	gtk_drag_begin_with_coordinates (GTK_WIDGET (container),
+					 dnd_info->drag_info.target_list,
+					 actions,
+					 button,
+					 (GdkEvent *) event,
+					 dnd_info->drag_info.start_x,
+					 dnd_info->drag_info.start_y);
 }
 
 static gboolean
