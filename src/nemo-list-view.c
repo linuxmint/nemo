@@ -149,10 +149,20 @@ static void   apply_columns_settings                             (NemoListView *
                                                                   char **column_order,
                                                                   char **visible_columns);
 static char **get_visible_columns                                (NemoListView *list_view);
+static char **get_default_visible_columns                        (NemoListView *list_view);
 static char **get_column_order                                   (NemoListView *list_view);
+static char **get_default_column_order                           (NemoListView *list_view);
 
 
 G_DEFINE_TYPE (NemoListView, nemo_list_view, NEMO_TYPE_VIEW);
+
+static const char * default_search_visible_columns[] = {
+   "name", "size", "type", "where", NULL
+};
+
+static const char * default_search_columns_order[] = {
+   "name", "size", "type", "where", NULL
+};
 
 static const char * default_trash_visible_columns[] = {
 	"name", "size", "type", "trashed_on", "trash_orig_path", NULL
@@ -1472,15 +1482,9 @@ column_header_menu_use_default (GtkMenuItem *menu_item,
 	nemo_file_set_metadata_list (file, NEMO_METADATA_KEY_LIST_VIEW_COLUMN_ORDER, NULL);
 	nemo_file_set_metadata_list (file, NEMO_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS, NULL);
 
-    default_columns = nemo_file_is_in_trash (file) ?
-        g_strdupv ((gchar **) default_trash_visible_columns) :
-        g_settings_get_strv (nemo_list_view_preferences,
-                     NEMO_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS);
+    default_columns = get_default_visible_columns (list_view);
 
-    default_order = nemo_file_is_in_trash (file) ?
-        g_strdupv ((gchar **) default_trash_columns_order) :
-        g_settings_get_strv (nemo_list_view_preferences,
-                     NEMO_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER);
+    default_order = get_default_column_order (list_view);
 
 	/* set view values ourselves, as new metadata could not have been
 	 * updated yet.
@@ -1942,6 +1946,27 @@ nemo_list_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *director
 }
 
 static char **
+get_default_visible_columns (NemoListView *list_view)
+{
+    NemoFile *file;
+    NemoDirectory *directory;
+
+    file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
+
+    if (nemo_file_is_in_trash (file)) {
+        return g_strdupv ((gchar **) default_trash_visible_columns);
+    }
+
+    directory = nemo_view_get_model (NEMO_VIEW (list_view));
+    if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
+        return g_strdupv ((gchar **) default_search_visible_columns);
+    }
+
+    return g_settings_get_strv (nemo_list_view_preferences,
+                                NEMO_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS);
+}
+
+static char **
 get_visible_columns (NemoListView *list_view)
 {
 	NemoFile *file;
@@ -1974,10 +1999,28 @@ get_visible_columns (NemoListView *list_view)
 		return ret;
 	}
 
-	return nemo_file_is_in_trash (file) ?
-		g_strdupv ((gchar **) default_trash_visible_columns) :
-		g_settings_get_strv (nemo_list_view_preferences,
-				     NEMO_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS);
+	return get_default_visible_columns (list_view);
+}
+
+static char **
+get_default_column_order (NemoListView *list_view)
+{
+    NemoFile *file;
+    NemoDirectory *directory;
+
+    file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
+
+    if (nemo_file_is_in_trash (file)) {
+        return g_strdupv ((gchar **) default_trash_columns_order);
+    }
+
+    directory = nemo_view_get_model (NEMO_VIEW (list_view));
+    if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
+        return g_strdupv ((gchar **) default_search_columns_order);
+    }
+
+    return g_settings_get_strv (nemo_list_view_preferences,
+                                NEMO_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER);
 }
 
 static char **
@@ -2013,10 +2056,7 @@ get_column_order (NemoListView *list_view)
 		return ret;
 	}
 
-	return nemo_file_is_in_trash (file) ?
-		g_strdupv ((gchar **) default_trash_columns_order) :
-		g_settings_get_strv (nemo_list_view_preferences,
-				     NEMO_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER);
+	return get_default_column_order (list_view);
 }
 
 static void
@@ -2710,15 +2750,9 @@ column_chooser_use_default_callback (NemoColumnChooser *chooser,
 	/* set view values ourselves, as new metadata could not have been
 	 * updated yet.
 	 */
-	default_columns = nemo_file_is_in_trash (file) ?
-		g_strdupv ((gchar **) default_trash_visible_columns) :
-		g_settings_get_strv (nemo_list_view_preferences,
-				     NEMO_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS);
+	default_columns = get_default_visible_columns (view);
 
-	default_order = nemo_file_is_in_trash (file) ?
-		g_strdupv ((gchar **) default_trash_columns_order) :
-		g_settings_get_strv (nemo_list_view_preferences,
-				     NEMO_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER);
+	default_order = get_default_column_order (view);
 
 	apply_columns_settings (view, default_order, default_columns);
 	column_chooser_set_from_arrays (chooser, view,
