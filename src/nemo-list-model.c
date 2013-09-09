@@ -290,7 +290,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 
 		if (file != NULL) {
 			zoom_level = nemo_list_model_get_zoom_level_from_column_id (column);
-			icon_size = nemo_get_icon_size_for_zoom_level (zoom_level);
+			icon_size = nemo_get_list_icon_size_for_zoom_level (zoom_level);
 
 			flags = NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
 				NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE |
