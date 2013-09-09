@@ -57,7 +57,6 @@
 #include <libnemo-private/nemo-module.h>
 #include <libnemo-private/nemo-tree-view-drag-dest.h>
 #include <libnemo-private/nemo-clipboard.h>
-#include <libnemo-private/nemo-cell-renderer-text-ellipsized.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_LIST_VIEW
 #include <libnemo-private/nemo-debug.h>
@@ -1669,15 +1668,18 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_sort_column_id (view->details->file_name_column, column_num);
 			gtk_tree_view_column_set_title (view->details->file_name_column, _("Name"));
 			gtk_tree_view_column_set_resizable (view->details->file_name_column, TRUE);
-			
+
+            gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
+
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
 			gtk_tree_view_column_set_attributes (view->details->file_name_column,
 							     cell,
 							     "pixbuf", NEMO_LIST_MODEL_SMALLEST_ICON_COLUMN,
 							     NULL);
 			
-			cell = nemo_cell_renderer_text_ellipsized_new ();
+			cell = gtk_cell_renderer_text_new ();
 			view->details->file_name_cell = (GtkCellRendererText *)cell;
+            g_object_set (cell, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 			g_signal_connect (cell, "edited", G_CALLBACK (cell_renderer_edited), view);
 			g_signal_connect (cell, "editing-canceled", G_CALLBACK (cell_renderer_editing_canceled), view);
 			g_signal_connect (cell, "editing-started", G_CALLBACK (cell_renderer_editing_started_cb), view);

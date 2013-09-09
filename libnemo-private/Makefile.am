@@ -67,8 +67,6 @@ libnemo_private_la_SOURCES = \
 	nemo-bookmark.h \
     nemo-cell-renderer-disk.c \
     nemo-cell-renderer-disk.h \
-	nemo-cell-renderer-text-ellipsized.c \
-	nemo-cell-renderer-text-ellipsized.h \
 	nemo-clipboard-monitor.c \
 	nemo-clipboard-monitor.h \
 	nemo-clipboard.c \
