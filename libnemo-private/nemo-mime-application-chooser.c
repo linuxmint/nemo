@@ -52,6 +52,7 @@ struct _NemoMimeApplicationChooserDetails {
 	GtkWidget *add_button;
     GtkWidget *custom_picker;
     GAppInfo *custom_info;
+    GtkWidget *custom_entry;
 };
 
 enum {
@@ -246,12 +247,12 @@ application_selected_cb (GtkAppChooserWidget *widget,
 }
 
 static void
-custom_app_set_cb (GtkFileChooserButton *button,
-                   gpointer user_data)
+custom_entry_changed_cb (GtkEditable *entry, gpointer user_data)
 {
     NemoMimeApplicationChooser *chooser = user_data;
+
     GAppInfo *default_app;
-    gchar *cl = g_strdup_printf ("%s %%f", gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (button)));
+    gchar *cl = g_strdup_printf ("%s %%f", gtk_entry_get_text (GTK_ENTRY (entry)));
     GAppInfo *info = g_app_info_create_from_commandline (cl, NULL, G_APP_INFO_CREATE_NONE, NULL);
 
     default_app = g_app_info_get_default_for_type (chooser->details->content_type, FALSE);
@@ -263,7 +264,23 @@ custom_app_set_cb (GtkFileChooserButton *button,
 
     g_object_unref (default_app);
 
+    if (chooser->details->custom_info != NULL) {
+        g_object_unref (chooser->details->custom_info);
+        chooser->details->custom_info = NULL;
+    }
+
     chooser->details->custom_info = info;
+}
+
+static void
+custom_app_set_cb (GtkFileChooserButton *button,
+                   gpointer user_data)
+{
+    NemoMimeApplicationChooser *chooser = user_data;
+
+    gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry),
+                        gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (button)));
+
 }
 
 static char *
@@ -393,12 +410,27 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
     gtk_box_pack_start (GTK_BOX (chooser), custom_label, FALSE, FALSE, 0);
     gtk_widget_show (GTK_WIDGET (custom_label));
 
+    GtkWidget *custom_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start (GTK_BOX (chooser), custom_box, TRUE, TRUE, 0);
+
+    GtkWidget *entry = gtk_entry_new ();
+    gtk_box_pack_start (GTK_BOX (custom_box), entry, TRUE, TRUE, 0);
+    gtk_entry_set_placeholder_text (GTK_ENTRY (entry), _("Enter a custom command..."));
+
+    g_signal_connect (entry, "changed",
+                      G_CALLBACK (custom_entry_changed_cb),
+                      chooser);
+
+    chooser->details->custom_entry = entry;
+
     button = gtk_file_chooser_button_new (_("Custom application"), GTK_FILE_CHOOSER_ACTION_OPEN);
     g_signal_connect (button, "file-set",
                       G_CALLBACK (custom_app_set_cb),
                       chooser);
     gtk_widget_show (button);
-    gtk_box_pack_start (GTK_BOX (chooser), button, FALSE, FALSE, 6);
+    gtk_box_pack_start (GTK_BOX (custom_box), button, TRUE, TRUE, 6);
+
+    gtk_widget_show_all (custom_box);
 
     chooser->details->custom_picker = button;
 
