@@ -536,3 +536,15 @@ nemo_mime_application_chooser_new (const char *uri,
 
 	return chooser;
 }
+
+GAppInfo *
+nemo_mime_application_chooser_get_info (NemoMimeApplicationChooser *chooser)
+{
+    return gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (chooser->details->open_with_widget));
+}
+
+const gchar *
+nemo_mime_application_chooser_get_uri (NemoMimeApplicationChooser *chooser)
+{
+    return chooser->details->uri;
+}

@@ -84,6 +84,7 @@
 #include <libnemo-private/nemo-file-undo-manager.h>
 #include <libnemo-private/nemo-action.h>
 #include <libnemo-private/nemo-action-manager.h>
+#include <libnemo-private/nemo-mime-application-chooser.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_DIRECTORY_VIEW
 #include <libnemo-private/nemo-debug.h>
@@ -1243,8 +1244,15 @@ app_chooser_dialog_response_cb (GtkDialog *dialog,
 		return;
 	}
 
-	info = gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (dialog));
-	file = g_object_get_data (G_OBJECT (dialog), "directory-view:file");
+    GtkWidget *content = gtk_dialog_get_content_area (dialog);
+    GList *children = gtk_container_get_children (GTK_CONTAINER (content));
+
+    NemoMimeApplicationChooser *chooser = children->data;
+
+    g_list_free (children);
+
+	info = nemo_mime_application_chooser_get_info (chooser);
+	file = nemo_file_get_by_uri (nemo_mime_application_chooser_get_uri (chooser));
 
 	g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 
@@ -1262,30 +1270,38 @@ choose_program (NemoView *view,
 		NemoFile *file)
 {
 	GtkWidget *dialog;
-	GFile *location;
-	GtkWindow *parent_window;
+
+    char *mime_type;
+    char *uri = NULL;
+    GList *uris = NULL;
 
 	g_assert (NEMO_IS_VIEW (view));
 	g_assert (NEMO_IS_FILE (file));
 
-	nemo_file_ref (file);
-	location = nemo_file_get_location (file);
-	parent_window = nemo_view_get_containing_window (view);
+    mime_type = nemo_file_get_mime_type (file);
+    uri = nemo_file_get_uri (file);
 
-	dialog = gtk_app_chooser_dialog_new (parent_window, 0,
-					     location);
-	g_object_set_data_full (G_OBJECT (dialog), 
-				"directory-view:file",
-				g_object_ref (file),
-				(GDestroyNotify)g_object_unref);
-	gtk_widget_show (dialog);
+    dialog = gtk_dialog_new_with_buttons (_("Open with"),
+                          nemo_view_get_containing_window (view),
+                          GTK_DIALOG_DESTROY_WITH_PARENT,
+                          GTK_STOCK_CANCEL,
+                          GTK_RESPONSE_CANCEL,
+                          GTK_STOCK_OK,
+                          GTK_RESPONSE_OK,
+                          NULL);
+
+
+    GtkWidget *chooser = nemo_mime_application_chooser_new (uri, uris, mime_type);
+
+    GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+
+    gtk_box_pack_start (GTK_BOX (content), chooser, FALSE, FALSE, 0);
+
+    gtk_widget_show_all (dialog);
 
 	g_signal_connect_object (dialog, "response", 
 				 G_CALLBACK (app_chooser_dialog_response_cb),
-				 parent_window, 0);
-
-	g_object_unref (location);
-	nemo_file_unref (file);	
+				 nemo_view_get_containing_window (view), 0);
 }
 
 static void
