@@ -1295,7 +1295,7 @@ choose_program (NemoView *view,
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
-    gtk_box_pack_start (GTK_BOX (content), chooser, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (content), chooser, TRUE, TRUE, 0);
 
     gtk_widget_show_all (dialog);
 
