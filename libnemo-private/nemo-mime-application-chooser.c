@@ -401,8 +401,8 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
     gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
                           TRUE);
 
-    GtkWidget *custom_label = gtk_label_new (_("Or select a custom executable file to use to open this file type.  "
-                                               "You can use this executable just once, or set it as default for all files of this type."));
+    GtkWidget *custom_label = gtk_label_new (_("You can also type or select a custom executable file to use to open this file type.  "
+                                               "You can use this command just once, or set it as default for all files of this type."));
     gtk_misc_set_alignment (GTK_MISC (custom_label), 0.0, 0.5);
     gtk_label_set_line_wrap (GTK_LABEL (custom_label), TRUE);
     gtk_label_set_line_wrap_mode (GTK_LABEL (custom_label),
