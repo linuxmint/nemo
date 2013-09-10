@@ -413,7 +413,7 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
     gtk_file_filter_set_name (filter, _("Executables"));
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (button), filter);
 
-	button = gtk_button_new_with_label (_("Add to menu"));
+	button = gtk_button_new_with_label (_("Add to list"));
 	g_signal_connect (button, "clicked", 
 			  G_CALLBACK (add_clicked_cb),
 			  chooser);
@@ -421,7 +421,7 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 	gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
 	chooser->details->add_button = button;
 
-	button = gtk_button_new_with_label (_("Set as new default"));
+	button = gtk_button_new_with_label (_("Set as default"));
 	g_signal_connect (button, "clicked",
 			  G_CALLBACK (set_as_default_clicked_cb),
 			  chooser);
