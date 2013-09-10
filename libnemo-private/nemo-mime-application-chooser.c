@@ -50,6 +50,8 @@ struct _NemoMimeApplicationChooserDetails {
 	GtkWidget *set_as_default_button;
 	GtkWidget *open_with_widget;
 	GtkWidget *add_button;
+    GtkWidget *custom_picker;
+    GAppInfo *custom_info;
 };
 
 enum {
@@ -72,7 +74,10 @@ add_clicked_cb (GtkButton *button,
 	gchar *message;
 	GError *error = NULL;
 
-	info = gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (chooser->details->open_with_widget));
+    if (!chooser->details->custom_info)
+        info = gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (chooser->details->open_with_widget));
+    else
+        info = chooser->details->custom_info;
 
 	if (info == NULL)
 		return;
@@ -166,9 +171,12 @@ set_as_default_clicked_cb (GtkButton *button,
 	GError *error = NULL;
 	gchar *message = NULL;
 
-	info = gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (chooser->details->open_with_widget));
+    if (!chooser->details->custom_info)
+        info = gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (chooser->details->open_with_widget));
+    else
+        info = chooser->details->custom_info;
 
-	g_app_info_set_as_default_for_type (info, chooser->details->content_type,
+    g_app_info_set_as_default_for_type (info, chooser->details->content_type,
 					    &error);
 
 	if (error != NULL) {
@@ -235,6 +243,27 @@ application_selected_cb (GtkAppChooserWidget *widget,
 				  app_info_can_add (info, chooser->details->content_type));
 
 	g_object_unref (default_app);
+}
+
+static void
+custom_app_set_cb (GtkFileChooserButton *button,
+                   gpointer user_data)
+{
+    NemoMimeApplicationChooser *chooser = user_data;
+    GAppInfo *default_app;
+    gchar *cl = g_strdup_printf ("%s %%f", gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (button)));
+    GAppInfo *info = g_app_info_create_from_commandline (cl, NULL, G_APP_INFO_CREATE_NONE, NULL);
+
+    default_app = g_app_info_get_default_for_type (chooser->details->content_type, FALSE);
+    gtk_widget_set_sensitive (chooser->details->set_as_default_button,
+                  !g_app_info_equal (info, default_app));
+
+    gtk_widget_set_sensitive (chooser->details->add_button,
+                  app_info_can_add (info, chooser->details->content_type));
+
+    g_object_unref (default_app);
+
+    chooser->details->custom_info = info;
 }
 
 static char *
@@ -317,17 +346,6 @@ nemo_mime_application_chooser_apply_labels (NemoMimeApplicationChooser *chooser)
 }
 
 static void
-show_more_clicked_cb (GtkWidget *button,
-		      gpointer user_data)
-{
-	NemoMimeApplicationChooser *chooser = user_data;
-
-	gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
-					       TRUE);
-	gtk_widget_hide (button);
-}
-
-static void
 nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 {
 	GtkWidget *box, *button;
@@ -363,12 +381,8 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 			  G_CALLBACK (populate_popup_cb),
 			  chooser);
 
-	button = gtk_button_new_with_label (_("Show other applications"));
-	gtk_box_pack_start (GTK_BOX (chooser->details->open_with_widget), button, FALSE, FALSE, 6);
-	gtk_widget_show_all (button);
-
-	g_signal_connect (button, "clicked",
-			  G_CALLBACK (show_more_clicked_cb), chooser);
+    gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
+                          TRUE);
 
 	box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_set_spacing (GTK_BOX (box), 6);
@@ -383,6 +397,19 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 	gtk_widget_show (button);
 	gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
 	gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (box), button, TRUE);
+
+    button = gtk_file_chooser_button_new (_("Custom application"), GTK_FILE_CHOOSER_ACTION_OPEN);
+    g_signal_connect (button, "file-set",
+                      G_CALLBACK (custom_app_set_cb),
+                      chooser);
+    gtk_widget_show (button);
+    gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
+    chooser->details->custom_picker = button;
+
+    GtkFileFilter *filter = gtk_file_filter_new ();
+    gtk_file_filter_add_mime_type (filter, "application/*");
+    gtk_file_filter_set_name (filter, _("Executables"));
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (button), filter);
 
 	button = gtk_button_new_from_stock (GTK_STOCK_ADD);
 	g_signal_connect (button, "clicked", 
@@ -418,6 +445,8 @@ nemo_mime_application_chooser_init (NemoMimeApplicationChooser *chooser)
 
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (chooser),
 					GTK_ORIENTATION_VERTICAL);
+
+    chooser->details->custom_info = NULL;
 }
 
 static void
@@ -441,6 +470,8 @@ nemo_mime_application_chooser_finalize (GObject *object)
 
 	g_free (chooser->details->uri);
 	g_free (chooser->details->content_type);
+    if (chooser->details->custom_info != NULL)
+        g_object_unref (chooser->details->custom_info);
 
 	G_OBJECT_CLASS (nemo_mime_application_chooser_parent_class)->finalize (object);
 }
