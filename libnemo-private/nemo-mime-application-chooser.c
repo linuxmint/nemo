@@ -330,7 +330,7 @@ nemo_mime_application_chooser_apply_labels (NemoMimeApplicationChooser *chooser)
 
 		/* first %s is filename, second %s is mime-type description */
 		emname = g_strdup_printf ("<i>%s</i>", basename);
-		label = g_strdup_printf (_("Select an application to open %s and other files of type \"%s\""),
+		label = g_strdup_printf (_("Select an application in the list to open %s and other files of type \"%s\""),
 					 emname, description);
 
 		g_free (emname);
@@ -384,34 +384,36 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
     gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
                           TRUE);
 
-	box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
-	gtk_box_set_spacing (GTK_BOX (box), 6);
-	gtk_button_box_set_layout (GTK_BUTTON_BOX (box), GTK_BUTTONBOX_END);
-	gtk_box_pack_start (GTK_BOX (chooser), box, FALSE, FALSE, 6);
-	gtk_widget_show (box);
-
-	button = gtk_button_new_with_label (_("Reset"));
-	g_signal_connect (button, "clicked", 
-			  G_CALLBACK (reset_clicked_cb),
-			  chooser);
-	gtk_widget_show (button);
-	gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
-	gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (box), button, TRUE);
+    GtkWidget *custom_label = gtk_label_new (_("Or select a custom executable file to use to open this file type.  "
+                                               "You can use this executable just once, or set it as default for all files of this type."));
+    gtk_misc_set_alignment (GTK_MISC (custom_label), 0.0, 0.5);
+    gtk_label_set_line_wrap (GTK_LABEL (custom_label), TRUE);
+    gtk_label_set_line_wrap_mode (GTK_LABEL (custom_label),
+                                  PANGO_WRAP_WORD_CHAR);
+    gtk_box_pack_start (GTK_BOX (chooser), custom_label, FALSE, FALSE, 0);
+    gtk_widget_show (GTK_WIDGET (custom_label));
 
     button = gtk_file_chooser_button_new (_("Custom application"), GTK_FILE_CHOOSER_ACTION_OPEN);
     g_signal_connect (button, "file-set",
                       G_CALLBACK (custom_app_set_cb),
                       chooser);
     gtk_widget_show (button);
-    gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (chooser), button, TRUE, TRUE, 6);
+
     chooser->details->custom_picker = button;
+
+	box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
+	gtk_box_set_spacing (GTK_BOX (box), 6);
+	gtk_button_box_set_layout (GTK_BUTTON_BOX (box), GTK_BUTTONBOX_CENTER);
+	gtk_box_pack_start (GTK_BOX (chooser), box, FALSE, FALSE, 6);
+	gtk_widget_show (box);
 
     GtkFileFilter *filter = gtk_file_filter_new ();
     gtk_file_filter_add_mime_type (filter, "application/*");
     gtk_file_filter_set_name (filter, _("Executables"));
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (button), filter);
 
-	button = gtk_button_new_from_stock (GTK_STOCK_ADD);
+	button = gtk_button_new_with_label (_("Add to menu"));
 	g_signal_connect (button, "clicked", 
 			  G_CALLBACK (add_clicked_cb),
 			  chooser);
@@ -419,7 +421,7 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 	gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
 	chooser->details->add_button = button;
 
-	button = gtk_button_new_with_label (_("Set as default"));
+	button = gtk_button_new_with_label (_("Set as new default"));
 	g_signal_connect (button, "clicked",
 			  G_CALLBACK (set_as_default_clicked_cb),
 			  chooser);
@@ -427,6 +429,13 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 	gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
 
 	chooser->details->set_as_default_button = button;
+
+    button = gtk_button_new_with_label (_("Reset to system defaults"));
+    g_signal_connect (button, "clicked", 
+              G_CALLBACK (reset_clicked_cb),
+              chooser);
+    gtk_widget_show (button);
+    gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
 
 	/* initialize sensitivity */
 	info = gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (chooser->details->open_with_widget));
@@ -571,7 +580,10 @@ nemo_mime_application_chooser_new (const char *uri,
 GAppInfo *
 nemo_mime_application_chooser_get_info (NemoMimeApplicationChooser *chooser)
 {
-    return gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (chooser->details->open_with_widget));
+    if (chooser->details->custom_info == NULL)
+        return gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (chooser->details->open_with_widget));
+    else
+        return chooser->details->custom_info;
 }
 
 const gchar *
