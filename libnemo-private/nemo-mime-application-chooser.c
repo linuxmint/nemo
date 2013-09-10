@@ -95,10 +95,9 @@ add_clicked_cb (GtkButton *button,
 		g_free (message);
 	} else {		
 		gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
+        gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
 		g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 	}
-
-	g_object_unref (info);
 }
 
 static void
@@ -159,7 +158,7 @@ reset_clicked_cb (GtkButton *button,
 
 	g_app_info_reset_type_associations (chooser->details->content_type);
 	gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
-
+    gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
 	g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 }
 
@@ -188,9 +187,8 @@ set_as_default_clicked_cb (GtkButton *button,
 				       GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (chooser))));
 	}
 
-	g_object_unref (info);
-
 	gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
+    gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
 	g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 }
 
@@ -251,25 +249,35 @@ custom_entry_changed_cb (GtkEditable *entry, gpointer user_data)
 {
     NemoMimeApplicationChooser *chooser = user_data;
 
-    GAppInfo *default_app;
-    gchar *cl = g_strdup_printf ("%s %%f", gtk_entry_get_text (GTK_ENTRY (entry)));
-    GAppInfo *info = g_app_info_create_from_commandline (cl, NULL, G_APP_INFO_CREATE_NONE, NULL);
+    const gchar *entry_text = gtk_entry_get_text (GTK_ENTRY (entry));
 
-    default_app = g_app_info_get_default_for_type (chooser->details->content_type, FALSE);
-    gtk_widget_set_sensitive (chooser->details->set_as_default_button,
-                  !g_app_info_equal (info, default_app));
+    if (g_strcmp0 (entry_text, "") != 0) {
+        GAppInfo *default_app;
+        gchar *cl = g_strdup_printf ("%s %%f", entry_text);
+        GAppInfo *info = g_app_info_create_from_commandline (cl, NULL, G_APP_INFO_CREATE_NONE, NULL);
 
-    gtk_widget_set_sensitive (chooser->details->add_button,
-                  app_info_can_add (info, chooser->details->content_type));
+        default_app = g_app_info_get_default_for_type (chooser->details->content_type, FALSE);
+        gtk_widget_set_sensitive (chooser->details->set_as_default_button,
+                      !g_app_info_equal (info, default_app));
 
-    g_object_unref (default_app);
+        gtk_widget_set_sensitive (chooser->details->add_button,
+                      app_info_can_add (info, chooser->details->content_type));
 
-    if (chooser->details->custom_info != NULL) {
-        g_object_unref (chooser->details->custom_info);
-        chooser->details->custom_info = NULL;
+        g_object_unref (default_app);
+        if (chooser->details->custom_info != NULL) {
+            g_object_unref (chooser->details->custom_info);
+            chooser->details->custom_info = NULL;
+        }
+        chooser->details->custom_info = info;
+
+    } else {
+        if (chooser->details->custom_info != NULL) {
+            g_object_unref (chooser->details->custom_info);
+            chooser->details->custom_info = NULL;
+        }
+        gtk_widget_set_sensitive (chooser->details->set_as_default_button, FALSE);
+        gtk_widget_set_sensitive (chooser->details->add_button, FALSE);
     }
-
-    chooser->details->custom_info = info;
 }
 
 static void
@@ -399,6 +407,8 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 			  chooser);
 
     gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
+                          TRUE);
+    gtk_app_chooser_widget_set_show_recommended (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
                           TRUE);
 
     GtkWidget *custom_label = gtk_label_new (_("You can also type or select a custom executable file to use to open this file type.  "
