@@ -428,7 +428,7 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
                       G_CALLBACK (custom_app_set_cb),
                       chooser);
     gtk_widget_show (button);
-    gtk_box_pack_start (GTK_BOX (custom_box), button, TRUE, TRUE, 6);
+    gtk_box_pack_start (GTK_BOX (custom_box), button, FALSE, FALSE, 6);
 
     gtk_widget_show_all (custom_box);
 
