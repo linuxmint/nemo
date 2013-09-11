@@ -64,7 +64,6 @@ enum {
 
 #define DEFAULT_APPS "Default Applications"
 #define ADDED_ASS "Added Associations"
-#define APP_TYPE "Application"
 
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
