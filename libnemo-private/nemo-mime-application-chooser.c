@@ -62,9 +62,161 @@ enum {
 	NUM_PROPERTIES
 };
 
+#define DEFAULT_APPS "Default Applications"
+#define ADDED_ASS "Added Associations"
+#define APP_TYPE "Application"
+
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 G_DEFINE_TYPE (NemoMimeApplicationChooser, nemo_mime_application_chooser, GTK_TYPE_BOX);
+
+static void
+update_mimelist (NemoMimeApplicationChooser *chooser, const gchar *fn, gboolean def)
+{
+    gchar *list_fn = g_build_filename (g_get_user_data_dir (), "applications", "mimeapps.list", NULL);
+    GKeyFile *mimeapps;
+    GFile *list_file;
+
+    list_file = g_file_new_for_path (list_fn);
+    mimeapps = g_key_file_new ();
+
+    if (g_file_query_exists (list_file, NULL)) {
+        g_key_file_load_from_file (mimeapps,
+                                   list_fn,
+                                   G_KEY_FILE_NONE,
+                                   NULL);
+    }
+
+    if (def) {
+        g_key_file_set_string (mimeapps,
+                               DEFAULT_APPS,
+                               chooser->details->content_type,
+                               fn);
+    } else {
+        gsize count;
+
+        gchar **l = g_key_file_get_string_list (mimeapps,
+                                                ADDED_ASS,
+                                                chooser->details->content_type,
+                                                &count,
+                                                NULL);
+
+        gchar *new_string_list;
+
+        if (l) {
+            gchar *temp_list;
+            temp_list = g_strjoinv (";", l);
+            new_string_list = g_strdup_printf ("%s;%s;", fn, temp_list);
+            g_free (temp_list);
+            g_strfreev (l);
+        } else {
+            new_string_list = g_strdup_printf ("%s;", fn);
+        }
+
+
+        g_key_file_set_string (mimeapps,
+                               ADDED_ASS,
+                               chooser->details->content_type,
+                               new_string_list);
+    }
+
+    if (g_file_query_exists (list_file, NULL)) {
+        g_file_delete (list_file, NULL, NULL);
+    }
+
+    gsize size;
+    gchar *buffer = g_key_file_to_data (mimeapps, &size, NULL);
+    GFileOutputStream *out;
+    gboolean res;
+
+    out = g_file_create (list_file,
+                         G_FILE_CREATE_NONE,
+                         NULL,
+                         NULL);
+    if (out) {
+        res = g_output_stream_write_all (G_OUTPUT_STREAM (out),
+                                         buffer, size,
+                                         NULL,
+                                         NULL,
+                                         NULL);
+        if (res) {
+            res = g_output_stream_close (G_OUTPUT_STREAM (out),
+                                         NULL,
+                                         NULL);
+        }
+        g_object_unref (out);
+    }
+
+    g_free (buffer);
+
+}
+
+static void
+create_custom_desktop_file (NemoMimeApplicationChooser *chooser, gboolean def)
+{
+    GKeyFile *keyfile = g_key_file_new ();
+
+    g_key_file_set_string (keyfile,
+                           G_KEY_FILE_DESKTOP_GROUP,
+                           G_KEY_FILE_DESKTOP_KEY_EXEC,
+                           g_app_info_get_commandline (chooser->details->custom_info));
+
+    g_key_file_set_string (keyfile,
+                           G_KEY_FILE_DESKTOP_GROUP,
+                           G_KEY_FILE_DESKTOP_KEY_NAME,
+                           g_app_info_get_display_name (chooser->details->custom_info));
+
+    g_key_file_set_string (keyfile,
+                           G_KEY_FILE_DESKTOP_GROUP,
+                           G_KEY_FILE_DESKTOP_KEY_MIME_TYPE,
+                           chooser->details->content_type);
+
+    g_key_file_set_string (keyfile,
+                           G_KEY_FILE_DESKTOP_GROUP,
+                           G_KEY_FILE_DESKTOP_KEY_TYPE,
+                           G_KEY_FILE_DESKTOP_TYPE_APPLICATION);
+
+    gsize size;
+    gchar *buffer = g_key_file_to_data (keyfile, &size, NULL);
+
+    gint32 rn = g_random_int_range (0, G_MAXINT32 - 1);
+    gchar *fn = g_strdup_printf ("nemo_%s_%d.desktop",
+                                 g_app_info_get_display_name (chooser->details->custom_info),
+                                 rn);
+
+    gchar *path = g_build_filename (g_get_user_data_dir (), "applications", fn, NULL);
+
+    GFile *outfile = g_file_new_for_path (path);
+
+    g_free (path);
+
+    GFileOutputStream *out;
+    gboolean res;
+
+    out = g_file_create (outfile,
+                         G_FILE_CREATE_NONE,
+                         NULL,
+                         NULL);
+    if (out) {
+        res = g_output_stream_write_all (G_OUTPUT_STREAM (out),
+                                         buffer, size,
+                                         NULL,
+                                         NULL,
+                                         NULL);
+        if (res) {
+            res = g_output_stream_close (G_OUTPUT_STREAM (out),
+                                         NULL,
+                                         NULL);
+            update_mimelist (chooser, fn, def);
+        }
+        g_object_unref (out);
+    }
+
+    g_object_unref (outfile);
+    g_free (fn);
+    g_free (buffer);
+}
+
 
 static void
 add_clicked_cb (GtkButton *button,
@@ -72,32 +224,21 @@ add_clicked_cb (GtkButton *button,
 {
 	NemoMimeApplicationChooser *chooser = user_data;
 	GAppInfo *info;
-	gchar *message;
-	GError *error = NULL;
 
-    if (!chooser->details->custom_info)
+    if (!chooser->details->custom_info) {
         info = gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (chooser->details->open_with_widget));
-    else
+        g_app_info_set_as_last_used_for_type (info, chooser->details->content_type, NULL);
+    } else {
         info = chooser->details->custom_info;
+        create_custom_desktop_file (chooser, FALSE);
+    }
 
 	if (info == NULL)
 		return;
 
-	g_app_info_set_as_last_used_for_type (info, chooser->details->content_type, &error);
-
-	if (error != NULL) {
-		message = g_strdup_printf (_("Error while adding \"%s\": %s"),
-					   g_app_info_get_display_name (info), error->message);
-		eel_show_error_dialog (_("Could not add application"),
-				       message,
-				       GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (chooser))));
-		g_error_free (error);
-		g_free (message);
-	} else {		
-		gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
-        gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
-		g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
-	}
+    gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
+    gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
+    g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 }
 
 static void
@@ -168,28 +309,18 @@ set_as_default_clicked_cb (GtkButton *button,
 {
 	NemoMimeApplicationChooser *chooser = user_data;
 	GAppInfo *info;
-	GError *error = NULL;
-	gchar *message = NULL;
 
-    if (!chooser->details->custom_info)
+    if (!chooser->details->custom_info) {
         info = gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (chooser->details->open_with_widget));
-    else
+        g_app_info_set_as_default_for_type (info, chooser->details->content_type, NULL);
+    } else {
         info = chooser->details->custom_info;
+        create_custom_desktop_file (chooser, TRUE);
+    }
 
-    g_app_info_set_as_default_for_type (info, chooser->details->content_type,
-					    &error);
-
-	if (error != NULL) {
-		message = g_strdup_printf (_("Error while setting \"%s\" as default application: %s"),
-					   g_app_info_get_display_name (info), error->message);
-		eel_show_error_dialog (_("Could not set as default"),
-				       message,
-				       GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (chooser))));
-	}
-
-	gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
+    gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
-	g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
+    g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 }
 
 static gint
@@ -253,7 +384,7 @@ custom_entry_changed_cb (GtkEditable *entry, gpointer user_data)
 
     if (g_strcmp0 (entry_text, "") != 0) {
         GAppInfo *default_app;
-        gchar *cl = g_strdup_printf ("%s %%f", entry_text);
+        gchar *cl = g_strdup_printf ("%s", entry_text);
         GAppInfo *info = g_app_info_create_from_commandline (cl, NULL, G_APP_INFO_CREATE_NONE, NULL);
 
         default_app = g_app_info_get_default_for_type (chooser->details->content_type, FALSE);
