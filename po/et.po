@@ -22,8 +22,8 @@ msgstr ""
 "Project-Id-Version: nautilus MASTER\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-03-12 16:53+0000\n"
-"PO-Revision-Date: 2013-03-13 10:30+0300\n"
+"POT-Creation-Date: 2013-09-11 20:22+0000\n"
+"PO-Revision-Date: 2013-09-12 00:18+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz@gmail.com>\n"
 "Language-Team: Estonian <gnome-et@linux.ee>\n"
 "Language: et\n"
@@ -31,6 +31,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"X-Generator: Poedit 1.5.4\n"
 
 msgid "Run Software"
 msgstr "Tarkvara käivitamine"
@@ -95,14 +96,30 @@ msgid ""
 "The position of the opposite end of the selection from the cursor in chars."
 msgstr "Valiku vastasotsa kaugus tähemärkides."
 
+#. name, stock id
+#. label, accelerator
+msgid "Cu_t"
+msgstr "_Lõika"
+
+#. name, stock id
+#. label, accelerator
+msgid "_Copy"
+msgstr "_Kopeeri"
+
+#. name, stock id
+#. label, accelerator
+msgid "_Paste"
+msgstr "_Aseta"
+
 msgid "Select All"
 msgstr "Vali kõik"
 
-msgid "Input Methods"
-msgstr "Sisestusmeetodid"
-
 msgid "Show more _details"
 msgstr "_Näita üksikasjalisemalt"
+
+#. Put up the timed wait window.
+msgid "_Cancel"
+msgstr "_Loobu"
 
 msgid "You can stop this operation by clicking cancel."
 msgstr "Seda tegevust saab peatada vajutades nupule \"Loobu\"."
@@ -116,20 +133,14 @@ msgstr "Kodukataloog"
 msgid "The selection rectangle"
 msgstr "Valiku ristkülik"
 
-#. name, stock id
-#. label, accelerator
 #. tooltip
 msgid "Cut the selected text to the clipboard"
 msgstr "Märgitud teksti lõikamine lõikelauale"
 
-#. name, stock id
-#. label, accelerator
 #. tooltip
 msgid "Copy the selected text to the clipboard"
 msgstr "Märgitud teksti kopeerimine lõikelauale"
 
-#. name, stock id
-#. label, accelerator
 #. tooltip
 msgid "Paste the text stored on the clipboard"
 msgstr "Lõikelaual hoitava teksti asetamine"
@@ -175,6 +186,12 @@ msgstr "Muudetud"
 
 msgid "The date the file was modified."
 msgstr "Faili viimase muutmise aeg."
+
+msgid "Accessed"
+msgstr "Pöördutud"
+
+msgid "The date the file was accessed."
+msgstr "Faili viimase pöörumise aeg."
 
 msgid "Owner"
 msgstr "Omanik"
@@ -235,6 +252,9 @@ msgid ""
 "If you want to eject the volume, please use Eject in the popup menu of the "
 "volume."
 msgstr "Kui soovid kettaseadme väljastada, vali paremklõpsumenüüst “Väljasta”."
+
+msgid "_OK"
+msgstr "_Olgu"
 
 msgid ""
 "If you want to unmount the volume, please use Unmount Volume in the popup "
@@ -544,6 +564,11 @@ msgstr "_Jäta kõik vahele"
 msgid "_Retry"
 msgstr "_Korda"
 
+#. name, stock id
+#. label, accelerator
+msgid "_Delete"
+msgstr "Kust_uta"
+
 msgid "Delete _All"
 msgstr "Kustuta _kõik"
 
@@ -717,7 +742,6 @@ msgstr "Kas tühjendada prügikast?"
 msgid "All items in the Trash will be permanently deleted."
 msgstr "Kõik prügikastis olevad kirjed kustutatakse jäädavalt."
 
-#. Empty Trash menu item
 msgid "Empty _Trash"
 msgstr "Tühjenda _prügikast"
 
@@ -1421,6 +1445,9 @@ msgstr "Kõik liigi “%s” alla kuuluvad failid avatakse rakendusega:"
 msgid "Select an application to open “%s” and other files of type “%s”"
 msgstr "Vali rakendus, millega faili “%s” ja teisi “%s”-liigilisi faile avada"
 
+msgid "_Add"
+msgstr "_Lisa"
+
 msgid "Set as default"
 msgstr "Määra vaikimisi"
 
@@ -1908,14 +1935,14 @@ msgstr "Uutes akendes külgpaani näitamine"
 msgid "If set to true, newly opened windows will have the side pane visible."
 msgstr "Kui märgitud, siis uutel akendel näidatakse külgpaani."
 
-msgid "Send To…"
-msgstr "Saatmine…"
+msgid "Email…"
+msgstr "E-kiri…"
 
-msgid "Send file by mail, instant message…"
-msgstr "Faili saatmine e-postiga, välksõnumiga…"
+msgid "Send file by mail…"
+msgstr "Faili saatmine e-postiga…"
 
-msgid "Send files by mail, instant message…"
-msgstr "Failide saatmine e-postiga, välksõnumiga…"
+msgid "Send files by mail…"
+msgstr "Failide saatmine e-postiga…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
 msgid "Oops! Something went wrong."
@@ -2023,15 +2050,18 @@ msgstr "Argumente pole võimalik analüüsida"
 msgid "Could not register the application"
 msgstr "Rakendust pole võimalik registreerida"
 
-#. name, stock id, label
+#. name, stock id
 msgid "New _Window"
 msgstr "_Uus aken"
 
-msgid "Connect to _Server"
-msgstr "Ühendumine _serveriga"
+#. name, stock id
+#. label, accelerator
+msgid "Connect to _Server…"
+msgstr "Ühendumine _serveriga…"
 
-msgid "Enter _Location"
-msgstr "Sisesta _asukoht"
+#. name, stock id
+msgid "Enter _Location…"
+msgstr "Sisesta _asukoht…"
 
 msgid "_Bookmarks"
 msgstr "_Järjehoidjad"
@@ -2147,6 +2177,12 @@ msgstr "_Muutmisaja järgi"
 msgid "Keep icons sorted by modification date in rows"
 msgstr "Ikooniridade sortimine muutmisaja järgi"
 
+msgid "By _Access Date"
+msgstr "_Kasutusaja järgi"
+
+msgid "Keep icons sorted by access date in rows"
+msgstr "Ikoone hoitakse pöördusaja järgi sorditult ridades"
+
 msgid "By T_rash Time"
 msgstr "_Kustutamise aja järgi"
 
@@ -2159,23 +2195,8 @@ msgstr "Asjakohasuse järgi"
 msgid "Keep icons sorted by search relevance in rows"
 msgstr "Ikoonide sortimine asjakohasuse järgi"
 
-#. translators: this is used in the view selection dropdown
-#. * of navigation windows and in the preferences dialog
 msgid "Icon View"
 msgstr "Ikoonivaade"
-
-#. translators: this is used in the view menu
-msgid "_Icons"
-msgstr "_Ikoonid"
-
-msgid "The icon view encountered an error."
-msgstr "Ikoonivaade sattus veale."
-
-msgid "The icon view encountered an error while starting up."
-msgstr "Ikoonivaate käivitamisel satuti veale."
-
-msgid "Display this location with the icon view."
-msgstr "Selle asukoha kuvamine ikoonivaatena."
 
 #. if it wasn't cancelled show a dialog
 msgid "Unable to access location"
@@ -2201,7 +2222,7 @@ msgstr ""
 msgid "There was an error displaying help."
 msgstr "Abiteabe kuvamisel tekkis viga."
 
-msgid "Don't recognize this file server type."
+msgid "This file server type is not recognized."
 msgstr "Selle failiserveri liiki ei suudetud tuvastada."
 
 msgid "This doesn't look like an address."
@@ -2278,12 +2299,6 @@ msgstr "Valitud ikoonide suuruse muutmine"
 #. tooltip
 msgid "Restore each selected icons to its original size"
 msgstr "Kõigi valitud ikoonide algsete suuruste taastamine"
-
-msgid "The desktop view encountered an error."
-msgstr "Töölauavaade sattus veale."
-
-msgid "The desktop view encountered an error while starting up."
-msgstr "Töölauavaade sattus käivitamise ajal veale."
 
 msgid "Comment"
 msgstr "Kommentaar"
@@ -2465,8 +2480,6 @@ msgstr ""
 "Vali ikooni all olevate andmete järjekord. Täpsemad andmed ilmuvad ikoonide "
 "suurendamisel."
 
-#. translators: this is used in the view selection dropdown
-#. * of navigation windows and in the preferences dialog
 msgid "List View"
 msgstr "Nimekirjavaade"
 
@@ -2681,9 +2694,17 @@ msgstr "Laadimine…"
 msgid "(Empty)"
 msgstr "(Tühi)"
 
+msgid "Use Default"
+msgstr "Kasuta vaikimisi"
+
 #, c-format
 msgid "%s Visible Columns"
 msgstr "Kataloogis %s nähtavad veerud"
+
+#. name, stock id
+#. label, accelerator
+msgid "_Close"
+msgstr "Sul_ge"
 
 msgid "Choose the order of information to appear in this folder:"
 msgstr "Vali, mismoodi selles kataloogis andmeid järjestatakse:"
@@ -2696,19 +2717,6 @@ msgstr "Nähtavad _veerud…"
 #. tooltip
 msgid "Select the columns visible in this folder"
 msgstr "Valib veerud, mida selles kataloogis näidata"
-
-#. translators: this is used in the view menu
-msgid "_List"
-msgstr "_Nimekiri"
-
-msgid "The list view encountered an error."
-msgstr "Loendivaade sattus veale."
-
-msgid "The list view encountered an error while starting up."
-msgstr "Loendivaate käivitamisel satuti veale."
-
-msgid "Display this location with the list view."
-msgstr "Selle asukoha kuvamine nimekirjavaatena."
 
 #, c-format
 msgid "Do you want to view %d location?"
@@ -2832,148 +2840,6 @@ msgstr[1] "Avatakse %d kirjet."
 
 msgid "Close tab"
 msgstr "Sulge kaart"
-
-msgid "Devices"
-msgstr "Seadmed"
-
-msgid "Places"
-msgstr "Asukohad"
-
-msgid "Recent"
-msgstr "Hiljutised"
-
-msgid "Recent files"
-msgstr "Hiljutised failid"
-
-#. tooltip
-msgid "Open your personal folder"
-msgstr "Isikliku kataloogi avamine"
-
-msgid "Open the contents of your desktop in a folder"
-msgstr "Töölaua avamine kaustana"
-
-msgid "Open the trash"
-msgstr "Ava prügikast"
-
-#, c-format
-msgid "Mount and open %s"
-msgstr "Haagi ja ava %s"
-
-msgid "Open the contents of the File System"
-msgstr "Failisüsteemi sisukorra avamine"
-
-msgid "Network"
-msgstr "Võrk"
-
-msgid "Browse Network"
-msgstr "Võrgu sirvimine"
-
-msgid "Browse the contents of the network"
-msgstr "Võrgus olevate ressursside sirvimine"
-
-msgid "Connect to a network server address"
-msgstr "Võrguserveriga ühendumine aadressi järgi"
-
-#. Adjust start/stop items to reflect the type of the drive
-#. name, stock id
-#. label, accelerator
-msgid "_Start"
-msgstr "_Käivita"
-
-#. name, stock id
-#. label, accelerator
-msgid "_Stop"
-msgstr "_Peata"
-
-#. start() for type G_DRIVE_START_STOP_TYPE_SHUTDOWN is normally not used
-msgid "_Power On"
-msgstr "_Lülita sisse"
-
-msgid "_Safely Remove Drive"
-msgstr "_Eemalda ketas turvaliselt"
-
-msgid "_Connect Drive"
-msgstr "Ü_henda ketas"
-
-msgid "_Disconnect Drive"
-msgstr "Ü_henda ketas lahti"
-
-msgid "_Start Multi-disk Device"
-msgstr "_Käivita mitmekettaseade"
-
-msgid "_Stop Multi-disk Device"
-msgstr "_Seiska mitmekettaseade"
-
-#. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
-msgid "_Unlock Drive"
-msgstr "_Võta ketas lukust lahti"
-
-msgid "_Lock Drive"
-msgstr "_Lukusta ketas"
-
-#, c-format
-msgid "Unable to start %s"
-msgstr "%s käivitamine pole võimalik"
-
-#, c-format
-msgid "Unable to eject %s"
-msgstr "%s väljastamine pole võimalik"
-
-#, c-format
-msgid "Unable to poll %s for media changes"
-msgstr "%s meediumimuutuste pollimine pole võimalik"
-
-#, c-format
-msgid "Unable to stop %s"
-msgstr "%s seiskamine pole võimalik"
-
-#. name, stock id
-#. label, accelerator
-msgid "_Open"
-msgstr "_Ava"
-
-#. name, stock id
-#. label, accelerator
-msgid "Open in New _Tab"
-msgstr "Ava uuel _kaardil"
-
-msgid "Open in New _Window"
-msgstr "Ava uues _aknas"
-
-msgid "_Add Bookmark"
-msgstr "_Lisa järjehoidja"
-
-msgid "Rename…"
-msgstr "_Nime muutmine…"
-
-#. name, stock id
-#. label, accelerator
-msgid "_Mount"
-msgstr "Ü_henda"
-
-#. name, stock id
-#. label, accelerator
-msgid "_Unmount"
-msgstr "Ü_henda lahti"
-
-#. name, stock id
-#. label, accelerator
-msgid "_Eject"
-msgstr "_Väljasta"
-
-#. name, stock id
-#. label, accelerator
-msgid "_Detect Media"
-msgstr "_Tuvasta meedia"
-
-msgid "_Format…"
-msgstr "_Vorming…"
-
-msgid "_Properties"
-msgstr "_Omadused"
-
-msgid "Computer"
-msgstr "Arvuti"
 
 msgid "File Operations"
 msgstr "Failioperatsioonid"
@@ -3188,6 +3054,14 @@ msgstr "Omaduste akna loomine."
 msgid "Select Custom Icon"
 msgstr "Kohandatud ikooni valimine"
 
+msgid "_Revert"
+msgstr "_Taasta"
+
+#. name, stock id
+#. label, accelerator
+msgid "_Open"
+msgstr "_Ava"
+
 msgid "File Type"
 msgstr "Faili liik"
 
@@ -3243,6 +3117,7 @@ msgstr "Käivitatavad failid selles kataloogis ilmuvad Skriptide menüüsse."
 msgid "View options"
 msgstr "Kuvamise valikud"
 
+#. Action Menu
 msgid "Location options"
 msgstr "Asukoha valikud"
 
@@ -3280,6 +3155,9 @@ msgstr "Näited:"
 
 msgid "Save Search as"
 msgstr "Otsingu salvestamine faili"
+
+msgid "_Save"
+msgstr "_Salvesta"
 
 msgid "Search _name:"
 msgstr "Otsingu _nimi:"
@@ -3444,6 +3322,15 @@ msgstr "Valitud kirjete avamine praeguses aknas"
 
 #. name, stock id
 #. label, accelerator
+msgid "Open _Item Location"
+msgstr "Ava _asukoht"
+
+#. tooltip
+msgid "Open the selected item's location in this window"
+msgstr "Valitud kirje asukoha avamine praeguses aknas"
+
+#. name, stock id
+#. label, accelerator
 #. Location-specific actions
 #. name, stock id
 #. label, accelerator
@@ -3453,6 +3340,11 @@ msgstr "Ava navigatsiooniaknas"
 #. tooltip
 msgid "Open each selected item in a navigation window"
 msgstr "Kõikide navigatsiooniaknas valitud kirjete avamine"
+
+#. name, stock id
+#. label, accelerator
+msgid "Open in New _Tab"
+msgstr "Ava uuel _kaardil"
 
 #. tooltip
 msgid "Open each selected item in a new tab"
@@ -3481,28 +3373,20 @@ msgstr "_Ava skriptide kataloog"
 msgid "Show the folder containing the scripts that appear in this menu"
 msgstr "Selles menüüs olevate skriptide kataloogi avamine"
 
-#. name, stock id
-#. label, accelerator
 #. tooltip
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr "Valitud failide ettevalmistamine ümbertõstmiseks \"Aseta\" käsuga"
 
-#. name, stock id
-#. label, accelerator
 #. tooltip
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr "Valitud failide ettevalmistamine kopeerimiseks \"Aseta\" käsuga"
 
-#. name, stock id
-#. label, accelerator
 #. tooltip
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "Eelnevalt Lõika või Kopeeri käskudega valitud failide ümbertõstmine või "
 "kopeerimine"
 
-#. We make accelerator "" instead of null here to not inherit the stock
-#. accelerator for paste
 #. name, stock id
 #. label, accelerator
 msgid "_Paste Into Folder"
@@ -3590,11 +3474,6 @@ msgstr "Tee sellest taustapilt"
 msgid "Move each selected item to the Trash"
 msgstr "Kõigi märgitud kirjete prügikasti viskamine"
 
-#. name, stock id
-#. label, accelerator
-msgid "_Delete"
-msgstr "Kust_uta"
-
 #. tooltip
 msgid "Delete each selected item, without moving to the Trash"
 msgstr "Kõigi valitud kirjete kustutamine ilma neid prügikasti viskamata"
@@ -3639,25 +3518,55 @@ msgstr ""
 "Sortimisjärjestuse ja suurendusastme lähtestamine selle vaate jaoks "
 "vastavaks eelistustele"
 
+#. name, stock id
+#. label, accelerator
+msgid "_Mount"
+msgstr "Ü_henda"
+
 #. tooltip
 msgid "Mount the selected volume"
 msgstr "Valitud kettaseadme haakimine"
+
+#. name, stock id
+#. label, accelerator
+msgid "_Unmount"
+msgstr "Ü_henda lahti"
 
 #. tooltip
 msgid "Unmount the selected volume"
 msgstr "Valitud kettaseadme lahtihaakimine"
 
+#. name, stock id
+#. label, accelerator
+msgid "_Eject"
+msgstr "_Väljasta"
+
 #. tooltip
 msgid "Eject the selected volume"
 msgstr "Valitud andmekandja väljastamine"
+
+#. name, stock id
+#. label, accelerator
+msgid "_Start"
+msgstr "_Käivita"
 
 #. tooltip
 msgid "Start the selected volume"
 msgstr "Valitud andmeruumi käivitamine"
 
+#. name, stock id
+#. label, accelerator
+msgid "_Stop"
+msgstr "_Peata"
+
 #. tooltip
 msgid "Stop the selected volume"
 msgstr "Valitud andmeruumi peatamine"
+
+#. name, stock id
+#. label, accelerator
+msgid "_Detect Media"
+msgstr "_Tuvasta meedia"
 
 #. tooltip
 msgid "Detect media in the selected drive"
@@ -3714,14 +3623,10 @@ msgstr "Kataloogi avamine navigeerimisaknas"
 msgid "Open this folder in a new tab"
 msgstr "Selle kataloogi avamine uuel kaardil"
 
-#. name, stock id
-#. label, accelerator
 #. tooltip
 msgid "Prepare this folder to be moved with a Paste command"
 msgstr "Selle kataloogi ettevalmistamine ümbertõstmiseks \"Aseta\" käsuga"
 
-#. name, stock id
-#. label, accelerator
 #. tooltip
 msgid "Prepare this folder to be copied with a Paste command"
 msgstr "Selle kataloogi ettevalmistamine kopeerimiseks \"Aseta\" käsuga"
@@ -3852,6 +3757,9 @@ msgstr "Lukustab valitud ketta lahti"
 msgid "Stop the selected drive"
 msgstr "Seiskab valitud ketta"
 
+msgid "_Safely Remove Drive"
+msgstr "_Eemalda ketas turvaliselt"
+
 msgid "Safely remove the selected drive"
 msgstr "Valitud kettaseadme turvaline eemaldamine"
 
@@ -3867,6 +3775,9 @@ msgstr "_Seiska mitmekettaseade"
 msgid "Stop the selected multi-disk drive"
 msgstr "Mitmekettaseadme seiskamine"
 
+msgid "_Lock Drive"
+msgstr "_Lukusta ketas"
+
 msgid "Lock the selected drive"
 msgstr "Valitud kettaseadme lukustamine"
 
@@ -3878,6 +3789,9 @@ msgstr "Avatud kataloogiga seotud kettaseadme ühendamine"
 
 msgid "Start the multi-disk drive associated with the open folder"
 msgstr "Avatud kataloogiga seotud mitmekettaseadme käivitamine"
+
+msgid "_Unlock Drive"
+msgstr "_Võta ketas lukust lahti"
 
 msgid "Unlock the drive associated with the open folder"
 msgstr "Avatud kataloogiga seotud kettaseadme lukust lahti võtmine"
@@ -3896,6 +3810,9 @@ msgstr "Avatud kataloogiga seotud mitmekettaseadme seiskamine"
 
 msgid "Lock the drive associated with the open folder"
 msgstr "Avatud kataloogiga seotud kettaseadme lukustamine"
+
+msgid "Open in New _Window"
+msgstr "Ava uues _aknas"
 
 msgid "_Delete Permanently"
 msgstr "Kustuta _jäädavalt"
@@ -3961,6 +3878,12 @@ msgstr "Hiirega lohistatud tekst.txt"
 #.
 msgid "dropped data"
 msgstr "hiirega lohistatud andmed"
+
+msgid "_Properties"
+msgstr "_Omadused"
+
+msgid "_Format…"
+msgstr "_Vorming…"
 
 msgid "_New Tab"
 msgstr "_Uus kaart"
@@ -4030,11 +3953,6 @@ msgstr ""
 "Ivar Smolin <okul linux ee>, 2005–2011.\n"
 "Mattias Põldaru <mahfiaz gmail com>, 2009–2012."
 
-#. name, stock id
-#. label, accelerator
-msgid "_Close"
-msgstr "Sul_ge"
-
 #. tooltip
 msgid "Close this folder"
 msgstr "Sulgeb selle kataloogi"
@@ -4042,7 +3960,8 @@ msgstr "Sulgeb selle kataloogi"
 msgid "Edit Nautilus preferences"
 msgstr "Nautiluse eelistuste muutmine"
 
-#. name, stock id, label
+#. name, stock id
+#. label, accelerator
 msgid "Open _Parent"
 msgstr "Ava ü_lemine"
 
@@ -4150,11 +4069,6 @@ msgstr "Harilik _suurus"
 msgid "Use the normal view size"
 msgstr "Vaate hariliku suuruse kasutamine"
 
-#. name, stock id
-#. label, accelerator
-msgid "Connect to _Server…"
-msgstr "Ühendumine _serveriga…"
-
 #. tooltip
 msgid "Connect to a remote computer or shared disk"
 msgstr "Loo ühendus eemalasuva arvuti või jagatud kettaga"
@@ -4164,52 +4078,52 @@ msgstr "Loo ühendus eemalasuva arvuti või jagatud kettaga"
 msgid "_Home"
 msgstr "_Kodukataloog"
 
+#. tooltip
+msgid "Open your personal folder"
+msgstr "Isikliku kataloogi avamine"
+
 msgid "Open another Nautilus window for the displayed location"
 msgstr "Näidatava asukoha jaoks Nautiluse uue akna avamine"
 
-#. name, stock id, label
+#. name, stock id
 msgid "New _Tab"
 msgstr "_Uus kaart"
 
 msgid "Open another tab for the displayed location"
 msgstr "Näidatava asukoha jaoks Nautiluse uue kaardi avamine"
 
-#. name, stock id, label
+#. name, stock id
 msgid "Close _All Windows"
 msgstr "Sulge _kõik aknad"
 
 msgid "Close all Navigation windows"
 msgstr "Kõigi navigatsiooniakende sulgemine"
 
-#. name, stock id, label
+#. name, stock id
 msgid "_Back"
 msgstr "_Tagasi"
 
 msgid "Go to the previous visited location"
 msgstr "Eelmise külastatud koha avamine"
 
-#. name, stock id, label
+#. name, stock id
 msgid "_Forward"
 msgstr "_Edasi"
 
 msgid "Go to the next visited location"
 msgstr "Järgmise külastatud koha avamine"
 
-#. name, stock id, label
-msgid "Enter _Location…"
-msgstr "Sisesta _asukoht…"
-
 msgid "Specify a location to open"
 msgstr "Avatava asukoha määramine"
 
-#. name, stock id, label
+#. name, stock id
 msgid "Bookmark this Location"
 msgstr "Lisa järjehoidja"
 
 msgid "Add a bookmark for the current location"
 msgstr "Praeguse asukoha jaoks järjehoidja lisamine"
 
-#. name, stock id, label
+#. name, stock id
 msgid "_Bookmarks…"
 msgstr "_Järjehoidjad…"
 
@@ -4354,3 +4268,117 @@ msgstr "Sisaldab fotosid ja muusikat"
 
 msgid "Open with:"
 msgstr "Avamine rakendusega:"
+
+#~ msgid "Input Methods"
+#~ msgstr "Sisestusmeetodid"
+
+#~ msgid "Send To…"
+#~ msgstr "Saatmine…"
+
+#~ msgid "Connect to _Server"
+#~ msgstr "Ühendumine _serveriga"
+
+#~ msgid "_Icons"
+#~ msgstr "_Ikoonid"
+
+#~ msgid "The icon view encountered an error."
+#~ msgstr "Ikoonivaade sattus veale."
+
+#~ msgid "The icon view encountered an error while starting up."
+#~ msgstr "Ikoonivaate käivitamisel satuti veale."
+
+#~ msgid "Display this location with the icon view."
+#~ msgstr "Selle asukoha kuvamine ikoonivaatena."
+
+#~ msgid "Don't recognize this file server type."
+#~ msgstr "Selle failiserveri liiki ei suudetud tuvastada."
+
+#~ msgid "The desktop view encountered an error."
+#~ msgstr "Töölauavaade sattus veale."
+
+#~ msgid "The desktop view encountered an error while starting up."
+#~ msgstr "Töölauavaade sattus käivitamise ajal veale."
+
+#~ msgid "_List"
+#~ msgstr "_Nimekiri"
+
+#~ msgid "The list view encountered an error."
+#~ msgstr "Loendivaade sattus veale."
+
+#~ msgid "The list view encountered an error while starting up."
+#~ msgstr "Loendivaate käivitamisel satuti veale."
+
+#~ msgid "Display this location with the list view."
+#~ msgstr "Selle asukoha kuvamine nimekirjavaatena."
+
+#~ msgid "Devices"
+#~ msgstr "Seadmed"
+
+#~ msgid "Places"
+#~ msgstr "Asukohad"
+
+#~ msgid "Recent"
+#~ msgstr "Hiljutised"
+
+#~ msgid "Recent files"
+#~ msgstr "Hiljutised failid"
+
+#~ msgid "Open the contents of your desktop in a folder"
+#~ msgstr "Töölaua avamine kaustana"
+
+#~ msgid "Open the trash"
+#~ msgstr "Ava prügikast"
+
+#~ msgid "Mount and open %s"
+#~ msgstr "Haagi ja ava %s"
+
+#~ msgid "Open the contents of the File System"
+#~ msgstr "Failisüsteemi sisukorra avamine"
+
+#~ msgid "Network"
+#~ msgstr "Võrk"
+
+#~ msgid "Browse Network"
+#~ msgstr "Võrgu sirvimine"
+
+#~ msgid "Browse the contents of the network"
+#~ msgstr "Võrgus olevate ressursside sirvimine"
+
+#~ msgid "Connect to a network server address"
+#~ msgstr "Võrguserveriga ühendumine aadressi järgi"
+
+#~ msgid "_Power On"
+#~ msgstr "_Lülita sisse"
+
+#~ msgid "_Connect Drive"
+#~ msgstr "Ü_henda ketas"
+
+#~ msgid "_Disconnect Drive"
+#~ msgstr "Ü_henda ketas lahti"
+
+#~ msgid "_Start Multi-disk Device"
+#~ msgstr "_Käivita mitmekettaseade"
+
+#~ msgid "_Stop Multi-disk Device"
+#~ msgstr "_Seiska mitmekettaseade"
+
+#~ msgid "Unable to start %s"
+#~ msgstr "%s käivitamine pole võimalik"
+
+#~ msgid "Unable to eject %s"
+#~ msgstr "%s väljastamine pole võimalik"
+
+#~ msgid "Unable to poll %s for media changes"
+#~ msgstr "%s meediumimuutuste pollimine pole võimalik"
+
+#~ msgid "Unable to stop %s"
+#~ msgstr "%s seiskamine pole võimalik"
+
+#~ msgid "_Add Bookmark"
+#~ msgstr "_Lisa järjehoidja"
+
+#~ msgid "Rename…"
+#~ msgstr "_Nime muutmine…"
+
+#~ msgid "Computer"
+#~ msgstr "Arvuti"
