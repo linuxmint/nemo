@@ -161,11 +161,6 @@
       <_summary>What to do with executable text files when activated</_summary>
       <_description>What to do with executable text files when they are activated (single or double clicked). Possible values are "launch" to launch them as programs, "ask" to ask what to do via a dialog, and "display" to display them as text files.</_description>
     </key>
-    <key name="install-mime-activation" type="b">
-      <default>true</default>
-      <_summary>Show the package installer for unknown mime types</_summary>
-      <_description>Whether to show the user a package installer dialog in case an unknown mime type is opened, in order to search for an application to handle it.</_description>
-    </key>
     <key name="mouse-use-extra-buttons" type="b">
       <default>true</default>
       <_summary>Use extra mouse button events in Nemo' browser window</_summary>

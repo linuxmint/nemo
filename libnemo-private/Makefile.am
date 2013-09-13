@@ -212,15 +212,11 @@ gsettingsschema_in_files = org.nemo.gschema.xml.in
 gsettings_SCHEMAS = $(gsettingsschema_in_files:.xml.in=.xml)
 .PRECIOUS: $(gsettings_SCHEMAS)
 
-convertdir = $(datadir)/GConf/gsettings
-convert_DATA = nemo.convert
-
 @INTLTOOL_XML_NOMERGE_RULE@
 
 @GSETTINGS_RULES@
 
 EXTRA_DIST =				\
-	nemo.convert		\
 	$(gsettingsschema_in_files)     \
 	$(TRACKER_SOURCES)		\
 	$(NULL)

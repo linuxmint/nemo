@@ -71,9 +71,6 @@ typedef enum
 /* Activating executable text files */
 #define NEMO_PREFERENCES_EXECUTABLE_TEXT_ACTIVATION		"executable-text-activation"
 
-/* Installing new packages when unknown mime type activated */
-#define NEMO_PREFERENCES_INSTALL_MIME_ACTIVATION		"install-mime-activation"
-
 /* Spatial or browser mode */
 #define NEMO_PREFERENCES_ALWAYS_USE_BROWSER			"always-use-browser"
 #define NEMO_PREFERENCES_NEW_TAB_POSITION			"tabs-open-position"
