@@ -44,6 +44,14 @@
 #include <libnemo-private/nemo-desktop-icon-file.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-signaller.h>
+#include <libnemo-private/nemo-mime-application-chooser.h>
+#include <sys/stat.h>
+
+enum {
+    UNIX_PERM_USER_EXEC = S_IXUSR,
+    UNIX_PERM_GROUP_EXEC = S_IXGRP,
+    UNIX_PERM_OTHER_EXEC = S_IXOTH,
+};
 
 #define DEBUG_FLAG NEMO_DEBUG_MIME
 #include <libnemo-private/nemo-debug.h>
@@ -93,6 +101,7 @@ typedef struct {
 #define RESPONSE_DISPLAY 1001
 #define RESPONSE_RUN_IN_TERMINAL 1002
 #define RESPONSE_MARK_TRUSTED 1003
+#define RESPONSE_OPEN_WITH 1004
 
 #define SILENT_WINDOW_OPEN_LIMIT 5
 #define SILENT_OPEN_LIMIT 5
@@ -1082,432 +1091,202 @@ confirm_multiple_windows (GtkWindow *parent_window,
 }
 
 typedef struct {
-	NemoWindowSlot *slot;
-	GtkWindow *parent_window;
-	NemoFile *file;
-	GList *files;
-	NemoWindowOpenFlags flags;
-	char *activation_directory;
-	gboolean user_confirmation;
-	char *uri;
-	GDBusProxy *proxy;
-	GtkWidget *dialog;
-} ActivateParametersInstall;
+    GtkWindow *parent_window;
+    NemoFile *file;
+} ActivateParametersSpecial;
 
 static void
-activate_parameters_install_free (ActivateParametersInstall *parameters_install)
+activate_parameters_special_free (ActivateParametersSpecial *parameters_special)
 {
-	if (parameters_install->slot) {
-		g_object_remove_weak_pointer (G_OBJECT (parameters_install->slot), (gpointer *)&parameters_install->slot);
-	}
-	if (parameters_install->parent_window) {
-		g_object_remove_weak_pointer (G_OBJECT (parameters_install->parent_window), (gpointer *)&parameters_install->parent_window);
-	}
-
-	if (parameters_install->proxy != NULL) {
-	        g_object_unref (parameters_install->proxy);
-	}
-
-	nemo_file_unref (parameters_install->file);
-	nemo_file_list_free (parameters_install->files);
-	g_free (parameters_install->activation_directory);
-	g_free (parameters_install->uri);
-	g_free (parameters_install);
-}
-
-static char *
-get_application_no_mime_type_handler_message (NemoFile *file, char *uri)
-{
-	char *uri_for_display;
-	char *nice_uri;
-	char *error_message;
-	GFile *location;
-
-	/* For local files, we want to use filename if possible */
-	if (nemo_file_is_local (file)) {
-		location = nemo_file_get_location (file);
-		nice_uri = g_file_get_parse_name (location);
-		g_object_unref (location);
-	} else {
-		nice_uri = g_strdup (uri);
-	}
-
-	/* Truncate the URI so it doesn't get insanely wide. Note that even
-	 * though the dialog uses wrapped text, if the URI doesn't contain
-	 * white space then the text-wrapping code is too stupid to wrap it.
-	 */
-	uri_for_display = eel_str_middle_truncate (nice_uri, MAX_URI_IN_DIALOG_LENGTH);
-	error_message = g_strdup_printf (_("Could not display \"%s\"."), uri_for_display);
-	g_free (nice_uri);
-	g_free (uri_for_display);
-	return error_message;
+    if (parameters_special->parent_window) {
+        g_object_remove_weak_pointer (G_OBJECT (parameters_special->parent_window), (gpointer *)&parameters_special->parent_window);
+    }
+    nemo_file_unref (parameters_special->file);
+    g_free (parameters_special);
 }
 
 static void
-open_with_response_cb (GtkDialog *dialog,
-		       gint response_id,
-		       gpointer user_data)
+make_exec_callback (NemoFile *file,
+                       GFile *res_loc,
+                      GError *error,
+                     gpointer callback_data)
 {
-	GtkWindow *parent_window;
-	NemoFile *file;
-	GList files;
-	GAppInfo *info;
-	ActivateParametersInstall *parameters = user_data;
-	
-	if (response_id != GTK_RESPONSE_OK) {
-		gtk_widget_destroy (GTK_WIDGET (dialog));
-		return;
-	}
+    ActivateParametersSpecial *params = (ActivateParametersSpecial *) callback_data;
 
-	parent_window = parameters->parent_window;
-	file = g_object_get_data (G_OBJECT (dialog), "mime-action:file");
-	info = gtk_app_chooser_get_app_info (GTK_APP_CHOOSER (dialog));
+    if (error == NULL) {
+        gchar *path = nemo_file_get_path (params->file);
+        nemo_launch_application_from_command (gtk_widget_get_screen (GTK_WIDGET (params->parent_window)),
+                                              path, FALSE, NULL);
+        g_free (path);
+    }
+    nemo_report_error_setting_permissions (file, error, NULL);
 
-	gtk_widget_destroy (GTK_WIDGET (dialog));
-
-	g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
-
-	files.next = NULL;
-	files.prev = NULL;
-	files.data = file;
-	nemo_launch_application (info, &files, parent_window);
-
-	g_object_unref (info);
-
-	activate_parameters_install_free (parameters);
+    activate_parameters_special_free (params);
 }
 
 static void
-choose_program (GtkDialog *message_dialog, int response, gpointer callback_data)
+open_with_dialog_response_cb (GtkDialog *dialog,
+                              gint response_id,
+                              gpointer user_data)
 {
-	GtkWidget *dialog;
-	NemoFile *file;
-	GFile *location;
-	ActivateParametersInstall *parameters = callback_data;
+    GtkWindow *parent_window;
+    NemoFile *file;
+    GAppInfo *info;
+    GList files;
 
-	if (response != GTK_RESPONSE_ACCEPT){
-		gtk_widget_destroy (GTK_WIDGET (message_dialog));
-		activate_parameters_install_free (parameters);
-		return;
-	}
+    parent_window = user_data;
 
-	file = g_object_get_data (G_OBJECT (message_dialog), "mime-action:file");
+    if (response_id != GTK_RESPONSE_OK) {
+        gtk_widget_destroy (GTK_WIDGET (dialog));
+        return;
+    }
 
-	g_assert (NEMO_IS_FILE (file));
+    GtkWidget *content = gtk_dialog_get_content_area (dialog);
+    GList *children = gtk_container_get_children (GTK_CONTAINER (content));
 
-	location = nemo_file_get_location (file);
-	nemo_file_ref (file);
+    NemoMimeApplicationChooser *chooser = children->data;
 
-	/* Destroy the message dialog after ref:ing the file */
-	gtk_widget_destroy (GTK_WIDGET (message_dialog));
+    g_list_free (children);
 
-	dialog = gtk_app_chooser_dialog_new (parameters->parent_window,
-					     0, location);
-	g_object_set_data_full (G_OBJECT (dialog), 
-				"mime-action:file",
-				nemo_file_ref (file),
-				(GDestroyNotify)nemo_file_unref);
+    info = nemo_mime_application_chooser_get_info (chooser);
+    file = nemo_file_get_by_uri (nemo_mime_application_chooser_get_uri (chooser));
 
-	gtk_widget_show (dialog);
+    g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 
-	g_signal_connect (dialog, 
-			  "response", 
-			  G_CALLBACK (open_with_response_cb),
-			  parameters);
+    files.next = NULL;
+    files.prev = NULL;
+    files.data = file;
+    nemo_launch_application (info, &files, parent_window);
 
-	g_object_unref (location);
-	nemo_file_unref (file);	
+    gtk_widget_destroy (GTK_WIDGET (dialog));
+    g_object_unref (info);
 }
 
 static void
-show_unhandled_type_error (ActivateParametersInstall *parameters)
+run_open_with_dialog (ActivateParametersSpecial *params)
 {
-	GtkWidget *dialog;
+    GtkWidget *dialog;
 
-	char *mime_type = nemo_file_get_mime_type (parameters->file);
-	char *error_message = get_application_no_mime_type_handler_message (parameters->file, parameters->uri);
-	if (g_content_type_is_unknown (mime_type)) {
-		dialog = gtk_message_dialog_new (parameters->parent_window,
-						 GTK_DIALOG_DESTROY_WITH_PARENT,
-						 GTK_MESSAGE_ERROR,
-						 0,
-						 NULL);
-		g_object_set (dialog,
-			      "text", error_message,
-			      "secondary-text", _("The file is of an unknown type"),
-			      NULL);
-	} else {
-		char *text;
-		text = g_strdup_printf (_("There is no application installed for %s files"), g_content_type_get_description (mime_type));
+    char *mime_type;
+    char *uri = NULL;
+    GList *uris = NULL;
 
-		dialog = gtk_message_dialog_new (parameters->parent_window,
-						 GTK_DIALOG_DESTROY_WITH_PARENT,
-						 GTK_MESSAGE_ERROR,
-						 0,
-						 NULL);
-		g_object_set (dialog,
-			      "text", error_message,
-			      "secondary-text", text,
-			      NULL);
+    mime_type = nemo_file_get_mime_type (params->file);
+    uri = nemo_file_get_uri (params->file);
 
-		g_free (text);
-	}
+    dialog = gtk_dialog_new_with_buttons (_("Open with"),
+                                          params->parent_window,
+                                          GTK_DIALOG_DESTROY_WITH_PARENT,
+                                          GTK_STOCK_CANCEL,
+                                          GTK_RESPONSE_CANCEL,
+                                          GTK_STOCK_OK,
+                                          GTK_RESPONSE_OK,
+                                          NULL);
 
-	gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Select Application"), GTK_RESPONSE_ACCEPT);
+    GtkWidget *chooser = nemo_mime_application_chooser_new (uri, uris, mime_type);
 
-	gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_OK, GTK_RESPONSE_OK);
+    GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
-	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+    gtk_box_pack_start (GTK_BOX (content), chooser, TRUE, TRUE, 0);
 
-	g_object_set_data_full (G_OBJECT (dialog), 
-				"mime-action:file",
-				nemo_file_ref (parameters->file),
-				(GDestroyNotify)nemo_file_unref);
+    gtk_widget_show_all (dialog);
 
-	gtk_widget_show (GTK_WIDGET (dialog));
-	
-	g_signal_connect (dialog, "response",
-			  G_CALLBACK (choose_program), parameters);
-
-	g_free (error_message);
-	g_free (mime_type);
+    g_signal_connect_object (dialog, "response", 
+                             G_CALLBACK (open_with_dialog_response_cb),
+                             params->parent_window, 0);
+    activate_parameters_special_free (params);
 }
 
 static void
-search_for_application_dbus_call_notify_cb (GDBusProxy   *proxy,
-					    GAsyncResult *result,
-					    gpointer      user_data)
+unhandled_uri_response_callback (GtkDialog *dialog,
+                                 int response_id,
+                                 ActivateParametersSpecial *parameters)
 {
-	ActivateParametersInstall *parameters_install = user_data;
-	GVariant *variant;
-	GError *error = NULL;
-
-	variant = g_dbus_proxy_call_finish (proxy, result, &error);
-	if (variant == NULL) {
-		if (!g_dbus_error_is_remote_error (error) ||
-		    g_strcmp0 (g_dbus_error_get_remote_error (error), "org.freedesktop.PackageKit.Modify.Failed") == 0) {
-			    char *message;
-
-			    message = g_strdup_printf ("%s\n%s",
-						       _("There was an internal error trying to search for applications:"),
-						       error->message);
-			    eel_show_error_dialog (_("Unable to search for application"), message,
-			                           parameters_install->parent_window);
-			    g_free (message);
-		    }
-
-		g_error_free (error);
-		activate_parameters_install_free (parameters_install);
-		return;
-	}
-
-	g_variant_unref (variant);
-
-	/* activate the file again */
-	nemo_mime_activate_files (parameters_install->parent_window,
-	                              parameters_install->slot,
-	                              parameters_install->files,
-	                              parameters_install->activation_directory,
-	                              parameters_install->flags,
-	                              parameters_install->user_confirmation);
-
-	activate_parameters_install_free (parameters_install);
-}
-
-static void
-search_for_application_mime_type (ActivateParametersInstall *parameters_install, const gchar *mime_type)
-{
-	GdkWindow *window;
-	guint xid = 0;
-	const char *mime_types[2];
-
-	g_assert (parameters_install->proxy != NULL);	
-
-	/* get XID from parent window */
-	window = gtk_widget_get_window (GTK_WIDGET (parameters_install->parent_window));
-	if (window != NULL) {
-		xid = GDK_WINDOW_XID (window);
-	}
-
-	mime_types[0] = mime_type;
-	mime_types[1] = NULL;
-
-	g_dbus_proxy_call (parameters_install->proxy,
-			   "InstallMimeTypes",
-			   g_variant_new ("(u^ass)",
-					  xid,
-					  mime_types,
-					  "hide-confirm-search"),
-			   G_DBUS_CALL_FLAGS_NONE,
-			   G_MAXINT /* no timeout */,
-			   NULL /* cancellable */,
-			   (GAsyncReadyCallback) search_for_application_dbus_call_notify_cb,
-			   parameters_install);
-
-	DEBUG ("InstallMimeType method invoked for %s", mime_type);
-}
-
-static void
-application_unhandled_file_install (GtkDialog *dialog,
-                                    gint response_id,
-                                    ActivateParametersInstall *parameters_install)
-{
-	char *mime_type;
-
-	gtk_widget_destroy (GTK_WIDGET (dialog));
-	parameters_install->dialog = NULL;
-
-	if (response_id == GTK_RESPONSE_YES) {
-		mime_type = nemo_file_get_mime_type (parameters_install->file);
-		search_for_application_mime_type (parameters_install, mime_type);
-		g_free (mime_type);
-	} else {
-		/* free as we're not going to get the async dbus callback */
-		activate_parameters_install_free (parameters_install);
-	}
-}
-
-static gboolean
-delete_cb (GtkDialog *dialog)
-{
-	gtk_dialog_response (dialog, GTK_RESPONSE_DELETE_EVENT);
-	return TRUE;
-}
-
-static void
-pk_proxy_appeared_cb (GObject *source,
-		      GAsyncResult *res,
-		      gpointer user_data)
-{
-        ActivateParametersInstall *parameters_install = user_data;
-	char *mime_type;
-	char *error_message;
-	GtkWidget *dialog;
-        GDBusProxy *proxy;
-	GError *error = NULL;
-
-	proxy = g_dbus_proxy_new_for_bus_finish (res, &error);
-
-	if (error != NULL) {
-		g_warning ("Couldn't call Modify on the PackageKit interface: %s",
-			   error->message);
-		g_error_free (error);
-
-		/* show an unhelpful dialog */
-		show_unhandled_type_error (parameters_install);
-		/* The callback wasn't started, so we have to free the parameters */
-		activate_parameters_install_free (parameters_install);
-
-		return;
-	}
-
-	mime_type = nemo_file_get_mime_type (parameters_install->file);
-	error_message = get_application_no_mime_type_handler_message (parameters_install->file,
-	                                                              parameters_install->uri);
-	/* use a custom dialog to prompt the user to install new software */
-	dialog = gtk_message_dialog_new (parameters_install->parent_window, 0,
-	                                 GTK_MESSAGE_ERROR,
-	                                 GTK_BUTTONS_YES_NO,
-	                                 "%s", error_message);
-	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-	                                          _("There is no application installed for %s files.\n"
-	                                            "Do you want to search for an application to open this file?"),
-	                                          g_content_type_get_description (mime_type));
-	gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
-
-	parameters_install->dialog = dialog;
-	parameters_install->proxy = proxy;
-
-	g_signal_connect (dialog, "response",
-	                  G_CALLBACK (application_unhandled_file_install),
-	                  parameters_install);
-	g_signal_connect (dialog, "delete-event",
-	                  G_CALLBACK (delete_cb), NULL);
-	gtk_widget_show_all (dialog);
-	g_free (mime_type);
+    switch (response_id) {
+    case RESPONSE_RUN:
+        ;
+        guint32 existing = nemo_file_get_permissions (parameters->file);
+        nemo_file_set_permissions (parameters->file,
+                                   existing | (UNIX_PERM_USER_EXEC|UNIX_PERM_GROUP_EXEC|UNIX_PERM_OTHER_EXEC),
+                                   (NemoFileOperationCallback) make_exec_callback,
+                                   parameters);
+        break;
+    case RESPONSE_OPEN_WITH:
+        run_open_with_dialog (parameters);
+        break;
+    default:
+        /* Just destroy dialog */
+        break;
+    }
+    gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
 static void
 application_unhandled_uri (ActivateParameters *parameters, char *uri)
 {
-	gboolean show_install_mime;
-	char *mime_type;
-	NemoFile *file;
-	ActivateParametersInstall *parameters_install;
 
-	file = nemo_file_get_by_uri (uri);
+    NemoFile *file = nemo_file_get_existing_by_uri (uri);
 
-	mime_type = nemo_file_get_mime_type (file);
+    char *primary, *secondary, *display_name;
+    GtkWidget *dialog;
 
-	/* copy the parts of parameters we are interested in as the orignal will be unref'd */
-	parameters_install = g_new0 (ActivateParametersInstall, 1);
-	parameters_install->slot = parameters->slot;
-	g_object_add_weak_pointer (G_OBJECT (parameters_install->slot), (gpointer *)&parameters_install->slot);
-	if (parameters->parent_window) {
-		parameters_install->parent_window = parameters->parent_window;
-		g_object_add_weak_pointer (G_OBJECT (parameters_install->parent_window), (gpointer *)&parameters_install->parent_window);
-	}
-	parameters_install->activation_directory = g_strdup (parameters->activation_directory);
-	parameters_install->file = file;
-	parameters_install->files = get_file_list_for_launch_locations (parameters->locations);
-	parameters_install->flags = parameters->flags;
-	parameters_install->user_confirmation = parameters->user_confirmation;
-	parameters_install->uri = g_strdup(uri);
+    ActivateParametersSpecial *parameters_special;
 
-#ifdef ENABLE_PACKAGEKIT
-	/* allow an admin to disable the PackageKit search functionality */
-	show_install_mime = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_INSTALL_MIME_ACTIVATION);
-#else
-	/* we have no install functionality */
-	show_install_mime = FALSE;
-#endif
-	/* There is no use trying to look for handlers of application/octet-stream */
-	if (g_content_type_is_unknown (mime_type)) {
-		show_install_mime = FALSE;
-	}
+    parameters_special = g_new0 (ActivateParametersSpecial, 1);
+    if (parameters->parent_window) {
+        parameters_special->parent_window = parameters->parent_window;
+        g_object_add_weak_pointer (G_OBJECT (parameters_special->parent_window), (gpointer *)&parameters_special->parent_window);
+    }
+    parameters_special->file = nemo_file_ref (file);
 
-	g_free (mime_type);
+    primary = _("Unknown file type");
+    display_name = nemo_file_get_display_name (file);
+    secondary =
+        g_strdup_printf (_("The file \"%s\" has no known programs associated with it.  "
+                   "If you trust the source of this file, and have sufficient permissions, you can mark it executable and launch it.  "
+                   "Or, you can use the Open With dialog to pick a program to associate it with."
+                   ),
+                 display_name);
+    
+    dialog = gtk_message_dialog_new (parameters->parent_window,
+                     0,
+                     GTK_MESSAGE_WARNING,
+                     GTK_BUTTONS_NONE,
+                     NULL);
+    g_object_set (dialog,
+              "text", primary,
+              "secondary-text", secondary,
+              NULL);
 
-	if (!show_install_mime) {
-		goto out;
-	}
+    gtk_dialog_add_button (GTK_DIALOG (dialog),
+                   _("Make executable and run"), RESPONSE_RUN);
+    gtk_dialog_add_button (GTK_DIALOG (dialog),
+                   _("Choose a program"), RESPONSE_OPEN_WITH);
 
-	g_dbus_proxy_new_for_bus (G_BUS_TYPE_SESSION,
-				  G_DBUS_PROXY_FLAGS_NONE,
-				  NULL,
-				  "org.freedesktop.PackageKit",
-				  "/org/freedesktop/PackageKit",
-				  "org.freedesktop.PackageKit.Modify",
-				  NULL,
-				  pk_proxy_appeared_cb,
-				  parameters_install);
+    if (!nemo_file_can_set_permissions (file)) {
+        GtkWidget *w = gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), RESPONSE_RUN);
+        gtk_widget_set_sensitive (w, FALSE);
+    }
 
-	return;
+    gtk_dialog_add_button (GTK_DIALOG (dialog),
+                   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+    gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
 
-out:
-        /* show an unhelpful dialog */
-        show_unhandled_type_error (parameters_install);
+    g_signal_connect (dialog, "response",
+              G_CALLBACK (unhandled_uri_response_callback),
+                          parameters_special);
+    gtk_widget_show (dialog);
+    
+    g_free (display_name);
+    g_free (secondary);
+    return;
 }
 
-typedef struct {
-	GtkWindow *parent_window;
-	NemoFile *file;
-} ActivateParametersDesktop;
-
-static void
-activate_parameters_desktop_free (ActivateParametersDesktop *parameters_desktop)
-{
-	if (parameters_desktop->parent_window) {
-		g_object_remove_weak_pointer (G_OBJECT (parameters_desktop->parent_window), (gpointer *)&parameters_desktop->parent_window);
-	}
-	nemo_file_unref (parameters_desktop->file);
-	g_free (parameters_desktop);
-}
 
 static void
 untrusted_launcher_response_callback (GtkDialog *dialog,
 				      int response_id,
-				      ActivateParametersDesktop *parameters)
+				      ActivateParametersSpecial *parameters)
 {
 	GdkScreen *screen;
 	char *uri;
@@ -1536,14 +1315,14 @@ untrusted_launcher_response_callback (GtkDialog *dialog,
 	}
 	
 	gtk_widget_destroy (GTK_WIDGET (dialog));
-	activate_parameters_desktop_free (parameters);
+	activate_parameters_special_free (parameters);
 }
 
 static void
 activate_desktop_file (ActivateParameters *parameters,
 		       NemoFile *file)
 {
-	ActivateParametersDesktop *parameters_desktop;
+	ActivateParametersSpecial *parameters_special;
 	char *primary, *secondary, *display_name;
 	GtkWidget *dialog;
 	GdkScreen *screen;
@@ -1553,12 +1332,12 @@ activate_desktop_file (ActivateParameters *parameters,
 
 	if (!nemo_file_is_trusted_link (file)) {
 		/* copy the parts of parameters we are interested in as the orignal will be freed */
-		parameters_desktop = g_new0 (ActivateParametersDesktop, 1);
+		parameters_special = g_new0 (ActivateParametersSpecial, 1);
 		if (parameters->parent_window) {
-			parameters_desktop->parent_window = parameters->parent_window;
-			g_object_add_weak_pointer (G_OBJECT (parameters_desktop->parent_window), (gpointer *)&parameters_desktop->parent_window);
+			parameters_special->parent_window = parameters->parent_window;
+			g_object_add_weak_pointer (G_OBJECT (parameters_special->parent_window), (gpointer *)&parameters_special->parent_window);
 		}
-		parameters_desktop->file = nemo_file_ref (file);
+		parameters_special->file = nemo_file_ref (file);
 
 		primary = _("Untrusted application launcher");
 		display_name = nemo_file_get_display_name (file);
@@ -1591,7 +1370,7 @@ activate_desktop_file (ActivateParameters *parameters,
 
 		g_signal_connect (dialog, "response",
 				  G_CALLBACK (untrusted_launcher_response_callback),
-				  parameters_desktop);
+				  parameters_special);
 		gtk_widget_show (dialog);
 		
 		g_free (display_name);

@@ -161,17 +161,6 @@ AM_CONDITIONAL(ENABLE_EMPTY_VIEW, test "x$ENABLE_EMPTY_VIEW" = "x1")
 
 dnl ==========================================================================
 
-AC_ARG_ENABLE(packagekit, 
-	AC_HELP_STRING([--disable-packagekit], 
-			[build without PackageKit support]))
-msg_packagekit=no
-if test "x$enable_packagekit" != "xno"; then
-	msg_packagekit=yes
-	AC_DEFINE(ENABLE_PACKAGEKIT, 1, [define to enable PackageKit mimetype installer])
-fi
-
-dnl ==========================================================================
-
 dnl Turn on the additional warnings last, so -Werror doesn't affect other tests.
 
 WARNING_CFLAGS=""
@@ -356,7 +345,6 @@ nemo-$VERSION:
 	compiler:		${CC}
 	libexif support:	$msg_libexif
 	libexempi support:	$msg_xmp
-	PackageKit support:     $msg_packagekit
 	Tracker support:	$build_tracker
 
         debugging support:      ${enable_debug}
