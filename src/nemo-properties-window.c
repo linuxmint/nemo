@@ -4082,7 +4082,6 @@ create_simple_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 	gboolean has_file, has_directory;
 	GtkLabel *group_label;
 	GtkLabel *owner_label;
-	GtkLabel *execute_label;
 	GtkWidget *value;
 	GtkComboBox *group_combo_box;
 	GtkComboBox *owner_combo_box;
@@ -4166,15 +4165,17 @@ create_simple_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 					   !has_directory);
 	}
 
-	append_blank_slim_row (page_grid);
-	
-	execute_label = attach_title_field (page_grid, _("Execute:"));
-	add_permissions_checkbox_with_label (window, page_grid,
-					     GTK_WIDGET (execute_label),
-					     _("Allow _executing file as program"),
-					     UNIX_PERM_USER_EXEC|UNIX_PERM_GROUP_EXEC|UNIX_PERM_OTHER_EXEC,
-					     execute_label, FALSE);
-	
+    if (!has_directory) {
+        GtkLabel *execute_label;
+        append_blank_slim_row (page_grid);
+
+        execute_label = attach_title_field (page_grid, _("Execute:"));
+        add_permissions_checkbox_with_label (window, page_grid,
+                             GTK_WIDGET (execute_label),
+                             _("Allow _executing file as program"),
+                             UNIX_PERM_USER_EXEC|UNIX_PERM_GROUP_EXEC|UNIX_PERM_OTHER_EXEC,
+                             execute_label, FALSE);
+    }
 }
 
 static void
