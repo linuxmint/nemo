@@ -1104,8 +1104,6 @@ nemo_path_bar_scroll_timeout (NemoPathBar *path_bar)
 {
         gboolean retval = FALSE;
 
-        GDK_THREADS_ENTER ();
-
         if (path_bar->timer) {
                 if (gtk_widget_has_focus (path_bar->up_slider_button)) {
 			nemo_path_bar_scroll_up (path_bar);
@@ -1124,10 +1122,7 @@ nemo_path_bar_scroll_timeout (NemoPathBar *path_bar)
 		} else {
 			retval = TRUE;
 		}
-        }            
-                
-
-        GDK_THREADS_LEAVE ();
+        }
 
         return retval;
 }
