@@ -212,6 +212,12 @@ nemo_convert_metadata_SOURCES= \
 	nemo-convert-metadata.c	\
 	$(NULL)
 
+polkitdir = $(datadir)/polkit-1/actions
+polkit_in_files = org.nemo.root.policy.in
+
+@INTLTOOL_POLICY_RULE@
+polkit_DATA = $(polkit_in_files:.policy.in=.policy)
+
 TESTS=check-nemo
 
 @INTLTOOL_SERVER_RULE@
@@ -223,6 +229,7 @@ CLEANFILES = \
 
 EXTRA_DIST =					\
 	$(server_in_files)			\
+    $(polkit_in_files)      \
 	$(UI_FILES)				\
 	nemo.gresource.xml			\
 	check-nemo				\

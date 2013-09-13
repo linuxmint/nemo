@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+"-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+"http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+
+<policyconfig>
+
+ <vendor>Linux Mint</vendor>
+ <vendor_url>http://linuxmint.com/</vendor_url>
+
+ <action id="org.nemo.root">
+   <description>Run Nemo with elevated privileges</description>
+   <message>Authentication is required to run Nemo as root</message>
+   <icon_name>gksu-root-terminal</icon_name>
+   <defaults>
+     <allow_any>auth_admin</allow_any>
+     <allow_inactive>auth_admin</allow_inactive>
+     <allow_active>auth_admin</allow_active>
+   </defaults>
+   <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/nemo</annotate>
+   <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+ </action>
+
+</policyconfig>
