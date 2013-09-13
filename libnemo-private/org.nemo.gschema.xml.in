@@ -366,22 +366,22 @@
       <_description>If this is set to true, Nemo will autostart and manage the desktop</_description>
     </key>
     <key name="home-icon-visible" type="b">
-      <default>true</default>
+      <default>false</default>
       <_summary>Home icon visible on desktop</_summary>
       <_description>If this is set to true, an icon linking to the home folder will be put on the desktop.</_description>
     </key>
     <key name="computer-icon-visible" type="b">
-      <default>true</default>
+      <default>false</default>
       <_summary>Computer icon visible on desktop</_summary>
       <_description>If this is set to true, an icon linking to the computer location will be put on the desktop.</_description>
     </key>
     <key name="trash-icon-visible" type="b">
-      <default>true</default>
+      <default>false</default>
       <_summary>Trash icon visible on desktop</_summary>
       <_description>If this is set to true, an icon linking to the trash will be put on the desktop.</_description>
     </key>
     <key name="volumes-visible" type="b">
-      <default>true</default>
+      <default>false</default>
       <_summary>Show mounted volumes on the desktop</_summary>
       <_description>If this is set to true, icons linking to mounted volumes will be put on the desktop.</_description>
     </key>
