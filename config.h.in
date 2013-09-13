@@ -99,7 +99,7 @@
 /* Define to 1 if you have the <X11/XF86keysym.h> header file. */
 #undef HAVE_X11_XF86KEYSYM_H
 
-/* Define the location where the catalogs will be installed */
+/* path for translations */
 #undef LOCALEDIR
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
