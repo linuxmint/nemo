@@ -1563,7 +1563,7 @@ activate_desktop_file (ActivateParameters *parameters,
 		primary = _("Untrusted application launcher");
 		display_name = nemo_file_get_display_name (file);
 		secondary =
-			g_strdup_printf (_("The application launcher \"%s\" has not been marked as trusted. "
+			g_strdup_printf (_("The application launcher \"%s\" has not been marked as trusted (executable). "
 					   "If you do not know the source of this file, launching it may be unsafe."
 					   ),
 					 display_name);
@@ -1577,14 +1577,14 @@ activate_desktop_file (ActivateParameters *parameters,
 			      "text", primary,
 			      "secondary-text", secondary,
 			      NULL);
-		if (nemo_file_get_ctime(file) < 1256817600L ) {
+
 		gtk_dialog_add_button (GTK_DIALOG (dialog),
 				       _("_Launch Anyway"), RESPONSE_RUN);
 		if (nemo_file_can_set_permissions (file)) {
 			gtk_dialog_add_button (GTK_DIALOG (dialog),
 					       _("Mark as _Trusted"), RESPONSE_MARK_TRUSTED);
 		}
-		}
+
 		gtk_dialog_add_button (GTK_DIALOG (dialog),
 				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 		gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
