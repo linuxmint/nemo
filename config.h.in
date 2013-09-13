@@ -12,9 +12,6 @@
 /* always defined to indicate that i18n is enabled */
 #undef ENABLE_NLS
 
-/* define to enable PackageKit mimetype installer */
-#undef ENABLE_PACKAGEKIT
-
 /* Define to enable Tracker support */
 #undef ENABLE_TRACKER
 
