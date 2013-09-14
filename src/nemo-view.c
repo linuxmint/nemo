@@ -6628,7 +6628,13 @@ action_open_as_root_callback (GtkAction *action,
 	if (selection != NULL) {
 		open_as_root (view, NEMO_FILE (selection->data));
 		nemo_file_list_free (selection);
-	}
+	} else {
+        NemoFile *file;
+        gchar *uri = nemo_view_get_uri (view);
+        file = nemo_file_get_existing_by_uri (uri);
+        open_as_root (view, file);
+        g_free (uri);
+    }
 
 }
 
