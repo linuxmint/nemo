@@ -79,6 +79,8 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DESKTOP_TOOLTIPS_WIDGET "tooltips_on_desktop_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_ADVANCED_PERMISSIONS_WIDGET "show_advanced_permissions_checkbutton"
 
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_BULK_RENAME_WIDGET "bulk_rename_entry"
+
 /* int enums */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET "preview_image_size_combobox"
 
@@ -570,6 +572,17 @@ bind_builder_bool_inverted (GtkBuilder *builder,
 			 "active", G_SETTINGS_BIND_INVERT_BOOLEAN);
 }
 
+static void
+bind_builder_string_entry (GtkBuilder *builder,
+                            GSettings *settings,
+                           const char *widget_name,
+                           const char *prefs)
+{
+    g_settings_bind (settings, prefs,
+                     gtk_builder_get_object (builder, widget_name),
+                     "text", G_SETTINGS_BIND_DEFAULT);
+}
+
 static gboolean
 enum_get_mapping (GValue             *value,
 		  GVariant           *variant,
@@ -881,6 +894,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
     bind_builder_bool (builder, nemo_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_ADVANCED_PERMISSIONS_WIDGET,
                        NEMO_PREFERENCES_SHOW_ADVANCED_PERMISSIONS);
+
+    bind_builder_string_entry (builder, nemo_preferences,
+                         NEMO_FILE_MANAGEMENT_PROPERTIES_BULK_RENAME_WIDGET,
+                         NEMO_PREFERENCES_BULK_RENAME_TOOL);
 
 	nemo_file_management_properties_dialog_setup_icon_caption_page (builder);
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);
