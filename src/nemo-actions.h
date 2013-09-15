@@ -141,6 +141,7 @@
 #define NEMO_ACTION_STATUSBAR_TREEVIEW "Statusbar Treeview"
 #define NEMO_ACTION_STATUSBAR_SIDEBAR_TOGGLE "Statusbar Sidebar Toggle"
 
+#define NEMO_ACTION_OPEN_IN_TERMINAL "OpenInTerminal"
 #define NEMO_ACTION_FOLLOW_SYMLINK "FollowSymbolicLink"
 
 #endif /* NEMO_ACTIONS_H */

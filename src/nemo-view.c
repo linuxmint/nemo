@@ -6576,28 +6576,25 @@ paste_into (NemoView *view,
 }
 
 static void
-open_as_root (NemoView *view,
-	    NemoFile *target)
+open_as_root (const gchar *path)
 {	
     gchar *argv[4];
-	g_assert (NEMO_IS_VIEW (view));
-	g_assert (NEMO_IS_FILE (target));
     argv[0] = "pkexec";
     argv[1] = "nemo";
-    argv[2] = g_file_get_path(nemo_file_get_location (target));
+    argv[2] = g_strdup (path);
     argv[3] = NULL;
     g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
                   NULL, NULL, NULL, NULL);
 }
 
 static void
-open_in_terminal (gchar *location)
+open_in_terminal (const gchar *path)
 {	
     gchar *argv[2];
     argv[0] = g_settings_get_string (gnome_terminal_preferences,
 				     GNOME_DESKTOP_TERMINAL_EXEC);
     argv[1] = NULL;
-    g_spawn_async(location, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
+    g_spawn_async(path, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
 }
 
 static void
@@ -6626,14 +6623,23 @@ action_open_as_root_callback (GtkAction *action,
 	view = NEMO_VIEW (callback_data);
 	selection = nemo_view_get_selection (view);
 	if (selection != NULL) {
-		open_as_root (view, NEMO_FILE (selection->data));
+        gchar *path = nemo_file_get_path (NEMO_FILE (selection->data));
+		open_as_root (path);
 		nemo_file_list_free (selection);
+        g_free (path);
 	} else {
-        NemoFile *file;
+        gchar *path;
         gchar *uri = nemo_view_get_uri (view);
-        file = nemo_file_get_existing_by_uri (uri);
-        open_as_root (view, file);
+        GFile *gfile = g_file_new_for_uri (uri);
+        if (g_file_has_uri_scheme (gfile, "x-nemo-desktop")) {
+            path = nemo_get_desktop_directory ();
+        } else {
+            path = g_file_get_path (gfile);
+        }
+        open_as_root (path);
         g_free (uri);
+        g_free (path);
+        g_object_unref (gfile);
     }
 
 }
@@ -6666,14 +6672,23 @@ action_open_in_terminal_callback(GtkAction *action,
 	view = NEMO_VIEW (callback_data);
 	selection = nemo_view_get_selection (view);
 	if (selection != NULL) {
-        open_in_terminal (g_file_get_path (g_file_get_parent (nemo_file_get_location (NEMO_FILE (selection->data)))));
+        gchar *path = nemo_file_get_path (NEMO_FILE (selection->data));
+        open_in_terminal (path);
+        g_free (path);
 		nemo_file_list_free (selection);
 	} else {
-        if (g_file_has_uri_scheme (g_file_new_for_uri (nemo_view_get_uri (view)), "x-nemo-desktop")) {
-            open_in_terminal (nemo_get_desktop_directory ());
+        gchar *path;
+        gchar *uri = nemo_view_get_uri (view);
+        GFile *gfile = g_file_new_for_uri (uri);
+        if (g_file_has_uri_scheme (gfile, "x-nemo-desktop")) {
+            path = nemo_get_desktop_directory ();
         } else {
-            open_in_terminal (g_filename_from_uri(nemo_view_get_uri(view), NULL, NULL));
+            path = g_file_get_path (gfile);
         }
+        open_in_terminal (path);
+        g_free (uri);
+        g_free (path);
+        g_object_unref (gfile);
     }
 }
 
@@ -7601,7 +7616,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open in New _Tab"), "<control><shift>o",
   /* tooltip */                  N_("Open each selected item in a new tab"),
 				 G_CALLBACK (action_open_new_tab_callback) },
-  /* name, stock id */         { "OpenInTerminal", "terminal",
+  /* name, stock id */         { NEMO_ACTION_OPEN_IN_TERMINAL, "terminal",
   /* label, accelerator */       N_("Open in Terminal"), "",
   /* tooltip */                  N_("Open terminal in the selected folder"),
 				 G_CALLBACK (action_open_in_terminal_callback) },
@@ -8964,9 +8979,18 @@ real_update_menus (NemoView *view)
 					  nemo_view_can_rename_file (view, selection->data));
 	}
 
-    action = gtk_action_group_get_action(view->details->dir_action_group,
+    gboolean no_selection_or_one_dir = ((selection_count == 1 && selection_contains_directory) ||
+                                        selection_count == 0);
+
+    gboolean show_open_as_root = (geteuid() != 0) && no_selection_or_one_dir;
+
+    action = gtk_action_group_get_action (view->details->dir_action_group,
                                          NEMO_ACTION_OPEN_AS_ROOT);
-    gtk_action_set_visible(action, geteuid() != 0);
+    gtk_action_set_visible (action, show_open_as_root);
+
+    action = gtk_action_group_get_action (view->details->dir_action_group,
+                                         NEMO_ACTION_OPEN_IN_TERMINAL);
+    gtk_action_set_visible (action, no_selection_or_one_dir);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_FOLDER);
