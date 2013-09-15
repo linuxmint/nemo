@@ -6331,21 +6331,28 @@ struct {
     { "x-office-spreadsheet", N_("Spreadsheet") },
 };
 
+/* FIXME: once we can use gio 2.34, use g_content_type_get_generic_icon_name */
+
 static char *
 get_basic_type_for_mime_type (const char *mime_type)
 {
-    char *icon_name;
     char *basic_type = NULL;
 
-    icon_name = g_content_type_get_generic_icon_name (mime_type);
-    if (icon_name != NULL) {
-        int i;
+    GIcon *icon;
+    icon = g_content_type_get_icon (mime_type);
+    const gchar * const *icon_names = g_themed_icon_get_names (G_THEMED_ICON (icon));
 
-        for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
-            if (strcmp (mime_type_map[i].icon_name, icon_name) == 0) {
-                basic_type = g_strdup (gettext (mime_type_map[i].display_name));
-                break;
+    if (icon_names != NULL) {
+        int i, j;
+        for (j = 0; j < g_strv_length ((gchar **) icon_names); j++) {
+            for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
+                if (strcmp (mime_type_map[i].icon_name, icon_names[j]) == 0) {
+                    basic_type = g_strdup (gettext (mime_type_map[i].display_name));
+                    break;
+                }
             }
+            if (basic_type != NULL)
+                break;
         }
     }
 
@@ -6353,7 +6360,7 @@ get_basic_type_for_mime_type (const char *mime_type)
         basic_type = g_strdup (_("Unknown"));
     }
 
-    g_free (icon_name);
+    g_object_unref (icon);
 
     return basic_type;
 }
