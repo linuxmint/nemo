@@ -15,6 +15,10 @@
 /* Define to enable Tracker support */
 #undef ENABLE_TRACKER
 
+/* Defined if we meet the minimum version for
+   g_content_type_get_generic_icon_name */
+#undef GENERIC_ICON_API
+
 /* the gettext translation domain */
 #undef GETTEXT_PACKAGE
 

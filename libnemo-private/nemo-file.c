@@ -6331,7 +6331,38 @@ struct {
     { "x-office-spreadsheet", N_("Spreadsheet") },
 };
 
-/* FIXME: once we can use gio 2.34, use g_content_type_get_generic_icon_name */
+/* FIXME: remove this ifdef once we no longer need support for < 2.34 glib */
+
+#ifdef GENERIC_ICON_API
+
+static char *
+get_basic_type_for_mime_type (const char *mime_type)
+{
+    char *icon_name;
+    char *basic_type = NULL;
+
+    icon_name = g_content_type_get_generic_icon_name (mime_type);
+    if (icon_name != NULL) {
+        int i;
+
+        for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
+            if (strcmp (mime_type_map[i].icon_name, icon_name) == 0) {
+                basic_type = g_strdup (gettext (mime_type_map[i].display_name));
+                break;
+            }
+        }
+    }
+
+    if (basic_type == NULL) {
+        basic_type = g_strdup (_("Unknown"));
+    }
+
+    g_free (icon_name);
+
+    return basic_type;
+}
+
+#else
 
 static char *
 get_basic_type_for_mime_type (const char *mime_type)
@@ -6364,6 +6395,8 @@ get_basic_type_for_mime_type (const char *mime_type)
 
     return basic_type;
 }
+
+#endif
 
 static char *
 get_description (NemoFile     *file,
