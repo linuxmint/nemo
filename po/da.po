@@ -46,8 +46,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-09 22:47+0200\n"
-"PO-Revision-Date: 2013-09-02 21:28+0200\n"
+"POT-Creation-Date: 2013-09-17 18:19+0200\n"
+"PO-Revision-Date: 2013-09-17 00:27+0200\n"
 "Last-Translator: Kenneth Nielsen <k.nielsen81@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "Language: da\n"
@@ -149,23 +149,22 @@ msgstr ""
 #: ../libnautilus-private/nautilus-clipboard.c:358 ../src/nautilus-view.c:7206
 #: ../src/nautilus-view.c:7359
 msgid "Cu_t"
-msgstr ""
+msgstr "Kl_ip"
 
 #. name, stock id
 #. label, accelerator
 #: ../eel/eel-editable-label.c:3082
 #: ../libnautilus-private/nautilus-clipboard.c:362 ../src/nautilus-view.c:7210
 #: ../src/nautilus-view.c:7363
-#, fuzzy
 msgid "_Copy"
-msgstr "_Kopiér hertil"
+msgstr "_Kopiér"
 
 #. name, stock id
 #. label, accelerator
 #: ../eel/eel-editable-label.c:3084
 #: ../libnautilus-private/nautilus-clipboard.c:366 ../src/nautilus-view.c:7214
 msgid "_Paste"
-msgstr ""
+msgstr "_Indsæt"
 
 #: ../eel/eel-editable-label.c:3087
 msgid "Select All"
@@ -188,9 +187,8 @@ msgstr "Vis flere _detaljer"
 #: ../src/nautilus-properties-window.c:5465 ../src/nautilus-query-editor.c:520
 #: ../src/nautilus-view.c:970 ../src/nautilus-view.c:1496
 #: ../src/nautilus-view.c:1616 ../src/nautilus-view.c:5995
-#, fuzzy
 msgid "_Cancel"
-msgstr "Annullér"
+msgstr "_Annullér"
 
 #: ../eel/eel-stock-dialogs.c:205
 msgid "You can stop this operation by clicking cancel."
@@ -285,14 +283,12 @@ msgid "The date the file was modified."
 msgstr "Den dato hvor filen sidst blev ændret."
 
 #: ../libnautilus-private/nautilus-column-utilities.c:87
-#, fuzzy
 msgid "Accessed"
-msgstr "Tilgået:"
+msgstr "Tilgået"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:88
-#, fuzzy
 msgid "The date the file was accessed."
-msgstr "Den dato hvor filen sidst blev ændret."
+msgstr "Den dato hvor filen sidst blev tilgået."
 
 #: ../libnautilus-private/nautilus-column-utilities.c:96
 msgid "Owner"
@@ -383,7 +379,7 @@ msgstr "Vælg punktet Skub ud i diskenhedens pop op-menu for at skubbe den ud."
 #: ../src/nautilus-mime-actions.c:1267 ../src/nautilus-mime-actions.c:1820
 #: ../src/nautilus-view.c:970 ../src/nautilus-view.c:1498
 msgid "_OK"
-msgstr ""
+msgstr "_O.k."
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:108
 msgid ""
@@ -1950,7 +1946,7 @@ msgstr "Vælg et program hvormed “%s” og andre filer af typen “%s” skal 
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:325
 msgid "_Add"
-msgstr ""
+msgstr "_Tilføj"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:333
 msgid "Set as default"
@@ -2556,17 +2552,15 @@ msgstr "Hvis sat til sand, vil nyligt åbnede vinduer have et sidepanel."
 #: ../nautilus-sendto-extension/nautilus-nste.c:97
 #: ../nautilus-sendto-extension/nautilus-nste.c:102
 msgid "Email…"
-msgstr ""
+msgstr "E-mail…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:98
-#, fuzzy
 msgid "Send file by mail…"
-msgstr "Send fil med e-post, lynbesked…"
+msgstr "Send fil med e-mail…"
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:103
-#, fuzzy
 msgid "Send files by mail…"
-msgstr "Send filer over e-post, lynbesked…"
+msgstr "Send filer med e-mail…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
 #: ../src/nautilus-application.c:225 ../src/nautilus-window-slot.c:1604
@@ -2865,15 +2859,12 @@ msgid "Keep icons sorted by modification date in rows"
 msgstr "Hold ikoner sorteret efter ændringsdato i rækker"
 
 #: ../src/nautilus-canvas-view.c:1142
-#, fuzzy
 msgid "By _Access Date"
-msgstr "Efter adgangstidspunkt"
+msgstr "Efter _adgangstidspunkt"
 
 #: ../src/nautilus-canvas-view.c:1143
-#, fuzzy
 msgid "Keep icons sorted by access date in rows"
-msgstr ""
-"Hold ikoner sorteret efter tidspunkt for flytning til papirkurv i rækker"
+msgstr "Hold ikoner sorteret i rækker efter tilgangstidspunkt"
 
 #: ../src/nautilus-canvas-view.c:1146
 msgid "By T_rash Time"
@@ -2930,7 +2921,7 @@ msgstr "Der opstod en fejl under visning af hjælp."
 
 #: ../src/nautilus-connect-server-dialog.c:149
 msgid "This file server type is not recognized."
-msgstr ""
+msgstr "Denne type filserver genkendes ikke."
 
 #: ../src/nautilus-connect-server-dialog.c:156
 msgid "This doesn't look like an address."
@@ -3560,9 +3551,8 @@ msgid "(Empty)"
 msgstr "(tom)"
 
 #: ../src/nautilus-list-view.c:1609
-#, fuzzy
 msgid "Use Default"
-msgstr "_Benyt standard"
+msgstr "Benyt forvalg"
 
 #: ../src/nautilus-list-view.c:2942
 #, c-format
@@ -4039,9 +4029,8 @@ msgid "Select Custom Icon"
 msgstr "Vælg eget ikon"
 
 #: ../src/nautilus-properties-window.c:5464
-#, fuzzy
 msgid "_Revert"
-msgstr "Aldrig"
+msgstr "_Nulstil"
 
 #. name, stock id
 #. label, accelerator
@@ -4174,7 +4163,7 @@ msgstr "Gem søgning som"
 
 #: ../src/nautilus-view.c:1619
 msgid "_Save"
-msgstr ""
+msgstr "_Gem"
 
 #: ../src/nautilus-view.c:1636
 msgid "Search _name:"
@@ -4375,15 +4364,13 @@ msgstr "Åbn det valgte objekt i dette vindue"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7178
-#, fuzzy
 msgid "Open _Item Location"
-msgstr "Indtast _sted"
+msgstr "Åbn _objektets sted"
 
 #. tooltip
 #: ../src/nautilus-view.c:7179
-#, fuzzy
 msgid "Open the selected item's location in this window"
-msgstr "Åbn det valgte objekt i dette vindue"
+msgstr "Åbn det valgte objekts sted i dette vindue"
 
 #. name, stock id
 #. label, accelerator
