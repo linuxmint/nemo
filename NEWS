@@ -1,3 +1,9 @@
+Major changes in 3.9.92:
+* Use new gtk_drag_begin_full API (Jasper St. Pierre)
+* Increase default window width to fit four icons (Michael Catanzaro)
+* Don't filter out NoDisplay applications from "Open With..."
+* Fix desktop file categories (Elad Alfassa)
+
 Major changes in 3.9.91:
 * Use a GtkRevealer for the search bar
 * Don't present redundant options for operations on single
