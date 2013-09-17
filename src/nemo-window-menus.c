@@ -1153,8 +1153,8 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { NEMO_ACTION_FORWARD, GTK_STOCK_GO_FORWARD, N_("_Forward"),
 				 "<alt>Right", N_("Go to the next visited location"),
 				 G_CALLBACK (action_forward_callback) },
-  /* name, stock id, label */  { NEMO_ACTION_EDIT_LOCATION, NULL, N_("_Location..."),
-                                 "<control>L", N_("Specify a location to open"),
+  /* name, stock id, label */  { NEMO_ACTION_EDIT_LOCATION, NULL, N_("Toggle _Location Entry"),
+                                 "<control>L", N_("Switch between location entry and breadcrumbs"),
                                  G_CALLBACK (action_menu_edit_location_callback) },
   /* name, stock id, label */  { "SplitViewNextPane", NULL, N_("S_witch to Other Pane"),
 				 "F6", N_("Move focus to the other pane in a split view window"),
@@ -1337,7 +1337,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 
     action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_TOGGLE_LOCATION,
                                                 _("Location"),
-                                                _("Use Location Entry"),
+                                                _("Toggle Location Entry"),
                                                 NULL));
     gtk_action_group_add_action (action_group, GTK_ACTION (action));
     show_location_entry_initially = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY);

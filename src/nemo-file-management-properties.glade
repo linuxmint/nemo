@@ -2362,7 +2362,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="show_edit_icon_toolbar_checkbutton">
-                                <property name="label" translatable="yes">Show toggle button location bar/bar path</property>
+                                <property name="label" translatable="yes">Show location entry/breadcrumbs toggle button.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
