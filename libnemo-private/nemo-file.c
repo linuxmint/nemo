@@ -2149,6 +2149,8 @@ update_info_internal (NemoFile *file,
 
 	file->details->file_info_is_up_to_date = TRUE;
 
+    file->details->thumbnail_try_count = 0;
+
 	/* FIXME bugzilla.gnome.org 42044: Need to let links that
 	 * point to the old name know that the file has been renamed.
 	 */
@@ -4293,7 +4295,7 @@ nemo_file_get_icon (NemoFile *file,
 			   file->details->can_read &&				
 			   !file->details->is_thumbnailing &&
 			   !file->details->thumbnailing_failed &&
-               file->details->thumbnail_try_count < MAX_THUMBNAIL_TRIES) {
+               file->details->thumbnail_try_count <= MAX_THUMBNAIL_TRIES) {
 			if (nemo_can_thumbnail (file)) {
 				nemo_create_thumbnail (file);
 			}
