@@ -109,6 +109,8 @@ typedef enum
 
 #define NEMO_PREFERENCES_CLOSE_DEVICE_VIEW_ON_EJECT "close-device-view-on-device-eject"
 
+#define NEMO_PREFERENCES_START_WITH_DUAL_PANE "start-with-dual-pane"
+
 enum
 {
 	NEMO_DEFAULT_FOLDER_VIEWER_ICON_VIEW,

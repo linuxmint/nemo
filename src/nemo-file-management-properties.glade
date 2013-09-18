@@ -1,124 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkListStore" id="model8">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">100 KB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">500 KB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">1 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">3 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">5 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">10 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">100 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">1 GB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">2 GB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">4 GB</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model1">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Icon View</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">List View</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Compact View</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model10">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Always</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Local Files Only</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Never</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model11">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Decimal</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Decimal (long format)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Binary</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Binary (long format)</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model2">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">By Name</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">By Size</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">By Type</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">By Modification Date</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">By Access Date</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">By Trashed Date</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkListStore" id="model3">
     <columns>
       <!-- column-name gchararray -->
@@ -206,6 +88,86 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="model1">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Icon View</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">List View</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Compact View</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model10">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Always</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Local Files Only</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Never</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model11">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Decimal</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Decimal (long format)</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Binary</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Binary (long format)</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model2">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">By Name</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By Size</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By Type</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By Modification Date</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By Access Date</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By Trashed Date</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="model6">
     <columns>
       <!-- column-name gchararray -->
@@ -237,6 +199,44 @@
       </row>
       <row>
         <col id="0" translatable="yes">Never</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model8">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">100 KB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">500 KB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">1 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">3 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">5 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">10 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">100 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">1 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">2 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">4 GB</col>
       </row>
     </data>
   </object>
@@ -959,7 +959,7 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
-                                <property name="padding">6</property>
+                                <property name="padding">3</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -976,7 +976,24 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
+                                <property name="padding">6</property>
                                 <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="start_with_dual_pane_checkbutton">
+                                <property name="label" translatable="yes">Always start in dual-pane view</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="use_underline">True</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">3</property>
                               </packing>
                             </child>
                           </object>
@@ -1640,6 +1657,69 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkBox" id="vbox100">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkLabel" id="label100">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Window and Tab Titles&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment100">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <object class="GtkBox" id="vbox101">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">6</property>
+                            <child>
+                              <object class="GtkCheckButton" id="show_full_path_in_title_bars_checkbutton">
+                                <property name="label" translatable="yes">Show the full p_ath in the title bar and tab bars</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="use_underline">True</property>
+                                <property name="xalign">0.5</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkBox" id="vbox12">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -1714,69 +1794,6 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkBox" id="vbox100">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">6</property>
-                    <child>
-                      <object class="GtkLabel" id="label100">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">&lt;b&gt;Window and Tab Titles&lt;/b&gt;</property>
-                        <property name="use_markup">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkAlignment" id="alignment100">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="left_padding">12</property>
-                        <child>
-                          <object class="GtkBox" id="vbox101">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">6</property>
-                            <child>
-                              <object class="GtkCheckButton" id="show_full_path_in_title_bars_checkbutton">
-                                <property name="label" translatable="yes">Show the full p_ath in the title bar and tab bars</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="use_underline">True</property>
-                                <property name="xalign">0.5</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
                     <property name="position">2</property>
                   </packing>
                 </child>

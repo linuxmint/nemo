@@ -255,6 +255,11 @@
       <_summary>Whether to close a view of a removeable device instead of navigating Home</_summary>
       <_description>If set to true, a view open for a removeable device will be closed instead of sent Home if the device is ejected</_description>
     </key>
+    <key name="start-with-dual-pane" type="b">
+      <default>false</default>
+      <_summary>Whether to default to showing dual-pane view when a new window is opened</_summary>
+      <_description>If set to true, new Nemo windows will default to showing two panes</_description>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">
