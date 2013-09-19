@@ -644,7 +644,8 @@ nemo_window_constructed (GObject *self)
 	slot = nemo_window_pane_open_slot (window->details->active_pane, 0);
 	nemo_window_set_active_slot (window, slot);
 
-    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_START_WITH_DUAL_PANE))
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_START_WITH_DUAL_PANE) &&
+        !window->details->disable_chrome)
         nemo_window_split_view_on (window);
 }
 
