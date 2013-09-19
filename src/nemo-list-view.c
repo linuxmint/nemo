@@ -32,6 +32,7 @@
 #include "nemo-error-reporting.h"
 #include "nemo-view-dnd.h"
 #include "nemo-view-factory.h"
+#include "nemo-window.h"
 
 #include <string.h>
 #include <eel/eel-vfs-extensions.h>
@@ -2146,9 +2147,14 @@ set_zoom_level_from_metadata_and_preferences (NemoListView *list_view)
 
 	if (nemo_view_supports_zooming (NEMO_VIEW (list_view))) {
 		file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
-		level = nemo_file_get_integer_metadata (file,
+        if (nemo_global_preferences_get_ignore_view_metadata ()) {
+            gint ignore_level = nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (list_view)));
+            level = ignore_level > -1 ? ignore_level : get_default_zoom_level ();
+        } else {
+            level = nemo_file_get_integer_metadata (file,
 							    NEMO_METADATA_KEY_LIST_VIEW_ZOOM_LEVEL, 
 							    get_default_zoom_level ());
+        }
 		nemo_list_view_set_zoom_level (list_view, level, TRUE);
 		
 		/* updated the rows after updating the font size */
@@ -3008,11 +3014,14 @@ nemo_list_view_set_zoom_level (NemoListView *view,
 	view->details->zoom_level = new_level;
 	g_signal_emit_by_name (NEMO_VIEW(view), "zoom_level_changed");
 
-	nemo_file_set_integer_metadata
-		(nemo_view_get_directory_as_file (NEMO_VIEW (view)), 
-		 NEMO_METADATA_KEY_LIST_VIEW_ZOOM_LEVEL, 
-		 get_default_zoom_level (),
-		 new_level);
+    if (nemo_global_preferences_get_ignore_view_metadata ())
+        nemo_window_set_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (view)), new_level);
+    else
+        nemo_file_set_integer_metadata
+            (nemo_view_get_directory_as_file (NEMO_VIEW (view)), 
+             NEMO_METADATA_KEY_LIST_VIEW_ZOOM_LEVEL, 
+             get_default_zoom_level (),
+             new_level);
 
 	/* Select correctly scaled icons. */
 	column = nemo_list_model_get_column_id_from_zoom_level (new_level);

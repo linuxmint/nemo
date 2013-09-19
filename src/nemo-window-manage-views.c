@@ -845,8 +845,8 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 		mimetype = nemo_file_get_mime_type (file);
 
 		/* Look in metadata for view */
-		view_id = nemo_file_get_metadata 
-			(file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL);
+		view_id = nemo_global_preferences_get_ignore_view_metadata () ? g_strdup (nemo_window_get_ignore_meta_view_id (window)) :
+                                                                        nemo_file_get_metadata (file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL);
 		if (view_id != NULL && 
 		    !nemo_view_factory_view_supports_uri (view_id,
 							      location,
@@ -1724,17 +1724,22 @@ nemo_window_slot_set_content_view (NemoWindowSlot *slot,
         end_location_change (slot);
 
 	file = nemo_file_get (slot->location);
-	nemo_file_set_metadata 
-		(file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL, id);
-        nemo_file_unref (file);
-        
-        nemo_window_slot_set_allow_stop (slot, TRUE);
 
-        if (nemo_view_get_selection_count (slot->content_view) == 0) {
-                /* If there is no selection, queue a scroll to the same icon that
-                 * is currently visible */
-                slot->pending_scroll_to = nemo_view_get_first_visible_file (slot->content_view);
-        }
+    if (nemo_global_preferences_get_ignore_view_metadata ()) {
+        nemo_window_set_ignore_meta_view_id (nemo_window_slot_get_window (slot), id);
+    } else {
+        nemo_file_set_metadata (file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL, id);
+    }
+
+    nemo_file_unref (file);
+
+    nemo_window_slot_set_allow_stop (slot, TRUE);
+
+    if (nemo_view_get_selection_count (slot->content_view) == 0) {
+            /* If there is no selection, queue a scroll to the same icon that
+             * is currently visible */
+            slot->pending_scroll_to = nemo_view_get_first_visible_file (slot->content_view);
+    }
 	slot->location_change_type = NEMO_LOCATION_CHANGE_RELOAD;
 	
         create_content_view (slot, id);

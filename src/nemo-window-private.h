@@ -112,6 +112,9 @@ struct NemoWindowDetails
         guint sidebar_width_handler_id;
 
         gboolean temporary_menu_bar;
+
+        gchar *ignore_meta_view_id;
+        gint ignore_meta_zoom_level;
 };
 
 /* window geometry */

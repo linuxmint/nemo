@@ -1,64 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkListStore" id="model3">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">33%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">50%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">66%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">100%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">150%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">200%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">400%</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model4">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">33%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">50%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">66%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">100%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">150%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">200%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">400%</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkListStore" id="model5">
     <columns>
       <!-- column-name gchararray -->
@@ -165,6 +107,64 @@
       </row>
       <row>
         <col id="0" translatable="yes">By Trashed Date</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model3">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">33%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">50%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">66%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">100%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">150%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">200%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">400%</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model4">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">33%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">50%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">66%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">100%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">150%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">200%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">400%</col>
       </row>
     </data>
   </object>
@@ -976,7 +976,7 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
-                                <property name="padding">6</property>
+                                <property name="padding">3</property>
                                 <property name="position">2</property>
                               </packing>
                             </child>
@@ -993,7 +993,25 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
+                                <property name="padding">3</property>
                                 <property name="position">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="ignore_view_metadata_checkbutton">
+                                <property name="label" translatable="yes">Ignore per-folder view preferences</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="use_underline">True</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="padding">3</property>
+                                <property name="position">4</property>
                               </packing>
                             </child>
                           </object>

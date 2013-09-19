@@ -34,6 +34,8 @@
 #include <eel/eel-string.h>
 #include <glib/gi18n.h>
 
+static gboolean ignore_view_metadata = FALSE;
+
 /*
  * Public functions
  */
@@ -55,6 +57,20 @@ nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void)
 	}
 
 	return g_strdup (viewer_iid);
+}
+
+gboolean
+nemo_global_preferences_get_ignore_view_metadata (void)
+{
+    return ignore_view_metadata;
+}
+
+static void
+ignore_view_metadata_cb (GSettings *settings,
+                         gchar *key,
+                         gpointer user_data)
+{
+    ignore_view_metadata = g_settings_get_boolean (settings, key);
 }
 
 void
@@ -79,4 +95,10 @@ nemo_global_preferences_init (void)
 	gnome_background_preferences = g_settings_new("org.cinnamon.desktop.background");
 	gnome_media_handling_preferences = g_settings_new("org.cinnamon.desktop.media-handling");
 	gnome_terminal_preferences = g_settings_new("org.cinnamon.desktop.default-applications.terminal");
+
+    ignore_view_metadata = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_IGNORE_VIEW_METADATA);
+
+    g_signal_connect (nemo_preferences,
+                      "changed::" NEMO_PREFERENCES_IGNORE_VIEW_METADATA,
+                      G_CALLBACK (ignore_view_metadata_cb), NULL);
 }

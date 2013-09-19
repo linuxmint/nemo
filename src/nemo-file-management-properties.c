@@ -79,6 +79,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DESKTOP_TOOLTIPS_WIDGET "tooltips_on_desktop_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_ADVANCED_PERMISSIONS_WIDGET "show_advanced_permissions_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_START_WITH_DUAL_PANE_WIDGET "start_with_dual_pane_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_IGNORE_VIEW_METADATA_WIDGET "ignore_view_metadata_checkbutton"
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_BULK_RENAME_WIDGET "bulk_rename_entry"
 
@@ -904,6 +905,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
                        NEMO_FILE_MANAGEMENT_PROPERTIES_START_WITH_DUAL_PANE_WIDGET,
                        NEMO_PREFERENCES_START_WITH_DUAL_PANE);
 
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_IGNORE_VIEW_METADATA_WIDGET,
+                       NEMO_PREFERENCES_IGNORE_VIEW_METADATA);
 
 	nemo_file_management_properties_dialog_setup_icon_caption_page (builder);
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);

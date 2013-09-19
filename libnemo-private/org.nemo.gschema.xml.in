@@ -260,6 +260,11 @@
       <_summary>Whether to default to showing dual-pane view when a new window is opened</_summary>
       <_description>If set to true, new Nemo windows will default to showing two panes</_description>
     </key>
+    <key name="ignore-view-metadata" type="b">
+      <default>false</default>
+      <_summary>Whether to ignore folder metadata for view zoom levels and layouts</_summary>
+      <_description>If set to true, views will not change according to their metadata, but stay consistent for the life of that window</_description>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">

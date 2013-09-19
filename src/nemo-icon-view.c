@@ -32,6 +32,7 @@
 #include "nemo-error-reporting.h"
 #include "nemo-view-dnd.h"
 #include "nemo-view-factory.h"
+#include "nemo-window.h"
 
 #include <stdlib.h>
 #include <eel/eel-vfs-extensions.h>
@@ -1022,17 +1023,22 @@ nemo_icon_view_begin_loading (NemoView *view)
 
 	/* Set up the zoom level from the metadata. */
 	if (nemo_view_supports_zooming (NEMO_VIEW (icon_view))) {
-		if (icon_view->details->compact) {
-			level = nemo_file_get_integer_metadata
-				(file, 
-				 NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
-				 get_default_zoom_level (icon_view));
-		} else {
-			level = nemo_file_get_integer_metadata
-				(file, 
-				 NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
-				 get_default_zoom_level (icon_view));
-		}
+        if (nemo_global_preferences_get_ignore_view_metadata () &&
+            nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (icon_view))) > -1) {
+            level = nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (icon_view)));
+        } else {
+    		if (icon_view->details->compact) {
+    			level = nemo_file_get_integer_metadata
+    				(file, 
+    				 NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
+    				 get_default_zoom_level (icon_view));
+    		} else {
+    			level = nemo_file_get_integer_metadata
+    				(file, 
+    				 NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
+    				 get_default_zoom_level (icon_view));
+    		}
+        }
 
 		nemo_icon_view_set_zoom_level (icon_view, level, TRUE);
 	}
@@ -1132,19 +1138,23 @@ nemo_icon_view_set_zoom_level (NemoIconView *view,
 		return;
 	}
 
-	if (view->details->compact) {
-		nemo_file_set_integer_metadata
-			(nemo_view_get_directory_as_file (NEMO_VIEW (view)), 
-			 NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
-			 get_default_zoom_level (view),
-			 new_level);
-	} else {
-		nemo_file_set_integer_metadata
-			(nemo_view_get_directory_as_file (NEMO_VIEW (view)), 
-			 NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
-			 get_default_zoom_level (view),
-			 new_level);
-	}
+    if (nemo_global_preferences_get_ignore_view_metadata ()) {
+        nemo_window_set_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (view)), new_level);
+    } else {
+    	if (view->details->compact) {
+    		nemo_file_set_integer_metadata
+    			(nemo_view_get_directory_as_file (NEMO_VIEW (view)), 
+    			 NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
+    			 get_default_zoom_level (view),
+    			 new_level);
+    	} else {
+    		nemo_file_set_integer_metadata
+    			(nemo_view_get_directory_as_file (NEMO_VIEW (view)), 
+    			 NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
+    			 get_default_zoom_level (view),
+    			 new_level);
+    	}
+    }
 
 	nemo_icon_container_set_zoom_level (icon_container, new_level);
 
@@ -2176,15 +2186,20 @@ default_zoom_level_changed_callback (gpointer callback_data)
 	if (nemo_view_supports_zooming (NEMO_VIEW (icon_view))) {
 		file = nemo_view_get_directory_as_file (NEMO_VIEW (icon_view));
 
-		if (nemo_icon_view_is_compact (icon_view)) {
-			level = nemo_file_get_integer_metadata (file, 
-								    NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
-								    get_default_zoom_level (icon_view));
-		} else {
-			level = nemo_file_get_integer_metadata (file, 
-								    NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
-								    get_default_zoom_level (icon_view));
-		}
+        if (nemo_global_preferences_get_ignore_view_metadata () &&
+            nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (icon_view))) > -1) {
+            level = nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (icon_view)));
+        } else {
+    		if (nemo_icon_view_is_compact (icon_view)) {
+    			level = nemo_file_get_integer_metadata (file, 
+    								    NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
+    								    get_default_zoom_level (icon_view));
+    		} else {
+    			level = nemo_file_get_integer_metadata (file, 
+    								    NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
+    								    get_default_zoom_level (icon_view));
+    		}
+        }
 		nemo_view_zoom_to_level (NEMO_VIEW (icon_view), level);
 	}
 }

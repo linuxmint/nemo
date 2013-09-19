@@ -110,6 +110,7 @@ typedef enum
 #define NEMO_PREFERENCES_CLOSE_DEVICE_VIEW_ON_EJECT "close-device-view-on-device-eject"
 
 #define NEMO_PREFERENCES_START_WITH_DUAL_PANE "start-with-dual-pane"
+#define NEMO_PREFERENCES_IGNORE_VIEW_METADATA "ignore-view-metadata"
 
 enum
 {
@@ -212,6 +213,7 @@ typedef enum
 
 void nemo_global_preferences_init                      (void);
 char *nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void);
+gboolean nemo_global_preferences_get_ignore_view_metadata (void);
 
 GSettings *nemo_preferences;
 GSettings *nemo_icon_view_preferences;

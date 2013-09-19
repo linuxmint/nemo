@@ -2021,6 +2021,9 @@ nemo_window_init (NemoWindow *window)
     window->details->show_sidebar = g_settings_get_boolean (nemo_window_state,
                                                             NEMO_WINDOW_STATE_START_WITH_SIDEBAR);
 
+    window->details->ignore_meta_view_id = NULL;
+    window->details->ignore_meta_zoom_level = -1;
+
 	/* Set initial window title */
 	gtk_window_set_title (GTK_WINDOW (window), _("Nemo"));
 }
@@ -2268,4 +2271,35 @@ gboolean
 nemo_window_get_show_sidebar (NemoWindow *window)
 {
     return window->details->show_sidebar;
+}
+
+const gchar *
+nemo_window_get_ignore_meta_view_id (NemoWindow *window)
+{
+    return window->details->ignore_meta_view_id;
+}
+
+void
+nemo_window_set_ignore_meta_view_id (NemoWindow *window, const gchar *id)
+{
+    if (id != NULL) {
+        gchar *old_id = window->details->ignore_meta_view_id;
+        if (g_strcmp0 (old_id, id) != 0) {
+            nemo_window_set_ignore_meta_zoom_level (window, -1);
+        }
+        window->details->ignore_meta_view_id = g_strdup (id);
+        g_free (old_id);
+    }
+}
+
+gint
+nemo_window_get_ignore_meta_zoom_level (NemoWindow *window)
+{
+    return window->details->ignore_meta_zoom_level;
+}
+
+void
+nemo_window_set_ignore_meta_zoom_level (NemoWindow *window, gint level)
+{
+    window->details->ignore_meta_zoom_level = level;
 }

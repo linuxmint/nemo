@@ -11,7 +11,7 @@ G_BEGIN_DECLS
 
 /* Names for Nemo's different zoom levels, from tiniest items to largest items */
 typedef enum {
-	NEMO_ZOOM_LEVEL_SMALLEST,
+	NEMO_ZOOM_LEVEL_SMALLEST = 0,
 	NEMO_ZOOM_LEVEL_SMALLER,
 	NEMO_ZOOM_LEVEL_SMALL,
 	NEMO_ZOOM_LEVEL_STANDARD,
