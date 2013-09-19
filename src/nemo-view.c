@@ -4911,11 +4911,12 @@ reset_move_copy_to_menu (NemoView *view)
         nemo_ui_unmerge_ui (ui_manager,
                 &view->details->copy_move_merge_ids[i],
                 &view->details->copy_move_action_groups[i]);
-
+        gchar *id = g_strdup_printf ("MoveCopyMenuGroup_%d", i);
         nemo_ui_prepare_merge_ui (ui_manager,
-                     g_strdup_printf ("MoveCopyMenuGroup_%d", i),
-                      &view->details->copy_move_merge_ids[i],
-                      &view->details->copy_move_action_groups[i]);
+                                  id,
+                                  &view->details->copy_move_merge_ids[i],
+                                  &view->details->copy_move_action_groups[i]);
+        g_free (id);
     }
 
     bookmark_count = nemo_bookmark_list_length (view->details->bookmarks);
