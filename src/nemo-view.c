@@ -4886,6 +4886,7 @@ setup_bookmark_action(      char *action_name,
     menuitem = gtk_ui_manager_get_widget(ui_manager, full_path);
     gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
     g_free (full_path);
+    g_free (action_name);
 }
 
 static void
@@ -4901,13 +4902,6 @@ reset_move_copy_to_menu (NemoView *view)
     GIcon *icon;
     char *mount_uri;
     num_applications = 0;
-
-    char *paths[4];
-
-    paths[0] = NEMO_VIEW_POPUP_PATH_MOVETO_ENTRIES_PLACEHOLDER;
-    paths[1] = NEMO_VIEW_POPUP_PATH_COPYTO_ENTRIES_PLACEHOLDER;
-    paths[2] = NEMO_VIEW_MENU_PATH_MOVETO_ENTRIES_PLACEHOLDER;
-    paths[3] = NEMO_VIEW_MENU_PATH_COPYTO_ENTRIES_PLACEHOLDER;
 
     ui_manager = nemo_window_get_ui_manager (view->details->window);
 
@@ -4949,7 +4943,7 @@ reset_move_copy_to_menu (NemoView *view)
                                                 TRUE,
                                                 view->details->copy_move_action_groups[0],
                                                 view->details->copy_move_merge_ids[0],
-                                                paths[0],
+                                                NEMO_VIEW_POPUP_PATH_MOVETO_ENTRIES_PLACEHOLDER,
                                                 view);
 
         setup_bookmark_action(g_strdup_printf ("COPYTO_POPUP_%d", index),
@@ -4960,7 +4954,7 @@ reset_move_copy_to_menu (NemoView *view)
                                                 FALSE,
                                                 view->details->copy_move_action_groups[1],
                                                 view->details->copy_move_merge_ids[1],
-                                                paths[1],
+                                                NEMO_VIEW_POPUP_PATH_COPYTO_ENTRIES_PLACEHOLDER,
                                                 view);
 
         setup_bookmark_action(g_strdup_printf ("MOVETO_MENU_%d", index),
@@ -4971,7 +4965,7 @@ reset_move_copy_to_menu (NemoView *view)
                                                 TRUE,
                                                 view->details->copy_move_action_groups[2],
                                                 view->details->copy_move_merge_ids[2],
-                                                paths[2],
+                                                NEMO_VIEW_MENU_PATH_MOVETO_ENTRIES_PLACEHOLDER,
                                                 view);
 
         setup_bookmark_action(g_strdup_printf ("COPYTO_MENU_%d", index),
@@ -4982,7 +4976,7 @@ reset_move_copy_to_menu (NemoView *view)
                                                 FALSE,
                                                 view->details->copy_move_action_groups[3],
                                                 view->details->copy_move_merge_ids[3],
-                                                paths[3],
+                                                NEMO_VIEW_MENU_PATH_COPYTO_ENTRIES_PLACEHOLDER,
                                                 view);
 
         g_object_unref (root);
