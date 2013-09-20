@@ -77,6 +77,7 @@ struct NemoListModelDetails {
 	GPtrArray *columns;
 
 	GList *highlight_files;
+    gboolean temp_unsorted;
 };
 
 typedef struct {
@@ -993,9 +994,11 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 		}
 	}
 
-	
-	file_entry->ptr = g_sequence_insert_sorted (files, file_entry,
-					    nemo_list_model_file_entry_compare_func, model);
+	if (model->details->temp_unsorted)
+        file_entry->ptr = g_sequence_append (files, file_entry);
+    else
+        file_entry->ptr = g_sequence_insert_sorted (files, file_entry,
+                                                    nemo_list_model_file_entry_compare_func, model);
 
 	g_hash_table_insert (parent_hash, file, file_entry->ptr);
 	
@@ -1040,10 +1043,10 @@ nemo_list_model_file_changed (NemoListModel *model, NemoFile *file,
 		return;
 	}
 
-	
 	pos_before = g_sequence_iter_get_position (ptr);
-		
-	g_sequence_sort_changed (ptr, nemo_list_model_file_entry_compare_func, model);
+
+    if (!model->details->temp_unsorted)
+        g_sequence_sort_changed (ptr, nemo_list_model_file_entry_compare_func, model);
 
 	pos_after = g_sequence_iter_get_position (ptr);
 
@@ -1371,7 +1374,7 @@ nemo_list_model_get_attribute_from_sort_column_id (NemoListModel *model,
 	NemoColumn *column;
 	int index;
 	GQuark attribute;
-	
+
 	index = sort_column_id - NEMO_LIST_MODEL_NUM_COLUMNS;
 
 	if (index < 0 || index >= model->details->columns->len) {
@@ -1692,4 +1695,19 @@ nemo_list_model_set_highlight_for_files (NemoListModel *model,
 		                refresh_row, model);
 
 	}
+}
+
+void
+nemo_list_model_set_temporarily_disable_sort (NemoListModel *model, gboolean disable)
+{
+    model->details->temp_unsorted = disable;
+
+    if (!disable)
+        nemo_list_model_sort (model);
+}
+
+gboolean
+nemo_list_model_get_temporarily_disable_sort (NemoListModel *model)
+{
+    return model->details->temp_unsorted;
 }

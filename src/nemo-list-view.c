@@ -154,6 +154,7 @@ static char **get_default_visible_columns                        (NemoListView *
 static char **get_column_order                                   (NemoListView *list_view);
 static char **get_default_column_order                           (NemoListView *list_view);
 
+static void   set_columns_settings_from_metadata_and_preferences (NemoListView *list_view);
 
 G_DEFINE_TYPE (NemoListView, nemo_list_view, NEMO_TYPE_VIEW);
 
@@ -1515,6 +1516,15 @@ column_header_menu_use_default (GtkMenuItem *menu_item,
 	g_strfreev (default_order);
 }
 
+static void
+column_header_menu_disable_sort (GtkMenuItem *menu_item,
+                                 NemoListView *list_view)
+{
+    gboolean active = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menu_item));
+
+    nemo_list_model_set_temporarily_disable_sort (list_view->details->model, active);
+}
+
 static gboolean
 column_header_clicked (GtkWidget *column_button,
                        GdkEventButton *event,
@@ -1605,6 +1615,20 @@ column_header_clicked (GtkWidget *column_button,
 	                  "activate",
 	                  G_CALLBACK (column_header_menu_use_default),
 	                  list_view);
+
+    menu_item = gtk_separator_menu_item_new ();
+    gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
+
+    menu_item = gtk_check_menu_item_new_with_label (_("Temporarily disable auto-sort"));
+    gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
+
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item),
+                                    nemo_list_model_get_temporarily_disable_sort (list_view->details->model));
+
+    g_signal_connect (menu_item,
+                      "activate",
+                      G_CALLBACK (column_header_menu_disable_sort),
+                      list_view);
 
 	gtk_widget_show_all (menu);
 	gtk_menu_popup_for_device (GTK_MENU (menu),
@@ -2142,9 +2166,9 @@ set_sort_order_from_metadata_and_preferences (NemoListView *list_view)
                                                         NEMO_METADATA_KEY_LIST_VIEW_SORT_REVERSED,
                                                         default_sort_reversed);
     }
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_view->details->model),
-					      sort_column_id,
-					      sort_reversed ? GTK_SORT_DESCENDING : GTK_SORT_ASCENDING);					      
+    gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_view->details->model),
+                                                             sort_column_id,
+                                                             sort_reversed ? GTK_SORT_DESCENDING : GTK_SORT_ASCENDING);
 }
 
 static gboolean
