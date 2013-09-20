@@ -2024,6 +2024,11 @@ nemo_window_init (NemoWindow *window)
 
     window->details->ignore_meta_view_id = NULL;
     window->details->ignore_meta_zoom_level = -1;
+    window->details->ignore_meta_visible_columns = NULL;
+    window->details->ignore_meta_column_order = NULL;
+    window->details->ignore_meta_sort_column = NULL;
+    window->details->ignore_meta_sort_direction = SORT_NULL;
+    window->details->ignore_meta_tighter_layout = TIGHTER_NULL;
 
 	/* Set initial window title */
 	gtk_window_set_title (GTK_WINDOW (window), _("Nemo"));
@@ -2303,4 +2308,76 @@ void
 nemo_window_set_ignore_meta_zoom_level (NemoWindow *window, gint level)
 {
     window->details->ignore_meta_zoom_level = level;
+}
+
+GList *
+nemo_window_get_ignore_meta_visible_columns (NemoWindow *window)
+{
+    return g_list_copy_deep (window->details->ignore_meta_visible_columns, (GCopyFunc) g_strdup, NULL);
+}
+
+void
+nemo_window_set_ignore_meta_visible_columns (NemoWindow *window, GList *list)
+{
+    GList *old = window->details->ignore_meta_visible_columns;
+    window->details->ignore_meta_visible_columns = list != NULL ? g_list_copy_deep (list, (GCopyFunc) g_strdup, NULL) :
+                                                                  NULL;
+    if (old != NULL)
+        g_list_free_full (old, g_free);
+}
+
+GList *
+nemo_window_get_ignore_meta_column_order (NemoWindow *window)
+{
+    return g_list_copy_deep (window->details->ignore_meta_column_order, (GCopyFunc) g_strdup, NULL);
+}
+
+void
+nemo_window_set_ignore_meta_column_order (NemoWindow *window, GList *list)
+{
+    GList *old = window->details->ignore_meta_column_order;
+    window->details->ignore_meta_column_order = list != NULL ? g_list_copy_deep (list, (GCopyFunc) g_strdup, NULL) :
+                                                               NULL;
+    if (old != NULL)
+        g_list_free_full (old, g_free);
+}
+
+const gchar *
+nemo_window_get_ignore_meta_sort_column (NemoWindow *window)
+{
+    return window->details->ignore_meta_sort_column;
+}
+
+void
+nemo_window_set_ignore_meta_sort_column (NemoWindow *window, const gchar *column)
+{
+    if (column != NULL) {
+        gchar *old_column = window->details->ignore_meta_sort_column;
+        window->details->ignore_meta_sort_column = g_strdup (column);
+        g_free (old_column);
+    }
+}
+
+gint
+nemo_window_get_ignore_meta_sort_direction (NemoWindow *window)
+{
+    return window->details->ignore_meta_sort_direction;
+}
+
+void
+nemo_window_set_ignore_meta_sort_direction (NemoWindow *window, gint direction)
+{
+    window->details->ignore_meta_sort_direction = direction;
+}
+
+gint
+nemo_window_get_ignore_meta_tighter_layout (NemoWindow *window)
+{
+    return window->details->ignore_meta_tighter_layout;
+}
+
+void
+nemo_window_set_ignore_meta_tighter_layout (NemoWindow *window, gint tighter)
+{
+    window->details->ignore_meta_tighter_layout = tighter;
 }

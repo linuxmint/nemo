@@ -66,6 +66,18 @@ typedef enum {
 	NEMO_WINDOW_OPEN_SLOT_APPEND = 1
 }  NemoWindowOpenSlotFlags;
 
+enum {
+    SORT_NULL = -1,
+    SORT_ASCENDING = 0,
+    SORT_DESCENDING = 1
+};
+
+enum {
+    TIGHTER_NULL = -1,
+    TIGHTER_NO = 0,
+    TIGHTER_YES = 1
+};
+
 #define NEMO_WINDOW_SIDEBAR_PLACES "places"
 #define NEMO_WINDOW_SIDEBAR_TREE "tree"
 
@@ -161,5 +173,15 @@ const gchar *nemo_window_get_ignore_meta_view_id (NemoWindow *window);
 void         nemo_window_set_ignore_meta_view_id (NemoWindow *window, const gchar *id);
 gint         nemo_window_get_ignore_meta_zoom_level (NemoWindow *window);
 void         nemo_window_set_ignore_meta_zoom_level (NemoWindow *window, gint level);
+GList       *nemo_window_get_ignore_meta_visible_columns (NemoWindow *window);
+void         nemo_window_set_ignore_meta_visible_columns (NemoWindow *window, GList *list);
+GList       *nemo_window_get_ignore_meta_column_order (NemoWindow *window);
+void         nemo_window_set_ignore_meta_column_order (NemoWindow *window, GList *list);
+const gchar *nemo_window_get_ignore_meta_sort_column (NemoWindow *window);
+void         nemo_window_set_ignore_meta_sort_column (NemoWindow *window, const gchar *column);
+gint         nemo_window_get_ignore_meta_sort_direction (NemoWindow *window);
+void         nemo_window_set_ignore_meta_sort_direction (NemoWindow *window, gint direction);
+gint         nemo_window_get_ignore_meta_tighter_layout (NemoWindow *window);
+void         nemo_window_set_ignore_meta_tighter_layout (NemoWindow *window, gint tighter);
 
 #endif
