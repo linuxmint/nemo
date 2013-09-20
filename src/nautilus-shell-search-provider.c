@@ -460,7 +460,7 @@ execute_search (NautilusShellSearchProvider *self,
   g_free (terms_joined);
 }
 
-static void
+static gboolean
 handle_get_initial_result_set (NautilusShellSearchProvider2  *skeleton,
                                GDBusMethodInvocation         *invocation,
                                gchar                        **terms,
@@ -470,9 +470,10 @@ handle_get_initial_result_set (NautilusShellSearchProvider2  *skeleton,
 
   g_debug ("****** GetInitialResultSet");
   execute_search (self, invocation, terms);
+  return TRUE;
 }
 
-static void
+static gboolean
 handle_get_subsearch_result_set (NautilusShellSearchProvider2  *skeleton,
                                  GDBusMethodInvocation         *invocation,
                                  gchar                        **previous_results,
@@ -483,6 +484,7 @@ handle_get_subsearch_result_set (NautilusShellSearchProvider2  *skeleton,
 
   g_debug ("****** GetSubSearchResultSet");
   execute_search (self, invocation, terms);
+  return TRUE;
 }
 
 typedef struct {
@@ -596,7 +598,7 @@ result_list_attributes_ready_cb (GList    *file_list,
   result_metas_data_free (data);
 }
 
-static void
+static gboolean
 handle_get_result_metas (NautilusShellSearchProvider2  *skeleton,
                          GDBusMethodInvocation         *invocation,
                          gchar                        **results,
@@ -627,7 +629,7 @@ handle_get_result_metas (NautilusShellSearchProvider2  *skeleton,
   if (missing_files == NULL) {
     result_metas_return_from_cache (data);
     result_metas_data_free (data);
-    return;
+    return TRUE;
   }
 
   nautilus_file_list_call_when_ready (missing_files,
@@ -636,9 +638,10 @@ handle_get_result_metas (NautilusShellSearchProvider2  *skeleton,
                                       result_list_attributes_ready_cb,
                                       data);
   nautilus_file_list_free (missing_files);
+  return TRUE;
 }
 
-static void
+static gboolean
 handle_activate_result (NautilusShellSearchProvider2 *skeleton,
                         GDBusMethodInvocation        *invocation,
                         gchar                        *result,
@@ -658,9 +661,10 @@ handle_activate_result (NautilusShellSearchProvider2 *skeleton,
   }
 
   nautilus_shell_search_provider2_complete_activate_result (skeleton, invocation);
+  return TRUE;
 }
 
-static void
+static gboolean
 handle_launch_search (NautilusShellSearchProvider2 *skeleton,
                       GDBusMethodInvocation        *invocation,
                       gchar                       **terms,
@@ -678,6 +682,7 @@ handle_launch_search (NautilusShellSearchProvider2 *skeleton,
   g_free (uri);
 
   nautilus_shell_search_provider2_complete_launch_search (skeleton, invocation);
+  return TRUE;
 }
 
 static void
