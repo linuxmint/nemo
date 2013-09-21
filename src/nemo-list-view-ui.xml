@@ -1,0 +1,8 @@
+<ui>
+<menubar name="MenuBar">
+	<menu action="View">
+		<placeholder name="View Items Placeholder">
+		</placeholder>
+	</menu>
+</menubar>
+</ui>

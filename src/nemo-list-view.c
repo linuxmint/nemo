@@ -2764,6 +2764,49 @@ nemo_list_view_select_all (NemoView *view)
 	gtk_tree_selection_select_all (gtk_tree_view_get_selection (NEMO_LIST_VIEW (view)->details->tree_view));
 }
 
+static void
+nemo_list_view_merge_menus (NemoView *view)
+{
+  NemoListView *list_view;
+  GtkUIManager *ui_manager;
+  GtkActionGroup *action_group;
+
+  list_view = NEMO_LIST_VIEW (view);
+
+  NEMO_VIEW_CLASS (nemo_list_view_parent_class)->merge_menus (view);
+
+  ui_manager = nemo_view_get_ui_manager (view);
+
+  action_group = gtk_action_group_new ("ListViewActions");
+  gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
+  list_view->details->list_action_group = action_group;
+
+  gtk_ui_manager_insert_action_group (ui_manager, action_group, 0);
+  g_object_unref (action_group); /* owned by ui manager */
+
+  list_view->details->list_merge_id =
+    gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-list-view-ui.xml", NULL);
+
+  list_view->details->menus_ready = TRUE;
+}
+
+static void
+nemo_list_view_unmerge_menus (NemoView *view)
+{
+  NemoListView *list_view;
+  GtkUIManager *ui_manager;
+
+  list_view = NEMO_LIST_VIEW (view);
+
+  NEMO_VIEW_CLASS (nemo_list_view_parent_class)->unmerge_menus (view);
+
+  ui_manager = nemo_view_get_ui_manager (view);
+  if (ui_manager != NULL) {
+    nemo_ui_unmerge_ui (ui_manager,
+          &list_view->details->list_merge_id,
+          &list_view->details->list_action_group);
+  }
+}
 
 static void
 nemo_list_view_update_menus (NemoView *view)
@@ -3373,6 +3416,8 @@ nemo_list_view_class_init (NemoListViewClass *class)
 	nemo_view_class->get_item_count = nemo_list_view_get_item_count;
 	nemo_view_class->is_empty = nemo_list_view_is_empty;
 	nemo_view_class->remove_file = nemo_list_view_remove_file;
+    nemo_view_class->merge_menus = nemo_list_view_merge_menus;
+    nemo_view_class->unmerge_menus = nemo_list_view_unmerge_menus;
 	nemo_view_class->update_menus = nemo_list_view_update_menus;
 	nemo_view_class->reset_to_defaults = nemo_list_view_reset_to_defaults;
 	nemo_view_class->restore_default_zoom_level = nemo_list_view_restore_default_zoom_level;
