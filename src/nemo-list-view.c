@@ -1599,8 +1599,6 @@ column_header_clicked (GtkWidget *column_button,
 	                                              g_str_equal,
 	                                              (GDestroyNotify) g_free,
 	                                              (GDestroyNotify) g_free);
-	/* always show name column */
-	g_hash_table_insert (visible_columns_hash, g_strdup ("name"), g_strdup ("name"));
 	if (visible_columns != NULL) {
 		for (i = 0; visible_columns[i] != NULL; ++i) {
 			g_hash_table_insert (visible_columns_hash,
@@ -1628,14 +1626,12 @@ column_header_clicked (GtkWidget *column_button,
 		g_object_set_data_full (G_OBJECT (menu_item),
 		                        "column-name", name, g_free);
 
-		/* name is always visible */
-		if (strcmp (lowercase, "name") == 0) {
-			gtk_widget_set_sensitive (menu_item, FALSE);
-		}
-
 		if (g_hash_table_lookup (visible_columns_hash, lowercase) != NULL) {
 			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item),
 			                                TRUE);
+        /*  Don't allow hiding the only visible column */
+            if (g_hash_table_size (visible_columns_hash) == 1)
+                gtk_widget_set_sensitive (GTK_WIDGET (menu_item), FALSE);
 		}
 
 		g_signal_connect (menu_item,
