@@ -107,6 +107,8 @@ struct NemoListViewDetails {
 
 	gulong clipboard_handler_id;
 
+    gulong reorder_signal_id;
+
 	GQuark last_sort_attr;
 };
 
@@ -1536,6 +1538,10 @@ column_header_menu_use_default (GtkMenuItem *menu_item,
 
 	file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
 
+    g_signal_handlers_block_by_func (list_view->details->tree_view,
+                                     columns_reordered_callback,
+                                     list_view);
+
     if (nemo_global_preferences_get_ignore_view_metadata ()) {
         NemoWindow *window = nemo_view_get_nemo_window (NEMO_VIEW (list_view));
         nemo_window_set_ignore_meta_visible_columns (window, NULL);
@@ -1553,6 +1559,10 @@ column_header_menu_use_default (GtkMenuItem *menu_item,
 	 * updated yet.
 	 */
 	apply_columns_settings (list_view, default_order, default_columns);
+
+    g_signal_handlers_unblock_by_func (list_view->details->tree_view,
+                                       columns_reordered_callback,
+                                       list_view);
 
 	g_strfreev (default_columns);
 	g_strfreev (default_order);
@@ -2271,8 +2281,8 @@ nemo_list_view_begin_loading (NemoView *view)
 	set_zoom_level_from_metadata_and_preferences (list_view);
 	set_columns_settings_from_metadata_and_preferences (list_view);
 
-    g_signal_connect_object (NEMO_LIST_VIEW (view)->details->tree_view, "columns-changed",
-                             G_CALLBACK (columns_reordered_callback), view, 0);
+    list_view->details->reorder_signal_id = g_signal_connect_object (NEMO_LIST_VIEW (view)->details->tree_view, "columns-changed",
+                                                                     G_CALLBACK (columns_reordered_callback), view, 0);
 }
 
 static void
@@ -2824,10 +2834,12 @@ static void
 nemo_list_view_reset_to_defaults (NemoView *view)
 {
 	NemoFile *file;
-	const gchar *default_sort_order;
-	gboolean default_sort_reversed;
 
 	file = nemo_view_get_directory_as_file (view);
+
+    g_signal_handlers_block_by_func (NEMO_LIST_VIEW (view)->details->tree_view,
+                                     columns_reordered_callback,
+                                     NEMO_LIST_VIEW (view));
 
     if (nemo_global_preferences_get_ignore_view_metadata ()) {
         NemoWindow *window = nemo_view_get_nemo_window (NEMO_VIEW (view));
@@ -2844,16 +2856,15 @@ nemo_list_view_reset_to_defaults (NemoView *view)
         nemo_file_set_metadata_list (file, NEMO_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS, NULL);
     }
 
-	default_sort_order = get_default_sort_order (file, &default_sort_reversed);
+    char **default_columns, **default_order;
 
-	gtk_tree_sortable_set_sort_column_id
-		(GTK_TREE_SORTABLE (NEMO_LIST_VIEW (view)->details->model),
-		 nemo_list_model_get_sort_column_id_from_attribute (NEMO_LIST_VIEW (view)->details->model,
-								  g_quark_from_string (default_sort_order)),
-		 default_sort_reversed ? GTK_SORT_DESCENDING : GTK_SORT_ASCENDING);
+    default_columns = get_default_visible_columns (NEMO_LIST_VIEW (view));
+    default_order = get_default_column_order (NEMO_LIST_VIEW (view));
+    apply_columns_settings (NEMO_LIST_VIEW (view), default_order, default_columns);
 
-	nemo_list_view_set_zoom_level (NEMO_LIST_VIEW (view), get_default_zoom_level (), FALSE);
-	set_columns_settings_from_metadata_and_preferences (NEMO_LIST_VIEW (view));
+    g_signal_handlers_unblock_by_func (NEMO_LIST_VIEW (view)->details->tree_view,
+                                       columns_reordered_callback,
+                                       NEMO_LIST_VIEW (view));
 }
 
 static void
@@ -3198,6 +3209,12 @@ nemo_list_view_dispose (GObject *object)
 
 	list_view = NEMO_LIST_VIEW (object);
 
+    if (list_view->details->reorder_signal_id != 0) {
+        g_signal_handler_disconnect (list_view->details->tree_view,
+                                      list_view->details->reorder_signal_id);
+        list_view->details->reorder_signal_id = 0;
+    }
+
 	if (list_view->details->model) {
 		stop_cell_editing (list_view);
 		g_object_unref (list_view->details->model);
@@ -3220,11 +3237,7 @@ nemo_list_view_dispose (GObject *object)
 		list_view->details->clipboard_handler_id = 0;
 	}
 
-    g_signal_handlers_disconnect_by_func (list_view->details->tree_view,
-                                          columns_reordered_callback,
-                                          list_view);
-
-	G_OBJECT_CLASS (nemo_list_view_parent_class)->dispose (object);
+    G_OBJECT_CLASS (nemo_list_view_parent_class)->dispose (object);
 }
 
 static void
