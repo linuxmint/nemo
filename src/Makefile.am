@@ -60,7 +60,6 @@ UI_FILES = \
 	nemo-toolbar-ui.xml			\
 	nemo-directory-view-ui.xml		\
 	nemo-desktop-icon-view-ui.xml	\
-	nemo-list-view-ui.xml		\
 	nemo-shell-ui.xml			\
 	$(NULL)
 
