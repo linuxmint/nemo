@@ -107,8 +107,6 @@ struct NemoListViewDetails {
 
 	gulong clipboard_handler_id;
 
-    gulong reorder_signal_id;
-
 	GQuark last_sort_attr;
 };
 
@@ -647,9 +645,12 @@ row_activated_callback (GtkTreeView *treeview, GtkTreePath *path,
 }
 
 static void
-columns_reordered_callback (GtkTreeView *treeview,
-                            NemoListView *view)
+columns_reordered_callback (AtkObject *atk,
+                            gpointer user_data)
 {
+
+    NemoListView *view = NEMO_LIST_VIEW (user_data);
+
     gchar **columns;
     GList *vis_columns = NULL;
     int i;
@@ -666,7 +667,7 @@ columns_reordered_callback (GtkTreeView *treeview,
     GList *tv_list, *iter, *l;
     GList *list = NULL;
 
-    tv_list = gtk_tree_view_get_columns (treeview);
+    tv_list = gtk_tree_view_get_columns (view->details->tree_view);
 
     for (iter = tv_list; iter != NULL; iter = iter->next) {
         for (l = vis_columns; l != NULL; l = l->next) {
@@ -2281,8 +2282,10 @@ nemo_list_view_begin_loading (NemoView *view)
 	set_zoom_level_from_metadata_and_preferences (list_view);
 	set_columns_settings_from_metadata_and_preferences (list_view);
 
-    list_view->details->reorder_signal_id = g_signal_connect_object (NEMO_LIST_VIEW (view)->details->tree_view, "columns-changed",
-                                                                     G_CALLBACK (columns_reordered_callback), view, 0);
+    AtkObject *atk = gtk_widget_get_accessible (GTK_WIDGET (NEMO_LIST_VIEW (view)->details->tree_view));
+
+    g_signal_connect_object (atk, "column-reordered",
+                             G_CALLBACK (columns_reordered_callback), view, 0);
 }
 
 static void
@@ -3208,12 +3211,6 @@ nemo_list_view_dispose (GObject *object)
 	NemoListView *list_view;
 
 	list_view = NEMO_LIST_VIEW (object);
-
-    if (list_view->details->reorder_signal_id != 0) {
-        g_signal_handler_disconnect (list_view->details->tree_view,
-                                      list_view->details->reorder_signal_id);
-        list_view->details->reorder_signal_id = 0;
-    }
 
 	if (list_view->details->model) {
 		stop_cell_editing (list_view);
