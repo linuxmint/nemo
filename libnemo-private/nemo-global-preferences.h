@@ -111,6 +111,8 @@ typedef enum
 
 #define NEMO_PREFERENCES_START_WITH_DUAL_PANE "start-with-dual-pane"
 #define NEMO_PREFERENCES_IGNORE_VIEW_METADATA "ignore-view-metadata"
+#define NEMO_PREFERENCES_SHOW_BOOKMARKS_IN_TO_MENUS "show-bookmarks-in-to-menus"
+#define NEMO_PREFERENCES_SHOW_PLACES_IN_TO_MENUS "show-places-in-to-menus"
 
 enum
 {

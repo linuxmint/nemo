@@ -5391,7 +5391,7 @@ select_image_button_callback (GtkWidget *widget,
 
 	if (dialog == NULL) {
 		dialog = gtk_file_chooser_dialog_new (_("Select Custom Icon"), GTK_WINDOW (window),
-						      GTK_FILE_CHOOSER_ACTION_OPEN,
+						      GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER,
 						      GTK_STOCK_REVERT_TO_SAVED, GTK_RESPONSE_NO,
 						      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						      GTK_STOCK_OPEN, GTK_RESPONSE_OK,

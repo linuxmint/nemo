@@ -86,6 +86,8 @@
 #define NEMO_ACTION_MOVE_TO_HOME "Move to Home"
 #define NEMO_ACTION_COPY_TO_DESKTOP "Copy to Desktop"
 #define NEMO_ACTION_MOVE_TO_DESKTOP "Move to Desktop"
+#define NEMO_ACTION_BROWSE_MOVE_TO "BrowseMoveTo"
+#define NEMO_ACTION_BROWSE_COPY_TO "BrowseCopyTo"
 #define NEMO_ACTION_LOCATION_PASTE_FILES_INTO "LocationPasteFilesInto"
 #define NEMO_ACTION_RENAME "Rename"
 #define NEMO_ACTION_DUPLICATE "Duplicate"

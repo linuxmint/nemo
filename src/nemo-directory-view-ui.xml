@@ -75,13 +75,21 @@
 				<menuitem name="Copy to next pane" action="Copy to next pane"/>
 				<menuitem name="Copy to Home" action="Copy to Home"/>
 				<menuitem name="Copy to Desktop" action="Copy to Desktop"/>
-				<placeholder name="CopyToPlaceHolder"/>
+				<placeholder name="BookmarkCopyToPlaceHolder"/>
+                <separator/>
+                <placeholder name="PlacesCopyToPlaceHolder"/>
+                <separator/>
+                <menuitem name="Browse for copy to" action="BrowseCopyTo"/>
 			</menu>
 			<menu action="MoveToMenu">
 				<menuitem name="Move to next pane" action="Move to next pane"/>
 				<menuitem name="Copy to Home" action="Move to Home"/>
 				<menuitem name="Copy to Desktop" action="Move to Desktop"/>
-				<placeholder name="MoveToPlaceHolder"/>
+				<placeholder name="BookmarkMoveToPlaceHolder"/>
+                <separator/>
+                <placeholder name="PlacesMoveToPlaceHolder"/>
+                <separator/>
+                <menuitem name="Browse for move to" action="BrowseMoveTo"/>
 			</menu>
 		</placeholder>
 		<placeholder name="Dangerous File Items Placeholder">
@@ -178,13 +186,21 @@
 			<menuitem name="Copy to next pane" action="Copy to next pane"/>
 			<menuitem name="Copy to Home" action="Copy to Home"/>
 			<menuitem name="Copy to Desktop" action="Copy to Desktop"/>
-			<placeholder name="CopyToPlaceHolder"/>
+			<placeholder name="BookmarkCopyToPlaceHolder"/>
+            <separator/>
+            <placeholder name="PlacesCopyToPlaceHolder"/>
+            <separator/>
+            <menuitem name="Browse for copy to" action="BrowseCopyTo"/>
 		</menu>
 		<menu action="MoveToMenu">
 			<menuitem name="Move to next pane" action="Move to next pane"/>
 			<menuitem name="Copy to Home" action="Move to Home"/>
 			<menuitem name="Copy to Desktop" action="Move to Desktop"/>
-			<placeholder name="MoveToPlaceHolder"/>
+			<placeholder name="BookmarkMoveToPlaceHolder"/>
+            <separator/>
+            <placeholder name="PlacesMoveToPlaceHolder"/>
+            <separator/>
+            <menuitem name="Browse for move to" action="BrowseMoveTo"/>
 		</menu>
 	</placeholder>
 	<separator name="Advanced separator"/>
