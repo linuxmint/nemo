@@ -77,7 +77,6 @@ typedef struct {
 	GVolumeMonitor *volume_monitor;
 
     NemoActionManager *action_manager;
-    guint action_manager_changed_id;
     GList *action_items;
 
 	gboolean devices_header_added;
@@ -2933,16 +2932,6 @@ action_payload_free (gpointer data)
     gtk_widget_destroy (GTK_WIDGET (p->item));
 }
 
-static void
-actions_added_or_changed_callback (NemoPlacesSidebar *sidebar)
-{
-    GList *tmp = sidebar->action_items;
-    sidebar->action_items = NULL;
-    g_list_free_full (tmp, action_payload_free);
-
-    add_action_popup_items (sidebar);
-}
-
 static gboolean
 nemo_places_sidebar_focus (GtkWidget *widget,
 			       GtkDirectionType direction)
@@ -3072,6 +3061,11 @@ action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
 static void
 add_action_popup_items (NemoPlacesSidebar *sidebar)
 {
+    if (sidebar->action_items != NULL)
+        g_list_free_full (sidebar->action_items, action_payload_free);
+
+    sidebar->action_items = NULL;
+
     GList *action_list = nemo_action_manager_list_actions (sidebar->action_manager);
     GtkWidget *item;
     GList *l;
@@ -3756,11 +3750,6 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
     sidebar->action_manager = nemo_action_manager_new ();
 
-    sidebar->action_manager_changed_id =
-        g_signal_connect_swapped (sidebar->action_manager, "changed",
-                      G_CALLBACK (actions_added_or_changed_callback),
-                                  sidebar);
-
     sidebar->action_items = NULL;
 
 	sidebar->volume_monitor = g_volume_monitor_get ();
@@ -4005,12 +3994,6 @@ nemo_places_sidebar_dispose (GObject *object)
 
 	g_clear_object (&sidebar->store);
 	g_clear_object (&sidebar->bookmarks);
-
-    if (sidebar->action_manager_changed_id != 0) {
-        g_signal_handler_disconnect (sidebar->action_manager,
-                                     sidebar->action_manager_changed_id);
-        sidebar->action_manager_changed_id = 0;
-    }
 
     g_clear_object (&sidebar->action_manager);
 
