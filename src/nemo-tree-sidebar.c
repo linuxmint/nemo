@@ -110,7 +110,6 @@ struct FMTreeViewDetails {
 	guint selection_changed_timer;
 
     NemoActionManager *action_manager;
-    guint action_manager_changed_id;
     GList *action_items;
     guint hidden_files_changed_id;
 };
@@ -1182,16 +1181,6 @@ action_payload_free (gpointer data)
 }
 
 static void
-actions_added_or_changed_callback (FMTreeView *view)
-{
-    GList *tmp = view->details->action_items;
-    view->details->action_items = NULL;
-    g_list_free_full (tmp, action_payload_free);
-
-    add_action_popup_items (view);
-}
-
-static void
 action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
 {
     gchar *uri = NULL;
@@ -1213,6 +1202,11 @@ action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
 static void
 add_action_popup_items (FMTreeView *view)
 {
+    if (view->details->action_items != NULL)
+        g_list_free_full (view->details->action_items, action_payload_free);
+
+    view->details->action_items = NULL;
+
     GList *action_list = nemo_action_manager_list_actions (view->details->action_manager);
     GList *l;
     GtkWidget *menu_item;
@@ -1496,11 +1490,6 @@ create_tree (FMTreeView *view)
 
     view->details->action_manager = nemo_action_manager_new ();
 
-    view->details->action_manager_changed_id =
-        g_signal_connect_swapped (view->details->action_manager, "changed",
-                      G_CALLBACK (actions_added_or_changed_callback),
-                                  view);
-
     view->details->action_items = NULL;
 
 	/* Create column */
@@ -1690,12 +1679,6 @@ fm_tree_view_dispose (GObject *object)
 		g_object_unref (view->details->volume_monitor);
 		view->details->volume_monitor = NULL;
 	}
-
-    if (view->details->action_manager_changed_id != 0) {
-        g_signal_handler_disconnect (view->details->action_manager,
-                                     view->details->action_manager_changed_id);
-        view->details->action_manager_changed_id = 0;
-    }
 
     if (view->details->hidden_files_changed_id != 0) {
         g_signal_handler_disconnect (view->details->window,
