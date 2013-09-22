@@ -183,7 +183,7 @@
       <_description>Speed tradeoff for when to show an image file as a thumbnail. If set to "always" then always thumbnail,  even if the folder is on a remote server. If set to "local-only" then only show thumbnails for local file systems. If set to "never" then never bother to thumbnail images, just use a generic icon.</_description>
     </key>
     <key name="thumbnail-limit" type="t">
-      <default>10485760</default>
+      <default>1048576</default>
       <_summary>Maximum image size for thumbnailing</_summary>
       <_description>Images over this size (in bytes) won't be  thumbnailed. The purpose of this setting is to  avoid thumbnailing large images that may take a long time to load or use lots of memory.</_description>
     </key>
