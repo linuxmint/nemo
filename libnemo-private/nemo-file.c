@@ -4022,8 +4022,7 @@ nemo_file_should_show_thumbnail (NemoFile *file)
 	/* If the thumbnail has already been created, don't care about the size
 	 * of the original file.
 	 */
-	if (nemo_thumbnail_is_mimetype_limited_by_size (mime_type) &&
-	    file->details->thumbnail_path == NULL &&
+	if (file->details->thumbnail_path == NULL &&
 	    nemo_file_get_size (file) > cached_thumbnail_limit) {
 		return FALSE;
 	}
