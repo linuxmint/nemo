@@ -1,3 +1,7 @@
+Major changes in 3.10.0:
+- Make search provider return results again (David King)
+- Translation updates
+
 Major changes in 3.9.92:
 * Use new gtk_drag_begin_full API (Jasper St. Pierre)
 * Increase default window width to fit four icons (Michael Catanzaro)
