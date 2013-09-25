@@ -195,8 +195,6 @@ static double	     get_mirror_x_position                     (NemoIconContainer 
 								double x);
 static void         text_ellipsis_limit_changed_container_callback  (gpointer callback_data);
 
-static void         show_desktop_tooltips_changed_container_callback (gpointer callback_data);
-
 static int compare_icons_horizontal (NemoIconContainer *container,
 				     NemoIcon *icon_a,
 				     NemoIcon *icon_b);
@@ -271,6 +269,19 @@ typedef struct {
 } PlacementGrid;
 
 static guint signals[LAST_SIGNAL];
+
+static void
+tooltip_prefs_changed_callback (NemoIconContainer *container)
+{
+    container->details->show_desktop_tooltips = g_settings_get_boolean (nemo_preferences,
+                                                                        NEMO_PREFERENCES_TOOLTIPS_DESKTOP);
+    container->details->show_icon_view_tooltips = g_settings_get_boolean (nemo_preferences,
+                                                                          NEMO_PREFERENCES_TOOLTIPS_ICON_VIEW);
+
+    container->details->tooltip_flags = nemo_global_preferences_get_tooltip_flags ();
+
+    nemo_icon_container_request_update_all (container);
+}
 
 /* Functions dealing with NemoIcons.  */
 
@@ -4029,9 +4040,9 @@ finalize (GObject *object)
 					      text_ellipsis_limit_changed_container_callback,
 					      object);
 
-    g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
-                          show_desktop_tooltips_changed_container_callback,
-                          object);
+    g_signal_handlers_disconnect_by_func (nemo_preferences,
+                                          tooltip_prefs_changed_callback,
+                                          object);
 
 	g_hash_table_destroy (details->icon_set);
 	details->icon_set = NULL;
@@ -5610,19 +5621,6 @@ text_ellipsis_limit_changed_container_callback (gpointer callback_data)
 	schedule_redo_layout (container);
 }
 
-static void
-show_desktop_tooltips_changed_container_callback (gpointer callback_data)
-{
-    NemoIconContainer *container;
-    container = NEMO_ICON_CONTAINER (callback_data);
-
-    gboolean show_tooltips = g_settings_get_boolean (nemo_desktop_preferences,
-                                                     NEMO_PREFERENCES_DESKTOP_SHOW_TOOLTIPS);
-    nemo_icon_container_set_show_desktop_tooltips (container, show_tooltips);
-
-    nemo_icon_container_request_update_all (container);
-}
-
 static GObject*
 nemo_icon_container_constructor (GType                  type,
 				     guint                  n_construct_params,
@@ -6171,6 +6169,38 @@ nemo_icon_container_init (NemoIconContainer *container)
 	g_signal_connect (container, "focus-out-event",
 			  G_CALLBACK (handle_focus_out_event), NULL);
 
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_TOOLTIPS_DESKTOP,
+                              G_CALLBACK (tooltip_prefs_changed_callback),
+                              container);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_TOOLTIPS_ICON_VIEW,
+                              G_CALLBACK (tooltip_prefs_changed_callback),
+                              container);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_TOOLTIP_FILE_TYPE,
+                              G_CALLBACK (tooltip_prefs_changed_callback),
+                              container);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_TOOLTIP_MOD_DATE,
+                              G_CALLBACK (tooltip_prefs_changed_callback),
+                              container);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_TOOLTIP_ACCESS_DATE,
+                              G_CALLBACK (tooltip_prefs_changed_callback),
+                              container);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_TOOLTIP_FULL_PATH,
+                              G_CALLBACK (tooltip_prefs_changed_callback),
+                              container);
+
+    tooltip_prefs_changed_callback (container);
+
 	if (!setup_prefs) {
 		g_signal_connect_swapped (nemo_icon_view_preferences,
 					  "changed::" NEMO_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT,
@@ -6184,7 +6214,7 @@ nemo_icon_container_init (NemoIconContainer *container)
 					  NULL);
 		desktop_text_ellipsis_limit_changed_callback (NULL);
 
-		setup_prefs = TRUE;
+        setup_prefs = TRUE;
 	}
 }
 
@@ -6902,30 +6932,6 @@ handle_hadjustment_changed (GtkAdjustment *adjustment,
 	}
 }
 
-static void
-construct_tooltip (NemoFile *file, gchar **tooltip_text)
-{
-    gint item_count;
-    if (nemo_file_is_directory (file)) {
-        nemo_file_get_directory_item_count (file, &item_count, NULL);
-        *tooltip_text = g_strdup_printf (ngettext ("%d item", "%d items", item_count), item_count);
-    } else {
-        gchar *scheme = nemo_file_get_uri_scheme (file);
-        if (g_strcmp0 (scheme, "x-nemo-desktop") != 0) {
-            gchar *size_string;
-            gint prefix;
-
-            prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
-            size_string = g_format_size_full (nemo_file_get_size (file), prefix);
-            *tooltip_text = g_strdup (size_string);
-            g_free (size_string);
-        } else {
-            *tooltip_text = NULL;
-        }
-        g_free (scheme);
-    }
-}
-
 void 
 nemo_icon_container_update_icon (NemoIconContainer *container,
 				     NemoIcon *icon)
@@ -7000,18 +7006,21 @@ nemo_icon_container_update_icon (NemoIconContainer *container,
 					       &additional_text,
 					       FALSE);
 
-    if (nemo_icon_container_get_is_desktop (container)) {
+    gboolean is_desktop = nemo_icon_container_get_is_desktop (container);
+
+    gboolean show_tooltip = (container->details->show_desktop_tooltips && is_desktop) ||
+                            (container->details->show_icon_view_tooltips && !is_desktop);
+
+    if (show_tooltip) {
         NemoFile *file = NEMO_FILE (icon->data);
         gchar *tooltip_text;
-        construct_tooltip (file, &tooltip_text);
 
-        if (nemo_icon_container_get_show_desktop_tooltips (container)) {
-            nemo_icon_canvas_item_set_tooltip_text (icon->item, tooltip_text);
-        } else {
-            nemo_icon_canvas_item_set_tooltip_text (icon->item, "");
-        }
-        if (tooltip_text != NULL)
-            g_free (tooltip_text);
+        tooltip_text = nemo_file_construct_tooltip (file, container->details->tooltip_flags);
+
+        nemo_icon_canvas_item_set_tooltip_text (icon->item, tooltip_text);
+        g_free (tooltip_text);
+    } else {
+        nemo_icon_canvas_item_set_tooltip_text (icon->item, "");
     }
 
 	/* If name of icon being renamed was changed from elsewhere, end renaming mode. 
@@ -8501,23 +8510,6 @@ nemo_icon_container_set_is_desktop (NemoIconContainer *container,
 	}
 }
 
-gboolean
-nemo_icon_container_get_show_desktop_tooltips (NemoIconContainer *container)
-{
-    g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), FALSE);
-
-    return container->details->show_desktop_tooltips;
-}
-
-void
-nemo_icon_container_set_show_desktop_tooltips (NemoIconContainer *container,
-                                               gboolean show_tooltips)
-{
-    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
-
-    container->details->show_desktop_tooltips = show_tooltips;
-}
-
 void
 nemo_icon_container_set_margins (NemoIconContainer *container,
 				     int left_margin,
@@ -8685,15 +8677,6 @@ nemo_icon_container_set_highlighted_for_clipboard (NemoIconContainer *container,
 				     NULL);
 	}
 
-}
-
-void
-nemo_icon_container_setup_tooltip_preference_callback (NemoIconContainer *container)
-{
-    g_signal_connect_swapped (nemo_desktop_preferences,
-                              "changed::" NEMO_PREFERENCES_DESKTOP_SHOW_TOOLTIPS,
-                              G_CALLBACK (show_desktop_tooltips_changed_container_callback),
-                              container);
 }
 
 /* NemoIconContainerAccessible */

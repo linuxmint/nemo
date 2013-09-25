@@ -275,6 +275,41 @@
       <_summary>Whether to list places in the Move To/Copy To menus</_summary>
       <_description>If set to true, places will be listed in the MoveTo/CopyTo menus</_description>
     </key>
+    <key name="tooltips-on-desktop" type="b">
+      <default>false</default>
+      <_summary>Show tooltips for desktop items</_summary>
+      <_description>If true, tooltips will be displayed for desktop items.</_description>
+    </key>
+    <key name="tooltips-in-icon-view" type="b">
+      <default>false</default>
+      <_summary>Show tooltips when hovering on items in an icon or compact view</_summary>
+      <_description>If true, tooltips will be displayed for icon and compact view items</_description>
+    </key>
+    <key name="tooltips-in-list-view" type="b">
+      <default>false</default>
+      <_summary>Show tooltips when hovering on items in a list view</_summary>
+      <_description>If true, tooltips will be displayed for list view items</_description>
+    </key>
+    <key name="tooltips-show-file-type" type="b">
+      <default>false</default>
+      <_summary>Show detailed file type in tooltip</_summary>
+      <_description>If true, tooltips will show a detailed file type.</_description>
+    </key>
+    <key name="tooltips-show-mod-date" type="b">
+      <default>false</default>
+      <_summary>Show file modified date in tooltip</_summary>
+      <_description>If true, tooltips will show their modified date.</_description>
+    </key>
+    <key name="tooltips-show-access-date" type="b">
+      <default>false</default>
+      <_summary>Show file accessed date in tooltip</_summary>
+      <_description>If true, tooltips will show their accessed date.</_description>
+    </key>
+    <key name="tooltips-show-path" type="b">
+      <default>false</default>
+      <_summary>Show full path in tooltip</_summary>
+      <_description>If true, tooltips will show the file's full path.</_description>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">
@@ -419,11 +454,6 @@
       <default>true</default>
       <_summary>Fade the background on change</_summary>
       <_description>If set to true, then Nemo will use a fade effect to change the desktop background.</_description>
-    </key>
-    <key name="tooltips-on-desktop" type="b">
-      <default>false</default>
-      <_summary>Show tooltips for desktop items</_summary>
-      <_description>If true, tooltips will be displayed for desktop items.</_description>
     </key>
   </schema>
 

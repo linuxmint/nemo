@@ -190,7 +190,6 @@ typedef enum
 #define NEMO_PREFERENCES_DESKTOP_VOLUMES_VISIBLE	   "volumes-visible"
 #define NEMO_PREFERENCES_DESKTOP_NETWORK_VISIBLE       "network-icon-visible"
 #define NEMO_PREFERENCES_DESKTOP_BACKGROUND_FADE       "background-fade"
-#define NEMO_PREFERENCES_DESKTOP_SHOW_TOOLTIPS         "tooltips-on-desktop"
 
 /* bulk rename utility */
 #define NEMO_PREFERENCES_BULK_RENAME_TOOL              "bulk-rename-tool"
@@ -213,9 +212,19 @@ typedef enum
 /* Terminal */
 #define GNOME_DESKTOP_TERMINAL_EXEC        "exec"
 
+/* Tooltips */
+#define NEMO_PREFERENCES_TOOLTIPS_DESKTOP              "tooltips-on-desktop"
+#define NEMO_PREFERENCES_TOOLTIPS_ICON_VIEW            "tooltips-in-icon-view"
+#define NEMO_PREFERENCES_TOOLTIPS_LIST_VIEW            "tooltips-in-list-view"
+#define NEMO_PREFERENCES_TOOLTIP_FILE_TYPE             "tooltips-show-file-type"
+#define NEMO_PREFERENCES_TOOLTIP_MOD_DATE              "tooltips-show-mod-date"
+#define NEMO_PREFERENCES_TOOLTIP_ACCESS_DATE           "tooltips-show-access-date"
+#define NEMO_PREFERENCES_TOOLTIP_FULL_PATH             "tooltips-show-path"
+
 void nemo_global_preferences_init                      (void);
 char *nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void);
 gboolean nemo_global_preferences_get_ignore_view_metadata (void);
+gint nemo_global_preferences_get_tooltip_flags (void);
 
 GSettings *nemo_preferences;
 GSettings *nemo_icon_view_preferences;

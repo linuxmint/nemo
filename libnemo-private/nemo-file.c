@@ -145,10 +145,7 @@ static GQuark attribute_name_q,
 	attribute_free_space_q;
 
 static void     nemo_file_info_iface_init                (NemoFileInfoIface *iface);
-static char *   nemo_file_get_owner_as_string            (NemoFile          *file,
-							      gboolean               include_real_name);
-static char *   nemo_file_get_type_as_string             (NemoFile          *file);
-static char *   nemo_file_get_detailed_type_as_string    (NemoFile          *file);
+
 static gboolean update_info_and_name                         (NemoFile          *file,
 							      GFileInfo             *info);
 static const char * nemo_file_peek_display_name (NemoFile *file);
@@ -4618,7 +4615,7 @@ nemo_file_get_trash_original_file_parent_as_string (NemoFile *file)
  * Returns: Newly allocated string ready to display to the user.
  * 
  **/
-static char *
+char *
 nemo_file_get_date_as_string (NemoFile *file, NemoDateType date_type)
 {
 	return nemo_file_fit_date_as_string (file, date_type,
@@ -5810,7 +5807,7 @@ nemo_file_get_permissions_as_string (NemoFile *file)
  * Returns: Newly allocated string ready to display to the user.
  * 
  **/
-static char *
+char *
 nemo_file_get_owner_as_string (NemoFile *file, gboolean include_real_name)
 {
 	char *user_name;
@@ -6460,7 +6457,7 @@ update_description_for_link (NemoFile *file, char *string)
 	return string;
 }
 
-static char *
+char *
 nemo_file_get_type_as_string (NemoFile *file)
 {
 	if (file == NULL) {
@@ -6474,7 +6471,7 @@ nemo_file_get_type_as_string (NemoFile *file)
     return update_description_for_link (file, get_description (file, FALSE));
 }
 
-static char *
+char *
 nemo_file_get_detailed_type_as_string (NemoFile *file)
 {
     if (file == NULL) {
@@ -7399,6 +7396,89 @@ nemo_file_cancel_call_when_ready (NemoFile *file,
 
 	NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->cancel_call_when_ready
 		(file, callback, callback_data);
+}
+
+static GString *
+add_line (GString *string, const gchar *add, gboolean prefix_newline)
+{
+    if (prefix_newline)
+        string = g_string_append (string, "\n");
+    return g_string_append (string, add);
+}
+
+gchar *
+nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
+{
+    gchar *scheme = nemo_file_get_uri_scheme (file);
+    gchar *nice = NULL;
+    gchar *tmp = NULL;
+    gchar *date;
+    gchar *ret;
+
+    if (g_strcmp0 (scheme, "x-nemo-desktop") == 0) {
+        g_free (scheme);
+        return NULL;
+    }
+
+    GString *string = g_string_new ("");
+
+    if (flags & NEMO_FILE_TOOLTIP_FLAGS_FILE_TYPE) {
+        tmp = nemo_file_get_detailed_type_as_string (file);
+        nice = g_strdup_printf (_("Type: %s\n"), tmp);
+        string = add_line (string, nice, FALSE);
+        g_free (tmp);
+        g_free (nice);
+    }
+
+    if (nemo_file_is_directory (file)) {
+        gint item_count;
+        nemo_file_get_directory_item_count (file, &item_count, NULL);
+        gchar *count = g_strdup_printf (ngettext ("%'d item", "%'d items", item_count), item_count);
+        nice = g_strdup_printf (_("Contains: %s"), count);
+        string = add_line (string, nice, FALSE);
+        g_free (count);
+        g_free (nice);
+    } else {
+        gchar *size_string;
+        gint prefix;
+        prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+        size_string = g_format_size_full (nemo_file_get_size (file), prefix);
+        nice = g_strdup_printf (_("Size: %s"), size_string);
+        string = add_line (string, nice, FALSE);
+        g_free (size_string);
+        g_free (nice);
+    }
+
+    if (flags & NEMO_FILE_TOOLTIP_FLAGS_ACCESS_DATE) {
+        date = nemo_file_get_date_as_string (file, NEMO_DATE_TYPE_ACCESSED);
+        tmp = g_strdup_printf (_("Accessed: %s"), date);
+        g_free (date);
+        string = add_line (string, tmp, TRUE);
+        g_free (tmp);
+    }
+
+    if (flags & NEMO_FILE_TOOLTIP_FLAGS_MOD_DATE) {
+        date = nemo_file_get_date_as_string (file, NEMO_DATE_TYPE_MODIFIED);
+        tmp = g_strdup_printf (_("Modified: %s"), date);
+        g_free (date);
+        string = add_line (string, tmp, TRUE);
+        g_free (tmp);
+    }
+
+    if (flags & NEMO_FILE_TOOLTIP_FLAGS_PATH) {
+        NemoFile *parent = nemo_file_get_parent (file);
+        tmp = nemo_file_get_path (parent);
+        nice = g_strdup_printf (_("Location: %s"), tmp);
+        string = add_line (string, nice, TRUE);
+        g_free (tmp);
+        g_free (nice);
+    }
+
+    ret = string->str;
+
+    g_string_free (string, FALSE);
+
+    return ret;
 }
 
 static void

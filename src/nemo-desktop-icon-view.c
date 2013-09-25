@@ -575,12 +575,6 @@ nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 	nemo_icon_container_set_is_fixed_size (icon_container, TRUE);
 	nemo_icon_container_set_is_desktop (icon_container, TRUE);
 
-    gboolean show_tooltips = g_settings_get_boolean (nemo_desktop_preferences,
-                                                     NEMO_PREFERENCES_DESKTOP_SHOW_TOOLTIPS);
-    nemo_icon_container_set_show_desktop_tooltips (icon_container, show_tooltips);
-
-    nemo_icon_container_setup_tooltip_preference_callback (icon_container);
-
 	nemo_icon_container_set_store_layout_timestamps (icon_container, TRUE);
 
 	/* Set allocation to be at 0, 0 */

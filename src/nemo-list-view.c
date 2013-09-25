@@ -108,6 +108,9 @@ struct NemoListViewDetails {
 	gulong clipboard_handler_id;
 
 	GQuark last_sort_attr;
+
+    gboolean tooltip_flags;
+    gboolean show_tooltips;
 };
 
 struct SelectionForeachData {
@@ -204,6 +207,15 @@ get_default_sort_order (NemoFile *file, gboolean *reversed)
 	}
 
 	return retval;
+}
+
+static void
+tooltip_prefs_changed_callback (NemoListView *view)
+{
+    view->details->show_tooltips = g_settings_get_boolean (nemo_preferences,
+                                                           NEMO_PREFERENCES_TOOLTIPS_LIST_VIEW);
+
+    view->details->tooltip_flags = nemo_global_preferences_get_tooltip_flags ();
 }
 
 static void
@@ -580,6 +592,50 @@ motion_notify_callback (GtkWidget *widget,
 	}
 	
 	return FALSE;
+}
+
+static gboolean
+query_tooltip_callback (GtkWidget *widget,
+                        gint x,
+                        gint y,
+                        gboolean kb_mode,
+                        GtkTooltip *tooltip,
+                        gpointer user_data)
+{
+    NemoListView *list_view;
+
+    list_view = NEMO_LIST_VIEW (user_data);
+
+    if (list_view->details->show_tooltips &&
+        !gtk_tree_view_is_blank_at_pos (GTK_TREE_VIEW (widget), x, y, NULL, NULL, NULL, NULL)) {
+        GtkTreeIter iter;
+        NemoFile *file;
+        GtkTreePath *path;
+        GtkTreeModel *model = GTK_TREE_MODEL (list_view->details->model);
+
+        if (gtk_tree_view_get_tooltip_context (GTK_TREE_VIEW (widget), &x, &y,
+                                               kb_mode,
+                                               &model, &path, &iter)) {
+
+            gtk_tree_model_get (GTK_TREE_MODEL (list_view->details->model),
+                                &iter,
+                                NEMO_LIST_MODEL_FILE_COLUMN, &file,
+                                -1);
+            if (file) {
+                gchar *tooltip_text;
+
+                tooltip_text = nemo_file_construct_tooltip (file, list_view->details->tooltip_flags);
+                gtk_tooltip_set_text (tooltip, tooltip_text);
+                gtk_tree_view_set_tooltip_cell (GTK_TREE_VIEW (widget), tooltip, path, NULL, NULL);
+                gtk_tree_path_free (path);
+                g_free (tooltip_text);
+
+                return TRUE;
+            }
+        }
+    }
+
+    return FALSE;
 }
 
 static gboolean
@@ -1881,6 +1937,9 @@ create_and_set_up_tree_view (NemoListView *view)
 				 "changed",
 				 G_CALLBACK (list_selection_changed_callback), view, 0);
 
+    g_signal_connect_object (GTK_WIDGET (view->details->tree_view), "query-tooltip",
+                             G_CALLBACK (query_tooltip_callback), view, 0);
+
 	g_signal_connect_object (view->details->tree_view, "drag_begin",
 				 G_CALLBACK (drag_begin_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "drag_data_get",
@@ -1908,7 +1967,7 @@ create_and_set_up_tree_view (NemoListView *view)
 	
     	g_signal_connect_object (view->details->tree_view, "focus_in_event",
 				 G_CALLBACK(focus_in_event_callback), view, 0);
-    
+
 	view->details->model = g_object_new (NEMO_TYPE_LIST_MODEL, NULL);
 	gtk_tree_view_set_model (view->details->tree_view, GTK_TREE_MODEL (view->details->model));
 	/* Need the model for the dnd drop icon "accept" change */
@@ -2031,6 +2090,8 @@ create_and_set_up_tree_view (NemoListView *view)
 
         atk_obj = gtk_widget_get_accessible (GTK_WIDGET (view->details->tree_view));
         atk_object_set_name (atk_obj, _("List View"));
+
+    gtk_widget_set_has_tooltip (GTK_WIDGET (view->details->tree_view), TRUE);
 
 	g_strfreev (default_visible_columns);
 	g_strfreev (default_column_order);
@@ -3283,6 +3344,10 @@ nemo_list_view_finalize (GObject *object)
 					      default_column_order_changed_callback,
 					      list_view);
 
+    g_signal_handlers_disconnect_by_func (nemo_preferences,
+                                          tooltip_prefs_changed_callback,
+                                          list_view);
+
 	G_OBJECT_CLASS (nemo_list_view_parent_class)->finalize (object);
 }
 
@@ -3471,6 +3536,33 @@ nemo_list_view_init (NemoListView *list_view)
 				  "changed::" NEMO_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER,
 				  G_CALLBACK (default_column_order_changed_callback),
 				  list_view);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_TOOLTIPS_LIST_VIEW,
+                              G_CALLBACK (tooltip_prefs_changed_callback),
+                              list_view);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_TOOLTIP_FILE_TYPE,
+                              G_CALLBACK (tooltip_prefs_changed_callback),
+                              list_view);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_TOOLTIP_MOD_DATE,
+                              G_CALLBACK (tooltip_prefs_changed_callback),
+                              list_view);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_TOOLTIP_ACCESS_DATE,
+                              G_CALLBACK (tooltip_prefs_changed_callback),
+                              list_view);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_TOOLTIP_FULL_PATH,
+                              G_CALLBACK (tooltip_prefs_changed_callback),
+                              list_view);
+
+    tooltip_prefs_changed_callback (list_view);
 
 	nemo_list_view_click_policy_changed (NEMO_VIEW (list_view));
 

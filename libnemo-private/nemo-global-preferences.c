@@ -65,6 +65,23 @@ nemo_global_preferences_get_ignore_view_metadata (void)
     return ignore_view_metadata;
 }
 
+gint
+nemo_global_preferences_get_tooltip_flags (void)
+{
+    NemoFileTooltipFlags flags = NEMO_FILE_TOOLTIP_FLAGS_NONE;
+
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_TOOLTIP_FILE_TYPE))
+        flags |= NEMO_FILE_TOOLTIP_FLAGS_FILE_TYPE;
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_TOOLTIP_MOD_DATE))
+        flags |= NEMO_FILE_TOOLTIP_FLAGS_MOD_DATE;
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_TOOLTIP_ACCESS_DATE))
+        flags |= NEMO_FILE_TOOLTIP_FLAGS_ACCESS_DATE;
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_TOOLTIP_FULL_PATH))
+        flags |= NEMO_FILE_TOOLTIP_FLAGS_PATH;
+
+    return flags;
+}
+
 static void
 ignore_view_metadata_cb (GSettings *settings,
                          gchar *key,

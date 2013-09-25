@@ -76,7 +76,6 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_AUTOMOUNT_MEDIA_WIDGET "media_automount_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_AUTOOPEN_MEDIA_WIDGET "media_autoopen_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_AUTORUN_MEDIA_WIDGET "media_autorun_checkbutton"
-#define NEMO_FILE_MANAGEMENT_PROPERTIES_DESKTOP_TOOLTIPS_WIDGET "tooltips_on_desktop_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_ADVANCED_PERMISSIONS_WIDGET "show_advanced_permissions_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_START_WITH_DUAL_PANE_WIDGET "start_with_dual_pane_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_IGNORE_VIEW_METADATA_WIDGET "ignore_view_metadata_checkbutton"
@@ -85,8 +84,18 @@
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_BULK_RENAME_WIDGET "bulk_rename_entry"
 
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_ICON_VIEW_WIDGET "tooltips_on_icon_view_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_LIST_VIEW_WIDGET "tooltips_on_list_view_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_DESKTOP_WIDGET "tooltips_on_desktop_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_FILE_TYPE_WIDGET "tt_show_file_type_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_MOD_DATE_WIDGET "tt_show_modified_date_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_ACCESS_DATE_WIDGET "tt_show_created_date_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_FULL_PATH_WIDGET "tt_show_full_path_checkbutton"
+
 /* int enums */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET "preview_image_size_combobox"
+
+#define W(s) (gtk_builder_get_object (builder, s))
 
 static const char * const default_view_values[] = {
 	"icon-view",
@@ -745,6 +754,33 @@ bind_builder_radio (GtkBuilder *builder,
 	}
 }
 
+static void
+setup_tooltip_items (GtkBuilder *builder)
+{
+    gboolean enabled = FALSE;
+
+    enabled = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_ICON_VIEW_WIDGET))) ||
+              gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_DESKTOP_WIDGET))) ||
+              gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_LIST_VIEW_WIDGET)));
+
+    gtk_widget_set_sensitive (GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_FILE_TYPE_WIDGET)), enabled);
+    gtk_widget_set_sensitive (GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_MOD_DATE_WIDGET)), enabled);
+    gtk_widget_set_sensitive (GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_ACCESS_DATE_WIDGET)), enabled);
+    gtk_widget_set_sensitive (GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_FULL_PATH_WIDGET)), enabled);
+}
+
+static void
+connect_tooltip_items (GtkBuilder *builder)
+{
+    GtkToggleButton *w;
+
+    w = GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_ICON_VIEW_WIDGET));
+    g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_tooltip_items), builder);
+
+    w = GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_DESKTOP_WIDGET));
+    g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_tooltip_items), builder);
+
+}
 
 static  void
 nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *window)
@@ -803,9 +839,6 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 	bind_builder_bool_inverted (builder, nemo_preferences,
 				    NEMO_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET,
 				    NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
-    bind_builder_bool (builder, nemo_desktop_preferences,
-               NEMO_FILE_MANAGEMENT_PROPERTIES_DESKTOP_TOOLTIPS_WIDGET,
-               NEMO_PREFERENCES_DESKTOP_SHOW_TOOLTIPS);
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET,
 			   NEMO_PREFERENCES_CONFIRM_TRASH);
@@ -918,6 +951,37 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
     bind_builder_bool (builder, nemo_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_IN_TO_MENUS_WIDGET,
                        NEMO_PREFERENCES_SHOW_PLACES_IN_TO_MENUS);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_DESKTOP_WIDGET,
+                       NEMO_PREFERENCES_TOOLTIPS_DESKTOP);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_ICON_VIEW_WIDGET,
+                       NEMO_PREFERENCES_TOOLTIPS_ICON_VIEW);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_LIST_VIEW_WIDGET,
+                       NEMO_PREFERENCES_TOOLTIPS_LIST_VIEW);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_FILE_TYPE_WIDGET,
+                       NEMO_PREFERENCES_TOOLTIP_FILE_TYPE);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_MOD_DATE_WIDGET,
+                       NEMO_PREFERENCES_TOOLTIP_MOD_DATE);
+    
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_ACCESS_DATE_WIDGET,
+                       NEMO_PREFERENCES_TOOLTIP_ACCESS_DATE);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_FULL_PATH_WIDGET,
+                       NEMO_PREFERENCES_TOOLTIP_FULL_PATH);
+
+    setup_tooltip_items (builder);
+    connect_tooltip_items (builder);
 
 	nemo_file_management_properties_dialog_setup_icon_caption_page (builder);
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);
