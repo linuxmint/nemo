@@ -777,6 +777,9 @@ connect_tooltip_items (GtkBuilder *builder)
     w = GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_ICON_VIEW_WIDGET));
     g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_tooltip_items), builder);
 
+    w = GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_LIST_VIEW_WIDGET));
+    g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_tooltip_items), builder);
+
     w = GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIPS_ON_DESKTOP_WIDGET));
     g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_tooltip_items), builder);
 
