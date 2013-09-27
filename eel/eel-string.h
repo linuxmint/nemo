@@ -34,6 +34,7 @@
  * abbreviation to mean a case-insensitive char *.
  */
 
+#define THOU_TO_STR(c) g_strdup_printf ("%'d", c);
 
 /* NULL is allowed for all the str parameters to these functions. */
 

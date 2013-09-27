@@ -33,6 +33,8 @@
 
 #include <glib/gi18n.h>
 
+#include <eel/eel-string.h>
+
 #include <libnemo-private/nemo-progress-info.h>
 #include <libnemo-private/nemo-progress-info-manager.h>
 
@@ -107,10 +109,11 @@ progress_ui_handler_update_status_icon (NemoProgressUIHandler *self)
 	gchar *tooltip;
 
 	progress_ui_handler_ensure_status_icon (self);
-	tooltip = g_strdup_printf (ngettext ("%'d file operation active.  %d%% complete.",
-					     "%'d file operations active.  %d%% complete.",
-					     self->priv->active_infos),
-				   self->priv->active_infos, self->priv->active_percent);
+    gchar *launchpad_sucks = THOU_TO_STR (self->priv->active_infos);
+    tooltip = g_strdup_printf (ngettext ("%1$s file operation active.  %2$d%% complete.",
+                               "%1$s file operations active.  %2$d%% complete.",
+                               self->priv->active_infos),
+                               launchpad_sucks, self->priv->active_percent);
 	gtk_status_icon_set_tooltip_text (self->priv->status_icon, tooltip);
     gchar *name = get_icon_name_from_percent (self->priv->active_percent);
     gtk_status_icon_set_from_icon_name (self->priv->status_icon, name);
