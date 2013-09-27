@@ -603,39 +603,43 @@ query_tooltip_callback (GtkWidget *widget,
                         gpointer user_data)
 {
     NemoListView *list_view;
+    gboolean ret;
+
+    ret = FALSE;
 
     list_view = NEMO_LIST_VIEW (user_data);
 
-    if (list_view->details->show_tooltips &&
-        !gtk_tree_view_is_blank_at_pos (GTK_TREE_VIEW (widget), x, y, NULL, NULL, NULL, NULL)) {
+    if (list_view->details->show_tooltips) {
         GtkTreeIter iter;
         NemoFile *file;
-        GtkTreePath *path;
+        GtkTreePath *path = NULL;
         GtkTreeModel *model = GTK_TREE_MODEL (list_view->details->model);
 
         if (gtk_tree_view_get_tooltip_context (GTK_TREE_VIEW (widget), &x, &y,
                                                kb_mode,
                                                &model, &path, &iter)) {
 
-            gtk_tree_model_get (GTK_TREE_MODEL (list_view->details->model),
-                                &iter,
-                                NEMO_LIST_MODEL_FILE_COLUMN, &file,
-                                -1);
-            if (file) {
-                gchar *tooltip_text;
+            if (!gtk_tree_view_is_blank_at_pos (GTK_TREE_VIEW (widget), x, y, NULL, NULL, NULL, NULL)) {
+                gtk_tree_model_get (GTK_TREE_MODEL (list_view->details->model),
+                                    &iter,
+                                    NEMO_LIST_MODEL_FILE_COLUMN, &file,
+                                    -1);
+                if (file) {
+                    gchar *tooltip_text;
 
-                tooltip_text = nemo_file_construct_tooltip (file, list_view->details->tooltip_flags);
-                gtk_tooltip_set_text (tooltip, tooltip_text);
-                gtk_tree_view_set_tooltip_cell (GTK_TREE_VIEW (widget), tooltip, path, NULL, NULL);
-                gtk_tree_path_free (path);
-                g_free (tooltip_text);
+                    tooltip_text = nemo_file_construct_tooltip (file, list_view->details->tooltip_flags);
+                    gtk_tooltip_set_text (tooltip, tooltip_text);
+                    gtk_tree_view_set_tooltip_cell (GTK_TREE_VIEW (widget), tooltip, path, NULL, NULL);
+                    g_free (tooltip_text);
 
-                return TRUE;
+                    ret = TRUE;
+                }
             }
         }
+        gtk_tree_path_free (path);
     }
 
-    return FALSE;
+    return ret;
 }
 
 static gboolean
