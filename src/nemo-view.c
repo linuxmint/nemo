@@ -6785,7 +6785,7 @@ action_browse_for_move_to_folder_callback (GtkAction *action, gpointer callback_
 
     dialog = gtk_file_chooser_dialog_new (_("Select Target Folder For Move"),
                                           nemo_view_get_containing_window (view),
-                                          GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER,
+                                          GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
                                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                           GTK_STOCK_OPEN, GTK_RESPONSE_OK,
                                           NULL);
@@ -6806,7 +6806,7 @@ action_browse_for_copy_to_folder_callback (GtkAction *action, gpointer callback_
 
     dialog = gtk_file_chooser_dialog_new (_("Select Target Folder For Copy"),
                                           nemo_view_get_containing_window (view),
-                                          GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER,
+                                          GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
                                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                           GTK_STOCK_OPEN, GTK_RESPONSE_OK,
                                           NULL);
