@@ -4915,7 +4915,7 @@ setup_bookmark_action(      char *action_name,
 
     full_path = g_strdup_printf ("%s/%s", path, action_name);
     menuitem = gtk_ui_manager_get_widget(ui_manager, full_path);
-    gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
+
     g_free (full_path);
     g_free (action_name);
 }
