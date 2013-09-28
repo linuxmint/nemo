@@ -266,12 +266,12 @@
       <_description>If set to true, views will not change according to their metadata, but stay consistent for the life of that window</_description>
     </key>
     <key name="show-bookmarks-in-to-menus" type="b">
-      <default>false</default>
+      <default>true</default>
       <_summary>Whether to list bookmarks in the Move To/Copy To menus</_summary>
       <_description>If set to true, bookmarks will be listed in the MoveTo/CopyTo menus</_description>
     </key>
     <key name="show-places-in-to-menus" type="b">
-      <default>false</default>
+      <default>true</default>
       <_summary>Whether to list places in the Move To/Copy To menus</_summary>
       <_description>If set to true, places will be listed in the MoveTo/CopyTo menus</_description>
     </key>
