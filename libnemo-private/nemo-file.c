@@ -7422,10 +7422,16 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
 
     GString *string = g_string_new ("");
 
+    tmp = nemo_file_get_display_name (file);
+    nice = g_strdup_printf (_("Name: %s"), tmp);
+    string = add_line (string, nice, FALSE);
+    g_free (nice);
+    g_free (tmp);
+
     if (flags & NEMO_FILE_TOOLTIP_FLAGS_FILE_TYPE) {
         tmp = nemo_file_get_detailed_type_as_string (file);
-        nice = g_strdup_printf (_("Type: %s\n"), tmp);
-        string = add_line (string, nice, FALSE);
+        nice = g_strdup_printf (_("Type: %s"), tmp);
+        string = add_line (string, nice, TRUE);
         g_free (tmp);
         g_free (nice);
     }
@@ -7437,7 +7443,7 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
         gchar *count = g_strdup_printf (ngettext ("%s item", "%s items", item_count), launchpad_sucks);
         g_free (launchpad_sucks);
         nice = g_strdup_printf (_("Contains: %s"), count);
-        string = add_line (string, nice, FALSE);
+        string = add_line (string, nice, TRUE);
         g_free (count);
         g_free (nice);
     } else {
@@ -7446,7 +7452,7 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
         prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
         size_string = g_format_size_full (nemo_file_get_size (file), prefix);
         nice = g_strdup_printf (_("Size: %s"), size_string);
-        string = add_line (string, nice, FALSE);
+        string = add_line (string, nice, TRUE);
         g_free (size_string);
         g_free (nice);
     }
