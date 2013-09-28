@@ -21,6 +21,7 @@
 #include "nemo-statusbar.h"
 
 #include "nemo-actions.h"
+#include "nemo-icon-info.h"
 
 #include <config.h>
 #include <glib/gi18n.h>
@@ -149,6 +150,29 @@ on_slider_changed_cb (GtkWidget *zoom_slider, gpointer user_data)
     nemo_view_zoom_to_level (view, (int) val);
 }
 
+static gboolean
+on_slider_scroll_event (GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
+{
+    gboolean in;
+    gint val;
+    gdouble delta_y;
+    gdk_event_get_scroll_deltas ((GdkEvent *) event, NULL, &delta_y);
+    in = delta_y < 0;
+    val = (int) gtk_range_get_value (GTK_RANGE (widget));
+
+    if (in) {
+        if (val < NEMO_ZOOM_LEVEL_LARGEST)
+            val++;
+    } else {
+        if (val > NEMO_ZOOM_LEVEL_SMALLEST)
+            val--;
+    }
+
+    gtk_range_set_value (GTK_RANGE (widget), (gdouble) val);
+
+    return TRUE;
+}
+
 #define SLIDER_WIDTH 100
 
 static void
@@ -213,7 +237,10 @@ nemo_status_bar_constructed (GObject *object)
 
     gtk_box_pack_start (GTK_BOX (bar), statusbar, TRUE, TRUE, 10);
 
-    GtkWidget *zoom_slider = gtk_scale_new_with_range (GTK_ORIENTATION_HORIZONTAL, 0, 6.0, 1.0);
+    GtkWidget *zoom_slider = gtk_scale_new_with_range (GTK_ORIENTATION_HORIZONTAL,
+                                                       (gdouble) NEMO_ZOOM_LEVEL_SMALLEST,
+                                                       (gdouble) NEMO_ZOOM_LEVEL_LARGEST,
+                                                       1.0);
     gtk_widget_set_tooltip_text (GTK_WIDGET (zoom_slider), _("Adjust zoom level"));
     bar->zoom_slider = zoom_slider;
 
@@ -223,6 +250,9 @@ nemo_status_bar_constructed (GObject *object)
     gtk_scale_set_draw_value (GTK_SCALE (zoom_slider), FALSE);
     gtk_range_set_increments (GTK_RANGE (zoom_slider), 1.0, 1.0);
     gtk_range_set_round_digits (GTK_RANGE (zoom_slider), 0);
+
+    g_signal_connect (GTK_WIDGET (zoom_slider), "scroll-event",
+                      G_CALLBACK (on_slider_scroll_event), bar);
 
     gtk_widget_show_all (GTK_WIDGET (bar));
 
