@@ -1896,6 +1896,13 @@ create_extra_pane (NemoWindow *window)
 		gtk_paned_pack2 (paned, GTK_WIDGET (pane), TRUE, FALSE);
 	}
 
+    /* Make the paned think it's been manually resized, otherwise
+       things like the trash bar will force unwanted resizes */
+
+    int w;
+    w = gtk_widget_get_allocated_width (GTK_WIDGET (paned)) / 2;
+    gtk_paned_set_position (paned, w);
+
 	/* Ensure the toolbar doesn't pop itself into existence (double toolbars suck.) */
 	gtk_widget_hide (pane->tool_bar);
 
