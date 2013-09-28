@@ -1013,12 +1013,16 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 	}
 
 	if (nemo_file_is_directory (file)) {
-		file_entry->files = g_sequence_new ((GDestroyNotify)file_entry_free);
+        gint count;
+        nemo_file_get_directory_item_count (file, &count, NULL);
+        if (count > 0) {
+            file_entry->files = g_sequence_new ((GDestroyNotify)file_entry_free);
 
-		add_dummy_row (model, file_entry);
+            add_dummy_row (model, file_entry);
 
-		gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model),
-						      path, &iter);
+            gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model),
+                                                  path, &iter);
+        }
 	}
 	gtk_tree_path_free (path);
 	

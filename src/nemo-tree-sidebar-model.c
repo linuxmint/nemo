@@ -669,9 +669,11 @@ report_node_inserted (FMTreeModel *model, TreeNode *node)
 		report_dummy_row_inserted (model, node);
 	}
 
-	if (node->directory != NULL ||
-	    node->parent == NULL) {
-		report_row_has_child_toggled (model, &iter);
+	if (node->directory != NULL) {
+        gint count;
+        nemo_file_get_directory_item_count (node->file, &count, NULL);
+        if (count > 0 || node->parent == NULL)
+		  report_row_has_child_toggled (model, &iter);
 	}
 }
 
