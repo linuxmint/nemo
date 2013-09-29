@@ -3010,13 +3010,6 @@ compare_by_type (NemoFile *file_1, NemoFile *file_2)
 		return +1;
 	}
 
-	if (file_1->details->mime_type != NULL &&
-	    file_2->details->mime_type != NULL &&
-	    strcmp (eel_ref_str_peek (file_1->details->mime_type),
-		    eel_ref_str_peek (file_2->details->mime_type)) == 0) {
-		return 0;
-	}
-
 	type_string_1 = nemo_file_get_type_as_string (file_1);
 	type_string_2 = nemo_file_get_type_as_string (file_2);
 
