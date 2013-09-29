@@ -858,7 +858,15 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 		/* Otherwise, use default */
 		if (view_id == NULL) {
-			view_id = nemo_global_preferences_get_default_folder_viewer_preference_as_iid ();
+            gchar *name;
+            name = nemo_file_get_name (file);
+
+            if (g_strcmp0 (name, "x-nemo-search") == 0)
+                view_id = g_strdup (NEMO_LIST_VIEW_IID);
+            else
+                view_id = nemo_global_preferences_get_default_folder_viewer_preference_as_iid ();
+
+            g_free (name);
 
 			if (view_id != NULL && 
 			    !nemo_view_factory_view_supports_uri (view_id,
