@@ -669,12 +669,20 @@ report_node_inserted (FMTreeModel *model, TreeNode *node)
 		report_dummy_row_inserted (model, node);
 	}
 
+    gboolean add_child = FALSE;
+
 	if (node->directory != NULL) {
         gint count;
-        nemo_file_get_directory_item_count (node->file, &count, NULL);
-        if (count > 0 || node->parent == NULL)
-		  report_row_has_child_toggled (model, &iter);
-	}
+        if (nemo_file_get_directory_item_count (node->file, &count, NULL)) {
+            add_child = count > 0 || node->parent == NULL;
+        } else {
+            add_child = node->parent == NULL ||
+                        nemo_dir_has_children_now (nemo_file_get_location (node->file));
+        }
+    }
+
+    if (add_child)
+        report_row_has_child_toggled (model, &iter);
 }
 
 static void

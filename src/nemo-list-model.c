@@ -1012,20 +1012,28 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 		gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
 	}
 
-	if (nemo_file_is_directory (file)) {
+    gboolean add_child = FALSE;
+
+    if (nemo_file_is_directory (file)) {
         gint count;
-        nemo_file_get_directory_item_count (file, &count, NULL);
-        if (count > 0) {
-            file_entry->files = g_sequence_new ((GDestroyNotify)file_entry_free);
-
-            add_dummy_row (model, file_entry);
-
-            gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model),
-                                                  path, &iter);
+        if (nemo_file_get_directory_item_count (file, &count, NULL)) {
+            add_child = count > 0;
+        } else {
+            add_child = nemo_dir_has_children_now (nemo_file_get_location (file));
         }
-	}
+    }
+
+    if (add_child) {
+        file_entry->files = g_sequence_new ((GDestroyNotify)file_entry_free);
+
+        add_dummy_row (model, file_entry);
+
+        gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model),
+                                                      path, &iter);
+    }
+
 	gtk_tree_path_free (path);
-	
+
 	return TRUE;
 }
 
