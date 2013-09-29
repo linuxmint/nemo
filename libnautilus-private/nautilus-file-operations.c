@@ -73,7 +73,7 @@ typedef struct {
 	GTimer *time;
 	GtkWindow *parent_window;
 	int screen_num;
-	int inhibit_cookie;
+	guint inhibit_cookie;
 	NautilusProgressInfo *progress;
 	GCancellable *cancellable;
 	GHashTable *skip_files;
@@ -932,7 +932,7 @@ init_common (gsize job_size,
 	common->progress = nautilus_progress_info_new ();
 	common->cancellable = nautilus_progress_info_get_cancellable (common->progress);
 	common->time = g_timer_new ();
-	common->inhibit_cookie = -1;
+	common->inhibit_cookie = 0;
 	common->screen_num = 0;
 	if (parent_window) {
 		screen = gtk_widget_get_screen (GTK_WIDGET (parent_window));
@@ -947,12 +947,12 @@ finalize_common (CommonJob *common)
 {
 	nautilus_progress_info_finish (common->progress);
 
-	if (common->inhibit_cookie != -1) {
+	if (common->inhibit_cookie != 0) {
 		gtk_application_uninhibit (GTK_APPLICATION (g_application_get_default ()),
 					   common->inhibit_cookie);
 	}
 
-	common->inhibit_cookie = -1;
+	common->inhibit_cookie = 0;
 	g_timer_destroy (common->time);
 
 	if (common->parent_window) {
