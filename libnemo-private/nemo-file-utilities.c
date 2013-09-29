@@ -1367,28 +1367,40 @@ nemo_get_cached_x_content_types_for_mount (GMount *mount)
 }
 
 gboolean
-nemo_dir_has_children_now (GFile *dir)
+nemo_dir_has_children_now (GFile *dir, gboolean *has_subdirs)
 {
     GFileEnumerator *enumerator;
     gboolean res;
+    gboolean has_dirs;
     GFileInfo *file_info;
 
     res = FALSE;
+    has_dirs = FALSE;
 
     enumerator = g_file_enumerate_children (dir,
-                        G_FILE_ATTRIBUTE_STANDARD_NAME,
+                        G_FILE_ATTRIBUTE_STANDARD_TYPE,
                         0,
                         NULL, NULL);
     if (enumerator) {
-        file_info = g_file_enumerator_next_file (enumerator, NULL, NULL);
-        if (file_info != NULL) {
-            res = TRUE;
-            g_object_unref (file_info);
-        }
-
+        do {
+            file_info = g_file_enumerator_next_file (enumerator, NULL, NULL);
+            if (file_info != NULL) {
+                res = TRUE;
+                GFileType type;
+                type = g_file_info_get_attribute_uint32 (file_info, G_FILE_ATTRIBUTE_STANDARD_TYPE);
+                if (type == G_FILE_TYPE_DIRECTORY) {
+                    has_dirs = TRUE;
+                    break;
+                }
+                g_object_unref (file_info);
+            }
+        } while (file_info != NULL);
         g_file_enumerator_close (enumerator, NULL, NULL);
         g_object_unref (enumerator);
     }
+
+    if (has_subdirs != NULL)
+        *has_subdirs = has_dirs;
 
     return res;
 }
