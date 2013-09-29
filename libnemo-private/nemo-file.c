@@ -2982,7 +2982,7 @@ prepend_automatic_keywords (NemoFile *file,
 }
 
 static int
-compare_by_type (NemoFile *file_1, NemoFile *file_2)
+compare_by_type (NemoFile *file_1, NemoFile *file_2, gboolean detailed)
 {
 	gboolean is_directory_1;
 	gboolean is_directory_2;
@@ -3010,8 +3010,13 @@ compare_by_type (NemoFile *file_1, NemoFile *file_2)
 		return +1;
 	}
 
-	type_string_1 = nemo_file_get_type_as_string (file_1);
-	type_string_2 = nemo_file_get_type_as_string (file_2);
+    if (detailed) {
+        type_string_1 = nemo_file_get_detailed_type_as_string (file_1);
+        type_string_2 = nemo_file_get_detailed_type_as_string (file_2);
+    } else {
+        type_string_1 = nemo_file_get_type_as_string (file_1);
+        type_string_2 = nemo_file_get_type_as_string (file_2);
+    }
 
 	if (type_string_1 == NULL || type_string_2 == NULL) {
 		if (type_string_1 != NULL) {
@@ -3166,14 +3171,17 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 			}
 			break;
 		case NEMO_FILE_SORT_BY_TYPE:
-			/* GnomeVFS doesn't know about our special text for certain
-			 * mime types, so we handle the mime-type sorting ourselves.
-			 */
-			result = compare_by_type (file_1, file_2);
+			result = compare_by_type (file_1, file_2, FALSE);
 			if (result == 0) {
 				result = compare_by_full_path (file_1, file_2);
 			}
 			break;
+        case NEMO_FILE_SORT_BY_DETAILED_TYPE:
+            result = compare_by_type (file_1, file_2, TRUE);
+            if (result == 0) {
+                result = compare_by_full_path (file_1, file_2);
+            }
+            break;
 		case NEMO_FILE_SORT_BY_MTIME:
 			result = compare_by_time (file_1, file_2, NEMO_DATE_TYPE_MODIFIED);
 			if (result == 0) {
@@ -3235,7 +3243,12 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 						       NEMO_FILE_SORT_BY_TYPE,
 						       directories_first,
 						       reversed);
-	} else if (attribute == attribute_modification_date_q || attribute == attribute_date_modified_q) {
+	} else if (attribute == attribute_detailed_type_q) {
+        return nemo_file_compare_for_sort (file_1, file_2,
+                               NEMO_FILE_SORT_BY_DETAILED_TYPE,
+                               directories_first,
+                               reversed); 
+    } else if (attribute == attribute_modification_date_q || attribute == attribute_date_modified_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_MTIME,
 						       directories_first,
