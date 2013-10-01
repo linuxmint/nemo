@@ -22,8 +22,8 @@ msgstr ""
 "Project-Id-Version: nautilus MASTER\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-09-11 20:22+0000\n"
-"PO-Revision-Date: 2013-09-12 00:18+0300\n"
+"POT-Creation-Date: 2013-09-24 03:44+0000\n"
+"PO-Revision-Date: 2013-09-27 08:41+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz@gmail.com>\n"
 "Language-Team: Estonian <gnome-et@linux.ee>\n"
 "Language: et\n"
@@ -36,9 +36,10 @@ msgstr ""
 msgid "Run Software"
 msgstr "Tarkvara käivitamine"
 
+# IMHO kasutatakse seda topelt, dialoogi pealkirjas ja gnome-shelli küljes näidatavas menüüs.
 #. set dialog properties
 msgid "Connect to Server"
-msgstr "Ühendu serveriga"
+msgstr "Ühendumine serveriga"
 
 #. Set initial window title
 msgid "Files"
@@ -2057,7 +2058,7 @@ msgstr "_Uus aken"
 #. name, stock id
 #. label, accelerator
 msgid "Connect to _Server…"
-msgstr "Ühendumine _serveriga…"
+msgstr "Ühendu _serveriga…"
 
 #. name, stock id
 msgid "Enter _Location…"
@@ -2514,7 +2515,7 @@ msgid "Always"
 msgstr "Alati"
 
 msgid "Local Files Only"
-msgstr "Ainult kohalike failide korral"
+msgstr "Ainult kohalikel failidel"
 
 msgid "Never"
 msgstr "Mitte kunagi"
@@ -2917,7 +2918,7 @@ msgstr "(osa sisust pole loetav)"
 #. * couldn't think of one.
 #.
 msgid "Contents:"
-msgstr "Sisukord:"
+msgstr "Sisu:"
 
 #. Translators: "used" refers to the capacity of the filesystem
 msgid "used"
@@ -3145,7 +3146,7 @@ msgstr[0] "See avab %'d eraldi akna."
 msgstr[1] "See avab %'d eraldi akent."
 
 msgid "Select Items Matching"
-msgstr "Kirjete valimine mustri järgi"
+msgstr "Valimine mustri järgi"
 
 msgid "_Pattern:"
 msgstr "_Muster:"
@@ -3425,7 +3426,7 @@ msgstr "Kõigi selles aknas olevate kirjete avamine"
 #. name, stock id
 #. label, accelerator
 msgid "Select I_tems Matching…"
-msgstr "_Kirjete valimine mustri järgi…"
+msgstr "_Valimine mustri järgi…"
 
 #. tooltip
 msgid "Select items in this window matching a given pattern"
@@ -3740,7 +3741,7 @@ msgid "_Connect"
 msgstr "Ü_hendu"
 
 msgid "Connect to the selected drive"
-msgstr "Ühendab valitud kettale"
+msgstr "Ühendab valitud ketta"
 
 msgid "_Start Multi-disk Drive"
 msgstr "_Käivita mitmekettaseade"
@@ -4071,7 +4072,7 @@ msgstr "Vaate hariliku suuruse kasutamine"
 
 #. tooltip
 msgid "Connect to a remote computer or shared disk"
-msgstr "Loo ühendus eemalasuva arvuti või jagatud kettaga"
+msgstr "Ühenduse loomine eemalasuva arvuti või jagatud kettaga"
 
 #. name, stock id
 #. label, accelerator
