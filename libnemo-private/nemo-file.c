@@ -99,7 +99,7 @@
 
 #define METADATA_ID_IS_LIST_MASK (1<<31)
 
-#define MAX_THUMBNAIL_TRIES 1
+#define MAX_THUMBNAIL_TRIES 2
 
 typedef enum {
 	SHOW_HIDDEN = 1 << 0,
