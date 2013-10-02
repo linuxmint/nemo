@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-28 11:36-0400\n"
+"POT-Creation-Date: 2013-10-01 22:08-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,6 +91,26 @@ msgid ""
 "\n"
 "\n"
 "Browse the file system with the file manager"
+msgstr ""
+
+#: src/nemo-application.c:1111
+msgid "Nemo's main menu is now hidden"
+msgstr ""
+
+#: src/nemo-application.c:1115
+msgid ""
+"You have chosen to hide the main menu.  You can get it back temporarily by:\n"
+"\n"
+"- Tapping the <Alt> key\n"
+"- Right-clicking an empty region of the main toolbar\n"
+"- Right-clicking an empty region of the status bar.\n"
+"\n"
+"You can restore it permanently by selecting this option again from the View "
+"menu."
+msgstr ""
+
+#: src/nemo-application.c:1126
+msgid "Don't show this message again."
 msgstr ""
 
 #: src/nemo-autorun-software.c:143 src/nemo-autorun-software.c:146
@@ -417,7 +437,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: src/nemo-file-management-properties.c:510 libnemo-private/nemo-file.c:4387
+#: src/nemo-file-management-properties.c:510 libnemo-private/nemo-file.c:4397
 msgid "today at %-I:%M:%S %p"
 msgstr ""
 
@@ -717,16 +737,16 @@ msgid "Failed to load image information"
 msgstr ""
 
 #: src/nemo-image-properties-page.c:706 src/nemo-list-model.c:410
-#: src/nemo-tree-sidebar-model.c:1252 src/nemo-window-manage-views.c:1140
+#: src/nemo-tree-sidebar-model.c:1271 src/nemo-window-manage-views.c:1148
 #: src/nemo-window-slot.c:202
 msgid "Loading..."
 msgstr ""
 
-#: src/nemo-image-properties-page.c:767 libnemo-private/nemo-file.c:6312
+#: src/nemo-image-properties-page.c:767 libnemo-private/nemo-file.c:6322
 msgid "Image"
 msgstr ""
 
-#: src/nemo-list-model.c:408 src/nemo-tree-sidebar-model.c:1252
+#: src/nemo-list-model.c:408 src/nemo-tree-sidebar-model.c:1271
 msgid "(Empty)"
 msgstr ""
 
@@ -1181,7 +1201,7 @@ msgstr ""
 msgid "%s Properties"
 msgstr ""
 
-#: src/nemo-properties-window.c:1123 libnemo-private/nemo-file.c:6280
+#: src/nemo-properties-window.c:1123 libnemo-private/nemo-file.c:6290
 msgid "unknown"
 msgstr ""
 
@@ -1464,7 +1484,7 @@ msgstr ""
 msgid "Music"
 msgstr ""
 
-#: src/nemo-query-editor.c:399 libnemo-private/nemo-file.c:6318
+#: src/nemo-query-editor.c:399 libnemo-private/nemo-file.c:6328
 msgid "Video"
 msgstr ""
 
@@ -1476,11 +1496,11 @@ msgstr ""
 msgid "Illustration"
 msgstr ""
 
-#: src/nemo-query-editor.c:449 libnemo-private/nemo-file.c:6323
+#: src/nemo-query-editor.c:449 libnemo-private/nemo-file.c:6333
 msgid "Spreadsheet"
 msgstr ""
 
-#: src/nemo-query-editor.c:465 libnemo-private/nemo-file.c:6322
+#: src/nemo-query-editor.c:465 libnemo-private/nemo-file.c:6332
 msgid "Presentation"
 msgstr ""
 
@@ -1549,23 +1569,23 @@ msgstr ""
 msgid "Search:"
 msgstr ""
 
-#: src/nemo-statusbar.c:176
+#: src/nemo-statusbar.c:200
 msgid "Show Places"
 msgstr ""
 
-#: src/nemo-statusbar.c:185
+#: src/nemo-statusbar.c:209
 msgid "Show Treeview"
 msgstr ""
 
-#: src/nemo-statusbar.c:199
+#: src/nemo-statusbar.c:223
 msgid "Hide the Sidebar (F9)"
 msgstr ""
 
-#: src/nemo-statusbar.c:208
+#: src/nemo-statusbar.c:232
 msgid "Show the Sidebar (F9)"
 msgstr ""
 
-#: src/nemo-statusbar.c:217
+#: src/nemo-statusbar.c:244
 msgid "Adjust zoom level"
 msgstr ""
 
@@ -1719,7 +1739,7 @@ msgstr[1] ""
 msgid "%s (%s)"
 msgstr ""
 
-#: src/nemo-view.c:3068 libnemo-private/nemo-file.c:5846
+#: src/nemo-view.c:3068 libnemo-private/nemo-file.c:5856
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
@@ -2419,7 +2439,7 @@ msgstr ""
 msgid "View or modify the properties of the open folder"
 msgstr ""
 
-#: src/nemo-view-dnd.c:125 libnemo-private/nemo-file.c:6452
+#: src/nemo-view-dnd.c:125 libnemo-private/nemo-file.c:6462
 #: libnemo-private/nemo-file-operations.c:377
 #, c-format
 msgid "Link to %s"
@@ -2464,71 +2484,71 @@ msgstr ""
 msgid "Go to the location specified by this bookmark"
 msgstr ""
 
-#: src/nemo-window.c:1544
+#: src/nemo-window.c:1571
 #, c-format
 msgid "%s - File Browser"
 msgstr ""
 
-#: src/nemo-window.c:2041 src/nemo-window-menus.c:312
+#: src/nemo-window.c:2068 src/nemo-window-menus.c:312
 msgid "Nemo"
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1140
+#: src/nemo-window-manage-views.c:1148
 msgid "Searching..."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1608 src/nemo-window-manage-views.c:1614
-#: src/nemo-window-manage-views.c:1631 src/nemo-window-manage-views.c:1642
-#: src/nemo-window-manage-views.c:1648 src/nemo-window-manage-views.c:1674
+#: src/nemo-window-manage-views.c:1616 src/nemo-window-manage-views.c:1622
+#: src/nemo-window-manage-views.c:1639 src/nemo-window-manage-views.c:1650
+#: src/nemo-window-manage-views.c:1656 src/nemo-window-manage-views.c:1682
 #, c-format
 msgid "Could not display \"%s\"."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1611
+#: src/nemo-window-manage-views.c:1619
 msgid "Nemo has no installed viewer capable of displaying the folder."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1617
+#: src/nemo-window-manage-views.c:1625
 msgid "The location is not a folder."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1623
+#: src/nemo-window-manage-views.c:1631
 #, c-format
 msgid "Could not find \"%s\"."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1626
+#: src/nemo-window-manage-views.c:1634
 msgid "Please check the spelling and try again."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1634
+#: src/nemo-window-manage-views.c:1642
 #, c-format
 msgid "Nemo cannot handle \"%s\" locations."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1637
+#: src/nemo-window-manage-views.c:1645
 msgid "Nemo cannot handle this kind of location."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1644
+#: src/nemo-window-manage-views.c:1652
 msgid "Unable to mount the location."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1650
+#: src/nemo-window-manage-views.c:1658
 msgid "Access was denied."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1659
+#: src/nemo-window-manage-views.c:1667
 #, c-format
 msgid "Could not display \"%s\", because the host could not be found."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1661
+#: src/nemo-window-manage-views.c:1669
 msgid ""
 "Check that the spelling is correct and that your proxy settings are correct."
 msgstr ""
 
-#: src/nemo-window-manage-views.c:1676
+#: src/nemo-window-manage-views.c:1684
 #, c-format
 msgid ""
 "Error: %s\n"
@@ -3179,296 +3199,296 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1219 libnemo-private/nemo-vfs-file.c:389
+#: libnemo-private/nemo-file.c:1222 libnemo-private/nemo-vfs-file.c:389
 msgid "This file cannot be mounted"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1264
+#: libnemo-private/nemo-file.c:1267
 msgid "This file cannot be unmounted"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1298
+#: libnemo-private/nemo-file.c:1301
 msgid "This file cannot be ejected"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1331 libnemo-private/nemo-vfs-file.c:567
+#: libnemo-private/nemo-file.c:1334 libnemo-private/nemo-vfs-file.c:567
 msgid "This file cannot be started"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1383 libnemo-private/nemo-file.c:1414
+#: libnemo-private/nemo-file.c:1386 libnemo-private/nemo-file.c:1417
 msgid "This file cannot be stopped"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1841
+#: libnemo-private/nemo-file.c:1844
 msgid "Slashes are not allowed in filenames"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1859
+#: libnemo-private/nemo-file.c:1862
 msgid "File not found"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1887
+#: libnemo-private/nemo-file.c:1890
 msgid "Toplevel files cannot be renamed"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1910
+#: libnemo-private/nemo-file.c:1913
 msgid "Unable to rename desktop icon"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1939
+#: libnemo-private/nemo-file.c:1942
 msgid "Unable to rename desktop file"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4386
+#: libnemo-private/nemo-file.c:4396
 msgid "today at 00:00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4389
+#: libnemo-private/nemo-file.c:4399
 msgid "today at 00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4390
+#: libnemo-private/nemo-file.c:4400
 msgid "today at %-I:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4392
+#: libnemo-private/nemo-file.c:4402
 msgid "today, 00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4393
+#: libnemo-private/nemo-file.c:4403
 msgid "today, %-I:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4395 libnemo-private/nemo-file.c:4396
+#: libnemo-private/nemo-file.c:4405 libnemo-private/nemo-file.c:4406
 msgid "today"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4405
+#: libnemo-private/nemo-file.c:4415
 msgid "yesterday at 00:00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4406
+#: libnemo-private/nemo-file.c:4416
 msgid "yesterday at %-I:%M:%S %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4408
+#: libnemo-private/nemo-file.c:4418
 msgid "yesterday at 00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4409
+#: libnemo-private/nemo-file.c:4419
 msgid "yesterday at %-I:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4411
+#: libnemo-private/nemo-file.c:4421
 msgid "yesterday, 00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4412
+#: libnemo-private/nemo-file.c:4422
 msgid "yesterday, %-I:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4414 libnemo-private/nemo-file.c:4415
+#: libnemo-private/nemo-file.c:4424 libnemo-private/nemo-file.c:4425
 msgid "yesterday"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4426
+#: libnemo-private/nemo-file.c:4436
 msgid "Wednesday, September 00 0000 at 00:00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4427
+#: libnemo-private/nemo-file.c:4437
 msgid "%A, %B %-d %Y at %-I:%M:%S %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4429
+#: libnemo-private/nemo-file.c:4439
 msgid "Mon, Oct 00 0000 at 00:00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4430
+#: libnemo-private/nemo-file.c:4440
 msgid "%a, %b %-d %Y at %-I:%M:%S %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4432
+#: libnemo-private/nemo-file.c:4442
 msgid "Mon, Oct 00 0000 at 00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4433
+#: libnemo-private/nemo-file.c:4443
 msgid "%a, %b %-d %Y at %-I:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4435
+#: libnemo-private/nemo-file.c:4445
 msgid "Oct 00 0000 at 00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4436
+#: libnemo-private/nemo-file.c:4446
 msgid "%b %-d %Y at %-I:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4438
+#: libnemo-private/nemo-file.c:4448
 msgid "Oct 00 0000, 00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4439
+#: libnemo-private/nemo-file.c:4449
 msgid "%b %-d %Y, %-I:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4441
+#: libnemo-private/nemo-file.c:4451
 msgid "00/00/00, 00:00 PM"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4442
+#: libnemo-private/nemo-file.c:4452
 msgid "%m/%-d/%y, %-I:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4444
+#: libnemo-private/nemo-file.c:4454
 msgid "00/00/00"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4445
+#: libnemo-private/nemo-file.c:4455
 msgid "%m/%d/%y"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5094
+#: libnemo-private/nemo-file.c:5104
 msgid "Not allowed to set permissions"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5389
+#: libnemo-private/nemo-file.c:5399
 msgid "Not allowed to set owner"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5407
+#: libnemo-private/nemo-file.c:5417
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5671
+#: libnemo-private/nemo-file.c:5681
 msgid "Not allowed to set group"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5689
+#: libnemo-private/nemo-file.c:5699
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5847
+#: libnemo-private/nemo-file.c:5857
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] ""
 msgstr[1] ""
 
-#: libnemo-private/nemo-file.c:5848
+#: libnemo-private/nemo-file.c:5858
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: libnemo-private/nemo-file.c:6243 libnemo-private/nemo-file.c:6259
+#: libnemo-private/nemo-file.c:6253 libnemo-private/nemo-file.c:6269
 msgid "? items"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6249
+#: libnemo-private/nemo-file.c:6259
 msgid "? bytes"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6266 libnemo-private/nemo-file.c:6349
-#: libnemo-private/nemo-file.c:6383
+#: libnemo-private/nemo-file.c:6276 libnemo-private/nemo-file.c:6359
+#: libnemo-private/nemo-file.c:6393
 msgid "Unknown"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6309 libnemo-private/nemo-file.c:6317
-#: libnemo-private/nemo-file.c:6409
+#: libnemo-private/nemo-file.c:6319 libnemo-private/nemo-file.c:6327
+#: libnemo-private/nemo-file.c:6419
 msgid "Program"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6310
+#: libnemo-private/nemo-file.c:6320
 msgid "Audio"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6311
+#: libnemo-private/nemo-file.c:6321
 msgid "Font"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6313
+#: libnemo-private/nemo-file.c:6323
 msgid "Archive"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6314
+#: libnemo-private/nemo-file.c:6324
 msgid "Markup"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6315 libnemo-private/nemo-file.c:6316
+#: libnemo-private/nemo-file.c:6325 libnemo-private/nemo-file.c:6326
 #: eel/eel-editable-label.c:311
 msgid "Text"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6319
+#: libnemo-private/nemo-file.c:6329
 msgid "Contacts"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6320
+#: libnemo-private/nemo-file.c:6330
 msgid "Calendar"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6321
+#: libnemo-private/nemo-file.c:6331
 msgid "Document"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6411
+#: libnemo-private/nemo-file.c:6421
 #: src/nemo-file-management-properties.glade:51
 msgid "Binary"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6415
+#: libnemo-private/nemo-file.c:6425
 msgid "Folder"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6446
+#: libnemo-private/nemo-file.c:6456
 msgid "link"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6468 libnemo-private/nemo-file.c:6482
+#: libnemo-private/nemo-file.c:6478 libnemo-private/nemo-file.c:6492
 msgid "link (broken)"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7426
+#: libnemo-private/nemo-file.c:7436
 #, c-format
 msgid "Name: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7433
+#: libnemo-private/nemo-file.c:7443
 #, c-format
 msgid "Type: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7443
+#: libnemo-private/nemo-file.c:7453
 #, c-format
 msgid "%s item"
 msgid_plural "%s items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: libnemo-private/nemo-file.c:7445
+#: libnemo-private/nemo-file.c:7455
 #, c-format
 msgid "Contains: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7454
+#: libnemo-private/nemo-file.c:7464
 #, c-format
 msgid "Size: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7462
+#: libnemo-private/nemo-file.c:7472
 #, c-format
 msgid "Accessed: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7470
+#: libnemo-private/nemo-file.c:7480
 #, c-format
 msgid "Modified: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7479
+#: libnemo-private/nemo-file.c:7489
 #, c-format
 msgid "Location: %s"
 msgstr ""
