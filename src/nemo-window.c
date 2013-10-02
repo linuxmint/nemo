@@ -92,6 +92,7 @@ static void mouse_back_button_changed		     (gpointer                  callback_
 static void mouse_forward_button_changed	     (gpointer                  callback_data);
 static void use_extra_mouse_buttons_changed          (gpointer              callback_data);
 static void side_pane_id_changed                    (NemoWindow            *window);
+static void handle_alt_menu_key                     (NemoWindow *window, gboolean on_release);
 
 /* Sanity check: highest mouse button value I could find was 14. 5 is our 
  * lower threshold (well-documented to be the one of the button events for the 
@@ -522,6 +523,18 @@ nemo_window_disable_chrome_mapping (GValue *value,
 	return TRUE;
 }
 
+static gboolean
+on_button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+{
+    NemoWindow *window = NEMO_WINDOW (user_data);
+    if (event->button == 3) {
+            /* simulate activating the menu */
+            handle_alt_menu_key (window, FALSE);
+            handle_alt_menu_key (window, TRUE);
+    }
+    return TRUE;
+}
+
 static void
 nemo_window_constructed (GObject *self)
 {
@@ -577,6 +590,10 @@ nemo_window_constructed (GObject *self)
 	toolbar_holder = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_container_add (GTK_CONTAINER (grid), toolbar_holder);
 	gtk_widget_show (toolbar_holder);
+
+    g_signal_connect_object (toolbar_holder, "button-press-event",
+                             G_CALLBACK (on_button_press_callback), window, 0);
+
 	window->details->toolbar_holder = toolbar_holder;
 
 	/* Register to menu provider extension signal managing menu updates */
@@ -613,11 +630,21 @@ nemo_window_constructed (GObject *self)
     gtk_container_add (GTK_CONTAINER (grid), sep);
     gtk_widget_show (sep);
 
-    gtk_container_add (GTK_CONTAINER (grid), nemo_statusbar);
+    GtkWidget *eb;
+
+    eb = gtk_event_box_new ();
+    gtk_container_add (GTK_CONTAINER (eb), nemo_statusbar);
+    gtk_container_add (GTK_CONTAINER (grid), eb);
+    gtk_widget_show (eb);
 
     window->details->statusbar = nemo_status_bar_get_real_statusbar (NEMO_STATUS_BAR (nemo_statusbar));
     window->details->help_message_cid = gtk_statusbar_get_context_id (GTK_STATUSBAR (window->details->statusbar),
                                                                       "help_message");
+
+    gtk_widget_add_events (GTK_WIDGET (eb), GDK_BUTTON_PRESS_MASK);
+
+    g_signal_connect_object (GTK_WIDGET (eb), "button-press-event",
+                             G_CALLBACK (on_button_press_callback), window, 0);
 
     g_settings_bind_with_mapping (nemo_window_state,
                       NEMO_WINDOW_STATE_START_WITH_STATUS_BAR,

@@ -221,6 +221,8 @@ typedef enum
 #define NEMO_PREFERENCES_TOOLTIP_ACCESS_DATE           "tooltips-show-access-date"
 #define NEMO_PREFERENCES_TOOLTIP_FULL_PATH             "tooltips-show-path"
 
+#define NEMO_PREFERENCES_DISABLE_MENU_WARNING          "disable-menu-warning"
+
 void nemo_global_preferences_init                      (void);
 char *nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void);
 gboolean nemo_global_preferences_get_ignore_view_metadata (void);

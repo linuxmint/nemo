@@ -1093,6 +1093,66 @@ init_gtk_accels (void)
 			  G_CALLBACK (queue_accel_map_save_callback), NULL);
 }
 
+
+static void
+menu_state_changed_callback (NemoApplication *self)
+{
+    if (!g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_MENU_BAR) &&
+        !g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_DISABLE_MENU_WARNING)) {
+
+        GtkWidget *dialog;
+        GtkWidget *msg_area;
+        GtkWidget *checkbox;
+
+        dialog = gtk_message_dialog_new (NULL,
+                                         GTK_DIALOG_MODAL,
+                                         GTK_MESSAGE_INFO,
+                                         GTK_BUTTONS_OK,
+                                         _("Nemo's main menu is now hidden"),
+                                         NULL);
+
+        gchar *secondary;
+        secondary = g_strdup_printf (_("You have chosen to hide the main menu.  You can get it back temporarily by:\n\n"
+                                     "- Tapping the <Alt> key\n"
+                                     "- Right-clicking an empty region of the main toolbar\n"
+                                     "- Right-clicking an empty region of the status bar.\n\n"
+                                     "You can restore it permanently by selecting this option again from the View menu."));
+        g_object_set (dialog,
+                      "secondary-text", secondary,
+                      NULL);
+        g_free (secondary);
+
+        msg_area = gtk_message_dialog_get_message_area (GTK_MESSAGE_DIALOG (dialog));
+        checkbox = gtk_check_button_new_with_label (_("Don't show this message again."));
+        gtk_box_pack_start (GTK_BOX (msg_area), checkbox, TRUE, TRUE, 2);
+
+        g_settings_bind (nemo_preferences,
+                         NEMO_PREFERENCES_DISABLE_MENU_WARNING,
+                         checkbox,
+                         "active",
+                         G_SETTINGS_BIND_DEFAULT);
+
+        gtk_widget_show_all (dialog);
+
+        g_signal_connect (dialog, "response",
+                          G_CALLBACK (gtk_widget_destroy), NULL);
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 static void
 nemo_application_startup (GApplication *app)
 {
@@ -1148,6 +1208,9 @@ nemo_application_startup (GApplication *app)
 				 G_CALLBACK (mount_removed_callback), self, 0);
 	g_signal_connect_object (self->priv->volume_monitor, "mount_added",
 				 G_CALLBACK (mount_added_callback), self, 0);
+
+    g_signal_connect_swapped (nemo_window_state, "changed::" NEMO_WINDOW_STATE_START_WITH_MENU_BAR,
+                              G_CALLBACK (menu_state_changed_callback), self);
 
 	/* Check the user's ~/.nemo directories and post warnings
 	 * if there are problems.

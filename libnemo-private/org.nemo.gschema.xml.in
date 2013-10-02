@@ -310,6 +310,11 @@
       <_summary>Show full path in tooltip</_summary>
       <_description>If true, tooltips will show the file's full path.</_description>
     </key>
+    <key name="disable-menu-warning" type="b">
+      <default>false</default>
+      <_summary>Don't show the explainer message when turning off the main menu</_summary>
+      <_description>If true, you will no longer recieve a popup explaining how to reactivate the main menu once you've hidden it</_description>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">

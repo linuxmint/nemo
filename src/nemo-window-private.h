@@ -111,6 +111,8 @@ struct NemoWindowDetails
 
         guint sidebar_width_handler_id;
 
+        guint menu_state_changed_id;
+
         gboolean temporary_menu_bar;
 
         gchar *ignore_meta_view_id;
