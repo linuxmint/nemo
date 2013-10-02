@@ -64,6 +64,7 @@ typedef struct {
 
 struct NemoQueryEditorDetails {
 	GtkWidget *entry;
+	int* mode_ptr;
 	gboolean change_frozen;
 	guint typing_timeout_id;
 	gboolean is_visible;
@@ -1196,6 +1197,7 @@ nemo_query_editor_get_query (NemoQueryEditor *editor)
 	
 	query = nemo_query_new ();
 	nemo_query_set_text (query, query_text);
+	nemo_query_set_mode(query, *(editor->details->mode_ptr));
 
 	for (l = editor->details->rows; l != NULL; l = l->next) {
 		row = l->data;
@@ -1281,6 +1283,9 @@ nemo_query_editor_new_with_bar (gboolean start_hidden,
 	eel_add_weak_pointer (&editor->details->bar);
 
 	editor->details->slot = slot;
+	
+	//store mode ptr, may be done better
+	editor->details->mode_ptr=nemo_search_bar_get_mode_ptr(bar);
 
 	entry = nemo_search_bar_borrow_entry (bar);
 	setup_external_entry (editor, entry);

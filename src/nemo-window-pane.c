@@ -172,7 +172,6 @@ search_bar_activate_callback (NemoSearchBar *bar,
 
 	directory = nemo_directory_get (location);
 	g_assert (NEMO_IS_SEARCH_DIRECTORY (directory));
-
 	search_directory = NEMO_SEARCH_DIRECTORY (directory);
 	query = nemo_search_bar_get_query (NEMO_SEARCH_BAR (pane->search_bar));
 

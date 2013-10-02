@@ -142,7 +142,6 @@ start_or_stop_search_engine (NemoSearchDirectory *search, gboolean adding)
 		nemo_search_engine_set_query (search->details->engine, search->details->query);
 
 		reset_file_list (search);
-
 		nemo_search_engine_start (search->details->engine);
 	} else if (!adding && (!search->details->monitor_list ||
 		   !search->details->pending_callback_list) &&
@@ -181,25 +180,23 @@ search_monitor_add (NemoDirectory *directory,
 	NemoFile *file;
 
 	search = NEMO_SEARCH_DIRECTORY (directory);
-
 	monitor = g_new0 (SearchMonitor, 1);
 	monitor->monitor_hidden_files = monitor_hidden_files;
 	monitor->monitor_attributes = file_attributes;
 	monitor->client = client;
 
 	search->details->monitor_list = g_list_prepend (search->details->monitor_list, monitor);
-	
+
 	if (callback != NULL) {
 		(* callback) (directory, search->details->files, callback_data);
 	}
-	
+
 	for (list = search->details->files; list != NULL; list = list->next) {
 		file = list->data;
 
 		/* Add monitors */
 		nemo_file_monitor_add (file, monitor, file_attributes);
 	}
-
 	start_or_stop_search_engine (search, TRUE);
 }
 
@@ -208,7 +205,7 @@ search_monitor_remove_file_monitors (SearchMonitor *monitor, NemoSearchDirectory
 {
 	GList *list;
 	NemoFile *file;
-	
+
 	for (list = search->details->files; list != NULL; list = list->next) {
 		file = list->data;
 
@@ -239,7 +236,6 @@ search_monitor_remove (NemoDirectory *directory,
 
 		if (monitor->client == client) {
 			search->details->monitor_list = g_list_delete_link (search->details->monitor_list, list);
-
 			search_monitor_destroy (monitor, search);
 
 			break;
@@ -656,7 +652,7 @@ search_dispose (GObject *object)
 	GList *list;
 
 	search = NEMO_SEARCH_DIRECTORY (object);
-	
+
 	/* Remove search monitors */
 	if (search->details->monitor_list) {
 		for (list = search->details->monitor_list; list != NULL; list = list->next) {

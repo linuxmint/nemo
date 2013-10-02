@@ -32,6 +32,7 @@
 struct NemoQueryDetails {
 	char *text;
 	char *location_uri;
+	guint mode;
 	GList *mime_types;
 };
 
@@ -101,6 +102,19 @@ nemo_query_set_location (NemoQuery *query, const char *uri)
 {
 	g_free (query->details->location_uri);
 	query->details->location_uri = g_strdup (uri);
+}
+
+guint
+nemo_query_get_mode(NemoQuery *query)
+{
+	return query->details->mode;
+}
+
+void
+nemo_query_set_mode(NemoQuery *query, const guint mode)
+{
+	g_free(query->details->mode);
+	query->details->mode=mode;
 }
 
 GList *

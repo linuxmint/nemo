@@ -27,8 +27,12 @@
 #include <string.h>
 #include <glib.h>
 #include <gio/gio.h>
-
+//suggestion: reduse batch size so user does not have to wait so long for first resuts
+//eg 1. file touched is searched file
+//but batch size 500 
+//->user will have to wait till 500 files are touched
 #define BATCH_SIZE 500
+#define STREAM_BUFFER_SIZE 4000
 
 typedef struct {
 	NemoSearchEngineSimple *engine;
@@ -36,6 +40,8 @@ typedef struct {
 
 	GList *mime_types;
 	char **words;
+	guint mode;
+	guint longest_word_length;
 	GList *found_list;
 
 	GQueue *directories; /* GFiles */
@@ -106,6 +112,19 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 	g_free (normalized);
 
 	data->mime_types = nemo_query_get_mime_types (query);
+	
+	data->mode = nemo_query_get_mode(query);
+	
+	data->longest_word_length = 0;
+	//determine length of longest word for content search
+	//done here so it is only calculated once
+	guint word_i_length,i;
+	for (i = 0; data->words[i] != NULL; i++) {
+		word_i_length=strlen(data->words[i]);
+		if (word_i_length>data->longest_word_length){
+			data->longest_word_length=word_i_length;
+		}
+	}
 
 	data->cancellable = g_cancellable_new ();
 	
@@ -189,7 +208,7 @@ send_batch (SearchThreadData *data)
 	G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN "," \
 	G_FILE_ATTRIBUTE_STANDARD_TYPE "," \
 	G_FILE_ATTRIBUTE_ID_FILE
-
+	                                                                                                            
 static void
 visit_directory (GFile *dir, SearchThreadData *data)
 {
@@ -197,13 +216,13 @@ visit_directory (GFile *dir, SearchThreadData *data)
 	GFileInfo *info;
 	GFile *child;
 	const char *mime_type, *display_name;
-	char *lower_name, *normalized;
+	char *normalized_search_in, *lower_search_in;
 	gboolean hit;
-	int i;
+	gint i;
 	GList *l;
 	const char *id;
 	gboolean visited;
-
+	
 	enumerator = g_file_enumerate_children (dir,
 						data->mime_types != NULL ?
 						STD_ATTRIBUTES ","
@@ -217,29 +236,135 @@ visit_directory (GFile *dir, SearchThreadData *data)
 		return;
 	}
 
+	//visit all children in dir
 	while ((info = g_file_enumerator_next_file (enumerator, data->cancellable, NULL)) != NULL) {
+		//skip hidden files/dirs
 		if (g_file_info_get_is_hidden (info)) {
 			goto next;
 		}
-		
+		//skip empty file/dir names
 		display_name = g_file_info_get_display_name (info);
 		if (display_name == NULL) {
 			goto next;
 		}
+		hit=FALSE;
+
+		//get child file/dir
+		child = g_file_get_child (dir, g_file_info_get_name (info));
+
+		//search in filename
+		if (data->mode==0/*TODO better: FILENAME*/){
+	
+			//normalize and lower for comparison
+			normalized_search_in = g_utf8_normalize (display_name, -1, G_NORMALIZE_NFD);
 		
-		normalized = g_utf8_normalize (display_name, -1, G_NORMALIZE_NFD);
-		lower_name = g_utf8_strdown (normalized, -1);
-		g_free (normalized);
-		
-		hit = TRUE;
-		for (i = 0; data->words[i] != NULL; i++) {
-			if (strstr (lower_name, data->words[i]) == NULL) {
-				hit = FALSE;
-				break;
+			//check if normalize worked (may not if search_in is not utf8)
+			if (normalized_search_in!=NULL) {
+				lower_search_in = g_utf8_strdown (normalized_search_in, -1);		
+
+				hit=TRUE;
+				//search for every input word 
+				for (i = 0; data->words[i] != NULL; i++) {
+					if (strstr (lower_search_in, data->words[i]) == NULL) {
+						hit=FALSE;
+						break;
+					} 
+				}
+				g_free(lower_search_in);
 			}
+			g_free (normalized_search_in);	
 		}
-		g_free (lower_name);
-		
+		//search in content
+		else{
+	     	//only search in regular files
+			if (g_file_info_get_file_type (info) == G_FILE_TYPE_REGULAR) {
+				GError* error=NULL;
+				
+				GFileInputStream* is=g_file_read(child,data->cancellable,&error);
+				if (error!=NULL) {
+					g_message(error->message);
+				} else {
+					const char content[STREAM_BUFFER_SIZE]="\0"; 					
+					gsize bytes_read=0;
+					
+					//string to save last part of last buffer and current buffer
+					//needed in case a search for "pattern" splits like text pat|tern text
+					GString* search_in=g_string_new(NULL);
+					GArray* hits=g_array_new(FALSE,FALSE,sizeof(gboolean));
+					//preset hit for each search word with FALSE
+					for (i = 0; data->words[i] != NULL; i++) {
+						gboolean hit_i=FALSE;
+						g_array_append_val(hits,hit_i);
+					}
+				
+					do{
+						error=NULL;
+						//store last characters of current buffer 
+						gint to_cut=strlen(lower_search_in)-data->longest_word_length;
+						if (to_cut>0 && to_cut<search_in->len){
+							search_in=g_string_erase(search_in,0,to_cut);
+						}
+						bytes_read=g_input_stream_read (is,content,STREAM_BUFFER_SIZE,data->cancellable,&error);
+						//0=end of file, -1=error
+						if (bytes_read==0 || bytes_read==-1) {
+							break;
+						}
+						if (error!=NULL) {
+							g_message(error->message);
+						} else {
+							//stream reading successful	
+							//append current buffer		
+							search_in=g_string_append(search_in,content);
+							normalized_search_in=g_utf8_normalize (search_in->str, bytes_read, G_NORMALIZE_NFD);
+
+							if (normalized_search_in==NULL){
+								g_free (normalized_search_in);								
+								break;
+							} else {				
+								//search for words		
+								GArray* hits_in_cur_buf=g_array_new(FALSE,FALSE,sizeof(gboolean));
+								lower_search_in = g_utf8_strdown (normalized_search_in, -1);		
+								//g_free (normalized_search_in); //todo sometimes double free or corruption
+
+								//search for every input word 
+								for (i = 0; data->words[i] != NULL; i++) {
+									gboolean hit_i;
+									if (strstr (lower_search_in, data->words[i]) == NULL) {
+										hit_i=FALSE;
+										g_array_append_val(hits_in_cur_buf,hit_i);
+									} else {
+										hit_i=TRUE;
+										g_array_append_val(hits_in_cur_buf,hit_i);
+									}
+								}
+													
+								//g_free(lower_search_in); //todo sometimes double free or corruption
+								hit=TRUE;
+								for (i = 0; data->words[i] != NULL; i++) {
+									//mark word i as found
+									if (g_array_index(hits_in_cur_buf,gboolean,i)==TRUE){
+										gboolean* hit_i=&g_array_index(hits,gboolean,i);
+										*hit_i=TRUE;
+									}
+									//check if all words hit already
+									if (g_array_index(hits,gboolean,i)==FALSE){
+										hit=FALSE;
+									}
+								}
+								g_array_free (hits_in_cur_buf, TRUE);	
+							}
+						}
+					} 
+					while (!hit);
+					//g_string_free(search_in,TRUE); //todo sometimes double free or corruption
+					g_object_unref(is);
+					
+					g_array_free (hits, TRUE);
+				}
+			} 
+		}
+
+		//check if mime-type fits if specified
 		if (hit && data->mime_types) {
 			mime_type = g_file_info_get_content_type (info);
 			hit = FALSE;
@@ -251,13 +376,12 @@ visit_directory (GFile *dir, SearchThreadData *data)
 				}
 			}
 		}
-		
-		child = g_file_get_child (dir, g_file_info_get_name (info));
-		
+	
+		//push uris of matched files into list with search results
 		if (hit) {
 			data->uri_hits = g_list_prepend (data->uri_hits, g_file_get_uri (child));
 		}
-		
+	
 		data->n_processed_files++;
 		if (data->n_processed_files > BATCH_SIZE) {
 			send_batch (data);
@@ -279,8 +403,9 @@ visit_directory (GFile *dir, SearchThreadData *data)
 				g_queue_push_tail (data->directories, g_object_ref (child));
 			}
 		}
-		
+
 		g_object_unref (child);
+
 	next:
 		g_object_unref (info);
 	}
@@ -311,7 +436,7 @@ search_thread_func (gpointer user_data)
 	}
 	
 	while (!g_cancellable_is_cancelled (data->cancellable) &&
-	       (dir = g_queue_pop_head (data->directories)) != NULL) {
+	       (dir = g_queue_pop_head (data->directories)) != NULL) {	
 		visit_directory (dir, data);
 		g_object_unref (dir);
 	}
