@@ -341,11 +341,17 @@ static GtkWidget *
 build_tab_label (NautilusNotebook *nb, NautilusWindowSlot *slot)
 {
 	GtkWidget *hbox, *label, *close_button, *image, *spinner, *icon;
+	GtkWidget *box;
+
+	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 4);
+	gtk_widget_show (box);
 
 	/* set hbox spacing and label padding (see below) so that there's an
 	 * equal amount of space around the label */
-	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 4);
+	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_widget_show (hbox);
+	gtk_widget_set_halign (hbox, GTK_ALIGN_CENTER);
+	gtk_box_pack_start (GTK_BOX (box), hbox, TRUE, TRUE, 0);
 
 	/* setup load feedback */
 	spinner = gtk_spinner_new ();
@@ -360,9 +366,8 @@ build_tab_label (NautilusNotebook *nb, NautilusWindowSlot *slot)
 	label = gtk_label_new (NULL);
 	gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
 	gtk_label_set_single_line_mode (GTK_LABEL (label), TRUE);
-	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
 	gtk_misc_set_padding (GTK_MISC (label), 0, 0);
-	gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show (label);
 
 	/* setup close button */
@@ -382,18 +387,18 @@ build_tab_label (NautilusNotebook *nb, NautilusWindowSlot *slot)
 	gtk_container_add (GTK_CONTAINER (close_button), image);
 	gtk_widget_show (image);
 
-	gtk_box_pack_start (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (box), close_button, FALSE, FALSE, 0);
 	gtk_widget_show (close_button);
 
-	g_object_set_data (G_OBJECT (hbox), "nautilus-notebook-tab", GINT_TO_POINTER (1));
-	nautilus_drag_slot_proxy_init (hbox, NULL, slot);
+	g_object_set_data (G_OBJECT (box), "nautilus-notebook-tab", GINT_TO_POINTER (1));
+	nautilus_drag_slot_proxy_init (box, NULL, slot);
 
-	g_object_set_data (G_OBJECT (hbox), "label", label);
-	g_object_set_data (G_OBJECT (hbox), "spinner", spinner);
-	g_object_set_data (G_OBJECT (hbox), "icon", icon);
-	g_object_set_data (G_OBJECT (hbox), "close-button", close_button);
+	g_object_set_data (G_OBJECT (box), "label", label);
+	g_object_set_data (G_OBJECT (box), "spinner", spinner);
+	g_object_set_data (G_OBJECT (box), "icon", icon);
+	g_object_set_data (G_OBJECT (box), "close-button", close_button);
 
-	return hbox;
+	return box;
 }
 
 static int
