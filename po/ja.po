@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-09-01 00:46+0000\n"
+"POT-Creation-Date: 2013-09-21 23:00+0000\n"
 "PO-Revision-Date: 2013-08-24 17:40+0900\n"
 "Last-Translator: Jiro Matsuzawa <jmatsuzawa@gnome.oeg>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
@@ -143,10 +143,10 @@ msgstr "詳細を表示する(_D)"
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:544
 #: ../libnautilus-private/nautilus-file-operations.c:185
 #: ../src/nautilus-connect-server-dialog.c:701
-#: ../src/nautilus-location-entry.c:275 ../src/nautilus-mime-actions.c:672
-#: ../src/nautilus-mime-actions.c:676 ../src/nautilus-mime-actions.c:747
-#: ../src/nautilus-mime-actions.c:1090 ../src/nautilus-mime-actions.c:1596
-#: ../src/nautilus-mime-actions.c:1820
+#: ../src/nautilus-location-entry.c:275 ../src/nautilus-mime-actions.c:648
+#: ../src/nautilus-mime-actions.c:652 ../src/nautilus-mime-actions.c:723
+#: ../src/nautilus-mime-actions.c:1066 ../src/nautilus-mime-actions.c:1572
+#: ../src/nautilus-mime-actions.c:1796
 #: ../src/nautilus-properties-window.c:4467
 #: ../src/nautilus-properties-window.c:5465 ../src/nautilus-query-editor.c:520
 #: ../src/nautilus-view.c:970 ../src/nautilus-view.c:1496
@@ -336,8 +336,8 @@ msgstr "ボリュームを取り出す時は、ボリュームのポップアッ
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:101
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:110
-#: ../src/nautilus-location-entry.c:275 ../src/nautilus-mime-actions.c:1090
-#: ../src/nautilus-mime-actions.c:1267 ../src/nautilus-mime-actions.c:1820
+#: ../src/nautilus-location-entry.c:275 ../src/nautilus-mime-actions.c:1066
+#: ../src/nautilus-mime-actions.c:1243 ../src/nautilus-mime-actions.c:1796
 #: ../src/nautilus-view.c:970 ../src/nautilus-view.c:1498
 msgid "_OK"
 msgstr "OK(_O)"
@@ -2398,7 +2398,7 @@ msgstr "“%s” には自動的に起動することを意図したソフトウ
 msgid "If you don't trust this location or aren't sure, press Cancel."
 msgstr "もしこの場所が信用できるものではないか、よくわからない時はキャンセルを押してください。"
 
-#: ../src/nautilus-autorun-software.c:241 ../src/nautilus-mime-actions.c:748
+#: ../src/nautilus-autorun-software.c:241 ../src/nautilus-mime-actions.c:724
 msgid "_Run"
 msgstr "実行する(_R)"
 
@@ -2522,8 +2522,8 @@ msgid "Icon View"
 msgstr "アイコン表示"
 
 #. if it wasn't cancelled show a dialog
-#: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1894
-#: ../src/nautilus-mime-actions.c:2166
+#: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1870
+#: ../src/nautilus-mime-actions.c:2142
 msgid "Unable to access location"
 msgstr "場所にアクセスできません"
 
@@ -3203,95 +3203,95 @@ msgid "Do you want to view %d location?"
 msgid_plural "Do you want to view %d locations?"
 msgstr[0] " %d 個の場所を表示しますか?"
 
-#: ../src/nautilus-location-entry.c:264 ../src/nautilus-mime-actions.c:1086
+#: ../src/nautilus-location-entry.c:264 ../src/nautilus-mime-actions.c:1062
 #, c-format
 msgid "This will open %d separate window."
 msgid_plural "This will open %d separate windows."
 msgstr[0] "%d 個のウィンドウを別々に開きます。"
 
-#: ../src/nautilus-mime-actions.c:656
+#: ../src/nautilus-mime-actions.c:632
 #, c-format
 msgid "The link “%s” is broken. Move it to Trash?"
 msgstr "このリンク “%s” は壊れています。ごみ箱に移動しますか?"
 
-#: ../src/nautilus-mime-actions.c:658
+#: ../src/nautilus-mime-actions.c:634
 #, c-format
 msgid "The link “%s” is broken."
 msgstr "このリンク “%s” は壊れています。"
 
-#: ../src/nautilus-mime-actions.c:664
+#: ../src/nautilus-mime-actions.c:640
 msgid "This link cannot be used because it has no target."
 msgstr "このリンクはリンク先が存在しないので使用できません。"
 
-#: ../src/nautilus-mime-actions.c:666
+#: ../src/nautilus-mime-actions.c:642
 #, c-format
 msgid "This link cannot be used because its target “%s” doesn't exist."
 msgstr "このリンクはリンク先である “%s” が存在しないので使用できません。"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-mime-actions.c:676 ../src/nautilus-view.c:7258
+#: ../src/nautilus-mime-actions.c:652 ../src/nautilus-view.c:7258
 #: ../src/nautilus-view.c:7372 ../src/nautilus-view.c:8346
 #: ../src/nautilus-view.c:8664
 msgid "Mo_ve to Trash"
 msgstr "ゴミ箱へ移動する(_V)"
 
-#: ../src/nautilus-mime-actions.c:736
+#: ../src/nautilus-mime-actions.c:712
 #, c-format
 msgid "Do you want to run “%s”, or display its contents?"
 msgstr "“%s” を実行しますか? それとも内容を表示しますか?"
 
-#: ../src/nautilus-mime-actions.c:738
+#: ../src/nautilus-mime-actions.c:714
 #, c-format
 msgid "“%s” is an executable text file."
 msgstr "“%s” は実行可能なテキストファイルです。"
 
-#: ../src/nautilus-mime-actions.c:744
+#: ../src/nautilus-mime-actions.c:720
 msgid "Run in _Terminal"
 msgstr "端末内で実行する(_T)"
 
-#: ../src/nautilus-mime-actions.c:745
+#: ../src/nautilus-mime-actions.c:721
 msgid "_Display"
 msgstr "表示する(_D)"
 
-#: ../src/nautilus-mime-actions.c:1081 ../src/nautilus-mime-actions.c:1816
+#: ../src/nautilus-mime-actions.c:1057 ../src/nautilus-mime-actions.c:1792
 #: ../src/nautilus-view.c:961
 msgid "Are you sure you want to open all files?"
 msgstr "すべてのファイルを開いてもよろしいですか?"
 
-#: ../src/nautilus-mime-actions.c:1083
+#: ../src/nautilus-mime-actions.c:1059
 #, c-format
 msgid "This will open %d separate tab."
 msgid_plural "This will open %d separate tabs."
 msgstr[0] "%d 個のタブを別々に開きます。"
 
-#: ../src/nautilus-mime-actions.c:1148
+#: ../src/nautilus-mime-actions.c:1124
 #, c-format
 msgid "Could not display “%s”."
 msgstr "“%s” を表示できませんでした。"
 
-#: ../src/nautilus-mime-actions.c:1246
+#: ../src/nautilus-mime-actions.c:1222
 msgid "The file is of an unknown type"
 msgstr "そのファイルの種類を特定できません"
 
-#: ../src/nautilus-mime-actions.c:1250
+#: ../src/nautilus-mime-actions.c:1226
 #, c-format
 msgid "There is no application installed for “%s” files"
 msgstr "“%s” の種類のファイルを扱うことが可能なアプリケーションはインストールされていません"
 
-#: ../src/nautilus-mime-actions.c:1265
+#: ../src/nautilus-mime-actions.c:1241
 msgid "_Select Application"
 msgstr "アプリケーションの選択(_S)"
 
-#: ../src/nautilus-mime-actions.c:1301
+#: ../src/nautilus-mime-actions.c:1277
 msgid "There was an internal error trying to search for applications:"
 msgstr "アプリケーションを検索している最中に Nautilus の内部エラーが発生しました:"
 
-#: ../src/nautilus-mime-actions.c:1303
+#: ../src/nautilus-mime-actions.c:1279
 msgid "Unable to search for application"
 msgstr "アプリケーションを検索できません"
 
-#: ../src/nautilus-mime-actions.c:1422
+#: ../src/nautilus-mime-actions.c:1398
 #, c-format
 msgid ""
 "There is no application installed for “%s” files.\n"
@@ -3300,39 +3300,39 @@ msgstr ""
 "“%s” の種類のファイルを扱えるアプリケーションがインストールされていません。\n"
 "この類のファイルを開くことができるアプリケーションを検索しますか?"
 
-#: ../src/nautilus-mime-actions.c:1572
+#: ../src/nautilus-mime-actions.c:1548
 msgid "Untrusted application launcher"
 msgstr "信用できないアプリケーションのランチャー"
 
-#: ../src/nautilus-mime-actions.c:1575
+#: ../src/nautilus-mime-actions.c:1551
 #, c-format
 msgid "The application launcher “%s” has not been marked as trusted. If you do not know the source of this file, launching it may be unsafe."
 msgstr "“%s” というランチャーの安全が確認されていません。ファイルの提供元が不明な場合、そのファイルを起動するのは安全ではありません。"
 
-#: ../src/nautilus-mime-actions.c:1590
+#: ../src/nautilus-mime-actions.c:1566
 msgid "_Launch Anyway"
 msgstr "とにかく起動する(_L)"
 
-#: ../src/nautilus-mime-actions.c:1593
+#: ../src/nautilus-mime-actions.c:1569
 msgid "Mark as _Trusted"
 msgstr "信用できるアプリにする(_T)"
 
-#: ../src/nautilus-mime-actions.c:1817
+#: ../src/nautilus-mime-actions.c:1793
 #, c-format
 msgid "This will open %d separate application."
 msgid_plural "This will open %d separate applications."
 msgstr[0] "%d 個のアプリケーションを別々に開きます。"
 
-#: ../src/nautilus-mime-actions.c:2245
+#: ../src/nautilus-mime-actions.c:2221
 msgid "Unable to start location"
 msgstr "場所を起動できません"
 
-#: ../src/nautilus-mime-actions.c:2329
+#: ../src/nautilus-mime-actions.c:2305
 #, c-format
 msgid "Opening “%s”."
 msgstr "“%s” を開いています。"
 
-#: ../src/nautilus-mime-actions.c:2332
+#: ../src/nautilus-mime-actions.c:2308
 #, c-format
 msgid "Opening %d item."
 msgid_plural "Opening %d items."
