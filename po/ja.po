@@ -2085,7 +2085,7 @@ msgstr "デスクトップのフォント"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
 msgid "The font _description used for the icons on the desktop."
-msgstr "デスクトップ上にあるアイコンに使用するフォントの説明です。(_D)"
+msgstr "デスクトップ上にあるアイコンに使用するフォントの説明です。"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:58
 msgid "Home icon visible on desktop"
