@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-08-13 12:29+0000\n"
-"PO-Revision-Date: 2013-10-09 11:29+0500\n"
+"PO-Revision-Date: 2013-10-09 12:25+0500\n"
 "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
 "Language-Team: \n"
 "Language: Tajik\n"
@@ -304,7 +304,7 @@ msgstr ""
 
 #: ../libnautilus-private/nautilus-column-utilities.c:177
 msgid "Original Location"
-msgstr ""
+msgstr "Ҷойгиршавии аслӣ"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:178
 msgid "Original location of file before moved to the Trash"
@@ -631,26 +631,26 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:152
 #, c-format
 msgid "An older folder with the same name already exists in “%s”."
-msgstr ""
+msgstr "Ҷузвдони куҳнатар бо номи монанд аллакай дар “%s” вуҷуд дорад."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:156
 #, c-format
 msgid "A newer folder with the same name already exists in “%s”."
-msgstr ""
+msgstr "Ҷузвдони навтар бо номи монанд аллакай дар “%s” вуҷуд дорад."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:160
 #, c-format
 msgid "Another folder with the same name already exists in “%s”."
-msgstr ""
+msgstr "Ҷузвдони дигар бо номи монанд аллакай дар “%s” вуҷуд дорад."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:165
 msgid "Replacing it will remove all files in the folder."
-msgstr ""
+msgstr "Агар ҷойгузин кунед, ҳамаи файлҳои ин ҷузвдон тоза карда мешаванд."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:167
 #, c-format
 msgid "Replace folder “%s”?"
-msgstr ""
+msgstr "Ҷузвдони “%s”-ро ҷойгузин мекунед?"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:169
 #, c-format
@@ -660,30 +660,30 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:174
 #, c-format
 msgid "Replace file “%s”?"
-msgstr ""
+msgstr "Файли “%s”-ро ҷойгузин мекунед?"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:176
 msgid "Replacing it will overwrite its content."
-msgstr ""
+msgstr "Агар ҷойгузин кунед, ҳамаи мӯҳтавои он ҷойгузин карда мешавад."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:180
 #, c-format
 msgid "An older file with the same name already exists in “%s”."
-msgstr ""
+msgstr "Файли куҳнатар бо номи монанд аллакай дар “%s” вуҷуд дорад."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:184
 #, c-format
 msgid "A newer file with the same name already exists in “%s”."
-msgstr ""
+msgstr "Файли навтар бо номи монанд аллакай дар “%s” вуҷуд дорад."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:188
 #, c-format
 msgid "Another file with the same name already exists in “%s”."
-msgstr ""
+msgstr "Файли дигар бо номи монанд аллакай дар “%s” вуҷуд дорад."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:256
 msgid "Original file"
-msgstr ""
+msgstr "Файли аслӣ"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:257
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:288
@@ -704,7 +704,7 @@ msgstr "Тағйироти охирин:"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:287
 msgid "Replace with"
-msgstr ""
+msgstr "Ҷойгузин кардан бо"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:316
 msgid "Merge"
@@ -713,7 +713,7 @@ msgstr "Муттаҳид кардан"
 #. Setup the expander for the rename action
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:509
 msgid "_Select a new name for the destination"
-msgstr ""
+msgstr "_Интихоб кардани номи нав барои ҷои таъинот"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:523
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:317
@@ -723,7 +723,7 @@ msgstr "Бозсозӣ кардан"
 #. Setup the checkbox to apply the action to all files
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:535
 msgid "Apply this action to all files"
-msgstr ""
+msgstr "Татбиқ кардани ин амал ба ҳамаи файлҳо"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:546
 #: ../libnautilus-private/nautilus-file-operations.c:186
@@ -732,7 +732,7 @@ msgstr "_Нодида гузарондан"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:551
 msgid "Re_name"
-msgstr ""
+msgstr "_Тағйир додани ном"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:557
 msgid "Replace"
@@ -740,11 +740,11 @@ msgstr "Ҷойгузин кардан"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:629
 msgid "File conflict"
-msgstr ""
+msgstr "Ихтилофи файлҳо"
 
 #: ../libnautilus-private/nautilus-file-operations.c:187
 msgid "S_kip All"
-msgstr ""
+msgstr "_Ҳамаро нодида гузарондан"
 
 #: ../libnautilus-private/nautilus-file-operations.c:188
 msgid "_Retry"
@@ -760,7 +760,7 @@ msgstr "_Нест кардан"
 
 #: ../libnautilus-private/nautilus-file-operations.c:190
 msgid "Delete _All"
-msgstr ""
+msgstr "_Ҳамаро нест кардан"
 
 #: ../libnautilus-private/nautilus-file-operations.c:191
 msgid "_Replace"
@@ -776,11 +776,11 @@ msgstr "_Муттаҳид кардан"
 
 #: ../libnautilus-private/nautilus-file-operations.c:194
 msgid "Merge _All"
-msgstr ""
+msgstr "_Ҳамаро муттаҳид кардан"
 
 #: ../libnautilus-private/nautilus-file-operations.c:195
 msgid "Copy _Anyway"
-msgstr ""
+msgstr "_Ба ҳар ҳол нусха бардоштан"
 
 #: ../libnautilus-private/nautilus-file-operations.c:280
 #, c-format
@@ -965,15 +965,15 @@ msgstr[1] ""
 #: ../libnautilus-private/nautilus-file-operations.c:1338
 #: ../libnautilus-private/nautilus-file-operations.c:1404
 msgid "If you delete an item, it will be permanently lost."
-msgstr ""
+msgstr "Агар шумо объектеро нест кунед, он бебозгашт гум мешавад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1358
 msgid "Empty all items from Trash?"
-msgstr ""
+msgstr "Сабадро аз ҳамаи объектҳо холӣ мекунед?"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1362
 msgid "All items in the Trash will be permanently deleted."
-msgstr ""
+msgstr "Ҳамаи объектҳои сабад бебозгашт нест карда мешаванд."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1365
 #: ../libnautilus-private/nautilus-file-operations.c:2243
@@ -1423,7 +1423,7 @@ msgstr ""
 #. localizers: the initial name of a new folder
 #: ../libnautilus-private/nautilus-file-operations.c:5996
 msgid "Untitled Folder"
-msgstr ""
+msgstr "Ҷузвдони беном"
 
 #. localizers: the initial name of a new template document
 #: ../libnautilus-private/nautilus-file-operations.c:6002
@@ -1434,7 +1434,7 @@ msgstr "Беном %s"
 #. localizers: the initial name of a new empty document
 #: ../libnautilus-private/nautilus-file-operations.c:6008
 msgid "Untitled Document"
-msgstr ""
+msgstr "Ҳуҷҷати беном"
 
 #: ../libnautilus-private/nautilus-file-operations.c:6186
 msgid "Error while creating directory %B."
@@ -3415,7 +3415,7 @@ msgstr ""
 #: ../src/nautilus-view.c:7374 ../src/nautilus-view.c:8348
 #: ../src/nautilus-view.c:8666
 msgid "Mo_ve to Trash"
-msgstr ""
+msgstr "Интиқол додан ба _сабад"
 
 #: ../src/nautilus-mime-actions.c:736
 #, c-format
@@ -3894,11 +3894,11 @@ msgstr ""
 
 #: ../src/nautilus-toolbar.c:495
 msgid "View options"
-msgstr "Намоиш додани имконот"
+msgstr "Имконоти намоиш"
 
 #: ../src/nautilus-toolbar.c:512
 msgid "Location options"
-msgstr ""
+msgstr "Имконоти ҷойгиршавӣ"
 
 #: ../src/nautilus-trash-bar.c:203
 msgid "Restore"
@@ -4228,7 +4228,7 @@ msgstr ""
 #. label, accelerator
 #: ../src/nautilus-view.c:7220 ../src/nautilus-view.c:7369
 msgid "_Paste Into Folder"
-msgstr ""
+msgstr "_Гузоштан ба ҷузвдон"
 
 #. tooltip
 #: ../src/nautilus-view.c:7221
@@ -4241,7 +4241,7 @@ msgstr ""
 #. label, accelerator
 #: ../src/nautilus-view.c:7224
 msgid "Copy To…"
-msgstr ""
+msgstr "Нусха бардоштан ба…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7225
@@ -4252,7 +4252,7 @@ msgstr ""
 #. label, accelerator
 #: ../src/nautilus-view.c:7228
 msgid "Move To…"
-msgstr ""
+msgstr "Интиқол додан ба..."
 
 #. tooltip
 #: ../src/nautilus-view.c:7229
@@ -4291,8 +4291,8 @@ msgstr ""
 #: ../src/nautilus-view.c:7244 ../src/nautilus-view.c:8720
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Эҷ_од кардани пайвандҳо"
+msgstr[1] "Эҷ_од кардани пайванд"
 
 #. tooltip
 #: ../src/nautilus-view.c:7245
@@ -4303,7 +4303,7 @@ msgstr ""
 #. label, accelerator
 #: ../src/nautilus-view.c:7248
 msgid "Rena_me…"
-msgstr ""
+msgstr "Тағйир додани _ном…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7249
