@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-08-13 12:29+0000\n"
-"PO-Revision-Date: 2013-10-08 19:47+0500\n"
+"PO-Revision-Date: 2013-10-09 11:29+0500\n"
 "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
 "Language-Team: \n"
 "Language: Tajik\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: ../data/nautilus-autorun-software.desktop.in.in.h:1
 msgid "Run Software"
-msgstr ""
+msgstr "Иҷро кардани нармафзор"
 
 #. set dialog properties
 #: ../data/nautilus-connect-server.desktop.in.in.h:1
@@ -39,15 +39,15 @@ msgstr "Файлҳо"
 
 #: ../data/nautilus.desktop.in.in.h:2
 msgid "Access and organize files"
-msgstr ""
+msgstr "Кушодан ва мураттабсозии файлҳо"
 
 #: ../data/nautilus.desktop.in.in.h:3
 msgid "folder;manager;explore;disk;filesystem;"
-msgstr ""
+msgstr "ҷузвдон;мудир;тамошо;диск;системаи файлӣ;"
 
 #: ../data/nautilus.xml.in.h:1
 msgid "Saved search"
-msgstr ""
+msgstr "Ҷустуҷӯи захирашуда"
 
 #: ../eel/eel-canvas.c:1255 ../eel/eel-canvas.c:1256
 msgid "X"
@@ -64,7 +64,7 @@ msgstr "Матн"
 
 #: ../eel/eel-editable-label.c:314
 msgid "The text of the label."
-msgstr ""
+msgstr "Матни барчасп."
 
 #: ../eel/eel-editable-label.c:320
 msgid "Justification"
@@ -108,7 +108,7 @@ msgstr ""
 #: ../libnautilus-private/nautilus-clipboard.c:358 ../src/nautilus-view.c:7206
 #: ../src/nautilus-view.c:7361
 msgid "Cu_t"
-msgstr ""
+msgstr "_Буридан"
 
 #. name, stock id
 #. label, accelerator
@@ -116,14 +116,14 @@ msgstr ""
 #: ../libnautilus-private/nautilus-clipboard.c:362 ../src/nautilus-view.c:7210
 #: ../src/nautilus-view.c:7365
 msgid "_Copy"
-msgstr ""
+msgstr "_Нусха бардоштан"
 
 #. name, stock id
 #. label, accelerator
 #: ../eel/eel-editable-label.c:3084
 #: ../libnautilus-private/nautilus-clipboard.c:366 ../src/nautilus-view.c:7214
 msgid "_Paste"
-msgstr ""
+msgstr "_Гузоштан"
 
 #: ../eel/eel-editable-label.c:3087
 msgid "Select All"
@@ -933,17 +933,19 @@ msgstr ""
 #. localizers: opening parentheses to match the "th copy)" string
 #: ../libnautilus-private/nautilus-file-operations.c:605
 msgid " ("
-msgstr ""
+msgstr " ("
 
 #. localizers: opening parentheses of the "th copy)" string
 #: ../libnautilus-private/nautilus-file-operations.c:613
 #, c-format
 msgid " (%'d"
-msgstr ""
+msgstr " (%'d"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1325
 msgid "Are you sure you want to permanently delete “%B” from the trash?"
 msgstr ""
+"Шумо мутмаин ҳастед, ки мехоҳед “%B”-ро аз сабади партов бебозгашт нест "
+"кунед?"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1328
 #, c-format
@@ -954,7 +956,11 @@ msgid_plural ""
 "Are you sure you want to permanently delete the %'d selected items from the "
 "trash?"
 msgstr[0] ""
+"Шумо мутмаин ҳастед, ки мехоҳед %'d объекти интихобшударо аз сабади партов "
+"бебозгашт нест кунед?"
 msgstr[1] ""
+"Шумо мутмаин ҳастед, ки мехоҳед %'d объекти интихобшударо аз сабади партов "
+"бебозгашт нест кунед?"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1338
 #: ../libnautilus-private/nautilus-file-operations.c:1404
@@ -973,11 +979,11 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-operations.c:2243
 #: ../src/nautilus-window.c:805
 msgid "Empty _Trash"
-msgstr ""
+msgstr "Холӣ кардани _сабад"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1392
 msgid "Are you sure you want to permanently delete “%B”?"
-msgstr ""
+msgstr "Шумо мутмаин ҳастед, ки мехоҳед “%B”-ро бебозгашт нест кунед?"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1395
 #, c-format
@@ -985,7 +991,11 @@ msgid "Are you sure you want to permanently delete the %'d selected item?"
 msgid_plural ""
 "Are you sure you want to permanently delete the %'d selected items?"
 msgstr[0] ""
+"Шумо мутмаин ҳастед, ки мехоҳед %'d объекти интихобшударо бебозгашт нест "
+"кунед?"
 msgstr[1] ""
+"Шумо мутмаин ҳастед, ки мехоҳед %'d объекти интихобшударо бебозгашт нест "
+"кунед?"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1438
 #, c-format
@@ -996,7 +1006,7 @@ msgstr[1] ""
 
 #: ../libnautilus-private/nautilus-file-operations.c:1444
 msgid "Deleting files"
-msgstr ""
+msgstr "Файлҳо нест шуда истодаанд"
 
 #. To translators: %T will expand to a time like "2 minutes".
 #. * The singular/plural form will be used depending on the remaining time (i.e. the %T argument).
@@ -1013,7 +1023,7 @@ msgstr[1] "%T боқӣ мондаанд"
 #: ../libnautilus-private/nautilus-file-operations.c:1675
 #: ../libnautilus-private/nautilus-file-operations.c:2503
 msgid "Error while deleting."
-msgstr ""
+msgstr "Ҳангоми несткунӣ хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1529
 msgid ""
@@ -1055,7 +1065,7 @@ msgstr ""
 
 #: ../libnautilus-private/nautilus-file-operations.c:1756
 msgid "Moving files to trash"
-msgstr ""
+msgstr "Интиқолдиҳии файлҳо ба сабад"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1758
 #, c-format
@@ -3126,7 +3136,7 @@ msgstr ""
 #: ../src/nautilus-file-management-properties.ui.h:46
 #, no-c-format
 msgid "33%"
-msgstr ""
+msgstr "33%"
 
 #: ../src/nautilus-file-management-properties.ui.h:48
 #, no-c-format
@@ -3136,7 +3146,7 @@ msgstr "50%"
 #: ../src/nautilus-file-management-properties.ui.h:50
 #, no-c-format
 msgid "66%"
-msgstr ""
+msgstr "66%"
 
 #: ../src/nautilus-file-management-properties.ui.h:52
 #, no-c-format
@@ -3160,11 +3170,11 @@ msgstr "400%"
 
 #: ../src/nautilus-file-management-properties.ui.h:59
 msgid "100 KB"
-msgstr ""
+msgstr "100 КБ"
 
 #: ../src/nautilus-file-management-properties.ui.h:60
 msgid "500 KB"
-msgstr ""
+msgstr "500 КБ"
 
 #: ../src/nautilus-file-management-properties.ui.h:61
 msgid "1 MB"
@@ -3180,11 +3190,11 @@ msgstr "5 МБ"
 
 #: ../src/nautilus-file-management-properties.ui.h:64
 msgid "10 MB"
-msgstr ""
+msgstr "10 МБ"
 
 #: ../src/nautilus-file-management-properties.ui.h:65
 msgid "100 MB"
-msgstr ""
+msgstr "100 МБ"
 
 #: ../src/nautilus-file-management-properties.ui.h:66
 msgid "1 GB"
@@ -3207,8 +3217,8 @@ msgstr ""
 #, c-format
 msgid "%d pixel"
 msgid_plural "%d pixels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d пиксел"
+msgstr[1] "%d пиксел"
 
 #: ../src/nautilus-image-properties-page.c:337
 msgid "Width"
@@ -3563,7 +3573,8 @@ msgstr ""
 #: ../src/nautilus-properties-window.c:633
 msgid "_Name:"
 msgid_plural "_Names:"
-msgstr[0] ""
+msgstr[0] "_Номҳо:"
+msgstr[1] "_Ном:"
 
 #: ../src/nautilus-properties-window.c:828
 #, c-format
