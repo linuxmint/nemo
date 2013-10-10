@@ -2329,7 +2329,9 @@ append_directory_contents_fields (NautilusPropertiesWindow *window,
 		NautilusFile *file;
 
 		file = NAUTILUS_FILE (l->data);
-		start_deep_count_for_file (window, file);
+		if (nautilus_file_is_directory (file)) {
+			start_deep_count_for_file (window, file);
+		}
 	}
 
 	/* Fill in the initial value. */
