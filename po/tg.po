@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-08-13 12:29+0000\n"
-"PO-Revision-Date: 2013-10-09 12:25+0500\n"
+"PO-Revision-Date: 2013-10-10 12:13+0500\n"
 "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
 "Language-Team: \n"
 "Language: Tajik\n"
@@ -87,7 +87,7 @@ msgstr ""
 
 #: ../eel/eel-editable-label.c:337
 msgid "Cursor Position"
-msgstr ""
+msgstr "Мавқеи курсор"
 
 #: ../eel/eel-editable-label.c:338
 msgid "The current position of the insertion cursor in chars."
@@ -131,7 +131,7 @@ msgstr "Ҳамаро интихоб кардан"
 
 #: ../eel/eel-gtk-extensions.c:327
 msgid "Show more _details"
-msgstr ""
+msgstr "Намоиш додани _тафсилоти бештар"
 
 #. Put up the timed wait window.
 #: ../eel/eel-stock-dialogs.c:196
@@ -207,7 +207,7 @@ msgstr ""
 
 #: ../libnautilus-private/nautilus-column-chooser.c:397
 msgid "Use De_fault"
-msgstr ""
+msgstr "_Пешфарзро истифода бурдан"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:57
 #: ../src/nautilus-list-view.c:2040
@@ -279,7 +279,7 @@ msgstr ""
 
 #: ../libnautilus-private/nautilus-column-utilities.c:120
 msgid "MIME Type"
-msgstr ""
+msgstr "Намуди MIME"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:121
 msgid "The mime type of the file."
@@ -340,7 +340,7 @@ msgstr ""
 #: ../src/nautilus-mime-actions.c:1267 ../src/nautilus-mime-actions.c:1820
 #: ../src/nautilus-view.c:970 ../src/nautilus-view.c:1498
 msgid "_OK"
-msgstr ""
+msgstr "_OK"
 
 #: ../libnautilus-private/nautilus-desktop-link-monitor.c:108
 msgid ""
@@ -352,19 +352,19 @@ msgstr ""
 #: ../libnautilus-private/nautilus-directory.c:523
 #, c-format
 msgid "%s (%s)"
-msgstr ""
+msgstr "%s (%s)"
 
 #: ../libnautilus-private/nautilus-dnd.c:774
 msgid "_Move Here"
-msgstr ""
+msgstr "_Ба ин ҷо интиқол додан"
 
 #: ../libnautilus-private/nautilus-dnd.c:779
 msgid "_Copy Here"
-msgstr ""
+msgstr "Ба ин ҷо _нусха бардоштан"
 
 #: ../libnautilus-private/nautilus-dnd.c:784
 msgid "_Link Here"
-msgstr ""
+msgstr "Ба _ин ҷо пайванд гузоштан"
 
 #: ../libnautilus-private/nautilus-dnd.c:789
 msgid "Set as _Background"
@@ -436,28 +436,28 @@ msgstr ""
 #.
 #: ../libnautilus-private/nautilus-file.c:4443
 msgid "%R"
-msgstr ""
+msgstr "%R"
 
 #: ../libnautilus-private/nautilus-file.c:4444
 msgid "%-I:%M %P"
-msgstr ""
+msgstr "%-I:%M %P"
 
 #: ../libnautilus-private/nautilus-file.c:4445
 #: ../libnautilus-private/nautilus-file.c:4446
 msgid "%b %-e"
-msgstr ""
+msgstr "%b %-e"
 
 #: ../libnautilus-private/nautilus-file.c:4447
 msgid "%b %-d %Y"
-msgstr ""
+msgstr "%b %-d %Y"
 
 #: ../libnautilus-private/nautilus-file.c:4448
 msgid "%a, %b %e %Y %I:%M:%S %p"
-msgstr ""
+msgstr "%a, %b %e %Y %I:%M:%S %p"
 
 #: ../libnautilus-private/nautilus-file.c:4449
 msgid "%a, %b %e %Y %T"
-msgstr ""
+msgstr "%a, %b %e %Y %T"
 
 #: ../libnautilus-private/nautilus-file.c:4948
 #, c-format
@@ -2377,7 +2377,7 @@ msgstr ""
 #: ../nautilus-sendto-extension/nautilus-nste.c:97
 #: ../nautilus-sendto-extension/nautilus-nste.c:102
 msgid "Email…"
-msgstr ""
+msgstr "Почтаи электронӣ..."
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:98
 msgid "Send file by mail…"
@@ -3641,11 +3641,11 @@ msgstr "озод"
 
 #: ../src/nautilus-properties-window.c:3063
 msgid "Total capacity:"
-msgstr ""
+msgstr "Ғунҷоиши умумӣ:"
 
 #: ../src/nautilus-properties-window.c:3066
 msgid "Filesystem type:"
-msgstr ""
+msgstr "Намуди системаи файлӣ:"
 
 #: ../src/nautilus-properties-window.c:3202
 msgid "Basic"
@@ -3653,7 +3653,7 @@ msgstr "Содда"
 
 #: ../src/nautilus-properties-window.c:3267
 msgid "Link target:"
-msgstr ""
+msgstr "Пайванди ҳадаф:"
 
 #: ../src/nautilus-properties-window.c:3286
 msgid "Location:"
@@ -3694,7 +3694,7 @@ msgstr "хондан"
 
 #: ../src/nautilus-properties-window.c:3982
 msgid "create/delete"
-msgstr ""
+msgstr "эҷод кардан/нест кардан"
 
 #: ../src/nautilus-properties-window.c:3984
 msgid "write"
@@ -3706,15 +3706,15 @@ msgstr "дастрасӣ"
 
 #: ../src/nautilus-properties-window.c:4058
 msgid "List files only"
-msgstr ""
+msgstr "Танҳо рӯйхати файлҳо"
 
 #: ../src/nautilus-properties-window.c:4064
 msgid "Access files"
-msgstr ""
+msgstr "Кушодани файлҳо"
 
 #: ../src/nautilus-properties-window.c:4070
 msgid "Create and delete files"
-msgstr ""
+msgstr "Эҷод ва нест кардани файлҳо"
 
 #: ../src/nautilus-properties-window.c:4085
 msgid "Read-only"
@@ -3722,7 +3722,7 @@ msgstr "Танҳо барои хондан"
 
 #: ../src/nautilus-properties-window.c:4091
 msgid "Read and write"
-msgstr ""
+msgstr "Хониш ва навишт"
 
 #: ../src/nautilus-properties-window.c:4118
 msgid "Access:"
@@ -3730,11 +3730,11 @@ msgstr "Дастрасӣ:"
 
 #: ../src/nautilus-properties-window.c:4120
 msgid "Folder access:"
-msgstr ""
+msgstr "Дастрасии ҷузвдон:"
 
 #: ../src/nautilus-properties-window.c:4122
 msgid "File access:"
-msgstr ""
+msgstr "Дастрасии файл:"
 
 #: ../src/nautilus-properties-window.c:4211
 msgid "_Owner:"
@@ -3756,7 +3756,7 @@ msgstr "Гурӯҳ:"
 
 #: ../src/nautilus-properties-window.c:4270
 msgid "Others"
-msgstr ""
+msgstr "Дигар"
 
 #: ../src/nautilus-properties-window.c:4285
 msgid "Execute:"
@@ -3776,7 +3776,7 @@ msgstr "Тағйир додан"
 
 #: ../src/nautilus-properties-window.c:4511
 msgid "Others:"
-msgstr ""
+msgstr "Дигар:"
 
 #: ../src/nautilus-properties-window.c:4552
 msgid "You are not the owner, so you cannot change these permissions."
@@ -3841,11 +3841,11 @@ msgstr "Тасвир"
 
 #: ../src/nautilus-query-editor.c:391
 msgid "Illustration"
-msgstr ""
+msgstr "Ороиш"
 
 #: ../src/nautilus-query-editor.c:430
 msgid "Pdf / Postscript"
-msgstr ""
+msgstr "Pdf / Postscript"
 
 #: ../src/nautilus-query-editor.c:438
 msgid "Text File"
@@ -3853,7 +3853,7 @@ msgstr "Файли матнӣ"
 
 #: ../src/nautilus-query-editor.c:517
 msgid "Select type"
-msgstr ""
+msgstr "Интихоби намуд"
 
 #: ../src/nautilus-query-editor.c:521
 msgid "Select"
@@ -3865,7 +3865,7 @@ msgstr "Ҳар"
 
 #: ../src/nautilus-query-editor.c:617
 msgid "Other Type…"
-msgstr ""
+msgstr "Намуди дигар..."
 
 #: ../src/nautilus-query-editor.c:886
 msgid "Remove this criterion from the search"
@@ -3976,29 +3976,29 @@ msgstr ""
 #: ../src/nautilus-view.c:2935 ../src/nautilus-view.c:2970
 #, c-format
 msgid "“%s” selected"
-msgstr ""
+msgstr "“%s” интихоб шудааст"
 
 #: ../src/nautilus-view.c:2937
 #, c-format
 msgid "%'d folder selected"
 msgid_plural "%'d folders selected"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%'d ҷузвдон интихоб шудаанд"
+msgstr[1] "%'d ҷузвдон интихоб шудааст"
 
 #: ../src/nautilus-view.c:2947
 #, c-format
 msgid "(containing %'d item)"
 msgid_plural "(containing %'d items)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(%'d объектро дар бар мегирад)"
+msgstr[1] "(%'d объектро дар бар мегирад)"
 
 #. translators: this is preceded with a string of form 'N folders' (N more than 1)
 #: ../src/nautilus-view.c:2958
 #, c-format
 msgid "(containing a total of %'d item)"
 msgid_plural "(containing a total of %'d items)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(Ҳамагӣ %'d объектро дар бар мегирад)"
+msgstr[1] "(Ҳамагӣ %'d объектро дар бар мегирад)"
 
 #: ../src/nautilus-view.c:2973
 #, c-format
@@ -4012,8 +4012,8 @@ msgstr[1] "%'d объект интихоб шудаанд"
 #, c-format
 msgid "%'d other item selected"
 msgid_plural "%'d other items selected"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(%'d объекти дигар интихоб шудаанд)"
+msgstr[1] "(%'d объекти дигар интихоб шудааст)"
 
 #. This is marked for translation in case a localiser
 #. * needs to use something other than parentheses. The
@@ -4022,7 +4022,7 @@ msgstr[1] ""
 #: ../src/nautilus-view.c:2994
 #, c-format
 msgid "(%s)"
-msgstr ""
+msgstr "(%s)"
 
 #. This is marked for translation in case a localizer
 #. * needs to change ", " to something else. The comma
@@ -4034,7 +4034,7 @@ msgstr ""
 #: ../src/nautilus-view.c:3018
 #, c-format
 msgid "%s %s, %s %s"
-msgstr ""
+msgstr "%s %s, %s %s"
 
 #: ../src/nautilus-view.c:4391
 #, c-format
@@ -4045,22 +4045,22 @@ msgstr "Кушодан бо %s"
 #, c-format
 msgid "Use “%s” to open the selected item"
 msgid_plural "Use “%s” to open the selected items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Барои кушодани объектҳои интихобшуда “%s”-ро истифода баред"
+msgstr[1] "Барои кушодани объекти интихобшуда “%s”-ро истифода баред"
 
 #: ../src/nautilus-view.c:5138
 #, c-format
 msgid "Run “%s” on any selected items"
-msgstr ""
+msgstr "Иҷро кардани “%s” барои ҳамаи объектҳои интихобшуда"
 
 #: ../src/nautilus-view.c:5392
 #, c-format
 msgid "Create a new document from template “%s”"
-msgstr ""
+msgstr "Эҷод кардани ҳуҷҷати нав аз қолиби “%s”"
 
 #: ../src/nautilus-view.c:5992
 msgid "Select Destination"
-msgstr ""
+msgstr "Интихоби ҷои таъинот"
 
 #: ../src/nautilus-view.c:5996
 msgid "_Select"
@@ -4070,23 +4070,23 @@ msgstr "_Интихоб кардан"
 #: ../src/nautilus-view.c:6508
 #, c-format
 msgid "Unable to remove “%s”"
-msgstr ""
+msgstr "Ҷудо кардани “%s” имконпазир нест"
 
 #. Translators: %s is a file name formatted for display
 #: ../src/nautilus-view.c:6535
 #, c-format
 msgid "Unable to eject “%s”"
-msgstr ""
+msgstr "Баровардани “%s” имконпазир нест"
 
 #: ../src/nautilus-view.c:6557
 msgid "Unable to stop drive"
-msgstr ""
+msgstr "Истодани драйв имконпазир нест"
 
 #. Translators: %s is a file name formatted for display
 #: ../src/nautilus-view.c:6659
 #, c-format
 msgid "Unable to start “%s”"
-msgstr ""
+msgstr "Оғоз кардани “%s” имконпазир нест"
 
 #. name, stock id, label
 #: ../src/nautilus-view.c:7150
@@ -4381,24 +4381,24 @@ msgstr ""
 #: ../src/nautilus-view.c:7290 ../src/nautilus-view.c:7314
 #: ../src/nautilus-view.c:7386
 msgid "_Mount"
-msgstr ""
+msgstr "_Васл кардан"
 
 #. tooltip
 #: ../src/nautilus-view.c:7291
 msgid "Mount the selected volume"
-msgstr ""
+msgstr "Васл кардани ҳаҷми интихобшуда"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7294 ../src/nautilus-view.c:7318
 #: ../src/nautilus-view.c:7390
 msgid "_Unmount"
-msgstr ""
+msgstr "_Ҷудо кардан"
 
 #. tooltip
 #: ../src/nautilus-view.c:7295
 msgid "Unmount the selected volume"
-msgstr ""
+msgstr "Ҷудо кардани ҳаҷми интихобшуда"
 
 #. name, stock id
 #. label, accelerator
@@ -4410,7 +4410,7 @@ msgstr "_Баровардан"
 #. tooltip
 #: ../src/nautilus-view.c:7299
 msgid "Eject the selected volume"
-msgstr ""
+msgstr "Баровардани ҳаҷми интихобшуда"
 
 #. name, stock id
 #. label, accelerator
@@ -4425,7 +4425,7 @@ msgstr "_Оғоз кардан"
 #. tooltip
 #: ../src/nautilus-view.c:7303
 msgid "Start the selected volume"
-msgstr ""
+msgstr "Оғоз кардани ҳаҷми интихобшуда"
 
 #. name, stock id
 #. label, accelerator
@@ -4439,20 +4439,20 @@ msgstr "_Истодан"
 #. tooltip
 #: ../src/nautilus-view.c:7307 ../src/nautilus-view.c:8203
 msgid "Stop the selected volume"
-msgstr ""
+msgstr "Истодани ҳаҷми интихобшуда"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7310 ../src/nautilus-view.c:7334
 #: ../src/nautilus-view.c:7406
 msgid "_Detect Media"
-msgstr ""
+msgstr "_Пайдо кардани медиа"
 
 #. tooltip
 #: ../src/nautilus-view.c:7311 ../src/nautilus-view.c:7335
 #: ../src/nautilus-view.c:7407
 msgid "Detect media in the selected drive"
-msgstr ""
+msgstr "Пайдо кардани медиа дар драйви интихобшуда"
 
 #. tooltip
 #: ../src/nautilus-view.c:7315
@@ -4587,7 +4587,7 @@ msgstr ""
 
 #: ../src/nautilus-view.c:7480
 msgid "Run or manage scripts"
-msgstr ""
+msgstr "Иҷро ё идора кардани скриптҳо"
 
 #. Create a script action here specially because its tooltip is dynamic
 #: ../src/nautilus-view.c:7482
@@ -4597,61 +4597,61 @@ msgstr "_Скриптҳо"
 #: ../src/nautilus-view.c:7832
 #, c-format
 msgid "Move the open folder out of the trash to “%s”"
-msgstr ""
+msgstr "Интиқол додани ҷузвдони кушода аз сабад ба “%s”"
 
 #: ../src/nautilus-view.c:7836
 #, c-format
 msgid "Move the selected folder out of the trash to “%s”"
-msgstr ""
+msgstr "Интиқол додани ҷузвдони интихобшуда аз сабад ба “%s”"
 
 #: ../src/nautilus-view.c:7839
 #, c-format
 msgid "Move the selected folders out of the trash to “%s”"
-msgstr ""
+msgstr "Интиқол додани ҷузвдонҳои интихобшуда аз сабад ба “%s”"
 
 #: ../src/nautilus-view.c:7844
 msgid "Move the selected folder out of the trash"
-msgstr ""
+msgstr "Интиқол додани ҷузвдони кушодаи интихобшуда аз сабад"
 
 #: ../src/nautilus-view.c:7846
 msgid "Move the selected folders out of the trash"
-msgstr ""
+msgstr "Интиқол додани ҷузвдонҳои интихобшуда аз сабад"
 
 #: ../src/nautilus-view.c:7852
 #, c-format
 msgid "Move the selected file out of the trash to “%s”"
-msgstr ""
+msgstr "Интиқол додани файли интихобшуда аз сабад ба “%s”"
 
 #: ../src/nautilus-view.c:7855
 #, c-format
 msgid "Move the selected files out of the trash to “%s”"
-msgstr ""
+msgstr "Интиқол додани файлҳои интихобшуда аз сабад ба “%s”"
 
 #: ../src/nautilus-view.c:7860
 msgid "Move the selected file out of the trash"
-msgstr ""
+msgstr "Интиқол додани файли интихобшуда аз сабад"
 
 #: ../src/nautilus-view.c:7862
 msgid "Move the selected files out of the trash"
-msgstr ""
+msgstr "Интиқол додани файлҳои интихобшуда аз сабад"
 
 #: ../src/nautilus-view.c:7868
 #, c-format
 msgid "Move the selected item out of the trash to “%s”"
-msgstr ""
+msgstr "Интиқол додани объекти интихобшуда аз сабад ба “%s”"
 
 #: ../src/nautilus-view.c:7871
 #, c-format
 msgid "Move the selected items out of the trash to “%s”"
-msgstr ""
+msgstr "Интиқол додани объектҳои интихобшуда аз сабад ба “%s”"
 
 #: ../src/nautilus-view.c:7876
 msgid "Move the selected item out of the trash"
-msgstr ""
+msgstr "Интиқол додани объекти интихобшуда аз сабад"
 
 #: ../src/nautilus-view.c:7878
 msgid "Move the selected items out of the trash"
-msgstr ""
+msgstr "Интиқол додани объектҳои интихобшуда аз сабад"
 
 #: ../src/nautilus-view.c:7985 ../src/nautilus-view.c:7989
 #: ../src/nautilus-view.c:8174 ../src/nautilus-view.c:8178
