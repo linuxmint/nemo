@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautil"
 "us&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-08-13 12:29+0000\n"
-"PO-Revision-Date: 2013-10-03 14:31+0200\n"
+"PO-Revision-Date: 2013-10-10 11:24-0400\n"
 "Last-Translator: F Wolff <friedel@translate.org.za>\n"
 "Language-Team: translate-discuss-af@lists.sourceforge.net\n"
 "Language: af\n"
@@ -2051,15 +2051,15 @@ msgstr ""
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:11
 msgid "Type of click used to launch/open files"
-msgstr "Soort kliek wat gebruik word om lêers te laat laai of te open"
+msgstr "Soort klik wat gebruik word om lêers te lanseer/open"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:12
 msgid ""
 "Possible values are \"single\" to launch files on a single click, or \"double"
 "\" to launch them on a double click."
 msgstr ""
-"Moontlike waardes is \"single\" om programme te laai met 'n enkelmuiskliek, "
-"of \"double\" om programme met 'n dubbelmuiskliek te laat laai."
+"Moontlike waardes is \"single\" om lêers te lanseer met 'n enkelklik, of "
+"\"double\" om hulle met 'n dubbelklik te lanseer."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:13
 msgid "What to do with executable text files when activated"
@@ -2073,9 +2073,9 @@ msgid ""
 "text files."
 msgstr ""
 "Wat met uitvoerbare tekslêers gedoen moet word wanneer hulle geaktiveer word "
-"(enkel- of dubbelkliek). Moontlike waardes is \"launch\" om hierdie lêers as "
-"programme te laai, \"ask\" om via 'n dialoog te vra wat daarmee doen moet "
-"word, en \"display\" om die lêers as tekslêers te vertoon."
+"(enkel- of dubbelklik). Moontlike waardes is \"launch\" om hulle as programme "
+"te lanseer, \"ask\" om via 'n dialoog te vra wat daarmee doen moet word, en "
+"\"display\" om hulle tekslêers te vertoon."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:15
 msgid "Show the package installer for unknown mime types"
@@ -2158,14 +2158,14 @@ msgstr ""
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:27
 msgid "Show folders first in windows"
-msgstr "Vertoon vouers eerste in vensters"
+msgstr "Vertoon gidse eerste in vensters"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:28
 msgid ""
 "If set to true, then Nautilus shows folders prior to showing files in the "
 "icon and list views."
 msgstr ""
-"Indien waar, sal Nautilus vouers vertoon voordat lêers in die ikoon- en "
+"Indien waar, sal Nautilus gidse vertoon voordat lêers in die ikoon- en "
 "lysaangesigte getoon word."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:29
@@ -2199,7 +2199,7 @@ msgstr ""
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:33
 msgid "Default folder viewer"
-msgstr "Verstek vouerbekyker"
+msgstr "Verstek gidskyker"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:34
 msgid ""
@@ -2353,8 +2353,8 @@ msgid ""
 "If this is set to true, an icon linking to the home folder will be put on "
 "the desktop."
 msgstr ""
-"Indien waar, sal 'n ikoon wat na die tuisvouer verwys op die werkarea "
-"geplaas word."
+"Indien waar, sal 'n ikoon wat na die tuisgids verwys op die werkarea geplaas "
+"word."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:60
 msgid "Trash icon visible on desktop"
@@ -3158,11 +3158,11 @@ msgstr "Gedrag"
 
 #: ../src/nautilus-file-management-properties.ui.h:13
 msgid "_Single click to open items"
-msgstr "_Enkelkliek om items te open"
+msgstr "_Enkelklik om items te open"
 
 #: ../src/nautilus-file-management-properties.ui.h:14
 msgid "_Double click to open items"
-msgstr "_Dubbelkliek om items te open"
+msgstr "_Dubbelklik om items te open"
 
 #: ../src/nautilus-file-management-properties.ui.h:15
 msgid "Executable Text Files"
@@ -5279,7 +5279,7 @@ msgstr "Gebruik gewone grootte aansig"
 #. tooltip
 #: ../src/nautilus-window-menus.c:544
 msgid "Connect to a remote computer or shared disk"
-msgstr "Verbind aan 'n afgeleë rekenaar of gedeelde skyf"
+msgstr "Koppel aan 'n afgeleë rekenaar of gedeelde skyf"
 
 #. name, stock id
 #. label, accelerator
