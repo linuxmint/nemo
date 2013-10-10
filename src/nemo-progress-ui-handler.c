@@ -57,13 +57,15 @@ G_DEFINE_TYPE (NemoProgressUIHandler, nemo_progress_ui_handler, G_TYPE_OBJECT);
 
 #define ACTION_DETAILS "details"
 
-static void
-status_icon_activate_cb (GtkStatusIcon *icon,
-			 NemoProgressUIHandler *self)
+static gboolean
+status_icon_button_release_cb (GtkStatusIcon *icon,
+                                    GdkEvent *event,
+			           NemoProgressUIHandler *self)
 {	
     self->priv->should_show_status_icon = FALSE;
 	gtk_status_icon_set_visible (icon, FALSE);
 	gtk_window_present (GTK_WINDOW (self->priv->progress_window));
+    return FALSE;
 }
 
 static void
@@ -76,8 +78,8 @@ progress_ui_handler_ensure_status_icon (NemoProgressUIHandler *self)
 	}
 
 	status_icon = gtk_status_icon_new_from_icon_name ("progress-0-symbolic");
-	g_signal_connect (status_icon, "activate",
-			  (GCallback) status_icon_activate_cb,
+	g_signal_connect (status_icon, "button-release-event",
+			  (GCallback) status_icon_button_release_cb,
 			  self);
 
 	gtk_status_icon_set_visible (status_icon, FALSE);
