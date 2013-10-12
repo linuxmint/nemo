@@ -4190,7 +4190,7 @@ msgstr "أعد العناصر المختارة إلى مواضعها الأصل�
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:210
 msgid "Empty"
-msgstr "خالية"
+msgstr "أفرغ"
 
 #: ../src/nautilus-view.c:963
 #, c-format
