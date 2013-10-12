@@ -1,0 +1,17 @@
+[Nemo Action]
+
+Name=Mount archive
+
+Comment=Mount %f to browse its contents
+
+Exec=/usr/lib/gvfs/gvfsd-archive file="%U"
+
+Selection=s
+
+Mimetypes=application/x-cd-image;application/x-bzip-compressed-tar;application/x-compressed-tar;application/x-tar;application/x-cpio;application/zip;
+
+Stock-Id=gtk-directory
+
+Dependencies=/usr/lib/gvfs/gvfsd-archive;
+
+Selection=s

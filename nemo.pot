@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-01 22:08-0400\n"
+"POT-Creation-Date: 2013-10-12 19:47-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -327,7 +327,7 @@ msgstr ""
 
 #: src/nemo-desktop-window.c:92 src/nemo-desktop-window.c:302
 #: src/nemo-pathbar.c:1332 src/nemo-places-sidebar.c:718
-#: libnemo-private/nemo-action.c:885
+#: libnemo-private/nemo-action.c:894
 msgid "Desktop"
 msgstr ""
 
@@ -1146,22 +1146,22 @@ msgstr ""
 msgid "_Properties"
 msgstr ""
 
-#: src/nemo-progress-ui-handler.c:113
+#: src/nemo-progress-ui-handler.c:115
 #, c-format
 msgid "%1$s file operation active.  %2$d%% complete."
 msgid_plural "%1$s file operations active.  %2$d%% complete."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-progress-ui-handler.c:156 src/nemo-progress-ui-handler.c:201
+#: src/nemo-progress-ui-handler.c:158 src/nemo-progress-ui-handler.c:203
 msgid "File Operations"
 msgstr ""
 
-#: src/nemo-progress-ui-handler.c:202
+#: src/nemo-progress-ui-handler.c:204
 msgid "All file operations have been successfully completed"
 msgstr ""
 
-#: src/nemo-progress-ui-handler.c:253
+#: src/nemo-progress-ui-handler.c:255
 #, c-format
 msgid "%d%% %s"
 msgstr ""
@@ -5274,26 +5274,35 @@ msgstr ""
 msgid "Toolbar"
 msgstr ""
 
-#: data/action_i18n_strings.py:7 data/action_i18n_strings.py:8
+#: data/action_i18n_strings.py:7
+msgid "Mount archive"
+msgstr ""
+
+#: data/action_i18n_strings.py:8
+#, python-format
+msgid "Mount %f to browse its contents"
+msgstr ""
+
+#: data/action_i18n_strings.py:9 data/action_i18n_strings.py:10
 msgid "Change Desktop _Background"
 msgstr ""
 
-#: data/action_i18n_strings.py:9
+#: data/action_i18n_strings.py:11
 msgid "Set as Wallpaper..."
 msgstr ""
 
-#: data/action_i18n_strings.py:10
+#: data/action_i18n_strings.py:12
 msgid "Set the selected image as your desktop wallpaper"
 msgstr ""
 
-#: data/action_i18n_strings.py:11
+#: data/action_i18n_strings.py:13
 msgid "Create a new l_auncher here..."
 msgstr ""
 
-#: data/action_i18n_strings.py:12
+#: data/action_i18n_strings.py:14
 msgid "Create a new launcher in this folder"
 msgstr ""
 
-#: data/action_i18n_strings.py:13 data/action_i18n_strings.py:14
+#: data/action_i18n_strings.py:15 data/action_i18n_strings.py:16
 msgid "Add Desklets"
 msgstr ""

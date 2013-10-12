@@ -542,14 +542,23 @@ nemo_action_new (const gchar *name,
     if (deps != NULL) {
         gint i = 0;
         for (i = 0; i < g_strv_length (deps); i++) {
-            gchar *p = g_find_program_in_path (deps[i]);
-            if (p == NULL) {
-                finish = FALSE;
-                DEBUG ("Missing action dependency: %s", deps[i]);
+            if (g_path_is_absolute (deps[i])) {
+                GFile *f = g_file_new_for_path (deps[i]);
+                if (!g_file_query_exists (f, NULL)) {
+                    finish = FALSE;
+                    DEBUG ("Missing action dependency: %s", deps[i]);
+                }
+                g_object_unref (f);
+            } else {
+                gchar *p = g_find_program_in_path (deps[i]);
+                if (p == NULL) {
+                    finish = FALSE;
+                    DEBUG ("Missing action dependency: %s", deps[i]);
+                    g_free (p);
+                    break;
+                }
                 g_free (p);
-                break;
             }
-            g_free (p);
         }
     }
 

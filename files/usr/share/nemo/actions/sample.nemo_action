@@ -33,7 +33,7 @@ Icon-Name=folder
 # defined, the Stock-Id takes precedence.
 #Stock-Id=gtk-cdrom
 
-# What type selection: [s]ingle, [s]ultiple, any, notnone, none (background click), or
+# What type selection: [s]ingle, [m]ultiple, any, notnone, none (background click), or
 # a number representing how many files must be selected to display.
 # ****** REQUIRED *******
 Selection=s

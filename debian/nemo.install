@@ -1,6 +1,3 @@
-debian/nemo-home.desktop usr/share/applications
-debian/nemo-mount-archive.desktop usr/share/applications
-debian/nemo-folder-handler.desktop usr/share/applications
 usr/bin
 usr/lib/nemo/nemo-convert-metadata
 usr/share/applications

@@ -2,7 +2,7 @@
 
 Name=Change Desktop _Background
 
-Comment=Open settings to allow you to select a different desktop background
+Comment=Change Desktop _Background
 
 Exec=cinnamon-settings backgrounds
 
@@ -56,3 +56,43 @@ Name[pl]=Zmień _tło pulpitu
 Name[ms]=Tukar Latar _Belakang Desktop
 Name[sr]=Из_мени позадину
 Name[nds]=Desktop_Hintergrund ändern
+Comment[el]=Αλλαγή _εικόνας επιφάνειας εργασίας
+Comment[vi]=Đổi Ảnh _nền Màn hình
+Comment[is]=Breyta _bakgrunni skjáborðs
+Comment[am]=የዴስክቶፕ _መደብ መቀየሪያ
+Comment[it]=Ca_mbia sfondo scrivania
+Comment[eu]=Aldatu _mahaigainaren atzeko planoa
+Comment[cy]=Newid Cefndir y _Bwrdd Gwaith
+Comment[ar]=تغيير _خلفية سطح المكتب
+Comment[ga]=Athraigh Cúl_ra na Deisce
+Comment[cs]=Změnit _pozadí plochy
+Comment[et]=Vaheta töölaua _taust
+Comment[id]=Ubah Latar _Belakang Desktop
+Comment[es]=Cambiar el _fondo del escritorio
+Comment[ru]=_Изменить фон рабочего стола
+Comment[nl]=Werk_bladachtergrond wijzigen
+Comment[pt]=Alterar _fundo da área de trabalho
+Comment[tr]=Masaüstü _Arkaplanını Değiştir
+Comment[en_AU]=Change Desktop _Background
+Comment[lt]=Keisti darbalaukio _foną
+Comment[ca]=Canvia el _fons de l'escriptori
+Comment[en_GB]=Change Desktop _Background
+Comment[fr]=Modifier l'arrière-plan du _bureau
+Comment[de]=_Hintergrund der Arbeitsfläche ändern
+Comment[uk]=Змінити т_ло стільниці
+Comment[pt_BR]=Alterar plano de _Fundo
+Comment[sl]=Spremeni _ozadje namizja
+Comment[hr]=Promijeni _pozadinu desktopa
+Comment[sr@latin]=Iz_meni pozadinu
+Comment[hu]=Asztal _hátterének módosítása
+Comment[bs]=Promijeni _pozadinu desktopa
+Comment[ja]=背景を変更 (_B)
+Comment[fr_CA]=Changer l'_arrière-plan du bureau
+Comment[zh_CN]=更改桌面背景(_B)
+Comment[ml]=ഡെസ്ക്ടോപ്പിന്റെ _പശ്ചാത്തലം മാറ്റുക
+Comment[sv]=Byt skrivbordsbak_grund
+Comment[sk]=Zmeniť _pozadie plochy
+Comment[pl]=Zmień _tło pulpitu
+Comment[ms]=Tukar Latar _Belakang Desktop
+Comment[sr]=Из_мени позадину
+Comment[nds]=Desktop_Hintergrund ändern
