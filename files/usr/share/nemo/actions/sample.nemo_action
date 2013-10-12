@@ -65,6 +65,8 @@ Extensions=any;
 
 # Dependencies - program executables required for this action to work.  Nemo will
 # Search in the path for these program(s) and not display the action if any are missing.
+# You can also supply an absolute path to a file (i.e. /usr/lib/gvfs/gvfsd-archive) to check
+# instead of or in addition to an executable in the path.
 # This is an array, separate entries with semi-colon, and terminate with a semicolon.
 #Dependencies=gedit;
 
