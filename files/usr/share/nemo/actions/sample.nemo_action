@@ -1,5 +1,14 @@
 [Nemo Action]
 
+###################################
+#### DEBUGGING:
+####
+#### Run Nemo with the environment
+#### variable NEMO_ACTION_VERBOSE
+#### set to get useful log output
+#### for debugging your actions
+###################################
+
 # Whether this action is active.  For troubleshooting.
 # Optional - if this field is omitted, the action will be active
 Active=false
