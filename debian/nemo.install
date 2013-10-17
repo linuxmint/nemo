@@ -3,4 +3,3 @@ usr/lib/nemo/nemo-convert-metadata
 usr/share/applications
 usr/share/dbus-1
 usr/share/man
-etc/xdg/autostart

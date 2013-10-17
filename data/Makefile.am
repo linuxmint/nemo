@@ -10,7 +10,7 @@ desktop_in_files = 					\
 	nemo.desktop.in				\
 	nemo-autorun-software.desktop.in
 
-autostartdir     = $(sysconfdir)/xdg/autostart
+autostartdir     = $(datadir)/applications
 autostart_in_files = nemo-autostart.desktop.in
 autostart_DATA = $(autostart_in_files:.desktop.in=.desktop)
 
