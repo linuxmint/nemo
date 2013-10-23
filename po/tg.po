@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2013-08-13 12:29+0000\n"
-"PO-Revision-Date: 2013-10-10 12:13+0500\n"
+"PO-Revision-Date: 2013-10-23 14:16+0500\n"
 "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
 "Language-Team: \n"
 "Language: Tajik\n"
@@ -1153,17 +1153,17 @@ msgstr[1] ""
 #: ../libnautilus-private/nautilus-file-operations.c:3564
 #: ../libnautilus-private/nautilus-file-operations.c:3609
 msgid "Error while copying."
-msgstr ""
+msgstr "Ҳангоми нусхабардорӣ хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2501
 #: ../libnautilus-private/nautilus-file-operations.c:3562
 #: ../libnautilus-private/nautilus-file-operations.c:3607
 msgid "Error while moving."
-msgstr ""
+msgstr "Ҳангоми интиқолдиҳӣ хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2505
 msgid "Error while moving files to trash."
-msgstr ""
+msgstr "Ҳангоми интиқолдиҳии файлҳо ба сабад хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2559
 msgid ""
@@ -1192,7 +1192,7 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-operations.c:2867
 #: ../libnautilus-private/nautilus-file-operations.c:2897
 msgid "Error while copying to “%B”."
-msgstr ""
+msgstr "Ҳангоми нусхабардорӣ ба “%B” хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2784
 msgid "You do not have permissions to access the destination folder."
@@ -1204,7 +1204,7 @@ msgstr ""
 
 #: ../libnautilus-private/nautilus-file-operations.c:2829
 msgid "The destination is not a folder."
-msgstr ""
+msgstr "Ҷои таъинот ҷузвдон намебошад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2868
 msgid ""
@@ -1223,46 +1223,46 @@ msgstr ""
 
 #: ../libnautilus-private/nautilus-file-operations.c:2957
 msgid "Moving “%B” to “%B”"
-msgstr ""
+msgstr "“%B” ба “%B” интиқол шуда истодааст"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2958
 msgid "Copying “%B” to “%B”"
-msgstr ""
+msgstr "“%B” ба “%B” нусхабардорӣ шуда истодааст"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2965
 msgid "Duplicating “%B”"
-msgstr ""
+msgstr "“%B” нусхабардорӣ шуда истодааст"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2973
 msgid "Moving file %'d of %'d (in “%B”) to “%B”"
-msgstr ""
+msgstr "Файли %'d аз %'d (дар “%B”) ба “%B”интиқол шуда истодааст"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2975
 msgid "Copying file %'d of %'d (in “%B”) to “%B”"
-msgstr ""
+msgstr "Файли %'d аз %'d (дар “%B”) ба “%B”нусхабардорӣ шуда истодааст"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2982
 msgid "Duplicating file %'d of %'d (in “%B”)"
-msgstr ""
+msgstr "Файли %'d аз %'d (дар “%B”) нусхабардорӣ шуда истодааст"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2991
 msgid "Moving file %'d of %'d to “%B”"
-msgstr ""
+msgstr "Файли %'d аз %'d ба “%B”интиқол шуда истодааст"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2993
 msgid "Copying file %'d of %'d to “%B”"
-msgstr ""
+msgstr "Файли %'d аз %'d ба “%B”нусхабардорӣ шуда истодааст"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2999
 #, c-format
 msgid "Duplicating file %'d of %'d"
-msgstr ""
+msgstr "Файли %'d аз %'d нусхабардорӣ шуда истодааст"
 
 #. To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "4 kb of 4 MB"
 #: ../libnautilus-private/nautilus-file-operations.c:3018
 #, c-format
 msgid "%S of %S"
-msgstr ""
+msgstr "%S аз %S"
 
 #. To translators: %S will expand to a size like "2 bytes" or "3 MB", %T to a time duration like
 #. * "2 minutes". So the whole thing will be something like "2 kb of 4 MB -- 2 hours left (4kb/sec)"
@@ -1272,8 +1272,8 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-operations.c:3029
 msgid "%S of %S — %T left (%S/sec)"
 msgid_plural "%S of %S — %T left (%S/sec)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%S аз %S — %T боқӣ мондааст (%S/сония)"
+msgstr[1] "%S аз %S — %T боқӣ мондаанд (%S/сония)"
 
 #: ../libnautilus-private/nautilus-file-operations.c:3436
 msgid ""
@@ -1301,7 +1301,7 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-operations.c:4352
 #: ../libnautilus-private/nautilus-file-operations.c:4967
 msgid "Error while moving “%B”."
-msgstr ""
+msgstr "Ҳангоми интиқолдиҳии “%B” хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3660
 msgid "Could not remove the source folder."
@@ -1312,7 +1312,7 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-operations.c:4354
 #: ../libnautilus-private/nautilus-file-operations.c:4425
 msgid "Error while copying “%B”."
-msgstr ""
+msgstr "Ҳангоми нусхабардории “%B” хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:3746
 #, c-format
@@ -1366,7 +1366,7 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-operations.c:4658
 #: ../libnautilus-private/nautilus-file-operations.c:4692
 msgid "Copying Files"
-msgstr ""
+msgstr "Нусхабардории файлҳо"
 
 #: ../libnautilus-private/nautilus-file-operations.c:4720
 msgid "Preparing to Move to “%B”"
@@ -1386,7 +1386,7 @@ msgstr ""
 
 #: ../libnautilus-private/nautilus-file-operations.c:5230
 msgid "Moving Files"
-msgstr ""
+msgstr "Интиқолдиҳии файлҳо"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5265
 msgid "Creating links in “%B”"
@@ -1414,11 +1414,11 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-operations.c:5412
 #, c-format
 msgid "There was an error creating the symlink in %F."
-msgstr ""
+msgstr "Ҳангоми эҷодкунии пайванди аломатӣ дар %F хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:5731
 msgid "Setting permissions"
-msgstr ""
+msgstr "Танзими иҷозатҳо"
 
 #. localizers: the initial name of a new folder
 #: ../libnautilus-private/nautilus-file-operations.c:5996
@@ -1438,20 +1438,20 @@ msgstr "Ҳуҷҷати беном"
 
 #: ../libnautilus-private/nautilus-file-operations.c:6186
 msgid "Error while creating directory %B."
-msgstr ""
+msgstr "Ҳангоми эҷодкунии директорияи %B хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:6188
 msgid "Error while creating file %B."
-msgstr ""
+msgstr "Ҳангоми эҷодкунии файли %B хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:6190
 #, c-format
 msgid "There was an error creating the directory in %F."
-msgstr ""
+msgstr "Ҳангоми эҷодкунии директория дар %F хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:6459
 msgid "Emptying Trash"
-msgstr ""
+msgstr "Сабад холӣ шуда истодааст"
 
 #: ../libnautilus-private/nautilus-file-operations.c:6507
 #: ../libnautilus-private/nautilus-file-operations.c:6548
@@ -1469,7 +1469,7 @@ msgstr "Ботил сохтан"
 #: ../libnautilus-private/nautilus-file-undo-operations.c:138
 #: ../src/nautilus-view.c:2554
 msgid "Undo last action"
-msgstr ""
+msgstr "Ботил сохтани амали охирин"
 
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:142
@@ -2628,7 +2628,7 @@ msgstr ""
 
 #: ../src/nautilus-canvas-view.c:1122
 msgid "_Manually"
-msgstr ""
+msgstr "_Ба таври дастӣ"
 
 #: ../src/nautilus-canvas-view.c:1123
 msgid "Leave icons wherever they are dropped"
@@ -2636,7 +2636,7 @@ msgstr ""
 
 #: ../src/nautilus-canvas-view.c:1126
 msgid "By _Name"
-msgstr ""
+msgstr "Аз _рӯи ном"
 
 #: ../src/nautilus-canvas-view.c:1127
 msgid "Keep icons sorted by name in rows"
@@ -2644,7 +2644,7 @@ msgstr ""
 
 #: ../src/nautilus-canvas-view.c:1130
 msgid "By _Size"
-msgstr ""
+msgstr "Аз рӯи _андоза"
 
 #: ../src/nautilus-canvas-view.c:1131
 msgid "Keep icons sorted by size in rows"
@@ -2660,7 +2660,7 @@ msgstr ""
 
 #: ../src/nautilus-canvas-view.c:1138
 msgid "By Modification _Date"
-msgstr ""
+msgstr "Аз рӯи санаи _тағйир"
 
 #: ../src/nautilus-canvas-view.c:1139
 msgid "Keep icons sorted by modification date in rows"
@@ -2668,7 +2668,7 @@ msgstr ""
 
 #: ../src/nautilus-canvas-view.c:1142
 msgid "By _Access Date"
-msgstr ""
+msgstr "Аз рӯи _санаи кушоиш"
 
 #: ../src/nautilus-canvas-view.c:1143
 msgid "Keep icons sorted by access date in rows"
@@ -2676,7 +2676,7 @@ msgstr ""
 
 #: ../src/nautilus-canvas-view.c:1146
 msgid "By T_rash Time"
-msgstr ""
+msgstr "Аз рӯи _санаи интиқол ба сабад"
 
 #: ../src/nautilus-canvas-view.c:1147
 msgid "Keep icons sorted by trash time in rows"
@@ -2684,7 +2684,7 @@ msgstr ""
 
 #: ../src/nautilus-canvas-view.c:1150
 msgid "By Search Relevance"
-msgstr ""
+msgstr "Аз рӯи муҳиммии ҷустуҷӯ"
 
 #: ../src/nautilus-canvas-view.c:1151
 msgid "Keep icons sorted by search relevance in rows"
@@ -2693,7 +2693,7 @@ msgstr ""
 #: ../src/nautilus-canvas-view-container.c:573
 #: ../src/nautilus-file-management-properties.ui.h:35
 msgid "Icon View"
-msgstr ""
+msgstr "Намуди нишонаҳо"
 
 #. if it wasn't cancelled show a dialog
 #: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1894
@@ -2735,7 +2735,7 @@ msgstr ""
 #: ../src/nautilus-connect-server-dialog.c:265
 #, c-format
 msgid "For example, %s"
-msgstr ""
+msgstr "Барои мисол, %s"
 
 #: ../src/nautilus-connect-server-dialog.c:533
 msgid "_Remove"
@@ -2747,11 +2747,11 @@ msgstr "_Ҳамаро пок кардан"
 
 #: ../src/nautilus-connect-server-dialog.c:604
 msgid "_Server Address"
-msgstr ""
+msgstr "_Суроғаи сервер"
 
 #: ../src/nautilus-connect-server-dialog.c:628
 msgid "_Recent Servers"
-msgstr ""
+msgstr "_Серверҳои қаблӣ"
 
 #: ../src/nautilus-connect-server-dialog.c:694
 msgid "_Browse"
@@ -4766,19 +4766,19 @@ msgstr ""
 
 #: ../src/nautilus-view.c:8289 ../src/nautilus-view.c:8624
 msgid "Open in New _Window"
-msgstr ""
+msgstr "Кушодан дар _равзанаи нав"
 
 #: ../src/nautilus-view.c:8344 ../src/nautilus-view.c:8662
 msgid "_Delete Permanently"
-msgstr ""
+msgstr "_Бебозгашт нест кардан"
 
 #: ../src/nautilus-view.c:8345
 msgid "Delete the open folder permanently"
-msgstr ""
+msgstr "Бебозгашт нест кардани ҷузвдони кушода"
 
 #: ../src/nautilus-view.c:8349
 msgid "Move the open folder to the Trash"
-msgstr ""
+msgstr "Интиқол додани ҷузвдони кушода ба сабад"
 
 #: ../src/nautilus-view.c:8533
 #, c-format
@@ -4812,11 +4812,11 @@ msgstr[1] ""
 
 #: ../src/nautilus-view.c:8663
 msgid "Delete all selected items permanently"
-msgstr ""
+msgstr "Бебозгашт нест кардани ҳамаи объектҳои интихобшуда"
 
 #: ../src/nautilus-view.c:8694
 msgid "Remo_ve from Recent"
-msgstr ""
+msgstr "Тоза кардан аз рӯйхати объектҳои _охирин"
 
 #: ../src/nautilus-view.c:8695
 msgid "Remove each selected item from the recently used list"
@@ -4857,7 +4857,7 @@ msgstr "_Хусусиятҳо"
 
 #: ../src/nautilus-window.c:827
 msgid "_Format…"
-msgstr ""
+msgstr "_Формат…"
 
 #: ../src/nautilus-window.c:1166
 msgid "_New Tab"
@@ -4865,11 +4865,11 @@ msgstr "Варақаи _нав"
 
 #: ../src/nautilus-window.c:1176 ../src/nautilus-window-menus.c:588
 msgid "Move Tab _Left"
-msgstr ""
+msgstr "Интиқол додани варақа ба тарафи _чап"
 
 #: ../src/nautilus-window.c:1184 ../src/nautilus-window-menus.c:591
 msgid "Move Tab _Right"
-msgstr ""
+msgstr "Интиқол додани варақа ба тарафи _рост"
 
 #: ../src/nautilus-window.c:1195
 msgid "_Close Tab"
@@ -4915,26 +4915,26 @@ msgstr ""
 #.
 #: ../src/nautilus-window.c:2402
 msgid "translator-credits"
-msgstr ""
+msgstr "Victor Ibragimov - victor.ibragimov@gmail.com"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:472
 msgid "Close this folder"
-msgstr ""
+msgstr "Пӯшидани ин ҷузвдон"
 
 #: ../src/nautilus-window-menus.c:476
 msgid "Edit Nautilus preferences"
-msgstr ""
+msgstr "Таҳрир кардани танзимҳои Nautilus"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:479
 msgid "Open _Parent"
-msgstr ""
+msgstr "Кушодани _асосӣ"
 
 #: ../src/nautilus-window-menus.c:480
 msgid "Open the parent folder"
-msgstr ""
+msgstr "Кушодани ҷузвдони асосӣ"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:484
@@ -4956,18 +4956,18 @@ msgstr ""
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:495
 msgid "_All Topics"
-msgstr ""
+msgstr "_Ҳамаи мавзӯҳо"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:496
 msgid "Display Nautilus help"
-msgstr ""
+msgstr "Намоиш додани кӯмаки Nautilus"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:499
 msgid "Search for files"
-msgstr ""
+msgstr "Ҷустуҷӯи файлҳо"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:500
@@ -5085,7 +5085,7 @@ msgstr ""
 #. name, stock id
 #: ../src/nautilus-window-menus.c:559
 msgid "Close _All Windows"
-msgstr ""
+msgstr "Пӯшидани ҳамаи _равзанаҳо"
 
 #: ../src/nautilus-window-menus.c:560
 msgid "Close all Navigation windows"
@@ -5116,50 +5116,50 @@ msgstr ""
 #. name, stock id
 #: ../src/nautilus-window-menus.c:575
 msgid "Bookmark this Location"
-msgstr ""
+msgstr "Гузоштани хатбарак барои ин ҷойгиршавӣ"
 
 #: ../src/nautilus-window-menus.c:576
 msgid "Add a bookmark for the current location"
-msgstr ""
+msgstr "Илова кардани хатбарак барои ҷойгиршавии ҷорӣ"
 
 #. name, stock id
 #: ../src/nautilus-window-menus.c:579
 msgid "_Bookmarks…"
-msgstr ""
+msgstr "_Хатбаракҳо…"
 
 #: ../src/nautilus-window-menus.c:580
 msgid "Display and edit bookmarks"
-msgstr ""
+msgstr "Намоиш додан ва таҳрир кардани хатбаракҳо"
 
 #: ../src/nautilus-window-menus.c:582
 msgid "_Previous Tab"
-msgstr ""
+msgstr "_Варақаи қаблӣ"
 
 #: ../src/nautilus-window-menus.c:583
 msgid "Activate previous tab"
-msgstr ""
+msgstr "Фаъол кардани варақаи қаблӣ"
 
 #: ../src/nautilus-window-menus.c:585
 msgid "_Next Tab"
-msgstr ""
+msgstr "_Варақаи навбатӣ"
 
 #: ../src/nautilus-window-menus.c:586
 msgid "Activate next tab"
-msgstr ""
+msgstr "Фаъол кардани варақаи навбатӣ"
 
 #: ../src/nautilus-window-menus.c:589
 msgid "Move current tab to left"
-msgstr ""
+msgstr "Интиқол додани варақаи ҷорӣ ба тарафи чап"
 
 #: ../src/nautilus-window-menus.c:592
 msgid "Move current tab to right"
-msgstr ""
+msgstr "Интиқол додани варақаи ҷорӣ ба тарафи рост"
 
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:610
 msgid "_Show Sidebar"
-msgstr ""
+msgstr "_Намоиш додани навори ҷонибӣ"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:611
@@ -5171,7 +5171,7 @@ msgstr ""
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:615
 msgid "_Search for Files…"
-msgstr ""
+msgstr "_Ҷустуҷӯи файлҳо…"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:616
@@ -5247,7 +5247,7 @@ msgstr ""
 
 #: ../src/nautilus-window-slot.c:2246
 msgid "Searching…"
-msgstr ""
+msgstr "Дар ҳоли ҷустуҷӯ…"
 
 #: ../src/nautilus-x-content-bar.c:93
 msgid "Audio CD"
@@ -5279,29 +5279,29 @@ msgstr "Тасвирҳои CD"
 
 #: ../src/nautilus-x-content-bar.c:107 ../src/nautilus-x-content-bar.c:140
 msgid "Contains digital photos"
-msgstr ""
+msgstr "Дорои суратҳои рақамӣ мебошад"
 
 #: ../src/nautilus-x-content-bar.c:109
 msgid "Contains music"
-msgstr ""
+msgstr "Дорои файлҳои мусиқӣ мебошад"
 
 #: ../src/nautilus-x-content-bar.c:111
 msgid "Contains software"
-msgstr ""
+msgstr "Дорои нармафзор мебошад"
 
 #. fallback to generic greeting
 #: ../src/nautilus-x-content-bar.c:114
 #, c-format
 msgid "Detected as “%s”"
-msgstr ""
+msgstr "Ҳамчун “%s” муайян карда шудааст"
 
 #: ../src/nautilus-x-content-bar.c:136
 msgid "Contains music and photos"
-msgstr ""
+msgstr "Дорои файлҳои мусиқӣ ва суратҳо мебошад"
 
 #: ../src/nautilus-x-content-bar.c:138
 msgid "Contains photos and music"
-msgstr ""
+msgstr "Дорои суратҳо ва файлҳои мусиқӣ мебошад"
 
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
