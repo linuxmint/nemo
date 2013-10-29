@@ -44,7 +44,8 @@ Depends: ${shlibs:Depends},
 Recommends: eject,
             librsvg2-common,
             gvfs-backends,
-            nemo-fileroller
+            nemo-fileroller,
+            gnome-search-tool
 Suggests: eog,
           evince | pdf-viewer,
           totem | mp3-decoder,
