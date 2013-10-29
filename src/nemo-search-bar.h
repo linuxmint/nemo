@@ -51,6 +51,7 @@ typedef struct {
 
 	void (* activate) (NemoSearchBar *bar);
 	void (* cancel)   (NemoSearchBar *bar);
+	void (* advanced) (NemoSearchBar *bar);
 } NemoSearchBarClass;
 
 GType      nemo_search_bar_get_type     	(void);

@@ -38,6 +38,7 @@ struct NemoSearchBarDetails {
 enum {
        ACTIVATE,
        CANCEL,
+       ADVANCED,
        LAST_SIGNAL
 }; 
 
@@ -98,6 +99,15 @@ nemo_search_bar_class_init (NemoSearchBarClass *class)
 			      g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 
+	signals[ADVANCED] =
+		g_signal_new ("advanced",
+			      G_TYPE_FROM_CLASS (class),
+			      G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (NemoSearchBarClass, advanced),
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE, 0);
+
 	binding_set = gtk_binding_set_by_class (class);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "cancel", 0);
 
@@ -126,7 +136,7 @@ entry_icon_release_cb (GtkEntry *entry,
 static void
 action_advanced_search_cb (GtkButton *advanced, NemoSearchBar *bar)
 {  
-	g_spawn_command_line_async ("gnome-search-tool", NULL);
+	g_signal_emit (bar, signals[ADVANCED], 0);
 }
 
 
