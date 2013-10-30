@@ -363,6 +363,9 @@ path_bar_button_pressed_callback (GtkWidget *widget,
 		}
 	}
 
+    if (event->button == 2)
+        return TRUE;
+
 	return FALSE;
 }
 
