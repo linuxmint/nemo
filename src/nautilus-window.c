@@ -823,7 +823,8 @@ places_sidebar_populate_popup_cb (GtkPlacesSidebar *sidebar,
 			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 			gtk_widget_show (item);
 		}
-	} else if (selected_volume) {
+	}
+	if (selected_volume) {
 		if (should_show_format_command (selected_volume)) {
 			item = gtk_menu_item_new_with_mnemonic (_("_Format…"));
 			g_object_set_data_full (G_OBJECT (item), "nautilus-volume",
