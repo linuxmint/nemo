@@ -373,6 +373,36 @@ nemo_bookmark_list_move_item (NemoBookmarkList *bookmarks,
 	nemo_bookmark_list_save_file (bookmarks);
 }
 
+static gint
+nemo_bookmark_list_compare_func (gconstpointer a, gconstpointer b)
+{
+    g_assert (NEMO_IS_BOOKMARK (a));
+    g_assert (NEMO_IS_BOOKMARK (b));
+
+    return g_utf8_collate (nemo_bookmark_get_name (NEMO_BOOKMARK (a)),
+                           nemo_bookmark_get_name (NEMO_BOOKMARK (b)));
+}
+
+/**
+ * nemo_bookmark_list_sort_ascending:
+ *
+ * Sort bookmarks in ascending order.
+ * @bookmarks: the list of bookmarks.
+ **/
+void
+nemo_bookmark_list_sort_ascending (NemoBookmarkList *bookmarks)
+{
+    g_assert (NEMO_IS_BOOKMARK_LIST (bookmarks));
+
+    bookmarks->list = g_list_sort (
+        bookmarks->list, (GCompareFunc)nemo_bookmark_list_compare_func);
+
+    /* Save bookmarks to file. This will also inform widgets about the changes
+     * we just made to the list.
+     */
+    nemo_bookmark_list_save_file (bookmarks);
+}
+
 /**
  * nemo_bookmark_list_delete_items_with_uri:
  * 
