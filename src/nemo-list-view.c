@@ -3108,8 +3108,7 @@ nemo_list_view_start_renaming_file (NemoView *view,
 	NemoListView *list_view;
 	GtkTreeIter iter;
 	GtkTreePath *path;
-	gint start_offset, end_offset;
-	
+
 	list_view = NEMO_LIST_VIEW (view);
 	
 	/* Select all if we are in renaming mode already */
@@ -3149,8 +3148,13 @@ nemo_list_view_start_renaming_file (NemoView *view,
 
 	/* set cursor also triggers editing-started, where we save the editable widget */
 	if (list_view->details->editable_widget != NULL) {
-		eel_filename_get_rename_region (list_view->details->original_name,
-						&start_offset, &end_offset);
+        int start_offset = 0;
+        int end_offset = -1;
+
+        if (!select_all) {
+            eel_filename_get_rename_region (list_view->details->original_name,
+                           &start_offset, &end_offset);
+        }
 
 		gtk_editable_select_region (GTK_EDITABLE (list_view->details->editable_widget),
 					    start_offset, end_offset);
