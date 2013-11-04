@@ -1,3 +1,9 @@
+Major changes in 3.10.1:
+- Fix rename entry position with Gtk 3.10
+- Fix default DnD operation to move on same fs
+- Fix crash on file copy
+- Translation updates
+
 Major changes in 3.10.0:
 - Make search provider return results again (David King)
 - Translation updates
