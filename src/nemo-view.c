@@ -6952,7 +6952,7 @@ static void
 open_as_root (const gchar *path)
 {	
     gchar *argv[4];
-    argv[0] = "pkexec";
+    argv[0] = "gksu";
     argv[1] = "nemo";
     argv[2] = g_strdup (path);
     argv[3] = NULL;
