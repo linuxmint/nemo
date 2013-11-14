@@ -63,8 +63,6 @@ typedef struct {
 
 GType nemo_application_get_type (void);
 
-NemoApplication *nemo_application_get_singleton (void);
-
 void nemo_application_quit (NemoApplication *self);
 
 NemoWindow *     nemo_application_create_window (NemoApplication *application,
