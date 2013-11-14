@@ -586,8 +586,6 @@ nemo_icon_container_selection_items_local (NemoIconContainer *container,
 	/* must have at least one item */
 	g_assert (items);
 
-	result = FALSE;
-
 	/* get the URI associated with the container */
 	container_uri_string = get_container_uri (container);
 	

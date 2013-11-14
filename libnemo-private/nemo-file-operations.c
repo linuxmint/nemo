@@ -2804,13 +2804,13 @@ verify_destination (CommonJob *job,
 		primary = f (_("Error while copying to \"%B\"."), dest);
 		secondary = f (_("The destination is not a folder."));
 
-		response = run_error (job,
-				      primary,
-				      secondary,
-				      NULL,
-				      FALSE,
-				      GTK_STOCK_CANCEL,
-				      NULL);
+		run_error (job,
+			   primary,
+			   secondary,
+			   NULL,
+			   FALSE,
+			   GTK_STOCK_CANCEL,
+			   NULL);
 		
 		abort_job (job);
 		return;
@@ -2868,13 +2868,13 @@ verify_destination (CommonJob *job,
 		primary = f (_("Error while copying to \"%B\"."), dest);
 		secondary = f (_("The destination is read-only."));
 
-		response = run_error (job,
-				      primary,
-				      secondary,
-				      NULL,
-				      FALSE,
-				      GTK_STOCK_CANCEL,
-				      NULL);
+		run_error (job,
+			   primary,
+			   secondary,
+			   NULL,
+			   FALSE,
+			   GTK_STOCK_CANCEL,
+			   NULL);
 		
 		g_error_free (error);
 
@@ -5356,7 +5356,7 @@ link_file (CopyMoveJob *job,
 	}
 	
 	/* Other error */
-	else {
+	else if (error != NULL) {
 		if (common->skip_all_error) {
 			goto out;
 		}

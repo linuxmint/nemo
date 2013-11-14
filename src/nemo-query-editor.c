@@ -810,7 +810,6 @@ type_add_rows_from_query (NemoQueryEditor    *editor,
 
 		row = nemo_query_editor_add_row (editor,
 						     NEMO_QUERY_EDITOR_ROW_TYPE);
-		model = gtk_combo_box_get_model (GTK_COMBO_BOX (row->type_widget));
 		
 		type_add_custom_type (row, mime_type, desc, &iter);
 		gtk_combo_box_set_active_iter  (GTK_COMBO_BOX (row->type_widget),

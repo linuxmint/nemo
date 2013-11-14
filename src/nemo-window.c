@@ -1607,7 +1607,6 @@ nemo_window_sync_zoom_widgets (NemoWindow *window)
 		can_zoom_in = can_zoom && nemo_view_can_zoom_in (view);
 		can_zoom_out = can_zoom && nemo_view_can_zoom_out (view);
 	} else {
-		zoom_level = NEMO_ZOOM_LEVEL_STANDARD;
 		supports_zooming = FALSE;
 		can_zoom = FALSE;
 		can_zoom_in = FALSE;
@@ -1980,7 +1979,6 @@ nemo_window_button_press_event (GtkWidget *widget,
 	NemoWindow *window;
 	gboolean handled;
 
-	handled = FALSE;
 	window = NEMO_WINDOW (widget);
 
 	if (mouse_extra_buttons && (event->button == mouse_back_button)) {

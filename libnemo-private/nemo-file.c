@@ -1188,8 +1188,6 @@ nemo_file_get_start_stop_type (NemoFile *file)
 
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
-	ret = G_DRIVE_START_STOP_TYPE_UNKNOWN;
-
 	ret = file->details->start_stop_type;
 	if (ret != G_DRIVE_START_STOP_TYPE_UNKNOWN)
 		goto out;
@@ -2737,7 +2735,6 @@ get_time (NemoFile *file,
 		return UNKNOWN;
 	}
 
-	time = 0;
 	switch (type) {
 	case NEMO_DATE_TYPE_MODIFIED:
 		time = file->details->mtime;

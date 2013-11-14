@@ -2520,7 +2520,6 @@ update_undo_actions (NemoView *view)
 
 	undo_label = undo_description = redo_label = redo_description = NULL;
 
-	is_undo = FALSE;
 	undo_active = FALSE;
 	redo_active = FALSE;
 
@@ -4736,8 +4735,6 @@ reset_open_with_menu (NemoView *view, GList *selection)
 				      "OpenWithGroup",
 				      &view->details->open_with_merge_id,
 				      &view->details->open_with_action_group);
-	
-	num_applications = 0;
 
 	other_applications_visible = (selection != NULL);
 	filter_default = (selection != NULL);
