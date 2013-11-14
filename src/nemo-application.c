@@ -674,8 +674,6 @@ nemo_application_finalize (GObject *object)
 
 	application = NEMO_APPLICATION (object);
 
-	nemo_bookmarks_exiting ();
-
 	g_clear_object (&application->priv->volume_monitor);
 	g_clear_object (&application->priv->progress_handler);
 

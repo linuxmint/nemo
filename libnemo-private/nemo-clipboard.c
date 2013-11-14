@@ -94,14 +94,6 @@ editable_select_all_callback (gpointer target)
 }
 
 static void
-text_view_select_all_callback (gpointer target)
-{
-	g_assert (GTK_IS_TEXT_VIEW (target));
-
-	g_signal_emit_by_name (target, "select-all", TRUE);
-}
-
-static void
 action_cut_callback (GtkAction *action,
 		     gpointer callback_data)
 {
@@ -234,72 +226,6 @@ editable_disconnect_callbacks (GObject *object,
 					      G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA,
 					      0, 0, NULL,
 					      G_CALLBACK (selection_changed_callback),
-					      target_data);
-}
-
-static void
-text_buffer_update_sensitivity (GtkTextBuffer *buffer,
-				TargetCallbackData *target_data)
-{
-	g_assert (GTK_IS_TEXT_BUFFER (buffer));
-	g_assert (target_data != NULL);
-
-	if (gtk_text_buffer_get_selection_bounds (buffer, NULL, NULL)) {
-		set_clipboard_menu_items_sensitive (target_data->action_group);
-	} else {
-		set_clipboard_menu_items_insensitive (target_data->action_group);
-	}
-}
-
-static void
-text_buffer_delete_range (GtkTextBuffer *buffer,
-			  GtkTextIter   *iter1,
-			  GtkTextIter   *iter2,
-			  TargetCallbackData *target_data)
-{
-	text_buffer_update_sensitivity (buffer, target_data);
-}
-
-static void
-text_buffer_mark_set (GtkTextBuffer *buffer,
-		      GtkTextIter *iter,
-		      GtkTextMark *mark,
-		      TargetCallbackData *target_data)
-{
-	/* anonymous marks with NULL names refer to cursor moves */
-	if (gtk_text_mark_get_name (mark) != NULL) {
-		text_buffer_update_sensitivity (buffer, target_data);
-	}
-}
-
-static void
-text_view_connect_callbacks (GObject *object,
-			     TargetCallbackData *target_data)
-{
-	GtkTextBuffer *buffer;
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (object));
-	g_assert (buffer);
-
-	g_signal_connect_after (buffer, "mark-set",
-				G_CALLBACK (text_buffer_mark_set), target_data);
-	g_signal_connect_after (buffer, "delete-range",
-				G_CALLBACK (text_buffer_delete_range), target_data);
-	text_buffer_update_sensitivity (buffer, target_data);
-}
-
-static void
-text_view_disconnect_callbacks (GObject *object,
-				TargetCallbackData *target_data)
-{
-	GtkTextBuffer *buffer;
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (object));
-	g_assert (buffer);
-
-	g_signal_handlers_disconnect_matched (buffer,
-					      G_SIGNAL_MATCH_DATA,
-					      0, 0, NULL, NULL,
 					      target_data);
 }
 
@@ -529,19 +455,6 @@ nemo_clipboard_set_up_editable (GtkEditable *target,
 					editable_select_all_callback,
 					editable_connect_callbacks,
 					editable_disconnect_callbacks);
-}
-
-void
-nemo_clipboard_set_up_text_view (GtkTextView *target,
-				     GtkUIManager *ui_manager)
-{
-	g_return_if_fail (GTK_IS_TEXT_VIEW (target));
-	g_return_if_fail (GTK_IS_UI_MANAGER (ui_manager));
-
-	nemo_clipboard_real_set_up (target, ui_manager, TRUE,
-					text_view_select_all_callback,
-					text_view_connect_callbacks,
-					text_view_disconnect_callbacks);
 }
 
 static GList *

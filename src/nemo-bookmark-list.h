@@ -78,8 +78,5 @@ NemoBookmark *      nemo_bookmark_list_item_at             (NemoBookmarkList   *
 void                    nemo_bookmark_list_move_item           (NemoBookmarkList *bookmarks,
 								    guint                 index,
 								    guint                 destination);
-void                    nemo_bookmark_list_set_window_geometry (NemoBookmarkList   *bookmarks,
-								    const char             *geometry);
-const char *            nemo_bookmark_list_get_window_geometry (NemoBookmarkList   *bookmarks);
 
 #endif /* NEMO_BOOKMARK_LIST_H */
