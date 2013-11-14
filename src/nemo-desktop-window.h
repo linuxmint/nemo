@@ -54,7 +54,8 @@ typedef struct {
 } NemoDesktopWindowClass;
 
 GType                  nemo_desktop_window_get_type            (void);
-NemoDesktopWindow *nemo_desktop_window_new                 (GdkScreen *screen);
+NemoDesktopWindow *nemo_desktop_window_new                 (GtkApplication        *application,
+								    GdkScreen             *screen);
 gboolean               nemo_desktop_window_loaded              (NemoDesktopWindow *window);
 
 #endif /* NEMO_DESKTOP_WINDOW_H */

@@ -32,7 +32,6 @@
 #include "nemo-window-private.h"
 
 #include "nemo-actions.h"
-#include "nemo-application.h"
 #include "nemo-bookmarks-window.h"
 #include "nemo-location-bar.h"
 #include "nemo-mime-actions.h"
@@ -131,7 +130,7 @@ static void cancel_view_as_callback         (NemoWindowSlot      *slot);
 static void action_view_as_callback         (GtkAction               *action,
 					     ActivateViewData        *data);
 
-G_DEFINE_TYPE (NemoWindow, nemo_window, GTK_TYPE_WINDOW);
+G_DEFINE_TYPE (NemoWindow, nemo_window, GTK_TYPE_APPLICATION_WINDOW);
 
 static const struct {
 	unsigned int keyval;
@@ -535,13 +534,15 @@ nemo_window_constructed (GObject *self)
     GtkWidget *nemo_statusbar;
 	NemoWindowPane *pane;
 	NemoWindowSlot *slot;
-	NemoApplication *application;
 
 	window = NEMO_WINDOW (self);
-	application = nemo_application_get_singleton ();
 
 	G_OBJECT_CLASS (nemo_window_parent_class)->constructed (self);
 
+	/* disable automatic menubar handling, since we show our regular
+	 * menubar together with the app menu.
+	 */
+	gtk_application_window_set_show_menubar (GTK_APPLICATION_WINDOW (self), FALSE);
 
 	grid = gtk_grid_new ();
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (grid), GTK_ORIENTATION_VERTICAL);
@@ -655,7 +656,6 @@ nemo_window_constructed (GObject *self)
 
 	nemo_window_initialize_bookmarks_menu (window);
 	nemo_window_set_initial_window_geometry (window);
-	nemo_undo_manager_attach (application->undo_manager, G_OBJECT (window));
 
 	slot = nemo_window_pane_open_slot (window->details->active_pane, 0);
 	nemo_window_set_active_slot (window, slot);
@@ -2195,9 +2195,11 @@ nemo_window_class_init (NemoWindowClass *class)
 }
 
 NemoWindow *
-nemo_window_new (GdkScreen *screen)
+nemo_window_new (GtkApplication *application,
+		     GdkScreen      *screen)
 {
 	return g_object_new (NEMO_TYPE_WINDOW,
+			     "application", application,
 			     "screen", screen,
 			     NULL);
 }
