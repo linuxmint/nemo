@@ -99,38 +99,6 @@ show_bogus_bookmark_window (NemoWindow *window,
 	g_free (detail);
 }
 
-static GtkWindow *
-get_or_create_bookmarks_window (NemoWindow *window)
-{
-	GObject *undo_manager_source;
-
-	undo_manager_source = G_OBJECT (window);
-
-	if (bookmarks_window == NULL) {
-		bookmarks_window = create_bookmarks_window (window->details->bookmark_list,
-		                                            undo_manager_source);
-	} else {
-		edit_bookmarks_dialog_set_signals (undo_manager_source);
-	}
-
-	return bookmarks_window;
-}
-
-/**
- * nemo_bookmarks_exiting:
- * 
- * Last chance to save state before app exits.
- * Called when application exits; don't call from anywhere else.
- **/
-void
-nemo_bookmarks_exiting (void)
-{
-	if (bookmarks_window != NULL) {
-		nemo_bookmarks_window_save_geometry (bookmarks_window);
-		gtk_widget_destroy (GTK_WIDGET (bookmarks_window));
-	}
-}
-
 /**
  * add_bookmark_for_current_location
  * 
@@ -156,13 +124,14 @@ nemo_window_add_bookmark_for_current_location (NemoWindow *window)
 void
 nemo_window_edit_bookmarks (NemoWindow *window)
 {
-	GtkWindow *dialog;
+	if (bookmarks_window == NULL) {
+		bookmarks_window = nemo_bookmarks_window_new (window, window->details->bookmark_list);
+		g_object_add_weak_pointer (G_OBJECT (bookmarks_window), (gpointer *) &bookmarks_window);
+	}
 
-	dialog = get_or_create_bookmarks_window (window);
-
-	gtk_window_set_screen (
-		dialog, gtk_window_get_screen (GTK_WINDOW (window)));
-        gtk_window_present (dialog);
+	gtk_window_set_transient_for (bookmarks_window, GTK_WINDOW (window));
+	gtk_window_set_screen (GTK_WINDOW (bookmarks_window), gtk_window_get_screen (GTK_WINDOW (window)));
+        gtk_window_present (bookmarks_window);
 }
 
 static void

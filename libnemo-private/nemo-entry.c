@@ -34,14 +34,12 @@
 #include <glib/gi18n.h>
 
 struct NemoEntryDetails {
-	gboolean user_edit;
 	gboolean special_tab_handling;
 
 	guint select_idle_id;
 };
 
 enum {
-	USER_CHANGED,
 	SELECTION_CHANGED,
 	LAST_SIGNAL
 };
@@ -59,8 +57,6 @@ static void
 nemo_entry_init (NemoEntry *entry)
 {
 	entry->details = g_new0 (NemoEntryDetails, 1);
-	
-	entry->details->user_edit = TRUE;
 }
 
 GtkWidget *
@@ -246,10 +242,7 @@ nemo_entry_set_text (NemoEntry *entry, const gchar *text)
 {
 	g_return_if_fail (NEMO_IS_ENTRY (entry));
 
-	entry->details->user_edit = FALSE;
 	gtk_entry_set_text (GTK_ENTRY (entry), text);
-	entry->details->user_edit = TRUE;
-	
 	g_signal_emit (entry, signals[SELECTION_CHANGED], 0);
 }
 
@@ -297,15 +290,6 @@ static void
 nemo_entry_insert_text (GtkEditable *editable, const gchar *text,
 			    int length, int *position)
 {
-	NemoEntry *entry;
-
-	entry = NEMO_ENTRY(editable);
-
-	/* Fire off user changed signals */
-	if (entry->details->user_edit) {
-		g_signal_emit (editable, signals[USER_CHANGED], 0);
-	}
-
 	parent_editable_interface->insert_text (editable, text, length, position);
 
 	g_signal_emit (editable, signals[SELECTION_CHANGED], 0);
@@ -314,15 +298,6 @@ nemo_entry_insert_text (GtkEditable *editable, const gchar *text,
 static void 
 nemo_entry_delete_text (GtkEditable *editable, int start_pos, int end_pos)
 {
-	NemoEntry *entry;
-	
-	entry = NEMO_ENTRY (editable);
-
-	/* Fire off user changed signals */
-	if (entry->details->user_edit) {
-		g_signal_emit (editable, signals[USER_CHANGED], 0);
-	}
-
 	parent_editable_interface->delete_text (editable, start_pos, end_pos);
 
 	g_signal_emit (editable, signals[SELECTION_CHANGED], 0);
@@ -382,14 +357,6 @@ nemo_entry_class_init (NemoEntryClass *class)
 	gobject_class->finalize = nemo_entry_finalize;
 
 	/* Set up signals */
-	signals[USER_CHANGED] = g_signal_new
-		("user_changed",
-		 G_TYPE_FROM_CLASS (class),
-		 G_SIGNAL_RUN_LAST,
-		 G_STRUCT_OFFSET (NemoEntryClass, user_changed),
-		 NULL, NULL,
-		 g_cclosure_marshal_VOID__VOID,
-		 G_TYPE_NONE, 0);
 	signals[SELECTION_CHANGED] = g_signal_new
 		("selection_changed",
 		 G_TYPE_FROM_CLASS (class),

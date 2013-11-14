@@ -29,11 +29,11 @@
 #define NEMO_BOOKMARKS_WINDOW_H
 
 #include <gtk/gtk.h>
+
+#include "nemo-window.h"
 #include "nemo-bookmark-list.h"
 
-GtkWindow *create_bookmarks_window                 (NemoBookmarkList *bookmarks,
-						    GObject              *undo_manager_source);
-void       nemo_bookmarks_window_save_geometry (GtkWindow            *window);
-void	   edit_bookmarks_dialog_set_signals	   (GObject 		 *undo_manager_source);
+GtkWindow *nemo_bookmarks_window_new (NemoWindow       *parent_window,
+					  NemoBookmarkList *bookmarks);
 
 #endif /* NEMO_BOOKMARKS_WINDOW_H */
