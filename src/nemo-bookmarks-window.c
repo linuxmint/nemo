@@ -29,9 +29,7 @@
 #include "nemo-bookmarks-window.h"
 #include "nemo-window.h"
 
-#include <libnemo-private/nemo-undo.h>
 #include <libnemo-private/nemo-global-preferences.h>
-#include <libnemo-private/nemo-undo-signal-handlers.h>
 
 #include <eel/eel-gtk-extensions.h>
 #include <eel/eel-gnome-extensions.h>
@@ -267,7 +265,6 @@ create_bookmarks_window (NemoBookmarkList *list, GObject *undo_manager_source)
 	jump_button = (GtkWidget *)gtk_builder_get_object (builder, "bookmark_jump_button");
 
 	set_up_close_accelerator (window);
-	nemo_undo_share_undo_manager (G_OBJECT (window), undo_manager_source);
 
 	gtk_window_set_wmclass (GTK_WINDOW (window), "bookmarks", "Nemo");
 	nemo_bookmarks_window_restore_geometry (window);

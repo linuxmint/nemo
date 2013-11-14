@@ -60,7 +60,6 @@
 #include <libnemo-private/nemo-module.h>
 #include <libnemo-private/nemo-signaller.h>
 #include <libnemo-private/nemo-ui-utilities.h>
-#include <libnemo-private/nemo-undo-manager.h>
 #include <libnemo-extension/nemo-menu-provider.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_APPLICATION
@@ -401,8 +400,6 @@ nemo_application_create_window (NemoApplication *application,
 	}
 	g_free (geometry_string);
 
-	nemo_undo_manager_attach (application->undo_manager, G_OBJECT (window));
-
 	DEBUG ("Creating a new navigation window");
 	
 	return window;
@@ -679,7 +676,6 @@ nemo_application_finalize (GObject *object)
 
 	nemo_bookmarks_exiting ();
 
-	g_clear_object (&application->undo_manager);
 	g_clear_object (&application->priv->volume_monitor);
 	g_clear_object (&application->priv->progress_handler);
 
@@ -1121,9 +1117,6 @@ nemo_application_startup (GApplication *app)
 
 	/* initialize the previewer singleton */
 	//nemo_previewer_get_singleton ();
-
-	/* create an undo manager */
-	self->undo_manager = nemo_undo_manager_new ();
 
 	/* create DBus manager */
 	nemo_dbus_manager_start (app);

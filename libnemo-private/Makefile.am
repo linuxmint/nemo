@@ -182,15 +182,6 @@ libnemo_private_la_SOURCES = \
 	nemo-tree-view-drag-dest.h \
 	nemo-ui-utilities.c \
 	nemo-ui-utilities.h \
-	nemo-undo-manager.c \
-	nemo-undo-manager.h \
-	nemo-undo-private.h \
-	nemo-undo-signal-handlers.c \
-	nemo-undo-signal-handlers.h \
-	nemo-undo-transaction.c \
-	nemo-undo-transaction.h \
-	nemo-undo.c \
-	nemo-undo.h \
 	nemo-vfs-directory.c \
 	nemo-vfs-directory.h \
 	nemo-vfs-file.c \

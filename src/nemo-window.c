@@ -64,7 +64,6 @@
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-clipboard.h>
-#include <libnemo-private/nemo-undo.h>
 #include <libnemo-private/nemo-search-directory.h>
 #include <libnemo-private/nemo-signaller.h>
 
