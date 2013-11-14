@@ -28,8 +28,6 @@
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 
-#include <libnemo-private/nemo-undo-manager.h>
-
 #include "nemo-window.h"
 
 #define NEMO_DESKTOP_ICON_VIEW_IID	"OAFIID:Nemo_File_Manager_Desktop_Icon_View"
@@ -55,8 +53,6 @@ typedef struct _NemoApplicationPriv NemoApplicationPriv;
 
 typedef struct {
 	GtkApplication parent;
-
-	NemoUndoManager *undo_manager;
 
 	NemoApplicationPriv *priv;
 } NemoApplication;

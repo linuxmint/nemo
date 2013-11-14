@@ -29,7 +29,6 @@
 
 #include <string.h>
 #include "nemo-global-preferences.h"
-#include "nemo-undo-signal-handlers.h"
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
@@ -62,8 +61,6 @@ nemo_entry_init (NemoEntry *entry)
 	entry->details = g_new0 (NemoEntryDetails, 1);
 	
 	entry->details->user_edit = TRUE;
-
-	nemo_undo_set_up_nemo_entry_for_undo (entry);
 }
 
 GtkWidget *

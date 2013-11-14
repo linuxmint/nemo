@@ -29,9 +29,8 @@
 #include "nemo-bookmarks-window.h"
 #include "nemo-window.h"
 
-#include <libnemo-private/nemo-undo.h>
 #include <libnemo-private/nemo-global-preferences.h>
-#include <libnemo-private/nemo-undo-signal-handlers.h>
+#include <libnemo-private/nemo-entry.h>
 
 #include <eel/eel-gtk-extensions.h>
 #include <eel/eel-gnome-extensions.h>
@@ -277,7 +276,6 @@ create_bookmarks_window (NemoBookmarkList *list, GObject *undo_manager_source)
 	sort_button = (GtkWidget *)gtk_builder_get_object (builder, "bookmark_sort_button");
 
 	set_up_close_accelerator (window);
-	nemo_undo_share_undo_manager (G_OBJECT (window), undo_manager_source);
 
 	gtk_window_set_wmclass (GTK_WINDOW (window), "bookmarks", "Nemo");
 	nemo_bookmarks_window_restore_geometry (window);
@@ -924,10 +922,6 @@ on_window_hide_event (GtkWidget *widget,
 		      gpointer user_data)
 {
 	nemo_bookmarks_window_save_geometry (GTK_WINDOW (widget));
-
-	/* Disable undo for entry widgets */
-	nemo_undo_unregister (G_OBJECT (name_field));
-	nemo_undo_unregister (G_OBJECT (uri_field));
 
 	/* restore_geometry only works after window is hidden */
 	g_idle_add (restore_geometry, widget);

@@ -59,7 +59,6 @@
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <libnemo-private/nemo-module.h>
-#include <libnemo-private/nemo-undo-manager.h>
 #include <libnemo-private/nemo-program-choosing.h>
 #include <libnemo-private/nemo-search-directory.h>
 #include <libnemo-private/nemo-search-engine.h>
