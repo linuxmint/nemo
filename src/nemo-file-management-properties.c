@@ -489,27 +489,27 @@ create_date_format_menu (GtkBuilder *builder)
 {
 	GtkComboBoxText *combo_box;
 	gchar *date_string;
-	time_t now_raw;
-	struct tm* now;
+	GDateTime *now;
 
 	combo_box = GTK_COMBO_BOX_TEXT
 		(gtk_builder_get_object (builder,
 					 NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET));
 
-	now_raw = time (NULL);
-	now = localtime (&now_raw);
+	now = g_date_time_new_now_local ();
 
-	date_string = eel_strdup_strftime ("%c", now);
+	date_string = g_date_time_format (now, "%c");
 	gtk_combo_box_text_append_text (combo_box, date_string);
 	g_free (date_string);
 
-	date_string = eel_strdup_strftime ("%Y-%m-%d %H:%M:%S", now);
+	date_string = g_date_time_format (now, "%Y-%m-%d %H:%M:%S");
 	gtk_combo_box_text_append_text (combo_box, date_string);
 	g_free (date_string);
 
-	date_string = eel_strdup_strftime (_("today at %-I:%M:%S %p"), now);
+	date_string = g_date_time_format (now, _("today at %-I:%M:%S %p"));
 	gtk_combo_box_text_append_text (combo_box, date_string);
 	g_free (date_string);
+
+	g_date_time_unref (now);
 }
 
 static void

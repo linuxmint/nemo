@@ -1529,8 +1529,7 @@ activate_files (ActivateParameters *parameters)
 
 			uri = nemo_file_get_activation_uri (file);
 			f = g_file_new_for_uri (uri);
-			nemo_window_slot_open_location (parameters->slot,
-							    f, flags, NULL);
+			nemo_window_slot_open_location (parameters->slot, f, flags);
 			g_object_unref (f);
 			g_free (uri);
 		}

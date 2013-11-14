@@ -121,8 +121,8 @@
 #define SNAP_HORIZONTAL(func,x) ((func ((double)((x) - DESKTOP_PAD_HORIZONTAL) / SNAP_SIZE_X) * SNAP_SIZE_X) + DESKTOP_PAD_HORIZONTAL)
 #define SNAP_VERTICAL(func, y) ((func ((double)((y) - DESKTOP_PAD_VERTICAL) / SNAP_SIZE_Y) * SNAP_SIZE_Y) + DESKTOP_PAD_VERTICAL)
 
-#define SNAP_NEAREST_HORIZONTAL(x) SNAP_HORIZONTAL (eel_round, x)
-#define SNAP_NEAREST_VERTICAL(y) SNAP_VERTICAL (eel_round, y)
+#define SNAP_NEAREST_HORIZONTAL(x) SNAP_HORIZONTAL (floor, x + .5)
+#define SNAP_NEAREST_VERTICAL(y) SNAP_VERTICAL (floor, y + .5)
 
 #define SNAP_CEIL_HORIZONTAL(x) SNAP_HORIZONTAL (ceil, x)
 #define SNAP_CEIL_VERTICAL(y) SNAP_VERTICAL (ceil, y)
@@ -4384,7 +4384,7 @@ nemo_icon_container_did_not_drag (NemoIconContainer *container,
 		g_object_get (G_OBJECT (gtk_widget_get_settings (GTK_WIDGET (container))), 
 			      "gtk-double-click-time", &double_click_time,
 			      NULL);
-		current_time = eel_get_system_time ();
+		current_time = g_get_monotonic_time ();
 		if (current_time - last_click_time < double_click_time * 1000) {
 			click_count++;
 		} else {
@@ -4432,7 +4432,7 @@ clicked_within_double_click_interval (NemoIconContainer *container)
 	g_object_get (G_OBJECT (gtk_widget_get_settings (GTK_WIDGET (container))), 
 		      "gtk-double-click-time", &double_click_time,
 		      NULL);
-	current_time = eel_get_system_time ();
+	current_time = g_get_monotonic_time ();
 	if (current_time - last_click_time < double_click_time * 1000) {
 		click_count++;
 	} else {

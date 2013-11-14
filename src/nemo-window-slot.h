@@ -132,26 +132,16 @@ char *  nemo_window_slot_get_location_uri		   (NemoWindowSlot *slot);
 
 void    nemo_window_slot_reload			   (NemoWindowSlot *slot);
 
+/* convenience wrapper without selection and callback/user_data */
+#define nemo_window_slot_open_location(slot, location, flags)\
+	nemo_window_slot_open_location_full(slot, location, flags, NULL, NULL, NULL)
+
 void nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 					      GFile *location,
 					      NemoWindowOpenFlags flags,
 					      GList *new_selection, /* NemoFile list */
 					      NemoWindowGoToCallback callback,
 					      gpointer user_data);
-
-/* convenience wrapper without callback/user_data */
-#define nemo_window_slot_open_location(slot, location, flags, new_selection)\
-	nemo_window_slot_open_location_full(slot, location, flags, new_selection, NULL, NULL)
-
-/* these are wrappers that always open according to current mode */
-#define nemo_window_slot_go_to(slot, location, new_tab) \
-	nemo_window_slot_open_location(slot, location, \
-					   (new_tab ? NEMO_WINDOW_OPEN_FLAG_NEW_TAB : 0), \
-					   NULL)
-#define nemo_window_slot_go_to_full(slot, location, new_tab, callback, user_data) \
-	nemo_window_slot_open_location_full(slot, location, \
-						(new_tab ? NEMO_WINDOW_OPEN_FLAG_NEW_TAB : 0), \
-						NULL, callback, user_data)
 
 void			nemo_window_slot_stop_loading	      (NemoWindowSlot	*slot);
 
@@ -162,10 +152,9 @@ gboolean		nemo_window_slot_content_view_matches_iid (NemoWindowSlot	*slot,
 								       const char		*iid);
 
 void    nemo_window_slot_go_home			   (NemoWindowSlot *slot,
-							    gboolean            new_tab);
+							    NemoWindowOpenFlags flags);
 void    nemo_window_slot_go_up                         (NemoWindowSlot *slot,
-							    gboolean close_behind,
-							    gboolean new_tab);
+							    NemoWindowOpenFlags flags);
 
 void    nemo_window_slot_set_content_view_widget	   (NemoWindowSlot *slot,
 							    NemoView       *content_view);

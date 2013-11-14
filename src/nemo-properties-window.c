@@ -1188,8 +1188,6 @@ static GtkLabel *
 attach_label (GtkGrid *grid,
 	      GtkWidget *sibling,
 	      const char *initial_text,
-	      gboolean right_aligned,
-	      gboolean bold,
 	      gboolean ellipsize_text,
 	      gboolean selectable,
 	      gboolean mnemonic)
@@ -1199,8 +1197,7 @@ attach_label (GtkGrid *grid,
 	if (ellipsize_text) {
 		label_field = gtk_label_new (initial_text);
                 gtk_label_set_ellipsize (GTK_LABEL (label_field),
-                                         right_aligned ? PANGO_ELLIPSIZE_START :
-                                                         PANGO_ELLIPSIZE_END);
+					 PANGO_ELLIPSIZE_END);
 	} else if (mnemonic) {
 		label_field = gtk_label_new_with_mnemonic (initial_text);
 	} else {
@@ -1210,11 +1207,8 @@ attach_label (GtkGrid *grid,
 	if (selectable) {
 		gtk_label_set_selectable (GTK_LABEL (label_field), TRUE);
 	}
-	
-	if (bold) {
-		eel_gtk_label_make_bold (GTK_LABEL (label_field));
-	}
-	gtk_misc_set_alignment (GTK_MISC (label_field), right_aligned ? 1 : 0, 0.5);
+
+	gtk_misc_set_alignment (GTK_MISC (label_field), 0, 0.5);
 	gtk_widget_show (label_field);
 
 	if (ellipsize_text) {
@@ -1236,7 +1230,7 @@ attach_value_label (GtkGrid *grid,
 		    GtkWidget *sibling,
 		    const char *initial_text)
 {
-	return attach_label (grid, sibling, initial_text, FALSE, FALSE, FALSE, TRUE, FALSE);
+	return attach_label (grid, sibling, initial_text, FALSE, TRUE, FALSE);
 }
 
 static GtkLabel *
@@ -1244,7 +1238,7 @@ attach_ellipsizing_value_label (GtkGrid *grid,
 				GtkWidget *sibling,
 				const char *initial_text)
 {
-	return attach_label (grid, sibling, initial_text, FALSE, FALSE, TRUE, TRUE, FALSE);
+	return attach_label (grid, sibling, initial_text, TRUE, TRUE, FALSE);
 }
 
 static GtkWidget*
@@ -2235,7 +2229,7 @@ static GtkLabel *
 attach_title_field (GtkGrid *grid,
 		    const char *title)
 {
-	return attach_label (grid, NULL, title, FALSE, FALSE, FALSE, FALSE, TRUE);
+	return attach_label (grid, NULL, title, FALSE, FALSE, TRUE);
 }		      
 
 #define INCONSISTENT_STATE_STRING \

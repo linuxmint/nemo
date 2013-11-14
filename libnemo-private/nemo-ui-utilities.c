@@ -111,26 +111,6 @@ nemo_action_from_menu_item (NemoMenuItem *item)
 	return action;
 }
 
-gboolean
-nemo_event_should_open_in_new_tab (void)
-{
-	GdkEvent *event;
-
-	event = gtk_get_current_event ();
-
-	if (event == NULL) {
-		return FALSE;
-	}
-
-	if (event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) {
-		return event->button.button == 2;
-	}
-
-	gdk_event_free (event);
-
-	return FALSE;
-}
-
 GdkPixbuf *
 nemo_ui_get_menu_icon (const char *icon_name)
 {

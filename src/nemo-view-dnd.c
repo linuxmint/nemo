@@ -210,13 +210,13 @@ nemo_view_handle_netscape_url_drop (NemoView  *view,
 	}
 
 	if (action == GDK_ACTION_LINK) {
-		if (eel_str_is_empty (title)) {
+		if (g_strcmp0 (title, NULL) == 0) {
 			link_name = g_file_get_basename (f);
 		} else {
 			link_name = g_strdup (title);
 		}
 
-		if (!eel_str_is_empty (link_name)) {
+		if (g_strcmp0 (link_name, NULL) != 0) {
 			NetscapeUrlDropLink *data;
 
 			data = g_slice_new0 (NetscapeUrlDropLink);

@@ -351,47 +351,6 @@ nemo_application_close_all_windows (NemoApplication *self)
 }
 
 static gboolean
-nemo_window_delete_event_callback (GtkWidget *widget,
-				       GdkEvent *event,
-				       gpointer user_data)
-{
-	NemoWindow *window;
-
-	window = NEMO_WINDOW (widget);
-	nemo_window_close (window);
-
-	return TRUE;
-}				       
-
-
-static NemoWindow *
-create_window (NemoApplication *application,
-	       GdkScreen *screen)
-{
-	NemoWindow *window;
-	
-	g_return_val_if_fail (NEMO_IS_APPLICATION (application), NULL);
-	
-	window = g_object_new (NEMO_TYPE_WINDOW,
-			       "screen", screen,
-			       NULL);
-
-	g_signal_connect_data (window, "delete_event",
-			       G_CALLBACK (nemo_window_delete_event_callback), NULL, NULL,
-			       G_CONNECT_AFTER);
-
-	gtk_application_add_window (GTK_APPLICATION (application),
-				    GTK_WINDOW (window));
-
-	/* Do not yet show the window. It will be shown later on if it can
-	 * successfully display its initial URI. Otherwise it will be destroyed
-	 * without ever having seen the light of day.
-	 */
-
-	return window;
-}
-
-static gboolean
 another_navigation_window_already_showing (NemoApplication *application,
 					   NemoWindow *the_window)
 {
@@ -417,7 +376,9 @@ nemo_application_create_window (NemoApplication *application,
 
 	g_return_val_if_fail (NEMO_IS_APPLICATION (application), NULL);
 
-	window = create_window (application, screen);
+	window = nemo_window_new (screen);
+	gtk_application_add_window (GTK_APPLICATION (application),
+				    GTK_WINDOW (window));
 
 	maximized = g_settings_get_boolean
 		(nemo_window_state, NEMO_WINDOW_STATE_MAXIMIZED);
@@ -576,7 +537,7 @@ mount_removed_callback (GVolumeMonitor *monitor,
                 nemo_window_slot_go_home (slot, FALSE);
 		} else {
 			computer = g_file_new_for_path (g_get_home_dir ());
-			nemo_window_slot_go_to (slot, computer, FALSE);
+			nemo_window_slot_open_location (slot, computer, 0);
 			g_object_unref(computer);
 		}
 	}
@@ -649,10 +610,8 @@ nemo_application_open_location (NemoApplication *application,
 		sel_list = g_list_prepend (sel_list, nemo_file_get (selection));
 	}
 
-	nemo_window_slot_open_location (nemo_window_get_active_slot (window),
-					    location,
-					    0,
-					    sel_list);
+	nemo_window_slot_open_location_full (nemo_window_get_active_slot (window), location,
+						 0, sel_list, NULL, NULL);
 
 	if (sel_list != NULL) {
 		nemo_file_list_free (sel_list);

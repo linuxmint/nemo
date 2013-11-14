@@ -59,6 +59,11 @@
 /* Cool-off period between last file modification time and thumbnail creation */
 #define THUMBNAIL_CREATION_DELAY_SECS 3
 
+#define NEMO_THUMBNAIL_FRAME_LEFT 3
+#define NEMO_THUMBNAIL_FRAME_TOP 3
+#define NEMO_THUMBNAIL_FRAME_RIGHT 3
+#define NEMO_THUMBNAIL_FRAME_BOTTOM 3
+
 static gpointer thumbnail_thread_start (gpointer data);
 
 /* structure used for making thumbnails, associating a uri with where the thumbnail is to be stored */
@@ -185,58 +190,6 @@ thumbnail_thread_starter_cb (gpointer data)
 	return FALSE;
 }
 
-void
-nemo_update_thumbnail_file_copied (const char *source_file_uri,
-				       const char *destination_file_uri)
-{
-	char *old_thumbnail_path;
-	time_t mtime;
-	GdkPixbuf *pixbuf;
-	GnomeDesktopThumbnailFactory *factory;
-	
-	old_thumbnail_path = gnome_desktop_thumbnail_path_for_uri (source_file_uri, GNOME_DESKTOP_THUMBNAIL_SIZE_NORMAL);
-	if (old_thumbnail_path != NULL &&
-	    g_file_test (old_thumbnail_path, G_FILE_TEST_EXISTS)) {
-		if (get_file_mtime (destination_file_uri, &mtime)) {
-			pixbuf = gdk_pixbuf_new_from_file (old_thumbnail_path, NULL);
-			
-			if (pixbuf && gnome_desktop_thumbnail_has_uri (pixbuf, source_file_uri)) {
-				factory = get_thumbnail_factory ();
-				gnome_desktop_thumbnail_factory_save_thumbnail (factory,
-										pixbuf,
-										destination_file_uri,
-										mtime);
-			}
-			
-			if (pixbuf) {
-				g_object_unref (pixbuf);
-			}
-		}
-	}
-
-	g_free (old_thumbnail_path);
-}
-
-void
-nemo_update_thumbnail_file_renamed (const char *source_file_uri,
-					const char *destination_file_uri)
-{
-	nemo_update_thumbnail_file_copied (source_file_uri, destination_file_uri);
-	nemo_remove_thumbnail_for_file (source_file_uri);
-}
-
-void 
-nemo_remove_thumbnail_for_file (const char *file_uri)
-{
-	char *thumbnail_path;
-	
-	thumbnail_path = gnome_desktop_thumbnail_path_for_uri (file_uri, GNOME_DESKTOP_THUMBNAIL_SIZE_NORMAL);
-	if (thumbnail_path != NULL) {
-		unlink (thumbnail_path);
-	}
-	g_free (thumbnail_path);
-}
-
 static GdkPixbuf *
 nemo_get_thumbnail_frame (void)
 {
@@ -282,43 +235,6 @@ nemo_thumbnail_frame_image (GdkPixbuf **pixbuf)
 	*pixbuf = pixbuf_with_frame;
 }
 
-GdkPixbuf *
-nemo_thumbnail_unframe_image (GdkPixbuf *pixbuf)
-{
-	GdkPixbuf *pixbuf_without_frame, *frame;
-	int left_offset, top_offset, right_offset, bottom_offset;
-	int w, h;
-		
-	/* The pixbuf isn't already framed (i.e., it was not made by
-	 * an old Nemo), so we must embed it in a frame.
-	 */
-
-	frame = nemo_get_thumbnail_frame ();
-	if (frame == NULL) {
-		return NULL;
-	}
-	
-	left_offset = NEMO_THUMBNAIL_FRAME_LEFT;
-	top_offset = NEMO_THUMBNAIL_FRAME_TOP;
-	right_offset = NEMO_THUMBNAIL_FRAME_RIGHT;
-	bottom_offset = NEMO_THUMBNAIL_FRAME_BOTTOM;
-
-	w = gdk_pixbuf_get_width (pixbuf) - left_offset - right_offset;
-	h = gdk_pixbuf_get_height (pixbuf) - top_offset - bottom_offset;
-	pixbuf_without_frame =
-		gdk_pixbuf_new (gdk_pixbuf_get_colorspace (pixbuf),
-				gdk_pixbuf_get_has_alpha (pixbuf),
-				gdk_pixbuf_get_bits_per_sample (pixbuf),
-				w, h);
-
-	gdk_pixbuf_copy_area (pixbuf,
-			      left_offset, top_offset,
-			      w, h,
-			      pixbuf_without_frame, 0, 0);
-	
-	return pixbuf_without_frame;
-}
-
 void
 nemo_thumbnail_remove_from_queue (const char *file_uri)
 {
@@ -349,45 +265,6 @@ nemo_thumbnail_remove_from_queue (const char *file_uri)
 	
 #ifdef DEBUG_THUMBNAILS
 	g_message ("(Remove from queue) Unlocking mutex\n");
-#endif
-	pthread_mutex_unlock (&thumbnails_mutex);
-}
-
-void
-nemo_thumbnail_remove_all_from_queue (void)
-{
-	NemoThumbnailInfo *info;
-	GList *l, *next;
-	
-#ifdef DEBUG_THUMBNAILS
-	g_message ("(Remove all from queue) Locking mutex\n");
-#endif
-	pthread_mutex_lock (&thumbnails_mutex);
-
-	/*********************************
-	 * MUTEX LOCKED
-	 *********************************/
-
-	l = thumbnails_to_make.head;
-	while (l != NULL) {
-		info = l->data;
-		next = l->next;
-		if (info != currently_thumbnailing) {
-			g_hash_table_remove (thumbnails_to_make_hash, 
-					     info->image_uri);
-			free_thumbnail_info (info);
-			g_queue_delete_link ((GQueue *)&thumbnails_to_make, l);
-		}
-
-		l = next;
-	}
-	
-	/*********************************
-	 * MUTEX UNLOCKED
-	 *********************************/
-	
-#ifdef DEBUG_THUMBNAILS
-	g_message ("(Remove all from queue) Unlocking mutex\n");
 #endif
 	pthread_mutex_unlock (&thumbnails_mutex);
 }

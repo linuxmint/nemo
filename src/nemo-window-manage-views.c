@@ -320,7 +320,7 @@ viewed_file_changed_callback (NemoFile *file,
 					nemo_path_bar_clear_buttons (NEMO_PATH_BAR (slot->pane->path_bar));
 				}
 				
-				nemo_window_slot_go_to (slot, go_to_file, FALSE);
+				nemo_window_slot_open_location (slot, go_to_file, 0);
 				g_object_unref (go_to_file);
 			} else {
 				nemo_window_slot_go_home (slot, FALSE);
@@ -913,7 +913,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 						root = g_file_new_for_path ("/");
 						/* the last fallback is to go to a known place that can't be deleted! */
-						nemo_window_slot_go_to (slot, location, FALSE);
+						nemo_window_slot_open_location (slot, location, 0);
 						g_object_unref (root);
 					}
 				} else {
@@ -1769,7 +1769,7 @@ void
 nemo_window_back_or_forward (NemoWindow *window, 
 				 gboolean back,
 				 guint distance,
-				 gboolean new_tab)
+				 NemoWindowOpenFlags flags)
 {
 	NemoWindowSlot *slot;
 	GList *list;
@@ -1795,10 +1795,8 @@ nemo_window_back_or_forward (NemoWindow *window,
         bookmark = g_list_nth_data (list, distance);
 	location = nemo_bookmark_get_location (bookmark);
 
-	if (new_tab) {
-		nemo_window_slot_open_location_full (slot, location,
-							 NEMO_WINDOW_OPEN_FLAG_NEW_TAB,
-							 NULL, NULL, NULL);
+	if (flags != 0) {
+		nemo_window_slot_open_location (slot, location, flags);
 	} else {
 		char *scroll_pos;
 

@@ -1049,7 +1049,7 @@ nemo_view_confirm_multiple (GtkWindow *parent_window,
 static gboolean
 selection_contains_one_item_in_menu_callback (NemoView *view, GList *selection)
 {
-	if (eel_g_list_exactly_one_item (selection)) {
+	if (g_list_length (selection) == 1) {
 		return TRUE;
 	}
 
@@ -1958,7 +1958,12 @@ new_folder_done (GFile *new_folder,
 
  fail:
 	g_hash_table_destroy (data->added_locations);
-	eel_remove_weak_pointer (&data->directory_view);
+
+	if (data->directory_view != NULL) {
+		g_object_remove_weak_pointer (G_OBJECT (data->directory_view),
+					      (gpointer *) &data->directory_view);
+	}
+
 	g_free (data);
 }
 
@@ -1972,7 +1977,8 @@ new_folder_data_new (NemoView *directory_view)
 	data->directory_view = directory_view;
 	data->added_locations = g_hash_table_new_full (g_file_hash, (GEqualFunc)g_file_equal,
 						       g_object_unref, NULL);
-	eel_add_weak_pointer (&data->directory_view);
+	g_object_add_weak_pointer (G_OBJECT (data->directory_view),
+				   (gpointer *) &data->directory_view);
 
 	return data;
 }
@@ -3301,7 +3307,11 @@ copy_move_done_data_free (CopyMoveDoneData *data)
 {
 	g_assert (data != NULL);
 	
-	eel_remove_weak_pointer (&data->directory_view);
+	if (data->directory_view != NULL) {
+		g_object_remove_weak_pointer (G_OBJECT (data->directory_view),
+					      (gpointer *) &data->directory_view);
+	}
+
 	nemo_file_list_free (data->added_files);
 	g_free (data);
 }
@@ -3329,7 +3339,8 @@ pre_copy_move (NemoView *directory_view)
 	copy_move_done_data = g_new0 (CopyMoveDoneData, 1);
 	copy_move_done_data->directory_view = directory_view;
 
-	eel_add_weak_pointer (&copy_move_done_data->directory_view);
+	g_object_add_weak_pointer (G_OBJECT (copy_move_done_data->directory_view),
+				   (gpointer *) &copy_move_done_data->directory_view);
 
 	/* We need to run after the default handler adds the folder we want to
 	 * operate on. The ADD_FILE signal is registered as G_SIGNAL_RUN_LAST, so we
@@ -3865,7 +3876,7 @@ changes_timeout_callback (gpointer data)
 
 	g_object_ref (G_OBJECT (view));
 
-	now = eel_get_system_time();
+	now = g_get_monotonic_time ();
 	time_delta = now - view->details->last_queued;
 
 	if (time_delta < UPDATE_INTERVAL_RESET*1000) {
@@ -3890,7 +3901,7 @@ static void
 schedule_changes (NemoView *view)
 {
 	/* Remember when the change was queued */
-	view->details->last_queued = eel_get_system_time();
+	view->details->last_queued = g_get_monotonic_time ();
 
 	/* No need to schedule if there are already changes pending or during loading */
 	if (view->details->changes_timeout_id != 0 ||
@@ -6520,7 +6531,7 @@ action_open_scripts_folder_callback (GtkAction *action,
 	}
 
 	view = NEMO_VIEW (callback_data);
-	nemo_window_slot_go_to (view->details->slot, location, FALSE);
+	nemo_window_slot_open_location (view->details->slot, location, 0);
 
 	eel_show_info_dialog_with_details 
 		(_("All executable files in this folder will appear in the "
@@ -7030,7 +7041,7 @@ action_follow_symlink_callback (GtkAction *action,
         gchar *uri = nemo_file_get_symbolic_link_target_uri (selection->data);
         GFile *location = g_file_new_for_uri (uri);
         g_free (uri);
-        nemo_window_slot_go_to (view->details->slot, location, FALSE);
+	    nemo_window_slot_open_location (view->details->slot, location, 0);
     }
     nemo_file_list_free (selection);
 }
@@ -7712,7 +7723,7 @@ action_connect_to_server_link_callback (GtkAction *action,
 	
 	selection = nemo_view_get_selection (view);
 
-	if (!eel_g_list_exactly_one_item (selection)) {
+	if (g_list_length (selection) != 1) {
 		nemo_file_list_free (selection);
 		return;
 	}
@@ -8563,11 +8574,11 @@ file_should_show_foreach (NemoFile        *file,
 	if (nemo_file_is_nemo_link (file)) {
 		uri = nemo_file_get_activation_uri (file);
 		if (uri != NULL &&
-		    (eel_istr_has_prefix (uri, "ftp:") ||
-		     eel_istr_has_prefix (uri, "ssh:") ||
-		     eel_istr_has_prefix (uri, "sftp:") ||
-		     eel_istr_has_prefix (uri, "dav:") ||
-		     eel_istr_has_prefix (uri, "davs:"))) {
+		    (g_str_has_prefix (uri, "ftp:") ||
+		     g_str_has_prefix (uri, "ssh:") ||
+		     g_str_has_prefix (uri, "sftp:") ||
+		     g_str_has_prefix (uri, "dav:") ||
+		     g_str_has_prefix (uri, "davs:"))) {
 			*show_connect = TRUE;
 		}
 		g_free (uri);

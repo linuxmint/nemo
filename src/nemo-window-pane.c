@@ -186,7 +186,7 @@ search_bar_activate_callback (NemoSearchBar *bar,
 		g_object_unref (query);
 	}
 
-	nemo_window_slot_go_to (pane->active_slot, location, FALSE);
+	nemo_window_slot_open_location (pane->active_slot, location, 0);
 
 	nemo_directory_unref (directory);
 	g_object_unref (location);	
@@ -287,19 +287,15 @@ nemo_window_pane_hide_search_bar (NemoWindowPane *pane)
 
 static void
 navigation_bar_location_changed_callback (GtkWidget *widget,
-					  const char *uri,
+					  GFile *location,
 					  NemoWindowPane *pane)
 {
-	GFile *location;
-
 	nemo_window_pane_hide_search_bar (pane);
 	nemo_window_pane_hide_temporary_bars (pane);
 
 	restore_focus_widget (pane);
 
-	location = g_file_new_for_uri (uri);
-	nemo_window_slot_go_to (pane->active_slot, location, FALSE);
-	g_object_unref (location);
+	nemo_window_slot_open_location (pane->active_slot, location, 0);
 }
 
 static gboolean
@@ -327,9 +323,9 @@ path_bar_location_changed_callback (GtkWidget *widget,
 	/* check whether we already visited the target location */
 	i = bookmark_list_get_uri_index (slot->back_list, location);
 	if (i >= 0) {
-		nemo_window_back_or_forward (pane->window, TRUE, i, FALSE);
+		nemo_window_back_or_forward (pane->window, TRUE, i, 0);
 	} else {
-		nemo_window_slot_go_to (pane->active_slot, location, FALSE);
+		nemo_window_slot_open_location (pane->active_slot, location, 0);
 	}
 }
 
@@ -397,8 +393,7 @@ path_bar_button_released_callback (GtkWidget *widget,
 
 		if (flags != 0) {
 			slot = nemo_window_get_active_slot (pane->window);
-			nemo_window_slot_open_location (slot, location,
-							    flags, NULL);
+			nemo_window_slot_open_location (slot, location, flags);
 			g_object_unref (location);
 			return TRUE;
 		}

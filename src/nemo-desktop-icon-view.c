@@ -654,7 +654,7 @@ trash_link_is_selection (NemoView *view)
 	
 	selection = nemo_view_get_selection (view);
 
-	if (eel_g_list_exactly_one_item (selection) &&
+	if ((g_list_length (selection) == 1) &&
 	    NEMO_IS_DESKTOP_ICON_FILE (selection->data)) {
 		link = nemo_desktop_icon_file_get_link (NEMO_DESKTOP_ICON_FILE (selection->data));
 		/* link may be NULL if the link was recently removed (unmounted) */

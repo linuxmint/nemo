@@ -797,7 +797,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 		      NULL);
 
 	/* Determine click count */
-	current_time = eel_get_system_time ();
+	current_time = g_get_monotonic_time ();
 	if (current_time - last_click_time < double_click_time * 1000) {
 		click_count++;
 	} else {
@@ -1073,9 +1073,10 @@ unload_file_timeout (gpointer data)
 			}
 			gtk_tree_path_free (path);
 		}
-	}
 
-	eel_remove_weak_pointer (&unload_data->view);
+		g_object_remove_weak_pointer (G_OBJECT (unload_data->view),
+					      (gpointer *) &unload_data->view);
+	}
 	
 	if (unload_data->directory) {
 		nemo_directory_unref (unload_data->directory);
@@ -1120,7 +1121,8 @@ row_collapsed_callback (GtkTreeView *treeview, GtkTreeIter *iter, GtkTreePath *p
 	unload_data->file = file;
 	unload_data->directory = directory;
 
-	eel_add_weak_pointer (&unload_data->view);
+	g_object_add_weak_pointer (G_OBJECT (unload_data->view),
+				   (gpointer *) &unload_data->view);
 	
 	g_timeout_add_seconds (COLLAPSE_TO_UNLOAD_DELAY,
 			       unload_file_timeout,

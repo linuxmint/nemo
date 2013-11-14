@@ -2152,7 +2152,7 @@ volume_mounted_cb (GVolume *volume,
 		if (sidebar->go_to_after_mount_slot != NULL) {
 			if ((sidebar->go_to_after_mount_flags & NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW) == 0) {
 				nemo_window_slot_open_location (sidebar->go_to_after_mount_slot, location,
-								    sidebar->go_to_after_mount_flags, NULL);
+								    sidebar->go_to_after_mount_flags);
 			} else {
 				NemoWindow *new, *cur;
 
@@ -2167,8 +2167,10 @@ volume_mounted_cb (GVolume *volume,
 		g_object_unref (G_OBJECT (mount));
 	}
 
-	
-	eel_remove_weak_pointer (&(sidebar->go_to_after_mount_slot));
+	if (sidebar->go_to_after_mount_slot) {
+		g_object_remove_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
+					      (gpointer *) &sidebar->go_to_after_mount_slot);
+	}
 }
 
 static void
@@ -2218,8 +2220,7 @@ open_selected_bookmark (NemoPlacesSidebar *sidebar,
 		/* Navigate to the clicked location */
 		if ((flags & NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW) == 0) {
 			slot = nemo_window_get_active_slot (sidebar->window);
-			nemo_window_slot_open_location (slot, location,
-							    flags, NULL);
+			nemo_window_slot_open_location (slot, location, flags);
 		} else {
 			NemoWindow *cur, *new;
 			
@@ -2248,7 +2249,8 @@ open_selected_bookmark (NemoPlacesSidebar *sidebar,
 
 			slot = nemo_window_get_active_slot (sidebar->window);
 			sidebar->go_to_after_mount_slot = slot;
-			eel_add_weak_pointer (&(sidebar->go_to_after_mount_slot));
+			g_object_add_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
+						   (gpointer *) &sidebar->go_to_after_mount_slot);
 
 			sidebar->go_to_after_mount_flags = flags;
 
@@ -3997,7 +3999,11 @@ nemo_places_sidebar_dispose (GObject *object)
 
     g_clear_object (&sidebar->action_manager);
 
-	eel_remove_weak_pointer (&(sidebar->go_to_after_mount_slot));
+	if (sidebar->go_to_after_mount_slot) {
+		g_object_remove_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
+					      (gpointer *) &sidebar->go_to_after_mount_slot);
+		sidebar->go_to_after_mount_slot = NULL;
+	}
 
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
 					      desktop_setting_changed_callback,

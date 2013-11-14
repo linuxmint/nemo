@@ -217,25 +217,6 @@ fi
 AC_SUBST(WARNING_CFLAGS)
 
 dnl ===========================================================================
-
-dnl strftime checks
-
-AC_TRY_RUN([#include <time.h>
-                int main ()
-                {
-                  char buf[100];
-                  struct tm tm = {0};
-                  tm.tm_year = 99;
-                  if (strftime(buf, 100, "%EY", &tm) == 4 &&
-		      strcmp (buf, "1999")==0)
-                    return 0;
-                  return 1;
-                }
-            ],
-	    AC_DEFINE(HAVE_STRFTIME_EXTENSION, 1, [Define if strftime supports %E and %O modifiers.])
-            )
-
-dnl ===========================================================================
 dnl Check for Tracker
 dnl ===========================================================================
 

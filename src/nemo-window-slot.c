@@ -116,6 +116,9 @@ real_update_query_editor (NemoWindowSlot *slot)
 		nemo_window_slot_add_extra_location_widget (slot, query_editor);
 		gtk_widget_show (query_editor);
 		nemo_query_editor_grab_focus (NEMO_QUERY_EDITOR (query_editor));
+
+		g_object_add_weak_pointer (G_OBJECT (slot->query_editor),
+					   (gpointer *) &slot->query_editor);
 	}
 
 	nemo_directory_unref (directory);
@@ -137,7 +140,7 @@ real_active (NemoWindowSlot *slot)
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (pane->notebook), page_num);
 
 	/* sync window to new slot */
-	nemo_window_sync_status (window);
+	nemo_window_push_status (window, slot->status_text);
 	nemo_window_sync_allow_stop (window, slot);
 	nemo_window_sync_title (window, slot);
 	nemo_window_sync_zoom_widgets (window);
@@ -579,7 +582,7 @@ nemo_window_slot_set_status (NemoWindowSlot *slot,
 
 	window = nemo_window_slot_get_window (slot);
 	if (slot == nemo_window_get_active_slot (window)) {
-		nemo_window_sync_status (window);
+		nemo_window_push_status (window, slot->status_text);
 	}
 }
 
@@ -599,8 +602,6 @@ nemo_window_slot_update_query_editor (NemoWindowSlot *slot)
 	}
 
 	real_update_query_editor (slot);
-
-	eel_add_weak_pointer (&slot->query_editor);
 }
 
 static void
@@ -635,7 +636,6 @@ nemo_window_slot_add_extra_location_widget (NemoWindowSlot *slot,
 char *
 nemo_window_slot_get_current_uri (NemoWindowSlot *slot)
 {
-
 	if (slot->pending_location != NULL) {
 		return g_file_get_uri (slot->pending_location);
 	}
@@ -662,32 +662,22 @@ nemo_window_slot_get_current_view (NemoWindowSlot *slot)
 
 void
 nemo_window_slot_go_home (NemoWindowSlot *slot,
-			      gboolean new_tab)
+			      NemoWindowOpenFlags flags)
 {			      
 	GFile *home;
-	NemoWindowOpenFlags flags;
 
 	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
 
-	if (new_tab) {
-		flags = NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
-	} else {
-		flags = 0;
-	}
-
 	home = g_file_new_for_path (g_get_home_dir ());
-	nemo_window_slot_open_location_full (slot, home, 
-						 flags, NULL, NULL, NULL);
+	nemo_window_slot_open_location (slot, home, flags);
 	g_object_unref (home);
 }
 
 void
 nemo_window_slot_go_up (NemoWindowSlot *slot,
-			    gboolean close_behind,
-			    gboolean new_tab)
+			    NemoWindowOpenFlags flags)
 {
 	GFile *parent;
-	NemoWindowOpenFlags flags;
 
 	if (slot->location == NULL) {
 		return;
@@ -698,18 +688,7 @@ nemo_window_slot_go_up (NemoWindowSlot *slot,
 		return;
 	}
 
-	flags = 0;
-	if (close_behind) {
-		flags |= NEMO_WINDOW_OPEN_FLAG_CLOSE_BEHIND;
-	}
-	if (new_tab) {
-		flags |= NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
-	}
-
-	nemo_window_slot_open_location (slot, parent,
-					    flags,
-					    NULL);
-
+	nemo_window_slot_open_location (slot, parent, flags);
 	g_object_unref (parent);
 }
 
