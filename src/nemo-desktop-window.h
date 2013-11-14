@@ -47,7 +47,6 @@ typedef struct NemoDesktopWindowDetails NemoDesktopWindowDetails;
 typedef struct {
 	NemoWindow parent_spot;
 	NemoDesktopWindowDetails *details;
-        gboolean affect_desktop_on_next_location_change;
 } NemoDesktopWindow;
 
 typedef struct {
@@ -56,7 +55,6 @@ typedef struct {
 
 GType                  nemo_desktop_window_get_type            (void);
 NemoDesktopWindow *nemo_desktop_window_new                 (GdkScreen *screen);
-void                   nemo_desktop_window_update_directory    (NemoDesktopWindow *window);
 gboolean               nemo_desktop_window_loaded              (NemoDesktopWindow *window);
 
 #endif /* NEMO_DESKTOP_WINDOW_H */

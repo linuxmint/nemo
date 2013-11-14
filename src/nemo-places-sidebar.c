@@ -4266,10 +4266,6 @@ nemo_places_sidebar_dispose (GObject *object)
                                           sidebar);
 
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
-					      desktop_setting_changed_callback,
-					      sidebar);
-
-	g_signal_handlers_disconnect_by_func (nemo_preferences,
 					      bookmarks_popup_menu_detach_cb,
 					      sidebar);
 
