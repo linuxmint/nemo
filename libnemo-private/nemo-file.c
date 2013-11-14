@@ -2790,7 +2790,6 @@ get_time (NemoFile *file,
 		return UNKNOWN;
 	}
 
-	time = 0;
 	switch (type) {
 	case NEMO_DATE_TYPE_MODIFIED:
 		time = file->details->mtime;

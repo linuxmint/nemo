@@ -4201,7 +4201,8 @@ create_permission_checkboxes (NemoPropertiesWindow *window,
 	gtk_grid_attach_next_to (page_grid, GTK_WIDGET (check_button_grid),
 				 GTK_WIDGET (owner_perm_label),
 				 GTK_POS_RIGHT, 1, 3);
-	
+
+	/* user */
 	w = add_permissions_checkbox (window,
 				      check_button_grid, 
 				      NULL,
@@ -4218,14 +4219,15 @@ create_permission_checkboxes (NemoPropertiesWindow *window,
 				      owner_perm_label,
 				      is_folder);
 
-	w = add_permissions_checkbox (window,
-				      check_button_grid,
-				      w,
-				      PERMISSIONS_CHECKBOXES_EXECUTE,
-				      UNIX_PERM_USER_EXEC,
-				      owner_perm_label,
-				      is_folder);
+	add_permissions_checkbox (window,
+				  check_button_grid,
+				  w,
+				  PERMISSIONS_CHECKBOXES_EXECUTE,
+				  UNIX_PERM_USER_EXEC,
+				  owner_perm_label,
+				  is_folder);
 
+	/* group */
 	w = add_permissions_checkbox (window,
 				      check_button_grid, 
 				      NULL,
@@ -4242,14 +4244,15 @@ create_permission_checkboxes (NemoPropertiesWindow *window,
 				      group_perm_label,
 				      is_folder);
 	
-	w = add_permissions_checkbox (window,
-				      check_button_grid, 
-				      w,
-				      PERMISSIONS_CHECKBOXES_EXECUTE,
-				      UNIX_PERM_GROUP_EXEC,
-				      group_perm_label,
-				      is_folder);
-	
+	add_permissions_checkbox (window,
+				  check_button_grid, 
+				  w,
+				  PERMISSIONS_CHECKBOXES_EXECUTE,
+				  UNIX_PERM_GROUP_EXEC,
+				  group_perm_label,
+				  is_folder);
+
+	/* other */
 	w = add_permissions_checkbox (window,
 				      check_button_grid, 
 				      NULL,

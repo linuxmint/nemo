@@ -358,22 +358,34 @@ get_eject_icon (NemoPlacesSidebar *sidebar,
 }
 
 static gboolean
-should_show_desktop (void)
-{
-	return g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP);
-}
-
-static gboolean
 is_built_in_bookmark (NemoFile *file)
 {
+	gboolean built_in;
+	gint idx;
+
 	if (nemo_file_is_home (file)) {
 		return TRUE;
 	}
 
-    if (nemo_file_is_desktop_directory (file) && should_show_desktop ())
-        return TRUE;
+	if (nemo_file_is_desktop_directory (file) &&
+        !g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
+		return FALSE;
+	}
 
-	return FALSE;
+	built_in = FALSE;
+
+	for (idx = 0; idx < G_USER_N_DIRECTORIES; idx++) {
+		/* PUBLIC_SHARE and TEMPLATES are not in our built-in list */
+		if (nemo_file_is_user_special_directory (file, idx)) {
+			if (idx != G_USER_DIRECTORY_PUBLIC_SHARE &&  idx != G_USER_DIRECTORY_TEMPLATES) {
+				built_in = TRUE;
+			}
+
+			break;
+		}
+	}
+
+	return built_in;
 }
 
 static GtkTreeIter
@@ -708,8 +720,8 @@ update_places (NemoPlacesSidebar *sidebar)
 	GDrive *drive;
 	GList *volumes;
 	GVolume *volume;
-	int bookmark_count, bookmark_index;
-	char *location, *mount_uri, *name, *desktop_path, *last_uri, *identifier;
+	int bookmark_count, bookmark_index = 0;
+	char *location, *mount_uri, *name, *last_uri, *identifier;
 	const gchar *bookmark_name;
 	GIcon *icon;
 	GFile *root;
@@ -765,10 +777,9 @@ update_places (NemoPlacesSidebar *sidebar)
     g_free (mount_uri);
     g_free (tooltip);
 
-    if (should_show_desktop ()) {
+    if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
         /* desktop */
-        desktop_path = nemo_get_desktop_directory ();
-        mount_uri = g_filename_to_uri (desktop_path, NULL, NULL);
+        mount_uri = nemo_get_desktop_directory_uri ();
         icon = get_gicon (mount_uri);
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                                SECTION_COMPUTER,
@@ -780,7 +791,6 @@ update_places (NemoPlacesSidebar *sidebar)
         g_free (sidebar->top_bookend_uri);
         sidebar->top_bookend_uri = g_strdup (mount_uri);
         g_free (mount_uri);
-        g_free (desktop_path);
     }
 
     /* add bookmarks */

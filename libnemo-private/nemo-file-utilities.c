@@ -507,7 +507,6 @@ nemo_get_desktop_location (void)
 	return res;
 }
 
-
 /**
  * nemo_get_desktop_directory_uri:
  * 
