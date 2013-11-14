@@ -2157,7 +2157,7 @@ volume_mounted_cb (GVolume *volume,
 				NemoWindow *new, *cur;
 
 				cur = NEMO_WINDOW (sidebar->window);
-				new = nemo_application_create_window (nemo_application_get_singleton (),
+				new = nemo_application_create_window (NEMO_APPLICATION (g_application_get_default ()),
 									  gtk_window_get_screen (GTK_WINDOW (cur)));
 				nemo_window_go_to (new, location);
 			}
@@ -2225,7 +2225,7 @@ open_selected_bookmark (NemoPlacesSidebar *sidebar,
 			NemoWindow *cur, *new;
 			
 			cur = NEMO_WINDOW (sidebar->window);
-			new = nemo_application_create_window (nemo_application_get_singleton (),
+			new = nemo_application_create_window (NEMO_APPLICATION (g_application_get_default ()),
 								  gtk_window_get_screen (GTK_WINDOW (cur)));
 			nemo_window_go_to (new, location);
 		}

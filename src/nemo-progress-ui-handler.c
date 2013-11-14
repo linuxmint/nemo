@@ -338,23 +338,18 @@ static void
 release_application (NemoProgressInfo *info,
 		     NemoProgressUIHandler *self)
 {
-	NemoApplication *app;
-
 	/* release the GApplication hold we acquired */
-	app = nemo_application_get_singleton ();
-	g_application_release (G_APPLICATION (app));
+	g_application_release (g_application_get_default ());
 }
 
 static void
 progress_info_started_cb (NemoProgressInfo *info,
 			  NemoProgressUIHandler *self)
 {
-	NemoApplication *app;
 	TimeoutData *data;
 
 	/* hold GApplication so we never quit while there's an operation pending */
-	app = nemo_application_get_singleton ();
-	g_application_hold (G_APPLICATION (app));
+	g_application_hold (g_application_get_default ());
 
 	g_signal_connect (info, "finished",
 			  G_CALLBACK (release_application), self);

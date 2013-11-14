@@ -76,7 +76,7 @@ nemo_connect_server_dialog_display_location_async (NemoConnectServerDialog *self
 					   callback, user_data,
 					   nemo_connect_server_dialog_display_location_async);
 
-	window = nemo_application_create_window (nemo_application_get_singleton (),
+	window = nemo_application_create_window (NEMO_APPLICATION (g_application_get_default ()),
 						     gtk_widget_get_screen (widget));
 
 	nemo_window_go_to_full (window, location,

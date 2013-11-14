@@ -115,7 +115,7 @@ action_undo_callback (GtkAction *action,
 {
 	NemoApplication *app;
 
-	app = nemo_application_get_singleton ();
+	app = NEMO_APPLICATION (g_application_get_default ());
 	nemo_undo_manager_undo (app->undo_manager);
 }
 #endif
@@ -463,7 +463,7 @@ static void
 action_close_all_windows_callback (GtkAction *action, 
 				   gpointer user_data)
 {
-	nemo_application_close_all_windows (nemo_application_get_singleton ());
+	nemo_application_close_all_windows (NEMO_APPLICATION (g_application_get_default ()));
 }
 
 static void
@@ -746,7 +746,7 @@ action_new_window_callback (GtkAction *action,
     uri = nemo_window_slot_get_current_uri (nemo_window_get_active_slot (current_window));
     GFile *loc = g_file_new_for_uri (uri);
 
-	application = nemo_application_get_singleton ();
+	application = NEMO_APPLICATION (g_application_get_default ());
 
 	new_window = nemo_application_create_window (
 				application,
@@ -1139,7 +1139,7 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "New Tab", "tab-new", N_("New _Tab"),
                                  "<control>T", N_("Open another tab for the displayed location"),
                                  G_CALLBACK (action_new_tab_callback) },
-  /* name, stock id, label */  { "Close All Windows", NULL, N_("Close _All Windows"),
+  /* name, stock id, label */  { NEMO_ACTION_CLOSE_ALL_WINDOWS, NULL, N_("Close _All Windows"),
                                  "<control>Q", N_("Close all Navigation windows"),
                                  G_CALLBACK (action_close_all_windows_callback) },
   /* name, stock id, label */  { NEMO_ACTION_BACK, GTK_STOCK_GO_BACK, N_("_Back"),

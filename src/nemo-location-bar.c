@@ -200,7 +200,7 @@ drag_data_received_callback (GtkWidget *widget,
 	if (new_windows_for_extras) {
 		int i;
 
-		application = nemo_application_get_singleton ();
+		application = NEMO_APPLICATION (g_application_get_default ());
 		screen = gtk_window_get_screen (GTK_WINDOW (window));
 
 		for (i = 1; names[i] != NULL; ++i) {

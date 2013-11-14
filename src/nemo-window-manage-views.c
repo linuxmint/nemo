@@ -417,7 +417,6 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 	GList *l;
 	gboolean use_same;
 	gboolean is_desktop;
-	NemoApplication *app;
 
 	window = nemo_window_slot_get_window (slot);
 
@@ -468,9 +467,8 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 	if (use_same) {
 		target_window = window;
 	} else {
-		app = nemo_application_get_singleton ();
 		target_window = nemo_application_create_window
-			(app,
+			(NEMO_APPLICATION (g_application_get_default ()),
 			 gtk_window_get_screen (GTK_WINDOW (window)));
 	}
 
@@ -772,7 +770,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 	GFile *location;
 	GMountOperation *mount_op;
 	MountNotMountedData *data;
-	NemoApplication *app;
+	GtkApplication *app;
 
 	slot = callback_data;
 	window = nemo_window_slot_get_window (slot);
@@ -898,9 +896,9 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 			 */
 			/* if this is the only window, we don't want to quit, so we redirect it to home */
 
-			app = nemo_application_get_singleton ();
-			
-			if (g_list_length (gtk_application_get_windows (GTK_APPLICATION (app))) == 1) {
+			app = GTK_APPLICATION (g_application_get_default ());
+
+			if (g_list_length (gtk_application_get_windows (app)) == 1) {
 				/* the user could have typed in a home directory that doesn't exist,
 				   in which case going home would cause an infinite loop, so we
 				   better test for that */

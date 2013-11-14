@@ -85,8 +85,6 @@
 
 #define NEMO_ACCEL_MAP_SAVE_DELAY 30
 
-static NemoApplication *singleton = NULL;
-
 /* Keeps track of all the desktop windows. */
 static GList *nemo_application_desktop_windows;
 
@@ -429,16 +427,6 @@ monitors_changed_callback (GdkScreen *screen, NemoApplication *application)
 	}
 }
 
-static gboolean
-window_can_be_closed (NemoWindow *window)
-{
-	if (!NEMO_IS_DESKTOP_WINDOW (window)) {
-		return TRUE;
-	}
-	
-	return FALSE;
-}
-
 static void
 mount_added_callback (GVolumeMonitor *monitor,
 		      GMount *mount,
@@ -496,7 +484,7 @@ mount_removed_callback (GVolumeMonitor *monitor,
 	/* Construct a list of windows to be closed. Do not add the non-closable windows to the list. */
 	for (node = window_list; node != NULL; node = node->next) {
 		window = NEMO_WINDOW (node->data);
-		if (window != NULL && window_can_be_closed (window)) {
+		if (window != NULL && !NEMO_IS_DESKTOP_WINDOW (window)) {
 			GList *l;
 			GList *lp;
 
@@ -626,26 +614,6 @@ nemo_application_open (GApplication *app,
 	open_windows (self, files, n_files,
 		      gdk_screen_get_default (),
 		      self->priv->geometry);
-}
-
-static GObject *
-nemo_application_constructor (GType type,
-				  guint n_construct_params,
-				  GObjectConstructParam *construct_params)
-{
-        GObject *retval;
-
-        if (singleton != NULL) {
-                return G_OBJECT (singleton);
-        }
-
-        retval = G_OBJECT_CLASS (nemo_application_parent_class)->constructor
-                (type, n_construct_params, construct_params);
-
-        singleton = NEMO_APPLICATION (retval);
-        g_object_add_weak_pointer (retval, (gpointer) &singleton);
-
-        return retval;
 }
 
 static void
@@ -1202,7 +1170,6 @@ nemo_application_class_init (NemoApplicationClass *class)
 	GtkApplicationClass *gtkapp_class;
 
         object_class = G_OBJECT_CLASS (class);
-	object_class->constructor = nemo_application_constructor;
         object_class->finalize = nemo_application_finalize;
 
 	application_class = G_APPLICATION_CLASS (class);
@@ -1215,13 +1182,4 @@ nemo_application_class_init (NemoApplicationClass *class)
 	gtkapp_class->window_removed = nemo_application_window_removed;
 
 	g_type_class_add_private (class, sizeof (NemoApplicationPriv));
-}
-
-NemoApplication *
-nemo_application_get_singleton (void)
-{
-	return g_object_new (NEMO_TYPE_APPLICATION,
-			     "application-id", "org.NemoApplication",
-			     "flags", G_APPLICATION_HANDLES_OPEN,
-			     NULL);
 }
