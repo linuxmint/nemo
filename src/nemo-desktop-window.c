@@ -148,7 +148,8 @@ nemo_desktop_window_screen_size_changed (GdkScreen             *screen,
 }
 
 NemoDesktopWindow *
-nemo_desktop_window_new (GdkScreen *screen)
+nemo_desktop_window_new (GtkApplication *application,
+			     GdkScreen      *screen)
 {
 	NemoDesktopWindow *window;
 	int width_request, height_request;
@@ -158,6 +159,7 @@ nemo_desktop_window_new (GdkScreen *screen)
     GdkRGBA transparent = {0, 0, 0, 0};
 
 	window = g_object_new (NEMO_TYPE_DESKTOP_WINDOW,
+			       "application", application,
 			       "disable-chrome", TRUE,
 			       "width_request", width_request,
 			       "height_request", height_request,

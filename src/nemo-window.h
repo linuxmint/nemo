@@ -84,7 +84,7 @@ enum {
 typedef struct NemoWindowDetails NemoWindowDetails;
 
 typedef struct {
-        GtkWindowClass parent_spot;
+        GtkApplicationWindowClass parent_spot;
 
 	/* Function pointers for overriding, without corresponding signals */
 
@@ -102,13 +102,14 @@ typedef struct {
 } NemoWindowClass;
 
 struct NemoWindow {
-        GtkWindow parent_object;
+        GtkApplicationWindow parent_object;
         
         NemoWindowDetails *details;
 };
 
 GType            nemo_window_get_type             (void);
-NemoWindow * nemo_window_new                  (GdkScreen         *screen);
+NemoWindow *     nemo_window_new                  (GtkApplication    *application,
+                                                       GdkScreen         *screen);
 void             nemo_window_close                (NemoWindow    *window);
 
 void             nemo_window_connect_content_view (NemoWindow    *window,
