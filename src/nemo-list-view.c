@@ -2026,6 +2026,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_sort_column_id (view->details->file_name_column, column_num);
 			gtk_tree_view_column_set_title (view->details->file_name_column, _("Name"));
 			gtk_tree_view_column_set_resizable (view->details->file_name_column, TRUE);
+            gtk_tree_view_column_set_min_width (view->details->file_name_column, 125);
             gtk_tree_view_column_set_reorderable (view->details->file_name_column, TRUE);
 
             gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
