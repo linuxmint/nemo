@@ -26,7 +26,7 @@
 
 typedef struct _NemoPathBar      NemoPathBar;
 typedef struct _NemoPathBarClass NemoPathBarClass;
-
+typedef struct _NemoPathBarDetails NemoPathBarDetails;
 
 #define NEMO_TYPE_PATH_BAR                 (nemo_path_bar_get_type ())
 #define NEMO_PATH_BAR(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_PATH_BAR, NemoPathBar))
@@ -38,42 +38,8 @@ typedef struct _NemoPathBarClass NemoPathBarClass;
 struct _NemoPathBar
 {
 	GtkContainer parent;
-
-	GdkWindow *event_window;
- 
-	GFile *root_path;
-	GFile *home_path;
-	GFile *desktop_path;
-
-	/** XDG Dirs */
-	GFile *xdg_documents_path;
-	GFile *xdg_download_path;
-	GFile *xdg_music_path;
-	GFile *xdg_pictures_path;
-	GFile *xdg_public_path;
-	GFile *xdg_templates_path;
-	GFile *xdg_videos_path;
-
-	GFile *current_path;
-	gpointer current_button_data;
-
-	GList *button_list;
-	GList *first_scrolled_button;
-	GList *fake_root;
-	GtkWidget *up_slider_button;
-	GtkWidget *down_slider_button;
-	guint settings_signal_id;
-	gint icon_size;
-	gint16 slider_width;
-	gint16 spacing;
-	gint16 button_offset;
-	guint timer;
-	guint slider_visible : 1;
-	guint need_timer : 1;
-	guint ignore_click : 1;
-
-	unsigned int drag_slider_timeout;
-	gboolean drag_slider_timeout_for_up_button;
+	
+	NemoPathBarDetails *priv;
 };
 
 struct _NemoPathBarClass
