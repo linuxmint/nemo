@@ -2307,7 +2307,7 @@ set_up_scripts_directory_global (void)
 							   NULL);
 	}
 
-	if (g_mkdir_with_parents (scripts_directory_path, 0755) == 0) {
+	if (g_mkdir_with_parents (scripts_directory_path, 0700) == 0) {
 		scripts_directory_uri = g_filename_to_uri (scripts_directory_path, NULL, NULL);
 		scripts_directory_uri_length = strlen (scripts_directory_uri);
 	}

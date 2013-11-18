@@ -51,7 +51,6 @@ gboolean nemo_is_home_directory                  (GFile *dir);
 gboolean nemo_is_home_directory_file             (GFile *dir,
 						      const char *filename);
 gboolean nemo_is_in_system_dir                   (GFile *location);
-char *   nemo_get_gmc_desktop_directory          (void);
 
 gboolean nemo_should_use_templates_directory     (void);
 char *   nemo_get_templates_directory            (void);
@@ -61,13 +60,6 @@ void     nemo_create_templates_directory         (void);
 char *   nemo_get_searches_directory             (void);
 
 char *	 nemo_compute_title_for_location	     (GFile *file);
-
-/* This function returns something that needs to be freed with g_free,
- * is not NULL, but is not garaunteed to exist */
-char *   nemo_get_desktop_directory_uri_no_create (void);
-
-/* Locate a file in either the uers directory or the datadir. */
-char *   nemo_get_data_file_path                 (const char *partial_path);
 
 gboolean nemo_is_file_roller_installed           (void);
 
@@ -82,14 +74,8 @@ void     nemo_uninhibit_power_manager            (int cookie);
 char *   nemo_ensure_unique_file_name            (const char *directory_uri,
 						      const char *base_name,
 			                              const char *extension);
-char *   nemo_unique_temporary_file_name         (void);
 
 GFile *  nemo_find_existing_uri_in_hierarchy     (GFile *location);
-
-GFile *
-nemo_find_file_insensitive (GFile *parent, const gchar *name);
-
-char * nemo_get_accel_map_file (void);
 
 GHashTable * nemo_trashed_files_get_original_directories (GList *files,
 							      GList **unhandled_files);
