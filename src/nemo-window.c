@@ -1086,6 +1086,7 @@ nemo_window_key_press_event (GtkWidget *widget,
 	NemoWindow *window;
 	NemoWindowSlot *active_slot;
 	NemoView *view;
+    GtkWidget *focus_widget;
 	int i;
 
 	window = NEMO_WINDOW (widget);
@@ -1098,6 +1099,17 @@ nemo_window_key_press_event (GtkWidget *widget,
 		 * focused widget and return. We don't want to process the window
 		 * accelerator bindings, as they might conflict with the 
 		 * editable widget bindings.
+		 */
+		if (gtk_window_propagate_key_event (GTK_WINDOW (window), event)) {
+			return TRUE;
+		}
+	}
+
+	focus_widget = gtk_window_get_focus (GTK_WINDOW (window));
+	if (view != NULL && focus_widget != NULL &&
+	    GTK_IS_EDITABLE (focus_widget)) {
+		/* if we have input focus on a GtkEditable (e.g. a GtkEntry), forward
+		 * the event to it before activating accelerator bindings too.
 		 */
 		if (gtk_window_propagate_key_event (GTK_WINDOW (window), event)) {
 			return TRUE;
