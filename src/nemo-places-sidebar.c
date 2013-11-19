@@ -360,8 +360,7 @@ get_eject_icon (NemoPlacesSidebar *sidebar,
 static gboolean
 should_show_desktop (void)
 {
-	return g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP) &&
-	       !g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR);
+	return g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP);
 }
 
 static gboolean
@@ -4199,22 +4198,13 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
               G_CALLBACK (row_collapsed_cb), sidebar);
     g_signal_connect (tree_view, "row-activated",
               G_CALLBACK (row_activated_cb), sidebar);
-
-	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-				  G_CALLBACK(desktop_setting_changed_callback),
-				  sidebar);
-
-	g_signal_connect_swapped (nemo_desktop_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
-				  G_CALLBACK(desktop_setting_changed_callback),
-				  sidebar);
-
-	if (!g_strcmp0(g_getenv("DESKTOP_SESSION"), "cinnamon")) {
-        g_signal_connect_swapped (cinnamon_privacy_preferences, "changed::" NEMO_PREFERENCES_RECENT_ENABLED,
-                  G_CALLBACK(desktop_setting_changed_callback),
-                  sidebar);
+    if (cinnamon_privacy_preferences) {
+    	g_signal_connect_swapped (cinnamon_privacy_preferences, "changed::" NEMO_PREFERENCES_RECENT_ENABLED,
+              G_CALLBACK(desktop_setting_changed_callback),
+              sidebar);
     }
-	g_signal_connect_object (nemo_trash_monitor_get (),
-				 "trash_state_changed",
+    g_signal_connect_object (nemo_trash_monitor_get (),
+				 "trash-state-changed",
 				 G_CALLBACK (trash_state_changed_cb),
 				 sidebar, 0);
 }

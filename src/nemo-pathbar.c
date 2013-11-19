@@ -63,8 +63,6 @@ typedef enum {
 
 static guint path_bar_signals [LAST_SIGNAL] = { 0 };
 
-static gboolean desktop_is_home;
-
 #define NEMO_PATH_BAR_ICON_SIZE 16
 #define NEMO_PATH_BAR_BUTTON_MAX_WIDTH 250
 
@@ -181,43 +179,6 @@ get_slider_button (NemoPathBar  *path_bar,
     gtk_widget_pop_composite_child ();
 
     return button;
-}
-
-static void
-update_button_types (NemoPathBar *path_bar)
-{
-    GList *list;
-    GFile *path = NULL;
-
-    for (list = path_bar->priv->button_list; list; list = list->next) {
-        ButtonData *button_data;
-        button_data = BUTTON_DATA (list->data);
-        if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button_data->button))) {
-            path = g_object_ref (button_data->path);
-            break;
-        }
-    }
-    if (path != NULL) {
-        nemo_path_bar_update_path (path_bar, path, TRUE);
-        g_object_unref (path);
-    }
-}
-
-
-static void
-desktop_location_changed_callback (gpointer user_data)
-{
-    NemoPathBar *path_bar;
-    
-    path_bar = NEMO_PATH_BAR (user_data);
-    
-    g_object_unref (path_bar->priv->desktop_path);
-    g_object_unref (path_bar->priv->home_path);
-    path_bar->priv->desktop_path = nemo_get_desktop_location ();
-    path_bar->priv->home_path = g_file_new_for_path (g_get_home_dir ());
-    desktop_is_home = g_file_equal (path_bar->priv->home_path, path_bar->priv->desktop_path);
-    
-    update_button_types (path_bar);
 }
 
 static void
@@ -357,12 +318,6 @@ nemo_path_bar_init (NemoPathBar *path_bar)
     path_bar->priv->xdg_templates_path = get_xdg_dir (G_USER_DIRECTORY_TEMPLATES);
     path_bar->priv->xdg_videos_path = get_xdg_dir (G_USER_DIRECTORY_VIDEOS);
 
-    desktop_is_home = g_file_equal (path_bar->priv->home_path, path_bar->priv->desktop_path);
-
-    g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-                  G_CALLBACK(desktop_location_changed_callback),
-                  path_bar);
-
     g_signal_connect_swapped (path_bar->priv->up_slider_button, "clicked", G_CALLBACK (nemo_path_bar_scroll_up), path_bar);
     g_signal_connect_swapped (path_bar->priv->down_slider_button, "clicked", G_CALLBACK (nemo_path_bar_scroll_down), path_bar);
 
@@ -431,9 +386,6 @@ nemo_path_bar_finalize (GObject *object)
 
     g_signal_handlers_disconnect_by_func (nemo_trash_monitor_get (),
                           trash_state_changed_cb, path_bar);
-    g_signal_handlers_disconnect_by_func (nemo_preferences,
-                          desktop_location_changed_callback,
-                          path_bar);
 
     G_OBJECT_CLASS (nemo_path_bar_parent_class)->finalize (object);
 }
@@ -1687,11 +1639,7 @@ setup_button_type (ButtonData       *button_data,
         button_data->type = HOME_BUTTON;
         button_data->fake_root = TRUE;
     } else if (nemo_is_desktop_directory (location)) {
-        if (!desktop_is_home) {
-            button_data->type = DESKTOP_BUTTON;
-        } else {
-            button_data->type = NORMAL_BUTTON;
-        }
+        button_data->type = DESKTOP_BUTTON;
     } else if (path_bar->priv->xdg_documents_path != NULL && g_file_equal (location, path_bar->priv->xdg_documents_path)) {
         button_data->type = XDG_BUTTON;
         button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_DOCUMENTS);

@@ -63,10 +63,6 @@ char *	 nemo_compute_title_for_location	     (GFile *file);
 
 gboolean nemo_is_file_roller_installed           (void);
 
-/* Inhibit/Uninhibit GNOME Power Manager */
-int    nemo_inhibit_power_manager                (const char *message) G_GNUC_WARN_UNUSED_RESULT;
-void     nemo_uninhibit_power_manager            (int cookie);
-
 /* Return an allocated file name that is guranteed to be unique, but
  * tries to make the name readable to users.
  * This isn't race-free, so don't use for security-related things
