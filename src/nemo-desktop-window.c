@@ -63,18 +63,6 @@ nemo_desktop_window_update_directory (NemoDesktopWindow *window)
 }
 
 static void
-nemo_desktop_window_dispose (GObject *obj)
-{
-	NemoDesktopWindow *window = NEMO_DESKTOP_WINDOW (obj);
-
-	g_signal_handlers_disconnect_by_func (nemo_preferences,
-					      nemo_desktop_window_update_directory,
-					      window);
-
-	G_OBJECT_CLASS (nemo_desktop_window_parent_class)->dispose (obj);
-}
-
-static void
 nemo_desktop_window_constructed (GObject *obj)
 {
 	GtkActionGroup *action_group;
@@ -106,12 +94,6 @@ nemo_desktop_window_constructed (GObject *obj)
 	if (accessible) {
 		atk_object_set_name (accessible, _("Desktop"));
 	}
-
-	/* Monitor the preference to have the desktop */
-	/* point to the Unix home folder */
-	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-				  G_CALLBACK (nemo_desktop_window_update_directory),
-				  window);
 }
 
 static void
@@ -318,7 +300,6 @@ nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 	GObjectClass *oclass = G_OBJECT_CLASS (klass);
 
 	oclass->constructed = nemo_desktop_window_constructed;
-	oclass->dispose = nemo_desktop_window_dispose;
 
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;

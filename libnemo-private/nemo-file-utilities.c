@@ -449,11 +449,7 @@ nemo_get_xdg_dir (const char *type)
 static char *
 get_desktop_path (void)
 {
-	if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR)) {
-		return g_strdup (g_get_home_dir());
-	} else {
-		return nemo_get_xdg_dir ("DESKTOP");
-	}
+	return nemo_get_xdg_dir ("DESKTOP");
 }
 
 /**
@@ -471,17 +467,15 @@ nemo_get_desktop_directory (void)
 	desktop_directory = get_desktop_path ();
 
 	/* Don't try to create a home directory */
-	if (!g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR)) {
-		if (!g_file_test (desktop_directory, G_FILE_TEST_EXISTS)) {
-			g_mkdir (desktop_directory, DEFAULT_DESKTOP_DIRECTORY_MODE);
-			/* FIXME bugzilla.gnome.org 41286: 
-			 * How should we handle the case where this mkdir fails? 
-			 * Note that nemo_application_startup will refuse to launch if this 
-			 * directory doesn't get created, so that case is OK. But the directory 
-			 * could be deleted after Nemo was launched, and perhaps
-			 * there is some bad side-effect of not handling that case.
-			 */
-		}
+	if (!g_file_test (desktop_directory, G_FILE_TEST_EXISTS)) {
+		g_mkdir (desktop_directory, DEFAULT_DESKTOP_DIRECTORY_MODE);
+		/* FIXME bugzilla.gnome.org 41286: 
+		 * How should we handle the case where this mkdir fails? 
+		 * Note that nemo_application_startup will refuse to launch if this 
+		 * directory doesn't get created, so that case is OK. But the directory 
+		 * could be deleted after Nemo was launched, and perhaps
+		 * there is some bad side-effect of not handling that case.
+		 */
 	}
 
 	return desktop_directory;
@@ -589,7 +583,6 @@ nemo_get_searches_directory (void)
 static GFile *desktop_dir = NULL;
 static GFile *desktop_dir_dir = NULL;
 static char *desktop_dir_filename = NULL;
-static gboolean desktop_dir_changed_callback_installed = FALSE;
 
 
 static void
@@ -605,12 +598,6 @@ desktop_dir_changed (void)
 	desktop_dir = NULL;
 	desktop_dir_dir = NULL;
 	desktop_dir_filename = NULL;
-}
-
-static void
-desktop_dir_changed_callback (gpointer callback_data)
-{
-	desktop_dir_changed ();
 }
 
 static void
@@ -678,13 +665,6 @@ nemo_is_desktop_directory_file (GFile *dir,
 				    const char *file)
 {
 
-	if (!desktop_dir_changed_callback_installed) {
-		g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-					  G_CALLBACK(desktop_dir_changed_callback),
-					  NULL);
-		desktop_dir_changed_callback_installed = TRUE;
-	}
-
 	if (desktop_dir == NULL) {
 		update_desktop_dir ();
 	}
@@ -696,13 +676,6 @@ nemo_is_desktop_directory_file (GFile *dir,
 gboolean
 nemo_is_desktop_directory (GFile *dir)
 {
-
-	if (!desktop_dir_changed_callback_installed) {
-		g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-					  G_CALLBACK(desktop_dir_changed_callback),
-					  NULL);
-		desktop_dir_changed_callback_installed = TRUE;
-	}
 
 	if (desktop_dir == NULL) {
 		update_desktop_dir ();
@@ -798,135 +771,6 @@ nemo_is_file_roller_installed (void)
 	}
 
 	return installed > 0 ? TRUE : FALSE;
-}
-
-#define GSM_NAME  "org.gnome.SessionManager"
-#define GSM_PATH "/org/gnome/SessionManager"
-#define GSM_INTERFACE "org.gnome.SessionManager"
-
-/* The following values come from
- * http://www.gnome.org/~mccann/gnome-session/docs/gnome-session.html#org.gnome.SessionManager.Inhibit 
- */
-#define INHIBIT_LOGOUT (1U)
-#define INHIBIT_SUSPEND (4U)
-
-static GDBusConnection *
-get_dbus_connection (void)
-{
-	static GDBusConnection *conn = NULL;
-
-	if (conn == NULL) {
-		GError *error = NULL;
-
-	        conn = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
-
-		if (conn == NULL) {
-	                g_warning ("Could not connect to session bus: %s", error->message);
-			g_error_free (error);
-		}
-	}
-
-	return conn;
-}
-
-/**
- * nemo_inhibit_power_manager:
- * @message: a human readable message for the reason why power management
- *       is being suspended.
- *
- * Inhibits the power manager from logging out or suspending the machine
- * (e.g. whenever Nemo is doing file operations).
- *
- * Returns: an integer cookie, which must be passed to
- *    nemo_uninhibit_power_manager() to resume
- *    normal power management.
- */
-int
-nemo_inhibit_power_manager (const char *message)
-{
-	GDBusConnection *connection;
-	GVariant *result;
-	GError *error = NULL;
-	guint cookie = 0;
-
-	g_return_val_if_fail (message != NULL, -1);
-
-        connection = get_dbus_connection ();
-
-        if (connection == NULL) {
-                return -1;
-        }
-
-	result = g_dbus_connection_call_sync (connection,
-					      GSM_NAME,
-					      GSM_PATH,
-					      GSM_INTERFACE,
-					      "Inhibit",
-					      g_variant_new ("(susu)",
-							     "Nemo",
-							     (guint) 0,
-							     message,
-							     (guint) (INHIBIT_LOGOUT | INHIBIT_SUSPEND)),
-					      G_VARIANT_TYPE ("(u)"),
-					      G_DBUS_CALL_FLAGS_NO_AUTO_START,
-					      -1,
-					      NULL,
-					      &error);
-
-	if (error != NULL) {
-		g_warning ("Could not inhibit power management: %s", error->message);
-		g_error_free (error);
-		return -1;
-	}
-
-	g_variant_get (result, "(u)", &cookie);
-	g_variant_unref (result);
-
-	return (int) cookie;
-}
-
-/**
- * nemo_uninhibit_power_manager:
- * @cookie: the cookie value returned by nemo_inhibit_power_manager()
- *
- * Uninhibits power management. This function must be called after the task
- * which inhibited power management has finished, or the system will not
- * return to normal power management.
- */
-void
-nemo_uninhibit_power_manager (gint cookie)
-{
-	GDBusConnection *connection;
-	GVariant *result;
-	GError *error = NULL;
-
-	g_return_if_fail (cookie > 0);
-
-	connection = get_dbus_connection ();
-
-	if (connection == NULL) {
-		return;
-	}
-
-	result = g_dbus_connection_call_sync (connection,
-					      GSM_NAME,
-					      GSM_PATH,
-					      GSM_INTERFACE,
-					      "Uninhibit",
-					      g_variant_new ("(u)", (guint) cookie),
-					      NULL,
-					      G_DBUS_CALL_FLAGS_NO_AUTO_START,
-					      -1,
-					      NULL,
-					      &error);
-
-	if (result == NULL) {
-		g_warning ("Could not uninhibit power management: %s", error->message);
-		g_error_free (error);
-		return;
-	}
-
-	g_variant_unref (result);
 }
 
 /* Returns TRUE if the file is in XDG_DATA_DIRS or

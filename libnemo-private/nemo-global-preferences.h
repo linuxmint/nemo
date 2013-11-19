@@ -36,9 +36,6 @@ G_BEGIN_DECLS
 #define NEMO_PREFERENCES_ENABLE_DELETE			"enable-delete"
 #define NEMO_PREFERENCES_SWAP_TRASH_DELETE      "swap-trash-delete"
 
-/* Desktop options */
-#define NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR                "desktop-is-home-dir"
-
 /* Display  */
 #define NEMO_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
 #define NEMO_PREFERENCES_SHOW_ADVANCED_PERMISSIONS		"show-advanced-permissions"
