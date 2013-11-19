@@ -94,14 +94,14 @@ nemo_bookmark_list_get_legacy_file (void)
 static GFile *
 nemo_bookmark_list_get_file (void)
 {
-    char *filename;
-    GFile *file;
+	char *filename;
+	GFile *file;
 
-    filename = g_build_filename (g_get_user_config_dir (),
-                                 "gtk-3.0",
-                                 "bookmarks",
-                                 NULL);
-    file = g_file_new_for_path (filename);
+	filename = g_build_filename (g_get_user_config_dir (),
+				     "gtk-3.0",
+				     "bookmarks",
+				     NULL);
+	file = g_file_new_for_path (filename);
 
     if (!g_file_query_exists (file, NULL)) {
         g_object_unref (file);
@@ -109,9 +109,9 @@ nemo_bookmark_list_get_file (void)
         return nemo_bookmark_list_get_legacy_file ();
     }
 
-    g_free (filename);
+	g_free (filename);
 
-    return file;
+	return file;
 }
 
 /* Initialization.  */
@@ -566,8 +566,8 @@ save_file_async (NemoBookmarkList *bookmarks,
 	GFile *file;
 	GList *l;
 	GString *bookmark_string;
-    GFile *parent;
-    char *path;
+	GFile *parent;
+	char *path;
 
 	/* temporarily disable bookmark file monitoring when writing file */
 	if (bookmarks->monitor != NULL) {
@@ -603,11 +603,11 @@ save_file_async (NemoBookmarkList *bookmarks,
 	/* keep the bookmark list alive */
 	g_object_ref (bookmarks);
 
-    parent = g_file_get_parent (file);
-    path = g_file_get_path (parent);
-    g_mkdir_with_parents (path, 0700);
-    g_free (path);
-    g_object_unref (parent);
+	parent = g_file_get_parent (file);
+	path = g_file_get_path (parent);
+	g_mkdir_with_parents (path, 0700);
+	g_free (path);
+	g_object_unref (parent);
 
 	g_file_replace_contents_async (file, bookmark_string->str,
 				       bookmark_string->len, NULL,
