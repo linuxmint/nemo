@@ -37,7 +37,7 @@
 
 enum {
     PATH_CLICKED,
-    PATH_SET,
+    PATH_EVENT,
     LAST_SIGNAL
 };
 
@@ -1111,15 +1111,15 @@ nemo_path_bar_class_init (NemoPathBarClass *path_bar_class)
 		  g_cclosure_marshal_VOID__OBJECT,
 		  G_TYPE_NONE, 1,
 		  G_TYPE_FILE);
-	 path_bar_signals [PATH_SET] =
-		g_signal_new ("path-set",
+        path_bar_signals [PATH_EVENT] =
+                g_signal_new ("path-event",
 		  G_OBJECT_CLASS_TYPE (path_bar_class),
 		  G_SIGNAL_RUN_FIRST,
-		  G_STRUCT_OFFSET (NemoPathBarClass, path_set),
-		  NULL, NULL,
-		  g_cclosure_marshal_VOID__OBJECT,
-		  G_TYPE_NONE, 1,
-		  G_TYPE_FILE);
+		  G_STRUCT_OFFSET (NemoPathBarClass, path_event),
+		  NULL, NULL, NULL,
+		  G_TYPE_NONE, 2,
+		  G_TYPE_FILE,
+		  GDK_TYPE_EVENT);
 
      gtk_container_class_handle_border_width (container_class);
      g_type_class_add_private (path_bar_class, sizeof (NemoPathBarDetails));
@@ -1381,6 +1381,46 @@ button_clicked_cb (GtkWidget *button,
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
 
         g_signal_emit (path_bar, path_bar_signals [PATH_CLICKED], 0, button_data->path);
+}
+
+static gboolean
+button_event_cb (GtkWidget *button,
+		 GdkEventButton *event,
+		 gpointer   data)
+{
+        ButtonData *button_data;
+        NemoPathBar *path_bar;
+        GList *button_list;
+
+        button_data = BUTTON_DATA (data);
+        path_bar = NEMO_PATH_BAR (gtk_widget_get_parent (button));
+
+	if (event->type == GDK_BUTTON_PRESS) {
+		g_object_set_data (G_OBJECT (button), "handle-button-release",
+				   GINT_TO_POINTER (TRUE));
+	}
+
+	if (event->type == GDK_BUTTON_RELEASE &&
+	    !GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (button),
+						  "handle-button-release"))) {
+		return FALSE;
+	}
+
+        button_list = g_list_find (path_bar->priv->button_list, button_data);
+        g_assert (button_list != NULL);
+
+        g_signal_emit (path_bar, path_bar_signals [PATH_EVENT], 0, button_data->path, event);
+
+	return FALSE;
+}
+
+static void
+button_drag_begin_cb (GtkWidget *widget,
+		      GdkDragContext *drag_context,
+		      gpointer user_data)
+{
+	g_object_set_data (G_OBJECT (widget), "handle-button-release",
+			   GINT_TO_POINTER (FALSE));
 }
 
 static NemoIconInfo *
@@ -1901,6 +1941,9 @@ make_directory_button (NemoPathBar  *path_bar,
                                        gtk_widget_get_scale_factor (GTK_WIDGET (path_bar)));
 
     g_signal_connect (button_data->button, "clicked", G_CALLBACK (button_clicked_cb), button_data);
+	g_signal_connect (button_data->button, "button-press-event", G_CALLBACK (button_event_cb), button_data);
+	g_signal_connect (button_data->button, "button-release-event", G_CALLBACK (button_event_cb), button_data);
+	g_signal_connect (button_data->button, "drag-begin", G_CALLBACK (button_drag_begin_cb), button_data);
     g_object_weak_ref (G_OBJECT (button_data->button), (GWeakNotify) button_data_free, button_data);
 
     setup_button_drag_source (button_data);
@@ -2042,7 +2085,7 @@ nemo_path_bar_update_path (NemoPathBar *path_bar,
     path_bar->priv->current_path = g_object_ref (file_path);
     path_bar->priv->current_button_data = current_button_data;
 
-    g_signal_emit (path_bar, path_bar_signals [PATH_SET], 0, file_path);
+    child_ordering_changed (path_bar);
 
     return result;
 }
@@ -2070,24 +2113,3 @@ nemo_path_bar_set_path (NemoPathBar *path_bar, GFile *file_path)
 
     return nemo_path_bar_update_path (path_bar, file_path, TRUE);
 }
-
-GFile *
-nemo_path_bar_get_path_for_button (NemoPathBar *path_bar,
-                       GtkWidget       *button)
-{
-    GList *list;
- 
-    g_return_val_if_fail (NEMO_IS_PATH_BAR (path_bar), NULL);
-    g_return_val_if_fail (GTK_IS_BUTTON (button), NULL);
-
-    for (list = path_bar->priv->button_list; list; list = list->next) {
-        ButtonData *button_data;
-        button_data = BUTTON_DATA (list->data);
-        if (button_data->button == button) {
-            return g_object_ref (button_data->path);
-        }
-    }
-
-    return NULL;
-}
-

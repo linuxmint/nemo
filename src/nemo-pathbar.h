@@ -48,8 +48,9 @@ struct _NemoPathBarClass
 
   	void (* path_clicked)   (NemoPathBar  *path_bar,
 				 GFile             *location);
-  	void (* path_set)       (NemoPathBar  *path_bar,
-				 GFile             *location);
+        gboolean (* path_event)     (NemoPathBar  *path_bar,
+                                 GdkEventButton   *event,
+                                 GFile            *location);
 };
 
 GType    nemo_path_bar_get_type (void) G_GNUC_CONST;
