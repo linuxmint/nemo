@@ -100,18 +100,18 @@ nemo_bookmark_list_get_legacy_file (void)
 static GFile *
 nemo_bookmark_list_get_file (void)
 {
-    char *filename;
-    GFile *file;
+	char *filename;
+	GFile *file;
 
-    filename = g_build_filename (g_get_user_config_dir (),
-                                 "gtk-3.0",
-                                 "bookmarks",
-                                 NULL);
-    file = g_file_new_for_path (filename);
+	filename = g_build_filename (g_get_user_config_dir (),
+				     "gtk-3.0",
+				     "bookmarks",
+				     NULL);
+	file = g_file_new_for_path (filename);
 
     g_free (filename);
 
-    return file;
+	return file;
 }
 
 /* Initialization.  */
