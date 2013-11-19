@@ -1256,7 +1256,7 @@ get_layout_location (EelEditableLabel  *label,
     *yp = y;
 }
 
-static void
+static gint
 eel_editable_label_get_cursor_pos (EelEditableLabel  *label,
 				   PangoRectangle *strong_pos,
 				   PangoRectangle *weak_pos)
@@ -1273,6 +1273,8 @@ eel_editable_label_get_cursor_pos (EelEditableLabel  *label,
     g_utf8_offset_to_pointer (preedit_text, label->preedit_cursor) - preedit_text;
       
   pango_layout_get_cursor_pos (label->layout, index, strong_pos, weak_pos);
+
+  return index;
 }
 
 /* Copied from gtkutil private function */
@@ -1412,24 +1414,15 @@ eel_editable_label_draw_cursor (EelEditableLabel  *label, cairo_t *cr, gint xoff
     {
       GtkWidget *widget = GTK_WIDGET (label);
 
-      GtkTextDirection keymap_direction;
-      GtkTextDirection widget_direction;
-      gboolean split_cursor;
       gboolean block;
       gboolean block_at_line_end;
       gint range[2];
-      PangoRectangle strong_pos, weak_pos;
-      PangoRectangle *cursor1 = NULL;
-      PangoRectangle *cursor2 = NULL;
-      GdkRectangle cursor_location;
-      GtkTextDirection dir1 = GTK_TEXT_DIR_NONE;
-      GtkTextDirection dir2 = GTK_TEXT_DIR_NONE;
+      gint index;
+      GtkStyleContext *context;
+      PangoRectangle strong_pos;
 
-      keymap_direction =
-	(gdk_keymap_get_direction (gdk_keymap_get_default ()) == PANGO_DIRECTION_LTR) ?
-	GTK_TEXT_DIR_LTR : GTK_TEXT_DIR_RTL;
-
-      widget_direction = gtk_widget_get_direction (widget);
+      context = gtk_widget_get_style_context (widget);
+      index = eel_editable_label_get_cursor_pos (label, NULL, NULL);
 
       if (label->overwrite_mode &&
 	  eel_editable_label_get_block_cursor_location (label, range,
@@ -1440,64 +1433,18 @@ eel_editable_label_draw_cursor (EelEditableLabel  *label, cairo_t *cr, gint xoff
 	block = FALSE;
 
       if (!block)
-	{ 
-          eel_editable_label_get_cursor_pos (label, &strong_pos, &weak_pos);
-
-          g_object_get (gtk_widget_get_settings (widget),
-			"gtk-split-cursor", &split_cursor,
-			NULL);
-
-          dir1 = widget_direction;
-      
-	  if (split_cursor)
-	    {
-	      cursor1 = &strong_pos;
-
-	      if (strong_pos.x != weak_pos.x ||
-		  strong_pos.y != weak_pos.y)
-		{
-		  dir2 = (widget_direction == GTK_TEXT_DIR_LTR) ? GTK_TEXT_DIR_RTL : GTK_TEXT_DIR_LTR;
-		  cursor2 = &weak_pos;
-		}
-	    }
-	  else
-	    {
-	      if (keymap_direction == widget_direction)
-		  cursor1 = &strong_pos;
-	      else
-		  cursor1 = &weak_pos;
-	    }
-      
-          cursor_location.x = xoffset + PANGO_PIXELS (cursor1->x);
-	  cursor_location.y = yoffset + PANGO_PIXELS (cursor1->y);
-	  cursor_location.width = 0;
-	  cursor_location.height = PANGO_PIXELS (cursor1->height);
-
-	  gtk_draw_insertion_cursor (widget,
-                                     cr,
-				     &cursor_location,
-				     TRUE, dir1, dir2 != GTK_TEXT_DIR_NONE);
-
-	  if (dir2 != GTK_TEXT_DIR_NONE)
-	    {
-	      cursor_location.x = xoffset + PANGO_PIXELS (cursor2->x);
-	      cursor_location.y = yoffset + PANGO_PIXELS (cursor2->y);
-	      cursor_location.width = 0;
-	      cursor_location.height = PANGO_PIXELS (cursor2->height);
-
-	      gtk_draw_insertion_cursor (widget, cr,
-					 &cursor_location,
-					 FALSE, dir2, TRUE);
-	    }
+	{
+          gtk_render_insertion_cursor (context, cr,
+                                       xoffset, yoffset,
+                                       label->layout, index,
+                                       gdk_keymap_get_direction (gdk_keymap_get_default ()));
 	}
       else /* Block cursor */
 	{
           GdkRGBA fg_color;
-          GtkStyleContext *style;
 	  cairo_region_t *clip;
 
-          style = gtk_widget_get_style_context (widget);
-          gtk_style_context_get_color (style, GTK_STATE_FLAG_NORMAL, &fg_color);
+          gtk_style_context_get_color (context, GTK_STATE_FLAG_NORMAL, &fg_color);
 
 	  cairo_save (cr);
           gdk_cairo_set_source_rgba (cr, &fg_color);
@@ -1520,7 +1467,7 @@ eel_editable_label_draw_cursor (EelEditableLabel  *label, cairo_t *cr, gint xoff
 	      gdk_cairo_region (cr, clip);
 	      cairo_clip (cr);
 
-              gtk_style_context_get_background_color (style, GTK_STATE_FLAG_FOCUSED,
+              gtk_style_context_get_background_color (context, GTK_STATE_FLAG_FOCUSED,
                                                       &color);
 
 	      gdk_cairo_set_source_rgba (cr,

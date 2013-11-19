@@ -1,3 +1,20 @@
+Nemo merged with changes in Nautilus 3.5.1. 
+
+Changes:
+* Add support for AFP shares in the Connect to Server dialog
+* Don't remove selection when clicking on a row out of name boundaries
+* Fix a wrapping issue with numeric strings in some circumstances
+* Fix rename field selection color for backdrop state
+* Don't select all icons on Ctrl+A when the search entry is focused
+* Remove desktop-is-home-dir GSetting
+
+Rejected: 
+* Add an application menu
+* Don't show sliders up to the file system root in the pathbar
+* Don't remove selection when clicking on a row out of name boundaries
+* Remove custom accel map loading/saving
+
+
 Development: 1/22/2013:
 
 - Breadcrumbs:  Stylable by themes, see src/nemo-styles-fallback.css for default style information.
