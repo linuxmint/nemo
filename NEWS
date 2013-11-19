@@ -1,3 +1,12 @@
+Major changes in 3.10.1:
+- Bring back eject button in sidebar (Matthias Clasen)
+- Fix rename entry rendering (Alex Larsson)
+- Fix rename entry positioning (Alex Larsson)
+- Avoid a crash if inhibit fails (Ross Lagerwall)
+- Center tab labels (William Jon McCann)
+- Fix DND move (Nelson Benitez Leon)
+- Translation updates
+
 Major changes in 3.10.0:
 - Make search provider return results again (David King)
 - Translation updates
