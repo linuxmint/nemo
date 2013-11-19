@@ -1,4 +1,4 @@
-Major changes in 3.10.1:
+Major changes in 3.11.2:
 - Bring back eject button in sidebar (Matthias Clasen)
 - Fix rename entry rendering (Alex Larsson)
 - Fix rename entry positioning (Alex Larsson)
