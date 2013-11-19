@@ -48,15 +48,14 @@ struct _NemoPathBarClass
 
   	void (* path_clicked)   (NemoPathBar  *path_bar,
 				 GFile             *location);
-  	void (* path_set)       (NemoPathBar  *path_bar,
-				 GFile             *location);
+        void (* path_event)     (NemoPathBar  *path_bar,
+                                 GdkEventButton   *event,
+                                 GFile            *location);
 };
 
 GType    nemo_path_bar_get_type (void) G_GNUC_CONST;
 
 gboolean nemo_path_bar_set_path    (NemoPathBar *path_bar, GFile *file);
-GFile *  nemo_path_bar_get_path_for_button (NemoPathBar *path_bar,
-						GtkWidget       *button);
 void     nemo_path_bar_clear_buttons (NemoPathBar *path_bar);
 
 #endif /* NEMO_PATHBAR_H */

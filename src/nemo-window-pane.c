@@ -329,61 +329,21 @@ path_bar_location_changed_callback (GtkWidget *widget,
 	}
 }
 
-static gboolean
-path_bar_button_pressed_callback (GtkWidget *widget,
-				  GdkEventButton *event,
-				  NemoWindowPane *pane)
-{
-	NemoWindowSlot *slot;
-	NemoView *view;
-	GFile *location;
-	char *uri;
-
-	g_object_set_data (G_OBJECT (widget), "handle-button-release",
-			   GINT_TO_POINTER (TRUE));
-
-	if (event->button == 3) {
-		slot = nemo_window_get_active_slot (pane->window);
-		view = slot->content_view;
-		if (view != NULL) {
-			location = nemo_path_bar_get_path_for_button (
-				NEMO_PATH_BAR (pane->path_bar), widget);
-			if (location != NULL) {
-				uri = g_file_get_uri (location);
-				nemo_view_pop_up_location_context_menu (
-					view, event, uri);
-				g_object_unref (location);
-				g_free (uri);
-				return TRUE;
-			}
-		}
-	}
-
-    if (event->button == 2)
-        return TRUE;
-
-	return FALSE;
-}
-
-static gboolean
-path_bar_button_released_callback (GtkWidget *widget,
-				   GdkEventButton *event,
-				   NemoWindowPane *pane)
+static void
+path_bar_path_event_callback (NemoPathBar *path_bar,
+			      GFile *location,
+			      GdkEventButton *event,
+			      NemoWindowPane *pane)
 {
 	NemoWindowSlot *slot;
 	NemoWindowOpenFlags flags;
-	GFile *location;
 	int mask;
-	gboolean handle_button_release;
+	NemoView *view;
+	char *uri;
 
-	mask = event->state & gtk_accelerator_get_default_mod_mask ();
-	flags = 0;
-
-	handle_button_release = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (widget),
-						  "handle-button-release"));
-
-	if (event->type == GDK_BUTTON_RELEASE && handle_button_release) {
-		location = nemo_path_bar_get_path_for_button (NEMO_PATH_BAR (pane->path_bar), widget);
+	if (event->type == GDK_BUTTON_RELEASE) {
+		mask = event->state & gtk_accelerator_get_default_mod_mask ();
+		flags = 0;
 
 		if (event->button == 2 && mask == 0) {
 			flags = NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
@@ -394,23 +354,16 @@ path_bar_button_released_callback (GtkWidget *widget,
 		if (flags != 0) {
 			slot = nemo_window_get_active_slot (pane->window);
 			nemo_window_slot_open_location (slot, location, flags);
-			g_object_unref (location);
-			return TRUE;
 		}
-
-		g_object_unref (location);
+	} else if (event->button == 3) {
+		slot = nemo_window_get_active_slot (pane->window);
+		view = slot->content_view;
+		if (view != NULL) {
+			uri = g_file_get_uri (location);
+			nemo_view_pop_up_location_context_menu (view, event, uri);
+			g_free (uri);
+		}
 	}
-
-	return FALSE;
-}
-
-static void
-path_bar_button_drag_begin_callback (GtkWidget *widget,
-				     GdkEventButton *event,
-				     gpointer user_data)
-{
-	g_object_set_data (G_OBJECT (widget), "handle-button-release",
-			   GINT_TO_POINTER (FALSE));
 }
 
 static void
@@ -421,43 +374,6 @@ notebook_popup_menu_new_tab_cb (GtkMenuItem *menuitem,
 
 	pane = user_data;
 	nemo_window_new_tab (pane->window);
-}
-
-static void
-path_bar_path_set_callback (GtkWidget *widget,
-			    GFile *location,
-			    NemoWindowPane *pane)
-{
-	GList *children, *l;
-	GtkWidget *child;
-
-	children = gtk_container_get_children (GTK_CONTAINER (widget));
-
-	for (l = children; l != NULL; l = l->next) {
-		child = GTK_WIDGET (l->data);
-
-		if (!GTK_IS_TOGGLE_BUTTON (child)) {
-			continue;
-		}
-
-		if (!g_signal_handler_find (child,
-					    G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA,
-					    0, 0, NULL,
-					    path_bar_button_pressed_callback,
-					    pane)) {
-			g_signal_connect (child, "button-press-event",
-					  G_CALLBACK (path_bar_button_pressed_callback),
-					  pane);
-			g_signal_connect (child, "button-release-event",
-					  G_CALLBACK (path_bar_button_released_callback),
-					  pane);
-			g_signal_connect (child, "drag-begin",
-					  G_CALLBACK (path_bar_button_drag_begin_callback),
-					  pane);
-		}
-	}
-
-	g_list_free (children);
 }
 
 static void
@@ -894,8 +810,8 @@ nemo_window_pane_constructed (GObject *obj)
 
 	g_signal_connect_object (pane->path_bar, "path-clicked",
 				 G_CALLBACK (path_bar_location_changed_callback), pane, 0);
-	g_signal_connect_object (pane->path_bar, "path-set",
-				 G_CALLBACK (path_bar_path_set_callback), pane, 0);
+	g_signal_connect_object (pane->path_bar, "path-event",
+				 G_CALLBACK (path_bar_path_event_callback), pane, 0);
 
 	/* connect to the location bar signals */
 	pane->location_bar = nemo_toolbar_get_location_bar (NEMO_TOOLBAR (pane->tool_bar));
