@@ -274,9 +274,6 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 	GList *emblem_icons, *l;
 	int icon_size, icon_scale;
 	NemoZoomLevel zoom_level;
-	NemoFile *parent_file;
-	char *emblems_to_ignore[3];
-	int i;
 	NemoFileIconFlags flags;
     cairo_surface_t *surface;
 	
@@ -348,22 +345,10 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
             bad_ratio = nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale > w ||
                         nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale > h;
 
-			gicon = G_ICON (pixbuf);
 
-			/* render emblems with GEmblemedIcon */
-			parent_file = nemo_file_get_parent (file);
-			i = 0;
-			emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
-			if (parent_file) {
-				if (!nemo_file_can_write (parent_file)) {
-					emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
-				}
-				nemo_file_unref (parent_file);
-			}
-			emblems_to_ignore[i++] = NULL;
 
-			emblem_icons = nemo_file_get_emblem_icons (file,
-								       emblems_to_ignore);
+			gicon = G_ICON (nemo_file_get_icon_pixbuf (file, icon_size, TRUE, icon_scale, flags));
+			emblem_icons = nemo_file_get_emblem_icons (file);
 
 			/* pick only the first emblem we can render for the list view */
 			for (l = emblem_icons; !bad_ratio && l != NULL; l = l->next) {
