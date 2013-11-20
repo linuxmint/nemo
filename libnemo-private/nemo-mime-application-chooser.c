@@ -175,6 +175,11 @@ create_custom_desktop_file (NemoMimeApplicationChooser *chooser, gboolean def)
                            G_KEY_FILE_DESKTOP_KEY_TYPE,
                            G_KEY_FILE_DESKTOP_TYPE_APPLICATION);
 
+    g_key_file_set_boolean (keyfile,
+                           G_KEY_FILE_DESKTOP_GROUP,
+                           G_KEY_FILE_DESKTOP_KEY_NO_DISPLAY,
+                           TRUE);
+
     gsize size;
     gchar *buffer = g_key_file_to_data (keyfile, &size, NULL);
 
