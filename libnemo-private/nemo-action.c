@@ -1339,6 +1339,10 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
                 }
             }
         }
+
+        if (nemo_file_is_mime_type (NEMO_FILE (iter->data), "application/x-nemo-link")) {
+            found_match = FALSE;
+        }
     }
 
     extension_type_show = found_match;
