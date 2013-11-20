@@ -3667,7 +3667,7 @@ padding_cell_renderer_func (GtkTreeViewColumn *column,
 	} else {
 		g_object_set (cell,
 			      "visible", TRUE,
-			      "ypad", 3,
+			      "ypad", 5,
 			      NULL);
 	}
 }
