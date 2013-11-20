@@ -1497,7 +1497,8 @@ activate_files (ActivateParameters *parameters)
 
 	flags = parameters->flags;
 	if (count > 1) {
-		if ((parameters->flags & NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW) == 0) {
+		if ((parameters->flags & NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW) == 0 &&
+            g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER)) {
 			flags |= NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
 		} else {
 			flags |= NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW;
