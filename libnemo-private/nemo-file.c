@@ -6579,15 +6579,16 @@ nemo_file_is_launchable (NemoFile *file)
  * 
  **/
 GList *
-nemo_file_get_emblem_icons (NemoFile *file,
-				char **exclude)
+nemo_file_get_emblem_icons (NemoFile *file)
 {
+	NemoFile *parent_file;
 	GList *keywords, *l;
 	GList *icons;
 	char *icon_names[2];
+	char *exclude[3];
 	char *keyword;
-	int i;
 	GIcon *icon;
+	int i;
 	
 	if (file == NULL) {
 		return NULL;
@@ -6595,20 +6596,28 @@ nemo_file_get_emblem_icons (NemoFile *file,
 	
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
 
+	i = 0;
+	parent_file = nemo_file_get_parent (file);
+	exclude[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
+	if (parent_file) {
+		if (!nemo_file_can_write (parent_file)) {
+			exclude[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
+		}
+		nemo_file_unref (parent_file);
+	}
+	exclude[i++] = NULL;
+
 	keywords = nemo_file_get_keywords (file);
 	keywords = prepend_automatic_keywords (file, keywords);
 
 	icons = NULL;
 	for (l = keywords; l != NULL; l = l->next) {
 		keyword = l->data;
-
-		if (exclude) {
-			for (i = 0; exclude[i] != NULL; i++) {
-				if (strcmp (exclude[i], keyword) == 0) {
-					continue;
-				}
+		for (i = 0; exclude[i] != NULL; i++) {
+			if (strcmp (exclude[i], keyword) == 0) {
+				continue;
 			}
-		}		
+		}
 
 		icon_names[0] = g_strconcat ("emblem-", keyword, NULL);
 		icon_names[1] = keyword;

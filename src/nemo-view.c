@@ -721,28 +721,6 @@ nemo_view_scroll_to_file (NemoView *view,
 	NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->scroll_to_file (view, uri);
 }
 
-char **
-nemo_view_get_emblem_names_to_exclude (NemoView *view)
-{
-	char **excludes;
-	int i;
-	
-	g_assert (NEMO_IS_VIEW (view));
-
-	excludes = g_new (char *, 3);
-	
-	i = 0;
-	excludes[i++] = g_strdup (NEMO_FILE_EMBLEM_NAME_TRASH);
-
-	if (!nemo_file_can_write (view->details->directory_as_file)) {
-		excludes[i++] = g_strdup (NEMO_FILE_EMBLEM_NAME_CANT_WRITE);
-	}
-
-	excludes[i++] = NULL;
-
-	return excludes;
-}
-
 /**
  * nemo_view_get_selection:
  *

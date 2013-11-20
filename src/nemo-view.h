@@ -392,7 +392,6 @@ void              nemo_view_load_location              (NemoView      *view,
 							    GFile             *location);
 void              nemo_view_stop_loading               (NemoView      *view);
 
-char **           nemo_view_get_emblem_names_to_exclude (NemoView     *view);
 char *            nemo_view_get_first_visible_file     (NemoView      *view);
 void              nemo_view_scroll_to_file             (NemoView      *view,
 							    const char        *uri);
