@@ -67,6 +67,7 @@
 #define NEMO_ACTION_OTHER_APPLICATION1 "OtherApplication1"
 #define NEMO_ACTION_OTHER_APPLICATION2 "OtherApplication2"
 #define NEMO_ACTION_NEW_FOLDER "New Folder"
+#define NEMO_ACTION_NEW_FOLDER_WITH_SELECTION "New Folder with Selection"
 #define NEMO_ACTION_PROPERTIES "Properties"
 #define NEMO_ACTION_PROPERTIES_ACCEL "PropertiesAccel"
 #define NEMO_ACTION_LOCATION_PROPERTIES "LocationProperties"

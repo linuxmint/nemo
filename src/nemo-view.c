@@ -1866,8 +1866,42 @@ reveal_newly_added_folder (NemoView *view, NemoFile *new_file,
 typedef struct {
 	NemoView *directory_view;
 	GHashTable *added_locations;
+	GList *selection;
 } NewFolderData;
 
+typedef struct {
+	NemoView *directory_view;
+	GHashTable *to_remove_locations;
+	NemoFile *new_folder;
+} NewFolderSelectionData;
+
+static void
+rename_newly_added_folder (NemoView *view, NemoFile *removed_file,
+			   NemoDirectory *directory, NewFolderSelectionData *data);
+
+static void
+rename_newly_added_folder (NemoView *view, NemoFile *removed_file,
+			   NemoDirectory *directory, NewFolderSelectionData *data)
+{
+	GFile *location;
+
+	location = nemo_file_get_location (removed_file);
+	if (!g_hash_table_remove (data->to_remove_locations, location)) {
+		g_assert_not_reached ();
+	}
+	g_object_unref (location);
+	if (g_hash_table_size (data->to_remove_locations) == 0) {
+		nemo_view_set_selection (data->directory_view, NULL);
+		g_signal_handlers_disconnect_by_func (data->directory_view,
+						      G_CALLBACK (rename_newly_added_folder),
+						      (void *) data);
+
+		rename_file (data->directory_view, data->new_folder);
+		g_object_unref (data->new_folder);
+		g_hash_table_destroy (data->to_remove_locations);
+		g_free (data);
+	}
+}
 
 static void
 track_newly_added_locations (NemoView *view, NemoFile *new_file,
@@ -1917,20 +1951,63 @@ new_folder_done (GFile *new_folder,
 		 NULL,
 		 screen_string);
 
-	if (g_hash_table_lookup_extended (data->added_locations, new_folder, NULL, NULL)) {
-		/* The file was already added */
-		rename_file (directory_view, file);
-	} else {
-		/* We need to run after the default handler adds the folder we want to
-		 * operate on. The ADD_FILE signal is registered as G_SIGNAL_RUN_LAST, so we
-		 * must use connect_after.
-		 */
+	if (data->selection != NULL) {
+		NewFolderSelectionData *sdata;
+		GList *uris, *l;
+
+		sdata = g_new (NewFolderSelectionData, 1);
+		sdata->directory_view = directory_view;
+		sdata->to_remove_locations = g_hash_table_new_full (g_file_hash, (GEqualFunc)g_file_equal,
+								    g_object_unref, NULL);
+		sdata->new_folder = g_object_ref (file);
+
+		uris = NULL;
+		for (l = data->selection; l != NULL; l = l->next) {
+			GFile *old_location;
+			GFile *new_location;
+			char *basename;
+
+			uris = g_list_prepend (uris, nemo_file_get_uri ((NemoFile *) l->data));
+
+			old_location = nemo_file_get_location (l->data);
+			basename = g_file_get_basename (old_location);
+			new_location = g_file_resolve_relative_path (new_folder, basename);
+			g_hash_table_insert (sdata->to_remove_locations, new_location, NULL);
+			g_free (basename);
+			g_object_unref (old_location);
+		}
+		uris = g_list_reverse (uris);
+
 		g_signal_connect_data (directory_view,
-				       "add_file",
-				       G_CALLBACK (reveal_newly_added_folder),
-				       g_object_ref (new_folder),
-				       (GClosureNotify)g_object_unref,
+				       "remove_file",
+				       G_CALLBACK (rename_newly_added_folder),
+				       sdata,
+				       (GClosureNotify)NULL,
 				       G_CONNECT_AFTER);
+
+		nemo_view_move_copy_items (directory_view,
+					       uris,
+					       NULL,
+					       nemo_file_get_uri (file),
+					       GDK_ACTION_MOVE,
+					       0, 0);
+		g_list_free_full (uris, g_free);
+	} else {
+		if (g_hash_table_lookup_extended (data->added_locations, new_folder, NULL, NULL)) {
+			/* The file was already added */
+			rename_file (directory_view, file);
+		} else {
+			/* We need to run after the default handler adds the folder we want to
+			 * operate on. The ADD_FILE signal is registered as G_SIGNAL_RUN_LAST, so we
+			 * must use connect_after.
+			 */
+			g_signal_connect_data (directory_view,
+					       "add_file",
+					       G_CALLBACK (reveal_newly_added_folder),
+					       g_object_ref (new_folder),
+					       (GClosureNotify)g_object_unref,
+					       G_CONNECT_AFTER);
+		}
 	}
 	nemo_file_unref (file);
 
@@ -1942,12 +2019,14 @@ new_folder_done (GFile *new_folder,
 					      (gpointer *) &data->directory_view);
 	}
 
+        nemo_file_list_free (data->selection);
 	g_free (data);
 }
 
 
 static NewFolderData *
-new_folder_data_new (NemoView *directory_view)
+new_folder_data_new (NemoView *directory_view,
+		     gboolean      with_selection)
 {
 	NewFolderData *data;
 
@@ -1955,6 +2034,11 @@ new_folder_data_new (NemoView *directory_view)
 	data->directory_view = directory_view;
 	data->added_locations = g_hash_table_new_full (g_file_hash, (GEqualFunc)g_file_equal,
 						       g_object_unref, NULL);
+	if (with_selection) {
+		data->selection = nemo_view_get_selection_for_file_transfer (directory_view);
+	} else {
+		data->selection = NULL;
+	}
 	g_object_add_weak_pointer (G_OBJECT (data->directory_view),
 				   (gpointer *) &data->directory_view);
 
@@ -1978,13 +2062,14 @@ context_menu_to_file_operation_position (NemoView *view)
 }
 
 static void
-nemo_view_new_folder (NemoView *directory_view)
+nemo_view_new_folder (NemoView *directory_view,
+			  gboolean      with_selection)
 {
 	char *parent_uri;
 	NewFolderData *data;
 	GdkPoint *pos;
 
-	data = new_folder_data_new (directory_view);
+	data = new_folder_data_new (directory_view, with_selection);
 
 	g_signal_connect_data (directory_view,
 			       "add_file",
@@ -2008,7 +2093,7 @@ setup_new_folder_data (NemoView *directory_view)
 {
 	NewFolderData *data;
 
-	data = new_folder_data_new (directory_view);
+	data = new_folder_data_new (directory_view, FALSE);
 
 	g_signal_connect_data (directory_view,
 			       "add_file",
@@ -2096,7 +2181,16 @@ action_new_folder_callback (GtkAction *action,
 {                
         g_assert (NEMO_IS_VIEW (callback_data));
 
-	nemo_view_new_folder (NEMO_VIEW (callback_data));
+	nemo_view_new_folder (NEMO_VIEW (callback_data), FALSE);
+}
+
+static void
+action_new_folder_with_selection_callback (GtkAction *action,
+					   gpointer callback_data)
+{                
+        g_assert (NEMO_IS_VIEW (callback_data));
+
+	nemo_view_new_folder (NEMO_VIEW (callback_data), TRUE);
 }
 
 static void
@@ -7953,6 +8047,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Create New _Folder"), "<control><shift>N",
   /* tooltip */                  N_("Create a new empty folder inside this folder"),
 				 G_CALLBACK (action_new_folder_callback) },
+  /* name, stock id */         { NEMO_ACTION_NEW_FOLDER_WITH_SELECTION, NULL,
+  /* label, accelerator */       N_("Create New Folder with Selection"), NULL,
+  /* tooltip */                  N_("Create a new folder containing the selected items"),
+				 G_CALLBACK (action_new_folder_with_selection_callback) },
   /* name, stock id, label */  { "No Templates", NULL, N_("No templates installed") },
   /* name, stock id */         { "New Empty Document", NULL,
     /* translators: this is used to indicate that a document doesn't contain anything */
@@ -9362,6 +9460,14 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_FOLDER);
 	gtk_action_set_sensitive (action, can_create_files);
+
+	action = gtk_action_group_get_action (view->details->dir_action_group,
+					      NEMO_ACTION_NEW_FOLDER_WITH_SELECTION);
+	gtk_action_set_sensitive (action, can_create_files && can_delete_files && (selection_count > 1));
+	gtk_action_set_visible (action, selection_count > 1);
+	label_with_underscore = g_strdup_printf (_("Create New Folder with Selection (%d Items)"), selection_count);
+	g_object_set (action, "label", label_with_underscore, NULL);
+	g_free (label_with_underscore);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_OPEN);

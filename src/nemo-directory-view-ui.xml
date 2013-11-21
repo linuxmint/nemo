@@ -7,6 +7,7 @@
 	<menu action="File">
 		<placeholder name="New Items Placeholder">
 			<menuitem name="New Folder" action="New Folder"/>
+			<menuitem name="New Folder with Selection" action="New Folder with Selection"/>
 			<menu action="New Documents">
 			         <menuitem name="No Templates" action="No Templates"/>
 				 <placeholder name="New Documents Placeholder"/>
@@ -150,6 +151,10 @@
 
 </popup>
 <popup name="selection">
+        <placeholder name="New Object Items">
+	        <menuitem name="New Folder with Selection" action="New Folder with Selection"/>
+		<separator name="new folder with selection separator"/>
+	</placeholder>
 	<placeholder name="Open Placeholder">
 		<menuitem name="Open" action="Open"/>
 		<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
