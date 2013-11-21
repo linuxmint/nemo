@@ -13,13 +13,6 @@
 	<attribute name="label" translatable="yes">Connect to _Server…</attribute>
       </item>
       <item>
-	<attribute name="action">app.enter-location</attribute>
-	<attribute name="label" translatable="yes">Enter _Location…</attribute>
-	<attribute name="accel">&lt;Primary&gt;l</attribute>
-      </item>
-    </section>
-    <section>
-      <item>
 	<attribute name="action">app.bookmarks</attribute>
 	<attribute name="label" translatable="yes">_Bookmarks</attribute>
 	<attribute name="accel">&lt;Primary&gt;b</attribute>
