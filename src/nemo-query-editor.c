@@ -163,9 +163,6 @@ nemo_query_editor_draw (GtkWidget *widget,
 
 	context = gtk_widget_get_style_context (widget);
 
-	gtk_style_context_save (context);
-	gtk_style_context_add_class (context, GTK_STYLE_CLASS_INFO);
-
 	gtk_render_background (context, cr, 0, 0,
 			       gtk_widget_get_allocated_width (widget),
 			       gtk_widget_get_allocated_height (widget));
@@ -173,8 +170,6 @@ nemo_query_editor_draw (GtkWidget *widget,
 	gtk_render_frame (context, cr, 0, 0,
 			  gtk_widget_get_allocated_width (widget),
 			  gtk_widget_get_allocated_height (widget));
-
-	gtk_style_context_restore (context);
 
 	GTK_WIDGET_CLASS (nemo_query_editor_parent_class)->draw (widget, cr);
 
@@ -970,6 +965,8 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 						       NemoQueryEditorDetails);
 	editor->details->is_visible = TRUE;
 
+	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (editor)),
+				     GTK_STYLE_CLASS_QUESTION);
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 
 	editor->details->invisible_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);

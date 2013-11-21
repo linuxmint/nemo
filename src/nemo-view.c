@@ -8032,7 +8032,7 @@ nemo_view_init_show_hidden_files (NemoView *view)
 }
 
 static const GtkActionEntry directory_view_entries[] = {
-  /* name, stock id, label */  { "New Documents", "document-new", N_("Create New _Document") },
+  /* name, stock id, label */  { "New Documents", "document-new", N_("New _Document") },
   /* name, stock id, label */  { "Open With", NULL, N_("Open Wit_h"),
 				 NULL, N_("Choose a program with which to open the selected item") },
   /* name, stock id */         { "Properties", GTK_STOCK_PROPERTIES,
@@ -8044,11 +8044,11 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  NULL,
 				 G_CALLBACK (action_properties_callback) },
   /* name, stock id */         { "New Folder", "folder-new",
-  /* label, accelerator */       N_("Create New _Folder"), "<control><shift>N",
+  /* label, accelerator */       N_("New _Folder"), "<control><shift>N",
   /* tooltip */                  N_("Create a new empty folder inside this folder"),
 				 G_CALLBACK (action_new_folder_callback) },
   /* name, stock id */         { NEMO_ACTION_NEW_FOLDER_WITH_SELECTION, NULL,
-  /* label, accelerator */       N_("Create New Folder with Selection"), NULL,
+  /* label, accelerator */       N_("New Folder with Selection"), NULL,
   /* tooltip */                  N_("Create a new folder containing the selected items"),
 				 G_CALLBACK (action_new_folder_with_selection_callback) },
   /* name, stock id, label */  { "No Templates", NULL, N_("No templates installed") },
@@ -9465,7 +9465,7 @@ real_update_menus (NemoView *view)
 					      NEMO_ACTION_NEW_FOLDER_WITH_SELECTION);
 	gtk_action_set_sensitive (action, can_create_files && can_delete_files && (selection_count > 1));
 	gtk_action_set_visible (action, selection_count > 1);
-	label_with_underscore = g_strdup_printf (_("Create New Folder with Selection (%d Items)"), selection_count);
+	label_with_underscore = g_strdup_printf (_("New Folder with Selection (%d Items)"), selection_count);
 	g_object_set (action, "label", label_with_underscore, NULL);
 	g_free (label_with_underscore);
 
