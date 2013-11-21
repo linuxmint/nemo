@@ -130,3 +130,38 @@ nemo_ui_get_menu_icon (const char *icon_name)
 
 	return pixbuf;
 }
+
+char *
+nemo_escape_action_name (const char *action_name,
+			     const char *prefix)
+{
+	GString *s;
+
+	if (action_name == NULL) {
+		return NULL;
+	}
+
+	s = g_string_new (prefix);
+
+	while (*action_name != 0) {
+		switch (*action_name) {
+		case '\\':
+			g_string_append (s, "\\\\");
+			break;
+		case '/':
+			g_string_append (s, "\\s");
+			break;
+		case '&':
+			g_string_append (s, "\\a");
+			break;
+		case '"':
+			g_string_append (s, "\\q");
+			break;
+		default:
+			g_string_append_c (s, *action_name);
+		}
+
+		action_name ++;
+	}
+	return g_string_free (s, FALSE);
+}

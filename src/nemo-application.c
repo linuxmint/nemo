@@ -997,19 +997,120 @@ queue_accel_map_save_callback (GtkAccelMap *object, gchar *accel_path,
 }
 
 static void
+update_accel_due_to_scripts_migration (gpointer data, const gchar *accel_path, guint accel_key,
+		GdkModifierType accel_mods, gboolean changed)
+{
+	char *old_scripts_location_esc = data;
+	char *old_scripts_pt;
+
+	old_scripts_pt = strstr (accel_path, old_scripts_location_esc);
+
+	if (old_scripts_pt != NULL) {
+		/* There's a mention of the deprecated scripts directory in the accel. Remove it, and
+		 * add a migrated one. */
+		char *tmp;
+		char *tmp2;
+		GString *new_accel_path;
+
+		/* base part of accel */
+		tmp = g_strndup (accel_path, old_scripts_pt - accel_path);
+		new_accel_path = g_string_new (tmp);
+		g_free (tmp);
+
+		/* new script directory, escaped */
+		tmp = nemo_get_scripts_directory_path ();
+		tmp2 = nemo_escape_action_name (tmp, "");
+		g_free (tmp);
+		g_string_append (new_accel_path, tmp2);
+		g_free (tmp2);
+
+		/* script path relative to scripts directory */
+		g_string_append (new_accel_path, old_scripts_pt + strlen (old_scripts_location_esc));
+
+		/* exchange entry */
+		gtk_accel_map_change_entry (accel_path, 0, 0, FALSE);
+		gtk_accel_map_change_entry (new_accel_path->str, accel_key, accel_mods, TRUE);
+
+		g_string_free (new_accel_path, TRUE);
+	}
+}
+
+static void
 init_gtk_accels (void)
 {
 	char *accel_map_filename;
+	gboolean performed_migration = FALSE;
+	char *old_scripts_directory_path = NULL;
+
+	accel_map_filename = nemo_get_accel_map_file ();
+
+	/* If the accel map file doesn't exist, try to migrate from
+	 * former locations. */
+	if (!g_file_test (accel_map_filename, G_FILE_TEST_IS_REGULAR)) {
+		char *old_accel_map_filename;
+		const gchar *override;
+
+		override = g_getenv ("GNOME22_USER_DIR");
+		if (override) {
+			old_accel_map_filename = g_build_filename (override,
+					"accels", "nemo", NULL);
+			old_scripts_directory_path = g_build_filename (override,
+				       "nemo-scripts",
+				       NULL);
+		} else {
+			old_accel_map_filename = g_build_filename (g_get_home_dir (),
+					".gnome2", "accels", "nemo", NULL);
+			old_scripts_directory_path = g_build_filename (g_get_home_dir (),
+								       ".gnome2",
+								       "nemo-scripts",
+								       NULL);
+		}
+
+		if (g_file_test (old_accel_map_filename, G_FILE_TEST_IS_REGULAR)) {
+			char *parent_dir;
+
+			parent_dir = g_path_get_dirname (accel_map_filename);
+			if (g_mkdir_with_parents (parent_dir, 0700) == 0) {
+				GFile *accel_map_file;
+				GFile *old_accel_map_file;
+
+				accel_map_file = g_file_new_for_path (accel_map_filename);
+				old_accel_map_file = g_file_new_for_path (old_accel_map_filename);
+
+				/* If the move fails, it's safer to not read any accel map
+				 * on startup instead of reading the old one and possibly
+				 * being stuck with it. */
+				performed_migration = g_file_move (old_accel_map_file, accel_map_file, 0, NULL, NULL, NULL, NULL);
+
+				g_object_unref (accel_map_file);
+				g_object_unref (old_accel_map_file);
+			}
+			g_free (parent_dir);
+		}
+
+		g_free (old_accel_map_filename);
+	}
 
 	/* load accelerator map, and register save callback */
-	accel_map_filename = nemo_get_accel_map_file ();
-	if (accel_map_filename) {
-		gtk_accel_map_load (accel_map_filename);
-		g_free (accel_map_filename);
+	gtk_accel_map_load (accel_map_filename);
+	g_free (accel_map_filename);
+
+	if (performed_migration) {
+		/* Migrate accels pointing to scripts */
+		char *old_scripts_location_esc;
+
+		old_scripts_location_esc = nemo_escape_action_name (old_scripts_directory_path, "");
+		gtk_accel_map_foreach (old_scripts_location_esc, update_accel_due_to_scripts_migration);
+		g_free (old_scripts_location_esc);
+		/* save map immediately */
+		save_of_accel_map_requested = TRUE;
+		nemo_application_save_accel_map (NULL);
 	}
 
 	g_signal_connect (gtk_accel_map_get (), "changed",
 			  G_CALLBACK (queue_accel_map_save_callback), NULL);
+
+	g_free (old_scripts_directory_path);
 }
 
 static void
