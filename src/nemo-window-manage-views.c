@@ -1255,33 +1255,13 @@ slot_add_extension_extra_widgets (NemoWindowSlot *slot)
 static void
 nemo_window_slot_show_x_content_bar (NemoWindowSlot *slot, GMount *mount, const char **x_content_types)
 {
-	unsigned int n;
+	GtkWidget *bar;
 
 	g_assert (NEMO_IS_WINDOW_SLOT (slot));
 
-	for (n = 0; x_content_types[n] != NULL; n++) {
-		GAppInfo *default_app;
-
-		/* skip blank media; the burn:/// location will provide it's own cluebar */
-		if (g_str_has_prefix (x_content_types[n], "x-content/blank-")) {
-			continue;
-		}
-
-		/* don't show the cluebar for windows software */
-		if (g_content_type_is_a (x_content_types[n], "x-content/win32-software")) {
-			continue;
-		}
-
-		/* only show the cluebar if a default app is available */
-		default_app = g_app_info_get_default_for_type (x_content_types[n], FALSE);
-		if (default_app != NULL)  {
-			GtkWidget *bar;
-			bar = nemo_x_content_bar_new (mount, x_content_types[n]);
-			gtk_widget_show (bar);
-			nemo_window_slot_add_extra_location_widget (slot, bar);
-			g_object_unref (default_app);
-		}
-	}
+	bar = nemo_x_content_bar_new (mount, x_content_types);
+	gtk_widget_show (bar);
+	nemo_window_slot_add_extra_location_widget (slot, bar);
 }
 
 static void

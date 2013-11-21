@@ -9465,7 +9465,10 @@ real_update_menus (NemoView *view)
 					      NEMO_ACTION_NEW_FOLDER_WITH_SELECTION);
 	gtk_action_set_sensitive (action, can_create_files && can_delete_files && (selection_count > 1));
 	gtk_action_set_visible (action, selection_count > 1);
-	label_with_underscore = g_strdup_printf (_("New Folder with Selection (%d Items)"), selection_count);
+	label_with_underscore = g_strdup_printf (ngettext("New Folder with Selection (%'d Item)",
+							  "New Folder with Selection (%'d Items)",
+							  selection_count),
+						 selection_count);
 	g_object_set (action, "label", label_with_underscore, NULL);
 	g_free (label_with_underscore);
 
