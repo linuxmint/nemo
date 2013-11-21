@@ -2406,6 +2406,7 @@ swap_delete_keybinding_changed_callback (gpointer callback_data)
 static gboolean
 set_up_scripts_directory_global (void)
 {
+	char *old_scripts_directory_path;
 	char *scripts_directory_path;
 
 	if (scripts_directory_uri != NULL) {
@@ -2420,6 +2421,7 @@ set_up_scripts_directory_global (void)
 	}
 
 	g_free (scripts_directory_path);
+	g_free (old_scripts_directory_path);
 
 	return (scripts_directory_uri != NULL) ? TRUE : FALSE;
 }
@@ -4599,41 +4601,6 @@ open_with_launch_application_callback (GtkAction *action,
 }
 
 static char *
-escape_action_name (const char *action_name,
-		    const char *prefix)
-{
-	GString *s;
-
-	if (action_name == NULL) {
-		return NULL;
-	}
-	
-	s = g_string_new (prefix);
-
-	while (*action_name != 0) {
-		switch (*action_name) {
-		case '\\':
-			g_string_append (s, "\\\\");
-			break;
-		case '/':
-			g_string_append (s, "\\s");
-			break;
-		case '&':
-			g_string_append (s, "\\a");
-			break;
-		case '"':
-			g_string_append (s, "\\q");
-			break;
-		default:
-			g_string_append_c (s, *action_name);
-		}
-
-		action_name ++;
-	}
-	return g_string_free (s, FALSE);
-}
-
-static char *
 escape_action_path (const char *action_path)
 {
 	GString *s;
@@ -4682,7 +4649,7 @@ add_submenu (GtkUIManager *ui_manager,
 	GtkAction *action;
 	
 	if (parent_path != NULL) {
-		action_name = escape_action_name (uri, "submenu_");
+		action_name = nemo_escape_action_name (uri, "submenu_");
 		submenu_name = g_path_get_basename (uri);
 		escaped_submenu_name = escape_action_path (submenu_name);
 		escaped_label = eel_str_double_underscores (label);
@@ -6097,7 +6064,7 @@ add_script_to_scripts_menus (NemoView *directory_view,
 
 	launch_parameters = script_launch_parameters_new (file, directory_view);
 
-	action_name = escape_action_name (uri, "script_");
+	action_name = nemo_escape_action_name (uri, "script_");
 	escaped_label = eel_str_double_underscores (name);
 
 	action = gtk_action_new (action_name,
@@ -6478,7 +6445,7 @@ add_template_to_templates_menus (NemoView *directory_view,
 	uri = nemo_file_get_uri (file);
 	tip = g_strdup_printf (_("Create a new document from template \"%s\""), name);
 
-	action_name = escape_action_name (uri, "template_");
+	action_name = nemo_escape_action_name (uri, "template_");
 	escaped_label = eel_str_double_underscores (name);
 	
 	parameters = create_template_parameters_new (file, directory_view);

@@ -134,20 +134,12 @@ nemo_get_user_directory (void)
  * Get the path for the filename containing nemo accelerator map.
  * The filename need not exist.
  *
- * Return value: the filename path, or NULL if the home directory could not be found
+ * Return value: the filename path
  **/
 char *
 nemo_get_accel_map_file (void)
 {
-	const gchar *override;
-
-	override = g_getenv ("GNOME22_USER_DIR");
-
-	if (override) {
-		return g_build_filename (override, "accels/nemo", NULL);
-	} else {
-		return g_build_filename (g_get_home_dir (), ".gnome2/accels/nemo", NULL);
-	}
+	return g_build_filename (g_get_user_config_dir (), "nemo", "accels", NULL);
 }
 
 /**

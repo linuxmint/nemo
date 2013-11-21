@@ -74,7 +74,6 @@ char *   nemo_ensure_unique_file_name            (const char *directory_uri,
 GFile *  nemo_find_existing_uri_in_hierarchy     (GFile *location);
 
 char * nemo_get_accel_map_file (void);
-
 char * nemo_get_scripts_directory_path (void);
 
 GHashTable * nemo_trashed_files_get_original_directories (GList *files,
