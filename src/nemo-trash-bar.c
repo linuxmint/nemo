@@ -180,6 +180,7 @@ nemo_trash_bar_init (NemoTrashBar *bar)
 {
 	GtkWidget *content_area, *action_area, *w;
 	GtkWidget *label;
+	PangoAttrList *attrs;
 
 	bar->priv = NEMO_TRASH_BAR_GET_PRIVATE (bar);
 	content_area = gtk_info_bar_get_content_area (GTK_INFO_BAR (bar));
@@ -188,9 +189,12 @@ nemo_trash_bar_init (NemoTrashBar *bar)
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (action_area),
 					GTK_ORIENTATION_HORIZONTAL);
 
+	attrs = pango_attr_list_new ();
+	pango_attr_list_insert (attrs, pango_attr_weight_new (PANGO_WEIGHT_BOLD));
 	label = gtk_label_new (_("Trash"));
-	gtk_style_context_add_class (gtk_widget_get_style_context (label),
-				     "nemo-cluebar-label");
+	gtk_label_set_attributes (GTK_LABEL (label), attrs);
+	pango_attr_list_unref (attrs);
+
 	gtk_widget_show (label);
 	gtk_container_add (GTK_CONTAINER (content_area), label);
 
@@ -223,5 +227,6 @@ nemo_trash_bar_new (NemoView *view)
 {
 	return g_object_new (NEMO_TYPE_TRASH_BAR,
 			     "view", view,
+			     "message-type", GTK_MESSAGE_QUESTION,
 			     NULL);
 }
