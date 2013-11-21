@@ -1067,7 +1067,7 @@ action_new_folder_callback (GtkAction *action,
     NemoWindow *window = user_data;
     NemoView *view = get_current_view (window);
 
-    nemo_view_new_folder (view);
+    nemo_view_new_folder (view, FALSE);
 }
 
 static void
