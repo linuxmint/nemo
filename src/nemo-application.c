@@ -1012,7 +1012,6 @@ init_gtk_accels (void)
 			  G_CALLBACK (queue_accel_map_save_callback), NULL);
 }
 
-
 static void
 menu_state_changed_callback (NemoApplication *self)
 {
