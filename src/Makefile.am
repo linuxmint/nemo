@@ -211,11 +211,11 @@ nemo_convert_metadata_SOURCES= \
 	nemo-convert-metadata.c	\
 	$(NULL)
 
-## polkitdir = $(datadir)/polkit-1/actions
-## polkit_in_files = org.nemo.root.policy.in
+polkitdir = $(datadir)/polkit-1/actions
+polkit_in_files = org.nemo.root.policy.in
 
-## @INTLTOOL_POLICY_RULE@
-## polkit_DATA = $(polkit_in_files:.policy.in=.policy)
+@INTLTOOL_POLICY_RULE@
+polkit_DATA = $(polkit_in_files:.policy.in=.policy)
 
 TESTS=check-nemo
 
