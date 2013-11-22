@@ -63,22 +63,21 @@
 # Ioannis Zampoukas <ioza1964@yahoo.gr>, 2012.
 # Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>, 2012, 2013.
 # Efstathios Iosifidis <iosifidis@opensuse.org>, 2013.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-10-18 13:23+0000\n"
-"PO-Revision-Date: 2013-10-19 14:40+0300\n"
-"Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
-"Language-Team: Greek, Modern (1453-) <opensuse-translation-el@opensuse.org>\n"
+"POT-Creation-Date: 2013-11-21 09:33+0000\n"
+"PO-Revision-Date: 2013-11-22 09:31+0300\n"
+"Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
+"Language-Team: team@lists.gnome.gr\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.6\n"
+"X-Generator: Virtaal 0.7.0\n"
 "X-Project-Style: gnome\n"
 
 #
@@ -97,8 +96,8 @@ msgstr "Σύνδεση σε εξυπηρετητή"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4476 ../src/nautilus-window.c:2200
-#: ../src/nautilus-window.c:2397
+#: ../src/nautilus-properties-window.c:4476 ../src/nautilus-window.c:2202
+#: ../src/nautilus-window.c:2399
 msgid "Files"
 msgstr "Αρχεία"
 
@@ -172,7 +171,7 @@ msgstr "Η θέση του αντίθετου άκρου της επιλογής
 
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3080
+#: ../eel/eel-editable-label.c:3085
 #: ../libnautilus-private/nautilus-clipboard.c:358 ../src/nautilus-view.c:7206
 #: ../src/nautilus-view.c:7359
 msgid "Cu_t"
@@ -182,7 +181,7 @@ msgstr "Απο_κοπή"
 # #       keep msg length relatively short...
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3082
+#: ../eel/eel-editable-label.c:3087
 #: ../libnautilus-private/nautilus-clipboard.c:362 ../src/nautilus-view.c:7210
 #: ../src/nautilus-view.c:7363
 msgid "_Copy"
@@ -190,12 +189,12 @@ msgstr "_Αντιγραφή"
 
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3084
+#: ../eel/eel-editable-label.c:3089
 #: ../libnautilus-private/nautilus-clipboard.c:366 ../src/nautilus-view.c:7214
 msgid "_Paste"
 msgstr "_Επικόλληση"
 
-#: ../eel/eel-editable-label.c:3087
+#: ../eel/eel-editable-label.c:3092
 msgid "Select All"
 msgstr "Επιλογή όλων"
 
@@ -1065,7 +1064,7 @@ msgstr "Όλα τα αντικείμενα στα απορρίμματα θα δ
 
 #: ../libnautilus-private/nautilus-file-operations.c:1396
 #: ../libnautilus-private/nautilus-file-operations.c:2272
-#: ../src/nautilus-window.c:805
+#: ../src/nautilus-window.c:806
 msgid "Empty _Trash"
 msgstr "Άδειασμα α_πορριμμάτων"
 
@@ -2469,10 +2468,10 @@ msgid "Desktop font"
 msgstr "Γραμματοσειρά επιφάνειας εργασίας"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
-msgid "The font _description used for the icons on the desktop."
+msgid "The font description used for the icons on the desktop."
 msgstr ""
-"Η χρησιμοποιούμενη _περιγραφή γραμματοσειράς που χρησιμοποιείται για τα "
-"εικονίδια στην επιφάνεια εργασίας."
+"Η χρησιμοποιούμενη περιγραφή γραμματοσειράς για τα εικονίδια στην επιφάνεια "
+"εργασίας."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:58
 msgid "Home icon visible on desktop"
@@ -3856,7 +3855,7 @@ msgid_plural "Opening %d items."
 msgstr[0] "Άνοιγμα %d στοιχείου."
 msgstr[1] "Άνοιγμα %d στοιχείων."
 
-#: ../src/nautilus-notebook.c:378
+#: ../src/nautilus-notebook.c:383
 msgid "Close tab"
 msgstr "Κλείσιμο καρτέλας"
 
@@ -5242,31 +5241,31 @@ msgstr "Αφημένο κείμενο.txt"
 msgid "dropped data"
 msgstr "αφημένα δεδομένα"
 
-#: ../src/nautilus-window.c:819
+#: ../src/nautilus-window.c:820
 msgid "_Properties"
 msgstr "_Ιδιότητες"
 
-#: ../src/nautilus-window.c:827
+#: ../src/nautilus-window.c:829
 msgid "_Format…"
 msgstr "_Διαμόρφωση…"
 
-#: ../src/nautilus-window.c:1176
+#: ../src/nautilus-window.c:1178
 msgid "_New Tab"
 msgstr "_Νέα καρτέλα"
 
-#: ../src/nautilus-window.c:1186 ../src/nautilus-window-menus.c:588
+#: ../src/nautilus-window.c:1188 ../src/nautilus-window-menus.c:588
 msgid "Move Tab _Left"
 msgstr "Μετακίνηση καρτέλας _αριστερά"
 
-#: ../src/nautilus-window.c:1194 ../src/nautilus-window-menus.c:591
+#: ../src/nautilus-window.c:1196 ../src/nautilus-window-menus.c:591
 msgid "Move Tab _Right"
 msgstr "Μετακίνηση καρτέλας _δεξιά"
 
-#: ../src/nautilus-window.c:1205
+#: ../src/nautilus-window.c:1207
 msgid "_Close Tab"
 msgstr "_Κλείσιμο καρτέλας"
 
-#: ../src/nautilus-window.c:2370
+#: ../src/nautilus-window.c:2372
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5278,7 +5277,7 @@ msgstr ""
 "όπως αυτή έχει δημοσιευτεί από το Ίδρυμα Ελεύθερου Λογισμικού· είτε της "
 "έκδοσης 2 της Άδειας, είτε (προαιρετικά) οποιασδήποτε μεταγενέστερης έκδοσης."
 
-#: ../src/nautilus-window.c:2374
+#: ../src/nautilus-window.c:2376
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5290,7 +5289,7 @@ msgstr ""
 "ΚΑΤΑΛΛΗΛΟΤΗΤΑΣ ΓΙΑ ΕΙΔΙΚΟ ΣΚΟΠΟ. Για περισσότερες λεπτομέρειες ανατρέξτε στη "
 "Γενική Άδεια Δημόσιας Χρήσης GNU."
 
-#: ../src/nautilus-window.c:2378
+#: ../src/nautilus-window.c:2380
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5303,11 +5302,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2393
+#: ../src/nautilus-window.c:2395
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "Πνευματικά δικαιώματα © %Id–%Id Οι συγγραφείς των αρχείων"
 
-#: ../src/nautilus-window.c:2399
+#: ../src/nautilus-window.c:2401
 msgid "Access and organize your files."
 msgstr "Προσπελάστε και οργανώστε τα αρχεία σας."
 
@@ -5316,7 +5315,7 @@ msgstr "Προσπελάστε και οργανώστε τα αρχεία σα�
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2409
+#: ../src/nautilus-window.c:2411
 msgid "translator-credits"
 msgstr ""
 "Ελληνική μεταφραστική ομάδα GNOME\n"
