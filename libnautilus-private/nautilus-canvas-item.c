@@ -771,7 +771,6 @@ prepare_pango_layout_for_draw (NautilusCanvasItem *item,
 	needs_highlight = details->is_highlighted_for_selection || details->is_highlighted_for_drop;
 
 	if (needs_highlight ||
-	    details->is_prelit ||
 	    details->is_highlighted_as_keyboard_focus ||
 	    details->entire_text) {
 		/* VOODOO-TODO, cf. compute_text_rectangle() */
