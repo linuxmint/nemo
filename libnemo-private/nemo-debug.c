@@ -22,8 +22,9 @@
  * Based on Empathy's empathy-debug.
  */
 
-#include <stdarg.h>
+#include "config.h"
 
+#include <stdarg.h>
 #include <glib.h>
 
 #include "nemo-debug.h"

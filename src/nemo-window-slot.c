@@ -21,6 +21,9 @@
   
    Author: Christian Neumair <cneumair@gnome.org>
 */
+
+#include "config.h"
+
 #include "nemo-window-slot.h"
 
 #include "nemo-desktop-window.h"

@@ -18,6 +18,7 @@
  * Boston, MA 02110-1335, USA. 
  */
 
+#include "config.h"
 #include "nemo-recent.h"
 
 #include <eel/eel-vfs-extensions.h>
