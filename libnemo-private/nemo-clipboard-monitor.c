@@ -306,7 +306,7 @@ nemo_get_clipboard_callback (GtkClipboard     *clipboard,
                 gsize len;
 
                 str = convert_file_list_to_string (clipboard_info, FALSE, &len);
-                gtk_selection_data_set (selection_data, copied_files_atom, 8, str, len);
+                gtk_selection_data_set (selection_data, copied_files_atom, 8, (guchar *) str, len);
                 g_free (str);
         }
 }

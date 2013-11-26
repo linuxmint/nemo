@@ -1764,7 +1764,7 @@ drag_data_received_callback (GtkWidget *widget,
 	if (!sidebar->drag_data_received) {
 		if (gtk_selection_data_get_target (selection_data) != GDK_NONE &&
 		    info == TEXT_URI_LIST) {
-			sidebar->drag_list = build_selection_list (gtk_selection_data_get_data (selection_data));
+			sidebar->drag_list = build_selection_list ((const gchar *) gtk_selection_data_get_data (selection_data));
 		} else {
 			sidebar->drag_list = NULL;
 		}
@@ -1843,7 +1843,7 @@ drag_data_received_callback (GtkWidget *widget,
 
 			switch (info) {
 			case TEXT_URI_LIST:
-				selection_list = build_selection_list (gtk_selection_data_get_data (selection_data));
+				selection_list = build_selection_list ((const gchar *) gtk_selection_data_get_data (selection_data));
 				uris = uri_list_from_selection (selection_list);
 				nemo_file_operations_copy_move (uris, NULL, drop_uri,
 								    real_action, GTK_WIDGET (tree_view),

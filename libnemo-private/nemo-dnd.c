@@ -239,7 +239,7 @@ nemo_drag_build_selection_list (GtkSelectionData *data)
 
 		/* 2: Decode geometry information.  */
 
-		item->got_icon_position = sscanf (p, "%d:%d:%d:%d%*s",
+		item->got_icon_position = sscanf ((const gchar *) p, "%d:%d:%d:%d%*s",
 						  &item->icon_x, &item->icon_y,
 						  &item->icon_width, &item->icon_height) == 4;
 		if (!item->got_icon_position) {
@@ -616,7 +616,7 @@ nemo_drag_drag_data_get (GtkWidget *widget,
 	
 	gtk_selection_data_set (selection_data,
 				gtk_selection_data_get_target (selection_data),
-				8, result->str, result->len);
+				8, (guchar *) result->str, result->len);
 	g_string_free (result, TRUE);
 
 	return TRUE;

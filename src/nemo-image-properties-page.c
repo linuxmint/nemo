@@ -484,7 +484,7 @@ file_read_callback (GObject      *object,
 
 #ifdef HAVE_EXIF
 		exif_still_loading = exif_loader_write (page->details->exifldr,
-				  		        page->details->buffer,
+				  		        (guchar *) page->details->buffer,
 				  			count_read);
 #else
 		exif_still_loading = 0;
@@ -492,7 +492,7 @@ file_read_callback (GObject      *object,
 
 		if (page->details->pixbuf_still_loading) {
 			if (!gdk_pixbuf_loader_write (page->details->loader,
-					      	      page->details->buffer,
+					      	      (const guchar *) page->details->buffer,
 					      	      count_read,
 					      	      NULL)) {
 				page->details->pixbuf_still_loading = FALSE;

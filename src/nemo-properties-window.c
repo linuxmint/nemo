@@ -473,7 +473,7 @@ nemo_properties_window_drag_data_received (GtkWidget *widget, GdkDragContext *co
 	image = GTK_IMAGE (widget);
  	window = GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (image)));
 
-	uris = g_strsplit (gtk_selection_data_get_data (selection_data), "\r\n", 0);
+	uris = g_strsplit ((const gchar *) gtk_selection_data_get_data (selection_data), "\r\n", 0);
 	exactly_one = uris[0] != NULL && (uris[1] == NULL || uris[1][0] == '\0');
 
 

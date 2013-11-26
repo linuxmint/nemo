@@ -150,7 +150,7 @@ drag_data_received_callback (GtkWidget *widget,
 	g_assert (data != NULL);
 	g_assert (callback_data == NULL);
 
-	names = g_uri_list_extract_uris (gtk_selection_data_get_data (data));
+	names = g_uri_list_extract_uris ((const gchar *) gtk_selection_data_get_data (data));
 
 	if (names == NULL || *names == NULL) {
 		g_warning ("No D&D URI's");

@@ -10272,7 +10272,7 @@ metadata_for_files_in_directory_ready_callback (NemoDirectory *directory,
 }
 
 static void
-disconnect_handler (GObject *object, int *id)
+disconnect_handler (GObject *object, guint *id)
 {
 	if (*id != 0) {
 		g_signal_handler_disconnect (object, *id);
@@ -10281,13 +10281,13 @@ disconnect_handler (GObject *object, int *id)
 }
 
 static void
-disconnect_directory_handler (NemoView *view, int *id)
+disconnect_directory_handler (NemoView *view, guint *id)
 {
 	disconnect_handler (G_OBJECT (view->details->model), id);
 }
 
 static void
-disconnect_directory_as_file_handler (NemoView *view, int *id)
+disconnect_directory_as_file_handler (NemoView *view, guint *id)
 {
 	disconnect_handler (G_OBJECT (view->details->directory_as_file), id);
 }
