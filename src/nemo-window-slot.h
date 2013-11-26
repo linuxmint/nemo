@@ -108,8 +108,6 @@ struct NemoWindowSlot {
 
 	GCancellable *find_mount_cancellable;
 
-	gboolean visible;
-
 	/* Back/Forward chain, and history list. 
 	 * The data in these lists are NemoBookmark pointers. 
 	 */

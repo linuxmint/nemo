@@ -61,14 +61,11 @@ struct NemoWindowDetails
 
 	/* View As menu */
 	GList *short_list_viewers;
-	char *extra_viewer;
 
 	/* View As choices */
 	GtkActionGroup *view_as_action_group; /* owned by ui_manager */
 	GtkRadioAction *view_as_radio_action;
-	GtkRadioAction *extra_viewer_radio_action;
 	guint short_list_merge_id;
-	guint extra_viewer_merge_id;
 
 	/* Ensures that we do not react on signals of a
 	 * view that is re-used as new view when its loading
@@ -97,9 +94,6 @@ struct NemoWindowDetails
 
         /* Toolbar holder */
         GtkWidget *toolbar_holder;
-
-        guint extensions_toolbar_merge_id;
-        GtkActionGroup *extensions_toolbar_action_group;
 
         /* focus widget before the location bar has been shown temporarily */
         GtkWidget *last_focus_widget;
@@ -141,15 +135,6 @@ typedef void (*NemoBookmarkFailedCallback) (NemoWindow *window,
 void               nemo_window_load_view_as_menus                    (NemoWindow    *window);
 void               nemo_window_load_extension_menus                  (NemoWindow    *window);
 NemoWindowPane *nemo_window_get_next_pane                        (NemoWindow *window);
-void               nemo_menus_append_bookmark_to_menu                (NemoWindow    *window, 
-                                                                          NemoBookmark  *bookmark, 
-                                                                          const char        *parent_path,
-                                                                          const char        *parent_id,
-                                                                          guint              index_in_parent,
-                                                                          GtkActionGroup    *action_group,
-                                                                          guint              merge_id,
-                                                                          GCallback          refresh_callback,
-                                                                          NemoBookmarkFailedCallback failed_callback);
 
 NemoWindowSlot *nemo_window_get_slot_for_view                    (NemoWindow *window,
 									  NemoView   *view);

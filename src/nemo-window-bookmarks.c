@@ -243,7 +243,7 @@ activate_bookmark_in_menu_item (GtkAction *action, gpointer user_data)
     g_object_unref (location);
 }
 
-void
+static void
 nemo_menus_append_bookmark_to_menu (NemoWindow *window, 
 					NemoBookmark *bookmark, 
 					const char *parent_path,
