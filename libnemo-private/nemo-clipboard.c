@@ -498,13 +498,13 @@ nemo_clipboard_get_uri_list_from_selection_data (GtkSelectionData *selection_dat
 	    || gtk_selection_data_get_length (selection_data) <= 0) {
 		items = NULL;
 	} else {
-		guchar *data;
+		gchar *data;
 		/* Not sure why it's legal to assume there's an extra byte
 		 * past the end of the selection data that it's safe to write
 		 * to. But gtk_editable_selection_received does this, so I
 		 * think it is OK.
 		 */
-		data = (guchar *) gtk_selection_data_get_data (selection_data);
+		data = (gchar *) gtk_selection_data_get_data (selection_data);
 		data[gtk_selection_data_get_length (selection_data)] = '\0';
 		lines = g_strsplit (data, "\n", 0);
 		items = convert_lines_to_str_list (lines, cut);

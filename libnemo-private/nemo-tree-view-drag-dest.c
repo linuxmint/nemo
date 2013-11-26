@@ -679,7 +679,7 @@ receive_dropped_text (NemoTreeViewDragDest *dest,
 		      int x, int y)
 {
 	char *drop_target;
-	char *text;
+	guchar *text;
 
 	if (!dest->details->drag_data) {
 		return;
@@ -795,7 +795,7 @@ drag_data_received_callback (GtkWidget *widget,
 			     gpointer data)
 {
 	NemoTreeViewDragDest *dest;
-	const char *tmp;
+	const gchar *tmp;
 	int length;
 	gboolean success, finished;
 	
@@ -834,7 +834,7 @@ drag_data_received_callback (GtkWidget *widget,
 			break;
 		case NEMO_ICON_DND_RAW:
 			length = gtk_selection_data_get_length (selection_data);
-			tmp = gtk_selection_data_get_data (selection_data);
+			tmp = (const gchar *) gtk_selection_data_get_data (selection_data);
 			receive_dropped_raw (dest, tmp, length, context, x, y);
 			success = TRUE;
 			break;
@@ -883,7 +883,7 @@ get_direct_save_filename (GdkDragContext *context)
 		return NULL;
 	}
 
-	return prop_text;
+	return (gchar *) prop_text;
 }
 
 static gboolean

@@ -161,13 +161,13 @@ parse_xml_node (GFile *file,
 			continue;
 		}
 
-		new_key = convert_key_name (attr->name);
+		new_key = convert_key_name ((const gchar *) attr->name);
 		if (new_key) {
 			property = xmlGetProp (filenode, attr->name);
 			if (property) {
 				g_file_info_set_attribute_string (info,
 								  new_key,
-								  property);
+								  (const gchar *) property);
 				xmlFree (property);
 			}
 		}
@@ -176,7 +176,7 @@ parse_xml_node (GFile *file,
 	list_keys = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
 	for (node = filenode->children; node != NULL; node = node->next) {
 		for (attr = node->properties; attr != NULL; attr = attr->next) {
-			new_key = convert_key_name (node->name);
+			new_key = convert_key_name ((const gchar *) node->name);
 			if (new_key) {
 				property = xmlGetProp (node, attr->name);
 				if (property) {
