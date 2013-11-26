@@ -74,10 +74,7 @@
 #include <sys/time.h>
 
 /* dock items */
-
-#define NEMO_MENU_PATH_EXTRA_VIEWER_PLACEHOLDER	"/MenuBar/View/View Choices/Extra Viewer"
 #define NEMO_MENU_PATH_SHORT_LIST_PLACEHOLDER  	"/MenuBar/View/View Choices/Short List"
-#define NEMO_MENU_PATH_AFTER_SHORT_LIST_SEPARATOR   "/MenuBar/View/View Choices/After Short List"
 
 #define MAX_TITLE_LENGTH 180
 
@@ -718,8 +715,6 @@ free_stored_viewers (NemoWindow *window)
 {
 	g_list_free_full (window->details->short_list_viewers, g_free);
 	window->details->short_list_viewers = NULL;
-	g_free (window->details->extra_viewer);
-	window->details->extra_viewer = NULL;
 }
 
 static void
@@ -796,11 +791,11 @@ nemo_window_view_visible (NemoWindow *window,
 
 	slot = nemo_window_get_slot_for_view (window, view);
 
-	if (slot->visible) {
+	if (gtk_widget_get_visible (GTK_WIDGET (slot))) {
 		return;
 	}
 
-	slot->visible = TRUE;
+	gtk_widget_show (GTK_WIDGET (slot));
 	pane = slot->pane;
 
 	if (gtk_widget_get_visible (GTK_WIDGET (pane))) {
@@ -811,7 +806,7 @@ nemo_window_view_visible (NemoWindow *window,
 	for (l = pane->slots; l != NULL; l = l->next) {
 		slot = l->data;
 
-		if (!slot->visible) {
+		if (!gtk_widget_get_visible (GTK_WIDGET (slot))) {
 			return;
 		}
 	}
@@ -1258,72 +1253,6 @@ add_view_as_menu_item (NemoWindow *window,
 	return action; /* return value owned by group */
 }
 
-/* Make a special first item in the "View as" option menu that represents
- * the current content view. This should only be called if the current
- * content view isn't already in the "View as" option menu.
- */
-static void
-update_extra_viewer_in_view_as_menus (NemoWindow *window,
-				      const char *id)
-{
-	gboolean had_extra_viewer;
-
-	had_extra_viewer = window->details->extra_viewer != NULL;
-
-	if (id == NULL) {
-		if (!had_extra_viewer) {
-			return;
-		}
-	} else {
-		if (had_extra_viewer
-		    && strcmp (window->details->extra_viewer, id) == 0) {
-			return;
-		}
-	}
-	g_free (window->details->extra_viewer);
-	window->details->extra_viewer = g_strdup (id);
-
-	if (window->details->extra_viewer_merge_id != 0) {
-		gtk_ui_manager_remove_ui (window->details->ui_manager,
-					  window->details->extra_viewer_merge_id);
-		window->details->extra_viewer_merge_id = 0;
-	}
-	
-	if (window->details->extra_viewer_radio_action != NULL) {
-		gtk_action_group_remove_action (window->details->view_as_action_group,
-						GTK_ACTION (window->details->extra_viewer_radio_action));
-		window->details->extra_viewer_radio_action = NULL;
-	}
-	
-	if (id != NULL) {
-		window->details->extra_viewer_merge_id = gtk_ui_manager_new_merge_id (window->details->ui_manager);
-                window->details->extra_viewer_radio_action =
-			add_view_as_menu_item (window, 
-					       NEMO_MENU_PATH_EXTRA_VIEWER_PLACEHOLDER, 
-					       window->details->extra_viewer, 
-					       0,
-					       window->details->extra_viewer_merge_id);
-	}
-}
-
-static void
-remove_extra_viewer_in_view_as_menus (NemoWindow *window)
-{
-	update_extra_viewer_in_view_as_menus (window, NULL);
-}
-
-static void
-replace_extra_viewer_in_view_as_menus (NemoWindow *window)
-{
-	NemoWindowSlot *slot;
-	const char *id;
-
-	slot = nemo_window_get_active_slot (window);
-
-	id = nemo_window_slot_get_content_view_id (slot);
-	update_extra_viewer_in_view_as_menus (window, id);
-}
-
 /**
  * nemo_window_sync_view_as_menus:
  * 
@@ -1357,12 +1286,6 @@ nemo_window_sync_view_as_menus (NemoWindow *window)
 		if (nemo_window_slot_content_view_matches_iid (slot, (char *)node->data)) {
 			break;
 		}
-	}
-	if (node == NULL) {
-		replace_extra_viewer_in_view_as_menus (window);
-		index = 0;
-	} else {
-		remove_extra_viewer_in_view_as_menus (window);
 	}
 
 	g_snprintf (action_name, sizeof (action_name), "view_as_%d", index);
@@ -1421,19 +1344,12 @@ load_view_as_menu (NemoWindow *window)
 					  window->details->short_list_merge_id);
 		window->details->short_list_merge_id = 0;
 	}
-	if (window->details->extra_viewer_merge_id != 0) {
-		gtk_ui_manager_remove_ui (window->details->ui_manager,
-					  window->details->extra_viewer_merge_id);
-		window->details->extra_viewer_merge_id = 0;
-		window->details->extra_viewer_radio_action = NULL;
-	}
 	if (window->details->view_as_action_group != NULL) {
 		gtk_ui_manager_remove_action_group (window->details->ui_manager,
 						    window->details->view_as_action_group);
 		window->details->view_as_action_group = NULL;
 	}
 
-	
 	refresh_stored_viewers (window);
 
 	merge_id = gtk_ui_manager_new_merge_id (window->details->ui_manager);
@@ -1554,7 +1470,6 @@ nemo_window_sync_title (NemoWindow *window,
 {
 	NemoWindowPane *pane;
 	NemoNotebook *notebook;
-	char *full_title;
 	char *window_title;
 
 	if (NEMO_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->sync_title != NULL) {
@@ -1564,17 +1479,7 @@ nemo_window_sync_title (NemoWindow *window,
 	}
 
 	if (slot == nemo_window_get_active_slot (window)) {
-		/* if spatial mode is default, we keep "File Browser" in the window title
-		 * to recognize browser windows. Otherwise, we default to the directory name.
-		 */
-		if (!g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER)) {
-			full_title = g_strdup_printf (_("%s - File Browser"), slot->title);
-			window_title = eel_str_middle_truncate (full_title, MAX_TITLE_LENGTH);
-			g_free (full_title);
-		} else {
-			window_title = eel_str_middle_truncate (slot->title, MAX_TITLE_LENGTH);
-		}
-
+		window_title = eel_str_middle_truncate (slot->title, MAX_TITLE_LENGTH);
 		gtk_window_set_title (GTK_WINDOW (window), window_title);
 		g_free (window_title);
 	}

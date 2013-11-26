@@ -52,12 +52,8 @@ struct NemoWindowSlotClass {
 	void (* changed_pane)	(NemoWindowSlot *slot);
 };
 
-/* Each NemoWindowSlot corresponds to
- * a location in the window for displaying
- * a NemoView.
- *
- * For navigation windows, this would be a
- * tab, while spatial windows only have one slot.
+/* Each NemoWindowSlot corresponds to a location in the window
+ * for displaying a NemoView, i.e. a tab.
  */
 struct NemoWindowSlot {
 	GtkBox parent;
@@ -110,8 +106,6 @@ struct NemoWindowSlot {
 	gpointer open_callback_user_data;
 
 	GCancellable *find_mount_cancellable;
-
-	gboolean visible;
 
 	/* Back/Forward chain, and history list. 
 	 * The data in these lists are NemoBookmark pointers. 

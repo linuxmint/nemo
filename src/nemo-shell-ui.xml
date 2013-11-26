@@ -81,8 +81,6 @@
 			<menuitem name="Zoom Normal" action="Zoom Normal"/>
 		</placeholder>
 		<placeholder name="View Choices">
-		        <separator/>
-			<placeholder name="Extra Viewer"/>
 			<separator name="Before Short List"/>
 			<placeholder name="Short List"/>
 		</placeholder>
