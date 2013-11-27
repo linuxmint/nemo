@@ -62,7 +62,6 @@ typedef enum {
 static guint path_bar_signals [LAST_SIGNAL] = { 0 };
 
 #define NEMO_PATH_BAR_ICON_SIZE 16
-#define NEMO_PATH_BAR_BUTTON_MAX_WIDTH 250
 
 typedef struct {
         GtkWidget *button;
@@ -670,7 +669,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         else
             gtk_label_set_width_chars (GTK_LABEL (BUTTON_DATA (list->data)->pre_padding), 2);
 
-        gtk_widget_get_preferred_size (child, &child_requisition, NULL);
+        gtk_widget_get_preferred_size (child, NULL, &child_requisition);
 
         gtk_widget_get_allocation (widget, &widget_allocation);
 
@@ -1372,18 +1371,9 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data)
 	NemoIconInfo *icon_info;
 	GdkPixbuf *pixbuf;
 	const gchar *dir_name = get_dir_name (button_data);
-	PangoLayout *layout;
-	gint width, height;
 
 	if (button_data->label != NULL) {
 		gtk_label_set_text (GTK_LABEL (button_data->label), dir_name);
-
-		layout = gtk_widget_create_pango_layout (button_data->label, dir_name);
-		pango_layout_get_pixel_size (layout, &width, &height);
-		width = MIN (width, NEMO_PATH_BAR_BUTTON_MAX_WIDTH);
-
-		gtk_widget_set_size_request (button_data->alignment, width, height);
-		g_object_unref (layout);
 	}
 
 	if (button_data->image != NULL) {
@@ -1408,8 +1398,7 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data)
 				gtk_widget_hide (GTK_WIDGET (button_data->image));
 			}
 		}
-        }
-
+	}
 }
 
 static void
