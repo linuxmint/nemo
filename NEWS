@@ -1,6 +1,25 @@
 Nemo merged with changes in Nautilus 3.5.1. 
 
 Changes:
+* Add a way to create a new directory for selection
+* Don't pack multiple x-content bars in the view
+* Show icons x-content bar application launchers
+* Fix pathbar buttons disappearing for too long titles
+* Remove markup from GtkBuilder strings
+
+Rejected:
+
+* Remove statusbar
+* Remove "Go->Computer"
+* Remove compact view
+* Remove extra panes and tree sidebar
+* Fix sidebar typeahead find being triggered
+* Don't show old 'note' emblems
+
+
+Nemo merged with changes in Nautilus 3.5.1. 
+
+Changes:
 * Add support for AFP shares in the Connect to Server dialog
 * Don't remove selection when clicking on a row out of name boundaries
 * Fix a wrapping issue with numeric strings in some circumstances
