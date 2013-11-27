@@ -62,6 +62,7 @@ typedef enum {
 static guint path_bar_signals [LAST_SIGNAL] = { 0 };
 
 #define NEMO_PATH_BAR_ICON_SIZE 16
+#define NEMO_PATH_BAR_BUTTON_MAX_WIDTH 250
 
 typedef struct {
         GtkWidget *button;
@@ -524,7 +525,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         GtkAllocation child_allocation;
         GList *list, *first_button;
         gint width;
-        gint allocation_width;
+        gint largest_width;
         gboolean need_sliders;
         gint up_slider_offset;
         gint down_slider_offset;
@@ -551,7 +552,6 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
                 return;
 	}
         direction = gtk_widget_get_direction (widget);
-        allocation_width = allocation->width;
 
   	/* First, we check to see if we need the scrollbars. */
   	if (path_bar->priv->fake_root) {
@@ -575,7 +575,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         }
     }
 
-    if (width <= allocation_width) {
+    if (width <= allocation->width) {
         if (path_bar->priv->fake_root) {
             first_button = path_bar->priv->fake_root;
         } else {
@@ -607,7 +607,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
             child = BUTTON_DATA (list->data)->button;
             nemo_pathbar_button_get_preferred_size (child, &child_requisition, allocation->height);
 
-            if (width + child_requisition.width + path_bar->priv->spacing + slider_space > allocation_width) {
+            if (width + child_requisition.width + path_bar->priv->spacing + slider_space > allocation->width) {
                 reached_end = TRUE;
             } else {
                 if (list == path_bar->priv->fake_root) {
@@ -625,7 +625,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
             child = BUTTON_DATA (first_button->next->data)->button;
             nemo_pathbar_button_get_preferred_size (child, &child_requisition, allocation->height);
 
-            if (width + child_requisition.width + path_bar->priv->spacing + slider_space > allocation_width) {
+            if (width + child_requisition.width + path_bar->priv->spacing + slider_space > allocation->width) {
                 reached_end = TRUE;
             } else {
                 width += child_requisition.width + path_bar->priv->spacing;
@@ -655,6 +655,12 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
             }
     }
 
+    /* Determine the largest possible allocation size */
+    largest_width = allocation->width;
+    if (need_sliders) {
+        largest_width -= (path_bar->priv->spacing + path_bar->priv->slider_width) * 2;
+    }
+
     gboolean first_element = TRUE;
     for (list = first_button; list; list = list->prev) {
         child = BUTTON_DATA (list->data)->button;
@@ -668,7 +674,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
 
         gtk_widget_get_allocation (widget, &widget_allocation);
 
-        child_allocation.width = child_requisition.width;
+        child_allocation.width = MIN (child_requisition.width, largest_width);
         if (direction == GTK_TEXT_DIR_RTL) {
             child_allocation.x -= child_allocation.width;
         }
@@ -679,7 +685,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
             }
         } else {
             if (need_sliders && direction == GTK_TEXT_DIR_LTR) {
-                if (child_allocation.x + child_allocation.width + path_bar->priv->spacing + path_bar->priv->slider_width - (offset) > widget_allocation.x + allocation_width) {
+                if (child_allocation.x + child_allocation.width + path_bar->priv->spacing + path_bar->priv->slider_width - (offset) > widget_allocation.x + allocation->width) {
                     break;
                 }
             }
@@ -1365,13 +1371,22 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data)
 {
 	NemoIconInfo *icon_info;
 	GdkPixbuf *pixbuf;
-        const gchar *dir_name = get_dir_name (button_data);
+	const gchar *dir_name = get_dir_name (button_data);
+	PangoLayout *layout;
+	gint width, height;
 
-        if (button_data->label != NULL) {
-			gtk_label_set_text (GTK_LABEL (button_data->label), dir_name);
-		}
+	if (button_data->label != NULL) {
+		gtk_label_set_text (GTK_LABEL (button_data->label), dir_name);
 
-        if (button_data->image != NULL) {
+		layout = gtk_widget_create_pango_layout (button_data->label, dir_name);
+		pango_layout_get_pixel_size (layout, &width, &height);
+		width = MIN (width, NEMO_PATH_BAR_BUTTON_MAX_WIDTH);
+
+		gtk_widget_set_size_request (button_data->alignment, width, height);
+		g_object_unref (layout);
+	}
+
+	if (button_data->image != NULL) {
 		if (button_data->custom_icon) {
 			gtk_image_set_from_pixbuf (GTK_IMAGE (button_data->image), button_data->custom_icon);  
 			gtk_widget_show (GTK_WIDGET (button_data->image));
@@ -1755,6 +1770,10 @@ make_directory_button (NemoPathBar  *path_bar,
                     button_data->is_base_dir = base_dir;
     }
     gtk_box_pack_start (GTK_BOX (child), get_padding_widget(2), FALSE, FALSE, 0);
+
+	if (button_data->label != NULL) {
+		gtk_label_set_ellipsize (GTK_LABEL (button_data->label), PANGO_ELLIPSIZE_MIDDLE);
+	}
 
 	if (button_data->path == NULL) {
         	button_data->path = g_object_ref (path);
