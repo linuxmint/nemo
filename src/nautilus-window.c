@@ -73,9 +73,6 @@
 #include <math.h>
 #include <sys/time.h>
 
-/* dock items */
-#define MAX_TITLE_LENGTH 180
-
 /* Forward and back buttons on the mouse */
 static gboolean mouse_extra_buttons = TRUE;
 static int mouse_forward_button = 9;
