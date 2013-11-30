@@ -940,16 +940,16 @@ setup_widgets (NemoQueryEditor *editor)
 #if GTK_CHECK_VERSION(3,6,0)
 	editor->details->entry = gtk_search_entry_new ();
 #else
-    GtkWidget *label = gtk_label_new ("");
-    char *label_markup = g_strconcat ("<b>", _("_Search for:"), "</b>", NULL);
-    gtk_label_set_markup_with_mnemonic (GTK_LABEL (label), label_markup);
-    g_free (label_markup);
-    gtk_widget_show (label);
+	GtkWidget *label = gtk_label_new ("");
+	char *label_markup = g_strconcat ("  <b>", _("_Search for:"), "</b>", NULL);
+	gtk_label_set_markup_with_mnemonic (GTK_LABEL (label), label_markup);
+	g_free (label_markup);
+	gtk_widget_show (label);
 
-    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 
-    editor->details->entry = gtk_entry_new ();
-    gtk_label_set_mnemonic_widget (GTK_LABEL (label), editor->details->entry);
+	editor->details->entry = gtk_entry_new ();
+	gtk_label_set_mnemonic_widget (GTK_LABEL (label), editor->details->entry);
 #endif
 	gtk_box_pack_start (GTK_BOX (hbox), editor->details->entry, TRUE, TRUE, 0);
 
