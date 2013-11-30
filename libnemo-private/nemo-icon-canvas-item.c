@@ -2210,12 +2210,16 @@ typedef struct {
 	gint action_number;
 } NemoIconCanvasItemAccessibleActionContext;
 
-static GType nemo_icon_canvas_item_accessible_get_type (void);
+typedef struct {
+	EelCanvasItemAccessible parent;
+	NemoIconCanvasItemAccessiblePrivate *priv;
+} NemoIconCanvasItemAccessible;
 
-#define GET_PRIV(o) \
-	G_TYPE_INSTANCE_GET_PRIVATE(o,\
-				    nemo_icon_canvas_item_accessible_get_type (),\
-				    NemoIconCanvasItemAccessiblePrivate);
+typedef struct {
+	EelCanvasItemAccessibleClass parent_class;
+} NemoIconCanvasItemAccessibleClass;
+
+#define GET_ACCESSIBLE_PRIV(o) ((NemoIconCanvasItemAccessible *) o)->priv;
 
 /* accessible AtkAction interface */
 static gboolean
@@ -2317,7 +2321,7 @@ nemo_icon_canvas_item_accessible_action_get_description (AtkAction *accessible,
 
 	g_assert (i < LAST_ACTION);
 
-	priv = GET_PRIV (accessible);
+	priv = GET_ACCESSIBLE_PRIV (accessible);
 
 	if (priv->action_descriptions[i]) {
 		return priv->action_descriptions[i];
@@ -2352,7 +2356,7 @@ nemo_icon_canvas_item_accessible_action_set_description (AtkAction *accessible,
 
 	g_assert (i < LAST_ACTION);
 
-	priv = GET_PRIV (accessible);
+	priv = GET_ACCESSIBLE_PRIV (accessible);
 
 	if (priv->action_descriptions[i]) {
 		g_free (priv->action_descriptions[i]);
@@ -2456,7 +2460,7 @@ nemo_icon_canvas_item_accessible_get_image_description (AtkImage *image)
 	NemoIconContainer *container;
 	char *description;
 
-	priv = GET_PRIV (image);
+	priv = GET_ACCESSIBLE_PRIV (image);
 
 	if (priv->image_description) {
 		return priv->image_description;
@@ -2535,7 +2539,7 @@ nemo_icon_canvas_item_accessible_set_image_description (AtkImage    *image,
 {
 	NemoIconCanvasItemAccessiblePrivate *priv;
 
-	priv = GET_PRIV (image);
+	priv = GET_ACCESSIBLE_PRIV (image);
 
 	g_free (priv->image_description);
 	priv->image_description = g_strdup (description);
@@ -2749,17 +2753,11 @@ nemo_icon_canvas_item_accessible_text_interface_init (AtkTextIface *iface)
 	iface->get_offset_at_point     = nemo_icon_canvas_item_accessible_get_offset_at_point;
 }
 
-typedef struct {
-	AtkGObjectAccessible parent;
-} NemoIconCanvasItemAccessible;
-
-typedef struct {
-	AtkGObjectAccessibleClass parent_class;
-} NemoIconCanvasItemAccessibleClass;
+static GType nemo_icon_canvas_item_accessible_get_type (void);
 
 G_DEFINE_TYPE_WITH_CODE (NemoIconCanvasItemAccessible,
 			 nemo_icon_canvas_item_accessible,
-			 ATK_TYPE_GOBJECT_ACCESSIBLE,
+			 eel_canvas_item_accessible_get_type (),
 			 G_IMPLEMENT_INTERFACE (ATK_TYPE_IMAGE,
 						nemo_icon_canvas_item_accessible_image_interface_init)
 			 G_IMPLEMENT_INTERFACE (ATK_TYPE_TEXT,
@@ -2822,7 +2820,7 @@ nemo_icon_canvas_item_accessible_finalize (GObject *object)
 	NemoIconCanvasItemAccessiblePrivate *priv;
 	int i;
 
-	priv = GET_PRIV (object);
+	priv = GET_ACCESSIBLE_PRIV (object);
 
 	for (i = 0; i < LAST_ACTION; i++) {
 		g_free (priv->action_descriptions[i]);
@@ -2864,6 +2862,8 @@ nemo_icon_canvas_item_accessible_class_init (NemoIconCanvasItemAccessibleClass *
 static void
 nemo_icon_canvas_item_accessible_init (NemoIconCanvasItemAccessible *self)
 {
+	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, nemo_icon_canvas_item_accessible_get_type (),
+						  NemoIconCanvasItemAccessiblePrivate);
 }
 
 /* dummy typedef */

@@ -144,7 +144,7 @@ typedef struct {
 	char *action_descriptions[LAST_ACTION];
 } NemoIconContainerAccessiblePrivate;
 
-static GType         nemo_icon_container_accessible_get_type (void);
+static AtkObject *   get_accessible                                 (GtkWidget *widget);
 
 static void          preview_selected_items                         (NemoIconContainer *container);
 static void          activate_selected_items                        (NemoIconContainer *container);
@@ -205,10 +205,6 @@ static int compare_icons_vertical (NemoIconContainer *container,
 
 static void store_layout_timestamps_now (NemoIconContainer *container);
 static void remove_search_entry_timeout (NemoIconContainer *container);
-
-static gpointer accessible_parent_class;
-
-static GQuark accessible_private_data_quark = 0;
 
 static const char *nemo_icon_container_accessible_action_names[] = {
 	"activate",
@@ -5562,22 +5558,6 @@ draw_canvas_background (EelCanvas *canvas,
 	/* Don't chain up to the parent to avoid clearing and redrawing */
 }
 
-
-static AtkObject *
-get_accessible (GtkWidget *widget)
-{
-	AtkObject *accessible;
-	
-	if ((accessible = eel_accessibility_get_atk_object (widget))) {
-		return accessible;
-	}
-	
-	accessible = g_object_new 
-		(nemo_icon_container_accessible_get_type (), NULL);
-	
-	return eel_accessibility_set_atk_object_return (widget, accessible);
-}
-
 static void
 grab_notify_cb  (GtkWidget        *widget,
 		 gboolean          was_grabbed)
@@ -5998,9 +5978,9 @@ nemo_icon_container_class_init (NemoIconContainerClass *class)
 	widget_class->motion_notify_event = motion_notify_event;
 	widget_class->key_press_event = key_press_event;
 	widget_class->popup_menu = popup_menu;
-	widget_class->get_accessible = get_accessible;
 	widget_class->style_updated = style_updated;
 	widget_class->grab_notify = grab_notify_cb;
+	widget_class->get_accessible = get_accessible;
 
 	canvas_class = EEL_CANVAS_CLASS (class);
 	canvas_class->draw_background = draw_canvas_background;
@@ -8492,7 +8472,7 @@ nemo_icon_container_set_is_desktop (NemoIconContainer *container,
 			gtk_style_context_add_class (context, "nemo-desktop");
 		}
 		else {
-			gtk_style_context_add_class (context, "nautilus-desktop");
+			gtk_style_context_add_class (context, "nemo-desktop");
 		}				
 	}
 }
@@ -8667,20 +8647,16 @@ nemo_icon_container_set_highlighted_for_clipboard (NemoIconContainer *container,
 }
 
 /* NemoIconContainerAccessible */
-
-static NemoIconContainerAccessiblePrivate *
-accessible_get_priv (AtkObject *accessible)
-{
+typedef struct {
+	EelCanvasAccessible parent;
 	NemoIconContainerAccessiblePrivate *priv;
-	
-	priv = g_object_get_qdata (G_OBJECT (accessible), 
-				   accessible_private_data_quark);
+} NemoIconContainerAccessible;
 
-	return priv;
-}
+typedef EelCanvasAccessibleClass NemoIconContainerAccessibleClass;
+
+#define GET_ACCESSIBLE_PRIV(o) ((NemoIconContainerAccessible *) o)->priv
 
 /* AtkAction interface */
-
 static gboolean
 nemo_icon_container_accessible_do_action (AtkAction *accessible, int i)
 {
@@ -8729,7 +8705,7 @@ nemo_icon_container_accessible_action_get_description (AtkAction *accessible,
 	
 	g_assert (i < LAST_ACTION);
 
-	priv = accessible_get_priv (ATK_OBJECT (accessible));
+	priv = GET_ACCESSIBLE_PRIV (accessible);
 	
 	if (priv->action_descriptions[i]) {
 		return priv->action_descriptions[i];
@@ -8764,7 +8740,7 @@ nemo_icon_container_accessible_action_set_description (AtkAction *accessible,
 
 	g_assert (i < LAST_ACTION);
 
-	priv = accessible_get_priv (ATK_OBJECT (accessible));
+	priv = GET_ACCESSIBLE_PRIV (accessible);
 
 	if (priv->action_descriptions[i]) {
 		g_free (priv->action_descriptions[i]);
@@ -8796,8 +8772,7 @@ nemo_icon_container_accessible_update_selection (AtkObject *accessible)
 	NemoIcon *icon;
 
 	container = NEMO_ICON_CONTAINER (gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible)));
-
-	priv = accessible_get_priv (accessible);
+	priv = GET_ACCESSIBLE_PRIV (accessible);
 
 	if (priv->selection) {
 		g_list_free (priv->selection);
@@ -8873,7 +8848,6 @@ nemo_icon_container_accessible_cleared_cb (NemoIconContainer *container,
 	g_signal_emit_by_name (data, "children_changed", 0, NULL, NULL);
 }
 
-
 static gboolean 
 nemo_icon_container_accessible_add_selection (AtkSelection *accessible, 
 						  int i)
@@ -8929,13 +8903,13 @@ static AtkObject *
 nemo_icon_container_accessible_ref_selection (AtkSelection *accessible, 
 						  int i)
 {
-	AtkObject *atk_object;
 	NemoIconContainerAccessiblePrivate *priv;
+	AtkObject *atk_object;
 	GList *item;
 	NemoIcon *icon;
 
 	nemo_icon_container_accessible_update_selection (ATK_OBJECT (accessible));
-	priv = accessible_get_priv (ATK_OBJECT (accessible));
+	priv = GET_ACCESSIBLE_PRIV (accessible);
 
 	item = (g_list_nth (priv->selection, i));
 
@@ -8955,14 +8929,13 @@ nemo_icon_container_accessible_ref_selection (AtkSelection *accessible,
 static int
 nemo_icon_container_accessible_get_selection_count (AtkSelection *accessible)
 {
-	int count;
 	NemoIconContainerAccessiblePrivate *priv;
+	int count;
 
+	priv = GET_ACCESSIBLE_PRIV (accessible);
 	nemo_icon_container_accessible_update_selection (ATK_OBJECT (accessible));
-	priv = accessible_get_priv (ATK_OBJECT (accessible));
-
 	count = g_list_length (priv->selection);
-	
+
 	return count;
 }
 
@@ -8994,8 +8967,8 @@ static gboolean
 nemo_icon_container_accessible_remove_selection (AtkSelection *accessible,
 						     int i)
 {
-	NemoIconContainer *container;
 	NemoIconContainerAccessiblePrivate *priv;
+	NemoIconContainer *container;
 	GList *l;
 	GList *selection;
 	NemoIcon *icon;
@@ -9006,11 +8979,10 @@ nemo_icon_container_accessible_remove_selection (AtkSelection *accessible,
 		return FALSE;
 	}
 
-	nemo_icon_container_accessible_update_selection (ATK_OBJECT (accessible));
-	priv = accessible_get_priv (ATK_OBJECT (accessible));
-
         container = NEMO_ICON_CONTAINER (widget);
-	
+	nemo_icon_container_accessible_update_selection (ATK_OBJECT (accessible));
+
+	priv = GET_ACCESSIBLE_PRIV (accessible);
 	l = g_list_nth (priv->selection, i);
 	if (l) {
 		icon = l->data;
@@ -9096,6 +9068,7 @@ nemo_icon_container_accessible_get_n_children (AtkObject *accessible)
 	if (container->details->rename_widget) {
 		i++;
 	}
+
 	return i;
 }
 
@@ -9122,7 +9095,7 @@ nemo_icon_container_accessible_ref_child (AtkObject *accessible, int i)
                 
                 atk_object = atk_gobject_accessible_for_object (G_OBJECT (icon->item));
                 g_object_ref (atk_object);
-                
+
                 return atk_object;
         } else {
 		if (i == g_list_length (container->details->icons)) {
@@ -9137,37 +9110,38 @@ nemo_icon_container_accessible_ref_child (AtkObject *accessible, int i)
         }
 }
 
+static GType nemo_icon_container_accessible_get_type (void);
+
+G_DEFINE_TYPE_WITH_CODE (NemoIconContainerAccessible, nemo_icon_container_accessible,
+			 eel_canvas_accessible_get_type (),
+			 G_IMPLEMENT_INTERFACE (ATK_TYPE_ACTION, nemo_icon_container_accessible_action_interface_init)
+			 G_IMPLEMENT_INTERFACE (ATK_TYPE_SELECTION, nemo_icon_container_accessible_selection_interface_init))
+
 static void
 nemo_icon_container_accessible_initialize (AtkObject *accessible, 
 					       gpointer data)
 {
 	NemoIconContainer *container;
-	NemoIconContainerAccessiblePrivate *priv;
 
-	if (ATK_OBJECT_CLASS (accessible_parent_class)->initialize) {
-		ATK_OBJECT_CLASS (accessible_parent_class)->initialize (accessible, data);
+	if (ATK_OBJECT_CLASS (nemo_icon_container_accessible_parent_class)->initialize) {
+		ATK_OBJECT_CLASS (nemo_icon_container_accessible_parent_class)->initialize (accessible, data);
 	}
-
-	priv = g_new0 (NemoIconContainerAccessiblePrivate, 1);
-	g_object_set_qdata (G_OBJECT (accessible), 
-			    accessible_private_data_quark, 
-			    priv);
 
 	if (GTK_IS_ACCESSIBLE (accessible)) {
 		nemo_icon_container_accessible_update_selection 
 			(ATK_OBJECT (accessible));
 		
 		container = NEMO_ICON_CONTAINER (gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible)));
-		g_signal_connect (G_OBJECT (container), "selection_changed",
+		g_signal_connect (container, "selection_changed",
 				  G_CALLBACK (nemo_icon_container_accessible_selection_changed_cb), 
 				  accessible);
-		g_signal_connect (G_OBJECT (container), "icon_added",
+		g_signal_connect (container, "icon_added",
 				  G_CALLBACK (nemo_icon_container_accessible_icon_added_cb), 
 				  accessible);
-		g_signal_connect (G_OBJECT (container), "icon_removed",
+		g_signal_connect (container, "icon_removed",
 				  G_CALLBACK (nemo_icon_container_accessible_icon_removed_cb), 
 				  accessible);
-		g_signal_connect (G_OBJECT (container), "cleared",
+		g_signal_connect (container, "cleared",
 				  G_CALLBACK (nemo_icon_container_accessible_cleared_cb), 
 				  accessible);
 	}
@@ -9179,7 +9153,8 @@ nemo_icon_container_accessible_finalize (GObject *object)
 	NemoIconContainerAccessiblePrivate *priv;
 	int i;
 
-	priv = accessible_get_priv (ATK_OBJECT (object));
+	priv = GET_ACCESSIBLE_PRIV (object);
+
 	if (priv->selection) {
 		g_list_free (priv->selection);
 	}
@@ -9189,58 +9164,44 @@ nemo_icon_container_accessible_finalize (GObject *object)
 			g_free (priv->action_descriptions[i]);
 		}
 	}
-	
-	g_free (priv);
 
-	G_OBJECT_CLASS (accessible_parent_class)->finalize (object);
+	G_OBJECT_CLASS (nemo_icon_container_accessible_parent_class)->finalize (object);
 }
 
 static void
-nemo_icon_container_accessible_class_init (AtkObjectClass *klass)
+nemo_icon_container_accessible_init (NemoIconContainerAccessible *self)
 {
-	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, nemo_icon_container_accessible_get_type (),
+						  NemoIconContainerAccessiblePrivate);
+}
 
-	accessible_parent_class = g_type_class_peek_parent (klass);
+static void
+nemo_icon_container_accessible_class_init (NemoIconContainerAccessibleClass *klass)
+{
+	AtkObjectClass *atk_class = ATK_OBJECT_CLASS (klass);
+	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
 	gobject_class->finalize = nemo_icon_container_accessible_finalize;
 
-	klass->get_n_children = nemo_icon_container_accessible_get_n_children;
-	klass->ref_child = nemo_icon_container_accessible_ref_child;
-	klass->initialize = nemo_icon_container_accessible_initialize;
+	atk_class->get_n_children = nemo_icon_container_accessible_get_n_children;
+	atk_class->ref_child = nemo_icon_container_accessible_ref_child;
+	atk_class->initialize = nemo_icon_container_accessible_initialize;
 
-	accessible_private_data_quark = g_quark_from_static_string ("icon-container-accessible-private-data");
+	g_type_class_add_private (klass, sizeof (NemoIconContainerAccessiblePrivate));
 }
 
-static GType
-nemo_icon_container_accessible_get_type (void)
+static AtkObject *
+get_accessible (GtkWidget *widget)
 {
-        static GType type = 0;
+	AtkObject *accessible;
+	
+	if ((accessible = eel_accessibility_get_atk_object (widget))) {
+		return accessible;
+	}
 
-        if (!type) {
-                static GInterfaceInfo atk_action_info = {
-                        (GInterfaceInitFunc) nemo_icon_container_accessible_action_interface_init,
-                        (GInterfaceFinalizeFunc) NULL,
-                        NULL
-                };              
-		
-                static GInterfaceInfo atk_selection_info = {
-                        (GInterfaceInitFunc) nemo_icon_container_accessible_selection_interface_init,
-                        (GInterfaceFinalizeFunc) NULL,
-                        NULL
-                };              
+	accessible = g_object_new (nemo_icon_container_accessible_get_type (), "widget", widget, NULL);
 
-		type = eel_accessibility_create_derived_type 
-			("NemoIconContainerAccessible",
-			 EEL_TYPE_CANVAS,
-			 nemo_icon_container_accessible_class_init);
-		
-                g_type_add_interface_static (type, ATK_TYPE_ACTION,
-                                             &atk_action_info);
-                g_type_add_interface_static (type, ATK_TYPE_SELECTION,
-                                             &atk_selection_info);
-        }
-
-        return type;
+	return eel_accessibility_set_atk_object_return (widget, accessible);
 }
 
 gboolean

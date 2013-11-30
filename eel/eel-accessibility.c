@@ -42,72 +42,43 @@ eel_accessibility_set_up_label_widget_relation (GtkWidget *label, GtkWidget *wid
 	atk_object_add_relationship (atk_widget, ATK_RELATION_LABELLED_BY, atk_label);
 }
 
-/*
- * Hacks to make re-using gail somewhat easier.
- */
-
-/**
- * eel_accessibility_create_derived_type:
- * @type_name: the name for the new accessible type eg. NemoIconCanvasItemAccessible
- * @existing_gobject_with_proxy: the GType of an object that has a registered factory that
- *      manufactures the type we want to inherit from. ie. to inherit from a GailCanvasItem
- *      we need to pass GNOME_TYPE_CANVAS_ITEM - since GailCanvasItem is registered against
- *      that type.
- * @opt_gail_parent_class: the name of the Gail class to derive from eg. GailCanvasItem
- * @class_init: the init function to run for this class
- * 
- * This should be run to register the type, it can subsequently be run with
- * the same name and will not re-register it, but simply return it.
- *
- * NB. to do instance init, you prolly want to override AtkObject::initialize
- * 
- * Return value: the registered type, or 0 on failure.
- **/
 GType
-eel_accessibility_create_derived_type (const char *type_name,
-				       GType existing_gobject_with_proxy,
-				       EelAccessibilityClassInitFn class_init)
+eel_accessibility_create_accessible_gtype (const char *type_name,
+					   GtkWidget *widget,
+					   GClassInitFunc class_init)
 {
-	GType type;
-	GType parent_atk_type;
-	GTypeInfo tinfo = { 0 };
+	GType atk_type, parent_atk_type;
 	GTypeQuery query;
-	AtkObjectFactory *factory;
+	AtkObject *parent_atk;
+	GtkWidgetClass *parent_class, *klass;
 
-	if ((type = g_type_from_name (type_name))) {
-		return type;
+	if ((atk_type = g_type_from_name (type_name))) {
+		return atk_type;
 	}
 
-	factory = atk_registry_get_factory
-		(atk_get_default_registry (),
-		 existing_gobject_with_proxy);
-	if (!factory) {
-		return G_TYPE_INVALID;
+	klass = GTK_WIDGET_CLASS (G_OBJECT_GET_CLASS (widget));
+	parent_class = klass;
+
+	while (klass->get_accessible == parent_class->get_accessible) {
+		parent_class = g_type_class_peek_parent (parent_class);
 	}
-	
-	parent_atk_type = atk_object_factory_get_accessible_type (factory);
+
+	parent_atk = parent_class->get_accessible (widget);
+	parent_atk_type = G_TYPE_FROM_INSTANCE (parent_atk);
+
 	if (!parent_atk_type) {
 		return G_TYPE_INVALID;
 	}
 
-	/*
-	 * Figure out the size of the class and instance 
+	/* Figure out the size of the class and instance 
 	 * we are deriving from
 	 */
 	g_type_query (parent_atk_type, &query);
 
-	if (class_init) {
-		tinfo.class_init = (GClassInitFunc) class_init;
-	}
-
-	tinfo.class_size    = query.class_size;
-	tinfo.instance_size = query.instance_size;
-
 	/* Register the type */
-	type = g_type_register_static (
-		parent_atk_type, type_name, &tinfo, 0);
-
-	return type;
+	return g_type_register_static_simple (parent_atk_type, type_name,
+					      query.class_size, class_init,
+					      query.instance_size, NULL, 0);
 }
 
 
@@ -149,24 +120,6 @@ AtkObject *
 eel_accessibility_get_atk_object (gpointer object)
 {
 	return g_object_get_qdata (object, get_quark_accessible ());
-}
-
-/**
- * eel_accessibilty_for_object:
- * @object: a GObject of some sort
- * 
- * gets an AtkObject associated with a GObject and if it doesn't
- * exist creates a suitable accessible object.
- * 
- * Return value: an associated accessible.
- **/
-AtkObject *
-eel_accessibility_for_object (gpointer object)
-{
-	if (GTK_IS_WIDGET (object))
-		return gtk_widget_get_accessible (object);
-
-	return atk_gobject_accessible_for_object (object);
 }
 
 /**

@@ -4118,74 +4118,34 @@ eel_canvas_item_accessible_ref_state_set (AtkObject *accessible)
 }
 
 static void
-eel_canvas_item_accessible_class_init (AtkObjectClass *klass)
+eel_canvas_item_accessible_class_init (EelCanvasItemAccessibleClass *klass)
 {
+	AtkObjectClass *atk_class = ATK_OBJECT_CLASS (klass);
+
  	accessible_item_parent_class = g_type_class_peek_parent (klass);
 
-	klass->initialize = eel_canvas_item_accessible_initialize;
-	klass->ref_state_set = eel_canvas_item_accessible_ref_state_set;
+	atk_class->initialize = eel_canvas_item_accessible_initialize;
+	atk_class->ref_state_set = eel_canvas_item_accessible_ref_state_set;
 }
 
-static GType
-eel_canvas_item_accessible_get_type (void)
+static void
+eel_canvas_item_accessible_init (EelCanvasItemAccessible *self)
 {
-	static GType type = 0;
 
-	if (!type) {
-		static const GInterfaceInfo atk_component_info = {
-			(GInterfaceInitFunc) eel_canvas_item_accessible_component_interface_init,
-                 	(GInterfaceFinalizeFunc) NULL,
-			NULL
-		};
-		AtkObjectFactory *factory;
-		GType parent_atk_type;
-		GTypeQuery query;
-		GTypeInfo tinfo = { 0 };
-
-		factory = atk_registry_get_factory (atk_get_default_registry(),
-						    G_TYPE_INITIALLY_UNOWNED);
-		if (!factory) {
-			return G_TYPE_INVALID;
-		}
-		parent_atk_type = atk_object_factory_get_accessible_type (factory);
-		if (!parent_atk_type) {
-			return G_TYPE_INVALID;
-		}
-		g_type_query (parent_atk_type, &query);
-		tinfo.class_init = (GClassInitFunc) eel_canvas_item_accessible_class_init;
-		tinfo.class_size = query.class_size;
-		tinfo.instance_size = query.instance_size;
-		type = g_type_register_static (parent_atk_type,
-					       "EelCanvasItemAccessibility",
-					       &tinfo, 0);
-
-		g_type_add_interface_static (type, ATK_TYPE_COMPONENT,
-					     &atk_component_info);
-
-	}
-
-	return type;
 }
 
-static AtkObject *
-eel_canvas_item_accessible_create (GObject *for_object)
-{
-	GType type;
-	AtkObject *accessible;
-	EelCanvasItem *item;
+G_DEFINE_TYPE_WITH_CODE (EelCanvasItemAccessible,
+			 eel_canvas_item_accessible,
+			 ATK_TYPE_GOBJECT_ACCESSIBLE,
+			 G_IMPLEMENT_INTERFACE (ATK_TYPE_COMPONENT,
+						eel_canvas_item_accessible_component_interface_init));
 
-	item = EEL_CANVAS_ITEM (for_object);
-	g_return_val_if_fail (item != NULL, NULL);
+static GType eel_canvas_item_accessible_factory_get_type (void);
 
-	type = eel_canvas_item_accessible_get_type ();
-	if (type == G_TYPE_INVALID) {
-		return atk_no_op_object_new (for_object);
-	}
-
-        accessible = g_object_new (type, NULL);
-	atk_object_initialize (accessible, for_object);
-	return accessible;
-}
+typedef AtkObjectFactory      EelCanvasItemAccessibleFactory;
+typedef AtkObjectFactoryClass EelCanvasItemAccessibleFactoryClass;
+G_DEFINE_TYPE (EelCanvasItemAccessibleFactory, eel_canvas_item_accessible_factory,
+	       ATK_TYPE_OBJECT_FACTORY)
 
 static GType
 eel_canvas_item_accessible_factory_get_accessible_type (void)
@@ -4194,15 +4154,19 @@ eel_canvas_item_accessible_factory_get_accessible_type (void)
 }
 
 static AtkObject*
-eel_canvas_item_accessible_factory_create_accessible (GObject *obj)
+eel_canvas_item_accessible_factory_create_accessible (GObject *for_object)
 {
 	AtkObject *accessible;
 
-	g_return_val_if_fail (G_IS_OBJECT (obj), NULL);
-
-	accessible = eel_canvas_item_accessible_create (obj);
-
+        accessible = g_object_new (eel_canvas_item_accessible_get_type (), NULL);
+	atk_object_initialize (accessible, for_object);
 	return accessible;
+}
+
+static void
+eel_canvas_item_accessible_factory_init (EelCanvasItemAccessibleFactory *self)
+{
+
 }
 
 static void
@@ -4210,31 +4174,6 @@ eel_canvas_item_accessible_factory_class_init (AtkObjectFactoryClass *klass)
 {
 	klass->create_accessible = eel_canvas_item_accessible_factory_create_accessible;
 	klass->get_accessible_type = eel_canvas_item_accessible_factory_get_accessible_type;
-}
- 
-static GType
-eel_canvas_item_accessible_factory_get_type (void)
-{
-	static GType type = 0;
-
-	if (!type) {
-		static const GTypeInfo tinfo = {
-			sizeof (AtkObjectFactoryClass),
-			(GBaseInitFunc) NULL,
-			(GBaseFinalizeFunc) NULL,
-			(GClassInitFunc) eel_canvas_item_accessible_factory_class_init,
-			NULL,		/* class_finalize */
-			NULL,		/* class_data */
-			sizeof (AtkObjectFactory),
-			0,		/* n_preallocs */
-			NULL
-		};
-		type = g_type_register_static (ATK_TYPE_OBJECT_FACTORY,
-					       "EelCanvasItemAccessibilityFactory",
-					       &tinfo, 0);
-	}
-
-	return type;
 }
 
 /* Class initialization function for EelCanvasItemClass */

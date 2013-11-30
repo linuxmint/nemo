@@ -2162,6 +2162,7 @@ volume_mounted_cb (GVolume *volume,
 	if (sidebar->go_to_after_mount_slot) {
 		g_object_remove_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
 					      (gpointer *) &sidebar->go_to_after_mount_slot);
+		sidebar->go_to_after_mount_slot = NULL;
 	}
 }
 
