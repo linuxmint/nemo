@@ -4267,9 +4267,10 @@ eel_editable_label_get_accessible (GtkWidget *widget)
         NULL
       };
 
-      type = eel_accessibility_create_derived_type ("EelEditableLabelAccessible",
-		       G_TYPE_FROM_INSTANCE (widget),
-		       eel_editable_label_accessible_class_init);
+      type = eel_accessibility_create_accessible_gtype
+        ("EelEditableLabelAccessible",
+         widget,
+         (GClassInitFunc) eel_editable_label_accessible_class_init);
 
       if (!type)
         return NULL;
@@ -4278,8 +4279,7 @@ eel_editable_label_get_accessible (GtkWidget *widget)
       g_type_add_interface_static (type, ATK_TYPE_TEXT, &atk_text_info);
     }
 
-  accessible = g_object_new (type, NULL);
+  accessible = g_object_new (type, "widget", widget, NULL);
 
   return eel_accessibility_set_atk_object_return (widget, accessible);
 }
-
