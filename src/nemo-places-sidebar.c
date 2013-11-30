@@ -34,7 +34,6 @@
 #include <libnemo-private/nemo-dnd.h>
 #include <libnemo-private/nemo-bookmark.h>
 #include <libnemo-private/nemo-global-preferences.h>
-#include <libnemo-private/nemo-module.h>
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-file-operations.h>
@@ -235,8 +234,8 @@ static void update_places_on_idle                      (NemoPlacesSidebar *sideb
 
 /* Identifiers for target types */
 enum {
-  GTK_TREE_MODEL_ROW,
-  TEXT_URI_LIST
+	GTK_TREE_MODEL_ROW,
+	TEXT_URI_LIST
 };
 
 /* Target types for dragging from the shortcuts list */
@@ -252,17 +251,14 @@ static const GtkTargetEntry nemo_shortcuts_drop_targets [] = {
 
 /* Drag and drop interface declarations */
 typedef struct {
-  GtkTreeStore parent;
+	GtkTreeStore parent;
 
-  NemoPlacesSidebar *sidebar;
+	NemoPlacesSidebar *sidebar;
 } NemoShortcutsModel;
 
 typedef struct {
-  GtkTreeStoreClass parent_class;
+	GtkTreeStoreClass parent_class;
 } NemoShortcutsModelClass;
-
-#define NEMO_TYPE_SHORTCUTS_MODEL (_nemo_shortcuts_model_get_type ())
-#define NEMO_SHORTCUTS_MODEL(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_SHORTCUTS_MODEL_TYPE, NemoShortcutsModel))
 
 GType _nemo_shortcuts_model_get_type (void);
 static void _nemo_shortcuts_model_drag_source_init (GtkTreeDragSourceIface *iface);
@@ -4490,7 +4486,7 @@ nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar)
         G_TYPE_BOOLEAN
 	};
 
-	model = g_object_new (NEMO_TYPE_SHORTCUTS_MODEL, NULL);
+	model = g_object_new (_nemo_shortcuts_model_get_type (), NULL);
 	model->sidebar = sidebar;
 
 	gtk_tree_store_set_column_types (GTK_TREE_STORE (model),
