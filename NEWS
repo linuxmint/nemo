@@ -1,4 +1,18 @@
-Nemo merged with changes in Nautilus 3.5.1. 
+Nemo merged with changes in Nautilus 3.5.3. 
+
+Changes:
+* Fix crasher after ejecting a volume from the sidebar
+* Fix possible crasher when cancelling a rename operation
+* Fix accessibility implementation of rename entries and icon view
+
+Rejected:
+* Fix DnD not working on sidebar bookmarks
+* Fix thumbnails failing to display in icon view
+* Fix crasher on gtk-shell-shows-app-menu GtkSetting change
+* Use GtkSearchEntry
+
+
+Nemo merged with changes in Nautilus 3.5.2. 
 
 Changes:
 * Add a way to create a new directory for selection
@@ -8,7 +22,6 @@ Changes:
 * Remove markup from GtkBuilder strings
 
 Rejected:
-
 * Remove statusbar
 * Remove "Go->Computer"
 * Remove compact view
