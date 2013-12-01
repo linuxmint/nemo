@@ -544,7 +544,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         gboolean need_sliders;
         gint up_slider_offset;
         gint down_slider_offset;
-        gint button_count; 
+        gint button_count = 0;
 
 	GtkRequisition child_requisition;
 	GtkAllocation widget_allocation;
@@ -621,26 +621,34 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
       		/* Count down the path chain towards the end. */
         nemo_pathbar_button_get_preferred_size (BUTTON_DATA (first_button->data)->button,
                                                 &child_requisition, allocation->height);
+        button_count = 1;
         width = child_requisition.width;
         list = first_button->prev;
         while (list && !reached_end) {
+            if (list == path_bar->fake_root) {
+        	break;
+	    }
             child = BUTTON_DATA (list->data)->button;
             nemo_pathbar_button_get_preferred_size (child, &child_requisition, allocation->height);
 
             if (width + child_requisition.width + path_bar->spacing + slider_space > allocation->width) {
                 reached_end = TRUE;
+        	if (button_count == 1) {
+        	    /* Display two Buttons in any case */
+        	    button_count++;
+                    largest_width /= 2;
+        	    if (child_requisition.width < largest_width) {
+        	        /* unused space for second button */
+        		largest_width += largest_width - child_requisition.width;
+        	    }
+        	}
             } else {
-                if (list == path_bar->fake_root) {
-                    break;
-                } else {
-                    width += child_requisition.width + path_bar->spacing;
-                }
+                width += child_requisition.width + path_bar->spacing;
             }
             list = list->prev;
         }
 
                     /* Finally, we walk up, seeing how many of the previous buttons we can add*/
-        button_count = 1; 
         while (first_button->next && ! reached_end) {
             if (first_button == path_bar->fake_root) {
                 break;
