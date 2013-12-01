@@ -69,7 +69,7 @@ get_builtin_columns (void)
 				 g_object_new (NEMO_TYPE_COLUMN,
 					       "name", "date_modified",
 					       "attribute", "date_modified",
-					       "label", _("Date Modified"),
+					       "label", _("Modified"),
 					       "description", _("The date the file was modified."),
 					       NULL));
 
@@ -77,7 +77,7 @@ get_builtin_columns (void)
 				 g_object_new (NEMO_TYPE_COLUMN,
 					       "name", "date_accessed",
 					       "attribute", "date_accessed",
-					       "label", _("Date Accessed"),
+					       "label", _("Accessed"),
 					       "description", _("The date the file was accessed."),
 					       NULL));
 
@@ -125,8 +125,8 @@ get_builtin_columns (void)
 				 g_object_new (NEMO_TYPE_COLUMN,
 					       "name", "selinux_context",
 					       "attribute", "selinux_context",
-					       "label", _("SELinux Context"),
-					       "description", _("The SELinux security context of the file."),
+					       "label", _("Security Context"),
+					       "description", _("The security context of the file."),
 					       NULL));
 #endif
 	columns = g_list_append (columns,

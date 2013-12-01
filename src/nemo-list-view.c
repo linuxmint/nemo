@@ -2052,7 +2052,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_cell_data_func (view->details->file_name_column, cell,
 								 (GtkTreeCellDataFunc) filename_cell_data_func,
 								 view, NULL);
-		} else {		
+		} else {
 			cell = gtk_cell_renderer_text_new ();
             g_object_set (cell,
                           "xalign", xalign,
