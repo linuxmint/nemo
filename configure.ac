@@ -271,8 +271,7 @@ if test "$GCC" = "yes" -a "$set_more_warnings" != "no"; then
 	-Wall \
 	-Wmissing-declarations -Wmissing-prototypes \
 	-Wnested-externs -Wpointer-arith \
-	-Wcast-align \
-	-Werror"
+	-Wcast-align "
 
 	for option in -Wstrict-aliasing=0 -Wno-pointer-sign; do
 		SAVE_CFLAGS="$CFLAGS"
