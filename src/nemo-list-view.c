@@ -140,8 +140,6 @@ static GList *nemo_list_view_get_selection_for_file_transfer (NemoView   *view);
 static void   nemo_list_view_set_zoom_level                  (NemoListView        *view,
 								  NemoZoomLevel  new_level,
 								  gboolean           always_set_level);
-static void   nemo_list_view_scale_font_size                 (NemoListView        *view,
-								  NemoZoomLevel  new_level);
 static void   nemo_list_view_scroll_to_file                  (NemoListView        *view,
 								  NemoFile      *file);
 static void   nemo_list_view_rename_callback                 (NemoFile      *file,
@@ -2938,41 +2936,6 @@ nemo_list_view_reset_to_defaults (NemoView *view)
 }
 
 static void
-nemo_list_view_scale_font_size (NemoListView *view, 
-				    NemoZoomLevel new_level)
-{
-	GList *l;
-	static gboolean first_time = TRUE;
-	static double pango_scale[7];
-	int medium;
-	int i;
-
-	g_return_if_fail (new_level >= NEMO_ZOOM_LEVEL_SMALLEST &&
-			  new_level <= NEMO_ZOOM_LEVEL_LARGEST);
-
-	if (first_time) {
-		first_time = FALSE;
-		medium = NEMO_ZOOM_LEVEL_SMALLER;
-		pango_scale[medium] = PANGO_SCALE_MEDIUM;
-		for (i = medium; i > NEMO_ZOOM_LEVEL_SMALLEST; i--) {
-			pango_scale[i - 1] = (1 / 1.2) * pango_scale[i];
-		}
-		for (i = medium; i < NEMO_ZOOM_LEVEL_LARGEST; i++) {
-			pango_scale[i + 1] = 1.2 * pango_scale[i];
-		}
-	}
-					 
-	g_object_set (G_OBJECT (view->details->file_name_cell),
-		      "scale", pango_scale[new_level],
-		      NULL);
-	for (l = view->details->cells; l != NULL; l = l->next) {
-		g_object_set (G_OBJECT (l->data),
-			      "scale", pango_scale[new_level],
-			      NULL);
-	}
-}
-
-static void
 nemo_list_view_set_zoom_level (NemoListView *view,
 				   NemoZoomLevel new_level,
 				   gboolean always_emit)
@@ -3009,9 +2972,6 @@ nemo_list_view_set_zoom_level (NemoListView *view,
 					     GTK_CELL_RENDERER (view->details->pixbuf_cell),
 					     "pixbuf", column,
 					     NULL);
-
-	/* Scale text. */
-	nemo_list_view_scale_font_size (view, new_level);
 
 	/* Make all rows the same size. */
 	icon_size = nemo_get_list_icon_size_for_zoom_level (new_level);
