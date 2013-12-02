@@ -799,6 +799,10 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     if (needs_reorder) {
         child_ordering_changed (path_bar);
     }
+
+	if (needs_reorder) {
+		child_ordering_changed (path_bar);
+	}
 }
 
 static void
@@ -1106,24 +1110,24 @@ nemo_path_bar_class_init (NemoPathBarClass *path_bar_class)
     container_class->remove = nemo_path_bar_remove;
     container_class->get_path_for_child = nemo_path_bar_get_path_for_child;
 
-        path_bar_signals [PATH_CLICKED] =
-                g_signal_new ("path-clicked",
-		  G_OBJECT_CLASS_TYPE (path_bar_class),
-		  G_SIGNAL_RUN_FIRST,
-		  G_STRUCT_OFFSET (NemoPathBarClass, path_clicked),
-		  NULL, NULL,
-		  g_cclosure_marshal_VOID__OBJECT,
-		  G_TYPE_NONE, 1,
-		  G_TYPE_FILE);
-        path_bar_signals [PATH_EVENT] =
-                g_signal_new ("path-event",
-		  G_OBJECT_CLASS_TYPE (path_bar_class),
-		  G_SIGNAL_RUN_FIRST,
-		  G_STRUCT_OFFSET (NemoPathBarClass, path_event),
-		  NULL, NULL, NULL,
-		  G_TYPE_NONE, 2,
-		  G_TYPE_FILE,
-		  GDK_TYPE_EVENT);
+    path_bar_signals [PATH_CLICKED] =
+        g_signal_new ("path-clicked",
+        G_OBJECT_CLASS_TYPE (path_bar_class),
+        G_SIGNAL_RUN_FIRST,
+        G_STRUCT_OFFSET (NemoPathBarClass, path_clicked),
+        NULL, NULL,
+        g_cclosure_marshal_VOID__OBJECT,
+        G_TYPE_NONE, 1,
+        G_TYPE_FILE);
+    path_bar_signals [PATH_EVENT] =
+        g_signal_new ("path-event",
+        G_OBJECT_CLASS_TYPE (path_bar_class),
+        G_SIGNAL_RUN_FIRST  | G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET (NemoPathBarClass, path_event),
+        NULL, NULL, NULL,
+        G_TYPE_BOOLEAN, 2,
+        G_TYPE_FILE,
+		GDK_TYPE_EVENT);
 
      gtk_container_class_handle_border_width (container_class);
      g_type_class_add_private (path_bar_class, sizeof (NemoPathBarDetails));
