@@ -623,8 +623,9 @@ nemo_get_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
 		return NEMO_ICON_SIZE_LARGER;
 	case NEMO_ZOOM_LEVEL_LARGEST:
 		return NEMO_ICON_SIZE_LARGEST;
+    default:
+        g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
 	}
-	g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
 }
 
 guint
@@ -645,8 +646,9 @@ nemo_get_list_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
         return NEMO_ICON_SIZE_LARGE;
     case NEMO_ZOOM_LEVEL_LARGEST:
         return NEMO_ICON_SIZE_LARGER;
+    default:
+        g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
     }
-    g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
 }
 
 gint

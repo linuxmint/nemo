@@ -1281,7 +1281,6 @@ lay_down_icons_horizontal (NemoIconContainer *container,
 	double max_height_above, max_height_below;
 	double height_above, height_below;
 	double line_width;
-    gboolean gridded_layout;
 	double grid_width;
 	double max_text_width, max_icon_width;
 	int icon_width;
@@ -1317,8 +1316,6 @@ lay_down_icons_horizontal (NemoIconContainer *container,
 	} else {
 		grid_width = STANDARD_ICON_GRID_WIDTH;
 	}
-
-    gridded_layout = !nemo_icon_container_is_tighter_layout (container);
 
 	line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? ICON_PAD_LEFT : 0;
 	line_start = icons;
@@ -8298,7 +8295,6 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 	pango_font_description_free (desc);
 	
 	icon_rect = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
-	text_rect = nemo_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
 
 	if (nemo_icon_container_is_layout_vertical (container) &&
 	    container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {

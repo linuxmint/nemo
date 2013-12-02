@@ -36,6 +36,7 @@
 #include <libegg/eggtreemultidnd.h>
 #include <eel/eel-graphic-effects.h>
 #include <libnemo-private/nemo-dnd.h>
+#include <libnemo-private/nemo-file-utilities.h>
 
 enum {
 	SUBDIRECTORY_UNLOADED,
@@ -1426,9 +1427,9 @@ nemo_list_model_get_column_id_from_zoom_level (NemoZoomLevel zoom_level)
 		return NEMO_LIST_MODEL_LARGER_ICON_COLUMN;
 	case NEMO_ZOOM_LEVEL_LARGEST:
 		return NEMO_LIST_MODEL_LARGEST_ICON_COLUMN;
+    default: 
+        g_return_val_if_reached (NEMO_LIST_MODEL_STANDARD_ICON_COLUMN);
 	}
-
-	g_return_val_if_reached (NEMO_LIST_MODEL_STANDARD_ICON_COLUMN);
 }
 
 void

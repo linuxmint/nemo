@@ -34,7 +34,7 @@ gboolean   nemo_can_thumbnail                   (NemoFile *file);
 gboolean   nemo_can_thumbnail_internally        (NemoFile *file);
 gboolean   nemo_thumbnail_is_mimetype_limited_by_size
 						    (const char *mime_type);
-void       nautilus_thumbnail_frame_image           (GdkPixbuf **pixbuf);
+void       nemo_thumbnail_frame_image           (GdkPixbuf **pixbuf);
 
 /* Queue handling: */
 void       nemo_thumbnail_remove_from_queue     (const char   *file_uri);
