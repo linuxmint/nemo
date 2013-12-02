@@ -64,7 +64,7 @@ static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 G_DEFINE_TYPE (NemoToolbar, nemo_toolbar, GTK_TYPE_BOX);
 
-void
+static void
 nemo_toolbar_update_root_state (NemoToolbar *self)
 {
     if (geteuid() == 0) {

@@ -27,6 +27,7 @@
 #include "nemo-mime-actions.h"
 
 #include "nemo-window-slot.h"
+#include "nemo-error-reporting.h"
 
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-stock-dialogs.h>

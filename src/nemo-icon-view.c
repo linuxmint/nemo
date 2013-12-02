@@ -1216,7 +1216,7 @@ nemo_icon_view_restore_default_zoom_level (NemoView *view)
 static NemoZoomLevel
 nemo_icon_view_get_default_zoom_level (NemoView *view)
 {
-    g_return_if_fail (NEMO_IS_ICON_VIEW (view));
+    g_return_val_if_fail (NEMO_IS_ICON_VIEW (view), NEMO_ZOOM_LEVEL_NULL);
 
     return get_default_zoom_level(NEMO_ICON_VIEW (view));
 }

@@ -571,7 +571,7 @@ sidebar_update_restore_selection (NemoPlacesSidebar *sidebar,
 	}
 }
 
-gint
+static gint
 get_disk_full (GFile *file, gchar **tooltip_info)
 {
     GFileInfo *info = g_file_query_filesystem_info (file,

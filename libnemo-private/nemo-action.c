@@ -869,7 +869,7 @@ default_parent_path:
                 if (g_strcmp0 (name, "x-nemo-desktop") == 0)
                     path = nemo_get_desktop_directory ();
                 else
-                    path = g_strdup_printf ("");
+                    path = g_strdup ("");
                 g_free (name);
             }
             str = insert_quote (action, str);
@@ -919,6 +919,8 @@ default_parent_display_name:
                 goto default_parent_path;
             }
             break;
+        default:
+            break; 
     }
 
     gchar *ret = str->str;
@@ -1085,7 +1087,7 @@ nemo_action_get_label (NemoAction *action, GList *selection, NemoFile *parent)
     const gchar *orig_label = nemo_action_get_orig_label (action);
 
     if (orig_label == NULL)
-        return;
+        return NULL;
 
     action->escape_underscores = TRUE;
 
@@ -1108,7 +1110,7 @@ nemo_action_get_tt (NemoAction *action, GList *selection, NemoFile *parent)
     const gchar *orig_tt = nemo_action_get_orig_tt (action);
 
     if (orig_tt == NULL)
-        return;
+        return NULL;
 
     action->escape_underscores = FALSE;
 

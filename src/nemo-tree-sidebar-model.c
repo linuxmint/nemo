@@ -35,6 +35,7 @@
 #include <libnemo-private/nemo-directory.h>
 #include <libnemo-private/nemo-file-attributes.h>
 #include <libnemo-private/nemo-file.h>
+#include <libnemo-private/nemo-file-utilities.h>
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
