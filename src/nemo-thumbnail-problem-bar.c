@@ -56,17 +56,19 @@ thumbnail_problem_bar_response_cb (GtkInfoBar *infobar,
     NemoThumbnailProblemBar *bar;
 
     bar = NEMO_THUMBNAIL_PROBLEM_BAR (infobar);
+ 
+    NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
 
     switch (response_id) {
         case FIX_CACHE:
             g_spawn_command_line_sync ("sh -c \"pkexec nemo --fix-cache\"", NULL, NULL, NULL, NULL);
-            nemo_application_check_thumbnail_cache (nemo_application_get_singleton ());
+            nemo_application_check_thumbnail_cache (app);
             nemo_window_slot_reload (nemo_view_get_nemo_window_slot (bar->priv->view));
             nemo_window_slot_check_bad_cache_bar (nemo_view_get_nemo_window_slot (bar->priv->view));
             break;
         case DISMISS:
-            nemo_application_clear_cache_flag (nemo_application_get_singleton ());
-            nemo_application_ignore_cache_problem (nemo_application_get_singleton ());
+            nemo_application_clear_cache_flag (app);
+            nemo_application_ignore_cache_problem (app);
             gtk_widget_hide (GTK_WIDGET (infobar));
             break;
         default:

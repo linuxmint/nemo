@@ -243,7 +243,7 @@ on_open_folder_clicked (GtkWidget *button, NemoScriptConfigWidget *widget)
     path = nemo_get_scripts_directory_path ();
     GFile *location = g_file_new_for_path (path);
 
-    nemo_application_open_location (nemo_application_get_singleton (),
+    nemo_application_open_location (NEMO_APPLICATION (g_application_get_default ()),
                                     location,
                                     NULL,
                                     "nemo");

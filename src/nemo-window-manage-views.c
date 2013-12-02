@@ -262,7 +262,7 @@ static void
 viewed_file_changed_callback (NemoFile *file,
                               NemoWindowSlot *slot)
 {
-        GFile *new_location;
+	GFile *new_location;
 	gboolean is_in_trash, was_in_trash;
 
         g_assert (NEMO_IS_FILE (file));
@@ -318,7 +318,6 @@ viewed_file_changed_callback (NemoFile *file,
 					/* multiview-TODO also update NemoWindowSlot
 					 * [which as of writing doesn't save/store any path bar state]
 					 */
-					nemo_path_bar_clear_buttons (NEMO_PATH_BAR (slot->pane->path_bar));
 				}
 				
 				nemo_window_slot_open_location (slot, go_to_file, 0);
@@ -1868,8 +1867,10 @@ nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot)
     if (NEMO_IS_DESKTOP_WINDOW (nemo_window_slot_get_window (slot)))
         return;
 
-    if (nemo_application_get_cache_bad (nemo_application_get_singleton ()) &&
-        !nemo_application_get_cache_problem_ignored (nemo_application_get_singleton ())) {
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+
+    if (nemo_application_get_cache_bad (app) &&
+        !nemo_application_get_cache_problem_ignored (app)) {
         if (slot->cache_bar != NULL) {
             gtk_widget_show (slot->cache_bar);
         } else {

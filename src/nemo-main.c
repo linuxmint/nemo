@@ -96,7 +96,7 @@ main (int argc, char *argv[])
 #endif
 
 	/* Run the nemo application. */
-	application = nemo_application_get_singleton ();
+	application = nemo_application_new ();
 
     /* hold indefinitely if we're asked to persist */
     if (g_getenv ("NEMO_PERSIST") != NULL) {

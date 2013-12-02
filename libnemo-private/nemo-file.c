@@ -4250,15 +4250,8 @@ nemo_file_get_emblemed_icon (NemoFile *file,
     GIcon *gicon, *emblem_icon, *emblemed_icon;
     GEmblem *emblem;
     GList *emblem_icons, *l;
-    char *emblems_to_ignore[3];
-    int i;
 
     gicon = nemo_file_get_gicon (file, flags);
-
-    i = 0;
-    emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
-    emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
-    emblems_to_ignore[i++] = NULL;
 
     emblem = NULL;
     emblem_icons = nemo_file_get_emblem_icons (file);

@@ -481,10 +481,6 @@ nemo_icon_view_clear (NemoView *view)
 static gboolean
 should_show_file_on_screen (NemoView *view, NemoFile *file)
 {
-	NemoIconView *icon_view;
-
-	icon_view = NEMO_ICON_VIEW (view);
-
 	if (!nemo_view_should_show_file (view, file)) {
 		return FALSE;
 	}	
@@ -541,11 +537,6 @@ nemo_icon_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *director
 	    !should_show_file_on_screen (view, file)) {
 		return;
 	}
-
-    if (nemo_file_has_thumbnail_access_problem (file)) {
-        nemo_application_set_cache_flag (nemo_application_get_singleton ());
-        nemo_window_slot_check_bad_cache_bar (nemo_view_get_nemo_window_slot (view));
-    }
 
 	/* Reset scroll region for the first icon added when loading a directory. */
 	if (nemo_view_get_loading (view) && nemo_icon_container_is_empty (icon_container)) {

@@ -888,9 +888,6 @@ clicked_within_slow_click_interval_on_text (NemoListView *view, GtkTreePath *pat
 static gboolean
 handle_icon_double_click (NemoListView *view, GtkTreePath *path, GdkEventButton *event, gboolean on_expander)
 {
-    GtkWidgetClass *tree_view_class;
-    tree_view_class = GTK_WIDGET_GET_CLASS (view->details->tree_view);
-
     /* Ignore double click if we are in single click mode */
     if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
         return FALSE;
@@ -2292,7 +2289,7 @@ nemo_list_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *director
 	NemoListModel *model;
 
     if (nemo_file_has_thumbnail_access_problem (file)) {
-        nemo_application_set_cache_flag (nemo_application_get_singleton ());
+        nemo_application_set_cache_flag (NEMO_APPLICATION (g_application_get_default ()));
         nemo_window_slot_check_bad_cache_bar (nemo_view_get_nemo_window_slot (view));
     }
 

@@ -60,7 +60,7 @@ content_bar_response_cb (GtkInfoBar *infobar,
 			 gpointer user_data)
 {
 	GAppInfo *default_app;
-	NemoXContentBar *bar;
+	NemoXContentBar *bar = user_data;
 
 	if (response_id < 0) {
 		return;

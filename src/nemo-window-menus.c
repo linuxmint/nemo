@@ -344,7 +344,7 @@ action_nemo_manual_callback (GtkAction *action,
 	NemoWindow *window;
 	GError *error;
 	GtkWidget *dialog;
-	const char* helpuri;
+	char* helpuri;
 	char* helpprefix;
 	const char* name = gtk_action_get_name (action);
 
