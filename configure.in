@@ -178,7 +178,6 @@ AC_ARG_ENABLE(more-warnings,
 AC_HELP_STRING([--enable-more-warnings], [Maximum compiler warnings]),
 set_more_warnings="$enableval",[
 if test -d $srcdir/.git; then
-	is_cvs_version=true
 	set_more_warnings=yes
 else
 	set_more_warnings=no
@@ -191,7 +190,8 @@ if test "$GCC" = "yes" -a "$set_more_warnings" != "no"; then
 	-Wall \
 	-Wmissing-declarations -Wmissing-prototypes \
 	-Wnested-externs -Wpointer-arith \
-	-Wcast-align "
+	-Wcast-align \
+	-Werror "
 
 	for option in -Wstrict-aliasing=0 -Wno-pointer-sign; do
 		SAVE_CFLAGS="$CFLAGS"
