@@ -1946,6 +1946,8 @@ use_extra_mouse_buttons_changed (gpointer callback_data)
 static void
 nemo_window_init (NemoWindow *window)
 {
+    GtkWindowGroup *window_group;
+
 	window->details = G_TYPE_INSTANCE_GET_PRIVATE (window, NEMO_TYPE_WINDOW, NemoWindowDetails);
 
 	window->details->panes = NULL;
@@ -1966,6 +1968,10 @@ nemo_window_init (NemoWindow *window)
     window->details->ignore_meta_sort_column = NULL;
     window->details->ignore_meta_sort_direction = SORT_NULL;
     window->details->ignore_meta_tighter_layout = TIGHTER_NULL;
+
+	window_group = gtk_window_group_new ();
+	gtk_window_group_add_window (window_group, GTK_WINDOW (window));
+	g_object_unref (window_group);
 
 	/* Set initial window title */
 	gtk_window_set_title (GTK_WINDOW (window), _("Nemo"));
