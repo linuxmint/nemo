@@ -314,7 +314,6 @@ nemo_toolbar_dispose (GObject *obj)
 {
 	NemoToolbar *self = NEMO_TOOLBAR (obj);
 
-	g_clear_object (&self->priv->ui_manager);
 	g_clear_object (&self->priv->action_group);
 
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
