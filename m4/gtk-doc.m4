@@ -37,7 +37,7 @@ AC_DEFUN([GTK_DOC_CHECK],
     dnl don't check for glib if we build glib
     if test "x$PACKAGE_NAME" != "xglib"; then
       dnl don't fail if someone does not have glib
-      PKG_CHECK_MODULES(GTKDOC_DEPS, glib-2.0 >= 2.10.0 gobject-2.0  >= 2.10.0,,)
+      PKG_CHECK_MODULES(GTKDOC_DEPS, glib-2.0 >= 2.10.0 gobject-2.0  >= 2.10.0,,[:])
     fi
   fi
 
@@ -58,6 +58,10 @@ AC_DEFUN([GTK_DOC_CHECK],
     enable_gtk_doc_pdf=no
   fi
 
+  if test -z "$AM_DEFAULT_VERBOSITY"; then
+    AM_DEFAULT_VERBOSITY=1
+  fi
+  AC_SUBST([AM_DEFAULT_VERBOSITY])
 
   AM_CONDITIONAL([ENABLE_GTK_DOC], [test x$enable_gtk_doc = xyes])
   AM_CONDITIONAL([GTK_DOC_BUILD_HTML], [test x$enable_gtk_doc_html = xyes])

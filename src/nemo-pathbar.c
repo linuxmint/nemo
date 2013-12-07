@@ -546,7 +546,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         gint down_slider_offset;
         gint button_count = 0;
 
-	GtkRequisition child_requisition;
+	GtkRequisition child_requisition, child_requisition_min;
 	GtkAllocation widget_allocation;
 
 	need_sliders = FALSE;
@@ -703,15 +703,15 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         else
             gtk_label_set_width_chars (GTK_LABEL (BUTTON_DATA (list->data)->pre_padding), 2);
 
-        gtk_widget_get_preferred_size (child, NULL, &child_requisition);
+        gtk_widget_get_preferred_size (child, &child_requisition_min, &child_requisition);
+        child_allocation.width = MIN (child_requisition.width, largest_width);
+        child_allocation.width = MAX (child_requisition_min.width, child_allocation.width);
+        if (button_count == 2 && child_allocation.width < largest_width) {
+            /* unused space for second button */
+            largest_width += largest_width - child_allocation.width;
+        }
 
         gtk_widget_get_allocation (widget, &widget_allocation);
-
-        child_allocation.width = MIN (child_requisition.width, largest_width);
-        if (button_count == 2 && child_requisition.width < largest_width) { 
-            /* unused space for second button */            
-            largest_width += largest_width - child_requisition.width;
-        }
 
         if (direction == GTK_TEXT_DIR_RTL) {
             child_allocation.x -= child_allocation.width;
