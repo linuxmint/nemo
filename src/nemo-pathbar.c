@@ -539,7 +539,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         GtkTextDirection direction;
         GtkAllocation child_allocation;
         GList *list, *first_button;
-        gint width;
+        gint width, width_min;
         gint largest_width;
         gboolean need_sliders;
         gint up_slider_offset;
@@ -634,12 +634,18 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
             if (width + child_requisition.width + path_bar->spacing + slider_space > allocation->width) {
                 reached_end = TRUE;
         	if (button_count == 1) {
-        	    /* Display two Buttons in any case */
-        	    button_count++;
-                    largest_width /= 2;
-        	    if (child_requisition.width < largest_width) {
-        	        /* unused space for second button */
-        		largest_width += largest_width - child_requisition.width;
+        	    /* Display two Buttons if they fit with shrinked */
+        	    gtk_widget_get_preferred_size (child, &child_requisition_min, NULL);
+        	    width_min = child_requisition_min.width;
+        	    gtk_widget_get_preferred_size (BUTTON_DATA (first_button->data)->button, &child_requisition_min, NULL);
+        	    width_min += child_requisition_min.width;
+        	    if (width_min <= largest_width) {
+                        button_count++;
+			largest_width /= 2;
+			if (child_requisition.width < largest_width) {
+			    /* unused space for second button */
+			    largest_width += largest_width - child_requisition.width;
+			}
         	    }
         	}
             } else {
@@ -659,14 +665,20 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
             if (width + child_requisition.width + path_bar->spacing + slider_space > allocation->width) {
                 reached_end = TRUE;
                 if (button_count == 1) {
-                    /* Display two Buttons in any case */                        
-                    first_button = first_button->next;
-                    button_count++; 
-                    largest_width /= 2; 
-                    if (width < largest_width) { 
-                       /* unused space for second button */            
-                        largest_width += largest_width - width;
-                    }
+            	    gtk_widget_get_preferred_size (child, &child_requisition_min, NULL);
+            	    width_min = child_requisition_min.width;
+            	    gtk_widget_get_preferred_size (BUTTON_DATA (first_button->data)->button, &child_requisition_min, NULL);
+            	    width_min += child_requisition_min.width;
+            	    if (width <= largest_width) {
+                        /* Display two Buttons in any case */
+                        first_button = first_button->next;
+                        button_count++;
+                        largest_width /= 2;
+                        if (width < largest_width) {
+                           /* unused space for second button */
+                           largest_width += largest_width - width;
+                        }
+            	    }
                 } 
             } else {
                 width += child_requisition.width + path_bar->spacing;
