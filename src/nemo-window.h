@@ -143,8 +143,14 @@ void                 nemo_window_report_load_underway  (NemoWindow *window,
 void                 nemo_window_view_visible          (NemoWindow *window,
                                                             NemoView *view);
 NemoWindowSlot * nemo_window_get_active_slot       (NemoWindow *window);
+GList *              nemo_window_get_panes             (NemoWindow *window);
+NemoWindowSlot * nemo_window_get_active_slot       (NemoWindow *window);
 void                 nemo_window_push_status           (NemoWindow *window,
                                                             const char *text);
+GtkWidget *          nemo_window_ensure_location_bar   (NemoWindow *window);
+void                 nemo_window_sync_location_widgets (NemoWindow *window);
+void                 nemo_window_sync_search_widgets   (NemoWindow *window);
+void                 nemo_window_grab_focus            (NemoWindow *window);
 
 void     nemo_window_hide_sidebar         (NemoWindow *window);
 void     nemo_window_show_sidebar         (NemoWindow *window);
@@ -186,5 +192,8 @@ gint         nemo_window_get_ignore_meta_tighter_layout (NemoWindow *window);
 void         nemo_window_set_ignore_meta_tighter_layout (NemoWindow *window, gint tighter);
 
 NemoWindowOpenFlags nemo_event_get_window_open_flags   (void);
+
+void nemo_window_slot_added (NemoWindow *window,  NemoWindowSlot *slot);
+void nemo_window_slot_removed (NemoWindow *window,  NemoWindowSlot *slot);
 
 #endif

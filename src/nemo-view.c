@@ -39,6 +39,7 @@
 #include "nemo-previewer.h"
 #include "nemo-properties-window.h"
 #include "nemo-bookmark-list.h"
+#include "nemo-window-pane.h"
 
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -6645,7 +6646,321 @@ create_popup_menu (NemoView *view, const char *popup_path)
 
 	return GTK_MENU (menu);
 }
-	
+
+typedef struct _CopyCallbackData {
+	NemoView   *view;
+	GtkFileChooser *chooser;
+	GHashTable     *locations;
+	GList          *selection;
+	gboolean        is_move;
+} CopyCallbackData;
+
+static void
+add_bookmark_for_uri (CopyCallbackData *data,
+		      const char       *uri)
+{
+	GError *error = NULL;
+	int count;
+
+	count = GPOINTER_TO_INT (g_hash_table_lookup (data->locations, uri));
+	if (count == 0) {
+		gtk_file_chooser_add_shortcut_folder_uri (data->chooser,
+							  uri,
+							  &error);
+		if (error != NULL) {
+			DEBUG ("Unable to add location '%s' to file selector: %s", uri, error->message);
+			g_clear_error (&error);
+		}
+	}
+	g_hash_table_replace (data->locations, g_strdup (uri), GINT_TO_POINTER (count + 1));
+}
+
+static void
+remove_bookmark_for_uri (CopyCallbackData *data,
+			 const char       *uri)
+{
+	GError *error = NULL;
+	int count;
+
+	count = GPOINTER_TO_INT (g_hash_table_lookup (data->locations, uri));
+	if (count == 1) {
+		gtk_file_chooser_remove_shortcut_folder_uri (data->chooser,
+							     uri,
+							     &error);
+		if (error != NULL) {
+			DEBUG ("Unable to remove location '%s' to file selector: %s", uri, error->message);
+			g_clear_error (&error);
+		}
+		g_hash_table_remove (data->locations, uri);
+	} else {
+		g_hash_table_replace (data->locations, g_strdup (uri), GINT_TO_POINTER (count - 1));
+	}
+}
+
+static void
+add_bookmarks_for_window_slot (CopyCallbackData   *data,
+			       NemoWindowSlot *slot)
+{
+	char *uri;
+
+	uri = nemo_window_slot_get_location_uri (slot);
+	if (uri != NULL) {
+		add_bookmark_for_uri (data, uri);
+	}
+	g_free (uri);
+}
+
+static void
+remove_bookmarks_for_window_slot (CopyCallbackData   *data,
+				  NemoWindowSlot *slot)
+{
+	char *uri;
+
+	uri = nemo_window_slot_get_location_uri (slot);
+	if (uri != NULL) {
+		remove_bookmark_for_uri (data, uri);
+	}
+	g_free (uri);
+}
+
+static void
+on_slot_location_changed (NemoWindowSlot *slot,
+			  const char         *from,
+			  const char         *to,
+			  CopyCallbackData   *data)
+{
+	if (from != NULL) {
+		remove_bookmark_for_uri (data, from);
+	}
+
+	if (to != NULL) {
+		add_bookmark_for_uri (data, to);
+	}
+}
+
+static void
+on_slot_added (NemoWindow     *window,
+	       NemoWindowSlot *slot,
+	       CopyCallbackData   *data)
+{
+	add_bookmarks_for_window_slot (data, slot);
+	g_signal_connect (slot, "location-changed", G_CALLBACK (on_slot_location_changed), data);
+}
+
+static void
+on_slot_removed (NemoWindow     *window,
+		 NemoWindowSlot *slot,
+		 CopyCallbackData   *data)
+{
+	remove_bookmarks_for_window_slot (data, slot);
+	g_signal_handlers_disconnect_by_func (slot,
+					      G_CALLBACK (on_slot_location_changed),
+					      data);
+}
+
+static void
+add_bookmarks_for_window (CopyCallbackData *data,
+			  NemoWindow   *window)
+{
+    GList *s;
+    GList *p;
+	GList *panes;
+
+	panes = nemo_window_get_panes (window);
+    for (p = panes; p != NULL; p = p->next) {
+        NemoWindowPane *pane = NEMO_WINDOW_PANE (p->data);
+        for (s = pane->slots; s != NULL; s = s->next) {
+            NemoWindowSlot *slot = NEMO_WINDOW_SLOT (s->data);
+            add_bookmarks_for_window_slot (data, slot);
+            g_signal_connect (slot, "location-changed", G_CALLBACK (on_slot_location_changed), data);
+        }
+    }
+	g_signal_connect (window, "slot-added", G_CALLBACK (on_slot_added), data);
+	g_signal_connect (window, "slot-removed", G_CALLBACK (on_slot_removed), data);
+}
+
+static void
+remove_bookmarks_for_window (CopyCallbackData *data,
+			     NemoWindow   *window)
+{
+    GList *s;
+    GList *p;
+    GList *panes;
+
+    panes = nemo_window_get_panes (window);
+    for (p = panes; p != NULL; p = p->next) {
+        NemoWindowPane *pane = NEMO_WINDOW_PANE (p->data);
+        for (s = pane->slots; s != NULL; s = s->next) {
+            NemoWindowSlot *slot = NEMO_WINDOW_SLOT (s->data);
+            remove_bookmarks_for_window_slot (data, slot);
+            g_signal_handlers_disconnect_by_func (slot,
+                                  G_CALLBACK (on_slot_location_changed),
+                                  data);
+        }
+    }
+
+	g_signal_handlers_disconnect_by_func (window,
+					      G_CALLBACK (on_slot_added),
+					      data);
+	g_signal_handlers_disconnect_by_func (window,
+					      G_CALLBACK (on_slot_removed),
+					      data);
+}
+
+static void
+on_app_window_added (GtkApplication   *application,
+		     GtkWindow        *window,
+		     CopyCallbackData *data)
+{
+	add_bookmarks_for_window (data, NEMO_WINDOW (window));
+}
+
+static void
+on_app_window_removed (GtkApplication   *application,
+		       GtkWindow        *window,
+		       CopyCallbackData *data)
+{
+	remove_bookmarks_for_window (data, NEMO_WINDOW (window));
+}
+
+static void
+copy_data_free (CopyCallbackData *data)
+{
+	GtkApplication *application;
+	GList *windows;
+	GList *w;
+
+	application = gtk_window_get_application (GTK_WINDOW (data->view->details->window));
+	g_signal_handlers_disconnect_by_func (application,
+					      G_CALLBACK (on_app_window_added),
+					      data);
+	g_signal_handlers_disconnect_by_func (application,
+					      G_CALLBACK (on_app_window_removed),
+					      data);
+
+	windows = gtk_application_get_windows (application);
+	for (w = windows; w != NULL; w = w->next) {
+		NemoWindow *window = w->data;
+	    GList *s;
+	    GList *p;
+	    GList *panes;
+
+	    panes = nemo_window_get_panes (window);
+	    for (p = panes; p != NULL; p = p->next) {
+	        NemoWindowPane *pane = NEMO_WINDOW_PANE (p->data);
+	        for (s = pane->slots; s != NULL; s = s->next) {
+	            NemoWindowSlot *slot = NEMO_WINDOW_SLOT (s->data);
+	            g_signal_handlers_disconnect_by_func (slot, G_CALLBACK (on_slot_location_changed), data);
+
+	        }
+	    }
+
+		g_signal_handlers_disconnect_by_func (window, G_CALLBACK (on_slot_added), data);
+		g_signal_handlers_disconnect_by_func (window, G_CALLBACK (on_slot_removed), data);
+	}
+
+	nemo_file_list_free (data->selection);
+	g_hash_table_destroy (data->locations);
+	g_free (data);
+}
+
+static void
+on_destination_dialog_response (GtkDialog *dialog,
+				gint       response_id,
+				gpointer   user_data)
+{
+	CopyCallbackData *copy_data = user_data;
+
+	if (response_id == GTK_RESPONSE_OK) {
+		char *target_uri;
+		GList *uris, *l;
+
+		target_uri = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (dialog));
+
+		uris = NULL;
+		for (l = copy_data->selection; l != NULL; l = l->next) {
+			uris = g_list_prepend (uris,
+					       nemo_file_get_uri ((NemoFile *) l->data));
+		}
+		uris = g_list_reverse (uris);
+
+		nemo_view_move_copy_items (copy_data->view, uris, NULL, target_uri,
+					       copy_data->is_move ? GDK_ACTION_MOVE : GDK_ACTION_COPY,
+					       0, 0);
+
+		g_list_free_full (uris, g_free);
+		g_free (target_uri);
+	}
+
+	copy_data_free (copy_data);
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+}
+
+static void
+add_window_location_bookmarks (CopyCallbackData *data)
+{
+	GtkApplication *application;
+	GList *windows;
+	GList *w;
+
+	application = gtk_window_get_application (GTK_WINDOW (data->view->details->window));
+	windows = gtk_application_get_windows (application);
+	g_signal_connect (application, "window-added", G_CALLBACK (on_app_window_added), data);
+	g_signal_connect (application, "window-removed", G_CALLBACK (on_app_window_removed), data);
+
+	for (w = windows; w != NULL; w = w->next) {
+		NemoWindow *window = w->data;
+		add_bookmarks_for_window (data, window);
+	}
+}
+
+static void
+copy_or_move_selection (NemoView *view,
+			gboolean      is_move)
+{
+	GtkWidget *dialog;
+	char *uri;
+	CopyCallbackData *copy_data;
+	GList *selection;
+    const gchar *title; 
+
+    if (is_move) {
+        title = _("Select Target Folder For Move");
+    } else {
+        title = _("Select Target Folder For Copy");
+    }
+
+	selection = nemo_view_get_selection_for_file_transfer (view);
+
+	dialog = gtk_file_chooser_dialog_new (title,
+					      GTK_WINDOW (view->details->window),
+					      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+					      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					      _("_Select"), GTK_RESPONSE_OK,
+					      NULL);
+	gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
+	gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+
+	copy_data = g_new0 (CopyCallbackData, 1);
+	copy_data->view = view;
+	copy_data->selection = selection;
+	copy_data->is_move = is_move;
+	copy_data->chooser = GTK_FILE_CHOOSER (dialog);
+	copy_data->locations = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+
+	add_window_location_bookmarks (copy_data);
+
+	uri = nemo_directory_get_uri (view->details->model);
+	gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dialog), uri);
+	g_free (uri);
+
+	g_signal_connect (dialog, "response",
+			  G_CALLBACK (on_destination_dialog_response),
+			  copy_data);
+
+	gtk_widget_show_all (dialog);
+}
+
 static void
 copy_or_cut_files (NemoView *view,
 		   GList           *clipboard_contents,
@@ -6824,83 +7139,21 @@ action_move_to_desktop_callback (GtkAction *action, gpointer callback_data)
 }
 
 static void
-browse_move_to_response_cb (GtkDialog *dialog, gint response, NemoView *view)
-{
-    gchar *uri;
-
-    switch (response) {
-        case GTK_RESPONSE_OK:
-            uri = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (dialog));
-            move_copy_selection_to_location (view, GDK_ACTION_MOVE, uri);
-            g_free (uri);
-            break;
-        case GTK_RESPONSE_CANCEL:
-        default:
-            break;
-    }
-
-    gtk_widget_destroy (GTK_WIDGET (dialog));
-}
-
-static void
-browse_copy_to_response_cb (GtkDialog *dialog, gint response, NemoView *view)
-{
-    gchar *uri;
-
-    switch (response) {
-        case GTK_RESPONSE_OK:
-            uri = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (dialog));
-            move_copy_selection_to_location (view, GDK_ACTION_COPY, uri);
-            g_free (uri);
-            break;
-        case GTK_RESPONSE_CANCEL:
-        default:
-            break;
-    }
-
-    gtk_widget_destroy (GTK_WIDGET (dialog));
-}
-
-static void
 action_browse_for_move_to_folder_callback (GtkAction *action, gpointer callback_data)
 {
-    GtkWidget *dialog;
-    NemoView *view;
+	NemoView *view;
 
-    view = NEMO_VIEW (callback_data);
-
-    dialog = gtk_file_chooser_dialog_new (_("Select Target Folder For Move"),
-                                          nemo_view_get_containing_window (view),
-                                          GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                          GTK_STOCK_OPEN, GTK_RESPONSE_OK,
-                                          NULL);
-
-    g_signal_connect (dialog, "response",
-                      G_CALLBACK (browse_move_to_response_cb), view);
-
-    gtk_widget_show (dialog);
+	view = NEMO_VIEW (callback_data);
+	copy_or_move_selection (view, TRUE);
 }
 
 static void
 action_browse_for_copy_to_folder_callback (GtkAction *action, gpointer callback_data)
 {
-    GtkWidget *dialog;
-    NemoView *view;
+	NemoView *view;
 
-    view = NEMO_VIEW (callback_data);
-
-    dialog = gtk_file_chooser_dialog_new (_("Select Target Folder For Copy"),
-                                          nemo_view_get_containing_window (view),
-                                          GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                          GTK_STOCK_OPEN, GTK_RESPONSE_OK,
-                                          NULL);
-
-    g_signal_connect (dialog, "response",
-                      G_CALLBACK (browse_copy_to_response_cb), view);
-
-    gtk_widget_show (dialog);
+	view = NEMO_VIEW (callback_data);
+	copy_or_move_selection (view, FALSE);
 }
 
 static void

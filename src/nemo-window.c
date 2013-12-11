@@ -111,6 +111,8 @@ enum {
 	PROMPT_FOR_LOCATION,
 	LOADING_URI,
 	HIDDEN_FILES_MODE_CHANGED,
+	SLOT_ADDED,
+	SLOT_REMOVED,
 	LAST_SIGNAL
 };
 
@@ -190,6 +192,18 @@ static void
 nemo_window_go_up_signal (NemoWindow *window)
 {
 	nemo_window_slot_go_up (nemo_window_get_active_slot (window), 0);
+}
+
+void 
+nemo_window_slot_removed (NemoWindow *window,  NemoWindowSlot *slot)
+{
+	g_signal_emit (window, signals[SLOT_REMOVED], 0, slot);
+}
+
+void 
+nemo_window_slot_added (NemoWindow *window,  NemoWindowSlot *slot)
+{
+    g_signal_emit (window, signals[SLOT_ADDED], 0, slot);
 }
 
 void
@@ -1796,6 +1810,14 @@ nemo_window_get_extra_slot (NemoWindow *window)
 	return extra_pane->active_slot;
 }
 
+GList *
+nemo_window_get_panes (NemoWindow *window)
+{
+	g_assert (NEMO_IS_WINDOW (window));
+
+	return window->details->panes;
+}
+
 static void
 window_set_search_action_text (NemoWindow *window,
 			       gboolean setting)
@@ -2085,6 +2107,22 @@ nemo_window_class_init (NemoWindowClass *class)
 			      g_cclosure_marshal_VOID__STRING,
 			      G_TYPE_NONE, 1,
 			      G_TYPE_STRING);
+	signals[SLOT_ADDED] =
+		g_signal_new ("slot-added",
+			      G_TYPE_FROM_CLASS (class),
+			      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			      0,
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__OBJECT,
+			      G_TYPE_NONE, 1, NEMO_TYPE_WINDOW_SLOT);
+	signals[SLOT_REMOVED] =
+		g_signal_new ("slot-removed",
+			      G_TYPE_FROM_CLASS (class),
+			      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			      0,
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__OBJECT,
+			      G_TYPE_NONE, 1, NEMO_TYPE_WINDOW_SLOT);
 
 	binding_set = gtk_binding_set_by_class (class);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, 0,
