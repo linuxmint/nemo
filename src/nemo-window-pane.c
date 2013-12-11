@@ -745,15 +745,13 @@ nemo_window_pane_dispose (GObject *object)
 	G_OBJECT_CLASS (nemo_window_pane_parent_class)->dispose (object);
 }
 
-static void
-nemo_window_pane_constructed (GObject *obj)
+static GtkWidget *
+create_toolbar (NemoWindowPane *pane)
 {
-	NemoWindowPane *pane = NEMO_WINDOW_PANE (obj);
 	GtkSizeGroup *header_size_group;
 	NemoWindow *window;
 	GtkActionGroup *action_group;
-
-	G_OBJECT_CLASS (nemo_window_pane_parent_class)->constructed (obj);
+	GtkWidget *toolbar;
 
 	window = pane->window;
 
@@ -763,9 +761,9 @@ nemo_window_pane_constructed (GObject *obj)
 	/* build the toolbar */
 	action_group = nemo_window_create_toolbar_action_group (window);
 	pane->toolbar_action_group = action_group;
-	pane->tool_bar = GTK_WIDGET (nemo_toolbar_new (action_group));
+	toolbar = GTK_WIDGET (nemo_toolbar_new (action_group));
 
-    g_signal_connect_object (pane->tool_bar, "notify::show-location-entry",
+    g_signal_connect_object (toolbar, "notify::show-location-entry",
                              G_CALLBACK (location_entry_changed_cb),
                              pane, 0);
 
@@ -779,7 +777,7 @@ nemo_window_pane_constructed (GObject *obj)
 
 	/* Pack to windows hbox (under the menu */
 	gtk_box_pack_start (GTK_BOX (window->details->toolbar_holder),
-			    pane->tool_bar,
+			    toolbar,
 			    TRUE, TRUE, 0);
 
 	/* start as non-active */
@@ -787,14 +785,14 @@ nemo_window_pane_constructed (GObject *obj)
 
 	g_settings_bind_with_mapping (nemo_window_state,
 				      NEMO_WINDOW_STATE_START_WITH_TOOLBAR,
-				      pane->tool_bar,
+				      toolbar,
 				      "visible",
 				      G_SETTINGS_BIND_GET,
 				      nemo_window_disable_chrome_mapping, NULL,
 				      window, NULL);
 
 	/* connect to the pathbar signals */
-	pane->path_bar = nemo_toolbar_get_path_bar (NEMO_TOOLBAR (pane->tool_bar));
+	pane->path_bar = nemo_toolbar_get_path_bar (NEMO_TOOLBAR (toolbar));
 	gtk_size_group_add_widget (header_size_group, pane->path_bar);
 
 	g_signal_connect_object (pane->path_bar, "path-clicked",
@@ -803,7 +801,7 @@ nemo_window_pane_constructed (GObject *obj)
 				 G_CALLBACK (path_bar_path_event_callback), pane, 0);
 
 	/* connect to the location bar signals */
-	pane->location_bar = nemo_toolbar_get_location_bar (NEMO_TOOLBAR (pane->tool_bar));
+	pane->location_bar = nemo_toolbar_get_location_bar (NEMO_TOOLBAR (toolbar));
 	gtk_size_group_add_widget (header_size_group, pane->location_bar);
 
 	nemo_clipboard_set_up_editable
@@ -818,40 +816,67 @@ nemo_window_pane_constructed (GObject *obj)
 	g_signal_connect_object (nemo_location_bar_get_entry (NEMO_LOCATION_BAR (pane->location_bar)), "focus-in-event",
 				 G_CALLBACK (toolbar_focus_in_callback), pane, 0);
 
-	/* initialize the notebook */
-	pane->notebook = g_object_new (NEMO_TYPE_NOTEBOOK, NULL);
-	gtk_box_pack_start (GTK_BOX (pane), pane->notebook,
-			    TRUE, TRUE, 0);
-	g_signal_connect (pane->notebook,
-			  "tab-close-request",
-			  G_CALLBACK (notebook_tab_close_requested),
-			  pane);
-	g_signal_connect_after (pane->notebook,
-				"button_press_event",
+	g_object_unref (header_size_group);
+
+	return toolbar;
+}
+
+static GtkWidget *
+create_notebook (NemoWindowPane *pane)
+{
+	GtkWidget *notebook;
+
+	notebook = g_object_new (NEMO_TYPE_NOTEBOOK, NULL);
+	g_signal_connect (notebook, "tab-close-request",
+				G_CALLBACK (notebook_tab_close_requested),
+				pane);
+	g_signal_connect (notebook, "popup-menu",
+			G_CALLBACK (notebook_popup_menu_cb),
+			pane);
+	g_signal_connect (notebook, "switch-page",
+			G_CALLBACK (notebook_switch_page_cb),
+			pane);
+	g_signal_connect_after (notebook, "button-press-event",
 				G_CALLBACK (notebook_button_press_cb),
 				pane);
-	g_signal_connect (pane->notebook, "popup-menu",
-			  G_CALLBACK (notebook_popup_menu_cb),
-			  pane);
-	g_signal_connect (pane->notebook,
-			  "switch-page",
-			  G_CALLBACK (notebook_switch_page_cb),
-			  pane);
-	g_signal_connect (pane->notebook, "create-window",
+
+	g_signal_connect (notebook, "create-window",
 			  G_CALLBACK (notebook_create_window_cb),
 			  pane);
-	g_signal_connect (pane->notebook, "page-added",
+	g_signal_connect (notebook, "page-added",
 			  G_CALLBACK (notebook_page_added_cb),
 			  pane);
-	g_signal_connect (pane->notebook, "page-removed",
+	g_signal_connect (notebook, "page-removed",
 			  G_CALLBACK (notebook_page_removed_cb),
 			  pane);
 
-	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (pane->notebook), FALSE);
-	gtk_notebook_set_show_border (GTK_NOTEBOOK (pane->notebook), FALSE);
-	gtk_notebook_set_group_name (GTK_NOTEBOOK (pane->notebook), "nemo-slots");
-	gtk_widget_show (pane->notebook);
-	gtk_container_set_border_width (GTK_CONTAINER (pane->notebook), 0);
+	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), FALSE);
+	gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
+	gtk_notebook_set_group_name (GTK_NOTEBOOK (notebook), "nemo-slots");
+	gtk_widget_show (notebook);
+	gtk_container_set_border_width (GTK_CONTAINER (notebook), 0);
+
+   	gtk_box_pack_start (GTK_BOX (pane), notebook,
+    		    TRUE, TRUE, 0);
+
+	return notebook;
+}
+
+static void
+nemo_window_pane_constructed (GObject *obj)
+{
+	NemoWindowPane *pane = NEMO_WINDOW_PANE (obj);
+	NemoWindow *window;
+
+	G_OBJECT_CLASS (nemo_window_pane_parent_class)->constructed (obj);
+
+	window = pane->window;
+
+	/* build the toolbar */
+	pane->tool_bar = create_toolbar (pane);
+
+	/* initialize the notebook */
+	pane->notebook = create_notebook (pane);
 
 	/* Ensure that the view has some minimal size and that other parts
 	 * of the UI (like location bar and tabs) don't request more and
@@ -865,9 +890,6 @@ nemo_window_pane_constructed (GObject *obj)
 	if (NEMO_IS_DESKTOP_WINDOW(window)) {
 		gtk_widget_hide (GTK_WIDGET (window->details->toolbar_holder));
 	}
-
-	/* we can unref the size group now */
-	g_object_unref (header_size_group);
 }
 
 static void
@@ -1037,6 +1059,8 @@ nemo_window_pane_close_slot (NemoWindowPane *pane,
 	NemoWindow *window;
 
 	DEBUG ("Requesting to remove slot %p from pane %p", slot, pane);
+	if (pane->window == NULL)
+		return;
 
 	window = pane->window;
 	if (!window)
@@ -1050,9 +1074,7 @@ nemo_window_pane_close_slot (NemoWindowPane *pane,
 
 	nemo_window_pane_remove_slot_unsafe (pane, slot);
 
-	/* If that was the last slot in the pane, close the pane or even the
-	 * whole window.
-	 */
+	/* If that was the last slot in the pane, close the pane or even the whole window. */
 	if (pane->slots == NULL) {
 		if (nemo_window_split_view_showing (window)) {
 			NemoWindowPane *new_pane;
@@ -1119,6 +1141,8 @@ nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 
 	DEBUG ("Removing slot %p", slot);
 
+    nemo_window_slot_removed (pane->window, slot);
+
 	/* save pane because slot is not valid anymore after this call */
 	pane = slot->pane;
 	notebook = GTK_NOTEBOOK (pane->notebook);
@@ -1167,6 +1191,7 @@ nemo_window_pane_open_slot (NemoWindowPane *pane,
 					   pane);
 
 	pane->slots = g_list_append (pane->slots, slot);
+	nemo_window_slot_added (pane->window, slot);
 
 	return slot;
 }
