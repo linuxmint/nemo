@@ -101,6 +101,7 @@ typedef enum
 #define NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST		"sort-directories-first"
 #define NEMO_PREFERENCES_DEFAULT_SORT_ORDER			"default-sort-order"
 #define NEMO_PREFERENCES_DEFAULT_SORT_IN_REVERSE_ORDER	"default-sort-in-reverse-order"
+#define NEMO_PREFERENCES_SORT_DOTFILES_FIRST            "sort-dotfiles-first"
 
 /* The default folder viewer - one of the two enums below */
 #define NEMO_PREFERENCES_DEFAULT_FOLDER_VIEWER		"default-folder-viewer"

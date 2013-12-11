@@ -2884,23 +2884,34 @@ compare_by_display_name (NemoFile *file_1, NemoFile *file_2)
 	const char *name_1, *name_2;
 	const char *key_1, *key_2;
 	gboolean sort_last_1, sort_last_2;
+        gboolean sort_dotfiles_first;
 	int compare;
+        
+        name_1 = nemo_file_peek_display_name (file_1);
+        name_2 = nemo_file_peek_display_name (file_2);
 
-	name_1 = nemo_file_peek_display_name (file_1);
-	name_2 = nemo_file_peek_display_name (file_2);
-
-	sort_last_1 = name_1[0] == SORT_LAST_CHAR1 || name_1[0] == SORT_LAST_CHAR2;
-	sort_last_2 = name_2[0] == SORT_LAST_CHAR1 || name_2[0] == SORT_LAST_CHAR2;
-
-	if (sort_last_1 && !sort_last_2) {
-		compare = +1;
-	} else if (!sort_last_1 && sort_last_2) {
-		compare = -1;
-	} else {
-		key_1 = nemo_file_peek_display_name_collation_key (file_1);
-		key_2 = nemo_file_peek_display_name_collation_key (file_2);
-		compare = strcmp (key_1, key_2);
-	}
+        // Check if we want to sort dotfiles first
+        sort_dotfiles_first = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SORT_DOTFILES_FIRST);
+        
+        if (sort_dotfiles_first) {
+            // Only consider "#" as sorting last
+            sort_last_1 = name_1[0] == SORT_LAST_CHAR2;
+            sort_last_2 = name_2[0] == SORT_LAST_CHAR2;
+        } else {
+            // Consider both "." and "#" to sorting last
+            sort_last_1 = name_1[0] == SORT_LAST_CHAR1 || name_1[0] == SORT_LAST_CHAR2;
+            sort_last_2 = name_2[0] == SORT_LAST_CHAR1 || name_2[0] == SORT_LAST_CHAR2;
+        }
+        
+        if (sort_last_1 && !sort_last_2) {
+                compare = +1;
+        } else if (!sort_last_1 && sort_last_2) {
+                compare = -1;
+        } else {
+                key_1 = nemo_file_peek_display_name_collation_key (file_1);
+                key_2 = nemo_file_peek_display_name_collation_key (file_2);
+                compare = strcmp (key_1, key_2);
+        }
 
 	return compare;
 }

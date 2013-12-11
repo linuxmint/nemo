@@ -197,6 +197,11 @@
       <_summary>Show folders first in windows</_summary>
       <_description>If set to true, then Nemo shows folders prior to showing files in the icon and list views.</_description>
     </key>
+    <key name="sort-dotfiles-first" type="b">
+      <default>false</default>
+      <_summary>Show dotfiles first in windows</_summary>
+      <_description>If set to true, then Nemo shows dotfiles first instead of intermixed with regular files. Respects folder-first preference.</_description>
+    </key>
     <key name="default-sort-order" enum="org.nemo.SortOrder">
       <aliases>
 	<alias value='modification_date' target='mtime'/>
