@@ -5972,10 +5972,17 @@ copy_or_move_selection (NautilusView *view,
 	char *uri;
 	CopyCallbackData *copy_data;
 	GList *selection;
+	const gchar *title;
+
+	if (is_move) {
+		title = _("Select Move Destination");
+	} else {
+		title = _("Select Copy Destination");
+	}
 
 	selection = nautilus_view_get_selection_for_file_transfer (view);
 
-	dialog = gtk_file_chooser_dialog_new (_("Select Destination"),
+	dialog = gtk_file_chooser_dialog_new (title,
 					      GTK_WINDOW (nautilus_view_get_window (view)),
 					      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 					      _("_Cancel"), GTK_RESPONSE_CANCEL,
