@@ -14,6 +14,7 @@
 					<menuitem name="Sort by Name" action="Sort by Name"/>
 					<menuitem name="Sort by Size" action="Sort by Size"/>
 					<menuitem name="Sort by Type" action="Sort by Type"/>
+					<menuitem name="Sort by Detailed Type" action="Sort by Detailed Type"/>
 					<menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
 					<menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
 				</placeholder>
@@ -36,6 +37,7 @@
 					<menuitem name="Sort by Name" action="Sort by Name"/>
 					<menuitem name="Sort by Size" action="Sort by Size"/>
 					<menuitem name="Sort by Type" action="Sort by Type"/>
+					<menuitem name="Sort by Detailed Type" action="Sort by Detailed Type"/>
 					<menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
 					<menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
 				</placeholder>

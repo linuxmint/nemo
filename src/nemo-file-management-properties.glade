@@ -2676,6 +2676,9 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
         <col id="0" translatable="yes">By Type</col>
       </row>
       <row>
+        <col id="0" translatable="yes">By Detailed Type</col>
+      </row>
+      <row>
         <col id="0" translatable="yes">By Modification Date</col>
       </row>
       <row>
