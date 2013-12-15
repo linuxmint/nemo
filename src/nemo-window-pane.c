@@ -861,13 +861,13 @@ create_notebook (NemoWindowPane *pane)
 				G_CALLBACK (notebook_button_press_cb),
 				pane);
 
-	g_signal_connect (pane->notebook, "create-window",
+	g_signal_connect (notebook, "create-window",
 			  G_CALLBACK (notebook_create_window_cb),
 			  pane);
-	g_signal_connect (pane->notebook, "page-added",
+	g_signal_connect (notebook, "page-added",
 			  G_CALLBACK (notebook_page_added_cb),
 			  pane);
-	g_signal_connect (pane->notebook, "page-removed",
+	g_signal_connect (notebook, "page-removed",
 			  G_CALLBACK (notebook_page_removed_cb),
 			  pane);
 
