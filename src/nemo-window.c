@@ -809,12 +809,12 @@ nemo_window_view_visible (NemoWindow *window,
 
 	slot = nemo_window_get_slot_for_view (window, view);
 
-	if (gtk_widget_get_visible (GTK_WIDGET (slot))) {
+	if (slot->visible) {
 		return;
 	}
 
-	gtk_widget_show (GTK_WIDGET (slot));
-	pane = slot->pane;
+	slot->visible = TRUE;
+    pane = slot->pane;
 
 	if (gtk_widget_get_visible (GTK_WIDGET (pane))) {
 		return;
@@ -824,7 +824,7 @@ nemo_window_view_visible (NemoWindow *window,
 	for (l = pane->slots; l != NULL; l = l->next) {
 		slot = l->data;
 
-		if (!gtk_widget_get_visible (GTK_WIDGET (slot))) {
+		if (!slot->visible) {
 			return;
 		}
 	}
