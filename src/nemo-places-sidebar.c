@@ -3540,109 +3540,6 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 	return FALSE;
 }
 
-static void
-update_eject_buttons (NemoPlacesSidebar *sidebar,
-		      GtkTreePath 	    *path)
-{
-	GtkTreeIter iter, store_iter;
-	gboolean icon_visible, path_same;
-
-	icon_visible = TRUE;
-
-	if (path == NULL && sidebar->eject_highlight_path == NULL) {
-		/* Both are null - highlight up to date */
-		return;
-	}
-
-	path_same = (path != NULL) &&
-		(sidebar->eject_highlight_path != NULL) &&
-		(gtk_tree_path_compare (sidebar->eject_highlight_path, path) == 0);
-
-	if (path_same) {
-		/* Same path - highlight up to date */
-		return;
-	}
-
-	if (path) {
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store_filter),
-					 &iter,
-					 path);
-
-		gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter),
-				    &iter,
-				    PLACES_SIDEBAR_COLUMN_EJECT, &icon_visible,
-				    -1);
-	}
-
-	if (!icon_visible || path == NULL || !path_same) {
-		/* remove highlighting and reset the saved path, as we are leaving
-		 * an eject button area.
-		 */
-		if (sidebar->eject_highlight_path) {
-			gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store_filter),
-						 &iter,
-						 sidebar->eject_highlight_path);
-
-            gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (sidebar->store_filter),
-                                                              &store_iter,
-                                                              &iter);
-
-            gtk_tree_store_set (sidebar->store,
-                                &store_iter,
-                                PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, FALSE),
-                                -1);
-
-			gtk_tree_path_free (sidebar->eject_highlight_path);
-			sidebar->eject_highlight_path = NULL;
-		}
-
-		if (!icon_visible) {
-			return;
-		}
-	}
-
-	if (path != NULL) {
-		/* add highlighting to the selected path, as the icon is visible and
-		 * we're hovering it.
-		 */
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store_filter),
-					 &iter,
-					 path);
-
-        gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (sidebar->store_filter),
-                                                          &store_iter,
-                                                          &iter);
-
-        gtk_tree_store_set (sidebar->store,
-                            &store_iter,
-                            PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, TRUE),
-                            -1);
-
-		sidebar->eject_highlight_path = gtk_tree_path_copy (path);
-	}
-}
-
-static gboolean
-bookmarks_motion_event_cb (GtkWidget             *widget,
-			   GdkEventMotion        *event,
-			   NemoPlacesSidebar *sidebar)
-{
-	GtkTreePath *path;
-
-	path = NULL;
-
-	if (over_eject_button (sidebar, event->x, event->y, &path)) {
-		update_eject_buttons (sidebar, path);
-		gtk_tree_path_free (path);
-
-		return TRUE;
-	}
-
-	update_eject_buttons (sidebar, NULL);
-
-	return FALSE;
-}
-
 /* Callback used when a button is pressed on the shortcuts list.  
  * We trap button 3 to bring up a popup menu, and button 2 to
  * open in a new tab.
@@ -4074,6 +3971,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	g_object_set (cell,
 		      "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE,
 		      "yalign", 0.8,
+		      "follow-state", TRUE,
 		      NULL);
 	gtk_tree_view_column_pack_start (eject_col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (eject_col, cell,
@@ -4192,8 +4090,6 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 			  G_CALLBACK (bookmarks_popup_menu_cb), sidebar);
 	g_signal_connect (tree_view, "button-press-event",
 			  G_CALLBACK (bookmarks_button_press_event_cb), sidebar);
-	g_signal_connect (tree_view, "motion-notify-event",
-			  G_CALLBACK (bookmarks_motion_event_cb), sidebar);
 	g_signal_connect (tree_view, "button-release-event",
 			  G_CALLBACK (bookmarks_button_release_event_cb), sidebar);
     g_signal_connect (tree_view, "row-expanded",
