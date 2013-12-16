@@ -67,11 +67,6 @@ gint		nemo_notebook_find_tab_num_at_pos (NemoNotebook *nb,
 						   gint 	 abs_x,
 						   gint 	 abs_y);
 	
-void		nemo_notebook_set_show_tabs	(NemoNotebook *nb,
-						 gboolean show_tabs);
-
-void		nemo_notebook_set_dnd_enabled (NemoNotebook *nb,
-						   gboolean enabled);
 void		nemo_notebook_sync_tab_label (NemoNotebook *nb,
 						  NemoWindowSlot *slot);
 void		nemo_notebook_sync_loading   (NemoNotebook *nb,
