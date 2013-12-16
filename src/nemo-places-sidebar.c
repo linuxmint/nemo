@@ -3646,6 +3646,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
 	/* icon renderer */
 	cell = gtk_cell_renderer_pixbuf_new ();
+	g_object_set (cell, "follow-state", TRUE, NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (col, cell,
 					     "gicon", PLACES_SIDEBAR_COLUMN_GICON,

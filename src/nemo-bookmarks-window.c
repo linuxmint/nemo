@@ -717,6 +717,9 @@ nemo_bookmarks_window_new (NemoWindow *parent_window,
 	jump_button = GTK_WIDGET (gtk_builder_get_object (builder, "bookmark_jump_button"));
 
 	rend = gtk_cell_renderer_pixbuf_new ();
+	g_object_set (rend,
+		      "follow-state", TRUE,
+		      NULL);
 	col = gtk_tree_view_column_new_with_attributes ("Icon", 
 							rend,
 							"gicon", 
