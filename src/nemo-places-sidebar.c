@@ -57,6 +57,8 @@
 #include "nemo-window.h"
 #include "nemo-window-slot.h"
 
+#include <libnotify/notify.h>
+
 #define DEBUG_FLAG NEMO_DEBUG_PLACES
 #include <libnemo-private/nemo-debug.h>
 
@@ -2420,6 +2422,32 @@ unmount_shortcut_cb (GtkMenuItem           *item,
 	do_unmount_selection (sidebar);
 }
 
+#if GLIB_CHECK_VERSION (2,34,0)
+static void
+show_unmount_progress_cb (GMountOperation *op,
+			  const gchar *message,
+			  gint64 time_left,
+			  gint64 bytes_left,
+			  gpointer user_data)
+{
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+
+	if (bytes_left == 0) {
+		nemo_application_notify_unmount_done (app, message);
+	} else {
+		nemo_application_notify_unmount_show (app, message);
+	}
+}
+
+static void
+show_unmount_progress_aborted_cb (GMountOperation *op,
+				  gpointer user_data)
+{
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+	nemo_application_notify_unmount_done (app, NULL);
+}
+#endif // GLIB_CHECK_VERSION (2,34,0)
+
 static void
 drive_eject_cb (GObject *source_object,
 		GAsyncResult *res,
@@ -2523,7 +2551,14 @@ do_eject (GMount *mount,
 		g_drive_eject_with_operation (drive, 0, mount_op, NULL, drive_eject_cb,
 					      g_object_ref (sidebar->window));
 	}
-	g_object_unref (mount_op);
+
+#if GLIB_CHECK_VERSION (2,34,0)
+	g_signal_connect (mount_op, "show-unmount-progress",
+	     	  G_CALLBACK (show_unmount_progress_cb), sidebar);
+	g_signal_connect (mount_op, "aborted",
+		      G_CALLBACK (show_unmount_progress_aborted_cb), sidebar);
+#endif // GLIB_CHECK_VERSION (2,34,0)     	
+    g_object_unref (mount_op);
 }
 
 static void

@@ -64,11 +64,6 @@ int		nemo_notebook_add_tab	(NemoNotebook *nb,
 						 int position,
 						 gboolean jump_to);
 	
-void		nemo_notebook_set_show_tabs	(NemoNotebook *nb,
-						 gboolean show_tabs);
-
-void		nemo_notebook_set_dnd_enabled (NemoNotebook *nb,
-						   gboolean enabled);
 void		nemo_notebook_sync_tab_label (NemoNotebook *nb,
 						  NemoWindowSlot *slot);
 void		nemo_notebook_sync_loading   (NemoNotebook *nb,
