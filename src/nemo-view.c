@@ -2784,7 +2784,6 @@ nemo_view_init (NemoView *view)
 					GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (view), NULL);
 	gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (view), NULL);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_NONE);
 
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (view)),
 					      GTK_JUNCTION_TOP | GTK_JUNCTION_LEFT);
@@ -11178,6 +11177,32 @@ real_get_selected_icon_locations (NemoView *view)
 }
 
 static void
+window_slots_changed (NemoWindow *window,
+		      NemoWindowSlot *slot,
+		      NemoView *view)
+{
+	GList *panes;
+    GList *p;
+	guint slot_count = 0; 
+
+    panes = nemo_window_get_panes (window);
+    for (p = panes; p != NULL; p = p->next) {
+        NemoWindowPane *pane = NEMO_WINDOW_PANE (p->data);        
+        slot_count = MAX (g_list_length (pane->slots), slot_count);    
+    }
+
+	/* Only add a shadow to the scrolled window when we're in a tabless
+	 * notebook, since when the notebook has tabs, it will draw its own
+	 * border.
+	 */
+	if (slot_count > 1) {
+		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_NONE);
+	} else {
+		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_IN);
+	}
+}
+
+static void
 nemo_view_set_property (GObject         *object,
 			    guint            prop_id,
 			    const GValue    *value,
@@ -11208,6 +11233,14 @@ nemo_view_set_property (GObject         *object,
 		g_signal_connect_object (directory_view->details->slot,
 					 "changed-pane", G_CALLBACK (slot_changed_pane),
 					 directory_view, 0);
+
+		g_signal_connect_object (directory_view->details->window,
+					 "slot-added", G_CALLBACK (window_slots_changed),
+					 directory_view, 0);
+		g_signal_connect_object (directory_view->details->window,
+					 "slot-removed", G_CALLBACK (window_slots_changed),
+					 directory_view, 0);
+		window_slots_changed (window, slot, directory_view);
 
 		g_signal_connect_object (directory_view->details->window,
 					 "hidden-files-mode-changed", G_CALLBACK (hidden_files_mode_changed),
