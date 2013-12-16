@@ -1141,13 +1141,14 @@ nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 
 	DEBUG ("Removing slot %p", slot);
 
-    nemo_window_slot_removed (pane->window, slot);
-
 	/* save pane because slot is not valid anymore after this call */
 	pane = slot->pane;
 	notebook = GTK_NOTEBOOK (pane->notebook);
 
 	nemo_window_manage_views_close_slot (slot);
+	pane->slots = g_list_remove (pane->slots, slot);
+
+    nemo_window_slot_removed (pane->window, slot);
 
 	page_num = gtk_notebook_page_num (notebook, GTK_WIDGET (slot));
 	g_assert (page_num >= 0);
@@ -1163,7 +1164,6 @@ nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 
 	gtk_notebook_set_show_tabs (notebook,
 				    gtk_notebook_get_n_pages (notebook) > 1);
-	pane->slots = g_list_remove (pane->slots, slot);
 }
 
 NemoWindowSlot *
