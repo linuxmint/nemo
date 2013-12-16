@@ -86,8 +86,6 @@ gint  nemo_get_icon_size_for_stock_size          (GtkIconSize        size);
 guint nemo_icon_get_emblem_size_for_icon_size    (guint              size);
 
 gboolean nemo_icon_theme_can_render              (GThemedIcon *icon);
-GIcon * nemo_user_special_directory_get_gicon (GUserDirectory directory);
-
 
 G_END_DECLS
 

@@ -699,29 +699,3 @@ nemo_icon_theme_can_render (GThemedIcon *icon)
 
 	return FALSE;
 }
-
-GIcon *
-nemo_user_special_directory_get_gicon (GUserDirectory directory)
-{
-
-	#define ICON_CASE(x) \
-		case G_USER_DIRECTORY_ ## x:\
-			return g_themed_icon_new (NEMO_ICON_FOLDER_ ## x);
-
-	switch (directory) {
-
-		ICON_CASE (DESKTOP);
-		ICON_CASE (DOCUMENTS);
-		ICON_CASE (DOWNLOAD);
-		ICON_CASE (MUSIC);
-		ICON_CASE (PICTURES);
-		ICON_CASE (PUBLIC_SHARE);
-		ICON_CASE (TEMPLATES);
-		ICON_CASE (VIDEOS);
-
-	default:
-		return g_themed_icon_new ("folder");
-	}
-
-	#undef ICON_CASE
-}
