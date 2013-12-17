@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-03 19:23+0100\n"
-"PO-Revision-Date: 2013-12-03 19:23+0200\n"
+"PO-Revision-Date: 2013-12-17 22:10+0200\n"
 "Last-Translator: Reinout van Schouwen <reinouts@gnome.org>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "Language: nl\n"
@@ -4173,7 +4173,7 @@ msgstr "Geselecteerde items op hun oorspronkelijke plaats terugzetten"
 #. Translators: "Empty" is an action (for the trash) , not a state
 #: ../src/nautilus-trash-bar.c:210
 msgid "Empty"
-msgstr "Leeg"
+msgstr "Legen"
 
 #: ../src/nautilus-view.c:963
 #, c-format
