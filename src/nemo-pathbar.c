@@ -564,23 +564,18 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
 	direction = gtk_widget_get_direction (widget);
 
   	/* First, we check to see if we need the scrollbars. */
-  	if (path_bar->fake_root) {
-		width = path_bar->spacing + path_bar->slider_width;
-	} else {
-		width = 0;
-	}
-
 	nemo_pathbar_button_get_preferred_size (BUTTON_DATA (path_bar->button_list->data)->button,
                                             &child_requisition, allocation->height);
     gint offset = rintf ((float) allocation->height / PATHBAR_BUTTON_OFFSET_FACTOR + 4);
 
-    width += child_requisition.width;
+    width = child_requisition.width;
 
     for (list = path_bar->button_list->next; list; list = list->next) {
         child = BUTTON_DATA (list->data)->button;
         nemo_pathbar_button_get_preferred_size (child, &child_requisition, allocation->height);
         width += child_requisition.width + path_bar->spacing;
         if (list == path_bar->fake_root) {
+            width += path_bar->spacing + path_bar->slider_width;
             break;
         }
     }
