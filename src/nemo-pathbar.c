@@ -98,11 +98,11 @@ struct _ButtonData
 	/* flag to indicate its the base folder in the URI */
 	gboolean is_base_dir;
 
-        GtkWidget *image;
-        GtkWidget *label;
+	GtkWidget *image;
+	GtkWidget *label;
 	GtkWidget *alignment;
-        guint ignore_changes : 1;
-        guint fake_root : 1;
+	guint ignore_changes : 1;
+	guint fake_root : 1;
 };
 
 G_DEFINE_TYPE (NemoPathBar, nemo_path_bar,
@@ -130,27 +130,27 @@ static GtkWidget *
 get_slider_button (NemoPathBar  *path_bar,
 		   GtkArrowType arrow_type)
 {
-        GtkWidget *button;
-        GtkWidget *arrow;
-        gtk_widget_push_composite_child ();
+	GtkWidget *button;
+	GtkWidget *arrow;
+	gtk_widget_push_composite_child ();
 
-        button = gtk_button_new ();
-        gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
-        gtk_widget_add_events (button, GDK_SCROLL_MASK);
+	button = gtk_button_new ();
+	gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
+	gtk_widget_add_events (button, GDK_SCROLL_MASK);
 
-        arrow = gtk_arrow_new (arrow_type, GTK_SHADOW_OUT);
+	arrow = gtk_arrow_new (arrow_type, GTK_SHADOW_OUT);
 
-        GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (arrow));
+	GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (arrow));
 
-        gtk_style_context_add_class (context, "nemo-big-arrow");
+	gtk_style_context_add_class (context, "nemo-big-arrow");
 
-        gtk_container_add (GTK_CONTAINER (button), arrow);
-        gtk_container_add (GTK_CONTAINER (path_bar), button);
-        gtk_widget_show_all (button);
+	gtk_container_add (GTK_CONTAINER (button), arrow);
+	gtk_container_add (GTK_CONTAINER (path_bar), button);
+	gtk_widget_show_all (button);
 
-        gtk_widget_pop_composite_child ();
+	gtk_widget_pop_composite_child ();
 
-        return button;
+	return button;
 }
 
 static void
@@ -454,27 +454,12 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
 		gtk_widget_get_preferred_width (button_data->button, &child_min, &child_nat);
 		gtk_widget_get_preferred_height (button_data->button, &child_height, NULL);
 		height = MAX (height, child_height);
-
-		if (button_data->type == NORMAL_BUTTON) {
-			/* Use 2*Height as button width because of ellipsized label.  */
-			child_min = MAX (child_min, child_height * 2);
-			child_nat = MAX (child_min, child_height * 2);
-		}
-
 		*minimum = MAX (*minimum, child_min);
 		*natural = MAX (*natural, child_nat);
 	}
-
-	/* Add space for slider, if we have more than one path */
-	/* Theoretically, the slider could be bigger than the other button.  But we're
-	 * not going to worry about that now.
-	 */
 	path_bar->slider_width = MIN (height * 2 / 3 + 10, height + 10);
-
-	if (path_bar->button_list && path_bar->button_list->next != NULL) {
-		*minimum += (path_bar->spacing + path_bar->slider_width) * 2;
-		*natural += (path_bar->spacing + path_bar->slider_width) * 2;
-	}
+	*minimum += (path_bar->spacing + path_bar->slider_width) * 2;
+	*natural += (path_bar->spacing + path_bar->slider_width) * 2;
 }
 
 static void
