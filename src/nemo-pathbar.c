@@ -70,6 +70,16 @@ static gboolean desktop_is_home;
 
 typedef struct _ButtonData ButtonData;
 
+/*
+ * Content of pathbar->button_list:
+ *       <- next                      previous ->
+ * ---------------------------------------------------------------------
+ * | /   |   home  |   user      | downloads    | folder   | sub folder
+ * ---------------------------------------------------------------------
+ *  last             fake_root                              button_list
+ *                                                 first_scrolled_button
+ */
+
 struct _ButtonData
 {
         GtkWidget *button;
