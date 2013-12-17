@@ -1110,6 +1110,7 @@ nemo_path_bar_scroll_timeout (NemoPathBar *path_bar)
 		}
 		if (path_bar->need_timer) {
 			path_bar->need_timer = FALSE;
+			g_source_remove (path_bar->timer);
 
 	  		path_bar->timer = g_timeout_add (SCROLL_TIMEOUT,
 				   			 (GSourceFunc)nemo_path_bar_scroll_timeout,
