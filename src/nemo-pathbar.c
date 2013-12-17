@@ -77,7 +77,7 @@ typedef struct _ButtonData ButtonData;
  * | /   |   home  |   user      | downloads    | folder   | sub folder
  * ---------------------------------------------------------------------
  *  last             fake_root                              button_list
- *                                                 first_scrolled_button
+ *                                scrolled_root_button
  */
 
 struct _ButtonData
