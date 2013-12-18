@@ -1,3 +1,12 @@
+Major changes in 3.11.3:
+* Don't perform deep counts on regular files (Ross Lagerwall)
+* Fix overlapping filenames on hover in canvas view (Manuel Bachmann)
+* Fix crasher when changing the symlinks cache (Michael Catanzaro)
+* Standardize Help/About/Quit for the app menu (Michael Catanzaro)
+* Remove Enter Location from the app menu (Michael Catanzaro)
+* Use search bar style for the query editor (William Jon McCann)
+* Support building against Tracker 0.18 (Dominique Leuenberger)
+
 Major changes in 3.11.2:
 - Bring back eject button in sidebar (Matthias Clasen)
 - Fix rename entry rendering (Alex Larsson)
