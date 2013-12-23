@@ -1983,6 +1983,17 @@ check_visibility (GMount           *mount,
 	}
 }
 
+static void hide_all_action_items (NemoPlacesSidebar *sidebar)
+{
+    GList *l;
+    ActionPayload *p;
+
+    for (l = sidebar->action_items; l != NULL; l = l->next) {
+        p = l->data;
+        gtk_widget_set_visible (p->item, FALSE);
+    }
+}
+
 static void
 bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 {
@@ -2094,6 +2105,8 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 	}
 
     if (!uri) {
+        hide_all_action_items (sidebar);
+        gtk_widget_set_visible (sidebar->popup_menu_action_separator_item, FALSE);
         return;
     }
 
