@@ -685,7 +685,7 @@ static const GtkActionEntry desktop_view_entries[] = {
 	  /* label, accelerator */
 	  N_("Restore Icons' Original Si_zes"), NULL,
 	  /* tooltip */
-	  N_("Restore each selected icons to its original size"),
+	  N_("Restore each selected icon to its original size"),
 	  G_CALLBACK (action_unstretch_callback) },
 };
 
