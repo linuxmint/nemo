@@ -274,7 +274,7 @@ static NemoIconInfo *
 real_get_icon (NemoWindow *window,
 	       NemoWindowSlot *slot)
 {
-	return nemo_icon_info_lookup_from_name (NEMO_ICON_DESKTOP, 48);
+	return nemo_icon_info_lookup_from_name (NEMO_DESKTOP_ICON_DESKTOP, 48);
 }
 
 static void

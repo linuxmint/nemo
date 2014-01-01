@@ -25,6 +25,14 @@
 #define NEMO_ICON_FOLDER_VIDEOS     "folder-videos"
 #define NEMO_ICON_FOLDER_SAVED_SEARCH "folder-saved-search"
 
+/* Icons for desktop */
+#define NEMO_DESKTOP_ICON_COMPUTER   "computer"
+#define NEMO_DESKTOP_ICON_DESKTOP    "user-desktop"
+#define NEMO_DESKTOP_ICON_TRASH      "user-trash"
+#define NEMO_DESKTOP_ICON_TRASH_FULL "user-trash-full"
+#define NEMO_DESKTOP_ICON_HOME       "user-home"
+#define NEMO_DESKTOP_ICON_NETWORK    "network-workgroup"
+
 /* Other icons */
 #define NEMO_ICON_TEMPLATE		"text-x-generic-template"
 
