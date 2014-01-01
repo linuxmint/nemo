@@ -109,7 +109,7 @@ toolbar_update_appearance (NemoToolbar *self)
 				self->priv->show_main_bar);
 
     if (show_location_entry) {
-        gtk_stack_set_visible_child_name (GTK_STACK (self->priv->stack), "location_bar");
+        gtk_stack_set_visible_child_name (GTK_STACK (self->priv->stack), "location_entry");
     } else {
         gtk_stack_set_visible_child_name (GTK_STACK (self->priv->stack), "path_bar");
     }

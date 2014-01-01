@@ -707,9 +707,9 @@ remove_all_extra_location_widgets (GtkWidget *widget,
 void
 nemo_window_slot_remove_extra_location_widgets (NemoWindowSlot *slot)
 {
-    gtk_container_foreach (GTK_CONTAINER (slot->extra_location_widgets),
-                           remove_all_extra_location_widgets,
-                           slot);
+	gtk_container_foreach (GTK_CONTAINER (slot->extra_location_widgets),
+			       remove_all_extra_location_widgets,
+			       slot);
 }
 
 void
