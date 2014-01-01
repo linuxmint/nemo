@@ -7171,9 +7171,9 @@ nemo_file_is_in_trash (NemoFile *file)
 gboolean
 nemo_file_is_in_recent (NemoFile *file)
 {
-   g_assert (NEMO_IS_FILE (file));
+	g_assert (NEMO_IS_FILE (file));
 
-   return nemo_directory_is_in_recent (file->details->directory);
+	return nemo_directory_is_in_recent (file->details->directory);
 }
 
 GError *

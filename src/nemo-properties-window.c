@@ -2399,14 +2399,14 @@ is_burn_directory (NemoFile *file)
 static gboolean
 is_recent_directory (NemoFile *file)
 {
-   char *file_uri;
-   gboolean result;
+	char *file_uri;
+	gboolean result;
 
-   file_uri = nemo_file_get_uri (file);
-   result = strcmp (file_uri, "recent:///") == 0;
-   g_free (file_uri);
+	file_uri = nemo_file_get_uri (file);
+	result = strcmp (file_uri, "recent:///") == 0;
+	g_free (file_uri);
 
-   return result;
+	return result;
 }
 
 static gboolean
@@ -2476,23 +2476,22 @@ should_show_link_target (NemoPropertiesWindow *window)
 static gboolean
 location_show_original (NemoPropertiesWindow *window)
 {
-   NemoFile *file;
+	NemoFile *file;
 
-   /* there is no way a recent item will be mixed with
-      other items so just pick the first file to check */
-   file = NEMO_FILE (g_list_nth_data (window->details->original_files, 0));
-   return (file != NULL && !nemo_file_is_in_recent (file));
+	/* there is no way a recent item will be mixed with
+	   other items so just pick the first file to check */
+	file = NEMO_FILE (g_list_nth_data (window->details->original_files, 0));
+	return (file != NULL && !nemo_file_is_in_recent (file));
 }
 
 static gboolean
 should_show_free_space (NemoPropertiesWindow *window)
 {
-
 	if (!is_multi_file_window (window)
 	    && (is_merged_trash_directory (get_target_file (window)) ||
 		is_computer_directory (get_target_file (window)) ||
 		is_network_directory (get_target_file (window)) ||
-        is_recent_directory (get_target_file (window)) ||
+		is_recent_directory (get_target_file (window)) ||
 		is_burn_directory (get_target_file (window)))) {
 		return FALSE;
 	}
@@ -2507,9 +2506,9 @@ should_show_free_space (NemoPropertiesWindow *window)
 static gboolean
 should_show_volume_usage (NemoPropertiesWindow *window)
 {
-	NemoFile 		*file;
-	gboolean 		success = FALSE;
-	
+	NemoFile *file;
+	gboolean success = FALSE;
+
 	if (is_multi_file_window (window)) {
 		return FALSE;
 	}

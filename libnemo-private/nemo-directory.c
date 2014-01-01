@@ -545,13 +545,13 @@ nemo_directory_is_in_trash (NemoDirectory *directory)
 gboolean
 nemo_directory_is_in_recent (NemoDirectory *directory)
 {
-   g_assert (NEMO_IS_DIRECTORY (directory));
+	g_assert (NEMO_IS_DIRECTORY (directory));
 
-   if (directory->details->location == NULL) {
-       return FALSE;
-   }
+	if (directory->details->location == NULL) {
+		return FALSE;
+	}
 
-   return g_file_has_uri_scheme (directory->details->location, "recent");
+	return g_file_has_uri_scheme (directory->details->location, "recent");
 }
 
 gboolean

@@ -49,7 +49,7 @@ eel_uri_is_trash (const char *uri)
 gboolean
 eel_uri_is_recent (const char *uri)
 {
-   return g_str_has_prefix (uri, "recent:");
+	return g_str_has_prefix (uri, "recent:");
 }
 
 gboolean
