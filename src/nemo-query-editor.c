@@ -329,7 +329,7 @@ typing_timeout_cb (gpointer user_data)
 	return FALSE;
 }
 
-#define TYPING_TIMEOUT 750
+#define TYPING_TIMEOUT 250
 
 static void
 entry_changed_cb (GtkWidget *entry, NemoQueryEditor *editor)
@@ -1082,16 +1082,6 @@ nemo_query_editor_set_visible (NemoQueryEditor *editor,
 	}
 }
 
-static gboolean
-query_is_valid (NemoQueryEditor *editor)
-{
-	const char *text;
-
-	text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
-
-	return text != NULL && text[0] != '\0';
-}
-
 static void
 nemo_query_editor_changed_force (NemoQueryEditor *editor, gboolean force_reload)
 {
@@ -1100,13 +1090,11 @@ nemo_query_editor_changed_force (NemoQueryEditor *editor, gboolean force_reload)
 	if (editor->details->change_frozen) {
 		return;
 	}
-	
-	if (query_is_valid (editor)) {
-		query = nemo_query_editor_get_query (editor);
-		g_signal_emit (editor, signals[CHANGED], 0,
-			       query, force_reload);
-		g_object_unref (query);
-	}
+
+	query = nemo_query_editor_get_query (editor);
+	g_signal_emit (editor, signals[CHANGED], 0,
+		       query, force_reload);
+	g_object_unref (query);
 }
 
 static void
@@ -1154,11 +1142,6 @@ nemo_query_editor_get_query (NemoQueryEditor *editor)
 
 	query_text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
 
-	/* Empty string is a NULL query */
-	if (query_text && query_text[0] == '\0') {
-		return NULL;
-	}
-	
 	query = nemo_query_new ();
 	nemo_query_set_text (query, query_text);
 
