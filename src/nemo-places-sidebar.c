@@ -112,8 +112,6 @@ typedef struct {
 	NemoWindowSlot *go_to_after_mount_slot;
 	NemoWindowOpenFlags go_to_after_mount_flags;
 
-	GtkTreePath *eject_highlight_path;
-
 	guint bookmarks_changed_id;
 
     gboolean my_computer_expanded;
@@ -3842,11 +3840,6 @@ nemo_places_sidebar_dispose (GObject *object)
 	sidebar->uri = NULL;
 
 	free_drag_data (sidebar);
-
-	if (sidebar->eject_highlight_path != NULL) {
-		gtk_tree_path_free (sidebar->eject_highlight_path);
-		sidebar->eject_highlight_path = NULL;
-	}
 
 	if (sidebar->bookmarks_changed_id != 0) {
 		g_signal_handler_disconnect (sidebar->bookmarks,
