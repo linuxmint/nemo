@@ -1098,7 +1098,7 @@ nemo_window_key_press_event (GtkWidget *widget,
 	NemoWindow *window;
 	NemoWindowSlot *active_slot;
 	NemoView *view;
-    GtkWidget *focus_widget;
+	GtkWidget *focus_widget;
 	int i;
 
 	window = NEMO_WINDOW (widget);

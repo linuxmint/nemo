@@ -52,6 +52,13 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
+gboolean
+nemo_window_slot_handle_event (NemoWindowSlot *slot,
+				   GdkEventKey        *event)
+{
+	return nemo_query_editor_handle_event (slot->query_editor, event);
+}
+
 static void
 sync_search_directory (NemoWindowSlot *slot)
 {
@@ -143,27 +150,21 @@ update_query_editor (NemoWindowSlot *slot)
 {
 	NemoDirectory *directory;
 	NemoSearchDirectory *search_directory;
-	NemoQuery *query;
 
 	directory = nemo_directory_get (slot->location);
 
-	query = NULL;
-
 	if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
+		NemoQuery *query;
 		search_directory = NEMO_SEARCH_DIRECTORY (directory);
 		query = nemo_search_directory_get_query (search_directory);
+		if (query != NULL) {
+			nemo_query_editor_set_query (slot->query_editor,
+							 query);
+			g_object_unref (query);
+		}
+	} else {
+		nemo_query_editor_set_location (slot->query_editor, slot->location);
 	}
-
-	if (query == NULL) {
-		char *uri;
-		uri = g_file_get_uri (slot->location);
-		query = nemo_query_new ();
-		nemo_query_set_location (query, uri);
-		g_free (uri);
-	}
-	nemo_query_editor_set_query (slot->query_editor,
-					 query);
-	g_object_unref (query);
 
 	nemo_directory_unref (directory);
 }
@@ -171,28 +172,12 @@ update_query_editor (NemoWindowSlot *slot)
 static void
 ensure_query_editor (NemoWindowSlot *slot)
 {
-	GtkWidget *query_editor;
+	g_assert (slot->query_editor != NULL);
 
-	if (slot->query_editor != NULL) {
-		return;
-	}
-
-	query_editor = nemo_query_editor_new ();
-	slot->query_editor = NEMO_QUERY_EDITOR (query_editor);
-
-	nemo_window_slot_add_extra_location_widget (slot, query_editor);
-	gtk_widget_show (query_editor);
+	gtk_widget_show (GTK_WIDGET (slot->query_editor));
 	nemo_query_editor_grab_focus (slot->query_editor);
 
 	update_query_editor (slot);
-
-	g_signal_connect_object (slot->query_editor, "changed",
-				 G_CALLBACK (query_editor_changed_callback), slot, 0);
-	g_signal_connect_object (slot->query_editor, "cancel",
-				 G_CALLBACK (query_editor_cancel_callback), slot, 0);
-
-	g_object_add_weak_pointer (G_OBJECT (slot->query_editor),
-				   (gpointer *) &slot->query_editor);
 }
 
 void
@@ -201,15 +186,24 @@ nemo_window_slot_set_query_editor_visible (NemoWindowSlot *slot,
 {
 	if (visible) {
 		ensure_query_editor (slot);
+		gtk_widget_show (GTK_WIDGET (slot->query_editor));
 		nemo_query_editor_set_visible (slot->query_editor, TRUE);
 		nemo_query_editor_grab_focus (slot->query_editor);
+
+		if (slot->qe_changed_id == 0)
+			slot->qe_changed_id = g_signal_connect (slot->query_editor, "changed",
+								G_CALLBACK (query_editor_changed_callback), slot);
+		if (slot->qe_cancel_id == 0)
+			slot->qe_cancel_id = g_signal_connect (slot->query_editor, "cancel",
+							       G_CALLBACK (query_editor_cancel_callback), slot);
+
 	} else {
-		if (slot->query_editor != NULL) {
-		    nemo_query_editor_set_visible (slot->query_editor, FALSE);
-			gtk_widget_destroy (GTK_WIDGET (slot->query_editor));
-//			slot->query_editor = NULL;
-//			g_assert (slot->query_editor == NULL);
-		}
+		gtk_widget_hide (GTK_WIDGET (slot->query_editor));
+		g_signal_handler_disconnect (slot->query_editor, slot->qe_changed_id);
+		slot->qe_changed_id = 0;
+		g_signal_handler_disconnect (slot->query_editor, slot->qe_cancel_id);
+		slot->qe_cancel_id = 0;
+		nemo_query_editor_clear_query (slot->query_editor);
 	}
 }
 
@@ -274,6 +268,11 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 	slot->extra_location_widgets = extras_vbox;
 	gtk_box_pack_start (GTK_BOX (slot), extras_vbox, FALSE, FALSE, 0);
 	gtk_widget_show (extras_vbox);
+
+	slot->query_editor = NEMO_QUERY_EDITOR (nemo_query_editor_new ());
+	nemo_window_slot_add_extra_location_widget (slot, GTK_WIDGET (slot->query_editor));
+	g_object_add_weak_pointer (G_OBJECT (slot->query_editor),
+				   (gpointer *) &slot->query_editor);
 
 	slot->view_overlay = gtk_overlay_new ();
 	gtk_widget_add_events (slot->view_overlay,
@@ -694,8 +693,7 @@ remove_all_extra_location_widgets (GtkWidget *widget,
 	NemoDirectory *directory;
 
 	directory = nemo_directory_get (slot->location);
-	if (!NEMO_IS_SEARCH_DIRECTORY (directory)
-	    || (widget != GTK_WIDGET (slot->query_editor))) {
+	if (widget != GTK_WIDGET (slot->query_editor)) {
 		gtk_container_remove (GTK_CONTAINER (slot->extra_location_widgets), widget);
 	}
 

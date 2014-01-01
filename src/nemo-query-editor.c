@@ -74,6 +74,7 @@ struct NemoQueryEditorDetails {
 
 	GList *rows;
 	char *last_set_query_text;
+	gboolean got_preedit;
 };
 
 enum {
@@ -111,6 +112,118 @@ static NemoQueryEditorRowOps row_type[] = {
 };
 
 G_DEFINE_TYPE (NemoQueryEditor, nemo_query_editor, GTK_TYPE_BOX);
+
+/* taken from gtk/gtktreeview.c */
+static void
+send_focus_change (GtkWidget *widget,
+                   GdkDevice *device,
+		   gboolean   in)
+{
+	GdkDeviceManager *device_manager;
+	GList *devices, *d;
+
+	device_manager = gdk_display_get_device_manager (gtk_widget_get_display (widget));
+	devices = gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_MASTER);
+	devices = g_list_concat (devices, gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_SLAVE));
+	devices = g_list_concat (devices, gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_FLOATING));
+
+	for (d = devices; d; d = d->next) {
+		GdkDevice *dev = d->data;
+		GdkEvent *fevent;
+		GdkWindow *window;
+
+		if (gdk_device_get_source (dev) != GDK_SOURCE_KEYBOARD)
+			continue;
+
+		window = gtk_widget_get_window (widget);
+
+		/* Skip non-master keyboards that haven't
+		 * selected for events from this window
+		 */
+		if (gdk_device_get_device_type (dev) != GDK_DEVICE_TYPE_MASTER &&
+		    !gdk_window_get_device_events (window, dev))
+			continue;
+
+		fevent = gdk_event_new (GDK_FOCUS_CHANGE);
+
+		fevent->focus_change.type = GDK_FOCUS_CHANGE;
+		fevent->focus_change.window = g_object_ref (window);
+		fevent->focus_change.in = in;
+		gdk_event_set_device (fevent, device);
+
+		gtk_widget_send_focus_change (widget, fevent);
+
+		gdk_event_free (fevent);
+	}
+
+	g_list_free (devices);
+}
+
+static void
+entry_focus_hack (GtkWidget *entry,
+		  GdkDevice *device)
+{
+	GtkEntryClass *entry_class;
+	GtkWidgetClass *entry_parent_class;
+
+	/* Grab focus will select all the text.  We don't want that to happen, so we
+	 * call the parent instance and bypass the selection change.  This is probably
+	 * really non-kosher. */
+	entry_class = g_type_class_peek (GTK_TYPE_ENTRY);
+	entry_parent_class = g_type_class_peek_parent (entry_class);
+	(entry_parent_class->grab_focus) (entry);
+
+	/* send focus-in event */
+	send_focus_change (entry, device, TRUE);
+}
+
+static void
+entry_preedit_changed_cb (GtkEntry            *entry,
+			  gchar               *preedit,
+			  NemoQueryEditor *editor)
+{
+	editor->details->got_preedit = TRUE;
+}
+
+gboolean
+nemo_query_editor_handle_event (NemoQueryEditor *editor,
+				    GdkEventKey         *event)
+{
+	GdkEvent *new_event;
+	gboolean handled = FALSE;
+	gulong id;
+	gboolean retval;
+	gboolean text_changed;
+	char *old_text;
+	const char *new_text;
+
+	editor->details->got_preedit = FALSE;
+
+	old_text = g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry)));
+
+	id = g_signal_connect (editor->details->entry, "preedit-changed",
+			       G_CALLBACK (entry_preedit_changed_cb), editor);
+
+	new_event = gdk_event_copy ((GdkEvent *) event);
+	((GdkEventKey *) new_event)->window = gtk_widget_get_window (editor->details->entry);
+
+	gtk_widget_realize (editor->details->entry);
+	retval = gtk_widget_event (editor->details->entry, new_event);
+	gdk_event_free (new_event);
+
+	g_signal_handler_disconnect (editor->details->entry, id);
+
+	new_text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
+	text_changed = strcmp (old_text, new_text) != 0;
+	g_free (old_text);
+
+	handled = (editor->details->got_preedit
+		   || (retval && text_changed));
+
+	editor->details->got_preedit = FALSE;
+
+	return handled;
+}
 
 static void
 nemo_query_editor_dispose (GObject *object)
@@ -1006,7 +1119,7 @@ void
 nemo_query_editor_grab_focus (NemoQueryEditor *editor)
 {
 	if (editor->details->is_visible) {
-		gtk_widget_grab_focus (editor->details->entry);
+		entry_focus_hack (editor->details->entry, gtk_get_current_event_device ());
 	}
 }
 
@@ -1084,19 +1197,11 @@ nemo_query_editor_new (void)
 }
 
 static void
-update_location (NemoQueryEditor *editor,
-		 NemoQuery       *query)
+update_location (NemoQueryEditor *editor)
 {
-	char *uri;
 	NemoFile *file;
 
-	uri = nemo_query_get_location (query);
-	if (uri == NULL) {
-		return;
-	}
-	g_free (editor->details->current_uri);
-	editor->details->current_uri = uri;
-	file = nemo_file_get_by_uri (uri);
+	file = nemo_file_get_by_uri (editor->details->current_uri);
 
 	if (file != NULL) {
 		char *name;
@@ -1117,6 +1222,15 @@ update_location (NemoQueryEditor *editor,
 }
 
 void
+nemo_query_editor_set_location (NemoQueryEditor *editor,
+				    GFile               *location)
+{
+	g_free (editor->details->current_uri);
+	editor->details->current_uri = g_file_get_uri (location);
+	update_location (editor);
+}
+
+void
 nemo_query_editor_set_query (NemoQueryEditor *editor, NemoQuery *query)
 {
 	NemoQueryEditorRowType type;
@@ -1134,9 +1248,13 @@ nemo_query_editor_set_query (NemoQueryEditor *editor, NemoQuery *query)
 	}
 
 	editor->details->change_frozen = TRUE;
+
 	gtk_entry_set_text (GTK_ENTRY (editor->details->entry), text);
 
-        update_location (editor, query);
+	g_free (editor->details->current_uri);
+	editor->details->current_uri = nemo_query_get_location (query);
+
+	update_location (editor);
 
 	for (type = 0; type < NEMO_QUERY_EDITOR_ROW_LAST; type++) {
 		row_type[type].add_rows_from_query (editor, query);
