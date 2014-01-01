@@ -67,7 +67,6 @@ struct NemoQueryEditorDetails {
 	guint typing_timeout_id;
 	gboolean is_visible;
 	GtkWidget *vbox;
-    GtkWidget *search_bar_revealer;
 
 	GtkWidget *search_current_button;
 	GtkWidget *search_all_button;
@@ -199,6 +198,9 @@ nemo_query_editor_handle_event (NemoQueryEditor *editor,
 	const char *new_text;
 
 	editor->details->got_preedit = FALSE;
+	if (!gtk_widget_get_realized (editor->details->entry)) {
+		gtk_widget_realize (editor->details->entry);
+	}
 
 	old_text = g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry)));
 
@@ -206,9 +208,9 @@ nemo_query_editor_handle_event (NemoQueryEditor *editor,
 			       G_CALLBACK (entry_preedit_changed_cb), editor);
 
 	new_event = gdk_event_copy ((GdkEvent *) event);
-	((GdkEventKey *) new_event)->window = gtk_widget_get_window (editor->details->entry);
-
-	gtk_widget_realize (editor->details->entry);
+	g_object_unref (((GdkEventKey *) new_event)->window);
+	((GdkEventKey *) new_event)->window = g_object_ref
+		(gtk_widget_get_window (editor->details->entry));
 	retval = gtk_widget_event (editor->details->entry, new_event);
 	gdk_event_free (new_event);
 
@@ -218,9 +220,7 @@ nemo_query_editor_handle_event (NemoQueryEditor *editor,
 	text_changed = strcmp (old_text, new_text) != 0;
 	g_free (old_text);
 
-	handled = (editor->details->got_preedit
-		   || (retval && text_changed));
-
+	handled = (editor->details->got_preedit) || (retval && text_changed);
 	editor->details->got_preedit = FALSE;
 
 	return handled;
@@ -262,6 +262,16 @@ nemo_query_editor_draw (GtkWidget *widget,
 }
 
 static void
+nemo_query_editor_grab_focus (GtkWidget *widget)
+{
+	NemoQueryEditor *editor = NEMO_QUERY_EDITOR (widget);
+
+	if (gtk_widget_get_visible (widget)) {
+		entry_focus_hack (editor->details->entry, gtk_get_current_event_device ());
+	}
+}
+
+static void
 nemo_query_editor_class_init (NemoQueryEditorClass *class)
 {
 	GObjectClass *gobject_class;
@@ -273,6 +283,7 @@ nemo_query_editor_class_init (NemoQueryEditorClass *class)
 
 	widget_class = GTK_WIDGET_CLASS (class);
 	widget_class->draw = nemo_query_editor_draw;
+	widget_class->grab_focus = nemo_query_editor_grab_focus;
 
 	signals[CHANGED] =
 		g_signal_new ("changed",
@@ -965,8 +976,6 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 {
 	editor->details = G_TYPE_INSTANCE_GET_PRIVATE (editor, NEMO_TYPE_QUERY_EDITOR,
 						       NemoQueryEditorDetails);
-	editor->details->is_visible = FALSE;
-    editor->details->search_bar_revealer = gtk_revealer_new ();
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (editor)),
 				     GTK_STYLE_CLASS_TOOLBAR);
@@ -976,18 +985,10 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 
 	editor->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-    gtk_container_add (GTK_CONTAINER (editor->details->search_bar_revealer), editor->details->vbox);
-    gtk_widget_show_all (editor->details->search_bar_revealer);
-	gtk_widget_set_no_show_all (editor->details->vbox, TRUE);
 	gtk_container_set_border_width (GTK_CONTAINER (editor->details->vbox), 6);
-	gtk_box_pack_start (GTK_BOX (editor), editor->details->search_bar_revealer,
+	gtk_box_pack_start (GTK_BOX (editor), editor->details->vbox,
 			    FALSE, FALSE, 0);
-}
-
-void
-nemo_query_editor_set_default_query (NemoQueryEditor *editor)
-{
-	nemo_query_editor_changed (editor);
+	gtk_widget_show (editor->details->vbox);
 }
 
 static void
@@ -1075,18 +1076,6 @@ setup_widgets (NemoQueryEditor *editor)
 	finish_first_line (editor, hbox, TRUE);
 }
 
-void
-nemo_query_editor_set_visible (NemoQueryEditor *editor,
-				   gboolean visible)
-{
-	editor->details->is_visible = visible;
-	if (visible) {
-		gtk_revealer_set_reveal_child (GTK_REVEALER (editor->details->search_bar_revealer), TRUE);
-	} else {
-		gtk_revealer_set_reveal_child (GTK_REVEALER (editor->details->search_bar_revealer), FALSE);
-	}
-}
-
 static void
 nemo_query_editor_changed_force (NemoQueryEditor *editor, gboolean force_reload)
 {
@@ -1106,14 +1095,6 @@ static void
 nemo_query_editor_changed (NemoQueryEditor *editor)
 {
 	nemo_query_editor_changed_force (editor, TRUE);
-}
-
-void
-nemo_query_editor_grab_focus (NemoQueryEditor *editor)
-{
-	if (editor->details->is_visible) {
-		entry_focus_hack (editor->details->entry, gtk_get_current_event_device ());
-	}
 }
 
 static void
@@ -1159,18 +1140,6 @@ nemo_query_editor_get_query (NemoQueryEditor *editor)
 	}
 	
 	return query;
-}
-
-void
-nemo_query_editor_clear_query (NemoQueryEditor *editor)
-{
-	editor->details->change_frozen = TRUE;
-	gtk_entry_set_text (GTK_ENTRY (editor->details->entry), "");
-
-	g_free (editor->details->last_set_query_text);
-	editor->details->last_set_query_text = g_strdup ("");
-
-	editor->details->change_frozen = FALSE;
 }
 
 GtkWidget *
@@ -1219,37 +1188,38 @@ nemo_query_editor_set_location (NemoQueryEditor *editor,
 }
 
 void
-nemo_query_editor_set_query (NemoQueryEditor *editor, NemoQuery *query)
+nemo_query_editor_set_query (NemoQueryEditor	*editor,
+				 NemoQuery		*query)
 {
 	NemoQueryEditorRowType type;
-	char *text;
+	char *text = NULL;
 
-	if (!query) {
-		nemo_query_editor_clear_query (editor);
-		return;
+	if (query != NULL) {
+		text = nemo_query_get_text (query);
 	}
-
-	text = nemo_query_get_text (query);
 
 	if (!text) {
 		text = g_strdup ("");
 	}
 
 	editor->details->change_frozen = TRUE;
-
 	gtk_entry_set_text (GTK_ENTRY (editor->details->entry), text);
 
 	g_free (editor->details->current_uri);
-	editor->details->current_uri = nemo_query_get_location (query);
+	editor->details->current_uri = NULL;
 
-	update_location (editor);
+	if (query != NULL) {
+		editor->details->current_uri = nemo_query_get_location (query);
+		update_location (editor);
 
-	for (type = 0; type < NEMO_QUERY_EDITOR_ROW_LAST; type++) {
-		row_type[type].add_rows_from_query (editor, query);
+
+		for (type = 0; type < NEMO_QUERY_EDITOR_ROW_LAST; type++) {
+			row_type[type].add_rows_from_query (editor, query);
+		}
 	}
-	
-	editor->details->change_frozen = FALSE;
 
 	g_free (editor->details->last_set_query_text);
 	editor->details->last_set_query_text = text;
+
+	editor->details->change_frozen = FALSE;
 }
