@@ -60,10 +60,7 @@ typedef struct {
 
 GType      nemo_query_editor_get_type     	   (void);
 GtkWidget* nemo_query_editor_new          	   (void);
-void       nemo_query_editor_set_default_query (NemoQueryEditor *editor);
 
-void	   nemo_query_editor_grab_focus (NemoQueryEditor *editor);
-void       nemo_query_editor_clear_query (NemoQueryEditor *editor);
 gboolean       nemo_query_editor_handle_event (NemoQueryEditor *editor,
 						   GdkEventKey         *event);
 
@@ -73,7 +70,4 @@ void           nemo_query_editor_set_query   (NemoQueryEditor *editor,
 GFile *        nemo_query_editor_get_location (NemoQueryEditor *editor);
 void           nemo_query_editor_set_location (NemoQueryEditor *editor,
 						   GFile               *location);
-void           nemo_query_editor_set_visible (NemoQueryEditor *editor,
-						  gboolean             visible);
-
 #endif /* NEMO_QUERY_EDITOR_H */
