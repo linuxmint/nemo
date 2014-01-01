@@ -7040,6 +7040,23 @@ nemo_file_is_in_trash (NemoFile *file)
 	return nemo_directory_is_in_trash (file->details->directory);
 }
 
+/**
+ * nemo_file_is_in_recent
+ * 
+ * Check if this file is a file in Recent.
+ * @file: NautilusFile representing the file in question.
+ * 
+ * Returns: TRUE if @file is in Recent.
+ * 
+ **/
+gboolean
+nemo_file_is_in_recent (NemoFile *file)
+{
+	g_assert (NEMO_IS_FILE (file));
+
+	return nemo_directory_is_in_recent (file->details->directory);
+}
+
 GError *
 nemo_file_get_file_info_error (NemoFile *file)
 {

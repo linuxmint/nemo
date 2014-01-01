@@ -44,11 +44,15 @@ nemo_recent_add_file (NemoFile *file,
 	GtkRecentData recent_data;
 	char *uri;
 
-	uri = nemo_file_get_uri (file);
+	uri = nemo_file_get_activation_uri (file);
+	if (uri == NULL) {
+		uri = nemo_file_get_uri (file);
+	}
 
 	/* do not add trash:// etc */
 	if (eel_uri_is_trash (uri)  ||
 	    eel_uri_is_search (uri) ||
+	    eel_uri_is_recent (uri) ||
 	    eel_uri_is_desktop (uri)) {
 		g_free (uri);
 		return;
