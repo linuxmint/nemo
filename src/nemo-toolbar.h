@@ -67,13 +67,10 @@ NemoToolbar *nemo_toolbar_new (GtkActionGroup *action_group);
 gboolean  nemo_toolbar_get_show_location_entry (NemoToolbar *self);
 GtkWidget *nemo_toolbar_get_path_bar (NemoToolbar *self);
 GtkWidget *nemo_toolbar_get_location_bar (NemoToolbar *self);
-GtkWidget *nemo_toolbar_get_search_bar (NemoToolbar *self);
 
 void nemo_toolbar_set_show_main_bar (NemoToolbar *self,
 					 gboolean show_main_bar);
 void nemo_toolbar_set_show_location_entry (NemoToolbar *self,
 					       gboolean show_location_entry);
-void nemo_toolbar_set_show_search_bar (NemoToolbar *self,
-					   gboolean show_search_bar);
 
 #endif /* __NEMO_TOOLBAR_H__ */

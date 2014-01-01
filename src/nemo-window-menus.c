@@ -40,7 +40,6 @@
 #include "nemo-window-bookmarks.h"
 #include "nemo-window-private.h"
 #include "nemo-desktop-window.h"
-#include "nemo-search-bar.h"
 #include "nemo-location-bar.h"
 #include "nemo-icon-view.h"
 #include "nemo-list-view.h"

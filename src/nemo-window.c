@@ -37,7 +37,6 @@
 #include "nemo-mime-actions.h"
 #include "nemo-notebook.h"
 #include "nemo-places-sidebar.h"
-#include "nemo-search-bar.h"
 #include "nemo-tree-sidebar.h"
 #include "nemo-view-factory.h"
 #include "nemo-window-manage-views.h"

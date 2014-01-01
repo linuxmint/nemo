@@ -32,7 +32,6 @@
 #include "nemo-application.h"
 #include "nemo-floating-bar.h"
 #include "nemo-location-bar.h"
-#include "nemo-search-bar.h"
 #include "nemo-pathbar.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
@@ -1414,8 +1413,6 @@ update_for_new_location (NemoWindowSlot *slot)
 		nemo_window_slot_remove_extra_location_widgets (slot);
 		
 		directory = nemo_directory_get (slot->location);
-
-		nemo_window_slot_update_query_editor (slot);
 
 		if (nemo_directory_is_in_trash (directory)) {
 			nemo_window_slot_show_trash_bar (slot);
