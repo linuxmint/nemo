@@ -61,7 +61,7 @@ struct NemoBookmarkListClass {
 };
 
 GType                   nemo_bookmark_list_get_type            (void);
-NemoBookmarkList *  nemo_bookmark_list_get_default                 (void);
+NemoBookmarkList *  nemo_bookmark_list_new                 (void);
 void                    nemo_bookmark_list_append              (NemoBookmarkList   *bookmarks,
 								    NemoBookmark *bookmark);
 gboolean                nemo_bookmark_list_contains            (NemoBookmarkList   *bookmarks,

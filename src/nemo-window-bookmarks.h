@@ -29,8 +29,6 @@
 #include <nemo-window.h>
 #include "nemo-bookmark-list.h"
 
-void                  nemo_window_add_bookmark_for_current_location (NemoWindow *window);
-void                  nemo_window_edit_bookmarks                    (NemoWindow *window);
 void                  nemo_window_initialize_bookmarks_menu         (NemoWindow *window);
 
 #endif

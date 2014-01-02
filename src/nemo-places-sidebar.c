@@ -4236,12 +4236,13 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 {
 	NemoWindowSlot *slot;
     gint breakpoint;
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
 
 	sidebar->window = window;
 
 	slot = nemo_window_get_active_slot (window);
 
-	sidebar->bookmarks = nemo_bookmark_list_get_default ();
+	sidebar->bookmarks = nemo_application_get_bookmarks (app);
 	sidebar->uri = nemo_window_slot_get_current_uri (slot);
 
     breakpoint = g_settings_get_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT);

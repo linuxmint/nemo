@@ -33,6 +33,7 @@
 #include "nemo-bookmarks-window.h"
 #include "nemo-window-bookmarks.h"
 #include "nemo-window-private.h"
+#include "nemo-application.h"
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <eel/eel-debug.h>
 #include <eel/eel-stock-dialogs.h>
@@ -42,8 +43,6 @@
 
 #define MENU_ITEM_MAX_WIDTH_CHARS 32
 #define MENU_PATH_BOOKMARKS_PLACEHOLDER	 "/MenuBar/Other Menus/Bookmarks/Bookmarks Placeholder"
-
-static GtkWindow *bookmarks_window = NULL;
 
 static void refresh_bookmarks_menu (NemoWindow *window);
 
@@ -97,41 +96,6 @@ show_bogus_bookmark_window (NemoWindow *window,
 	g_object_unref (location);
 	g_free (uri_for_display);
 	g_free (detail);
-}
-
-/**
- * add_bookmark_for_current_location
- * 
- * Add a bookmark for the displayed location to the bookmarks menu.
- * Does nothing if there's already a bookmark for the displayed location.
- */
-void
-nemo_window_add_bookmark_for_current_location (NemoWindow *window)
-{
-	NemoBookmark *bookmark;
-	NemoWindowSlot *slot;
-	NemoBookmarkList *list;
-
-	slot = nemo_window_get_active_slot (window);
-	bookmark = slot->current_location_bookmark;
-	list = window->details->bookmark_list;
-
-	if (!nemo_bookmark_list_contains (list, bookmark)) {
-		nemo_bookmark_list_append (list, bookmark); 
-	}
-}
-
-void
-nemo_window_edit_bookmarks (NemoWindow *window)
-{
-	if (bookmarks_window == NULL) {
-		bookmarks_window = nemo_bookmarks_window_new (window, window->details->bookmark_list);
-		g_object_add_weak_pointer (G_OBJECT (bookmarks_window), (gpointer *) &bookmarks_window);
-	}
-
-	gtk_window_set_transient_for (bookmarks_window, GTK_WINDOW (window));
-	gtk_window_set_screen (GTK_WINDOW (bookmarks_window), gtk_window_get_screen (GTK_WINDOW (window)));
-        gtk_window_present (bookmarks_window);
 }
 
 static void
@@ -323,7 +287,8 @@ update_bookmarks (NemoWindow *window)
 	g_assert (window->details->bookmarks_action_group == NULL);
 
 	if (window->details->bookmark_list == NULL) {
-		window->details->bookmark_list = nemo_bookmark_list_get_default ();
+		NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+		window->details->bookmark_list = nemo_application_get_bookmarks (app);
 	}
 
 	bookmarks = window->details->bookmark_list;

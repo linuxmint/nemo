@@ -40,6 +40,7 @@
 #include "nemo-properties-window.h"
 #include "nemo-bookmark-list.h"
 #include "nemo-window-pane.h"
+#include "nemo-application.h"
 
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -2879,7 +2880,9 @@ nemo_view_init (NemoView *view)
                       G_CALLBACK (actions_added_or_changed_callback),
                                   view);
 
-    view->details->bookmarks = nemo_bookmark_list_get_default ();
+
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+    view->details->bookmarks = nemo_application_get_bookmarks (app);
 
     view->details->bookmarks_changed_id =
         g_signal_connect_swapped (view->details->bookmarks, "changed",
