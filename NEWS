@@ -1,3 +1,38 @@
+Nemo merged with changes in Nautilus 3.5.4. 
+
+Changes:
+* Add a notification while ejecting volumes
+* List view:
+  - Use a better default column order
+  - Change some list column names
+* Search:
+  - Combine the search bar and the query editor
+  - Tracker engine performance improvements and fixes
+* Sidebar:
+  - Add a recent files place
+* Fix loading string not disappearing in image properties on load
+
+Rejected:
+* List view:
+  - New date format display
+  - Use a list model instead of a tree model for list view
+  - Use 32px icons by default
+* Search:
+  - "Just type" search
+* Sidebar:
+  - Use symbolic icons
+  - Improve order of the items
+* Toolbar:
+  - Change toolbar layout to the GNOME 3 style
+  - Don't show titlebar when maximized
+  - Use a linked style for the pathbar
+* Menus:
+  - Migrate the menubar to a gear menu
+  - Remove "Go" menu
+  - Remove "Bookmarks" menu
+* Remove "Text beside icons" option for icon view
+
+
 Nemo merged with changes in Nautilus 3.5.3. 
 
 Changes:
