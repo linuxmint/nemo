@@ -2487,8 +2487,10 @@ location_show_original (NemoPropertiesWindow *window)
 {
 	NemoFile *file;
 
-	file = get_original_file (window);
-	return !nemo_file_is_in_recent (file);
+	/* there is no way a recent item will be mixed with
+	   other items so just pick the first file to check */
+	file = NEMO_FILE (g_list_nth_data (window->details->original_files, 0));
+	return (file != NULL && !nemo_file_is_in_recent (file));
 }
 
 static gboolean

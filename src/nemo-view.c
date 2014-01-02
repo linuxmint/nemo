@@ -6879,6 +6879,41 @@ copy_data_free (CopyCallbackData *data)
 	g_free (data);
 }
 
+static gboolean
+uri_is_parent_of_selection (GList *selection,
+			    const char *uri)
+{
+	gboolean found;
+	GList *l;
+	GFile *file;
+
+	found = FALSE;
+
+	file = g_file_new_for_uri (uri);
+	for (l = selection; !found && l != NULL; l = l->next) {
+		GFile *parent;
+		parent = nemo_file_get_parent_location (l->data);
+		found = g_file_equal (file, parent);
+		g_object_unref (parent);
+	}
+	g_object_unref (file);
+	return found;
+}
+
+static void
+on_destination_dialog_folder_changed (GtkFileChooser *chooser,
+				      gpointer        user_data)
+{
+	CopyCallbackData *copy_data = user_data;
+	char *uri;
+	gboolean found;
+
+	uri = gtk_file_chooser_get_current_folder_uri (chooser);
+	found = uri_is_parent_of_selection (copy_data->selection, uri);
+	gtk_dialog_set_response_sensitive (GTK_DIALOG (chooser), GTK_RESPONSE_OK, !found);
+	g_free (uri);
+}
+
 static void
 on_destination_dialog_response (GtkDialog *dialog,
 				gint       response_id,
@@ -7017,7 +7052,9 @@ copy_or_move_selection (NemoView *view,
 	uri = nemo_directory_get_uri (view->details->model);
 	gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dialog), uri);
 	g_free (uri);
-
+	g_signal_connect (dialog, "current-folder-changed",
+			  G_CALLBACK (on_destination_dialog_folder_changed),
+			  copy_data);
 	g_signal_connect (dialog, "response",
 			  G_CALLBACK (on_destination_dialog_response),
 			  copy_data);
