@@ -23,15 +23,15 @@
 
 #include <config.h>
 #include "nemo-query-editor.h"
-#include "nemo-file-utilities.h"
 
 #include <string.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
-
-#include <eel/eel-glib-extensions.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+
+#include <eel/eel-glib-extensions.h>
+#include <libnemo-private/nemo-file-utilities.h>
 
 typedef enum {
 	NEMO_QUERY_EDITOR_ROW_TYPE,
