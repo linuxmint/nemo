@@ -1,5 +1,5 @@
 # Brazilian Portuguese translation of nautilus.
-# Copyright (C) 2000-2013 Free Software Foundation, Inc.
+# Copyright (C) 2000-2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the nautilus package.
 # Gustavo Maciel Dias Vieira <gdvieira@zaz.com.br>, 2000-2001.
 # Evandro Fernandes Giovanini <evandrofg@ig.com.br>, 2002-2003, 2006.
@@ -20,7 +20,7 @@
 # Djavan Fagundes <djavan@comum.org>, 2011.
 # Antonio Fernandes C. Neto <fernandesn@gnome.org>, 2011, 2013.
 # Jonh Wendell <jwendell@gnome.org>, 2009, 2012.
-# Rafael Ferreira <rafael.f.f1@gmail.com>, 2012.
+# Rafael Ferreira <rafael.f.f1@gmail.com>, 2012, 2013, 2014.
 # Fábio Nogueira <fnogueira@gnome.org>, 2012.
 # Florêncio Neves <florencioneves@gmail.com>, 2013.
 #
@@ -29,16 +29,16 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-09-18 16:25+0000\n"
-"PO-Revision-Date: 2013-09-18 15:04-0300\n"
-"Last-Translator: Antonio Fernandes C. Neto <fernandesn@gnome.org>\n"
+"POT-Creation-Date: 2013-12-31 20:59+0000\n"
+"PO-Revision-Date: 2014-01-02 06:15-0300\n"
+"Last-Translator: Rafael Ferreira <rafael.f.f1@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.6.3\n"
 "X-Project-Style: gnome\n"
 
 #: ../data/nautilus-autorun-software.desktop.in.in.h:1
@@ -54,8 +54,8 @@ msgstr "Conectar ao servidor"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4476 ../src/nautilus-window.c:2200
-#: ../src/nautilus-window.c:2397
+#: ../src/nautilus-properties-window.c:4478 ../src/nautilus-window.c:2202
+#: ../src/nautilus-window.c:2399
 msgid "Files"
 msgstr "Arquivos"
 
@@ -131,7 +131,7 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3080
+#: ../eel/eel-editable-label.c:3085
 #: ../libnautilus-private/nautilus-clipboard.c:358 ../src/nautilus-view.c:7206
 #: ../src/nautilus-view.c:7359
 msgid "Cu_t"
@@ -139,7 +139,7 @@ msgstr "Recor_tar"
 
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3082
+#: ../eel/eel-editable-label.c:3087
 #: ../libnautilus-private/nautilus-clipboard.c:362 ../src/nautilus-view.c:7210
 #: ../src/nautilus-view.c:7363
 msgid "_Copy"
@@ -147,12 +147,12 @@ msgstr "_Copiar"
 
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3084
+#: ../eel/eel-editable-label.c:3089
 #: ../libnautilus-private/nautilus-clipboard.c:366 ../src/nautilus-view.c:7214
 msgid "_Paste"
 msgstr "C_olar"
 
-#: ../eel/eel-editable-label.c:3087
+#: ../eel/eel-editable-label.c:3092
 msgid "Select All"
 msgstr "Selecionar tudo"
 
@@ -169,8 +169,8 @@ msgstr "Mostrar mais _detalhes"
 #: ../src/nautilus-mime-actions.c:652 ../src/nautilus-mime-actions.c:723
 #: ../src/nautilus-mime-actions.c:1066 ../src/nautilus-mime-actions.c:1572
 #: ../src/nautilus-mime-actions.c:1796
-#: ../src/nautilus-properties-window.c:4467
-#: ../src/nautilus-properties-window.c:5465 ../src/nautilus-query-editor.c:520
+#: ../src/nautilus-properties-window.c:4469
+#: ../src/nautilus-properties-window.c:5467 ../src/nautilus-query-editor.c:520
 #: ../src/nautilus-view.c:970 ../src/nautilus-view.c:1496
 #: ../src/nautilus-view.c:1616 ../src/nautilus-view.c:5995
 msgid "_Cancel"
@@ -189,7 +189,7 @@ msgstr " (Unicode inválido)"
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:275
 #: ../src/nautilus-list-view.c:1827 ../src/nautilus-pathbar.c:295
-#: ../src/nautilus-query-editor.c:1094
+#: ../src/nautilus-query-editor.c:1096
 #: ../src/nautilus-shell-search-provider.c:288
 msgid "Home"
 msgstr "Pasta pessoal"
@@ -294,7 +294,7 @@ msgid "The group of the file."
 msgstr "O grupo do arquivo."
 
 #: ../libnautilus-private/nautilus-column-utilities.c:112
-#: ../src/nautilus-properties-window.c:4538
+#: ../src/nautilus-properties-window.c:4540
 msgid "Permissions"
 msgstr "Permissões"
 
@@ -719,13 +719,13 @@ msgstr "Arquivo original"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:257
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:288
-#: ../src/nautilus-properties-window.c:3277
+#: ../src/nautilus-properties-window.c:3279
 msgid "Size:"
 msgstr "Tamanho:"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:260
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:291
-#: ../src/nautilus-properties-window.c:3259
+#: ../src/nautilus-properties-window.c:3261
 msgid "Type:"
 msgstr "Tipo:"
 
@@ -1007,7 +1007,7 @@ msgstr "Todos os itens na lixeira serão permanentemente excluídos."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1396
 #: ../libnautilus-private/nautilus-file-operations.c:2272
-#: ../src/nautilus-window.c:805
+#: ../src/nautilus-window.c:806
 msgid "Empty _Trash"
 msgstr "Esvaziar _lixeira"
 
@@ -2384,8 +2384,8 @@ msgid "Desktop font"
 msgstr "Fonte da área de trabalho"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
-msgid "The font _description used for the icons on the desktop."
-msgstr "A _descrição da fonte usada para os ícones na área de trabalho."
+msgid "The font description used for the icons on the desktop."
+msgstr "A descrição da fonte usada para os ícones na área de trabalho."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:58
 msgid "Home icon visible on desktop"
@@ -2699,30 +2699,27 @@ msgstr "Nova _janela"
 msgid "Connect to _Server…"
 msgstr "Conectar ao _servidor…"
 
-#. name, stock id
-#: ../src/nautilus-app-menu.ui.h:3 ../src/nautilus-window-menus.c:571
-msgid "Enter _Location…"
-msgstr "Digitar _local…"
-
-#: ../src/nautilus-app-menu.ui.h:4
+#: ../src/nautilus-app-menu.ui.h:3
 msgid "_Bookmarks"
 msgstr "_Marcadores"
 
-#: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-window-menus.c:475
+#: ../src/nautilus-app-menu.ui.h:4 ../src/nautilus-window-menus.c:475
 msgid "Prefere_nces"
 msgstr "Preferê_ncias"
 
-#: ../src/nautilus-app-menu.ui.h:6
-msgid "_About Files"
-msgstr "_Sobre Arquivos"
-
 #. name, stock id, label
-#: ../src/nautilus-app-menu.ui.h:7 ../src/nautilus-properties-window.c:4945
+#: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-properties-window.c:4947
 #: ../src/nautilus-view.c:1494 ../src/nautilus-window-menus.c:469
 msgid "_Help"
 msgstr "Aj_uda"
 
-#: ../src/nautilus-app-menu.ui.h:8
+#. name, stock id
+#. label, accelerator
+#: ../src/nautilus-app-menu.ui.h:6 ../src/nautilus-window-menus.c:515
+msgid "_About"
+msgstr "_Sobre"
+
+#: ../src/nautilus-app-menu.ui.h:7
 msgid "_Quit"
 msgstr "_Sair"
 
@@ -2907,7 +2904,7 @@ msgstr ""
 "Adiciona conexão à montagem do servidor"
 
 #: ../src/nautilus-connect-server-dialog.c:104
-#: ../src/nautilus-properties-window.c:5194 ../src/nautilus-view.c:1471
+#: ../src/nautilus-properties-window.c:5196 ../src/nautilus-view.c:1471
 msgid "There was an error displaying help."
 msgstr "Houve um erro ao exibir a ajuda."
 
@@ -3013,7 +3010,7 @@ msgstr "Torna os ícones selecionados redimensionáveis"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:688
-msgid "Restore each selected icons to its original size"
+msgid "Restore each selected icon to its original size"
 msgstr "Restaura cada ícone selecionado ao tamanho original"
 
 #: ../src/nautilus-desktop-item-properties.c:405
@@ -3149,8 +3146,8 @@ msgstr "Renomeando \"%s\" para \"%s\"."
 
 #. Translators: this is referred to captions under icons.
 #: ../src/nautilus-file-management-properties.c:281
-#: ../src/nautilus-properties-window.c:4051
-#: ../src/nautilus-properties-window.c:4078
+#: ../src/nautilus-properties-window.c:4053
+#: ../src/nautilus-properties-window.c:4080
 msgid "None"
 msgstr "Nenhum"
 
@@ -3282,7 +3279,7 @@ msgid "_Only for files smaller than:"
 msgstr "Apenas para arquivos _menores que:"
 
 #: ../src/nautilus-file-management-properties.ui.h:32
-#: ../src/nautilus-properties-window.c:4479
+#: ../src/nautilus-properties-window.c:4481
 msgid "Folders"
 msgstr "Pastas"
 
@@ -3552,7 +3549,7 @@ msgstr "%s Colunas visíveis"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-list-view.c:2948 ../src/nautilus-properties-window.c:4946
+#: ../src/nautilus-list-view.c:2948 ../src/nautilus-properties-window.c:4948
 #: ../src/nautilus-window-menus.c:471
 msgid "_Close"
 msgstr "_Fechar"
@@ -3722,7 +3719,7 @@ msgid_plural "Opening %d items."
 msgstr[0] "Abrindo %d item."
 msgstr[1] "Abrindo %d itens."
 
-#: ../src/nautilus-notebook.c:378
+#: ../src/nautilus-notebook.c:383
 msgid "Close tab"
 msgstr "Fecha aba"
 
@@ -3831,195 +3828,195 @@ msgid "Contents:"
 msgstr "Conteúdo:"
 
 #. Translators: "used" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:3055
+#: ../src/nautilus-properties-window.c:3057
 msgid "used"
 msgstr "usado"
 
 #. Translators: "free" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:3061
+#: ../src/nautilus-properties-window.c:3063
 msgid "free"
 msgstr "disponível"
 
-#: ../src/nautilus-properties-window.c:3063
+#: ../src/nautilus-properties-window.c:3065
 msgid "Total capacity:"
 msgstr "Capacidade total:"
 
-#: ../src/nautilus-properties-window.c:3066
+#: ../src/nautilus-properties-window.c:3068
 msgid "Filesystem type:"
 msgstr "Tipo de sistema de arquivo:"
 
-#: ../src/nautilus-properties-window.c:3202
+#: ../src/nautilus-properties-window.c:3204
 msgid "Basic"
 msgstr "Básico"
 
-#: ../src/nautilus-properties-window.c:3267
+#: ../src/nautilus-properties-window.c:3269
 msgid "Link target:"
 msgstr "Destino do link:"
 
-#: ../src/nautilus-properties-window.c:3286
+#: ../src/nautilus-properties-window.c:3288
 msgid "Location:"
 msgstr "Localização:"
 
-#: ../src/nautilus-properties-window.c:3294
+#: ../src/nautilus-properties-window.c:3296
 msgid "Volume:"
 msgstr "Volume:"
 
-#: ../src/nautilus-properties-window.c:3303
+#: ../src/nautilus-properties-window.c:3305
 msgid "Accessed:"
 msgstr "Acessado:"
 
-#: ../src/nautilus-properties-window.c:3307
+#: ../src/nautilus-properties-window.c:3309
 msgid "Modified:"
 msgstr "Modificado:"
 
-#: ../src/nautilus-properties-window.c:3317
+#: ../src/nautilus-properties-window.c:3319
 msgid "Free space:"
 msgstr "Espaço livre:"
 
 #. translators: this gets concatenated to "no read",
 #. * "no access", etc. (see following strings)
 #.
-#: ../src/nautilus-properties-window.c:3968
-#: ../src/nautilus-properties-window.c:3979
-#: ../src/nautilus-properties-window.c:3991
+#: ../src/nautilus-properties-window.c:3970
+#: ../src/nautilus-properties-window.c:3981
+#: ../src/nautilus-properties-window.c:3993
 msgid "no "
 msgstr "não "
 
-#: ../src/nautilus-properties-window.c:3971
+#: ../src/nautilus-properties-window.c:3973
 msgid "list"
 msgstr "listar"
 
-#: ../src/nautilus-properties-window.c:3973
+#: ../src/nautilus-properties-window.c:3975
 msgid "read"
 msgstr "ler"
 
-#: ../src/nautilus-properties-window.c:3982
+#: ../src/nautilus-properties-window.c:3984
 msgid "create/delete"
 msgstr "criar/excluir"
 
-#: ../src/nautilus-properties-window.c:3984
+#: ../src/nautilus-properties-window.c:3986
 msgid "write"
 msgstr "escrever"
 
-#: ../src/nautilus-properties-window.c:3993
+#: ../src/nautilus-properties-window.c:3995
 msgid "access"
 msgstr "acessar"
 
-#: ../src/nautilus-properties-window.c:4058
+#: ../src/nautilus-properties-window.c:4060
 msgid "List files only"
 msgstr "Apenas listar arquivos"
 
-#: ../src/nautilus-properties-window.c:4064
+#: ../src/nautilus-properties-window.c:4066
 msgid "Access files"
 msgstr "Acessar arquivos"
 
-#: ../src/nautilus-properties-window.c:4070
+#: ../src/nautilus-properties-window.c:4072
 msgid "Create and delete files"
 msgstr "Criar e excluir arquivos"
 
-#: ../src/nautilus-properties-window.c:4085
+#: ../src/nautilus-properties-window.c:4087
 msgid "Read-only"
 msgstr "Apenas leitura"
 
-#: ../src/nautilus-properties-window.c:4091
+#: ../src/nautilus-properties-window.c:4093
 msgid "Read and write"
 msgstr "Leitura e escrita"
 
-#: ../src/nautilus-properties-window.c:4118
+#: ../src/nautilus-properties-window.c:4120
 msgid "Access:"
 msgstr "Acesso:"
 
-#: ../src/nautilus-properties-window.c:4120
+#: ../src/nautilus-properties-window.c:4122
 msgid "Folder access:"
 msgstr "Acesso à pasta:"
 
-#: ../src/nautilus-properties-window.c:4122
+#: ../src/nautilus-properties-window.c:4124
 msgid "File access:"
 msgstr "Acesso ao arquivo:"
 
-#: ../src/nautilus-properties-window.c:4211
+#: ../src/nautilus-properties-window.c:4213
 msgid "_Owner:"
 msgstr "Pr_oprietário:"
 
-#: ../src/nautilus-properties-window.c:4219
-#: ../src/nautilus-properties-window.c:4483
+#: ../src/nautilus-properties-window.c:4221
+#: ../src/nautilus-properties-window.c:4485
 msgid "Owner:"
 msgstr "Proprietário:"
 
-#: ../src/nautilus-properties-window.c:4241
+#: ../src/nautilus-properties-window.c:4243
 msgid "_Group:"
 msgstr "_Grupo:"
 
-#: ../src/nautilus-properties-window.c:4249
-#: ../src/nautilus-properties-window.c:4497
+#: ../src/nautilus-properties-window.c:4251
+#: ../src/nautilus-properties-window.c:4499
 msgid "Group:"
 msgstr "Grupo:"
 
-#: ../src/nautilus-properties-window.c:4270
+#: ../src/nautilus-properties-window.c:4272
 msgid "Others"
 msgstr "Outros"
 
-#: ../src/nautilus-properties-window.c:4285
+#: ../src/nautilus-properties-window.c:4287
 msgid "Execute:"
 msgstr "Executar:"
 
-#: ../src/nautilus-properties-window.c:4288
+#: ../src/nautilus-properties-window.c:4290
 msgid "Allow _executing file as program"
 msgstr "Permitir _execução do arquivo como um programa"
 
-#: ../src/nautilus-properties-window.c:4464
+#: ../src/nautilus-properties-window.c:4466
 msgid "Change Permissions for Enclosed Files"
 msgstr "Alterar permissões dos anexos"
 
-#: ../src/nautilus-properties-window.c:4468
+#: ../src/nautilus-properties-window.c:4470
 msgid "Change"
 msgstr "Mudar"
 
-#: ../src/nautilus-properties-window.c:4511
+#: ../src/nautilus-properties-window.c:4513
 msgid "Others:"
 msgstr "Outros:"
 
-#: ../src/nautilus-properties-window.c:4552
+#: ../src/nautilus-properties-window.c:4554
 msgid "You are not the owner, so you cannot change these permissions."
 msgstr ""
 "Você não é o proprietário, logo você não pode alterar estas permissões."
 
-#: ../src/nautilus-properties-window.c:4567
+#: ../src/nautilus-properties-window.c:4569
 msgid "Security context:"
 msgstr "Contexto de segurança:"
 
-#: ../src/nautilus-properties-window.c:4582
+#: ../src/nautilus-properties-window.c:4584
 msgid "Change Permissions for Enclosed Files…"
 msgstr "Alterar permissões dos arquivos contidos na pasta…"
 
-#: ../src/nautilus-properties-window.c:4592
+#: ../src/nautilus-properties-window.c:4594
 #, c-format
 msgid "The permissions of “%s” could not be determined."
 msgstr "Não foi possível determinar as permissões de \"%s\"."
 
-#: ../src/nautilus-properties-window.c:4595
+#: ../src/nautilus-properties-window.c:4597
 msgid "The permissions of the selected file could not be determined."
 msgstr "Não foi possível determinar as permissões do arquivo selecionado."
 
-#: ../src/nautilus-properties-window.c:4839
+#: ../src/nautilus-properties-window.c:4841
 msgid "Open With"
 msgstr "Abrir com"
 
-#: ../src/nautilus-properties-window.c:5162
+#: ../src/nautilus-properties-window.c:5164
 msgid "Creating Properties window."
 msgstr "Criando janela de propriedades."
 
-#: ../src/nautilus-properties-window.c:5462
+#: ../src/nautilus-properties-window.c:5464
 msgid "Select Custom Icon"
 msgstr "Selecionar ícone personalizado"
 
-#: ../src/nautilus-properties-window.c:5464
+#: ../src/nautilus-properties-window.c:5466
 msgid "_Revert"
 msgstr "_Reverter"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-properties-window.c:5466 ../src/nautilus-view.c:7170
+#: ../src/nautilus-properties-window.c:5468 ../src/nautilus-view.c:7170
 #: ../src/nautilus-view.c:8588
 msgid "_Open"
 msgstr "_Abrir"
@@ -4068,20 +4065,20 @@ msgstr "Qualquer"
 msgid "Other Type…"
 msgstr "Outro tipo…"
 
-#: ../src/nautilus-query-editor.c:886
+#: ../src/nautilus-query-editor.c:888
 msgid "Remove this criterion from the search"
 msgstr "Remover este critério da pesquisa"
 
 #. create the Current/All Files selector
-#: ../src/nautilus-query-editor.c:968
+#: ../src/nautilus-query-editor.c:970
 msgid "Current"
 msgstr "Alterar"
 
-#: ../src/nautilus-query-editor.c:971
+#: ../src/nautilus-query-editor.c:973
 msgid "All Files"
 msgstr "Todos arquivos"
 
-#: ../src/nautilus-query-editor.c:993
+#: ../src/nautilus-query-editor.c:995
 msgid "Add a new criterion to this search"
 msgstr "Adicionar novo critério a esta pesquisa"
 
@@ -5064,31 +5061,31 @@ msgstr "Texto arrastado.txt"
 msgid "dropped data"
 msgstr "dados arrastados"
 
-#: ../src/nautilus-window.c:819
+#: ../src/nautilus-window.c:820
 msgid "_Properties"
 msgstr "_Propriedades"
 
-#: ../src/nautilus-window.c:827
+#: ../src/nautilus-window.c:829
 msgid "_Format…"
 msgstr "_Formatar…"
 
-#: ../src/nautilus-window.c:1176
+#: ../src/nautilus-window.c:1178
 msgid "_New Tab"
 msgstr "Nova a_ba"
 
-#: ../src/nautilus-window.c:1186 ../src/nautilus-window-menus.c:588
+#: ../src/nautilus-window.c:1188 ../src/nautilus-window-menus.c:588
 msgid "Move Tab _Left"
 msgstr "Mover aba para _esquerda"
 
-#: ../src/nautilus-window.c:1194 ../src/nautilus-window-menus.c:591
+#: ../src/nautilus-window.c:1196 ../src/nautilus-window-menus.c:591
 msgid "Move Tab _Right"
 msgstr "Mover aba para _direita"
 
-#: ../src/nautilus-window.c:1205
+#: ../src/nautilus-window.c:1207
 msgid "_Close Tab"
 msgstr "_Fechar aba"
 
-#: ../src/nautilus-window.c:2370
+#: ../src/nautilus-window.c:2372
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5100,7 +5097,7 @@ msgstr ""
 "Free Software Foundation; tanto a versão 2 da Licença ou (a sua escolha) "
 "qualquer versão posterior."
 
-#: ../src/nautilus-window.c:2374
+#: ../src/nautilus-window.c:2376
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5112,7 +5109,7 @@ msgstr ""
 "A UM PROPÓSITO EM PARTICULAR. Veja a Licença Pública Geral GNU (GNU GPL) "
 "para mais detalhes."
 
-#: ../src/nautilus-window.c:2378
+#: ../src/nautilus-window.c:2380
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5125,11 +5122,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2393
+#: ../src/nautilus-window.c:2395
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "Copyright © %Id–%Id Os autores do Nautilus"
 
-#: ../src/nautilus-window.c:2399
+#: ../src/nautilus-window.c:2401
 msgid "Access and organize your files."
 msgstr "Acesse e organize seus arquivos."
 
@@ -5137,7 +5134,7 @@ msgstr "Acesse e organize seus arquivos."
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2409
+#: ../src/nautilus-window.c:2411
 msgid "translator-credits"
 msgstr ""
 "Gustavo Maciel Dias Vieira <gdvieira@zaz.com.br>\n"
@@ -5259,12 +5256,6 @@ msgstr ""
 "Transfira facilmente arquivos para seus contatos e dispositivos do "
 "gerenciador de arquivo."
 
-#. name, stock id
-#. label, accelerator
-#: ../src/nautilus-window-menus.c:515
-msgid "_About"
-msgstr "_Sobre"
-
 #. tooltip
 #: ../src/nautilus-window-menus.c:516
 msgid "Display credits for the creators of Nautilus"
@@ -5310,7 +5301,7 @@ msgstr "Conecta a um computador remoto ou disco compartilhado"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:547 ../src/nautilus-window-menus.c:731
+#: ../src/nautilus-window-menus.c:547 ../src/nautilus-window-menus.c:730
 msgid "_Home"
 msgstr "_Início"
 
@@ -5358,6 +5349,11 @@ msgstr "_Avançar"
 #: ../src/nautilus-window-menus.c:568
 msgid "Go to the next visited location"
 msgstr "Vai para o próximo local visitado"
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:571
+msgid "Enter _Location…"
+msgstr "Digitar _local…"
 
 #: ../src/nautilus-window-menus.c:572
 msgid "Specify a location to open"
@@ -5440,7 +5436,7 @@ msgstr "Ver itens como um lista"
 msgid "View items as a grid of icons"
 msgstr "Ver itens como uma grade de ícones"
 
-#: ../src/nautilus-window-menus.c:728
+#: ../src/nautilus-window-menus.c:727
 msgid "_Up"
 msgstr "A_cima"
 
@@ -5561,6 +5557,9 @@ msgstr "Contém fotos e músicas"
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "Abrir com:"
+
+#~ msgid "_About Files"
+#~ msgstr "_Sobre Arquivos"
 
 #~ msgid "Input Methods"
 #~ msgstr "Métodos de entrada"
