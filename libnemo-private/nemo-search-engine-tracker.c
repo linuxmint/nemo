@@ -23,18 +23,10 @@
 
 #include <config.h>
 #include "nemo-search-engine-tracker.h"
-#include <gmodule.h>
 #include <string.h>
 #include <gio/gio.h>
 
 #include <libtracker-sparql/tracker-sparql.h>
-
-/* If defined, we use fts:match, this has to be enabled in Tracker to
- * work which it usually is. The alternative is to undefine it and
- * use filename matching instead. This doesn't use the content of the
- * file however.
- */
-#undef FTS_MATCHING
 
 struct NemoSearchEngineTrackerDetails {
 	TrackerSparqlConnection *connection;
@@ -55,28 +47,15 @@ finalize (GObject *object)
 
 	tracker = NEMO_SEARCH_ENGINE_TRACKER (object);
 
+	if (tracker->details->cancellable) {
+		g_cancellable_cancel (tracker->details->cancellable);
+		g_clear_object (&tracker->details->cancellable);
+	}
+
 	g_clear_object (&tracker->details->query);
-	g_clear_object (&tracker->details->cancellable);
 	g_clear_object (&tracker->details->connection);
 
 	G_OBJECT_CLASS (nemo_search_engine_tracker_parent_class)->finalize (object);
-}
-
-
-/* stolen from tracker sources, tracker.c */
-static void
-sparql_append_string_literal (GString     *sparql,
-                              const gchar *str)
-{
-	char *s;
-
-	s = tracker_sparql_escape_string (str);
-
-	g_string_append_c (sparql, '"');
-	g_string_append (sparql, s);
-	g_string_append_c (sparql, '"');
-
-	g_free (s);
 }
 
 static void cursor_callback (GObject      *object,
@@ -109,7 +88,7 @@ cursor_callback (GObject      *object,
 	cursor = TRACKER_SPARQL_CURSOR (object);
 	success = tracker_sparql_cursor_next_finish (cursor, result, &error);
 
-	if (error) {
+	if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
 		tracker->details->query_pending = FALSE;
 		nemo_search_engine_error (NEMO_SEARCH_ENGINE (tracker), error->message);
 		g_error_free (error);
@@ -117,6 +96,8 @@ cursor_callback (GObject      *object,
 
 		return;
 	}
+
+	g_clear_error (&error);
 
 	if (!success) {
 		tracker->details->query_pending = FALSE;
@@ -152,12 +133,14 @@ query_callback (GObject      *object,
 	                                                 result,
 	                                                 &error);
 
-	if (error) {
+	if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
 		tracker->details->query_pending = FALSE;
 		nemo_search_engine_error (NEMO_SEARCH_ENGINE (tracker), error->message);
 		g_error_free (error);
 		return;
 	}
+
+	g_clear_error (&error);
 
 	if (!cursor) {
 		tracker->details->query_pending = FALSE;
@@ -172,7 +155,7 @@ static void
 nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 {
 	NemoSearchEngineTracker *tracker;
-	gchar	*query_text, *search_text, *location_uri;
+	gchar	*query_text, *search_text, *location_uri, *downcase;
 	GString *sparql;
 	GList *mimetypes, *l;
 	gint mime_count;
@@ -187,20 +170,18 @@ nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 		return;
 	}
 
-	g_cancellable_reset (tracker->details->cancellable);
-
 	query_text = nemo_query_get_text (tracker->details->query);
-	search_text = g_utf8_strdown (query_text, -1);
+	downcase = g_utf8_strdown (query_text, -1);
+	search_text = tracker_sparql_escape_string (downcase);
 	g_free (query_text);
+	g_free (downcase);
 
 	location_uri = nemo_query_get_location (tracker->details->query);
 	mimetypes = nemo_query_get_mime_types (tracker->details->query);
 
 	mime_count = g_list_length (mimetypes);
 
-#ifdef FTS_MATCHING
-	/* Using FTS: */
-	sparql = g_string_new ("SELECT nie:url(?urn) "
+	sparql = g_string_new ("SELECT DISTINCT nie:url(?urn) "
 			       "WHERE {"
 			       "  ?urn a nfo:FileDataObject ;"
 			       "  tracker:available true ; ");
@@ -209,83 +190,35 @@ nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 		g_string_append (sparql, "nie:mimeType ?mime ;");
 	}
 
-	g_string_append (sparql, "  fts:match ");
-	sparql_append_string_literal (sparql, search_text);
-
-	if (location_uri || mime_count > 0) {
-		g_string_append (sparql, " . FILTER (");
+	g_string_append_printf (sparql, " fts:match '%s*'", search_text);
+	g_string_append (sparql, " . FILTER (");
 	
-		if (location_uri)  {
-			g_string_append (sparql, " fn:starts-with(nie:url(?urn),");
-			sparql_append_string_literal (sparql, location_uri);
-			g_string_append (sparql, ")");
-		}
-
-		if (mime_count > 0) {
-			if (location_uri) {
-				g_string_append (sparql, " && ");
-			}
-
-			g_string_append (sparql, "(");
-			for (l = mimetypes; l != NULL; l = l->next) {
-				if (l != mimetypes) {
-					g_string_append (sparql, " || ");
-				}
-
-				g_string_append (sparql, "?mime = ");
-				sparql_append_string_literal (sparql, l->data);
-			}
-			g_string_append (sparql, ")");
-		}
-
-		g_string_append (sparql, ")");
-	}
-
-	g_string_append (sparql, " } ORDER BY DESC(fts:rank(?urn)) ASC(nie:url(?urn))");
-#else  /* FTS_MATCHING */
-	/* Using filename matching: */
-	sparql = g_string_new ("SELECT nie:url(?urn) "
-			       "WHERE {"
-			       "  ?urn a nfo:FileDataObject ;");
-
-	if (mime_count > 0) {
-		g_string_append (sparql, "nie:mimeType ?mime ;");
-	}
-
-	g_string_append (sparql, "    tracker:available true ."
-			 "  FILTER (fn:contains(fn:lower-case(nfo:fileName(?urn)),");
-
-	sparql_append_string_literal (sparql, search_text);
-
-	g_string_append (sparql, ")");
-
 	if (location_uri)  {
-		g_string_append (sparql, " && fn:starts-with(nie:url(?urn),");
-		sparql_append_string_literal (sparql, location_uri);
-		g_string_append (sparql, ")");
+		g_string_append_printf (sparql, " fn:starts-with(nie:url(?urn), '%s')",
+					location_uri);
 	}
 
+	g_string_append_printf (sparql, " && fn:contains(fn:lower-case(nfo:fileName(?urn)), '%s')",
+				search_text);
+
 	if (mime_count > 0) {
-		g_string_append (sparql, " && ");
-		g_string_append (sparql, "(");
+		g_string_append (sparql, " && (");
+
 		for (l = mimetypes; l != NULL; l = l->next) {
 			if (l != mimetypes) {
 				g_string_append (sparql, " || ");
 			}
 
-			g_string_append (sparql, "?mime = ");
-			sparql_append_string_literal (sparql, l->data);
+			g_string_append_printf (sparql, "fn:contains(?mime, '%s')",
+						(gchar *) l->data);
 		}
 		g_string_append (sparql, ")");
 	}
 
-	g_string_append (sparql, ")");
+	g_string_append (sparql, ")}");
 
-
-	g_string_append (sparql, 
-			 "} ORDER BY DESC(nie:url(?urn)) DESC(nfo:fileName(?urn))");
-#endif /* FTS_MATCHING */
-
+	tracker->details->cancellable = g_cancellable_new ();
+	tracker->details->query_pending = TRUE;
 	tracker_sparql_connection_query_async (tracker->details->connection,
 					       sparql->str,
 					       tracker->details->cancellable,
@@ -293,14 +226,9 @@ nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 					       tracker);
 	g_string_free (sparql, TRUE);
 
-	tracker->details->query_pending = TRUE;
-
 	g_free (search_text);
 	g_free (location_uri);
-
-	if (mimetypes != NULL) {
-		g_list_free_full (mimetypes, g_free);
-	}
+	g_list_free_full (mimetypes, g_free);
 }
 
 static void
@@ -312,6 +240,7 @@ nemo_search_engine_tracker_stop (NemoSearchEngine *engine)
 	
 	if (tracker->details->query && tracker->details->query_pending) {
 		g_cancellable_cancel (tracker->details->cancellable);
+		g_clear_object (&tracker->details->cancellable);
 		tracker->details->query_pending = FALSE;
 	}
 }
@@ -376,7 +305,6 @@ nemo_search_engine_tracker_new (void)
 
 	engine = g_object_new (NEMO_TYPE_SEARCH_ENGINE_TRACKER, NULL);
 	engine->details->connection = connection;
-	engine->details->cancellable = g_cancellable_new ();
 
 	return NEMO_SEARCH_ENGINE (engine);
 }

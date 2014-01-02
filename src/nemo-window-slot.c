@@ -64,6 +64,8 @@ sync_search_directory (NemoWindowSlot *slot)
 {
 	NemoDirectory *directory;
 	NemoQuery *query;
+	gchar *text;
+	GFile *location;
 
 	g_assert (NEMO_IS_FILE (slot->viewed_file));
 
@@ -71,11 +73,21 @@ sync_search_directory (NemoWindowSlot *slot)
 	g_assert (NEMO_IS_SEARCH_DIRECTORY (directory));
 
 	query = nemo_query_editor_get_query (slot->query_editor);
-	nemo_search_directory_set_query (NEMO_SEARCH_DIRECTORY (directory),
-					     query);
-	g_object_unref (query);
-	nemo_window_slot_reload (slot);
+	text = nemo_query_get_text (query);
 
+	if (!strlen (text)) {
+		location = nemo_query_editor_get_location (slot->query_editor);
+		slot->load_with_search = TRUE;
+		nemo_window_slot_open_location (slot, location, 0);
+		g_object_unref (location);
+	} else {
+		nemo_search_directory_set_query (NEMO_SEARCH_DIRECTORY (directory),
+						     query);
+		nemo_window_slot_reload (slot);
+	}
+
+	g_free (text);
+	g_object_unref (query);
 	nemo_directory_unref (directory);
 }
 

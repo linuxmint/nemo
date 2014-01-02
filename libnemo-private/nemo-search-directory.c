@@ -604,8 +604,7 @@ search_force_reload (NemoDirectory *directory)
 	
 	if (search->details->search_running) {
 		nemo_search_engine_stop (search->details->engine);
-		nemo_search_engine_set_query (search->details->engine, search->details->query);
-		nemo_search_engine_start (search->details->engine);
+		search->details->search_running = FALSE;
 	}
 }
 

@@ -950,19 +950,20 @@ toggle_toolbar_search_button (NemoWindowPane *pane,
 void
 nemo_window_pane_sync_search_widgets (NemoWindowPane *pane)
 {
-	NemoWindowSlot *slot;
 	NemoDirectory *directory;
 	NemoSearchDirectory *search_directory;
+    NemoWindowSlot *slot;
 
-	slot = pane->active_slot;
 	search_directory = NULL;
+    slot = pane->active_slot;
 
 	directory = nemo_directory_get (slot->location);
 	if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
 		search_directory = NEMO_SEARCH_DIRECTORY (directory);
 	}
 
-	if (search_directory != NULL) {
+    if (search_directory != NULL || slot->load_with_search) {
+        slot->load_with_search = FALSE;
 		toggle_toolbar_search_button (pane, TRUE);
 	} else {
 	    toggle_toolbar_search_button (pane, FALSE);
