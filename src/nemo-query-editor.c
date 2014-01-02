@@ -582,7 +582,8 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 		dialog = gtk_dialog_new_with_buttons (_("Select type"),
 						      GTK_WINDOW (toplevel),
 						      0,
-						      GTK_STOCK_OK, GTK_RESPONSE_OK,
+						      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						      _("Select"), GTK_RESPONSE_OK,
 						      NULL);
 		gtk_window_set_default_size (GTK_WINDOW (dialog), 400, 600);
 			

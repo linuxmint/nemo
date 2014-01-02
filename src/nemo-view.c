@@ -6909,6 +6909,40 @@ on_destination_dialog_response (GtkDialog *dialog,
 	gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
+static gboolean
+destination_dialog_filter_cb (const GtkFileFilterInfo *filter_info,
+			      gpointer                 user_data)
+{
+	GList *selection = user_data;
+	GList *l;
+
+	for (l = selection; l != NULL; l = l->next) {
+		char *uri;
+		uri = nemo_file_get_uri (l->data);
+		if (strcmp (uri, filter_info->uri) == 0) {
+			g_free (uri);
+			return FALSE;
+		}
+		g_free (uri);
+	}
+
+	return TRUE;
+}
+
+static GList *
+get_selected_folders (GList *selection)
+{
+	GList *folders;
+	GList *l;
+
+	folders = NULL;
+	for (l = selection; l != NULL; l = l->next) {
+		if (nemo_file_is_directory (l->data))
+			folders = g_list_prepend (folders, nemo_file_ref (l->data));
+	}
+	return g_list_reverse (folders);
+}
+
 static void
 add_window_location_bookmarks (CopyCallbackData *data)
 {
@@ -6962,6 +6996,21 @@ copy_or_move_selection (NemoView *view,
 	copy_data->locations = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
 	add_window_location_bookmarks (copy_data);
+
+	if (selection != NULL) {
+		GtkFileFilter *filter;
+		GList *folders;
+
+		folders = get_selected_folders (selection);
+
+		filter = gtk_file_filter_new ();
+		gtk_file_filter_add_custom (filter,
+					    GTK_FILE_FILTER_URI,
+					    destination_dialog_filter_cb,
+					    folders,
+					    (GDestroyNotify)nemo_file_list_free);
+		gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dialog), filter);
+	}
 
 	uri = nemo_directory_get_uri (view->details->model);
 	gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dialog), uri);
