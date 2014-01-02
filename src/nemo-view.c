@@ -250,7 +250,8 @@ struct NemoViewDetails
 	gboolean menu_states_untrustworthy;
 	gboolean scripts_invalid;
 	gboolean templates_invalid;
-    gboolean actions_invalid;
+	gboolean templates_present;
+	gboolean actions_invalid;
 	gboolean reported_load_error;
 
 	/* flag to indicate that no file updates should be dispatched to subclasses.
@@ -6603,6 +6604,7 @@ update_templates_menu (NemoView *view)
 
 	action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_NO_TEMPLATES);
 	gtk_action_set_visible (action, !any_templates);
+        view->details->templates_present = any_templates;
 
 	g_free (templates_directory_uri);
 }
@@ -10096,14 +10098,15 @@ real_update_menus (NemoView *view)
 		update_scripts_menu (view);
 	}
 
+	if (can_create_files
+	    && !selection_contains_recent
+	    && view->details->templates_invalid) {
+		update_templates_menu (view);
+	}
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_DOCUMENTS);
 	gtk_action_set_sensitive (action, can_create_files);
 	gtk_action_set_visible (action, !selection_contains_recent);
-
-	if (can_create_files && view->details->templates_invalid) {
-		update_templates_menu (view);
-	}
 
     if (view->details->actions_invalid) {
         update_actions_menu (view);
