@@ -2217,10 +2217,12 @@ create_and_set_up_tree_view (NemoListView *view)
 			
 			cell = gtk_cell_renderer_text_new ();
 			view->details->file_name_cell = (GtkCellRendererText *)cell;
-            g_object_set (cell,
-                          "xpad", 5,
-                          "ellipsize", PANGO_ELLIPSIZE_END,
-                          NULL);
+			g_object_set (cell,
+				      "ellipsize", PANGO_ELLIPSIZE_END,
+				      "single-paragraph-mode", TRUE,
+				      "xpad", 5,
+				      NULL);
+
 			g_signal_connect (cell, "edited", G_CALLBACK (cell_renderer_edited), view);
 			g_signal_connect (cell, "editing-canceled", G_CALLBACK (cell_renderer_editing_canceled), view);
 			g_signal_connect (cell, "editing-started", G_CALLBACK (cell_renderer_editing_started_cb), view);
@@ -2231,28 +2233,25 @@ create_and_set_up_tree_view (NemoListView *view)
 								 view, NULL);
 		} else {
 			cell = gtk_cell_renderer_text_new ();
-            g_object_set (cell,
-                          "xalign", xalign,
-                          "xpad", 5,
-                          NULL);
+			g_object_set (cell,
+				      "xalign", xalign,
+				      "xpad", 5,
+				      NULL);
 			view->details->cells = g_list_append (view->details->cells,
 							      cell);
 			column = gtk_tree_view_column_new_with_attributes (label,
 									   cell,
 									   "text", column_num,
 									   NULL);
-            gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
-            gtk_tree_view_column_set_min_width (column, 10);
-            g_object_ref_sink (column);
+			g_object_ref_sink (column);
 			gtk_tree_view_column_set_sort_column_id (column, column_num);
 			g_hash_table_insert (view->details->columns, 
 					     g_strdup (name), 
 					     column);
 
 			gtk_tree_view_column_set_resizable (column, TRUE);
-            gtk_tree_view_column_set_visible (column, TRUE);
-            gtk_tree_view_column_set_reorderable (column, TRUE);
-            gtk_tree_view_column_set_expand (column, TRUE);
+			gtk_tree_view_column_set_visible (column, TRUE);
+			gtk_tree_view_column_set_reorderable (column, TRUE);
 		}
 		g_free (name);
 		g_free (label);

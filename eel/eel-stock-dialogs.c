@@ -380,6 +380,8 @@ create_message_dialog (const char *primary_text,
 					 type,
 					 buttons_type,
 					 NULL);
+	if (parent)
+		gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
 
 	g_object_set (dialog,
 		      "text", primary_text,
