@@ -3875,7 +3875,6 @@ nemo_places_sidebar_dispose (GObject *object)
 	}
 
 	g_clear_object (&sidebar->store);
-	g_clear_object (&sidebar->bookmarks);
 
     g_clear_object (&sidebar->action_manager);
 
@@ -3936,12 +3935,13 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 					   NemoWindow *window)
 {
 	NemoWindowSlot *slot;
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
 
 	sidebar->window = window;
 
 	slot = nemo_window_get_active_slot (window);
 
-	sidebar->bookmarks = nemo_bookmark_list_new ();
+	sidebar->bookmarks = nemo_application_get_bookmarks (app);
 	sidebar->uri = nemo_window_slot_get_current_uri (slot);
 
 	sidebar->bookmarks_changed_id =

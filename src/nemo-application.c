@@ -34,6 +34,7 @@
 #include "nemo-empty-view.h"
 #endif /* ENABLE_EMPTY_VIEW */
 
+#include "nemo-bookmarks-window.h"
 #include "nemo-desktop-icon-view.h"
 #include "nemo-desktop-window.h"
 #include "nemo-freedesktop-dbus.h"
@@ -44,7 +45,6 @@
 #include "nemo-progress-ui-handler.h"
 #include "nemo-self-check-functions.h"
 #include "nemo-window.h"
-#include "nemo-window-bookmarks.h"
 #include "nemo-window-manage-views.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
@@ -111,7 +111,37 @@ struct _NemoApplicationPriv {
 #if GLIB_CHECK_VERSION (2,34,0)
 	NotifyNotification *unmount_notify;
 #endif
+
+	GtkWidget *bookmarks_window;
+	NemoBookmarkList *bookmark_list;
 };
+
+NemoBookmarkList *
+nemo_application_get_bookmarks (NemoApplication *application)
+{
+	return application->priv->bookmark_list;
+}
+
+void
+nemo_application_edit_bookmarks (NemoApplication *application,
+				     NemoWindow      *window)
+{
+	GtkWindow *bookmarks_window;
+
+	bookmarks_window = GTK_WINDOW (application->priv->bookmarks_window);
+
+	if (bookmarks_window == NULL) {
+		bookmarks_window = nemo_bookmarks_window_new (window, application->priv->bookmark_list);
+		application->priv->bookmarks_window = GTK_WIDGET (bookmarks_window);
+
+		g_object_add_weak_pointer (G_OBJECT (bookmarks_window),
+					   (gpointer *) &application->priv->bookmarks_window);
+	}
+
+	gtk_window_set_transient_for (bookmarks_window, GTK_WINDOW (window));
+	gtk_window_set_screen (bookmarks_window, gtk_window_get_screen (GTK_WINDOW (window)));
+	gtk_window_present (bookmarks_window);
+}
 
 #if GLIB_CHECK_VERSION (2,34,0)
 void
@@ -700,6 +730,7 @@ nemo_application_finalize (GObject *object)
 
 	g_clear_object (&application->priv->volume_monitor);
 	g_clear_object (&application->priv->progress_handler);
+	g_clear_object (&application->priv->bookmark_list);
 
 	g_free (application->priv->geometry);
 
@@ -1282,6 +1313,8 @@ nemo_application_startup (GApplication *app)
 
     g_signal_connect_swapped (nemo_window_state, "changed::" NEMO_WINDOW_STATE_START_WITH_MENU_BAR,
                               G_CALLBACK (menu_state_changed_callback), self);
+
+	self->priv->bookmark_list = nemo_bookmark_list_new ();
 
 	/* Check the user's ~/.nemo directories and post warnings
 	 * if there are problems.

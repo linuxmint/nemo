@@ -37,7 +37,6 @@
 #include "nemo-navigation-action.h"
 #include "nemo-notebook.h"
 #include "nemo-window-manage-views.h"
-#include "nemo-window-bookmarks.h"
 #include "nemo-window-private.h"
 #include "nemo-desktop-window.h"
 #include "nemo-location-bar.h"
@@ -665,14 +664,27 @@ static void
 action_add_bookmark_callback (GtkAction *action,
 			      gpointer user_data)
 {
-        nemo_window_add_bookmark_for_current_location (NEMO_WINDOW (user_data));
+	NemoWindow *window = user_data;
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+	NemoBookmark *bookmark;
+	NemoWindowSlot *slot;
+	NemoBookmarkList *list;
+
+	slot = nemo_window_get_active_slot (window);
+	bookmark = slot->current_location_bookmark;
+	list = nemo_application_get_bookmarks (app);
+
+	if (!nemo_bookmark_list_contains (list, bookmark)) {
+		nemo_bookmark_list_append (list, bookmark);
+	}
 }
 
 static void
 action_edit_bookmarks_callback (GtkAction *action, 
 				gpointer user_data)
 {
-        nemo_window_edit_bookmarks (NEMO_WINDOW (user_data));
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+	nemo_application_edit_bookmarks (app, NEMO_WINDOW (user_data));
 }
 
 static void

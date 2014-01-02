@@ -28,6 +28,7 @@
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 
+#include "nemo-bookmark-list.h"
 #include "nemo-window.h"
 
 #define NEMO_DESKTOP_ICON_VIEW_IID	"OAFIID:Nemo_File_Manager_Desktop_Icon_View"
@@ -82,5 +83,10 @@ void nemo_application_notify_unmount_show (NemoApplication *application,
 void nemo_application_notify_unmount_done (NemoApplication *application,
 					       const gchar *message);
 #endif // GLIB_CHECK_VERSION (2,34,0)
+
+NemoBookmarkList *
+     nemo_application_get_bookmarks  (NemoApplication *application);
+void nemo_application_edit_bookmarks (NemoApplication *application,
+					  NemoWindow      *window);
 
 #endif /* __NEMO_APPLICATION_H__ */
