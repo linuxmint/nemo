@@ -138,6 +138,8 @@ query_editor_changed_callback (NemoQueryEditor *editor,
 		   indicate the directory needs to be sync'd with the
 		   current query. */
 		create_new_search (slot);
+		/* Focus is now on the new slot, move it back to query_editor */
+		gtk_widget_grab_focus (GTK_WIDGET (slot->query_editor));
 	} else {
 		sync_search_directory (slot);
 	}
