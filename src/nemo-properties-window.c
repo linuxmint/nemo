@@ -4519,7 +4519,7 @@ create_permissions_page (NemoPropertiesWindow *window)
 	
 #ifdef HAVE_SELINUX
 		append_title_value_pair
-			(window, page_grid, _("SELinux context:"), 
+			(window, page_grid, _("Security context:"), 
 			 "selinux_context", INCONSISTENT_STATE_STRING,
 			 FALSE);
 #endif

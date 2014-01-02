@@ -10995,7 +10995,8 @@ window_slots_changed (NemoWindow *window,
 	 * notebook, since when the notebook has tabs, it will draw its own
 	 * border.
 	 */
-	if (slot_count > 1) {
+	if (slot_count > 1 ||
+	    NEMO_IS_DESKTOP_ICON_VIEW (view)) {
 		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_NONE);
 	} else {
 		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_IN);

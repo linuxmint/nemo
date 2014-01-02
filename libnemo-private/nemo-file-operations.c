@@ -2354,13 +2354,16 @@ volume_mount_cb (GObject *source_object,
 	if (!g_volume_mount_finish (G_VOLUME (source_object), res, &error)) {
 		if (error->code != G_IO_ERROR_FAILED_HANDLED &&
                     error->code != G_IO_ERROR_ALREADY_MOUNTED) {
+			GtkWindow *parent;
+
+			parent = gtk_mount_operation_get_parent (GTK_MOUNT_OPERATION (mount_op));
 			name = g_volume_get_name (G_VOLUME (source_object));
-			primary = g_strdup_printf (_("Unable to mount %s"), name);
+			primary = g_strdup_printf (_("Unable to access %s"), name);
 			g_free (name);
 			success = FALSE;
 			eel_show_error_dialog (primary,
 					       error->message,
-					       NULL);
+					       parent);
 			g_free (primary);
 		}
 		g_error_free (error);

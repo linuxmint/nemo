@@ -5817,15 +5817,16 @@ nemo_file_get_owner_as_string (NemoFile *file, gboolean include_real_name)
 		return NULL;
 	}
 
-	if (file->details->owner_real == NULL) {
+	if (file->details->uid == getuid ()) {
+		/* Translators: "me" is used to indicate the file is owned by me (the current user) */
+		user_name = g_strdup (_("me"));
+	} else if (file->details->owner_real == NULL) {
 		user_name = g_strdup (eel_ref_str_peek (file->details->owner));
 	} else if (file->details->owner == NULL) {
 		user_name = g_strdup (eel_ref_str_peek (file->details->owner_real));
 	} else if (include_real_name &&
 		   strcmp (eel_ref_str_peek (file->details->owner), eel_ref_str_peek (file->details->owner_real)) != 0) {
-		user_name = g_strdup_printf ("%s - %s",
-					     eel_ref_str_peek (file->details->owner),
-					     eel_ref_str_peek (file->details->owner_real));
+		user_name = g_strdup (eel_ref_str_peek (file->details->owner_real));
 	} else {
 		user_name = g_strdup (eel_ref_str_peek (file->details->owner));
 	}
@@ -7820,17 +7821,21 @@ nemo_file_list_from_uris (GList *uri_list)
 
 static gboolean
 get_attributes_for_default_sort_type (NemoFile *file,
+				      gboolean *is_recent,
 				      gboolean *is_download,
 				      gboolean *is_trash)
 {
-	gboolean is_download_dir, is_desktop_dir, is_trash_dir, retval;
+	gboolean is_recent_dir, is_download_dir, is_desktop_dir, is_trash_dir, retval;
 
+	*is_recent = FALSE;
 	*is_download = FALSE;
 	*is_trash = FALSE;
 	retval = FALSE;
 
 	/* special handling for certain directories */
 	if (file && nemo_file_is_directory (file)) {
+		is_recent_dir =
+			nemo_file_is_in_recent (file);
 		is_download_dir =
 			nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_DOWNLOAD);
 		is_desktop_dir =
@@ -7844,6 +7849,9 @@ get_attributes_for_default_sort_type (NemoFile *file,
 		} else if (is_trash_dir) {
 			*is_trash = TRUE;
 			retval = TRUE;
+		} else if (is_recent_dir) {
+			*is_recent = TRUE;
+			retval = TRUE;
 		}
 	}
 
@@ -7855,14 +7863,14 @@ nemo_file_get_default_sort_type (NemoFile *file,
 				     gboolean *reversed)
 {
 	NemoFileSortType retval;
-	gboolean is_download, is_trash, res;
+	gboolean is_recent, is_download, is_trash, res;
 
 	retval = NEMO_FILE_SORT_NONE;
-	is_download = is_trash = FALSE;
-	res = get_attributes_for_default_sort_type (file, &is_download, &is_trash);
+	is_recent = is_download = is_trash = FALSE;
+	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash);
 
 	if (res) {
-		if (is_download) {
+		if (is_recent || is_download) {
 			retval = NEMO_FILE_SORT_BY_MTIME;
 		} else if (is_trash) {
 			retval = NEMO_FILE_SORT_BY_TRASHED_TIME;
@@ -7881,14 +7889,14 @@ nemo_file_get_default_sort_attribute (NemoFile *file,
 					  gboolean *reversed)
 {
 	const gchar *retval;
-	gboolean is_download, is_trash, res;
+	gboolean is_recent, is_download, is_trash, res;
 
 	retval = NULL;
 	is_download = is_trash = FALSE;
-	res = get_attributes_for_default_sort_type (file, &is_download, &is_trash);
+	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash);
 
 	if (res) {
-		if (is_download) {
+		if (is_recent || is_download) {
 			retval = g_quark_to_string (attribute_date_modified_q);
 		} else if (is_trash) {
 			retval = g_quark_to_string (attribute_trashed_on_q);

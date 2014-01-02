@@ -172,7 +172,7 @@ static void
 nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 {
 	NemoSearchEngineTracker *tracker;
-	gchar	*search_text, *location_uri;
+	gchar	*query_text, *search_text, *location_uri;
 	GString *sparql;
 	GList *mimetypes, *l;
 	gint mime_count;
@@ -189,7 +189,10 @@ nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 
 	g_cancellable_reset (tracker->details->cancellable);
 
-	search_text = nemo_query_get_text (tracker->details->query);
+	query_text = nemo_query_get_text (tracker->details->query);
+	search_text = g_utf8_strdown (query_text, -1);
+	g_free (query_text);
+
 	location_uri = nemo_query_get_location (tracker->details->query);
 	mimetypes = nemo_query_get_mime_types (tracker->details->query);
 
@@ -250,7 +253,7 @@ nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 	}
 
 	g_string_append (sparql, "    tracker:available true ."
-			 "  FILTER (fn:contains(nfo:fileName(?urn),");
+			 "  FILTER (fn:contains(fn:lower-case(nfo:fileName(?urn)),");
 
 	sparql_append_string_literal (sparql, search_text);
 

@@ -31,6 +31,22 @@
 #include <libnemo-extension/nemo-column-provider.h>
 #include <libnemo-private/nemo-module.h>
 
+static const char *default_column_order[] = {
+	"name",
+	"size",
+	"type",
+	"date_modified",
+	"date_accessed",
+	"owner",
+	"group",
+	"permissions",
+	"octal_permissions",
+	"mime_type",
+	"selinux_context",
+	"where",
+	NULL
+};
+
 static GList *
 get_builtin_columns (void)
 {
@@ -274,35 +290,51 @@ column_compare (NemoColumn *a, NemoColumn *b, char **column_order)
 {
 	int index_a;
 	int index_b;
-	char *name;
-	
-	g_object_get (G_OBJECT (a), "name", &name, NULL);
-	index_a = strv_index (column_order, name);
-	g_free (name);
+	char *name_a;
+	char *name_b;
+	int ret;
 
-	g_object_get (G_OBJECT (b), "name", &name, NULL);
-	index_b = strv_index (column_order, name);
-	g_free (name);
+	g_object_get (G_OBJECT (a), "name", &name_a, NULL);
+	index_a = strv_index (column_order, name_a);
+
+	g_object_get (G_OBJECT (b), "name", &name_b, NULL);
+	index_b = strv_index (column_order, name_b);
 
 	if (index_a == index_b) {
-		int ret;
-		char *label_a;
-		char *label_b;
+		int pos_a;
+		int pos_b;
+
+		pos_a = strv_index ((char **)default_column_order, name_a);
+		pos_b = strv_index ((char **)default_column_order, name_b);
+
+		if (pos_a == pos_b) {
+			char *label_a;
+			char *label_b;
 		
-		g_object_get (G_OBJECT (a), "label", &label_a, NULL);
-		g_object_get (G_OBJECT (b), "label", &label_b, NULL);
-		ret = strcmp (label_a, label_b);
-		g_free (label_a);
-		g_free (label_b);
-		
-		return ret;
+			g_object_get (G_OBJECT (a), "label", &label_a, NULL);
+			g_object_get (G_OBJECT (b), "label", &label_b, NULL);
+			ret = strcmp (label_a, label_b);
+			g_free (label_a);
+			g_free (label_b);
+		} else if (pos_a == -1) {
+			ret = 1;
+		} else if (pos_b == -1) {
+			ret = -1;
+		} else {
+			ret = index_a - index_b;
+		}
 	} else if (index_a == -1) {
-		return 1;
+		ret = 1;
 	} else if (index_b == -1) {
-		return -1;
+		ret = -1;
 	} else {
-		return index_a - index_b;
+		ret = index_a - index_b;
 	}
+
+	g_free (name_a);
+	g_free (name_b);
+
+	return ret;
 }
 
 GList *
