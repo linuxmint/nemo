@@ -23,6 +23,7 @@
  */
 
 #include <config.h>
+#include <gtk/gtk.h>
 #include "nemo-column.h"
 #include "nemo-extension-i18n.h"
 
@@ -34,6 +35,7 @@ enum {
 	PROP_LABEL,
 	PROP_DESCRIPTION,
 	PROP_XALIGN,
+	PROP_DEFAULT_SORT_ORDER,
 	LAST_PROP
 };
 
@@ -43,6 +45,7 @@ struct _NemoColumnDetails {
 	char *label;
 	char *description;
 	float xalign;
+	GtkSortType default_sort_order;
 };
 
 G_DEFINE_TYPE (NemoColumn, nemo_column, G_TYPE_OBJECT);
@@ -110,6 +113,9 @@ nemo_column_get_property (GObject *object,
 	case PROP_XALIGN :
 		g_value_set_float (value, column->details->xalign);
 		break;
+	case PROP_DEFAULT_SORT_ORDER :
+		g_value_set_enum (value, column->details->default_sort_order);
+		break;
 	default :
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -150,6 +156,10 @@ nemo_column_set_property (GObject *object,
 	case PROP_XALIGN :
 		column->details->xalign = g_value_get_float (value);
 		g_object_notify (object, "xalign");		
+		break;
+	case PROP_DEFAULT_SORT_ORDER :
+		column->details->default_sort_order = g_value_get_enum (value);
+		g_object_notify (object, "default-sort-order");
 		break;
 	default :
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -232,5 +242,13 @@ nemo_column_class_init (NemoColumnClass *class)
 							     1.0,
 							     0.0,
 							     G_PARAM_READWRITE));
+	g_object_class_install_property (G_OBJECT_CLASS (class),
+					 PROP_DEFAULT_SORT_ORDER,
+					 g_param_spec_enum ("default-sort-order",
+							    "Default sort order",
+							    "Default sort order",
+							    GTK_TYPE_SORT_TYPE,
+							    GTK_SORT_ASCENDING,
+							    G_PARAM_READWRITE));
 }
 

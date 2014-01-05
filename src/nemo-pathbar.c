@@ -1888,6 +1888,7 @@ make_directory_button (NemoPathBar  *path_bar,
 
 	if (button_data->label != NULL) {
 		gtk_label_set_ellipsize (GTK_LABEL (button_data->label), PANGO_ELLIPSIZE_MIDDLE);
+		gtk_label_set_single_line_mode (GTK_LABEL (button_data->label), TRUE);
 	}
 
 	if (button_data->path == NULL) {

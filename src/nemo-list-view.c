@@ -1995,13 +1995,16 @@ create_and_set_up_tree_view (NemoListView *view)
 		char *name;
 		char *label;
 		float xalign;
+		GtkSortType sort_order;
 
 		nemo_column = NEMO_COLUMN (l->data);
 
 		g_object_get (nemo_column, 
 			      "name", &name, 
 			      "label", &label,
-			      "xalign", &xalign, NULL);
+			      "xalign", &xalign,
+			      "default-sort-order", &sort_order,
+			      NULL);
 
 		column_num = nemo_list_model_add_column (view->details->model,
 						       nemo_column);
@@ -2014,7 +2017,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			view->details->pixbuf_cell = (GtkCellRendererPixbuf *)cell;
 			
 			view->details->file_name_column = gtk_tree_view_column_new ();
-            g_object_ref_sink (view->details->file_name_column);
+			g_object_ref_sink (view->details->file_name_column);
 			view->details->file_name_column_num = column_num;
 			
 			g_hash_table_insert (view->details->columns,
@@ -2028,7 +2031,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_resizable (view->details->file_name_column, TRUE);
             gtk_tree_view_column_set_reorderable (view->details->file_name_column, TRUE);
 
-            gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
+			gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
 
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
 			gtk_tree_view_column_set_attributes (view->details->file_name_column,
@@ -2072,6 +2075,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_resizable (column, TRUE);
 			gtk_tree_view_column_set_visible (column, TRUE);
 			gtk_tree_view_column_set_reorderable (column, TRUE);
+			gtk_tree_view_column_set_sort_order (column, sort_order);
 		}
 		g_free (name);
 		g_free (label);

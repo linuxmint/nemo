@@ -87,6 +87,7 @@ get_builtin_columns (void)
 					       "attribute", "date_modified",
 					       "label", _("Modified"),
 					       "description", _("The date the file was modified."),
+					       "default-sort-order", GTK_SORT_DESCENDING,
 					       NULL));
 
 	columns = g_list_append (columns,
@@ -95,6 +96,7 @@ get_builtin_columns (void)
 					       "attribute", "date_accessed",
 					       "label", _("Accessed"),
 					       "description", _("The date the file was accessed."),
+					       "default-sort-order", GTK_SORT_DESCENDING,
 					       NULL));
 
 	columns = g_list_append (columns,
