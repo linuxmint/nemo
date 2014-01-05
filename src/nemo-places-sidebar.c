@@ -680,16 +680,20 @@ recent_is_supported (void)
             return FALSE;
     }
 
-    const char * const *supported;
-    int i;
+	const char * const *supported;
+	int i;
 
-    supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
-    for (i = 0; supported[i] != NULL; i++) {
-       if (strcmp ("recent", supported[i]) == 0) {
-           return TRUE;
-       }
-    }
-    return FALSE;
+	supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
+	if (!supported) {
+		return FALSE;
+	}
+
+	for (i = 0; supported[i] != NULL; i++) {
+		if (strcmp ("recent", supported[i]) == 0) {
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
 static GIcon *
