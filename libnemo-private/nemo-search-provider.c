@@ -19,7 +19,7 @@
  */
 
 #include <config.h>
-#include "nautilus-search-provider.h"
+#include "nemo-search-provider.h"
 
 #include <glib-object.h>
 
@@ -33,17 +33,17 @@ enum {
 
 static guint signals[LAST_SIGNAL];
 
-static void nautilus_search_provider_base_init (gpointer g_iface);
+static void nemo_search_provider_base_init (gpointer g_iface);
 
 GType
-nautilus_search_provider_get_type (void)
+nemo_search_provider_get_type (void)
 {
 	static GType search_provider_type = 0;
 
 	if (!search_provider_type) {
 		const GTypeInfo search_provider_info = {
-			sizeof (NautilusSearchProviderIface), /* class_size */
-			nautilus_search_provider_base_init,   /* base_init */
+			sizeof (NemoSearchProviderIface), /* class_size */
+			nemo_search_provider_base_init,   /* base_init */
 			NULL,           /* base_finalize */
 			NULL,
 			NULL,           /* class_finalize */
@@ -54,7 +54,7 @@ nautilus_search_provider_get_type (void)
 		};
 
 		search_provider_type = g_type_register_static (G_TYPE_INTERFACE,
-							       "NautilusSearchProvider",
+							       "NemoSearchProvider",
 							       &search_provider_info,
 							       0);
 
@@ -65,7 +65,7 @@ nautilus_search_provider_get_type (void)
 }
 
 static void
-nautilus_search_provider_base_init (gpointer g_iface)
+nemo_search_provider_base_init (gpointer g_iface)
 {
 	static gboolean initialized = FALSE;
 
@@ -74,34 +74,34 @@ nautilus_search_provider_base_init (gpointer g_iface)
 	}
 
 	signals[HITS_ADDED] = g_signal_new ("hits-added",
-					    NAUTILUS_TYPE_SEARCH_PROVIDER,
+					    NEMO_TYPE_SEARCH_PROVIDER,
 					    G_SIGNAL_RUN_LAST,
-					    G_STRUCT_OFFSET (NautilusSearchProviderIface, hits_added),
+					    G_STRUCT_OFFSET (NemoSearchProviderIface, hits_added),
 					    NULL, NULL,
 					    g_cclosure_marshal_VOID__POINTER,
 					    G_TYPE_NONE, 1,
 					    G_TYPE_POINTER);
 	signals[HITS_SUBTRACTED] = g_signal_new ("hits-subtracted",
-						 NAUTILUS_TYPE_SEARCH_PROVIDER,
+						 NEMO_TYPE_SEARCH_PROVIDER,
 						 G_SIGNAL_RUN_LAST,
-						 G_STRUCT_OFFSET (NautilusSearchProviderIface, hits_subtracted),
+						 G_STRUCT_OFFSET (NemoSearchProviderIface, hits_subtracted),
 						 NULL, NULL,
 						 g_cclosure_marshal_VOID__POINTER,
 						 G_TYPE_NONE, 1,
 						 G_TYPE_POINTER);
 
 	signals[FINISHED] = g_signal_new ("finished",
-					  NAUTILUS_TYPE_SEARCH_PROVIDER,
+					  NEMO_TYPE_SEARCH_PROVIDER,
 					  G_SIGNAL_RUN_LAST,
-					  G_STRUCT_OFFSET (NautilusSearchProviderIface, finished),
+					  G_STRUCT_OFFSET (NemoSearchProviderIface, finished),
 					  NULL, NULL,
 					  g_cclosure_marshal_VOID__VOID,
 					  G_TYPE_NONE, 0);
 
 	signals[ERROR] = g_signal_new ("error",
-				       NAUTILUS_TYPE_SEARCH_PROVIDER,
+				       NEMO_TYPE_SEARCH_PROVIDER,
 				       G_SIGNAL_RUN_LAST,
-				       G_STRUCT_OFFSET (NautilusSearchProviderIface, error),
+				       G_STRUCT_OFFSET (NemoSearchProviderIface, error),
 				       NULL, NULL,
 				       g_cclosure_marshal_VOID__STRING,
 				       G_TYPE_NONE, 1,
@@ -111,60 +111,60 @@ nautilus_search_provider_base_init (gpointer g_iface)
 }
 
 void
-nautilus_search_provider_set_query (NautilusSearchProvider *provider, NautilusQuery *query)
+nemo_search_provider_set_query (NemoSearchProvider *provider, NemoQuery *query)
 {
-	g_return_if_fail (NAUTILUS_IS_SEARCH_PROVIDER (provider));
-	g_return_if_fail (NAUTILUS_SEARCH_PROVIDER_GET_IFACE (provider)->set_query != NULL);
+	g_return_if_fail (NEMO_IS_SEARCH_PROVIDER (provider));
+	g_return_if_fail (NEMO_SEARCH_PROVIDER_GET_IFACE (provider)->set_query != NULL);
 
-	NAUTILUS_SEARCH_PROVIDER_GET_IFACE (provider)->set_query (provider, query);
+	NEMO_SEARCH_PROVIDER_GET_IFACE (provider)->set_query (provider, query);
 }
 
 void
-nautilus_search_provider_start (NautilusSearchProvider *provider)
+nemo_search_provider_start (NemoSearchProvider *provider)
 {
-	g_return_if_fail (NAUTILUS_IS_SEARCH_PROVIDER (provider));
-	g_return_if_fail (NAUTILUS_SEARCH_PROVIDER_GET_IFACE (provider)->start != NULL);
+	g_return_if_fail (NEMO_IS_SEARCH_PROVIDER (provider));
+	g_return_if_fail (NEMO_SEARCH_PROVIDER_GET_IFACE (provider)->start != NULL);
 
-	NAUTILUS_SEARCH_PROVIDER_GET_IFACE (provider)->start (provider);
+	NEMO_SEARCH_PROVIDER_GET_IFACE (provider)->start (provider);
 }
 
 void
-nautilus_search_provider_stop (NautilusSearchProvider *provider)
+nemo_search_provider_stop (NemoSearchProvider *provider)
 {
-	g_return_if_fail (NAUTILUS_IS_SEARCH_PROVIDER (provider));
-	g_return_if_fail (NAUTILUS_SEARCH_PROVIDER_GET_IFACE (provider)->stop != NULL);
+	g_return_if_fail (NEMO_IS_SEARCH_PROVIDER (provider));
+	g_return_if_fail (NEMO_SEARCH_PROVIDER_GET_IFACE (provider)->stop != NULL);
 
-	NAUTILUS_SEARCH_PROVIDER_GET_IFACE (provider)->stop (provider);
+	NEMO_SEARCH_PROVIDER_GET_IFACE (provider)->stop (provider);
 }
 
 void
-nautilus_search_provider_hits_added (NautilusSearchProvider *provider, GList *hits)
+nemo_search_provider_hits_added (NemoSearchProvider *provider, GList *hits)
 {
-	g_return_if_fail (NAUTILUS_IS_SEARCH_PROVIDER (provider));
+	g_return_if_fail (NEMO_IS_SEARCH_PROVIDER (provider));
 
 	g_signal_emit (provider, signals[HITS_ADDED], 0, hits);
 }
 
 void
-nautilus_search_provider_hits_subtracted (NautilusSearchProvider *provider, GList *hits)
+nemo_search_provider_hits_subtracted (NemoSearchProvider *provider, GList *hits)
 {
-	g_return_if_fail (NAUTILUS_IS_SEARCH_PROVIDER (provider));
+	g_return_if_fail (NEMO_IS_SEARCH_PROVIDER (provider));
 
 	g_signal_emit (provider, signals[HITS_SUBTRACTED], 0, hits);
 }
 
 void
-nautilus_search_provider_finished (NautilusSearchProvider *provider)
+nemo_search_provider_finished (NemoSearchProvider *provider)
 {
-	g_return_if_fail (NAUTILUS_IS_SEARCH_PROVIDER (provider));
+	g_return_if_fail (NEMO_IS_SEARCH_PROVIDER (provider));
 
 	g_signal_emit (provider, signals[FINISHED], 0);
 }
 
 void
-nautilus_search_provider_error (NautilusSearchProvider *provider, const char *error_message)
+nemo_search_provider_error (NemoSearchProvider *provider, const char *error_message)
 {
-	g_return_if_fail (NAUTILUS_IS_SEARCH_PROVIDER (provider));
+	g_return_if_fail (NEMO_IS_SEARCH_PROVIDER (provider));
 
 	g_signal_emit (provider, signals[ERROR], 0, error_message);
 }
