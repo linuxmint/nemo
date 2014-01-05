@@ -6118,14 +6118,6 @@ nemo_icon_container_init (NemoIconContainer *container)
 	details->layout_timestamp = UNDEFINED_TIME;
 	details->zoom_level = NEMO_ZOOM_LEVEL_STANDARD;
 
-	details->font_size_table[NEMO_ZOOM_LEVEL_SMALLEST] = -2 * PANGO_SCALE;
-	details->font_size_table[NEMO_ZOOM_LEVEL_SMALLER] = -2 * PANGO_SCALE;
-	details->font_size_table[NEMO_ZOOM_LEVEL_SMALL] = -0 * PANGO_SCALE;
-	details->font_size_table[NEMO_ZOOM_LEVEL_STANDARD] = 0 * PANGO_SCALE;
-	details->font_size_table[NEMO_ZOOM_LEVEL_LARGE] = 0 * PANGO_SCALE;
-	details->font_size_table[NEMO_ZOOM_LEVEL_LARGER] = 0 * PANGO_SCALE;
-	details->font_size_table[NEMO_ZOOM_LEVEL_LARGEST] = 0 * PANGO_SCALE;
-
 	container->details = details;
 
 	g_signal_connect (container, "focus-in-event",
@@ -8286,9 +8278,6 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 	} else {
 		context = gtk_widget_get_pango_context (GTK_WIDGET (container));
 		desc = pango_font_description_copy (pango_context_get_font_description (context));
-		pango_font_description_set_size (desc,
-						 pango_font_description_get_size (desc) +
-						 container->details->font_size_table [container->details->zoom_level]);
 	}
 	eel_editable_label_set_font_description (EEL_EDITABLE_LABEL (details->rename_widget),
 						 desc);
@@ -8522,30 +8511,6 @@ nemo_icon_container_set_font (NemoIconContainer *container,
 	invalidate_labels (container);
 	nemo_icon_container_request_update_all (container);
 	gtk_widget_queue_draw (GTK_WIDGET (container));
-}
-
-void
-nemo_icon_container_set_font_size_table (NemoIconContainer *container,
-					     const int font_size_table[NEMO_ZOOM_LEVEL_LARGEST + 1])
-{
-	int old_font_size;
-	int i;
-	
-	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
-	g_return_if_fail (font_size_table != NULL);
-	
-	old_font_size = container->details->font_size_table[container->details->zoom_level];
-
-	for (i = 0; i <= NEMO_ZOOM_LEVEL_LARGEST; i++) {
-		if (container->details->font_size_table[i] != font_size_table[i]) {
-			container->details->font_size_table[i] = font_size_table[i];
-		}
-	}
-
-	if (old_font_size != container->details->font_size_table[container->details->zoom_level]) {
-		invalidate_labels (container);
-		nemo_icon_container_request_update_all (container);
-	}
 }
 
 /**

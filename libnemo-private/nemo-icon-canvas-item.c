@@ -1541,9 +1541,6 @@ create_label_layout (NemoIconCanvasItem *item,
 		desc = pango_font_description_from_string (container->details->font);
 	} else {
 		desc = pango_font_description_copy (pango_context_get_font_description (context));
-		pango_font_description_set_size (desc,
-						 pango_font_description_get_size (desc) +
-						 container->details->font_size_table [container->details->zoom_level]);
 	}
 	pango_layout_set_font_description (layout, desc);
 	pango_font_description_free (desc);

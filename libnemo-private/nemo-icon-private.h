@@ -200,9 +200,6 @@ struct NemoIconContainerDetails {
 	/* specific fonts used to draw labels */
 	char *font;
 	
-	/* font sizes used to draw labels */
-	int font_size_table[NEMO_ZOOM_LEVEL_LARGEST + 1];
-
 	/* State used so arrow keys don't wander if icons aren't lined up.
 	 */
 	int arrow_key_start_x;

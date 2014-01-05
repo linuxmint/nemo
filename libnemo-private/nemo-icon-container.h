@@ -332,8 +332,6 @@ void              nemo_icon_container_set_show_desktop_tooltips     (NemoIconCon
 void              nemo_icon_container_reset_scroll_region           (NemoIconContainer  *container);
 void              nemo_icon_container_set_font                      (NemoIconContainer  *container,
 									 const char             *font); 
-void              nemo_icon_container_set_font_size_table           (NemoIconContainer  *container,
-									 const int               font_size_table[NEMO_ZOOM_LEVEL_LARGEST + 1]);
 void              nemo_icon_container_set_margins                   (NemoIconContainer  *container,
 									 int                     left_margin,
 									 int                     right_margin,
