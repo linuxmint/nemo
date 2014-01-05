@@ -1346,7 +1346,7 @@ nemo_application_startup (GApplication *app)
 #endif
 
     if (geteuid() != 0)
-        init_desktop (self);
+		init_desktop (self);
 
 #ifdef HAVE_UNITY
 	unity_bookmarks_handler_initialize ();
