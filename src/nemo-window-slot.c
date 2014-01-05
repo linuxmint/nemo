@@ -27,10 +27,10 @@
 #include "nemo-window-slot.h"
 
 #include "nemo-actions.h"
-#include "nemo-desktop-window.h"
 #include "nemo-floating-bar.h"
 #include "nemo-window-private.h"
 #include "nemo-window-manage-views.h"
+#include "nemo-desktop-window.h"
 
 #include <glib/gi18n.h>
 
@@ -56,6 +56,11 @@ gboolean
 nemo_window_slot_handle_event (NemoWindowSlot *slot,
 				   GdkEventKey        *event)
 {
+	NemoWindow *window;
+
+	window = nemo_window_slot_get_window (slot);
+	if (NEMO_IS_DESKTOP_WINDOW (window))
+		return FALSE;
 	return nemo_query_editor_handle_event (slot->query_editor, event);
 }
 
