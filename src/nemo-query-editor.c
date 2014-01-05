@@ -256,27 +256,6 @@ nemo_query_editor_dispose (GObject *object)
 	G_OBJECT_CLASS (nemo_query_editor_parent_class)->dispose (object);
 }
 
-static gboolean
-nemo_query_editor_draw (GtkWidget *widget,
-			    cairo_t *cr)
-{
-	GtkStyleContext *context;
-
-	context = gtk_widget_get_style_context (widget);
-
-	gtk_render_background (context, cr, 0, 0,
-			       gtk_widget_get_allocated_width (widget),
-			       gtk_widget_get_allocated_height (widget));
-
-	gtk_render_frame (context, cr, 0, 0,
-			  gtk_widget_get_allocated_width (widget),
-			  gtk_widget_get_allocated_height (widget));
-
-	GTK_WIDGET_CLASS (nemo_query_editor_parent_class)->draw (widget, cr);
-
-	return FALSE;
-}
-
 static void
 nemo_query_editor_grab_focus (GtkWidget *widget)
 {
@@ -298,7 +277,6 @@ nemo_query_editor_class_init (NemoQueryEditorClass *class)
         gobject_class->dispose = nemo_query_editor_dispose;
 
 	widget_class = GTK_WIDGET_CLASS (class);
-	widget_class->draw = nemo_query_editor_draw;
 	widget_class->grab_focus = nemo_query_editor_grab_focus;
 
 	signals[CHANGED] =
@@ -942,6 +920,9 @@ nemo_query_editor_add_row (NemoQueryEditor *editor,
 	row->type = type;
 	
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
+	gtk_style_context_add_class (gtk_widget_get_style_context (hbox),
+				     GTK_STYLE_CLASS_TOOLBAR);
 	row->hbox = hbox;
 	gtk_widget_show (hbox);
 	gtk_box_pack_start (GTK_BOX (editor->details->vbox), hbox, FALSE, FALSE, 0);
@@ -964,11 +945,13 @@ nemo_query_editor_add_row (NemoQueryEditor *editor,
 	create_type_widgets (row);
 	
 	button = gtk_button_new ();
-	image = gtk_image_new_from_stock (GTK_STOCK_REMOVE,
-					  GTK_ICON_SIZE_SMALL_TOOLBAR);
+	gtk_style_context_add_class (gtk_widget_get_style_context (button),
+				     GTK_STYLE_CLASS_RAISED);
+
+	image = gtk_image_new_from_icon_name ("window-close-symbolic",
+					      GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_container_add (GTK_CONTAINER (button), image);
 	gtk_widget_show (image);
-	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
 	gtk_widget_show (button);
 
 	g_signal_connect (button, "clicked",
@@ -994,15 +977,9 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 	editor->details = G_TYPE_INSTANCE_GET_PRIVATE (editor, NEMO_TYPE_QUERY_EDITOR,
 						       NemoQueryEditorDetails);
 
-	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (editor)),
-				     GTK_STYLE_CLASS_TOOLBAR);
-	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (editor)),
-				     GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
-
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 
-	editor->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-	gtk_container_set_border_width (GTK_CONTAINER (editor->details->vbox), 6);
+	editor->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_pack_start (GTK_BOX (editor), editor->details->vbox,
 			    FALSE, FALSE, 0);
 	gtk_widget_show (editor->details->vbox);
@@ -1026,13 +1003,15 @@ static void
 finish_first_line (NemoQueryEditor *editor, GtkWidget *hbox, gboolean use_go)
 {
 	GtkWidget *button, *image;
+	GtkWidget *button_box;
 
 	button = gtk_button_new ();
+	gtk_style_context_add_class (gtk_widget_get_style_context (button),
+				     GTK_STYLE_CLASS_RAISED);
 	image = gtk_image_new_from_stock (GTK_STOCK_ADD,
 					  GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_container_add (GTK_CONTAINER (button), image);
 	gtk_widget_show (image);
-	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
 	gtk_widget_show (button);
 
 	g_signal_connect (button, "clicked",
@@ -1054,19 +1033,58 @@ finish_first_line (NemoQueryEditor *editor, GtkWidget *hbox, gboolean use_go)
 			  G_CALLBACK (on_all_button_toggled), editor);
 	g_signal_connect (editor->details->search_current_button, "toggled",
 			  G_CALLBACK (on_current_button_toggled), editor);
-	gtk_box_pack_start (GTK_BOX (hbox), editor->details->search_current_button, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (hbox), editor->details->search_all_button, FALSE, FALSE, 0);
+
+	button_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	gtk_widget_show (button_box);
+	gtk_box_pack_end (GTK_BOX (hbox), button_box, FALSE, FALSE, 0);
+	gtk_style_context_add_class (gtk_widget_get_style_context (button_box),
+				     GTK_STYLE_CLASS_LINKED);
+	gtk_style_context_add_class (gtk_widget_get_style_context (button_box),
+				     GTK_STYLE_CLASS_RAISED);
+
+	gtk_box_pack_start (GTK_BOX (button_box), editor->details->search_current_button, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (button_box), editor->details->search_all_button, FALSE, FALSE, 0);
+}
+
+static gboolean
+entry_box_draw_cb (GtkWidget *widget,
+		   cairo_t *cr)
+{
+	GtkStyleContext *context;
+
+	context = gtk_widget_get_style_context (widget);
+
+	gtk_render_background (context, cr, 0, 0,
+			       gtk_widget_get_allocated_width (widget),
+			       gtk_widget_get_allocated_height (widget));
+
+	gtk_render_frame (context, cr, 0, 0,
+			  gtk_widget_get_allocated_width (widget),
+			  gtk_widget_get_allocated_height (widget));
+
+	return FALSE;
 }
 
 static void
 setup_widgets (NemoQueryEditor *editor)
 {
+	GtkWidget *bg_hbox;
 	GtkWidget *hbox;
 
-	/* Create visible part: */
+	bg_hbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+	gtk_style_context_add_class (gtk_widget_get_style_context (bg_hbox),
+				     GTK_STYLE_CLASS_TOOLBAR);
+	gtk_style_context_add_class (gtk_widget_get_style_context (bg_hbox),
+				     GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
+	g_signal_connect (bg_hbox, "draw", G_CALLBACK (entry_box_draw_cb), NULL);
+
+	gtk_widget_show (bg_hbox);
+	gtk_box_pack_start (GTK_BOX (editor->details->vbox), bg_hbox, FALSE, FALSE, 0);
+
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_widget_show (hbox);
-	gtk_box_pack_start (GTK_BOX (editor->details->vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (bg_hbox), hbox, FALSE, FALSE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
 
 #if GTK_CHECK_VERSION(3,6,0)
 	editor->details->entry = gtk_search_entry_new ();
