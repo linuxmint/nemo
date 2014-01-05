@@ -2,12 +2,12 @@
  *
  * Copyright (C) 2012 Red Hat, Inc.
  *
- * Nautilus is free software; you can redistribute it and/or
+ * Nemo is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
  *
- * Nautilus is distributed in the hope that it will be useful,
+ * Nemo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
@@ -23,10 +23,10 @@
 
 #include <string.h>
 
-#include "nautilus-search-hit.h"
-#include "nautilus-query.h"
+#include "nemo-search-hit.h"
+#include "nemo-query.h"
 
-struct NautilusSearchHitDetails
+struct NemoSearchHitDetails
 {
 	char      *uri;
 
@@ -46,11 +46,11 @@ enum {
 	NUM_PROPERTIES
 };
 
-G_DEFINE_TYPE (NautilusSearchHit, nautilus_search_hit, G_TYPE_OBJECT)
+G_DEFINE_TYPE (NemoSearchHit, nemo_search_hit, G_TYPE_OBJECT)
 
 void
-nautilus_search_hit_compute_scores (NautilusSearchHit *hit,
-				    NautilusQuery     *query)
+nemo_search_hit_compute_scores (NemoSearchHit *hit,
+				    NemoQuery     *query)
 {
 	GDateTime *now;
 	char *query_uri;
@@ -63,7 +63,7 @@ nautilus_search_hit_compute_scores (NautilusSearchHit *hit,
 	gdouble proximity_bonus = 0.0;
 	gdouble match_bonus = 0.0;
 
-	query_uri = nautilus_query_get_location (query);
+	query_uri = nemo_query_get_location (query);
 	query_path = g_filename_from_uri (query_uri, NULL, NULL);
 	g_free (query_uri);
 	if (query_path != NULL) {
@@ -124,19 +124,19 @@ nautilus_search_hit_compute_scores (NautilusSearchHit *hit,
 }
 
 const char *
-nautilus_search_hit_get_uri (NautilusSearchHit *hit)
+nemo_search_hit_get_uri (NemoSearchHit *hit)
 {
 	return hit->details->uri;
 }
 
 gdouble
-nautilus_search_hit_get_relevance (NautilusSearchHit *hit)
+nemo_search_hit_get_relevance (NemoSearchHit *hit)
 {
 	return hit->details->relevance;
 }
 
 static void
-nautilus_search_hit_set_uri (NautilusSearchHit *hit,
+nemo_search_hit_set_uri (NemoSearchHit *hit,
 			     const char        *uri)
 {
 	g_free (hit->details->uri);
@@ -144,14 +144,14 @@ nautilus_search_hit_set_uri (NautilusSearchHit *hit,
 }
 
 void
-nautilus_search_hit_set_fts_rank (NautilusSearchHit *hit,
+nemo_search_hit_set_fts_rank (NemoSearchHit *hit,
 				  gdouble            rank)
 {
 	hit->details->fts_rank = rank;
 }
 
 void
-nautilus_search_hit_set_modification_time (NautilusSearchHit *hit,
+nemo_search_hit_set_modification_time (NemoSearchHit *hit,
 					   GDateTime         *date)
 {
 	if (hit->details->modification_time != NULL)
@@ -163,7 +163,7 @@ nautilus_search_hit_set_modification_time (NautilusSearchHit *hit,
 }
 
 void
-nautilus_search_hit_set_access_time (NautilusSearchHit *hit,
+nemo_search_hit_set_access_time (NemoSearchHit *hit,
 				     GDateTime         *date)
 {
 	if (hit->details->access_time != NULL)
@@ -175,29 +175,29 @@ nautilus_search_hit_set_access_time (NautilusSearchHit *hit,
 }
 
 static void
-nautilus_search_hit_set_property (GObject *object,
+nemo_search_hit_set_property (GObject *object,
 				  guint arg_id,
 				  const GValue *value,
 				  GParamSpec *pspec)
 {
-	NautilusSearchHit *hit;
+	NemoSearchHit *hit;
 
-	hit = NAUTILUS_SEARCH_HIT (object);
+	hit = NEMO_SEARCH_HIT (object);
 
 	switch (arg_id) {
 	case PROP_RELEVANCE:
 		hit->details->relevance = g_value_get_double (value);
 	case PROP_FTS_RANK:
-		nautilus_search_hit_set_fts_rank (hit, g_value_get_double (value));
+		nemo_search_hit_set_fts_rank (hit, g_value_get_double (value));
 		break;
 	case PROP_URI:
-		nautilus_search_hit_set_uri (hit, g_value_get_string (value));
+		nemo_search_hit_set_uri (hit, g_value_get_string (value));
 		break;
 	case PROP_MODIFICATION_TIME:
-		nautilus_search_hit_set_modification_time (hit, g_value_get_boxed (value));
+		nemo_search_hit_set_modification_time (hit, g_value_get_boxed (value));
 		break;
 	case PROP_ACCESS_TIME:
-		nautilus_search_hit_set_access_time (hit, g_value_get_boxed (value));
+		nemo_search_hit_set_access_time (hit, g_value_get_boxed (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, arg_id, pspec);
@@ -206,14 +206,14 @@ nautilus_search_hit_set_property (GObject *object,
 }
 
 static void
-nautilus_search_hit_get_property (GObject *object,
+nemo_search_hit_get_property (GObject *object,
 				  guint arg_id,
 				  GValue *value,
 				  GParamSpec *pspec)
 {
-	NautilusSearchHit *hit;
+	NemoSearchHit *hit;
 
-	hit = NAUTILUS_SEARCH_HIT (object);
+	hit = NEMO_SEARCH_HIT (object);
 
 	switch (arg_id) {
 	case PROP_RELEVANCE:
@@ -238,9 +238,9 @@ nautilus_search_hit_get_property (GObject *object,
 }
 
 static void
-nautilus_search_hit_finalize (GObject *object)
+nemo_search_hit_finalize (GObject *object)
 {
-	NautilusSearchHit *hit = NAUTILUS_SEARCH_HIT (object);
+	NemoSearchHit *hit = NEMO_SEARCH_HIT (object);
 
 	g_free (hit->details->uri);
 
@@ -251,19 +251,19 @@ nautilus_search_hit_finalize (GObject *object)
 		g_date_time_unref (hit->details->modification_time);
 	}
 
-	G_OBJECT_CLASS (nautilus_search_hit_parent_class)->finalize (object);
+	G_OBJECT_CLASS (nemo_search_hit_parent_class)->finalize (object);
 }
 
 static void
-nautilus_search_hit_class_init (NautilusSearchHitClass *class)
+nemo_search_hit_class_init (NemoSearchHitClass *class)
 {
 	GObjectClass *object_class;
 
 	object_class = (GObjectClass *) class;
 
-	object_class->finalize = nautilus_search_hit_finalize;
-	object_class->get_property = nautilus_search_hit_get_property;
-	object_class->set_property = nautilus_search_hit_set_property;
+	object_class->finalize = nemo_search_hit_finalize;
+	object_class->get_property = nemo_search_hit_get_property;
+	object_class->set_property = nemo_search_hit_set_property;
 
 	g_object_class_install_property (object_class,
 					 PROP_URI,
@@ -303,23 +303,23 @@ nautilus_search_hit_class_init (NautilusSearchHitClass *class)
 							      0,
 							      G_PARAM_READWRITE));
 
-	g_type_class_add_private (class, sizeof (NautilusSearchHitDetails));
+	g_type_class_add_private (class, sizeof (NemoSearchHitDetails));
 }
 
 static void
-nautilus_search_hit_init (NautilusSearchHit *hit)
+nemo_search_hit_init (NemoSearchHit *hit)
 {
 	hit->details = G_TYPE_INSTANCE_GET_PRIVATE (hit,
-						    NAUTILUS_TYPE_SEARCH_HIT,
-						    NautilusSearchHitDetails);
+						    NEMO_TYPE_SEARCH_HIT,
+						    NemoSearchHitDetails);
 }
 
-NautilusSearchHit *
-nautilus_search_hit_new (const char *uri)
+NemoSearchHit *
+nemo_search_hit_new (const char *uri)
 {
-	NautilusSearchHit *hit;
+	NemoSearchHit *hit;
 
-	hit = g_object_new (NAUTILUS_TYPE_SEARCH_HIT,
+	hit = g_object_new (NEMO_TYPE_SEARCH_HIT,
 			    "uri", uri,
 			    NULL);
 
