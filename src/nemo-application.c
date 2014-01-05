@@ -1321,6 +1321,13 @@ nemo_application_startup (GApplication *app)
 	 */
 	check_required_directories (self);
 	init_desktop (self);
+<<<<<<< HEAD:src/nemo-application.c
+=======
+
+	do_upgrades_once (self);
+
+	nautilus_application_init_actions (self);
+>>>>>>> 55e2cdde737054302cdcad840f7ea843c813b266:src/nautilus-application.c
 }
 
 static void
