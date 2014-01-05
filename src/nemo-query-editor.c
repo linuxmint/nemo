@@ -197,6 +197,21 @@ nemo_query_editor_handle_event (NemoQueryEditor *editor,
 	char *old_text;
 	const char *new_text;
 
+	/* if we're focused already, no need to handle the event manually */
+	if (gtk_widget_has_focus (editor->details->entry)) {
+		return FALSE;
+	}
+
+	/* never handle these events */
+	if (event->keyval == GDK_KEY_slash || event->keyval == GDK_KEY_Delete) {
+		return FALSE;
+	}
+
+	/* don't activate search for these events */
+	if (!gtk_widget_get_visible (GTK_WIDGET (editor)) && event->keyval == GDK_KEY_space) {
+		return FALSE;
+	}
+
 	editor->details->got_preedit = FALSE;
 	if (!gtk_widget_get_realized (editor->details->entry)) {
 		gtk_widget_realize (editor->details->entry);
