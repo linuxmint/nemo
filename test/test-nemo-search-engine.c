@@ -1,3 +1,4 @@
+#include <libnemo-private/nemo-search-provider.h>
 #include <libnemo-private/nemo-search-engine.h>
 #include <gtk/gtk.h>
 
@@ -46,10 +47,10 @@ main (int argc, char* argv[])
 
 	query = nemo_query_new ();
 	nemo_query_set_text (query, "richard hult");
-	nemo_search_engine_set_query (engine, query);
+	nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (engine), query);
 	g_object_unref (query);
 
-	nemo_search_engine_start (engine);
+	nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine));
        
 	gtk_main ();
 	return 0;

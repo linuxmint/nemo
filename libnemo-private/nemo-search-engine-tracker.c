@@ -22,6 +22,7 @@
  */
 
 #include <config.h>
+#include "nemo-search-provider.h"
 #include "nemo-search-engine-tracker.h"
 #include <string.h>
 #include <gio/gio.h>
@@ -36,9 +37,13 @@ struct NemoSearchEngineTrackerDetails {
 	GCancellable  *cancellable;
 };
 
-G_DEFINE_TYPE (NemoSearchEngineTracker,
-	       nemo_search_engine_tracker,
-	       NEMO_TYPE_SEARCH_ENGINE);
+static void nemo_search_provider_init (NemoSearchProviderIface  *iface);
+
+G_DEFINE_TYPE_WITH_CODE (NemoSearchEngineTracker,
+			 nemo_search_engine_tracker,
+			 G_TYPE_OBJECT,
+			 G_IMPLEMENT_INTERFACE (NEMO_TYPE_SEARCH_PROVIDER,
+						nemo_search_provider_init))
 
 static void
 finalize (GObject *object)
@@ -89,19 +94,14 @@ cursor_callback (GObject      *object,
 	success = tracker_sparql_cursor_next_finish (cursor, result, &error);
 
 	if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-		tracker->details->query_pending = FALSE;
-		nemo_search_engine_error (NEMO_SEARCH_ENGINE (tracker), error->message);
-		g_error_free (error);
-		g_object_unref (cursor);
-
-		return;
+		nemo_search_provider_error (NEMO_SEARCH_PROVIDER (tracker), error->message);
 	}
 
 	g_clear_error (&error);
 
 	if (!success) {
 		tracker->details->query_pending = FALSE;
-		nemo_search_engine_finished (NEMO_SEARCH_ENGINE (tracker));
+		nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (tracker));
 		g_object_unref (cursor);
 
 		return;
@@ -109,7 +109,7 @@ cursor_callback (GObject      *object,
 
 	/* We iterate result by result, not n at a time. */
 	hits = g_list_append (NULL, (gchar*) tracker_sparql_cursor_get_string (cursor, 0, NULL));
-	nemo_search_engine_hits_added (NEMO_SEARCH_ENGINE (tracker), hits);
+	nemo_search_provider_hits_added (NEMO_SEARCH_PROVIDER (tracker), hits);
 	g_list_free (hits);
 
 	/* Get next */
@@ -134,17 +134,14 @@ query_callback (GObject      *object,
 	                                                 &error);
 
 	if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-		tracker->details->query_pending = FALSE;
-		nemo_search_engine_error (NEMO_SEARCH_ENGINE (tracker), error->message);
-		g_error_free (error);
-		return;
+		nemo_search_provider_error (NEMO_SEARCH_PROVIDER (tracker), error->message);
 	}
 
 	g_clear_error (&error);
 
 	if (!cursor) {
 		tracker->details->query_pending = FALSE;
-		nemo_search_engine_finished (NEMO_SEARCH_ENGINE (tracker));
+		nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (tracker));
 		return;
 	}
 
@@ -152,7 +149,7 @@ query_callback (GObject      *object,
 }
 
 static void
-nemo_search_engine_tracker_start (NemoSearchEngine *engine)
+nemo_search_engine_tracker_start (NemoSearchProvider *provider)
 {
 	NemoSearchEngineTracker *tracker;
 	gchar	*query_text, *search_text, *location_uri, *downcase;
@@ -160,7 +157,7 @@ nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 	GList *mimetypes, *l;
 	gint mime_count;
 
-	tracker = NEMO_SEARCH_ENGINE_TRACKER (engine);
+	tracker = NEMO_SEARCH_ENGINE_TRACKER (provider);
 
 	if (tracker->details->query_pending) {
 		return;
@@ -232,11 +229,11 @@ nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 }
 
 static void
-nemo_search_engine_tracker_stop (NemoSearchEngine *engine)
+nemo_search_engine_tracker_stop (NautilusSearchProvider *provider)
 {
 	NemoSearchEngineTracker *tracker;
 
-	tracker = NEMO_SEARCH_ENGINE_TRACKER (engine);
+	tracker = NEMO_SEARCH_ENGINE_TRACKER (provider);
 	
 	if (tracker->details->query && tracker->details->query_pending) {
 		g_cancellable_cancel (tracker->details->cancellable);
@@ -246,11 +243,12 @@ nemo_search_engine_tracker_stop (NemoSearchEngine *engine)
 }
 
 static void
-nemo_search_engine_tracker_set_query (NemoSearchEngine *engine, NemoQuery *query)
+nemo_search_engine_tracker_set_query (NemoSearchProvider *provider,
+					  NemoQuery *query)
 {
 	NemoSearchEngineTracker *tracker;
 
-	tracker = NEMO_SEARCH_ENGINE_TRACKER (engine);
+	tracker = NEMO_SEARCH_ENGINE_TRACKER (provider);
 
 	if (query) {
 		g_object_ref (query);
@@ -264,18 +262,20 @@ nemo_search_engine_tracker_set_query (NemoSearchEngine *engine, NemoQuery *query
 }
 
 static void
+nemo_search_provider_init (NemoSearchProviderIface *iface)
+{
+	iface->set_query = nemo_search_engine_tracker_set_query;
+	iface->start = nemo_search_engine_tracker_start;
+	iface->stop = nemo_search_engine_tracker_stop;
+}
+
+static void
 nemo_search_engine_tracker_class_init (NemoSearchEngineTrackerClass *class)
 {
 	GObjectClass *gobject_class;
-	NemoSearchEngineClass *engine_class;
 
 	gobject_class = G_OBJECT_CLASS (class);
 	gobject_class->finalize = finalize;
-
-	engine_class = NEMO_SEARCH_ENGINE_CLASS (class);
-	engine_class->set_query = nemo_search_engine_tracker_set_query;
-	engine_class->start = nemo_search_engine_tracker_start;
-	engine_class->stop = nemo_search_engine_tracker_stop;
 
 	g_type_class_add_private (class, sizeof (NemoSearchEngineTrackerDetails));
 }
@@ -288,7 +288,7 @@ nemo_search_engine_tracker_init (NemoSearchEngineTracker *engine)
 }
 
 
-NemoSearchEngine *
+NemoSearchEngineTracker *
 nemo_search_engine_tracker_new (void)
 {
 	NemoSearchEngineTracker *engine;
@@ -306,5 +306,5 @@ nemo_search_engine_tracker_new (void)
 	engine = g_object_new (NEMO_TYPE_SEARCH_ENGINE_TRACKER, NULL);
 	engine->details->connection = connection;
 
-	return NEMO_SEARCH_ENGINE (engine);
+	return engine;
 }

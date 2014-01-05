@@ -22,149 +22,222 @@
  */
 
 #include <config.h>
+
+#include <glib/gi18n.h>
+#include "nemo-search-provider.h"
 #include "nemo-search-engine.h"
 #include "nemo-search-engine-simple.h"
+#define DEBUG_FLAG NEMO_DEBUG_SEARCH
+#include "nemo-debug.h"
 
 #ifdef ENABLE_TRACKER
 #include "nemo-search-engine-tracker.h"
 #endif
 
-enum {
-	HITS_ADDED,
-	HITS_SUBTRACTED,
-	FINISHED,
-	ERROR,
-	LAST_SIGNAL
-}; 
+struct NemoSearchEngineDetails
+{
+	NemoSearchEngineSimple *simple;
+#ifdef ENABLE_TRACKER
+	NemoSearchEngineTracker *tracker;
+#endif
+	GHashTable *uris;
+	guint num_providers;
+	guint providers_finished;
+	guint providers_error;
+};
 
-static guint signals[LAST_SIGNAL];
+static void nemo_search_provider_init (NemoSearchProviderIface  *iface);
 
-G_DEFINE_ABSTRACT_TYPE (NemoSearchEngine, nemo_search_engine,
-			G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (NemoSearchEngine,
+			 nemo_search_engine,
+			 G_TYPE_OBJECT,
+			 G_IMPLEMENT_INTERFACE (NEMO_TYPE_SEARCH_PROVIDER,
+						nemo_search_provider_init))
+
+static void
+nemo_search_engine_set_query (NemoSearchProvider *provider,
+				  NemoQuery          *query)
+{
+	NemoSearchEngine *engine = NEMO_SEARCH_ENGINE (provider);
+#ifdef ENABLE_TRACKER
+	nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (engine->details->tracker), query);
+#endif
+	nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (engine->details->simple), query);
+}
+
+static void
+nemo_search_engine_start (NemoSearchProvider *provider)
+{
+	NemoSearchEngine *engine = NEMO_SEARCH_ENGINE (provider);
+	engine->details->providers_finished = 0;
+	engine->details->providers_error = 0;
+#ifdef ENABLE_TRACKER
+	nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->tracker));
+#endif
+	nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->simple));
+}
+
+static void
+nemo_search_engine_stop (NemoSearchProvider *provider)
+{
+	NemoSearchEngine *engine = NEMO_SEARCH_ENGINE (provider);
+#ifdef ENABLE_TRACKER
+	nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (engine->details->tracker));
+#endif
+	nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (engine->details->simple));
+}
+
+static void
+search_provider_hits_added (NemoSearchProvider *provider,
+			    GList                  *hits,
+			    NemoSearchEngine   *engine)
+{
+	GList *added = NULL;
+	GList *l;
+
+	for (l = hits; l != NULL; l = l->next) {
+		char *uri = l->data;
+		int count;
+		count = GPOINTER_TO_INT (g_hash_table_lookup (engine->details->uris, uri));
+		if (count == 0)
+			added = g_list_prepend (added, uri);
+		g_hash_table_replace (engine->details->uris, g_strdup (uri), GINT_TO_POINTER (count++));
+	}
+	if (added != NULL) {
+		nemo_search_provider_hits_added (NEMO_SEARCH_PROVIDER (engine), g_list_reverse (added));
+		g_list_free (added);
+	}
+}
+
+static void
+search_provider_hits_subtracted (NemoSearchProvider *provider,
+				 GList                  *hits,
+				 NemoSearchEngine   *engine)
+{
+	GList *removed = NULL;
+	GList *l;
+
+	for (l = hits; l != NULL; l = l->next) {
+		char *uri = l->data;
+		int count;
+		count = GPOINTER_TO_INT (g_hash_table_lookup (engine->details->uris, uri));
+		g_assert (count > 0);
+		if (count == 1) {
+			removed = g_list_prepend (removed, uri);
+			g_hash_table_remove (engine->details->uris, uri);
+		} else {
+			g_hash_table_replace (engine->details->uris, g_strdup (uri), GINT_TO_POINTER (count--));
+		}
+	}
+	if (removed != NULL) {
+		nemo_search_provider_hits_subtracted (NEMO_SEARCH_PROVIDER (engine), g_list_reverse (removed));
+		g_list_free (removed);
+	}
+}
+
+static void
+search_provider_error (NemoSearchProvider *provider,
+		       const char             *error_message,
+		       NemoSearchEngine   *engine)
+
+{
+	DEBUG ("Search provider error: %s", error_message);
+	engine->details->providers_error++;
+	if (engine->details->providers_error == engine->details->num_providers) {
+		nemo_search_provider_error (NEMO_SEARCH_PROVIDER (engine),
+						_("Unable to complete the requested search"));
+	}
+}
+
+static void
+search_provider_finished (NemoSearchProvider *provider,
+			  NemoSearchEngine   *engine)
+
+{
+	engine->details->providers_finished++;
+	if (engine->details->providers_finished == engine->details->num_providers)
+		nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (engine));
+}
+
+static void
+connect_provider_signals (NemoSearchEngine   *engine,
+			  NemoSearchProvider *provider)
+{
+	g_signal_connect (provider, "hits-added",
+			  G_CALLBACK (search_provider_hits_added),
+			  engine);
+	g_signal_connect (provider, "hits-subtracted",
+			  G_CALLBACK (search_provider_hits_subtracted),
+			  engine);
+	g_signal_connect (provider, "finished",
+			  G_CALLBACK (search_provider_finished),
+			  engine);
+	g_signal_connect (provider, "error",
+			  G_CALLBACK (search_provider_error),
+			  engine);
+}
+
+static void
+nemo_search_provider_init (NemoSearchProviderIface *iface)
+{
+	iface->set_query = nemo_search_engine_set_query;
+	iface->start = nemo_search_engine_start;
+	iface->stop = nemo_search_engine_stop;
+}
+
+static void
+nemo_search_engine_finalize (GObject *object)
+{
+	NemoSearchEngine *engine = NEMO_SEARCH_ENGINE (object);
+
+	g_hash_table_destroy (engine->details->uris);
+
+#ifdef ENABLE_TRACKER
+	g_clear_object (&engine->details->tracker);
+#endif
+	g_clear_object (&engine->details->simple);
+
+	G_OBJECT_CLASS (nemo_search_engine_parent_class)->finalize (object);
+}
 
 static void
 nemo_search_engine_class_init (NemoSearchEngineClass *class)
 {
-	signals[HITS_ADDED] =
-		g_signal_new ("hits-added",
-		              G_TYPE_FROM_CLASS (class),
-		              G_SIGNAL_RUN_LAST,
-		              G_STRUCT_OFFSET (NemoSearchEngineClass, hits_added),
-		              NULL, NULL,
-		              g_cclosure_marshal_VOID__POINTER,
-		              G_TYPE_NONE, 1,
-			      G_TYPE_POINTER);
+	GObjectClass *object_class;
 
-	signals[HITS_SUBTRACTED] =
-		g_signal_new ("hits-subtracted",
-		              G_TYPE_FROM_CLASS (class),
-		              G_SIGNAL_RUN_LAST,
-		              G_STRUCT_OFFSET (NemoSearchEngineClass, hits_subtracted),
-		              NULL, NULL,
-		              g_cclosure_marshal_VOID__POINTER,
-		              G_TYPE_NONE, 1,
-			      G_TYPE_POINTER);
+	object_class = (GObjectClass *) class;
 
-	signals[FINISHED] =
-		g_signal_new ("finished",
-		              G_TYPE_FROM_CLASS (class),
-		              G_SIGNAL_RUN_LAST,
-		              G_STRUCT_OFFSET (NemoSearchEngineClass, finished),
-		              NULL, NULL,
-		              g_cclosure_marshal_VOID__VOID,
-		              G_TYPE_NONE, 0);
-	
-	signals[ERROR] =
-		g_signal_new ("error",
-		              G_TYPE_FROM_CLASS (class),
-		              G_SIGNAL_RUN_LAST,
-		              G_STRUCT_OFFSET (NemoSearchEngineClass, error),
-		              NULL, NULL,
-		              g_cclosure_marshal_VOID__STRING,
-		              G_TYPE_NONE, 1,
-			      G_TYPE_STRING);
+	object_class->finalize = nemo_search_engine_finalize;
 
+	g_type_class_add_private (class, sizeof (NemoSearchEngineDetails));
 }
 
 static void
 nemo_search_engine_init (NemoSearchEngine *engine)
 {
+	engine->details = G_TYPE_INSTANCE_GET_PRIVATE (engine,
+						       NEMO_TYPE_SEARCH_ENGINE,
+						       NemoSearchEngineDetails);
+
+	engine->details->uris = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+
+#ifdef ENABLE_TRACKER
+	engine->details->tracker = nemo_search_engine_tracker_new ();
+	connect_provider_signals (engine, NEMO_SEARCH_PROVIDER (engine->details->tracker));
+	engine->details->num_providers++;
+#endif
+
+	engine->details->simple = nemo_search_engine_simple_new ();
+	connect_provider_signals (engine, NEMO_SEARCH_PROVIDER (engine->details->simple));
+	engine->details->num_providers++;
 }
 
 NemoSearchEngine *
 nemo_search_engine_new (void)
 {
 	NemoSearchEngine *engine;
-	
-#ifdef ENABLE_TRACKER	
-	engine = nemo_search_engine_tracker_new ();
-	if (engine) {
-		return engine;
-	}
-#endif
-	
-	engine = nemo_search_engine_simple_new ();
+
+	engine = g_object_new (NEMO_TYPE_SEARCH_ENGINE, NULL);
+
 	return engine;
-}
-
-void
-nemo_search_engine_set_query (NemoSearchEngine *engine, NemoQuery *query)
-{
-	g_return_if_fail (NEMO_IS_SEARCH_ENGINE (engine));
-	g_return_if_fail (NEMO_SEARCH_ENGINE_GET_CLASS (engine)->set_query != NULL);
-
-	NEMO_SEARCH_ENGINE_GET_CLASS (engine)->set_query (engine, query);
-}
-
-void
-nemo_search_engine_start (NemoSearchEngine *engine)
-{
-	g_return_if_fail (NEMO_IS_SEARCH_ENGINE (engine));
-	g_return_if_fail (NEMO_SEARCH_ENGINE_GET_CLASS (engine)->start != NULL);
-
-	NEMO_SEARCH_ENGINE_GET_CLASS (engine)->start (engine);
-}
-
-
-void
-nemo_search_engine_stop (NemoSearchEngine *engine)
-{
-	g_return_if_fail (NEMO_IS_SEARCH_ENGINE (engine));
-	g_return_if_fail (NEMO_SEARCH_ENGINE_GET_CLASS (engine)->stop != NULL);
-
-	NEMO_SEARCH_ENGINE_GET_CLASS (engine)->stop (engine);
-}
-
-void	       
-nemo_search_engine_hits_added (NemoSearchEngine *engine, GList *hits)
-{
-	g_return_if_fail (NEMO_IS_SEARCH_ENGINE (engine));
-
-	g_signal_emit (engine, signals[HITS_ADDED], 0, hits);
-}
-
-
-void	       
-nemo_search_engine_hits_subtracted (NemoSearchEngine *engine, GList *hits)
-{
-	g_return_if_fail (NEMO_IS_SEARCH_ENGINE (engine));
-
-	g_signal_emit (engine, signals[HITS_SUBTRACTED], 0, hits);
-}
-
-
-void	       
-nemo_search_engine_finished (NemoSearchEngine *engine)
-{
-	g_return_if_fail (NEMO_IS_SEARCH_ENGINE (engine));
-
-	g_signal_emit (engine, signals[FINISHED], 0);
-}
-
-void
-nemo_search_engine_error (NemoSearchEngine *engine, const char *error_message)
-{
-	g_return_if_fail (NEMO_IS_SEARCH_ENGINE (engine));
-
-	g_signal_emit (engine, signals[ERROR], 0, error_message);
 }

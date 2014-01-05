@@ -164,6 +164,8 @@ libnemo_private_la_SOURCES = \
 	nemo-search-directory.h \
 	nemo-search-directory-file.c \
 	nemo-search-directory-file.h \
+	nemo-search-provider.c \
+	nemo-search-provider.h \
 	nemo-search-engine.c \
 	nemo-search-engine.h \
 	nemo-search-engine-simple.c \

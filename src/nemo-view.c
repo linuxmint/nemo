@@ -2339,7 +2339,7 @@ sort_directories_first_changed_callback (gpointer callback_data)
 
 	if (preference_value != view->details->sort_directories_first) {
 		view->details->sort_directories_first = preference_value;
-		return NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->sort_directories_first_changed (view);
+		NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->sort_directories_first_changed (view);
 	}
 }
 
