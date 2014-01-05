@@ -573,6 +573,10 @@ recent_is_supported (void)
 	int i;
 
 	supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
+	if (!supported) {
+		return FALSE;
+	}
+
 	for (i = 0; supported[i] != NULL; i++) {
 		if (strcmp ("recent", supported[i]) == 0) {
 			return TRUE;
