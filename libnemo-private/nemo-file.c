@@ -125,9 +125,6 @@ static GQuark attribute_name_q,
 	attribute_date_modified_q,
 	attribute_accessed_date_q,
 	attribute_date_accessed_q,
-	attribute_used_date_q,
-	attribute_date_used_q,
-	attribute_date_used_full_q,
 	attribute_mime_type_q,
 	attribute_size_detail_q,
 	attribute_deep_size_q,
@@ -2745,9 +2742,6 @@ get_time (NemoFile *file,
 	case NEMO_DATE_TYPE_ACCESSED:
 		time = file->details->atime;
 		break;
-	case NEMO_DATE_TYPE_USED:
-		time = MAX (file->details->atime, file->details->mtime);
-		break;
 	case NEMO_DATE_TYPE_TRASHED:
 		time = file->details->trash_time;
 		break;
@@ -3194,12 +3188,6 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 				result = compare_by_full_path (file_1, file_2);
 			}
 			break;
-		case NEMO_FILE_SORT_BY_USED_TIME:
-			result = compare_by_time (file_1, file_2, NEMO_DATE_TYPE_USED);
-			if (result == 0) {
-				result = compare_by_full_path (file_1, file_2);
-			}
-			break;
 		case NEMO_FILE_SORT_BY_TRASHED_TIME:
 			result = compare_by_time (file_1, file_2, NEMO_DATE_TYPE_TRASHED);
 			if (result == 0) {
@@ -3260,11 +3248,6 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 						       directories_first,
 						       reversed);
         } else if (attribute == attribute_accessed_date_q || attribute == attribute_date_accessed_q) {
-		return nemo_file_compare_for_sort (file_1, file_2,
-						       NEMO_FILE_SORT_BY_ATIME,
-						       directories_first,
-						       reversed);
-        } else if (attribute == attribute_used_date_q || attribute == attribute_date_used_q || attribute == attribute_date_used_full_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_ATIME,
 						       directories_first,
@@ -4361,7 +4344,6 @@ nemo_file_get_date (NemoFile *file,
 	g_return_val_if_fail (date_type == NEMO_DATE_TYPE_CHANGED
 			      || date_type == NEMO_DATE_TYPE_ACCESSED
 			      || date_type == NEMO_DATE_TYPE_MODIFIED
-			      || date_type == NEMO_DATE_TYPE_USED
 			      || date_type == NEMO_DATE_TYPE_TRASHED
 			      || date_type == NEMO_DATE_TYPE_PERMISSIONS_CHANGED, FALSE);
 
@@ -6097,8 +6079,8 @@ nemo_file_get_deep_directory_count_as_string (NemoFile *file)
  * @file: NemoFile representing the file in question.
  * @attribute_name: The name of the desired attribute. The currently supported
  * set includes "name", "type", "mime_type", "size", "deep_size", "deep_directory_count",
- * "deep_file_count", "deep_total_count", "date_modified", "date_changed", "date_accessed", "date_used",
- * "date_permissions", "date_modified_full", "date_changed_full", "date_accessed_full", "date_used_full",
+ * "deep_file_count", "deep_total_count", "date_modified", "date_changed", "date_accessed",
+ * "date_permissions", "date_modified_full", "date_changed_full", "date_accessed_full",
  * "date_permissions_full", "owner", "group", "permissions", "octal_permissions", "uri", "where",
  * "link_target", "volume", "free_space", "selinux_context", "trashed_on", "trashed_on_full", "trashed_orig_path"
  * 
@@ -6155,14 +6137,6 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
 	if (attribute_q == attribute_date_accessed_q) {
 		return nemo_file_get_date_as_string (file,
 							 NEMO_DATE_TYPE_ACCESSED);
-	}
-	if (attribute_q == attribute_date_used_q) {
-		return nemo_file_get_date_as_string (file,
-							 NEMO_DATE_TYPE_USED);
-	}
-	if (attribute_q == attribute_date_used_full_q) {
-		return nemo_file_get_date_as_string (file,
-							 NEMO_DATE_TYPE_USED);
 	}
 	if (attribute_q == attribute_trashed_on_q) {
 		return nemo_file_get_date_as_string (file,
@@ -8297,9 +8271,6 @@ nemo_file_class_init (NemoFileClass *class)
 	attribute_date_modified_q = g_quark_from_static_string ("date_modified");
 	attribute_accessed_date_q = g_quark_from_static_string ("accessed_date");
 	attribute_date_accessed_q = g_quark_from_static_string ("date_accessed");
-	attribute_used_date_q = g_quark_from_static_string ("used_date");
-	attribute_date_used_q = g_quark_from_static_string ("date_used");
-	attribute_date_used_full_q = g_quark_from_static_string ("date_used_full");
 	attribute_mime_type_q = g_quark_from_static_string ("mime_type");
 	attribute_size_detail_q = g_quark_from_static_string ("size_detail");
 	attribute_deep_size_q = g_quark_from_static_string ("deep_size");

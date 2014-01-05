@@ -387,12 +387,12 @@
       <_description>Default zoom level used by the list view.</_description>
     </key>
     <key name="default-visible-columns" type="as">
-      <default>[ 'name', 'size', 'type', 'date_used' ]</default>
+      <default>[ 'name', 'size', 'type', 'date_modified' ]</default>
       <_summary>Default list of columns visible in the list view</_summary>
       <_description>Default list of columns visible in the list view.</_description>
     </key>
     <key name="default-column-order" type="as">
-      <default>[ 'name', 'size', 'type', 'date_used' ]</default>
+      <default>[ 'name', 'size', 'type', 'date_modified' ]</default>
       <_summary>Default column order in the list view</_summary>
       <_description>Default column order in the list view.</_description>
     </key>
