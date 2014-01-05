@@ -22,6 +22,7 @@
  */
 
 #include <config.h>
+#include "nemo-search-provider.h"
 #include "nemo-search-engine-simple.h"
 
 #include <string.h>
@@ -55,8 +56,13 @@ struct NemoSearchEngineSimpleDetails {
 	gboolean query_finished;
 };
 
-G_DEFINE_TYPE (NemoSearchEngineSimple, nemo_search_engine_simple,
-	       NEMO_TYPE_SEARCH_ENGINE);
+static void nemo_search_provider_init (NemoSearchProviderIface  *iface);
+
+G_DEFINE_TYPE_WITH_CODE (NemoSearchEngineSimple,
+			 nemo_search_engine_simple,
+			 G_TYPE_OBJECT,
+			 G_IMPLEMENT_INTERFACE (NEMO_TYPE_SEARCH_PROVIDER,
+						nemo_search_provider_init))
 
 static void
 finalize (GObject *object)
@@ -134,7 +140,7 @@ search_thread_done_idle (gpointer user_data)
 	data = user_data;
 
 	if (!g_cancellable_is_cancelled (data->cancellable)) {
-		nemo_search_engine_finished (NEMO_SEARCH_ENGINE (data->engine));
+		nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (data->engine));
 		data->engine->details->active_search = NULL;
 	}
 	
@@ -157,8 +163,8 @@ search_thread_add_hits_idle (gpointer user_data)
 	hits = user_data;
 
 	if (!g_cancellable_is_cancelled (hits->thread_data->cancellable)) {
-		nemo_search_engine_hits_added (NEMO_SEARCH_ENGINE (hits->thread_data->engine),
-						   hits->uris);
+		nemo_search_provider_hits_added (NEMO_SEARCH_PROVIDER (hits->thread_data->engine),
+						     hits->uris);
 	}
 
 	g_list_free_full (hits->uris, g_free);
@@ -323,13 +329,13 @@ search_thread_func (gpointer user_data)
 }
 
 static void
-nemo_search_engine_simple_start (NemoSearchEngine *engine)
+nemo_search_engine_simple_start (NemoSearchProvider *provider)
 {
 	NemoSearchEngineSimple *simple;
 	SearchThreadData *data;
 	GThread *thread;
 	
-	simple = NEMO_SEARCH_ENGINE_SIMPLE (engine);
+	simple = NEMO_SEARCH_ENGINE_SIMPLE (provider);
 
 	if (simple->details->active_search != NULL) {
 		return;
@@ -348,11 +354,11 @@ nemo_search_engine_simple_start (NemoSearchEngine *engine)
 }
 
 static void
-nemo_search_engine_simple_stop (NemoSearchEngine *engine)
+nemo_search_engine_simple_stop (NemoSearchProvider *provider)
 {
 	NemoSearchEngineSimple *simple;
 
-	simple = NEMO_SEARCH_ENGINE_SIMPLE (engine);
+	simple = NEMO_SEARCH_ENGINE_SIMPLE (provider);
 
 	if (simple->details->active_search != NULL) {
 		g_cancellable_cancel (simple->details->active_search->cancellable);
@@ -361,11 +367,12 @@ nemo_search_engine_simple_stop (NemoSearchEngine *engine)
 }
 
 static void
-nemo_search_engine_simple_set_query (NemoSearchEngine *engine, NemoQuery *query)
+nemo_search_engine_simple_set_query (NemoSearchProvider *provider,
+					 NemoQuery          *query)
 {
 	NemoSearchEngineSimple *simple;
 
-	simple = NEMO_SEARCH_ENGINE_SIMPLE (engine);
+	simple = NEMO_SEARCH_ENGINE_SIMPLE (provider);
 
 	if (query) {
 		g_object_ref (query);
@@ -379,18 +386,20 @@ nemo_search_engine_simple_set_query (NemoSearchEngine *engine, NemoQuery *query)
 }
 
 static void
+nemo_search_provider_init (NemoSearchProviderIface *iface)
+{
+	iface->set_query = nemo_search_engine_simple_set_query;
+	iface->start = nemo_search_engine_simple_start;
+	iface->stop = nemo_search_engine_simple_stop;
+}
+
+static void
 nemo_search_engine_simple_class_init (NemoSearchEngineSimpleClass *class)
 {
 	GObjectClass *gobject_class;
-	NemoSearchEngineClass *engine_class;
 
 	gobject_class = G_OBJECT_CLASS (class);
 	gobject_class->finalize = finalize;
-
-	engine_class = NEMO_SEARCH_ENGINE_CLASS (class);
-	engine_class->set_query = nemo_search_engine_simple_set_query;
-	engine_class->start = nemo_search_engine_simple_start;
-	engine_class->stop = nemo_search_engine_simple_stop;
 
 	g_type_class_add_private (class, sizeof (NemoSearchEngineSimpleDetails));
 }
@@ -402,10 +411,10 @@ nemo_search_engine_simple_init (NemoSearchEngineSimple *engine)
 						       NemoSearchEngineSimpleDetails);
 }
 
-NemoSearchEngine *
+NemoSearchEngineSimple *
 nemo_search_engine_simple_new (void)
 {
-	NemoSearchEngine *engine;
+	NemoSearchEngineSimple *engine;
 
 	engine = g_object_new (NEMO_TYPE_SEARCH_ENGINE_SIMPLE, NULL);
 

@@ -36,16 +36,16 @@
 typedef struct NemoSearchEngineTrackerDetails NemoSearchEngineTrackerDetails;
 
 typedef struct NemoSearchEngineTracker {
-	NemoSearchEngine parent;
+	GObject parent;
 	NemoSearchEngineTrackerDetails *details;
 } NemoSearchEngineTracker;
 
 typedef struct {
-	NemoSearchEngineClass parent_class;
+	GObjectClass parent_class;
 } NemoSearchEngineTrackerClass;
 
 GType nemo_search_engine_tracker_get_type (void);
 
-NemoSearchEngine* nemo_search_engine_tracker_new (void);
+NemoSearchEngineTracker* nemo_search_engine_tracker_new (void);
 
 #endif /* NEMO_SEARCH_ENGINE_TRACKER_H */

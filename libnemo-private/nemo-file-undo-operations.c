@@ -258,8 +258,8 @@ nemo_file_undo_info_get_strings (NemoFileUndoInfo *self,
 				     gchar **redo_description)
 {
 	return NEMO_FILE_UNDO_INFO_CLASS (G_OBJECT_GET_CLASS (self))->strings_func (self,
-											undo_label, undo_description,
-											redo_label, redo_description);
+										 undo_label, undo_description,
+										 redo_label, redo_description);
 }
 
 static void

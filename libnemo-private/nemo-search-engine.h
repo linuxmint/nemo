@@ -25,7 +25,6 @@
 #define NEMO_SEARCH_ENGINE_H
 
 #include <glib-object.h>
-#include <libnemo-private/nemo-query.h>
 
 #define NEMO_TYPE_SEARCH_ENGINE		(nemo_search_engine_get_type ())
 #define NEMO_SEARCH_ENGINE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_SEARCH_ENGINE, NemoSearchEngine))
@@ -43,31 +42,10 @@ typedef struct NemoSearchEngine {
 
 typedef struct {
 	GObjectClass parent_class;
-	
-	/* VTable */
-	void (*set_query) (NemoSearchEngine *engine, NemoQuery *query);
-	void (*start) (NemoSearchEngine *engine);
-	void (*stop) (NemoSearchEngine *engine);
-
-	/* Signals */
-	void (*hits_added) (NemoSearchEngine *engine, GList *hits);
-	void (*hits_subtracted) (NemoSearchEngine *engine, GList *hits);
-	void (*finished) (NemoSearchEngine *engine);
-	void (*error) (NemoSearchEngine *engine, const char *error_message);
 } NemoSearchEngineClass;
 
 GType          nemo_search_engine_get_type  (void);
-gboolean       nemo_search_engine_enabled (void);
 
 NemoSearchEngine* nemo_search_engine_new       (void);
 
-void           nemo_search_engine_set_query (NemoSearchEngine *engine, NemoQuery *query);
-void	       nemo_search_engine_start (NemoSearchEngine *engine);
-void	       nemo_search_engine_stop (NemoSearchEngine *engine);
-
-void	       nemo_search_engine_hits_added (NemoSearchEngine *engine, GList *hits);
-void	       nemo_search_engine_hits_subtracted (NemoSearchEngine *engine, GList *hits);
-void	       nemo_search_engine_finished (NemoSearchEngine *engine);
-void	       nemo_search_engine_error (NemoSearchEngine *engine, const char *error_message);
-
-#endif /* NEMO_SEARCH_ENGINE_H */
+#endif /* NAUTILUS_SEARCH_ENGINE_H */
