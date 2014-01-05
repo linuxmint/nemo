@@ -31,6 +31,11 @@
 
 #define BATCH_SIZE 500
 
+enum {
+	PROP_RECURSIVE = 1,
+	NUM_PROPERTIES
+};
+
 typedef struct {
 	NemoSearchEngineSimple *engine;
 	GCancellable *cancellable;
@@ -42,7 +47,8 @@ typedef struct {
 	GQueue *directories; /* GFiles */
 
 	GHashTable *visited;
-	
+
+	gboolean recursive;
 	gint n_processed_files;
 	GList *uri_hits;
 } SearchThreadData;
@@ -52,9 +58,12 @@ struct NemoSearchEngineSimpleDetails {
 	NemoQuery *query;
 
 	SearchThreadData *active_search;
-	
+
+	gboolean recursive;
 	gboolean query_finished;
 };
+
+static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 static void nemo_search_provider_init (NemoSearchProviderIface  *iface);
 
@@ -269,7 +278,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 			send_batch (data);
 		}
 
-		if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY) {
+		if (data->engine->details->recursive && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY) {
 			id = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_ID_FILE);
 			visited = FALSE;
 			if (id) {
@@ -386,6 +395,43 @@ nemo_search_engine_simple_set_query (NemoSearchProvider *provider,
 }
 
 static void
+nemo_search_engine_simple_set_property (GObject *object,
+					    guint arg_id,
+					    const GValue *value,
+					    GParamSpec *pspec)
+{
+	NemoSearchEngineSimple *engine;
+
+	engine = NEMO_SEARCH_ENGINE_SIMPLE (object);
+
+	switch (arg_id) {
+	case PROP_RECURSIVE:
+		engine->details->recursive = g_value_get_boolean (value);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, arg_id, pspec);
+		break;
+	}
+}
+
+static void
+nemo_search_engine_simple_get_property (GObject *object,
+					    guint arg_id,
+					    GValue *value,
+					    GParamSpec *pspec)
+{
+	NemoSearchEngineSimple *engine;
+
+	engine = NEMO_SEARCH_ENGINE_SIMPLE (object);
+
+	switch (arg_id) {
+	case PROP_RECURSIVE:
+		g_value_set_boolean (value, engine->details->recursive);
+		break;
+	}
+}
+
+static void
 nemo_search_provider_init (NemoSearchProviderIface *iface)
 {
 	iface->set_query = nemo_search_engine_simple_set_query;
@@ -400,7 +446,16 @@ nemo_search_engine_simple_class_init (NemoSearchEngineSimpleClass *class)
 
 	gobject_class = G_OBJECT_CLASS (class);
 	gobject_class->finalize = finalize;
+	gobject_class->get_property = nemo_search_engine_simple_get_property;
+	gobject_class->set_property = nemo_search_engine_simple_set_property;
 
+	properties[PROP_RECURSIVE] = g_param_spec_boolean ("recursive",
+							   "recursive",
+							   "recursive",
+							   FALSE,
+							   G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+
+	g_object_class_install_properties (gobject_class, NUM_PROPERTIES, properties);
 	g_type_class_add_private (class, sizeof (NemoSearchEngineSimpleDetails));
 }
 
