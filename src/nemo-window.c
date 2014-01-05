@@ -1578,6 +1578,7 @@ nemo_window_connect_content_view (NemoWindow *window,
 				      NemoView *view)
 {
 	NemoWindowSlot *slot;
+	NemoDirectory *directory;
 
 	g_assert (NEMO_IS_WINDOW (window));
 	g_assert (NEMO_IS_VIEW (view));
@@ -1599,9 +1600,14 @@ nemo_window_connect_content_view (NemoWindow *window,
        */
 	if (slot->pending_location == NULL) {
 		nemo_window_load_view_as_menus (window);
-	}
+	} else {
+		directory = nemo_directory_get (slot->pending_location);
+		if (!NEMO_IS_SEARCH_DIRECTORY (directory)) {
+			nemo_view_grab_focus (view);
+		}
 
-	nemo_view_grab_focus (view);
+		nemo_directory_unref (directory);
+	}
 }
 
 void

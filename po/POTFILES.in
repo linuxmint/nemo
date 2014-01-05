@@ -39,6 +39,7 @@ libnemo-private/nemo-program-choosing.c
 libnemo-private/nemo-progress-info.c
 libnemo-private/nemo-query.c
 libnemo-private/nemo-search-directory-file.c
+libnemo-private/nemo-search-engine.c
 libnemo-private/nemo-tree-view-drag-dest.c
 libnemo-private/nemo-undo-signal-handlers.c
 libnemo-private/nemo-vfs-file.c
