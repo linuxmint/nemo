@@ -273,7 +273,7 @@ if test "$GCC" = "yes" -a "$set_more_warnings" != "no"; then
 	-Wnested-externs -Wpointer-arith \
 	-Wcast-align \
 	-Wno-deprecated-declarations \
-	-Werror "
+	-Werror"
 
 	for option in -Wstrict-aliasing=0 -Wno-pointer-sign; do
 		SAVE_CFLAGS="$CFLAGS"

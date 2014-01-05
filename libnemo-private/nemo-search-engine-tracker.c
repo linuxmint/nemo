@@ -229,7 +229,7 @@ nemo_search_engine_tracker_start (NemoSearchProvider *provider)
 }
 
 static void
-nemo_search_engine_tracker_stop (NautilusSearchProvider *provider)
+nemo_search_engine_tracker_stop (NemoSearchProvider *provider)
 {
 	NemoSearchEngineTracker *tracker;
 
