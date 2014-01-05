@@ -452,7 +452,7 @@ nemo_search_engine_simple_class_init (NemoSearchEngineSimpleClass *class)
 	properties[PROP_RECURSIVE] = g_param_spec_boolean ("recursive",
 							   "recursive",
 							   "recursive",
-							   FALSE,
+							   TRUE,
 							   G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
 	g_object_class_install_properties (gobject_class, NUM_PROPERTIES, properties);
