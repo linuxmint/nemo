@@ -21,6 +21,7 @@
 
 #include <glib-object.h>
 #include <libnemo-private/nemo-query.h>
+#include <libnemo-private/nemo-search-hit.h>
 
 G_BEGIN_DECLS
 

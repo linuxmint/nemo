@@ -96,11 +96,14 @@ search_provider_hits_added (NemoSearchProvider *provider,
 	GList *l;
 
 	for (l = hits; l != NULL; l = l->next) {
-		char *uri = l->data;
+		NemoSearchHit *hit = l->data;
 		int count;
+		const char *uri;
+
+		uri = nemo_search_hit_get_uri (hit);
 		count = GPOINTER_TO_INT (g_hash_table_lookup (engine->details->uris, uri));
 		if (count == 0)
-			added = g_list_prepend (added, uri);
+			added = g_list_prepend (added, hit);
 		g_hash_table_replace (engine->details->uris, g_strdup (uri), GINT_TO_POINTER (count++));
 	}
 	if (added != NULL) {
@@ -118,12 +121,15 @@ search_provider_hits_subtracted (NemoSearchProvider *provider,
 	GList *l;
 
 	for (l = hits; l != NULL; l = l->next) {
-		char *uri = l->data;
+		NemoSearchHit *hit = l->data;
 		int count;
+		const char *uri;
+
+		uri = nemo_search_hit_get_uri (hit);
 		count = GPOINTER_TO_INT (g_hash_table_lookup (engine->details->uris, uri));
 		g_assert (count > 0);
 		if (count == 1) {
-			removed = g_list_prepend (removed, uri);
+			removed = g_list_prepend (removed, hit);
 			g_hash_table_remove (engine->details->uris, uri);
 		} else {
 			g_hash_table_replace (engine->details->uris, g_strdup (uri), GINT_TO_POINTER (count--));

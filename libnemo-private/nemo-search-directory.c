@@ -468,22 +468,26 @@ search_engine_hits_added (NemoSearchEngine *engine, GList *hits,
 	GList *hit_list;
 	GList *file_list;
 	NemoFile *file;
-	char *uri;
 	SearchMonitor *monitor;
 	GList *monitor_list;
 
 	file_list = NULL;
 
 	for (hit_list = hits; hit_list != NULL; hit_list = hit_list->next) {
-		uri = hit_list->data;
+		NemoSearchHit *hit = hit_list->data;
+		const char *uri;
 
+		uri = nemo_search_hit_get_uri (hit);
 		if (g_str_has_suffix (uri, NEMO_SAVED_SEARCH_EXTENSION)) {
 			/* Never return saved searches themselves as hits */
 			continue;
 		}
-		
+
+		nemo_search_hit_compute_scores (hit, search->details->query);
+
 		file = nemo_file_get_by_uri (uri);
-		
+		nemo_file_set_search_relevance (file, nemo_search_hit_get_relevance (hit));
+
 		for (monitor_list = search->details->monitor_list; monitor_list; monitor_list = monitor_list->next) {
 			monitor = monitor_list->data;
 
@@ -513,13 +517,15 @@ search_engine_hits_subtracted (NemoSearchEngine *engine, GList *hits,
 	GList *monitor_list;
 	SearchMonitor *monitor;
 	GList *file_list;
-	char *uri;
 	NemoFile *file;
 
 	file_list = NULL;
 
 	for (hit_list = hits; hit_list != NULL; hit_list = hit_list->next) {
-		uri = hit_list->data;
+		NemoSearchHit *hit = hit_list->data;
+		const char *uri;
+
+		uri = nemo_search_hit_get_uri (hit);
 		file = nemo_file_get_by_uri (uri);
 
 		for (monitor_list = search->details->monitor_list; monitor_list; 
