@@ -22,6 +22,7 @@
  */
 
 #include <config.h>
+#include "nemo-search-hit.h"
 #include "nemo-search-provider.h"
 #include "nemo-search-engine-tracker.h"
 #include <string.h>
@@ -85,6 +86,12 @@ cursor_callback (GObject      *object,
 	NemoSearchEngineTracker *tracker;
 	GError *error = NULL;
 	TrackerSparqlCursor *cursor;
+	NemoSearchHit *hit;
+	const char *uri;
+	const char *mtime_str;
+	const char *atime_str;
+	GTimeVal tv;
+	gdouble rank;
 	GList *hits;
 	gboolean success;
 
@@ -108,9 +115,34 @@ cursor_callback (GObject      *object,
 	}
 
 	/* We iterate result by result, not n at a time. */
-	hits = g_list_append (NULL, (gchar*) tracker_sparql_cursor_get_string (cursor, 0, NULL));
+	uri = tracker_sparql_cursor_get_string (cursor, 0, NULL);
+	rank = tracker_sparql_cursor_get_double (cursor, 1);
+	mtime_str = tracker_sparql_cursor_get_string (cursor, 2, NULL);
+	atime_str = tracker_sparql_cursor_get_string (cursor, 3, NULL);
+
+	hit = nemo_search_hit_new (uri);
+	nemo_search_hit_set_fts_rank (hit, rank);
+	if (g_time_val_from_iso8601 (mtime_str, &tv)) {
+		GDateTime *dt;
+		dt = g_date_time_new_from_timeval_local (&tv);
+		nautilus_search_hit_set_modification_time (hit, dt);
+		g_date_time_unref (dt);
+	} else {
+		g_warning ("unable to parse mtime: %s", mtime_str);
+	}
+	if (g_time_val_from_iso8601 (atime_str, &tv)) {
+		GDateTime *dt;
+		dt = g_date_time_new_from_timeval_local (&tv);
+		nemo_search_hit_set_access_time (hit, dt);
+		g_date_time_unref (dt);
+	} else {
+		g_warning ("unable to parse atime: %s", atime_str);
+	}
+
+	hits = g_list_append (NULL, hit);
 	nemo_search_provider_hits_added (NEMO_SEARCH_PROVIDER (tracker), hits);
 	g_list_free (hits);
+	g_object_unref (hit);
 
 	/* Get next */
 	cursor_next (tracker, cursor);
@@ -178,7 +210,7 @@ nemo_search_engine_tracker_start (NemoSearchProvider *provider)
 
 	mime_count = g_list_length (mimetypes);
 
-	sparql = g_string_new ("SELECT DISTINCT nie:url(?urn) "
+	sparql = g_string_new ("SELECT DISTINCT nie:url(?urn) fts:rank(?urn) tracker:coalesce(nfo:fileLastModified(?urn), nie:contentLastModified(?urn)) AS ?mtime tracker:coalesce(nfo:fileLastAccessed(?urn), nie:contentAccessed(?urn)) AS ?atime "
 			       "WHERE {"
 			       "  ?urn a nfo:FileDataObject ;"
 			       "  tracker:available true ; ");
@@ -212,7 +244,7 @@ nemo_search_engine_tracker_start (NemoSearchProvider *provider)
 		g_string_append (sparql, ")");
 	}
 
-	g_string_append (sparql, ")}");
+	g_string_append (sparql, ")} ORDER BY DESC (fts:rank(?urn))");
 
 	tracker->details->cancellable = g_cancellable_new ();
 	tracker->details->query_pending = TRUE;

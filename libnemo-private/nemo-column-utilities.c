@@ -209,6 +209,24 @@ get_trash_columns (void)
 	return nemo_column_list_copy (columns);
 }
 
+static GList *
+get_search_columns (void)
+{
+	static GList *columns = NULL;
+
+	if (columns == NULL) {
+		columns = g_list_append (columns,
+					 g_object_new (NEMO_TYPE_COLUMN,
+						       "name", "search_relevance",
+						       "attribute", "search_relevance",
+						       "label", _("Relevance"),
+						       "description", _("Relevance rank for search"),
+						       NULL));
+	}
+
+	return nemo_column_list_copy (columns);
+}
+
 GList *
 nemo_get_common_columns (void)
 {
@@ -229,6 +247,8 @@ nemo_get_all_columns (void)
 
 	columns = g_list_concat (nemo_get_common_columns (),
 	                         get_trash_columns ());
+	columns = g_list_concat (columns,
+				 get_search_columns ());
 
 	return columns;
 }

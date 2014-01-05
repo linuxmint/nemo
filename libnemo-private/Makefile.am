@@ -170,6 +170,8 @@ libnemo_private_la_SOURCES = \
 	nemo-search-engine.h \
 	nemo-search-engine-simple.c \
 	nemo-search-engine-simple.h \
+	nemo-search-hit.c \
+	nemo-search-hit.h \
 	nemo-selection-canvas-item.c \
 	nemo-selection-canvas-item.h \
 	nemo-signaller.h \

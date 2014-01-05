@@ -61,7 +61,8 @@ typedef enum {
     NEMO_FILE_SORT_BY_DETAILED_TYPE,
 	NEMO_FILE_SORT_BY_MTIME,
         NEMO_FILE_SORT_BY_ATIME,
-	NEMO_FILE_SORT_BY_TRASHED_TIME
+	NEMO_FILE_SORT_BY_TRASHED_TIME,
+	NEMO_FILE_SORT_BY_SEARCH_RELEVANCE
 } NemoFileSortType;	
 
 typedef enum {
@@ -208,6 +209,7 @@ gboolean                nemo_file_is_directory                      (NemoFile   
 gboolean                nemo_file_is_user_special_directory         (NemoFile                   *file,
 									 GUserDirectory                 special_directory);
 gboolean		nemo_file_is_archive			(NemoFile			*file);
+gboolean                nemo_file_is_in_search 			(NemoFile			*file);
 gboolean                nemo_file_is_in_trash                       (NemoFile                   *file);
 gboolean                nemo_file_is_in_recent                      (NemoFile                   *file);
 gboolean                nemo_file_is_in_desktop                     (NemoFile                   *file);
@@ -236,6 +238,8 @@ char *                  nemo_file_peek_top_left_text                (NemoFile   
 gboolean                nemo_file_get_directory_item_mime_types     (NemoFile                   *file,
 									 GList                         **mime_list);
 
+void                    nemo_file_set_search_relevance              (NemoFile                   *file,
+									 gdouble                         relevance);
 void                    nemo_file_set_attributes                    (NemoFile                   *file, 
 									 GFileInfo                      *attributes,
 									 NemoFileOperationCallback   callback,
