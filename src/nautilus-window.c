@@ -458,6 +458,8 @@ nautilus_window_set_initial_window_geometry (NautilusWindow *window)
 	GdkScreen *screen;
 	guint max_width_for_screen, max_height_for_screen;
 	guint default_width, default_height;
+	gboolean show_sidebar;
+	GtkAction *action;
 
 	screen = gtk_window_get_screen (GTK_WINDOW (window));
 	
@@ -472,6 +474,17 @@ nautilus_window_set_initial_window_geometry (NautilusWindow *window)
 				          max_width_for_screen), 
 				     MIN (default_height, 
 				          max_height_for_screen));
+
+	show_sidebar = g_settings_get_boolean (nautilus_window_state, NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR);
+	action = gtk_action_group_get_action (window->details->main_action_group,
+					      NAUTILUS_ACTION_SHOW_HIDE_SIDEBAR);
+	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), show_sidebar);
+
+	if (show_sidebar) {
+		nautilus_window_show_sidebar (window);
+	} else {
+		nautilus_window_hide_sidebar (window);
+	}
 }
 
 static gboolean
@@ -1519,12 +1532,6 @@ nautilus_window_constructed (GObject *self)
 
 	slot = nautilus_window_open_slot (window, 0);
 	nautilus_window_set_active_slot (window, slot);
-
-	if (g_settings_get_boolean (nautilus_window_state, NAUTILUS_WINDOW_STATE_START_WITH_SIDEBAR)) {
-		nautilus_window_show_sidebar (window);
-	} else {
-		nautilus_window_hide_sidebar (window);
-	}
 
 	window->details->bookmarks_id =
 		g_signal_connect_swapped (nautilus_application_get_bookmarks (application), "changed",
