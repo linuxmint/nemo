@@ -161,9 +161,10 @@ nemo_search_bar_init (NemoSearchBar *bar)
 	gtk_widget_show (align);
 
 	bar->details->entry = gtk_entry_new ();
-	gtk_entry_set_icon_from_icon_name (GTK_ENTRY (bar->details->entry),
-					   GTK_ENTRY_ICON_SECONDARY,
-					   "edit-find");
+	//FIXME: Icon was interacting strangely with tab close button
+	//gtk_entry_set_icon_from_icon_name (GTK_ENTRY (bar->details->entry),
+		//			   GTK_ENTRY_ICON_SECONDARY,
+		//			   "edit-find");
 	gtk_container_add (GTK_CONTAINER (align), bar->details->entry);
 
 	g_signal_connect (bar->details->entry, "activate",
