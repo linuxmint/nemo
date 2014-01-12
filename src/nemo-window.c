@@ -43,7 +43,6 @@
 #include "nemo-window-bookmarks.h"
 #include "nemo-window-slot.h"
 #include "nemo-window-menus.h"
-#include "nemo-icon-view.h"
 #include "nemo-list-view.h"
 #include "nemo-statusbar.h"
 

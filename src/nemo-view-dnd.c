@@ -31,7 +31,6 @@
 
 #include "nemo-view-dnd.h"
 
-#include "nemo-desktop-icon-view.h"
 #include "nemo-view.h"
 
 #include <eel/eel-stock-dialogs.h>

@@ -37,7 +37,6 @@
 #include "nemo-window-manage-views.h"
 #include "nemo-window-private.h"
 #include "nemo-window-menus.h"
-#include "nemo-icon-view.h"
 #include "nemo-list-view.h"
 
 #include <glib/gi18n.h>

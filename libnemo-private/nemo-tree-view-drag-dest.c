@@ -34,7 +34,6 @@
 
 #include "nemo-file-dnd.h"
 #include "nemo-file-changes-queue.h"
-#include "nemo-icon-dnd.h"
 #include "nemo-link.h"
 
 #include <gtk/gtk.h>

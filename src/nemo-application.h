@@ -31,7 +31,7 @@
 #include "nemo-bookmark-list.h"
 #include "nemo-window.h"
 
-#define NEMO_DESKTOP_ICON_VIEW_IID	"OAFIID:Nemo_File_Manager_Desktop_Icon_View"
+#define NEMO_DESKTOP_CANVAS_VIEW_IID	"OAFIID:Nemo_File_Manager_Desktop_Canvas_View"
 
 #define NEMO_TYPE_APPLICATION nemo_application_get_type()
 #define NEMO_APPLICATION(obj) \

@@ -31,7 +31,7 @@
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-trash-monitor.h>
-#include <libnemo-private/nemo-icon-dnd.h>
+#include <libnemo-private/nemo-canvas-dnd.h>
 
 #include "nemo-window-slot-dnd.h"
 
