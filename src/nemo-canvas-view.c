@@ -1506,7 +1506,7 @@ nemo_canvas_view_merge_menus (NemoView *view)
 	g_object_unref (action_group); /* owned by ui manager */
 
 	canvas_view->details->canvas_merge_id =
-		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nemo/nemo-canvas-view-ui.xml", NULL);
+		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-icon-view-ui.xml", NULL);
 
 	/* Do one-time state-setting here; context-dependent state-setting
 	 * is done in update_menus.
