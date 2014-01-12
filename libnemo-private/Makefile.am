@@ -65,6 +65,13 @@ libnemo_private_la_SOURCES = \
     nemo-action-manager.h \
 	nemo-bookmark.c \
 	nemo-bookmark.h \
+	nemo-canvas-container.c \
+	nemo-canvas-container.h \
+	nemo-canvas-dnd.c \
+	nemo-canvas-dnd.h \
+	nemo-canvas-item.c \
+	nemo-canvas-item.h \
+	nemo-canvas-private.h \
     nemo-cell-renderer-disk.c \
     nemo-cell-renderer-disk.h \
 	nemo-clipboard-monitor.c \
@@ -122,13 +129,6 @@ libnemo_private_la_SOURCES = \
 	nemo-generated.h \
 	nemo-global-preferences.c \
 	nemo-global-preferences.h \
-	nemo-icon-canvas-item.c \
-	nemo-icon-canvas-item.h \
-	nemo-icon-container.c \
-	nemo-icon-container.h \
-	nemo-icon-dnd.c \
-	nemo-icon-dnd.h \
-	nemo-icon-private.h \
 	nemo-icon-info.c \
 	nemo-icon-info.h \
 	nemo-icon-names.h \

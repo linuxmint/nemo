@@ -40,7 +40,7 @@
 #include "nemo-window-private.h"
 #include "nemo-desktop-window.h"
 #include "nemo-location-bar.h"
-#include "nemo-icon-view.h"
+#include "nemo-canvas-view.h"
 #include "nemo-list-view.h"
 #include "nemo-toolbar.h"
 #include <gtk/gtk.h>
@@ -850,7 +850,7 @@ action_icon_view_callback (GtkAction *action,
     NemoWindowSlot *slot;
     window = NEMO_WINDOW (user_data);
     slot = nemo_window_get_active_slot (window);
-    nemo_window_slot_set_content_view (slot, NEMO_ICON_VIEW_ID);
+    nemo_window_slot_set_content_view (slot, NEMO_CANVAS_VIEW_ID);
     toolbar_set_view_button (ICON_VIEW, nemo_window_get_active_pane(window));
 }
 
@@ -876,18 +876,18 @@ action_compact_view_callback (GtkAction *action,
     NemoWindowSlot *slot;
     window = NEMO_WINDOW (user_data);
     slot = nemo_window_get_active_slot (window);
-    nemo_window_slot_set_content_view (slot, FM_COMPACT_VIEW_ID);
+    nemo_window_slot_set_content_view (slot, NEMO_COMPACT_VIEW_ID);
     toolbar_set_view_button (COMPACT_VIEW, nemo_window_get_active_pane(window));
 }
 
 guint
 toolbar_action_for_view_id (const char *view_id)
 {
-    if (g_strcmp0(view_id, NEMO_ICON_VIEW_ID) == 0) {
+    if (g_strcmp0(view_id, NEMO_CANVAS_VIEW_ID) == 0) {
         return ICON_VIEW;
     } else if (g_strcmp0(view_id, NEMO_LIST_VIEW_ID) == 0) {
         return LIST_VIEW;
-    } else if (g_strcmp0(view_id, FM_COMPACT_VIEW_ID) == 0) {
+    } else if (g_strcmp0(view_id, NEMO_COMPACT_VIEW_ID) == 0) {
         return COMPACT_VIEW;
     } else {
         return NULL_VIEW;

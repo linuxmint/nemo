@@ -32,7 +32,7 @@
 #include "nemo-view.h"
 
 #include "nemo-actions.h"
-#include "nemo-desktop-icon-view.h"
+#include "nemo-desktop-canvas-view.h"
 #include "nemo-error-reporting.h"
 #include "nemo-list-view.h"
 #include "nemo-mime-actions.h"
@@ -9947,7 +9947,7 @@ real_update_menus (NemoView *view)
 	show_open_alternate = file_list_all_are_folders (selection) &&
 		selection_count > 0 &&
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER) &&
-		!NEMO_IS_DESKTOP_ICON_VIEW (view);
+		!NEMO_IS_DESKTOP_CANVAS_VIEW (view);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_OPEN_ALTERNATE);
@@ -10052,7 +10052,7 @@ real_update_menus (NemoView *view)
 				selection_count),
 		      NULL);
 	
-	show_properties = (!NEMO_IS_DESKTOP_ICON_VIEW (view) || selection_count > 0);
+	show_properties = (!NEMO_IS_DESKTOP_CANVAS_VIEW (view) || selection_count > 0);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PROPERTIES);
@@ -10996,7 +10996,7 @@ window_slots_changed (NemoWindow *window,
 	 * border.
 	 */
 	if (slot_count > 1 ||
-	    NEMO_IS_DESKTOP_ICON_VIEW (view)) {
+	    NEMO_IS_DESKTOP_CANVAS_VIEW (view)) {
 		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_NONE);
 	} else {
 		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_IN);

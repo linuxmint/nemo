@@ -43,7 +43,7 @@ void nemo_run_lib_self_checks (void);
 	macro (nemo_self_check_file_operations) \
 	macro (nemo_self_check_directory) \
 	macro (nemo_self_check_file) \
-	macro (nemo_self_check_icon_container) \
+	macro (nemo_self_check_canvas_container) \
 /* Add new self-check functions to the list above this line. */
 
 /* Generate prototypes for all the functions. */

@@ -1,5 +1,5 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
-/* gnome-icon-container-private.h
+/* gnome-canvas-container-private.h
 
    Copyright (C) 1999, 2000 Free Software Foundation
    Copyright (C) 2000 Eazel, Inc.
@@ -22,22 +22,22 @@
    Author: Ettore Perazzoli <ettore@gnu.org>
 */
 
-#ifndef NEMO_ICON_CONTAINER_PRIVATE_H
-#define NEMO_ICON_CONTAINER_PRIVATE_H
+#ifndef NEMO_CANVAS_CONTAINER_PRIVATE_H
+#define NEMO_CANVAS_CONTAINER_PRIVATE_H
 
 #include <eel/eel-glib-extensions.h>
-#include <libnemo-private/nemo-icon-canvas-item.h>
-#include <libnemo-private/nemo-icon-container.h>
-#include <libnemo-private/nemo-icon-dnd.h>
+#include <libnemo-private/nemo-canvas-item.h>
+#include <libnemo-private/nemo-canvas-container.h>
+#include <libnemo-private/nemo-canvas-dnd.h>
 
 /* An Icon. */
 
 typedef struct {
 	/* Object represented by this icon. */
-	NemoIconData *data;
+	NemoCanvasIconData *data;
 
 	/* Canvas item for the icon. */
-	NemoIconCanvasItem *item;
+	NemoCanvasItem *item;
 
 	/* X/Y coordinates. */
 	double x, y;
@@ -66,10 +66,10 @@ typedef struct {
 	eel_boolean_bit is_monitored : 1;
 
 	eel_boolean_bit has_lazy_position : 1;
-} NemoIcon;
+} NemoCanvasIcon;
 
 
-/* Private NemoIconContainer members. */
+/* Private NemoCanvasContainer members. */
 
 typedef struct {
 	gboolean active;
@@ -84,7 +84,7 @@ typedef struct {
 	EelDRect prev_rect;
 	int last_adj_x;
 	int last_adj_y;
-} NemoIconRubberbandInfo;
+} NemoCanvasRubberbandInfo;
 
 typedef enum {
 	DRAG_STATE_INITIAL,
@@ -118,33 +118,33 @@ enum {
 	LAST_LABEL_COLOR
 };
 
-struct NemoIconContainerDetails {
+struct NemoCanvasContainerDetails {
 	/* List of icons. */
 	GList *icons;
 	GList *new_icons;
 	GHashTable *icon_set;
 
 	/* Current icon for keyboard navigation. */
-	NemoIcon *keyboard_focus;
-	NemoIcon *keyboard_rubberband_start;
+	NemoCanvasIcon *keyboard_focus;
+	NemoCanvasIcon *keyboard_rubberband_start;
 
 	/* Current icon with stretch handles, so we have only one. */
-	NemoIcon *stretch_icon;
+	NemoCanvasIcon *stretch_icon;
 	double stretch_initial_x, stretch_initial_y;
 	guint stretch_initial_size;
 	
 	/* Last highlighted drop target. */
-	NemoIcon *drop_target;
+	NemoCanvasIcon *drop_target;
 
 	/* Rubberbanding status. */
-	NemoIconRubberbandInfo rubberband_info;
+	NemoCanvasRubberbandInfo rubberband_info;
 
 	/* Timeout used to make a selected icon fully visible after a short
 	 * period of time. (The timeout is needed to make sure
 	 * double-clicking still works.)
 	 */
 	guint keyboard_icon_reveal_timer_id;
-	NemoIcon *keyboard_icon_to_reveal;
+	NemoCanvasIcon *keyboard_icon_to_reveal;
 
 	/* Used to coalesce selection changed signals in some cases */
 	guint selection_changed_id;
@@ -152,19 +152,19 @@ struct NemoIconContainerDetails {
 	/* If a request is made to reveal an unpositioned icon we remember
 	 * it and reveal it once it gets positioned (in relayout).
 	 */
-	NemoIcon *pending_icon_to_reveal;
+	NemoCanvasIcon *pending_icon_to_reveal;
 
 	/* If a request is made to rename an unpositioned icon we remember
 	 * it and start renaming it once it gets positioned (in relayout).
 	 */
-	NemoIcon *pending_icon_to_rename;
+	NemoCanvasIcon *pending_icon_to_rename;
 
 	/* Remembered information about the start of the current event. */
 	guint32 button_down_time;
 	
 	/* Drag state. Valid only if drag_button is non-zero. */
 	guint drag_button;
-	NemoIcon *drag_icon;
+	NemoCanvasIcon *drag_icon;
 	int drag_x, drag_y;
 	DragState drag_state;
 	gboolean drag_started;
@@ -172,10 +172,10 @@ struct NemoIconContainerDetails {
 	gboolean drag_allow_moves;
 
 	gboolean icon_selected_on_button_down;
-	NemoIcon *double_click_icon[2]; /* Both clicks in a double click need to be on the same icon */
+	NemoCanvasIcon *double_click_icon[2]; /* Both clicks in a double click need to be on the same icon */
 	guint double_click_button[2];
 
-	NemoIcon *range_selection_base_icon;
+	NemoCanvasIcon *range_selection_base_icon;
 	
 	/* Renaming Details */
 	gboolean renaming;
@@ -192,7 +192,7 @@ struct NemoIconContainerDetails {
 	guint align_idle_id;
 
 	/* DnD info. */
-	NemoIconDndInfo *dnd_info;
+	NemoCanvasDndInfo *dnd_info;
 
 	/* zoom level */
 	int zoom_level;
@@ -216,10 +216,10 @@ struct NemoIconContainerDetails {
 	gboolean all_columns_same_width;
 	
 	/* Layout mode */
-	NemoIconLayoutMode layout_mode;
+	NemoCanvasLayoutMode layout_mode;
 
 	/* Label position */
-	NemoIconLabelPosition label_position;
+	NemoCanvasLabelPosition label_position;
 
 	/* Forced icon size, iff greater than 0 */
 	int forced_icon_size;
@@ -240,7 +240,7 @@ struct NemoIconContainerDetails {
 	gboolean is_desktop;
 
     gboolean show_desktop_tooltips;
-    gboolean show_icon_view_tooltips;
+    gboolean show_canvas_view_tooltips;
 
     gint tooltip_flags; /* Really a NemoFileTooltipFlags */
 
@@ -282,28 +282,28 @@ struct NemoIconContainerDetails {
 };
 
 /* Private functions shared by mutiple files. */
-NemoIcon *nemo_icon_container_get_icon_by_uri             (NemoIconContainer *container,
-								   const char            *uri);
-void          nemo_icon_container_move_icon                   (NemoIconContainer *container,
-								   NemoIcon          *icon,
-								   int                    x,
-								   int                    y,
-								   double                 scale,
-								   gboolean               raise,
-								   gboolean               snap,
-								   gboolean		  update_position);
-void          nemo_icon_container_select_list_unselect_others (NemoIconContainer *container,
-								   GList                 *icons);
-char *        nemo_icon_container_get_icon_uri                (NemoIconContainer *container,
-								   NemoIcon          *icon);
-char *        nemo_icon_container_get_icon_drop_target_uri    (NemoIconContainer *container,
-								   NemoIcon          *icon);
-void          nemo_icon_container_update_icon                 (NemoIconContainer *container,
-								   NemoIcon          *icon);
-gboolean      nemo_icon_container_has_stored_icon_positions   (NemoIconContainer *container);
-gboolean      nemo_icon_container_scroll                      (NemoIconContainer *container,
-								   int                    delta_x,
-								   int                    delta_y);
-void          nemo_icon_container_update_scroll_region        (NemoIconContainer *container);
+NemoCanvasIcon *nemo_canvas_container_get_icon_by_uri             (NemoCanvasContainer *container,
+									 const char            *uri);
+void          nemo_canvas_container_move_icon                   (NemoCanvasContainer *container,
+								       NemoCanvasIcon      *icon,
+								       int                    x,
+								       int                    y,
+								       double                 scale,
+								       gboolean               raise,
+								       gboolean               snap,
+								       gboolean		  update_position);
+void          nemo_canvas_container_select_list_unselect_others (NemoCanvasContainer *container,
+								     GList                 *icons);
+char *        nemo_canvas_container_get_icon_uri                (NemoCanvasContainer *container,
+								       NemoCanvasIcon          *canvas);
+char *        nemo_canvas_container_get_icon_drop_target_uri    (NemoCanvasContainer *container,
+								       NemoCanvasIcon          *canvas);
+void          nemo_canvas_container_update_icon                 (NemoCanvasContainer *container,
+								       NemoCanvasIcon          *canvas);
+gboolean      nemo_canvas_container_has_stored_icon_positions   (NemoCanvasContainer *container);
+gboolean      nemo_canvas_container_scroll                      (NemoCanvasContainer *container,
+								     int                    delta_x,
+								     int                    delta_y);
+void          nemo_canvas_container_update_scroll_region        (NemoCanvasContainer *container);
 
-#endif /* NEMO_ICON_CONTAINER_PRIVATE_H */
+#endif /* NEMO_CANVAS_CONTAINER_PRIVATE_H */

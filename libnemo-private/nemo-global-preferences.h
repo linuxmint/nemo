@@ -120,24 +120,24 @@ enum
 };
 
 /* These IIDs are used by the preferences code and in nemo-application.c */
-#define NEMO_ICON_VIEW_IID		"OAFIID:Nemo_File_Manager_Icon_View"
+#define NEMO_CANVAS_VIEW_IID   "OAFIID:Nemo_File_Manager_Canvas_View"
 #define NEMO_COMPACT_VIEW_IID	"OAFIID:Nemo_File_Manager_Compact_View"
 #define NEMO_LIST_VIEW_IID		"OAFIID:Nemo_File_Manager_List_View"
 
 
 /* Icon View */
-#define NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL		"default-zoom-level"
-#define NEMO_PREFERENCES_ICON_VIEW_DEFAULT_USE_TIGHTER_LAYOUT   "default-use-tighter-layout"
-#define NEMO_PREFERENCES_ICON_VIEW_LABELS_BESIDE_ICONS		"labels-beside-icons"
+#define NEMO_PREFERENCES_CANVAS_VIEW_DEFAULT_ZOOM_LEVEL		"default-zoom-level"
+#define NEMO_PREFERENCES_CANVAS_VIEW_DEFAULT_USE_TIGHTER_LAYOUT   "default-use-tighter-layout"
+#define NEMO_PREFERENCES_CANVAS_VIEW_LABELS_BESIDE_ICONS		"labels-beside-icons"
 
 /* Which text attributes appear beneath icon names */
-#define NEMO_PREFERENCES_ICON_VIEW_CAPTIONS				"captions"
+#define NEMO_PREFERENCES_CANVAS_VIEW_CAPTIONS				"captions"
 
 /* The default size for thumbnail icons */
-#define NEMO_PREFERENCES_ICON_VIEW_THUMBNAIL_SIZE			"thumbnail-size"
+#define NEMO_PREFERENCES_CANVAS_VIEW_THUMBNAIL_SIZE			"thumbnail-size"
 
 /* ellipsization preferences */
-#define NEMO_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT		"text-ellipsis-limit"
+#define NEMO_PREFERENCES_CANVAS_VIEW_TEXT_ELLIPSIS_LIMIT		"text-ellipsis-limit"
 #define NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT		"text-ellipsis-limit"
 
 /* Compact View */
@@ -226,7 +226,7 @@ gboolean nemo_global_preferences_get_ignore_view_metadata (void);
 gint nemo_global_preferences_get_tooltip_flags (void);
 
 GSettings *nemo_preferences;
-GSettings *nemo_icon_view_preferences;
+GSettings *nemo_canvas_view_preferences;
 GSettings *nemo_list_view_preferences;
 GSettings *nemo_compact_view_preferences;
 GSettings *nemo_desktop_preferences;

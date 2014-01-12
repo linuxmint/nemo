@@ -84,13 +84,17 @@ nemo_SOURCES = \
 	nemo-bookmark-list.h		\
 	nemo-bookmarks-window.c		\
 	nemo-bookmarks-window.h		\
+	nemo-canvas-view.c			\
+	nemo-canvas-view.h			\
+	nemo-canvas-view-container.c		\
+	nemo-canvas-view-container.h		\
 	nemo-connect-server-dialog.c	\
 	nemo-connect-server-dialog.h	\
 	nemo-connect-server-dialog-nonmain.c \
 	nemo-connect-server-operation.c	\
 	nemo-connect-server-operation.h	\
-	nemo-desktop-icon-view.c		\
-	nemo-desktop-icon-view.h		\
+	nemo-desktop-canvas-view.c		\
+	nemo-desktop-canvas-view.h		\
 	nemo-desktop-item-properties.c	\
 	nemo-desktop-item-properties.h	\
 	nemo-desktop-window.c		\
@@ -103,10 +107,6 @@ nemo_SOURCES = \
 	nemo-floating-bar.h			\
 	nemo-freedesktop-dbus.c		\
 	nemo-freedesktop-dbus.h		\
-	nemo-icon-view.c			\
-	nemo-icon-view.h			\
-	nemo-icon-view-container.c		\
-	nemo-icon-view-container.h		\
 	nemo-image-properties-page.c	\
 	nemo-image-properties-page.h	\
 	nemo-list-model.c			\

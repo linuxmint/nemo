@@ -41,7 +41,6 @@
 #include <gio/gio.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-entry.h>
-#include <libnemo-private/nemo-icon-dnd.h>
 #include <libnemo-private/nemo-clipboard.h>
 #include <stdio.h>
 #include <string.h>

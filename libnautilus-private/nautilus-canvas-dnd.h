@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 
-/* nemo-icon-dnd.h - Drag & drop handling for the icon container widget.
+/* nemo-canvas-dnd.h - Drag & drop handling for the canvas container widget.
 
    Copyright (C) 1999, 2000 Free Software Foundation
    Copyright (C) 2000 Eazel, Inc.
@@ -25,10 +25,10 @@
 	    Andy Hertzfeld <andy@eazel.com>
 */
 
-#ifndef NEMO_ICON_DND_H
-#define NEMO_ICON_DND_H
+#ifndef NEMO_CANVAS_DND_H
+#define NEMO_CANVAS_DND_H
 
-#include <libnemo-private/nemo-icon-container.h>
+#include <libnemo-private/nemo-canvas-container.h>
 #include <libnemo-private/nemo-dnd.h>
 
 /* DnD-related information. */
@@ -40,17 +40,17 @@ typedef struct {
 	
 	/* Shadow for the icons being dragged.  */
 	EelCanvasItem *shadow;
-} NemoIconDndInfo;
+} NemoCanvasDndInfo;
 
 
-void   nemo_icon_dnd_init                  (NemoIconContainer *container);
-void   nemo_icon_dnd_fini                  (NemoIconContainer *container);
-void   nemo_icon_dnd_begin_drag            (NemoIconContainer *container,
-						GdkDragAction          actions,
-						gint                   button,
-						GdkEventMotion        *event,
-						int                    start_x,
-						int                    start_y);
-void   nemo_icon_dnd_end_drag              (NemoIconContainer *container);
+void   nemo_canvas_dnd_init                  (NemoCanvasContainer *container);
+void   nemo_canvas_dnd_fini                  (NemoCanvasContainer *container);
+void   nemo_canvas_dnd_begin_drag            (NemoCanvasContainer *container,
+						  GdkDragAction          actions,
+						  gint                   button,
+						  GdkEventMotion        *event,
+						  int                    start_x,
+						  int                    start_y);
+void   nemo_canvas_dnd_end_drag              (NemoCanvasContainer *container);
 
-#endif /* NEMO_ICON_DND_H */
+#endif /* NEMO_CANVAS_DND_H */

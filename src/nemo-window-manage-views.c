@@ -979,7 +979,7 @@ create_content_view (NemoWindowSlot *slot,
         	 * to fix it here than trying to make it pick the right view in
         	 * the first place.
         	 */
-		view_id = NEMO_DESKTOP_ICON_VIEW_IID;
+		view_id = NEMO_DESKTOP_CANVAS_VIEW_IID;
 	} 
         
         if (slot->content_view != NULL &&

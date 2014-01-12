@@ -33,7 +33,6 @@
 
 #include <libnemo-private/nemo-directory.h>
 #include <libnemo-private/nemo-file.h>
-#include <libnemo-private/nemo-icon-container.h>
 #include <libnemo-private/nemo-link.h>
 
 typedef struct NemoView NemoView;

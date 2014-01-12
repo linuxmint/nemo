@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 
-/* fm-icon-container.h - the container widget for file manager icons
+/* nemo-icon-canvas-container.c - the container widget for file manager icons
 
    Copyright (C) 2002 Sun Microsystems, Inc.
 
@@ -23,7 +23,7 @@
 */
 #include <config.h>
 
-#include "nemo-icon-view-container.h"
+#include "nemo-canvas-view-container.h"
 
 #include <string.h>
 #include <glib/gi18n.h>
@@ -37,20 +37,20 @@
 #define ICON_TEXT_ATTRIBUTES_NUM_ITEMS		3
 #define ICON_TEXT_ATTRIBUTES_DEFAULT_TOKENS	"size,date_modified,type"
 
-G_DEFINE_TYPE (NemoIconViewContainer, nemo_icon_view_container, NEMO_TYPE_ICON_CONTAINER);
+G_DEFINE_TYPE (NemoCanvasViewContainer, nemo_canvas_view_container, NEMO_TYPE_CANVAS_CONTAINER);
 
 static GQuark attribute_none_q;
 
-static NemoIconView *
-get_icon_view (NemoIconContainer *container)
+static NemoCanvasView *
+get_canvas_view (NemoCanvasContainer *container)
 {
 	/* Type unsafe comparison for performance */
-	return ((NemoIconViewContainer *)container)->view;
+	return ((NemoCanvasViewContainer *)container)->view;
 }
 
 static NemoIconInfo *
-nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
-					      NemoIconData      *data,
+nemo_canvas_view_container_get_icon_images (NemoCanvasContainer *container,
+					      NemoCanvasIconData      *data,
 					      int                    size,
 					      char                 **embedded_text,
 					      gboolean               for_drag_accept,
@@ -58,7 +58,7 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 					      gboolean              *embedded_text_needs_loading,
 					      gboolean              *has_window_open)
 {
-	NemoIconView *icon_view;
+	NemoCanvasView *canvas_view;
 	NemoFile *file;
 	gboolean use_embedding;
 	NemoFileIconFlags flags;
@@ -71,8 +71,8 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	file = (NemoFile *) data;
 
 	g_assert (NEMO_IS_FILE (file));
-	icon_view = get_icon_view (container);
-	g_return_val_if_fail (icon_view != NULL, NULL);
+	canvas_view = get_canvas_view (container);
+	g_return_val_if_fail (canvas_view != NULL, NULL);
 
 	use_embedding = FALSE;
 	if (embedded_text) {
@@ -83,10 +83,10 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	*has_window_open = nemo_file_has_open_window (file);
 
 	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM;
-	if (!nemo_icon_view_is_compact (icon_view) ||
-	    nemo_icon_container_get_zoom_level (container) > NEMO_ZOOM_LEVEL_STANDARD) {
+	if (!nemo_canvas_view_is_compact (canvas_view) ||
+	    nemo_canvas_container_get_zoom_level (container) > NEMO_ZOOM_LEVEL_STANDARD) {
 		flags |= NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;
-		if (nemo_icon_view_is_compact (icon_view)) {
+		if (nemo_canvas_view_is_compact (canvas_view)) {
 			flags |= NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE;
 		}
 	}
@@ -156,8 +156,8 @@ skip_emblem:
 }
 
 static char *
-nemo_icon_view_container_get_icon_description (NemoIconContainer *container,
-						   NemoIconData      *data)
+nemo_canvas_view_container_get_icon_description (NemoCanvasContainer *container,
+						   NemoCanvasIconData      *data)
 {
 	NemoFile *file;
 	char *mime_type;
@@ -177,8 +177,8 @@ nemo_icon_view_container_get_icon_description (NemoIconContainer *container,
 }
 
 static void
-nemo_icon_view_container_start_monitor_top_left (NemoIconContainer *container,
-						     NemoIconData      *data,
+nemo_canvas_view_container_start_monitor_top_left (NemoCanvasContainer *container,
+						     NemoCanvasIconData      *data,
 						     gconstpointer          client,
 						     gboolean               large_text)
 {
@@ -197,8 +197,8 @@ nemo_icon_view_container_start_monitor_top_left (NemoIconContainer *container,
 }
 
 static void
-nemo_icon_view_container_stop_monitor_top_left (NemoIconContainer *container,
-						    NemoIconData      *data,
+nemo_canvas_view_container_stop_monitor_top_left (NemoCanvasContainer *container,
+						    NemoCanvasIconData      *data,
 						    gconstpointer          client)
 {
 	NemoFile *file;
@@ -211,8 +211,8 @@ nemo_icon_view_container_stop_monitor_top_left (NemoIconContainer *container,
 }
 
 static void
-nemo_icon_view_container_prioritize_thumbnailing (NemoIconContainer *container,
-						      NemoIconData      *data)
+nemo_canvas_view_container_prioritize_thumbnailing (NemoCanvasContainer *container,
+						      NemoCanvasIconData      *data)
 {
 	NemoFile *file;
 	char *uri;
@@ -255,16 +255,16 @@ update_auto_strv_as_quarks (GSettings   *settings,
  * beneath icons.
  */
 static GQuark *
-nemo_icon_view_container_get_icon_text_attributes_from_preferences (void)
+nemo_canvas_view_container_get_icon_text_attributes_from_preferences (void)
 {
 	static GQuark *attributes = NULL;
 
 	if (attributes == NULL) {
-		update_auto_strv_as_quarks (nemo_icon_view_preferences, 
-					    NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
+		update_auto_strv_as_quarks (nemo_canvas_view_preferences,
+					    NEMO_PREFERENCES_CANVAS_VIEW_CAPTIONS,
 					    &attributes);
-		g_signal_connect (nemo_icon_view_preferences, 
-				  "changed::" NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
+		g_signal_connect (nemo_canvas_view_preferences,
+				  "changed::" NEMO_PREFERENCES_CANVAS_VIEW_CAPTIONS,
 				  G_CALLBACK (update_auto_strv_as_quarks),
 				  &attributes);
 	}
@@ -310,16 +310,16 @@ quarkv_length (GQuark *attributes)
 }
 
 /**
- * nemo_icon_view_get_icon_text_attribute_names:
+ * nemo_canvas_view_get_icon_text_attribute_names:
  *
  * Get a list representing which text attributes should be displayed
  * beneath an icon. The result is dependent on zoom level and possibly
  * user configuration. Don't free the result.
- * @view: NemoIconView to query.
+ * @view: NemoCanvasView to query.
  * 
  **/
 static GQuark *
-nemo_icon_view_container_get_icon_text_attribute_names (NemoIconContainer *container,
+nemo_canvas_view_container_get_icon_text_attribute_names (NemoCanvasContainer *container,
 							    int *len)
 {
 	GQuark *attributes;
@@ -335,9 +335,9 @@ nemo_icon_view_container_get_icon_text_attribute_names (NemoIconContainer *conta
 		3	/* NEMO_ZOOM_LEVEL_LARGEST */
 	};
 
-	piece_count = pieces_by_level[nemo_icon_container_get_zoom_level (container)];
+	piece_count = pieces_by_level[nemo_canvas_container_get_zoom_level (container)];
 
-	attributes = nemo_icon_view_container_get_icon_text_attributes_from_preferences ();
+	attributes = nemo_canvas_view_container_get_icon_text_attributes_from_preferences ();
 
 	*len = MIN (piece_count, quarkv_length (attributes));
 
@@ -348,8 +348,8 @@ nemo_icon_view_container_get_icon_text_attribute_names (NemoIconContainer *conta
  * part below that is not editable.
  */
 static void
-nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
-					    NemoIconData      *data,
+nemo_canvas_view_container_get_icon_text (NemoCanvasContainer *container,
+					    NemoCanvasIconData      *data,
 					    char                 **editable_text,
 					    char                 **additional_text,
 					    gboolean               include_invisible)
@@ -357,7 +357,7 @@ nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
 	GQuark *attributes;
 	char *text_array[4];
 	int i, j, num_attributes;
-	NemoIconView *icon_view;
+	NemoCanvasView *canvas_view;
 	NemoFile *file;
 	gboolean use_additional;
 
@@ -365,13 +365,13 @@ nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
 
 	g_assert (NEMO_IS_FILE (file));
 	g_assert (editable_text != NULL);
-	icon_view = get_icon_view (container);
-	g_return_if_fail (icon_view != NULL);
+	canvas_view = get_canvas_view (container);
+	g_return_if_fail (canvas_view != NULL);
 
 	use_additional = (additional_text != NULL);
 
 	/* In the smallest zoom mode, no text is drawn. */
-	if (nemo_icon_container_get_zoom_level (container) == NEMO_ZOOM_LEVEL_SMALLEST &&
+	if (nemo_canvas_container_get_zoom_level (container) == NEMO_ZOOM_LEVEL_SMALLEST &&
             !include_invisible) {
 		*editable_text = NULL;
 	} else {
@@ -383,7 +383,7 @@ nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
 		return;
 	}
 
-	if (nemo_icon_view_is_compact (icon_view)) {
+	if (nemo_canvas_view_is_compact (canvas_view)) {
 		*additional_text = NULL;
 		return;
 	}
@@ -397,7 +397,7 @@ nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
 	}
 
 	/* Find out what attributes go below each icon. */
-	attributes = nemo_icon_view_container_get_icon_text_attribute_names (container,
+	attributes = nemo_canvas_view_container_get_icon_text_attribute_names (container,
 									   &num_attributes);
 
 	/* Get the attributes. */
@@ -483,9 +483,9 @@ get_sort_category (NemoFile *file)
 }
 
 static int
-fm_desktop_icon_container_icons_compare (NemoIconContainer *container,
-					 NemoIconData      *data_a,
-					 NemoIconData      *data_b)
+fm_desktop_canvas_container_icons_compare (NemoCanvasContainer *container,
+					 NemoCanvasIconData      *data_a,
+					 NemoCanvasIconData      *data_b)
 {
 	NemoFile *file_a;
 	NemoFile *file_b;
@@ -495,7 +495,7 @@ fm_desktop_icon_container_icons_compare (NemoIconContainer *container,
 	file_a = (NemoFile *) data_a;
 	file_b = (NemoFile *) data_b;
 
-	directory_view = NEMO_VIEW (NEMO_ICON_VIEW_CONTAINER (container)->view);
+	directory_view = NEMO_VIEW (NEMO_CANVAS_VIEW_CONTAINER (container)->view);
 	g_return_val_if_fail (directory_view != NULL, 0);
 	
 	category_a = get_sort_category (file_a);
@@ -516,30 +516,30 @@ fm_desktop_icon_container_icons_compare (NemoIconContainer *container,
 }
 
 static int
-nemo_icon_view_container_compare_icons (NemoIconContainer *container,
-					    NemoIconData      *icon_a,
-					    NemoIconData      *icon_b)
+nemo_canvas_view_container_compare_icons (NemoCanvasContainer *container,
+					    NemoCanvasIconData      *icon_a,
+					    NemoCanvasIconData      *icon_b)
 {
-	NemoIconView *icon_view;
+	NemoCanvasView *canvas_view;
 
-	icon_view = get_icon_view (container);
-	g_return_val_if_fail (icon_view != NULL, 0);
+	canvas_view = get_canvas_view (container);
+	g_return_val_if_fail (canvas_view != NULL, 0);
 
-	if (NEMO_ICON_VIEW_CONTAINER (container)->sort_for_desktop) {
-		return fm_desktop_icon_container_icons_compare
+	if (NEMO_CANVAS_VIEW_CONTAINER (container)->sort_for_desktop) {
+		return fm_desktop_canvas_container_icons_compare
 			(container, icon_a, icon_b);
 	}
 
 	/* Type unsafe comparisons for performance */
-	return nemo_icon_view_compare_files (icon_view,
+	return nemo_canvas_view_compare_files (canvas_view,
 					   (NemoFile *)icon_a,
 					   (NemoFile *)icon_b);
 }
 
 static int
-nemo_icon_view_container_compare_icons_by_name (NemoIconContainer *container,
-						    NemoIconData      *icon_a,
-						    NemoIconData      *icon_b)
+nemo_canvas_view_container_compare_icons_by_name (NemoCanvasContainer *container,
+						    NemoCanvasIconData      *icon_a,
+						    NemoCanvasIconData      *icon_b)
 {
 	return nemo_file_compare_for_sort
 		(NEMO_FILE (icon_a),
@@ -549,77 +549,77 @@ nemo_icon_view_container_compare_icons_by_name (NemoIconContainer *container,
 }
 
 static void
-nemo_icon_view_container_freeze_updates (NemoIconContainer *container)
+nemo_canvas_view_container_freeze_updates (NemoCanvasContainer *container)
 {
-	NemoIconView *icon_view;
-	icon_view = get_icon_view (container);
-	g_return_if_fail (icon_view != NULL);
-	nemo_view_freeze_updates (NEMO_VIEW (icon_view));
+	NemoCanvasView *canvas_view;
+	canvas_view = get_canvas_view (container);
+	g_return_if_fail (canvas_view != NULL);
+	nemo_view_freeze_updates (NEMO_VIEW (canvas_view));
 }
 
 static void
-nemo_icon_view_container_unfreeze_updates (NemoIconContainer *container)
+nemo_canvas_view_container_unfreeze_updates (NemoCanvasContainer *container)
 {
-	NemoIconView *icon_view;
-	icon_view = get_icon_view (container);
-	g_return_if_fail (icon_view != NULL);
-	nemo_view_unfreeze_updates (NEMO_VIEW (icon_view));
+	NemoCanvasView *canvas_view;
+	canvas_view = get_canvas_view (container);
+	g_return_if_fail (canvas_view != NULL);
+	nemo_view_unfreeze_updates (NEMO_VIEW (canvas_view));
 }
 
 static void
-nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
+nemo_canvas_view_container_class_init (NemoCanvasViewContainerClass *klass)
 {
-	NemoIconContainerClass *ic_class;
+	NemoCanvasContainerClass *ic_class;
 
 	ic_class = &klass->parent_class;
 
 	attribute_none_q = g_quark_from_static_string ("none");
 	
-	ic_class->get_icon_text = nemo_icon_view_container_get_icon_text;
-	ic_class->get_icon_images = nemo_icon_view_container_get_icon_images;
-	ic_class->get_icon_description = nemo_icon_view_container_get_icon_description;
-	ic_class->start_monitor_top_left = nemo_icon_view_container_start_monitor_top_left;
-	ic_class->stop_monitor_top_left = nemo_icon_view_container_stop_monitor_top_left;
-	ic_class->prioritize_thumbnailing = nemo_icon_view_container_prioritize_thumbnailing;
+	ic_class->get_icon_text = nemo_canvas_view_container_get_icon_text;
+	ic_class->get_icon_images = nemo_canvas_view_container_get_icon_images;
+	ic_class->get_icon_description = nemo_canvas_view_container_get_icon_description;
+	ic_class->start_monitor_top_left = nemo_canvas_view_container_start_monitor_top_left;
+	ic_class->stop_monitor_top_left = nemo_canvas_view_container_stop_monitor_top_left;
+	ic_class->prioritize_thumbnailing = nemo_canvas_view_container_prioritize_thumbnailing;
 
-	ic_class->compare_icons = nemo_icon_view_container_compare_icons;
-	ic_class->compare_icons_by_name = nemo_icon_view_container_compare_icons_by_name;
-	ic_class->freeze_updates = nemo_icon_view_container_freeze_updates;
-	ic_class->unfreeze_updates = nemo_icon_view_container_unfreeze_updates;
+	ic_class->compare_icons = nemo_canvas_view_container_compare_icons;
+	ic_class->compare_icons_by_name = nemo_canvas_view_container_compare_icons_by_name;
+	ic_class->freeze_updates = nemo_canvas_view_container_freeze_updates;
+	ic_class->unfreeze_updates = nemo_canvas_view_container_unfreeze_updates;
 }
 
 static void
-nemo_icon_view_container_init (NemoIconViewContainer *icon_container)
+nemo_canvas_view_container_init (NemoCanvasViewContainer *canvas_container)
 {
-	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (icon_container)),
+	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (canvas_container)),
 				     GTK_STYLE_CLASS_VIEW);
 
 }
 
-NemoIconContainer *
-nemo_icon_view_container_construct (NemoIconViewContainer *icon_container, NemoIconView *view)
+NemoCanvasContainer *
+nemo_canvas_view_container_construct (NemoCanvasViewContainer *canvas_container, NemoCanvasView *view)
 {
 	AtkObject *atk_obj;
 
-	g_return_val_if_fail (NEMO_IS_ICON_VIEW (view), NULL);
+	g_return_val_if_fail (NEMO_IS_CANVAS_VIEW (view), NULL);
 
-	icon_container->view = view;
-	atk_obj = gtk_widget_get_accessible (GTK_WIDGET (icon_container));
-	atk_object_set_name (atk_obj, _("Icon View"));
+	canvas_container->view = view;
+	atk_obj = gtk_widget_get_accessible (GTK_WIDGET (canvas_container));
+	atk_object_set_name (atk_obj, _("Canvas View"));
 
-	return NEMO_ICON_CONTAINER (icon_container);
+	return NEMO_CANVAS_CONTAINER (canvas_container);
 }
 
-NemoIconContainer *
-nemo_icon_view_container_new (NemoIconView *view)
+NemoCanvasContainer *
+nemo_canvas_view_container_new (NemoCanvasView *view)
 {
-	return nemo_icon_view_container_construct
-		(g_object_new (NEMO_TYPE_ICON_VIEW_CONTAINER, NULL),
+	return nemo_canvas_view_container_construct
+		(g_object_new (NEMO_TYPE_CANVAS_VIEW_CONTAINER, NULL),
 		 view);
 }
 
 void
-nemo_icon_view_container_set_sort_desktop (NemoIconViewContainer *container,
+nemo_canvas_view_container_set_sort_desktop (NemoCanvasViewContainer *container,
 					       gboolean         desktop)
 {
 	container->sort_for_desktop = desktop;

@@ -385,8 +385,8 @@ icon_captions_changed_callback (GtkComboBox *combo_box,
 	}
 	g_ptr_array_add (captions, NULL);
 
-	g_settings_set_strv (nemo_icon_view_preferences,
-			     NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
+	g_settings_set_strv (nemo_canvas_view_preferences,
+			     NEMO_PREFERENCES_CANVAS_VIEW_CAPTIONS,
 			     (const char **)captions->pdata);
 	g_ptr_array_free (captions, TRUE);
 }
@@ -429,7 +429,7 @@ update_icon_captions_from_settings (GtkBuilder *builder)
 	char **captions;
 	int i, j;
 
-	captions = g_settings_get_strv (nemo_icon_view_preferences, NEMO_PREFERENCES_ICON_VIEW_CAPTIONS);
+	captions = g_settings_get_strv (nemo_canvas_view_preferences, NEMO_PREFERENCES_CANVAS_VIEW_CAPTIONS);
 	if (captions == NULL)
 		return;
 
@@ -460,8 +460,8 @@ nemo_file_management_properties_dialog_setup_icon_caption_page (GtkBuilder *buil
 	int i;
 	gboolean writable;
 
-	writable = g_settings_is_writable (nemo_icon_view_preferences,
-					   NEMO_PREFERENCES_ICON_VIEW_CAPTIONS);
+	writable = g_settings_is_writable (nemo_canvas_view_preferences,
+					   NEMO_PREFERENCES_CANVAS_VIEW_CAPTIONS);
 
 	columns = nemo_get_common_columns ();
 
@@ -827,12 +827,12 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 			   NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR);
 
 	/* setup preferences */
-    bind_builder_bool (builder, nemo_icon_view_preferences,
+    bind_builder_bool (builder, nemo_canvas_view_preferences,
                 NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_LAYOUT_WIDGET,
-                NEMO_PREFERENCES_ICON_VIEW_DEFAULT_USE_TIGHTER_LAYOUT);
-	bind_builder_bool (builder, nemo_icon_view_preferences,
+                NEMO_PREFERENCES_CANVAS_VIEW_DEFAULT_USE_TIGHTER_LAYOUT);
+	bind_builder_bool (builder, nemo_canvas_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_LABELS_BESIDE_ICONS_WIDGET,
-			   NEMO_PREFERENCES_ICON_VIEW_LABELS_BESIDE_ICONS);
+			   NEMO_PREFERENCES_CANVAS_VIEW_LABELS_BESIDE_ICONS);
 	bind_builder_bool (builder, nemo_compact_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_ALL_COLUMNS_SAME_WIDTH,
 			   NEMO_PREFERENCES_COMPACT_VIEW_ALL_COLUMNS_SAME_WIDTH);
@@ -862,9 +862,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_DEFAULT_VIEW_WIDGET,
 			   NEMO_PREFERENCES_DEFAULT_FOLDER_VIEWER,
 			   (const char **) default_view_values);
-	bind_builder_enum (builder, nemo_icon_view_preferences,
+	bind_builder_enum (builder, nemo_canvas_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_ICON_VIEW_ZOOM_WIDGET,
-			   NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
+			   NEMO_PREFERENCES_CANVAS_VIEW_DEFAULT_ZOOM_LEVEL,
 			   (const char **) zoom_values);
 	bind_builder_enum (builder, nemo_compact_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_VIEW_ZOOM_WIDGET,

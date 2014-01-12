@@ -33,7 +33,7 @@
 
 G_BEGIN_DECLS
 
-#define	EEL_TRASH_URI "trash:"
+#define EEL_TRASH_URI "trash:"
 #define EEL_DESKTOP_URI "x-nemo-desktop:"
 #define EEL_SEARCH_URI "x-nemo-search:"
 

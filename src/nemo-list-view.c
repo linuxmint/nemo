@@ -53,7 +53,6 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <libnemo-private/nemo-global-preferences.h>
-#include <libnemo-private/nemo-icon-dnd.h>
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-module.h>
 #include <libnemo-private/nemo-tree-view-drag-dest.h>

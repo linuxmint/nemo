@@ -35,10 +35,10 @@
 #endif /* ENABLE_EMPTY_VIEW */
 
 #include "nemo-bookmarks-window.h"
-#include "nemo-desktop-icon-view.h"
+#include "nemo-desktop-canvas-view.h"
 #include "nemo-desktop-window.h"
 #include "nemo-freedesktop-dbus.h"
-#include "nemo-icon-view.h"
+#include "nemo-canvas-view.h"
 #include "nemo-image-properties-page.h"
 #include "nemo-list-view.h"
 #include "nemo-previewer.h"
@@ -1278,10 +1278,10 @@ nemo_application_startup (GApplication *app)
 	nemo_global_preferences_init ();
 
 	/* register views */
-	nemo_icon_view_register ();
-	nemo_desktop_icon_view_register ();
+	nemo_canvas_view_register ();
+	nemo_desktop_canvas_view_register ();
 	nemo_list_view_register ();
-	nemo_icon_view_compact_register ();
+	nemo_canvas_view_compact_register ();
 #if ENABLE_EMPTY_VIEW
 	nemo_empty_view_register ();
 #endif

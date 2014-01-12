@@ -53,7 +53,7 @@ nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void)
 	} else if (preference_value == NEMO_DEFAULT_FOLDER_VIEWER_COMPACT_VIEW) {
 		viewer_iid = NEMO_COMPACT_VIEW_IID;
 	} else {
-		viewer_iid = NEMO_ICON_VIEW_IID;
+		viewer_iid = NEMO_CANVAS_VIEW_IID;
 	}
 
 	return g_strdup (viewer_iid);
@@ -103,7 +103,7 @@ nemo_global_preferences_init (void)
 
 	nemo_preferences = g_settings_new("org.nemo.preferences");
 	nemo_window_state = g_settings_new("org.nemo.window-state");
-	nemo_icon_view_preferences = g_settings_new("org.nemo.icon-view");
+	nemo_canvas_view_preferences = g_settings_new("org.nemo.icon-view");
 	nemo_list_view_preferences = g_settings_new("org.nemo.list-view");
 	nemo_compact_view_preferences = g_settings_new("org.nemo.compact-view");
 	nemo_desktop_preferences = g_settings_new("org.nemo.desktop");

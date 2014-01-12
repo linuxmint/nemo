@@ -31,9 +31,9 @@ libnemo-private/nemo-file-operations.c
 libnemo-private/nemo-file-undo-operations.c
 libnemo-private/nemo-file-utilities.c
 libnemo-private/nemo-global-preferences.c
-libnemo-private/nemo-icon-canvas-item.c
-libnemo-private/nemo-icon-container.c
-libnemo-private/nemo-icon-dnd.c
+libnemo-private/nemo-canvas-item.c
+libnemo-private/nemo-canvas-container.c
+libnemo-private/nemo-canvas-dnd.c
 libnemo-private/nemo-mime-application-chooser.c
 libnemo-private/nemo-program-choosing.c
 libnemo-private/nemo-progress-info.c
@@ -50,7 +50,7 @@ src/nemo-bookmarks-window.c
 [type: gettext/glade]src/nemo-bookmarks-window.ui
 src/nemo-connect-server-dialog.c
 src/nemo-connect-server-dialog-main.c
-src/nemo-desktop-icon-view.c
+src/nemo-desktop-canvas-view.c
 src/nemo-desktop-icon-view-ui.xml
 src/nemo-desktop-item-properties.c
 src/nemo-desktop-window.c
@@ -58,8 +58,8 @@ src/nemo-directory-view-ui.xml
 src/nemo-error-reporting.c
 src/nemo-file-management-properties.c
 [type: gettext/glade]src/nemo-file-management-properties.ui
-src/nemo-icon-view.c
-src/nemo-icon-view-container.c
+src/nemo-canvas-view.c
+src/nemo-canvas-view-container.c
 src/nemo-icon-view-ui.xml
 src/nemo-image-properties-page.c
 src/nemo-list-model.c
