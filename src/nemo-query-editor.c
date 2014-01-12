@@ -948,8 +948,8 @@ nemo_query_editor_add_row (NemoQueryEditor *editor,
 	gtk_style_context_add_class (gtk_widget_get_style_context (button),
 				     GTK_STYLE_CLASS_RAISED);
 
-	image = gtk_image_new_from_icon_name ("window-close-symbolic",
-					      GTK_ICON_SIZE_SMALL_TOOLBAR);
+	image = gtk_image_new_from_stock (GTK_STOCK_REMOVE,
+	                 GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_container_add (GTK_CONTAINER (button), image);
 	gtk_widget_show (image);
 	gtk_widget_show (button);
