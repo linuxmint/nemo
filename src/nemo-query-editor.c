@@ -67,7 +67,6 @@ struct NemoQueryEditorDetails {
 	gboolean change_frozen;
 	guint typing_timeout_id;
 	gboolean is_visible;
-	GtkWidget *vbox;
 
 	GtkWidget *search_current_button;
 	GtkWidget *search_all_button;
@@ -865,8 +864,7 @@ remove_row_cb (GtkButton *clicked_button, NemoQueryEditorRow *row)
 	NemoQueryEditor *editor;
 
 	editor = row->editor;
-	gtk_container_remove (GTK_CONTAINER (editor->details->vbox),
-			      row->toolbar);
+	gtk_container_remove (GTK_CONTAINER (editor), row->toolbar);
 	
 	editor->details->rows = g_list_remove (editor->details->rows, row);
 
@@ -923,7 +921,7 @@ nemo_query_editor_add_row (NemoQueryEditor *editor,
 
 	/* create the toolbar and the box container for its contents */
 	row->toolbar = gtk_toolbar_new ();
-	gtk_box_pack_start (GTK_BOX (editor->details->vbox), row->toolbar, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (editor), row->toolbar, TRUE, TRUE, 0);
 
 	item = gtk_tool_item_new ();
 	gtk_tool_item_set_expand (item, TRUE);
@@ -985,11 +983,6 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 						       NemoQueryEditorDetails);
 
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
-
-	editor->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-	gtk_box_pack_start (GTK_BOX (editor), editor->details->vbox,
-			    FALSE, FALSE, 0);
-	gtk_widget_show (editor->details->vbox);
 }
 
 static void
@@ -1017,7 +1010,7 @@ setup_widgets (NemoQueryEditor *editor)
 	toolbar = gtk_toolbar_new ();
 	gtk_style_context_add_class (gtk_widget_get_style_context (toolbar),
 				     GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
-	gtk_box_pack_start (GTK_BOX (editor->details->vbox), toolbar, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (editor), toolbar, TRUE, TRUE, 0);
 
 	item = gtk_tool_item_new ();
 	gtk_tool_item_set_expand (item, TRUE);
