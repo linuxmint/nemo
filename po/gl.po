@@ -11,13 +11,13 @@
 # Antón Méixome <meixome@mancomun.org>, 2009, 2010.
 # Fran Diéguez <frandieguez@gnome.org>, 2009, 2010, 2011, 2012.
 # Leandro Regueiro <leandro.regueiro@gmail.com>, 2012.
-# Fran Dieguez <frandieguez@gnome.org>, 2012, 2013.
+# Fran Dieguez <frandieguez@gnome.org>, 2012, 2013, 2014.
 msgid ""
 msgstr ""
 "Project-Id-Version: nautilus-master-po-gl-54706\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-18 23:46+0100\n"
-"PO-Revision-Date: 2013-12-18 23:46+0200\n"
+"POT-Creation-Date: 2014-01-13 15:26+0100\n"
+"PO-Revision-Date: 2014-01-13 15:27+0200\n"
 "Last-Translator: Fran Dieguez <frandieguez@gnome.org>\n"
 "Language-Team: gnome-l10n-gl@gnome.org\n"
 "Language: gl\n"
@@ -40,8 +40,8 @@ msgstr "Conectarse a un servidor"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4478 ../src/nautilus-window.c:2202
-#: ../src/nautilus-window.c:2399
+#: ../src/nautilus-properties-window.c:4478 ../src/nautilus-window.c:2209
+#: ../src/nautilus-window.c:2406
 msgid "Files"
 msgstr "Ficheiros"
 
@@ -993,7 +993,7 @@ msgstr "Todos os elementos do lixo eliminaranse permanentemente."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1396
 #: ../libnautilus-private/nautilus-file-operations.c:2272
-#: ../src/nautilus-window.c:806
+#: ../src/nautilus-window.c:819
 msgid "Empty _Trash"
 msgstr "Baleirar o _lixo"
 
@@ -3001,7 +3001,7 @@ msgstr "Facer que as iconas seleccionadas sexan redimensionábeis"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:688
-msgid "Restore each selected icons to its original size"
+msgid "Restore each selected icon to its original size"
 msgstr "Restaurar cada unha das iconas seleccionadas ao seu tamaño orixinal"
 
 #: ../src/nautilus-desktop-item-properties.c:405
@@ -5053,31 +5053,31 @@ msgstr "Texto arrastrado.txt"
 msgid "dropped data"
 msgstr "datos arrastrados"
 
-#: ../src/nautilus-window.c:820
+#: ../src/nautilus-window.c:833
 msgid "_Properties"
 msgstr "_Propiedades"
 
-#: ../src/nautilus-window.c:829
+#: ../src/nautilus-window.c:842
 msgid "_Format…"
 msgstr "_Formatar…"
 
-#: ../src/nautilus-window.c:1178
+#: ../src/nautilus-window.c:1191
 msgid "_New Tab"
 msgstr "_Nova lapela"
 
-#: ../src/nautilus-window.c:1188 ../src/nautilus-window-menus.c:588
+#: ../src/nautilus-window.c:1201 ../src/nautilus-window-menus.c:588
 msgid "Move Tab _Left"
 msgstr "Mover a lapela á _esquerda"
 
-#: ../src/nautilus-window.c:1196 ../src/nautilus-window-menus.c:591
+#: ../src/nautilus-window.c:1209 ../src/nautilus-window-menus.c:591
 msgid "Move Tab _Right"
 msgstr "Mover a lapela á _dereita"
 
-#: ../src/nautilus-window.c:1207
+#: ../src/nautilus-window.c:1220
 msgid "_Close Tab"
 msgstr "_Pechar a lapela"
 
-#: ../src/nautilus-window.c:2372
+#: ../src/nautilus-window.c:2379
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5089,7 +5089,7 @@ msgstr ""
 "Free Software Foundation tanto na versión 2 da licenza como (baixo a súa "
 "elección) calquera versión posterior."
 
-#: ../src/nautilus-window.c:2376
+#: ../src/nautilus-window.c:2383
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5101,7 +5101,7 @@ msgstr ""
 "A UN PROPÓSITO EN PARTICULAR. Olle a Licenza Pública xeral para obter máis "
 "información."
 
-#: ../src/nautilus-window.c:2380
+#: ../src/nautilus-window.c:2387
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5114,11 +5114,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2395
+#: ../src/nautilus-window.c:2402
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "Copyright © %Id–%Id Os autores de Ficheiros"
 
-#: ../src/nautilus-window.c:2401
+#: ../src/nautilus-window.c:2408
 msgid "Access and organize your files."
 msgstr "Acceder aos seus ficheiros e organizalos."
 
@@ -5126,7 +5126,7 @@ msgstr "Acceder aos seus ficheiros e organizalos."
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2411
+#: ../src/nautilus-window.c:2418
 msgid "translator-credits"
 msgstr ""
 "Leandro Regueiro <leandro.regueiro@gmail.com>, 2012\n"
