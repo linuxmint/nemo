@@ -33,7 +33,7 @@
 
 static GSimpleAsyncResult *display_location_res = NULL;
 
-static void
+static gboolean
 window_go_to_cb (NemoWindow *window,
 		 GError *error,
 		 gpointer user_data)
@@ -46,6 +46,8 @@ window_go_to_cb (NemoWindow *window,
 
 	g_object_unref (display_location_res);
 	display_location_res = NULL;
+
+	return TRUE;
 }
 
 gboolean

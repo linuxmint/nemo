@@ -36,9 +36,9 @@ typedef struct NemoWindow NemoWindow;
 typedef struct NemoWindowSlot NemoWindowSlot;
 typedef struct NemoWindowSlotClass NemoWindowSlotClass;
 
-typedef void (* NemoWindowGoToCallback) (NemoWindow *window,
-                                             GError *error,
-                                             gpointer user_data);
+typedef gboolean (* NemoWindowGoToCallback) (NemoWindow *window,
+                                                 GError *error,
+                                                 gpointer user_data);
 
 typedef enum {
         NEMO_WINDOW_OPEN_FLAG_CLOSE_BEHIND = 1<<0,
