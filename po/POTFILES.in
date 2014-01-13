@@ -51,7 +51,7 @@ src/nemo-bookmarks-window.c
 src/nemo-connect-server-dialog.c
 src/nemo-connect-server-dialog-main.c
 src/nemo-desktop-canvas-view.c
-src/nemo-desktop-icon-view-ui.xml
+src/nemo-desktop-canvas-view-ui.xml
 src/nemo-desktop-item-properties.c
 src/nemo-desktop-window.c
 src/nemo-directory-view-ui.xml

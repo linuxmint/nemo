@@ -605,7 +605,7 @@ nemo_canvas_view_container_construct (NemoCanvasViewContainer *canvas_container,
 
 	canvas_container->view = view;
 	atk_obj = gtk_widget_get_accessible (GTK_WIDGET (canvas_container));
-	atk_object_set_name (atk_obj, _("Canvas View"));
+	atk_object_set_name (atk_obj, _("Icon View"));
 
 	return NEMO_CANVAS_CONTAINER (canvas_container);
 }

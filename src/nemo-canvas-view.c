@@ -1411,12 +1411,12 @@ nemo_canvas_view_start_renaming_file (NemoView *view,
 static const GtkActionEntry canvas_view_entries[] = {
   /* name, stock id, label */  { "Arrange Items", NULL, N_("Arran_ge Items") }, 
   /* name, stock id */         { "Stretch", NULL,
-  /* label, accelerator */       N_("Resize Canvas..."), NULL,
-  /* tooltip */                  N_("Make the selected canvas resizable"),
+  /* label, accelerator */       N_("Resize Icon..."), NULL,
+  /* tooltip */                  N_("Make the selected icons resizable"),
                                  G_CALLBACK (action_stretch_callback) },
   /* name, stock id */         { "Unstretch", NULL,
   /* label, accelerator */       N_("Restore Icons' Original Si_zes"), NULL,
-  /* tooltip */                  N_("Restore each selected canvas to its original size"),
+  /* tooltip */                  N_("Restore each selected icons to its original size"),
                                  G_CALLBACK (action_unstretch_callback) },
   /* name, stock id */         { "Clean Up", NULL,
   /* label, accelerator */       N_("_Organize by Name"), NULL,
@@ -1506,7 +1506,7 @@ nemo_canvas_view_merge_menus (NemoView *view)
 	g_object_unref (action_group); /* owned by ui manager */
 
 	canvas_view->details->canvas_merge_id =
-		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-icon-view-ui.xml", NULL);
+		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-canvas-view-ui.xml", NULL);
 
 	/* Do one-time state-setting here; context-dependent state-setting
 	 * is done in update_menus.
@@ -1586,7 +1586,7 @@ nemo_canvas_view_update_menus (NemoView *view)
 	g_object_set (action, "label",
 		      (selection_count > 1)
 		      ? _("Restore Icons' Original Si_zes")
-		      : _("Restore Canvas's Original Si_ze"),
+		      : _("Restore Icon's Original Si_ze"),
 		      NULL);
 	gtk_action_set_sensitive (action,
 				  canvas_container != NULL
@@ -2858,7 +2858,7 @@ static NemoViewInfo nemo_canvas_view = {
 	N_("_Icons"),
 	N_("The icon view encountered an error."),
 	N_("The icon view encountered an error while starting up."),
-	N_("Display this location with the canvas view."),
+	N_("Display this location with the icon view."),
 	nemo_canvas_view_create,
 	nemo_canvas_view_supports_uri
 };
