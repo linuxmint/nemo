@@ -78,6 +78,7 @@ struct NemoQueryEditorDetails {
 };
 
 enum {
+	ACTIVATED,
 	CHANGED,
 	CANCEL,
 	LAST_SIGNAL
@@ -297,6 +298,15 @@ nemo_query_editor_class_init (NemoQueryEditorClass *class)
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
 
+	signals[ACTIVATED] =
+		g_signal_new ("activated",
+		              G_TYPE_FROM_CLASS (class),
+		              G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+		              G_STRUCT_OFFSET (NemoQueryEditorClass, activated),
+		              NULL, NULL,
+		              g_cclosure_marshal_VOID__VOID,
+		              G_TYPE_NONE, 0);
+
 	binding_set = gtk_binding_set_by_class (class);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "cancel", 0);
 
@@ -315,12 +325,7 @@ nemo_query_editor_get_location (NemoQueryEditor *editor)
 static void
 entry_activate_cb (GtkWidget *entry, NemoQueryEditor *editor)
 {
-	if (editor->details->typing_timeout_id > 0) {
-		g_source_remove (editor->details->typing_timeout_id);
-		editor->details->typing_timeout_id = 0;
-	}
-
-	nemo_query_editor_changed_force (editor, TRUE);
+	g_signal_emit (editor, signals[ACTIVATED], 0);
 }
 
 static gboolean

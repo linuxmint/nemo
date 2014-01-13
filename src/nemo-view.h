@@ -169,6 +169,10 @@ struct NemoViewClass {
          * select all of the items in the view */
         void     (* select_all)	         	(NemoView *view);
 
+        /* select_first is a function pointer that subclasses must override to
+         * select the first item in the view */
+        void     (* select_first)	      	(NemoView *view);
+
         /* set_selection is a function pointer that subclasses must
          * override to select the specified items (and unselect all
          * others). The argument is a list of NemoFiles. */
@@ -381,6 +385,7 @@ void              nemo_view_new_file_with_initial_contents (NemoView *view,
 								GdkPoint *pos);
 
 /* selection handling */
+void              nemo_view_activate_selection         (NemoView      *view);
 int               nemo_view_get_selection_count        (NemoView      *view);
 GList *           nemo_view_get_selection              (NemoView      *view);
 void              nemo_view_set_selection              (NemoView      *view,

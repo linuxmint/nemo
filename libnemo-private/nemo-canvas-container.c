@@ -7535,7 +7535,32 @@ nemo_canvas_container_select_all (NemoCanvasContainer *container)
 }
 
 /**
- * nemo_canvas_container_set_selection:
+ * nautilus_canvas_container_select_first:
+ * @container: An canvas container widget.
+ * 
+ * Select the first icon in @container.
+ **/
+void
+nemo_canvas_container_select_first (NemoCanvasContainer *container)
+{
+	gboolean selection_changed;
+	NemoCanvasIcon *icon;
+
+	g_return_if_fail (NEMO_IS_CANVAS_CONTAINER (container));
+
+	selection_changed = FALSE;
+
+	icon = g_list_nth_data (container->details->icons, 0);
+	selection_changed |= icon_set_selected (container, icon, TRUE);
+
+	if (selection_changed) {
+		g_signal_emit (container,
+			       signals[SELECTION_CHANGED], 0);
+	}
+}
+
+/**
+ * nautilus_canvas_container_set_selection:
  * @container: An canvas container widget.
  * @selection: A list of NemoCanvasIconData *.
  * 

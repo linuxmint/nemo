@@ -299,6 +299,9 @@ void              nemo_canvas_container_unselect_all                  (NemoCanva
 void              nemo_canvas_container_select_all                    (NemoCanvasContainer  *view);
 
 
+void              nemo_canvas_container_select_first                  (NemoCanvasContainer  *view);
+
+
 /* operations on the selection */
 GList     *       nemo_canvas_container_get_selection                 (NemoCanvasContainer  *view);
 void			  nemo_canvas_container_invert_selection				(NemoCanvasContainer  *view);

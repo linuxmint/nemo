@@ -1641,6 +1641,17 @@ nemo_canvas_view_select_all (NemoView *view)
 }
 
 static void
+nemo_canvas_view_select_first (NemoView *view)
+{
+	NemoCanvasContainer *canvas_container;
+
+	g_return_if_fail (NEMO_IS_CANVAS_VIEW (view));
+
+	canvas_container = get_canvas_container (NEMO_CANVAS_VIEW (view));
+        nemo_canvas_container_select_first (canvas_container);
+}
+
+static void
 nemo_canvas_view_reveal_selection (NemoView *view)
 {
 	GList *selection;
@@ -2667,6 +2678,7 @@ nemo_canvas_view_class_init (NemoCanvasViewClass *klass)
     nemo_view_class->get_default_zoom_level = nemo_canvas_view_get_default_zoom_level;
 	nemo_view_class->reveal_selection = nemo_canvas_view_reveal_selection;
 	nemo_view_class->select_all = nemo_canvas_view_select_all;
+        nemo_view_class->select_first = nemo_canvas_view_select_first;
 	nemo_view_class->set_selection = nemo_canvas_view_set_selection;
 	nemo_view_class->invert_selection = nemo_canvas_view_invert_selection;
 	nemo_view_class->compare_files = compare_files;

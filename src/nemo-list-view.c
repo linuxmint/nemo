@@ -2843,6 +2843,19 @@ nemo_list_view_select_all (NemoView *view)
 }
 
 static void
+nemo_list_view_select_first (NemoView *view)
+{
+	GtkTreeSelection *selection;
+	GtkTreeIter iter;
+
+	if (!gtk_tree_model_get_iter_first (GTK_TREE_MODEL (NEMO_LIST_VIEW (view)->details->model), &iter)) {
+		return;
+	}
+	selection = gtk_tree_view_get_selection (NEMO_LIST_VIEW (view)->details->tree_view);
+	gtk_tree_selection_select_iter (selection, &iter);
+}
+
+static void
 nemo_list_view_merge_menus (NemoView *view)
 {
   NemoListView *list_view;
@@ -3469,6 +3482,7 @@ nemo_list_view_class_init (NemoListViewClass *class)
     nemo_view_class->get_default_zoom_level = nemo_list_view_get_default_zoom_level;
 	nemo_view_class->reveal_selection = nemo_list_view_reveal_selection;
 	nemo_view_class->select_all = nemo_list_view_select_all;
+	nemo_view_class->select_first = nemo_list_view_select_first;
 	nemo_view_class->set_selection = nemo_list_view_set_selection;
 	nemo_view_class->invert_selection = nemo_list_view_invert_selection;
 	nemo_view_class->compare_files = nemo_list_view_compare_files;

@@ -54,6 +54,7 @@ typedef struct {
 			  NemoQuery        *query,
 			  gboolean              reload);
 	void (* cancel)   (NemoQueryEditor *editor);
+	void (* activated) (NemoQueryEditor *editor);
 } NemoQueryEditorClass;
 
 #include "nemo-window-slot.h"
