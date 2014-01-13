@@ -99,7 +99,7 @@ nemo_canvas_view_container_get_icon_images (NemoCanvasContainer *container,
 		flags |= NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
 	}
 
-	scale = gtk_widget_get_scale_factor (GTK_WIDGET (icon_view));
+	scale = gtk_widget_get_scale_factor (GTK_WIDGET (canvas_view));
 	icon_info = nemo_file_get_icon (file, size, scale, flags);
 	emblem_icons = nemo_file_get_emblem_icons (file);
 

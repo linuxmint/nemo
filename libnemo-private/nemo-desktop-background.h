@@ -31,7 +31,7 @@
 
 #include <gtk/gtk.h>
 
-#include "nemo-icon-container.h"
+#include "nemo-canvas-container.h"
 
 typedef struct NemoDesktopBackground NemoDesktopBackground;
 typedef struct NemoDesktopBackgroundClass NemoDesktopBackgroundClass;
@@ -49,7 +49,7 @@ typedef struct NemoDesktopBackgroundClass NemoDesktopBackgroundClass;
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_DESKTOP_BACKGROUND, NemoDesktopBackgroundClass))
 
 GType nemo_desktop_background_get_type (void);
-NemoDesktopBackground * nemo_desktop_background_new (NemoIconContainer *container);
+NemoDesktopBackground * nemo_desktop_background_new (NemoCanvasContainer *container);
 
 typedef struct NemoDesktopBackgroundDetails NemoDesktopBackgroundDetails;
 

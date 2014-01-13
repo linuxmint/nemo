@@ -318,6 +318,8 @@ void              nemo_canvas_container_set_zoom_level                (NemoCanva
 									   int                     new_zoom_level);
 void              nemo_canvas_container_set_single_click_mode         (NemoCanvasContainer  *container,
 									   gboolean                single_click_mode);
+void              nemo_canvas_container_set_click_to_rename_enabled (NemoCanvasContainer *container,
+                                                                             gboolean enabled);
 void              nemo_canvas_container_enable_linger_selection       (NemoCanvasContainer  *view,
 									   gboolean                enable);
 gboolean          nemo_canvas_container_get_is_fixed_size             (NemoCanvasContainer  *container);

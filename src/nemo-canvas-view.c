@@ -171,6 +171,7 @@ static void                 nemo_canvas_view_set_zoom_level               (NemoC
 									     NemoZoomLevel     new_level,
 									     gboolean              always_emit);
 static void                 nemo_canvas_view_update_click_mode            (NemoCanvasView           *canvas_view);
+static void                 nemo_canvas_view_update_click_to_rename_mode  (NemoCanvasView           *canvas_view);
 static void                 nemo_canvas_view_set_directory_tighter_layout (NemoCanvasView           *canvas_view,
                                         NemoFile         *file,
                                         gboolean              tighter_layout);
@@ -2313,17 +2314,17 @@ nemo_canvas_view_update_click_mode (NemoCanvasView *canvas_view)
 }
 
 static void
-nemo_icon_view_update_click_to_rename_mode (NemoIconView *icon_view)
+nemo_canvas_view_update_click_to_rename_mode (NemoCanvasView *canvas_view)
 {
-    NemoIconContainer   *icon_container;
+    NemoCanvasContainer   *canvas_container;
     gboolean enabled;
 
-    icon_container = get_icon_container (icon_view);
-    g_assert (icon_container != NULL);
+    canvas_container = get_canvas_container (canvas_view);
+    g_assert (canvas_container != NULL);
 
     enabled = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CLICK_TO_RENAME);
 
-    nemo_icon_container_set_click_to_rename_enabled (icon_container,
+    nemo_canvas_container_set_click_to_rename_enabled (canvas_container,
                                                      enabled);
 }
 

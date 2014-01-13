@@ -529,7 +529,7 @@ nemo_desktop_background_class_init (NemoDesktopBackgroundClass *klass)
 
         pspec = g_param_spec_object ("widget", "The widget for this background",
                                      "The widget that gets its background set",
-                                     NEMO_TYPE_ICON_CONTAINER,
+                                     NEMO_TYPE_CANVAS_CONTAINER,
                                      G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
         g_object_class_install_property (object_class, PROP_WIDGET, pspec);
 
@@ -556,7 +556,7 @@ nemo_desktop_background_init (NemoDesktopBackground *self)
 }
 
 NemoDesktopBackground *
-nemo_desktop_background_new (NemoIconContainer *container)
+nemo_desktop_background_new (NemoCanvasContainer *container)
 {
         return g_object_new (NEMO_TYPE_DESKTOP_BACKGROUND,
                              "widget", container,

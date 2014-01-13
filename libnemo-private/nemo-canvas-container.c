@@ -283,11 +283,11 @@ tooltip_prefs_changed_callback (NemoCanvasContainer *container)
     nemo_canvas_container_request_update_all (container);
 }
 
-/* Functions dealing with NemoIcons.  */
+/* Functions dealing with NemoCanvasIcons.  */
 
 static gboolean
-clicked_on_text (NemoIconContainer *container,
-                          NemoIcon *icon,
+clicked_on_text (NemoCanvasContainer *container,
+                          NemoCanvasIcon *icon,
                     GdkEventButton *event)
 {
     if (icon == NULL)
@@ -296,7 +296,7 @@ clicked_on_text (NemoIconContainer *container,
     double eventX, eventY;
     EelDRect icon_rect;
 
-    icon_rect = nemo_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
+    icon_rect = nemo_canvas_item_get_text_rectangle (icon->item, TRUE);
     eel_canvas_window_to_world (EEL_CANVAS (container), event->x, event->y, &eventX, &eventY);
 
     gboolean ret =  (eventX > icon_rect.x0) &&
@@ -308,8 +308,8 @@ clicked_on_text (NemoIconContainer *container,
 }
 
 static gboolean
-clicked_on_icon (NemoIconContainer *container,
-                          NemoIcon *icon,
+clicked_on_icon (NemoCanvasContainer *container,
+                          NemoCanvasIcon *icon,
                     GdkEventButton *event)
 {
     if (icon == NULL)
@@ -318,7 +318,7 @@ clicked_on_icon (NemoIconContainer *container,
     double eventX, eventY;
     EelDRect icon_rect;
 
-    icon_rect = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
+    icon_rect = nemo_canvas_item_get_icon_rectangle (icon->item);
     eel_canvas_window_to_world (EEL_CANVAS (container), event->x, event->y, &eventX, &eventY);
 
     gboolean ret =  (eventX > icon_rect.x0) &&
@@ -4316,7 +4316,7 @@ button_press_event (GtkWidget *widget,
     	}
 
     if (clicked_on_item) {
-        NemoIcon *icon; // current icon which was clicked on
+        NemoCanvasIcon *icon; // current icon which was clicked on
 
         /* when icon is in renaming mode and user clicks on the image part of icon renaming should get closed */
         icon = get_first_selected_icon (container); // this function gets the clicked icon
@@ -4498,7 +4498,7 @@ clicked_within_double_click_interval (NemoCanvasContainer *container)
 }
 
 static gboolean
-clicked_within_slow_click_interval_on_text (NemoIconContainer *container, NemoIcon *icon, GdkEventButton *event)
+clicked_within_slow_click_interval_on_text (NemoCanvasContainer *container, NemoCanvasIcon *icon, GdkEventButton *event)
 {
     static gint64 last_slow_click_time = 0;
     static gint slow_click_count = 0;
@@ -8798,8 +8798,6 @@ typedef EelCanvasAccessibleClass NemoCanvasContainerAccessibleClass;
 
 #define GET_ACCESSIBLE_PRIV(o) ((NemoCanvasContainerAccessible *) o)->priv
 
-#define GET_ACCESSIBLE_PRIV(o) ((NemoIconContainerAccessible *) o)->priv
-
 /* AtkAction interface */
 static gboolean
 nemo_canvas_container_accessible_do_action (AtkAction *accessible, int i)
@@ -9074,8 +9072,6 @@ nemo_canvas_container_accessible_get_selection_count (AtkSelection *accessible)
 	nemo_canvas_container_accessible_update_selection (ATK_OBJECT (accessible));
 	count = g_list_length (priv->selection);
 
-	count = g_list_length (priv->selection);
-
 	return count;
 }
 
@@ -9306,6 +9302,7 @@ nemo_canvas_container_accessible_init (NemoCanvasContainerAccessible *self)
 static void
 nemo_canvas_container_accessible_class_init (NemoCanvasContainerAccessibleClass *klass)
 {
+	AtkObjectClass *atk_class = ATK_OBJECT_CLASS (klass);
 	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
 	gobject_class->finalize = nemo_canvas_container_accessible_finalize;
