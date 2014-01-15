@@ -523,16 +523,60 @@ nautilus_desktop_canvas_view_init (NautilusDesktopCanvasView *desktop_canvas_vie
 				  desktop_canvas_view);
 }
 
+static const gchar *
+get_control_center_command (const gchar ** params_out)
+{
+	gchar *path;
+	const gchar *retval;
+	const gchar *params;
+
+	path = NULL;
+	retval = NULL;
+	params = NULL;
+
+	/* In Unity look for unity-control-center */
+	if (g_strcmp0 (g_getenv ("XDG_CURRENT_DESKTOP"), "Unity") == 0) {
+		path = g_find_program_in_path ("unity-control-center");
+		if (path != NULL) {
+			retval = "unity-control-center";
+			params = "appearance";
+			goto out;
+		}
+	}
+
+	/* Otherwise look for gnome-control-center */
+	path = g_find_program_in_path ("gnome-control-center");
+	if (path != NULL) {
+		retval = "gnome-control-center";
+		params = "background";
+	}
+
+ out:
+	g_free (path);
+	if (params_out != NULL) {
+		*params_out = params;
+	}
+
+	return retval;
+}
+
 static void
 action_change_background_callback (GtkAction *action, 
 				   gpointer data)
 {
+	const gchar *control_center_cmd, *params;
+
         g_assert (NAUTILUS_VIEW (data));
 
+	control_center_cmd = get_control_center_command (&params);
+	if (control_center_cmd == NULL) {
+		return;
+	}
+
 	nautilus_launch_application_from_command (gtk_widget_get_screen (GTK_WIDGET (data)),
-						  "gnome-control-center",
+						  control_center_cmd,
 						  FALSE,
-						  "background", NULL);
+						  params, NULL);
 }
 
 static void
@@ -696,7 +740,6 @@ real_merge_menus (NautilusView *view)
 	GtkUIManager *ui_manager;
 	GtkActionGroup *action_group;
 	GtkAction *action;
-	gchar *control_center_path;
 
 	NAUTILUS_VIEW_CLASS (nautilus_desktop_canvas_view_parent_class)->merge_menus (view);
 
@@ -732,13 +775,10 @@ real_merge_menus (NautilusView *view)
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
 
-	control_center_path = g_find_program_in_path ("gnome-control-center");
-	if (control_center_path == NULL) {
+	if (get_control_center_command (NULL) == NULL) {
 		action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_CHANGE_BACKGROUND);
 		gtk_action_set_visible (action, FALSE);
 	}
-
-	g_free (control_center_path);
 }
 
 NautilusView *
