@@ -1186,10 +1186,11 @@ nautilus_window_constructed (GObject *self)
 	gtk_widget_show (window->details->main_view);
 
 	window->details->notebook = create_notebook (window);
-	nautilus_window_set_initial_window_geometry (window);
 
 	slot = nautilus_window_open_slot (window, 0);
 	nautilus_window_set_active_slot (window, slot);
+
+	nautilus_window_set_initial_window_geometry (window);
 
 	window->details->bookmarks_id =
 		g_signal_connect_swapped (nautilus_application_get_bookmarks (application), "changed",
