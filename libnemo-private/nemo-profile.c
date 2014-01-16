@@ -32,10 +32,10 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
-#include "nautilus-profile.h"
+#include "nemo-profile.h"
 
 void
-_nautilus_profile_log (const char *func,
+_nemo_profile_log (const char *func,
                        const char *note,
                        const char *format,
                        ...)
