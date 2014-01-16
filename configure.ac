@@ -93,6 +93,19 @@ else
 fi
 
 dnl ==========================================================================
+dnl Enable Profiling
+
+AC_ARG_ENABLE(profiling,
+        [AC_HELP_STRING([--enable-profiling],
+        [turn on profiling])],
+        , enable_profiling=yes)
+
+if test "x$enable_profiling" = "xyes"; then
+    AC_DEFINE(ENABLE_PROFILING,1,[enable profiling])
+fi
+
+
+dnl ==========================================================================
 
 AC_CHECK_PROGS(PERL, perl5 perl)
 AC_PATH_PROG(GLIB_GENMARSHAL, glib-genmarshal)
@@ -419,6 +432,7 @@ nemo-$VERSION:
 	Zeitgeist logging: 	$build_zeitgeist
 
 	debugging support:      ${enable_debug}
+	profiling support:      ${enable_profiling}
 	nemo-extension documentation: ${enable_gtk_doc}
 	nemo-extension introspection: ${found_introspection}
 "

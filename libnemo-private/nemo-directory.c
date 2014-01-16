@@ -33,6 +33,7 @@
 #include "nemo-global-preferences.h"
 #include "nemo-lib-self-check-functions.h"
 #include "nemo-metadata.h"
+#include "nemo-profile.h"
 #include "nemo-desktop-directory.h"
 #include "nemo-vfs-directory.h"
 #include <eel/eel-glib-extensions.h>
@@ -716,22 +717,26 @@ void
 nemo_directory_emit_files_added (NemoDirectory *directory,
 				     GList *added_files)
 {
+	nemo_profile_start (NULL);
 	if (added_files != NULL) {
 		g_signal_emit (directory,
 				 signals[FILES_ADDED], 0,
 				 added_files);
 	}
+	nemo_profile_end (NULL);
 }
 
 void
 nemo_directory_emit_files_changed (NemoDirectory *directory,
 				       GList *changed_files)
 {
+	nemo_profile_start (NULL);
 	if (changed_files != NULL) {
 		g_signal_emit (directory,
 				 signals[FILES_CHANGED], 0,
 				 changed_files);
 	}
+	nemo_profile_end (NULL);
 }
 
 void
@@ -740,10 +745,12 @@ nemo_directory_emit_change_signals (NemoDirectory *directory,
 {
 	GList *p;
 
+	nemo_profile_start (NULL);
 	for (p = changed_files; p != NULL; p = p->next) {
 		nemo_file_emit_changed (p->data);
 	}
 	nemo_directory_emit_files_changed (directory, changed_files);
+	nemo_profile_end (NULL);
 }
 
 void
@@ -907,6 +914,8 @@ nemo_directory_notify_files_added (GList *files)
 	NemoFile *file;
 	GFile *location, *parent;
 
+	nemo_profile_start (NULL);
+
 	/* Make a list of added files in each directory. */
 	added_lists = g_hash_table_new (NULL, NULL);
 
@@ -976,6 +985,8 @@ nemo_directory_notify_files_added (GList *files)
 	/* Invalidate count for each parent directory. */
 	g_hash_table_foreach (parent_directories, invalidate_count_and_unref, NULL);
 	g_hash_table_destroy (parent_directories);
+
+	nemo_profile_end (NULL);
 }
 
 static void

@@ -154,6 +154,8 @@ libnemo_private_la_SOURCES = \
 	nemo-module.h \
 	nemo-monitor.c \
 	nemo-monitor.h \
+	nemo-profile.c \
+	nemo-profile.h \
     nemo-places-tree-view.c \
     nemo-places-tree-view.h \
 	nemo-progress-info.c \

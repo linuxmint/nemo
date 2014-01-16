@@ -58,6 +58,7 @@
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-lib-self-check-functions.h>
 #include <libnemo-private/nemo-module.h>
+#include <libnemo-private/nemo-profile.h>
 #include <libnemo-private/nemo-signaller.h>
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <libnemo-private/nemo-thumbnails.h>
@@ -227,6 +228,8 @@ check_required_directories (NemoApplication *application)
 
 	g_assert (NEMO_IS_APPLICATION (application));
 
+	nemo_profile_start (NULL);
+
 	ret = TRUE;
 
 	user_directory = nemo_get_user_directory ();
@@ -283,6 +286,7 @@ check_required_directories (NemoApplication *application)
 	g_slist_free (directories);
 	g_free (user_directory);
 	g_free (desktop_directory);
+	nemo_profile_end (NULL);
 
 	return ret;
 }
@@ -457,6 +461,7 @@ nemo_application_create_window (NemoApplication *application,
 	gboolean maximized;
 
 	g_return_val_if_fail (NEMO_IS_APPLICATION (application), NULL);
+	nemo_profile_start (NULL);
 
 	window = nemo_window_new (GTK_APPLICATION (application), screen);
 
@@ -486,7 +491,8 @@ nemo_application_create_window (NemoApplication *application,
 	g_free (geometry_string);
 
 	DEBUG ("Creating a new navigation window");
-	
+	nemo_profile_end (NULL);
+
 	return window;
 }
 
@@ -624,7 +630,7 @@ open_window (NemoApplication *application,
 
 	uri = g_file_get_uri (location);
 	DEBUG ("Opening new window at uri %s", uri);
-
+	nemo_profile_start (NULL);
 	window = nemo_application_create_window (application,
 						     screen);
 	nemo_window_go_to (window, location);
@@ -640,6 +646,8 @@ open_window (NemoApplication *application,
 								 APPLICATION_WINDOW_MIN_HEIGHT,
 								 FALSE);
 	}
+
+	nemo_profile_end (NULL);
 
 	g_free (uri);
 }
@@ -673,6 +681,8 @@ nemo_application_open_location (NemoApplication *application,
 	NemoWindow *window;
 	GList *sel_list = NULL;
 
+	nemo_profile_start (NULL);
+
 	window = nemo_application_create_window (application, gdk_screen_get_default ());
 	gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
 
@@ -686,6 +696,8 @@ nemo_application_open_location (NemoApplication *application,
 	if (sel_list != NULL) {
 		nemo_file_list_free (sel_list);
 	}
+
+	nemo_profile_end (NULL);
 }
 
 static void
@@ -781,6 +793,7 @@ static void
 do_perform_self_checks (gint *exit_status)
 {
 #ifndef NEMO_OMIT_SELF_CHECK
+	nemo_profile_start (NULL);
 	/* Run the checks (each twice) for nemo and libnemo-private. */
 
 	nemo_run_self_checks ();
@@ -790,6 +803,7 @@ do_perform_self_checks (gint *exit_status)
 	nemo_run_self_checks ();
 	nemo_run_lib_self_checks ();
 	eel_exit_if_self_checks_failed ();
+	nemo_profile_end (NULL);
 #endif
 
 	*exit_status = EXIT_SUCCESS;
@@ -852,6 +866,8 @@ nemo_application_local_command_line (GApplication *application,
 	gchar **argv = NULL;
 
 	*exit_status = EXIT_SUCCESS;
+
+	nemo_profile_start (NULL);
 
 	context = g_option_context_new (_("\n\nBrowse the file system with the file manager"));
 	g_option_context_add_main_entries (context, options, NULL);
@@ -963,6 +979,7 @@ nemo_application_local_command_line (GApplication *application,
 
  out:
 	g_option_context_free (context);
+	nemo_profile_end (NULL);
 
 	return TRUE;	
 }
@@ -1270,6 +1287,9 @@ static void
 nemo_application_startup (GApplication *app)
 {
 	NemoApplication *self = NEMO_APPLICATION (app);
+
+	nemo_profile_start (NULL);
+
 	/* chain up to the GTK+ implementation early, so gtk_init()
 	 * is called for us.
 	 */
@@ -1286,6 +1306,7 @@ nemo_application_startup (GApplication *app)
 	nemo_global_preferences_init ();
 
 	/* register views */
+	nemo_profile_start ("Register views");
 	nemo_canvas_view_register ();
 	nemo_desktop_canvas_view_register ();
 	nemo_list_view_register ();
@@ -1293,6 +1314,7 @@ nemo_application_startup (GApplication *app)
 #if ENABLE_EMPTY_VIEW
 	nemo_empty_view_register ();
 #endif
+	nemo_profile_end ("Register views");
 
 	/* register property pages */
 	nemo_image_properties_page_register ();
@@ -1302,7 +1324,9 @@ nemo_application_startup (GApplication *app)
 	init_gtk_accels ();
 	
 	/* initialize nemo modules */
+	nemo_profile_start ("Modules");
 	nemo_module_setup ();
+	nemo_profile_end ("Modules");
 
 	/* attach menu-provider module callback */
 	menu_provider_init_callback ();
@@ -1324,7 +1348,7 @@ nemo_application_startup (GApplication *app)
 
 	self->priv->bookmark_list = nemo_bookmark_list_new ();
 
-	/* Check the user's ~/.nemo directories and post warnings
+	/* Check the user's .nemo directories and post warnings
 	 * if there are problems.
 	 */
 	check_required_directories (self);
@@ -1351,6 +1375,8 @@ nemo_application_startup (GApplication *app)
 #ifdef HAVE_UNITY
 	unity_bookmarks_handler_initialize ();
 #endif
+
+	nemo_profile_end (NULL);
 }
 
 static void

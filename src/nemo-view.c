@@ -82,6 +82,7 @@
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-recent.h>
 #include <libnemo-private/nemo-module.h>
+#include <libnemo-private/nemo-profile.h>
 #include <libnemo-private/nemo-program-choosing.h>
 #include <libnemo-private/nemo-trash-monitor.h>
 #include <libnemo-private/nemo-ui-utilities.h>
@@ -2777,6 +2778,8 @@ nemo_view_init (NemoView *view)
 	NemoDirectory *templates_directory;
 	char *templates_uri;
 
+	nemo_profile_start (NULL);
+
 	view->details = G_TYPE_INSTANCE_GET_PRIVATE (view, NEMO_TYPE_VIEW,
 						     NemoViewDetails);
 
@@ -2902,6 +2905,7 @@ nemo_view_init (NemoView *view)
         g_signal_connect_swapped (view->details->bookmarks, "changed",
                       G_CALLBACK (schedule_update_menus),
                       view);
+	nemo_profile_end (NULL);
 }
 
 static void
@@ -3350,10 +3354,11 @@ nemo_view_load_location (NemoView *nemo_view,
 	NemoView *directory_view;
 
 	directory_view = NEMO_VIEW (nemo_view);
-
+	nemo_profile_start (NULL);
 	directory = nemo_directory_get (location);
 	load_directory (directory_view, directory);
 	nemo_directory_unref (directory);
+	nemo_profile_end (NULL);
 }
 
 static gboolean
@@ -3379,6 +3384,8 @@ done_loading (NemoView *view,
 	if (!view->details->loading) {
 		return;
 	}
+
+	nemo_profile_start (NULL);
 
 	/* This can be called during destruction, in which case there
 	 * is no NemoWindow any more.
@@ -3432,6 +3439,7 @@ done_loading (NemoView *view,
 	g_signal_emit (view, signals[END_LOADING], 0, all_files_seen);
 
 	view->details->loading = FALSE;
+	nemo_profile_end (NULL);
 }
 
 
@@ -3460,6 +3468,8 @@ debuting_files_add_file_callback (NemoView *view,
 {
 	GFile *location;
 
+	nemo_profile_start (NULL);
+
 	location = nemo_file_get_location (new_file);
 
 	if (g_hash_table_remove (data->debuting_files, location)) {
@@ -3474,7 +3484,9 @@ debuting_files_add_file_callback (NemoView *view,
 							      data);
 		}
 	}
-	
+
+	nemo_profile_end (NULL);
+
 	g_object_unref (location);
 }
 
@@ -4105,6 +4117,8 @@ files_added_callback (NemoDirectory *directory,
 
 	view = NEMO_VIEW (callback_data);
 
+	nemo_profile_start (NULL);
+
 	window = nemo_view_get_containing_window (view);
 	uri = nemo_view_get_uri (view);
 	DEBUG_FILES (files, "Files added in window %p: %s",
@@ -4117,6 +4131,8 @@ files_added_callback (NemoDirectory *directory,
 
 	/* The number of items could have changed */
 	schedule_update_status (view);
+
+	nemo_profile_end (NULL);
 }
 
 static void
@@ -4157,6 +4173,7 @@ done_loading_callback (NemoDirectory *directory,
 
 	view = NEMO_VIEW (callback_data);
 	
+	nemo_profile_start (NULL);
 	process_new_files (view);
 	if (g_hash_table_size (view->details->non_ready_files) == 0) {
 		/* Unschedule a pending update and schedule a new one with the minimal
@@ -4166,6 +4183,7 @@ done_loading_callback (NemoDirectory *directory,
 		unschedule_display_of_pending_files (view);
 		schedule_timeout_display_of_pending_files (view, UPDATE_INTERVAL_MIN);
 	}
+	nemo_profile_end (NULL);
 }
 
 static void
@@ -10817,6 +10835,8 @@ load_directory (NemoView *view,
 	g_assert (NEMO_IS_VIEW (view));
 	g_assert (NEMO_IS_DIRECTORY (directory));
 
+	nemo_profile_start (NULL);
+
 	nemo_view_stop_loading (view);
 	g_signal_emit (view, signals[CLEAR], 0);
 
@@ -10880,6 +10900,8 @@ load_directory (NemoView *view,
 	view->details->file_changed_handler_id = g_signal_connect
 		(view->details->directory_as_file, "changed",
 		 G_CALLBACK (file_changed_callback), view);
+
+	nemo_profile_end (NULL);
 }
 
 static void
@@ -10887,13 +10909,17 @@ finish_loading (NemoView *view)
 {
 	NemoFileAttributes attributes;
 
+	nemo_profile_start (NULL);
+
 	nemo_window_report_load_underway (view->details->window,
 					      NEMO_VIEW (view));
 
 	/* Tell interested parties that we've begun loading this directory now.
 	 * Subclasses use this to know that the new metadata is now available.
 	 */
+	nemo_profile_start ("BEGIN_LOADING");
 	g_signal_emit (view, signals[BEGIN_LOADING], 0);
+	nemo_profile_end ("BEGIN_LOADING");
 
 	/* Assume we have now all information to show window */
 	nemo_window_view_visible  (view->details->window, NEMO_VIEW (view));
@@ -10942,6 +10968,8 @@ finish_loading (NemoView *view)
 	view->details->files_changed_handler_id = g_signal_connect
 		(view->details->model, "files_changed",
 		 G_CALLBACK (files_changed_callback), view);
+
+	nemo_profile_end (NULL);
 }
 
 static void
@@ -10965,9 +10993,12 @@ metadata_for_directory_as_file_ready_callback (NemoFile *file,
 	g_assert (view->details->directory_as_file == file);
 	g_assert (view->details->metadata_for_directory_as_file_pending);
 
+	nemo_profile_start (NULL);
+
 	view->details->metadata_for_directory_as_file_pending = FALSE;
 	
 	finish_loading_if_all_metadata_loaded (view);
+	nemo_profile_end (NULL);
 }
 
 static void
@@ -10983,9 +11014,12 @@ metadata_for_files_in_directory_ready_callback (NemoDirectory *directory,
 	g_assert (view->details->model == directory);
 	g_assert (view->details->metadata_for_files_in_directory_pending);
 
+	nemo_profile_start (NULL);
+
 	view->details->metadata_for_files_in_directory_pending = FALSE;
 	
 	finish_loading_if_all_metadata_loaded (view);
+	nemo_profile_end (NULL);
 }
 
 static void
