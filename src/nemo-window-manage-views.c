@@ -54,6 +54,7 @@
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-module.h>
 #include <libnemo-private/nemo-monitor.h>
+#include <libnemo-private/nemo-profile.h>
 #include <libnemo-private/nemo-search-directory.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_WINDOW
@@ -433,6 +434,7 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 	new_uri = g_file_get_uri (location);
 
 	DEBUG ("Opening location, old: %s, new: %s", old_uri, new_uri);
+	nemo_profile_start ("Opening location, old: %s, new: %s", old_uri, new_uri);
 
 	g_free (old_uri);
 	g_free (new_uri);
@@ -520,8 +522,7 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 			callback (window, NULL, user_data);
 		}
 
-		g_object_unref (old_location);
-                return;
+		goto done;
         }
 
         begin_location_change (target_slot, location, old_location, new_selection,
@@ -538,7 +539,10 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 		}
 	}
 
+ done:
 	g_clear_object (&old_location);
+
+	nemo_profile_end (NULL);
 }
 
 const char *
@@ -618,6 +622,8 @@ begin_location_change (NemoWindowSlot *slot,
         g_assert (type == NEMO_LOCATION_CHANGE_BACK
                   || type == NEMO_LOCATION_CHANGE_FORWARD
                   || distance == 0);
+
+	nemo_profile_start (NULL);
 
 	/* If there is no new selection and the new location is
 	 * a (grand)parent of the old location then we automatically
@@ -709,6 +715,8 @@ begin_location_change (NemoWindowSlot *slot,
 				       NEMO_FILE_ATTRIBUTE_MOUNT,
                                        got_file_info_for_view_selection_callback,
 				       slot);
+
+	nemo_profile_end (NULL);
 }
 
 typedef struct {
@@ -778,6 +786,8 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 	g_assert (slot->determine_view_file == file);
 	slot->determine_view_file = NULL;
+
+	nemo_profile_start (NULL);
 
 	if (slot->mount_error) {
 		error = g_error_copy (slot->mount_error);
@@ -959,6 +969,8 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 	g_clear_error (&error);
 
 	nemo_file_unref (file);
+
+	nemo_profile_end (NULL);
 }
 
 /* Load a view into the window, either reusing the old one or creating
@@ -980,6 +992,8 @@ create_content_view (NemoWindowSlot *slot,
 	GError *error = NULL;
 
 	window = nemo_window_slot_get_window (slot);
+
+	nemo_profile_start (NULL);
 
  	/* FIXME bugzilla.gnome.org 41243: 
 	 * We should use inheritance instead of these special cases
@@ -1039,6 +1053,8 @@ create_content_view (NemoWindowSlot *slot,
 		g_propagate_error (error_out, error);
 	}
 
+	nemo_profile_end (NULL);
+
 	return ret;
 }
 
@@ -1057,7 +1073,8 @@ load_new_location (NemoWindowSlot *slot,
 
 	selection_copy = eel_g_object_list_copy (selection);
 	view = NULL;
-	
+
+	nemo_profile_start (NULL);
 	/* Note, these may recurse into report_load_underway */
         if (slot->content_view != NULL && tell_current_content_view) {
 		view = slot->content_view;
@@ -1077,6 +1094,8 @@ load_new_location (NemoWindowSlot *slot,
 	}
 
 	g_list_free_full (selection_copy, g_object_unref);
+
+	nemo_profile_end (NULL);
 }
 
 /* A view started to load the location its viewing, either due to
@@ -1091,6 +1110,8 @@ nemo_window_report_load_underway (NemoWindow *window,
 
 	g_assert (NEMO_IS_WINDOW (window));
 
+	nemo_profile_start (NULL);
+
 	if (window->details->temporarily_ignore_view_signals) {
 		return;
 	}
@@ -1103,6 +1124,8 @@ nemo_window_report_load_underway (NemoWindow *window,
 	} else {
 		nemo_window_slot_set_allow_stop (slot, TRUE);
 	}
+
+	nemo_profile_end (NULL);
 }
 
 static void

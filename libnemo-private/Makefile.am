@@ -146,6 +146,8 @@ libnemo_private_la_SOURCES = \
 	nemo-module.h \
 	nemo-monitor.c \
 	nemo-monitor.h \
+	nemo-profile.c \
+	nemo-profile.h \
     nemo-pathbar-button.c \
     nemo-pathbar-button.h \
     nemo-places-tree-view.c \

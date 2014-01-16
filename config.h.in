@@ -12,6 +12,9 @@
 /* always defined to indicate that i18n is enabled */
 #undef ENABLE_NLS
 
+/* enable profiling */
+#undef ENABLE_PROFILING
+
 /* Define to enable Tracker support */
 #undef ENABLE_TRACKER
 
