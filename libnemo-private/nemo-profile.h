@@ -19,14 +19,14 @@
  * Authors: William Jon McCann <mccann@jhu.edu>
  *
  * Can be profiled like so:
- *       strace -ttt -f -o /tmp/logfile.strace nautilus
+ *       strace -ttt -f -o /tmp/logfile.strace NEMO
  *       python plot-timeline.py -o prettygraph.png /tmp/logfile.strace
  *
  *       See: http://www.gnome.org/~federico/news-2006-03.html#09
  */
 
-#ifndef __NAUTILUS_PROFILE_H
-#define __NAUTILUS_PROFILE_H
+#ifndef __NEMO_PROFILE_H
+#define __NEMO_PROFILE_H
 
 #include <glib.h>
 
@@ -34,25 +34,25 @@ G_BEGIN_DECLS
 
 #ifdef ENABLE_PROFILING
 #ifdef G_HAVE_ISO_VARARGS
-#define nautilus_profile_start(...) _nautilus_profile_log (G_STRFUNC, "start", __VA_ARGS__)
-#define nautilus_profile_end(...)   _nautilus_profile_log (G_STRFUNC, "end", __VA_ARGS__)
-#define nautilus_profile_msg(...)   _nautilus_profile_log (NULL, NULL, __VA_ARGS__)
+#define nemo_profile_start(...) _nemo_profile_log (G_STRFUNC, "start", __VA_ARGS__)
+#define nemo_profile_end(...)   _nemo_profile_log (G_STRFUNC, "end", __VA_ARGS__)
+#define nemo_profile_msg(...)   _nemo_profile_log (NULL, NULL, __VA_ARGS__)
 #elif defined(G_HAVE_GNUC_VARARGS)
-#define nautilus_profile_start(format...) _nautilus_profile_log (G_STRFUNC, "start", format)
-#define nautilus_profile_end(format...)   _nautilus_profile_log (G_STRFUNC, "end", format)
-#define nautilus_profile_msg(format...)   _nautilus_profile_log (NULL, NULL, format)
+#define nemo_profile_start(format...) _nemo_profile_log (G_STRFUNC, "start", format)
+#define nemo_profile_end(format...)   _nemo_profile_log (G_STRFUNC, "end", format)
+#define nemo_profile_msg(format...)   _nemo_profile_log (NULL, NULL, format)
 #endif
 #else
-#define nautilus_profile_start(...)
-#define nautilus_profile_end(...)
-#define nautilus_profile_msg(...)
+#define nemo_profile_start(...)
+#define nemo_profile_end(...)
+#define nemo_profile_msg(...)
 #endif
 
-void            _nautilus_profile_log    (const char *func,
+void            _nemo_profile_log    (const char *func,
                                           const char *note,
                                           const char *format,
                                           ...) G_GNUC_PRINTF (3, 4);
 
 G_END_DECLS
 
-#endif /* __NAUTILUS_PROFILE_H */
+#endif /* __NEMO_PROFILE_H */
