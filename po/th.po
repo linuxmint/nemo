@@ -1,10 +1,10 @@
 # Thai nautilus translation.
-# Copyright (C) 2003-2013 Free Software Foundation, Inc.
+# Copyright (C) 2003-2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the nautilus package.
 # Paisa Seeluangsawat <paisa@users.sf.net>, 2003, 2004.
 # Supranee Thirawatthanasuk <supranee@opentle.org>, 2005.
 # Theppitak Karoonboonyanan <thep@linux.thai.net>, 2005-2012.
-# Akom Chotiphantawanon <knight2000@gmail.com>, 2013.
+# Akom Chotiphantawanon <knight2000@gmail.com>, 2013-2014.
 #
 # Thai translation for eel.
 # Copyright (C) 2003-2008 Free Software Foundation, Inc.
@@ -18,8 +18,8 @@ msgstr ""
 "Project-Id-Version: nautilus\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-10-29 18:36+0000\n"
-"PO-Revision-Date: 2013-11-01 14:28+0700\n"
+"POT-Creation-Date: 2014-01-17 20:28+0000\n"
+"PO-Revision-Date: 2014-01-18 20:56+0700\n"
 "Last-Translator: Akom Chotiphantawanon <knight2000@gmail.com>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
 "Language: th\n"
@@ -42,8 +42,8 @@ msgstr "เชื่อมต่อไปเซิร์ฟเวอร์"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4476 ../src/nautilus-window.c:2201
-#: ../src/nautilus-window.c:2398
+#: ../src/nautilus-properties-window.c:4478 ../src/nautilus-window.c:2209
+#: ../src/nautilus-window.c:2406
 msgid "Files"
 msgstr "แฟ้ม"
 
@@ -116,7 +116,7 @@ msgstr "ตำแหน่งปลายด้านตรงข้ามกั
 
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3080
+#: ../eel/eel-editable-label.c:3085
 #: ../libnautilus-private/nautilus-clipboard.c:358 ../src/nautilus-view.c:7206
 #: ../src/nautilus-view.c:7359
 msgid "Cu_t"
@@ -124,7 +124,7 @@ msgstr "_ตัด"
 
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3082
+#: ../eel/eel-editable-label.c:3087
 #: ../libnautilus-private/nautilus-clipboard.c:362 ../src/nautilus-view.c:7210
 #: ../src/nautilus-view.c:7363
 msgid "_Copy"
@@ -132,12 +132,12 @@ msgstr "_คัดลอก"
 
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3084
+#: ../eel/eel-editable-label.c:3089
 #: ../libnautilus-private/nautilus-clipboard.c:366 ../src/nautilus-view.c:7214
 msgid "_Paste"
 msgstr "_แปะ"
 
-#: ../eel/eel-editable-label.c:3087
+#: ../eel/eel-editable-label.c:3092
 msgid "Select All"
 msgstr "เลือกทั้งหมด"
 
@@ -154,8 +154,8 @@ msgstr "แสดง_รายละเอียด"
 #: ../src/nautilus-mime-actions.c:652 ../src/nautilus-mime-actions.c:723
 #: ../src/nautilus-mime-actions.c:1066 ../src/nautilus-mime-actions.c:1572
 #: ../src/nautilus-mime-actions.c:1796
-#: ../src/nautilus-properties-window.c:4467
-#: ../src/nautilus-properties-window.c:5465 ../src/nautilus-query-editor.c:520
+#: ../src/nautilus-properties-window.c:4469
+#: ../src/nautilus-properties-window.c:5467 ../src/nautilus-query-editor.c:520
 #: ../src/nautilus-view.c:970 ../src/nautilus-view.c:1496
 #: ../src/nautilus-view.c:1616 ../src/nautilus-view.c:5995
 msgid "_Cancel"
@@ -173,7 +173,7 @@ msgstr " (ยูนิโค้ดผิดรูปแบบ)"
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:275
 #: ../src/nautilus-list-view.c:1827 ../src/nautilus-pathbar.c:295
-#: ../src/nautilus-query-editor.c:1094
+#: ../src/nautilus-query-editor.c:1096
 #: ../src/nautilus-shell-search-provider.c:288
 msgid "Home"
 msgstr "บ้าน"
@@ -278,7 +278,7 @@ msgid "The group of the file."
 msgstr "กลุ่มของแฟ้ม"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:112
-#: ../src/nautilus-properties-window.c:4538
+#: ../src/nautilus-properties-window.c:4540
 msgid "Permissions"
 msgstr "สิทธิ์"
 
@@ -694,13 +694,13 @@ msgstr "แฟ้มเดิม"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:257
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:288
-#: ../src/nautilus-properties-window.c:3277
+#: ../src/nautilus-properties-window.c:3279
 msgid "Size:"
 msgstr "ขนาด:"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:260
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:291
-#: ../src/nautilus-properties-window.c:3259
+#: ../src/nautilus-properties-window.c:3261
 msgid "Type:"
 msgstr "ชนิด:"
 
@@ -975,7 +975,7 @@ msgstr "ทุกรายการในถังขยะจะถูกลบ
 
 #: ../libnautilus-private/nautilus-file-operations.c:1396
 #: ../libnautilus-private/nautilus-file-operations.c:2272
-#: ../src/nautilus-window.c:806
+#: ../src/nautilus-window.c:819
 msgid "Empty _Trash"
 msgstr "เ_ทขยะ"
 
@@ -2271,11 +2271,11 @@ msgstr "กำหนดว่าจะท่องดูมุมมองรา
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:56
 msgid "Desktop font"
-msgstr "อักษรของพื้นโต๊ะ"
+msgstr "แบบอักษรของพื้นโต๊ะ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
-msgid "The font _description used for the icons on the desktop."
-msgstr "ลักษณะอักษรสำหรับไอคอนบนพื้นโต๊ะ"
+msgid "The font description used for the icons on the desktop."
+msgstr "ชื่อบรรยายแบบอักษรสำหรับไอคอนบนพื้นโต๊ะ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:58
 msgid "Home icon visible on desktop"
@@ -2567,30 +2567,27 @@ msgstr "เปิด_หน้าต่างใหม่"
 msgid "Connect to _Server…"
 msgstr "เชื่อมต่อไปเซิร์_ฟเวอร์…"
 
-#. name, stock id
-#: ../src/nautilus-app-menu.ui.h:3 ../src/nautilus-window-menus.c:571
-msgid "Enter _Location…"
-msgstr "ป้อน_ตำแหน่ง…"
-
-#: ../src/nautilus-app-menu.ui.h:4
+#: ../src/nautilus-app-menu.ui.h:3
 msgid "_Bookmarks"
 msgstr "ที่_คั่นหน้า"
 
-#: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-window-menus.c:475
+#: ../src/nautilus-app-menu.ui.h:4 ../src/nautilus-window-menus.c:475
 msgid "Prefere_nces"
 msgstr "_ปรับแต่ง"
 
-#: ../src/nautilus-app-menu.ui.h:6
-msgid "_About Files"
-msgstr "เ_กี่ยวกับโปรแกรมแฟ้ม"
-
 #. name, stock id, label
-#: ../src/nautilus-app-menu.ui.h:7 ../src/nautilus-properties-window.c:4945
+#: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-properties-window.c:4947
 #: ../src/nautilus-view.c:1494 ../src/nautilus-window-menus.c:469
 msgid "_Help"
 msgstr "_วิธีใช้"
 
-#: ../src/nautilus-app-menu.ui.h:8
+#. name, stock id
+#. label, accelerator
+#: ../src/nautilus-app-menu.ui.h:6 ../src/nautilus-window-menus.c:515
+msgid "_About"
+msgstr "เ_กี่ยวกับ"
+
+#: ../src/nautilus-app-menu.ui.h:7
 msgid "_Quit"
 msgstr "_ออก"
 
@@ -2774,7 +2771,7 @@ msgstr ""
 "เพิ่มการเมานท์เชื่อมต่อไปยังเซิร์ฟเวอร์"
 
 #: ../src/nautilus-connect-server-dialog.c:104
-#: ../src/nautilus-properties-window.c:5194 ../src/nautilus-view.c:1471
+#: ../src/nautilus-properties-window.c:5196 ../src/nautilus-view.c:1471
 msgid "There was an error displaying help."
 msgstr "เกิดข้อผิดพลาดขณะแสดงวิธีใช้"
 
@@ -2818,66 +2815,66 @@ msgstr "เชื่อม_ต่อ"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:621 ../src/nautilus-view.c:7202
+#: ../src/nautilus-desktop-canvas-view.c:665 ../src/nautilus-view.c:7202
 #: ../src/nautilus-view.c:8747
 msgid "E_mpty Trash"
 msgstr "เ_ทขยะ"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:645
-#: ../src/nautilus-desktop-canvas-view.c:686
+#: ../src/nautilus-desktop-canvas-view.c:689
+#: ../src/nautilus-desktop-canvas-view.c:730
 msgid "Restore Icons' Original Si_zes"
 msgstr "กลับไปใช้_ขนาดปกติของไอคอน"
 
-#: ../src/nautilus-desktop-canvas-view.c:646
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore Icon's Original Si_ze"
 msgstr "กลับไปใช้_ขนาดปกติของไอคอน"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:658
+#: ../src/nautilus-desktop-canvas-view.c:702
 msgid "Change Desktop _Background"
 msgstr "เปลี่ยนพื้นหลังของพื้นโต๊ะ"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:660
+#: ../src/nautilus-desktop-canvas-view.c:704
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr "เปิดหน้าต่างเลือกสีหรือลวดลายพื้นหลังของพื้นโต๊ะ"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:665
+#: ../src/nautilus-desktop-canvas-view.c:709
 msgid "Empty Trash"
 msgstr "เทขยะ"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:667 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:711 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7203
 msgid "Delete all items in the Trash"
 msgstr "ลบรายการทั้งหมดในถังขยะ"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:672
+#: ../src/nautilus-desktop-canvas-view.c:716
 msgid "_Organize Desktop by Name"
 msgstr "_จัดเรียงพื้นโต๊ะตามชื่อ"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:674
+#: ../src/nautilus-desktop-canvas-view.c:718
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr "เรียงไอคอนให้พอดีหน้าต่าง และไม่ให้ทับกัน"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:679
+#: ../src/nautilus-desktop-canvas-view.c:723
 msgid "Resize Icon…"
 msgstr "ปรับขนาดไอคอน…"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:681
+#: ../src/nautilus-desktop-canvas-view.c:725
 msgid "Make the selected icons resizable"
 msgstr "ทำไอคอนที่เลือกให้ปรับขนาดได้"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:688
-msgid "Restore each selected icons to its original size"
+#: ../src/nautilus-desktop-canvas-view.c:732
+msgid "Restore each selected icon to its original size"
 msgstr "กลับไปใช้ขนาดปกติของไอคอนที่เลือก"
 
 #: ../src/nautilus-desktop-item-properties.c:405
@@ -3009,8 +3006,8 @@ msgstr "กำลังเปลี่ยนชื่อ “%s” เป็น �
 
 #. Translators: this is referred to captions under icons.
 #: ../src/nautilus-file-management-properties.c:281
-#: ../src/nautilus-properties-window.c:4051
-#: ../src/nautilus-properties-window.c:4078
+#: ../src/nautilus-properties-window.c:4053
+#: ../src/nautilus-properties-window.c:4080
 msgid "None"
 msgstr "ไม่มี"
 
@@ -3141,7 +3138,7 @@ msgid "_Only for files smaller than:"
 msgstr "เฉพาะแฟ้มที่เ_ล็กกว่า:"
 
 #: ../src/nautilus-file-management-properties.ui.h:32
-#: ../src/nautilus-properties-window.c:4479
+#: ../src/nautilus-properties-window.c:4481
 msgid "Folders"
 msgstr "โฟลเดอร์"
 
@@ -3410,7 +3407,7 @@ msgstr "คอลัมน์ที่แสดงใน %s"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-list-view.c:2948 ../src/nautilus-properties-window.c:4946
+#: ../src/nautilus-list-view.c:2948 ../src/nautilus-properties-window.c:4948
 #: ../src/nautilus-window-menus.c:471
 msgid "_Close"
 msgstr "ปิ_ด"
@@ -3680,195 +3677,195 @@ msgid "Contents:"
 msgstr "เนื้อหา:"
 
 #. Translators: "used" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:3055
+#: ../src/nautilus-properties-window.c:3057
 msgid "used"
 msgstr "ใช้"
 
 #. Translators: "free" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:3061
+#: ../src/nautilus-properties-window.c:3063
 msgid "free"
 msgstr "ว่าง"
 
-#: ../src/nautilus-properties-window.c:3063
+#: ../src/nautilus-properties-window.c:3065
 msgid "Total capacity:"
 msgstr "ความจุรวม:"
 
-#: ../src/nautilus-properties-window.c:3066
+#: ../src/nautilus-properties-window.c:3068
 msgid "Filesystem type:"
 msgstr "ชนิดระบบแฟ้ม:"
 
-#: ../src/nautilus-properties-window.c:3202
+#: ../src/nautilus-properties-window.c:3204
 msgid "Basic"
 msgstr "พื้นฐาน"
 
-#: ../src/nautilus-properties-window.c:3267
+#: ../src/nautilus-properties-window.c:3269
 msgid "Link target:"
 msgstr "จุดหมายจุดเชื่อมโยง:"
 
-#: ../src/nautilus-properties-window.c:3286
+#: ../src/nautilus-properties-window.c:3288
 msgid "Location:"
 msgstr "ตำแหน่ง:"
 
-#: ../src/nautilus-properties-window.c:3294
+#: ../src/nautilus-properties-window.c:3296
 msgid "Volume:"
 msgstr "โวลุม:"
 
-#: ../src/nautilus-properties-window.c:3303
+#: ../src/nautilus-properties-window.c:3305
 msgid "Accessed:"
 msgstr "เข้าถึงเมื่อ:"
 
-#: ../src/nautilus-properties-window.c:3307
+#: ../src/nautilus-properties-window.c:3309
 msgid "Modified:"
 msgstr "แก้ไขเมื่อ:"
 
-#: ../src/nautilus-properties-window.c:3317
+#: ../src/nautilus-properties-window.c:3319
 msgid "Free space:"
 msgstr "เนื้อที่ว่าง:"
 
 #. translators: this gets concatenated to "no read",
 #. * "no access", etc. (see following strings)
 #.
-#: ../src/nautilus-properties-window.c:3968
-#: ../src/nautilus-properties-window.c:3979
-#: ../src/nautilus-properties-window.c:3991
+#: ../src/nautilus-properties-window.c:3970
+#: ../src/nautilus-properties-window.c:3981
+#: ../src/nautilus-properties-window.c:3993
 msgid "no "
 msgstr "ไม่ให้"
 
-#: ../src/nautilus-properties-window.c:3971
+#: ../src/nautilus-properties-window.c:3973
 msgid "list"
 msgstr "ดูรายชื่อแฟ้ม"
 
-#: ../src/nautilus-properties-window.c:3973
+#: ../src/nautilus-properties-window.c:3975
 msgid "read"
 msgstr "อ่าน"
 
-#: ../src/nautilus-properties-window.c:3982
+#: ../src/nautilus-properties-window.c:3984
 msgid "create/delete"
 msgstr "สร้าง/ลบ"
 
-#: ../src/nautilus-properties-window.c:3984
+#: ../src/nautilus-properties-window.c:3986
 msgid "write"
 msgstr "เขียน"
 
-#: ../src/nautilus-properties-window.c:3993
+#: ../src/nautilus-properties-window.c:3995
 msgid "access"
 msgstr "เข้าถึง"
 
-#: ../src/nautilus-properties-window.c:4058
+#: ../src/nautilus-properties-window.c:4060
 msgid "List files only"
 msgstr "ดูรายชื่อแฟ้มเท่านั้น"
 
-#: ../src/nautilus-properties-window.c:4064
+#: ../src/nautilus-properties-window.c:4066
 msgid "Access files"
 msgstr "เข้าถึงแฟ้ม"
 
-#: ../src/nautilus-properties-window.c:4070
+#: ../src/nautilus-properties-window.c:4072
 msgid "Create and delete files"
 msgstr "สร้างและลบแฟ้ม"
 
-#: ../src/nautilus-properties-window.c:4085
+#: ../src/nautilus-properties-window.c:4087
 msgid "Read-only"
 msgstr "อ่านได้เท่านั้น"
 
-#: ../src/nautilus-properties-window.c:4091
+#: ../src/nautilus-properties-window.c:4093
 msgid "Read and write"
 msgstr "อ่านและเขียนได้"
 
-#: ../src/nautilus-properties-window.c:4118
+#: ../src/nautilus-properties-window.c:4120
 msgid "Access:"
 msgstr "การเข้าถึง:"
 
-#: ../src/nautilus-properties-window.c:4120
+#: ../src/nautilus-properties-window.c:4122
 msgid "Folder access:"
 msgstr "การเข้าถึงโฟลเดอร์:"
 
-#: ../src/nautilus-properties-window.c:4122
+#: ../src/nautilus-properties-window.c:4124
 msgid "File access:"
 msgstr "การเข้าถึงแฟ้ม:"
 
-#: ../src/nautilus-properties-window.c:4211
+#: ../src/nautilus-properties-window.c:4213
 msgid "_Owner:"
 msgstr "เ_จ้าของ:"
 
-#: ../src/nautilus-properties-window.c:4219
-#: ../src/nautilus-properties-window.c:4483
+#: ../src/nautilus-properties-window.c:4221
+#: ../src/nautilus-properties-window.c:4485
 msgid "Owner:"
 msgstr "เจ้าของ:"
 
-#: ../src/nautilus-properties-window.c:4241
+#: ../src/nautilus-properties-window.c:4243
 msgid "_Group:"
 msgstr "_กลุ่ม:"
 
-#: ../src/nautilus-properties-window.c:4249
-#: ../src/nautilus-properties-window.c:4497
+#: ../src/nautilus-properties-window.c:4251
+#: ../src/nautilus-properties-window.c:4499
 msgid "Group:"
 msgstr "กลุ่ม:"
 
-#: ../src/nautilus-properties-window.c:4270
+#: ../src/nautilus-properties-window.c:4272
 msgid "Others"
 msgstr "อื่นๆ"
 
-#: ../src/nautilus-properties-window.c:4285
+#: ../src/nautilus-properties-window.c:4287
 msgid "Execute:"
 msgstr "เรียกใช้:"
 
-#: ../src/nautilus-properties-window.c:4288
+#: ../src/nautilus-properties-window.c:4290
 msgid "Allow _executing file as program"
 msgstr "อนุญาตให้เ_รียกแฟ้มทำงานเป็นโปรแกรม"
 
-#: ../src/nautilus-properties-window.c:4464
+#: ../src/nautilus-properties-window.c:4466
 msgid "Change Permissions for Enclosed Files"
 msgstr "เปลี่ยนการกำหนดสิทธิ์ของแฟ้มที่อยู่ภายใน"
 
 # Most Thai oranges are much brighter.
-#: ../src/nautilus-properties-window.c:4468
+#: ../src/nautilus-properties-window.c:4470
 msgid "Change"
 msgstr "เปลี่ยน"
 
-#: ../src/nautilus-properties-window.c:4511
+#: ../src/nautilus-properties-window.c:4513
 msgid "Others:"
 msgstr "อื่นๆ:"
 
-#: ../src/nautilus-properties-window.c:4552
+#: ../src/nautilus-properties-window.c:4554
 msgid "You are not the owner, so you cannot change these permissions."
 msgstr "คุณไม่ใช่เจ้าของแฟ้ม/โฟลเดอร์ คุณจึงเปลี่ยนสิทธิ์เหล่านี้ไม่ได้"
 
-#: ../src/nautilus-properties-window.c:4567
+#: ../src/nautilus-properties-window.c:4569
 msgid "Security context:"
 msgstr "Security context:"
 
-#: ../src/nautilus-properties-window.c:4582
+#: ../src/nautilus-properties-window.c:4584
 msgid "Change Permissions for Enclosed Files…"
 msgstr "เปลี่ยนการกำหนดสิทธิ์ของแฟ้มที่อยู่ภายใน…"
 
-#: ../src/nautilus-properties-window.c:4592
+#: ../src/nautilus-properties-window.c:4594
 #, c-format
 msgid "The permissions of “%s” could not be determined."
 msgstr "ไม่สามารถพิจารณาการกำหนดสิทธิ์ของ “%s”"
 
-#: ../src/nautilus-properties-window.c:4595
+#: ../src/nautilus-properties-window.c:4597
 msgid "The permissions of the selected file could not be determined."
 msgstr "ไม่สามารถกำหนดสิทธิ์ของแฟ้มที่เลือก"
 
-#: ../src/nautilus-properties-window.c:4839
+#: ../src/nautilus-properties-window.c:4841
 msgid "Open With"
 msgstr "เปิดด้วย"
 
-#: ../src/nautilus-properties-window.c:5162
+#: ../src/nautilus-properties-window.c:5164
 msgid "Creating Properties window."
 msgstr "กำลังสร้างหน้าต่างคุณสมบัติ"
 
-#: ../src/nautilus-properties-window.c:5462
+#: ../src/nautilus-properties-window.c:5464
 msgid "Select Custom Icon"
 msgstr "เลือกไอคอนกำหนดเอง"
 
-#: ../src/nautilus-properties-window.c:5464
+#: ../src/nautilus-properties-window.c:5466
 msgid "_Revert"
 msgstr "_ย้อนคืน"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-properties-window.c:5466 ../src/nautilus-view.c:7170
+#: ../src/nautilus-properties-window.c:5468 ../src/nautilus-view.c:7170
 #: ../src/nautilus-view.c:8588
 msgid "_Open"
 msgstr "_เปิด"
@@ -3917,20 +3914,20 @@ msgstr "ใดๆ"
 msgid "Other Type…"
 msgstr "ชนิดอื่น…"
 
-#: ../src/nautilus-query-editor.c:886
+#: ../src/nautilus-query-editor.c:888
 msgid "Remove this criterion from the search"
 msgstr "ลบเงื่อนไขนี้ออกจากการค้นหา"
 
 #. create the Current/All Files selector
-#: ../src/nautilus-query-editor.c:968
+#: ../src/nautilus-query-editor.c:970
 msgid "Current"
 msgstr "ปัจจุบัน"
 
-#: ../src/nautilus-query-editor.c:971
+#: ../src/nautilus-query-editor.c:973
 msgid "All Files"
 msgstr "ทุกแฟ้ม"
 
-#: ../src/nautilus-query-editor.c:993
+#: ../src/nautilus-query-editor.c:995
 msgid "Add a new criterion to this search"
 msgstr "เพิ่มเงื่อนไขใหม่ในการค้นหานี้"
 
@@ -4891,31 +4888,31 @@ msgstr "Dropped Text.txt"
 msgid "dropped data"
 msgstr "dropped data"
 
-#: ../src/nautilus-window.c:820
+#: ../src/nautilus-window.c:833
 msgid "_Properties"
 msgstr "คุณ_สมบัติ"
 
-#: ../src/nautilus-window.c:828
+#: ../src/nautilus-window.c:842
 msgid "_Format…"
 msgstr "_ฟอร์แมต…"
 
-#: ../src/nautilus-window.c:1177
+#: ../src/nautilus-window.c:1191
 msgid "_New Tab"
 msgstr "เปิดแ_ท็บใหม่"
 
-#: ../src/nautilus-window.c:1187 ../src/nautilus-window-menus.c:588
+#: ../src/nautilus-window.c:1201 ../src/nautilus-window-menus.c:588
 msgid "Move Tab _Left"
 msgstr "ย้ายแท็บไปทาง_ซ้าย"
 
-#: ../src/nautilus-window.c:1195 ../src/nautilus-window-menus.c:591
+#: ../src/nautilus-window.c:1209 ../src/nautilus-window-menus.c:591
 msgid "Move Tab _Right"
 msgstr "ย้ายแท็บไปทาง_ขวา"
 
-#: ../src/nautilus-window.c:1206
+#: ../src/nautilus-window.c:1220
 msgid "_Close Tab"
 msgstr "ปิ_ดแท็บ"
 
-#: ../src/nautilus-window.c:2371
+#: ../src/nautilus-window.c:2379
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -4926,7 +4923,7 @@ msgstr ""
 "ภายใต้เงื่อนไขของ GNU General Public License ที่เผยแพร่โดยมูลนิธิซอฟต์แวร์เสรี "
 "ไม่ว่าจะเป็นสัญญาอนุญาตรุ่นที่ 2 หรือรุ่นถัดมา (ตามแต่คุณจะเลือก)"
 
-#: ../src/nautilus-window.c:2375
+#: ../src/nautilus-window.c:2383
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -4938,7 +4935,7 @@ msgstr ""
 "_ความเหมาะสมสำหรับวัตถุประสงค์เฉพาะกิจใดๆ_ กรุณาอ่าน GNU General Public License "
 "เพื่อดูรายละเอียดเพิ่มเติม"
 
-#: ../src/nautilus-window.c:2379
+#: ../src/nautilus-window.c:2387
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -4951,11 +4948,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2394
+#: ../src/nautilus-window.c:2402
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "Copyright © %Id–%Id The Files authors"
 
-#: ../src/nautilus-window.c:2400
+#: ../src/nautilus-window.c:2408
 msgid "Access and organize your files."
 msgstr "เข้าถึงและจัดระเบียบแฟ้มของคุณ"
 
@@ -4963,7 +4960,7 @@ msgstr "เข้าถึงและจัดระเบียบแฟ้ม
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2410
+#: ../src/nautilus-window.c:2418
 msgid "translator-credits"
 msgstr ""
 "Paisa Seeluangsawat <paisa@users.sf.net>\n"
@@ -5066,12 +5063,6 @@ msgid ""
 msgstr ""
 "ถ่ายโอนแฟ้มให้กับผู้ติดต่อของคุณ หรือไปยังอุปกรณ์ต่างๆ ของคุณอย่างง่ายดายจากโปรแกรมจัดการแฟ้ม"
 
-#. name, stock id
-#. label, accelerator
-#: ../src/nautilus-window-menus.c:515
-msgid "_About"
-msgstr "เ_กี่ยวกับ"
-
 #. tooltip
 #: ../src/nautilus-window-menus.c:516
 msgid "Display credits for the creators of Nautilus"
@@ -5117,7 +5108,7 @@ msgstr "เชื่อมต่อไปยังเครื่องในเ
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:547 ../src/nautilus-window-menus.c:731
+#: ../src/nautilus-window-menus.c:547 ../src/nautilus-window-menus.c:730
 msgid "_Home"
 msgstr "_บ้าน"
 
@@ -5165,6 +5156,11 @@ msgstr "เดินห_น้า"
 #: ../src/nautilus-window-menus.c:568
 msgid "Go to the next visited location"
 msgstr "ไปตำแหน่งที่เปิดถัดจากนี้"
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:571
+msgid "Enter _Location…"
+msgstr "ป้อน_ตำแหน่ง…"
 
 #: ../src/nautilus-window-menus.c:572
 msgid "Specify a location to open"
@@ -5247,7 +5243,7 @@ msgstr "แสดงรายการแบบรายชื่อ"
 msgid "View items as a grid of icons"
 msgstr "แสดงรายการแบบแถวตารางไอคอน"
 
-#: ../src/nautilus-window-menus.c:728
+#: ../src/nautilus-window-menus.c:727
 msgid "_Up"
 msgstr "ขึ้_น"
 
@@ -5363,6 +5359,9 @@ msgstr "มีภาพถ่ายและเพลง"
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "เปิดด้วย:"
+
+#~ msgid "_About Files"
+#~ msgstr "เ_กี่ยวกับโปรแกรมแฟ้ม"
 
 #~ msgid "Input Methods"
 #~ msgstr "วิธีป้อนข้อความ"
