@@ -12,15 +12,16 @@
 # Aron Xu <happyaron.xu@gmail.com>, 2009, 2010, 2011, 2012.
 # Cheng Lu <chenglu1990@gmail.com>, 2012.
 # Wylmer Wang <wantinghard@gmail.com>, 2013.
+# Tong Hui <tonghuix@gmail.com>, 2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nautilus master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-11-21 02:50+0000\n"
-"PO-Revision-Date: 2013-11-23 21:41+0800\n"
-"Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
+"POT-Creation-Date: 2014-01-17 20:28+0000\n"
+"PO-Revision-Date: 2014-01-13 00:44+0800\n"
+"Last-Translator: Tong Hui <tonghuix@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
@@ -41,8 +42,8 @@ msgstr "连接到服务器"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4476 ../src/nautilus-window.c:2202
-#: ../src/nautilus-window.c:2399
+#: ../src/nautilus-properties-window.c:4478 ../src/nautilus-window.c:2209
+#: ../src/nautilus-window.c:2406
 msgid "Files"
 msgstr "文件"
 
@@ -128,7 +129,6 @@ msgstr "剪切(_T)"
 #: ../eel/eel-editable-label.c:3087
 #: ../libnautilus-private/nautilus-clipboard.c:362 ../src/nautilus-view.c:7210
 #: ../src/nautilus-view.c:7363
-#| msgid "_Copy Here"
 msgid "_Copy"
 msgstr "复制(_C)"
 
@@ -156,11 +156,10 @@ msgstr "显示更多细节(_D)"
 #: ../src/nautilus-mime-actions.c:652 ../src/nautilus-mime-actions.c:723
 #: ../src/nautilus-mime-actions.c:1066 ../src/nautilus-mime-actions.c:1572
 #: ../src/nautilus-mime-actions.c:1796
-#: ../src/nautilus-properties-window.c:4467
-#: ../src/nautilus-properties-window.c:5465 ../src/nautilus-query-editor.c:520
+#: ../src/nautilus-properties-window.c:4469
+#: ../src/nautilus-properties-window.c:5467 ../src/nautilus-query-editor.c:520
 #: ../src/nautilus-view.c:970 ../src/nautilus-view.c:1496
 #: ../src/nautilus-view.c:1616 ../src/nautilus-view.c:5995
-#| msgid "Cancel"
 msgid "_Cancel"
 msgstr "取消(_C)"
 
@@ -176,7 +175,7 @@ msgstr " (无效的 Unicode)"
 #: ../libnautilus-private/nautilus-desktop-link.c:134
 #: ../libnautilus-private/nautilus-file-utilities.c:275
 #: ../src/nautilus-list-view.c:1827 ../src/nautilus-pathbar.c:295
-#: ../src/nautilus-query-editor.c:1094
+#: ../src/nautilus-query-editor.c:1096
 #: ../src/nautilus-shell-search-provider.c:288
 msgid "Home"
 msgstr "主文件夹"
@@ -257,7 +256,6 @@ msgid "The date the file was modified."
 msgstr "文件修改的日期。"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:87
-#| msgid "Accessed:"
 msgid "Accessed"
 msgstr "访问日期"
 
@@ -282,7 +280,7 @@ msgid "The group of the file."
 msgstr "文件的组。"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:112
-#: ../src/nautilus-properties-window.c:4538
+#: ../src/nautilus-properties-window.c:4540
 msgid "Permissions"
 msgstr "权限"
 
@@ -697,13 +695,13 @@ msgstr "原始文件"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:257
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:288
-#: ../src/nautilus-properties-window.c:3277
+#: ../src/nautilus-properties-window.c:3279
 msgid "Size:"
 msgstr "大小："
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:260
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:291
-#: ../src/nautilus-properties-window.c:3259
+#: ../src/nautilus-properties-window.c:3261
 msgid "Type:"
 msgstr "类型："
 
@@ -976,7 +974,7 @@ msgstr "回收站中的所有项目将被永久删除。"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1396
 #: ../libnautilus-private/nautilus-file-operations.c:2272
-#: ../src/nautilus-window.c:806
+#: ../src/nautilus-window.c:819
 msgid "Empty _Trash"
 msgstr "清空回收站(_T)"
 
@@ -2262,7 +2260,6 @@ msgid "Desktop font"
 msgstr "桌面字体"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
-#| msgid "The font _description used for the icons on the desktop."
 msgid "The font description used for the icons on the desktop."
 msgstr "桌面上图标描述所用的字体。"
 
@@ -2406,12 +2403,10 @@ msgid "Email…"
 msgstr "邮件..."
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:98
-#| msgid "Send file by mail, instant message…"
 msgid "Send file by mail…"
 msgstr "通过邮件发送文件..."
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:103
-#| msgid "Send files by mail, instant message…"
 msgid "Send files by mail…"
 msgstr "通过邮件发送文件..."
 
@@ -2554,30 +2549,27 @@ msgstr "新建窗口(_W)"
 msgid "Connect to _Server…"
 msgstr "连接到服务器(_S)..."
 
-#. name, stock id
-#: ../src/nautilus-app-menu.ui.h:3 ../src/nautilus-window-menus.c:571
-msgid "Enter _Location…"
-msgstr "输入位置(_L)..."
-
-#: ../src/nautilus-app-menu.ui.h:4
+#: ../src/nautilus-app-menu.ui.h:3
 msgid "_Bookmarks"
 msgstr "书签(_B)"
 
-#: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-window-menus.c:475
+#: ../src/nautilus-app-menu.ui.h:4 ../src/nautilus-window-menus.c:475
 msgid "Prefere_nces"
 msgstr "首选项(_N)"
 
-#: ../src/nautilus-app-menu.ui.h:6
-msgid "_About Files"
-msgstr "关于文件(_A)"
-
 #. name, stock id, label
-#: ../src/nautilus-app-menu.ui.h:7 ../src/nautilus-properties-window.c:4945
+#: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-properties-window.c:4947
 #: ../src/nautilus-view.c:1494 ../src/nautilus-window-menus.c:469
 msgid "_Help"
 msgstr "帮助(_H)"
 
-#: ../src/nautilus-app-menu.ui.h:8
+#. name, stock id
+#. label, accelerator
+#: ../src/nautilus-app-menu.ui.h:6 ../src/nautilus-window-menus.c:515
+msgid "_About"
+msgstr "关于(_A)"
+
+#: ../src/nautilus-app-menu.ui.h:7
 msgid "_Quit"
 msgstr "退出(_Q)"
 
@@ -2706,12 +2698,10 @@ msgid "Keep icons sorted by modification date in rows"
 msgstr "按修改时间排列图标"
 
 #: ../src/nautilus-canvas-view.c:1142
-#| msgid "By Access Date"
 msgid "By _Access Date"
 msgstr "按访问日期(_A)"
 
 #: ../src/nautilus-canvas-view.c:1143
-#| msgid "Keep icons sorted by trash time in rows"
 msgid "Keep icons sorted by access date in rows"
 msgstr "按访问日期排列各行图标"
 
@@ -2763,12 +2753,11 @@ msgstr ""
 "添加“连接到服务器”挂载"
 
 #: ../src/nautilus-connect-server-dialog.c:104
-#: ../src/nautilus-properties-window.c:5194 ../src/nautilus-view.c:1471
+#: ../src/nautilus-properties-window.c:5196 ../src/nautilus-view.c:1471
 msgid "There was an error displaying help."
 msgstr "显示帮助时出错。"
 
 #: ../src/nautilus-connect-server-dialog.c:149
-#| msgid "The server at “%s” cannot be found."
 msgid "This file server type is not recognized."
 msgstr "文件服务器类型无法识别。"
 
@@ -2808,67 +2797,67 @@ msgstr "连接(_O)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:621 ../src/nautilus-view.c:7202
+#: ../src/nautilus-desktop-canvas-view.c:665 ../src/nautilus-view.c:7202
 #: ../src/nautilus-view.c:8747
 msgid "E_mpty Trash"
 msgstr "清空回收站(_M)"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:645
-#: ../src/nautilus-desktop-canvas-view.c:686
+#: ../src/nautilus-desktop-canvas-view.c:689
+#: ../src/nautilus-desktop-canvas-view.c:730
 msgid "Restore Icons' Original Si_zes"
 msgstr "恢复图标的初始大小(_Z)"
 
-#: ../src/nautilus-desktop-canvas-view.c:646
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore Icon's Original Si_ze"
 msgstr "恢复图标的初始大小(_Z)"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:658
+#: ../src/nautilus-desktop-canvas-view.c:702
 msgid "Change Desktop _Background"
 msgstr "更改桌面背景(_B)"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:660
+#: ../src/nautilus-desktop-canvas-view.c:704
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr "显示一个设置桌面背景图案或颜色的窗口"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:665
+#: ../src/nautilus-desktop-canvas-view.c:709
 msgid "Empty Trash"
 msgstr "清空回收站"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:667 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:711 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7203
 msgid "Delete all items in the Trash"
 msgstr "删除回收站中的所有项目"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:672
+#: ../src/nautilus-desktop-canvas-view.c:716
 msgid "_Organize Desktop by Name"
 msgstr "按名称整理桌面(_O)"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:674
+#: ../src/nautilus-desktop-canvas-view.c:718
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr "重新摆放图像以更好适应窗口，并避免重叠"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:679
+#: ../src/nautilus-desktop-canvas-view.c:723
 msgid "Resize Icon…"
 msgstr "缩放图标..."
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:681
+#: ../src/nautilus-desktop-canvas-view.c:725
 msgid "Make the selected icons resizable"
 msgstr "使选中的图标可缩放"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:688
-msgid "Restore each selected icons to its original size"
-msgstr "将每个选中图标恢复到初始大小"
+#: ../src/nautilus-desktop-canvas-view.c:732
+msgid "Restore each selected icon to its original size"
+msgstr "将每个选中图标恢复到其原尺寸"
 
 #: ../src/nautilus-desktop-item-properties.c:405
 #: ../src/nautilus-desktop-item-properties.c:415
@@ -2999,8 +2988,8 @@ msgstr "将“%s”重命名为“%s”。"
 
 #. Translators: this is referred to captions under icons.
 #: ../src/nautilus-file-management-properties.c:281
-#: ../src/nautilus-properties-window.c:4051
-#: ../src/nautilus-properties-window.c:4078
+#: ../src/nautilus-properties-window.c:4053
+#: ../src/nautilus-properties-window.c:4080
 msgid "None"
 msgstr "无"
 
@@ -3130,7 +3119,7 @@ msgid "_Only for files smaller than:"
 msgstr "仅显示小于指定大小的文件(_O)："
 
 #: ../src/nautilus-file-management-properties.ui.h:32
-#: ../src/nautilus-properties-window.c:4479
+#: ../src/nautilus-properties-window.c:4481
 msgid "Folders"
 msgstr "文件夹"
 
@@ -3389,7 +3378,6 @@ msgid "(Empty)"
 msgstr "(空)"
 
 #: ../src/nautilus-list-view.c:1609
-#| msgid "Use De_fault"
 msgid "Use Default"
 msgstr "使用默认值"
 
@@ -3400,7 +3388,7 @@ msgstr "%s 可见列"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-list-view.c:2948 ../src/nautilus-properties-window.c:4946
+#: ../src/nautilus-list-view.c:2948 ../src/nautilus-properties-window.c:4948
 #: ../src/nautilus-window-menus.c:471
 msgid "_Close"
 msgstr "关闭(_C)"
@@ -3670,195 +3658,194 @@ msgid "Contents:"
 msgstr "内容："
 
 #. Translators: "used" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:3055
+#: ../src/nautilus-properties-window.c:3057
 msgid "used"
 msgstr "已用"
 
 #. Translators: "free" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:3061
+#: ../src/nautilus-properties-window.c:3063
 msgid "free"
 msgstr "剩余"
 
-#: ../src/nautilus-properties-window.c:3063
+#: ../src/nautilus-properties-window.c:3065
 msgid "Total capacity:"
 msgstr "总容量："
 
-#: ../src/nautilus-properties-window.c:3066
+#: ../src/nautilus-properties-window.c:3068
 msgid "Filesystem type:"
 msgstr "文件系统类型："
 
-#: ../src/nautilus-properties-window.c:3202
+#: ../src/nautilus-properties-window.c:3204
 msgid "Basic"
 msgstr "基本"
 
-#: ../src/nautilus-properties-window.c:3267
+#: ../src/nautilus-properties-window.c:3269
 msgid "Link target:"
 msgstr "链接目标："
 
-#: ../src/nautilus-properties-window.c:3286
+#: ../src/nautilus-properties-window.c:3288
 msgid "Location:"
 msgstr "位置："
 
-#: ../src/nautilus-properties-window.c:3294
+#: ../src/nautilus-properties-window.c:3296
 msgid "Volume:"
 msgstr "卷："
 
-#: ../src/nautilus-properties-window.c:3303
+#: ../src/nautilus-properties-window.c:3305
 msgid "Accessed:"
 msgstr "访问："
 
-#: ../src/nautilus-properties-window.c:3307
+#: ../src/nautilus-properties-window.c:3309
 msgid "Modified:"
 msgstr "修改："
 
-#: ../src/nautilus-properties-window.c:3317
+#: ../src/nautilus-properties-window.c:3319
 msgid "Free space:"
 msgstr "剩余空间："
 
 #. translators: this gets concatenated to "no read",
 #. * "no access", etc. (see following strings)
 #.
-#: ../src/nautilus-properties-window.c:3968
-#: ../src/nautilus-properties-window.c:3979
-#: ../src/nautilus-properties-window.c:3991
+#: ../src/nautilus-properties-window.c:3970
+#: ../src/nautilus-properties-window.c:3981
+#: ../src/nautilus-properties-window.c:3993
 msgid "no "
 msgstr "无"
 
-#: ../src/nautilus-properties-window.c:3971
+#: ../src/nautilus-properties-window.c:3973
 msgid "list"
 msgstr "列表"
 
-#: ../src/nautilus-properties-window.c:3973
+#: ../src/nautilus-properties-window.c:3975
 msgid "read"
 msgstr "读取"
 
-#: ../src/nautilus-properties-window.c:3982
+#: ../src/nautilus-properties-window.c:3984
 msgid "create/delete"
 msgstr "创建/删除"
 
-#: ../src/nautilus-properties-window.c:3984
+#: ../src/nautilus-properties-window.c:3986
 msgid "write"
 msgstr "写入"
 
-#: ../src/nautilus-properties-window.c:3993
+#: ../src/nautilus-properties-window.c:3995
 msgid "access"
 msgstr "访问"
 
-#: ../src/nautilus-properties-window.c:4058
+#: ../src/nautilus-properties-window.c:4060
 msgid "List files only"
 msgstr "只能列出文件"
 
-#: ../src/nautilus-properties-window.c:4064
+#: ../src/nautilus-properties-window.c:4066
 msgid "Access files"
 msgstr "访问文件"
 
-#: ../src/nautilus-properties-window.c:4070
+#: ../src/nautilus-properties-window.c:4072
 msgid "Create and delete files"
 msgstr "创建和删除文件"
 
-#: ../src/nautilus-properties-window.c:4085
+#: ../src/nautilus-properties-window.c:4087
 msgid "Read-only"
 msgstr "只读"
 
-#: ../src/nautilus-properties-window.c:4091
+#: ../src/nautilus-properties-window.c:4093
 msgid "Read and write"
 msgstr "读写"
 
-#: ../src/nautilus-properties-window.c:4118
+#: ../src/nautilus-properties-window.c:4120
 msgid "Access:"
 msgstr "访问："
 
-#: ../src/nautilus-properties-window.c:4120
+#: ../src/nautilus-properties-window.c:4122
 msgid "Folder access:"
 msgstr "文件夹访问："
 
-#: ../src/nautilus-properties-window.c:4122
+#: ../src/nautilus-properties-window.c:4124
 msgid "File access:"
 msgstr "文件访问："
 
-#: ../src/nautilus-properties-window.c:4211
+#: ../src/nautilus-properties-window.c:4213
 msgid "_Owner:"
 msgstr "所有者(_O)："
 
-#: ../src/nautilus-properties-window.c:4219
-#: ../src/nautilus-properties-window.c:4483
+#: ../src/nautilus-properties-window.c:4221
+#: ../src/nautilus-properties-window.c:4485
 msgid "Owner:"
 msgstr "所有者："
 
-#: ../src/nautilus-properties-window.c:4241
+#: ../src/nautilus-properties-window.c:4243
 msgid "_Group:"
 msgstr "组(_G)："
 
-#: ../src/nautilus-properties-window.c:4249
-#: ../src/nautilus-properties-window.c:4497
+#: ../src/nautilus-properties-window.c:4251
+#: ../src/nautilus-properties-window.c:4499
 msgid "Group:"
 msgstr "组："
 
-#: ../src/nautilus-properties-window.c:4270
+#: ../src/nautilus-properties-window.c:4272
 msgid "Others"
 msgstr "其他"
 
-#: ../src/nautilus-properties-window.c:4285
+#: ../src/nautilus-properties-window.c:4287
 msgid "Execute:"
 msgstr "执行："
 
-#: ../src/nautilus-properties-window.c:4288
+#: ../src/nautilus-properties-window.c:4290
 msgid "Allow _executing file as program"
 msgstr "允许作为程序执行文件(_E)"
 
-#: ../src/nautilus-properties-window.c:4464
+#: ../src/nautilus-properties-window.c:4466
 msgid "Change Permissions for Enclosed Files"
 msgstr "更改包含文件的权限"
 
-#: ../src/nautilus-properties-window.c:4468
+#: ../src/nautilus-properties-window.c:4470
 msgid "Change"
 msgstr "更改"
 
-#: ../src/nautilus-properties-window.c:4511
+#: ../src/nautilus-properties-window.c:4513
 msgid "Others:"
 msgstr "其他："
 
-#: ../src/nautilus-properties-window.c:4552
+#: ../src/nautilus-properties-window.c:4554
 msgid "You are not the owner, so you cannot change these permissions."
 msgstr "您不是所有者，所以您不能更改这些权限。"
 
-#: ../src/nautilus-properties-window.c:4567
+#: ../src/nautilus-properties-window.c:4569
 msgid "Security context:"
 msgstr "安全上下文："
 
-#: ../src/nautilus-properties-window.c:4582
+#: ../src/nautilus-properties-window.c:4584
 msgid "Change Permissions for Enclosed Files…"
 msgstr "更改包含文件的权限..."
 
-#: ../src/nautilus-properties-window.c:4592
+#: ../src/nautilus-properties-window.c:4594
 #, c-format
 msgid "The permissions of “%s” could not be determined."
 msgstr "无法确定“%s”的权限。"
 
-#: ../src/nautilus-properties-window.c:4595
+#: ../src/nautilus-properties-window.c:4597
 msgid "The permissions of the selected file could not be determined."
 msgstr "无法确定选中文件的权限。"
 
-#: ../src/nautilus-properties-window.c:4839
+#: ../src/nautilus-properties-window.c:4841
 msgid "Open With"
 msgstr "打开方式"
 
-#: ../src/nautilus-properties-window.c:5162
+#: ../src/nautilus-properties-window.c:5164
 msgid "Creating Properties window."
 msgstr "创建属性 窗口。"
 
-#: ../src/nautilus-properties-window.c:5462
+#: ../src/nautilus-properties-window.c:5464
 msgid "Select Custom Icon"
 msgstr "选择自定义图标"
 
-#: ../src/nautilus-properties-window.c:5464
-#| msgid "Never"
+#: ../src/nautilus-properties-window.c:5466
 msgid "_Revert"
 msgstr "还原(_R)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-properties-window.c:5466 ../src/nautilus-view.c:7170
+#: ../src/nautilus-properties-window.c:5468 ../src/nautilus-view.c:7170
 #: ../src/nautilus-view.c:8588
 msgid "_Open"
 msgstr "打开(_O)"
@@ -3907,20 +3894,20 @@ msgstr "任何"
 msgid "Other Type…"
 msgstr "其他类型..."
 
-#: ../src/nautilus-query-editor.c:886
+#: ../src/nautilus-query-editor.c:888
 msgid "Remove this criterion from the search"
 msgstr "从搜索中移除此条件"
 
 #. create the Current/All Files selector
-#: ../src/nautilus-query-editor.c:968
+#: ../src/nautilus-query-editor.c:970
 msgid "Current"
 msgstr "当前的"
 
-#: ../src/nautilus-query-editor.c:971
+#: ../src/nautilus-query-editor.c:973
 msgid "All Files"
 msgstr "所有文件"
 
-#: ../src/nautilus-query-editor.c:993
+#: ../src/nautilus-query-editor.c:995
 msgid "Add a new criterion to this search"
 msgstr "向此搜索中添加新条件"
 
@@ -4178,13 +4165,11 @@ msgstr "在此窗口中打开选中的项目"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7178
-#| msgid "Open Location"
 msgid "Open _Item Location"
 msgstr "打开项目位置(_I)"
 
 #. tooltip
 #: ../src/nautilus-view.c:7179
-#| msgid "Open the selected item in this window"
 msgid "Open the selected item's location in this window"
 msgstr "在此窗口中打开选中项目的位置"
 
@@ -4880,31 +4865,31 @@ msgstr "拖放的文本.txt"
 msgid "dropped data"
 msgstr "拖放的数据"
 
-#: ../src/nautilus-window.c:820
+#: ../src/nautilus-window.c:833
 msgid "_Properties"
 msgstr "属性(_P)"
 
-#: ../src/nautilus-window.c:829
+#: ../src/nautilus-window.c:842
 msgid "_Format…"
 msgstr "格式化(_F)..."
 
-#: ../src/nautilus-window.c:1178
+#: ../src/nautilus-window.c:1191
 msgid "_New Tab"
 msgstr "新建标签页(_N)"
 
-#: ../src/nautilus-window.c:1188 ../src/nautilus-window-menus.c:588
+#: ../src/nautilus-window.c:1201 ../src/nautilus-window-menus.c:588
 msgid "Move Tab _Left"
 msgstr "左移标签页(_L)"
 
-#: ../src/nautilus-window.c:1196 ../src/nautilus-window-menus.c:591
+#: ../src/nautilus-window.c:1209 ../src/nautilus-window-menus.c:591
 msgid "Move Tab _Right"
 msgstr "右移标签页(_R)"
 
-#: ../src/nautilus-window.c:1207
+#: ../src/nautilus-window.c:1220
 msgid "_Close Tab"
 msgstr "关闭标签页(_C)"
 
-#: ../src/nautilus-window.c:2372
+#: ../src/nautilus-window.c:2379
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -4914,7 +4899,7 @@ msgstr ""
 "Files 是自由软件；您可以按照自由软件基金会所发表的 GNU GPL 协议自由发放和/或"
 "修改它；GPL 协议应该采用第二版或以后的任何版本。"
 
-#: ../src/nautilus-window.c:2376
+#: ../src/nautilus-window.c:2383
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -4925,7 +4910,7 @@ msgstr ""
 "它所造成的任何直接或间接后果都不承担任何责任。请参看GNU GPL 协议中的细节。"
 
 # 此处源码没改过来 Nautilus->Files
-#: ../src/nautilus-window.c:2380
+#: ../src/nautilus-window.c:2387
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -4938,11 +4923,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2395
+#: ../src/nautilus-window.c:2402
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "版权所有© %Id–%Id Files 作者"
 
-#: ../src/nautilus-window.c:2401
+#: ../src/nautilus-window.c:2408
 msgid "Access and organize your files."
 msgstr "访问和管理你的文件。"
 
@@ -4950,7 +4935,7 @@ msgstr "访问和管理你的文件。"
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2411
+#: ../src/nautilus-window.c:2418
 msgid "translator-credits"
 msgstr ""
 "Wang Jian <lark@linux.net.cn>\n"
@@ -4964,7 +4949,8 @@ msgstr ""
 "Aron Xu <happyaron.xu@gmail.com>\n"
 "Cheng Lu <chenglu1990@gmail.com>\n"
 "Wylmer Wang <wantinghard@gmail.com>\n"
-"eternalhui <www.eternalhui@gmail.com>"
+"eternalhui <www.eternalhui@gmail.com>\n"
+"Tong Hui <tonghuix@gmail.com>"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:472
@@ -5058,12 +5044,6 @@ msgid ""
 "Easily transfer files to your contacts and devices from the file manager."
 msgstr "轻松地从文件管理器中传送文件给您的联系人和设备。"
 
-#. name, stock id
-#. label, accelerator
-#: ../src/nautilus-window-menus.c:515
-msgid "_About"
-msgstr "关于(_A)"
-
 #. tooltip
 #: ../src/nautilus-window-menus.c:516
 msgid "Display credits for the creators of Nautilus"
@@ -5109,7 +5089,7 @@ msgstr "连接到远程计算机或共享磁盘"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:547 ../src/nautilus-window-menus.c:731
+#: ../src/nautilus-window-menus.c:547 ../src/nautilus-window-menus.c:730
 msgid "_Home"
 msgstr "主目录(_H)"
 
@@ -5157,6 +5137,11 @@ msgstr "前进(_F)"
 #: ../src/nautilus-window-menus.c:568
 msgid "Go to the next visited location"
 msgstr "转到下一个访问过的位置"
+
+#. name, stock id
+#: ../src/nautilus-window-menus.c:571
+msgid "Enter _Location…"
+msgstr "输入位置(_L)..."
 
 #: ../src/nautilus-window-menus.c:572
 msgid "Specify a location to open"
@@ -5239,7 +5224,7 @@ msgstr "以列表方式查看项目"
 msgid "View items as a grid of icons"
 msgstr "以图标网格方式查看项目"
 
-#: ../src/nautilus-window-menus.c:728
+#: ../src/nautilus-window-menus.c:727
 msgid "_Up"
 msgstr "向上(_U)"
 
@@ -5355,6 +5340,9 @@ msgstr "包含相片和音乐"
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "打开方式："
+
+#~ msgid "_About Files"
+#~ msgstr "关于文件(_A)"
 
 #~ msgid "Input Methods"
 #~ msgstr "输入法"
