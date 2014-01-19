@@ -65,7 +65,6 @@ UI_FILES = \
 	nemo-file-management-properties.glade	\
 	nemo-canvas-view-ui.xml		\
 	nemo-directory-view-ui.xml		\
-	nemo-desktop-icon-view-ui.xml	\
 	nemo-shell-ui.xml			\
 	$(NULL)
 

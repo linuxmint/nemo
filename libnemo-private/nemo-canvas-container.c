@@ -206,8 +206,8 @@ static int compare_icons_vertical (NemoCanvasContainer *container,
 static void store_layout_timestamps_now (NemoCanvasContainer *container);
 static void remove_search_entry_timeout (NemoCanvasContainer *container);
 
-static gboolean handle_icon_slow_two_click (NemoIconContainer *container,
-                                            NemoIcon *icon,
+static gboolean handle_canvas_slow_two_click (NemoCanvasContainer *container,
+                                            NemoCanvasIcon *icon,
                                             GdkEventButton *event);
 
 static const char *nemo_canvas_container_accessible_action_names[] = {
@@ -4459,9 +4459,9 @@ nemo_canvas_container_did_not_drag (NemoCanvasContainer *container,
 	}
 
     if (details->drag_icon != NULL &&
-        handle_icon_slow_two_click (container, details->drag_icon, event)) {
+        handle_canvas_slow_two_click (container, details->drag_icon, event)) {
         if (!details->skip_rename_on_release)
-            nemo_icon_container_start_renaming_selected_item (container, FALSE);
+            nemo_canvas_container_start_renaming_selected_item (container, FALSE);
     }
 }
 
@@ -6352,10 +6352,6 @@ handle_canvas_slow_two_click (NemoCanvasContainer *container,
         details->double_click_icon[0] == details->double_click_icon[1] &&
         details->double_click_button[0] == details->double_click_button[1]) {
         if (!button_event_modifies_selection (event)) {
-<<<<<<< generic:libnemo-private/nemo-icon-container.c
-=======
-            nemo_canvas_container_start_renaming_selected_item (container, FALSE);
->>>>>>> HEAD~330:libnautilus-private/nautilus-canvas-container.c
             return TRUE;
         }
     }
@@ -6405,12 +6401,7 @@ handle_canvas_button_press (NemoCanvasContainer *container,
 		details->double_click_button[0] = event->button;
 	}
 
-<<<<<<< generic:libnemo-private/nemo-icon-container.c
-    if (handle_icon_double_click (container, icon, event)) {
-=======
-	if (handle_canvas_double_click (container, icon, event) ||
-        handle_canvas_slow_two_click (container, icon, event)) {
->>>>>>> HEAD~330:libnautilus-private/nautilus-canvas-container.c
+    if (handle_canvas_double_click (container, icon, event)) {
 		/* Double clicking does not trigger a D&D action. */
 		details->drag_button = 0;
 		details->drag_icon = NULL;
@@ -6441,7 +6432,7 @@ handle_canvas_button_press (NemoCanvasContainer *container,
 	 */
 	details->icon_selected_on_button_down = icon->is_selected;
 
-    GList *sel = nemo_icon_container_get_selected_icons (container);
+    GList *sel = nemo_canvas_container_get_selected_icons (container);
     details->skip_rename_on_release = g_list_length (sel) > 1;
     g_list_free (sel);
 
@@ -7701,7 +7692,7 @@ nemo_canvas_container_select_all (NemoCanvasContainer *container)
 }
 
 /**
- * nautilus_canvas_container_select_first:
+ * nemo_canvas_container_select_first:
  * @container: An canvas container widget.
  * 
  * Select the first icon in @container.
@@ -7728,7 +7719,7 @@ nemo_canvas_container_select_first (NemoCanvasContainer *container)
 }
 
 /**
- * nautilus_canvas_container_set_selection:
+ * nemo_canvas_container_set_selection:
  * @container: An canvas container widget.
  * @selection: A list of NemoCanvasIconData *.
  * 
