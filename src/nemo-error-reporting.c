@@ -80,7 +80,7 @@ nemo_report_error_loading_directory (NemoFile *file,
 		message = g_strdup (error->message);
 	}
 
-	eel_show_error_dialog (_("The folder contents could not be displayed."), message, parent_window);
+	eel_show_error_dialog (_("This location could not be displayed."), message, parent_window);
 
 	g_free (file_name);
 	g_free (message);
@@ -201,12 +201,12 @@ nemo_report_error_renaming_file (NemoFile *file,
 	if (error->domain == G_IO_ERROR) {
 		switch (error->code) {
 		case G_IO_ERROR_EXISTS:
-			message = g_strdup_printf (_("The name \"%s\" is already used in this folder. "
+			message = g_strdup_printf (_("The name \"%s\" is already used in this location. "
 						     "Please use a different name."), 
 						   new_name_truncated);
 			break;
 		case G_IO_ERROR_NOT_FOUND:
-			message = g_strdup_printf (_("There is no \"%s\" in this folder. "
+			message = g_strdup_printf (_("There is no \"%s\" in this location. "
 						     "Perhaps it was just moved or deleted?"), 
 						   original_name_truncated);
 			break;

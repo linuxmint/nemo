@@ -803,6 +803,8 @@ eel_self_check_string (void)
 	EEL_CHECK_STRING_RESULT (eel_str_middle_truncate ("something_odd", 13), "something_odd");
 	EEL_CHECK_STRING_RESULT (eel_str_middle_truncate ("something_even", 14), "something_even");
 	EEL_CHECK_STRING_RESULT (eel_str_middle_truncate ("something_odd", 13), "something_odd");
+	EEL_CHECK_STRING_RESULT (eel_str_middle_truncate ("ääääääääää", 5), "ä...ä");
+	EEL_CHECK_STRING_RESULT (eel_str_middle_truncate ("あぃいぅうぇえぉ", 7), "あぃ...えぉ");
 
 	EEL_CHECK_STRING_RESULT (eel_str_strip_substring_and_after (NULL, "bar"), NULL);
 	EEL_CHECK_STRING_RESULT (eel_str_strip_substring_and_after ("", "bar"), "");
