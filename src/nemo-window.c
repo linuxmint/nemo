@@ -48,7 +48,6 @@
 
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
-#include <eel/eel-string.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
@@ -1490,7 +1489,6 @@ nemo_window_sync_title (NemoWindow *window,
 {
 	NemoWindowPane *pane;
 	NemoNotebook *notebook;
-	char *window_title;
 
 	if (NEMO_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->sync_title != NULL) {
 		NEMO_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->sync_title (window, slot);
@@ -1499,9 +1497,7 @@ nemo_window_sync_title (NemoWindow *window,
 	}
 
 	if (slot == nemo_window_get_active_slot (window)) {
-		window_title = eel_str_middle_truncate (slot->title, MAX_TITLE_LENGTH);
-		gtk_window_set_title (GTK_WINDOW (window), window_title);
-		g_free (window_title);
+		gtk_window_set_title (GTK_WINDOW (window), slot->title);
 	}
 
 	pane = slot->pane;
