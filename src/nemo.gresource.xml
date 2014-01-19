@@ -4,9 +4,9 @@
     <file compressed="true">nemo-bookmarks-window.glade</file>
     <file compressed="true">nemo-file-management-properties.glade</file>
     <file>nemo-canvas-view-ui.xml</file>
+    <file>nemo-desktop-canvas-view-ui.xml</file>
     <file>nemo-toolbar-ui.xml</file>
     <file>nemo-directory-view-ui.xml</file>
-    <file>nemo-desktop-icon-view-ui.xml</file>
     <file>nemo-list-view-ui.xml</file>
     <file>nemo-shell-ui.xml</file>
     <file>nemo-statusbar-ui.xml</file>

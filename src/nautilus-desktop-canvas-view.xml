@@ -1,0 +1,20 @@
+<ui>
+<popup name="background">
+  <placeholder name="Before Zoom Items">
+    <placeholder name="New Window Items">
+    </placeholder>
+    <placeholder name="New Object Items">
+    </placeholder>
+  </placeholder>
+  <placeholder name="After Zoom Items">
+    <placeholder name="Background Items">
+      <menuitem name="Change Background" action="Change Background"/>
+    </placeholder>
+  </placeholder>
+</popup>
+<popup name="selection">
+  <placeholder name="Empty Trash Holder">
+    <menuitem name="Empty Trash" action="Empty Trash Conditional"/>
+  </placeholder>
+</popup>
+</ui>
