@@ -962,7 +962,7 @@ nemo_query_editor_add_row (NemoQueryEditor *editor,
 	gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 
 	image = gtk_image_new_from_stock (GTK_STOCK_REMOVE,
-	                 GTK_ICON_SIZE_SMALL_TOOLBAR);
+	                 GTK_ICON_SIZE_MENU);
 	gtk_container_add (GTK_CONTAINER (button), image);
 
 	g_signal_connect (button, "clicked",
@@ -1076,7 +1076,7 @@ setup_widgets (NemoQueryEditor *editor)
 	gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 
 	image = gtk_image_new_from_icon_name ("list-add",
-					      GTK_ICON_SIZE_SMALL_TOOLBAR);
+					      GTK_ICON_SIZE_MENU);
 	gtk_container_add (GTK_CONTAINER (button), image);
 
 	g_signal_connect (button, "clicked",

@@ -1651,13 +1651,13 @@ display_view_selection_failure (NemoWindow *window, NemoFile *file,
 				(_("Could not display \"%s\"."),
 				 uri_for_display);
 			detail_message = g_strdup 
-				(_("Nemo has no installed viewer capable of displaying the folder."));
+				(_("Unable to display the contents of this folder."));
 		} else {
 			error_message = g_strdup_printf
 				(_("Could not display \"%s\"."),
 				 uri_for_display);
 			detail_message = g_strdup 
-				(_("The location is not a folder."));
+				(_("This location doesn't appear to be a folder."));
 		}
 	} else if (error->domain == G_IO_ERROR) {
 		switch (error->code) {
@@ -1674,10 +1674,10 @@ display_view_selection_failure (NemoWindow *window, NemoFile *file,
 			error_message = g_strdup_printf (_("Could not display \"%s\"."),
 							 uri_for_display);
 			if (scheme_string != NULL) {
-				detail_message = g_strdup_printf (_("Nemo cannot handle \"%s\" locations."),
+				detail_message = g_strdup_printf (_("\"%s\" locations are not supported."),
 								  scheme_string);
 			} else {
-				detail_message = g_strdup (_("Nemo cannot handle this kind of location."));
+				detail_message = g_strdup (_("Unable to handle this kind of location."));
 			}
 			g_free (scheme_string);
 			break;
@@ -1690,7 +1690,7 @@ display_view_selection_failure (NemoWindow *window, NemoFile *file,
 		case G_IO_ERROR_PERMISSION_DENIED:
 			error_message = g_strdup_printf (_("Could not display \"%s\"."),
 							 uri_for_display);
-			detail_message = g_strdup (_("Access was denied."));
+			detail_message = g_strdup (_("Don't have permission to access the requested location."));
 			break;
 			
 		case G_IO_ERROR_HOST_NOT_FOUND:
@@ -1701,7 +1701,7 @@ display_view_selection_failure (NemoWindow *window, NemoFile *file,
 			 */
 			error_message = g_strdup_printf (_("Could not display \"%s\", because the host could not be found."),
 							 uri_for_display);
-			detail_message = g_strdup (_("Check that the spelling is correct and that your proxy settings are correct."));
+			detail_message = g_strdup (_("Please check the spelling or the network settings."));
 			break;
 		case G_IO_ERROR_CANCELLED:
 		case G_IO_ERROR_FAILED_HANDLED:
@@ -1713,10 +1713,10 @@ display_view_selection_failure (NemoWindow *window, NemoFile *file,
 		}
 	}
 	
-	if (error_message == NULL) {
+	if (detail_message == NULL) {
 		error_message = g_strdup_printf (_("Could not display \"%s\"."),
 						 uri_for_display);
-		detail_message = g_strdup_printf (_("Error: %s\nPlease select another viewer and try again."), error->message);
+		detail_message = g_strdup_printf (_("Unhandled error message: %s"), error->message);
 	}
 	
 	eel_show_error_dialog (error_message, detail_message, GTK_WINDOW (window));

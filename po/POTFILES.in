@@ -1,9 +1,9 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
 [encoding: UTF-8]
-data/nemo.xml.in
 data/nemo-autorun-software.desktop.in.in
 data/nemo.desktop.in.in
+data/nemo.xml.in
 debian/mount-archive.desktop.in
 eel/eel-canvas.c
 eel/eel-editable-label.c
@@ -16,6 +16,9 @@ libnemo-extension/nemo-column.c
 libnemo-extension/nemo-menu-item.c
 libnemo-extension/nemo-property-page.c
 libnemo-private/nemo-bookmark.c
+libnemo-private/nemo-canvas-container.c
+libnemo-private/nemo-canvas-dnd.c
+libnemo-private/nemo-canvas-item.c
 libnemo-private/nemo-clipboard.c
 libnemo-private/nemo-column-chooser.c
 libnemo-private/nemo-column-utilities.c
