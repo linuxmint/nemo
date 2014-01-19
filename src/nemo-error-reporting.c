@@ -65,15 +65,15 @@ nemo_report_error_loading_directory (NemoFile *file,
 	if (error->domain == G_IO_ERROR) {
 		switch (error->code) {
 		case G_IO_ERROR_PERMISSION_DENIED:
-			message = g_strdup_printf (_("You do not have the permissions necessary to view the contents of \"%s\"."),
+			message = g_strdup_printf (_("You do not have the permissions necessary to view the contents of “%s”."),
 						   file_name);
 			break;
 		case G_IO_ERROR_NOT_FOUND:
-			message = g_strdup_printf (_("\"%s\" could not be found. Perhaps it has recently been deleted."),
+			message = g_strdup_printf (_("“%s” could not be found. Perhaps it has recently been deleted."),
 						   file_name);
 			break;
 		default:
-			message = g_strdup_printf (_("Sorry, could not display all the contents of \"%s\": %s"), file_name,
+			message = g_strdup_printf (_("Sorry, could not display all the contents of “%s”: %s"), file_name,
 						   error->message);
 		}
 	} else {
@@ -104,7 +104,7 @@ nemo_report_error_setting_group (NemoFile *file,
 	if (error->domain == G_IO_ERROR) {
 		switch (error->code) {
 		case G_IO_ERROR_PERMISSION_DENIED:
-			message = g_strdup_printf (_("You do not have the permissions necessary to change the group of \"%s\"."),
+			message = g_strdup_printf (_("You do not have the permissions necessary to change the group of “%s”."),
 						   file_name);
 			break;
 		default:
@@ -117,7 +117,7 @@ nemo_report_error_setting_group (NemoFile *file,
 		g_warning ("Hit unhandled case %s:%d in nemo_report_error_setting_group", 
 			   g_quark_to_string (error->domain), error->code);
 		/* fall through */
-		message = g_strdup_printf (_("Sorry, could not change the group of \"%s\": %s"), file_name,
+		message = g_strdup_printf (_("Sorry, could not change the group of “%s”: %s"), file_name,
 					   error->message);
 	}
 	
@@ -142,7 +142,7 @@ nemo_report_error_setting_owner (NemoFile *file,
 
 	file_name = nemo_file_get_display_name (file);
 
-	message = g_strdup_printf (_("Sorry, could not change the owner of \"%s\": %s"), file_name, error->message);
+	message = g_strdup_printf (_("Sorry, could not change the owner of “%s”: %s"), file_name, error->message);
 
 	eel_show_error_dialog (_("The owner could not be changed."), message, parent_window);
 
@@ -164,7 +164,7 @@ nemo_report_error_setting_permissions (NemoFile *file,
 
 	file_name = nemo_file_get_display_name (file);
 
-	message = g_strdup_printf (_("Sorry, could not change the permissions of \"%s\": %s"), file_name, error->message);
+	message = g_strdup_printf (_("Sorry, could not change the permissions of “%s”: %s"), file_name, error->message);
 
 	eel_show_error_dialog (_("The permissions could not be changed."), message, parent_window);
 
@@ -201,32 +201,32 @@ nemo_report_error_renaming_file (NemoFile *file,
 	if (error->domain == G_IO_ERROR) {
 		switch (error->code) {
 		case G_IO_ERROR_EXISTS:
-			message = g_strdup_printf (_("The name \"%s\" is already used in this location. "
+			message = g_strdup_printf (_("The name “%s” is already used in this location. "
 						     "Please use a different name."), 
 						   new_name_truncated);
 			break;
 		case G_IO_ERROR_NOT_FOUND:
-			message = g_strdup_printf (_("There is no \"%s\" in this location. "
+			message = g_strdup_printf (_("There is no “%s” in this location. "
 						     "Perhaps it was just moved or deleted?"), 
 						   original_name_truncated);
 			break;
 		case G_IO_ERROR_PERMISSION_DENIED:
-			message = g_strdup_printf (_("You do not have the permissions necessary to rename \"%s\"."),
+			message = g_strdup_printf (_("You do not have the permissions necessary to rename “%s”."),
 						   original_name_truncated);
 			break;
 		case G_IO_ERROR_INVALID_FILENAME:
 			if (strchr (new_name, '/') != NULL) {
-				message = g_strdup_printf (_("The name \"%s\" is not valid because it contains the character \"/\". "
+				message = g_strdup_printf (_("The name “%s” is not valid because it contains the character “/”. "
 							     "Please use a different name."),
 							   new_name_truncated);
 			} else {
-				message = g_strdup_printf (_("The name \"%s\" is not valid. "
+				message = g_strdup_printf (_("The name “%s” is not valid. "
 							     "Please use a different name."),
 							   new_name_truncated);
 			}
 			break;
                 case G_IO_ERROR_FILENAME_TOO_LONG:
-                        message = g_strdup_printf (_("The name \"%s\" is too long. "
+                        message = g_strdup_printf (_("The name “%s” is too long. "
                                                      "Please use a different name."),
                                                      new_name_truncated);
                         break;
@@ -240,7 +240,7 @@ nemo_report_error_renaming_file (NemoFile *file,
 		g_warning ("Hit unhandled case %s:%d in nemo_report_error_renaming_file", 
 			   g_quark_to_string (error->domain), error->code);
 		/* fall through */
-		message = g_strdup_printf (_("Sorry, could not rename \"%s\" to \"%s\": %s"), 
+		message = g_strdup_printf (_("Sorry, could not rename “%s” to “%s”: %s"), 
 					   original_name_truncated, new_name_truncated,
 					   error->message);
 	}
@@ -345,7 +345,7 @@ nemo_rename_file (NemoFile *file,
 
 	/* Start the timed wait to cancel the rename. */
 	old_name = nemo_file_get_display_name (file);
-	wait_message = g_strdup_printf (_("Renaming \"%s\" to \"%s\"."),
+	wait_message = g_strdup_printf (_("Renaming “%s” to “%s”."),
 					old_name,
 					new_name);
 	g_free (old_name);

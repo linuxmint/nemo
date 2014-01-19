@@ -107,11 +107,11 @@ get_message_for_x_content_type (const char *x_content_type)
 		message = g_strdup (_("Contains digital photos"));
 	} else if (strcmp (x_content_type, "x-content/audio-player") == 0) {
 		message = g_strdup (_("Contains music"));
-	} else if (strcmp (x_content_type, "x-content/software") == 0) {
+	} else if (strcmp (x_content_type, "x-content/unix-software") == 0) {
 		message = g_strdup (_("Contains software"));
 	} else {
 		/* fallback to generic greeting */
-		message = g_strdup_printf (_("Detected as \"%s\""), description);
+		message = g_strdup_printf (_("Detected as “%s”"), description);
 	}
 
 	g_free (description);

@@ -430,7 +430,7 @@ nemo_mime_application_chooser_apply_labels (NemoMimeApplicationChooser *chooser)
 			description = g_content_type_get_description (chooser->details->content_type);
 		}
 
-		label = g_strdup_printf (_("Open all files of type \"%s\" with"),
+		label = g_strdup_printf (_("Open all files of type “%s” with"),
 					 description);
 	} else {
 		GFile *file;
@@ -450,7 +450,7 @@ nemo_mime_application_chooser_apply_labels (NemoMimeApplicationChooser *chooser)
 
 		/* first %s is filename, second %s is mime-type description */
 		emname = g_strdup_printf ("<i>%s</i>", basename);
-		label = g_strdup_printf (_("Select an application in the list to open %s and other files of type \"%s\""),
+		label = g_strdup_printf (_("Select an application to open %s and other files of type “%s”"),
 					 emname, description);
 
 		g_free (emname);
