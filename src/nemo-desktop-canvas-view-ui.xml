@@ -8,7 +8,6 @@
   </placeholder>
   <placeholder name="After Zoom Items">
     <placeholder name="Background Items">
-      <menuitem name="Change Background" action="Change Background"/>
     </placeholder>
   </placeholder>
 </popup>
