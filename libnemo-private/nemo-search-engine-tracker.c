@@ -125,7 +125,7 @@ cursor_callback (GObject      *object,
 	if (g_time_val_from_iso8601 (mtime_str, &tv)) {
 		GDateTime *dt;
 		dt = g_date_time_new_from_timeval_local (&tv);
-		nautilus_search_hit_set_modification_time (hit, dt);
+		nemo_search_hit_set_modification_time (hit, dt);
 		g_date_time_unref (dt);
 	} else {
 		g_warning ("unable to parse mtime: %s", mtime_str);
@@ -261,7 +261,7 @@ nemo_search_engine_tracker_start (NemoSearchProvider *provider)
 }
 
 static void
-nemo_search_engine_tracker_stop (NautilusSearchProvider *provider)
+nemo_search_engine_tracker_stop (NemoSearchProvider *provider)
 {
 	NemoSearchEngineTracker *tracker;
 
