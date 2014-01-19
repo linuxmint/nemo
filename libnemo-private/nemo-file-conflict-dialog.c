@@ -138,7 +138,7 @@ file_list_ready_cb (GList *files,
 	if (dest_is_dir) {
 		if (source_is_dir) {
 			primary_text = g_strdup_printf
-				(_("Merge folder \"%s\"?"),
+				(_("Merge folder “%s”?"),
 				 dest_name);
 
 			message_extra = 
@@ -147,43 +147,43 @@ file_list_ready_cb (GList *files,
 
 			if (src_mtime > dest_mtime) {
 				message = g_strdup_printf (
-					_("An older folder with the same name already exists in \"%s\"."),
+					_("An older folder with the same name already exists in “%s”."),
 					dest_dir_name);
 			} else if (src_mtime < dest_mtime) {
 				message = g_strdup_printf (
-					_("A newer folder with the same name already exists in \"%s\"."),
+					_("A newer folder with the same name already exists in “%s”."),
 					dest_dir_name);
 			} else {
 				message = g_strdup_printf (
-					_("Another folder with the same name already exists in \"%s\"."),
+					_("Another folder with the same name already exists in “%s”."),
 					dest_dir_name);
 			}
 		} else {
 			message_extra =
 				_("Replacing it will remove all files in the folder.");
 			primary_text = g_strdup_printf
-				(_("Replace folder \"%s\"?"), dest_name);
+				(_("Replace folder “%s”?"), dest_name);
 			message = g_strdup_printf
-				(_("A folder with the same name already exists in \"%s\"."),
+				(_("A folder with the same name already exists in “%s”."),
 				 dest_dir_name);
 		}
 	} else {
 		primary_text = g_strdup_printf
-			(_("Replace file \"%s\"?"), dest_name);
+			(_("Replace file “%s”?"), dest_name);
 
 		message_extra = _("Replacing it will overwrite its content.");
 
 		if (src_mtime > dest_mtime) {
 			message = g_strdup_printf (
-				_("An older file with the same name already exists in \"%s\"."),
+				_("An older file with the same name already exists in “%s”."),
 				dest_dir_name);
 		} else if (src_mtime < dest_mtime) {
 			message = g_strdup_printf (
-				_("A newer file with the same name already exists in \"%s\"."),
+				_("A newer file with the same name already exists in “%s”."),
 				dest_dir_name);
 		} else {
 			message = g_strdup_printf (
-				_("Another file with the same name already exists in \"%s\"."),
+				_("Another file with the same name already exists in “%s”."),
 				dest_dir_name);
 		}
 	}

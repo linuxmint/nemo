@@ -130,7 +130,7 @@ nemo_query_to_readable_string (NemoQuery *query)
 		return g_strdup (_("Search"));
 	}
 
-	return g_strdup_printf (_("Search for \"%s\""), query->details->text);
+	return g_strdup_printf (_("Search for “%s”"), query->details->text);
 }
 
 static char *

@@ -3135,7 +3135,7 @@ nemo_view_display_selection_info (NemoView *view)
 
 	if (folder_count != 0) {
 		if (folder_count == 1 && non_folder_count == 0) {
-			folder_count_str = g_strdup_printf (_("\"%s\" selected"), first_item_name);
+			folder_count_str = g_strdup_printf (_("“%s” selected"), first_item_name);
 		} else {
 			folder_count_str = g_strdup_printf (ngettext("%'d folder selected", 
 								     "%'d folders selected", 
@@ -3172,7 +3172,7 @@ nemo_view_display_selection_info (NemoView *view)
 
 		if (folder_count == 0) {
 			if (non_folder_count == 1) {
-				items_string = g_strdup_printf (_("\"%s\" selected"), 
+				items_string = g_strdup_printf (_("“%s” selected"), 
 								first_item_name);
 			} else {
 				items_string = g_strdup_printf (ngettext("%'d item selected",
@@ -4731,8 +4731,8 @@ add_application_to_open_with_menu (NemoView *view,
 	else
 		label = g_strdup_printf (_("Open With %s"), escaped_app);
 
-	tip = g_strdup_printf (ngettext ("Use \"%s\" to open the selected item",
-					 "Use \"%s\" to open the selected items",
+	tip = g_strdup_printf (ngettext ("Use “%s” to open the selected item",
+					 "Use “%s” to open the selected items",
 					 g_list_length (files)),
 			       escaped_app);
 	g_free (escaped_app);
@@ -5999,7 +5999,7 @@ run_script_callback (GtkAction *action, gpointer callback_data)
 
 	screen = gtk_widget_get_screen (GTK_WIDGET (launch_parameters->directory_view));
 
-	DEBUG ("run_script_callback, script_path=\"%s\" (omitting script parameters)",
+	DEBUG ("run_script_callback, script_path=“%s” (omitting script parameters)",
 	       local_file_path);
 
 	nemo_launch_application_from_command_array (screen, quoted_path, FALSE,
@@ -6032,7 +6032,7 @@ add_script_to_scripts_menus (NemoView *directory_view,
 
 	name = nemo_file_get_display_name (file);
 	uri = nemo_file_get_uri (file);
-	tip = g_strdup_printf (_("Run \"%s\" on any selected items"), name);
+	tip = g_strdup_printf (_("Run “%s” on any selected items"), name);
 
 	launch_parameters = script_launch_parameters_new (file, directory_view);
 
@@ -6411,7 +6411,7 @@ add_template_to_templates_menus (NemoView *directory_view,
 	g_free (tmp);
 
 	uri = nemo_file_get_uri (file);
-	tip = g_strdup_printf (_("Create a new document from template \"%s\""), name);
+	tip = g_strdup_printf (_("Create a new document from template “%s”"), name);
 
 	action_name = nemo_escape_action_name (uri, "template_");
 	escaped_label = eel_str_double_underscores (name);
@@ -6664,29 +6664,6 @@ action_open_scripts_folder_callback (GtkAction *action,
 
 	view = NEMO_VIEW (callback_data);
 	nemo_window_slot_open_location (view->details->slot, location, 0);
-
-	eel_show_info_dialog_with_details 
-		(_("All executable files in this folder will appear in the "
-		   "Scripts menu."),
-		 _("Choosing a script from the menu will run "
-		   "that script with any selected items as input."), 
-		 _("All executable files in this folder will appear in the "
-		   "Scripts menu. Choosing a script from the menu will run "
-		   "that script.\n\n"
-		   "When executed from a local folder, scripts will be passed "
-		   "the selected file names. When executed from a remote folder "
-		   "(e.g. a folder showing web or ftp content), scripts will "
-		   "be passed no parameters.\n\n"
-		   "In all cases, the following environment variables will be "
-		   "set by Nemo, which the scripts may use:\n\n"
-		   "NEMO_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected files (only if local)\n\n"
-		   "NEMO_SCRIPT_SELECTED_URIS: newline-delimited URIs for selected files\n\n"
-		   "NEMO_SCRIPT_CURRENT_URI: URI for current location\n\n"
-		   "NEMO_SCRIPT_WINDOW_GEOMETRY: position and size of current window\n\n"
-		   "NEMO_SCRIPT_NEXT_PANE_SELECTED_FILE_PATHS: newline-delimited paths for selected files in the inactive pane of a split-view window (only if local)\n\n"
-		   "NEMO_SCRIPT_NEXT_PANE_SELECTED_URIS: newline-delimited URIs for selected files in the inactive pane of a split-view window\n\n"
-		   "NEMO_SCRIPT_NEXT_PANE_CURRENT_URI: URI for current location in the inactive pane of a split-view window"),
-		 nemo_view_get_containing_window (view));
 }
 
 static GtkMenu *
@@ -7138,11 +7115,11 @@ copy_or_cut_files (NemoView *view,
 	if (count == 1) {
 		name = nemo_file_get_display_name (clipboard_contents->data);
 		if (cut) {
-			status_string = g_strdup_printf (_("\"%s\" will be moved "
+			status_string = g_strdup_printf (_("“%s” will be moved "
 							   "if you select the Paste command"),
 							 name);
 		} else {
-			status_string = g_strdup_printf (_("\"%s\" will be copied "
+			status_string = g_strdup_printf (_("“%s” will be copied "
 							   "if you select the Paste command"),
 							 name);
 		}
@@ -9193,11 +9170,11 @@ update_restore_from_trash_action (GtkAction *action,
 		if (is_self) {
 			g_assert (g_list_length (files) == 1);
 			g_assert (original_location != NULL);
-			tooltip = g_strdup_printf (_("Move the open folder out of the trash to \"%s\""), original_name);
+			tooltip = g_strdup_printf (_("Move the open folder out of the trash to “%s”"), original_name);
 		} else if (files_are_all_directories (files)) {
 			if (original_name != NULL) {
-				tooltip = g_strdup_printf (ngettext ("Move the selected folder out of the trash to \"%s\"",
-								     "Move the selected folders out of the trash to \"%s\"",
+				tooltip = g_strdup_printf (ngettext ("Move the selected folder out of the trash to “%s”",
+								     "Move the selected folders out of the trash to “%s”",
 								     g_list_length (files)), original_name);
 			} else {
 				tooltip = g_strdup_printf (ngettext ("Move the selected folder out of the trash",
@@ -9206,8 +9183,8 @@ update_restore_from_trash_action (GtkAction *action,
 			}
 		} else if (files_is_none_directory (files)) {
 			if (original_name != NULL) {
-				tooltip = g_strdup_printf (ngettext ("Move the selected file out of the trash to \"%s\"",
-								     "Move the selected files out of the trash to \"%s\"",
+				tooltip = g_strdup_printf (ngettext ("Move the selected file out of the trash to “%s”",
+								     "Move the selected files out of the trash to “%s”",
 								     g_list_length (files)), original_name);
 			} else {
 				tooltip = g_strdup_printf (ngettext ("Move the selected file out of the trash",
@@ -9216,8 +9193,8 @@ update_restore_from_trash_action (GtkAction *action,
 			}
 		} else {
 			if (original_name != NULL) {
-				tooltip = g_strdup_printf (ngettext ("Move the selected item out of the trash to \"%s\"",
-								     "Move the selected items out of the trash to \"%s\"",
+				tooltip = g_strdup_printf (ngettext ("Move the selected item out of the trash to “%s”",
+								     "Move the selected items out of the trash to “%s”",
 								     g_list_length (files)), original_name);
 			} else {
 				tooltip = g_strdup_printf (ngettext ("Move the selected item out of the trash",

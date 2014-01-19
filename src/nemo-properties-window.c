@@ -4546,7 +4546,7 @@ create_permissions_page (NemoPropertiesWindow *window)
 	} else {
 		if (!is_multi_file_window (window)) {
 			file_name = nemo_file_get_display_name (get_target_file (window));
-			prompt_text = g_strdup_printf (_("The permissions of \"%s\" could not be determined."), file_name);
+			prompt_text = g_strdup_printf (_("The permissions of “%s” could not be determined."), file_name);
 			g_free (file_name);
 		} else {
 			prompt_text = g_strdup (_("The permissions of the selected file could not be determined."));

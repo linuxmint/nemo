@@ -1322,7 +1322,7 @@ confirm_delete_from_trash (CommonJob *job,
 	g_assert (file_count > 0);
 	
 	if (file_count == 1) {
-		prompt = f (_("Are you sure you want to permanently delete \"%B\" "
+		prompt = f (_("Are you sure you want to permanently delete “%B” "
 					    "from the trash?"), files->data);
 	} else {
 		prompt = f (ngettext("Are you sure you want to permanently delete "
@@ -1389,7 +1389,7 @@ confirm_delete_directly (CommonJob *job,
 	}
 
 	if (file_count == 1) {
-		prompt = f (_("Are you sure you want to permanently delete \"%B\"?"), 
+		prompt = f (_("Are you sure you want to permanently delete “%B”?"), 
 			    files->data);
 	} else {
 		prompt = f (ngettext("Are you sure you want to permanently delete "
@@ -1526,10 +1526,10 @@ delete_dir (CommonJob *job, GFile *dir,
 			details = NULL;
 			
 			if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-				secondary = f (_("Files in the folder \"%B\" cannot be deleted because you do "
+				secondary = f (_("Files in the folder “%B” cannot be deleted because you do "
 						 "not have permissions to see them."), dir);
 			} else {
-				secondary = f (_("There was an error getting information about the files in the folder \"%B\"."), dir);
+				secondary = f (_("There was an error getting information about the files in the folder “%B”."), dir);
 				details = error->message;
 			}
 			
@@ -1559,10 +1559,10 @@ delete_dir (CommonJob *job, GFile *dir,
 		primary = f (_("Error while deleting."));
 		details = NULL;
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-			secondary = f (_("The folder \"%B\" cannot be deleted because you do not have "
+			secondary = f (_("The folder “%B” cannot be deleted because you do not have "
 					 "permissions to read it."), dir);
 		} else {
-			secondary = f (_("There was an error reading the folder \"%B\"."), dir);
+			secondary = f (_("There was an error reading the folder “%B”."), dir);
 			details = error->message;
 		}
 		
@@ -1806,11 +1806,14 @@ trash_files (CommonJob *job, GList *files, int *files_skipped)
 				goto skip;
 			}
 
-			primary = f (_("Cannot move file to trash, do you want to delete immediately?"));
-			secondary = f (_("The file \"%B\" cannot be moved to the trash."), file);
+			/* Translators: %B is a file name */
+			primary = f (_("“%B” can't be put in the trash. Do you want to delete it immediately?"), file);
 			details = NULL;
+			secondary = NULL;
 			if (!IS_IO_ERROR (error, NOT_SUPPORTED)) {
 				details = error->message;
+			} else if (!g_file_is_native (file)) {
+				secondary = f (_("This remote location does not support sending items to the trash."));
 			}
 
 			response = run_question (job,
@@ -2543,10 +2546,10 @@ scan_dir (GFile *dir,
 			details = NULL;
 			
 			if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-				secondary = f (_("Files in the folder \"%B\" cannot be handled because you do "
+				secondary = f (_("Files in the folder “%B” cannot be handled because you do "
 						 "not have permissions to see them."), dir);
 			} else {
-				secondary = f (_("There was an error getting information about the files in the folder \"%B\"."), dir);
+				secondary = f (_("There was an error getting information about the files in the folder “%B”."), dir);
 				details = error->message;
 			}
 			
@@ -2582,10 +2585,10 @@ scan_dir (GFile *dir,
 		details = NULL;
 		
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-			secondary = f (_("The folder \"%B\" cannot be handled because you do not have "
+			secondary = f (_("The folder “%B” cannot be handled because you do not have "
 					 "permissions to read it."), dir);
 		} else {
-			secondary = f (_("There was an error reading the folder \"%B\"."), dir);
+			secondary = f (_("There was an error reading the folder “%B”."), dir);
 			details = error->message;
 		}
 		/* set show_all to TRUE here, as we don't know how many
@@ -2659,10 +2662,10 @@ scan_file (GFile *file,
 		details = NULL;
 		
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-			secondary = f (_("The file \"%B\" cannot be handled because you do not have "
+			secondary = f (_("The file “%B” cannot be handled because you do not have "
 					 "permissions to read it."), file);
 		} else {
-			secondary = f (_("There was an error getting information about \"%B\"."), file);
+			secondary = f (_("There was an error getting information about “%B”."), file);
 			details = error->message;
 		}
 		/* set show_all to TRUE here, as we don't know how many
@@ -2763,7 +2766,7 @@ verify_destination (CommonJob *job,
 			return;
 		}
 		
-		primary = f (_("Error while copying to \"%B\"."), dest);
+		primary = f (_("Error while copying to “%B”."), dest);
 		details = NULL;
 		
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
@@ -2805,7 +2808,7 @@ verify_destination (CommonJob *job,
 	g_object_unref (info);
 	
 	if (file_type != G_FILE_TYPE_DIRECTORY) {
-		primary = f (_("Error while copying to \"%B\"."), dest);
+		primary = f (_("Error while copying to “%B”."), dest);
 		secondary = f (_("The destination is not a folder."));
 
 		run_error (job,
@@ -2839,7 +2842,7 @@ verify_destination (CommonJob *job,
 		
 		if (free_size < required_size) {
 			size_difference = required_size - free_size;
-			primary = f (_("Error while copying to \"%B\"."), dest);
+			primary = f (_("Error while copying to “%B”."), dest);
 			secondary = f (_("There is not enough space on the destination. Try to remove files to make space."));
 			
 			details = f (_("%S more space is required to copy to the destination."), size_difference);
@@ -2869,7 +2872,7 @@ verify_destination (CommonJob *job,
 	if (!job_aborted (job) &&
 	    g_file_info_get_attribute_boolean (fsinfo,
 					       G_FILE_ATTRIBUTE_FILESYSTEM_READONLY)) {
-		primary = f (_("Error while copying to \"%B\"."), dest);
+		primary = f (_("Error while copying to “%B”."), dest);
 		secondary = f (_("The destination is read-only."));
 
 		run_error (job,
@@ -2929,15 +2932,15 @@ report_copy_progress (CopyMoveJob *copy_job,
 			if (copy_job->destination != NULL) {
 				nemo_progress_info_take_status (job->progress,
 								    f (is_move ?
-								       _("Moving \"%B\" to \"%B\""):
-								       _("Copying \"%B\" to \"%B\""),
+								       _("Moving “%B” to “%B”"):
+								       _("Copying “%B” to “%B”"),
 								       copy_job->fake_display_source != NULL ?
 								       copy_job->fake_display_source :
 								       (GFile *)copy_job->files->data,
 								       copy_job->destination));
 			} else {
 				nemo_progress_info_take_status (job->progress,
-								    f (_("Duplicating \"%B\""),
+								    f (_("Duplicating “%B”"),
 								       (GFile *)copy_job->files->data));
 			}
 		} else if (copy_job->files != NULL &&
@@ -2945,16 +2948,16 @@ report_copy_progress (CopyMoveJob *copy_job,
 			if (copy_job->destination != NULL) {
 				nemo_progress_info_take_status (job->progress,
 								    f (is_move ?
-								       _("Moving file %'d of %'d (in \"%B\") to \"%B\"")
+								       _("Moving file %'d of %'d (in “%B”) to “%B”")
 								       :
-								       _("Copying file %'d of %'d (in \"%B\") to \"%B\""),
+								       _("Copying file %'d of %'d (in “%B”) to “%B”"),
 								       transfer_info->num_files + 1,
 								       source_info->num_files,
 								       (GFile *)copy_job->files->data,
 								       copy_job->destination));
 			} else {
 				nemo_progress_info_take_status (job->progress,
-								    f (_("Duplicating file %'d of %'d (in \"%B\")"),
+								    f (_("Duplicating file %'d of %'d (in “%B”)"),
 								       transfer_info->num_files + 1,
 								       source_info->num_files,
 								       (GFile *)copy_job->files->data));
@@ -2963,9 +2966,9 @@ report_copy_progress (CopyMoveJob *copy_job,
 			if (copy_job->destination != NULL) {
 				nemo_progress_info_take_status (job->progress,
 								    f (is_move ?
-								       _("Moving file %'d of %'d to \"%B\"")
+								       _("Moving file %'d of %'d to “%B”")
 								       :
-								       _ ("Copying file %'d of %'d to \"%B\""),
+								       _ ("Copying file %'d of %'d to “%B”"),
 								       transfer_info->num_files + 1,
 								       source_info->num_files,
 								       copy_job->destination));
@@ -3398,10 +3401,10 @@ create_dest_dir (CommonJob *job,
 		details = NULL;
 		
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-			secondary = f (_("The folder \"%B\" cannot be copied because you do not have "
+			secondary = f (_("The folder “%B” cannot be copied because you do not have "
 					 "permissions to create it in the destination."), src);
 		} else {
-			secondary = f (_("There was an error creating the folder \"%B\"."), src);
+			secondary = f (_("There was an error creating the folder “%B”."), src);
 			details = error->message;
 		}
 		
@@ -3531,10 +3534,10 @@ copy_move_directory (CopyMoveJob *copy_job,
 			details = NULL;
 			
 			if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-				secondary = f (_("Files in the folder \"%B\" cannot be copied because you do "
+				secondary = f (_("Files in the folder “%B” cannot be copied because you do "
 						 "not have permissions to see them."), src);
 			} else {
-				secondary = f (_("There was an error getting information about the files in the folder \"%B\"."), src);
+				secondary = f (_("There was an error getting information about the files in the folder “%B”."), src);
 				details = error->message;
 			}
 			
@@ -3576,10 +3579,10 @@ copy_move_directory (CopyMoveJob *copy_job,
 		details = NULL;
 		
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-			secondary = f (_("The folder \"%B\" cannot be copied because you do not have "
+			secondary = f (_("The folder “%B” cannot be copied because you do not have "
 					 "permissions to read it."), src);
 		} else {
-			secondary = f (_("There was an error reading the folder \"%B\"."), src);
+			secondary = f (_("There was an error reading the folder “%B”."), src);
 			details = error->message;
 		}
 		
@@ -3621,7 +3624,7 @@ copy_move_directory (CopyMoveJob *copy_job,
 			if (job->skip_all_error) {
 				goto skip;
 			}
-			primary = f (_("Error while moving \"%B\"."), src);
+			primary = f (_("Error while moving “%B”."), src);
 			secondary = f (_("Could not remove the source folder."));
 			details = error->message;
 			
@@ -3707,7 +3710,7 @@ remove_target_recursively (CommonJob *job,
 			goto skip1;
 		}
 		
-		primary = f (_("Error while copying \"%B\"."), src);
+		primary = f (_("Error while copying “%B”."), src);
 		secondary = f (_("Could not remove files from the already existing folder %F."), file);
 		details = error->message;
 
@@ -3748,7 +3751,7 @@ remove_target_recursively (CommonJob *job,
 		    IS_IO_ERROR (error, CANCELLED)) {
 			goto skip2;
 		}
-		primary = f (_("Error while copying \"%B\"."), src);
+		primary = f (_("Error while copying “%B”."), src);
 		secondary = f (_("Could not remove the already existing file %F."), file);
 		details = error->message;
 
@@ -4314,9 +4317,9 @@ copy_move_file (CopyMoveJob *copy_job,
 					goto out;
 				}
 				if (copy_job->is_move) {
-					primary = f (_("Error while moving \"%B\"."), src);
+					primary = f (_("Error while moving “%B”."), src);
 				} else {
-					primary = f (_("Error while copying \"%B\"."), src);
+					primary = f (_("Error while copying “%B”."), src);
 				}
 				secondary = f (_("Could not remove the already existing file with the same name in %F."), dest_dir);
 				details = error->message;
@@ -4387,7 +4390,7 @@ copy_move_file (CopyMoveJob *copy_job,
 			g_error_free (error);
 			goto out;
 		}
-		primary = f (_("Error while copying \"%B\"."), src);
+		primary = f (_("Error while copying “%B”."), src);
 		secondary = f (_("There was an error copying the file into %F."), dest_dir);
 		details = error->message;
 		
@@ -4682,7 +4685,7 @@ report_move_progress (CopyMoveJob *move_job, int total, int left)
 	job = (CommonJob *)move_job;
 	
 	nemo_progress_info_take_status (job->progress,
-					    f (_("Preparing to Move to \"%B\""),
+					    f (_("Preparing to Move to “%B”"),
 					       move_job->destination));
 
 	nemo_progress_info_take_details (job->progress,
@@ -4927,7 +4930,7 @@ move_file_prepare (CopyMoveJob *move_job,
 		if (job->skip_all_error) {
 			goto out;
 		}
-		primary = f (_("Error while moving \"%B\"."), src);
+		primary = f (_("Error while moving “%B”."), src);
 		secondary = f (_("There was an error moving the file into %F."), dest_dir);
 		details = error->message;
 		
@@ -5225,7 +5228,7 @@ report_link_progress (CopyMoveJob *link_job, int total, int left)
 	job = (CommonJob *)link_job;
 	
 	nemo_progress_info_take_status (job->progress,
-					    f (_("Creating links in \"%B\""),
+					    f (_("Creating links in “%B”"),
 					       link_job->destination));
 
 	nemo_progress_info_take_details (job->progress,

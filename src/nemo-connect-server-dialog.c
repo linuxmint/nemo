@@ -288,7 +288,7 @@ connect_dialog_set_info_bar_error (NemoConnectServerDialog *dialog,
 	case G_IO_ERROR_NOT_FOUND:
 		folder = gtk_entry_get_text (GTK_ENTRY (dialog->details->folder_entry));
 		server = gtk_entry_get_text (GTK_ENTRY (dialog->details->server_entry));
-		str = g_strdup_printf (_("The folder \"%s\" cannot be opened on \"%s\"."),
+		str = g_strdup_printf (_("The folder “%s” cannot be opened on “%s”."),
 				       folder, server);
 		label = gtk_label_new (str);
 		entry = dialog->details->folder_entry;
@@ -298,7 +298,7 @@ connect_dialog_set_info_bar_error (NemoConnectServerDialog *dialog,
 		break;
 	case G_IO_ERROR_HOST_NOT_FOUND:
 		server = gtk_entry_get_text (GTK_ENTRY (dialog->details->server_entry));
-		str = g_strdup_printf (_("The server at \"%s\" cannot be found."), server);
+		str = g_strdup_printf (_("The server at “%s” cannot be found."), server);
 		label = gtk_label_new (str);
 		entry = dialog->details->server_entry;
 
