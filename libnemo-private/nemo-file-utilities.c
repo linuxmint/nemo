@@ -152,7 +152,7 @@ nemo_get_accel_map_file (void)
 char *
 nemo_get_scripts_directory_path (void)
 {
-	return g_build_filename (g_get_user_data_dir (), "nautilus", "scripts", NULL);
+	return g_build_filename (g_get_user_data_dir (), "nemo", "scripts", NULL);
 }
 
 typedef struct {

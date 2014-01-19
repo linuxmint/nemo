@@ -35,6 +35,7 @@
 #include "nemo-pathbar.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
+#include "nemo-special-location-bar.h"
 #include "nemo-trash-bar.h"
 #include "nemo-view-factory.h"
 #include "nemo-x-content-bar.h"
@@ -1322,6 +1323,18 @@ nemo_window_slot_show_x_content_bar (NemoWindowSlot *slot, GMount *mount, const 
 }
 
 static void
+nemo_window_slot_show_special_location_bar (NemoWindowSlot     *slot,
+						NemoSpecialLocation special_location)
+{
+	GtkWidget *bar;
+
+	bar = nemo_special_location_bar_new (special_location);
+	gtk_widget_show (bar);
+
+	nemo_window_slot_add_extra_location_widget (slot, bar);
+}
+
+static void
 nemo_window_slot_show_trash_bar (NemoWindowSlot *slot)
 {
 	GtkWidget *bar;
@@ -1457,6 +1470,17 @@ update_for_new_location (NemoWindowSlot *slot)
 
 		if (nemo_directory_is_in_trash (directory)) {
 			nemo_window_slot_show_trash_bar (slot);
+		} else {
+			GFile *scripts_file;
+			char *scripts_path = nemo_get_scripts_directory_path ();
+			scripts_file = g_file_new_for_path (scripts_path);
+			g_free (scripts_path);
+			if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
+				nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_TEMPLATES);
+			} else if (g_file_equal (slot->location, scripts_file)) {
+				nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_SCRIPTS);
+			}
+			g_object_unref (scripts_file);
 		}
 
 		/* need the mount to determine if we should put up the x-content cluebar */
