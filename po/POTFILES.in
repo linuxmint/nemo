@@ -34,9 +34,6 @@ libnemo-private/nemo-file-operations.c
 libnemo-private/nemo-file-undo-operations.c
 libnemo-private/nemo-file-utilities.c
 libnemo-private/nemo-global-preferences.c
-libnemo-private/nemo-canvas-item.c
-libnemo-private/nemo-canvas-container.c
-libnemo-private/nemo-canvas-dnd.c
 libnemo-private/nemo-mime-application-chooser.c
 libnemo-private/nemo-program-choosing.c
 libnemo-private/nemo-progress-info.c
@@ -80,6 +77,7 @@ src/nemo-properties-window.c
 src/nemo-query-editor.c
 src/nemo-search-bar.c
 src/nemo-shell-ui.xml
+src/nemo-special-location-bar.c
 src/nemo-trash-bar.c
 src/nemo-tree-sidebar.c
 src/nemo-tree-sidebar-model.c

@@ -1597,7 +1597,7 @@ select_pattern (NemoView *view)
 
 	example = gtk_label_new (NULL);
 	gtk_widget_set_halign (example, GTK_ALIGN_START);
-	example_pattern = g_strdup_printf ("<b>%s</b><i>%s</i> ", 
+	example_pattern = g_strdup_printf ("%s<i>%s</i> ", 
 					   _("Examples: "),
 					   "*.png, file\?\?.txt, pict*.\?\?\?");
 	gtk_label_set_markup (GTK_LABEL (example), example_pattern);
@@ -8414,7 +8414,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* name, stock id, label */  { "Open With", NULL, N_("Open Wit_h"),
 				 NULL, N_("Choose a program with which to open the selected item") },
   /* name, stock id */         { "Properties", GTK_STOCK_PROPERTIES,
-  /* label, accelerator */       N_("_Properties"), "<alt>Return",
+  /* label, accelerator */       N_("P_roperties"), "<alt>Return",
   /* tooltip */                  N_("View or modify the properties of each selected item"),
 				 G_CALLBACK (action_properties_callback) },
   /* name, stock id */         { "PropertiesAccel", NULL,
@@ -8521,7 +8521,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Create a symbolic link for each selected item"),
 				 G_CALLBACK (action_create_link_callback) },
   /* name, stock id */         { "Rename", NULL,
-  /* label, accelerator */       N_("_Rename..."), "F2",
+  /* label, accelerator */       N_("Rena_me..."), "F2",
   /* tooltip */                  N_("Rename selected item"),
 				 G_CALLBACK (action_rename_callback) },
   /* name, stock id */         { "RenameSelectAll", NULL,
@@ -8684,7 +8684,7 @@ static const GtkActionEntry directory_view_entries[] = {
 				 G_CALLBACK (action_location_detect_media_callback) },
 
   /* name, stock id */         { "LocationProperties", GTK_STOCK_PROPERTIES,
-  /* label, accelerator */       N_("_Properties"), NULL,
+  /* label, accelerator */       N_("P_roperties"), NULL,
   /* tooltip */                  N_("View or modify the properties of this folder"),
 				 G_CALLBACK (action_location_properties_callback) },
 

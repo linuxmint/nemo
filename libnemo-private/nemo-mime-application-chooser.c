@@ -469,7 +469,7 @@ nemo_mime_application_chooser_apply_labels (NemoMimeApplicationChooser *chooser)
 					 description);
 	} else {
 		GFile *file;
-		gchar *basename, *emname;
+		gchar *basename;
 
 		file = g_file_new_for_uri (chooser->details->uri);
 		basename = g_file_get_basename (file);
@@ -484,11 +484,9 @@ nemo_mime_application_chooser_apply_labels (NemoMimeApplicationChooser *chooser)
 		}
 
 		/* first %s is filename, second %s is mime-type description */
-		emname = g_strdup_printf ("<i>%s</i>", basename);
-		label = g_strdup_printf (_("Select an application to open %s and other files of type “%s”"),
-					 emname, description);
+		label = g_strdup_printf (_("Select an application to open “%s” and other files of type “%s”"),
+					 basename, description);
 
-		g_free (emname);
 		g_free (basename);
 		g_object_unref (file);
 	}
