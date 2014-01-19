@@ -68,17 +68,61 @@ UI_FILES = \
 	nemo-shell-ui.xml			\
 	$(NULL)
 
+headers =					\
+	nemo-special-location-bar.h		\
+	$(NULL)
+
 nemo-resources.c: nemo.gresource.xml $(UI_FILES)
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-source --c-name nemo $(srcdir)/nemo.gresource.xml
 
 nemo-resources.h: nemo.gresource.xml
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-header --c-name nemo $(srcdir)/nemo.gresource.xml
 
+nemo-enum-types.h: stamp-nemo-enum-types.h
+	$(AM_V_GEN)true
+
+stamp-nemo-enum-types.h: $(headers) Makefile
+	$(AM_V_GEN)(cd $(srcdir) \
+	&& glib-mkenums \
+			--fhead "#ifndef __NAUTILUS_ENUM_TYPES_H__\n" \
+			--fhead "#define __NAUTILUS_ENUM_TYPES_H__ 1\n\n" \
+			--fhead "#include <glib-object.h>\n\n" \
+			--fhead "G_BEGIN_DECLS\n\n" \
+			--ftail "G_END_DECLS\n\n" \
+			--ftail "#endif /* __NAUTILUS_ENUM_TYPES_H__ */\n" \
+			--fprod "#include \"@filename@\"\n" \
+			--eprod "#define @ENUMPREFIX@_TYPE_@ENUMSHORT@ @enum_name@_get_type()\n" \
+			--eprod "GType @enum_name@_get_type (void);\n" \
+		$(headers) ) > xgen-gth \
+	&& (cmp -s xgen-gth nemo-enum-type.h || cp xgen-gth nemo-enum-types.h) \
+	&& rm -f xgen-gth \
+	&& echo timestamp > $(@F)
+
+nemo-enum-types.c: $(headers) Makefile
+	$(AM_V_GEN)(cd $(srcdir) \
+	&& glib-mkenums \
+			--fhead "#include <config.h>\n" \
+			--fhead "#include <glib-object.h>\n" \
+			--fhead "#include \"nemo-enum-types.h\"\n\n" \
+			--fprod "\n/* enumerations from \"@filename@\" */" \
+			--vhead "static const G@Type@Value _@enum_name@_values[] = {" \
+			--vprod "  { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
+			--vtail "  { 0, NULL, NULL }\n};\n\n" \
+			--vtail "GType\n@enum_name@_get_type (void)\n{\n" \
+			--vtail "  static GType type = 0;\n\n" \
+			--vtail "  if (!type)\n" \
+			--vtail "    type = g_@type@_register_static (\"@EnumName@\", _@enum_name@_values);\n\n" \
+			--vtail "  return type;\n}\n\n" \
+		$(headers) ) > xgen-gtc \
+	&& cp xgen-gtc $(@F) \
+	&& rm -f xgen-gtc
 
 BUILT_SOURCES = \
 	$(dbus_built_sources) \
 	nemo-resources.c \
 	nemo-resources.h \
+	nemo-enum-types.h \
+	nemo-enum-types.c \
 	$(NULL)
 
 nemo_SOURCES = \
@@ -160,6 +204,8 @@ nemo_SOURCES = \
     nemo-script-config-widget.h         \
 	nemo-self-check-functions.c 	\
 	nemo-self-check-functions.h 	\
+	nemo-special-location-bar.c		\
+	nemo-special-location-bar.h		\
     nemo-statusbar.c    \
     nemo-statusbar.h    \
     nemo-thumbnail-problem-bar.c  \
@@ -260,6 +306,7 @@ TESTS=check-nemo
 CLEANFILES = \
 	$(BUILT_SOURCES)			\
 	$(server_DATA)				\
+	stamp-nemo-enum-types.h		\
 	$(NULL)
 
 EXTRA_DIST =					\
