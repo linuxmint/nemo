@@ -262,16 +262,17 @@ check_required_directories (NemoApplication *application)
 			g_string_append_printf (directories_as_string, ", %s", (const char *)l->data);
 		}
 
+		error_string = _("Oops! Something went wrong.");
 		if (failed_count == 1) {
-			error_string = g_strdup_printf (_("Nemo could not create the required folder \"%s\"."),
-							directories_as_string->str);
-			detail_string = _("Before running Nemo, please create the following folder, or "
-					  "set permissions such that Nemo can create it.");
+			detail_string = g_strdup_printf (_("Unable to create a required folder. "
+							   "Please create the following folder, or "
+							   "set permissions such that it can be created:\n%s"),
+							 directories_as_string->str);
 		} else {
-			error_string = g_strdup_printf (_("Nemo could not create the following required folders: "
-							  "%s."), directories_as_string->str);
-			detail_string = _("Before running Nemo, please create these folders, or "
-					  "set permissions such that Nemo can create them.");
+			detail_string = g_strdup_printf (_("Unable to create required folders. "
+							   "Please create the following folders, or "
+							   "set permissions such that they can be created:\n%s"),
+							 directories_as_string->str);
 		}
 
 		dialog = eel_show_error_dialog (error_string, detail_string, NULL);
@@ -280,7 +281,6 @@ check_required_directories (NemoApplication *application)
 					    GTK_WINDOW (dialog));
 
 		g_string_free (directories_as_string, TRUE);
-		g_free (error_string);
 	}
 
 	g_slist_free (directories);
