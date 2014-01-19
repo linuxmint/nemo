@@ -44,7 +44,6 @@ typedef enum {
 } NautilusNavigationDirection;
 
 struct _NautilusToolbarPriv {
-	GtkWidget *toolbar;
 	NautilusWindow *window;
 
 	GtkWidget *path_bar;
@@ -63,7 +62,7 @@ enum {
 
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
-G_DEFINE_TYPE (NautilusToolbar, nautilus_toolbar, GTK_TYPE_FRAME);
+G_DEFINE_TYPE (NautilusToolbar, nautilus_toolbar, GTK_TYPE_HEADER_BAR);
 
 static void unschedule_menu_popup_timeout (NautilusToolbar *self);
 
@@ -398,6 +397,7 @@ nautilus_toolbar_constructed (GObject *obj)
 	GtkWidget *box;
 	GtkWidget *separator;
 	GtkUIManager *ui_manager;
+	GtkSizeGroup *size_group;
 	gboolean rtl;
 
 	G_OBJECT_CLASS (nautilus_toolbar_parent_class)->constructed (obj);
@@ -405,8 +405,7 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (self)),
 				     "header-bar");
 
-	self->priv->toolbar = toolbar = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-	gtk_container_add (GTK_CONTAINER (self), toolbar);
+	toolbar = GTK_WIDGET (obj);
 
 	rtl = gtk_widget_get_default_direction () == GTK_TEXT_DIR_RTL;
 
@@ -414,6 +413,8 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (self)),
 					      GTK_JUNCTION_BOTTOM);
+
+	size_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
 
 	/* Back and Forward */
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
@@ -439,35 +440,31 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_style_context_add_class (gtk_widget_get_style_context (box),
 				     GTK_STYLE_CLASS_LINKED);
 
-	gtk_box_pack_start (GTK_BOX (toolbar), box, FALSE, FALSE, 0);
-
-	if (rtl) {
-		gtk_widget_set_margin_left (box, 6);
-	} else {
-		gtk_widget_set_margin_right (box, 6);
-	}
-
-	/* regular path bar */
-	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	gtk_header_bar_pack_start (GTK_HEADER_BAR (toolbar), box);
+	gtk_size_group_add_widget (size_group, box);
 
 	self->priv->path_bar = g_object_new (NAUTILUS_TYPE_PATH_BAR, NULL);
-	gtk_box_pack_start (GTK_BOX (box), self->priv->path_bar, TRUE, TRUE, 0);
+	gtk_header_bar_pack_start (GTK_HEADER_BAR (toolbar), self->priv->path_bar);
+
+	gtk_size_group_add_widget (size_group, self->priv->path_bar);
 
 	/* entry-like location bar */
 	self->priv->location_entry = nautilus_location_entry_new ();
-	gtk_box_pack_start (GTK_BOX (box), self->priv->location_entry, TRUE, TRUE, 0);
+	gtk_header_bar_pack_start (GTK_HEADER_BAR (toolbar), self->priv->location_entry);
 
-	gtk_box_pack_start (GTK_BOX (toolbar), box, TRUE, TRUE, 0);
+	gtk_size_group_add_widget (size_group, self->priv->location_entry);
 
-	/* search */
-	button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_SEARCH, NULL);
+	/* Action Menu */
+	button = toolbar_create_toolbutton (self, TRUE, FALSE, "emblem-system-symbolic", _("Location options"));
 	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
-	gtk_container_add (GTK_CONTAINER (toolbar), button);
-	if (rtl) {
-		gtk_widget_set_margin_right (button, 76);
-	} else {
-		gtk_widget_set_margin_left (button, 76);
-	}
+	menu = gtk_ui_manager_get_widget (ui_manager, "/ActionMenu");
+	gtk_widget_set_halign (menu, GTK_ALIGN_END);
+	gtk_menu_button_set_popup (GTK_MENU_BUTTON (button), menu);
+	gtk_actionable_set_action_name (GTK_ACTIONABLE (button), "win.gear-menu");
+        g_signal_connect (menu, "key-press-event", G_CALLBACK (gear_menu_key_press), self);
+
+	gtk_header_bar_pack_end (GTK_HEADER_BAR (toolbar), button);
+	gtk_size_group_add_widget (size_group, button);
 
 	/* View buttons */
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
@@ -489,53 +486,15 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_style_context_add_class (gtk_widget_get_style_context (box),
 				     GTK_STYLE_CLASS_LINKED);
 
-	gtk_container_add (GTK_CONTAINER (toolbar), box);
-	if (rtl) {
-		gtk_widget_set_margin_right (box, 6);
-	} else {
-		gtk_widget_set_margin_left (box, 6);
-	}
+	gtk_header_bar_pack_end (GTK_HEADER_BAR (toolbar), box);
+	gtk_size_group_add_widget (size_group, box);
 
-	/* Action Menu */
-	button = toolbar_create_toolbutton (self, TRUE, FALSE, "emblem-system-symbolic", _("Location options"));
+	/* search */
+	button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_SEARCH, NULL);
 	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
-	menu = gtk_ui_manager_get_widget (ui_manager, "/ActionMenu");
-	gtk_widget_set_halign (menu, GTK_ALIGN_END);
-	gtk_menu_button_set_popup (GTK_MENU_BUTTON (button), menu);
-	gtk_actionable_set_action_name (GTK_ACTIONABLE (button), "win.gear-menu");
-        g_signal_connect (menu, "key-press-event", G_CALLBACK (gear_menu_key_press), self);
-
-	gtk_container_add (GTK_CONTAINER (toolbar), button);
-	if (rtl) {
-		gtk_widget_set_margin_right (button, 6);
-	} else {
-		gtk_widget_set_margin_left (button, 6);
-	}
-
-	/* Separator and Close */
-	separator = gtk_separator_new (GTK_ORIENTATION_VERTICAL);
-	gtk_container_add (GTK_CONTAINER (toolbar), separator);
-
-	if (rtl) {
-		gtk_widget_set_margin_right (separator, 6);
-	} else {
-		gtk_widget_set_margin_left (separator, 6);
-	}
-
-	button = gtk_button_new_from_icon_name ("window-close-symbolic",
-						GTK_ICON_SIZE_MENU);
-	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
-	gtk_style_context_add_class (gtk_widget_get_style_context (button),
-				     "titlebutton");
-	g_signal_connect (button, "clicked",
-			  G_CALLBACK (close_button_clicked), self);
-	gtk_container_add (GTK_CONTAINER (toolbar), button);
-
-	if (rtl) {
-		gtk_widget_set_margin_right (button, 6);
-	} else {
-		gtk_widget_set_margin_left (button, 6);
-	}
+	gtk_widget_set_margin_start (button, 76);
+	gtk_header_bar_pack_end (GTK_HEADER_BAR (toolbar), button);
+	gtk_size_group_add_widget (size_group, button);
 
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY,
@@ -543,6 +502,8 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	gtk_widget_show_all (toolbar);
 	toolbar_update_appearance (self);
+
+	g_object_unref (size_group);
 }
 
 static void
@@ -637,6 +598,9 @@ nautilus_toolbar_new (NautilusWindow *window)
 {
 	return g_object_new (NAUTILUS_TYPE_TOOLBAR,
 			     "window", window,
+			     "show-close-button", TRUE,
+			     "custom-title", gtk_label_new (NULL),
+			     "valign", GTK_ALIGN_CENTER,
 			     NULL);
 }
 
