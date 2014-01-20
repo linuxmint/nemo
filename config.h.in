@@ -34,7 +34,7 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define to enable xmp support */
+/* Define to enable XMP support */
 #undef HAVE_EXEMPI
 
 /* Define to enable EXIF support */

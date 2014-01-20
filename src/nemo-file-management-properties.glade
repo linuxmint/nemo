@@ -4,7 +4,7 @@
   <object class="GtkDialog" id="file_management_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">File Management Preferences</property>
+    <property name="title" translatable="yes">Files Preferences</property>
     <property name="window_position">center</property>
     <property name="default_width">800</property>
     <property name="default_height">600</property>

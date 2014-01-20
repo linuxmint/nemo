@@ -599,12 +599,20 @@ thumbnail_thread_start (gpointer data)
 									     info->mime_type);
 
 		if (pixbuf) {
+#ifdef DEBUG_THUMBNAILS
+			g_message ("(Thumbnail Thread) Saving thumbnail: %s\n",
+				   info->image_uri);
+#endif
 			gnome_desktop_thumbnail_factory_save_thumbnail (thumbnail_factory,
 									pixbuf,
 									info->image_uri,
 									current_orig_mtime);
 			g_object_unref (pixbuf);
 		} else {
+#ifdef DEBUG_THUMBNAILS
+			g_message ("(Thumbnail Thread) Thumbnail failed: %s\n",
+				   info->image_uri);
+#endif
 			gnome_desktop_thumbnail_factory_create_failed_thumbnail (thumbnail_factory, 
 										 info->image_uri,
 										 current_orig_mtime);
