@@ -68,8 +68,6 @@ typedef enum
 /* Activating executable text files */
 #define NEMO_PREFERENCES_EXECUTABLE_TEXT_ACTIVATION		"executable-text-activation"
 
-/* Spatial or browser mode */
-#define NEMO_PREFERENCES_ALWAYS_USE_BROWSER			"always-use-browser"
 #define NEMO_PREFERENCES_NEW_TAB_POSITION			"tabs-open-position"
 
 #define NEMO_PREFERENCES_SHOW_LOCATION_ENTRY		"show-location-entry"

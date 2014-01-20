@@ -1778,24 +1778,19 @@ canvas_container_activate_alternate_callback (NemoCanvasContainer *container,
 	open_in_tab = FALSE;
 	open_in_window = FALSE;
 	close_behind = FALSE;
-	
-	if (g_settings_get_boolean (nemo_preferences,
-				    NEMO_PREFERENCES_ALWAYS_USE_BROWSER)) {
-		if (event->type == GDK_BUTTON_PRESS ||
-		    event->type == GDK_BUTTON_RELEASE ||
-		    event->type == GDK_2BUTTON_PRESS ||
-		    event->type == GDK_3BUTTON_PRESS) {
-			button_event = (GdkEventButton *) event;
-			open_in_window = ((button_event->state & GDK_SHIFT_MASK) != 0);
-			open_in_tab = !open_in_window;
-		} else if (event->type == GDK_KEY_PRESS ||
-			   event->type == GDK_KEY_RELEASE) {
-			key_event = (GdkEventKey *) event;
-			open_in_tab = ((key_event->state & GDK_SHIFT_MASK) != 0);
-		}
-	} else {
-		close_behind = TRUE;
-	} 
+
+	if (event->type == GDK_BUTTON_PRESS ||
+	    event->type == GDK_BUTTON_RELEASE ||
+	    event->type == GDK_2BUTTON_PRESS ||
+	    event->type == GDK_3BUTTON_PRESS) {
+		button_event = (GdkEventButton *) event;
+		open_in_window = ((button_event->state & GDK_SHIFT_MASK) != 0);
+		open_in_tab = !open_in_window;
+	} else if (event->type == GDK_KEY_PRESS ||
+		   event->type == GDK_KEY_RELEASE) {
+		key_event = (GdkEventKey *) event;
+		open_in_tab = ((key_event->state & GDK_SHIFT_MASK) != 0);
+	}
 
 	if (open_in_tab) {
 		flags |= NEMO_WINDOW_OPEN_FLAG_NEW_TAB;

@@ -308,15 +308,10 @@ activate_selected_items_alternate (NemoListView *view,
 
 	flags = 0;
 
-	if (g_settings_get_boolean (nemo_preferences,
-				    NEMO_PREFERENCES_ALWAYS_USE_BROWSER)) {
-		if (open_in_tab) {
-			flags |= NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
-		} else {
-			flags |= NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW;
-		}
+	if (open_in_tab) {
+		flags |= NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
 	} else {
-		flags |= NEMO_WINDOW_OPEN_FLAG_CLOSE_BEHIND;
+		flags |= NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW;
 	}
 
 	if (file != NULL) {

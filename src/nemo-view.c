@@ -9631,18 +9631,12 @@ real_update_location_menu (NemoView *view)
 	gboolean is_recent;
 	gboolean can_delete_file, show_delete;
 	gboolean show_separate_delete_command;
-	gboolean show_open_in_new_tab;
-	gboolean show_open_alternate;
 	GList l;
 	char *label;
 	char *tip;
 
-	show_open_in_new_tab = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
-	show_open_alternate = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
-
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_LOCATION_OPEN_ALTERNATE);
-	gtk_action_set_visible (action, show_open_alternate);
 
 	label = _("Open in New _Window");
 	g_object_set (action,
@@ -9651,7 +9645,6 @@ real_update_location_menu (NemoView *view)
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_LOCATION_OPEN_IN_NEW_TAB);
-	gtk_action_set_visible (action, show_open_in_new_tab);
 
 	label = _("Open in New _Tab");
 	g_object_set (action,
@@ -9982,7 +9975,6 @@ real_update_menus (NemoView *view)
 
 	show_open_alternate = file_list_all_are_folders (selection) &&
 		selection_count > 0 &&
-		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER) &&
 		!NEMO_IS_DESKTOP_CANVAS_VIEW (view);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,

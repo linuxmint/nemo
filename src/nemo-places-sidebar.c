@@ -3089,14 +3089,10 @@ static void
 bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
 {
 	GtkWidget *item;
-	gboolean use_browser;
 	
 	if (sidebar->popup_menu) {
 		return;
 	}
-
-	use_browser = g_settings_get_boolean (nemo_preferences,
-					      NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
 
 	sidebar->popup_menu = gtk_menu_new ();
 	gtk_menu_attach_to_widget (GTK_MENU (sidebar->popup_menu),
@@ -3116,21 +3112,16 @@ bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
 	g_signal_connect (item, "activate",
 			  G_CALLBACK (open_shortcut_in_new_tab_cb), sidebar);
 	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	if (use_browser) {
-		gtk_widget_show (item);
-	}
+	gtk_widget_show (item);
 
 	item = gtk_menu_item_new_with_mnemonic (_("Open in New _Window"));
 	g_signal_connect (item, "activate",
 			  G_CALLBACK (open_shortcut_in_new_window_cb), sidebar);
 	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
+	gtk_widget_show (item);
 
-	if (use_browser) {
-		gtk_widget_show (item);
-	}
-    sidebar->popup_menu_remove_rename_separator_item =
-        GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (sidebar->popup_menu)));
+	sidebar->popup_menu_remove_rename_separator_item =
+		GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (sidebar->popup_menu)));
 
 	item = gtk_menu_item_new_with_mnemonic (_("_Add Bookmark"));
 	sidebar->popup_menu_add_shortcut_item = item;
@@ -3347,14 +3338,9 @@ bookmarks_button_press_event_cb (GtkWidget             *widget,
 	} else if (event->button == 2) {
 		NemoWindowOpenFlags flags = 0;
 
-		if (g_settings_get_boolean (nemo_preferences,
-					    NEMO_PREFERENCES_ALWAYS_USE_BROWSER)) {
-			flags = (event->state & GDK_CONTROL_MASK) ?
-				NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW :
-				NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
-		} else {
-			flags = NEMO_WINDOW_OPEN_FLAG_CLOSE_BEHIND;
-		}
+		flags = (event->state & GDK_CONTROL_MASK) ?
+			NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW :
+			NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
 
 		open_selected_bookmark (sidebar, model, &iter, flags);
 		retval = TRUE;
@@ -3977,8 +3963,6 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 	g_signal_connect_object (sidebar->volume_monitor, "drive_changed",
 				 G_CALLBACK (drive_changed_callback), sidebar, 0);
 
-	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_ALWAYS_USE_BROWSER,
-				  G_CALLBACK (bookmarks_popup_menu_detach_cb), sidebar);
 	update_places (sidebar);
 }
 
