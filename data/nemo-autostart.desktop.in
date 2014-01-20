@@ -3,6 +3,6 @@ Type=Application
 Name=Nemo
 Comment=Start Nemo desktop at log in
 Exec=nemo -n
-OnlyShowIn=GNOME;Unity;
+OnlyShowIn=X-Cinnamon;
 AutostartCondition=GSettings org.nemo.desktop show-desktop-icons
 NoDisplay=true

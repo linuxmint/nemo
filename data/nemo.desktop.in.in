@@ -280,7 +280,6 @@ Icon=folder
 Terminal=false
 Type=Application
 StartupNotify=false
-OnlyShowIn=GNOME;Unity;
 Categories=GNOME;GTK;Utility;Core;
 MimeType=inode/directory;application/x-gnome-saved-search;
 X-GNOME-Bugzilla-Bugzilla=GNOME
