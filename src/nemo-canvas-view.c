@@ -73,6 +73,7 @@ enum
 	PROP_SUPPORTS_AUTO_LAYOUT,
 	PROP_SUPPORTS_SCALING,
 	PROP_SUPPORTS_KEEP_ALIGNED,
+	PROP_SUPPORTS_MANUAL_LAYOUT,
 	PROP_SUPPORTS_LABELS_BESIDE_ICONS,
 	NUM_PROPERTIES
 };
@@ -116,6 +117,7 @@ struct NemoCanvasViewDetails
 	GtkWidget *canvas_container;
 
 	gboolean supports_auto_layout;
+	gboolean supports_manual_layout;
 	gboolean supports_scaling;
 	gboolean supports_keep_aligned;
 	gboolean supports_labels_beside_icons;
@@ -235,7 +237,7 @@ nemo_canvas_view_supports_manual_layout (NemoCanvasView *view)
 {
 	g_return_val_if_fail (NEMO_IS_CANVAS_VIEW (view), FALSE);
 
-	return !nemo_canvas_view_is_compact (view);
+	return !nemo_canvas_view_is_compact (view) && view->details->supports_manual_layout;
 }
 
 static gboolean
@@ -681,6 +683,8 @@ update_layout_menus (NemoCanvasView *view)
 	action = gtk_action_group_get_action (view->details->canvas_action_group,
 					      NEMO_ACTION_CLEAN_UP);
 	gtk_action_set_sensitive (action, !is_auto_layout);	
+	gtk_action_set_visible (action,
+				nemo_canvas_view_supports_manual_layout (view));
 
 	if (NEMO_IS_DESKTOP_CANVAS_VIEW (view)) {
 		gtk_action_set_label (action, _("_Organize Desktop by Name"));
@@ -2584,6 +2588,9 @@ nemo_canvas_view_set_property (GObject         *object,
 	case PROP_SUPPORTS_AUTO_LAYOUT:
 		canvas_view->details->supports_auto_layout = g_value_get_boolean (value);
 		break;
+	case PROP_SUPPORTS_MANUAL_LAYOUT:
+		canvas_view->details->supports_manual_layout = g_value_get_boolean (value);
+		break;
 	case PROP_SUPPORTS_SCALING:
 		canvas_view->details->supports_scaling = g_value_get_boolean (value);
 		break;
@@ -2708,6 +2715,13 @@ nemo_canvas_view_class_init (NemoCanvasViewClass *klass)
 				      "Supports auto layout",
 				      "Whether this view supports auto layout",
 				      TRUE,
+				      G_PARAM_WRITABLE |
+				      G_PARAM_CONSTRUCT_ONLY);
+	properties[PROP_SUPPORTS_MANUAL_LAYOUT] =
+		g_param_spec_boolean ("supports-manual-layout",
+				      "Supports manual layout",
+				      "Whether this view supports manual layout",
+				      FALSE,
 				      G_PARAM_WRITABLE |
 				      G_PARAM_CONSTRUCT_ONLY);
 	properties[PROP_SUPPORTS_SCALING] =
