@@ -2777,7 +2777,7 @@ nemo_canvas_view_init (NemoCanvasView *canvas_view)
 				  G_CALLBACK (default_sort_in_reverse_order_changed_callback),
 				  canvas_view);
 	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
+				  "changed::" NEMO_PREFERENCES_SHOW_FILE_THUMBNAILS,
 				  G_CALLBACK (image_display_policy_changed_callback),
 				  canvas_view);
 	g_signal_connect_swapped (nemo_canvas_view_preferences,

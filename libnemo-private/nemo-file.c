@@ -117,6 +117,12 @@ static guint signals[LAST_SIGNAL];
 
 static GHashTable *symbolic_links;
 
+static guint64 cached_thumbnail_limit;
+int cached_thumbnail_size;
+static NemoSpeedTradeoffValue show_file_thumbs;
+
+static NemoSpeedTradeoffValue show_directory_item_count;
+
 static GQuark attribute_name_q,
 	attribute_size_q,
 	attribute_type_q,
@@ -4051,11 +4057,6 @@ get_custom_icon (NemoFile *file)
 	return icon;
 }
 
-
-static guint64 cached_thumbnail_limit;
-int cached_thumbnail_size;
-static int show_image_thumbs;
-
 GFilesystemPreviewType
 nemo_file_get_filesystem_use_preview (NemoFile *file)
 {
@@ -4094,13 +4095,13 @@ nemo_file_should_show_thumbnail (NemoFile *file)
 		return FALSE;
 	}
 
-	if (show_image_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
+	if (show_file_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
 		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
 			return FALSE;
 		} else {
 			return TRUE;
 		}
-	} else if (show_image_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
+	} else if (show_file_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
 		return FALSE;
 	} else {
 		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
@@ -4691,15 +4692,6 @@ nemo_file_get_date_as_string (NemoFile *file, NemoDateType date_type)
 		0, NULL, NULL, NULL);
 }
 
-static NemoSpeedTradeoffValue show_directory_item_count;
-static NemoSpeedTradeoffValue show_text_in_icons;
-
-static void
-show_text_in_icons_changed_callback (gpointer callback_data)
-{
-	show_text_in_icons = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_TEXT_IN_ICONS);
-}
-
 static void
 show_directory_item_count_changed_callback (gpointer callback_data)
 {
@@ -4788,31 +4780,17 @@ nemo_file_should_show_type (NemoFile *file)
 gboolean
 nemo_file_should_get_top_left_text (NemoFile *file)
 {
-	static gboolean show_text_in_icons_callback_added = FALSE;
-	
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
-	/* Add the callback once for the life of our process */
-	if (!show_text_in_icons_callback_added) {
-		g_signal_connect_swapped (nemo_preferences,
-					  "changed::" NEMO_PREFERENCES_SHOW_TEXT_IN_ICONS,
-					  G_CALLBACK (show_text_in_icons_changed_callback),
-					  NULL);
-		show_text_in_icons_callback_added = TRUE;
-
-		/* Peek for the first time */
-		show_text_in_icons_changed_callback (NULL);
-	}
-	
-	if (show_text_in_icons == NEMO_SPEED_TRADEOFF_ALWAYS) {
+	if (show_file_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
 		return TRUE;
 	}
 	
-	if (show_text_in_icons == NEMO_SPEED_TRADEOFF_NEVER) {
+	if (show_file_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
 		return FALSE;
 	}
 
-	return get_speed_tradeoff_preference_for_file (file, show_text_in_icons);
+	return get_speed_tradeoff_preference_for_file (file, show_file_thumbs);
 }
 
 /**
@@ -8268,7 +8246,7 @@ static void
 thumbnail_limit_changed_callback (gpointer user_data)
 {
 	g_settings_get (nemo_preferences,
-			NEMO_PREFERENCES_IMAGE_FILE_THUMBNAIL_LIMIT,
+			NEMO_PREFERENCES_FILE_THUMBNAIL_LIMIT,
 			"t", &cached_thumbnail_limit);
 
 	/* Tell the world that icons might have changed. We could invent a narrower-scope
@@ -8294,7 +8272,7 @@ thumbnail_size_changed_callback (gpointer user_data)
 static void
 show_thumbnails_changed_callback (gpointer user_data)
 {
-	show_image_thumbs = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS);
+	show_file_thumbs = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_FILE_THUMBNAILS);
 
 	/* Tell the world that icons might have changed. We could invent a narrower-scope
 	 * signal to mean only "thumbnails might have changed" if this ends up being slow
@@ -8408,7 +8386,7 @@ nemo_file_class_init (NemoFileClass *class)
 
 	thumbnail_limit_changed_callback (NULL);
 	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_IMAGE_FILE_THUMBNAIL_LIMIT,
+				  "changed::" NEMO_PREFERENCES_FILE_THUMBNAIL_LIMIT,
 				  G_CALLBACK (thumbnail_limit_changed_callback),
 				  NULL);
 	thumbnail_size_changed_callback (NULL);
@@ -8418,7 +8396,7 @@ nemo_file_class_init (NemoFileClass *class)
 				  NULL);
 	show_thumbnails_changed_callback (NULL);
 	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
+				  "changed::" NEMO_PREFERENCES_SHOW_FILE_THUMBNAILS,
 				  G_CALLBACK (show_thumbnails_changed_callback),
 				  NULL);
 

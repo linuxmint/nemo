@@ -306,10 +306,6 @@ add_preferences_callbacks (void)
 				  G_CALLBACK(filtering_changed_callback),
 				  NULL);
 	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_SHOW_TEXT_IN_ICONS,
-				  G_CALLBACK (async_data_preference_changed_callback),
-				  NULL);
-	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_SHOW_DIRECTORY_ITEM_COUNTS,
 				  G_CALLBACK (async_data_preference_changed_callback),
 				  NULL);

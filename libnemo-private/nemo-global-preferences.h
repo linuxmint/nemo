@@ -169,10 +169,9 @@ typedef enum
 	NEMO_SPEED_TRADEOFF_NEVER
 } NemoSpeedTradeoffValue;
 
-#define NEMO_PREFERENCES_SHOW_TEXT_IN_ICONS		"show-icon-text"
 #define NEMO_PREFERENCES_SHOW_DIRECTORY_ITEM_COUNTS "show-directory-item-counts"
-#define NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS	"show-image-thumbnails"
-#define NEMO_PREFERENCES_IMAGE_FILE_THUMBNAIL_LIMIT	"thumbnail-limit"
+#define NEMO_PREFERENCES_SHOW_FILE_THUMBNAILS	"show-image-thumbnails"
+#define NEMO_PREFERENCES_FILE_THUMBNAIL_LIMIT	"thumbnail-limit"
 
 typedef enum
 {
