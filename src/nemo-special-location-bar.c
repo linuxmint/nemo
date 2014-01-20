@@ -54,6 +54,9 @@ get_message_for_special_location (NemoSpecialLocation location)
 	case NEMO_SPECIAL_LOCATION_SCRIPTS:
 		message = g_strdup (_("Executable files in this folder will appear in the Scripts menu."));
 		break;
+    case NEMO_SPECIAL_LOCATION_ACTIONS:
+        message = g_strdup (_("Place nemo_action files here, to extend context menus."));
+        break;
 	default:
 		g_assert_not_reached ();
 	}

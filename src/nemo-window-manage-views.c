@@ -57,6 +57,7 @@
 #include <libnemo-private/nemo-monitor.h>
 #include <libnemo-private/nemo-profile.h>
 #include <libnemo-private/nemo-search-directory.h>
+#include <libnemo-private/nemo-action-manager.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_WINDOW
 #include <libnemo-private/nemo-debug.h>
@@ -1474,13 +1475,19 @@ update_for_new_location (NemoWindowSlot *slot)
 			GFile *scripts_file;
 			char *scripts_path = nemo_get_scripts_directory_path ();
 			scripts_file = g_file_new_for_path (scripts_path);
+            GFile *actions_file;
+            gchar *actions_path = nemo_action_manager_get_user_directory_path ();
+            actions_file = g_file_new_for_path (actions_path);
 			g_free (scripts_path);
 			if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
 				nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_TEMPLATES);
 			} else if (g_file_equal (slot->location, scripts_file)) {
 				nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_SCRIPTS);
-			}
+			} else if (g_file_equal (slot->location, actions_file)) {
+                nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_ACTIONS);
+            }
 			g_object_unref (scripts_file);
+			g_object_unref (actions_file);
 		}
 
 		/* need the mount to determine if we should put up the x-content cluebar */

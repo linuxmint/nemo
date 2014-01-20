@@ -45,6 +45,7 @@ typedef struct
 typedef enum {
 	NEMO_SPECIAL_LOCATION_TEMPLATES,
 	NEMO_SPECIAL_LOCATION_SCRIPTS,
+	NEMO_SPECIAL_LOCATION_ACTIONS,
 } NemoSpecialLocation;
 
 typedef struct

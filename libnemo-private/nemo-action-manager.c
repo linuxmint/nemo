@@ -128,6 +128,7 @@ remove_directory_from_actions_directory_list (NemoActionManager *action_manager,
                                           G_CALLBACK (actions_added_or_changed_callback));
 }
 
+
 static void
 set_up_actions_directories (NemoActionManager *action_manager)
 {
@@ -135,7 +136,7 @@ set_up_actions_directories (NemoActionManager *action_manager)
     gchar *sys_path = g_build_filename (NEMO_DATADIR, "actions", NULL);
     gchar *sys_uri = g_filename_to_uri (sys_path, NULL, NULL);
 
-    gchar *user_path = g_build_filename (g_get_user_data_dir (), "nemo", "actions", NULL);
+    gchar *user_path = nemo_action_manager_get_user_directory_path ();
 
     if (!g_file_test (user_path, G_FILE_TEST_EXISTS)) {
         g_mkdir_with_parents (user_path, DEFAULT_NEMO_DIRECTORY_MODE);
@@ -323,4 +324,10 @@ GList *
 nemo_action_manager_list_actions (NemoActionManager *action_manager)
 {
     return action_manager->action_list_dirty ? NULL : action_manager->actions;
+}
+
+gchar *
+nemo_action_manager_get_user_directory_path (void)
+{
+    return g_build_filename (g_get_user_data_dir (), "nemo", "actions", NULL);
 }
