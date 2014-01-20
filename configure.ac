@@ -172,40 +172,34 @@ AM_CONDITIONAL(ENABLE_ZEITGEIST, test "x$build_zeitgeist" = "xyes")
 dnl ==========================================================================
 dnl libexif checking
 
-AM_CONDITIONAL(HAVE_EXIF, false)
 AC_ARG_ENABLE(libexif,
-	AC_HELP_STRING([--disable-libexif],
-			[build without libexif support]))
-msg_libexif=no
-if test "x$enable_libexif" != "xno"; then
-	PKG_CHECK_MODULES(EXIF, libexif >= exif_minver, [
-			  AM_CONDITIONAL(HAVE_EXIF, true)
-			  AC_DEFINE(HAVE_EXIF, 1, [Define to enable EXIF support])
-			  ] msg_libexif=yes,
-			  [AM_CONDITIONAL(HAVE_EXIF, false)])
+              [AS_HELP_STRING([--enable-exif=@<:@yes/no@:>@],
+                              [build EXIF support [default=yes]])],
+              [enable_exif="$enableval"],
+              [enable_exif=yes])
 
-	AC_SUBST(EXIF_CFLAGS)
-	AC_SUBST(EXIF_LIBS)
+if test "x$enable_exif" != "xno"; then
+  PKG_CHECK_MODULES(EXIF, libexif >= exif_minver)
+  AC_DEFINE(HAVE_EXIF, 1, [Define to enable EXIF support])
 fi
+
+AM_CONDITIONAL(HAVE_EXIF, test "x$enable_exif" = "xyes")
 
 dnl ==========================================================================
 dnl exempi checking
 
-AM_CONDITIONAL(HAVE_EXEMPI, false)
-AC_ARG_ENABLE(xmp, 
-	AC_HELP_STRING([--disable-xmp], 
-			[build without xmp support]))
-msg_xmp=no
-if test "x$enable_xmp" != "xno"; then
-	PKG_CHECK_MODULES(EXEMPI, exempi-2.0 >= exempi_minver, [
-		  	  AM_CONDITIONAL(HAVE_EXEMPI, true)
-			  AC_DEFINE(HAVE_EXEMPI, 1, [Define to enable xmp support])
-			  ] msg_xmp=yes,
-	          	  [AM_CONDITIONAL(HAVE_EXEMPI, false)])
+AC_ARG_ENABLE(xmp,
+              [AS_HELP_STRING([--enable-xmp=@<:@yes/no@:>@],
+                              [build XMP support [default=yes]])],
+              [enable_xmp="$enableval"],
+              [enable_xmp=yes])
 
-	AC_SUBST(EXEMPI_CFLAGS)
-	AC_SUBST(EXEMPI_LIBS)
+if test "x$enable_xmp" != "xno"; then
+  PKG_CHECK_MODULES(EXEMPI, exempi-2.0 >= exempi_minver)
+  AC_DEFINE(HAVE_EXEMPI, 1, [Define to enable XMP support])
 fi
+
+AM_CONDITIONAL(HAVE_EXEMPI, test "x$enable_xmp" = "xyes")
 
 PKG_CHECK_MODULES(GEN_ICON, glib-2.0 >= glib_mime_ver , gen_icon_api=yes, gen_icon_api=no)
 if test x$gen_icon_api = xyes ; then
@@ -425,9 +419,11 @@ nemo-$VERSION:
 	source code location:	${srcdir}
 	compiler:		${CC}
 	desktop libraries:	$msg_desktop
-	libexif support:	$msg_libexif
-	libexempi support:	$msg_xmp
-	Unity support:          $msg_unity
+	Unity support:		$msg_unity
+	libexif support:	${enable_exif}
+	libexempi support:	${enable_xmp}
+	PackageKit support:     $msg_packagekit
+	nautilus-sendto ext:	$enable_nst_extension
 	Tracker support:	$build_tracker
 	Zeitgeist logging: 	$build_zeitgeist
 

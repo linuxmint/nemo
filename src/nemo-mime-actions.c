@@ -285,7 +285,6 @@ filter_non_uri_apps (GList *apps)
 	return apps;
 }
 
-
 static gboolean
 nemo_mime_actions_check_if_required_attributes_ready (NemoFile *file)
 {
