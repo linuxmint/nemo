@@ -680,7 +680,7 @@ static void
 nemo_image_properties_page_init (NemoImagePropertiesPage *page)
 {
 	GtkWidget *sw;
-	
+
 	page->details = G_TYPE_INSTANCE_GET_PRIVATE (page,
 						     NEMO_TYPE_IMAGE_PROPERTIES_PAGE,
 						     NemoImagePropertiesPageDetails);
@@ -694,8 +694,8 @@ nemo_image_properties_page_init (NemoImagePropertiesPage *page)
 	gtk_container_set_border_width (GTK_CONTAINER (sw), 0);
 	gtk_widget_set_vexpand (GTK_WIDGET (sw), TRUE);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
-	                                GTK_POLICY_NEVER,
-	                                GTK_POLICY_AUTOMATIC);
+					GTK_POLICY_NEVER,
+					GTK_POLICY_AUTOMATIC);
 	gtk_box_pack_start (GTK_BOX (page), sw, FALSE, TRUE, 2);
 
 	page->details->grid = gtk_grid_new ();
