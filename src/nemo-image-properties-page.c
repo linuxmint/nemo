@@ -570,7 +570,7 @@ file_open_callback (GObject      *object,
 
 	file = G_FILE (object);
 	uri = g_file_get_uri (file);
-	
+
 	error = NULL;
 	stream = g_file_read_finish (file, res, &error);
 	if (stream) {
@@ -653,7 +653,7 @@ load_location (NemoImagePropertiesPage *page,
 	data = g_new0 (FileOpenData, 1);
 	data->page = page;
 	data->info = info;
-	
+
 	g_file_read_async (file,
 			   0,
 			   page->details->cancellable,
