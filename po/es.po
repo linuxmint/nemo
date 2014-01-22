@@ -25,8 +25,8 @@ msgstr ""
 "Project-Id-Version: nautilus.master.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-12-31 20:59+0000\n"
-"PO-Revision-Date: 2014-01-02 10:04+0100\n"
+"POT-Creation-Date: 2014-01-22 01:19+0000\n"
+"PO-Revision-Date: 2014-01-22 10:24+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -35,6 +35,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: Gtranslator 2.91.5\n"
+
+#: ../data/nautilus.appdata.xml.in.h:1
+msgid ""
+"Nautilus, also known as Files, is the default file manager of the GNOME "
+"desktop. It provides a simple and integrated way of managing your files and "
+"browsing your file system."
+msgstr ""
+"Nautilus, también conocido como Archivos, es el gestor de archivos "
+"predeterminado del escritorio GNOME. Proporciona una manera sencilla e "
+"integrada para gestionar sus archivos y explorar el sistema de archivos."
+
+#: ../data/nautilus.appdata.xml.in.h:2
+msgid ""
+"Nautilus supports all the basic functions of a file manager and more. It can "
+"search and manage your files and folders, both locally and on a network, "
+"read and write data to and from removable media, run scripts, and launch "
+"applications. It has three views: Icon Grid, Icon List, and Tree List. Its "
+"functions can be extended with plugins and scripts."
+msgstr ""
+"Nautilus soporta todas las funciones básicas de un gestor de archivos y "
+"algunas más. Puede buscar y gestionar sus archivos y carpeta, tanto locales "
+"como remotas, leer y escribir datos de y en dispositivos extraíbles, "
+"ejecutar scripts y lanzar aplicaciones. Tiene tres vistas: rejilla de "
+"iconos, lista de iconos y árbol. Se puede ampliar su funcionalidad con "
+"scripts y complementos."
 
 #: ../data/nautilus-autorun-software.desktop.in.in.h:1
 msgid "Run Software"
@@ -52,8 +77,8 @@ msgstr "Conectar con el servidor"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4478 ../src/nautilus-window.c:2202
-#: ../src/nautilus-window.c:2399
+#: ../src/nautilus-properties-window.c:4478 ../src/nautilus-window.c:2209
+#: ../src/nautilus-window.c:2406
 msgid "Files"
 msgstr "Archivos"
 
@@ -1106,7 +1131,7 @@ msgstr "Se eliminarán permanentemente todos los elementos en la papelera."
 # src/file-manager/fm-directory-view.c:2154
 #: ../libnautilus-private/nautilus-file-operations.c:1396
 #: ../libnautilus-private/nautilus-file-operations.c:2272
-#: ../src/nautilus-window.c:806
+#: ../src/nautilus-window.c:819
 msgid "Empty _Trash"
 msgstr "Vaciar la _papelera"
 
@@ -3225,31 +3250,31 @@ msgstr "C_onectar"
 # src/file-manager/fm-directory-view.c:2154
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:621 ../src/nautilus-view.c:7202
+#: ../src/nautilus-desktop-canvas-view.c:665 ../src/nautilus-view.c:7202
 #: ../src/nautilus-view.c:8747
 msgid "E_mpty Trash"
 msgstr "_Vaciar la papelera"
 
 # src/file-manager/fm-icon-view.c:318
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:645
-#: ../src/nautilus-desktop-canvas-view.c:686
+#: ../src/nautilus-desktop-canvas-view.c:689
+#: ../src/nautilus-desktop-canvas-view.c:730
 msgid "Restore Icons' Original Si_zes"
 msgstr "Re_staurar el tamaño original de los iconos"
 
 # src/file-manager/fm-icon-view.c:318
-#: ../src/nautilus-desktop-canvas-view.c:646
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore Icon's Original Si_ze"
 msgstr "Re_staurar el tamaño original de los iconos"
 
 # src/nautilus-sidebar.c:424
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:658
+#: ../src/nautilus-desktop-canvas-view.c:702
 msgid "Change Desktop _Background"
 msgstr "Cambiar el _fondo del escritorio"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:660
+#: ../src/nautilus-desktop-canvas-view.c:704
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr ""
@@ -3258,24 +3283,24 @@ msgstr ""
 
 # src/file-manager/fm-directory-view.c:2154
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:665
+#: ../src/nautilus-desktop-canvas-view.c:709
 msgid "Empty Trash"
 msgstr "Vacía la papelera"
 
 # src/file-manager/fm-directory-view.c:2669
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:667 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:711 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7203
 msgid "Delete all items in the Trash"
 msgstr "Eliminar todos los elementos en la papelera"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:672
+#: ../src/nautilus-desktop-canvas-view.c:716
 msgid "_Organize Desktop by Name"
 msgstr "_Organizar el escritorio por nombre"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:674
+#: ../src/nautilus-desktop-canvas-view.c:718
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr ""
 "Reposiciona los iconos para que quepan mejor en la ventana y evitar el "
@@ -3283,19 +3308,18 @@ msgstr ""
 
 # src/file-manager/fm-icon-view.c:310
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:679
+#: ../src/nautilus-desktop-canvas-view.c:723
 msgid "Resize Icon…"
 msgstr "Redimensionar icono…"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:681
+#: ../src/nautilus-desktop-canvas-view.c:725
 msgid "Make the selected icons resizable"
 msgstr "Hacer que los iconos seleccionados sea redimensionables"
 
 # src/file-manager/fm-icon-view.c:318
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:688
-#| msgid "Restore each selected icons to its original size"
+#: ../src/nautilus-desktop-canvas-view.c:732
 msgid "Restore each selected icon to its original size"
 msgstr "Restaurar cada icono seleccionado a su tamaño original"
 
@@ -5592,31 +5616,31 @@ msgid "dropped data"
 msgstr "se soltaron los datos"
 
 # src/file-manager/fm-directory-view.c:2151
-#: ../src/nautilus-window.c:820
+#: ../src/nautilus-window.c:833
 msgid "_Properties"
 msgstr "_Propiedades"
 
-#: ../src/nautilus-window.c:829
+#: ../src/nautilus-window.c:842
 msgid "_Format…"
 msgstr "_Formatear…"
 
-#: ../src/nautilus-window.c:1178
+#: ../src/nautilus-window.c:1191
 msgid "_New Tab"
 msgstr "_Pestaña nueva"
 
-#: ../src/nautilus-window.c:1188 ../src/nautilus-window-menus.c:588
+#: ../src/nautilus-window.c:1201 ../src/nautilus-window-menus.c:588
 msgid "Move Tab _Left"
 msgstr "Mover pestaña a la _izquierda"
 
-#: ../src/nautilus-window.c:1196 ../src/nautilus-window-menus.c:591
+#: ../src/nautilus-window.c:1209 ../src/nautilus-window-menus.c:591
 msgid "Move Tab _Right"
 msgstr "Mover pestaña a la _derecha"
 
-#: ../src/nautilus-window.c:1207
+#: ../src/nautilus-window.c:1220
 msgid "_Close Tab"
 msgstr "_Cerrar pestaña"
 
-#: ../src/nautilus-window.c:2372
+#: ../src/nautilus-window.c:2379
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5628,7 +5652,7 @@ msgstr ""
 "Software Foundation; tanto en la versión 2 de la Licencia como (a su "
 "elección) cualquier versión posterior."
 
-#: ../src/nautilus-window.c:2376
+#: ../src/nautilus-window.c:2383
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5640,7 +5664,7 @@ msgstr ""
 "PARA UN PROPÓSITO PARTICULAR. Consulte la Licencia Pública General de GNU "
 "para más detalles."
 
-#: ../src/nautilus-window.c:2380
+#: ../src/nautilus-window.c:2387
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5653,12 +5677,12 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2395
+#: ../src/nautilus-window.c:2402
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "Copyright © %Id–%Id Los autores de Archivos"
 
 # src/file-manager/fm-properties-window.c:1105
-#: ../src/nautilus-window.c:2401
+#: ../src/nautilus-window.c:2408
 msgid "Access and organize your files."
 msgstr "Acceder a sus archivos y organizarlos."
 
@@ -5666,7 +5690,7 @@ msgstr "Acceder a sus archivos y organizarlos."
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2411
+#: ../src/nautilus-window.c:2418
 msgid "translator-credits"
 msgstr ""
 "Jorge González <jorgegonz@svn.gnome.org>, 2007-2010, 2012\n"
