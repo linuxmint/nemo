@@ -3145,7 +3145,8 @@ create_basic_page (NemoPropertiesWindow *window)
 					 FALSE);
 	}
 
-	if (should_show_free_space (window)) {
+	if (should_show_free_space (window)
+	    && ! should_show_volume_usage (window)) {
 		append_blank_row (grid);
 
 		append_title_value_pair (window, grid, _("Free space:"), 
@@ -4166,17 +4167,17 @@ create_simple_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 					   !has_directory);
 	}
 
-    if (!has_directory) {
-        GtkLabel *execute_label;
-        append_blank_slim_row (page_grid);
+	if (!has_directory) {
+		GtkLabel *execute_label;
+		append_blank_slim_row (page_grid);
 
-        execute_label = attach_title_field (page_grid, _("Execute:"));
-        add_permissions_checkbox_with_label (window, page_grid,
-                             GTK_WIDGET (execute_label),
-                             _("Allow _executing file as program"),
-                             UNIX_PERM_USER_EXEC|UNIX_PERM_GROUP_EXEC|UNIX_PERM_OTHER_EXEC,
-                             execute_label, FALSE);
-    }
+		execute_label = attach_title_field (page_grid, _("Execute:"));
+		add_permissions_checkbox_with_label (window, page_grid,
+						     GTK_WIDGET (execute_label),
+						     _("Allow _executing file as program"),
+						     UNIX_PERM_USER_EXEC|UNIX_PERM_GROUP_EXEC|UNIX_PERM_OTHER_EXEC,
+						     execute_label, FALSE);
+	}
 }
 
 static void
@@ -4896,10 +4897,9 @@ create_properties_window (StartupData *startup_data)
 				NULL);
 
 	/* FIXME - HIGificiation, should be done inside GTK+ */
-	gtk_container_set_border_width (GTK_CONTAINER (window), 12);
-	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (window))), 12);
+	gtk_container_set_border_width (GTK_CONTAINER (window), 5);
+	gtk_container_set_border_width (GTK_CONTAINER (window->details->notebook), 5);
 	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_action_area (GTK_DIALOG (window))), 0);
-	gtk_box_set_spacing (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (window))), 12);
 
 	/* Update from initial state */
 	properties_window_update (window, NULL);
