@@ -16,8 +16,5 @@ Its functions can be extended with plugins and scripts.
 </_p>
 </description>
 <url type="homepage">https://wiki.gnome.org/Apps/Nautilus/</url>
-<screenshots>
-<screenshot type="default">http://software.opensuse.org/package/thumbnail/nautilus.png</screenshot>
-</screenshots>
 <updatecontact>cosimoc_at_gnome.org</updatecontact>
 </application>
