@@ -8466,7 +8466,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Open each selected item in a navigation window"),
 				 G_CALLBACK (action_open_alternate_callback) },
   /* name, stock id */         { "OpenInNewTab", NULL,
-  /* label, accelerator */       N_("Open in New _Tab"), "<control><shift>o",
+  /* label, accelerator */       N_("Open in New _Tab"), "<control><shift>t",
   /* tooltip */                  N_("Open each selected item in a new tab"),
 				 G_CALLBACK (action_open_new_tab_callback) },
   /* name, stock id */         { NEMO_ACTION_OPEN_IN_TERMINAL, "terminal",
