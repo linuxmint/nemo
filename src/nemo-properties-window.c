@@ -115,6 +115,7 @@ struct NemoPropertiesWindowDetails {
 
 	GList *permission_buttons;
 	GList *permission_combos;
+	GList *change_permission_combos;
 	GHashTable *initial_permissions;
 	gboolean has_recursive_apply;
 
@@ -148,9 +149,11 @@ typedef enum {
 } CheckboxType;
 
 enum {
-	TITLE_COLUMN,
-	VALUE_COLUMN,
-	COLUMN_COUNT
+	COLUMN_NAME,
+	COLUMN_VALUE,
+	COLUMN_USE_ORIGINAL,
+	COLUMN_ID,
+	NUM_COLUMNS
 };
 
 typedef struct {
@@ -3180,7 +3183,7 @@ files_has_directory (NemoPropertiesWindow *window)
 	return FALSE;
 }
 
-static gboolean 
+static gboolean
 files_has_changable_permissions_directory (NemoPropertiesWindow *window)
 {
 	GList *l;
@@ -3193,14 +3196,12 @@ files_has_changable_permissions_directory (NemoPropertiesWindow *window)
 		    nemo_file_can_set_permissions (file)) {
 			return TRUE;
 		}
-		
 	}
 
 	return FALSE;
 }
 
-
-static gboolean 
+static gboolean
 files_has_file (NemoPropertiesWindow *window)
 {
 	GList *l;
@@ -3211,7 +3212,6 @@ files_has_file (NemoPropertiesWindow *window)
 		if (!nemo_file_is_directory (file)) {
 			return TRUE;
 		}
-		
 	}
 
 	return FALSE;
@@ -3374,8 +3374,7 @@ permission_button_toggled (GtkToggleButton *button,
 		inconsistent = TRUE;
 		on = TRUE;
 
-		if (!window->details->has_recursive_apply &&
-		    initial_permission_state_consistent (window, permission_mask, is_folder, is_special)) {
+		if (initial_permission_state_consistent (window, permission_mask, is_folder, is_special)) {
 			inconsistent = FALSE;
 			on = TRUE;
 		}
@@ -3420,15 +3419,6 @@ permission_button_update (NemoPropertiesWindow *window,
 	gboolean sensitive;
 	guint32 button_permission;
 
-	if (gtk_toggle_button_get_inconsistent (button) &&
-	    window->details->has_recursive_apply) {
-		/* Never change from an inconsistent state if we have dirs, even
-		 * if the current state is now consistent, because its a useful
-		 * state for recursive apply.
-		 */
-		return;
-	}
-	
 	button_permission = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
 								"permission"));
 	is_folder = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
@@ -3475,12 +3465,7 @@ permission_button_update (NemoPropertiesWindow *window,
 	}
 
 	sensitive = !all_cannot_set;
-	if (!is_folder) {
-		/* Don't insitive files when we have recursive apply */
-		sensitive |= window->details->has_recursive_apply;
-	}
 
-	
 	g_signal_handlers_block_by_func (G_OBJECT (button), 
 					 G_CALLBACK (permission_button_toggled),
 					 window);
@@ -3688,7 +3673,8 @@ permission_combo_changed (GtkWidget *combo, NemoPropertiesWindow *window)
 	if (!gtk_combo_box_get_active_iter (GTK_COMBO_BOX (combo),  &iter)) {
 		return;
 	}
-	gtk_tree_model_get (model, &iter, 1, &new_perm, 2, &use_original, -1);
+	gtk_tree_model_get (model, &iter, COLUMN_VALUE, &new_perm,
+			    COLUMN_USE_ORIGINAL, &use_original, -1);
 	vfs_new_perm = permission_to_vfs (type, new_perm);
 
 	update_permissions (window, vfs_new_perm, vfs_mask,
@@ -3709,7 +3695,7 @@ permission_combo_add_multiple_choice (GtkComboBox *combo, GtkTreeIter *iter)
 	gtk_tree_model_get_iter_first (model, iter);
 	do {
 		gboolean multi;
-		gtk_tree_model_get (model, iter, 2, &multi, -1);
+		gtk_tree_model_get (model, iter, COLUMN_USE_ORIGINAL, &multi, -1);
 		
 		if (multi) {
 			found = TRUE;
@@ -3719,7 +3705,10 @@ permission_combo_add_multiple_choice (GtkComboBox *combo, GtkTreeIter *iter)
 	
 	if (!found) {
 		gtk_list_store_append (store, iter);
-		gtk_list_store_set (store, iter, 0, "---", 1, 0, 2, TRUE, -1);
+		gtk_list_store_set (store, iter,
+				    COLUMN_NAME, "---",
+				    COLUMN_VALUE, 0,
+				    COLUMN_USE_ORIGINAL, TRUE, -1);
 	}
 }
 
@@ -3745,17 +3734,9 @@ permission_combo_update (NemoPropertiesWindow *window,
 
 	is_multi = FALSE;
 	if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (combo),  &iter)) {
-		gtk_tree_model_get (model, &iter, 2, &is_multi, -1);
+		gtk_tree_model_get (model, &iter, COLUMN_USE_ORIGINAL, &is_multi, -1);
 	}
 
-	if (is_multi && window->details->has_recursive_apply) {
-		/* Never change from an inconsistent state if we have dirs, even
-		 * if the current state is now consistent, because its a useful
-		 * state for recursive apply.
-		 */
-		return;
-	}
-	
 	no_files = TRUE;
 	no_dirs = TRUE;
 	all_dir_same = TRUE;
@@ -3892,8 +3873,7 @@ permission_combo_update (NemoPropertiesWindow *window,
 	if (is_folder) {
 		sensitive = !all_dir_cannot_set;
 	} else {
-		sensitive = !all_file_cannot_set ||
-			window->details->has_recursive_apply;
+		sensitive = !all_file_cannot_set;
 	}
 	gtk_widget_set_sensitive (GTK_WIDGET (combo), sensitive);
 
@@ -3903,27 +3883,18 @@ permission_combo_update (NemoPropertiesWindow *window,
 
 }
 
-static void
-add_permissions_combo_box (NemoPropertiesWindow *window, GtkGrid *grid,
-			   PermissionType type, gboolean is_folder,
-			   gboolean short_label)
+static GtkWidget *
+create_permissions_combo_box (PermissionType type,
+			      gboolean is_folder)
 {
 	GtkWidget *combo;
-	GtkLabel *label;
 	GtkListStore *store;
 	GtkCellRenderer *cell;
 	GtkTreeIter iter;
 
-	if (short_label) {
-		label = attach_title_field (grid, _("Access:"));
-	} else if (is_folder) {
-		label = attach_title_field (grid, _("Folder access:"));
-	} else {
-		label = attach_title_field (grid, _("File access:"));
-	}
-	
-	store = gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_INT, G_TYPE_BOOLEAN);
+	store = gtk_list_store_new (NUM_COLUMNS, G_TYPE_STRING, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_STRING);
 	combo = gtk_combo_box_new_with_model (GTK_TREE_MODEL (store));
+	gtk_combo_box_set_id_column (GTK_COMBO_BOX (combo), COLUMN_ID);
 
 	g_object_set_data (G_OBJECT (combo), "is-folder", GINT_TO_POINTER (is_folder));
 	g_object_set_data (G_OBJECT (combo), "permission-type", GINT_TO_POINTER (type));
@@ -3934,42 +3905,88 @@ add_permissions_combo_box (NemoPropertiesWindow *window, GtkGrid *grid,
 			/* Translators: this is referred to the permissions
 			 * the user has in a directory.
 			 */
-			gtk_list_store_set (store, &iter, 0, _("None"), 1, 0, -1);
+			gtk_list_store_set (store, &iter,
+					    COLUMN_NAME, _("None"),
+					    COLUMN_VALUE, 0,
+					    COLUMN_ID, "none",
+					    -1);
 		}
 		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, 0, _("List files only"), 1, PERMISSION_READ, -1);
+		gtk_list_store_set (store, &iter,
+				    COLUMN_NAME, _("List files only"),
+				    COLUMN_VALUE, PERMISSION_READ,
+				    COLUMN_ID, "r",
+				    -1);
 		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, 0, _("Access files"), 1, PERMISSION_READ|PERMISSION_EXEC, -1);
+		gtk_list_store_set (store, &iter,
+				    COLUMN_NAME, _("Access files"),
+				    COLUMN_VALUE, PERMISSION_READ|PERMISSION_EXEC,
+				    COLUMN_ID, "rx",
+				    -1);
 		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, 0, _("Create and delete files"), 1, PERMISSION_READ|PERMISSION_EXEC|PERMISSION_WRITE, -1);
+		gtk_list_store_set (store, &iter,
+				    COLUMN_NAME, _("Create and delete files"),
+				    COLUMN_VALUE, PERMISSION_READ|PERMISSION_EXEC|PERMISSION_WRITE,
+				    COLUMN_ID, "rwx",
+				    -1);
 	} else {
 		if (type != PERMISSION_USER) {
 			gtk_list_store_append (store, &iter);
-			gtk_list_store_set (store, &iter, 0, _("None"), 1, 0, -1);
+			gtk_list_store_set (store, &iter,
+					    COLUMN_NAME, _("None"),
+					    COLUMN_VALUE, 0,
+					    COLUMN_ID, "none",
+					    -1);
 		}
 		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, 0, _("Read-only"), 1, PERMISSION_READ, -1);
+		gtk_list_store_set (store, &iter,
+				    COLUMN_NAME, _("Read-only"),
+				    COLUMN_VALUE, PERMISSION_READ,
+				    COLUMN_ID, "r",
+				    -1);
 		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, 0, _("Read and write"), 1, PERMISSION_READ|PERMISSION_WRITE, -1);
+		gtk_list_store_set (store, &iter,
+				    COLUMN_NAME, _("Read and write"),
+				    COLUMN_VALUE, PERMISSION_READ|PERMISSION_WRITE,
+				    COLUMN_ID, "rw",
+				    -1);
 	}
-	if (window->details->has_recursive_apply) {
-		permission_combo_add_multiple_choice (GTK_COMBO_BOX (combo), &iter);
-	}
-
 	g_object_unref (store);
 
-	window->details->permission_combos = 
-		g_list_prepend (window->details->permission_combos,
-				combo);
-
-	g_signal_connect (combo, "changed", G_CALLBACK (permission_combo_changed), window);
-	
 	cell = gtk_cell_renderer_text_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, TRUE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo), cell,
-					"text", 0,
+					"text", COLUMN_NAME,
 					NULL);
-	
+
+	return combo;
+}
+
+static void
+add_permissions_combo_box (NemoPropertiesWindow *window,
+			   GtkGrid *grid,
+			   PermissionType type,
+			   gboolean is_folder,
+			   gboolean short_label)
+{
+	GtkWidget *combo;
+	GtkLabel *label;
+
+	if (short_label) {
+		label = attach_title_field (grid, _("Access:"));
+	} else if (is_folder) {
+		label = attach_title_field (grid, _("Folder access:"));
+	} else {
+		label = attach_title_field (grid, _("File access:"));
+	}
+
+	combo = create_permissions_combo_box (type, is_folder);
+
+	window->details->permission_combos = g_list_prepend (window->details->permission_combos,
+							     combo);
+
+	g_signal_connect (combo, "changed", G_CALLBACK (permission_combo_changed), window);
+
 	gtk_label_set_mnemonic_widget (label, combo);
 	gtk_widget_show (combo);
 
@@ -4082,15 +4099,16 @@ get_initial_permissions (GList *file_list)
 static void
 create_simple_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 {
-	gboolean has_file, has_directory;
+	gboolean has_directory;
+	gboolean has_file;
 	GtkLabel *group_label;
 	GtkLabel *owner_label;
 	GtkWidget *value;
 	GtkComboBox *group_combo_box;
 	GtkComboBox *owner_combo_box;
 
-	has_file = files_has_file (window);
 	has_directory = files_has_directory (window);
+	has_file = files_has_file (window);
 
 	if (!is_multi_file_window (window) && nemo_file_can_set_owner (get_target_file (window))) {
 		owner_label = attach_title_field (page_grid, _("_Owner:"));
@@ -4110,14 +4128,14 @@ create_simple_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 					    FALSE); 
 		gtk_label_set_mnemonic_widget (owner_label, value);
 	}
-	
-	if (has_directory) {
+	if (has_directory && has_file) {
 		add_permissions_combo_box (window, page_grid,
 					   PERMISSION_USER, TRUE, FALSE);
-	}
-	if (has_file || window->details->has_recursive_apply) {
 		add_permissions_combo_box (window, page_grid,
-					   PERMISSION_USER, FALSE, !has_directory);
+					   PERMISSION_USER, FALSE, FALSE);
+	} else {
+		add_permissions_combo_box (window, page_grid,
+					   PERMISSION_USER, has_directory, TRUE);
 	}
 
 	append_blank_slim_row (page_grid);
@@ -4141,30 +4159,26 @@ create_simple_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 					    FALSE); 
 		gtk_label_set_mnemonic_widget (group_label, value);
 	}
-	
-	if (has_directory) {
+	if (has_directory && has_file) {
 		add_permissions_combo_box (window, page_grid,
-					   PERMISSION_GROUP, TRUE,
-					   FALSE);
-	}
-	if (has_file || window->details->has_recursive_apply) {
+					   PERMISSION_GROUP, TRUE, FALSE);
 		add_permissions_combo_box (window, page_grid,
-					   PERMISSION_GROUP, FALSE,
-					   !has_directory);
+					   PERMISSION_GROUP, FALSE, FALSE);
+	} else {
+		add_permissions_combo_box (window, page_grid,
+					   PERMISSION_GROUP, has_directory, TRUE);
 	}
 
 	append_blank_slim_row (page_grid);
 	attach_title_field (page_grid, _("Others"));
-	
-	if (has_directory) {
+	if (has_directory && has_file) {
 		add_permissions_combo_box (window, page_grid,
-					   PERMISSION_OTHER, TRUE,
-					   FALSE);
-	}
-	if (has_file || window->details->has_recursive_apply) {
+					   PERMISSION_OTHER, TRUE, FALSE);
 		add_permissions_combo_box (window, page_grid,
-					   PERMISSION_OTHER, FALSE,
-					   !has_directory);
+					   PERMISSION_OTHER, FALSE, FALSE);
+	} else {
+		add_permissions_combo_box (window, page_grid,
+					   PERMISSION_OTHER, has_directory, TRUE);
 	}
 
 	if (!has_directory) {
@@ -4285,7 +4299,8 @@ create_advanced_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 	GtkLabel *owner_label;
 	GtkComboBox *group_combo_box;
 	GtkComboBox *owner_combo_box;
-	gboolean has_directory, has_file;
+	gboolean has_directory;
+	gboolean has_file;
 
 	if (!is_multi_file_window (window) && nemo_file_can_set_owner (get_target_file (window))) {
 		
@@ -4333,19 +4348,13 @@ create_advanced_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 	has_directory = files_has_directory (window);
 	has_file = files_has_file (window);
 
-	if (has_directory) {
-		if (has_file || window->details->has_recursive_apply) {
-			attach_title_field (page_grid, _("Folder Permissions:"));
-		}
+	if (has_directory && has_file) {
+		attach_title_field (page_grid, _("Folder Permissions:"));
 		create_permission_checkboxes (window, page_grid, TRUE);
-	}
-
-
-	if (has_file || window->details->has_recursive_apply) {
-		if (has_directory) {
-			attach_title_field (page_grid, _("File Permissions:"));
-		}
+		attach_title_field (page_grid, _("File Permissions:"));
 		create_permission_checkboxes (window, page_grid, FALSE);
+	} else {
+		create_permission_checkboxes (window, page_grid, has_directory);
 	}
 
 	append_blank_slim_row (page_grid);
@@ -4369,70 +4378,46 @@ set_recursive_permissions_done (gboolean success,
 	g_object_unref (window);
 }
 
-
 static void
-apply_recursive_clicked (GtkWidget *recursive_button,
-			 NemoPropertiesWindow *window)
+on_change_permissions_response (GtkDialog                *dialog,
+			       int                       response,
+			       NemoPropertiesWindow *window)
 {
+	if (response != GTK_RESPONSE_OK) {
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		return;
+	}
 	guint32 file_permission, file_permission_mask;
 	guint32 dir_permission, dir_permission_mask;
-	guint32 vfs_mask, vfs_new_perm, p;
-	GtkWidget *button, *combo;
-	gboolean active, is_folder, is_special, use_original;
+	guint32 vfs_mask, vfs_new_perm;
+	GtkWidget *combo;
+	gboolean is_folder, use_original;
 	GList *l;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	PermissionType type;
 	int new_perm, mask;
-	
+
 	file_permission = 0;
 	file_permission_mask = 0;
 	dir_permission = 0;
 	dir_permission_mask = 0;
 
-	/* Advanced mode and execute checkbox: */
-	for (l = window->details->permission_buttons; l != NULL; l = l->next) {
-		button = l->data;
-		
-		if (gtk_toggle_button_get_inconsistent (GTK_TOGGLE_BUTTON (button))) {
-			continue;
-		}
-		
-		active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
-		p = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
-							"permission"));
-		is_folder = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
-								"is-folder"));
-		is_special = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
-								 "is-special"));
-		
-		if (is_folder || is_special) {
-			dir_permission_mask |= p;
-			if (active) {
-				dir_permission |= p;
-			}
-		}
-		if (!is_folder || is_special) {
-			file_permission_mask |= p;
-			if (active) {
-				file_permission |= p;
-			}
-		}
-	}
 	/* Simple mode, minus exec checkbox */
-	for (l = window->details->permission_combos; l != NULL; l = l->next) {
+	for (l = window->details->change_permission_combos; l != NULL; l = l->next) {
 		combo = l->data;
-		
+
 		if (!gtk_combo_box_get_active_iter (GTK_COMBO_BOX (combo),  &iter)) {
 			continue;
 		}
-		
+
 		type = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (combo), "permission-type"));
-		is_folder = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (combo),
-								"is-folder"));
-		
+		is_folder = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (combo), "is-folder"));
+
 		model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
-		gtk_tree_model_get (model, &iter, 1, &new_perm, 2, &use_original, -1);
+		gtk_tree_model_get (model, &iter,
+				    COLUMN_VALUE, &new_perm,
+				    COLUMN_USE_ORIGINAL, &use_original, -1);
 		if (use_original) {
 			continue;
 		}
@@ -4475,6 +4460,145 @@ apply_recursive_clicked (GtkWidget *recursive_button,
 			g_free (uri);
 		}
 	}
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+}
+
+static void
+set_active_from_umask (GtkWidget     *combo,
+		       PermissionType type,
+		       gboolean       is_folder)
+{
+	mode_t initial;
+	mode_t mask;
+	mode_t p;
+	const char *id;
+
+	if (is_folder) {
+		initial = (S_IRWXU | S_IRWXG | S_IRWXO);
+	} else {
+		initial = (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+	}
+
+	umask (mask = umask (0));
+
+	p = ~mask & initial;
+
+	if (type == PERMISSION_USER) {
+		p &= ~(S_IRWXG | S_IRWXO);
+		if ((p & S_IRWXU) == S_IRWXU) {
+			id = "rwx";
+		} else if ((p & (S_IRUSR | S_IWUSR)) == (S_IRUSR | S_IWUSR)) {
+			id = "rw";
+		} else if ((p & (S_IRUSR | S_IXUSR)) == (S_IRUSR | S_IXUSR)) {
+			id = "rx";
+		} else if ((p & S_IRUSR) == S_IRUSR) {
+			id = "r";
+		} else {
+			id = "none";
+		}
+	} else if (type == PERMISSION_GROUP) {
+		p &= ~(S_IRWXU | S_IRWXO);
+		if ((p & S_IRWXG) == S_IRWXG) {
+			id = "rwx";
+		} else if ((p & (S_IRGRP | S_IWGRP)) == (S_IRGRP | S_IWGRP)) {
+			id = "rw";
+		} else if ((p & (S_IRGRP | S_IXGRP)) == (S_IRGRP | S_IXGRP)) {
+			id = "rx";
+		} else if ((p & S_IRGRP) == S_IRGRP) {
+			id = "r";
+		} else {
+			id = "none";
+		}
+	} else {
+		p &= ~(S_IRWXU | S_IRWXG);
+		if ((p & S_IRWXO) == S_IRWXO) {
+			id = "rwx";
+		} else if ((p & (S_IROTH | S_IWOTH)) == (S_IROTH | S_IWOTH)) {
+			id = "rw";
+		} else if ((p & (S_IROTH | S_IXOTH)) == (S_IROTH | S_IXOTH)) {
+			id = "rx";
+		} else if ((p & S_IROTH) == S_IROTH) {
+			id = "r";
+		} else {
+			id = "none";
+		}
+	}
+
+	gtk_combo_box_set_active_id (GTK_COMBO_BOX (combo), id);
+}
+
+static void
+on_change_permissions_clicked (GtkWidget                *button,
+			       NemoPropertiesWindow *window)
+{
+	GtkWidget *dialog;
+	GtkWidget *label;
+	GtkWidget *combo;
+	GtkGrid *grid;
+
+	dialog = gtk_dialog_new_with_buttons (_("Change Permissions for Enclosed Files"),
+					       GTK_WINDOW (window),
+					       GTK_DIALOG_MODAL,
+					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					       _("Change"), GTK_RESPONSE_OK,
+					       NULL);
+
+	grid = GTK_GRID (create_grid_with_standard_properties ());
+	gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
+			    GTK_WIDGET (grid),
+			    TRUE, TRUE, 0);
+
+	label = gtk_label_new (_("Files"));
+	gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.5);
+	gtk_grid_attach (grid, label, 1, 0, 1, 1);
+	label = gtk_label_new (_("Folders"));
+	gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.5);
+	gtk_grid_attach (grid, label, 2, 0, 1, 1);
+
+	label = gtk_label_new (_("Owner:"));
+	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+	gtk_grid_attach (grid, label, 0, 1, 1, 1);
+	combo = create_permissions_combo_box (PERMISSION_USER, FALSE);
+	window->details->change_permission_combos = g_list_prepend (window->details->change_permission_combos,
+								    combo);
+	set_active_from_umask (combo, PERMISSION_USER, FALSE);
+	gtk_grid_attach (grid, combo, 1, 1, 1, 1);
+	combo = create_permissions_combo_box (PERMISSION_USER, TRUE);
+	window->details->change_permission_combos = g_list_prepend (window->details->change_permission_combos,
+								    combo);
+	set_active_from_umask (combo, PERMISSION_USER, TRUE);
+	gtk_grid_attach (grid, combo, 2, 1, 1, 1);
+
+	label = gtk_label_new (_("Group:"));
+	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+	gtk_grid_attach (grid, label, 0, 2, 1, 1);
+	combo = create_permissions_combo_box (PERMISSION_GROUP, FALSE);
+	window->details->change_permission_combos = g_list_prepend (window->details->change_permission_combos,
+								    combo);
+	set_active_from_umask (combo, PERMISSION_GROUP, FALSE);
+	gtk_grid_attach (grid, combo, 1, 2, 1, 1);
+	combo = create_permissions_combo_box (PERMISSION_GROUP, TRUE);
+	window->details->change_permission_combos = g_list_prepend (window->details->change_permission_combos,
+								    combo);
+	set_active_from_umask (combo, PERMISSION_GROUP, TRUE);
+	gtk_grid_attach (grid, combo, 2, 2, 1, 1);
+
+	label = gtk_label_new (_("Others:"));
+	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+	gtk_grid_attach (grid, label, 0, 3, 1, 1);
+	combo = create_permissions_combo_box (PERMISSION_OTHER, FALSE);
+	window->details->change_permission_combos = g_list_prepend (window->details->change_permission_combos,
+								    combo);
+	set_active_from_umask (combo, PERMISSION_OTHER, FALSE);
+	gtk_grid_attach (grid, combo, 1, 3, 1, 1);
+	combo = create_permissions_combo_box (PERMISSION_OTHER, TRUE);
+	window->details->change_permission_combos = g_list_prepend (window->details->change_permission_combos,
+								    combo);
+	set_active_from_umask (combo, PERMISSION_OTHER, TRUE);
+	gtk_grid_attach (grid, combo, 2, 3, 1, 1);
+
+	g_signal_connect (dialog, "response", G_CALLBACK (on_change_permissions_response), window);
+	gtk_widget_show_all (dialog);
 }
 
 static void
@@ -4516,9 +4640,8 @@ create_permissions_page (NemoPropertiesWindow *window)
 			create_simple_permissions (window, page_grid);
 		}
 
-		append_blank_slim_row (page_grid);
-	
 #ifdef HAVE_SELINUX
+		append_blank_slim_row (page_grid);
 		append_title_value_pair
 			(window, page_grid, _("Security context:"), 
 			 "selinux_context", INCONSISTENT_STATE_STRING,
@@ -4528,7 +4651,9 @@ create_permissions_page (NemoPropertiesWindow *window)
 			(window, page_grid, _("Last changed:"), 
 			 "date_permissions", INCONSISTENT_STATE_STRING,
 			 FALSE);
-	
+
+		append_blank_row (page_grid);
+
 		if (window->details->has_recursive_apply) {
 			hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 			gtk_widget_show (hbox);
@@ -4536,12 +4661,12 @@ create_permissions_page (NemoPropertiesWindow *window)
 			gtk_container_add_with_properties (GTK_CONTAINER (page_grid), hbox,
 							   "width", 2,
 							   NULL);
-		
-			button = gtk_button_new_with_mnemonic (_("Apply Permissions to Enclosed Files"));
+
+			button = gtk_button_new_with_mnemonic (_("Change Permissions for Enclosed Files..."));
 			gtk_widget_show (button);
 			gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 			g_signal_connect (button, "clicked",
-					  G_CALLBACK (apply_recursive_clicked),
+					  G_CALLBACK (on_change_permissions_clicked),
 					  window);
 		}
 	} else {
@@ -5191,6 +5316,9 @@ real_destroy (GtkWidget *object)
 
 	g_list_free (window->details->permission_combos);
 	window->details->permission_combos = NULL;
+
+	g_list_free (window->details->change_permission_combos);
+	window->details->change_permission_combos = NULL;
 
 	if (window->details->initial_permissions) {
 		g_hash_table_destroy (window->details->initial_permissions);
