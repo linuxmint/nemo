@@ -27,7 +27,8 @@ Build-Depends: debhelper (>= 8),
                libglib2.0-doc,
                libgtk-3-doc,
                python-polib,
-               cinnamon-translations
+               cinnamon-translations,
+               python-gi
 Homepage: http://www.github.com/linuxmint/nemo/
 Standards-Version: 3.9.2
 
