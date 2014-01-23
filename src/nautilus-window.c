@@ -1032,7 +1032,9 @@ nautilus_window_sync_location_widgets (NautilusWindow *window)
 		GtkWidget *path_bar;
 
 		location_entry = nautilus_toolbar_get_location_entry (NAUTILUS_TOOLBAR (window->details->toolbar));
-		nautilus_location_entry_set_location (NAUTILUS_LOCATION_ENTRY (location_entry), location);
+		if (location_entry != NULL && GTK_IS_WIDGET (location_entry)) {
+			nautilus_location_entry_set_location (NAUTILUS_LOCATION_ENTRY (location_entry), location);
+		}
 
 		path_bar = nautilus_toolbar_get_path_bar (NAUTILUS_TOOLBAR (window->details->toolbar));
 		nautilus_path_bar_set_path (NAUTILUS_PATH_BAR (path_bar), location);
