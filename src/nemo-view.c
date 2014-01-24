@@ -5426,15 +5426,17 @@ extension_action_callback (GtkAction *action,
 }
 
 static GdkPixbuf *
-get_menu_icon_for_file (NemoFile *file)
+get_menu_icon_for_file (NemoFile *file,
+                        GtkWidget *widget)
 {
 	NemoIconInfo *info;
 	GdkPixbuf *pixbuf;
-	int size;
+	int size, scale;
 
 	size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
-	
-	info = nemo_file_get_icon (file, size, 0);
+    scale = gtk_widget_get_scale_factor (widget);
+
+	info = nemo_file_get_icon (file, size, scale, 0);
 	pixbuf = nemo_icon_info_get_pixbuf_nodefault_at_size (info, size);
 	g_object_unref (info);
 	
@@ -5465,7 +5467,7 @@ add_extension_action_for_files (NemoView *view,
 				 NULL);
 
 	if (icon != NULL) {
-		pixbuf = nemo_ui_get_menu_icon (icon);
+		pixbuf = nemo_ui_get_menu_icon (icon, GTK_WIDGET (view));
 		if (pixbuf != NULL) {
 			gtk_action_set_gicon (action, G_ICON (pixbuf));
 			g_object_unref (pixbuf);
@@ -5902,7 +5904,7 @@ add_script_to_scripts_menus (NemoView *directory_view,
 				 tip,
 				 NULL);
 
-	pixbuf = get_menu_icon_for_file (file);
+	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	if (pixbuf != NULL) {
 		g_object_set_data_full (G_OBJECT (action), "menu-icon",
 					pixbuf,
@@ -5966,7 +5968,7 @@ add_submenu_to_directory_menus (NemoView *directory_view,
 	ui_manager = nemo_window_get_ui_manager (directory_view->details->window);
 	uri = nemo_file_get_uri (file);
 	name = nemo_file_get_display_name (file);
-	pixbuf = get_menu_icon_for_file (file);
+	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	add_submenu (ui_manager, action_group, merge_id, menu_path, uri, name, pixbuf, TRUE);
 	add_submenu (ui_manager, action_group, merge_id, popup_path, uri, name, pixbuf, FALSE);
 	add_submenu (ui_manager, action_group, merge_id, popup_bg_path, uri, name, pixbuf, FALSE);
@@ -6281,7 +6283,7 @@ add_template_to_templates_menus (NemoView *directory_view,
 				 tip,
 				 NULL);
 	
-	pixbuf = get_menu_icon_for_file (file);
+	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	if (pixbuf != NULL) {
 		g_object_set_data_full (G_OBJECT (action), "menu-icon",
 					pixbuf,
@@ -7720,7 +7722,7 @@ action_connect_to_server_link_callback (GtkAction *action,
 	file = NEMO_FILE (selection->data);
 
 	uri = nemo_file_get_activation_uri (file);
-	icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, 0);
+	icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, gtk_widget_get_scale_factor (GTK_WIDGET (view)), 0);
 	icon_name = nemo_icon_info_get_used_name (icon);
 	name = nemo_file_get_display_name (file);
 
@@ -8269,7 +8271,7 @@ connect_proxy (NemoView *view,
 
 	if (strcmp (gtk_action_get_name (action), NEMO_ACTION_NEW_EMPTY_DOCUMENT) == 0 &&
 	    GTK_IS_IMAGE_MENU_ITEM (proxy)) {
-		pixbuf = nemo_ui_get_menu_icon ("text-x-generic");
+		pixbuf = nemo_ui_get_menu_icon ("text-x-generic", GTK_WIDGET (view));
 		if (pixbuf != NULL) {
 			image = gtk_image_new_from_pixbuf (pixbuf);
 			gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), image);

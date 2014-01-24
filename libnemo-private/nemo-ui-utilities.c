@@ -68,7 +68,8 @@ extension_action_callback (GtkAction *action,
 }
 
 GtkAction *
-nemo_action_from_menu_item (NemoMenuItem *item)
+nemo_action_from_menu_item (NemoMenuItem *item,
+                            GtkWidget    *parent_widget)
 {
 	char *name, *label, *tip, *icon_name;
 	gboolean sensitive, priority;
@@ -88,7 +89,7 @@ nemo_action_from_menu_item (NemoMenuItem *item)
 				 NULL);
 
 	if (icon_name != NULL) {
-		pixbuf = nemo_ui_get_menu_icon (icon_name);
+		pixbuf = nemo_ui_get_menu_icon (icon_name, parent_widget);
 		if (pixbuf != NULL) {
 			gtk_action_set_gicon (action, G_ICON (pixbuf));
 			g_object_unref (pixbuf);
@@ -132,18 +133,21 @@ nemo_event_should_open_in_new_tab (void)
 }
 
 GdkPixbuf *
-nemo_ui_get_menu_icon (const char *icon_name)
+nemo_ui_get_menu_icon (const char *icon_name,
+                       GtkWidget  *parent_widget)
 {
 	NemoIconInfo *info;
 	GdkPixbuf *pixbuf;
 	int size;
+    int scale;
 
 	size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
+    scale = gtk_widget_get_scale_factor (parent_widget);
 
 	if (g_path_is_absolute (icon_name)) {
-		info = nemo_icon_info_lookup_from_path (icon_name, size);
+		info = nemo_icon_info_lookup_from_path (icon_name, size, scale);
 	} else {
-		info = nemo_icon_info_lookup_from_name (icon_name, size);
+		info = nemo_icon_info_lookup_from_name (icon_name, size, scale);
 	}
 	pixbuf = nemo_icon_info_get_pixbuf_nodefault_at_size (info, size);
 	g_object_unref (info);

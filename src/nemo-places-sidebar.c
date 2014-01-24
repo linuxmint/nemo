@@ -29,6 +29,7 @@
 #include <glib/gi18n.h>
 #include <gio/gio.h>
 #include <math.h>
+#include <cairo-gobject.h>
 
 #include <libnemo-private/nemo-dnd.h>
 #include <libnemo-private/nemo-bookmark.h>
@@ -399,15 +400,22 @@ add_place (NemoPlacesSidebar *sidebar,
 	int icon_size;
 	gboolean show_eject, show_unmount;
 	gboolean show_eject_button;
+    gint scale;
+    cairo_surface_t *surface;
+
+    scale = gtk_widget_get_scale_factor (GTK_WIDGET (sidebar));
 
 	cat_iter = check_heading_for_devices (sidebar, section_type, cat_iter);
 
 	icon_size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
 
-	icon_info = nemo_icon_info_lookup (icon, icon_size);
+	icon_info = nemo_icon_info_lookup (icon, icon_size, scale);
 
 	pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size);
 	g_object_unref (icon_info);
+    
+    surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, scale, NULL);
+    g_object_unref (pixbuf);
 
 	check_unmount_and_eject (mount, volume, drive,
 				 &show_unmount, &show_eject);
@@ -430,7 +438,7 @@ add_place (NemoPlacesSidebar *sidebar,
 
 	gtk_tree_store_append (sidebar->store, &iter, &cat_iter);
 	gtk_tree_store_set (sidebar->store, &iter,
-			    PLACES_SIDEBAR_COLUMN_ICON, pixbuf,
+			    PLACES_SIDEBAR_COLUMN_ICON, surface,
 			    PLACES_SIDEBAR_COLUMN_NAME, name,
 			    PLACES_SIDEBAR_COLUMN_URI, uri,
 			    PLACES_SIDEBAR_COLUMN_DRIVE, drive,
@@ -447,10 +455,6 @@ add_place (NemoPlacesSidebar *sidebar,
                 PLACES_SIDEBAR_COLUMN_DF_PERCENT, df_percent,
                 PLACES_SIDEBAR_COLUMN_SHOW_DF, show_df_percent,
 			    -1);
-
-	if (pixbuf != NULL) {
-		g_object_unref (pixbuf);
-	}
 
     return cat_iter;
 }
@@ -3825,7 +3829,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	cell = gtk_cell_renderer_pixbuf_new ();
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (col, cell,
-					     "pixbuf", PLACES_SIDEBAR_COLUMN_ICON,
+					     "surface", PLACES_SIDEBAR_COLUMN_ICON,
 					     NULL);
 	gtk_tree_view_column_set_cell_data_func (col, cell,
 						 icon_cell_renderer_func,
@@ -4186,7 +4190,7 @@ nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar)
 		G_TYPE_VOLUME,
 		G_TYPE_MOUNT,
 		G_TYPE_STRING,
-		GDK_TYPE_PIXBUF,
+		CAIRO_GOBJECT_TYPE_SURFACE,
 		G_TYPE_INT,
 		G_TYPE_BOOLEAN,
 		G_TYPE_BOOLEAN,

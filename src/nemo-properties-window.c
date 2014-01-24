@@ -358,17 +358,23 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 {
 	NemoIconInfo *icon, *new_icon;
 	GList *l;
+    gint icon_scale;
 	
 	icon = NULL;
+    icon_scale = gtk_widget_get_scale_factor (GTK_WIDGET (window->details->notebook));
 	for (l = window->details->original_files; l != NULL; l = l->next) {
 		NemoFile *file;
 		
 		file = NEMO_FILE (l->data);
 		
 		if (!icon) {
-			icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS | NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
+			icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, icon_scale,
+                                       NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
+                                       NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
 		} else {
-			new_icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS | NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
+			new_icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, icon_scale,
+                                           NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
+                                           NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
 			if (!new_icon || new_icon != icon) {
 				g_object_unref (icon);
 				g_object_unref (new_icon);
@@ -380,7 +386,7 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 	}
 
 	if (!icon) {
-		icon = nemo_icon_info_lookup_from_name ("text-x-generic", NEMO_ICON_SIZE_STANDARD);
+		icon = nemo_icon_info_lookup_from_name ("text-x-generic", NEMO_ICON_SIZE_STANDARD, icon_scale);
 	}
 
 	if (icon_name != NULL) {
@@ -396,14 +402,12 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 
 
 static void
-update_properties_window_icon (GtkImage *image)
+update_properties_window_icon (NemoPropertiesWindow *window)
 {
-	NemoPropertiesWindow *window;
 	GdkPixbuf *pixbuf;
+    cairo_surface_t *surface;
 	char *name;
 
-	window = g_object_get_data (G_OBJECT (image), "properties_window");
-	
 	get_image_for_properties_window (window, &name, &pixbuf);
 
 	if (name != NULL) {
@@ -412,10 +416,13 @@ update_properties_window_icon (GtkImage *image)
 		gtk_window_set_icon (GTK_WINDOW (window), pixbuf);
 	}
 
-	gtk_image_set_from_pixbuf (image, pixbuf);
+    surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, gtk_widget_get_scale_factor (GTK_WIDGET (window)),
+                                                    gtk_widget_get_window (GTK_WIDGET (window)));
+    gtk_image_set_from_surface (GTK_IMAGE (window->details->icon_image), surface);
 
 	g_free (name);
 	g_object_unref (pixbuf);
+    cairo_surface_destroy (surface);
 }
 
 /* utility to test if a uri refers to a local image */
@@ -515,11 +522,11 @@ create_image_widget (NemoPropertiesWindow *window,
 {
  	GtkWidget *button;
 	GtkWidget *image;
-	GdkPixbuf *pixbuf;
-	
-	get_image_for_properties_window (window, NULL, &pixbuf);
 
 	image = gtk_image_new ();
+    window->details->icon_image = image;
+
+    update_properties_window_icon (window);
 	gtk_widget_show (image);
 
 	button = NULL;
@@ -539,13 +546,6 @@ create_image_widget (NemoPropertiesWindow *window,
 				  G_CALLBACK (select_image_button_callback), window);
 	}
 
-	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
-
-	g_object_unref (pixbuf);
-
-	g_object_set_data (G_OBJECT (image), "properties_window", window);
-
-	window->details->icon_image = image;
 	window->details->icon_button = button;
 
 	return button != NULL ? button : image;
@@ -994,7 +994,7 @@ properties_window_update (NemoPropertiesWindow *window,
 
 	if (dirty_original) {
 		update_properties_window_title (window);
-		update_properties_window_icon (GTK_IMAGE (window->details->icon_image));
+		update_properties_window_icon (window);
 
 		update_name_field (window);
 

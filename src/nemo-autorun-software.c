@@ -210,7 +210,8 @@ present_autorun_for_software_dialog (GMount *mount)
 
 	icon = g_mount_get_icon (mount);
 	icon_size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_DIALOG);
-	icon_info = nemo_icon_info_lookup (icon, icon_size);
+	icon_info = nemo_icon_info_lookup (icon, icon_size,
+                                       gtk_widget_get_scale_factor (GTK_WIDGET (dialog)));
 	pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size);
 	image = gtk_image_new_from_pixbuf (pixbuf);
 	gtk_misc_set_alignment (GTK_MISC (image), 0.5, 0.0);
