@@ -456,10 +456,12 @@ GIcon *                 nemo_file_get_gicon                         (NemoFile   
 									 NemoFileIconFlags           flags);
 NemoIconInfo *      nemo_file_get_icon                          (NemoFile                   *file,
 									 int                             size,
+                                     int                             scale,
 									 NemoFileIconFlags           flags);
 GdkPixbuf *             nemo_file_get_icon_pixbuf                   (NemoFile                   *file,
 									 int                             size,
 									 gboolean                        force_size,
+                                     int                             scale,
 									 NemoFileIconFlags           flags);
 
 gboolean                nemo_file_has_open_window                   (NemoFile                   *file);

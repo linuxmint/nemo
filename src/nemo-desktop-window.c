@@ -293,7 +293,8 @@ static NemoIconInfo *
 real_get_icon (NemoWindow *window,
 	       NemoWindowSlot *slot)
 {
-	return nemo_icon_info_lookup_from_name (NEMO_ICON_DESKTOP, 48);
+	return nemo_icon_info_lookup_from_name (NEMO_ICON_DESKTOP, 48,
+                                            gtk_widget_get_scale_factor (GTK_WIDGET (window)));
 }
 
 static void

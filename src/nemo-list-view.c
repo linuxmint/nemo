@@ -475,13 +475,13 @@ stop_drag_check (NemoListView *view)
 	view->details->drag_button = 0;
 }
 
-static GdkPixbuf *
-get_drag_pixbuf (NemoListView *view)
+static cairo_surface_t *
+get_drag_surface (NemoListView *view)
 {
 	GtkTreeModel *model;
 	GtkTreePath *path;
 	GtkTreeIter iter;
-	GdkPixbuf *ret;
+	cairo_surface_t *ret;
 	GdkRectangle cell_area;
 	
 	ret = NULL;
@@ -514,14 +514,13 @@ drag_begin_callback (GtkWidget *widget,
 		     NemoListView *view)
 {
 	GList *ref_list;
-	GdkPixbuf *pixbuf;
 
-	pixbuf = get_drag_pixbuf (view);
-	if (pixbuf) {
-		gtk_drag_set_icon_pixbuf (context,
-					  pixbuf,
-					  0, 0);
-		g_object_unref (pixbuf);
+    cairo_surface_t *surface;
+
+    surface = get_drag_surface (view);
+    if (surface) {
+        gtk_drag_set_icon_surface (context, surface);
+        cairo_surface_destroy (surface);
 	} else {
 		gtk_drag_set_icon_default (context);
 	}
@@ -1891,6 +1890,13 @@ focus_in_event_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_
 	return FALSE;
 }
 
+static gint
+get_icon_scale_callback (NemoListModel *model,
+                         NemoListView  *view)
+{
+   return gtk_widget_get_scale_factor (GTK_WIDGET (view->details->tree_view));
+}
+
 static void
 create_and_set_up_tree_view (NemoListView *view)
 {
@@ -1984,6 +1990,9 @@ create_and_set_up_tree_view (NemoListView *view)
 	g_signal_connect_object (view->details->model, "subdirectory_unloaded",
 				 G_CALLBACK (subdirectory_unloaded_callback), view, 0);
 
+    g_signal_connect_object (view->details->model, "get-icon-scale",
+                 G_CALLBACK (get_icon_scale_callback), view, 0);
+
 	gtk_tree_selection_set_mode (gtk_tree_view_get_selection (view->details->tree_view), GTK_SELECTION_MULTIPLE);
 	gtk_tree_view_set_rules_hint (view->details->tree_view, TRUE);
 
@@ -2034,7 +2043,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
 			gtk_tree_view_column_set_attributes (view->details->file_name_column,
 							     cell,
-							     "pixbuf", NEMO_LIST_MODEL_SMALLEST_ICON_COLUMN,
+							     "surface", NEMO_LIST_MODEL_SMALLEST_ICON_COLUMN,
 							     NULL);
 			
 			cell = gtk_cell_renderer_text_new ();
@@ -3006,7 +3015,7 @@ nemo_list_view_set_zoom_level (NemoListView *view,
 	column = nemo_list_model_get_column_id_from_zoom_level (new_level);
 	gtk_tree_view_column_set_attributes (view->details->file_name_column,
 					     GTK_CELL_RENDERER (view->details->pixbuf_cell),
-					     "pixbuf", column,
+					     "surface", column,
 					     NULL);
 
 	/* Scale text. */

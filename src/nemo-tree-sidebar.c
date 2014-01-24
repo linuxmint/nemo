@@ -1407,6 +1407,37 @@ create_popup_menu (FMTreeView *view)
     add_action_popup_items (view);
 }
 
+static gint
+get_icon_scale_callback (FMTreeModel *model,
+                         FMTreeView  *view)
+{
+   return gtk_widget_get_scale_factor (GTK_WIDGET (view->details->tree_widget));
+}
+
+static void
+surface_data_func (GtkTreeViewColumn *tree_column,
+                     GtkCellRenderer *cell,
+                        GtkTreeModel *tree_model,
+                         GtkTreeIter *iter,
+                            gpointer  data)
+{
+    gboolean expanded;
+    cairo_surface_t *surface;
+
+    g_object_get (cell,
+                  "is-expanded", &expanded,
+                  NULL);
+
+    gtk_tree_model_get (tree_model, iter,
+                        expanded ? FM_TREE_MODEL_OPEN_SURFACE_COLUMN : FM_TREE_MODEL_CLOSED_SURFACE_COLUMN,
+                        &surface,
+                        -1);
+
+    g_object_set (cell,
+                  "surface", surface,
+                  NULL);
+}
+
 static void
 create_tree (FMTreeView *view)
 {
@@ -1432,10 +1463,12 @@ create_tree (FMTreeView *view)
 	gtk_tree_sortable_set_default_sort_func (GTK_TREE_SORTABLE (view->details->sort_model),
 						 compare_rows, view, NULL);
 
-	g_signal_connect_object
-		(view->details->child_model, "row_loaded",
-		 G_CALLBACK (row_loaded_callback),
-		 view, G_CONNECT_AFTER);
+	g_signal_connect_object (view->details->child_model, "row_loaded",
+		                     G_CALLBACK (row_loaded_callback),
+                             view, G_CONNECT_AFTER);
+    g_signal_connect_object (view->details->child_model, "get-icon-scale",
+                             G_CALLBACK (get_icon_scale_callback), view, 0);
+
 #ifdef NOT_YET_USABLE /* Do we really want this? */
 	icon = g_themed_icon_new (NEMO_ICON_COMPUTER);
 	fm_tree_model_add_root_uri (view->details->child_model, "computer:///", _("Computer"), icon, NULL);
@@ -1497,12 +1530,9 @@ create_tree (FMTreeView *view)
 
 	cell = gtk_cell_renderer_pixbuf_new ();
 	gtk_tree_view_column_pack_start (column, cell, FALSE);
-	gtk_tree_view_column_set_attributes (column, cell,
-					     "pixbuf", FM_TREE_MODEL_CLOSED_PIXBUF_COLUMN,
-					     "pixbuf_expander_closed", FM_TREE_MODEL_CLOSED_PIXBUF_COLUMN,
-					     "pixbuf_expander_open", FM_TREE_MODEL_OPEN_PIXBUF_COLUMN,
-					     NULL);
-	
+    gtk_tree_view_column_set_cell_data_func (column, cell, (GtkTreeCellDataFunc) surface_data_func, NULL, NULL);
+
+
 	cell = gtk_cell_renderer_text_new ();
 	gtk_tree_view_column_pack_start (column, cell, TRUE);
 	gtk_tree_view_column_set_attributes (column, cell,
@@ -1751,4 +1781,3 @@ nemo_tree_sidebar_new (NemoWindow *window)
 
 	return GTK_WIDGET (sidebar);
 }
-
