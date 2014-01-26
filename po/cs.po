@@ -15,15 +15,15 @@
 # Tomas Bzatek <tbzatek@redhat.com>, 2009.
 # Lucas Lommer <llommer@svn.gnome.org>, 2008, 2009, 2010, 2011, 2012.
 # Adam Matoušek <adamatousek@gmail.com>, 2012, 2013
-# Marek Černocký <marek@manet.cz>, 2010, 2012, 2013.
+# Marek Černocký <marek@manet.cz>, 2010, 2012, 2013, 2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nautilus master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2013-12-31 20:59+0000\n"
-"PO-Revision-Date: 2014-01-12 11:52+0100\n"
+"POT-Creation-Date: 2014-01-22 01:19+0000\n"
+"PO-Revision-Date: 2014-01-26 15:50+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -33,6 +33,31 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Generator: Gtranslator 2.91.6\n"
 "X-Project-Style: gnome\n"
+
+#: ../data/nautilus.appdata.xml.in.h:1
+msgid ""
+"Nautilus, also known as Files, is the default file manager of the GNOME "
+"desktop. It provides a simple and integrated way of managing your files and "
+"browsing your file system."
+msgstr ""
+"Aplikace Nautilus, známá i pod názvem Soubory, je výchozí správce souborů "
+"pro pracovní prostředí GNOME. Poskytuje jednoduchou a dobře začleněnou "
+"správu vašich souborů a procházení vaším souborovým systémem."
+
+#: ../data/nautilus.appdata.xml.in.h:2
+msgid ""
+"Nautilus supports all the basic functions of a file manager and more. It can "
+"search and manage your files and folders, both locally and on a network, "
+"read and write data to and from removable media, run scripts, and launch "
+"applications. It has three views: Icon Grid, Icon List, and Tree List. Its "
+"functions can be extended with plugins and scripts."
+msgstr ""
+"Podporuje všechny základní funkce očekávané od správce souborů a k tomu něco "
+"navíc. Umí vyhledávat a spravovat vaše soubory a složky, jak místní, tak "
+"síťové, číst a zapisovat data z/na výměnná média, spouštět skripty a "
+"aplikace. Má tři způsoby zobrazení: ikony v mřížce, seznam s ikonami a "
+"stromové zobrazení. Funkčnost je možné rozšiřovat pomocí zásuvných modulů a "
+"skriptů."
 
 #: ../data/nautilus-autorun-software.desktop.in.in.h:1
 msgid "Run Software"
@@ -47,8 +72,8 @@ msgstr "Připojit se k serveru"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4478 ../src/nautilus-window.c:2202
-#: ../src/nautilus-window.c:2399
+#: ../src/nautilus-properties-window.c:4478 ../src/nautilus-window.c:2209
+#: ../src/nautilus-window.c:2406
 msgid "Files"
 msgstr "Soubory"
 
@@ -1003,7 +1028,7 @@ msgstr "Všechny položky v koši budou trvale smazány."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1396
 #: ../libnautilus-private/nautilus-file-operations.c:2272
-#: ../src/nautilus-window.c:806
+#: ../src/nautilus-window.c:819
 msgid "Empty _Trash"
 msgstr "Vyprázdnit _koš"
 
@@ -2950,28 +2975,28 @@ msgstr "_Připojit"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:621 ../src/nautilus-view.c:7202
+#: ../src/nautilus-desktop-canvas-view.c:665 ../src/nautilus-view.c:7202
 #: ../src/nautilus-view.c:8747
 msgid "E_mpty Trash"
 msgstr "Vy_prázdnit koš"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:645
-#: ../src/nautilus-desktop-canvas-view.c:686
+#: ../src/nautilus-desktop-canvas-view.c:689
+#: ../src/nautilus-desktop-canvas-view.c:730
 msgid "Restore Icons' Original Si_zes"
 msgstr "Obnovit původní _velikosti ikon"
 
-#: ../src/nautilus-desktop-canvas-view.c:646
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore Icon's Original Si_ze"
 msgstr "Obnovit původní _velikost ikony"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:658
+#: ../src/nautilus-desktop-canvas-view.c:702
 msgid "Change Desktop _Background"
 msgstr "Změnit _pozadí plochy"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:660
+#: ../src/nautilus-desktop-canvas-view.c:704
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr ""
@@ -2979,38 +3004,38 @@ msgstr ""
 "plochy"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:665
+#: ../src/nautilus-desktop-canvas-view.c:709
 msgid "Empty Trash"
 msgstr "Vyprázdnit koš"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:667 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:711 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7203
 msgid "Delete all items in the Trash"
 msgstr "Smazat všechny položky z koše"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:672
+#: ../src/nautilus-desktop-canvas-view.c:716
 msgid "_Organize Desktop by Name"
 msgstr "Pře_organizovat plochu podle názvů"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:674
+#: ../src/nautilus-desktop-canvas-view.c:718
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr "Přemístit ikony, aby se lépe vešly do okna a nepřekrývaly se"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:679
+#: ../src/nautilus-desktop-canvas-view.c:723
 msgid "Resize Icon…"
 msgstr "Roztáhnout ikonu…"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:681
+#: ../src/nautilus-desktop-canvas-view.c:725
 msgid "Make the selected icons resizable"
 msgstr "Udělat vybrané ikony roztažitelnými"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:688
+#: ../src/nautilus-desktop-canvas-view.c:732
 msgid "Restore each selected icon to its original size"
 msgstr "Obnovit původní velikost každé vybrané ikony"
 
@@ -5075,31 +5100,31 @@ msgstr "Upuštěný text.txt"
 msgid "dropped data"
 msgstr "upuštěná data"
 
-#: ../src/nautilus-window.c:820
+#: ../src/nautilus-window.c:833
 msgid "_Properties"
 msgstr "_Vlastnosti"
 
-#: ../src/nautilus-window.c:829
+#: ../src/nautilus-window.c:842
 msgid "_Format…"
 msgstr "_Formátovat…"
 
-#: ../src/nautilus-window.c:1178
+#: ../src/nautilus-window.c:1191
 msgid "_New Tab"
 msgstr "_Nová karta"
 
-#: ../src/nautilus-window.c:1188 ../src/nautilus-window-menus.c:588
+#: ../src/nautilus-window.c:1201 ../src/nautilus-window-menus.c:588
 msgid "Move Tab _Left"
 msgstr "Přesunout kartu v_levo"
 
-#: ../src/nautilus-window.c:1196 ../src/nautilus-window-menus.c:591
+#: ../src/nautilus-window.c:1209 ../src/nautilus-window-menus.c:591
 msgid "Move Tab _Right"
 msgstr "Přesunout kartu vp_ravo"
 
-#: ../src/nautilus-window.c:1207
+#: ../src/nautilus-window.c:1220
 msgid "_Close Tab"
 msgstr "_Zavřít kartu"
 
-#: ../src/nautilus-window.c:2372
+#: ../src/nautilus-window.c:2379
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -5111,7 +5136,7 @@ msgstr ""
 "verze 2 této licence anebo (podle vlastního uvážení) kterékoliv pozdější "
 "verze."
 
-#: ../src/nautilus-window.c:2376
+#: ../src/nautilus-window.c:2383
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -5122,7 +5147,7 @@ msgstr ""
 "neposkytují se ani odvozené záruky PRODEJNOSTI anebo VHODNOSTI PRO URČITÝ "
 "ÚČEL. Další podrobnosti hledejte v GNU General Public License."
 
-#: ../src/nautilus-window.c:2380
+#: ../src/nautilus-window.c:2387
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -5135,11 +5160,11 @@ msgstr ""
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2395
+#: ../src/nautilus-window.c:2402
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "Copyright © %Id – %Id autoři programu Files"
 
-#: ../src/nautilus-window.c:2401
+#: ../src/nautilus-window.c:2408
 msgid "Access and organize your files."
 msgstr "Přístup a organizace vašich souborů"
 
@@ -5147,7 +5172,7 @@ msgstr "Přístup a organizace vašich souborů"
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2411
+#: ../src/nautilus-window.c:2418
 msgid "translator-credits"
 msgstr ""
 "Michal Bukovjan <bukm@centrum.cz>\n"
