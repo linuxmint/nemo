@@ -120,6 +120,11 @@
       <summary>Show Search button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
+    <key type="b" name="show-new-folder-icon-toolbar">
+      <default>true</default>
+      <summary>Show new folder button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
     <key type="b" name="show-label-search-icon-toolbar">
       <default>false</default>
       <summary>Show the Search button label in nemo toolbar</summary>

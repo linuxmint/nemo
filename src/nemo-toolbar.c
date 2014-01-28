@@ -130,6 +130,11 @@ toolbar_update_appearance (NemoToolbar *self)
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR);
 	if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
 	else {gtk_widget_show (GTK_WIDGET(widgetitem));}
+
+    widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/SecondaryToolbar/New Folder");
+    icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR);
+    if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
+    else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 }
 
 static void
@@ -245,9 +250,10 @@ nemo_toolbar_constructed (GObject *obj)
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR,
 				  G_CALLBACK (toolbar_update_appearance), self);
-
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR,
+                  G_CALLBACK (toolbar_update_appearance), self);
 	toolbar_update_appearance (self);
-
 }
 
 static void

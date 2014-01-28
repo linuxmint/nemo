@@ -82,6 +82,7 @@ typedef enum
 #define NEMO_PREFERENCES_SHOW_HOME_ICON_TOOLBAR		"show-home-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_COMPUTER_ICON_TOOLBAR		"show-computer-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR		"show-search-icon-toolbar"
+#define NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR   "show-new-folder-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR	"show-label-search-icon-toolbar"
 
 /* Which views should be displayed for new windows */

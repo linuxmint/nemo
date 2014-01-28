@@ -1993,26 +1993,26 @@ context_menu_to_file_operation_position (NemoView *view)
 	}
 }
 
-static void
-nemo_view_new_folder (NemoView *directory_view)
+void
+nemo_view_new_folder (NemoView *view)
 {
 	char *parent_uri;
 	NewFolderData *data;
 	GdkPoint *pos;
 
-	data = new_folder_data_new (directory_view);
+	data = new_folder_data_new (view);
 
-	g_signal_connect_data (directory_view,
+	g_signal_connect_data (view,
 			       "add_file",
 			       G_CALLBACK (track_newly_added_locations),
 			       data,
 			       (GClosureNotify)NULL,
 			       G_CONNECT_AFTER);
 
-	pos = context_menu_to_file_operation_position (directory_view);
+	pos = context_menu_to_file_operation_position (view);
 
-	parent_uri = nemo_view_get_backing_uri (directory_view);
-	nemo_file_operations_new_folder (GTK_WIDGET (directory_view),
+	parent_uri = nemo_view_get_backing_uri (view);
+	nemo_file_operations_new_folder (GTK_WIDGET (view),
 					     pos, parent_uri,
 					     new_folder_done, data);
 

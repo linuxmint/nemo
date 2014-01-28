@@ -1031,6 +1031,18 @@ action_tab_change_action_activate_callback (GtkAction *action,
 	}
 }
 
+static void
+action_new_folder_callback (GtkAction *action,
+                            gpointer user_data)
+{
+    g_assert (NEMO_IS_WINDOW (user_data));
+    NemoWindow *window = user_data;
+    NemoView *view = get_current_view (window);
+
+    nemo_view_new_folder (view);
+}
+
+
 static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "File", NULL, N_("_File") },
   /* name, stock id, label */  { "Edit", NULL, N_("_Edit") },
@@ -1346,6 +1358,16 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
                       G_CALLBACK (action_toggle_location_entry_callback), window);
     gtk_action_set_icon_name (GTK_ACTION (action), "location-symbolic");
 
+    g_object_unref (action);
+
+    action = GTK_ACTION (gtk_action_new (NEMO_ACTION_NEW_FOLDER,
+                                                _("New folder"),
+                                                _("Create a new folder"),
+                                                NULL));
+    gtk_action_group_add_action (action_group, GTK_ACTION (action));
+    g_signal_connect (action, "activate",
+                      G_CALLBACK (action_new_folder_callback), window);
+    gtk_action_set_icon_name (GTK_ACTION (action), "tab-new-symbolic");
     g_object_unref (action);
 
     action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_ICON_VIEW,
