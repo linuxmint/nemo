@@ -398,6 +398,12 @@ nemo_location_entry_set_secondary_action (NemoLocationEntry *entry,
 	entry->details->secondary_action = secondary_action;
 }
 
+NemoLocationEntryAction
+nemo_location_entry_get_secondary_action (NemoLocationEntry *entry)
+{
+    return entry->details->secondary_action;
+}
+
 static void
 nemo_location_entry_init (NemoLocationEntry *entry)
 {
