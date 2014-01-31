@@ -10,17 +10,34 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: nautilus 3.1.90\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-27 19:46+0800\n"
-"PO-Revision-Date: 2013-12-27 19:46+0800\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
+"POT-Creation-Date: 2014-01-22 01:19+0000\n"
+"PO-Revision-Date: 2014-02-01 07:35+0800\n"
 "Last-Translator: Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
-"Language: \n"
+"Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.6.3\n"
+
+#: ../data/nautilus.appdata.xml.in.h:1
+msgid ""
+"Nautilus, also known as Files, is the default file manager of the GNOME "
+"desktop. It provides a simple and integrated way of managing your files and "
+"browsing your file system."
+msgstr "Nautilus，亦稱為 Files (檔案)，是 GNOME 桌面的預設檔案管理程式。它提供了簡易與整合的方法讓你管理與瀏覽檔案系統。"
+
+#: ../data/nautilus.appdata.xml.in.h:2
+msgid ""
+"Nautilus supports all the basic functions of a file manager and more. It can "
+"search and manage your files and folders, both locally and on a network, "
+"read and write data to and from removable media, run scripts, and launch "
+"applications. It has three views: Icon Grid, Icon List, and Tree List. Its "
+"functions can be extended with plugins and scripts."
+msgstr "Nautilus 支援檔案管理的所有基礎功能，甚至更多。它可以搜尋與管理你的檔案與資料夾，無論是本地端或是網絡；讀寫可移除媒體的資料、執行命令稿與應用程式。它有三種檢視：圖示格線、圖示清單和樹狀清單。它的功能可以透過外掛程式與命令稿擴充。"
 
 #: ../data/nautilus-autorun-software.desktop.in.in.h:1
 msgid "Run Software"
@@ -35,8 +52,8 @@ msgstr "連接伺服器"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4478 ../src/nautilus-window.c:2202
-#: ../src/nautilus-window.c:2399
+#: ../src/nautilus-properties-window.c:4478 ../src/nautilus-window.c:2209
+#: ../src/nautilus-window.c:2406
 msgid "Files"
 msgstr "檔案"
 
@@ -963,7 +980,7 @@ msgstr "所有在回收筒中的項目會永遠地被刪除。"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1396
 #: ../libnautilus-private/nautilus-file-operations.c:2272
-#: ../src/nautilus-window.c:806
+#: ../src/nautilus-window.c:819
 msgid "Empty _Trash"
 msgstr "清理回收筒(_T)"
 
@@ -2722,7 +2739,7 @@ msgstr "伺服器位址(_S)"
 
 #: ../src/nautilus-connect-server-dialog.c:628
 msgid "_Recent Servers"
-msgstr "最近使用的伺服器(_R)"
+msgstr "最近伺服器(_R)"
 
 #: ../src/nautilus-connect-server-dialog.c:694
 msgid "_Browse"
@@ -2734,67 +2751,68 @@ msgstr "連線(_O)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:621 ../src/nautilus-view.c:7202
+#: ../src/nautilus-desktop-canvas-view.c:665 ../src/nautilus-view.c:7202
 #: ../src/nautilus-view.c:8747
 msgid "E_mpty Trash"
 msgstr "清理回收筒(_M)"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:645
-#: ../src/nautilus-desktop-canvas-view.c:686
+#: ../src/nautilus-desktop-canvas-view.c:689
+#: ../src/nautilus-desktop-canvas-view.c:730
 msgid "Restore Icons' Original Si_zes"
 msgstr "還原圖示大小(_Z)"
 
-#: ../src/nautilus-desktop-canvas-view.c:646
+#: ../src/nautilus-desktop-canvas-view.c:690
 msgid "Restore Icon's Original Si_ze"
 msgstr "還原圖示大小(_Z)"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:658
+#: ../src/nautilus-desktop-canvas-view.c:702
 msgid "Change Desktop _Background"
 msgstr "更改桌面背景(_B)"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:660
+#: ../src/nautilus-desktop-canvas-view.c:704
 msgid ""
 "Show a window that lets you set your desktop background's pattern or color"
 msgstr "顯示一個可設定桌面背景圖樣或顏色的視窗"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:665
+#: ../src/nautilus-desktop-canvas-view.c:709
 msgid "Empty Trash"
 msgstr "清理回收筒"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:667 ../src/nautilus-trash-bar.c:213
+#: ../src/nautilus-desktop-canvas-view.c:711 ../src/nautilus-trash-bar.c:213
 #: ../src/nautilus-view.c:7203
 msgid "Delete all items in the Trash"
 msgstr "清理回收筒所有項目"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:672
+#: ../src/nautilus-desktop-canvas-view.c:716
 msgid "_Organize Desktop by Name"
 msgstr "以名稱組織桌面(_O)"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:674
+#: ../src/nautilus-desktop-canvas-view.c:718
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr "重新排列圖示以符合視窗及避免重疊"
 
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:679
+#: ../src/nautilus-desktop-canvas-view.c:723
 msgid "Resize Icon…"
 msgstr "調整圖示大小…"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:681
+#: ../src/nautilus-desktop-canvas-view.c:725
 msgid "Make the selected icons resizable"
 msgstr "將選取的圖示設為可改變大小"
 
 #. tooltip
-#: ../src/nautilus-desktop-canvas-view.c:688
-msgid "Restore each selected icons to its original size"
-msgstr "還原所有選取圖示的大小"
+#: ../src/nautilus-desktop-canvas-view.c:732
+#| msgid "Restore each selected icons to its original size"
+msgid "Restore each selected icon to its original size"
+msgstr "還原所有選取圖示的尺寸"
 
 #: ../src/nautilus-desktop-item-properties.c:405
 #: ../src/nautilus-desktop-item-properties.c:415
@@ -4767,11 +4785,11 @@ msgstr "永久刪除所有選定的項目"
 
 #: ../src/nautilus-view.c:8692
 msgid "Remo_ve from Recent"
-msgstr "從最近使用的移除(_V)"
+msgstr "從最近移除(_V)"
 
 #: ../src/nautilus-view.c:8693
 msgid "Remove each selected item from the recently used list"
-msgstr "將每個選取的項目從最近使用的清單移除"
+msgstr "將每個選取的項目從最近清單移除"
 
 #: ../src/nautilus-view.c:8733
 msgid "View or modify the properties of the open folder"
@@ -4802,31 +4820,31 @@ msgstr "拖放的 Text.txt"
 msgid "dropped data"
 msgstr "拖放的資料"
 
-#: ../src/nautilus-window.c:820
+#: ../src/nautilus-window.c:833
 msgid "_Properties"
 msgstr "屬性(_P)"
 
-#: ../src/nautilus-window.c:829
+#: ../src/nautilus-window.c:842
 msgid "_Format…"
 msgstr "格式化(_F)…"
 
-#: ../src/nautilus-window.c:1178
+#: ../src/nautilus-window.c:1191
 msgid "_New Tab"
 msgstr "新增分頁(_N)"
 
-#: ../src/nautilus-window.c:1188 ../src/nautilus-window-menus.c:588
+#: ../src/nautilus-window.c:1201 ../src/nautilus-window-menus.c:588
 msgid "Move Tab _Left"
 msgstr "將分頁左移(_L)"
 
-#: ../src/nautilus-window.c:1196 ../src/nautilus-window-menus.c:591
+#: ../src/nautilus-window.c:1209 ../src/nautilus-window-menus.c:591
 msgid "Move Tab _Right"
 msgstr "將分頁右移(_R)"
 
-#: ../src/nautilus-window.c:1207
+#: ../src/nautilus-window.c:1220
 msgid "_Close Tab"
 msgstr "關閉分頁(_C)"
 
-#: ../src/nautilus-window.c:2372
+#: ../src/nautilus-window.c:2379
 msgid ""
 "Files is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -4834,7 +4852,7 @@ msgid ""
 "version."
 msgstr "Files 是自由軟件，你可以遵照自由軟件基金會 (Free Software Foundation) 出版的 GNU 通用公共許可證條款 (GNU General Public License) 第二版來修改和重新發布這一程式，或者自由選擇使用任何更新的版本。 "
 
-#: ../src/nautilus-window.c:2376
+#: ../src/nautilus-window.c:2383
 msgid ""
 "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -4842,7 +4860,7 @@ msgid ""
 "details."
 msgstr "發布 Files 的目的是希望它有用，但沒有任何擔保。甚至沒有適合特定目的而隱含的擔保。更詳細的情況請參閱 GNU 通用公共許可證。 "
 
-#: ../src/nautilus-window.c:2380
+#: ../src/nautilus-window.c:2387
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -4852,11 +4870,11 @@ msgstr "你應該已經和程式一起收到一份 GNU 通用公共許可證的�
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2395
+#: ../src/nautilus-window.c:2402
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "版權所有 © %Id–%Id Files 作者羣"
 
-#: ../src/nautilus-window.c:2401
+#: ../src/nautilus-window.c:2408
 msgid "Access and organize your files."
 msgstr "存取並組織你的檔案。"
 
@@ -4864,7 +4882,7 @@ msgstr "存取並組織你的檔案。"
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2411
+#: ../src/nautilus-window.c:2418
 msgid "translator-credits"
 msgstr ""
 "如對翻譯有任何意見，請送一封電子郵件給\n"
@@ -5263,1012 +5281,3 @@ msgstr "包含相片與音樂"
 #: ../src/nautilus-x-content-bar.c:195
 msgid "Open with:"
 msgstr "以此開啟："
-
-#~ msgid "_About Files"
-#~ msgstr "關於檔案(_A)"
-
-#~ msgid "Input Methods"
-#~ msgstr "輸入法"
-
-#~ msgid "Send To…"
-#~ msgstr "傳送到…"
-
-#~ msgid "Connect to _Server"
-#~ msgstr "連接伺服器(_S)"
-
-#~ msgid "_Icons"
-#~ msgstr "圖示(_I)"
-
-#~ msgid "The icon view encountered an error."
-#~ msgstr "圖示顯示模式發生錯誤。"
-
-#~ msgid "The icon view encountered an error while starting up."
-#~ msgstr "啟動圖示顯示模式時發生錯誤。"
-
-#~ msgid "Display this location with the icon view."
-#~ msgstr "以圖示顯示模式來顯示本位置。"
-
-#~ msgid "Don't recognize this file server type."
-#~ msgstr "不要辨識這個檔案伺服器類型。"
-
-#~ msgid "The desktop view encountered an error."
-#~ msgstr "桌面顯示模式發生錯誤。"
-
-#~ msgid "The desktop view encountered an error while starting up."
-#~ msgstr "啟動桌面顯示模式時發生錯誤。"
-
-#~ msgid "_List"
-#~ msgstr "清單(_L)"
-
-#~ msgid "The list view encountered an error."
-#~ msgstr "清單顯示模式發生錯誤。"
-
-#~ msgid "The list view encountered an error while starting up."
-#~ msgstr "啟動清單顯示模式時發生錯誤。"
-
-#~ msgid "Display this location with the list view."
-#~ msgstr "以清單顯示模式來顯示本位置。"
-
-#~ msgid "Devices"
-#~ msgstr "裝置"
-
-#~ msgid "Places"
-#~ msgstr "位置"
-
-#~ msgid "Recent"
-#~ msgstr "最近開啟"
-
-#~ msgid "Recent files"
-#~ msgstr "最近開啟檔案"
-
-#~ msgid "Open the contents of your desktop in a folder"
-#~ msgstr "以資料夾形式開啟您桌面中的內容"
-
-#~ msgid "Open the trash"
-#~ msgstr "開啟回收筒"
-
-#~ msgid "Mount and open %s"
-#~ msgstr "掛載並開啟 %s"
-
-#~ msgid "Open the contents of the File System"
-#~ msgstr "開啟檔案系統的內容"
-
-#~ msgid "Network"
-#~ msgstr "網路"
-
-#~ msgid "Browse Network"
-#~ msgstr "瀏覽網路"
-
-#~ msgid "Browse the contents of the network"
-#~ msgstr "瀏覽網路的內容"
-
-#~ msgid "Connect to a network server address"
-#~ msgstr "連接到網路伺服器位址"
-
-#~ msgid "_Power On"
-#~ msgstr "電源開啟(_P)"
-
-#~ msgid "_Connect Drive"
-#~ msgstr "連接裝置(_C)"
-
-#~ msgid "_Disconnect Drive"
-#~ msgstr "中斷裝置(_D)"
-
-#~ msgid "_Start Multi-disk Device"
-#~ msgstr "開啟多磁碟裝置(_S)"
-
-#~ msgid "_Stop Multi-disk Device"
-#~ msgstr "關閉多磁碟裝置(_S)"
-
-#~ msgid "Unable to start %s"
-#~ msgstr "無法開啟 %s"
-
-#~ msgid "Unable to eject %s"
-#~ msgstr "無法退出 %s"
-
-#~ msgid "Unable to poll %s for media changes"
-#~ msgstr "無法監測 %s 的媒體變更"
-
-#~ msgid "Unable to stop %s"
-#~ msgstr "無法關閉 %s"
-
-#~ msgid "_Add Bookmark"
-#~ msgstr "加入書籤(_A)"
-
-#~ msgid "Rename…"
-#~ msgstr "重新命名…"
-
-#~ msgid "Computer"
-#~ msgstr "電腦"
-
-#~ msgid ""
-#~ "If set to true, then hidden files are shown by default in the file "
-#~ "manager. Hidden files are either dotfiles, listed in the folder's .hidden "
-#~ "file or backup files ending with a tilde (~)."
-#~ msgstr ""
-#~ "如設定為「true」，所有隱藏檔案都會在檔案總管中顯示出來。所謂隱藏檔案即是任"
-#~ "何第一個字元為一點‘.’的檔案，或者在某個資料夾的 .hidden 檔案或備份檔案"
-#~ "（以 ~ 結尾）內容之中。"
-
-#~ msgid "Rename..."
-#~ msgstr "重新命名…"
-
-#~ msgid "Change Permissions for Enclosed Files..."
-#~ msgstr "改變選取檔案的權限…"
-
-#~ msgid "_Empty Document"
-#~ msgstr "空的文件(_E)"
-
-#~ msgid "Create a new empty document inside this folder"
-#~ msgstr "在這個資料夾中新增空白的文件"
-
-#~ msgid "Select I_tems Matching..."
-#~ msgstr "選擇項目比對(_T)…"
-
-#~ msgid "Connect to _Server..."
-#~ msgstr "連接伺服器(_S)…"
-
-#~ msgid "Enter _Location..."
-#~ msgstr "輸入位置(_L)…"
-
-#~ msgid "_Bookmarks..."
-#~ msgstr "書籤(_B)…"
-
-#~ msgid "unknown type"
-#~ msgstr "類型不詳"
-
-#~ msgid "unknown MIME type"
-#~ msgstr "MIME 類型不詳"
-
-#~ msgid "link"
-#~ msgstr "連結"
-
-#~ msgid "Security Context"
-#~ msgstr "安全性內容"
-
-#~ msgid "The security context of the file."
-#~ msgstr "檔案的安全性內容。"
-
-#~ msgid "by _Name"
-#~ msgstr "以名稱(_N)"
-
-#~ msgid "by _Size"
-#~ msgstr "依大小(_S)"
-
-#~ msgid "by _Type"
-#~ msgstr "以檔案類型(_T)"
-
-#~ msgid "by Modification _Date"
-#~ msgstr "以修改日期(_D)"
-
-#~ msgid "by T_rash Time"
-#~ msgstr "以回收筒時刻(_R)"
-
-#~ msgid "Arran_ge Items"
-#~ msgstr "項目排列方式(_G)"
-
-#~ msgid "_Organize by Name"
-#~ msgstr "依名稱排序(_O)"
-
-#~ msgid "Go To:"
-#~ msgstr "前往："
-
-#~ msgid "SSH"
-#~ msgstr "SSH"
-
-#~ msgid "Public FTP"
-#~ msgstr "公共 FTP"
-
-#~ msgid "FTP (with login)"
-#~ msgstr "FTP (需登入)"
-
-#~ msgid "Windows share"
-#~ msgstr "Windows 分享"
-
-#~ msgid "WebDAV (HTTP)"
-#~ msgstr "WebDAV (HTTP)"
-
-#~ msgid "Secure WebDAV (HTTPS)"
-#~ msgstr "Secure WebDAV (HTTPS)"
-
-#~ msgid "Apple Filing Protocol (AFP)"
-#~ msgstr "Apple Filing Protocol (AFP)"
-
-#~ msgid "Connecting..."
-#~ msgstr "正在連線…"
-
-#~ msgid ""
-#~ "Can't load the supported server method list.\n"
-#~ "Please check your gvfs installation."
-#~ msgstr ""
-#~ "不能載入支援的伺服器方法清單。\n"
-#~ "請檢查您的 gvfs 安裝。"
-
-#~ msgid "The folder “%s” cannot be opened on “%s”."
-#~ msgstr "資料夾“%s”不能在“%s”上開啟。"
-
-#~ msgid "Try Again"
-#~ msgstr "再試一次"
-
-#~ msgid "Please verify your user details."
-#~ msgstr "請檢驗您的使用者詳細資料。"
-
-#~ msgid "Continue"
-#~ msgstr "繼續"
-
-#~ msgid "_Server:"
-#~ msgstr "伺服器(_S):"
-
-#~ msgid "_Port:"
-#~ msgstr "連接埠(_P):"
-
-#~ msgid "_Type:"
-#~ msgstr "類型(_T):"
-
-#~ msgid "Sh_are:"
-#~ msgstr "分享(_A):"
-
-#~ msgid "User Details"
-#~ msgstr "使用者詳細資料"
-
-#~ msgid "_Domain name:"
-#~ msgstr "網域名稱(_D):"
-
-#~ msgid "_User name:"
-#~ msgstr "使用者名稱(_U):"
-
-#~ msgid "Pass_word:"
-#~ msgstr "密碼(_W):"
-
-#~ msgid "_Remember this password"
-#~ msgstr "記住這個密碼(_R)"
-
-#~ msgid "Operation cancelled"
-#~ msgstr "操作程序已取消"
-
-#~ msgid "Free space: %s"
-#~ msgstr "可用空間：%s"
-
-#~ msgid "%s, Free space: %s"
-#~ msgstr "%s，可用空間：%s"
-
-#~ msgid "%s, %s"
-#~ msgstr "%s，%s"
-
-#~ msgid "%s%s, %s"
-#~ msgstr "%s%s，%s"
-
-#~ msgid "“%s” will be moved if you select the Paste command"
-#~ msgstr "選擇「貼上」指令則會移動“%s”"
-
-#~ msgid "“%s” will be copied if you select the Paste command"
-#~ msgstr "選擇「貼上」指令則會複製“%s”"
-
-#~ msgid "The %'d selected item will be moved if you select the Paste command"
-#~ msgid_plural ""
-#~ "The %'d selected items will be moved if you select the Paste command"
-#~ msgstr[0] "選取「貼上」指令則會移動 %'d 個已選的項目"
-
-#~ msgid "The %'d selected item will be copied if you select the Paste command"
-#~ msgid_plural ""
-#~ "The %'d selected items will be copied if you select the Paste command"
-#~ msgstr[0] "選取「貼上」指令則會複製 %'d 個已選的項目"
-
-#~ msgid "There is nothing on the clipboard to paste."
-#~ msgstr "剪貼簿中沒有內容可供貼上。"
-
-#~ msgid "Link _name:"
-#~ msgstr "連結名稱(_N):"
-
-#~ msgid "No templates installed"
-#~ msgstr "沒有安裝任何模板"
-
-#~ msgid "D_uplicate"
-#~ msgstr "複製(_U)"
-
-#~ msgid "Duplicate each selected item"
-#~ msgstr "複製所有選定的項目"
-
-#~ msgid "Connect To This Server"
-#~ msgstr "連接此伺服器"
-
-#~ msgid "Make a permanent connection to this server"
-#~ msgstr "永遠地連接到此伺服器"
-
-#~ msgid "_File"
-#~ msgstr "檔案(_F)"
-
-#~ msgid "_Edit"
-#~ msgstr "編輯(_E)"
-
-#~ msgid "_View"
-#~ msgstr "檢視(_V)"
-
-#~ msgid "_Go"
-#~ msgstr "前往(_G)"
-
-#~ msgid "_Tabs"
-#~ msgstr "分頁(_T)"
-
-#~ msgid "Sidebar"
-#~ msgstr "側邊欄"
-
-#~ msgid "Back history"
-#~ msgstr "上一頁紀錄"
-
-#~ msgid "Forward history"
-#~ msgstr "上一頁紀錄"
-
-#~ msgid "Icons"
-#~ msgstr "圖示"
-
-#~ msgid "Unable to mount location"
-#~ msgstr "無法掛載位置"
-
-#~ msgid "Unable to unmount location"
-#~ msgstr "無法卸載位置"
-
-#~ msgid "Unable to eject location"
-#~ msgstr "無法退出位置"
-
-#~ msgid "Octal Permissions"
-#~ msgstr "8 進位權限"
-
-#~ msgid "The permissions of the file, in octal notation."
-#~ msgstr "以 8 進位數字表示的檔案權限。"
-
-#~ msgid "Show other applications"
-#~ msgstr "顯示其他的應用程式"
-
-#~ msgid "Show advanced permissions in the file property dialog"
-#~ msgstr "在檔案屬性對話盒中顯示進階權限"
-
-#~ msgid ""
-#~ "If set to true, then Nautilus lets you edit and display file permissions "
-#~ "in a more unix-like way, accessing some more esoteric options."
-#~ msgstr ""
-#~ "如設定為‘true’，Nautilus 會讓您以較 unix 相似的形式修改及顯示檔案權限，存"
-#~ "取一些較難懂的選項。"
-
-#~ msgid "Edit Bookmarks"
-#~ msgstr "修改書籤"
-
-#~ msgid "_Read"
-#~ msgstr "讀取(_R)"
-
-#~ msgid "_Write"
-#~ msgstr "寫入(_W)"
-
-#~ msgid "E_xecute"
-#~ msgstr "執行(_X)"
-
-#~ msgid "Special flags:"
-#~ msgstr "特殊屬性："
-
-#~ msgid "Set _user ID"
-#~ msgstr "Set _user ID"
-
-#~ msgid "Set gro_up ID"
-#~ msgstr "Set gro_up ID"
-
-#~ msgid "_Sticky"
-#~ msgstr "_Sticky"
-
-#~ msgid "Folder Permissions:"
-#~ msgstr "資料夾權限："
-
-#~ msgid "File Permissions:"
-#~ msgstr "檔案權限："
-
-#~ msgid "Autorun Prompt"
-#~ msgstr "自動執行提示"
-
-#~ msgid ""
-#~ "Enables the classic Nautilus behavior, where all windows are browsers"
-#~ msgstr "啟用典型的 Nautilus 運作方式，那麼所有視窗都是瀏覽器"
-
-#~ msgid ""
-#~ "If set to true, then all Nautilus windows will be browser windows. This "
-#~ "is how Nautilus used to behave before version 2.6, and some people prefer "
-#~ "this behavior."
-#~ msgstr ""
-#~ "如設定為‘true’，那麼所有 Nautilus 視窗皆是瀏覽器視窗。這是 Nautilus 在 "
-#~ "2.6 版前的運作方式，有些人比較喜歡這種運作方式。"
-
-#~ msgid "When to show preview text in icons"
-#~ msgstr "何時會在圖示內顯示預覽文字"
-
-#~ msgid ""
-#~ "Speed tradeoff for when to show a preview of text file contents in the "
-#~ "file's icon. If set to \"always\" then always show previews, even if the "
-#~ "folder is on a remote server. If set to \"local-only\" then only show "
-#~ "previews for local file systems. If set to \"never\" then never bother to "
-#~ "read preview data."
-#~ msgstr ""
-#~ "有關檔案的圖示是否顯示文字檔預覽內容在速度方面的權衡。如果設定為“always”，"
-#~ "即使是遠端檔案仍然會顯示預覽圖示。如果設定為“local-only”則只會顯示本地檔案"
-#~ "系統的預覽圖示。如果設定為“never”則不會顯示預覽圖示。"
-
-#~ msgid "Error starting autorun program: %s"
-#~ msgstr "啟動自動執行程式時發生錯誤：%s"
-
-#~ msgid "Cannot find the autorun program"
-#~ msgstr "找不到自動執行的程式"
-
-#~ msgid "<big><b>Error autorunning software</b></big>"
-#~ msgstr "<big><b>自動執行軟體錯誤</b></big>"
-
-#~ msgid ""
-#~ "The software will run directly from the medium “%s”. You should never run "
-#~ "software that you don't trust.\n"
-#~ "\n"
-#~ "If in doubt, press Cancel."
-#~ msgstr ""
-#~ "此軟體將直接從媒體“%s”執行。若不信任此軟體請勿執行它。\n"
-#~ "\n"
-#~ "如果懷疑，請按「取消」。"
-
-#~ msgid "File Management Preferences"
-#~ msgstr "檔案管理偏好設定"
-
-#~ msgid "Open each _folder in its own window"
-#~ msgstr "分別以自己的視窗開啟每個資料夾(_F)"
-
-#~ msgid "Text Files"
-#~ msgstr "文字檔案"
-
-#~ msgid "Show te_xt in icons:"
-#~ msgstr "在圖示內顯示文字(_X):"
-
-#~ msgid "Other Previewable Files"
-#~ msgstr "其他可預覽的檔案"
-
-#~ msgid "_Rename..."
-#~ msgstr "重新命名(_R)…"
-
-#~ msgid "me"
-#~ msgstr "我"
-
-#~ msgid "The file \"%B\" cannot be moved to the trash."
-#~ msgstr "檔案“%B”不能移至回收筒。"
-
-#~ msgid "Nautilus could not create the required folder \"%s\"."
-#~ msgstr "Nautilus 無法建立所需的資料夾“%s”。"
-
-#~ msgid "Nautilus could not create the following required folders: %s."
-#~ msgstr "Nautilus 無法新增以下的資料夾：%s。"
-
-#~ msgid ""
-#~ "Before running Nautilus, please create these folders, or set permissions "
-#~ "such that Nautilus can create them."
-#~ msgstr ""
-#~ "執行 Nautilus 之前，請自行建立這些資料夾，或是設定正確的權限使 Nautilus 可"
-#~ "以建立這些資料夾。"
-
-#~ msgid "<b>Width:</b> %d pixel"
-#~ msgid_plural "<b>Width:</b> %d pixels"
-#~ msgstr[0] "<b>寬度：</b> %d 像素"
-
-#~ msgid "<b>Height:</b> %d pixel"
-#~ msgid_plural "<b>Height:</b> %d pixels"
-#~ msgstr[0] "<b>高度：</b> %d 像素"
-
-#~ msgid "loading..."
-#~ msgstr "載入中…"
-
-#~ msgid "Restore Selected Items"
-#~ msgstr "還原選取的項目"
-
-#~ msgid ""
-#~ "Choosing a script from the menu will run that script with any selected "
-#~ "items as input."
-#~ msgstr ""
-#~ "在選單中選取其中一個指令稿會以所有已選取的項目作為輸入資料來執行該指令稿。"
-
-#~ msgid ""
-#~ "All executable files in this folder will appear in the Scripts menu. "
-#~ "Choosing a script from the menu will run that script.\n"
-#~ "\n"
-#~ "When executed from a local folder, scripts will be passed the selected "
-#~ "file names. When executed from a remote folder (e.g. a folder showing web "
-#~ "or ftp content), scripts will be passed no parameters.\n"
-#~ "\n"
-#~ "In all cases, the following environment variables will be set by "
-#~ "Nautilus, which the scripts may use:\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected "
-#~ "files (only if local)\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_SELECTED_URIS: newline-delimited URIs for selected files\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_CURRENT_URI: URI for current location\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_WINDOW_GEOMETRY: position and size of current window\n"
-#~ "\n"
-#~ msgstr ""
-#~ "所有此資料夾的可執行檔都會在「命令稿」選單中出現。在選單中選取其中一個命令"
-#~ "稿就會執行那個命令稿。\n"
-#~ "\n"
-#~ "當在本機的資料夾中執行時，命令稿會以選取的檔案名稱作為參數。當在遠端的資料"
-#~ "夾中執行時（例如顯示網頁或 ftp 內容的資料夾），執行指令稿時不會使用任何參"
-#~ "數。\n"
-#~ "\n"
-#~ "在任何情況下，命令稿都可以使用以下由 Nautilus 設定的環境變數：\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_SELECTED_FILE_PATHS：已選取的檔案，以 newline 字元分隔（只"
-#~ "適用於本機檔案）\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_SELECTED_URIS：已選取的檔案的 URI，以 newline 字元分隔\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_CURRENT_URI：表示目前位置的 URI\n"
-#~ "\n"
-#~ "NAUTILUS_SCRIPT_WINDOW_GEOMETRY：目前視窗的位置及大小\n"
-#~ "\n"
-
-#~ msgid "Nautilus has no installed viewer capable of displaying the folder."
-#~ msgstr "Nautilus 沒有一個已安裝的檢示程式能顯示這資料夾"
-
-#~ msgid "Could not find \"%s\"."
-#~ msgstr "找不到「%s」。"
-
-#~ msgid "Nautilus cannot handle \"%s\" locations."
-#~ msgstr "Nautilus 無法處理「%s」的位置。"
-
-#~ msgid "Access was denied."
-#~ msgstr "存取被禁止。"
-
-#~ msgid "Could not display \"%s\", because the host could not be found."
-#~ msgstr "無法顯示「%s」，因為找不到主機。"
-
-#~ msgid ""
-#~ "Check that the spelling is correct and that your proxy settings are "
-#~ "correct."
-#~ msgstr "請檢查是否有錯字而且代理伺服程式設定是否正確。"
-
-#~ msgid ""
-#~ "Error: %s\n"
-#~ "Please select another viewer and try again."
-#~ msgstr ""
-#~ "錯誤：%s\n"
-#~ "請選擇另一種顯示模式並再嘗試。"
-
-#~ msgid "Last changed:"
-#~ msgstr "最後修改時間："
-
-#~ msgid "_Edit Bookmarks..."
-#~ msgstr "編輯書籤(_E)…"
-
-#~ msgid "Display a window that allows editing the bookmarks in this menu"
-#~ msgstr "顯示可修改書籤的視窗"
-
-#~ msgid "Unable to mount %s"
-#~ msgstr "無法掛載 %s"
-
-#~ msgid "SELinux context:"
-#~ msgstr "SELinux 安全性內容:"
-
-#~ msgid ""
-#~ "Do you want to remove any bookmarks with the non-existing location from "
-#~ "your list?"
-#~ msgstr "有些書籤可能記錄了已經不存在的位置。是否要刪除這類書籤？"
-
-#~ msgid "The location \"%s\" does not exist."
-#~ msgstr "位置“%s”不存在。"
-
-#~ msgid "Go to the location specified by this bookmark"
-#~ msgstr "前往該書籤指定的位置"
-
-#~ msgid "Date Accessed"
-#~ msgstr "最後存取日期"
-
-#~ msgid "today at 00:00:00 PM"
-#~ msgstr "今天凌晨 00:00:00"
-
-#~ msgid "today at %-I:%M:%S %p"
-#~ msgstr "今天%p %-I:%M:%S"
-
-#~ msgid "today at 00:00 PM"
-#~ msgstr "今天凌晨 00:00"
-
-#~ msgid "today at %-I:%M %p"
-#~ msgstr "今天%p %-I:%M"
-
-#~ msgid "today, 00:00 PM"
-#~ msgstr "今天凌晨 00:00"
-
-#~ msgid "today"
-#~ msgstr "今天"
-
-#~ msgid "yesterday at 00:00:00 PM"
-#~ msgstr "昨天凌晨 00:00:00"
-
-#~ msgid "yesterday at %-I:%M:%S %p"
-#~ msgstr "昨天%p %-I:%M:%S"
-
-#~ msgid "yesterday at 00:00 PM"
-#~ msgstr "昨天凌晨 00:00"
-
-#~ msgid "yesterday at %-I:%M %p"
-#~ msgstr "昨天%p %-I:%M"
-
-#~ msgid "yesterday, 00:00 PM"
-#~ msgstr "昨天凌晨 00:00"
-
-#~ msgid "yesterday, %-I:%M %p"
-#~ msgstr "昨天%p %-I:%M"
-
-#~ msgid "yesterday"
-#~ msgstr "昨天"
-
-#~ msgid "Wednesday, September 00 0000 at 00:00:00 PM"
-#~ msgstr "0000年00月00日(週三)於下午 00時00分00秒"
-
-#~ msgid "%A, %B %-d %Y at %-I:%M:%S %p"
-#~ msgstr "%Y年%m月%d日(%A) %p %I時%M分%S秒"
-
-#~ msgid "Mon, Oct 00 0000 at 00:00:00 PM"
-#~ msgstr "0000年00月00日(一) 下午 00:00:00"
-
-#~ msgid "Mon, Oct 00 0000 at 00:00 PM"
-#~ msgstr "0000年00月00日(一) 下午 00:00"
-
-#~ msgid "%a, %b %-d %Y at %-I:%M %p"
-#~ msgstr "%Y年%m月%d日(%a) %p %I:%M"
-
-#~ msgid "Oct 00 0000 at 00:00 PM"
-#~ msgstr "0000年00月00日下午 00:00"
-
-#~ msgid "%b %-d %Y at %-I:%M %p"
-#~ msgstr "%Y年%m月%d日%p %I:%M"
-
-#~ msgid "Oct 00 0000, 00:00 PM"
-#~ msgstr "0000年00月00日下午 00:00"
-
-#~ msgid "00/00/00, 00:00 PM"
-#~ msgstr "00/00/00 下午 00:00"
-
-#~ msgid "%m/%-d/%y, %-I:%M %p"
-#~ msgstr "%y/%m/%d %p %I:%M"
-
-#~ msgid "00/00/00"
-#~ msgstr "00/00/00"
-
-#~ msgid "%m/%d/%y"
-#~ msgstr "%y/%m/%d"
-
-#~ msgid "Edit"
-#~ msgstr "編輯"
-
-#~ msgid "Undo Edit"
-#~ msgstr "取消修改"
-
-#~ msgid "Undo the edit"
-#~ msgstr "取消此次修改"
-
-#~ msgid "Redo Edit"
-#~ msgstr "重新修改"
-
-#~ msgid "Redo the edit"
-#~ msgstr "重新進行此次修改"
-
-#~ msgid "All columns have same width"
-#~ msgstr "所有欄位使用相同寬度"
-
-#~ msgid "Computer icon visible on desktop"
-#~ msgstr "在桌面中顯示「電腦」圖示"
-
-#~ msgid "Date Format"
-#~ msgstr "日期格式"
-
-#~ msgid "Default compact view zoom level"
-#~ msgstr "預設的精簡顯示縮放倍率"
-
-#~ msgid "Default zoom level used by the compact view."
-#~ msgstr "精簡顯示模式使用的預設縮放倍率。"
-
-#~ msgid "Desktop computer icon name"
-#~ msgstr "桌面中「電腦」圖示的名稱"
-
-#~ msgid ""
-#~ "If set to true, Nautilus will only show folders in the tree side pane. "
-#~ "Otherwise it will show both folders and files."
-#~ msgstr ""
-#~ "如設定為‘true’，Nautilus 只會在目錄樹側面窗格中顯示目錄，不然會同時顯示目"
-#~ "錄和檔案。"
-
-#~ msgid ""
-#~ "If set to true, newly opened windows will have the status bar visible."
-#~ msgstr "如設定為‘true’，新開啟的視窗會顯示狀態列。"
-
-#~ msgid "If set to true, newly opened windows will have toolbars visible."
-#~ msgstr "如設定為‘true’，新開啟的視窗會顯示工具列。"
-
-#~ msgid ""
-#~ "If set to true, then Nautilus will use the user's home folder as the "
-#~ "desktop. If it is false, then it will use ~/Desktop as the desktop."
-#~ msgstr ""
-#~ "如設定為‘true’，Nautilus 會以使用者的個人資料夾作為桌面，如設定為‘false’，"
-#~ "則會使用 ~/Desktop 作為桌面。"
-
-#~ msgid ""
-#~ "If this is set to true, an icon linking to the computer location will be "
-#~ "put on the desktop."
-#~ msgstr "如設定為‘true’，則桌面上會顯示一個連結到電腦位置的圖示。"
-
-#~ msgid ""
-#~ "If this preference is set, all columns in the compact view have the same "
-#~ "width. Otherwise, the width of each column is determined seperately."
-#~ msgstr ""
-#~ "如果此項偏好設定生效，在精簡檢視中所有欄位都會有相同的寬度。否則每個欄位的"
-#~ "寬度都是個別決定的。"
-
-#~ msgid ""
-#~ "If true, labels will be placed beside icons rather than underneath them."
-#~ msgstr "如設定為‘true’，圖示的標籤會放在圖示旁邊而不是在圖示下。"
-
-#~ msgid "Nautilus uses the users home folder as the desktop"
-#~ msgstr "Nautilus 會使用使用者的「個人資料夾」作為桌面"
-
-#~ msgid "Only show folders in the tree side pane"
-#~ msgstr "只在目錄樹側面窗格中顯示資料夾"
-
-#~ msgid "Put labels beside icons"
-#~ msgstr "圖示標籤放在圖示旁邊"
-
-#~ msgid "Show status bar in new windows"
-#~ msgstr "在新的視窗中顯示狀態列"
-
-#~ msgid "Show toolbar in new windows"
-#~ msgstr "在新的視窗中顯示工具列"
-
-#~ msgid "Side pane view"
-#~ msgstr "側面窗格顯示模式"
-
-#~ msgid ""
-#~ "The format of file dates. Possible values are \"locale\", \"iso\", and "
-#~ "\"informal\"."
-#~ msgstr ""
-#~ "日期的格式。可接受的值為“locale”（本地）、“iso”及“informal”（非正式）。"
-
-#~ msgid "The side pane view to show in newly opened windows."
-#~ msgstr "在新的視窗中，側面窗格預設的顯示模式。"
-
-#~ msgid ""
-#~ "This name can be set if you want a custom name for the computer icon on "
-#~ "the desktop."
-#~ msgstr "如果您想為桌面上的「電腦」圖示自訂名稱，可以在這裡設定。"
-
-#~ msgid "<b>_Bookmarks</b>"
-#~ msgstr "<b>書籤(_B)</b>"
-
-#~ msgid "<b>_Location</b>"
-#~ msgstr "<b>位置(_L)</b>"
-
-#~ msgid "<b>_Name</b>"
-#~ msgstr "<b>名稱(_N)</b>"
-
-#~ msgid "<b>Behavior</b>"
-#~ msgstr "<b>運作方式</b>"
-
-#~ msgid "<b>Compact View Defaults</b>"
-#~ msgstr "<b>精簡顯示預設值</b>"
-
-#~ msgid "<b>Date</b>"
-#~ msgstr "<b>日期</b>"
-
-#~ msgid "<b>Folders</b>"
-#~ msgstr "<b>資料夾</b>"
-
-#~ msgid "<b>List Columns</b>"
-#~ msgstr "<b>清單欄位</b>"
-
-#~ msgid "<b>Text Files</b>"
-#~ msgstr "<b>文字檔</b>"
-
-#~ msgid "<b>Trash</b>"
-#~ msgstr "<b>回收筒</b>"
-
-#~ msgid "<b>Tree View Defaults</b>"
-#~ msgstr "<b>預設為目錄樹顯示</b>"
-
-#~ msgid "A_ll columns have the same width"
-#~ msgstr "所有欄位寬度相等(_L)"
-
-#~ msgid "Compact View"
-#~ msgstr "精簡檢視"
-
-#~ msgid "Show _only folders"
-#~ msgstr "只顯示資料夾(_O)"
-
-#~ msgid "_Default zoom level:"
-#~ msgstr "預設縮放程度(_D):"
-
-#~ msgid "_Text beside icons"
-#~ msgstr "圖示旁顯示文字(_T)"
-
-#~ msgid "_Compact"
-#~ msgstr "精簡(_C)"
-
-#~ msgid "The compact view encountered an error."
-#~ msgstr "精簡顯示模式發生錯誤。"
-
-#~ msgid "The compact view encountered an error while starting up."
-#~ msgstr "啟動精簡顯示模式時發生錯誤。"
-
-#~ msgid "Display this location with the compact view."
-#~ msgstr "以精簡顯示模式來顯示本位置。"
-
-#~ msgid "File System"
-#~ msgstr "檔案系統"
-
-#~ msgid "Select folder to search in"
-#~ msgstr "選取在哪個資料夾中搜尋"
-
-#~ msgid "Search Folder"
-#~ msgstr "搜尋資料夾"
-
-#~ msgid "Edit the saved search"
-#~ msgstr "編輯已儲存的搜尋"
-
-#~ msgid "Go"
-#~ msgstr "前往"
-
-#~ msgid "Reload"
-#~ msgstr "重新載入"
-
-#~ msgid "Perform or update the search"
-#~ msgstr "進行或更新搜尋"
-
-#~ msgid "_Search for:"
-#~ msgstr "搜尋字串(_S):"
-
-#~ msgid "Search results"
-#~ msgstr "搜尋結果"
-
-#~ msgid "Search:"
-#~ msgstr "搜尋:"
-
-#~ msgid "Network Neighbourhood"
-#~ msgstr "網路上的芳鄰"
-
-#~ msgid "Cop_y to"
-#~ msgstr "複製到(_Y)"
-
-#~ msgid "M_ove to"
-#~ msgstr "移動到(_O)"
-
-#~ msgid "_Other pane"
-#~ msgstr "其他窗格(_O)"
-
-#~ msgid "Copy the current selection to the other pane in the window"
-#~ msgstr "將目前的選擇區域複製到視窗中的其他窗格"
-
-#~ msgid "Move the current selection to the other pane in the window"
-#~ msgstr "將目前的選擇區域移動到視窗中的其他窗格"
-
-#~ msgid "Copy the current selection to the home folder"
-#~ msgstr "將目前的選擇區域複製到家目錄"
-
-#~ msgid "Move the current selection to the home folder"
-#~ msgstr "將目前的選擇區域移動到家目錄"
-
-#~ msgid "_Desktop"
-#~ msgstr "桌面(_D)"
-
-#~ msgid "Copy the current selection to the desktop"
-#~ msgstr "將目前的選擇區域複製到桌面"
-
-#~ msgid "Move the current selection to the desktop"
-#~ msgstr "將目前的選擇區域移動到桌面"
-
-#~ msgid "%s - File Browser"
-#~ msgstr "%s - 檔案瀏覽器"
-
-#~ msgid "Nautilus"
-#~ msgstr "Nautilus"
-
-#~ msgid ""
-#~ "Nautilus lets you organize files and folders, both on your computer and "
-#~ "online."
-#~ msgstr "Nautilus 讓您組織檔案和資料夾，不管是在您的電腦或是在網路上。"
-
-#~ msgid "Nautilus Web Site"
-#~ msgstr "Nautilus 網站"
-
-#~ msgid "Undo the last text change"
-#~ msgstr "復原上一次文字修改"
-
-#~ msgid "_Computer"
-#~ msgstr "電腦(_C)"
-
-#~ msgid ""
-#~ "Browse all local and remote disks and folders accessible from this "
-#~ "computer"
-#~ msgstr "從本電腦瀏覽所有本機及遠端磁碟及資料夾"
-
-#~ msgid "_Network"
-#~ msgstr "網路(_N)"
-
-#~ msgid "Browse bookmarked and local network locations"
-#~ msgstr "瀏覽已記錄及本地網路的位置"
-
-#~ msgid "T_emplates"
-#~ msgstr "模板(_E)"
-
-#~ msgid "Open your personal templates folder"
-#~ msgstr "開啟個人模板資料夾"
-
-#~ msgid "_Trash"
-#~ msgstr "回收筒(_T)"
-
-#~ msgid "Open your personal trash folder"
-#~ msgstr "開啟個人回收筒資料夾"
-
-#~ msgid "S_witch to Other Pane"
-#~ msgstr "切換至其他窗格(_W)"
-
-#~ msgid "Move focus to the other pane in a split view window"
-#~ msgstr "將焦移至分離檢視視窗的其他窗格中"
-
-#~ msgid "Sa_me Location as Other Pane"
-#~ msgstr "與其他窗格同樣的位置(_M)"
-
-#~ msgid "Go to the same location as in the extra pane"
-#~ msgstr "前往與額外窗格中同樣的位置"
-
-#~ msgid "_Main Toolbar"
-#~ msgstr "主工具列(_M)"
-
-#~ msgid "Change the visibility of this window's main toolbar"
-#~ msgstr "顯示或隱藏本視窗的主工具列"
-
-#~ msgid "St_atusbar"
-#~ msgstr "狀態列(_A)"
-
-#~ msgid "Change the visibility of this window's statusbar"
-#~ msgstr "顯示或隱藏本視窗的狀態列"
-
-#~ msgid "E_xtra Pane"
-#~ msgstr "額外窗格(_X)"
-
-#~ msgid "Open an extra folder view side-by-side"
-#~ msgstr "開啟額外資料夾檢視"
-
-#~ msgid "Select Places as the default sidebar"
-#~ msgstr "選擇位置做為預設的側邊欄"
-
-#~ msgid "Tree"
-#~ msgstr "目錄樹"
-
-#~ msgid "Select Tree as the default sidebar"
-#~ msgstr "選擇樹狀圖做為預設的側邊欄"
-
-#~ msgid "These files are on an Audio CD."
-#~ msgstr "這些檔案位於音樂 CD 上。"
-
-#~ msgid "These files are on an Audio DVD."
-#~ msgstr "這些檔案位於音樂 DVD 上。"
-
-#~ msgid "These files are on a Video DVD."
-#~ msgstr "這些檔案位於影片 DVD 上。"
-
-#~ msgid "These files are on a Video CD."
-#~ msgstr "這些檔案位於影片 CD 上。"
-
-#~ msgid "These files are on a Super Video CD."
-#~ msgstr "這些檔案位於 SVCD 上。"
-
-#~ msgid "These files are on a Photo CD."
-#~ msgstr "這些檔案位於相片 CD 上。"
-
-#~ msgid "These files are on a Picture CD."
-#~ msgstr "這些檔案位於照片 CD 上。"
-
-#~ msgid "These files are on a digital audio player."
-#~ msgstr "這些檔案位於數位音樂播放機上。"
-
-#~ msgid "The media has been detected as \"%s\"."
-#~ msgstr "該媒體已偵測為「%s」。"
-
-#~ msgid "Open %s"
-#~ msgstr "開啟 %s"
