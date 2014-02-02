@@ -570,6 +570,18 @@ showing_trash_directory (NemoView *view)
 }
 
 static gboolean
+showing_network_directory (NemoView *view)
+{
+	NemoFile *file;
+
+	file = nemo_view_get_directory_as_file (view);
+	if (file != NULL) {
+		return nemo_file_is_in_network (file);
+	}
+	return FALSE;
+}
+
+static gboolean
 showing_recent_directory (NemoView *view)
 {
 	NemoFile *file;
@@ -8431,7 +8443,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* name, stock id, label */  { "New Documents", "document-new", N_("New _Document") },
   /* name, stock id, label */  { "Open With", NULL, N_("Open Wit_h"),
 				 NULL, N_("Choose a program with which to open the selected item") },
-  /* name, stock id */         { "Properties", GTK_STOCK_PROPERTIES,
+  /* name, stock id */         { NEMO_ACTION_PROPERTIES, GTK_STOCK_PROPERTIES,
   /* label, accelerator */       N_("P_roperties"), "<alt>Return",
   /* tooltip */                  N_("View or modify the properties of each selected item"),
 				 G_CALLBACK (action_properties_callback) },
@@ -8701,7 +8713,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Detect media in the selected drive"),
 				 G_CALLBACK (action_location_detect_media_callback) },
 
-  /* name, stock id */         { "LocationProperties", GTK_STOCK_PROPERTIES,
+  /* name, stock id */         { NEMO_ACTION_LOCATION_PROPERTIES, GTK_STOCK_PROPERTIES,
   /* label, accelerator */       N_("P_roperties"), NULL,
   /* tooltip */                  N_("View or modify the properties of this folder"),
 				 G_CALLBACK (action_location_properties_callback) },
@@ -10097,13 +10109,15 @@ real_update_menus (NemoView *view)
 			      	"Ma_ke Links",
 				selection_count),
 		      NULL);
-	
-	show_properties = (!NEMO_IS_DESKTOP_CANVAS_VIEW (view) || selection_count > 0);
+
+	show_properties = !showing_network_directory (view)
+		&& (!NEMO_IS_DESKTOP_CANVAS_VIEW (view) || selection_count > 0);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PROPERTIES);
 
 	gtk_action_set_sensitive (action, show_properties);
+	gtk_action_set_visible (action, show_properties);
 
 	if (selection_count == 0) {
 		gtk_action_set_tooltip (action, _("View or modify the properties of the open folder"));
@@ -10111,12 +10125,11 @@ real_update_menus (NemoView *view)
 		gtk_action_set_tooltip (action, _("View or modify the properties of each selected item"));
 	}
 
-	gtk_action_set_visible (action, show_properties);
-
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PROPERTIES_ACCEL);
 
 	gtk_action_set_sensitive (action, show_properties);
+	gtk_action_set_visible (action, show_properties);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_EMPTY_TRASH);

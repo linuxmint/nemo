@@ -365,13 +365,13 @@ application_selected_cb (GtkAppChooserWidget *widget,
 	GAppInfo *default_app;
 
 	default_app = g_app_info_get_default_for_type (chooser->details->content_type, FALSE);
-	gtk_widget_set_sensitive (chooser->details->set_as_default_button,
-				  !g_app_info_equal (info, default_app));
-
+	if (default_app != NULL) {
+		gtk_widget_set_sensitive (chooser->details->set_as_default_button,
+					  !g_app_info_equal (info, default_app));
+		g_object_unref (default_app);
+	}
 	gtk_widget_set_sensitive (chooser->details->add_button,
 				  app_info_can_add (info, chooser->details->content_type));
-
-	g_object_unref (default_app);
 }
 
 static void

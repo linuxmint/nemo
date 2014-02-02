@@ -213,6 +213,7 @@ gboolean                nemo_file_is_in_search 			(NemoFile			*file);
 gboolean                nemo_file_is_in_trash                       (NemoFile                   *file);
 gboolean                nemo_file_is_in_recent                      (NemoFile                   *file);
 gboolean                nemo_file_is_in_desktop                     (NemoFile                   *file);
+gboolean                nemo_file_is_in_network                     (NemoFile                   *file);
 gboolean		nemo_file_is_home				(NemoFile                   *file);
 gboolean                nemo_file_is_desktop_directory              (NemoFile                   *file);
 GError *                nemo_file_get_file_info_error               (NemoFile                   *file);
