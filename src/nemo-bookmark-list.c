@@ -336,15 +336,9 @@ nemo_bookmark_list_move_item (NemoBookmarkList *bookmarks,
 	bookmarks->list = g_list_remove_link (bookmarks->list,
 					      bookmark_item);
 
-	if (index < destination) {
-		bookmarks->list = g_list_insert (bookmarks->list,
-						 bookmark_item->data,
-						 destination - 1);
-	} else {
-		bookmarks->list = g_list_insert (bookmarks->list,
-						 bookmark_item->data,
-						 destination);
-	}
+	bookmarks->list = g_list_insert (bookmarks->list,
+					 bookmark_item->data,
+					 destination);
 
 	nemo_bookmark_list_save_file (bookmarks);
 }

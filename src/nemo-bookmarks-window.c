@@ -53,7 +53,8 @@ static int                   selection_changed_id = 0;
 static GtkWidget	    *name_field = NULL;
 static int		     name_field_changed_signal_id;
 static GtkWidget	    *remove_button = NULL;
-static GtkWidget            *jump_button = NULL;
+static GtkWidget	    *up_button = NULL;
+static GtkWidget	    *down_button = NULL;
 static gboolean		     text_changed = FALSE;
 static gboolean		     name_text_changed = FALSE;
 static GtkWidget	    *uri_field = NULL;
@@ -121,39 +122,6 @@ get_selected_bookmark (void)
 	return nemo_bookmark_list_item_at(bookmarks, get_selected_row ());
 }
 
-static void
-nemo_bookmarks_window_response_cb (GtkDialog *dialog,
-				       int response_id,
-				       gpointer callback_data)
-{
-	if (response_id == GTK_RESPONSE_HELP) {
-		GError *error = NULL;
-
-		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
-			      "help:gnome-help/nemo-bookmarks-edit",
-			      gtk_get_current_event_time (), &error);
-
-		if (error) {
-			GtkWidget *err_dialog;
-			err_dialog = gtk_message_dialog_new (GTK_WINDOW (dialog),
-							     GTK_DIALOG_DESTROY_WITH_PARENT,
-							     GTK_MESSAGE_ERROR,
-							     GTK_BUTTONS_OK,
-							     _("There was an error displaying help: \n%s"),
-							     error->message);
-
-			g_signal_connect (G_OBJECT (err_dialog),
-					  "response", G_CALLBACK (gtk_widget_destroy),
-					  NULL);
-			gtk_window_set_resizable (GTK_WINDOW (err_dialog), FALSE);
-			gtk_widget_show (err_dialog);
-			g_error_free (error);
-		}
-	} else if (response_id == GTK_RESPONSE_CLOSE) {
-		gtk_widget_destroy (GTK_WIDGET (dialog));
-        }
-}
-
 static int
 nemo_bookmarks_window_key_press_event_cb (GtkWindow *window, 
 					      GdkEventKey *event, 
@@ -192,6 +160,27 @@ setup_empty_list (void)
 }
 
 static void
+update_button_sensitivity (void)
+{
+	NemoBookmark *selected;
+	int n_active;
+	int index = -1;
+
+	selected = get_selected_bookmark ();
+	n_active = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (bookmark_list_store), NULL);
+	if (selected != NULL) {
+		index = get_selected_row ();
+	}
+
+	/* Set the sensitivity of widgets that require a selection */
+	gtk_widget_set_sensitive (remove_button, index >= 0 && n_active > 1);
+	gtk_widget_set_sensitive (up_button, index > 0);
+	gtk_widget_set_sensitive (down_button, index >= 0 && index < n_active - 1);
+	gtk_widget_set_sensitive (name_field, selected != NULL);
+	gtk_widget_set_sensitive (uri_field, selected != NULL);
+}
+
+static void
 on_selection_changed (GtkTreeSelection *treeselection,
 		      gpointer user_data)
 {
@@ -212,12 +201,8 @@ on_selection_changed (GtkTreeSelection *treeselection,
 
 		g_object_unref (location);
 	}
-	
-	/* Set the sensitivity of widgets that require a selection */
-	gtk_widget_set_sensitive (remove_button, selected != NULL);
-        gtk_widget_set_sensitive (jump_button, selected != NULL);
-	gtk_widget_set_sensitive (name_field, selected != NULL);
-	gtk_widget_set_sensitive (uri_field, selected != NULL);
+
+	update_button_sensitivity ();
 
 	g_signal_handler_block (name_field, name_field_changed_signal_id);
 	nemo_entry_set_text (NEMO_ENTRY (name_field),
@@ -417,13 +402,6 @@ open_selected_bookmark (NemoWindow *window)
 }
 
 static void
-on_jump_button_clicked (GtkButton *button,
-                        gpointer   user_data)
-{
-	open_selected_bookmark (user_data);
-}
-
-static void
 bookmarks_delete_bookmark (void)
 {
 	GtkTreeIter iter;
@@ -466,6 +444,33 @@ on_remove_button_clicked (GtkButton *button,
         bookmarks_delete_bookmark ();
 }
 
+static void
+on_up_button_clicked (GtkButton *button,
+		      gpointer   user_data)
+{
+	guint row;
+	GtkTreeIter iter;
+
+	row = get_selected_row ();
+	nemo_bookmark_list_move_item (bookmarks, row, row - 1);
+	gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (bookmark_list_store),
+				       &iter, NULL, row - 1);
+	gtk_tree_selection_select_iter (bookmark_selection, &iter);
+}
+
+static void
+on_down_button_clicked (GtkButton *button,
+			gpointer   user_data)
+{
+	guint row;
+	GtkTreeIter iter;
+
+	row = get_selected_row ();
+	nemo_bookmark_list_move_item (bookmarks, row, row + 1);
+	gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (bookmark_list_store),
+				       &iter, NULL, row + 1);
+	gtk_tree_selection_select_iter (bookmark_selection, &iter);
+}
 
 /* This is a bit of a kludge to get DnD to work. We check if the row in the
    GtkListStore matches the one in the bookmark list. If it doesn't, we assume
@@ -692,7 +697,7 @@ nemo_bookmarks_window_new (NemoWindow *parent_window,
 
 	builder = gtk_builder_new ();
 	if (!gtk_builder_add_from_resource (builder,
-					    "/org/nemo/nemo-bookmarks-window.ui",
+					    "/org/nemo/nemo-bookmarks-window.glade",
 					    NULL)) {
 		return NULL;
 	}
@@ -709,12 +714,11 @@ nemo_bookmarks_window_new (NemoWindow *parent_window,
 
 	g_signal_connect (window, "key-press-event",
 			  G_CALLBACK (nemo_bookmarks_window_key_press_event_cb), NULL);
-	g_signal_connect (window, "response",
-			  G_CALLBACK (nemo_bookmarks_window_response_cb), NULL);
 
 	bookmark_list_widget = GTK_TREE_VIEW (gtk_builder_get_object (builder, "bookmark_tree_view"));
-	remove_button = GTK_WIDGET (gtk_builder_get_object (builder, "bookmark_delete_button"));
-	jump_button = GTK_WIDGET (gtk_builder_get_object (builder, "bookmark_jump_button"));
+	remove_button = GTK_WIDGET (gtk_builder_get_object (builder, "bookmark_remove_button"));
+	up_button = GTK_WIDGET (gtk_builder_get_object (builder, "bookmark_up_button"));
+	down_button = GTK_WIDGET (gtk_builder_get_object (builder, "bookmark_down_button"));
 
 	rend = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (rend,
@@ -814,8 +818,10 @@ nemo_bookmarks_window_new (NemoWindow *parent_window,
 			  G_CALLBACK (name_or_uri_field_activate), NULL);
 	g_signal_connect (remove_button, "clicked",
 			  G_CALLBACK (on_remove_button_clicked), NULL);
-	g_signal_connect (jump_button, "clicked",
-			  G_CALLBACK (on_jump_button_clicked), parent_window);
+	g_signal_connect (up_button, "clicked",
+			  G_CALLBACK (on_up_button_clicked), NULL);
+	g_signal_connect (down_button, "clicked",
+			  G_CALLBACK (on_down_button_clicked), NULL);
 
 	gtk_tree_selection_set_mode (bookmark_selection, GTK_SELECTION_BROWSE);
 	
