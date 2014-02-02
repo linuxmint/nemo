@@ -1640,8 +1640,7 @@ activation_mount_not_mounted_callback (GObject *source_object,
 		    (error->code != G_IO_ERROR_CANCELLED &&
 		     error->code != G_IO_ERROR_FAILED_HANDLED &&
 		     error->code != G_IO_ERROR_ALREADY_MOUNTED)) {
-			eel_show_error_dialog (_("Unable to mount location"),
-					       error->message, parameters->parent_window);
+			eel_show_error_dialog (_("Unable to mount location"), error->message, parameters->parent_window);
 		}
 
 		if (error->domain != G_IO_ERROR ||
