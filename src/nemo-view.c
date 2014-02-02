@@ -7667,6 +7667,10 @@ file_mount_callback (NemoFile  *file,
 		     GError        *error,
 		     gpointer       callback_data)
 {
+	NemoView *view;
+
+	view = NEMO_VIEW (callback_data);
+
 	if (error != NULL &&
 	    (error->domain != G_IO_ERROR ||
 	     (error->code != G_IO_ERROR_CANCELLED &&
@@ -7674,10 +7678,10 @@ file_mount_callback (NemoFile  *file,
 	      error->code != G_IO_ERROR_ALREADY_MOUNTED))) {
 		char *text;
 		char *name;
-		name = nautilus_file_get_display_name (file);
+		name = nemo_file_get_display_name (file);
 		/* Translators: %s is a file name formatted for display */
-		text = g_strdup_printf (_("Unable to mount “%s”"), name);
-		eel_show_error_dialog (text, error->message, NULL);
+		text = g_strdup_printf (_("Unable to access “%s”"), name);
+		eel_show_error_dialog (text, error->message, GTK_WINDOW (view->details->window));
 		g_free (text);
 		g_free (name);
 	}
@@ -7700,10 +7704,10 @@ file_unmount_callback (NemoFile  *file,
 	      error->code != G_IO_ERROR_FAILED_HANDLED))) {
 		char *text;
 		char *name;
-		name = nautilus_file_get_display_name (file);
+		name = nemo_file_get_display_name (file);
 		/* Translators: %s is a file name formatted for display */
-		text = g_strdup_printf (_("Unable to unmount “%s”"), name);
-		eel_show_error_dialog (text, error->message, NULL);
+		text = g_strdup_printf (_("Unable to remove “%s”"), name);
+		eel_show_error_dialog (text, error->message, GTK_WINDOW (view->details->window));
 		g_free (text);
 		g_free (name);
 	}
@@ -7726,10 +7730,10 @@ file_eject_callback (NemoFile  *file,
 	      error->code != G_IO_ERROR_FAILED_HANDLED))) {
 		char *text;
 		char *name;
-		name = nautilus_file_get_display_name (file);
+		name = nemo_file_get_display_name (file);
 		/* Translators: %s is a file name formatted for display */
 		text = g_strdup_printf (_("Unable to eject “%s”"), name);
-		eel_show_error_dialog (text, error->message, NULL);
+		eel_show_error_dialog (text, error->message, GTK_WINDOW (view->details->window));
 		g_free (text);
 		g_free (name);
 	}
@@ -7741,12 +7745,16 @@ file_stop_callback (NemoFile  *file,
 		    GError        *error,
 		    gpointer       callback_data)
 {
+	NemoView *view;
+
+	view = NEMO_VIEW (callback_data);
+
 	if (error != NULL &&
 	    (error->domain != G_IO_ERROR ||
 	     (error->code != G_IO_ERROR_CANCELLED &&
 	      error->code != G_IO_ERROR_FAILED_HANDLED))) {
 		eel_show_error_dialog (_("Unable to stop drive"),
-				       error->message, NULL);
+				       error->message, GTK_WINDOW (view->details->window));
 	}
 }
 
@@ -7832,6 +7840,10 @@ file_start_callback (NemoFile  *file,
 		     GError        *error,
 		     gpointer       callback_data)
 {
+	NemoView *view;
+
+	view = NEMO_VIEW (callback_data);
+
 	if (error != NULL &&
 	    (error->domain != G_IO_ERROR ||
 	     (error->code != G_IO_ERROR_CANCELLED &&
@@ -7839,10 +7851,10 @@ file_start_callback (NemoFile  *file,
 	      error->code != G_IO_ERROR_ALREADY_MOUNTED))) {
 		char *text;
 		char *name;
-		name = nautilus_file_get_display_name (file);
+		name = nemo_file_get_display_name (file);
 		/* Translators: %s is a file name formatted for display */
 		text = g_strdup_printf (_("Unable to start “%s”"), name);
-		eel_show_error_dialog (text, error->message, NULL);
+		eel_show_error_dialog (text, error->message, GTK_WINDOW (view->details->window));
 		g_free (text);
 		g_free (name);
 	}
@@ -7857,7 +7869,7 @@ action_start_volume_callback (GtkAction *action,
 	NemoView *view;
 	GMountOperation *mount_op;
 
-        view = NEMO_VIEW (data);
+	view = NEMO_VIEW (data);
 
 	selection = nemo_view_get_selection (view);
 	for (l = selection; l != NULL; l = l->next) {
@@ -7866,7 +7878,7 @@ action_start_volume_callback (GtkAction *action,
 		if (nemo_file_can_start (file) || nemo_file_can_start_degraded (file)) {
 			mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
 			nemo_file_start (file, mount_op, NULL,
-					     file_start_callback, NULL);
+					     file_start_callback, view);
 			g_object_unref (mount_op);
 		}
 	}
@@ -7891,7 +7903,7 @@ action_stop_volume_callback (GtkAction *action,
 			GMountOperation *mount_op;
 			mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
 			nemo_file_stop (file, mount_op, NULL,
-					    file_stop_callback, NULL);
+					    file_stop_callback, view);
 			g_object_unref (mount_op);
 		}
 	}
@@ -7936,7 +7948,7 @@ action_self_mount_volume_callback (GtkAction *action,
 
 	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
 	g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
-	nemo_file_mount (file, mount_op, NULL, file_mount_callback, NULL);
+	nemo_file_mount (file, mount_op, NULL, file_mount_callback, view);
 	g_object_unref (mount_op);
 }
 
@@ -7996,7 +8008,7 @@ action_self_start_volume_callback (GtkAction *action,
 	}
 
 	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
-	nemo_file_start (file, mount_op, NULL, file_start_callback, NULL);
+	nemo_file_start (file, mount_op, NULL, file_start_callback, view);
 	g_object_unref (mount_op);
 }
 
@@ -8017,7 +8029,7 @@ action_self_stop_volume_callback (GtkAction *action,
 
 	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
 	nemo_file_stop (file, mount_op, NULL,
-			    file_stop_callback, NULL);
+			    file_stop_callback, view);
 	g_object_unref (mount_op);
 }
 
@@ -8055,7 +8067,7 @@ action_location_mount_volume_callback (GtkAction *action,
 
 	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
 	g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
-	nemo_file_mount (file, mount_op, NULL, file_mount_callback, NULL);
+	nemo_file_mount (file, mount_op, NULL, file_mount_callback, view);
 	g_object_unref (mount_op);
 }
 
@@ -8117,7 +8129,7 @@ action_location_start_volume_callback (GtkAction *action,
 	}
 
 	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
-	nemo_file_start (file, mount_op, NULL, file_start_callback, NULL);
+	nemo_file_start (file, mount_op, NULL, file_start_callback, view);
 	g_object_unref (mount_op);
 }
 
@@ -8138,7 +8150,7 @@ action_location_stop_volume_callback (GtkAction *action,
 
 	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
 	nemo_file_stop (file, mount_op, NULL,
-			    file_stop_callback, NULL);
+			    file_stop_callback, view);
 	g_object_unref (mount_op);
 }
 
