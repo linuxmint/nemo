@@ -7232,6 +7232,23 @@ nemo_file_is_in_recent (NemoFile *file)
 	return nemo_directory_is_in_recent (file->details->directory);
 }
 
+/**
+ * nemo_file_is_in_network
+ * 
+ * Check if this file is a file in Network.
+ * @file: NemoFile representing the file in question.
+ * 
+ * Returns: TRUE if @file is in Network.
+ * 
+ **/
+gboolean
+nemo_file_is_in_network (NemoFile *file)
+{
+	g_assert (NEMO_IS_FILE (file));
+
+	return nemo_directory_is_in_network (file->details->directory);
+}
+
 GError *
 nemo_file_get_file_info_error (NemoFile *file)
 {
