@@ -7917,8 +7917,14 @@ file_mount_callback (NemoFile  *file,
 	     (error->code != G_IO_ERROR_CANCELLED &&
 	      error->code != G_IO_ERROR_FAILED_HANDLED &&
 	      error->code != G_IO_ERROR_ALREADY_MOUNTED))) {
-		eel_show_error_dialog (_("Unable to mount location"),
-				       error->message, NULL);
+		char *text;
+		char *name;
+		name = nautilus_file_get_display_name (file);
+		/* Translators: %s is a file name formatted for display */
+		text = g_strdup_printf (_("Unable to mount “%s”"), name);
+		eel_show_error_dialog (text, error->message, NULL);
+		g_free (text);
+		g_free (name);
 	}
 }
 
@@ -7937,8 +7943,14 @@ file_unmount_callback (NemoFile  *file,
 	    (error->domain != G_IO_ERROR ||
 	     (error->code != G_IO_ERROR_CANCELLED &&
 	      error->code != G_IO_ERROR_FAILED_HANDLED))) {
-		eel_show_error_dialog (_("Unable to unmount location"),
-				       error->message, NULL);
+		char *text;
+		char *name;
+		name = nautilus_file_get_display_name (file);
+		/* Translators: %s is a file name formatted for display */
+		text = g_strdup_printf (_("Unable to unmount “%s”"), name);
+		eel_show_error_dialog (text, error->message, NULL);
+		g_free (text);
+		g_free (name);
 	}
 }
 
@@ -7957,8 +7969,14 @@ file_eject_callback (NemoFile  *file,
 	    (error->domain != G_IO_ERROR ||
 	     (error->code != G_IO_ERROR_CANCELLED &&
 	      error->code != G_IO_ERROR_FAILED_HANDLED))) {
-		eel_show_error_dialog (_("Unable to eject location"),
-				       error->message, NULL);
+		char *text;
+		char *name;
+		name = nautilus_file_get_display_name (file);
+		/* Translators: %s is a file name formatted for display */
+		text = g_strdup_printf (_("Unable to eject “%s”"), name);
+		eel_show_error_dialog (text, error->message, NULL);
+		g_free (text);
+		g_free (name);
 	}
 }
 
@@ -8064,8 +8082,14 @@ file_start_callback (NemoFile  *file,
 	     (error->code != G_IO_ERROR_CANCELLED &&
 	      error->code != G_IO_ERROR_FAILED_HANDLED &&
 	      error->code != G_IO_ERROR_ALREADY_MOUNTED))) {
-		eel_show_error_dialog (_("Unable to start location"),
-				       error->message, NULL);
+		char *text;
+		char *name;
+		name = nautilus_file_get_display_name (file);
+		/* Translators: %s is a file name formatted for display */
+		text = g_strdup_printf (_("Unable to start “%s”"), name);
+		eel_show_error_dialog (text, error->message, NULL);
+		g_free (text);
+		g_free (name);
 	}
 }
 
