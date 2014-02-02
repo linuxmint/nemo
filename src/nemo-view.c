@@ -9191,33 +9191,51 @@ update_restore_from_trash_action (GtkAction *action,
 			tooltip = g_strdup_printf (_("Move the open folder out of the trash to “%s”"), original_name);
 		} else if (files_are_all_directories (files)) {
 			if (original_name != NULL) {
-				tooltip = g_strdup_printf (ngettext ("Move the selected folder out of the trash to “%s”",
-								     "Move the selected folders out of the trash to “%s”",
-								     g_list_length (files)), original_name);
+				if (g_list_length (files) == 1) {
+					tooltip = g_strdup_printf (_("Move the selected folder out of the trash to “%s”"),
+								   original_name);
+				} else {
+					tooltip = g_strdup_printf (_("Move the selected folders out of the trash to “%s”"),
+								   original_name);
+				}
 			} else {
-				tooltip = g_strdup_printf (ngettext ("Move the selected folder out of the trash",
-								     "Move the selected folders out of the trash",
-								     g_list_length (files)));
+				if (g_list_length (files) == 1) {
+					tooltip = g_strdup (_("Move the selected folder out of the trash"));
+				} else {
+					tooltip = g_strdup (_("Move the selected folders out of the trash"));
+				}
 			}
 		} else if (files_is_none_directory (files)) {
 			if (original_name != NULL) {
-				tooltip = g_strdup_printf (ngettext ("Move the selected file out of the trash to “%s”",
-								     "Move the selected files out of the trash to “%s”",
-								     g_list_length (files)), original_name);
+				if (g_list_length (files) == 1) {
+					tooltip = g_strdup_printf (_("Move the selected file out of the trash to “%s”"),
+								   original_name);
+				} else {
+					tooltip = g_strdup_printf (_("Move the selected files out of the trash to “%s”"),
+								   original_name);
+				}
 			} else {
-				tooltip = g_strdup_printf (ngettext ("Move the selected file out of the trash",
-								     "Move the selected files out of the trash",
-								     g_list_length (files)));
+				if (g_list_length (files) == 1) {
+					tooltip = g_strdup (_("Move the selected file out of the trash"));
+				} else {
+					tooltip = g_strdup (_("Move the selected files out of the trash"));
+				}
 			}
 		} else {
 			if (original_name != NULL) {
-				tooltip = g_strdup_printf (ngettext ("Move the selected item out of the trash to “%s”",
-								     "Move the selected items out of the trash to “%s”",
-								     g_list_length (files)), original_name);
+				if (g_list_length (files) == 1) {
+					tooltip = g_strdup_printf (_("Move the selected item out of the trash to “%s”"),
+								   original_name);
+				} else {
+					tooltip = g_strdup_printf (_("Move the selected items out of the trash to “%s”"),
+								   original_name);
+				}
 			} else {
-				tooltip = g_strdup_printf (ngettext ("Move the selected item out of the trash",
-								     "Move the selected items out of the trash",
-								     g_list_length (files)));
+				if (g_list_length (files) == 1) {
+					tooltip = g_strdup (_("Move the selected item out of the trash"));
+				} else {
+					tooltip = g_strdup (_("Move the selected items out of the trash"));
+				}
 			}
 		}
 		g_free (original_name);
