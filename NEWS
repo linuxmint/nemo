@@ -1,3 +1,27 @@
+Nemo merged with changes in Nautilus 3.5.90.
+
+Changes:
+* Add cluebars for Templates and Scripts special directories
+* Add ability to reorder bookmarks
+* Improve strings in the Autorun prompt
+* Improve error message strings
+* Improve the image Properties page
+* Improve the Permissions page in the Properties window
+* Improve the layout of the Bookmarks dialog
+* Use the dropped text paragraph as name when creating new files
+  using DnD of text snippets
+* Use double quotes instead of ASCII quotes for filenames
+* Remove support for Manual layouting in icon views outside of Desktop
+* Fix segfault when no search results are found
+
+Rejected:
+* Reorganize application and gear menu, and add a menu for view actions
+* Add a View options selector to the toolbar
+* Change default action for executable text files to Display
+* Change the view mode and zoom level to be per-window instead of per-folder
+* Remove the Octal permissions list view column
+
+
 Nemo merged with changes in Nautilus 3.5.5.
 
 Changes:
