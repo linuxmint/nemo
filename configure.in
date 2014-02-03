@@ -340,17 +340,11 @@ nemo-$VERSION:
 	prefix:                 ${prefix}
 	source code location:	${srcdir}
 	compiler:		${CC}
-<<<<<<< HEAD
-	libexif support:	$msg_libexif
-	libexempi support:	$msg_xmp
-	Tracker support:	$build_tracker
-=======
 	libexif support:	${enable_exif}
 	libexempi support:	${enable_xmp}
 	PackageKit support:     $msg_packagekit
 	nautilus-sendto ext:	$enable_nst_extension
 	Tracker support:	$enable_tracker
->>>>>>> 5bb55d500e5a8b659a3c19b14d425fc1be81bb9b
 
         debugging support:      ${enable_debug}
         profiling support:      ${enable_profiling}

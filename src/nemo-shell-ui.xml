@@ -1,6 +1,7 @@
 <ui>
 <accelerator action="Back"/>
 <accelerator action="Forward"/>
+<accelerator action="Home"/>
 <accelerator action="Search"/>
 <accelerator action="SplitViewNextPane"/>
 <accelerator action="TabsPrevious"/>

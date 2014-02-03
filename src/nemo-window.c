@@ -1478,9 +1478,6 @@ nemo_window_sync_up_button (NemoWindow *window)
 	action = gtk_action_group_get_action (action_group,
 					      NEMO_ACTION_UP);
 	gtk_action_set_sensitive (action, allowed);
-	action = gtk_action_group_get_action (action_group,
-					      NEMO_ACTION_UP_ACCEL);
-	gtk_action_set_sensitive (action, allowed);
 }
 
 void
