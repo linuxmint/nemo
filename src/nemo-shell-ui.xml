@@ -1,10 +1,13 @@
 <ui>
+<accelerator action="Back"/>
+<accelerator action="Forward"/>
 <accelerator action="Search"/>
 <accelerator action="SplitViewNextPane"/>
 <accelerator action="TabsPrevious"/>
 <accelerator action="TabsNext"/>
 <accelerator action="TabsMoveLeft"/>
 <accelerator action="TabsMoveRight"/>
+<accelerator action="Up"/>
 <accelerator action="ZoomInAccel"/>
 <accelerator action="ZoomInAccel2"/>
 <accelerator action="ZoomOutAccel"/>
