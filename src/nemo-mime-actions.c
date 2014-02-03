@@ -1107,9 +1107,7 @@ open_with_dialog_response_cb (GtkDialog *dialog,
                               gpointer user_data)
 {
     GtkWindow *parent_window;
-    NemoFile *file;
     GAppInfo *info;
-    GList files;
 
     parent_window = user_data;
 
@@ -1126,14 +1124,11 @@ open_with_dialog_response_cb (GtkDialog *dialog,
     g_list_free (children);
 
     info = nemo_mime_application_chooser_get_info (chooser);
-    file = nemo_file_get_by_uri (nemo_mime_application_chooser_get_uri (chooser));
+    const GList *files = nemo_mime_application_chooser_get_files (chooser);
 
     g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 
-    files.next = NULL;
-    files.prev = NULL;
-    files.data = file;
-    nemo_launch_application (info, &files, parent_window);
+    nemo_launch_application (info, files, parent_window);
 
     gtk_widget_destroy (GTK_WIDGET (dialog));
     g_object_unref (info);
@@ -1145,11 +1140,9 @@ run_open_with_dialog (ActivateParametersSpecial *params)
     GtkWidget *dialog;
 
     char *mime_type;
-    char *uri = NULL;
-    GList *uris = NULL;
+    GList files;
 
     mime_type = nemo_file_get_mime_type (params->file);
-    uri = nemo_file_get_uri (params->file);
 
     dialog = gtk_dialog_new_with_buttons (_("Open with"),
                                           params->parent_window,
@@ -1160,7 +1153,11 @@ run_open_with_dialog (ActivateParametersSpecial *params)
                                           GTK_RESPONSE_OK,
                                           NULL);
 
-    GtkWidget *chooser = nemo_mime_application_chooser_new (uri, uris, mime_type);
+    files.next = NULL;
+    files.prev = NULL;
+    files.data = params->file;
+    GtkWidget *chooser = nemo_mime_application_chooser_new (&files, mime_type);
+
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 

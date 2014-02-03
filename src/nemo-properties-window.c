@@ -4897,27 +4897,26 @@ create_open_with_page (NemoPropertiesWindow *window)
 {
 	GtkWidget *vbox;
 	char *mime_type;
-	char *uri = NULL;
-	GList *uris = NULL;
+	GList *files = NULL;
+	NemoFile *target_file;
 
-	mime_type = nemo_file_get_mime_type (get_target_file (window));
+	target_file = get_target_file (window);
+	mime_type = nemo_file_get_mime_type (target_file);
 
 	if (!is_multi_file_window (window)) {
-		uri = nemo_file_get_uri (get_target_file (window));
-		if (uri == NULL) {
-			return;
-		}
+		files = g_list_prepend (NULL, target_file);
 	} else {
-		uris = window->details->original_files;
-		if (uris == NULL) {
+		files = g_list_copy (window->details->original_files);
+		if (files == NULL) {
 			return;
 		}
 	}
 
-	vbox = nemo_mime_application_chooser_new (uri, uris, mime_type);
+	vbox = nemo_mime_application_chooser_new (files, mime_type);
 
 	gtk_widget_show (vbox);
 	g_free (mime_type);
+	g_list_free (files);
 
 	g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:gnome-help/files-open"), g_free);
 	gtk_notebook_append_page (window->details->notebook, 
