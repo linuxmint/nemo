@@ -4838,6 +4838,7 @@ move_file_prepare (CopyMoveJob *move_job,
 	if (IS_IO_ERROR (error, INVALID_FILENAME) &&
 	    !handled_invalid_filename) {
 		g_error_free (error);
+
 		handled_invalid_filename = TRUE;
 
 		g_assert (*dest_fs_type == NULL);
@@ -4928,6 +4929,7 @@ move_file_prepare (CopyMoveJob *move_job,
 	/* Other error */
 	else {
 		if (job->skip_all_error) {
+			g_error_free (error);
 			goto out;
 		}
 		primary = f (_("Error while moving “%B”."), src);

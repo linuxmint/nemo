@@ -761,13 +761,25 @@ nemo_find_existing_uri_in_hierarchy (GFile *location)
 	return location;
 }
 
+static gboolean
+have_program_in_path (const char *name)
+{
+        gchar *path;
+        gboolean result;
+
+        path = g_find_program_in_path (name);
+        result = (path != NULL);
+        g_free (path);
+        return result;
+}
+
 gboolean
 nemo_is_file_roller_installed (void)
 {
 	static int installed = - 1;
 
 	if (installed < 0) {
-		if (g_find_program_in_path ("file-roller")) {
+		if (have_program_in_path ("file-roller")) {
 			installed = 1;
 		} else {
 			installed = 0;
