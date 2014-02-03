@@ -4287,8 +4287,42 @@ button_press_event (GtkWidget *widget,
     	}
 
 	if (clicked_on_icon) {
-		return TRUE;
-	}
+		/* Olny if the preferences is selected and clicks are for left button do a quick renames with pause in-between */
+        if(event->button == 1 && g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN)){
+			NemoIcon *icon;//current icon which was clicked on
+			static NemoIcon *last_icon_clicked=NULL;//this will show if icon was selected before 
+			EelDRect text_rect;//stores dimentions of the text part
+			static int clicked_on_icon_text_before=0;//this is different from last_icon_clicked, here we have to make sure if it was clicked on text part
+			static gint64 last_time_clicked_on_icon_text_before=0;//it should be static to keep the last time it was clicked on icon
+			int double_click_time;//default double click time on the system
+			
+			g_object_get (G_OBJECT (gtk_widget_get_settings (widget)),
+					  "gtk-double-click-time", &double_click_time,
+					  NULL);//this will get the default double click time for user's system
+
+			icon=get_first_selected_icon(container);//this function gets the icon which was clicked
+        
+			/*this gets dimentions of the text part of the icon, right now it only works on standard zoom levels and I don't know why?*/
+			text_rect = nemo_icon_canvas_item_get_text_rectangle (icon->item, FALSE);
+			
+			//users should have to only click into the text area or it will not rename
+			if(event->x > text_rect.x0 && event->x < text_rect.x1 && event->y > text_rect.y0 && event->y < text_rect.y1){
+				if(clicked_on_icon_text_before==0 || last_icon_clicked!=icon){//if it was not clicked before then do not rename, just mark it as being clicked
+					last_time_clicked_on_icon_text_before=eel_get_system_time ();
+					clicked_on_icon_text_before=1;
+					last_icon_clicked=icon;//we need to be sure that the last icon which was clicked is the current we are clicking
+				}
+            else{//if it was clicked before then change the name, but not bafore double click time, this prevents annoying effects
+                if(eel_get_system_time()>last_time_clicked_on_icon_text_before+(double_click_time * 1000))
+                    nemo_icon_container_start_renaming_selected_item(container,FALSE);//we send a FALSE so it will be smart enough to not take extentions
+                last_time_clicked_on_icon_text_before=0;
+                clicked_on_icon_text_before=0;
+				}
+			}
+        }
+		/* There is a bug in the system, if an icon is being renamed and we click on the image part it does not close renaming which is annoying! Fix should come here in next pull request */
+        return TRUE;
+    }
 
 	if (event->button == DRAG_BUTTON &&
 	    event->type == GDK_BUTTON_PRESS) {
