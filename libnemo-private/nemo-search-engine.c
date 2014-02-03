@@ -107,7 +107,8 @@ search_provider_hits_added (NemoSearchProvider *provider,
 		g_hash_table_replace (engine->details->uris, g_strdup (uri), GINT_TO_POINTER (count++));
 	}
 	if (added != NULL) {
-		nemo_search_provider_hits_added (NEMO_SEARCH_PROVIDER (engine), g_list_reverse (added));
+		added = g_list_reverse (added);
+		nemo_search_provider_hits_added (NEMO_SEARCH_PROVIDER (engine), added);
 		g_list_free (added);
 	}
 }

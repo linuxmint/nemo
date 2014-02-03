@@ -9525,7 +9525,7 @@ update_restore_from_trash_action (GtkAction *action,
 
 		g_object_set (action, "tooltip", tooltip, NULL);
 		g_free (tooltip);
-		
+
 		if (original_location != NULL) {
 			g_object_unref (original_location);
 		}

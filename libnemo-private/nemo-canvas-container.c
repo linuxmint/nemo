@@ -6843,6 +6843,7 @@ preview_selected_items (NemoCanvasContainer *container)
 			       selection, locations);
 	}
 	g_list_free (selection);	
+	g_array_unref (locations);
 }
 
 static void
