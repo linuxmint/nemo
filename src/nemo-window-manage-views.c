@@ -344,12 +344,11 @@ viewed_file_changed_callback (NemoFile *file,
 			}
                 } else {
 			/* TODO?
- 			 *   why do we update title & icon at all in this case? */
+ 			 *   why do we update title at all in this case? */
                         g_object_unref (new_location);
                 }
 
                 nemo_window_slot_update_title (slot);
-		nemo_window_slot_update_icon (slot);
         }
 }
 
@@ -1530,7 +1529,6 @@ update_for_new_location (NemoWindowSlot *slot)
 	}
 
 	nemo_window_slot_update_title (slot);
-	nemo_window_slot_update_icon (slot);
 
 	if (slot == slot->pane->active_slot) {
 		nemo_window_pane_sync_location_widgets (slot->pane);

@@ -2990,7 +2990,7 @@ create_pie_widget (NemoPropertiesWindow *window)
 static GtkWidget*
 create_volume_usage_widget (NemoPropertiesWindow *window)
 {
-	GtkWidget *piewidget;
+	GtkWidget *piewidget = NULL;
 	gchar *uri;
 	NemoFile *file;
 	GFile *location;
@@ -3014,11 +3014,12 @@ create_volume_usage_widget (NemoPropertiesWindow *window)
 	}
 	
 	g_object_unref (location);
-	
-	piewidget = create_pie_widget (window);
-	                   
-        gtk_widget_show_all (piewidget);            
-        
+
+	if (window->details->volume_capacity > 0) {
+		piewidget = create_pie_widget (window);
+		gtk_widget_show_all (piewidget);
+	}
+
 	return piewidget;
 }
 
@@ -3161,9 +3162,12 @@ create_basic_page (NemoPropertiesWindow *window)
 
 	if (should_show_volume_usage (window)) {
 		volume_usage = create_volume_usage_widget (window);
-		gtk_container_add_with_properties (GTK_CONTAINER (grid), volume_usage,
-						   "width", 2,
-						   NULL);
+		if (volume_usage != NULL) {
+			gtk_container_add_with_properties (GTK_CONTAINER (grid),
+							   volume_usage,
+							   "width", 2,
+							   NULL);
+		}
 	}
 }
 
