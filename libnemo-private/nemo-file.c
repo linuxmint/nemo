@@ -6605,6 +6605,21 @@ nemo_file_is_mime_type (NemoFile *file, const char *mime_type)
 				    mime_type);
 }
 
+char *
+nemo_file_get_extension (NemoFile *file)
+{
+	char *name;
+	char *extension = NULL;
+
+	name = nemo_file_get_name (file);
+	if (name != NULL) {
+		extension = g_strdup (eel_filename_get_extension_offset (name));
+		g_free (name);
+	}
+
+	return extension;
+}
+
 gboolean
 nemo_file_is_launchable (NemoFile *file)
 {

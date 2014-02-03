@@ -192,6 +192,7 @@ time_t                  nemo_file_get_mtime                         (NemoFile   
 time_t                  nemo_file_get_ctime                         (NemoFile                   *file);
 GFileType               nemo_file_get_file_type                     (NemoFile                   *file);
 char *                  nemo_file_get_mime_type                     (NemoFile                   *file);
+char *                  nemo_file_get_extension                     (NemoFile                   *file);
 gboolean                nemo_file_is_mime_type                      (NemoFile                   *file,
 									 const char                     *mime_type);
 gboolean                nemo_file_is_launchable                     (NemoFile                   *file);

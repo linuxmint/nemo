@@ -543,7 +543,7 @@ parse_previous_duplicate_name (const char *name,
 
 	g_assert (name[0] != '\0');
 
-	*suffix = eel_filename_get_extension_offset (name + 1);
+	*suffix = eel_filename_get_extension_offset (name);
 
 	if (*suffix == NULL || (*suffix)[1] == '\0') {
 		/* no suffix */
@@ -2361,7 +2361,7 @@ volume_mount_cb (GObject *source_object,
 
 			parent = gtk_mount_operation_get_parent (GTK_MOUNT_OPERATION (mount_op));
 			name = g_volume_get_name (G_VOLUME (source_object));
-			primary = g_strdup_printf (_("Unable to access %s"), name);
+			primary = g_strdup_printf (_("Unable to access “%s”"), name);
 			g_free (name);
 			success = FALSE;
 			eel_show_error_dialog (primary,

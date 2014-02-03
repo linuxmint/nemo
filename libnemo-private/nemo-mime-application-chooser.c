@@ -421,34 +421,6 @@ custom_app_set_cb (GtkFileChooserButton *button,
 
 }
 
-static char *
-get_extension (const char *basename)
-{
-	char *p;
-	
-	p = strrchr (basename, '.');
-	
-	if (p && *(p + 1) != '\0') {
-		return g_strdup (p + 1);
-	} else {
-		return NULL;
-	}
-}
-
-static gchar *
-get_extension_from_file (NemoFile *nfile)
-{
-	char *name;
-	char *extension;
-
-	name = nemo_file_get_name (nfile);
-	extension = get_extension (name);
-
-	g_free (name);
-
-	return extension;
-}
-
 static void
 nemo_mime_application_chooser_apply_labels (NemoMimeApplicationChooser *chooser)
 {
@@ -457,7 +429,7 @@ nemo_mime_application_chooser_apply_labels (NemoMimeApplicationChooser *chooser)
 	if (chooser->details->files != NULL) {
 		/* here we assume all files are of the same content type */
 		if (g_content_type_is_unknown (chooser->details->content_type)) {
-			extension = get_extension_from_file (NEMO_FILE (chooser->details->files->data));
+			extension = nemo_file_get_extension (NEMO_FILE (chooser->details->files->data));
 
 			/* the %s here is a file extension */
 			description = g_strdup_printf (_("%s document"), extension);
@@ -475,7 +447,7 @@ nemo_mime_application_chooser_apply_labels (NemoMimeApplicationChooser *chooser)
 		basename = g_file_get_basename (file);
 
 		if (g_content_type_is_unknown (chooser->details->content_type)) {
-			extension = get_extension (basename);
+			extension = g_strdup("extension"); // This hack is replaced in a later commit
 
 			/* the %s here is a file extension */
 			description = g_strdup_printf (_("%s document"), extension);
@@ -523,6 +495,8 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 						 TRUE);
 	gtk_app_chooser_widget_set_show_fallback (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
 						  TRUE);
+	gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
+					       TRUE);
 	gtk_box_pack_start (GTK_BOX (chooser), chooser->details->open_with_widget,
 			    TRUE, TRUE, 6);
 	gtk_widget_show (chooser->details->open_with_widget);
@@ -614,6 +588,15 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 					 info, chooser);
 		g_object_unref (info);
 	}
+
+	g_signal_connect (chooser->details->open_with_widget,
+			  "application-selected",
+			  G_CALLBACK (application_selected_cb),
+			  chooser);
+	g_signal_connect (chooser->details->open_with_widget,
+			  "populate-popup",
+			  G_CALLBACK (populate_popup_cb),
+			  chooser);
 }
 
 static void
