@@ -368,14 +368,19 @@ get_drop_target_uri_for_path (NemoTreeViewDragDest *dest,
 			      GtkTreePath *path)
 {
 	NemoFile *file;
-	char *target;
+	char *target = NULL;
+	gboolean can;
 
 	file = file_for_path (dest, path);
 	if (file == NULL) {
 		return NULL;
 	}
-	
-	target = nemo_file_get_drop_target_uri (file);
+	can = nemo_drag_can_accept_info (file,
+					     dest->details->drag_type,
+					     dest->details->drag_list);
+	if (can) {
+		target = nemo_file_get_drop_target_uri (file);
+	}
 	nemo_file_unref (file);
 	
 	return target;
@@ -395,56 +400,36 @@ get_drop_action (NemoTreeViewDragDest *dest,
 		return 0;
 	}
 
+	drop_target = get_drop_target_uri_for_path (dest, path);
+	if (drop_target == NULL) {
+		return 0;
+	}
+
+	action = 0;
 	switch (dest->details->drag_type) {
 	case NEMO_ICON_DND_GNOME_ICON_LIST :
-		drop_target = get_drop_target_uri_for_path (dest, path);
-		
-		if (!drop_target) {
-			return 0;
-		}
-
 		nemo_drag_default_drop_action_for_icons
 			(context,
 			 drop_target,
 			 dest->details->drag_list,
 			 &action);
-
-		g_free (drop_target);
-		
-		return action;
-		
+		break;
 	case NEMO_ICON_DND_NETSCAPE_URL:
-		drop_target = get_drop_target_uri_for_path (dest, path);
-
-		if (drop_target == NULL) {
-			return 0;
-		}
-
 		action = nemo_drag_default_drop_action_for_netscape_url (context);
-
-		g_free (drop_target);
-
-		return action;
-		
+		break;
 	case NEMO_ICON_DND_URI_LIST :
-		drop_target = get_drop_target_uri_for_path (dest, path);
-
-		if (drop_target == NULL) {
-			return 0;
-		}
-
-		g_free (drop_target);
-
-		return gdk_drag_context_get_suggested_action (context);
-
+		action = gdk_drag_context_get_suggested_action (context);
+		break;
 	case NEMO_ICON_DND_TEXT:
 	case NEMO_ICON_DND_RAW:
 	case NEMO_ICON_DND_XDNDDIRECTSAVE:
-		return GDK_ACTION_COPY;
-
+		action = GDK_ACTION_COPY;
+		break;
 	}
 
-	return 0;
+	g_free (drop_target);
+
+	return action;
 }
 
 static gboolean
@@ -610,7 +595,7 @@ receive_uris (NemoTreeViewDragDest *dest,
 
 	/* We only want to copy external uris */
 	if (dest->details->drag_type == NEMO_ICON_DND_URI_LIST) {
-		action = GDK_ACTION_COPY;
+		real_action = GDK_ACTION_COPY;
 	}
 
 	if (real_action > 0) {

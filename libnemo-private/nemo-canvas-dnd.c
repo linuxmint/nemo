@@ -973,11 +973,22 @@ nemo_canvas_container_find_drop_target (NemoCanvasContainer *container,
 
 		container_uri = get_container_uri (container);
 
-		if (rewrite_desktop &&
-		    container_uri != NULL &&
-		    eel_uri_is_desktop (container_uri)) {
-			g_free (container_uri);
-			container_uri = nemo_get_desktop_directory_uri ();
+		if (container_uri != NULL) {
+			if (rewrite_desktop && eel_uri_is_desktop (container_uri)) {
+				g_free (container_uri);
+				container_uri = nemo_get_desktop_directory_uri ();
+			} else {
+				gboolean can;
+				file = nemo_file_get_by_uri (container_uri);
+				can = nemo_drag_can_accept_info (file,
+								     container->details->dnd_info->drag_info.data_type,
+								     container->details->dnd_info->drag_info.selection_list);
+				g_object_unref (file);
+				if (!can) {
+					g_free (container_uri);
+					container_uri = NULL;
+				}
+			}
 		}
 		
 		return container_uri;
@@ -1070,28 +1081,23 @@ nemo_canvas_container_get_drop_action (NemoCanvasContainer *container,
 	canvas_widget_to_world (EEL_CANVAS (container), x, y, &world_x, &world_y);
 	*action = 0;
 
+	drop_target = nemo_canvas_container_find_drop_target (container,
+								  context, x, y, &icon_hit, FALSE);
+	if (drop_target == NULL) {
+		return;
+	}
+
 	/* case out on the type of object being dragged */
 	switch (container->details->dnd_info->drag_info.data_type) {
 	case NEMO_ICON_DND_GNOME_ICON_LIST:
-		if (container->details->dnd_info->drag_info.selection_list == NULL) {
-			return;
+		if (container->details->dnd_info->drag_info.selection_list != NULL) {
+			nemo_drag_default_drop_action_for_icons (context, drop_target, 
+								     container->details->dnd_info->drag_info.selection_list, 
+								     action);
 		}
-		drop_target = nemo_canvas_container_find_drop_target (container,
-									context, x, y, &icon_hit, FALSE);
-		if (!drop_target) {
-			return;
-		}
-		nemo_drag_default_drop_action_for_icons (context, drop_target, 
-							     container->details->dnd_info->drag_info.selection_list, 
-							     action);
-		g_free (drop_target);
 		break;
 	case NEMO_ICON_DND_URI_LIST:
-		drop_target = nemo_canvas_container_find_drop_target (container,
-									context, x, y, &icon_hit, FALSE);
 		*action = nemo_drag_default_drop_action_for_uri_list (context, drop_target);
-
-		g_free (drop_target);
 		break;
 
 	case NEMO_ICON_DND_NETSCAPE_URL:
@@ -1108,6 +1114,8 @@ nemo_canvas_container_get_drop_action (NemoCanvasContainer *container,
 		*action = GDK_ACTION_COPY;
 		break;
 	}
+
+	g_free (drop_target);
 }
 
 static void
