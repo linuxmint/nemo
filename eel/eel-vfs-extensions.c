@@ -106,20 +106,31 @@ char *
 eel_filename_get_extension_offset (const char *filename)
 {
 	char *end, *end2;
+	const char *start;
 
-	end = strrchr (filename, '.');
+	if (filename == NULL || filename[0] == '\0') {
+		return NULL;
+	}
 
-	if (end && end != filename) {
+	/* basename must have at least one char */
+	start = filename + 1;
+
+	end = strrchr (start, '.');
+	if (end == NULL || end[1] == '\0') {
+		return NULL;
+	}
+
+	if (end != start) {
 		if (strcmp (end, ".gz") == 0 ||
 		    strcmp (end, ".bz2") == 0 ||
 		    strcmp (end, ".sit") == 0 ||
 		    strcmp (end, ".Z") == 0) {
 			end2 = end - 1;
-			while (end2 > filename &&
+			while (end2 > start &&
 			       *end2 != '.') {
 				end2--;
 			}
-			if (end2 != filename) {
+			if (end2 != start) {
 				end = end2;
 			}
 		}
