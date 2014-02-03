@@ -845,7 +845,6 @@ nemo_window_view_visible (NemoWindow *window,
 			slot = l->data;
 
 			nemo_window_slot_update_title (slot);
-			nemo_window_slot_update_icon (slot);
 		}
 	}
 
@@ -1998,6 +1997,7 @@ nemo_window_init (NemoWindow *window)
 
 	/* Set initial window title */
 	gtk_window_set_title (GTK_WINDOW (window), _("Nemo"));
+	gtk_window_set_icon_name (GTK_WINDOW (window), "system-file-manager");
 }
 
 static NemoIconInfo *

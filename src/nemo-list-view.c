@@ -2030,7 +2030,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
 			gtk_tree_view_column_set_attributes (view->details->file_name_column,
 							     cell,
-							     "pixbuf", NEMO_LIST_MODEL_SMALLEST_ICON_COLUMN,
+							     "pixbuf", nemo_list_model_get_column_id_from_zoom_level (view->details->zoom_level),
 							     NULL);
 			
 			cell = gtk_cell_renderer_text_new ();
@@ -3122,13 +3122,13 @@ nemo_list_view_start_renaming_file (NemoView *view,
 
 	/* set cursor also triggers editing-started, where we save the editable widget */
 	if (list_view->details->editable_widget != NULL) {
-        int start_offset = 0;
-        int end_offset = -1;
+		int start_offset = 0;
+		int end_offset = -1;
 
-        if (!select_all) {
-            eel_filename_get_rename_region (list_view->details->original_name,
-                           &start_offset, &end_offset);
-        }
+		if (!select_all) {
+			eel_filename_get_rename_region (list_view->details->original_name,
+							&start_offset, &end_offset);
+		}
 
 		gtk_editable_select_region (GTK_EDITABLE (list_view->details->editable_widget),
 					    start_offset, end_offset);
@@ -3497,6 +3497,9 @@ nemo_list_view_init (NemoListView *list_view)
 {
 	list_view->details = g_new0 (NemoListViewDetails, 1);
 
+	/* ensure that the zoom level is always set before settings up the tree view columns */
+	list_view->details->zoom_level = get_default_zoom_level ();
+
 	create_and_set_up_tree_view (list_view);
 
 	g_signal_connect_swapped (nemo_preferences,
@@ -3550,9 +3553,6 @@ nemo_list_view_init (NemoListView *list_view)
 	nemo_list_view_click_policy_changed (NEMO_VIEW (list_view));
 
 	nemo_list_view_sort_directories_first_changed (NEMO_VIEW (list_view));
-
-	/* ensure that the zoom level is always set in begin_loading */
-	list_view->details->zoom_level = NEMO_ZOOM_LEVEL_SMALLEST - 1;
 
 	list_view->details->hover_path = NULL;
 	list_view->details->clipboard_handler_id =

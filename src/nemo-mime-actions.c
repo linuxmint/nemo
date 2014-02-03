@@ -268,23 +268,28 @@ filter_nemo_handler (GList *apps)
 }
 
 static GList*
-filter_non_uri_apps (GList *apps)
+filter_non_uri_apps (GList *apps,
+		     gboolean accept_files)
 {
 	GList *l, *next;
 	GAppInfo *app;
 
 	for (l = apps; l != NULL; l = next) {
+		gboolean support;
+
 		app = l->data;
 		next = l->next;
-		
-		if (!g_app_info_supports_uris (app)) {
+		support = g_app_info_supports_uris (app);
+		if (accept_files) {
+			support |= g_app_info_supports_files (app);
+		}
+		if (!support) {
 			apps = g_list_delete_link (apps, l);
 			g_object_unref (app);
 		}
 	}
 	return apps;
 }
-
 
 static gboolean
 nemo_mime_actions_check_if_required_attributes_ready (NemoFile *file)
@@ -453,11 +458,9 @@ nemo_mime_get_applications_for_file (NemoFile *file)
 		g_free (uri_scheme);
 	}
 
-	if (!file_has_local_path (file)) {
-		/* Filter out non-uri supporting apps */
-		result = filter_non_uri_apps (result);
-	}
-	
+	/* Filter out non-uri supporting apps */
+	result = filter_non_uri_apps (result, file_has_local_path (file));
+
 	result = g_list_sort (result, (GCompareFunc) application_compare_by_name);
 	g_free (mime_type);
 

@@ -124,7 +124,6 @@ GType   nemo_window_slot_get_type (void);
 NemoWindowSlot * nemo_window_slot_new (NemoWindowPane *pane);
 
 void    nemo_window_slot_update_title		   (NemoWindowSlot *slot);
-void    nemo_window_slot_update_icon		   (NemoWindowSlot *slot);
 void    nemo_window_slot_set_query_editor_visible	   (NemoWindowSlot *slot,
 							    gboolean            visible);
 gboolean nemo_window_slot_handle_event       	   (NemoWindowSlot *slot,
