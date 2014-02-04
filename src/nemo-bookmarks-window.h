@@ -33,7 +33,32 @@
 #include "nemo-window.h"
 #include "nemo-bookmark-list.h"
 
-GtkWindow *nemo_bookmarks_window_new (NemoWindow       *parent_window,
-					  NemoBookmarkList *bookmarks);
+#define NEMO_TYPE_BOOKMARKS_WINDOW nemo_bookmarks_window_get_type()
+#define NEMO_BOOKMARKS_WINDOW(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_BOOKMARKS_WINDOW, NemoBookmarksWindow))
+#define NEMO_BOOKMARKS_WINDOW_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_BOOKMARKS_WINDOW, NemoBookmarksWindowClass))
+#define NEMO_IS_BOOKMARKS_WINDOW(obj) \
+  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_BOOKMARKS_WINDOW))
+#define NEMO_IS_BOOKMARKS_WINDOW_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_BOOKMARKS_WINDOW))
+#define NEMO_BOOKMARKS_WINDOW_GET_CLASS(obj) \
+  (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_BOOKMARKS_WINDOW, NemoBookmarksWindowClass))
+
+typedef struct NemoBookmarksWindowPrivate NemoBookmarksWindowPrivate;
+
+typedef struct  {
+	GtkWindow parent;
+
+	NemoBookmarksWindowPrivate *priv;
+} NemoBookmarksWindow;
+
+typedef struct {
+	GtkWindowClass parent_class;
+} NemoBookmarksWindowClass;
+
+GType nemo_bookmarks_window_get_type (void);
+
+GtkWindow *nemo_bookmarks_window_new (NemoWindow       *parent_window);
 
 #endif /* NEMO_BOOKMARKS_WINDOW_H */

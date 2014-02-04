@@ -156,6 +156,7 @@ void nemo_window_sync_title            (NemoWindow *window,
 void nemo_window_sync_zoom_widgets     (NemoWindow *window);
 void nemo_window_sync_up_button        (NemoWindow *window);
 void nemo_window_sync_menu_bar         (NemoWindow *window);
+void nemo_window_sync_view_as_menus    (NemoWindow *window);
 
 /* window menus */
 GtkActionGroup *nemo_window_create_toolbar_action_group (NemoWindow *window);

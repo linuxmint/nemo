@@ -90,6 +90,7 @@ typedef struct {
 
         void   (* sync_title) (NemoWindow *window,
 			       NemoWindowSlot *slot);
+        void   (* sync_view_as_menus) (NemoWindow *window);
         NemoIconInfo * (* get_icon) (NemoWindow *window,
                                          NemoWindowSlot *slot);
 
