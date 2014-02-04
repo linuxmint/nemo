@@ -293,6 +293,13 @@ real_window_close (NemoWindow *window)
 }
 
 static void
+real_sync_view_as_menus (NemoWindow *window)
+{
+	/* stub, does nothing */
+	return;
+}
+
+static void
 nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 {
 	GtkWidgetClass *wclass = GTK_WIDGET_CLASS (klass);
@@ -307,6 +314,7 @@ nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 	wclass->delete_event = nemo_desktop_window_delete_event;
 
 	nclass->sync_title = real_sync_title;
+	nclass->sync_view_as_menus = real_sync_view_as_menus;
 	nclass->get_icon = real_get_icon;
 	nclass->close = real_window_close;
 

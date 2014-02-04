@@ -1271,17 +1271,8 @@ add_view_as_menu_item (NemoWindow *window,
 	return action; /* return value owned by group */
 }
 
-/**
- * nemo_window_sync_view_as_menus:
- * 
- * Set the visible item of the "View as" option menu and
- * the marked "View as" item in the View menu to
- * match the current content view.
- * 
- * @window: The NemoWindow whose "View as" option menu should be synched.
- */
 static void
-nemo_window_sync_view_as_menus (NemoWindow *window)
+real_sync_view_as_menus (NemoWindow *window)
 {
 	NemoWindowSlot *slot;
     NemoWindowPane *pane;
@@ -1451,6 +1442,23 @@ nemo_window_sync_menu_bar (NemoWindow *window)
     }
 
     window->details->temporary_menu_bar = FALSE;
+}
+
+/**
+ * nemo_window_sync_view_as_menus:
+ *
+ * Set the visible item of the "View as" option menu and
+ * the marked "View as" item in the View menu to
+ * match the current content view.
+ *
+ * @window: The NemoWindow whose "View as" option menu should be synched.
+ */
+void
+nemo_window_sync_view_as_menus (NemoWindow *window)
+{
+	if (NEMO_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->sync_view_as_menus != NULL) {
+		NEMO_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->sync_view_as_menus (window);
+	}
 }
 
 void
@@ -2044,6 +2052,7 @@ nemo_window_class_init (NemoWindowClass *class)
 
 	class->get_icon = real_get_icon;
 	class->close = real_window_close;
+	class->sync_view_as_menus = real_sync_view_as_menus;
 
 	properties[PROP_DISABLE_CHROME] =
 		g_param_spec_boolean ("disable-chrome",

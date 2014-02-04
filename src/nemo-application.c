@@ -113,7 +113,6 @@ struct _NemoApplicationPriv {
 	NotifyNotification *unmount_notify;
 #endif
 
-	GtkWidget *bookmarks_window;
 	NemoBookmarkList *bookmark_list;
 };
 
@@ -129,18 +128,7 @@ nemo_application_edit_bookmarks (NemoApplication *application,
 {
 	GtkWindow *bookmarks_window;
 
-	bookmarks_window = GTK_WINDOW (application->priv->bookmarks_window);
-
-	if (bookmarks_window == NULL) {
-		bookmarks_window = nemo_bookmarks_window_new (window, application->priv->bookmark_list);
-		application->priv->bookmarks_window = GTK_WIDGET (bookmarks_window);
-
-		g_object_add_weak_pointer (G_OBJECT (bookmarks_window),
-					   (gpointer *) &application->priv->bookmarks_window);
-	}
-
-	gtk_window_set_transient_for (bookmarks_window, GTK_WINDOW (window));
-	gtk_window_set_screen (bookmarks_window, gtk_window_get_screen (GTK_WINDOW (window)));
+	bookmarks_window = nemo_bookmarks_window_new (window);
 	gtk_window_present (bookmarks_window);
 }
 
@@ -400,25 +388,6 @@ nemo_application_create_desktop_windows (NemoApplication *application)
 	}
 }
 
-static void
-nemo_application_open_desktop (NemoApplication *application)
-{
-	if (nemo_application_desktop_windows == NULL) {
-		nemo_application_create_desktop_windows (application);
-	}
-}
-
-static void
-nemo_application_close_desktop (void)
-{
-	if (nemo_application_desktop_windows != NULL) {
-		g_list_foreach (nemo_application_desktop_windows,
-				(GFunc) gtk_widget_destroy, NULL);
-		g_list_free (nemo_application_desktop_windows);
-		nemo_application_desktop_windows = NULL;
-	}
-}
-
 void
 nemo_application_close_all_windows (NemoApplication *self)
 {
@@ -493,30 +462,6 @@ nemo_application_create_window (NemoApplication *application,
 	nemo_profile_end (NULL);
 
 	return window;
-}
-
-/* callback for showing or hiding the desktop based on the user's preference */
-static void
-desktop_changed_callback (gpointer user_data)
-{
-	NemoApplication *application;
-	application = NEMO_APPLICATION (user_data);
-	if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
-		nemo_application_open_desktop (application);
-	} else {
-		nemo_application_close_desktop ();
-	}
-}
-
-static void
-monitors_changed_callback (GdkScreen *screen, NemoApplication *application)
-{
-	if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
-		nemo_application_close_desktop ();
-		nemo_application_open_desktop (application);
-	} else {
-		nemo_application_close_desktop ();
-	}
 }
 
 static void
@@ -1045,12 +990,61 @@ init_icons_and_styles (void)
 }
 
 static void
+nemo_application_open_desktop (NemoApplication *application)
+{
+	/* Initialize the desktop link monitor singleton */
+	nemo_desktop_link_monitor_get ();
+
+	if (nemo_application_desktop_windows == NULL) {
+		nemo_application_create_desktop_windows (application);
+	}
+}
+
+static void
+nemo_application_close_desktop (void)
+{
+	if (nemo_application_desktop_windows != NULL) {
+		g_list_foreach (nemo_application_desktop_windows,
+				(GFunc) gtk_widget_destroy, NULL);
+		g_list_free (nemo_application_desktop_windows);
+		nemo_application_desktop_windows = NULL;
+	}
+	nemo_desktop_link_monitor_shutdown ();
+}
+
+/* callback for showing or hiding the desktop based on the user's preference */
+static void
+desktop_changed_callback (gpointer user_data)
+{
+	NemoApplication *application;
+
+	application = NEMO_APPLICATION (user_data);
+	if (g_settings_get_boolean (gnome_background_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
+		nemo_application_open_desktop (application);
+	} else {
+		nemo_application_close_desktop ();
+	}
+}
+
+static void
+monitors_changed_callback (GdkScreen *screen, NemoApplication *application)
+{
+    if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
+        nemo_application_close_desktop ();
+        nemo_application_open_desktop (application);
+    } else {
+        nemo_application_close_desktop ();
+    }
+}
+
+static void
 init_desktop (NemoApplication *self)
 {
 	GdkScreen *screen;
 	screen = gdk_display_get_screen (gdk_display_get_default (), 0);
 	/* Initialize the desktop link monitor singleton */
 	nemo_desktop_link_monitor_get ();
+
 
 	if (!self->priv->no_desktop &&
 	    !g_settings_get_boolean (nemo_desktop_preferences,

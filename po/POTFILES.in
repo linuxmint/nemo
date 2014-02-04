@@ -26,6 +26,7 @@ libnemo-private/nemo-desktop-directory-file.c
 libnemo-private/nemo-desktop-icon-file.c
 libnemo-private/nemo-desktop-link.c
 libnemo-private/nemo-desktop-link-monitor.c
+libnemo-private/nemo-directory.c
 libnemo-private/nemo-dnd.c
 libnemo-private/nemo-entry.c
 libnemo-private/nemo-file.c
