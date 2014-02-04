@@ -38,6 +38,7 @@
 #include "nemo-vfs-directory.h"
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-string.h>
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
 enum {
@@ -457,19 +458,31 @@ nemo_directory_get_existing_corresponding_file (NemoDirectory *directory)
 char *
 nemo_directory_get_name_for_self_as_new_file (NemoDirectory *directory)
 {
+	GFile *file;
 	char *directory_uri;
-	char *name, *colon;
-	
-	directory_uri = nemo_directory_get_uri (directory);
+	char *scheme;
+	char *name;
+	char *hostname = NULL;
 
-	colon = strchr (directory_uri, ':');
-	if (colon == NULL || colon == directory_uri) {
+	directory_uri = nemo_directory_get_uri (directory);
+	file = g_file_new_for_uri (directory_uri);
+	scheme = g_file_get_uri_scheme (file);
+	g_object_unref (file);
+
+	nemo_uri_parse (directory_uri, &hostname, NULL, NULL);
+	if (hostname == NULL) {
 		name = g_strdup (directory_uri);
+	} else if (scheme == NULL) {
+		name = g_strdup (hostname);
 	} else {
-		name = g_strndup (directory_uri, colon - directory_uri);
+		/* Translators: this is of the format "hostname (uri-scheme)" */
+		name = g_strdup_printf (_("%s (%s)"), hostname, scheme);
 	}
+
 	g_free (directory_uri);
-	
+	g_free (scheme);
+	g_free (hostname);
+
 	return name;
 }
 

@@ -52,6 +52,213 @@ static void update_xdg_dir_cache (void);
 static void schedule_user_dirs_changed (void);
 static void desktop_dir_changed (void);
 
+
+/* Allowed characters outside alphanumeric for unreserved. */
+#define G_URI_OTHER_UNRESERVED "-._~"
+
+/* This or something equivalent will eventually go into glib/guri.h */
+gboolean
+nemo_uri_parse (const char  *uri,
+		    char       **host,
+		    guint16     *port,
+		    char       **userinfo)
+{
+  char *tmp_str;
+  const char *start, *p;
+  char c;
+
+  g_return_val_if_fail (uri != NULL, FALSE);
+
+  if (host)
+    *host = NULL;
+
+  if (port)
+    *port = 0;
+
+  if (userinfo)
+    *userinfo = NULL;
+
+  /* From RFC 3986 Decodes:
+   * URI          = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+   * hier-part    = "//" authority path-abempty
+   * path-abempty = *( "/" segment )
+   * authority    = [ userinfo "@" ] host [ ":" port ]
+   */
+
+  /* Check we have a valid scheme */
+  tmp_str = g_uri_parse_scheme (uri);
+
+  if (tmp_str == NULL)
+    return FALSE;
+
+  g_free (tmp_str);
+
+  /* Decode hier-part:
+   *  hier-part   = "//" authority path-abempty
+   */
+  p = uri;
+  start = strstr (p, "//");
+
+  if (start == NULL)
+    return FALSE;
+
+  start += 2;
+
+  if (strchr (start, '@') != NULL)
+    {
+      /* Decode userinfo:
+       * userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
+       * unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+       * pct-encoded   = "%" HEXDIG HEXDIG
+       */
+      p = start;
+      while (1)
+	{
+	  c = *p++;
+
+	  if (c == '@')
+	    break;
+
+	  /* pct-encoded */
+	  if (c == '%')
+	    {
+	      if (!(g_ascii_isxdigit (p[0]) ||
+		    g_ascii_isxdigit (p[1])))
+		return FALSE;
+
+	      p++;
+
+	      continue;
+	    }
+
+	  /* unreserved /  sub-delims / : */
+	  if (!(g_ascii_isalnum (c) ||
+		strchr (G_URI_OTHER_UNRESERVED, c) ||
+		strchr (G_URI_RESERVED_CHARS_SUBCOMPONENT_DELIMITERS, c) ||
+		c == ':'))
+	    return FALSE;
+	}
+
+      if (userinfo)
+	*userinfo = g_strndup (start, p - start - 1);
+
+      start = p;
+    }
+  else
+    {
+      p = start;
+    }
+
+
+  /* decode host:
+   * host          = IP-literal / IPv4address / reg-name
+   * reg-name      = *( unreserved / pct-encoded / sub-delims )
+   */
+
+  /* If IPv6 or IPvFuture */
+  if (*p == '[')
+    {
+      start++;
+      p++;
+      while (1)
+	{
+	  c = *p++;
+
+	  if (c == ']')
+	    break;
+
+	  /* unreserved /  sub-delims */
+	  if (!(g_ascii_isalnum (c) ||
+		strchr (G_URI_OTHER_UNRESERVED, c) ||
+		strchr (G_URI_RESERVED_CHARS_SUBCOMPONENT_DELIMITERS, c) ||
+		c == ':' ||
+		c == '.'))
+	    goto error;
+	}
+    }
+  else
+    {
+      while (1)
+	{
+	  c = *p++;
+
+	  if (c == ':' ||
+	      c == '/' ||
+	      c == '?' ||
+	      c == '#' ||
+	      c == '\0')
+	    break;
+
+	  /* pct-encoded */
+	  if (c == '%')
+	    {
+	      if (!(g_ascii_isxdigit (p[0]) ||
+		    g_ascii_isxdigit (p[1])))
+		goto error;
+
+	      p++;
+
+	      continue;
+	    }
+
+	  /* unreserved /  sub-delims */
+	  if (!(g_ascii_isalnum (c) ||
+		strchr (G_URI_OTHER_UNRESERVED, c) ||
+		strchr (G_URI_RESERVED_CHARS_SUBCOMPONENT_DELIMITERS, c)))
+	    goto error;
+	}
+    }
+
+  if (host)
+    *host = g_uri_unescape_segment (start, p - 1, NULL);
+
+  if (c == ':')
+    {
+      /* Decode pot:
+       *  port          = *DIGIT
+       */
+      guint tmp = 0;
+
+      while (1)
+	{
+	  c = *p++;
+
+	  if (c == '/' ||
+	      c == '?' ||
+	      c == '#' ||
+	      c == '\0')
+	    break;
+
+	  if (!g_ascii_isdigit (c))
+	    goto error;
+
+	  tmp = (tmp * 10) + (c - '0');
+
+	  if (tmp > 65535)
+	    goto error;
+	}
+      if (port)
+	*port = (guint16) tmp;
+    }
+
+  return TRUE;
+
+error:
+  if (host && *host)
+    {
+      g_free (*host);
+      *host = NULL;
+    }
+
+  if (userinfo && *userinfo)
+    {
+      g_free (*userinfo);
+      *userinfo = NULL;
+    }
+
+  return FALSE;
+}
+
 char *
 nemo_compute_title_for_location (GFile *location)
 {

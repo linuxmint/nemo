@@ -104,30 +104,44 @@ static void load_new_location                         (NemoWindowSlot         *s
 static void location_has_really_changed               (NemoWindowSlot         *slot);
 static void update_for_new_location                   (NemoWindowSlot         *slot);
 
-/* set_displayed_location:
- */
 static void
-set_displayed_location (NemoWindowSlot *slot, GFile *location)
+set_displayed_file (NemoWindowSlot *slot, NemoFile *file)
 {
-        GFile *bookmark_location;
         gboolean recreate;
+	GFile *new_location = NULL;
 
-        if (slot->current_location_bookmark == NULL || location == NULL) {
+	if (file != NULL) {
+		new_location = nemo_file_get_location (file);
+	}
+
+        if (slot->current_location_bookmark == NULL || file == NULL) {
                 recreate = TRUE;
         } else {
+		GFile *bookmark_location;
                 bookmark_location = nemo_bookmark_get_location (slot->current_location_bookmark);
-                recreate = !g_file_equal (bookmark_location, location);
+                recreate = !g_file_equal (bookmark_location, new_location);
                 g_object_unref (bookmark_location);
         }
-        
+
         if (recreate) {
+		char *display_name = NULL;
+
                 /* We've changed locations, must recreate bookmark for current location. */
 		g_clear_object (&slot->last_location_bookmark);
 
+		if (file != NULL) {
+			display_name = nemo_file_get_display_name (file);
+		}
 		slot->last_location_bookmark = slot->current_location_bookmark;
-		slot->current_location_bookmark = (location == NULL) ? NULL
-                        : nemo_bookmark_new (location, NULL, NULL);
+		if (new_location == NULL) {
+			slot->current_location_bookmark = NULL;
+		} else {
+			slot->current_location_bookmark = nemo_bookmark_new (new_location, display_name, NULL);
+		}
+		g_free (display_name);
         }
+
+	g_clear_object (&new_location);
 }
 
 static void
@@ -1422,7 +1436,8 @@ update_for_new_location (NemoWindowSlot *slot)
 	new_location = slot->pending_location;
 	slot->pending_location = NULL;
 
-	set_displayed_location (slot, new_location);
+	file = nemo_file_get (new_location);
+	set_displayed_file (slot, file);
 
 	update_history (slot, slot->location_change_type, new_location);
 
@@ -1440,7 +1455,6 @@ update_for_new_location (NemoWindowSlot *slot)
          * if it goes away.
          */
 	cancel_viewed_file_changed_callback (slot);
-	file = nemo_file_get (slot->location);
 	nemo_window_slot_set_viewed_file (slot, file);
 	slot->viewed_file_seen = !nemo_file_is_not_yet_confirmed (file);
 	slot->viewed_file_in_trash = nemo_file_is_in_trash (file);
