@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Tajik Gnome\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2014-02-01 23:46+0000\n"
-"PO-Revision-Date: 2014-02-02 12:04+0500\n"
+"POT-Creation-Date: 2014-02-03 23:45+0000\n"
+"PO-Revision-Date: 2014-02-04 12:16+0500\n"
 "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
 "Language-Team: \n"
 "Language: tg\n"
@@ -104,7 +104,6 @@ msgstr ""
 "xalign"
 
 #: ../eel/eel-editable-label.c:329
-#, fuzzy
 msgid "Line wrap"
 msgstr "Чархиши хат"
 
@@ -127,10 +126,9 @@ msgid "Selection Bound"
 msgstr "Ҳошияи интихоб"
 
 #: ../eel/eel-editable-label.c:348
-#, fuzzy
 msgid ""
 "The position of the opposite end of the selection from the cursor in chars."
-msgstr "Вазъияти охири муқобили интихоб аз курсор бо аломат"
+msgstr "Вазъияти охири муқобили интихоб аз курсор бо аломат."
 
 #. name, stock id
 #. label, accelerator
@@ -183,8 +181,7 @@ msgstr "_Бекор кардан"
 #, fuzzy
 msgid "You can stop this operation by clicking cancel."
 msgstr ""
-"Шумо бо зер кардани тугмаи бекор карданметавонед ин равандро дар ҳар "
-"марҳилаи дилхоҳ бекор кунед."
+"Шумо метавонед ин амалро бо зеркунии тугмаи \"Бекор кардан\" қатъ кунед."
 
 #: ../eel/eel-vfs-extensions.c:98
 msgid " (invalid Unicode)"
@@ -200,9 +197,8 @@ msgid "Home"
 msgstr "Феҳристи асосӣ"
 
 #: ../libnautilus-private/nautilus-canvas-container.c:2447
-#, fuzzy
 msgid "The selection rectangle"
-msgstr "Росткунҷаи равзанаи ҳубобӣ ба мавриди зерин ишора мекунад"
+msgstr "Интихоби росткунҷа"
 
 #. tooltip
 #: ../libnautilus-private/nautilus-clipboard.c:357
@@ -229,9 +225,8 @@ msgstr "Ҳ_амаро интихоб кардан"
 
 #. tooltip
 #: ../libnautilus-private/nautilus-clipboard.c:369
-#, fuzzy
 msgid "Select all the text in a text field"
-msgstr "Ҳадафи майдони матн"
+msgstr "Интихоб кардани тамоми матн дар майдони матнӣ"
 
 #: ../libnautilus-private/nautilus-column-chooser.c:374
 msgid "Move _Up"
@@ -251,11 +246,8 @@ msgid "Name"
 msgstr "Ном"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:57
-#, fuzzy
 msgid "The name and icon of the file."
-msgstr ""
-"Файли нишонаеро интихоб кунед, ё шумо метавонед номи нишонаеро ба қуттии "
-"вуруд ворид кунед"
+msgstr "Ном ва нишонаи файл."
 
 #: ../libnautilus-private/nautilus-column-utilities.c:63
 msgid "Size"
@@ -278,7 +270,6 @@ msgid "Modified"
 msgstr "Санаи тағйир"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:79
-#, fuzzy
 msgid "The date the file was modified."
 msgstr "Санаи тағйироти файл."
 
@@ -295,16 +286,14 @@ msgid "Owner"
 msgstr "Соҳиб"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:96
-#, fuzzy
 msgid "The owner of the file."
-msgstr "_Соҳиб:"
+msgstr "Соҳиби файл."
 
 #: ../libnautilus-private/nautilus-column-utilities.c:103
 msgid "Group"
 msgstr "Гурӯҳ"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:104
-#, fuzzy
 msgid "The group of the file."
 msgstr "Гурӯҳи файл."
 
@@ -314,18 +303,16 @@ msgid "Permissions"
 msgstr "Иҷозатҳо"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:112
-#, fuzzy
 msgid "The permissions of the file."
-msgstr "Иҷозатҳои файл"
+msgstr "Иҷозатҳои файл."
 
 #: ../libnautilus-private/nautilus-column-utilities.c:119
 msgid "MIME Type"
 msgstr "Намуди MIME"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:120
-#, fuzzy
 msgid "The mime type of the file."
-msgstr "Намуди MIME"
+msgstr "Навъи мими файл."
 
 #: ../libnautilus-private/nautilus-column-utilities.c:127
 #: ../src/nautilus-image-properties-page.c:413
@@ -333,9 +320,8 @@ msgid "Location"
 msgstr "Ҷойгиршавӣ"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:128
-#, fuzzy
 msgid "The location of the file."
-msgstr "Ҷойгиршавии файли асосии конфигуратсияи пешакӣ:"
+msgstr "Ҷойгиршавии файл."
 
 #: ../libnautilus-private/nautilus-column-utilities.c:169
 msgid "Trashed On"
@@ -351,7 +337,6 @@ msgid "Original Location"
 msgstr "Ҷойгиршавии аслӣ"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:177
-#, fuzzy
 msgid "Original location of file before moved to the Trash"
 msgstr "Ҷойгиршавии аслии файл қабл аз интиқоли он ба сабад"
 
@@ -360,7 +345,6 @@ msgid "Relevance"
 msgstr "Маънидорӣ"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:195
-#, fuzzy
 msgid "Relevance rank for search"
 msgstr "Аз рӯи муҳиммии ҷустуҷӯ"
 
@@ -450,9 +434,9 @@ msgid "This file cannot be stopped"
 msgstr "Ин файл манъ карда намешавад"
 
 #: ../libnautilus-private/nautilus-file.c:1821
-#, fuzzy, c-format
+#, c-format
 msgid "Slashes are not allowed in filenames"
-msgstr "Гузоштани номи файл"
+msgstr "Хати хам дар номҳои файлҳо истифода намешавад"
 
 #: ../libnautilus-private/nautilus-file.c:1839
 #, c-format
@@ -467,12 +451,12 @@ msgstr ""
 "шаванд?"
 
 #: ../libnautilus-private/nautilus-file.c:1890
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to rename desktop icon"
 msgstr "Номи нишонаи мизи корӣ иваз карда намешавад"
 
 #: ../libnautilus-private/nautilus-file.c:1919
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to rename desktop file"
 msgstr "Номи файли мизи корӣ иваз карда намешавад"
 
@@ -524,7 +508,7 @@ msgid "Not allowed to set owner"
 msgstr "Барои танзими соҳиб иҷозат надорад"
 
 #: ../libnautilus-private/nautilus-file.c:5259
-#, fuzzy, c-format
+#, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "Соҳиби муайяншудаи '%s' вуҷуд надорад."
 
@@ -534,7 +518,7 @@ msgid "Not allowed to set group"
 msgstr "Барои танзими гурӯҳ иҷозат надорад"
 
 #: ../libnautilus-private/nautilus-file.c:5541
-#, fuzzy, c-format
+#, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "Гурӯҳи муайяншудаи '%s' вуҷуд надорад."
 
@@ -639,7 +623,6 @@ msgstr "Такдим"
 
 #: ../libnautilus-private/nautilus-file.c:6178
 #: ../src/nautilus-query-editor.c:404
-#, fuzzy
 msgid "Spreadsheet"
 msgstr "Ҷадвали электронӣ"
 
@@ -683,9 +666,8 @@ msgid ""
 "Merging will ask for confirmation before replacing any files in the folder "
 "that conflict with the files being copied."
 msgstr ""
-"Агар фаъол шавад, Чашми GNOME ҳангоми интиқоли тассвирҳо ба партов тасдиқро "
-"намепурсад. Агар интиқоли яке аз файлҳо ба партов номумкин бошад, он савол "
-"мепурсад ва ба ҷои он нест мекунад."
+"Амали муттаҳидсозӣ пеш аз ҷойгузинкунии ягон файле, ки дар ҷузвдон бо "
+"файлҳои интиқолшаванда ихтилоф мекунад, тасдиқи шуморо талаб мекунад."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:150
 #, c-format
@@ -712,9 +694,9 @@ msgid "Replace folder “%s”?"
 msgstr "Ҷузвдони “%s”-ро ҷойгузин мекунед?"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:167
-#, fuzzy, c-format
+#, c-format
 msgid "A folder with the same name already exists in “%s”."
-msgstr "Ҷузвдони куҳнатар бо номи монанд аллакай дар “%s” вуҷуд дорад."
+msgstr "Ҷузвдоне бо номи монанд аллакай дар “%s” вуҷуд дорад."
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:172
 #, c-format
@@ -925,21 +907,18 @@ msgstr " (нусхаи дигар)"
 #: ../libnautilus-private/nautilus-file-operations.c:455
 #: ../libnautilus-private/nautilus-file-operations.c:457
 #: ../libnautilus-private/nautilus-file-operations.c:467
-#, fuzzy
 msgid "th copy)"
-msgstr "ум нусха)"
+msgstr "-ум нусха)"
 
 #. localizers: tag used to detect the x1st copy of a file
 #: ../libnautilus-private/nautilus-file-operations.c:460
-#, fuzzy
 msgid "st copy)"
 msgstr "-ум нусха)"
 
 #. localizers: tag used to detect the x2nd copy of a file
 #: ../libnautilus-private/nautilus-file-operations.c:462
-#, fuzzy
 msgid "nd copy)"
-msgstr "юм нусха)"
+msgstr "-юм нусха)"
 
 #. localizers: tag used to detect the x3rd copy of a file
 #: ../libnautilus-private/nautilus-file-operations.c:464
@@ -1106,7 +1085,6 @@ msgstr ""
 
 #: ../libnautilus-private/nautilus-file-operations.c:1570
 #: ../libnautilus-private/nautilus-file-operations.c:3608
-#, fuzzy
 msgid "_Skip files"
 msgstr "_Нодида гузарондани файлҳо"
 
@@ -1277,11 +1255,8 @@ msgid "Error while copying to “%B”."
 msgstr "Ҳангоми нусхабардорӣ ба “%B” хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2811
-#, fuzzy
 msgid "You do not have permissions to access the destination folder."
-msgstr ""
-"Ҷузвдони \"%B\" нусха бардошта намешавад, зеро ки шумо барои эҷод кардани он "
-"дар ҷои таъинот иҷозат надоред."
+msgstr "Шумо барои барои кушодани ҷузвдони ҷои таъинот иҷозат надоред."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2813
 msgid "There was an error getting information about the destination."
@@ -1299,12 +1274,11 @@ msgid ""
 msgstr "Кӯшиш кунед, ки фазоро холӣ кунед"
 
 #: ../libnautilus-private/nautilus-file-operations.c:2897
-#, fuzzy, c-format
+#, c-format
 msgid "%S more space is required to copy to the destination."
-msgstr "Барои нусха бардоштан ба ҷойи таъинот %S фазои дигар лозим аст."
+msgstr "Барои нусха бардоштан ба ҷойи таъинот, %S фазои иловагӣ лозим аст."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2925
-#, fuzzy
 msgid "The destination is read-only."
 msgstr "Ҷои таъинот танҳо барои хондан аст."
 
@@ -1465,9 +1439,8 @@ msgid "Copying Files"
 msgstr "Нусхабардории файлҳо"
 
 #: ../libnautilus-private/nautilus-file-operations.c:4743
-#, fuzzy
 msgid "Preparing to Move to “%B”"
-msgstr "Омодасозии интиқол ба \"%B\""
+msgstr "Омодасозии интиқол ба “%B”"
 
 #: ../libnautilus-private/nautilus-file-operations.c:4747
 #, c-format
@@ -1503,9 +1476,8 @@ msgid "Error while creating link to %B."
 msgstr "Ҳангоми эҷодкунии пайванд ба %B хатогӣ ба вуҷуд омад."
 
 #: ../libnautilus-private/nautilus-file-operations.c:5429
-#, fuzzy
 msgid "Symbolic links only supported for local files"
-msgstr "Танҳо файлҳои маҳаллӣ"
+msgstr "Пайвандҳои рамзӣ танҳо барои файлҳои маҳаллӣ дастгирӣ мешаванд"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5432
 #, fuzzy
@@ -1866,14 +1838,14 @@ msgid "_Redo Trash"
 msgstr "_Дубора анҷом додани интиқол ба сабад"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1297
-#, fuzzy, c-format
+#, c-format
 msgid "Restore original permissions of items enclosed in '%s'"
-msgstr "Барқарор кардани иҷозатҳои аслии '%s'"
+msgstr "Барқарор кардани иҷозатҳои аслии объектҳои иловашуда дар '%s'"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1298
-#, fuzzy, c-format
+#, c-format
 msgid "Set permissions of items enclosed in '%s'"
-msgstr "Татбиқ кардани иҷозатҳо ба файлҳои замимашуда"
+msgstr "Татбиқ кардани иҷозатҳо ба файлҳои замимашуда ба '%s'"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1300
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1455
@@ -1886,7 +1858,7 @@ msgid "_Redo Change Permissions"
 msgstr "_Дубора анҷом додани тағйири иҷозатҳо"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1452
-#, fuzzy, c-format
+#, c-format
 msgid "Restore original permissions of '%s'"
 msgstr "Барқарор кардани иҷозатҳои аслии '%s'"
 
@@ -1896,7 +1868,7 @@ msgid "Set permissions of '%s'"
 msgstr "Танзим кардани иҷозатҳои '%s'"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1563
-#, fuzzy, c-format
+#, c-format
 msgid "Restore group of '%s' to '%s'"
 msgstr "Барқарор кардани гурӯҳи '%s' ба '%s'"
 
@@ -1937,14 +1909,15 @@ msgid "Could not determine original location of “%s” "
 msgstr "Ҷойгиршавии аслии \"%s\" муайян карда нашуд "
 
 #: ../libnautilus-private/nautilus-file-utilities.c:1259
-#, fuzzy
 msgid "The item cannot be restored from trash"
-msgstr "Интиқол додани ҳар як объекти интихобшуда ба сабад"
+msgstr "Объект аз сабад барқарор карда намешавад"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:80
 #, fuzzy, c-format
 msgid "Error while adding “%s”: %s"
-msgstr "ҳангоми иловакунии файл бо масири \"%s\" libisofs хатогӣ намоиш дод"
+msgstr ""
+"ҳангоми иловакунии мӯҳтаво ба директорияи \"%s\" (%x) libisofs хатогӣ намоиш "
+"дод "
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:82
 #, fuzzy
@@ -1957,7 +1930,6 @@ msgid "Could not forget association"
 msgstr "Робита фаромуш карда нашуд"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:134
-#, fuzzy
 msgid "Forget association"
 msgstr "Фаромуш кардани робита"
 
@@ -1987,7 +1959,7 @@ msgstr "Кушодани ҳамаи файлҳо бо навъи “%s” тав
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:266
 #, fuzzy, c-format
 msgid "Select an application to open “%s” and other files of type “%s”"
-msgstr "Барномаеро барои кушодани “%s” интихоб кунед"
+msgstr "Барномаеро барои кушодани \"%s\" интихоб кунед"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:324
 msgid "_Add"
@@ -1998,12 +1970,8 @@ msgid "Set as default"
 msgstr "Таъин кардан ҳамчун пешфарз"
 
 #: ../libnautilus-private/nautilus-program-choosing.c:312
-#, fuzzy
 msgid "Sorry, but you cannot execute commands from a remote site."
-msgstr ""
-"Landscape - ин хидмати мудирияти дурдаст аз Canonical мебошад. Агар шумо "
-"онро иҷозат диҳед, сервери Landscape метавонад самаранокии ин компютерро "
-"пайгирӣ намояд ва фармонҳои мудириятро фиристонад."
+msgstr "Мутаассифона, шумо наметавонед фармонҳоро аз сайти дурдаст иҷро кунед."
 
 #: ../libnautilus-private/nautilus-program-choosing.c:314
 #, fuzzy
@@ -2168,7 +2136,7 @@ msgid ""
 "double clicked). Possible values are \"launch\" to launch them as programs, "
 "\"ask\" to ask what to do via a dialog, and \"display\" to display them as "
 "text files."
-msgstr "Чӣ бояд кард?"
+msgstr "Чӣ бояд кард"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:15
 #, fuzzy
@@ -2326,7 +2294,8 @@ msgstr "Нигоҳ доштани нишонаҳо дар қаторҳо аз р
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:33
 #, fuzzy
 msgid "Default folder viewer"
-msgstr "Ҷузвдони пешфарз барои эскизҳои PVR"
+msgstr ""
+"Nemo барои намоиш додани ҷузвдон тамошобини мувофиқи насбшударо надорад."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:34
 #, fuzzy
@@ -2337,9 +2306,8 @@ msgid ""
 msgstr "Намоиши ҷузвдони ҷорӣ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:35
-#, fuzzy
 msgid "Whether to show hidden files"
-msgstr "Намоиш додани файлҳо ва зерҷузвдонҳои ноаён"
+msgstr "Интихоби намоиш додани файлҳои ноаён"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:36
 #, fuzzy
@@ -2366,9 +2334,8 @@ msgstr ""
 "ро иҷро кунед."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:39
-#, fuzzy
 msgid "List of possible captions on icons"
-msgstr "Рӯйхати ҳолатҳои имконпазир"
+msgstr "Рӯйхати зернависҳои имконпазир барои нишонаҳо"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:40
 #, fuzzy
@@ -2392,7 +2359,7 @@ msgstr "Сатҳи танзими андозаи рӯйхати _пешфарз:
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:43
 #, fuzzy
 msgid "Default Thumbnail Icon Size"
-msgstr "Андозаи эскизи шрифт (пешфарз: 128)"
+msgstr "Андозаи пешнамоиши кучак (пешфарз: 128)"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:44
 #, fuzzy
@@ -2402,7 +2369,7 @@ msgstr "Андозаи пешнамоиши кучак (пешфарз: 128)"
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:45
 #, fuzzy
 msgid "Text Ellipsis Limit"
-msgstr "Маҳдуд кардан то"
+msgstr "Маҳдудият"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:47
 #, fuzzy, no-c-format
@@ -2472,9 +2439,8 @@ msgid "The font description used for the icons on the desktop."
 msgstr "Тавсифи шрифт"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:58
-#, fuzzy
 msgid "Home icon visible on desktop"
-msgstr "Намоиш додани нишонаи сабад дар мизи корӣ"
+msgstr "Намоиш додани нишонаи ҷузвдони асосӣ дар мизи корӣ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:59
 #, fuzzy
@@ -2494,7 +2460,7 @@ msgstr "Намоиш додани нишонаи сабад дар мизи ко
 msgid ""
 "If this is set to true, an icon linking to the trash will be put on the "
 "desktop."
-msgstr "Номи нишонаи сабад дар мизи корӣ"
+msgstr "Намоиш додани нишонаи сабад дар мизи корӣ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:62
 #, fuzzy
@@ -2604,7 +2570,7 @@ msgstr "Панҷараки _паҳлӯ"
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:80
 #, fuzzy
 msgid "The default width of the side pane in new windows."
-msgstr "Равзанаҳои нав тарҳбандии пешфарзро истифода мебаранд"
+msgstr "Панҷараки _паҳлӯ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:81
 #, fuzzy
@@ -2665,9 +2631,7 @@ msgid ""
 "Unable to create required folders. Please create the following folders, or "
 "set permissions such that they can be created:\n"
 "%s"
-msgstr ""
-"Пеш аз иҷро кардани Nemo, лутфан, ин ҷузвдонҳоро эҷод кунед, ё ки "
-"иҷозатҳоеро таъин кунед, то ин ки Nemo онҳоро эҷод карда тавонад."
+msgstr "Nemo ҷузвдонҳои лозимии зеринро эҷод карда тавонист: %s."
 
 #: ../src/nautilus-application.c:366
 #, fuzzy
@@ -2713,12 +2677,10 @@ msgid "--no-desktop and --force-desktop cannot be used together."
 msgstr "Мизи корӣ "
 
 #: ../src/nautilus-application.c:1209
-#, fuzzy
 msgid "Perform a quick set of self-check tests."
-msgstr "Иттилооти SMART ва Воситаҳои худсанҷӣ..."
+msgstr "Иҷро кардани танзими тезкор барои санҷишҳои худсанҷ."
 
 #: ../src/nautilus-application.c:1215
-#, fuzzy
 msgid "Show the version of the program."
 msgstr "Намоиш додани версияи барнома."
 
@@ -2728,9 +2690,8 @@ msgid "Create the initial window with the given geometry."
 msgstr "Эҷод кардани равзанаи аслӣ бо геометрияи додашуда."
 
 #: ../src/nautilus-application.c:1217
-#, fuzzy
 msgid "GEOMETRY"
-msgstr "ГЕОМЕТРИЯ"
+msgstr "ҲАНДАСА"
 
 #: ../src/nautilus-application.c:1219
 #, fuzzy
@@ -2740,9 +2701,7 @@ msgstr "Кушодани равзанаи нави браузери шахсӣ"
 #: ../src/nautilus-application.c:1221
 #, fuzzy
 msgid "Only create windows for explicitly specified URIs."
-msgstr ""
-"Иҷро кардани барномаи муайяншуда бо файли мизи кории он,\n"
-"ихтиёран бо фиристодани рӯйхати URI-ҳо ҳамчун аргументҳо."
+msgstr "Равзанаҳоро танҳо барои суроғаҳои URI-и муайяншудаи дақиқ эҷод кунед."
 
 #: ../src/nautilus-application.c:1223
 #, fuzzy
@@ -2772,7 +2731,6 @@ msgid "[URI...]"
 msgstr "[URI...]"
 
 #: ../src/nautilus-application.c:1242
-#, fuzzy
 msgid ""
 "\n"
 "\n"
@@ -2780,7 +2738,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Тамошо кардани системаи файлӣ тавассути мудиди файлҳо"
+"Тамошо кардани системаи файлӣ тавассути мудири файлҳо"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
@@ -3001,11 +2959,8 @@ msgid "Unable to display location"
 msgstr "Макон намоиш дода намешавад"
 
 #: ../src/nautilus-connect-server.c:140
-#, fuzzy
 msgid "Print but do not open the URI"
-msgstr ""
-"URI-и директория охирин бор барои кушодан ё захира кардани ҳуҷҷат истифода "
-"шуд"
+msgstr "Чоп кунед, вале суроғаи URI-ро накушоед"
 
 #. Translators: This is the --help description for the connect to server app,
 #. the initial newlines are between the command line arg and the description
@@ -3072,12 +3027,10 @@ msgstr "_Холӣ кардани сабад"
 #. label, accelerator
 #: ../src/nautilus-desktop-canvas-view.c:688
 #: ../src/nautilus-desktop-canvas-view.c:729
-#, fuzzy
 msgid "Restore Icons' Original Si_zes"
 msgstr "_Барқарор кардани андозаҳои аслии нишонаҳо"
 
 #: ../src/nautilus-desktop-canvas-view.c:689
-#, fuzzy
 msgid "Restore Icon's Original Si_ze"
 msgstr "_Барқарор кардани андозаи аслии нишона"
 
@@ -3122,13 +3075,11 @@ msgstr "Тағйир додани андозаи нишона…"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:724
-#, fuzzy
 msgid "Make the selected icons resizable"
 msgstr "Андозаи нишона метавонад тағйир дода шавад"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:731
-#, fuzzy
 msgid "Restore each selected icon to its original size"
 msgstr "Барқарор кардани ҳар як нишона ба андозаи аслии он"
 
@@ -3159,9 +3110,9 @@ msgid "Desktop"
 msgstr "Мизи корӣ"
 
 #: ../src/nautilus-error-reporting.c:67
-#, fuzzy, c-format
+#, c-format
 msgid "You do not have the permissions necessary to view the contents of “%s”."
-msgstr "Шумо барои захира кардани ин файл иҷозаҳои кофӣ надоред."
+msgstr "Шумо барои намоиш додани мӯҳтавои “%s” иҷозатҳои кофӣ надоред."
 
 #: ../src/nautilus-error-reporting.c:71
 #, fuzzy, c-format
@@ -3169,57 +3120,54 @@ msgid "“%s” could not be found. Perhaps it has recently been deleted."
 msgstr "\"%s\" ёфт нашуд. Эҳтимол аст, ки он нест шуда буд."
 
 #: ../src/nautilus-error-reporting.c:75
-#, fuzzy, c-format
+#, c-format
 msgid "Sorry, could not display all the contents of “%s”: %s"
-msgstr "Мӯҳтавои %s кушода нашуд"
+msgstr "Мутаассифона, ҳамаи мӯҳтавои “%s” намоиш дода намешавад: %s"
 
 #: ../src/nautilus-error-reporting.c:82
 msgid "This location could not be displayed."
 msgstr "Ин макон намоиш дода намешавад"
 
 #: ../src/nautilus-error-reporting.c:106
-#, fuzzy, c-format
+#, c-format
 msgid "You do not have the permissions necessary to change the group of “%s”."
-msgstr "Шумо барои захира кардани ин файл иҷозаҳои кофӣ надоред."
+msgstr "Шумо барои тағйир додани гурӯҳи “%s” иҷозатҳои кофӣ надоред."
 
 #. fall through
 #: ../src/nautilus-error-reporting.c:119
-#, fuzzy, c-format
+#, c-format
 msgid "Sorry, could not change the group of “%s”: %s"
-msgstr "Мутаассифона, %s ногаҳонан пӯшида шуд."
+msgstr "Мутаассифона, гурӯҳи “%s” тағйир дода нашуд: %s"
 
 #: ../src/nautilus-error-reporting.c:124
-#, fuzzy
 msgid "The group could not be changed."
 msgstr "Гурӯҳ тағйир дода намешавад."
 
 #: ../src/nautilus-error-reporting.c:144
-#, fuzzy, c-format
+#, c-format
 msgid "Sorry, could not change the owner of “%s”: %s"
-msgstr "Restore owner of '%s' to '%s'"
+msgstr "Мутаассифона, соҳиби “%s” тағйир дода нашуд: %s"
 
 #: ../src/nautilus-error-reporting.c:146
-#, fuzzy
 msgid "The owner could not be changed."
-msgstr "Парол тағйир дода намешавад"
+msgstr "Соҳиб тағйир дода намешавад."
 
 #: ../src/nautilus-error-reporting.c:166
-#, fuzzy, c-format
+#, c-format
 msgid "Sorry, could not change the permissions of “%s”: %s"
-msgstr "Мутаассифона, %s ногаҳонан пӯшида шуд."
+msgstr "Мутаассифона, иҷозатҳои “%s” тағйир дода нашуданд: %s"
 
 #: ../src/nautilus-error-reporting.c:168
-#, fuzzy
 msgid "The permissions could not be changed."
-msgstr "Парол тағйир дода намешавад"
+msgstr "Иҷозатҳо тағйир дода намешаванд."
 
 #: ../src/nautilus-error-reporting.c:203
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The name “%s” is already used in this location. Please use a different name."
 msgstr ""
-"Номи интихобшудаи гурӯҳи ҳаҷмҳо аллакай истифода мешавад. Лутфан, номи "
-"дигареро интихоб кунед."
+"Номи “%s” аллакай дар ин маскон истифода шудааст. Лутфан, номи дигареро "
+"интихоб кунед."
 
 #: ../src/nautilus-error-reporting.c:208
 #, fuzzy, c-format
@@ -3228,39 +3176,38 @@ msgid ""
 msgstr "\"%s\" ёфт нашуд. Эҳтимол аст, ки он нест шуда буд."
 
 #: ../src/nautilus-error-reporting.c:213
-#, fuzzy, c-format
+#, c-format
 msgid "You do not have the permissions necessary to rename “%s”."
-msgstr "Шумо барои захира кардани ин файл иҷозаҳои кофӣ надоред."
+msgstr "Шумо барои иваз кардани номи “%s” иҷозатҳои кофӣ надоред."
 
 #: ../src/nautilus-error-reporting.c:218
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The name “%s” is not valid because it contains the character “/”. Please use "
 "a different name."
 msgstr ""
-"Номи \"%s\" эътибор надорад, зеро он ақалан яке аз аломатҳои : %s-ро дар бар "
-"мегирад, лутфан дигар номро ҳуруфчинӣ намоед."
+"Номи “%s” беэътибор аст, зеро ки он аломати \"/\"-ро дар бар мегирад, "
+"Лутфан, номи дигареро интихоб кунед."
 
 #: ../src/nautilus-error-reporting.c:222
-#, fuzzy, c-format
+#, c-format
 msgid "The name “%s” is not valid. Please use a different name."
-msgstr "Лутфан номи дигарро истифода баред."
+msgstr "Номи “%s” беэътибор аст. Лутфан, номи дигареро интихоб кунед."
 
 #: ../src/nautilus-error-reporting.c:228
-#, fuzzy, c-format
+#, c-format
 msgid "The name “%s” is too long. Please use a different name."
-msgstr "Лутфан номи дигарро истифода баред."
+msgstr "Номи “%s” хеле дароз аст. Лутфан, номи дигареро интихоб кунед."
 
 #. fall through
 #: ../src/nautilus-error-reporting.c:242
-#, fuzzy, c-format
+#, c-format
 msgid "Sorry, could not rename “%s” to “%s”: %s"
-msgstr "Номи %s ба %s иваз карда нашуд: %s.\n"
+msgstr "Мутаассифона, номи “%s” ба “%s” иваз карда нашуд: %s"
 
 #: ../src/nautilus-error-reporting.c:250
-#, fuzzy
 msgid "The item could not be renamed."
-msgstr "Объект тоза карда нашуд"
+msgstr "Номи объект иваз карда нашуд."
 
 #: ../src/nautilus-error-reporting.c:347
 #, c-format
@@ -3283,9 +3230,8 @@ msgid "Default View"
 msgstr "Намоиши пешфарз"
 
 #: ../src/nautilus-file-management-properties.ui.h:3
-#, fuzzy
 msgid "View _new folders using:"
-msgstr "Ҳамоҳангсозии худкор барои ҳамаи ҷузвдонҳои нави абрӣ ва ин компютер"
+msgstr "Намоиш додани ҷузвдонҳои _нав тавассути:"
 
 #: ../src/nautilus-file-management-properties.ui.h:4
 #, fuzzy
@@ -3293,14 +3239,12 @@ msgid "_Arrange items:"
 msgstr "_Муттаҳид кардани объектҳо:"
 
 #: ../src/nautilus-file-management-properties.ui.h:5
-#, fuzzy
 msgid "Sort _folders before files"
-msgstr "Файлҳо ва ҷузвдонҳо"
+msgstr "Мураттаб кардани _ҷузвдонҳо пеш аз файлҳо"
 
 #: ../src/nautilus-file-management-properties.ui.h:6
-#, fuzzy
 msgid "Show hidden and _backup files"
-msgstr "Намоиш додани файлҳо ва зерҷузвдонҳои ноаён"
+msgstr "Намоиш додани файлҳои ноаён ва файлҳои _нусхаи эҳтиётӣ"
 
 #: ../src/nautilus-file-management-properties.ui.h:7
 #, fuzzy
@@ -3328,7 +3272,6 @@ msgid "Behavior"
 msgstr "Рафтор"
 
 #: ../src/nautilus-file-management-properties.ui.h:13
-#, fuzzy
 msgid "_Single click to open items"
 msgstr "_Зеркунии ягона барои кушодани объектҳо"
 
@@ -3347,9 +3290,8 @@ msgid "_Run executable text files when they are opened"
 msgstr "_Иҷро кардани файлҳои матнии иҷрошаванда ҳангоми кушоиши он"
 
 #: ../src/nautilus-file-management-properties.ui.h:17
-#, fuzzy
 msgid "_View executable text files when they are opened"
-msgstr "_Иҷро кардани файлҳои матнии иҷрошаванда ҳангоми кушоиши он"
+msgstr "_Намоиш додани файлҳои матнии иҷрошаванда ҳангоми кушоиши онҳо"
 
 #: ../src/nautilus-file-management-properties.ui.h:18
 msgid "_Ask each time"
@@ -3372,9 +3314,8 @@ msgid "I_nclude a Delete command that bypasses Trash"
 msgstr "И_лова кардани фармони \"Нест кардан\", ки сабадро аз канор мегузарад"
 
 #: ../src/nautilus-file-management-properties.ui.h:22
-#, fuzzy
 msgid "Icon Captions"
-msgstr "<b>Унвонҳои нишонаҳо</b>"
+msgstr "Зернависҳои нишонаҳо"
 
 #: ../src/nautilus-file-management-properties.ui.h:23
 #, fuzzy
@@ -3409,14 +3350,12 @@ msgid "List Columns"
 msgstr "Рӯйхати сутунҳо"
 
 #: ../src/nautilus-file-management-properties.ui.h:30
-#, fuzzy
 msgid "Show _thumbnails:"
 msgstr "_Намоиш додани эскизҳо:"
 
 #: ../src/nautilus-file-management-properties.ui.h:31
-#, fuzzy
 msgid "_Only for files smaller than:"
-msgstr "Тасвири диск %s хурдтар аз дастгоҳи ҳадаф аст"
+msgstr "_Танҳо барои файлҳои хурдтар аз:"
 
 #: ../src/nautilus-file-management-properties.ui.h:32
 #: ../src/nautilus-properties-window.c:4480
@@ -3732,9 +3671,9 @@ msgstr[0] "Ин амал %'d равзанаи алоҳидаро мекушоя�
 msgstr[1] "Ин амал %'d равзанаи алоҳидаро мекушояд."
 
 #: ../src/nautilus-mime-actions.c:631
-#, fuzzy, c-format
+#, c-format
 msgid "The link “%s” is broken. Move it to Trash?"
-msgstr "Пайванди “%s” вайрон аст."
+msgstr "Пайванди “%s” вайрон аст. Онро ба сабад интиқол медиҳед?"
 
 #: ../src/nautilus-mime-actions.c:633
 #, c-format
@@ -3826,7 +3765,6 @@ msgstr ""
 "Барои кушодани ин файл шумо фармонеро ҷустуҷӯ кардан мехоҳед?"
 
 #: ../src/nautilus-mime-actions.c:1547
-#, fuzzy
 msgid "Untrusted application launcher"
 msgstr "Огозкунандаи барномаи беэътибор"
 
@@ -3899,17 +3837,16 @@ msgstr "Ҳамаи амалиётҳои файлӣ бомуваффақият а
 #: ../src/nautilus-properties-window.c:499
 #, fuzzy
 msgid "You cannot assign more than one custom icon at a time!"
-msgstr "--geometry бо зиёда аз як суроғаи URI истифода намешавад."
+msgstr ""
+"Шумо наметавонед дар як вақт зиёда аз як нишонаи фармоиширо таъин кунед!"
 
 #: ../src/nautilus-properties-window.c:500
 #, fuzzy
 msgid "Please drag just one image to set a custom icon."
 msgstr ""
-"Луфтан асбоби ченкуниро ба мисли тасвири дар поён буда ба ҳолати экран таъин "
-"намоед."
+"Шумо наметавонед дар як вақт зиёда аз як нишонаи фармоиширо таъин кунед!"
 
 #: ../src/nautilus-properties-window.c:511
-#, fuzzy
 msgid "The file that you dropped is not local."
 msgstr "Файле, ки шумо гузоштед, файли маҳҳалӣ намебошад."
 
@@ -3917,10 +3854,11 @@ msgstr "Файле, ки шумо гузоштед, файли маҳҳалӣ н
 #: ../src/nautilus-properties-window.c:518
 #, fuzzy
 msgid "You can only use local images as custom icons."
-msgstr "Танҳо нишонаҳо"
+msgstr ""
+"Шумо метавонед танҳо тасвирҳои маҳаллиро ҳамчун нишонаҳои фармоишӣ истифода "
+"баред."
 
 #: ../src/nautilus-properties-window.c:517
-#, fuzzy
 msgid "The file that you dropped is not an image."
 msgstr "Файле, ки шумо гузоштед, файли тасвирӣ намебошад."
 
@@ -3941,10 +3879,10 @@ msgid "%s Properties"
 msgstr "Хусусиятҳои %s"
 
 #: ../src/nautilus-properties-window.c:1223
-#, fuzzy, c-format
+#, c-format
 msgctxt "MIME type description (MIME type)"
 msgid "%s (%s)"
-msgstr "%s %s, %s %s"
+msgstr "%s (%s)"
 
 #: ../src/nautilus-properties-window.c:1431
 msgid "Cancel Group Change?"
@@ -4117,7 +4055,6 @@ msgid "Execute:"
 msgstr "Иҷро кардан:"
 
 #: ../src/nautilus-properties-window.c:4289
-#, fuzzy
 msgid "Allow _executing file as program"
 msgstr "Иҷозат додани _иҷрокунии файл ҳамчун барнома"
 
@@ -4138,8 +4075,7 @@ msgstr "Дигар:"
 #, fuzzy
 msgid "You are not the owner, so you cannot change these permissions."
 msgstr ""
-"Ҷузвдони “%B” нест карда намешаванд, зеро ки шумо барои хондани он иҷозат "
-"надоред."
+"Шумо наметавонед ин иҷозатҳоро тағйир диҳед, зеро ки шумо соҳиб намебошед."
 
 #: ../src/nautilus-properties-window.c:4568
 msgid "Security context:"
@@ -4151,14 +4087,13 @@ msgid "Change Permissions for Enclosed Files…"
 msgstr "Татбиқ кардани иҷозатҳо ба файлҳои замимашуда"
 
 #: ../src/nautilus-properties-window.c:4593
-#, fuzzy, c-format
+#, c-format
 msgid "The permissions of “%s” could not be determined."
-msgstr "Танзим кардани иҷозатҳои '%s'"
+msgstr "Иҷозатҳои “%s” муайян карда нашудаанд."
 
 #: ../src/nautilus-properties-window.c:4596
-#, fuzzy
 msgid "The permissions of the selected file could not be determined."
-msgstr "Иҷозатҳои файл"
+msgstr "Иҷозатҳои файли интихобшуда муайян карда нашудаанд."
 
 #: ../src/nautilus-properties-window.c:4840
 msgid "Open With"
@@ -4326,7 +4261,7 @@ msgstr "_Ҷузвдон:"
 #: ../src/nautilus-view.c:1656
 #, fuzzy
 msgid "Select Folder to Save Search In"
-msgstr "Захира кардани ҷустуҷӯ ҳамчун"
+msgstr "Ҷузвдонеро барои захира кардани ҷустуҷӯ интихоб намоед"
 
 #: ../src/nautilus-view.c:2304
 #, fuzzy
@@ -4482,9 +4417,8 @@ msgstr "_Хусусиятҳо"
 
 #. tooltip
 #: ../src/nautilus-view.c:7153 ../src/nautilus-view.c:8733
-#, fuzzy
 msgid "View or modify the properties of each selected item"
-msgstr "Дубора нусха бардоштани ҳар як объекти интихобшуда"
+msgstr "Намоиш додан ё тағйир додани хусусиятҳои ҳар як объекти интихобшуда"
 
 #. name, stock id
 #. label, accelerator
@@ -4600,9 +4534,10 @@ msgstr ""
 
 #. tooltip
 #: ../src/nautilus-view.c:7213
-#, fuzzy
 msgid "Move or copy files previously selected by a Cut or Copy command"
-msgstr "Файлҳои зеринро нусхабардорӣ мекунед?"
+msgstr ""
+"Интиқол додан ё нусха бардоштани файлҳои интихобшудаи қабли тавассути "
+"фармони \"Буридан\" ё \"Нусха бардоштан\""
 
 #. name, stock id
 #. label, accelerator
@@ -4612,11 +4547,12 @@ msgstr "_Гузоштан ба ҷузвдон"
 
 #. tooltip
 #: ../src/nautilus-view.c:7217
-#, fuzzy
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
-msgstr "Нусха бардоштани тасвири интихобшуда ба ҳофизаи муваққатӣ"
+msgstr ""
+"Интиқол додан ё нусха бардоштани файлҳои интихобшудаи қабли тавассути "
+"фармони \"Буридан\" ё \"Нусха бардоштан\" ба ҷузвдони интихобшуда"
 
 #. name, stock id
 #. label, accelerator
@@ -4628,7 +4564,9 @@ msgstr "Нусха бардоштан ба…"
 #: ../src/nautilus-view.c:7221
 #, fuzzy
 msgid "Copy selected files to another location"
-msgstr " (нусхаи дигар)"
+msgstr ""
+"Интиқол додан ё нусха бардоштани файлҳои интихобшудаи қабли тавассути "
+"фармони \"Буридан\" ё \"Нусха бардоштан\" ба ҷузвдони интихобшуда"
 
 #. name, stock id
 #. label, accelerator
@@ -4638,9 +4576,8 @@ msgstr "Интиқол додан ба..."
 
 #. tooltip
 #: ../src/nautilus-view.c:7225
-#, fuzzy
 msgid "Move selected files to another location"
-msgstr "Интиқол додани файлҳои интихобшуда аз сабад"
+msgstr "Интиқол додани файлҳои интихобшуда ба макони дигар"
 
 #. tooltip
 #: ../src/nautilus-view.c:7229
@@ -4755,9 +4692,8 @@ msgstr "Дубора анҷом додани амали охирин"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-view.c:7282
-#, fuzzy
 msgid "Reset View to _Defaults"
-msgstr "Танзими дубора ба пешфарзҳо"
+msgstr "Танзими дубора ба _намоиши пешфарз"
 
 #. tooltip
 #: ../src/nautilus-view.c:7283
@@ -4851,7 +4787,6 @@ msgstr "Васл кардани ҳаҷми марбут ба ҷузвдони к
 
 #. tooltip
 #: ../src/nautilus-view.c:7315
-#, fuzzy
 msgid "Unmount the volume associated with the open folder"
 msgstr "Ҷудо кардани ҳаҷми марбут ба ҷузвдони кушода"
 
@@ -4863,15 +4798,13 @@ msgstr "Баровардани ҳаҷми марбут ба ҷузвдони к�
 
 #. tooltip
 #: ../src/nautilus-view.c:7323
-#, fuzzy
 msgid "Start the volume associated with the open folder"
-msgstr "Оғоз кардани драйви марбут ба ҷузвдони кушода"
+msgstr "Оғоз кардани ҳаҷми марбут ба ҷузвдони кушода"
 
 #. tooltip
 #: ../src/nautilus-view.c:7327
-#, fuzzy
 msgid "Stop the volume associated with the open folder"
-msgstr "Васл кардани ҳаҷми марбут ба ҷузвдони кушода"
+msgstr "Манъ кардани ҳаҷми марбут ба ҷузвдони кушода"
 
 #. name, stock id
 #. label, accelerator
@@ -4927,11 +4860,12 @@ msgstr ""
 
 #. tooltip
 #: ../src/nautilus-view.c:7366
-#, fuzzy
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into this "
 "folder"
-msgstr "Файлҳои зеринро нусхабардорӣ мекунед?"
+msgstr ""
+"Интиқол додан ё нусха бардоштани файлҳои интихобшудаи қабли тавассути "
+"фармони \"Буридан\" ё \"Нусха бардоштан\" ба ин ҷузвдон"
 
 #. tooltip
 #: ../src/nautilus-view.c:7371
@@ -4951,7 +4885,6 @@ msgstr "Васл кардани ҳаҷми марбут ба ин ҷузвдон
 
 #. tooltip
 #: ../src/nautilus-view.c:7387
-#, fuzzy
 msgid "Unmount the volume associated with this folder"
 msgstr "Ҷудо кардани ҳаҷми марбут ба ин ҷузвдон"
 
@@ -4963,21 +4896,18 @@ msgstr "Баровардани ҳаҷми марбут ба ин ҷузвдон"
 
 #. tooltip
 #: ../src/nautilus-view.c:7395
-#, fuzzy
 msgid "Start the volume associated with this folder"
-msgstr "Васл кардани ҳаҷми марбут ба ин ҷузвдон"
+msgstr "Оғоз кардани ҳаҷми марбут ба ин ҷузвдон"
 
 #. tooltip
 #: ../src/nautilus-view.c:7399
-#, fuzzy
 msgid "Stop the volume associated with this folder"
-msgstr "Васл кардани ҳаҷми марбут ба ин ҷузвдон"
+msgstr "Манъ кардани ҳаҷми марбут ба ин ҷузвдон"
 
 #. tooltip
 #: ../src/nautilus-view.c:7408 ../src/nautilus-window-menus.c:596
-#, fuzzy
 msgid "View or modify the properties of this folder"
-msgstr "Намоиш, тағйир ва конфигуратсия кардани дискҳо ва медиа"
+msgstr "Намоиш додан ё тағйир додани хусусиятҳои ин ҷузвдон"
 
 #. name, stock id
 #. label, accelerator
@@ -5076,14 +5006,12 @@ msgstr "Пайваст шудан ба драйви интихобшуда"
 
 #: ../src/nautilus-view.c:7992 ../src/nautilus-view.c:8079
 #: ../src/nautilus-view.c:8181
-#, fuzzy
 msgid "_Start Multi-disk Drive"
-msgstr "_Оғоз кардани дастгоҳ бо якчанд диск"
+msgstr "_Оғоз кардани драйв бо якчанд диск"
 
 #: ../src/nautilus-view.c:7993 ../src/nautilus-view.c:8182
-#, fuzzy
 msgid "Start the selected multi-disk drive"
-msgstr "_Оғоз кардани дастгоҳ бо якчанд диск"
+msgstr "_Оғоз кардани драйви бо якчанд диски интихобшуда"
 
 #: ../src/nautilus-view.c:7996
 msgid "U_nlock Drive"
@@ -5117,14 +5045,12 @@ msgstr "Қатъ кардани пайвасти драйви интихобшу
 
 #: ../src/nautilus-view.c:8021 ../src/nautilus-view.c:8108
 #: ../src/nautilus-view.c:8210
-#, fuzzy
 msgid "_Stop Multi-disk Drive"
-msgstr "М_анъ кардани дастгоҳ бо якчанд диск"
+msgstr "М_анъ кардани драйв бо якчанд диск"
 
 #: ../src/nautilus-view.c:8022 ../src/nautilus-view.c:8211
-#, fuzzy
 msgid "Stop the selected multi-disk drive"
-msgstr "М_анъ кардани дастгоҳ бо якчанд диск"
+msgstr "Манъ кардани дастгоҳ бо якчанд диск"
 
 #: ../src/nautilus-view.c:8025 ../src/nautilus-view.c:8112
 #: ../src/nautilus-view.c:8214
@@ -5145,23 +5071,20 @@ msgid "Connect to the drive associated with the open folder"
 msgstr "Пайваст шудан ба драйви бо ҷузвдони кушодашуда алоқаманд"
 
 #: ../src/nautilus-view.c:8080
-#, fuzzy
 msgid "Start the multi-disk drive associated with the open folder"
-msgstr "Оғоз кардани драйви марбут ба ҷузвдони кушода"
+msgstr "Оғоз кардани драйви бо якчанд диски марбут ба ҷузвдони кушода"
 
 #: ../src/nautilus-view.c:8083 ../src/nautilus-view.c:8185
 msgid "_Unlock Drive"
 msgstr "_Кушодани драйв"
 
 #: ../src/nautilus-view.c:8084
-#, fuzzy
 msgid "Unlock the drive associated with the open folder"
-msgstr "Оғоз кардани драйви марбут ба ҷузвдони кушода"
+msgstr "Кушодани қулфи драйви марбут ба ҷузвдони кушода"
 
 #: ../src/nautilus-view.c:8097
-#, fuzzy
 msgid "_Stop the drive associated with the open folder"
-msgstr "Оғоз кардани драйви марбут ба ҷузвдони кушода"
+msgstr "_Манъ кардани драйви марбут ба ҷузвдони кушода"
 
 #: ../src/nautilus-view.c:8101
 msgid "Safely remove the drive associated with the open folder"
@@ -5172,12 +5095,10 @@ msgid "Disconnect the drive associated with the open folder"
 msgstr "Қатъ кардани пайвасти драйви марбут ба ҷузвдони кушода"
 
 #: ../src/nautilus-view.c:8109
-#, fuzzy
 msgid "Stop the multi-disk drive associated with the open folder"
-msgstr "Оғоз кардани драйви марбут ба ҷузвдони кушода"
+msgstr "Манъ кардани драйви бо якчанд диски марбут ба ҷузвдони кушода"
 
 #: ../src/nautilus-view.c:8113
-#, fuzzy
 msgid "Lock the drive associated with the open folder"
 msgstr "Қулф кардани драйви марбут ба ҷузвдони кушода"
 
@@ -5241,9 +5162,8 @@ msgid "Remove each selected item from the recently used list"
 msgstr "Тоза кардани объекти интихобшуда аз навори абзор"
 
 #: ../src/nautilus-view.c:8731
-#, fuzzy
 msgid "View or modify the properties of the open folder"
-msgstr "Намоиш, тағйир ва конфигуратсия кардани дискҳо ва медиа"
+msgstr "Намоиш додан ё тағйир додани хусусиятҳои ҷузвдони кушода"
 
 #: ../src/nautilus-view-dnd.c:169 ../src/nautilus-view-dnd.c:203
 #: ../src/nautilus-view-dnd.c:294
@@ -5307,10 +5227,10 @@ msgid ""
 "Foundation; either version 2 of the License, or (at your option) any later "
 "version."
 msgstr ""
-"Brasero нармафзори озод мебошад; шумо метавонед онро мутобиқи шартҳои "
-"Иҷозатномаи умумии ҷамъиятии GNU-и бо Фонди нармафзори озод интишордодашуда "
-"(версияи 2-и иҷозатнома ё (бо хоҳиши худ) ягон версияи навтар) аз нав паҳн "
-"гардонед ва/ё тағйир диҳед."
+"PackageKit нармафзори ройгон мебошад; шумо метавонед онро мутобиқи шароитҳои "
+"Иҷозатномаи умумии ҷамъиятии Версияи 2 GNU, ки аз ҷониби Фонди Нармафзори "
+"озод нашр шудааст ё ҳатто версияи 2 Иҷозатнома ё ҳар версияи навбатӣ (дар "
+"имконоти шумо), дубора паҳн намоед ва/ё тағйир диҳед."
 
 #: ../src/nautilus-window.c:2383
 #, fuzzy
@@ -5320,20 +5240,20 @@ msgid ""
 "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
 "details."
 msgstr ""
-"Мо умедворем, ки ин барнома барои фоидаоварӣ паҳн карда мешавад, вале БЕ "
-"ЯГОН КАФОЛАТ; ҳатто бе кафолат барои ФУРӮШ ё МУВОФИҚАТ БА МАҚСАДҲОИ МАХСУС. "
-"Барои маълумоти муфассал ба Иҷозатномаи ҷамъиятии умумии GNU муроҷиат кунед."
+"Gucharmap ва файлҳои иттилооти Юникод бо мақсаде таҳия мешаванд, ки онҳо "
+"фоидаовар бошанд, вале БЕ ЯГОН КАФОЛАТ, ҳатто бе кафолати пешбинишавандаи "
+"ФУРӮХТАШАВӢ ё МУТОБИҚАТ БА ҲАДАФИ МУАЙЯН. Барои маълумоти бештар ба "
+"иҷозатномаи умумии ҷамъиятии GNU ва ҳуқуқи муаллифи Юникод нигаред. "
 
 #: ../src/nautilus-window.c:2387
-#, fuzzy
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "Street, Fifth Floor, Boston, MA 02110-1301 USA"
 msgstr ""
-"Ҳамроҳ бо ин барнома шумо бояд як нусхаи Иҷозатномаи умумии ҷамъиятии  GNU-"
-"ро дарёфт намоед; агар накунед, ба Фонди нармафзори ройгон, Inc., 51 Хиёбони "
-"Франклин, ошёнаи 5-ум, Бостон, MA 02110-1301, ИМА нависед. "
+"Шумо нусхаи Иҷозатномаи ҷамъиятии умумии GNU-ро бо Nautilus қабул кардед; ба "
+"таври дигар, ба суроғаи Бунёди нармафзори озод нависед: 51 Franklin Street, "
+"Fifth Floor, Boston, MA  02110-1301, USA"
 
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
@@ -5341,12 +5261,11 @@ msgstr ""
 #: ../src/nautilus-window.c:2402
 #, fuzzy
 msgid "Copyright © %Id–%Id The Files authors"
-msgstr "ID"
+msgstr "Рамзи ID"
 
 #: ../src/nautilus-window.c:2408
-#, fuzzy
 msgid "Access and organize your files."
-msgstr "Кушодан ва мураттабсозии файлҳо"
+msgstr "Кушодан ва мураттабсозии файлҳо."
 
 #. Translators should localize the following string
 #. * which will be displayed at the bottom of the about
@@ -5377,9 +5296,8 @@ msgstr "Кушодани ҷузвдони асосӣ"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:484
-#, fuzzy
 msgid "Stop loading the current location"
-msgstr "Бекор кардани боркунии лоиҳаи ҷорӣ"
+msgstr "Бекор кардани боркунии ҷойгиршавии ҷорӣ"
 
 #. name, stock id
 #. label, accelerator
@@ -5389,7 +5307,6 @@ msgstr "_Аз нав бор кардан"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:488
-#, fuzzy
 msgid "Reload the current location"
 msgstr "Аз нав бор кардани макони ҷорӣ"
 
@@ -5420,9 +5337,8 @@ msgstr "Лутфан, номи файлро ворид кунед"
 #. name, stock id
 #. label, accelerator
 #: ../src/nautilus-window-menus.c:503
-#, fuzzy
 msgid "Sort files and folders"
-msgstr "Файлҳо ва ҷузвдонҳо"
+msgstr "Мураттаб кардани _ҷузвдонҳо ва файлҳо"
 
 #. tooltip
 #: ../src/nautilus-window-menus.c:504
@@ -5563,14 +5479,11 @@ msgstr "Гузариш ба ҷойгиршавии боздидшудаи нав
 #: ../src/nautilus-window-menus.c:571
 #, fuzzy
 msgid "Enter _Location…"
-msgstr "enter"
+msgstr "Ҷ_ойгиршавӣ:"
 
 #: ../src/nautilus-window-menus.c:572
-#, fuzzy
 msgid "Specify a location to open"
-msgstr ""
-"Оё шумо мехоҳед, ки ҷойгиршавии дигареро барои ин ҷаласа муайян кунед? Ё бо "
-"ҷойгиршавии ҷорӣ аз нав кӯшиш мекунед?"
+msgstr "Ҷойгиршавиеро барои кушоиш муайян кунед"
 
 #. name, stock id
 #: ../src/nautilus-window-menus.c:575
@@ -5647,18 +5560,17 @@ msgid "View items as a list"
 msgstr "Намоиш додани объектҳо дар рӯйхат"
 
 #: ../src/nautilus-window-menus.c:625
-#, fuzzy
 msgid "View items as a grid of icons"
-msgstr "Намуд: Нишонаҳо"
+msgstr "Намоиш додани объектҳо ҳамчун тӯри нишонаҳо"
 
 #: ../src/nautilus-window-menus.c:727
 msgid "_Up"
 msgstr "_Ба боло"
 
 #: ../src/nautilus-window-slot.c:1279 ../src/nautilus-window-slot.c:1451
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to load location"
-msgstr "Танзимот бор карда нашуд"
+msgstr "Макон кушода намешавад"
 
 #: ../src/nautilus-window-slot.c:1606
 #, fuzzy
@@ -5668,15 +5580,13 @@ msgstr "Намоиш додани феҳристҳои пахш ва мӯҳта�
 #: ../src/nautilus-window-slot.c:1608
 #, fuzzy
 msgid "This location doesn't appear to be a folder."
-msgstr "Ин тасвири боэътибори диск ё файли боэътибори cue намебошад."
+msgstr "Ин ҷойгиршавӣ ҷузвдон нмебошад."
 
 #: ../src/nautilus-window-slot.c:1613
 #, fuzzy
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
-msgstr ""
-"Паролҳо мувофиқат намекунанд, лутфан, онҳоро дубора санҷед ва аз нав ворид "
-"намоед."
+msgstr "Лутфан, дурустии матни воридшударо санҷед ва аз нав кӯшиш кунед."
 
 #: ../src/nautilus-window-slot.c:1618
 #, c-format
