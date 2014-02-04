@@ -4288,7 +4288,7 @@ button_press_event (GtkWidget *widget,
 
 	if (clicked_on_icon) {
 		NemoIcon *icon;//current icon which was clicked on
-        EelDRect icon_rect;//stores dimentions of the text part
+        EelDRect icon_rect;//stores dimensions of the icon part
         double eventX;//where did click event happened for x
         double eventY;//where did click event happened for y
 		/* when icon is in renaming mode and user clicks on the image part of icon renaming should get closed */
@@ -8378,7 +8378,14 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 		start_offset = 0;
 		end_offset = -1;
 	} else {
-		eel_filename_get_rename_region (editable_text, &start_offset, &end_offset);
+		/* if it is a directory it should select all of the text regardless of select_all option */
+		if(nemo_file_is_directory(icon->data))
+        {
+            start_offset = 0;
+            end_offset = -1;
+        }else{
+            eel_filename_get_rename_region (editable_text, &start_offset, &end_offset);
+        }
 	}
 
 	gtk_widget_show (details->rename_widget);
