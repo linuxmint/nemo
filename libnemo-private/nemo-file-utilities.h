@@ -63,6 +63,11 @@ char *	 nemo_compute_title_for_location	     (GFile *file);
 
 gboolean nemo_is_file_roller_installed           (void);
 
+gboolean nemo_uri_parse                          (const char  *uri,
+						      char       **host,
+						      guint16     *port,
+						      char       **userinfo);
+
 /* Return an allocated file name that is guranteed to be unique, but
  * tries to make the name readable to users.
  * This isn't race-free, so don't use for security-related things
