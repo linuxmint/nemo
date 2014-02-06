@@ -4464,7 +4464,7 @@ on_change_permissions_clicked (GtkWidget                *button,
 
 	dialog = gtk_dialog_new_with_buttons (_("Change Permissions for Enclosed Files"),
 					       GTK_WINDOW (window),
-					       GTK_DIALOG_MODAL,
+					       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_USE_HEADER_BAR,
 					      _("_Cancel"), GTK_RESPONSE_CANCEL,
 					      _("Change"), GTK_RESPONSE_OK,
 					      NULL);
@@ -4847,7 +4847,9 @@ create_properties_window (StartupData *startup_data)
 	NautilusPropertiesWindow *window;
 	GList *l;
 
-	window = NAUTILUS_PROPERTIES_WINDOW (gtk_widget_new (NAUTILUS_TYPE_PROPERTIES_WINDOW, NULL));
+	window = NAUTILUS_PROPERTIES_WINDOW (gtk_widget_new (NAUTILUS_TYPE_PROPERTIES_WINDOW,
+							     "use-header-bar", TRUE,
+							     NULL));
 
 	window->details->original_files = nautilus_file_list_copy (startup_data->original_files);
 	
@@ -4923,6 +4925,8 @@ create_properties_window (StartupData *startup_data)
 
 	/* Create the notebook tabs. */
 	window->details->notebook = GTK_NOTEBOOK (gtk_notebook_new ());
+	gtk_notebook_set_show_border (window->details->notebook, FALSE);
+	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (window))), 0);
 	gtk_widget_show (GTK_WIDGET (window->details->notebook));
 	gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (window))),
 			    GTK_WIDGET (window->details->notebook),
@@ -4941,16 +4945,6 @@ create_properties_window (StartupData *startup_data)
 
 	/* append pages from available views */
 	append_extension_pages (window);
-
-	gtk_dialog_add_buttons (GTK_DIALOG (window),
-				_("_Help"), GTK_RESPONSE_HELP,
-				_("_Close"), GTK_RESPONSE_CLOSE,
-				NULL);
-
-	/* FIXME - HIGificiation, should be done inside GTK+ */
-	gtk_container_set_border_width (GTK_CONTAINER (window), 5);
-	gtk_container_set_border_width (GTK_CONTAINER (window->details->notebook), 5);
-	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_action_area (GTK_DIALOG (window))), 0);
 
 	/* Update from initial state */
 	properties_window_update (window, NULL);
@@ -5177,27 +5171,7 @@ static void
 real_response (GtkDialog *dialog,
 	       int        response)
 {
-	GError *error = NULL;
-	NautilusPropertiesWindow *window = NAUTILUS_PROPERTIES_WINDOW (dialog);
-	GtkWidget *curpage;
-	const char *helpuri;
-
 	switch (response) {
-	case GTK_RESPONSE_HELP:
-		curpage = gtk_notebook_get_nth_page (window->details->notebook,
-						     gtk_notebook_get_current_page (window->details->notebook));
-		helpuri = g_object_get_data (G_OBJECT (curpage), "help-uri");
-		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
-			      helpuri ? helpuri : "help:gnome-help/files",
-			      gtk_get_current_event_time (),
-			      &error);
-		if (error != NULL) {
-			eel_show_error_dialog (_("There was an error displaying help."), error->message,
-					       GTK_WINDOW (dialog));
-			g_error_free (error);
-		}
-		break;
-
 	case GTK_RESPONSE_NONE:
 	case GTK_RESPONSE_CLOSE:
 	case GTK_RESPONSE_DELETE_EVENT:

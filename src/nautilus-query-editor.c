@@ -515,7 +515,7 @@ type_combo_changed (GtkComboBox *combo_box, NautilusQueryEditorRow *row)
 		toplevel = gtk_widget_get_toplevel (GTK_WIDGET (combo_box));
 		dialog = gtk_dialog_new_with_buttons (_("Select type"),
 						      GTK_WINDOW (toplevel),
-						      0,
+						      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_USE_HEADER_BAR,
 						      _("_Cancel"), GTK_RESPONSE_CANCEL,
 						      _("Select"), GTK_RESPONSE_OK,
 						      NULL);

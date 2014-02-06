@@ -624,6 +624,8 @@ nautilus_file_conflict_dialog_new (GtkWindow *parent,
 	GtkWidget *dialog;
 	
 	dialog = GTK_WIDGET (g_object_new (NAUTILUS_TYPE_FILE_CONFLICT_DIALOG,
+					   "use-header-bar", TRUE,
+					   "modal", TRUE,
 					   "title", _("File conflict"),
 					   NULL));
 	set_source_and_destination (dialog,

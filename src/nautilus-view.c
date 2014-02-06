@@ -1245,7 +1245,8 @@ choose_program (NautilusView *view,
 	location = nautilus_file_get_location (file);
 	parent_window = nautilus_view_get_containing_window (view);
 
-	dialog = gtk_app_chooser_dialog_new (parent_window, 0,
+	dialog = gtk_app_chooser_dialog_new (parent_window,
+					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_USE_HEADER_BAR,
 					     location);
 	g_object_set_data_full (G_OBJECT (dialog), 
 				"directory-view:file",
@@ -1460,17 +1461,6 @@ pattern_select_response_cb (GtkWidget *dialog, int response, gpointer user_data)
 	case GTK_RESPONSE_CANCEL :
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		break;
-	case GTK_RESPONSE_HELP :
-		error = NULL;
-		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
-			      "help:gnome-help/files-select",
-			      gtk_get_current_event_time (), &error);
-		if (error) {
-			eel_show_error_dialog (_("There was an error displaying help."), error->message,
-					       GTK_WINDOW (dialog));
-			g_error_free (error);
-		}
-		break;
 	default :
 		g_assert_not_reached ();
 	}
@@ -1488,12 +1478,10 @@ select_pattern (NautilusView *view)
 
 	dialog = gtk_dialog_new_with_buttons (_("Select Items Matching"),
 					      nautilus_view_get_containing_window (view),
-					      GTK_DIALOG_DESTROY_WITH_PARENT,
-					      _("_Help"),
-					      GTK_RESPONSE_HELP,
+					      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_USE_HEADER_BAR,
 					      _("_Cancel"),
 					      GTK_RESPONSE_CANCEL,
-					      _("_OK"),
+					      _("_Select"),
 					      GTK_RESPONSE_OK,
 					      NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG (dialog),

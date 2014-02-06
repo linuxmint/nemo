@@ -44,7 +44,6 @@ struct _NautilusConnectServerDialogDetails {
 	GtkWidget *menu;
 	GtkWidget *remove_menu_item;
 	GtkWidget *clear_menu_item;
-	GtkWidget *browse_button;
 
 	char **supported;
 };
@@ -59,13 +58,6 @@ enum {
 G_DEFINE_TYPE (NautilusConnectServerDialog, nautilus_connect_server_dialog,
 	       GTK_TYPE_DIALOG)
 
-void
-nautilus_connect_server_dialog_set_show_browse (NautilusConnectServerDialog *dialog,
-						gboolean                     show)
-{
-	gtk_widget_set_visible (dialog->details->browse_button, show);
-}
-
 GFile *
 nautilus_connect_server_dialog_get_location (NautilusConnectServerDialog *dialog)
 {
@@ -78,37 +70,6 @@ nautilus_connect_server_dialog_get_location (NautilusConnectServerDialog *dialog
 	}
 
 	return file;
-}
-
-static void
-nautilus_connect_server_dialog_response (GtkDialog *dialog,
-					 int        response_id,
-					 gpointer   data)
-{
-	GError *error;
-	NautilusConnectServerDialog *cs_dialog = NAUTILUS_CONNECT_SERVER_DIALOG (dialog);
-
-	switch (response_id) {
-	case GTK_RESPONSE_ACCEPT:
-		g_signal_stop_emission_by_name (dialog, "response");
-		gtk_entry_set_text (GTK_ENTRY (cs_dialog->details->uri_entry), "network:///");
-		gtk_dialog_response (dialog, GTK_RESPONSE_OK);
-		break;
-	case GTK_RESPONSE_HELP:
-		error = NULL;
-		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
-			      "help:gnome-help/nautilus-connect",
-			      gtk_get_current_event_time (), &error);
-		if (error) {
-			eel_show_error_dialog (_("There was an error displaying help."), error->message,
-					       GTK_WINDOW (dialog));
-			g_error_free (error);
-		}
-		g_signal_stop_emission_by_name (dialog, "response");
-		break;
-	default :
-		break;
-	}
 }
 
 static gboolean
@@ -565,7 +526,6 @@ static void
 nautilus_connect_server_dialog_init (NautilusConnectServerDialog *dialog)
 {
 	GtkWidget *label;
-	GtkWidget *button;
 	GtkWidget *sw;
 	GtkWidget *view;
 	GtkWidget *box;
@@ -689,13 +649,6 @@ nautilus_connect_server_dialog_init (NautilusConnectServerDialog *dialog)
 	dialog->details->view = GTK_TREE_VIEW (view);
 	dialog->details->store = store;
 
-	button = gtk_dialog_add_button (GTK_DIALOG (dialog),
-					_("_Browse"),
-					GTK_RESPONSE_ACCEPT);
-	gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (gtk_dialog_get_action_area (GTK_DIALOG (dialog))),
-					    button, TRUE);
-	dialog->details->browse_button = button;
-
 	gtk_dialog_add_button (GTK_DIALOG (dialog),
 			       _("_Cancel"),
 			       GTK_RESPONSE_CANCEL);
@@ -714,10 +667,6 @@ nautilus_connect_server_dialog_init (NautilusConnectServerDialog *dialog)
 	g_signal_connect (dialog->details->uri_entry, "icon-release",
 			  G_CALLBACK (on_uri_entry_clear),
 			  dialog);
-
-	g_signal_connect (dialog, "response",
-			  G_CALLBACK (nautilus_connect_server_dialog_response),
-			  NULL);
 
 	create_popup_menu (dialog);
 	populate_server_list (dialog);
@@ -751,7 +700,9 @@ nautilus_connect_server_dialog_new (NautilusWindow *window)
 {
 	GtkWidget *dialog;
 
-	dialog = gtk_widget_new (NAUTILUS_TYPE_CONNECT_SERVER_DIALOG, NULL);
+	dialog = gtk_widget_new (NAUTILUS_TYPE_CONNECT_SERVER_DIALOG,
+				 "use-header-bar", TRUE,
+				 NULL);
 
 	if (window) {
 		gtk_window_set_screen (GTK_WINDOW (dialog),
