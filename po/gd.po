@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautil"
 "us&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2014-02-04 11:41+0000\n"
-"PO-Revision-Date: 2014-02-04 16:42+0100\n"
+"PO-Revision-Date: 2014-02-06 11:47+0100\n"
 "Last-Translator: GunChleoc <fios@foramnagaidhlig.net>\n"
 "Language-Team: Fòram na Gàidhlig http://www.foramnagaidhlig.net\n"
 "Language: gd\n"
@@ -1531,17 +1531,19 @@ msgstr "Thachair mearachd nuair a bha sinn a' cruthachadh ceangal ri %B."
 
 #: ../libnautilus-private/nautilus-file-operations.c:5429
 msgid "Symbolic links only supported for local files"
-msgstr "Chan eil taic ri ceanglaichean samhla ach airson faidhlichean ionadail"
+msgstr ""
+"Chan eil taic ri ceanglaichean samhlachail ach airson faidhlichean ionadail"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5432
 msgid "The target doesn't support symbolic links."
-msgstr "Chan eil an targaid a' cur taic ri ceanglaichean samhla."
+msgstr "Chan eil an targaid a' cur taic ri ceanglaichean samhlachail."
 
 #: ../libnautilus-private/nautilus-file-operations.c:5435
 #, c-format
 msgid "There was an error creating the symlink in %F."
 msgstr ""
-"Thachair mearachd nuair a bha sinn a' cruthachadh a' symlink ann an %F."
+"Thachair mearachd nuair a bha sinn a' cruthachadh a' cheangail shamhlachail "
+"ann an %F."
 
 #: ../libnautilus-private/nautilus-file-operations.c:5754
 msgid "Setting permissions"
@@ -4712,7 +4714,7 @@ msgstr[3] "Dè_an ceanglaichean"
 #. tooltip
 #: ../src/nautilus-view.c:7241
 msgid "Create a symbolic link for each selected item"
-msgstr "Cruthaich ceangal samhlach airson gach nì a thagh thu"
+msgstr "Cruthaich ceangal samhlachail airson gach nì a thagh thu"
 
 #. name, stock id
 #. label, accelerator
