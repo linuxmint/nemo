@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Tajik Gnome\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2014-02-04 23:45+0000\n"
-"PO-Revision-Date: 2014-02-05 16:44+0500\n"
+"POT-Creation-Date: 2014-02-05 23:39+0000\n"
+"PO-Revision-Date: 2014-02-06 14:24+0500\n"
 "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
 "Language-Team: \n"
 "Language: tg\n"
@@ -110,7 +110,7 @@ msgstr "Чархиши хат"
 #: ../eel/eel-editable-label.c:330
 #, fuzzy
 msgid "If set, wrap lines if the text becomes too wide."
-msgstr "Агар танзим кунед, хатҳои матни аз ҳад дароз печонида мешаванд."
+msgstr "Агар гузошта шавад, хатҳо мечарханд агар матн хеле васеъ бошад"
 
 #: ../eel/eel-editable-label.c:337
 msgid "Cursor Position"
@@ -1121,9 +1121,9 @@ msgstr[1] "%'d файл барои интиқол ба сабад боқӣ мо�
 
 #. Translators: %B is a file name
 #: ../libnautilus-private/nautilus-file-operations.c:1837
-#, fuzzy
 msgid "“%B” can't be put in the trash. Do you want to delete it immediately?"
-msgstr "Файл ба сабад интиқол нашуд, шумо мехоҳед, ки фавран нест кунед?"
+msgstr ""
+"“%B” ба сабад интиқол нашудааст. Шумо мехоҳед, ки онро фавран нест кунед?"
 
 #: ../libnautilus-private/nautilus-file-operations.c:1843
 #, fuzzy
@@ -1466,7 +1466,6 @@ msgstr[0] "Эҷодкунии пайванд ба %'d файл"
 msgstr[1] "Эҷодкунии пайванд ба %'d файл"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5427
-#, fuzzy
 msgid "Error while creating link to %B."
 msgstr "Ҳангоми эҷодкунии пайванд ба %B хатогӣ ба вуҷуд омад."
 
@@ -1706,7 +1705,7 @@ msgstr[0] "_Дубора анҷом додани такроркунии %d об�
 msgstr[1] "_Дубора анҷом додани такроркунии %d объект"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:439
-#, fuzzy, c-format
+#, c-format
 msgid "Duplicate '%s' in '%s'"
 msgstr "Дубора нусха бардоштани '%s' дар '%s'"
 
@@ -1904,11 +1903,9 @@ msgid "The item cannot be restored from trash"
 msgstr "Объект аз сабад барқарор карда намешавад"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:80
-#, fuzzy, c-format
+#, c-format
 msgid "Error while adding “%s”: %s"
-msgstr ""
-"ҳангоми иловакунии мӯҳтаво ба директорияи \"%s\" (%x) libisofs хатогӣ намоиш "
-"дод "
+msgstr "Ҳангоми иловакунии “%s” хатогӣ ба вуҷуд омад: %s"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:82
 #, fuzzy
@@ -1925,9 +1922,10 @@ msgid "Forget association"
 msgstr "Фаромуш кардани робита"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:172
-#, fuzzy, c-format
+#, c-format
 msgid "Error while setting “%s” as default application: %s"
-msgstr "Хато ҳангоми навиштан ба '%s'"
+msgstr ""
+"Ҳангоми танзимкунии “%s” ҳамчун барномаи пешфарз хатогӣ ба вуҷуд омад: %s"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:174
 msgid "Could not set as default"
@@ -1965,7 +1963,6 @@ msgid "Sorry, but you cannot execute commands from a remote site."
 msgstr "Мутаассифона, шумо наметавонед фармонҳоро аз сайти дурдаст иҷро кунед."
 
 #: ../libnautilus-private/nautilus-program-choosing.c:314
-#, fuzzy
 msgid "This is disabled due to security considerations."
 msgstr "Ба сабабҳои амнияти система ғайрифаъол шудааст."
 
@@ -2034,7 +2031,7 @@ msgid ""
 "If set to \"after-current-tab\", then new tabs are inserted after the "
 "current tab. If set to \"end\", then new tabs are appended to the end of the "
 "tab list."
-msgstr "Варақаи _нав"
+msgstr "_Варақаи нав"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:3
 #, fuzzy
@@ -2113,7 +2110,7 @@ msgstr "зеркунии дубора"
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:13
 #, fuzzy
 msgid "What to do with executable text files when activated"
-msgstr "_Намоиш додани файлҳои матнии иҷрошаванда ҳангоми кушоиши онҳо"
+msgstr "_Иҷро кардани файлҳои матнии иҷрошаванда ҳангоми кушоиши он"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:14
 #, fuzzy
@@ -2176,9 +2173,8 @@ msgid ""
 msgstr "Тугмаи бозгашт"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:23
-#, fuzzy
 msgid "When to show thumbnails of files"
-msgstr "_Намоиш додани эскизҳо:"
+msgstr "Мавриди намоиши эскизҳои файлҳо"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:24
 #, fuzzy
@@ -2289,7 +2285,7 @@ msgid ""
 "When a folder is visited this viewer is used unless you have selected "
 "another view for that particular folder. Possible values are \"list-view\", "
 "and \"icon-view\"."
-msgstr "Намоиши ҷузвдони ҷорӣ"
+msgstr "Намоиш додани ҷузвдони ҷорӣ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:35
 msgid "Whether to show hidden files"
@@ -2335,12 +2331,12 @@ msgstr "Зернависҳои нишонаҳо"
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:41
 #, fuzzy
 msgid "Default icon zoom level"
-msgstr "Сатҳи танзими андозаи рӯйхати _пешфарз:"
+msgstr "_Сатҳи танзими андозаи пешфарз:"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:42
 #, fuzzy
 msgid "Default zoom level used by the icon view."
-msgstr "Сатҳи танзими андозаи рӯйхати _пешфарз:"
+msgstr "_Сатҳи танзими андозаи пешфарз:"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:43
 #, fuzzy
@@ -2388,12 +2384,12 @@ msgstr "Сатҳи танзими андозаи рӯйхати _пешфарз:
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:50
 #, fuzzy
 msgid "Default list of columns visible in the list view"
-msgstr "Рӯйхати сутунҳо"
+msgstr "Сутунҳои рӯйхат"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:51
 #, fuzzy
 msgid "Default list of columns visible in the list view."
-msgstr "Рӯйхати сутунҳо"
+msgstr "Сутунҳои рӯйхат"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:52
 #, fuzzy
@@ -2549,9 +2545,8 @@ msgid "Whether the navigation window should be maximized by default."
 msgstr "Интихоби ҳолати равзана дар ҳадди аксар"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:79
-#, fuzzy
 msgid "Width of the side pane"
-msgstr "Панҷараки _паҳлӯ"
+msgstr "Бари панҷараки ҷонибӣ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:80
 #, fuzzy
@@ -2650,17 +2645,12 @@ msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry бо зиёда аз як суроғаи URI истифода намешавад."
 
 #: ../src/nautilus-application.c:1104
-#, fuzzy
 msgid "--select must be used with at least an URI."
-msgstr ""
-"Интихоби меъёри аксари шабакаҳо/динамикҳои аудиоии дастрас барои аудиои "
-"рамзшуда. Агар каналҳои барориши рақамии оптикӣ/коаксиро истифода баред, "
-"меъёри 2.0 -ро интихоб намоед."
+msgstr "Фармони --select бояд ақаллан бо суроғаи URI истифода шавад."
 
 #: ../src/nautilus-application.c:1110
-#, fuzzy
 msgid "--no-desktop and --force-desktop cannot be used together."
-msgstr "Мизи корӣ "
+msgstr "Фармонҳои --no-desktop ва --force-desktop якҷоя истифода намешаванд."
 
 #: ../src/nautilus-application.c:1209
 msgid "Perform a quick set of self-check tests."
@@ -2697,11 +2687,9 @@ msgstr ""
 "равзанаи гуфтугӯи хусусиятҳо)."
 
 #: ../src/nautilus-application.c:1225
-#, fuzzy
 msgid "Always manage the desktop (ignore the GSettings preference)."
 msgstr ""
-"Идора накардани мизи корӣ (истифода накардани хусусиятҳои танзимшуда дар "
-"равзанаи гуфтугӯи хусусиятҳо)."
+"Ҳамеша идора кардани мизи корӣ (истифода накардани хусусиятҳои GSettings)."
 
 #: ../src/nautilus-application.c:1227
 msgid "Quit Nautilus."
@@ -3668,13 +3656,12 @@ msgid "The link “%s” is broken."
 msgstr "Пайванди “%s” вайрон аст."
 
 #: ../src/nautilus-mime-actions.c:639
-#, fuzzy
 msgid "This link cannot be used because it has no target."
 msgstr ""
 "Ин пайванд истифода намешавад, зеро ки он ҷои таъинотро дар бар намегирад."
 
 #: ../src/nautilus-mime-actions.c:641
-#, fuzzy, c-format
+#, c-format
 msgid "This link cannot be used because its target “%s” doesn't exist."
 msgstr ""
 "Ин пайванд истифода намешавад, зеро ки ҷои таъиноти \"%s\" вуҷуд надорад."
@@ -4779,7 +4766,6 @@ msgstr "Ҷудо кардани ҳаҷми марбут ба ҷузвдони к
 
 #. tooltip
 #: ../src/nautilus-view.c:7319
-#, fuzzy
 msgid "Eject the volume associated with the open folder"
 msgstr "Баровардани ҳаҷми марбут ба ҷузвдони кушода"
 
@@ -4874,7 +4860,6 @@ msgstr "Ҷудо кардани ҳаҷми марбут ба ин ҷузвдон
 
 #. tooltip
 #: ../src/nautilus-view.c:7391
-#, fuzzy
 msgid "Eject the volume associated with this folder"
 msgstr "Баровардани ҳаҷми марбут ба ин ҷузвдон"
 
@@ -5165,15 +5150,13 @@ msgstr "Намуди беэътибори кашидан истифода шуд
 
 #. Translator: This is the filename used for when you dnd text to a directory
 #: ../src/nautilus-view-dnd.c:382
-#, fuzzy
 msgid "Dropped Text.txt"
-msgstr "файли text.txt-и воридшуда"
+msgstr "Файли воридшудаи Text.txt"
 
 #. Translator: This is the filename used for when you dnd raw
 #. * data to a directory, if the source didn't supply a name.
 #.
 #: ../src/nautilus-view-dnd.c:480
-#, fuzzy
 msgid "dropped data"
 msgstr "иттилооти воридшуда"
 
@@ -5455,9 +5438,8 @@ msgstr "Гузариш ба ҷойгиршавии боздидшудаи нав
 
 #. name, stock id
 #: ../src/nautilus-window-menus.c:571
-#, fuzzy
 msgid "Enter _Location…"
-msgstr "Ҷ_ойгиршавӣ:"
+msgstr "Ворид кардани ҷ_ойгиршавӣ..."
 
 #: ../src/nautilus-window-menus.c:572
 msgid "Specify a location to open"
@@ -5556,9 +5538,8 @@ msgid "Unable to display the contents of this folder."
 msgstr "Намоиш додани феҳристҳои пахш ва мӯҳтавои онҳо"
 
 #: ../src/nautilus-window-slot.c:1608
-#, fuzzy
 msgid "This location doesn't appear to be a folder."
-msgstr "Ин ҷойгиршавӣ ҷузвдон нмебошад."
+msgstr "Ин ҷойгиршавӣ ҷузвдон намебошад."
 
 #: ../src/nautilus-window-slot.c:1613
 #, fuzzy
