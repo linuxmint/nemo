@@ -42,6 +42,7 @@
 #include "nautilus-search-directory-file.h"
 #include "nautilus-thumbnails.h"
 #include "nautilus-ui-utilities.h"
+#include "nautilus-video-mime-types.h"
 #include "nautilus-vfs-file.h"
 #include "nautilus-file-undo-operations.h"
 #include "nautilus-file-undo-manager.h"
@@ -4064,6 +4065,24 @@ nautilus_file_should_show_thumbnail (NautilusFile *file)
 	return FALSE;
 }
 
+static gboolean
+nautilus_is_video_file (NautilusFile *file)
+{
+	const char *mime_type;
+	guint i;
+
+	mime_type = eel_ref_str_peek (file->details->mime_type);
+	if (mime_type == NULL)
+		return FALSE;
+
+	for (i = 0; video_mime_types[i] != NULL; i++) {
+		if (g_content_type_equals (video_mime_types[i], mime_type))
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 static void
 prepend_icon_name (const char *name,
 		   GThemedIcon *icon)
@@ -4294,7 +4313,10 @@ nautilus_file_get_icon (NautilusFile *file,
 
 			/* We don't want frames around small icons */
 			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
-				nautilus_ui_frame_image (&scaled_pixbuf);
+				if (nautilus_is_video_file (file))
+					nautilus_ui_frame_video (&scaled_pixbuf);
+				else
+					nautilus_ui_frame_image (&scaled_pixbuf);
 			}
 
 			g_object_unref (raw_pixbuf);

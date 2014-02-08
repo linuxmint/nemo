@@ -172,6 +172,7 @@ libnautilus_private_la_SOURCES = \
 	nautilus-tree-view-drag-dest.h \
 	nautilus-ui-utilities.c \
 	nautilus-ui-utilities.h \
+	nautilus-video-mime-types.h \
 	nautilus-vfs-directory.c \
 	nautilus-vfs-directory.h \
 	nautilus-vfs-file.c \
