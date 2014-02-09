@@ -1496,12 +1496,13 @@ nemo_window_sync_title (NemoWindow *window,
 
 	if (NEMO_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->sync_title != NULL) {
 		NEMO_WINDOW_CLASS (G_OBJECT_GET_CLASS (window))->sync_title (window, slot);
-
 		return;
 	}
 
 	if (slot == nemo_window_get_active_slot (window)) {
-		gtk_window_set_title (GTK_WINDOW (window), slot->title);
+	    gchar *escaped_title = g_strescape (slot->title, "");
+		gtk_window_set_title (GTK_WINDOW (window), escaped_title);
+		g_free(escaped_title);
 	}
 
 	pane = slot->pane;
