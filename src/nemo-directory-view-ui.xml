@@ -231,10 +231,9 @@
 		 <menuitem name="Start Volume" action="Start Volume"/>
 		 <menuitem name="Stop Volume" action="Stop Volume"/>
 		 <menuitem name="Poll" action="Poll"/>
-        </placeholder>
-        <menuitem name="Connect To Server Link" action="Connect To Server Link"/>
-        <separator name="Properties Separator"/>
-        <menuitem name="Properties" action="Properties"/>
+    </placeholder>
+    <separator name="Properties Separator"/>
+    <menuitem name="Properties" action="Properties"/>
 </popup>
 <popup name="location">
 	<placeholder name="Open Placeholder">
