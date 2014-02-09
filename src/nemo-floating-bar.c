@@ -234,6 +234,7 @@ nemo_floating_bar_constructed (GObject *obj)
 
 	w = gtk_label_new (NULL);
 	gtk_label_set_ellipsize (GTK_LABEL (w), PANGO_ELLIPSIZE_END);
+	gtk_label_set_single_line_mode (GTK_LABEL (w), TRUE);
 	gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
 	g_object_set (w,
 		      "margin-top", 2,
