@@ -1513,6 +1513,73 @@
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkBox" id="vbox100">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">6</property>
+                            <child>
+                              <object class="GtkLabel" id="label100">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Window and Tab Titles</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkAlignment" id="alignment100">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="left_padding">12</property>
+                                <child>
+                                  <object class="GtkBox" id="vbox101">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">6</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_full_path_in_title_bars_checkbutton">
+                                        <property name="label" translatable="yes">Show the full p_ath in the title bar and tab bars</property>
+                                        <property name="use_action_appearance">False</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_action_appearance">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkBox" id="vbox12">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -1589,73 +1656,6 @@
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">False</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkBox" id="vbox100">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">6</property>
-                            <child>
-                              <object class="GtkLabel" id="label100">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
-                                <property name="label" translatable="yes">Window and Tab Titles</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkAlignment" id="alignment100">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="left_padding">12</property>
-                                <child>
-                                  <object class="GtkBox" id="vbox101">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="orientation">vertical</property>
-                                    <property name="spacing">6</property>
-                                    <child>
-                                      <object class="GtkCheckButton" id="show_full_path_in_title_bars_checkbutton">
-                                        <property name="label" translatable="yes">Show the full p_ath in the title bar and tab bars</property>
-                                        <property name="use_action_appearance">False</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="use_action_appearance">False</property>
-                                        <property name="use_underline">True</property>
-                                        <property name="xalign">0</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
                             <property name="position">2</property>
                           </packing>
                         </child>
@@ -1847,20 +1847,18 @@
                         <property name="orientation">vertical</property>
                         <property name="spacing">18</property>
                         <child>
-                          <object class="GtkBox" id="vbox30">
+                          <object class="GtkBox" id="list_columns_vbox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="orientation">vertical</property>
                             <property name="spacing">6</property>
                             <child>
-                              <object class="GtkLabel" id="label31">
+                              <object class="GtkLabel" id="label33">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
-                                <property name="label" translatable="yes">List Columns</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
+                                <property name="label" translatable="yes">Choose the order of information to appear in the list view.</property>
+                                <property name="wrap">True</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -1869,41 +1867,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkAlignment" id="alignment21">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="left_padding">12</property>
-                                <child>
-                                  <object class="GtkBox" id="list_columns_vbox">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="orientation">vertical</property>
-                                    <property name="spacing">6</property>
-                                    <child>
-                                      <object class="GtkLabel" id="label33">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="xalign">0</property>
-                                        <property name="label" translatable="yes">Choose the order of information to appear in the list view.</property>
-                                        <property name="wrap">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                           </object>
                           <packing>
@@ -2315,13 +2279,14 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkCheckButton" id="tt_show_modified_date_checkbutton">
-                                                <property name="label" translatable="yes">Modified date</property>
+                                              <object class="GtkCheckButton" id="tt_show_created_date_checkbutton">
+                                                <property name="label" translatable="yes">Accessed date</property>
                                                 <property name="use_action_appearance">False</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="use_action_appearance">False</property>
+                                                <property name="use_underline">True</property>
                                                 <property name="xalign">0</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>
@@ -2332,14 +2297,13 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkCheckButton" id="tt_show_created_date_checkbutton">
-                                                <property name="label" translatable="yes">Accessed date</property>
+                                              <object class="GtkCheckButton" id="tt_show_modified_date_checkbutton">
+                                                <property name="label" translatable="yes">Modified date</property>
                                                 <property name="use_action_appearance">False</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="use_action_appearance">False</property>
-                                                <property name="use_underline">True</property>
                                                 <property name="xalign">0</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>

@@ -979,7 +979,9 @@ properties_window_update (NemoPropertiesWindow *window,
 		    g_list_find (window->details->target_files, changed_file)) {
 			dirty_target = TRUE;
 		}
-
+		if (changed_file != NULL) {
+			nemo_file_recompute_deep_counts (changed_file);
+		}
 	}
 
 	if (dirty_original) {
