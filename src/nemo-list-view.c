@@ -872,8 +872,8 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 			if (event->button == 3 && 
 			    (blank_click || gtk_tree_selection_path_is_selected (selection, path))) {
 				call_parent = FALSE;
-			} 
-			
+			}
+
 			if ((event->button == 1 || event->button == 2) &&
 			    ((event->state & GDK_CONTROL_MASK) != 0 ||
 			     (event->state & GDK_SHIFT_MASK) == 0)) {			
