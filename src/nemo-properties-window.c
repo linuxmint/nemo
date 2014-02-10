@@ -825,7 +825,10 @@ update_properties_window_title (NemoPropertiesWindow *window)
 		if (file != NULL) {
 			g_free (title);
 			name = nemo_file_get_display_name (file);
+			// Replace Line feeds with LF Character
+	        char *escaped_name = eel_str_replace_substring (name, "\n", "\xE2\x90\x8A");
 			title = g_strdup_printf (_("%s Properties"), name);
+            g_free (escaped_name);
 			g_free (name);
 		}
 	}

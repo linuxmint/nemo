@@ -48,6 +48,7 @@
 
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
+#include <eel/eel-string.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
@@ -1500,7 +1501,7 @@ nemo_window_sync_title (NemoWindow *window,
 	}
 
 	if (slot == nemo_window_get_active_slot (window)) {
-	    gchar *escaped_title = g_strescape (slot->title, "");
+  	    char *escaped_title = eel_str_replace_substring (slot->title, "\n", "\xE2\x90\x8A");
 		gtk_window_set_title (GTK_WINDOW (window), escaped_title);
 		g_free(escaped_title);
 	}
