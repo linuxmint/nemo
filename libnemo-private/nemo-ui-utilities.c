@@ -23,12 +23,13 @@
 */
 
 #include <config.h>
+
 #include "nemo-ui-utilities.h"
 #include "nemo-icon-info.h"
-#include <gio/gio.h>
+#include <eel/eel-graphic-effects.h>
 
+#include <gio/gio.h>
 #include <gtk/gtk.h>
-#include <eel/eel-debug.h>
 
 void
 nemo_ui_unmerge_ui (GtkUIManager *ui_manager,
@@ -164,4 +165,59 @@ nemo_escape_action_name (const char *action_name,
 		action_name ++;
 	}
 	return g_string_free (s, FALSE);
+}
+
+static GdkPixbuf *
+nautilus_get_thumbnail_frame (void)
+{
+	static GdkPixbuf *thumbnail_frame = NULL;
+
+	if (thumbnail_frame == NULL) {
+		GInputStream *stream = g_resources_open_stream
+			("/org/gnome/nautilus/icons/thumbnail_frame.png", 0, NULL);
+		if (stream != NULL) {
+			thumbnail_frame = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
+			g_object_unref (stream);
+		}
+	}
+
+	return thumbnail_frame;
+}
+
+#define NEMO_THUMBNAIL_FRAME_LEFT 3
+#define NEMO_THUMBNAIL_FRAME_TOP 3
+#define NEMO_THUMBNAIL_FRAME_RIGHT 3
+#define NEMO_THUMBNAIL_FRAME_BOTTOM 3
+
+void
+nemo_ui_frame_image (GdkPixbuf **pixbuf)
+{
+	GdkPixbuf *pixbuf_with_frame, *frame;
+	int left_offset, top_offset, right_offset, bottom_offset;
+	int size;
+
+	frame = nautilus_get_thumbnail_frame ();
+	if (frame == NULL) {
+		return;
+	}
+
+	size = MAX (gdk_pixbuf_get_width (*pixbuf),
+		    gdk_pixbuf_get_height (*pixbuf));
+
+	/* We don't want frames around small icons */
+	if (size < 128 && gdk_pixbuf_get_has_alpha (*pixbuf)) {
+		return;
+	}
+
+	left_offset = NEMO_THUMBNAIL_FRAME_LEFT;
+	top_offset = NEMO_THUMBNAIL_FRAME_TOP;
+	right_offset = NEMO_THUMBNAIL_FRAME_RIGHT;
+	bottom_offset = NEMO_THUMBNAIL_FRAME_BOTTOM;
+
+	pixbuf_with_frame = eel_embed_image_in_frame
+		(*pixbuf, frame,
+		 left_offset, top_offset, right_offset, bottom_offset);
+	g_object_unref (*pixbuf);
+
+	*pixbuf = pixbuf_with_frame;
 }

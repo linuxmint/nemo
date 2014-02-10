@@ -59,11 +59,6 @@
 /* Cool-off period between last file modification time and thumbnail creation */
 #define THUMBNAIL_CREATION_DELAY_SECS 3
 
-#define NEMO_THUMBNAIL_FRAME_LEFT 3
-#define NEMO_THUMBNAIL_FRAME_TOP 3
-#define NEMO_THUMBNAIL_FRAME_RIGHT 3
-#define NEMO_THUMBNAIL_FRAME_BOTTOM 3
-
 static gpointer thumbnail_thread_start (gpointer data);
 
 /* structure used for making thumbnails, associating a uri with where the thumbnail is to be stored */
@@ -188,51 +183,6 @@ thumbnail_thread_starter_cb (gpointer data)
 	thumbnail_thread_starter_id = 0;
 
 	return FALSE;
-}
-
-static GdkPixbuf *
-nemo_get_thumbnail_frame (void)
-{
-	static GdkPixbuf *thumbnail_frame = NULL;
-
-	if (thumbnail_frame == NULL) {
-		GInputStream *stream = g_resources_open_stream ("/org/nemo/icons/thumbnail_frame.png", 0, NULL);
-		if (stream != NULL) {
-			thumbnail_frame = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
-			g_object_unref (stream);
-		}
-	}
-	
-	return thumbnail_frame;
-}
-
-
-void
-nemo_thumbnail_frame_image (GdkPixbuf **pixbuf)
-{
-	GdkPixbuf *pixbuf_with_frame, *frame;
-	int left_offset, top_offset, right_offset, bottom_offset;
-		
-	/* The pixbuf isn't already framed (i.e., it was not made by
-	 * an old Nemo), so we must embed it in a frame.
-	 */
-
-	frame = nemo_get_thumbnail_frame ();
-	if (frame == NULL) {
-		return;
-	}
-	
-	left_offset = NEMO_THUMBNAIL_FRAME_LEFT;
-	top_offset = NEMO_THUMBNAIL_FRAME_TOP;
-	right_offset = NEMO_THUMBNAIL_FRAME_RIGHT;
-	bottom_offset = NEMO_THUMBNAIL_FRAME_BOTTOM;
-	
-	pixbuf_with_frame = eel_embed_image_in_frame
-		(*pixbuf, frame,
-		 left_offset, top_offset, right_offset, bottom_offset);
-	g_object_unref (*pixbuf);	
-
-	*pixbuf = pixbuf_with_frame;
 }
 
 void

@@ -43,6 +43,7 @@
 #include "nemo-search-directory.h"
 #include "nemo-search-directory-file.h"
 #include "nemo-thumbnails.h"
+#include "nemo-ui-utilities.h"
 #include "nemo-vfs-file.h"
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
@@ -4284,8 +4285,20 @@ nemo_file_get_icon (NemoFile *file,
 	
 	gicon = get_custom_icon (file);
 	if (gicon) {
+		GdkPixbuf *pixbuf;
+
 		icon = nemo_icon_info_lookup (gicon, size);
 		g_object_unref (gicon);
+
+		pixbuf = nemo_icon_info_get_pixbuf (icon);
+		if (pixbuf != NULL) {
+			nemo_ui_frame_image (&pixbuf);
+			g_object_unref (icon);
+
+			icon = nemo_icon_info_new_for_pixbuf (pixbuf);
+			g_object_unref (pixbuf);
+		}
+
 		return icon;
 	}
 
@@ -4329,10 +4342,7 @@ nemo_file_get_icon (NemoFile *file,
 								 MAX (h * scale, 1),
 								 GDK_INTERP_BILINEAR);
 
-			/* We don't want frames around small icons */
-			if (!gdk_pixbuf_get_has_alpha(raw_pixbuf) || s >= 128) {
-				nemo_thumbnail_frame_image (&scaled_pixbuf);
-			}
+			nemo_ui_frame_image (&scaled_pixbuf);
 			g_object_unref (raw_pixbuf);
 
 			/* Don't scale up if more than 25%, then read the original

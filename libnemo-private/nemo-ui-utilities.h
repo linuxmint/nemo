@@ -38,7 +38,8 @@ GtkAction * nemo_action_from_menu_item         (NemoMenuItem  *item);
 
 GdkPixbuf * nemo_ui_get_menu_icon              (const char        *icon_name);
 
-char * nemo_escape_action_name (const char *action_name, const char *prefix);
-
+char * nemo_escape_action_name                 (const char        *action_name,
+						    const char        *prefix);
+void   nemo_ui_frame_image                     (GdkPixbuf        **pixbuf);
 
 #endif /* NEMO_UI_UTILITIES_H */
