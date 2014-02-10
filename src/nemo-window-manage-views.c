@@ -663,7 +663,7 @@ begin_location_change (NemoWindowSlot *slot,
 	end_location_change (slot);
 
 	nemo_window_slot_set_allow_stop (slot, TRUE);
-	nemo_window_slot_set_status (slot, " ", NULL);
+	nemo_window_slot_set_status (slot, NULL, NULL);
 
 	g_assert (slot->pending_location == NULL);
 	g_assert (slot->pending_selection == NULL);
@@ -1211,9 +1211,9 @@ real_setup_loading_floating_bar (NemoWindowSlot *slot)
 		return;
 	}
 
-	nemo_floating_bar_set_label (NEMO_FLOATING_BAR (slot->floating_bar),
-					 NEMO_IS_SEARCH_DIRECTORY (nemo_view_get_model (slot->content_view)) ?
-					 _("Searching...") : _("Loading..."));
+	nemo_floating_bar_set_primary_label (NEMO_FLOATING_BAR (slot->floating_bar),
+						 NEMO_IS_SEARCH_DIRECTORY (nemo_view_get_model (slot->content_view)) ?
+						 _("Searching...") : _("Loading..."));
 	nemo_floating_bar_set_show_spinner (NEMO_FLOATING_BAR (slot->floating_bar),
 						TRUE);
 	nemo_floating_bar_add_action (NEMO_FLOATING_BAR (slot->floating_bar),

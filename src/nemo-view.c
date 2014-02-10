@@ -3084,13 +3084,13 @@ nemo_view_display_selection_info (NemoView *view)
 	guint file_item_count;
 	GList *p;
 	char *first_item_name;
-	char *non_folder_str;
+	char *non_folder_count_str;
+	char *non_folder_item_count_str;
 	char *folder_count_str;
 	char *folder_item_count_str;
-	char *status_string;
-	char *view_status_string;
+	char *primary_status;
+	char *detail_status;
 	char *free_space_str;
-	char *obj_selected_free_space_str;
 	NemoFile *file;
 
 	g_return_if_fail (NEMO_IS_VIEW (view));
@@ -3105,12 +3105,10 @@ nemo_view_display_selection_info (NemoView *view)
 	non_folder_size = 0;
 	first_item_name = NULL;
 	folder_count_str = NULL;
-	non_folder_str = NULL;
 	folder_item_count_str = NULL;
 	free_space_str = NULL;
-	obj_selected_free_space_str = NULL;
-	status_string = NULL;
-	view_status_string = NULL;
+	non_folder_count_str = NULL;
+	non_folder_item_count_str = NULL;
 	
 	for (p = selection; p != NULL; p = p->next) {
 		file = p->data;
@@ -3154,8 +3152,8 @@ nemo_view_display_selection_info (NemoView *view)
 			if (!folder_item_count_known) {
 				folder_item_count_str = g_strdup ("");
 			} else {
-				folder_item_count_str = g_strdup_printf (ngettext(" (containing %'d item)",
-										  " (containing %'d items)",
+				folder_item_count_str = g_strdup_printf (ngettext("(containing %'d item)",
+										  "(containing %'d items)",
 										  folder_item_count), 
 									 folder_item_count);
 			}
@@ -3165,8 +3163,8 @@ nemo_view_display_selection_info (NemoView *view)
 				folder_item_count_str = g_strdup ("");
 			} else {
 				/* translators: this is preceded with a string of form 'N folders' (N more than 1) */
-				folder_item_count_str = g_strdup_printf (ngettext(" (containing a total of %'d item)",
-										  " (containing a total of %'d items)",
+				folder_item_count_str = g_strdup_printf (ngettext("(containing a total of %'d item)",
+										  "(containing a total of %'d items)",
 										  folder_item_count), 
 									 folder_item_count);
 			}
@@ -3175,24 +3173,22 @@ nemo_view_display_selection_info (NemoView *view)
 	}
 
 	if (non_folder_count != 0) {
-		char *items_string;
-
 		if (folder_count == 0) {
 			if (non_folder_count == 1) {
-				items_string = g_strdup_printf (_("“%s” selected"), 
-								first_item_name);
+				non_folder_count_str = g_strdup_printf (_("“%s” selected"),
+									first_item_name);
 			} else {
-				items_string = g_strdup_printf (ngettext("%'d item selected",
-									 "%'d items selected",
-									 non_folder_count), 
-								non_folder_count);
+				non_folder_count_str = g_strdup_printf (ngettext("%'d item selected",
+										 "%'d items selected",
+										 non_folder_count),
+									non_folder_count);
 			}
 		} else {
 			/* Folders selected also, use "other" terminology */
-			items_string = g_strdup_printf (ngettext("%'d other item selected",
-								 "%'d other items selected",
-								 non_folder_count), 
-							non_folder_count);
+			non_folder_count_str = g_strdup_printf (ngettext("%'d other item selected",
+									 "%'d other items selected",
+									 non_folder_count),
+								non_folder_count);
 		}
 
 		if (non_folder_size_known) {
@@ -3203,72 +3199,38 @@ nemo_view_display_selection_info (NemoView *view)
 			size_string = g_format_size_full (non_folder_size, prefix);
 			/* This is marked for translation in case a localiser
 			 * needs to use something other than parentheses. The
-			 * first message gives the number of items selected;
-			 * the message in parentheses the size of those items.
+			 * the message in parentheses is the size of the selected items.
 			 */
-			non_folder_str = g_strdup_printf (_("%s (%s)"), 
-							  items_string, 
-							  size_string);
-
+			non_folder_item_count_str = g_strdup_printf (_("(%s)"), size_string);
 			g_free (size_string);
-			g_free (items_string);
 		} else {
-			non_folder_str = items_string;
+			non_folder_item_count_str = g_strdup ("");
 		}
 	}
 
-	free_space_str = nemo_file_get_volume_free_space (view->details->directory_as_file);
-	if (free_space_str != NULL) {
-		obj_selected_free_space_str = g_strdup_printf (_("Free space: %s"), free_space_str);
-	}
 	if (folder_count == 0 && non_folder_count == 0)	{
-		char *item_count_str;
+       	char *item_count_str;
 		guint item_count;
+
+		primary_status = NULL;
 
 		item_count = nemo_view_get_item_count (view);
 		
 		item_count_str = g_strdup_printf (ngettext ("%'u item", "%'u items", item_count), item_count);
 
+	    free_space_str = nemo_file_get_volume_free_space (view->details->directory_as_file);
 		if (free_space_str != NULL) {
-			status_string = g_strdup_printf (_("%s, Free space: %s"), item_count_str, free_space_str);
+			detail_status = g_strdup_printf (_("%s, Free space: %s"), item_count_str, free_space_str);
 			g_free (item_count_str);
 		} else {
-			status_string = item_count_str;
+			detail_status = item_count_str;
 		}
-
 	} else if (folder_count == 0) {
-		view_status_string = g_strdup (non_folder_str);
-
-		if (free_space_str != NULL) {
-			/* Marking this for translation, since you
-			 * might want to change "," to something else.
-			 * After the comma the amount of free space will
-			 * be shown.
-			 */
-			status_string = g_strdup_printf (_("%s, %s"),
-							 non_folder_str,
-							 obj_selected_free_space_str);
-		}
+		primary_status = g_strdup (non_folder_count_str);
+		detail_status = g_strdup (non_folder_item_count_str);
 	} else if (non_folder_count == 0) {
-		/* No use marking this for translation, since you
-		 * can't reorder the strings, which is the main thing
-		 * you'd want to do.
-		 */
-		view_status_string = g_strdup_printf ("%s%s",
-						      folder_count_str,
-						      folder_item_count_str);
-
-		if (free_space_str != NULL) {
-			/* Marking this for translation, since you
-			 * might want to change "," to something else.
-			 * After the comma the amount of free space will
-			 * be shown.
-			 */
-			status_string = g_strdup_printf (_("%s%s, %s"),
-							 folder_count_str,
-							 folder_item_count_str,
-							 obj_selected_free_space_str);
-		}
+		primary_status = g_strdup (folder_count_str);
+		detail_status  = g_strdup (folder_item_count_str);
 	} else {
 		/* This is marked for translation in case a localizer
 		 * needs to change ", " to something else. The comma
@@ -3277,45 +3239,26 @@ nemo_view_display_selection_info (NemoView *view)
 		 * message about the number of other items and the
 		 * total size of those items.
 		 */
-		view_status_string = g_strdup_printf (_("%s%s, %s"),
-						      folder_count_str,
-						      folder_item_count_str,
-						      non_folder_str);
-
-		if (obj_selected_free_space_str != NULL) {
-			/* This is marked for translation in case a localizer
-			 * needs to change ", " to something else. The first comma
-			 * is between the message about the number of folders
-			 * and the number of items in those folders and the
-			 * message about the number of other items and the
-			 * total size of those items. After the second comma
-			 * the free space is written.
-			 */
-			status_string = g_strdup_printf (_("%s%s, %s, %s"),
-							 folder_count_str,
-							 folder_item_count_str,
-							 non_folder_str,
-							 obj_selected_free_space_str);
-		}
+		primary_status = g_strdup_printf (_("%s %s, %s %s"),
+						  folder_count_str,
+						  folder_item_count_str,
+						  non_folder_count_str,
+						  non_folder_item_count_str);
+		detail_status = NULL;
 	}
 
 	g_free (free_space_str);
-	g_free (obj_selected_free_space_str);
 	g_free (first_item_name);
 	g_free (folder_count_str);
 	g_free (folder_item_count_str);
-	g_free (non_folder_str);
-
-	if (status_string == NULL) {
-		status_string = g_strdup (view_status_string);
-	}
+	g_free (non_folder_count_str);
+	g_free (non_folder_item_count_str);
 
 	nemo_window_slot_set_status (view->details->slot,
-					 status_string,
-					 view_status_string);
+					 primary_status, detail_status);
 
-	g_free (status_string);
-	g_free (view_status_string);
+	g_free (primary_status);
+	g_free (detail_status);
 }
 
 static void
