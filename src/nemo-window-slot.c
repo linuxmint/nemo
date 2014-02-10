@@ -50,7 +50,13 @@ enum {
 	LAST_SIGNAL
 };
 
+enum {
+	PROP_PANE = 1,
+	NUM_PROPERTIES
+};
+
 static guint signals[LAST_SIGNAL] = { 0 };
+static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 gboolean
 nemo_window_slot_handle_event (NemoWindowSlot *slot,
@@ -288,9 +294,48 @@ floating_bar_action_cb (NemoFloatingBar *floating_bar,
 }
 
 static void
-nemo_window_slot_init (NemoWindowSlot *slot)
+nemo_window_slot_set_property (GObject *object,
+				   guint property_id,
+				   const GValue *value,
+				   GParamSpec *pspec)
 {
+	NemoWindowSlot *slot = NEMO_WINDOW_SLOT (object);
+
+	switch (property_id) {
+	case PROP_PANE:
+		slot->pane = g_value_get_object (value);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+		break;
+	}
+}
+
+static void
+nemo_window_slot_get_property (GObject *object,
+				   guint property_id,
+				   GValue *value,
+				   GParamSpec *pspec)
+{
+	NemoWindowSlot *slot = NEMO_WINDOW_SLOT (object);
+
+	switch (property_id) {
+	case PROP_PANE:
+		g_value_set_object (value, slot->pane);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+		break;
+	}
+}
+
+static void
+nemo_window_slot_constructed (GObject *object)
+{
+	NemoWindowSlot *slot = NEMO_WINDOW_SLOT (object);
 	GtkWidget *extras_vbox;
+
+	G_OBJECT_CLASS (nemo_window_slot_parent_class)->constructed (object);
 
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (slot),
 					GTK_ORIENTATION_VERTICAL);
@@ -313,7 +358,7 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 	gtk_box_pack_start (GTK_BOX (slot), slot->view_overlay, TRUE, TRUE, 0);
 	gtk_widget_show (slot->view_overlay);
 
-	slot->floating_bar = nemo_floating_bar_new ("", FALSE);
+	slot->floating_bar = nemo_floating_bar_new (NULL, NULL, FALSE);
 	gtk_widget_set_halign (slot->floating_bar, GTK_ALIGN_END);
 	gtk_widget_set_valign (slot->floating_bar, GTK_ALIGN_END);
 	gtk_overlay_add_overlay (GTK_OVERLAY (slot->view_overlay),
@@ -323,6 +368,12 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 			  G_CALLBACK (floating_bar_action_cb), slot);
 
 	slot->title = g_strdup (_("Loading..."));
+}
+
+static void
+nemo_window_slot_init (NemoWindowSlot *slot)
+{
+	/* do nothing */
 }
 
 static void
@@ -403,6 +454,9 @@ nemo_window_slot_class_init (NemoWindowSlotClass *klass)
 	klass->inactive = real_inactive;
 
 	oclass->dispose = nemo_window_slot_dispose;
+	oclass->constructed = nemo_window_slot_constructed;
+	oclass->set_property = nemo_window_slot_set_property;
+	oclass->get_property = nemo_window_slot_get_property;
 
 	signals[ACTIVE] =
 		g_signal_new ("active",
@@ -441,6 +495,15 @@ nemo_window_slot_class_init (NemoWindowSlotClass *klass)
 			      G_TYPE_NONE, 2,
 			      G_TYPE_STRING,
 			      G_TYPE_STRING);
+
+	properties[PROP_PANE] =
+		g_param_spec_object ("pane",
+				     "The NemoWindowPane",
+				     "The NemoWindowPane this slot is part of",
+				     NEMO_TYPE_WINDOW_PANE,
+				     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+
+	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
 
 GFile *
@@ -568,7 +631,8 @@ nemo_window_slot_set_allow_stop (NemoWindowSlot *slot,
 
 static void
 real_slot_set_short_status (NemoWindowSlot *slot,
-			    const gchar *status)
+			    const gchar *primary_status,
+			    const gchar *detail_status)
 {
 	
 	gboolean show_statusbar;
@@ -585,17 +649,19 @@ real_slot_set_short_status (NemoWindowSlot *slot,
 		      "disable-chrome", &disable_chrome,
 		      NULL);
 
-	if (status == NULL || show_statusbar || disable_chrome) {
+	if ((primary_status == NULL && detail_status == NULL) || show_statusbar || disable_chrome) {
 		gtk_widget_hide (slot->floating_bar);
 		return;
 	}
 
-	nemo_floating_bar_set_label (NEMO_FLOATING_BAR (slot->floating_bar), status);
+	nemo_floating_bar_set_labels (NEMO_FLOATING_BAR (slot->floating_bar),
+					  primary_status, detail_status);
 	gtk_widget_show (slot->floating_bar);
 }
 
 typedef struct {
-	gchar *status;
+	gchar *primary_status;
+	gchar *detail_status;
 	NemoWindowSlot *slot;
 } SetStatusData;
 
@@ -604,7 +670,8 @@ set_status_data_free (gpointer data)
 {
 	SetStatusData *status_data = data;
 
-	g_free (status_data->status);
+	g_free (status_data->primary_status);
+	g_free (status_data->detail_status);
 
 	g_slice_free (SetStatusData, data);
 }
@@ -615,14 +682,17 @@ set_status_timeout_cb (gpointer data)
 	SetStatusData *status_data = data;
 
 	status_data->slot->set_status_timeout_id = 0;
-	real_slot_set_short_status (status_data->slot, status_data->status);
+	real_slot_set_short_status (status_data->slot,
+				    status_data->primary_status,
+				    status_data->detail_status);
 
 	return FALSE;
 }
 
 static void
 set_floating_bar_status (NemoWindowSlot *slot,
-			 const gchar *status)
+			 const gchar *primary_status,
+			 const gchar *detail_status)
 {
 	GtkSettings *settings;
 	gint double_click_time;
@@ -639,7 +709,8 @@ set_floating_bar_status (NemoWindowSlot *slot,
 		      NULL);
 
 	status_data = g_slice_new0 (SetStatusData);
-	status_data->status = g_strdup (status);
+	status_data->primary_status = g_strdup (primary_status);
+	status_data->detail_status = g_strdup (detail_status);
 	status_data->slot = slot;
 
 	/* waiting for half of the double-click-time before setting
@@ -656,18 +727,28 @@ set_floating_bar_status (NemoWindowSlot *slot,
 
 void
 nemo_window_slot_set_status (NemoWindowSlot *slot,
-				 const char *status,
-				 const char *short_status)
+				 const char *primary_status,
+				 const char *detail_status)
 {
 	NemoWindow *window;
 
 	g_assert (NEMO_IS_WINDOW_SLOT (slot));
 
 	g_free (slot->status_text);
-	slot->status_text = g_strdup (status);
+	if (primary_status) {
+	    if (detail_status) {
+	        slot->status_text = g_strdup_printf ("%s %s",
+                                                 primary_status,
+                                                 detail_status);
+	    } else {
+	        slot->status_text = g_strdup(primary_status);
+	    }
+	} else {
+	    slot->status_text = g_strdup(detail_status);
+	}
 
 	if (slot->content_view != NULL) {
-		set_floating_bar_status (slot, short_status);
+		set_floating_bar_status (slot, primary_status, detail_status);
 	}
 
 	window = nemo_window_slot_get_window (slot);
@@ -806,10 +887,7 @@ nemo_window_slot_should_close_with_mount (NemoWindowSlot *slot,
 NemoWindowSlot *
 nemo_window_slot_new (NemoWindowPane *pane)
 {
-	NemoWindowSlot *slot;
-
-	slot = g_object_new (NEMO_TYPE_WINDOW_SLOT, NULL);
-	slot->pane = pane;
-
-	return slot;
+	return g_object_new (NEMO_TYPE_WINDOW_SLOT,
+			     "pane", pane,
+			     NULL);
 }
