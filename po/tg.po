@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Tajik Gnome\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2014-02-10 23:02+0000\n"
-"PO-Revision-Date: 2014-02-11 13:24+0500\n"
+"POT-Creation-Date: 2014-02-11 11:02+0000\n"
+"PO-Revision-Date: 2014-02-11 23:45+0500\n"
 "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
 "Language-Team: \n"
 "Language: tg\n"
@@ -2520,23 +2520,21 @@ msgid "Show location bar in new windows"
 msgstr "Намоиш додани навори ҷойгиршавӣ дар равзанаҳои нав"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:82
-#, fuzzy
 msgid ""
 "If set to true, newly opened windows will have the location bar visible."
 msgstr ""
-"Агар true бошад, равзанаҳои эҷодшудаи нави терминал андозаи танзимоти "
-"муайяншуда бо пешфарз_андоза_сутунҳо ва пешфарз_андоза_сатрҳо хоҳад дошт  "
+"Агар ба қимати true танзим шавад, равзанаҳои кушодашудаи нав бо навори "
+"ҷойгиршавӣ кушода мешаванд."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:83
 msgid "Show side pane in new windows"
 msgstr "Намоиш додан панҷараки ҷонибӣ дар равзанаҳои нав"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:84
-#, fuzzy
 msgid "If set to true, newly opened windows will have the side pane visible."
 msgstr ""
-"Агар true бошад, равзанаҳои эҷодшудаи нави терминал андозаи танзимоти "
-"муайяншуда бо пешфарз_андоза_сутунҳо ва пешфарз_андоза_сатрҳо хоҳад дошт  "
+"Агар ба қимати true танзим шавад, равзанаҳои кушодашудаи нав бо навори "
+"ҷонибӣ кушода мешаванд."
 
 #: ../nautilus-sendto-extension/nautilus-nste.c:97
 #: ../nautilus-sendto-extension/nautilus-nste.c:102
