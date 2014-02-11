@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2014-02-11 11:02+0000\n"
-"PO-Revision-Date: 2014-02-11 23:45+0500\n"
+"PO-Revision-Date: 2014-02-11 23:58+0500\n"
 "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
 "Language-Team: \n"
 "Language: tg\n"
@@ -2437,33 +2437,36 @@ msgid "Desktop home icon name"
 msgstr "Номи нишонаи ҷузвдони асосӣ дар мизи корӣ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:67
-#, fuzzy
 msgid ""
 "This name can be set if you want a custom name for the home icon on the "
 "desktop."
-msgstr "Номи нишонаи ҷузвдони асосӣ дар мизи корӣ"
+msgstr ""
+"Ин ном метавонад танзим карда шавад, агар шумо хоҳед, ки номи фармоишӣ барои "
+"нишонаи ҷузвдони асосӣ дар мизи корӣ намоиш дода шавад."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:68
 msgid "Desktop trash icon name"
 msgstr "Номи нишонаи сабад дар мизи корӣ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:69
-#, fuzzy
 msgid ""
 "This name can be set if you want a custom name for the trash icon on the "
 "desktop."
-msgstr "Номи нишонаи сабад дар мизи корӣ"
+msgstr ""
+"Ин ном метавонад танзим карда шавад, агар шумо хоҳед, ки номи фармоишӣ барои "
+"нишонаи сабад дар мизи корӣ намоиш дода шавад."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:70
 msgid "Network servers icon name"
 msgstr "Номи нишонаи серверҳои шабакавӣ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:71
-#, fuzzy
 msgid ""
 "This name can be set if you want a custom name for the network servers icon "
 "on the desktop."
-msgstr "Номи нишонаи серверҳои шабакавӣ"
+msgstr ""
+"Ин ном метавонад танзим карда шавад, агар шумо хоҳед, ки номи фармоишӣ барои "
+"нишонаи серверҳои шабакавӣ дар мизи корӣ намоиш дода шавад."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:72
 #, fuzzy
