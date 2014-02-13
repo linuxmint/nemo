@@ -895,6 +895,48 @@ nemo_is_desktop_directory (GFile *dir)
 	return g_file_equal (dir, desktop_dir);
 }
 
+GMount *
+nemo_get_mounted_mount_for_root (GFile *location)
+{
+	GVolumeMonitor *volume_monitor;
+	GList *mounts;
+	GList *l;
+	GMount *mount;
+	GMount *result = NULL;
+	GFile *root = NULL;
+	GFile *default_location = NULL;
+
+	volume_monitor = g_volume_monitor_get ();
+	mounts = g_volume_monitor_get_mounts (volume_monitor);
+
+	for (l = mounts; l != NULL; l = l->next) {
+		mount = l->data;
+
+		if (g_mount_is_shadowed (mount)) {
+			continue;
+		}
+
+		root = g_mount_get_root (mount);
+		if (g_file_equal (location, root)) {
+			result = g_object_ref (mount);
+			break;
+		}
+
+		default_location = g_mount_get_default_location (mount);
+		if (!g_file_equal (default_location, root) &&
+		    g_file_equal (location, default_location)) {
+			result = g_object_ref (mount);
+			break;
+		}
+	}
+
+	g_clear_object (&root);
+	g_clear_object (&default_location);
+	g_list_free_full (mounts, g_object_unref);
+
+	return result;
+}
+
 char *
 nemo_ensure_unique_file_name (const char *directory_uri,
 				  const char *base_name,

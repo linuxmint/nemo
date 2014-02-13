@@ -51,6 +51,7 @@ gboolean nemo_is_home_directory                  (GFile *dir);
 gboolean nemo_is_home_directory_file             (GFile *dir,
 						      const char *filename);
 gboolean nemo_is_in_system_dir                   (GFile *location);
+GMount * nemo_get_mounted_mount_for_root         (GFile *location);
 
 gboolean nemo_should_use_templates_directory     (void);
 char *   nemo_get_templates_directory            (void);

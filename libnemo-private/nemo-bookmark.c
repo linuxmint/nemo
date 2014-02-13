@@ -253,10 +253,10 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
 		DEBUG ("%s: creating file", nemo_bookmark_get_name (bookmark));
 
 		bookmark->details->file = nemo_file_get (bookmark->details->location);
-		g_assert (!nemo_file_is_gone (bookmark->details->file));
-
-		g_signal_connect_object (bookmark->details->file, "changed",
-					 G_CALLBACK (bookmark_file_changed_callback), bookmark, 0);
+		if (!nemo_file_is_gone (bookmark->details->file)) {
+            g_signal_connect_object (bookmark->details->file, "changed",
+                         G_CALLBACK (bookmark_file_changed_callback), bookmark, 0);
+		}
 	}
 
 	/* Set icon based on available information. */

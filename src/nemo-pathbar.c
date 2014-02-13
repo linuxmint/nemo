@@ -1559,12 +1559,9 @@ setup_file_path_mounted_mount (GFile *location, ButtonData *button_data)
 	mounts = g_volume_monitor_get_mounts (volume_monitor);
 	for (l = mounts; l != NULL; l = l->next) {
 		mount = l->data;
-                if (g_mount_is_shadowed (mount)) {
+        if (g_mount_is_shadowed (mount)) {
 			continue;
-                }
-		if (result) {
-			continue;
-		}
+        }
 		root = g_mount_get_root (mount);
 		if (g_file_equal (location, root)) {
 			result = TRUE;

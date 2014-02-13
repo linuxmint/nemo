@@ -177,9 +177,6 @@ char           * nemo_window_slot_get_current_uri      (NemoWindowSlot *slot);
 NemoWindow * nemo_window_slot_get_window           (NemoWindowSlot *slot);
 void           nemo_window_slot_make_hosting_pane_active (NemoWindowSlot *slot);
 
-gboolean nemo_window_slot_should_close_with_mount (NemoWindowSlot *slot,
-						       GMount *mount);
-
 void nemo_window_slot_clear_forward_list (NemoWindowSlot *slot);
 void nemo_window_slot_clear_back_list    (NemoWindowSlot *slot);
 

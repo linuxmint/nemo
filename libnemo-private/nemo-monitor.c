@@ -93,18 +93,12 @@ dir_changed (GFileMonitor* monitor,
 	case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
 		nemo_file_changes_queue_file_changed (child);
 		break;
+	case G_FILE_MONITOR_EVENT_UNMOUNTED:
 	case G_FILE_MONITOR_EVENT_DELETED:
 		nemo_file_changes_queue_file_removed (child);
 		break;
 	case G_FILE_MONITOR_EVENT_CREATED:
 		nemo_file_changes_queue_file_added (child);
-		break;
-		
-	case G_FILE_MONITOR_EVENT_PRE_UNMOUNT:
-		/* TODO: Do something */
-		break;
-	case G_FILE_MONITOR_EVENT_UNMOUNTED:
-		/* TODO: Do something */
 		break;
 	}
 

@@ -53,6 +53,7 @@
 #include <libnemo-private/nemo-dbus-manager.h>
 #include <libnemo-private/nemo-desktop-link-monitor.h>
 #include <libnemo-private/nemo-directory-private.h>
+#include <libnemo-private/nemo-file-changes-queue.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-file-operations.h>
 #include <libnemo-private/nemo-global-preferences.h>
@@ -93,9 +94,12 @@ static GList *nemo_application_desktop_windows;
 static gboolean save_of_accel_map_requested = FALSE;
 
 static void     desktop_changed_callback          (gpointer                  user_data);
+#if (1)
+/* TODO: This should not be required since nautilus commit 0852847e2613dbcebb4ed7f58e5b2aee3aa86a90 */
 static void     mount_removed_callback            (GVolumeMonitor            *monitor,
 						   GMount                    *mount,
 						   NemoApplication       *application);
+#endif
 static void     mount_added_callback              (GVolumeMonitor            *monitor,
 						   GMount                    *mount,
 						   NemoApplication       *application);
@@ -487,6 +491,9 @@ mount_added_callback (GVolumeMonitor *monitor,
 	}
 }
 
+#if (1)
+/* TODO: This should not be required since nautilus commit 0852847e2613dbcebb4ed7f58e5b2aee3aa86a90 */
+
 /* Called whenever a mount is unmounted. Check and see if there are
  * any windows open displaying contents on the mount. If there are,
  * close them.  It would also be cool to save open window and position
@@ -497,73 +504,16 @@ mount_removed_callback (GVolumeMonitor *monitor,
 			GMount *mount,
 			NemoApplication *application)
 {
-	GList *window_list, *node, *close_list;
-	NemoWindow *window;
-	NemoWindowSlot *slot;
-	NemoWindowSlot *force_no_close_slot;
-	GFile *root, *computer;
-	gchar *uri;
-	gint n_slots;
+	GFile *root = g_mount_get_root (mount);
+	gchar *uri = g_file_get_uri (root);
+    DEBUG ("Removed mount at uri %s", uri);
+    g_free (uri);
 
-	close_list = NULL;
-	force_no_close_slot = NULL;
-	n_slots = 0;
-
-	/* Check and see if any of the open windows are displaying contents from the unmounted mount */
-	window_list = gtk_application_get_windows (GTK_APPLICATION (application));
-
-	root = g_mount_get_root (mount);
-	uri = g_file_get_uri (root);
-
-	DEBUG ("Removed mount at uri %s", uri);
-	g_free (uri);
-
-	/* Construct a list of windows to be closed. Do not add the non-closable windows to the list. */
-	for (node = window_list; node != NULL; node = node->next) {
-		window = NEMO_WINDOW (node->data);
-		if (window != NULL && !NEMO_IS_DESKTOP_WINDOW (window)) {
-			GList *l;
-			GList *lp;
-
-			for (lp = window->details->panes; lp != NULL; lp = lp->next) {
-				NemoWindowPane *pane;
-				pane = (NemoWindowPane*) lp->data;
-				for (l = pane->slots; l != NULL; l = l->next) {
-					slot = l->data;
-					n_slots++;
-					if (nemo_window_slot_should_close_with_mount (slot, mount)) {
-						close_list = g_list_prepend (close_list, slot);
-					}
-				} /* for all slots */
-			} /* for all panes */
-		}
-	}
-
-	if ((nemo_application_desktop_windows == NULL) &&
-	    (close_list != NULL) &&
-	    (g_list_length (close_list) == n_slots)) {
-		/* We are trying to close all open slots. Keep one navigation slot open. */
-		force_no_close_slot = close_list->data;
-	}
-
-	/* Handle the windows in the close list. */
-	for (node = close_list; node != NULL; node = node->next) {
-		slot = node->data;
-
-		if (slot != force_no_close_slot) {
-            if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CLOSE_DEVICE_VIEW_ON_EJECT))
-                nemo_window_pane_slot_close (slot->pane, slot);
-            else
-                nemo_window_slot_go_home (slot, FALSE);
-		} else {
-			computer = g_file_new_for_path (g_get_home_dir ());
-			nemo_window_slot_open_location (slot, computer, 0);
-			g_object_unref(computer);
-		}
-	}
-
-	g_list_free (close_list);
+	nemo_file_changes_queue_file_removed(root);
+	nemo_file_changes_consume_changes(TRUE);
+	return;
 }
+#endif
 
 static void
 open_window (NemoApplication *application,
@@ -1321,11 +1271,12 @@ nemo_application_startup (GApplication *app)
 	notify_init (GETTEXT_PACKAGE);
 	self->priv->progress_handler = nemo_progress_ui_handler_new ();
 
-	/* Watch for unmounts so we can close open windows */
-	/* TODO-gio: This should be using the UNMOUNTED feature of GFileMonitor instead */
 	self->priv->volume_monitor = g_volume_monitor_get ();
+#if (1)
+    /* TODO: This should not be required since nautilus commit 0852847e2613dbcebb4ed7f58e5b2aee3aa86a90 */
 	g_signal_connect_object (self->priv->volume_monitor, "mount_removed",
 				 G_CALLBACK (mount_removed_callback), self, 0);
+#endif
 	g_signal_connect_object (self->priv->volume_monitor, "mount_added",
 				 G_CALLBACK (mount_added_callback), self, 0);
 

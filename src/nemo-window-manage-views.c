@@ -293,14 +293,14 @@ viewed_file_changed_callback (NemoFile *file,
 
 	slot->viewed_file_in_trash = is_in_trash = nemo_file_is_in_trash (file);
 
-	/* Close window if the file it's viewing has been deleted or moved to trash. */
 	if (nemo_file_is_gone (file) || (is_in_trash && !was_in_trash)) {
-                /* Don't close the window in the case where the
-                 * file was never seen in the first place.
-                 */
+
                 if (slot->viewed_file_seen) {
 			/* auto-show existing parent. */
-			GFile *go_to_file, *parent, *location;
+			GFile *go_to_file;
+			GFile *parent;
+			GFile *location;
+			GMount *mount;
 
                         /* Detecting a file is gone may happen in the
                          * middle of a pending location change, we
@@ -318,14 +318,21 @@ viewed_file_changed_callback (NemoFile *file,
 			end_location_change (slot);
 
 			go_to_file = NULL;
-			location =  nemo_file_get_location (file);
-			parent = g_file_get_parent (location);
+			parent = NULL;
+
+			location = nemo_file_get_location (file);
+			mount = nemo_get_mounted_mount_for_root (location);
+			if (mount != NULL) {
+				parent = g_file_get_parent (location);
+				g_object_unref (mount);
+			}
 			g_object_unref (location);
-			if (parent) {
+
+			if (parent != NULL) {
 				go_to_file = nemo_find_existing_uri_in_hierarchy (parent);
 				g_object_unref (parent);
 			}
-				
+
 			if (go_to_file != NULL) {
 				/* the path bar URI will be set to go_to_uri immediately
 				 * in begin_location_change, but we don't want the
