@@ -124,6 +124,17 @@ nemo_monitor_directory (GFile *location)
 
 	if (ret->monitor) {
 		g_signal_connect (ret->monitor, "changed", (GCallback)dir_changed, ret);
+	} else {
+	    /*
+	     * this will be fixed in nautilus commit 3891241ba760c59d284b7579dbd340651c8d4d29
+	     * we can remove mount_removed_callback in nemo-application.c then
+	     */
+	    /*
+	    char *uri;
+	    uri = g_file_get_uri (location);
+	    g_print ("g_file_monitor_directory returning NULL for %s\n", uri);
+	    g_free (uri);
+	    */
 	}
 
 	/* We return a monitor even on failure, so we can avoid later trying again */

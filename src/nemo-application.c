@@ -492,7 +492,9 @@ mount_added_callback (GVolumeMonitor *monitor,
 }
 
 #if (1)
-/* TODO: This should not be required since nautilus commit 0852847e2613dbcebb4ed7f58e5b2aee3aa86a90 */
+/* TODO: This should not be required since nautilus commit 0852847e2613dbcebb4ed7f58e5b2aee3aa86a90
+ * will be fixed in 3891241ba760c59d284b7579dbd340651c8d4d29
+ */
 
 /* Called whenever a mount is unmounted. Check and see if there are
  * any windows open displaying contents on the mount. If there are,
