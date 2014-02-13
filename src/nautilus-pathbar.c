@@ -303,21 +303,18 @@ static void
 set_label_size_request (ButtonData *button_data)
 {
         gint width, height;
-	GtkRequisition min_req, bold_req;
+	GtkRequisition nat_req, bold_req;
 
 	if (button_data->label == NULL) {
 		return;
 	}
 
-	gtk_label_set_ellipsize (GTK_LABEL (button_data->label), PANGO_ELLIPSIZE_NONE);
-	gtk_widget_get_preferred_size (button_data->label, &min_req, NULL);
-	gtk_label_set_ellipsize (GTK_LABEL (button_data->label), PANGO_ELLIPSIZE_MIDDLE);	
-
+	gtk_widget_get_preferred_size (button_data->label, NULL, &nat_req);
 	gtk_widget_get_preferred_size (button_data->bold_label, &bold_req, NULL);
 
-	width = MAX (min_req.width, bold_req.width);
+	width = MAX (nat_req.width, bold_req.width);
 	width = MIN (width, NAUTILUS_PATH_BAR_BUTTON_MAX_WIDTH);
-	height = MAX (min_req.height, bold_req.height);
+	height = MAX (nat_req.height, bold_req.height);
 
 	gtk_widget_set_size_request (button_data->label, width, height);
 }
