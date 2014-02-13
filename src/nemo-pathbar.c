@@ -1357,7 +1357,7 @@ nemo_path_bar_check_icon_theme (NemoPathBar *path_bar)
 }
 
 /* Public functions and their helpers */
-void
+static void
 nemo_path_bar_clear_buttons (NemoPathBar *path_bar)
 {
         while (path_bar->priv->button_list != NULL) {
@@ -1773,12 +1773,15 @@ button_data_file_changed (NemoFile *file,
 	} else if (nemo_file_is_gone (file)) {
 		gint idx, position;
 
-		/* if the current or a parent location are gone, don't do anything, as the view
-		 * will get the event too and call us back.
+		/* if the current or a parent location are gone, clear all the buttons,
+		 * the view will set the new path.
 		 */
 		current_location = nemo_file_get_location (current_button_data->file);
 
-		if (g_file_has_prefix (location, current_location)) {
+		if (g_file_has_prefix (current_location, location) ||
+		    g_file_equal (current_location, location)) {
+			nemo_path_bar_clear_buttons (path_bar);
+		} else if (g_file_has_prefix (location, current_location)) {
 			/* remove this and the following buttons */
 			position = g_list_position (path_bar->priv->button_list,
 						    g_list_find (path_bar->priv->button_list, button_data));
