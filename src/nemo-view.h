@@ -309,7 +309,7 @@ struct NemoViewClass {
 GType               nemo_view_get_type                         (void);
 
 /* Functions callable from the user interface and elsewhere. */
-NemoWindow     *nemo_view_get_nemo_window              (NemoView  *view);
+NemoWindow     *nemo_view_get_window              (NemoView  *view);
 NemoWindowSlot *nemo_view_get_nemo_window_slot     (NemoView  *view);
 char *              nemo_view_get_uri                          (NemoView  *view);
 
