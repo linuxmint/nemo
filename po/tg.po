@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Tajik Gnome\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2014-02-11 11:02+0000\n"
-"PO-Revision-Date: 2014-02-11 23:58+0500\n"
+"POT-Creation-Date: 2014-02-13 23:36+0000\n"
+"PO-Revision-Date: 2014-02-14 11:30+0500\n"
 "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
 "Language-Team: \n"
 "Language: tg\n"
@@ -2075,9 +2075,8 @@ msgstr ""
 "аст."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:11
-#, fuzzy
 msgid "Type of click used to launch/open files"
-msgstr "Намуди натиҷаи муқобилаи барои файлҳо истифодашуда"
+msgstr "Навъи зеркунӣ барои кушодан/иҷро кардани файлҳо"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:12
 #, fuzzy
@@ -2087,9 +2086,8 @@ msgid ""
 msgstr "зеркунии дубора"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:13
-#, fuzzy
 msgid "What to do with executable text files when activated"
-msgstr "_Иҷро кардани файлҳои матнии иҷрошаванда ҳангоми кушоиши он"
+msgstr "Фармон барои файлҳои матнии иҷрошаванда баъд аз фаъолсозӣ"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:14
 #, fuzzy
@@ -2101,9 +2099,8 @@ msgid ""
 msgstr "Чӣ бояд кард"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:15
-#, fuzzy
 msgid "Show the package installer for unknown mime types"
-msgstr "Намуди MIME -и номаълум"
+msgstr "Намоиш додани насбкунандаи бастаҳо барои намудҳои мими номаълум"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:16
 #, fuzzy
@@ -2306,9 +2303,8 @@ msgid "Default icon zoom level"
 msgstr "Сатҳи танзими андозаи нишонаҳои пешфарз"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:42
-#, fuzzy
 msgid "Default zoom level used by the icon view."
-msgstr "_Сатҳи танзими андозаи пешфарз:"
+msgstr "Сатҳи танзими андозаи пешфарз барои намоиши нишонаҳо."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:43
 msgid "Default Thumbnail Icon Size"
@@ -2319,9 +2315,8 @@ msgid "The default size of an icon for a thumbnail in the icon view."
 msgstr "Андозаи пешфарз барои нишонаи эскиз дар намуди нишонаҳо."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:45
-#, fuzzy
 msgid "Text Ellipsis Limit"
-msgstr "Маҳдуд кардан то"
+msgstr "Ҳудуди элипсиси матн"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:47
 #, fuzzy, no-c-format
@@ -2347,9 +2342,8 @@ msgid "Default list zoom level"
 msgstr "Сатҳи танзими андозаи рӯйхати _пешфарз:"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:49
-#, fuzzy
 msgid "Default zoom level used by the list view."
-msgstr "Сатҳи танзими андозаи рӯйхати _пешфарз:"
+msgstr "Сатҳи танзими андозаи пешфарз барои намоиши рӯйхат."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:50
 msgid "Default list of columns visible in the list view"
@@ -4294,7 +4288,6 @@ msgid "Open Wit_h"
 msgstr "_Кушодан бо"
 
 #: ../src/nautilus-view.c:7138
-#, fuzzy
 msgid "Choose a program with which to open the selected item"
 msgstr "Барномаро барои кушодани объекти интихобшуда интихоб кунед"
 
@@ -4318,7 +4311,6 @@ msgstr "Ҷузвдони _нав"
 
 #. tooltip
 #: ../src/nautilus-view.c:7149
-#, fuzzy
 msgid "Create a new empty folder inside this folder"
 msgstr "Эҷод кардани ҷузвдони холии нав дар дохили ин ҷузвдон"
 
@@ -4330,9 +4322,8 @@ msgstr "Ҷузвдони нав бо интихоб"
 
 #. tooltip
 #: ../src/nautilus-view.c:7153
-#, fuzzy
 msgid "Create a new folder containing the selected items"
-msgstr "Эҷод кардани _ҷузвдони нав"
+msgstr "Эҷод кардани ҷузвдони нав барои объектҳои интихобшуда"
 
 #. tooltip
 #: ../src/nautilus-view.c:7157
@@ -4384,9 +4375,8 @@ msgstr "Барномаи _дигар…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7177 ../src/nautilus-view.c:7181
-#, fuzzy
 msgid "Choose another application with which to open the selected item"
-msgstr "Барномаи дигарро барои кушодани объекти интихобшуда интихоб кунед"
+msgstr "Барномаи дигареро барои кушодани объекти интихобшуда интихоб кунед"
 
 #. name, stock id
 #. label, accelerator
@@ -4402,7 +4392,6 @@ msgstr "_Кушодани ҷузвдони скриптҳо"
 
 #. tooltip
 #: ../src/nautilus-view.c:7185
-#, fuzzy
 msgid "Show the folder containing the scripts that appear in this menu"
 msgstr "Намоиш додани ҷузвдон бо скриптҳое, ки дар ин меню пайдо мешаванд"
 
@@ -4450,9 +4439,8 @@ msgstr "Нусха бардоштан ба…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7209
-#, fuzzy
 msgid "Copy selected files to another location"
-msgstr "Интиқол додани файлҳои интихобшуда ба макони дигар"
+msgstr "Нусха бардоштани файлҳои интихобшуда ба макони дигар"
 
 #. name, stock id
 #. label, accelerator
@@ -4478,7 +4466,6 @@ msgstr "_Интихоби объектҳои мувофиқ…"
 
 #. tooltip
 #: ../src/nautilus-view.c:7221
-#, fuzzy
 msgid "Select items in this window matching a given pattern"
 msgstr ""
 "Интихоб кардани объектҳое дар ин равзана, ки ба шаклвораи додашуда мувофиқат "
@@ -4492,7 +4479,6 @@ msgstr "_Воруна кардани интихоб"
 
 #. tooltip
 #: ../src/nautilus-view.c:7225
-#, fuzzy
 msgid "Select all and only the items that are not currently selected"
 msgstr ""
 "Интихоб кардани ҳамаи объектҳо ва объектҳое, ки то ҳол интихоб карда нашуданд"
@@ -4507,7 +4493,6 @@ msgstr[1] "Эҷ_од кардани пайванд"
 
 #. tooltip
 #: ../src/nautilus-view.c:7229
-#, fuzzy
 msgid "Create a symbolic link for each selected item"
 msgstr "Эҷод кардани пайванди рамзӣ барои ҳар як объекти интихобшуда"
 
@@ -4530,9 +4515,8 @@ msgstr "Танзим кардани ҳамчун тасвири экран"
 
 #. tooltip
 #: ../src/nautilus-view.c:7237
-#, fuzzy
 msgid "Make item the wallpaper"
-msgstr "Тасвири замина"
+msgstr "Таъин кардани ҳамчун тасвири замина"
 
 #. tooltip
 #: ../src/nautilus-view.c:7245 ../src/nautilus-view.c:8651
