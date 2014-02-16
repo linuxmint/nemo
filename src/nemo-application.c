@@ -109,12 +109,6 @@ static GList *nemo_application_desktop_windows;
 static gboolean save_of_accel_map_requested = FALSE;
 
 static void     desktop_changed_callback          (gpointer                  user_data);
-#if (1)
-/* TODO: This should not be required since nautilus commit 0852847e2613dbcebb4ed7f58e5b2aee3aa86a90 */
-static void     mount_removed_callback            (GVolumeMonitor            *monitor,
-						   GMount                    *mount,
-						   NemoApplication       *application);
-#endif
 static void     mount_added_callback              (GVolumeMonitor            *monitor,
 						   GMount                    *mount,
 						   NemoApplication       *application);
@@ -491,32 +485,6 @@ mount_added_callback (GVolumeMonitor *monitor,
 		nemo_directory_unref (directory);
 	}
 }
-
-#if (1)
-/* TODO: This should not be required since nautilus commit 0852847e2613dbcebb4ed7f58e5b2aee3aa86a90
- * will be fixed in 3891241ba760c59d284b7579dbd340651c8d4d29
- */
-
-/* Called whenever a mount is unmounted. Check and see if there are
- * any windows open displaying contents on the mount. If there are,
- * close them.  It would also be cool to save open window and position
- * info.
- */
-static void
-mount_removed_callback (GVolumeMonitor *monitor,
-			GMount *mount,
-			NemoApplication *application)
-{
-	GFile *root = g_mount_get_root (mount);
-	gchar *uri = g_file_get_uri (root);
-    DEBUG ("Removed mount at uri %s", uri);
-    g_free (uri);
-
-	nemo_file_changes_queue_file_removed(root);
-	nemo_file_changes_consume_changes(TRUE);
-	return;
-}
-#endif
 
 static void
 open_window (NemoApplication *application,
@@ -1282,11 +1250,6 @@ nemo_application_startup (GApplication *app)
 	self->priv->progress_handler = nemo_progress_ui_handler_new ();
 
 	self->priv->volume_monitor = g_volume_monitor_get ();
-#if (1)
-    /* TODO: This should not be required since nautilus commit 0852847e2613dbcebb4ed7f58e5b2aee3aa86a90 */
-	g_signal_connect_object (self->priv->volume_monitor, "mount_removed",
-				 G_CALLBACK (mount_removed_callback), self, 0);
-#endif
 	g_signal_connect_object (self->priv->volume_monitor, "mount_added",
 				 G_CALLBACK (mount_added_callback), self, 0);
 
