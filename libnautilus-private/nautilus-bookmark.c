@@ -387,6 +387,7 @@ static gboolean
 exists_non_native_idle_cb (gpointer user_data)
 {
 	NautilusBookmark *bookmark = user_data;
+	bookmark->details->exists_id = 0;
 	nautilus_bookmark_set_exists (bookmark, FALSE);
 
 	return FALSE;
