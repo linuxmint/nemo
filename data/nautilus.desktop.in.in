@@ -7,7 +7,6 @@ Icon=system-file-manager
 Terminal=false
 Type=Application
 StartupNotify=true
-OnlyShowIn=GNOME;Unity;
 Categories=GNOME;GTK;Utility;Core;FileManager;
 MimeType=inode/directory;application/x-gnome-saved-search;
 X-GNOME-Bugzilla-Bugzilla=GNOME
