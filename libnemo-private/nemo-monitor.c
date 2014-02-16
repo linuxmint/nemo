@@ -34,7 +34,6 @@
 struct NemoMonitor {
 	GFileMonitor *monitor;
 	GVolumeMonitor *volume_monitor;
-	GMount *mount;
 	GFile *location;
 };
 
@@ -87,11 +86,16 @@ mount_removed (GVolumeMonitor *volume_monitor,
 	       gpointer user_data)
 {
 	NemoMonitor *monitor = user_data;
+	GFile *mount_location;
 
-	if (mount == monitor->mount) {
+	mount_location = g_mount_get_root (mount);
+
+	if (g_file_has_prefix (monitor->location, mount_location)) {
 		nemo_file_changes_queue_file_removed (monitor->location);
 		schedule_call_consume_changes ();
 	}
+
+	g_object_unref (mount_location);
 }
 
 static void
@@ -145,7 +149,6 @@ nemo_monitor_directory (GFile *location)
 	if (dir_monitor != NULL) {
 		ret->monitor = dir_monitor;
 	} else if (!g_file_is_native (location)) {
-		ret->mount = nemo_get_mounted_mount_for_root (location);
 		ret->location = g_object_ref (location);
 		ret->volume_monitor = g_volume_monitor_get ();
 	}
@@ -179,6 +182,5 @@ nemo_monitor_cancel (NemoMonitor *monitor)
 	}
 
 	g_clear_object (&monitor->location);
-	g_clear_object (&monitor->mount);
 	g_free (monitor);
 }
