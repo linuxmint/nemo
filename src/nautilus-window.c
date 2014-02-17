@@ -1786,45 +1786,6 @@ nautilus_window_set_active_slot (NautilusWindow *window, NautilusWindowSlot *new
 }
 
 static void
-nautilus_window_get_preferred_width (GtkWidget *widget,
-				     gint *minimal_width,
-				     gint *natural_width)
-{
-	GdkScreen *screen;
-	gint max_w, min_w, default_w;
-
-	screen = gtk_window_get_screen (GTK_WINDOW (widget));	
-
-	max_w = get_max_forced_width (screen);
-	min_w = NAUTILUS_WINDOW_MIN_WIDTH;
-
-	default_w = NAUTILUS_WINDOW_DEFAULT_WIDTH;
-
-	*minimal_width = MIN (min_w, max_w);
-	*natural_width = MIN (default_w, max_w);
-}
-
-static void
-nautilus_window_get_preferred_height (GtkWidget *widget,
-				      gint *minimal_height,
-				      gint *natural_height)
-{
-	GdkScreen *screen;
-	gint max_h, min_h, default_h;
-
-	screen = gtk_window_get_screen (GTK_WINDOW (widget));	
-
-	max_h = get_max_forced_height (screen);
-
-	min_h = NAUTILUS_WINDOW_MIN_HEIGHT;
-
-	default_h = NAUTILUS_WINDOW_DEFAULT_HEIGHT;
-
-	*minimal_height = MIN (min_h, max_h);
-	*natural_height = MIN (default_h, max_h);
-}
-
-static void
 nautilus_window_realize (GtkWidget *widget)
 {
 	GTK_WIDGET_CLASS (nautilus_window_parent_class)->realize (widget);
@@ -2232,8 +2193,6 @@ nautilus_window_class_init (NautilusWindowClass *class)
 
 	wclass->destroy = nautilus_window_destroy;
 	wclass->show = nautilus_window_show;
-	wclass->get_preferred_width = nautilus_window_get_preferred_width;
-	wclass->get_preferred_height = nautilus_window_get_preferred_height;
 	wclass->realize = nautilus_window_realize;
 	wclass->key_press_event = nautilus_window_key_press_event;
 	wclass->window_state_event = nautilus_window_state_event;
