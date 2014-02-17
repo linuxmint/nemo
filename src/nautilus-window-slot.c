@@ -988,9 +988,9 @@ nautilus_window_slot_set_location (NautilusWindowSlot *slot,
 
 	if (slot == nautilus_window_get_active_slot (slot->details->window)) {
 		nautilus_window_sync_location_widgets (slot->details->window);
-		nautilus_window_slot_update_title (slot);
 	}
 
+	nautilus_window_slot_update_title (slot);
 	nautilus_window_slot_emit_location_change (slot, old_location, location);
 
 	if (old_location) {
