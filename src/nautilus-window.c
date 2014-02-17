@@ -2333,24 +2333,8 @@ nautilus_window_show_about_dialog (NautilusWindow *window)
 		"Sun Microsystems",
 		NULL
 	};
-	const gchar *license[] = {
-		N_("Files is free software; you can redistribute it and/or modify "
-		   "it under the terms of the GNU General Public License as published by "
-		   "the Free Software Foundation; either version 2 of the License, or "
-		   "(at your option) any later version."),
-		N_("Files is distributed in the hope that it will be useful, "
-		   "but WITHOUT ANY WARRANTY; without even the implied warranty of "
-		   "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
-		   "GNU General Public License for more details."),
-		N_("You should have received a copy of the GNU General Public License "
-		   "along with Nautilus; if not, write to the Free Software Foundation, Inc., "
-		   "51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA")
-	};
-	gchar *license_trans, *copyright_str;
+	gchar *copyright_str;
 	GDateTime *date;
-
-	license_trans = g_strjoin ("\n\n", _(license[0]), _(license[1]),
-					     _(license[2]), NULL);
 
 	date = g_date_time_new_now_local ();
 
@@ -2365,8 +2349,7 @@ nautilus_window_show_about_dialog (NautilusWindow *window)
 			       "version", VERSION,
 			       "comments", _("Access and organize your files."),
 			       "copyright", copyright_str,
-			       "license", license_trans,
-			       "wrap-license", TRUE,
+			       "license-type", GTK_LICENSE_GPL_2_0,
 			       "authors", authors,
 			       "documenters", documenters,
 				/* Translators should localize the following string
@@ -2377,7 +2360,6 @@ nautilus_window_show_about_dialog (NautilusWindow *window)
 			      "logo-icon-name", "system-file-manager",
 			      NULL);
 
-	g_free (license_trans);
 	g_free (copyright_str);
 	g_date_time_unref (date);
 }
