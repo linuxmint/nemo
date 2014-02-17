@@ -578,7 +578,7 @@ nautilus_window_slot_constructed (GObject *object)
 					GTK_ORIENTATION_VERTICAL);
 	gtk_widget_show (GTK_WIDGET (slot));
 
-	extras_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
+	extras_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	slot->details->extra_location_widgets = extras_vbox;
 	gtk_box_pack_start (GTK_BOX (slot), extras_vbox, FALSE, FALSE, 0);
 	gtk_widget_show (extras_vbox);
