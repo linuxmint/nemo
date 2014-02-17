@@ -21,7 +21,6 @@ endif
 EXTRA_DIST=					\
 	COPYING.LIB				\
 	COPYING.EXTENSIONS			\
-	COPYING-DOCS				\
 	HACKING					\
 	MAINTAINERS				\
 	README.commits				\
