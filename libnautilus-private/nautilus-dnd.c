@@ -785,11 +785,6 @@ nautilus_drag_drop_action_ask (GtkWidget *widget,
 				      (actions & GDK_ACTION_LINK) != 0,
 				      &damd);
 
-	append_drop_action_menu_item (menu, _("Set as _Background"),
-				      NAUTILUS_DND_ACTION_SET_AS_BACKGROUND,
-				      (actions & NAUTILUS_DND_ACTION_SET_AS_BACKGROUND) != 0,
-				      &damd);
-
 	eel_gtk_menu_append_separator (GTK_MENU (menu));
 	
 	menu_item = gtk_menu_item_new_with_mnemonic (_("Cancel"));

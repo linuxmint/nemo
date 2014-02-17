@@ -51,9 +51,6 @@
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
-#define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libgnome-desktop/gnome-bg.h>
-#include <gdesktop-enums.h>
 
 #include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-file-changes-queue.h>
@@ -1011,79 +1008,16 @@ nautilus_canvas_container_find_drop_target (NautilusCanvasContainer *container,
 	return nautilus_canvas_container_get_icon_drop_target_uri (container, drop_target_icon);
 }
 
-static gboolean
-selection_is_image_file (GList *selection_list)
-{
-	const char *mime_type;
-	NautilusDragSelectionItem *selected_item;
-	gboolean result;
-	GFile *location;
-	GFileInfo *info;
-
-	/* Make sure only one item is selected */
-	if (selection_list == NULL ||
-	    selection_list->next != NULL) {
-		return FALSE;
-	}
-
-	selected_item = selection_list->data;
-
-	mime_type = NULL;
-	
-	location = g_file_new_for_uri (selected_item->uri);
-	info = g_file_query_info (location,
-				  G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
-				  0, NULL, NULL);
-	if (info) {
-		mime_type = g_file_info_get_content_type (info);
-	}
-
-	result = g_str_has_prefix (mime_type, "image/");
-
-	if (info) {
-		g_object_unref (info);
-	}
-	g_object_unref (location);
-	
-	return result;
-}
-
-static void
-receive_dropped_background_image (const gchar *image_uri)
-{
-	GnomeBG *bg;
-	char *filename;
-
-	if (image_uri != NULL) {
-		filename = g_filename_from_uri (image_uri, NULL, NULL);
-	} else {
-		filename = NULL;
-	}
-
-	bg = gnome_bg_new ();
-
-	/* Currently, we only support tiled images. So we set the placement.
-	 */
-	gnome_bg_set_placement (bg, G_DESKTOP_BACKGROUND_STYLE_WALLPAPER);
-	gnome_bg_set_filename (bg, filename);
-
-	gnome_bg_save_to_preferences (bg, gnome_background_preferences);
-
-	g_free (filename);
-	g_object_unref (bg);
-}
-
 static void
 nautilus_canvas_container_receive_dropped_icons (NautilusCanvasContainer *container,
 					       GdkDragContext *context,
 					       int x, int y)
 {
-	char *drop_target, *container_uri;
+	char *drop_target;
 	gboolean local_move_only;
 	double world_x, world_y;
 	gboolean icon_hit;
 	GdkDragAction action, real_action;
-	NautilusDragSelectionItem *selected_item;
 
 	drop_target = NULL;
 
@@ -1101,26 +1035,11 @@ nautilus_canvas_container_receive_dropped_icons (NautilusCanvasContainer *contai
 			action = GDK_ACTION_MOVE;
 		} else {
 			action = GDK_ACTION_MOVE | GDK_ACTION_COPY | GDK_ACTION_LINK;
-			container_uri = get_container_uri (container);
-			
-			if (eel_uri_is_desktop (container_uri) &&
-			    selection_is_image_file (container->details->dnd_info->drag_info.selection_list)) {
-				action |= NAUTILUS_DND_ACTION_SET_AS_BACKGROUND;
-			}
-
-			g_free (container_uri);
 		}
 		real_action = nautilus_drag_drop_action_ask
 			(GTK_WIDGET (container), action);
 	}
 	
-	if (real_action == (GdkDragAction) NAUTILUS_DND_ACTION_SET_AS_BACKGROUND) {
-		selected_item = container->details->dnd_info->drag_info.selection_list->data;
-		receive_dropped_background_image (selected_item->uri);
-
-		return;
-	}
-		
 	if (real_action > 0) {
 		eel_canvas_window_to_world (EEL_CANVAS (container),
 					    x + gtk_adjustment_get_value (gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (container))),
