@@ -996,6 +996,10 @@ static void
 start_deep_count_for_file (NautilusPropertiesWindow *window,
 			   NautilusFile             *file)
 {
+	if (!nautilus_file_is_directory (file)) {
+		return;
+	}
+
 	if (!g_list_find (window->details->deep_count_files, file)) {
 		nautilus_file_ref (file);
 		window->details->deep_count_files = g_list_prepend (window->details->deep_count_files, file);
@@ -2328,9 +2332,7 @@ append_directory_contents_fields (NautilusPropertiesWindow *window,
 		NautilusFile *file;
 
 		file = NAUTILUS_FILE (l->data);
-		if (nautilus_file_is_directory (file)) {
-			start_deep_count_for_file (window, file);
-		}
+		start_deep_count_for_file (window, file);
 	}
 
 	/* Fill in the initial value. */
