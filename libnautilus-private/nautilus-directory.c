@@ -244,28 +244,37 @@ nautilus_directory_finalize (GObject *object)
 }
 
 static void
-invalidate_one_count (gpointer key, gpointer value, gpointer user_data)
+collect_all_directories (gpointer key, gpointer value, gpointer callback_data)
 {
 	NautilusDirectory *directory;
-
-	g_assert (key != NULL);
-	g_assert (NAUTILUS_IS_DIRECTORY (value));
-	g_assert (user_data == NULL);
+	GList **dirs;
 
 	directory = NAUTILUS_DIRECTORY (value);
-	
-	nautilus_directory_invalidate_count_and_mime_list (directory);
+	dirs = callback_data;
+
+	*dirs = g_list_prepend (*dirs, nautilus_directory_ref (directory));
 }
 
 static void
 filtering_changed_callback (gpointer callback_data)
 {
+	GList *dirs, *l;
+	NautilusDirectory *directory;
+
 	g_assert (callback_data == NULL);
+
+	dirs = NULL;
+	g_hash_table_foreach (directories, collect_all_directories, &dirs);
 
 	/* Preference about which items to show has changed, so we
 	 * can't trust any of our precomputed directory counts.
 	 */
-	g_hash_table_foreach (directories, invalidate_one_count, NULL);
+	for (l = dirs; l != NULL; l = l->next) {
+		directory = NAUTILUS_DIRECTORY (l->data);
+		nautilus_directory_invalidate_count_and_mime_list (directory);
+	}
+
+	nautilus_directory_list_unref (dirs);
 }
 
 void
@@ -282,18 +291,6 @@ emit_change_signals_for_all_files (NautilusDirectory *directory)
 	nautilus_directory_emit_change_signals (directory, files);
 
 	nautilus_file_list_free (files);
-}
-
-static void
-collect_all_directories (gpointer key, gpointer value, gpointer callback_data)
-{
-	NautilusDirectory *directory;
-	GList **dirs;
-
-	directory = NAUTILUS_DIRECTORY (value);
-	dirs = callback_data;
-
-	*dirs = g_list_prepend (*dirs, nautilus_directory_ref (directory));
 }
 
 void
