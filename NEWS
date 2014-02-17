@@ -1,3 +1,17 @@
+Major changes in 3.11.90:
+* Port to GtkHeaderBar (Yosef Or Boczko, Matthias Clasen)
+* Fix tab label not being update on removals or renames
+* Fix minimum size requisition of Nautilus windows
+* Fix remote mounts not being detected as removed (Daniel Schürmann)
+* Fix high CPU usage when searching with criteria (Daniel Wyatt)
+* Fix unwanted search entries on the desktop (Marc Deslauriers)
+* Fix initial value of start-with-sidebar
+* Fix some critical assertions
+* Fix a crash when selecting an unsupported custom image (Nelson Benítez León)
+* Remove Set as Background action on interactive DND
+* Use unity-control-center when under Unity (Robert Ancell)
+* Add film strip in nautilus rather than in totem (Bastien Nocera)
+
 Major changes in 3.11.3:
 * Don't perform deep counts on regular files (Ross Lagerwall)
 * Fix overlapping filenames on hover in canvas view (Manuel Bachmann)
