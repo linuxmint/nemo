@@ -55,6 +55,10 @@ enum {
 	NUM_PROPERTIES
 };
 
+struct NemoWindowSlotDetails {
+	NemoWindowPane *pane;
+};
+
 static guint signals[LAST_SIGNAL] = { 0 };
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
@@ -139,8 +143,10 @@ query_editor_cancel_callback (NemoQueryEditor *editor,
 			      NemoWindowSlot *slot)
 {
 	GtkAction *search;
+	NemoWindowPane *pane;
 
-	search = gtk_action_group_get_action (slot->pane->toolbar_action_group,
+        pane = slot->details->pane; 
+	search = gtk_action_group_get_action (pane->toolbar_action_group,
 					      NEMO_ACTION_SEARCH);
 
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (search), FALSE);
@@ -253,7 +259,7 @@ real_active (NemoWindowSlot *slot)
 	int page_num;
 
 	window = nemo_window_slot_get_window (slot);
-	pane = slot->pane;
+	pane = nemo_window_slot_get_pane (slot);
 	page_num = gtk_notebook_page_num (GTK_NOTEBOOK (pane->notebook),
 					  GTK_WIDGET (slot));
 	g_assert (page_num >= 0);
@@ -265,8 +271,8 @@ real_active (NemoWindowSlot *slot)
 	nemo_window_sync_allow_stop (window, slot);
 	nemo_window_sync_title (window, slot);
 	nemo_window_sync_zoom_widgets (window);
-	nemo_window_pane_sync_location_widgets (slot->pane);
-	nemo_window_pane_sync_search_widgets (slot->pane);
+	nemo_window_pane_sync_location_widgets (pane);
+	nemo_window_pane_sync_search_widgets (pane);
 
 	if (slot->viewed_file != NULL) {
 		nemo_window_load_view_as_menus (window);
@@ -303,7 +309,7 @@ nemo_window_slot_set_property (GObject *object,
 
 	switch (property_id) {
 	case PROP_PANE:
-		slot->pane = g_value_get_object (value);
+		nemo_window_slot_set_pane (slot, g_value_get_object (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -321,7 +327,7 @@ nemo_window_slot_get_property (GObject *object,
 
 	switch (property_id) {
 	case PROP_PANE:
-		g_value_set_object (value, slot->pane);
+		g_value_set_object (value, slot->details->pane);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -373,7 +379,8 @@ nemo_window_slot_constructed (GObject *object)
 static void
 nemo_window_slot_init (NemoWindowSlot *slot)
 {
-	/* do nothing */
+	slot->details = G_TYPE_INSTANCE_GET_PRIVATE
+		(slot, NEMO_TYPE_WINDOW_SLOT, NemoWindowSlotDetails);
 }
 
 static void
@@ -434,7 +441,7 @@ nemo_window_slot_dispose (GObject *object)
 		slot->find_mount_cancellable = NULL;
 	}
 
-	slot->pane = NULL;
+	slot->details->pane = NULL;
 
 	g_free (slot->title);
 	slot->title = NULL;
@@ -501,9 +508,10 @@ nemo_window_slot_class_init (NemoWindowSlotClass *klass)
 				     "The NemoWindowPane",
 				     "The NemoWindowPane this slot is part of",
 				     NEMO_TYPE_WINDOW_PANE,
-				     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+				     G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 
 	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
+	g_type_class_add_private (klass, sizeof (NemoWindowSlotDetails));
 }
 
 GFile *
@@ -531,7 +539,7 @@ nemo_window_slot_get_location_uri (NemoWindowSlot *slot)
 void
 nemo_window_slot_make_hosting_pane_active (NemoWindowSlot *slot)
 {
-	g_assert (NEMO_IS_WINDOW_PANE (slot->pane));
+	g_assert (NEMO_IS_WINDOW_SLOT (slot));
 	
 	nemo_window_set_active_slot (nemo_window_slot_get_window (slot),
 					 slot);
@@ -541,7 +549,27 @@ NemoWindow *
 nemo_window_slot_get_window (NemoWindowSlot *slot)
 {
 	g_assert (NEMO_IS_WINDOW_SLOT (slot));
-	return slot->pane->window;
+	return slot->details->pane->window;
+}
+
+NemoWindowPane *
+nemo_window_slot_get_pane (NemoWindowSlot *slot)
+{
+    g_assert (NEMO_IS_WINDOW_SLOT (slot));
+    return slot->details->pane;
+}
+
+void
+nemo_window_slot_set_pane (NemoWindowSlot *slot,
+				 NemoWindowPane *pane)
+{
+	g_assert (NEMO_IS_WINDOW_SLOT (slot));
+	g_assert (NEMO_IS_WINDOW_PANE (pane));
+
+	if (slot->details->pane != pane) {
+		slot->details->pane = pane;
+		g_object_notify_by_pspec (G_OBJECT (slot), properties[PROP_PANE]);
+	}
 }
 
 /* nemo_window_slot_update_title:

@@ -280,10 +280,13 @@ viewed_file_changed_callback (NemoFile *file,
 {
         GFile *new_location;
 	gboolean is_in_trash, was_in_trash;
+	NemoWindowPane *pane;
 
         g_assert (NEMO_IS_FILE (file));
-	g_assert (NEMO_IS_WINDOW_PANE (slot->pane));
+	g_assert (NEMO_IS_WINDOW_SLOT (slot));
 	g_assert (file == slot->viewed_file);
+
+	pane = nemo_window_slot_get_pane (slot);
 
         if (!nemo_file_is_not_yet_confirmed (file)) {
                 slot->viewed_file_seen = TRUE;
@@ -349,8 +352,8 @@ viewed_file_changed_callback (NemoFile *file,
 				   slot->location)) {
                         g_object_unref (slot->location);
                         slot->location = new_location;
-			if (slot == slot->pane->active_slot) {
-				nemo_window_pane_sync_location_widgets (slot->pane);
+			if (slot == pane->active_slot) {
+				nemo_window_pane_sync_location_widgets (pane);
 			}
                 } else {
 			/* TODO?
@@ -784,6 +787,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 	char *view_id;
 	char *mimetype;
 	NemoWindow *window;
+        NemoWindowPane *pane;
 	NemoWindowSlot *slot;
 	NemoFile *viewed_file, *parent_file;
 	GFile *location;
@@ -793,6 +797,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 	slot = callback_data;
 	window = nemo_window_slot_get_window (slot);
+	pane = nemo_window_slot_get_pane (slot);
 
 	g_assert (slot->determine_view_file == file);
 	slot->determine_view_file = NULL;
@@ -956,7 +961,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 			/* We're missing a previous location (if opened location
 			 * in a new tab) so close it and return */
 			if (slot->location == NULL) {
-				nemo_window_pane_slot_close (slot->pane, slot);
+				nemo_window_pane_slot_close (pane, slot);
 			} else {
 				/* We disconnected this, so we need to re-connect it */
 				viewed_file = nemo_file_get (slot->location);
@@ -1423,6 +1428,7 @@ static void
 update_for_new_location (NemoWindowSlot *slot)
 {
 	NemoWindow *window;
+	NemoWindowPane *pane;
         GFile *new_location;
         NemoFile *file;
 	NemoDirectory *directory;
@@ -1430,6 +1436,7 @@ update_for_new_location (NemoWindowSlot *slot)
 	FindMountData *data;
 
 	window = nemo_window_slot_get_window (slot);
+    pane = nemo_window_slot_get_pane (slot);
 	new_location = slot->pending_location;
 	slot->pending_location = NULL;
 
@@ -1524,11 +1531,11 @@ update_for_new_location (NemoWindowSlot *slot)
 
 	nemo_window_slot_update_title (slot);
 
-	if (slot == slot->pane->active_slot) {
-		nemo_window_pane_sync_location_widgets (slot->pane);
+	if (slot == pane->active_slot) {
+		nemo_window_pane_sync_location_widgets (pane);
 
 		if (location_really_changed) {
-			nemo_window_pane_sync_search_widgets (slot->pane);
+			nemo_window_pane_sync_search_widgets (pane);
 		}
 	}
 
