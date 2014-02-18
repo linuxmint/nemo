@@ -138,6 +138,13 @@ get_message_for_two_x_content_types (char **x_content_types)
 		} else {
 			message = g_strdup (_("Contains digital photos"));
 		}
+	} else if ((strcmp (x_content_types[0], "x-content/video-vcd") == 0
+		    || strcmp (x_content_types[1], "x-content/video-vcd") == 0)
+		   && (strcmp (x_content_types[0], "x-content/video-dvd") == 0
+		       || strcmp (x_content_types[1], "x-content/video-dvd") == 0)) {
+		message = g_strdup_printf ("%s/%s",
+					   get_message_for_x_content_type (x_content_types[0]),
+					   get_message_for_x_content_type (x_content_types[1]));
 	} else {
 		message = get_message_for_x_content_type (x_content_types[0]);
 	}
@@ -211,11 +218,25 @@ nautilus_x_content_bar_set_x_content_types (NautilusXContentBar *bar, const char
 		GIcon *icon;
 		GtkWidget *image;
 		GtkWidget *button;
-
-		/* TODO: We really need a GtkBrowserBackButton-ish widget here.. until then, we only
-		 *       show the default application. */
+		GAppInfo *app;
+		gboolean has_app;
+		guint i;
 
 		default_app = g_ptr_array_index (apps, n);
+		has_app = FALSE;
+
+		for (i = 0; i < n; i++) {
+			app = g_ptr_array_index (apps, i);
+			if (g_app_info_equal (app, default_app)) {
+				has_app = TRUE;
+				break;
+			}
+		}
+
+		if (has_app) {
+			continue;
+		}
+
 		icon = g_app_info_get_icon (default_app);
 		if (icon != NULL) {
 			image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_BUTTON);
