@@ -52,13 +52,15 @@ struct NemoWindowSlotClass {
 	void (* changed_pane)	(NemoWindowSlot *slot);
 };
 
+typedef struct NemoWindowSlotDetails NemoWindowSlotDetails;
+
 /* Each NemoWindowSlot corresponds to a location in the window
  * for displaying a NemoView, i.e. a tab.
  */
 struct NemoWindowSlot {
 	GtkBox parent;
 
-	NemoWindowPane *pane;
+	NemoWindowSlotDetails *details;
 
 	/* slot contains
  	 *  1) an event box containing extra_location_widgets
@@ -122,7 +124,11 @@ struct NemoWindowSlot {
 
 GType   nemo_window_slot_get_type (void);
 
-NemoWindowSlot * nemo_window_slot_new (NemoWindowPane *pane);
+NemoWindowSlot * nemo_window_slot_new              (NemoWindowPane *pane);
+
+NemoWindowPane * nemo_window_slot_get_pane           (NemoWindowSlot *slot);
+void             nemo_window_slot_set_pane           (NemoWindowSlot *slot,
+							    NemoWindowPane *pane);
 
 void    nemo_window_slot_update_title		   (NemoWindowSlot *slot);
 void    nemo_window_slot_set_query_editor_visible	   (NemoWindowSlot *slot,

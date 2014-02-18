@@ -209,6 +209,7 @@ void
 nemo_window_new_tab (NemoWindow *window)
 {
 	NemoWindowSlot *current_slot;
+	NemoWindowPane *current_pane;
 	NemoWindowSlot *new_slot;
 	NemoWindowOpenFlags flags;
 	GFile *location;
@@ -217,6 +218,7 @@ nemo_window_new_tab (NemoWindow *window)
 
 	current_slot = nemo_window_get_active_slot (window);
 	location = nemo_window_slot_get_location (current_slot);
+	current_pane = nemo_window_slot_get_pane(current_slot);
 
 	if (location != NULL) {
 		flags = 0;
@@ -233,7 +235,7 @@ nemo_window_new_tab (NemoWindow *window)
 		}
 		g_free (scheme);
 
-		new_slot = nemo_window_pane_open_slot (current_slot->pane, flags);
+		new_slot = nemo_window_pane_open_slot (current_pane, flags);
 		nemo_window_set_active_slot (window, new_slot);
 		nemo_window_slot_open_location (new_slot, location, 0);
 		g_object_unref (location);
@@ -265,6 +267,9 @@ nemo_window_sync_allow_stop (NemoWindow *window,
 	GtkAction *reload_action;
 	gboolean allow_stop, slot_is_active;
 	NemoNotebook *notebook;
+	NemoWindowPane *pane;
+
+	pane = nemo_window_slot_get_pane(slot);
 
 	stop_action = gtk_action_group_get_action (nemo_window_get_main_action_group (window),
 						   NEMO_ACTION_STOP);
@@ -286,7 +291,7 @@ nemo_window_sync_allow_stop (NemoWindow *window,
 		}
 
 
-		notebook = NEMO_NOTEBOOK (slot->pane->notebook);
+		notebook = NEMO_NOTEBOOK (pane->notebook);
 		nemo_notebook_sync_loading (notebook, slot);
 	}
 }
@@ -815,7 +820,7 @@ nemo_window_view_visible (NemoWindow *window,
 	}
 
 	slot->visible = TRUE;
-    pane = slot->pane;
+    pane = nemo_window_slot_get_pane(slot);
 
 	if (gtk_widget_get_visible (GTK_WIDGET (pane))) {
 		return;
@@ -960,14 +965,17 @@ void
 nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
 {
 	NemoWindowSlot *old_slot;
+    NemoWindowPane *old_pane;
+    NemoWindowPane *new_pane;
+
 	g_assert (NEMO_IS_WINDOW (window));
 
 	DEBUG ("Setting new slot %p as active", new_slot);
 
 	if (new_slot) {
-		g_assert ((window == nemo_window_slot_get_window (new_slot)));
-		g_assert (NEMO_IS_WINDOW_PANE (new_slot->pane));
-		g_assert (g_list_find (new_slot->pane->slots, new_slot) != NULL);
+	    new_pane = nemo_window_slot_get_pane (new_slot);
+	    g_assert ((window == nemo_window_slot_get_window (new_slot)));
+		g_assert (g_list_find (new_pane->slots, new_slot) != NULL);
 	}
 
 	old_slot = nemo_window_get_active_slot (window);
@@ -982,15 +990,16 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
 		if (old_slot->content_view != NULL) {
 			nemo_window_disconnect_content_view (window, old_slot->content_view);
 		}
-		gtk_widget_hide (GTK_WIDGET (old_slot->pane->tool_bar));
+		old_pane = nemo_window_slot_get_pane (old_slot);
+		gtk_widget_hide (GTK_WIDGET (old_pane->tool_bar));
 		/* inform slot & view */
 		g_signal_emit_by_name (old_slot, "inactive");
 	}
 
 	/* deal with panes */
 	if (new_slot &&
-	    new_slot->pane != window->details->active_pane) {
-		real_set_active_pane (window, new_slot->pane);
+	    new_pane != window->details->active_pane) {
+		real_set_active_pane (window, new_pane);
 	}
 
 	window->details->active_pane->active_slot = new_slot;
@@ -1011,7 +1020,7 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
 		show_toolbar = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_TOOLBAR);
 
 		if ( show_toolbar) {
-			gtk_widget_show (GTK_WIDGET (new_slot->pane->tool_bar));
+			gtk_widget_show (GTK_WIDGET (new_pane->tool_bar));
 		}
 
 		/* inform slot & view */
@@ -1505,7 +1514,7 @@ nemo_window_sync_title (NemoWindow *window,
 		g_free(escaped_title);
 	}
 
-	pane = slot->pane;
+	pane = nemo_window_slot_get_pane(slot);
 	notebook = NEMO_NOTEBOOK (pane->notebook);
 	nemo_notebook_sync_tab_label (notebook, slot);
 }

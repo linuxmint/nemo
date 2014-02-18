@@ -86,14 +86,14 @@ GType nemo_window_pane_get_type (void);
 
 NemoWindowPane *nemo_window_pane_new (NemoWindow *window);
 
-NemoWindowSlot *nemo_window_pane_open_slot (NemoWindowPane *pane,
-					    NemoWindowOpenSlotFlags flags);
+NemoWindowSlot *nemo_window_pane_open_slot  (NemoWindowPane *pane,
+						     NemoWindowOpenSlotFlags flags);
 /* This removes the slot from the given pane but does not close the pane and/or
  * window as well if there are no more slots left afterwards. This
  * functionality is provided by `nemo_window_pane_close_slot' below.
  */
-void nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
-					  NemoWindowSlot *slot);
+void  nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
+						     NemoWindowSlot *slot);
 
 void nemo_window_pane_sync_location_widgets (NemoWindowPane *pane);
 void nemo_window_pane_sync_search_widgets  (NemoWindowPane *pane);

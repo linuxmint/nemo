@@ -45,11 +45,6 @@
 #define NEMO_APPLICATION_GET_CLASS(obj) \
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_APPLICATION, NemoApplicationClass))
 
-#ifndef NEMO_SPATIAL_WINDOW_DEFINED
-#define NEMO_SPATIAL_WINDOW_DEFINED
-typedef struct _NemoSpatialWindow NemoSpatialWindow;
-#endif
-
 typedef struct _NemoApplicationPriv NemoApplicationPriv;
 
 typedef struct {

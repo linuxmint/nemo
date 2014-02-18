@@ -572,18 +572,21 @@ notebook_page_added_cb (GtkNotebook *notebook,
 			gpointer user_data)
 {
 	NemoWindowPane *pane;
+	NemoWindowPane *slot_pane;
+	NemoWindowPane *dummy_slot_pane;
 	NemoWindowSlot *slot;
 	NemoWindowSlot *dummy_slot;
 	gboolean dnd_slot;
 
 	pane = NEMO_WINDOW_PANE (user_data);
 	slot = NEMO_WINDOW_SLOT (page);
-
+	slot_pane = nemo_window_slot_get_pane (slot);
+	
 	//Slot has been dropped onto another pane (new window or tab bar of other window)
 	//So reassociate the pane if needed.
-	if (slot->pane != pane) {
-		slot->pane->slots = g_list_remove (slot->pane->slots, slot);
-		slot->pane = pane;
+	if (slot_pane != pane) {
+		slot_pane->slots = g_list_remove (slot_pane->slots, slot);
+		nemo_window_slot_set_pane(slot, pane);
 		pane->slots = g_list_append (pane->slots, slot);
 		g_signal_emit_by_name (slot, "changed-pane");
 		nemo_window_set_active_slot (nemo_window_slot_get_window (slot), slot);
@@ -601,8 +604,8 @@ notebook_page_added_cb (GtkNotebook *notebook,
 
 	dummy_slot = g_list_nth_data (pane->slots, 0);
 	if (dummy_slot != NULL) {
-		nemo_window_pane_remove_slot_unsafe (
-			dummy_slot->pane, dummy_slot);
+	    dummy_slot_pane = nemo_window_slot_get_pane (dummy_slot);
+		nemo_window_pane_remove_slot_unsafe (dummy_slot_pane, dummy_slot);
 	}
 
 	gtk_widget_show (GTK_WIDGET (pane));
@@ -1137,18 +1140,15 @@ nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 	GtkNotebook *notebook;
 
 	g_assert (NEMO_IS_WINDOW_SLOT (slot));
-	g_assert (NEMO_IS_WINDOW_PANE (slot->pane));
 
 	DEBUG ("Removing slot %p", slot);
 
 	/* save pane because slot is not valid anymore after this call */
-	pane = slot->pane;
+	pane = nemo_window_slot_get_pane(slot);
 	notebook = GTK_NOTEBOOK (pane->notebook);
 
-	nemo_window_manage_views_close_slot (slot);
 	pane->slots = g_list_remove (pane->slots, slot);
-
-    nemo_window_slot_removed (pane->window, slot);
+	nemo_window_slot_removed (pane->window, slot);
 
 	page_num = gtk_notebook_page_num (notebook, GTK_WIDGET (slot));
 	g_assert (page_num >= 0);
@@ -1161,7 +1161,7 @@ nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 	g_signal_handlers_unblock_by_func (notebook,
 					   G_CALLBACK (notebook_switch_page_cb),
 					   pane);
-
+	
 	gtk_notebook_set_show_tabs (notebook,
 				    gtk_notebook_get_n_pages (notebook) > 1);
 }
