@@ -84,4 +84,8 @@ NemoBookmarkList *
 void nemo_application_edit_bookmarks (NemoApplication *application,
 					  NemoWindow      *window);
 
+void
+nemo_application_connect_server (NemoApplication *application,
+                     NemoWindow      *window);
+
 #endif /* __NEMO_APPLICATION_H__ */
