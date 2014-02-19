@@ -679,26 +679,28 @@ on_connect_server_response (GtkDialog      *dialog,
     gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
-void
+GtkWidget *
 nemo_application_connect_server (NemoApplication *application,
-                     NemoWindow      *window)
+				     NemoWindow      *window)
 {
-    GtkWidget *dialog;
+	GtkWidget *dialog;
 
-    dialog = application->priv->connect_server_window;
+	dialog = application->priv->connect_server_window;
 
-    if (dialog == NULL) {
-        dialog = nemo_connect_server_dialog_new (window);
-        g_signal_connect (dialog, "response", G_CALLBACK (on_connect_server_response), application);
-        application->priv->connect_server_window = GTK_WIDGET (dialog);
+	if (dialog == NULL) {
+		dialog = nemo_connect_server_dialog_new (window);
+		g_signal_connect (dialog, "response", G_CALLBACK (on_connect_server_response), application);
+		application->priv->connect_server_window = GTK_WIDGET (dialog);
 
-        g_object_add_weak_pointer (G_OBJECT (dialog),
-                       (gpointer *) &application->priv->connect_server_window);
-    }
+		g_object_add_weak_pointer (G_OBJECT (dialog),
+					   (gpointer *) &application->priv->connect_server_window);
+	}
 
-    gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
-    gtk_window_set_screen (GTK_WINDOW (dialog), gtk_window_get_screen (GTK_WINDOW (window)));
-    gtk_window_present (GTK_WINDOW (dialog));
+	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
+	gtk_window_set_screen (GTK_WINDOW (dialog), gtk_window_get_screen (GTK_WINDOW (window)));
+	gtk_window_present (GTK_WINDOW (dialog));
+
+	return dialog;
 }
 
 static void

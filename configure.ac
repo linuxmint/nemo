@@ -173,7 +173,7 @@ dnl ==========================================================================
 dnl libexif checking
 
 AC_ARG_ENABLE(libexif,
-              [AS_HELP_STRING([--enable-exif=@<:@yes/no@:>@],
+              [AS_HELP_STRING([--enable-libexif=@<:@yes/no@:>@],
                               [build EXIF support [default=yes]])],
               [enable_exif="$enableval"],
               [enable_exif=yes])
