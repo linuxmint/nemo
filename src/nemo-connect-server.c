@@ -3,12 +3,12 @@
  * Copyright (C) 2005 Vincent Untz
  * Copyright (C) 2012 Red Hat, Inc.
  *
- * Nautilus is free software; you can redistribute it and/or
+ * Nemo is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
  *
- * Nautilus is distributed in the hope that it will be useful,
+ * Nemo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
@@ -24,7 +24,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
-#include "nautilus-connect-server-dialog.h"
+#include "nemo-connect-server-dialog.h"
 #include <eel/eel-stock-dialogs.h>
 
 static gboolean just_print_uri = FALSE;
@@ -117,7 +117,7 @@ on_connect_server_response (GtkDialog      *dialog,
 	if (response == GTK_RESPONSE_OK) {
 		GFile *location;
 
-		location = nautilus_connect_server_dialog_get_location (NAUTILUS_CONNECT_SERVER_DIALOG (dialog));
+		location = nemo_connect_server_dialog_get_location (NEMO_CONNECT_SERVER_DIALOG (dialog));
 		if (location != NULL) {
 			mount_location (GTK_WIDGET (dialog), location);
 			g_object_unref (location);
@@ -141,11 +141,12 @@ main (int argc, char *argv[])
 		{ NULL }
 	};
 
-	bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);
+	/*bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);*/
+	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-	g_set_prgname ("nautilus-connect-server");
+	g_set_prgname ("nemo-connect-server");
 
 	/* Translators: This is the --help description for the connect to server app,
 	   the initial newlines are between the command line arg and the description */
@@ -164,8 +165,8 @@ main (int argc, char *argv[])
 
 	g_option_context_free (context);
 
-	dialog = nautilus_connect_server_dialog_new (NULL);
-	nautilus_connect_server_dialog_set_show_browse (NAUTILUS_CONNECT_SERVER_DIALOG (dialog), FALSE);
+	dialog = nemo_connect_server_dialog_new (NULL);
+	nemo_connect_server_dialog_set_show_browse (NEMO_CONNECT_SERVER_DIALOG (dialog), FALSE);
 
 	gtk_window_set_default_icon_name ("folder-remote-symbolic");
 
