@@ -1,3 +1,28 @@
+Nemo merged with changes in Nautilus 3.5.91.
+
+Changes:
+* New design for the Connect to Server dialog
+* Cleanup icon view caption strings
+* Fix wrong zoom level restored at startup
+* Fix unparented mount/eject error dialogs
+* Fix drag and drop for unwritable locations
+* Fix stray templates bar when no templates directory is defined
+* Fix item count not updating in realtime for directories in Properties
+* Fix missing history context menu on navigation buttons
+* Fix missing Create Link context action
+* Fix missing frame around custom icons
+* Fix broken behavior with multiline filenames
+* Plug a number of memory leaks
+
+
+Rejected:
+* Follow 12h/24h GSettings preference for view date display
+* Add paste and location properties actions to the gear menu
+* Use symbolic icons in the sidebar for drives and mounts
+* Fix Open With menu showing for apps that don't support URIs and files
+* Fix missing keybindings for Back/Forward/Up/Go Home
+* Remove context menu on blank list view space
+
 Nemo merged with changes in Nautilus 3.5.90.
 
 Changes:
