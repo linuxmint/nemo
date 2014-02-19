@@ -3305,7 +3305,7 @@ done_loading (NemoView *view,
 {
 	GList *selection;
 	gboolean do_reveal = FALSE;
-	NemoWindow *window;
+	NemoWindow *window = NULL;
 
 	if (!view->details->loading) {
 		return;
@@ -3313,7 +3313,9 @@ done_loading (NemoView *view,
 
 	nemo_profile_start (NULL);
 
-	window = nemo_view_get_window (view);
+	if (view->details->slot) {
+	    window = nemo_window_slot_get_window (view->details->slot);
+	}
 
 	/* This can be called during destruction, in which case there
 	 * is no NemoWindow any more.
