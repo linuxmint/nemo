@@ -1254,7 +1254,7 @@ create_popup_menu (FMTreeView *view)
 	g_signal_connect (menu_item, "activate",
 			  G_CALLBACK (fm_tree_view_open_in_new_tab_cb),
 			  view);
-
+	gtk_widget_show (menu_item);
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup), menu_item);
 	view->details->popup_open_in_new_tab = menu_item;
 	
@@ -1263,7 +1263,7 @@ create_popup_menu (FMTreeView *view)
 	g_signal_connect (menu_item, "activate",
 			  G_CALLBACK (fm_tree_view_open_in_new_window_cb),
 			  view);
-
+	gtk_widget_show (menu_item);
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup), menu_item);
 	view->details->popup_open_in_new_window = menu_item;
 	
