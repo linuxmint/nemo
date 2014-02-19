@@ -2,6 +2,7 @@
 # Please keep this file sorted alphabetically.
 [encoding: UTF-8]
 data/nemo-autorun-software.desktop.in.in
+data/nautilus-connect-server.desktop.in.in
 data/nemo.desktop.in.in
 data/nemo.xml.in
 debian/mount-archive.desktop.in
@@ -49,8 +50,8 @@ src/nemo-application.c
 src/nemo-autorun-software.c
 src/nemo-bookmarks-window.c
 [type: gettext/glade]src/nemo-bookmarks-window.ui
+src/nemo-connect-server.c
 src/nemo-connect-server-dialog.c
-src/nemo-connect-server-dialog-main.c
 src/nemo-desktop-canvas-view.c
 src/nemo-desktop-canvas-view-ui.xml
 src/nemo-desktop-item-properties.c
