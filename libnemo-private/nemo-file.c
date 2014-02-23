@@ -4269,6 +4269,12 @@ get_default_file_icon (NemoFileIconFlags flags)
 	}
 }
 
+char *
+nemo_file_get_thumbnail_path (NemoFile *file)
+{
+	return g_strdup (file->details->thumbnail_path);
+}
+
 NemoIconInfo *
 nemo_file_get_icon (NemoFile *file,
 			int size,
