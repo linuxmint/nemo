@@ -1773,10 +1773,14 @@ apply_columns_settings (NemoListView *list_view,
 						      g_str_equal,
 						      (GDestroyNotify) g_free,
 						      (GDestroyNotify) g_free);
-	for (i = 0; visible_columns[i] != NULL; ++i) {
-		g_hash_table_insert (visible_columns_hash,
-				     g_ascii_strdown (visible_columns[i], -1),
-				     g_ascii_strdown (visible_columns[i], -1));
+	/* always show name column */
+	g_hash_table_insert (visible_columns_hash, g_strdup ("name"), g_strdup ("name"));
+	if (visible_columns != NULL) {
+		for (i = 0; visible_columns[i] != NULL; ++i) {
+			g_hash_table_insert (visible_columns_hash,
+					     g_ascii_strdown (visible_columns[i], -1),
+					     g_ascii_strdown (visible_columns[i], -1));
+		}
 	}
 
 	for (l = all_columns; l != NULL; l = l->next) {
