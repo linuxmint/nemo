@@ -170,6 +170,8 @@ libnemo_private_la_SOURCES = \
 	nemo-search-provider.h \
 	nemo-search-engine.c \
 	nemo-search-engine.h \
+	nemo-search-engine-model.c \
+	nemo-search-engine-model.h \
 	nemo-search-engine-simple.c \
 	nemo-search-engine-simple.h \
 	nemo-search-hit.c \
