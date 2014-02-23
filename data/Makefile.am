@@ -24,13 +24,20 @@ servicedir = $(datadir)/dbus-1/services
 service_DATA = $(service_in_files:.service.in=.service)
 service_in_files = 				\
 	org.freedesktop.NemoFileManager1.service.in	\
-	org.Nemo.service.in
+	org.Nemo.service.in		\
+	org.Nemo.SearchProvider.service.in
 
 org.Nemo.service: org.Nemo.service.in Makefile
 	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
 
 org.freedesktop.NemoFileManager1.service: org.freedesktop.NemoFileManager1.service.in Makefile
 	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
+
+org.Nemo.SearchProvider.service: org.Nemo.SearchProvider.service.in Makefile
+	$(AM_V_GEN) sed -e "s|\@libexecdir\@|$(libexecdir)|" $< > $@
+
+searchproviderdir = $(datadir)/gnome-shell/search-providers
+searchprovider_DATA = nautilus-search-provider.ini
 
 nemodatadir = $(datadir)/nemo
 
@@ -44,6 +51,7 @@ EXTRA_DIST = $(nemodata_DATA) 	\
 	nemo.desktop.in		\
 	dbus-interfaces.xml		\
 	freedesktop-dbus-interfaces.xml	\
+	shell-search-provider-dbus-interfaces.xml \
 	$(xml_in_files) 		\
 	$(desktop_in_files)		\
 	$(service_in_files)		\
