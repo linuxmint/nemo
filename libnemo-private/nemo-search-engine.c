@@ -27,6 +27,7 @@
 #include "nemo-search-provider.h"
 #include "nemo-search-engine.h"
 #include "nemo-search-engine-simple.h"
+#include "nemo-search-engine-model.h"
 #define DEBUG_FLAG NEMO_DEBUG_SEARCH
 #include "nemo-debug.h"
 
@@ -36,7 +37,11 @@
 
 struct NemoSearchEngineDetails
 {
+#if USE_MODEL
+	NemoSearchEngineModel *model;
+#else
 	NemoSearchEngineSimple *simple;
+#endif
 #ifdef ENABLE_TRACKER
 	NemoSearchEngineTracker *tracker;
 #endif
@@ -62,7 +67,11 @@ nemo_search_engine_set_query (NemoSearchProvider *provider,
 #ifdef ENABLE_TRACKER
 	nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (engine->details->tracker), query);
 #endif
+#if USE_MODEL
+	nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (engine->details->model), query);
+#else
 	nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (engine->details->simple), query);
+#endif
 }
 
 static void
@@ -74,7 +83,11 @@ nemo_search_engine_start (NemoSearchProvider *provider)
 #ifdef ENABLE_TRACKER
 	nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->tracker));
 #endif
+#if USE_MODEL
+	nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->model));
+#else
 	nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->simple));
+#endif
 }
 
 static void
@@ -84,7 +97,11 @@ nemo_search_engine_stop (NemoSearchProvider *provider)
 #ifdef ENABLE_TRACKER
 	nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (engine->details->tracker));
 #endif
+#if USE_MODEL
+	nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (engine->details->model));
+#else
 	nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (engine->details->simple));
+#endif
 }
 
 static void
@@ -209,7 +226,11 @@ nemo_search_engine_finalize (GObject *object)
 #ifdef ENABLE_TRACKER
 	g_clear_object (&engine->details->tracker);
 #endif
+#if USE_MODEL
+	g_clear_object (&engine->details->model);
+#else
 	g_clear_object (&engine->details->simple);
+#endif
 
 	G_OBJECT_CLASS (nemo_search_engine_parent_class)->finalize (object);
 }
@@ -240,10 +261,15 @@ nemo_search_engine_init (NemoSearchEngine *engine)
 	connect_provider_signals (engine, NEMO_SEARCH_PROVIDER (engine->details->tracker));
 	engine->details->num_providers++;
 #endif
-
+#if USE_MODEL
+	engine->details->model = nemo_search_engine_model_new ();
+	connect_provider_signals (engine, NEMO_SEARCH_PROVIDER (engine->details->model));
+	engine->details->num_providers++;
+#else
 	engine->details->simple = nemo_search_engine_simple_new ();
 	connect_provider_signals (engine, NEMO_SEARCH_PROVIDER (engine->details->simple));
 	engine->details->num_providers++;
+#endif
 }
 
 NemoSearchEngine *
