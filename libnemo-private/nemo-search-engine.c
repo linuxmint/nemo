@@ -104,7 +104,7 @@ search_provider_hits_added (NemoSearchProvider *provider,
 		count = GPOINTER_TO_INT (g_hash_table_lookup (engine->details->uris, uri));
 		if (count == 0)
 			added = g_list_prepend (added, hit);
-		g_hash_table_replace (engine->details->uris, g_strdup (uri), GINT_TO_POINTER (count++));
+		g_hash_table_replace (engine->details->uris, g_strdup (uri), GINT_TO_POINTER (++count));
 	}
 	if (added != NULL) {
 		added = g_list_reverse (added);
@@ -133,7 +133,7 @@ search_provider_hits_subtracted (NemoSearchProvider *provider,
 			removed = g_list_prepend (removed, hit);
 			g_hash_table_remove (engine->details->uris, uri);
 		} else {
-			g_hash_table_replace (engine->details->uris, g_strdup (uri), GINT_TO_POINTER (count--));
+			g_hash_table_replace (engine->details->uris, g_strdup (uri), GINT_TO_POINTER (--count));
 		}
 	}
 	if (removed != NULL) {
