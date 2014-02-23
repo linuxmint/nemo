@@ -255,11 +255,11 @@ nemo_search_engine_tracker_start (NemoSearchProvider *provider)
 	g_string_append (sparql, " . FILTER (");
 	
 	if (location_uri)  {
-		g_string_append_printf (sparql, " fn:starts-with(nie:url(?urn), '%s')",
+		g_string_append_printf (sparql, " fn:starts-with(nie:url(?urn), '%s') && ",
 					location_uri);
 	}
 
-	g_string_append_printf (sparql, " && fn:contains(fn:lower-case(nfo:fileName(?urn)), '%s')",
+	g_string_append_printf (sparql, "fn:contains(fn:lower-case(nfo:fileName(?urn)), '%s')",
 				search_text);
 
 	if (mime_count > 0) {
