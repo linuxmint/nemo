@@ -151,9 +151,11 @@ search_provider_error (NemoSearchProvider *provider,
 	DEBUG ("Search provider error: %s", error_message);
 	engine->details->providers_error++;
 	if (engine->details->providers_error == engine->details->num_providers) {
+		g_object_ref (engine);
 		nemo_search_provider_error (NEMO_SEARCH_PROVIDER (engine),
 						_("Unable to complete the requested search"));
 		g_hash_table_remove_all (engine->details->uris);
+		g_object_unref (engine);
 	}
 }
 
@@ -164,8 +166,10 @@ search_provider_finished (NemoSearchProvider *provider,
 {
 	engine->details->providers_finished++;
 	if (engine->details->providers_finished == engine->details->num_providers) {
+		g_object_ref (engine);
 		nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (engine));
 		g_hash_table_remove_all (engine->details->uris);
+		g_object_unref (engine);
 	}
 }
 
