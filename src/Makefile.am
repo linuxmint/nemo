@@ -50,8 +50,11 @@ LDADD =\
 	$(UNITY_LIBS) \
 	$(NULL)
 
-dbus_built_sources = nemo-freedesktop-generated.c nemo-freedesktop-generated.h
-$(dbus_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-dbus-interfaces.xml
+dbus_freedesktop_built_sources =			\
+	nemo-freedesktop-generated.c		\
+	nemo-freedesktop-generated.h
+
+$(dbus_freedesktop_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-dbus-interfaces.xml
 	gdbus-codegen									\
 		--interface-prefix org.freedesktop.					\
 		--c-namespace NemoFreedesktop					\
@@ -84,12 +87,12 @@ nemo-enum-types.h: stamp-nemo-enum-types.h
 stamp-nemo-enum-types.h: $(headers) Makefile
 	$(AM_V_GEN)(cd $(srcdir) \
 	&& glib-mkenums \
-			--fhead "#ifndef __NAUTILUS_ENUM_TYPES_H__\n" \
-			--fhead "#define __NAUTILUS_ENUM_TYPES_H__ 1\n\n" \
+			--fhead "#ifndef __NEMO_ENUM_TYPES_H__\n" \
+			--fhead "#define __NEMO_ENUM_TYPES_H__ 1\n\n" \
 			--fhead "#include <glib-object.h>\n\n" \
 			--fhead "G_BEGIN_DECLS\n\n" \
 			--ftail "G_END_DECLS\n\n" \
-			--ftail "#endif /* __NAUTILUS_ENUM_TYPES_H__ */\n" \
+			--ftail "#endif /* __NEMO_ENUM_TYPES_H__ */\n" \
 			--fprod "#include \"@filename@\"\n" \
 			--eprod "#define @ENUMPREFIX@_TYPE_@ENUMSHORT@ @enum_name@_get_type()\n" \
 			--eprod "GType @enum_name@_get_type (void);\n" \
@@ -117,8 +120,8 @@ nemo-enum-types.c: $(headers) Makefile
 	&& cp xgen-gtc $(@F) \
 	&& rm -f xgen-gtc
 
-BUILT_SOURCES = \
-	$(dbus_built_sources) \
+nemo_built_sources = \
+	$(dbus_freedesktop_built_sources) \
 	nemo-resources.c \
 	nemo-resources.h \
 	nemo-enum-types.h \
@@ -253,7 +256,7 @@ nemo_SOURCES += $(UNITY_SOURCES)
 endif
 
 nodist_nemo_SOURCES = \
-	$(BUILT_SOURCES) \
+	$(nemo_built_sources) \
 	$(NULL)
 
 EMPTY_VIEW_SOURCES = \
@@ -285,6 +288,11 @@ nemo_convert_metadata_SOURCES= \
 nemo_extensions_list_SOURCES= \
     nemo-extensions-list.c \
     $(NULL)
+
+BUILT_SOURCES = 					\
+	$(nemo_built_sources) 			\
+	$(dbus_shell_search_provider_built_sources) 	\
+	$(NULL)
 
 polkitdir = $(datadir)/polkit-1/actions
 polkit_in_files = org.nemo.root.policy.in
