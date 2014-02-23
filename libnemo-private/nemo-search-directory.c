@@ -30,6 +30,8 @@
 #include "nemo-file-utilities.h"
 #include "nemo-search-provider.h"
 #include "nemo-search-engine.h"
+#include "nemo-search-engine-model.h"
+
 #include <eel/eel-glib-extensions.h>
 #include <gtk/gtk.h>
 #include <gio/gio.h>
@@ -52,6 +54,8 @@ struct NemoSearchDirectoryDetails {
 	GList *monitor_list;
 	GList *callback_list;
 	GList *pending_callback_list;
+
+	NemoDirectory *base_model;
 };
 
 typedef struct {
@@ -73,8 +77,17 @@ typedef struct {
 	GHashTable *non_ready_hash;
 } SearchCallback;
 
+enum {
+	PROP_0,
+	PROP_BASE_MODEL,
+	PROP_QUERY,
+	NUM_PROPERTIES
+};
+
 G_DEFINE_TYPE (NemoSearchDirectory, nemo_search_directory,
 	       NEMO_TYPE_DIRECTORY);
+
+static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 static void search_engine_hits_added (NemoSearchEngine *engine, GList *hits, NemoSearchDirectory *search);
 static void search_engine_hits_subtracted (NemoSearchEngine *engine, GList *hits, NemoSearchDirectory *search);
@@ -136,11 +149,17 @@ start_or_stop_search_engine (NemoSearchDirectory *search, gboolean adding)
 	    search->details->pending_callback_list) &&
 	    search->details->query &&
 	    !search->details->search_running) {
+		NemoSearchEngineModel *model_provider;
+
 		/* We need to start the search engine */
 		search->details->search_running = TRUE;
 		search->details->search_finished = FALSE;
 		ensure_search_engine (search);
-		nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (search->details->engine), search->details->query);
+		nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (search->details->engine),
+						    search->details->query);
+
+		model_provider = nemo_search_engine_get_model_provider (search->details->engine);
+		nemo_search_engine_model_set_model (model_provider, search->details->base_model);
 
 		reset_file_list (search);
 
@@ -666,13 +685,67 @@ search_is_editable (NemoDirectory *directory)
 }
 
 static void
+search_set_property (GObject *object,
+		     guint property_id,
+		     const GValue *value,
+		     GParamSpec *pspec)
+{
+	NemoSearchDirectory *search = NEMO_SEARCH_DIRECTORY (object);
+
+	switch (property_id) {
+	case PROP_BASE_MODEL:
+		nemo_search_directory_set_base_model (search, g_value_get_object (value));
+		break;
+	case PROP_QUERY:
+		nemo_search_directory_set_query (search, g_value_get_object (value));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+		break;
+	}
+}
+
+static void
+search_get_property (GObject *object,
+		     guint property_id,
+		     GValue *value,
+		     GParamSpec *pspec)
+{
+	NemoSearchDirectory *search = NEMO_SEARCH_DIRECTORY (object);
+
+	switch (property_id) {
+	case PROP_BASE_MODEL:
+		g_value_set_object (value, nemo_search_directory_get_base_model (search));
+		break;
+	case PROP_QUERY:
+		g_value_take_object (value, nemo_search_directory_get_query (search));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+		break;
+	}
+}
+
+static void
+clear_base_model (NemoSearchDirectory *search)
+{
+	if (search->details->base_model != NULL) {
+		nemo_directory_file_monitor_remove (search->details->base_model,
+							&search->details->base_model);
+		g_clear_object (&search->details->base_model);
+	}
+}
+
+static void
 search_dispose (GObject *object)
 {
 	NemoSearchDirectory *search;
 	GList *list;
 
 	search = NEMO_SEARCH_DIRECTORY (object);
-	
+
+	clear_base_model (search);
+
 	/* Remove search monitors */
 	if (search->details->monitor_list) {
 		for (list = search->details->monitor_list; list != NULL; list = list->next) {
@@ -723,10 +796,7 @@ search_finalize (GObject *object)
 	NemoSearchDirectory *search;
 
 	search = NEMO_SEARCH_DIRECTORY (object);
-
 	g_free (search->details->saved_search_uri);
-	
-	g_free (search->details);
 
 	G_OBJECT_CLASS (nemo_search_directory_parent_class)->finalize (object);
 }
@@ -734,18 +804,20 @@ search_finalize (GObject *object)
 static void
 nemo_search_directory_init (NemoSearchDirectory *search)
 {
-	search->details = g_new0 (NemoSearchDirectoryDetails, 1);
+	search->details = G_TYPE_INSTANCE_GET_PRIVATE (search, NEMO_TYPE_SEARCH_DIRECTORY,
+						       NemoSearchDirectoryDetails);
 }
 
 static void
 nemo_search_directory_class_init (NemoSearchDirectoryClass *class)
 {
-	NemoDirectoryClass *directory_class;
+	NemoDirectoryClass *directory_class = NEMO_DIRECTORY_CLASS (class);
+	GObjectClass *oclass = G_OBJECT_CLASS (class);
 
-	G_OBJECT_CLASS (class)->dispose = search_dispose;
-	G_OBJECT_CLASS (class)->finalize = search_finalize;
-
-	directory_class = NEMO_DIRECTORY_CLASS (class);
+	oclass->dispose = search_dispose;
+	oclass->finalize = search_finalize;
+	oclass->get_property = search_get_property;
+	oclass->set_property = search_set_property;
 
  	directory_class->are_all_files_seen = search_are_all_files_seen;
 	directory_class->is_not_empty = search_is_not_empty;
@@ -759,6 +831,48 @@ nemo_search_directory_class_init (NemoSearchDirectoryClass *class)
 	
 	directory_class->get_file_list = search_get_file_list;
 	directory_class->is_editable = search_is_editable;
+
+	properties[PROP_BASE_MODEL] =
+		g_param_spec_object ("base-model",
+				     "The base model",
+				     "The base directory model for this directory",
+				     NEMO_TYPE_DIRECTORY,
+				     G_PARAM_READWRITE);
+	properties[PROP_QUERY] =
+		g_param_spec_object ("query",
+				     "The query",
+				     "The query for this search directory",
+				     NEMO_TYPE_QUERY,
+				     G_PARAM_READWRITE);
+
+	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
+	g_type_class_add_private (class, sizeof (NemoSearchDirectoryDetails));
+}
+
+void
+nemo_search_directory_set_base_model (NemoSearchDirectory *search,
+					  NemoDirectory *base_model)
+{
+	if (search->details->base_model == base_model) {
+		return;
+	}
+
+	clear_base_model (search);
+	search->details->base_model = nemo_directory_ref (base_model);
+
+	if (search->details->base_model != NULL) {
+		nemo_directory_file_monitor_add (base_model, &search->details->base_model,
+						     TRUE, NEMO_FILE_ATTRIBUTE_INFO,
+						     NULL, NULL);
+	}
+
+	g_object_notify_by_pspec (G_OBJECT (search), properties[PROP_BASE_MODEL]);
+}
+
+NemoDirectory *
+nemo_search_directory_get_base_model (NemoSearchDirectory *search)
+{
+	return search->details->base_model;
 }
 
 char *
@@ -772,32 +886,29 @@ nemo_search_directory_generate_new_uri (void)
 	return uri;
 }
 
-
 void
 nemo_search_directory_set_query (NemoSearchDirectory *search,
 				     NemoQuery *query)
 {
-	NemoDirectory *dir;
-	NemoFile *as_file;
+	NemoFile *file;
 
 	if (search->details->query != query) {
 		search->details->modified = TRUE;
+
+		if (query) {
+			g_object_ref (query);
+		}
+
+		g_clear_object (&search->details->query);
+		search->details->query = query;
+
+		g_object_notify_by_pspec (G_OBJECT (search), properties[PROP_QUERY]);
 	}
 
-	if (query) {
-		g_object_ref (query);
-	}
-
-	if (search->details->query) {
-		g_object_unref (search->details->query);
-	}
-
-	search->details->query = query;
-
-	dir = NEMO_DIRECTORY (search);
-	as_file = dir->details->as_file;
-	if (as_file != NULL) {
-		nemo_search_directory_file_update_display_name (NEMO_SEARCH_DIRECTORY_FILE (as_file));
+	file = nemo_directory_get_existing_corresponding_file (NEMO_DIRECTORY (search));
+	if (file != NULL) {
+		nemo_search_directory_file_update_display_name (NEMO_SEARCH_DIRECTORY_FILE (file));
+		g_object_unref (file);
 	}
 }
 

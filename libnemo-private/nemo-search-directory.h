@@ -67,4 +67,9 @@ NemoQuery *nemo_search_directory_get_query       (NemoSearchDirectory *search);
 void           nemo_search_directory_set_query       (NemoSearchDirectory *search,
 							  NemoQuery           *query);
 
+NemoDirectory *
+               nemo_search_directory_get_base_model (NemoSearchDirectory  *search);
+void           nemo_search_directory_set_base_model (NemoSearchDirectory  *search,
+							 NemoDirectory        *base_model);
+
 #endif /* NEMO_SEARCH_DIRECTORY_H */

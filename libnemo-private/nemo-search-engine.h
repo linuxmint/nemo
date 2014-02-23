@@ -26,6 +26,9 @@
 
 #include <glib-object.h>
 
+#include <libnemo-private/nemo-directory.h>
+#include <libnemo-private/nemo-search-engine-model.h>
+
 #define NEMO_TYPE_SEARCH_ENGINE		(nemo_search_engine_get_type ())
 #define NEMO_SEARCH_ENGINE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_SEARCH_ENGINE, NemoSearchEngine))
 #define NEMO_SEARCH_ENGINE_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_SEARCH_ENGINE, NemoSearchEngineClass))
@@ -44,8 +47,10 @@ typedef struct {
 	GObjectClass parent_class;
 } NemoSearchEngineClass;
 
-GType          nemo_search_engine_get_type  (void);
+GType                 nemo_search_engine_get_type           (void);
 
-NemoSearchEngine* nemo_search_engine_new       (void);
+NemoSearchEngine *nemo_search_engine_new                (void);
+NemoSearchEngineModel *
+                      nemo_search_engine_get_model_provider (NemoSearchEngine *engine);
 
-#endif /* NAUTILUS_SEARCH_ENGINE_H */
+#endif /* NEMO_SEARCH_ENGINE_H */
