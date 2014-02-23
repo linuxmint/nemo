@@ -188,6 +188,7 @@ NemoFile *          nemo_file_get_parent                        (NemoFile       
 GFile *                 nemo_file_get_parent_location               (NemoFile                   *file);
 char *                  nemo_file_get_parent_uri                    (NemoFile                   *file);
 char *                  nemo_file_get_parent_uri_for_display        (NemoFile                   *file);
+char *                  nemo_file_get_thumbnail_path                (NemoFile                   *file);
 gboolean                nemo_file_can_get_size                      (NemoFile                   *file);
 goffset                 nemo_file_get_size                          (NemoFile                   *file);
 time_t                  nemo_file_get_mtime                         (NemoFile                   *file);

@@ -4381,6 +4381,12 @@ get_throttle_count (NemoFile *file)
     return details->thumbnail_throttle_count;
 }
 
+char *
+nemo_file_get_thumbnail_path (NemoFile *file)
+{
+	return g_strdup (file->details->thumbnail_path);
+}
+
 NemoIconInfo *
 nemo_file_get_icon (NemoFile *file,
 			int size,

@@ -85,7 +85,7 @@ check_pending_hits (NemoSearchEngineTracker *tracker,
 		hits = g_list_prepend (hits, hit);
 	}
 
-	nemo_search_provider_hits_added (NAUTILUS_SEARCH_PROVIDER (tracker), hits);
+	nemo_search_provider_hits_added (NEMO_SEARCH_PROVIDER (tracker), hits);
 	g_list_free_full (hits, g_object_unref);
 }
 
@@ -348,7 +348,7 @@ static void
 nemo_search_engine_tracker_init (NemoSearchEngineTracker *engine)
 {
 	engine->details = G_TYPE_INSTANCE_GET_PRIVATE (engine, NEMO_TYPE_SEARCH_ENGINE_TRACKER,
-						       NmoSearchEngineTrackerDetails);
+						       NemoSearchEngineTrackerDetails);
 	engine->details->hits_pending = g_queue_new ();
 }
 

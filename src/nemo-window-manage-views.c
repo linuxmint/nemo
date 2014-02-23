@@ -342,11 +342,11 @@ viewed_file_changed_callback (NemoFile *file,
 				/* the path bar URI will be set to go_to_uri immediately
 				 * in begin_location_change, but we don't want the
 				 * inexistant children to show up anymore */
-				if (slot == slot->pane->active_slot) {
+				//if (slot == slot->pane->active_slot) {
 					/* multiview-TODO also update NemoWindowSlot
 					 * [which as of writing doesn't save/store any path bar state]
 					 */
-				}
+				//}
 				
 				nemo_window_slot_open_location (slot, go_to_file, 0);
 				g_object_unref (go_to_file);

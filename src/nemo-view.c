@@ -9916,10 +9916,10 @@ update_complex_popup_items (NemoView *view)
     gboolean complex_mode = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS);
 
     for (i = 0; i < G_N_ELEMENTS (complex_item_paths); i++) {
-        item = gtk_ui_manager_get_widget (nemo_window_get_ui_manager (view->details->window),
+        item = gtk_ui_manager_get_widget (nemo_view_get_ui_manager (view),
                                           complex_item_paths[i]);
 
-        action = gtk_ui_manager_get_action (nemo_window_get_ui_manager (view->details->window),
+        action = gtk_ui_manager_get_action (nemo_view_get_ui_manager (view),
                                           complex_item_paths[i]);
 
         if (item != NULL)
