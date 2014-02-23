@@ -1903,7 +1903,7 @@ nemo_window_back_or_forward (NemoWindow *window,
 
 /* reload the contents of the window */
 void
-nemo_window_slot_reload (NemoWindowSlot *slot)
+nemo_window_slot_force_reload (NemoWindowSlot *slot)
 {
 	GFile *location;
         char *current_pos;
@@ -1912,13 +1912,6 @@ nemo_window_slot_reload (NemoWindowSlot *slot)
 	g_assert (NEMO_IS_WINDOW_SLOT (slot));
 
 	if (slot->location == NULL) {
-		return;
-	}
-
-	if (slot->pending_location != NULL
-	    || slot->content_view == NULL
-	    || nemo_view_get_loading (slot->content_view)) {
-		/* there is a reload in flight */
 		return;
 	}
 
@@ -1939,4 +1932,24 @@ nemo_window_slot_reload (NemoWindowSlot *slot)
         g_free (current_pos);
 	g_object_unref (location);
 	g_list_free_full (selection, g_object_unref);
+}
+
+void
+nemo_window_slot_queue_reload (NemoWindowSlot *slot)
+{
+	g_assert (NEMO_IS_WINDOW_SLOT (slot));
+
+	if (slot->location == NULL) {
+		return;
+	}
+
+	if (slot->pending_location != NULL
+	    || slot->content_view == NULL
+	    || nemo_view_get_loading (slot->content_view)) {
+		/* there is a reload in flight */
+		slot->needs_reload = TRUE;
+		return;
+	}
+
+	nemo_window_slot_force_reload (slot);
 }
