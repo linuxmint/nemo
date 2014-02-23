@@ -2,12 +2,12 @@
 /*
  * Copyright (C) 2005 Red Hat, Inc
  *
- * Nautilus is free software; you can redistribute it and/or
+ * Nemo is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
  *
- * Nautilus is distributed in the hope that it will be useful,
+ * Nemo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
@@ -22,38 +22,38 @@
  */
 
 #include <config.h>
-#include "nautilus-search-hit.h"
-#include "nautilus-search-provider.h"
-#include "nautilus-search-engine-model.h"
-#include "nautilus-directory.h"
-#include "nautilus-directory-private.h"
-#include "nautilus-file.h"
+#include "nemo-search-hit.h"
+#include "nemo-search-provider.h"
+#include "nemo-search-engine-model.h"
+#include "nemo-directory.h"
+#include "nemo-directory-private.h"
+#include "nemo-file.h"
 
 #include <string.h>
 #include <glib.h>
 #include <gio/gio.h>
 
-struct NautilusSearchEngineModelDetails {
-	NautilusQuery *query;
+struct NemoSearchEngineModelDetails {
+	NemoQuery *query;
 
 	GList *hits;
-	NautilusDirectory *directory;
+	NemoDirectory *directory;
 };
 
-static void nautilus_search_provider_init (NautilusSearchProviderIface  *iface);
+static void nemo_search_provider_init (NemoSearchProviderIface  *iface);
 
-G_DEFINE_TYPE_WITH_CODE (NautilusSearchEngineModel,
-			 nautilus_search_engine_model,
+G_DEFINE_TYPE_WITH_CODE (NemoSearchEngineModel,
+			 nemo_search_engine_model,
 			 G_TYPE_OBJECT,
-			 G_IMPLEMENT_INTERFACE (NAUTILUS_TYPE_SEARCH_PROVIDER,
-						nautilus_search_provider_init))
+			 G_IMPLEMENT_INTERFACE (NEMO_TYPE_SEARCH_PROVIDER,
+						nemo_search_provider_init))
 
 static void
 finalize (GObject *object)
 {
-	NautilusSearchEngineModel *model;
+	NemoSearchEngineModel *model;
 
-	model = NAUTILUS_SEARCH_ENGINE_MODEL (object);
+	model = NEMO_SEARCH_ENGINE_MODEL (object);
 
 	if (model->details->hits != NULL) {
 		g_list_free_full (model->details->hits, g_object_unref);
@@ -63,22 +63,22 @@ finalize (GObject *object)
 	g_clear_object (&model->details->directory);
 	g_clear_object (&model->details->query);
 
-	G_OBJECT_CLASS (nautilus_search_engine_model_parent_class)->finalize (object);
+	G_OBJECT_CLASS (nemo_search_engine_model_parent_class)->finalize (object);
 }
 
 static gboolean
 emit_finished_idle_cb (gpointer user_data)
 {
-	NautilusSearchEngineModel *model = user_data;
+	NemoSearchEngineModel *model = user_data;
 
 	if (model->details->hits != NULL) {
-		nautilus_search_provider_hits_added (NAUTILUS_SEARCH_PROVIDER (model),
+		nemo_search_provider_hits_added (NEMO_SEARCH_PROVIDER (model),
 						     model->details->hits);
 		g_list_free_full (model->details->hits, g_object_unref);
 		model->details->hits = NULL;
 	}
 
-	nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (model));
+	nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (model));
 
 	g_clear_object (&model->details->directory);
 	g_object_unref (model);
@@ -87,11 +87,11 @@ emit_finished_idle_cb (gpointer user_data)
 }
 
 static gchar *
-prepare_query_pattern (NautilusSearchEngineModel *model)
+prepare_query_pattern (NemoSearchEngineModel *model)
 {
 	gchar *text, *pattern, *normalized, *lower;
 
-	text = nautilus_query_get_text (model->details->query);
+	text = nemo_query_get_text (model->details->query);
 	normalized = g_utf8_normalize (text, -1, G_NORMALIZE_NFD);
 	lower = g_utf8_strdown (normalized, -1);
 	pattern = g_strdup_printf ("*%s*", lower);
@@ -104,28 +104,28 @@ prepare_query_pattern (NautilusSearchEngineModel *model)
 }
 
 static void
-model_directory_ready_cb (NautilusDirectory	*directory,
+model_directory_ready_cb (NemoDirectory	*directory,
 			  GList			*list,
 			  gpointer		 user_data)
 {
-	NautilusSearchEngineModel *model = user_data;
+	NemoSearchEngineModel *model = user_data;
 	gchar *uri, *pattern;
 	gchar *display_name, *lower;
 	GList *files, *l, *hits;
-	NautilusFile *file;
+	NemoFile *file;
 
 	pattern = prepare_query_pattern (model);
-	files = nautilus_directory_get_file_list (directory);
+	files = nemo_directory_get_file_list (directory);
 	hits = NULL;
 
 	for (l = files; l != NULL; l = l->next) {
 		file = l->data;
-		display_name = nautilus_file_get_display_name (file);
+		display_name = nemo_file_get_display_name (file);
 		lower = g_utf8_strdown (display_name, -1);
 
 		if (g_pattern_match_simple (pattern, lower)) {
-			uri = nautilus_file_get_uri (file);
-			hits = g_list_prepend (hits, nautilus_search_hit_new (uri));
+			uri = nemo_file_get_uri (file);
+			hits = g_list_prepend (hits, nemo_search_hit_new (uri));
 			g_free (uri);
 		}
 
@@ -133,21 +133,21 @@ model_directory_ready_cb (NautilusDirectory	*directory,
 		g_free (display_name);
 	}
 
-	nautilus_file_list_free (files);
+	nemo_file_list_free (files);
 	model->details->hits = hits;
 
 	emit_finished_idle_cb (model);
 }
 
 static void
-nautilus_search_engine_model_start (NautilusSearchProvider *provider)
+nemo_search_engine_model_start (NemoSearchProvider *provider)
 {
-	NautilusSearchEngineModel *model;
+	NemoSearchEngineModel *model;
 	GFile *location;
-	NautilusDirectory *directory;
+	NemoDirectory *directory;
 	gchar *uri;
 
-	model = NAUTILUS_SEARCH_ENGINE_MODEL (provider);
+	model = NEMO_SEARCH_ENGINE_MODEL (provider);
 
 	if (model->details->query == NULL) {
 		return;
@@ -155,14 +155,14 @@ nautilus_search_engine_model_start (NautilusSearchProvider *provider)
 
 	g_object_ref (model);
 
-	uri = nautilus_query_get_location (model->details->query);
+	uri = nemo_query_get_location (model->details->query);
 	if (uri == NULL) {
 		g_idle_add (emit_finished_idle_cb, model);
 		return;
 	}
 
 	location = g_file_new_for_uri (uri);
-	directory = nautilus_directory_get_existing (location);
+	directory = nemo_directory_get_existing (location);
 	g_object_unref (location);
 	g_free (uri);
 
@@ -172,24 +172,24 @@ nautilus_search_engine_model_start (NautilusSearchProvider *provider)
 	}
 
 	model->details->directory = directory;
-	nautilus_directory_call_when_ready (model->details->directory,
-					    NAUTILUS_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT,
+	nemo_directory_call_when_ready (model->details->directory,
+					    NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT,
 					    TRUE, model_directory_ready_cb, model);
 }
 
 static void
-nautilus_search_engine_model_stop (NautilusSearchProvider *provider)
+nemo_search_engine_model_stop (NemoSearchProvider *provider)
 {
 	/* do nothing */
 }
 
 static void
-nautilus_search_engine_model_set_query (NautilusSearchProvider *provider,
-					 NautilusQuery          *query)
+nemo_search_engine_model_set_query (NemoSearchProvider *provider,
+					 NemoQuery          *query)
 {
-	NautilusSearchEngineModel *model;
+	NemoSearchEngineModel *model;
 
-	model = NAUTILUS_SEARCH_ENGINE_MODEL (provider);
+	model = NEMO_SEARCH_ENGINE_MODEL (provider);
 
 	if (query) {
 		g_object_ref (query);
@@ -203,37 +203,37 @@ nautilus_search_engine_model_set_query (NautilusSearchProvider *provider,
 }
 
 static void
-nautilus_search_provider_init (NautilusSearchProviderIface *iface)
+nemo_search_provider_init (NemoSearchProviderIface *iface)
 {
-	iface->set_query = nautilus_search_engine_model_set_query;
-	iface->start = nautilus_search_engine_model_start;
-	iface->stop = nautilus_search_engine_model_stop;
+	iface->set_query = nemo_search_engine_model_set_query;
+	iface->start = nemo_search_engine_model_start;
+	iface->stop = nemo_search_engine_model_stop;
 }
 
 static void
-nautilus_search_engine_model_class_init (NautilusSearchEngineModelClass *class)
+nemo_search_engine_model_class_init (NemoSearchEngineModelClass *class)
 {
 	GObjectClass *gobject_class;
 
 	gobject_class = G_OBJECT_CLASS (class);
 	gobject_class->finalize = finalize;
 
-	g_type_class_add_private (class, sizeof (NautilusSearchEngineModelDetails));
+	g_type_class_add_private (class, sizeof (NemoSearchEngineModelDetails));
 }
 
 static void
-nautilus_search_engine_model_init (NautilusSearchEngineModel *engine)
+nemo_search_engine_model_init (NemoSearchEngineModel *engine)
 {
-	engine->details = G_TYPE_INSTANCE_GET_PRIVATE (engine, NAUTILUS_TYPE_SEARCH_ENGINE_MODEL,
-						       NautilusSearchEngineModelDetails);
+	engine->details = G_TYPE_INSTANCE_GET_PRIVATE (engine, NEMO_TYPE_SEARCH_ENGINE_MODEL,
+						       NemoSearchEngineModelDetails);
 }
 
-NautilusSearchEngineModel *
-nautilus_search_engine_model_new (void)
+NemoSearchEngineModel *
+nemo_search_engine_model_new (void)
 {
-	NautilusSearchEngineModel *engine;
+	NemoSearchEngineModel *engine;
 
-	engine = g_object_new (NAUTILUS_TYPE_SEARCH_ENGINE_MODEL, NULL);
+	engine = g_object_new (NEMO_TYPE_SEARCH_ENGINE_MODEL, NULL);
 
 	return engine;
 }
