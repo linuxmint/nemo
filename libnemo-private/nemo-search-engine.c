@@ -37,16 +37,14 @@
 
 struct NemoSearchEngineDetails
 {
-#if USE_MODEL
-	NemoSearchEngineModel *model;
-#else
-	NemoSearchEngineSimple *simple;
-#endif
 #ifdef ENABLE_TRACKER
 	NemoSearchEngineTracker *tracker;
 #endif
+	NemoSearchEngineSimple *simple;
+	NemoSearchEngineModel *model;
+
 	GHashTable *uris;
-	guint num_providers;
+	guint providers_running;
 	guint providers_finished;
 	guint providers_error;
 };
@@ -67,27 +65,30 @@ nemo_search_engine_set_query (NemoSearchProvider *provider,
 #ifdef ENABLE_TRACKER
 	nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (engine->details->tracker), query);
 #endif
-#if USE_MODEL
 	nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (engine->details->model), query);
-#else
 	nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (engine->details->simple), query);
-#endif
 }
 
 static void
 nemo_search_engine_start (NemoSearchProvider *provider)
 {
 	NemoSearchEngine *engine = NEMO_SEARCH_ENGINE (provider);
+
+	engine->details->providers_running = 0;
 	engine->details->providers_finished = 0;
 	engine->details->providers_error = 0;
+
 #ifdef ENABLE_TRACKER
-	nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->tracker));
+	nautilus_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->tracker));
+	engine->details->providers_running++;
 #endif
-#if USE_MODEL
-	nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->model));
-#else
-	nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->simple));
-#endif
+	if (nemo_search_engine_model_get_model (engine->details->model)) {
+		nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->model));
+		engine->details->providers_running++;
+	} else {
+		nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->simple));
+		engine->details->providers_running++;
+	}
 }
 
 static void
@@ -97,11 +98,8 @@ nemo_search_engine_stop (NemoSearchProvider *provider)
 #ifdef ENABLE_TRACKER
 	nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (engine->details->tracker));
 #endif
-#if USE_MODEL
 	nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (engine->details->model));
-#else
 	nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (engine->details->simple));
-#endif
 }
 
 static void
@@ -167,7 +165,7 @@ search_provider_error (NemoSearchProvider *provider,
 {
 	DEBUG ("Search provider error: %s", error_message);
 	engine->details->providers_error++;
-	if (engine->details->providers_error == engine->details->num_providers) {
+	if (engine->details->providers_error == engine->details->providers_running) {
 		g_object_ref (engine);
 		nemo_search_provider_error (NEMO_SEARCH_PROVIDER (engine),
 						_("Unable to complete the requested search"));
@@ -182,7 +180,7 @@ search_provider_finished (NemoSearchProvider *provider,
 
 {
 	engine->details->providers_finished++;
-	if (engine->details->providers_finished == engine->details->num_providers) {
+	if (engine->details->providers_finished == engine->details->providers_running) {
 		g_object_ref (engine);
 		nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (engine));
 		g_hash_table_remove_all (engine->details->uris);
@@ -226,11 +224,8 @@ nemo_search_engine_finalize (GObject *object)
 #ifdef ENABLE_TRACKER
 	g_clear_object (&engine->details->tracker);
 #endif
-#if USE_MODEL
 	g_clear_object (&engine->details->model);
-#else
 	g_clear_object (&engine->details->simple);
-#endif
 
 	G_OBJECT_CLASS (nemo_search_engine_parent_class)->finalize (object);
 }
@@ -259,17 +254,12 @@ nemo_search_engine_init (NemoSearchEngine *engine)
 #ifdef ENABLE_TRACKER
 	engine->details->tracker = nemo_search_engine_tracker_new ();
 	connect_provider_signals (engine, NEMO_SEARCH_PROVIDER (engine->details->tracker));
-	engine->details->num_providers++;
 #endif
-#if USE_MODEL
 	engine->details->model = nemo_search_engine_model_new ();
 	connect_provider_signals (engine, NEMO_SEARCH_PROVIDER (engine->details->model));
-	engine->details->num_providers++;
-#else
+
 	engine->details->simple = nemo_search_engine_simple_new ();
 	connect_provider_signals (engine, NEMO_SEARCH_PROVIDER (engine->details->simple));
-	engine->details->num_providers++;
-#endif
 }
 
 NemoSearchEngine *
@@ -280,4 +270,10 @@ nemo_search_engine_new (void)
 	engine = g_object_new (NEMO_TYPE_SEARCH_ENGINE, NULL);
 
 	return engine;
+}
+
+NemoSearchEngineModel *
+nemo_search_engine_get_model_provider (NemoSearchEngine *engine)
+{
+	return engine->details->model;
 }

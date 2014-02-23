@@ -10411,9 +10411,15 @@ load_directory (NemoView *view,
 						   view->details->subdirectory_list->data);
 	}
 
+	old_directory = view->details->model;
+
+	if (NEMO_IS_SEARCH_DIRECTORY (directory) &&
+	    !NEMO_IS_SEARCH_DIRECTORY (old_directory)) {
+		nemo_search_directory_set_base_model (NEMO_SEARCH_DIRECTORY (directory), old_directory);
+	}
+
 	disconnect_model_handlers (view);
 
-	old_directory = view->details->model;
 	nemo_directory_ref (directory);
 	view->details->model = directory;
 	nemo_directory_unref (old_directory);

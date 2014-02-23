@@ -24,7 +24,7 @@
 #ifndef NEMO_SEARCH_ENGINE_MODEL_H
 #define NEMO_SEARCH_ENGINE_MODEL_H
 
-#include <libnemo-private/nemo-search-engine.h>
+#include <libnemo-private/nemo-directory.h>
 
 #define NEMO_TYPE_SEARCH_ENGINE_MODEL		(nemo_search_engine_model_get_type ())
 #define NEMO_SEARCH_ENGINE_MODEL(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_SEARCH_ENGINE_MODEL, NemoSearchEngineModel))
@@ -47,5 +47,8 @@ typedef struct {
 GType          nemo_search_engine_model_get_type  (void);
 
 NemoSearchEngineModel* nemo_search_engine_model_new       (void);
+void                       nemo_search_engine_model_set_model (NemoSearchEngineModel *model,
+								   NemoDirectory         *directory);
+NemoDirectory *        nemo_search_engine_model_get_model (NemoSearchEngineModel *model);
 
 #endif /* NEMO_SEARCH_ENGINE_MODEL_H */

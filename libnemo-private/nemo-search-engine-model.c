@@ -38,6 +38,8 @@ struct NemoSearchEngineModelDetails {
 
 	GList *hits;
 	NemoDirectory *directory;
+
+	gboolean query_pending;
 };
 
 static void nemo_search_provider_init (NemoSearchProviderIface  *iface);
@@ -79,8 +81,7 @@ emit_finished_idle_cb (gpointer user_data)
 	}
 
 	nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (model));
-
-	g_clear_object (&model->details->directory);
+	model->details->query_pending = FALSE;
 	g_object_unref (model);
 
 	return FALSE;
@@ -143,44 +144,40 @@ static void
 nemo_search_engine_model_start (NemoSearchProvider *provider)
 {
 	NemoSearchEngineModel *model;
-	GFile *location;
-	NemoDirectory *directory;
-	gchar *uri;
 
 	model = NEMO_SEARCH_ENGINE_MODEL (provider);
-
-	if (model->details->query == NULL) {
-		return;
-	}
-
 	g_object_ref (model);
 
-	uri = nemo_query_get_location (model->details->query);
-	if (uri == NULL) {
+	if (model->details->query_pending) {
+		return;
+	}
+
+	if (model->details->query == NULL ||
+	    model->details->directory == NULL) {
 		g_idle_add (emit_finished_idle_cb, model);
 		return;
 	}
 
-	location = g_file_new_for_uri (uri);
-	directory = nemo_directory_get_existing (location);
-	g_object_unref (location);
-	g_free (uri);
-
-	if (directory == NULL) {
-		g_idle_add (emit_finished_idle_cb, model);
-		return;
-	}
-
-	model->details->directory = directory;
+	model->details->query_pending = TRUE;
 	nemo_directory_call_when_ready (model->details->directory,
-					    NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT,
+					    NEMO_FILE_ATTRIBUTE_INFO,
 					    TRUE, model_directory_ready_cb, model);
 }
 
 static void
 nemo_search_engine_model_stop (NemoSearchProvider *provider)
 {
-	/* do nothing */
+	NemoSearchEngineModel *model;
+
+	model = NEMO_SEARCH_ENGINE_MODEL (provider);
+
+	if (model->details->query_pending) {
+		nemo_directory_cancel_callback (model->details->directory,
+						    model_directory_ready_cb, model);
+		model->details->query_pending = FALSE;
+	}
+
+	g_clear_object (&model->details->directory);
 }
 
 static void
@@ -236,4 +233,18 @@ nemo_search_engine_model_new (void)
 	engine = g_object_new (NEMO_TYPE_SEARCH_ENGINE_MODEL, NULL);
 
 	return engine;
+}
+
+void
+nemo_search_engine_model_set_model (NemoSearchEngineModel *model,
+					NemoDirectory         *directory)
+{
+	g_clear_object (&model->details->directory);
+	model->details->directory = nemo_directory_ref (directory);
+}
+
+NemoDirectory *
+nemo_search_engine_model_get_model (NemoSearchEngineModel *model)
+{
+	return model->details->directory;
 }
