@@ -1,15 +1,15 @@
 /*
- * nautilus-shell-search-provider.c - Implementation of a GNOME Shell
+ * nemo-shell-search-provider.c - Implementation of a GNOME Shell
  *   search provider
  *
  * Copyright (C) 2012 Red Hat, Inc.
  *
- * Nautilus is free software; you can redistribute it and/or
+ * Nemo is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
  *
- * Nautilus is distributed in the hope that it will be useful,
+ * Nemo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
@@ -26,7 +26,7 @@
 
 #include <gio/gio.h>
 
-#include "nautilus-shell-search-provider-generated.h"
+#include "nemo-shell-search-provider-generated.h"
 
 #define SEARCH_PROVIDER_INACTIVITY_TIMEOUT 12000 /* milliseconds */
 
@@ -36,18 +36,18 @@ typedef struct {
   guint name_owner_id;
 
   GDBusObjectManagerServer *object_manager;
-  NautilusShellSearchProvider *skeleton;
-} NautilusShellSearchProviderApp;
+  NemoShellSearchProvider *skeleton;
+} NemoShellSearchProviderApp;
 
-typedef GApplicationClass NautilusShellSearchProviderAppClass;
+typedef GApplicationClass NemoShellSearchProviderAppClass;
 
-GType nautilus_shell_search_provider_app_get_type (void);
+GType nemo_shell_search_provider_app_get_type (void);
 
-#define NAUTILUS_TYPE_SHELL_SEARCH_PROVIDER_APP nautilus_shell_search_provider_app_get_type()
-#define NAUTILUS_SHELL_SEARCH_PROVIDER_APP(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_SHELL_SEARCH_PROVIDER_APP, NautilusShellSearchProviderApp))
+#define NEMO_TYPE_SHELL_SEARCH_PROVIDER_APP nemo_shell_search_provider_app_get_type()
+#define NEMO_SHELL_SEARCH_PROVIDER_APP(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_SHELL_SEARCH_PROVIDER_APP, NemoShellSearchProviderApp))
 
-G_DEFINE_TYPE (NautilusShellSearchProviderApp, nautilus_shell_search_provider_app, G_TYPE_APPLICATION)
+G_DEFINE_TYPE (NemoShellSearchProviderApp, nemo_shell_search_provider_app, G_TYPE_APPLICATION)
 
 static void
 handle_get_initial_result_set (GDBusMethodInvocation *invocation,
@@ -99,10 +99,10 @@ search_provider_bus_acquired_cb (GDBusConnection *connection,
                                  const gchar *name,
                                  gpointer user_data)
 {
-  NautilusShellSearchProviderApp *self = user_data;
+  NemoShellSearchProviderApp *self = user_data;
 
-  self->object_manager = g_dbus_object_manager_server_new ("/org/gnome/Nautilus/SearchProvider");
-  self->skeleton = nautilus_shell_search_provider_skeleton_new ();
+  self->object_manager = g_dbus_object_manager_server_new ("/org/Nemo/SearchProvider");
+  self->skeleton = nemo_shell_search_provider_skeleton_new ();
 
   g_signal_connect (self->skeleton, "handle-get-initial-result-set",
                     G_CALLBACK (handle_get_initial_result_set), self);
@@ -115,14 +115,14 @@ search_provider_bus_acquired_cb (GDBusConnection *connection,
 
   g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->skeleton),
                                     connection,
-                                    "/org/gnome/Nautilus/SearchProvider", NULL);
+                                    "/org/Nemo/SearchProvider", NULL);
   g_dbus_object_manager_server_set_connection (self->object_manager, connection);
 }
 
 static void
 search_provider_app_dispose (GObject *obj)
 {
-  NautilusShellSearchProviderApp *self = NAUTILUS_SHELL_SEARCH_PROVIDER_APP (obj);
+  NemoShellSearchProviderApp *self = NEMO_SHELL_SEARCH_PROVIDER_APP (obj);
 
   if (self->name_owner_id != 0) {
     g_bus_unown_name (self->name_owner_id);
@@ -136,22 +136,22 @@ search_provider_app_dispose (GObject *obj)
 
   g_clear_object (&self->object_manager);
 
-  G_OBJECT_CLASS (nautilus_shell_search_provider_app_parent_class)->dispose (obj);
+  G_OBJECT_CLASS (nemo_shell_search_provider_app_parent_class)->dispose (obj);
 }
 
 static void
 search_provider_app_startup (GApplication *app)
 {
-  NautilusShellSearchProviderApp *self = NAUTILUS_SHELL_SEARCH_PROVIDER_APP (app);
+  NemoShellSearchProviderApp *self = NEMO_SHELL_SEARCH_PROVIDER_APP (app);
 
-  G_APPLICATION_CLASS (nautilus_shell_search_provider_app_parent_class)->startup (app);
+  G_APPLICATION_CLASS (nemo_shell_search_provider_app_parent_class)->startup (app);
 
   /* hold indefinitely if we're asked to persist */
-  if (g_getenv ("NAUTILUS_SEARCH_PROVIDER_PERSIST") != NULL)
+  if (g_getenv ("NEMO_SEARCH_PROVIDER_PERSIST") != NULL)
     g_application_hold (app);
 
   self->name_owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
-                                        "org.gnome.Nautilus.SearchProvider",
+                                        "org.Nemo.SearchProvider",
                                         G_BUS_NAME_OWNER_FLAGS_NONE,
                                         search_provider_bus_acquired_cb,
                                         search_provider_name_acquired_cb,
@@ -160,17 +160,17 @@ search_provider_app_startup (GApplication *app)
 }
 
 static void
-nautilus_shell_search_provider_app_init (NautilusShellSearchProviderApp *self)
+nemo_shell_search_provider_app_init (NemoShellSearchProviderApp *self)
 {
   GApplication *app = G_APPLICATION (self);
 
   g_application_set_inactivity_timeout (app, SEARCH_PROVIDER_INACTIVITY_TIMEOUT);
-  g_application_set_application_id (app, "org.gnome.Nautilus.SearchProvider");
+  g_application_set_application_id (app, "org.Nemo.SearchProvider");
   g_application_set_flags (app, G_APPLICATION_IS_SERVICE);
 }
 
 static void
-nautilus_shell_search_provider_app_class_init (NautilusShellSearchProviderAppClass *klass)
+nemo_shell_search_provider_app_class_init (NemoShellSearchProviderAppClass *klass)
 {
   GApplicationClass *aclass = G_APPLICATION_CLASS (klass);
   GObjectClass *oclass = G_OBJECT_CLASS (klass);
@@ -180,11 +180,11 @@ nautilus_shell_search_provider_app_class_init (NautilusShellSearchProviderAppCla
 }
 
 static GApplication *
-nautilus_shell_search_provider_app_new (void)
+nemo_shell_search_provider_app_new (void)
 {
   g_type_init ();
 
-  return g_object_new (nautilus_shell_search_provider_app_get_type (),
+  return g_object_new (nemo_shell_search_provider_app_get_type (),
                        NULL);
 }
 
@@ -195,7 +195,7 @@ main (int   argc,
   GApplication *app;
   gint res;
 
-  app = nautilus_shell_search_provider_app_new ();
+  app = nemo_shell_search_provider_app_new ();
   res = g_application_run (app, argc, argv);
   g_object_unref (app);
 
