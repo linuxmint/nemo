@@ -982,7 +982,7 @@ action_tabs_previous_callback (GtkAction *action,
 	NemoWindow *window = user_data;
 
 	pane = nemo_window_get_active_pane (window);
-	nemo_notebook_set_current_page_relative (NEMO_NOTEBOOK (pane->notebook), -1);
+	nemo_notebook_prev_page (NEMO_NOTEBOOK (pane->notebook));
 }
 
 static void
@@ -993,7 +993,7 @@ action_tabs_next_callback (GtkAction *action,
 	NemoWindow *window = user_data;
 
 	pane = nemo_window_get_active_pane (window);
-	nemo_notebook_set_current_page_relative (NEMO_NOTEBOOK (pane->notebook), 1);
+	nemo_notebook_next_page (NEMO_NOTEBOOK (pane->notebook));
 }
 
 static void
