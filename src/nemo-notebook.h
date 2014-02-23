@@ -83,6 +83,8 @@ gboolean        nemo_notebook_can_reorder_child_relative (NemoNotebook *notebook
 							  int 	    	offset);
 gboolean        nemo_notebook_can_set_current_page_relative (NemoNotebook *notebook,
 								 int offset);
+void            nemo_notebook_prev_page (NemoNotebook *notebook);
+void            nemo_notebook_next_page (NemoNotebook *notebook);
 
 G_END_DECLS
 
