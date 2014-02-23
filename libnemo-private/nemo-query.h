@@ -45,7 +45,6 @@ typedef struct {
 } NemoQueryClass;
 
 GType          nemo_query_get_type (void);
-gboolean       nemo_query_enabled  (void);
 
 NemoQuery* nemo_query_new      (void);
 

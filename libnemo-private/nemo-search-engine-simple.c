@@ -99,7 +99,7 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 	
 	data = g_new0 (SearchThreadData, 1);
 
-	data->engine = engine;
+	data->engine = g_object_ref (engine);
 	data->directories = g_queue_new ();
 	data->visited = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 	uri = nemo_query_get_location (query);
@@ -139,6 +139,8 @@ search_thread_data_free (SearchThreadData *data)
 	g_strfreev (data->words);	
 	g_list_free_full (data->mime_types, g_free);
 	g_list_free_full (data->hits, g_object_unref);
+	g_object_unref (data->engine);
+
 	g_free (data);
 }
 

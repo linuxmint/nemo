@@ -27,7 +27,9 @@
 #include "nemo-window-slot.h"
 
 #include "nemo-actions.h"
+#include "nemo-application.h"
 #include "nemo-floating-bar.h"
+#include "nemo-thumbnail-problem-bar.h"
 #include "nemo-window-private.h"
 #include "nemo-window-manage-views.h"
 #include "nemo-desktop-window.h"
@@ -57,6 +59,13 @@ enum {
 
 struct NemoWindowSlotDetails {
 	NemoWindowPane *pane;
+
+	/* floating bar */
+	guint set_status_timeout_id;
+	guint loading_timeout_id;
+	GtkWidget *floating_bar;
+	GtkWidget *view_overlay;
+    GtkWidget *cache_bar;
 };
 
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -98,7 +107,7 @@ sync_search_directory (NemoWindowSlot *slot)
 	} else {
 		nemo_search_directory_set_query (NEMO_SEARCH_DIRECTORY (directory),
 						     query);
-		nemo_window_slot_reload (slot);
+		nemo_window_slot_force_reload (slot);
 	}
 
 	g_free (text);
@@ -384,6 +393,17 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 }
 
 static void
+view_end_loading_cb (NemoView       *view,
+		     gboolean            all_files_seen,
+		     NemoWindowSlot *slot)
+{
+	if (slot->needs_reload) {
+		nemo_window_slot_queue_reload (slot);
+		slot->needs_reload = FALSE;
+	}
+}
+
+static void
 nemo_window_slot_dispose (GObject *object)
 {
 	NemoWindowSlot *slot;
@@ -622,6 +642,8 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 
 	if (slot->content_view != NULL) {
 		/* disconnect old view */
+		g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (view_end_loading_cb), slot);
+
 		nemo_window_disconnect_content_view (window, slot->content_view);
 
 		widget = GTK_WIDGET (slot->content_view);
@@ -637,6 +659,8 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 
 		slot->content_view = new_view;
 		g_object_ref (slot->content_view);
+
+		g_signal_connect (new_view, "end_loading", G_CALLBACK (view_end_loading_cb), slot);
 
 		/* connect new view */
 		nemo_window_connect_content_view (window, new_view);
@@ -901,4 +925,31 @@ nemo_window_slot_new (NemoWindowPane *pane)
 	return g_object_new (NEMO_TYPE_WINDOW_SLOT,
 			     "pane", pane,
 			     NULL);
+}
+
+void
+nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot)
+{
+    if (NEMO_IS_DESKTOP_WINDOW (nemo_window_slot_get_window (slot)))
+        return;
+
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+
+    if (nemo_application_get_cache_bad (app) &&
+        !nemo_application_get_cache_problem_ignored (app)) {
+        if (slot->details->cache_bar != NULL) {
+            gtk_widget_show (slot->details->cache_bar);
+        } else {
+            GtkWidget *bad_bar = nemo_thumbnail_problem_bar_new (nemo_window_slot_get_current_view (slot));
+            if (bad_bar) {
+                gtk_widget_show (bad_bar);
+                nemo_window_slot_add_extra_location_widget (slot, bad_bar);
+                slot->details->cache_bar = bad_bar;
+            }
+        }
+    } else {
+        if (slot->details->cache_bar != NULL) {
+            gtk_widget_hide (slot->details->cache_bar);
+        }
+    }
 }

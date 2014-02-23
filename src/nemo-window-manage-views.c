@@ -1930,7 +1930,7 @@ nemo_window_back_or_forward (NemoWindow *window,
 
 /* reload the contents of the window */
 void
-nemo_window_slot_reload (NemoWindowSlot *slot)
+nemo_window_slot_force_reload (NemoWindowSlot *slot)
 {
 	GFile *location;
         char *current_pos;
@@ -1939,13 +1939,6 @@ nemo_window_slot_reload (NemoWindowSlot *slot)
 	g_assert (NEMO_IS_WINDOW_SLOT (slot));
 
 	if (slot->location == NULL) {
-		return;
-	}
-
-	if (slot->pending_location != NULL
-	    || slot->content_view == NULL
-	    || nemo_view_get_loading (slot->content_view)) {
-		/* there is a reload in flight */
 		return;
 	}
 
@@ -1969,28 +1962,21 @@ nemo_window_slot_reload (NemoWindowSlot *slot)
 }
 
 void
-nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot)
+nemo_window_slot_queue_reload (NemoWindowSlot *slot)
 {
-    if (NEMO_IS_DESKTOP_WINDOW (nemo_window_slot_get_window (slot)))
-        return;
+	g_assert (NEMO_IS_WINDOW_SLOT (slot));
 
-	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+	if (slot->location == NULL) {
+		return;
+	}
 
-    if (nemo_application_get_cache_bad (app) &&
-        !nemo_application_get_cache_problem_ignored (app)) {
-        if (slot->cache_bar != NULL) {
-            gtk_widget_show (slot->cache_bar);
-        } else {
-            GtkWidget *bad_bar = nemo_thumbnail_problem_bar_new (nemo_window_slot_get_current_view (slot));
-            if (bad_bar) {
-                gtk_widget_show (bad_bar);
-                nemo_window_slot_add_extra_location_widget (slot, bad_bar);
-                slot->cache_bar = bad_bar;
-            }
-        }
-    } else {
-        if (slot->cache_bar != NULL) {
-            gtk_widget_hide (slot->cache_bar);
-        }
-    }
+	if (slot->pending_location != NULL
+	    || slot->content_view == NULL
+	    || nemo_view_get_loading (slot->content_view)) {
+		/* there is a reload in flight */
+		slot->needs_reload = TRUE;
+		return;
+	}
+
+	nemo_window_slot_force_reload (slot);
 }
