@@ -594,6 +594,13 @@ trash_link_is_selection (NemoView *view)
 }
 
 static void
+action_clean_up_callback (GtkAction *action,
+			  gpointer callback_data)
+{
+	nemo_canvas_view_clean_up_by_name (NEMO_CANVAS_VIEW (callback_data));
+}
+
+static void
 real_update_menus (NemoView *view)
 {
 	NemoDesktopCanvasView *desktop_view;
@@ -630,7 +637,14 @@ static const GtkActionEntry desktop_view_entries[] = {
 	  N_("Empty Trash"), NULL,
 	  /* tooltip */
 	  N_("Delete all items in the Trash"),
-	  G_CALLBACK (action_empty_trash_conditional_callback) }
+	  G_CALLBACK (action_empty_trash_conditional_callback) },
+	/* name, stock id */
+	{ NEMO_ACTION_CLEAN_UP, NULL,
+	  /* label, accelerator */
+	  N_("_Organize Desktop by Name"), NULL,
+	  /* tooltip */
+	  N_("Reposition icons to better fit in the window and avoid overlapping"),
+	  G_CALLBACK (action_clean_up_callback) },
 };
 
 static void
