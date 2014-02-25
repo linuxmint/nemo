@@ -79,7 +79,7 @@ nemo_search_engine_start (NemoSearchProvider *provider)
 	engine->details->providers_error = 0;
 
 #ifdef ENABLE_TRACKER
-	nautilus_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->tracker));
+	nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->tracker));
 	engine->details->providers_running++;
 #endif
 	if (nemo_search_engine_model_get_model (engine->details->model)) {

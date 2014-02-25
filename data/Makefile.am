@@ -37,7 +37,7 @@ org.Nemo.SearchProvider.service: org.Nemo.SearchProvider.service.in Makefile
 	$(AM_V_GEN) sed -e "s|\@libexecdir\@|$(libexecdir)|" $< > $@
 
 searchproviderdir = $(datadir)/gnome-shell/search-providers
-searchprovider_DATA = nautilus-search-provider.ini
+searchprovider_DATA = nemo-search-provider.ini
 
 nemodatadir = $(datadir)/nemo
 
