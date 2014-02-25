@@ -57,8 +57,6 @@
 #include "nemo-window.h"
 #include "nemo-window-slot.h"
 
-#include <libnotify/notify.h>
-
 #define DEBUG_FLAG NEMO_DEBUG_PLACES
 #include <libnemo-private/nemo-debug.h>
 
