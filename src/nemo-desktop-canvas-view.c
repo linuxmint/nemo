@@ -90,6 +90,8 @@ static time_t desktop_dir_modify_time;
 
 #define get_canvas_container(w) nemo_canvas_view_get_canvas_container(NEMO_CANVAS_VIEW (w))
 
+#define POPUP_PATH_CANVAS_APPEARANCE		"/selection/Canvas Appearance Items"
+
 static void
 canvas_container_set_workarea (NemoCanvasContainer *canvas_container,
 			     GdkScreen             *screen,
@@ -624,6 +626,28 @@ action_empty_trash_conditional_callback (GtkAction *action,
 	nemo_file_operations_empty_trash (GTK_WIDGET (data));
 }
 
+static void
+action_stretch_callback (GtkAction *action,
+			 gpointer callback_data)
+{
+	nemo_canvas_container_show_stretch_handles
+		(get_canvas_container (callback_data));
+}
+
+static void
+action_unstretch_callback (GtkAction *action,
+			   gpointer callback_data)
+{
+	nemo_canvas_container_unstretch (get_canvas_container (callback_data));
+}
+
+static void
+action_clean_up_callback (GtkAction *action,
+			  gpointer callback_data)
+{
+	nemo_canvas_view_clean_up_by_name (NEMO_CANVAS_VIEW (callback_data));
+}
+
 static gboolean
 trash_link_is_selection (NemoView *view)
 {
@@ -654,19 +678,14 @@ trash_link_is_selection (NemoView *view)
 }
 
 static void
-action_clean_up_callback (GtkAction *action,
-			  gpointer callback_data)
-{
-	nemo_canvas_view_clean_up_by_name (NEMO_CANVAS_VIEW (callback_data));
-}
-
-static void
 real_update_menus (NemoView *view)
 {
 	NemoDesktopCanvasView *desktop_view;
-	char *label;
+        NemoCanvasContainer *canvas_container;
 	gboolean include_empty_trash;
+	char *label;
 	GtkAction *action;
+        int selection_count;
 
 	g_assert (NEMO_IS_DESKTOP_CANVAS_VIEW (view));
 
@@ -687,6 +706,31 @@ real_update_menus (NemoView *view)
 					  !nemo_trash_monitor_is_empty ());
 		g_free (label);
 	}
+
+	/* Stretch */
+        selection_count = nemo_view_get_selection_count (view);
+        canvas_container = get_canvas_container (desktop_view);
+
+	action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+					      NEMO_ACTION_STRETCH);
+	gtk_action_set_sensitive (action,
+				  selection_count == 1
+				  && canvas_container != NULL
+				  && !nemo_canvas_container_has_stretch_handles (canvas_container));
+	gtk_action_set_visible (action, TRUE);
+
+	/* Unstretch */
+	action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+					      NEMO_ACTION_UNSTRETCH);
+	g_object_set (action, "label",
+		      (selection_count > 1)
+		      ? _("Restore Icons' Original Si_zes")
+		      : _("Restore Icon's Original Si_ze"),
+		      NULL);
+	gtk_action_set_sensitive (action,
+				  canvas_container != NULL
+				  && nemo_canvas_container_is_stretched (canvas_container));
+	gtk_action_set_visible (action, TRUE);
 }
 
 static const GtkActionEntry desktop_view_entries[] = {
@@ -705,6 +749,20 @@ static const GtkActionEntry desktop_view_entries[] = {
 	  /* tooltip */
 	  N_("Reposition icons to better fit in the window and avoid overlapping"),
 	  G_CALLBACK (action_clean_up_callback) },
+	/* name, stock id */
+         { "Stretch", NULL,
+	   /* label, accelerator */
+	   N_("Resize Icon..."), NULL,
+	   /* tooltip */
+	   N_("Make the selected icons resizable"),
+	   G_CALLBACK (action_stretch_callback) },
+	/* name, stock id */
+	{ "Unstretch", NULL,
+	  /* label, accelerator */
+	  N_("Restore Icons' Original Si_zes"), NULL,
+	  /* tooltip */
+	  N_("Restore each selected icons to its original size"),
+	  G_CALLBACK (action_unstretch_callback) },
 };
 
 static void
@@ -731,7 +789,22 @@ real_merge_menus (NemoView *view)
 	g_object_unref (action_group); /* owned by ui manager */
 
 	desktop_view->details->desktop_merge_id =
-		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-desktop-icon-view-ui.xml", NULL);
+		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-desktop-canvas-view-ui.xml", NULL);
+
+	gtk_ui_manager_add_ui (ui_manager,
+			       desktop_view->details->desktop_merge_id,
+			       POPUP_PATH_CANVAS_APPEARANCE,
+			       NEMO_ACTION_STRETCH,
+			       NEMO_ACTION_STRETCH,
+			       GTK_UI_MANAGER_MENUITEM,
+			       FALSE);
+	gtk_ui_manager_add_ui (ui_manager,
+			       desktop_view->details->desktop_merge_id,
+			       POPUP_PATH_CANVAS_APPEARANCE,
+			       NEMO_ACTION_UNSTRETCH,
+			       NEMO_ACTION_UNSTRETCH,
+			       GTK_UI_MANAGER_MENUITEM,
+			       FALSE);
 }
 
 static NemoView *

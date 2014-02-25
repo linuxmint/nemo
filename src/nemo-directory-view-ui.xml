@@ -219,7 +219,7 @@
 		<menuitem name="Restore From Trash" action="Restore From Trash"/>
 	</placeholder>
 	<separator name="Appearance separator"/>
-	<placeholder name="Icon Appearance Items">
+	<placeholder name="Canvas Appearance Items">
 	</placeholder>
 	<separator name="Extension actions separator"/>
 	<placeholder name="Extension Actions"/>

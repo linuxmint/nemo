@@ -65,8 +65,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define POPUP_PATH_CANVAS_APPEARANCE		"/selection/Canvas Appearance Items"
-
 enum 
 {
 	PROP_COMPACT = 1,
@@ -84,8 +82,6 @@ typedef struct {
 	const NemoFileSortType sort_type;
 	const char *metadata_text;
 	const char *action;
-	const char *menu_label;
-	const char *menu_hint;
 } SortCriterion;
 
 typedef enum {
@@ -132,37 +128,27 @@ static const SortCriterion sort_criteria[] = {
 	{
 		NEMO_FILE_SORT_BY_DISPLAY_NAME,
 		"name",
-		"Sort by Name",
-		N_("by _Name"),
-		N_("Keep icons sorted by name in rows")
+		"Sort by Name"
 	},
 	{
 		NEMO_FILE_SORT_BY_SIZE,
 		"size",
-		"Sort by Size",
-		N_("by _Size"),
-		N_("Keep icons sorted by size in rows")
+		"Sort by Size"
 	},
 	{
 		NEMO_FILE_SORT_BY_TYPE,
 		"type",
-		"Sort by Type",
-		N_("by _Type"),
-		N_("Keep icons sorted by type in rows")
+		"Sort by Type"
 	},
 	{
 		NEMO_FILE_SORT_BY_MTIME,
 		"modification date",
-		"Sort by Modification Date",
-		N_("by Modification _Date"),
-		N_("Keep icons sorted by modification date in rows")
+		"Sort by Modification Date"
 	},
 	{
 		NEMO_FILE_SORT_BY_TRASHED_TIME,
 		"trashed",
-		"Sort by Trash Time",
-		N_("by T_rash Time"),
-		N_("Keep icons sorted by trash time in rows")
+		NEMO_ACTION_SORT_TRASH_TIME
 	}
 };
 
@@ -335,26 +321,6 @@ static void
 clear_sort_criterion (NemoCanvasView *canvas_view)
 {
 	real_set_sort_criterion (canvas_view, NULL, TRUE, TRUE);
-}
-
-static void
-action_stretch_callback (GtkAction *action,
-			 gpointer callback_data)
-{
-	g_assert (NEMO_IS_CANVAS_VIEW (callback_data));
-
-	nemo_canvas_container_show_stretch_handles
-		(get_canvas_container (NEMO_CANVAS_VIEW (callback_data)));
-}
-
-static void
-action_unstretch_callback (GtkAction *action,
-			   gpointer callback_data)
-{
-	g_assert (NEMO_IS_CANVAS_VIEW (callback_data));
-
-	nemo_canvas_container_unstretch
-		(get_canvas_container (NEMO_CANVAS_VIEW (callback_data)));
 }
 
 void
@@ -1397,14 +1363,6 @@ nemo_canvas_view_start_renaming_file (NemoView *view,
 
 static const GtkActionEntry canvas_view_entries[] = {
   /* name, stock id, label */  { "Arrange Items", NULL, N_("Arran_ge Items") }, 
-  /* name, stock id */         { "Stretch", NULL,
-  /* label, accelerator */       N_("Resize Icon..."), NULL,
-  /* tooltip */                  N_("Make the selected icons resizable"),
-                                 G_CALLBACK (action_stretch_callback) },
-  /* name, stock id */         { "Unstretch", NULL,
-  /* label, accelerator */       N_("Restore Icons' Original Si_zes"), NULL,
-  /* tooltip */                  N_("Restore each selected icons to its original size"),
-                                 G_CALLBACK (action_unstretch_callback) },
 };
 
 static const GtkToggleActionEntry canvas_view_toggle_entries[] = {
@@ -1447,7 +1405,7 @@ static const GtkRadioActionEntry arrange_radio_entries[] = {
     N_("By Modification _Date"), NULL,
     N_("Keep icons sorted by modification date in rows"),
     NEMO_FILE_SORT_BY_MTIME },
-  { "Sort by Trash Time", NULL,
+  { NEMO_ACTION_SORT_TRASH_TIME, NULL,
     N_("By T_rash Time"), NULL,
     N_("Keep icons sorted by trash time in rows"),
     NEMO_FILE_SORT_BY_TRASHED_TIME },
@@ -1490,8 +1448,8 @@ nemo_canvas_view_merge_menus (NemoView *view)
 
 	canvas_view->details->canvas_merge_id =
 		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-canvas-view-ui.xml", NULL);
-
-	/* Do one-time state-setting here; context-dependent state-setting
+	
+        /* Do one-time state-setting here; context-dependent state-setting
 	 * is done in update_menus.
 	 */
 	if (!nemo_canvas_view_supports_auto_layout (canvas_view)) {
@@ -1499,24 +1457,6 @@ nemo_canvas_view_merge_menus (NemoView *view)
 						      NEMO_ACTION_ARRANGE_ITEMS);
 		gtk_action_set_visible (action, FALSE);
 	}
-
-	if (nemo_canvas_view_supports_scaling (canvas_view)) {
-		gtk_ui_manager_add_ui (ui_manager,
-				       canvas_view->details->canvas_merge_id,
-				       POPUP_PATH_CANVAS_APPEARANCE,
-				       NEMO_ACTION_STRETCH,
-				       NEMO_ACTION_STRETCH,
-				       GTK_UI_MANAGER_MENUITEM,
-				       FALSE);
-		gtk_ui_manager_add_ui (ui_manager,
-				       canvas_view->details->canvas_merge_id,
-				       POPUP_PATH_CANVAS_APPEARANCE,
-				       NEMO_ACTION_UNSTRETCH,
-				       NEMO_ACTION_UNSTRETCH,
-				       GTK_UI_MANAGER_MENUITEM,
-				       FALSE);
-	}
-
 	update_layout_menus (canvas_view);
 }
 
@@ -1542,42 +1482,13 @@ static void
 nemo_canvas_view_update_menus (NemoView *view)
 {
 	NemoCanvasView *canvas_view;
-        int selection_count;
 	GtkAction *action;
-        NemoCanvasContainer *canvas_container;
 	gboolean editable;
 
-        canvas_view = NEMO_CANVAS_VIEW (view);
+	canvas_view = NEMO_CANVAS_VIEW (view);
 
 	NEMO_VIEW_CLASS (nemo_canvas_view_parent_class)->update_menus(view);
-
-        selection_count = nemo_view_get_selection_count (view);
-        canvas_container = get_canvas_container (canvas_view);
-
-	action = gtk_action_group_get_action (canvas_view->details->canvas_action_group,
-					      NEMO_ACTION_STRETCH);
-	gtk_action_set_sensitive (action,
-				  selection_count == 1
-				  && canvas_container != NULL
-				  && !nemo_canvas_container_has_stretch_handles (canvas_container));
-
-	gtk_action_set_visible (action,
-				nemo_canvas_view_supports_scaling (canvas_view));
-
-	action = gtk_action_group_get_action (canvas_view->details->canvas_action_group,
-					      NEMO_ACTION_UNSTRETCH);
-	g_object_set (action, "label",
-		      (selection_count > 1)
-		      ? _("Restore Icons' Original Si_zes")
-		      : _("Restore Icon's Original Si_ze"),
-		      NULL);
-	gtk_action_set_sensitive (action,
-				  canvas_container != NULL
-				  && nemo_canvas_container_is_stretched (canvas_container));
-
-	gtk_action_set_visible (action,
-				nemo_canvas_view_supports_scaling (canvas_view));
-
+        
 	editable = nemo_view_is_editable (view);
 	action = gtk_action_group_get_action (canvas_view->details->canvas_action_group,
 					      NEMO_ACTION_MANUAL_LAYOUT);
