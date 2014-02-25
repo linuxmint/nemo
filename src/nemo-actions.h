@@ -140,6 +140,7 @@
 #define NEMO_ACTION_UNSTRETCH "Unstretch"
 #define NEMO_ACTION_ZOOM_ITEMS "Zoom Items"
 #define NEMO_ACTION_SORT_TRASH_TIME "Sort by Trash Time"
+#define NEMO_ACTION_SORT_SEARCH_RELEVANCE "Sort by Search Relevance"
 #define NEMO_ACTION_OPEN_AS_ROOT "OpenAsRoot"
 #define NEMO_ACTION_TOGGLE_LOCATION "Toggle Location Button"
 
