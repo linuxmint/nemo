@@ -3030,6 +3030,7 @@ verify_destination (CommonJob *job,
 	char *primary, *secondary, *details;
 	int response;
 	GFileType file_type;
+	gboolean dest_is_symlink = FALSE;
 
 	if (dest_fs_id) {
 		*dest_fs_id = NULL;
@@ -3041,7 +3042,7 @@ verify_destination (CommonJob *job,
 	info = g_file_query_info (dest, 
 				  G_FILE_ATTRIBUTE_STANDARD_TYPE","
 				  G_FILE_ATTRIBUTE_ID_FILESYSTEM,
-				  0,
+				  dest_is_symlink ? G_FILE_QUERY_INFO_NONE : G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
 				  job->cancellable,
 				  &error);
 
@@ -3083,6 +3084,12 @@ verify_destination (CommonJob *job,
 	}
 
 	file_type = g_file_info_get_file_type (info);
+	if (!dest_is_symlink && file_type == G_FILE_TYPE_SYMBOLIC_LINK) {
+		/* Record that destination is a symlink and do real stat() once again */
+		dest_is_symlink = TRUE;
+		g_object_unref (info);
+		goto retry;
+	}
 
 	if (dest_fs_id) {
 		*dest_fs_id =
@@ -3105,6 +3112,11 @@ verify_destination (CommonJob *job,
 			   NULL);
 		
 		abort_job (job);
+		return;
+	}
+	
+	if (dest_is_symlink) {
+		/* We can't reliably statfs() destination if it's a symlink, thus not doing any further checks. */
 		return;
 	}
 	
