@@ -73,7 +73,7 @@ new_bookmark_from_uri (const char *uri, const char *label)
 	new_bookmark = NULL;
 
 	if (location) {
-		new_bookmark = nemo_bookmark_new (location, label, NULL);
+		new_bookmark = nemo_bookmark_new (location, label);
 		g_object_unref (location);
 	}
 
@@ -537,6 +537,45 @@ nemo_bookmark_list_item_at (NemoBookmarkList *bookmarks, guint index)
 	g_return_val_if_fail (index < g_list_length (bookmarks->list), NULL);
 
 	return NEMO_BOOKMARK (g_list_nth_data (bookmarks->list, index));
+}
+
+/**
+ * nemo_bookmark_list_item_with_uri:
+ *
+ * Get the bookmark with the specified URI, if any
+ * @bookmarks: the list of bookmarks.
+ * @uri: an URI
+ *
+ * Return value: the bookmark with URI @uri, or %NULL.
+ **/
+NemoBookmark *
+nemo_bookmark_list_item_with_uri (NemoBookmarkList *bookmarks,
+				      const gchar	   *uri)
+{
+	GList *node;
+	gchar *bookmark_uri;
+	NemoBookmark *bookmark;
+	gboolean found = FALSE;
+
+	g_return_val_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks), NULL);
+	g_return_val_if_fail (uri != NULL, NULL);
+
+	for (node = bookmarks->list; node != NULL; node = node->next) {
+		bookmark = node->data;
+		bookmark_uri = nemo_bookmark_get_uri (bookmark);
+
+		if (g_strcmp0 (uri, bookmark_uri) == 0) {
+			found = TRUE;
+		}
+
+		g_free (bookmark_uri);
+
+		if (found) {
+			return bookmark;
+		}
+	}
+
+	return NULL;
 }
 
 /**

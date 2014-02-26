@@ -78,6 +78,8 @@ GList *                 nemo_bookmark_list_get_for_uri         (NemoBookmarkList
 guint                   nemo_bookmark_list_length              (NemoBookmarkList   *bookmarks);
 NemoBookmark *      nemo_bookmark_list_item_at             (NemoBookmarkList   *bookmarks,
 								    guint                   index);
+NemoBookmark *      nemo_bookmark_list_item_with_uri       (NemoBookmarkList *bookmarks,
+								    const gchar	         *uri);
 void                    nemo_bookmark_list_move_item           (NemoBookmarkList *bookmarks,
 								    guint                 index,
 								    guint                 destination);

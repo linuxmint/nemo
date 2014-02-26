@@ -51,6 +51,7 @@ enum {
 	PROP_CUSTOM_NAME,
 	PROP_LOCATION,
 	PROP_ICON,
+	PROP_SYMBOLIC_ICON,
 	NUM_PROPERTIES
 };
 
@@ -65,6 +66,7 @@ struct NemoBookmarkDetails
 	gboolean has_custom_name;
 	GFile *location;
 	GIcon *icon;
+	GIcon *symbolic_icon;
 	NemoFile *file;
 
 	char *scroll_file;
@@ -265,7 +267,8 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
 	/* Set icon based on available information. */
 	nemo_bookmark_update_icon (bookmark);
 
-	if (bookmark->details->icon == NULL) {
+	if (bookmark->details->icon == NULL ||
+	    bookmark->details->symbolic_icon == NULL) {
 		nemo_bookmark_set_icon_to_default (bookmark);
 	}
 
@@ -300,6 +303,15 @@ nemo_bookmark_set_property (GObject *object,
 		}
 
 		break;
+	case PROP_SYMBOLIC_ICON:
+		new_icon = g_value_get_object (value);
+
+		if (new_icon != NULL && !g_icon_equal (self->details->symbolic_icon, new_icon)) {
+			g_clear_object (&self->details->symbolic_icon);
+			self->details->symbolic_icon = g_object_ref (new_icon);
+		}
+
+		break;
 	case PROP_LOCATION:
 		self->details->location = g_value_dup_object (value);
 		break;
@@ -330,6 +342,9 @@ nemo_bookmark_get_property (GObject *object,
 	case PROP_ICON:
 		g_value_set_object (value, self->details->icon);
 		break;
+	case PROP_SYMBOLIC_ICON:
+		g_value_set_object (value, self->details->symbolic_icon);
+		break;
 	case PROP_LOCATION:
 		g_value_set_object (value, self->details->location);
 		break;
@@ -355,6 +370,7 @@ nemo_bookmark_finalize (GObject *object)
 
 	g_object_unref (bookmark->details->location);
 	g_clear_object (&bookmark->details->icon);
+	g_clear_object (&bookmark->details->symbolic_icon);
 
 	g_free (bookmark->details->name);
 	g_free (bookmark->details->scroll_file);
@@ -415,6 +431,13 @@ nemo_bookmark_class_init (NemoBookmarkClass *class)
 		g_param_spec_object ("icon",
 				     "Bookmark's icon",
 				     "The icon of this bookmark",
+				     G_TYPE_ICON,
+				     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+	properties[PROP_SYMBOLIC_ICON] =
+		g_param_spec_object ("symbolic-icon",
+				     "Bookmark's symbolic icon",
+				     "The symbolic icon of this bookmark",
 				     G_TYPE_ICON,
 				     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
@@ -532,13 +555,35 @@ nemo_bookmark_compare_uris (gconstpointer a, gconstpointer b)
 NemoBookmark *
 nemo_bookmark_copy (NemoBookmark *bookmark)
 {
+	NemoBookmark *retval;
+
 	g_return_val_if_fail (NEMO_IS_BOOKMARK (bookmark), NULL);
 
-	return nemo_bookmark_new (
-			bookmark->details->location,
-			bookmark->details->has_custom_name ?
-			bookmark->details->name : NULL,
-			bookmark->details->icon);
+	retval = nemo_bookmark_new (bookmark->details->location,
+					bookmark->details->has_custom_name ?
+					bookmark->details->name : NULL);
+	if (bookmark->details->icon) {
+		g_object_set (retval, "icon", bookmark->details->icon, NULL);
+	}
+	if (bookmark->details->symbolic_icon) {
+		g_object_set (retval, "symbolic-icon", bookmark->details->symbolic_icon, NULL);
+	}
+
+	return retval;
+}
+
+GIcon *
+nemo_bookmark_get_symbolic_icon (NemoBookmark *bookmark)
+{
+	g_return_val_if_fail (NEMO_IS_BOOKMARK (bookmark), NULL);
+
+	/* Try to connect a file in case file exists now but didn't earlier. */
+	nemo_bookmark_connect_file (bookmark);
+
+	if (bookmark->details->symbolic_icon) {
+		return g_object_ref (bookmark->details->symbolic_icon);
+	}
+	return NULL;
 }
 
 GIcon *
@@ -585,8 +630,7 @@ nemo_bookmark_get_uri (NemoBookmark *bookmark)
 
 NemoBookmark *
 nemo_bookmark_new (GFile *location,
-		       const gchar *custom_name,
-                       GIcon *icon)
+		       const gchar *custom_name)
 {
 	NemoBookmark *new_bookmark;
     gchar *name;
@@ -598,7 +642,6 @@ nemo_bookmark_new (GFile *location,
 
 	new_bookmark = NEMO_BOOKMARK (g_object_new (NEMO_TYPE_BOOKMARK,
 							"location", location,
-							"icon", icon,
 							"name", name,
 							"custom-name", custom_name != NULL,
 							NULL));
