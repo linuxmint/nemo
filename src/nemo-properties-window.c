@@ -103,6 +103,7 @@ struct NemoPropertiesWindowDetails {
 
 	GtkLabel *directory_contents_title_field;
 	GtkLabel *directory_contents_value_field;
+	GtkWidget *directory_contents_spinner;
 	guint update_directory_contents_timeout_id;
 	guint update_files_timeout_id;
 
@@ -124,6 +125,8 @@ struct NemoPropertiesWindowDetails {
 	GList *mime_list;
 
 	gboolean deep_count_finished;
+	GList *deep_count_files;
+	guint deep_count_spinner_timeout_id;
 
 	guint total_count;
 	goffset total_size;
@@ -131,11 +134,11 @@ struct NemoPropertiesWindowDetails {
 
 	guint long_operation_underway;
 
- 	GList *changed_files;
- 	
- 	guint64 volume_capacity;
- 	guint64 volume_free;
-	
+	GList *changed_files;
+
+	guint64 volume_capacity;
+	guint64 volume_free;
+
 	GdkRGBA used_color;
 	GdkRGBA free_color;
 	GdkRGBA used_stroke_color;
@@ -190,6 +193,7 @@ static const GtkTargetEntry target_table[] = {
  */
 #define CHOWN_CHGRP_TIMEOUT			300 /* milliseconds */
 
+static void schedule_directory_contents_update    (NemoPropertiesWindow *window);
 static void directory_contents_value_field_update (NemoPropertiesWindow *window);
 static void file_changed_callback                 (NemoFile       *file,
 						   gpointer            user_data);
@@ -943,6 +947,70 @@ get_mime_list (NemoPropertiesWindow *window)
 	return ret;
 }
 
+static gboolean
+start_spinner_callback (NemoPropertiesWindow *window)
+{
+	gtk_widget_show (window->details->directory_contents_spinner);
+	gtk_spinner_start (GTK_SPINNER (window->details->directory_contents_spinner));
+	window->details->deep_count_spinner_timeout_id = 0;
+
+	return FALSE;
+}
+
+static void
+schedule_start_spinner (NemoPropertiesWindow *window)
+{
+	if (window->details->deep_count_spinner_timeout_id == 0) {
+		window->details->deep_count_spinner_timeout_id
+			= g_timeout_add_seconds (1,
+						 (GSourceFunc)start_spinner_callback,
+						 window);
+	}
+}
+
+static void
+stop_spinner (NemoPropertiesWindow *window)
+{
+	gtk_spinner_stop (GTK_SPINNER (window->details->directory_contents_spinner));
+	gtk_widget_hide (window->details->directory_contents_spinner);
+	if (window->details->deep_count_spinner_timeout_id > 0) {
+		g_source_remove (window->details->deep_count_spinner_timeout_id);
+		window->details->deep_count_spinner_timeout_id = 0;
+	}
+}
+
+static void
+stop_deep_count_for_file (NemoPropertiesWindow *window,
+			  NemoFile             *file)
+{
+	if (g_list_find (window->details->deep_count_files, file)) {
+		g_signal_handlers_disconnect_by_func (file,
+						      G_CALLBACK (schedule_directory_contents_update),
+						      window);
+		nemo_file_unref (file);
+		window->details->deep_count_files = g_list_remove (window->details->deep_count_files, file);
+	}
+}
+
+static void
+start_deep_count_for_file (NemoPropertiesWindow *window,
+			   NemoFile             *file)
+{
+	if (!g_list_find (window->details->deep_count_files, file)) {
+		nemo_file_ref (file);
+		window->details->deep_count_files = g_list_prepend (window->details->deep_count_files, file);
+
+		nemo_file_recompute_deep_counts (file);
+		if (!window->details->deep_count_finished) {
+			g_signal_connect_object (file,
+						 "updated_deep_count_in_progress",
+						 G_CALLBACK (schedule_directory_contents_update),
+						 window, G_CONNECT_SWAPPED);
+			schedule_start_spinner (window);
+		}
+	}
+}
+
 static void
 properties_window_update (NemoPropertiesWindow *window, 
 			  GList *files)
@@ -980,7 +1048,7 @@ properties_window_update (NemoPropertiesWindow *window,
 			dirty_target = TRUE;
 		}
 		if (changed_file != NULL) {
-			nemo_file_recompute_deep_counts (changed_file);
+			start_deep_count_for_file (window, changed_file);
 		}
 	}
 
@@ -2026,7 +2094,7 @@ file_has_prefix (NemoFile *file,
 static void
 directory_contents_value_field_update (NemoPropertiesWindow *window)
 {
-	NemoRequestStatus file_status, status;
+	NemoRequestStatus file_status;
 	char *text, *temp;
 	guint directory_count;
 	guint file_count;
@@ -2040,10 +2108,10 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 	GList *l;
 	guint file_unreadable;
 	goffset file_size;
+	gboolean deep_count_active;
 
 	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
 
-	status = NEMO_REQUEST_DONE;
 	total_count = window->details->total_count;
 	total_size = window->details->total_size;
     total_hidden = window->details->hidden_count;
@@ -2062,7 +2130,7 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 					 &directory_count,
 					 &file_count, 
 					 &file_unreadable,
-                     &hidden_count,
+					 &hidden_count,
 					 &file_size,
 					 TRUE);
 			total_count += (file_count + directory_count);
@@ -2072,21 +2140,21 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 				unreadable_directory_count = TRUE;
 			}
 			
-			if (file_status != NEMO_REQUEST_DONE) {
-				status = file_status;
+			if (file_status == NEMO_REQUEST_DONE) {
+				stop_deep_count_for_file (window, file);
 			}
 		} else {
 			++total_count;
 			total_size += nemo_file_get_size (file);
 		}
 	}
-	
+
+	deep_count_active = (g_list_length (window->details->deep_count_files) > 0);
 	/* If we've already displayed the total once, don't do another visible
 	 * count-up if the deep_count happens to get invalidated.
 	 * But still display the new total, since it might have changed.
 	 */
-	if (window->details->deep_count_finished &&
-	    status != NEMO_REQUEST_DONE) {
+	if (window->details->deep_count_finished && deep_count_active) {
 		return;
 	}
 
@@ -2094,16 +2162,13 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 	used_two_lines = FALSE;
 	
 	if (total_count == 0) {
-		switch (status) {
-		case NEMO_REQUEST_DONE:
+		if (!deep_count_active) {
 			if (unreadable_directory_count == 0) {
 				text = g_strdup (_("nothing"));
 			} else {
 				text = g_strdup (_("unreadable"));
 			}
-			
-			break;
-		default:
+		} else {
 			text = g_strdup ("...");
 		}
 	} else {
@@ -2153,8 +2218,9 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 			    text);
 	g_free (text);
 
-	if (status == NEMO_REQUEST_DONE) {
+	if (!deep_count_active) {
 		window->details->deep_count_finished = TRUE;
+		stop_spinner (window);
 	}
 }
 
@@ -2190,8 +2256,6 @@ attach_directory_contents_value_field (NemoPropertiesWindow *window,
 				       GtkWidget *sibling)
 {
 	GtkLabel *value_field;
-	GList *l;
-	NemoFile *file;
 
 	value_field = attach_value_label (grid, sibling, "");
 
@@ -2199,21 +2263,8 @@ attach_directory_contents_value_field (NemoPropertiesWindow *window,
 	window->details->directory_contents_value_field = value_field;
 
 	gtk_label_set_line_wrap (value_field, TRUE);
-	
-	/* Fill in the initial value. */
-	directory_contents_value_field_update (window);
- 
-	for (l = window->details->target_files; l; l = l->next) {
-		file = NEMO_FILE (l->data);
-		nemo_file_recompute_deep_counts (file);
-		
-		g_signal_connect_object (file,
-					 "updated_deep_count_in_progress",
-					 G_CALLBACK (schedule_directory_contents_update),
-					 window, G_CONNECT_SWAPPED);
-	}
-	
-	return value_field;	
+
+	return value_field;
 }
 
 static GtkLabel *
@@ -2270,13 +2321,30 @@ append_directory_contents_fields (NemoPropertiesWindow *window,
 				  GtkGrid *grid)
 {
 	GtkLabel *title_field, *value_field;
+	GList *l;
 
 	title_field = attach_title_field (grid, "");
 	window->details->directory_contents_title_field = title_field;
 	gtk_label_set_line_wrap (title_field, TRUE);
 
-	value_field = attach_directory_contents_value_field 
-		(window, grid, GTK_WIDGET (title_field));
+	value_field = attach_directory_contents_value_field (window, grid, GTK_WIDGET (title_field));
+
+	window->details->directory_contents_spinner = gtk_spinner_new ();
+	gtk_grid_attach_next_to (grid,
+				 window->details->directory_contents_spinner,
+				 GTK_WIDGET (value_field),
+				 GTK_POS_RIGHT,
+				 1, 1);
+
+	for (l = window->details->target_files; l; l = l->next) {
+		NemoFile *file;
+
+		file = NEMO_FILE (l->data);
+		start_deep_count_for_file (window, file);
+	}
+
+	/* Fill in the initial value. */
+	directory_contents_value_field_update (window);
 
 	gtk_label_set_mnemonic_widget (title_field, GTK_WIDGET(value_field));
 }
@@ -4833,7 +4901,6 @@ file_changed_callback (NemoFile *file, gpointer user_data)
 	if (!g_list_find (window->details->changed_files, file)) {
 		nemo_file_ref (file);
 		window->details->changed_files = g_list_prepend (window->details->changed_files, file);
-		
 		schedule_files_update (window);
 	}
 }
@@ -5328,7 +5395,17 @@ real_destroy (GtkWidget *object)
 
 	nemo_file_list_free (window->details->changed_files);
 	window->details->changed_files = NULL;
- 
+
+	if (window->details->deep_count_spinner_timeout_id > 0) {
+		g_source_remove (window->details->deep_count_spinner_timeout_id);
+	}
+
+	for (l = window->details->deep_count_files; l != NULL; l = l->next) {
+		stop_deep_count_for_file (window, l->data);
+	}
+	g_list_free (window->details->deep_count_files);
+	window->details->deep_count_files = NULL;
+
 	window->details->name_field = NULL;
 
 	g_list_free (window->details->permission_buttons);
