@@ -46,7 +46,7 @@ typedef struct _NemoToolbarClass NemoToolbarClass;
 
 typedef enum {
 	NEMO_TOOLBAR_MODE_PATH_BAR,
-	NEMO_TOOLBAR_MODE_LOCATION_BAR,
+	NEMO_TOOLBAR_MODE_LOCATION_ENTRY,
 } NemoToolbarMode;
 
 struct _NemoToolbar {
@@ -66,7 +66,7 @@ GtkWidget *nemo_toolbar_new (GtkActionGroup *action_group);
 
 gboolean  nemo_toolbar_get_show_location_entry (NemoToolbar *self);
 GtkWidget *nemo_toolbar_get_path_bar (NemoToolbar *self);
-GtkWidget *nemo_toolbar_get_location_bar (NemoToolbar *self);
+GtkWidget *nemo_toolbar_get_location_entry (NemoToolbar *self);
 
 void nemo_toolbar_set_show_main_bar (NemoToolbar *self,
 					 gboolean show_main_bar);

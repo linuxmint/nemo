@@ -31,7 +31,6 @@
 #include "nemo-actions.h"
 #include "nemo-application.h"
 #include "nemo-floating-bar.h"
-#include "nemo-location-bar.h"
 #include "nemo-pathbar.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
@@ -341,12 +340,12 @@ viewed_file_changed_callback (NemoFile *file,
 			if (go_to_file != NULL) {
 				/* the path bar URI will be set to go_to_uri immediately
 				 * in begin_location_change, but we don't want the
-				 * inexistant children to show up anymore */
-				//if (slot == slot->pane->active_slot) {
+				 * inexistant children to show up anymore */				
+				if (slot == nemo_window_slot_get_pane (slot)->active_slot) {
 					/* multiview-TODO also update NemoWindowSlot
 					 * [which as of writing doesn't save/store any path bar state]
 					 */
-				//}
+				}
 				
 				nemo_window_slot_open_location (slot, go_to_file, 0);
 				g_object_unref (go_to_file);

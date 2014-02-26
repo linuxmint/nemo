@@ -33,7 +33,7 @@
 
 #include "nemo-actions.h"
 #include "nemo-bookmarks-window.h"
-#include "nemo-location-bar.h"
+#include "nemo-location-entry.h"
 #include "nemo-mime-actions.h"
 #include "nemo-notebook.h"
 #include "nemo-places-sidebar.h"
@@ -298,18 +298,18 @@ nemo_window_sync_allow_stop (NemoWindow *window,
 
 static void
 nemo_window_prompt_for_location (NemoWindow *window,
-				     const char     *initial)
+				 const char *initial)
 {	
 	NemoWindowPane *pane;
 
 	g_return_if_fail (NEMO_IS_WINDOW (window));
+	GFile *location = g_file_parse_name (initial);
+	g_return_if_fail (G_IS_FILE (location));
 
-	if (initial) {
-		nemo_window_show_location_entry(window);
-		pane = window->details->active_pane;
-		nemo_location_bar_set_location (NEMO_LOCATION_BAR (pane->location_bar),
-						    initial);
-	}
+	nemo_window_show_location_entry(window);
+	pane = window->details->active_pane;
+	nemo_location_entry_set_uri (NEMO_LOCATION_ENTRY (pane->location_entry),
+	                          initial);
 }
 
 /* Code should never force the window taller than this size.

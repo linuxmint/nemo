@@ -63,7 +63,7 @@ struct _NemoWindowPane {
 	NemoWindowSlot *active_slot;
 
 	/* location bar */
-	GtkWidget *location_bar;
+	GtkWidget *location_entry;
 	GtkWidget *path_bar;
 	GtkWidget *search_bar;
 	GtkWidget *tool_bar;
@@ -103,6 +103,6 @@ GtkActionGroup * nemo_window_pane_get_toolbar_action_group (NemoWindowPane   *pa
 void nemo_window_pane_grab_focus (NemoWindowPane *pane);
 
 /* bars */
-void     nemo_window_pane_ensure_location_bar (NemoWindowPane *pane);
+void     nemo_window_pane_ensure_location_entry (NemoWindowPane *pane);
 
 #endif /* NEMO_WINDOW_PANE_H */

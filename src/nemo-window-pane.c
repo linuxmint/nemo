@@ -30,7 +30,7 @@
 
 #include "nemo-actions.h"
 #include "nemo-application.h"
-#include "nemo-location-bar.h"
+#include "nemo-location-entry.h"
 #include "nemo-notebook.h"
 #include "nemo-pathbar.h"
 #include "nemo-toolbar.h"
@@ -67,7 +67,7 @@ widget_is_in_temporary_bars (GtkWidget *widget,
 {
 	gboolean res = FALSE;
 
-	if (gtk_widget_get_ancestor (widget, NEMO_TYPE_LOCATION_BAR) != NULL &&
+	if (gtk_widget_get_ancestor (widget, NEMO_TYPE_LOCATION_ENTRY) != NULL &&
 	     pane->temporary_navigation_bar)
 		res = TRUE;
 
@@ -209,11 +209,11 @@ static void
 location_entry_changed_cb (NemoToolbar *toolbar, gboolean val, gpointer data)
 {
     NemoWindowPane *pane = NEMO_WINDOW_PANE (data);
-    nemo_window_pane_ensure_location_bar (pane);
+    nemo_window_pane_ensure_location_entry (pane);
 }
 
 static void
-navigation_bar_cancel_callback (GtkWidget *widget,
+location_entry_cancel_callback (GtkWidget *widget,
 				NemoWindowPane *pane)
 {
 	GtkAction *location;
@@ -227,19 +227,15 @@ navigation_bar_cancel_callback (GtkWidget *widget,
 }
 
 static void
-navigation_bar_location_changed_callback (GtkWidget *widget,
-                                        const gchar *uri,
-                                     NemoWindowPane *pane)
+location_entry_location_changed_callback (GtkWidget *widget,
+					  GFile *location,
+					  NemoWindowPane *pane)
 {
-    GFile *location;
+	nemo_window_pane_hide_temporary_bars (pane);
 
-    nemo_window_pane_hide_temporary_bars (pane);
+	restore_focus_widget (pane);
 
-    restore_focus_widget (pane);
-
-    location = g_file_new_for_uri (uri);
-    nemo_window_slot_open_location (pane->active_slot, location, 0);
-    g_object_unref (location);
+	nemo_window_slot_open_location (pane->active_slot, location, 0);
 }
 
 static gboolean
@@ -802,20 +798,19 @@ create_toolbar (NemoWindowPane *pane)
 	g_signal_connect_object (pane->path_bar, "path-event",
 				 G_CALLBACK (path_bar_path_event_callback), pane, 0);
 
-	/* connect to the location bar signals */
-	pane->location_bar = nemo_toolbar_get_location_bar (NEMO_TOOLBAR (toolbar));
-	gtk_size_group_add_widget (header_size_group, pane->location_bar);
+	/* connect to the location entry signals */
+	pane->location_entry = nemo_toolbar_get_location_entry (NEMO_TOOLBAR (toolbar));
+	gtk_size_group_add_widget (header_size_group, pane->location_entry);
 
-	nemo_clipboard_set_up_editable
-		(GTK_EDITABLE (nemo_location_bar_get_entry (NEMO_LOCATION_BAR (pane->location_bar))),
-		 nemo_window_get_ui_manager (NEMO_WINDOW (window)),
-		 TRUE);
+	nemo_clipboard_set_up_editable (GTK_EDITABLE (pane->location_entry),
+	                                nemo_window_get_ui_manager (NEMO_WINDOW (window)),
+	                                TRUE);
 
-	g_signal_connect_object (pane->location_bar, "location-changed",
-				 G_CALLBACK (navigation_bar_location_changed_callback), pane, 0);
-	g_signal_connect_object (pane->location_bar, "cancel",
-				 G_CALLBACK (navigation_bar_cancel_callback), pane, 0);
-	g_signal_connect_object (nemo_location_bar_get_entry (NEMO_LOCATION_BAR (pane->location_bar)), "focus-in-event",
+	g_signal_connect_object (pane->location_entry, "location-changed",
+				 G_CALLBACK (location_entry_location_changed_callback), pane, 0);
+	g_signal_connect_object (pane->location_entry, "cancel",
+				 G_CALLBACK (location_entry_cancel_callback), pane, 0);
+	g_signal_connect_object (pane->location_entry, "focus-in-event",
 				 G_CALLBACK (toolbar_focus_in_callback), pane, 0);
 
 	g_object_unref (header_size_group);
@@ -993,7 +988,7 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 
 		/* this may be NULL if we just created the slot */
 		uri = nemo_window_slot_get_location_uri (slot);
-		nemo_location_bar_set_location (NEMO_LOCATION_BAR (pane->location_bar), uri);
+		nemo_location_entry_set_uri (NEMO_LOCATION_ENTRY (pane->location_entry), uri);
 		g_free (uri);
 		nemo_path_bar_set_path (NEMO_PATH_BAR (pane->path_bar), slot->location);
         restore_focus_widget (pane);
@@ -1110,7 +1105,7 @@ nemo_window_pane_grab_focus (NemoWindowPane *pane)
 }
 
 void
-nemo_window_pane_ensure_location_bar (NemoWindowPane *pane)
+nemo_window_pane_ensure_location_entry (NemoWindowPane *pane)
 {
     gboolean show_location, use_temp_toolbars;
 
@@ -1126,7 +1121,7 @@ nemo_window_pane_ensure_location_bar (NemoWindowPane *pane)
     }
     if (show_location) {
         remember_focus_widget (pane);
-        nemo_location_bar_activate (NEMO_LOCATION_BAR (pane->location_bar));
+        nemo_location_entry_focus (NEMO_LOCATION_ENTRY (pane->location_entry));
     } else {
         restore_focus_widget (pane);
     }
