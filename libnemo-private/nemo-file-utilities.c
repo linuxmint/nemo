@@ -1075,7 +1075,7 @@ nemo_is_in_system_dir (GFile *file)
 		g_free (gnome2);
 	}
 	g_free (path);
-	
+
 	return res;
 }
 

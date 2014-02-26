@@ -64,10 +64,6 @@ CLEANFILES = $(xml_files)	\
 	$(autostart_DATA)	\
 	$(NULL)
 
-SUBDIRS = \
-	icons    \
-	$(NULL)
-
 install-data-hook:
 if ENABLE_UPDATE_MIMEDB
 	$(UPDATE_MIME_DATABASE) "$(DESTDIR)$(datadir)/mime"
