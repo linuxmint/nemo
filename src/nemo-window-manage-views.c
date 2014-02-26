@@ -135,7 +135,7 @@ set_displayed_file (NemoWindowSlot *slot, NemoFile *file)
 		if (new_location == NULL) {
 			slot->current_location_bookmark = NULL;
 		} else {
-			slot->current_location_bookmark = nemo_bookmark_new (new_location, display_name, NULL);
+			slot->current_location_bookmark = nemo_bookmark_new (new_location, display_name);
 		}
 		g_free (display_name);
         }

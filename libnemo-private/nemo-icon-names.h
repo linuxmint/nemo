@@ -33,6 +33,16 @@
 #define NEMO_DESKTOP_ICON_HOME       "user-home"
 #define NEMO_DESKTOP_ICON_NETWORK    "network-workgroup"
 
+/* Fullcolor icons */
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER        "folder"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_REMOTE "folder-remote"
+#define NAUTILUS_ICON_FULLCOLOR_FOLDER_SAVED_SEARCH "folder-saved-search"
+
+/* Symbolic icons */
+#define NAUTILUS_ICON_SYMBOLIC_FOLDER        "folder-symbolic"
+#define NAUTILUS_ICON_SYMBOLIC_FOLDER_REMOTE "folder-remote-symbolic"
+#define NAUTILUS_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH "folder-saved-search-symbolic"
+
 /* Other icons */
 #define NEMO_ICON_TEMPLATE		"text-x-generic-template"
 

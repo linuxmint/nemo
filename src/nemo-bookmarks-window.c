@@ -519,8 +519,7 @@ update_bookmark_from_text (NemoBookmarksWindow *self)
 
 	bookmark = nemo_bookmark_new (location,
 					  self->priv->name_text_changed ?
-					  gtk_entry_get_text (GTK_ENTRY (self->priv->name_field)) : NULL,
-					  NULL);
+					  gtk_entry_get_text (GTK_ENTRY (self->priv->name_field)) : NULL);
 	g_object_unref (location);
 
 	selected_row = get_selected_row (self);

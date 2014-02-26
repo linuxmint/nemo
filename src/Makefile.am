@@ -263,6 +263,8 @@ $(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/she
 		$(NULL)
 
 nemo_shell_search_provider_SOURCES = 		\
+	nemo-bookmark-list.h			\
+	nemo-bookmark-list.c			\
 	nemo-shell-search-provider.c		\
 	$(NULL)
 
