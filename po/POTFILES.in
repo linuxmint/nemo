@@ -67,7 +67,6 @@ src/nemo-image-properties-page.c
 src/nemo-list-model.c
 src/nemo-list-view.c
 src/nemo-list-view-ui.xml
-src/nemo-location-bar.c
 src/nemo-location-entry.c
 src/nemo-main.c
 src/nemo-mime-actions.c

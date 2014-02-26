@@ -312,7 +312,6 @@ Makefile
 cut-n-paste-code/Makefile
 cut-n-paste-code/libegg/Makefile
 data/Makefile
-data/icons/Makefile
 data/nemo.desktop.in
 data/nemo-autorun-software.desktop.in
 data/nemo-connect-server.desktop.in

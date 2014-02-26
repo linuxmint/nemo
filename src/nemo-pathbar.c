@@ -1995,7 +1995,7 @@ nemo_path_bar_update_path (NemoPathBar *path_bar,
 			       GFile *file_path,
 			       gboolean emit_signal)
 {
-	NemoFile *file, *parent_file;
+	NemoFile *file;
         gboolean first_directory, last_directory;
         gboolean result;
         GList *new_buttons, *l, *fake_root;
@@ -2015,6 +2015,8 @@ nemo_path_bar_update_path (NemoPathBar *path_bar,
         gtk_widget_push_composite_child ();
 
         while (file != NULL) {
+                NemoFile *parent_file;
+
 		parent_file = nemo_file_get_parent (file);
 		last_directory = !parent_file;
 		button_data = make_directory_button (path_bar, file, first_directory, last_directory);
@@ -2029,6 +2031,8 @@ nemo_path_bar_update_path (NemoPathBar *path_bar,
 		if (parent_file != NULL &&
 		    button_data->fake_root) {
 			fake_root = new_buttons;
+                        nemo_file_unref (parent_file);
+                        break;
 		}
 		
 		file = parent_file;
