@@ -159,8 +159,6 @@ nemo_SOURCES = \
 	nemo-list-view-private.h 		\
 	nemo-list-view.c			\
 	nemo-list-view.h 			\
-	nemo-location-bar.c         	\
-	nemo-location-bar.h			\
 	nemo-location-entry.c               \
 	nemo-location-entry.h               \
 	nemo-main.c 			\

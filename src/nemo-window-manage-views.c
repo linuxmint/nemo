@@ -31,7 +31,6 @@
 #include "nemo-actions.h"
 #include "nemo-application.h"
 #include "nemo-floating-bar.h"
-#include "nemo-location-bar.h"
 #include "nemo-pathbar.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"

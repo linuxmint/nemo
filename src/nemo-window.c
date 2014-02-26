@@ -33,7 +33,7 @@
 
 #include "nemo-actions.h"
 #include "nemo-bookmarks-window.h"
-#include "nemo-location-bar.h"
+#include "nemo-location-entry.h"
 #include "nemo-mime-actions.h"
 #include "nemo-notebook.h"
 #include "nemo-places-sidebar.h"
@@ -305,11 +305,11 @@ nemo_window_prompt_for_location (NemoWindow *window,
 	g_return_if_fail (NEMO_IS_WINDOW (window));
 
 	pane = window->details->active_pane;
-	nemo_window_pane_ensure_location_bar (pane);
+	nemo_window_pane_ensure_location_entry (pane);
 
 	if (initial) {
-		nemo_location_bar_set_location (NEMO_LOCATION_BAR (pane->location_bar),
-						    initial);
+	    nemo_location_entry_set_uri (NEMO_LOCATION_ENTRY (pane->location_entry),
+	                          initial);
 	}
 }
 

@@ -855,7 +855,9 @@ nemo_application_local_command_line (GApplication *application,
 	argc = g_strv_length (argv);
 
 	if (!g_option_context_parse (context, &argc, &argv, &error)) {
-		g_printerr ("Could not parse arguments: %s\n", error->message);
+		/* Translators: this is a fatal error quit message printed on the
+		 * command line */
+		g_printerr ("%s: %s\n", _("Could not parse arguments"), error->message);
 		g_error_free (error);
 
 		*exit_status = EXIT_FAILURE;
@@ -885,7 +887,9 @@ nemo_application_local_command_line (GApplication *application,
 	g_application_register (application, NULL, &error);
 
 	if (error != NULL) {
-		g_printerr ("Could not register the application: %s\n", error->message);
+		/* Translators: this is a fatal error quit message printed on the
+		 * command line */
+		g_printerr ("%s: %s\n", _("Could not register the application"), error->message);
 		g_error_free (error);
 
 		*exit_status = EXIT_FAILURE;

@@ -39,7 +39,7 @@
 #include "nemo-window-manage-views.h"
 #include "nemo-window-private.h"
 #include "nemo-desktop-window.h"
-#include "nemo-location-bar.h"
+#include "nemo-location-entry.h"
 #include "nemo-canvas-view.h"
 #include "nemo-list-view.h"
 #include "nemo-toolbar.h"
@@ -793,7 +793,7 @@ toggle_location_entry_setting (NemoWindow     *window,
     temp_toolbar_visible = pane->temporary_navigation_bar;
     default_toolbar_visible = g_settings_get_boolean (nemo_window_state,
                                                       NEMO_WINDOW_STATE_START_WITH_TOOLBAR);
-    already_has_focus = nemo_location_bar_has_focus (NEMO_LOCATION_BAR (pane->location_bar));
+    already_has_focus = gtk_widget_has_focus (GTK_WIDGET (pane->location_entry));
 
     grab_focus_only = from_accel_or_menu && (pane->last_focus_widget == NULL || !already_has_focus) && current_view;
 
@@ -808,7 +808,7 @@ toggle_location_entry_setting (NemoWindow     *window,
         gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (button_action), !current_view);
         g_signal_handlers_unblock_by_func (button_action, action_toggle_location_entry_callback, window);
     } else {
-        nemo_window_pane_ensure_location_bar (pane);
+        nemo_window_pane_ensure_location_entry (pane);
     }
 }
 
