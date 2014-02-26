@@ -714,7 +714,7 @@ nemo_location_entry_init (NemoLocationEntry *entry)
 	entry->details->completer = g_filename_completer_new ();
 	g_filename_completer_set_dirs_only (entry->details->completer, TRUE);
 
-	gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry), GTK_ENTRY_ICON_PRIMARY, "folder-symbolic");
+	gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry), GTK_ENTRY_ICON_PRIMARY, "folder");
 	gtk_entry_set_icon_activatable (GTK_ENTRY (entry), GTK_ENTRY_ICON_PRIMARY, FALSE);
 	targetlist = gtk_target_list_new (drag_types, G_N_ELEMENTS (drag_types));
 	gtk_entry_set_icon_drag_source (GTK_ENTRY (entry), GTK_ENTRY_ICON_PRIMARY, targetlist, GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
