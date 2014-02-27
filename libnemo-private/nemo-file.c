@@ -1704,13 +1704,16 @@ nemo_file_operation_free (NemoFileOperation *op)
 
 	if (op->undo_info != NULL) {
 		nemo_file_undo_manager_set_action (op->undo_info);
+		g_object_unref (op->undo_info);
 	}
 
 	g_free (op);
 }
 
 void
-nemo_file_operation_complete (NemoFileOperation *op, GFile *result_file, GError *error)
+nemo_file_operation_complete (NemoFileOperation *op,
+				  GFile *result_file,
+				  GError *error)
 {
 	/* Claim that something changed even if the operation failed.
 	 * This makes it easier for some clients who see the "reverting"
@@ -1721,6 +1724,11 @@ nemo_file_operation_complete (NemoFileOperation *op, GFile *result_file, GError 
 	if (op->callback) {
 		(* op->callback) (op->file, result_file, error, op->callback_data);
 	}
+
+	if (error != NULL) {
+		g_clear_object (&op->undo_info);
+	}
+
 	nemo_file_operation_free (op);
 }
 
