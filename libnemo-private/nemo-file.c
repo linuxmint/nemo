@@ -6526,28 +6526,28 @@ struct {
 static char *
 get_basic_type_for_mime_type (const char *mime_type)
 {
-    char *icon_name;
-    char *basic_type = NULL;
+	char *icon_name;
+	char *basic_type = NULL;
 
-    icon_name = g_content_type_get_generic_icon_name (mime_type);
-    if (icon_name != NULL) {
-        int i;
+	icon_name = g_content_type_get_generic_icon_name (mime_type);
+	if (icon_name != NULL) {
+		int i;
 
-        for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
-            if (strcmp (mime_type_map[i].icon_name, icon_name) == 0) {
-                basic_type = g_strdup (gettext (mime_type_map[i].display_name));
-                break;
-            }
+		for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
+			if (strcmp (mime_type_map[i].icon_name, icon_name) == 0) {
+				basic_type = g_strdup (gettext (mime_type_map[i].display_name));
+				break;
+			}
+		}
         }
-    }
 
-    if (basic_type == NULL) {
-        basic_type = g_strdup (_("Unknown"));
-    }
+	if (basic_type == NULL) {
+		basic_type = g_strdup (_("Unknown"));
+	}
 
-    g_free (icon_name);
+	g_free (icon_name);
 
-    return basic_type;
+	return basic_type;
 }
 
 #else
