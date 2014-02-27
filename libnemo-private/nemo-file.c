@@ -133,7 +133,7 @@ static NemoSpeedTradeoffValue show_directory_item_count;
 static GQuark attribute_name_q,
 	attribute_size_q,
 	attribute_type_q,
-    attribute_detailed_type_q,
+	attribute_detailed_type_q,
 	attribute_modification_date_q,
 	attribute_date_modified_q,
 	attribute_accessed_date_q,
@@ -161,7 +161,10 @@ static GQuark attribute_name_q,
 	attribute_free_space_q;
 
 static void     nemo_file_info_iface_init                (NemoFileInfoIface *iface);
-
+static char *   nemo_file_get_owner_as_string            (NemoFile          *file,
+							      gboolean               include_real_name);
+static char *   nemo_file_get_type_as_string             (NemoFile          *file);
+static char *   nemo_file_get_detailed_type_as_string    (NemoFile          *file);
 static gboolean update_info_and_name                         (NemoFile          *file,
 							      GFileInfo             *info);
 static const char * nemo_file_peek_display_name (NemoFile *file);
@@ -6270,7 +6273,7 @@ nemo_file_get_deep_directory_count_as_string (NemoFile *file)
  * 
  * @file: NemoFile representing the file in question.
  * @attribute_name: The name of the desired attribute. The currently supported
- * set includes "name", "type", "mime_type", "size", "deep_size", "deep_directory_count",
+ * set includes "name", "type", "detailed_type", "mime_type", "size", "deep_size", "deep_directory_count",
  * "deep_file_count", "deep_total_count", "date_modified", "date_changed", "date_accessed",
  * "date_permissions", "date_modified_full", "date_changed_full", "date_accessed_full",
  * "date_permissions_full", "owner", "group", "permissions", "octal_permissions", "uri", "where",
@@ -6291,9 +6294,9 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
 	if (attribute_q == attribute_type_q) {
 		return nemo_file_get_type_as_string (file);
 	}
-    if (attribute_q == attribute_detailed_type_q) {
-        return nemo_file_get_detailed_type_as_string (file);
-    }
+	if (attribute_q == attribute_detailed_type_q) {
+		return nemo_file_get_detailed_type_as_string (file);
+	}
 	if (attribute_q == attribute_mime_type_q) {
 		return nemo_file_get_mime_type (file);
 	}
@@ -6453,11 +6456,11 @@ nemo_file_get_string_attribute_with_default_q (NemoFile *file, GQuark attribute_
 		}
 		return g_strdup ("...");
 	}
-    if (attribute_q == attribute_type_q
-        || attribute_q == attribute_detailed_type_q
-        || attribute_q == attribute_mime_type_q) {
-        return g_strdup (_("Unknown"));
-    }
+	if (attribute_q == attribute_type_q
+	    || attribute_q == attribute_detailed_type_q
+	    || attribute_q == attribute_mime_type_q) {
+		return g_strdup (_("Unknown"));
+	}
 	if (attribute_q == attribute_trashed_on_q) {
 		/* If n/a */
 		return g_strdup ("");
@@ -6499,21 +6502,21 @@ struct {
         const char *icon_name;
         const char *display_name;
 } mime_type_map[] = {
-    { "application-x-executable", N_("Program") },
-    { "audio-x-generic", N_("Audio") },
-    { "font-x-generic", N_("Font") },
-    { "image-x-generic", N_("Image") },
-    { "package-x-generic", N_("Archive") },
-    { "text-html", N_("Markup") },
-    { "text-x-generic", N_("Text") },
-    { "text-x-generic-template", N_("Text") },
-    { "text-x-script", N_("Program") },
-    { "video-x-generic", N_("Video") },
-    { "x-office-address-book", N_("Contacts") },
-    { "x-office-calendar", N_("Calendar") },
-    { "x-office-document", N_("Document") },
-    { "x-office-presentation", N_("Presentation") },
-    { "x-office-spreadsheet", N_("Spreadsheet") },
+	{ "application-x-executable", N_("Program") },
+	{ "audio-x-generic", N_("Audio") },
+	{ "font-x-generic", N_("Font") },
+	{ "image-x-generic", N_("Image") },
+	{ "package-x-generic", N_("Archive") },
+	{ "text-html", N_("Markup") },
+	{ "text-x-generic", N_("Text") },
+	{ "text-x-generic-template", N_("Text") },
+	{ "text-x-script", N_("Program") },
+	{ "video-x-generic", N_("Video") },
+	{ "x-office-address-book", N_("Contacts") },
+	{ "x-office-calendar", N_("Calendar") },
+	{ "x-office-document", N_("Document") },
+	{ "x-office-presentation", N_("Presentation") },
+	{ "x-office-spreadsheet", N_("Spreadsheet") },
 };
 
 /* FIXME: remove this ifdef once we no longer need support for < 2.34 glib */
@@ -6552,79 +6555,78 @@ get_basic_type_for_mime_type (const char *mime_type)
 static char *
 get_basic_type_for_mime_type (const char *mime_type)
 {
-    char *basic_type = NULL;
+	char *basic_type = NULL;
 
-    GIcon *icon;
-    icon = g_content_type_get_icon (mime_type);
-    const gchar * const *icon_names = g_themed_icon_get_names (G_THEMED_ICON (icon));
+	GIcon *icon;
+	icon = g_content_type_get_icon (mime_type);
+	const gchar * const *icon_names = g_themed_icon_get_names (G_THEMED_ICON (icon));
 
-    if (icon_names != NULL) {
-        int i, j;
-        for (j = 0; j < g_strv_length ((gchar **) icon_names); j++) {
-            for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
-                if (strcmp (mime_type_map[i].icon_name, icon_names[j]) == 0) {
-                    basic_type = g_strdup (gettext (mime_type_map[i].display_name));
-                    break;
-                }
-            }
-            if (basic_type != NULL)
-                break;
-        }
-    }
+	if (icon_names != NULL) {
+		int i, j;
+		for (j = 0; j < g_strv_length ((gchar **) icon_names); j++) {
+			for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
+				if (strcmp (mime_type_map[i].icon_name, icon_names[j]) == 0) {
+					basic_type = g_strdup (gettext (mime_type_map[i].display_name));
+					break;
+				}
+			}
+			if (basic_type != NULL)
+				break;
+		}
+    	}
 
-    if (basic_type == NULL) {
-        basic_type = g_strdup (_("Unknown"));
-    }
+	if (basic_type == NULL) {
+		basic_type = g_strdup (_("Unknown"));
+	}
 
-    g_object_unref (icon);
+	g_object_unref (icon);
 
-    return basic_type;
+	return basic_type;
 }
 
 #endif
 
 static char *
 get_description (NemoFile     *file,
-                 gboolean      detailed)
+		gboolean      detailed)
 {
-    const char *mime_type;
+	const char *mime_type;
 
-    g_assert (NEMO_IS_FILE (file));
+	g_assert (NEMO_IS_FILE (file));
 
-    mime_type = eel_ref_str_peek (file->details->mime_type);
+	mime_type = eel_ref_str_peek (file->details->mime_type);
+	if (mime_type == NULL) {
+		return NULL;
+	}
 
-    if (mime_type == NULL) {
-        return NULL;
-    }
+	if (g_content_type_is_unknown (mime_type)) {
+		if (nemo_file_is_executable (file)) {
+			return g_strdup (_("Program"));
+		}
+		return g_strdup (_("Binary"));
+	}
 
-    if (g_content_type_is_unknown (mime_type)) {
-        if (nemo_file_is_executable (file)) {
-            return g_strdup (_("Program"));
-        }
-        return g_strdup (_("Binary"));
-    }
+	if (strcmp (mime_type, "inode/directory") == 0) {
+		return g_strdup (_("Folder"));
+	}
 
-    if (strcmp (mime_type, "inode/directory") == 0) {
-        return g_strdup (_("Folder"));
-     }
+	if (detailed) {
+		char *description;
 
-    if (detailed) {
-        char *description;
+		description = g_content_type_get_description (mime_type);
+		if (description != NULL) {
+			return description;
+		}
+	} else {
+		char *category;
 
-        description = g_content_type_get_description (mime_type);
-        if (description != NULL) {
-            return description;
-        }
-    } else {
-        char *category;
+		category = get_basic_type_for_mime_type (mime_type);
+		if (category != NULL) {
+			return category;
+		}
+	}
 
-        category = get_basic_type_for_mime_type (mime_type);
-        if (category != NULL) {
-            return category;
-        }
-    }
-
-    return g_strdup (mime_type);
+	return g_strdup (mime_type);
 }
 
 /* Takes ownership of string */
@@ -6636,7 +6638,7 @@ update_description_for_link (NemoFile *file, char *string)
 	if (nemo_file_is_symbolic_link (file)) {
 		g_assert (!nemo_file_is_broken_symbolic_link (file));
 		if (string == NULL) {
-			return g_strdup (_("link"));
+			return g_strdup (_("Link"));
 		}
 		/* Note to localizers: convert file type string for file 
 		 * (e.g. "folder", "plain text") to file type for symbolic link 
@@ -6650,7 +6652,7 @@ update_description_for_link (NemoFile *file, char *string)
 	return string;
 }
 
-char *
+static char *
 nemo_file_get_type_as_string (NemoFile *file)
 {
 	if (file == NULL) {
@@ -6658,21 +6660,21 @@ nemo_file_get_type_as_string (NemoFile *file)
 	}
 
 	if (nemo_file_is_broken_symbolic_link (file)) {
-		return g_strdup (_("link (broken)"));
-    }
-
-    return update_description_for_link (file, get_description (file, FALSE));
+		return g_strdup (_("Link (broken)"));
+	}
+	
+	return update_description_for_link (file, get_description (file, FALSE));
 }
 
-char *
+static char *
 nemo_file_get_detailed_type_as_string (NemoFile *file)
 {
-    if (file == NULL) {
-        return NULL;
-    }
+	if (file == NULL) {
+		return NULL;
+	}
 
-    if (nemo_file_is_broken_symbolic_link (file)) {
-        return g_strdup (_("link (broken)"));
+	if (nemo_file_is_broken_symbolic_link (file)) {
+		return g_strdup (_("Link (broken)"));
 	}
 	
 	return update_description_for_link (file, get_description (file, TRUE));
@@ -8509,7 +8511,7 @@ nemo_file_class_init (NemoFileClass *class)
 	attribute_name_q = g_quark_from_static_string ("name");
 	attribute_size_q = g_quark_from_static_string ("size");
 	attribute_type_q = g_quark_from_static_string ("type");
-    attribute_detailed_type_q = g_quark_from_static_string ("detailed_type");
+	attribute_detailed_type_q = g_quark_from_static_string ("detailed_type");
 	attribute_modification_date_q = g_quark_from_static_string ("modification_date");
 	attribute_date_modified_q = g_quark_from_static_string ("date_modified");
 	attribute_accessed_date_q = g_quark_from_static_string ("accessed_date");

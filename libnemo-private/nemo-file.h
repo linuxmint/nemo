@@ -498,11 +498,6 @@ void                    nemo_file_list_call_when_ready              (GList      
 									 gpointer                        callback_data);
 void                    nemo_file_list_cancel_call_when_ready       (NemoFileListHandle         *handle);
 
-char *   nemo_file_get_owner_as_string            (NemoFile          *file,
-                                                          gboolean           include_real_name);
-char *   nemo_file_get_type_as_string             (NemoFile          *file);
-char *   nemo_file_get_detailed_type_as_string    (NemoFile          *file);
-
 char *   nemo_file_get_date_as_string             (NemoFile *file, NemoDateType date_type);
 
 gchar *  nemo_file_construct_tooltip              (NemoFile *file, NemoFileTooltipFlags flags);
