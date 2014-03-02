@@ -106,24 +106,13 @@ sync_search_directory (NemoWindowSlot *slot)
 	nemo_directory_unref (directory);
 }
 
-static gboolean
-sync_search_location_cb (NemoWindow *window,
-			 GError *error,
-			 gpointer user_data)
-{
-	NemoWindowSlot *slot = user_data;
-	if (error == NULL) {
-		sync_search_directory (slot);
-	}
-	return (error == NULL);
-}
-
 static void
 create_new_search (NemoWindowSlot *slot)
 {
 	char *uri;
 	NemoDirectory *directory;
 	GFile *location;
+	NemoQuery *query;
 
 	uri = nemo_search_directory_generate_new_uri ();
 	location = g_file_new_for_uri (uri);
@@ -131,9 +120,13 @@ create_new_search (NemoWindowSlot *slot)
 	directory = nemo_directory_get (location);
 	g_assert (NEMO_IS_SEARCH_DIRECTORY (directory));
 
-	nemo_window_slot_open_location_full (slot, location, 0, NULL, sync_search_location_cb, slot);
+	query = nemo_query_editor_get_query (slot->query_editor);
+	nemo_search_directory_set_query (NEMO_SEARCH_DIRECTORY (directory), query);
+
+	nemo_window_slot_open_location (slot, location, 0);
 
 	nemo_directory_unref (directory);
+	g_object_unref (query);
 	g_object_unref (location);
 	g_free (uri);
 }

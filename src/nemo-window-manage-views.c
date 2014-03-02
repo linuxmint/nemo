@@ -1004,6 +1004,7 @@ create_content_view (NemoWindowSlot *slot,
 	GList *selection;
 	gboolean ret = TRUE;
 	GError *error = NULL;
+	NemoDirectory *old_directory, *new_directory;
 
 	window = nemo_window_slot_get_window (slot);
 
@@ -1035,6 +1036,21 @@ create_content_view (NemoWindowSlot *slot,
                 slot->new_content_view = view;
 		nemo_window_connect_content_view (window, slot->new_content_view);
         }
+
+	/* Forward search selection and state before loading the new model */
+	new_directory = nemo_directory_get (slot->pending_location);
+	old_directory = nemo_directory_get (slot->location);
+
+	if (NEMO_IS_SEARCH_DIRECTORY (new_directory) &&
+	    !NEMO_IS_SEARCH_DIRECTORY (old_directory)) {
+		nemo_search_directory_set_base_model (NEMO_SEARCH_DIRECTORY (new_directory), old_directory);
+	}
+
+	if (NEMO_IS_SEARCH_DIRECTORY (old_directory) &&
+	    !NEMO_IS_SEARCH_DIRECTORY (new_directory) &&
+	    slot->pending_selection == NULL) {
+		slot->pending_selection = nemo_view_get_selection (slot->content_view);
+	}
 
 	/* Actually load the pending location and selection: */
 
