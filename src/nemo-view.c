@@ -10708,12 +10708,6 @@ load_directory (NemoView *view,
 	}
 
 	old_directory = view->details->model;
-
-	if (NEMO_IS_SEARCH_DIRECTORY (directory) &&
-	    !NEMO_IS_SEARCH_DIRECTORY (old_directory)) {
-		nemo_search_directory_set_base_model (NEMO_SEARCH_DIRECTORY (directory), old_directory);
-	}
-
 	disconnect_model_handlers (view);
 
 	nemo_directory_ref (directory);

@@ -454,7 +454,11 @@ drag_motion_callback (GtkWidget *widget,
 
 	gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (widget),
 					   x, y, &path, &pos);
-	
+	if (pos == GTK_TREE_VIEW_DROP_BEFORE ||
+	    pos == GTK_TREE_VIEW_DROP_AFTER) {
+		gtk_tree_path_free (path);
+		path = NULL;
+	}
 
 	if (!dest->details->have_drag_data) {
 		res = get_drag_data (dest, context, time);
@@ -545,13 +549,18 @@ drag_leave_callback (GtkWidget *widget,
 static char *
 get_drop_target_uri_at_pos (NemoTreeViewDragDest *dest, int x, int y)
 {
-	char *drop_target;
+	char *drop_target = NULL;
 	GtkTreePath *path;
 	GtkTreePath *drop_path;
 	GtkTreeViewDropPosition pos;
 
-	gtk_tree_view_get_dest_row_at_pos (dest->details->tree_view, x, y, 
+	gtk_tree_view_get_dest_row_at_pos (dest->details->tree_view, x, y,
 					   &path, &pos);
+	if (pos == GTK_TREE_VIEW_DROP_BEFORE ||
+	    pos == GTK_TREE_VIEW_DROP_AFTER) {
+		gtk_tree_path_free (path);
+		path = NULL;
+	}
 
 	drop_path = get_drop_path (dest, path);
 
