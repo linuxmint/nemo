@@ -40,3 +40,5 @@ endif
 EXTRA_DIST = \
 	test.h \
 	$(NULL)
+
+-include $(top_srcdir)/git.mk

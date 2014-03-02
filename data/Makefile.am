@@ -56,6 +56,7 @@ EXTRA_DIST = $(nemodata_DATA) 	\
 	$(desktop_in_files)		\
 	$(service_in_files)		\
 	$(autostart_in_files)		\
+	$(searchprovider_DATA)		\
 	$(NULL)
 
 CLEANFILES = $(xml_files)	\
@@ -73,3 +74,5 @@ uninstall-hook:
 if ENABLE_UPDATE_MIMEDB
 	$(UPDATE_MIME_DATABASE) "$(DESTDIR)$(datadir)/mime"
 endif
+
+-include $(top_srcdir)/git.mk
