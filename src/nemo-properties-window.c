@@ -68,13 +68,17 @@
 #include <sys/mount.h>
 #endif
 
-#define USED_FILL_R  0.988235294
-#define USED_FILL_G  0.91372549
-#define USED_FILL_B  0.309803922
+#define UNKNOWN_FILL_R  0.5333333333333333
+#define UNKNOWN_FILL_G  0.5411764705882353
+#define UNKNOWN_FILL_B  0.5215686274509804
 
-#define FREE_FILL_R  0.447058824
-#define FREE_FILL_G  0.623529412
-#define FREE_FILL_B  0.811764706
+#define USED_FILL_R  0.4470588235294118
+#define USED_FILL_G  0.6235294117647059
+#define USED_FILL_B  0.8117647058823529
+
+#define FREE_FILL_R  0.9333333333333333
+#define FREE_FILL_G  0.9333333333333333
+#define FREE_FILL_B  0.9254901960784314
 
 
 #define PREVIEW_IMAGE_WIDTH 96
@@ -138,11 +142,14 @@ struct NemoPropertiesWindowDetails {
 
 	guint64 volume_capacity;
 	guint64 volume_free;
+	guint64 volume_used;
 
 	GdkRGBA used_color;
 	GdkRGBA free_color;
+	GdkRGBA unknown_color;
 	GdkRGBA used_stroke_color;
 	GdkRGBA free_stroke_color;
+	GdkRGBA unknown_stroke_color;
 };
 
 typedef enum {
@@ -2330,6 +2337,7 @@ append_directory_contents_fields (NemoPropertiesWindow *window,
 	value_field = attach_directory_contents_value_field (window, grid, GTK_WIDGET (title_field));
 
 	window->details->directory_contents_spinner = gtk_spinner_new ();
+
 	gtk_grid_attach_next_to (grid,
 				 window->details->directory_contents_spinner,
 				 GTK_WIDGET (value_field),
@@ -2672,6 +2680,46 @@ paint_free_legend (GtkWidget *widget,
 }
 
 static void
+paint_slice (cairo_t       *cr,
+	     double         x,
+	     double         y,
+	     double         radius,
+	     double         percent_start,
+	     double         percent_width,
+	     const GdkRGBA *fill,
+	     const GdkRGBA *stroke)
+{
+	double angle1;
+	double angle2;
+	gboolean full;
+	double offset = G_PI / 2.0;
+
+	if (percent_width < .01) {
+		return;
+	}
+
+	angle1 = (percent_start * 2 * G_PI) - offset;
+	angle2 = angle1 + (percent_width * 2 * G_PI);
+
+	full = (percent_width > .99);
+
+	if (!full) {
+		cairo_move_to (cr, x, y);
+	}
+	cairo_arc (cr, x, y, radius, angle1, angle2);
+
+	if (!full) {
+		cairo_line_to (cr, x, y);
+	}
+
+	gdk_cairo_set_source_rgba (cr, fill);
+	cairo_fill_preserve (cr);
+
+	gdk_cairo_set_source_rgba (cr, stroke);
+	cairo_stroke (cr);
+}
+
+static void
 paint_pie_chart (GtkWidget *widget,
 		 cairo_t *cr,
 		 gpointer data)
@@ -2679,8 +2727,8 @@ paint_pie_chart (GtkWidget *widget,
   	
   	NemoPropertiesWindow *window;
 	gint width, height;
-	double free, used;
-	double angle1, angle2, split, xc, yc, radius;
+	double free, used, reserved;
+	double xc, yc, radius;
 	GtkAllocation allocation;
 	GtkStyleContext *notebook_ctx;
 	GdkRGBA bg_color;
@@ -2689,7 +2737,7 @@ paint_pie_chart (GtkWidget *widget,
 	gtk_widget_get_allocation (widget, &allocation);
 
 	width  = allocation.width;
-  	height = allocation.height;
+	height = allocation.height;
 
 	notebook_ctx = gtk_widget_get_style_context (GTK_WIDGET (window->details->notebook));
 	gtk_style_context_get_background_color (notebook_ctx,
@@ -2702,11 +2750,9 @@ paint_pie_chart (GtkWidget *widget,
 	cairo_restore (cr);
 
 	free = (double)window->details->volume_free / (double)window->details->volume_capacity;
-	used =  1.0 - free;
+	used = (double)window->details->volume_used / (double)window->details->volume_capacity;
+	reserved = 1.0 - (used + free);
 
-	angle1 = free * 2 * G_PI;
-	angle2 = used * 2 * G_PI;
-	split = (2 * G_PI - angle1) * .5;
 	xc = width / 2;
 	yc = height / 2;
 
@@ -2715,50 +2761,17 @@ paint_pie_chart (GtkWidget *widget,
 	} else {
 		radius = height / 2 - 8;
 	}
-	
-	if (angle1 != 2 * G_PI && angle1 != 0) {
-		angle1 = angle1 + split;
-	}
-		
-	if (angle2 != 2 * G_PI && angle2 != 0) {
-		angle2 = angle2 - split;
-	}
-	
-	if (used > 0) {
-		if (free != 0) {
-			cairo_move_to (cr,xc,yc);
-		}
-		
-		cairo_arc (cr, xc, yc, radius, angle1, angle2);
-		
-		if (free != 0) {
-			cairo_line_to (cr,xc,yc);
-		}
-		
-		gdk_cairo_set_source_rgba (cr, &window->details->used_color);
-		cairo_fill_preserve (cr);
-		
-		gdk_cairo_set_source_rgba (cr, &window->details->used_stroke_color);
-		cairo_stroke (cr);
-	}
-	
-	if (free > 0) {
-		if (used != 0) {
-			cairo_move_to (cr,xc,yc);
-		}
-	
-		cairo_arc_negative (cr, xc, yc, radius, angle1, angle2);
-	
-		if (used != 0) {
-			cairo_line_to (cr,xc,yc);
-		}
 
-		gdk_cairo_set_source_rgba (cr, &window->details->free_color);
-		cairo_fill_preserve(cr);
-
-		gdk_cairo_set_source_rgba (cr, &window->details->free_stroke_color);
-		cairo_stroke (cr);
-	}
+	paint_slice (cr, xc, yc, radius,
+		     0, free,
+		     &window->details->free_color, &window->details->free_stroke_color);
+	paint_slice (cr, xc, yc, radius,
+		     free + used, reserved,
+		     &window->details->unknown_color, &window->details->unknown_stroke_color);
+	/* paint the used last so its slice strokes are on top */
+	paint_slice (cr, xc, yc, radius,
+		     free, used,
+		     &window->details->used_color, &window->details->used_stroke_color);
 }
 
 
@@ -2958,10 +2971,15 @@ create_pie_widget (NemoPropertiesWindow *window)
 	GtkWidget 		*pie_canvas;
 	GtkWidget 		*used_canvas;
 	GtkWidget 		*used_label;
+	GtkWidget 		*used_type_label;
 	GtkWidget 		*free_canvas;
 	GtkWidget 		*free_label;
+	GtkWidget 		*free_type_label;
 	GtkWidget 		*capacity_label;
+	GtkWidget 		*capacity_value_label;
 	GtkWidget 		*fstype_label;
+	GtkWidget 		*fstype_value_label;
+	GtkWidget 		*spacer_label;
 	gchar			*capacity;
 	gchar 			*used;
 	gchar 			*free;
@@ -2971,20 +2989,28 @@ create_pie_widget (NemoPropertiesWindow *window)
 	GFileInfo *info;
 	int prefix;
 	
-	prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+        prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
 	capacity = g_format_size_full (window->details->volume_capacity, prefix);
 	free 	 = g_format_size_full (window->details->volume_free, prefix);
-	used 	 = g_format_size_full (window->details->volume_capacity - window->details->volume_free, prefix);	
+	used 	 = g_format_size_full (window->details->volume_used, prefix);
 	
 	file = get_original_file (window);
 	
 	uri = nemo_file_get_activation_uri (file);
 	
 	grid = GTK_GRID (gtk_grid_new ());
+	gtk_widget_set_hexpand (GTK_WIDGET (grid), FALSE);
 	gtk_container_set_border_width (GTK_CONTAINER (grid), 5);
-	gtk_grid_set_column_spacing (GTK_GRID (grid), 5);
+	gtk_grid_set_row_spacing (GTK_GRID (grid), 10);
+	gtk_grid_set_column_spacing (GTK_GRID (grid), 10);
 	style = gtk_widget_get_style_context (GTK_WIDGET (grid));
 
+	if (!gtk_style_context_lookup_color (style, "chart_rgba_0", &window->details->unknown_color)) {
+		window->details->unknown_color.red = UNKNOWN_FILL_R;
+		window->details->unknown_color.green = UNKNOWN_FILL_G;
+		window->details->unknown_color.blue = UNKNOWN_FILL_B;
+		window->details->unknown_color.alpha = 1;
+	}
 	if (!gtk_style_context_lookup_color (style, "chart_rgba_1", &window->details->used_color)) {
 		window->details->used_color.red = USED_FILL_R;
 		window->details->used_color.green = USED_FILL_G;
@@ -3001,26 +3027,30 @@ create_pie_widget (NemoPropertiesWindow *window)
 
 	_pie_style_shade (&window->details->used_color, &window->details->used_stroke_color, 0.7);
 	_pie_style_shade (&window->details->free_color, &window->details->free_stroke_color, 0.7);
-	
+	_pie_style_shade (&window->details->unknown_color, &window->details->unknown_stroke_color, 0.7);
+
 	pie_canvas = gtk_drawing_area_new ();
 	gtk_widget_set_size_request (pie_canvas, 200, 200);
 
 	used_canvas = gtk_drawing_area_new ();
-	gtk_widget_set_valign (used_canvas, GTK_ALIGN_CENTER);
-	gtk_widget_set_halign (used_canvas, GTK_ALIGN_CENTER);
 	gtk_widget_set_size_request (used_canvas, 20, 20);
+	used_label = gtk_label_new (used);
 	/* Translators: "used" refers to the capacity of the filesystem */
-	used_label = gtk_label_new (g_strconcat (used, " ", _("used"), NULL));
+	used_type_label = gtk_label_new (_("used"));
 
 	free_canvas = gtk_drawing_area_new ();
-	gtk_widget_set_valign (free_canvas, GTK_ALIGN_CENTER);
-	gtk_widget_set_halign (free_canvas, GTK_ALIGN_CENTER);
 	gtk_widget_set_size_request (free_canvas, 20, 20);
+	free_label = gtk_label_new (free);
 	/* Translators: "free" refers to the capacity of the filesystem */
-	free_label = gtk_label_new (g_strconcat (free, " ", _("free"), NULL));  
+	free_type_label = gtk_label_new (_("free"));
 
-	capacity_label = gtk_label_new (g_strconcat (_("Total capacity:"), " ", capacity, NULL));
-	fstype_label = gtk_label_new (NULL);
+	capacity_label = gtk_label_new (_("Total capacity:"));
+	capacity_value_label = gtk_label_new (capacity);
+
+	fstype_label = gtk_label_new (_("Filesystem type:"));
+	fstype_value_label = gtk_label_new (NULL);
+
+	spacer_label = gtk_label_new ("");
 
 	location = g_file_new_for_uri (uri);
 	info = g_file_query_filesystem_info (location, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE,
@@ -3028,9 +3058,9 @@ create_pie_widget (NemoPropertiesWindow *window)
 	if (info) {
 		fs_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
 		if (fs_type != NULL) {
-			gtk_label_set_text (GTK_LABEL (fstype_label), g_strconcat (_("Filesystem type:"), " ", fs_type, NULL));
+			gtk_label_set_text (GTK_LABEL (fstype_value_label), fs_type);
 		}
-		
+
 		g_object_unref (info);
 	}
 	g_object_unref (location);
@@ -3041,23 +3071,57 @@ create_pie_widget (NemoPropertiesWindow *window)
 	g_free (free);
 
 	gtk_container_add_with_properties (GTK_CONTAINER (grid), pie_canvas,
-					   "height", 4,
+					   "height", 5,
 					   NULL);
-	gtk_grid_attach_next_to (grid, used_canvas, pie_canvas,
+
+	gtk_widget_set_vexpand (spacer_label, TRUE);
+	gtk_grid_attach_next_to (grid, spacer_label, pie_canvas,
 				 GTK_POS_RIGHT, 1, 1);
+
+	gtk_widget_set_halign (used_canvas, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (used_canvas, FALSE);
+	gtk_grid_attach_next_to (grid, used_canvas, spacer_label,
+				 GTK_POS_BOTTOM, 1, 1);
+	gtk_widget_set_halign (used_label, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (used_label, FALSE);
 	gtk_grid_attach_next_to (grid, used_label, used_canvas,
 				 GTK_POS_RIGHT, 1, 1);
-
-	gtk_grid_attach_next_to (grid, free_canvas, used_canvas,
-				 GTK_POS_BOTTOM, 1, 1);
-	gtk_grid_attach_next_to (grid, free_label, free_canvas,
+	gtk_widget_set_halign (used_type_label, GTK_ALIGN_START);
+	gtk_widget_set_vexpand (used_type_label, FALSE);
+	gtk_grid_attach_next_to (grid, used_type_label, used_label,
 				 GTK_POS_RIGHT, 1, 1);
 
+	gtk_widget_set_halign (free_canvas, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (free_canvas, FALSE);
+	gtk_grid_attach_next_to (grid, free_canvas, used_canvas,
+				 GTK_POS_BOTTOM, 1, 1);
+	gtk_widget_set_halign (free_label, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (free_label, FALSE);
+	gtk_grid_attach_next_to (grid, free_label, free_canvas,
+				 GTK_POS_RIGHT, 1, 1);
+	gtk_widget_set_halign (free_type_label, GTK_ALIGN_START);
+	gtk_widget_set_vexpand (free_type_label, FALSE);
+	gtk_grid_attach_next_to (grid, free_type_label, free_label,
+				 GTK_POS_RIGHT, 1, 1);
+
+	gtk_widget_set_halign (capacity_label, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (capacity_label, FALSE);
 	gtk_grid_attach_next_to (grid, capacity_label, free_canvas,
-				 GTK_POS_BOTTOM, 2, 1);
+				 GTK_POS_BOTTOM, 1, 1);
+	gtk_widget_set_halign (capacity_value_label, GTK_ALIGN_START);
+	gtk_widget_set_vexpand (capacity_value_label, FALSE);
+	gtk_grid_attach_next_to (grid, capacity_value_label, capacity_label,
+				 GTK_POS_RIGHT, 1, 1);
+
+	gtk_widget_set_halign (fstype_label, GTK_ALIGN_END);
+	gtk_widget_set_vexpand (fstype_label, FALSE);
 	gtk_grid_attach_next_to (grid, fstype_label, capacity_label,
-				 GTK_POS_BOTTOM, 2, 1);
-	
+				 GTK_POS_BOTTOM, 1, 1);
+	gtk_widget_set_halign (fstype_value_label, GTK_ALIGN_START);
+	gtk_widget_set_vexpand (fstype_value_label, FALSE);
+	gtk_grid_attach_next_to (grid, fstype_value_label, fstype_label,
+				 GTK_POS_RIGHT, 1, 1);
+
 	g_signal_connect (pie_canvas, "draw",
 			  G_CALLBACK (paint_pie_chart), window);
 	g_signal_connect (used_canvas, "draw",
@@ -3076,9 +3140,9 @@ create_volume_usage_widget (NemoPropertiesWindow *window)
 	NemoFile *file;
 	GFile *location;
 	GFileInfo *info;
-	
+
 	file = get_original_file (window);
-	
+
 	uri = nemo_file_get_activation_uri (file);
 
 	location = g_file_new_for_uri (uri);
@@ -3087,13 +3151,19 @@ create_volume_usage_widget (NemoPropertiesWindow *window)
 	if (info) {
 		window->details->volume_capacity = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
 		window->details->volume_free = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+		if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED)) {
+			window->details->volume_used = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
+		} else {
+			window->details->volume_used = window->details->volume_capacity - window->details->volume_free;
+		}
 
 		g_object_unref (info);
 	} else {
-		window->details->volume_capacity = 0;		
-		window->details->volume_free = 0;		
+		window->details->volume_capacity = 0;
+		window->details->volume_free = 0;
+		window->details->volume_used = 0;
 	}
-	
+
 	g_object_unref (location);
 
 	if (window->details->volume_capacity > 0) {
@@ -3237,7 +3307,7 @@ create_basic_page (NemoPropertiesWindow *window)
 		if (volume_usage != NULL) {
 			gtk_container_add_with_properties (GTK_CONTAINER (grid),
 							   volume_usage,
-							   "width", 2,
+							   "width", 3,
 							   NULL);
 		}
 	}
