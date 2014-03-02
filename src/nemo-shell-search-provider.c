@@ -347,7 +347,10 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
 
     for (m = volumes; m != NULL; m = m->next) {
       volume = m->data;
-      mounts_to_check = g_list_prepend (mounts_to_check, g_volume_get_mount (volume));
+      mount = g_volume_get_mount (volume);
+      if (mount != NULL) {
+        mounts_to_check = g_list_prepend (mounts_to_check, mount);
+      }
     }
 
     g_list_free_full (volumes, g_object_unref);
@@ -360,8 +363,12 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
     volume = l->data;
     drive = g_volume_get_drive (volume);
 
-    if (drive == NULL)
-      mounts_to_check = g_list_prepend (mounts_to_check, g_volume_get_mount (volume));
+    if (drive == NULL) {
+      mount = g_volume_get_mount (volume);
+      if (mount != NULL) {
+        mounts_to_check = g_list_prepend (mounts_to_check, mount);
+      }
+    }
     g_clear_object (&drive);
   }
   g_list_free_full (volumes, g_object_unref);
