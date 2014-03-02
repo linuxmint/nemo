@@ -30,7 +30,6 @@
 
 #include "nemo-actions.h"
 #include "nemo-application.h"
-#include "nemo-floating-bar.h"
 #include "nemo-pathbar.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
@@ -1225,62 +1224,6 @@ nemo_window_report_location_change (NemoWindow *window)
 	}
 }
 
-static void
-real_setup_loading_floating_bar (NemoWindowSlot *slot)
-{
-	gboolean disable_chrome;
-
-	g_object_get (nemo_window_slot_get_window (slot),
-		      "disable-chrome", &disable_chrome,
-		      NULL);
-
-	if (disable_chrome) {
-		gtk_widget_hide (slot->floating_bar);
-		return;
-	}
-
-	nemo_floating_bar_set_primary_label (NEMO_FLOATING_BAR (slot->floating_bar),
-						 NEMO_IS_SEARCH_DIRECTORY (nemo_view_get_model (slot->content_view)) ?
-						 _("Searching...") : _("Loading..."));
-	nemo_floating_bar_set_show_spinner (NEMO_FLOATING_BAR (slot->floating_bar),
-						TRUE);
-	nemo_floating_bar_add_action (NEMO_FLOATING_BAR (slot->floating_bar),
-					  GTK_STOCK_STOP,
-					  NEMO_FLOATING_BAR_ACTION_ID_STOP);
-
-	gtk_widget_set_halign (slot->floating_bar, GTK_ALIGN_END);
-	gtk_widget_show (slot->floating_bar);
-}
-
-static gboolean
-setup_loading_floating_bar_timeout_cb (gpointer user_data)
-{
-	NemoWindowSlot *slot = user_data;
-
-	slot->loading_timeout_id = 0;
-	real_setup_loading_floating_bar (slot);
-
-	return FALSE;
-}
-
-static void
-setup_loading_floating_bar (NemoWindowSlot *slot)
-{
-	/* setup loading overlay */
-	if (slot->set_status_timeout_id != 0) {
-		g_source_remove (slot->set_status_timeout_id);
-		slot->set_status_timeout_id = 0;
-	}
-
-	if (slot->loading_timeout_id != 0) {
-		g_source_remove (slot->loading_timeout_id);
-		slot->loading_timeout_id = 0;
-	}
-
-	slot->loading_timeout_id =
-		g_timeout_add (500, setup_loading_floating_bar_timeout_cb, slot);
-}
-
 /* This is called when we have decided we can actually change to the new view/location situation. */
 static void
 location_has_really_changed (NemoWindowSlot *slot)
@@ -1320,8 +1263,6 @@ location_has_really_changed (NemoWindowSlot *slot)
 
 		g_object_unref (location_copy);
 	}
-
-	setup_loading_floating_bar (slot);
 }
 
 static void
@@ -1613,18 +1554,6 @@ nemo_window_report_load_complete (NemoWindow *window,
 }
 
 static void
-remove_loading_floating_bar (NemoWindowSlot *slot)
-{
-	if (slot->loading_timeout_id != 0) {
-		g_source_remove (slot->loading_timeout_id);
-		slot->loading_timeout_id = 0;
-	}
-
-	gtk_widget_hide (slot->floating_bar);
-	nemo_floating_bar_cleanup_actions (NEMO_FLOATING_BAR (slot->floating_bar));
-}
-
-static void
 end_location_change (NemoWindowSlot *slot)
 {
 	char *uri;
@@ -1636,7 +1565,6 @@ end_location_change (NemoWindowSlot *slot)
 	}
 
 	nemo_window_slot_set_allow_stop (slot, FALSE);
-	remove_loading_floating_bar (slot);
 
         /* Now we can free pending_scroll_to, since the load_complete
          * callback already has been emitted.

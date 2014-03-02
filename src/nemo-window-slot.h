@@ -68,13 +68,6 @@ struct NemoWindowSlot {
  	 */
 	GtkWidget *extra_location_widgets;
 
-	GtkWidget *view_overlay;
-	GtkWidget *floating_bar;
-    GtkWidget *cache_bar;
-
-	guint set_status_timeout_id;
-	guint loading_timeout_id;
-
 	NemoView *content_view;
 	NemoView *new_content_view;
 

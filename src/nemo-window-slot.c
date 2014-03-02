@@ -359,20 +359,20 @@ nemo_window_slot_constructed (GObject *object)
 	g_object_add_weak_pointer (G_OBJECT (slot->query_editor),
 				   (gpointer *) &slot->query_editor);
 
-	slot->view_overlay = gtk_overlay_new ();
-	gtk_widget_add_events (slot->view_overlay,
+	slot->details->view_overlay = gtk_overlay_new ();
+	gtk_widget_add_events (slot->details->view_overlay,
 			       GDK_ENTER_NOTIFY_MASK |
 			       GDK_LEAVE_NOTIFY_MASK);
-	gtk_box_pack_start (GTK_BOX (slot), slot->view_overlay, TRUE, TRUE, 0);
-	gtk_widget_show (slot->view_overlay);
+	gtk_box_pack_start (GTK_BOX (slot), slot->details->view_overlay, TRUE, TRUE, 0);
+	gtk_widget_show (slot->details->view_overlay);
 
-	slot->floating_bar = nemo_floating_bar_new (NULL, NULL, FALSE);
-	gtk_widget_set_halign (slot->floating_bar, GTK_ALIGN_END);
-	gtk_widget_set_valign (slot->floating_bar, GTK_ALIGN_END);
-	gtk_overlay_add_overlay (GTK_OVERLAY (slot->view_overlay),
-				 slot->floating_bar);
+	slot->details->floating_bar = nemo_floating_bar_new (NULL, NULL, FALSE);
+	gtk_widget_set_halign (slot->details->floating_bar, GTK_ALIGN_END);
+	gtk_widget_set_valign (slot->details->floating_bar, GTK_ALIGN_END);
+	gtk_overlay_add_overlay (GTK_OVERLAY (slot->details->view_overlay),
+				 slot->details->floating_bar);
 
-	g_signal_connect (slot->floating_bar, "action",
+	g_signal_connect (slot->details->floating_bar, "action",
 			  G_CALLBACK (floating_bar_action_cb), slot);
 
 	slot->title = g_strdup (_("Loading..."));
@@ -386,6 +386,18 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 }
 
 static void
+remove_loading_floating_bar (NemoWindowSlot *slot)
+{
+	if (slot->details->loading_timeout_id != 0) {
+		g_source_remove (slot->details->loading_timeout_id);
+		slot->details->loading_timeout_id = 0;
+	}
+
+	gtk_widget_hide (slot->details->floating_bar);
+	nemo_floating_bar_cleanup_actions (NEMO_FLOATING_BAR (slot->details->floating_bar));
+}
+
+static void
 view_end_loading_cb (NemoView       *view,
 		     gboolean            all_files_seen,
 		     NemoWindowSlot *slot)
@@ -394,6 +406,72 @@ view_end_loading_cb (NemoView       *view,
 		nemo_window_slot_queue_reload (slot);
 		slot->needs_reload = FALSE;
 	}
+
+	remove_loading_floating_bar (slot);
+}
+
+
+static void
+real_setup_loading_floating_bar (NemoWindowSlot *slot)
+{
+	gboolean disable_chrome;
+
+	g_object_get (nemo_window_slot_get_window (slot),
+		      "disable-chrome", &disable_chrome,
+		      NULL);
+
+	if (disable_chrome) {
+		gtk_widget_hide (slot->details->floating_bar);
+		return;
+	}
+
+	nemo_floating_bar_set_primary_label (NEMO_FLOATING_BAR (slot->details->floating_bar),
+						 NEMO_IS_SEARCH_DIRECTORY (nemo_view_get_model (slot->content_view)) ?
+						 _("Searching...") : _("Loading..."));
+	nemo_floating_bar_set_show_spinner (NEMO_FLOATING_BAR (slot->details->floating_bar),
+						TRUE);
+	nemo_floating_bar_add_action (NEMO_FLOATING_BAR (slot->details->floating_bar),
+					  GTK_STOCK_STOP,
+					  NEMO_FLOATING_BAR_ACTION_ID_STOP);
+
+	gtk_widget_set_halign (slot->details->floating_bar, GTK_ALIGN_END);
+	gtk_widget_show (slot->details->floating_bar);
+}
+
+static gboolean
+setup_loading_floating_bar_timeout_cb (gpointer user_data)
+{
+	NemoWindowSlot *slot = user_data;
+
+	slot->details->loading_timeout_id = 0;
+	real_setup_loading_floating_bar (slot);
+
+	return FALSE;
+}
+
+static void
+setup_loading_floating_bar (NemoWindowSlot *slot)
+{
+	/* setup loading overlay */
+	if (slot->details->set_status_timeout_id != 0) {
+		g_source_remove (slot->details->set_status_timeout_id);
+		slot->details->set_status_timeout_id = 0;
+	}
+
+	if (slot->details->loading_timeout_id != 0) {
+		g_source_remove (slot->details->loading_timeout_id);
+		slot->details->loading_timeout_id = 0;
+	}
+
+	slot->details->loading_timeout_id =
+		g_timeout_add (500, setup_loading_floating_bar_timeout_cb, slot);
+}
+
+static void
+view_begin_loading_cb (NemoView       *view,
+		       NemoWindowSlot *slot)
+{
+	setup_loading_floating_bar (slot);
 }
 
 static void
@@ -422,14 +500,14 @@ nemo_window_slot_dispose (GObject *object)
 		slot->new_content_view = NULL;
 	}
 
-	if (slot->set_status_timeout_id != 0) {
-		g_source_remove (slot->set_status_timeout_id);
-		slot->set_status_timeout_id = 0;
+	if (slot->details->set_status_timeout_id != 0) {
+		g_source_remove (slot->details->set_status_timeout_id);
+		slot->details->set_status_timeout_id = 0;
 	}
 
-	if (slot->loading_timeout_id != 0) {
-		g_source_remove (slot->loading_timeout_id);
-		slot->loading_timeout_id = 0;
+	if (slot->details->loading_timeout_id != 0) {
+		g_source_remove (slot->details->loading_timeout_id);
+		slot->details->loading_timeout_id = 0;
 	}
 
 	nemo_window_slot_set_viewed_file (slot, NULL);
@@ -636,6 +714,7 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 	if (slot->content_view != NULL) {
 		/* disconnect old view */
 		g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (view_end_loading_cb), slot);
+		g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (view_begin_loading_cb), slot);
 
 		nemo_window_disconnect_content_view (window, slot->content_view);
 
@@ -647,12 +726,13 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 
 	if (new_view != NULL) {
 		widget = GTK_WIDGET (new_view);
-		gtk_container_add (GTK_CONTAINER (slot->view_overlay), widget);
+		gtk_container_add (GTK_CONTAINER (slot->details->view_overlay), widget);
 		gtk_widget_show (widget);
 
 		slot->content_view = new_view;
 		g_object_ref (slot->content_view);
 
+		g_signal_connect (new_view, "begin_loading", G_CALLBACK (view_begin_loading_cb), slot);
 		g_signal_connect (new_view, "end_loading", G_CALLBACK (view_end_loading_cb), slot);
 
 		/* connect new view */
@@ -678,13 +758,12 @@ static void
 real_slot_set_short_status (NemoWindowSlot *slot,
 			    const gchar *primary_status,
 			    const gchar *detail_status)
-{
-	
+{	
 	gboolean show_statusbar;
 	gboolean disable_chrome;
 
-	nemo_floating_bar_cleanup_actions (NEMO_FLOATING_BAR (slot->floating_bar));
-	nemo_floating_bar_set_show_spinner (NEMO_FLOATING_BAR (slot->floating_bar),
+	nemo_floating_bar_cleanup_actions (NEMO_FLOATING_BAR (slot->details->floating_bar));
+	nemo_floating_bar_set_show_spinner (NEMO_FLOATING_BAR (slot->details->floating_bar),
 						FALSE);
 
 	show_statusbar = g_settings_get_boolean (nemo_window_state,
@@ -695,13 +774,13 @@ real_slot_set_short_status (NemoWindowSlot *slot,
 		      NULL);
 
 	if ((primary_status == NULL && detail_status == NULL) || show_statusbar || disable_chrome) {
-		gtk_widget_hide (slot->floating_bar);
+		gtk_widget_hide (slot->details->floating_bar);
 		return;
 	}
 
-	nemo_floating_bar_set_labels (NEMO_FLOATING_BAR (slot->floating_bar),
+	nemo_floating_bar_set_labels (NEMO_FLOATING_BAR (slot->details->floating_bar),
 					  primary_status, detail_status);
-	gtk_widget_show (slot->floating_bar);
+	gtk_widget_show (slot->details->floating_bar);
 }
 
 typedef struct {
@@ -726,7 +805,7 @@ set_status_timeout_cb (gpointer data)
 {
 	SetStatusData *status_data = data;
 
-	status_data->slot->set_status_timeout_id = 0;
+	status_data->slot->details->set_status_timeout_id = 0;
 	real_slot_set_short_status (status_data->slot,
 				    status_data->primary_status,
 				    status_data->detail_status);
@@ -743,9 +822,9 @@ set_floating_bar_status (NemoWindowSlot *slot,
 	gint double_click_time;
 	SetStatusData *status_data;
 
-	if (slot->set_status_timeout_id != 0) {
-		g_source_remove (slot->set_status_timeout_id);
-		slot->set_status_timeout_id = 0;
+	if (slot->details->set_status_timeout_id != 0) {
+		g_source_remove (slot->details->set_status_timeout_id);
+		slot->details->set_status_timeout_id = 0;
 	}
 
 	settings = gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (slot->content_view)));
@@ -762,7 +841,7 @@ set_floating_bar_status (NemoWindowSlot *slot,
 	 * the status seems to be a good approximation of not setting it
 	 * too often and not delaying the statusbar too much.
 	 */
-	slot->set_status_timeout_id =
+	slot->details->set_status_timeout_id =
 		g_timeout_add_full (G_PRIORITY_DEFAULT,
 				    (guint) (double_click_time / 2),
 				    set_status_timeout_cb,
