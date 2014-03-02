@@ -315,6 +315,9 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
     bookmark = nemo_bookmark_list_item_at (self->bookmarks, idx);
 
     name = nemo_bookmark_get_name (bookmark);
+    if (name == NULL)
+      continue;
+
     prepared = prepare_string_for_compare (name);
 
     found = TRUE;
@@ -393,6 +396,9 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
     mount = l->data;
 
     query_text = g_mount_get_name (mount);
+    if (query_text == NULL)
+      continue;
+
     prepared = prepare_string_for_compare (query_text);
     g_free (query_text);
 

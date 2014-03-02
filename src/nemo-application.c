@@ -1326,6 +1326,8 @@ nemo_application_startup (GApplication *app)
 	 */
 	G_APPLICATION_CLASS (nemo_application_parent_class)->startup (app);
 
+	gtk_window_set_default_icon_name ("system-file-manager");
+
 	/* initialize the previewer singleton */
 	//nemo_previewer_get_singleton ();
 
