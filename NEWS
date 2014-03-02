@@ -1,3 +1,27 @@
+Nemo merged with changes in Nautilus 3.5.92.
+
+Changes:
+* Add a Shell search results provider
+* Add a NautilusDirectory-based search engine implementation for network
+  directories
+* Improve performance and stability of the search engine
+* Change the Type column to only show basic type information
+* Preserve view selection when exiting search
+* Use an icon for the location entry
+* Fix wrong order of files when searching in canvas view
+* Fix inability to drop on current directory in list view
+* Fix crash when trying to undo failed directory creations
+* Fix positioning of detached tabs
+* Fix symlink creation for remote shares
+* Fix duplicate entries in the sidebar
+* Fix inability to clear entry in Connect to Server dialog
+* Fix view selector flashing while switching views
+* Plug a number of memory leaks
+* Tweak the color scheme for the pie chart in mount properties
+
+Rejected:
+* Remove the SELinux context column for list view
+
 Nemo merged with changes in Nautilus 3.5.91.
 
 Changes:
