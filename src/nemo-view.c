@@ -3007,11 +3007,7 @@ nemo_view_destroy (GtkWidget *object)
     }
     g_clear_object (&view->details->action_manager);
 
-	nemo_view_unmerge_menus (view);
-	
-	/* We don't own the window, so no unref */
-	view->details->slot = NULL;
-	
+	nemo_view_unmerge_menus (view);	
 	nemo_view_stop_loading (view);
 
 	for (node = view->details->scripts_directory_list; node != NULL; node = next) {
@@ -3056,6 +3052,9 @@ nemo_view_destroy (GtkWidget *object)
 		nemo_file_unref (view->details->directory_as_file);
 		view->details->directory_as_file = NULL;
 	}
+
+	/* We don't own the slot, so no unref */
+	view->details->slot = NULL;
 
     g_signal_handlers_disconnect_by_func (nemo_plugin_preferences, G_CALLBACK (plugin_prefs_changed), view);
 
