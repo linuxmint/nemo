@@ -1,3 +1,12 @@
+Nemo merged with changes in Nautilus 3.6.0.
+
+Changes:
+* Fix toggling of hidden files visibility in searches
+* Fix base directory appearing in search results
+* Fix missing search results under some locales
+* Fix unmounted mounts showing in shell search provider results
+* Fix a crasher when a window is closed while the view is loading
+
 Nemo merged with changes in Nautilus 3.5.92.
 
 Changes:
