@@ -4740,7 +4740,7 @@ nemo_file_fit_date_as_string (NemoFile *file,
 			 * shortest format
 			 */
 			
-			date_string = g_date_time_format (date_time, format);
+			date_string = g_date_time_format (date_time, _(format));
 
 			if (truncate_callback == NULL) {
 				result = date_string;
