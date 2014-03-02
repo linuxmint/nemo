@@ -255,7 +255,7 @@ nemo_search_engine_tracker_start (NemoSearchProvider *provider)
 	g_string_append (sparql, " . FILTER (");
 	
 	if (location_uri)  {
-		g_string_append_printf (sparql, " fn:starts-with(nie:url(?urn), '%s') && ",
+		g_string_append_printf (sparql, " tracker:uri-is-descendant('%s', nie:url(?urn)) && ",
 					location_uri);
 	}
 
