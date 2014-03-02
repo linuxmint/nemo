@@ -846,6 +846,26 @@ nemo_search_directory_set_base_model (NemoSearchDirectory *search,
 		return;
 	}
 
+	if (search->details->query != NULL) {
+		gchar *uri;
+		GFile *query_location, *model_location;
+		gboolean is_equal;
+
+		uri = nemo_query_get_location (search->details->query);
+		query_location = g_file_new_for_uri (uri);
+		model_location = nemo_directory_get_location (base_model);
+
+		is_equal = g_file_equal (model_location, query_location);
+
+		g_object_unref (model_location);
+		g_object_unref (query_location);
+		g_free (uri);
+
+		if (!is_equal) {
+			return;
+		}
+	}
+
 	clear_base_model (search);
 	search->details->base_model = nemo_directory_ref (base_model);
 
