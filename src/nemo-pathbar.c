@@ -1218,7 +1218,7 @@ nemo_path_bar_scroll_up (NemoPathBar *path_bar)
 			path_bar->priv->first_scrolled_button = list;
 	  		return;
 		}
-        }
+	}
 }
 
 static gboolean
@@ -1971,8 +1971,6 @@ nemo_path_bar_update_path (NemoPathBar *path_bar,
 		if (parent_file != NULL &&
 		    button_data->fake_root) {
 			fake_root = new_buttons;
-                        nemo_file_unref (parent_file);
-                        break;
 		}
 		
 		file = parent_file;
