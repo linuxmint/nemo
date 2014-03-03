@@ -212,6 +212,15 @@ query_callback (GObject      *object,
 	cursor_next (tracker, cursor);
 }
 
+static gboolean
+search_finished_idle (gpointer user_data)
+{
+	NautilusSearchProvider *provider = user_data;
+	nautilus_search_provider_finished (provider);
+
+	return FALSE;
+}
+
 static void
 nemo_search_engine_tracker_start (NemoSearchProvider *provider)
 {
@@ -227,7 +236,8 @@ nemo_search_engine_tracker_start (NemoSearchProvider *provider)
 		return;
 	}
 
-	if (tracker->details->query == NULL) {
+	if (tracker->details->connection == NULL) {
+		g_idle_add (search_finished_idle, provider);
 		return;
 	}
 
@@ -314,14 +324,8 @@ nemo_search_engine_tracker_set_query (NemoSearchProvider *provider,
 
 	tracker = NEMO_SEARCH_ENGINE_TRACKER (provider);
 
-	if (query) {
-		g_object_ref (query);
-	}
-
-	if (tracker->details->query) {
-		g_object_unref (tracker->details->query);
-	}
-
+	g_object_ref (query);
+	g_clear_object (&tracker->details->query);
 	tracker->details->query = query;
 }
 
@@ -347,29 +351,22 @@ nemo_search_engine_tracker_class_init (NemoSearchEngineTrackerClass *class)
 static void
 nemo_search_engine_tracker_init (NemoSearchEngineTracker *engine)
 {
-	engine->details = G_TYPE_INSTANCE_GET_PRIVATE (engine, NEMO_TYPE_SEARCH_ENGINE_TRACKER,
-						       NmoSearchEngineTrackerDetails);
-	engine->details->hits_pending = g_queue_new ();
-}
-
-
-NemoSearchEngineTracker *
-nemo_search_engine_tracker_new (void)
-{
-	NemoSearchEngineTracker *engine;
-	TrackerSparqlConnection *connection;
 	GError *error = NULL;
 
-	connection = tracker_sparql_connection_get (NULL, &error);
+	engine->details = G_TYPE_INSTANCE_GET_PRIVATE (engine, NEMO_TYPE_SEARCH_ENGINE_TRACKER,
+						       NemoSearchEngineTrackerDetails);
+	engine->details->hits_pending = g_queue_new ();
+
+	engine->details->connection = tracker_sparql_connection_get (NULL, &error);
 
 	if (error) {
 		g_warning ("Could not establish a connection to Tracker: %s", error->message);
 		g_error_free (error);
-		return NULL;
 	}
+}
 
-	engine = g_object_new (NEMO_TYPE_SEARCH_ENGINE_TRACKER, NULL);
-	engine->details->connection = connection;
-
-	return engine;
+NemoSearchEngineTracker *
+nemo_search_engine_tracker_new (void)
+{
+	return g_object_new (NEMO_TYPE_SEARCH_ENGINE_TRACKER, NULL);
 }

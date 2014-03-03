@@ -32,6 +32,7 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-search-engine.h>
 #include <libnemo-private/nemo-search-provider.h>
+#include <libnemo-private/nemo-ui-utilities.h>
 
 #include "nemo-bookmark-list.h"
 #include "nemo-shell-search-provider-generated.h"
@@ -127,18 +128,6 @@ get_gicon (NemoShellSearchProviderApp *self,
     return nemo_bookmark_get_icon (bookmark);
   else
     return nemo_file_get_gicon (file, 0);
-}
-
-static gchar *
-prepare_string_for_compare (const gchar *string)
-{
-  gchar *normalized, *res;
-
-  normalized = g_utf8_normalize (string, -1, G_NORMALIZE_NFD);
-  res = g_utf8_strdown (normalized, -1);
-  g_free (normalized);
-
-  return res;
 }
 
 static void
@@ -308,7 +297,7 @@ search_hit_candidate_new (const gchar *uri,
   SearchHitCandidate *candidate = g_slice_new0 (SearchHitCandidate);
 
   candidate->uri = g_strdup (uri);
-  candidate->string_for_compare = prepare_string_for_compare (name);
+  candidate->string_for_compare = nemo_search_prepare_string_for_compare (name);
 
   return candidate;
 }
@@ -332,7 +321,7 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
 
   candidates = NULL;
   query_text = nemo_query_get_text (self->current_search->query);
-  string = prepare_string_for_compare (query_text);
+  string = nemo_search_prepare_string_for_compare (query_text);
   terms = g_strsplit (string, " ", -1);
 
   g_free (string);

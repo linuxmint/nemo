@@ -28,6 +28,7 @@
 #include "nemo-directory.h"
 #include "nemo-directory-private.h"
 #include "nemo-file.h"
+#include "nemo-ui-utilities.h"
 
 #include <string.h>
 #include <glib.h>
@@ -88,24 +89,12 @@ emit_finished_idle_cb (gpointer user_data)
 }
 
 static gchar *
-prepare_string_for_compare (const gchar *string)
-{
-	gchar *normalized, *res;
-
-	normalized = g_utf8_normalize (string, -1, G_NORMALIZE_NFD);
-	res = g_utf8_strdown (normalized, -1);
-	g_free (normalized);
-
-	return res;
-}
-
-static gchar *
 prepare_pattern_for_comparison (NemoSearchEngineModel *model)
 {
 	gchar *text, *prepared, *pattern;
 
 	text = nemo_query_get_text (model->details->query);
-	prepared = prepare_string_for_compare (text);
+	prepared = nemo_search_prepare_string_for_compare (text);
 	pattern = g_strdup_printf ("*%s*", prepared);
 
 	g_free (prepared);
@@ -132,7 +121,7 @@ model_directory_ready_cb (NemoDirectory	*directory,
 	for (l = files; l != NULL; l = l->next) {
 		file = l->data;
 		display_name = nemo_file_get_display_name (file);
-		prepared = prepare_string_for_compare (display_name);
+		prepared = nemo_search_prepare_string_for_compare (display_name);
 
 		if (g_pattern_match_simple (pattern, prepared)) {
 			uri = nemo_file_get_uri (file);
@@ -162,8 +151,7 @@ nemo_search_engine_model_start (NemoSearchProvider *provider)
 		return;
 	}
 
-	if (model->details->query == NULL ||
-	    model->details->directory == NULL) {
+	if (model->details->directory == NULL) {
 		g_idle_add (emit_finished_idle_cb, model);
 		return;
 	}
@@ -198,14 +186,8 @@ nemo_search_engine_model_set_query (NemoSearchProvider *provider,
 
 	model = NEMO_SEARCH_ENGINE_MODEL (provider);
 
-	if (query) {
-		g_object_ref (query);
-	}
-
-	if (model->details->query) {
-		g_object_unref (model->details->query);
-	}
-
+	g_object_ref (query);
+	g_clear_object (&model->details->query);
 	model->details->query = query;
 }
 

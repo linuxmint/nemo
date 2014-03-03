@@ -115,6 +115,7 @@ nemo_search_provider_set_query (NemoSearchProvider *provider, NemoQuery *query)
 {
 	g_return_if_fail (NEMO_IS_SEARCH_PROVIDER (provider));
 	g_return_if_fail (NEMO_SEARCH_PROVIDER_GET_IFACE (provider)->set_query != NULL);
+	g_return_if_fail (NEMO_IS_QUERY (query));
 
 	NEMO_SEARCH_PROVIDER_GET_IFACE (provider)->set_query (provider, query);
 }
