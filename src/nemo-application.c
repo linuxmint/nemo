@@ -849,7 +849,7 @@ nemo_application_local_command_line (GApplication *application,
 
 	context = g_option_context_new (_("\n\nBrowse the file system with the file manager"));
 	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_add_group (context, gtk_get_option_group (TRUE));
+	g_option_context_add_group (context, gtk_get_option_group (FALSE));
 
 	argv = *arguments;
 	argc = g_strv_length (argv);
