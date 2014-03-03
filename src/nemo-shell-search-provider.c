@@ -27,6 +27,7 @@
 #include <gio/gio.h>
 #include <string.h>
 #include <glib/gi18n.h>
+#include <gdk/gdkx.h>
 
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
@@ -686,6 +687,55 @@ handle_get_result_metas (NemoShellSearchProvider  *skeleton,
   nemo_file_list_free (missing_files);
 }
 
+/* taken from Epiphany's ephy-main.c */
+static Time
+slowly_and_stupidly_obtain_timestamp (Display *xdisplay)
+{
+  Window xwindow;
+  XEvent event;
+
+  {
+    XSetWindowAttributes attrs;
+    Atom atom_name;
+    Atom atom_type;
+    char* name;
+
+    attrs.override_redirect = True;
+    attrs.event_mask = PropertyChangeMask | StructureNotifyMask;
+
+    xwindow =
+      XCreateWindow (xdisplay,
+                     RootWindow (xdisplay, 0),
+                     -100, -100, 1, 1,
+                     0,
+                     CopyFromParent,
+                     CopyFromParent,
+                     CopyFromParent,
+                     CWOverrideRedirect | CWEventMask,
+                     &attrs);
+
+    atom_name = XInternAtom (xdisplay, "WM_NAME", TRUE);
+    g_assert (atom_name != None);
+    atom_type = XInternAtom (xdisplay, "STRING", TRUE);
+    g_assert (atom_type != None);
+
+    name = "Fake Window";
+    XChangeProperty (xdisplay,
+                     xwindow, atom_name,
+                     atom_type,
+                     8, PropModeReplace, (unsigned char *)name, strlen (name));
+  }
+
+  XWindowEvent (xdisplay,
+                xwindow,
+                PropertyChangeMask,
+                &event);
+
+  XDestroyWindow(xdisplay, xwindow);
+
+  return event.xproperty.time;
+}
+
 static void
 handle_activate_result (NemoShellSearchProvider *skeleton,
                         GDBusMethodInvocation       *invocation,
@@ -693,8 +743,15 @@ handle_activate_result (NemoShellSearchProvider *skeleton,
                         gpointer                     user_data)
 {
   GError *error = NULL;
+  guint32 timestamp;
 
-  gtk_show_uri (NULL, result, GDK_CURRENT_TIME, &error);
+  /* We need a timestamp here to get the correct WM focus.
+   * Ideally this would be given to us by the caller, but since it
+   * is not, get it ourselves.
+   */
+  timestamp = slowly_and_stupidly_obtain_timestamp (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()));
+  gtk_show_uri (NULL, result, timestamp, &error);
+
   if (error != NULL) {
     g_warning ("Unable to activate %s: %s", result, error->message);
     g_error_free (error);
