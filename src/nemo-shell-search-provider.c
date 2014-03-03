@@ -474,6 +474,7 @@ execute_search (NemoShellSearchProviderApp *self,
   home_uri = nemo_get_home_directory_uri ();
 
   query = nemo_query_new ();
+  nemo_query_set_show_hidden_files (query, FALSE);
   nemo_query_set_text (query, terms_joined);
   nemo_query_set_location (query, home_uri);
 

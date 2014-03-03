@@ -51,6 +51,9 @@ NemoQuery* nemo_query_new      (void);
 char *         nemo_query_get_text           (NemoQuery *query);
 void           nemo_query_set_text           (NemoQuery *query, const char *text);
 
+gboolean       nemo_query_get_show_hidden_files (NemoQuery *query);
+void           nemo_query_set_show_hidden_files (NemoQuery *query, gboolean show_hidden);
+
 char *         nemo_query_get_location       (NemoQuery *query);
 void           nemo_query_set_location       (NemoQuery *query, const char *uri);
 
