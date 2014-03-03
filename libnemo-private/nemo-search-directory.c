@@ -909,10 +909,10 @@ nemo_search_directory_set_query (NemoSearchDirectory *search,
 	}
 
 	file = nemo_directory_get_existing_corresponding_file (NEMO_DIRECTORY (search));
-	if (file != NULL) {
+	if ((file != NULL) && (search->details->saved_search_uri == NULL)) {
 		nemo_search_directory_file_update_display_name (NEMO_SEARCH_DIRECTORY_FILE (file));
-		g_object_unref (file);
 	}
+	nemo_file_unref (file);
 }
 
 NemoQuery *
@@ -925,18 +925,16 @@ nemo_search_directory_get_query (NemoSearchDirectory *search)
 	return NULL;
 }
 
-NemoSearchDirectory *
-nemo_search_directory_new_from_saved_search (const char *uri)
+void
+nemo_search_directory_set_saved_search (NemoSearchDirectory *search,
+					    GFile *saved_search)
 {
-	NemoSearchDirectory *search;
 	NemoQuery *query;
 	char *file;
-	
-	search = NEMO_SEARCH_DIRECTORY (g_object_new (NEMO_TYPE_SEARCH_DIRECTORY, NULL));
 
-	search->details->saved_search_uri = g_strdup (uri);
-	
-	file = g_filename_from_uri (uri, NULL, NULL);
+	search->details->saved_search_uri = g_file_get_uri (saved_search);
+	file = g_file_get_path (saved_search);
+
 	if (file != NULL) {
 		query = nemo_query_load (file);
 		if (query != NULL) {
@@ -949,7 +947,6 @@ nemo_search_directory_new_from_saved_search (const char *uri)
 	}
 
 	search->details->modified = FALSE;
-	return search;
 }
 
 gboolean

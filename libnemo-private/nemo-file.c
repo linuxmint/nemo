@@ -47,7 +47,6 @@
 #include "nemo-vfs-file.h"
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
-#include "nemo-saved-search-file.h"
 #include <eel/eel-debug.h>
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-gtk-extensions.h>
@@ -531,8 +530,6 @@ nemo_file_new_from_filename (NemoDirectory *directory,
 			 * that references a file like this. (See #349840) */
 			file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
 		}
-	} else if (g_str_has_suffix (filename, NEMO_SAVED_SEARCH_EXTENSION)) {
-		file = NEMO_FILE (g_object_new (NEMO_TYPE_SAVED_SEARCH_FILE, NULL));
 	} else {
 		file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
 	}
@@ -635,20 +632,11 @@ nemo_file_new_from_info (NemoDirectory *directory,
 			     GFileInfo *info)
 {
 	NemoFile *file;
-	const char *mime_type;
 
 	g_return_val_if_fail (NEMO_IS_DIRECTORY (directory), NULL);
 	g_return_val_if_fail (info != NULL, NULL);
 
-	mime_type = g_file_info_get_content_type (info);
-	if (mime_type &&
-	    strcmp (mime_type, NEMO_SAVED_SEARCH_MIMETYPE) == 0) {
-		g_file_info_set_file_type (info, G_FILE_TYPE_DIRECTORY);
-		file = NEMO_FILE (g_object_new (NEMO_TYPE_SAVED_SEARCH_FILE, NULL));
-	} else {
-		file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
-	}
-
+	file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
 	file->details->directory = nemo_directory_ref (directory);
 
 	update_info_and_name (file, info);
@@ -2180,7 +2168,12 @@ update_info_internal (NemoFile *file,
 						  g_file_info_get_display_name (info),
 						  g_file_info_get_edit_name (info),
 						  FALSE);
-	
+
+	mime_type = g_file_info_get_content_type (info);
+	if (g_strcmp0 (mime_type, NEMO_SAVED_SEARCH_MIMETYPE) == 0) {
+		g_file_info_set_file_type (info, G_FILE_TYPE_DIRECTORY);
+	}
+
 	file_type = g_file_info_get_file_type (info);
 	if (file->details->type != file_type) {
 		changed = TRUE;
