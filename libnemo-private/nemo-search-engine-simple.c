@@ -142,14 +142,10 @@ search_thread_data_free (SearchThreadData *data)
 static gboolean
 search_thread_done_idle (gpointer user_data)
 {
-	SearchThreadData *data;
+	SearchThreadData *data = user_data;
 
-	data = user_data;
-
-	if (!g_cancellable_is_cancelled (data->cancellable)) {
-		nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (data->engine));
-		data->engine->details->active_search = NULL;
-	}
+	nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (data->engine));
+	data->engine->details->active_search = NULL;
 	
 	search_thread_data_free (data);
 	

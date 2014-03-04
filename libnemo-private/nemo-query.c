@@ -24,10 +24,11 @@
 #include <config.h>
 #include <string.h>
 
-#include "nemo-query.h"
 #include <eel/eel-glib-extensions.h>
 #include <glib/gi18n.h>
-#include <libnemo-private/nemo-file-utilities.h>
+
+#include "nemo-file-utilities.h"
+#include "nemo-query.h"
 
 struct NemoQueryDetails {
 	char *text;

@@ -158,6 +158,28 @@ search_provider_hits_subtracted (NemoSearchProvider *provider,
 }
 
 static void
+check_providers_status (NemoSearchEngine *engine)
+{
+	gint num_finished = engine->details->providers_error + engine->details->providers_finished;
+
+	if (num_finished < engine->details->providers_running) {
+		return;
+	}
+
+	g_object_ref (engine);
+
+	if (num_finished == engine->details->providers_error) {
+		nemo_search_provider_error (NEMO_SEARCH_PROVIDER (engine),
+						_("Unable to complete the requested search"));
+	} else {
+		nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (engine));
+	}
+
+	g_hash_table_remove_all (engine->details->uris);
+	g_object_unref (engine);
+}
+
+static void
 search_provider_error (NemoSearchProvider *provider,
 		       const char             *error_message,
 		       NemoSearchEngine   *engine)
@@ -165,13 +187,8 @@ search_provider_error (NemoSearchProvider *provider,
 {
 	DEBUG ("Search provider error: %s", error_message);
 	engine->details->providers_error++;
-	if (engine->details->providers_error == engine->details->providers_running) {
-		g_object_ref (engine);
-		nemo_search_provider_error (NEMO_SEARCH_PROVIDER (engine),
-						_("Unable to complete the requested search"));
-		g_hash_table_remove_all (engine->details->uris);
-		g_object_unref (engine);
-	}
+
+	check_providers_status (engine);
 }
 
 static void
@@ -179,13 +196,10 @@ search_provider_finished (NemoSearchProvider *provider,
 			  NemoSearchEngine   *engine)
 
 {
+	DEBUG ("Search provider finished");
 	engine->details->providers_finished++;
-	if (engine->details->providers_finished == engine->details->providers_running) {
-		g_object_ref (engine);
-		nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (engine));
-		g_hash_table_remove_all (engine->details->uris);
-		g_object_unref (engine);
-	}
+
+	check_providers_status (engine);
 }
 
 static void
