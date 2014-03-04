@@ -174,35 +174,6 @@ search_provider_hits_added (NemoSearchProvider *provider,
 }
 
 static void
-search_provider_hits_subtracted (NemoSearchProvider *provider,
-				 GList                  *hits,
-				 NemoSearchEngine   *engine)
-{
-	GList *removed = NULL;
-	GList *l;
-
-	for (l = hits; l != NULL; l = l->next) {
-		NemoSearchHit *hit = l->data;
-		int count;
-		const char *uri;
-
-		uri = nemo_search_hit_get_uri (hit);
-		count = GPOINTER_TO_INT (g_hash_table_lookup (engine->details->uris, uri));
-		g_assert (count > 0);
-		if (count == 1) {
-			removed = g_list_prepend (removed, hit);
-			g_hash_table_remove (engine->details->uris, uri);
-		} else {
-			g_hash_table_replace (engine->details->uris, g_strdup (uri), GINT_TO_POINTER (--count));
-		}
-	}
-	if (removed != NULL) {
-		nemo_search_provider_hits_subtracted (NEMO_SEARCH_PROVIDER (engine), g_list_reverse (removed));
-		g_list_free (removed);
-	}
-}
-
-static void
 check_providers_status (NemoSearchEngine *engine)
 {
 	gint num_finished = engine->details->providers_error + engine->details->providers_finished;
@@ -261,9 +232,6 @@ connect_provider_signals (NemoSearchEngine   *engine,
 {
 	g_signal_connect (provider, "hits-added",
 			  G_CALLBACK (search_provider_hits_added),
-			  engine);
-	g_signal_connect (provider, "hits-subtracted",
-			  G_CALLBACK (search_provider_hits_subtracted),
 			  engine);
 	g_signal_connect (provider, "finished",
 			  G_CALLBACK (search_provider_finished),

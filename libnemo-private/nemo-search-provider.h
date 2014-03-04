@@ -43,7 +43,6 @@ struct _NemoSearchProviderIface {
 
         /* Signals */
         void (*hits_added) (NemoSearchProvider *provider, GList *hits);
-        void (*hits_subtracted) (NemoSearchProvider *provider, GList *hits);
         void (*finished) (NemoSearchProvider *provider);
         void (*error) (NemoSearchProvider *provider, const char *error_message);
 };
@@ -57,8 +56,6 @@ void           nemo_search_provider_start           (NemoSearchProvider *provide
 void           nemo_search_provider_stop            (NemoSearchProvider *provider);
 
 void           nemo_search_provider_hits_added      (NemoSearchProvider *provider,
-                                                         GList *hits);
-void           nemo_search_provider_hits_subtracted (NemoSearchProvider *provider,
                                                          GList *hits);
 void           nemo_search_provider_finished        (NemoSearchProvider *provider);
 void           nemo_search_provider_error           (NemoSearchProvider *provider,

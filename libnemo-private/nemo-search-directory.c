@@ -90,7 +90,6 @@ G_DEFINE_TYPE (NemoSearchDirectory, nemo_search_directory,
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 static void search_engine_hits_added (NemoSearchEngine *engine, GList *hits, NemoSearchDirectory *search);
-static void search_engine_hits_subtracted (NemoSearchEngine *engine, GList *hits, NemoSearchDirectory *search);
 static void search_engine_finished (NemoSearchEngine *engine, NemoSearchDirectory *search);
 static void search_engine_error (NemoSearchEngine *engine, const char *error, NemoSearchDirectory *search);
 static void search_callback_file_ready_callback (NemoFile *file, gpointer data);
@@ -533,54 +532,12 @@ search_engine_hits_added (NemoSearchEngine *engine, GList *hits,
 		g_signal_connect (file, "changed", G_CALLBACK (file_changed), search),
 
 		file_list = g_list_prepend (file_list, file);
-		g_hash_table_replace (search->details->files_hash, file, GINT_TO_POINTER (1));
+		g_hash_table_add (search->details->files_hash, file);
 	}
 	
 	search->details->files = g_list_concat (search->details->files, file_list);
 
 	nemo_directory_emit_files_added (NEMO_DIRECTORY (search), file_list);
-
-	file = nemo_directory_get_corresponding_file (NEMO_DIRECTORY (search));
-	nemo_file_emit_changed (file);
-	nemo_file_unref (file);
-}
-
-static void
-search_engine_hits_subtracted (NemoSearchEngine *engine, GList *hits, 
-			       NemoSearchDirectory *search)
-{
-	GList *hit_list;
-	GList *monitor_list;
-	SearchMonitor *monitor;
-	GList *file_list;
-	NemoFile *file;
-
-	file_list = NULL;
-
-	for (hit_list = hits; hit_list != NULL; hit_list = hit_list->next) {
-		NemoSearchHit *hit = hit_list->data;
-		const char *uri;
-
-		uri = nemo_search_hit_get_uri (hit);
-		file = nemo_file_get_by_uri (uri);
-
-		for (monitor_list = search->details->monitor_list; monitor_list; 
-		     monitor_list = monitor_list->next) {
-			monitor = monitor_list->data;
-			/* Remove monitors */
-			nemo_file_monitor_remove (file, monitor);
-		}
-		
-		g_signal_handlers_disconnect_by_func (file, file_changed, search);
-
-		search->details->files = g_list_remove (search->details->files, file);
-
-		file_list = g_list_prepend (file_list, file);
-	}
-	
-	nemo_directory_emit_files_changed (NEMO_DIRECTORY (search), file_list);
-
-	nemo_file_list_free (file_list);
 
 	file = nemo_directory_get_corresponding_file (NEMO_DIRECTORY (search));
 	nemo_file_emit_changed (file);
@@ -802,9 +759,6 @@ nemo_search_directory_init (NemoSearchDirectory *search)
 	search->details->engine = nemo_search_engine_new ();
 	g_signal_connect (search->details->engine, "hits-added",
 			  G_CALLBACK (search_engine_hits_added),
-			  search);
-	g_signal_connect (search->details->engine, "hits-subtracted",
-			  G_CALLBACK (search_engine_hits_subtracted),
 			  search);
 	g_signal_connect (search->details->engine, "finished",
 			  G_CALLBACK (search_engine_finished),

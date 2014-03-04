@@ -25,7 +25,6 @@
 
 enum {
        HITS_ADDED,
-       HITS_SUBTRACTED,
        FINISHED,
        ERROR,
        LAST_SIGNAL
@@ -81,14 +80,6 @@ nemo_search_provider_base_init (gpointer g_iface)
 					    g_cclosure_marshal_VOID__POINTER,
 					    G_TYPE_NONE, 1,
 					    G_TYPE_POINTER);
-	signals[HITS_SUBTRACTED] = g_signal_new ("hits-subtracted",
-						 NEMO_TYPE_SEARCH_PROVIDER,
-						 G_SIGNAL_RUN_LAST,
-						 G_STRUCT_OFFSET (NemoSearchProviderIface, hits_subtracted),
-						 NULL, NULL,
-						 g_cclosure_marshal_VOID__POINTER,
-						 G_TYPE_NONE, 1,
-						 G_TYPE_POINTER);
 
 	signals[FINISHED] = g_signal_new ("finished",
 					  NEMO_TYPE_SEARCH_PROVIDER,
@@ -144,14 +135,6 @@ nemo_search_provider_hits_added (NemoSearchProvider *provider, GList *hits)
 	g_return_if_fail (NEMO_IS_SEARCH_PROVIDER (provider));
 
 	g_signal_emit (provider, signals[HITS_ADDED], 0, hits);
-}
-
-void
-nemo_search_provider_hits_subtracted (NemoSearchProvider *provider, GList *hits)
-{
-	g_return_if_fail (NEMO_IS_SEARCH_PROVIDER (provider));
-
-	g_signal_emit (provider, signals[HITS_SUBTRACTED], 0, hits);
 }
 
 void

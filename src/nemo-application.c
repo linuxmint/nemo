@@ -779,6 +779,8 @@ static void
 do_perform_self_checks (gint *exit_status)
 {
 #ifndef NEMO_OMIT_SELF_CHECK
+	gtk_init (NULL, NULL);
+
 	nemo_profile_start (NULL);
 	/* Run the checks (each twice) for nemo and libnemo-private. */
 
