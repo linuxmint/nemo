@@ -49,6 +49,7 @@ static GDebugKey keys[] = {
   { "Places", NEMO_DEBUG_PLACES },
   { "Previewer", NEMO_DEBUG_PREVIEWER },
   { "Search", NEMO_DEBUG_SEARCH },
+  { "SearchHit", NEMO_DEBUG_SEARCH_HIT },
   { "Smclient", NEMO_DEBUG_SMCLIENT },
   { "Window", NEMO_DEBUG_WINDOW },
   { "Undo", NEMO_DEBUG_UNDO },

@@ -35,6 +35,8 @@ struct NemoQueryDetails {
 	char *location_uri;
 	GList *mime_types;
 	gboolean show_hidden;
+
+	char **prepared_words;
 };
 
 static void  nemo_query_class_init       (NemoQueryClass *class);
@@ -49,6 +51,7 @@ finalize (GObject *object)
 
 	query = NEMO_QUERY (object);
 	g_free (query->details->text);
+	g_strfreev (query->details->prepared_words);
 	g_free (query->details->location_uri);
 
 	G_OBJECT_CLASS (nemo_query_parent_class)->finalize (object);
@@ -73,6 +76,59 @@ nemo_query_init (NemoQuery *query)
 	query->details->show_hidden = TRUE;
 }
 
+static gchar *
+prepare_string_for_compare (const gchar *string)
+{
+	gchar *normalized, *res;
+
+	normalized = g_utf8_normalize (string, -1, G_NORMALIZE_NFD);
+	res = g_utf8_strdown (normalized, -1);
+	g_free (normalized);
+
+	return res;
+}
+
+gdouble
+nemo_query_matches_string (NemoQuery *query,
+			       const gchar *string)
+{
+	gchar *prepared_string, *ptr;
+	gboolean found;
+	gdouble retval;
+	gint idx;
+
+	if (!query->details->text) {
+		return -1;
+	}
+
+	if (!query->details->prepared_words) {
+		prepared_string = prepare_string_for_compare (query->details->text);
+		query->details->prepared_words = g_strsplit (prepared_string, " ", -1);
+		g_free (prepared_string);
+	}
+
+	prepared_string = prepare_string_for_compare (string);
+	found = TRUE;
+	ptr = NULL;
+
+	for (idx = 0; query->details->prepared_words[idx] != NULL; idx++) {
+		if ((ptr = strstr (prepared_string, query->details->prepared_words[idx])) == NULL) {
+			found = FALSE;
+			break;
+		}
+	}
+
+	if (!found) {
+		g_free (prepared_string);
+		return -1;
+	}
+
+	retval = MAX (10.0, (50.0 / idx) - (gdouble) (ptr - prepared_string));
+	g_free (prepared_string);
+
+	return retval;
+}
+
 NemoQuery *
 nemo_query_new (void)
 {
@@ -91,6 +147,9 @@ nemo_query_set_text (NemoQuery *query, const char *text)
 {
 	g_free (query->details->text);
 	query->details->text = g_strstrip (g_strdup (text));
+
+	g_strfreev (query->details->prepared_words);
+	query->details->prepared_words = NULL;
 }
 
 char *

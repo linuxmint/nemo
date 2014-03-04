@@ -26,6 +26,8 @@
 
 #include "nemo-search-hit.h"
 #include "nemo-query.h"
+#define DEBUG_FLAG NEMO_DEBUG_SEARCH_HIT
+#include "nemo-debug.h"
 
 struct NemoSearchHitDetails
 {
@@ -111,12 +113,14 @@ nemo_search_hit_compute_scores (NemoSearchHit *hit,
 	}
 
 	if (hit->details->fts_rank > 0) {
-		match_bonus = 10.0 * hit->details->fts_rank;
+		match_bonus = MIN (500, 10.0 * hit->details->fts_rank);
 	} else {
 		match_bonus = 0.0;
 	}
 
 	hit->details->relevance = recent_bonus + proximity_bonus + match_bonus;
+	DEBUG ("Hit %s computed relevance %.2f (%.2f + %.2f + %.2f)", hit->details->uri, hit->details->relevance,
+	       proximity_bonus, recent_bonus, match_bonus);
 
 	g_date_time_unref (now);
 }

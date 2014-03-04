@@ -47,6 +47,9 @@ struct NemoSearchEngineDetails
 	guint providers_running;
 	guint providers_finished;
 	guint providers_error;
+
+	gboolean running;
+	gboolean restart;
 };
 
 static void nemo_search_provider_init (NemoSearchProviderIface  *iface);
@@ -70,13 +73,15 @@ nemo_search_engine_set_query (NemoSearchProvider *provider,
 }
 
 static void
-nemo_search_engine_start (NemoSearchProvider *provider)
+search_engine_start_real (NemoSearchEngine *engine)
 {
-	NemoSearchEngine *engine = NEMO_SEARCH_ENGINE (provider);
-
 	engine->details->providers_running = 0;
 	engine->details->providers_finished = 0;
 	engine->details->providers_error = 0;
+
+	engine->details->restart = FALSE;
+
+	DEBUG ("Search engine start real");
 
 #ifdef ENABLE_TRACKER
 	nautilus_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->tracker));
@@ -92,14 +97,48 @@ nemo_search_engine_start (NemoSearchProvider *provider)
 }
 
 static void
+nemo_search_engine_start (NemoSearchProvider *provider)
+{
+	NemoSearchEngine *engine = NEMO_SEARCH_ENGINE (provider);
+	gint num_finished;
+
+	DEBUG ("Search engine start");
+
+	num_finished = engine->details->providers_error + engine->details->providers_finished;
+
+	if (engine->details->running) {
+		if (num_finished == engine->details->providers_running &&
+		    engine->details->restart) {
+			search_engine_start_real (engine);
+		}
+
+		return;
+	}
+
+	engine->details->running = TRUE;
+
+	if (num_finished < engine->details->providers_running) {
+		engine->details->restart = TRUE;
+	} else {
+		search_engine_start_real (engine);
+	}
+}
+
+static void
 nemo_search_engine_stop (NemoSearchProvider *provider)
 {
 	NemoSearchEngine *engine = NEMO_SEARCH_ENGINE (provider);
+
+	DEBUG ("Search engine stop");
+
 #ifdef ENABLE_TRACKER
 	nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (engine->details->tracker));
 #endif
 	nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (engine->details->model));
 	nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (engine->details->simple));
+
+	engine->details->running = FALSE;
+	engine->details->restart = FALSE;
 }
 
 static void
@@ -109,6 +148,12 @@ search_provider_hits_added (NemoSearchProvider *provider,
 {
 	GList *added = NULL;
 	GList *l;
+
+	if (!engine->details->running || engine->details->restart) {
+		DEBUG ("Ignoring hits-added, since engine is %s",
+		       !engine->details->running ? "not running" : "waiting to restart");
+		return;
+	}
 
 	for (l = hits; l != NULL; l = l->next) {
 		NemoSearchHit *hit = l->data;
@@ -169,14 +214,22 @@ check_providers_status (NemoSearchEngine *engine)
 	g_object_ref (engine);
 
 	if (num_finished == engine->details->providers_error) {
+		DEBUG ("Search engine error");
 		nemo_search_provider_error (NEMO_SEARCH_PROVIDER (engine),
 						_("Unable to complete the requested search"));
 	} else {
+		DEBUG ("Search engine finished");
 		nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (engine));
 	}
 
+	engine->details->running = FALSE;
 	g_hash_table_remove_all (engine->details->uris);
 	g_object_unref (engine);
+
+	if (engine->details->restart) {
+		DEBUG ("Restarting engine");
+		nemo_search_engine_start (NEMO_SEARCH_PROVIDER (engine));
+	}
 }
 
 static void

@@ -26,6 +26,8 @@
 #include "nemo-search-provider.h"
 #include "nemo-search-engine-simple.h"
 #include "nemo-ui-utilities.h"
+#define DEBUG_FLAG NEMO_DEBUG_SEARCH
+#include "nemo-debug.h"
 
 #include <string.h>
 #include <glib.h>
@@ -43,7 +45,6 @@ typedef struct {
 	GCancellable *cancellable;
 
 	GList *mime_types;
-	char **words;
 	GList *found_list;
 
 	GQueue *directories; /* GFiles */
@@ -53,6 +54,8 @@ typedef struct {
 	gboolean recursive;
 	gint n_processed_files;
 	GList *hits;
+
+	NemoQuery *query;
 } SearchThreadData;
 
 
@@ -91,7 +94,7 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 			NemoQuery *query)
 {
 	SearchThreadData *data;
-	char *text, *prepared, *uri;
+	char *uri;
 	GFile *location;
 	
 	data = g_new0 (SearchThreadData, 1);
@@ -99,23 +102,13 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 	data->engine = g_object_ref (engine);
 	data->directories = g_queue_new ();
 	data->visited = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-	uri = nemo_query_get_location (query);
-	location = NULL;
-	if (uri != NULL) {
-		location = g_file_new_for_uri (uri);
-		g_free (uri);
-	}
-	if (location == NULL) {
-		location = g_file_new_for_path ("/");
-	}
-	g_queue_push_tail (data->directories, location);
-	
-	text = nemo_query_get_text (query);
-	prepared = nemo_search_prepare_string_for_compare (text);
-	data->words = g_strsplit (prepared, " ", -1);
-	g_free (text);
-	g_free (prepared);
+	data->query = g_object_ref (query);
 
+	uri = nemo_query_get_location (query);
+	location = g_file_new_for_uri (uri);
+	g_free (uri);
+
+	g_queue_push_tail (data->directories, location);
 	data->mime_types = nemo_query_get_mime_types (query);
 
 	data->cancellable = g_cancellable_new ();
@@ -131,7 +124,7 @@ search_thread_data_free (SearchThreadData *data)
 	g_queue_free (data->directories);
 	g_hash_table_destroy (data->visited);
 	g_object_unref (data->cancellable);
-	g_strfreev (data->words);	
+	g_object_unref (data->query);
 	g_list_free_full (data->mime_types, g_free);
 	g_list_free_full (data->hits, g_object_unref);
 	g_object_unref (data->engine);
@@ -143,12 +136,15 @@ static gboolean
 search_thread_done_idle (gpointer user_data)
 {
 	SearchThreadData *data = user_data;
+	NemoSearchEngineSimple *engine = data->engine;
 
-	nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (data->engine));
-	data->engine->details->active_search = NULL;
-	
+	DEBUG ("Simple engine done");
+
+	engine->details->active_search = NULL;
+	nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (engine));
+
 	search_thread_data_free (data);
-	
+
 	return FALSE;
 }
 
@@ -162,6 +158,8 @@ static gboolean
 search_thread_add_hits_idle (gpointer user_data)
 {
 	SearchHitsData *data = user_data;
+
+	DEBUG ("Simple engine add hits");
 
 	if (!g_cancellable_is_cancelled (data->thread_data->cancellable)) {
 		nemo_search_provider_hits_added (NEMO_SEARCH_PROVIDER (data->thread_data->engine),
@@ -205,9 +203,8 @@ visit_directory (GFile *dir, SearchThreadData *data)
 	GFileInfo *info;
 	GFile *child;
 	const char *mime_type, *display_name;
-	char *prepared;
-	gboolean found, is_hidden;
-	int i;
+	gdouble match;
+	gboolean is_hidden, found;
 	GList *l;
 	const char *id;
 	gboolean visited;
@@ -232,21 +229,14 @@ visit_directory (GFile *dir, SearchThreadData *data)
 		}
 
 		is_hidden = g_file_info_get_is_hidden (info) || g_file_info_get_is_backup (info);
-		if (is_hidden && !nemo_query_get_show_hidden_files (data->engine->details->query)) {
+		if (is_hidden && !nemo_query_get_show_hidden_files (data->query)) {
 			goto next;
 		}
 
-		prepared = nemo_search_prepare_string_for_compare (display_name);
+		child = g_file_get_child (dir, g_file_info_get_name (info));
+		match = nemo_query_matches_string (data->query, display_name);
+		found = (match > -1);
 
-		found = TRUE;
-		for (i = 0; data->words[i] != NULL; i++) {
-			if (strstr (prepared, data->words[i]) == NULL) {
-				found = FALSE;
-				break;
-			}
-		}
-		g_free (prepared);
-		
 		if (found && data->mime_types) {
 			mime_type = g_file_info_get_content_type (info);
 			found = FALSE;
@@ -259,8 +249,6 @@ visit_directory (GFile *dir, SearchThreadData *data)
 			}
 		}
 		
-		child = g_file_get_child (dir, g_file_info_get_name (info));
-		
 		if (found) {
 			NemoSearchHit *hit;
 			GTimeVal tv;
@@ -270,7 +258,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 			uri = g_file_get_uri (child);
 			hit = nemo_search_hit_new (uri);
 			g_free (uri);
-			nemo_search_hit_set_fts_rank (hit, 10.0);
+			nemo_search_hit_set_fts_rank (hit, match);
 			g_file_info_get_modification_time (info, &tv);
 			dt = g_date_time_new_from_timeval_local (&tv);
 			nemo_search_hit_set_modification_time (hit, dt);
@@ -336,7 +324,10 @@ search_thread_func (gpointer user_data)
 		visit_directory (dir, data);
 		g_object_unref (dir);
 	}
-	send_batch (data);
+
+	if (!g_cancellable_is_cancelled (data->cancellable)) {
+		send_batch (data);
+	}
 
 	g_idle_add (search_thread_done_idle, data);
 	
@@ -355,6 +346,8 @@ nemo_search_engine_simple_start (NemoSearchProvider *provider)
 	if (simple->details->active_search != NULL) {
 		return;
 	}
+
+	DEBUG ("Simple engine start");
 	
 	data = search_thread_data_new (simple, simple->details->query);
 
@@ -372,6 +365,7 @@ nemo_search_engine_simple_stop (NemoSearchProvider *provider)
 	simple = NEMO_SEARCH_ENGINE_SIMPLE (provider);
 
 	if (simple->details->active_search != NULL) {
+		DEBUG ("Simple engine stop");
 		g_cancellable_cancel (simple->details->active_search->cancellable);
 		simple->details->active_search = NULL;
 	}

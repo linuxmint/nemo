@@ -298,7 +298,7 @@ search_hit_candidate_new (const gchar *uri,
   SearchHitCandidate *candidate = g_slice_new0 (SearchHitCandidate);
 
   candidate->uri = g_strdup (uri);
-  candidate->string_for_compare = nemo_search_prepare_string_for_compare (name);
+  candidate->string_for_compare = g_strdup (name);
 
   return candidate;
 }
@@ -309,10 +309,9 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
   NemoSearchHit *hit;
   NemoBookmark *bookmark;
   const gchar *name;
-  gint length, idx, j;
-  gchar *query_text, *string, *uri;
-  gchar **terms;
-  gboolean found;
+  gint length, idx;
+  gchar *string, *uri;
+  gdouble match;
   GList *l, *m, *drives, *volumes, *mounts, *mounts_to_check, *candidates;
   GDrive *drive;
   GVolume *volume;
@@ -321,12 +320,6 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
   SearchHitCandidate *candidate;
 
   candidates = NULL;
-  query_text = nemo_query_get_text (self->current_search->query);
-  string = nemo_search_prepare_string_for_compare (query_text);
-  terms = g_strsplit (string, " ", -1);
-
-  g_free (string);
-  g_free (query_text);
 
   /* first add bookmarks */
   length = nemo_bookmark_list_length (self->bookmarks);
@@ -430,24 +423,17 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
 
   for (l = candidates; l != NULL; l = l->next) {
     candidate = l->data;
-    found = TRUE;
+    match = nemo_query_matches_string (self->current_search->query,
+                                           candidate->string_for_compare);
 
-    for (j = 0; terms[j] != NULL; j++) {
-      if (strstr (candidate->string_for_compare, terms[j]) == NULL) {
-        found = FALSE;
-        break;
-      }
-    }
-
-    if (found) {
+    if (match > -1) {
       hit = nemo_search_hit_new (candidate->uri);
+      nemo_search_hit_set_fts_rank (hit, match);
       nemo_search_hit_compute_scores (hit, self->current_search->query);
       g_hash_table_replace (self->current_search->hits, g_strdup (candidate->uri), hit);
     }
   }
   g_list_free_full (candidates, (GDestroyNotify) search_hit_candidate_free);
-
-  g_strfreev (terms);
 }
 
 static void
