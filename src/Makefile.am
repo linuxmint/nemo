@@ -219,7 +219,6 @@ nemo_SOURCES = \
 	nemo-window-slot-dnd.h		\
 	nemo-window.c			\
 	nemo-window.h			\
-	nemo-window-types.h			\
 	nemo-x-content-bar.c		\
 	nemo-x-content-bar.h		\
 	$(NULL)

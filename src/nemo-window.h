@@ -34,9 +34,28 @@
 #include <libnemo-private/nemo-bookmark.h>
 #include <libnemo-private/nemo-search-directory.h>
 
+typedef struct NemoWindow NemoWindow;
+typedef struct NemoWindowClass NemoWindowClass;
+typedef struct NemoWindowDetails NemoWindowDetails;
+
+typedef enum {
+        NEMO_WINDOW_OPEN_FLAG_CLOSE_BEHIND = 1 << 0,
+        NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW = 1 << 1,
+        NEMO_WINDOW_OPEN_FLAG_NEW_TAB = 1 << 2
+} NemoWindowOpenFlags;
+
+typedef enum {
+	NEMO_WINDOW_OPEN_SLOT_NONE = 0,
+	NEMO_WINDOW_OPEN_SLOT_APPEND = 1
+}  NemoWindowOpenSlotFlags;
+
+typedef gboolean (* NemoWindowGoToCallback) (NemoWindow *window,
+                                                 GError *error,
+                                                 gpointer user_data);
+
 #include "nemo-navigation-state.h"
 #include "nemo-view.h"
-#include "nemo-window-types.h"
+#include "nemo-window-slot.h"
 
 #define NEMO_TYPE_WINDOW nemo_window_get_type()
 #define NEMO_WINDOW(obj) \
@@ -55,17 +74,6 @@ typedef enum {
         NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE
 } NemoWindowShowHiddenFilesMode;
 
-typedef enum {
-        NEMO_WINDOW_NOT_SHOWN,
-        NEMO_WINDOW_POSITION_SET,
-        NEMO_WINDOW_SHOULD_SHOW
-} NemoWindowShowState;
-
-typedef enum {
-	NEMO_WINDOW_OPEN_SLOT_NONE = 0,
-	NEMO_WINDOW_OPEN_SLOT_APPEND = 1
-}  NemoWindowOpenSlotFlags;
-
 enum {
     SORT_NULL = -1,
     SORT_ASCENDING = 0,
@@ -81,9 +89,7 @@ enum {
 #define NEMO_WINDOW_SIDEBAR_PLACES "places"
 #define NEMO_WINDOW_SIDEBAR_TREE "tree"
 
-typedef struct NemoWindowDetails NemoWindowDetails;
-
-typedef struct {
+struct NemoWindowClass {
         GtkApplicationWindowClass parent_spot;
 
 	/* Function pointers for overriding, without corresponding signals */
@@ -100,7 +106,7 @@ typedef struct {
         /* Signals used only for keybindings */
         void   (* go_up)  (NemoWindow *window);
 	void   (* reload) (NemoWindow *window);
-} NemoWindowClass;
+};
 
 struct NemoWindow {
         GtkApplicationWindow parent_object;

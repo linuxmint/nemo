@@ -27,9 +27,14 @@
 
 #include <glib-object.h>
 
+typedef struct NemoWindowPane NemoWindowPane;
+typedef struct NemoWindowPaneClass NemoWindowPaneClass;
+
 #include "nemo-window.h"
 
 #include <libnemo-private/nemo-icon-info.h>
+
+
 
 #define NEMO_TYPE_WINDOW_PANE	 (nemo_window_pane_get_type())
 #define NEMO_WINDOW_PANE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), NEMO_TYPE_WINDOW_PANE, NemoWindowPaneClass))
@@ -38,7 +43,7 @@
 #define NEMO_IS_WINDOW_PANE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), NEMO_TYPE_WINDOW_PANE))
 #define NEMO_WINDOW_PANE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), NEMO_TYPE_WINDOW_PANE, NemoWindowPaneClass))
 
-struct _NemoWindowPaneClass {
+struct NemoWindowPaneClass {
 	GtkBoxClass parent_class;
 };
 
@@ -51,7 +56,7 @@ struct _NemoWindowPaneClass {
  *
  * A navigation window may have one or more panes.
  */
-struct _NemoWindowPane {
+struct NemoWindowPane {
 	GtkBox parent;
 
 	/* hosting window */
