@@ -40,7 +40,12 @@
 
 #define SEARCH_PROVIDER_INACTIVITY_TIMEOUT 12000 /* milliseconds */
 
+typedef GApplicationClass NemoShellSearchProviderAppClass;
+typedef struct _NemoShellSearchProviderApp NemoShellSearchProviderApp;
+
 typedef struct {
+  NemoShellSearchProviderApp *self;
+
   NemoSearchEngine *engine;
   NemoQuery *query;
 
@@ -50,7 +55,7 @@ typedef struct {
   gint64 start_time;
 } PendingSearch;
 
-typedef struct {
+struct _NemoShellSearchProviderApp {
   GApplication parent;
 
   guint name_owner_id;
@@ -63,9 +68,7 @@ typedef struct {
 
   NemoBookmarkList *bookmarks;
   GVolumeMonitor *volumes;
-} NemoShellSearchProviderApp;
-
-typedef GApplicationClass NemoShellSearchProviderAppClass;
+};
 
 GType nemo_shell_search_provider_app_get_type (void);
 
@@ -142,30 +145,26 @@ pending_search_free (PendingSearch *search)
 }
 
 static void
-finish_current_search (NemoShellSearchProviderApp *self,
-                       GDBusMethodInvocation          *invocation,
-                       GVariant                       *result)
+pending_search_finish (PendingSearch         *search,
+                       GDBusMethodInvocation *invocation,
+                       GVariant              *result)
 {
+  NemoShellSearchProviderApp *self = search->self;
+
   g_dbus_method_invocation_return_value (invocation, result);
 
-  if (self->current_search != NULL) {
-    g_application_release (G_APPLICATION (self));
-
-    pending_search_free (self->current_search);
+  if (search == self->current_search)
     self->current_search = NULL;
-  }
+
+  g_application_release (G_APPLICATION (self));
+  pending_search_free (search);
 }
 
 static void
 cancel_current_search (NemoShellSearchProviderApp *self)
 {
-  PendingSearch *search = self->current_search;
-
-  if (search == NULL)
-    return;
-
-  nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (search->engine));
-  finish_current_search (self, search->invocation, g_variant_new ("(as)", NULL));
+  if (self->current_search != NULL)
+    nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (self->current_search->engine));
 }
 
 static void
@@ -174,8 +173,7 @@ search_hits_added_cb (NemoSearchEngine *engine,
                       gpointer              user_data)
 
 {
-  NemoShellSearchProviderApp *self = user_data;
-  PendingSearch *search = self->current_search;
+  PendingSearch *search = user_data;
   GList *l;
   NemoSearchHit *hit;
   const gchar *hit_uri;
@@ -217,8 +215,7 @@ static void
 search_finished_cb (NemoSearchEngine *engine,
                     gpointer              user_data)
 {
-  NemoShellSearchProviderApp *self = user_data;
-  PendingSearch *search = self->current_search;
+  PendingSearch *search = user_data;
   GList *hits, *l;
   NemoSearchHit *hit;
   GVariantBuilder builder;
@@ -239,7 +236,7 @@ search_finished_cb (NemoSearchEngine *engine,
   }
 
   g_list_free (hits);
-  finish_current_search (self, search->invocation,
+  pending_search_finish (search, search->invocation,
                          g_variant_new ("(as)", &builder));
 }
 
@@ -252,7 +249,8 @@ search_error_cb (NemoSearchEngine *engine,
   PendingSearch *search = self->current_search;
 
   g_debug ("*** Search engine search error");
-  finish_current_search (self, search->invocation, g_variant_new ("(as)", NULL));
+  pending_search_finish (search, search->invocation,
+                         g_variant_new ("(as)", NULL));
 }
 
 typedef struct {
@@ -282,7 +280,7 @@ search_hit_candidate_new (const gchar *uri,
 }
 
 static void
-search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
+search_add_volumes_and_bookmarks (PendingSearch *search)
 {
   NemoSearchHit *hit;
   NemoBookmark *bookmark;
@@ -300,9 +298,9 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
   candidates = NULL;
 
   /* first add bookmarks */
-  length = nemo_bookmark_list_length (self->bookmarks);
+  length = nemo_bookmark_list_length (search->self->bookmarks);
   for (idx = 0; idx < length; idx++) {
-    bookmark = nemo_bookmark_list_item_at (self->bookmarks, idx);
+    bookmark = nemo_bookmark_list_item_at (search->self->bookmarks, idx);
 
     name = nemo_bookmark_get_name (bookmark);
     if (name == NULL)
@@ -329,7 +327,7 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
   mounts_to_check = NULL;
 
   /* first check all connected drives */
-  drives = g_volume_monitor_get_connected_drives (self->volumes);
+  drives = g_volume_monitor_get_connected_drives (search->self->volumes);
   for (l = drives; l != NULL; l = l->next) {
     drive = l->data;
     volumes = g_drive_get_volumes (drive);
@@ -347,7 +345,7 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
   g_list_free_full (drives, g_object_unref);
 
   /* then volumes that don't have a drive */
-  volumes = g_volume_monitor_get_volumes (self->volumes);
+  volumes = g_volume_monitor_get_volumes (search->self->volumes);
   for (l = volumes; l != NULL; l = l->next) {
     volume = l->data;
     drive = g_volume_get_drive (volume);
@@ -363,7 +361,7 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
   g_list_free_full (volumes, g_object_unref);
 
   /* then mounts that have no volume */
-  mounts = g_volume_monitor_get_mounts (self->volumes);
+  mounts = g_volume_monitor_get_mounts (search->self->volumes);
   for (l = mounts; l != NULL; l = l->next) {
     mount = l->data;
 
@@ -401,14 +399,14 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
 
   for (l = candidates; l != NULL; l = l->next) {
     candidate = l->data;
-    match = nemo_query_matches_string (self->current_search->query,
+    match = nemo_query_matches_string (search->query,
                                            candidate->string_for_compare);
 
     if (match > -1) {
       hit = nemo_search_hit_new (candidate->uri);
       nemo_search_hit_set_fts_rank (hit, match);
-      nemo_search_hit_compute_scores (hit, self->current_search->query);
-      g_hash_table_replace (self->current_search->hits, g_strdup (candidate->uri), hit);
+      nemo_search_hit_compute_scores (hit, search->query);
+      g_hash_table_replace (search->hits, g_strdup (candidate->uri), hit);
     }
   }
   g_list_free_full (candidates, (GDestroyNotify) search_hit_candidate_free);
@@ -423,14 +421,12 @@ execute_search (NemoShellSearchProviderApp *self,
   NemoQuery *query;
   PendingSearch *pending_search;
 
-  if (self->current_search != NULL)
-    cancel_current_search (self);
+  cancel_current_search (self);
 
   /* don't attempt searches for a single character */
   if (g_strv_length (terms) == 1 &&
       g_utf8_strlen (terms[0], -1) == 1) {
-    finish_current_search (self, invocation,
-                           g_variant_new ("(as)", NULL));
+    g_dbus_method_invocation_return_value (invocation, g_variant_new ("(as)", NULL));
     return;
   }
 
@@ -448,18 +444,19 @@ execute_search (NemoShellSearchProviderApp *self,
   pending_search->query = query;
   pending_search->engine = nemo_search_engine_new ();
   pending_search->start_time = g_get_monotonic_time ();
+  pending_search->self = self;
 
   g_signal_connect (pending_search->engine, "hits-added",
-                    G_CALLBACK (search_hits_added_cb), self);
+                    G_CALLBACK (search_hits_added_cb), pending_search);
   g_signal_connect (pending_search->engine, "finished",
-                    G_CALLBACK (search_finished_cb), self);
+                    G_CALLBACK (search_finished_cb), pending_search);
   g_signal_connect (pending_search->engine, "error",
-                    G_CALLBACK (search_error_cb), self);
+                    G_CALLBACK (search_error_cb), pending_search);
 
   self->current_search = pending_search;
   g_application_hold (G_APPLICATION (self));
 
-  search_add_volumes_and_bookmarks (self);
+  search_add_volumes_and_bookmarks (pending_search);
 
   /* start searching */
   g_debug ("*** Search engine search started");
