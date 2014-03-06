@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: eel.HEAD.he\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-03-06 09:38+0200\n"
-"PO-Revision-Date: 2014-03-06 09:40+0200\n"
+"PO-Revision-Date: 2014-03-06 09:42+0200\n"
 "Last-Translator: Yosef Or Boczko <yoseforb@gmail.com>\n"
 "Language-Team: עברית <>\n"
 "Language: he\n"
@@ -997,7 +997,7 @@ msgstr[1] "האם למחוק לצמיתות את %'d הפריטים הנבחרי
 #: ../libnautilus-private/nautilus-file-operations.c:1367
 #: ../libnautilus-private/nautilus-file-operations.c:1433
 msgid "If you delete an item, it will be permanently lost."
-msgstr "פריט שימחק יהיה אבוד לנצח."
+msgstr "פריט שימחק יאבד לנצח."
 
 #: ../libnautilus-private/nautilus-file-operations.c:1387
 msgid "Empty all items from Trash?"
