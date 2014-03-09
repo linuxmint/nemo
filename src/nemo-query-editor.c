@@ -47,8 +47,6 @@ typedef struct {
 	GtkWidget *combo;
 
 	GtkWidget *type_widget;
-	
-	void *data;
 } NemoQueryEditorRow;
 
 
@@ -57,7 +55,6 @@ typedef struct {
 	GtkWidget * (*create_widgets)      (NemoQueryEditorRow *row);
 	void        (*add_to_query)        (NemoQueryEditorRow *row,
 					    NemoQuery          *query);
-	void        (*free_data)           (NemoQueryEditorRow *row);
 	void        (*add_rows_from_query) (NemoQueryEditor *editor,
 					    NemoQuery *query);
 } NemoQueryEditorRowOps;
@@ -66,15 +63,15 @@ struct NemoQueryEditorDetails {
 	GtkWidget *entry;
 	gboolean change_frozen;
 	guint typing_timeout_id;
-	gboolean is_visible;
 
 	GtkWidget *search_current_button;
 	GtkWidget *search_all_button;
 	char *current_uri;
 
 	GList *rows;
-	char *last_set_query_text;
 	gboolean got_preedit;
+
+	NemoQuery *query;
 };
 
 enum {
@@ -97,7 +94,6 @@ static NemoQueryEditorRow * nemo_query_editor_add_row (NemoQueryEditor *editor,
 static GtkWidget *type_row_create_widgets      (NemoQueryEditorRow *row);
 static void       type_row_add_to_query        (NemoQueryEditorRow *row,
 					        NemoQuery          *query);
-static void       type_row_free_data           (NemoQueryEditorRow *row);
 static void       type_add_rows_from_query     (NemoQueryEditor    *editor,
 					        NemoQuery          *query);
 
@@ -107,7 +103,6 @@ static NemoQueryEditorRowOps row_type[] = {
 	{ N_("File Type"),
 	  type_row_create_widgets,
 	  type_row_add_to_query,
-	  type_row_free_data,
 	  type_add_rows_from_query
 	},
 };
@@ -243,6 +238,13 @@ nemo_query_editor_handle_event (NemoQueryEditor *editor,
 }
 
 static void
+row_destroy (NemoQueryEditorRow *row)
+{
+	gtk_widget_destroy (row->toolbar);
+	g_free (row);
+}
+
+static void
 nemo_query_editor_dispose (GObject *object)
 {
 	NemoQueryEditor *editor;
@@ -253,6 +255,11 @@ nemo_query_editor_dispose (GObject *object)
 		g_source_remove (editor->details->typing_timeout_id);
 		editor->details->typing_timeout_id = 0;
 	}
+
+	g_clear_object (&editor->details->query);
+
+	g_list_free_full (editor->details->rows, (GDestroyNotify) row_destroy);
+	editor->details->rows = NULL;
 
 	G_OBJECT_CLASS (nemo_query_editor_parent_class)->dispose (object);
 }
@@ -721,11 +728,6 @@ type_row_add_to_query (NemoQueryEditorRow *row,
 	}
 }
 
-static void
-type_row_free_data (NemoQueryEditorRow *row)
-{
-}
-
 static gboolean
 all_group_types_in_list (char **group_types, GList *mime_types)
 {
@@ -869,12 +871,8 @@ remove_row_cb (GtkButton *clicked_button, NemoQueryEditorRow *row)
 	NemoQueryEditor *editor;
 
 	editor = row->editor;
-	gtk_container_remove (GTK_CONTAINER (editor), row->toolbar);
-	
 	editor->details->rows = g_list_remove (editor->details->rows, row);
-
-	row_type[row->type].free_data (row);
-	g_free (row);
+	row_destroy (row);
 
 	nemo_query_editor_changed (editor);
 }
@@ -900,9 +898,6 @@ row_type_combo_changed_cb (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 		gtk_widget_destroy (row->type_widget);
 		row->type_widget = NULL;
 	}
-
-	row_type[row->type].free_data (row);
-	row->data = NULL;
 
 	row->type = type;
 	
@@ -1160,6 +1155,7 @@ static void
 update_location (NemoQueryEditor *editor)
 {
 	NemoFile *file;
+	GtkWidget *label;
 
 	file = nemo_file_get_by_uri (editor->details->current_uri);
 
@@ -1173,9 +1169,13 @@ update_location (NemoQueryEditor *editor)
 			name = g_strdup_printf ("\342\200\234%s\342\200\235", filename);
 			g_free (filename);
 		}
-		gtk_button_set_label (GTK_BUTTON (editor->details->search_current_button),
-				      name);
+
+		gtk_button_set_label (GTK_BUTTON (editor->details->search_current_button), name);
 		g_free (name);
+
+		label = gtk_bin_get_child (GTK_BIN (editor->details->search_current_button));
+		gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_MIDDLE);
+		g_object_set (label, "max-width-chars", 30, NULL);
 
 		nemo_file_unref (file);
 	}
@@ -1190,11 +1190,29 @@ nemo_query_editor_set_location (NemoQueryEditor *editor,
 	update_location (editor);
 }
 
+static void
+update_rows (NemoQueryEditor *editor,
+	     NemoQuery       *query)
+{
+	NemoQueryEditorRowType type;
+
+	/* if we were just created, set the rows from query,
+	 * otherwise, re-use the query setting we have already.
+	 */
+	if (query != NULL && editor->details->query == NULL) {
+		for (type = 0; type < NEMO_QUERY_EDITOR_ROW_LAST; type++) {
+			row_type[type].add_rows_from_query (editor, query);
+		}
+	} else if (query == NULL && editor->details->query != NULL) {
+		g_list_free_full (editor->details->rows, (GDestroyNotify) row_destroy);
+		editor->details->rows = NULL;
+	}
+}
+
 void
 nemo_query_editor_set_query (NemoQueryEditor	*editor,
 				 NemoQuery		*query)
 {
-	NemoQueryEditorRowType type;
 	char *text = NULL;
 
 	if (query != NULL) {
@@ -1211,18 +1229,14 @@ nemo_query_editor_set_query (NemoQueryEditor	*editor,
 	g_free (editor->details->current_uri);
 	editor->details->current_uri = NULL;
 
+	update_rows (editor, query);
+	g_clear_object (&editor->details->query);
+
 	if (query != NULL) {
+		editor->details->query = g_object_ref (query);
 		editor->details->current_uri = nemo_query_get_location (query);
 		update_location (editor);
-
-
-		for (type = 0; type < NEMO_QUERY_EDITOR_ROW_LAST; type++) {
-			row_type[type].add_rows_from_query (editor, query);
-		}
 	}
-
-	g_free (editor->details->last_set_query_text);
-	editor->details->last_set_query_text = text;
 
 	editor->details->change_frozen = FALSE;
 }

@@ -109,20 +109,35 @@ model_directory_ready_cb (NemoDirectory	*directory,
 {
 	NemoSearchEngineModel *model = user_data;
 	gchar *uri, *display_name;
-	GList *files, *l, *hits;
+	GList *files, *hits, *mime_types, *l, *m;
 	NemoFile *file;
 	gdouble match;
+	gboolean found;
 	NemoSearchHit *hit;
 
 	files = nemo_directory_get_file_list (directory);
+	mime_types = nemo_query_get_mime_types (model->details->query);
 	hits = NULL;
 
 	for (l = files; l != NULL; l = l->next) {
 		file = l->data;
+
 		display_name = nemo_file_get_display_name (file);
 		match = nemo_query_matches_string (model->details->query, display_name);
+		found = (match > -1);
 
-		if (match > -1) {
+		if (found && mime_types) {
+			found = FALSE;
+
+			for (m = mime_types; m != NULL; m = m->next) {
+				if (nemo_file_is_mime_type (file, m->data)) {
+					found = TRUE;
+					break;
+				}
+			}
+		}
+
+		if (found) {
 			uri = nemo_file_get_uri (file);
 			hit = nemo_search_hit_new (uri);
 			nemo_search_hit_set_fts_rank (hit, match);
@@ -133,6 +148,7 @@ model_directory_ready_cb (NemoDirectory	*directory,
 		g_free (display_name);
 	}
 
+	g_list_free_full (mime_types, g_free);
 	nemo_file_list_free (files);
 	model->details->hits = hits;
 
