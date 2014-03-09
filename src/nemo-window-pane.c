@@ -942,11 +942,38 @@ toggle_toolbar_search_button (NemoWindowPane *pane,
 {
 	GtkActionGroup *group;
 	GtkAction *action;
+	NemoWindowSlot *slot;
+	gboolean old_active;
+	GFile *location;
 
+	slot = pane->active_slot;
 	group = pane->action_group;
 	action = gtk_action_group_get_action (group, NEMO_ACTION_SEARCH);
 
+	old_active = slot->search_active;
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), active);
+	slot->search_active = active;
+
+	if (!active && old_active) {
+		/* Use the location bar as the return location */
+		if (slot->query_editor != NULL) {
+			location = nemo_query_editor_get_location (slot->query_editor);
+			/* Last try: use the home directory as the return location */
+			if (location == NULL) {
+				location = g_file_new_for_path (g_get_home_dir ());
+			}
+
+			nemo_window_slot_open_location (slot, location, 0);
+			g_object_unref (location);
+		}
+	}
+}
+
+void
+nemo_window_pane_set_search_action_active (NemoWindowPane *pane,
+					  gboolean        active)
+{
+	toggle_toolbar_search_button (pane, active);
 }
 
 void

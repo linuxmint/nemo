@@ -94,6 +94,7 @@ struct NemoWindowSlot {
 	gulong qe_changed_id;
 	gulong qe_cancel_id;
 	gulong qe_activated_id;
+	gboolean search_active;
 
 	/* New location. */
 	NemoLocationChangeType location_change_type;
@@ -101,6 +102,7 @@ struct NemoWindowSlot {
 	GFile *pending_location;
 	char *pending_scroll_to;
 	GList *pending_selection;
+	gboolean pending_use_default_location;
 	NemoFile *determine_view_file;
 	GCancellable *mount_cancellable;
 	GError *mount_error;

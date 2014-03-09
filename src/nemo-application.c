@@ -600,10 +600,10 @@ get_focus_window (GtkApplication *application)
 
 static gboolean
 go_to_server_cb (NemoWindow *window,
-         GError         *error,
-         gpointer        user_data)
+		 GFile          *location,
+		 GError         *error,
+		 gpointer        user_data)
 {
-	GFile *location = user_data;
 	gboolean retval;
 
 	if (error == NULL) {
@@ -655,8 +655,6 @@ go_to_server_cb (NemoWindow *window,
 		retval = FALSE;
 	}
 
-	g_object_unref (location);
-
 	return retval;
 }
 
@@ -667,13 +665,14 @@ on_connect_server_response (GtkDialog      *dialog,
 {
 	if (response == GTK_RESPONSE_OK) {
 		GFile *location;
+		NemoWindow *window = NEMO_WINDOW (get_focus_window (application));
 
 		location = nemo_connect_server_dialog_get_location (NEMO_CONNECT_SERVER_DIALOG (dialog));
 		if (location != NULL) {
-			nemo_window_go_to_full (NEMO_WINDOW (get_focus_window (application)),
-						    location,
-						    go_to_server_cb,
-						    location);
+			nemo_window_slot_open_location_full (nemo_window_get_active_slot (window),
+								 location,
+								 NEMO_WINDOW_OPEN_FLAG_USE_DEFAULT_LOCATION,
+								 NULL, go_to_server_cb, application);
 		}
 	}
 

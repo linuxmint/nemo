@@ -98,6 +98,7 @@ void                nemo_window_pane_close_slot (NemoWindowPane *pane,
 						     gboolean remove_from_notebook);
 
 void nemo_window_pane_sync_location_widgets (NemoWindowPane *pane);
+void nemo_window_pane_set_search_action_active (NemoWindowPane *pane, gboolean active);
 void nemo_window_pane_sync_search_widgets  (NemoWindowPane *pane);
 void nemo_window_pane_set_active (NemoWindowPane *pane, gboolean is_active);
 void nemo_window_pane_slot_close (NemoWindowPane *pane, NemoWindowSlot *slot);
