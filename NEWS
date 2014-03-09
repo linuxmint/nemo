@@ -1,3 +1,13 @@
+Nemo merged with changes in Nautilus 3.6.3.
+
+Changes:
+* Fix links on remote volumes not activating default action
+* Fix duplicated query editor filter rows when changing search location
+* Fix search toolbar disappearing with very long folder names
+* Fix missing Trash action after "Recent" was visited
+* Fix missing frame around thumbnails for some zoom factors
+* Fix crash when unmounting remote volumes
+
 Nemo merged with changes in Nautilus 3.6.2.
 
 Changes:
