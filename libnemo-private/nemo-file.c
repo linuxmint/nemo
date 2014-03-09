@@ -4338,7 +4338,11 @@ nemo_file_get_icon (NemoFile *file,
 								 MAX (h * scale, 1),
 								 GDK_INTERP_BILINEAR);
 
-			nemo_ui_frame_image (&scaled_pixbuf);
+			/* We don't want frames around small icons */
+			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128) {
+				nemo_ui_frame_image (&scaled_pixbuf);
+			}
+
 			g_object_unref (raw_pixbuf);
 
 			/* Don't scale up if more than 25%, then read the original

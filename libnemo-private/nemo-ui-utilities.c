@@ -194,18 +194,9 @@ nemo_ui_frame_image (GdkPixbuf **pixbuf)
 {
 	GdkPixbuf *pixbuf_with_frame, *frame;
 	int left_offset, top_offset, right_offset, bottom_offset;
-	int size;
 
 	frame = nautilus_get_thumbnail_frame ();
 	if (frame == NULL) {
-		return;
-	}
-
-	size = MAX (gdk_pixbuf_get_width (*pixbuf),
-		    gdk_pixbuf_get_height (*pixbuf));
-
-	/* We don't want frames around small icons */
-	if (size < 128 && gdk_pixbuf_get_has_alpha (*pixbuf)) {
 		return;
 	}
 
