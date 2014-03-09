@@ -1083,9 +1083,20 @@ create_content_view (NemoWindowSlot *slot,
 	}
 
 	if (NEMO_IS_SEARCH_DIRECTORY (old_directory) &&
-	    !NEMO_IS_SEARCH_DIRECTORY (new_directory) &&
-	    slot->pending_selection == NULL) {
-		slot->pending_selection = nemo_view_get_selection (slot->content_view);
+	    !NEMO_IS_SEARCH_DIRECTORY (new_directory)) {
+		/* Reset the search_visible state when going out of a search directory,
+		 * before nemo_window_slot_sync_search_widgets() is called
+		 * if we're not being loaded with search visible.
+		 */
+		if (!slot->load_with_search) {
+			slot->search_visible = FALSE;
+		}
+
+		slot->load_with_search = FALSE;
+
+		if (slot->pending_selection == NULL) {
+			slot->pending_selection = nemo_view_get_selection (slot->content_view);
+		}
 	}
 
 	/* Actually load the pending location and selection: */
