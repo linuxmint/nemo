@@ -1855,13 +1855,6 @@ activation_get_activation_uris (ActivateParameters *parameters)
 			parameters->locations = g_list_delete_link (parameters->locations, l);
 			continue;
 		}
-		
-		if (nemo_file_is_symbolic_link (file)) {
-			nemo_file_invalidate_attributes 
-				(file,
-				 NEMO_FILE_ATTRIBUTE_INFO |
-				 NEMO_FILE_ATTRIBUTE_LINK_INFO);
-		}
 	}
 
 	if (parameters->locations == NULL) {

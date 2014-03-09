@@ -64,6 +64,7 @@ struct NemoBookmarkDetails
 	char *name;
 	gboolean has_custom_name;
 	GFile *location;
+	gboolean location_gone;
 	GIcon *icon;
 	GIcon *symbolic_icon;
 	NemoFile *file;
@@ -178,9 +179,10 @@ bookmark_file_changed_callback (NemoFile *file,
 		 * bookmark just because its not there anymore.
 		 */
 		DEBUG ("%s: trashed", nemo_bookmark_get_name (bookmark));
+		bookmark->details->location_gone = TRUE;
 		nemo_bookmark_disconnect_file (bookmark);
 	} else {
-		nemo_bookmark_update_icon (bookmark);
+		bookmark->details->location_gone = FALSE;
 		bookmark_set_name_from_ready_file (bookmark, file);
 	}
 }
@@ -752,6 +754,10 @@ nemo_bookmark_uri_known_not_to_exist (NemoBookmark *bookmark)
 {
 	char *path_name;
 	gboolean exists;
+
+	if (bookmark->details->location_gone) {
+		return TRUE;
+	}
 
 	/* Convert to a path, returning FALSE if not local. */
 	if (!g_file_is_native (bookmark->details->location)) {
