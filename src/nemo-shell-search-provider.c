@@ -140,6 +140,7 @@ pending_search_free (PendingSearch *search)
   g_hash_table_destroy (search->hits);
   g_clear_object (&search->query);
   g_clear_object (&search->engine);
+  g_clear_object (&search->invocation);
 
   g_slice_free (PendingSearch, search);
 }
@@ -439,7 +440,7 @@ execute_search (NemoShellSearchProviderApp *self,
   nemo_query_set_location (query, home_uri);
 
   pending_search = g_slice_new0 (PendingSearch);
-  pending_search->invocation = invocation;
+  pending_search->invocation = g_object_ref (invocation);
   pending_search->hits = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_object_unref);
   pending_search->query = query;
   pending_search->engine = nemo_search_engine_new ();
@@ -506,6 +507,7 @@ static void
 result_metas_data_free (ResultMetasData *data)
 {
   g_clear_object (&data->self);
+  g_clear_object (&data->invocation);
   g_strfreev (data->uris);
 
   g_slice_free (ResultMetasData, data);
@@ -629,7 +631,7 @@ handle_get_result_metas (NemoShellSearchProvider  *skeleton,
 
   data = g_slice_new0 (ResultMetasData);
   data->self = g_object_ref (self);
-  data->invocation = invocation;
+  data->invocation = g_object_ref (invocation);
   data->start_time = g_get_monotonic_time ();
   data->uris = g_strdupv (results);
 
