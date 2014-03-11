@@ -86,6 +86,7 @@ static GList *nautilus_application_desktop_windows;
 static gboolean save_of_accel_map_requested = FALSE;
 
 static void     desktop_changed_callback          (gpointer                  user_data);
+static void     nautilus_application_open_desktop (NautilusApplication *application);
 
 G_DEFINE_TYPE (NautilusApplication, nautilus_application, GTK_TYPE_APPLICATION);
 
@@ -920,6 +921,16 @@ action_help (GSimpleAction *action,
 }
 
 static void
+action_force_desktop (GSimpleAction *action,
+		      GVariant *parameter,
+		      gpointer user_data)
+{
+	NautilusApplication *self = user_data;
+
+	nautilus_application_open_desktop (self);
+}
+
+static void
 action_kill (GSimpleAction *action,
 	     GVariant *parameter,
 	     gpointer user_data)
@@ -1004,6 +1015,7 @@ static GActionEntry app_entries[] = {
 	{ "help", action_help, NULL, NULL, NULL },
 	{ "quit", action_quit, NULL, NULL, NULL },
 	{ "kill", action_kill, NULL, NULL, NULL },
+	{ "force-desktop", action_force_desktop, NULL, NULL, NULL },
 };
 
 static void
@@ -1293,6 +1305,13 @@ nautilus_application_local_command_line (GApplication *application,
 		g_action_group_activate_action (G_ACTION_GROUP (application),
 						"kill", NULL);
 		goto out;
+	}
+
+	if (self->priv->force_desktop) {
+		DEBUG ("Forcing desktop, as requested");
+		g_action_group_activate_action (G_ACTION_GROUP (application),
+						"force-desktop", NULL);
+                /* fall through */
 	}
 
 	GFile **files;
