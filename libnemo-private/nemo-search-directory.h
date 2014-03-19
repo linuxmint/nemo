@@ -62,6 +62,8 @@ gboolean       nemo_search_directory_is_modified     (NemoSearchDirectory *searc
 void           nemo_search_directory_save_search     (NemoSearchDirectory *search);
 void           nemo_search_directory_save_to_file    (NemoSearchDirectory *search,
 							  const char              *save_file_uri);
+void    nemo_search_directory_stop_search (NemoSearchDirectory *search);
+gboolean nemo_search_directory_get_finished (NemoSearchDirectory *search);
 
 NemoQuery *nemo_search_directory_get_query       (NemoSearchDirectory *search);
 void           nemo_search_directory_set_query       (NemoSearchDirectory *search,
