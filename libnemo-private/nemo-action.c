@@ -847,9 +847,11 @@ get_insertion_string (NemoAction *action, TokenType token_type, GList *selection
                         str = insert_separator (action, str);
                     str = insert_quote (action, str);
                     gchar *uri = nemo_file_get_uri (NEMO_FILE (l->data));
-                    if (uri)
-                        str = _score_append (action, str, uri);
+                    gchar *escaped = g_uri_unescape_string (uri, NULL);
+                    if (escaped)
+                        str = _score_append (action, str, escaped);
                     g_free (uri);
+                    g_free (escaped);
                     str = insert_quote (action, str);
                     first = FALSE;
                 }
