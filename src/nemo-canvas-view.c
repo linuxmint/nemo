@@ -141,6 +141,11 @@ static const SortCriterion sort_criteria[] = {
 		"Sort by Type"
 	},
 	{
+		NEMO_FILE_SORT_BY_DETAILED_TYPE,
+		"detailed_type",
+		"Sort by Detailed Type",
+	},
+	{
 		NEMO_FILE_SORT_BY_MTIME,
 		"modification date",
 		"Sort by Modification Date"
@@ -1415,6 +1420,11 @@ static const GtkRadioActionEntry arrange_radio_entries[] = {
     N_("By _Type"), NULL,
     N_("Keep icons sorted by type in rows"),
     NEMO_FILE_SORT_BY_TYPE },
+  { "Sort by Detailed Type", NULL,
+    N_("By _Detailed Type"), NULL,
+    N_("Keep icons sorted by detailed type in rows"),
+    NEMO_FILE_SORT_BY_DETAILED_TYPE
+  },
   { "Sort by Modification Date", NULL,
     N_("By Modification _Date"), NULL,
     N_("Keep icons sorted by modification date in rows"),
