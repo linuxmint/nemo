@@ -138,6 +138,7 @@ nemo_desktop_window_new (GtkApplication *application,
 
 	width_request = gdk_screen_get_width (screen);
 	height_request = gdk_screen_get_height (screen);
+    GdkRGBA transparent = {0, 0, 0, 0};
 
 	window = g_object_new (NEMO_TYPE_DESKTOP_WINDOW,
 			       "application", application,
@@ -154,6 +155,7 @@ nemo_desktop_window_new (GtkApplication *application,
 	 * Note that nemo_desktop_window_init is too early to do this.
 	 */
 	nemo_desktop_window_update_directory (window);
+    gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
 
 	return window;
 }
