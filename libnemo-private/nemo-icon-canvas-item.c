@@ -1418,6 +1418,7 @@ draw_embedded_text (NemoIconCanvasItem *item,
 	PangoFontDescription *desc;
 	GtkWidget *widget;
 	GtkStyleContext *style_context;
+    guint scale;
 
 	if (item->details->embedded_text == NULL ||
 	    item->details->embedded_text_rect.width == 0 ||
@@ -1449,16 +1450,18 @@ draw_embedded_text (NemoIconCanvasItem *item,
 
 	cairo_save (cr);
 
+    scale = gtk_widget_get_scale_factor (widget);
+
 	cairo_rectangle (cr,
-			 x + item->details->embedded_text_rect.x,
-			 y + item->details->embedded_text_rect.y,
-			 item->details->embedded_text_rect.width,
-			 item->details->embedded_text_rect.height);
+			 x + item->details->embedded_text_rect.x / scale,
+			 y + item->details->embedded_text_rect.y / scale,
+			 item->details->embedded_text_rect.width / scale,
+			 item->details->embedded_text_rect.height / scale);
 	cairo_clip (cr);
 
 	gtk_render_layout (style_context, cr,
-			   x + item->details->embedded_text_rect.x,
-			   y + item->details->embedded_text_rect.y,
+			   x + item->details->embedded_text_rect.x / scale,
+			   y + item->details->embedded_text_rect.y / scale,
 			   layout);
 
 	gtk_style_context_restore (style_context);
