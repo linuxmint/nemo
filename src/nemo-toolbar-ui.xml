@@ -11,6 +11,7 @@
 </toolbar>
 <toolbar name="SecondaryToolbar">		
 	<toolitem name="Edit Location" action="Toggle Location Button"/>
+        <toolitem name="New Folder" action="New Folder"/>
         <toolitem name="Search" action="Search"/>
         <toolitem name="Icon View" action="IconView"/>
         <toolitem name="List View" action="ListView"/>
