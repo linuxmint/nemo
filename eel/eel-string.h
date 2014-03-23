@@ -38,13 +38,6 @@
 
 /* NULL is allowed for all the str parameters to these functions. */
 
-/* Other basic string operations. */
-gboolean eel_str_is_empty                  (const char    *str_or_null);
-gboolean eel_str_is_equal                  (const char    *str_a,
-					    const char    *str_b);
-gboolean eel_istr_has_prefix               (const char    *target,
-					    const char    *prefix);
-
 /* Escape function for '_' character. */
 char *   eel_str_double_underscores        (const char    *str);
 

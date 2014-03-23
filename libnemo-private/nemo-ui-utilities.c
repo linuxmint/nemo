@@ -23,12 +23,13 @@
 */
 
 #include <config.h>
+
 #include "nemo-ui-utilities.h"
 #include "nemo-icon-info.h"
-#include <gio/gio.h>
+#include <eel/eel-graphic-effects.h>
 
+#include <gio/gio.h>
 #include <gtk/gtk.h>
-#include <eel/eel-debug.h>
 
 void
 nemo_ui_unmerge_ui (GtkUIManager *ui_manager,
@@ -111,26 +112,6 @@ nemo_action_from_menu_item (NemoMenuItem *item)
 	return action;
 }
 
-gboolean
-nemo_event_should_open_in_new_tab (void)
-{
-	GdkEvent *event;
-
-	event = gtk_get_current_event ();
-
-	if (event == NULL) {
-		return FALSE;
-	}
-
-	if (event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) {
-		return event->button.button == 2;
-	}
-
-	gdk_event_free (event);
-
-	return FALSE;
-}
-
 GdkPixbuf *
 nemo_ui_get_menu_icon (const char *icon_name)
 {
@@ -149,4 +130,85 @@ nemo_ui_get_menu_icon (const char *icon_name)
 	g_object_unref (info);
 
 	return pixbuf;
+}
+
+char *
+nemo_escape_action_name (const char *action_name,
+			     const char *prefix)
+{
+	GString *s;
+
+	if (action_name == NULL) {
+		return NULL;
+	}
+
+	s = g_string_new (prefix);
+
+	while (*action_name != 0) {
+		switch (*action_name) {
+		case '\\':
+			g_string_append (s, "\\\\");
+			break;
+		case '/':
+			g_string_append (s, "\\s");
+			break;
+		case '&':
+			g_string_append (s, "\\a");
+			break;
+		case '"':
+			g_string_append (s, "\\q");
+			break;
+		default:
+			g_string_append_c (s, *action_name);
+		}
+
+		action_name ++;
+	}
+	return g_string_free (s, FALSE);
+}
+
+static GdkPixbuf *
+nautilus_get_thumbnail_frame (void)
+{
+	static GdkPixbuf *thumbnail_frame = NULL;
+
+	if (thumbnail_frame == NULL) {
+		GInputStream *stream = g_resources_open_stream
+			("/org/gnome/nautilus/icons/thumbnail_frame.png", 0, NULL);
+		if (stream != NULL) {
+			thumbnail_frame = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
+			g_object_unref (stream);
+		}
+	}
+
+	return thumbnail_frame;
+}
+
+#define NEMO_THUMBNAIL_FRAME_LEFT 3
+#define NEMO_THUMBNAIL_FRAME_TOP 3
+#define NEMO_THUMBNAIL_FRAME_RIGHT 3
+#define NEMO_THUMBNAIL_FRAME_BOTTOM 3
+
+void
+nemo_ui_frame_image (GdkPixbuf **pixbuf)
+{
+	GdkPixbuf *pixbuf_with_frame, *frame;
+	int left_offset, top_offset, right_offset, bottom_offset;
+
+	frame = nautilus_get_thumbnail_frame ();
+	if (frame == NULL) {
+		return;
+	}
+
+	left_offset = NEMO_THUMBNAIL_FRAME_LEFT;
+	top_offset = NEMO_THUMBNAIL_FRAME_TOP;
+	right_offset = NEMO_THUMBNAIL_FRAME_RIGHT;
+	bottom_offset = NEMO_THUMBNAIL_FRAME_BOTTOM;
+
+	pixbuf_with_frame = eel_embed_image_in_frame
+		(*pixbuf, frame,
+		 left_offset, top_offset, right_offset, bottom_offset);
+	g_object_unref (*pixbuf);
+
+	*pixbuf = pixbuf_with_frame;
 }

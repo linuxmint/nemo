@@ -12,6 +12,9 @@
 /* always defined to indicate that i18n is enabled */
 #undef ENABLE_NLS
 
+/* enable profiling */
+#undef ENABLE_PROFILING
+
 /* Define to enable Tracker support */
 #undef ENABLE_TRACKER
 
@@ -31,7 +34,7 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define to enable xmp support */
+/* Define to enable XMP support */
 #undef HAVE_EXEMPI
 
 /* Define to enable EXIF support */
@@ -72,9 +75,6 @@
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
-
-/* Define if strftime supports %E and %O modifiers. */
-#undef HAVE_STRFTIME_EXTENSION
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H

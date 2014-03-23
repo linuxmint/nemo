@@ -32,6 +32,7 @@
 #include "nemo-signaller.h"
 #include "nemo-global-preferences.h"
 #include "nemo-link.h"
+#include "nemo-profile.h"
 #include <eel/eel-glib-extensions.h>
 #include <gtk/gtk.h>
 #include <libxml/parser.h>
@@ -743,8 +744,18 @@ nemo_directory_monitor_add_internal (NemoDirectory *directory,
 {
 	Monitor *monitor;
 	GList *file_list;
-		
+	char *file_uri = NULL;
+	char *dir_uri = NULL;
+
 	g_assert (NEMO_IS_DIRECTORY (directory));
+
+	if (file != NULL)
+		file_uri = nemo_file_get_uri (file);
+	if (directory != NULL)
+		dir_uri = nemo_directory_get_uri (directory);
+	nemo_profile_start ("uri %s file-uri %s client %p", dir_uri, file_uri, client);
+	g_free (dir_uri);
+	g_free (file_uri);
 
 	/* Replace any current monitor for this client/file pair. */
 	remove_monitor (directory, file, client);
@@ -797,6 +808,7 @@ nemo_directory_monitor_add_internal (NemoDirectory *directory,
 
 	/* Kick off I/O. */
 	nemo_directory_async_state_changed (directory);
+	nemo_profile_end (NULL);
 }
 
 static void
@@ -873,6 +885,8 @@ dequeue_pending_idle_callback (gpointer callback_data)
 	directory = NEMO_DIRECTORY (callback_data);
 
 	nemo_directory_ref (directory);
+
+	nemo_profile_start ("nitems %d", g_list_length (directory->details->pending_file_info));
 
 	directory->details->dequeue_pending_idle_id = 0;
 
@@ -1000,6 +1014,8 @@ dequeue_pending_idle_callback (gpointer callback_data)
 	/* Get the state machine running again. */
 	nemo_directory_async_state_changed (directory);
 
+	nemo_profile_end (NULL);
+
 	nemo_directory_unref (directory);
 	return FALSE;
 }
@@ -1059,12 +1075,6 @@ directory_load_cancel (NemoDirectory *directory)
 	}
 }
 
-static gboolean
-remove_callback (gpointer key, gpointer value, gpointer user_data)
-{
-	return TRUE;
-}
-
 static void
 file_list_cancel (NemoDirectory *directory)
 {
@@ -1081,7 +1091,7 @@ file_list_cancel (NemoDirectory *directory)
 	}
 
 	if (directory->details->hidden_file_hash) {
-		g_hash_table_foreach_remove (directory->details->hidden_file_hash, remove_callback, NULL);
+		g_hash_table_remove_all (directory->details->hidden_file_hash);
 	}
 }
 
@@ -1090,6 +1100,8 @@ directory_load_done (NemoDirectory *directory,
 		     GError *error)
 {
 	GList *node;
+
+	nemo_profile_start (NULL);
 
 	directory->details->directory_loaded = TRUE;
 	directory->details->directory_loaded_sent_notification = FALSE;
@@ -1116,6 +1128,8 @@ directory_load_done (NemoDirectory *directory,
 	dequeue_pending_idle_callback (directory);
 
 	directory_load_cancel (directory);
+
+	nemo_profile_end (NULL);
 }
 
 void
@@ -2030,7 +2044,7 @@ read_dot_hidden_file (NemoDirectory *directory)
 			char *hidden_filename;
 		
 			hidden_filename = g_strndup (file_contents + start, i - start);
-			g_hash_table_insert (directory->details->hidden_file_hash,
+			g_hash_table_replace (directory->details->hidden_file_hash,
 					     hidden_filename, hidden_filename);
 		}
 
@@ -2199,7 +2213,7 @@ start_monitoring_file_list (NemoDirectory *directory)
 		}
 		
 		fn = g_strdup (kde_trash_dir_name);
-		g_hash_table_insert (directory->details->hidden_file_hash,
+		g_hash_table_replace (directory->details->hidden_file_hash,
 				     fn, fn);
 	}
 
@@ -2298,6 +2312,8 @@ void
 nemo_directory_force_reload_internal (NemoDirectory     *directory,
 					  NemoFileAttributes file_attributes)
 {
+	nemo_profile_start (NULL);
+
 	/* invalidate attributes that are getting reloaded for all files */
 	nemo_directory_invalidate_file_attributes (directory, file_attributes);
 
@@ -2310,6 +2326,8 @@ nemo_directory_force_reload_internal (NemoDirectory     *directory,
 
 	add_all_files_to_work_queue (directory);
 	nemo_directory_async_state_changed (directory);
+
+	nemo_profile_end (NULL);
 }
 
 static gboolean
@@ -3884,7 +3902,7 @@ get_pixbuf_for_content (goffset file_len,
 	res = TRUE;
 	while (res && file_len > 0) {
 		chunk_len = file_len;
-		res = gdk_pixbuf_loader_write (loader, file_contents, chunk_len, NULL);
+		res = gdk_pixbuf_loader_write (loader, (guchar *) file_contents, chunk_len, NULL);
 		file_contents += chunk_len;
 		file_len -= chunk_len;
 	}

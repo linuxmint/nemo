@@ -50,6 +50,8 @@ typedef struct NemoLocationEntry {
 
 typedef struct {
 	NemoEntryClass parent_class;
+	/* for GtkBindingSet */
+	void         (* cancel)           (NemoLocationEntry *entry);
 } NemoLocationEntryClass;
 
 typedef enum {
@@ -63,7 +65,8 @@ void       nemo_location_entry_set_special_text     (NemoLocationEntry *entry,
 							 const char            *special_text);
 void       nemo_location_entry_set_secondary_action (NemoLocationEntry *entry,
 							 NemoLocationEntryAction secondary_action);
-void       nemo_location_entry_update_current_location (NemoLocationEntry *entry,
-							    const char *path);
+void       nemo_location_entry_set_uri              (NemoLocationEntry *entry,
+							 const char            *location);
+void       nemo_location_entry_focus                (NemoLocationEntry *entry);
 
 #endif /* NEMO_LOCATION_ENTRY_H */

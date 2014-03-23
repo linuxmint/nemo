@@ -32,15 +32,7 @@
 #include <gtk/gtk.h>
 #include <eel/eel-gdk-extensions.h>
 
-#define EEL_STANDARD_CLOSE_WINDOW_CONTROL_KEY 	'w'
-
 /* GtkWindow */
-void                  eel_gtk_window_set_initial_geometry             (GtkWindow            *window,
-								       EelGdkGeometryFlags   geometry_flags,
-								       int                   left,
-								       int                   top,
-								       guint                 width,
-								       guint                 height);
 void                  eel_gtk_window_set_initial_geometry_from_string (GtkWindow            *window,
 								       const char           *geometry_string,
 								       guint                 minimum_width,
@@ -55,9 +47,6 @@ void                  eel_pop_up_context_menu                         (GtkMenu  
 GtkMenuItem *         eel_gtk_menu_append_separator                   (GtkMenu              *menu);
 GtkMenuItem *         eel_gtk_menu_insert_separator                   (GtkMenu              *menu,
 								       int                   index);
-
-/* GtkLabel */
-void                  eel_gtk_label_make_bold                         (GtkLabel             *label);
 
 /* GtkTreeView */
 void                  eel_gtk_tree_view_set_activate_on_single_click  (GtkTreeView               *tree_view,

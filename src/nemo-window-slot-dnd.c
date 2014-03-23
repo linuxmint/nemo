@@ -98,6 +98,18 @@ slot_proxy_drag_motion (GtkWidget          *widget,
     }
   }
 
+  if (target_uri != NULL) {
+    NemoFile *file;
+    gboolean can;
+    file = nemo_file_get_existing_by_uri (target_uri);
+    can = nemo_file_can_write (file);
+    g_object_unref (file);
+    if (!can) {
+      action = 0;
+      goto out;
+    }
+  }
+
   if (drag_info->have_data &&
       drag_info->have_valid_data) {
     if (drag_info->info == NEMO_ICON_DND_GNOME_ICON_LIST) {

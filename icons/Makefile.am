@@ -6,3 +6,5 @@ noinst_DATA =\
 	$(NULL)
 
 EXTRA_DIST = $(noinst_DATA)
+
+-include $(top_srcdir)/git.mk

@@ -8,7 +8,6 @@ INCLUDES =\
 	$(WARNING_CFLAGS) \
 	-DVERSION="\"$(VERSION)\"" \
 	-DNEMO_DATADIR=\""$(datadir)/nemo"\" \
-	-DLOCALEDIR=\""$(prefix)/${DATADIRNAME}/cinnamon/locale"\"	\
 	$(NULL)
 
 LDADD =\
@@ -34,3 +33,5 @@ test_nemo_directory_async_SOURCES = test-nemo-directory-async.c
 EXTRA_DIST = \
 	test.h \
 	$(NULL)
+
+-include $(top_srcdir)/git.mk

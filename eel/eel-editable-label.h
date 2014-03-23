@@ -61,6 +61,8 @@ struct _EelEditableLabel
   guint   overwrite_mode : 1;
   guint   draw_outline : 1;
   PangoWrapMode  wrap_mode;
+
+  GdkWindow *text_area;
   
   gchar  *text;
   int text_size; /* allocated size, in bytes */
