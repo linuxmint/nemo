@@ -27,6 +27,7 @@
 #include <config.h>
 
 #include "nemo-progress-info-widget.h"
+#include "nemo-job-queue.h"
 
 struct _NemoProgressInfoWidgetPriv {
 	NemoProgressInfo *info;
@@ -34,6 +35,7 @@ struct _NemoProgressInfoWidgetPriv {
 	GtkWidget *status; /* GtkLabel */
 	GtkWidget *details; /* GtkLabel */
 	GtkWidget *progress_bar;
+    GtkWidget *start_button;
 };
 
 enum {
@@ -74,6 +76,9 @@ update_progress (NemoProgressInfoWidget *self)
 {
 	double progress;
 
+    if (nemo_progress_info_get_is_started (self->priv->info))
+        gtk_widget_set_sensitive (self->priv->start_button, FALSE);
+
 	progress = nemo_progress_info_get_progress (self->priv->info);
 	if (progress < 0) {
 		gtk_progress_bar_pulse (GTK_PROGRESS_BAR (self->priv->progress_bar));
@@ -87,7 +92,26 @@ cancel_clicked (GtkWidget *button,
 		NemoProgressInfoWidget *self)
 {
 	nemo_progress_info_cancel (self->priv->info);
+
+    NemoJobQueue *queue = nemo_job_queue_get ();
+    nemo_job_queue_start_job_by_info (queue, self->priv->info);
+
 	gtk_widget_set_sensitive (button, FALSE);
+}
+
+static void
+start_clicked (GtkWidget *button,
+               NemoProgressInfoWidget *self)
+{
+    NemoJobQueue *queue = nemo_job_queue_get ();
+
+    nemo_job_queue_start_job_by_info (queue, self->priv->info);
+}
+
+static void
+on_started (NemoProgressInfoWidget *self) {
+    g_printerr ("ON STARTED\n");
+    gtk_widget_set_sensitive (self->priv->start_button, FALSE);
 }
 
 static void
@@ -135,6 +159,19 @@ nemo_progress_info_widget_constructed (GObject *obj)
 	g_signal_connect (button, "clicked",
 			  G_CALLBACK (cancel_clicked), self);
 
+
+    image = gtk_image_new_from_stock (GTK_STOCK_JUMP_TO,
+                      GTK_ICON_SIZE_BUTTON);
+    button = gtk_button_new ();
+    gtk_container_add (GTK_CONTAINER (button), image);
+    gtk_box_pack_start (GTK_BOX (hbox),
+                        button,
+                        FALSE,FALSE,
+                        0);
+    g_signal_connect (button, "clicked",
+              G_CALLBACK (start_clicked), self);
+    self->priv->start_button = button;
+
 	gtk_box_pack_start (GTK_BOX (self),
 			    hbox,
 			    FALSE,FALSE,
@@ -160,6 +197,10 @@ nemo_progress_info_widget_constructed (GObject *obj)
 	g_signal_connect_swapped (self->priv->info,
 				  "progress-changed",
 				  G_CALLBACK (update_progress), self);
+    g_printerr ("CONNECTING\n");
+    g_signal_connect_swapped (self->priv->info,
+                  "started",
+                  G_CALLBACK (on_started), self);
 	g_signal_connect_swapped (self->priv->info,
 				  "finished",
 				  G_CALLBACK (info_finished), self);

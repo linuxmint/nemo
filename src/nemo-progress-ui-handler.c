@@ -142,8 +142,7 @@ static void
 progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 {
 	GtkWidget *vbox, *progress_window;
-	const gchar *desktop_environment = g_getenv ("DESKTOP_SESSION");
-	
+
 	if (self->priv->progress_window != NULL) {
 		return;
 	}
@@ -162,10 +161,6 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 				 GTK_WIN_POS_CENTER);
 	gtk_window_set_icon_name (GTK_WINDOW (progress_window),
 				"system-run");
-	if ((!g_strcmp0(desktop_environment, "ubuntu")) ||
-	       (!g_strcmp0(desktop_environment, "ubuntu-2d")))
-	    gtk_window_set_skip_taskbar_hint (GTK_WINDOW (progress_window),
-				TRUE);
 
 	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_set_spacing (GTK_BOX (vbox), 5);
@@ -184,9 +179,14 @@ progress_ui_handler_add_to_window (NemoProgressUIHandler *self,
 				   NemoProgressInfo *info)
 {
 	GtkWidget *progress;
+    GtkWidget *sep;
 
 	progress = nemo_progress_info_widget_new (info);
 	progress_ui_handler_ensure_window (self);
+
+    sep = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+
+    gtk_box_pack_start (GTK_BOX (self->priv->window_vbox), sep, FALSE, FALSE, 0);
 
 	gtk_box_pack_start (GTK_BOX (self->priv->window_vbox),
 			    progress,
@@ -318,7 +318,7 @@ timeout_data_new (NemoProgressUIHandler *self,
 }
 
 static gboolean
-new_op_started_timeout (TimeoutData *data)
+new_op_queued_timeout (TimeoutData *data)
 {
 	NemoProgressInfo *info = data->info;
 	NemoProgressUIHandler *self = data->self;
@@ -348,7 +348,7 @@ release_application (NemoProgressInfo *info,
 }
 
 static void
-progress_info_started_cb (NemoProgressInfo *info,
+progress_info_queued_cb (NemoProgressInfo *info,
 			  NemoProgressUIHandler *self)
 {
 	NemoApplication *app;
@@ -365,7 +365,7 @@ progress_info_started_cb (NemoProgressInfo *info,
 
 	/* timeout for the progress window to appear */
 	g_timeout_add_seconds (2,
-			       (GSourceFunc) new_op_started_timeout,
+			       (GSourceFunc) new_op_queued_timeout,
 			       data);
 }
 
@@ -374,8 +374,9 @@ new_progress_info_cb (NemoProgressInfoManager *manager,
 		      NemoProgressInfo *info,
 		      NemoProgressUIHandler *self)
 {
-	g_signal_connect (info, "started",
-			  G_CALLBACK (progress_info_started_cb), self);
+        g_printerr ("running %s\n", G_STRFUNC);
+	g_signal_connect (info, "queued",
+			  G_CALLBACK (progress_info_queued_cb), self);
 }
 
 static void

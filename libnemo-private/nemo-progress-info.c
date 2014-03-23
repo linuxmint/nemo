@@ -33,6 +33,7 @@
 
 enum {
   CHANGED,
+  QUEUED,
   PROGRESS_CHANGED,
   STARTED,
   FINISHED,
@@ -56,6 +57,7 @@ struct _NemoProgressInfo
 	gboolean started;
 	gboolean finished;
 	gboolean paused;
+    gboolean queued;
 	
 	GSource *idle_source;
 	gboolean source_is_now;
@@ -64,6 +66,7 @@ struct _NemoProgressInfo
 	gboolean finish_at_idle;
 	gboolean changed_at_idle;
 	gboolean progress_at_idle;
+    gboolean queue_at_idle;
 };
 
 struct _NemoProgressInfoClass
@@ -128,6 +131,15 @@ nemo_progress_info_class_init (NemoProgressInfoClass *klass)
 			      g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 	
+    signals[QUEUED] =
+        g_signal_new ("queued",
+                  NEMO_TYPE_PROGRESS_INFO,
+                  G_SIGNAL_RUN_LAST,
+                  0,
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
+
 	signals[PROGRESS_CHANGED] =
 		g_signal_new ("progress-changed",
 			      NEMO_TYPE_PROGRESS_INFO,
@@ -172,6 +184,7 @@ nemo_progress_info_init (NemoProgressInfo *info)
 NemoProgressInfo *
 nemo_progress_info_new (void)
 {
+    g_printerr ("running %s\n", G_STRFUNC);
 	NemoProgressInfo *info;
 	
 	info = g_object_new (NEMO_TYPE_PROGRESS_INFO, NULL);
@@ -307,6 +320,7 @@ idle_callback (gpointer data)
 	gboolean finish_at_idle;
 	gboolean changed_at_idle;
 	gboolean progress_at_idle;
+    gboolean queue_at_idle;
 	GSource *source;
 
 	source = g_main_current_source ();
@@ -338,15 +352,18 @@ idle_callback (gpointer data)
 	finish_at_idle = info->finish_at_idle;
 	changed_at_idle = info->changed_at_idle;
 	progress_at_idle = info->progress_at_idle;
+    queue_at_idle = info->queue_at_idle;
 	
 	info->start_at_idle = FALSE;
 	info->finish_at_idle = FALSE;
 	info->changed_at_idle = FALSE;
 	info->progress_at_idle = FALSE;
+    info->queue_at_idle = FALSE;
 	
 	G_UNLOCK (progress_info);
 	
 	if (start_at_idle) {
+        g_printerr ("EMITTING>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 		g_signal_emit (info,
 			       signals[STARTED],
 			       0);
@@ -370,6 +387,12 @@ idle_callback (gpointer data)
 			       0);
 	}
 	
+    if (queue_at_idle) {
+        g_signal_emit (info,
+                   signals[QUEUED],
+                   0);
+    }
+
 	g_object_unref (info);
 	
 	return FALSE;
@@ -399,6 +422,21 @@ queue_idle (NemoProgressInfo *info, gboolean now)
 }
 
 void
+nemo_progress_info_queue (NemoProgressInfo *info)
+{
+    G_LOCK (progress_info);
+    
+    if (!info->queued) {
+        info->queued = TRUE;
+        
+        info->queue_at_idle = TRUE;
+        queue_idle (info, TRUE);
+    }
+    
+    G_UNLOCK (progress_info);
+}
+
+void
 nemo_progress_info_pause (NemoProgressInfo *info)
 {
 	G_LOCK (progress_info);
@@ -425,6 +463,7 @@ nemo_progress_info_resume (NemoProgressInfo *info)
 void
 nemo_progress_info_start (NemoProgressInfo *info)
 {
+        g_printerr ("running %s\n", G_STRFUNC);
 	G_LOCK (progress_info);
 	
 	if (!info->started) {
