@@ -85,8 +85,8 @@ typedef enum {
 
 /* Emblems sometimes displayed for NautilusFiles. Do not localize. */ 
 #define NAUTILUS_FILE_EMBLEM_NAME_SYMBOLIC_LINK "symbolic-link"
-#define NAUTILUS_FILE_EMBLEM_NAME_CANT_READ "noread"
-#define NAUTILUS_FILE_EMBLEM_NAME_CANT_WRITE "nowrite"
+#define NAUTILUS_FILE_EMBLEM_NAME_CANT_READ "unreadable"
+#define NAUTILUS_FILE_EMBLEM_NAME_CANT_WRITE "readonly"
 #define NAUTILUS_FILE_EMBLEM_NAME_TRASH "trash"
 #define NAUTILUS_FILE_EMBLEM_NAME_NOTE "note"
 
