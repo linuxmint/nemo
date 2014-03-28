@@ -557,11 +557,25 @@ showing_trash_directory (NemoView *view)
 }
 
 static gboolean
+showing_recent_directory (NemoView *view)
+{
+   NemoFile *file;
+
+   file = nemo_view_get_directory_as_file (view);
+   if (file != NULL) {
+       return nemo_file_is_in_recent (file);
+   }
+   return FALSE;
+}
+
+static gboolean
 nemo_view_supports_creating_files (NemoView *view)
 {
 	g_return_val_if_fail (NEMO_IS_VIEW (view), FALSE);
 
-	return !nemo_view_is_read_only (view) && !showing_trash_directory (view);
+    return !nemo_view_is_read_only (view)
+           && !showing_trash_directory (view)
+           && !showing_recent_directory (view);
 }
 
 static gboolean
@@ -9111,6 +9125,7 @@ real_update_paste_menu (NemoView *view,
 {
 	gboolean can_paste_files_into;
 	gboolean selection_is_read_only;
+    gboolean selection_contains_recent;
 	gboolean is_read_only;
 	GtkAction *action;
 
@@ -9119,14 +9134,19 @@ real_update_paste_menu (NemoView *view,
 		 !nemo_file_has_activation_uri (NEMO_FILE (selection->data)));
 		 
 	is_read_only = nemo_view_is_read_only (view);
-	
-	can_paste_files_into = (selection_count == 1 && 
-	                        can_paste_into_file (NEMO_FILE (selection->data)));
+
+    selection_contains_recent = showing_recent_directory (view);
+
+    can_paste_files_into = (!selection_contains_recent &&
+                            selection_count == 1 &&
+                            can_paste_into_file (NEMO_FILE (selection->data)));
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PASTE);
 	gtk_action_set_sensitive (action, !is_read_only);
-	
+
+    gtk_action_set_visible (action, !selection_contains_recent);
+
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PASTE_FILES_INTO);
 	gtk_action_set_visible (action, can_paste_files_into);
@@ -9146,6 +9166,7 @@ real_update_location_menu (NemoView *view)
 	NemoFile *file;
 	gboolean is_special_link;
 	gboolean is_desktop_or_home_dir;
+    gboolean is_recent;
 	gboolean can_delete_file, show_delete;
 	gboolean show_separate_delete_command;
 	gboolean show_open_in_new_tab;
@@ -9185,6 +9206,8 @@ real_update_location_menu (NemoView *view)
 	is_desktop_or_home_dir = nemo_file_is_home (file)
 		|| nemo_file_is_desktop_directory (file);
 
+    is_recent = nemo_file_is_in_recent (file);
+
 	can_delete_file =
 		nemo_file_can_delete (file) &&
 		!is_special_link &&
@@ -9192,7 +9215,8 @@ real_update_location_menu (NemoView *view)
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_LOCATION_CUT);
-	gtk_action_set_sensitive (action, can_delete_file);
+    gtk_action_set_sensitive (action, !is_recent && can_delete_file);
+    gtk_action_set_visible (action, !is_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_LOCATION_PASTE_FILES_INTO);
@@ -9200,10 +9224,13 @@ real_update_location_menu (NemoView *view)
 			   "can-paste-according-to-destination",
 			   GINT_TO_POINTER (can_paste_into_file (file)));
 	gtk_action_set_sensitive (action,
-				  GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
-								      "can-paste-according-to-clipboard")) &&
-				  GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
-								      "can-paste-according-to-destination")));
+                              !is_recent &&
+                              GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
+                                               "can-paste-according-to-clipboard")) &&
+                              GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
+                                               "can-paste-according-to-destination")));
+
+    gtk_action_set_visible (action, !is_recent);
 
 	show_delete = TRUE;
 
@@ -9310,6 +9337,7 @@ real_update_menus (NemoView *view)
 	char *label_with_underscore;
 	gboolean selection_contains_special_link;
 	gboolean selection_contains_desktop_or_home_dir;
+    gboolean selection_contains_recent;
     gboolean selection_contains_directory;
 	gboolean can_create_files;
 	gboolean can_delete_files;
@@ -9337,6 +9365,7 @@ real_update_menus (NemoView *view)
 
 	selection_contains_special_link = special_link_in_selection (view);
 	selection_contains_desktop_or_home_dir = desktop_or_home_dir_in_selection (view);
+    selection_contains_recent = showing_recent_directory (view);
     selection_contains_directory = directory_in_selection (view);
 	can_create_files = nemo_view_supports_creating_files (view);
 	can_delete_files =
@@ -9345,7 +9374,8 @@ real_update_menus (NemoView *view)
 		!selection_contains_special_link &&
 		!selection_contains_desktop_or_home_dir;
 	can_copy_files = selection_count != 0
-		&& !selection_contains_special_link;	
+                     && !selection_contains_recent
+                     && !selection_contains_special_link;
 
 	can_duplicate_files = can_create_files && can_copy_files;
 	can_link_files = can_create_files && can_copy_files;
@@ -9361,6 +9391,8 @@ real_update_menus (NemoView *view)
 					  selection_count == 1 &&
 					  nemo_view_can_rename_file (view, selection->data));
 	}
+
+    gtk_action_set_visible (action, !selection_contains_recent);
 
     gboolean no_selection_or_one_dir = ((selection_count == 1 && selection_contains_directory) ||
                                         selection_count == 0);
@@ -9378,6 +9410,7 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_FOLDER);
 	gtk_action_set_sensitive (action, can_create_files);
+    gtk_action_set_visible (action, !selection_contains_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_OPEN);
@@ -9545,10 +9578,12 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_DUPLICATE);
 	gtk_action_set_sensitive (action, can_duplicate_files);
+    gtk_action_set_visible (action, !selection_contains_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_CREATE_LINK);
 	gtk_action_set_sensitive (action, can_link_files);
+    gtk_action_set_visible (action, !selection_contains_recent);
 	g_object_set (action, "label",
 		      ngettext ("Ma_ke Link",
 			      	"Ma_ke Links",
@@ -9622,6 +9657,7 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_CUT);
 	gtk_action_set_sensitive (action, can_delete_files);
+    gtk_action_set_visible (action, !selection_contains_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_COPY);
@@ -9640,6 +9676,7 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_DOCUMENTS);
 	gtk_action_set_sensitive (action, can_create_files);
+    gtk_action_set_visible (action, !selection_contains_recent);
 
 	if (can_create_files && view->details->templates_invalid) {
 		update_templates_menu (view);
@@ -9661,8 +9698,7 @@ real_update_menus (NemoView *view)
 	/* move to next pane: works if file is cuttable, and next pane is writable */
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_MOVE_TO_NEXT_PANE);
-	gtk_action_set_visible (action, can_delete_files && next_pane_is_writable);
-
+	gtk_action_set_visible (action, can_delete_files && next_pane_is_writable && !selection_contains_recent);
 
 	show_desktop_target =
 		g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP) &&
@@ -9679,10 +9715,11 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_MOVE_TO_HOME);
 	gtk_action_set_sensitive (action, can_delete_files);
+    gtk_action_set_visible (action, !selection_contains_recent);
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_MOVE_TO_DESKTOP);
 	gtk_action_set_sensitive (action, can_delete_files);
-	gtk_action_set_visible (action, show_desktop_target);
+	gtk_action_set_visible (action, show_desktop_target && !selection_contains_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      "CopyToMenu");
@@ -9690,6 +9727,7 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      "MoveToMenu");
 	gtk_action_set_sensitive (action, can_delete_files);
+    gtk_action_set_visible (action, !selection_contains_recent);
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                           NEMO_ACTION_FOLLOW_SYMLINK);

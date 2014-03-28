@@ -209,6 +209,7 @@ gboolean                nemo_file_is_user_special_directory         (NemoFile   
 									 GUserDirectory                 special_directory);
 gboolean		nemo_file_is_archive			(NemoFile			*file);
 gboolean                nemo_file_is_in_trash                       (NemoFile                   *file);
+gboolean                nemo_file_is_in_recent                      (NemoFile                   *file);
 gboolean                nemo_file_is_in_desktop                     (NemoFile                   *file);
 gboolean		nemo_file_is_home				(NemoFile                   *file);
 gboolean                nemo_file_is_desktop_directory              (NemoFile                   *file);
