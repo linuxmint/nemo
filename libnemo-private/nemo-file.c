@@ -7842,17 +7842,21 @@ nemo_file_list_from_uris (GList *uri_list)
 
 static gboolean
 get_attributes_for_default_sort_type (NemoFile *file,
+                      gboolean *is_recent,
 				      gboolean *is_download,
 				      gboolean *is_trash)
 {
-	gboolean is_download_dir, is_desktop_dir, is_trash_dir, retval;
+	gboolean is_recent_dir, is_download_dir, is_desktop_dir, is_trash_dir, retval;
 
+    *is_recent = FALSE;
 	*is_download = FALSE;
 	*is_trash = FALSE;
 	retval = FALSE;
 
 	/* special handling for certain directories */
 	if (file && nemo_file_is_directory (file)) {
+        is_recent_dir =
+            nemo_file_is_in_recent (file);
 		is_download_dir =
 			nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_DOWNLOAD);
 		is_desktop_dir =
@@ -7866,7 +7870,10 @@ get_attributes_for_default_sort_type (NemoFile *file,
 		} else if (is_trash_dir) {
 			*is_trash = TRUE;
 			retval = TRUE;
-		}
+		} else if (is_recent_dir) {
+            *is_recent = TRUE;
+            retval = TRUE;
+        }
 	}
 
 	return retval;
@@ -7877,15 +7884,18 @@ nemo_file_get_default_sort_type (NemoFile *file,
 				     gboolean *reversed)
 {
 	NemoFileSortType retval;
-	gboolean is_download, is_trash, res;
+	gboolean is_recent, is_download, is_trash, res;
 
 	retval = NEMO_FILE_SORT_NONE;
-	is_download = is_trash = FALSE;
-	res = get_attributes_for_default_sort_type (file, &is_download, &is_trash);
+
+    is_recent = is_download = is_trash = FALSE;
+    res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash);
 
 	if (res) {
-		if (is_download) {
-			retval = NEMO_FILE_SORT_BY_MTIME;
+        if (is_recent) {
+			retval = NEMO_FILE_SORT_BY_ATIME;
+        } else if (is_download) {
+            retval = NEMO_FILE_SORT_BY_MTIME;
 		} else if (is_trash) {
 			retval = NEMO_FILE_SORT_BY_TRASHED_TIME;
 		}
@@ -7903,14 +7913,14 @@ nemo_file_get_default_sort_attribute (NemoFile *file,
 					  gboolean *reversed)
 {
 	const gchar *retval;
-	gboolean is_download, is_trash, res;
+	gboolean is_recent, is_download, is_trash, res;
 
 	retval = NULL;
 	is_download = is_trash = FALSE;
-	res = get_attributes_for_default_sort_type (file, &is_download, &is_trash);
+	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash);
 
 	if (res) {
-		if (is_download) {
+        if (is_recent || is_download) {
 			retval = g_quark_to_string (attribute_date_modified_q);
 		} else if (is_trash) {
 			retval = g_quark_to_string (attribute_trashed_on_q);
