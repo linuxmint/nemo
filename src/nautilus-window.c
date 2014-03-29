@@ -249,7 +249,7 @@ location_entry_location_changed_callback (GtkWidget      *widget,
 	nautilus_window_slot_open_location (window->details->active_slot, location, 0);
 }
 
-static gboolean
+static void
 notebook_switch_page_cb (GtkNotebook    *notebook,
 			 GtkWidget      *page,
 			 unsigned int    page_num,
@@ -267,8 +267,6 @@ notebook_switch_page_cb (GtkNotebook    *notebook,
 
 	nautilus_window_set_active_slot (nautilus_window_slot_get_window (slot),
 					 slot);
-
-	return FALSE;
 }
 
 static void
