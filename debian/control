@@ -43,11 +43,11 @@ Depends: ${shlibs:Depends},
          libglib2.0-data,
          cinnamon-desktop-data,
          cinnamon-translations,
-         cinnamon
+         cinnamon,
+	 file-roller
 Recommends: eject,
             librsvg2-common,
             gvfs-backends,
-            nemo-fileroller
 Suggests: eog,
           evince | pdf-viewer,
           totem | mp3-decoder,
