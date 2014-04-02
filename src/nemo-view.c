@@ -9720,8 +9720,7 @@ real_update_menus (NemoView *view)
 		!selection_contains_special_link &&
 		!selection_contains_desktop_or_home_dir;
 	can_copy_files = selection_count != 0
-		&& !selection_contains_recent
-		&& !selection_contains_special_link;
+                     && !selection_contains_special_link;
 
 	can_duplicate_files = can_create_files && can_copy_files;
 	can_link_files = can_create_files && can_copy_files;
@@ -9925,9 +9924,20 @@ real_update_menus (NemoView *view)
 	   show the delete option. or if the user set this  pref */
 	gtk_action_set_visible (action, (!can_trash_files && can_delete_files) || show_separate_delete_command);
 
-	if ((!can_trash_files && can_delete_files) || show_separate_delete_command) {
+    if (selection_contains_recent) {
+        label = _("Remo_ve from Recent");
+        tip = _("Remove each selected item from the recenly used list");
+    } else {
+        label = _("_Delete");
+        tip = _("Delete each selected item, without moving to the Trash");
+    }
+
+
+
+        if ((!can_trash_files && can_delete_files) || show_separate_delete_command) {
 		g_object_set (action,
-			      "label", _("_Delete"),
+			      "label", label,
+			      "tooltip", tip,
 			      "icon-name", NEMO_ICON_DELETE,
 			      NULL);
 	}
@@ -10714,7 +10724,11 @@ static gboolean
 real_is_read_only (NemoView *view)
 {
 	NemoFile *file;
-	
+
+    if (showing_recent_directory (view)) {
+        return TRUE;
+    }
+
 	if (!nemo_view_is_editable (view)) {
 		return TRUE;
 	}

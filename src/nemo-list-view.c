@@ -174,6 +174,14 @@ static const char * default_trash_columns_order[] = {
 	"name", "size", "type", "trashed_on", "trash_orig_path", NULL
 };
 
+static const char * default_recent_visible_columns[] = {
+    "name", "size", "type", "date_accessed", NULL
+};
+
+static const char * default_recent_columns_order[] = {
+    "name", "size", "type", "date_accessed", NULL
+};
+
 static const gchar*
 get_default_sort_order (NemoFile *file, gboolean *reversed)
 {
@@ -2127,6 +2135,10 @@ get_default_visible_columns (NemoListView *list_view)
         return g_strdupv ((gchar **) default_trash_visible_columns);
     }
 
+    if (nemo_file_is_in_recent (file)) {
+        return g_strdupv ((gchar **) default_recent_visible_columns);
+    }
+
     directory = nemo_view_get_model (NEMO_VIEW (list_view));
     if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
         return g_strdupv ((gchar **) default_search_visible_columns);
@@ -2185,6 +2197,10 @@ get_default_column_order (NemoListView *list_view)
 
     if (nemo_file_is_in_trash (file)) {
         return g_strdupv ((gchar **) default_trash_columns_order);
+    }
+
+    if (nemo_file_is_in_recent (file)) {
+        return g_strdupv ((gchar **) default_recent_columns_order);
     }
 
     directory = nemo_view_get_model (NEMO_VIEW (list_view));
@@ -3594,6 +3610,9 @@ nemo_list_view_supports_uri (const char *uri,
 	if (g_str_has_prefix (uri, "trash:")) {
 		return TRUE;
 	}
+    if (g_str_has_prefix (uri, "recent:")) {
+        return TRUE;
+    }
 	if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
 		return TRUE;
 	}
