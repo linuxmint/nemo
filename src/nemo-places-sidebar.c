@@ -637,18 +637,6 @@ update_places (NemoPlacesSidebar *sidebar)
                                     _("My Computer"));
     /* add built in bookmarks */
 
-	if (recent_is_supported ()) {
-		mount_uri = "recent:///"; /* No need to strdup */
-		icon = g_themed_icon_new ("document-open-recent");
-		cat_iter = add_place (sidebar, PLACES_BUILT_IN,
-			   SECTION_COMPUTER,
-			   _("Recent"), icon, mount_uri,
-			   NULL, NULL, NULL, 0,
-			   _("Recent files"), 0, FALSE,
-			   cat_iter);
-		g_object_unref (icon);
-	}
-
     /* home folder */
     mount_uri = nemo_get_home_directory_uri ();
     icon = g_themed_icon_new (NEMO_ICON_HOME);
@@ -666,6 +654,17 @@ update_places (NemoPlacesSidebar *sidebar)
     sidebar->top_bookend_uri = g_strdup (mount_uri);
     g_free (mount_uri);
     g_free (tooltip);
+
+    if (recent_is_supported ()) {
+        mount_uri = "recent:///"; /* No need to strdup */
+        icon = g_themed_icon_new ("document-open-recent");
+        cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                              SECTION_COMPUTER,
+                              _("Recent"), icon, mount_uri,
+                              NULL, NULL, NULL, 0,
+                              _("Recent files"), 0, FALSE, cat_iter);
+        g_object_unref (icon);
+    }
 
     if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
         /* desktop */

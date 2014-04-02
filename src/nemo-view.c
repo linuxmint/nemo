@@ -10063,8 +10063,7 @@ real_update_menus (NemoView *view)
 	/* move to next pane: works if file is cuttable, and next pane is writable */
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_MOVE_TO_NEXT_PANE);
-	gtk_action_set_visible (action, can_delete_files && next_pane_is_writable);
-
+	gtk_action_set_visible (action, can_delete_files && next_pane_is_writable && !selection_contains_recent);
 
 	show_desktop_target =
 		g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP);
@@ -10081,10 +10080,11 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_MOVE_TO_HOME);
 	gtk_action_set_sensitive (action, can_delete_files);
+    gtk_action_set_visible (action, !selection_contains_recent);
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_MOVE_TO_DESKTOP);
 	gtk_action_set_sensitive (action, can_delete_files);
-	gtk_action_set_visible (action, show_desktop_target);
+	gtk_action_set_visible (action, show_desktop_target && !selection_contains_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      "CopyToMenu");
@@ -10092,6 +10092,7 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      "MoveToMenu");
 	gtk_action_set_sensitive (action, can_delete_files);
+    gtk_action_set_visible (action, !selection_contains_recent);
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                           NEMO_ACTION_FOLLOW_SYMLINK);
