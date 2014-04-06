@@ -6,8 +6,10 @@
 
   <name xml:lang="en">Nautilus</name>
   <shortdesc xml:lang="en">Default file manager for GNOME</shortdesc>
-  <homepage rdf:resource="http://live.gnome.org/Nautilus" />
+  <homepage rdf:resource="https://wiki.gnome.org/Apps/Nautilus" />
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/nautilus-list" />
+  <download-page rdf:resource="http://download.gnome.org/sources/nautilus/" />
+  <bug-database rdf:resource="https://bugzilla.gnome.org/browse.cgi?product=nautilus" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#desktop" />
 
   <maintainer>

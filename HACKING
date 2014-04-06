@@ -7,7 +7,7 @@ in releases on the GNOME FTP site
 
 If you plan to hack on Nautilus, please make sure you work from the
 Git version. The Git version can be checked from the GNOME git server.
-See http://live.gnome.org/Git for details on how to get started with
+See http://wiki.gnome.org/Git for details on how to get started with
 GNOME Git. For details on how Nautilus uses git, see the README.commits
 file.
 
