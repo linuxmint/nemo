@@ -25,8 +25,8 @@ msgstr ""
 "Project-Id-Version: nautilus.master.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2014-02-18 23:04+0000\n"
-"PO-Revision-Date: 2014-02-20 14:18+0100\n"
+"POT-Creation-Date: 2014-04-07 10:41+0000\n"
+"PO-Revision-Date: 2014-04-07 14:08+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -68,7 +68,7 @@ msgstr "Ejecutar programa"
 # libnautilus-private/nautilus-global-preferences.c:592
 #. set dialog properties
 #: ../data/nautilus-connect-server.desktop.in.in.h:1
-#: ../src/nautilus-connect-server-dialog.c:547
+#: ../src/nautilus-connect-server-dialog.c:551
 msgid "Connect to Server"
 msgstr "Conectar con el servidor"
 
@@ -77,8 +77,8 @@ msgstr "Conectar con el servidor"
 #. Set initial window title
 #: ../data/nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4479 ../src/nautilus-window.c:2168
-#: ../src/nautilus-window.c:2347
+#: ../src/nautilus-properties-window.c:4479 ../src/nautilus-window.c:2166
+#: ../src/nautilus-window.c:2345
 msgid "Files"
 msgstr "Archivos"
 
@@ -192,7 +192,7 @@ msgstr "Mostrar más _detalles"
 #: ../eel/eel-stock-dialogs.c:195
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:542
 #: ../libnautilus-private/nautilus-file-operations.c:183
-#: ../src/nautilus-connect-server-dialog.c:653
+#: ../src/nautilus-connect-server-dialog.c:657
 #: ../src/nautilus-location-entry.c:274 ../src/nautilus-mime-actions.c:647
 #: ../src/nautilus-mime-actions.c:651 ../src/nautilus-mime-actions.c:722
 #: ../src/nautilus-mime-actions.c:1065 ../src/nautilus-mime-actions.c:1571
@@ -1126,7 +1126,7 @@ msgstr "Se eliminarán permanentemente todos los elementos en la papelera."
 # src/file-manager/fm-directory-view.c:2154
 #: ../libnautilus-private/nautilus-file-operations.c:1394
 #: ../libnautilus-private/nautilus-file-operations.c:2270
-#: ../src/nautilus-window.c:815
+#: ../src/nautilus-window.c:813
 msgid "Empty _Trash"
 msgstr "Vaciar la _papelera"
 
@@ -2799,11 +2799,11 @@ msgid "Send files by mail…"
 msgstr "Enviar archivos por correo-e…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:224 ../src/nautilus-window-slot.c:1602
+#: ../src/nautilus-application.c:225 ../src/nautilus-window-slot.c:1602
 msgid "Oops! Something went wrong."
 msgstr "Algo salió mal."
 
-#: ../src/nautilus-application.c:226
+#: ../src/nautilus-application.c:227
 #, c-format
 msgid ""
 "Unable to create a required folder. Please create the following folder, or "
@@ -2814,7 +2814,7 @@ msgstr ""
 "establezca los permisos necesarios para que se pueda crear:\n"
 "%s"
 
-#: ../src/nautilus-application.c:231
+#: ../src/nautilus-application.c:232
 #, c-format
 msgid ""
 "Unable to create required folders. Please create the following folders, or "
@@ -2825,7 +2825,7 @@ msgstr ""
 "establezca los permisos necesarios para que se puedan crear:\n"
 "%s"
 
-#: ../src/nautilus-application.c:365
+#: ../src/nautilus-application.c:366
 msgid ""
 "Nautilus 3.0 deprecated this directory and tried migrating this "
 "configuration to ~/.config/nautilus"
@@ -2833,7 +2833,7 @@ msgstr ""
 "Nautlius 3.0 hizo obsoleta esta carpeta e intentó migrar su configuración a "
 "~/.config/nautilus"
 
-#: ../src/nautilus-application.c:910 ../src/nautilus-window-menus.c:253
+#: ../src/nautilus-application.c:911 ../src/nautilus-window-menus.c:253
 #, c-format
 msgid ""
 "There was an error displaying help: \n"
@@ -2843,79 +2843,79 @@ msgstr ""
 "%s"
 
 # src/nautilus-main.c:117
-#: ../src/nautilus-application.c:1084
+#: ../src/nautilus-application.c:1096
 msgid "--check cannot be used with other options."
 msgstr "--check no se puede usar con otras opciones."
 
 # src/nautilus-main.c:117
-#: ../src/nautilus-application.c:1090
+#: ../src/nautilus-application.c:1102
 msgid "--quit cannot be used with URIs."
 msgstr "--quit no se puede usar con URI."
 
 # src/nautilus-main.c:117
-#: ../src/nautilus-application.c:1097
+#: ../src/nautilus-application.c:1109
 msgid "--geometry cannot be used with more than one URI."
 msgstr "--geometry no se puede usar con más de un URI."
 
 # src/nautilus-main.c:117
-#: ../src/nautilus-application.c:1103
+#: ../src/nautilus-application.c:1115
 msgid "--select must be used with at least an URI."
 msgstr "--select se debe usar con al menos un URI."
 
-#: ../src/nautilus-application.c:1109
+#: ../src/nautilus-application.c:1121
 msgid "--no-desktop and --force-desktop cannot be used together."
 msgstr "--no-desktop y --force-desktop no se pueden usar juntas."
 
 # src/nautilus-main.c:63
-#: ../src/nautilus-application.c:1208
+#: ../src/nautilus-application.c:1220
 msgid "Perform a quick set of self-check tests."
 msgstr "Realiza un conjunto rápido de auto-verificaciones."
 
 # src/file-manager/fm-properties-window.c:1641
-#: ../src/nautilus-application.c:1214
+#: ../src/nautilus-application.c:1226
 msgid "Show the version of the program."
 msgstr "Mostrar la versión del programa."
 
-#: ../src/nautilus-application.c:1216
+#: ../src/nautilus-application.c:1228
 msgid "Create the initial window with the given geometry."
 msgstr "Crea la ventana inicial con la geometría indicada."
 
-#: ../src/nautilus-application.c:1216
+#: ../src/nautilus-application.c:1228
 msgid "GEOMETRY"
 msgstr "GEOMETRÍA"
 
-#: ../src/nautilus-application.c:1218
+#: ../src/nautilus-application.c:1230
 msgid "Always open a new window for browsing specified URIs"
 msgstr "Abrir siempre una ventana nueva para explorar las URI especificadas"
 
-#: ../src/nautilus-application.c:1220
+#: ../src/nautilus-application.c:1232
 msgid "Only create windows for explicitly specified URIs."
 msgstr "Sólo crear ventanas para las URI explícitamente especificadas."
 
-#: ../src/nautilus-application.c:1222
+#: ../src/nautilus-application.c:1234
 msgid "Never manage the desktop (ignore the GSettings preference)."
 msgstr ""
 "No gestionar nunca el escritorio (ignorar las preferencias de GSettings)."
 
-#: ../src/nautilus-application.c:1224
+#: ../src/nautilus-application.c:1236
 msgid "Always manage the desktop (ignore the GSettings preference)."
 msgstr ""
 "Gestionar siempre el escritorio (ignorar las preferencias de GSettings)."
 
 # src/nautilus-main.c:65
-#: ../src/nautilus-application.c:1226
+#: ../src/nautilus-application.c:1238
 msgid "Quit Nautilus."
 msgstr "Salir de Nautilus."
 
-#: ../src/nautilus-application.c:1228
+#: ../src/nautilus-application.c:1240
 msgid "Select specified URI in parent folder."
 msgstr "Seleccionar el URI especificado en la carpeta padre."
 
-#: ../src/nautilus-application.c:1229
+#: ../src/nautilus-application.c:1241
 msgid "[URI...]"
 msgstr "[URI…]"
 
-#: ../src/nautilus-application.c:1241
+#: ../src/nautilus-application.c:1253
 msgid ""
 "\n"
 "\n"
@@ -2927,13 +2927,13 @@ msgstr ""
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1251
+#: ../src/nautilus-application.c:1263
 msgid "Could not parse arguments"
 msgstr "No se pudieron analizar los argumentos"
 
 #. Translators: this is a fatal error quit message printed on the
 #. * command line
-#: ../src/nautilus-application.c:1284
+#: ../src/nautilus-application.c:1296
 msgid "Could not register the application"
 msgstr "No se pudo registrar la aplicación"
 
@@ -3208,24 +3208,24 @@ msgstr "Por ejemplo, %s"
 
 # #-#-#-#-#  nautilus-es.po (Nautilus)  #-#-#-#-#
 # src/nautilus-bookmarks-window.c:198 src/nautilus-window-menus.c:588
-#: ../src/nautilus-connect-server-dialog.c:493
+#: ../src/nautilus-connect-server-dialog.c:497
 msgid "_Remove"
 msgstr "_Quitar"
 
-#: ../src/nautilus-connect-server-dialog.c:502
+#: ../src/nautilus-connect-server-dialog.c:506
 msgid "_Clear All"
 msgstr "_Limpiar todo"
 
-#: ../src/nautilus-connect-server-dialog.c:563
+#: ../src/nautilus-connect-server-dialog.c:567
 msgid "_Server Address"
 msgstr "_Dirección del servidor"
 
 # libnautilus-private/nautilus-global-preferences.c:592
-#: ../src/nautilus-connect-server-dialog.c:587
+#: ../src/nautilus-connect-server-dialog.c:591
 msgid "_Recent Servers"
 msgstr "Servidores _recientes"
 
-#: ../src/nautilus-connect-server-dialog.c:656
+#: ../src/nautilus-connect-server-dialog.c:660
 msgid "C_onnect"
 msgstr "C_onectar"
 
@@ -4716,13 +4716,11 @@ msgstr "Crear un documento nuevo a partir de la plantilla «%s»"
 
 # src/nautilus-property-browser.c:263 src/nautilus-property-browser.c:1977
 #: ../src/nautilus-view.c:5978
-#| msgid "Select Destination"
 msgid "Select Move Destination"
 msgstr "Seleccionar el destino para mover"
 
 # src/nautilus-property-browser.c:263 src/nautilus-property-browser.c:1977
 #: ../src/nautilus-view.c:5980
-#| msgid "Select Destination"
 msgid "Select Copy Destination"
 msgstr "Seleccionar el destino para copiar"
 
@@ -5598,39 +5596,39 @@ msgid "dropped data"
 msgstr "se soltaron los datos"
 
 # src/file-manager/fm-directory-view.c:2151
-#: ../src/nautilus-window.c:829
+#: ../src/nautilus-window.c:827
 msgid "_Properties"
 msgstr "_Propiedades"
 
-#: ../src/nautilus-window.c:838
+#: ../src/nautilus-window.c:836
 msgid "_Format…"
 msgstr "_Formatear…"
 
-#: ../src/nautilus-window.c:1189
+#: ../src/nautilus-window.c:1187
 msgid "_New Tab"
 msgstr "_Pestaña nueva"
 
-#: ../src/nautilus-window.c:1199 ../src/nautilus-window-menus.c:587
+#: ../src/nautilus-window.c:1197 ../src/nautilus-window-menus.c:587
 msgid "Move Tab _Left"
 msgstr "Mover pestaña a la _izquierda"
 
-#: ../src/nautilus-window.c:1207 ../src/nautilus-window-menus.c:590
+#: ../src/nautilus-window.c:1205 ../src/nautilus-window-menus.c:590
 msgid "Move Tab _Right"
 msgstr "Mover pestaña a la _derecha"
 
-#: ../src/nautilus-window.c:1218
+#: ../src/nautilus-window.c:1216
 msgid "_Close Tab"
 msgstr "_Cerrar pestaña"
 
 #. Translators: these two strings here indicate the copyright time span,
 #. * e.g. 1999-2011.
 #.
-#: ../src/nautilus-window.c:2343
+#: ../src/nautilus-window.c:2341
 msgid "Copyright © %Id–%Id The Files authors"
 msgstr "Copyright © %Id–%Id Los autores de Archivos"
 
 # src/file-manager/fm-properties-window.c:1105
-#: ../src/nautilus-window.c:2349
+#: ../src/nautilus-window.c:2347
 msgid "Access and organize your files."
 msgstr "Acceder a sus archivos y organizarlos."
 
@@ -5638,9 +5636,10 @@ msgstr "Acceder a sus archivos y organizarlos."
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2358
+#: ../src/nautilus-window.c:2356
 msgid "translator-credits"
 msgstr ""
+"Daniel Mustieles <daniel.musiteles@gmail.com>, 2010 - 2014\n"
 "Jorge González <jorgegonz@svn.gnome.org>, 2007-2010, 2012\n"
 "Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2003-2006\n"
 "Pablo Gonzalo del Campo <pablodc@bigfoot.com>, 2000-2004\n"
