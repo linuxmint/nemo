@@ -300,7 +300,7 @@ action_about_nemo_callback (GtkAction *action,
 		   "along with Nemo; if not, write to the Free Software Foundation, Inc., "
 		   "51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA")
 	};
-	gchar *license_trans, *copyright_str;
+	gchar *license_trans;
 	GDateTime *date;
 
 	license_trans = g_strjoin ("\n\n", _(license[0]), _(license[1]),
@@ -320,7 +320,6 @@ action_about_nemo_callback (GtkAction *action,
 			      NULL);
 
 	g_free (license_trans);
-	g_free (copyright_str);
 	g_date_time_unref (date);
 }
 
