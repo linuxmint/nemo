@@ -229,14 +229,14 @@ button_press_cb (NemoNotebook *notebook,
 	return FALSE;
 }
 
-gboolean controlPressed;
+gboolean ctrlPressed = FALSE;
 
 /* user_data = if this is a callback for a keydown (else a keyup) */
 static gboolean
 control_key_checker_cb(NemoNotebook *notebook, GdkEventKey *event, gpointer user_data)
 {
-	if (event->keyval == GDK_KEY_Control_L)
-		controlPressed = (gboolean)user_data;
+	if (event->keyval == GDK_KEY_Control_L || event->keyval == GDK_KEY_Control_R)
+		ctrlPressed = (gboolean)user_data;
 	
 	return FALSE;
 }
@@ -244,12 +244,12 @@ control_key_checker_cb(NemoNotebook *notebook, GdkEventKey *event, gpointer user
 static gboolean
 notebook_tab_shortcut_cb(NemoNotebook *notebook, GtkDirectionType direction, gpointer user_data)
 {
-	/* the "focus" event is fired if tab/shift+tab is fired, so we only
+	/* the "focus" event is fired if tab/shift+tab is pressed, so we only
 	 * need to check if ctrl is pressed down here.
 	 */
-	if (controlPressed)
+	if (ctrlPressed)
 	{
-		/* change the selected tab, work out if we need to do any wrap-around */
+		/* change the selected tab. work out if we need to do any wrap-around */
 		int last    = gtk_notebook_get_n_pages (GTK_NOTEBOOK(user_data)) - 1;
 		int current = gtk_notebook_get_current_page (GTK_NOTEBOOK(user_data));
 		int next;
