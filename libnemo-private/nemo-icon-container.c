@@ -4292,11 +4292,11 @@ button_press_event (GtkWidget *widget,
 		double eventX;//where did click event happened for x
 		double eventY;//where did click event happened for y
 		/* when icon is in renaming mode and user clicks on the image part of icon renaming should get closed */
-		icon=get_first_selected_icon(container);//this function gets the clicked icon
-		icon_rect = nemo_icon_canvas_item_get_icon_rectangle(icon->item);
-		eel_canvas_window_to_world(EEL_CANVAS (container), event->x, event->y, &eventX, &eventY);
-		if(eventX > icon_rect.x0 && eventX < icon_rect.x1 && eventY > icon_rect.y0 && eventY < icon_rect.y1 && icon == get_icon_being_renamed (container)){
-			end_renaming_mode(container,TRUE);
+		icon = get_first_selected_icon (container);//this function gets the clicked icon
+		icon_rect = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
+		eel_canvas_window_to_world (EEL_CANVAS (container), event->x, event->y, &eventX, &eventY);
+		if (eventX > icon_rect.x0 && eventX < icon_rect.x1 && eventY > icon_rect.y0 && eventY < icon_rect.y1 && icon == get_icon_being_renamed (container)){
+			end_renaming_mode (container,TRUE);
 		}
 		return TRUE;
 	}
@@ -8379,7 +8379,7 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 		end_offset = -1;
 	} else {
 		/* if it is a directory it should select all of the text regardless of select_all option */
-		if(nemo_file_is_directory(icon->data)){
+		if (nemo_file_is_directory (icon->data)){
 			start_offset = 0;
 			end_offset = -1;
 		}else{
