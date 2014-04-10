@@ -229,6 +229,42 @@ button_press_cb (NemoNotebook *notebook,
 	return FALSE;
 }
 
+gboolean ctrlPressed = FALSE;
+
+/* user_data = if this is a callback for a keydown (else a keyup) */
+static gboolean
+control_key_checker_cb(NemoNotebook *notebook, GdkEventKey *event, gpointer user_data)
+{
+	if (event->keyval == GDK_KEY_Control_L || event->keyval == GDK_KEY_Control_R)
+		ctrlPressed = (gboolean)user_data;
+	
+	return FALSE;
+}
+
+static gboolean
+notebook_tab_shortcut_cb(NemoNotebook *notebook, GtkDirectionType direction, gpointer user_data)
+{
+	/* the "focus" event is fired if tab/shift+tab is pressed, so we only
+	 * need to check if ctrl is pressed down here.
+	 */
+	if (ctrlPressed)
+	{
+		/* change the selected tab. work out if we need to do any wrap-around */
+		int last    = gtk_notebook_get_n_pages (GTK_NOTEBOOK(user_data)) - 1;
+		int current = gtk_notebook_get_current_page (GTK_NOTEBOOK(user_data));
+		int next;
+		
+		if (direction)
+			next = (current == 0 ? last : current - 1);
+		else
+			next = (current == last ? 0 : current + 1);
+		
+		gtk_notebook_set_current_page (GTK_NOTEBOOK(user_data), next);
+	}
+	
+	return TRUE;
+}
+
 static void
 nemo_notebook_init (NemoNotebook *notebook)
 {
@@ -237,7 +273,20 @@ nemo_notebook_init (NemoNotebook *notebook)
 	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), FALSE);
 
 	g_signal_connect (notebook, "button-press-event",
-			  (GCallback)button_press_cb, NULL);
+			  G_CALLBACK(button_press_cb), NULL);
+
+	/* Make it so that pressing ctrl+tab/ctrl+shift+tab switches the currently
+	 * focused tab.
+	 */
+	/* Gtk internally gobbles up tab/shift+tab keyboard events for widget 
+	 * focus switching but we can override this with a little trickery.
+	 */
+	g_signal_connect (notebook, "focus",
+			  G_CALLBACK(notebook_tab_shortcut_cb), (gpointer)notebook);
+	g_signal_connect (notebook, "key-press-event",
+			  G_CALLBACK(control_key_checker_cb), (gpointer)TRUE);
+	g_signal_connect (notebook, "key-release-event",
+			  G_CALLBACK(control_key_checker_cb), (gpointer)FALSE);
 
 	/* Set up drag-and-drop target */
 	/* TODO this would be used for opening a new tab.
