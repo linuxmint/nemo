@@ -317,6 +317,20 @@ hide_query_editor (NautilusWindowSlot *slot)
 	nautilus_query_editor_set_query (slot->details->query_editor, NULL);
 }
 
+static GFile *
+nautilus_window_slot_get_current_location (NautilusWindowSlot *slot)
+{
+	if (slot->details->pending_location != NULL) {
+		return slot->details->pending_location;
+	}
+
+	if (slot->details->location != NULL) {
+		return slot->details->location;
+	}
+
+	return NULL;
+}
+
 static void
 show_query_editor (NautilusWindowSlot *slot)
 {
@@ -324,12 +338,7 @@ show_query_editor (NautilusWindowSlot *slot)
 	NautilusSearchDirectory *search_directory;
 	GFile *location;
 
-	if (slot->details->location) {
-		location = slot->details->location;
-	} else {
-		location = slot->details->pending_location;
-	}
-
+	location = nautilus_window_slot_get_current_location (slot);
 	directory = nautilus_directory_get (location);
 
 	if (NAUTILUS_IS_SEARCH_DIRECTORY (directory)) {
@@ -2752,12 +2761,11 @@ nautilus_window_slot_set_status (NautilusWindowSlot *slot,
 char *
 nautilus_window_slot_get_current_uri (NautilusWindowSlot *slot)
 {
-	if (slot->details->pending_location != NULL) {
-		return g_file_get_uri (slot->details->pending_location);
-	}
+	GFile *location;
 
-	if (slot->details->location != NULL) {
-		return g_file_get_uri (slot->details->location);
+	location = nautilus_window_slot_get_current_location (slot);
+	if (location != NULL) {
+		return g_file_get_uri (location);
 	}
 
 	return NULL;
