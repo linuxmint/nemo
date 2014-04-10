@@ -2121,9 +2121,7 @@ nautilus_window_slot_update_for_new_location (NautilusWindowSlot *slot)
 	NautilusWindow *window;
         GFile *new_location, *old_location;
         NautilusFile *file;
-	NautilusDirectory *directory;
 	gboolean location_really_changed;
-	FindMountData *data;
 
 	window = nautilus_window_slot_get_window (slot);
 	new_location = slot->details->pending_location;
@@ -2159,50 +2157,6 @@ nautilus_window_slot_update_for_new_location (NautilusWindowSlot *slot)
 
 		/* Load menus from nautilus extensions for this location */
 		nautilus_window_load_extension_menus (window);
-	}
-
-	if (location_really_changed) {
-		nautilus_window_slot_remove_extra_location_widgets (slot);
-
-		directory = nautilus_directory_get (new_location);
-
-		if (nautilus_directory_is_in_trash (directory)) {
-			nautilus_window_slot_show_trash_bar (slot);
-		} else {
-			GFile *scripts_file;
-			char *scripts_path = nautilus_get_scripts_directory_path ();
-			scripts_file = g_file_new_for_path (scripts_path);
-			g_free (scripts_path);
-			if (nautilus_should_use_templates_directory () &&
-			    nautilus_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
-				nautilus_window_slot_show_special_location_bar (slot, NAUTILUS_SPECIAL_LOCATION_TEMPLATES);
-			} else if (g_file_equal (new_location, scripts_file)) {
-				nautilus_window_slot_show_special_location_bar (slot, NAUTILUS_SPECIAL_LOCATION_SCRIPTS);
-			}
-			g_object_unref (scripts_file);
-		}
-
-		/* need the mount to determine if we should put up the x-content cluebar */
-		if (slot->details->find_mount_cancellable != NULL) {
-			g_cancellable_cancel (slot->details->find_mount_cancellable);
-			slot->details->find_mount_cancellable = NULL;
-		}
-
-		data = g_new (FindMountData, 1);
-		data->slot = slot;
-		data->cancellable = g_cancellable_new ();
-		data->mount = NULL;
-
-		slot->details->find_mount_cancellable = data->cancellable;
-		g_file_find_enclosing_mount_async (new_location,
-						   G_PRIORITY_DEFAULT,
-						   data->cancellable,
-						   found_mount_cb,
-						   data);
-
-		nautilus_directory_unref (directory);
-
-		slot_add_extension_extra_widgets (slot);
 	}
 
 	if (slot == nautilus_window_get_active_slot (window) &&
@@ -2318,6 +2272,67 @@ view_begin_loading_cb (NautilusView       *view,
 }
 
 static void
+nautilus_window_slot_setup_extra_location_widgets (NautilusWindowSlot *slot)
+{
+	GFile *location;
+	FindMountData *data;
+	NautilusDirectory *directory;
+
+	location = nautilus_window_slot_get_current_location (slot);
+
+	if (location == NULL) {
+		return;
+	}
+
+	directory = nautilus_directory_get (location);
+
+	if (nautilus_directory_is_in_trash (directory)) {
+		nautilus_window_slot_show_trash_bar (slot);
+	} else {
+		NautilusFile *file;
+		GFile *scripts_file;
+		char *scripts_path = nautilus_get_scripts_directory_path ();
+
+		scripts_file = g_file_new_for_path (scripts_path);
+		g_free (scripts_path);
+
+		file = nautilus_file_get (location);
+
+		if (nautilus_should_use_templates_directory () &&
+		    nautilus_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
+			nautilus_window_slot_show_special_location_bar (slot, NAUTILUS_SPECIAL_LOCATION_TEMPLATES);
+		} else if (g_file_equal (location, scripts_file)) {
+			nautilus_window_slot_show_special_location_bar (slot, NAUTILUS_SPECIAL_LOCATION_SCRIPTS);
+		}
+
+		g_object_unref (scripts_file);
+		nautilus_file_unref (file);
+	}
+
+	/* need the mount to determine if we should put up the x-content cluebar */
+	if (slot->details->find_mount_cancellable != NULL) {
+		g_cancellable_cancel (slot->details->find_mount_cancellable);
+		slot->details->find_mount_cancellable = NULL;
+	}
+
+	data = g_new (FindMountData, 1);
+	data->slot = slot;
+	data->cancellable = g_cancellable_new ();
+	data->mount = NULL;
+
+	slot->details->find_mount_cancellable = data->cancellable;
+	g_file_find_enclosing_mount_async (location,
+					   G_PRIORITY_DEFAULT,
+					   data->cancellable,
+					   found_mount_cb,
+					   data);
+
+	nautilus_directory_unref (directory);
+
+	slot_add_extension_extra_widgets (slot);
+}
+
+static void
 nautilus_window_slot_connect_new_content_view (NautilusWindowSlot *slot)
 {
 	if (slot->details->content_view != NULL) {
@@ -2381,8 +2396,14 @@ location_has_really_changed (NautilusWindowSlot *slot)
 
 	window = nautilus_window_slot_get_window (slot);
 
-	/* Switch to the new content view. */
+	/* Switch to the new content view.
+	 * Destroy the extra location widgets first, since they might hold
+	 * a pointer to the old view, which will possibly be destroyed inside
+	 * nautilus_window_slot_switch_new_content_view().
+	 */
+	nautilus_window_slot_remove_extra_location_widgets (slot);
 	nautilus_window_slot_switch_new_content_view (slot);
+	nautilus_window_slot_setup_extra_location_widgets (slot);
 
 	if (slot->details->pending_location != NULL) {
 		/* Tell the window we are finished. */
