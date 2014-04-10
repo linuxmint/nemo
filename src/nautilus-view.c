@@ -254,9 +254,6 @@ struct NautilusViewDetails
 	gboolean metadata_for_directory_as_file_pending;
 	gboolean metadata_for_files_in_directory_pending;
 
-	gboolean selection_change_is_due_to_shell;
-	gboolean send_selection_change_to_shell;
-
 	GtkActionGroup *open_with_action_group;
 	guint open_with_merge_id;
 
@@ -2594,9 +2591,7 @@ nautilus_view_set_selection (NautilusView *nautilus_view,
 		/* If we aren't still loading, set the selection right now,
 		 * and reveal the new selection.
 		 */
-		view->details->selection_change_is_due_to_shell = TRUE;
 		nautilus_view_call_set_selection (view, selection);
-		view->details->selection_change_is_due_to_shell = FALSE;
 		nautilus_view_reveal_selection (view);
 	} else {
 		/* If we are still loading, set the list of pending URIs instead.
@@ -3026,8 +3021,6 @@ static void
 nautilus_view_send_selection_change (NautilusView *view)
 {
 	g_signal_emit (view, signals[SELECTION_CHANGED], 0);
-
-	view->details->send_selection_change_to_shell = FALSE;
 }
 
 void
@@ -3091,9 +3084,7 @@ done_loading (NautilusView *view,
 		} else if (selection != NULL && all_files_seen) {
 			view->details->pending_selection = NULL;
 
-			view->details->selection_change_is_due_to_shell = TRUE;
 			nautilus_view_call_set_selection (view, selection);
-			view->details->selection_change_is_due_to_shell = FALSE;
 			g_list_free_full (selection, g_object_unref);
 			do_reveal = TRUE;
 		}
@@ -3585,9 +3576,7 @@ display_selection_info_idle_callback (gpointer data)
 
 	view->details->display_selection_idle_id = 0;
 	nautilus_view_display_selection_info (view);
-	if (view->details->send_selection_change_to_shell) {
-		nautilus_view_send_selection_change (view);
-	}
+	nautilus_view_send_selection_change (view);
 
 	g_object_unref (G_OBJECT (view));
 
@@ -9065,10 +9054,6 @@ nautilus_view_notify_selection_changed (NautilusView *view)
 	nautilus_file_list_free (selection);
 
 	view->details->selection_was_removed = FALSE;
-
-	if (!view->details->selection_change_is_due_to_shell) {
-		view->details->send_selection_change_to_shell = TRUE;
-	}
 
 	/* Schedule a display of the new selection. */
 	if (view->details->display_selection_idle_id == 0) {
