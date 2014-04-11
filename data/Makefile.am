@@ -42,14 +42,7 @@ org.freedesktop.FileManager1.service: org.freedesktop.FileManager1.service.in Ma
 searchproviderdir = $(datadir)/gnome-shell/search-providers
 searchprovider_DATA = nautilus-search-provider.ini
 
-nautilusdatadir = $(datadir)/nautilus
-
-nautilusdata_DATA = \
-	nautilus-extras.placeholder 	\
-	nautilus-suggested.placeholder 	\
-	$(NULL)
-
-EXTRA_DIST = $(nautilusdata_DATA) 	\
+EXTRA_DIST =				\
 	org.gnome.Nautilus.desktop	\
 	org.gnome.Nautilus.desktop.in	\
 	dbus-interfaces.xml		\
