@@ -1,0 +1,16 @@
+[Nemo Action]
+
+Name=Compress...
+
+Comment=Compress the current selection into a new archive
+
+Exec=file-roller -d %U
+
+Icon-Name=add-files-to-archive
+
+Selection=notnone
+
+Extensions=any
+
+Dependencies=file-roller;
+
