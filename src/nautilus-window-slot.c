@@ -2403,12 +2403,16 @@ location_has_really_changed (NautilusWindowSlot *slot)
 	 */
 	nautilus_window_slot_remove_extra_location_widgets (slot);
 	nautilus_window_slot_switch_new_content_view (slot);
-	nautilus_window_slot_setup_extra_location_widgets (slot);
 
 	if (slot->details->pending_location != NULL) {
 		/* Tell the window we are finished. */
 		nautilus_window_slot_update_for_new_location (slot);
 	}
+
+	/* Now that we finished switching to the new location,
+	 * add back the extra location widgets.
+	 */
+	nautilus_window_slot_setup_extra_location_widgets (slot);
 
 	location = nautilus_window_slot_get_location (slot);
 	if (location != NULL) {
