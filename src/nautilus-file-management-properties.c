@@ -429,6 +429,17 @@ bind_builder_bool (GtkBuilder *builder,
 			 "active", G_SETTINGS_BIND_DEFAULT);
 }
 
+static void
+bind_builder_bool_oneway (GtkBuilder *builder,
+			  GSettings *settings,
+			  const char *widget_name,
+			  const char *prefs)
+{
+	g_settings_bind (settings, prefs,
+			 gtk_builder_get_object (builder, widget_name),
+			 "active", G_SETTINGS_BIND_SET);
+}
+
 static gboolean
 enum_get_mapping (GValue             *value,
 		  GVariant           *variant,
@@ -606,6 +617,9 @@ nautilus_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow
 	/* setup preferences */
 	bind_builder_bool (builder, nautilus_preferences,
 			   NAUTILUS_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
+			   NAUTILUS_PREFERENCES_SORT_DIRECTORIES_FIRST);
+	bind_builder_bool_oneway (builder, gtk_filechooser_preferences,
+				  NAUTILUS_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
 			   NAUTILUS_PREFERENCES_SORT_DIRECTORIES_FIRST);
 
 	bind_builder_bool (builder, nautilus_preferences,
