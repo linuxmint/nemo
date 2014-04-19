@@ -358,9 +358,11 @@ nautilus_file_management_properties_dialog_setup_icon_caption_page (GtkBuilder *
 		create_icon_caption_combo_box_items (GTK_COMBO_BOX_TEXT (combo_box), columns);
 		gtk_widget_set_sensitive (combo_box, writable);
 
-		g_signal_connect (combo_box, "changed",
-				  G_CALLBACK (icon_captions_changed_callback),
-				  builder);
+		g_signal_connect_data (combo_box, "changed",
+				       G_CALLBACK (icon_captions_changed_callback),
+				       g_object_ref (builder),
+				       (GClosureNotify)g_object_unref,
+				       0);
 	}
 
 	nautilus_column_list_free (columns);
