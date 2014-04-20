@@ -690,23 +690,13 @@ report_node_inserted (FMTreeModel *model, TreeNode *node)
 	}
 
     gboolean add_child = FALSE;
-    gboolean has_subdirs;
 
 	if (node->directory != NULL) {
         gint count;
-        if (!model->details->show_only_directories &&
-            nemo_file_get_directory_item_count (node->file, &count, NULL)) {
+        if (nemo_file_get_directory_item_count (node->file, &count, NULL)) {
             add_child = count > 0 || node->parent == NULL;
         } else {
-            if (node->parent == NULL) {
-                add_child = TRUE;
-            } else if (nemo_dir_has_children_now (nemo_file_get_location (node->file),
-                                                  &has_subdirs)) {
-                if (model->details->show_only_directories)
-                    add_child = has_subdirs;
-                else
-                    add_child = FALSE;
-            }
+            add_child = TRUE;
         }
     }
 
