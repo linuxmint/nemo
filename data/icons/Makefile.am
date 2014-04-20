@@ -24,6 +24,7 @@ public_icons = \
 	hicolor_actions_scalable_sidebar-show-symbolic.svg \
 	hicolor_actions_scalable_sidebar-tree-symbolic.svg \
 	hicolor_actions_scalable_sidebar-places-symbolic.svg \
+	hicolor_actions_scalable_stock-image.svg \
 	hicolor_status_scalable_progress-0-symbolic.svg \
 	hicolor_status_scalable_progress-10-symbolic.svg \
 	hicolor_status_scalable_progress-20-symbolic.svg \
