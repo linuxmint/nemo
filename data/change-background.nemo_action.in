@@ -8,7 +8,7 @@ Exec=cinnamon-settings backgrounds
 
 Selection=None
 
-Icon-Name=cs-backgrounds-symbolic
+Icon-Name=background-change
 
 Extensions=any;
 
