@@ -126,8 +126,8 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
         if (s < size)
             size = s;
 
-        bad_ratio = nemo_icon_get_emblem_size_for_icon_size (size) > w ||
-                    nemo_icon_get_emblem_size_for_icon_size (size) > h;
+        bad_ratio = nemo_icon_get_emblem_size_for_icon_size (size) * scale > w ||
+                    nemo_icon_get_emblem_size_for_icon_size (size) * scale > h;
 
         if (bad_ratio)
             goto skip_emblem; /* Would prefer to not use goto, but

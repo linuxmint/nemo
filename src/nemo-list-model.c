@@ -344,8 +344,8 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
             if (s < icon_size)
                 icon_size = s;
 
-            bad_ratio = nemo_icon_get_emblem_size_for_icon_size (icon_size) > w ||
-                        nemo_icon_get_emblem_size_for_icon_size (icon_size) > h;
+            bad_ratio = nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale > w ||
+                        nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale > h;
 
 			gicon = G_ICON (pixbuf);
 
