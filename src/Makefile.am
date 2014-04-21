@@ -16,7 +16,8 @@ INCLUDES =							\
 	-I$(top_builddir)/libnemo-private 			\
 	$(BASE_CFLAGS) 						\
 	$(COMMON_CFLAGS)					\
-	$(NEMO_CFLAGS)					\
+	$(NEMO_CFLAGS)						\
+	$(DESKTOP_CFLAGS)					\
 	$(WARNING_CFLAGS)					\
 	$(EXIF_CFLAGS)						\
 	$(EXEMPI_CFLAGS)                                        \
@@ -37,6 +38,7 @@ LDADD =\
 	$(BASE_LIBS) \
 	$(COMMON_LIBS) \
 	$(NEMO_LIBS) \
+	$(DESKTOP_LIBS) \
 	$(CORE_LIBS) \
 	$(EXIF_LIBS) \
 	$(EXEMPI_LIBS) \

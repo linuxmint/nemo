@@ -38,7 +38,11 @@
 #include <cairo.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
+#ifdef GNOME_BUILD
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
+#else 
 #include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
+#endif
 
 #include <eel/eel-accessibility.h>
 #include <eel/eel-glib-extensions.h>

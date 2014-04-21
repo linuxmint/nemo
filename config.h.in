@@ -22,6 +22,9 @@
 /* the gettext translation domain */
 #undef GETTEXT_PACKAGE
 
+/* Define to build against gnome libs */
+#undef GNOME_BUILD
+
 /* Define to 1 if you have the `bind_textdomain_codeset' function. */
 #undef HAVE_BIND_TEXTDOMAIN_CODESET
 
