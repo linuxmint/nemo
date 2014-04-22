@@ -492,11 +492,10 @@ static gboolean
 another_navigation_window_already_showing (NautilusApplication *application,
 					   NautilusWindow *the_window)
 {
-	GList *list, *item;
+	GList *l;
 	
-	list = gtk_application_get_windows (GTK_APPLICATION (application));
-	for (item = list; item != NULL; item = item->next) {
-		if (item->data != the_window) {
+	for (l = gtk_application_get_windows (GTK_APPLICATION (application)); l; l = l->next) {
+		if (NAUTILUS_IS_WINDOW (l->data) && l->data != the_window) {
 			return TRUE;
 		}
 	}
@@ -563,12 +562,10 @@ get_window_slot_for_location (NautilusApplication *application, GFile *location)
 	}
 
 	for (l = gtk_application_get_windows (GTK_APPLICATION (application)); l; l = l->next) {
-		NautilusWindow *win = NAUTILUS_WINDOW (l->data);
-
-		if (NAUTILUS_IS_DESKTOP_WINDOW (win))
+		if (!NAUTILUS_IS_WINDOW (l->data) || NAUTILUS_IS_DESKTOP_WINDOW (l->data))
 			continue;
 
-		for (sl = nautilus_window_get_slots (win); sl; sl = sl->next) {
+		for (sl = nautilus_window_get_slots (NAUTILUS_WINDOW (l->data)); sl; sl = sl->next) {
 			NautilusWindowSlot *current = NAUTILUS_WINDOW_SLOT (sl->data);
 			GFile *slot_location = nautilus_window_slot_get_location (current);
 
@@ -952,11 +949,13 @@ action_quit (GSimpleAction *action,
 	     gpointer user_data)
 {
 	GtkApplication *application = user_data;
-	GList *windows;
+	GList *l;
 
 	/* nautilus_window_close() doesn't do anything for desktop windows */
-	windows = gtk_application_get_windows (application);
-	g_list_foreach (windows, (GFunc) nautilus_window_close, NULL);
+	for (l = gtk_application_get_windows (GTK_APPLICATION (application)); l; l = l->next) {
+		if (NAUTILUS_IS_WINDOW (l->data))
+			nautilus_window_close (NAUTILUS_WINDOW (l->data));
+	}
 }
 
 static void
@@ -1668,13 +1667,10 @@ update_dbus_opened_locations (NautilusApplication *app)
 	g_return_if_fail (NAUTILUS_IS_APPLICATION (app));
 
 	for (l = gtk_application_get_windows (GTK_APPLICATION (app)); l; l = l->next) {
-		NautilusWindow *win = NAUTILUS_WINDOW (l->data);
-
-		if (NAUTILUS_IS_DESKTOP_WINDOW (win)) {
+		if (!NAUTILUS_IS_WINDOW (l->data) || NAUTILUS_IS_DESKTOP_WINDOW (l->data))
 			continue;
-		}
 
-		for (sl = nautilus_window_get_slots (win); sl; sl = sl->next) {
+		for (sl = nautilus_window_get_slots (NAUTILUS_WINDOW (l->data)); sl; sl = sl->next) {
 			NautilusWindowSlot *slot = NAUTILUS_WINDOW_SLOT (sl->data);
 			gchar *uri = nautilus_window_slot_get_location_uri (slot);
 
@@ -1754,12 +1750,14 @@ nautilus_application_window_removed (GtkApplication *app,
 				     GtkWindow *window)
 {
 	NautilusPreviewer *previewer;
+	GList *l;
 
 	/* chain to parent */
 	GTK_APPLICATION_CLASS (nautilus_application_parent_class)->window_removed (app, window);
 
 	/* if this was the last window, close the previewer */
-	if (g_list_length (gtk_application_get_windows (app)) == 0) {
+	for (l = gtk_application_get_windows (GTK_APPLICATION (app)); l && !NAUTILUS_IS_WINDOW (l->data); l = l->next);
+	if (!l) {
 		previewer = nautilus_previewer_get_singleton ();
 		nautilus_previewer_call_close (previewer);
 	}
