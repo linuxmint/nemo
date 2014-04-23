@@ -686,6 +686,7 @@ nautilus_bookmarks_window_constructed (GObject *object)
 	GError *error = NULL;
 	GtkWindow *window;
 	GtkWidget *content;
+	GtkWidget *headerbar;
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *rend;
 
@@ -702,8 +703,14 @@ nautilus_bookmarks_window_constructed (GObject *object)
 		return;
 	}
 
+	headerbar = gtk_header_bar_new ();
+	gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (headerbar), TRUE);
+	gtk_widget_show (headerbar);
+
 	window = GTK_WINDOW (object);
 	gtk_window_set_title (window, _("Bookmarks"));
+	gtk_window_set_titlebar (window,  headerbar);
+	gtk_window_set_type_hint (window, GDK_WINDOW_TYPE_HINT_DIALOG);
 	gtk_window_set_default_size (window, 
 				     BOOKMARKS_WINDOW_INITIAL_WIDTH, 
 				     BOOKMARKS_WINDOW_INITIAL_HEIGHT);
