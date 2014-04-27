@@ -5462,6 +5462,7 @@ add_extension_action_for_files (NemoView *view,
 				NemoMenuItem *item,
 				GList *files)
 {
+    GtkAction *ret = NULL;
 	char *name, *label, *tip, *icon;
 	gboolean sensitive, priority;
 	GtkAction *action;
@@ -5501,9 +5502,13 @@ add_extension_action_for_files (NemoView *view,
 			       G_CALLBACK (extension_action_callback),
 			       data,
 			       (GClosureNotify)extension_action_callback_data_free, 0);
-		
-	gtk_action_group_add_action (view->details->extensions_menu_action_group,
-				     GTK_ACTION (action));
+
+    if (gtk_action_group_get_action (view->details->extensions_menu_action_group, gtk_action_get_name (GTK_ACTION (action))) == NULL) {
+        gtk_action_group_add_action (view->details->extensions_menu_action_group,
+                                     GTK_ACTION (action));
+        ret = action;
+    }
+	
 	g_object_unref (action);
 	
 	g_free (name);
@@ -5511,7 +5516,7 @@ add_extension_action_for_files (NemoView *view,
 	g_free (tip);
 	g_free (icon);
 
-	return action;
+	return ret;
 }
 
 static void
@@ -5528,7 +5533,7 @@ add_extension_menu_items (NemoView *view,
 	for (l = menu_items; l; l = l->next) {
 		NemoMenuItem *item;
 		NemoMenu *menu;
-		GtkAction *action;
+		GtkAction *action = NULL;
 		char *path;
 		
 		item = NEMO_MENU_ITEM (l->data);
@@ -5537,42 +5542,44 @@ add_extension_menu_items (NemoView *view,
 		
 		action = add_extension_action_for_files (view, item, files);
 		
-		path = g_build_path ("/", NEMO_VIEW_POPUP_PATH_EXTENSION_ACTIONS, subdirectory, NULL);
-		gtk_ui_manager_add_ui (ui_manager,
-				       view->details->extensions_menu_merge_id,
-				       path,
-				       gtk_action_get_name (action),
-				       gtk_action_get_name (action),
-				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
-				       FALSE);
-		g_free (path);
+        if (action) {
+    		path = g_build_path ("/", NEMO_VIEW_POPUP_PATH_EXTENSION_ACTIONS, subdirectory, NULL);
+    		gtk_ui_manager_add_ui (ui_manager,
+    				       view->details->extensions_menu_merge_id,
+    				       path,
+    				       gtk_action_get_name (action),
+    				       gtk_action_get_name (action),
+    				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
+    				       FALSE);
+    		g_free (path);
 
-		path = g_build_path ("/", NEMO_VIEW_MENU_PATH_EXTENSION_ACTIONS_PLACEHOLDER, subdirectory, NULL);
-		gtk_ui_manager_add_ui (ui_manager,
-				       view->details->extensions_menu_merge_id,
-				       path,
-				       gtk_action_get_name (action),
-				       gtk_action_get_name (action),
-				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
-				       FALSE);
-		g_free (path);
+    		path = g_build_path ("/", NEMO_VIEW_MENU_PATH_EXTENSION_ACTIONS_PLACEHOLDER, subdirectory, NULL);
+    		gtk_ui_manager_add_ui (ui_manager,
+    				       view->details->extensions_menu_merge_id,
+    				       path,
+    				       gtk_action_get_name (action),
+    				       gtk_action_get_name (action),
+    				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
+    				       FALSE);
+    		g_free (path);
 
-		/* recursively fill the menu */		       
-		if (menu != NULL) {
-			char *subdir;
-			GList *children;
-			
-			children = nemo_menu_get_items (menu);
-			
-			subdir = g_build_path ("/", subdirectory, gtk_action_get_name (action), NULL);
-			add_extension_menu_items (view,
-						  files,
-						  children,
-						  subdir);
+    		/* recursively fill the menu */		       
+    		if (menu != NULL) {
+    			char *subdir;
+    			GList *children;
+    			
+    			children = nemo_menu_get_items (menu);
+    			
+    			subdir = g_build_path ("/", subdirectory, gtk_action_get_name (action), NULL);
+    			add_extension_menu_items (view,
+    						  files,
+    						  children,
+    						  subdir);
 
-			nemo_menu_item_list_free (children);
-			g_free (subdir);
-		}			
+    			nemo_menu_item_list_free (children);
+    			g_free (subdir);
+    		}
+        }
 	}
 }
 
