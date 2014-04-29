@@ -9,7 +9,7 @@ desktop_DATA     = 					\
 	$(desktop_in_files:.desktop.in=.desktop)	\
 	nautilus-classic.desktop
 desktop_in_files = 					\
-	nautilus.desktop.in				\
+	org.gnome.Nautilus.desktop.in				\
 	nautilus-autorun-software.desktop.in		\
 	nautilus-connect-server.desktop.in
 
@@ -54,8 +54,8 @@ nautilusdata_DATA = \
 	$(NULL)
 
 EXTRA_DIST = $(nautilusdata_DATA) 	\
-	nautilus.desktop		\
-	nautilus.desktop.in		\
+	org.gnome.Nautilus.desktop	\
+	org.gnome.Nautilus.desktop.in	\
 	dbus-interfaces.xml		\
 	freedesktop-dbus-interfaces.xml	\
 	shell-search-provider-dbus-interfaces.xml \

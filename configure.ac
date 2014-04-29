@@ -312,7 +312,7 @@ AM_CONDITIONAL(ENABLE_UPDATE_MIMEDB, test x$enable_update_mimedb = xyes)
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
-data/nautilus.desktop.in
+data/org.gnome.Nautilus.desktop.in
 data/nautilus-autorun-software.desktop.in
 data/nautilus-classic.desktop
 data/nautilus-connect-server.desktop.in

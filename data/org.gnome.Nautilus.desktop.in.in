@@ -6,6 +6,7 @@ Exec=nautilus --new-window %U
 Icon=system-file-manager
 Terminal=false
 Type=Application
+DBusActivatable=true
 StartupNotify=true
 Categories=GNOME;GTK;Utility;Core;FileManager;
 MimeType=inode/directory;application/x-gnome-saved-search;
