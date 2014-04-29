@@ -492,39 +492,6 @@ open_window (NautilusApplication *application,
 	nautilus_profile_end (NULL);
 }
 
-static void
-open_windows (NautilusApplication *application,
-	      gboolean force_new,
-	      GFile **files,
-	      gint n_files)
-{
-	guint i;
-
-	if (files == NULL || files[0] == NULL) {
-		/* Open a window pointing at the default location. */
-		open_window (application, NULL);
-	} else {
-		/* Open windows at each requested location. */
-		for (i = 0; i < n_files; ++i) {
-			NautilusWindowSlot *slot = NULL;
-
-			if (!force_new)
-				slot = get_window_slot_for_location (application, files[i]);
-
-			if (!slot) {
-				open_window (application, files[i]);
-			} else {
-				/* We open the location again to update any possible selection */
-				nautilus_window_slot_open_location (slot, files[i], 0);
-
-				NautilusWindow *window = nautilus_window_slot_get_window (slot);
-				nautilus_window_set_active_slot (window, slot);
-				gtk_window_present (GTK_WINDOW (window));
-			}
-		}
-	}
-}
-
 void
 nautilus_application_open_location (NautilusApplication *application,
 				    GFile *location,
@@ -569,12 +536,33 @@ nautilus_application_open (GApplication *app,
 			   const gchar *hint)
 {
 	NautilusApplication *self = NAUTILUS_APPLICATION (app);
+	gboolean force_new = (g_strcmp0 (hint, "new-window") == 0);
+	NautilusWindowSlot *slot = NULL;
+	NautilusWindow *window;
+	GFile *file;
+	gint idx;
 
 	DEBUG ("Open called on the GApplication instance; %d files", n_files);
 
-	gboolean force_new = (g_strcmp0 (hint, "new-window") == 0);
+	/* Open windows at each requested location. */
+	for (idx = 0; idx < n_files; idx++) {
+		file = files[idx];
 
-	open_windows (self, force_new, files, n_files);
+		if (!force_new) {
+			slot = get_window_slot_for_location (self, file);
+		}
+
+		if (!slot) {
+			open_window (self, file);
+		} else {
+			/* We open the location again to update any possible selection */
+			nautilus_window_slot_open_location (slot, file, 0);
+
+			window = nautilus_window_slot_get_window (slot);
+			nautilus_window_set_active_slot (window, slot);
+			gtk_window_present (GTK_WINDOW (window));
+		}
+	}
 }
 
 static gboolean
