@@ -4,7 +4,7 @@
 data/nautilus.appdata.xml.in
 data/nautilus-autorun-software.desktop.in.in
 data/nautilus-connect-server.desktop.in.in
-data/nautilus.desktop.in.in
+data/org.gnome.Nautilus.desktop.in.in
 data/nautilus.xml.in
 eel/eel-canvas.c
 eel/eel-editable-label.c
@@ -47,6 +47,7 @@ libnautilus-private/nautilus-vfs-file.c
 libnautilus-private/org.gnome.nautilus.gschema.xml.in
 nautilus-sendto-extension/nautilus-nste.c
 src/nautilus-application.c
+src/nautilus-application-actions.c
 [type: gettext/glade]src/nautilus-app-menu.ui
 src/nautilus-autorun-software.c
 src/nautilus-bookmarks-window.c
