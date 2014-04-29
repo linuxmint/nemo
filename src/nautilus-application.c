@@ -86,6 +86,7 @@ struct _NautilusApplicationPriv {
 
 	gboolean no_desktop;
 	gboolean force_desktop;
+	gboolean no_default_window;
 
 	NotifyNotification *unmount_notify;
 
@@ -684,14 +685,6 @@ nautilus_application_connect_server (NautilusApplication *application,
 }
 
 static void
-nautilus_application_init (NautilusApplication *application)
-{
-	application->priv =
-		G_TYPE_INSTANCE_GET_PRIVATE (application, NAUTILUS_TYPE_APPLICATION,
-					     NautilusApplicationPriv);
-}
-
-static void
 nautilus_application_finalize (GObject *object)
 {
 	NautilusApplication *application;
@@ -712,34 +705,35 @@ nautilus_application_finalize (GObject *object)
 
 static gboolean
 do_cmdline_sanity_checks (NautilusApplication *self,
-			  gboolean perform_self_check,
-			  gboolean version,
-			  gboolean kill_shell,
-			  gboolean select_uris,
-			  gchar **remaining)
+			  GVariantDict        *options)
 {
 	gboolean retval = FALSE;
 
-	if (perform_self_check && (remaining != NULL || kill_shell)) {
+	if (g_variant_dict_contains (options, "check") &&
+	    (g_variant_dict_contains (options, G_OPTION_REMAINING) ||
+	     g_variant_dict_contains (options, "quit"))) {
 		g_printerr ("%s\n",
 			    _("--check cannot be used with other options."));
 		goto out;
 	}
 
-	if (kill_shell && remaining != NULL) {
+	if (g_variant_dict_contains (options, "quit") &&
+	    g_variant_dict_contains (options, G_OPTION_REMAINING)) {
 		g_printerr ("%s\n",
 			    _("--quit cannot be used with URIs."));
 		goto out;
 	}
 
 
-	if (select_uris && remaining == NULL) {
+	if (g_variant_dict_contains (options, "select") &&
+	    !g_variant_dict_contains (options, G_OPTION_REMAINING)) {
 		g_printerr ("%s\n",
 			    _("--select must be used with at least an URI."));
 		goto out;
 	}
 
-	if (self->priv->no_desktop && self->priv->force_desktop) {
+	if (g_variant_dict_contains (options, "force-desktop") &&
+	    g_variant_dict_contains (options, "no-desktop")) {
 		g_printerr ("%s\n",
 			    _("--no-desktop and --force-desktop cannot be used together."));
 		goto out;
@@ -751,8 +745,8 @@ do_cmdline_sanity_checks (NautilusApplication *self,
 	return retval;
 }
 
-static void
-do_perform_self_checks (gint *exit_status)
+static int
+do_perform_self_checks (void)
 {
 #ifndef NAUTILUS_OMIT_SELF_CHECK
 	gtk_init (NULL, NULL);
@@ -770,7 +764,7 @@ do_perform_self_checks (gint *exit_status)
 	nautilus_profile_end (NULL);
 #endif
 
-	*exit_status = EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 static void
@@ -822,96 +816,62 @@ nautilus_application_select (NautilusApplication *self,
 	g_variant_builder_clear (&builder);
 }
 
-static gboolean
-nautilus_application_local_command_line (GApplication *application,
-					 gchar ***arguments,
-					 gint *exit_status)
-{
-	gboolean perform_self_check = FALSE;
-	gboolean version = FALSE;
-	gboolean browser = FALSE;
-	gboolean kill_shell = FALSE;
-	gboolean open_new_window = FALSE;
-	gboolean no_default_window = FALSE;
-	gboolean select_uris = FALSE;
-	gchar *geometry = NULL;
-	gchar **remaining = NULL;
-	NautilusApplication *self = NAUTILUS_APPLICATION (application);
-
-	const GOptionEntry options[] = {
+const GOptionEntry options[] = {
 #ifndef NAUTILUS_OMIT_SELF_CHECK
-		{ "check", 'c', 0, G_OPTION_ARG_NONE, &perform_self_check, 
-		  N_("Perform a quick set of self-check tests."), NULL },
+	{ "check", 'c', 0, G_OPTION_ARG_NONE, NULL,
+	  N_("Perform a quick set of self-check tests."), NULL },
 #endif
-		/* dummy, only for compatibility reasons */
-		{ "browser", '\0', G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &browser,
-		  NULL, NULL },
-                /* ditto */
-		{ "geometry", 'g', G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING, &geometry,
-		  N_("Create the initial window with the given geometry."), N_("GEOMETRY") },
-		{ "version", '\0', 0, G_OPTION_ARG_NONE, &version,
-		  N_("Show the version of the program."), NULL },
-		{ "new-window", 'w', 0, G_OPTION_ARG_NONE, &open_new_window,
-		  N_("Always open a new window for browsing specified URIs"), NULL },
-		{ "no-default-window", 'n', 0, G_OPTION_ARG_NONE, &no_default_window,
-		  N_("Only create windows for explicitly specified URIs."), NULL },
-		{ "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &self->priv->no_desktop,
-		  N_("Never manage the desktop (ignore the GSettings preference)."), NULL },
-		{ "force-desktop", '\0', 0, G_OPTION_ARG_NONE, &self->priv->force_desktop,
-		  N_("Always manage the desktop (ignore the GSettings preference)."), NULL },
-		{ "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
-		  N_("Quit Nautilus."), NULL },
-		{ "select", 's', 0, G_OPTION_ARG_NONE, &select_uris,
-		  N_("Select specified URI in parent folder."), NULL },
-		{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, &remaining, NULL,  N_("[URI...]") },
+	/* dummy, only for compatibility reasons */
+	{ "browser", '\0', G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, NULL,
+	  NULL, NULL },
+	/* ditto */
+	{ "geometry", 'g', G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING, NULL,
+	  N_("Create the initial window with the given geometry."), N_("GEOMETRY") },
+	{ "version", '\0', 0, G_OPTION_ARG_NONE, NULL,
+	  N_("Show the version of the program."), NULL },
+	{ "new-window", 'w', 0, G_OPTION_ARG_NONE, NULL,
+	  N_("Always open a new window for browsing specified URIs"), NULL },
+	{ "no-default-window", 'n', 0, G_OPTION_ARG_NONE, NULL,
+	  N_("Only create windows for explicitly specified URIs."), NULL },
+	{ "no-desktop", '\0', 0, G_OPTION_ARG_NONE, NULL,
+	  N_("Never manage the desktop (ignore the GSettings preference)."), NULL },
+	{ "force-desktop", '\0', 0, G_OPTION_ARG_NONE, NULL,
+	  N_("Always manage the desktop (ignore the GSettings preference)."), NULL },
+	{ "quit", 'q', 0, G_OPTION_ARG_NONE, NULL,
+	  N_("Quit Nautilus."), NULL },
+	{ "select", 's', 0, G_OPTION_ARG_NONE, NULL,
+	  N_("Select specified URI in parent folder."), NULL },
+	{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, NULL, NULL,  N_("[URI...]") },
 
-		{ NULL }
-	};
-	GOptionContext *context;
+	{ NULL }
+};
+
+static gint
+nautilus_application_handle_local_options (GApplication *application,
+					   GVariantDict *options)
+{
+	const gchar * const *remaining = NULL;
+	NautilusApplication *self = NAUTILUS_APPLICATION (application);
+	gint retval = -1;
 	GError *error = NULL;
-	gint argc = 0;
-	gchar **argv = NULL;
-	*exit_status = EXIT_SUCCESS;
 
 	nautilus_profile_start (NULL);
 
-	context = g_option_context_new (_("\n\nBrowse the file system with the file manager"));
-	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_add_group (context, gtk_get_option_group (FALSE));
-
-	argv = *arguments;
-	argc = g_strv_length (argv);
-
-	if (!g_option_context_parse (context, &argc, &argv, &error)) {
-		/* Translators: this is a fatal error quit message printed on the
-		 * command line */
-		g_printerr ("%s: %s\n", _("Could not parse arguments"), error->message);
-		g_error_free (error);
-
-		*exit_status = EXIT_FAILURE;
-		goto out;
-	}
-
-	if (version) {
+	if (g_variant_dict_contains (options, "version")) {
 		g_print ("GNOME nautilus " PACKAGE_VERSION "\n");
+		retval = EXIT_SUCCESS;
 		goto out;
 	}
 
-	if (!do_cmdline_sanity_checks (self, perform_self_check,
-				       version, kill_shell, select_uris, remaining)) {
-		*exit_status = EXIT_FAILURE;
+	if (!do_cmdline_sanity_checks (self, options)) {
+		retval = EXIT_FAILURE;
 		goto out;
 	}
 
-	if (perform_self_check) {
-		do_perform_self_checks (exit_status);
+	if (g_variant_dict_contains (options, "check")) {
+		retval = do_perform_self_checks ();
 		goto out;
 	}
-
-	DEBUG ("Parsing local command line: open_new_window %d, no_default_window %d, "
-	       "quit %d, self checks %d, no_desktop %d, show_desktop %d",
-	       open_new_window, no_default_window, kill_shell, perform_self_check,
-	       self->priv->no_desktop, self->priv->force_desktop);
 
 	g_application_register (application, NULL, &error);
 
@@ -921,25 +881,25 @@ nautilus_application_local_command_line (GApplication *application,
 		g_printerr ("%s: %s\n", _("Could not register the application"), error->message);
 		g_error_free (error);
 
-		*exit_status = EXIT_FAILURE;
+		retval = EXIT_FAILURE;
 		goto out;
 	}
 
-	if (kill_shell) {
+	if (g_variant_dict_contains (options, "quit")) {
 		DEBUG ("Killing application, as requested");
 		g_action_group_activate_action (G_ACTION_GROUP (application),
 						"kill", NULL);
 		goto out;
 	}
 
-	if (self->priv->force_desktop) {
+	if (g_variant_dict_contains (options, "force-desktop")) {
 		DEBUG ("Forcing desktop, as requested");
 		g_action_group_activate_action (G_ACTION_GROUP (application),
 						"open-desktop", NULL);
                 /* fall through */
 	}
 
-	if (self->priv->no_desktop) {
+	if (g_variant_dict_contains (options, "no-desktop")) {
 		DEBUG ("Forcing desktop off, as requested");
 		g_action_group_activate_action (G_ACTION_GROUP (application),
 						"close-desktop", NULL);
@@ -951,6 +911,8 @@ nautilus_application_local_command_line (GApplication *application,
 
 	len = 0;
 	files = NULL;
+
+	g_variant_dict_lookup (options, G_OPTION_REMAINING, "^a&s", &remaining);
 
 	/* Convert args to GFiles */
 	if (remaining != NULL) {
@@ -968,26 +930,20 @@ nautilus_application_local_command_line (GApplication *application,
 
 		len = file_array->len;
 		files = (GFile **) g_ptr_array_free (file_array, FALSE);
-		g_strfreev (remaining);
 	}
 
-	if (files == NULL && !no_default_window && !select_uris) {
-		files = g_malloc0 (2 * sizeof (GFile *));
-		len = 1;
-
-		files[0] = g_file_new_for_path (g_get_home_dir ());
-		files[1] = NULL;
-	}
+	self->priv->no_default_window = g_variant_dict_contains (options, "no-default-window");
 
 	if (len == 0) {
 		goto out;
 	}
 
-	if (select_uris) {
+	if (g_variant_dict_contains (options, "select")) {
 		nautilus_application_select (self, files, len);
 	} else {
 		/* Invoke "Open" to create new windows */
-		g_application_open (application, files, len, open_new_window ? "new-window" : "");
+		g_application_open (application, files, len,
+				    g_variant_dict_contains (options, "new-window") ? "new-window" : "");
 	}
 
 	for (idx = 0; idx < len; idx++) {
@@ -995,12 +951,42 @@ nautilus_application_local_command_line (GApplication *application,
 	}
 	g_free (files);
 
+	retval = EXIT_SUCCESS;
+
  out:
-	g_free (geometry);
-	g_option_context_free (context);
 	nautilus_profile_end (NULL);
 
-	return TRUE;	
+	return retval;
+}
+
+static void
+nautilus_application_activate (GApplication *app)
+{
+	NautilusApplication *self = NAUTILUS_APPLICATION (app);
+	GFile **files;
+
+	DEBUG ("Calling activate");
+
+	if (self->priv->no_default_window) {
+		return;
+	}
+
+	files = g_malloc0 (2 * sizeof (GFile *));
+	files[0] = g_file_new_for_path (g_get_home_dir ());
+	g_application_open (app, files, 1, "new-window");
+
+	g_object_unref (files[0]);
+	g_free (files);
+}
+
+static void
+nautilus_application_init (NautilusApplication *application)
+{
+	application->priv =
+		G_TYPE_INSTANCE_GET_PRIVATE (application, NAUTILUS_TYPE_APPLICATION,
+					     NautilusApplicationPriv);
+
+	g_application_add_main_option_entries (G_APPLICATION (application), options);
 }
 
 static void
@@ -1424,11 +1410,12 @@ nautilus_application_class_init (NautilusApplicationClass *class)
 
 	application_class = G_APPLICATION_CLASS (class);
 	application_class->startup = nautilus_application_startup;
+	application_class->activate = nautilus_application_activate;
 	application_class->quit_mainloop = nautilus_application_quit_mainloop;
 	application_class->open = nautilus_application_open;
-	application_class->local_command_line = nautilus_application_local_command_line;
 	application_class->dbus_register = nautilus_application_dbus_register;
 	application_class->dbus_unregister = nautilus_application_dbus_unregister;
+	application_class->handle_local_options = nautilus_application_handle_local_options;
 
 	gtkapp_class = GTK_APPLICATION_CLASS (class);
 	gtkapp_class->window_added = nautilus_application_window_added;
