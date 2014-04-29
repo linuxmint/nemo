@@ -100,6 +100,10 @@ struct _NautilusApplicationPriv {
 NautilusBookmarkList *
 nautilus_application_get_bookmarks (NautilusApplication *application)
 {
+	if (!application->priv->bookmark_list) {
+		application->priv->bookmark_list = nautilus_bookmark_list_new ();
+	}
+
 	return application->priv->bookmark_list;
 }
 
