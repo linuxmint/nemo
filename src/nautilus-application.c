@@ -44,7 +44,6 @@
 #include "nautilus-window-slot.h"
 
 #include <libnautilus-private/nautilus-dbus-manager.h>
-#include <libnautilus-private/nautilus-desktop-link-monitor.h>
 #include <libnautilus-private/nautilus-directory-private.h>
 #include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-file-operations.h>
@@ -72,9 +71,6 @@
 #include <gtk/gtk.h>
 
 #define NAUTILUS_ACCEL_MAP_SAVE_DELAY 30
-
-/* Keeps track of all the desktop windows. */
-static GList *nautilus_application_desktop_windows;
 
 /* The saving of the accelerator map was requested  */
 static gboolean save_of_accel_map_requested = FALSE;
@@ -377,107 +373,6 @@ do_upgrades_once (NautilusApplication *self)
 
 	g_free (nautilus_dir);
 	g_free (xdg_dir);
-}
-
-static void 
-selection_get_cb (GtkWidget          *widget,
-		  GtkSelectionData   *selection_data,
-		  guint               info,
-		  guint               time)
-{
-	/* No extra targets atm */
-}
-
-static GtkWidget *
-get_desktop_manager_selection (GdkScreen *screen)
-{
-	char selection_name[32];
-	GdkAtom selection_atom;
-	Window selection_owner;
-	GdkDisplay *display;
-	GtkWidget *selection_widget;
-
-	g_snprintf (selection_name, sizeof (selection_name),
-		    "_NET_DESKTOP_MANAGER_S%d", gdk_screen_get_number (screen));
-	selection_atom = gdk_atom_intern (selection_name, FALSE);
-	display = gdk_screen_get_display (screen);
-
-	selection_owner = XGetSelectionOwner (GDK_DISPLAY_XDISPLAY (display),
-					      gdk_x11_atom_to_xatom_for_display (display, 
-										 selection_atom));
-	if (selection_owner != None) {
-		return NULL;
-	}
-	
-	selection_widget = gtk_invisible_new_for_screen (screen);
-	/* We need this for gdk_x11_get_server_time() */
-	gtk_widget_add_events (selection_widget, GDK_PROPERTY_CHANGE_MASK);
-
-	if (gtk_selection_owner_set_for_display (display,
-						 selection_widget,
-						 selection_atom,
-						 gdk_x11_get_server_time (gtk_widget_get_window (selection_widget)))) {
-		
-		g_signal_connect (selection_widget, "selection-get",
-				  G_CALLBACK (selection_get_cb), NULL);
-		return selection_widget;
-	}
-
-	gtk_widget_destroy (selection_widget);
-	
-	return NULL;
-}
-
-static void
-desktop_unrealize_cb (GtkWidget        *widget,
-		      GtkWidget        *selection_widget)
-{
-	gtk_widget_destroy (selection_widget);
-}
-
-static gboolean
-selection_clear_event_cb (GtkWidget	        *widget,
-			  GdkEventSelection     *event,
-			  NautilusDesktopWindow *window)
-{
-	gtk_widget_destroy (GTK_WIDGET (window));
-	
-	nautilus_application_desktop_windows =
-		g_list_remove (nautilus_application_desktop_windows, window);
-
-	return TRUE;
-}
-
-static void
-nautilus_application_create_desktop_windows (NautilusApplication *application)
-{
-	GdkScreen *screen;
-	NautilusDesktopWindow *window;
-	GtkWidget *selection_widget;
-
-	screen = gdk_screen_get_default ();
-
-	DEBUG ("Creating desktop window");
-		
-	selection_widget = get_desktop_manager_selection (screen);
-	if (selection_widget != NULL) {
-		window = nautilus_desktop_window_new (GTK_APPLICATION (application), screen);
-
-		g_signal_connect (selection_widget, "selection-clear-event",
-				  G_CALLBACK (selection_clear_event_cb), window);
-
-		g_signal_connect (window, "unrealize",
-				  G_CALLBACK (desktop_unrealize_cb), selection_widget);
-
-		/* We realize it immediately so that the NAUTILUS_DESKTOP_WINDOW_ID
-		   property is set so gnome-settings-daemon doesn't try to set the
-		   background. And we do a gdk_flush() to be sure X gets it. */
-		gtk_widget_realize (GTK_WIDGET (window));
-		gdk_flush ();
-
-		nautilus_application_desktop_windows =
-			g_list_prepend (nautilus_application_desktop_windows, window);
-	}
 }
 
 static gboolean
@@ -1040,7 +935,14 @@ nautilus_application_local_command_line (GApplication *application,
 	if (self->priv->force_desktop) {
 		DEBUG ("Forcing desktop, as requested");
 		g_action_group_activate_action (G_ACTION_GROUP (application),
-						"force-desktop", NULL);
+						"open-desktop", NULL);
+                /* fall through */
+	}
+
+	if (self->priv->no_desktop) {
+		DEBUG ("Forcing desktop off, as requested");
+		g_action_group_activate_action (G_ACTION_GROUP (application),
+						"close-desktop", NULL);
                 /* fall through */
 	}
 
@@ -1109,26 +1011,6 @@ init_icons_and_styles (void)
 					   NAUTILUS_DATADIR G_DIR_SEPARATOR_S "icons");
 }
 
-void
-nautilus_application_open_desktop (NautilusApplication *application)
-{
-	/* Initialize the desktop link monitor singleton */
-	nautilus_desktop_link_monitor_get ();
-
-	nautilus_application_create_desktop_windows (application);
-}
-
-static void
-nautilus_application_close_desktop (void)
-{
-	g_list_foreach (nautilus_application_desktop_windows,
-			(GFunc) gtk_widget_destroy, NULL);
-	g_list_free (nautilus_application_desktop_windows);
-	nautilus_application_desktop_windows = NULL;
-
-	nautilus_desktop_link_monitor_shutdown ();
-}
-
 /* callback for showing or hiding the desktop based on the user's preference */
 static void
 desktop_changed_callback (gpointer user_data)
@@ -1137,9 +1019,11 @@ desktop_changed_callback (gpointer user_data)
 
 	application = NAUTILUS_APPLICATION (user_data);
 	if (g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
-		nautilus_application_open_desktop (application);
+		g_action_group_activate_action (G_ACTION_GROUP (application),
+						"open-desktop", NULL);
 	} else {
-		nautilus_application_close_desktop ();
+		g_action_group_activate_action (G_ACTION_GROUP (application),
+						"close-desktop", NULL);
 	}
 }
 
@@ -1160,13 +1044,21 @@ init_desktop (NautilusApplication *self)
 	}
 
 	if (should_show) {
-		nautilus_application_open_desktop (self);
+		g_action_group_activate_action (G_ACTION_GROUP (self),
+						"open-desktop", NULL);
+	} else {
+		g_action_group_activate_action (G_ACTION_GROUP (self),
+						"close-desktop", NULL);
 	}
 
-	/* Monitor the preference to show or hide the desktop */
-	g_signal_connect_swapped (gnome_background_preferences, "changed::" NAUTILUS_PREFERENCES_SHOW_DESKTOP,
-				  G_CALLBACK (desktop_changed_callback),
-				  self);
+	/* Monitor the preference to show or hide the desktop, if no other
+	 * command line option was specified.
+	 */
+	if (!self->priv->no_desktop && !self->priv->force_desktop) {
+		g_signal_connect_swapped (gnome_background_preferences, "changed::" NAUTILUS_PREFERENCES_SHOW_DESKTOP,
+					  G_CALLBACK (desktop_changed_callback),
+					  self);
+	}
 }
 
 static gboolean 

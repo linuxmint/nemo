@@ -20,6 +20,8 @@
  */
 
 #include "nautilus-application-actions.h"
+
+#include "nautilus-desktop-window.h"
 #include "nautilus-file-management-properties.h"
 
 #include <glib/gi18n.h>
@@ -135,13 +137,24 @@ action_help (GSimpleAction *action,
 }
 
 static void
-action_force_desktop (GSimpleAction *action,
+action_open_desktop (GSimpleAction *action,
+                     GVariant *parameter,
+                     gpointer user_data)
+{
+	nautilus_desktop_window_ensure ();
+}
+
+static void
+action_close_desktop (GSimpleAction *action,
 		      GVariant *parameter,
 		      gpointer user_data)
 {
-	NautilusApplication *self = user_data;
+	GtkWidget *desktop_window;
 
-	nautilus_application_open_desktop (self);
+	desktop_window = nautilus_desktop_window_get ();
+	if (desktop_window != NULL) {
+		gtk_widget_destroy (desktop_window);
+	}
 }
 
 static void
@@ -231,7 +244,8 @@ static GActionEntry app_entries[] = {
 	{ "help", action_help, NULL, NULL, NULL },
 	{ "quit", action_quit, NULL, NULL, NULL },
 	{ "kill", action_kill, NULL, NULL, NULL },
-	{ "force-desktop", action_force_desktop, NULL, NULL, NULL },
+	{ "open-desktop", action_open_desktop, NULL, NULL, NULL },
+	{ "close-desktop", action_close_desktop, NULL, NULL, NULL },
 };
 
 void
