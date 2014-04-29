@@ -50,7 +50,6 @@ nautilus_dbus_manager_dispose (GObject *object)
   NautilusDBusManager *self = (NautilusDBusManager *) object;
 
   if (self->file_operations) {
-    g_dbus_interface_skeleton_unexport (G_DBUS_INTERFACE_SKELETON (self->file_operations));
     g_object_unref (self->file_operations);
     self->file_operations = NULL;
   }
@@ -128,10 +127,6 @@ handle_empty_trash (NautilusDBusFileOperations *object,
 static void
 nautilus_dbus_manager_init (NautilusDBusManager *self)
 {
-  GDBusConnection *connection;
-
-  connection = g_application_get_dbus_connection (g_application_get_default ());
-
   self->file_operations = nautilus_dbus_file_operations_skeleton_new ();
 
   g_signal_connect (self->file_operations,
@@ -146,9 +141,6 @@ nautilus_dbus_manager_init (NautilusDBusManager *self)
 		    "handle-empty-trash",
 		    G_CALLBACK (handle_empty_trash),
 		    self);
-  g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->file_operations), connection,
-				    "/org/gnome/Nautilus", NULL);
-
 }
 
 static void
@@ -164,4 +156,19 @@ nautilus_dbus_manager_new (void)
 {
   return g_object_new (nautilus_dbus_manager_get_type (),
                        NULL);
+}
+
+gboolean
+nautilus_dbus_manager_register (NautilusDBusManager *self,
+                                GDBusConnection     *connection,
+                                GError             **error)
+{
+  return g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->file_operations),
+                                           connection, "/org/gnome/Nautilus", error);
+}
+
+void
+nautilus_dbus_manager_unregister (NautilusDBusManager *self)
+{
+  g_dbus_interface_skeleton_unexport (G_DBUS_INTERFACE_SKELETON (self->file_operations));
 }

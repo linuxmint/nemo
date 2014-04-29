@@ -1221,7 +1221,6 @@ nautilus_application_startup (GApplication *app)
 	gtk_window_set_default_icon_name ("system-file-manager");
 
 	/* create DBus manager */
-	self->priv->dbus_manager = nautilus_dbus_manager_new ();
 	self->priv->fdb_manager = nautilus_freedesktop_dbus_new ();
 
 	/* initialize preferences and create the global GSettings objects */
@@ -1261,6 +1260,34 @@ nautilus_application_startup (GApplication *app)
 	init_desktop (self);
 
 	nautilus_profile_end (NULL);
+}
+
+static gboolean
+nautilus_application_dbus_register (GApplication	 *app,
+				    GDBusConnection      *connection,
+				    const gchar		 *object_path,
+				    GError		**error)
+{
+	NautilusApplication *self = NAUTILUS_APPLICATION (app);
+
+	self->priv->dbus_manager = nautilus_dbus_manager_new ();
+	if (!nautilus_dbus_manager_register (self->priv->dbus_manager, connection, error)) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static void
+nautilus_application_dbus_unregister (GApplication	*app,
+				      GDBusConnection   *connection,
+				      const gchar	*object_path)
+{
+	NautilusApplication *self = NAUTILUS_APPLICATION (app);
+
+	if (self->priv->dbus_manager) {
+		nautilus_dbus_manager_unregister (self->priv->dbus_manager);
+	}
 }
 
 static void
@@ -1400,6 +1427,8 @@ nautilus_application_class_init (NautilusApplicationClass *class)
 	application_class->quit_mainloop = nautilus_application_quit_mainloop;
 	application_class->open = nautilus_application_open;
 	application_class->local_command_line = nautilus_application_local_command_line;
+	application_class->dbus_register = nautilus_application_dbus_register;
+	application_class->dbus_unregister = nautilus_application_dbus_unregister;
 
 	gtkapp_class = GTK_APPLICATION_CLASS (class);
 	gtkapp_class->window_added = nautilus_application_window_added;
