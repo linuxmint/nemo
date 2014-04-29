@@ -457,7 +457,7 @@ get_window_slot_for_location (NautilusApplication *application, GFile *location)
 			NautilusWindowSlot *current = NAUTILUS_WINDOW_SLOT (sl->data);
 			GFile *slot_location = nautilus_window_slot_get_location (current);
 
-			if (g_file_equal (slot_location, location)) {
+			if (slot_location && g_file_equal (slot_location, location)) {
 				slot = current;
 				break;
 			}
@@ -847,10 +847,49 @@ const GOptionEntry options[] = {
 };
 
 static gint
+nautilus_application_handle_file_args (NautilusApplication *self,
+				       GVariantDict        *options)
+{
+	GFile **files;
+	GFile *file;
+	gint idx, len;
+	const gchar * const *remaining = NULL;
+	GPtrArray *file_array;
+
+	g_variant_dict_lookup (options, G_OPTION_REMAINING, "^a&s", &remaining);
+
+	if (remaining == NULL) {
+		return -1;
+	}
+
+	/* Convert args to GFiles */
+	file_array = g_ptr_array_new_full (0, g_object_unref);
+
+	for (idx = 0; remaining[idx] != NULL; idx++) {
+		file = g_file_new_for_commandline_arg (remaining[idx]);
+		g_ptr_array_add (file_array, file);
+	}
+
+	len = file_array->len;
+	files = (GFile **) file_array->pdata;
+
+	if (g_variant_dict_contains (options, "select")) {
+		nautilus_application_select (self, files, len);
+	} else {
+		/* Invoke "Open" to create new windows */
+		g_application_open (G_APPLICATION (self), files, len,
+				    g_variant_dict_contains (options, "new-window") ? "new-window" : "");
+	}
+
+	g_ptr_array_unref (file_array);
+
+	return EXIT_SUCCESS;
+}
+
+static gint
 nautilus_application_handle_local_options (GApplication *application,
 					   GVariantDict *options)
 {
-	const gchar * const *remaining = NULL;
 	NautilusApplication *self = NAUTILUS_APPLICATION (application);
 	gint retval = -1;
 	GError *error = NULL;
@@ -906,52 +945,8 @@ nautilus_application_handle_local_options (GApplication *application,
                 /* fall through */
 	}
 
-	GFile **files;
-	gint idx, len;
-
-	len = 0;
-	files = NULL;
-
-	g_variant_dict_lookup (options, G_OPTION_REMAINING, "^a&s", &remaining);
-
-	/* Convert args to GFiles */
-	if (remaining != NULL) {
-		GFile *file;
-		GPtrArray *file_array;
-
-		file_array = g_ptr_array_new ();
-
-		for (idx = 0; remaining[idx] != NULL; idx++) {
-			file = g_file_new_for_commandline_arg (remaining[idx]);
-			if (file != NULL) {
-				g_ptr_array_add (file_array, file);
-			}
-		}
-
-		len = file_array->len;
-		files = (GFile **) g_ptr_array_free (file_array, FALSE);
-	}
-
 	self->priv->no_default_window = g_variant_dict_contains (options, "no-default-window");
-
-	if (len == 0) {
-		goto out;
-	}
-
-	if (g_variant_dict_contains (options, "select")) {
-		nautilus_application_select (self, files, len);
-	} else {
-		/* Invoke "Open" to create new windows */
-		g_application_open (application, files, len,
-				    g_variant_dict_contains (options, "new-window") ? "new-window" : "");
-	}
-
-	for (idx = 0; idx < len; idx++) {
-		g_object_unref (files[idx]);
-	}
-	g_free (files);
-
-	retval = EXIT_SUCCESS;
+	retval = nautilus_application_handle_file_args (self, options);
 
  out:
 	nautilus_profile_end (NULL);
