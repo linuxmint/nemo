@@ -129,6 +129,8 @@ nautilus_SOURCES = \
 	nautilus-actions.h			\
 	nautilus-application.c			\
 	nautilus-application.h			\
+	nautilus-application-actions.c		\
+	nautilus-application-actions.h		\
 	nautilus-bookmark-list.c		\
 	nautilus-bookmark-list.h		\
 	nautilus-bookmarks-window.c		\

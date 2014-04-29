@@ -29,10 +29,10 @@
 
 #include "nautilus-application.h"
 
+#include "nautilus-application-actions.h"
 #include "nautilus-bookmarks-window.h"
 #include "nautilus-connect-server-dialog.h"
 #include "nautilus-desktop-window.h"
-#include "nautilus-file-management-properties.h"
 #include "nautilus-freedesktop-dbus.h"
 #include "nautilus-image-properties-page.h"
 #include "nautilus-previewer.h"
@@ -71,12 +71,6 @@
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 
-/* Keep window from shrinking down ridiculously small; numbers are somewhat arbitrary */
-#define APPLICATION_WINDOW_MIN_WIDTH	300
-#define APPLICATION_WINDOW_MIN_HEIGHT	100
-
-#define START_STATE_CONFIG "start-state"
-
 #define NAUTILUS_ACCEL_MAP_SAVE_DELAY 30
 
 /* Keeps track of all the desktop windows. */
@@ -86,7 +80,6 @@ static GList *nautilus_application_desktop_windows;
 static gboolean save_of_accel_map_requested = FALSE;
 
 static void     desktop_changed_callback          (gpointer                  user_data);
-static void     nautilus_application_open_desktop (NautilusApplication *application);
 
 G_DEFINE_TYPE (NautilusApplication, nautilus_application, GTK_TYPE_APPLICATION);
 
@@ -690,24 +683,6 @@ nautilus_application_open (GApplication *app,
 		      gdk_screen_get_default ());
 }
 
-static void
-action_new_window (GSimpleAction *action,
-		   GVariant *parameter,
-		   gpointer user_data)
-{
-	GtkApplication *application = user_data;
-	NautilusWindow *window;
-	GtkWindow *cur_window;
-
-	cur_window = gtk_application_get_active_window (application);
-	window = nautilus_application_create_window (NAUTILUS_APPLICATION (application),
-						     cur_window ?
-						     gtk_window_get_screen (cur_window) :
-						     gdk_screen_get_default ());
-
-	nautilus_window_slot_go_home (nautilus_window_get_active_slot (window), 0);
-}
-
 static gboolean
 go_to_server_cb (NautilusWindow *window,
 		 GFile          *location,
@@ -811,229 +786,6 @@ nautilus_application_connect_server (NautilusApplication *application,
 	gtk_window_present (GTK_WINDOW (dialog));
 
 	return dialog;
-}
-
-static void
-action_connect_to_server (GSimpleAction *action,
-			  GVariant *parameter,
-			  gpointer user_data)
-{
-	GtkApplication *application = user_data;
-
-	nautilus_application_connect_server (NAUTILUS_APPLICATION (application),
-					     NAUTILUS_WINDOW (gtk_application_get_active_window (application)));
-}
-
-static void
-action_enter_location (GSimpleAction *action,
-		       GVariant *parameter,
-		       gpointer user_data)
-{
-	GtkApplication *application = user_data;
-	NautilusWindow *window;
-	GtkWindow *cur_window;
-
-	cur_window = gtk_application_get_active_window (application);
-	window = NAUTILUS_WINDOW (cur_window);
-	nautilus_window_ensure_location_entry (window);
-}
-
-static void
-action_bookmarks (GSimpleAction *action,
-		  GVariant *parameter,
-		  gpointer user_data)
-{
-	GtkApplication *application = user_data;
-
-	nautilus_application_edit_bookmarks (NAUTILUS_APPLICATION (application),
-					     NAUTILUS_WINDOW (gtk_application_get_active_window (application)));
-}
-
-static void
-action_preferences (GSimpleAction *action,
-		    GVariant *parameter,
-		    gpointer user_data)
-{
-	GtkApplication *application = user_data;
-	nautilus_file_management_properties_dialog_show (gtk_application_get_active_window (application));
-}
-
-static void
-action_about (GSimpleAction *action,
-	      GVariant *parameter,
-	      gpointer user_data)
-{
-	GtkApplication *application = user_data;
-
-	nautilus_window_show_about_dialog (NAUTILUS_WINDOW (gtk_application_get_active_window (application)));
-}
-
-static void
-action_help (GSimpleAction *action,
-	     GVariant *parameter,
-	     gpointer user_data)
-{
-	GtkWindow *window;
-	GtkWidget *dialog;
-	GtkApplication *application = user_data;
-	GError *error = NULL;
-
-	window = gtk_application_get_active_window (application);
-	gtk_show_uri (window ? 
-		      gtk_window_get_screen (GTK_WINDOW (window)) :
-		      gdk_screen_get_default (),
-		      "help:gnome-help/files",
-		      gtk_get_current_event_time (), &error);
-
-	if (error) {
-		dialog = gtk_message_dialog_new (window ? GTK_WINDOW (window) : NULL,
-						 GTK_DIALOG_MODAL,
-						 GTK_MESSAGE_ERROR,
-						 GTK_BUTTONS_OK,
-						 _("There was an error displaying help: \n%s"),
-						 error->message);
-		g_signal_connect (G_OBJECT (dialog), "response",
-				  G_CALLBACK (gtk_widget_destroy),
-				  NULL);
-
-		gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
-		gtk_widget_show (dialog);
-		g_error_free (error);
-	}
-}
-
-static void
-action_force_desktop (GSimpleAction *action,
-		      GVariant *parameter,
-		      gpointer user_data)
-{
-	NautilusApplication *self = user_data;
-
-	nautilus_application_open_desktop (self);
-}
-
-static void
-action_kill (GSimpleAction *action,
-	     GVariant *parameter,
-	     gpointer user_data)
-{
-	GtkApplication *application = user_data;
-	GList *windows;
-
-	/* this will also destroy the desktop windows */
-	windows = gtk_application_get_windows (application);
-	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
-
-	/* we have been asked to force quit */
-	g_application_quit (G_APPLICATION (application));
-}
-
-static void
-action_quit (GSimpleAction *action,
-	     GVariant *parameter,
-	     gpointer user_data)
-{
-	GtkApplication *application = user_data;
-	GList *l;
-
-	/* nautilus_window_close() doesn't do anything for desktop windows */
-	for (l = gtk_application_get_windows (GTK_APPLICATION (application)); l; l = l->next) {
-		if (NAUTILUS_IS_WINDOW (l->data))
-			nautilus_window_close (NAUTILUS_WINDOW (l->data));
-	}
-}
-
-static void
-action_search (GSimpleAction *action,
-	       GVariant *parameter,
-	       gpointer user_data)
-{
-	GtkApplication *application = user_data;
-	const gchar *string, *uri;
-	NautilusQuery *query;
-	NautilusDirectory *directory;
-	gchar *search_uri;
-	NautilusWindow *window;
-	GtkWindow *cur_window;
-	GFile *location;
-
-	g_variant_get (parameter, "(ss)", &uri, &string);
-
-	if (strlen (string) == 0 ||
-	    strlen (uri) == 0) {
-		return;
-	}
-
-	query = nautilus_query_new ();
-	nautilus_query_set_location (query, uri);
-	nautilus_query_set_text (query, string);
-
-	search_uri = nautilus_search_directory_generate_new_uri ();
-	location = g_file_new_for_uri (search_uri);
-	g_free (search_uri);
-
-	directory = nautilus_directory_get (location);
-	nautilus_search_directory_set_query (NAUTILUS_SEARCH_DIRECTORY (directory), query);
-
-	cur_window = gtk_application_get_active_window (application);
-	window = nautilus_application_create_window (NAUTILUS_APPLICATION (application),
-						     cur_window ?
-						     gtk_window_get_screen (cur_window) :
-						     gdk_screen_get_default ());
-
-	nautilus_window_slot_open_location (nautilus_window_get_active_slot (window), location, 0);
-
-	nautilus_directory_unref (directory);
-	g_object_unref (query);
-	g_object_unref (location);
-}
-
-static GActionEntry app_entries[] = {
-	{ "new-window", action_new_window, NULL, NULL, NULL },
-	{ "connect-to-server", action_connect_to_server, NULL, NULL, NULL },
-	{ "enter-location", action_enter_location, NULL, NULL, NULL },
-	{ "bookmarks", action_bookmarks, NULL, NULL, NULL },
-	{ "preferences", action_preferences, NULL, NULL, NULL },
-	{ "search", action_search, "(ss)", NULL, NULL },
-	{ "about", action_about, NULL, NULL, NULL },
-	{ "help", action_help, NULL, NULL, NULL },
-	{ "quit", action_quit, NULL, NULL, NULL },
-	{ "kill", action_kill, NULL, NULL, NULL },
-	{ "force-desktop", action_force_desktop, NULL, NULL, NULL },
-};
-
-static void
-nautilus_application_init_actions (NautilusApplication *self)
-{
-	GtkBuilder *builder;
-	GError *error = NULL;
-	const gchar *debug_no_app_menu;
-
-	g_action_map_add_action_entries (G_ACTION_MAP (self),
-					 app_entries, G_N_ELEMENTS (app_entries),
-					 self);
-	gtk_application_add_accelerator (GTK_APPLICATION (self), "F10", "win.gear-menu", NULL);
-
-	builder = gtk_builder_new ();
-	gtk_builder_add_from_resource (builder, "/org/gnome/nautilus/nautilus-app-menu.ui", &error);
-
-	if (error == NULL) {
-		gtk_application_set_app_menu (GTK_APPLICATION (self),
-					      G_MENU_MODEL (gtk_builder_get_object (builder, "app-menu")));
-	} else {
-		g_critical ("Unable to add the application menu: %s\n", error->message);
-		g_error_free (error);
-	}
-
-	g_object_unref (builder);
-
-	debug_no_app_menu = g_getenv ("NAUTILUS_DEBUG_NO_APP_MENU");
-	if (debug_no_app_menu) {
-		DEBUG ("Disabling app menu GtkSetting as requested...");
-		g_object_set (gtk_settings_get_default (),
-			      "gtk-shell-shows-app-menu", FALSE,
-			      NULL);
-	}
 }
 
 static void
@@ -1357,7 +1109,7 @@ init_icons_and_styles (void)
 					   NAUTILUS_DATADIR G_DIR_SEPARATOR_S "icons");
 }
 
-static void
+void
 nautilus_application_open_desktop (NautilusApplication *application)
 {
 	/* Initialize the desktop link monitor singleton */
@@ -1616,7 +1368,7 @@ nautilus_application_startup (GApplication *app)
 
 	do_upgrades_once (self);
 
-	nautilus_application_init_actions (self);
+	nautilus_init_application_actions (self);
 	init_desktop (self);
 
 	nautilus_profile_end (NULL);
