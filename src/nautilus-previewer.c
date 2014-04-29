@@ -29,88 +29,18 @@
 
 #include <gio/gio.h>
 
-G_DEFINE_TYPE (NautilusPreviewer, nautilus_previewer, G_TYPE_OBJECT);
-
 #define PREVIEWER_DBUS_NAME "org.gnome.NautilusPreviewer"
 #define PREVIEWER_DBUS_IFACE "org.gnome.NautilusPreviewer"
 #define PREVIEWER_DBUS_PATH "/org/gnome/NautilusPreviewer"
-
-static NautilusPreviewer *singleton = NULL;
-
-struct _NautilusPreviewerPriv {
-  GDBusConnection *connection;
-};
-
-static void
-nautilus_previewer_dispose (GObject *object)
-{
-  NautilusPreviewer *self = NAUTILUS_PREVIEWER (object);
-
-  DEBUG ("%p", self);
-
-  g_clear_object (&self->priv->connection);
-
-  G_OBJECT_CLASS (nautilus_previewer_parent_class)->dispose (object);
-}
-
-static GObject *
-nautilus_previewer_constructor (GType type,
-                                guint n_construct_params,
-                                GObjectConstructParam *construct_params)
-{
-  GObject *retval;
-
-  if (singleton != NULL)
-    return G_OBJECT (singleton);
-
-  retval = G_OBJECT_CLASS (nautilus_previewer_parent_class)->constructor
-    (type, n_construct_params, construct_params);
-
-  singleton = NAUTILUS_PREVIEWER (retval);
-  g_object_add_weak_pointer (retval, (gpointer) &singleton);
-
-  return retval;
-}
-
-static void
-nautilus_previewer_init (NautilusPreviewer *self)
-{
-  GError *error = NULL;
-
-  self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, NAUTILUS_TYPE_PREVIEWER,
-                                            NautilusPreviewerPriv);
-
-  self->priv->connection = g_bus_get_sync (G_BUS_TYPE_SESSION,
-                                           NULL, &error);
-
-  if (error != NULL) {
-    g_printerr ("Unable to initialize DBus connection: %s", error->message);
-    g_error_free (error);
-    return;
-  }
-}
-
-static void
-nautilus_previewer_class_init (NautilusPreviewerClass *klass)
-{
-  GObjectClass *oclass;
-
-  oclass = G_OBJECT_CLASS (klass);
-  oclass->constructor = nautilus_previewer_constructor;
-  oclass->dispose = nautilus_previewer_dispose;
-
-  g_type_class_add_private (klass, sizeof (NautilusPreviewerPriv));
-}
 
 static void
 previewer_show_file_ready_cb (GObject *source,
                               GAsyncResult *res,
                               gpointer user_data)
 {
-  NautilusPreviewer *self = user_data;
   GError *error = NULL;
 
-  g_dbus_connection_call_finish (self->priv->connection,
+  g_dbus_connection_call_finish (G_DBUS_CONNECTION (source),
                                  res, &error);
 
   if (error != NULL) {
@@ -118,8 +48,6 @@ previewer_show_file_ready_cb (GObject *source,
            error->message);
     g_error_free (error);
   }
-
-  g_object_unref (self);
 }
 
 static void
@@ -127,10 +55,9 @@ previewer_close_ready_cb (GObject *source,
                           GAsyncResult *res,
                           gpointer user_data)
 {
-  NautilusPreviewer *self = user_data;
   GError *error = NULL;
 
-  g_dbus_connection_call_finish (self->priv->connection,
+  g_dbus_connection_call_finish (G_DBUS_CONNECTION (source),
                                  res, &error);
 
   if (error != NULL) {
@@ -138,33 +65,20 @@ previewer_close_ready_cb (GObject *source,
            error->message);
     g_error_free (error);
   }
-
-  g_object_unref (self);
-}
-
-NautilusPreviewer *
-nautilus_previewer_get_singleton (void)
-{
-  return g_object_new (NAUTILUS_TYPE_PREVIEWER, NULL);
 }
 
 void
-nautilus_previewer_call_show_file (NautilusPreviewer *self,
-                                   const gchar *uri,
+nautilus_previewer_call_show_file (const gchar *uri,
                                    guint xid,
 				   gboolean close_if_already_visible)
 {
+  GDBusConnection *connection = g_application_get_dbus_connection (g_application_get_default ());
   GVariant *variant;
 
   variant = g_variant_new ("(sib)",
                            uri, xid, close_if_already_visible);
 
-  if (self->priv->connection == NULL) {
-    g_printerr ("No DBus connection available");
-    return;
-  }
-
-  g_dbus_connection_call (self->priv->connection,
+  g_dbus_connection_call (connection,
                           PREVIEWER_DBUS_NAME,
                           PREVIEWER_DBUS_PATH,
                           PREVIEWER_DBUS_IFACE,
@@ -175,19 +89,16 @@ nautilus_previewer_call_show_file (NautilusPreviewer *self,
                           -1,
                           NULL,
                           previewer_show_file_ready_cb,
-                          g_object_ref (self));
+                          NULL);
 }
 
 void
-nautilus_previewer_call_close (NautilusPreviewer *self)
+nautilus_previewer_call_close (void)
 {
-  if (self->priv->connection == NULL) {
-    g_printerr ("No DBus connection available");
-    return;
-  }
+  GDBusConnection *connection = g_application_get_dbus_connection (g_application_get_default ());
 
   /* don't autostart the previewer if it's not running */
-  g_dbus_connection_call (self->priv->connection,
+  g_dbus_connection_call (connection,
                           PREVIEWER_DBUS_NAME,
                           PREVIEWER_DBUS_PATH,
                           PREVIEWER_DBUS_IFACE,
@@ -198,5 +109,5 @@ nautilus_previewer_call_close (NautilusPreviewer *self)
                           -1,
                           NULL,
                           previewer_close_ready_cb,
-                          g_object_ref (self));
+                          NULL);
 }

@@ -23,43 +23,14 @@
 #ifndef __NAUTILUS_PREVIEWER_H__
 #define __NAUTILUS_PREVIEWER_H__
 
-#include <glib-object.h>
+#include <glib.h>
 
 G_BEGIN_DECLS
 
-#define NAUTILUS_TYPE_PREVIEWER nautilus_previewer_get_type()
-#define NAUTILUS_PREVIEWER(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NAUTILUS_TYPE_PREVIEWER, NautilusPreviewer))
-#define NAUTILUS_PREVIEWER_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST ((klass), NAUTILUS_TYPE_PREVIEWER, NautilusPreviewerClass))
-#define NAUTILUS_IS_PREVIEWER(obj) \
-  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NAUTILUS_TYPE_PREVIEWER))
-#define NAUTILUS_IS_PREVIEWER_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_TYPE ((klass), NAUTILUS_TYPE_PREVIEWER))
-#define NAUTILUS_PREVIEWER_GET_CLASS(obj) \
-  (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_TYPE_PREVIEWER, NautilusPreviewerClass))
-
-typedef struct _NautilusPreviewerPriv NautilusPreviewerPriv;
-
-typedef struct {
-  GObject parent;
-
-  /* private */
-  NautilusPreviewerPriv *priv;
-} NautilusPreviewer;
-
-typedef struct {
-  GObjectClass parent_class;
-} NautilusPreviewerClass;
-
-GType nautilus_previewer_get_type (void);
-
-NautilusPreviewer *nautilus_previewer_get_singleton (void);
-void nautilus_previewer_call_show_file (NautilusPreviewer *previewer,
-                                        const gchar *uri,
-                                        guint xid,
-					gboolean close_if_already_visible);
-void nautilus_previewer_call_close (NautilusPreviewer *previewer);
+void nautilus_previewer_call_show_file (const gchar *uri,
+                                        guint        xid,
+					gboolean     close_if_already_visible);
+void nautilus_previewer_call_close     (void);
 
 G_END_DECLS
 

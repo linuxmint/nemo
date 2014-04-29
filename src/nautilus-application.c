@@ -1220,9 +1220,6 @@ nautilus_application_startup (GApplication *app)
 
 	gtk_window_set_default_icon_name ("system-file-manager");
 
-	/* initialize the previewer singleton */
-	nautilus_previewer_get_singleton ();
-
 	/* create DBus manager */
 	self->priv->dbus_manager = nautilus_dbus_manager_new ();
 	self->priv->fdb_manager = nautilus_freedesktop_dbus_new ();
@@ -1373,7 +1370,6 @@ static void
 nautilus_application_window_removed (GtkApplication *app,
 				     GtkWindow *window)
 {
-	NautilusPreviewer *previewer;
 	GList *l;
 
 	/* chain to parent */
@@ -1382,8 +1378,7 @@ nautilus_application_window_removed (GtkApplication *app,
 	/* if this was the last window, close the previewer */
 	for (l = gtk_application_get_windows (GTK_APPLICATION (app)); l && !NAUTILUS_IS_WINDOW (l->data); l = l->next);
 	if (!l) {
-		previewer = nautilus_previewer_get_singleton ();
-		nautilus_previewer_call_close (previewer);
+		nautilus_previewer_call_close ();
 	}
 
 	g_signal_handlers_disconnect_by_func (window, on_slot_added, app);
