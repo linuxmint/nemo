@@ -97,7 +97,6 @@ struct _NautilusApplicationPriv {
 
 	gboolean no_desktop;
 	gboolean force_desktop;
-	gchar *geometry;
 
 	NotifyNotification *unmount_notify;
 
@@ -588,7 +587,7 @@ get_window_slot_for_location (NautilusApplication *application, GFile *location)
 
 static void
 open_window (NautilusApplication *application,
-	     GFile *location, GdkScreen *screen, const char *geometry)
+	     GFile *location, GdkScreen *screen)
 {
 	NautilusWindow *window;
 
@@ -601,18 +600,6 @@ open_window (NautilusApplication *application,
 		nautilus_window_slot_go_home (nautilus_window_get_active_slot (window), 0);
 	}
 
-	if (geometry != NULL && !gtk_widget_get_visible (GTK_WIDGET (window))) {
-		/* never maximize windows opened from shell if a
-		 * custom geometry has been requested.
-		 */
-		gtk_window_unmaximize (GTK_WINDOW (window));
-		eel_gtk_window_set_initial_geometry_from_string (GTK_WINDOW (window),
-								 geometry,
-								 APPLICATION_WINDOW_MIN_WIDTH,
-								 APPLICATION_WINDOW_MIN_HEIGHT,
-								 FALSE);
-	}
-
 	nautilus_profile_end (NULL);
 }
 
@@ -621,14 +608,13 @@ open_windows (NautilusApplication *application,
 	      gboolean force_new,
 	      GFile **files,
 	      gint n_files,
-	      GdkScreen *screen,
-	      const char *geometry)
+	      GdkScreen *screen)
 {
 	guint i;
 
 	if (files == NULL || files[0] == NULL) {
 		/* Open a window pointing at the default location. */
-		open_window (application, NULL, screen, geometry);
+		open_window (application, NULL, screen);
 	} else {
 		/* Open windows at each requested location. */
 		for (i = 0; i < n_files; ++i) {
@@ -638,7 +624,7 @@ open_windows (NautilusApplication *application,
 				slot = get_window_slot_for_location (application, files[i]);
 
 			if (!slot) {
-				open_window (application, files[i], screen, geometry);
+				open_window (application, files[i], screen);
 			} else {
 				/* We open the location again to update any possible selection */
 				nautilus_window_slot_open_location (slot, files[i], 0);
@@ -701,8 +687,7 @@ nautilus_application_open (GApplication *app,
 	gboolean force_new = (g_strcmp0 (hint, "new-window") == 0);
 
 	open_windows (self, force_new, files, n_files,
-		      gdk_screen_get_default (),
-		      self->priv->geometry);
+		      gdk_screen_get_default ());
 }
 
 static void
@@ -1069,8 +1054,6 @@ nautilus_application_finalize (GObject *object)
 	g_clear_object (&application->priv->progress_handler);
 	g_clear_object (&application->priv->bookmark_list);
 
-	g_free (application->priv->geometry);
-
 	g_clear_object (&application->priv->dbus_manager);
 	g_clear_object (&application->priv->fdb_manager);
 	g_clear_object (&application->priv->search_provider);
@@ -1102,12 +1085,6 @@ do_cmdline_sanity_checks (NautilusApplication *self,
 		goto out;
 	}
 
-	if (self->priv->geometry != NULL &&
-	    remaining != NULL && remaining[0] != NULL && remaining[1] != NULL) {
-		g_printerr ("%s\n",
-			    _("--geometry cannot be used with more than one URI."));
-		goto out;
-	}
 
 	if (select_uris && remaining == NULL) {
 		g_printerr ("%s\n",
@@ -1210,6 +1187,7 @@ nautilus_application_local_command_line (GApplication *application,
 	gboolean open_new_window = FALSE;
 	gboolean no_default_window = FALSE;
 	gboolean select_uris = FALSE;
+	gchar *geometry = NULL;
 	gchar **remaining = NULL;
 	NautilusApplication *self = NAUTILUS_APPLICATION (application);
 
@@ -1221,10 +1199,11 @@ nautilus_application_local_command_line (GApplication *application,
 		/* dummy, only for compatibility reasons */
 		{ "browser", '\0', G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &browser,
 		  NULL, NULL },
+                /* ditto */
+		{ "geometry", 'g', G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING, &geometry,
+		  N_("Create the initial window with the given geometry."), N_("GEOMETRY") },
 		{ "version", '\0', 0, G_OPTION_ARG_NONE, &version,
 		  N_("Show the version of the program."), NULL },
-		{ "geometry", 'g', 0, G_OPTION_ARG_STRING, &self->priv->geometry,
-		  N_("Create the initial window with the given geometry."), N_("GEOMETRY") },
 		{ "new-window", 'w', 0, G_OPTION_ARG_NONE, &open_new_window,
 		  N_("Always open a new window for browsing specified URIs"), NULL },
 		{ "no-default-window", 'n', 0, G_OPTION_ARG_NONE, &no_default_window,
@@ -1363,6 +1342,7 @@ nautilus_application_local_command_line (GApplication *application,
 	g_free (files);
 
  out:
+	g_free (geometry);
 	g_option_context_free (context);
 	nautilus_profile_end (NULL);
 
