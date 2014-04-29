@@ -35,7 +35,6 @@
 struct _NautilusDBusManager {
   GObject parent;
 
-  GDBusObjectManagerServer *object_manager;
   NautilusDBusFileOperations *file_operations;
 };
 
@@ -54,11 +53,6 @@ nautilus_dbus_manager_dispose (GObject *object)
     g_dbus_interface_skeleton_unexport (G_DBUS_INTERFACE_SKELETON (self->file_operations));
     g_object_unref (self->file_operations);
     self->file_operations = NULL;
-  }
-
-  if (self->object_manager) {
-    g_object_unref (self->object_manager);
-    self->object_manager = NULL;
   }
 
   G_OBJECT_CLASS (nautilus_dbus_manager_parent_class)->dispose (object);
@@ -138,7 +132,6 @@ nautilus_dbus_manager_init (NautilusDBusManager *self)
 
   connection = g_application_get_dbus_connection (g_application_get_default ());
 
-  self->object_manager = g_dbus_object_manager_server_new ("/org/gnome/Nautilus");
   self->file_operations = nautilus_dbus_file_operations_skeleton_new ();
 
   g_signal_connect (self->file_operations,
@@ -153,11 +146,9 @@ nautilus_dbus_manager_init (NautilusDBusManager *self)
 		    "handle-empty-trash",
 		    G_CALLBACK (handle_empty_trash),
 		    self);
-
   g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->file_operations), connection,
 				    "/org/gnome/Nautilus", NULL);
 
-  g_dbus_object_manager_server_set_connection (self->object_manager, connection);
 }
 
 static void
