@@ -42,6 +42,19 @@ LDADD =\
 	$(POPT_LIBS) \
 	$(NULL)
 
+dbus_built_sources = 					\
+	nautilus-generated.c				\
+	nautilus-generated.h
+
+$(dbus_built_sources) : Makefile.am $(top_srcdir)/data/dbus-interfaces.xml
+	gdbus-codegen									\
+		--interface-prefix org.gnome.Nautilus.					\
+		--c-namespace NautilusDBus						\
+		--c-generate-object-manager						\
+		--generate-c-code nautilus-generated					\
+		$(top_srcdir)/data/dbus-interfaces.xml					\
+		$(NULL)
+
 dbus_freedesktop_built_sources =			\
 	nautilus-freedesktop-generated.c		\
 	nautilus-freedesktop-generated.h
@@ -117,6 +130,7 @@ nautilus-enum-types.c: $(headers) Makefile
 	&& rm -f xgen-gtc
 
 nautilus_built_sources = \
+	$(dbus_built_sources) \
 	$(dbus_freedesktop_built_sources) \
 	$(dbus_shell_search_provider_built_sources) \
 	nautilus-resources.c \
@@ -141,6 +155,8 @@ nautilus_SOURCES = \
 	nautilus-canvas-view-container.h	\
 	nautilus-connect-server-dialog.c	\
 	nautilus-connect-server-dialog.h	\
+	nautilus-dbus-manager.c 		\
+	nautilus-dbus-manager.h 		\
 	nautilus-desktop-canvas-view.c		\
 	nautilus-desktop-canvas-view.h		\
 	nautilus-desktop-item-properties.c	\
@@ -235,7 +251,6 @@ nautilus_convert_metadata_SOURCES= \
 
 BUILT_SOURCES = 					\
 	$(nautilus_built_sources) 			\
-	$(dbus_shell_search_provider_built_sources) 	\
 	$(NULL)
 
 TESTS=check-nautilus

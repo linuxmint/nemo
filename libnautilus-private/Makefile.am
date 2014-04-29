@@ -17,20 +17,6 @@ AM_CPPFLAGS = 						\
 	-DNAUTILUS_EXTENSIONDIR=\""$(libdir)/nautilus/extensions-3.0"\" \
 	$(NULL)
 
-dbus_built_sources = nautilus-generated.c nautilus-generated.h
-$(dbus_built_sources) : Makefile.am $(top_srcdir)/data/dbus-interfaces.xml
-	gdbus-codegen									\
-		--interface-prefix org.gnome.Nautilus.					\
-		--c-namespace NautilusDBus						\
-		--c-generate-object-manager						\
-		--generate-c-code nautilus-generated					\
-		$(top_srcdir)/data/dbus-interfaces.xml					\
-		$(NULL)
-
-BUILT_SOURCES = \
-	$(dbus_built_sources) \
-	$(NULL)
-
 if ENABLE_TRACKER
 nautilus_tracker_engine_sources = \
 	nautilus-search-engine-tracker.c \
@@ -70,8 +56,6 @@ libnautilus_private_la_SOURCES = \
 	nautilus-column-chooser.h \
 	nautilus-column-utilities.c \
 	nautilus-column-utilities.h \
-	nautilus-dbus-manager.c \
-	nautilus-dbus-manager.h \
 	nautilus-debug.c \
 	nautilus-debug.h \
 	nautilus-default-file-icon.c \
@@ -113,8 +97,6 @@ libnautilus_private_la_SOURCES = \
 	nautilus-file-utilities.h \
 	nautilus-file.c \
 	nautilus-file.h \
-	nautilus-generated.c \
-	nautilus-generated.h \
 	nautilus-global-preferences.c \
 	nautilus-global-preferences.h \
 	nautilus-icon-info.c \

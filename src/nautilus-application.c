@@ -32,6 +32,7 @@
 #include "nautilus-application-actions.h"
 #include "nautilus-bookmarks-window.h"
 #include "nautilus-connect-server-dialog.h"
+#include "nautilus-dbus-manager.h"
 #include "nautilus-desktop-window.h"
 #include "nautilus-freedesktop-dbus.h"
 #include "nautilus-image-properties-page.h"
@@ -43,7 +44,6 @@
 #include "nautilus-window-private.h"
 #include "nautilus-window-slot.h"
 
-#include <libnautilus-private/nautilus-dbus-manager.h>
 #include <libnautilus-private/nautilus-directory-private.h>
 #include <libnautilus-private/nautilus-file-utilities.h>
 #include <libnautilus-private/nautilus-file-operations.h>
