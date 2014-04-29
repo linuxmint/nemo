@@ -45,10 +45,6 @@ struct NautilusDesktopLinkMonitorDetails {
 	NautilusDesktopLink *trash_link;
 	NautilusDesktopLink *network_link;
 
-	gulong mount_id;
-	gulong unmount_id;
-	gulong changed_id;
-	
 	GList *mount_links;
 };
 
@@ -416,16 +412,12 @@ nautilus_desktop_link_monitor_init (NautilusDesktopLinkMonitor *monitor)
 				  G_CALLBACK (desktop_volumes_visible_changed),
 				  monitor);
 
-	monitor->details->mount_id =
-		g_signal_connect_object (monitor->details->volume_monitor, "mount-added",
-					 G_CALLBACK (mount_added_callback), monitor, 0);
-	monitor->details->unmount_id =
-		g_signal_connect_object (monitor->details->volume_monitor, "mount-removed",
-					 G_CALLBACK (mount_removed_callback), monitor, 0);
-	monitor->details->changed_id =
-		g_signal_connect_object (monitor->details->volume_monitor, "mount-changed",
-					 G_CALLBACK (mount_changed_callback), monitor, 0);
-
+	g_signal_connect_object (monitor->details->volume_monitor, "mount-added",
+				 G_CALLBACK (mount_added_callback), monitor, 0);
+	g_signal_connect_object (monitor->details->volume_monitor, "mount-removed",
+				 G_CALLBACK (mount_removed_callback), monitor, 0);
+	g_signal_connect_object (monitor->details->volume_monitor, "mount-changed",
+				 G_CALLBACK (mount_changed_callback), monitor, 0);
 }
 
 static void
@@ -449,8 +441,6 @@ desktop_link_monitor_finalize (GObject *object)
 	NautilusDesktopLinkMonitor *monitor;
 
 	monitor = NAUTILUS_DESKTOP_LINK_MONITOR (object);
-
-	g_object_unref (monitor->details->volume_monitor);
 
 	/* Default links */
 
@@ -482,15 +472,7 @@ desktop_link_monitor_finalize (GObject *object)
 					      desktop_volumes_visible_changed,
 					      monitor);
 
-	if (monitor->details->mount_id != 0) {
-		g_source_remove (monitor->details->mount_id);
-	}
-	if (monitor->details->unmount_id != 0) {
-		g_source_remove (monitor->details->unmount_id);
-	}
-	if (monitor->details->changed_id != 0) {
-		g_source_remove (monitor->details->changed_id);
-	}
+	g_object_unref (monitor->details->volume_monitor);
 
 	G_OBJECT_CLASS (nautilus_desktop_link_monitor_parent_class)->finalize (object);
 }
