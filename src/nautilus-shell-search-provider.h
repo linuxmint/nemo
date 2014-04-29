@@ -34,4 +34,9 @@ typedef GObjectClass NautilusShellSearchProviderClass;
 GType nautilus_shell_search_provider_get_type (void);
 NautilusShellSearchProvider * nautilus_shell_search_provider_new (void);
 
+gboolean nautilus_shell_search_provider_register   (NautilusShellSearchProvider *self,
+                                                    GDBusConnection             *connection,
+                                                    GError                     **error);
+void     nautilus_shell_search_provider_unregister (NautilusShellSearchProvider *self);
+
 #endif /* __NAUTILUS_SHELL_SEARCH_PROVIDER_H__ */

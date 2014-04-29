@@ -1216,10 +1216,6 @@ nautilus_application_startup (GApplication *app)
 	notify_init (GETTEXT_PACKAGE);
 	self->priv->progress_handler = nautilus_progress_ui_handler_new ();
 
-	/* Bookmarks and search */
-	self->priv->bookmark_list = nautilus_bookmark_list_new ();
-	self->priv->search_provider = nautilus_shell_search_provider_new ();
-
 	/* Check the user's .nautilus directories and post warnings
 	 * if there are problems.
 	 */
@@ -1246,6 +1242,11 @@ nautilus_application_dbus_register (GApplication	 *app,
 		return FALSE;
 	}
 
+	self->priv->search_provider = nautilus_shell_search_provider_new ();
+	if (!nautilus_shell_search_provider_register (self->priv->search_provider, connection, error)) {
+		return FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -1258,6 +1259,10 @@ nautilus_application_dbus_unregister (GApplication	*app,
 
 	if (self->priv->dbus_manager) {
 		nautilus_dbus_manager_unregister (self->priv->dbus_manager);
+	}
+
+	if (self->priv->search_provider) {
+		nautilus_shell_search_provider_unregister (self->priv->search_provider);
 	}
 }
 

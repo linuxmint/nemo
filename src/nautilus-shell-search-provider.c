@@ -54,8 +54,6 @@ typedef struct {
 struct _NautilusShellSearchProvider {
   GObject parent;
 
-  guint name_owner_id;
-  GDBusObjectManagerServer *object_manager;
   NautilusShellSearchProvider2 *skeleton;
 
   PendingSearch *current_search;
@@ -659,66 +657,11 @@ handle_launch_search (NautilusShellSearchProvider2 *skeleton,
 }
 
 static void
-search_provider_name_acquired_cb (GDBusConnection *connection,
-                                  const gchar     *name,
-                                  gpointer         user_data)
-{
-  g_debug ("Search provider name acquired: %s\n", name);
-}
-
-static void
-search_provider_name_lost_cb (GDBusConnection *connection,
-                              const gchar     *name,
-                              gpointer         user_data)
-{
-  g_debug ("Search provider name lost: %s\n", name);
-}
-
-static void
-search_provider_bus_acquired_cb (GDBusConnection *connection,
-                                 const gchar *name,
-                                 gpointer user_data)
-{
-  NautilusShellSearchProvider *self = user_data;
-
-  self->object_manager = g_dbus_object_manager_server_new ("/org/gnome/Nautilus/SearchProvider");
-  self->skeleton = nautilus_shell_search_provider2_skeleton_new ();
-
-  g_signal_connect (self->skeleton, "handle-get-initial-result-set",
-                    G_CALLBACK (handle_get_initial_result_set), self);
-  g_signal_connect (self->skeleton, "handle-get-subsearch-result-set",
-                    G_CALLBACK (handle_get_subsearch_result_set), self);
-  g_signal_connect (self->skeleton, "handle-get-result-metas",
-                    G_CALLBACK (handle_get_result_metas), self);
-  g_signal_connect (self->skeleton, "handle-activate-result",
-                    G_CALLBACK (handle_activate_result), self);
-  g_signal_connect (self->skeleton, "handle-launch-search",
-                    G_CALLBACK (handle_launch_search), self);
-
-  g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->skeleton),
-                                    connection,
-                                    "/org/gnome/Nautilus/SearchProvider", NULL);
-  g_dbus_object_manager_server_set_connection (self->object_manager, connection);
-
-  g_application_release (g_application_get_default ());
-}
-
-static void
 search_provider_dispose (GObject *obj)
 {
   NautilusShellSearchProvider *self = NAUTILUS_SHELL_SEARCH_PROVIDER (obj);
 
-  if (self->name_owner_id != 0) {
-    g_bus_unown_name (self->name_owner_id);
-    self->name_owner_id = 0;
-  }
-
-  if (self->skeleton != NULL) {
-    g_dbus_interface_skeleton_unexport (G_DBUS_INTERFACE_SKELETON (self->skeleton));
-    g_clear_object (&self->skeleton);
-  }
-
-  g_clear_object (&self->object_manager);
+  g_clear_object (&self->skeleton);
   g_hash_table_destroy (self->metas_cache);
   cancel_current_search (self);
 
@@ -735,14 +678,18 @@ nautilus_shell_search_provider_init (NautilusShellSearchProvider *self)
   self->bookmarks = nautilus_application_get_bookmarks (NAUTILUS_APPLICATION (g_application_get_default ()));
   self->volumes = g_volume_monitor_get ();
 
-  g_application_hold (g_application_get_default ());
-  self->name_owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
-                                        "org.gnome.Nautilus.SearchProvider",
-                                        G_BUS_NAME_OWNER_FLAGS_NONE,
-                                        search_provider_bus_acquired_cb,
-                                        search_provider_name_acquired_cb,
-                                        search_provider_name_lost_cb,
-                                        self, NULL);
+  self->skeleton = nautilus_shell_search_provider2_skeleton_new ();
+
+  g_signal_connect (self->skeleton, "handle-get-initial-result-set",
+                    G_CALLBACK (handle_get_initial_result_set), self);
+  g_signal_connect (self->skeleton, "handle-get-subsearch-result-set",
+                    G_CALLBACK (handle_get_subsearch_result_set), self);
+  g_signal_connect (self->skeleton, "handle-get-result-metas",
+                    G_CALLBACK (handle_get_result_metas), self);
+  g_signal_connect (self->skeleton, "handle-activate-result",
+                    G_CALLBACK (handle_activate_result), self);
+  g_signal_connect (self->skeleton, "handle-launch-search",
+                    G_CALLBACK (handle_launch_search), self);
 }
 
 static void
@@ -758,4 +705,20 @@ nautilus_shell_search_provider_new (void)
 {
   return g_object_new (nautilus_shell_search_provider_get_type (),
                        NULL);
+}
+
+gboolean
+nautilus_shell_search_provider_register (NautilusShellSearchProvider *self,
+                                         GDBusConnection             *connection,
+                                         GError                     **error)
+{
+  return g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->skeleton),
+                                           connection,
+                                           "/org/gnome/Nautilus/SearchProvider", error);
+}
+
+void
+nautilus_shell_search_provider_unregister (NautilusShellSearchProvider *self)
+{
+  g_dbus_interface_skeleton_unexport (G_DBUS_INTERFACE_SKELETON (self->skeleton));
 }
