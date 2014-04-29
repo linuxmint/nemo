@@ -476,12 +476,12 @@ get_window_slot_for_location (NautilusApplication *application, GFile *location)
 
 static void
 open_window (NautilusApplication *application,
-	     GFile *location, GdkScreen *screen)
+	     GFile *location)
 {
 	NautilusWindow *window;
 
 	nautilus_profile_start (NULL);
-	window = nautilus_application_create_window (application, screen);
+	window = nautilus_application_create_window (application, gdk_screen_get_default ());
 
 	if (location != NULL) {
 		nautilus_window_go_to (window, location);
@@ -496,14 +496,13 @@ static void
 open_windows (NautilusApplication *application,
 	      gboolean force_new,
 	      GFile **files,
-	      gint n_files,
-	      GdkScreen *screen)
+	      gint n_files)
 {
 	guint i;
 
 	if (files == NULL || files[0] == NULL) {
 		/* Open a window pointing at the default location. */
-		open_window (application, NULL, screen);
+		open_window (application, NULL);
 	} else {
 		/* Open windows at each requested location. */
 		for (i = 0; i < n_files; ++i) {
@@ -513,7 +512,7 @@ open_windows (NautilusApplication *application,
 				slot = get_window_slot_for_location (application, files[i]);
 
 			if (!slot) {
-				open_window (application, files[i], screen);
+				open_window (application, files[i]);
 			} else {
 				/* We open the location again to update any possible selection */
 				nautilus_window_slot_open_location (slot, files[i], 0);
@@ -575,8 +574,7 @@ nautilus_application_open (GApplication *app,
 
 	gboolean force_new = (g_strcmp0 (hint, "new-window") == 0);
 
-	open_windows (self, force_new, files, n_files,
-		      gdk_screen_get_default ());
+	open_windows (self, force_new, files, n_files);
 }
 
 static gboolean
