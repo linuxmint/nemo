@@ -11,6 +11,7 @@ public_icons = \
 	hicolor_apps_32x32_nemo.png \
 	hicolor_apps_scalable_nemo.svg \
 	hicolor_actions_16x16_nemo-eject.png \
+	hicolor_actions_scalable_nemo-computer-symbolic.svg \
 	hicolor_actions_scalable_nemo-folder-new-symbolic.svg \
 	hicolor_actions_scalable_nemo-edit-find-symbolic.svg \
 	hicolor_actions_scalable_nemo-go-home-symbolic.svg \
