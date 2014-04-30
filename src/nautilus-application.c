@@ -75,8 +75,6 @@
 /* The saving of the accelerator map was requested  */
 static gboolean save_of_accel_map_requested = FALSE;
 
-static void     desktop_changed_callback          (gpointer                  user_data);
-
 G_DEFINE_TYPE (NautilusApplication, nautilus_application, GTK_TYPE_APPLICATION);
 
 struct _NautilusApplicationPriv {
@@ -84,8 +82,7 @@ struct _NautilusApplicationPriv {
 	NautilusDBusManager *dbus_manager;
 	NautilusFreedesktopDBus *fdb_manager;
 
-	gboolean no_desktop;
-	gboolean force_desktop;
+	gboolean desktop_override;
 	gboolean no_default_window;
 
 	NotifyNotification *unmount_notify;
@@ -331,9 +328,7 @@ do_upgrades_once (NautilusApplication *self)
 	const gchar *message;
 	int fd, res;
 
-	if (!self->priv->no_desktop) {
-		mark_desktop_files_trusted ();
-	}
+	mark_desktop_files_trusted ();
 
 	metafile_dir = g_build_filename (g_get_home_dir (),
 					 ".nautilus/metafiles", NULL);
@@ -923,16 +918,14 @@ nautilus_application_handle_local_options (GApplication *application,
 
 	if (g_variant_dict_contains (options, "force-desktop")) {
 		DEBUG ("Forcing desktop, as requested");
+		self->priv->desktop_override = TRUE;
 		g_action_group_activate_action (G_ACTION_GROUP (application),
 						"open-desktop", NULL);
-                /* fall through */
-	}
-
-	if (g_variant_dict_contains (options, "no-desktop")) {
+	} else if (g_variant_dict_contains (options, "no-desktop")) {
 		DEBUG ("Forcing desktop off, as requested");
+		self->priv->desktop_override = TRUE;
 		g_action_group_activate_action (G_ACTION_GROUP (application),
 						"close-desktop", NULL);
-                /* fall through */
 	}
 
 	self->priv->no_default_window = g_variant_dict_contains (options, "no-default-window");
@@ -982,54 +975,36 @@ init_icons_and_styles (void)
 					   NAUTILUS_DATADIR G_DIR_SEPARATOR_S "icons");
 }
 
-/* callback for showing or hiding the desktop based on the user's preference */
 static void
-desktop_changed_callback (gpointer user_data)
+nautilus_application_set_desktop_visible (NautilusApplication *self,
+					  gboolean             visible)
 {
-	NautilusApplication *application;
+	const gchar *action_name;
 
-	application = NAUTILUS_APPLICATION (user_data);
-	if (g_settings_get_boolean (gnome_background_preferences, NAUTILUS_PREFERENCES_SHOW_DESKTOP)) {
-		g_action_group_activate_action (G_ACTION_GROUP (application),
-						"open-desktop", NULL);
-	} else {
-		g_action_group_activate_action (G_ACTION_GROUP (application),
-						"close-desktop", NULL);
+	action_name = visible ? "open-desktop" : "close-desktop";
+	g_action_group_activate_action (G_ACTION_GROUP (self),
+					action_name, NULL);
+}
+
+static void
+update_desktop_from_gsettings (NautilusApplication *self)
+{
+	/* desktop GSetting was overridden - don't do anything */
+	if (self->priv->desktop_override) {
+		return;
 	}
+
+	nautilus_application_set_desktop_visible (self, g_settings_get_boolean (gnome_background_preferences,
+										NAUTILUS_PREFERENCES_SHOW_DESKTOP));
 }
 
 static void
 init_desktop (NautilusApplication *self)
 {
-	gboolean should_show;
-
-	/* by default, take the GSettings value */
-	should_show = g_settings_get_boolean (gnome_background_preferences,
-					      NAUTILUS_PREFERENCES_SHOW_DESKTOP);
-
-	/* the command line switches take over the setting */
-	if (self->priv->no_desktop) {
-		should_show = FALSE;
-	} else if (self->priv->force_desktop) {
-		should_show = TRUE;
-	}
-
-	if (should_show) {
-		g_action_group_activate_action (G_ACTION_GROUP (self),
-						"open-desktop", NULL);
-	} else {
-		g_action_group_activate_action (G_ACTION_GROUP (self),
-						"close-desktop", NULL);
-	}
-
-	/* Monitor the preference to show or hide the desktop, if no other
-	 * command line option was specified.
-	 */
-	if (!self->priv->no_desktop && !self->priv->force_desktop) {
-		g_signal_connect_swapped (gnome_background_preferences, "changed::" NAUTILUS_PREFERENCES_SHOW_DESKTOP,
-					  G_CALLBACK (desktop_changed_callback),
-					  self);
-	}
+	update_desktop_from_gsettings (self);
+	g_signal_connect_swapped (gnome_background_preferences, "changed::" NAUTILUS_PREFERENCES_SHOW_DESKTOP,
+				  G_CALLBACK (update_desktop_from_gsettings),
+				  self);
 }
 
 static gboolean 
