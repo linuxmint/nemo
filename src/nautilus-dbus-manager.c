@@ -28,7 +28,7 @@
 #include <libnautilus-private/nautilus-file-operations.h>
 
 #define DEBUG_FLAG NAUTILUS_DEBUG_DBUS
-#include "nautilus-debug.h"
+#include <libnautilus-private/nautilus-debug.h>
 
 #include <gio/gio.h>
 
