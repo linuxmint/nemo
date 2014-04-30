@@ -25,7 +25,7 @@
 #include "nautilus-dbus-manager.h"
 #include "nautilus-generated.h"
 
-#include "nautilus-file-operations.h"
+#include <libnautilus-private/nautilus-file-operations.h>
 
 #define DEBUG_FLAG NAUTILUS_DEBUG_DBUS
 #include "nautilus-debug.h"
