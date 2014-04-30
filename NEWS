@@ -1,3 +1,13 @@
+Major changes in 3.13.1:
+* Port to be a DBusActivatable application
+* Fix a crash when switching back from the trash folder
+* Do not use legacy emblem names (David King)
+* Sync the GTK+ setting for sort-directories-first (Matthias Clasen)
+* Fix crash when enumerating windows (Robert Ancell)
+* Use spaces between em dashes in file operations (Ross Lagerwall)
+* Use headerbar in bookmarks window (Yosef Or Boczko)
+* Fix arrow in connect server dialog for RTL languages (Yosef Or Boczko)
+
 Major changes in 3.12.0:
 * Translation updates
 
