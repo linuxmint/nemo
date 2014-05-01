@@ -613,6 +613,7 @@ go_to_server_cb (NautilusWindow *window,
 			g_bookmark_file_to_file (bookmarks, filename, NULL);
 		}
 
+		nautilus_file_unref (file);
 		g_free (filename);
 		g_bookmark_file_free (bookmarks);
 
