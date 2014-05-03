@@ -2635,7 +2635,7 @@ msgstr "«--geometry» no es pot utilitzar amb més d'un URI."
 
 #: ../src/nautilus-application.c:1115
 msgid "--select must be used with at least an URI."
-msgstr "«--select» s'ha d'utilitza amb un o més URI."
+msgstr "«--select» s'ha d'utilitzar amb un o més URI."
 
 #: ../src/nautilus-application.c:1121
 msgid "--no-desktop and --force-desktop cannot be used together."
