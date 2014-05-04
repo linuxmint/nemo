@@ -103,6 +103,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Have Unity */
+#undef HAVE_UNITY
+
 /* Define to 1 if you have the <X11/XF86keysym.h> header file. */
 #undef HAVE_X11_XF86KEYSYM_H
 
