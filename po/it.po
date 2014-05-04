@@ -5112,7 +5112,7 @@ msgstr "Elimina permanentemente tutti gli oggetti selezionati"
 
 #: ../src/nautilus-view.c:8685
 msgid "Remo_ve from Recent"
-msgstr "Rimu_vi da recenti"
+msgstr "Rimuo_vi da recenti"
 
 #: ../src/nautilus-view.c:8686
 msgid "Remove each selected item from the recently used list"
