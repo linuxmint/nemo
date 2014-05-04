@@ -342,30 +342,38 @@ action_nemo_manual_callback (GtkAction *action,
 	GError *error;
 	GtkWidget *dialog;
 	const char* helpuri;
+	char* helpprefix;
 	const char* name = gtk_action_get_name (action);
 
 	error = NULL;
 	window = NEMO_WINDOW (user_data);
+	
+	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+		helpprefix = "ubuntu-help";
+	else
+		helpprefix = "gnome-help";
 
 	if (g_str_equal (name, "NemoHelpSearch")) {
-		helpuri = "help:gnome-help/files-search";
+		 helpuri = g_strconcat ("help:", helpprefix, "/files-search", NULL);
 	} else if (g_str_equal (name,"NemoHelpSort")) {
-		helpuri = "help:gnome-help/files-sort";
+		helpuri = g_strconcat ("help:", helpprefix, "/files-sort", NULL);
 	} else if (g_str_equal (name, "NemoHelpLost")) {
-		helpuri = "help:gnome-help/files-lost";
+		helpuri = g_strconcat ("help:", helpprefix, "/files-lost", NULL);
 	} else if (g_str_equal (name, "NemoHelpShare")) {
-		helpuri = "help:gnome-help/files-share";
+		 helpuri = g_strconcat ("help:", helpprefix, "/files-share", NULL);
 	} else {
-		helpuri = "help:gnome-help/files";
+		helpuri = g_strconcat ("help:", helpprefix, "/files", NULL);
 	}
 
 	if (NEMO_IS_DESKTOP_WINDOW (window)) {
-		nemo_launch_application_from_command (gtk_window_get_screen (GTK_WINDOW (window)), "gnome-help", FALSE, NULL);
+		nemo_launch_application_from_command (gtk_window_get_screen (GTK_WINDOW (window)), helpprefix, FALSE, NULL);
 	} else {
 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (window)),
 			      helpuri,
 			      gtk_get_current_event_time (), &error);
 	}
+	
+	g_free(helpuri);
 
 	if (error) {
 		dialog = gtk_message_dialog_new (GTK_WINDOW (window),
