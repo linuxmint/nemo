@@ -31,6 +31,7 @@ INCLUDES =							\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
 	-DVERSION="\"$(VERSION)\"" 				\
 	$(DISABLE_DEPRECATED_CFLAGS)                            \
+	$(UNITY_CFLAGS)                            \
 	$(NULL)
 
 LDADD =\
@@ -43,6 +44,7 @@ LDADD =\
 	$(EXIF_LIBS) \
 	$(EXEMPI_LIBS) \
 	$(POPT_LIBS) \
+	$(UNITY_LIBS) \
 	$(NULL)
 
 dbus_built_sources = nemo-freedesktop-generated.c nemo-freedesktop-generated.h
@@ -182,6 +184,17 @@ nemo_SOURCES = \
 	nemo-x-content-bar.c		\
 	nemo-x-content-bar.h		\
 	$(NULL)
+
+UNITY_SOURCES = \
+	unity-quicklist-handler.c	\
+	unity-quicklist-handler.h	\
+	unity-bookmarks-handler.c	\
+	unity-bookmarks-handler.h	\
+	$(NULL)
+
+if HAVE_UNITY
+nemo_SOURCES += $(UNITY_SOURCES)
+endif
 
 nodist_nemo_SOURCES = \
 	$(BUILT_SOURCES) \

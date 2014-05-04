@@ -215,15 +215,16 @@ if test "x$enable_unity" != "xno"; then
     PKG_CHECK_MODULES(UNITY,
         [unity >= unity_minver
          dbusmenu-glib-0.4 >= dbusmenu_minver], [
-            AM_CONDITIONAL(HAVE_UNITY, 1)
+            AM_CONDITIONAL(HAVE_UNITY, true)
             AC_DEFINE(HAVE_UNITY, 1, [Have Unity])
             ]
             msg_unity=yes,
-            [AM_CONDITIONAL(HAVE_UNITY, 0)
+            [AM_CONDITIONAL(HAVE_UNITY, false)
             ])
         AC_SUBST(UNITY_CFLAGS)
         AC_SUBST(UNITY_LIBS)
 fi
+
 
 dnl ==========================================================================
 
