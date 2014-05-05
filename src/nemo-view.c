@@ -9695,7 +9695,11 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_DOCUMENTS);
 	gtk_action_set_sensitive (action, can_create_files);
-    gtk_action_set_visible (action, !selection_contains_recent);
+	
+	if (g_strcmp0 (g_getenv ("XDG_CURRENT_DESKTOP"), "Unity") == 0)
+		gtk_action_set_visible (action, TRUE);
+	else
+		gtk_action_set_visible (action, !selection_contains_recent);
 
 	if (can_create_files && view->details->templates_invalid) {
 		update_templates_menu (view);
