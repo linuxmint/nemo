@@ -66,7 +66,9 @@
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
 
+#ifdef BUILD_ZEITGEIST
 #include <zeitgeist.h>
+#endif
 
 /* TODO: TESTING!!! */
 
@@ -194,6 +196,7 @@ typedef struct {
 #define MERGE_ALL _("Merge _All")
 #define COPY_FORCE _("Copy _Anyway")
 
+#ifdef BUILD_ZEITGEIST
 #define ZEITGEIST_NEMO_ACTOR "application://nemo.desktop"
 
 static void
@@ -289,6 +292,7 @@ log_zeitgeist_event_for_file_no_reply (const char *event_interpretation, GFile *
 		NULL,
 		_log_zeitgeist_event_for_file_cb, data);
 }
+#endif // BUILD_ZEITGEIST
 
 static void
 mark_desktop_file_trusted (CommonJob *common,
@@ -1951,7 +1955,8 @@ delete_job_done (gpointer user_data)
 	GHashTable *debuting_uris;
 
 	job = user_data;
-	
+
+#ifdef BUILD_ZEITGEIST
 	// Send event to Zeitgeist for deletions/trash
 	GList *file_iter = job->files;
 	while (file_iter != NULL) {
@@ -1979,6 +1984,7 @@ delete_job_done (gpointer user_data)
 		g_free (display_name);
 		file_iter = g_list_next (file_iter);
 	}
+#endif // BUILD_ZEITGEIST
 
 	g_list_free_full (job->files, g_object_unref);
 
@@ -4608,7 +4614,8 @@ copy_job_done (gpointer user_data)
 				    !job_aborted ((CommonJob *) job),
 				    job->done_callback_data);
 	}
-	
+
+#ifdef BUILD_ZEITGEIST	
 	// Send event to Zeitgeist
 	GHashTableIter iter;
 	GFile *file;
@@ -4624,7 +4631,7 @@ copy_job_done (gpointer user_data)
 			ZEITGEIST_ZG_CREATE_EVENT, file, NULL);
 		}
 	}
-	// ---
+#endif // BUILD_ZEITGEIST
 
 	g_list_free_full (job->files, g_object_unref);
 	if (job->destination) {
@@ -5190,6 +5197,7 @@ move_job_done (gpointer user_data)
 				    job->done_callback_data);
 	}
 
+#ifdef BUILD_ZEITGEIST
 	// Send event to Zeitgeist for moved files (not renaming)
 	GList *file_iter = job->files;
 	while (file_iter != NULL) {
@@ -5201,7 +5209,7 @@ move_job_done (gpointer user_data)
 		new_file, g_file_get_uri (file_iter->data));
 		file_iter = g_list_next (file_iter);
 	}
-	// ---
+#endif // BUILD_ZEITGEIST
 
 	g_list_free_full (job->files, g_object_unref);
 	g_object_unref (job->destination);
@@ -5546,6 +5554,7 @@ link_job_done (gpointer user_data)
 				    job->done_callback_data);
 	}
 
+#ifdef BUILD_ZEITGEIST
 	// Send event to Zeitgeist
 	GHashTableIter iter;
 	GFile *file;
@@ -5561,7 +5570,7 @@ link_job_done (gpointer user_data)
 				ZEITGEIST_ZG_CREATE_EVENT, file, NULL);
 		}
 	}
-	// ---
+#endif // BUILD_ZEITGEIST
 
 	g_list_free_full (job->files, g_object_unref);
 	g_object_unref (job->destination);
@@ -5737,13 +5746,14 @@ set_permissions_job_done (gpointer user_data)
 				    job->done_callback_data);
 	}
 
+#ifdef BUILD_ZEITGEIST
 	// Send event to Zeitgeist
 	if (job->file) {
 		g_object_ref (job->file);
 		log_zeitgeist_event_for_file_no_reply (
 		ZEITGEIST_ZG_CREATE_EVENT, job->file, NULL);
 	}
-	// ---
+#endif // BUILD_ZEITGEIST
 
 	finalize_common ((CommonJob *)job);
 	return FALSE;

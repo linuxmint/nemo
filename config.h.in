@@ -3,6 +3,9 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
+/* Define to enable Zeitgeist support */
+#undef BUILD_ZEITGEIST
+
 /* Enable debug code */
 #undef ENABLE_DEBUG
 
