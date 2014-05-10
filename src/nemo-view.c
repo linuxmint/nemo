@@ -114,6 +114,7 @@
 #define NEMO_VIEW_MENU_PATH_EXTENSION_ACTIONS_PLACEHOLDER     "/MenuBar/Edit/Extension Actions"
 #define NEMO_VIEW_MENU_PATH_NEW_DOCUMENTS_PLACEHOLDER  	  "/MenuBar/File/New Items Placeholder/New Documents/New Documents Placeholder"
 #define NEMO_VIEW_MENU_PATH_OPEN				  "/MenuBar/File/Open Placeholder/Open"
+#define NEMO_VIEW_MENU_PATH_OPEN_EDIT             "/MenuBar/File/Open Placeholder/OpenEdit"
 
 #define NEMO_VIEW_POPUP_PATH_SELECTION			  "/selection"
 #define NEMO_VIEW_POPUP_PATH_APPLICATIONS_SUBMENU_PLACEHOLDER "/selection/Open Placeholder/Open With/Applications Placeholder"
@@ -122,6 +123,7 @@
 #define NEMO_VIEW_POPUP_PATH_ACTIONS_PLACEHOLDER           "/selection/Open Placeholder/ActionsPlaceholder"
 #define NEMO_VIEW_POPUP_PATH_EXTENSION_ACTIONS		  "/selection/Extension Actions"
 #define NEMO_VIEW_POPUP_PATH_OPEN				  "/selection/Open Placeholder/Open"
+#define NEMO_VIEW_POPUP_PATH_OPEN_EDIT                 "/selection/Open Placeholder/OpenEdit"
 
 #define NEMO_VIEW_POPUP_PATH_BACKGROUND			  "/background"
 #define NEMO_VIEW_POPUP_PATH_BACKGROUND_SCRIPTS_PLACEHOLDER	  "/background/Before Zoom Items/New Object Items/Scripts/Scripts Placeholder"
@@ -8000,6 +8002,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("_Open"), "<control>o",
   /* tooltip */                  N_("Open the selected item in this window"),
 				 G_CALLBACK (action_open_callback) },
+  /* name, stock id */         { "OpenEdit", NULL,
+  /* label, accelerator */       N_("_Open"), "<control>e",
+  /* tooltip */                  NULL,
+                 G_CALLBACK (action_open_callback) },
   /* name, stock id */         { "OpenAccel", NULL,
   /* label, accelerator */       "OpenAccel", "<alt>Down",
   /* tooltip */                  NULL,
@@ -9355,7 +9361,8 @@ real_update_menus (NemoView *view)
 	gboolean show_open_alternate;
 	gboolean show_open_in_new_tab;
 	gboolean can_open;
-	gboolean show_app;
+	gboolean show_open;
+    gboolean all_executable;
 	gboolean show_save_search;
 	gboolean save_search_sensitive;
 	gboolean show_save_search_as;
@@ -9422,18 +9429,21 @@ real_update_menus (NemoView *view)
 					      NEMO_ACTION_OPEN);
 	gtk_action_set_sensitive (action, selection_count != 0);
 	
-	can_open = show_app = selection_count != 0;
+	can_open = show_open = selection_count != 0;
+    all_executable = TRUE;
 
 	for (l = selection; l != NULL; l = l->next) {
 		NemoFile *file;
 
 		file = NEMO_FILE (selection->data);
 
-		if (!nemo_mime_file_opens_in_external_app (file)) {
-			show_app = FALSE;
+		if (nemo_mime_file_opens_in_external_app (file)) {
+			show_open = FALSE;
 		}
 
-		if (!show_app) {
+        all_executable = all_executable && nemo_file_is_executable (file);
+
+		if (!show_open) {
 			break;
 		}
 	} 
@@ -9443,9 +9453,21 @@ real_update_menus (NemoView *view)
 	app = NULL;
 	app_icon = NULL;
 
-	if (can_open && show_app) {
-		app = nemo_mime_get_default_application_for_files (selection);
-	}
+    if (can_open)
+        app = nemo_mime_get_default_application_for_files (selection);
+
+    if (can_open && show_open) {
+        g_object_set (action, "label", _("_Open"), NULL);
+        app_icon = g_themed_icon_new (GTK_STOCK_OPEN);
+        gtk_action_set_gicon (action, app_icon);
+        g_object_unref (app_icon);
+    }
+
+    gtk_action_set_visible (action, can_open);
+
+    action = gtk_action_group_get_action (view->details->dir_action_group,
+                                          NEMO_ACTION_OPEN_EDIT);
+    gtk_action_set_sensitive (action, selection_count != 0);
 
 	if (app != NULL) {
 		char *escaped_app;
@@ -9463,13 +9485,11 @@ real_update_menus (NemoView *view)
 		g_object_unref (app);
 	}
 
-	g_object_set (action, "label", 
-		      label_with_underscore ? label_with_underscore : _("_Open"),
-		      NULL);
+	g_object_set (action, "label", label_with_underscore, NULL);
 
 	menuitem = gtk_ui_manager_get_widget (
 					      nemo_window_get_ui_manager (view->details->window),
-					      NEMO_VIEW_MENU_PATH_OPEN);
+					      NEMO_VIEW_MENU_PATH_OPEN_EDIT);
 
 	/* Only force displaying the icon if it is an application icon */
 	gtk_image_menu_item_set_always_show_image (
@@ -9477,7 +9497,7 @@ real_update_menus (NemoView *view)
 
 	menuitem = gtk_ui_manager_get_widget (
 					      nemo_window_get_ui_manager (view->details->window),
-					      NEMO_VIEW_POPUP_PATH_OPEN);
+					      NEMO_VIEW_POPUP_PATH_OPEN_EDIT);
 
 	/* Only force displaying the icon if it is an application icon */
 	gtk_image_menu_item_set_always_show_image (
@@ -9490,7 +9510,7 @@ real_update_menus (NemoView *view)
 	gtk_action_set_gicon (action, app_icon);
 	g_object_unref (app_icon);
 
-	gtk_action_set_visible (action, can_open);
+	gtk_action_set_visible (action, all_executable && app != NULL);
 	
 	g_free (label_with_underscore);
 
