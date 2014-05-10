@@ -9517,7 +9517,7 @@ real_update_menus (NemoView *view)
 	gtk_action_set_gicon (action, app_icon);
 	g_object_unref (app_icon);
 
-	gtk_action_set_visible (action, all_executable && app != NULL);
+	gtk_action_set_visible (action, all_executable && app != NULL && !selection_contains_directory);
 	
 	g_free (label_with_underscore);
 
