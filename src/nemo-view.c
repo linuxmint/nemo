@@ -8005,7 +8005,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* name, stock id */         { "OpenEdit", NULL,
   /* label, accelerator */       N_("_Open"), "<control>e",
   /* tooltip */                  NULL,
-                 G_CALLBACK (action_open_callback) },
+                                 NULL },
   /* name, stock id */         { "OpenAccel", NULL,
   /* label, accelerator */       "OpenAccel", "<alt>Down",
   /* tooltip */                  NULL,
@@ -9469,8 +9469,10 @@ real_update_menus (NemoView *view)
                                           NEMO_ACTION_OPEN_EDIT);
     gtk_action_set_sensitive (action, selection_count != 0);
 
-	if (app != NULL) {
+	if (app != NULL && all_executable) {
 		char *escaped_app;
+        ApplicationLaunchParameters *launch_parameters;
+        launch_parameters = application_launch_parameters_new (app, selection, view);
 
 		escaped_app = eel_str_double_underscores (g_app_info_get_name (app));
 		label_with_underscore = g_strdup_printf (_("_Open With %s"),
@@ -9483,6 +9485,11 @@ real_update_menus (NemoView *view)
 
 		g_free (escaped_app);
 		g_object_unref (app);
+
+        g_signal_connect_data (action, "activate",
+                   G_CALLBACK (open_with_launch_application_callback),
+                   launch_parameters, 
+                   (GClosureNotify)application_launch_parameters_free, 0);
 	}
 
 	g_object_set (action, "label", label_with_underscore, NULL);
