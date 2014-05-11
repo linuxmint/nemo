@@ -333,31 +333,39 @@ action_nemo_manual_callback (GtkAction *action,
 	NemoWindow *window;
 	GError *error;
 	GtkWidget *dialog;
-	const char* helpuri;
+	char* helpuri;
+	char* helpprefix;
 	const char* name = gtk_action_get_name (action);
 
 	error = NULL;
 	window = NEMO_WINDOW (user_data);
+	
+	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+		helpprefix = "ubuntu-help";
+	else
+		helpprefix = "gnome-help";
 
 	if (g_str_equal (name, "NemoHelpSearch")) {
-		helpuri = "help:gnome-help/files-search";
+		helpuri = g_strconcat ("help:", helpprefix, "/files-search", NULL);
 	} else if (g_str_equal (name,"NemoHelpSort")) {
-		helpuri = "help:gnome-help/files-sort";
+		helpuri = g_strconcat ("help:", helpprefix, "/files-sort", NULL);
 	} else if (g_str_equal (name, "NemoHelpLost")) {
-		helpuri = "help:gnome-help/files-lost";
+		helpuri = g_strconcat ("help:", helpprefix, "/files-lost", NULL);
 	} else if (g_str_equal (name, "NemoHelpShare")) {
-		helpuri = "help:gnome-help/files-share";
+		helpuri = g_strconcat ("help:", helpprefix, "/files-share", NULL);
 	} else {
-		helpuri = "help:gnome-help/files";
+		helpuri = g_strconcat ("help:", helpprefix, "/files", NULL);
 	}
 
 	if (NEMO_IS_DESKTOP_WINDOW (window)) {
-		nemo_launch_application_from_command (gtk_window_get_screen (GTK_WINDOW (window)), "gnome-help", FALSE, NULL);
+		nemo_launch_application_from_command (gtk_window_get_screen (GTK_WINDOW (window)), helpprefix, FALSE, NULL);
 	} else {
 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (window)),
 			      helpuri,
 			      gtk_get_current_event_time (), &error);
 	}
+	
+	g_free(helpuri);
 
 	if (error) {
 		dialog = gtk_message_dialog_new (GTK_WINDOW (window),
@@ -1260,7 +1268,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
 			       "name", NEMO_ACTION_BACK,
 			       "label", _("_Back"),
-			       "stock_id", GTK_STOCK_GO_BACK,
+			       "icon_name", "nemo-go-previous-symbolic",
 			       "tooltip", _("Go to the previous visited location"),
 			       "arrow-tooltip", _("Back history"),
 			       "window", window,
@@ -1276,7 +1284,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
 			       "name", NEMO_ACTION_FORWARD,
 			       "label", _("_Forward"),
-			       "stock_id", GTK_STOCK_GO_FORWARD,
+			       "icon_name", "nemo-go-next-symbolic",
 			       "tooltip", _("Go to the next visited location"),
 			       "arrow-tooltip", _("Forward history"),
 			       "window", window,
@@ -1295,7 +1303,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_UP,
    			       "label", _("_Up"),
-   			       "stock_id", GTK_STOCK_GO_UP,
+   			       "icon_name", "nemo-go-up-symbolic",
    			       "tooltip", _("Go to parent folder"),
    			       "arrow-tooltip", _("Forward history"),
    			       "window", window,
@@ -1310,7 +1318,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_RELOAD,
    			       "label", _("_Reload"),
-   			       "stock_id", GTK_STOCK_REFRESH,
+   			       "icon_name", "nemo-view-refresh-symbolic",
    			       "tooltip", _("Reload the current location"),
    			       "window", window,
    			       "direction", NEMO_NAVIGATION_DIRECTION_RELOAD,
@@ -1324,7 +1332,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_HOME,
    			       "label", _("_Home"),
-   			       "stock_id", GTK_STOCK_HOME,
+   			       "icon_name", "nemo-go-home-symbolic",
    			       "tooltip", _("Go to home directory"),
    			       "window", window,
    			       "direction", NEMO_NAVIGATION_DIRECTION_HOME,
@@ -1369,7 +1377,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
     gtk_action_group_add_action (action_group, GTK_ACTION (action));
     g_signal_connect (action, "activate",
                       G_CALLBACK (action_new_folder_callback), window);
-    gtk_action_set_icon_name (GTK_ACTION (action), "folder-new");
+    gtk_action_set_icon_name (GTK_ACTION (action), "nemo-folder-new-symbolic");
     g_object_unref (action);
 
     action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_ICON_VIEW,
@@ -1412,7 +1420,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
  				NULL));
  
   	gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "edit-find");
+    gtk_action_set_icon_name (GTK_ACTION (action), "nemo-edit-find-symbolic");
  
  
  	show_label_search_icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR);
@@ -1647,7 +1655,7 @@ add_extension_menu_items (NemoWindow *window,
 		
 		g_object_get (item, "menu", &menu, NULL);
 		
-		action = nemo_action_from_menu_item (item);
+		action = nemo_action_from_menu_item (item, GTK_WIDGET (window));
 		gtk_action_group_add_action_with_accel (action_group, action, NULL);
 		
 		path = g_build_path ("/", POPUP_PATH_EXTENSION_ACTIONS, subdirectory, NULL);

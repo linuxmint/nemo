@@ -38,7 +38,11 @@
 #include <cairo.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
+#ifdef GNOME_BUILD
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
+#else 
 #include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
+#endif
 
 #include <eel/eel-accessibility.h>
 #include <eel/eel-glib-extensions.h>
@@ -370,17 +374,23 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 {
 	NemoIconInfo *icon, *new_icon;
 	GList *l;
+    gint icon_scale;
 	
 	icon = NULL;
+    icon_scale = gtk_widget_get_scale_factor (GTK_WIDGET (window->details->notebook));
 	for (l = window->details->original_files; l != NULL; l = l->next) {
 		NemoFile *file;
 		
 		file = NEMO_FILE (l->data);
 		
 		if (!icon) {
-			icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS | NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
+			icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, icon_scale,
+                                       NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
+                                       NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
 		} else {
-			new_icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS | NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
+			new_icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, icon_scale,
+                                           NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
+                                           NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
 			if (!new_icon || new_icon != icon) {
 				g_object_unref (icon);
 				g_object_unref (new_icon);
@@ -392,7 +402,7 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 	}
 
 	if (!icon) {
-		icon = nemo_icon_info_lookup_from_name ("text-x-generic", NEMO_ICON_SIZE_STANDARD);
+		icon = nemo_icon_info_lookup_from_name ("text-x-generic", NEMO_ICON_SIZE_STANDARD, icon_scale);
 	}
 
 	if (icon_name != NULL) {
@@ -408,14 +418,12 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 
 
 static void
-update_properties_window_icon (GtkImage *image)
+update_properties_window_icon (NemoPropertiesWindow *window)
 {
-	NemoPropertiesWindow *window;
 	GdkPixbuf *pixbuf;
+    cairo_surface_t *surface;
 	char *name;
 
-	window = g_object_get_data (G_OBJECT (image), "properties_window");
-	
 	get_image_for_properties_window (window, &name, &pixbuf);
 
 	if (name != NULL) {
@@ -424,10 +432,13 @@ update_properties_window_icon (GtkImage *image)
 		gtk_window_set_icon (GTK_WINDOW (window), pixbuf);
 	}
 
-	gtk_image_set_from_pixbuf (image, pixbuf);
+    surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, gtk_widget_get_scale_factor (GTK_WIDGET (window)),
+                                                    gtk_widget_get_window (GTK_WIDGET (window)));
+    gtk_image_set_from_surface (GTK_IMAGE (window->details->icon_image), surface);
 
 	g_free (name);
 	g_object_unref (pixbuf);
+    cairo_surface_destroy (surface);
 }
 
 /* utility to test if a uri refers to a local image */
@@ -527,11 +538,11 @@ create_image_widget (NemoPropertiesWindow *window,
 {
  	GtkWidget *button;
 	GtkWidget *image;
-	GdkPixbuf *pixbuf;
-	
-	get_image_for_properties_window (window, NULL, &pixbuf);
 
 	image = gtk_image_new ();
+    window->details->icon_image = image;
+
+    update_properties_window_icon (window);
 	gtk_widget_show (image);
 
 	button = NULL;
@@ -551,13 +562,6 @@ create_image_widget (NemoPropertiesWindow *window,
 				  G_CALLBACK (select_image_button_callback), window);
 	}
 
-	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
-
-	g_object_unref (pixbuf);
-
-	g_object_set_data (G_OBJECT (image), "properties_window", window);
-
-	window->details->icon_image = image;
 	window->details->icon_button = button;
 
 	return button != NULL ? button : image;
@@ -1061,7 +1065,7 @@ properties_window_update (NemoPropertiesWindow *window,
 
 	if (dirty_original) {
 		update_properties_window_title (window);
-		update_properties_window_icon (GTK_IMAGE (window->details->icon_image));
+		update_properties_window_icon (window);
 
 		update_name_field (window);
 
@@ -3183,8 +3187,13 @@ create_basic_page (NemoPropertiesWindow *window)
 	GtkWidget *volume_usage;
 	GtkWidget *hbox, *vbox;
 
-	hbox = create_page_with_hbox (window->details->notebook, _("Basic"),
-				      "help:gnome-help/nemo-file-properties-basic");
+	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+		hbox = create_page_with_hbox (window->details->notebook, _("Basic"),
+			"help:ubuntu-help/nemo-file-properties-basic");
+	else
+		hbox = create_page_with_hbox (window->details->notebook, _("Basic"),
+			"help:gnome-help/nemo-file-properties-basic");
+
 	
 	/* Icon pixmap */
 
@@ -4756,9 +4765,14 @@ create_permissions_page (NemoPropertiesWindow *window)
 	char *file_name, *prompt_text;
 	GList *file_list;
 
-	vbox = create_page_with_vbox (window->details->notebook,
-				      _("Permissions"),
-				      "help:gnome-help/nemo-file-properties-permissions");
+	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+		vbox = create_page_with_vbox (window->details->notebook,
+			_("Permissions"),
+			"help:ubuntu-help/nemo-file-properties-permissions");
+	else
+		vbox = create_page_with_vbox (window->details->notebook,
+		      _("Permissions"),
+		      "help:gnome-help/nemo-file-properties-permissions");
 
 	file_list = window->details->original_files;
 
@@ -5064,7 +5078,10 @@ create_open_with_page (NemoPropertiesWindow *window)
 	g_free (mime_type);
 	g_list_free (files);
 
-	g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:gnome-help/files-open"), g_free);
+	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+		g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:ubuntu-help/files-open"), g_free);
+	else
+		g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:gnome-help/files-open"), g_free);
 	gtk_notebook_append_page (window->details->notebook, 
 				  vbox, gtk_label_new (_("Open With")));
 }
@@ -5418,10 +5435,17 @@ real_response (GtkDialog *dialog,
 		curpage = gtk_notebook_get_nth_page (window->details->notebook,
 						     gtk_notebook_get_current_page (window->details->notebook));
 		helpuri = g_object_get_data (G_OBJECT (curpage), "help-uri");
-		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
-			      helpuri ? helpuri : "help:gnome-help/files",
-			      gtk_get_current_event_time (),
-			      &error);
+		if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+			gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
+				helpuri ? helpuri : "help:ubuntu-help/files",
+				gtk_get_current_event_time (),
+				&error);
+		else
+			gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
+				helpuri ? helpuri : "help:gnome-help/files",
+				gtk_get_current_event_time (),
+				&error);
+
 		if (error != NULL) {
 			eel_show_error_dialog (_("There was an error displaying help."), error->message,
 					       GTK_WINDOW (dialog));

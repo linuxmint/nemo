@@ -25,7 +25,10 @@ class Main:
                     if file == "nemo.mo":
                         path, junk = os.path.split(root)
                         path, locale = os.path.split(path)
-                        self.mo_files[locale] = polib.mofile(os.path.join(root, file))
+                        try:
+                            self.mo_files[locale] = polib.mofile(os.path.join(root, file))
+                        except:
+                            print "merge_action_strings - Failed to load .mo file: %s" % (os.path.join(root, file))
 
         if len(self.mo_files) > 0:
             for locale in self.mo_files.keys():
