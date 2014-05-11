@@ -44,7 +44,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <signal.h>
+#ifdef GNOME_BUILD
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
+#else
 #include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
+#endif
 
 #include "nemo-file-private.h"
 
@@ -277,7 +281,7 @@ thumbnail_thread_notify_file_changed (gpointer image_uri)
 		nemo_file_invalidate_attributes (file,
 						     NEMO_FILE_ATTRIBUTE_THUMBNAIL |
 						     NEMO_FILE_ATTRIBUTE_INFO);
-        nemo_file_increment_thumbnail_try_count (file);
+      //  nemo_file_increment_thumbnail_try_count (file);
 		nemo_file_unref (file);
 	}
 	g_free (image_uri);

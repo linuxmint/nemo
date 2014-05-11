@@ -41,6 +41,7 @@
 #include <fcntl.h>
 #include <gdk/gdkx.h>
 #include <glib/gi18n.h>
+#include <libnemo-private/nemo-desktop-background.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
 #include <libnemo-private/nemo-directory-notify.h>
 #include <libnemo-private/nemo-file-changes-queue.h>
@@ -75,6 +76,8 @@ struct NemoDesktopCanvasViewDetails
 	gulong delayed_init_signal;
 	guint reload_desktop_timeout;
 	gboolean pending_rescan;
+
+	NemoDesktopBackground *background;
 };
 
 static void     default_zoom_level_changed                        (gpointer                user_data);
@@ -231,6 +234,22 @@ desktop_canvas_view_property_filter (GdkXEvent *gdk_xevent,
 	return GDK_FILTER_CONTINUE;
 }
 
+static void
+real_begin_loading (NemoView *object)
+{
+	NemoCanvasContainer *canvas_container;
+	NemoDesktopCanvasView *view;
+
+	view = NEMO_DESKTOP_CANVAS_VIEW (object);
+
+	canvas_container = get_canvas_container (view);
+	if (view->details->background == NULL) {
+		view->details->background = nemo_desktop_background_new (canvas_container);
+	}
+
+	NEMO_VIEW_CLASS (nemo_desktop_canvas_view_parent_class)->begin_loading (object);
+}
+
 static const char *
 real_get_id (NemoView *view)
 {
@@ -268,6 +287,11 @@ nemo_desktop_canvas_view_dispose (GObject *object)
 					      nemo_view_update_menus,
 					      canvas_view);
 
+	if (canvas_view->details->background != NULL) {
+		g_object_unref (canvas_view->details->background);
+		canvas_view->details->background = NULL;
+	}
+
 	G_OBJECT_CLASS (nemo_desktop_canvas_view_parent_class)->dispose (object);
 }
 
@@ -280,6 +304,7 @@ nemo_desktop_canvas_view_class_init (NemoDesktopCanvasViewClass *class)
 
 	G_OBJECT_CLASS (class)->dispose = nemo_desktop_canvas_view_dispose;
 
+	vclass->begin_loading = real_begin_loading;
 	vclass->merge_menus = real_merge_menus;
 	vclass->update_menus = real_update_menus;
 	vclass->get_view_id = real_get_id;
@@ -405,17 +430,6 @@ realized_callback (GtkWidget *widget, NemoDesktopCanvasView *desktop_canvas_view
 	gdk_window_add_filter (root_window,
 			       desktop_canvas_view_property_filter,
 			       desktop_canvas_view);
-}
-
-static void
-desktop_canvas_container_realize (GtkWidget *widget,
-                                NemoDesktopCanvasView *desktop_canvas_view)
-{
-    GdkWindow *bin_window;
-    GdkRGBA transparent = { 0, 0, 0, 0 };
-
-    bin_window = gtk_layout_get_bin_window (GTK_LAYOUT (widget));
-    gdk_window_set_background_rgba (bin_window, &transparent);
 }
 
 static NemoZoomLevel
@@ -592,8 +606,6 @@ nemo_desktop_canvas_view_init (NemoDesktopCanvasView *desktop_canvas_view)
 	g_signal_connect_object (canvas_container, "middle_click",
 				 G_CALLBACK (nemo_desktop_canvas_view_handle_middle_click), desktop_canvas_view, 0);
 	g_signal_connect_object (canvas_container, "realize",
-				 G_CALLBACK (desktop_canvas_container_realize), desktop_canvas_view, 0);
-	g_signal_connect_object (desktop_canvas_view, "realize",
 				 G_CALLBACK (realized_callback), desktop_canvas_view, 0);
 	g_signal_connect_object (desktop_canvas_view, "unrealize",
 				 G_CALLBACK (unrealized_callback), desktop_canvas_view, 0);

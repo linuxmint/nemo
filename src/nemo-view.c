@@ -1559,7 +1559,12 @@ pattern_select_response_cb (GtkWidget *dialog, int response, gpointer user_data)
 		break;
 	case GTK_RESPONSE_HELP :
 		error = NULL;
-		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
+		if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+			gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
+				"help:ubuntu-help/files-select",
+				gtk_get_current_event_time (), &error);
+		else
+			gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
 			      "help:gnome-help/files-select",
 			      gtk_get_current_event_time (), &error);
 		if (error) {
@@ -5554,15 +5559,17 @@ extension_action_callback (GtkAction *action,
 }
 
 static GdkPixbuf *
-get_menu_icon_for_file (NemoFile *file)
+get_menu_icon_for_file (NemoFile *file,
+                        GtkWidget *widget)
 {
 	NemoIconInfo *info;
 	GdkPixbuf *pixbuf;
-	int size;
+	int size, scale;
 
 	size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
-	
-	info = nemo_file_get_icon (file, size, 0);
+    scale = gtk_widget_get_scale_factor (widget);
+
+	info = nemo_file_get_icon (file, size, scale, 0);
 	pixbuf = nemo_icon_info_get_pixbuf_nodefault_at_size (info, size);
 	g_object_unref (info);
 	
@@ -5574,6 +5581,7 @@ add_extension_action_for_files (NemoView *view,
 				NemoMenuItem *item,
 				GList *files)
 {
+    GtkAction *ret = NULL;
 	char *name, *label, *tip, *icon;
 	gboolean sensitive, priority;
 	GtkAction *action;
@@ -5593,7 +5601,7 @@ add_extension_action_for_files (NemoView *view,
 				 NULL);
 
 	if (icon != NULL) {
-		pixbuf = nemo_ui_get_menu_icon (icon);
+		pixbuf = nemo_ui_get_menu_icon (icon, GTK_WIDGET (view));
 		if (pixbuf != NULL) {
 			gtk_action_set_gicon (action, G_ICON (pixbuf));
 			g_object_unref (pixbuf);
@@ -5613,9 +5621,13 @@ add_extension_action_for_files (NemoView *view,
 			       G_CALLBACK (extension_action_callback),
 			       data,
 			       (GClosureNotify)extension_action_callback_data_free, 0);
-		
-	gtk_action_group_add_action (view->details->extensions_menu_action_group,
-				     GTK_ACTION (action));
+
+    if (gtk_action_group_get_action (view->details->extensions_menu_action_group, gtk_action_get_name (GTK_ACTION (action))) == NULL) {
+        gtk_action_group_add_action (view->details->extensions_menu_action_group,
+                                     GTK_ACTION (action));
+        ret = action;
+    }
+	
 	g_object_unref (action);
 	
 	g_free (name);
@@ -5623,7 +5635,7 @@ add_extension_action_for_files (NemoView *view,
 	g_free (tip);
 	g_free (icon);
 
-	return action;
+	return ret;
 }
 
 static void
@@ -5640,7 +5652,7 @@ add_extension_menu_items (NemoView *view,
 	for (l = menu_items; l; l = l->next) {
 		NemoMenuItem *item;
 		NemoMenu *menu;
-		GtkAction *action;
+		GtkAction *action = NULL;
 		char *path;
 		
 		item = NEMO_MENU_ITEM (l->data);
@@ -5649,42 +5661,44 @@ add_extension_menu_items (NemoView *view,
 		
 		action = add_extension_action_for_files (view, item, files);
 		
-		path = g_build_path ("/", NEMO_VIEW_POPUP_PATH_EXTENSION_ACTIONS, subdirectory, NULL);
-		gtk_ui_manager_add_ui (ui_manager,
-				       view->details->extensions_menu_merge_id,
-				       path,
-				       gtk_action_get_name (action),
-				       gtk_action_get_name (action),
-				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
-				       FALSE);
-		g_free (path);
+        if (action) {
+    		path = g_build_path ("/", NEMO_VIEW_POPUP_PATH_EXTENSION_ACTIONS, subdirectory, NULL);
+    		gtk_ui_manager_add_ui (ui_manager,
+    				       view->details->extensions_menu_merge_id,
+    				       path,
+    				       gtk_action_get_name (action),
+    				       gtk_action_get_name (action),
+    				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
+    				       FALSE);
+    		g_free (path);
 
-		path = g_build_path ("/", NEMO_VIEW_MENU_PATH_EXTENSION_ACTIONS_PLACEHOLDER, subdirectory, NULL);
-		gtk_ui_manager_add_ui (ui_manager,
-				       view->details->extensions_menu_merge_id,
-				       path,
-				       gtk_action_get_name (action),
-				       gtk_action_get_name (action),
-				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
-				       FALSE);
-		g_free (path);
+    		path = g_build_path ("/", NEMO_VIEW_MENU_PATH_EXTENSION_ACTIONS_PLACEHOLDER, subdirectory, NULL);
+    		gtk_ui_manager_add_ui (ui_manager,
+    				       view->details->extensions_menu_merge_id,
+    				       path,
+    				       gtk_action_get_name (action),
+    				       gtk_action_get_name (action),
+    				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
+    				       FALSE);
+    		g_free (path);
 
-		/* recursively fill the menu */		       
-		if (menu != NULL) {
-			char *subdir;
-			GList *children;
-			
-			children = nemo_menu_get_items (menu);
-			
-			subdir = g_build_path ("/", subdirectory, gtk_action_get_name (action), NULL);
-			add_extension_menu_items (view,
-						  files,
-						  children,
-						  subdir);
+    		/* recursively fill the menu */		       
+    		if (menu != NULL) {
+    			char *subdir;
+    			GList *children;
+    			
+    			children = nemo_menu_get_items (menu);
+    			
+    			subdir = g_build_path ("/", subdirectory, gtk_action_get_name (action), NULL);
+    			add_extension_menu_items (view,
+    						  files,
+    						  children,
+    						  subdir);
 
-			nemo_menu_item_list_free (children);
-			g_free (subdir);
-		}			
+    			nemo_menu_item_list_free (children);
+    			g_free (subdir);
+    		}
+        }
 	}
 }
 
@@ -6030,7 +6044,7 @@ add_script_to_scripts_menus (NemoView *directory_view,
 				 tip,
 				 NULL);
 
-	pixbuf = get_menu_icon_for_file (file);
+	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	if (pixbuf != NULL) {
 		gtk_action_set_gicon (action, G_ICON (pixbuf));
 		g_object_unref (pixbuf);
@@ -6097,7 +6111,7 @@ add_submenu_to_directory_menus (NemoView *directory_view,
 	ui_manager = nemo_view_get_ui_manager (directory_view);
 	uri = nemo_file_get_uri (file);
 	name = nemo_file_get_display_name (file);
-	pixbuf = get_menu_icon_for_file (file);
+	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	add_submenu (ui_manager, action_group, merge_id, menu_path, uri, name, pixbuf, TRUE);
 	add_submenu (ui_manager, action_group, merge_id, popup_path, uri, name, pixbuf, FALSE);
 	add_submenu (ui_manager, action_group, merge_id, popup_bg_path, uri, name, pixbuf, FALSE);
@@ -6412,7 +6426,7 @@ add_template_to_templates_menus (NemoView *directory_view,
 				 tip,
 				 NULL);
 	
-	pixbuf = get_menu_icon_for_file (file);
+	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	if (pixbuf != NULL) {
 		gtk_action_set_gicon (action, G_ICON (pixbuf));
 		g_object_unref (pixbuf);
@@ -8630,7 +8644,7 @@ connect_proxy (NemoView *view,
 
 	if (strcmp (gtk_action_get_name (action), NEMO_ACTION_NEW_EMPTY_DOCUMENT) == 0 &&
 	    GTK_IS_IMAGE_MENU_ITEM (proxy)) {
-		pixbuf = nemo_ui_get_menu_icon ("text-x-generic");
+		pixbuf = nemo_ui_get_menu_icon ("text-x-generic", GTK_WIDGET (view));
 		if (pixbuf != NULL) {
 			image = gtk_image_new_from_pixbuf (pixbuf);
 			gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), image);
@@ -9533,6 +9547,8 @@ real_update_location_menu (NemoView *view)
 		|| nemo_file_is_desktop_directory (file);
 	is_recent = nemo_file_is_in_recent (file);
 
+    is_recent = nemo_file_is_in_recent (file);
+
 	can_delete_file =
 		nemo_file_can_delete (file) &&
 		!is_special_link &&
@@ -9925,14 +9941,24 @@ real_update_menus (NemoView *view)
 	   show the delete option. or if the user set this  pref */
 	gtk_action_set_visible (action, (!can_trash_files && can_delete_files) || show_separate_delete_command);
 
+    if (selection_contains_recent) {
+        label = _("Remo_ve from Recent");
+        tip = _("Remove each selected item from the recenly used list");
+    } else {
+        label = _("_Delete");
+        tip = _("Delete each selected item, without moving to the Trash");
+    }
+
+
+
 	if ((!can_trash_files && can_delete_files) || show_separate_delete_command) {
 		g_object_set (action,
-			      "label", _("_Delete"),
+			      "label", label,
+			      "tooltip", tip,
 			      "icon-name", NEMO_ICON_DELETE,
 			      NULL);
 	}
 	gtk_action_set_sensitive (action, can_delete_files);
-
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_RESTORE_FROM_TRASH);
@@ -10045,7 +10071,15 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_DOCUMENTS);
 	gtk_action_set_sensitive (action, can_create_files);
-	gtk_action_set_visible (action, !selection_contains_recent);
+	
+	if (g_strcmp0 (g_getenv ("XDG_CURRENT_DESKTOP"), "Unity") == 0)
+		gtk_action_set_visible (action, TRUE);
+	else
+		gtk_action_set_visible (action, !selection_contains_recent);
+
+	if (can_create_files && view->details->templates_invalid) {
+		update_templates_menu (view);
+	}
 
     if (view->details->actions_invalid) {
         update_actions_menu (view);
@@ -10063,8 +10097,7 @@ real_update_menus (NemoView *view)
 	/* move to next pane: works if file is cuttable, and next pane is writable */
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_MOVE_TO_NEXT_PANE);
-	gtk_action_set_visible (action, can_delete_files && next_pane_is_writable);
-
+	gtk_action_set_visible (action, can_delete_files && next_pane_is_writable && !selection_contains_recent);
 
 	show_desktop_target =
 		g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP);
@@ -10081,10 +10114,11 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_MOVE_TO_HOME);
 	gtk_action_set_sensitive (action, can_delete_files);
+    gtk_action_set_visible (action, !selection_contains_recent);
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_MOVE_TO_DESKTOP);
 	gtk_action_set_sensitive (action, can_delete_files);
-	gtk_action_set_visible (action, show_desktop_target);
+	gtk_action_set_visible (action, show_desktop_target && !selection_contains_recent);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      "CopyToMenu");
@@ -10092,6 +10126,7 @@ real_update_menus (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      "MoveToMenu");
 	gtk_action_set_sensitive (action, can_delete_files);
+    gtk_action_set_visible (action, !selection_contains_recent);
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                           NEMO_ACTION_FOLLOW_SYMLINK);
@@ -10713,7 +10748,11 @@ static gboolean
 real_is_read_only (NemoView *view)
 {
 	NemoFile *file;
-	
+
+    if (showing_recent_directory (view)) {
+        return TRUE;
+    }
+
 	if (!nemo_view_is_editable (view)) {
 		return TRUE;
 	}
