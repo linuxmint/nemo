@@ -1,3 +1,14 @@
+Major changes in 3.12.2:
+* Don't resolve symlinks before launching an application
+* Fix a crasher when switching location out of trash
+* Fix a crasher when enumerating windows (Robert Ancell)
+* Fix a crasher when listing bookmarks (Robert Ancell)
+* Use headerbar in bookmarks dialog (Yosef Or Boczko)
+* Fix arrow direction in connect server dialog for RTL (Yosef Or Boczko)
+* Use spaces between em dashes in file operations (Ross Lagerwall)
+* Do not use legacy emblem names (David King)
+* Sync the GTK+ setting for 'sort-directories-first' (Matthias Clasen)
+
 Major changes in 3.12.0:
 * Translation updates
 
