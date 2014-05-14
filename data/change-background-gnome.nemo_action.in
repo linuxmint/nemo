@@ -4,7 +4,7 @@ Name=Change Desktop _Background
 
 Comment=Change Desktop _Background
 
-Exec=cinnamon-settings backgrounds
+Exec=gnome-control-center background
 
 Selection=None
 
@@ -12,7 +12,7 @@ Icon-Name=cs-backgrounds
 
 Extensions=any;
 
-Dependencies=cinnamon-settings;
+Dependencies=gnome-control-center;
 
-Conditions=desktop;dbus org.Cinnamon;
+Conditions=desktop;dbus org.gnome.Shell.Screencast;
 

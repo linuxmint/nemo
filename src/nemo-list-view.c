@@ -1907,12 +1907,15 @@ create_and_set_up_tree_view (NemoListView *view)
 	GList *nemo_columns;
 	GList *l;
 	gchar **default_column_order, **default_visible_columns;
-	
+
 	view->details->tree_view = GTK_TREE_VIEW (gtk_tree_view_new ());
 	view->details->columns = g_hash_table_new_full (g_str_hash, 
 							g_str_equal,
 							(GDestroyNotify) g_free,
 							(GDestroyNotify) g_object_unref);
+
+    gtk_scrollable_set_hscroll_policy (GTK_SCROLLABLE (view->details->tree_view), GTK_SCROLL_NATURAL);
+
 	gtk_tree_view_set_enable_search (view->details->tree_view, TRUE);
 
 	/* Don't handle backspace key. It's used to open the parent folder. */
@@ -2036,6 +2039,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_title (view->details->file_name_column, _("Name"));
 			gtk_tree_view_column_set_resizable (view->details->file_name_column, TRUE);
             gtk_tree_view_column_set_min_width (view->details->file_name_column, 125);
+            gtk_tree_view_column_set_sizing (view->details->file_name_column, GTK_TREE_VIEW_COLUMN_FIXED);
             gtk_tree_view_column_set_reorderable (view->details->file_name_column, TRUE);
 
 			gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);

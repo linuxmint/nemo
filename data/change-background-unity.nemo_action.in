@@ -4,7 +4,7 @@ Name=Change Desktop _Background
 
 Comment=Change Desktop _Background
 
-Exec=cinnamon-settings backgrounds
+Exec=unity-control-center appearance
 
 Selection=None
 
@@ -12,7 +12,7 @@ Icon-Name=cs-backgrounds
 
 Extensions=any;
 
-Dependencies=cinnamon-settings;
+Dependencies=unity-control-center;unity-settings-daemon;
 
-Conditions=desktop;dbus org.Cinnamon;
+Conditions=desktop;dbus com.canonical.Unity;
 

@@ -10,7 +10,7 @@ Selection=None
 
 Extensions=any;
 
-Icon-Name=display
+Icon-Name=cs-desklets
 
 Dependencies=cinnamon-settings;
 

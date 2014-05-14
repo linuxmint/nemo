@@ -8,10 +8,12 @@ INCLUDES = 						\
 	-I$(top_srcdir)/cut-n-paste-code		\
 	$(BASE_CFLAGS)					\
 	$(COMMON_CFLAGS)				\
-	$(NEMO_CFLAGS)				\
+	$(NEMO_CFLAGS)					\
+	$(DESKTOP_CFLAGS)				\
 	$(WARNING_CFLAGS)				\
 	$(DISABLE_DEPRECATED_CFLAGS)			\
 	$(TRACKER_CFLAGS)				\
+	$(ZEITGEIST_CFLAGS)	\
 	-DDATADIR=\""$(datadir)"\" 			\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
 	-DNEMO_DATADIR=\""$(datadir)/nemo"\" 	\
@@ -50,11 +52,13 @@ libnemo_private_la_LIBADD =		\
 	$(dependency_static_libs)	\
 	$(SELINUX_LIBS)			\
 	$(TRACKER_LIBS)			\
+	$(ZEITGEIST_LIBS)			\
 	$(top_builddir)/eel/libeel-2.la \
 	$(top_builddir)/libnemo-extension/libnemo-extension.la \
 	$(BASE_LIBS)			\
 	$(COMMON_LIBS)			\
-	$(NEMO_LIBS)		\
+	$(NEMO_LIBS)			\
+	$(DESKTOP_LIBS)			\
 	-lm				\
 	$(NULL)
 
@@ -88,6 +92,8 @@ libnemo_private_la_SOURCES = \
 	nemo-debug.h \
 	nemo-default-file-icon.c \
 	nemo-default-file-icon.h \
+	nemo-desktop-background.c \
+	nemo-desktop-background.h \
 	nemo-desktop-directory-file.c \
 	nemo-desktop-directory-file.h \
 	nemo-desktop-directory.c \

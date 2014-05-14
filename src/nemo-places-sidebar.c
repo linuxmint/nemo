@@ -2447,7 +2447,7 @@ show_unmount_progress_cb (GMountOperation *op,
 			  gint64 bytes_left,
 			  gpointer user_data)
 {
-	NemoApplication *app = NAUTILUS_APPLICATION (g_application_get_default ());
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
 
 	if (bytes_left == 0) {
 		nemo_application_notify_unmount_done (app, message);

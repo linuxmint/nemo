@@ -44,7 +44,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <signal.h>
+#ifdef GNOME_BUILD
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
+#else
 #include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
+#endif
 
 #include "nemo-file-private.h"
 

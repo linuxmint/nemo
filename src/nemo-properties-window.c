@@ -38,7 +38,11 @@
 #include <cairo.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
+#ifdef GNOME_BUILD
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
+#else 
 #include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
+#endif
 
 #include <eel/eel-accessibility.h>
 #include <eel/eel-glib-extensions.h>
@@ -3183,8 +3187,13 @@ create_basic_page (NemoPropertiesWindow *window)
 	GtkWidget *volume_usage;
 	GtkWidget *hbox, *vbox;
 
-	hbox = create_page_with_hbox (window->details->notebook, _("Basic"),
-				      "help:gnome-help/nemo-file-properties-basic");
+	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+		hbox = create_page_with_hbox (window->details->notebook, _("Basic"),
+			"help:ubuntu-help/nemo-file-properties-basic");
+	else
+		hbox = create_page_with_hbox (window->details->notebook, _("Basic"),
+			"help:gnome-help/nemo-file-properties-basic");
+
 	
 	/* Icon pixmap */
 
@@ -4756,9 +4765,14 @@ create_permissions_page (NemoPropertiesWindow *window)
 	char *file_name, *prompt_text;
 	GList *file_list;
 
-	vbox = create_page_with_vbox (window->details->notebook,
-				      _("Permissions"),
-				      "help:gnome-help/nemo-file-properties-permissions");
+	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+		vbox = create_page_with_vbox (window->details->notebook,
+			_("Permissions"),
+			"help:ubuntu-help/nemo-file-properties-permissions");
+	else
+		vbox = create_page_with_vbox (window->details->notebook,
+		      _("Permissions"),
+		      "help:gnome-help/nemo-file-properties-permissions");
 
 	file_list = window->details->original_files;
 
@@ -5064,7 +5078,10 @@ create_open_with_page (NemoPropertiesWindow *window)
 	g_free (mime_type);
 	g_list_free (files);
 
-	g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:gnome-help/files-open"), g_free);
+	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+		g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:ubuntu-help/files-open"), g_free);
+	else
+		g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:gnome-help/files-open"), g_free);
 	gtk_notebook_append_page (window->details->notebook, 
 				  vbox, gtk_label_new (_("Open With")));
 }
@@ -5418,10 +5435,17 @@ real_response (GtkDialog *dialog,
 		curpage = gtk_notebook_get_nth_page (window->details->notebook,
 						     gtk_notebook_get_current_page (window->details->notebook));
 		helpuri = g_object_get_data (G_OBJECT (curpage), "help-uri");
-		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
-			      helpuri ? helpuri : "help:gnome-help/files",
-			      gtk_get_current_event_time (),
-			      &error);
+		if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+			gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
+				helpuri ? helpuri : "help:ubuntu-help/files",
+				gtk_get_current_event_time (),
+				&error);
+		else
+			gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
+				helpuri ? helpuri : "help:gnome-help/files",
+				gtk_get_current_event_time (),
+				&error);
+
 		if (error != NULL) {
 			eel_show_error_dialog (_("There was an error displaying help."), error->message,
 					       GTK_WINDOW (dialog));

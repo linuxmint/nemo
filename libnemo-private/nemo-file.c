@@ -90,6 +90,11 @@
 #define DEBUG_REF_PRINTF printf
 #endif
 
+#ifdef BUILD_ZEITGEIST
+#include <zeitgeist.h>
+#define ZEITGEIST_NEMO_ACTOR "application://nemo.desktop"
+#endif // BUILD_ZEITGEIST
+
 /* Files that start with these characters sort after files that don't. */
 #define SORT_LAST_CHAR1 '.'
 #define SORT_LAST_CHAR2 '#'
@@ -1759,6 +1764,31 @@ rename_get_info_callback (GObject *source_object,
 		g_free (old_name);
 		
 		new_uri = nemo_file_get_uri (op->file);
+
+#ifdef BUILD_ZEITGEIST		
+		// Send event to Zeitgeist
+		ZeitgeistLog *log = zeitgeist_log_get_default ();
+		gchar *origin = g_path_get_dirname (new_uri);
+		ZeitgeistSubject *subject = zeitgeist_subject_new_full (
+			old_uri,
+			NULL, // subject interpretation - auto-guess
+			NULL, // subject manifestation - auto-guess
+			g_file_info_get_content_type (new_info), // const char*
+			origin,
+			new_name,
+			NULL // storage - auto-guess
+		);
+		zeitgeist_subject_set_current_uri (subject, new_uri);
+		g_free (origin);
+		// FIXME: zeitgeist_subject_set_current_uri ();
+		ZeitgeistEvent *event = zeitgeist_event_new_full (
+			ZEITGEIST_ZG_MOVE_EVENT,
+			ZEITGEIST_ZG_USER_ACTIVITY,
+			ZEITGEIST_NEMO_ACTOR,
+			subject, NULL);
+		zeitgeist_log_insert_events_no_reply (log, event, NULL);
+#endif // BUILD_ZEITGEIST
+
 		nemo_directory_moved (old_uri, new_uri);
 		g_free (new_uri);
 		g_free (old_uri);

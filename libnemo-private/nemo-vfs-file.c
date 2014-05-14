@@ -215,6 +215,7 @@ vfs_file_get_item_count (NemoFile *file,
 	if (count != NULL) {
 		*count = file->details->directory_count;
 	}
+
 	return TRUE;
 }
 

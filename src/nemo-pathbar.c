@@ -1523,10 +1523,10 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data)
 						NEMO_PATH_BAR_ICON_SIZE,
 						NEMO_FILE_ICON_FLAGS_NONE);
 		pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, NEMO_PATH_BAR_ICON_SIZE);
-				gtk_image_set_from_pixbuf (GTK_IMAGE (button_data->image), pixbuf);
-				gtk_widget_show (GTK_WIDGET (button_data->image));
-				g_object_unref (pixbuf);
-				g_object_unref (icon_info);
+		gtk_image_set_from_pixbuf (GTK_IMAGE (button_data->image), pixbuf);
+		gtk_widget_show (GTK_WIDGET (button_data->image));
+		g_object_unref (pixbuf);
+		g_object_unref (icon_info);
 	} else {
 		gtk_widget_hide (GTK_WIDGET (button_data->image));
 	}
