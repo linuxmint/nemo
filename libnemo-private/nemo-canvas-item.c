@@ -474,7 +474,12 @@ nemo_canvas_item_get_drag_surface (NemoCanvasItem *item)
 
 	gtk_style_context_save (context);
 		
-        gtk_style_context_add_class (context, "nemo-canvas-item");
+	if (gtk_style_context_has_class (context, "nemo-canvas-item")) {
+		gtk_style_context_add_class (context, "nemo-canvas-item");
+	}
+	else {
+		gtk_style_context_add_class (context, "nautilus-canvas-item");
+	}
 
 	/* Assume we're updated so canvas item data is right */
 
