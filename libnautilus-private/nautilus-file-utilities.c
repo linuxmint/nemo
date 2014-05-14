@@ -31,7 +31,6 @@
 #include "nautilus-file.h"
 #include "nautilus-file-operations.h"
 #include "nautilus-search-directory.h"
-#include "nautilus-signaller.h"
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-string.h>

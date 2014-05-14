@@ -2668,10 +2668,6 @@ nautilus_view_init (NautilusView *view)
 		nautilus_directory_unref (templates_directory);
 	}
 	update_templates_directory (view);
-	g_signal_connect_object (nautilus_signaller_get_current (),
-				 "user-dirs-changed",
-				 G_CALLBACK (user_dirs_changed),
-				 view, G_CONNECT_SWAPPED);
 
 	view->details->sort_directories_first =
 		g_settings_get_boolean (nautilus_preferences, NAUTILUS_PREFERENCES_SORT_DIRECTORIES_FIRST);
@@ -5436,14 +5432,6 @@ update_templates_directory (NautilusView *view)
 		add_directory_to_templates_directory_list (view, templates_directory);
 		nautilus_directory_unref (templates_directory);
 	}
-}
-
-static void
-user_dirs_changed (NautilusView *view)
-{
-	update_templates_directory (view);
-	view->details->templates_invalid = TRUE;
-	schedule_update_menus (view);
 }
 
 static gboolean

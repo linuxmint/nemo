@@ -36,7 +36,6 @@ typedef GObjectClass NautilusSignallerClass;
 enum {
 	HISTORY_LIST_CHANGED,
 	POPUP_MENU_CHANGED,
-	USER_DIRS_CHANGED,
 	MIME_DATA_CHANGED,
 	LAST_SIGNAL
 };
@@ -77,14 +76,6 @@ nautilus_signaller_class_init (NautilusSignallerClass *class)
 		              G_TYPE_NONE, 0);
 	signals[POPUP_MENU_CHANGED] =
 		g_signal_new ("popup-menu-changed",
-		              G_TYPE_FROM_CLASS (class),
-		              G_SIGNAL_RUN_LAST,
-		              0,
-		              NULL, NULL,
-		              g_cclosure_marshal_VOID__VOID,
-		              G_TYPE_NONE, 0);
-	signals[USER_DIRS_CHANGED] =
-		g_signal_new ("user-dirs-changed",
 		              G_TYPE_FROM_CLASS (class),
 		              G_SIGNAL_RUN_LAST,
 		              0,
