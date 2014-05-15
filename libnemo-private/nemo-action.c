@@ -865,12 +865,12 @@ default_parent_path:
             ;
             gchar *path = nemo_file_get_path (parent);
             if (path == NULL) {
-                gchar *name = nemo_file_get_display_name (parent);
-                if (g_strcmp0 (name, "x-nemo-desktop") == 0)
+                gchar *scheme = nemo_file_get_uri_scheme (parent);
+       	        if (g_strcmp0 (scheme, "x-nemo-desktop") == 0)
                     path = nemo_get_desktop_directory ();
                 else
-                    path = g_strdup_printf ("");
-                g_free (name);
+                    path = g_strdup ("");
+                g_free (scheme);
             }
             str = insert_quote (action, str);
             str = _score_append (action, str, path);
@@ -891,12 +891,12 @@ default_parent_path:
 default_parent_display_name:
             ;
             gchar *parent_display_name;
-            gchar *real_display_name = nemo_file_get_display_name (parent);
-            if (g_strcmp0 (real_display_name, "x-nemo-desktop") == 0)
-                parent_display_name = g_strdup_printf (_("Desktop"));
+            gchar *scheme = nemo_file_get_uri_scheme (parent);
+   	    if (g_strcmp0 (scheme, "x-nemo-desktop") == 0)
+   		 parent_display_name = g_strdup_printf (_("Desktop"));
             else
-                parent_display_name = nemo_file_get_display_name (parent);
-            g_free (real_display_name);
+        	 parent_display_name = nemo_file_get_display_name (parent);
+            g_free (scheme);
             str = insert_quote (action, str);
             str = _score_append (action, str, parent_display_name);
             str = insert_quote (action, str);
@@ -919,6 +919,8 @@ default_parent_display_name:
                 goto default_parent_path;
             }
             break;
+        default:
+            break; 
     }
 
     gchar *ret = str->str;
@@ -1085,7 +1087,7 @@ nemo_action_get_label (NemoAction *action, GList *selection, NemoFile *parent)
     const gchar *orig_label = nemo_action_get_orig_label (action);
 
     if (orig_label == NULL)
-        return;
+        return NULL;
 
     action->escape_underscores = TRUE;
 
@@ -1108,7 +1110,7 @@ nemo_action_get_tt (NemoAction *action, GList *selection, NemoFile *parent)
     const gchar *orig_tt = nemo_action_get_orig_tt (action);
 
     if (orig_tt == NULL)
-        return;
+        return NULL;
 
     action->escape_underscores = FALSE;
 
@@ -1230,10 +1232,10 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
         for (j = 0; j < condition_count; j++) {
             condition = conditions[j];
             if (g_strcmp0 (condition, "desktop") == 0) {
-                gchar *name = nemo_file_get_display_name (parent);
-                if (g_strcmp0 (name, "x-nemo-desktop") != 0)
+                gchar *scheme = nemo_file_get_uri_scheme (parent);
+           	if (g_strcmp0 (scheme, "x-nemo-desktop") != 0)
                     condition_type_show = FALSE;
-                g_free (name);
+                g_free (scheme);
                 break;
             } else if (g_strcmp0 (condition, "removable") == 0) {
                 gboolean is_removable = FALSE;

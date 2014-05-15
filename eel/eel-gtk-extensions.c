@@ -140,7 +140,7 @@ sanity_check_window_dimensions (guint *width, guint *height)
  * @width: width of window in pixels
  * @height: height of window in pixels
  */
-void
+static void
 eel_gtk_window_set_initial_geometry (GtkWindow *window, 
 					  EelGdkGeometryFlags geometry_flags,
 					  int left,
@@ -315,32 +315,6 @@ eel_gtk_menu_insert_separator (GtkMenu *menu, int index)
 	gtk_menu_shell_insert (GTK_MENU_SHELL (menu), menu_item, index);
 
 	return GTK_MENU_ITEM (menu_item);
-}
-
-/**
- * eel_gtk_label_make_bold.
- *
- * Switches the font of label to a bold equivalent.
- * @label: The label.
- **/
-void
-eel_gtk_label_make_bold (GtkLabel *label)
-{
-	PangoFontDescription *font_desc;
-
-	font_desc = pango_font_description_new ();
-
-	pango_font_description_set_weight (font_desc,
-					   PANGO_WEIGHT_BOLD);
-
-	/* This will only affect the weight of the font, the rest is
-	 * from the current state of the widget, which comes from the
-	 * theme or user prefs, since the font desc only has the
-	 * weight flag turned on.
-	 */
-	gtk_widget_override_font (GTK_WIDGET (label), font_desc);
-
-	pango_font_description_free (font_desc);
 }
 
 static gboolean 

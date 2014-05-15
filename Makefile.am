@@ -28,13 +28,32 @@ EXTRA_DIST=					\
 	intltool-merge.in			\
 	intltool-update.in			\
 	Makefile.shared				\
-	add-include-prefix			\
 	$(NULL)
 
 DISTCLEANFILES = \
-  intltool-extract \
-  intltool-merge \
-  intltool-update
+	intltool-extract \
+	intltool-merge \
+	intltool-update
+
+MAINTAINERCLEANFILES = \
+	$(srcdir)/INSTALL \
+	$(srcdir)/aclocal.m4 \
+	$(srcdir)/autoscan.log \
+	$(srcdir)/compile \
+	$(srcdir)/config.guess \
+	$(srcdir)/config.h.in \
+	$(srcdir)/config.sub \
+	$(srcdir)/configure.scan \
+	$(srcdir)/depcomp \
+	$(srcdir)/install-sh \
+	$(srcdir)/ltmain.sh \
+	$(srcdir)/missing \
+	$(srcdir)/mkinstalldirs \
+	$(srcdir)/omf.make \
+	$(srcdir)/xmldocs.make \
+	$(srcdir)/gtk-doc.make \
+	$(srcdir)/ChangeLog \
+	`find "$(srcdir)" -type f -name Makefile.in -print`
 
 DISTCHECK_CONFIGURE_FLAGS = --disable-update-mimedb --enable-gtk-doc
 
@@ -48,7 +67,7 @@ distclean-local:
 ChangeLog:
 	@echo Creating $@
 	@if test -d "$(srcdir)/.git"; then \
-	  (GIT_DIR=$(top_srcdir)/.git ./missing --run git log NEMO_2_26_2.. --stat -M -C --name-status  --date=short --no-color) | fmt --split-only > $@.tmp \
+	  (GIT_DIR=$(top_srcdir)/.git ./missing --run git log --stat -M -C --name-status  --date=short --no-color) | fmt --split-only > $@.tmp \
 	  && mv -f $@.tmp $@ \
 	  || ($(RM) $@.tmp; \
 	      echo Failed to generate ChangeLog, your ChangeLog may be outdated >&2; \
@@ -60,3 +79,5 @@ ChangeLog:
 	fi
 
 .PHONY: ChangeLog
+
+-include $(top_srcdir)/git.mk

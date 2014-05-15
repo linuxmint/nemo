@@ -53,8 +53,8 @@ typedef struct
 
 GType		 nemo_x_content_bar_get_type	(void) G_GNUC_CONST;
 
-GtkWidget	*nemo_x_content_bar_new		   (GMount              *mount, 
-							    const char          *x_content_type);
+GtkWidget	*nemo_x_content_bar_new		   (GMount              *mount,
+							    const char         **x_content_types);
 
 G_END_DECLS
 

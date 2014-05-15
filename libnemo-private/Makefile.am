@@ -8,10 +8,12 @@ INCLUDES = 						\
 	-I$(top_srcdir)/cut-n-paste-code		\
 	$(BASE_CFLAGS)					\
 	$(COMMON_CFLAGS)				\
-	$(NEMO_CFLAGS)				\
+	$(NEMO_CFLAGS)					\
+	$(DESKTOP_CFLAGS)				\
 	$(WARNING_CFLAGS)				\
 	$(DISABLE_DEPRECATED_CFLAGS)			\
 	$(TRACKER_CFLAGS)				\
+	$(ZEITGEIST_CFLAGS)	\
 	-DDATADIR=\""$(datadir)"\" 			\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
 	-DNEMO_DATADIR=\""$(datadir)/nemo"\" 	\
@@ -50,11 +52,13 @@ libnemo_private_la_LIBADD =		\
 	$(dependency_static_libs)	\
 	$(SELINUX_LIBS)			\
 	$(TRACKER_LIBS)			\
+	$(ZEITGEIST_LIBS)			\
 	$(top_builddir)/eel/libeel-2.la \
 	$(top_builddir)/libnemo-extension/libnemo-extension.la \
 	$(BASE_LIBS)			\
 	$(COMMON_LIBS)			\
-	$(NEMO_LIBS)		\
+	$(NEMO_LIBS)			\
+	$(DESKTOP_LIBS)			\
 	-lm				\
 	$(NULL)
 
@@ -65,6 +69,13 @@ libnemo_private_la_SOURCES = \
     nemo-action-manager.h \
 	nemo-bookmark.c \
 	nemo-bookmark.h \
+	nemo-canvas-container.c \
+	nemo-canvas-container.h \
+	nemo-canvas-dnd.c \
+	nemo-canvas-dnd.h \
+	nemo-canvas-item.c \
+	nemo-canvas-item.h \
+	nemo-canvas-private.h \
     nemo-cell-renderer-disk.c \
     nemo-cell-renderer-disk.h \
 	nemo-clipboard-monitor.c \
@@ -122,13 +133,6 @@ libnemo_private_la_SOURCES = \
 	nemo-generated.h \
 	nemo-global-preferences.c \
 	nemo-global-preferences.h \
-	nemo-icon-canvas-item.c \
-	nemo-icon-canvas-item.h \
-	nemo-icon-container.c \
-	nemo-icon-container.h \
-	nemo-icon-dnd.c \
-	nemo-icon-dnd.h \
-	nemo-icon-private.h \
 	nemo-icon-info.c \
 	nemo-icon-info.h \
 	nemo-icon-names.h \
@@ -136,8 +140,6 @@ libnemo_private_la_SOURCES = \
 	nemo-lib-self-check-functions.h \
 	nemo-link.c \
 	nemo-link.h \
-	nemo-merged-directory.c \
-	nemo-merged-directory.h \
 	nemo-metadata.h \
 	nemo-metadata.c \
 	nemo-mime-application-chooser.c \
@@ -146,6 +148,8 @@ libnemo_private_la_SOURCES = \
 	nemo-module.h \
 	nemo-monitor.c \
 	nemo-monitor.h \
+	nemo-profile.c \
+	nemo-profile.h \
     nemo-pathbar-button.c \
     nemo-pathbar-button.h \
     nemo-places-tree-view.c \
@@ -158,16 +162,20 @@ libnemo_private_la_SOURCES = \
 	nemo-program-choosing.h \
 	nemo-recent.c \
 	nemo-recent.h \
-	nemo-saved-search-file.c \
-	nemo-saved-search-file.h \
 	nemo-search-directory.c \
 	nemo-search-directory.h \
 	nemo-search-directory-file.c \
 	nemo-search-directory-file.h \
+	nemo-search-provider.c \
+	nemo-search-provider.h \
 	nemo-search-engine.c \
 	nemo-search-engine.h \
+	nemo-search-engine-model.c \
+	nemo-search-engine-model.h \
 	nemo-search-engine-simple.c \
 	nemo-search-engine-simple.h \
+	nemo-search-hit.c \
+	nemo-search-hit.h \
 	nemo-selection-canvas-item.c \
 	nemo-selection-canvas-item.h \
 	nemo-signaller.h \
@@ -182,15 +190,6 @@ libnemo_private_la_SOURCES = \
 	nemo-tree-view-drag-dest.h \
 	nemo-ui-utilities.c \
 	nemo-ui-utilities.h \
-	nemo-undo-manager.c \
-	nemo-undo-manager.h \
-	nemo-undo-private.h \
-	nemo-undo-signal-handlers.c \
-	nemo-undo-signal-handlers.h \
-	nemo-undo-transaction.c \
-	nemo-undo-transaction.h \
-	nemo-undo.c \
-	nemo-undo.h \
 	nemo-vfs-directory.c \
 	nemo-vfs-directory.h \
 	nemo-vfs-file.c \
@@ -228,3 +227,5 @@ CLEANFILES = \
 
 dist-hook:
 	cd $(distdir); rm -f $(CLEANFILES)
+
+-include $(top_srcdir)/git.mk

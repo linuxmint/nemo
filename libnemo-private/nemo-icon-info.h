@@ -54,17 +54,13 @@ typedef struct _NemoIconInfoClass NemoIconInfoClass;
 
 GType    nemo_icon_info_get_type (void) G_GNUC_CONST;
 
-NemoIconInfo *    nemo_icon_info_new_for_pixbuf               (GdkPixbuf         *pixbuf,
-                                                               int                scale);
+NemoIconInfo *    nemo_icon_info_new_for_pixbuf               (GdkPixbuf         *pixbuf);
 NemoIconInfo *    nemo_icon_info_lookup                       (GIcon             *icon,
-                                                               int                size,
-                                                               int                scale);
+								       int                size);
 NemoIconInfo *    nemo_icon_info_lookup_from_name             (const char        *name,
-                                                               int                size,
-                                                               int                scale);
+								       int                size);
 NemoIconInfo *    nemo_icon_info_lookup_from_path             (const char        *path,
-                                                               int                size,
-                                                               int                scale);
+								       int                size);
 gboolean              nemo_icon_info_is_fallback                  (NemoIconInfo  *icon);
 GdkPixbuf *           nemo_icon_info_get_pixbuf                   (NemoIconInfo  *icon);
 GdkPixbuf *           nemo_icon_info_get_pixbuf_nodefault         (NemoIconInfo  *icon);
@@ -90,8 +86,6 @@ gint  nemo_get_icon_size_for_stock_size          (GtkIconSize        size);
 guint nemo_icon_get_emblem_size_for_icon_size    (guint              size);
 
 gboolean nemo_icon_theme_can_render              (GThemedIcon *icon);
-GIcon * nemo_user_special_directory_get_gicon (GUserDirectory directory);
-
 
 G_END_DECLS
 

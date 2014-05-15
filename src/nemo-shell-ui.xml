@@ -1,10 +1,14 @@
 <ui>
+<accelerator action="Back"/>
+<accelerator action="Forward"/>
+<accelerator action="Home"/>
 <accelerator action="Search"/>
 <accelerator action="SplitViewNextPane"/>
 <accelerator action="TabsPrevious"/>
 <accelerator action="TabsNext"/>
 <accelerator action="TabsMoveLeft"/>
 <accelerator action="TabsMoveRight"/>
+<accelerator action="Up"/>
 <accelerator action="ZoomInAccel"/>
 <accelerator action="ZoomInAccel2"/>
 <accelerator action="ZoomOutAccel"/>
@@ -81,8 +85,6 @@
 			<menuitem name="Zoom Normal" action="Zoom Normal"/>
 		</placeholder>
 		<placeholder name="View Choices">
-		        <separator/>
-			<placeholder name="Extra Viewer"/>
 			<separator name="Before Short List"/>
 			<placeholder name="Short List"/>
 		</placeholder>

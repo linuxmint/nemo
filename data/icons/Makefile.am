@@ -37,12 +37,6 @@ public_icons = \
 	hicolor_status_scalable_progress-100-symbolic.svg \
 	$(NULL)
 
-private_icons = \
-	hicolor_emblems_16x16_emblem-note.png \
-	hicolor_emblems_24x24_emblem-note.png \
-	hicolor_emblems_48x48_emblem-note.png \
-	$(NULL)
-
 noinst_DATA = \
 	hicolor_apps_16x16_nemo.svg \
 	hicolor_apps_22x22_nemo.svg \
@@ -51,7 +45,6 @@ noinst_DATA = \
 
 EXTRA_DIST = \
 	$(public_icons)		\
-	$(private_icons)	\
 	$(noinst_DATA)		\
 	$(NULL)
 

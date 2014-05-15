@@ -80,11 +80,6 @@
       <_summary>Where to position newly open tabs in browser windows.</_summary>
       <_description>If set to "after-current-tab", then new tabs are inserted after the current tab. If set to "end", then new tabs are appended to the end of the tab list.</_description>
     </key>
-    <key name="always-use-browser" type="b">
-      <default>true</default>
-      <_summary>Enables the classic Nemo behavior, where all windows are browsers</_summary>
-      <_description>If set to true, then all Nemo windows will be browser windows. This is how Nemo used to behave before version 2.6, and some people prefer this behavior.</_description>
-    </key>
     <key name="show-location-entry" type="b">
       <default>false</default>
       <_summary>Show the location entry by default</_summary>
@@ -145,12 +140,6 @@
       <_summary>Whether to swap the hotkeys for Trash and Delete</_summary>
       <_description>If set to true, the Delete key will permanently delete a file, and the Shift-Delete key will only trash a file.</_description>
     </key>
-    <key name="show-icon-text" enum="org.nemo.SpeedTradeoff">
-      <aliases><alias value='local_only' target='local-only'/></aliases>
-      <default>'local-only'</default>
-      <_summary>When to show preview text in icons</_summary>
-      <_description>Speed tradeoff for when to show a preview of text file contents in the file's icon. If set to "always" then always show previews,  even if the folder is on a remote server. If set to "local-only" then only show previews for local file systems. If set to "never" then never bother to read preview data.</_description>
-    </key>
     <key name="show-directory-item-counts"  enum="org.nemo.SpeedTradeoff">
       <aliases><alias value='local_only' target='local-only'/></aliases>
       <default>'local-only'</default>
@@ -185,8 +174,8 @@
     <key name="show-image-thumbnails" enum="org.nemo.SpeedTradeoff">
       <aliases><alias value='local_only' target='local-only'/></aliases>
       <default>'local-only'</default>
-      <_summary>When to show thumbnails of image files</_summary>
-      <_description>Speed tradeoff for when to show an image file as a thumbnail. If set to "always" then always thumbnail,  even if the folder is on a remote server. If set to "local-only" then only show thumbnails for local file systems. If set to "never" then never bother to thumbnail images, just use a generic icon.</_description>
+      <_summary>When to show thumbnails of files</_summary>
+      <_description>Speed tradeoff for when to show a file as a thumbnail. If set to "always" then always thumbnail,  even if the folder is on a remote server. If set to "local-only" then only show thumbnails for local file systems. If set to "never" then never bother to thumbnail files, just use a generic icon. Despite what the name may suggest, this applies to any previewable file type.</_description>
     </key>
     <key name="thumbnail-limit" type="t">
       <default>1048576</default>
@@ -215,11 +204,6 @@
       <default>false</default>
       <_summary>Reverse sort order in new windows</_summary>
       <_description>If true, files in new windows will be sorted in reverse order. ie, if sorted by name, then instead of sorting the files from "a" to "z", they will be sorted from "z" to "a"; if sorted by size, instead of being incrementally they will be sorted decrementally.</_description>
-    </key>
-    <key name="desktop-is-home-dir" type="b">
-      <default>false</default>
-      <_summary>Nemo uses the users home folder as the desktop</_summary>
-      <_description>If set to true, then Nemo will use the user's home folder as the desktop.  If it is false, then it will use ~/Desktop as the desktop.</_description>
     </key>
     <key name="default-folder-viewer" enum="org.nemo.FolderView">
       <aliases>

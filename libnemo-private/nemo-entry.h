@@ -53,7 +53,6 @@ typedef struct {
 typedef struct {
 	GtkEntryClass parent_class;
 
-	void (*user_changed)      (NemoEntry *entry);
 	void (*selection_changed) (NemoEntry *entry);
 } NemoEntryClass;
 

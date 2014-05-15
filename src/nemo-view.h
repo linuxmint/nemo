@@ -33,7 +33,6 @@
 
 #include <libnemo-private/nemo-directory.h>
 #include <libnemo-private/nemo-file.h>
-#include <libnemo-private/nemo-icon-container.h>
 #include <libnemo-private/nemo-link.h>
 
 typedef struct NemoView NemoView;
@@ -169,6 +168,10 @@ struct NemoViewClass {
         /* select_all is a function pointer that subclasses must override to
          * select all of the items in the view */
         void     (* select_all)	         	(NemoView *view);
+
+        /* select_first is a function pointer that subclasses must override to
+         * select the first item in the view */
+        void     (* select_first)	      	(NemoView *view);
 
         /* set_selection is a function pointer that subclasses must
          * override to select the specified items (and unselect all
@@ -306,7 +309,7 @@ struct NemoViewClass {
 GType               nemo_view_get_type                         (void);
 
 /* Functions callable from the user interface and elsewhere. */
-NemoWindow     *nemo_view_get_nemo_window              (NemoView  *view);
+NemoWindow     *nemo_view_get_window              (NemoView  *view);
 NemoWindowSlot *nemo_view_get_nemo_window_slot     (NemoView  *view);
 char *              nemo_view_get_uri                          (NemoView  *view);
 
@@ -382,6 +385,7 @@ void              nemo_view_new_file_with_initial_contents (NemoView *view,
 								GdkPoint *pos);
 
 /* selection handling */
+void              nemo_view_activate_selection         (NemoView      *view);
 int               nemo_view_get_selection_count        (NemoView      *view);
 GList *           nemo_view_get_selection              (NemoView      *view);
 void              nemo_view_set_selection              (NemoView      *view,
@@ -392,7 +396,6 @@ void              nemo_view_load_location              (NemoView      *view,
 							    GFile             *location);
 void              nemo_view_stop_loading               (NemoView      *view);
 
-char **           nemo_view_get_emblem_names_to_exclude (NemoView     *view);
 char *            nemo_view_get_first_visible_file     (NemoView      *view);
 void              nemo_view_scroll_to_file             (NemoView      *view,
 							    const char        *uri);
@@ -411,6 +414,6 @@ void              nemo_view_pop_up_location_context_menu (NemoView    *view,
 							      const char      *location);
 void              nemo_view_grab_focus                 (NemoView      *view);
 void              nemo_view_update_menus               (NemoView      *view);
-void              nemo_view_new_folder                 (NemoView      *view);
+void              nemo_view_new_folder                 (NemoView      *view, gboolean with_selection);
 
 #endif /* NEMO_VIEW_H */

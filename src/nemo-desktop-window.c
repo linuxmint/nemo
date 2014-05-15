@@ -48,15 +48,18 @@ G_DEFINE_TYPE (NemoDesktopWindow, nemo_desktop_window,
 	       NEMO_TYPE_WINDOW);
 
 static void
-nemo_desktop_window_dispose (GObject *obj)
+nemo_desktop_window_update_directory (NemoDesktopWindow *window)
 {
-	NemoDesktopWindow *window = NEMO_DESKTOP_WINDOW (obj);
+	GFile *location;
 
-	g_signal_handlers_disconnect_by_func (nemo_preferences,
-					      nemo_desktop_window_update_directory,
-					      window);
+	g_assert (NEMO_IS_DESKTOP_WINDOW (window));
 
-	G_OBJECT_CLASS (nemo_desktop_window_parent_class)->dispose (obj);
+	window->details->loaded = FALSE;
+	location = g_file_new_for_uri (EEL_DESKTOP_URI);
+	nemo_window_go_to (NEMO_WINDOW (window), location);
+	window->details->loaded = TRUE;
+
+	g_object_unref (location);
 }
 
 static void
@@ -91,12 +94,6 @@ nemo_desktop_window_constructed (GObject *obj)
 	if (accessible) {
 		atk_object_set_name (accessible, _("Desktop"));
 	}
-
-	/* Monitor the preference to have the desktop */
-	/* point to the Unix home folder */
-	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-				  G_CALLBACK (nemo_desktop_window_update_directory),
-				  window);
 }
 
 static void
@@ -117,28 +114,6 @@ nemo_desktop_window_init (NemoDesktopWindow *window)
 			   GINT_TO_POINTER (1));
 }
 
-static gint
-nemo_desktop_window_delete_event (NemoDesktopWindow *window)
-{
-	/* Returning true tells GTK+ not to delete the window. */
-	return TRUE;
-}
-
-void
-nemo_desktop_window_update_directory (NemoDesktopWindow *window)
-{
-	GFile *location;
-
-	g_assert (NEMO_IS_DESKTOP_WINDOW (window));
-
-	window->details->loaded = FALSE;
-	location = g_file_new_for_uri (EEL_DESKTOP_URI);
-	nemo_window_go_to (NEMO_WINDOW (window), location);
-	window->details->loaded = TRUE;
-
-	g_object_unref (location);
-}
-
 static void
 nemo_desktop_window_screen_size_changed (GdkScreen             *screen,
 					     NemoDesktopWindow *window)
@@ -155,7 +130,8 @@ nemo_desktop_window_screen_size_changed (GdkScreen             *screen,
 }
 
 NemoDesktopWindow *
-nemo_desktop_window_new (GdkScreen *screen)
+nemo_desktop_window_new (GtkApplication *application,
+			     GdkScreen      *screen)
 {
 	NemoDesktopWindow *window;
 	int width_request, height_request;
@@ -165,6 +141,7 @@ nemo_desktop_window_new (GdkScreen *screen)
     GdkRGBA transparent = {0, 0, 0, 0};
 
 	window = g_object_new (NEMO_TYPE_DESKTOP_WINDOW,
+			       "application", application,
 			       "disable-chrome", TRUE,
 			       "width_request", width_request,
 			       "height_request", height_request,
@@ -174,8 +151,6 @@ nemo_desktop_window_new (GdkScreen *screen)
 	/* Special sawmill setting*/
 	gtk_window_set_wmclass (GTK_WINDOW (window), "desktop_window", "Nemo");
 
-	g_signal_connect (window, "delete_event", G_CALLBACK (nemo_desktop_window_delete_event), NULL);
-
 	/* Point window at the desktop folder.
 	 * Note that nemo_desktop_window_init is too early to do this.
 	 */
@@ -183,6 +158,14 @@ nemo_desktop_window_new (GdkScreen *screen)
     gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
 
 	return window;
+}
+
+static gboolean
+nemo_desktop_window_delete_event (GtkWidget *widget,
+				      GdkEventAny *event)
+{
+	/* Returning true tells GTK+ not to delete the window. */
+	return TRUE;
 }
 
 static void
@@ -293,8 +276,7 @@ static NemoIconInfo *
 real_get_icon (NemoWindow *window,
 	       NemoWindowSlot *slot)
 {
-	return nemo_icon_info_lookup_from_name (NEMO_ICON_DESKTOP, 48,
-                                            gtk_widget_get_scale_factor (GTK_WIDGET (window)));
+	return nemo_icon_info_lookup_from_name (NEMO_DESKTOP_ICON_DESKTOP, 48);
 }
 
 static void
@@ -313,6 +295,13 @@ real_window_close (NemoWindow *window)
 }
 
 static void
+real_sync_view_as_menus (NemoWindow *window)
+{
+	/* stub, does nothing */
+	return;
+}
+
+static void
 nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 {
 	GtkWidgetClass *wclass = GTK_WIDGET_CLASS (klass);
@@ -320,13 +309,14 @@ nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 	GObjectClass *oclass = G_OBJECT_CLASS (klass);
 
 	oclass->constructed = nemo_desktop_window_constructed;
-	oclass->dispose = nemo_desktop_window_dispose;
 
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;
 	wclass->map = map;
+	wclass->delete_event = nemo_desktop_window_delete_event;
 
 	nclass->sync_title = real_sync_title;
+	nclass->sync_view_as_menus = real_sync_view_as_menus;
 	nclass->get_icon = real_get_icon;
 	nclass->close = real_window_close;
 

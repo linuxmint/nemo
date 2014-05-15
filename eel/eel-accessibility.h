@@ -33,16 +33,13 @@
 
 void eel_accessibility_set_up_label_widget_relation (GtkWidget *label, GtkWidget *widget);
 
-typedef void     (*EelAccessibilityClassInitFn)    (AtkObjectClass *klass);
-
 AtkObject    *eel_accessibility_get_atk_object        (gpointer              object);
-AtkObject    *eel_accessibility_for_object            (gpointer              object);
 gpointer      eel_accessibility_get_gobject           (AtkObject            *object);
 AtkObject    *eel_accessibility_set_atk_object_return (gpointer              object,
 						       AtkObject            *atk_object);
-GType         eel_accessibility_create_derived_type   (const char           *type_name,
-						       GType                 existing_gobject_with_proxy,
-						       EelAccessibilityClassInitFn class_init);
+GType         eel_accessibility_create_accessible_gtype (const char *type_name,
+							 GtkWidget *widget,
+							 GClassInitFunc class_init);
 
 char*         eel_accessibility_text_get_text         (AtkText              *text,
                                                        gint                 start_pos,

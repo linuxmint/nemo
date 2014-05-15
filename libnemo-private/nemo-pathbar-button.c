@@ -270,3 +270,4 @@ nemo_pathbar_button_get_preferred_size (GtkWidget *button, GtkRequisition *requi
     req.height = height;
     *requisition = req;
 }
+

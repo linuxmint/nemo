@@ -61,7 +61,8 @@ typedef enum {
     NEMO_FILE_SORT_BY_DETAILED_TYPE,
 	NEMO_FILE_SORT_BY_MTIME,
         NEMO_FILE_SORT_BY_ATIME,
-	NEMO_FILE_SORT_BY_TRASHED_TIME
+	NEMO_FILE_SORT_BY_TRASHED_TIME,
+	NEMO_FILE_SORT_BY_SEARCH_RELEVANCE
 } NemoFileSortType;	
 
 typedef enum {
@@ -185,12 +186,14 @@ NemoFile *          nemo_file_get_parent                        (NemoFile       
 GFile *                 nemo_file_get_parent_location               (NemoFile                   *file);
 char *                  nemo_file_get_parent_uri                    (NemoFile                   *file);
 char *                  nemo_file_get_parent_uri_for_display        (NemoFile                   *file);
+char *                  nemo_file_get_thumbnail_path                (NemoFile                   *file);
 gboolean                nemo_file_can_get_size                      (NemoFile                   *file);
 goffset                 nemo_file_get_size                          (NemoFile                   *file);
 time_t                  nemo_file_get_mtime                         (NemoFile                   *file);
 time_t                  nemo_file_get_ctime                         (NemoFile                   *file);
 GFileType               nemo_file_get_file_type                     (NemoFile                   *file);
 char *                  nemo_file_get_mime_type                     (NemoFile                   *file);
+char *                  nemo_file_get_extension                     (NemoFile                   *file);
 gboolean                nemo_file_is_mime_type                      (NemoFile                   *file,
 									 const char                     *mime_type);
 gboolean                nemo_file_is_launchable                     (NemoFile                   *file);
@@ -208,9 +211,11 @@ gboolean                nemo_file_is_directory                      (NemoFile   
 gboolean                nemo_file_is_user_special_directory         (NemoFile                   *file,
 									 GUserDirectory                 special_directory);
 gboolean		nemo_file_is_archive			(NemoFile			*file);
+gboolean                nemo_file_is_in_search 			(NemoFile			*file);
 gboolean                nemo_file_is_in_trash                       (NemoFile                   *file);
 gboolean                nemo_file_is_in_recent                      (NemoFile                   *file);
 gboolean                nemo_file_is_in_desktop                     (NemoFile                   *file);
+gboolean                nemo_file_is_in_network                     (NemoFile                   *file);
 gboolean		nemo_file_is_home				(NemoFile                   *file);
 gboolean                nemo_file_is_desktop_directory              (NemoFile                   *file);
 GError *                nemo_file_get_file_info_error               (NemoFile                   *file);
@@ -228,9 +233,7 @@ NemoRequestStatus   nemo_file_get_deep_counts                   (NemoFile       
 gboolean                nemo_file_should_show_thumbnail             (NemoFile                   *file);
 gboolean                nemo_file_should_show_directory_item_count  (NemoFile                   *file);
 gboolean                nemo_file_should_show_type                  (NemoFile                   *file);
-GList *                 nemo_file_get_keywords                      (NemoFile                   *file);
-GList *                 nemo_file_get_emblem_icons                  (NemoFile                   *file,
-									 char                          **exclude);
+GList *                 nemo_file_get_emblem_icons                  (NemoFile                   *file);
 char *                  nemo_file_get_top_left_text                 (NemoFile                   *file);
 char *                  nemo_file_peek_top_left_text                (NemoFile                   *file,
 									 gboolean                        need_large_text,
@@ -238,6 +241,8 @@ char *                  nemo_file_peek_top_left_text                (NemoFile   
 gboolean                nemo_file_get_directory_item_mime_types     (NemoFile                   *file,
 									 GList                         **mime_list);
 
+void                    nemo_file_set_search_relevance              (NemoFile                   *file,
+									 gdouble                         relevance);
 void                    nemo_file_set_attributes                    (NemoFile                   *file, 
 									 GFileInfo                      *attributes,
 									 NemoFileOperationCallback   callback,
@@ -457,12 +462,10 @@ GIcon *                 nemo_file_get_gicon                         (NemoFile   
 									 NemoFileIconFlags           flags);
 NemoIconInfo *      nemo_file_get_icon                          (NemoFile                   *file,
 									 int                             size,
-                                     int                             scale,
 									 NemoFileIconFlags           flags);
 GdkPixbuf *             nemo_file_get_icon_pixbuf                   (NemoFile                   *file,
 									 int                             size,
 									 gboolean                        force_size,
-                                     int                             scale,
 									 NemoFileIconFlags           flags);
 
 gboolean                nemo_file_has_open_window                   (NemoFile                   *file);
@@ -487,11 +490,6 @@ void                    nemo_file_list_call_when_ready              (GList      
 									 NemoFileListCallback        callback,
 									 gpointer                        callback_data);
 void                    nemo_file_list_cancel_call_when_ready       (NemoFileListHandle         *handle);
-
-char *   nemo_file_get_owner_as_string            (NemoFile          *file,
-                                                          gboolean           include_real_name);
-char *   nemo_file_get_type_as_string             (NemoFile          *file);
-char *   nemo_file_get_detailed_type_as_string    (NemoFile          *file);
 
 char *   nemo_file_get_date_as_string             (NemoFile *file, NemoDateType date_type);
 
