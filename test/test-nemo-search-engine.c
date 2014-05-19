@@ -13,16 +13,6 @@ hits_added_cb (NemoSearchEngine *engine, GSList *hits)
 }
 
 static void
-hits_subtracted_cb (NemoSearchEngine *engine, GSList *hits)
-{
-	g_print ("hits subtracted\n");
-	while (hits) {
-		g_print (" - %s\n", (char *)hits->data);
-		hits = hits->next;
-	}
-}
-
-static void
 finished_cb (NemoSearchEngine *engine)
 {
 	g_print ("finished!\n");
@@ -40,8 +30,6 @@ main (int argc, char* argv[])
 	engine = nemo_search_engine_new ();
 	g_signal_connect (engine, "hits-added", 
 			  G_CALLBACK (hits_added_cb), NULL);
-	g_signal_connect (engine, "hits-subtracted", 
-			  G_CALLBACK (hits_subtracted_cb), NULL);
 	g_signal_connect (engine, "finished", 
 			  G_CALLBACK (finished_cb), NULL);
 

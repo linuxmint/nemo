@@ -1,3 +1,30 @@
+Nemo merged with changes in Nautilus 3.6.1.
+
+Changes:
+* Fix floating bar not disappearing on search finish
+* Fix fullcolor icons appearing in the pathbar for mount roots
+* Fix drag and drop of multiple rows in list view
+* Fix search relevance not being applied correctly when searching
+* Fix sidebar visibility switch applying to all windows
+* Fix search location when moving to a search directory in Back/Forward
+  history
+* Fix missing search results with non-ASCII characters
+* Fix Home/Trash not showing up in shell provider results
+* Fix startup notification not working when opening multiple windows
+* Fix search results not focusing when activated from the Shell
+* Fix error dialog not showing up when entering a non-existant location
+  in Connect to Server
+* Fix inability to open files after cancelling a rename in list view under
+  some circumstances
+* Fix desktop icons not following the primary monitor workarea when multihead
+  is used with the desktop enabled
+* Fix crasher when search string changes too fast
+* Fix crasher when enabling search while loading a directory
+* Fix crasher when trying to open a saved search file
+* Fix crasher when Tracker is installed but not running
+* Fix crasher in the shell search provider for bookmarks/mounts with an
+  empty name
+
 Nemo merged with changes in Nautilus 3.6.0.
 
 Changes:

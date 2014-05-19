@@ -24,15 +24,19 @@
 #include <config.h>
 #include <string.h>
 
-#include "nemo-query.h"
 #include <eel/eel-glib-extensions.h>
 #include <glib/gi18n.h>
-#include <libnemo-private/nemo-file-utilities.h>
+
+#include "nemo-file-utilities.h"
+#include "nemo-query.h"
 
 struct NemoQueryDetails {
 	char *text;
 	char *location_uri;
 	GList *mime_types;
+	gboolean show_hidden;
+
+	char **prepared_words;
 };
 
 static void  nemo_query_class_init       (NemoQueryClass *class);
@@ -47,6 +51,7 @@ finalize (GObject *object)
 
 	query = NEMO_QUERY (object);
 	g_free (query->details->text);
+	g_strfreev (query->details->prepared_words);
 	g_free (query->details->location_uri);
 
 	G_OBJECT_CLASS (nemo_query_parent_class)->finalize (object);
@@ -68,6 +73,60 @@ nemo_query_init (NemoQuery *query)
 {
 	query->details = G_TYPE_INSTANCE_GET_PRIVATE (query, NEMO_TYPE_QUERY,
 						      NemoQueryDetails);
+	query->details->show_hidden = TRUE;
+}
+
+static gchar *
+prepare_string_for_compare (const gchar *string)
+{
+	gchar *normalized, *res;
+
+	normalized = g_utf8_normalize (string, -1, G_NORMALIZE_NFD);
+	res = g_utf8_strdown (normalized, -1);
+	g_free (normalized);
+
+	return res;
+}
+
+gdouble
+nemo_query_matches_string (NemoQuery *query,
+			       const gchar *string)
+{
+	gchar *prepared_string, *ptr;
+	gboolean found;
+	gdouble retval;
+	gint idx;
+
+	if (!query->details->text) {
+		return -1;
+	}
+
+	if (!query->details->prepared_words) {
+		prepared_string = prepare_string_for_compare (query->details->text);
+		query->details->prepared_words = g_strsplit (prepared_string, " ", -1);
+		g_free (prepared_string);
+	}
+
+	prepared_string = prepare_string_for_compare (string);
+	found = TRUE;
+	ptr = NULL;
+
+	for (idx = 0; query->details->prepared_words[idx] != NULL; idx++) {
+		if ((ptr = strstr (prepared_string, query->details->prepared_words[idx])) == NULL) {
+			found = FALSE;
+			break;
+		}
+	}
+
+	if (!found) {
+		g_free (prepared_string);
+		return -1;
+	}
+
+	retval = MAX (10.0, (50.0 / idx) - (gdouble) (ptr - prepared_string));
+	g_free (prepared_string);
+
+	return retval;
 }
 
 NemoQuery *
@@ -88,6 +147,9 @@ nemo_query_set_text (NemoQuery *query, const char *text)
 {
 	g_free (query->details->text);
 	query->details->text = g_strstrip (g_strdup (text));
+
+	g_strfreev (query->details->prepared_words);
+	query->details->prepared_words = NULL;
 }
 
 char *
@@ -121,6 +183,18 @@ nemo_query_add_mime_type (NemoQuery *query, const char *mime_type)
 {
 	query->details->mime_types = g_list_append (query->details->mime_types,
 						    g_strdup (mime_type));
+}
+
+gboolean
+nemo_query_get_show_hidden_files (NemoQuery *query)
+{
+	return query->details->show_hidden;
+}
+
+void
+nemo_query_set_show_hidden_files (NemoQuery *query, gboolean show_hidden)
+{
+	query->details->show_hidden = show_hidden;
 }
 
 char *
