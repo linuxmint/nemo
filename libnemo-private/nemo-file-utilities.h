@@ -64,6 +64,9 @@ char *	 nemo_compute_title_for_location	     (GFile *file);
 
 gboolean nemo_is_file_roller_installed           (void);
 
+GIcon *  nemo_special_directory_get_icon         (GUserDirectory directory);
+GIcon *  nemo_special_directory_get_symbolic_icon (GUserDirectory directory);
+
 gboolean nemo_uri_parse                          (const char  *uri,
 						      char       **host,
 						      guint16     *port,

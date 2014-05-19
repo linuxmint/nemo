@@ -237,14 +237,14 @@ desktop_canvas_view_property_filter (GdkXEvent *gdk_xevent,
 static void
 real_begin_loading (NemoView *object)
 {
-	NemoCanvasContainer *icon_container;
+	NemoCanvasContainer *canvas_container;
 	NemoDesktopCanvasView *view;
 
 	view = NEMO_DESKTOP_CANVAS_VIEW (object);
 
-	icon_container = get_canvas_container (view);
+	canvas_container = get_canvas_container (view);
 	if (view->details->background == NULL) {
-		view->details->background = nemo_desktop_background_new (icon_container);
+		view->details->background = nemo_desktop_background_new (canvas_container);
 	}
 
 	NEMO_VIEW_CLASS (nemo_desktop_canvas_view_parent_class)->begin_loading (object);

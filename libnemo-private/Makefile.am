@@ -166,8 +166,6 @@ libnemo_private_la_SOURCES = \
 	nemo-program-choosing.h \
 	nemo-recent.c \
 	nemo-recent.h \
-	nemo-saved-search-file.c \
-	nemo-saved-search-file.h \
 	nemo-search-directory.c \
 	nemo-search-directory.h \
 	nemo-search-directory-file.c \

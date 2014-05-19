@@ -190,12 +190,46 @@ query_editor_changed_callback (NemoQueryEditor *editor,
 }
 
 static void
-update_query_editor (NemoWindowSlot *slot)
+hide_query_editor (NemoWindowSlot *slot)
+{
+	gtk_widget_hide (GTK_WIDGET (slot->query_editor));
+
+	if (slot->qe_changed_id > 0) {
+		g_signal_handler_disconnect (slot->query_editor, slot->qe_changed_id);
+		slot->qe_changed_id = 0;
+	}
+	if (slot->qe_cancel_id > 0) {
+		g_signal_handler_disconnect (slot->query_editor, slot->qe_cancel_id);
+		slot->qe_cancel_id = 0;
+	}
+	if (slot->qe_activated_id > 0) {
+		g_signal_handler_disconnect (slot->query_editor, slot->qe_activated_id);
+		slot->qe_activated_id = 0;
+	}
+
+	nemo_query_editor_set_query (slot->query_editor, NULL);
+}
+
+static void
+show_query_editor (NemoWindowSlot *slot)
 {
 	NemoDirectory *directory;
 	NemoSearchDirectory *search_directory;
+	GFile *location;
 
-	directory = nemo_directory_get (slot->location);
+	/* This might be called while we're still loading the location.
+	 * In such a case, just set slot->load_with_search to TRUE, to stop
+	 * nautilus_window_sync_search_widgets() from hiding it again when
+	 * loading has completed.
+	 */
+	if (slot->location) {
+		location = slot->location;
+	} else {
+		location = slot->pending_location;
+		slot->load_with_search = TRUE;
+	}
+
+	directory = nemo_directory_get (location);
 
 	if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
 		NemoQuery *query;
@@ -207,21 +241,26 @@ update_query_editor (NemoWindowSlot *slot)
 			g_object_unref (query);
 		}
 	} else {
-		nemo_query_editor_set_location (slot->query_editor, slot->location);
+		nemo_query_editor_set_location (slot->query_editor, location);
 	}
 
 	nemo_directory_unref (directory);
-}
-
-static void
-ensure_query_editor (NemoWindowSlot *slot)
-{
-	g_assert (slot->query_editor != NULL);
-
-	update_query_editor (slot);
 
 	gtk_widget_show (GTK_WIDGET (slot->query_editor));
 	gtk_widget_grab_focus (GTK_WIDGET (slot->query_editor));
+
+	if (slot->qe_changed_id == 0) {
+		slot->qe_changed_id = g_signal_connect (slot->query_editor, "changed",
+							G_CALLBACK (query_editor_changed_callback), slot);
+	}
+	if (slot->qe_cancel_id == 0) {
+		slot->qe_cancel_id = g_signal_connect (slot->query_editor, "cancel",
+						       G_CALLBACK (query_editor_cancel_callback), slot);
+	}
+	if (slot->qe_activated_id == 0) {
+		slot->qe_activated_id = g_signal_connect (slot->query_editor, "activated",
+							  G_CALLBACK (query_editor_activated_callback), slot);
+	}
 }
 
 void
@@ -229,27 +268,9 @@ nemo_window_slot_set_query_editor_visible (NemoWindowSlot *slot,
 					       gboolean            visible)
 {
 	if (visible) {
-		ensure_query_editor (slot);
-
-		if (slot->qe_changed_id == 0)
-			slot->qe_changed_id = g_signal_connect (slot->query_editor, "changed",
-								G_CALLBACK (query_editor_changed_callback), slot);
-		if (slot->qe_cancel_id == 0)
-			slot->qe_cancel_id = g_signal_connect (slot->query_editor, "cancel",
-							       G_CALLBACK (query_editor_cancel_callback), slot);
-		if (slot->qe_activated_id == 0)
-			slot->qe_activated_id = g_signal_connect (slot->query_editor, "activated",
-							       G_CALLBACK (query_editor_activated_callback), slot);
-
+		show_query_editor (slot);
 	} else {
-		gtk_widget_hide (GTK_WIDGET (slot->query_editor));
-		g_signal_handler_disconnect (slot->query_editor, slot->qe_changed_id);
-		slot->qe_changed_id = 0;
-		g_signal_handler_disconnect (slot->query_editor, slot->qe_cancel_id);
-		slot->qe_cancel_id = 0;
-		g_signal_handler_disconnect (slot->query_editor, slot->qe_activated_id);
-		slot->qe_activated_id = 0;
-		nemo_query_editor_set_query (slot->query_editor, NULL);
+		hide_query_editor (slot);
 	}
 }
 

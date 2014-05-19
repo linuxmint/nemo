@@ -25,6 +25,7 @@
 #include "nemo-search-hit.h"
 #include "nemo-search-provider.h"
 #include "nemo-search-engine-simple.h"
+#include "nemo-ui-utilities.h"
 
 #include <string.h>
 #include <glib.h>
@@ -80,11 +81,7 @@ finalize (GObject *object)
 	NemoSearchEngineSimple *simple;
 
 	simple = NEMO_SEARCH_ENGINE_SIMPLE (object);
-	
-	if (simple->details->query) {
-		g_object_unref (simple->details->query);
-		simple->details->query = NULL;
-	}
+	g_clear_object (&simple->details->query);
 
 	G_OBJECT_CLASS (nemo_search_engine_simple_parent_class)->finalize (object);
 }
@@ -94,7 +91,7 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 			NemoQuery *query)
 {
 	SearchThreadData *data;
-	char *text, *lower, *normalized, *uri;
+	char *text, *prepared, *uri;
 	GFile *location;
 	
 	data = g_new0 (SearchThreadData, 1);
@@ -114,12 +111,10 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 	g_queue_push_tail (data->directories, location);
 	
 	text = nemo_query_get_text (query);
-	normalized = g_utf8_normalize (text, -1, G_NORMALIZE_NFD);
-	lower = g_utf8_strdown (normalized, -1);
-	data->words = g_strsplit (lower, " ", -1);
+	prepared = nemo_search_prepare_string_for_compare (text);
+	data->words = g_strsplit (prepared, " ", -1);
 	g_free (text);
-	g_free (lower);
-	g_free (normalized);
+	g_free (prepared);
 
 	data->mime_types = nemo_query_get_mime_types (query);
 
@@ -214,7 +209,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 	GFileInfo *info;
 	GFile *child;
 	const char *mime_type, *display_name;
-	char *lower_name, *normalized;
+	char *prepared;
 	gboolean found;
 	int i;
 	GList *l;
@@ -239,19 +234,17 @@ visit_directory (GFile *dir, SearchThreadData *data)
 		if (display_name == NULL) {
 			goto next;
 		}
-		
-		normalized = g_utf8_normalize (display_name, -1, G_NORMALIZE_NFD);
-		lower_name = g_utf8_strdown (normalized, -1);
-		g_free (normalized);
-		
+
+		prepared = nemo_search_prepare_string_for_compare (display_name);
+
 		found = TRUE;
 		for (i = 0; data->words[i] != NULL; i++) {
-			if (strstr (lower_name, data->words[i]) == NULL) {
+			if (strstr (prepared, data->words[i]) == NULL) {
 				found = FALSE;
 				break;
 			}
 		}
-		g_free (lower_name);
+		g_free (prepared);
 		
 		if (found && data->mime_types) {
 			mime_type = g_file_info_get_content_type (info);
@@ -361,10 +354,6 @@ nemo_search_engine_simple_start (NemoSearchProvider *provider)
 	if (simple->details->active_search != NULL) {
 		return;
 	}
-
-	if (simple->details->query == NULL) {
-		return;
-	}
 	
 	data = search_thread_data_new (simple, simple->details->query);
 
@@ -395,14 +384,8 @@ nemo_search_engine_simple_set_query (NemoSearchProvider *provider,
 
 	simple = NEMO_SEARCH_ENGINE_SIMPLE (provider);
 
-	if (query) {
-		g_object_ref (query);
-	}
-
-	if (simple->details->query) {
-		g_object_unref (simple->details->query);
-	}
-
+	g_object_ref (query);
+	g_clear_object (&simple->details->query);
 	simple->details->query = query;
 }
 

@@ -28,6 +28,7 @@
 #include "nemo-directory.h"
 #include "nemo-directory-private.h"
 #include "nemo-file.h"
+#include "nemo-ui-utilities.h"
 
 #include <string.h>
 #include <glib.h>
@@ -88,18 +89,16 @@ emit_finished_idle_cb (gpointer user_data)
 }
 
 static gchar *
-prepare_query_pattern (NemoSearchEngineModel *model)
+prepare_pattern_for_comparison (NemoSearchEngineModel *model)
 {
-	gchar *text, *pattern, *normalized, *lower;
+	gchar *text, *prepared, *pattern;
 
 	text = nemo_query_get_text (model->details->query);
-	normalized = g_utf8_normalize (text, -1, G_NORMALIZE_NFD);
-	lower = g_utf8_strdown (normalized, -1);
-	pattern = g_strdup_printf ("*%s*", lower);
+	prepared = nemo_search_prepare_string_for_compare (text);
+	pattern = g_strdup_printf ("*%s*", prepared);
 
+	g_free (prepared);
 	g_free (text);
-	g_free (normalized);
-	g_free (lower);
 
 	return pattern;
 }
@@ -111,26 +110,26 @@ model_directory_ready_cb (NemoDirectory	*directory,
 {
 	NemoSearchEngineModel *model = user_data;
 	gchar *uri, *pattern;
-	gchar *display_name, *lower;
+	gchar *display_name, *prepared;
 	GList *files, *l, *hits;
 	NemoFile *file;
 
-	pattern = prepare_query_pattern (model);
+	pattern = prepare_pattern_for_comparison (model);
 	files = nemo_directory_get_file_list (directory);
 	hits = NULL;
 
 	for (l = files; l != NULL; l = l->next) {
 		file = l->data;
 		display_name = nemo_file_get_display_name (file);
-		lower = g_utf8_strdown (display_name, -1);
+		prepared = nemo_search_prepare_string_for_compare (display_name);
 
-		if (g_pattern_match_simple (pattern, lower)) {
+		if (g_pattern_match_simple (pattern, prepared)) {
 			uri = nemo_file_get_uri (file);
 			hits = g_list_prepend (hits, nemo_search_hit_new (uri));
 			g_free (uri);
 		}
 
-		g_free (lower);
+		g_free (prepared);
 		g_free (display_name);
 	}
 
@@ -152,8 +151,7 @@ nemo_search_engine_model_start (NemoSearchProvider *provider)
 		return;
 	}
 
-	if (model->details->query == NULL ||
-	    model->details->directory == NULL) {
+	if (model->details->directory == NULL) {
 		g_idle_add (emit_finished_idle_cb, model);
 		return;
 	}
@@ -188,14 +186,8 @@ nemo_search_engine_model_set_query (NemoSearchProvider *provider,
 
 	model = NEMO_SEARCH_ENGINE_MODEL (provider);
 
-	if (query) {
-		g_object_ref (query);
-	}
-
-	if (model->details->query) {
-		g_object_unref (model->details->query);
-	}
-
+	g_object_ref (query);
+	g_clear_object (&model->details->query);
 	model->details->query = query;
 }
 

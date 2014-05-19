@@ -82,6 +82,7 @@ src/nemo-places-sidebar.c
 src/nemo-progress-ui-handler.c
 src/nemo-properties-window.c
 src/nemo-query-editor.c
+src/nemo-shell-search-provider.c
 src/nemo-search-bar.c
 src/nemo-shell-ui.xml
 src/nemo-special-location-bar.c

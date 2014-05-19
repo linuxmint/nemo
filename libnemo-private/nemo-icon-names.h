@@ -34,14 +34,28 @@
 #define NEMO_DESKTOP_ICON_NETWORK    "network-workgroup"
 
 /* Fullcolor icons */
-#define NAUTILUS_ICON_FULLCOLOR_FOLDER        "folder"
-#define NAUTILUS_ICON_FULLCOLOR_FOLDER_REMOTE "folder-remote"
-#define NAUTILUS_ICON_FULLCOLOR_FOLDER_SAVED_SEARCH "folder-saved-search"
+#define NEMO_ICON_FULLCOLOR_FOLDER              "folder"
+#define NEMO_ICON_FULLCOLOR_FOLDER_REMOTE       "folder-remote"
+#define NEMO_ICON_FULLCOLOR_FOLDER_DOCUMENTS    "folder-documents"
+#define NEMO_ICON_FULLCOLOR_FOLDER_DOWNLOAD     "folder-download"
+#define NEMO_ICON_FULLCOLOR_FOLDER_MUSIC        "folder-music"
+#define NEMO_ICON_FULLCOLOR_FOLDER_PICTURES     "folder-pictures"
+#define NEMO_ICON_FULLCOLOR_FOLDER_PUBLIC_SHARE "folder-publicshare"
+#define NEMO_ICON_FULLCOLOR_FOLDER_TEMPLATES    "folder-templates"
+#define NEMO_ICON_FULLCOLOR_FOLDER_VIDEOS       "folder-videos"
+#define NEMO_ICON_FULLCOLOR_FOLDER_SAVED_SEARCH "folder-saved-search"
 
 /* Symbolic icons */
-#define NAUTILUS_ICON_SYMBOLIC_FOLDER        "folder-symbolic"
-#define NAUTILUS_ICON_SYMBOLIC_FOLDER_REMOTE "folder-remote-symbolic"
-#define NAUTILUS_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH "folder-saved-search-symbolic"
+#define NEMO_ICON_SYMBOLIC_FOLDER              "folder-symbolic"
+#define NEMO_ICON_SYMBOLIC_FOLDER_REMOTE       "folder-remote-symbolic"
+#define NEMO_ICON_SYMBOLIC_FOLDER_DOCUMENTS    "folder-documents"
+#define NEMO_ICON_SYMBOLIC_FOLDER_DOWNLOAD     "folder-download-symbolic"
+#define NEMO_ICON_SYMBOLIC_FOLDER_MUSIC        "folder-music-symbolic"
+#define NEMO_ICON_SYMBOLIC_FOLDER_PICTURES     "folder-pictures-symbolic"
+#define NEMO_ICON_SYMBOLIC_FOLDER_PUBLIC_SHARE "folder-publicshare-symbolic"
+#define NEMO_ICON_SYMBOLIC_FOLDER_TEMPLATES    "folder-templates-symbolic"
+#define NEMO_ICON_SYMBOLIC_FOLDER_VIDEOS       "folder-videos-symbolic"
+#define NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH "folder-saved-search-symbolic"
 
 /* Other icons */
 #define NEMO_ICON_TEMPLATE		"text-x-generic-template"

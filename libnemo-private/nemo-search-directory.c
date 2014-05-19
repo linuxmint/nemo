@@ -773,10 +773,7 @@ search_dispose (GObject *object)
 		search->details->pending_callback_list = NULL;
 	}
 
-	if (search->details->query) {
-		g_object_unref (search->details->query);
-		search->details->query = NULL;
-	}
+	g_clear_object (&search->details->query);
 
 	if (search->details->engine) {
 		if (search->details->search_running) {
@@ -857,6 +854,26 @@ nemo_search_directory_set_base_model (NemoSearchDirectory *search,
 		return;
 	}
 
+	if (search->details->query != NULL) {
+		gchar *uri;
+		GFile *query_location, *model_location;
+		gboolean is_equal;
+
+		uri = nemo_query_get_location (search->details->query);
+		query_location = g_file_new_for_uri (uri);
+		model_location = nemo_directory_get_location (base_model);
+
+		is_equal = g_file_equal (model_location, query_location);
+
+		g_object_unref (model_location);
+		g_object_unref (query_location);
+		g_free (uri);
+
+		if (!is_equal) {
+			return;
+		}
+	}
+
 	clear_base_model (search);
 	search->details->base_model = nemo_directory_ref (base_model);
 
@@ -895,10 +912,7 @@ nemo_search_directory_set_query (NemoSearchDirectory *search,
 	if (search->details->query != query) {
 		search->details->modified = TRUE;
 
-		if (query) {
-			g_object_ref (query);
-		}
-
+		g_object_ref (query);
 		g_clear_object (&search->details->query);
 		search->details->query = query;
 
@@ -906,10 +920,10 @@ nemo_search_directory_set_query (NemoSearchDirectory *search,
 	}
 
 	file = nemo_directory_get_existing_corresponding_file (NEMO_DIRECTORY (search));
-	if (file != NULL) {
+	if ((file != NULL) && (search->details->saved_search_uri == NULL)) {
 		nemo_search_directory_file_update_display_name (NEMO_SEARCH_DIRECTORY_FILE (file));
-		g_object_unref (file);
 	}
+	nemo_file_unref (file);
 }
 
 NemoQuery *
@@ -922,18 +936,16 @@ nemo_search_directory_get_query (NemoSearchDirectory *search)
 	return NULL;
 }
 
-NemoSearchDirectory *
-nemo_search_directory_new_from_saved_search (const char *uri)
+void
+nemo_search_directory_set_saved_search (NemoSearchDirectory *search,
+					    GFile *saved_search)
 {
-	NemoSearchDirectory *search;
 	NemoQuery *query;
 	char *file;
-	
-	search = NEMO_SEARCH_DIRECTORY (g_object_new (NEMO_TYPE_SEARCH_DIRECTORY, NULL));
 
-	search->details->saved_search_uri = g_strdup (uri);
-	
-	file = g_filename_from_uri (uri, NULL, NULL);
+	search->details->saved_search_uri = g_file_get_uri (saved_search);
+	file = g_file_get_path (saved_search);
+
 	if (file != NULL) {
 		query = nemo_query_load (file);
 		if (query != NULL) {
@@ -946,7 +958,6 @@ nemo_search_directory_new_from_saved_search (const char *uri)
 	}
 
 	search->details->modified = FALSE;
-	return search;
 }
 
 gboolean
