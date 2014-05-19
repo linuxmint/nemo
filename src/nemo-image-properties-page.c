@@ -362,6 +362,8 @@ append_options_info (NemoImagePropertiesPage *page)
 	append_option_value_pair (page, pixbuf, "tEXt::Copyright", _("Copyright"));
 	append_option_value_pair (page, pixbuf, "tEXt::Creation Time", _("Created On"));
 	append_option_value_pair (page, pixbuf, "tEXt::Software", _("Created By"));
+	/* Translators: this refers to a legal disclaimer string embedded in
+	 * the metadata of an image */
 	append_option_value_pair (page, pixbuf, "tEXt::Disclaimer", _("Disclaimer"));
 	append_option_value_pair (page, pixbuf, "tEXt::Warning", _("Warning"));
 	append_option_value_pair (page, pixbuf, "tEXt::Source", _("Source"));
