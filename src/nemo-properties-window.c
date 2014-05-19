@@ -56,6 +56,7 @@
 #include <libnemo-private/nemo-entry.h>
 #include <libnemo-private/nemo-file-attributes.h>
 #include <libnemo-private/nemo-file-operations.h>
+#include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-link.h>
@@ -2455,6 +2456,19 @@ is_computer_directory (NemoFile *file)
 }
 
 static gboolean
+is_root_directory (NemoFile *file)
+{
+	GFile *location;
+	gboolean result;
+
+	location = nemo_file_get_location (file);
+	result = nemo_is_root_directory (location);
+	g_object_unref (location);
+
+	return result;
+}
+
+static gboolean
 is_network_directory (NemoFile *file)
 {
 	char *file_uri;
@@ -2519,10 +2533,11 @@ should_show_file_type (NemoPropertiesWindow *window)
 }
 
 static gboolean
-should_show_location_info (NemoPropertiesWindow *window) 
+should_show_location_info (NemoPropertiesWindow *window)
 {
-	if (!is_multi_file_window (window) 
+	if (!is_multi_file_window (window)
 	    && (is_merged_trash_directory (get_target_file (window)) ||
+		is_root_directory (get_target_file (window)) ||
 		is_computer_directory (get_target_file (window)) ||
 		is_network_directory (get_target_file (window)) ||
 		is_burn_directory (get_target_file (window)))) {
@@ -2588,6 +2603,28 @@ should_show_free_space (NemoPropertiesWindow *window)
 }
 
 static gboolean
+should_show_volume_info (NemoPropertiesWindow *window)
+{
+	NemoFile *file;
+
+	if (is_multi_file_window (window)) {
+		return FALSE;
+	}
+
+	file = get_original_file (window);
+
+	if (file == NULL) {
+		return FALSE;
+	}
+
+	if (nemo_file_can_unmount (file)) {
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static gboolean
 should_show_volume_usage (NemoPropertiesWindow *window)
 {
 	NemoFile *file;
@@ -2607,9 +2644,12 @@ should_show_volume_usage (NemoPropertiesWindow *window)
 		return TRUE;
 	}
 
+	success = is_root_directory (file);
+
 #ifdef TODO_GIO
 	/* Look at is_mountpoint for activation uri */
 #endif
+
 	return success;
 }
 
@@ -3264,12 +3304,14 @@ create_basic_page (NemoPropertiesWindow *window)
 	append_blank_row (grid);
 
 	if (should_show_location_info (window)) {
-		append_title_and_ellipsizing_value (window, grid, _("Location:"), 
+		append_title_and_ellipsizing_value (window, grid, _("Location:"),
 						    "where",
 						    INCONSISTENT_STATE_STRING,
 						    location_show_original (window), 
 						    PANGO_ELLIPSIZE_MIDDLE);
+	}
 
+	if (should_show_volume_info (window)) {
 		append_title_and_ellipsizing_value (window, grid,
 						    _("Volume:"),
 						    "volume",
