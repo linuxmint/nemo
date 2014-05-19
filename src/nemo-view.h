@@ -123,16 +123,6 @@ struct NemoViewClass {
 	void 	(* end_loading) 	 (NemoView *view,
 					  gboolean all_files_seen);
 
-	/* The 'load_error' signal is emitted when the directory model
-	 * reports an error in the process of monitoring the directory's
-	 * contents.  The load error indicates that the process of 
-	 * loading the contents has ended, but the directory is still
-	 * being monitored. The default implementation handles common
-	 * load failures like ACCESS_DENIED.
-	 */
-	void    (* load_error)           (NemoView *view,
-					  GError *error);
-
 	/* Function pointers that don't have corresponding signals */
 
         /* reset_to_defaults is a function pointer that subclasses must 
