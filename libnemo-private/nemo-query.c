@@ -74,6 +74,7 @@ nemo_query_init (NemoQuery *query)
 	query->details = G_TYPE_INSTANCE_GET_PRIVATE (query, NEMO_TYPE_QUERY,
 						      NemoQueryDetails);
 	query->details->show_hidden = TRUE;
+	query->details->location_uri = nemo_get_home_directory_uri ();
 }
 
 static gchar *
@@ -417,11 +418,9 @@ nemo_query_to_xml (NemoQuery *query)
 	g_string_append_printf (xml, "   <text>%s</text>\n", text);
 	g_free (text);
 
-	if (query->details->location_uri) {
-		uri = encode_home_uri (query->details->location_uri);
-		g_string_append_printf (xml, "   <location>%s</location>\n", uri);
-		g_free (uri);
-	}
+	uri = encode_home_uri (query->details->location_uri);
+	g_string_append_printf (xml, "   <location>%s</location>\n", uri);
+	g_free (uri);
 
 	if (query->details->mime_types) {
 		g_string_append (xml, "   <mimetypes>\n");

@@ -83,6 +83,8 @@ search_engine_start_real (NemoSearchEngine *engine)
 
 	DEBUG ("Search engine start real");
 
+	g_object_ref (engine);
+
 #ifdef ENABLE_TRACKER
 	nautilus_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->tracker));
 	engine->details->providers_running++;
@@ -182,8 +184,6 @@ check_providers_status (NemoSearchEngine *engine)
 		return;
 	}
 
-	g_object_ref (engine);
-
 	if (num_finished == engine->details->providers_error) {
 		DEBUG ("Search engine error");
 		nemo_search_provider_error (NEMO_SEARCH_PROVIDER (engine),
@@ -195,12 +195,13 @@ check_providers_status (NemoSearchEngine *engine)
 
 	engine->details->running = FALSE;
 	g_hash_table_remove_all (engine->details->uris);
-	g_object_unref (engine);
 
 	if (engine->details->restart) {
 		DEBUG ("Restarting engine");
 		nemo_search_engine_start (NEMO_SEARCH_PROVIDER (engine));
 	}
+
+	g_object_unref (engine);
 }
 
 static void
