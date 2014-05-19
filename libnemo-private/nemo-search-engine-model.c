@@ -81,26 +81,11 @@ emit_finished_idle_cb (gpointer user_data)
 		model->details->hits = NULL;
 	}
 
-	nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (model));
 	model->details->query_pending = FALSE;
+	nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (model));
 	g_object_unref (model);
 
 	return FALSE;
-}
-
-static gchar *
-prepare_pattern_for_comparison (NemoSearchEngineModel *model)
-{
-	gchar *text, *prepared, *pattern;
-
-	text = nemo_query_get_text (model->details->query);
-	prepared = nemo_search_prepare_string_for_compare (text);
-	pattern = g_strdup_printf ("*%s*", prepared);
-
-	g_free (prepared);
-	g_free (text);
-
-	return pattern;
 }
 
 static void
@@ -109,27 +94,28 @@ model_directory_ready_cb (NemoDirectory	*directory,
 			  gpointer		 user_data)
 {
 	NemoSearchEngineModel *model = user_data;
-	gchar *uri, *pattern;
-	gchar *display_name, *prepared;
+	gchar *uri, *display_name;
 	GList *files, *l, *hits;
 	NemoFile *file;
+	gdouble match;
+	NemoSearchHit *hit;
 
-	pattern = prepare_pattern_for_comparison (model);
 	files = nemo_directory_get_file_list (directory);
 	hits = NULL;
 
 	for (l = files; l != NULL; l = l->next) {
 		file = l->data;
 		display_name = nemo_file_get_display_name (file);
-		prepared = nemo_search_prepare_string_for_compare (display_name);
+		match = nemo_query_matches_string (model->details->query, display_name);
 
-		if (g_pattern_match_simple (pattern, prepared)) {
+		if (match > -1) {
 			uri = nemo_file_get_uri (file);
-			hits = g_list_prepend (hits, nemo_search_hit_new (uri));
+			hit = nemo_search_hit_new (uri);
+			nemo_search_hit_set_fts_rank (hit, match);
+			hits = g_list_prepend (hits, hit);
 			g_free (uri);
 		}
 
-		g_free (prepared);
 		g_free (display_name);
 	}
 

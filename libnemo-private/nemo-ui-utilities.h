@@ -37,8 +37,6 @@ void        nemo_ui_prepare_merge_ui           (GtkUIManager      *ui_manager,
 GtkAction * nemo_action_from_menu_item         (NemoMenuItem  *item,
                                                 GtkWidget     *parent_widget);
 
-gchar * nemo_search_prepare_string_for_compare (const gchar *string);
-
 GdkPixbuf * nemo_ui_get_menu_icon              (const char        *icon_name,
                                                 GtkWidget         *parent_widget);
 char * nemo_escape_action_name                 (const char        *action_name,

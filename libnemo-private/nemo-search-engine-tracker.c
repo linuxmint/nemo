@@ -116,8 +116,9 @@ cursor_callback (GObject      *object,
 	const char *mtime_str;
 	const char *atime_str;
 	GTimeVal tv;
-	gdouble rank;
+	gdouble rank, match;
 	gboolean success, has_error;
+	gchar *basename;
 
 	tracker = NEMO_SEARCH_ENGINE_TRACKER (user_data);
 
@@ -153,9 +154,13 @@ cursor_callback (GObject      *object,
 	rank = tracker_sparql_cursor_get_double (cursor, 1);
 	mtime_str = tracker_sparql_cursor_get_string (cursor, 2, NULL);
 	atime_str = tracker_sparql_cursor_get_string (cursor, 3, NULL);
+	basename = g_path_get_basename (uri);
 
 	hit = nemo_search_hit_new (uri);
-	nemo_search_hit_set_fts_rank (hit, rank);
+	match = nemo_query_matches_string (tracker->details->query, basename);
+	nemo_search_hit_set_fts_rank (hit, rank + match);
+	g_free (basename);
+
 	if (g_time_val_from_iso8601 (mtime_str, &tv)) {
 		GDateTime *dt;
 		dt = g_date_time_new_from_timeval_local (&tv);

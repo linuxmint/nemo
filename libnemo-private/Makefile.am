@@ -144,8 +144,6 @@ libnemo_private_la_SOURCES = \
 	nemo-lib-self-check-functions.h \
 	nemo-link.c \
 	nemo-link.h \
-	nemo-merged-directory.c \
-	nemo-merged-directory.h \
 	nemo-metadata.h \
 	nemo-metadata.c \
 	nemo-mime-application-chooser.c \

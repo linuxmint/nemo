@@ -3108,12 +3108,10 @@ static Knowledge
 get_search_relevance (NemoFile *file,
 		      gdouble      *relevance_out)
 {
-	if (!nemo_file_is_in_search (file)) {
-		return UNKNOWABLE;
-	}
-
+	/* we're only called in search directories, and in that
+	 * case, the relevance is always known (or zero).
+	 */
 	*relevance_out = file->details->search_relevance;
-
 	return KNOWN;
 }
 
@@ -3121,23 +3119,9 @@ static int
 compare_by_search_relevance (NemoFile *file_1, NemoFile *file_2)
 {
 	gdouble r_1, r_2;
-	Knowledge known_1, known_2;
 
-	r_1 = 0;
-	r_2 = 0;
-	known_1 = get_search_relevance (file_1, &r_1);
-	known_2 = get_search_relevance (file_2, &r_2);
-
-	if (known_1 > known_2) {
-		return -1;
-	}
-	if (known_1 < known_2) {
-		return +1;
-	}
-
-	if (known_1 == UNKNOWABLE || known_1 == UNKNOWN) {
-		return 0;
-	}
+	get_search_relevance (file_1, &r_1);
+	get_search_relevance (file_2, &r_2);
 
 	if (r_1 < r_2) {
 		return -1;

@@ -192,28 +192,6 @@ search_hits_added_cb (NemoSearchEngine *engine,
   }
 }
 
-static void
-search_hits_subtracted_cb (NemoSearchEngine *engine,
-                           GList                *hits,
-                           gpointer              user_data)
-{
-  NemoShellSearchProviderApp *self = user_data;
-  PendingSearch *search = self->current_search;
-  GList *l;
-  NemoSearchHit *hit;
-  const gchar *hit_uri;
-
-  g_debug ("*** Search engine hits subtracted");
-
-  for (l = hits; l != NULL; l = l->next) {
-    hit = l->data;
-    hit_uri = nemo_search_hit_get_uri (hit);
-    g_debug ("    %s", hit_uri);
-
-    g_hash_table_remove (search->hits, hit_uri);
-  }
-}
-
 static gint
 search_hit_compare_relevance (gconstpointer a,
                               gconstpointer b)
@@ -298,7 +276,7 @@ search_hit_candidate_new (const gchar *uri,
   SearchHitCandidate *candidate = g_slice_new0 (SearchHitCandidate);
 
   candidate->uri = g_strdup (uri);
-  candidate->string_for_compare = nemo_search_prepare_string_for_compare (name);
+  candidate->string_for_compare = g_strdup (name);
 
   return candidate;
 }
@@ -309,10 +287,9 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
   NemoSearchHit *hit;
   NemoBookmark *bookmark;
   const gchar *name;
-  gint length, idx, j;
-  gchar *query_text, *string, *uri;
-  gchar **terms;
-  gboolean found;
+  gint length, idx;
+  gchar *string, *uri;
+  gdouble match;
   GList *l, *m, *drives, *volumes, *mounts, *mounts_to_check, *candidates;
   GDrive *drive;
   GVolume *volume;
@@ -321,12 +298,6 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
   SearchHitCandidate *candidate;
 
   candidates = NULL;
-  query_text = nemo_query_get_text (self->current_search->query);
-  string = nemo_search_prepare_string_for_compare (query_text);
-  terms = g_strsplit (string, " ", -1);
-
-  g_free (string);
-  g_free (query_text);
 
   /* first add bookmarks */
   length = nemo_bookmark_list_length (self->bookmarks);
@@ -430,24 +401,17 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
 
   for (l = candidates; l != NULL; l = l->next) {
     candidate = l->data;
-    found = TRUE;
+    match = nemo_query_matches_string (self->current_search->query,
+                                           candidate->string_for_compare);
 
-    for (j = 0; terms[j] != NULL; j++) {
-      if (strstr (candidate->string_for_compare, terms[j]) == NULL) {
-        found = FALSE;
-        break;
-      }
-    }
-
-    if (found) {
+    if (match > -1) {
       hit = nemo_search_hit_new (candidate->uri);
+      nemo_search_hit_set_fts_rank (hit, match);
       nemo_search_hit_compute_scores (hit, self->current_search->query);
       g_hash_table_replace (self->current_search->hits, g_strdup (candidate->uri), hit);
     }
   }
   g_list_free_full (candidates, (GDestroyNotify) search_hit_candidate_free);
-
-  g_strfreev (terms);
 }
 
 static void
@@ -474,6 +438,7 @@ execute_search (NemoShellSearchProviderApp *self,
   home_uri = nemo_get_home_directory_uri ();
 
   query = nemo_query_new ();
+  nemo_query_set_show_hidden_files (query, FALSE);
   nemo_query_set_text (query, terms_joined);
   nemo_query_set_location (query, home_uri);
 
@@ -486,8 +451,6 @@ execute_search (NemoShellSearchProviderApp *self,
 
   g_signal_connect (pending_search->engine, "hits-added",
                     G_CALLBACK (search_hits_added_cb), self);
-  g_signal_connect (pending_search->engine, "hits-subtracted",
-                    G_CALLBACK (search_hits_subtracted_cb), self);
   g_signal_connect (pending_search->engine, "finished",
                     G_CALLBACK (search_finished_cb), self);
   g_signal_connect (pending_search->engine, "error",

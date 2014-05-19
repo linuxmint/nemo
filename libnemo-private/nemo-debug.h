@@ -48,7 +48,8 @@ typedef enum {
   NEMO_DEBUG_WINDOW = 1 << 13,
   NEMO_DEBUG_UNDO = 1 << 14,
   NEMO_DEBUG_SEARCH = 1 << 15,
-  NEMO_DEBUG_ACTIONS = 1 << 16
+  NEMO_DEBUG_SEARCH_HIT = 1 << 16,
+  NEMO_DEBUG_ACTIONS = 1 << 17
 } DebugFlags;
 
 void nemo_debug_set_flags (DebugFlags flags);
