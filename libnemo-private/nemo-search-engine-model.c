@@ -41,6 +41,7 @@ struct NemoSearchEngineModelDetails {
 	NemoDirectory *directory;
 
 	gboolean query_pending;
+	guint finished_id;
 };
 
 static void nemo_search_provider_init (NemoSearchProviderIface  *iface);
@@ -63,6 +64,11 @@ finalize (GObject *object)
 		model->details->hits = NULL;
 	}
 
+	if (model->details->finished_id != 0) {
+		g_source_remove (model->details->finished_id);
+		model->details->finished_id = 0;
+	}
+
 	g_clear_object (&model->details->directory);
 	g_clear_object (&model->details->query);
 
@@ -70,10 +76,8 @@ finalize (GObject *object)
 }
 
 static gboolean
-emit_finished_idle_cb (gpointer user_data)
+search_finished (NemoSearchEngineModel *model)
 {
-	NemoSearchEngineModel *model = user_data;
-
 	if (model->details->hits != NULL) {
 		nemo_search_provider_hits_added (NEMO_SEARCH_PROVIDER (model),
 						     model->details->hits);
@@ -86,6 +90,16 @@ emit_finished_idle_cb (gpointer user_data)
 	g_object_unref (model);
 
 	return FALSE;
+}
+
+static void
+search_finished_idle (NemoSearchEngineModel *model)
+{
+	if (model->details->finished_id != 0) {
+		return;
+	}
+
+	model->details->finished_id = g_idle_add ((GSourceFunc) search_finished, model);
 }
 
 static void
@@ -122,7 +136,7 @@ model_directory_ready_cb (NemoDirectory	*directory,
 	nemo_file_list_free (files);
 	model->details->hits = hits;
 
-	emit_finished_idle_cb (model);
+	search_finished (model);
 }
 
 static void
@@ -131,18 +145,19 @@ nemo_search_engine_model_start (NemoSearchProvider *provider)
 	NemoSearchEngineModel *model;
 
 	model = NEMO_SEARCH_ENGINE_MODEL (provider);
-	g_object_ref (model);
 
 	if (model->details->query_pending) {
 		return;
 	}
 
+	g_object_ref (model);
+	model->details->query_pending = TRUE;
+
 	if (model->details->directory == NULL) {
-		g_idle_add (emit_finished_idle_cb, model);
+		search_finished_idle (model);
 		return;
 	}
 
-	model->details->query_pending = TRUE;
 	nemo_directory_call_when_ready (model->details->directory,
 					    NEMO_FILE_ATTRIBUTE_INFO,
 					    TRUE, model_directory_ready_cb, model);
@@ -158,7 +173,7 @@ nemo_search_engine_model_stop (NemoSearchProvider *provider)
 	if (model->details->query_pending) {
 		nemo_directory_cancel_callback (model->details->directory,
 						    model_directory_ready_cb, model);
-		model->details->query_pending = FALSE;
+		search_finished_idle (model);
 	}
 
 	g_clear_object (&model->details->directory);
