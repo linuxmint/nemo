@@ -55,8 +55,8 @@ GType   nemo_search_directory_get_type             (void);
 
 char   *nemo_search_directory_generate_new_uri     (void);
 
-NemoSearchDirectory *nemo_search_directory_new_from_saved_search (const char *uri);
-
+void           nemo_search_directory_set_saved_search (NemoSearchDirectory *search,
+							   GFile                   *saved_search);
 gboolean       nemo_search_directory_is_saved_search (NemoSearchDirectory *search);
 gboolean       nemo_search_directory_is_modified     (NemoSearchDirectory *search);
 void           nemo_search_directory_save_search     (NemoSearchDirectory *search);

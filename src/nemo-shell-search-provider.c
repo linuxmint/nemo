@@ -26,11 +26,14 @@
 
 #include <gio/gio.h>
 #include <string.h>
+#include <glib/gi18n.h>
+#include <gdk/gdkx.h>
 
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-search-engine.h>
 #include <libnemo-private/nemo-search-provider.h>
+#include <libnemo-private/nemo-ui-utilities.h>
 
 #include "nemo-bookmark-list.h"
 #include "nemo-shell-search-provider-generated.h"
@@ -126,18 +129,6 @@ get_gicon (NemoShellSearchProviderApp *self,
     return nemo_bookmark_get_icon (bookmark);
   else
     return nemo_file_get_gicon (file, 0);
-}
-
-static gchar *
-prepare_string_for_compare (const gchar *string)
-{
-  gchar *normalized, *res;
-
-  normalized = g_utf8_normalize (string, -1, G_NORMALIZE_NFD);
-  res = g_utf8_strdown (normalized, -1);
-  g_free (normalized);
-
-  return res;
 }
 
 static void
@@ -286,6 +277,32 @@ search_error_cb (NemoSearchEngine *engine,
   finish_current_search (self, search->invocation, g_variant_new ("(as)", NULL));
 }
 
+typedef struct {
+  gchar *uri;
+  gchar *string_for_compare;
+} SearchHitCandidate;
+
+static void
+search_hit_candidate_free (SearchHitCandidate *candidate)
+{
+  g_free (candidate->uri);
+  g_free (candidate->string_for_compare);
+
+  g_slice_free (SearchHitCandidate, candidate);
+}
+
+static SearchHitCandidate *
+search_hit_candidate_new (const gchar *uri,
+                          const gchar *name)
+{
+  SearchHitCandidate *candidate = g_slice_new0 (SearchHitCandidate);
+
+  candidate->uri = g_strdup (uri);
+  candidate->string_for_compare = nemo_search_prepare_string_for_compare (name);
+
+  return candidate;
+}
+
 static void
 search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
 {
@@ -293,50 +310,51 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
   NemoBookmark *bookmark;
   const gchar *name;
   gint length, idx, j;
-  gchar *query_text, *prepared, *uri;
+  gchar *query_text, *string, *uri;
   gchar **terms;
   gboolean found;
-  GList *l, *m, *drives, *volumes, *mounts, *mounts_to_check;
+  GList *l, *m, *drives, *volumes, *mounts, *mounts_to_check, *candidates;
   GDrive *drive;
   GVolume *volume;
   GMount *mount;
   GFile *location;
+  SearchHitCandidate *candidate;
 
+  candidates = NULL;
   query_text = nemo_query_get_text (self->current_search->query);
-  prepared = prepare_string_for_compare (query_text);
-  terms = g_strsplit (prepared, " ", -1);
+  string = nemo_search_prepare_string_for_compare (query_text);
+  terms = g_strsplit (string, " ", -1);
 
-  g_free (prepared);
+  g_free (string);
   g_free (query_text);
 
-  /* first match bookmarks */
+  /* first add bookmarks */
   length = nemo_bookmark_list_length (self->bookmarks);
   for (idx = 0; idx < length; idx++) {
     bookmark = nemo_bookmark_list_item_at (self->bookmarks, idx);
 
     name = nemo_bookmark_get_name (bookmark);
-    prepared = prepare_string_for_compare (name);
+    if (name == NULL)
+      continue;
 
-    found = TRUE;
+    uri = nemo_bookmark_get_uri (bookmark);
+    candidate = search_hit_candidate_new (uri, name);
+    candidates = g_list_prepend (candidates, candidate);
 
-    for (j = 0; terms[j] != NULL; j++) {
-      if (strstr (prepared, terms[j]) == NULL) {
-        found = FALSE;
-        break;
-      }
-    }
-
-    g_free (prepared);
-
-    if (found) {
-      uri = nemo_bookmark_get_uri (bookmark);
-      hit = nemo_search_hit_new (uri);
-      nemo_search_hit_compute_scores (hit, self->current_search->query);
-      g_hash_table_replace (self->current_search->hits, uri, hit);
-    }
+    g_free (uri);
   }
 
-  /* now match mounts */
+  /* home dir */
+  uri = nemo_get_home_directory_uri ();
+  candidate = search_hit_candidate_new (uri, _("Home"));
+  candidates = g_list_prepend (candidates, candidate);
+  g_free (uri);
+
+  /* trash */
+  candidate = search_hit_candidate_new ("trash:///", _("Trash"));
+  candidates = g_list_prepend (candidates, candidate);
+
+  /* now add mounts */
   mounts_to_check = NULL;
 
   /* first check all connected drives */
@@ -388,37 +406,46 @@ search_add_volumes_and_bookmarks (NemoShellSearchProviderApp *self)
   }
   g_list_free_full (mounts, g_object_unref);
 
-  /* now do the actual string matching */
+  /* actually add mounts to candidates */
   for (l = mounts_to_check; l != NULL; l = l->next) {
     mount = l->data;
 
-    query_text = g_mount_get_name (mount);
-    prepared = prepare_string_for_compare (query_text);
-    g_free (query_text);
+    string = g_mount_get_name (mount);
+    if (string == NULL)
+      continue;
 
+    location = g_mount_get_default_location (mount);
+    uri = g_file_get_uri (location);
+    candidate = search_hit_candidate_new (uri, string);
+    candidates = g_list_prepend (candidates, candidate);
+
+    g_free (uri);
+    g_free (string);
+    g_object_unref (location);
+  }
+  g_list_free_full (mounts_to_check, g_object_unref);
+
+  /* now do the actual string matching */
+  candidates = g_list_reverse (candidates);
+
+  for (l = candidates; l != NULL; l = l->next) {
+    candidate = l->data;
     found = TRUE;
 
     for (j = 0; terms[j] != NULL; j++) {
-      if (strstr (prepared, terms[j]) == NULL) {
+      if (strstr (candidate->string_for_compare, terms[j]) == NULL) {
         found = FALSE;
         break;
       }
     }
 
-    g_free (prepared);
-
     if (found) {
-      location = g_mount_get_default_location (mount);
-      uri = g_file_get_uri (location);
-      hit = nemo_search_hit_new (uri);
-
+      hit = nemo_search_hit_new (candidate->uri);
       nemo_search_hit_compute_scores (hit, self->current_search->query);
-      g_hash_table_replace (self->current_search->hits, uri, hit);
-
-      g_object_unref (location);
+      g_hash_table_replace (self->current_search->hits, g_strdup (candidate->uri), hit);
     }
   }
-  g_list_free_full (mounts_to_check, g_object_unref);
+  g_list_free_full (candidates, (GDestroyNotify) search_hit_candidate_free);
 
   g_strfreev (terms);
 }
@@ -660,6 +687,55 @@ handle_get_result_metas (NemoShellSearchProvider  *skeleton,
   nemo_file_list_free (missing_files);
 }
 
+/* taken from Epiphany's ephy-main.c */
+static Time
+slowly_and_stupidly_obtain_timestamp (Display *xdisplay)
+{
+  Window xwindow;
+  XEvent event;
+
+  {
+    XSetWindowAttributes attrs;
+    Atom atom_name;
+    Atom atom_type;
+    char* name;
+
+    attrs.override_redirect = True;
+    attrs.event_mask = PropertyChangeMask | StructureNotifyMask;
+
+    xwindow =
+      XCreateWindow (xdisplay,
+                     RootWindow (xdisplay, 0),
+                     -100, -100, 1, 1,
+                     0,
+                     CopyFromParent,
+                     CopyFromParent,
+                     CopyFromParent,
+                     CWOverrideRedirect | CWEventMask,
+                     &attrs);
+
+    atom_name = XInternAtom (xdisplay, "WM_NAME", TRUE);
+    g_assert (atom_name != None);
+    atom_type = XInternAtom (xdisplay, "STRING", TRUE);
+    g_assert (atom_type != None);
+
+    name = "Fake Window";
+    XChangeProperty (xdisplay,
+                     xwindow, atom_name,
+                     atom_type,
+                     8, PropModeReplace, (unsigned char *)name, strlen (name));
+  }
+
+  XWindowEvent (xdisplay,
+                xwindow,
+                PropertyChangeMask,
+                &event);
+
+  XDestroyWindow(xdisplay, xwindow);
+
+  return event.xproperty.time;
+}
+
 static void
 handle_activate_result (NemoShellSearchProvider *skeleton,
                         GDBusMethodInvocation       *invocation,
@@ -667,8 +743,15 @@ handle_activate_result (NemoShellSearchProvider *skeleton,
                         gpointer                     user_data)
 {
   GError *error = NULL;
+  guint32 timestamp;
 
-  gtk_show_uri (NULL, result, GDK_CURRENT_TIME, &error);
+  /* We need a timestamp here to get the correct WM focus.
+   * Ideally this would be given to us by the caller, but since it
+   * is not, get it ourselves.
+   */
+  timestamp = slowly_and_stupidly_obtain_timestamp (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()));
+  gtk_show_uri (NULL, result, timestamp, &error);
+
   if (error != NULL) {
     g_warning ("Unable to activate %s: %s", result, error->message);
     g_error_free (error);
