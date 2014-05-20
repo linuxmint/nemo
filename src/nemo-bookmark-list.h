@@ -63,8 +63,6 @@ GType                   nemo_bookmark_list_get_type            (void);
 NemoBookmarkList *  nemo_bookmark_list_new                 (void);
 void                    nemo_bookmark_list_append              (NemoBookmarkList   *bookmarks,
 								    NemoBookmark *bookmark);
-gboolean                nemo_bookmark_list_contains            (NemoBookmarkList   *bookmarks,
-								    NemoBookmark *bookmark);
 void                    nemo_bookmark_list_delete_item_at      (NemoBookmarkList   *bookmarks,
 								    guint                   index);
 void                    nemo_bookmark_list_delete_items_with_uri (NemoBookmarkList *bookmarks,

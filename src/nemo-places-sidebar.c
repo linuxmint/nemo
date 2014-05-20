@@ -163,7 +163,6 @@ enum {
 	PLACES_SIDEBAR_COLUMN_NO_EJECT,
 	PLACES_SIDEBAR_COLUMN_BOOKMARK,
 	PLACES_SIDEBAR_COLUMN_TOOLTIP,
-	PLACES_SIDEBAR_COLUMN_EJECT_GICON,
 	PLACES_SIDEBAR_COLUMN_SECTION_TYPE,
 	PLACES_SIDEBAR_COLUMN_HEADING_TEXT,
     PLACES_SIDEBAR_COLUMN_DF_PERCENT,
@@ -331,7 +330,6 @@ add_place (NemoPlacesSidebar *sidebar,
        GtkTreeIter cat_iter)
 {
 	GtkTreeIter           iter;
-	GIcon *eject;
 	gboolean show_eject, show_unmount;
 	gboolean show_eject_button;
 
@@ -350,12 +348,6 @@ add_place (NemoPlacesSidebar *sidebar,
 		show_eject_button = (show_unmount || show_eject);
 	}
 
-	if (show_eject_button) {
-		eject = g_themed_icon_new_with_default_fallbacks ("nemo-eject");
-	} else {
-		eject = NULL;
-	}
-
 	gtk_tree_store_append (sidebar->store, &iter, &cat_iter);
 	gtk_tree_store_set (sidebar->store, &iter,
 			    PLACES_SIDEBAR_COLUMN_GICON, icon,
@@ -370,15 +362,10 @@ add_place (NemoPlacesSidebar *sidebar,
 			    PLACES_SIDEBAR_COLUMN_NO_EJECT, !show_eject_button,
 			    PLACES_SIDEBAR_COLUMN_BOOKMARK, place_type != PLACES_BOOKMARK,
 			    PLACES_SIDEBAR_COLUMN_TOOLTIP, tooltip,
-			    PLACES_SIDEBAR_COLUMN_EJECT_GICON, eject,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,
                 PLACES_SIDEBAR_COLUMN_DF_PERCENT, df_percent,
                 PLACES_SIDEBAR_COLUMN_SHOW_DF, show_df_percent,
 			    -1);
-
-	if (eject != NULL) {
-		g_object_unref (eject);
-	}
 
     return cat_iter;
 }
@@ -688,9 +675,9 @@ update_places (NemoPlacesSidebar *sidebar)
     for (index = 0; index < bookmark_count; ++index) {
         bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
 
-        if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
-            continue;
-        }
+	if (!nemo_bookmark_get_exists (bookmark)) {
+		continue;
+	}
 
         root = nemo_bookmark_get_location (bookmark);
         file = nemo_file_get (root);
@@ -1607,10 +1594,7 @@ bookmarks_drop_uris (NemoPlacesSidebar *sidebar,
 		nemo_file_unref (file);
 
 		bookmark = nemo_bookmark_new (location, NULL);
-
-		if (!nemo_bookmark_list_contains (sidebar->bookmarks, bookmark)) {
-			nemo_bookmark_list_insert_item (sidebar->bookmarks, bookmark, position++);
-		}
+                nemo_bookmark_list_append (sidebar->bookmarks, bookmark);
 
 		g_object_unref (location);
 		g_object_unref (bookmark);
@@ -2295,10 +2279,7 @@ add_bookmark (NemoPlacesSidebar *sidebar)
 
 		location = g_file_new_for_uri (uri);
 		bookmark = nemo_bookmark_new (location, name);
-
-		if (!nemo_bookmark_list_contains (sidebar->bookmarks, bookmark)) {
-			nemo_bookmark_list_append (sidebar->bookmarks, bookmark);
-		}
+		nemo_bookmark_list_append (sidebar->bookmarks, bookmark);
 
 		g_object_unref (location);
 		g_object_unref (bookmark);
@@ -3637,6 +3618,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	GtkTreeViewColumn *col, *expander_col, *eject_col, *expander_pad_col;
 	GtkCellRenderer   *cell;
 	GtkTreeSelection  *selection;
+	GIcon             *eject;
 
     sidebar->action_manager = nemo_action_manager_new ();
 
@@ -3726,16 +3708,18 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	/* eject icon renderer */
 	cell = gtk_cell_renderer_pixbuf_new ();
 	sidebar->eject_icon_cell_renderer = cell;
+	eject = g_themed_icon_new_with_default_fallbacks ("media-eject-symbolic");
 	g_object_set (cell,
 		      "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE,
 		      "yalign", 0.8,
 		      "follow-state", TRUE,
+		      "gicon", eject,
 		      NULL);
 	gtk_tree_view_column_pack_start (eject_col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (eject_col, cell,
 					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
-					     "gicon", PLACES_SIDEBAR_COLUMN_EJECT_GICON,
 					     NULL);
+	g_object_unref (eject);
 
 	/* normal text renderer */
 	cell = nemo_cell_renderer_disk_new ();
@@ -4053,7 +4037,6 @@ nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar)
 		G_TYPE_BOOLEAN,
 		G_TYPE_BOOLEAN,
 		G_TYPE_STRING,
-		G_TYPE_ICON,
 		G_TYPE_INT,
 		G_TYPE_STRING,
         G_TYPE_INT,
