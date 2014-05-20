@@ -675,11 +675,13 @@ update_places (NemoPlacesSidebar *sidebar)
     for (index = 0; index < bookmark_count; ++index) {
         bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
 
-	if (!nemo_bookmark_get_exists (bookmark)) {
-		continue;
+        root = nemo_bookmark_get_location (bookmark);
+
+        if (!nemo_bookmark_get_exists (bookmark) && g_file_is_native (root)) {
+            g_object_unref (root);
+            continue;
 	}
 
-        root = nemo_bookmark_get_location (bookmark);
         file = nemo_file_get (root);
 
         //if (is_built_in_bookmark (file)) {

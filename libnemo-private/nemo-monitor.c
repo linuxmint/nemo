@@ -143,7 +143,7 @@ nemo_monitor_directory (GFile *location)
 	GFileMonitor *dir_monitor;
 	NemoMonitor *ret;
 
-	ret = g_new0 (NemoMonitor, 1);
+	ret = g_slice_new0 (NemoMonitor);
 	dir_monitor = g_file_monitor_directory (location, G_FILE_MONITOR_WATCH_MOUNTS, NULL, NULL);
 
 	if (dir_monitor != NULL) {
@@ -182,5 +182,5 @@ nemo_monitor_cancel (NemoMonitor *monitor)
 	}
 
 	g_clear_object (&monitor->location);
-	g_free (monitor);
+	g_slice_free (NemoMonitor, monitor);
 }
