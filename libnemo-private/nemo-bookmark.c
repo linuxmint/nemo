@@ -258,6 +258,12 @@ nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark)
 	if (g_file_is_native (bookmark->details->location)) {
 		symbolic_icon = get_native_icon (bookmark, TRUE);
 		icon = get_native_icon (bookmark, FALSE);
+		if (!bookmark->details->exists) {
+			DEBUG ("%s: file does not exist, add emblem", nemo_bookmark_get_name (bookmark));
+
+			apply_warning_emblem (&icon, FALSE);
+			apply_warning_emblem (&symbolic_icon, TRUE);
+		}
 	} else {
 		uri = nemo_bookmark_get_uri (bookmark);
 		if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
@@ -268,13 +274,6 @@ nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark)
 			icon = g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER_REMOTE);
 		}
 		g_free (uri);
-	}
-
-	if (!bookmark->details->exists) {
-		DEBUG ("%s: file does not exist, add emblem", nemo_bookmark_get_name (bookmark));
-
-		apply_warning_emblem (&icon, FALSE);
-		apply_warning_emblem (&symbolic_icon, TRUE);
 	}
 
 	DEBUG ("%s: setting icon to default", nemo_bookmark_get_name (bookmark));
