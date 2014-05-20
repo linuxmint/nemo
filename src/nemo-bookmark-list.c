@@ -318,33 +318,13 @@ nemo_bookmark_list_append (NemoBookmarkList *bookmarks,
 	g_return_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks));
 	g_return_if_fail (NEMO_IS_BOOKMARK (bookmark));
 
-	insert_bookmark_internal (bookmarks, 
-				  nemo_bookmark_copy (bookmark), 
-				  -1);
+	if (g_list_find_custom (bookmarks->list, bookmark,
+				nemo_bookmark_compare_with) != NULL) {
+		return;
+	}
 
+	insert_bookmark_internal (bookmarks, g_object_ref (bookmark), -1);
 	nemo_bookmark_list_save_file (bookmarks);
-}
-
-/**
- * nemo_bookmark_list_contains:
- *
- * Check whether a bookmark with matching name and url is already in the list.
- * @bookmarks: NemoBookmarkList to check contents of.
- * @bookmark: NemoBookmark to match against.
- * 
- * Return value: TRUE if matching bookmark is in list, FALSE otherwise
- **/
-gboolean
-nemo_bookmark_list_contains (NemoBookmarkList *bookmarks, 
-				 NemoBookmark     *bookmark)
-{
-	g_return_val_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks), FALSE);
-	g_return_val_if_fail (NEMO_IS_BOOKMARK (bookmark), FALSE);
-
-	return g_list_find_custom (bookmarks->list,
-				   (gpointer)bookmark, 
-				   nemo_bookmark_compare_with) 
-		!= NULL;
 }
 
 /**
@@ -492,10 +472,7 @@ nemo_bookmark_list_insert_item (NemoBookmarkList *bookmarks,
 	g_return_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks));
 	g_return_if_fail (index <= g_list_length (bookmarks->list));
 
-	insert_bookmark_internal (bookmarks,
-				  nemo_bookmark_copy (new_bookmark), 
-				  index);
-
+	insert_bookmark_internal (bookmarks, g_object_ref (new_bookmark), index);
 	nemo_bookmark_list_save_file (bookmarks);
 }
 

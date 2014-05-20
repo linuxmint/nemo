@@ -195,16 +195,16 @@ bookmark_holder_free_cover (gpointer callback_data, GClosure *closure)
 static void
 activate_bookmark_in_menu_item (GtkAction *action, gpointer user_data)
 {
-    NemoWindowSlot *slot;
-    BookmarkHolder *holder;
-    GFile *location;
+	NemoWindowSlot *slot;
+	BookmarkHolder *holder;
+	GFile *location;
 
-    holder = (BookmarkHolder *)user_data;
+	holder = (BookmarkHolder *)user_data;
 
-    location = nemo_bookmark_get_location (holder->bookmark);
-    slot = nemo_window_get_active_slot (holder->window);
-    nemo_window_slot_open_location (slot, location, nemo_event_get_window_open_flags ());
-    g_object_unref (location);
+	location = nemo_bookmark_get_location (holder->bookmark);
+	slot = nemo_window_get_active_slot (holder->window);
+	nemo_window_slot_open_location (slot, location, nemo_event_get_window_open_flags ());
+	g_object_unref (location);
 }
 
 static void

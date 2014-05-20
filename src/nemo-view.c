@@ -5183,7 +5183,7 @@ reset_move_copy_to_menu (NemoView *view)
             /* Unlike the sidebar or the bookmarks menu, we are using bookmarks as
                file operation targets, not locations to open.  As such, we should
                never show unmounted/invalid locations in the move-to/copy-to menu */
-            if (!nemo_bookmark_uri_get_exists (bookmark)) {
+            if (!nemo_bookmark_get_exists (bookmark)) {
                 continue;
             }
 
@@ -9759,12 +9759,11 @@ real_update_location_menu (NemoView *view)
 			   "can-paste-according-to-destination",
 			   GINT_TO_POINTER (can_paste_into_file (file)));
 	gtk_action_set_sensitive (action,
-	                          !is_recent &&
-	                          GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
-	                                           "can-paste-according-to-clipboard")) &&
-	                          GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
-                                               "can-paste-according-to-destination")));
-
+				  !is_recent &&
+				  GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
+								      "can-paste-according-to-clipboard")) &&
+				  GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
+								      "can-paste-according-to-destination")));
 	gtk_action_set_visible (action, !is_recent);
 
 	show_delete = TRUE;

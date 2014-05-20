@@ -103,7 +103,7 @@ unity_bookmarks_handler_update_bookmarks () {
 
 		bookmark = nemo_bookmark_list_item_at (bookmarks, index);
 
-		if (!nemo_bookmark_uri_get_exists (bookmark)) {
+		if (!nemo_bookmark_get_exists (bookmark)) {
 			continue;
 		}
 

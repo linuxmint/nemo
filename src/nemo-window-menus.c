@@ -690,9 +690,7 @@ action_add_bookmark_callback (GtkAction *action,
 	bookmark = slot->current_location_bookmark;
 	list = nemo_application_get_bookmarks (app);
 
-	if (!nemo_bookmark_list_contains (list, bookmark)) {
-		nemo_bookmark_list_append (list, bookmark);
-	}
+	nemo_bookmark_list_append (list, bookmark);
 }
 
 static void
