@@ -1434,9 +1434,13 @@ get_gicon_for_mount (ButtonData *button_data)
 	GIcon *icon;
 	GMount *mount;
 
+	icon = NULL;
 	mount = nemo_get_mounted_mount_for_root (button_data->path);
-	icon = g_mount_get_icon (mount);
-	g_object_unref (mount);
+
+	if (mount != NULL) {
+		icon = g_mount_get_icon (mount);
+		g_object_unref (mount);
+	}
 
 	return icon;
 }

@@ -1810,13 +1810,21 @@ activate_activation_uris_ready_callback (GList *files_ignore,
 
 	/* Convert the files to the actual activation uri files */
 	for (l = parameters->locations; l != NULL; l = l->next) {
-		char *uri;
+		char *uri = NULL;
+
 		location = l->data;
 
 		/* We want the file for the activation URI since we care
 		 * about the attributes for that, not for the original file.
 		 */
-		uri = nemo_file_get_activation_uri (location->file);
+		if (nemo_file_is_symbolic_link (location->file)) {
+			uri = nemo_file_get_symbolic_link_target_uri (location->file);
+		}
+
+		if (uri == NULL) {
+			uri = nemo_file_get_activation_uri (location->file);
+		}
+
 		if (uri != NULL) {
 			launch_location_update_from_uri (location, uri);
 		}
