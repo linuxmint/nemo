@@ -400,39 +400,49 @@ nemo_bookmark_list_item_at (NemoBookmarkList *bookmarks, guint index)
 }
 
 /**
- * nemo_bookmark_list_item_with_uri:
+ * nemo_bookmark_list_item_with_location:
  *
- * Get the bookmark with the specified URI, if any
+ * Get the bookmark with the specified location, if any
  * @bookmarks: the list of bookmarks.
- * @uri: an URI
+ * @location: a #GFile
+ * @index: location where to store bookmark index, or %NULL
  *
- * Return value: the bookmark with URI @uri, or %NULL.
+ * Return value: the bookmark with location @location, or %NULL.
  **/
 NemoBookmark *
-nemo_bookmark_list_item_with_uri (NemoBookmarkList *bookmarks,
-				      const gchar	   *uri)
+nemo_bookmark_list_item_with_location (NemoBookmarkList *bookmarks,
+					   GFile                *location,
+					   guint                *index)
 {
 	GList *node;
-	gchar *bookmark_uri;
+	GFile *bookmark_location;
 	NemoBookmark *bookmark;
 	gboolean found = FALSE;
+	guint idx;
 
 	g_return_val_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks), NULL);
-	g_return_val_if_fail (uri != NULL, NULL);
+	g_return_val_if_fail (G_IS_FILE (location), NULL);
+
+	idx = 0;
 
 	for (node = bookmarks->list; node != NULL; node = node->next) {
 		bookmark = node->data;
-		bookmark_uri = nemo_bookmark_get_uri (bookmark);
+		bookmark_location = nemo_bookmark_get_location (bookmark);
 
-		if (g_strcmp0 (uri, bookmark_uri) == 0) {
+		if (g_file_equal (location, bookmark_location)) {
 			found = TRUE;
 		}
 
-		g_free (bookmark_uri);
+		g_object_unref (bookmark_location);
 
 		if (found) {
+			if (index) {
+				*index = idx;
+			}
 			return bookmark;
 		}
+
+		idx++;
 	}
 
 	return NULL;
@@ -693,6 +703,17 @@ nemo_bookmark_list_save_file (NemoBookmarkList *bookmarks)
 	if (g_queue_get_length (bookmarks->pending_ops) == 1) {
 		process_next_op (bookmarks);
 	}
+}
+
+gboolean
+nemo_bookmark_list_can_bookmark_location (NemoBookmarkList *list,
+					      GFile                *location)
+{
+	if (nemo_bookmark_list_item_with_location (list, location, NULL)) {
+		return FALSE;
+	}
+
+	return !nemo_is_home_directory (location);
 }
 
 /**

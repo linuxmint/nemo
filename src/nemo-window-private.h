@@ -104,6 +104,7 @@ struct NemoWindowDetails
         gboolean disable_chrome;
 
         guint sidebar_width_handler_id;
+        guint bookmarks_id;
 
         guint menu_state_changed_id;
 
@@ -144,7 +145,6 @@ void                 nemo_window_set_active_slot                     (NemoWindow
 void                 nemo_window_set_active_pane                     (NemoWindow *window,
                                                                           NemoWindowPane *new_pane);
 NemoWindowPane * nemo_window_get_active_pane                     (NemoWindow *window);
-
 
 /* sync window GUI with current slot. Used when changing slots,
  * and when updating the slot state.

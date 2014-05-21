@@ -1967,7 +1967,7 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 	gtk_widget_set_visible (sidebar->popup_menu_add_shortcut_item, (type == PLACES_MOUNTED_VOLUME));
 
 	gtk_widget_set_visible (sidebar->popup_menu_remove_item, (type == PLACES_BOOKMARK));
-	gtk_widget_set_visible (sidebar->popup_menu_rename_item, (type == PLACES_BOOKMARK));
+	gtk_widget_set_visible (sidebar->popup_menu_rename_item, (type == PLACES_BOOKMARK || type == PLACES_XDG_DIR));
 	gtk_widget_set_sensitive (sidebar->popup_menu_empty_trash_item, !nemo_trash_monitor_is_empty ());
 
  	check_visibility (mount, volume, drive,
@@ -2313,7 +2313,7 @@ rename_selected_bookmark (NemoPlacesSidebar *sidebar)
 				    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &type,
 				    -1);
 
-		if (type != PLACES_BOOKMARK) {
+		if (type != PLACES_BOOKMARK && type != PLACES_XDG_DIR) {
 			return;
 		}
 
@@ -3432,22 +3432,46 @@ bookmarks_edited (GtkCellRenderer       *cell,
 {
 	GtkTreePath *path;
 	GtkTreeIter iter;
+	gchar *uri;
+	GFile *location;
 	NemoBookmark *bookmark;
-	int index;
+	PlaceType type;
 
 	g_object_set (cell, "editable", FALSE, NULL);
 	
 	path = gtk_tree_path_new_from_string (path_string);
-	gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store), &iter, path);
+	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store), &iter, path)) {
+		goto out;
+	}
+
+	uri = NULL;
 	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
-		            PLACES_SIDEBAR_COLUMN_INDEX, &index,
+		            PLACES_SIDEBAR_COLUMN_URI, &uri,
+		            PLACES_SIDEBAR_COLUMN_ROW_TYPE, &type,
 		            -1);
-	gtk_tree_path_free (path);
-	bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
+	if (!uri) {
+		goto out;
+	}
+
+	location = g_file_new_for_uri (uri);
+	bookmark = nemo_bookmark_list_item_with_location (sidebar->bookmarks, location, NULL);
 
 	if (bookmark != NULL) {
 		nemo_bookmark_set_custom_name (bookmark, new_text);
+	} else if (type == PLACES_XDG_DIR) {
+		/* In case we're renaming a built-in bookmark, and it's not in the
+		 * list, add it with a custom name.
+		 */
+		bookmark = nemo_bookmark_new (location, new_text);
+		nemo_bookmark_list_append (sidebar->bookmarks, bookmark);
+		g_object_unref (bookmark);
 	}
+
+	g_object_unref (location);
+
+ out:
+	g_free (uri);
+	gtk_tree_path_free (path);
 }
 
 static void
