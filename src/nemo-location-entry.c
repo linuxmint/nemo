@@ -74,7 +74,7 @@ struct NemoLocationEntryDetails {
 
 	guint idle_id;
 
-	char *last_uri;
+	GFile *last_location;
 
 	gboolean has_special_text;
 	gboolean setting_special_text;
@@ -130,9 +130,8 @@ nemo_location_entry_update_action (NemoLocationEntry *entry)
 {
 	const char *current_text;
 	GFile *location;
-	GFile *last_location;
 
-	if (entry->details->last_uri == NULL){
+	if (entry->details->last_location == NULL){
 		nemo_location_entry_set_secondary_action (entry,
 							      NEMO_LOCATION_ENTRY_ACTION_GOTO);
 		return;
@@ -140,9 +139,8 @@ nemo_location_entry_update_action (NemoLocationEntry *entry)
 
 	current_text = gtk_entry_get_text (GTK_ENTRY (entry));
 	location = g_file_parse_name (current_text);
-	last_location = g_file_parse_name (entry->details->last_uri);
 
-	if (g_file_equal (last_location, location)) {
+	if (g_file_equal (entry->details->last_location, location)) {
 		nemo_location_entry_set_secondary_action (entry,
 							      NEMO_LOCATION_ENTRY_ACTION_CLEAR);
 	} else {
@@ -151,7 +149,6 @@ nemo_location_entry_update_action (NemoLocationEntry *entry)
 	}
 
 	g_object_unref (location);
-	g_object_unref (last_location);
 }
 
 static int
@@ -188,37 +185,35 @@ nemo_location_entry_update_current_uri (NemoLocationEntry *entry,
 }
 
 void
-nemo_location_entry_set_uri (NemoLocationEntry *entry,
-				 const char            *uri)
+nemo_location_entry_set_location (NemoLocationEntry *entry,
+				      GFile                 *location)
 {
-	char *formatted_uri;
-	GFile *file;
+	gchar *uri, *formatted_uri;
 
-	g_assert (uri != NULL);
+	g_assert (location != NULL);
 
 	/* Note: This is called in reaction to external changes, and
 	 * thus should not emit the LOCATION_CHANGED signal. */
+	uri = g_file_get_uri (location);
+	formatted_uri = g_file_get_parse_name (location);
 
 	if (eel_uri_is_search (uri)) {
-		nemo_location_entry_set_special_text (entry,
-							  "");
+		nemo_location_entry_set_special_text (entry, "");
 	} else {
-		file = g_file_new_for_uri (uri);
-		formatted_uri = g_file_get_parse_name (file);
-		g_object_unref (file);
-		nemo_location_entry_update_current_uri (entry,
-								 formatted_uri);
-		g_free (formatted_uri);
+		nemo_location_entry_update_current_uri (entry, formatted_uri);
 	}
 
-	/* remember the original uri for later comparison */
-
-	if (entry->details->last_uri != uri) {
-		g_free (entry->details->last_uri);
-		entry->details->last_uri = g_strdup (uri);
+	/* remember the original location for later comparison */
+	if (!entry->details->last_location ||
+	    !g_file_equal (entry->details->last_location, location)) {
+		g_clear_object (&entry->details->last_location);
+		entry->details->last_location = g_object_ref (location);
 	}
 
 	nemo_location_entry_update_action (entry);
+
+	g_free (uri);
+	g_free (formatted_uri);
 }
 
 static void
@@ -289,8 +284,10 @@ drag_data_received_callback (GtkWidget *widget,
 		}
 	}
 
-	nemo_location_entry_set_uri (self, names[0]);
+	location = g_file_new_for_uri (names[0]);
+	nemo_location_entry_set_location (self, location);
 	emit_location_changed (self);
+	g_object_unref (location);
 
 	if (new_windows_for_extras) {
 		int i;
@@ -511,8 +508,7 @@ finalize (GObject *object)
 	g_object_unref (entry->details->completer);
 	g_free (entry->details->special_text);
 
-	g_free (entry->details->last_uri);
-	entry->details->last_uri = NULL;
+	g_clear_object (&entry->details->last_location);
 
 	G_OBJECT_CLASS (nemo_location_entry_parent_class)->finalize (object);
 }
@@ -609,10 +605,7 @@ nemo_location_entry_activate (GtkEntry *entry)
 static void
 nemo_location_entry_cancel (NemoLocationEntry *entry)
 {
-	char *last_uri;
-
-	last_uri = entry->details->last_uri;
-	nemo_location_entry_set_uri (entry, last_uri);
+	nemo_location_entry_set_location (entry, entry->details->last_location);
 }
 
 static void

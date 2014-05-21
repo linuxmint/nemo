@@ -65,8 +65,8 @@ void       nemo_location_entry_set_special_text     (NemoLocationEntry *entry,
 							 const char            *special_text);
 void       nemo_location_entry_set_secondary_action (NemoLocationEntry *entry,
 							 NemoLocationEntryAction secondary_action);
-void       nemo_location_entry_set_uri              (NemoLocationEntry *entry,
-							 const char            *location);
+void       nemo_location_entry_set_location         (NemoLocationEntry *entry,
+							 GFile         *location);
 void       nemo_location_entry_focus                (NemoLocationEntry *entry);
 
 #endif /* NEMO_LOCATION_ENTRY_H */

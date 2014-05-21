@@ -104,12 +104,12 @@ static gchar *
 get_display_name (NemoShellSearchProviderApp *self,
                   NemoFile                   *file)
 {
-  gchar *uri;
+  GFile *location;
   NemoBookmark *bookmark;
 
-  uri = nemo_file_get_uri (file);
-  bookmark = nemo_bookmark_list_item_with_uri (self->bookmarks, uri);
-  g_free (uri);
+  location = nemo_file_get_location (file);
+  bookmark = nemo_bookmark_list_item_with_location (self->bookmarks, location, NULL);
+  g_object_unref (location);
 
   if (bookmark)
     return g_strdup (nemo_bookmark_get_name (bookmark));
@@ -121,12 +121,12 @@ static GIcon *
 get_gicon (NemoShellSearchProviderApp *self,
            NemoFile                   *file)
 {
-  gchar *uri;
+  GFile *location;
   NemoBookmark *bookmark;
 
-  uri = nemo_file_get_uri (file);
-  bookmark = nemo_bookmark_list_item_with_uri (self->bookmarks, uri);
-  g_free (uri);
+  location = nemo_file_get_location (file);
+  bookmark = nemo_bookmark_list_item_with_location (self->bookmarks, location, NULL);
+  g_object_unref (location);
 
   if (bookmark)
     return nemo_bookmark_get_icon (bookmark);

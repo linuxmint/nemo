@@ -143,6 +143,29 @@ bookmark_set_name_from_ready_file (NemoBookmark *self,
 }
 
 static void
+apply_warning_emblem (GIcon **base,
+		      gboolean symbolic)
+{
+	GIcon *warning, *emblemed_icon;
+	GEmblem *emblem;
+
+	if (symbolic) {
+		warning = g_themed_icon_new ("dialog-warning-symbolic");
+	} else {
+		warning = g_themed_icon_new ("dialog-warning");
+	}
+
+	emblem = g_emblem_new (warning);
+	emblemed_icon = g_emblemed_icon_new (*base, emblem);
+
+	g_object_unref (emblem);
+	g_object_unref (warning);
+	g_object_unref (*base);
+
+	*base = emblemed_icon;
+}
+
+static void
 nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark);
 
 

@@ -32,6 +32,7 @@
 #include "nemo-window-private.h"
 
 #include "nemo-actions.h"
+#include "nemo-application.h"
 #include "nemo-bookmarks-window.h"
 #include "nemo-location-entry.h"
 #include "nemo-mime-actions.h"
@@ -308,8 +309,8 @@ nemo_window_prompt_for_location (NemoWindow *window,
 
 	nemo_window_show_location_entry(window);
 	pane = window->details->active_pane;
-	nemo_location_entry_set_uri (NEMO_LOCATION_ENTRY (pane->location_entry),
-	                          initial);
+	nemo_location_entry_set_location (NEMO_LOCATION_ENTRY (pane->location_entry),
+	                          location);
 }
 
 /* Code should never force the window taller than this size.
@@ -551,6 +552,7 @@ nemo_window_constructed (GObject *self)
     GtkWidget *nemo_statusbar;
 	NemoWindowPane *pane;
 	NemoWindowSlot *slot;
+	NemoApplication *application;
 
 	window = NEMO_WINDOW (self);
 
@@ -679,9 +681,14 @@ nemo_window_constructed (GObject *self)
 	slot = nemo_window_pane_open_slot (window->details->active_pane, 0);
 	nemo_window_set_active_slot (window, slot);
 
-    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_START_WITH_DUAL_PANE) &&
-        !window->details->disable_chrome)
-        nemo_window_split_view_on (window);
+	if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_START_WITH_DUAL_PANE) &&
+            !window->details->disable_chrome)
+		nemo_window_split_view_on (window);
+
+	application = NEMO_APPLICATION (g_application_get_default ());
+	window->details->bookmarks_id =
+		g_signal_connect_swapped (nemo_application_get_bookmarks (application), "changed",
+					  G_CALLBACK (nemo_window_pane_sync_bookmarks), window->details->active_pane);
 
 	nemo_profile_end (NULL);
 }
@@ -756,6 +763,7 @@ static void
 nemo_window_destroy (GtkWidget *object)
 {
 	NemoWindow *window;
+	NemoApplication *application;
 	GList *panes_copy;
 
 	window = NEMO_WINDOW (object);
@@ -773,6 +781,13 @@ nemo_window_destroy (GtkWidget *object)
 	/* the panes list should now be empty */
 	g_assert (window->details->panes == NULL);
 	g_assert (window->details->active_pane == NULL);
+
+	if (window->details->bookmarks_id != 0) {
+		application = NEMO_APPLICATION (gtk_window_get_application (GTK_WINDOW (window)));
+		g_signal_handler_disconnect (nemo_application_get_bookmarks (application),
+					     window->details->bookmarks_id);
+		window->details->bookmarks_id = 0;
+	}
 
 	GTK_WIDGET_CLASS (nemo_window_parent_class)->destroy (object);
 }

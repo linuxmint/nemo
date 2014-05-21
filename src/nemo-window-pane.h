@@ -95,6 +95,7 @@ NemoWindowSlot *nemo_window_pane_open_slot  (NemoWindowPane *pane,
 void  nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 						     NemoWindowSlot *slot);
 
+void nemo_window_pane_sync_bookmarks (NemoWindowPane *pane);
 void nemo_window_pane_sync_location_widgets (NemoWindowPane *pane);
 void nemo_window_pane_sync_search_widgets  (NemoWindowPane *pane);
 void nemo_window_pane_set_active (NemoWindowPane *pane, gboolean is_active);

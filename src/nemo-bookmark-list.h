@@ -76,11 +76,14 @@ GList *                 nemo_bookmark_list_get_for_uri         (NemoBookmarkList
 guint                   nemo_bookmark_list_length              (NemoBookmarkList   *bookmarks);
 NemoBookmark *      nemo_bookmark_list_item_at             (NemoBookmarkList   *bookmarks,
 								    guint                   index);
-NemoBookmark *      nemo_bookmark_list_item_with_uri       (NemoBookmarkList *bookmarks,
-								    const gchar	         *uri);
+NemoBookmark *      nemo_bookmark_list_item_with_location  (NemoBookmarkList *bookmarks,
+								    GFile                *location,
+								    guint                *index);
 void                    nemo_bookmark_list_move_item           (NemoBookmarkList *bookmarks,
 								    guint                 index,
 								    guint                 destination);
 void                    nemo_bookmark_list_sort_ascending           (NemoBookmarkList *bookmarks);
+gboolean                nemo_bookmark_list_can_bookmark_location (NemoBookmarkList *list,
+								      GFile                *location);
 
 #endif /* NEMO_BOOKMARK_LIST_H */

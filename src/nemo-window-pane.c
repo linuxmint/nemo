@@ -974,6 +974,28 @@ nemo_window_pane_get_toolbar_action_group (NemoWindowPane *pane)
 }
 
 void
+nemo_window_pane_sync_bookmarks (NemoWindowPane *pane)
+{
+	gboolean can_bookmark = FALSE;
+	NemoWindowSlot *slot;
+	NemoBookmarkList *bookmarks;
+	GtkAction *action;
+
+	slot = pane->active_slot;
+
+	if (slot->location != NULL) {
+		bookmarks = nemo_application_get_bookmarks
+			(NEMO_APPLICATION (gtk_window_get_application (GTK_WINDOW (pane->window))));
+		can_bookmark = nemo_bookmark_list_can_bookmark_location (bookmarks, slot->location);
+	}
+
+	action = gtk_action_group_get_action (nemo_window_get_main_action_group (pane->window),
+					      NEMO_ACTION_ADD_BOOKMARK);
+
+	gtk_action_set_sensitive (action, can_bookmark);
+}
+
+void
 nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 {
 	NemoWindowSlot *slot, *active_slot;
@@ -984,14 +1006,10 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 
 	/* Change the location bar and path bar to match the current location. */
 	if (slot->location != NULL) {
-		char *uri;
-
 		/* this may be NULL if we just created the slot */
-		uri = nemo_window_slot_get_location_uri (slot);
-		nemo_location_entry_set_uri (NEMO_LOCATION_ENTRY (pane->location_entry), uri);
-		g_free (uri);
+		nemo_location_entry_set_location (NEMO_LOCATION_ENTRY (pane->location_entry), slot->location);
 		nemo_path_bar_set_path (NEMO_PATH_BAR (pane->path_bar), slot->location);
-        restore_focus_widget (pane);
+		restore_focus_widget (pane);
 	}
 
 	/* Update window global UI if this is the active pane */
@@ -1008,7 +1026,7 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 		nemo_navigation_state_set_boolean (nav_state,
 						       NEMO_ACTION_FORWARD,
 						       active_slot->forward_list != NULL);
-
+		nemo_window_pane_sync_bookmarks (pane);
 	}
 }
 
