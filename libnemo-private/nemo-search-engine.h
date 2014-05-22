@@ -28,6 +28,7 @@
 
 #include <libnemo-private/nemo-directory.h>
 #include <libnemo-private/nemo-search-engine-model.h>
+#include <libnemo-private/nemo-search-engine-simple.h>
 
 #define NEMO_TYPE_SEARCH_ENGINE		(nemo_search_engine_get_type ())
 #define NEMO_SEARCH_ENGINE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_SEARCH_ENGINE, NemoSearchEngine))
@@ -52,5 +53,12 @@ GType                 nemo_search_engine_get_type           (void);
 NemoSearchEngine *nemo_search_engine_new                (void);
 NemoSearchEngineModel *
                       nemo_search_engine_get_model_provider (NemoSearchEngine *engine);
+
+#ifndef NEMO_SEARCH_ENGINE_SIMPLE_H
+#error no hallo
+#endif
+
+NemoSearchEngineSimple *
+                      nemo_search_engine_get_simple_provider (NemoSearchEngine *engine);
 
 #endif /* NEMO_SEARCH_ENGINE_H */

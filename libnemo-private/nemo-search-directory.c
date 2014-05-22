@@ -46,7 +46,7 @@ struct NemoSearchDirectoryDetails {
 	NemoSearchEngine *engine;
 
 	gboolean search_running;
-	gboolean search_finished;
+	gboolean search_loaded;
 
 	GList *files;
 	GHashTable *files_hash;
@@ -90,7 +90,6 @@ G_DEFINE_TYPE (NemoSearchDirectory, nemo_search_directory,
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 static void search_engine_hits_added (NemoSearchEngine *engine, GList *hits, NemoSearchDirectory *search);
-static void search_engine_finished (NemoSearchEngine *engine, NemoSearchDirectory *search);
 static void search_engine_error (NemoSearchEngine *engine, const char *error, NemoSearchDirectory *search);
 static void search_callback_file_ready_callback (NemoFile *file, gpointer data);
 static void file_changed (NemoFile *file, NemoSearchDirectory *search);
@@ -146,6 +145,7 @@ static void
 start_search (NemoSearchDirectory *search)
 {
 	NemoSearchEngineModel *model_provider;
+	NemoSearchEngineSimple *simple_provider;
 
 	if (!search->details->query) {
 		return;
@@ -161,7 +161,7 @@ start_search (NemoSearchDirectory *search)
 
 	/* We need to start the search engine */
 	search->details->search_running = TRUE;
-	search->details->search_finished = FALSE;
+	search->details->search_loaded = FALSE;
 
 	set_hidden_files (search);
 	nemo_search_provider_set_query (NEMO_SEARCH_PROVIDER (search->details->engine),
@@ -169,6 +169,9 @@ start_search (NemoSearchDirectory *search)
 
 	model_provider = nemo_search_engine_get_model_provider (search->details->engine);
 	nemo_search_engine_model_set_model (model_provider, search->details->base_model);
+
+	simple_provider = nemo_search_engine_get_simple_provider (search->details->engine);
+	g_object_set (simple_provider, "recursive", TRUE, NULL);
 
 	reset_file_list (search);
 
@@ -436,7 +439,7 @@ search_call_when_ready (NemoDirectory *directory,
 	search_callback->wait_for_attributes = file_attributes;
 	search_callback->wait_for_file_list = wait_for_file_list;
 
-	if (wait_for_file_list && !search->details->search_finished) {
+	if (wait_for_file_list && !search->details->search_loaded) {
 		/* Add it to the pending callback list, which will be
 		 * processed when the directory has finished loading
 		 */
@@ -494,6 +497,14 @@ search_cancel_callback (NemoDirectory *directory,
 	}
 }
 
+static void
+search_callback_add_pending_file_callbacks (SearchCallback *callback)
+{
+	callback->file_list = nemo_file_list_copy (callback->search_directory->details->files);
+	callback->non_ready_hash = file_list_to_hash_table (callback->search_directory->details->files);
+
+	search_callback_add_file_callbacks (callback);
+}
 
 static void
 search_engine_hits_added (NemoSearchEngine *engine, GList *hits, 
@@ -542,15 +553,20 @@ search_engine_hits_added (NemoSearchEngine *engine, GList *hits,
 	file = nemo_directory_get_corresponding_file (NEMO_DIRECTORY (search));
 	nemo_file_emit_changed (file);
 	nemo_file_unref (file);
-}
 
-static void
-search_callback_add_pending_file_callbacks (SearchCallback *callback)
-{
-	callback->file_list = nemo_file_list_copy (callback->search_directory->details->files);
-	callback->non_ready_hash = file_list_to_hash_table (callback->search_directory->details->files);
+	if (!search->details->search_loaded) {
+		search->details->search_loaded = TRUE;
+		nemo_directory_emit_done_loading (NEMO_DIRECTORY (search));
 
-	search_callback_add_file_callbacks (callback);
+		/* Add all file callbacks */
+		g_list_foreach (search->details->pending_callback_list,
+				(GFunc)search_callback_add_pending_file_callbacks, NULL);
+		search->details->callback_list = g_list_concat (search->details->callback_list,
+								search->details->pending_callback_list);
+
+		g_list_free (search->details->pending_callback_list);
+		search->details->pending_callback_list = NULL;
+	}
 }
 
 static void
@@ -566,23 +582,6 @@ search_engine_error (NemoSearchEngine *engine, const char *error_message, NemoSe
 }
 
 static void
-search_engine_finished (NemoSearchEngine *engine, NemoSearchDirectory *search)
-{
-	search->details->search_finished = TRUE;
-
-	nemo_directory_emit_done_loading (NEMO_DIRECTORY (search));
-
-	/* Add all file callbacks */
-	g_list_foreach (search->details->pending_callback_list, 
-			(GFunc)search_callback_add_pending_file_callbacks, NULL);
-	search->details->callback_list = g_list_concat (search->details->callback_list,
-							search->details->pending_callback_list);
-
-	g_list_free (search->details->pending_callback_list);
-	search->details->pending_callback_list = NULL;
-}
-
-static void
 search_force_reload (NemoDirectory *directory)
 {
 	NemoSearchDirectory *search;
@@ -593,7 +592,7 @@ search_force_reload (NemoDirectory *directory)
 		return;
 	}
 	
-	search->details->search_finished = FALSE;
+	search->details->search_loaded = FALSE;
 
 	/* Remove file monitors */
 	reset_file_list (search);
@@ -608,7 +607,7 @@ search_are_all_files_seen (NemoDirectory *directory)
 	search = NEMO_SEARCH_DIRECTORY (directory);
 
 	return (!search->details->query ||
-		search->details->search_finished);
+		search->details->search_loaded);
 }
 
 static gboolean
@@ -759,9 +758,6 @@ nemo_search_directory_init (NemoSearchDirectory *search)
 	search->details->engine = nemo_search_engine_new ();
 	g_signal_connect (search->details->engine, "hits-added",
 			  G_CALLBACK (search_engine_hits_added),
-			  search);
-	g_signal_connect (search->details->engine, "finished",
-			  G_CALLBACK (search_engine_finished),
 			  search);
 	g_signal_connect (search->details->engine, "error",
 			  G_CALLBACK (search_engine_error),

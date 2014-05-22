@@ -376,6 +376,7 @@ build_tab_label (NemoNotebook *nb, NemoWindowSlot *slot)
 	gtk_box_pack_start (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
 	gtk_widget_show (close_button);
 
+	g_object_set_data (G_OBJECT (hbox), "nemo-notebook-tab", GINT_TO_POINTER (1));
 	nemo_drag_slot_proxy_init (hbox, NULL, slot);
 
 	g_object_set_data (G_OBJECT (hbox), "label", label);
