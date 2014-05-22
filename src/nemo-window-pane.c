@@ -982,11 +982,12 @@ nemo_window_pane_sync_search_widgets (NemoWindowPane *pane)
 		search_directory = NEMO_SEARCH_DIRECTORY (directory);
 	}
 
-    if (search_directory != NULL || slot->load_with_search) {
-        slot->load_with_search = FALSE;
+	if (search_directory != NULL || slot->load_with_search ||
+	    gtk_widget_get_visible (GTK_WIDGET (slot->query_editor))) {
+		slot->load_with_search = FALSE;
 		toggle_toolbar_search_button (pane, TRUE);
 	} else {
-	    toggle_toolbar_search_button (pane, FALSE);
+		toggle_toolbar_search_button (pane, FALSE);
 	}
 
 	nemo_directory_unref (directory);
