@@ -92,10 +92,10 @@ search_engine_start_real (NemoSearchEngine *engine)
 	if (nemo_search_engine_model_get_model (engine->details->model)) {
 		nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->model));
 		engine->details->providers_running++;
-	} else {
-		nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->simple));
-		engine->details->providers_running++;
 	}
+
+	nemo_search_provider_start (NEMO_SEARCH_PROVIDER (engine->details->simple));
+	engine->details->providers_running++;
 }
 
 static void
@@ -312,4 +312,10 @@ NemoSearchEngineModel *
 nemo_search_engine_get_model_provider (NemoSearchEngine *engine)
 {
 	return engine->details->model;
+}
+
+NemoSearchEngineSimple *
+nemo_search_engine_get_simple_provider (NemoSearchEngine *engine)
+{
+	return engine->details->simple;
 }
