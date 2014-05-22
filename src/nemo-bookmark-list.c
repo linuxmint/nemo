@@ -607,6 +607,7 @@ load_callback (GObject *source,
 	contents = g_simple_async_result_get_op_res_gpointer (G_SIMPLE_ASYNC_RESULT (res));
 
 	if (contents == NULL) {
+		op_processed_cb (self);
 		return;
 	}
 
@@ -830,11 +831,22 @@ gboolean
 nemo_bookmark_list_can_bookmark_location (NemoBookmarkList *list,
 					      GFile                *location)
 {
+	NemoBookmark *bookmark;
+	gboolean is_builtin;
+
 	if (nemo_bookmark_list_item_with_location (list, location, NULL)) {
 		return FALSE;
 	}
 
-	return !nemo_is_home_directory (location);
+	if (nemo_is_home_directory (location)) {
+		return FALSE;
+	}
+
+	bookmark = nemo_bookmark_new (location, NULL);
+	is_builtin = nemo_bookmark_get_is_builtin (bookmark);
+	g_object_unref (bookmark);
+
+	return !is_builtin;
 }
 
 /**

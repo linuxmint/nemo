@@ -35,6 +35,7 @@
 
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
+#include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-icon-names.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_BOOKMARKS
@@ -165,6 +166,58 @@ apply_warning_emblem (GIcon **base,
 	*base = emblemed_icon;
 }
 
+gboolean
+nemo_bookmark_get_is_builtin (NemoBookmark *bookmark)
+{
+	GUserDirectory xdg_type;
+
+	/* if this is not an XDG dir, it's never builtin */
+	if (!nemo_bookmark_get_xdg_type (bookmark, &xdg_type)) {
+		return FALSE;
+	}
+
+	/* exclude XDG locations which are not in our builtin list */
+	if (xdg_type == G_USER_DIRECTORY_DESKTOP &&
+	    !g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
+		return FALSE;
+	}
+
+	return (xdg_type != G_USER_DIRECTORY_TEMPLATES) && (xdg_type != G_USER_DIRECTORY_PUBLIC_SHARE);
+}
+
+gboolean
+nemo_bookmark_get_xdg_type (NemoBookmark *bookmark,
+				GUserDirectory   *directory)
+{
+	gboolean match;
+	GFile *location;
+	const gchar *path;
+	GUserDirectory dir;
+
+	match = FALSE;
+
+	for (dir = 0; dir < G_USER_N_DIRECTORIES; dir++) {
+		path = g_get_user_special_dir (dir);
+		if (!path) {
+			continue;
+		}
+
+		location = g_file_new_for_path (path);
+		match = g_file_equal (location, bookmark->details->location);
+		g_object_unref (location);
+
+		if (match) {
+			break;
+		}
+	}
+
+	if (match && directory != NULL) {
+		*directory = dir;
+	}
+
+	return match;
+}
+
 static void
 nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark);
 
@@ -222,24 +275,22 @@ static GIcon *
 get_native_icon (NemoBookmark *bookmark,
 		 gboolean symbolic)
 {
-	gint idx;
+	GUserDirectory xdg_type;
 	GIcon *icon = NULL;
 
 	if (bookmark->details->file == NULL) {
 		goto out;
 	}
 
-	for (idx = 0; idx < G_USER_N_DIRECTORIES; idx++) {
-		if (nemo_file_is_user_special_directory (bookmark->details->file, idx)) {
-			break;
-		}
+	if (!nemo_bookmark_get_xdg_type (bookmark, &xdg_type)) {
+		goto out;
 	}
 
-	if (idx < G_USER_N_DIRECTORIES) {
+	if (xdg_type < G_USER_N_DIRECTORIES) {
 		if (symbolic) {
-			icon = nemo_special_directory_get_symbolic_icon (idx);
+			icon = nemo_special_directory_get_symbolic_icon (xdg_type);
 		} else {
-			icon = nemo_special_directory_get_icon (idx);
+			icon = nemo_special_directory_get_icon (xdg_type);
 		}
 	}
 
