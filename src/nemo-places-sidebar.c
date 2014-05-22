@@ -248,37 +248,6 @@ static GtkTreeStore *nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar);
 
 G_DEFINE_TYPE (NemoPlacesSidebar, nemo_places_sidebar, GTK_TYPE_SCROLLED_WINDOW);
 
-static gboolean
-is_built_in_bookmark (NemoFile *file)
-{
-	gboolean built_in;
-	gint idx;
-
-	if (nemo_file_is_home (file)) {
-		return TRUE;
-	}
-
-	if (nemo_file_is_desktop_directory (file) &&
-        !g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
-		return FALSE;
-	}
-
-	built_in = FALSE;
-
-	for (idx = 0; idx < G_USER_N_DIRECTORIES; idx++) {
-		/* PUBLIC_SHARE and TEMPLATES are not in our built-in list */
-		if (nemo_file_is_user_special_directory (file, idx)) {
-			if (idx != G_USER_DIRECTORY_PUBLIC_SHARE &&  idx != G_USER_DIRECTORY_TEMPLATES) {
-				built_in = TRUE;
-			}
-
-			break;
-		}
-	}
-
-	return built_in;
-}
-
 static GtkTreeIter
 add_heading (NemoPlacesSidebar *sidebar,
 	     SectionType section_type,
@@ -593,7 +562,6 @@ update_places (NemoPlacesSidebar *sidebar)
 	char *tooltip;
     gchar *tooltip_info;
 	GList *network_mounts, *network_volumes;
-	NemoFile *file;
     gint full;
 
 	DEBUG ("Updating places sidebar");
@@ -681,15 +649,6 @@ update_places (NemoPlacesSidebar *sidebar)
             g_object_unref (root);
             continue;
 	}
-
-        file = nemo_file_get (root);
-
-        //if (is_built_in_bookmark (file)) {
-        //  g_object_unref (root);
-        //  nemo_file_unref (file);
-        //  continue;
-        //}
-        nemo_file_unref (file);
 
         bookmark_name = nemo_bookmark_get_name (bookmark);
         icon = nemo_bookmark_get_icon (bookmark);
@@ -1450,30 +1409,23 @@ free_drag_data (NemoPlacesSidebar *sidebar)
 }
 
 static gboolean
-can_accept_file_as_bookmark (NemoFile *file)
-{
-	return (nemo_file_is_directory (file) &&
-		!is_built_in_bookmark (file));
-}
-
-static gboolean
-can_accept_items_as_bookmarks (const GList *items)
+can_accept_items_as_bookmarks (NemoPlacesSidebar *sidebar, const GList *items)
 {
 	int max;
 	char *uri;
-	NemoFile *file;
+	GFile *location;
 
 	/* Iterate through selection checking if item will get accepted as a bookmark.
 	 * If more than 100 items selected, return an over-optimistic result.
 	 */
 	for (max = 100; items != NULL && max >= 0; items = items->next, max--) {
 		uri = ((NemoDragSelectionItem *)items->data)->uri;
-		file = nemo_file_get_by_uri (uri);
-		if (!can_accept_file_as_bookmark (file)) {
-			nemo_file_unref (file);
+		location = g_file_new_for_uri (uri);
+		if (!nemo_bookmark_list_can_bookmark_location (sidebar->bookmarks, location)) {
+			g_object_unref (location);
 			return FALSE;
 		}
-		nemo_file_unref (file);
+		g_object_unref (location);
 	}
 	
 	return TRUE;
@@ -1512,7 +1464,7 @@ drag_motion_callback (GtkTreeView *tree_view,
 		if (sidebar->drag_data_received &&
 		    sidebar->drag_data_info == GTK_TREE_MODEL_ROW) {
 			action = GDK_ACTION_MOVE;
-		} else if (can_accept_items_as_bookmarks (sidebar->drag_list)) {
+		} else if (can_accept_items_as_bookmarks (sidebar, sidebar->drag_list)) {
 			action = GDK_ACTION_COPY;
 		} else {
 			action = 0;
@@ -1584,16 +1536,17 @@ bookmarks_drop_uris (NemoPlacesSidebar *sidebar,
 	
 	for (i = 0; uris[i]; i++) {
 		uri = uris[i];
-		file = nemo_file_get_by_uri (uri);
 
-		if (!can_accept_file_as_bookmark (file)) {
-			nemo_file_unref (file);
+		file = nemo_file_get_by_uri (uri);
+		uri = nemo_file_get_drop_target_uri (file);
+		nemo_file_unref (file);
+
+		location = g_file_new_for_uri (uri);
+
+		if (!nemo_bookmark_list_can_bookmark_location (sidebar->bookmarks, location)) {
+			g_object_unref (location);
 			continue;
 		}
-
-		uri = nemo_file_get_drop_target_uri (file);
-		location = g_file_new_for_uri (uri);
-		nemo_file_unref (file);
 
 		bookmark = nemo_bookmark_new (location, NULL);
                 nemo_bookmark_list_append (sidebar->bookmarks, bookmark);

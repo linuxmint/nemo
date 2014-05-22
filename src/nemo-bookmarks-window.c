@@ -48,7 +48,6 @@ enum {
 	BOOKMARK_LIST_COLUMN_ICON,
 	BOOKMARK_LIST_COLUMN_NAME,
 	BOOKMARK_LIST_COLUMN_BOOKMARK,
-	BOOKMARK_LIST_COLUMN_STYLE,
 	BOOKMARK_LIST_NUM_COLUMNS
 };
 
@@ -153,8 +152,7 @@ create_bookmark_store (void)
 	return gtk_list_store_new (BOOKMARK_LIST_NUM_COLUMNS,
 				   G_TYPE_ICON,
 				   G_TYPE_STRING,
-				   G_TYPE_OBJECT,
-				   PANGO_TYPE_STYLE);
+				   G_TYPE_OBJECT);
 }
 
 static void
@@ -168,7 +166,6 @@ setup_empty_list (NemoBookmarksWindow *self)
 
 	gtk_list_store_set (empty_model, &iter,
 			    BOOKMARK_LIST_COLUMN_NAME, _("No bookmarks defined"),
-			    BOOKMARK_LIST_COLUMN_STYLE, PANGO_STYLE_ITALIC,
 			    -1);
 	gtk_tree_view_set_model (self->priv->tree_view,
 				 GTK_TREE_MODEL (empty_model));
@@ -182,17 +179,21 @@ update_widgets_sensitivity (NemoBookmarksWindow *self)
 	NemoBookmark *selected;
 	int n_active;
 	int index = -1;
+	gboolean builtin;
 
 	selected = get_selected_bookmark (self);
 	n_active = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (self->priv->model), NULL);
 	if (selected != NULL) {
 		index = get_selected_row (self);
+		builtin = nemo_bookmark_get_is_builtin (selected);
+	} else {
+		builtin = FALSE;
 	}
 
 	/* Set the sensitivity of widgets that require a selection */
-	gtk_widget_set_sensitive (self->priv->remove_button, index >= 0 && n_active > 1);
-	gtk_widget_set_sensitive (self->priv->up_button, index > 0);
-	gtk_widget_set_sensitive (self->priv->down_button, index >= 0 && index < n_active - 1);
+	gtk_widget_set_sensitive (self->priv->remove_button, !builtin && index >= 0 && n_active > 1);
+	gtk_widget_set_sensitive (self->priv->up_button, !builtin && index > 0);
+	gtk_widget_set_sensitive (self->priv->down_button, !builtin && index >= 0 && index < n_active - 1);
 	gtk_widget_set_sensitive (self->priv->name_field, selected != NULL);
 	gtk_widget_set_sensitive (self->priv->uri_field, selected != NULL);
 }
@@ -305,7 +306,6 @@ repopulate (NemoBookmarksWindow *self)
 				    BOOKMARK_LIST_COLUMN_ICON, bookmark_icon,
 				    BOOKMARK_LIST_COLUMN_NAME, bookmark_name,
 				    BOOKMARK_LIST_COLUMN_BOOKMARK, bookmark,
-				    BOOKMARK_LIST_COLUMN_STYLE, PANGO_STYLE_NORMAL,
 				    -1);
 
 		if (bookmark == selected) {
@@ -752,8 +752,6 @@ nemo_bookmarks_window_constructed (GObject *object)
 							rend,
 							"text", 
 							BOOKMARK_LIST_COLUMN_NAME,
-							"style",
-							BOOKMARK_LIST_COLUMN_STYLE,
 							NULL);
 	gtk_tree_view_append_column (self->priv->tree_view,
 				     GTK_TREE_VIEW_COLUMN (col));

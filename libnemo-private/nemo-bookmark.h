@@ -72,6 +72,9 @@ char *                nemo_bookmark_get_uri                (NemoBookmark      *b
 GIcon *               nemo_bookmark_get_icon               (NemoBookmark      *bookmark);
 GIcon *               nemo_bookmark_get_symbolic_icon      (NemoBookmark      *bookmark);
 gboolean              nemo_bookmark_get_exists             (NemoBookmark      *bookmark);
+gboolean              nemo_bookmark_get_xdg_type           (NemoBookmark      *bookmark,
+								GUserDirectory        *directory);
+gboolean              nemo_bookmark_get_is_builtin         (NemoBookmark      *bookmark);
 gboolean	      nemo_bookmark_get_has_custom_name    (NemoBookmark      *bookmark);
 void                  nemo_bookmark_set_custom_name        (NemoBookmark      *bookmark,
 								const char            *new_name);
