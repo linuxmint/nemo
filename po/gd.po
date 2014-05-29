@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautil"
 "us&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2014-05-29 10:21+0000\n"
-"PO-Revision-Date: 2014-05-29 16:07+0100\n"
+"PO-Revision-Date: 2014-05-29 16:09+0100\n"
 "Last-Translator: GunChleoc <fios@foramnagaidhlig.net>\n"
 "Language-Team: Fòram na Gàidhlig http://www.foramnagaidhlig.net\n"
 "Language: gd\n"
@@ -4654,7 +4654,7 @@ msgstr "Tagh nithean san uinneag seo a tha a' maidseadh ri pàtran àraid"
 #. label, accelerator
 #: ../src/nautilus-view.c:7206
 msgid "_Invert Selection"
-msgstr "Ais-thionndaidh an _taghadh"
+msgstr "Cuir an _taghadh bun os cionn"
 
 #. tooltip
 #: ../src/nautilus-view.c:7207
