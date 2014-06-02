@@ -397,7 +397,6 @@ nautilus_toolbar_constructed (GObject *obj)
 	GtkWidget *separator;
 	GtkUIManager *ui_manager;
 	GtkSizeGroup *size_group;
-	gboolean rtl;
 
 	G_OBJECT_CLASS (nautilus_toolbar_parent_class)->constructed (obj);
 
@@ -405,8 +404,6 @@ nautilus_toolbar_constructed (GObject *obj)
 				     "header-bar");
 
 	toolbar = GTK_WIDGET (obj);
-
-	rtl = gtk_widget_get_default_direction () == GTK_TEXT_DIR_RTL;
 
 	ui_manager = nautilus_window_get_ui_manager (self->priv->window);
 
@@ -422,7 +419,7 @@ nautilus_toolbar_constructed (GObject *obj)
 	button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_BACK, NULL);
 	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
 	gtk_action_set_icon_name (gtk_activatable_get_related_action (GTK_ACTIVATABLE (button)),
-				  rtl ? "go-previous-rtl-symbolic" : "go-previous-symbolic");
+				  "go-previous-symbolic");
 	navigation_button_setup_menu (self, button, NAUTILUS_NAVIGATION_DIRECTION_BACK);
 	gtk_container_add (GTK_CONTAINER (box), button);
 
@@ -430,7 +427,7 @@ nautilus_toolbar_constructed (GObject *obj)
 	button = toolbar_create_toolbutton (self, FALSE, FALSE, NAUTILUS_ACTION_FORWARD, NULL);
 	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
 	gtk_action_set_icon_name (gtk_activatable_get_related_action (GTK_ACTIVATABLE (button)),
-				  rtl ? "go-next-rtl-symbolic" : "go-next-symbolic");
+				  "go-next-symbolic");
 	navigation_button_setup_menu (self, button, NAUTILUS_NAVIGATION_DIRECTION_FORWARD);
 	gtk_container_add (GTK_CONTAINER (box), button);
 
