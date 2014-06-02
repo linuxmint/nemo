@@ -235,12 +235,9 @@ static void
 check_uri_entry (NautilusConnectServerDialog *dialog)
 {
 	guint length;
-	gboolean rtl;
 	gboolean button_active = FALSE;
 	gboolean icon_active = FALSE;
 	const char *text = NULL;
-
-	rtl = gtk_widget_get_direction (GTK_WIDGET (dialog)) == GTK_TEXT_DIR_RTL;
 
 	length = gtk_entry_get_text_length (GTK_ENTRY (dialog->details->uri_entry));
 	if (length > 0) {
@@ -260,8 +257,7 @@ check_uri_entry (NautilusConnectServerDialog *dialog)
 	gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, button_active);
 
 	g_object_set (dialog->details->uri_entry,
-		      "secondary-icon-name", icon_active ? (rtl ? "edit-clear-rtl-symbolic" :
-								  "edit-clear-symbolic") : NULL,
+		      "secondary-icon-name", icon_active ? ("edit-clear-symbolic") : NULL,
 		      "secondary-icon-activatable", icon_active,
 		      "secondary-icon-sensitive", icon_active,
 		      NULL);
