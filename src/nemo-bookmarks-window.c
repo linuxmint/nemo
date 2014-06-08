@@ -798,8 +798,7 @@ update_bookmark_from_text (void)
 			(gtk_entry_get_text (GTK_ENTRY (uri_field)));
 		
 		bookmark = nemo_bookmark_new (location,
-						  name_text_changed ? gtk_entry_get_text (GTK_ENTRY (name_field)) : NULL,
-						  NULL);
+						  name_text_changed ? gtk_entry_get_text (GTK_ENTRY (name_field)) : NULL);
 		
 		g_object_unref (location);
 
