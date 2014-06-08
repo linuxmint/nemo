@@ -107,6 +107,7 @@ void nemo_file_operations_unmount_mount (GtkWindow                      *parent_
 					     gboolean                        check_trash);
 void nemo_file_operations_unmount_mount_full (GtkWindow                 *parent_window,
 						  GMount                    *mount,
+                          GMountOperation           *mount_operation,
 						  gboolean                   eject,
 						  gboolean                   check_trash,
 						  NemoUnmountCallback    callback,

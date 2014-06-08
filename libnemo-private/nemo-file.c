@@ -1275,7 +1275,7 @@ nemo_file_unmount (NemoFile                   *file,
 		data->file = nemo_file_ref (file);
 		data->callback = callback;
 		data->callback_data = callback_data;
-		nemo_file_operations_unmount_mount_full (NULL, file->details->mount, FALSE, TRUE, unmount_done, data);
+		nemo_file_operations_unmount_mount_full (NULL, file->details->mount, NULL, FALSE, TRUE, unmount_done, data);
 	} else if (callback) {
 		callback (file, NULL, NULL, callback_data);
 	}
@@ -1309,7 +1309,7 @@ nemo_file_eject (NemoFile                   *file,
 		data->file = nemo_file_ref (file);
 		data->callback = callback;
 		data->callback_data = callback_data;
-		nemo_file_operations_unmount_mount_full (NULL, file->details->mount, TRUE, TRUE, unmount_done, data);
+		nemo_file_operations_unmount_mount_full (NULL, file->details->mount, NULL, TRUE, TRUE, unmount_done, data);
 	} else if (callback) {
 		callback (file, NULL, NULL, callback_data);
 	}

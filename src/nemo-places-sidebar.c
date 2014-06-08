@@ -59,6 +59,8 @@
 #include "nemo-window.h"
 #include "nemo-window-slot.h"
 
+#include <libnotify/notify.h>
+
 #define DEBUG_FLAG NEMO_DEBUG_PLACES
 #include <libnemo-private/nemo-debug.h>
 
@@ -113,6 +115,8 @@ typedef struct {
 	NemoWindowOpenFlags go_to_after_mount_flags;
 
 	GtkTreePath *eject_highlight_path;
+
+    NotifyNotification *unmount_notify;
 
 	guint bookmarks_changed_id;
 
@@ -2496,13 +2500,55 @@ unmount_done (gpointer data)
 }
 
 static void
+show_unmount_progress_cb (GMountOperation *op,
+                              const gchar *message,
+                                    gint64 time_left,
+                                    gint64 bytes_left,
+                                  gpointer user_data)
+{
+    NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+
+    if (bytes_left == 0) {
+        nemo_application_notify_unmount_done (app, message);
+    } else {
+        nemo_application_notify_unmount_show (app, message);
+    }
+}
+
+static void
+show_unmount_progress_aborted_cb (GMountOperation *op,
+                                  gpointer user_data)
+{
+    NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+    nemo_application_notify_unmount_done (app, NULL);
+}
+
+static GMountOperation *
+get_unmount_operation (NemoPlacesSidebar *sidebar)
+{
+    GMountOperation *mount_op;
+
+    mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
+    g_signal_connect (mount_op, "show-unmount-progress",
+                      G_CALLBACK (show_unmount_progress_cb), sidebar);
+    g_signal_connect (mount_op, "aborted",
+                      G_CALLBACK (show_unmount_progress_aborted_cb), sidebar);
+
+    return mount_op;
+}
+
+static void
 do_unmount (GMount *mount,
 	    NemoPlacesSidebar *sidebar)
 {
+    GMountOperation *mount_op;
+
 	if (mount != NULL) {
-		nemo_file_operations_unmount_mount_full (NULL, mount, FALSE, TRUE,
-							     unmount_done,
-							     g_object_ref (sidebar->window));
+        mount_op = get_unmount_operation (sidebar);
+        nemo_file_operations_unmount_mount_full (NULL, mount, mount_op, FALSE, TRUE,
+                                                 unmount_done,
+                                                 g_object_ref (sidebar->window));
+        g_object_unref (mount_op);
 	}
 }
 
@@ -2623,9 +2669,8 @@ do_eject (GMount *mount,
 	  GDrive *drive,
 	  NemoPlacesSidebar *sidebar)
 {
-	GMountOperation *mount_op;
+    GMountOperation *mount_op = get_unmount_operation (sidebar);
 
-	mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
 	if (mount != NULL) {
 		g_mount_eject_with_operation (mount, 0, mount_op, NULL, mount_eject_cb,
 					      g_object_ref (sidebar->window));
@@ -2873,9 +2918,7 @@ stop_shortcut_cb (GtkMenuItem           *item,
 			    -1);
 
 	if (drive != NULL) {
-		GMountOperation *mount_op;
-
-		mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
+        GMountOperation *mount_op = get_unmount_operation (sidebar);
 		g_drive_stop (drive, G_MOUNT_UNMOUNT_NONE, mount_op, NULL, drive_stop_cb,
 			      g_object_ref (sidebar->window));
 		g_object_unref (mount_op);
@@ -4023,6 +4066,7 @@ nemo_places_sidebar_dispose (GObject *object)
 	sidebar->uri = NULL;
 
 	free_drag_data (sidebar);
+    g_clear_object (&sidebar->unmount_notify);
 
 	if (sidebar->eject_highlight_path != NULL) {
 		gtk_tree_path_free (sidebar->eject_highlight_path);
