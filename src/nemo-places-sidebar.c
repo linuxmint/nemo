@@ -260,7 +260,7 @@ static GtkTreeStore *nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar);
 
 G_DEFINE_TYPE (NemoPlacesSidebar, nemo_places_sidebar, GTK_TYPE_SCROLLED_WINDOW);
 
-static GdkPixbuf *
+static cairo_surface_t *
 get_eject_icon (NemoPlacesSidebar *sidebar,
 		gboolean highlighted)
 {
@@ -271,11 +271,14 @@ get_eject_icon (NemoPlacesSidebar *sidebar,
 	GtkIconTheme *icon_theme;
 	GtkStyleContext *style;
 	GtkStateFlags state;
+    cairo_surface_t *surface;
+    gint scale = 1;
 
+    scale = gtk_widget_get_scale_factor (GTK_WIDGET (sidebar));
 	icon_theme = gtk_icon_theme_get_default ();
 	icon_size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
 	icon = g_themed_icon_new_with_default_fallbacks ("nemo-eject");
-	icon_info = gtk_icon_theme_lookup_by_gicon (icon_theme, icon, icon_size, 0);
+	icon_info = gtk_icon_theme_lookup_by_gicon_for_scale (icon_theme, icon, icon_size, scale, 0);
 
 	style = gtk_widget_get_style_context (GTK_WIDGET (sidebar));
 	gtk_style_context_save (style);
@@ -307,7 +310,9 @@ get_eject_icon (NemoPlacesSidebar *sidebar,
 	gtk_style_context_restore (style);
 	g_object_unref (icon);
 
-	return eject;
+	surface = gdk_cairo_surface_create_from_pixbuf (eject, scale, NULL);
+    g_object_unref (eject);
+    return surface;
 }
 
 static gboolean
@@ -399,7 +404,7 @@ add_place (NemoPlacesSidebar *sidebar,
 {
 	GdkPixbuf            *pixbuf;
 	GtkTreeIter           iter;
-	GdkPixbuf	     *eject;
+	cairo_surface_t      *eject;
 	NemoIconInfo *icon_info;
 	int icon_size;
 	gboolean show_eject, show_unmount;
@@ -435,7 +440,7 @@ add_place (NemoPlacesSidebar *sidebar,
 	}
 
 	if (show_eject_button) {
-		eject = get_eject_icon (sidebar, FALSE);
+        eject = get_eject_icon (sidebar, FALSE);
 	} else {
 		eject = NULL;
 	}
@@ -3928,7 +3933,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	gtk_tree_view_column_pack_start (eject_col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (eject_col, cell,
 					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
-					     "pixbuf", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
+					     "surface", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
 					     NULL);
 
 	/* normal text renderer */
@@ -4266,7 +4271,7 @@ nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar)
 		G_TYPE_BOOLEAN,
 		G_TYPE_BOOLEAN,
 		G_TYPE_STRING,
-		GDK_TYPE_PIXBUF,
+		CAIRO_GOBJECT_TYPE_SURFACE,
 		G_TYPE_INT,
 		G_TYPE_STRING,
         G_TYPE_INT,
