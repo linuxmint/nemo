@@ -70,7 +70,7 @@ Extensions=any;
 # Quote type to use (if any) - enclose paths/urls with quotes.  Optional - defaults
 # to no quotes.  
 # Can be:  single, double, backtick
-Quote=none
+Quote=double
 
 # Dependencies - program executables required for this action to work.  Nemo will
 # Search in the path for these program(s) and not display the action if any are missing.
