@@ -45,7 +45,7 @@ Icon-Name=folder
 # What type selection: [s]ingle, [m]ultiple, any, notnone, none (background click), or
 # a number representing how many files must be selected to display.
 # ****** REQUIRED *******
-Selection=s
+Selection=m
 
 # What extensions to display on - this is an array, end with a semicolon
 # Single entry options, ending in a semicolon:
@@ -70,7 +70,7 @@ Extensions=any;
 # Quote type to use (if any) - enclose paths/urls with quotes.  Optional - defaults
 # to no quotes.  
 # Can be:  single, double, backtick
-#Quote=none
+Quote=none
 
 # Dependencies - program executables required for this action to work.  Nemo will
 # Search in the path for these program(s) and not display the action if any are missing.
