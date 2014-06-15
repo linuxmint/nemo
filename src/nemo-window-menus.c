@@ -1041,6 +1041,35 @@ action_new_folder_callback (GtkAction *action,
     nemo_view_new_folder (view);
 }
 
+static void
+open_in_terminal_other (const gchar *path)
+{
+    gchar *argv[2];
+    argv[0] = g_settings_get_string (gnome_terminal_preferences, GNOME_DESKTOP_TERMINAL_EXEC);
+    argv[1] = NULL;
+    g_spawn_async(path, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
+}
+
+
+static void
+action_open_terminal_callback(GtkAction *action, gpointer callback_data)
+{  
+    NemoWindow *window;
+    NemoView *view;
+    
+    window = NEMO_WINDOW(callback_data);
+
+    view = get_current_view (window);
+
+    gchar *path;
+    gchar *uri = nemo_view_get_uri (view);
+    GFile *gfile = g_file_new_for_uri (uri);
+    path = g_file_get_path (gfile);
+    open_in_terminal_other (path);
+    g_free (uri);
+    g_free (path);
+    g_object_unref (gfile);
+}
 
 static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "File", NULL, N_("_File") },
@@ -1368,6 +1397,17 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
                       G_CALLBACK (action_new_folder_callback), window);
     gtk_action_set_icon_name (GTK_ACTION (action), "folder-new");
     g_object_unref (action);
+    
+    action = GTK_ACTION (gtk_action_new (NEMO_ACTION_OPEN_IN_TERMINAL,
+                                                _("Open in Terminal"),
+                                                _("Open terminal in selected folder"),
+                                                NULL));
+    gtk_action_group_add_action (action_group, GTK_ACTION (action));
+    g_signal_connect (action, "activate",
+                      G_CALLBACK (action_open_terminal_callback), window);
+    gtk_action_set_icon_name (GTK_ACTION (action), "terminal"); //TODO: we should probably get some sort of sybolic-ish icon to match the others
+    g_object_unref (action);
+
 
     action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_ICON_VIEW,
                          _("Icons"),

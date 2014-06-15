@@ -100,6 +100,8 @@ toolbar_update_appearance (NemoToolbar *self)
 
     gtk_widget_set_visible (self->priv->root_bar,
                 self->priv->show_root_bar);
+        
+        /* Please refer to the element name, not the action name after the forward slash, otherwise the prefs will not work*/
 
 	widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/Toolbar/Up");
 	icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_UP_ICON_TOOLBAR);
@@ -133,6 +135,11 @@ toolbar_update_appearance (NemoToolbar *self)
 
     widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/SecondaryToolbar/New Folder");
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR);
+    if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
+    else {gtk_widget_show (GTK_WIDGET(widgetitem));}
+        
+    widgetitem = gtk_ui_manager_get_widget (self->priv->ui_manager, "/SecondaryToolbar/Open in Terminal");
+    icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_OPEN_IN_TERMINAL_TOOLBAR);
     if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 }
@@ -251,8 +258,11 @@ nemo_toolbar_constructed (GObject *obj)
 				  "changed::" NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR,
 				  G_CALLBACK (toolbar_update_appearance), self);
     g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
+        "changed::" NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR,
+        G_CALLBACK (toolbar_update_appearance), self);
+    g_signal_connect_swapped (nemo_preferences,
+        "changed::" NEMO_PREFERENCES_SHOW_OPEN_IN_TERMINAL_TOOLBAR,
+        G_CALLBACK (toolbar_update_appearance), self);
 	toolbar_update_appearance (self);
 }
 
