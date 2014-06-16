@@ -34,6 +34,7 @@
 #include "nemo-empty-view.h"
 #endif /* ENABLE_EMPTY_VIEW */
 
+#include "nemo-bookmark-list.h"
 #include "nemo-desktop-icon-view.h"
 #include "nemo-desktop-window.h"
 #include "nemo-freedesktop-dbus.h"
@@ -1145,6 +1146,47 @@ init_gtk_accels (void)
 			  G_CALLBACK (queue_accel_map_save_callback), NULL);
 }
 
+static void
+on_bookmarks_loaded (NemoBookmarkList *bookmarks, gpointer user_data)
+{
+    gint i;
+    NemoBookmark *bookmark;
+    GList *orphans = NULL;
+    GList *ptr;
+
+    gint bookmark_count = nemo_bookmark_list_length (bookmarks);
+
+    g_signal_handlers_disconnect_by_func (bookmarks, on_bookmarks_loaded, NULL);
+
+    for (i = 0; i < bookmark_count; i++) {
+        bookmark = nemo_bookmark_list_item_at (bookmarks, i);
+        gchar *uri = nemo_bookmark_get_uri (bookmark);
+        GFile *file = g_file_new_for_uri (uri);
+
+        g_free (uri);
+        if (!g_file_query_exists (file, NULL)) {
+            orphans = g_list_prepend (orphans, nemo_bookmark_get_uri (bookmark));
+        }
+        g_object_unref (file);
+    }
+
+    if (g_list_length (orphans) > 0) {
+        for (ptr = orphans; ptr; ptr = ptr->next) {
+            nemo_bookmark_list_delete_items_with_uri (bookmarks, (gchar *)ptr->data);
+        }
+    }
+
+    g_object_unref (bookmarks);
+    g_list_free_full (orphans, g_free);
+}
+
+static void
+sanitize_bookmarks (void)
+{
+    NemoBookmarkList *bookmarks = nemo_bookmark_list_new ();
+
+    g_signal_connect (bookmarks, "changed", G_CALLBACK (on_bookmarks_loaded), NULL);
+}
 
 static void
 menu_state_changed_callback (NemoApplication *self)
@@ -1192,19 +1234,6 @@ menu_state_changed_callback (NemoApplication *self)
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 static void
 nemo_application_startup (GApplication *app)
 {
@@ -1242,7 +1271,10 @@ nemo_application_startup (GApplication *app)
 	/* initialize theming */
 	init_icons_and_styles ();
 	init_gtk_accels ();
-	
+
+    /* clean up orphaned bookmarks */
+    sanitize_bookmarks ();
+
 	/* initialize nemo modules */
 	nemo_module_setup ();
 
