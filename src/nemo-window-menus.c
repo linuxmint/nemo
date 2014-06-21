@@ -1281,7 +1281,6 @@ static const GtkRadioActionEntry main_radio_entries[] = {
 GtkActionGroup *
 nemo_window_create_toolbar_action_group (NemoWindow *window)
 {
-	gboolean show_label_search_icon_toolbar;
     gboolean show_location_entry_initially;
 
 	NemoNavigationState *navigation_state;
@@ -1458,10 +1457,6 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
  
   	gtk_action_group_add_action (action_group, action);
     gtk_action_set_icon_name (GTK_ACTION (action), "edit-find");
- 
- 
- 	show_label_search_icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR);
- 	gtk_action_set_is_important (GTK_ACTION (action), show_label_search_icon_toolbar);
   
   	g_object_unref (action);
 

@@ -2572,22 +2572,9 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                         <property name="position">7</property>
                                       </packing>
                                     </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="show_label_search_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show label on search icon (need to restart nemo)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="use_underline">True</property>
-                                        <property name="xalign">0</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">8</property>
-                                      </packing>
-                                    </child>
+<<<<<<< HEAD
+=======
+>>>>>>> remove "Show label on search icon" preference
                                   </object>
                                 </child>
                               </object>
