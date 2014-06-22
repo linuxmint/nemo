@@ -105,7 +105,7 @@ toolbar_update_appearance (NemoToolbar *self)
 	gtk_widget_set_visible (self->priv->path_bar,
 				!show_location_entry);
 
-	gtk_revealer_set_reveal_child (self->priv->search_bar_revealer,
+	gtk_revealer_set_reveal_child (GTK_REVEALER (self->priv->search_bar_revealer),
 				                   self->priv->show_search_bar);
 
     gtk_widget_set_visible (self->priv->root_bar,
@@ -204,10 +204,10 @@ nemo_toolbar_constructed (GObject *obj)
 {
 	NemoToolbar *self = NEMO_TOOLBAR (obj);
 	GtkWidget *toolbar;
+    GtkWidget *hbox;
     GtkWidget *button;
     GtkToolItem *tool_box;
     GtkWidget *box;
-    GtkWidget *button_box;
 	GtkStyleContext *context;
 
 	G_OBJECT_CLASS (nemo_toolbar_parent_class)->constructed (obj);
@@ -223,23 +223,14 @@ nemo_toolbar_constructed (GObject *obj)
 
 	toolbar = gtk_toolbar_new ();
 	self->priv->toolbar = toolbar;
-    gtk_container_add (GTK_CONTAINER (self), toolbar);
+    gtk_box_pack_start (GTK_BOX (self), self->priv->toolbar, TRUE, TRUE, 0);
 	
 	context = gtk_widget_get_style_context (GTK_WIDGET(toolbar));
 	gtk_style_context_add_class (context, GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
 	
-    /* Setup the main box to hold all our toolbar items */
-    button_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 3);
-    tool_box = gtk_tool_item_new ();
-    gtk_tool_item_set_expand (tool_box, TRUE);
-    gtk_container_add (GTK_CONTAINER (tool_box), button_box);
-    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
-    gtk_widget_show (GTK_WIDGET (tool_box));
-    gtk_widget_show (GTK_WIDGET (button_box));
-	
     /* Back/Forward/Up */
+    tool_box = gtk_tool_item_new ();
     box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_widget_show (GTK_WIDGET (box));
 
     button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_BACK);
     gtk_container_add (GTK_CONTAINER (box), button);
@@ -253,19 +244,29 @@ nemo_toolbar_constructed (GObject *obj)
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
 
-    gtk_box_pack_start (GTK_BOX (button_box), box, FALSE, FALSE, 0);
+    gtk_container_add (GTK_CONTAINER (tool_box), GTK_WIDGET (box));
+    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
+
+    gtk_widget_show_all (GTK_WIDGET (tool_box));
+    gtk_widget_set_margin_right (GTK_WIDGET (tool_box), 6);
 
     /* Refresh */
+    tool_box = gtk_tool_item_new ();
     box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_widget_show (GTK_WIDGET (box));
+
     self->priv->refresh_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_RELOAD);
     gtk_container_add (GTK_CONTAINER (box), self->priv->refresh_button);
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
-    gtk_box_pack_start (GTK_BOX (button_box), box, FALSE, FALSE, 0);
+
+    gtk_container_add (GTK_CONTAINER (tool_box), GTK_WIDGET (box));
+    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
+
+    gtk_widget_show_all (GTK_WIDGET (tool_box));
+    gtk_widget_set_margin_right (GTK_WIDGET (tool_box), 6);
 
     /* Home/Computer */
+    tool_box = gtk_tool_item_new ();
     box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_widget_show (GTK_WIDGET (box));
 
     self->priv->home_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_HOME);
     gtk_container_add (GTK_CONTAINER (box), self->priv->home_button);
@@ -276,41 +277,35 @@ nemo_toolbar_constructed (GObject *obj)
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
 
-    gtk_box_pack_start (GTK_BOX (button_box), box, FALSE, FALSE, 0);
+    gtk_container_add (GTK_CONTAINER (tool_box), GTK_WIDGET (box));
+    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
+
+    gtk_widget_show_all (GTK_WIDGET (tool_box));
+    gtk_widget_set_margin_right (GTK_WIDGET (tool_box), 6);
 
     /* Regular Path Bar */
+    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_widget_show (hbox);
+
     self->priv->path_bar = g_object_new (NEMO_TYPE_PATH_BAR, NULL);
-    gtk_box_pack_start (GTK_BOX (button_box), self->priv->path_bar, TRUE, TRUE, 0);
-    gtk_widget_set_margin_left (GTK_WIDGET (self->priv->path_bar), 4);
-    gtk_widget_set_margin_right (GTK_WIDGET (self->priv->path_bar), 4);
+    gtk_box_pack_start (GTK_BOX (hbox), self->priv->path_bar, TRUE, TRUE, 0);
     
     /* Entry-Like Location Bar */
     self->priv->location_bar = nemo_location_bar_new ();
-    gtk_box_pack_start (GTK_BOX (button_box), self->priv->location_bar, TRUE, TRUE, 0);
-    gtk_widget_set_margin_left (GTK_WIDGET (self->priv->location_bar), 4);
-    gtk_widget_set_margin_right (GTK_WIDGET (self->priv->location_bar), 4);
-	
-    /* View Select */
-    box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_widget_show (GTK_WIDGET (box));
+    gtk_box_pack_start (GTK_BOX (hbox), self->priv->location_bar, TRUE, TRUE, 0);
 
-    button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_ICON_VIEW);
-    gtk_container_add (GTK_CONTAINER (box), button);
+    tool_box = gtk_tool_item_new ();
+    gtk_tool_item_set_expand (tool_box, TRUE);
+    gtk_container_add (GTK_CONTAINER (tool_box), hbox);
+    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
+    gtk_widget_show (GTK_WIDGET (tool_box));
 
-    button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_LIST_VIEW);
-    gtk_container_add (GTK_CONTAINER (box), button);
-
-    button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_COMPACT_VIEW);
-    gtk_container_add (GTK_CONTAINER (box), button);
-
-    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
-    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
-
-    gtk_box_pack_end (GTK_BOX (button_box), box, FALSE, FALSE, 0);
-
+<<<<<<< HEAD
     /* Search/Open in Terminal/New Folder/Toggle Location */
+=======
+    tool_box = gtk_tool_item_new ();
+>>>>>>> improve the toolbar behavior in narrow windows
     box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_widget_show (GTK_WIDGET (box));
 
     self->priv->toggle_location_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_TOGGLE_LOCATION);
     gtk_container_add (GTK_CONTAINER (box), self->priv->toggle_location_button);
@@ -327,9 +322,35 @@ nemo_toolbar_constructed (GObject *obj)
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
 
-    gtk_box_pack_end (GTK_BOX (button_box), box, FALSE, FALSE, 0);
+    gtk_container_add (GTK_CONTAINER (tool_box), GTK_WIDGET (box));
+    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
+
+    gtk_widget_show_all (GTK_WIDGET (tool_box));
+    gtk_widget_set_margin_left (GTK_WIDGET (tool_box), 6);
 
     setup_root_info_bar (self);
+
+    /* View Select */
+    tool_box = gtk_tool_item_new ();
+    box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+
+    button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_ICON_VIEW);
+    gtk_container_add (GTK_CONTAINER (box), button);
+
+    button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_LIST_VIEW);
+    gtk_container_add (GTK_CONTAINER (box), button);
+
+    button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_COMPACT_VIEW);
+    gtk_container_add (GTK_CONTAINER (box), button);
+
+    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
+    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
+
+    gtk_container_add (GTK_CONTAINER (tool_box), GTK_WIDGET (box));
+    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
+
+    gtk_widget_show_all (GTK_WIDGET (tool_box));
+    gtk_widget_set_margin_left (GTK_WIDGET (tool_box), 6);
 
 	/* search bar */
 	self->priv->search_bar = nemo_search_bar_new ();
@@ -370,7 +391,10 @@ nemo_toolbar_constructed (GObject *obj)
                   "changed::" NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR,
                   G_CALLBACK (toolbar_update_appearance), self);
 
+<<<<<<< HEAD
 >>>>>>> restyle the toolbar buttons
+=======
+>>>>>>> improve the toolbar behavior in narrow windows
 	toolbar_update_appearance (self);
 }
 
