@@ -91,12 +91,12 @@
       <_description>If set to true, then Nemo browser windows will show a textual input entry for the location toolbar.</_description>
     </key>
     <key type="b" name="show-up-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show Up button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-reload-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show refresh button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
@@ -106,12 +106,12 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-home-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show Home button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-computer-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show Computer button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
@@ -121,7 +121,7 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-new-folder-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show new folder button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
