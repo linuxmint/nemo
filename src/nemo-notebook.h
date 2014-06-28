@@ -63,6 +63,9 @@ int		nemo_notebook_add_tab	(NemoNotebook *nb,
 						 NemoWindowSlot *slot,
 						 int position,
 						 gboolean jump_to);
+gint		nemo_notebook_find_tab_num_at_pos (NemoNotebook *nb,
+						   gint 	 abs_x,
+						   gint 	 abs_y);
 	
 void		nemo_notebook_set_show_tabs	(NemoNotebook *nb,
 						 gboolean show_tabs);

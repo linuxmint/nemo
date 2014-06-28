@@ -117,7 +117,7 @@ restore_focus_widget (NemoWindowPane *pane)
 	}
 }
 
-static inline NemoWindowSlot *
+static NemoWindowSlot *
 get_first_inactive_slot (NemoWindowPane *pane)
 {
 	GList *l;
@@ -189,7 +189,7 @@ search_bar_activate_callback (NemoSearchBar *bar,
 	nemo_window_slot_go_to (pane->active_slot, location, FALSE);
 
 	nemo_directory_unref (directory);
-	g_object_unref (location);	
+	g_object_unref (location);
 	g_free (uri);
 }
 
@@ -248,7 +248,7 @@ navigation_bar_cancel_callback (GtkWidget *widget,
 	location = gtk_action_group_get_action (pane->action_group,
 					      NEMO_ACTION_TOGGLE_LOCATION);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (location), FALSE);
-	
+
 	nemo_window_pane_hide_temporary_bars (pane);
 	restore_focus_widget (pane);
 }
@@ -582,23 +582,41 @@ notebook_tab_close_requested (NemoNotebook *notebook,
 
 static gboolean
 notebook_button_press_cb (GtkWidget *widget,
-			  GdkEventButton *event,
-			  gpointer user_data)
+                          GdkEventButton *event,
+                          gpointer user_data)
 {
 	NemoWindowPane *pane;
+	NemoNotebook *notebook;
+	int tab_clicked;
 
-	if (event->type == GDK_BUTTON_PRESS) {
-		pane = NEMO_WINDOW_PANE (user_data);
+	if (event->type != GDK_BUTTON_PRESS)
+		return FALSE;
 
-		if (event->button == 2) {
-			notebook_tab_close_requested (NEMO_NOTEBOOK (pane->notebook), 
-										  pane->active_slot, pane);
-			return TRUE;
+	/* Not a button event we actually care about, so just bail */
+	if (event->button != 1 && event->button != 2 && event->button != 3)
+		return FALSE;
+
+	pane = NEMO_WINDOW_PANE (user_data);
+	notebook = NEMO_NOTEBOOK (pane->notebook);
+	tab_clicked = nemo_notebook_find_tab_num_at_pos (
+		notebook, event->x_root, event->y_root);
+
+	/* Do not change the current page on middle-click events. Close the
+	 * clicked tab instead.
+	 */
+	if (event->button == 2) {
+		if (tab_clicked != -1) {
+			GtkWidget *page = gtk_notebook_get_nth_page (
+				GTK_NOTEBOOK (notebook), tab_clicked);
+			notebook_tab_close_requested (
+				notebook, NEMO_WINDOW_SLOT (page), pane);
 		}
-		if (event->button == 3) {
+	} else {
+		gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook),
+					       tab_clicked);
+
+		if (event->button == 3)
 			notebook_popup_menu_show (pane, event);
-			return TRUE;
-		}
 	}
 
 	return FALSE;
@@ -646,12 +664,12 @@ notebook_page_removed_cb (GtkNotebook *notebook,
 	NemoWindowPane *pane = user_data;
 	NemoWindowSlot *slot = NEMO_WINDOW_SLOT (page), *next_slot;
 	gboolean dnd_slot;
-	
+
 	dnd_slot = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (slot), "dnd-window-slot"));
 	if (!dnd_slot) {
 		return;
 	}
-	
+
 	if (pane->active_slot == slot) {
 		next_slot = get_first_inactive_slot (pane);
 		nemo_window_set_active_slot (pane->window, next_slot);
@@ -671,10 +689,10 @@ notebook_page_added_cb (GtkNotebook *notebook,
 	NemoWindowSlot *slot;
 	NemoWindowSlot *dummy_slot;
 	gboolean dnd_slot;
-	
+
 	pane = NEMO_WINDOW_PANE (user_data);
 	slot = NEMO_WINDOW_SLOT (page);
-	
+
 	//Slot has been dropped onto another pane (new window or tab bar of other window)
 	//So reassociate the pane if needed.
 	if (slot->pane != pane) {
@@ -684,22 +702,22 @@ notebook_page_added_cb (GtkNotebook *notebook,
 		g_signal_emit_by_name (slot, "changed-pane");
 		nemo_window_set_active_slot (nemo_window_slot_get_window (slot), slot);
 	}
-	
+
 	dnd_slot = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (slot), "dnd-window-slot"));
-	
+
 	if (!dnd_slot) {
 		//Slot does not come from dnd window creation.
 		return;
 	}
-	
+
 	g_object_set_data (G_OBJECT (page), "dnd-window-slot",
 		   GINT_TO_POINTER (FALSE));
-	
+
 	dummy_slot = g_list_nth_data (pane->slots, 0);
 	if (dummy_slot != NULL) {
 		nemo_window_pane_close_slot (dummy_slot->pane, dummy_slot);
 	}
-	
+
 	gtk_widget_show (GTK_WIDGET (pane));
 	gtk_widget_show (GTK_WIDGET (pane->window));
 }
@@ -715,21 +733,21 @@ notebook_create_window_cb (GtkNotebook *notebook,
 	NemoWindow *new_window;
 	NemoWindowPane *new_pane;
 	NemoWindowSlot *slot;
-	
+
 	if (!NEMO_IS_WINDOW_SLOT (page)) {
 		return NULL;
 	}
-	
+
 	app = NEMO_APPLICATION (g_application_get_default ());
 	new_window = nemo_application_create_window
 		(app, gtk_widget_get_screen (GTK_WIDGET (notebook)));
-	
+
 	slot = NEMO_WINDOW_SLOT (page);
 	g_object_set_data (G_OBJECT (slot), "dnd-window-slot",
 			   GINT_TO_POINTER (TRUE));
-	
+
 	gtk_window_set_position (GTK_WINDOW (new_window), GTK_WIN_POS_MOUSE);
-	
+
 	new_pane = nemo_window_get_active_pane (new_window);
 	return GTK_NOTEBOOK (new_pane->notebook);
 }
@@ -1117,7 +1135,7 @@ toggle_toolbar_search_button (NemoWindowPane *pane)
 					 action_show_hide_search_callback, pane);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), TRUE);
 	g_signal_handlers_unblock_by_func (action,
-					   action_show_hide_search_callback, pane);	
+					   action_show_hide_search_callback, pane);
 }
 
 void
@@ -1163,6 +1181,10 @@ nemo_window_pane_slot_close (NemoWindowPane *pane,
 		window = pane->window;
 
 		if (pane->active_slot == slot) {
+			/* XXX: It's silly to select the first inactive slot
+			 * here. It'd be a lot more sensible to select the next
+			 * inactive one instead (cf. Firefox, etc.).
+			 */
 			next_slot = get_first_inactive_slot (NEMO_WINDOW_PANE (pane));
 			nemo_window_set_active_slot (window, next_slot);
 		}
@@ -1199,7 +1221,7 @@ nemo_window_pane_grab_focus (NemoWindowPane *pane)
 {
 	if (NEMO_IS_WINDOW_PANE (pane) && pane->active_slot) {
 		nemo_view_grab_focus (pane->active_slot->content_view);
-	}	
+	}
 }
 
 void
