@@ -486,23 +486,23 @@ nemo_notebook_remove (GtkContainer *container,
 
 void
 nemo_notebook_reorder_current_child_relative (NemoNotebook *notebook,
-						  int offset)
+					      int    	    page_num,
+					      int 	    offset)
 {
 	GtkNotebook *gnotebook;
-	GtkWidget *child;
-	int page;
+	GtkWidget *page;
 
 	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
-
-	if (!nemo_notebook_can_reorder_current_child_relative (notebook, offset)) {
+	g_return_if_fail (page_num != -1);
+	if (!nemo_notebook_can_reorder_child_relative (
+		notebook, page_num, offset)) {
 		return;
 	}
 
 	gnotebook = GTK_NOTEBOOK (notebook);
-
-	page = gtk_notebook_get_current_page (gnotebook);
-	child = gtk_notebook_get_nth_page (gnotebook, page);
-	gtk_notebook_reorder_child (gnotebook, child, page + offset);
+	page = gtk_notebook_get_nth_page (gnotebook, page_num);
+	g_return_if_fail (page != NULL);
+	gtk_notebook_reorder_child (gnotebook, page, page_num + offset);
 }
 
 void
@@ -527,19 +527,16 @@ nemo_notebook_set_current_page_relative (NemoNotebook *notebook,
 
 static gboolean
 nemo_notebook_is_valid_relative_position (NemoNotebook *notebook,
-					      int offset)
+					  int		page_num,
+					  int 		offset)
 {
 	GtkNotebook *gnotebook;
-	int page;
 	int n_pages;
 
 	gnotebook = GTK_NOTEBOOK (notebook);
-
-	page = gtk_notebook_get_current_page (gnotebook);
 	n_pages = gtk_notebook_get_n_pages (gnotebook) - 1;
-	if (page < 0 ||
-	    (offset < 0 && page < -offset) ||
-	    (offset > 0 && page > n_pages - offset)) {
+	if (page_num < 0 || (offset < 0 && page_num < -offset) ||
+	    (offset > 0 && page_num > n_pages - offset)) {
 		return FALSE;
 	}
 
@@ -547,20 +544,26 @@ nemo_notebook_is_valid_relative_position (NemoNotebook *notebook,
 }
 
 gboolean
-nemo_notebook_can_reorder_current_child_relative (NemoNotebook *notebook,
-						      int offset)
+nemo_notebook_can_reorder_child_relative (NemoNotebook *notebook,
+					  int		page_num,
+					  int 		offset)
 {
 	g_return_val_if_fail (NEMO_IS_NOTEBOOK (notebook), FALSE);
 
-	return nemo_notebook_is_valid_relative_position (notebook, offset);
+	return nemo_notebook_is_valid_relative_position (
+		notebook, page_num, offset);
 }
 
 gboolean
 nemo_notebook_can_set_current_page_relative (NemoNotebook *notebook,
 						 int offset)
 {
+	int page_num;
+
 	g_return_val_if_fail (NEMO_IS_NOTEBOOK (notebook), FALSE);
 
-	return nemo_notebook_is_valid_relative_position (notebook, offset);
+	page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (notebook));
+	return nemo_notebook_is_valid_relative_position (
+		notebook, page_num, offset);
 }
 

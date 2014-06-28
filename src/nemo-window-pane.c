@@ -466,23 +466,39 @@ path_bar_path_set_callback (GtkWidget *widget,
 }
 
 static void
+reorder_tab (NemoWindowPane *pane, int offset)
+{
+	int num_target_tab;
+
+	g_return_if_fail (pane != NULL);
+
+	num_target_tab = GPOINTER_TO_INT (
+		g_object_get_data (G_OBJECT (pane), "num_target_tab"));
+	nemo_notebook_reorder_current_child_relative (
+		NEMO_NOTEBOOK (pane->notebook), num_target_tab, offset);
+}
+
+static void
 notebook_popup_menu_move_left_cb (GtkMenuItem *menuitem,
 				  gpointer user_data)
 {
-	NemoWindowPane *pane;
-
-	pane = NEMO_WINDOW_PANE (user_data);
-	nemo_notebook_reorder_current_child_relative (NEMO_NOTEBOOK (pane->notebook), -1);
+	reorder_tab (NEMO_WINDOW_PANE (user_data), -1);
 }
 
 static void
 notebook_popup_menu_move_right_cb (GtkMenuItem *menuitem,
 				   gpointer user_data)
 {
-	NemoWindowPane *pane;
+	reorder_tab (NEMO_WINDOW_PANE (user_data), 1);
+}
 
-	pane = NEMO_WINDOW_PANE (user_data);
-	nemo_notebook_reorder_current_child_relative (NEMO_NOTEBOOK (pane->notebook), 1);
+/* emitted when the user clicks the "close" button of tabs */
+static void
+notebook_tab_close_requested (NemoNotebook *notebook,
+			      NemoWindowSlot *slot,
+			      NemoWindowPane *pane)
+{
+	nemo_window_pane_slot_close (pane, slot);
 }
 
 static void
@@ -490,16 +506,25 @@ notebook_popup_menu_close_cb (GtkMenuItem *menuitem,
 			      gpointer user_data)
 {
 	NemoWindowPane *pane;
-	NemoWindowSlot *slot;
+	NemoNotebook *notebook;
+	int num_target_tab;
+	GtkWidget *page;
 
 	pane = NEMO_WINDOW_PANE (user_data);
-	slot = pane->active_slot;
-	nemo_window_pane_slot_close (pane, slot);
+	g_return_if_fail (pane != NULL);
+	notebook = NEMO_NOTEBOOK (pane->notebook);
+	num_target_tab = GPOINTER_TO_INT (
+		g_object_get_data (G_OBJECT (pane), "num_target_tab"));
+	page = gtk_notebook_get_nth_page (
+		GTK_NOTEBOOK (notebook), num_target_tab);
+	notebook_tab_close_requested (
+		notebook, NEMO_WINDOW_SLOT (page), pane);
 }
 
 static void
 notebook_popup_menu_show (NemoWindowPane *pane,
-			  GdkEventButton *event)
+			  GdkEventButton *event,
+			  int 	 	  num_target_tab)
 {
 	GtkWidget *popup;
 	GtkWidget *item;
@@ -510,8 +535,10 @@ notebook_popup_menu_show (NemoWindowPane *pane,
 
 	notebook = NEMO_NOTEBOOK (pane->notebook);
 
-	can_move_left = nemo_notebook_can_reorder_current_child_relative (notebook, -1);
-	can_move_right = nemo_notebook_can_reorder_current_child_relative (notebook, 1);
+	can_move_left = nemo_notebook_can_reorder_child_relative (
+		notebook, num_target_tab, -1);
+	can_move_right = nemo_notebook_can_reorder_child_relative (
+		notebook, num_target_tab, 1);
 
 	popup = gtk_menu_new();
 
@@ -524,6 +551,13 @@ notebook_popup_menu_show (NemoWindowPane *pane,
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup),
 			       gtk_separator_menu_item_new ());
+
+	/* Store the target tab index in the pane object so we don't have to
+	 * wrap user data in a custom struct which may leak if none of the 
+	 * callbacks which would free it again is invoked. 
+	 */ 
+	g_object_set_data (G_OBJECT (pane), "num_target_tab", 
+			   GINT_TO_POINTER (num_target_tab));
 
 	item = gtk_menu_item_new_with_mnemonic (_("Move Tab _Left"));
 	g_signal_connect (item, "activate",
@@ -571,15 +605,6 @@ notebook_popup_menu_show (NemoWindowPane *pane,
 			button, event_time);
 }
 
-/* emitted when the user clicks the "close" button of tabs */
-static void
-notebook_tab_close_requested (NemoNotebook *notebook,
-			      NemoWindowSlot *slot,
-			      NemoWindowPane *pane)
-{
-	nemo_window_pane_slot_close (pane, slot);
-}
-
 static gboolean
 notebook_button_press_cb (GtkWidget *widget,
                           GdkEventButton *event,
@@ -612,11 +637,12 @@ notebook_button_press_cb (GtkWidget *widget,
 				notebook, NEMO_WINDOW_SLOT (page), pane);
 		}
 	} else {
-		gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook),
-					       tab_clicked);
-
-		if (event->button == 3)
-			notebook_popup_menu_show (pane, event);
+		if (event->button == 3) {
+			notebook_popup_menu_show (pane, event, tab_clicked);
+		} else {
+			gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook),
+						       tab_clicked);
+		}
 	}
 
 	return FALSE;
@@ -627,9 +653,14 @@ notebook_popup_menu_cb (GtkWidget *widget,
 			gpointer user_data)
 {
 	NemoWindowPane *pane;
+	int page_num;
 
-	pane = user_data;
-	notebook_popup_menu_show (pane, NULL);
+	pane = NEMO_WINDOW_PANE (user_data);
+	page_num = gtk_notebook_get_current_page (
+		GTK_NOTEBOOK (pane->notebook));
+	if (page_num == -1)
+	       return FALSE;
+	notebook_popup_menu_show (pane, NULL, page_num);
 	return TRUE;
 }
 
