@@ -485,9 +485,9 @@ nemo_notebook_remove (GtkContainer *container,
 }
 
 void
-nemo_notebook_reorder_current_child_relative (NemoNotebook *notebook,
-					      int    	    page_num,
-					      int 	    offset)
+nemo_notebook_reorder_child_relative (NemoNotebook *notebook,
+				      int    	    page_num,
+				      int 	    offset)
 {
 	GtkNotebook *gnotebook;
 	GtkWidget *page;

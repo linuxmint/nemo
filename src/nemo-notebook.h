@@ -77,9 +77,9 @@ void		nemo_notebook_sync_tab_label (NemoNotebook *nb,
 void		nemo_notebook_sync_loading   (NemoNotebook *nb,
 						  NemoWindowSlot *slot);
 
-void		nemo_notebook_reorder_current_child_relative (NemoNotebook *notebook,
-							      int	    page_num,
-					      		      int 	    offset);
+void		nemo_notebook_reorder_child_relative (NemoNotebook *notebook,
+						      int	    page_num,
+						      int 	    offset);
 void		nemo_notebook_set_current_page_relative (NemoNotebook *notebook,
 							     int offset);
 

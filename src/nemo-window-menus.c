@@ -1000,7 +1000,7 @@ reorder_tab (NemoWindowPane *pane, int offset)
 	page_num = gtk_notebook_get_current_page (
 		GTK_NOTEBOOK (pane->notebook));
 	g_return_if_fail (page_num != -1);
-	nemo_notebook_reorder_current_child_relative (
+	nemo_notebook_reorder_child_relative (
 		NEMO_NOTEBOOK (pane->notebook), page_num, offset);
 }
 

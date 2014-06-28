@@ -474,7 +474,7 @@ reorder_tab (NemoWindowPane *pane, int offset)
 
 	num_target_tab = GPOINTER_TO_INT (
 		g_object_get_data (G_OBJECT (pane), "num_target_tab"));
-	nemo_notebook_reorder_current_child_relative (
+	nemo_notebook_reorder_child_relative (
 		NEMO_NOTEBOOK (pane->notebook), num_target_tab, offset);
 }
 
