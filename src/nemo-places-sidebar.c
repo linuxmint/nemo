@@ -761,7 +761,6 @@ update_places (NemoPlacesSidebar *sidebar)
         root = nemo_bookmark_get_location (bookmark);
 
         if (!nemo_bookmark_get_exists (bookmark) && g_file_is_native (root)) {
-            g_printerr ("blah\n");
             g_object_unref (root);
             continue;
         }
