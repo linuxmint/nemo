@@ -439,6 +439,7 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
 
 	for (list = path_bar->button_list; list; list = list->next) {
 		button_data = BUTTON_DATA (list->data);
+        //set_label_size_request (button_data);
 
 		gtk_widget_get_preferred_width (button_data->button, &child_min, &child_nat);
 		gtk_widget_get_preferred_height (button_data->button, &child_height, NULL);
@@ -1436,6 +1437,33 @@ get_dir_name (ButtonData *button_data)
 }
 
 static void
+set_label_padding_size (ButtonData *button_data)
+{
+    const gchar *dir_name = get_dir_name (button_data);
+    PangoLayout *layout;
+    gint width, height, bold_width, bold_height;
+    gint pad_left, pad_right;
+    gchar *markup;
+    
+    layout = gtk_widget_create_pango_layout (button_data->label, dir_name);
+    pango_layout_get_pixel_size (layout, &width, &height);
+
+    markup = g_markup_printf_escaped ("<b>%s</b>", dir_name);
+    pango_layout_set_markup (layout, markup, -1);
+    g_free (markup);
+
+    pango_layout_get_pixel_size (layout, &bold_width, &bold_height);
+
+    pad_left = (bold_width - width) / 2;
+    pad_right = (bold_width - width) / 2;
+
+    gtk_widget_set_margin_left (GTK_WIDGET (button_data->label), pad_left);
+    gtk_widget_set_margin_right (GTK_WIDGET (button_data->label), pad_right);
+
+    g_object_unref (layout);
+}
+
+static void
 nemo_path_bar_update_button_appearance (ButtonData *button_data, gint scale)
 {
 	NemoIconInfo *icon_info;
@@ -1443,16 +1471,19 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data, gint scale)
     const gchar *dir_name = get_dir_name (button_data);
 
     if (button_data->label != NULL) {
-        char *markup;
-
-        markup = g_markup_printf_escaped ("<b>%s</b>", dir_name);
 		if (gtk_label_get_use_markup (GTK_LABEL (button_data->label))) {
+            char *markup;
+
+            markup = g_markup_printf_escaped ("<b>%s</b>", dir_name);
             gtk_label_set_markup (GTK_LABEL (button_data->label), markup);
+            gtk_widget_set_margin_right (GTK_WIDGET (button_data->label), 0);
+            gtk_widget_set_margin_left (GTK_WIDGET (button_data->label), 0);
+
+            g_free(markup);
         } else {
             gtk_label_set_text (GTK_LABEL (button_data->label), dir_name);
+            set_label_padding_size (button_data);
         }
-
-        g_free (markup);
 	}
 
     if (button_data->image != NULL) {
