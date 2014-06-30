@@ -71,13 +71,13 @@ struct _NemoWindowPane {
 	gboolean temporary_navigation_bar;
 	gboolean temporary_search_bar;
 
-    gboolean show_location_entry;
+	gboolean show_location_entry;
 
 	/* notebook */
 	GtkWidget *notebook;
 
 	GtkActionGroup *action_group;
-    GtkActionGroup *toolbar_action_group;
+	GtkActionGroup *toolbar_action_group;
 
 	GtkWidget *last_focus_widget;
 };
@@ -90,7 +90,7 @@ NemoWindowSlot *nemo_window_pane_open_slot (NemoWindowPane *pane,
 					    NemoWindowOpenSlotFlags flags);
 /* This removes the slot from the given pane but does not close the pane and/or
  * window as well if there are no more slots left afterwards. This
- * functionality is provided by `nemo_window_pane_slot_close' below.
+ * functionality is provided by `nemo_window_pane_close_slot' below.
  */
 void nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 					  NemoWindowSlot *slot);
@@ -98,7 +98,7 @@ void nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 void nemo_window_pane_sync_location_widgets (NemoWindowPane *pane);
 void nemo_window_pane_sync_search_widgets  (NemoWindowPane *pane);
 void nemo_window_pane_set_active (NemoWindowPane *pane, gboolean is_active);
-void nemo_window_pane_slot_close (NemoWindowPane *pane, NemoWindowSlot *slot);
+void nemo_window_pane_close_slot (NemoWindowPane *pane, NemoWindowSlot *slot);
 GtkActionGroup * nemo_window_pane_get_toolbar_action_group (NemoWindowPane   *pane);
 void nemo_window_pane_grab_focus (NemoWindowPane *pane);
 

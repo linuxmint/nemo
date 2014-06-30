@@ -498,7 +498,7 @@ notebook_tab_close_requested (NemoNotebook *notebook,
 			      NemoWindowSlot *slot,
 			      NemoWindowPane *pane)
 {
-	nemo_window_pane_slot_close (pane, slot);
+	nemo_window_pane_close_slot (pane, slot);
 }
 
 static void
@@ -1200,7 +1200,7 @@ nemo_window_pane_sync_search_widgets (NemoWindowPane *pane)
 }
 
 void
-nemo_window_pane_slot_close (NemoWindowPane *pane,
+nemo_window_pane_close_slot (NemoWindowPane *pane,
 				 NemoWindowSlot *slot)
 {
 	NemoWindowSlot *next_slot;

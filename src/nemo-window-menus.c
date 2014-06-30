@@ -82,7 +82,7 @@ action_close_window_slot_callback (GtkAction *action,
 	window = NEMO_WINDOW (user_data);
 	slot = nemo_window_get_active_slot (window);
 
-	nemo_window_pane_slot_close (slot->pane, slot);
+	nemo_window_pane_close_slot (slot->pane, slot);
 }
 
 static void
