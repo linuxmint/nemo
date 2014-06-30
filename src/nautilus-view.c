@@ -1137,6 +1137,9 @@ action_open_item_location_callback (GtkAction *action,
 	view = NAUTILUS_VIEW (callback_data);
 	selection = nautilus_view_get_selection (view);
 
+	if (!selection)
+		return;
+
 	item = NAUTILUS_FILE (selection->data);
 	activation_location = nautilus_file_get_activation_location (item);
 	activation_file = nautilus_file_get (activation_location);
