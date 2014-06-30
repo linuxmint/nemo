@@ -118,18 +118,43 @@ restore_focus_widget (NemoWindowPane *pane)
 }
 
 static NemoWindowSlot *
-get_first_inactive_slot (NemoWindowPane *pane)
+get_next_or_previous_slot (NemoWindowPane *pane)
 {
-	GList *l;
-	NemoWindowSlot *slot;
+	GtkNotebook *gnotebook;
+	gint page_num;
+	GtkWidget *page;
 
-	for (l = pane->slots; l != NULL; l = l->next) {
-		slot = NEMO_WINDOW_SLOT (l->data);
-		if (slot != pane->active_slot) {
-			return slot;
+	g_return_val_if_fail (pane != NULL, NULL);
+
+	gnotebook = GTK_NOTEBOOK (pane->notebook);
+	page = NULL;
+
+	/* If we don't have an active slot, return the first page in the
+	 * notebook.
+	 */
+	if (!pane->active_slot) {
+		page = gtk_notebook_get_nth_page (gnotebook, 0);
+	} else {
+		/* Otherwise, return the next or previous slot that appears in
+		 * the notebook. We don't use pane->slots to select the next
+		 * slot as the list does not represent the order in which slots
+		 * are actually displayed in the pane.
+		 */
+		page_num = gtk_notebook_page_num (
+			gnotebook, GTK_WIDGET (pane->active_slot));
+		if (page_num != -1) {
+			page = gtk_notebook_get_nth_page (
+				gnotebook, page_num+1);
+			/* Get the previous page if there is no next one. */
+			if (!page) {
+				page = gtk_notebook_get_nth_page (
+					gnotebook, page_num-1);
+			}
 		}
 	}
 
+	if (page)
+		return NEMO_WINDOW_SLOT (page);
 	return NULL;
 }
 
@@ -702,7 +727,7 @@ notebook_page_removed_cb (GtkNotebook *notebook,
 	}
 
 	if (pane->active_slot == slot) {
-		next_slot = get_first_inactive_slot (pane);
+		next_slot = get_next_or_previous_slot (pane);
 		nemo_window_set_active_slot (pane->window, next_slot);
 	}
 
@@ -1203,47 +1228,44 @@ void
 nemo_window_pane_close_slot (NemoWindowPane *pane,
 				 NemoWindowSlot *slot)
 {
-	NemoWindowSlot *next_slot;
+	NemoWindow *window;
 
 	DEBUG ("Requesting to remove slot %p from pane %p", slot, pane);
 
-	if (pane->window) {
-		NemoWindow *window;
+	window = pane->window;
+	if (!window)
+		return;
 
-		window = pane->window;
+	if (pane->active_slot == slot) {
+		NemoWindowSlot *next_slot;
+		next_slot = get_next_or_previous_slot (NEMO_WINDOW_PANE (pane));
+		nemo_window_set_active_slot (window, next_slot);
+	}
 
-		if (pane->active_slot == slot) {
-			/* XXX: It's silly to select the first inactive slot
-			 * here. It'd be a lot more sensible to select the next
-			 * inactive one instead (cf. Firefox, etc.).
-			 */
-			next_slot = get_first_inactive_slot (NEMO_WINDOW_PANE (pane));
-			nemo_window_set_active_slot (window, next_slot);
-		}
+	nemo_window_pane_remove_slot_unsafe (pane, slot);
 
-		nemo_window_pane_remove_slot_unsafe (pane, slot);
+	/* If that was the last slot in the pane, close the pane or even the
+	 * whole window.
+	 */
+	if (pane->slots == NULL) {
+		if (nemo_window_split_view_showing (window)) {
+			NemoWindowPane *new_pane;
 
-		/* If that was the last slot in the pane, close the pane or even the whole window. */
-		if (pane->slots == NULL) {
-			if (nemo_window_split_view_showing (window)) {
-				NemoWindowPane *new_pane;
+			DEBUG ("Last slot removed from the pane %p, closing it", pane);
+			nemo_window_close_pane (window, pane);
 
-				DEBUG ("Last slot removed from the pane %p, closing it", pane);
-				nemo_window_close_pane (window, pane);
+			new_pane = g_list_nth_data (window->details->panes, 0);
 
-				new_pane = g_list_nth_data (window->details->panes, 0);
-
-				if (new_pane->active_slot == NULL) {
-					new_pane->active_slot = get_first_inactive_slot (new_pane);
-				}
-
-				DEBUG ("Calling set_active_pane, new slot %p", new_pane->active_slot);
-				nemo_window_set_active_pane (window, new_pane);
-				nemo_window_update_show_hide_menu_items (window);
-			} else {
-				DEBUG ("Last slot removed from the last pane, close the window");
-				nemo_window_close (window);
+			if (new_pane->active_slot == NULL) {
+				new_pane->active_slot = get_next_or_previous_slot (new_pane);
 			}
+
+			DEBUG ("Calling set_active_pane, new slot %p", new_pane->active_slot);
+			nemo_window_set_active_pane (window, new_pane);
+			nemo_window_update_show_hide_menu_items (window);
+		} else {
+			DEBUG ("Last slot removed from the last pane, close the window");
+			nemo_window_close (window);
 		}
 	}
 }
