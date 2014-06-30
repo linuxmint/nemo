@@ -746,7 +746,8 @@ notebook_page_added_cb (GtkNotebook *notebook,
 
 	dummy_slot = g_list_nth_data (pane->slots, 0);
 	if (dummy_slot != NULL) {
-		nemo_window_pane_close_slot (dummy_slot->pane, dummy_slot);
+		nemo_window_pane_remove_slot_unsafe (
+			dummy_slot->pane, dummy_slot);
 	}
 
 	gtk_widget_show (GTK_WIDGET (pane));
@@ -1220,7 +1221,7 @@ nemo_window_pane_slot_close (NemoWindowPane *pane,
 			nemo_window_set_active_slot (window, next_slot);
 		}
 
-		nemo_window_pane_close_slot (pane, slot);
+		nemo_window_pane_remove_slot_unsafe (pane, slot);
 
 		/* If that was the last slot in the pane, close the pane or even the whole window. */
 		if (pane->slots == NULL) {
@@ -1279,8 +1280,8 @@ nemo_window_pane_ensure_location_bar (NemoWindowPane *pane)
 }
 
 void
-nemo_window_pane_close_slot (NemoWindowPane *pane,
-				 NemoWindowSlot *slot)
+nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
+				     NemoWindowSlot *slot)
 {
 	int page_num;
 	GtkNotebook *notebook;
@@ -1288,7 +1289,7 @@ nemo_window_pane_close_slot (NemoWindowPane *pane,
 	g_assert (NEMO_IS_WINDOW_SLOT (slot));
 	g_assert (NEMO_IS_WINDOW_PANE (slot->pane));
 
-	DEBUG ("Closing slot %p", slot);
+	DEBUG ("Removing slot %p", slot);
 
 	/* save pane because slot is not valid anymore after this call */
 	pane = slot->pane;
