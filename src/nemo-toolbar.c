@@ -44,6 +44,7 @@ struct _NemoToolbarPriv {
 	GtkWidget *path_bar;
 	GtkWidget *location_bar;
 	GtkWidget *search_bar;
+    GtkWidget *search_bar_revealer;
     GtkWidget *root_bar;
 
 	gboolean show_main_bar;
@@ -95,8 +96,8 @@ toolbar_update_appearance (NemoToolbar *self)
 	gtk_widget_set_visible (self->priv->path_bar,
 				!show_location_entry);
 
-	gtk_widget_set_visible (self->priv->search_bar,
-				self->priv->show_search_bar);
+	gtk_revealer_set_reveal_child (self->priv->search_bar_revealer,
+				                   self->priv->show_search_bar);
 
     gtk_widget_set_visible (self->priv->root_bar,
                 self->priv->show_root_bar);
@@ -226,7 +227,12 @@ nemo_toolbar_constructed (GObject *obj)
 
 	/* search bar */
 	self->priv->search_bar = nemo_search_bar_new ();
-	gtk_box_pack_start (GTK_BOX (self), self->priv->search_bar, TRUE, TRUE, 0);
+    self->priv->search_bar_revealer = gtk_revealer_new ();
+    gtk_container_add (GTK_CONTAINER (self->priv->search_bar_revealer),
+                       GTK_WIDGET (self->priv->search_bar));
+    gtk_widget_show_all (self->priv->search_bar_revealer);
+
+	gtk_box_pack_start (GTK_BOX (self), self->priv->search_bar_revealer, TRUE, TRUE, 0);
 
 	/* nemo patch */
 	g_signal_connect_swapped (nemo_preferences,

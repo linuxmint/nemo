@@ -32,6 +32,7 @@
 #include "nemo-file.h"
 #include "nemo-signaller.h"
 #include <eel/eel-stock-dialogs.h>
+#include <eel/eel-string.h>
 
 #include <string.h>
 #include <glib/gi18n-lib.h>
@@ -51,6 +52,7 @@ struct _NemoMimeApplicationChooserDetails {
 	GtkWidget *open_with_widget;
 	GtkWidget *add_button;
     GtkWidget *custom_picker;
+    GtkWidget *file_button;
     GAppInfo *custom_info;
     GtkWidget *custom_entry;
 };
@@ -70,159 +72,6 @@ static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 G_DEFINE_TYPE (NemoMimeApplicationChooser, nemo_mime_application_chooser, GTK_TYPE_BOX);
 
 static void
-update_mimelist (NemoMimeApplicationChooser *chooser, const gchar *fn, gboolean def)
-{
-    gchar *list_fn = g_build_filename (g_get_user_data_dir (), "applications", "mimeapps.list", NULL);
-    GKeyFile *mimeapps;
-    GFile *list_file;
-
-    list_file = g_file_new_for_path (list_fn);
-    mimeapps = g_key_file_new ();
-
-    if (g_file_query_exists (list_file, NULL)) {
-        g_key_file_load_from_file (mimeapps,
-                                   list_fn,
-                                   G_KEY_FILE_NONE,
-                                   NULL);
-    }
-
-    if (def) {
-        g_key_file_set_string (mimeapps,
-                               DEFAULT_APPS,
-                               chooser->details->content_type,
-                               fn);
-    } else {
-        gsize count;
-
-        gchar **l = g_key_file_get_string_list (mimeapps,
-                                                ADDED_ASS,
-                                                chooser->details->content_type,
-                                                &count,
-                                                NULL);
-
-        gchar *new_string_list;
-
-        if (l) {
-            gchar *temp_list;
-            temp_list = g_strjoinv (";", l);
-            new_string_list = g_strdup_printf ("%s;%s;", fn, temp_list);
-            g_free (temp_list);
-            g_strfreev (l);
-        } else {
-            new_string_list = g_strdup_printf ("%s;", fn);
-        }
-
-
-        g_key_file_set_string (mimeapps,
-                               ADDED_ASS,
-                               chooser->details->content_type,
-                               new_string_list);
-    }
-
-    if (g_file_query_exists (list_file, NULL)) {
-        g_file_delete (list_file, NULL, NULL);
-    }
-
-    gsize size;
-    gchar *buffer = g_key_file_to_data (mimeapps, &size, NULL);
-    GFileOutputStream *out;
-    gboolean res;
-
-    out = g_file_create (list_file,
-                         G_FILE_CREATE_NONE,
-                         NULL,
-                         NULL);
-    if (out) {
-        res = g_output_stream_write_all (G_OUTPUT_STREAM (out),
-                                         buffer, size,
-                                         NULL,
-                                         NULL,
-                                         NULL);
-        if (res) {
-            res = g_output_stream_close (G_OUTPUT_STREAM (out),
-                                         NULL,
-                                         NULL);
-        }
-        g_object_unref (out);
-    }
-
-    g_free (buffer);
-
-}
-
-static void
-create_custom_desktop_file (NemoMimeApplicationChooser *chooser, gboolean def)
-{
-    GKeyFile *keyfile = g_key_file_new ();
-
-    g_key_file_set_string (keyfile,
-                           G_KEY_FILE_DESKTOP_GROUP,
-                           G_KEY_FILE_DESKTOP_KEY_EXEC,
-                           g_app_info_get_commandline (chooser->details->custom_info));
-
-    g_key_file_set_string (keyfile,
-                           G_KEY_FILE_DESKTOP_GROUP,
-                           G_KEY_FILE_DESKTOP_KEY_NAME,
-                           g_app_info_get_display_name (chooser->details->custom_info));
-
-    g_key_file_set_string (keyfile,
-                           G_KEY_FILE_DESKTOP_GROUP,
-                           G_KEY_FILE_DESKTOP_KEY_MIME_TYPE,
-                           chooser->details->content_type);
-
-    g_key_file_set_string (keyfile,
-                           G_KEY_FILE_DESKTOP_GROUP,
-                           G_KEY_FILE_DESKTOP_KEY_TYPE,
-                           G_KEY_FILE_DESKTOP_TYPE_APPLICATION);
-
-    g_key_file_set_boolean (keyfile,
-                           G_KEY_FILE_DESKTOP_GROUP,
-                           G_KEY_FILE_DESKTOP_KEY_NO_DISPLAY,
-                           TRUE);
-
-    gsize size;
-    gchar *buffer = g_key_file_to_data (keyfile, &size, NULL);
-
-    gint32 rn = g_random_int_range (0, G_MAXINT32 - 1);
-    gchar *fn = g_strdup_printf ("nemo_%s_%d.desktop",
-                                 g_app_info_get_display_name (chooser->details->custom_info),
-                                 rn);
-
-    gchar *path = g_build_filename (g_get_user_data_dir (), "applications", fn, NULL);
-
-    GFile *outfile = g_file_new_for_path (path);
-
-    g_free (path);
-
-    GFileOutputStream *out;
-    gboolean res;
-
-    out = g_file_create (outfile,
-                         G_FILE_CREATE_NONE,
-                         NULL,
-                         NULL);
-    if (out) {
-        res = g_output_stream_write_all (G_OUTPUT_STREAM (out),
-                                         buffer, size,
-                                         NULL,
-                                         NULL,
-                                         NULL);
-        if (res) {
-            res = g_output_stream_close (G_OUTPUT_STREAM (out),
-                                         NULL,
-                                         NULL);
-            update_mimelist (chooser, fn, def);
-        }
-        g_object_unref (out);
-    }
-
-    g_object_unref (outfile);
-    g_free (fn);
-    g_free (buffer);
-}
-
-
-static void
 add_clicked_cb (GtkButton *button,
 		gpointer user_data)
 {
@@ -234,7 +83,7 @@ add_clicked_cb (GtkButton *button,
         g_app_info_set_as_last_used_for_type (info, chooser->details->content_type, NULL);
     } else {
         info = chooser->details->custom_info;
-        create_custom_desktop_file (chooser, FALSE);
+        g_app_info_set_as_last_used_for_type (info, chooser->details->content_type, NULL);
     }
 
 	if (info == NULL)
@@ -242,6 +91,7 @@ add_clicked_cb (GtkButton *button,
 
     gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
+    gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser->details->file_button), "");
     g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 }
 
@@ -304,6 +154,7 @@ reset_clicked_cb (GtkButton *button,
 	g_app_info_reset_type_associations (chooser->details->content_type);
 	gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
+    gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser->details->file_button), "");
 	g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 }
 
@@ -319,11 +170,12 @@ set_as_default_clicked_cb (GtkButton *button,
         g_app_info_set_as_default_for_type (info, chooser->details->content_type, NULL);
     } else {
         info = chooser->details->custom_info;
-        create_custom_desktop_file (chooser, TRUE);
+        g_app_info_set_as_default_for_type (info, chooser->details->content_type, NULL);
     }
 
     gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
+    gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser->details->file_button), "");
     g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 }
 
@@ -376,8 +228,75 @@ application_selected_cb (GtkAppChooserWidget *widget,
 	gtk_widget_set_sensitive (chooser->details->add_button,
 				  app_info_can_add (info, chooser->details->content_type));
 
+    gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
+    gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser->details->file_button), "");
+
 	g_object_unref (default_app);
 }
+
+static gboolean
+validate_entry (GtkEntry *entry, const gchar *str)
+{
+    gint argcp = 0;
+    gchar **argvp;
+    gboolean ret = FALSE;
+    if (g_shell_parse_argv (str, &argcp, &argvp, NULL)) {
+        if (argcp > 0) {
+            gchar *path_exec = g_find_program_in_path (argvp[0]);
+            if (path_exec) {
+                ret = TRUE;
+            } else {
+                if (!g_file_test (str, G_FILE_TEST_IS_DIR) &&
+                    g_file_test (str, G_FILE_TEST_IS_EXECUTABLE)) {
+                    ret = TRUE;
+                }
+            }
+            g_free (path_exec);
+        }
+    }
+
+    g_strfreev (argvp);
+
+    if (ret) {
+        gtk_entry_set_icon_from_icon_name (entry,
+                                           GTK_ENTRY_ICON_SECONDARY,
+                                           "ok");
+        gtk_entry_set_icon_tooltip_text (entry,
+                                         GTK_ENTRY_ICON_SECONDARY,
+                                         _("Valid"));
+    } else {
+        gtk_entry_set_icon_from_icon_name (entry,
+                                           GTK_ENTRY_ICON_SECONDARY,
+                                           "stop");
+        gtk_entry_set_icon_tooltip_text (entry,
+                                         GTK_ENTRY_ICON_SECONDARY,
+                                         _("Not a valid executable.  Spaces in the file path must be escaped with backslash (\\)."));
+    }
+
+    return ret;
+}
+
+static gchar *
+get_nice_name (const gchar *entry)
+{
+    gchar *exec_path;
+    gchar *ret = NULL;
+    gint argcp = 0;
+    gchar **argvp;
+
+    if (g_shell_parse_argv (entry, &argcp, &argvp, NULL)) {
+        if (argcp > 0) {
+            exec_path = argvp[0];
+            GFile *file = g_file_new_for_path (exec_path);
+            ret = g_file_get_basename (file);
+            g_object_unref (file);
+        }
+    }
+
+    g_strfreev (argvp);
+    return ret;
+}
+
 
 static void
 custom_entry_changed_cb (GtkEditable *entry, gpointer user_data)
@@ -385,12 +304,14 @@ custom_entry_changed_cb (GtkEditable *entry, gpointer user_data)
     NemoMimeApplicationChooser *chooser = user_data;
 
     const gchar *entry_text = gtk_entry_get_text (GTK_ENTRY (entry));
+    gboolean empty = g_strcmp0 (entry_text, "") == 0;
 
-    if (g_strcmp0 (entry_text, "") != 0) {
+    if (!empty && validate_entry (GTK_ENTRY (entry), entry_text)) {
         GAppInfo *default_app;
         gchar *cl = g_strdup_printf ("%s", entry_text);
-        GAppInfo *info = g_app_info_create_from_commandline (cl, NULL, G_APP_INFO_CREATE_NONE, NULL);
 
+        GAppInfo *info = g_app_info_create_from_commandline (cl, get_nice_name (cl),
+                                                             G_APP_INFO_CREATE_NONE, NULL);
         default_app = g_app_info_get_default_for_type (chooser->details->content_type, FALSE);
         gtk_widget_set_sensitive (chooser->details->set_as_default_button,
                       !g_app_info_equal (info, default_app));
@@ -410,6 +331,16 @@ custom_entry_changed_cb (GtkEditable *entry, gpointer user_data)
             g_object_unref (chooser->details->custom_info);
             chooser->details->custom_info = NULL;
         }
+
+        if (empty) {
+            gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry),
+                                               GTK_ENTRY_ICON_SECONDARY,
+                                               NULL);
+            gtk_entry_set_icon_tooltip_text (GTK_ENTRY (entry),
+                                             GTK_ENTRY_ICON_SECONDARY,
+                                             NULL);
+        }
+        
         gtk_widget_set_sensitive (chooser->details->set_as_default_button, FALSE);
         gtk_widget_set_sensitive (chooser->details->add_button, FALSE);
     }
@@ -421,9 +352,13 @@ custom_app_set_cb (GtkFileChooserButton *button,
 {
     NemoMimeApplicationChooser *chooser = user_data;
 
-    gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry),
-                        gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (button)));
+    gchar *unescaped = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (button));
+    gchar *escaped = eel_str_escape_spaces (unescaped);
 
+    gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), escaped);
+
+    g_free (unescaped);
+    g_free (escaped);
 }
 
 static char *
@@ -505,6 +440,17 @@ nemo_mime_application_chooser_apply_labels (NemoMimeApplicationChooser *chooser)
 	g_free (description);
 }
 
+static gboolean
+exec_filter_func (const GtkFileFilterInfo *info, gpointer data)
+{
+    if (info->contains & GTK_FILE_FILTER_FILENAME) {
+        if (g_file_test (info->filename, G_FILE_TEST_IS_EXECUTABLE))
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
 static void
 nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 {
@@ -575,6 +521,8 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
     gtk_widget_show (button);
     gtk_box_pack_start (GTK_BOX (custom_box), button, FALSE, FALSE, 6);
 
+    chooser->details->file_button = button;
+
     gtk_widget_show_all (custom_box);
 
     chooser->details->custom_picker = button;
@@ -586,11 +534,15 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 	gtk_widget_show (box);
 
     GtkFileFilter *filter = gtk_file_filter_new ();
-    gtk_file_filter_add_mime_type (filter, "application/*");
+    gtk_file_filter_add_custom (filter,
+                                GTK_FILE_FILTER_FILENAME,
+                                (GtkFileFilterFunc) exec_filter_func,
+                                NULL,
+                                NULL);
     gtk_file_filter_set_name (filter, _("Executables"));
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (button), filter);
 
-	button = gtk_button_new_with_label (_("Add to list"));
+ 	button = gtk_button_new_with_label (_("Add to list"));
 	g_signal_connect (button, "clicked", 
 			  G_CALLBACK (add_clicked_cb),
 			  chooser);

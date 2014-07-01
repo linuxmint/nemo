@@ -59,6 +59,8 @@
 #include "nemo-window.h"
 #include "nemo-window-slot.h"
 
+#include <libnotify/notify.h>
+
 #define DEBUG_FLAG NEMO_DEBUG_PLACES
 #include <libnemo-private/nemo-debug.h>
 
@@ -113,6 +115,8 @@ typedef struct {
 	NemoWindowOpenFlags go_to_after_mount_flags;
 
 	GtkTreePath *eject_highlight_path;
+
+    NotifyNotification *unmount_notify;
 
 	guint bookmarks_changed_id;
 
@@ -256,7 +260,7 @@ static GtkTreeStore *nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar);
 
 G_DEFINE_TYPE (NemoPlacesSidebar, nemo_places_sidebar, GTK_TYPE_SCROLLED_WINDOW);
 
-static GdkPixbuf *
+static cairo_surface_t *
 get_eject_icon (NemoPlacesSidebar *sidebar,
 		gboolean highlighted)
 {
@@ -267,11 +271,14 @@ get_eject_icon (NemoPlacesSidebar *sidebar,
 	GtkIconTheme *icon_theme;
 	GtkStyleContext *style;
 	GtkStateFlags state;
+    cairo_surface_t *surface;
+    gint scale = 1;
 
+    scale = gtk_widget_get_scale_factor (GTK_WIDGET (sidebar));
 	icon_theme = gtk_icon_theme_get_default ();
 	icon_size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
 	icon = g_themed_icon_new_with_default_fallbacks ("nemo-eject");
-	icon_info = gtk_icon_theme_lookup_by_gicon (icon_theme, icon, icon_size, 0);
+	icon_info = gtk_icon_theme_lookup_by_gicon_for_scale (icon_theme, icon, icon_size, scale, 0);
 
 	style = gtk_widget_get_style_context (GTK_WIDGET (sidebar));
 	gtk_style_context_save (style);
@@ -303,7 +310,9 @@ get_eject_icon (NemoPlacesSidebar *sidebar,
 	gtk_style_context_restore (style);
 	g_object_unref (icon);
 
-	return eject;
+	surface = gdk_cairo_surface_create_from_pixbuf (eject, scale, NULL);
+    g_object_unref (eject);
+    return surface;
 }
 
 static gboolean
@@ -317,7 +326,7 @@ static gboolean
 is_built_in_bookmark (NemoFile *file)
 {
 	gboolean built_in;
-	gint idx;
+	// gint idx;
 
 	if (nemo_file_is_home (file)) {
 		return TRUE;
@@ -329,16 +338,16 @@ is_built_in_bookmark (NemoFile *file)
 
 	built_in = FALSE;
 
-	for (idx = 0; idx < G_USER_N_DIRECTORIES; idx++) {
-		/* PUBLIC_SHARE and TEMPLATES are not in our built-in list */
-		if (nemo_file_is_user_special_directory (file, idx)) {
-			if (idx != G_USER_DIRECTORY_PUBLIC_SHARE &&  idx != G_USER_DIRECTORY_TEMPLATES) {
-				built_in = TRUE;
-			}
+	// for (idx = 0; idx < G_USER_N_DIRECTORIES; idx++) {
+	// 	/* PUBLIC_SHARE and TEMPLATES are not in our built-in list */
+	// 	if (nemo_file_is_user_special_directory (file, idx)) {
+	// 		if (idx != G_USER_DIRECTORY_PUBLIC_SHARE &&  idx != G_USER_DIRECTORY_TEMPLATES) {
+	// 			built_in = TRUE;
+	// 		}
 
-			break;
-		}
-	}
+	// 		break;
+	// 	}
+	// }
 
 	return built_in;
 }
@@ -395,7 +404,7 @@ add_place (NemoPlacesSidebar *sidebar,
 {
 	GdkPixbuf            *pixbuf;
 	GtkTreeIter           iter;
-	GdkPixbuf	     *eject;
+	cairo_surface_t      *eject;
 	NemoIconInfo *icon_info;
 	int icon_size;
 	gboolean show_eject, show_unmount;
@@ -431,7 +440,7 @@ add_place (NemoPlacesSidebar *sidebar,
 	}
 
 	if (show_eject_button) {
-		eject = get_eject_icon (sidebar, FALSE);
+        eject = get_eject_icon (sidebar, FALSE);
 	} else {
 		eject = NULL;
 	}
@@ -727,17 +736,6 @@ update_places (NemoPlacesSidebar *sidebar)
     g_free (mount_uri);
     g_free (tooltip);
 
-    if (recent_is_supported ()) {
-        mount_uri = "recent:///"; /* No need to strdup */
-        icon = g_themed_icon_new ("folder-recent");
-        cat_iter = add_place (sidebar, PLACES_BUILT_IN,
-                              SECTION_COMPUTER,
-                              _("Recent"), icon, mount_uri,
-                              NULL, NULL, NULL, 0,
-                              _("Recent files"), 0, FALSE, cat_iter);
-        g_object_unref (icon);
-    }
-
     if (should_show_desktop ()) {
         /* desktop */
         desktop_path = nemo_get_desktop_directory ();
@@ -760,19 +758,21 @@ update_places (NemoPlacesSidebar *sidebar)
     bookmark_count = nemo_bookmark_list_length (sidebar->bookmarks);
     for (index = 0; index < bookmark_count; ++index) {
         bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
+        root = nemo_bookmark_get_location (bookmark);
 
-        if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
+        if (!nemo_bookmark_get_exists (bookmark) && g_file_is_native (root)) {
+            g_object_unref (root);
             continue;
         }
 
-        root = nemo_bookmark_get_location (bookmark);
         file = nemo_file_get (root);
 
-        //if (is_built_in_bookmark (file)) {
-        //  g_object_unref (root);
-        //  nemo_file_unref (file);
-        //  continue;
-        //}
+        if (is_built_in_bookmark (file)) {
+            g_printerr ("book\n");
+            g_object_unref (root);
+            nemo_file_unref (file);
+            continue;
+        }
         nemo_file_unref (file);
 
         bookmark_name = nemo_bookmark_get_name (bookmark);
@@ -790,6 +790,17 @@ update_places (NemoPlacesSidebar *sidebar)
         g_object_unref (icon);
         g_free (mount_uri);
         g_free (tooltip);
+    }
+
+    if (recent_is_supported ()) {
+        mount_uri = "recent:///"; /* No need to strdup */
+        icon = g_themed_icon_new ("document-open-recent");
+        cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                              SECTION_COMPUTER,
+                              _("Recent"), icon, mount_uri,
+                              NULL, NULL, NULL, 0,
+                              _("Recent files"), 0, FALSE, cat_iter);
+        g_object_unref (icon);
     }
 
     /* file system root */
@@ -1680,7 +1691,7 @@ bookmarks_drop_uris (NemoPlacesSidebar *sidebar,
 		location = g_file_new_for_uri (uri);
 		nemo_file_unref (file);
 
-		bookmark = nemo_bookmark_new (location, NULL, NULL);
+		bookmark = nemo_bookmark_new (location, NULL);
 
 		if (!nemo_bookmark_list_contains (sidebar->bookmarks, bookmark)) {
 			nemo_bookmark_list_insert_item (sidebar->bookmarks, bookmark, position++);
@@ -2373,7 +2384,7 @@ add_bookmark (NemoPlacesSidebar *sidebar)
 		}
 
 		location = g_file_new_for_uri (uri);
-		bookmark = nemo_bookmark_new (location, NULL, NULL);
+		bookmark = nemo_bookmark_new (location, NULL);
 
 		if (!nemo_bookmark_list_contains (sidebar->bookmarks, bookmark)) {
 			nemo_bookmark_list_append (sidebar->bookmarks, bookmark);
@@ -2496,13 +2507,55 @@ unmount_done (gpointer data)
 }
 
 static void
+show_unmount_progress_cb (GMountOperation *op,
+                              const gchar *message,
+                                    gint64 time_left,
+                                    gint64 bytes_left,
+                                  gpointer user_data)
+{
+    NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+
+    if (bytes_left == 0) {
+        nemo_application_notify_unmount_done (app, message);
+    } else {
+        nemo_application_notify_unmount_show (app, message);
+    }
+}
+
+static void
+show_unmount_progress_aborted_cb (GMountOperation *op,
+                                  gpointer user_data)
+{
+    NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+    nemo_application_notify_unmount_done (app, NULL);
+}
+
+static GMountOperation *
+get_unmount_operation (NemoPlacesSidebar *sidebar)
+{
+    GMountOperation *mount_op;
+
+    mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
+    g_signal_connect (mount_op, "show-unmount-progress",
+                      G_CALLBACK (show_unmount_progress_cb), sidebar);
+    g_signal_connect (mount_op, "aborted",
+                      G_CALLBACK (show_unmount_progress_aborted_cb), sidebar);
+
+    return mount_op;
+}
+
+static void
 do_unmount (GMount *mount,
 	    NemoPlacesSidebar *sidebar)
 {
+    GMountOperation *mount_op;
+
 	if (mount != NULL) {
-		nemo_file_operations_unmount_mount_full (NULL, mount, FALSE, TRUE,
-							     unmount_done,
-							     g_object_ref (sidebar->window));
+        mount_op = get_unmount_operation (sidebar);
+        nemo_file_operations_unmount_mount_full (NULL, mount, mount_op, FALSE, TRUE,
+                                                 unmount_done,
+                                                 g_object_ref (sidebar->window));
+        g_object_unref (mount_op);
 	}
 }
 
@@ -2623,9 +2676,8 @@ do_eject (GMount *mount,
 	  GDrive *drive,
 	  NemoPlacesSidebar *sidebar)
 {
-	GMountOperation *mount_op;
+    GMountOperation *mount_op = get_unmount_operation (sidebar);
 
-	mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
 	if (mount != NULL) {
 		g_mount_eject_with_operation (mount, 0, mount_op, NULL, mount_eject_cb,
 					      g_object_ref (sidebar->window));
@@ -2873,9 +2925,7 @@ stop_shortcut_cb (GtkMenuItem           *item,
 			    -1);
 
 	if (drive != NULL) {
-		GMountOperation *mount_op;
-
-		mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
+        GMountOperation *mount_op = get_unmount_operation (sidebar);
 		g_drive_stop (drive, G_MOUNT_UNMOUNT_NONE, mount_op, NULL, drive_stop_cb,
 			      g_object_ref (sidebar->window));
 		g_object_unref (mount_op);
@@ -3885,7 +3935,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	gtk_tree_view_column_pack_start (eject_col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (eject_col, cell,
 					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
-					     "pixbuf", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
+					     "surface", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
 					     NULL);
 
 	/* normal text renderer */
@@ -4023,6 +4073,7 @@ nemo_places_sidebar_dispose (GObject *object)
 	sidebar->uri = NULL;
 
 	free_drag_data (sidebar);
+    g_clear_object (&sidebar->unmount_notify);
 
 	if (sidebar->eject_highlight_path != NULL) {
 		gtk_tree_path_free (sidebar->eject_highlight_path);
@@ -4222,7 +4273,7 @@ nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar)
 		G_TYPE_BOOLEAN,
 		G_TYPE_BOOLEAN,
 		G_TYPE_STRING,
-		GDK_TYPE_PIXBUF,
+		CAIRO_GOBJECT_TYPE_SURFACE,
 		G_TYPE_INT,
 		G_TYPE_STRING,
         G_TYPE_INT,

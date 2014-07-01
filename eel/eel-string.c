@@ -100,6 +100,40 @@ eel_str_double_underscores (const char *string)
 }
 
 char *
+eel_str_escape_spaces (const char *string)
+{
+    int spaces;
+    const char *p;
+    char *q;
+    char *escaped;
+
+    if (string == NULL) {
+        return NULL;
+    }
+
+    spaces = 0;
+    for (p = string; *p != '\0'; p++) {
+        spaces += (*p == ' ');
+    }
+
+    if (spaces == 0) {
+        return g_strdup (string);
+    }
+
+    escaped = g_new (char, strlen (string) + spaces + 1);
+    for (p = string, q = escaped; *p != '\0'; p++, q++) {
+        /* Add an extra underscore. */
+        if (*p == ' ') {
+            *q++ = '\\';
+        }
+        *q = *p;
+    }
+    *q = '\0';
+
+    return escaped;
+}
+
+char *
 eel_str_capitalize (const char *string)
 {
 	char *capitalized;

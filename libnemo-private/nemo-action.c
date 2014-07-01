@@ -63,6 +63,7 @@ static gpointer parent_class;
 #define KEY_QUOTE_TYPE "Quote"
 #define KEY_DEPENDENCIES "Dependencies"
 #define KEY_CONDITIONS "Conditions"
+#define KEY_WHITESPACE "EscapeSpaces"
 
 enum 
 {
@@ -78,6 +79,7 @@ enum
   PROP_ORIG_TT,
   PROP_SEPARATOR,
   PROP_QUOTE_TYPE,
+  PROP_ESCAPE_SPACE,
   PROP_CONDITIONS
 };
 
@@ -114,6 +116,7 @@ nemo_action_init (NemoAction *action)
     action->dbus = NULL;
     action->dbus_satisfied = TRUE;
     action->escape_underscores = FALSE;
+    action->escape_space = FALSE;
     action->log_output = g_getenv ("NEMO_ACTION_VERBOSE") != NULL;
 }
 
@@ -230,6 +233,14 @@ nemo_action_class_init (NemoActionClass *klass)
                                      g_param_spec_pointer ("conditions",
                                                            "Special show conditions",
                                                            "Special conditions, like a bool gsettings key, or 'desktop'",
+                                                           G_PARAM_READWRITE)
+                                     );
+    g_object_class_install_property (object_class,
+                                     PROP_ESCAPE_SPACE,
+                                     g_param_spec_boolean ("escape-space",
+                                                           "Escape spaces in file paths",
+                                                           "Escape spaces in file paths",
+                                                           FALSE,
                                                            G_PARAM_READWRITE)
                                      );
 }
@@ -431,6 +442,13 @@ nemo_action_constructed (GObject *object)
                                                      &condition_count,
                                                      NULL);
 
+    gboolean escape_space;
+
+    escape_space = g_key_file_get_boolean (key_file,
+                                           ACTION_FILE_GROUP,
+                                           KEY_WHITESPACE,
+                                           NULL);
+
     if (conditions && condition_count > 0) {
         int j;
         gchar *condition;
@@ -472,6 +490,7 @@ nemo_action_constructed (GObject *object)
                    "quote-type", quote_type,
                    "separator", separator,
                    "conditions", conditions,
+                   "escape-space", escape_space,
                     NULL);
 
     g_free (orig_label);
@@ -653,6 +672,9 @@ nemo_action_set_property (GObject         *object,
     case PROP_CONDITIONS:
       nemo_action_set_conditions (action, g_value_get_pointer (value));
       break;
+    case PROP_ESCAPE_SPACE:
+      action->escape_space = g_value_get_boolean (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -707,6 +729,9 @@ nemo_action_get_property (GObject    *object,
     case PROP_CONDITIONS:
       g_value_set_pointer (value, action->conditions);
       break;
+    case PROP_ESCAPE_SPACE:
+      g_value_set_boolean (value, action->escape_space);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -757,8 +782,24 @@ find_token_type (const gchar *str, TokenType *token_type)
     return NULL;
 }
 
+static gchar *
+get_path (NemoAction *action, NemoFile *file)
+{
+    gchar *ret;
+
+    if (action->escape_space) {
+        gchar *path = nemo_file_get_path (file);
+        ret = eel_str_escape_spaces (path);
+        g_free (path);
+    } else {
+        ret = nemo_file_get_path (file);
+    }
+
+    return ret;
+}
+
 static GString *
-_score_append (NemoAction *action, GString *str, const gchar *c)
+score_append (NemoAction *action, GString *str, const gchar *c)
 {
     if (action->escape_underscores) {
         gchar *escaped = eel_str_double_underscores (c);
@@ -776,7 +817,7 @@ insert_separator (NemoAction *action, GString *str)
     if (action->separator == NULL)
         str = g_string_append (str, " ");
     else
-        str = _score_append (action, str, action->separator);
+        str = score_append (action, str, action->separator);
 
     return str;
 }
@@ -802,16 +843,24 @@ insert_quote (NemoAction *action, GString *str)
 }
 
 static gchar *
-get_device_path (NemoFile *file)
+get_device_path (NemoAction *action, NemoFile *file)
 {
     GMount *mount = nemo_file_get_mount (file);
     GVolume *volume = g_mount_get_volume (mount);
-    gchar *id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+    gchar *ret = NULL;
+
+    if (action->escape_space) {
+        gchar *id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+        ret = eel_str_escape_spaces (id);
+        g_free (id);
+    } else {
+        ret = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+    }
 
     g_object_unref (mount);
     g_object_unref (volume);
 
-    return id;
+    return ret;
 }
 
 static gchar *
@@ -829,9 +878,9 @@ get_insertion_string (NemoAction *action, TokenType token_type, GList *selection
                     if (!first)
                         str = insert_separator (action, str);
                     str = insert_quote (action, str);
-                    gchar *path = nemo_file_get_path (NEMO_FILE (l->data));
+                    gchar *path = get_path (action, NEMO_FILE (l->data));
                     if (path)
-                        str = _score_append (action, str, path);
+                        str = score_append (action, str, path);
                     g_free (path);
                     str = insert_quote (action, str);
                     first = FALSE;
@@ -847,11 +896,8 @@ get_insertion_string (NemoAction *action, TokenType token_type, GList *selection
                         str = insert_separator (action, str);
                     str = insert_quote (action, str);
                     gchar *uri = nemo_file_get_uri (NEMO_FILE (l->data));
-                    gchar *escaped = g_uri_unescape_string (uri, NULL);
-                    if (escaped)
-                        str = _score_append (action, str, escaped);
+                    str = score_append (action, str, uri);
                     g_free (uri);
-                    g_free (escaped);
                     str = insert_quote (action, str);
                     first = FALSE;
                 }
@@ -863,24 +909,24 @@ get_insertion_string (NemoAction *action, TokenType token_type, GList *selection
             ;
 default_parent_path:
             ;
-            gchar *path = nemo_file_get_path (parent);
+            gchar *path = get_path (action, parent);
             if (path == NULL) {
                 gchar *name = nemo_file_get_display_name (parent);
                 if (g_strcmp0 (name, "x-nemo-desktop") == 0)
                     path = nemo_get_desktop_directory ();
                 else
-                    path = g_strdup_printf ("");
+                    path = g_strdup ("");
                 g_free (name);
             }
             str = insert_quote (action, str);
-            str = _score_append (action, str, path);
+            str = score_append (action, str, path);
             str = insert_quote (action, str);
             g_free (path);
             break;
         case TOKEN_FILE_DISPLAY_NAME:
             if (g_list_length (selection) > 0) {
                 gchar *file_display_name = nemo_file_get_display_name (NEMO_FILE (selection->data));
-                str = _score_append (action, str, file_display_name);
+                str = score_append (action, str, file_display_name);
                 g_free (file_display_name);
             } else {
                 goto default_parent_display_name;
@@ -898,7 +944,7 @@ default_parent_display_name:
                 parent_display_name = nemo_file_get_display_name (parent);
             g_free (real_display_name);
             str = insert_quote (action, str);
-            str = _score_append (action, str, parent_display_name);
+            str = score_append (action, str, parent_display_name);
             str = insert_quote (action, str);
             g_free (parent_display_name);
             break;
@@ -908,9 +954,9 @@ default_parent_display_name:
                     if (!first)
                         str = insert_separator (action, str);
                     str = insert_quote (action, str);
-                    gchar *dev = get_device_path (NEMO_FILE (l->data));
+                    gchar *dev = get_device_path (action, NEMO_FILE (l->data));
                     if (dev)
-                        str = _score_append (action, str, dev);
+                        str = score_append (action, str, dev);
                     g_free (dev);
                     str = insert_quote (action, str);
                     first = FALSE;

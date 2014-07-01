@@ -63,6 +63,9 @@ int		nemo_notebook_add_tab	(NemoNotebook *nb,
 						 NemoWindowSlot *slot,
 						 int position,
 						 gboolean jump_to);
+gint		nemo_notebook_find_tab_num_at_pos (NemoNotebook *nb,
+						   gint 	 abs_x,
+						   gint 	 abs_y);
 	
 void		nemo_notebook_set_show_tabs	(NemoNotebook *nb,
 						 gboolean show_tabs);
@@ -74,13 +77,15 @@ void		nemo_notebook_sync_tab_label (NemoNotebook *nb,
 void		nemo_notebook_sync_loading   (NemoNotebook *nb,
 						  NemoWindowSlot *slot);
 
-void		nemo_notebook_reorder_current_child_relative (NemoNotebook *notebook,
-								  int offset);
+void		nemo_notebook_reorder_child_relative (NemoNotebook *notebook,
+						      int	    page_num,
+						      int 	    offset);
 void		nemo_notebook_set_current_page_relative (NemoNotebook *notebook,
 							     int offset);
 
-gboolean        nemo_notebook_can_reorder_current_child_relative (NemoNotebook *notebook,
-								      int offset);
+gboolean        nemo_notebook_can_reorder_child_relative (NemoNotebook *notebook,
+							  int	    	page_num,
+							  int 	    	offset);
 gboolean        nemo_notebook_can_set_current_page_relative (NemoNotebook *notebook,
 								 int offset);
 
