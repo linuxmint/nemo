@@ -6,14 +6,8 @@
     <property name="border_width">0</property>
     <property name="window_position">center</property>
     <property name="type_hint">dialog</property>
-    <child type="titlebar">
-      <object class="GtkHeaderBar" id="headerbar">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="show-close-button">True</property>
-        <property name="title" translatable="yes">Files Preferences</property>
-      </object>
-    </child>
+    <property name="title" translatable="yes">Files Preferences</property>
+    <property name="use_header_bar">1</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
