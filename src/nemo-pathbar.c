@@ -1488,7 +1488,9 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data, gint scale)
 
     if (button_data->image != NULL) {
 		if (button_data->custom_icon) {
-			gtk_image_set_from_pixbuf (GTK_IMAGE (button_data->image), button_data->custom_icon);  
+			cairo_surface_t *surface;
+            surface = gdk_cairo_surface_create_from_pixbuf (button_data->custom_icon, scale, NULL);
+            g_object_set (GTK_IMAGE (button_data->image), "surface", surface, NULL);  
 			gtk_widget_show (GTK_WIDGET (button_data->image));
 		} else {
 			icon_info = get_type_icon_info (button_data, scale);
