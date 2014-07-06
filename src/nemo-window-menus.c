@@ -1400,7 +1400,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
     
     action = GTK_ACTION (gtk_action_new (NEMO_ACTION_OPEN_IN_TERMINAL,
                                                 _("Open in Terminal"),
-                                                _("Open terminal in selected folder"),
+                                                _("Open a terminal in the active folder"),
                                                 NULL));
     gtk_action_group_add_action (action_group, GTK_ACTION (action));
     g_signal_connect (action, "activate",
