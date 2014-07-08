@@ -451,7 +451,7 @@ nautilus_toolbar_constructed (GObject *obj)
 	gtk_size_group_add_widget (size_group, self->priv->location_entry);
 
 	/* Action Menu */
-	button = toolbar_create_toolbutton (self, TRUE, FALSE, "emblem-system-symbolic", _("Location options"));
+	button = toolbar_create_toolbutton (self, TRUE, FALSE, "view-context-menu-symbolic", _("Location options"));
 	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
 	menu = gtk_ui_manager_get_widget (ui_manager, "/ActionMenu");
 	gtk_widget_set_halign (menu, GTK_ALIGN_END);
