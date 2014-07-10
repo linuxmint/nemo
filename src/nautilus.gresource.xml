@@ -12,5 +12,6 @@
     <file alias="icons/thumbnail_frame.png">../icons/thumbnail_frame.png</file>
     <file alias="icons/filmholes.png">../icons/filmholes.png</file>
     <file alias="icons/knob.png">../icons/knob.png</file>
+    <file>Adwaita.css</file>
   </gresource>
 </gresources>
