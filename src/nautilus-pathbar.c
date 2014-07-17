@@ -242,6 +242,8 @@ nautilus_path_bar_init (NautilusPathBar *path_bar)
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (path_bar)),
                                      GTK_STYLE_CLASS_LINKED);
+	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (path_bar)),
+                                     "path-bar");
 }
 
 static void
