@@ -50,7 +50,7 @@ class Main:
             outfile = open(outfilename, 'w')
             outfile.write(outstring)
             outfile.close()
-            print("Extraction complete.  Run makepot now")
+            print "Extraction complete.  Run makepot now"
 
 if __name__ == "__main__":
     Main()
