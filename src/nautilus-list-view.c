@@ -2944,7 +2944,7 @@ create_column_editor (NautilusListView *view)
 	window = gtk_dialog_new_with_buttons (str,
 					      GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (view))),
 					      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_USE_HEADER_BAR,
-					      NULL);
+					      NULL, NULL);
 	g_free (str);
 	g_signal_connect (window, "response", 
 			  G_CALLBACK (column_editor_response_callback), NULL);

@@ -378,15 +378,6 @@ gear_menu_key_press (GtkWidget *widget,
 }
 
 static void
-close_button_clicked (GtkButton *button,
-		      gpointer user_data)
-{
-	NautilusToolbar *self = user_data;
-
-	gtk_window_close (GTK_WINDOW (self->priv->window));
-}
-
-static void
 nautilus_toolbar_constructed (GObject *obj)
 {
 	NautilusToolbar *self = NAUTILUS_TOOLBAR (obj);
@@ -394,7 +385,6 @@ nautilus_toolbar_constructed (GObject *obj)
 	GtkWidget *button;
 	GtkWidget *menu;
 	GtkWidget *box;
-	GtkWidget *separator;
 	GtkUIManager *ui_manager;
 	GtkSizeGroup *size_group;
 

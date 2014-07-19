@@ -307,7 +307,6 @@ static void     nautilus_view_select_file                      (NautilusView    
 							        NautilusFile         *file);
 
 static void     update_templates_directory                     (NautilusView *view);
-static void     user_dirs_changed                              (NautilusView *view);
 
 static gboolean file_list_all_are_folders                      (GList *file_list);
 
@@ -1436,7 +1435,6 @@ pattern_select_response_cb (GtkWidget *dialog, int response, gpointer user_data)
 	NautilusDirectory *directory;
 	GtkWidget *entry;
 	GList *selection;
-	GError *error;
 
 	view = NAUTILUS_VIEW (user_data);
 
