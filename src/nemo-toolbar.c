@@ -142,17 +142,14 @@ toolbar_update_appearance (NemoToolbar *self)
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR);
     if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
-<<<<<<< HEAD
         
     widgetitem = self->priv->open_terminal_button;
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_OPEN_IN_TERMINAL_TOOLBAR);
     if (icon_toolbar == FALSE ) {gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
-=======
 
     widgetitem = self->priv->toggle_location_button;
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR);
->>>>>>> restyle the toolbar buttons
     if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 }
@@ -300,11 +297,8 @@ nemo_toolbar_constructed (GObject *obj)
     gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
     gtk_widget_show (GTK_WIDGET (tool_box));
 
-<<<<<<< HEAD
     /* Search/Open in Terminal/New Folder/Toggle Location */
-=======
     tool_box = gtk_tool_item_new ();
->>>>>>> improve the toolbar behavior in narrow windows
     box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
     self->priv->toggle_location_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_TOGGLE_LOCATION);
@@ -381,20 +375,12 @@ nemo_toolbar_constructed (GObject *obj)
                   "changed::" NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR,
                   G_CALLBACK (toolbar_update_appearance), self);
     g_signal_connect_swapped (nemo_preferences,
-<<<<<<< HEAD
-        "changed::" NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR,
-        G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-        "changed::" NEMO_PREFERENCES_SHOW_OPEN_IN_TERMINAL_TOOLBAR,
-        G_CALLBACK (toolbar_update_appearance), self);
-=======
                   "changed::" NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR,
                   G_CALLBACK (toolbar_update_appearance), self);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_SHOW_OPEN_IN_TERMINAL_TOOLBAR,
+                  G_CALLBACK (toolbar_update_appearance), self);
 
-<<<<<<< HEAD
->>>>>>> restyle the toolbar buttons
-=======
->>>>>>> improve the toolbar behavior in narrow windows
 	toolbar_update_appearance (self);
 }
 

@@ -125,14 +125,11 @@
       <summary>Show new folder button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
-<<<<<<< HEAD
     <key type="b" name="show-open-in-terminal-toolbar">
       <default>false</default>
       <summary>Show open in terminal in the nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
-=======
->>>>>>> remove "Show label on search icon" preference
     <key name="confirm-trash" type="b">
       <default>true</default>
       <_summary>Whether to ask for confirmation when deleting files, or emptying Trash</_summary>

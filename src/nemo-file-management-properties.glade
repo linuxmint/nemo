@@ -2806,9 +2806,6 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                         <property name="position">7</property>
                                       </packing>
                                     </child>
-<<<<<<< HEAD
-=======
->>>>>>> remove "Show label on search icon" preference
                                   </object>
                                 </child>
                               </object>
