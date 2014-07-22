@@ -1,3 +1,12 @@
+Major changes in 3.13.2:
+* Fix a missing unref (Robert Ancell)
+* Fix a crash in selection handling (Iain Lane)
+* Use header bar for properties dialog (Matthias Clasen)
+* Use new gear menu icon (Matthias)
+* Include application-specific theming for Adwaita (Matthias)
+* Share pathbar styling with GTK+ (Matthias)
+* Translation updates
+
 Major changes in 3.13.1:
 * Port to be a DBusActivatable application
 * Fix a crash when switching back from the trash folder
