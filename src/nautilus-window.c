@@ -2330,22 +2330,12 @@ nautilus_window_show_about_dialog (NautilusWindow *window)
 		"Sun Microsystems",
 		NULL
 	};
-	gchar *copyright_str;
-	GDateTime *date;
-
-	date = g_date_time_new_now_local ();
-
-	/* Translators: these two strings here indicate the copyright time span,
-	 * e.g. 1999-2011.
-	 */
-	copyright_str = g_strdup_printf (_("Copyright \xC2\xA9 %Id\xE2\x80\x93%Id "
-					   "The Files authors"), 1999, g_date_time_get_year (date));
 
 	gtk_show_about_dialog (window ? GTK_WINDOW (window) : NULL,
 			       "program-name", _("Files"),
 			       "version", VERSION,
 			       "comments", _("Access and organize your files."),
-			       "copyright", copyright_str,
+			       "copyright", "Copyright © 1999–2014 The Files Authors",
 			       "license-type", GTK_LICENSE_GPL_2_0,
 			       "authors", authors,
 			       "documenters", documenters,
@@ -2356,7 +2346,4 @@ nautilus_window_show_about_dialog (NautilusWindow *window)
 			      "translator-credits", _("translator-credits"),
 			      "logo-icon-name", "system-file-manager",
 			      NULL);
-
-	g_free (copyright_str);
-	g_date_time_unref (date);
 }
