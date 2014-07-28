@@ -72,7 +72,7 @@ msgstr "Dostop in razvrščanje datotek"
 
 #: ../data/nautilus.desktop.in.in.h:3
 msgid "folder;manager;explore;disk;filesystem;"
-msgstr "mapa;upravljalnik;datoteke;raziskovalec;datotečni sistem;disk"
+msgstr "mapa;upravljalnik;datoteke;raziskovalec;datotečni sistem;disk;"
 
 #: ../data/nautilus.xml.in.h:1
 msgid "Saved search"
