@@ -253,15 +253,15 @@ nautilus_floating_bar_constructed (GObject *obj)
 	self->priv->spinner = w;
 
 	gtk_widget_set_size_request (w, 16, 16);
-	gtk_widget_set_margin_left (w, 8);
+	gtk_widget_set_margin_start (w, 8);
 
 	labels_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_box_pack_start (GTK_BOX (box), labels_box, TRUE, TRUE, 0);
 	g_object_set (labels_box,
 		      "margin-top", 2,
 		      "margin-bottom", 2,
-		      "margin-left", 12,
-		      "margin-right", 12,
+		      "margin-start", 12,
+		      "margin-end", 12,
 		      NULL);
 	gtk_widget_show (labels_box);
 
