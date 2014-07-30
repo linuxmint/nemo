@@ -10,7 +10,7 @@
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/nautilus-list" />
   <download-page rdf:resource="http://download.gnome.org/sources/nautilus/" />
   <bug-database rdf:resource="https://bugzilla.gnome.org/browse.cgi?product=nautilus" />
-  <category rdf:resource="http://api.gnome.org/doap-extensions#desktop" />
+  <category rdf:resource="http://api.gnome.org/doap-extensions#core" />
 
   <maintainer>
     <foaf:Person>
