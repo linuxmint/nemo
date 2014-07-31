@@ -11,6 +11,7 @@
   <download-page rdf:resource="http://download.gnome.org/sources/nautilus/" />
   <bug-database rdf:resource="https://bugzilla.gnome.org/browse.cgi?product=nautilus" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#core" />
+  <programming-language>C</programming-language>
 
   <maintainer>
     <foaf:Person>
