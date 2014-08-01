@@ -9,7 +9,7 @@ desktop_DATA     = 					\
 	$(desktop_in_files:.desktop.in=.desktop)	\
 	nautilus-classic.desktop
 desktop_in_files = 					\
-	org.gnome.Nautilus.desktop.in				\
+	org.gnome.Nautilus.desktop.in			\
 	nautilus-autorun-software.desktop.in		\
 	nautilus-connect-server.desktop.in
 
@@ -18,7 +18,7 @@ autostart_in_files = nautilus-autostart.desktop.in
 autostart_DATA = $(autostart_in_files:.desktop.in=.desktop)
 
 appdatadir = $(datadir)/appdata
-appdata_in_files = nautilus.appdata.xml.in
+appdata_in_files = org.gnome.Nautilus.appdata.xml.in
 appdata_DATA = $(appdata_in_files:.xml.in=.xml)
 @INTLTOOL_XML_RULE@
 
