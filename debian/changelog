@@ -1,3 +1,10 @@
+nemo (2.2.4) qiana; urgency=medium
+
+  * Fixes for network share browsing segfault, and segfault when ejecting mounted ISO.
+  * Actions: Don't accumulate callbacks in views.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 12 Aug 2014 13:17:33 +0200
+
 nemo (2.2.3) qiana; urgency=medium
 
   * Merging debian/patches
