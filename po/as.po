@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: as\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2014-02-11 23:02+0000\n"
-"PO-Revision-Date: 2014-02-12 16:01+0630\n"
+"POT-Creation-Date: 2014-08-13 10:04+0000\n"
+"PO-Revision-Date: 2014-08-13 23:15+0530\n"
 "Last-Translator: Nilamdyuti Goswami <ngoswami@redhat.com>\n"
 "Language-Team: Assamese <kde-i18n-doc@kde.org>\n"
 "Language: as_IN\n"
@@ -23,18 +23,18 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1)\n"
 "X-Generator: Lokalize 1.5\n"
 
-#: ../data/nautilus.appdata.xml.in.h:1
+#: ../data/org.gnome.Nautilus.appdata.xml.in.h:1
 msgid ""
 "Nautilus, also known as Files, is the default file manager of the GNOME "
 "desktop. It provides a simple and integrated way of managing your files and "
 "browsing your file system."
 msgstr ""
-"Nautilus, ফাইলসমূহ নামৰেও জনাজাত, GNOME ডেস্কটপৰ অবিকল্পিত ফাইল ব্যৱস্থাপক। "
-"ই আপোনাৰ ফাইলসমূহ ব্যৱস্থাপনা কৰাৰ আৰু আপোনাৰ ফাইল চিস্টেম ব্ৰাউছ কৰাৰ এটা "
-"সহজ "
-"আৰু অনুকূলিত পদ্ধতি প্ৰদান কৰে।"
+"Nautilus, ফাইলসমূহ নামৰেও জনাজাত, GNOME ডেস্কটপৰ অবিকল্পিত ফাইল ব্যৱস্থাপক। ই "
+"আপোনাৰ ফাইলসমূহ ব্যৱস্থাপনা কৰাৰ আৰু আপোনাৰ ফাইল চিস্টেম ব্ৰাউছ কৰাৰ এটা সহজ "
+"আৰু "
+"অনুকূলিত পদ্ধতি প্ৰদান কৰে।"
 
-#: ../data/nautilus.appdata.xml.in.h:2
+#: ../data/org.gnome.Nautilus.appdata.xml.in.h:2
 msgid ""
 "Nautilus supports all the basic functions of a file manager and more. It can "
 "search and manage your files and folders, both locally and on a network, "
@@ -44,12 +44,12 @@ msgid ""
 msgstr ""
 "Nautilus এ এটা ফাইল ব্যৱস্থাপকৰ সকলো মৌলিক ফলন আৰু অধিক সমৰ্থন কৰে। ই আপোনাৰ "
 "ফাইল আৰু ফোল্ডাৰ সন্ধান আৰু ব্যৱস্থাপনা কৰিব পাৰে, স্থানীয়ভাৱে আৰু নেটৱাৰ্কত, "
-"আতৰাব পৰা "
-"মাধ্যমৰ পৰা তথ্য পঢ়িব আৰু লিখিব পাৰে, স্ক্ৰিপ্টবোৰ চলাব পাৰে, আৰু "
-"এপ্লিকেচনসমূহ লঞ্চ কৰিব "
-"পাৰে। ইয়াৰ তিনিটা দৰ্শন আছে: আইকন গ্ৰিড, আইকন তালিকা, আৰু ট্ৰি তালিকা। ইয়াৰ "
-"কাৰ্য্যকৰীতাক "
-"প্লাগিনসমূহ আৰু স্ক্ৰিপ্টসমূহৰ সহায়ত প্ৰসাৰিত কৰিব পাৰি।"
+"আতৰাব "
+"পৰা মাধ্যমৰ পৰা তথ্য পঢ়িব আৰু লিখিব পাৰে, স্ক্ৰিপ্টবোৰ চলাব পাৰে, আৰু "
+"এপ্লিকেচনসমূহ "
+"লঞ্চ কৰিব পাৰে। ইয়াৰ তিনিটা দৰ্শন আছে: আইকন গ্ৰিড, আইকন তালিকা, আৰু ট্ৰি "
+"তালিকা। "
+"ইয়াৰ কাৰ্য্যকৰীতাক প্লাগিনসমূহ আৰু স্ক্ৰিপ্টসমূহৰ সহায়ত প্ৰসাৰিত কৰিব পাৰি।"
 
 #: ../data/nautilus-autorun-software.desktop.in.in.h:1
 msgid "Run Software"
@@ -63,18 +63,18 @@ msgid "Connect to Server"
 msgstr "চাৰ্ভাৰৰ সৈতে সংযোগ কৰক"
 
 #. Set initial window title
-#: ../data/nautilus.desktop.in.in.h:1
+#: ../data/org.gnome.Nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4477 ../src/nautilus-window.c:2211
-#: ../src/nautilus-window.c:2408
+#: ../src/nautilus-properties-window.c:4479 ../src/nautilus-window.c:2166
+#: ../src/nautilus-window.c:2335
 msgid "Files"
 msgstr "ফাইলসমূহ"
 
-#: ../data/nautilus.desktop.in.in.h:2
+#: ../data/org.gnome.Nautilus.desktop.in.in.h:2
 msgid "Access and organize files"
 msgstr "অভিগম কৰক আৰু ফাইলসমূহ আয়োজিত কৰক"
 
-#: ../data/nautilus.desktop.in.in.h:3
+#: ../data/org.gnome.Nautilus.desktop.in.in.h:3
 msgid "folder;manager;explore;disk;filesystem;"
 msgstr "ফোল্ডাৰ;ব্যৱস্থাপক;অন্বেষণ;ডিস্ক;ফাইলচিস্টেম;"
 
@@ -90,20 +90,20 @@ msgstr "X"
 msgid "Y"
 msgstr "Y"
 
-#: ../eel/eel-editable-label.c:313 ../libnautilus-private/nautilus-file.c:6192
+#: ../eel/eel-editable-label.c:312 ../libnautilus-private/nautilus-file.c:6192
 #: ../libnautilus-private/nautilus-file.c:6193
 msgid "Text"
 msgstr "লিখনী"
 
-#: ../eel/eel-editable-label.c:314
+#: ../eel/eel-editable-label.c:313
 msgid "The text of the label."
 msgstr "লেবেলত প্ৰদৰ্শিত লিখনী।"
 
-#: ../eel/eel-editable-label.c:320
+#: ../eel/eel-editable-label.c:319
 msgid "Justification"
 msgstr "ন্যায্যতা"
 
-#: ../eel/eel-editable-label.c:321
+#: ../eel/eel-editable-label.c:320
 msgid ""
 "The alignment of the lines in the text of the label relative to each other. "
 "This does NOT affect the alignment of the label within its allocation. See "
@@ -114,29 +114,29 @@ msgstr ""
 "স্থানত লেবেলৰ দিশ প্ৰভাবিত নহব। লেবেলৰ দিশ পৰিবৰ্তন সম্পৰ্কে জানিবলৈ GtkMisc::"
 "xalign চাওক।"
 
-#: ../eel/eel-editable-label.c:329
+#: ../eel/eel-editable-label.c:328
 msgid "Line wrap"
 msgstr "শাৰী মেৰিওৱা"
 
-#: ../eel/eel-editable-label.c:330
+#: ../eel/eel-editable-label.c:329
 msgid "If set, wrap lines if the text becomes too wide."
 msgstr ""
 "মান নিৰ্ধাৰিত হ'লে, পংক্তি অত্যাধিক দীঘল হ'লে সেইসমূহ বিভাজন কৰি প্ৰদৰ্শন কৰা "
 "হ'ব।"
 
-#: ../eel/eel-editable-label.c:337
+#: ../eel/eel-editable-label.c:336
 msgid "Cursor Position"
 msgstr "কাৰ্চাৰৰ অৱস্থান"
 
-#: ../eel/eel-editable-label.c:338
+#: ../eel/eel-editable-label.c:337
 msgid "The current position of the insertion cursor in chars."
 msgstr "সুমুৱাৰ সময় প্ৰদৰ্শিত কাৰ্চাৰৰ অৱস্থান, আখৰ অনুসৰি নিৰ্ধাৰিত।"
 
-#: ../eel/eel-editable-label.c:347
+#: ../eel/eel-editable-label.c:346
 msgid "Selection Bound"
 msgstr "নিৰ্বাচিত অংশৰ সীমা"
 
-#: ../eel/eel-editable-label.c:348
+#: ../eel/eel-editable-label.c:347
 msgid ""
 "The position of the opposite end of the selection from the cursor in chars."
 msgstr ""
@@ -144,28 +144,28 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3085
-#: ../libnautilus-private/nautilus-clipboard.c:356 ../src/nautilus-view.c:7192
-#: ../src/nautilus-view.c:7345
+#: ../eel/eel-editable-label.c:3084
+#: ../libnautilus-private/nautilus-clipboard.c:356 ../src/nautilus-view.c:7175
+#: ../src/nautilus-view.c:7328
 msgid "Cu_t"
 msgstr "কাট কৰক (_t)"
 
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3087
-#: ../libnautilus-private/nautilus-clipboard.c:360 ../src/nautilus-view.c:7196
-#: ../src/nautilus-view.c:7349
+#: ../eel/eel-editable-label.c:3086
+#: ../libnautilus-private/nautilus-clipboard.c:360 ../src/nautilus-view.c:7179
+#: ../src/nautilus-view.c:7332
 msgid "_Copy"
 msgstr "কপি কৰক (_C)"
 
 #. name, stock id
 #. label, accelerator
-#: ../eel/eel-editable-label.c:3089
-#: ../libnautilus-private/nautilus-clipboard.c:364 ../src/nautilus-view.c:7200
+#: ../eel/eel-editable-label.c:3088
+#: ../libnautilus-private/nautilus-clipboard.c:364 ../src/nautilus-view.c:7183
 msgid "_Paste"
 msgstr "পেইস্ট কৰক (_P)"
 
-#: ../eel/eel-editable-label.c:3092
+#: ../eel/eel-editable-label.c:3091
 msgid "Select All"
 msgstr "সকলো বাছক"
 
@@ -182,10 +182,10 @@ msgstr "অতিৰিক্ত বিৱৰণ প্ৰদৰ্শন কৰ
 #: ../src/nautilus-mime-actions.c:651 ../src/nautilus-mime-actions.c:722
 #: ../src/nautilus-mime-actions.c:1065 ../src/nautilus-mime-actions.c:1571
 #: ../src/nautilus-mime-actions.c:1795
-#: ../src/nautilus-properties-window.c:4468
-#: ../src/nautilus-properties-window.c:5440 ../src/nautilus-query-editor.c:519
-#: ../src/nautilus-view.c:968 ../src/nautilus-view.c:1482
-#: ../src/nautilus-view.c:1602 ../src/nautilus-view.c:5981
+#: ../src/nautilus-properties-window.c:4470
+#: ../src/nautilus-properties-window.c:5446 ../src/nautilus-query-editor.c:519
+#: ../src/nautilus-view.c:964 ../src/nautilus-view.c:1478
+#: ../src/nautilus-view.c:1598 ../src/nautilus-view.c:5964
 msgid "_Cancel"
 msgstr "বাতিল কৰক (_C)"
 
@@ -198,11 +198,11 @@ msgid " (invalid Unicode)"
 msgstr " (অবৈধ ইউনিক'ড)"
 
 #: ../libnautilus-private/nautilus-bookmark.c:107
-#: ../libnautilus-private/nautilus-desktop-link.c:132
-#: ../libnautilus-private/nautilus-file-utilities.c:274
-#: ../src/nautilus-list-view.c:1826 ../src/nautilus-pathbar.c:293
-#: ../src/nautilus-query-editor.c:1095
-#: ../src/nautilus-shell-search-provider.c:288
+#: ../libnautilus-private/nautilus-desktop-link.c:129
+#: ../libnautilus-private/nautilus-file-utilities.c:265
+#: ../src/nautilus-list-view.c:1826 ../src/nautilus-pathbar.c:295
+#: ../src/nautilus-query-editor.c:1094
+#: ../src/nautilus-shell-search-provider.c:285
 msgid "Home"
 msgstr "ঘৰ"
 
@@ -227,7 +227,7 @@ msgstr "ক্লিপবৰ্ডত উপস্থিত তথ্য পে
 
 #. name, stock id
 #. label, accelerator
-#: ../libnautilus-private/nautilus-clipboard.c:368 ../src/nautilus-view.c:7216
+#: ../libnautilus-private/nautilus-clipboard.c:368 ../src/nautilus-view.c:7199
 msgid "Select _All"
 msgstr "সকলো বাছক (_A)"
 
@@ -306,7 +306,7 @@ msgid "The group of the file."
 msgstr "ফাইলৰ দল।"
 
 #: ../libnautilus-private/nautilus-column-utilities.c:111
-#: ../src/nautilus-properties-window.c:4539
+#: ../src/nautilus-properties-window.c:4541
 msgid "Permissions"
 msgstr "অনুমতি"
 
@@ -360,12 +360,12 @@ msgstr "সন্ধানৰ বাবে প্ৰসঙ্গতা মান
 msgid "on the desktop"
 msgstr "ডেস্কটপত অবস্থিত"
 
-#: ../libnautilus-private/nautilus-desktop-link-monitor.c:87
+#: ../libnautilus-private/nautilus-desktop-link-monitor.c:83
 #, c-format
 msgid "You cannot move the volume “%s” to the trash."
 msgstr "আপুনি ভলিউম “%s” ক আবৰ্জনাৰ বাকচত স্থানান্তৰ কৰিব নোৱাৰিব।"
 
-#: ../libnautilus-private/nautilus-desktop-link-monitor.c:97
+#: ../libnautilus-private/nautilus-desktop-link-monitor.c:93
 msgid ""
 "If you want to eject the volume, please use Eject in the popup menu of the "
 "volume."
@@ -374,15 +374,15 @@ msgstr ""
 "ব্যৱহাৰ "
 "কৰক।"
 
-#: ../libnautilus-private/nautilus-desktop-link-monitor.c:99
-#: ../libnautilus-private/nautilus-desktop-link-monitor.c:108
+#: ../libnautilus-private/nautilus-desktop-link-monitor.c:95
+#: ../libnautilus-private/nautilus-desktop-link-monitor.c:104
 #: ../src/nautilus-location-entry.c:274 ../src/nautilus-mime-actions.c:1065
 #: ../src/nautilus-mime-actions.c:1242 ../src/nautilus-mime-actions.c:1795
-#: ../src/nautilus-view.c:968
+#: ../src/nautilus-view.c:964
 msgid "_OK"
 msgstr "ঠিক আছে (_O)"
 
-#: ../libnautilus-private/nautilus-desktop-link-monitor.c:106
+#: ../libnautilus-private/nautilus-desktop-link-monitor.c:102
 msgid ""
 "If you want to unmount the volume, please use Unmount Volume in the popup "
 "menu of the volume."
@@ -392,7 +392,7 @@ msgstr ""
 "ব্যৱহাৰ কৰক।"
 
 #. Translators: this is of the format "hostname (uri-scheme)"
-#: ../libnautilus-private/nautilus-directory.c:521
+#: ../libnautilus-private/nautilus-directory.c:518
 #, c-format
 msgid "%s (%s)"
 msgstr "%s (%s)"
@@ -409,11 +409,7 @@ msgstr "ইয়াত কপি কৰক (_C)"
 msgid "_Link Here"
 msgstr "ইয়াত সংযোগ কৰা হ'ব (_L)"
 
-#: ../libnautilus-private/nautilus-dnd.c:788
-msgid "Set as _Background"
-msgstr "পটভুমি হিচাপে সংহতি কৰক (_B)"
-
-#: ../libnautilus-private/nautilus-dnd.c:795
+#: ../libnautilus-private/nautilus-dnd.c:790
 msgid "Cancel"
 msgstr "বাতিল কৰক"
 
@@ -573,7 +569,7 @@ msgstr "অজ্ঞাত"
 #. * for which we have no more appropriate default.
 #.
 #: ../libnautilus-private/nautilus-file.c:6156
-#: ../src/nautilus-properties-window.c:1182
+#: ../src/nautilus-properties-window.c:1186
 msgid "unknown"
 msgstr "অজ্ঞাত"
 
@@ -735,13 +731,13 @@ msgstr "প্ৰকৃত ফাইল"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:255
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:286
-#: ../src/nautilus-properties-window.c:3278
+#: ../src/nautilus-properties-window.c:3280
 msgid "Size:"
 msgstr "মাপ:"
 
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:258
 #: ../libnautilus-private/nautilus-file-conflict-dialog.c:289
-#: ../src/nautilus-properties-window.c:3260
+#: ../src/nautilus-properties-window.c:3262
 msgid "Type:"
 msgstr "ধৰণ:"
 
@@ -801,8 +797,8 @@ msgstr "পুনৰ চেষ্টা কৰক (_R)"
 #. name, stock id
 #. label, accelerator
 #: ../libnautilus-private/nautilus-file-operations.c:187
-#: ../src/nautilus-view.c:7248 ../src/nautilus-view.c:7362
-#: ../src/nautilus-view.c:8681
+#: ../src/nautilus-view.c:7231 ../src/nautilus-view.c:7345
+#: ../src/nautilus-view.c:8664
 msgid "_Delete"
 msgstr "মচি পেলাওক (_D)"
 
@@ -1026,7 +1022,7 @@ msgstr "আবৰ্জনাৰ সকলো বস্তু চিৰস্থ
 
 #: ../libnautilus-private/nautilus-file-operations.c:1394
 #: ../libnautilus-private/nautilus-file-operations.c:2270
-#: ../src/nautilus-window.c:819
+#: ../src/nautilus-window.c:813
 msgid "Empty _Trash"
 msgstr "আবৰ্জনা খালি কৰক (_T)"
 
@@ -1167,7 +1163,7 @@ msgstr "আবৰ্জনাৰ বাকচ ৰিক্ত নকৰিব (_
 
 #. Translators: %s is a file name formatted for display
 #: ../libnautilus-private/nautilus-file-operations.c:2401
-#: ../src/nautilus-view.c:6467
+#: ../src/nautilus-view.c:6450
 #, c-format
 msgid "Unable to access “%s”"
 msgstr "“%s” অভিগম কৰিবলে অক্ষম"
@@ -1525,23 +1521,23 @@ msgstr "ভৰষাবান লঞ্চাৰ চিহ্নিত কৰি
 
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:133
-#: ../src/nautilus-view.c:2539
+#: ../src/nautilus-view.c:2535
 msgid "Undo"
 msgstr "বাতিল কৰক"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:136
-#: ../src/nautilus-view.c:2540
+#: ../src/nautilus-view.c:2536
 msgid "Undo last action"
 msgstr "সৰ্বশেষ কাৰ্য্য বাতিল কৰক"
 
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:140
-#: ../src/nautilus-view.c:2558
+#: ../src/nautilus-view.c:2554
 msgid "Redo"
 msgstr "আকৌ কৰক"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:143
-#: ../src/nautilus-view.c:2559
+#: ../src/nautilus-view.c:2555
 msgid "Redo last undone action"
 msgstr "সৰ্বশেষ বাতিল কৰা কাৰ্য্য পুনৰ কৰক"
 
@@ -1889,12 +1885,12 @@ msgstr "গৰাকী পৰিবৰ্তন বাতিল কৰক (_U)"
 msgid "_Redo Change Owner"
 msgstr "গৰাকী পুনৰ পৰিবৰ্তন কৰক (_R)"
 
-#: ../libnautilus-private/nautilus-file-utilities.c:1255
+#: ../libnautilus-private/nautilus-file-utilities.c:932
 #, c-format
 msgid "Could not determine original location of “%s” "
 msgstr "“%s” ৰ মূল অৱস্থান নিৰ্ধাৰণ কৰা নগল "
 
-#: ../libnautilus-private/nautilus-file-utilities.c:1259
+#: ../libnautilus-private/nautilus-file-utilities.c:936
 msgid "The item cannot be restored from trash"
 msgstr "বস্তুটো আবৰ্জনাৰ বাকচৰ পৰা উদ্ধাৰ কৰা সম্ভৱ নহয়"
 
@@ -2423,7 +2419,6 @@ msgid "Desktop font"
 msgstr "ডেস্কটপত ব্যবহৃত ফন্ট"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:57
-#| msgid "The font _description used for the icons on the desktop."
 msgid "The font description used for the icons on the desktop."
 msgstr "ডেস্কটপৰ আইকনৰ বাবে ব্যবহৃত ফন্টৰ বিৱৰন।"
 
@@ -2589,25 +2584,25 @@ msgstr "নতুন উইন্ডোতে পাৰ্শ্ববৰ্ত�
 msgid "If set to true, newly opened windows will have the side pane visible."
 msgstr "মান সত্য (true) হলে নতুন উইন্ডোতে পাৰ্শ্ববৰ্তী পেইন প্ৰদৰ্শিত হ'ব।"
 
-#: ../nautilus-sendto-extension/nautilus-nste.c:97
-#: ../nautilus-sendto-extension/nautilus-nste.c:102
+#: ../nautilus-sendto-extension/nautilus-nste.c:96
+#: ../nautilus-sendto-extension/nautilus-nste.c:101
 msgid "Email…"
 msgstr "ই-মেইল…"
 
-#: ../nautilus-sendto-extension/nautilus-nste.c:98
+#: ../nautilus-sendto-extension/nautilus-nste.c:97
 msgid "Send file by mail…"
 msgstr "ফাইলক মেইলৰে পঠাওক…"
 
-#: ../nautilus-sendto-extension/nautilus-nste.c:103
+#: ../nautilus-sendto-extension/nautilus-nste.c:102
 msgid "Send files by mail…"
 msgstr "ফাইলসমূহক মেইলৰে পঠাওক…"
 
 #. Some sort of failure occurred. How 'bout we tell the user?
-#: ../src/nautilus-application.c:225 ../src/nautilus-window-slot.c:1602
+#: ../src/nautilus-application.c:215 ../src/nautilus-window-slot.c:1611
 msgid "Oops! Something went wrong."
 msgstr "ইচচ! কিবা এটা ভুল হৈছে।"
 
-#: ../src/nautilus-application.c:227
+#: ../src/nautilus-application.c:217
 #, c-format
 msgid ""
 "Unable to create a required folder. Please create the following folder, or "
@@ -2619,7 +2614,7 @@ msgstr ""
 "অথবা অনুমতিসমূহ সংহতি কৰক যাতে ইয়াক সৃষ্টি কৰিব পাৰি:\n"
 "%s"
 
-#: ../src/nautilus-application.c:232
+#: ../src/nautilus-application.c:222
 #, c-format
 msgid ""
 "Unable to create required folders. Please create the following folders, or "
@@ -2631,7 +2626,7 @@ msgstr ""
 "অথবা অনুমতি সংহতি যাতে সিহতক সৃষ্টি কৰিব পাৰি:\n"
 "%s"
 
-#: ../src/nautilus-application.c:366
+#: ../src/nautilus-application.c:354
 msgid ""
 "Nautilus 3.0 deprecated this directory and tried migrating this "
 "configuration to ~/.config/nautilus"
@@ -2639,7 +2634,74 @@ msgstr ""
 "Nautilus 3.0 এ এই ডাইৰেকটৰি ডিপ্ৰিকেইট কৰিছে আৰু এই সংৰূপক ~/.config/nautilus "
 "লে প্ৰব্ৰজন কৰাৰ চেষ্টা কৰিছে"
 
-#: ../src/nautilus-application.c:911 ../src/nautilus-window-menus.c:254
+#: ../src/nautilus-application.c:702
+msgid "--check cannot be used with other options."
+msgstr "--check অন্য বিকল্পসমূহৰ লগত ব্যৱহাৰ কৰিব নোৱাৰি।"
+
+#: ../src/nautilus-application.c:709
+msgid "--quit cannot be used with URIs."
+msgstr "--quit URIসমূহৰ লগত ব্যৱহাৰ কৰিব নোৱাৰি।"
+
+#: ../src/nautilus-application.c:717
+msgid "--select must be used with at least an URI."
+msgstr "--select অন্তত এটা URl ৰ সৈতে ব্যৱহাৰ কৰিব লাগিব।"
+
+#: ../src/nautilus-application.c:724
+msgid "--no-desktop and --force-desktop cannot be used together."
+msgstr "--no-desktop আৰু --force-desktop একেলগে ব্যৱহাৰ কৰিব নোৱাৰি।"
+
+#: ../src/nautilus-application.c:808
+msgid "Perform a quick set of self-check tests."
+msgstr "সৰ্বমোট self."
+
+#: ../src/nautilus-application.c:815
+msgid "Create the initial window with the given geometry."
+msgstr "প্ৰস্তুত কৰক."
+
+#: ../src/nautilus-application.c:815
+msgid "GEOMETRY"
+msgstr "GEOMETRY"
+
+#: ../src/nautilus-application.c:817
+msgid "Show the version of the program."
+msgstr "প্ৰগ্ৰামৰ সংস্কৰণ সংখ্যা প্ৰদৰ্শন কৰা হ'ব।"
+
+#: ../src/nautilus-application.c:819
+msgid "Always open a new window for browsing specified URIs"
+msgstr "ধাৰ্য্যত URls ব্ৰাউছ কৰিবলে সদায় এটা নতুন উইন্ডো খোলিব"
+
+#: ../src/nautilus-application.c:821
+msgid "Only create windows for explicitly specified URIs."
+msgstr "সুকীয়াভাৱে ধাৰ্য্যত URls ৰ বাবে কেৱল উইন্ডোসমূহ সৃষ্টি কৰিব।"
+
+#: ../src/nautilus-application.c:823
+msgid "Never manage the desktop (ignore the GSettings preference)."
+msgstr "ডেস্কটপ কেতিয়াও ব্যৱস্থাপনা নকৰিব (GSettings পছন্দ উপেক্ষা কৰক)।"
+
+#: ../src/nautilus-application.c:825
+msgid "Always manage the desktop (ignore the GSettings preference)."
+msgstr "ডেস্কটপ সদায় ব্যৱস্থাপনা কৰিব (GSettings পছন্দ উপেক্ষা কৰক)।"
+
+#: ../src/nautilus-application.c:827
+msgid "Quit Nautilus."
+msgstr "Nautilus ৰ পৰা প্ৰস্থান কৰক।"
+
+#: ../src/nautilus-application.c:829
+msgid "Select specified URI in parent folder."
+msgstr "উপধায়ক ফোল্ডাৰত ধাৰ্য্যত URl বাছক।"
+
+#: ../src/nautilus-application.c:830
+msgid "[URI...]"
+msgstr "[URI...]"
+
+#. Translators: this is a fatal error quit message printed on the
+#. * command line
+#: ../src/nautilus-application.c:906
+msgid "Could not register the application"
+msgstr "এপ্লিকেচন ৰেজিস্টাৰ কৰিব পৰা নগল"
+
+#: ../src/nautilus-application-actions.c:127
+#: ../src/nautilus-window-menus.c:253
 #, c-format
 msgid ""
 "There was an error displaying help: \n"
@@ -2648,100 +2710,14 @@ msgstr ""
 "সহায়ক তথ্য প্ৰদৰ্শনত ত্ৰুটি হৈছে: \n"
 "%s"
 
-#: ../src/nautilus-application.c:1085
-msgid "--check cannot be used with other options."
-msgstr "--check অন্য বিকল্পসমূহৰ লগত ব্যৱহাৰ কৰিব নোৱাৰি।"
-
-#: ../src/nautilus-application.c:1091
-msgid "--quit cannot be used with URIs."
-msgstr "--quit URIসমূহৰ লগত ব্যৱহাৰ কৰিব নোৱাৰি।"
-
-#: ../src/nautilus-application.c:1098
-msgid "--geometry cannot be used with more than one URI."
-msgstr "--geometry এটাতকৈ বেছি URI ৰ লগত ব্যৱহাৰ কৰিব নোৱাৰি।"
-
-#: ../src/nautilus-application.c:1104
-msgid "--select must be used with at least an URI."
-msgstr "--select অন্তত এটা URl ৰ সৈতে ব্যৱহাৰ কৰিব লাগিব।"
-
-#: ../src/nautilus-application.c:1110
-msgid "--no-desktop and --force-desktop cannot be used together."
-msgstr "--no-desktop আৰু --force-desktop একেলগে ব্যৱহাৰ কৰিব নোৱাৰি।"
-
-#: ../src/nautilus-application.c:1209
-msgid "Perform a quick set of self-check tests."
-msgstr "সৰ্বমোট self."
-
-#: ../src/nautilus-application.c:1215
-msgid "Show the version of the program."
-msgstr "প্ৰগ্ৰামৰ সংস্কৰণ সংখ্যা প্ৰদৰ্শন কৰা হ'ব।"
-
-#: ../src/nautilus-application.c:1217
-msgid "Create the initial window with the given geometry."
-msgstr "প্ৰস্তুত কৰক."
-
-#: ../src/nautilus-application.c:1217
-msgid "GEOMETRY"
-msgstr "GEOMETRY"
-
-#: ../src/nautilus-application.c:1219
-msgid "Always open a new window for browsing specified URIs"
-msgstr "ধাৰ্য্যত URls ব্ৰাউছ কৰিবলে সদায় এটা নতুন উইন্ডো খোলিব"
-
-#: ../src/nautilus-application.c:1221
-msgid "Only create windows for explicitly specified URIs."
-msgstr "সুকীয়াভাৱে ধাৰ্য্যত URls ৰ বাবে কেৱল উইন্ডোসমূহ সৃষ্টি কৰিব।"
-
-#: ../src/nautilus-application.c:1223
-msgid "Never manage the desktop (ignore the GSettings preference)."
-msgstr "ডেস্কটপ কেতিয়াও ব্যৱস্থাপনা নকৰিব (GSettings পছন্দ উপেক্ষা কৰক)।"
-
-#: ../src/nautilus-application.c:1225
-msgid "Always manage the desktop (ignore the GSettings preference)."
-msgstr "ডেস্কটপ সদায় ব্যৱস্থাপনা কৰিব (GSettings পছন্দ উপেক্ষা কৰক)।"
-
-#: ../src/nautilus-application.c:1227
-msgid "Quit Nautilus."
-msgstr "Nautilus ৰ পৰা প্ৰস্থান কৰক।"
-
-#: ../src/nautilus-application.c:1229
-msgid "Select specified URI in parent folder."
-msgstr "উপধায়ক ফোল্ডাৰত ধাৰ্য্যত URl বাছক।"
-
-#: ../src/nautilus-application.c:1230
-msgid "[URI...]"
-msgstr "[URI...]"
-
-#: ../src/nautilus-application.c:1242
-msgid ""
-"\n"
-"\n"
-"Browse the file system with the file manager"
-msgstr ""
-"\n"
-"\n"
-"ফাইল ব্যৱস্থাপকৰ সৈতে ফাইল চিস্টেম ব্ৰাউছ"
-
-#. Translators: this is a fatal error quit message printed on the
-#. * command line
-#: ../src/nautilus-application.c:1252
-msgid "Could not parse arguments"
-msgstr "তৰ্কসমূহ বিশ্লেষণ কৰিব পৰা নগল"
-
-#. Translators: this is a fatal error quit message printed on the
-#. * command line
-#: ../src/nautilus-application.c:1285
-msgid "Could not register the application"
-msgstr "এপ্লিকেচন ৰেজিস্টাৰ কৰিব পৰা নগল"
-
 #. name, stock id
-#: ../src/nautilus-app-menu.ui.h:1 ../src/nautilus-window-menus.c:551
+#: ../src/nautilus-app-menu.ui.h:1 ../src/nautilus-window-menus.c:550
 msgid "New _Window"
 msgstr "নতুন উইন্ডো (_W)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-app-menu.ui.h:2 ../src/nautilus-window-menus.c:543
+#: ../src/nautilus-app-menu.ui.h:2 ../src/nautilus-window-menus.c:542
 msgid "Connect to _Server…"
 msgstr "চাৰ্ভাৰৰ সৈতে সংযোগ কৰক (_S)…"
 
@@ -2749,18 +2725,18 @@ msgstr "চাৰ্ভাৰৰ সৈতে সংযোগ কৰক (_S)…"
 msgid "_Bookmarks"
 msgstr "পত্ৰচিহ্নসমূহ (_B)"
 
-#: ../src/nautilus-app-menu.ui.h:4 ../src/nautilus-window-menus.c:475
+#: ../src/nautilus-app-menu.ui.h:4 ../src/nautilus-window-menus.c:474
 msgid "Prefere_nces"
 msgstr "পছন্দ (_n)"
 
 #. name, stock id, label
-#: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-window-menus.c:469
+#: ../src/nautilus-app-menu.ui.h:5 ../src/nautilus-window-menus.c:468
 msgid "_Help"
 msgstr "সহায়(_H)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-app-menu.ui.h:6 ../src/nautilus-window-menus.c:515
+#: ../src/nautilus-app-menu.ui.h:6 ../src/nautilus-window-menus.c:514
 msgid "_About"
 msgstr "বিষয় (_A)"
 
@@ -2805,11 +2781,11 @@ msgstr "যদি আপুনি এই অৱস্থানক ভৰষা �
 msgid "_Run"
 msgstr "চলাওক (_R)"
 
-#: ../src/nautilus-bookmarks-window.c:168
+#: ../src/nautilus-bookmarks-window.c:166
 msgid "No bookmarks defined"
 msgstr "কোনো পত্ৰচিহ্নৰ বিৱৰণ দিয়া হোৱা নাই"
 
-#: ../src/nautilus-bookmarks-window.c:710
+#: ../src/nautilus-bookmarks-window.c:711
 msgid "Bookmarks"
 msgstr "পত্ৰচিহ্নসমূহ"
 
@@ -2926,22 +2902,22 @@ msgid "Icon View"
 msgstr "আইকন অনুসৰি প্ৰদৰ্শন"
 
 #. if it wasn't cancelled show a dialog
-#: ../src/nautilus-connect-server.c:53 ../src/nautilus-mime-actions.c:1869
-#: ../src/nautilus-mime-actions.c:2141
+#: ../src/nautilus-connect-server.c:52 ../src/nautilus-mime-actions.c:1869
+#: ../src/nautilus-mime-actions.c:2133
 msgid "Unable to access location"
 msgstr "অৱস্থান অভিগম কৰিবলে অক্ষম"
 
-#: ../src/nautilus-connect-server.c:74
+#: ../src/nautilus-connect-server.c:73
 msgid "Unable to display location"
 msgstr "অৱস্থান প্ৰদৰ্শন কৰিবলে অক্ষম"
 
-#: ../src/nautilus-connect-server.c:140
+#: ../src/nautilus-connect-server.c:139
 msgid "Print but do not open the URI"
 msgstr "প্ৰিন্ট কৰক কিন্তু URI নুখুলিব"
 
 #. Translators: This is the --help description for the connect to server app,
 #. the initial newlines are between the command line arg and the description
-#: ../src/nautilus-connect-server.c:152
+#: ../src/nautilus-connect-server.c:151
 msgid ""
 "\n"
 "\n"
@@ -2987,8 +2963,8 @@ msgstr "সংযোগ স্থাপন কৰক:(_o)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-desktop-canvas-view.c:664 ../src/nautilus-view.c:7188
-#: ../src/nautilus-view.c:8733
+#: ../src/nautilus-desktop-canvas-view.c:664 ../src/nautilus-view.c:7171
+#: ../src/nautilus-view.c:8716
 msgid "E_mpty Trash"
 msgstr "আবৰ্জনাৰ বাকচ ৰিক্ত কৰক (_m)"
 
@@ -3020,7 +2996,7 @@ msgstr "আবৰ্জনাৰ বাকচ ৰিক্ত কৰক"
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:710 ../src/nautilus-trash-bar.c:212
-#: ../src/nautilus-view.c:7189
+#: ../src/nautilus-view.c:7172
 msgid "Delete all items in the Trash"
 msgstr "আবৰ্জনাৰ বাকচত উপস্থিত সকলো সামগ্ৰী আঁতৰুৱা হ'ব"
 
@@ -3047,34 +3023,33 @@ msgstr "নিৰ্বাচিত আইকন পুনৰাকৃতি দ
 
 #. tooltip
 #: ../src/nautilus-desktop-canvas-view.c:731
-#| msgid "Restore each selected icons to its original size"
 msgid "Restore each selected icon to its original size"
 msgstr "প্ৰতিটো নিৰ্বাচিত আইকনক তাৰ প্ৰকৃত আকাৰলৈ প্ৰত্যাবৰ্তন কৰক"
 
-#: ../src/nautilus-desktop-item-properties.c:405
-#: ../src/nautilus-desktop-item-properties.c:415
+#: ../src/nautilus-desktop-item-properties.c:404
+#: ../src/nautilus-desktop-item-properties.c:414
 #: ../src/nautilus-image-properties-page.c:368
 msgid "Comment"
 msgstr "মন্তব্য"
 
-#: ../src/nautilus-desktop-item-properties.c:408
+#: ../src/nautilus-desktop-item-properties.c:407
 msgid "URL"
 msgstr "URL"
 
-#: ../src/nautilus-desktop-item-properties.c:411
-#: ../src/nautilus-desktop-item-properties.c:421
+#: ../src/nautilus-desktop-item-properties.c:410
+#: ../src/nautilus-desktop-item-properties.c:420
 #: ../src/nautilus-image-properties-page.c:359
 #: ../src/nautilus-image-properties-page.c:414
 msgid "Description"
 msgstr "বিবৰণ"
 
 #
-#: ../src/nautilus-desktop-item-properties.c:418
+#: ../src/nautilus-desktop-item-properties.c:417
 msgid "Command"
 msgstr "কমান্ড"
 
 #. hardcode "Desktop"
-#: ../src/nautilus-desktop-window.c:92 ../src/nautilus-desktop-window.c:245
+#: ../src/nautilus-desktop-window.c:197 ../src/nautilus-desktop-window.c:367
 msgid "Desktop"
 msgstr "ডেস্কটপ"
 
@@ -3190,8 +3165,8 @@ msgstr "“%s” ক “%s” লে পুনৰ নামকৰণ কৰা �
 
 #. Translators: this is referred to captions under icons.
 #: ../src/nautilus-file-management-properties.c:211
-#: ../src/nautilus-properties-window.c:4052
-#: ../src/nautilus-properties-window.c:4079
+#: ../src/nautilus-properties-window.c:4054
+#: ../src/nautilus-properties-window.c:4081
 msgid "None"
 msgstr "কোনটিই নহয়"
 
@@ -3269,7 +3244,7 @@ msgstr "প্ৰতিবাৰ সোধক (_A)"
 
 #. trash
 #: ../src/nautilus-file-management-properties.ui.h:19
-#: ../src/nautilus-shell-search-provider.c:293 ../src/nautilus-trash-bar.c:194
+#: ../src/nautilus-shell-search-provider.c:290 ../src/nautilus-trash-bar.c:194
 msgid "Trash"
 msgstr "আৰ্বজনা"
 
@@ -3324,7 +3299,7 @@ msgid "_Only for files smaller than:"
 msgstr "কেৱল চিহ্নিত মাপতকে সৰু ফাইলসমূহৰ বাবে (_O)"
 
 #: ../src/nautilus-file-management-properties.ui.h:32
-#: ../src/nautilus-properties-window.c:4480
+#: ../src/nautilus-properties-window.c:4482
 msgid "Folders"
 msgstr "ফোল্ডাৰসমূহ"
 
@@ -3576,8 +3551,8 @@ msgid "Failed to load image information"
 msgstr "ছবি তথ্য ল'ড কৰোতে ব্যৰ্থ"
 
 #: ../src/nautilus-image-properties-page.c:706
-#: ../src/nautilus-list-model.c:391 ../src/nautilus-window-slot.c:609
-#: ../src/nautilus-window-slot.c:2249
+#: ../src/nautilus-list-model.c:391 ../src/nautilus-window-slot.c:618
+#: ../src/nautilus-window-slot.c:2212
 msgid "Loading…"
 msgstr "ল'ড কৰা হৈছে…"
 
@@ -3644,9 +3619,9 @@ msgstr "এই সংযোগ ব্যৱহাৰ কৰিব নোৱা�
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-mime-actions.c:651 ../src/nautilus-view.c:7244
-#: ../src/nautilus-view.c:7358 ../src/nautilus-view.c:8332
-#: ../src/nautilus-view.c:8650
+#: ../src/nautilus-mime-actions.c:651 ../src/nautilus-view.c:7227
+#: ../src/nautilus-view.c:7341 ../src/nautilus-view.c:8315
+#: ../src/nautilus-view.c:8633
 msgid "Mo_ve to Trash"
 msgstr "আবৰ্জনাৰ বাকচত স্থানান্তৰণ (_v)"
 
@@ -3669,7 +3644,7 @@ msgid "_Display"
 msgstr "প্ৰদৰ্শন (_D)"
 
 #: ../src/nautilus-mime-actions.c:1056 ../src/nautilus-mime-actions.c:1791
-#: ../src/nautilus-view.c:959
+#: ../src/nautilus-view.c:955
 msgid "Are you sure you want to open all files?"
 msgstr "আপুনি নিশ্চিতৰূপে সকলো ফাইলসমূহ খোলিবলে ইচ্ছুক?"
 
@@ -3744,16 +3719,16 @@ msgid_plural "This will open %d separate applications."
 msgstr[0] "এইটোৱে %d ভিন্ন এপ্লিকেচন খুলিব।"
 msgstr[1] "এইটোৱে %d ভিন্ন এপ্লিকেচনসমূহ খুলিব।"
 
-#: ../src/nautilus-mime-actions.c:2220
+#: ../src/nautilus-mime-actions.c:2212
 msgid "Unable to start location"
 msgstr "অৱস্থান আৰম্ভ কৰিবলে ব্যৰ্থ"
 
-#: ../src/nautilus-mime-actions.c:2304
+#: ../src/nautilus-mime-actions.c:2296
 #, c-format
 msgid "Opening “%s”."
 msgstr "“%s” খোলা হৈছে।"
 
-#: ../src/nautilus-mime-actions.c:2307
+#: ../src/nautilus-mime-actions.c:2299
 #, c-format
 msgid "Opening %d item."
 msgid_plural "Opening %d items."
@@ -3761,7 +3736,7 @@ msgstr[0] "%d বস্তু খোলা হৈছে।"
 msgstr[1] "%d বস্তু খোলা হৈছে।"
 
 #
-#: ../src/nautilus-notebook.c:383
+#: ../src/nautilus-notebook.c:382
 msgid "Close tab"
 msgstr "টেব বন্ধ কৰক"
 
@@ -3826,36 +3801,36 @@ msgstr "বৈশিষ্টসমূহ"
 msgid "%s Properties"
 msgstr "%s বৈশিষ্টসমূহ"
 
-#: ../src/nautilus-properties-window.c:1223
+#: ../src/nautilus-properties-window.c:1227
 #, c-format
 msgctxt "MIME type description (MIME type)"
 msgid "%s (%s)"
 msgstr "%s (%s)"
 
-#: ../src/nautilus-properties-window.c:1431
+#: ../src/nautilus-properties-window.c:1435
 msgid "Cancel Group Change?"
 msgstr "দল পৰিবৰ্তন বাতিল কৰিব নে?"
 
-#: ../src/nautilus-properties-window.c:1846
+#: ../src/nautilus-properties-window.c:1850
 msgid "Cancel Owner Change?"
 msgstr "গৰাকী পৰিবৰ্তন বাতিল কৰিব নে?"
 
-#: ../src/nautilus-properties-window.c:2162
+#: ../src/nautilus-properties-window.c:2166
 msgid "nothing"
 msgstr "একো নহয়"
 
-#: ../src/nautilus-properties-window.c:2164
+#: ../src/nautilus-properties-window.c:2168
 msgid "unreadable"
 msgstr "পাঠযোগ্য নহয়"
 
-#: ../src/nautilus-properties-window.c:2172
+#: ../src/nautilus-properties-window.c:2176
 #, c-format
 msgid "%'d item, with size %s"
 msgid_plural "%'d items, totalling %s"
 msgstr[0] "%'d বস্তু, সৰ্বমোট মাপ %s"
 msgstr[1] "%'d বস্তু, সৰ্বমোট মাপ %s"
 
-#: ../src/nautilus-properties-window.c:2181
+#: ../src/nautilus-properties-window.c:2185
 msgid "(some contents unreadable)"
 msgstr "(কিছু অংশ পঢ়াৰ অযোগ্য)"
 
@@ -3865,201 +3840,201 @@ msgstr "(কিছু অংশ পঢ়াৰ অযোগ্য)"
 #. * 2-line value. Maybe there's a better way to do this, but I
 #. * couldn't think of one.
 #.
-#: ../src/nautilus-properties-window.c:2198
+#: ../src/nautilus-properties-window.c:2202
 msgid "Contents:"
 msgstr "সমল:"
 
 #. Translators: "used" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:3056
+#: ../src/nautilus-properties-window.c:3058
 msgid "used"
 msgstr "ব্যবহৃত"
 
 #. Translators: "free" refers to the capacity of the filesystem
-#: ../src/nautilus-properties-window.c:3062
+#: ../src/nautilus-properties-window.c:3064
 msgid "free"
 msgstr "অবশিষ্ট"
 
-#: ../src/nautilus-properties-window.c:3064
+#: ../src/nautilus-properties-window.c:3066
 msgid "Total capacity:"
 msgstr "সৰ্বমোট ক্ষমতা:"
 
-#: ../src/nautilus-properties-window.c:3067
+#: ../src/nautilus-properties-window.c:3069
 msgid "Filesystem type:"
 msgstr "ফাইলচিস্টেমৰ ধৰণ:"
 
-#: ../src/nautilus-properties-window.c:3203
+#: ../src/nautilus-properties-window.c:3205
 msgid "Basic"
 msgstr "মৌলিক"
 
-#: ../src/nautilus-properties-window.c:3268
+#: ../src/nautilus-properties-window.c:3270
 msgid "Link target:"
 msgstr "সংযোগৰ লক্ষ্য:"
 
-#: ../src/nautilus-properties-window.c:3287
+#: ../src/nautilus-properties-window.c:3289
 msgid "Location:"
 msgstr "অৱস্থান:"
 
-#: ../src/nautilus-properties-window.c:3295
+#: ../src/nautilus-properties-window.c:3297
 msgid "Volume:"
 msgstr "ভলিউম:"
 
-#: ../src/nautilus-properties-window.c:3304
+#: ../src/nautilus-properties-window.c:3306
 msgid "Accessed:"
 msgstr "অভিগম কৰা হৈছে:"
 
-#: ../src/nautilus-properties-window.c:3308
+#: ../src/nautilus-properties-window.c:3310
 msgid "Modified:"
 msgstr "পৰিবৰ্তনৰ সময়:"
 
-#: ../src/nautilus-properties-window.c:3318
+#: ../src/nautilus-properties-window.c:3320
 msgid "Free space:"
 msgstr "মুক্ত স্থান:"
 
 #. translators: this gets concatenated to "no read",
 #. * "no access", etc. (see following strings)
 #.
-#: ../src/nautilus-properties-window.c:3969
-#: ../src/nautilus-properties-window.c:3980
-#: ../src/nautilus-properties-window.c:3992
+#: ../src/nautilus-properties-window.c:3971
+#: ../src/nautilus-properties-window.c:3982
+#: ../src/nautilus-properties-window.c:3994
 msgid "no "
 msgstr "নহয় "
 
-#: ../src/nautilus-properties-window.c:3972
+#: ../src/nautilus-properties-window.c:3974
 msgid "list"
 msgstr "তালিকা"
 
-#: ../src/nautilus-properties-window.c:3974
+#: ../src/nautilus-properties-window.c:3976
 msgid "read"
 msgstr "পঢ়া"
 
-#: ../src/nautilus-properties-window.c:3983
+#: ../src/nautilus-properties-window.c:3985
 msgid "create/delete"
 msgstr "সৃষ্টি কৰক/মচি পেলাওক"
 
-#: ../src/nautilus-properties-window.c:3985
+#: ../src/nautilus-properties-window.c:3987
 msgid "write"
 msgstr "লিখক"
 
-#: ../src/nautilus-properties-window.c:3994
+#: ../src/nautilus-properties-window.c:3996
 msgid "access"
 msgstr "অভিগম"
 
-#: ../src/nautilus-properties-window.c:4059
+#: ../src/nautilus-properties-window.c:4061
 msgid "List files only"
 msgstr "কেৱল ফাইলসমূহ তালিকাভুক্ত কৰক"
 
-#: ../src/nautilus-properties-window.c:4065
+#: ../src/nautilus-properties-window.c:4067
 msgid "Access files"
 msgstr "ফাইলসমূহ অভিগম কৰক"
 
-#: ../src/nautilus-properties-window.c:4071
+#: ../src/nautilus-properties-window.c:4073
 msgid "Create and delete files"
 msgstr "ফাইলসমূহ সৃষ্টি কৰক আৰু মচি পেলাওক"
 
-#: ../src/nautilus-properties-window.c:4086
+#: ../src/nautilus-properties-window.c:4088
 msgid "Read-only"
 msgstr "কেৱল-পঢ়িব পৰা"
 
-#: ../src/nautilus-properties-window.c:4092
+#: ../src/nautilus-properties-window.c:4094
 msgid "Read and write"
 msgstr "পঢ়া আৰু লিখা"
 
-#: ../src/nautilus-properties-window.c:4119
+#: ../src/nautilus-properties-window.c:4121
 msgid "Access:"
 msgstr "অভিগম:"
 
-#: ../src/nautilus-properties-window.c:4121
+#: ../src/nautilus-properties-window.c:4123
 msgid "Folder access:"
 msgstr "ফোল্ডাৰ অভিগম:"
 
-#: ../src/nautilus-properties-window.c:4123
+#: ../src/nautilus-properties-window.c:4125
 msgid "File access:"
 msgstr "ফাইল অভিগম:"
 
-#: ../src/nautilus-properties-window.c:4212
+#: ../src/nautilus-properties-window.c:4214
 msgid "_Owner:"
 msgstr "গৰাকী (_O):"
 
-#: ../src/nautilus-properties-window.c:4220
-#: ../src/nautilus-properties-window.c:4484
+#: ../src/nautilus-properties-window.c:4222
+#: ../src/nautilus-properties-window.c:4486
 msgid "Owner:"
 msgstr "গৰাকী:"
 
-#: ../src/nautilus-properties-window.c:4242
+#: ../src/nautilus-properties-window.c:4244
 msgid "_Group:"
 msgstr "দল (_G):"
 
-#: ../src/nautilus-properties-window.c:4250
-#: ../src/nautilus-properties-window.c:4498
+#: ../src/nautilus-properties-window.c:4252
+#: ../src/nautilus-properties-window.c:4500
 msgid "Group:"
 msgstr "দল:"
 
 #
-#: ../src/nautilus-properties-window.c:4271
+#: ../src/nautilus-properties-window.c:4273
 msgid "Others"
 msgstr "অন্য"
 
-#: ../src/nautilus-properties-window.c:4286
+#: ../src/nautilus-properties-window.c:4288
 msgid "Execute:"
 msgstr "সঞ্চালন:"
 
-#: ../src/nautilus-properties-window.c:4289
+#: ../src/nautilus-properties-window.c:4291
 msgid "Allow _executing file as program"
 msgstr "ফাইলক প্ৰগ্ৰাম হিচাপে এক্সিকিউট কৰাৰ অনুমতি দিয়ক (_e)"
 
-#: ../src/nautilus-properties-window.c:4465
+#: ../src/nautilus-properties-window.c:4467
 msgid "Change Permissions for Enclosed Files"
 msgstr "অন্তৰ্ভুক্ত ফাইলসমূহৰ বাবে অনুমতি পৰিবৰ্তন কৰক"
 
-#: ../src/nautilus-properties-window.c:4469
+#: ../src/nautilus-properties-window.c:4471
 msgid "Change"
 msgstr "পৰিবৰ্তন কৰক"
 
-#: ../src/nautilus-properties-window.c:4512
+#: ../src/nautilus-properties-window.c:4514
 msgid "Others:"
 msgstr "অন্য:"
 
-#: ../src/nautilus-properties-window.c:4553
+#: ../src/nautilus-properties-window.c:4555
 msgid "You are not the owner, so you cannot change these permissions."
 msgstr "আপোনাৰ গৰাকীধীন না হৱৰ বাবে এই অনুমতিসমূহ আপুনি পৰিবৰ্তন কৰিব নোৱাৰিব।"
 
-#: ../src/nautilus-properties-window.c:4568
+#: ../src/nautilus-properties-window.c:4570
 msgid "Security context:"
 msgstr "সুৰক্ষা পৰিপ্ৰেক্ষতিত:"
 
-#: ../src/nautilus-properties-window.c:4583
+#: ../src/nautilus-properties-window.c:4585
 msgid "Change Permissions for Enclosed Files…"
 msgstr "অন্তৰ্ভুক্ত নথিপত্ৰসমূহৰ বাবে অনুমতি পৰিবৰ্তন কৰক…"
 
-#: ../src/nautilus-properties-window.c:4593
+#: ../src/nautilus-properties-window.c:4595
 #, c-format
 msgid "The permissions of “%s” could not be determined."
 msgstr "“%s” ৰ অনুমতিসমূহ নিৰ্ধাৰণ কৰিব পৰা নগল।"
 
-#: ../src/nautilus-properties-window.c:4596
+#: ../src/nautilus-properties-window.c:4598
 msgid "The permissions of the selected file could not be determined."
 msgstr "নিৰ্বাচিত ফাইলৰ অনুমতিসমূহ নিৰ্ধাৰণ কৰিব নোৱাৰি।"
 
-#: ../src/nautilus-properties-window.c:4840
+#: ../src/nautilus-properties-window.c:4842
 msgid "Open With"
 msgstr "চিহ্নিত বস্তুৰ সৈতে খোলক"
 
-#: ../src/nautilus-properties-window.c:5157
+#: ../src/nautilus-properties-window.c:5159
 msgid "Creating Properties window."
 msgstr "বৈশিষ্টসমূহ উইন্ডো সৃষ্টি কৰা হৈছে।"
 
-#: ../src/nautilus-properties-window.c:5437
+#: ../src/nautilus-properties-window.c:5443
 msgid "Select Custom Icon"
 msgstr "স্বনিৰ্বাচন আইকন বাছক"
 
-#: ../src/nautilus-properties-window.c:5439
+#: ../src/nautilus-properties-window.c:5445
 msgid "_Revert"
 msgstr "উলোটাওক (_R)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-properties-window.c:5441 ../src/nautilus-view.c:7156
-#: ../src/nautilus-view.c:8574
+#: ../src/nautilus-properties-window.c:5447 ../src/nautilus-view.c:7139
+#: ../src/nautilus-view.c:8557
 msgid "_Open"
 msgstr "খোলক (_O)"
 
@@ -4102,28 +4077,28 @@ msgid "Select"
 msgstr "বাছক"
 
 #
-#: ../src/nautilus-query-editor.c:601
+#: ../src/nautilus-query-editor.c:600
 msgid "Any"
 msgstr "যিকোনো"
 
-#: ../src/nautilus-query-editor.c:616
+#: ../src/nautilus-query-editor.c:615
 msgid "Other Type…"
 msgstr "অন্য ধৰণ…"
 
-#: ../src/nautilus-query-editor.c:887
+#: ../src/nautilus-query-editor.c:886
 msgid "Remove this criterion from the search"
 msgstr "সন্ধানৰ পৰা এই নীৰ্ণায়ক মান মচি পেলাওক"
 
 #. create the Current/All Files selector
-#: ../src/nautilus-query-editor.c:969
+#: ../src/nautilus-query-editor.c:968
 msgid "Current"
 msgstr "বৰ্তমান"
 
-#: ../src/nautilus-query-editor.c:972
+#: ../src/nautilus-query-editor.c:971
 msgid "All Files"
 msgstr "সকলো ফাইল"
 
-#: ../src/nautilus-query-editor.c:994
+#: ../src/nautilus-query-editor.c:993
 msgid "Add a new criterion to this search"
 msgstr "এই সন্ধানৰ বাবে নতুন নীৰ্ণায়ক মান যোগ কৰক"
 
@@ -4136,14 +4111,14 @@ msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr ""
 "চিহ্নিত ফোল্ডাৰত উপস্থিত সকলো এক্সেকিউটেবল ফাইল স্ক্ৰিপ্ট মেনুত প্ৰদৰ্শিত হ'ব।"
 
-#: ../src/nautilus-toolbar.c:481
-msgid "View options"
-msgstr "বিকল্পসমূহ দৰ্শন কৰক"
-
 #. Action Menu
-#: ../src/nautilus-toolbar.c:500
+#: ../src/nautilus-toolbar.c:444
 msgid "Location options"
 msgstr "অৱস্থানৰ বিকল্পসমূহ"
+
+#: ../src/nautilus-toolbar.c:464
+msgid "View options"
+msgstr "বিকল্পসমূহ দৰ্শন কৰক"
 
 #: ../src/nautilus-trash-bar.c:202
 msgid "Restore"
@@ -4158,14 +4133,14 @@ msgstr "নিৰ্বাচিত বস্তুসমূহক তেওল�
 msgid "Empty"
 msgstr "ৰিক্ত"
 
-#: ../src/nautilus-view.c:961
+#: ../src/nautilus-view.c:957
 #, c-format
 msgid "This will open %'d separate tab."
 msgid_plural "This will open %'d separate tabs."
 msgstr[0] "ইয়াৰ বাবে %'d  পৃথক টেব খোলা হ'ব।"
 msgstr[1] "ইয়াৰ বাবে %d পৃথক উইন্ডো খোলা হ'ব।"
 
-#: ../src/nautilus-view.c:964
+#: ../src/nautilus-view.c:960
 #, c-format
 msgid "This will open %'d separate window."
 msgid_plural "This will open %'d separate windows."
@@ -4173,43 +4148,43 @@ msgstr[0] "ইয়াৰ বাবে %'d  পৃথক উইন্ডো খো
 msgstr[1] "ইয়াৰ বাবে %d পৃথক উইন্ডো খোলা হ'ব।"
 
 #
-#: ../src/nautilus-view.c:1479
+#: ../src/nautilus-view.c:1475
 msgid "Select Items Matching"
 msgstr "মিল খোৱা বস্তুবোৰ বাছক"
 
-#: ../src/nautilus-view.c:1484 ../src/nautilus-view.c:5982
+#: ../src/nautilus-view.c:1480 ../src/nautilus-view.c:5965
 msgid "_Select"
 msgstr "বাছক (_S)"
 
-#: ../src/nautilus-view.c:1492
+#: ../src/nautilus-view.c:1488
 msgid "_Pattern:"
 msgstr "বিন্যাস (_P):"
 
-#: ../src/nautilus-view.c:1498
+#: ../src/nautilus-view.c:1494
 msgid "Examples: "
 msgstr "উদাহৰণসমূহ:"
 
-#: ../src/nautilus-view.c:1599
+#: ../src/nautilus-view.c:1595
 msgid "Save Search as"
 msgstr "সন্ধানক সংৰক্ষণ কৰক"
 
-#: ../src/nautilus-view.c:1605
+#: ../src/nautilus-view.c:1601
 msgid "_Save"
 msgstr "সংৰক্ষণ কৰক (_S)"
 
-#: ../src/nautilus-view.c:1622
+#: ../src/nautilus-view.c:1618
 msgid "Search _name:"
 msgstr "নাম সন্ধান কৰক (_n):"
 
-#: ../src/nautilus-view.c:1639
+#: ../src/nautilus-view.c:1635
 msgid "_Folder:"
 msgstr "ফোল্ডাৰ (_F):"
 
-#: ../src/nautilus-view.c:1644
+#: ../src/nautilus-view.c:1640
 msgid "Select Folder to Save Search In"
 msgstr "সন্ধানৰ ফলাফল যি ডাইৰেকটৰিত সংৰক্ষণ কৰা হ'ব তাক বাছক"
 
-#: ../src/nautilus-view.c:2292
+#: ../src/nautilus-view.c:2288
 msgid ""
 "Nautilus 3.6 deprecated this directory and tried migrating this "
 "configuration to ~/.local/share/nautilus"
@@ -4217,27 +4192,27 @@ msgstr ""
 "Nautilus 3.6 এ এই ডাইৰেকটৰি ডিপ্ৰিকেইট কৰিছে আৰু এই সংৰূপক  ~/.local/share/"
 "nautilus লে প্ৰব্ৰজন কৰাৰ চেষ্টা কৰিছে"
 
-#: ../src/nautilus-view.c:2723
+#: ../src/nautilus-view.c:2713
 msgid "Content View"
 msgstr "সমল দৰ্শন"
 
-#: ../src/nautilus-view.c:2724
+#: ../src/nautilus-view.c:2714
 msgid "View of the current folder"
 msgstr "বৰ্তমান ফোল্ডাৰৰ দৰ্শন"
 
-#: ../src/nautilus-view.c:2921 ../src/nautilus-view.c:2956
+#: ../src/nautilus-view.c:2911 ../src/nautilus-view.c:2946
 #, c-format
 msgid "“%s” selected"
 msgstr "“%s” নিৰ্বাচিত হৈছে"
 
-#: ../src/nautilus-view.c:2923
+#: ../src/nautilus-view.c:2913
 #, c-format
 msgid "%'d folder selected"
 msgid_plural "%'d folders selected"
 msgstr[0] "%'d ফোল্ডাৰ নিৰ্বাচিত হৈছে"
 msgstr[1] "%d ফোল্ডাৰ নিৰ্বাচিত হৈছে"
 
-#: ../src/nautilus-view.c:2933
+#: ../src/nautilus-view.c:2923
 #, c-format
 msgid "(containing %'d item)"
 msgid_plural "(containing %'d items)"
@@ -4245,14 +4220,14 @@ msgstr[0] "(%'d বস্তু অন্তৰ্ভুক্ত)"
 msgstr[1] "(%'d বস্তুবোৰ অন্তৰ্ভুক্ত)"
 
 #. translators: this is preceded with a string of form 'N folders' (N more than 1)
-#: ../src/nautilus-view.c:2944
+#: ../src/nautilus-view.c:2934
 #, c-format
 msgid "(containing a total of %'d item)"
 msgid_plural "(containing a total of %'d items)"
 msgstr[0] "(সৰ্বমোট %'d বস্তু অন্তৰ্ভুক্ত)"
 msgstr[1] "(সৰ্বমোট %'d বস্তুবোৰ অন্তৰ্ভুক্ত)"
 
-#: ../src/nautilus-view.c:2959
+#: ../src/nautilus-view.c:2949
 #, c-format
 msgid "%'d item selected"
 msgid_plural "%'d items selected"
@@ -4260,7 +4235,7 @@ msgstr[0] "%'d বস্তু নিৰ্বাচিত হৈছে"
 msgstr[1] "%d বস্তু নিৰ্বাচিত হৈছে"
 
 #. Folders selected also, use "other" terminology
-#: ../src/nautilus-view.c:2966
+#: ../src/nautilus-view.c:2956
 #, c-format
 msgid "%'d other item selected"
 msgid_plural "%'d other items selected"
@@ -4271,7 +4246,7 @@ msgstr[1] "অন্য %d বস্তু নিৰ্বাচিত হৈছ
 #. * needs to use something other than parentheses. The
 #. * the message in parentheses is the size of the selected items.
 #.
-#: ../src/nautilus-view.c:2980
+#: ../src/nautilus-view.c:2970
 #, c-format
 msgid "(%s)"
 msgstr "(%s)"
@@ -4283,120 +4258,126 @@ msgstr "(%s)"
 #. * message about the number of other items and the
 #. * total size of those items.
 #.
-#: ../src/nautilus-view.c:3004
+#: ../src/nautilus-view.c:2994
 #, c-format
 msgid "%s %s, %s %s"
 msgstr "%s %s, %s %s"
 
-#: ../src/nautilus-view.c:4377
+#: ../src/nautilus-view.c:4361
 #, c-format
 msgid "Open With %s"
 msgstr "%s ৰ সৈতে খোলক"
 
-#: ../src/nautilus-view.c:4379
+#: ../src/nautilus-view.c:4363
 #, c-format
 msgid "Use “%s” to open the selected item"
 msgid_plural "Use “%s” to open the selected items"
 msgstr[0] "নিৰ্বাচিত বস্তুটো খোলিবলে “%s” ব্যৱহাৰ কৰক"
 msgstr[1] "নিৰ্বাচিত বস্তুবোৰ খোলিবলে “%s” ব্যৱহাৰ কৰক"
 
-#: ../src/nautilus-view.c:5124
+#: ../src/nautilus-view.c:5108
 #, c-format
 msgid "Run “%s” on any selected items"
 msgstr "নিৰ্বাচিত যি কোনো বস্তুৰ বাবে “%s” চলাওক"
 
-#: ../src/nautilus-view.c:5378
+#: ../src/nautilus-view.c:5362
 #, c-format
 msgid "Create a new document from template “%s”"
 msgstr "“%s” টেমপ্লেট প্ৰয়োগ কৰি এটা নতুন দস্তাবেজ সৃষ্টি কৰক"
 
-#: ../src/nautilus-view.c:5978
-msgid "Select Destination"
-msgstr "গন্তব্য বাছক"
+#: ../src/nautilus-view.c:5954
+#| msgid "Select Destination"
+msgid "Select Move Destination"
+msgstr "স্থানান্তৰ কৰিবলৈ গন্তব্য বাছক"
+
+#: ../src/nautilus-view.c:5956
+#| msgid "Select Destination"
+msgid "Select Copy Destination"
+msgstr "কপি কৰিবলৈ গন্তব্য বাছক"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6494
+#: ../src/nautilus-view.c:6477
 #, c-format
 msgid "Unable to remove “%s”"
 msgstr "“%s” আতৰাবলে অক্ষম"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6521
+#: ../src/nautilus-view.c:6504
 #, c-format
 msgid "Unable to eject “%s”"
 msgstr "“%s” বাহিৰ কৰিবলে অক্ষম"
 
-#: ../src/nautilus-view.c:6543
+#: ../src/nautilus-view.c:6526
 msgid "Unable to stop drive"
 msgstr "ড্ৰাইভ বন্ধ কৰিবলে ব্যৰ্থ"
 
 #. Translators: %s is a file name formatted for display
-#: ../src/nautilus-view.c:6645
+#: ../src/nautilus-view.c:6628
 #, c-format
 msgid "Unable to start “%s”"
 msgstr "“%s” আৰম্ভ কৰিবলে অক্ষম"
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7136
+#: ../src/nautilus-view.c:7119
 msgid "New _Document"
 msgstr "নতুন দস্তাবেজ (_D)"
 
 #. name, stock id, label
-#: ../src/nautilus-view.c:7137
+#: ../src/nautilus-view.c:7120
 msgid "Open Wit_h"
 msgstr "চিহ্নিত বস্তুৰ সৈতে খোলক (_h)"
 
-#: ../src/nautilus-view.c:7138
+#: ../src/nautilus-view.c:7121
 msgid "Choose a program with which to open the selected item"
 msgstr "চিহ্নিত ফাইলকে ব্যবহাৰৰ বাবে এটা প্ৰগ্ৰাম বাছক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7140 ../src/nautilus-view.c:7395
-#: ../src/nautilus-window-menus.c:595
+#: ../src/nautilus-view.c:7123 ../src/nautilus-view.c:7378
+#: ../src/nautilus-window-menus.c:594
 msgid "P_roperties"
 msgstr "বৈশিষ্ট্যসমূহ (_r)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7141 ../src/nautilus-view.c:8721
+#: ../src/nautilus-view.c:7124 ../src/nautilus-view.c:8704
 msgid "View or modify the properties of each selected item"
 msgstr "প্ৰতিটি নিৰ্বাচিত বস্তুৰ বৈশিষ্ট্য প্ৰদৰ্শন অথবা পৰিবৰ্তন কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7148
+#: ../src/nautilus-view.c:7131
 msgid "New _Folder"
 msgstr "নতুন ফোল্ডাৰ (_F)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7149
+#: ../src/nautilus-view.c:7132
 msgid "Create a new empty folder inside this folder"
 msgstr "বৰ্তমান ফোল্ডাৰত এটা নতুন ফোল্ডাৰ সৃষ্টি কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7152
+#: ../src/nautilus-view.c:7135
 msgid "New Folder with Selection"
 msgstr "নিৰ্বাচনৰ সৈতে নতুন ফোল্ডাৰ"
 
 #. tooltip
-#: ../src/nautilus-view.c:7153
+#: ../src/nautilus-view.c:7136
 msgid "Create a new folder containing the selected items"
 msgstr "নিৰ্বাচিত বস্তুবোৰ অন্তৰ্ভুক্ত কৰা এটা নতুন ফোল্ডাৰ সৃষ্টি কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7157
+#: ../src/nautilus-view.c:7140
 msgid "Open the selected item in this window"
 msgstr "নিৰ্বাচিত বস্তুটো বৰ্তমান উইন্ডোত খোলক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7164
+#: ../src/nautilus-view.c:7147
 msgid "Open _Item Location"
 msgstr "বস্তুৰ অৱস্থান খোলক (_I)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7165
+#: ../src/nautilus-view.c:7148
 msgid "Open the selected item's location in this window"
 msgstr "নিৰ্বাচিত বস্তুটোৰ অৱস্থান এই উইন্ডোত খোলক"
 
@@ -4405,68 +4386,68 @@ msgstr "নিৰ্বাচিত বস্তুটোৰ অৱস্থা�
 #. Location-specific actions
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7168 ../src/nautilus-view.c:7336
+#: ../src/nautilus-view.c:7151 ../src/nautilus-view.c:7319
 msgid "Open in Navigation Window"
 msgstr "দিশনিৰ্ণয় উইন্ডোত খোলক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7169
+#: ../src/nautilus-view.c:7152
 msgid "Open each selected item in a navigation window"
 msgstr "নিৰ্বাচিত প্ৰতিটি বস্তু এটা দিশনিৰ্ণয় উইন্ডোত খোলক"
 
 #
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7172 ../src/nautilus-view.c:7340
-#: ../src/nautilus-view.c:8281 ../src/nautilus-view.c:8628
+#: ../src/nautilus-view.c:7155 ../src/nautilus-view.c:7323
+#: ../src/nautilus-view.c:8264 ../src/nautilus-view.c:8611
 msgid "Open in New _Tab"
 msgstr "নতুন টেবত খোলক (_T)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7173
+#: ../src/nautilus-view.c:7156
 msgid "Open each selected item in a new tab"
 msgstr "নিৰ্বাচিত প্ৰতিটি বস্তু এটা নতুন টেবত খোলক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7176
+#: ../src/nautilus-view.c:7159
 msgid "Other _Application…"
 msgstr "অন্য এপ্লিকেচন (_A)…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7177 ../src/nautilus-view.c:7181
+#: ../src/nautilus-view.c:7160 ../src/nautilus-view.c:7164
 msgid "Choose another application with which to open the selected item"
 msgstr "নিৰ্বাচিত বস্তুক খোলিবলে অন্য এপ্লিকেচন বাছক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7180
+#: ../src/nautilus-view.c:7163
 msgid "Open With Other _Application…"
 msgstr "অন্য এপ্লিকেচনৰ সৈতে খোলক (_A)…"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7184
+#: ../src/nautilus-view.c:7167
 msgid "_Open Scripts Folder"
 msgstr "স্ক্ৰিপ্ট ধাৰণকৰ্তা ফোল্ডাৰ খোলক (_O)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7185
+#: ../src/nautilus-view.c:7168
 msgid "Show the folder containing the scripts that appear in this menu"
 msgstr "বৰ্তমান মেনুত উল্লিখিত স্ক্ৰিপ্ট ধাৰণকৰ্তা ফোল্ডাৰ প্ৰদৰ্শন কৰা হ'ব"
 
 #. tooltip
-#: ../src/nautilus-view.c:7193
+#: ../src/nautilus-view.c:7176
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr "নিৰ্বাচিত ফাইলসমূহ পেইস্ট কমান্ডৰ সহায়ত স্থানান্তৰৰ বাবে প্ৰস্তুত কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7197
+#: ../src/nautilus-view.c:7180
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr "নিৰ্বাচিত ফাইলসমূহ পেইস্ট কমান্ডৰ সহায়ত কপি কৰাৰ বাবে প্ৰস্তুত কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7201
+#: ../src/nautilus-view.c:7184
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "কাট অথবা কপি কমান্ডৰ সহায়ত পূৰ্বে নিৰ্বাচিত ফাইল যথাক্ৰমে স্থানান্তৰ অথবা কপি "
@@ -4474,12 +4455,12 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7204 ../src/nautilus-view.c:7353
+#: ../src/nautilus-view.c:7187 ../src/nautilus-view.c:7336
 msgid "_Paste Into Folder"
 msgstr "ফোল্ডাৰত পেইস্ট কৰক (_P)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7205
+#: ../src/nautilus-view.c:7188
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -4490,125 +4471,125 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7208
+#: ../src/nautilus-view.c:7191
 msgid "Copy To…"
 msgstr "লে কপি কৰক…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7209
+#: ../src/nautilus-view.c:7192
 msgid "Copy selected files to another location"
 msgstr "নিৰ্বাচিত ফাইলসমূহ অন্য অৱস্থানলে কপি কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7212
+#: ../src/nautilus-view.c:7195
 msgid "Move To…"
 msgstr "লে স্থানান্তৰ কৰক…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7213
+#: ../src/nautilus-view.c:7196
 msgid "Move selected files to another location"
 msgstr "নিৰ্বাচিত ফাইলসমূহ অন্য অৱস্থানলে স্থানান্তৰ কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7217
+#: ../src/nautilus-view.c:7200
 msgid "Select all items in this window"
 msgstr "বৰ্তমান উইন্ডোত উপস্থিত সকলো সমল বাছক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7220
+#: ../src/nautilus-view.c:7203
 msgid "Select I_tems Matching…"
 msgstr "মিল খোৱা বস্তুবোৰ বাছক (_t)…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7221
+#: ../src/nautilus-view.c:7204
 msgid "Select items in this window matching a given pattern"
 msgstr ""
 "বৰ্তমান উইন্ডোত উপস্থিত, সুনিৰ্দিষ্ট বিন্যাসৰ সৈতে সুসংগত বস্তুসমূহ বাছক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7224
+#: ../src/nautilus-view.c:7207
 msgid "_Invert Selection"
 msgstr "নিৰ্বাচিত মান উলোটাই দিয়ক (_I)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7225
+#: ../src/nautilus-view.c:7208
 msgid "Select all and only the items that are not currently selected"
 msgstr "কেৱল বৰ্তমানে নিৰ্বাচন না কৰা সকলো বস্তু নিৰ্বাচন কৰা হ'ব"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7228 ../src/nautilus-view.c:8704
+#: ../src/nautilus-view.c:7211 ../src/nautilus-view.c:8687
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "সংযোগ সৃষ্টি কৰক (_k)"
 msgstr[1] "সংযোগ সৃষ্টি কৰক (_k)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7229
+#: ../src/nautilus-view.c:7212
 msgid "Create a symbolic link for each selected item"
 msgstr "প্ৰতিটি নিৰ্মাচিত বস্তুৰ বাবে সাংকেতিক সংযোগ সৃষ্টি কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7232
+#: ../src/nautilus-view.c:7215
 msgid "Rena_me…"
 msgstr "পুনৰ নামকৰণ কৰক (_m)…"
 
 #. tooltip
-#: ../src/nautilus-view.c:7233
+#: ../src/nautilus-view.c:7216
 msgid "Rename selected item"
 msgstr "নিৰ্বাচিত বস্তুৰ নাম পৰিবৰ্তন কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7236
+#: ../src/nautilus-view.c:7219
 msgid "Set as Wallpaper"
 msgstr "ৱালপেপাৰ হিচাপে সংহতি কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7237
+#: ../src/nautilus-view.c:7220
 msgid "Make item the wallpaper"
 msgstr "বস্তুক ৱালপেপাৰ বনাওক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7245 ../src/nautilus-view.c:8651
+#: ../src/nautilus-view.c:7228 ../src/nautilus-view.c:8634
 msgid "Move each selected item to the Trash"
 msgstr "প্ৰতিটি নিৰ্বাচিত বস্তু আবৰ্জনাৰ বাকচত স্থানান্তৰ কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7249 ../src/nautilus-view.c:8682
+#: ../src/nautilus-view.c:7232 ../src/nautilus-view.c:8665
 msgid "Delete each selected item, without moving to the Trash"
 msgstr "আবৰ্জনাৰ বাকচত স্থানান্তৰ নকৰি প্ৰতিটি নিৰ্বাচিত বস্তু মচি পেলাওক"
 
 #
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7252 ../src/nautilus-view.c:7366
+#: ../src/nautilus-view.c:7235 ../src/nautilus-view.c:7349
 msgid "_Restore"
 msgstr "পুনৰুদ্ধাৰ কৰক (_R)"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7256
+#: ../src/nautilus-view.c:7239
 msgid "_Undo"
 msgstr "পূৰ্বাবস্থা (_U)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7257
+#: ../src/nautilus-view.c:7240
 msgid "Undo the last action"
 msgstr "সৰ্বশেষ কাৰ্য্য বাতিল কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7260
+#: ../src/nautilus-view.c:7243
 msgid "_Redo"
 msgstr "পুনৰ কৰক (_R)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7261
+#: ../src/nautilus-view.c:7244
 msgid "Redo the last undone action"
 msgstr "সৰ্বশেষ বাতিল কৰা কাৰ্য্য পুনৰ কৰক"
 
@@ -4620,169 +4601,169 @@ msgstr "সৰ্বশেষ বাতিল কৰা কাৰ্য্য �
 #.
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7270
+#: ../src/nautilus-view.c:7253
 msgid "Reset View to _Defaults"
 msgstr "প্ৰদৰ্শনৰ বাবে অবিকল্পিত দৃশ্য ব্যবহাৰ কৰা হ'ব (_D)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7271
+#: ../src/nautilus-view.c:7254
 msgid "Reset sorting order and zoom level to match preferences for this view"
 msgstr ""
 "এই দৰ্শনৰ বাবে পছন্দসমূহ মিল খোৱাবলে সজোৱাৰ ক্ৰম আৰু জুম স্তৰ পুনৰ সংহতি কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7274 ../src/nautilus-view.c:7298
-#: ../src/nautilus-view.c:7370
+#: ../src/nautilus-view.c:7257 ../src/nautilus-view.c:7281
+#: ../src/nautilus-view.c:7353
 msgid "_Mount"
 msgstr "মাউন্ট কৰক (_M)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7275
+#: ../src/nautilus-view.c:7258
 msgid "Mount the selected volume"
 msgstr "নিৰ্বাচিত ভলিউম মাউন্ট কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7278 ../src/nautilus-view.c:7302
-#: ../src/nautilus-view.c:7374
+#: ../src/nautilus-view.c:7261 ../src/nautilus-view.c:7285
+#: ../src/nautilus-view.c:7357
 msgid "_Unmount"
 msgstr "আনমাউন্ট কৰক (_U)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7279
+#: ../src/nautilus-view.c:7262
 msgid "Unmount the selected volume"
 msgstr "নিৰ্বাচিত ভলিউম আনমাউন্ট কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7282 ../src/nautilus-view.c:7306
-#: ../src/nautilus-view.c:7378
+#: ../src/nautilus-view.c:7265 ../src/nautilus-view.c:7289
+#: ../src/nautilus-view.c:7361
 msgid "_Eject"
 msgstr "বহিষ্কাৰ (_E)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7283
+#: ../src/nautilus-view.c:7266
 msgid "Eject the selected volume"
 msgstr "নিৰ্বাচিত ভলিউম বাহিৰ উলিয়াওক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7286 ../src/nautilus-view.c:7310
-#: ../src/nautilus-view.c:7382 ../src/nautilus-view.c:7968
-#: ../src/nautilus-view.c:7972 ../src/nautilus-view.c:8055
-#: ../src/nautilus-view.c:8059 ../src/nautilus-view.c:8157
-#: ../src/nautilus-view.c:8161
+#: ../src/nautilus-view.c:7269 ../src/nautilus-view.c:7293
+#: ../src/nautilus-view.c:7365 ../src/nautilus-view.c:7951
+#: ../src/nautilus-view.c:7955 ../src/nautilus-view.c:8038
+#: ../src/nautilus-view.c:8042 ../src/nautilus-view.c:8140
+#: ../src/nautilus-view.c:8144
 msgid "_Start"
 msgstr "আৰম্ভ কৰক (_S)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7287
+#: ../src/nautilus-view.c:7270
 msgid "Start the selected volume"
 msgstr "নিৰ্বাচিত ভলিউম আৰম্ভ কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7290 ../src/nautilus-view.c:7314
-#: ../src/nautilus-view.c:7386 ../src/nautilus-view.c:7997
-#: ../src/nautilus-view.c:8084 ../src/nautilus-view.c:8186
-#: ../src/nautilus-window-menus.c:483
+#: ../src/nautilus-view.c:7273 ../src/nautilus-view.c:7297
+#: ../src/nautilus-view.c:7369 ../src/nautilus-view.c:7980
+#: ../src/nautilus-view.c:8067 ../src/nautilus-view.c:8169
+#: ../src/nautilus-window-menus.c:482
 msgid "_Stop"
 msgstr "বন্ধ কৰক (_S)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7291 ../src/nautilus-view.c:8187
+#: ../src/nautilus-view.c:7274 ../src/nautilus-view.c:8170
 msgid "Stop the selected volume"
 msgstr "নিৰ্বাচিত ভলিউম বন্ধ কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7294 ../src/nautilus-view.c:7318
-#: ../src/nautilus-view.c:7390
+#: ../src/nautilus-view.c:7277 ../src/nautilus-view.c:7301
+#: ../src/nautilus-view.c:7373
 msgid "_Detect Media"
 msgstr "মিডিয়া চিনাক্ত কৰা হ'ব (_D)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7295 ../src/nautilus-view.c:7319
-#: ../src/nautilus-view.c:7391
+#: ../src/nautilus-view.c:7278 ../src/nautilus-view.c:7302
+#: ../src/nautilus-view.c:7374
 msgid "Detect media in the selected drive"
 msgstr "নিৰ্বাচিত ড্ৰাইভত মিডিয়াৰ উপস্থিতি চিনাক্ত কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7299
+#: ../src/nautilus-view.c:7282
 msgid "Mount the volume associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ভলিউম মাউন্ট কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7303
+#: ../src/nautilus-view.c:7286
 msgid "Unmount the volume associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ভলিউম আনমাউন্ট কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7307
+#: ../src/nautilus-view.c:7290
 msgid "Eject the volume associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ভলিউম বহিষ্কাৰ কৰা হ'ব"
 
 #. tooltip
-#: ../src/nautilus-view.c:7311
+#: ../src/nautilus-view.c:7294
 msgid "Start the volume associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ভলিউম আৰম্ভ কৰা হ'ব"
 
 #. tooltip
-#: ../src/nautilus-view.c:7315
+#: ../src/nautilus-view.c:7298
 msgid "Stop the volume associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ভলিউম বন্ধ কৰা হ'ব"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7322
+#: ../src/nautilus-view.c:7305
 msgid "Open File and Close window"
 msgstr "ফাইল খোলক আৰু উইন্ডো বন্ধ কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7326
+#: ../src/nautilus-view.c:7309
 msgid "Sa_ve Search"
 msgstr "সন্ধান সংৰক্ষণ কৰক (_v)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7327
+#: ../src/nautilus-view.c:7310
 msgid "Save the edited search"
 msgstr "সম্পাদিত সন্ধান সংৰক্ষণ কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7330
+#: ../src/nautilus-view.c:7313
 msgid "Sa_ve Search As…"
 msgstr "সন্ধানক এই ধৰণে সংৰক্ষণ কৰক (_v)… "
 
 #. tooltip
-#: ../src/nautilus-view.c:7331
+#: ../src/nautilus-view.c:7314
 msgid "Save the current search as a file"
 msgstr "বৰ্তমান সন্ধান ফাইলৰূপে সংৰক্ষণ কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7337
+#: ../src/nautilus-view.c:7320
 msgid "Open this folder in a navigation window"
 msgstr "এই ফোল্ডাৰটো এটা দিশনিৰ্ণয় উইন্ডোত খোলক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7341
+#: ../src/nautilus-view.c:7324
 msgid "Open this folder in a new tab"
 msgstr "এই ফোল্ডাৰটো এটা নতুন টেবত খোলক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7346
+#: ../src/nautilus-view.c:7329
 msgid "Prepare this folder to be moved with a Paste command"
 msgstr "পেইস্ট কমান্ডৰ সহায়ত বৰ্তমান ফোল্ডাৰ স্থানান্তৰৰ বাবে প্ৰস্তুত কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7350
+#: ../src/nautilus-view.c:7333
 msgid "Prepare this folder to be copied with a Paste command"
 msgstr "পেইস্ট কমান্ডৰ সহায়ত বৰ্তমান ফোল্ডাৰ কপি কৰাৰ বাবে প্ৰস্তুত কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7354
+#: ../src/nautilus-view.c:7337
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into this "
 "folder"
@@ -4792,294 +4773,294 @@ msgstr ""
 "স্থানান্তৰ অথবা কপি কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7359
+#: ../src/nautilus-view.c:7342
 msgid "Move this folder to the Trash"
 msgstr "বৰ্তমান ফোল্ডাৰটো আবৰ্জনাৰ বাকচত স্থানান্তৰ কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7363
+#: ../src/nautilus-view.c:7346
 msgid "Delete this folder, without moving to the Trash"
 msgstr "বৰ্তমান ফোল্ডাৰটো আবৰ্জনাৰ বাকচত স্থানান্তৰ নকৰি মচি পেলাওক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7371
+#: ../src/nautilus-view.c:7354
 msgid "Mount the volume associated with this folder"
 msgstr "চিহ্নিত ফোল্ডাৰৰ সৈতে যুক্ত ভলিউম মাউন্ট কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7375
+#: ../src/nautilus-view.c:7358
 msgid "Unmount the volume associated with this folder"
 msgstr "চিহ্নিত ফোল্ডাৰৰ সৈতে যুক্ত ভলিউম আনমাউন্ট কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7379
+#: ../src/nautilus-view.c:7362
 msgid "Eject the volume associated with this folder"
 msgstr "চিহ্নিত ফোল্ডাৰৰ সৈতে যুক্ত ভলিউম বাহিৰ কৰক"
 
 #. tooltip
-#: ../src/nautilus-view.c:7383
+#: ../src/nautilus-view.c:7366
 msgid "Start the volume associated with this folder"
 msgstr "চিহ্নিত ফোল্ডাৰৰ সৈতে যুক্ত ভলিউম আৰম্ভ কৰা হ'ব"
 
 #. tooltip
-#: ../src/nautilus-view.c:7387
+#: ../src/nautilus-view.c:7370
 msgid "Stop the volume associated with this folder"
 msgstr "চিহ্নিত ফোল্ডাৰৰ সৈতে যুক্ত ভলিউম বন্ধ কৰা হ'ব"
 
 #. tooltip
-#: ../src/nautilus-view.c:7396 ../src/nautilus-window-menus.c:596
+#: ../src/nautilus-view.c:7379 ../src/nautilus-window-menus.c:595
 msgid "View or modify the properties of this folder"
 msgstr "বৰ্তমান ফোল্ডাৰৰ বৈশিষ্ট্য প্ৰদৰ্শন অথবা পৰিবৰ্তন কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-view.c:7402
+#: ../src/nautilus-view.c:7385
 msgid "Show _Hidden Files"
 msgstr "লুকুৱা ফাইল প্ৰদৰ্শন কৰা হ'ব (_H)"
 
 #. tooltip
-#: ../src/nautilus-view.c:7403
+#: ../src/nautilus-view.c:7386
 msgid "Toggle the display of hidden files in the current window"
 msgstr "বৰ্তমান উইন্ডোত লুকুৱা ফাইলৰ প্ৰদৰ্শন আৰম্ভ অথবা বন্ধ কৰক"
 
-#: ../src/nautilus-view.c:7464
+#: ../src/nautilus-view.c:7447
 msgid "Run or manage scripts"
 msgstr "স্ক্ৰিপ্টসমূহ চলাওক অথবা ব্যৱস্থাপনা কৰক"
 
 #. Create a script action here specially because its tooltip is dynamic
-#: ../src/nautilus-view.c:7466
+#: ../src/nautilus-view.c:7449
 msgid "_Scripts"
 msgstr "স্ক্ৰিপ্ট (_S)"
 
-#: ../src/nautilus-view.c:7816
+#: ../src/nautilus-view.c:7799
 #, c-format
 msgid "Move the open folder out of the trash to “%s”"
 msgstr "খোলা ফোল্ডাৰটো আবৰ্জনাৰ বাকচৰ পৰা “%s” লে স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7820
+#: ../src/nautilus-view.c:7803
 #, c-format
 msgid "Move the selected folder out of the trash to “%s”"
 msgstr "নিৰ্বাচিত ফোল্ডাৰটো আবৰ্জনাৰ বাকচৰ পৰা “%s” লে স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7823
+#: ../src/nautilus-view.c:7806
 #, c-format
 msgid "Move the selected folders out of the trash to “%s”"
 msgstr "নিৰ্বাচিত ফোল্ডাৰসমূহ আবৰ্জনাৰ বাকচৰ পৰা “%s” লে স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7828
+#: ../src/nautilus-view.c:7811
 msgid "Move the selected folder out of the trash"
 msgstr "নিৰ্বাচিত ফোল্ডাৰটো আবৰ্জনাৰ বাকচৰ পৰা স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7830
+#: ../src/nautilus-view.c:7813
 msgid "Move the selected folders out of the trash"
 msgstr "নিৰ্বাচিত ফোল্ডাৰসমূহ আবৰ্জনাৰ বাকচৰ পৰা স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7836
+#: ../src/nautilus-view.c:7819
 #, c-format
 msgid "Move the selected file out of the trash to “%s”"
 msgstr "নিৰ্বাচিত ফাইল আবৰ্জনাৰ বাকচৰ পৰা “%s” লে স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7839
+#: ../src/nautilus-view.c:7822
 #, c-format
 msgid "Move the selected files out of the trash to “%s”"
 msgstr "নিৰ্বাচিত ফাইলসমূহ আবৰ্জনাৰ বাকচৰ পৰা “%s” লে স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7844
+#: ../src/nautilus-view.c:7827
 msgid "Move the selected file out of the trash"
 msgstr "নিৰ্বাচিত ফাইল আবৰ্জনাৰ বাকচৰ স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7846
+#: ../src/nautilus-view.c:7829
 msgid "Move the selected files out of the trash"
 msgstr "নিৰ্বাচিত ফাইলসমূহ আবৰ্জনাৰ বাকচৰ স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7852
+#: ../src/nautilus-view.c:7835
 #, c-format
 msgid "Move the selected item out of the trash to “%s”"
 msgstr "নিৰ্বাচিত বস্তুটো আবৰ্জনাৰ বাকচৰ পৰা “%s” লে স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7855
+#: ../src/nautilus-view.c:7838
 #, c-format
 msgid "Move the selected items out of the trash to “%s”"
 msgstr "নিৰ্বাচিত বস্তুবোৰ আবৰ্জনাৰ বাকচৰ পৰা “%s” লে স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7860
+#: ../src/nautilus-view.c:7843
 msgid "Move the selected item out of the trash"
 msgstr "নিৰ্বাচিত বস্তুটো আবৰ্জনাৰ বাকচৰ স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7862
+#: ../src/nautilus-view.c:7845
 msgid "Move the selected items out of the trash"
 msgstr "নিৰ্বাচিত বস্তুবোৰ আবৰ্জনাৰ বাকচৰ পৰা স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:7969 ../src/nautilus-view.c:7973
-#: ../src/nautilus-view.c:8158 ../src/nautilus-view.c:8162
+#: ../src/nautilus-view.c:7952 ../src/nautilus-view.c:7956
+#: ../src/nautilus-view.c:8141 ../src/nautilus-view.c:8145
 msgid "Start the selected drive"
 msgstr "নিৰ্বাচিত ড্ৰাইভ আৰম্ভ কৰা হ'ব"
 
-#: ../src/nautilus-view.c:7976 ../src/nautilus-view.c:8063
-#: ../src/nautilus-view.c:8165
+#: ../src/nautilus-view.c:7959 ../src/nautilus-view.c:8046
+#: ../src/nautilus-view.c:8148
 msgid "_Connect"
 msgstr "সংযোগ কৰক (_C)"
 
-#: ../src/nautilus-view.c:7977 ../src/nautilus-view.c:8166
+#: ../src/nautilus-view.c:7960 ../src/nautilus-view.c:8149
 msgid "Connect to the selected drive"
 msgstr "নিৰ্বাচিত ড্ৰাইভৰ সৈতে সংযোগ স্থাপন কৰা হ'ব"
 
-#: ../src/nautilus-view.c:7980 ../src/nautilus-view.c:8067
-#: ../src/nautilus-view.c:8169
+#: ../src/nautilus-view.c:7963 ../src/nautilus-view.c:8050
+#: ../src/nautilus-view.c:8152
 msgid "_Start Multi-disk Drive"
 msgstr "মাল্টি-ডিস্ক ড্ৰাইভ আৰম্ভ কৰা হ'ব (_S)"
 
-#: ../src/nautilus-view.c:7981 ../src/nautilus-view.c:8170
+#: ../src/nautilus-view.c:7964 ../src/nautilus-view.c:8153
 msgid "Start the selected multi-disk drive"
 msgstr "নিৰ্বাচিত মাল্টি-ডিস্ক ড্ৰাইভ আৰম্ভ কৰা হ'ব"
 
-#: ../src/nautilus-view.c:7984
+#: ../src/nautilus-view.c:7967
 msgid "U_nlock Drive"
 msgstr "ড্ৰাইভ আনলক কৰা হ'ব (_n)"
 
-#: ../src/nautilus-view.c:7985 ../src/nautilus-view.c:8174
+#: ../src/nautilus-view.c:7968 ../src/nautilus-view.c:8157
 msgid "Unlock the selected drive"
 msgstr "নিৰ্বাচিত ড্ৰাইভ আনলক কৰা হ'ব"
 
-#: ../src/nautilus-view.c:7998
+#: ../src/nautilus-view.c:7981
 msgid "Stop the selected drive"
 msgstr "নিৰ্বাচিত ড্ৰাইভ বন্ধ কৰক"
 
-#: ../src/nautilus-view.c:8001 ../src/nautilus-view.c:8088
-#: ../src/nautilus-view.c:8190
+#: ../src/nautilus-view.c:7984 ../src/nautilus-view.c:8071
+#: ../src/nautilus-view.c:8173
 msgid "_Safely Remove Drive"
 msgstr "নিৰাপদভাবে ড্ৰাইভ আঁতৰাওক (_S)"
 
-#: ../src/nautilus-view.c:8002 ../src/nautilus-view.c:8191
+#: ../src/nautilus-view.c:7985 ../src/nautilus-view.c:8174
 msgid "Safely remove the selected drive"
 msgstr "নিৰ্বাচিত ড্ৰাইভ নিৰাপদভাবে আঁতৰাওক"
 
-#: ../src/nautilus-view.c:8005 ../src/nautilus-view.c:8092
-#: ../src/nautilus-view.c:8194
+#: ../src/nautilus-view.c:7988 ../src/nautilus-view.c:8075
+#: ../src/nautilus-view.c:8177
 msgid "_Disconnect"
 msgstr "বিচ্ছিন্ন কৰক (_D)"
 
-#: ../src/nautilus-view.c:8006 ../src/nautilus-view.c:8195
+#: ../src/nautilus-view.c:7989 ../src/nautilus-view.c:8178
 msgid "Disconnect the selected drive"
 msgstr "নিৰ্বাচিত ড্ৰাইভ বিচ্ছিন্ন কৰক"
 
-#: ../src/nautilus-view.c:8009 ../src/nautilus-view.c:8096
-#: ../src/nautilus-view.c:8198
+#: ../src/nautilus-view.c:7992 ../src/nautilus-view.c:8079
+#: ../src/nautilus-view.c:8181
 msgid "_Stop Multi-disk Drive"
 msgstr "মাল্টি-ডিস্ক ড্ৰাইভ বন্ধ কৰক (_S)"
 
-#: ../src/nautilus-view.c:8010 ../src/nautilus-view.c:8199
+#: ../src/nautilus-view.c:7993 ../src/nautilus-view.c:8182
 msgid "Stop the selected multi-disk drive"
 msgstr "নিৰ্বাচিত মাল্টি-ডিস্ক ড্ৰাইভ বন্ধ কৰক"
 
-#: ../src/nautilus-view.c:8013 ../src/nautilus-view.c:8100
-#: ../src/nautilus-view.c:8202
+#: ../src/nautilus-view.c:7996 ../src/nautilus-view.c:8083
+#: ../src/nautilus-view.c:8185
 msgid "_Lock Drive"
 msgstr "ড্ৰাইভ লক কৰক (_L)"
 
-#: ../src/nautilus-view.c:8014 ../src/nautilus-view.c:8203
+#: ../src/nautilus-view.c:7997 ../src/nautilus-view.c:8186
 msgid "Lock the selected drive"
 msgstr "নিৰ্বাচিত ড্ৰাইভ লক কৰা হ'ব"
 
-#: ../src/nautilus-view.c:8056 ../src/nautilus-view.c:8060
+#: ../src/nautilus-view.c:8039 ../src/nautilus-view.c:8043
 msgid "Start the drive associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ড্ৰাইভ আৰম্ভ কৰা হ'ব"
 
-#: ../src/nautilus-view.c:8064
+#: ../src/nautilus-view.c:8047
 msgid "Connect to the drive associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ড্ৰাইভৰ সৈতে সংযোগ স্থাপন কৰা হ'ব"
 
-#: ../src/nautilus-view.c:8068
+#: ../src/nautilus-view.c:8051
 msgid "Start the multi-disk drive associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত মাল্টি-ডিস্ক ড্ৰাইভ আৰম্ভ কৰা হ'ব"
 
-#: ../src/nautilus-view.c:8071 ../src/nautilus-view.c:8173
+#: ../src/nautilus-view.c:8054 ../src/nautilus-view.c:8156
 msgid "_Unlock Drive"
 msgstr "ড্ৰাইভ আনলক কৰা হ'ব (_U)"
 
-#: ../src/nautilus-view.c:8072
+#: ../src/nautilus-view.c:8055
 msgid "Unlock the drive associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ড্ৰাইভ আনলক কৰা হ'ব"
 
-#: ../src/nautilus-view.c:8085
+#: ../src/nautilus-view.c:8068
 msgid "_Stop the drive associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ড্ৰাইভ বন্ধ কৰা হ'ব (_S)"
 
-#: ../src/nautilus-view.c:8089
+#: ../src/nautilus-view.c:8072
 msgid "Safely remove the drive associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ড্ৰাইভটি নিৰাপদভাবে আঁতৰাওক"
 
-#: ../src/nautilus-view.c:8093
+#: ../src/nautilus-view.c:8076
 msgid "Disconnect the drive associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ড্ৰাইভ বিচ্ছিন্ন কৰা হ'ব"
 
-#: ../src/nautilus-view.c:8097
+#: ../src/nautilus-view.c:8080
 msgid "Stop the multi-disk drive associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত মাল্টি-ডিস্ক ড্ৰাইভ বন্ধ কৰা হ'ব"
 
-#: ../src/nautilus-view.c:8101
+#: ../src/nautilus-view.c:8084
 msgid "Lock the drive associated with the open folder"
 msgstr "খোলা ফোল্ডাৰৰ সৈতে যুক্ত ড্ৰাইভ লক কৰা হ'ব"
 
-#: ../src/nautilus-view.c:8273 ../src/nautilus-view.c:8608
+#: ../src/nautilus-view.c:8256 ../src/nautilus-view.c:8591
 msgid "Open in New _Window"
 msgstr "নতুন উইন্ডোত খোলক (_W)"
 
-#: ../src/nautilus-view.c:8328 ../src/nautilus-view.c:8646
+#: ../src/nautilus-view.c:8311 ../src/nautilus-view.c:8629
 msgid "_Delete Permanently"
 msgstr "স্থানীয়ৰূপে মচি পেলাওক (_D)"
 
-#: ../src/nautilus-view.c:8329
+#: ../src/nautilus-view.c:8312
 msgid "Delete the open folder permanently"
 msgstr "বৰ্তমান ফোল্ডাৰ স্থানীয়ৰূপে মচি পেলাওক"
 
-#: ../src/nautilus-view.c:8333
+#: ../src/nautilus-view.c:8316
 msgid "Move the open folder to the Trash"
 msgstr "বৰ্তমান ফোল্ডাৰটো আবৰ্জনাৰ বাকচত স্থানান্তৰ কৰক"
 
-#: ../src/nautilus-view.c:8517
+#: ../src/nautilus-view.c:8500
 #, c-format
 msgid "New Folder with Selection (%'d Item)"
 msgid_plural "New Folder with Selection (%'d Items)"
 msgstr[0] "নিৰ্বাচন (%'d বস্তু) ৰ সৈতে নতুন ফোল্ডাৰ"
 msgstr[1] "নিৰ্বাচন (%'d বস্তুবোৰ) ৰ সৈতে নতুন ফোল্ডাৰ"
 
-#: ../src/nautilus-view.c:8561
+#: ../src/nautilus-view.c:8544
 #, c-format
 msgid "_Open With %s"
 msgstr "%s ৰ সৈতে খোলক (_O)"
 
-#: ../src/nautilus-view.c:8572
+#: ../src/nautilus-view.c:8555
 msgid "Run"
 msgstr "চলাওক"
 
-#: ../src/nautilus-view.c:8610
+#: ../src/nautilus-view.c:8593
 #, c-format
 msgid "Open in %'d New _Window"
 msgid_plural "Open in %'d New _Windows"
 msgstr[0] "%'d নতুন উইন্ডোত খোলক (_W)"
 msgstr[1] "%d নতুন উইন্ডোসমূহত খোলক (_W)"
 
-#: ../src/nautilus-view.c:8630
+#: ../src/nautilus-view.c:8613
 #, c-format
 msgid "Open in %'d New _Tab"
 msgid_plural "Open in %'d New _Tabs"
 msgstr[0] "%'d নতুন টেবত খোলক (_T)"
 msgstr[1] "%d নতুন উইন্ডোসমূহত খোলক (_T)"
 
-#: ../src/nautilus-view.c:8647
+#: ../src/nautilus-view.c:8630
 msgid "Delete all selected items permanently"
 msgstr "নিৰ্বাচিত সকলো সামগ্ৰী স্থায়ীৰূপে মচি পেলাওক"
 
-#: ../src/nautilus-view.c:8678
+#: ../src/nautilus-view.c:8661
 msgid "Remo_ve from Recent"
 msgstr "শেহতীয়াৰ পৰা আতৰাওক (_v)"
 
-#: ../src/nautilus-view.c:8679
+#: ../src/nautilus-view.c:8662
 msgid "Remove each selected item from the recently used list"
 msgstr "শেহতীয়াভাৱে ব্যৱহাৰ কৰা তালিকাৰ পৰা প্ৰতিটো নিৰ্বাচিত বস্তুক আতৰাওক"
 
-#: ../src/nautilus-view.c:8719
+#: ../src/nautilus-view.c:8702
 msgid "View or modify the properties of the open folder"
 msgstr "বৰ্তমান ফোল্ডাৰৰ বৈশিষ্ট্য প্ৰদৰ্শন অথবা পৰিবৰ্তন কৰক"
 
@@ -5108,78 +5089,33 @@ msgstr "ড্ৰপ্ড Text.txt"
 msgid "dropped data"
 msgstr "ড্ৰপ কৰা তথ্য"
 
-#: ../src/nautilus-window.c:833
+#: ../src/nautilus-window.c:827
 msgid "_Properties"
 msgstr "বৈশিষ্টসমূহ (_P)"
 
-#: ../src/nautilus-window.c:842
+#: ../src/nautilus-window.c:836
 msgid "_Format…"
 msgstr "ফৰমেট কৰক (_F)…"
 
-#: ../src/nautilus-window.c:1193
+#: ../src/nautilus-window.c:1187
 msgid "_New Tab"
 msgstr "নতুন টেব (_N)"
 
 #
-#: ../src/nautilus-window.c:1203 ../src/nautilus-window-menus.c:588
+#: ../src/nautilus-window.c:1197 ../src/nautilus-window-menus.c:587
 msgid "Move Tab _Left"
 msgstr "টেব বাওঁফালে স্থানান্তৰ কৰক (_L)"
 
 #
-#: ../src/nautilus-window.c:1211 ../src/nautilus-window-menus.c:591
+#: ../src/nautilus-window.c:1205 ../src/nautilus-window-menus.c:590
 msgid "Move Tab _Right"
 msgstr "টেব সোঁফালে স্থানান্তৰ কৰক (_R)"
 
-#: ../src/nautilus-window.c:1222
+#: ../src/nautilus-window.c:1216
 msgid "_Close Tab"
 msgstr "টেব বন্ধ কৰক (_C)"
 
-#: ../src/nautilus-window.c:2381
-msgid ""
-"Files is free software; you can redistribute it and/or modify it under the "
-"terms of the GNU General Public License as published by the Free Software "
-"Foundation; either version 2 of the License, or (at your option) any later "
-"version."
-msgstr ""
-"Files এটা বিনামুলিয়া চফ্টৱেৰ; আপুনি Free Software Foundation ৰ দ্বাৰা "
-"প্ৰকাশিত "
-"GNU General Public License ৰ চুক্তিসমূহৰ অন্তৰ্গত ইয়াক পুনৰ বিলাব পাৰিব অথবা "
-"সলনি  "
-"কৰিব পাৰিব; হৈতো অনুজ্ঞাৰ সংস্কৰণ ২, অথবা (আপুনাৰ বিকল্পত) যিকোনো পৰৱৰ্তী "
-"সংস্কৰণ।"
-
-#: ../src/nautilus-window.c:2385
-msgid ""
-"Files is distributed in the hope that it will be useful, but WITHOUT ANY "
-"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
-"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
-"details."
-msgstr ""
-"Files এইটো আশাত বিলোৱা হৈছে যি ই ব্যৱহাৰযোগ্য হ'ব, কিন্তু কোনো ৱাৰেন্টি "
-"নথকাকৈ; "
-"ব্যৱসায়ীক  অথবা কোনো এটা বিশেষ কাৰণৰ যোগ্যতাৰ বাবে বুজুৱা ৱাৰেন্টি নথকাকৈ। "
-"অধিক "
-"যানিবলৈ  GNU General Public License চাওক।"
-
-#
-#: ../src/nautilus-window.c:2389
-msgid ""
-"You should have received a copy of the GNU General Public License along with "
-"Nautilus; if not, write to the Free Software Foundation, Inc., 51 Franklin "
-"Street, Fifth Floor, Boston, MA 02110-1301 USA"
-msgstr ""
-"আপুনি হয়তো Nautilus ৰ সৈতে GNU General Public License ৰ এটা কপি প্ৰাপ্ত কৰিছে;"
-"যদি নাই পোৱা, তেন্তে Free Software Foundation, Inc., 51 Franklin Street, "
-"Fifth Floor, Boston, MA 02110-1301 USA লে লিখক"
-
-#. Translators: these two strings here indicate the copyright time span,
-#. * e.g. 1999-2011.
-#.
-#: ../src/nautilus-window.c:2404
-msgid "Copyright © %Id–%Id The Files authors"
-msgstr "স্বত্বাধিকাৰ © %Id–%Id Files লিখকসমূহ"
-
-#: ../src/nautilus-window.c:2410
+#: ../src/nautilus-window.c:2337
 msgid "Access and organize your files."
 msgstr "আপোনাৰ ফাইলসমূহ অভিগম কৰক আৰু সংগঠিত কৰক।"
 
@@ -5187,7 +5123,7 @@ msgstr "আপোনাৰ ফাইলসমূহ অভিগম কৰক �
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2420
+#: ../src/nautilus-window.c:2346
 msgid "translator-credits"
 msgstr ""
 "অমিতাক্ষ ফুকন (aphukan@fedoraproject.org), নীলমদ্যুতি গোস্বামী "
@@ -5196,64 +5132,64 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:471
+#: ../src/nautilus-window-menus.c:470
 msgid "_Close"
 msgstr "বন্ধ কৰক (_C)"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:472
+#: ../src/nautilus-window-menus.c:471
 msgid "Close this folder"
 msgstr "এই ফোল্ডাৰ বন্ধ কৰক"
 
-#: ../src/nautilus-window-menus.c:476
+#: ../src/nautilus-window-menus.c:475
 msgid "Edit Nautilus preferences"
 msgstr "Nautilus পছন্দসমূহ সম্পাদনা কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:479
+#: ../src/nautilus-window-menus.c:478
 msgid "Open _Parent"
 msgstr "উপধায়ক খোলক (_P)"
 
-#: ../src/nautilus-window-menus.c:480
+#: ../src/nautilus-window-menus.c:479
 msgid "Open the parent folder"
 msgstr "উপধায়ক ফোল্ডাৰ খোলক"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:484
+#: ../src/nautilus-window-menus.c:483
 msgid "Stop loading the current location"
 msgstr "বৰ্তমান অৱস্থান ল'ড কৰা বন্ধ কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:487
+#: ../src/nautilus-window-menus.c:486
 msgid "_Reload"
 msgstr "পুনৰ ল'ড কৰক (_R)"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:488
+#: ../src/nautilus-window-menus.c:487
 msgid "Reload the current location"
 msgstr "বৰ্তমান অৱস্থান পুনৰ ল'ড কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:495
+#: ../src/nautilus-window-menus.c:494
 msgid "_All Topics"
 msgstr "সকলো বিষয় (_A)"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:496
+#: ../src/nautilus-window-menus.c:495
 msgid "Display Nautilus help"
 msgstr "Nautilus ৰ সহায় প্ৰদৰ্শন কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:499
+#: ../src/nautilus-window-menus.c:498
 msgid "Search for files"
 msgstr "ফাইলসমূহ সন্ধান কৰক"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:500
+#: ../src/nautilus-window-menus.c:499
 msgid ""
 "Locate files based on file name and type. Save your searches for later use."
 msgstr ""
@@ -5263,12 +5199,12 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:503
+#: ../src/nautilus-window-menus.c:502
 msgid "Sort files and folders"
 msgstr "ফাইলসমূহ আৰু ফোল্ডাৰসমূহ সজাঁওক"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:504
+#: ../src/nautilus-window-menus.c:503
 msgid "Arrange files by name, size, type, or when they were changed."
 msgstr ""
 "ফাইলসমূহ সিহতৰ নাম, আকাৰ, ধৰণ, অথবা সিহতক যেতিয়া সলনি কৰা হৈছিল সেই হিচাপে "
@@ -5276,24 +5212,24 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:507
+#: ../src/nautilus-window-menus.c:506
 msgid "Find a lost file"
 msgstr "এটা হেৰুৱা ফাইল সন্ধান কৰক"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:508
+#: ../src/nautilus-window-menus.c:507
 msgid "Follow these tips if you can't find a file you created or downloaded."
 msgstr ""
 "এই সহায় অনুকৰণ কৰক যদি আপুনি এটা সৃষ্টি অথবা ডাউনল'ড কৰা ফাইল বিচাৰি নাপায়।"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:511
+#: ../src/nautilus-window-menus.c:510
 msgid "Share and transfer files"
 msgstr "ফাইলসমূহ অংশীদাৰী আৰু স্থানান্তৰ কৰক"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:512
+#: ../src/nautilus-window-menus.c:511
 msgid ""
 "Easily transfer files to your contacts and devices from the file manager."
 msgstr ""
@@ -5301,211 +5237,211 @@ msgstr ""
 "স্থানান্তৰ কৰক।"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:516
+#: ../src/nautilus-window-menus.c:515
 msgid "Display credits for the creators of Nautilus"
 msgstr "Nautilus ৰ সৃষ্টিকৰ্তাসমূহৰ বাবে কৃতিত্বসমূহ দেখুৱাওক"
 
 #
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:519
+#: ../src/nautilus-window-menus.c:518
 msgid "Zoom _In"
 msgstr "ডাঙৰ কৰি প্ৰদৰ্শন (_I)"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:520
+#: ../src/nautilus-window-menus.c:519
 msgid "Increase the view size"
 msgstr "দৰ্শনৰ মাপ বৃদ্ধি কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:531
+#: ../src/nautilus-window-menus.c:530
 msgid "Zoom _Out"
 msgstr "সৰু কৰি প্ৰদৰ্শন (_O)"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:532
+#: ../src/nautilus-window-menus.c:531
 msgid "Decrease the view size"
 msgstr "প্ৰদৰ্শনৰ মাপ হ্ৰাস কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:539
+#: ../src/nautilus-window-menus.c:538
 msgid "Normal Si_ze"
 msgstr "স্বাভাৱিক আকাৰ (_z)"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:540
+#: ../src/nautilus-window-menus.c:539
 msgid "Use the normal view size"
 msgstr "স্বাভাবিক দৰ্শনৰ আকাৰ ব্যবহাৰ কৰক"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:544
+#: ../src/nautilus-window-menus.c:543
 msgid "Connect to a remote computer or shared disk"
 msgstr "দূৰবৰ্তী কমপিউটাৰ অথবা শেয়াৰ কৰা ডিস্কেৰ সৈতে সংযোগ কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:547 ../src/nautilus-window-menus.c:730
+#: ../src/nautilus-window-menus.c:546 ../src/nautilus-window-menus.c:729
 msgid "_Home"
 msgstr "ঘৰ (_H)"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:548
+#: ../src/nautilus-window-menus.c:547
 msgid "Open your personal folder"
 msgstr "ব্যক্তিগত ফোল্ডাৰ খোলক"
 
-#: ../src/nautilus-window-menus.c:552
+#: ../src/nautilus-window-menus.c:551
 msgid "Open another Nautilus window for the displayed location"
 msgstr "প্ৰদৰ্শিত অৱস্থানৰ বাবে অন্য Nautilus উইন্ডো খোলক"
 
 #. name, stock id
-#: ../src/nautilus-window-menus.c:555
+#: ../src/nautilus-window-menus.c:554
 msgid "New _Tab"
 msgstr "নতুন টেব (_T)"
 
-#: ../src/nautilus-window-menus.c:556
+#: ../src/nautilus-window-menus.c:555
 msgid "Open another tab for the displayed location"
 msgstr "প্ৰদৰ্শিত অৱস্থানৰ বাবে পৃথক টেব খোলা হ'ব"
 
 #. name, stock id
-#: ../src/nautilus-window-menus.c:559
+#: ../src/nautilus-window-menus.c:558
 msgid "Close _All Windows"
 msgstr "সকলো উইন্ডো বন্ধ কৰক (_A)"
 
-#: ../src/nautilus-window-menus.c:560
+#: ../src/nautilus-window-menus.c:559
 msgid "Close all Navigation windows"
 msgstr "সকলো দিশনিৰ্ণয় উইন্ডো বন্ধ কৰক"
 
 #
 #. name, stock id
-#: ../src/nautilus-window-menus.c:563
+#: ../src/nautilus-window-menus.c:562
 msgid "_Back"
 msgstr "পিছলৈ (_B)"
 
-#: ../src/nautilus-window-menus.c:564
+#: ../src/nautilus-window-menus.c:563
 msgid "Go to the previous visited location"
 msgstr "পূৰ্বতে ভ্ৰমণ কৰা অৱস্থানত যাওক"
 
 #. name, stock id
-#: ../src/nautilus-window-menus.c:567
+#: ../src/nautilus-window-menus.c:566
 msgid "_Forward"
 msgstr "আগলৈ (_F)"
 
-#: ../src/nautilus-window-menus.c:568
+#: ../src/nautilus-window-menus.c:567
 msgid "Go to the next visited location"
 msgstr "পৰবৰ্তী ভ্ৰমণ কৰা অৱস্থানত যাওক"
 
 #. name, stock id
-#: ../src/nautilus-window-menus.c:571
+#: ../src/nautilus-window-menus.c:570
 msgid "Enter _Location…"
 msgstr "অৱস্থান সুমুৱাওক (_L)…"
 
-#: ../src/nautilus-window-menus.c:572
+#: ../src/nautilus-window-menus.c:571
 msgid "Specify a location to open"
 msgstr "খোলাৰ বাবে এটা অৱস্থান ধাৰ্য্য কৰক"
 
 #. name, stock id
-#: ../src/nautilus-window-menus.c:575
+#: ../src/nautilus-window-menus.c:574
 msgid "Bookmark this Location"
 msgstr "এই অৱস্থান পত্ৰচিহ্নিত কৰক"
 
-#: ../src/nautilus-window-menus.c:576
+#: ../src/nautilus-window-menus.c:575
 msgid "Add a bookmark for the current location"
 msgstr "বৰ্তমান অৱস্থানৰ বাবে এটা পত্ৰচিহ্ন যোগ কৰক"
 
 #. name, stock id
-#: ../src/nautilus-window-menus.c:579
+#: ../src/nautilus-window-menus.c:578
 msgid "_Bookmarks…"
 msgstr "পত্ৰচিহ্নসমূহ (_B)…"
 
-#: ../src/nautilus-window-menus.c:580
+#: ../src/nautilus-window-menus.c:579
 msgid "Display and edit bookmarks"
 msgstr "পত্ৰচিহ্নসমূহ প্ৰদৰ্শন কৰক আৰু সম্পাদন কৰক"
 
 #
-#: ../src/nautilus-window-menus.c:582
+#: ../src/nautilus-window-menus.c:581
 msgid "_Previous Tab"
 msgstr "পূৰ্ববৰ্তী টেব (_P)"
 
 #
-#: ../src/nautilus-window-menus.c:583
+#: ../src/nautilus-window-menus.c:582
 msgid "Activate previous tab"
 msgstr "পূৰ্ববৰ্তী টেবক সক্ৰিয় কৰক"
 
 #
-#: ../src/nautilus-window-menus.c:585
+#: ../src/nautilus-window-menus.c:584
 msgid "_Next Tab"
 msgstr "পৰবৰ্তী টেব (_N)"
 
 #
-#: ../src/nautilus-window-menus.c:586
+#: ../src/nautilus-window-menus.c:585
 msgid "Activate next tab"
 msgstr "পৰবৰ্তী টেব সক্ৰিয় কৰক"
 
 #
-#: ../src/nautilus-window-menus.c:589
+#: ../src/nautilus-window-menus.c:588
 msgid "Move current tab to left"
 msgstr "বৰ্তমান টেবক বাঁওফালে সৰিয়ে দিন"
 
 #
-#: ../src/nautilus-window-menus.c:592
+#: ../src/nautilus-window-menus.c:591
 msgid "Move current tab to right"
 msgstr "বৰ্তমান টেবক সোঁফালে স্থানান্তৰ কৰক"
 
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:610
+#: ../src/nautilus-window-menus.c:609
 msgid "_Show Sidebar"
 msgstr "কাষবাৰ দেখুৱাওক (_S)"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:611
+#: ../src/nautilus-window-menus.c:610
 msgid "Change the visibility of this window's side pane"
 msgstr "উইন্ডোৰ কাষবাৰৰ দৃশ্যমানতা পৰিবৰ্তন কৰক"
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: ../src/nautilus-window-menus.c:615
+#: ../src/nautilus-window-menus.c:614
 msgid "_Search for Files…"
 msgstr "ফাইলসমূহ সন্ধান কৰক (_S)…"
 
 #. tooltip
-#: ../src/nautilus-window-menus.c:616
+#: ../src/nautilus-window-menus.c:615
 msgid "Search documents and folders by name"
 msgstr "দস্তাবেজ আৰু ফোল্ডাৰসমূহ নামেৰে সন্ধান কৰক"
 
-#: ../src/nautilus-window-menus.c:622 ../src/nautilus-window-menus.c:624
+#: ../src/nautilus-window-menus.c:621 ../src/nautilus-window-menus.c:623
 msgid "List"
 msgstr "তালিকা"
 
-#: ../src/nautilus-window-menus.c:623
+#: ../src/nautilus-window-menus.c:622
 msgid "View items as a list"
 msgstr "বস্তুবোৰ এটা তালিকা হিচাপে দৰ্শন কৰক"
 
-#: ../src/nautilus-window-menus.c:625
+#: ../src/nautilus-window-menus.c:624
 msgid "View items as a grid of icons"
 msgstr "বস্তুবোৰক আইকনসমূহৰ এটা গ্ৰিড হিচাপে দৰ্শন কৰক"
 
-#: ../src/nautilus-window-menus.c:727
+#: ../src/nautilus-window-menus.c:726
 msgid "_Up"
 msgstr "ওপৰত (_U)"
 
-#: ../src/nautilus-window-slot.c:1279 ../src/nautilus-window-slot.c:1451
+#: ../src/nautilus-window-slot.c:1288 ../src/nautilus-window-slot.c:1460
 #, c-format
 msgid "Unable to load location"
 msgstr "অৱস্থান ল'ড কৰিবলে অক্ষম"
 
-#: ../src/nautilus-window-slot.c:1606
+#: ../src/nautilus-window-slot.c:1615
 msgid "Unable to display the contents of this folder."
 msgstr "এই ফোল্ডাৰৰ সমলসমূহ প্ৰদৰ্শন কৰিবলে অক্ষম।"
 
-#: ../src/nautilus-window-slot.c:1608
+#: ../src/nautilus-window-slot.c:1617
 msgid "This location doesn't appear to be a folder."
 msgstr "এই অৱস্থান এটা ফোল্ডাৰ যেন নালাগে।"
 
-#: ../src/nautilus-window-slot.c:1613
+#: ../src/nautilus-window-slot.c:1622
 msgid ""
 "Unable to find the requested file. Please check the spelling and try again."
 msgstr ""
@@ -5513,20 +5449,20 @@ msgstr ""
 "চেষ্টা "
 "কৰক।"
 
-#: ../src/nautilus-window-slot.c:1618
+#: ../src/nautilus-window-slot.c:1627
 #, c-format
 msgid "“%s” locations are not supported."
 msgstr "“%s” অৱস্থানসমূহ সমৰ্থিত নহয়।"
 
-#: ../src/nautilus-window-slot.c:1621
+#: ../src/nautilus-window-slot.c:1630
 msgid "Unable to handle this kind of location."
 msgstr "এই ধৰণৰ অৱস্থান ব্যৱস্থাপনকৰিবলে অক্ষম।"
 
-#: ../src/nautilus-window-slot.c:1626
+#: ../src/nautilus-window-slot.c:1635
 msgid "Unable to access the requested location."
 msgstr "অনুৰোধ কৰা অৱস্থান অভিগম কৰিবলে অক্ষম।"
 
-#: ../src/nautilus-window-slot.c:1629
+#: ../src/nautilus-window-slot.c:1638
 msgid "Don't have permission to access the requested location."
 msgstr "অনুৰোধ কৰা অৱস্থান অভিগম কৰিবলে অনুমতি নাই।"
 
@@ -5535,7 +5471,7 @@ msgstr "অনুৰোধ কৰা অৱস্থান অভিগম ক�
 #. * But this case is also hit for legitimate web addresses when
 #. * the proxy is set up wrong.
 #.
-#: ../src/nautilus-window-slot.c:1637
+#: ../src/nautilus-window-slot.c:1646
 msgid ""
 "Unable to find the requested location. Please check the spelling or the "
 "network settings."
@@ -5544,12 +5480,12 @@ msgstr ""
 "সংহতিসমূহ "
 "নীৰিক্ষণ কৰক।"
 
-#: ../src/nautilus-window-slot.c:1648
+#: ../src/nautilus-window-slot.c:1657
 #, c-format
 msgid "Unhandled error message: %s"
 msgstr "অব্যৱস্থাপিত ত্ৰুটি বাৰ্তা: %s"
 
-#: ../src/nautilus-window-slot.c:2249
+#: ../src/nautilus-window-slot.c:2212
 msgid "Searching…"
 msgstr "সন্ধান কৰা হৈছে…"
 
@@ -5607,9 +5543,61 @@ msgstr "সংগিত আৰু ফ'টো অন্তৰ্ভুক্ত �
 msgid "Contains photos and music"
 msgstr "ফ'টো আৰু সংগিত অন্তৰ্ভুক্ত কৰে"
 
-#: ../src/nautilus-x-content-bar.c:194
+#: ../src/nautilus-x-content-bar.c:201
 msgid "Open with:"
 msgstr "চিহ্নিত বস্তুৰ সৈতে খোলক:"
+
+#~ msgid "Set as _Background"
+#~ msgstr "পটভুমি হিচাপে সংহতি কৰক (_B)"
+
+#~ msgid "--geometry cannot be used with more than one URI."
+#~ msgstr "--geometry এটাতকৈ বেছি URI ৰ লগত ব্যৱহাৰ কৰিব নোৱাৰি।"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Browse the file system with the file manager"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "ফাইল ব্যৱস্থাপকৰ সৈতে ফাইল চিস্টেম ব্ৰাউছ"
+
+#~ msgid "Could not parse arguments"
+#~ msgstr "তৰ্কসমূহ বিশ্লেষণ কৰিব পৰা নগল"
+
+#~ msgid ""
+#~ "Files is free software; you can redistribute it and/or modify it under "
+#~ "the terms of the GNU General Public License as published by the Free "
+#~ "Software Foundation; either version 2 of the License, or (at your option) "
+#~ "any later version."
+#~ msgstr ""
+#~ "Files এটা বিনামুলিয়া চফ্টৱেৰ; আপুনি Free Software Foundation ৰ দ্বাৰা প্ৰকাশিত "
+#~ "GNU General Public License ৰ চুক্তিসমূহৰ অন্তৰ্গত ইয়াক পুনৰ বিলাব পাৰিব অথবা "
+#~ "সলনি  কৰিব পাৰিব; হৈতো অনুজ্ঞাৰ সংস্কৰণ ২, অথবা (আপুনাৰ বিকল্পত) যিকোনো পৰৱৰ্তী "
+#~ "সংস্কৰণ।"
+
+#~ msgid ""
+#~ "Files is distributed in the hope that it will be useful, but WITHOUT ANY "
+#~ "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+#~ "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+#~ "details."
+#~ msgstr ""
+#~ "Files এইটো আশাত বিলোৱা হৈছে যি ই ব্যৱহাৰযোগ্য হ'ব, কিন্তু কোনো ৱাৰেন্টি "
+#~ "নথকাকৈ; ব্যৱসায়ীক  অথবা কোনো এটা বিশেষ কাৰণৰ যোগ্যতাৰ বাবে বুজুৱা ৱাৰেন্টি "
+#~ "নথকাকৈ। অধিক যানিবলৈ  GNU General Public License চাওক।"
+
+#
+#~ msgid ""
+#~ "You should have received a copy of the GNU General Public License along "
+#~ "with Nautilus; if not, write to the Free Software Foundation, Inc., 51 "
+#~ "Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA"
+#~ msgstr ""
+#~ "আপুনি হয়তো Nautilus ৰ সৈতে GNU General Public License ৰ এটা কপি প্ৰাপ্ত "
+#~ "কৰিছে;যদি নাই পোৱা, তেন্তে Free Software Foundation, Inc., 51 Franklin "
+#~ "Street, Fifth Floor, Boston, MA 02110-1301 USA লে লিখক"
+
+#~ msgid "Copyright © %Id–%Id The Files authors"
+#~ msgstr "স্বত্বাধিকাৰ © %Id–%Id Files লিখকসমূহ"
 
 #~ msgid "_About Files"
 #~ msgstr "ফাইলসমূহৰ বিষয়ে (_A)"
