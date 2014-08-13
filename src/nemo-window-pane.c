@@ -188,7 +188,7 @@ nemo_window_pane_hide_temporary_bars (NemoWindowPane *pane)
 	slot = pane->active_slot;
 
 	if (pane->temporary_navigation_bar) {
-		directory = nemo_directory_get (slot->location);
+		directory = nemo_directory_get (nemo_window_slot_get_location(slot));
 
 		pane->temporary_navigation_bar = FALSE;
 
@@ -261,7 +261,7 @@ path_bar_location_changed_callback (GtkWidget *widget,
 	nemo_window_set_active_pane (pane->window, pane);
 
 	/* check whether we already visited the target location */
-	i = bookmark_list_get_uri_index (slot->back_list, location);
+	i = bookmark_list_get_uri_index (nemo_window_slot_get_back_history (slot), location);
 	if (i >= 0) {
 		nemo_window_back_or_forward (pane->window, TRUE, i, 0);
 	} else {
@@ -297,7 +297,7 @@ path_bar_path_event_callback (NemoPathBar *path_bar,
 		}
 	} else if (event->button == 3) {
 		slot = nemo_window_get_active_slot (pane->window);
-		view = slot->content_view;
+		view = nemo_window_slot_get_view(slot);
 		if (view != NULL) {
 			uri = g_file_get_uri (location);
 			nemo_view_pop_up_location_context_menu (view, event, uri);
@@ -557,7 +557,6 @@ notebook_page_removed_cb (GtkNotebook *notebook,
 		nemo_window_set_active_slot (pane->window, next_slot);
 	}
 
-	nemo_window_manage_views_close_slot (slot);
 	pane->slots = g_list_remove (pane->slots, slot);
 }
 
@@ -643,31 +642,15 @@ action_show_hide_search_callback (GtkAction *action,
 				  gpointer user_data)
 {
 	NemoWindowPane *pane = user_data;
-	NemoWindow *window = pane->window;
 	NemoWindowSlot *slot;
 
 	slot = pane->active_slot;
 
 	if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
-	    remember_focus_widget (pane);
-	    nemo_window_slot_set_query_editor_visible (slot, TRUE);
+		remember_focus_widget (pane);
+		nemo_window_slot_set_query_editor_visible (slot, TRUE);
 	} else {
-		GFile *location = NULL;
-
 		restore_focus_widget (pane);
-
-		/* Use the location bar as the return location */
-		if (slot->query_editor != NULL) {
-		    location = nemo_query_editor_get_location (slot->query_editor);
-			/* Last try: use the home directory as the return location */
-			if (location == NULL) {
-				location = g_file_new_for_path (g_get_home_dir ());
-			}
-
-			nemo_window_go_to (window, location);
-			g_object_unref (location);
-		}
-
 		nemo_window_slot_set_query_editor_visible (slot, FALSE);
 	}
 }
@@ -983,10 +966,11 @@ nemo_window_pane_sync_bookmarks (NemoWindowPane *pane)
 
 	slot = pane->active_slot;
 
-	if (slot->location != NULL) {
+	GFile *location = nemo_window_slot_get_location(slot);
+	if (location != NULL) {
 		bookmarks = nemo_application_get_bookmarks
 			(NEMO_APPLICATION (gtk_window_get_application (GTK_WINDOW (pane->window))));
-		can_bookmark = nemo_bookmark_list_can_bookmark_location (bookmarks, slot->location);
+		can_bookmark = nemo_bookmark_list_can_bookmark_location (bookmarks, location);
 	}
 
 	action = gtk_action_group_get_action (nemo_window_get_main_action_group (pane->window),
@@ -1005,10 +989,11 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 	nemo_window_pane_hide_temporary_bars (pane);
 
 	/* Change the location bar and path bar to match the current location. */
-	if (slot->location != NULL) {
+	GFile *location = nemo_window_slot_get_location(slot);
+	if (location != NULL) {
 		/* this may be NULL if we just created the slot */
-		nemo_location_entry_set_location (NEMO_LOCATION_ENTRY (pane->location_entry), slot->location);
-		nemo_path_bar_set_path (NEMO_PATH_BAR (pane->path_bar), slot->location);
+		nemo_location_entry_set_location (NEMO_LOCATION_ENTRY (pane->location_entry), location);
+		nemo_path_bar_set_path (NEMO_PATH_BAR (pane->path_bar), location);
 		restore_focus_widget (pane);
 	}
 
@@ -1022,66 +1007,23 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 
 		nemo_navigation_state_set_boolean (nav_state,
 						       NEMO_ACTION_BACK,
-						       active_slot->back_list != NULL);
+						       nemo_window_slot_get_back_history (active_slot) != NULL);
 		nemo_navigation_state_set_boolean (nav_state,
 						       NEMO_ACTION_FORWARD,
-						       active_slot->forward_list != NULL);
+						       nemo_window_slot_get_forward_history(active_slot) != NULL);
 		nemo_window_pane_sync_bookmarks (pane);
 	}
-}
-
-static void
-toggle_toolbar_search_button (NemoWindowPane *pane,
-                                  gboolean        active)
-{
-	GtkActionGroup *group;
-	GtkAction *action;
-
-	group = pane->action_group;
-	action = gtk_action_group_get_action (group, NEMO_ACTION_SEARCH);
-
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), active);
-}
-
-void
-nemo_window_pane_sync_search_widgets (NemoWindowPane *pane)
-{
-	NemoDirectory *directory;
-	NemoSearchDirectory *search_directory;
-    NemoWindowSlot *slot;
-
-	search_directory = NULL;
-    slot = pane->active_slot;
-
-	directory = nemo_directory_get (slot->location);
-	if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
-		search_directory = NEMO_SEARCH_DIRECTORY (directory);
-	}
-
-	if (search_directory != NULL || slot->load_with_search ||
-	    gtk_widget_get_visible (GTK_WIDGET (slot->query_editor))) {
-		slot->load_with_search = FALSE;
-		toggle_toolbar_search_button (pane, TRUE);
-	} else {
-		toggle_toolbar_search_button (pane, FALSE);
-	}
-
-	nemo_directory_unref (directory);
 }
 
 void
 nemo_window_pane_close_slot (NemoWindowPane *pane,
 				 NemoWindowSlot *slot)
 {
-	NemoWindow *window;
-
 	DEBUG ("Requesting to remove slot %p from pane %p", slot, pane);
 	if (pane->window == NULL)
 		return;
 
-	window = pane->window;
-	if (!window)
-		return;
+	NemoWindow *window = pane->window;
 
 	if (pane->active_slot == slot) {
 		NemoWindowSlot *next_slot;
@@ -1118,9 +1060,13 @@ nemo_window_pane_close_slot (NemoWindowPane *pane,
 void
 nemo_window_pane_grab_focus (NemoWindowPane *pane)
 {
-	if (NEMO_IS_WINDOW_PANE (pane) && pane->active_slot) {
-		nemo_view_grab_focus (pane->active_slot->content_view);
-	}
+	if (NEMO_IS_WINDOW_PANE (pane) &&
+		pane->active_slot) {
+		NemoView *view = nemo_window_slot_get_view (pane->active_slot);
+		if (view) {
+			nemo_view_grab_focus (view);	
+		}
+	}	
 }
 
 void
