@@ -206,8 +206,6 @@ nemo_SOURCES = \
 	nemo-view-factory.h 		\
 	nemo-window-bookmarks.c		\
 	nemo-window-bookmarks.h		\
-	nemo-window-manage-views.c		\
-	nemo-window-manage-views.h		\
 	nemo-window-menus.c         	\
 	nemo-window-menus.h         \
 	nemo-window-pane.c	\

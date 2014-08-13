@@ -34,7 +34,6 @@
 #include "nemo-notebook.h"
 #include "nemo-pathbar.h"
 #include "nemo-toolbar.h"
-#include "nemo-window-manage-views.h"
 #include "nemo-window-private.h"
 #include "nemo-window-menus.h"
 #include "nemo-list-view.h"
