@@ -204,8 +204,7 @@ nemo_location_entry_set_location (NemoLocationEntry *entry,
 	}
 
 	/* remember the original location for later comparison */
-	if (!entry->details->last_location ||
-	    !g_file_equal (entry->details->last_location, location)) {
+	if (entry->details->last_location != location) {
 		g_clear_object (&entry->details->last_location);
 		entry->details->last_location = g_object_ref (location);
 	}

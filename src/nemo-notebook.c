@@ -29,7 +29,6 @@
 #include "nemo-notebook.h"
 
 #include "nemo-window.h"
-#include "nemo-window-manage-views.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
 #include "nemo-window-slot-dnd.h"
@@ -256,7 +255,7 @@ nemo_notebook_sync_loading (NemoNotebook *notebook,
 				NemoWindowSlot *slot)
 {
 	GtkWidget *tab_label, *spinner, *icon;
-	gboolean active;
+	gboolean active, allow_stop;
 
 	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
 	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
@@ -271,11 +270,13 @@ nemo_notebook_sync_loading (NemoNotebook *notebook,
 
 	active = FALSE;
 	g_object_get (spinner, "active", &active, NULL);
-	if (active == slot->allow_stop)	{
+	allow_stop = nemo_window_slot_get_allow_stop (slot);
+
+	if (active == allow_stop) {
 		return;
 	}
 
-	if (slot->allow_stop) {
+	if (allow_stop) {
 		gtk_widget_hide (icon);
 		gtk_widget_show (spinner);
 		gtk_spinner_start (GTK_SPINNER (spinner));
@@ -292,6 +293,7 @@ nemo_notebook_sync_tab_label (NemoNotebook *notebook,
 {
 	GtkWidget *hbox, *label;
 	char *location_name;
+	GFile *location;
 
 	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
 	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
@@ -302,13 +304,14 @@ nemo_notebook_sync_tab_label (NemoNotebook *notebook,
 	label = GTK_WIDGET (g_object_get_data (G_OBJECT (hbox), "label"));
 	g_return_if_fail (GTK_IS_WIDGET (label));
 
-	gtk_label_set_text (GTK_LABEL (label), slot->title);
+	gtk_label_set_text (GTK_LABEL (label), nemo_window_slot_get_title (slot));
+	location = nemo_window_slot_get_location (slot);
 
-	if (slot->location != NULL) {
+	if (location != NULL) {
 		/* Set the tooltip on the label's parent (the tab label hbox),
 		 * so it covers all of the tab label.
 		 */
-		location_name = g_file_get_parse_name (slot->location);
+		location_name = g_file_get_parse_name (location);
 		gtk_widget_set_tooltip_text (gtk_widget_get_parent (label), location_name);
 		g_free (location_name);
 	} else {

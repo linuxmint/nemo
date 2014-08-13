@@ -3318,10 +3318,6 @@ done_loading (NemoView *view,
 	 * is no NemoWindow any more.
 	 */
 	if (window != NULL) {
-		if (all_files_seen) {
-			nemo_window_report_load_complete (window, NEMO_VIEW (view));
-		}
-
 		schedule_update_menus (view);
 		schedule_update_status (view);
 		reset_update_interval (view);
@@ -10443,12 +10439,8 @@ static void
 finish_loading (NemoView *view)
 {
 	NemoFileAttributes attributes;
-	NemoWindow *window;
 
 	nemo_profile_start (NULL);
-
-	window = nemo_view_get_window (view);
-	nemo_window_report_load_underway (window, NEMO_VIEW (view));
 
 	/* Tell interested parties that we've begun loading this directory now.
 	 * Subclasses use this to know that the new metadata is now available.
@@ -10458,7 +10450,7 @@ finish_loading (NemoView *view)
 	nemo_profile_end ("BEGIN_LOADING");
 
 	/* Assume we have now all information to show window */
-	nemo_window_view_visible  (window, NEMO_VIEW (view));
+	nemo_window_view_visible  (nemo_view_get_window (view), NEMO_VIEW (view));
 
 	if (nemo_directory_are_all_files_seen (view->details->model)) {
 		/* Unschedule a pending update and schedule a new one with the minimal

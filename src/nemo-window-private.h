@@ -67,12 +67,6 @@ struct NemoWindowDetails
 	GtkRadioAction *view_as_radio_action;
 	guint short_list_merge_id;
 
-	/* Ensures that we do not react on signals of a
-	 * view that is re-used as new view when its loading
-	 * is cancelled
-	 */
-	gboolean temporarily_ignore_view_signals;
-
         /* available panes, and active pane.
          * Both of them may never be NULL.
          */

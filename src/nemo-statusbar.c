@@ -142,7 +142,7 @@ on_slider_changed_cb (GtkWidget *zoom_slider, gpointer user_data)
     if (!NEMO_IS_WINDOW_SLOT (slot))
         return;
 
-    NemoView *view = slot->content_view;
+    NemoView *view = nemo_window_slot_get_view (slot);
 
     if (!NEMO_IS_VIEW (view))
         return;
@@ -366,7 +366,7 @@ nemo_status_bar_sync_zoom_widgets (NemoStatusBar *bar)
     if (!NEMO_IS_WINDOW_SLOT (slot))
         return;
 
-    NemoView *view = slot->content_view;
+    NemoView *view = nemo_window_slot_get_view (slot);
 
     if (!NEMO_IS_VIEW (view))
         return;

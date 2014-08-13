@@ -783,19 +783,19 @@ nemo_bookmark_new (GFile *location,
 		       const gchar *custom_name)
 {
 	NemoBookmark *new_bookmark;
-    gchar *name;
+	gchar *name;
 
-    if (custom_name == NULL)
-        name = g_file_get_basename (location);
-    else
-        name = g_strdup (custom_name);
+	if (custom_name == NULL)
+		name = g_file_get_basename (location);
+	else
+		name = g_strdup (custom_name);
 
 	new_bookmark = NEMO_BOOKMARK (g_object_new (NEMO_TYPE_BOOKMARK,
 							"location", location,
 							"name", name,
 							"custom-name", custom_name != NULL,
 							NULL));
-    g_free (name);
+	g_free (name);
 
 	return new_bookmark;
 }				 

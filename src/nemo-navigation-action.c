@@ -95,8 +95,9 @@ fill_menu (NemoWindow *window,
 	GList *list;
 
 	slot = nemo_window_get_active_slot (window);
+	list = back ? nemo_window_slot_get_back_history (slot) :
+		nemo_window_slot_get_forward_history (slot);
 	
-	list = back ? slot->back_list : slot->forward_list;
 	index = 0;
 	while (list != NULL) {
 		menu_item = nemo_bookmark_menu_item_new (NEMO_BOOKMARK (list->data));

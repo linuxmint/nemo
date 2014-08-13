@@ -36,7 +36,6 @@
 #include "nemo-file-management-properties.h"
 #include "nemo-navigation-action.h"
 #include "nemo-notebook.h"
-#include "nemo-window-manage-views.h"
 #include "nemo-window-private.h"
 #include "nemo-desktop-window.h"
 #include "nemo-location-entry.h"
@@ -504,7 +503,6 @@ action_split_view_same_location_callback (GtkAction *action,
 	if (location) {
 		nemo_window_slot_open_location (nemo_window_get_active_slot (window),
 						    location, 0);
-		g_object_unref (location);
 	}
 }
 
@@ -544,7 +542,7 @@ action_split_view_callback (GtkAction *action,
 
 		slot = nemo_window_get_active_slot (window);
 		if (slot != NULL) {
-			nemo_view_update_menus (slot->content_view);
+			nemo_view_update_menus (nemo_window_slot_get_view(slot));
 		}
 	}
 }
@@ -589,10 +587,6 @@ nemo_window_update_split_view_actions_sensitivity (NemoWindow *window)
 	/* same location */
 	action = gtk_action_group_get_action (action_group, "SplitViewSameLocation");
 	gtk_action_set_sensitive (action, have_multiple_panes && !next_pane_is_in_same_location);
-
-	/* clean up */
-	g_clear_object (&active_pane_location);
-	g_clear_object (&next_pane_location);
 }
 
 static void
@@ -665,15 +659,11 @@ action_add_bookmark_callback (GtkAction *action,
 {
 	NemoWindow *window = user_data;
 	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
-	NemoBookmark *bookmark;
 	NemoWindowSlot *slot;
-	NemoBookmarkList *list;
 
 	slot = nemo_window_get_active_slot (window);
-	bookmark = slot->current_location_bookmark;
-	list = nemo_application_get_bookmarks (app);
-
-	nemo_bookmark_list_append (list, bookmark);
+	nemo_bookmark_list_append (nemo_application_get_bookmarks (app),
+				       nemo_window_slot_get_bookmark (slot));
 }
 
 static void
@@ -1575,6 +1565,7 @@ nemo_window_finalize_menus (NemoWindow *window)
 static GList *
 get_extension_menus (NemoWindow *window)
 {
+	NemoFile *file;
 	NemoWindowSlot *slot;
 	GList *providers;
 	GList *items;
@@ -1584,6 +1575,7 @@ get_extension_menus (NemoWindow *window)
 	items = NULL;
 
 	slot = nemo_window_get_active_slot (window);
+	file = nemo_window_slot_get_file (slot);
 
 	for (l = providers; l != NULL; l = l->next) {
 		NemoMenuProvider *provider;
@@ -1592,7 +1584,7 @@ get_extension_menus (NemoWindow *window)
 		provider = NEMO_MENU_PROVIDER (l->data);
 		file_items = nemo_menu_provider_get_background_items (provider,
 									  GTK_WIDGET (window),
-									  slot->viewed_file);
+									  file);
 		items = g_list_concat (items, file_items);
 	}
 

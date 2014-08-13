@@ -61,60 +61,6 @@ struct NemoWindowSlot {
 	GtkBox parent;
 
 	NemoWindowSlotDetails *details;
-
-	/* slot contains
- 	 *  1) an event box containing extra_location_widgets
- 	 *  2) the view box for the content view
- 	 */
-	GtkWidget *extra_location_widgets;
-
-	NemoView *content_view;
-	NemoView *new_content_view;
-
-	/* Information about bookmarks */
-	NemoBookmark *current_location_bookmark;
-	NemoBookmark *last_location_bookmark;
-
-	/* Current location. */
-	GFile *location;
-	char *title;
-	char *status_text;
-
-	NemoFile *viewed_file;
-	gboolean viewed_file_seen;
-	gboolean viewed_file_in_trash;
-
-	gboolean allow_stop;
-
-	NemoQueryEditor *query_editor;
-	gulong qe_changed_id;
-	gulong qe_cancel_id;
-	gulong qe_activated_id;
-
-	/* New location. */
-	NemoLocationChangeType location_change_type;
-	guint location_change_distance;
-	GFile *pending_location;
-	char *pending_scroll_to;
-	GList *pending_selection;
-	NemoFile *determine_view_file;
-	GCancellable *mount_cancellable;
-	GError *mount_error;
-	gboolean tried_mount;
-	NemoWindowGoToCallback open_callback;
-	gpointer open_callback_user_data;
-	gboolean load_with_search;
-
-	gboolean needs_reload;
-
-	GCancellable *find_mount_cancellable;
-
-	gboolean visible;
-
-	/* Back/Forward chain, and history list. 
-	 * The data in these lists are NemoBookmark pointers. 
-	 */
-	GList *back_list, *forward_list;
 };
 
 GType   nemo_window_slot_get_type (void);
@@ -124,18 +70,6 @@ NemoWindowSlot * nemo_window_slot_new              (NemoWindowPane *pane);
 NemoWindowPane * nemo_window_slot_get_pane           (NemoWindowSlot *slot);
 void             nemo_window_slot_set_pane           (NemoWindowSlot *slot,
 							    NemoWindowPane *pane);
-
-void    nemo_window_slot_update_title		   (NemoWindowSlot *slot);
-void    nemo_window_slot_set_query_editor_visible	   (NemoWindowSlot *slot,
-							    gboolean            visible);
-gboolean nemo_window_slot_handle_event       	   (NemoWindowSlot *slot,
-							    GdkEventKey        *event);
-
-GFile * nemo_window_slot_get_location		   (NemoWindowSlot *slot);
-char *  nemo_window_slot_get_location_uri		   (NemoWindowSlot *slot);
-
-void    nemo_window_slot_queue_reload		   (NemoWindowSlot *slot);
-void    nemo_window_slot_force_reload		   (NemoWindowSlot *slot);
 
 /* convenience wrapper without selection and callback/user_data */
 #define nemo_window_slot_open_location(slot, location, flags)\
@@ -148,7 +82,35 @@ void nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 					      NemoWindowGoToCallback callback,
 					      gpointer user_data);
 
+GList * nemo_window_slot_get_back_history              (NemoWindowSlot *slot);
+GList * nemo_window_slot_get_forward_history           (NemoWindowSlot *slot);
+
+NemoFile *    nemo_window_slot_get_file            (NemoWindowSlot *slot);
+NemoBookmark *nemo_window_slot_get_bookmark        (NemoWindowSlot *slot);
+NemoView *    nemo_window_slot_get_view            (NemoWindowSlot *slot);
+NemoView *    nemo_window_slot_get_new_view            (NemoWindowSlot *slot);
+
+void    nemo_window_slot_set_query_editor_visible	   (NemoWindowSlot *slot,
+							    gboolean            visible);
+gboolean nemo_window_slot_get_allow_stop               (NemoWindowSlot *slot);
+//void     nemo_window_slot_set_allow_stop		   (NemoWindowSlot *slot,
+//							    gboolean	        allow_stop);
+
+void    nemo_window_slot_update_title		   (NemoWindowSlot *slot);
+
+const gchar *nemo_window_slot_get_title                (NemoWindowSlot *slot);
+gboolean nemo_window_slot_handle_event       	   (NemoWindowSlot *slot,
+							    GdkEventKey        *event);
+
+GFile * nemo_window_slot_get_location		   (NemoWindowSlot *slot);
+char *  nemo_window_slot_get_location_uri		   (NemoWindowSlot *slot);
+
+void    nemo_window_slot_queue_reload		   (NemoWindowSlot *slot);
+
+
 void			nemo_window_slot_stop_loading	      (NemoWindowSlot	*slot);
+
+void    nemo_window_slot_queue_reload		   (NemoWindowSlot *slot);
 
 void			nemo_window_slot_set_content_view	      (NemoWindowSlot	*slot,
 								       const char		*id);
@@ -163,8 +125,6 @@ void    nemo_window_slot_go_up                         (NemoWindowSlot *slot,
 
 void    nemo_window_slot_set_content_view_widget	   (NemoWindowSlot *slot,
 							    NemoView       *content_view);
-void    nemo_window_slot_set_viewed_file		   (NemoWindowSlot *slot,
-							    NemoFile      *file);
 void    nemo_window_slot_set_allow_stop		   (NemoWindowSlot *slot,
 							    gboolean	    allow_stop);
 void    nemo_window_slot_set_status			   (NemoWindowSlot *slot,

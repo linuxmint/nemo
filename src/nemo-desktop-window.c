@@ -270,13 +270,6 @@ realize (GtkWidget *widget)
 				  G_CALLBACK (nemo_desktop_window_screen_size_changed), window);
 }
 
-static NemoIconInfo *
-real_get_icon (NemoWindow *window,
-	       NemoWindowSlot *slot)
-{
-	return nemo_icon_info_lookup_from_name (NEMO_DESKTOP_ICON_DESKTOP, 48);
-}
-
 static void
 real_sync_title (NemoWindow *window,
 		 NemoWindowSlot *slot)
@@ -287,13 +280,6 @@ real_sync_title (NemoWindow *window,
 
 static void
 real_window_close (NemoWindow *window)
-{
-	/* stub, does nothing */
-	return;
-}
-
-static void
-real_sync_view_as_menus (NemoWindow *window)
 {
 	/* stub, does nothing */
 	return;
@@ -314,8 +300,6 @@ nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 	wclass->delete_event = nemo_desktop_window_delete_event;
 
 	nclass->sync_title = real_sync_title;
-	nclass->sync_view_as_menus = real_sync_view_as_menus;
-	nclass->get_icon = real_get_icon;
 	nclass->close = real_window_close;
 
 	g_type_class_add_private (klass, sizeof (NemoDesktopWindowDetails));
