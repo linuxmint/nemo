@@ -42,6 +42,10 @@ NautilusNotebook .frame {
     border-width: 0;
 }
 
+NautilusNotebook.notebook tab .button {
+    padding: 0px;
+}
+
 NautilusQueryEditor .search-bar.toolbar {
     border-top-width: 0;
     border-bottom-width: 0;
