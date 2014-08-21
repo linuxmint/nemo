@@ -88,6 +88,22 @@
 static GHashTable *windows;
 static GHashTable *pending_lists;
 
+typedef struct {
+	NautilusFile *file;
+	char         *owner;
+	GtkWindow    *window;
+	unsigned int  timeout;
+	gboolean      cancelled;
+} OwnerChange;
+
+typedef struct {
+	NautilusFile *file;
+	char         *group;
+	GtkWindow    *window;
+	unsigned int  timeout;
+	gboolean      cancelled;
+} GroupChange;
+
 struct NautilusPropertiesWindowDetails {	
 	GList *original_files;
 	GList *target_files;
@@ -111,12 +127,8 @@ struct NautilusPropertiesWindowDetails {
 	guint update_directory_contents_timeout_id;
 	guint update_files_timeout_id;
 
-	NautilusFile *group_change_file;
-	char         *group_change_group;
-	unsigned int  group_change_timeout;
-	NautilusFile *owner_change_file;
-	char         *owner_change_owner;
-	unsigned int  owner_change_timeout;
+	GroupChange  *group_change;
+	OwnerChange  *owner_change;
 
 	GList *permission_buttons;
 	GList *permission_combos;
@@ -207,8 +219,8 @@ static void properties_window_update              (NautilusPropertiesWindow *win
 						   GList              *files);
 static void is_directory_ready_callback           (NautilusFile       *file,
 						   gpointer            data);
-static void cancel_group_change_callback          (NautilusPropertiesWindow *window);
-static void cancel_owner_change_callback          (NautilusPropertiesWindow *window);
+static void cancel_group_change_callback          (GroupChange        *change);
+static void cancel_owner_change_callback          (OwnerChange        *change);
 static void parent_widget_destroyed_callback      (GtkWidget          *widget,
 						   gpointer            callback_data);
 static void select_image_button_callback          (GtkWidget          *widget,
@@ -1368,78 +1380,70 @@ attach_ellipsizing_value_field (NautilusPropertiesWindow *window,
 }
 
 static void
-group_change_callback (NautilusFile *file,
-		       GFile *res_loc,
-		       GError *error,
-		       NautilusPropertiesWindow *window)
+group_change_free (GroupChange *change)
 {
-	char *group;
+	nautilus_file_unref (change->file);
+	g_free (change->group);
+	g_object_unref (change->window);
 
-	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (window));
-	g_assert (window->details->group_change_file == file);
-
-	group = window->details->group_change_group;
-	g_assert (group != NULL);
-
-	/* Report the error if it's an error. */
-	eel_timed_wait_stop ((EelCancelCallback) cancel_group_change_callback, window);
-	nautilus_report_error_setting_group (file, error, GTK_WINDOW (window));
-
-	nautilus_file_unref (file);
-	g_free (group);
-
-	window->details->group_change_file = NULL;
-	window->details->group_change_group = NULL;
-	g_object_unref (G_OBJECT (window));
+	g_free (change);
 }
 
 static void
-cancel_group_change_callback (NautilusPropertiesWindow *window)
+group_change_callback (NautilusFile *file,
+		       GFile *res_loc,
+		       GError *error,
+		       GroupChange *change)
 {
-	NautilusFile *file;
-	char *group;
+	NautilusPropertiesWindow *window;
 
-	file = window->details->group_change_file;
-	g_assert (NAUTILUS_IS_FILE (file));
+	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (change->window));
+	g_assert (NAUTILUS_IS_FILE (change->file));
+	g_assert (change->group != NULL);
 
-	group = window->details->group_change_group;
-	g_assert (group != NULL);
+	if (!change->cancelled) {
+		/* Report the error if it's an error. */
+		eel_timed_wait_stop ((EelCancelCallback) cancel_group_change_callback, change);
+		nautilus_report_error_setting_group (change->file, error, change->window);
+	}
 
-	nautilus_file_cancel (file, (NautilusFileOperationCallback) group_change_callback, window);
+	window = NAUTILUS_PROPERTIES_WINDOW(change->window);
+	if (window->details->group_change == change) {
+		window->details->group_change = NULL;
+	}
 
-	g_free (group);
-	nautilus_file_unref (file);
+	group_change_free (change);
+}
 
-	window->details->group_change_file = NULL;
-	window->details->group_change_group = NULL;
-	g_object_unref (window);
+static void
+cancel_group_change_callback (GroupChange *change)
+{
+	g_assert (NAUTILUS_IS_FILE (change->file));
+	g_assert (change->group != NULL);
+
+	change->cancelled = TRUE;
+	nautilus_file_cancel (change->file, (NautilusFileOperationCallback) group_change_callback, change);
 }
 
 static gboolean
-schedule_group_change_timeout (NautilusPropertiesWindow *window)
+schedule_group_change_timeout (GroupChange *change)
 {
-	NautilusFile *file;
-	char *group;
+	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (change->window));
+	g_assert (NAUTILUS_IS_FILE (change->file));
+	g_assert (change->group != NULL);
 
-	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (window));
-
-	file = window->details->group_change_file;
-	g_assert (NAUTILUS_IS_FILE (file));
-
-	group = window->details->group_change_group;
-	g_assert (group != NULL);
+	change->timeout = 0;
 
 	eel_timed_wait_start
 		((EelCancelCallback) cancel_group_change_callback,
-		 window,
+		 change,
 		 _("Cancel Group Change?"),
-		 GTK_WINDOW (window));
+		 change->window);
 
 	nautilus_file_set_group
-		(file,  group,
-		 (NautilusFileOperationCallback) group_change_callback, window);
+		(change->file, change->group,
+		 (NautilusFileOperationCallback) group_change_callback, change);
 
-	window->details->group_change_timeout = 0;
 	return FALSE;
 }
 
@@ -1448,55 +1452,45 @@ schedule_group_change (NautilusPropertiesWindow *window,
 		       NautilusFile       *file,
 		       const char         *group)
 {
+	GroupChange *change;
+
 	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (window));
-	g_assert (window->details->group_change_group == NULL);
-	g_assert (window->details->group_change_file == NULL);
+	g_assert (window->details->group_change == NULL);
 	g_assert (NAUTILUS_IS_FILE (file));
 
-	window->details->group_change_file = nautilus_file_ref (file);
-	window->details->group_change_group = g_strdup (group);
-	g_object_ref (G_OBJECT (window));
-	window->details->group_change_timeout =
+	change = g_new0 (GroupChange, 1);
+
+	change->file = nautilus_file_ref (file);
+	change->group = g_strdup (group);
+	change->window = g_object_ref (G_OBJECT (window));
+	change->timeout =
 		g_timeout_add (CHOWN_CHGRP_TIMEOUT,
 			       (GSourceFunc) schedule_group_change_timeout,
-			       window);
+			       change);
+
+	window->details->group_change = change;
 }
 
 static void
 unschedule_or_cancel_group_change (NautilusPropertiesWindow *window)
 {
-	NautilusFile *file;
-	char *group;
+	GroupChange *change;
 
 	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (window));
 
-	file = window->details->group_change_file;
-	group = window->details->group_change_group;
+	change = window->details->group_change;
 
-	g_assert ((file == NULL && group == NULL) ||
-		  (file != NULL && group != NULL));
-
-	if (file != NULL) {
-		g_assert (NAUTILUS_IS_FILE (file));
-
-		if (window->details->group_change_timeout == 0) {
-			nautilus_file_cancel (file,
-					      (NautilusFileOperationCallback) group_change_callback, window);
-			eel_timed_wait_stop ((EelCancelCallback) cancel_group_change_callback, window);
+	if (change != NULL) {
+		if (change->timeout == 0) {
+			/* The operation was started, cancel it and let the operation callback free the change */
+			cancel_group_change_callback (change);
+			eel_timed_wait_stop ((EelCancelCallback) cancel_group_change_callback, change);
+		} else {
+			g_source_remove (change->timeout);
+			group_change_free (change);
 		}
 
-		nautilus_file_unref (file);
-		g_free (group);
-
-		window->details->group_change_file = NULL;
-		window->details->group_change_group = NULL;
-		g_object_unref (G_OBJECT (window));
-	}
-
-	if (window->details->group_change_timeout > 0) {
-		g_assert (file != NULL);
-		g_source_remove (window->details->group_change_timeout);
-		window->details->group_change_timeout = 0;
+		window->details->group_change = NULL;
 	}
 }
 
@@ -1783,78 +1777,70 @@ attach_group_combo_box (GtkGrid *grid,
 }	
 
 static void
-owner_change_callback (NautilusFile *file,
-                       GFile 	    *result_location,
-		       GError        *error,
-		       NautilusPropertiesWindow *window)
+owner_change_free (OwnerChange *change)
 {
-	char *owner;
+	nautilus_file_unref (change->file);
+	g_free (change->owner);
+	g_object_unref (change->window);
 
-	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (window));
-	g_assert (window->details->owner_change_file == file);
-
-	owner = window->details->owner_change_owner;
-	g_assert (owner != NULL);
-
-	/* Report the error if it's an error. */
-	eel_timed_wait_stop ((EelCancelCallback) cancel_owner_change_callback, window);
-	nautilus_report_error_setting_owner (file, error, GTK_WINDOW (window));
-
-	nautilus_file_unref (file);
-	g_free (owner);
-
-	window->details->owner_change_file = NULL;
-	window->details->owner_change_owner = NULL;
-	g_object_unref (G_OBJECT (window));
+	g_free (change);
 }
 
 static void
-cancel_owner_change_callback (NautilusPropertiesWindow *window)
+owner_change_callback (NautilusFile *file,
+                       GFile 	    *result_location,
+		       GError        *error,
+		       OwnerChange *change)
 {
-	NautilusFile *file;
-	char *owner;
+	NautilusPropertiesWindow *window;
 
-	file = window->details->owner_change_file;
-	g_assert (NAUTILUS_IS_FILE (file));
+	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (change->window));
+	g_assert (NAUTILUS_IS_FILE (change->file));
+	g_assert (change->owner != NULL);
 
-	owner = window->details->owner_change_owner;
-	g_assert (owner != NULL);
+	if (!change->cancelled) {
+		/* Report the error if it's an error. */
+		eel_timed_wait_stop ((EelCancelCallback) cancel_owner_change_callback, change);
+		nautilus_report_error_setting_owner (file, error, change->window);
+	}
 
-	nautilus_file_cancel (file, (NautilusFileOperationCallback) owner_change_callback, window);
+	window = NAUTILUS_PROPERTIES_WINDOW(change->window);
+	if (window->details->owner_change == change) {
+		window->details->owner_change = NULL;
+	}
 
-	nautilus_file_unref (file);
-	g_free (owner);
+	owner_change_free (change);
+}
 
-	window->details->owner_change_file = NULL;
-	window->details->owner_change_owner = NULL;
-	g_object_unref (window);
+static void
+cancel_owner_change_callback (OwnerChange *change)
+{
+	g_assert (NAUTILUS_IS_FILE (change->file));
+	g_assert (change->owner != NULL);
+
+	change->cancelled = TRUE;
+	nautilus_file_cancel (change->file, (NautilusFileOperationCallback) owner_change_callback, change);
 }
 
 static gboolean
-schedule_owner_change_timeout (NautilusPropertiesWindow *window)
+schedule_owner_change_timeout (OwnerChange *change)
 {
-	NautilusFile *file;
-	char *owner;
+	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (change->window));
+	g_assert (NAUTILUS_IS_FILE (change->file));
+	g_assert (change->owner != NULL);
 
-	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (window));
-
-	file = window->details->owner_change_file;
-	g_assert (NAUTILUS_IS_FILE (file));
-
-	owner = window->details->owner_change_owner;
-	g_assert (owner != NULL);
+	change->timeout = 0;
 
 	eel_timed_wait_start
 		((EelCancelCallback) cancel_owner_change_callback,
-		 window,
+		 change,
 		 _("Cancel Owner Change?"),
-		 GTK_WINDOW (window));
+		 change->window);
 
 	nautilus_file_set_owner
-		(file,  owner,
-		 (NautilusFileOperationCallback) owner_change_callback, window);
+		(change->file, change->owner,
+		 (NautilusFileOperationCallback) owner_change_callback, change);
 
-	window->details->owner_change_timeout = 0;
 	return FALSE;
 }
 
@@ -1863,55 +1849,47 @@ schedule_owner_change (NautilusPropertiesWindow *window,
 		       NautilusFile       *file,
 		       const char         *owner)
 {
+	OwnerChange *change;
+
 	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (window));
-	g_assert (window->details->owner_change_owner == NULL);
-	g_assert (window->details->owner_change_file == NULL);
+	g_assert (window->details->owner_change == NULL);
 	g_assert (NAUTILUS_IS_FILE (file));
 
-	window->details->owner_change_file = nautilus_file_ref (file);
-	window->details->owner_change_owner = g_strdup (owner);
-	g_object_ref (G_OBJECT (window));
-	window->details->owner_change_timeout =
+	change = g_new0 (OwnerChange, 1);
+
+	change->file = nautilus_file_ref (file);
+	change->owner = g_strdup (owner);
+	change->window = g_object_ref (G_OBJECT (window));
+	change->timeout =
 		g_timeout_add (CHOWN_CHGRP_TIMEOUT,
 			       (GSourceFunc) schedule_owner_change_timeout,
-			       window);
+			       change);
+
+	window->details->owner_change = change;
 }
 
 static void
 unschedule_or_cancel_owner_change (NautilusPropertiesWindow *window)
 {
-	NautilusFile *file;
-	char *owner;
+	OwnerChange *change;
 
 	g_assert (NAUTILUS_IS_PROPERTIES_WINDOW (window));
 
-	file = window->details->owner_change_file;
-	owner = window->details->owner_change_owner;
+	change = window->details->owner_change;
 
-	g_assert ((file == NULL && owner == NULL) ||
-		  (file != NULL && owner != NULL));
+	if (change != NULL) {
+		g_assert (NAUTILUS_IS_FILE (change->file));
 
-	if (file != NULL) {
-		g_assert (NAUTILUS_IS_FILE (file));
-
-		if (window->details->owner_change_timeout == 0) {
-			nautilus_file_cancel (file,
-					      (NautilusFileOperationCallback) owner_change_callback, window);
-			eel_timed_wait_stop ((EelCancelCallback) cancel_owner_change_callback, window);
+		if (change->timeout == 0) {
+			/* The operation was started, cancel it and let the operation callback free the change */
+			cancel_owner_change_callback (change);
+			eel_timed_wait_stop ((EelCancelCallback) cancel_owner_change_callback, change);
+		} else {
+			g_source_remove (change->timeout);
+			owner_change_free (change);
 		}
 
-		nautilus_file_unref (file);
-		g_free (owner);
-
-		window->details->owner_change_file = NULL;
-		window->details->owner_change_owner = NULL;
-		g_object_unref (G_OBJECT (window));
-	}
-
-	if (window->details->owner_change_timeout > 0) {
-		g_assert (file != NULL);
-		g_source_remove (window->details->owner_change_timeout);
-		window->details->owner_change_timeout = 0;
+		window->details->owner_change = NULL;
 	}
 }
 
