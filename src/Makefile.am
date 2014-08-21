@@ -106,7 +106,7 @@ stamp-nautilus-enum-types.h: $(headers) Makefile
 			--eprod "#define @ENUMPREFIX@_TYPE_@ENUMSHORT@ @enum_name@_get_type()\n" \
 			--eprod "GType @enum_name@_get_type (void);\n" \
 		$(headers) ) > xgen-gth \
-	&& (cmp -s xgen-gth nautilus-enum-type.h || cp xgen-gth nautilus-enum-types.h) \
+	&& (cmp -s xgen-gth nautilus-enum-types.h || cp xgen-gth nautilus-enum-types.h) \
 	&& rm -f xgen-gth \
 	&& echo timestamp > $(@F)
 
