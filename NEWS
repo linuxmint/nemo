@@ -1,3 +1,8 @@
+Major changes in 3.13.90:
+* Use margin-start/end instead of deprecated margin-left/right
+* Fix floating bar CSS style after Adwaita GTK move
+* Translation updates
+
 Major changes in 3.13.2:
 * Fix a missing unref (Robert Ancell)
 * Fix a crash in selection handling (Iain Lane)
