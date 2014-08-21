@@ -38,12 +38,6 @@ NautilusWindow > GtkGrid > .pane-separator:hover {
     color: shade (@theme_bg_color, 0.9);
 }
 
-NautilusWindow > GtkGrid > .pane-separator:backdrop,
-NautilusWindow > GtkGrid > .pane-separator:hover:backdrop {
-    border-color: @unfocused_borders;
-    background-color: @sidebar_bg_unfocused;
-}
-
 NautilusNotebook.notebook {
     border-right-width: 0;
     border-left-width: 0;
@@ -52,19 +46,6 @@ NautilusNotebook.notebook {
 
 NautilusNotebook .frame {
     border-width: 0;
-}
-
-NautilusToolbar .button {
-    icon-shadow: 0 1px @button_text_shadow;
-}
-
-NautilusToolbar .button:active {
-    icon-shadow: 0 1px @button_active_text_shadow;
-}
-
-NautilusToolbar .button:insensitive,
-NautilusToolbar .button:active *:insensitive {
-    icon-shadow: none;
 }
 
 NautilusQueryEditor .search-bar.toolbar {
