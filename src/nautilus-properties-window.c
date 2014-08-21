@@ -1712,18 +1712,18 @@ combo_box_row_separator_func (GtkTreeModel *model,
 static GtkComboBox *
 attach_combo_box (GtkGrid *grid,
 		  GtkWidget *sibling,
-		  gboolean two_columns)
+		  gboolean three_columns)
 {
 	GtkWidget *combo_box;
 	GtkWidget *aligner;
 
-	if (!two_columns) {
+	if (!three_columns) {
 		combo_box = gtk_combo_box_text_new ();
 	} else {
 		GtkTreeModel *model;
 		GtkCellRenderer *renderer;
 
-		model = GTK_TREE_MODEL (gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING));
+		model = GTK_TREE_MODEL (gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING));
 		combo_box = gtk_combo_box_new_with_model (model);
 		g_object_unref (G_OBJECT (model));
 
@@ -1897,20 +1897,15 @@ static void
 changed_owner_callback (GtkComboBox *combo_box, NautilusFile* file)
 {
 	NautilusPropertiesWindow *window;
-	char *owner_text;
-	char **name_array;
 	char *new_owner;
 	char *cur_owner;
 
 	g_assert (GTK_IS_COMBO_BOX (combo_box));
 	g_assert (NAUTILUS_IS_FILE (file));
 
-	owner_text = combo_box_get_active_entry (combo_box, 0);
-        if (! owner_text)
+	new_owner = combo_box_get_active_entry (combo_box, 2);
+        if (! new_owner)
 	    return;
-    	name_array = g_strsplit (owner_text, " - ", 2);
-	new_owner = name_array[0];
-	g_free (owner_text);
 	cur_owner = nautilus_file_get_owner_name (file);
 
 	if (strcmp (new_owner, cur_owner) != 0) {
@@ -1920,7 +1915,7 @@ changed_owner_callback (GtkComboBox *combo_box, NautilusFile* file)
 		unschedule_or_cancel_owner_change (window);
 		schedule_owner_change (window, file, new_owner);
 	}
-	g_strfreev (name_array);
+	g_free (new_owner);
 	g_free (cur_owner);
 }
 
@@ -1934,6 +1929,7 @@ synch_user_menu (GtkComboBox *combo_box, NautilusFile *file)
 	GtkTreeIter iter;
 	char *user_name;
 	char *owner_name;
+	char *nice_owner_name;
 	int user_index;
 	int owner_index;
 	char **name_array;
@@ -1963,7 +1959,7 @@ synch_user_menu (GtkComboBox *combo_box, NautilusFile *file)
 			user_name = (char *)node->data;
 
 			name_array = g_strsplit (user_name, "\n", 2);
-			if (name_array[1] != NULL) {
+			if (name_array[1] != NULL && *name_array[1] != 0) {
 				combo_text = g_strdup_printf ("%s - %s", name_array[0], name_array[1]);
 			} else {
 				combo_text = g_strdup (name_array[0]);
@@ -1973,6 +1969,7 @@ synch_user_menu (GtkComboBox *combo_box, NautilusFile *file)
 			gtk_list_store_set (store, &iter,
 					    0, combo_text,
 					    1, user_name,
+					    2, name_array[0],
 					    -1);
 
 			g_strfreev (name_array);
@@ -1980,8 +1977,9 @@ synch_user_menu (GtkComboBox *combo_box, NautilusFile *file)
 		}
 	}
 
-	owner_name = nautilus_file_get_string_attribute (file, "owner");
-	owner_index = tree_model_get_entry_index (model, 0, owner_name);
+	owner_name = nautilus_file_get_owner_name (file);
+	owner_index = tree_model_get_entry_index (model, 2, owner_name);
+	nice_owner_name = nautilus_file_get_string_attribute (file, "owner");
 
 	/* If owner wasn't in list, we prepend it (with a separator). 
 	 * This can happen if the owner is an id with no matching
@@ -1994,30 +1992,24 @@ synch_user_menu (GtkComboBox *combo_box, NautilusFile *file)
 			gtk_list_store_set (store, &iter,
 					    0, "-",
 					    1, NULL,
+					    2, NULL,
 					    -1);
 		}
 
-		name_array = g_strsplit (owner_name, " - ", 2);
-		if (name_array[1] != NULL) {
-			user_name = g_strdup_printf ("%s\n%s", name_array[0], name_array[1]);
-		} else {
-			user_name = g_strdup (name_array[0]);
-		}
 		owner_index = 0;
 
 		gtk_list_store_prepend (store, &iter);
 		gtk_list_store_set (store, &iter,
-				    0, owner_name,
-				    1, user_name,
+				    0, nice_owner_name,
+				    1, owner_name,
+				    2, owner_name,
 				    -1);
-
-		g_free (user_name);
-		g_strfreev (name_array);
 	}
 
 	gtk_combo_box_set_active (combo_box, owner_index);
 
 	g_free (owner_name);
+	g_free (nice_owner_name);
 	g_list_free_full (users, g_free);
 }	
 
