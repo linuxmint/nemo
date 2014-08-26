@@ -687,10 +687,20 @@ nemo_window_constructed (GObject *self)
         !window->details->disable_chrome)
         nemo_window_split_view_on (window);
 
+
 	application = NEMO_APPLICATION (g_application_get_default ());
 	window->details->bookmarks_id =
 		g_signal_connect_swapped (nemo_application_get_bookmarks (application), "changed",
 					  G_CALLBACK (nemo_window_pane_sync_bookmarks), window->details->active_pane);
+
+	window->details->sidebar_id = g_settings_get_string (nemo_window_state,
+                                                         NEMO_WINDOW_STATE_SIDE_PANE_VIEW);
+
+	if (g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_SIDEBAR)) {
+		nemo_window_show_sidebar (window);
+	} else {
+		nemo_window_hide_sidebar (window);
+	}	
 
 	nemo_profile_end (NULL);
 }
@@ -1691,15 +1701,6 @@ nemo_window_show (GtkWidget *widget)
 	NemoWindow *window;
 
 	window = NEMO_WINDOW (widget);
-
-    window->details->sidebar_id = g_settings_get_string (nemo_window_state,
-                                                         NEMO_WINDOW_STATE_SIDE_PANE_VIEW);
-
-	if (g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_SIDEBAR)) {
-		nemo_window_show_sidebar (window);
-	} else {
-		nemo_window_hide_sidebar (window);
-	}
 
 	GTK_WIDGET_CLASS (nemo_window_parent_class)->show (widget);	
 

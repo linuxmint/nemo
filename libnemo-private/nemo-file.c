@@ -735,11 +735,13 @@ NemoFile *
 nemo_file_get_by_uri (const char *uri)
 {
 	GFile *location;
-	NemoFile *file;
+	NemoFile *file = NULL;
 	
 	location = g_file_new_for_uri (uri);
-	file = nemo_file_get_internal (location, TRUE);
-	g_object_unref (location);
+	if (location) {
+		file = nemo_file_get_internal (location, TRUE);
+		g_object_unref (location);
+	}
 	
 	return file;
 }
