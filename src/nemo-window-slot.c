@@ -973,39 +973,36 @@ viewed_file_changed_callback (NemoFile *file,
 
 	if (nemo_file_is_gone (file) || (is_in_trash && !was_in_trash)) {
                 if (slot->details->viewed_file_seen) {
-			/* auto-show existing parent. */
 			GFile *go_to_file;
 			GFile *parent;
 			GFile *location;
 			GMount *mount;
 
-                        /* Detecting a file is gone may happen in the
-                         * middle of a pending location change, we
-                         * need to cancel it before closing the window
-                         * or things break.
-                         */
-			go_to_file = NULL;
 			parent = NULL;
-
 			location = nemo_file_get_location (file);
-			mount = nemo_get_mounted_mount_for_root (location);
-			if (mount != NULL) {
-				parent = g_file_get_parent (location);
-				g_object_unref (mount);
+
+			if (g_file_is_native (location)) {
+				mount = nemo_get_mounted_mount_for_root (location);
+
+				if (mount == NULL) {
+					parent = g_file_get_parent (location);
+				}
+
+				g_clear_object (&mount);
 			}
-			g_object_unref (location);
 
 			if (parent != NULL) {
+				/* auto-show existing parent */
 				go_to_file = nemo_find_existing_uri_in_hierarchy (parent);
-				g_object_unref (parent);
+			} else {
+				go_to_file = g_file_new_for_path (g_get_home_dir ());
 			}
 
-			if (go_to_file != NULL) {
-				nemo_window_slot_open_location (slot, go_to_file, 0);
-				g_object_unref (go_to_file);
-			} else {
-				nemo_window_slot_go_home (slot, FALSE);
-			}
+			nemo_window_slot_open_location (slot, go_to_file, 0);
+
+			g_clear_object (&parent);
+			g_object_unref (go_to_file);
+			g_object_unref (location);
                 }
 	} else {
                 new_location = nemo_file_get_location (file);
