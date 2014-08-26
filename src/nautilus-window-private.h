@@ -71,7 +71,6 @@ struct NautilusWindowDetails
         gboolean disable_chrome;
 
         guint sidebar_width_handler_id;
-        guint app_menu_visibility_id;
         guint bookmarks_id;
 };
 
