@@ -1256,28 +1256,26 @@ desktop_setting_changed_callback (gpointer user_data)
 }
 
 static void
-loading_uri_callback (NemoWindow *window,
-                            char *location,
-               NemoPlacesSidebar *sidebar)
+update_current_uri (NemoPlacesSidebar *sidebar)
 {
-    GtkTreeSelection *selection;
-    GtkTreeIter       iter_cat, iter_child;
-    gboolean          valid_cat, valid_child;
-    char              *uri;
-    gboolean found = FALSE;
+	GtkTreeSelection *selection;
+	GtkTreeIter       iter_cat, iter_child;
+	gboolean          valid_cat, valid_child;
+	char              *uri;
+	gboolean found = FALSE;
 
-    if (strcmp (sidebar->uri, location) != 0) {
-        g_free (sidebar->uri);
-                sidebar->uri = g_strdup (location);
+	if (sidebar->uri == NULL) {
+		return;
+	}
 
-        /* set selection if any place matches location */
-        selection = gtk_tree_view_get_selection (sidebar->tree_view);
-        gtk_tree_selection_unselect_all (selection);
-        valid_cat = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (sidebar->store_filter),
-                                                    &iter_cat);
+	/* set selection if any place matches location */
+	selection = gtk_tree_view_get_selection (sidebar->tree_view);
+	gtk_tree_selection_unselect_all (selection);
+	valid_cat = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (sidebar->store_filter),
+					       &iter_cat);
 
-        while (valid_cat) {
-            valid_child = gtk_tree_model_iter_children (GTK_TREE_MODEL (sidebar->store_filter),
+	while (valid_cat) {
+	    valid_child = gtk_tree_model_iter_children (GTK_TREE_MODEL (sidebar->store_filter),
                                                         &iter_child,
                                                         &iter_cat);
             while (valid_child) {
@@ -1285,7 +1283,7 @@ loading_uri_callback (NemoWindow *window,
                                	    PLACES_SIDEBAR_COLUMN_URI, &uri,
                                     -1);
                 if (uri != NULL) {
-                    if (strcmp (uri, location) == 0) {
+                    if (strcmp (uri, sidebar->uri) == 0) {
                         g_free (uri);
                         gtk_tree_selection_select_iter (selection, &iter_child);
                         found = TRUE;
@@ -1300,9 +1298,21 @@ loading_uri_callback (NemoWindow *window,
                 break;
             }
             valid_cat = gtk_tree_model_iter_next (GTK_TREE_MODEL (sidebar->store_filter),
-							                         &iter_cat);
-		}
-    }
+			                          &iter_cat);
+	}
+}
+
+static void
+loading_uri_callback (NemoWindow *window,
+		      char *location,
+		      NemoPlacesSidebar *sidebar)
+{
+        if (g_strcmp0 (sidebar->uri, location) != 0) {
+		g_free (sidebar->uri);
+                sidebar->uri = g_strdup (location);
+
+		update_current_uri (sidebar);
+	}
 }
 
 typedef struct {
@@ -4166,14 +4176,8 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 	slot = nemo_window_get_active_slot (window);
 
 	sidebar->bookmarks = nemo_application_get_bookmarks (app);
-	sidebar->uri = nemo_window_slot_get_current_uri (slot);
 
     breakpoint = g_settings_get_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT);
-
-    if (breakpoint < 0) {     // Default gsettings value is -1 (which translates to 'not previously set')
-        breakpoint = nemo_bookmark_list_length (sidebar->bookmarks);
-        g_settings_set_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT, breakpoint);
-    }
 
     sidebar->bookmark_breakpoint = breakpoint;
     g_signal_connect_swapped (nemo_window_state, "changed::" NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT,
@@ -4184,10 +4188,6 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 					  G_CALLBACK (update_places_on_idle),
 					  sidebar);
 
-	g_signal_connect_object (window, "loading_uri",
-				 G_CALLBACK (loading_uri_callback),
-				 sidebar, 0);
-			 
 	g_signal_connect_object (sidebar->volume_monitor, "volume_added",
 				 G_CALLBACK (volume_added_callback), sidebar, 0);
 	g_signal_connect_object (sidebar->volume_monitor, "volume_removed",
@@ -4208,6 +4208,12 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 				 G_CALLBACK (drive_changed_callback), sidebar, 0);
 
 	update_places (sidebar);
+
+	g_signal_connect_object (window, "loading-uri",
+				 G_CALLBACK (loading_uri_callback),
+				 sidebar, 0);
+	sidebar->uri = nemo_window_slot_get_current_uri (slot);
+	update_current_uri (sidebar);
 }
 
 static void
