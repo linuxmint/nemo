@@ -51,12 +51,12 @@ libnemo-private/org.nemo.gschema.xml.in
 src/nemo-application.c
 src/nemo-autorun-software.c
 src/nemo-bookmarks-window.c
-<<<<<<< HEAD
 [type: gettext/glade]src/nemo-bookmarks-window.glade
-=======
-[type: gettext/glade]src/nemo-bookmarks-window.ui
+src/nemo-canvas-view.c
+src/nemo-canvas-view-container.c
+src/nemo-canvas-view-ui.xml
+src/nemo-statusbar.c
 src/nemo-connect-server.c
->>>>>>> Merge commit '3ae2baac4384aee09ca7fc9985cf568960484e6c' into nemo_master_merge
 src/nemo-connect-server-dialog.c
 src/nemo-desktop-canvas-view.c
 src/nemo-desktop-canvas-view-ui.xml
@@ -83,7 +83,6 @@ src/nemo-progress-ui-handler.c
 src/nemo-properties-window.c
 src/nemo-query-editor.c
 src/nemo-shell-search-provider.c
-src/nemo-search-bar.c
 src/nemo-shell-ui.xml
 src/nemo-special-location-bar.c
 src/nemo-statusbar.c

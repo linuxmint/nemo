@@ -562,6 +562,9 @@ nemo_window_constructed (GObject *self)
 
 	G_OBJECT_CLASS (nemo_window_parent_class)->constructed (self);
 
+	application = NEMO_APPLICATION (g_application_get_default ());
+	gtk_window_set_application (GTK_WINDOW (window), GTK_APPLICATION (application));
+
 	/* disable automatic menubar handling, since we show our regular
 	 * menubar together with the app menu.
 	 */
@@ -686,12 +689,6 @@ nemo_window_constructed (GObject *self)
 	if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_START_WITH_DUAL_PANE) &&
             !window->details->disable_chrome)
 		nemo_window_split_view_on (window);
-
-
-	application = NEMO_APPLICATION (g_application_get_default ());
-	window->details->bookmarks_id =
-		g_signal_connect_swapped (nemo_application_get_bookmarks (application), "changed",
-					  G_CALLBACK (nemo_window_pane_sync_bookmarks), window->details->active_pane);
 
 	window->details->sidebar_id = g_settings_get_string (nemo_window_state,
                                                          NEMO_WINDOW_STATE_SIDE_PANE_VIEW);
@@ -1003,7 +1000,7 @@ nemo_window_report_location_change (NemoWindow *window)
 	uri = nemo_window_slot_get_current_uri (slot);
 
 	if (uri != NULL) {
-		g_signal_emit_by_name (window, "loading-uri", uri);
+		g_signal_emit (window, signals[LOADING_URI], 0, uri);
 		g_free (uri);
 	}
 }
