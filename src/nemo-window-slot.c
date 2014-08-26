@@ -2214,7 +2214,6 @@ nemo_window_slot_update_for_new_location (NemoWindowSlot *slot)
 	}
 
 	nemo_window_sync_menu_bar (window);
-	g_print("g_object_unref %p\n", new_location);
 	g_object_unref (new_location);
 }
 
