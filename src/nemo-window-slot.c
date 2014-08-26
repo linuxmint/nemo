@@ -211,8 +211,9 @@ sync_search_directory (NemoWindowSlot *slot)
 	text = nemo_query_get_text (query);
 
 	if (!strlen (text)) {
-		location = nemo_query_editor_get_location (slot->details->query_editor);
+		/* Prevent the location change from hiding the query editor in this case */
 		slot->details->load_with_search = TRUE;
+		location = nemo_query_editor_get_location (slot->details->query_editor);
 		nemo_window_slot_open_location (slot, location, 0);
 		g_object_unref (location);
 	} else {
@@ -255,7 +256,7 @@ static void
 query_editor_cancel_callback (NemoQueryEditor *editor,
 			      NemoWindowSlot *slot)
 {
-	toggle_toolbar_search_button (slot, FALSE);
+	nemo_window_slot_set_search_visible (slot, FALSE);
 }
 
 static void
@@ -321,16 +322,10 @@ show_query_editor (NemoWindowSlot *slot)
 	NemoSearchDirectory *search_directory;
 	GFile *location;
 
-	/* This might be called while we're still loading the location.
-	 * In such a case, just set slot->details->load_with_search to TRUE, to stop
-	 * sync_search_widgets() from hiding it again when loading has
-	 * completed.
-	 */
 	if (slot->details->location) {
 		location = slot->details->location;
 	} else {
 		location = slot->details->pending_location;
-		slot->details->load_with_search = TRUE;
 	}
 
 	directory = nemo_directory_get (location);
@@ -371,24 +366,51 @@ show_query_editor (NemoWindowSlot *slot)
 }
 
 void
-nemo_window_slot_set_query_editor_visible (NemoWindowSlot *slot,
-					       gboolean  visible)
+nemo_window_slot_set_search_visible (NemoWindowSlot *slot,
+					 gboolean            visible)
 {
+	gboolean old_visible;
+	GFile *return_location;
+	GtkAction *action;
+	gboolean active_slot;
+
+	old_visible = slot->details->search_visible;
+	slot->details->search_visible = visible;
+
+	return_location = NULL;
+	active_slot = (slot == slot->details->pane->active_slot);
+
 	if (visible) {
 		show_query_editor (slot);
 	} else {
-		/* Use the location bar as the return location */
-		GFile *location = NULL;
-		if (slot->details->query_editor != NULL) {
-		    location = nemo_query_editor_get_location (slot->details->query_editor);
+		if (old_visible && active_slot && slot->details->query_editor != NULL) {
+			/* Use the location bar as the return location */
+			return_location = nemo_query_editor_get_location (slot->details->query_editor);
+
 			/* Last try: use the home directory as the return location */
-			if (location == NULL) {
-				location = g_file_new_for_path (g_get_home_dir ());
+			if (return_location == NULL) {
+				return_location = g_file_new_for_path (g_get_home_dir ());
 			}
-			nemo_window_slot_open_location (slot, location, 0);
-			g_object_unref (location);
 		}
+
+		if (active_slot) {
+			nemo_window_pane_grab_focus (slot->details->pane);
+		}
+
 		hide_query_editor (slot);
+	}
+
+	if (!active_slot) {
+		return;
+	}
+
+	action = gtk_action_group_get_action (slot->details->pane->action_group,
+					      NEMO_ACTION_SEARCH);
+	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), visible);
+
+	if (return_location != NULL) {
+		nemo_window_go_to (slot->details->pane->window, return_location);
+		g_object_unref (return_location);
 	}
 }
 

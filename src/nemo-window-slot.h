@@ -94,11 +94,9 @@ NemoBookmark *nemo_window_slot_get_bookmark        (NemoWindowSlot *slot);
 NemoView *    nemo_window_slot_get_view            (NemoWindowSlot *slot);
 NemoView *    nemo_window_slot_get_new_view            (NemoWindowSlot *slot);
 
-void    nemo_window_slot_set_query_editor_visible	   (NemoWindowSlot *slot,
+void    nemo_window_slot_set_search_visible            (NemoWindowSlot *slot,
 							    gboolean            visible);
 gboolean nemo_window_slot_get_allow_stop               (NemoWindowSlot *slot);
-//void     nemo_window_slot_set_allow_stop		   (NemoWindowSlot *slot,
-//							    gboolean	        allow_stop);
 
 void    nemo_window_slot_update_title		   (NemoWindowSlot *slot);
 

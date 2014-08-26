@@ -646,11 +646,11 @@ action_show_hide_search_callback (GtkAction *action,
 	slot = pane->active_slot;
 
 	if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
-		remember_focus_widget (pane);
-		nemo_window_slot_set_query_editor_visible (slot, TRUE);
+	    remember_focus_widget (pane);
+	    nemo_window_slot_set_search_visible(slot, TRUE);
 	} else {
 		restore_focus_widget (pane);
-		nemo_window_slot_set_query_editor_visible (slot, FALSE);
+		nemo_window_slot_set_search_visible (slot, FALSE);
 	}
 }
 
