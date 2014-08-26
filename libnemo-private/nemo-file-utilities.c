@@ -1003,8 +1003,8 @@ nemo_find_existing_uri_in_hierarchy (GFile *location)
 		info = g_file_query_info (location,
 					  G_FILE_ATTRIBUTE_STANDARD_NAME,
 					  0, NULL, NULL);
-		g_object_unref (info);
 		if (info != NULL) {
+			g_object_unref (info);
 			return location;
 		}
 		tmp = location;
