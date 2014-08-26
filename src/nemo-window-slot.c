@@ -255,14 +255,7 @@ static void
 query_editor_cancel_callback (NemoQueryEditor *editor,
 			      NemoWindowSlot *slot)
 {
-	GtkAction *search;
-	NemoWindowPane *pane;
-
-        pane = slot->details->pane; 
-	search = gtk_action_group_get_action (pane->toolbar_action_group,
-					      NEMO_ACTION_SEARCH);
-
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (search), FALSE);
+	nemo_window_pane_set_search_action_active (slot->details->pane, FALSE);
 }
 
 static void
@@ -761,7 +754,7 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 	    !is_desktop) {
 
 		if (callback != NULL) {
-			callback (window, NULL, user_data);
+			callback (window, location, NULL, user_data);
 		}
 
 		goto done;
@@ -792,6 +785,7 @@ report_callback (NemoWindowSlot *slot,
 	if (slot->details->open_callback != NULL) {
 		gboolean res;
 		res = slot->details->open_callback (nemo_window_slot_get_window (slot),
+				                    slot->details->pending_location,
 						    error, slot->details->open_callback_user_data);
 		slot->details->open_callback = NULL;
 		slot->details->open_callback_user_data = NULL;

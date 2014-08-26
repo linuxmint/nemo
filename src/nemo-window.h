@@ -41,7 +41,8 @@ typedef struct NemoWindowDetails NemoWindowDetails;
 typedef enum {
         NEMO_WINDOW_OPEN_FLAG_CLOSE_BEHIND = 1 << 0,
         NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW = 1 << 1,
-        NEMO_WINDOW_OPEN_FLAG_NEW_TAB = 1 << 2
+        NEMO_WINDOW_OPEN_FLAG_NEW_TAB = 1 << 2,
+        NEMO_WINDOW_OPEN_FLAG_USE_DEFAULT_LOCATION = 1 << 3
 } NemoWindowOpenFlags;
 
 typedef enum {
@@ -50,6 +51,7 @@ typedef enum {
 }  NemoWindowOpenSlotFlags;
 
 typedef gboolean (* NemoWindowGoToCallback) (NemoWindow *window,
+                                                 GFile *location,
                                                  GError *error,
                                                  gpointer user_data);
 

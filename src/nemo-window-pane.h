@@ -102,6 +102,7 @@ void  nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 
 void nemo_window_pane_sync_bookmarks (NemoWindowPane *pane);
 void nemo_window_pane_sync_location_widgets (NemoWindowPane *pane);
+void nemo_window_pane_set_search_action_active (NemoWindowPane *pane, gboolean active);
 void nemo_window_pane_sync_search_widgets  (NemoWindowPane *pane);
 void nemo_window_pane_set_active (NemoWindowPane *pane, gboolean is_active);
 void nemo_window_pane_close_slot (NemoWindowPane *pane, NemoWindowSlot *slot);
