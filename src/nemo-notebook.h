@@ -29,6 +29,11 @@
 
 #include <glib.h>
 #include <gtk/gtk.h>
+
+typedef struct _NemoNotebookClass	NemoNotebookClass;
+typedef struct _NemoNotebook	NemoNotebook;
+typedef struct _NemoNotebookPrivate	NemoNotebookPrivate;
+
 #include "nemo-window-slot.h"
 
 G_BEGIN_DECLS
@@ -39,9 +44,6 @@ G_BEGIN_DECLS
 #define NEMO_IS_NOTEBOOK(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), NEMO_TYPE_NOTEBOOK))
 #define NEMO_IS_NOTEBOOK_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), NEMO_TYPE_NOTEBOOK))
 #define NEMO_NOTEBOOK_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), NEMO_TYPE_NOTEBOOK, NemoNotebookClass))
-
-typedef struct _NemoNotebookClass	NemoNotebookClass;
-typedef struct _NemoNotebook		NemoNotebook;
 
 struct _NemoNotebook
 {

@@ -25,9 +25,15 @@
 #ifndef NEMO_WINDOW_SLOT_H
 #define NEMO_WINDOW_SLOT_H
 
-#include "nemo-view.h"
-#include "nemo-window-types.h"
 #include "nemo-query-editor.h"
+
+typedef struct NemoWindowSlot NemoWindowSlot;
+typedef struct NemoWindowSlotClass NemoWindowSlotClass;
+typedef struct NemoWindowSlotDetails NemoWindowSlotDetails;
+
+#include "nemo-view.h"
+#include "nemo-window.h"
+#include "nemo-window-pane.h"
 
 #define NEMO_TYPE_WINDOW_SLOT	 (nemo_window_slot_get_type())
 #define NEMO_WINDOW_SLOT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), NEMO_TYPE_WINDOW_SLOT, NemoWindowSlotClass))
@@ -51,8 +57,6 @@ struct NemoWindowSlotClass {
 	void (* inactive)	(NemoWindowSlot *slot);
 	void (* changed_pane)	(NemoWindowSlot *slot);
 };
-
-typedef struct NemoWindowSlotDetails NemoWindowSlotDetails;
 
 /* Each NemoWindowSlot corresponds to a location in the window
  * for displaying a NemoView, i.e. a tab.
