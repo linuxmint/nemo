@@ -255,7 +255,7 @@ static void
 query_editor_cancel_callback (NemoQueryEditor *editor,
 			      NemoWindowSlot *slot)
 {
-	nemo_window_pane_set_search_action_active (slot->details->pane, FALSE);
+	toggle_toolbar_search_button (slot, FALSE);
 }
 
 static void
@@ -760,6 +760,7 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 		goto done;
         }
 
+	slot->details->pending_use_default_location = ((flags & NEMO_WINDOW_OPEN_FLAG_USE_DEFAULT_LOCATION) != 0);
         begin_location_change (target_slot, location, old_location, new_selection,
 			       NEMO_LOCATION_CHANGE_STANDARD, 0, NULL, callback, user_data);
 
@@ -785,7 +786,7 @@ report_callback (NemoWindowSlot *slot,
 	if (slot->details->open_callback != NULL) {
 		gboolean res;
 		res = slot->details->open_callback (nemo_window_slot_get_window (slot),
-				                    slot->details->pending_location,
+						    slot->details->pending_location,
 						    error, slot->details->open_callback_user_data);
 		slot->details->open_callback = NULL;
 		slot->details->open_callback_user_data = NULL;
@@ -1083,7 +1084,8 @@ mount_not_mounted_callback (GObject *source_object,
 	} else {
 		nemo_file_invalidate_all_attributes (slot->details->determine_view_file);
 		nemo_file_call_when_ready (slot->details->determine_view_file,
-					       NEMO_FILE_ATTRIBUTE_INFO,
+					       NEMO_FILE_ATTRIBUTE_INFO |
+					       NEMO_FILE_ATTRIBUTE_MOUNT,
 					       got_file_info_for_view_selection_callback,
 					       slot);
 	}
@@ -1102,10 +1104,11 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 	NemoWindowPane *pane;
 	NemoWindowSlot *slot;
 	NemoFile *viewed_file, *parent_file;
-	GFile *location;
+	GFile *location, *default_location;
 	GMountOperation *mount_op;
 	MountNotMountedData *data;
 	GtkApplication *app;
+	GMount *mount;
 
 	slot = callback_data;
 	window = nemo_window_slot_get_window (slot);
@@ -1141,6 +1144,35 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 		goto done;
 	}
 
+	mount = NULL;
+	default_location = NULL;
+
+	if (slot->details->pending_use_default_location) {
+		mount = nemo_file_get_mount (file);
+		slot->details->pending_use_default_location = FALSE;
+	}
+
+	if (mount != NULL) {
+		default_location = g_mount_get_default_location (mount);
+		g_object_unref (mount);
+	}
+
+	if (default_location != NULL &&
+	    !g_file_equal (slot->details->pending_location, default_location)) {
+		g_clear_object (&slot->details->pending_location);
+		slot->details->pending_location = default_location;
+		slot->details->determine_view_file = nemo_file_get (default_location);
+
+		nemo_file_invalidate_all_attributes (slot->details->determine_view_file);
+		nemo_file_call_when_ready (slot->details->determine_view_file,
+					       NEMO_FILE_ATTRIBUTE_INFO |
+					       NEMO_FILE_ATTRIBUTE_MOUNT,
+					       got_file_info_for_view_selection_callback,
+					       slot);
+
+		goto done;
+	}
+
 	parent_file = nemo_file_get_parent (file);
 	if ((parent_file != NULL) &&
 	    nemo_file_get_file_type (file) == G_FILE_TYPE_REGULAR) {
@@ -1158,7 +1190,8 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 		nemo_file_invalidate_all_attributes (slot->details->determine_view_file);
 		nemo_file_call_when_ready (slot->details->determine_view_file,
-					       NEMO_FILE_ATTRIBUTE_INFO,
+					       NEMO_FILE_ATTRIBUTE_INFO |
+					       NEMO_FILE_ATTRIBUTE_MOUNT,
 					       got_file_info_for_view_selection_callback,
 					       slot);
 
@@ -2400,7 +2433,6 @@ location_has_really_changed (NemoWindowSlot *slot)
 			g_free (uri);
 		}
 
-		g_print("g_object_ref %p\n", location_copy);
 		g_object_unref (location_copy);
 	}
 }
