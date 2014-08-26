@@ -79,14 +79,6 @@ action_close_window_slot_callback (GtkAction *action,
 }
 
 static void
-action_connect_to_server_callback (GtkAction *action, 
-				   gpointer user_data)
-{
-	g_action_group_activate_action (G_ACTION_GROUP (g_application_get_default ()),
-					"connect-to-server", NULL);
-}
-
-static void
 action_bookmarks_callback (GtkAction *action, 
 			   gpointer user_data)
 {
@@ -186,22 +178,6 @@ action_zoom_normal_callback (GtkAction *action,
 }
 
 static void
-action_preferences_callback (GtkAction *action, 
-			     gpointer user_data)
-{
-	g_action_group_activate_action (G_ACTION_GROUP (g_application_get_default ()),
-					"preferences", NULL);
-}
-
-static void
-action_about_nautilus_callback (GtkAction *action,
-				gpointer user_data)
-{
-	g_action_group_activate_action (G_ACTION_GROUP (g_application_get_default ()),
-					"about", NULL);
-}
-
-static void
 action_up_callback (GtkAction *action, 
 		     gpointer user_data) 
 {
@@ -212,65 +188,7 @@ action_up_callback (GtkAction *action,
 	nautilus_window_slot_go_up (slot, nautilus_event_get_window_open_flags ());
 }
 
-static void
-action_nautilus_manual_callback (GtkAction *action, 
-				 gpointer user_data)
-{
-	NautilusWindow *window;
-	GError *error;
-	GtkWidget *dialog;
-	const char* helpuri;
-	const char* name = gtk_action_get_name (action);
-
-	error = NULL;
-	window = NAUTILUS_WINDOW (user_data);
-
-	if (g_str_equal (name, "NautilusHelpSearch")) {
-		helpuri = "help:gnome-help/files-search";
-	} else if (g_str_equal (name,"NautilusHelpSort")) {
-		helpuri = "help:gnome-help/files-sort";
-	} else if (g_str_equal (name, "NautilusHelpLost")) {
-		helpuri = "help:gnome-help/files-lost";
-	} else if (g_str_equal (name, "NautilusHelpShare")) {
-		helpuri = "help:gnome-help/files-share";
-	} else {
-		helpuri = "help:gnome-help/files";
-	}
-
-	if (NAUTILUS_IS_DESKTOP_WINDOW (window)) {
-		nautilus_launch_application_from_command (gtk_window_get_screen (GTK_WINDOW (window)), "gnome-help", FALSE, NULL);
-	} else {
-		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (window)),
-			      helpuri,
-			      gtk_get_current_event_time (), &error);
-	}
-
-	if (error) {
-		dialog = gtk_message_dialog_new (GTK_WINDOW (window),
-						 GTK_DIALOG_MODAL,
-						 GTK_MESSAGE_ERROR,
-						 GTK_BUTTONS_OK,
-						 _("There was an error displaying help: \n%s"),
-						 error->message);
-		g_signal_connect (G_OBJECT (dialog), "response",
-				  G_CALLBACK (gtk_widget_destroy),
-				  NULL);
-
-		gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
-		gtk_widget_show (dialog);
-		g_error_free (error);
-	}
-}
-
 #define MENU_ITEM_MAX_WIDTH_CHARS 32
-
-static void
-action_close_all_windows_callback (GtkAction *action, 
-				   gpointer user_data)
-{
-	g_action_group_activate_action (G_ACTION_GROUP (g_application_get_default ()),
-					"quit", NULL);
-}
 
 static void
 action_back_callback (GtkAction *action, 
@@ -331,14 +249,6 @@ connect_proxy_cb (GtkActionGroup *action_group,
 
 	gtk_label_set_ellipsize (label, PANGO_ELLIPSIZE_END);
 	gtk_label_set_max_width_chars (label, MENU_ITEM_MAX_WIDTH_CHARS);
-}
-
-static void
-action_new_window_callback (GtkAction *action,
-			    gpointer user_data)
-{
-	g_action_group_activate_action (G_ACTION_GROUP (g_application_get_default ()),
-					"new-window", NULL);
 }
 
 static void
@@ -465,15 +375,10 @@ action_view_radio_changed (GtkRadioAction *action,
 }
 
 static const GtkActionEntry main_entries[] = {
-  /* name, stock id, label */  { "Help", NULL, N_("_Help") },
   /* name, stock id */         { NAUTILUS_ACTION_CLOSE, NULL,
   /* label, accelerator */       N_("_Close"), "<control>W",
   /* tooltip */                  N_("Close this folder"),
                                  G_CALLBACK (action_close_window_slot_callback) },
-                               { NAUTILUS_ACTION_PREFERENCES, NULL,
-                                 N_("Prefere_nces"),               
-                                 NULL, N_("Edit Nautilus preferences"),
-                                 G_CALLBACK (action_preferences_callback) },
   /* name, stock id */         { NAUTILUS_ACTION_UP, NULL,
   /* label, accelerator */	 N_("Open _Parent"), "<alt>Up",
 				 N_("Open the parent folder"),
@@ -490,30 +395,6 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       "ReloadAccel", "F5",
   /* tooltip */                  NULL,
                                  G_CALLBACK (action_reload_callback) },
-  /* name, stock id */         { NAUTILUS_ACTION_HELP, NULL,
-  /* label, accelerator */       N_("_All Topics"), "F1",
-  /* tooltip */                  N_("Display Nautilus help"),
-                                 G_CALLBACK (action_nautilus_manual_callback) },
-  /* name, stock id */         { "NautilusHelpSearch", NULL,
-  /* label, accelerator */       N_("Search for files"), NULL,
-  /* tooltip */                  N_("Locate files based on file name and type. Save your searches for later use."),
-                                 G_CALLBACK (action_nautilus_manual_callback) },
-  /* name, stock id */         { "NautilusHelpSort", NULL,
-  /* label, accelerator */       N_("Sort files and folders"), NULL,
-  /* tooltip */                  N_("Arrange files by name, size, type, or when they were changed."),
-                                 G_CALLBACK (action_nautilus_manual_callback) },
-  /* name, stock id */         { "NautilusHelpLost", NULL,
-  /* label, accelerator */       N_("Find a lost file"), NULL,
-  /* tooltip */                  N_("Follow these tips if you can't find a file you created or downloaded."),
-                                 G_CALLBACK (action_nautilus_manual_callback) },
-  /* name, stock id */         { "NautilusHelpShare", NULL,
-  /* label, accelerator */       N_("Share and transfer files"), NULL,
-  /* tooltip */                  N_("Easily transfer files to your contacts and devices from the file manager."),
-                                 G_CALLBACK (action_nautilus_manual_callback) },
-  /* name, stock id */         { NAUTILUS_ACTION_ABOUT, NULL,
-  /* label, accelerator */       N_("_About"), NULL,
-  /* tooltip */                  N_("Display credits for the creators of Nautilus"),
-                                 G_CALLBACK (action_about_nautilus_callback) },
   /* name, stock id */         { NAUTILUS_ACTION_ZOOM_IN, NULL,
   /* label, accelerator */       N_("Zoom _In"), "<control>plus",
   /* tooltip */                  N_("Increase the view size"),
@@ -538,26 +419,14 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("Normal Si_ze"), "<control>0",
   /* tooltip */                  N_("Use the normal view size"),
                                  G_CALLBACK (action_zoom_normal_callback) },
-  /* name, stock id */         { NAUTILUS_ACTION_CONNECT_TO_SERVER, NULL, 
-  /* label, accelerator */       N_("Connect to _Server…"), NULL,
-  /* tooltip */                  N_("Connect to a remote computer or shared disk"),
-                                 G_CALLBACK (action_connect_to_server_callback) },
   /* name, stock id */         { NAUTILUS_ACTION_GO_HOME, NAUTILUS_ICON_HOME,
   /* label, accelerator */       N_("_Home"), "<alt>Home",
   /* tooltip */                  N_("Open your personal folder"),
                                  G_CALLBACK (action_home_callback) },
-  /* name, stock id */         { NAUTILUS_ACTION_NEW_WINDOW, "window-new",
-				 N_("New _Window"), "<control>N",
-				 N_("Open another Nautilus window for the displayed location"),
-                                 G_CALLBACK (action_new_window_callback) },
   /* name, stock id */         { NAUTILUS_ACTION_NEW_TAB, "tab-new",
 				 N_("New _Tab"), "<control>T",
 				 N_("Open another tab for the displayed location"),
                                  G_CALLBACK (action_new_tab_callback) },
-  /* name, stock id */         { NAUTILUS_ACTION_CLOSE_ALL_WINDOWS, NULL,
-				 N_("Close _All Windows"), "<control>Q",
-				 N_("Close all Navigation windows"),
-                                 G_CALLBACK (action_close_all_windows_callback) },
   /* name, stock id */         { NAUTILUS_ACTION_BACK, "go-previous-symbolic",
 				 N_("_Back"), "<alt>Left",
 				 N_("Go to the previous visited location"),
