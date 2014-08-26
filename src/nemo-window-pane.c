@@ -1144,7 +1144,7 @@ nemo_window_pane_open_slot (NemoWindowPane *pane,
 				   (flags & NEMO_WINDOW_OPEN_SLOT_APPEND) != 0 ?
 				   -1 :
 				   gtk_notebook_get_current_page (GTK_NOTEBOOK (pane->notebook)) + 1,
-				   FALSE);
+				   TRUE);
 	g_signal_handlers_unblock_by_func (pane->notebook,
 					   G_CALLBACK (notebook_switch_page_cb),
 					   pane);
