@@ -1,3 +1,23 @@
+Nemo merged with changes in Nautilus 3.7.1.
+
+Changes:
+* Turn on again recursive search for the simple engine
+* Enable incremental loading for search directories
+* Add extra information to image properties page
+* Show free space pie chart for the local root filesystem
+* Resolve symbolic links before launching a file
+* Avoid sync I/O when reading bookmark locations
+* Don't add non-existent XDG folders to the sidebar
+* Don't offer to remove built-in XDG folder bookmarks
+* Fix black input field when renaming a file in icon view with XIM enabled
+* Fix wrong return location when unmounting a remote mount
+* Fix notebook tabs not properly switching after timeout when hovered
+* Fix search toggle button state inconsistent when switching between tabs
+* Fix crasher when using the Tracker engine from the Shell search provider
+* Fix crasher in Shell search provider
+* Fix crasher when unmounting a volume under certain circumstances
+* Switch to feshly opened notebook tabs 
+
 Nemo merged with changes in Nautilus 3.6.1.
 
 Changes:
