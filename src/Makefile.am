@@ -30,7 +30,7 @@ INCLUDES =							\
 	-DPREFIX=\""$(prefix)"\" 				\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
 	-DVERSION="\"$(VERSION)\"" 				\
-	$(DISABLE_DEPRECATED_CFLAGS)                            \
+	$(DISABLE_DEPRECATED) 		                        \
 	$(NULL)
 
 LDADD =\

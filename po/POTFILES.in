@@ -87,7 +87,6 @@ src/nemo-view.c
 src/nemo-view-dnd.c
 src/nemo-window-bookmarks.c
 src/nemo-window.c
-src/nemo-window-manage-views.c
 src/nemo-window-menus.c
 src/nemo-window-pane.c
 src/nemo-window-private.h

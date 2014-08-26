@@ -34,7 +34,6 @@
 #include "nemo-canvas-private.h"
 #include "nemo-lib-self-check-functions.h"
 #include "nemo-selection-canvas-item.h"
-#include <atk/atkaction.h>
 #include <eel/eel-accessibility.h>
 #include <eel/eel-vfs-extensions.h>
 #include <eel/eel-gtk-extensions.h>

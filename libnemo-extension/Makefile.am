@@ -9,7 +9,7 @@ INCLUDES=\
 	-I$(top_builddir) \
 	$(BASE_CFLAGS) \
 	$(WARNING_CFLAGS) \
-	$(DISABLE_DEPRECATED_CFLAGS) \
+	$(DISABLE_DEPRECATED) \
 	-DDATADIR=\""$(datadir)"\" \
 	$(NULL)
 

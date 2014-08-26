@@ -10,7 +10,7 @@ INCLUDES = 						\
 	$(COMMON_CFLAGS)				\
 	$(NEMO_CFLAGS)				\
 	$(WARNING_CFLAGS)				\
-	$(DISABLE_DEPRECATED_CFLAGS)			\
+	$(DISABLE_DEPRECATED)				\
 	$(TRACKER_CFLAGS)				\
 	-DDATADIR=\""$(datadir)"\" 			\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\

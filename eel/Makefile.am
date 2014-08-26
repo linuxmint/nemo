@@ -9,7 +9,7 @@ INCLUDES =						\
 	$(BASE_CFLAGS)					\
 	$(COMMON_CFLAGS)				\
 	$(WARNING_CFLAGS)				\
-	$(DISABLE_DEPRECATED_CFLAGS)			\
+	$(DISABLE_DEPRECATED)				\
 	-DDATADIR=\""$(datadir)"\"			\
 	-DSOURCE_DATADIR=\""$(top_srcdir)/data"\"	\
 	$(NULL)

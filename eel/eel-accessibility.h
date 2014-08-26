@@ -25,9 +25,7 @@
 #define EEL_ACCESSIBILITY_H
 
 #include <glib-object.h>
-#include <atk/atkobject.h>
-#include <atk/atkregistry.h>
-#include <atk/atkobjectfactory.h>
+#include <atk/atk.h>
 #include <gtk/gtk.h>
 #include <libgail-util/gailtextutil.h>
 

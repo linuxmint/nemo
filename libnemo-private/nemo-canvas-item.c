@@ -41,9 +41,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <glib/gi18n.h>
-#include <atk/atkimage.h>
-#include <atk/atkcomponent.h>
-#include <atk/atknoopobject.h>
+#include <atk/atk.h>
 #include <stdio.h>
 #include <string.h>
 
