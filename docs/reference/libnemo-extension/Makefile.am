@@ -15,9 +15,6 @@ DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.xml
 # e.g. DOC_SOURCE_DIR=../../../libnemo-extension
 DOC_SOURCE_DIR=$(top_srcdir)/libnemo-extension
 
-# Extra options to pass to gtkdoc-scangobj. Not normally needed.
-SCANGOBJ_OPTIONS=--type-init-func="g_type_init()"
-
 # Extra options to supply to gtkdoc-mkdb.
 MKDB_OPTIONS=--sgml-mode --output-format=xml
 

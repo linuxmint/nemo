@@ -832,7 +832,9 @@ nemo_shell_search_provider_app_class_init (NemoShellSearchProviderAppClass *klas
 static GApplication *
 nemo_shell_search_provider_app_new (void)
 {
-  g_type_init ();
+#if !GLIB_CHECK_VERSION (2, 35, 1)
+       g_type_init ();
+#endif
 
   return g_object_new (nemo_shell_search_provider_app_get_type (),
                        NULL);
