@@ -624,19 +624,6 @@ static const GtkRadioActionEntry view_radio_entries[] = {
 	  "<control>2", N_("View items as a grid of icons"), 1 }
 };
 
-static const gchar* app_actions[] = {
-	NAUTILUS_ACTION_NEW_WINDOW,
-	NAUTILUS_ACTION_CONNECT_TO_SERVER,
-	NAUTILUS_ACTION_EDIT_BOOKMARKS,
-	NAUTILUS_ACTION_PREFERENCES,
-	NAUTILUS_ACTION_HELP,
-	NAUTILUS_ACTION_ABOUT,
-	NAUTILUS_ACTION_CLOSE_ALL_WINDOWS,
-
-	/* also hide the help menu entirely when using an app menu */
-	"Help"
-};
-
 static void
 action_toggle_state (GSimpleAction *action,
 		     GVariant *parameter,
@@ -660,28 +647,6 @@ nautilus_window_initialize_actions (NautilusWindow *window)
 	g_action_map_add_action_entries (G_ACTION_MAP (window),
 					 win_entries, G_N_ELEMENTS (win_entries),
 					 window);
-}
-
-static void
-nautilus_window_menus_set_visibility_for_app_menu (NautilusWindow *window)
-{
-	const gchar *action_name;
-	gboolean shows_app_menu;
-	GtkSettings *settings;
-	GtkAction *action;
-	gint idx;
-
-	settings = gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window)));
-	g_object_get (settings,
-		      "gtk-shell-shows-app-menu", &shows_app_menu,
-		      NULL);
-
-	for (idx = 0; idx < G_N_ELEMENTS (app_actions); idx++) {
-		action_name = app_actions[idx];
-		action = gtk_action_group_get_action (window->details->main_action_group, action_name);
-
-		gtk_action_set_visible (action, !shows_app_menu);
-	}
 }
 
 /**
@@ -715,12 +680,6 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 					    view_radio_entries, G_N_ELEMENTS (view_radio_entries),
 					    -1, G_CALLBACK (action_view_radio_changed),
 					    window);
-
-	nautilus_window_menus_set_visibility_for_app_menu (window);
-	window->details->app_menu_visibility_id =
-		g_signal_connect_swapped (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
-					  "notify::gtk-shell-shows-app-menu",
-					  G_CALLBACK (nautilus_window_menus_set_visibility_for_app_menu), window);
 
 	action = gtk_action_group_get_action (action_group, NAUTILUS_ACTION_UP);
 	g_object_set (action, "short_label", _("_Up"), NULL);
@@ -762,16 +721,6 @@ nautilus_window_initialize_menus (NautilusWindow *window)
 
 	/* add the UI */
 	gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/gnome/nautilus/nautilus-shell-ui.xml", NULL);
-}
-
-void
-nautilus_window_finalize_menus (NautilusWindow *window)
-{
-	if (window->details->app_menu_visibility_id != 0) {
-		g_signal_handler_disconnect (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
-					     window->details->app_menu_visibility_id);
-		window->details->app_menu_visibility_id = 0;
-	}
 }
 
 static GList *

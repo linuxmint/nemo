@@ -1629,8 +1629,6 @@ nautilus_window_finalize (GObject *object)
 		window->details->sidebar_width_handler_id = 0;
 	}
 
-	nautilus_window_finalize_menus (window);
-
 	g_clear_object (&window->details->ui_manager);
 
 	/* nautilus_window_close() should have run */

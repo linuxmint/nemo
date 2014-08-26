@@ -110,7 +110,6 @@ void nautilus_window_sync_up_button        (NautilusWindow *window);
 /* window menus */
 void               nautilus_window_initialize_actions                    (NautilusWindow    *window);
 void               nautilus_window_initialize_menus                      (NautilusWindow    *window);
-void               nautilus_window_finalize_menus                        (NautilusWindow    *window);
 
 void               nautilus_window_update_show_hide_menu_items           (NautilusWindow     *window);
 
