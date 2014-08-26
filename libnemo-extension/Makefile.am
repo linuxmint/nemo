@@ -9,7 +9,7 @@ AM_CPPFLAGS =\
 	-I$(top_builddir) \
 	$(BASE_CFLAGS) \
 	$(WARNING_CFLAGS) \
-	$(DISABLE_DEPRECATED_CFLAGS) \
+	$(DISABLE_DEPRECATED) \
     -DLIBEXECDIR=\""$(libexecdir)"\" \
 	-DDATADIR=\""$(datadir)"\" \
 	$(NULL)

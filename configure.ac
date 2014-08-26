@@ -33,6 +33,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([1.11 dist-xz no-dist-gzip tar-ustar])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AM_MAINTAINER_MODE([enable])
+GNOME_MAINTAINER_MODE_DEFINES
 
 dnl We need to decrement current by one in the calculation of the age because
 dnl the library was started with version "1:0:0" instead of "0:0:0"
@@ -359,11 +360,6 @@ PKG_CHECK_MODULES(NEMO, [
 	gio-unix-2.0 >= glib_minver
 	libnotify >= notify_minver
 ])
-
-AC_SUBST(NEMO_CFLAGS)
-AC_SUBST(NEMO_LIBS)
-
-AC_SUBST(DISABLE_DEPRECATED_CFLAGS)
 
 dnl Multimedia keys
 AC_CHECK_HEADERS([X11/XF86keysym.h])
