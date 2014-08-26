@@ -572,11 +572,11 @@ action_show_hide_search_callback (GtkAction *action,
 	slot = pane->active_slot;
 
 	if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
-		remember_focus_widget (pane);
-		nemo_window_slot_set_query_editor_visible (slot, TRUE);
+	    remember_focus_widget (pane);
+	    nemo_window_slot_set_search_visible(slot, TRUE);
 	} else {
 		restore_focus_widget (pane);
-		nemo_window_slot_set_query_editor_visible (slot, FALSE);
+		nemo_window_slot_set_search_visible (slot, FALSE);
 	}
 }
 
@@ -986,10 +986,13 @@ nemo_window_pane_slot_close (NemoWindowPane *pane,
 void
 nemo_window_pane_grab_focus (NemoWindowPane *pane)
 {
-	if (NEMO_IS_WINDOW_PANE (pane) && pane->active_slot) {
+	if (NEMO_IS_WINDOW_PANE (pane) &&
+	    pane->active_slot) {
 		NemoView *view = nemo_window_slot_get_view (pane->active_slot);
-		nemo_view_grab_focus (view);
-	}	
+                if (view) {
+		        nemo_view_grab_focus (view);	
+                }
+        }	
 }
 
 void
