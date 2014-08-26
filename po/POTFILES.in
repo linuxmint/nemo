@@ -80,6 +80,7 @@ src/nemo-shell-search-provider.c
 src/nemo-search-bar.c
 src/nemo-shell-ui.xml
 src/nemo-special-location-bar.c
+src/nemo-toolbar.c
 src/nemo-trash-bar.c
 src/nemo-tree-sidebar.c
 src/nemo-tree-sidebar-model.c
