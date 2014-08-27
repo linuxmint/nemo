@@ -4008,6 +4008,18 @@ get_custom_icon_metadata_name (NemoFile *file)
 }
 
 static GIcon *
+get_link_icon (NemoFile *file)
+{
+	GIcon *icon = NULL;
+
+	if (file->details->got_link_info && file->details->custom_icon != NULL) {
+		icon = g_object_ref (file->details->custom_icon);
+	}
+
+	return icon;
+}
+
+static GIcon *
 get_custom_icon (NemoFile *file)
 {
 	char *custom_icon_uri, *custom_icon_name;
@@ -4040,11 +4052,7 @@ get_custom_icon (NemoFile *file)
 			g_free (custom_icon_name);
 		}
 	}
- 
-	if (icon == NULL && file->details->got_link_info && file->details->custom_icon != NULL) {
-		icon = g_object_ref (file->details->custom_icon);
- 	}
- 
+
 	return icon;
 }
 
@@ -4135,6 +4143,12 @@ nemo_file_get_gicon (NemoFile *file,
 	}
 
 	icon = get_custom_icon (file);
+
+	if (icon != NULL) {
+		return icon;
+	}
+
+	icon = get_link_icon (file);
 
 	if (icon != NULL) {
 		return icon;
@@ -4272,27 +4286,36 @@ nemo_file_get_icon (NemoFile *file,
 {
 	NemoIconInfo *icon;
 	GIcon *gicon;
+	gboolean custom_icon;
 	GdkPixbuf *raw_pixbuf, *scaled_pixbuf;
 	int modified_size;
 
 	if (file == NULL) {
 		return NULL;
 	}
-	
-	gicon = get_custom_icon (file);
-	if (gicon) {
-		GdkPixbuf *pixbuf;
 
+	custom_icon = FALSE;
+	gicon = get_custom_icon (file);
+
+	if (gicon) {
+		custom_icon = TRUE;
+	} else {
+		gicon = get_link_icon (file);
+	}
+
+	if (gicon) {
 		icon = nemo_icon_info_lookup (gicon, size);
 		g_object_unref (gicon);
 
-		pixbuf = nemo_icon_info_get_pixbuf (icon);
-		if (pixbuf != NULL) {
-			nemo_ui_frame_image (&pixbuf);
-			g_object_unref (icon);
+		if (custom_icon) {
+			raw_pixbuf = nemo_icon_info_get_pixbuf (icon);
+			if (raw_pixbuf != NULL) {
+				nemo_ui_frame_image (&raw_pixbuf);
+				g_object_unref (icon);
 
-			icon = nemo_icon_info_new_for_pixbuf (pixbuf);
-			g_object_unref (pixbuf);
+				icon = nemo_icon_info_new_for_pixbuf (raw_pixbuf);
+				g_object_unref (raw_pixbuf);
+			}
 		}
 
 		return icon;

@@ -584,7 +584,10 @@ nemo_application_open (GApplication *app,
 static GtkWindow *
 get_focus_window (GtkApplication *application)
 {
-	GList *windows;
+#if GTK_CHECK_VERSION(3, 6, 0)
+        return gtk_application_get_active_window (application);
+#else  
+        GList *windows;
 	GtkWindow *window = NULL;
 
 	/* the windows are ordered with the last focused first */
@@ -595,6 +598,7 @@ get_focus_window (GtkApplication *application)
 	}
 
 	return window;
+#endif
 }
 
 static gboolean

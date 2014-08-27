@@ -351,7 +351,6 @@ static void unschedule_pop_up_location_context_menu (NemoView *view);
 static void disconnect_bookmark_signals (NemoView *view);
 
 G_DEFINE_TYPE (NemoView, nemo_view, GTK_TYPE_SCROLLED_WINDOW);
-#define parent_class nemo_view_parent_class
 
 /* virtual methods (public and non-public) */
 
@@ -11003,7 +11002,7 @@ nemo_view_scroll_event (GtkWidget *widget,
 		return TRUE;
 	}
 
-	return GTK_WIDGET_CLASS (parent_class)->scroll_event (widget, event);
+	return GTK_WIDGET_CLASS (nemo_view_parent_class)->scroll_event (widget, event);
 }
 
 
@@ -11019,8 +11018,8 @@ nemo_view_parent_set (GtkWidget *widget,
 	parent = gtk_widget_get_parent (widget);
 	g_assert (parent == NULL || old_parent == NULL);
 
-	if (GTK_WIDGET_CLASS (parent_class)->parent_set != NULL) {
-		GTK_WIDGET_CLASS (parent_class)->parent_set (widget, old_parent);
+	if (GTK_WIDGET_CLASS (nemo_view_parent_class)->parent_set != NULL) {
+		GTK_WIDGET_CLASS (nemo_view_parent_class)->parent_set (widget, old_parent);
 	}
 
 	if (parent != NULL) {
