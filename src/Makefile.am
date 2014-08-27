@@ -75,7 +75,7 @@ headers =					\
 	nemo-special-location-bar.h		\
 	$(NULL)
 
-nemo-resources.c: nemo.gresource.xml $(UI_FILES)
+nemo-resources.c: nemo.gresource.xml $(shell glib-compile-resources --generate-dependencies $(srcdir)/nemo.gresource.xml)
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-source --c-name nemo $(srcdir)/nemo.gresource.xml
 
 nemo-resources.h: nemo.gresource.xml
