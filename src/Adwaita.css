@@ -38,12 +38,6 @@ NautilusWindow > GtkGrid > .pane-separator:hover {
     color: shade (@theme_bg_color, 0.9);
 }
 
-NautilusNotebook.notebook {
-    border-right-width: 0;
-    border-left-width: 0;
-    border-bottom-width: 0;
-}
-
 NautilusNotebook .frame {
     border-width: 0;
 }
