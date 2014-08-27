@@ -63,7 +63,6 @@
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-profile.h>
 #include <libnemo-private/nemo-clipboard.h>
-#include <libnemo-private/nemo-search-directory.h>
 #include <libnemo-private/nemo-signaller.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_WINDOW
@@ -208,24 +207,21 @@ nemo_window_slot_added (NemoWindow *window,  NemoWindowSlot *slot)
 void
 nemo_window_new_tab (NemoWindow *window)
 {
-	NemoWindowSlot *current_slot;
-	NemoWindowPane *current_pane;
-	NemoWindowSlot *new_slot;
+	NemoWindowSlot *slot;
 	NemoWindowOpenFlags flags;
 	GFile *location;
 	int new_slot_position;
 	char *scheme;
 
-	current_slot = nemo_window_get_active_slot (window);
-	location = nemo_window_slot_get_location (current_slot);
-	current_pane = nemo_window_slot_get_pane(current_slot);
+	slot = nemo_window_get_active_slot (window);
+	location = nemo_window_slot_get_location (slot);
 
 	if (location != NULL) {
-		flags = 0;
+		flags = NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
 
 		new_slot_position = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_NEW_TAB_POSITION);
 		if (new_slot_position == NEMO_NEW_TAB_POSITION_END) {
-			flags = NEMO_WINDOW_OPEN_SLOT_APPEND;
+			flags |= NEMO_WINDOW_OPEN_SLOT_APPEND;
 		}
 
 		scheme = g_file_get_uri_scheme (location);
@@ -237,9 +233,7 @@ nemo_window_new_tab (NemoWindow *window)
 
 		g_free (scheme);
 
-		new_slot = nemo_window_pane_open_slot (current_pane, flags);
-		nemo_window_set_active_slot (window, new_slot);
-		nemo_window_slot_open_location (new_slot, location, 0);
+		nemo_window_slot_open_location (slot, location, flags);
 		g_object_unref (location);
 	}
 }

@@ -986,7 +986,6 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 {
 	editor->details = G_TYPE_INSTANCE_GET_PRIVATE (editor, NEMO_TYPE_QUERY_EDITOR,
 						       NemoQueryEditorDetails);
-
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 }
 
