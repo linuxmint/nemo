@@ -147,19 +147,6 @@ static void location_has_really_changed (NemoWindowSlot *slot);
 static void nemo_window_slot_connect_new_content_view (NemoWindowSlot *slot);
 
 static void
-toggle_toolbar_search_button (NemoWindowSlot *slot,
-			      gboolean            active)
-{
-	GtkActionGroup *action_group;
-	GtkAction *action;
-
-	action_group = slot->details->pane->action_group;
-	action = gtk_action_group_get_action (action_group, NEMO_ACTION_SEARCH);
-
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), active);
-}
-
-static void
 nemo_window_slot_sync_search_widgets (NemoWindowSlot *slot)
 {
 	NemoDirectory *directory;
@@ -169,19 +156,16 @@ nemo_window_slot_sync_search_widgets (NemoWindowSlot *slot)
 		return;
 	}
 
-	toggle = FALSE;
+	toggle = slot->details->search_visible;
 
-	if (slot->details->load_with_search) {
-		toggle = TRUE;
-	} else if (slot->details->content_view != NULL) {
+	if (slot->details->content_view != NULL) {
 		directory = nemo_view_get_model (slot->details->content_view);
-		if (NEMO_IS_SEARCH_DIRECTORY (directory) ||
-		    gtk_widget_get_visible (GTK_WIDGET (slot->details->query_editor))) {
+		if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
 			toggle = TRUE;
 		}
 	}
 
-	toggle_toolbar_search_button (slot, toggle);
+	nemo_window_slot_set_search_visible (slot, toggle);
 }
 
 gboolean
@@ -369,11 +353,13 @@ void
 nemo_window_slot_set_search_visible (NemoWindowSlot *slot,
 					 gboolean            visible)
 {
+	GtkActionGroup *action_group;
+	GtkAction *action;
 	gboolean old_visible;
 	GFile *return_location;
-	GtkAction *action;
 	gboolean active_slot;
 
+	/* set search active state for the slot */
 	old_visible = slot->details->search_visible;
 	slot->details->search_visible = visible;
 
@@ -383,11 +369,14 @@ nemo_window_slot_set_search_visible (NemoWindowSlot *slot,
 	if (visible) {
 		show_query_editor (slot);
 	} else {
-		if (old_visible && active_slot && slot->details->query_editor != NULL) {
-			/* Use the location bar as the return location */
+		/* If search was active on this slot and became inactive, change
+		 * the slot location to the real directory.
+		 */
+		if (old_visible && active_slot) {
+			/* Use the query editor search root if possible */
 			return_location = nemo_query_editor_get_location (slot->details->query_editor);
 
-			/* Last try: use the home directory as the return location */
+			/* Use the home directory as a fallback */
 			if (return_location == NULL) {
 				return_location = g_file_new_for_path (g_get_home_dir ());
 			}
@@ -397,6 +386,7 @@ nemo_window_slot_set_search_visible (NemoWindowSlot *slot,
 			nemo_window_pane_grab_focus (slot->details->pane);
 		}
 
+		/* Now hide the editor and clear its state */
 		hide_query_editor (slot);
 	}
 
@@ -404,12 +394,17 @@ nemo_window_slot_set_search_visible (NemoWindowSlot *slot,
 		return;
 	}
 
-	action = gtk_action_group_get_action (slot->details->pane->action_group,
-					      NEMO_ACTION_SEARCH);
+	/* also synchronize the window action state */
+	action_group = slot->details->pane->action_group;
+	action = gtk_action_group_get_action (action_group, NEMO_ACTION_SEARCH);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), visible);
 
+
+	/* If search was active on this slot and became inactive, change
+	 * the slot location to the real directory.
+	 */
 	if (return_location != NULL) {
-		nemo_window_go_to (slot->details->pane->window, return_location);
+		nemo_window_slot_open_location (slot, return_location, 0);
 		g_object_unref (return_location);
 	}
 }
@@ -746,6 +741,7 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 
 		target_slot = nemo_window_pane_open_slot (nemo_window_get_active_pane (window),
 							      slot_flags);
+		nemo_window_set_active_slot (window, target_slot);
 	}
 
 	/* close the current window if the flags say so */
@@ -1415,9 +1411,20 @@ create_content_view (NemoWindowSlot *slot,
 	}
 
 	if (NEMO_IS_SEARCH_DIRECTORY (old_directory) &&
-	    !NEMO_IS_SEARCH_DIRECTORY (new_directory) &&
-	    slot->details->pending_selection == NULL) {
-		slot->details->pending_selection = nemo_view_get_selection (slot->details->content_view);
+	    !NEMO_IS_SEARCH_DIRECTORY (new_directory)) {
+		/* Reset the search_active state when going out of a search directory,
+		 * before nautilus_window_slot_sync_search_widgets() is called
+		 * if we're not being loaded with search visible.
+		 */
+		if (!slot->details->load_with_search) {
+			slot->details->search_visible = FALSE;
+		}
+
+		slot->details->load_with_search = FALSE;
+
+		if (slot->details->pending_selection == NULL) {
+			slot->details->pending_selection = nemo_view_get_selection (slot->details->content_view);
+		}
 	}
 
 	/* Actually load the pending location and selection: */

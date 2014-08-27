@@ -507,6 +507,26 @@ search_callback_add_pending_file_callbacks (SearchCallback *callback)
 }
 
 static void
+search_directory_ensure_loaded (NemoSearchDirectory *search)
+{
+	if (search->details->search_loaded) {
+		return;
+	}
+
+	search->details->search_loaded = TRUE;
+	nemo_directory_emit_done_loading (NEMO_DIRECTORY (search));
+
+	/* Add all file callbacks */
+	g_list_foreach (search->details->pending_callback_list,
+			(GFunc)search_callback_add_pending_file_callbacks, NULL);
+	search->details->callback_list = g_list_concat (search->details->callback_list,
+							search->details->pending_callback_list);
+
+	g_list_free (search->details->pending_callback_list);
+	search->details->pending_callback_list = NULL;
+}
+
+static void
 search_engine_hits_added (NemoSearchEngine *engine, GList *hits, 
 			  NemoSearchDirectory *search)
 {
@@ -554,19 +574,7 @@ search_engine_hits_added (NemoSearchEngine *engine, GList *hits,
 	nemo_file_emit_changed (file);
 	nemo_file_unref (file);
 
-	if (!search->details->search_loaded) {
-		search->details->search_loaded = TRUE;
-		nemo_directory_emit_done_loading (NEMO_DIRECTORY (search));
-
-		/* Add all file callbacks */
-		g_list_foreach (search->details->pending_callback_list,
-				(GFunc)search_callback_add_pending_file_callbacks, NULL);
-		search->details->callback_list = g_list_concat (search->details->callback_list,
-								search->details->pending_callback_list);
-
-		g_list_free (search->details->pending_callback_list);
-		search->details->pending_callback_list = NULL;
-	}
+	search_directory_ensure_loaded (search);
 }
 
 static void
@@ -579,6 +587,12 @@ search_engine_error (NemoSearchEngine *engine, const char *error_message, NemoSe
 	nemo_directory_emit_load_error (NEMO_DIRECTORY (search),
 					    error);
 	g_error_free (error);
+}
+
+static void
+search_engine_finished (NemoSearchEngine *engine, NemoSearchDirectory *search)
+{
+	search_directory_ensure_loaded (search);
 }
 
 static void
@@ -771,6 +785,9 @@ nemo_search_directory_init (NemoSearchDirectory *search)
 			  search);
 	g_signal_connect (search->details->engine, "error",
 			  G_CALLBACK (search_engine_error),
+			  search);
+	g_signal_connect (search->details->engine, "finished",
+			  G_CALLBACK (search_engine_finished),
 			  search);
 }
 
