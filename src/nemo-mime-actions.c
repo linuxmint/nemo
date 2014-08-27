@@ -821,6 +821,16 @@ get_activation_action (NemoFile *file)
 }
 
 gboolean
+nemo_mime_file_launches (NemoFile *file)
+{
+	ActivationAction activation_action;
+
+	activation_action = get_activation_action (file);
+
+	return (activation_action == ACTIVATION_ACTION_LAUNCH);
+}
+
+gboolean
 nemo_mime_file_opens_in_external_app (NemoFile *file)
 {
   ActivationAction activation_action;
@@ -1709,7 +1719,7 @@ activation_mount_not_mounted (ActivateParameters *parameters)
 	files = get_file_list_for_launch_locations (parameters->locations);
 	nemo_file_list_call_when_ready
 		(files,
-		 nemo_mime_actions_get_required_file_attributes () | NEMO_FILE_ATTRIBUTE_LINK_INFO,
+		 nemo_mime_actions_get_required_file_attributes (),
 		 &parameters->files_handle,
 		 activate_callback, parameters);
 	nemo_file_list_free (files);
@@ -1832,7 +1842,7 @@ activate_activation_uris_ready_callback (GList *files_ignore,
 	files = get_file_list_for_launch_locations (parameters->locations);
 	nemo_file_list_call_when_ready
 		(files,
-		 nemo_mime_actions_get_required_file_attributes () | NEMO_FILE_ATTRIBUTE_LINK_INFO,
+		 nemo_mime_actions_get_required_file_attributes (),
 		 &parameters->files_handle,
 		 activate_callback, parameters);
 	nemo_file_list_free (files);
@@ -1864,9 +1874,7 @@ activation_get_activation_uris (ActivateParameters *parameters)
 
 	files = get_file_list_for_launch_locations (parameters->locations);
 	nemo_file_list_call_when_ready
-		(files,
-		 NEMO_FILE_ATTRIBUTE_INFO |
-		 NEMO_FILE_ATTRIBUTE_LINK_INFO,
+		(files, nemo_mime_actions_get_required_file_attributes (),
 		 &parameters->files_handle,
 		 activate_activation_uris_ready_callback, parameters);
 	nemo_file_list_free (files);

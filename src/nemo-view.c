@@ -9651,7 +9651,7 @@ real_update_menus (NemoView *view)
 	gboolean show_open_alternate;
 	gboolean show_open_in_new_tab;
 	gboolean can_open;
-	gboolean show_app;
+	gboolean show_app, show_run;
 	gboolean show_save_search;
 	gboolean save_search_sensitive;
 	gboolean show_save_search_as;
@@ -9735,7 +9735,7 @@ real_update_menus (NemoView *view)
 					      NEMO_ACTION_OPEN);
 	gtk_action_set_sensitive (action, selection_count != 0);
 	
-	can_open = show_app = selection_count != 0;
+	can_open = show_app = show_run = selection_count != 0;
 
 	for (l = selection; l != NULL; l = l->next) {
 		NemoFile *file;
@@ -9746,7 +9746,11 @@ real_update_menus (NemoView *view)
 			show_app = FALSE;
 		}
 
-		if (!show_app) {
+		if (!nemo_mime_file_launches (file)) {
+			show_run = FALSE;
+		}
+
+		if (!show_app && !show_run) {
 			break;
 		}
 	} 
@@ -9774,11 +9778,14 @@ real_update_menus (NemoView *view)
 
 		g_free (escaped_app);
 		g_object_unref (app);
+	} else if (show_run) {
+		label_with_underscore = g_strdup (_("Run"));
+	} else {
+		label_with_underscore = g_strdup (_("_Open"));
 	}
 
-	g_object_set (action, "label", 
-		      label_with_underscore ? label_with_underscore : _("_Open"),
-		      NULL);
+	g_object_set (action, "label", label_with_underscore, NULL);
+	g_free (label_with_underscore);
 
 	menuitem = gtk_ui_manager_get_widget (
 					      nemo_view_get_ui_manager (view),
@@ -9804,8 +9811,6 @@ real_update_menus (NemoView *view)
 	g_object_unref (app_icon);
 
 	gtk_action_set_visible (action, can_open);
-	
-	g_free (label_with_underscore);
 
 	show_open_alternate = file_list_all_are_folders (selection) &&
 		selection_count > 0 &&
