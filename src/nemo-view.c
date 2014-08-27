@@ -9922,7 +9922,7 @@ real_update_menus (NemoView *view)
 	gboolean show_open_alternate;
 	gboolean show_open_in_new_tab;
 	gboolean can_open;
-	gboolean show_app;
+	gboolean show_app, show_run;
     gboolean showing_search;
 	gboolean show_save_search;
 	gboolean save_search_sensitive;
@@ -9941,7 +9941,7 @@ real_update_menus (NemoView *view)
 	selection_contains_special_link = special_link_in_selection (view);
 	selection_contains_desktop_or_home_dir = desktop_or_home_dir_in_selection (view);
 	selection_contains_directory = directory_in_selection (view);
-	selection_contains_recent = showing_recent_directory (view);
+	selection_contains_recent = showing_recent_directory (view);	
 
 	can_create_files = nemo_view_supports_creating_files (view);
 	can_delete_files =
@@ -9955,7 +9955,7 @@ real_update_menus (NemoView *view)
 		!selection_contains_special_link &&
 		!selection_contains_desktop_or_home_dir;
 	can_copy_files = selection_count != 0
-                     && !selection_contains_special_link;
+		&& !selection_contains_special_link;
 
 	can_duplicate_files = can_create_files && can_copy_files;
 	can_link_files = can_create_files && can_copy_files;
@@ -9973,7 +9973,7 @@ real_update_menus (NemoView *view)
 	}
 	gtk_action_set_visible (action, !selection_contains_recent);
 
-    gtk_action_set_visible (action, !selection_contains_recent && !selection_contains_special_link);
+	gtk_action_set_visible (action, !selection_contains_recent && !selection_contains_special_link);
 
     gboolean no_selection_or_one_dir = ((selection_count == 1 && selection_contains_directory) ||
                                         selection_count == 0);
@@ -10008,7 +10008,7 @@ real_update_menus (NemoView *view)
 					      NEMO_ACTION_OPEN);
 	gtk_action_set_sensitive (action, selection_count != 0);
 	
-	can_open = show_app = selection_count != 0;
+	can_open = show_app = show_run = selection_count != 0;
 
 	for (l = selection; l != NULL; l = l->next) {
 		NemoFile *file;
@@ -10019,7 +10019,11 @@ real_update_menus (NemoView *view)
 			show_app = FALSE;
 		}
 
-		if (!show_app) {
+		if (!nemo_mime_file_launches (file)) {
+			show_run = FALSE;
+		}
+
+		if (!show_app && !show_run) {
 			break;
 		}
 	} 
@@ -10047,11 +10051,14 @@ real_update_menus (NemoView *view)
 
 		g_free (escaped_app);
 		g_object_unref (app);
+	} else if (show_run) {
+		label_with_underscore = g_strdup (_("Run"));
+	} else {
+		label_with_underscore = g_strdup (_("_Open"));
 	}
 
-	g_object_set (action, "label", 
-		      label_with_underscore ? label_with_underscore : _("_Open"),
-		      NULL);
+	g_object_set (action, "label", label_with_underscore, NULL);
+	g_free (label_with_underscore);
 
     if (view->details->expander_label_widget) {
         gtk_label_set_text_with_mnemonic (GTK_LABEL (view->details->expander_label_widget),
@@ -10084,8 +10091,6 @@ real_update_menus (NemoView *view)
 	g_object_unref (app_icon);
 
 	gtk_action_set_visible (action, can_open);
-	
-	g_free (label_with_underscore);
 
 	show_open_alternate = file_list_all_are_folders (selection) &&
 		selection_count > 0 &&

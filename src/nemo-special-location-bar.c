@@ -49,7 +49,7 @@ get_message_for_special_location (NemoSpecialLocation location)
 
 	switch (location) {
 	case NEMO_SPECIAL_LOCATION_TEMPLATES:
-		message = g_strdup (_("Files in this folder will appear in the Create Document menu."));
+		message = g_strdup (_("Files in this folder will appear in the New Document menu."));
 		break;
 	case NEMO_SPECIAL_LOCATION_SCRIPTS:
 		message = g_strdup (_("Executable files in this folder will appear in the Scripts menu."));
