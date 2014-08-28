@@ -37,7 +37,7 @@ G_BEGIN_DECLS
 #define NEMO_PREFERENCES_SWAP_TRASH_DELETE      "swap-trash-delete"
 
 /* Display  */
-#define NEMO_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
+#define NEMO_PREFERENCES_SHOW_HIDDEN			"show-hidden"
 #define NEMO_PREFERENCES_SHOW_ADVANCED_PERMISSIONS		"show-advanced-permissions"
 #define NEMO_PREFERENCES_DATE_FORMAT			"date-format"
 
@@ -229,6 +229,7 @@ GSettings *nemo_compact_view_preferences;
 GSettings *nemo_desktop_preferences;
 GSettings *nemo_tree_sidebar_preferences;
 GSettings *nemo_window_state;
+GSettings *gtk_filechooser_preferences;
 GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
 GSettings *gnome_media_handling_preferences;

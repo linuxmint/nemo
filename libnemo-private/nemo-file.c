@@ -3384,15 +3384,6 @@ nemo_file_is_hidden_file (NemoFile *file)
 	return file->details->is_hidden;
 }
 
-static gboolean
-is_file_hidden (NemoFile *file)
-{
-	return file->details->directory->details->hidden_file_hash != NULL &&
-		g_hash_table_lookup (file->details->directory->details->hidden_file_hash,
-				     eel_ref_str_peek (file->details->name)) != NULL;
-	
-}
-
 /**
  * nemo_file_should_show:
  * @file: the file to check.
@@ -3412,7 +3403,7 @@ nemo_file_should_show (NemoFile *file,
 	if (nemo_file_is_in_trash (file)) {
 		return TRUE;
 	} else {
-		return (show_hidden || (!nemo_file_is_hidden_file (file) && !is_file_hidden (file))) &&
+		return (show_hidden || !nemo_file_is_hidden_file (file)) &&
 			(show_foreign || !(nemo_file_is_in_desktop (file) && nemo_file_is_foreign_link (file)));
 	}
 }
@@ -4286,7 +4277,6 @@ nemo_file_get_icon (NemoFile *file,
 {
 	NemoIconInfo *icon;
 	GIcon *gicon;
-	gboolean custom_icon;
 	GdkPixbuf *raw_pixbuf, *scaled_pixbuf;
 	int modified_size;
 
@@ -4294,29 +4284,14 @@ nemo_file_get_icon (NemoFile *file,
 		return NULL;
 	}
 
-	custom_icon = FALSE;
 	gicon = get_custom_icon (file);
-
-	if (gicon) {
-		custom_icon = TRUE;
-	} else {
+	if (gicon == NULL) {
 		gicon = get_link_icon (file);
 	}
 
-	if (gicon) {
+	if (gicon != NULL) {
 		icon = nemo_icon_info_lookup (gicon, size);
 		g_object_unref (gicon);
-
-		if (custom_icon) {
-			raw_pixbuf = nemo_icon_info_get_pixbuf (icon);
-			if (raw_pixbuf != NULL) {
-				nemo_ui_frame_image (&raw_pixbuf);
-				g_object_unref (icon);
-
-				icon = nemo_icon_info_new_for_pixbuf (raw_pixbuf);
-				g_object_unref (raw_pixbuf);
-			}
-		}
 
 		return icon;
 	}

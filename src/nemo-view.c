@@ -508,7 +508,7 @@ nemo_view_reset_to_defaults (NemoView *view)
         NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->reset_to_defaults (view);
 
         window = nemo_window_slot_get_window (view->details->slot);
-        gboolean show_hidden = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
+        gboolean show_hidden = g_settings_get_boolean (gtk_filechooser_preferences, NEMO_PREFERENCES_SHOW_HIDDEN);
         if (show_hidden) {
                 nemo_window_set_hidden_files_mode (window, NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE);
         } else {

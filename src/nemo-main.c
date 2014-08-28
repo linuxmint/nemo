@@ -100,7 +100,7 @@ main (int argc, char *argv[])
 	/* Run the nautilus application. */
 	application = g_object_new (NEMO_TYPE_APPLICATION,
 				    "application-id", "org.gnome.NemoApplication",
-				    "flags", G_APPLICATION_HANDLES_OPEN | G_APPLICATION_IS_SERVICE,
+				    "flags", G_APPLICATION_HANDLES_OPEN,
 				    "inactivity-timeout", 12000,
 				    NULL);
 

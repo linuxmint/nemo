@@ -659,6 +659,7 @@ static void
 handle_launch_search (NemoShellSearchProvider2 *skeleton,
                       GDBusMethodInvocation *invocation,
                       gchar **terms,
+                      guint32 timestamp,
                       gpointer user_data)
 {
   GApplication *app = g_application_get_default ();
