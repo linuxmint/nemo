@@ -575,7 +575,7 @@ nemo_window_slot_constructed (GObject *object)
 	g_signal_connect (slot->details->floating_bar, "action",
 			  G_CALLBACK (floating_bar_action_cb), slot);
 
-	slot->details->title = g_strdup (_("Loading..."));
+	slot->details->title = g_strdup (_("Loading…"));
 }
 
 static void
@@ -2314,7 +2314,7 @@ real_setup_loading_floating_bar (NemoWindowSlot *slot)
 
 	nemo_floating_bar_set_primary_label (NEMO_FLOATING_BAR (slot->details->floating_bar),
 						 NEMO_IS_SEARCH_DIRECTORY (nemo_view_get_model (slot->details->content_view)) ?
-						 _("Searching...") : _("Loading..."));
+						 _("Searching…") : _("Loading…"));
 	nemo_floating_bar_set_details_label (NEMO_FLOATING_BAR (slot->details->floating_bar), NULL);
 	nemo_floating_bar_set_show_spinner (NEMO_FLOATING_BAR (slot->details->floating_bar),
 						TRUE);
