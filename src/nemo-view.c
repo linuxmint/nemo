@@ -5185,7 +5185,7 @@ reset_move_copy_to_menu (NemoView *view)
         gchar *name, *identifier;
         index = 0;
 
-        /* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
+        /* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,…) */
         volume_monitor = g_volume_monitor_get ();
         mounts = g_volume_monitor_get_mounts (volume_monitor);
 
@@ -8330,11 +8330,11 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Navigate to the original file that this symbolic link points to"),
                  G_CALLBACK (action_follow_symlink_callback) },
   /* name, stock id */         { NEMO_ACTION_OTHER_APPLICATION1, NULL,
-  /* label, accelerator */       N_("Other _Application..."), NULL,
+  /* label, accelerator */       N_("Other _Application…"), NULL,
   /* tooltip */                  N_("Choose another application with which to open the selected item"),
 				 G_CALLBACK (action_other_application_callback) },
   /* name, stock id */         { NEMO_ACTION_OTHER_APPLICATION2, NULL,
-  /* label, accelerator */       N_("Open With Other _Application..."), NULL,
+  /* label, accelerator */       N_("Open With Other _Application…"), NULL,
   /* tooltip */                  N_("Choose another application with which to open the selected item"),
 				 G_CALLBACK (action_other_application_callback) },
   /* name, stock id */         { NEMO_ACTION_OPEN_SCRIPTS_FOLDER, NULL,
@@ -8370,7 +8370,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Select all items in this window"),
 				 G_CALLBACK (action_select_all_callback) },
   /* name, stock id */         { NEMO_ACTION_SELECT_PATTERN, NULL,
-  /* label, accelerator */       N_("Select I_tems Matching..."), "<control>S",
+  /* label, accelerator */       N_("Select I_tems Matching…"), "<control>S",
   /* tooltip */                  N_("Select items in this window matching a given pattern"),
 				 G_CALLBACK (action_select_pattern_callback) },
   /* name, stock id */         { NEMO_ACTION_INVERT_SELECTION, NULL,
@@ -8386,7 +8386,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Create a symbolic link for each selected item"),
 				 G_CALLBACK (action_create_link_callback) },
   /* name, stock id */         { NEMO_ACTION_RENAME, NULL,
-  /* label, accelerator */       N_("Rena_me..."), "F2",
+  /* label, accelerator */       N_("Rena_me…"), "F2",
   /* tooltip */                  N_("Rename selected item"),
 				 G_CALLBACK (action_rename_callback) },
   /* name, stock id */         { "RenameSelectAll", NULL,
@@ -8480,7 +8480,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Save the edited search"),
 				 G_CALLBACK (action_save_search_callback) },
   /* name, stock id */         { NEMO_ACTION_SAVE_SEARCH_AS, NULL,
-  /* label, accelerator */       N_("Sa_ve Search As..."), NULL,
+  /* label, accelerator */       N_("Sa_ve Search As…"), NULL,
   /* tooltip */                  N_("Save the current search as a file"),
 				 G_CALLBACK (action_save_search_as_callback) },
 
@@ -9892,9 +9892,18 @@ real_update_menus (NemoView *view)
 	   show the delete option. or if the user set this  pref */
 	gtk_action_set_visible (action, (!can_trash_files && can_delete_files) || show_separate_delete_command);
 
+	if (selection_contains_recent) {
+		label = _("Remo_ve from Recent");
+		tip = _("Remove each selected item from the recently used list");
+	} else {
+		label = _("_Delete");
+		tip = _("Delete each selected item, without moving to the Trash");
+	}
+
 	if ((!can_trash_files && can_delete_files) || show_separate_delete_command) {
 		g_object_set (action,
-			      "label", _("_Delete"),
+			      "label", label,
+			      "tooltip", tip,
 			      "icon-name", NEMO_ICON_DELETE,
 			      NULL);
 	}
