@@ -136,8 +136,11 @@ static void
 nemo_dbus_manager_init (NemoDBusManager *self)
 {
   GDBusConnection *connection;
-
+#if GLIB_CHECK_VERSION (2, 34, 0)
   connection = g_application_get_dbus_connection (g_application_get_default ());
+#else
+  connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
+#endif
 
   self->object_manager = g_dbus_object_manager_server_new ("/org/Nemo");
   self->file_operations = nemo_dbus_file_operations_skeleton_new ();

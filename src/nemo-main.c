@@ -76,7 +76,7 @@ main (int argc, char *argv[])
 #endif
 
 #if !GLIB_CHECK_VERSION (2, 35, 1)
-       g_type_init ();
+	g_type_init ();
 #endif
 
 	/* This will be done by gtk+ later, but for now, force it to GNOME */
@@ -97,13 +97,13 @@ main (int argc, char *argv[])
 	xmp_init();
 #endif
 
-	/* Run the nemo application. */
+	/* Run the nautilus application. */
 	application = nemo_application_new ();
 
-    /* hold indefinitely if we're asked to persist */
-    if (g_getenv ("NEMO_PERSIST") != NULL) {
-        g_application_hold (G_APPLICATION (application));
-    }
+	/* hold indefinitely if we're asked to persist */
+	if (g_getenv ("NEMO_PERSIST") != NULL) {
+		g_application_hold (G_APPLICATION (application));
+	}
 
 	retval = g_application_run (G_APPLICATION (application),
 				    argc, argv);

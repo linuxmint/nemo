@@ -35,16 +35,13 @@
 #include <libnemo-private/nemo-search-provider.h>
 #include <libnemo-private/nemo-ui-utilities.h>
 
+#include "nemo-application.h"
 #include "nemo-bookmark-list.h"
 #include "nemo-shell-search-provider-generated.h"
-
-#define SEARCH_PROVIDER_INACTIVITY_TIMEOUT 12000 /* milliseconds */
-
-typedef GApplicationClass NemoShellSearchProviderAppClass;
-typedef struct _NemoShellSearchProviderApp NemoShellSearchProviderApp;
+#include "nemo-shell-search-provider.h"
 
 typedef struct {
-  NemoShellSearchProviderApp *self;
+  NemoShellSearchProvider *self;
 
   NemoSearchEngine *engine;
   NemoQuery *query;
@@ -55,12 +52,12 @@ typedef struct {
   gint64 start_time;
 } PendingSearch;
 
-struct _NemoShellSearchProviderApp {
-  GApplication parent;
+struct _NemoShellSearchProvider {
+  GObject parent;
 
   guint name_owner_id;
   GDBusObjectManagerServer *object_manager;
-  NemoShellSearchProvider *skeleton;
+  NemoShellSearchProvider2 *skeleton;
 
   PendingSearch *current_search;
 
@@ -70,13 +67,7 @@ struct _NemoShellSearchProviderApp {
   GVolumeMonitor *volumes;
 };
 
-GType nemo_shell_search_provider_app_get_type (void);
-
-#define NEMO_TYPE_SHELL_SEARCH_PROVIDER_APP nemo_shell_search_provider_app_get_type()
-#define NEMO_SHELL_SEARCH_PROVIDER_APP(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_SHELL_SEARCH_PROVIDER_APP, NemoShellSearchProviderApp))
-
-G_DEFINE_TYPE (NemoShellSearchProviderApp, nemo_shell_search_provider_app, G_TYPE_APPLICATION)
+G_DEFINE_TYPE (NemoShellSearchProvider, nemo_shell_search_provider, G_TYPE_OBJECT)
 
 static GVariant *
 variant_from_pixbuf (GdkPixbuf *pixbuf)
@@ -101,7 +92,7 @@ variant_from_pixbuf (GdkPixbuf *pixbuf)
 }
 
 static gchar *
-get_display_name (NemoShellSearchProviderApp *self,
+get_display_name (NemoShellSearchProvider *self,
                   NemoFile                   *file)
 {
   GFile *location;
@@ -118,7 +109,7 @@ get_display_name (NemoShellSearchProviderApp *self,
 }
 
 static GIcon *
-get_gicon (NemoShellSearchProviderApp *self,
+get_gicon (NemoShellSearchProvider *self,
            NemoFile                   *file)
 {
   GFile *location;
@@ -149,19 +140,19 @@ pending_search_finish (PendingSearch         *search,
                        GDBusMethodInvocation *invocation,
                        GVariant              *result)
 {
-  NemoShellSearchProviderApp *self = search->self;
+  NemoShellSearchProvider *self = search->self;
 
   g_dbus_method_invocation_return_value (invocation, result);
 
   if (search == self->current_search)
     self->current_search = NULL;
 
-  g_application_release (G_APPLICATION (self));
+  g_application_release (g_application_get_default ());
   pending_search_free (search);
 }
 
 static void
-cancel_current_search (NemoShellSearchProviderApp *self)
+cancel_current_search (NemoShellSearchProvider *self)
 {
   if (self->current_search != NULL)
     nemo_search_provider_stop (NEMO_SEARCH_PROVIDER (self->current_search->engine));
@@ -245,7 +236,7 @@ search_error_cb (NemoSearchEngine *engine,
                  const gchar          *error_message,
                  gpointer              user_data)
 {
-  NemoShellSearchProviderApp *self = user_data;
+  NemoShellSearchProvider *self = user_data;
   PendingSearch *search = self->current_search;
 
   g_debug ("*** Search engine search error");
@@ -413,7 +404,7 @@ search_add_volumes_and_bookmarks (PendingSearch *search)
 }
 
 static void
-execute_search (NemoShellSearchProviderApp *self,
+execute_search (NemoShellSearchProvider *self,
                 GDBusMethodInvocation          *invocation,
                 gchar                         **terms)
 {
@@ -454,7 +445,7 @@ execute_search (NemoShellSearchProviderApp *self,
                     G_CALLBACK (search_error_cb), pending_search);
 
   self->current_search = pending_search;
-  g_application_hold (G_APPLICATION (self));
+  g_application_hold (g_application_get_default ());
 
   search_add_volumes_and_bookmarks (pending_search);
 
@@ -469,32 +460,32 @@ execute_search (NemoShellSearchProviderApp *self,
 }
 
 static void
-handle_get_initial_result_set (NemoShellSearchProvider  *skeleton,
-                               GDBusMethodInvocation        *invocation,
-                               gchar                       **terms,
-                               gpointer                      user_data)
+handle_get_initial_result_set (NemoShellSearchProvider2  *skeleton,
+                               GDBusMethodInvocation         *invocation,
+                               gchar                        **terms,
+                               gpointer                       user_data)
 {
-  NemoShellSearchProviderApp *self = user_data;
+  NemoShellSearchProvider *self = user_data;
 
   g_debug ("****** GetInitialResultSet");
   execute_search (self, invocation, terms);
 }
 
 static void
-handle_get_subsearch_result_set (NemoShellSearchProvider  *skeleton,
-                                 GDBusMethodInvocation        *invocation,
-                                 gchar                       **previous_results,
-                                 gchar                       **terms,
-                                 gpointer                      user_data)
+handle_get_subsearch_result_set (NemoShellSearchProvider2  *skeleton,
+                                 GDBusMethodInvocation         *invocation,
+                                 gchar                        **previous_results,
+                                 gchar                        **terms,
+                                 gpointer                       user_data)
 {
-  NemoShellSearchProviderApp *self = user_data;
+  NemoShellSearchProvider *self = user_data;
 
   g_debug ("****** GetSubSearchResultSet");
   execute_search (self, invocation, terms);
 }
 
 typedef struct {
-  NemoShellSearchProviderApp *self;
+  NemoShellSearchProvider *self;
 
   gint64 start_time;
   GDBusMethodInvocation *invocation;
@@ -606,12 +597,12 @@ result_list_attributes_ready_cb (GList    *file_list,
 }
 
 static void
-handle_get_result_metas (NemoShellSearchProvider  *skeleton,
-                         GDBusMethodInvocation        *invocation,
-                         gchar                       **results,
-                         gpointer                      user_data)
+handle_get_result_metas (NemoShellSearchProvider2  *skeleton,
+                         GDBusMethodInvocation         *invocation,
+                         gchar                        **results,
+                         gpointer                       user_data)
 {
-  NemoShellSearchProviderApp *self = user_data;
+  NemoShellSearchProvider *self = user_data;
   GList *missing_files = NULL;
   const gchar *uri;
   ResultMetasData *data;
@@ -647,75 +638,38 @@ handle_get_result_metas (NemoShellSearchProvider  *skeleton,
   nemo_file_list_free (missing_files);
 }
 
-/* taken from Epiphany's ephy-main.c */
-static Time
-slowly_and_stupidly_obtain_timestamp (Display *xdisplay)
+static void
+handle_activate_result (NemoShellSearchProvider2 *skeleton,
+                        GDBusMethodInvocation        *invocation,
+                        gchar                        *result,
+                        gchar                       **terms,
+                        guint32                       timestamp,
+                        gpointer                      user_data)
 {
-  Window xwindow;
-  XEvent event;
+  GFile *file = g_file_new_for_uri (result);
+  g_application_open (g_application_get_default (), &file, 1, "");
+  g_object_unref (file);
 
-  {
-    XSetWindowAttributes attrs;
-    Atom atom_name;
-    Atom atom_type;
-    char* name;
-
-    attrs.override_redirect = True;
-    attrs.event_mask = PropertyChangeMask | StructureNotifyMask;
-
-    xwindow =
-      XCreateWindow (xdisplay,
-                     RootWindow (xdisplay, 0),
-                     -100, -100, 1, 1,
-                     0,
-                     CopyFromParent,
-                     CopyFromParent,
-                     CopyFromParent,
-                     CWOverrideRedirect | CWEventMask,
-                     &attrs);
-
-    atom_name = XInternAtom (xdisplay, "WM_NAME", TRUE);
-    g_assert (atom_name != None);
-    atom_type = XInternAtom (xdisplay, "STRING", TRUE);
-    g_assert (atom_type != None);
-
-    name = "Fake Window";
-    XChangeProperty (xdisplay,
-                     xwindow, atom_name,
-                     atom_type,
-                     8, PropModeReplace, (unsigned char *)name, strlen (name));
-  }
-
-  XWindowEvent (xdisplay,
-                xwindow,
-                PropertyChangeMask,
-                &event);
-
-  XDestroyWindow(xdisplay, xwindow);
-
-  return event.xproperty.time;
+  nemo_shell_search_provider2_complete_activate_result (skeleton, invocation);
 }
 
 static void
-handle_activate_result (NemoShellSearchProvider *skeleton,
-                        GDBusMethodInvocation       *invocation,
-                        gchar                       *result,
-                        gpointer                     user_data)
+handle_launch_search (NemoShellSearchProvider2 *skeleton,
+                      GDBusMethodInvocation *invocation,
+                      gchar **terms,
+                      gpointer user_data)
 {
-  GError *error = NULL;
-  guint32 timestamp;
+  GApplication *app = g_application_get_default ();
+  gchar *string = g_strjoinv (" ", terms);
+  gchar *uri = nemo_get_home_directory_uri ();
 
-  /* We need a timestamp here to get the correct WM focus.
-   * Ideally this would be given to us by the caller, but since it
-   * is not, get it ourselves.
-   */
-  timestamp = slowly_and_stupidly_obtain_timestamp (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()));
-  gtk_show_uri (NULL, result, timestamp, &error);
+  g_action_group_activate_action (G_ACTION_GROUP (app), "search",
+                                  g_variant_new ("(ss)", uri, string));
 
-  if (error != NULL) {
-    g_warning ("Unable to activate %s: %s", result, error->message);
-    g_error_free (error);
-  }
+  g_free (string);
+  g_free (uri);
+
+  nemo_shell_search_provider2_complete_launch_search (skeleton, invocation);
 }
 
 static void
@@ -739,10 +693,10 @@ search_provider_bus_acquired_cb (GDBusConnection *connection,
                                  const gchar *name,
                                  gpointer user_data)
 {
-  NemoShellSearchProviderApp *self = user_data;
+  NemoShellSearchProvider *self = user_data;
 
-  self->object_manager = g_dbus_object_manager_server_new ("/org/Nemo/SearchProvider");
-  self->skeleton = nemo_shell_search_provider_skeleton_new ();
+  self->object_manager = g_dbus_object_manager_server_new ("/org/gnome/Nemo/SearchProvider");
+  self->skeleton = nemo_shell_search_provider2_skeleton_new ();
 
   g_signal_connect (self->skeleton, "handle-get-initial-result-set",
                     G_CALLBACK (handle_get_initial_result_set), self);
@@ -752,17 +706,21 @@ search_provider_bus_acquired_cb (GDBusConnection *connection,
                     G_CALLBACK (handle_get_result_metas), self);
   g_signal_connect (self->skeleton, "handle-activate-result",
                     G_CALLBACK (handle_activate_result), self);
+  g_signal_connect (self->skeleton, "handle-launch-search",
+                    G_CALLBACK (handle_launch_search), self);
 
   g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->skeleton),
                                     connection,
                                     "/org/Nemo/SearchProvider", NULL);
   g_dbus_object_manager_server_set_connection (self->object_manager, connection);
+
+  g_application_release (g_application_get_default ());
 }
 
 static void
-search_provider_app_dispose (GObject *obj)
+search_provider_dispose (GObject *obj)
 {
-  NemoShellSearchProviderApp *self = NEMO_SHELL_SEARCH_PROVIDER_APP (obj);
+  NemoShellSearchProvider *self = NEMO_SHELL_SEARCH_PROVIDER (obj);
 
   if (self->name_owner_id != 0) {
     g_bus_unown_name (self->name_owner_id);
@@ -778,81 +736,40 @@ search_provider_app_dispose (GObject *obj)
   g_hash_table_destroy (self->metas_cache);
   cancel_current_search (self);
 
-  g_clear_object (&self->bookmarks);
   g_clear_object (&self->volumes);
 
-  G_OBJECT_CLASS (nemo_shell_search_provider_app_parent_class)->dispose (obj);
+  G_OBJECT_CLASS (nemo_shell_search_provider_parent_class)->dispose (obj);
 }
 
 static void
-search_provider_app_startup (GApplication *app)
+nemo_shell_search_provider_init (NemoShellSearchProvider *self)
 {
-  NemoShellSearchProviderApp *self = NEMO_SHELL_SEARCH_PROVIDER_APP (app);
+  self->metas_cache = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                             g_free, (GDestroyNotify) g_variant_unref);
+  self->bookmarks = nemo_application_get_bookmarks (NEMO_APPLICATION (g_application_get_default ()));
+  self->volumes = g_volume_monitor_get ();
 
-  G_APPLICATION_CLASS (nemo_shell_search_provider_app_parent_class)->startup (app);
-
-  /* hold indefinitely if we're asked to persist */
-  if (g_getenv ("NEMO_SEARCH_PROVIDER_PERSIST") != NULL)
-    g_application_hold (app);
-
+  g_application_hold (g_application_get_default ());
   self->name_owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
                                         "org.Nemo.SearchProvider",
                                         G_BUS_NAME_OWNER_FLAGS_NONE,
                                         search_provider_bus_acquired_cb,
                                         search_provider_name_acquired_cb,
                                         search_provider_name_lost_cb,
-                                        app, NULL);
+                                        self, NULL);
 }
 
 static void
-nemo_shell_search_provider_app_init (NemoShellSearchProviderApp *self)
+nemo_shell_search_provider_class_init (NemoShellSearchProviderClass *klass)
 {
-  GApplication *app = G_APPLICATION (self);
-
-  g_application_set_inactivity_timeout (app, SEARCH_PROVIDER_INACTIVITY_TIMEOUT);
-  g_application_set_application_id (app, "org.Nemo.SearchProvider");
-  g_application_set_flags (app, G_APPLICATION_IS_SERVICE);
-
-  self->metas_cache = g_hash_table_new_full (g_str_hash, g_str_equal,
-                                             g_free, (GDestroyNotify) g_variant_unref);
-  self->bookmarks = nemo_bookmark_list_new ();
-  self->volumes = g_volume_monitor_get ();
-}
-
-static void
-nemo_shell_search_provider_app_class_init (NemoShellSearchProviderAppClass *klass)
-{
-  GApplicationClass *aclass = G_APPLICATION_CLASS (klass);
   GObjectClass *oclass = G_OBJECT_CLASS (klass);
 
-  aclass->startup = search_provider_app_startup;
-  oclass->dispose = search_provider_app_dispose;
+  oclass->dispose = search_provider_dispose;
 }
 
-static GApplication *
-nemo_shell_search_provider_app_new (void)
+NemoShellSearchProvider *
+nemo_shell_search_provider_new (void)
 {
-#if !GLIB_CHECK_VERSION (2, 35, 1)
-       g_type_init ();
-#endif
-
-  return g_object_new (nemo_shell_search_provider_app_get_type (),
+  return g_object_new (nemo_shell_search_provider_get_type (),
                        NULL);
 }
-
-int
-main (int   argc,
-      char *argv[])
-{
-  GApplication *app;
-  gint res;
-
-  gtk_init (&argc, &argv);
-
-  app = nemo_shell_search_provider_app_new ();
-  res = g_application_run (app, argc, argv);
-  g_object_unref (app);
-
-  return res;
-}
-

@@ -146,7 +146,7 @@ bus_acquired_cb (GDBusConnection *conn,
 
 	DEBUG ("Bus acquired at %s", name);
 
-	fdb->object_manager = g_dbus_object_manager_server_new ("/org/freedesktop/FileManager1");
+	fdb->object_manager = g_dbus_object_manager_server_new (NEMO_FDO_DBUS_PATH);
 
 	fdb->skeleton = nemo_freedesktop_file_manager1_skeleton_new ();
 
@@ -157,7 +157,7 @@ bus_acquired_cb (GDBusConnection *conn,
 	g_signal_connect (fdb->skeleton, "handle-show-item-properties",
 			  G_CALLBACK (skeleton_handle_show_item_properties_cb), fdb);
 
-	g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (fdb->skeleton), conn, "/org/freedesktop/FileManager1", NULL);
+	g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (fdb->skeleton), conn, NEMO_FDO_DBUS_PATH, NULL);
 
 	g_dbus_object_manager_server_set_connection (fdb->object_manager, conn);
 }
@@ -211,7 +211,7 @@ static void
 nemo_freedesktop_dbus_init (NemoFreedesktopDBus *fdb)
 {
 	fdb->owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
-					"org.freedesktop.FileManager1",
+					NEMO_FDO_DBUS_NAME,
 					G_BUS_NAME_OWNER_FLAGS_NONE,
 					bus_acquired_cb,
 					name_acquired_cb,
@@ -225,7 +225,6 @@ nemo_freedesktop_dbus_set_open_locations (NemoFreedesktopDBus *fdb,
 					      const gchar **locations)
 {
 	g_return_if_fail (NEMO_IS_FREEDESKTOP_DBUS (fdb));
-
 	nemo_freedesktop_file_manager1_set_open_locations (fdb->skeleton, locations);
 }
 

@@ -25,6 +25,10 @@
 
 #include <glib-object.h>
 
+#define NEMO_FDO_DBUS_IFACE "org.freedesktop.FileManager1"
+#define NEMO_FDO_DBUS_NAME  "org.freedesktop.FileManager1"
+#define NEMO_FDO_DBUS_PATH  "/org/freedesktop/FileManager1"
+
 #define NEMO_TYPE_FREEDESKTOP_DBUS nemo_freedesktop_dbus_get_type()
 #define NEMO_FREEDESKTOP_DBUS(obj) \
   (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_FREEDESKTOP_DBUS, NemoFreedesktopDBus))
