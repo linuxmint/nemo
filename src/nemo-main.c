@@ -76,7 +76,7 @@ main (int argc, char *argv[])
 #endif
 
 #if !GLIB_CHECK_VERSION (2, 35, 1)
-       g_type_init ();
+	g_type_init ();
 #endif
 
 	/* This will be done by gtk+ later, but for now, force it to GNOME */
@@ -100,8 +100,15 @@ main (int argc, char *argv[])
 	/* Run the nautilus application. */
 	application = g_object_new (NEMO_TYPE_APPLICATION,
 				    "application-id", "org.gnome.NemoApplication",
-				    "flags", G_APPLICATION_HANDLES_OPEN,
+				    "flags", G_APPLICATION_HANDLES_OPEN | G_APPLICATION_IS_SERVICE,
+				    "inactivity-timeout", 12000,
 				    NULL);
+
+	/* hold indefinitely if we're asked to persist */
+	if (g_getenv ("NEMO_PERSIST") != NULL) {
+		g_application_hold (G_APPLICATION (application));
+	}
+
 	retval = g_application_run (G_APPLICATION (application),
 				    argc, argv);
 

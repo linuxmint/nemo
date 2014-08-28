@@ -45,6 +45,7 @@
 #include "nemo-previewer.h"
 #include "nemo-progress-ui-handler.h"
 #include "nemo-self-check-functions.h"
+#include "nemo-shell-search-provider.h"
 #include "nemo-window.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
@@ -94,15 +95,13 @@ static GList *nemo_application_desktop_windows;
 static gboolean save_of_accel_map_requested = FALSE;
 
 static void     desktop_changed_callback          (gpointer                  user_data);
-static void     mount_added_callback              (GVolumeMonitor            *monitor,
-						   GMount                    *mount,
-						   NemoApplication       *application);
 
 G_DEFINE_TYPE (NemoApplication, nemo_application, GTK_TYPE_APPLICATION);
 
 struct _NemoApplicationPriv {
-	GVolumeMonitor *volume_monitor;
 	NemoProgressUIHandler *progress_handler;
+	NemoDBusManager *dbus_manager;
+	NemoFreedesktopDBus *fdb_manager;
 
 	gboolean no_desktop;
 	gchar *geometry;
@@ -114,6 +113,8 @@ struct _NemoApplicationPriv {
 	NemoBookmarkList *bookmark_list;
 
 	GtkWidget *connect_server_window;
+
+	NemoShellSearchProvider *search_provider;
 };
 
 NemoBookmarkList *
@@ -465,29 +466,6 @@ nemo_application_create_window (NemoApplication *application,
 }
 
 static void
-mount_added_callback (GVolumeMonitor *monitor,
-		      GMount *mount,
-		      NemoApplication *application)
-{
-	NemoDirectory *directory;
-	GFile *root;
-	gchar *uri;
-		
-	root = g_mount_get_root (mount);
-	uri = g_file_get_uri (root);
-
-	DEBUG ("Added mount at uri %s", uri);
-	g_free (uri);
-	
-	directory = nemo_directory_get_existing (root);
-	g_object_unref (root);
-	if (directory != NULL) {
-		nemo_directory_force_reload (directory);
-		nemo_directory_unref (directory);
-	}
-}
-
-static void
 open_window (NemoApplication *application,
 	     GFile *location, GdkScreen *screen, const char *geometry)
 {
@@ -730,14 +708,15 @@ nemo_application_finalize (GObject *object)
 
 	application = NEMO_APPLICATION (object);
 
-	g_clear_object (&application->priv->volume_monitor);
 	g_clear_object (&application->priv->progress_handler);
 	g_clear_object (&application->priv->bookmark_list);
 
 	g_free (application->priv->geometry);
 
-	nemo_dbus_manager_stop ();
-	nemo_freedesktop_dbus_stop ();
+	g_clear_object (&application->priv->dbus_manager);
+	g_clear_object (&application->priv->fdb_manager);
+	g_clear_object (&application->priv->search_provider);
+
 	notify_uninit ();
 
         G_OBJECT_CLASS (nemo_application_parent_class)->finalize (object);
@@ -1338,8 +1317,8 @@ nemo_application_startup (GApplication *app)
 	//nemo_previewer_get_singleton ();
 
 	/* create DBus manager */
-	nemo_dbus_manager_start (app);
-	nemo_freedesktop_dbus_start (self);
+	self->priv->dbus_manager = nemo_dbus_manager_new ();
+	self->priv->fdb_manager = nemo_freedesktop_dbus_new ();
 
 	/* initialize preferences and create the global GSettings objects */
 	nemo_global_preferences_init ();
@@ -1374,14 +1353,13 @@ nemo_application_startup (GApplication *app)
 	notify_init (GETTEXT_PACKAGE);
 	self->priv->progress_handler = nemo_progress_ui_handler_new ();
 
-	self->priv->volume_monitor = g_volume_monitor_get ();
-	g_signal_connect_object (self->priv->volume_monitor, "mount_added",
-				 G_CALLBACK (mount_added_callback), self, 0);
-
-    g_signal_connect_swapped (nemo_window_state, "changed::" NEMO_WINDOW_STATE_START_WITH_MENU_BAR,
+        g_signal_connect_swapped (nemo_window_state, "changed::" NEMO_WINDOW_STATE_START_WITH_MENU_BAR,
                               G_CALLBACK (menu_state_changed_callback), self);
 
+
+	/* Bookmarks and search */
 	self->priv->bookmark_list = nemo_bookmark_list_new ();
+	self->priv->search_provider = nemo_shell_search_provider_new ();
 
 	/* Check the user's .nemo directories and post warnings
 	 * if there are problems.

@@ -23,9 +23,12 @@
 #ifndef __NEMO_FREEDESKTOP_DBUS_H__
 #define __NEMO_FREEDESKTOP_DBUS_H__
 
-#include "nemo-application.h"
+#include <glib-object.h>
 
-void nemo_freedesktop_dbus_start (NemoApplication *app);
-void nemo_freedesktop_dbus_stop (void);
+typedef struct _NemoFreedesktopDBus NemoFreedesktopDBus;
+typedef struct _NemoFreedesktopDBusClass NemoFreedesktopDBusClass;
+
+GType nemo_freedesktop_dbus_get_type (void);
+NemoFreedesktopDBus * nemo_freedesktop_dbus_new (void);
 
 #endif /* __NEMO_FREEDESKTOP_DBUS_H__ */

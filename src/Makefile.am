@@ -8,7 +8,6 @@ bin_PROGRAMS=					\
 
 libexec_PROGRAMS=				\
 	nemo-convert-metadata		\
-	nemo-shell-search-provider		\
 	$(NULL)
 
 INCLUDES =							\
@@ -55,6 +54,18 @@ $(dbus_freedesktop_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-d
 		--c-generate-object-manager						\
 		--generate-c-code nemo-freedesktop-generated			\
 		$(top_srcdir)/data/freedesktop-dbus-interfaces.xml			\
+		$(NULL)
+
+dbus_shell_search_provider_built_sources =		\
+	nemo-shell-search-provider-generated.c	\
+	nemo-shell-search-provider-generated.h
+
+$(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml
+	gdbus-codegen									\
+		--interface-prefix org.gnome.						\
+		--c-namespace Nemo							\
+		--generate-c-code nemo-shell-search-provider-generated		\
+		$(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml		\
 		$(NULL)
 
 UI_FILES = \
@@ -118,6 +129,7 @@ nemo-enum-types.c: $(headers) Makefile
 
 nemo_built_sources = \
 	$(dbus_freedesktop_built_sources) \
+	$(dbus_shell_search_provider_built_sources) \
 	nemo-resources.c \
 	nemo-resources.h \
 	nemo-enum-types.h \
@@ -186,6 +198,8 @@ nemo_SOURCES = \
 	nemo-query-editor.h			\
 	nemo-self-check-functions.c 	\
 	nemo-self-check-functions.h 	\
+	nemo-shell-search-provider.h	\
+	nemo-shell-search-provider.c	\
 	nemo-special-location-bar.c		\
 	nemo-special-location-bar.h		\
     nemo-statusbar.c    \
@@ -245,28 +259,6 @@ nemo_connect_server_SOURCES= \
 
 nemo_convert_metadata_SOURCES= \
 	nemo-convert-metadata.c	\
-	$(NULL)
-
-dbus_shell_search_provider_built_sources =		\
-	nemo-shell-search-provider-generated.c	\
-	nemo-shell-search-provider-generated.h
-
-$(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml
-	gdbus-codegen									\
-		--interface-prefix org.gnome.						\
-		--c-namespace Nemo							\
-		--generate-c-code nemo-shell-search-provider-generated		\
-		$(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml		\
-		$(NULL)
-
-nemo_shell_search_provider_SOURCES = 		\
-	nemo-bookmark-list.h			\
-	nemo-bookmark-list.c			\
-	nemo-shell-search-provider.c		\
-	$(NULL)
-
-nodist_nemo_shell_search_provider_SOURCES =		\
-	$(dbus_shell_search_provider_built_sources)	\
 	$(NULL)
 
 BUILT_SOURCES = 					\
