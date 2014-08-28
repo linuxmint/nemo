@@ -1,4 +1,20 @@
+Nemo merged with changes in Nautilus 3.7.3:
+
+Changes:
+* Update search provider to org.gnome.Shell.SearchProvider2 interface
+* Rely on GIO to parse ".hidden" files
+* Consistently use unicode ellipsis instead of three periods (Jeremy Bicha)
+* Use a different label for removing a file from "Recent" (Paolo Borelli)
+* Restore the previous behavior wrt. framing for custom icons
+* Share the "show hidden" GSetting option with the GTK+
+  file chooser (Timothy Arceri)
+* Fix missing unmount sync notification under some circumstances
+* Fix infinite loop while deep counting the size of "/" (Phillip Susi)
+* Fix wrong filename when restoring file from trash (Timothy Arceri)
+
 Nemo merged with changes in Nautilus 3.7.2:
+
+Changes:
 * Request to render larger thumbnails by default
 * Don't quote the current location name in search bar
 * Use "Run" in menus when launchine executables
