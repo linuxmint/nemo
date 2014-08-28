@@ -2590,29 +2590,31 @@ show_unmount_progress_aborted_cb (GMountOperation *op,
 static GMountOperation *
 get_unmount_operation (NemoPlacesSidebar *sidebar)
 {
-    GMountOperation *mount_op;
+	GMountOperation *mount_op;
 
-    mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
-    g_signal_connect (mount_op, "show-unmount-progress",
-                      G_CALLBACK (show_unmount_progress_cb), sidebar);
-    g_signal_connect (mount_op, "aborted",
-                      G_CALLBACK (show_unmount_progress_aborted_cb), sidebar);
+	mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
+#if GLIB_CHECK_VERSION (2,34,0)
+        g_signal_connect (mount_op, "show-unmount-progress",
+			  G_CALLBACK (show_unmount_progress_cb), sidebar);
+	g_signal_connect (mount_op, "aborted",
+			  G_CALLBACK (show_unmount_progress_aborted_cb), sidebar);
+#endif // GLIB_CHECK_VERSION (2,34,0)
 
-    return mount_op;
+	return mount_op;
 }
 
 static void
 do_unmount (GMount *mount,
 	    NemoPlacesSidebar *sidebar)
 {
-    GMountOperation *mount_op;
+	GMountOperation *mount_op;
 
 	if (mount != NULL) {
-        mount_op = get_unmount_operation (sidebar);
-        nemo_file_operations_unmount_mount_full (NULL, mount, mount_op, FALSE, TRUE,
-                                                 unmount_done,
-                                                 g_object_ref (sidebar->window));
-        g_object_unref (mount_op);
+		mount_op = get_unmount_operation (sidebar);
+		nemo_file_operations_unmount_mount_full (NULL, mount, mount_op, FALSE, TRUE,
+							     unmount_done,
+							     g_object_ref (sidebar->window));
+		g_object_unref (mount_op);
 	}
 }
 
@@ -2733,7 +2735,7 @@ do_eject (GMount *mount,
 	  GDrive *drive,
 	  NemoPlacesSidebar *sidebar)
 {
-    GMountOperation *mount_op = get_unmount_operation (sidebar);
+	GMountOperation *mount_op = get_unmount_operation (sidebar);
 
 	if (mount != NULL) {
 		g_mount_eject_with_operation (mount, 0, mount_op, NULL, mount_eject_cb,
@@ -2746,13 +2748,7 @@ do_eject (GMount *mount,
 					      g_object_ref (sidebar->window));
 	}
 
-#if GLIB_CHECK_VERSION (2,34,0)
-	g_signal_connect (mount_op, "show-unmount-progress",
-	     	  G_CALLBACK (show_unmount_progress_cb), sidebar);
-	g_signal_connect (mount_op, "aborted",
-		      G_CALLBACK (show_unmount_progress_aborted_cb), sidebar);
-#endif // GLIB_CHECK_VERSION (2,34,0)     	
-    g_object_unref (mount_op);
+	g_object_unref (mount_op);
 }
 
 static void
@@ -2989,7 +2985,7 @@ stop_shortcut_cb (GtkMenuItem           *item,
 			    -1);
 
 	if (drive != NULL) {
-        GMountOperation *mount_op = get_unmount_operation (sidebar);
+		GMountOperation *mount_op = get_unmount_operation (sidebar);
 		g_drive_stop (drive, G_MOUNT_UNMOUNT_NONE, mount_op, NULL, drive_stop_cb,
 			      g_object_ref (sidebar->window));
 		g_object_unref (mount_op);
