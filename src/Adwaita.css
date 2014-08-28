@@ -29,15 +29,6 @@ NautilusWindow .sidebar .frame {
     border-style: none;
 }
 
-NautilusWindow > GtkGrid > .pane-separator,
-NautilusWindow > GtkGrid > .pane-separator:hover {
-    border-width: 0 1px 0 0;
-    border-style: solid;
-    border-color: @borders;
-    background-color: @sidebar_bg;
-    color: shade (@theme_bg_color, 0.9);
-}
-
 NautilusNotebook .frame {
     border-width: 0;
 }
@@ -46,98 +37,34 @@ NautilusNotebook.notebook tab .button {
     padding: 0px;
 }
 
-NautilusQueryEditor .search-bar.toolbar {
-    border-top-width: 0;
-    border-bottom-width: 0;
-}
-
-NautilusQueryEditor .toolbar {
-    padding-top: 3px;
-    padding-bottom: 2px;
-
-    border-width: 1px 0 0 0;
-    border-style: solid;
-}
-
-NautilusQueryEditor .toolbar:nth-child(2) {
-    border-color: @borders;
-}
-
-NautilusQueryEditor .toolbar:last-child,
-NautilusQueryEditor .search-bar.toolbar:only-child {
-    border-bottom-width: 1px;
-    border-bottom-color: @borders;
-}
-
-NautilusQueryEditor .toolbar:backdrop:nth-child(2) {
-    border-color: @unfocused_borders;
-}
-
-@define-color floating_bar_inset_color alpha(white, 0.45);
-
+/* Floating status bar */
 .floating-bar {
-    background-image: linear-gradient(to bottom,
-                                      @theme_base_color 20%,
-                                      shade(@theme_base_color, 0.9)
-                                      );
-    background-color: @theme_base_color;
-    border-color: @borders;
-
-    color: @theme_fg_color;
-    text-shadow: 0 1px alpha(white, 0.40);
-
-    border-radius: 3px;
-    border-width: 1px;
-    border-style: solid;
-    box-shadow: inset 1px 1px @floating_bar_inset_color, -1px -1px @floating_bar_inset_color;
+  padding: 2px;
+  background-color: @theme_base_color;
+  border-width: 1px;
+  border-style: solid solid none;
+  border-color: @borders;
+  border-radius: 3px 3px 0 0;
 }
 
-.floating-bar.top {
-    border-top-width: 0;
-    border-top-right-radius: 0;
-    border-top-left-radius: 0;
+.floating-bar.bottom.left { /* axes left border and border radius */
+  border-left-style: none;
+  border-top-left-radius: 0;
 }
-
-.floating-bar.right {
-    border-right-width: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-.floating-bar.bottom {
-    border-bottom-width: 0;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.floating-bar.left {
-    border-left-width: 0;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.floating-bar.bottom.right {
-    box-shadow: inset 1px 1px @floating_bar_inset_color;
-}
-
-.floating-bar.bottom.left {
-    box-shadow: inset -1px 1px @floating_bar_inset_color;
+.floating-bar.bottom.right { /* axes right border and border radius */
+  border-right-style: none;
+  border-top-right-radius: 0;
 }
 
 .floating-bar:backdrop {
-    background-color: @theme_unfocused_base_color;
-    border-color: shade(@theme_unfocused_base_color, 0.9);
-    background-image: none;
-    box-shadow: none;
+  background-color: @theme_unfocused_base_color;
+  border-color: @unfocused_borders;
 }
 
 .floating-bar .button {
-    background-color: transparent;
-    background-image: none;
+    padding: 4px;
+}
 
-    border-style: none;
-    border-image: none;
-
-    -GtkButton-image-spacing: 0;
-    -GtkButton-inner-border: 0;
+.search-bar {
+    box-shadow: none;
 }

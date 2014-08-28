@@ -484,6 +484,7 @@ nautilus_floating_bar_add_action (NautilusFloatingBar *self,
 	gtk_widget_show (w);
 
 	button = gtk_button_new ();
+	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
 	gtk_button_set_image (GTK_BUTTON (button), w);
 	gtk_box_pack_end (GTK_BOX (self), button, FALSE, FALSE, 0);
 	gtk_widget_show (button);
