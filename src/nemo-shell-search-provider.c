@@ -69,28 +69,6 @@ struct _NemoShellSearchProvider {
 
 G_DEFINE_TYPE (NemoShellSearchProvider, nemo_shell_search_provider, G_TYPE_OBJECT)
 
-static GVariant *
-variant_from_pixbuf (GdkPixbuf *pixbuf)
-{
-  GVariant *variant;
-  guchar *data;
-  guint   length;
-
-  data = gdk_pixbuf_get_pixels_with_length (pixbuf, &length);
-  variant = g_variant_new ("(iiibii@ay)",
-                           gdk_pixbuf_get_width (pixbuf),
-                           gdk_pixbuf_get_height (pixbuf),
-                           gdk_pixbuf_get_rowstride (pixbuf),
-                           gdk_pixbuf_get_has_alpha (pixbuf),
-                           gdk_pixbuf_get_bits_per_sample (pixbuf),
-                           gdk_pixbuf_get_n_channels (pixbuf),
-                           g_variant_new_from_data (G_VARIANT_TYPE_BYTESTRING,
-                                                    data, length, TRUE,
-                                                    (GDestroyNotify)g_object_unref,
-                                                    g_object_ref (pixbuf)));
-  return variant;
-}
-
 static gchar *
 get_display_name (NemoShellSearchProvider *self,
                   NemoFile                   *file)
@@ -537,11 +515,13 @@ result_list_attributes_ready_cb (GList    *file_list,
   NemoFile *file;
   GList *l;
   gchar *uri, *display_name;
-  GdkPixbuf *pix;
-  gchar *thumbnail_path, *gicon_str;
+  gchar *thumbnail_path;
   GIcon *gicon;
   GFile *location;
   GVariant *meta_variant;
+  gint icon_scale;
+
+  icon_scale = gdk_screen_get_monitor_scale_factor (gdk_screen_get_default (), 0);
 
   for (l = file_list; l != NULL; l = l->next) {
     file = l->data;
@@ -549,8 +529,6 @@ result_list_attributes_ready_cb (GList    *file_list,
 
     uri = nemo_file_get_uri (file);
     display_name = get_display_name (data->self, file);
-    pix = nemo_file_get_icon_pixbuf (file, 128, TRUE,
-                                         NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS);
 
     g_variant_builder_add (&meta, "{sv}",
                            "id", g_variant_new_string (uri));
@@ -570,21 +548,14 @@ result_list_attributes_ready_cb (GList    *file_list,
       gicon = get_gicon (data->self, file);
     }
 
-    if (gicon != NULL) {
-      gicon_str = g_icon_to_string (gicon);
-      g_variant_builder_add (&meta, "{sv}",
-                             "gicon", g_variant_new_string (gicon_str));
-
-      g_free (gicon_str);
-      g_object_unref (gicon);
-    } else {
-      pix = nemo_file_get_icon_pixbuf (file, 128, TRUE,
-                                           NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS);
-
-      g_variant_builder_add (&meta, "{sv}",
-                             "icon-data", variant_from_pixbuf (pix));
-      g_object_unref (pix);
+    if (gicon == NULL) {
+      gicon = G_ICON (nemo_file_get_icon_pixbuf (file, 128, TRUE, icon_scale,
+                                                     NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS));
     }
+
+    g_variant_builder_add (&meta, "{sv}",
+                           "icon", g_icon_serialize (gicon));
+    g_object_unref (gicon);
 
     meta_variant = g_variant_builder_end (&meta);
     g_hash_table_insert (data->self->metas_cache,
@@ -659,6 +630,7 @@ static void
 handle_launch_search (NemoShellSearchProvider2 *skeleton,
                       GDBusMethodInvocation *invocation,
                       gchar **terms,
+                      guint32 timestamp,
                       gpointer user_data)
 {
   GApplication *app = g_application_get_default ();

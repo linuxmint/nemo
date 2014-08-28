@@ -40,6 +40,7 @@
     </method>
     <method name = 'LaunchSearch'>
       <arg type='as' name='Terms' direction='in' />
+      <arg type='u' name='Timestamp' direction='in' />
     </method>
   </interface>
 </node>

@@ -234,10 +234,6 @@ nemo_directory_finalize (GObject *object)
 	g_assert (directory->details->file_list == NULL);
 	g_hash_table_destroy (directory->details->file_hash);
 
-	if (directory->details->hidden_file_hash) {
-		g_hash_table_destroy (directory->details->hidden_file_hash);
-	}
-	
 	nemo_file_queue_destroy (directory->details->high_priority_queue);
 	nemo_file_queue_destroy (directory->details->low_priority_queue);
 	nemo_file_queue_destroy (directory->details->extension_queue);
@@ -354,8 +350,8 @@ add_preferences_callbacks (void)
 {
 	nemo_global_preferences_init ();
 
-	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_SHOW_HIDDEN_FILES,
+	g_signal_connect_swapped (gtk_filechooser_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_HIDDEN,
 				  G_CALLBACK(filtering_changed_callback),
 				  NULL);
 	g_signal_connect_swapped (nemo_preferences,

@@ -1599,7 +1599,7 @@ nemo_window_initialize_menus (NemoWindow *window)
 	action = gtk_action_group_get_action (action_group, NEMO_ACTION_SHOW_HIDDEN_FILES);
 	g_signal_handlers_block_by_func (action, action_show_hidden_files_callback, window);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-				      g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
+				      g_settings_get_boolean (gtk_filechooser_preferences, NEMO_PREFERENCES_SHOW_HIDDEN));
 	g_signal_handlers_unblock_by_func (action, action_show_hidden_files_callback, window);
 
     g_signal_connect_object ( NEMO_WINDOW (window), "notify::sidebar-view-id",
