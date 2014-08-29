@@ -389,7 +389,6 @@ docs/reference/Makefile
 docs/reference/libnemo-extension/Makefile
 docs/reference/libnemo-extension/version.xml
 eel/Makefile
-icons/Makefile
 libnemo-private/Makefile
 libnemo-extension/Makefile
 libnemo-extension/libnemo-extension.pc
