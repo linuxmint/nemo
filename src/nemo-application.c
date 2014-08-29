@@ -470,14 +470,15 @@ open_window (NemoApplication *application,
 	     GFile *location, GdkScreen *screen, const char *geometry)
 {
 	NemoWindow *window;
-	gchar *uri;
 
-	uri = g_file_get_uri (location);
-	DEBUG ("Opening new window at uri %s", uri);
 	nemo_profile_start (NULL);
-	window = nemo_application_create_window (application,
-						     screen);
-	nemo_window_go_to (window, location);
+	window = nemo_application_create_window (application, screen);
+
+	if (location != NULL) {
+		nemo_window_go_to (window, location);
+	} else {
+		nemo_window_slot_go_home (nemo_window_get_active_slot (window), 0);
+	}
 
 	if (geometry != NULL && !gtk_widget_get_visible (GTK_WIDGET (window))) {
 		/* never maximize windows opened from shell if a
@@ -492,8 +493,6 @@ open_window (NemoApplication *application,
 	}
 
 	nemo_profile_end (NULL);
-
-	g_free (uri);
 }
 
 static void
@@ -727,6 +726,7 @@ do_cmdline_sanity_checks (NemoApplication *self,
 			  gboolean perform_self_check,
 			  gboolean version,
 			  gboolean kill_shell,
+			  gboolean select_uris,
 			  gchar **remaining)
 {
 	gboolean retval = FALSE;
@@ -747,6 +747,12 @@ do_cmdline_sanity_checks (NemoApplication *self,
 	    remaining != NULL && remaining[0] != NULL && remaining[1] != NULL) {
 		g_printerr ("%s\n",
 			    _("--geometry cannot be used with more than one URI."));
+		goto out;
+	}
+
+	if (select_uris && remaining == NULL) {
+		g_printerr ("%s\n",
+			    _("--select must be used with at least an URI."));
 		goto out;
 	}
 
@@ -788,6 +794,60 @@ nemo_application_quit (NemoApplication *self)
 	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
 }
 
+static void
+select_items_ready_cb (GObject *source,
+		       GAsyncResult *res,
+		       gpointer user_data)
+{
+	GDBusConnection *connection = G_DBUS_CONNECTION (source);
+	NemoApplication *self = user_data;
+	GError *error = NULL;
+
+	g_dbus_connection_call_finish (connection, res, &error);
+
+	if (error != NULL) {
+		g_warning ("Unable to select specified URIs %s\n", error->message);
+		g_error_free (error);
+
+		/* open default location instead */
+		g_application_open (G_APPLICATION (self), NULL, 0, "");
+	}
+}
+
+static void
+nemo_application_select (NemoApplication *self,
+			     GFile **files,
+			     gint len)
+{
+	GVariantBuilder builder;
+	gint idx;
+	gchar *uri;
+	GDBusConnection *connection;
+#if GLIB_CHECK_VERSION (2, 34, 0)
+	connection = g_application_get_dbus_connection (g_application_get_default ());
+#else
+	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
+#endif
+
+	g_variant_builder_init (&builder, G_VARIANT_TYPE ("as"));
+	for (idx = 0; idx < len; idx++) {
+		uri = g_file_get_uri (files[idx]);
+		g_variant_builder_add (&builder, "s", uri);
+		g_free (uri);
+	}
+
+	g_dbus_connection_call (connection,
+				NEMO_FDO_DBUS_NAME,
+				NEMO_FDO_DBUS_PATH,
+				NEMO_FDO_DBUS_IFACE,
+				"ShowItems",
+				g_variant_new ("(ass)", &builder, ""), NULL,
+				G_DBUS_CALL_FLAGS_NONE, G_MAXINT, NULL,
+				select_items_ready_cb, self);
+
+	g_variant_builder_clear (&builder);
+}
+
 static gboolean
 nemo_application_local_command_line (GApplication *application,
 					 gchar ***arguments,
@@ -798,6 +858,7 @@ nemo_application_local_command_line (GApplication *application,
 	gboolean browser = FALSE;
 	gboolean kill_shell = FALSE;
 	gboolean no_default_window = FALSE;
+	gboolean select_uris = FALSE;
 	gchar **remaining = NULL;
 	NemoApplication *self = NEMO_APPLICATION (application);
 
@@ -819,6 +880,8 @@ nemo_application_local_command_line (GApplication *application,
 		  N_("Do not manage the desktop (ignore the preference set in the preferences dialog)."), NULL },
 		{ "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
 		  N_("Quit Nemo."), NULL },
+		{ "select", 's', 0, G_OPTION_ARG_NONE, &select_uris,
+		  N_("Select specified URI in parent folder."), NULL },
 		{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, &remaining, NULL,  N_("[URI...]") },
 
 		{ NULL }
@@ -855,7 +918,7 @@ nemo_application_local_command_line (GApplication *application,
 	}
 
 	if (!do_cmdline_sanity_checks (self, perform_self_check,
-				       version, kill_shell, remaining)) {
+				       version, kill_shell, select_uris, remaining)) {
 		*exit_status = EXIT_FAILURE;
 		goto out;
 	}
@@ -913,7 +976,7 @@ nemo_application_local_command_line (GApplication *application,
 		g_strfreev (remaining);
 	}
 
-	if (files == NULL && !no_default_window) {
+	if (files == NULL && !no_default_window && !select_uris) {
 		files = g_malloc0 (2 * sizeof (GFile *));
 		len = 1;
 
@@ -921,8 +984,14 @@ nemo_application_local_command_line (GApplication *application,
 		files[1] = NULL;
 	}
 
-	/* Invoke "Open" to create new windows */
-	if (len > 0) {
+	if (len == 0) {
+		goto out;
+	}
+
+	if (select_uris) {
+		nemo_application_select (self, files, len);
+	} else {
+		/* Invoke "Open" to create new windows */
 		g_application_open (application, files, len, "");
 	}
 

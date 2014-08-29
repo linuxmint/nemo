@@ -25,6 +25,10 @@
 
 #include <glib-object.h>
 
+#define NEMO_FDO_DBUS_IFACE "org.freedesktop.FileManager1"
+#define NEMO_FDO_DBUS_NAME  "org.freedesktop.FileManager1"
+#define NEMO_FDO_DBUS_PATH  "/org/freedesktop/FileManager1"
+
 typedef struct _NemoFreedesktopDBus NemoFreedesktopDBus;
 typedef struct _NemoFreedesktopDBusClass NemoFreedesktopDBusClass;
 
