@@ -41,6 +41,7 @@ eel_accessibility_set_up_label_widget_relation (GtkWidget *label, GtkWidget *wid
 	atk_object_add_relationship (atk_widget, ATK_RELATION_LABELLED_BY, atk_label);
 }
 
+#if !GTK_CHECK_VERSION(3,7,5)
 GType
 eel_accessibility_create_accessible_gtype (const char *type_name,
 					   GtkWidget *widget,
@@ -79,7 +80,7 @@ eel_accessibility_create_accessible_gtype (const char *type_name,
 					      query.class_size, class_init,
 					      query.instance_size, NULL, 0);
 }
-
+#endif
 
 static GQuark
 get_quark_accessible (void)

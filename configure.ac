@@ -22,7 +22,7 @@ dnl Interface break is not allowed.
 m4_define(nemo_extension_current,  5)
 m4_define(nemo_extension_revision, 0)
 
-AC_INIT(nemo, 2.8.6, https://github.com/linuxmint/nemo)
+AC_INIT(nemo, 2.8.1.14-daschuer https://github.com/daschuer/nemo)
 
 dnl ===========================================================================
 
@@ -40,15 +40,16 @@ dnl the library was started with version "1:0:0" instead of "0:0:0"
 AC_SUBST(NEMO_EXTENSION_VERSION_INFO, [nemo_extension_current]:[nemo_extension_revision]:`expr [nemo_extension_current] - 1`)
 
 AC_C_BIGENDIAN
-AC_C_CONST
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AM_DISABLE_STATIC
-AC_LIBTOOL_WIN32_DLL
-AM_PROG_LIBTOOL
+
+# Initialize libtool
+LT_PREREQ([2.2])
+LT_INIT([disable-static])
+
 PKG_PROG_PKG_CONFIG
 
 AC_CHECK_LIB(m, floor)
@@ -78,7 +79,7 @@ GTK_DOC_CHECK([1.4])
 dnl ==========================================================================
 
 AC_ARG_ENABLE(debug,
-  AC_HELP_STRING([--disable-debug],[Disable debugging code]),
+  AS_HELP_STRING([--disable-debug],[Disable debugging code]),
   [
     case "${enableval}" in
       yes|no) enable_debug="${enableval}" ;;
@@ -97,8 +98,8 @@ dnl ==========================================================================
 dnl Enable Profiling
 
 AC_ARG_ENABLE(profiling,
-        [AC_HELP_STRING([--enable-profiling],
-        [turn on profiling])],
+        [AS_HELP_STRING([--enable-profiling],
+                        [turn on profiling])],
         , enable_profiling=yes)
 
 if test "x$enable_profiling" = "xyes"; then
@@ -227,7 +228,7 @@ AC_SUBST(SELINUX_LIBS)
 
 
 AC_ARG_ENABLE(empty_view,
- AC_HELP_STRING([--enable-empty-view], [Enable empty view]),
+ AS_HELP_STRING([--enable-empty-view],[Enable empty view]),
  [ENABLE_EMPTY_VIEW=1
   AC_DEFINE(ENABLE_EMPTY_VIEW, 1, [define to enable the empty view that is used for performance measurement])])
 
@@ -264,7 +265,7 @@ dnl Turn on the additional warnings last, so -Werror doesn't affect other tests.
 WARNING_CFLAGS=""
 
 AC_ARG_ENABLE(more-warnings,
-AC_HELP_STRING([--enable-more-warnings], [Maximum compiler warnings]),
+AS_HELP_STRING([--enable-more-warnings],[Maximum compiler warnings]),
 set_more_warnings="$enableval",[
 if test -d $srcdir/.git; then
 	set_more_warnings=yes
@@ -287,9 +288,9 @@ if test "$GCC" = "yes" -a "$set_more_warnings" != "no"; then
 		SAVE_CFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS $option"
 		AC_MSG_CHECKING([whether gcc understands $option])
-		AC_TRY_COMPILE([], [],
-			has_option=yes,
-			has_option=no,)
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+		                  [has_option=yes],
+		                  [has_option=no])
 		if test $has_option = yes; then
 		   	WARNING_CFLAGS="$WARNING_CFLAGS $option"
 		fi
@@ -339,18 +340,12 @@ PKG_CHECK_MODULES(BASE, [
 	glib-2.0 >= glib_minver
 ])
 
-AC_SUBST(BASE_CFLAGS)
-AC_SUBST(BASE_LIBS)
-
 dnl common libs (eel, nemo)
 PKG_CHECK_MODULES(COMMON, [
 	gail-3.0
 	libxml-2.0 >= xml_minver
 	x11
 ])
-
-AC_SUBST(COMMON_CFLAGS)
-AC_SUBST(COMMON_LIBS)
 
 dnl additional nemo libs
 PKG_CHECK_MODULES(NEMO, [
@@ -374,7 +369,7 @@ dnl ==========================================================================
 AC_PATH_PROG(UPDATE_MIME_DATABASE, update-mime-database, no)
 
 AC_ARG_ENABLE(update-mimedb,
-   AC_HELP_STRING([--disable-update-mimedb],
+   AS_HELP_STRING([--disable-update-mimedb],
                    [disable the update-mime-database after install [default=no]]),,
     enable_update_mimedb=yes)
 AM_CONDITIONAL(ENABLE_UPDATE_MIMEDB, test x$enable_update_mimedb = xyes)

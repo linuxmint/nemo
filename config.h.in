@@ -157,6 +157,3 @@
 #  undef WORDS_BIGENDIAN
 # endif
 #endif
-
-/* Define to empty if `const' does not conform to ANSI C. */
-#undef const
