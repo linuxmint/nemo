@@ -486,6 +486,8 @@ progress_ui_handler_show_complete_notification (NemoProgressUIHandler *self)
 	complete_notification = notify_notification_new (_("File Operations"),
 							 _("All file operations have been successfully completed"),
 							 NULL);
+	notify_notification_set_hint (complete_notification,
+				      "desktop-entry", g_variant_new_string ("nemo"));
 	notify_notification_show (complete_notification, NULL);
 
 	g_object_unref (complete_notification);
