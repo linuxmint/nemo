@@ -1,3 +1,14 @@
+Nemo merged with changes in Nautilus 3.7.4:
+
+Changes:
+* Support a --select commandline option to force selection of the passed-in URI
+* Add source hints to notifications (Matthias Clasen)
+* Modernize build infrastructure (Javier Jardon)
+* Fix a crasher in the Shell search provider
+
+Revert: 
+* Use public GTK-a11y support instead of our own hacks
+
 Nemo merged with changes in Nautilus 3.7.3:
 
 Changes:

@@ -68,24 +68,15 @@ $(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/she
 		$(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml		\
 		$(NULL)
 
-UI_FILES = \
-	nemo-bookmarks-window.glade		\
-	nemo-file-management-properties.glade	\
-	nemo-canvas-view-ui.xml		\
-	nemo-desktop-canvas-view-ui.xml	\
-	nemo-toolbar-ui.xml			\
-	nemo-directory-view-ui.xml		\
-	nemo-shell-ui.xml			\
-	$(NULL)
 
 headers =					\
 	nemo-special-location-bar.h		\
 	$(NULL)
 
-nemo-resources.c: nemo.gresource.xml $(shell glib-compile-resources --generate-dependencies $(srcdir)/nemo.gresource.xml)
+resource_files = $(shell glib-compile-resources --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/nemo.gresource.xml)
+nemo-resources.c: nemo.gresource.xml $(resource_files)
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-source --c-name nemo $(srcdir)/nemo.gresource.xml
-
-nemo-resources.h: nemo.gresource.xml
+nemo-resources.h: nemo.gresource.xml $(resource_files)
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-header --c-name nemo $(srcdir)/nemo.gresource.xml
 
 nemo-enum-types.h: stamp-nemo-enum-types.h
@@ -283,9 +274,9 @@ CLEANFILES = \
 	$(NULL)
 
 EXTRA_DIST =					\
+	$(resource_files)			\
 	$(server_in_files)			\
-    $(polkit_in_files)      \
-	$(UI_FILES)				\
+	$(polkit_in_files)      \
 	nemo.gresource.xml			\
 	check-nemo				\
 	$(NULL)
