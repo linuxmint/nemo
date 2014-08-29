@@ -1235,4 +1235,6 @@ nemo_query_editor_set_query (NemoQueryEditor	*editor,
 	}
 
 	editor->details->change_frozen = FALSE;
+
+	g_free (text);
 }

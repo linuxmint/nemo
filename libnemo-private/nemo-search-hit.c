@@ -123,6 +123,7 @@ nemo_search_hit_compute_scores (NemoSearchHit *hit,
 	       proximity_bonus, recent_bonus, match_bonus);
 
 	g_date_time_unref (now);
+	g_free (query_uri);
 }
 
 const char *
