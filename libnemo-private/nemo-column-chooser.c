@@ -536,6 +536,8 @@ get_column_names (NemoColumnChooser *chooser, gboolean only_visible)
 			if (!only_visible || visible) {
 				/* give ownership to the array */
 				g_ptr_array_add (ret, name);
+			} else {
+				g_free (name);
 			}
 
 		} while (gtk_tree_model_iter_next (GTK_TREE_MODEL (chooser->details->store), &iter));

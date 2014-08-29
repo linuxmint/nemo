@@ -1992,6 +1992,7 @@ new_folder_done (GFile *new_folder,
 	if (data->selection != NULL) {
 		NewFolderSelectionData *sdata;
 		GList *uris, *l;
+		char *target_uri;
 
 		sdata = g_new (NewFolderSelectionData, 1);
 		sdata->directory_view = directory_view;
@@ -2016,6 +2017,8 @@ new_folder_done (GFile *new_folder,
 		}
 		uris = g_list_reverse (uris);
 
+		target_uri = nemo_file_get_uri (file);
+
 		g_signal_connect_data (directory_view,
 				       "remove_file",
 				       G_CALLBACK (rename_newly_added_folder),
@@ -2026,10 +2029,11 @@ new_folder_done (GFile *new_folder,
 		nemo_view_move_copy_items (directory_view,
 					       uris,
 					       NULL,
-					       nemo_file_get_uri (file),
+					       target_uri,
 					       GDK_ACTION_MOVE,
 					       0, 0);
 		g_list_free_full (uris, g_free);
+		g_free (target_uri);
 	} else {
 		if (g_hash_table_lookup_extended (data->added_locations, new_folder, NULL, NULL)) {
 			/* The file was already added */
