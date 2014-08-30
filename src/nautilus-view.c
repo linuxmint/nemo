@@ -2177,19 +2177,15 @@ all_files_in_trash (GList *files)
 }
 
 static gboolean
-all_selected_items_in_trash (NautilusView *view)
+all_selected_items_in_trash (GList *selection)
 {
-	GList *selection;
 	gboolean result;
 
 	/* If the contents share a parent directory, we need only
 	 * check that parent directory. Otherwise we have to inspect
 	 * each selected item.
 	 */
-	selection = nautilus_view_get_selection (view);
 	result = (selection == NULL) ? FALSE : all_files_in_trash (selection);
-	nautilus_file_list_free (selection);
-
 	return result;
 }
 
@@ -4056,17 +4052,13 @@ nautilus_view_create_links_for_files (NautilusView *view, GList *files,
  */
  
 static gboolean
-special_link_in_selection (NautilusView *view)
+special_link_in_selection (GList *selection)
 {
 	gboolean saw_link;
-	GList *selection, *node;
+	GList *node;
 	NautilusFile *file;
 
-	g_return_val_if_fail (NAUTILUS_IS_VIEW (view), FALSE);
-
 	saw_link = FALSE;
-
-	selection = nautilus_view_get_selection (NAUTILUS_VIEW (view));
 
 	for (node = selection; node != NULL; node = node->next) {
 		file = NAUTILUS_FILE (node->data);
@@ -4078,8 +4070,6 @@ special_link_in_selection (NautilusView *view)
 		}
 	}
 	
-	nautilus_file_list_free (selection);
-	
 	return saw_link;
 }
 
@@ -4089,17 +4079,13 @@ special_link_in_selection (NautilusView *view)
  */
  
 static gboolean
-desktop_or_home_dir_in_selection (NautilusView *view)
+desktop_or_home_dir_in_selection (GList *selection)
 {
 	gboolean saw_desktop_or_home_dir;
-	GList *selection, *node;
+	GList *node;
 	NautilusFile *file;
 
-	g_return_val_if_fail (NAUTILUS_IS_VIEW (view), FALSE);
-
 	saw_desktop_or_home_dir = FALSE;
-
-	selection = nautilus_view_get_selection (NAUTILUS_VIEW (view));
 
 	for (node = selection; node != NULL; node = node->next) {
 		file = NAUTILUS_FILE (node->data);
@@ -4112,8 +4098,6 @@ desktop_or_home_dir_in_selection (NautilusView *view)
 			break;
 		}
 	}
-	
-	nautilus_file_list_free (selection);
 	
 	return saw_desktop_or_home_dir;
 }
@@ -8410,6 +8394,7 @@ real_update_menus (NautilusView *view)
 	gboolean selection_contains_desktop_or_home_dir;
 	gboolean selection_contains_recent;
 	gboolean selection_contains_search;
+	gboolean selection_all_in_trash;
 	gboolean can_create_files;
 	gboolean can_delete_files;
 	gboolean can_move_files;
@@ -8433,11 +8418,12 @@ real_update_menus (NautilusView *view)
 	selection = nautilus_view_get_selection (view);
 	selection_count = g_list_length (selection);
 
-	selection_contains_special_link = special_link_in_selection (view);
-	selection_contains_desktop_or_home_dir = desktop_or_home_dir_in_selection (view);
+	selection_contains_special_link = special_link_in_selection (selection);
+	selection_contains_desktop_or_home_dir = desktop_or_home_dir_in_selection (selection);
 	selection_contains_recent = showing_recent_directory (view);
 	selection_contains_search = view->details->model &&
 		NAUTILUS_IS_SEARCH_DIRECTORY (view->details->model);
+	selection_all_in_trash = all_selected_items_in_trash (selection);
 
 	can_create_files = nautilus_view_supports_creating_files (view);
 	can_delete_files =
@@ -8625,7 +8611,7 @@ real_update_menus (NautilusView *view)
 	reset_open_with_menu (view, selection);
 	reset_extension_actions_menu (view, selection);
 
-	if (all_selected_items_in_trash (view)) {
+	if (selection_all_in_trash) {
 		label = _("_Delete Permanently");
 		tip = _("Delete all selected items permanently");
 		show_separate_delete_command = FALSE;
@@ -8640,7 +8626,7 @@ real_update_menus (NautilusView *view)
 	g_object_set (action,
 		      "label", label,
 		      "tooltip", tip,
-		      "icon-name", all_selected_items_in_trash (view) ?
+		      "icon-name", selection_all_in_trash ?
 		      NAUTILUS_ICON_DELETE : NAUTILUS_ICON_TRASH_FULL,
 		      NULL);
 	/* if the backend supports delete but not trash then don't show trash */
