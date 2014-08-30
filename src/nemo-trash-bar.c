@@ -213,7 +213,7 @@ nemo_trash_bar_init (NemoTrashBar *bar)
 				     _("Delete all items in the Trash"));
 
 	g_signal_connect_object (nemo_trash_monitor_get (),
-				 "trash_state_changed",
+				 "trash-state-changed",
 				 G_CALLBACK (nemo_trash_bar_trash_state_changed),
 				 bar,
 				 0);

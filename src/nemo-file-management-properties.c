@@ -552,7 +552,7 @@ nemo_file_management_properties_dialog_setup_list_column_page (GtkBuilder *build
 
 	g_signal_connect (chooser, "changed",
 			  G_CALLBACK (columns_changed_callback), chooser);
-	g_signal_connect (chooser, "use_default",
+	g_signal_connect (chooser, "use-default",
 			  G_CALLBACK (use_default_callback), chooser);
 
 	gtk_widget_show (chooser);

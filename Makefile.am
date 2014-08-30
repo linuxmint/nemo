@@ -3,7 +3,6 @@ include $(top_srcdir)/Makefile.shared
 DIRS =				\
 	eel			\
 	libnemo-extension	\
-	cut-n-paste-code 	\
 	libnemo-private 	\
 	src 			\
 	test 			\

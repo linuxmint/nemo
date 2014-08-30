@@ -1284,7 +1284,7 @@ app_chooser_dialog_response_cb (GtkDialog *dialog,
 	info = nemo_mime_application_chooser_get_info (chooser);
 	files = nemo_mime_application_chooser_get_files (chooser);
 
-	g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
+	g_signal_emit_by_name (nemo_signaller_get_current (), "mime-data-changed");
 
 	nemo_launch_application (info, files, parent_window);
 
@@ -2020,7 +2020,7 @@ new_folder_done (GFile *new_folder,
 		target_uri = nemo_file_get_uri (file);
 
 		g_signal_connect_data (directory_view,
-				       "remove_file",
+				       "remove-file",
 				       G_CALLBACK (rename_newly_added_folder),
 				       sdata,
 				       (GClosureNotify)NULL,
@@ -2044,7 +2044,7 @@ new_folder_done (GFile *new_folder,
 			 * must use connect_after.
 			 */
 			g_signal_connect_data (directory_view,
-					       "add_file",
+					       "add-file",
 					       G_CALLBACK (reveal_newly_added_folder),
 					       g_object_ref (new_folder),
 					       (GClosureNotify)g_object_unref,
@@ -2114,7 +2114,7 @@ nemo_view_new_folder (NemoView *directory_view,
 	data = new_folder_data_new (directory_view, with_selection);
 
 	g_signal_connect_data (directory_view,
-			       "add_file",
+			       "add-file",
 			       G_CALLBACK (track_newly_added_locations),
 			       data,
 			       (GClosureNotify)NULL,
@@ -2138,7 +2138,7 @@ setup_new_folder_data (NemoView *directory_view)
 	data = new_folder_data_new (directory_view, FALSE);
 
 	g_signal_connect_data (directory_view,
-			       "add_file",
+			       "add-file",
 			       G_CALLBACK (track_newly_added_locations),
 			       data,
 			       (GClosureNotify)NULL,
@@ -2528,9 +2528,9 @@ add_directory_to_directory_list (NemoView *view,
 						     FALSE, attributes,
 						     (NemoDirectoryCallback)changed_callback, view);
 
-		g_signal_connect_object (directory, "files_added",
+		g_signal_connect_object (directory, "files-added",
 					 G_CALLBACK (changed_callback), view, 0);
-		g_signal_connect_object (directory, "files_changed",
+		g_signal_connect_object (directory, "files-changed",
 					 G_CALLBACK (changed_callback), view, 0);
 
 		*directory_list = g_list_append	(*directory_list, directory);
@@ -2847,22 +2847,22 @@ nemo_view_init (NemoView *view)
 	}
 	update_templates_directory (view);
 	g_signal_connect_object (nemo_signaller_get_current (),
-				 "user_dirs_changed",
+				 "user-dirs-changed",
 				 G_CALLBACK (user_dirs_changed),
 				 view, G_CONNECT_SWAPPED);
 
 	view->details->sort_directories_first =
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
 
-	g_signal_connect_object (nemo_trash_monitor_get (), "trash_state_changed",
+	g_signal_connect_object (nemo_trash_monitor_get (), "trash-state-changed",
 				 G_CALLBACK (nemo_view_trash_state_changed_callback), view, 0);
 
 	/* React to clipboard changes */
-	g_signal_connect_object (nemo_clipboard_monitor_get (), "clipboard_changed",
+	g_signal_connect_object (nemo_clipboard_monitor_get (), "clipboard-changed",
 				 G_CALLBACK (clipboard_changed_callback), view, 0);
 
 	/* Register to menu provider extension signal managing menu updates */
-	g_signal_connect_object (nemo_signaller_get_current (), "popup_menu_changed",
+	g_signal_connect_object (nemo_signaller_get_current (), "popup-menu-changed",
 				 G_CALLBACK (nemo_view_update_menus), view, G_CONNECT_SWAPPED);
 
 	gtk_widget_show (GTK_WIDGET (view));
@@ -3465,7 +3465,7 @@ pre_copy_move (NemoView *directory_view)
 	 * operate on. The ADD_FILE signal is registered as G_SIGNAL_RUN_LAST, so we
 	 * must use connect_after.
 	 */
-	g_signal_connect (directory_view, "add_file",
+	g_signal_connect (directory_view, "add-file",
 			  G_CALLBACK (pre_copy_move_add_file_callback), copy_move_done_data);
 
 	return copy_move_done_data;
@@ -3569,7 +3569,7 @@ copy_move_done_callback (GHashTable *debuting_files,
 			 * must use connect_after.
 			 */
 			g_signal_connect_data (directory_view,
-					       "add_file",
+					       "add-file",
 					       G_CALLBACK (debuting_files_add_file_callback),
 					       debuting_files_data,
 					       (GClosureNotify) debuting_files_data_free,
@@ -4161,10 +4161,10 @@ nemo_view_add_subdirectory (NemoView  *view,
 					     files_added_callback, view);
 	
 	g_signal_connect
-		(directory, "files_added",
+		(directory, "files-added",
 		 G_CALLBACK (files_added_callback), view);
 	g_signal_connect
-		(directory, "files_changed",
+		(directory, "files-changed",
 		 G_CALLBACK (files_changed_callback), view);
 	
 	view->details->subdirectory_list = g_list_prepend (
@@ -10484,10 +10484,10 @@ finish_loading (NemoView *view)
 
 	/* Connect handlers to learn about loading progress. */
 	view->details->done_loading_handler_id = g_signal_connect
-		(view->details->model, "done_loading",
+		(view->details->model, "done-loading",
 		 G_CALLBACK (done_loading_callback), view);
 	view->details->load_error_handler_id = g_signal_connect
-		(view->details->model, "load_error",
+		(view->details->model, "load-error",
 		 G_CALLBACK (load_error_callback), view);
 
 	/* Monitor the things needed to get the right icon. Also
@@ -10510,10 +10510,10 @@ finish_loading (NemoView *view)
 					     files_added_callback, view);
 
     	view->details->files_added_handler_id = g_signal_connect
-		(view->details->model, "files_added",
+		(view->details->model, "files-added",
 		 G_CALLBACK (files_added_callback), view);
 	view->details->files_changed_handler_id = g_signal_connect
-		(view->details->model, "files_changed",
+		(view->details->model, "files-changed",
 		 G_CALLBACK (files_changed_callback), view);
 
 	nemo_profile_end (NULL);
@@ -11078,7 +11078,7 @@ nemo_view_class_init (NemoViewClass *klass)
 	scrolled_window_class->scrollbar_spacing = 0;
 
 	signals[ADD_FILE] =
-		g_signal_new ("add_file",
+		g_signal_new ("add-file",
 		              G_TYPE_FROM_CLASS (klass),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoViewClass, add_file),
@@ -11086,7 +11086,7 @@ nemo_view_class_init (NemoViewClass *klass)
 		              g_cclosure_marshal_generic,
 		              G_TYPE_NONE, 2, NEMO_TYPE_FILE, NEMO_TYPE_DIRECTORY);
 	signals[BEGIN_FILE_CHANGES] =
-		g_signal_new ("begin_file_changes",
+		g_signal_new ("begin-file-changes",
 		              G_TYPE_FROM_CLASS (klass),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoViewClass, begin_file_changes),
@@ -11094,7 +11094,7 @@ nemo_view_class_init (NemoViewClass *klass)
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
 	signals[BEGIN_LOADING] =
-		g_signal_new ("begin_loading",
+		g_signal_new ("begin-loading",
 		              G_TYPE_FROM_CLASS (klass),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoViewClass, begin_loading),
@@ -11110,7 +11110,7 @@ nemo_view_class_init (NemoViewClass *klass)
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
 	signals[END_FILE_CHANGES] =
-		g_signal_new ("end_file_changes",
+		g_signal_new ("end-file-changes",
 		              G_TYPE_FROM_CLASS (klass),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoViewClass, end_file_changes),
@@ -11118,7 +11118,7 @@ nemo_view_class_init (NemoViewClass *klass)
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
 	signals[END_LOADING] =
-		g_signal_new ("end_loading",
+		g_signal_new ("end-loading",
 		              G_TYPE_FROM_CLASS (klass),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoViewClass, end_loading),
@@ -11126,7 +11126,7 @@ nemo_view_class_init (NemoViewClass *klass)
 		              g_cclosure_marshal_VOID__BOOLEAN,
 		              G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
 	signals[FILE_CHANGED] =
-		g_signal_new ("file_changed",
+		g_signal_new ("file-changed",
 		              G_TYPE_FROM_CLASS (klass),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoViewClass, file_changed),
@@ -11134,7 +11134,7 @@ nemo_view_class_init (NemoViewClass *klass)
 		              g_cclosure_marshal_generic,
 		              G_TYPE_NONE, 2, NEMO_TYPE_FILE, NEMO_TYPE_DIRECTORY);
 	signals[REMOVE_FILE] =
-		g_signal_new ("remove_file",
+		g_signal_new ("remove-file",
 		              G_TYPE_FROM_CLASS (klass),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoViewClass, remove_file),

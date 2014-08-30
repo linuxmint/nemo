@@ -350,7 +350,7 @@ build_grid (GtkWidget *container,
 		g_signal_connect (entry, "activate",
 				  G_CALLBACK (entry_activate_cb),
 				  container);
-		g_signal_connect (entry, "focus_out_event",
+		g_signal_connect (entry, "focus-out-event",
 				  G_CALLBACK (entry_focus_out_cb),
 				  container);
 		
@@ -363,7 +363,7 @@ build_grid (GtkWidget *container,
 					   target_table, G_N_ELEMENTS (target_table),
 					   GDK_ACTION_COPY | GDK_ACTION_MOVE);
 			
-			g_signal_connect (entry, "drag_data_received",
+			g_signal_connect (entry, "drag-data-received",
 					  G_CALLBACK (nemo_desktop_item_properties_url_drag_data_received),
 					  entry);
 		} else if (strcmp (item_entry->field, "Exec") == 0) {
@@ -372,7 +372,7 @@ build_grid (GtkWidget *container,
 					   target_table, G_N_ELEMENTS (target_table),
 					   GDK_ACTION_COPY | GDK_ACTION_MOVE);
 			
-			g_signal_connect (entry, "drag_data_received",
+			g_signal_connect (entry, "drag-data-received",
 					  G_CALLBACK (nemo_desktop_item_properties_exec_drag_data_received),
 					  entry);
 		}

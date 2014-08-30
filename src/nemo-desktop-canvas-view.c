@@ -334,7 +334,7 @@ nemo_desktop_canvas_view_handle_middle_click (NemoCanvasContainer *canvas_contai
 
 	/* Stop the event because we don't want anyone else dealing with it. */	
 	gdk_flush ();
-	g_signal_stop_emission_by_name (canvas_container, "middle_click");
+	g_signal_stop_emission_by_name (canvas_container, "middle-click");
 
 	/* build an X event to represent the middle click. */
 	x_event.type = ButtonPress;
@@ -477,7 +477,7 @@ delayed_init (NemoDesktopCanvasView *desktop_canvas_view)
 {
 	/* Keep track of the load time. */
 	g_signal_connect_object (nemo_view_get_model (NEMO_VIEW (desktop_canvas_view)),
-				 "done_loading",
+				 "done-loading",
 				 G_CALLBACK (done_loading), desktop_canvas_view, 0);
 
 	/* Monitor desktop directory. */
@@ -540,7 +540,7 @@ nemo_desktop_canvas_view_init (NemoDesktopCanvasView *desktop_canvas_view)
 	 */
 	if (!nemo_monitor_active ()) {
 		desktop_canvas_view->details->delayed_init_signal = g_signal_connect_object
-			(desktop_canvas_view, "begin_loading",
+			(desktop_canvas_view, "begin-loading",
 			 G_CALLBACK (delayed_init), desktop_canvas_view, 0);
 	}
 	
@@ -574,7 +574,7 @@ nemo_desktop_canvas_view_init (NemoDesktopCanvasView *desktop_canvas_view)
 						 NEMO_CANVAS_LAYOUT_T_B_R_L :
 						 NEMO_CANVAS_LAYOUT_T_B_L_R);
 
-	g_signal_connect_object (canvas_container, "middle_click",
+	g_signal_connect_object (canvas_container, "middle-click",
 				 G_CALLBACK (nemo_desktop_canvas_view_handle_middle_click), desktop_canvas_view, 0);
 	g_signal_connect_object (canvas_container, "realize",
 				 G_CALLBACK (desktop_canvas_container_realize), desktop_canvas_view, 0);

@@ -310,6 +310,8 @@ drag_data_get_callback (GtkWidget *widget,
 			guint32 time,
 			gpointer data)
 {
+	NemoDragInfo *drag_info;
+
 	g_assert (widget != NULL);
 	g_assert (NEMO_IS_CANVAS_CONTAINER (widget));
 	g_return_if_fail (context != NULL);
@@ -318,8 +320,8 @@ drag_data_get_callback (GtkWidget *widget,
 	 * the selection data in the right format. Pass it means to
 	 * iterate all the selected icons.
 	 */
-	nemo_drag_drag_data_get (widget, context, selection_data,
-		info, time, widget, each_icon_get_data_binder);
+	drag_info = &(NEMO_CANVAS_CONTAINER (widget)->details->dnd_info->drag_info);
+	nemo_drag_drag_data_get_from_cache (drag_info->selection_cache, context, selection_data, info, time);
 }
 
 
@@ -572,7 +574,7 @@ get_container_uri (NemoCanvasContainer *container)
 
 	/* get the URI associated with the container */
 	uri = NULL;
-	g_signal_emit_by_name (container, "get_container_uri", &uri);
+	g_signal_emit_by_name (container, "get-container-uri", &uri);
 	return uri;
 }
 
@@ -611,7 +613,7 @@ receive_dropped_netscape_url (NemoCanvasContainer *container, const char *encode
 
 	drop_target = nemo_canvas_container_find_drop_target (container, context, x, y, NULL, TRUE);
 
-	g_signal_emit_by_name (container, "handle_netscape_url",
+	g_signal_emit_by_name (container, "handle-netscape-url",
 			       encoded_url,
 			       drop_target,
 			       gdk_drag_context_get_selected_action (context),
@@ -632,7 +634,7 @@ receive_dropped_uri_list (NemoCanvasContainer *container, const char *uri_list, 
 
 	drop_target = nemo_canvas_container_find_drop_target (container, context, x, y, NULL, TRUE);
 
-	g_signal_emit_by_name (container, "handle_uri_list",
+	g_signal_emit_by_name (container, "handle-uri-list",
 				 uri_list,
 				 drop_target,
 				 gdk_drag_context_get_selected_action (context),
@@ -653,7 +655,7 @@ receive_dropped_text (NemoCanvasContainer *container, const char *text, GdkDragC
 
 	drop_target = nemo_canvas_container_find_drop_target (container, context, x, y, NULL, TRUE);
 	
-	g_signal_emit_by_name (container, "handle_text",
+	g_signal_emit_by_name (container, "handle-text",
 			       text,
 			       drop_target,
 			       gdk_drag_context_get_selected_action (context),
@@ -674,7 +676,7 @@ receive_dropped_raw (NemoCanvasContainer *container, const char *raw_data, int l
 
 	drop_target = nemo_canvas_container_find_drop_target (container, context, x, y, NULL, TRUE);
 
-	g_signal_emit_by_name (container, "handle_raw",
+	g_signal_emit_by_name (container, "handle-raw",
 			       raw_data,
 			       length,
 			       drop_target,
@@ -901,7 +903,7 @@ handle_nonlocal_move (NemoCanvasContainer *container,
 	}
 
 	/* start the copy */
-	g_signal_emit_by_name (container, "move_copy_items",
+	g_signal_emit_by_name (container, "move-copy-items",
 			       source_uris,
 			       source_item_locations,
 			       target_uri,
@@ -1244,6 +1246,7 @@ drag_begin_callback (GtkWidget      *widget,
 		     gpointer        data)
 {
 	NemoCanvasContainer *container;
+	NemoDragInfo *drag_info;
 	cairo_surface_t *surface;
 	double x1, y1, x2, y2, winx, winy;
 	int x_offset, y_offset;
@@ -1270,6 +1273,12 @@ drag_begin_callback (GtkWidget      *widget,
         cairo_surface_set_device_offset (surface, -x_offset, -y_offset);
         gtk_drag_set_icon_surface (context, surface);
         cairo_surface_destroy (surface);
+
+	/* cache the data at the beginning since the view may change */
+	drag_info = &(container->details->dnd_info->drag_info);
+	drag_info->selection_cache = nemo_drag_create_selection_cache (widget,
+									   each_icon_get_data_binder);
+
 }
 
 void
@@ -1416,7 +1425,7 @@ hover_timer (gpointer user_data)
 
 	dnd_info->hover_id = 0;
 
-	g_signal_emit_by_name (container, "handle_hover", dnd_info->target_uri);
+	g_signal_emit_by_name (container, "handle-hover", dnd_info->target_uri);
 
 	return FALSE;
 }
@@ -1710,21 +1719,21 @@ nemo_canvas_dnd_init (NemoCanvasContainer *container)
 
 	
 	/* Messages for outgoing drag. */
-	g_signal_connect (container, "drag_begin", 
+	g_signal_connect (container, "drag-begin", 
 			  G_CALLBACK (drag_begin_callback), NULL);
-	g_signal_connect (container, "drag_data_get",
+	g_signal_connect (container, "drag-data-get",
 			  G_CALLBACK (drag_data_get_callback), NULL);
-	g_signal_connect (container, "drag_end",
+	g_signal_connect (container, "drag-end",
 			  G_CALLBACK (drag_end_callback), NULL);
 	
 	/* Messages for incoming drag. */
-	g_signal_connect (container, "drag_data_received",
+	g_signal_connect (container, "drag-data-received",
 			  G_CALLBACK (drag_data_received_callback), NULL);
-	g_signal_connect (container, "drag_motion",
+	g_signal_connect (container, "drag-motion",
 			  G_CALLBACK (drag_motion_callback), NULL);
-	g_signal_connect (container, "drag_drop",
+	g_signal_connect (container, "drag-drop",
 			  G_CALLBACK (drag_drop_callback), NULL);
-	g_signal_connect (container, "drag_leave",
+	g_signal_connect (container, "drag-leave",
 			  G_CALLBACK (drag_leave_callback), NULL);
 }
 

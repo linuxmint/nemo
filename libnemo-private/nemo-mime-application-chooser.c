@@ -235,7 +235,7 @@ add_clicked_cb (GtkButton *button,
 
     gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
-    g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
+    g_signal_emit_by_name (nemo_signaller_get_current (), "mime-data-changed");
 }
 
 static void
@@ -264,7 +264,7 @@ remove_clicked_cb (GtkMenuItem *item,
 		g_object_unref (info);
 	}
 
-	g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
+	g_signal_emit_by_name (nemo_signaller_get_current (), "mime-data-changed");
 }
 
 static void
@@ -297,7 +297,7 @@ reset_clicked_cb (GtkButton *button,
 	g_app_info_reset_type_associations (chooser->details->content_type);
 	gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
-	g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
+	g_signal_emit_by_name (nemo_signaller_get_current (), "mime-data-changed");
 }
 
 static void
@@ -317,7 +317,7 @@ set_as_default_clicked_cb (GtkButton *button,
 
     gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
-    g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
+    g_signal_emit_by_name (nemo_signaller_get_current (), "mime-data-changed");
 }
 
 static gint

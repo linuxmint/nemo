@@ -4192,11 +4192,11 @@ realize (GtkWidget *widget)
 	nemo_canvas_dnd_init (container);
 
 	hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (widget));
-	g_signal_connect (hadj, "value_changed",
+	g_signal_connect (hadj, "value-changed",
 			  G_CALLBACK (handle_hadjustment_changed), widget);
 
 	vadj = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (widget));
-	g_signal_connect (vadj, "value_changed",
+	g_signal_connect (vadj, "value-changed",
 			  G_CALLBACK (handle_vadjustment_changed), widget);
 
 }
@@ -5216,16 +5216,16 @@ nemo_canvas_container_ensure_interactive_directory (NemoCanvasContainer *contain
 	gtk_window_set_type_hint (GTK_WINDOW (container->details->search_window),
 				  GDK_WINDOW_TYPE_HINT_COMBO);
 
-	g_signal_connect (container->details->search_window, "delete_event",
+	g_signal_connect (container->details->search_window, "delete-event",
 			  G_CALLBACK (nemo_canvas_container_search_delete_event),
 			  container);
-	g_signal_connect (container->details->search_window, "key_press_event",
+	g_signal_connect (container->details->search_window, "key-press-event",
 			  G_CALLBACK (nemo_canvas_container_search_key_press_event),
 			  container);
-	g_signal_connect (container->details->search_window, "button_press_event",
+	g_signal_connect (container->details->search_window, "button-press-event",
 			  G_CALLBACK (nemo_canvas_container_search_button_press_event),
 			  container);
-	g_signal_connect (container->details->search_window, "scroll_event",
+	g_signal_connect (container->details->search_window, "scroll-event",
 			  G_CALLBACK (nemo_canvas_container_search_scroll_event),
 			  container);
 
@@ -5628,7 +5628,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 	/* Signals.  */
 
 	signals[SELECTION_CHANGED]
-		= g_signal_new ("selection_changed",
+		= g_signal_new ("selection-changed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5637,7 +5637,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                g_cclosure_marshal_VOID__VOID,
 		                G_TYPE_NONE, 0);
 	signals[BUTTON_PRESS]
-		= g_signal_new ("button_press",
+		= g_signal_new ("button-press",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5657,7 +5657,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ACTIVATE_ALTERNATE]
-		= g_signal_new ("activate_alternate",
+		= g_signal_new ("activate-alternate",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5667,7 +5667,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ACTIVATE_PREVIEWER]
-		= g_signal_new ("activate_previewer",
+		= g_signal_new ("activate-previewer",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5677,7 +5677,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                G_TYPE_NONE, 2,
 				G_TYPE_POINTER, G_TYPE_POINTER);
 	signals[CONTEXT_CLICK_SELECTION]
-		= g_signal_new ("context_click_selection",
+		= g_signal_new ("context-click-selection",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5687,7 +5687,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[CONTEXT_CLICK_BACKGROUND]
-		= g_signal_new ("context_click_background",
+		= g_signal_new ("context-click-background",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5697,7 +5697,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[MIDDLE_CLICK]
-		= g_signal_new ("middle_click",
+		= g_signal_new ("middle-click",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5707,7 +5707,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ICON_POSITION_CHANGED]
-		= g_signal_new ("icon_position_changed",
+		= g_signal_new ("icon-position-changed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5718,7 +5718,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_POINTER);
 	signals[ICON_STRETCH_STARTED]
-		= g_signal_new ("icon_stretch_started",
+		= g_signal_new ("icon-stretch-started",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5728,7 +5728,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ICON_STRETCH_ENDED]
-		= g_signal_new ("icon_stretch_ended",
+		= g_signal_new ("icon-stretch-ended",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5738,7 +5738,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ICON_RENAME_STARTED]
-		= g_signal_new ("icon_rename_started",
+		= g_signal_new ("icon-rename-started",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5748,7 +5748,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                G_TYPE_NONE, 1,
 				G_TYPE_POINTER);
 	signals[ICON_RENAME_ENDED]
-		= g_signal_new ("icon_rename_ended",
+		= g_signal_new ("icon-rename-ended",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5759,7 +5759,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_STRING);
 	signals[GET_ICON_URI]
-		= g_signal_new ("get_icon_uri",
+		= g_signal_new ("get-icon-uri",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5769,7 +5769,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                G_TYPE_STRING, 1,
 				G_TYPE_POINTER);
 	signals[GET_ICON_DROP_TARGET_URI]
-		= g_signal_new ("get_icon_drop_target_uri",
+		= g_signal_new ("get-icon-drop-target-uri",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5779,7 +5779,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                G_TYPE_STRING, 1,
 				G_TYPE_POINTER);
 	signals[MOVE_COPY_ITEMS] 
-		= g_signal_new ("move_copy_items",
+		= g_signal_new ("move-copy-items",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass, 
@@ -5794,7 +5794,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 				G_TYPE_INT,
 				G_TYPE_INT);
 	signals[HANDLE_NETSCAPE_URL]
-		= g_signal_new ("handle_netscape_url",
+		= g_signal_new ("handle-netscape-url",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass, 
@@ -5808,7 +5808,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 				G_TYPE_INT,
 				G_TYPE_INT);
 	signals[HANDLE_URI_LIST] 
-		= g_signal_new ("handle_uri_list",
+		= g_signal_new ("handle-uri-list",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass, 
@@ -5822,7 +5822,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 				G_TYPE_INT,
 				G_TYPE_INT);
 	signals[HANDLE_TEXT]
-		= g_signal_new ("handle_text",
+		= g_signal_new ("handle-text",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass, 
@@ -5836,7 +5836,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 				G_TYPE_INT,
 				G_TYPE_INT);
 	signals[HANDLE_RAW]
-		= g_signal_new ("handle_raw",
+		= g_signal_new ("handle-raw",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5852,7 +5852,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 				G_TYPE_INT,
 				G_TYPE_INT);
 	signals[HANDLE_HOVER] =
-		g_signal_new ("handle_hover",
+		g_signal_new ("handle-hover",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5862,7 +5862,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 			      G_TYPE_NONE, 1,
 			      G_TYPE_STRING);
 	signals[GET_CONTAINER_URI] 
-		= g_signal_new ("get_container_uri",
+		= g_signal_new ("get-container-uri",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass, 
@@ -5871,7 +5871,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                g_cclosure_marshal_generic,
 		                G_TYPE_STRING, 0);
 	signals[CAN_ACCEPT_ITEM] 
-		= g_signal_new ("can_accept_item",
+		= g_signal_new ("can-accept-item",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass, 
@@ -5882,7 +5882,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_STRING);
 	signals[GET_STORED_ICON_POSITION]
-		= g_signal_new ("get_stored_icon_position",
+		= g_signal_new ("get-stored-icon-position",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5893,7 +5893,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_POINTER);
 	signals[GET_STORED_LAYOUT_TIMESTAMP]
-		= g_signal_new ("get_stored_layout_timestamp",
+		= g_signal_new ("get-stored-layout-timestamp",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5904,7 +5904,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_POINTER);
 	signals[STORE_LAYOUT_TIMESTAMP]
-		= g_signal_new ("store_layout_timestamp",
+		= g_signal_new ("store-layout-timestamp",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5915,7 +5915,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 				G_TYPE_POINTER,
 				G_TYPE_POINTER);
 	signals[LAYOUT_CHANGED]
-		= g_signal_new ("layout_changed",
+		= g_signal_new ("layout-changed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5924,7 +5924,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                g_cclosure_marshal_VOID__VOID,
 		                G_TYPE_NONE, 0);
 	signals[BAND_SELECT_STARTED]
-		= g_signal_new ("band_select_started",
+		= g_signal_new ("band-select-started",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5933,7 +5933,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                g_cclosure_marshal_VOID__VOID,
 		                G_TYPE_NONE, 0);
 	signals[BAND_SELECT_ENDED]
-		= g_signal_new ("band_select_ended",
+		= g_signal_new ("band-select-ended",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5942,7 +5942,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                g_cclosure_marshal_VOID__VOID,
 		                G_TYPE_NONE, 0);
 	signals[ICON_ADDED]
-		= g_signal_new ("icon_added",
+		= g_signal_new ("icon-added",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -5951,7 +5951,7 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                g_cclosure_marshal_VOID__POINTER,
 		                G_TYPE_NONE, 1, G_TYPE_POINTER);
 	signals[ICON_REMOVED]
-		= g_signal_new ("icon_removed",
+		= g_signal_new ("icon-removed",
 		                G_TYPE_FROM_CLASS (class),
 		                G_SIGNAL_RUN_LAST,
 		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
@@ -8798,7 +8798,7 @@ static void
 nemo_canvas_container_accessible_selection_changed_cb (NemoCanvasContainer *container,
 							   gpointer data)
 {
-	g_signal_emit_by_name (data, "selection_changed");
+	g_signal_emit_by_name (data, "selection-changed");
 }
 
 static void
@@ -8818,7 +8818,7 @@ nemo_canvas_container_accessible_icon_added_cb (NemoCanvasContainer *container,
 			(G_OBJECT (icon->item));
 		index = g_list_index (container->details->icons, icon);
 		
-		g_signal_emit_by_name (atk_parent, "children_changed::add",
+		g_signal_emit_by_name (atk_parent, "children-changed::add",
 				       index, atk_child, NULL);
 	}
 }
@@ -8840,7 +8840,7 @@ nemo_canvas_container_accessible_icon_removed_cb (NemoCanvasContainer *container
 			(G_OBJECT (icon->item));
 		index = g_list_index (container->details->icons, icon);
 		
-		g_signal_emit_by_name (atk_parent, "children_changed::remove",
+		g_signal_emit_by_name (atk_parent, "children-changed::remove",
 				       index, atk_child, NULL);
 	}
 }
@@ -8849,7 +8849,7 @@ static void
 nemo_canvas_container_accessible_cleared_cb (NemoCanvasContainer *container, 
 						 gpointer data)
 {
-	g_signal_emit_by_name (data, "children_changed", 0, NULL, NULL);
+	g_signal_emit_by_name (data, "children-changed", 0, NULL, NULL);
 }
 
 static gboolean 
@@ -9136,13 +9136,13 @@ nemo_canvas_container_accessible_initialize (AtkObject *accessible,
 			(ATK_OBJECT (accessible));
 		
 		container = NEMO_CANVAS_CONTAINER (gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible)));
-		g_signal_connect (container, "selection_changed",
+		g_signal_connect (container, "selection-changed",
 				  G_CALLBACK (nemo_canvas_container_accessible_selection_changed_cb), 
 				  accessible);
-		g_signal_connect (container, "icon_added",
+		g_signal_connect (container, "icon-added",
 				  G_CALLBACK (nemo_canvas_container_accessible_icon_added_cb), 
 				  accessible);
-		g_signal_connect (container, "icon_removed",
+		g_signal_connect (container, "icon-removed",
 				  G_CALLBACK (nemo_canvas_container_accessible_icon_removed_cb), 
 				  accessible);
 		g_signal_connect (container, "cleared",

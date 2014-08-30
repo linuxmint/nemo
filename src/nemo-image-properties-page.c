@@ -593,7 +593,7 @@ file_open_callback (GObject      *object,
 		g_free (mime_type);
 
 		g_signal_connect (page->details->loader,
-				  "size_prepared",
+				  "size-prepared",
 				  G_CALLBACK (size_prepared_callback),
 				  page);
 

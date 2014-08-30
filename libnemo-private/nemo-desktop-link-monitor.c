@@ -440,13 +440,13 @@ nemo_desktop_link_monitor_init (NemoDesktopLinkMonitor *monitor)
 				  monitor);
 
 	monitor->details->mount_id =
-		g_signal_connect_object (monitor->details->volume_monitor, "mount_added",
+		g_signal_connect_object (monitor->details->volume_monitor, "mount-added",
 					 G_CALLBACK (mount_added_callback), monitor, 0);
 	monitor->details->unmount_id =
-		g_signal_connect_object (monitor->details->volume_monitor, "mount_removed",
+		g_signal_connect_object (monitor->details->volume_monitor, "mount-removed",
 					 G_CALLBACK (mount_removed_callback), monitor, 0);
 	monitor->details->changed_id =
-		g_signal_connect_object (monitor->details->volume_monitor, "mount_changed",
+		g_signal_connect_object (monitor->details->volume_monitor, "mount-changed",
 					 G_CALLBACK (mount_changed_callback), monitor, 0);
 
 }

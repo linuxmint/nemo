@@ -33,7 +33,7 @@
  * Callers in Nemo normally get the UI manager from
  * nemo_window_get_ui_manager. */
 /* The shares selection changes argument should be set to true if the
- * widget uses the signal "selection_changed" to tell others about
+ * widget uses the signal "selection-changed" to tell others about
  * text selection changes.  The NemoEntry widget
  * is currently the only editable in nemo that shares selection
  * changes. */

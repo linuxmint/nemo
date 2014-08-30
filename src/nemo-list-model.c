@@ -33,7 +33,6 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
-#include <libegg/eggtreemultidnd.h>
 #include <eel/eel-graphic-effects.h>
 #include <libnemo-private/nemo-dnd.h>
 #include <libnemo-private/nemo-file-utilities.h>
@@ -57,7 +56,6 @@ static int nemo_list_model_file_entry_compare_func (gconstpointer a,
 							gpointer      user_data);
 static void nemo_list_model_tree_model_init (GtkTreeModelIface *iface);
 static void nemo_list_model_sortable_init (GtkTreeSortableIface *iface);
-static void nemo_list_model_multi_drag_source_init (EggTreeMultiDragSourceIface *iface);
 
 struct NemoListModelDetails {
 	GSequence *files;
@@ -103,16 +101,12 @@ G_DEFINE_TYPE_WITH_CODE (NemoListModel, nemo_list_model, G_TYPE_OBJECT,
 			 G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL,
 						nemo_list_model_tree_model_init)
 			 G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_SORTABLE,
-						nemo_list_model_sortable_init)
-			 G_IMPLEMENT_INTERFACE (EGG_TYPE_TREE_MULTI_DRAG_SOURCE,
-						nemo_list_model_multi_drag_source_init));
+						nemo_list_model_sortable_init));
 
 static const GtkTargetEntry drag_types [] = {
 	{ NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
 	{ NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
 };
-
-static GtkTargetList *drag_target_list = NULL;
 
 static void
 file_entry_free (FileEntry *file_entry)
@@ -806,101 +800,6 @@ nemo_list_model_has_default_sort_func (GtkTreeSortable *sortable)
 	return FALSE;
 }
 
-static gboolean
-nemo_list_model_multi_row_draggable (EggTreeMultiDragSource *drag_source, GList *path_list)
-{
-	return TRUE;
-}
-
-static void
-each_path_get_data_binder (NemoDragEachSelectedItemDataGet data_get,
-			   gpointer context,
-			   gpointer data)
-{
-	DragDataGetInfo *info;
-	GList *l;
-	NemoFile *file;
-	GtkTreeRowReference *row;
-	GtkTreePath *path;
-	char *uri;
-	GdkRectangle cell_area;
-	GtkTreeViewColumn *column;
-
-	info = context;
-
-	g_return_if_fail (info->model->details->drag_view);
-
-	column = gtk_tree_view_get_column (info->model->details->drag_view, 0);
-
-	for (l = info->path_list; l != NULL; l = l->next) {
-		row = l->data;
-
-		path = gtk_tree_row_reference_get_path (row);
-		file = nemo_list_model_file_for_path (info->model, path);
-		if (file) {
-			gtk_tree_view_get_cell_area
-				(info->model->details->drag_view,
-				 path, 
-				 column,
-				 &cell_area);
-				
-			uri = nemo_file_get_uri (file);
-				
-			(*data_get) (uri, 
-				     0,
-				     cell_area.y - info->model->details->drag_begin_y,
-				     cell_area.width, cell_area.height, 
-				     data);
-				
-			g_free (uri);
-			
-			nemo_file_unref (file);
-		}
-		
-		gtk_tree_path_free (path);
-	}
-}
-
-static gboolean
-nemo_list_model_multi_drag_data_get (EggTreeMultiDragSource *drag_source, 
-					 GList *path_list, 
-					 GtkSelectionData *selection_data)
-{
-	NemoListModel *model;
-	DragDataGetInfo context;
-	guint target_info;
-	
-	model = NEMO_LIST_MODEL (drag_source);
-
-	context.model = model;
-	context.path_list = path_list;
-
-	if (!drag_target_list) {
-		drag_target_list = nemo_list_model_get_drag_target_list ();
-	}
-
-	if (gtk_target_list_find (drag_target_list,
-				  gtk_selection_data_get_target (selection_data),
-				  &target_info)) {
-		nemo_drag_drag_data_get (NULL,
-					     NULL,
-					     selection_data,
-					     target_info,
-					     GDK_CURRENT_TIME,
-					     &context,
-					     each_path_get_data_binder);
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-}
-
-static gboolean
-nemo_list_model_multi_drag_data_delete (EggTreeMultiDragSource *drag_source, GList *path_list)
-{
-	return TRUE;
-}
-
 static void
 add_dummy_row (NemoListModel *model, FileEntry *parent_entry)
 {
@@ -1447,6 +1346,22 @@ nemo_list_model_set_drag_view (NemoListModel *model,
 	model->details->drag_begin_y = drag_begin_y;
 }
 
+GtkTreeView *
+nemo_list_model_get_drag_view (NemoListModel *model,
+				   int *drag_begin_x,
+				   int *drag_begin_y)
+{
+	if (drag_begin_x != NULL) {
+		*drag_begin_x = model->details->drag_begin_x;
+	}
+
+	if (drag_begin_y != NULL) {
+		*drag_begin_y = model->details->drag_begin_y;
+	}
+
+	return model->details->drag_view;
+}
+
 GtkTargetList *
 nemo_list_model_get_drag_target_list ()
 {
@@ -1568,7 +1483,7 @@ nemo_list_model_class_init (NemoListModelClass *klass)
 	object_class->dispose = nemo_list_model_dispose;
 
       list_model_signals[SUBDIRECTORY_UNLOADED] =
-        g_signal_new ("subdirectory_unloaded",
+        g_signal_new ("subdirectory-unloaded",
                       NEMO_TYPE_LIST_MODEL,
                       G_SIGNAL_RUN_FIRST,
                       G_STRUCT_OFFSET (NemoListModelClass, subdirectory_unloaded),
@@ -1601,14 +1516,6 @@ nemo_list_model_sortable_init (GtkTreeSortableIface *iface)
 	iface->get_sort_column_id = nemo_list_model_get_sort_column_id;
 	iface->set_sort_column_id = nemo_list_model_set_sort_column_id;
 	iface->has_default_sort_func = nemo_list_model_has_default_sort_func;
-}
-
-static void
-nemo_list_model_multi_drag_source_init (EggTreeMultiDragSourceIface *iface)
-{
-	iface->row_draggable = nemo_list_model_multi_row_draggable;
-	iface->drag_data_get = nemo_list_model_multi_drag_data_get;
-	iface->drag_data_delete = nemo_list_model_multi_drag_data_delete;
 }
 
 void
