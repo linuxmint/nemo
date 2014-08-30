@@ -5,7 +5,6 @@ noinst_LTLIBRARIES=libnemo-private.la
 AM_CPPFLAGS = 						\
 	-I$(top_srcdir) 				\
 	-I$(top_builddir) 				\
-	-I$(top_srcdir)/cut-n-paste-code		\
 	$(BASE_CFLAGS)					\
 	$(COMMON_CFLAGS)				\
 	$(NEMO_CFLAGS)					\
@@ -40,16 +39,11 @@ nemo_tracker_engine_sources = \
 	nemo-search-engine-tracker.h
 endif
 
-dependency_static_libs = \
-	$(top_builddir)/cut-n-paste-code/libegg/libegg.la \
-	$(NULL)
-
 libnemo_private_la_LDFLAGS =	\
 	-no-undefined			\
 	$(NULL)
 
 libnemo_private_la_LIBADD =		\
-	$(dependency_static_libs)	\
 	$(SELINUX_LIBS)			\
 	$(TRACKER_LIBS)			\
 	$(ZEITGEIST_LIBS)			\
@@ -212,8 +206,6 @@ libnemo_private_la_SOURCES = \
 nodist_libnemo_private_la_SOURCES =\
 	$(BUILT_SOURCES) \
 	$(NULL)
-
-$(lib_LTLIBRARIES): $(dependency_static_libs)
 
 gsettingsschema_in_files = org.nemo.gschema.xml.in
 gsettings_SCHEMAS = $(gsettingsschema_in_files:.xml.in=.xml)

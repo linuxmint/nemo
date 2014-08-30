@@ -93,9 +93,9 @@ add_directory_to_directory_list (NemoActionManager *action_manager,
                              FALSE, attributes,
                              (NemoDirectoryCallback)changed_callback, action_manager);
 
-        g_signal_connect_object (directory, "files_added",
+        g_signal_connect_object (directory, "files-added",
                      G_CALLBACK (changed_callback), action_manager, 0);
-        g_signal_connect_object (directory, "files_changed",
+        g_signal_connect_object (directory, "files-changed",
                      G_CALLBACK (changed_callback), action_manager, 0);
 
         *directory_list = g_list_append (*directory_list, directory);

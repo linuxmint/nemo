@@ -14,7 +14,6 @@ libexec_PROGRAMS=				\
 
 AM_CPPFLAGS =							\
 	-I$(top_srcdir) 					\
-	-I$(top_srcdir)/cut-n-paste-code			\
 	-I$(top_builddir)/libnemo-private 			\
 	$(BASE_CFLAGS) 						\
 	$(COMMON_CFLAGS)					\

@@ -558,7 +558,7 @@ create_image_widget (NemoPropertiesWindow *window,
 				   target_table, G_N_ELEMENTS (target_table),
 				   GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
-		g_signal_connect (image, "drag_data_received",
+		g_signal_connect (image, "drag-data-received",
 				  G_CALLBACK (nemo_properties_window_drag_data_received), NULL);
 		g_signal_connect (button, "clicked",
 				  G_CALLBACK (select_image_button_callback), window);
@@ -607,7 +607,7 @@ set_name_field (NemoPropertiesWindow *window,
 						 GTK_POS_RIGHT, 1, 1);
 			gtk_label_set_mnemonic_widget (GTK_LABEL (window->details->name_label), window->details->name_field);
 
-			g_signal_connect_object (window->details->name_field, "focus_out_event",
+			g_signal_connect_object (window->details->name_field, "focus-out-event",
 						 G_CALLBACK (name_field_focus_out), window, 0);
 			g_signal_connect_object (window->details->name_field, "activate",
 						 G_CALLBACK (name_field_activate), window, 0);
@@ -1017,7 +1017,7 @@ start_deep_count_for_file (NemoPropertiesWindow *window,
 		nemo_file_recompute_deep_counts (file);
 		if (!window->details->deep_count_finished) {
 			g_signal_connect_object (file,
-						 "updated_deep_count_in_progress",
+						 "updated-deep-count-in-progress",
 						 G_CALLBACK (schedule_directory_contents_update),
 						 window, G_CONNECT_SWAPPED);
 			schedule_start_spinner (window);

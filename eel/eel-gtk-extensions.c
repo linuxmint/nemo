@@ -359,7 +359,7 @@ eel_gtk_tree_view_set_activate_on_single_click (GtkTreeView *tree_view,
 	} else if (!button_press_id && should_activate) {
 		button_press_id = g_signal_connect 
 			(tree_view,
-			 "button_press_event",
+			 "button-press-event",
 			 G_CALLBACK  (tree_view_button_press_callback),
 			 NULL);
 		g_object_set_data (G_OBJECT (tree_view), 

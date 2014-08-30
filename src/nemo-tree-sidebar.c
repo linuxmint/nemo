@@ -1478,9 +1478,9 @@ create_tree (FMTreeView *view)
 	}
 	g_list_free (mounts);
 	
-	g_signal_connect_object (volume_monitor, "mount_added",
+	g_signal_connect_object (volume_monitor, "mount-added",
 				 G_CALLBACK (mount_added_callback), view, 0);
-	g_signal_connect_object (volume_monitor, "mount_removed",
+	g_signal_connect_object (volume_monitor, "mount-removed",
 				 G_CALLBACK (mount_removed_callback), view, 0);
 	
 	g_object_unref (view->details->child_model);
@@ -1490,15 +1490,15 @@ create_tree (FMTreeView *view)
 	view->details->drag_dest = 
 		nemo_tree_view_drag_dest_new (view->details->tree_widget);
 	g_signal_connect_object (view->details->drag_dest, 
-				 "get_root_uri",
+				 "get-root-uri",
 				 G_CALLBACK (get_root_uri_callback),
 				 view, 0);
 	g_signal_connect_object (view->details->drag_dest, 
-				 "get_file_for_path",
+				 "get-file-for-path",
 				 G_CALLBACK (get_file_for_path_callback),
 				 view, 0);
 	g_signal_connect_object (view->details->drag_dest,
-				 "move_copy_items",
+				 "move-copy-items",
 				 G_CALLBACK (move_copy_items_callback),
 				 view, 0);
 
@@ -1542,7 +1542,7 @@ create_tree (FMTreeView *view)
 			  view);
 
 	g_signal_connect (G_OBJECT (view->details->tree_widget), 
-			  "button_press_event", G_CALLBACK (button_pressed_callback),
+			  "button-press-event", G_CALLBACK (button_pressed_callback),
 			  view);
 
 	slot = nemo_window_get_active_slot (view->details->window);
@@ -1616,7 +1616,7 @@ fm_tree_view_init (FMTreeView *view)
 	
 	gtk_widget_show (GTK_WIDGET (view));
 
-	g_signal_connect_object (view, "parent_set",
+	g_signal_connect_object (view, "parent-set",
 				 G_CALLBACK (parent_set_callback), view, 0);
 
 	view->details->selection_location = NULL;
@@ -1746,7 +1746,7 @@ fm_tree_view_set_parent_window (FMTreeView *sidebar,
 
 	slot = nemo_window_get_active_slot (window);
 
-	g_signal_connect_object (window, "loading_uri",
+	g_signal_connect_object (window, "loading-uri",
 				 G_CALLBACK (loading_uri_callback), sidebar, 0);
 	location = nemo_window_slot_get_current_uri (slot);
 	loading_uri_callback (window, location, sidebar);

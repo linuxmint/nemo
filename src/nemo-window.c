@@ -423,7 +423,7 @@ nemo_window_set_up_sidebar (NemoWindow *window)
 
 	setup_side_pane_width (window);
 	g_signal_connect (window->details->sidebar, 
-			  "size_allocate",
+			  "size-allocate",
 			  G_CALLBACK (side_pane_size_allocate_callback),
 			  window);
 
@@ -2099,7 +2099,7 @@ nemo_window_class_init (NemoWindowClass *class)
 			      g_cclosure_marshal_VOID__STRING,
 			      G_TYPE_NONE, 1, G_TYPE_STRING);
 	signals[HIDDEN_FILES_MODE_CHANGED] =
-		g_signal_new ("hidden_files_mode_changed",
+		g_signal_new ("hidden-files-mode-changed",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      0,
@@ -2107,7 +2107,7 @@ nemo_window_class_init (NemoWindowClass *class)
 			      g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 	signals[LOADING_URI] =
-		g_signal_new ("loading_uri",
+		g_signal_new ("loading-uri",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
 			      0,

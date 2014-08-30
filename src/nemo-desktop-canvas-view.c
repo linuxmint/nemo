@@ -421,7 +421,7 @@ delayed_init (NemoDesktopCanvasView *desktop_canvas_view)
 {
 	/* Keep track of the load time. */
 	g_signal_connect_object (nemo_view_get_model (NEMO_VIEW (desktop_canvas_view)),
-				 "done_loading",
+				 "done-loading",
 				 G_CALLBACK (done_loading), desktop_canvas_view, 0);
 
 	/* Monitor desktop directory. */
@@ -484,7 +484,7 @@ nemo_desktop_canvas_view_init (NemoDesktopCanvasView *desktop_canvas_view)
 	 */
 	if (!nemo_monitor_active ()) {
 		desktop_canvas_view->details->delayed_init_signal = g_signal_connect_object
-			(desktop_canvas_view, "begin_loading",
+			(desktop_canvas_view, "begin-loading",
 			 G_CALLBACK (delayed_init), desktop_canvas_view, 0);
 	}
 	

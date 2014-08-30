@@ -42,7 +42,6 @@
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
-#include <libegg/eggtreemultidnd.h>
 #include <glib/gi18n.h>
 #include <glib-object.h>
 #include <libnemo-extension/nemo-column-provider.h>
@@ -413,7 +412,7 @@ drag_data_get_callback (GtkWidget *widget,
 {
 	GtkTreeView *tree_view;
 	GtkTreeModel *model;
-	GList *ref_list;
+	GList *selection_cache;
 
 	tree_view = GTK_TREE_VIEW (widget);
   
@@ -423,67 +422,12 @@ drag_data_get_callback (GtkWidget *widget,
 		return;
 	}
 
-	ref_list = g_object_get_data (G_OBJECT (context), "drag-info");
-
-	if (ref_list == NULL) {
+	selection_cache = g_object_get_data (G_OBJECT (context), "drag-info");
+	if (selection_cache == NULL) {
 		return;
 	}
 
-	if (EGG_IS_TREE_MULTI_DRAG_SOURCE (model)) {
-		egg_tree_multi_drag_source_drag_data_get (EGG_TREE_MULTI_DRAG_SOURCE (model),
-							  ref_list,
-							  selection_data);
-	}
-}
-
-static void
-filtered_selection_foreach (GtkTreeModel *model,
-			    GtkTreePath *path,
-			    GtkTreeIter *iter,
-			    gpointer data)
-{
-	struct SelectionForeachData *selection_data;
-	GtkTreeIter parent;
-	GtkTreeIter child;
-	
-	selection_data = data;
-
-	/* If the parent folder is also selected, don't include this file in the
-	 * file operation, since that would copy it to the toplevel target instead
-	 * of keeping it as a child of the copied folder
-	 */
-	child = *iter;
-	while (gtk_tree_model_iter_parent (model, &parent, &child)) {
-		if (gtk_tree_selection_iter_is_selected (selection_data->selection,
-							 &parent)) {
-			return;
-		}
-		child = parent;
-	}
-	
-	selection_data->list = g_list_prepend (selection_data->list, 
-					       gtk_tree_row_reference_new (model, path));
-}
-
-static GList *
-get_filtered_selection_refs (GtkTreeView *tree_view)
-{
-	struct SelectionForeachData selection_data;
-
-	selection_data.list = NULL;
-	selection_data.selection = gtk_tree_view_get_selection (tree_view);
-	
-	gtk_tree_selection_selected_foreach (selection_data.selection, 
-					     filtered_selection_foreach, 
-					     &selection_data);
-	return g_list_reverse (selection_data.list);
-}
-
-static void
-ref_list_free (GList *ref_list)
-{
-	g_list_foreach (ref_list, (GFunc) gtk_tree_row_reference_free, NULL);
-	g_list_free (ref_list);
+	nemo_drag_drag_data_get_from_cache (selection_cache, context, selection_data, info, time);
 }
 
 static void
@@ -525,31 +469,100 @@ get_drag_surface (NemoListView *view)
 	return ret;
 }
 
+/* iteration glue struct */
+typedef struct {
+	NemoListView *view;
+	NemoDragEachSelectedItemDataGet iteratee;
+	gpointer iteratee_data;
+} ListGetDataBinderContext;
+
+static void
+item_get_data_binder (GtkTreeModel *model,
+		      GtkTreePath *path,
+		      GtkTreeIter *iter,
+		      gpointer data)
+{
+	ListGetDataBinderContext *context = data;
+	NemoFile *file;
+	GtkTreeView *treeview;
+	GtkTreeViewColumn *column;
+	GdkRectangle cell_area;
+	int drag_begin_y  = 0;
+	char *uri;
+
+	treeview = nemo_list_model_get_drag_view (context->view->details->model,
+						      NULL,
+						      &drag_begin_y);
+	column = gtk_tree_view_get_column (treeview, 0);
+
+	file = nemo_list_model_file_for_path (NEMO_LIST_MODEL (model), path);
+	if (file == NULL) {
+		return;
+	}
+
+	gtk_tree_view_get_cell_area (treeview,
+				     path,
+				     column,
+				     &cell_area);
+
+	uri = nemo_file_get_uri (file);
+	nemo_file_unref (file);
+
+	/* pass the uri, mouse-relative x/y and icon width/height */
+	context->iteratee (uri,
+			   0,
+			   cell_area.y - drag_begin_y,
+			   cell_area.width,
+			   cell_area.height,
+			   context->iteratee_data);
+
+	g_free (uri);
+}
+
+static void
+each_item_get_data_binder (NemoDragEachSelectedItemDataGet iteratee,
+			   gpointer iterator_context,
+			   gpointer data)
+{
+	NemoListView *view = NEMO_LIST_VIEW (iterator_context);
+	ListGetDataBinderContext context;
+	GtkTreeSelection *selection;
+
+	context.view = view;
+	context.iteratee = iteratee;
+	context.iteratee_data = data;
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view->details->tree_view));
+	gtk_tree_selection_selected_foreach (selection, item_get_data_binder, &context);
+}
+
+
 static void
 drag_begin_callback (GtkWidget *widget,
 		     GdkDragContext *context,
 		     NemoListView *view)
 {
-	GList *ref_list;
+	GList *selection_cache;
+	cairo_surface_t *surface;
 
-    cairo_surface_t *surface;
-
-    surface = get_drag_surface (view);
-    if (surface) {
-        gtk_drag_set_icon_surface (context, surface);
-        cairo_surface_destroy (surface);
+	surface = get_drag_surface (view);
+	if (surface) {
+		gtk_drag_set_icon_surface (context, surface);
+		cairo_surface_destroy (surface);
 	} else {
 		gtk_drag_set_icon_default (context);
 	}
 
 	stop_drag_check (view);
 	view->details->drag_started = TRUE;
-	
-	ref_list = get_filtered_selection_refs (GTK_TREE_VIEW (widget));
+
+	selection_cache = nemo_drag_create_selection_cache (view,
+								each_item_get_data_binder);
+
 	g_object_set_data_full (G_OBJECT (context),
 				"drag-info",
-				ref_list,
-				(GDestroyNotify)ref_list_free);
+				selection_cache,
+				(GDestroyNotify)nemo_drag_destroy_selection_list);
 }
 
 static gboolean
@@ -2089,24 +2102,24 @@ create_and_set_up_tree_view (NemoListView *view)
 		nemo_tree_view_drag_dest_new (view->details->tree_view);
 
 	g_signal_connect_object (view->details->drag_dest,
-				 "get_root_uri",
+				 "get-root-uri",
 				 G_CALLBACK (get_root_uri_callback),
 				 view, 0);
 	g_signal_connect_object (view->details->drag_dest,
-				 "get_file_for_path",
+				 "get-file-for-path",
 				 G_CALLBACK (get_file_for_path_callback),
 				 view, 0);
 	g_signal_connect_object (view->details->drag_dest,
-				 "move_copy_items",
+				 "move-copy-items",
 				 G_CALLBACK (move_copy_items_callback),
 				 view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_netscape_url",
+	g_signal_connect_object (view->details->drag_dest, "handle-netscape-url",
 				 G_CALLBACK (list_view_handle_netscape_url), view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_uri_list",
+	g_signal_connect_object (view->details->drag_dest, "handle-uri-list",
 				 G_CALLBACK (list_view_handle_uri_list), view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_text",
+	g_signal_connect_object (view->details->drag_dest, "handle-text",
 				 G_CALLBACK (list_view_handle_text), view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_raw",
+	g_signal_connect_object (view->details->drag_dest, "handle-raw",
 				 G_CALLBACK (list_view_handle_raw), view, 0);
 
 	g_signal_connect_object (gtk_tree_view_get_selection (view->details->tree_view),
@@ -2116,32 +2129,32 @@ create_and_set_up_tree_view (NemoListView *view)
     g_signal_connect_object (GTK_WIDGET (view->details->tree_view), "query-tooltip",
                              G_CALLBACK (query_tooltip_callback), view, 0);
 
-	g_signal_connect_object (view->details->tree_view, "drag_begin",
+	g_signal_connect_object (view->details->tree_view, "drag-begin",
 				 G_CALLBACK (drag_begin_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "drag_data_get",
+	g_signal_connect_object (view->details->tree_view, "drag-data-get",
 				 G_CALLBACK (drag_data_get_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "motion_notify_event",
+	g_signal_connect_object (view->details->tree_view, "motion-notify-event",
 				 G_CALLBACK (motion_notify_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "enter_notify_event",
+	g_signal_connect_object (view->details->tree_view, "enter-notify-event",
 				 G_CALLBACK (enter_notify_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "leave_notify_event",
+	g_signal_connect_object (view->details->tree_view, "leave-notify-event",
 				 G_CALLBACK (leave_notify_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "button_press_event",
+	g_signal_connect_object (view->details->tree_view, "button-press-event",
 				 G_CALLBACK (button_press_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "button_release_event",
+	g_signal_connect_object (view->details->tree_view, "button-release-event",
 				 G_CALLBACK (button_release_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "key_press_event",
+	g_signal_connect_object (view->details->tree_view, "key-press-event",
 				 G_CALLBACK (key_press_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "popup_menu",
+	g_signal_connect_object (view->details->tree_view, "popup-menu",
                                  G_CALLBACK (popup_menu_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "row_expanded",
+	g_signal_connect_object (view->details->tree_view, "row-expanded",
                                  G_CALLBACK (row_expanded_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "row_collapsed",
+	g_signal_connect_object (view->details->tree_view, "row-collapsed",
                                  G_CALLBACK (row_collapsed_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "row-activated",
                                  G_CALLBACK (row_activated_callback), view, 0);
 	
-    	g_signal_connect_object (view->details->tree_view, "focus_in_event",
+    	g_signal_connect_object (view->details->tree_view, "focus-in-event",
 				 G_CALLBACK(focus_in_event_callback), view, 0);
 
 	view->details->model = g_object_new (NEMO_TYPE_LIST_MODEL, NULL);
@@ -2150,10 +2163,10 @@ create_and_set_up_tree_view (NemoListView *view)
 	nemo_list_model_set_drag_view (NEMO_LIST_MODEL (view->details->model),
 				     view->details->tree_view,  0, 0);
 
-	g_signal_connect_object (view->details->model, "sort_column_changed",
+	g_signal_connect_object (view->details->model, "sort-column-changed",
 				 G_CALLBACK (sort_column_changed_callback), view, 0);
 	
-	g_signal_connect_object (view->details->model, "subdirectory_unloaded",
+	g_signal_connect_object (view->details->model, "subdirectory-unloaded",
 				 G_CALLBACK (subdirectory_unloaded_callback), view, 0);
 
     g_signal_connect_object (view->details->model, "get-icon-scale",
@@ -3160,13 +3173,13 @@ nemo_list_view_set_zoom_level (NemoListView *view,
 
 	if (view->details->zoom_level == new_level) {
 		if (always_emit) {
-			g_signal_emit_by_name (NEMO_VIEW(view), "zoom_level_changed");
+			g_signal_emit_by_name (NEMO_VIEW(view), "zoom-level-changed");
 		}
 		return;
 	}
 
 	view->details->zoom_level = new_level;
-	g_signal_emit_by_name (NEMO_VIEW(view), "zoom_level_changed");
+	g_signal_emit_by_name (NEMO_VIEW(view), "zoom-level-changed");
 
     if (nemo_global_preferences_get_ignore_view_metadata ())
         nemo_window_set_ignore_meta_zoom_level (nemo_view_get_window (NEMO_VIEW (view)), new_level);
@@ -3771,7 +3784,7 @@ nemo_list_view_init (NemoListView *list_view)
 	list_view->details->hover_path = NULL;
 	list_view->details->clipboard_handler_id =
 		g_signal_connect (nemo_clipboard_monitor_get (),
-		                  "clipboard_info",
+		                  "clipboard-info",
 		                  G_CALLBACK (list_view_notify_clipboard_info), list_view);
 }
 

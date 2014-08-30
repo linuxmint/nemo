@@ -1836,9 +1836,12 @@ static void
 eel_canvas_accessible_adjustment_changed (GtkAdjustment *adjustment,
 					  gpointer       data)
 {
-	/* The scrollbars have changed */
+	AtkObject *atk_obj;
 
-	g_signal_emit_by_name (ATK_OBJECT (data), "visible_data_changed");
+	/* The scrollbars have changed */
+	atk_obj = ATK_OBJECT (data);
+
+	g_signal_emit_by_name (atk_obj, "visible-data-changed");
 }
 
 static void
@@ -1919,11 +1922,11 @@ eel_canvas_accessible_initialize (AtkObject *obj,
 
 	gtk_accessible_set_widget (GTK_ACCESSIBLE (obj), GTK_WIDGET (data));
 	g_signal_connect (gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (canvas)),
-			  "value_changed",
+			  "value-changed",
 			  G_CALLBACK (eel_canvas_accessible_adjustment_changed),
 			  obj);
 	g_signal_connect (gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (canvas)),
-			  "value_changed",
+			  "value-changed",
 			  G_CALLBACK (eel_canvas_accessible_adjustment_changed),
 			  obj);
 	
@@ -2334,7 +2337,7 @@ eel_canvas_class_init (EelCanvasClass *klass)
 	klass->request_update = eel_canvas_request_update_real;
 
 	canvas_signals[DRAW_BACKGROUND] =
-		g_signal_new ("draw_background",
+		g_signal_new ("draw-background",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (EelCanvasClass, draw_background),
@@ -2664,9 +2667,9 @@ scroll_to (EelCanvas *canvas, int cx, int cy)
 	
 	/* Signal GtkLayout that it should do a redraw. */
 	if (changed_x)
-		g_signal_emit_by_name (hadjustment, "value_changed");
+		g_signal_emit_by_name (hadjustment, "value-changed");
 	if (changed_y)
-		g_signal_emit_by_name (vadjustment, "value_changed");
+		g_signal_emit_by_name (vadjustment, "value-changed");
 }
 
 /* Size allocation handler for the canvas */

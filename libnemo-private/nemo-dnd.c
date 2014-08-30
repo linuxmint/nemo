@@ -81,6 +81,7 @@ nemo_drag_finalize (NemoDragInfo *drag_info)
 {
 	gtk_target_list_unref (drag_info->target_list);
 	nemo_drag_destroy_selection_list (drag_info->selection_list);
+	nemo_drag_destroy_selection_list (drag_info->selection_cache);
 
 	g_free (drag_info);
 }
@@ -97,6 +98,7 @@ nemo_drag_selection_item_new (void)
 static void
 drag_selection_item_destroy (NemoDragSelectionItem *item)
 {
+	g_clear_object (&item->file);
 	g_free (item->uri);
 	g_free (item);
 }
@@ -220,6 +222,7 @@ nemo_drag_build_selection_list (GtkSelectionData *data)
 		item->uri = g_malloc (len + 1);
 		memcpy (item->uri, oldp, len);
 		item->uri[len] = 0;
+		item->file = nemo_file_get_existing_by_uri (item->uri);
 
 		p++;
 		if (*p == '\n' || *p == '\0') {
@@ -455,9 +458,9 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 	}
 	
 	dropped_uri = ((NemoDragSelectionItem *)items->data)->uri;
-	dropped_file = nemo_file_get_existing_by_uri (dropped_uri);
+	dropped_file = ((NemoDragSelectionItem *)items->data)->file;
 	target_file = nemo_file_get_existing_by_uri (target_uri_string);
-	
+
 	/*
 	 * Check for trash URI.  We do a find_directory for any Trash directory.
 	 * Passing 0 permissions as gnome-vfs would override the permissions
@@ -468,8 +471,6 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 		if (actions & GDK_ACTION_MOVE) {
 			*action = GDK_ACTION_MOVE;
 		}
-
-		nemo_file_unref (dropped_file);
 		nemo_file_unref (target_file);
 		return;
 
@@ -477,7 +478,6 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 		if (actions & GDK_ACTION_MOVE) {
 			*action = GDK_ACTION_MOVE;
 		}
-		nemo_file_unref (dropped_file);
 		nemo_file_unref (target_file);
 		return;
 	} else if (eel_uri_is_desktop (target_uri_string)) {
@@ -493,14 +493,12 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 			}
 			
 			g_object_unref (target);
-			nemo_file_unref (dropped_file);
 			nemo_file_unref (target_file);
 			return;
 		}
 	} else if (target_file != NULL && nemo_file_is_archive (target_file)) {
 		*action = GDK_ACTION_COPY;
 
-		nemo_file_unref (dropped_file);
 		nemo_file_unref (target_file);
 		return;
 	} else {
@@ -509,7 +507,6 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 
 	same_fs = check_same_fs (target_file, dropped_file);
 
-	nemo_file_unref (dropped_file);
 	nemo_file_unref (target_file);
 	
 	/* Compare the first dropped uri with the target uri for same fs match. */
@@ -585,8 +582,81 @@ add_one_uri (const char *uri, int x, int y, int w, int h, gpointer data)
 	g_string_append (result, "\r\n");
 }
 
+static void
+cache_one_item (const char *uri,
+		int x, int y,
+		int w, int h,
+		gpointer data)
+{
+	GList **cache = data;
+	NemoDragSelectionItem *item;
+
+	item = nemo_drag_selection_item_new ();
+	item->uri = g_strdup (uri);
+	item->file = nemo_file_get_existing_by_uri (uri);
+	item->icon_x = x;
+	item->icon_y = y;
+	item->icon_width = w;
+	item->icon_height = h;
+	*cache = g_list_prepend (*cache, item);
+}
+
+GList *
+nemo_drag_create_selection_cache (gpointer container_context,
+				      NemoDragEachSelectedItemIterator each_selected_item_iterator)
+{
+	GList *cache = NULL;
+
+	(* each_selected_item_iterator) (cache_one_item, container_context, &cache);
+	cache = g_list_reverse (cache);
+
+	return cache;
+}
+
 /* Common function for drag_data_get_callback calls.
  * Returns FALSE if it doesn't handle drag data */
+gboolean
+nemo_drag_drag_data_get_from_cache (GList *cache,
+					GdkDragContext *context,
+					GtkSelectionData *selection_data,
+					guint info,
+					guint32 time)
+{
+	GList *l;
+	GString *result;
+	NemoDragEachSelectedItemDataGet func;
+
+	if (cache == NULL) {
+		return FALSE;
+	}
+
+	switch (info) {
+	case NEMO_ICON_DND_GNOME_ICON_LIST:
+		func = add_one_gnome_icon;
+		break;
+	case NEMO_ICON_DND_URI_LIST:
+	case NEMO_ICON_DND_TEXT:
+		func = add_one_uri;
+		break;
+	default:
+		return FALSE;
+	}
+
+	result = g_string_new (NULL);
+
+	for (l = cache; l != NULL; l = l->next) {
+		NemoDragSelectionItem *item = l->data;
+		(*func) (item->uri, item->icon_x, item->icon_y, item->icon_width, item->icon_height, result);
+	}
+
+	gtk_selection_data_set (selection_data,
+				gtk_selection_data_get_target (selection_data),
+				8, (guchar *) result->str, result->len);
+	g_string_free (result, TRUE);
+
+	return TRUE;
+}
+
 gboolean
 nemo_drag_drag_data_get (GtkWidget *widget,
 			GdkDragContext *context,

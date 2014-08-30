@@ -197,14 +197,14 @@ add_move_binding (GtkBindingSet  *binding_set,
   g_assert ((modmask & GDK_SHIFT_MASK) == 0);
   
   gtk_binding_entry_add_signal (binding_set, keyval, modmask,
-				"move_cursor", 3,
+				"move-cursor", 3,
 				G_TYPE_ENUM, step,
 				G_TYPE_INT, count,
                                 G_TYPE_BOOLEAN, FALSE);
 
   /* Selection-extending version */
   gtk_binding_entry_add_signal (binding_set, keyval, modmask | GDK_SHIFT_MASK,
-				"move_cursor", 3,
+				"move-cursor", 3,
 				G_TYPE_ENUM, step,
 				G_TYPE_INT, count,
                                 G_TYPE_BOOLEAN, TRUE);
@@ -255,7 +255,7 @@ eel_editable_label_class_init (EelEditableLabelClass *class)
 #endif
 
   signals[MOVE_CURSOR] = 
-    g_signal_new ("move_cursor",
+    g_signal_new ("move-cursor",
 		  G_TYPE_FROM_CLASS (class),
 		  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 		  G_STRUCT_OFFSET (EelEditableLabelClass, move_cursor),
@@ -264,7 +264,7 @@ eel_editable_label_class_init (EelEditableLabelClass *class)
 		  G_TYPE_NONE, 3, GTK_TYPE_MOVEMENT_STEP, G_TYPE_INT, G_TYPE_BOOLEAN);
   
   signals[COPY_CLIPBOARD] =
-    g_signal_new ("copy_clipboard",
+    g_signal_new ("copy-clipboard",
 		  G_TYPE_FROM_CLASS (class),
 		  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 		  G_STRUCT_OFFSET  (EelEditableLabelClass, copy_clipboard),
@@ -273,7 +273,7 @@ eel_editable_label_class_init (EelEditableLabelClass *class)
 		  G_TYPE_NONE, 0);
   
   signals[POPULATE_POPUP] =
-    g_signal_new ("populate_popup",
+    g_signal_new ("populate-popup",
 		  G_TYPE_FROM_CLASS (class),
 		  G_SIGNAL_RUN_LAST,
 		  G_STRUCT_OFFSET (EelEditableLabelClass, populate_popup),
@@ -282,7 +282,7 @@ eel_editable_label_class_init (EelEditableLabelClass *class)
 		  G_TYPE_NONE, 1, GTK_TYPE_MENU);
 
   signals[DELETE_FROM_CURSOR] = 
-    g_signal_new ("delete_from_cursor",
+    g_signal_new ("delete-from-cursor",
 		  G_TYPE_FROM_CLASS (class),
 		  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 		  G_STRUCT_OFFSET (EelEditableLabelClass, delete_from_cursor),
@@ -291,7 +291,7 @@ eel_editable_label_class_init (EelEditableLabelClass *class)
 		  G_TYPE_NONE, 2, GTK_TYPE_DELETE_TYPE, G_TYPE_INT);
   
   signals[CUT_CLIPBOARD] =
-    g_signal_new ("cut_clipboard",
+    g_signal_new ("cut-clipboard",
 		  G_TYPE_FROM_CLASS (class),
 		  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 		  G_STRUCT_OFFSET (EelEditableLabelClass, cut_clipboard),
@@ -300,7 +300,7 @@ eel_editable_label_class_init (EelEditableLabelClass *class)
 		  G_TYPE_NONE, 0);
 
   signals[PASTE_CLIPBOARD] =
-    g_signal_new ("paste_clipboard",
+    g_signal_new ("paste-clipboard",
 		  G_TYPE_FROM_CLASS (class),
 		  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 		  G_STRUCT_OFFSET (EelEditableLabelClass, paste_clipboard),
@@ -309,7 +309,7 @@ eel_editable_label_class_init (EelEditableLabelClass *class)
 		  G_TYPE_NONE, 0);
 
   signals[TOGGLE_OVERWRITE] =
-    g_signal_new ("toggle_overwrite",
+    g_signal_new ("toggle-overwrite",
 		  G_TYPE_FROM_CLASS (class),
 		  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 		  G_STRUCT_OFFSET (EelEditableLabelClass, toggle_overwrite),
@@ -450,74 +450,74 @@ eel_editable_label_class_init (EelEditableLabelClass *class)
   /* Select all
    */
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_a, GDK_CONTROL_MASK,
-                                "move_cursor", 3,
+                                "move-cursor", 3,
                                 GTK_TYPE_MOVEMENT_STEP, GTK_MOVEMENT_BUFFER_ENDS,
                                 G_TYPE_INT, -1,
 				G_TYPE_BOOLEAN, FALSE);
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_a, GDK_CONTROL_MASK,
-                                "move_cursor", 3,
+                                "move-cursor", 3,
                                 GTK_TYPE_MOVEMENT_STEP, GTK_MOVEMENT_BUFFER_ENDS,
                                 G_TYPE_INT, 1,
 				G_TYPE_BOOLEAN, TRUE);
   
   /* Deleting text */
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, 0,
-				"delete_from_cursor", 2,
+				"delete-from-cursor", 2,
 				G_TYPE_ENUM, GTK_DELETE_CHARS,
 				G_TYPE_INT, 1);
 
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, 0,
-				"delete_from_cursor", 2,
+				"delete-from-cursor", 2,
 				G_TYPE_ENUM, GTK_DELETE_CHARS,
 				G_TYPE_INT, 1);
   
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, 0,
-				"delete_from_cursor", 2,
+				"delete-from-cursor", 2,
 				G_TYPE_ENUM, GTK_DELETE_CHARS,
 				G_TYPE_INT, -1);
 
   /* Make this do the same as Backspace, to help with mis-typing */
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, GDK_SHIFT_MASK,
-                                "delete_from_cursor", 2,
+                                "delete-from-cursor", 2,
                                 G_TYPE_ENUM, GTK_DELETE_CHARS,
                                 G_TYPE_INT, -1);
 
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, GDK_CONTROL_MASK,
-				"delete_from_cursor", 2,
+				"delete-from-cursor", 2,
 				G_TYPE_ENUM, GTK_DELETE_WORD_ENDS,
 				G_TYPE_INT, 1);
 
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, GDK_CONTROL_MASK,
-				"delete_from_cursor", 2,
+				"delete-from-cursor", 2,
 				G_TYPE_ENUM, GTK_DELETE_WORD_ENDS,
 				G_TYPE_INT, 1);
   
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, GDK_CONTROL_MASK,
-				"delete_from_cursor", 2,
+				"delete-from-cursor", 2,
 				G_TYPE_ENUM, GTK_DELETE_WORD_ENDS,
 				G_TYPE_INT, -1);
 
   /* Cut/copy/paste */
 
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_x, GDK_CONTROL_MASK,
-				"cut_clipboard", 0);
+				"cut-clipboard", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_c, GDK_CONTROL_MASK,
-				"copy_clipboard", 0);
+				"copy-clipboard", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_v, GDK_CONTROL_MASK,
-				"paste_clipboard", 0);
+				"paste-clipboard", 0);
 
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, GDK_SHIFT_MASK,
-				"cut_clipboard", 0);
+				"cut-clipboard", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_Insert, GDK_CONTROL_MASK,
-				"copy_clipboard", 0);
+				"copy-clipboard", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_Insert, GDK_SHIFT_MASK,
-				"paste_clipboard", 0);
+				"paste-clipboard", 0);
 
   /* Overwrite */
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_Insert, 0,
-				"toggle_overwrite", 0);
+				"toggle-overwrite", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Insert, 0,
-				"toggle_overwrite", 0);
+				"toggle-overwrite", 0);
 }
 
 static void
@@ -625,11 +625,11 @@ eel_editable_label_init (EelEditableLabel *label)
 
   g_signal_connect (G_OBJECT (label->im_context), "commit",
 		    G_CALLBACK (eel_editable_label_commit_cb), label);
-  g_signal_connect (G_OBJECT (label->im_context), "preedit_changed",
+  g_signal_connect (G_OBJECT (label->im_context), "preedit-changed",
 		    G_CALLBACK (eel_editable_label_preedit_changed_cb), label);
-  g_signal_connect (G_OBJECT (label->im_context), "retrieve_surrounding",
+  g_signal_connect (G_OBJECT (label->im_context), "retrieve-surrounding",
 		    G_CALLBACK (eel_editable_label_retrieve_surrounding_cb), label);
-  g_signal_connect (G_OBJECT (label->im_context), "delete_surrounding",
+  g_signal_connect (G_OBJECT (label->im_context), "delete-surrounding",
 		    G_CALLBACK (eel_editable_label_delete_surrounding_cb), label);
 }
 
@@ -2223,7 +2223,7 @@ eel_editable_label_focus_in (GtkWidget     *widget,
   gtk_im_context_focus_in (label->im_context);
 
   g_signal_connect (gdk_keymap_get_default (),
-		    "direction_changed",
+		    "direction-changed",
 		    G_CALLBACK (eel_editable_label_keymap_direction_changed), label);
 
   eel_editable_label_check_cursor_blink (label);
@@ -3093,11 +3093,11 @@ popup_targets_received (GtkClipboard     *clipboard,
   
       clipboard_contains_text = gtk_selection_data_targets_include_text (data);
 
-      append_action_signal (label, label->popup_menu, GTK_STOCK_CUT, "cut_clipboard",
+      append_action_signal (label, label->popup_menu, GTK_STOCK_CUT, "cut-clipboard",
 			    have_selection);
-      append_action_signal (label, label->popup_menu, GTK_STOCK_COPY, "copy_clipboard",
+      append_action_signal (label, label->popup_menu, GTK_STOCK_COPY, "copy-clipboard",
 			    have_selection);
-      append_action_signal (label, label->popup_menu, GTK_STOCK_PASTE, "paste_clipboard",
+      append_action_signal (label, label->popup_menu, GTK_STOCK_PASTE, "paste-clipboard",
 			    clipboard_contains_text);
   
       menuitem = gtk_menu_item_new_with_label (_("Select All"));
@@ -3199,7 +3199,7 @@ editable_insert_text_emit  (GtkEditable *editable,
   text[new_text_length] = '\0';
   strncpy (text, new_text, new_text_length);
   
-  g_signal_emit_by_name (editable, "insert_text", text, new_text_length, position);
+  g_signal_emit_by_name (editable, "insert-text", text, new_text_length, position);
 
   if (new_text_length > 63)
     g_free (text);
@@ -3226,7 +3226,7 @@ editable_delete_text_emit (GtkEditable *editable,
   
   g_object_ref (G_OBJECT (editable));
 
-  g_signal_emit_by_name (editable, "delete_text", start_pos, end_pos);
+  g_signal_emit_by_name (editable, "delete-text", start_pos, end_pos);
 
   g_object_unref (G_OBJECT (editable));
 }
@@ -4097,7 +4097,7 @@ eel_editable_label_accessible_insert_text_cb (EelEditableLabel *label,
 #endif
   if (!priv->signal_name)
     {
-      priv->signal_name = "text_changed::insert";
+      priv->signal_name = "text-changed::insert";
       priv->position = *position;
       priv->length = arg2;
     }
@@ -4125,7 +4125,7 @@ eel_editable_label_accessible_delete_text_cb (EelEditableLabel *label,
 
   accessible = gtk_widget_get_accessible (GTK_WIDGET (label));
 
-  g_signal_emit_by_name (accessible, "text_changed::delete", arg1, arg2 - arg1);
+  g_signal_emit_by_name (accessible, "text-changed::delete", arg1, arg2 - arg1);
 }
 
 static void
@@ -4197,11 +4197,11 @@ eel_editable_label_accessible_notify_gtk (GObject    *obj,
     {
       eel_editable_label_accessible_notify_insert (accessible);
       if (check_for_selection_change (accessible, widget))
-        g_signal_emit_by_name (accessible, "text_selection_changed");
+        g_signal_emit_by_name (accessible, "text-selection-changed");
       /*
        * The label cursor position has moved so generate the signal.
        */
-      g_signal_emit_by_name (accessible, "text_caret_moved",
+      g_signal_emit_by_name (accessible, "text-caret-moved",
                              g_utf8_pointer_to_offset (label->text,
 					 label->text + label->selection_anchor));
     }
@@ -4210,7 +4210,7 @@ eel_editable_label_accessible_notify_gtk (GObject    *obj,
       eel_editable_label_accessible_notify_insert (accessible);
 
       if (check_for_selection_change (accessible, widget))
-        g_signal_emit_by_name (accessible, "text_selection_changed");
+        g_signal_emit_by_name (accessible, "text-selection-changed");
     }
 }
 

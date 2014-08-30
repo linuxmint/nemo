@@ -816,7 +816,7 @@ nemo_bookmarks_window_constructed (GObject *object)
 	self->priv->name_changed_id =
 		g_signal_connect (self->priv->name_field, "changed",
 				  G_CALLBACK (on_name_field_changed), self);
-	g_signal_connect (self->priv->name_field, "focus_out_event",
+	g_signal_connect (self->priv->name_field, "focus-out-event",
 			  G_CALLBACK (on_text_field_focus_out_event), self);
 	g_signal_connect (self->priv->name_field, "activate",
 			  G_CALLBACK (name_or_uri_field_activate), self);
@@ -824,7 +824,7 @@ nemo_bookmarks_window_constructed (GObject *object)
 	self->priv->uri_changed_id =
 		g_signal_connect (self->priv->uri_field, "changed",
 				  G_CALLBACK (on_uri_field_changed), self);
-	g_signal_connect (self->priv->uri_field, "focus_out_event",
+	g_signal_connect (self->priv->uri_field, "focus-out-event",
 			  G_CALLBACK (on_text_field_focus_out_event), self);
 	g_signal_connect (self->priv->uri_field, "activate",
 			  G_CALLBACK (name_or_uri_field_activate), self);

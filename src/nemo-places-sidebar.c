@@ -1812,6 +1812,7 @@ build_selection_list (const char *data)
 		uri = uris[i];
 		item = nemo_drag_selection_item_new ();
 		item->uri = g_strdup (uri);
+		item->file = nemo_file_get_existing_by_uri (uri);
 		item->got_icon_position = FALSE;
 		result = g_list_prepend (result, item);
 	}
@@ -2005,7 +2006,9 @@ drag_data_received_callback (GtkWidget *widget,
 			switch (info) {
 			case TEXT_URI_LIST:
 				selection_list = build_selection_list ((const gchar *) gtk_selection_data_get_data (selection_data));
+				g_assert (selection_list);
 				uris = uri_list_from_selection (selection_list);
+				g_assert (uris);
 				nemo_file_operations_copy_move (uris, NULL, drop_uri,
 								    real_action, GTK_WIDGET (tree_view),
 								    NULL, NULL);
@@ -4248,23 +4251,23 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 					  G_CALLBACK (update_places_on_idle),
 					  sidebar);
 
-	g_signal_connect_object (sidebar->volume_monitor, "volume_added",
+	g_signal_connect_object (sidebar->volume_monitor, "volume-added",
 				 G_CALLBACK (volume_added_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "volume_removed",
+	g_signal_connect_object (sidebar->volume_monitor, "volume-removed",
 				 G_CALLBACK (volume_removed_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "volume_changed",
+	g_signal_connect_object (sidebar->volume_monitor, "volume-changed",
 				 G_CALLBACK (volume_changed_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "mount_added",
+	g_signal_connect_object (sidebar->volume_monitor, "mount-added",
 				 G_CALLBACK (mount_added_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "mount_removed",
+	g_signal_connect_object (sidebar->volume_monitor, "mount-removed",
 				 G_CALLBACK (mount_removed_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "mount_changed",
+	g_signal_connect_object (sidebar->volume_monitor, "mount-changed",
 				 G_CALLBACK (mount_changed_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "drive_disconnected",
+	g_signal_connect_object (sidebar->volume_monitor, "drive-disconnected",
 				 G_CALLBACK (drive_disconnected_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "drive_connected",
+	g_signal_connect_object (sidebar->volume_monitor, "drive-connected",
 				 G_CALLBACK (drive_connected_callback), sidebar, 0);
-	g_signal_connect_object (sidebar->volume_monitor, "drive_changed",
+	g_signal_connect_object (sidebar->volume_monitor, "drive-changed",
 				 G_CALLBACK (drive_changed_callback), sidebar, 0);
 
 	update_places (sidebar);

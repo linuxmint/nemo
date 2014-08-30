@@ -8539,7 +8539,7 @@ nemo_file_class_init (NemoFileClass *class)
 		              G_TYPE_NONE, 0);
 
 	signals[UPDATED_DEEP_COUNT_IN_PROGRESS] =
-		g_signal_new ("updated_deep_count_in_progress",
+		g_signal_new ("updated-deep-count-in-progress",
 		              G_TYPE_FROM_CLASS (class),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoFileClass, updated_deep_count_in_progress),
@@ -8572,7 +8572,7 @@ nemo_file_class_init (NemoFileClass *class)
 				 NULL, 0);
 
 	g_signal_connect (nemo_signaller_get_current (),
-			  "mime_data_changed",
+			  "mime-data-changed",
 			  G_CALLBACK (mime_type_data_changed_callback),
 			  NULL);
 }

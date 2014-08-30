@@ -2459,7 +2459,7 @@ location_has_really_changed (NemoWindowSlot *slot)
 			char *uri;
 
 			uri = g_file_get_uri (location_copy);
-			g_signal_emit_by_name (window, "loading_uri", uri);
+			g_signal_emit_by_name (window, "loading-uri", uri);
 			g_free (uri);
 		}
 

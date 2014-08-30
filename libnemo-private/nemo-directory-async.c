@@ -786,7 +786,7 @@ nemo_directory_monitor_add_internal (NemoDirectory *directory,
 	    directory->details->mime_db_monitor == 0) {
 		directory->details->mime_db_monitor =
 			g_signal_connect_object (nemo_signaller_get_current (),
-						 "mime_data_changed",
+						 "mime-data-changed",
 						 G_CALLBACK (mime_db_changed_callback), directory, 0);
 	}
 
