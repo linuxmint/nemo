@@ -798,7 +798,6 @@ finalize (GObject *object)
 	eel_ref_str_unref (file->details->group);
 	g_free (file->details->selinux_context);
 	g_free (file->details->description);
-	g_free (file->details->top_left_text);
 	g_free (file->details->activation_uri);
 	g_clear_object (&file->details->custom_icon);
 
@@ -4609,22 +4608,6 @@ nautilus_file_should_show_type (NautilusFile *file)
 	return ret;
 }
 
-gboolean
-nautilus_file_should_get_top_left_text (NautilusFile *file)
-{
-	g_return_val_if_fail (NAUTILUS_IS_FILE (file), FALSE);
-
-	if (show_file_thumbs == NAUTILUS_SPEED_TRADEOFF_ALWAYS) {
-		return TRUE;
-	}
-	
-	if (show_file_thumbs == NAUTILUS_SPEED_TRADEOFF_NEVER) {
-		return FALSE;
-	}
-
-	return get_speed_tradeoff_preference_for_file (file, show_file_thumbs);
-}
-
 /**
  * nautilus_file_get_directory_item_count
  * 
@@ -7007,66 +6990,6 @@ nautilus_file_is_executable (NautilusFile *file)
 	return file->details->can_execute;
 }
 
-/**
- * nautilus_file_peek_top_left_text
- * 
- * Peek at the text from the top left of the file.
- * @file: NautilusFile representing the file in question.
- * 
- * Returns: NULL if there is no text readable, otherwise, the text.
- *          This string is owned by the file object and should not
- *          be kept around or freed.
- * 
- **/
-char *
-nautilus_file_peek_top_left_text (NautilusFile *file,
-				  gboolean  need_large_text,
-				  gboolean *needs_loading)
-{
-	g_return_val_if_fail (NAUTILUS_IS_FILE (file), NULL);
-
-	if (!nautilus_file_should_get_top_left_text (file)) {
-		if (needs_loading) {
-			*needs_loading = FALSE;
-		}
-		return NULL;
-	}
-	
-	if (needs_loading) {
-		*needs_loading = !file->details->top_left_text_is_up_to_date;
-		if (need_large_text) {
-			*needs_loading |= file->details->got_top_left_text != file->details->got_large_top_left_text;
-		}
-	}
-
-	/* Show " ..." in the file until we read the contents in. */
-	if (!file->details->got_top_left_text) {
-		
-		if (nautilus_file_contains_text (file)) {
-			return " ...";
-		}
-		return NULL;
-	}
-	
-	/* Show what we read in. */
-	return file->details->top_left_text;
-}
-
-/**
- * nautilus_file_get_top_left_text
- * 
- * Get the text from the top left of the file.
- * @file: NautilusFile representing the file in question.
- * 
- * Returns: NULL if there is no text readable, otherwise, the text.
- * 
- **/
-char *
-nautilus_file_get_top_left_text (NautilusFile *file)
-{
-	return g_strdup (nautilus_file_peek_top_left_text (file, FALSE, NULL));
-}
-
 char *
 nautilus_file_get_filesystem_id (NautilusFile *file)
 {
@@ -7316,12 +7239,6 @@ invalidate_mime_list (NautilusFile *file)
 }
 
 static void
-invalidate_top_left_text (NautilusFile *file)
-{
-	file->details->top_left_text_is_up_to_date = FALSE;
-}
-
-static void
 invalidate_file_info (NautilusFile *file)
 {
 	file->details->file_info_is_up_to_date = FALSE;
@@ -7386,9 +7303,6 @@ nautilus_file_invalidate_attributes_internal (NautilusFile *file,
 	}
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILE_INFO)) {
 		invalidate_file_info (file);
-	}
-	if (REQUEST_WANTS_TYPE (request, REQUEST_TOP_LEFT_TEXT)) {
-		invalidate_top_left_text (file);
 	}
 	if (REQUEST_WANTS_TYPE (request, REQUEST_LINK_INFO)) {
 		invalidate_link_info (file);
@@ -7477,8 +7391,6 @@ nautilus_file_get_all_attributes (void)
 		NAUTILUS_FILE_ATTRIBUTE_DEEP_COUNTS |
 		NAUTILUS_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT | 
 		NAUTILUS_FILE_ATTRIBUTE_DIRECTORY_ITEM_MIME_TYPES | 
-		NAUTILUS_FILE_ATTRIBUTE_TOP_LEFT_TEXT | 
-		NAUTILUS_FILE_ATTRIBUTE_LARGE_TOP_LEFT_TEXT |
 		NAUTILUS_FILE_ATTRIBUTE_EXTENSION_INFO |
 		NAUTILUS_FILE_ATTRIBUTE_THUMBNAIL |
 		NAUTILUS_FILE_ATTRIBUTE_MOUNT;
@@ -7850,136 +7762,6 @@ nautilus_file_list_cancel_call_when_ready (NautilusFileListHandle *handle)
 
 		file_list_ready_data_free (data);
 	}
-}
-
-static char *
-try_to_make_utf8 (const char *text, int *length)
-{
-	static const char *encodings_to_try[2];
-	static int n_encodings_to_try = 0;
-        gsize converted_length;
-        GError *conversion_error;
-	char *utf8_text;
-	int i;
-	
-	if (n_encodings_to_try == 0) {
-		const char *charset;
-		gboolean charset_is_utf8;
-		
-		charset_is_utf8 = g_get_charset (&charset);
-		if (!charset_is_utf8) {
-			encodings_to_try[n_encodings_to_try++] = charset;
-		}
-        
-		if (g_ascii_strcasecmp (charset, "ISO-8859-1") != 0) {
-			encodings_to_try[n_encodings_to_try++] = "ISO-8859-1";
-		}
-	}
-
-        utf8_text = NULL;
-	for (i = 0; i < n_encodings_to_try; i++) {
-		conversion_error = NULL;
-		utf8_text = g_convert (text, *length, 
-					   "UTF-8", encodings_to_try[i],
-					   NULL, &converted_length, &conversion_error);
-		if (utf8_text != NULL) {
-			*length = converted_length;
-			break;
-		}
-		g_error_free (conversion_error);
-	}
-	
-	return utf8_text;
-}
-
-
-
-/* Extract the top left part of the read-in text. */
-char *
-nautilus_extract_top_left_text (const char *text,
-				gboolean large,
-				int length)
-{
-        GString* buffer;
-	const gchar *in;
-	const gchar *end;
-	int line, i;
-	gunichar c;
-	char *text_copy;
-	const char *utf8_end;
-	gboolean validated;
-	int max_bytes, max_lines, max_cols;
-
-	if (large) {
-		max_bytes = NAUTILUS_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_BYTES;
-		max_lines = NAUTILUS_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_LINES;
-		max_cols = NAUTILUS_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_CHARACTERS_PER_LINE;
-	} else {
-		max_bytes = NAUTILUS_FILE_TOP_LEFT_TEXT_MAXIMUM_BYTES;
-		max_lines = NAUTILUS_FILE_TOP_LEFT_TEXT_MAXIMUM_LINES;
-		max_cols = NAUTILUS_FILE_TOP_LEFT_TEXT_MAXIMUM_CHARACTERS_PER_LINE;
-	}
-			
-	
-
-        text_copy = NULL;
-        if (text != NULL) {
-		/* Might be a partial utf8 character at the end if we didn't read whole file */
-		validated = g_utf8_validate (text, length, &utf8_end);
-		if (!validated &&
-		    !(length >= max_bytes &&
-		      text + length - utf8_end < 6)) {
-			text_copy = try_to_make_utf8 (text, &length);
-			text = text_copy;
-		} else if (!validated) {
-			length = utf8_end - text;
-		}
-        }
-
-	if (text == NULL || length == 0) {
-		return NULL;
-	}
-
-	buffer = g_string_new ("");
-	end = text + length; in = text;
-
-	for (line = 0; line < max_lines; line++) {
-		/* Extract one line. */
-		for (i = 0; i < max_cols; ) {
-			if (*in == '\n') {
-				break;
-			}
-			
-			c = g_utf8_get_char (in);
-			
-			if (g_unichar_isprint (c)) {
-				g_string_append_unichar (buffer, c);
-				i++;
-			}
-			
-			in = g_utf8_next_char (in);
-			if (in == end) {
-				goto done;
-			}
-		}
-
-		/* Skip the rest of the line. */
-		while (*in != '\n') {
-			if (++in == end) {
-				goto done;
-			}
-		}
-		if (++in == end) {
-			goto done;
-		}
-
-		/* Put a new-line separator in. */
-		g_string_append_c(buffer, '\n');
-	}
- done:
-	g_free (text_copy);
-
-	return g_string_free(buffer, FALSE);
 }
 
 static void

@@ -72,13 +72,6 @@ void        nautilus_canvas_item_set_emblems              (NautilusCanvasItem   
 							   GList                    *emblem_pixbufs);
 void        nautilus_canvas_item_set_show_stretch_handles (NautilusCanvasItem       *item,
 							   gboolean                  show_stretch_handles);
-void        nautilus_canvas_item_set_attach_points        (NautilusCanvasItem       *item,
-							   GdkPoint                 *attach_points,
-							   int                       n_attach_points);
-void        nautilus_canvas_item_set_embedded_text_rect   (NautilusCanvasItem       *item,
-							   const GdkRectangle       *text_rect);
-void        nautilus_canvas_item_set_embedded_text        (NautilusCanvasItem       *item,
-							   const char               *text);
 double      nautilus_canvas_item_get_max_text_width       (NautilusCanvasItem       *item);
 const char *nautilus_canvas_item_get_editable_text        (NautilusCanvasItem       *canvas_item);
 void        nautilus_canvas_item_set_renaming             (NautilusCanvasItem       *canvas_item,

@@ -32,11 +32,6 @@ struct _NautilusIconInfo
 	gint64 last_use_time;
 	GdkPixbuf *pixbuf;
 	
-	gboolean got_embedded_rect;
-	GdkRectangle embedded_rect;
-	gint n_attach_points;
-	GdkPoint *attach_points;
-	char *display_name;
         char *icon_name;
 
 	gint  orig_scale;
@@ -99,8 +94,6 @@ nautilus_icon_info_finalize (GObject *object)
 	if (icon->pixbuf) {
 		g_object_unref (icon->pixbuf);
 	}
-	g_free (icon->attach_points);
-	g_free (icon->display_name);
 	g_free (icon->icon_name);
 
         G_OBJECT_CLASS (nautilus_icon_info_parent_class)->finalize (object);
@@ -139,24 +132,12 @@ nautilus_icon_info_new_for_icon_info (GtkIconInfo *icon_info,
 				      gint         scale)
 {
 	NautilusIconInfo *icon;
-	GdkPoint *points;
-	gint n_points;
 	const char *filename;
 	char *basename, *p;
 
 	icon = g_object_new (NAUTILUS_TYPE_ICON_INFO, NULL);
 
 	icon->pixbuf = gtk_icon_info_load_icon (icon_info, NULL);
-
-	icon->got_embedded_rect = gtk_icon_info_get_embedded_rect (icon_info,
-								   &icon->embedded_rect);
-
-	if (gtk_icon_info_get_attach_points (icon_info, &points, &n_points)) {
-		icon->n_attach_points = n_points;
-		icon->attach_points = points;
-	}
-
-	icon->display_name = g_strdup (gtk_icon_info_get_display_name (icon_info));
 
 	filename = gtk_icon_info_get_filename (icon_info);
 	if (filename != NULL) {
@@ -579,30 +560,6 @@ nautilus_icon_info_get_pixbuf_at_size (NautilusIconInfo  *icon,
 						 GDK_INTERP_BILINEAR);
 	g_object_unref (pixbuf);
 	return scaled_pixbuf;
-}
-
-gboolean
-nautilus_icon_info_get_embedded_rect (NautilusIconInfo  *icon,
-				      GdkRectangle      *rectangle)
-{
-	*rectangle = icon->embedded_rect;
-	return icon->got_embedded_rect;
-}
-
-gboolean
-nautilus_icon_info_get_attach_points (NautilusIconInfo  *icon,
-				      GdkPoint         **points,
-				      gint              *n_points)
-{
-	*n_points = icon->n_attach_points;
-	*points = icon->attach_points;
-	return icon->n_attach_points != 0;
-}
-
-const char *
-nautilus_icon_info_get_display_name   (NautilusIconInfo  *icon)
-{
-	return icon->display_name;
 }
 
 const char *

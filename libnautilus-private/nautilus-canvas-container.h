@@ -137,10 +137,7 @@ typedef struct {
 	NautilusIconInfo *(* get_icon_images)     (NautilusCanvasContainer *container,
 						     NautilusCanvasIconData *data,
 						     int canvas_size,
-						     char **embedded_text,
 						     gboolean for_drag_accept,
-						     gboolean need_large_embeddded_text,
-						     gboolean *embedded_text_needs_loading,
 						     gboolean *has_window_open);
 	void         (* get_icon_text)            (NautilusCanvasContainer *container,
 						     NautilusCanvasIconData *data,
@@ -157,13 +154,6 @@ typedef struct {
 						     NautilusCanvasIconData *canvas_b);
 	void         (* freeze_updates)           (NautilusCanvasContainer *container);
 	void         (* unfreeze_updates)         (NautilusCanvasContainer *container);
-	void         (* start_monitor_top_left)   (NautilusCanvasContainer *container,
-						   NautilusCanvasIconData *data,
-						   gconstpointer client,
-						   gboolean large_text);
-	void         (* stop_monitor_top_left)    (NautilusCanvasContainer *container,
-						   NautilusCanvasIconData *data,
-						   gconstpointer client);
 	void         (* prioritize_thumbnailing)  (NautilusCanvasContainer *container,
 						   NautilusCanvasIconData *data);
 

@@ -210,10 +210,6 @@ gboolean                nautilus_file_should_show_thumbnail             (Nautilu
 gboolean                nautilus_file_should_show_directory_item_count  (NautilusFile                   *file);
 gboolean                nautilus_file_should_show_type                  (NautilusFile                   *file);
 GList *                 nautilus_file_get_emblem_icons                  (NautilusFile                   *file);
-char *                  nautilus_file_get_top_left_text                 (NautilusFile                   *file);
-char *                  nautilus_file_peek_top_left_text                (NautilusFile                   *file,
-									 gboolean                        need_large_text,
-									 gboolean                       *got_top_left_text);
 gboolean                nautilus_file_get_directory_item_mime_types     (NautilusFile                   *file,
 									 GList                         **mime_list);
 

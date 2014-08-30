@@ -105,14 +105,6 @@
 #define SNAP_SIZE_X 		78
 #define SNAP_SIZE_Y 		20
 
-#define MINIMUM_EMBEDDED_TEXT_RECT_WIDTH       20
-#define MINIMUM_EMBEDDED_TEXT_RECT_HEIGHT      20
-
-/* If icon size is bigger than this, request large embedded text.
- * Its selected so that the non-large text should fit in "normal" icon sizes
- */
-#define ICON_SIZE_FOR_LARGE_EMBEDDED_TEXT 55
-
 #define SNAP_HORIZONTAL(func,x) ((func ((double)((x) - DESKTOP_PAD_HORIZONTAL) / SNAP_SIZE_X) * SNAP_SIZE_X) + DESKTOP_PAD_HORIZONTAL)
 #define SNAP_VERTICAL(func, y) ((func ((double)((y) - DESKTOP_PAD_VERTICAL) / SNAP_SIZE_Y) * SNAP_SIZE_Y) + DESKTOP_PAD_VERTICAL)
 
@@ -167,13 +159,6 @@ static inline void   icon_get_bounding_box                          (NautilusCan
 static gboolean      is_renaming                                    (NautilusCanvasContainer *container);
 static gboolean      is_renaming_pending                            (NautilusCanvasContainer *container);
 static void          process_pending_icon_to_rename                 (NautilusCanvasContainer *container);
-static void          nautilus_canvas_container_stop_monitor_top_left  (NautilusCanvasContainer *container,
-								       NautilusCanvasIconData      *data,
-								       gconstpointer          client);
-static void          nautilus_canvas_container_start_monitor_top_left (NautilusCanvasContainer *container,
-								       NautilusCanvasIconData      *data,
-								       gconstpointer          client,
-								       gboolean               large_text);
 static void          handle_hadjustment_changed                     (GtkAdjustment         *adjustment,
 								     NautilusCanvasContainer *container);
 static void          handle_vadjustment_changed                     (GtkAdjustment         *adjustment,
@@ -5492,7 +5477,6 @@ void
 nautilus_canvas_container_clear (NautilusCanvasContainer *container)
 {
 	NautilusCanvasContainerDetails *details;
-	NautilusCanvasIcon *icon;
 	GList *p;
 
 	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
@@ -5515,12 +5499,6 @@ nautilus_canvas_container_clear (NautilusCanvasContainer *container)
 	details->drop_target = NULL;
 
 	for (p = details->icons; p != NULL; p = p->next) {
-		icon = p->data;
-		if (icon->is_monitored) {
-			nautilus_canvas_container_stop_monitor_top_left (container,
-									 icon->data,
-									 icon);
-		}
 		icon_free (p->data);
 	}
 	g_list_free (details->icons);
@@ -5763,11 +5741,6 @@ icon_destroy (NautilusCanvasContainer *container,
 		details->stretch_icon = NULL;
 	}
 
-	if (icon->is_monitored) {
-		nautilus_canvas_container_stop_monitor_top_left (container,
-								 icon->data,
-								 icon);
-	}
 	icon_free (icon);
 
 	if (was_selected) {
@@ -5867,10 +5840,7 @@ static NautilusIconInfo *
 nautilus_canvas_container_get_icon_images (NautilusCanvasContainer *container,
 					     NautilusCanvasIconData      *data,
 					     int                    size,
-					     char                 **embedded_text,
 					     gboolean               for_drag_accept,
-					     gboolean               need_large_embeddded_text,
-					     gboolean              *embedded_text_needs_loading,
 					     gboolean              *has_open_window)
 {
 	NautilusCanvasContainerClass *klass;
@@ -5878,7 +5848,7 @@ nautilus_canvas_container_get_icon_images (NautilusCanvasContainer *container,
 	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
 	g_assert (klass->get_icon_images != NULL);
 
-	return klass->get_icon_images (container, data, size, embedded_text, for_drag_accept, need_large_embeddded_text, embedded_text_needs_loading, has_open_window);
+	return klass->get_icon_images (container, data, size, for_drag_accept, has_open_window);
 }
 
 static void
@@ -5902,34 +5872,6 @@ nautilus_canvas_container_unfreeze_updates (NautilusCanvasContainer *container)
 
 	klass->unfreeze_updates (container);
 }
-
-static void
-nautilus_canvas_container_start_monitor_top_left (NautilusCanvasContainer *container,
-						  NautilusCanvasIconData *data,
-						  gconstpointer client,
-						  gboolean large_text)
-{
-	NautilusCanvasContainerClass *klass;
-
-	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
-	g_assert (klass->start_monitor_top_left != NULL);
-
-	klass->start_monitor_top_left (container, data, client, large_text);
-}
-
-static void
-nautilus_canvas_container_stop_monitor_top_left (NautilusCanvasContainer *container,
-						 NautilusCanvasIconData *data,
-						 gconstpointer client)
-{
-	NautilusCanvasContainerClass *klass;
-
-	klass = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (container);
-	g_return_if_fail (klass->stop_monitor_top_left != NULL);
-
-	klass->stop_monitor_top_left (container, data, client);
-}
-
 
 static void
 nautilus_canvas_container_prioritize_thumbnailing (NautilusCanvasContainer *container,
@@ -6033,15 +5975,8 @@ nautilus_canvas_container_update_icon (NautilusCanvasContainer *container,
 	guint icon_size;
 	guint min_image_size, max_image_size;
 	NautilusIconInfo *icon_info;
-	GdkPoint *attach_points;
-	int n_attach_points;
-	gboolean has_embedded_text_rect;
 	GdkPixbuf *pixbuf;
 	char *editable_text, *additional_text;
-	char *embedded_text;
-	GdkRectangle embedded_text_rect;
-	gboolean large_embedded_text;
-	gboolean embedded_text_needs_loading;
 	gboolean has_open_window;
 	
 	if (icon == NULL) {
@@ -6063,27 +5998,13 @@ nautilus_canvas_container_update_icon (NautilusCanvasContainer *container,
 	DEBUG ("Icon size, getting for size %d", icon_size);
 
 	/* Get the icons. */
-	embedded_text = NULL;
-	large_embedded_text = icon_size > ICON_SIZE_FOR_LARGE_EMBEDDED_TEXT;
 	icon_info = nautilus_canvas_container_get_icon_images (container, icon->data, icon_size,
-							       &embedded_text,
 							       icon == details->drop_target,							     
-							       large_embedded_text, &embedded_text_needs_loading,
 							       &has_open_window);
 
 	pixbuf = nautilus_icon_info_get_pixbuf (icon_info);
-
-	nautilus_icon_info_get_attach_points (icon_info, &attach_points, &n_attach_points);
-	has_embedded_text_rect = nautilus_icon_info_get_embedded_rect (icon_info,
-									 &embedded_text_rect);
-
 	g_object_unref (icon_info);
  
-	if (has_embedded_text_rect && embedded_text_needs_loading) {
-		icon->is_monitored = TRUE;
-		nautilus_canvas_container_start_monitor_top_left (container, icon->data, icon, large_embedded_text);
-	}
-	
 	nautilus_canvas_container_get_icon_text (container,
 						   icon->data,
 						   &editable_text,
@@ -6108,9 +6029,6 @@ nautilus_canvas_container_update_icon (NautilusCanvasContainer *container,
 			     NULL);
 
 	nautilus_canvas_item_set_image (icon->item, pixbuf);
-	nautilus_canvas_item_set_attach_points (icon->item, attach_points, n_attach_points);
-	nautilus_canvas_item_set_embedded_text_rect (icon->item, &embedded_text_rect);
-	nautilus_canvas_item_set_embedded_text (icon->item, embedded_text);
 
 	/* Let the pixbufs go. */
 	g_object_unref (pixbuf);

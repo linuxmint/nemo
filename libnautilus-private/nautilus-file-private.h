@@ -30,14 +30,6 @@
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-string.h>
 
-#define NAUTILUS_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_CHARACTERS_PER_LINE 80
-#define NAUTILUS_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_LINES               24
-#define NAUTILUS_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_BYTES               10000
-
-#define NAUTILUS_FILE_TOP_LEFT_TEXT_MAXIMUM_CHARACTERS_PER_LINE 10
-#define NAUTILUS_FILE_TOP_LEFT_TEXT_MAXIMUM_LINES               5
-#define NAUTILUS_FILE_TOP_LEFT_TEXT_MAXIMUM_BYTES               1024
-
 #define NAUTILUS_FILE_DEFAULT_ATTRIBUTES				\
 	"standard::*,access::*,mountable::*,time::*,unix::*,owner::*,selinux::*,thumbnail::*,id::filesystem,trash::orig-path,trash::deletion-date,metadata::*"
 
@@ -101,7 +93,6 @@ struct NautilusFileDetails
 	time_t thumbnail_mtime;
 	
 	GList *mime_list; /* If this is a directory, the list of MIME types in it. */
-	char *top_left_text;
 
 	/* Info you might get from a link (.desktop, .directory or nautilus link) */
 	GIcon *custom_icon;
@@ -168,10 +159,6 @@ struct NautilusFileDetails
 
 	eel_boolean_bit mount_is_up_to_date           : 1;
 	
-	eel_boolean_bit got_top_left_text             : 1;
-	eel_boolean_bit got_large_top_left_text       : 1;
-	eel_boolean_bit top_left_text_is_up_to_date   : 1;
-
 	eel_boolean_bit got_link_info                 : 1;
 	eel_boolean_bit link_info_is_up_to_date       : 1;
 	eel_boolean_bit got_custom_display_name       : 1;
@@ -240,9 +227,6 @@ NautilusFile *nautilus_file_new_from_info                  (NautilusDirectory   
 							    GFileInfo              *info);
 void          nautilus_file_emit_changed                   (NautilusFile           *file);
 void          nautilus_file_mark_gone                      (NautilusFile           *file);
-char *        nautilus_extract_top_left_text               (const char             *text,
-							    gboolean                large,
-							    int                     length);
 void          nautilus_file_set_directory                  (NautilusFile           *file,
 							    NautilusDirectory      *directory);
 gboolean      nautilus_file_get_date                       (NautilusFile           *file,
@@ -272,11 +256,6 @@ gboolean      nautilus_file_set_display_name               (NautilusFile        
 							    gboolean                custom);
 void          nautilus_file_set_mount                      (NautilusFile           *file,
 							    GMount                 *mount);
-
-/* Return true if the top lefts of files in this directory should be
- * fetched, according to the preference settings.
- */
-gboolean      nautilus_file_should_get_top_left_text       (NautilusFile           *file);
 
 /* Mark specified attributes for this file out of date without canceling current
  * I/O or kicking off new I/O.

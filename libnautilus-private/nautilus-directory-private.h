@@ -49,8 +49,6 @@ typedef enum {
 	REQUEST_FILE_INFO,
 	REQUEST_FILE_LIST, /* always FALSE if file != NULL */
 	REQUEST_MIME_LIST,
-	REQUEST_TOP_LEFT_TEXT,
-	REQUEST_LARGE_TOP_LEFT_TEXT,
 	REQUEST_EXTENSION_INFO,
 	REQUEST_THUMBNAIL,
 	REQUEST_MOUNT,
@@ -127,8 +125,6 @@ struct NautilusDirectoryDetails
 
 	FilesystemInfoState *filesystem_info_state;
 	
-	TopLeftTextReadState *top_left_read_state;
-
 	LinkInfoReadState *link_info_read_state;
 
 	GList *file_operations_in_progress; /* list of FileOperation * */

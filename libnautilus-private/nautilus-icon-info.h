@@ -71,12 +71,6 @@ GdkPixbuf *           nautilus_icon_info_get_pixbuf_nodefault_at_size (NautilusI
 								       gsize              forced_size);
 GdkPixbuf *           nautilus_icon_info_get_pixbuf_at_size           (NautilusIconInfo  *icon,
 								       gsize              forced_size);
-gboolean              nautilus_icon_info_get_embedded_rect            (NautilusIconInfo  *icon,
-								       GdkRectangle      *rectangle);
-gboolean              nautilus_icon_info_get_attach_points            (NautilusIconInfo  *icon,
-								       GdkPoint         **points,
-								       gint              *n_points);
-const char *          nautilus_icon_info_get_display_name             (NautilusIconInfo  *icon);
 const char *          nautilus_icon_info_get_used_name                (NautilusIconInfo  *icon);
 
 void                  nautilus_icon_info_clear_caches                 (void);

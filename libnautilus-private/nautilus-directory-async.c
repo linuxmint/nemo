@@ -508,18 +508,6 @@ mime_list_cancel (NautilusDirectory *directory)
 }
 
 static void
-top_left_cancel (NautilusDirectory *directory)
-{
-	if (directory->details->top_left_read_state != NULL) {
-		g_cancellable_cancel (directory->details->top_left_read_state->cancellable);
-		directory->details->top_left_read_state->directory = NULL;
-		directory->details->top_left_read_state = NULL;
-		
-		async_job_end (directory, "top left");
-	}
-}
-
-static void
 link_info_cancel (NautilusDirectory *directory)
 {
 	if (directory->details->link_info_read_state != NULL) {
@@ -674,16 +662,6 @@ nautilus_directory_set_up_request (NautilusFileAttributes file_attributes)
 	if (file_attributes & NAUTILUS_FILE_ATTRIBUTE_LINK_INFO) {
 		REQUEST_SET_TYPE (request, REQUEST_FILE_INFO);
 		REQUEST_SET_TYPE (request, REQUEST_LINK_INFO);
-	}
-	
-	if (file_attributes & NAUTILUS_FILE_ATTRIBUTE_TOP_LEFT_TEXT) {
-		REQUEST_SET_TYPE (request, REQUEST_TOP_LEFT_TEXT);
-		REQUEST_SET_TYPE (request, REQUEST_FILE_INFO);
-	}
-	
-	if (file_attributes & NAUTILUS_FILE_ATTRIBUTE_LARGE_TOP_LEFT_TEXT) {
-		REQUEST_SET_TYPE (request, REQUEST_LARGE_TOP_LEFT_TEXT);
-		REQUEST_SET_TYPE (request, REQUEST_FILE_INFO);
 	}
 
 	if ((file_attributes & NAUTILUS_FILE_ATTRIBUTE_EXTENSION_INFO) != 0) {
@@ -1576,11 +1554,6 @@ nautilus_async_destroying_file (NautilusFile *file)
 		directory->details->get_info_file = NULL;
 		changed = TRUE;
 	}
-	if (directory->details->top_left_read_state != NULL
-	    && directory->details->top_left_read_state->file == file) {
-		directory->details->top_left_read_state->file = NULL;
-		changed = TRUE;
-	}
 	if (directory->details->link_info_read_state != NULL &&
 	    directory->details->link_info_read_state->file == file) {
 		directory->details->link_info_read_state->file = NULL;
@@ -1629,22 +1602,6 @@ should_get_directory_count_now (NautilusFile *file)
 		&& !file->details->loading_directory;
 }
 
-static gboolean
-lacks_top_left (NautilusFile *file)
-{
-	return file->details->file_info_is_up_to_date &&
-		!file->details->top_left_text_is_up_to_date 
-		&& nautilus_file_should_get_top_left_text (file);
-}
-
-static gboolean
-lacks_large_top_left (NautilusFile *file)
-{
-	return file->details->file_info_is_up_to_date &&
-		(!file->details->top_left_text_is_up_to_date ||
-		 file->details->got_large_top_left_text != file->details->got_top_left_text)
-		&& nautilus_file_should_get_top_left_text (file);
-}
 static gboolean
 lacks_info (NautilusFile *file)
 {
@@ -1769,18 +1726,6 @@ request_is_satisfied (NautilusDirectory *directory,
 
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILESYSTEM_INFO)) {
 		if (has_problem (directory, file, lacks_filesystem_info)) {
-			return FALSE;
-		}
-	}
-
-	if (REQUEST_WANTS_TYPE (request, REQUEST_TOP_LEFT_TEXT)) {
-		if (has_problem (directory, file, lacks_top_left)) {
-			return FALSE;
-		}
-	}
-		
-	if (REQUEST_WANTS_TYPE (request, REQUEST_LARGE_TOP_LEFT_TEXT)) {
-		if (has_problem (directory, file, lacks_large_top_left)) {
 			return FALSE;
 		}
 	}
@@ -3144,185 +3089,6 @@ mime_list_start (NautilusDirectory *directory,
 }
 
 static void
-top_left_stop (NautilusDirectory *directory)
-{
-	NautilusFile *file;
-
-	if (directory->details->top_left_read_state != NULL) {
-		file = directory->details->top_left_read_state->file;
-		if (file != NULL) {
-			g_assert (NAUTILUS_IS_FILE (file));
-			g_assert (file->details->directory == directory);
-			if (is_needy (file,
-				      lacks_top_left,
-				      REQUEST_TOP_LEFT_TEXT) ||
-			    is_needy (file,
-				      lacks_large_top_left,
-				      REQUEST_LARGE_TOP_LEFT_TEXT)) {
-				return;
-			}
-		}
-
-		/* The top left is not wanted, so stop it. */
-		top_left_cancel (directory);
-	}
-}
-
-static void
-top_left_read_state_free (TopLeftTextReadState *state)
-{
-	g_object_unref (state->cancellable);
-	g_free (state);
-}
-
-static void
-top_left_read_callback (GObject *source_object,
-			GAsyncResult *res,
-			gpointer callback_data)
-{
-	TopLeftTextReadState *state;
-	NautilusDirectory *directory;
-	NautilusFileDetails *file_details;
-	gsize file_size;
-	char *file_contents;
-
-	state = callback_data;
-
-	if (state->directory == NULL) {
-		/* Operation was cancelled. Bail out */
-		top_left_read_state_free (state);
-		return;
-	}
-	
-	directory = nautilus_directory_ref (state->directory);
-	
-	file_details = state->file->details;
-
-	file_details->top_left_text_is_up_to_date = TRUE;
-	g_free (file_details->top_left_text);
-
-	if (g_file_load_partial_contents_finish (G_FILE (source_object),
-						 res,
-						 &file_contents, &file_size,
-						 NULL, NULL)) {
-		file_details->top_left_text = nautilus_extract_top_left_text (file_contents, state->large, file_size);
-		file_details->got_top_left_text = TRUE;
-		file_details->got_large_top_left_text = state->large;
-		g_free (file_contents);
-	} else {
-		file_details->top_left_text = NULL;
-		file_details->got_top_left_text = FALSE;
-		file_details->got_large_top_left_text = FALSE;
-	}
-
-	nautilus_file_changed (state->file);
-
-	directory->details->top_left_read_state = NULL;
-	async_job_end (directory, "top left");
-
-	top_left_read_state_free (state);
-	
-	nautilus_directory_async_state_changed (directory);
-
-	nautilus_directory_unref (directory);
-}
-
-static int
-count_lines (const char *text, int length)
-{
-	int count, i;
-
-	count = 0;
-	for (i = 0; i < length; i++) {
-		count += *text++ == '\n';
-	}
-	return count;
-}
-
-static gboolean
-top_left_read_more_callback (const char *file_contents,
-			     goffset bytes_read,
-			     gpointer callback_data)
-{
-	TopLeftTextReadState *state;
-
-	state = callback_data;
-
-	/* Stop reading when we have enough. */
-	if (state->large) {
-		return bytes_read < NAUTILUS_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_BYTES &&
-			count_lines (file_contents, bytes_read) <= NAUTILUS_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_LINES;
-	} else {
-		return bytes_read < NAUTILUS_FILE_TOP_LEFT_TEXT_MAXIMUM_BYTES &&
-			count_lines (file_contents, bytes_read) <= NAUTILUS_FILE_TOP_LEFT_TEXT_MAXIMUM_LINES;
-	}
-}
-
-static void
-top_left_start (NautilusDirectory *directory,
-		NautilusFile *file,
-		gboolean *doing_io)
-{
-	GFile *location;
-	gboolean needs_large;
-	TopLeftTextReadState *state;
-
-	if (directory->details->top_left_read_state != NULL) {
- 		*doing_io = TRUE;
-		return;
-	}
-	
-	needs_large = FALSE;
-
-	if (is_needy (file,
-		      lacks_large_top_left,
-		      REQUEST_LARGE_TOP_LEFT_TEXT)) {
-		needs_large = TRUE;
-	}
-
-	/* Figure out which file to read the top left for. */
-	if (!(needs_large ||
-	      is_needy (file,
-			lacks_top_left,
-			REQUEST_TOP_LEFT_TEXT))) {
-		return;
-	}
-	*doing_io = TRUE;
-
-	if (!nautilus_file_contains_text (file)) {
-		g_free (file->details->top_left_text);
-		file->details->top_left_text = NULL;
-		file->details->got_top_left_text = FALSE;
-		file->details->got_large_top_left_text = FALSE;
-		file->details->top_left_text_is_up_to_date = TRUE;
-
-		nautilus_directory_async_state_changed (directory);
-		return;
-	}
-
-	if (!async_job_start (directory, "top left")) {
-		return;
-	}
-
-	/* Start reading. */
-	state = g_new0 (TopLeftTextReadState, 1);
-	state->directory = directory;
-	state->cancellable = g_cancellable_new ();
-	state->large = needs_large;
-	state->file = file;
-
-	directory->details->top_left_read_state = state;
-
-	location = nautilus_file_get_location (file);
-	g_file_load_partial_contents_async (location,
-					    state->cancellable,
-					    top_left_read_more_callback,
-					    top_left_read_callback,
-					    state);
-	g_object_unref (location);
-}
-
-static void
 get_info_state_free (GetInfoState *state)
 {
 	g_object_unref (state->cancellable);
@@ -4446,7 +4212,6 @@ start_or_stop_io (NautilusDirectory *directory)
 	directory_count_stop (directory);
 	deep_count_stop (directory);
 	mime_list_stop (directory);
-	top_left_stop (directory);
 	link_info_stop (directory);
 	extension_info_stop (directory);
 	mount_stop (directory);
@@ -4478,7 +4243,6 @@ start_or_stop_io (NautilusDirectory *directory)
 		directory_count_start (directory, file, &doing_io);
 		deep_count_start (directory, file, &doing_io);
 		mime_list_start (directory, file, &doing_io);
-		top_left_start (directory, file, &doing_io);
 		thumbnail_start (directory, file, &doing_io);
 		filesystem_info_start (directory, file, &doing_io);
 
@@ -4548,7 +4312,6 @@ nautilus_directory_cancel (NautilusDirectory *directory)
 	link_info_cancel (directory);
 	mime_list_cancel (directory);
 	new_files_cancel (directory);
-	top_left_cancel (directory);
 	extension_info_cancel (directory);
 	thumbnail_cancel (directory);
 	mount_cancel (directory);
@@ -4589,16 +4352,6 @@ cancel_mime_list_for_file (NautilusDirectory *directory,
 	if (directory->details->mime_list_in_progress != NULL &&
 	    directory->details->mime_list_in_progress->mime_list_file == file) {
 		mime_list_cancel (directory);
-	}
-}
-
-static void
-cancel_top_left_text_for_file (NautilusDirectory *directory,
-			       NautilusFile      *file)
-{
-	if (directory->details->top_left_read_state != NULL &&
-	    directory->details->top_left_read_state->file == file) {
-		top_left_cancel (directory);
 	}
 }
 
@@ -4669,9 +4422,6 @@ cancel_loading_attributes (NautilusDirectory *directory,
 	if (REQUEST_WANTS_TYPE (request, REQUEST_MIME_LIST)) {
 		mime_list_cancel (directory);
 	}
-	if (REQUEST_WANTS_TYPE (request, REQUEST_TOP_LEFT_TEXT)) {
-		top_left_cancel (directory);
-	}
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILE_INFO)) {
 		file_info_cancel (directory);
 	}
@@ -4716,9 +4466,6 @@ nautilus_directory_cancel_loading_file_attributes (NautilusDirectory      *direc
 	}
 	if (REQUEST_WANTS_TYPE (request, REQUEST_MIME_LIST)) {
 		cancel_mime_list_for_file (directory, file);
-	}
-	if (REQUEST_WANTS_TYPE (request, REQUEST_TOP_LEFT_TEXT)) {
-		cancel_top_left_text_for_file (directory, file);
 	}
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILE_INFO)) {
 		cancel_file_info_for_file (directory, file);

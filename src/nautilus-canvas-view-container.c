@@ -51,15 +51,11 @@ static NautilusIconInfo *
 nautilus_canvas_view_container_get_icon_images (NautilusCanvasContainer *container,
 					      NautilusCanvasIconData      *data,
 					      int                    size,
-					      char                 **embedded_text,
 					      gboolean               for_drag_accept,
-					      gboolean               need_large_embeddded_text,
-					      gboolean              *embedded_text_needs_loading,
 					      gboolean              *has_window_open)
 {
 	NautilusCanvasView *canvas_view;
 	NautilusFile *file;
-	gboolean use_embedding;
 	NautilusFileIconFlags flags;
 	NautilusIconInfo *icon_info;
 	GdkPixbuf *pixbuf;
@@ -73,21 +69,12 @@ nautilus_canvas_view_container_get_icon_images (NautilusCanvasContainer *contain
 	g_assert (NAUTILUS_IS_FILE (file));
 	canvas_view = get_canvas_view (container);
 	g_return_val_if_fail (canvas_view != NULL, NULL);
-
-	use_embedding = FALSE;
-	if (embedded_text) {
-		*embedded_text = nautilus_file_peek_top_left_text (file, need_large_embeddded_text, embedded_text_needs_loading);
-		use_embedding = *embedded_text != NULL;
-	}
 	
 	*has_window_open = nautilus_file_has_open_window (file);
 
 	flags = NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
 		NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS;
 
-	if (use_embedding) {
-		flags |= NAUTILUS_FILE_ICON_FLAGS_EMBEDDING_TEXT;
-	}
 	if (for_drag_accept) {
 		flags |= NAUTILUS_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
 	}
@@ -145,40 +132,6 @@ nautilus_canvas_view_container_get_icon_description (NautilusCanvasContainer *co
 	description = g_content_type_get_description (mime_type);
 	g_free (mime_type);
 	return g_strdup (description);
-}
-
-static void
-nautilus_canvas_view_container_start_monitor_top_left (NautilusCanvasContainer *container,
-						     NautilusCanvasIconData      *data,
-						     gconstpointer          client,
-						     gboolean               large_text)
-{
-	NautilusFile *file;
-	NautilusFileAttributes attributes;
-		
-	file = (NautilusFile *) data;
-
-	g_assert (NAUTILUS_IS_FILE (file));
-
-	attributes = NAUTILUS_FILE_ATTRIBUTE_TOP_LEFT_TEXT;
-	if (large_text) {
-		attributes |= NAUTILUS_FILE_ATTRIBUTE_LARGE_TOP_LEFT_TEXT;
-	}
-	nautilus_file_monitor_add (file, client, attributes);
-}
-
-static void
-nautilus_canvas_view_container_stop_monitor_top_left (NautilusCanvasContainer *container,
-						    NautilusCanvasIconData      *data,
-						    gconstpointer          client)
-{
-	NautilusFile *file;
-
-	file = (NautilusFile *) data;
-
-	g_assert (NAUTILUS_IS_FILE (file));
-
-	nautilus_file_monitor_remove (file, client);
 }
 
 static void
@@ -542,8 +495,6 @@ nautilus_canvas_view_container_class_init (NautilusCanvasViewContainerClass *kla
 	ic_class->get_icon_text = nautilus_canvas_view_container_get_icon_text;
 	ic_class->get_icon_images = nautilus_canvas_view_container_get_icon_images;
 	ic_class->get_icon_description = nautilus_canvas_view_container_get_icon_description;
-	ic_class->start_monitor_top_left = nautilus_canvas_view_container_start_monitor_top_left;
-	ic_class->stop_monitor_top_left = nautilus_canvas_view_container_stop_monitor_top_left;
 	ic_class->prioritize_thumbnailing = nautilus_canvas_view_container_prioritize_thumbnailing;
 
 	ic_class->compare_icons = nautilus_canvas_view_container_compare_icons;
