@@ -515,3 +515,17 @@ nemo_view_drop_proxy_received_uris (NemoView *view,
 
 	g_free (container_uri);
 }
+
+void
+nemo_view_handle_hover (NemoView *view,
+			    const char   *target_uri)
+{
+	NemoWindowSlot *slot;
+	GFile *location;
+
+	slot = nemo_view_get_nemo_window_slot (view);
+
+	location = g_file_new_for_uri (target_uri);
+	nemo_window_slot_open_location (slot, location, 0);
+	g_object_unref (location);
+}

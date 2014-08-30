@@ -230,6 +230,9 @@ show_selection_idle_callback (gpointer callback_data)
 
 	view->details->show_selection_idle_id = 0;
 
+	if (view->details->selection_location == NULL) {
+		return FALSE;
+	}
 	file = nemo_file_get_by_uri (view->details->selection_location);
 	if (file == NULL) {
 		return FALSE;

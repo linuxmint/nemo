@@ -449,6 +449,8 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
   if (target_slot != NULL)
     drag_info->target_slot = g_object_ref (target_slot);
 
+  drag_info->widget = widget;
+
   gtk_drag_dest_set (widget, 0,
                      NULL, 0,
                      GDK_ACTION_MOVE |

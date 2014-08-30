@@ -406,7 +406,7 @@ set_direct_save_uri (GtkWidget *widget, GdkDragContext *context, NemoDragInfo *d
 	GFile *base, *child;
 	char *filename, *drop_target;
 	gchar *uri;
-	
+
 	drag_info->got_drop_data_type = TRUE;
 	drag_info->data_type = NEMO_ICON_DND_XDNDDIRECTSAVE;
 	
@@ -1181,6 +1181,15 @@ nemo_canvas_dnd_update_drop_target (NemoCanvasContainer *container,
 }
 
 static void
+remove_hover_timer (NemoCanvasDndInfo *dnd_info)
+{
+	if (dnd_info->hover_id != 0) {
+		g_source_remove (dnd_info->hover_id);
+		dnd_info->hover_id = 0;
+	}
+}
+
+static void
 nemo_canvas_container_free_drag_data (NemoCanvasContainer *container)
 {
 	NemoCanvasDndInfo *dnd_info;
@@ -1203,6 +1212,11 @@ nemo_canvas_container_free_drag_data (NemoCanvasContainer *container)
 		g_free (dnd_info->drag_info.direct_save_uri);
 		dnd_info->drag_info.direct_save_uri = NULL;
 	}
+
+	g_free (dnd_info->target_uri);
+	dnd_info->target_uri = NULL;
+
+	remove_hover_timer (dnd_info);
 }
 
 static void
@@ -1394,6 +1408,51 @@ stop_dnd_highlight (GtkWidget *widget)
 }
 
 static gboolean
+hover_timer (gpointer user_data)
+{
+	NemoCanvasContainer *container = user_data;
+	NemoCanvasDndInfo *dnd_info;
+
+	dnd_info = container->details->dnd_info;
+
+	dnd_info->hover_id = 0;
+
+	g_signal_emit_by_name (container, "handle_hover", dnd_info->target_uri);
+
+	return FALSE;
+}
+
+static void
+check_hover_timer (NemoCanvasContainer *container,
+		   const char              *uri)
+{
+	NemoCanvasDndInfo *dnd_info;
+	GtkSettings *settings;
+	guint timeout;
+
+	dnd_info = container->details->dnd_info;
+
+	if (g_strcmp0 (uri, dnd_info->target_uri) == 0) {
+		return;
+	}
+	remove_hover_timer (dnd_info);
+
+	settings = gtk_widget_get_settings (GTK_WIDGET (container));
+	g_object_get (settings, "gtk-timeout-expand", &timeout, NULL);
+
+	g_free (dnd_info->target_uri);
+	dnd_info->target_uri = NULL;
+
+	if (uri != NULL) {
+		dnd_info->target_uri = g_strdup (uri);
+		dnd_info->hover_id =
+			gdk_threads_add_timeout (timeout,
+						 hover_timer,
+						 container);
+	}
+}
+
+static gboolean
 drag_motion_callback (GtkWidget *widget,
 		      GdkDragContext *context,
 		      int x, int y,
@@ -1412,7 +1471,14 @@ drag_motion_callback (GtkWidget *widget,
 	nemo_canvas_container_get_drop_action (NEMO_CANVAS_CONTAINER (widget), context, x, y,
 						 &action);
 	if (action != 0) {
+		char *uri;
+		uri = nemo_canvas_container_find_drop_target (NEMO_CANVAS_CONTAINER (widget),
+								  context, x, y, NULL, TRUE);
+		check_hover_timer (NEMO_CANVAS_CONTAINER (widget), uri);
+		g_free (uri);
 		start_dnd_highlight (widget);
+	} else {
+		remove_hover_timer (NEMO_CANVAS_CONTAINER (widget)->details->dnd_info);
 	}
 	  
 	gdk_drag_status (context, action, time);

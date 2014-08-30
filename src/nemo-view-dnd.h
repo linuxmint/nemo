@@ -58,6 +58,8 @@ void nemo_view_handle_raw_drop          (NemoView  *view,
 					     GdkDragAction  action,
 					     int            x,
 					     int            y);
+void nemo_view_handle_hover             (NemoView  *view,
+					     const char    *target_uri);
 
 void nemo_view_drop_proxy_received_uris (NemoView  *view,
 					     const GList   *uris,

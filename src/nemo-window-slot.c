@@ -2312,6 +2312,7 @@ real_setup_loading_floating_bar (NemoWindowSlot *slot)
 		return;
 	}
 
+	nemo_floating_bar_cleanup_actions (NEMO_FLOATING_BAR (slot->details->floating_bar));
 	nemo_floating_bar_set_primary_label (NEMO_FLOATING_BAR (slot->details->floating_bar),
 						 NEMO_IS_SEARCH_DIRECTORY (nemo_view_get_model (slot->details->content_view)) ?
 						 _("Searching…") : _("Loading…"));

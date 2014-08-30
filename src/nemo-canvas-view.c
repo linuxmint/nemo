@@ -2444,6 +2444,14 @@ canvas_view_handle_raw (NemoCanvasContainer *container, const char *raw_data,
 				       raw_data, length, target_uri, direct_save_uri, action, x, y);
 }
 
+static void
+canvas_view_handle_hover (NemoCanvasContainer *container,
+			  const char *target_uri,
+			  NemoCanvasView *view)
+{
+	nemo_view_handle_hover (NEMO_VIEW (view), target_uri);
+}
+
 static char *
 canvas_view_get_first_visible_file (NemoView *view)
 {
@@ -2745,6 +2753,8 @@ nemo_canvas_view_init (NemoCanvasView *canvas_view)
 				 G_CALLBACK (canvas_view_handle_text), canvas_view, 0);
 	g_signal_connect_object (get_canvas_container (canvas_view), "handle_raw",
 				 G_CALLBACK (canvas_view_handle_raw), canvas_view, 0);
+	g_signal_connect_object (canvas_container, "handle_hover",
+				 G_CALLBACK (canvas_view_handle_hover), canvas_view, 0);
 
 	canvas_view->details->clipboard_handler_id =
 		g_signal_connect (nemo_clipboard_monitor_get (),
