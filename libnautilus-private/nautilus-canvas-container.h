@@ -313,8 +313,6 @@ void              nautilus_canvas_container_set_margins                   (Nauti
 									   int                     right_margin,
 									   int                     top_margin,
 									   int                     bottom_margin);
-void              nautilus_canvas_container_set_use_drop_shadows          (NautilusCanvasContainer  *container,
-									   gboolean                use_drop_shadows);
 char*             nautilus_canvas_container_get_icon_description          (NautilusCanvasContainer  *container,
 									     NautilusCanvasIconData       *data);
 gboolean          nautilus_canvas_container_get_allow_moves               (NautilusCanvasContainer  *container);

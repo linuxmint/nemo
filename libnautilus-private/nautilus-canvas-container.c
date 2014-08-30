@@ -3945,7 +3945,6 @@ style_updated (GtkWidget *widget)
 	NautilusCanvasContainer *container;
 
 	container = NAUTILUS_CANVAS_CONTAINER (widget);
-	container->details->use_drop_shadows = container->details->drop_shadows_requested;
 
 	/* Don't chain up to parent, if this is a desktop container,
 	 * because that resets the background of the window.
@@ -7481,19 +7480,6 @@ nautilus_canvas_container_set_margins (NautilusCanvasContainer *container,
 
 	/* redo layout of icons as the margins have changed */
 	schedule_redo_layout (container);
-}
-
-void
-nautilus_canvas_container_set_use_drop_shadows (NautilusCanvasContainer  *container,
-						gboolean                use_drop_shadows)
-{
-	if (container->details->drop_shadows_requested == use_drop_shadows) {
-		return;
-	}
-
-	container->details->drop_shadows_requested = use_drop_shadows;
-	container->details->use_drop_shadows = use_drop_shadows;
-	gtk_widget_queue_draw (GTK_WIDGET (container));
 }
 
 /* handle theme changes */

@@ -459,7 +459,6 @@ nautilus_desktop_canvas_view_init (NautilusDesktopCanvasView *desktop_canvas_vie
 	}
 
 	canvas_container = get_canvas_container (desktop_canvas_view);
-	nautilus_canvas_container_set_use_drop_shadows (canvas_container, TRUE);
 	nautilus_canvas_view_container_set_sort_desktop (NAUTILUS_CANVAS_VIEW_CONTAINER (canvas_container), TRUE);
 
 	/* Do a reload on the desktop if we don't have FAM, a smarter
