@@ -613,7 +613,7 @@ nemo_drag_drag_data_get (GtkWidget *widget,
 	default:
 		return FALSE;
 	}
-	
+
 	gtk_selection_data_set (selection_data,
 				gtk_selection_data_get_target (selection_data),
 				8, (guchar *) result->str, result->len);

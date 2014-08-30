@@ -131,6 +131,8 @@ typedef struct {
 						   GdkDragAction action,
 						   int x,
 						   int y);
+	void	     (* handle_hover)		  (NemoCanvasContainer *container,
+						   const char *target_uri);
 
 	/* Queries on the container for subclass/client.
 	 * These must be implemented. The default "do nothing" is not good enough.

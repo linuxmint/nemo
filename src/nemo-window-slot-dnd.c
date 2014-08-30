@@ -46,20 +46,21 @@ typedef struct {
 
   NemoFile *target_file;
   NemoWindowSlot *target_slot;
-
+  GtkWidget *widget;
 
   gboolean is_notebook;
-  guint switch_tab_timer;
+  guint switch_location_timer;
 } NemoDragSlotProxyInfo;
 
-static gboolean
-slot_proxy_switch_tab_timer (gpointer user_data)
+static void
+switch_tab (NemoDragSlotProxyInfo *drag_info)
 {
-  NemoDragSlotProxyInfo *drag_info = user_data;
   GtkWidget *notebook, *slot;
   gint idx, n_pages;
 
-  drag_info->switch_tab_timer = 0;
+  if (drag_info->target_slot == NULL) {
+    return;
+  }
 
   notebook = gtk_widget_get_ancestor (GTK_WIDGET (drag_info->target_slot), NEMO_TYPE_NOTEBOOK);
   n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
@@ -73,39 +74,70 @@ slot_proxy_switch_tab_timer (gpointer user_data)
           break;
         }
     }
+}
+
+static void
+switch_location (NemoDragSlotProxyInfo *drag_info)
+{
+  GFile *location;
+  NemoWindowSlot *target_slot;
+  GtkWidget *window;
+
+  if (drag_info->target_file == NULL) {
+    return;
+  }
+
+  window = gtk_widget_get_toplevel (drag_info->widget);
+  g_assert (NEMO_IS_WINDOW (window));
+
+  target_slot = nemo_window_get_active_slot (NEMO_WINDOW (window));
+
+  location = nemo_file_get_location (drag_info->target_file);
+  nemo_window_slot_open_location (target_slot, location, 0);
+  g_object_unref (location);
+}
+
+static gboolean
+slot_proxy_switch_location_timer (gpointer user_data)
+{
+  NemoDragSlotProxyInfo *drag_info = user_data;
+
+  drag_info->switch_location_timer = 0;
+
+  if (drag_info->is_notebook)
+    switch_tab (drag_info);
+  else
+    switch_location (drag_info);
 
   return FALSE;
 }
 
 static void
-slot_proxy_check_switch_tab_timer (NemoDragSlotProxyInfo *drag_info,
-                                   GtkWidget *widget)
+slot_proxy_check_switch_location_timer (NemoDragSlotProxyInfo *drag_info,
+                                        GtkWidget *widget)
 {
   GtkSettings *settings;
   guint timeout;
 
-  if (!drag_info->is_notebook)
-    return;
-
-  if (drag_info->switch_tab_timer)
+  if (drag_info->switch_location_timer)
     return;
 
   settings = gtk_widget_get_settings (widget);
   g_object_get (settings, "gtk-timeout-expand", &timeout, NULL);
 
-  drag_info->switch_tab_timer =
+  drag_info->switch_location_timer =
     gdk_threads_add_timeout (timeout,
-                             slot_proxy_switch_tab_timer,
+                             slot_proxy_switch_location_timer,
                              drag_info);
 }
 
 static void
-slot_proxy_remove_switch_tab_timer (NemoDragSlotProxyInfo *drag_info)
+slot_proxy_remove_switch_location_timer (NemoDragSlotProxyInfo *drag_info)
 {
-  if (drag_info->switch_tab_timer != 0)
+  if (drag_info->switch_location_timer != 0)
     {
-      g_source_remove (drag_info->switch_tab_timer);
-      drag_info->switch_tab_timer = 0;
+      g_source_remove (drag_info->switch_location_timer);
+      drag_info->switch_location_timer = 0;
     }
 }
 
@@ -193,14 +225,14 @@ slot_proxy_drag_motion (GtkWidget          *widget,
         nemo_pathbar_button_set_highlight (widget, TRUE);
     } else {
         gtk_drag_highlight (widget);
-        slot_proxy_check_switch_tab_timer (drag_info, widget);
+        slot_proxy_check_switch_location_timer (drag_info, widget);
     }
   } else {
     if (NEMO_IS_PATHBAR_BUTTON (widget)) {
         nemo_pathbar_button_set_highlight (widget, FALSE);
     } else {
         gtk_drag_unhighlight (widget);
-        slot_proxy_remove_switch_tab_timer (drag_info);
+        slot_proxy_remove_switch_location_timer (drag_info);
     }
   }
 
@@ -223,7 +255,7 @@ drag_info_free (gpointer user_data)
 static void
 drag_info_clear (NemoDragSlotProxyInfo *drag_info)
 {
-  slot_proxy_remove_switch_tab_timer (drag_info);
+  slot_proxy_remove_switch_location_timer (drag_info);
 
   if (!drag_info->have_data) {
     goto out;
@@ -433,6 +465,8 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
 
   if (target_slot != NULL)
     drag_info->target_slot = g_object_ref (target_slot);
+
+  drag_info->widget = widget;
 
   gtk_drag_dest_set (widget, 0,
                      NULL, 0,
