@@ -227,8 +227,7 @@ NautilusFile *nautilus_file_new_from_info                  (NautilusDirectory   
 							    GFileInfo              *info);
 void          nautilus_file_emit_changed                   (NautilusFile           *file);
 void          nautilus_file_mark_gone                      (NautilusFile           *file);
-void          nautilus_file_set_directory                  (NautilusFile           *file,
-							    NautilusDirectory      *directory);
+
 gboolean      nautilus_file_get_date                       (NautilusFile           *file,
 							    NautilusDateType        date_type,
 							    time_t                 *date);

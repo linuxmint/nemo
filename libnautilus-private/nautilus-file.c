@@ -2640,13 +2640,6 @@ nautilus_file_update_name_and_directory (NautilusFile *file,
 	return TRUE;
 }
 
-void
-nautilus_file_set_directory (NautilusFile *file,
-			     NautilusDirectory *new_directory)
-{
-	nautilus_file_update_name_and_directory (file, NULL, new_directory);
-}
-
 static Knowledge
 get_item_count (NautilusFile *file,
 		guint *count)
