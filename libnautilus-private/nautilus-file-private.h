@@ -91,7 +91,10 @@ struct NautilusFileDetails
 	char *thumbnail_path;
 	GdkPixbuf *thumbnail;
 	time_t thumbnail_mtime;
-	
+
+	GdkPixbuf *scaled_thumbnail;
+	double thumbnail_scale;
+
 	GList *mime_list; /* If this is a directory, the list of MIME types in it. */
 
 	/* Info you might get from a link (.desktop, .directory or nautilus link) */
