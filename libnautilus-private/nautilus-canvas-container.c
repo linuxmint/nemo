@@ -7690,8 +7690,6 @@ nautilus_canvas_container_accessible_update_selection (AtkObject *accessible)
 {
 	NautilusCanvasContainer *container;
 	NautilusCanvasContainerAccessiblePrivate *priv;
-	GList *l;
-	NautilusCanvasIcon *icon;
 
 	container = NAUTILUS_CANVAS_CONTAINER (gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible)));
 	priv = GET_ACCESSIBLE_PRIV (accessible);
@@ -7700,16 +7698,8 @@ nautilus_canvas_container_accessible_update_selection (AtkObject *accessible)
 		g_list_free (priv->selection);
 		priv->selection = NULL;
 	}
-	
-	for (l = container->details->icons; l != NULL; l = l->next) {
-		icon = l->data;
-		if (icon->is_selected) {
-			priv->selection = g_list_prepend (priv->selection, 
-							  icon);
-		}
-	}
 
-	priv->selection = g_list_reverse (priv->selection);
+	priv->selection = nautilus_canvas_container_get_selection (container);
 }
 
 static void
