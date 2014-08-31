@@ -424,6 +424,13 @@ icon_toggle_selected (NautilusCanvasContainer *container,
 	end_renaming_mode (container, TRUE);
 
 	icon->is_selected = !icon->is_selected;
+	if (icon->is_selected) {
+		container->details->selection = g_list_prepend (container->details->selection, icon->data);
+		container->details->selection_needs_resort = TRUE;
+	} else {
+		container->details->selection = g_list_remove (container->details->selection, icon->data);
+	}
+
 	eel_canvas_item_set (EEL_CANVAS_ITEM (icon->item),
 			     "highlighted_for_selection", (gboolean) icon->is_selected,
 			     NULL);
@@ -1096,6 +1103,19 @@ nautilus_canvas_container_update_scroll_region (NautilusCanvasContainer *contain
 }
 
 static int
+compare_icons_data (gconstpointer a, gconstpointer b, gpointer canvas_container)
+{
+	NautilusCanvasContainerClass *klass;
+	NautilusCanvasIconData *data_a, *data_b;
+
+	data_a = (NautilusCanvasIconData *) a;
+	data_b = (NautilusCanvasIconData *) b;
+	klass  = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (canvas_container);
+
+	return klass->compare_icons (canvas_container, data_a, data_b);
+}
+
+static int
 compare_icons (gconstpointer a, gconstpointer b, gpointer canvas_container)
 {
 	NautilusCanvasContainerClass *klass;
@@ -1106,6 +1126,15 @@ compare_icons (gconstpointer a, gconstpointer b, gpointer canvas_container)
 	klass  = NAUTILUS_CANVAS_CONTAINER_GET_CLASS (canvas_container);
 
 	return klass->compare_icons (canvas_container, icon_a->data, icon_b->data);
+}
+
+static void
+sort_selection (NautilusCanvasContainer *container)
+{
+	container->details->selection = g_list_sort_with_data (container->details->selection,
+							       compare_icons_data,
+							       container);
+	container->details->selection_needs_resort = FALSE;
 }
 
 static void
@@ -1124,6 +1153,7 @@ static void
 resort (NautilusCanvasContainer *container)
 {
 	sort_icons (container, &container->details->icons);
+	sort_selection (container);
 }
 
 typedef struct {
@@ -5636,6 +5666,7 @@ icon_destroy (NautilusCanvasContainer *container,
  
 	details->icons = g_list_remove (details->icons, icon);
 	details->new_icons = g_list_remove (details->new_icons, icon);
+	details->selection = g_list_remove (details->selection, icon->data);
 	g_hash_table_remove (details->icon_set, icon->data);
 
 	was_selected = icon->is_selected;
@@ -6360,21 +6391,13 @@ nautilus_canvas_container_reveal (NautilusCanvasContainer *container, NautilusCa
 GList *
 nautilus_canvas_container_get_selection (NautilusCanvasContainer *container)
 {
-	GList *list, *p;
-
 	g_return_val_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container), NULL);
 
-	list = NULL;
-	for (p = container->details->icons; p != NULL; p = p->next) {
-		NautilusCanvasIcon *icon;
-
-		icon = p->data;
-		if (icon->is_selected) {
-			list = g_list_prepend (list, icon->data);
-		}
+	if (container->details->selection_needs_resort) {
+		sort_selection (container);
 	}
 
-	return g_list_reverse (list);
+	return g_list_copy (container->details->selection);
 }
 
 static GList *
