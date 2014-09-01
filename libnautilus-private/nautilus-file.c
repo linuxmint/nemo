@@ -504,8 +504,16 @@ void
 nautilus_file_set_directory (NautilusFile *file,
 			     NautilusDirectory *directory)
 {
+	char *parent_uri;
+
 	g_clear_object (&file->details->directory);
+	g_free (file->details->directory_name_collation_key);
+
 	file->details->directory = nautilus_directory_ref (directory);
+
+	parent_uri = nautilus_file_get_parent_uri (file);
+	file->details->directory_name_collation_key = g_utf8_collate_key_for_filename (parent_uri, -1);
+	g_free (parent_uri);
 }
 
 static NautilusFile *
@@ -793,6 +801,7 @@ finalize (GObject *object)
 	eel_ref_str_unref (file->details->name);
 	eel_ref_str_unref (file->details->display_name);
 	g_free (file->details->display_name_collation_key);
+	g_free (file->details->directory_name_collation_key);
 	eel_ref_str_unref (file->details->edit_name);
 	if (file->details->icon) {
 		g_object_unref (file->details->icon);
@@ -2888,22 +2897,8 @@ compare_by_display_name (NautilusFile *file_1, NautilusFile *file_2)
 static int
 compare_by_directory_name (NautilusFile *file_1, NautilusFile *file_2)
 {
-	char *directory_1, *directory_2;
-	int compare;
-
-	if (file_1->details->directory == file_2->details->directory) {
-		return 0;
-	}
-
-	directory_1 = nautilus_file_get_parent_uri_for_display (file_1);
-	directory_2 = nautilus_file_get_parent_uri_for_display (file_2);
-
-	compare = g_utf8_collate (directory_1, directory_2);
-
-	g_free (directory_1);
-	g_free (directory_2);
-
-	return compare;
+	return strcmp (file_1->details->directory_name_collation_key,
+		       file_2->details->directory_name_collation_key);
 }
 
 static GList *
