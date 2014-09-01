@@ -664,7 +664,7 @@ on_connect_server_response (GtkDialog      *dialog,
 	gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
-void
+GtkWidget *
 nemo_application_connect_server (NemoApplication *application,
 				     NemoWindow      *window)
 {
@@ -684,6 +684,8 @@ nemo_application_connect_server (NemoApplication *application,
 	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
 	gtk_window_set_screen (GTK_WINDOW (dialog), gtk_window_get_screen (GTK_WINDOW (window)));
 	gtk_window_present (GTK_WINDOW (dialog));
+
+	return dialog;
 }
 
 static void

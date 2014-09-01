@@ -84,7 +84,7 @@ NemoBookmarkList *
 void nemo_application_edit_bookmarks (NemoApplication *application,
 					  NemoWindow      *window);
 
-void
+GtkWidget * 
 nemo_application_connect_server (NemoApplication *application,
                      NemoWindow      *window);
 
