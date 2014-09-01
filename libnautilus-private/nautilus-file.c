@@ -924,7 +924,6 @@ nautilus_file_get_parent_location (NautilusFile *file)
 	g_assert (NAUTILUS_IS_FILE (file));
 	
 	if (nautilus_file_is_self_owned (file)) {
-		/* Callers expect an empty string, not a NULL. */
 		return NULL;
 	}
 
