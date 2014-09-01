@@ -1068,8 +1068,8 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 			if (event->button == 3 && 
 			    (blank_click || gtk_tree_selection_path_is_selected (selection, path))) {
 				call_parent = FALSE;
-			}
-
+			} 
+			
 			if ((event->button == 1 || event->button == 2) &&
 			    ((event->state & GDK_CONTROL_MASK) != 0 ||
 			     (event->state & GDK_SHIFT_MASK) == 0)) {			
@@ -2803,7 +2803,6 @@ nemo_list_view_get_backing_uri (NemoView *view)
 		tree_selection_has_common_parent (selection, &is_common, &is_root);
 
 		if (is_common && !is_root) {
-
 			paths = gtk_tree_selection_get_selected_rows (selection, NULL);
 			path = (GtkTreePath *) paths->data;
 
@@ -2812,8 +2811,7 @@ nemo_list_view_get_backing_uri (NemoView *view)
 			uri = nemo_file_get_parent_uri (file);
 			nemo_file_unref (file);
 
-			g_list_foreach (paths, (GFunc) gtk_tree_path_free, NULL);
-			g_list_free (paths);
+			g_list_free_full (paths, (GDestroyNotify) gtk_tree_path_free);
 		}
 	}
 

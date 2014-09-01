@@ -438,7 +438,7 @@ nemo_list_model_iter_children (GtkTreeModel *tree_model, GtkTreeIter *iter, GtkT
 	FileEntry *file_entry;
 
 	model = (NemoListModel *)tree_model;
-	
+
 	if (parent == NULL) {
 		files = model->details->files;
 	} else {
@@ -449,7 +449,7 @@ nemo_list_model_iter_children (GtkTreeModel *tree_model, GtkTreeIter *iter, GtkT
 	if (files == NULL || g_sequence_get_length (files) == 0) {
 		return FALSE;
 	}
-	
+
 	iter->stamp = model->details->stamp;
 	iter->user_data = g_sequence_get_begin_iter (files);
 
@@ -460,7 +460,7 @@ static gboolean
 nemo_list_model_iter_has_child (GtkTreeModel *tree_model, GtkTreeIter *iter)
 {
 	FileEntry *file_entry;
-	
+
 	if (iter == NULL) {
 		return !nemo_list_model_is_empty (NEMO_LIST_MODEL (tree_model));
 	}
@@ -498,7 +498,7 @@ nemo_list_model_iter_nth_child (GtkTreeModel *tree_model, GtkTreeIter *iter, Gtk
 	FileEntry *file_entry;
 
 	model = (NemoListModel *)tree_model;
-	
+
 	if (parent != NULL) {
 		file_entry = g_sequence_get (parent->user_data);
 		files = file_entry->files;
@@ -523,18 +523,18 @@ nemo_list_model_iter_parent (GtkTreeModel *tree_model, GtkTreeIter *iter, GtkTre
 {
 	NemoListModel *model;
 	FileEntry *file_entry;
-	
+
 	model = (NemoListModel *)tree_model;
-	
+
 	file_entry = g_sequence_get (child->user_data);
-	
+
 	if (file_entry->parent == NULL) {
 		return FALSE;
 	}
 
 	iter->stamp = model->details->stamp;
 	iter->user_data = file_entry->parent->ptr;
-	
+
 	return TRUE;
 }
 

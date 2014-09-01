@@ -45,7 +45,6 @@
 #include "nemo-debug.h"
 
 #define AUTO_SCROLL_MARGIN 20
-
 #define HOVER_EXPAND_TIMEOUT 1
 
 struct _NemoTreeViewDragDestDetails {
@@ -61,7 +60,7 @@ struct _NemoTreeViewDragDestDetails {
 	guint highlight_id;
 	guint scroll_id;
 	guint expand_id;
-	
+
 	char *direct_save_uri;
 };
 
@@ -328,6 +327,29 @@ file_for_path (NemoTreeViewDragDest *dest, GtkTreePath *path)
 	return file;
 }
 
+static char *
+get_drop_target_uri_for_path (NemoTreeViewDragDest *dest,
+			      GtkTreePath *path)
+{
+	NemoFile *file;
+	char *target = NULL;
+	gboolean can;
+
+	file = file_for_path (dest, path);
+	if (file == NULL) {
+		return NULL;
+	}
+	can = nemo_drag_can_accept_info (file,
+					     dest->details->drag_type,
+					     dest->details->drag_list);
+	if (can) {
+		target = nemo_file_get_drop_target_uri (file);
+	}
+	nemo_file_unref (file);
+	
+	return target;
+}
+
 static GtkTreePath *
 get_drop_path (NemoTreeViewDragDest *dest,
 	       GtkTreePath *path)
@@ -361,29 +383,6 @@ get_drop_path (NemoTreeViewDragDest *dest,
 	nemo_file_unref (file);
 	
 	return ret;
-}
-
-static char *
-get_drop_target_uri_for_path (NemoTreeViewDragDest *dest,
-			      GtkTreePath *path)
-{
-	NemoFile *file;
-	char *target = NULL;
-	gboolean can;
-
-	file = file_for_path (dest, path);
-	if (file == NULL) {
-		return NULL;
-	}
-	can = nemo_drag_can_accept_info (file,
-					     dest->details->drag_type,
-					     dest->details->drag_list);
-	if (can) {
-		target = nemo_file_get_drop_target_uri (file);
-	}
-	nemo_file_unref (file);
-	
-	return target;
 }
 
 static guint
