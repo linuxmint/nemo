@@ -429,17 +429,6 @@ bind_builder_bool (GtkBuilder *builder,
 			 "active", G_SETTINGS_BIND_DEFAULT);
 }
 
-static void
-bind_builder_bool_oneway (GtkBuilder *builder,
-			  GSettings *settings,
-			  const char *widget_name,
-			  const char *prefs)
-{
-	g_settings_bind (settings, prefs,
-			 gtk_builder_get_object (builder, widget_name),
-			 "active", G_SETTINGS_BIND_SET);
-}
-
 static gboolean
 enum_get_mapping (GValue             *value,
 		  GVariant           *variant,
