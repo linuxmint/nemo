@@ -82,7 +82,7 @@ nemo_drag_finalize (NemoDragInfo *drag_info)
 	gtk_target_list_unref (drag_info->target_list);
 	nemo_drag_destroy_selection_list (drag_info->selection_list);
 	nemo_drag_destroy_selection_list (drag_info->selection_cache);
-
+	g_clear_object(&drag_info->source_view);
 	g_free (drag_info);
 }
 

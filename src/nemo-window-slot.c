@@ -1386,8 +1386,8 @@ create_content_view (NemoWindowSlot *slot,
 			view_id) == 0) {
                 /* reuse existing content view */
                 view = slot->details->content_view;
-                slot->details->new_content_view = view;
-		g_object_ref (view);
+                slot->details->new_content_view = g_object_ref (view);
+
         } else {
                 /* create a new content view */
 		view = nemo_view_factory_create (view_id, slot);
@@ -1552,8 +1552,7 @@ free_location_change (NemoWindowSlot *slot)
 
 		NemoWindow *window  = nemo_window_slot_get_window (slot);
 		nemo_window_disconnect_content_view (window, slot->details->new_content_view);
-		g_object_unref (slot->details->new_content_view);
-		slot->details->new_content_view = NULL;
+		g_clear_object (&slot->details->new_content_view);
         }
 }
 
@@ -2406,9 +2405,10 @@ nemo_window_slot_switch_new_content_view (NemoWindowSlot *slot)
 		nemo_window_disconnect_content_view (window, slot->details->content_view);
 
 		widget = GTK_WIDGET (slot->details->content_view);
-		gtk_widget_destroy (widget);
-		g_object_unref (slot->details->content_view);
-		slot->details->content_view = NULL;
+		// Do not destroy here, because the view might be a drag source
+                g_signal_emit_by_name (slot, "inactive");
+		gtk_container_remove (GTK_CONTAINER (slot->details->view_overlay), widget);
+                g_clear_object(&slot->details->content_view);
 	}
 
 	if (slot->details->new_content_view != NULL) {
@@ -2479,15 +2479,13 @@ nemo_window_slot_dispose (GObject *object)
 	if (slot->details->content_view) {
 		widget = GTK_WIDGET (slot->details->content_view);
 		gtk_widget_destroy (widget);
-		g_object_unref (slot->details->content_view);
-		slot->details->content_view = NULL;
+		g_clear_object (&slot->details->content_view);
 	}
 
 	if (slot->details->new_content_view) {
 		widget = GTK_WIDGET (slot->details->new_content_view);
 		gtk_widget_destroy (widget);
-		g_object_unref (slot->details->new_content_view);
-		slot->details->new_content_view = NULL;
+		g_clear_object (&slot->details->new_content_view);
 	}
 
 	if (slot->details->set_status_timeout_id != 0) {

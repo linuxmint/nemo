@@ -86,6 +86,8 @@ typedef struct {
 
 	/* cache of selected URIs, representing items being dragged */
 	GList *selection_cache;
+	/* strong reference to the source list view */
+	GtkWidget *source_view;
 
 	/* has the drop occured ? */
 	gboolean drop_occured;
