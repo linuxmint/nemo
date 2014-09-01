@@ -256,6 +256,8 @@ gboolean      nautilus_file_set_display_name               (NautilusFile        
 							    const char             *display_name,
 							    const char             *edit_name,
 							    gboolean                custom);
+void          nautilus_file_set_directory                  (NautilusFile           *file,
+							    NautilusDirectory      *directory);
 void          nautilus_file_set_mount                      (NautilusFile           *file,
 							    GMount                 *mount);
 

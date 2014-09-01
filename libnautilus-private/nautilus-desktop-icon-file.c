@@ -271,7 +271,7 @@ nautilus_desktop_icon_file_new (NautilusDesktopLink *link)
 	eazel_dump_stack_trace ("\t", 10);
 #endif
 
-	file->details->directory = directory;
+	nautilus_file_set_directory (file, directory);
 
 	icon_file = NAUTILUS_DESKTOP_ICON_FILE (file);
 	icon_file->details->link = link;

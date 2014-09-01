@@ -500,6 +500,14 @@ nautilus_file_clear_info (NautilusFile *file)
 	clear_metadata (file);
 }
 
+void
+nautilus_file_set_directory (NautilusFile *file,
+			     NautilusDirectory *directory)
+{
+	g_clear_object (&file->details->directory);
+	file->details->directory = nautilus_directory_ref (directory);
+}
+
 static NautilusFile *
 nautilus_file_new_from_filename (NautilusDirectory *directory,
 				 const char *filename,
@@ -530,8 +538,7 @@ nautilus_file_new_from_filename (NautilusDirectory *directory,
 	} else {
 		file = NAUTILUS_FILE (g_object_new (NAUTILUS_TYPE_VFS_FILE, NULL));
 	}
-
-	file->details->directory = nautilus_directory_ref (directory);
+	nautilus_file_set_directory (file, directory);
 
 	file->details->name = eel_ref_str_new (filename);
 
@@ -634,7 +641,7 @@ nautilus_file_new_from_info (NautilusDirectory *directory,
 	g_return_val_if_fail (info != NULL, NULL);
 
 	file = NAUTILUS_FILE (g_object_new (NAUTILUS_TYPE_VFS_FILE, NULL));
-	file->details->directory = nautilus_directory_ref (directory);
+	nautilus_file_set_directory (file, directory);
 
 	update_info_and_name (file, info);
 
@@ -2624,8 +2631,7 @@ nautilus_file_update_name_and_directory (NautilusFile *file,
 	monitors = nautilus_directory_remove_file_monitors (old_directory, file);
 	nautilus_directory_remove_file (old_directory, file);
 
-	file->details->directory = nautilus_directory_ref (new_directory);
-	nautilus_directory_unref (old_directory);
+	nautilus_file_set_directory (file, new_directory);
 
 	if (name) {
 		update_name_internal (file, name, FALSE);
