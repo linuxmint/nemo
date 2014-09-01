@@ -61,6 +61,14 @@
 #define DEBUG_FLAG NEMO_DEBUG_LIST_VIEW
 #include <libnemo-private/nemo-debug.h>
 
+/* DnD-related information. */
+typedef struct {
+	/* cache of selected URIs, representing items being dragged */
+	GList *selection_cache;
+	/* strong reference to the source list view */
+	NemoListView *source_view;
+} NemoListViewDndInfo;
+
 struct NemoListViewDetails {
 	GtkTreeView *tree_view;
 	NemoListModel *model;
@@ -109,11 +117,14 @@ struct NemoListViewDetails {
 
 	GQuark last_sort_attr;
 
-    gboolean tooltip_flags;
-    gboolean show_tooltips;
+	gboolean tooltip_flags;
+	gboolean show_tooltips;
 
-    gboolean click_to_rename;
+	gboolean click_to_rename;
+
+	NemoListViewDndInfo drag_info;
 };
+
 
 struct SelectionForeachData {
 	GList *list;
@@ -128,7 +139,7 @@ struct SelectionForeachData {
 #define LIST_VIEW_MINIMUM_ROW_HEIGHT	28
 
 /* We wait two seconds after row is collapsed to unload the subdirectory */
-#define COLLAPSE_TO_UNLOAD_DELAY 2 
+#define COLLAPSE_TO_UNLOAD_DELAY 2
 
 /* Wait for the rename to end when activating a file being renamed */
 #define WAIT_FOR_RENAME_ON_ACTIVATE 200
@@ -412,7 +423,6 @@ drag_data_get_callback (GtkWidget *widget,
 {
 	GtkTreeView *tree_view;
 	GtkTreeModel *model;
-	GList *selection_cache;
 
 	tree_view = GTK_TREE_VIEW (widget);
   
@@ -422,12 +432,12 @@ drag_data_get_callback (GtkWidget *widget,
 		return;
 	}
 
-	selection_cache = g_object_get_data (G_OBJECT (context), "drag-info");
-	if (selection_cache == NULL) {
+	NemoListViewDndInfo *drag_info = g_object_get_data (G_OBJECT (context), "drag-info");
+	if (drag_info->selection_cache == NULL) {
 		return;
 	}
 
-	nemo_drag_drag_data_get_from_cache (selection_cache, context, selection_data, info, time);
+	nemo_drag_drag_data_get_from_cache (drag_info->selection_cache, context, selection_data, info, time);
 }
 
 static void
@@ -536,13 +546,18 @@ each_item_get_data_binder (NemoDragEachSelectedItemDataGet iteratee,
 	gtk_tree_selection_selected_foreach (selection, item_get_data_binder, &context);
 }
 
+static void
+destroy_drag_info (NemoListViewDndInfo* drag_info)
+{
+	nemo_drag_destroy_selection_list (drag_info->selection_cache);
+	g_object_unref(drag_info->source_view);
+}
 
 static void
 drag_begin_callback (GtkWidget *widget,
 		     GdkDragContext *context,
 		     NemoListView *view)
 {
-	GList *selection_cache;
 	cairo_surface_t *surface;
 
 	surface = get_drag_surface (view);
@@ -556,13 +571,15 @@ drag_begin_callback (GtkWidget *widget,
 	stop_drag_check (view);
 	view->details->drag_started = TRUE;
 
-	selection_cache = nemo_drag_create_selection_cache (view,
+	view->details->drag_info.selection_cache = nemo_drag_create_selection_cache (view,
 								each_item_get_data_binder);
+
+	view->details->drag_info.source_view = g_object_ref(view);
 
 	g_object_set_data_full (G_OBJECT (context),
 				"drag-info",
-				selection_cache,
-				(GDestroyNotify)nemo_drag_destroy_selection_list);
+				&view->details->drag_info,
+				(GDestroyNotify)destroy_drag_info);
 }
 
 static gboolean

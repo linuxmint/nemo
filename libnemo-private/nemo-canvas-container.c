@@ -4257,7 +4257,6 @@ unrealize (GtkWidget *widget)
 
 	container = NEMO_CANVAS_CONTAINER (widget);
 
-	nemo_canvas_dnd_fini (container);
 	remove_search_entry_timeout (container);
 
 	GTK_WIDGET_CLASS (nemo_canvas_container_parent_class)->unrealize (widget);
