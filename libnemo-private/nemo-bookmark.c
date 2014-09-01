@@ -225,7 +225,7 @@ nemo_bookmark_get_is_builtin (NemoBookmark *bookmark)
 
 	/* exclude XDG locations which are not in our builtin list */
 	if (xdg_type == G_USER_DIRECTORY_DESKTOP &&
-	    !g_settings_get_boolean (gnome_background_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
+	    !g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
 		return FALSE;
 	}
 
