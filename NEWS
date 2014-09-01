@@ -1,3 +1,19 @@
+Nemo merged with changes in Nautilus 3.7.5:
+
+Changes:
+* Switch to hovered locations on DnD (William Jon McCann)
+* Support a --force-desktop commandline option for classic mode
+* Use a better position for navigation button popup menus
+* Fix many memory leaks (Pavel Vasin)
+* Fix a crasher when a file in trash has reserved characters in the filename
+* Fix a crasher when closing the sidebar immediately after construction
+* Fix a crasher closing the properties dialog while calculating folder size
+* Fix backup files showing up in search provider results
+* Fix floating bar buttons being added twice
+
+Revert:
+* Add a separate desktop file for classic mode integration
+
 Nemo merged with changes in Nautilus 3.7.4:
 
 Changes:
