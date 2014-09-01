@@ -1281,7 +1281,6 @@ static const GtkRadioActionEntry main_radio_entries[] = {
 GtkActionGroup *
 nemo_window_create_toolbar_action_group (NemoWindow *window)
 {
-	gboolean show_label_search_icon_toolbar;
     gboolean show_location_entry_initially;
 
 	NemoNavigationState *navigation_state;
@@ -1294,7 +1293,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
 			       "name", NEMO_ACTION_BACK,
 			       "label", _("_Back"),
-			       "stock_id", GTK_STOCK_GO_BACK,
+			       "icon_name", "go-previous",
 			       "tooltip", _("Go to the previous visited location"),
 			       "arrow-tooltip", _("Back history"),
 			       "window", window,
@@ -1310,7 +1309,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
 			       "name", NEMO_ACTION_FORWARD,
 			       "label", _("_Forward"),
-			       "stock_id", GTK_STOCK_GO_FORWARD,
+			       "icon_name", "go-next",
 			       "tooltip", _("Go to the next visited location"),
 			       "arrow-tooltip", _("Forward history"),
 			       "window", window,
@@ -1329,7 +1328,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_UP,
    			       "label", _("_Up"),
-   			       "stock_id", GTK_STOCK_GO_UP,
+   			       "icon_name", "go-up",
    			       "tooltip", _("Go to parent folder"),
    			       "arrow-tooltip", _("Forward history"),
    			       "window", window,
@@ -1344,7 +1343,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_RELOAD,
    			       "label", _("_Reload"),
-   			       "stock_id", GTK_STOCK_REFRESH,
+   			       "icon_name", "view-refresh",
    			       "tooltip", _("Reload the current location"),
    			       "window", window,
    			       "direction", NEMO_NAVIGATION_DIRECTION_RELOAD,
@@ -1358,7 +1357,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_HOME,
    			       "label", _("_Home"),
-   			       "stock_id", GTK_STOCK_HOME,
+   			       "icon_name", "go-home",
    			       "tooltip", _("Go to home directory"),
    			       "window", window,
    			       "direction", NEMO_NAVIGATION_DIRECTION_HOME,
@@ -1458,10 +1457,6 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
  
   	gtk_action_group_add_action (action_group, action);
     gtk_action_set_icon_name (GTK_ACTION (action), "edit-find");
- 
- 
- 	show_label_search_icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR);
- 	gtk_action_set_is_important (GTK_ACTION (action), show_label_search_icon_toolbar);
   
   	g_object_unref (action);
 
