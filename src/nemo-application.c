@@ -104,6 +104,7 @@ struct _NemoApplicationPriv {
 	NemoFreedesktopDBus *fdb_manager;
 
 	gboolean no_desktop;
+	gboolean force_desktop;
 	gchar *geometry;
 
 #if GLIB_CHECK_VERSION (2,34,0)
@@ -760,6 +761,12 @@ do_cmdline_sanity_checks (NemoApplication *self,
 		goto out;
 	}
 
+	if (self->priv->no_desktop && self->priv->force_desktop) {
+		g_printerr ("%s\n",
+			    _("--no-desktop and --force-desktop cannot be used together."));
+		goto out;
+	}
+
 	retval = TRUE;
 
  out:
@@ -881,7 +888,9 @@ nemo_application_local_command_line (GApplication *application,
 		{ "no-default-window", 'n', 0, G_OPTION_ARG_NONE, &no_default_window,
 		  N_("Only create windows for explicitly specified URIs."), NULL },
 		{ "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &self->priv->no_desktop,
-		  N_("Do not manage the desktop (ignore the preference set in the preferences dialog)."), NULL },
+		  N_("Never manage the desktop (ignore the GSettings preference)."), NULL },
+		{ "force-desktop", '\0', 0, G_OPTION_ARG_NONE, &self->priv->force_desktop,
+		  N_("Always manage the desktop (ignore the GSettings preference)."), NULL },
 		{ "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
 		  N_("Quit Nemo."), NULL },
 		{ "select", 's', 0, G_OPTION_ARG_NONE, &select_uris,
@@ -933,8 +942,9 @@ nemo_application_local_command_line (GApplication *application,
 	}
 
 	DEBUG ("Parsing local command line, no_default_window %d, quit %d, "
-	       "self checks %d, no_desktop %d",
-	       no_default_window, kill_shell, perform_self_check, self->priv->no_desktop);
+	       "self checks %d, no_desktop %d, show_desktop %d",
+	       no_default_window, kill_shell, perform_self_check,
+	       self->priv->no_desktop, self->priv->force_desktop);
 
 	g_application_register (application, NULL, &error);
 
@@ -1148,14 +1158,20 @@ init_desktop (NemoApplication *self)
 	/* Initialize the desktop link monitor singleton */
 	nemo_desktop_link_monitor_get ();
 
+	gboolean should_show;
 
-	if (!self->priv->no_desktop &&
-	    !g_settings_get_boolean (nemo_desktop_preferences,
-				     NEMO_PREFERENCES_SHOW_DESKTOP)) {
-		self->priv->no_desktop = TRUE;
+	/* by default, take the GSettings value */
+	should_show = g_settings_get_boolean (nemo_desktop_preferences,
+					      NEMO_PREFERENCES_SHOW_DESKTOP);
+
+	/* the command line switches take over the setting */
+	if (self->priv->no_desktop) {
+		should_show = FALSE;
+	} else if (self->priv->force_desktop) {
+		should_show = TRUE;
 	}
 
-	if (!self->priv->no_desktop) {
+	if (should_show) {
 		nemo_application_open_desktop (self);
 	}
 
