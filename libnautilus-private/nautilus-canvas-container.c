@@ -2005,20 +2005,6 @@ invalidate_label_sizes (NautilusCanvasContainer *container)
 	}
 }
 
-/* invalidate the entire labels (i.e. their attributes) for all the icons */
-static void
-invalidate_labels (NautilusCanvasContainer *container)
-{
-	GList *p;
-	NautilusCanvasIcon *icon;
-	
-	for (p = container->details->icons; p != NULL; p = p->next) {
-		icon = p->data;
-
-		nautilus_canvas_item_invalidate_label (icon->item);		
-	}
-}
-
 static gboolean
 select_range (NautilusCanvasContainer *container,
 	      NautilusCanvasIcon *icon1,
@@ -3910,6 +3896,29 @@ unrealize (GtkWidget *widget)
 }
 
 static void
+nautilus_canvas_container_request_update_all_internal (NautilusCanvasContainer *container,
+						       gboolean invalidate_labels)
+{
+	GList *node;
+	NautilusCanvasIcon *icon;
+
+	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
+
+	for (node = container->details->icons; node != NULL; node = node->next) {
+		icon = node->data;
+
+		if (invalidate_labels) {
+			nautilus_canvas_item_invalidate_label (icon->item);
+		}
+
+		nautilus_canvas_container_update_icon (container, icon);
+	}
+
+	container->details->needs_resort = TRUE;
+	redo_layout (container);
+}
+
+static void
 style_updated (GtkWidget *widget)
 {
 	NautilusCanvasContainer *container;
@@ -3924,8 +3933,7 @@ style_updated (GtkWidget *widget)
 	}
 
 	if (gtk_widget_get_realized (widget)) {
-		invalidate_labels (container);
-		nautilus_canvas_container_request_update_all (container);
+		nautilus_canvas_container_request_update_all_internal (container, TRUE);
 	}
 }
 
@@ -6331,8 +6339,7 @@ nautilus_canvas_container_set_zoom_level (NautilusCanvasContainer *container, in
 		/ NAUTILUS_ICON_SIZE_STANDARD;
 	eel_canvas_set_pixels_per_unit (EEL_CANVAS (container), pixels_per_unit);
 
-	invalidate_labels (container);
-	nautilus_canvas_container_request_update_all (container);
+	nautilus_canvas_container_request_update_all_internal (container, TRUE);
 }
 
 /**
@@ -6345,18 +6352,7 @@ nautilus_canvas_container_set_zoom_level (NautilusCanvasContainer *container, in
 void
 nautilus_canvas_container_request_update_all (NautilusCanvasContainer *container)
 {
-	GList *node;
-	NautilusCanvasIcon *icon;
-
-	g_return_if_fail (NAUTILUS_IS_CANVAS_CONTAINER (container));
-
-	for (node = container->details->icons; node != NULL; node = node->next) {
-		icon = node->data;
-		nautilus_canvas_container_update_icon (container, icon);
-	}
-
-	container->details->needs_resort = TRUE;
-	redo_layout (container);
+	nautilus_canvas_container_request_update_all_internal (container, FALSE);
 }
 
 /**
@@ -7041,8 +7037,7 @@ nautilus_canvas_container_set_label_position (NautilusCanvasContainer *container
 	if (container->details->label_position != position) {
 		container->details->label_position = position;
 
-		invalidate_labels (container);
-		nautilus_canvas_container_request_update_all (container);
+		nautilus_canvas_container_request_update_all_internal (container, TRUE);
 
 		schedule_redo_layout (container);
 	}
@@ -7452,8 +7447,7 @@ nautilus_canvas_container_set_font (NautilusCanvasContainer *container,
 	g_free (container->details->font);
 	container->details->font = g_strdup (font);
 
-	invalidate_labels (container);
-	nautilus_canvas_container_request_update_all (container);
+	nautilus_canvas_container_request_update_all_internal (container, TRUE);
 	gtk_widget_queue_draw (GTK_WIDGET (container));
 }
 
