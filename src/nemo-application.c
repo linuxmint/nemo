@@ -1153,7 +1153,7 @@ desktop_changed_callback (gpointer user_data)
 	NemoApplication *application;
 
 	application = NEMO_APPLICATION (user_data);
-	if (g_settings_get_boolean (gnome_background_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
+	if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
 		nemo_application_open_desktop (application);
 	} else {
 		nemo_application_close_desktop ();
