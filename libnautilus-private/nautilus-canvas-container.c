@@ -1102,6 +1102,19 @@ nautilus_canvas_container_update_scroll_region (NautilusCanvasContainer *contain
 	}
 }
 
+static void
+cache_icon_positions (NautilusCanvasContainer *container)
+{
+	GList *l;
+	gint idx;
+	NautilusCanvasIcon *icon;
+
+	for (l = container->details->icons, idx = 0; l != NULL; l = l ->next) {
+		icon = l->data;
+		icon->position = idx++;
+	}
+}
+
 static int
 compare_icons_data (gconstpointer a, gconstpointer b, gpointer canvas_container)
 {
@@ -1154,6 +1167,7 @@ resort (NautilusCanvasContainer *container)
 {
 	sort_icons (container, &container->details->icons);
 	sort_selection (container);
+	cache_icon_positions (container);
 }
 
 typedef struct {
@@ -7666,17 +7680,15 @@ nautilus_canvas_container_accessible_icon_added_cb (NautilusCanvasContainer *con
 	NautilusCanvasIcon *icon;
 	AtkObject *atk_parent;
 	AtkObject *atk_child;
-	int index;
 
 	icon = g_hash_table_lookup (container->details->icon_set, icon_data);
 	if (icon) {
 		atk_parent = ATK_OBJECT (data);
 		atk_child = atk_gobject_accessible_for_object 
 			(G_OBJECT (icon->item));
-		index = g_list_index (container->details->icons, icon);
 		
 		g_signal_emit_by_name (atk_parent, "children-changed::add",
-				       index, atk_child, NULL);
+				       icon->position, atk_child, NULL);
 	}
 }
 
@@ -7688,17 +7700,15 @@ nautilus_canvas_container_accessible_icon_removed_cb (NautilusCanvasContainer *c
 	NautilusCanvasIcon *icon;
 	AtkObject *atk_parent;
 	AtkObject *atk_child;
-	int index;
 	
 	icon = g_hash_table_lookup (container->details->icon_set, icon_data);
 	if (icon) {
 		atk_parent = ATK_OBJECT (data);
 		atk_child = atk_gobject_accessible_for_object 
 			(G_OBJECT (icon->item));
-		index = g_list_index (container->details->icons, icon);
 		
 		g_signal_emit_by_name (atk_parent, "children-changed::remove",
-				       index, atk_child, NULL);
+				       icon->position, atk_child, NULL);
 	}
 }
 

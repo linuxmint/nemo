@@ -52,6 +52,9 @@ typedef struct {
 	/* Scale factor (stretches icon). */
 	double scale;
 
+	/* Position in the view */
+	int position;
+
 	/* Whether this item is selected. */
 	eel_boolean_bit is_selected : 1;
 
