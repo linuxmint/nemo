@@ -3962,6 +3962,9 @@ destroy (GtkWidget *object)
 
 	container = NEMO_CANVAS_CONTAINER (object);
 
+	nemo_drag_finalize (&container->details->dnd_info->drag_info);
+	container->details->dnd_info = NULL;
+
         nemo_canvas_container_clear (container);
 
 	if (container->details->rubberband_info.timer_id != 0) {
@@ -4183,7 +4186,9 @@ realize (GtkWidget *widget)
 	container = NEMO_CANVAS_CONTAINER (widget);
 
 	/* Set up DnD.  */
-	nemo_canvas_dnd_init (container);
+	if (container->details->dnd_info == NULL) {
+		nemo_canvas_dnd_init (container);
+	}
 
 	hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (widget));
 	g_signal_connect (hadj, "value-changed",
