@@ -25,14 +25,6 @@
     color: @theme_unfocused_selected_fg_color;
 }
 
-NautilusWindow .sidebar .frame {
-    border-style: none;
-}
-
-NautilusNotebook .frame {
-    border-width: 0;
-}
-
 /* Floating status bar */
 .floating-bar {
   padding: 2px;

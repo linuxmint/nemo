@@ -1317,33 +1317,6 @@ create_toolbar (NautilusWindow *window)
 }
 
 static void
-notebook_num_pages_changed (NautilusWindow *window)
-{
-	NautilusView *view;
-	NautilusWindowSlot *active_slot;
-
-	active_slot = nautilus_window_get_active_slot (window);
-	if (active_slot == NULL) {
-		return;
-	}
-	view = nautilus_window_slot_get_current_view (active_slot);
-	if (view == NULL) {
-		return;
-	}
-
-	/* Only add a shadow to the scrolled window when we're in a tabless
-	 * notebook, since when the notebook has tabs, it will draw its own
-	 * border.
-	 */
-	if (g_list_length (window->details->slots) > 1 ||
-	    NAUTILUS_IS_DESKTOP_WINDOW (window)) {
-		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_NONE);
-	} else {
-		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (view), GTK_SHADOW_IN);
-	}
-}
-
-static void
 notebook_page_removed_cb (GtkNotebook *notebook,
 			  GtkWidget *page,
 			  guint page_num,
@@ -1352,8 +1325,6 @@ notebook_page_removed_cb (GtkNotebook *notebook,
 	NautilusWindow *window = user_data;
 	NautilusWindowSlot *slot = NAUTILUS_WINDOW_SLOT (page), *next_slot;
 	gboolean dnd_slot;
-
-	notebook_num_pages_changed (window);
 
 	dnd_slot = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (slot), "dnd-window-slot"));
 	if (!dnd_slot) {
@@ -1378,11 +1349,6 @@ notebook_page_added_cb (GtkNotebook *notebook,
 	NautilusWindowSlot *slot = NAUTILUS_WINDOW_SLOT (page);
 	NautilusWindowSlot *dummy_slot;
 	gboolean dnd_slot;
-
-	/* It's too early here to call notebook_num_pages_changed(),
-	 * since the view might not be associagted to the slot yet.
-	 * Defer the call to nautilus_window_connect_content_view().
-	 */
 
 	dnd_slot = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (slot), "dnd-window-slot"));
 	if (!dnd_slot) {
@@ -1986,9 +1952,6 @@ nautilus_window_connect_content_view (NautilusWindow *window,
 	g_signal_connect (view, "zoom-level-changed",
 			  G_CALLBACK (zoom_level_changed_callback),
 			  window);
-
-	/* See the comment in notebook_page_added_cb() */
-	notebook_num_pages_changed (window);
 }
 
 void
