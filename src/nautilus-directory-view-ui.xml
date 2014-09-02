@@ -4,13 +4,13 @@
 <accelerator action="OpenCloseParent"/>
 <accelerator action="PropertiesAccel"/>
 <accelerator action="RenameSelectAll"/>
-<popup name="ViewMenu">
+<popup name="ViewMenu" accelerators="true">
   <placeholder name="View Details">
     <menuitem name="Reset to Defaults" action="Reset to Defaults"/>
     <menuitem name="Show Hidden Files" action="Show Hidden Files"/>
   </placeholder>
 </popup>
-<popup name="ActionMenu">
+<popup name="ActionMenu" accelerators="true">
   <placeholder name="New Items Placeholder">
     <menuitem name="New Folder" action="New Folder"/>
     <menuitem name="New Folder with Selection" action="New Folder with Selection"/>
