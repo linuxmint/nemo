@@ -181,16 +181,9 @@ unrealize (GtkWidget *widget)
 {
 	NemoDesktopWindow *window;
 	NemoDesktopWindowDetails *details;
-	GdkWindow *root_window;
 
 	window = NEMO_DESKTOP_WINDOW (widget);
 	details = window->details;
-
-	root_window = gdk_screen_get_root_window (
-				gtk_window_get_screen (GTK_WINDOW (window)));
-
-	gdk_property_delete (root_window,
-			     gdk_atom_intern ("NEMO_DESKTOP_WINDOW_ID", TRUE));
 
 	if (details->size_changed_id != 0) {
 		g_signal_handler_disconnect (gtk_window_get_screen (GTK_WINDOW (window)),
@@ -215,26 +208,6 @@ set_wmspec_desktop_hint (GdkWindow *window)
 }
 
 static void
-set_desktop_window_id (NemoDesktopWindow *window,
-		       GdkWindow             *gdkwindow)
-{
-	/* Tuck the desktop windows xid in the root to indicate we own the desktop.
-	 */
-	Window window_xid;
-	GdkWindow *root_window;
-
-	root_window = gdk_screen_get_root_window (
-				gtk_window_get_screen (GTK_WINDOW (window)));
-
-	window_xid = GDK_WINDOW_XID (gdkwindow);
-
-	gdk_property_change (root_window,
-			     gdk_atom_intern ("NEMO_DESKTOP_WINDOW_ID", FALSE),
-			     gdk_x11_xatom_to_atom (XA_WINDOW), 32,
-			     GDK_PROP_MODE_REPLACE, (guchar *) &window_xid, 1);
-}
-
-static void
 realize (GtkWidget *widget)
 {
 	NemoDesktopWindow *window;
@@ -252,8 +225,6 @@ realize (GtkWidget *widget)
 
 	/* This is the new way to set up the desktop window */
 	set_wmspec_desktop_hint (gtk_widget_get_window (widget));
-
-	set_desktop_window_id (window, gtk_widget_get_window (widget));
 
 	details->size_changed_id =
 		g_signal_connect (gtk_window_get_screen (GTK_WINDOW (window)), "size-changed",

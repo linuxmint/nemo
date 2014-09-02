@@ -37,6 +37,7 @@
 
 #include "nemo-file-dnd.h"
 #include "nemo-canvas-private.h"
+//#include "nemo-global-preferences.h"
 #include "../src/nemo-canvas-view-container.h"
 #include "nemo-link.h"
 #include "nemo-metadata.h"
@@ -1454,6 +1455,11 @@ check_hover_timer (NemoCanvasContainer *container,
 	if (g_strcmp0 (uri, dnd_info->target_uri) == 0) {
 		return;
 	}
+
+	if (nemo_canvas_container_get_is_desktop (container)) {
+		return;
+	}
+
 	remove_hover_timer (dnd_info);
 
 	settings = gtk_widget_get_settings (GTK_WIDGET (container));
