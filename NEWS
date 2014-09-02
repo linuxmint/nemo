@@ -1,3 +1,9 @@
+Major changes in 3.13.91:
+* Performance improvements for canvas and list views
+* Remove duplicate actions in gear menu when app menu is not in use
+* Fix CSS style for new GTK (Lapo Calamandrei, Alex Diavatis, António Fernandes)
+* Fix handling of sort-directories-first setting (Matthias Clasen)
+
 Major changes in 3.13.90:
 * Fix problems with fast group/owner changes
 * Fix user list for owner changes
