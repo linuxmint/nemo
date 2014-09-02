@@ -33,10 +33,6 @@ NautilusNotebook .frame {
     border-width: 0;
 }
 
-NautilusNotebook.notebook tab .button {
-    padding: 0px;
-}
-
 /* Floating status bar */
 .floating-bar {
   padding: 2px;
