@@ -619,9 +619,16 @@ handle_activate_result (NemoShellSearchProvider2 *skeleton,
                         guint32                       timestamp,
                         gpointer                      user_data)
 {
-  GFile *file = g_file_new_for_uri (result);
-  g_application_open (g_application_get_default (), &file, 1, "");
-  g_object_unref (file);
+  gboolean res;
+  GFile *file;
+
+  res = gtk_show_uri (NULL, result, timestamp, NULL);
+
+  if (!res) {
+    file = g_file_new_for_uri (result);
+    g_application_open (g_application_get_default (), &file, 1, "");
+    g_object_unref (file);
+  }
 
   nemo_shell_search_provider2_complete_activate_result (skeleton, invocation);
 }
