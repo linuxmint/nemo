@@ -1921,6 +1921,19 @@ check_have_gnome_disks (void)
 	return res;
 }
 
+static gboolean
+check_have_palimpsest ()
+{
+	gchar *palimpsest_path;
+	gboolean res;
+
+	palimpsest_path = g_find_program_in_path ("palimpsest");
+	res = (palimpsest_path != NULL);
+	g_free (palimpsest_path);
+
+	return res;
+}
+
 static void
 check_unmount_and_eject (GMount *mount,
 			 GVolume *volume,
@@ -1984,7 +1997,7 @@ check_visibility (GMount           *mount,
 			*show_mount = g_volume_can_mount (volume);
 
 		unix_device_id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
-		*show_format = (unix_device_id != NULL) && check_have_gnome_disks ();
+		*show_format = (unix_device_id != NULL) && (check_have_gnome_disks () || check_have_palimpsest ()) ;
 		g_free (unix_device_id);
 	}
 }
@@ -2960,11 +2973,18 @@ format_shortcut_cb (GtkMenuItem           *item,
 	xid = (gint) gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET (sidebar->window)));
 	xid_string = g_strdup_printf ("%d", xid);
 
-	cmdline = g_strconcat ("gnome-disks ",
+    if (check_have_gnome_disks ()) {
+		cmdline = g_strconcat ("gnome-disks ",
 			       "--block-device ", device_identifier, " ",
 			       "--format-device ",
 			       "--xid ", xid_string,
 			       NULL);
+	} else {
+		cmdline = g_strconcat ("palimpsest ",
+			       "--show-volume=", device_identifier,
+			       NULL);
+	}
+
 	app_info = g_app_info_create_from_commandline (cmdline, NULL, 0, NULL);
 	g_app_info_launch (app_info, NULL, NULL, NULL);
 
