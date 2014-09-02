@@ -5488,7 +5488,9 @@ nautilus_canvas_container_clear (NautilusCanvasContainer *container)
 	details->icons = NULL;
 	g_list_free (details->new_icons);
 	details->new_icons = NULL;
-	
+	g_list_free (details->selection);
+	details->selection = NULL;
+
  	g_hash_table_destroy (details->icon_set);
  	details->icon_set = g_hash_table_new (g_direct_hash, g_direct_equal);
  
