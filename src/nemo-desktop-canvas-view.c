@@ -394,13 +394,13 @@ realized_callback (GtkWidget *widget, NemoDesktopCanvasView *desktop_canvas_view
 
 static void
 desktop_canvas_container_realize (GtkWidget *widget,
-                                NemoDesktopCanvasView *desktop_canvas_view)
+				  NemoDesktopCanvasView *desktop_canvas_view)
 {
-    GdkWindow *bin_window;
-    GdkRGBA transparent = { 0, 0, 0, 0 };
+        GdkWindow *bin_window;
+        GdkRGBA transparent = { 0, 0, 0, 0 };
 
-    bin_window = gtk_layout_get_bin_window (GTK_LAYOUT (widget));
-    gdk_window_set_background_rgba (bin_window, &transparent);
+        bin_window = gtk_layout_get_bin_window (GTK_LAYOUT (widget));
+        gdk_window_set_background_rgba (bin_window, &transparent);
 }
 
 static NemoZoomLevel

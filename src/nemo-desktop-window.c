@@ -243,7 +243,7 @@ realize (GtkWidget *widget)
 {
 	NemoDesktopWindow *window;
 	NemoDesktopWindowDetails *details;
-    GdkVisual *visual;
+	GdkVisual *visual;
 
 	window = NEMO_DESKTOP_WINDOW (widget);
 	details = window->details;
@@ -251,11 +251,11 @@ realize (GtkWidget *widget)
 	/* Make sure we get keyboard events */
 	gtk_widget_set_events (widget, gtk_widget_get_events (widget) 
 			      | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
-
-    visual = gdk_screen_get_rgba_visual (gtk_widget_get_screen (widget));
-    if (visual) {
-        gtk_widget_set_visual (widget, visual);
-    }
+			      
+	visual = gdk_screen_get_rgba_visual (gtk_widget_get_screen (widget));
+	if (visual) {
+		gtk_widget_set_visual (widget, visual);
+	}
 
 	/* Do the work of realizing. */
 	GTK_WIDGET_CLASS (nemo_desktop_window_parent_class)->realize (widget);
