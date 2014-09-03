@@ -61,6 +61,8 @@ GType nemo_application_get_type (void);
 
 void nemo_application_quit (NemoApplication *self);
 
+NemoApplication * nemo_application_new (void);
+
 NemoWindow *     nemo_application_create_window (NemoApplication *application,
 							 GdkScreen           *screen);
 

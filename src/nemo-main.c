@@ -98,11 +98,7 @@ main (int argc, char *argv[])
 #endif
 
 	/* Run the nautilus application. */
-	application = g_object_new (NEMO_TYPE_APPLICATION,
-				    "application-id", "org.gnome.NemoApplication",
-				    "flags", G_APPLICATION_HANDLES_OPEN,
-				    "inactivity-timeout", 12000,
-				    NULL);
+	application = nemo_application_new ();
 
 	/* hold indefinitely if we're asked to persist */
 	if (g_getenv ("NEMO_PERSIST") != NULL) {
