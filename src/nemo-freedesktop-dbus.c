@@ -220,6 +220,15 @@ nemo_freedesktop_dbus_init (NemoFreedesktopDBus *fdb)
 					NULL);
 }
 
+void
+nemo_freedesktop_dbus_set_open_locations (NemoFreedesktopDBus *fdb,
+					      const gchar **locations)
+{
+	g_return_if_fail (NEMO_IS_FREEDESKTOP_DBUS (fdb));
+
+	nemo_freedesktop_nemo_file_manager1_set_open_locations (fdb->skeleton, locations);
+}
+
 /* Tries to own the org.freedesktop.NemoFileManager1 service name */
 NemoFreedesktopDBus *
 nemo_freedesktop_dbus_new (void)

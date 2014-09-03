@@ -117,8 +117,7 @@ struct NemoWindow {
 };
 
 GType            nemo_window_get_type             (void);
-NemoWindow *     nemo_window_new                  (GtkApplication    *application,
-                                                       GdkScreen         *screen);
+NemoWindow *     nemo_window_new                  (GdkScreen         *screen);
 void             nemo_window_close                (NemoWindow    *window);
 
 void             nemo_window_connect_content_view (NemoWindow    *window,

@@ -556,6 +556,9 @@ nemo_window_constructed (GObject *self)
 
 	G_OBJECT_CLASS (nemo_window_parent_class)->constructed (self);
 
+	application = NEMO_APPLICATION (g_application_get_default ());
+	gtk_window_set_application (GTK_WINDOW (window), GTK_APPLICATION (application));
+
 	/* disable automatic menubar handling, since we show our regular
 	 * menubar together with the app menu.
 	 */
@@ -690,7 +693,6 @@ nemo_window_constructed (GObject *self)
 		nemo_window_hide_sidebar (window);
 	}
 
-	application = NEMO_APPLICATION (g_application_get_default ());
 	window->details->bookmarks_id =
 		g_signal_connect_swapped (nemo_application_get_bookmarks (application), "changed",
 					  G_CALLBACK (nemo_window_pane_sync_bookmarks), window->details->active_pane);	
@@ -2167,11 +2169,9 @@ nemo_window_class_init (NemoWindowClass *class)
 }
 
 NemoWindow *
-nemo_window_new (GtkApplication *application,
-		     GdkScreen      *screen)
+nemo_window_new (GdkScreen *screen)
 {
 	return g_object_new (NEMO_TYPE_WINDOW,
-			     "application", application,
 			     "screen", screen,
 			     NULL);
 }
