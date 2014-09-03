@@ -145,6 +145,7 @@ static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 static void nemo_window_slot_force_reload (NemoWindowSlot *slot);
 static void location_has_really_changed (NemoWindowSlot *slot);
 static void nemo_window_slot_connect_new_content_view (NemoWindowSlot *slot);
+static void nemo_window_slot_emit_location_change (NemoWindowSlot *slot, GFile *from, GFile *to);
 
 static void
 nemo_window_slot_sync_search_widgets (NemoWindowSlot *slot)
@@ -961,17 +962,26 @@ nemo_window_slot_set_location (NemoWindowSlot *slot,
 		return;
 	}
 
-	g_clear_object (&slot->details->location);
+	GFile *old_location = slot->details->location;
 	slot->details->location = g_object_ref (location);
 
 	if (slot->details->location &&
 	    g_file_equal (location, slot->details->location)) {
-		return;
+              	if (old_location) {
+	        	g_object_unref (old_location);
+	        }		
+                return;
 	}
 
 	if (slot == nemo_window_get_active_slot (slot->details->pane->window)) {
 		nemo_window_pane_sync_location_widgets (slot->details->pane);
 		nemo_window_slot_update_title (slot);
+	}
+
+	nemo_window_slot_emit_location_change (slot, old_location, location);
+
+	if (old_location) {
+		g_object_unref (old_location);
 	}
 }
 
@@ -2195,7 +2205,6 @@ nemo_window_slot_update_for_new_location (NemoWindowSlot *slot)
 	slot->details->viewed_file_in_trash = nemo_file_is_in_trash (file);
 	nemo_file_unref (file);
 
-	nemo_window_slot_emit_location_change (slot, old_location, new_location);
 	nemo_window_slot_set_location (slot, new_location);
 
 	if (slot == nemo_window_get_active_slot (window)) {
