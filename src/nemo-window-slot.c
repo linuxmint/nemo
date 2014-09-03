@@ -665,6 +665,7 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
         NemoWindowSlot *target_slot;
 	NemoWindowOpenFlags slot_flags;
 	GFile *old_location;
+	GList *old_selection;
 	char *old_uri, *new_uri;
 	int new_slot_position;
 	GList *panes;
@@ -765,8 +766,8 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 		}
 	}
 
-	GList *old_selection = NULL;
-	if (slot->details->content_view) {
+	old_selection = NULL;
+	if (slot->details->content_view != NULL) {
 		old_selection = nemo_view_get_selection (slot->details->content_view);
 	}
 
