@@ -1322,6 +1322,48 @@ nemo_get_cached_x_content_types_for_mount (GMount *mount)
 	return NULL;
 }
 
+gboolean
+nemo_file_selection_equal (GList *selection_a,
+			       GList *selection_b)
+{
+	GList *al, *bl;
+	gboolean selection_matches;
+
+	if (selection_a == NULL || selection_b == NULL) {
+		return (selection_a == selection_b);
+	}
+
+	if (g_list_length (selection_a) != g_list_length (selection_b)) {
+		return FALSE;
+	}
+
+	selection_matches = TRUE;
+
+	for (al = selection_a; al; al = al->next) {
+		GFile *a_location = nemo_file_get_location (NEMO_FILE (al->data));
+		gboolean found = FALSE;
+
+		for (bl = selection_b; bl; bl = bl->next) {
+			GFile *b_location = nemo_file_get_location (NEMO_FILE (bl->data));
+			found = g_file_equal (b_location, a_location);
+			g_object_unref (b_location);
+
+			if (found) {
+				break;
+			}
+		}
+
+		selection_matches = found;
+		g_object_unref (a_location);
+
+		if (!selection_matches) {
+			break;
+		}
+	}
+
+	return selection_matches;
+}
+
 #if !defined (NEMO_OMIT_SELF_CHECK)
 
 void

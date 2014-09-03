@@ -98,4 +98,6 @@ void nemo_get_x_content_types_for_mount_async (GMount *mount,
 						   GCancellable *cancellable,
 						   gpointer user_data);
 
+gboolean nemo_file_selection_equal (GList *selection_a, GList *selection_b);
+
 #endif /* NEMO_FILE_UTILITIES_H */
