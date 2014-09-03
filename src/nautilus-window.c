@@ -1274,13 +1274,9 @@ notebook_popup_menu_cb (GtkWidget *widget,
 static GtkWidget *
 create_toolbar (NautilusWindow *window)
 {
-	GtkSizeGroup *header_size_group;
 	GtkWidget *toolbar;
 	GtkWidget *path_bar;
 	GtkWidget *location_entry;
-
-	header_size_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
-	gtk_size_group_set_ignore_hidden (header_size_group, FALSE);
 
 	/* build the toolbar */
 	toolbar = nautilus_toolbar_new (NAUTILUS_WINDOW (window));
@@ -1291,7 +1287,6 @@ create_toolbar (NautilusWindow *window)
 
 	/* connect to the pathbar signals */
 	path_bar = nautilus_toolbar_get_path_bar (NAUTILUS_TOOLBAR (toolbar));
-	gtk_size_group_add_widget (header_size_group, path_bar);
 
 	g_signal_connect_object (path_bar, "path-clicked",
 				 G_CALLBACK (path_bar_location_changed_callback), window, 0);
@@ -1300,7 +1295,6 @@ create_toolbar (NautilusWindow *window)
 
 	/* connect to the location entry signals */
 	location_entry = nautilus_toolbar_get_location_entry (NAUTILUS_TOOLBAR (toolbar));
-	gtk_size_group_add_widget (header_size_group, location_entry);
 
 	nautilus_clipboard_set_up_editable (GTK_EDITABLE (location_entry),
 					    nautilus_window_get_ui_manager (NAUTILUS_WINDOW (window)),
@@ -1310,8 +1304,6 @@ create_toolbar (NautilusWindow *window)
 				 G_CALLBACK (location_entry_location_changed_callback), window, 0);
 	g_signal_connect_object (location_entry, "cancel",
 				 G_CALLBACK (location_entry_cancel_callback), window, 0);
-
-	g_object_unref (header_size_group);
 
 	return toolbar;
 }
