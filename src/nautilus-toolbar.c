@@ -393,9 +393,6 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	ui_manager = nautilus_window_get_ui_manager (self->priv->window);
 
-	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (self)),
-					      GTK_JUNCTION_BOTTOM);
-
 	/* Back and Forward */
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
