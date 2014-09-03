@@ -386,7 +386,6 @@ nautilus_toolbar_constructed (GObject *obj)
 	GtkWidget *menu;
 	GtkWidget *box;
 	GtkUIManager *ui_manager;
-	GtkSizeGroup *size_group;
 
 	G_OBJECT_CLASS (nautilus_toolbar_parent_class)->constructed (obj);
 
@@ -399,8 +398,6 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (self)),
 					      GTK_JUNCTION_BOTTOM);
-
-	size_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
 
 	/* Back and Forward */
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
@@ -427,18 +424,13 @@ nautilus_toolbar_constructed (GObject *obj)
 				     GTK_STYLE_CLASS_LINKED);
 
 	gtk_header_bar_pack_start (GTK_HEADER_BAR (toolbar), box);
-	gtk_size_group_add_widget (size_group, box);
 
 	self->priv->path_bar = g_object_new (NAUTILUS_TYPE_PATH_BAR, NULL);
 	gtk_header_bar_pack_start (GTK_HEADER_BAR (toolbar), self->priv->path_bar);
 
-	gtk_size_group_add_widget (size_group, self->priv->path_bar);
-
 	/* entry-like location bar */
 	self->priv->location_entry = nautilus_location_entry_new ();
 	gtk_header_bar_pack_start (GTK_HEADER_BAR (toolbar), self->priv->location_entry);
-
-	gtk_size_group_add_widget (size_group, self->priv->location_entry);
 
 	/* Action Menu */
 	button = toolbar_create_toolbutton (self, TRUE, FALSE, "open-menu-symbolic", _("Location options"));
@@ -450,7 +442,6 @@ nautilus_toolbar_constructed (GObject *obj)
         g_signal_connect (menu, "key-press-event", G_CALLBACK (gear_menu_key_press), self);
 
 	gtk_header_bar_pack_end (GTK_HEADER_BAR (toolbar), button);
-	gtk_size_group_add_widget (size_group, button);
 
 	/* View buttons */
 	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
@@ -473,14 +464,12 @@ nautilus_toolbar_constructed (GObject *obj)
 				     GTK_STYLE_CLASS_LINKED);
 
 	gtk_header_bar_pack_end (GTK_HEADER_BAR (toolbar), box);
-	gtk_size_group_add_widget (size_group, box);
 
 	/* search */
 	button = toolbar_create_toolbutton (self, FALSE, TRUE, NAUTILUS_ACTION_SEARCH, NULL);
 	gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
 	gtk_widget_set_margin_start (button, 76);
 	gtk_header_bar_pack_end (GTK_HEADER_BAR (toolbar), button);
-	gtk_size_group_add_widget (size_group, button);
 
 	g_signal_connect_swapped (nautilus_preferences,
 				  "changed::" NAUTILUS_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY,
@@ -488,8 +477,6 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	gtk_widget_show_all (toolbar);
 	toolbar_update_appearance (self);
-
-	g_object_unref (size_group);
 }
 
 static void
