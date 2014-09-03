@@ -764,16 +764,21 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 		}
 	}
 
-        if (target_window == window && target_slot == slot &&
+	GList *old_selection = NULL;
+	if (slot->details->content_view) {
+		old_selection = nemo_view_get_selection (slot->details->content_view);
+	}
+
+	if (target_window == window && target_slot == slot && !is_desktop &&
 	    old_location && g_file_equal (old_location, location) &&
-	    !is_desktop) {
+	    nemo_file_selection_equal (old_selection, new_selection)) {
 
 		if (callback != NULL) {
 			callback (window, location, NULL, user_data);
 		}
 
 		goto done;
-        }
+	}
 
 	slot->details->pending_use_default_location = ((flags & NEMO_WINDOW_OPEN_FLAG_USE_DEFAULT_LOCATION) != 0);
         begin_location_change (target_slot, location, old_location, new_selection,
