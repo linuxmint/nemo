@@ -389,9 +389,6 @@ nautilus_toolbar_constructed (GObject *obj)
 
 	G_OBJECT_CLASS (nautilus_toolbar_parent_class)->constructed (obj);
 
-	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (self)),
-				     "header-bar");
-
 	toolbar = GTK_WIDGET (obj);
 
 	ui_manager = nautilus_window_get_ui_manager (self->priv->window);
