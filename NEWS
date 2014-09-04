@@ -1,3 +1,16 @@
+Nemo merged with changes in Nautilus 3.7.92:
+
+Changes:
+* Ensure target directories exist when restoring trash contents (3.8)
+* Export non-VFS URIs to DnD selections
+* Fix double tap not working on certain touchscreen devices
+* Fix inability to move desktop icons to non-primary displays in certain
+  configurations
+
+Revert: 
+* Hide Change Background desktop action g-c-c is not installed
+* Fix for removal of org.gnome.desktop.background draw-background setting
+
 Nemo merged with changes in Nautilus 3.7.91:
 
 Changes:
