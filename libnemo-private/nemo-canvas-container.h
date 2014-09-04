@@ -188,6 +188,8 @@ typedef struct {
 						     NemoCanvasPosition *position);
 	char *       (* get_icon_uri)             (NemoCanvasContainer *container,
 						     NemoCanvasIconData *data);
+	char *       (* get_icon_activation_uri)  (NemoCanvasContainer *container,
+						     NemoCanvasIconData *data);
 	char *       (* get_icon_drop_target_uri) (NemoCanvasContainer *container,
 						     NemoCanvasIconData *data);
 

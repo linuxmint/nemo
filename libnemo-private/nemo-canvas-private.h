@@ -296,6 +296,8 @@ void          nemo_canvas_container_select_list_unselect_others (NemoCanvasConta
 								     GList                 *icons);
 char *        nemo_canvas_container_get_icon_uri                (NemoCanvasContainer *container,
 								       NemoCanvasIcon          *canvas);
+char *        nemo_canvas_container_get_icon_activation_uri     (NemoCanvasContainer *container,
+								     NemoCanvasIcon          *canvas);
 char *        nemo_canvas_container_get_icon_drop_target_uri    (NemoCanvasContainer *container,
 								       NemoCanvasIcon          *canvas);
 void          nemo_canvas_container_update_icon                 (NemoCanvasContainer *container,
