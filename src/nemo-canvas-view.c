@@ -2003,6 +2003,18 @@ get_icon_uri_callback (NemoCanvasContainer *container,
 }
 
 static char *
+get_icon_activation_uri_callback (NemoCanvasContainer *container,
+				  NemoFile *file,
+				  NemoCanvasView *canvas_view)
+{
+	g_assert (NEMO_IS_CANVAS_CONTAINER (container));
+	g_assert (NEMO_IS_FILE (file));
+	g_assert (NEMO_IS_CANVAS_VIEW (canvas_view));
+
+	return nemo_file_get_activation_uri (file);
+}
+
+static char *
 get_icon_drop_target_uri_callback (NemoCanvasContainer *container,
 		       		   NemoFile *file,
 		       		   NemoCanvasView *canvas_view)
@@ -2368,6 +2380,8 @@ create_canvas_container (NemoCanvasView *canvas_view)
 	/* FIXME: many of these should move into fm-canvas-container as virtual methods */
 	g_signal_connect_object (canvas_container, "get-icon-uri",
 				 G_CALLBACK (get_icon_uri_callback), canvas_view, 0);
+	g_signal_connect_object (canvas_container, "get-icon-activation-uri",
+				 G_CALLBACK (get_icon_activation_uri_callback), canvas_view, 0);
 	g_signal_connect_object (canvas_container, "get-icon-drop-target-uri",
 				 G_CALLBACK (get_icon_drop_target_uri_callback), canvas_view, 0);
 	g_signal_connect_object (canvas_container, "move-copy-items",

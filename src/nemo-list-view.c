@@ -515,7 +515,7 @@ item_get_data_binder (GtkTreeModel *model,
 				     column,
 				     &cell_area);
 
-	uri = nemo_file_get_uri (file);
+	uri = nemo_file_get_activation_uri (file);
 	nemo_file_unref (file);
 
 	/* pass the uri, mouse-relative x/y and icon width/height */

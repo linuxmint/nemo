@@ -237,6 +237,7 @@ enum {
 	MIDDLE_CLICK,
 	GET_CONTAINER_URI,
 	GET_ICON_URI,
+	GET_ICON_ACTIVATION_URI,
 	GET_ICON_DROP_TARGET_URI,
 	GET_STORED_ICON_POSITION,
 	ICON_POSITION_CHANGED,
@@ -5874,6 +5875,16 @@ nemo_canvas_container_class_init (NemoCanvasContainerClass *class)
 		                g_cclosure_marshal_generic,
 		                G_TYPE_STRING, 1,
 				G_TYPE_POINTER);
+	signals[GET_ICON_ACTIVATION_URI]
+		= g_signal_new ("get-icon-activation-uri",
+		                G_TYPE_FROM_CLASS (class),
+		                G_SIGNAL_RUN_LAST,
+		                G_STRUCT_OFFSET (NemoCanvasContainerClass,
+						 get_icon_activation_uri),
+		                NULL, NULL,
+		                g_cclosure_marshal_generic,
+		                G_TYPE_STRING, 1,
+				G_TYPE_POINTER);
 	signals[GET_ICON_DROP_TARGET_URI]
 		= g_signal_new ("get-icon-drop-target-uri",
 		                G_TYPE_FROM_CLASS (class),
@@ -8090,6 +8101,20 @@ nemo_canvas_container_get_icon_uri (NemoCanvasContainer *container,
 	uri = NULL;
 	g_signal_emit (container,
 		       signals[GET_ICON_URI], 0,
+		       icon->data,
+		       &uri);
+	return uri;
+}
+
+char *
+nemo_canvas_container_get_icon_activation_uri (NemoCanvasContainer *container,
+						   NemoCanvasIcon *icon)
+{
+	char *uri;
+
+	uri = NULL;
+	g_signal_emit (container,
+		       signals[GET_ICON_ACTIVATION_URI], 0,
 		       icon->data,
 		       &uri);
 	return uri;
