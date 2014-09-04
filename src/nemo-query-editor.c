@@ -1210,6 +1210,7 @@ nemo_query_editor_set_query (NemoQueryEditor	*editor,
 				 NemoQuery		*query)
 {
 	char *text = NULL;
+	char *current_text = NULL;
 
 	if (query != NULL) {
 		text = nemo_query_get_text (query);
@@ -1220,7 +1221,12 @@ nemo_query_editor_set_query (NemoQueryEditor	*editor,
 	}
 
 	editor->details->change_frozen = TRUE;
-	gtk_entry_set_text (GTK_ENTRY (editor->details->entry), text);
+
+	current_text = g_strstrip (g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry))));
+	if (!g_str_equal (current_text, text)) {
+		gtk_entry_set_text (GTK_ENTRY (editor->details->entry), text);
+	}
+	g_free (current_text);
 
 	g_free (editor->details->current_uri);
 	editor->details->current_uri = NULL;
