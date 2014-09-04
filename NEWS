@@ -1,3 +1,8 @@
+Nemo merged with changes in Nautilus 3.9.9:
+
+Changes:
+* Fix inconsistency in handling of NoDisplay=true applications
+
 Nemo merged with changes in Nautilus 3.7.92:
 
 Changes:

@@ -268,6 +268,28 @@ filter_nemo_handler (GList *apps)
 }
 
 static GList*
+filter_no_show_apps (GList *apps)
+{
+	GList *l, *next;
+	GAppInfo *application;
+
+	l = apps;
+	while (l != NULL) {
+		application = (GAppInfo *) l->data;
+		next = l->next;
+
+		if (!g_app_info_should_show (application)) {
+			g_object_unref (application);
+			apps = g_list_delete_link (apps, l);
+		}
+
+		l = next;
+	}
+
+	return apps;
+}
+
+static GList*
 filter_non_uri_apps (GList *apps,
 		     gboolean accept_files)
 {
@@ -457,6 +479,8 @@ nemo_mime_get_applications_for_file (NemoFile *file)
 		}
 		g_free (uri_scheme);
 	}
+
+	result = filter_no_show_apps (result);
 
 	/* Filter out non-uri supporting apps */
 	result = filter_non_uri_apps (result, file_has_local_path (file));
