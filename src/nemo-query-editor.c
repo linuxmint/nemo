@@ -69,7 +69,6 @@ struct NemoQueryEditorDetails {
 	char *current_uri;
 
 	GList *rows;
-	gboolean got_preedit;
 
 	NemoQuery *query;
 };
@@ -173,25 +172,14 @@ entry_focus_hack (GtkWidget *entry,
 	send_focus_change (entry, device, TRUE);
 }
 
-static void
-entry_preedit_changed_cb (GtkEntry            *entry,
-			  gchar               *preedit,
-			  NemoQueryEditor *editor)
-{
-	editor->details->got_preedit = TRUE;
-}
-
 gboolean
 nemo_query_editor_handle_event (NemoQueryEditor *editor,
 				    GdkEventKey         *event)
 {
+	GtkWidget *toplevel;
+	GtkWidget *old_focus;
 	GdkEvent *new_event;
-	gboolean handled = FALSE;
-	gulong id;
 	gboolean retval;
-	gboolean text_changed;
-	char *old_text;
-	const char *new_text;
 
 	/* if we're focused already, no need to handle the event manually */
 	if (gtk_widget_has_focus (editor->details->entry)) {
@@ -208,15 +196,24 @@ nemo_query_editor_handle_event (NemoQueryEditor *editor,
 		return FALSE;
 	}
 
-	editor->details->got_preedit = FALSE;
+	/* if it's not printable we don't need it */
+	if (!g_unichar_isprint (gdk_keyval_to_unicode (event->keyval))) {
+		return FALSE;
+	}
+
 	if (!gtk_widget_get_realized (editor->details->entry)) {
 		gtk_widget_realize (editor->details->entry);
 	}
 
-	old_text = g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry)));
+	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (editor));
+	if (gtk_widget_is_toplevel (toplevel)) {
+		old_focus = gtk_window_get_focus (GTK_WINDOW (toplevel));
+	} else {
+		old_focus = NULL;
+	}
 
-	id = g_signal_connect (editor->details->entry, "preedit-changed",
-			       G_CALLBACK (entry_preedit_changed_cb), editor);
+	/* input methods will typically only process events after getting focus */
+	gtk_widget_grab_focus (editor->details->entry);
 
 	new_event = gdk_event_copy ((GdkEvent *) event);
 	g_object_unref (((GdkEventKey *) new_event)->window);
@@ -225,16 +222,11 @@ nemo_query_editor_handle_event (NemoQueryEditor *editor,
 	retval = gtk_widget_event (editor->details->entry, new_event);
 	gdk_event_free (new_event);
 
-	g_signal_handler_disconnect (editor->details->entry, id);
+	if (!retval && old_focus) {
+		gtk_widget_grab_focus (old_focus);
+	}
 
-	new_text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
-	text_changed = strcmp (old_text, new_text) != 0;
-	g_free (old_text);
-
-	handled = (editor->details->got_preedit) || (retval && text_changed);
-	editor->details->got_preedit = FALSE;
-
-	return handled;
+	return retval;
 }
 
 static void
