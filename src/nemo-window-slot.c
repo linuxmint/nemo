@@ -798,6 +798,7 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 	}
 
  done:
+	nemo_file_list_free (old_selection);
 	nemo_profile_end (NULL);
 }
 
