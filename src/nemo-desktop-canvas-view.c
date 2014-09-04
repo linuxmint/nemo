@@ -99,27 +99,27 @@ canvas_container_set_workarea (NemoCanvasContainer *canvas_container,
 			     int                    n_items)
 {
 	int left, right, top, bottom;
+	int screen_width, screen_height;
 	int i;
-	GdkRectangle geometry;
 
 	left = right = top = bottom = 0;
-	gdk_screen_get_monitor_geometry (screen, gdk_screen_get_primary_monitor (screen), &geometry);
+
+	screen_width  = gdk_screen_get_width (screen);
+	screen_height = gdk_screen_get_height (screen);
 
 	for (i = 0; i < n_items; i += 4) {
-		GdkRectangle workarea;
+		int x      = workareas [i];
+		int y      = workareas [i + 1];
+		int width  = workareas [i + 2];
+		int height = workareas [i + 3];
 
-		workarea.x = workareas[i];
-		workarea.y = workareas[i + 1];
-		workarea.width = workareas[i + 2];
-		workarea.height = workareas[i + 3];
-
-		if (!gdk_rectangle_intersect (&geometry, &workarea, &workarea))
+		if ((x + width) > screen_width || (y + height) > screen_height)
 			continue;
 
-		left   = MAX (left, workarea.x);
-		right  = MAX (right, (geometry.x + geometry.width) - (workarea.x + workarea.width));
-		top    = MAX (top, workarea.y);
-		bottom = MAX (bottom, (geometry.y + geometry.height) - (workarea.y + workarea.height));
+		left   = MAX (left, x);
+		right  = MAX (right, screen_width - width - x);
+		top    = MAX (top, y);
+		bottom = MAX (bottom, screen_height - height - y);
 	}
 
 	nemo_canvas_container_set_margins (canvas_container,
