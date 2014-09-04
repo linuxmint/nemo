@@ -353,6 +353,7 @@ PKG_CHECK_MODULES(NEMO, [
 	gmodule-no-export-2.0 >= glib_minver
 	gio-2.0 >= glib_minver
 	gio-unix-2.0 >= glib_minver
+	gsettings-desktop-schemas >= schemas_minver
 	libnotify >= notify_minver
 ])
 
