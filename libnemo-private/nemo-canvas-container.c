@@ -4012,8 +4012,10 @@ destroy (GtkWidget *object)
 
 	container = NEMO_CANVAS_CONTAINER (object);
 
-	nemo_drag_finalize (&container->details->dnd_info->drag_info);
-	container->details->dnd_info = NULL;
+	if (container->details->dnd_info) {
+		nemo_drag_finalize (&container->details->dnd_info->drag_info);
+		container->details->dnd_info = NULL;
+	}
 
         nemo_canvas_container_clear (container);
 
