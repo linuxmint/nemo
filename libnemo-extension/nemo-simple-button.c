@@ -4,12 +4,22 @@
 #include "nemo-simple-button.h"
 #include <glib.h>
 
+G_DEFINE_TYPE (NemoSimpleButton, nemo_simple_button, GTK_TYPE_BUTTON);
 
-G_DEFINE_TYPE (NemoSimpleButton, nemo_simple_button, GTK_TYPE_BUTTON)
+static gboolean
+nemo_simple_button_button_release (GtkWidget      *widget,
+                                   GdkEventButton *event)
+{
+  g_signal_emit_by_name (GTK_BUTTON (widget), "released");
+
+  return GDK_EVENT_PROPAGATE;
+}
 
 static void
 nemo_simple_button_class_init (NemoSimpleButtonClass *klass)
 {
+  GtkWidgetClass *widget_class = (GtkWidgetClass*) klass;
+  widget_class->button_release_event = nemo_simple_button_button_release;
 }
 
 static void
