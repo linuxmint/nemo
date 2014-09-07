@@ -2164,7 +2164,6 @@ nautilus_canvas_container_move_icon (NautilusCanvasContainer *container,
 /* Implementation of rubberband selection.  */
 static void
 rubberband_select (NautilusCanvasContainer *container,
-		   const EelDRect *previous_rect,
 		   const EelDRect *current_rect)
 {
 	GList *p;
@@ -2322,13 +2321,10 @@ rubberband_timeout_callback (gpointer data)
 	selection_rect.y1 = y2;
 
 	rubberband_select (container,
-			   &band_info->prev_rect,
 			   &selection_rect);
 	
 	band_info->prev_x = x;
 	band_info->prev_y = y;
-
-	band_info->prev_rect = selection_rect;
 
 	return TRUE;
 }
@@ -3287,7 +3283,7 @@ keyboard_move_to (NautilusCanvasContainer *container,
 		if (icon && container->details->keyboard_rubberband_start) {
 			rect = get_rubberband (container->details->keyboard_rubberband_start,
 					       icon);
-			rubberband_select (container, NULL, &rect);
+			rubberband_select (container, &rect);
 		}
 	} else if (event != NULL &&
 		   (event->state & GDK_CONTROL_MASK) == 0 &&
