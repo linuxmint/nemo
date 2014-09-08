@@ -768,7 +768,6 @@ update_places (NemoPlacesSidebar *sidebar)
         file = nemo_file_get (root);
 
         if (is_built_in_bookmark (file)) {
-            g_printerr ("book\n");
             g_object_unref (root);
             nemo_file_unref (file);
             continue;
