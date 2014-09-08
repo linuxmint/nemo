@@ -4120,7 +4120,7 @@ nautilus_file_get_gicon (NautilusFile *file,
 
 		/* fetch the mount icon here, we'll use it later */
 		if (flags & NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON ||
-		    flags & NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM) {
+		    flags & NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS) {
 			mount = nautilus_file_get_mount (file);
 
 			if (mount != NULL) {
@@ -4133,7 +4133,7 @@ nautilus_file_get_gicon (NautilusFile *file,
 		     (flags & NAUTILUS_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT) ||
 		     (flags & NAUTILUS_FILE_ICON_FLAGS_FOR_OPEN_FOLDER) ||
 		     (flags & NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON) ||
-		     (flags & NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM) ||
+		     (flags & NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS) ||
 		     ((flags & NAUTILUS_FILE_ICON_FLAGS_IGNORE_VISITING) == 0 &&
 		      nautilus_file_has_open_window (file))) &&
 		    G_IS_THEMED_ICON (file->details->icon)) {
@@ -4196,7 +4196,7 @@ nautilus_file_get_gicon (NautilusFile *file,
 		    mount_icon != NULL) {
 			g_object_unref (icon);
 			icon = mount_icon;
-		} else if ((flags & NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM) &&
+		} else if ((flags & NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS) &&
 			     mount_icon != NULL && !g_icon_equal (mount_icon, icon)) {
 
 			emblem = g_emblem_new (mount_icon);

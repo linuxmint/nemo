@@ -303,7 +303,7 @@ nautilus_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int 
 
 			flags = NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS |
 				NAUTILUS_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE |
-				NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM;
+				NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS;
 			if (model->details->drag_view != NULL) {
 				GtkTreePath *path_a, *path_b;
 				

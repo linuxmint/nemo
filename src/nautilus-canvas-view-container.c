@@ -72,7 +72,7 @@ nautilus_canvas_view_container_get_icon_images (NautilusCanvasContainer *contain
 	
 	*has_window_open = nautilus_file_has_open_window (file);
 
-	flags = NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
+	flags = NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS |
 		NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS;
 
 	if (for_drag_accept) {
