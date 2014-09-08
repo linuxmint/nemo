@@ -80,7 +80,8 @@ typedef enum {
 	/* uses the icon of the mount if present */
 	NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON = (1<<6),
 	/* render emblems */
-	NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS = (1<<7)
+	NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS = (1<<7),
+	NAUTILUS_FILE_ICON_FLAGS_USE_ONE_EMBLEM = (1<<8)
 } NautilusFileIconFlags;	
 
 /* Emblems sometimes displayed for NautilusFiles. Do not localize. */ 

@@ -4094,7 +4094,8 @@ nautilus_file_get_gicon (NautilusFile *file,
 	const char *name;
 	GPtrArray *prepend_array;
 	GMount *mount;
-	GIcon *icon, *mount_icon = NULL, *emblemed_icon;
+	GList *emblems, *l;
+	GIcon *icon, *mount_icon = NULL, *emblemed_icon = NULL;
 	GEmblem *emblem;
 	int i;
 	gboolean is_folder = FALSE, is_preview = FALSE, is_inode_directory = FALSE;
@@ -4196,19 +4197,40 @@ nautilus_file_get_gicon (NautilusFile *file,
 		    mount_icon != NULL) {
 			g_object_unref (icon);
 			icon = mount_icon;
-		} else if ((flags & NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS) &&
-			     mount_icon != NULL && !g_icon_equal (mount_icon, icon)) {
+		} else if (flags & NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS) {
+			emblems = nautilus_file_get_emblem_icons (file);
 
-			emblem = g_emblem_new (mount_icon);
-			emblemed_icon = g_emblemed_icon_new (icon, emblem);
+			if (mount_icon != NULL) {
+				emblems = g_list_prepend (emblems, mount_icon);
+			}
 
-			g_object_unref (emblem);
-			g_object_unref (icon);
-			g_object_unref (mount_icon);
+			for (l = emblems; l != NULL; l = l->next) {
+				if (g_icon_equal (l->data, icon)) {
+					continue;
+				}
 
-			icon = emblemed_icon;
-		} else if (mount_icon != NULL) {
-			g_object_unref (mount_icon);
+				emblem = g_emblem_new (l->data);
+
+				if (emblemed_icon == NULL) {
+					emblemed_icon = g_emblemed_icon_new (icon, emblem);
+				} else {
+					g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon), emblem);
+				}
+
+				if (emblemed_icon != NULL &&
+				    (flags & NAUTILUS_FILE_ICON_FLAGS_USE_ONE_EMBLEM)) {
+					break;
+				}
+			}
+
+			if (emblemed_icon != NULL) {
+				g_object_unref (icon);
+				icon = emblemed_icon;
+			}
+
+			if (emblems != NULL) {
+				g_list_free_full (emblems, g_object_unref);
+			}
 		}
 
 		return icon;

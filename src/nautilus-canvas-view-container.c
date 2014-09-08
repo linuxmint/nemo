@@ -58,10 +58,6 @@ nautilus_canvas_view_container_get_icon_images (NautilusCanvasContainer *contain
 	NautilusFile *file;
 	NautilusFileIconFlags flags;
 	NautilusIconInfo *icon_info;
-	GdkPixbuf *pixbuf;
-	GIcon *emblemed_icon;
-	GEmblem *emblem;
-	GList *emblem_icons, *l;
 	gint scale;
 
 	file = (NautilusFile *) data;
@@ -81,34 +77,6 @@ nautilus_canvas_view_container_get_icon_images (NautilusCanvasContainer *contain
 
 	scale = gtk_widget_get_scale_factor (GTK_WIDGET (canvas_view));
 	icon_info = nautilus_file_get_icon (file, size, scale, flags);
-	emblem_icons = nautilus_file_get_emblem_icons (file);
-
-	/* apply emblems */
-	if (emblem_icons != NULL) {
-		l = emblem_icons;
-
-		emblem = g_emblem_new (l->data);
-		pixbuf = nautilus_icon_info_get_pixbuf (icon_info);
-		emblemed_icon = g_emblemed_icon_new (G_ICON (pixbuf), emblem);
-		g_object_unref (emblem);
-
-		for (l = l->next; l != NULL; l = l->next) {
-			emblem = g_emblem_new (l->data);
-			g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon),
-						    emblem);
-			g_object_unref (emblem);
-		}
-
-		g_clear_object (&icon_info);
-		icon_info = nautilus_icon_info_lookup (emblemed_icon, size, scale);
-
-		g_object_unref (pixbuf);
-		g_object_unref (emblemed_icon);
-	}
-
-	if (emblem_icons != NULL) {
-		g_list_free_full (emblem_icons, g_object_unref);
-	}
 
 	return icon_info;
 }
