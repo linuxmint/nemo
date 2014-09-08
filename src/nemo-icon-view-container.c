@@ -36,6 +36,7 @@
 
 #define ICON_TEXT_ATTRIBUTES_NUM_ITEMS		3
 #define ICON_TEXT_ATTRIBUTES_DEFAULT_TOKENS	"size,date_modified,type"
+#define DESKTOP_MAX_ICON_TEXT 			20
 
 G_DEFINE_TYPE (NemoIconViewContainer, nemo_icon_view_container, NEMO_TYPE_ICON_CONTAINER);
 
@@ -360,6 +361,20 @@ nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
 		/* Strip the suffix for nemo object xml files. */
 		*editable_text = nemo_file_get_display_name (file);
 	}
+
+	/* If icon text is too long, strip it and add "..." */
+	if (strlen(*editable_text) > DESKTOP_MAX_ICON_TEXT)
+        {
+                char * new_str ;
+                if((new_str = malloc(DESKTOP_MAX_ICON_TEXT+3+1)) != NULL){
+                        new_str[0] = '\0';   // ensures the memory is an empty string
+                        strcat(new_str,strndup(*editable_text,DESKTOP_MAX_ICON_TEXT));
+                        strcat(new_str,"...");
+                        *editable_text = new_str;
+                }
+		/* TODO: Add tooltip with complete text */
+        }
+
 
 	if (!use_additional) {
 		return;
