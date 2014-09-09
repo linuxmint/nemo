@@ -210,7 +210,6 @@ NautilusRequestStatus   nautilus_file_get_deep_counts                   (Nautilu
 gboolean                nautilus_file_should_show_thumbnail             (NautilusFile                   *file);
 gboolean                nautilus_file_should_show_directory_item_count  (NautilusFile                   *file);
 gboolean                nautilus_file_should_show_type                  (NautilusFile                   *file);
-GList *                 nautilus_file_get_emblem_icons                  (NautilusFile                   *file);
 gboolean                nautilus_file_get_directory_item_mime_types     (NautilusFile                   *file,
 									 GList                         **mime_list);
 

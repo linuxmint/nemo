@@ -3950,6 +3950,23 @@ get_custom_icon_metadata_name (NautilusFile *file)
 }
 
 static GIcon *
+get_mount_icon (NautilusFile *file)
+{
+	GMount *mount;
+	GIcon *mount_icon;
+
+	mount = nautilus_file_get_mount (file);
+	mount_icon = NULL;
+
+	if (mount != NULL) {
+		mount_icon = g_mount_get_icon (mount);
+		g_object_unref (mount);
+	}
+
+	return mount_icon;
+}
+
+static GIcon *
 get_link_icon (NautilusFile *file)
 {
 	GIcon *icon = NULL;
@@ -4079,11 +4096,201 @@ nautilus_is_video_file (NautilusFile *file)
 	return FALSE;
 }
 
+static GList *
+sort_keyword_list_and_remove_duplicates (GList *keywords)
+{
+	GList *p;
+	GList *duplicate_link;
+
+	if (keywords != NULL) {
+		keywords = g_list_sort (keywords, (GCompareFunc) g_utf8_collate);
+
+		p = keywords;
+		while (p->next != NULL) {
+			if (strcmp ((const char *) p->data, (const char *) p->next->data) == 0) {
+				duplicate_link = p->next;
+				keywords = g_list_remove_link (keywords, duplicate_link);
+				g_list_free_full (duplicate_link, g_free);
+			} else {
+				p = p->next;
+			}
+		}
+	}
+
+	return keywords;
+}
+
+static void
+clean_up_metadata_keywords (NautilusFile *file,
+			    GList **metadata_keywords)
+{
+	NautilusFile *parent_file;
+	GList *l, *res = NULL;
+	char *exclude[4];
+	char *keyword;
+	gboolean found;
+	gint i;
+
+	i = 0;
+	exclude[i++] = NAUTILUS_FILE_EMBLEM_NAME_TRASH;
+	exclude[i++] = NAUTILUS_FILE_EMBLEM_NAME_NOTE;
+
+	parent_file = nautilus_file_get_parent (file);
+	if (parent_file) {
+		if (!nautilus_file_can_write (parent_file)) {
+			exclude[i++] = NAUTILUS_FILE_EMBLEM_NAME_CANT_WRITE;
+		}
+		nautilus_file_unref (parent_file);
+	}
+	exclude[i++] = NULL;
+
+	for (l = *metadata_keywords; l != NULL; l = l->next) {
+		keyword = l->data;
+		found = FALSE;
+
+		for (i = 0; exclude[i] != NULL; i++) {
+			if (strcmp (exclude[i], keyword) == 0) {
+				found = TRUE;
+				break;
+			}
+		}
+
+		if (!found) {
+			res = g_list_prepend (res, keyword);
+		}
+	}
+
+	g_list_free (*metadata_keywords);
+	*metadata_keywords = res;
+}
+
+/**
+ * nautilus_file_get_keywords
+ *
+ * Return this file's keywords.
+ * @file: NautilusFile representing the file in question.
+ *
+ * Returns: A list of keywords.
+ *
+ **/
+static GList *
+nautilus_file_get_keywords (NautilusFile *file)
+{
+	GList *keywords, *metadata_keywords;
+
+	if (file == NULL) {
+		return NULL;
+	}
+
+	g_return_val_if_fail (NAUTILUS_IS_FILE (file), NULL);
+
+	keywords = g_list_copy_deep (file->details->extension_emblems, (GCopyFunc) g_strdup, NULL);
+	keywords = g_list_concat (keywords, g_list_copy_deep (file->details->pending_extension_emblems, (GCopyFunc) g_strdup, NULL));
+
+	metadata_keywords = nautilus_file_get_metadata_list (file, NAUTILUS_METADATA_KEY_EMBLEMS);
+	clean_up_metadata_keywords (file, &metadata_keywords);
+	keywords = g_list_concat (keywords, metadata_keywords);
+
+	return sort_keyword_list_and_remove_duplicates (keywords);
+}
+
+/**
+ * nautilus_file_get_emblem_icons
+ *
+ * Return the list of names of emblems that this file should display,
+ * in canonical order.
+ * @file: NautilusFile representing the file in question.
+ *
+ * Returns: A list of emblem names.
+ *
+ **/
+static GList *
+nautilus_file_get_emblem_icons (NautilusFile *file)
+{
+	GList *keywords, *l;
+	GList *icons;
+	char *icon_names[2];
+	char *keyword;
+	GIcon *icon;
+
+	if (file == NULL) {
+		return NULL;
+	}
+
+	g_return_val_if_fail (NAUTILUS_IS_FILE (file), NULL);
+
+	keywords = nautilus_file_get_keywords (file);
+	keywords = prepend_automatic_keywords (file, keywords);
+
+	icons = NULL;
+	for (l = keywords; l != NULL; l = l->next) {
+		keyword = l->data;
+
+		icon_names[0] = g_strconcat ("emblem-", keyword, NULL);
+		icon_names[1] = keyword;
+		icon = g_themed_icon_new_from_names (icon_names, 2);
+		g_free (icon_names[0]);
+
+		icons = g_list_prepend (icons, icon);
+	}
+
+	icon = get_mount_icon (file);
+	if (icon != NULL) {
+		icons = g_list_prepend (icons, icon);
+	}
+
+	g_list_free_full (keywords, g_free);
+
+	return icons;
+}
+
 static void
 prepend_icon_name (const char *name,
 		   GThemedIcon *icon)
 {
 	g_themed_icon_prepend_name(icon, name);
+}
+
+static GIcon *
+apply_emblems_to_icon (NautilusFile *file,
+		       GIcon *icon,
+		       NautilusFileIconFlags flags)
+{
+	GIcon *emblemed_icon;
+	GEmblem *emblem;
+	GList *emblems, *l;
+
+	emblemed_icon = NULL;
+	emblems = nautilus_file_get_emblem_icons (file);
+
+	for (l = emblems; l != NULL; l = l->next) {
+		if (g_icon_equal (l->data, icon)) {
+			continue;
+		}
+
+		emblem = g_emblem_new (l->data);
+
+		if (emblemed_icon == NULL) {
+			emblemed_icon = g_emblemed_icon_new (icon, emblem);
+		} else {
+			g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon), emblem);
+		}
+
+		if (emblemed_icon != NULL &&
+		    (flags & NAUTILUS_FILE_ICON_FLAGS_USE_ONE_EMBLEM)) {
+			break;
+		}
+	}
+
+	if (emblems != NULL) {
+		g_list_free_full (emblems, g_object_unref);
+	}
+
+	if (emblemed_icon != NULL) {
+		return emblemed_icon;
+	} else {
+		return g_object_ref (icon);
+	}
 }
 
 GIcon *
@@ -4093,10 +4300,7 @@ nautilus_file_get_gicon (NautilusFile *file,
 	const char * const * names;
 	const char *name;
 	GPtrArray *prepend_array;
-	GMount *mount;
-	GList *emblems, *l;
-	GIcon *icon, *mount_icon = NULL, *emblemed_icon = NULL;
-	GEmblem *emblem;
+	GIcon *icon, *emblemed_icon;
 	int i;
 	gboolean is_folder = FALSE, is_preview = FALSE, is_inode_directory = FALSE;
 
@@ -4116,19 +4320,16 @@ nautilus_file_get_gicon (NautilusFile *file,
 		return icon;
 	}
 
+	if (flags & NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON) {
+		icon = get_mount_icon (file);
+
+		if (icon != NULL) {
+			return icon;
+		}
+	}
+
 	if (file->details->icon) {
 		icon = NULL;
-
-		/* fetch the mount icon here, we'll use it later */
-		if (flags & NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON ||
-		    flags & NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS) {
-			mount = nautilus_file_get_mount (file);
-
-			if (mount != NULL) {
-				mount_icon = g_mount_get_icon (mount);
-				g_object_unref (mount);
-			}
-		}
 
 		if (((flags & NAUTILUS_FILE_ICON_FLAGS_EMBEDDING_TEXT) ||
 		     (flags & NAUTILUS_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT) ||
@@ -4193,44 +4394,10 @@ nautilus_file_get_gicon (NautilusFile *file,
 			icon = g_object_ref (file->details->icon);
 		}
 
-		if ((flags & NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON) &&
-		    mount_icon != NULL) {
+		if (flags & NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS) {
+			emblemed_icon = apply_emblems_to_icon (file, icon, flags);
 			g_object_unref (icon);
-			icon = mount_icon;
-		} else if (flags & NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS) {
-			emblems = nautilus_file_get_emblem_icons (file);
-
-			if (mount_icon != NULL) {
-				emblems = g_list_prepend (emblems, mount_icon);
-			}
-
-			for (l = emblems; l != NULL; l = l->next) {
-				if (g_icon_equal (l->data, icon)) {
-					continue;
-				}
-
-				emblem = g_emblem_new (l->data);
-
-				if (emblemed_icon == NULL) {
-					emblemed_icon = g_emblemed_icon_new (icon, emblem);
-				} else {
-					g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon), emblem);
-				}
-
-				if (emblemed_icon != NULL &&
-				    (flags & NAUTILUS_FILE_ICON_FLAGS_USE_ONE_EMBLEM)) {
-					break;
-				}
-			}
-
-			if (emblemed_icon != NULL) {
-				g_object_unref (icon);
-				icon = emblemed_icon;
-			}
-
-			if (emblems != NULL) {
-				g_list_free_full (emblems, g_object_unref);
-			}
+			icon = emblemed_icon;
 		}
 
 		return icon;
@@ -6427,149 +6594,6 @@ nautilus_file_is_launchable (NautilusFile *file)
 		nautilus_file_can_execute (file) &&
 		nautilus_file_is_executable (file) &&
 		!nautilus_file_is_directory (file);
-}
-
-static GList *
-sort_keyword_list_and_remove_duplicates (GList *keywords)
-{
-	GList *p;
-	GList *duplicate_link;
-	
-	if (keywords != NULL) {
-		keywords = g_list_sort (keywords, (GCompareFunc) g_utf8_collate);
-
-		p = keywords;
-		while (p->next != NULL) {
-			if (strcmp ((const char *) p->data, (const char *) p->next->data) == 0) {
-				duplicate_link = p->next;
-				keywords = g_list_remove_link (keywords, duplicate_link);
-				g_list_free_full (duplicate_link, g_free);
-			} else {
-				p = p->next;
-			}
-		}
-	}
-	
-	return keywords;
-}
-
-static void
-clean_up_metadata_keywords (NautilusFile *file,
-			    GList **metadata_keywords)
-{
-	NautilusFile *parent_file;
-	GList *l, *res = NULL;
-	char *exclude[4];
-	char *keyword;
-	gboolean found;
-	gint i;
-
-	i = 0;
-	exclude[i++] = NAUTILUS_FILE_EMBLEM_NAME_TRASH;
-	exclude[i++] = NAUTILUS_FILE_EMBLEM_NAME_NOTE;
-
-	parent_file = nautilus_file_get_parent (file);
-	if (parent_file) {
-		if (!nautilus_file_can_write (parent_file)) {
-			exclude[i++] = NAUTILUS_FILE_EMBLEM_NAME_CANT_WRITE;
-		}
-		nautilus_file_unref (parent_file);
-	}
-	exclude[i++] = NULL;
-
-	for (l = *metadata_keywords; l != NULL; l = l->next) {
-		keyword = l->data;
-		found = FALSE;
-
-		for (i = 0; exclude[i] != NULL; i++) {
-			if (strcmp (exclude[i], keyword) == 0) {
-				found = TRUE;
-				break;
-			}
-		}
-
-		if (!found) {
-			res = g_list_prepend (res, keyword);
-		}
-	}
-
-	g_list_free (*metadata_keywords);
-	*metadata_keywords = res;
-}
-
-/**
- * nautilus_file_get_keywords
- * 
- * Return this file's keywords.
- * @file: NautilusFile representing the file in question.
- * 
- * Returns: A list of keywords.
- * 
- **/
-static GList *
-nautilus_file_get_keywords (NautilusFile *file)
-{
-	GList *keywords, *metadata_keywords;
-
-	if (file == NULL) {
-		return NULL;
-	}
-
-	g_return_val_if_fail (NAUTILUS_IS_FILE (file), NULL);
-
-	keywords = g_list_copy_deep (file->details->extension_emblems, (GCopyFunc) g_strdup, NULL);
-	keywords = g_list_concat (keywords, g_list_copy_deep (file->details->pending_extension_emblems, (GCopyFunc) g_strdup, NULL));
-
-	metadata_keywords = nautilus_file_get_metadata_list (file, NAUTILUS_METADATA_KEY_EMBLEMS);
-	clean_up_metadata_keywords (file, &metadata_keywords);
-	keywords = g_list_concat (keywords, metadata_keywords);
-
-	return sort_keyword_list_and_remove_duplicates (keywords);
-}
-
-/**
- * nautilus_file_get_emblem_icons
- * 
- * Return the list of names of emblems that this file should display,
- * in canonical order.
- * @file: NautilusFile representing the file in question.
- * 
- * Returns: A list of emblem names.
- * 
- **/
-GList *
-nautilus_file_get_emblem_icons (NautilusFile *file)
-{
-	GList *keywords, *l;
-	GList *icons;
-	char *icon_names[2];
-	char *keyword;
-	GIcon *icon;
-	
-	if (file == NULL) {
-		return NULL;
-	}
-	
-	g_return_val_if_fail (NAUTILUS_IS_FILE (file), NULL);
-
-	keywords = nautilus_file_get_keywords (file);
-	keywords = prepend_automatic_keywords (file, keywords);
-
-	icons = NULL;
-	for (l = keywords; l != NULL; l = l->next) {
-		keyword = l->data;
-
-		icon_names[0] = g_strconcat ("emblem-", keyword, NULL);
-		icon_names[1] = keyword;
-		icon = g_themed_icon_new_from_names (icon_names, 2);
-		g_free (icon_names[0]);
-
-		icons = g_list_prepend (icons, icon);
-	}
-
-	g_list_free_full (keywords, g_free);
-	
-	return icons;
 }
 
 /**
