@@ -4420,36 +4420,21 @@ nautilus_file_get_thumbnail_path (NautilusFile *file)
 	return g_strdup (file->details->thumbnail_path);
 }
 
-NautilusIconInfo *
-nautilus_file_get_icon (NautilusFile *file,
-			int size,
-			int scale,
-			NautilusFileIconFlags flags)
+static NautilusIconInfo *
+nautilus_file_get_thumbnail_icon (NautilusFile *file,
+				  int size,
+				  int scale,
+				  NautilusFileIconFlags flags)
 {
-	NautilusIconInfo *icon;
-	GIcon *gicon;
-	GdkPixbuf *raw_pixbuf, *scaled_pixbuf;
 	int modified_size;
+	GdkPixbuf *raw_pixbuf, *scaled_pixbuf;
+	int w, h, s;
+	double thumb_scale;
+	GIcon *gicon;
+	NautilusIconInfo *icon;
 
-	if (file == NULL) {
-		return NULL;
-	}
+	icon = NULL;
 
-	gicon = get_custom_icon (file);
-	if (gicon == NULL) {
-		gicon = get_link_icon (file);
-	}
-
-	if (gicon != NULL) {
-		icon = nautilus_icon_info_lookup (gicon, size, scale);
-		g_object_unref (gicon);
-
-		return icon;
-	}
-
-	DEBUG ("Called file_get_icon(), at size %d, force thumbnail %d", size,
-	       flags & NAUTILUS_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE);
-	
 	if (flags & NAUTILUS_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
 		modified_size = size * scale;
 	} else {
@@ -4458,97 +4443,132 @@ nautilus_file_get_icon (NautilusFile *file,
 		       modified_size, cached_thumbnail_size);
 	}
 
+	if (file->details->thumbnail) {
+		raw_pixbuf = g_object_ref (file->details->thumbnail);
+
+		w = gdk_pixbuf_get_width (raw_pixbuf);
+		h = gdk_pixbuf_get_height (raw_pixbuf);
+
+		s = MAX (w, h);
+		/* Don't scale up small thumbnails in the standard view */
+		if (s <= cached_thumbnail_size) {
+			thumb_scale = (double) size / NAUTILUS_ICON_SIZE_STANDARD;
+		} else {
+			thumb_scale = (double) modified_size / s;
+		}
+
+		/* Make sure that icons don't get smaller than NAUTILUS_ICON_SIZE_SMALLEST */
+		if (s * thumb_scale <= NAUTILUS_ICON_SIZE_SMALLEST) {
+			thumb_scale = (double) NAUTILUS_ICON_SIZE_SMALLEST / s;
+		}
+
+		if (file->details->thumbnail_scale == thumb_scale &&
+		    file->details->scaled_thumbnail != NULL) {
+			scaled_pixbuf = file->details->scaled_thumbnail;
+		} else {
+			scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
+								 MAX (w * thumb_scale, 1),
+								 MAX (h * thumb_scale, 1),
+								 GDK_INTERP_BILINEAR);
+
+			/* We don't want frames around small icons */
+			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
+				if (nautilus_is_video_file (file)) {
+					nautilus_ui_frame_video (&scaled_pixbuf);
+				} else {
+					nautilus_ui_frame_image (&scaled_pixbuf);
+				}
+			}
+
+			g_clear_object (&file->details->scaled_thumbnail);
+			file->details->scaled_thumbnail = scaled_pixbuf;
+			file->details->thumbnail_scale = thumb_scale;
+		}
+
+		g_object_unref (raw_pixbuf);
+
+		/* Don't scale up if more than 25%, then read the original
+		   image instead. We don't want to compare to exactly 100%,
+		   since the zoom level 150% gives thumbnails at 144, which is
+		   ok to scale up from 128. */
+		if (modified_size > 128 * 1.25 * scale &&
+		    !file->details->thumbnail_wants_original &&
+		    nautilus_can_thumbnail_internally (file)) {
+			/* Invalidate if we resize upward */
+			file->details->thumbnail_wants_original = TRUE;
+			nautilus_file_invalidate_attributes (file, NAUTILUS_FILE_ATTRIBUTE_THUMBNAIL);
+		}
+
+		DEBUG ("Returning thumbnailed image, at size %d %d",
+		       (int) (w * thumb_scale), (int) (h * thumb_scale));
+
+		icon = nautilus_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
+	} else if (file->details->thumbnail_path == NULL &&
+		   file->details->can_read &&
+		   !file->details->is_thumbnailing &&
+		   !file->details->thumbnailing_failed &&
+		   nautilus_can_thumbnail (file)) {
+		nautilus_create_thumbnail (file);
+	}
+
+	if (icon == NULL && file->details->is_thumbnailing) {
+		gicon = g_themed_icon_new (ICON_NAME_THUMBNAIL_LOADING);
+		icon = nautilus_icon_info_lookup (gicon, size, scale);
+		g_object_unref (gicon);
+	}
+
+	return icon;
+}
+
+NautilusIconInfo *
+nautilus_file_get_icon (NautilusFile *file,
+			int size,
+			int scale,
+			NautilusFileIconFlags flags)
+{
+	NautilusIconInfo *icon;
+	GIcon *gicon;
+
+	icon = NULL;
+
+	if (file == NULL) {
+		goto out;
+	}
+
+	gicon = get_custom_icon (file);
+
+	if (gicon == NULL) {
+		gicon = get_link_icon (file);
+	}
+
+	if (gicon != NULL) {
+		icon = nautilus_icon_info_lookup (gicon, size, scale);
+		g_object_unref (gicon);
+
+		goto out;
+	}
+
+	DEBUG ("Called file_get_icon(), at size %d, force thumbnail %d", size,
+	       flags & NAUTILUS_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE);
+
 	if (flags & NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS &&
 	    nautilus_file_should_show_thumbnail (file)) {
-		if (file->details->thumbnail) {
-			int w, h, s;
-			double thumb_scale;
-
-			raw_pixbuf = g_object_ref (file->details->thumbnail);
-
-			w = gdk_pixbuf_get_width (raw_pixbuf);
-			h = gdk_pixbuf_get_height (raw_pixbuf);
-			
-			s = MAX (w, h);			
-			/* Don't scale up small thumbnails in the standard view */
-			if (s <= cached_thumbnail_size) {
-				thumb_scale = (double)size / NAUTILUS_ICON_SIZE_STANDARD;
-			}
-			else {
-				thumb_scale = (double)modified_size / s;
-			}
-			/* Make sure that icons don't get smaller than NAUTILUS_ICON_SIZE_SMALLEST */
-			if (s*thumb_scale <= NAUTILUS_ICON_SIZE_SMALLEST) {
-				thumb_scale = (double) NAUTILUS_ICON_SIZE_SMALLEST / s;
-			}
-
-			if (file->details->thumbnail_scale == thumb_scale &&
-			    file->details->scaled_thumbnail != NULL) {
-				scaled_pixbuf = file->details->scaled_thumbnail;
-			} else {
-				scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
-									 MAX (w * thumb_scale, 1),
-									 MAX (h * thumb_scale, 1),
-									 GDK_INTERP_BILINEAR);
-
-				/* We don't want frames around small icons */
-				if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
-					if (nautilus_is_video_file (file))
-						nautilus_ui_frame_video (&scaled_pixbuf);
-					else
-						nautilus_ui_frame_image (&scaled_pixbuf);
-				}
-
-				g_clear_object (&file->details->scaled_thumbnail);
-				file->details->scaled_thumbnail = scaled_pixbuf;
-				file->details->thumbnail_scale = thumb_scale;
-			}
-
-			g_object_unref (raw_pixbuf);
-
-			/* Don't scale up if more than 25%, then read the original
-			   image instead. We don't want to compare to exactly 100%,
-			   since the zoom level 150% gives thumbnails at 144, which is
-			   ok to scale up from 128. */
-			if (modified_size > 128 * 1.25 * scale &&
-			    !file->details->thumbnail_wants_original &&
-			    nautilus_can_thumbnail_internally (file)) {
-				/* Invalidate if we resize upward */
-				file->details->thumbnail_wants_original = TRUE;
-				nautilus_file_invalidate_attributes (file, NAUTILUS_FILE_ATTRIBUTE_THUMBNAIL);
-			}
-
-			DEBUG ("Returning thumbnailed image, at size %d %d",
-			       (int) (w * thumb_scale), (int) (h * thumb_scale));
-			
-			return nautilus_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
-		} else if (file->details->thumbnail_path == NULL &&
-			   file->details->can_read &&				
-			   !file->details->is_thumbnailing &&
-			   !file->details->thumbnailing_failed) {
-			if (nautilus_can_thumbnail (file)) {
-				nautilus_create_thumbnail (file);
-			}
-		}
+		icon = nautilus_file_get_thumbnail_icon (file, size, scale, flags);
 	}
 
-	if (file->details->is_thumbnailing &&
-	    flags & NAUTILUS_FILE_ICON_FLAGS_USE_THUMBNAILS)
-		gicon = g_themed_icon_new (ICON_NAME_THUMBNAIL_LOADING);
-	else
+	if (icon == NULL) {
 		gicon = nautilus_file_get_gicon (file, flags);
-	
-	if (gicon) {
 		icon = nautilus_icon_info_lookup (gicon, size, scale);
+		g_object_unref (gicon);
+
 		if (nautilus_icon_info_is_fallback (icon)) {
 			g_object_unref (icon);
-			icon = nautilus_icon_info_lookup (get_default_file_icon (flags), size, scale);
+			icon = nautilus_icon_info_lookup (get_default_file_icon (), size, scale);
 		}
-		g_object_unref (gicon);
-		return icon;
-	} else {
-		return nautilus_icon_info_lookup (get_default_file_icon (flags), size, scale);
 	}
+
+ out:
+	return icon;
 }
 
 GdkPixbuf *
