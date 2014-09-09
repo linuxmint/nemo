@@ -4434,6 +4434,7 @@ nautilus_file_get_thumbnail_icon (NautilusFile *file,
 	NautilusIconInfo *icon;
 
 	icon = NULL;
+	pixbuf = NULL;
 
 	if (flags & NAUTILUS_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
 		modified_size = size * scale;
@@ -4497,14 +4498,16 @@ nautilus_file_get_thumbnail_icon (NautilusFile *file,
 
 		DEBUG ("Returning thumbnailed image, at size %d %d",
 		       (int) (w * thumb_scale), (int) (h * thumb_scale));
-
-		icon = nautilus_icon_info_new_for_pixbuf (pixbuf, scale);
 	} else if (file->details->thumbnail_path == NULL &&
 		   file->details->can_read &&
 		   !file->details->is_thumbnailing &&
 		   !file->details->thumbnailing_failed &&
 		   nautilus_can_thumbnail (file)) {
 		nautilus_create_thumbnail (file);
+	}
+
+	if (pixbuf != NULL) {
+		icon = nautilus_icon_info_new_for_pixbuf (pixbuf, scale);
 	}
 
 	if (icon == NULL && file->details->is_thumbnailing) {
