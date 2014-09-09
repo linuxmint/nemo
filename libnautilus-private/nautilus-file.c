@@ -4430,10 +4430,11 @@ nautilus_file_get_thumbnail_icon (NautilusFile *file,
 	GdkPixbuf *pixbuf;
 	int w, h, s;
 	double thumb_scale;
-	GIcon *gicon;
+	GIcon *gicon, *emblemed_icon;
 	NautilusIconInfo *icon;
 
 	icon = NULL;
+	gicon = NULL;
 	pixbuf = NULL;
 
 	if (flags & NAUTILUS_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
@@ -4507,13 +4508,22 @@ nautilus_file_get_thumbnail_icon (NautilusFile *file,
 	}
 
 	if (pixbuf != NULL) {
-		icon = nautilus_icon_info_new_for_pixbuf (pixbuf, scale);
+		gicon = g_object_ref (pixbuf);
+	} else if (file->details->is_thumbnailing) {
+		gicon = g_themed_icon_new (ICON_NAME_THUMBNAIL_LOADING);
 	}
 
-	if (icon == NULL && file->details->is_thumbnailing) {
-		gicon = g_themed_icon_new (ICON_NAME_THUMBNAIL_LOADING);
-		icon = nautilus_icon_info_lookup (gicon, size, scale);
+	if (gicon != NULL) {
+		emblemed_icon = apply_emblems_to_icon (file, gicon, flags);
 		g_object_unref (gicon);
+
+		if (g_icon_equal (emblemed_icon, G_ICON (pixbuf))) {
+			icon = nautilus_icon_info_new_for_pixbuf (pixbuf, scale);
+		} else {
+			icon = nautilus_icon_info_lookup (emblemed_icon, size, scale);
+		}
+
+		g_object_unref (emblemed_icon);
 	}
 
 	return icon;
