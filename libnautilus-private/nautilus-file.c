@@ -4427,7 +4427,7 @@ nautilus_file_get_thumbnail_icon (NautilusFile *file,
 				  NautilusFileIconFlags flags)
 {
 	int modified_size;
-	GdkPixbuf *raw_pixbuf, *scaled_pixbuf;
+	GdkPixbuf *pixbuf;
 	int w, h, s;
 	double thumb_scale;
 	GIcon *gicon;
@@ -4444,10 +4444,8 @@ nautilus_file_get_thumbnail_icon (NautilusFile *file,
 	}
 
 	if (file->details->thumbnail) {
-		raw_pixbuf = g_object_ref (file->details->thumbnail);
-
-		w = gdk_pixbuf_get_width (raw_pixbuf);
-		h = gdk_pixbuf_get_height (raw_pixbuf);
+		w = gdk_pixbuf_get_width (file->details->thumbnail);
+		h = gdk_pixbuf_get_height (file->details->thumbnail);
 
 		s = MAX (w, h);
 		/* Don't scale up small thumbnails in the standard view */
@@ -4464,28 +4462,26 @@ nautilus_file_get_thumbnail_icon (NautilusFile *file,
 
 		if (file->details->thumbnail_scale == thumb_scale &&
 		    file->details->scaled_thumbnail != NULL) {
-			scaled_pixbuf = file->details->scaled_thumbnail;
+			pixbuf = file->details->scaled_thumbnail;
 		} else {
-			scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
-								 MAX (w * thumb_scale, 1),
-								 MAX (h * thumb_scale, 1),
-								 GDK_INTERP_BILINEAR);
+			pixbuf = gdk_pixbuf_scale_simple (file->details->thumbnail,
+							  MAX (w * thumb_scale, 1),
+							  MAX (h * thumb_scale, 1),
+							  GDK_INTERP_BILINEAR);
 
 			/* We don't want frames around small icons */
-			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
+			if (!gdk_pixbuf_get_has_alpha (file->details->thumbnail) || s >= 128 * scale) {
 				if (nautilus_is_video_file (file)) {
-					nautilus_ui_frame_video (&scaled_pixbuf);
+					nautilus_ui_frame_video (&pixbuf);
 				} else {
-					nautilus_ui_frame_image (&scaled_pixbuf);
+					nautilus_ui_frame_image (&pixbuf);
 				}
 			}
 
 			g_clear_object (&file->details->scaled_thumbnail);
-			file->details->scaled_thumbnail = scaled_pixbuf;
+			file->details->scaled_thumbnail = pixbuf;
 			file->details->thumbnail_scale = thumb_scale;
 		}
-
-		g_object_unref (raw_pixbuf);
 
 		/* Don't scale up if more than 25%, then read the original
 		   image instead. We don't want to compare to exactly 100%,
@@ -4502,7 +4498,7 @@ nautilus_file_get_thumbnail_icon (NautilusFile *file,
 		DEBUG ("Returning thumbnailed image, at size %d %d",
 		       (int) (w * thumb_scale), (int) (h * thumb_scale));
 
-		icon = nautilus_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
+		icon = nautilus_icon_info_new_for_pixbuf (pixbuf, scale);
 	} else if (file->details->thumbnail_path == NULL &&
 		   file->details->can_read &&
 		   !file->details->is_thumbnailing &&
