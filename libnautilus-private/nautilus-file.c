@@ -4302,7 +4302,7 @@ nautilus_file_get_gicon (NautilusFile *file,
 	GPtrArray *prepend_array;
 	GIcon *icon, *emblemed_icon;
 	int i;
-	gboolean is_folder = FALSE, is_preview = FALSE, is_inode_directory = FALSE;
+	gboolean is_folder = FALSE, is_inode_directory = FALSE;
 
 	if (file == NULL) {
 		return NULL;
@@ -4331,8 +4331,7 @@ nautilus_file_get_gicon (NautilusFile *file,
 	if (file->details->icon) {
 		icon = NULL;
 
-		if (((flags & NAUTILUS_FILE_ICON_FLAGS_EMBEDDING_TEXT) ||
-		     (flags & NAUTILUS_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT) ||
+		if (((flags & NAUTILUS_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT) ||
 		     (flags & NAUTILUS_FILE_ICON_FLAGS_FOR_OPEN_FOLDER) ||
 		     (flags & NAUTILUS_FILE_ICON_FLAGS_USE_MOUNT_ICON) ||
 		     (flags & NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS) ||
@@ -4351,17 +4350,10 @@ nautilus_file_get_gicon (NautilusFile *file,
 				if (strcmp (name, "inode-directory") == 0) {
 					is_inode_directory = TRUE;
 				}
-				if (strcmp (name, "text-x-generic") == 0 &&
-				    (flags & NAUTILUS_FILE_ICON_FLAGS_EMBEDDING_TEXT)) {
-					is_preview = TRUE;
-				}
 			}
 
 			/* Here, we add icons in reverse order of precedence,
 			 * because they are later prepended */
-			if (is_preview) {
-				g_ptr_array_add (prepend_array, "text-x-preview");
-			}
 			
 			/* "folder" should override "inode-directory", not the other way around */
 			if (is_inode_directory) {
@@ -4393,34 +4385,27 @@ nautilus_file_get_gicon (NautilusFile *file,
 		if (icon == NULL) {
 			icon = g_object_ref (file->details->icon);
 		}
+	}
 
-		if (flags & NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS) {
-			emblemed_icon = apply_emblems_to_icon (file, icon, flags);
-			g_object_unref (icon);
-			icon = emblemed_icon;
-		}
-
-		return icon;
+ out:
+	if (flags & NAUTILUS_FILE_ICON_FLAGS_USE_EMBLEMS) {
+		emblemed_icon = apply_emblems_to_icon (file, icon, flags);
+		g_object_unref (icon);
+		icon = emblemed_icon;
 	}
 	
 	return g_themed_icon_new ("text-x-generic");
 }
 
 static GIcon *
-get_default_file_icon (NautilusFileIconFlags flags)
+get_default_file_icon (void)
 {
 	static GIcon *fallback_icon = NULL;
-	static GIcon *fallback_icon_preview = NULL;
 	if (fallback_icon == NULL) {
 		fallback_icon = g_themed_icon_new ("text-x-generic");
-		fallback_icon_preview = g_themed_icon_new ("text-x-preview");
-		g_themed_icon_append_name (G_THEMED_ICON (fallback_icon_preview), "text-x-generic");
 	}
-	if (flags & NAUTILUS_FILE_ICON_FLAGS_EMBEDDING_TEXT) {
-		return fallback_icon_preview;
-	} else {
-		return fallback_icon;
-	}
+
+	return fallback_icon;
 }
 
 char *
