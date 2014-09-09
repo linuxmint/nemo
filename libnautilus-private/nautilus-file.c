@@ -4016,6 +4016,24 @@ get_custom_icon (NautilusFile *file)
 }
 
 static GIcon *
+get_custom_or_link_icon (NautilusFile *file)
+{
+	GIcon *icon;
+
+	icon = get_custom_icon (file);
+	if (icon != NULL) {
+		return icon;
+	}
+
+	icon = get_link_icon (file);
+	if (icon != NULL) {
+		return icon;
+	}
+
+	return NULL;
+}
+
+static GIcon *
 get_default_file_icon (void)
 {
 	static GIcon *fallback_icon = NULL;
@@ -4315,20 +4333,11 @@ nautilus_file_get_gicon (NautilusFile *file,
 	int i;
 	gboolean is_folder = FALSE, is_inode_directory = FALSE;
 
-	icon = NULL;
-
 	if (file == NULL) {
 		return NULL;
 	}
 
-	icon = get_custom_icon (file);
-
-	if (icon != NULL) {
-		return icon;
-	}
-
-	icon = get_link_icon (file);
-
+	icon = get_custom_or_link_icon (file);
 	if (icon != NULL) {
 		return icon;
 	}
@@ -4544,12 +4553,7 @@ nautilus_file_get_icon (NautilusFile *file,
 		goto out;
 	}
 
-	gicon = get_custom_icon (file);
-
-	if (gicon == NULL) {
-		gicon = get_link_icon (file);
-	}
-
+	gicon = get_custom_or_link_icon (file);
 	if (gicon != NULL) {
 		icon = nautilus_icon_info_lookup (gicon, size, scale);
 		g_object_unref (gicon);
