@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nautilus master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
-"POT-Creation-Date: 2014-08-30 20:30+0000\n"
+"POT-Creation-Date: 2014-09-10 10:04+0000\n"
 "PO-Revision-Date: 2014-08-28 02:24+0900\n"
 "Last-Translator: Jiro Matsuzawa <jmatsuzawa@gnome.oeg>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
@@ -49,8 +49,8 @@ msgstr "サーバーへ接続"
 #. Set initial window title
 #: ../data/org.gnome.Nautilus.desktop.in.in.h:1
 #: ../src/nautilus-file-management-properties.ui.h:29
-#: ../src/nautilus-properties-window.c:4449 ../src/nautilus-window.c:2164
-#: ../src/nautilus-window.c:2333
+#: ../src/nautilus-properties-window.c:4449 ../src/nautilus-window.c:2119
+#: ../src/nautilus-window.c:2288
 msgid "Files"
 msgstr "ファイル"
 
@@ -74,8 +74,8 @@ msgstr "X"
 msgid "Y"
 msgstr "Y"
 
-#: ../eel/eel-editable-label.c:312 ../libnautilus-private/nautilus-file.c:6176
-#: ../libnautilus-private/nautilus-file.c:6177
+#: ../eel/eel-editable-label.c:312 ../libnautilus-private/nautilus-file.c:6393
+#: ../libnautilus-private/nautilus-file.c:6394
 msgid "Text"
 msgstr "文字列"
 
@@ -179,7 +179,7 @@ msgstr " (Unicode が正しくありません)"
 msgid "Home"
 msgstr "ホーム"
 
-#: ../libnautilus-private/nautilus-canvas-container.c:2432
+#: ../libnautilus-private/nautilus-canvas-container.c:2449
 msgid "The selection rectangle"
 msgstr "選択範囲"
 
@@ -376,50 +376,50 @@ msgstr "ここへリンクを作る(_L)"
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: ../libnautilus-private/nautilus-file.c:1207
+#: ../libnautilus-private/nautilus-file.c:1226
 #: ../libnautilus-private/nautilus-vfs-file.c:369
 msgid "This file cannot be mounted"
 msgstr "このファイルはマウントできません"
 
-#: ../libnautilus-private/nautilus-file.c:1252
+#: ../libnautilus-private/nautilus-file.c:1271
 msgid "This file cannot be unmounted"
 msgstr "このファイルはアンマウントできません"
 
-#: ../libnautilus-private/nautilus-file.c:1286
+#: ../libnautilus-private/nautilus-file.c:1305
 msgid "This file cannot be ejected"
 msgstr "このファイルは取り出せません"
 
-#: ../libnautilus-private/nautilus-file.c:1319
+#: ../libnautilus-private/nautilus-file.c:1338
 #: ../libnautilus-private/nautilus-vfs-file.c:547
 msgid "This file cannot be started"
 msgstr "このファイルは起動できません"
 
-#: ../libnautilus-private/nautilus-file.c:1371
-#: ../libnautilus-private/nautilus-file.c:1402
+#: ../libnautilus-private/nautilus-file.c:1390
+#: ../libnautilus-private/nautilus-file.c:1421
 msgid "This file cannot be stopped"
 msgstr "このファイルは停止できません"
 
-#: ../libnautilus-private/nautilus-file.c:1821
+#: ../libnautilus-private/nautilus-file.c:1840
 #, c-format
 msgid "Slashes are not allowed in filenames"
 msgstr "ファイル名にスラッシュは使えません"
 
-#: ../libnautilus-private/nautilus-file.c:1839
+#: ../libnautilus-private/nautilus-file.c:1858
 #, c-format
 msgid "File not found"
 msgstr "ファイルが見つかりません"
 
-#: ../libnautilus-private/nautilus-file.c:1867
+#: ../libnautilus-private/nautilus-file.c:1886
 #, c-format
 msgid "Toplevel files cannot be renamed"
 msgstr "トップレベルのファイル名を変更できません"
 
-#: ../libnautilus-private/nautilus-file.c:1890
+#: ../libnautilus-private/nautilus-file.c:1909
 #, c-format
 msgid "Unable to rename desktop icon"
 msgstr "デスクトップのアイコン名を変更できません"
 
-#: ../libnautilus-private/nautilus-file.c:1919
+#: ../libnautilus-private/nautilus-file.c:1938
 #, c-format
 msgid "Unable to rename desktop file"
 msgstr "デスクトップのファイル名を変更できません"
@@ -436,166 +436,166 @@ msgstr "デスクトップのファイル名を変更できません"
 #. * off zero padding, and putting a "_" there will use
 #. * space padding instead of zero padding.
 #.
-#: ../libnautilus-private/nautilus-file.c:4462
+#: ../libnautilus-private/nautilus-file.c:4679
 msgid "%R"
 msgstr "%R"
 
-#: ../libnautilus-private/nautilus-file.c:4463
+#: ../libnautilus-private/nautilus-file.c:4680
 msgid "%-I:%M %P"
 msgstr "%P%I:%M"
 
-#: ../libnautilus-private/nautilus-file.c:4464
-#: ../libnautilus-private/nautilus-file.c:4465
+#: ../libnautilus-private/nautilus-file.c:4681
+#: ../libnautilus-private/nautilus-file.c:4682
 msgid "%b %-e"
 msgstr "%b%e日"
 
-#: ../libnautilus-private/nautilus-file.c:4466
+#: ../libnautilus-private/nautilus-file.c:4683
 msgid "%b %-d %Y"
 msgstr "%Y年%b%d日"
 
-#: ../libnautilus-private/nautilus-file.c:4467
+#: ../libnautilus-private/nautilus-file.c:4684
 msgid "%a, %b %e %Y %I:%M:%S %p"
 msgstr "%Y年%b%e日(%a) %p%I:%M:%S"
 
-#: ../libnautilus-private/nautilus-file.c:4468
+#: ../libnautilus-private/nautilus-file.c:4685
 msgid "%a, %b %e %Y %T"
 msgstr "%Y年%b%e日(%a) %T"
 
-#: ../libnautilus-private/nautilus-file.c:4951
+#: ../libnautilus-private/nautilus-file.c:5168
 #, c-format
 msgid "Not allowed to set permissions"
 msgstr "アクセス権は指定できません"
 
-#: ../libnautilus-private/nautilus-file.c:5246
+#: ../libnautilus-private/nautilus-file.c:5463
 #, c-format
 msgid "Not allowed to set owner"
 msgstr "所有者は指定できません"
 
-#: ../libnautilus-private/nautilus-file.c:5264
+#: ../libnautilus-private/nautilus-file.c:5481
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr "指定した '%s' という所有者は存在しません"
 
-#: ../libnautilus-private/nautilus-file.c:5528
+#: ../libnautilus-private/nautilus-file.c:5745
 #, c-format
 msgid "Not allowed to set group"
 msgstr "グループは指定できません"
 
-#: ../libnautilus-private/nautilus-file.c:5546
+#: ../libnautilus-private/nautilus-file.c:5763
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr "指定した '%s' というグループは存在しません"
 
 #. Translators: "Me" is used to indicate the file is owned by me (the current user)
-#: ../libnautilus-private/nautilus-file.c:5681
+#: ../libnautilus-private/nautilus-file.c:5898
 msgid "Me"
 msgstr "自分"
 
-#: ../libnautilus-private/nautilus-file.c:5705
+#: ../libnautilus-private/nautilus-file.c:5922
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
 msgstr[0] "%'u個のアイテム"
 
-#: ../libnautilus-private/nautilus-file.c:5706
+#: ../libnautilus-private/nautilus-file.c:5923
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] "%'u個のフォルダー"
 
-#: ../libnautilus-private/nautilus-file.c:5707
+#: ../libnautilus-private/nautilus-file.c:5924
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
 msgstr[0] "%'u個のファイル"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6103
-#: ../libnautilus-private/nautilus-file.c:6119
+#: ../libnautilus-private/nautilus-file.c:6320
+#: ../libnautilus-private/nautilus-file.c:6336
 msgid "? items"
 msgstr "?個のアイテム"
 
 #. This means no contents at all were readable
-#: ../libnautilus-private/nautilus-file.c:6109
+#: ../libnautilus-private/nautilus-file.c:6326
 msgid "? bytes"
 msgstr "?バイト"
 
-#: ../libnautilus-private/nautilus-file.c:6126
-#: ../libnautilus-private/nautilus-file.c:6206
+#: ../libnautilus-private/nautilus-file.c:6343
+#: ../libnautilus-private/nautilus-file.c:6423
 msgid "Unknown"
 msgstr "不明"
 
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: ../libnautilus-private/nautilus-file.c:6140
+#: ../libnautilus-private/nautilus-file.c:6357
 #: ../src/nautilus-properties-window.c:1198
 msgid "unknown"
 msgstr "不明"
 
-#: ../libnautilus-private/nautilus-file.c:6170
-#: ../libnautilus-private/nautilus-file.c:6178
-#: ../libnautilus-private/nautilus-file.c:6229
+#: ../libnautilus-private/nautilus-file.c:6387
+#: ../libnautilus-private/nautilus-file.c:6395
+#: ../libnautilus-private/nautilus-file.c:6446
 msgid "Program"
 msgstr "プログラム"
 
-#: ../libnautilus-private/nautilus-file.c:6171
+#: ../libnautilus-private/nautilus-file.c:6388
 msgid "Audio"
 msgstr "オーディオ"
 
-#: ../libnautilus-private/nautilus-file.c:6172
+#: ../libnautilus-private/nautilus-file.c:6389
 msgid "Font"
 msgstr "フォント"
 
-#: ../libnautilus-private/nautilus-file.c:6173
+#: ../libnautilus-private/nautilus-file.c:6390
 #: ../src/nautilus-image-properties-page.c:767
 msgid "Image"
 msgstr "画像"
 
-#: ../libnautilus-private/nautilus-file.c:6174
+#: ../libnautilus-private/nautilus-file.c:6391
 msgid "Archive"
 msgstr "アーカイブ"
 
-#: ../libnautilus-private/nautilus-file.c:6175
+#: ../libnautilus-private/nautilus-file.c:6392
 msgid "Markup"
 msgstr "マークアップ"
 
-#: ../libnautilus-private/nautilus-file.c:6179
+#: ../libnautilus-private/nautilus-file.c:6396
 #: ../src/nautilus-query-editor.c:354
 msgid "Video"
 msgstr "動画"
 
-#: ../libnautilus-private/nautilus-file.c:6180
+#: ../libnautilus-private/nautilus-file.c:6397
 msgid "Contacts"
 msgstr "連絡先"
 
-#: ../libnautilus-private/nautilus-file.c:6181
+#: ../libnautilus-private/nautilus-file.c:6398
 msgid "Calendar"
 msgstr "カレンダー"
 
-#: ../libnautilus-private/nautilus-file.c:6182
+#: ../libnautilus-private/nautilus-file.c:6399
 msgid "Document"
 msgstr "ドキュメント"
 
-#: ../libnautilus-private/nautilus-file.c:6183
+#: ../libnautilus-private/nautilus-file.c:6400
 #: ../src/nautilus-query-editor.c:420
 msgid "Presentation"
 msgstr "プレゼンテーション"
 
-#: ../libnautilus-private/nautilus-file.c:6184
+#: ../libnautilus-private/nautilus-file.c:6401
 #: ../src/nautilus-query-editor.c:404
 msgid "Spreadsheet"
 msgstr "表計算"
 
-#: ../libnautilus-private/nautilus-file.c:6231
+#: ../libnautilus-private/nautilus-file.c:6448
 msgid "Binary"
 msgstr "バイナリ"
 
-#: ../libnautilus-private/nautilus-file.c:6235
+#: ../libnautilus-private/nautilus-file.c:6452
 msgid "Folder"
 msgstr "フォルダー"
 
-#: ../libnautilus-private/nautilus-file.c:6266
+#: ../libnautilus-private/nautilus-file.c:6483
 msgid "Link"
 msgstr "リンク"
 
@@ -604,15 +604,15 @@ msgstr "リンク"
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: ../libnautilus-private/nautilus-file.c:6272
+#: ../libnautilus-private/nautilus-file.c:6489
 #: ../libnautilus-private/nautilus-file-operations.c:377
 #: ../src/nautilus-view-dnd.c:122
 #, c-format
 msgid "Link to %s"
 msgstr "%sへのリンク"
 
-#: ../libnautilus-private/nautilus-file.c:6288
-#: ../libnautilus-private/nautilus-file.c:6302
+#: ../libnautilus-private/nautilus-file.c:6505
+#: ../libnautilus-private/nautilus-file.c:6519
 msgid "Link (broken)"
 msgstr "リンク切れ"
 
@@ -2488,7 +2488,7 @@ msgstr "検索の関連度順"
 msgid "Keep icons sorted by search relevance in rows"
 msgstr "アイコンを検索の関連度順で並べ替えます"
 
-#: ../src/nautilus-canvas-view-container.c:523
+#: ../src/nautilus-canvas-view-container.c:491
 #: ../src/nautilus-file-management-properties.ui.h:35
 msgid "Icon View"
 msgstr "アイコン表示"
@@ -3120,12 +3120,12 @@ msgid "Failed to load image information"
 msgstr "画像情報の読み込みに失敗しました"
 
 #: ../src/nautilus-image-properties-page.c:706
-#: ../src/nautilus-list-model.c:391 ../src/nautilus-window-slot.c:618
+#: ../src/nautilus-list-model.c:365 ../src/nautilus-window-slot.c:618
 #: ../src/nautilus-window-slot.c:2212
 msgid "Loading…"
 msgstr "読み込み中…"
 
-#: ../src/nautilus-list-model.c:389
+#: ../src/nautilus-list-model.c:363
 msgid "(Empty)"
 msgstr "(空)"
 
@@ -3661,11 +3661,11 @@ msgid "Executable files in this folder will appear in the Scripts menu."
 msgstr "このフォルダーにある実行可能なファイルが [スクリプト] メニューに表示されます。"
 
 #. Action Menu
-#: ../src/nautilus-toolbar.c:444
+#: ../src/nautilus-toolbar.c:430
 msgid "Location options"
 msgstr "場所オプション"
 
-#: ../src/nautilus-toolbar.c:464
+#: ../src/nautilus-toolbar.c:449
 msgid "View options"
 msgstr "表示オプション"
 
@@ -4628,7 +4628,7 @@ msgstr "タブを右へ移動(_R)"
 msgid "_Close Tab"
 msgstr "タブを閉じる(_C)"
 
-#: ../src/nautilus-window.c:2335
+#: ../src/nautilus-window.c:2290
 msgid "Access and organize your files."
 msgstr "ファイルへアクセスしたり整理したりします。"
 
@@ -4636,7 +4636,7 @@ msgstr "ファイルへアクセスしたり整理したりします。"
 #. * which will be displayed at the bottom of the about
 #. * box to give credit to the translator(s).
 #.
-#: ../src/nautilus-window.c:2344
+#: ../src/nautilus-window.c:2299
 msgid "translator-credits"
 msgstr ""
 "相花毅 <takeshi.aihana@gmail.com>\n"
