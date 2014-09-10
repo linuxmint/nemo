@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: nautilus master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2014-09-10 10:04+0000\n"
-"PO-Revision-Date: 2014-08-28 02:24+0900\n"
+"PO-Revision-Date: 2014-09-11 00:45+0900\n"
 "Last-Translator: Jiro Matsuzawa <jmatsuzawa@gnome.oeg>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "Language: ja\n"
@@ -77,11 +77,11 @@ msgstr "Y"
 #: ../eel/eel-editable-label.c:312 ../libnautilus-private/nautilus-file.c:6393
 #: ../libnautilus-private/nautilus-file.c:6394
 msgid "Text"
-msgstr "文字列"
+msgstr "テキスト"
 
 #: ../eel/eel-editable-label.c:313
 msgid "The text of the label."
-msgstr "ラベルの文字列です"
+msgstr "ラベルのテキストです"
 
 #: ../eel/eel-editable-label.c:319
 msgid "Justification"
