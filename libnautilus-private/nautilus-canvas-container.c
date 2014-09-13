@@ -7660,7 +7660,7 @@ nautilus_canvas_container_accessible_update_selection (AtkObject *accessible)
 		priv->selection = NULL;
 	}
 
-	priv->selection = nautilus_canvas_container_get_selection (container);
+	priv->selection = nautilus_canvas_container_get_selected_icons (container);
 }
 
 static void
