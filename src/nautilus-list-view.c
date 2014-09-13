@@ -1253,7 +1253,7 @@ sort_column_changed_callback (GtkTreeSortable *sortable,
 	view->details->last_sort_attr = sort_attr;
 }
 
-static void
+static gboolean
 editable_focus_out_cb (GtkWidget *widget,
 		       GdkEvent *event,
 		       gpointer user_data)
@@ -1264,6 +1264,8 @@ editable_focus_out_cb (GtkWidget *widget,
 
 	nautilus_view_set_is_renaming (NAUTILUS_VIEW (view), FALSE);
 	nautilus_view_unfreeze_updates (NAUTILUS_VIEW (view));
+
+	return FALSE;
 }
 
 static void
