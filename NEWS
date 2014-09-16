@@ -1,3 +1,10 @@
+Major changes in 3.13.92:
+* Improve toolbar and pathbar styling with GTK 3.14
+* Expand properties dialog notebook in its parent container
+* Fix crash when using the rename field context menu in list view
+* Fix crash when using a screen reader in canvas view
+* Fix crash when changing icon captions setting (Volker Sobek)
+
 Major changes in 3.13.91:
 * Performance improvements for canvas and list views
 * Remove duplicate actions in gear menu when app menu is not in use
