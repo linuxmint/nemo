@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2014-09-18 22:06+0000\n"
-"PO-Revision-Date: 2014-09-19 11:25+0100\n"
+"PO-Revision-Date: 2014-09-19 11:48+0100\n"
 "Last-Translator: Fabio Tomat <f.t.public@gmail.com>\n"
 "Language-Team: Friulian Language Team\n"
 "Language: fur_IT\n"
@@ -1987,15 +1987,15 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1565
 #, c-format
 msgid "Set group of '%s' to '%s'"
-msgstr ""
+msgstr "Cambie grup di '%s' a '%s'"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1568
 msgid "_Undo Change Group"
-msgstr ""
+msgstr "_Anule cambie grup"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1569
 msgid "_Redo Change Group"
-msgstr ""
+msgstr "_Torne cambie grup"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1571
 #, c-format
@@ -2005,20 +2005,20 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1573
 #, c-format
 msgid "Set owner of '%s' to '%s'"
-msgstr ""
+msgstr "Cambie proprietari di '%s' a '%s'"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1576
 msgid "_Undo Change Owner"
-msgstr ""
+msgstr "_Anule cambie proprietari"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1577
 msgid "_Redo Change Owner"
-msgstr ""
+msgstr "_Torne cambie proprietari"
 
 #: ../libnautilus-private/nautilus-file-utilities.c:932
 #, c-format
 msgid "Could not determine original location of “%s” "
-msgstr ""
+msgstr "No pues determinâ la posizion origjinâl di \"%s\""
 
 #: ../libnautilus-private/nautilus-file-utilities.c:936
 msgid "The item cannot be restored from trash"
@@ -2032,7 +2032,7 @@ msgstr "Erôr dilunc la eliminazion."
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:82
 msgid "Could not add application"
-msgstr ""
+msgstr "Impussibil zontâ le aplicazion"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:110
 #, fuzzy
@@ -2042,16 +2042,16 @@ msgstr "No si pues gjavâ l'aplicazion"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:134
 msgid "Forget association"
-msgstr ""
+msgstr "Dismentee associazion"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:172
 #, c-format
 msgid "Error while setting “%s” as default application: %s"
-msgstr ""
+msgstr "Erôr tal meti \"%s\" come aplicazion predefinide: %s"
 
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:174
 msgid "Could not set as default"
-msgstr ""
+msgstr "Impussibil meti come predefinide"
 
 #. Translators: the %s here is a file extension
 #: ../libnautilus-private/nautilus-mime-application-chooser.c:252
@@ -2085,16 +2085,16 @@ msgstr "Pre_determinâts"
 
 #: ../libnautilus-private/nautilus-program-choosing.c:312
 msgid "Sorry, but you cannot execute commands from a remote site."
-msgstr ""
+msgstr "Mi displâs, ma no tu puedis eseguî comants da un sît esterni."
 
 #: ../libnautilus-private/nautilus-program-choosing.c:314
 msgid "This is disabled due to security considerations."
-msgstr ""
+msgstr "Chest a nol è abilitât par resons di sigurece."
 
 #: ../libnautilus-private/nautilus-program-choosing.c:325
 #: ../libnautilus-private/nautilus-program-choosing.c:393
 msgid "There was an error launching the application."
-msgstr ""
+msgstr "Al è vignût fûr un erôr tal fâ partî le aplicazion."
 
 #: ../libnautilus-private/nautilus-program-choosing.c:350
 #: ../libnautilus-private/nautilus-program-choosing.c:361
@@ -2140,7 +2140,7 @@ msgstr ""
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:1
 msgid "Where to position newly open tabs in browser windows."
-msgstr ""
+msgstr "Dulà posizionâ lis gnovis schedis viertis intal barcon di navigazion."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:2
 msgid ""
@@ -2148,6 +2148,9 @@ msgid ""
 "current tab. If set to \"end\", then new tabs are appended to the end of the "
 "tab list."
 msgstr ""
+"Se mitût a \"after-current-tab\", alore lis gnovis schedis a saran inseridis "
+"dopo le schede curint. Se mitût a \"end\", alore lis gnovis schedis a saran "
+"zontadis a le fin de liste das schedis."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:3
 msgid "Always use the location entry, instead of the pathbar"
@@ -3651,8 +3654,8 @@ msgstr "Sêstu sigûr di volê vierzi ducj i files?"
 #, c-format
 msgid "This will open %d separate tab."
 msgid_plural "This will open %d separate tabs."
-msgstr[0] "Chest al vierzarà %d tab separât."
-msgstr[1] "Chest al vierzarà %d tab separâts."
+msgstr[0] "Chest al vierzarà %d schede separade."
+msgstr[1] "Chest al vierzarà %d schedis separadis."
 
 #: ../src/nautilus-mime-actions.c:1123
 #, c-format
@@ -3741,7 +3744,7 @@ msgstr[1] "Daûr a vierzi %d elements."
 
 #: ../src/nautilus-notebook.c:382
 msgid "Close tab"
-msgstr "Siere tab"
+msgstr "Siere schede"
 
 #: ../src/nautilus-progress-ui-handler.c:106
 #: ../src/nautilus-progress-ui-handler.c:158
@@ -4423,12 +4426,12 @@ msgstr ""
 #: ../src/nautilus-view.c:7139 ../src/nautilus-view.c:7307
 #: ../src/nautilus-view.c:8248 ../src/nautilus-view.c:8596
 msgid "Open in New _Tab"
-msgstr "Vierç intun gnûf _Tab"
+msgstr "Vierç intune gnove _Schede"
 
 #. tooltip
 #: ../src/nautilus-view.c:7140
 msgid "Open each selected item in a new tab"
-msgstr "Vierç ogni element selezionât intun gnûf tab"
+msgstr "Vierç ogni element selezionât intune gnove schede"
 
 #. name, stock id
 #. label, accelerator
@@ -4788,10 +4791,9 @@ msgstr "Vierç cheste cartele intun barcon di navigazion"
 
 #. tooltip
 #: ../src/nautilus-view.c:7308
-#, fuzzy
 #| msgid "Open this folder in a folder window"
 msgid "Open this folder in a new tab"
-msgstr "Vierç cheste cartele in un barcon des cartelis"
+msgstr "Vierç cheste cartele intune gnove schede"
 
 #. tooltip
 #: ../src/nautilus-view.c:7313
@@ -5140,8 +5142,8 @@ msgstr[1] "Vierç in %'d gnûfs _barcons"
 #, c-format
 msgid "Open in %'d New _Tab"
 msgid_plural "Open in %'d New _Tabs"
-msgstr[0] "Vierç in %'d gnûf _Tab"
-msgstr[1] "Vierç in %'d gnûfs _Tab"
+msgstr[0] "Vierç in %'d gnove _Schede"
+msgstr[1] "Vierç in %'d gnovis _Schedis"
 
 #: ../src/nautilus-view.c:8615
 msgid "Delete all selected items permanently"
@@ -5200,19 +5202,19 @@ msgstr "_Formate..."
 
 #: ../src/nautilus-window.c:1187
 msgid "_New Tab"
-msgstr ""
+msgstr "_Gnove schede"
 
 #: ../src/nautilus-window.c:1197 ../src/nautilus-window-menus.c:456
 msgid "Move Tab _Left"
-msgstr ""
+msgstr "Sposte schede a _Sinistre"
 
 #: ../src/nautilus-window.c:1205 ../src/nautilus-window-menus.c:459
 msgid "Move Tab _Right"
-msgstr ""
+msgstr "Sposte schede a _Diestre"
 
 #: ../src/nautilus-window.c:1216
 msgid "_Close Tab"
-msgstr "_Siere Tab"
+msgstr "_Siere Schede"
 
 #: ../src/nautilus-window.c:2290
 msgid "Access and organize your files."
@@ -5310,13 +5312,12 @@ msgstr "Vierç la tô cartele personâl"
 #. name, stock id
 #: ../src/nautilus-window-menus.c:427
 msgid "New _Tab"
-msgstr ""
+msgstr "Gnove _Schede"
 
 #: ../src/nautilus-window-menus.c:428
-#, fuzzy
 #| msgid "Open a folder window for the displayed location"
 msgid "Open another tab for the displayed location"
-msgstr "Vierç un barcon des cartelis pe posizion mostrade"
+msgstr "Vierç une altre schede pe posizion mostrade"
 
 #. name, stock id
 #: ../src/nautilus-window-menus.c:431
@@ -5369,27 +5370,27 @@ msgstr "Modifiche segnelibris"
 
 #: ../src/nautilus-window-menus.c:450
 msgid "_Previous Tab"
-msgstr ""
+msgstr "Schede _Precedent"
 
 #: ../src/nautilus-window-menus.c:451
 msgid "Activate previous tab"
-msgstr ""
+msgstr "Ative schede precedent"
 
 #: ../src/nautilus-window-menus.c:453
 msgid "_Next Tab"
-msgstr ""
+msgstr "Schede _Sucessive"
 
 #: ../src/nautilus-window-menus.c:454
 msgid "Activate next tab"
-msgstr ""
+msgstr "Ative schede sucessive"
 
 #: ../src/nautilus-window-menus.c:457
 msgid "Move current tab to left"
-msgstr ""
+msgstr "Sposte schede curint a sinistre"
 
 #: ../src/nautilus-window-menus.c:460
 msgid "Move current tab to right"
-msgstr ""
+msgstr "Sposte schede curint a diestre"
 
 #. name, stock id
 #. label, accelerator
