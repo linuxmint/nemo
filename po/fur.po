@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2014-09-18 22:06+0000\n"
-"PO-Revision-Date: 2014-09-19 11:48+0100\n"
+"PO-Revision-Date: 2014-09-20 01:12+0100\n"
 "Last-Translator: Fabio Tomat <f.t.public@gmail.com>\n"
 "Language-Team: Friulian Language Team\n"
 "Language: fur_IT\n"
@@ -2154,27 +2154,33 @@ msgstr ""
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:3
 msgid "Always use the location entry, instead of the pathbar"
-msgstr ""
+msgstr "Doprâ simpri il cjamp di posizion al puest de rie di percors"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:4
 msgid ""
 "If set to true, then Nautilus browser windows will always use a textual "
 "input entry for the location toolbar, instead of the pathbar."
 msgstr ""
+"Se mitût vêr alore il barcon di esplorazion Nautilus al mostrarà simpri une "
+"rie di inseriment testuâl pe posizion al puest de rie di percors."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:5
 msgid "Whether to ask for confirmation when deleting files, or emptying Trash"
 msgstr ""
+"Indiche se domandâ conferme cuant che a si scancele file o si disvuede le "
+"scovacere"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:6
 msgid ""
 "If set to true, then Nautilus will ask for confirmation when you attempt to "
 "delete files, or empty the Trash."
 msgstr ""
+"Se mitût a vêr alore Nautilus al domandarà conferme cuant che si cirarà di "
+"scancelâ file o disvuedâ le scovacere."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:7
 msgid "Whether to enable immediate deletion"
-msgstr ""
+msgstr "Indiche se abilitâ la eliminazion imediade"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:8
 msgid ""
@@ -2182,10 +2188,13 @@ msgid ""
 "file immediately and in-place, instead of moving it to the trash. This "
 "feature can be dangerous, so use caution."
 msgstr ""
+"Se mitût vêr alore Nautilus al fasarà in mût che tu puedis eliminâ un file "
+"subite e sul puest invezit che movilu te scovacere. Cheste opzion a pues "
+"sedi pericolose duncje doprile cun atenzion."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:9
 msgid "When to show number of items in a folder"
-msgstr ""
+msgstr "Cuant mostrâ il numar di elements intune cartele"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:10
 msgid ""
@@ -2197,13 +2206,15 @@ msgstr ""
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:11
 msgid "Type of click used to launch/open files"
-msgstr ""
+msgstr "Tipo di click doprât par fa partî/vierzi i file"
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:12
 msgid ""
 "Possible values are \"single\" to launch files on a single click, or \"double"
 "\" to launch them on a double click."
 msgstr ""
+"Valôrs pussibii son \"single\" par fâ partî file cuntun singul click o "
+"\"double\" par fâju partî cuntun dopli click."
 
 #: ../libnautilus-private/org.gnome.nautilus.gschema.xml.in.h:13
 msgid "What to do with executable text files when activated"
@@ -3173,7 +3184,7 @@ msgstr "Viodude predefinide"
 
 #: ../src/nautilus-file-management-properties.ui.h:3
 msgid "View _new folders using:"
-msgstr ""
+msgstr "Mostre _gnovis cartelis doprant:"
 
 #: ../src/nautilus-file-management-properties.ui.h:4
 msgid "_Arrange items:"
@@ -3272,7 +3283,7 @@ msgstr "Viodude a liste"
 
 #: ../src/nautilus-file-management-properties.ui.h:25
 msgid "Navigate folders in a tree"
-msgstr ""
+msgstr "Esplore cartelis intun arbul"
 
 #: ../src/nautilus-file-management-properties.ui.h:26
 msgid "Display"
@@ -3288,7 +3299,7 @@ msgstr "Colonis de liste"
 
 #: ../src/nautilus-file-management-properties.ui.h:30
 msgid "Show _thumbnails:"
-msgstr ""
+msgstr "Mostre _anteprimis:"
 
 #: ../src/nautilus-file-management-properties.ui.h:31
 msgid "_Only for files smaller than:"
@@ -3301,7 +3312,7 @@ msgstr "Cartelis"
 
 #: ../src/nautilus-file-management-properties.ui.h:33
 msgid "Count _number of items:"
-msgstr ""
+msgstr "Conte il _numar di elements:"
 
 #: ../src/nautilus-file-management-properties.ui.h:34
 msgid "Preview"
@@ -3313,7 +3324,7 @@ msgstr "Simpri"
 
 #: ../src/nautilus-file-management-properties.ui.h:37
 msgid "Local Files Only"
-msgstr ""
+msgstr "Dome file locâi"
 
 #: ../src/nautilus-file-management-properties.ui.h:38
 msgid "Never"
@@ -3348,7 +3359,7 @@ msgstr ""
 #: ../src/nautilus-file-management-properties.ui.h:46
 #, no-c-format
 msgid "33%"
-msgstr ""
+msgstr "33%"
 
 #: ../src/nautilus-file-management-properties.ui.h:48
 #, no-c-format
@@ -3358,7 +3369,7 @@ msgstr "50%"
 #: ../src/nautilus-file-management-properties.ui.h:50
 #, no-c-format
 msgid "66%"
-msgstr ""
+msgstr "66%"
 
 #: ../src/nautilus-file-management-properties.ui.h:52
 #, no-c-format
@@ -3414,11 +3425,11 @@ msgstr "1 GB"
 
 #: ../src/nautilus-file-management-properties.ui.h:67
 msgid "2 GB"
-msgstr ""
+msgstr "2 GB"
 
 #: ../src/nautilus-file-management-properties.ui.h:68
 msgid "4 GB"
-msgstr ""
+msgstr "4 GB"
 
 #: ../src/nautilus-image-properties-page.c:329
 msgid "Image Type"
@@ -3429,26 +3440,26 @@ msgstr "Gjenar figure"
 #, c-format
 msgid "%d pixel"
 msgid_plural "%d pixels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d pixel"
+msgstr[1] "%d pixel"
 
 #: ../src/nautilus-image-properties-page.c:335
 msgid "Width"
-msgstr ""
+msgstr "Largjece"
 
 #: ../src/nautilus-image-properties-page.c:341
 msgid "Height"
-msgstr ""
+msgstr "Altece"
 
 #: ../src/nautilus-image-properties-page.c:354
 #: ../src/nautilus-image-properties-page.c:355
 msgid "Title"
-msgstr ""
+msgstr "Titul"
 
 #: ../src/nautilus-image-properties-page.c:356
 #: ../src/nautilus-image-properties-page.c:357
 msgid "Author"
-msgstr ""
+msgstr "Autôr"
 
 #: ../src/nautilus-image-properties-page.c:360
 #: ../src/nautilus-image-properties-page.c:417
@@ -3471,11 +3482,11 @@ msgstr ""
 
 #: ../src/nautilus-image-properties-page.c:366
 msgid "Warning"
-msgstr ""
+msgstr "Atenzion"
 
 #: ../src/nautilus-image-properties-page.c:367
 msgid "Source"
-msgstr ""
+msgstr "Sorzint"
 
 #: ../src/nautilus-image-properties-page.c:382
 msgid "Camera Brand"
@@ -3500,11 +3511,11 @@ msgstr "Date modifiche"
 
 #: ../src/nautilus-image-properties-page.c:392
 msgid "Exposure Time"
-msgstr ""
+msgstr "Timp di esposizion"
 
 #: ../src/nautilus-image-properties-page.c:393
 msgid "Aperture Value"
-msgstr ""
+msgstr "Valôr di vierzidure"
 
 #: ../src/nautilus-image-properties-page.c:394
 msgid "ISO Speed Rating"
@@ -3544,7 +3555,7 @@ msgstr ""
 
 #: ../src/nautilus-image-properties-page.c:441
 msgid "Failed to load image information"
-msgstr ""
+msgstr "Falît tal cjamâ lis informazions de inmagjin"
 
 #: ../src/nautilus-image-properties-page.c:706
 #: ../src/nautilus-list-model.c:365 ../src/nautilus-window-slot.c:618
@@ -3907,7 +3918,7 @@ msgstr "no "
 
 #: ../src/nautilus-properties-window.c:3944
 msgid "list"
-msgstr ""
+msgstr "liste"
 
 #: ../src/nautilus-properties-window.c:3946
 msgid "read"
@@ -3995,7 +4006,7 @@ msgstr "I permès dal file."
 
 #: ../src/nautilus-properties-window.c:4441
 msgid "Change"
-msgstr ""
+msgstr "Cambie"
 
 #: ../src/nautilus-properties-window.c:4484
 msgid "Others:"
@@ -4103,11 +4114,11 @@ msgstr "Gjave chest criteri de ricercje"
 #. create the Current/All Files selector
 #: ../src/nautilus-query-editor.c:968
 msgid "Current"
-msgstr ""
+msgstr "Curint"
 
 #: ../src/nautilus-query-editor.c:971
 msgid "All Files"
-msgstr ""
+msgstr "Ducj i file"
 
 #: ../src/nautilus-query-editor.c:993
 msgid "Add a new criterion to this search"
@@ -4177,7 +4188,7 @@ msgstr "_Model:"
 
 #: ../src/nautilus-view.c:1494
 msgid "Examples: "
-msgstr ""
+msgstr "Esemplis:"
 
 #: ../src/nautilus-view.c:1595
 msgid "Save Search as"
@@ -4185,7 +4196,7 @@ msgstr "Salve ricercje cul non"
 
 #: ../src/nautilus-view.c:1601
 msgid "_Save"
-msgstr ""
+msgstr "_Salve"
 
 #: ../src/nautilus-view.c:1618
 msgid "Search _name:"
@@ -4495,7 +4506,7 @@ msgstr ""
 #. label, accelerator
 #: ../src/nautilus-view.c:7175
 msgid "Copy To…"
-msgstr ""
+msgstr "Copie in..."
 
 #. tooltip
 #: ../src/nautilus-view.c:7176
@@ -4575,7 +4586,7 @@ msgstr "Cambie il non dal element selezionât"
 #. label, accelerator
 #: ../src/nautilus-view.c:7203
 msgid "Set as Wallpaper"
-msgstr ""
+msgstr "Dopre come fonts"
 
 #. tooltip
 #: ../src/nautilus-view.c:7204
@@ -4685,7 +4696,7 @@ msgstr "Pare fûr il volum selezionât"
 #: ../src/nautilus-view.c:8026 ../src/nautilus-view.c:8124
 #: ../src/nautilus-view.c:8128
 msgid "_Start"
-msgstr ""
+msgstr "_Fâs partî"
 
 #. tooltip
 #: ../src/nautilus-view.c:7254
@@ -4989,15 +5000,15 @@ msgstr "Pare fûr il volum selezionât"
 #: ../src/nautilus-view.c:7947 ../src/nautilus-view.c:8034
 #: ../src/nautilus-view.c:8136
 msgid "_Start Multi-disk Drive"
-msgstr ""
+msgstr "_Fâs partî il Dispositîf Multi-disc"
 
 #: ../src/nautilus-view.c:7948 ../src/nautilus-view.c:8137
 msgid "Start the selected multi-disk drive"
-msgstr ""
+msgstr "Fâs partî il dispositîf multi-disc selezionât"
 
 #: ../src/nautilus-view.c:7951
 msgid "U_nlock Drive"
-msgstr ""
+msgstr "S_bloche Dispositîf"
 
 #: ../src/nautilus-view.c:7952 ../src/nautilus-view.c:8141
 #, fuzzy
@@ -5014,7 +5025,7 @@ msgstr "Monte il volum selezionât"
 #: ../src/nautilus-view.c:7968 ../src/nautilus-view.c:8055
 #: ../src/nautilus-view.c:8157
 msgid "_Safely Remove Drive"
-msgstr ""
+msgstr "_Gjave dispositîf in sigurece"
 
 #: ../src/nautilus-view.c:7969 ../src/nautilus-view.c:8158
 #, fuzzy
@@ -5038,16 +5049,16 @@ msgstr "Pare fûr il volum selezionât"
 #: ../src/nautilus-view.c:7976 ../src/nautilus-view.c:8063
 #: ../src/nautilus-view.c:8165
 msgid "_Stop Multi-disk Drive"
-msgstr ""
+msgstr "_Ferme Dispositîf Multi-disc"
 
 #: ../src/nautilus-view.c:7977 ../src/nautilus-view.c:8166
 msgid "Stop the selected multi-disk drive"
-msgstr ""
+msgstr "Ferme il dispositîf multi-disc selezionât"
 
 #: ../src/nautilus-view.c:7980 ../src/nautilus-view.c:8067
 #: ../src/nautilus-view.c:8169
 msgid "_Lock Drive"
-msgstr ""
+msgstr "_Bloche Dispositîf"
 
 #: ../src/nautilus-view.c:7981 ../src/nautilus-view.c:8170
 #, fuzzy
@@ -5069,7 +5080,7 @@ msgstr ""
 
 #: ../src/nautilus-view.c:8038 ../src/nautilus-view.c:8140
 msgid "_Unlock Drive"
-msgstr ""
+msgstr "_Sbloche Dispositîf"
 
 #: ../src/nautilus-view.c:8039
 msgid "Unlock the drive associated with the open folder"
@@ -5504,7 +5515,7 @@ msgstr "Audio CD"
 
 #: ../src/nautilus-x-content-bar.c:94
 msgid "Audio DVD"
-msgstr ""
+msgstr "DVD Audio"
 
 #: ../src/nautilus-x-content-bar.c:96
 msgid "Video DVD"
@@ -5532,7 +5543,7 @@ msgstr "Al ten dentri fotografiis digjitâls."
 
 #: ../src/nautilus-x-content-bar.c:108
 msgid "Contains music"
-msgstr ""
+msgstr "Al ten musiche"
 
 #: ../src/nautilus-x-content-bar.c:110
 msgid "Contains software"
@@ -5546,11 +5557,11 @@ msgstr ""
 
 #: ../src/nautilus-x-content-bar.c:135
 msgid "Contains music and photos"
-msgstr ""
+msgstr "Al ten musiche e fotos"
 
 #: ../src/nautilus-x-content-bar.c:137
 msgid "Contains photos and music"
-msgstr ""
+msgstr "Al ten fotos e musiche"
 
 #: ../src/nautilus-x-content-bar.c:201
 msgid "Open with:"
