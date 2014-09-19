@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nautilus&keywords=I18N+L10N&component=Internationalization (i18n)\n"
 "POT-Creation-Date: 2014-09-18 22:06+0000\n"
-"PO-Revision-Date: 2014-09-19 10:50+0100\n"
+"PO-Revision-Date: 2014-09-19 11:25+0100\n"
 "Last-Translator: Fabio Tomat <f.t.public@gmail.com>\n"
 "Language-Team: Friulian Language Team\n"
 "Language: fur_IT\n"
@@ -1313,7 +1313,7 @@ msgstr ""
 #: ../libnautilus-private/nautilus-file-operations.c:2897
 #, c-format
 msgid "%S more space is required to copy to the destination."
-msgstr ""
+msgstr "%S in plui di spazi al covente par copiâ inte destinazion."
 
 #: ../libnautilus-private/nautilus-file-operations.c:2925
 msgid "The destination is read-only."
@@ -1329,7 +1329,7 @@ msgstr "Daûr a copiâ \"%B\" in \"%B\""
 
 #: ../libnautilus-private/nautilus-file-operations.c:2992
 msgid "Duplicating “%B”"
-msgstr ""
+msgstr "Dopleant \"%B\""
 
 #: ../libnautilus-private/nautilus-file-operations.c:3000
 #, fuzzy
@@ -1347,7 +1347,7 @@ msgstr "Daûr a copiâ %'d file (in \"%B\") vierç \"%B\""
 
 #: ../libnautilus-private/nautilus-file-operations.c:3009
 msgid "Duplicating file %'d of %'d (in “%B”)"
-msgstr ""
+msgstr "Dopleant file %'d di %'d (in “%B”)"
 
 #: ../libnautilus-private/nautilus-file-operations.c:3018
 msgid "Moving file %'d of %'d to “%B”"
@@ -1360,7 +1360,7 @@ msgstr "Daûr a copiâ %'d di %'d in \"%B\""
 #: ../libnautilus-private/nautilus-file-operations.c:3026
 #, c-format
 msgid "Duplicating file %'d of %'d"
-msgstr ""
+msgstr "Dopleant file %'d di %'d"
 
 #. To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "4 kb of 4 MB"
 #: ../libnautilus-private/nautilus-file-operations.c:3045
@@ -1443,7 +1443,7 @@ msgstr "No si pues gjavâ files de cartele esistinte %F."
 #: ../libnautilus-private/nautilus-file-operations.c:3813
 #, c-format
 msgid "Could not remove the already existing file %F."
-msgstr ""
+msgstr "No pues gjavâ il file %F za presint."
 
 #. the run_warning() frees all strings passed in automatically
 #: ../libnautilus-private/nautilus-file-operations.c:4133
@@ -1476,11 +1476,11 @@ msgstr "Tu puedis discjamâlu o creâ un leam."
 
 #: ../libnautilus-private/nautilus-file-operations.c:4166
 msgid "You cannot copy a file over itself."
-msgstr ""
+msgstr "No tu puedis copiâ un file parsore se stes."
 
 #: ../libnautilus-private/nautilus-file-operations.c:4167
 msgid "The source file would be overwritten by the destination."
-msgstr ""
+msgstr "Il file sorzint a nol sarà sorescrit de destinazion."
 
 #: ../libnautilus-private/nautilus-file-operations.c:4380
 #, c-format
@@ -1495,7 +1495,7 @@ msgstr "Al è stât un erôr copiant il file in %F."
 #: ../libnautilus-private/nautilus-file-operations.c:4681
 #: ../libnautilus-private/nautilus-file-operations.c:4715
 msgid "Copying Files"
-msgstr ""
+msgstr "Copie dai file"
 
 #: ../libnautilus-private/nautilus-file-operations.c:4743
 msgid "Preparing to Move to “%B”"
@@ -1511,7 +1511,7 @@ msgstr[1] "Daûr a prontâ a movi %'d files"
 #: ../libnautilus-private/nautilus-file-operations.c:4991
 #, c-format
 msgid "There was an error moving the file into %F."
-msgstr ""
+msgstr "Al è vignût fûr un erôr intant che a si spostave il file in %F."
 
 #: ../libnautilus-private/nautilus-file-operations.c:5253
 msgid "Moving Files"
@@ -1519,35 +1519,35 @@ msgstr "Daûr a movi i file"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5288
 msgid "Creating links in “%B”"
-msgstr ""
+msgstr "Creazion dai leams in \"%B\""
 
 #: ../libnautilus-private/nautilus-file-operations.c:5292
 #, c-format
 msgid "Making link to %'d file"
 msgid_plural "Making links to %'d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Creant leam a %'d file"
+msgstr[1] "Creant leam a %'d file"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5427
 msgid "Error while creating link to %B."
-msgstr ""
+msgstr "Al è vignût fûr un erôr intant che a si creave un leam a %B."
 
 #: ../libnautilus-private/nautilus-file-operations.c:5429
 msgid "Symbolic links only supported for local files"
-msgstr ""
+msgstr "Leams simbolics a son supuartâts dome par i file locâi"
 
 #: ../libnautilus-private/nautilus-file-operations.c:5432
 msgid "The target doesn't support symbolic links."
-msgstr ""
+msgstr "La destinazion no supuarte i leams simbolics."
 
 #: ../libnautilus-private/nautilus-file-operations.c:5435
 #, c-format
 msgid "There was an error creating the symlink in %F."
-msgstr ""
+msgstr "Al è vignût fûr un erôr intal creâ un leam in %F."
 
 #: ../libnautilus-private/nautilus-file-operations.c:5754
 msgid "Setting permissions"
-msgstr ""
+msgstr "Impostazion permès"
 
 #. localizers: the initial name of a new folder
 #: ../libnautilus-private/nautilus-file-operations.c:6019
@@ -1567,16 +1567,16 @@ msgstr "Document cence non"
 
 #: ../libnautilus-private/nautilus-file-operations.c:6209
 msgid "Error while creating directory %B."
-msgstr ""
+msgstr "Erôr tal creâ le cartele %B."
 
 #: ../libnautilus-private/nautilus-file-operations.c:6211
 msgid "Error while creating file %B."
-msgstr ""
+msgstr "Erôr tal creâ il file %B."
 
 #: ../libnautilus-private/nautilus-file-operations.c:6213
 #, c-format
 msgid "There was an error creating the directory in %F."
-msgstr ""
+msgstr "Al è vignût fûr un erôr tal creâ le cartele in %F."
 
 #: ../libnautilus-private/nautilus-file-operations.c:6482
 msgid "Emptying Trash"
@@ -1598,7 +1598,7 @@ msgstr "Anule"
 #: ../libnautilus-private/nautilus-file-undo-operations.c:136
 #: ../src/nautilus-view.c:2532
 msgid "Undo last action"
-msgstr ""
+msgstr "Anule ultime azion"
 
 #. Reset to default info
 #: ../libnautilus-private/nautilus-file-undo-operations.c:140
@@ -1609,14 +1609,14 @@ msgstr "Torne a fâ modifiche"
 #: ../libnautilus-private/nautilus-file-undo-operations.c:143
 #: ../src/nautilus-view.c:2551
 msgid "Redo last undone action"
-msgstr ""
+msgstr "Torne fâs le ultime azion anulade"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:365
 #, c-format
 msgid "Move %d item back to '%s'"
 msgid_plural "Move %d items back to '%s'"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Sposte di gnûf %d element su '%s'"
+msgstr[1] "Sposte di gnûf %d elements su '%s'"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:368
 #, fuzzy, c-format
@@ -1646,7 +1646,7 @@ msgstr[1] "Torne a fâ la modifiche"
 #: ../libnautilus-private/nautilus-file-undo-operations.c:379
 #, c-format
 msgid "Move '%s' back to '%s'"
-msgstr ""
+msgstr "Sposte di gnûf '%s' su '%s'"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:380
 #, c-format
@@ -1661,7 +1661,7 @@ msgstr "An_ule"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:383
 msgid "_Redo Move"
-msgstr ""
+msgstr "_Torne Sposte"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:386
 #, fuzzy
@@ -1708,8 +1708,8 @@ msgstr "_Elimine de Scovacere"
 #, c-format
 msgid "Delete %d copied item"
 msgid_plural "Delete %d copied items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Scancele %d element copiât"
+msgstr[1] "Scancele %d elements copiâts"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:405
 #, fuzzy, c-format
@@ -1724,15 +1724,15 @@ msgstr[1] "Daûr a copiâ %'d files in \"%B\""
 #, c-format
 msgid "_Undo Copy %d item"
 msgid_plural "_Undo Copy %d items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "_Anule Copie %d element"
+msgstr[1] "_Anule Copie %d elements"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:412
 #, c-format
 msgid "_Redo Copy %d item"
 msgid_plural "_Redo Copy %d items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "_Torne Copie %d element"
+msgstr[1] "_Torne Copie %d elements"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:416
 #: ../libnautilus-private/nautilus-file-undo-operations.c:438
@@ -1744,7 +1744,7 @@ msgstr "Elimine '%s'"
 #: ../libnautilus-private/nautilus-file-undo-operations.c:417
 #, c-format
 msgid "Copy '%s' to '%s'"
-msgstr ""
+msgstr "Copie '%s' su '%s'"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:419
 #, fuzzy
@@ -1754,7 +1754,7 @@ msgstr "An_ule"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:420
 msgid "_Redo Copy"
-msgstr ""
+msgstr "_Torne Copie"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:424
 #, fuzzy, c-format
@@ -1791,7 +1791,7 @@ msgstr[1] "Dupliche ogni element selezionât"
 #: ../libnautilus-private/nautilus-file-undo-operations.c:439
 #, c-format
 msgid "Duplicate '%s' in '%s'"
-msgstr ""
+msgstr "Dopleâ '%s' in '%s'"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:442
 #, fuzzy
@@ -1817,8 +1817,8 @@ msgstr[1] "_Dopli clic par vierzi i elments"
 #, c-format
 msgid "Create links to %d item"
 msgid_plural "Create links to %d items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Cree leams a %d element"
+msgstr[1] "Cree leams a %d elements"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:454
 #, c-format
@@ -1898,7 +1898,7 @@ msgstr "Cree document dal model \"%s\""
 #: ../libnautilus-private/nautilus-file-undo-operations.c:868
 #, c-format
 msgid "Rename '%s' as '%s'"
-msgstr ""
+msgstr "Cambie non '%s' in '%s'"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:870
 #, fuzzy
@@ -1923,7 +1923,7 @@ msgstr[1] "Daûr a movi i files te scovacere"
 #: ../libnautilus-private/nautilus-file-undo-operations.c:994
 #, c-format
 msgid "Restore '%s' to '%s'"
-msgstr ""
+msgstr "Torne a meti '%s' in '%s'"
 
 #: ../libnautilus-private/nautilus-file-undo-operations.c:1001
 #, fuzzy, c-format
