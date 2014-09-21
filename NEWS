@@ -1,4 +1,16 @@
-Nemo merged with changes in Nautilus 3.9.9:
+Nemo merged with changes in Nautilus 3.8.1:
+
+Changes:
+* Use a consistent name for applications in the Open With context menu
+* Don't follow symbolic links when searching recursively
+* Increase default sidebar width
+* Fix resetting view to default preferences not working (Michael Wood)
+* Fix behavior of search entry with external Input Methods (Rui Matos)
+* Fix partial ranking order of search results
+* Fix move of special icons on the Desktop triggering file operations
+* Fix copy action not working in Recent
+
+Nemo merged with changes in Nautilus 3.8.0:
 
 Changes:
 * Fix inconsistency in handling of NoDisplay=true applications
