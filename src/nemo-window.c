@@ -692,14 +692,14 @@ nemo_window_constructed (GObject *self)
 	slot = nemo_window_pane_open_slot (window->details->active_pane, 0);
 	nemo_window_set_active_slot (window, slot);
 
-	nemo_window_set_initial_window_geometry (window);
-
 	if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_START_WITH_DUAL_PANE) &&
             !window->details->disable_chrome)
 		nemo_window_split_view_on (window);
 
 	window->details->sidebar_id = g_settings_get_string (nemo_window_state,
                                                          NEMO_WINDOW_STATE_SIDE_PANE_VIEW);
+
+	nemo_window_set_initial_window_geometry (window);
 
 	window->details->bookmarks_id =
 		g_signal_connect_swapped (nemo_application_get_bookmarks (application), "changed",

@@ -555,7 +555,7 @@ modify_link_hash_table (NemoFile *file,
 	GList **list_ptr;
 
 	/* Check if there is a symlink name. If none, we are OK. */
-	if (file->details->symlink_name == NULL) {
+	if (file->details->symlink_name == NULL || !nemo_file_is_symbolic_link (file)) {
 		return;
 	}
 
