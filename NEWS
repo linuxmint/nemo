@@ -1,3 +1,11 @@
+Nemo merged with changes in Nautilus 3.8.2:
+
+Changes:
+* Don't grab focus to search entry needlessly (Rui Matos)
+* Increase default size to fit 4 columns of icons (Michael Catanzaro)
+* Remove no-longer-existing keys from GConf conversion
+* Change 'x-nautilus-search:' To 'Search' in tooltips (Ting-Wei Lan)
+
 Nemo merged with changes in Nautilus 3.8.1:
 
 Changes:
