@@ -2875,11 +2875,11 @@ nemo_view_init (NemoView *view)
                   G_CALLBACK (swap_delete_keybinding_changed_callback), view);
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_CLICK_POLICY,
-				  G_CALLBACK(click_policy_changed_callback),
+				  G_CALLBACK (click_policy_changed_callback),
 				  view);
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST, 
-				  G_CALLBACK(sort_directories_first_changed_callback), view);
+				  G_CALLBACK (sort_directories_first_changed_callback), view);
 	g_signal_connect_swapped (gnome_lockdown_preferences,
 				  "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
 				  G_CALLBACK (schedule_update_menus), view);
