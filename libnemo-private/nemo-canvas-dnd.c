@@ -237,7 +237,12 @@ icon_get_data_binder (NemoCanvasIcon *icon, gpointer data)
 
 	canvas_rect_world_to_widget (EEL_CANVAS (container), &world_rect, &widget_rect);
 
-	uri = nemo_canvas_container_get_icon_activation_uri (container, icon);
+	uri = nemo_canvas_container_get_icon_uri (container, icon);
+	if (!eel_uri_is_desktop (uri)) {
+		g_free (uri);
+		uri = nemo_canvas_container_get_icon_activation_uri (container, icon);
+	}
+
 	if (uri == NULL) {
 		g_warning ("no URI for one of the iterated icons");
 		return TRUE;
