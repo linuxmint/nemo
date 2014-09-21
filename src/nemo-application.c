@@ -704,6 +704,7 @@ go_to_server_cb (NemoWindow *window,
 			g_bookmark_file_to_file (bookmarks, filename, NULL);
 		}
 
+		nemo_file_unref (file);
 		g_free (filename);
 		g_bookmark_file_free (bookmarks);
 
