@@ -33,6 +33,7 @@
 #include "nemo-window-slot.h"
 #include "nemo-window-slot-dnd.h"
 
+#include <eel/eel-vfs-extensions.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
 #include <gtk/gtk.h>
@@ -294,6 +295,7 @@ nemo_notebook_sync_tab_label (NemoNotebook *notebook,
 	GtkWidget *hbox, *label;
 	char *location_name;
 	GFile *location;
+	const gchar *title_name;
 
 	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
 	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
@@ -312,7 +314,12 @@ nemo_notebook_sync_tab_label (NemoNotebook *notebook,
 		 * so it covers all of the tab label.
 		 */
 		location_name = g_file_get_parse_name (location);
-		gtk_widget_set_tooltip_text (gtk_widget_get_parent (label), location_name);
+		title_name = nemo_window_slot_get_title (slot);
+		if (g_str_has_prefix (location_name, EEL_SEARCH_URI)) {
+			gtk_widget_set_tooltip_text (gtk_widget_get_parent (label), title_name);
+		} else {
+			gtk_widget_set_tooltip_text (gtk_widget_get_parent (label), location_name);
+		}
 		g_free (location_name);
 	} else {
 		gtk_widget_set_tooltip_text (gtk_widget_get_parent (label), NULL);
