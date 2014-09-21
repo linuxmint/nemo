@@ -3391,6 +3391,7 @@ nemo_file_is_hidden_file (NemoFile *file)
  * nemo_file_should_show:
  * @file: the file to check.
  * @show_hidden: whether we want to show hidden files or not.
+ * @show_foreign: whether we want to show foreign files or not
  * 
  * Determines if a #NemoFile should be shown. Note that when browsing
  * a trash directory, this function will always return %TRUE. 
@@ -3405,10 +3406,17 @@ nemo_file_should_show (NemoFile *file,
 	/* Never hide any files in trash. */
 	if (nemo_file_is_in_trash (file)) {
 		return TRUE;
-	} else {
-		return (show_hidden || !nemo_file_is_hidden_file (file)) &&
-			(show_foreign || !(nemo_file_is_in_desktop (file) && nemo_file_is_foreign_link (file)));
 	}
+
+	if (!show_hidden && nemo_file_is_hidden_file (file)) {
+		return FALSE;
+	}
+
+	if (!show_foreign && nemo_file_is_foreign_link (file)) {
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 gboolean
