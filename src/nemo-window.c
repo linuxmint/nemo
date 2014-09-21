@@ -337,6 +337,8 @@ nemo_window_set_initial_window_geometry (NemoWindow *window)
 	GdkScreen *screen;
 	guint max_width_for_screen, max_height_for_screen;
 	guint default_width, default_height;
+	gboolean show_sidebar;
+	GtkAction *action;
 
 	screen = gtk_window_get_screen (GTK_WINDOW (window));
 	
@@ -351,6 +353,17 @@ nemo_window_set_initial_window_geometry (NemoWindow *window)
 				          max_width_for_screen), 
 				     MIN (default_height, 
 				          max_height_for_screen));
+
+	show_sidebar = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_SIDEBAR);
+	action = gtk_action_group_get_action (window->details->main_action_group,
+					      NEMO_ACTION_SHOW_HIDE_SIDEBAR);
+	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), show_sidebar);
+
+	if (show_sidebar) {
+		nemo_window_show_sidebar (window);
+	} else {
+		nemo_window_hide_sidebar (window);
+	}
 }
 
 static gboolean
@@ -675,10 +688,11 @@ nemo_window_constructed (GObject *self)
 	side_pane_id_changed (window);
 
 	nemo_window_initialize_bookmarks_menu (window);
-	nemo_window_set_initial_window_geometry (window);
 
 	slot = nemo_window_pane_open_slot (window->details->active_pane, 0);
 	nemo_window_set_active_slot (window, slot);
+
+	nemo_window_set_initial_window_geometry (window);
 
 	if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_START_WITH_DUAL_PANE) &&
             !window->details->disable_chrome)
@@ -686,12 +700,6 @@ nemo_window_constructed (GObject *self)
 
 	window->details->sidebar_id = g_settings_get_string (nemo_window_state,
                                                          NEMO_WINDOW_STATE_SIDE_PANE_VIEW);
-
-	if (g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_SIDEBAR)) {
-		nemo_window_show_sidebar (window);
-	} else {
-		nemo_window_hide_sidebar (window);
-	}
 
 	window->details->bookmarks_id =
 		g_signal_connect_swapped (nemo_application_get_bookmarks (application), "changed",
