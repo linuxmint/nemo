@@ -185,6 +185,7 @@
 	</placeholder>
 	<separator name="File actions separator"/>
 	<placeholder name="File Actions">
+		<menuitem name="Duplicate" action="Duplicate"/>
 		<menuitem name="Create Link" action="Create Link"/>
 		<menuitem name="Rename" action="Rename"/>
 		<menu action="CopyToMenu">
