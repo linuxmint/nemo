@@ -3306,8 +3306,19 @@ done_loading (NemoView *view,
 	GList *selection;
 	gboolean do_reveal = FALSE;
 	NemoWindow *window = NULL;
+	gboolean search_finished = TRUE;
+	gboolean is_search = FALSE;
+
+	if (NEMO_IS_SEARCH_DIRECTORY (view->details->model)) {
+		is_search = TRUE;
+		search_finished = nemo_search_directory_get_finished (
+		    NEMO_SEARCH_DIRECTORY(view->details->model));
+	}
 
 	if (!view->details->loading) {
+		if (search_finished && is_search) {
+			g_signal_emit (view, signals[END_LOADING], 0, all_files_seen);
+		}
 		return;
 	}
 
@@ -3363,7 +3374,9 @@ done_loading (NemoView *view,
 	}
 
 	view->details->loading = FALSE;
-	g_signal_emit (view, signals[END_LOADING], 0, all_files_seen);
+        if (search_finished || !is_search) {
+        	g_signal_emit (view, signals[END_LOADING], 0, all_files_seen);
+        }
 
 	nemo_profile_end (NULL);
 }

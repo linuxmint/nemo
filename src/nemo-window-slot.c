@@ -464,6 +464,11 @@ floating_bar_action_cb (NemoFloatingBar *floating_bar,
 {
 	if (action == NEMO_FLOATING_BAR_ACTION_ID_STOP) {
 		nemo_window_slot_stop_loading (slot);
+
+		NemoDirectory * directory = nemo_view_get_model (nemo_window_slot_get_view(slot));
+		if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
+			nemo_search_directory_stop_search (NEMO_SEARCH_DIRECTORY(directory));
+		}
 	}
 }
 
@@ -2758,10 +2763,6 @@ real_slot_set_short_status (NemoWindowSlot *slot,
 	gboolean show_statusbar;
 	gboolean disable_chrome;
 
-	nemo_floating_bar_cleanup_actions (NEMO_FLOATING_BAR (slot->details->floating_bar));
-	nemo_floating_bar_set_show_spinner (NEMO_FLOATING_BAR (slot->details->floating_bar),
-						FALSE);
-
 	show_statusbar = g_settings_get_boolean (nemo_window_state,
 						 NEMO_WINDOW_STATE_START_WITH_STATUS_BAR);
 
@@ -2769,7 +2770,15 @@ real_slot_set_short_status (NemoWindowSlot *slot,
 		      "disable-chrome", &disable_chrome,
 		      NULL);
 
-	if ((primary_status == NULL && detail_status == NULL) || show_statusbar || disable_chrome) {
+	if (show_statusbar || disable_chrome) {
+		return;
+	}
+
+	nemo_floating_bar_cleanup_actions (NEMO_FLOATING_BAR (slot->details->floating_bar));
+	nemo_floating_bar_set_show_spinner (NEMO_FLOATING_BAR (slot->details->floating_bar),
+						FALSE);
+
+	if ((primary_status == NULL && detail_status == NULL)) {
 		gtk_widget_hide (slot->details->floating_bar);
 		return;
 	}
