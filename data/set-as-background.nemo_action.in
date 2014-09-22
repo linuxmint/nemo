@@ -4,7 +4,7 @@ Name=Set as Wallpaper...
 
 Comment=Set the selected image as your desktop wallpaper
 
-Exec=gsettings set org.cinnamon.desktop.background picture-uri %U
+Exec=gsettings set org.cinnamon.desktop.background picture-uri "%U"
 
 Selection=s
 

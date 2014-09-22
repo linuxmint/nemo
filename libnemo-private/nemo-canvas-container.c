@@ -7293,6 +7293,7 @@ nemo_canvas_container_remove (NemoCanvasContainer *container,
 		return FALSE;
 	}
 
+    gtk_widget_set_tooltip_text (GTK_WIDGET (EEL_CANVAS_ITEM (icon->item)->canvas), "");
 	icon_destroy (container, icon);
 	schedule_redo_layout (container);
 

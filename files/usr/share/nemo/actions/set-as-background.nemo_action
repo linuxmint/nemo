@@ -4,7 +4,7 @@ Name=Set as Wallpaper...
 
 Comment=Set the selected image as your desktop wallpaper
 
-Exec=gsettings set org.cinnamon.desktop.background picture-uri %U
+Exec=gsettings set org.cinnamon.desktop.background picture-uri "%U"
 
 Selection=s
 
@@ -80,7 +80,7 @@ Comment[bs]=Postavite označenu sliku kao desktop pozadinu
 Comment[hu]=A kiválasztott kép beállítása az asztal háttereként
 Comment[ja]=選択した画像をデスクトップの壁紙に設定
 Comment[ml]=തിരഞ്ഞെടുത്ത ചിത്രം താങ്കളുടെ ഡെസ്ക്‌ടോപ്പിന്റെ പശ്ചാത്തലചിത്രമായി സജ്ജീകരിക്കുക
-Comment[pt]=Definir a imagem seleccionada como fundo do Ambiente de Trabalho
+Comment[pt]=Definir imagem seleccionada como fundo da área de trabalho
 Comment[zh_CN]=将所选图像设置为您的桌面壁纸
 Comment[sr]=Постави изабрану слику као позадину на радну површ
 Comment[gd]=Stèidhich an ìomhaigh taghte mar do phàipear-balla a' bhàrr-deasc
