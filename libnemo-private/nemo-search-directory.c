@@ -513,6 +513,7 @@ search_directory_ensure_loaded (NemoSearchDirectory *search)
 		return;
 	}
 
+	search->details->search_running = TRUE;
 	search->details->search_loaded = TRUE;
 	nemo_directory_emit_done_loading (NEMO_DIRECTORY (search));
 
@@ -592,6 +593,8 @@ search_engine_error (NemoSearchEngine *engine, const char *error_message, NemoSe
 static void
 search_engine_finished (NemoSearchEngine *engine, NemoSearchDirectory *search)
 {
+	search->details->search_running = FALSE;
+	nemo_directory_emit_done_loading (NEMO_DIRECTORY (search));
 	search_directory_ensure_loaded (search);
 }
 
@@ -987,3 +990,15 @@ nemo_search_directory_save_search (NemoSearchDirectory *search)
 						search->details->saved_search_uri);
 	search->details->modified = FALSE;
 }
+
+void
+nemo_search_directory_stop_search (NemoSearchDirectory *search) {
+	stop_search(search);
+}
+
+gboolean
+nemo_search_directory_get_finished (NemoSearchDirectory *search)
+{
+	return !search->details->search_running;
+}
+

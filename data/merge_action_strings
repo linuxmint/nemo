@@ -20,7 +20,7 @@ class Main:
                         self.in_keyfiles[fn] = keyfile
 
         if len(self.in_keyfiles) > 0:
-            for root, subFolders, files in os.walk("/usr/share/locale"):
+            for root, subFolders, files in os.walk("/usr/share/cinnamon/locale"):
                 for file in files:
                     if file == "nemo.mo":
                         path, junk = os.path.split(root)
