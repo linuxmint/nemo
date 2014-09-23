@@ -1,3 +1,6 @@
+Changes in 3.14.0:
+* Translation updates
+
 Major changes in 3.13.92:
 * Improve toolbar and pathbar styling with GTK 3.14
 * Expand properties dialog notebook in its parent container

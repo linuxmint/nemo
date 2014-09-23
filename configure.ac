@@ -18,7 +18,7 @@ dnl Interface break is not allowed.
 m4_define(nautilus_extension_current,  5)
 m4_define(nautilus_extension_revision, 0)
 
-AC_INIT([nautilus],[3.13.92],[http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus])
+AC_INIT([nautilus],[3.14.0],[http://bugzilla.gnome.org/enter_bug.cgi?product=nautilus])
 
 dnl ===========================================================================
 
