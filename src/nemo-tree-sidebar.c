@@ -1415,26 +1415,26 @@ get_icon_scale_callback (FMTreeModel *model,
 }
 
 static void
-surface_data_func (GtkTreeViewColumn *tree_column,
-                     GtkCellRenderer *cell,
-                        GtkTreeModel *tree_model,
-                         GtkTreeIter *iter,
-                            gpointer  data)
+icon_data_func (GtkTreeViewColumn *tree_column,
+                  GtkCellRenderer *cell,
+                     GtkTreeModel *tree_model,
+                      GtkTreeIter *iter,
+                         gpointer  data)
 {
     gboolean expanded;
-    cairo_surface_t *surface;
+    GIcon *icon;
 
     g_object_get (cell,
                   "is-expanded", &expanded,
                   NULL);
 
     gtk_tree_model_get (tree_model, iter,
-                        expanded ? FM_TREE_MODEL_OPEN_SURFACE_COLUMN : FM_TREE_MODEL_CLOSED_SURFACE_COLUMN,
-                        &surface,
+                        expanded ? FM_TREE_MODEL_OPEN_ICON_COLUMN : FM_TREE_MODEL_CLOSED_ICON_COLUMN,
+                        &icon,
                         -1);
 
     g_object_set (cell,
-                  "surface", surface,
+                  "gicon", icon,
                   NULL);
 }
 
@@ -1530,8 +1530,14 @@ create_tree (FMTreeView *view)
 
 	cell = gtk_cell_renderer_pixbuf_new ();
 	gtk_tree_view_column_pack_start (column, cell, FALSE);
-    gtk_tree_view_column_set_cell_data_func (column, cell, (GtkTreeCellDataFunc) surface_data_func, NULL, NULL);
 
+    gtk_tree_view_column_set_cell_data_func (column, cell,
+                                             (GtkTreeCellDataFunc) icon_data_func,
+                                             NULL, NULL);
+
+    g_object_set (cell,
+                  "follow-state", TRUE,
+                  NULL);
 
 	cell = gtk_cell_renderer_text_new ();
 	gtk_tree_view_column_pack_start (column, cell, TRUE);
