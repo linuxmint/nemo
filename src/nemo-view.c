@@ -83,6 +83,8 @@
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-file-undo-manager.h>
 #include <libnemo-private/nemo-action.h>
+#include <libnemo-private/nemo-widget-action.h>
+#include <libnemo-private/nemo-separator-action.h>
 #include <libnemo-private/nemo-action-manager.h>
 #include <libnemo-private/nemo-mime-application-chooser.h>
 
@@ -347,6 +349,7 @@ static gboolean file_list_all_are_folders                      (GList *file_list
 
 static void unschedule_pop_up_location_context_menu (NemoView *view);
 static void disconnect_bookmark_signals (NemoView *view);
+static void run_action_callback (NemoAction *action, gpointer callback_data);
 
 G_DEFINE_TYPE (NemoView, nemo_view, GTK_TYPE_SCROLLED_WINDOW);
 #define parent_class nemo_view_parent_class
@@ -2774,6 +2777,12 @@ nemo_view_init (NemoView *view)
 }
 
 static void
+disconnect_action_activate (NemoAction *action, NemoView *view)
+{
+    g_signal_handlers_disconnect_by_func (action, run_action_callback, view);
+}
+
+static void
 real_unmerge_menus (NemoView *view)
 {
 	GtkUIManager *ui_manager;
@@ -2802,6 +2811,16 @@ real_unmerge_menus (NemoView *view)
 	nemo_ui_unmerge_ui (ui_manager,
 				&view->details->templates_merge_id,
 				&view->details->templates_action_group);
+
+    if (view->details->actions_action_group) {
+        GList *action_list;
+
+        action_list = gtk_action_group_list_actions (view->details->actions_action_group);
+        g_list_foreach (action_list, (GFunc) disconnect_action_activate, view);
+
+        g_list_free (action_list);
+    }
+
     nemo_ui_unmerge_ui (ui_manager,
                 &view->details->actions_merge_id,
                 &view->details->actions_action_group);
@@ -5470,8 +5489,10 @@ add_extension_action_for_files (NemoView *view,
     GtkAction *ret = NULL;
 	char *name, *label, *tip, *icon;
 	gboolean sensitive, priority;
+    gboolean separator;
 	GtkAction *action;
 	GdkPixbuf *pixbuf;
+    GtkWidget *widget_a, *widget_b;
 	ExtensionActionCallbackData *data;
 	
 	g_object_get (G_OBJECT (item), 
@@ -5479,20 +5500,28 @@ add_extension_action_for_files (NemoView *view,
 		      "tip", &tip, "icon", &icon,
 		      "sensitive", &sensitive,
 		      "priority", &priority,
+              "widget-a", &widget_a,
+              "widget-b", &widget_b,
+              "separator", &separator,
 		      NULL);
 
-	action = gtk_action_new (name,
-				 label,
-				 tip,
-				 NULL);
-
-	if (icon != NULL) {
-		pixbuf = nemo_ui_get_menu_icon (icon, GTK_WIDGET (view));
-		if (pixbuf != NULL) {
-			gtk_action_set_gicon (action, G_ICON (pixbuf));
-			g_object_unref (pixbuf);
-		}
-	}
+    if (widget_a == NULL && !separator) {
+        action = gtk_action_new (name,
+                                 label,
+                                 tip,
+                                 NULL);
+        if (icon != NULL) {
+            pixbuf = nemo_ui_get_menu_icon (icon, GTK_WIDGET (view));
+            if (pixbuf != NULL) {
+                gtk_action_set_gicon (action, G_ICON (pixbuf));
+                g_object_unref (pixbuf);
+            }
+        }
+    } else if (separator) {
+        action = nemo_separator_action_new (name);
+    } else {
+        action = nemo_widget_action_new (name, widget_a, widget_b);
+    }
 
 	gtk_action_set_sensitive (action, sensitive);
 	g_object_set (action, "is-important", priority, NULL);
@@ -5546,15 +5575,22 @@ add_extension_menu_items (NemoView *view,
 		g_object_get (item, "menu", &menu, NULL);
 		
 		action = add_extension_action_for_files (view, item, files);
-		
+
         if (action) {
+            GtkUIManagerItemType item_type;
+
+            if (G_OBJECT_TYPE (action) == NEMO_TYPE_SEPARATOR_ACTION)
+                item_type = GTK_UI_MANAGER_SEPARATOR;
+            else {
+                item_type = (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM; 
+            }
     		path = g_build_path ("/", NEMO_VIEW_POPUP_PATH_EXTENSION_ACTIONS, subdirectory, NULL);
     		gtk_ui_manager_add_ui (ui_manager,
     				       view->details->extensions_menu_merge_id,
     				       path,
     				       gtk_action_get_name (action),
     				       gtk_action_get_name (action),
-    				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
+    				       item_type,
     				       FALSE);
     		g_free (path);
 
@@ -5564,7 +5600,7 @@ add_extension_menu_items (NemoView *view,
     				       path,
     				       gtk_action_get_name (action),
     				       gtk_action_get_name (action),
-    				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
+                           item_type,
     				       FALSE);
     		g_free (path);
 
@@ -7056,9 +7092,25 @@ action_follow_symlink_callback (GtkAction *action,
     selection = nemo_view_get_selection (view);
     if (nemo_file_is_symbolic_link (selection->data)) {
         gchar *uri = nemo_file_get_symbolic_link_target_uri (selection->data);
+        gchar *view_uri = nemo_view_get_uri (view);
         GFile *location = g_file_new_for_uri (uri);
+        GFile *parent = g_file_get_parent (location);
+        GFile *current = g_file_new_for_uri (view_uri);
+
+        if (g_file_equal (current, parent)) {
+            nemo_view_scroll_to_file (view, uri);
+            GList *l = NULL;
+            l = g_list_append (l, nemo_file_get_existing (location));
+            nemo_view_set_selection (view, l);
+        } else {
+            nemo_window_slot_go_to (view->details->slot, location, FALSE);
+        }
+
         g_free (uri);
-        nemo_window_slot_go_to (view->details->slot, location, FALSE);
+        g_free (view_uri);
+        g_object_unref (location);
+        g_object_unref (parent);
+        g_object_unref (current);
     }
     nemo_file_list_free (selection);
 }
@@ -8017,7 +8069,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open in New _Tab"), "<control><shift>o",
   /* tooltip */                  N_("Open each selected item in a new tab"),
 				 G_CALLBACK (action_open_new_tab_callback) },
-  /* name, stock id */         { NEMO_ACTION_OPEN_IN_TERMINAL, "terminal",
+  /* name, stock id */         { NEMO_ACTION_OPEN_IN_TERMINAL, "utilities-terminal",
   /* label, accelerator */       N_("Open in Terminal"), "",
   /* tooltip */                  N_("Open terminal in the selected folder"),
 				 G_CALLBACK (action_open_in_terminal_callback) },
@@ -9575,7 +9627,7 @@ real_update_menus (NemoView *view)
 
     if (selection_contains_recent) {
         label = _("Remo_ve from Recent");
-        tip = _("Remove each selected item from the recenly used list");
+        tip = _("Remove each selected item from the recently used list");
     } else {
         label = _("_Delete");
         tip = _("Delete each selected item, without moving to the Trash");

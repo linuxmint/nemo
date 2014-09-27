@@ -128,7 +128,22 @@ NemoMenuItem
 
 </para>
 
+<!-- ##### ARG NemoMenuItem:separator ##### -->
+<para>
+
+</para>
+
 <!-- ##### ARG NemoMenuItem:tip ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoMenuItem:widget-a ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG NemoMenuItem:widget-b ##### -->
 <para>
 
 </para>

@@ -969,7 +969,6 @@ nemo_window_pane_constructed (GObject *obj)
 
 	/* connect to the search bar signals */
 	pane->search_bar = nemo_toolbar_get_search_bar (NEMO_TOOLBAR (pane->tool_bar));
-	gtk_size_group_add_widget (header_size_group, pane->search_bar);
 
 	g_signal_connect_object (pane->search_bar, "activate",
 				 G_CALLBACK (search_bar_activate_callback), pane, 0);

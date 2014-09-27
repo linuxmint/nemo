@@ -91,12 +91,12 @@
       <_description>If set to true, then Nemo browser windows will show a textual input entry for the location toolbar.</_description>
     </key>
     <key type="b" name="show-up-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show Up button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-reload-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show refresh button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
@@ -106,12 +106,12 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-home-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show Home button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-computer-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show Computer button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
@@ -121,14 +121,14 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-new-folder-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show new folder button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
-    <key type="b" name="show-label-search-icon-toolbar">
+    <key type="b" name="show-open-in-terminal-toolbar">
       <default>false</default>
-      <summary>Show the Search button label in nemo toolbar</summary>
-      <description>If set to true, then Nemo browser windows will show the Search label button.</description>
+      <summary>Show open in terminal in the nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key name="confirm-trash" type="b">
       <default>true</default>
