@@ -2930,17 +2930,22 @@ compare_by_display_name (NemoFile *file_1, NemoFile *file_2)
 	name_1 = nemo_file_peek_display_name (file_1);
 	name_2 = nemo_file_peek_display_name (file_2);
 
-	sort_last_1 = name_1[0] == SORT_LAST_CHAR1 || name_1[0] == SORT_LAST_CHAR2;
-	sort_last_2 = name_2[0] == SORT_LAST_CHAR1 || name_2[0] == SORT_LAST_CHAR2;
+	sort_last_1 = name_1 && (name_1[0] == SORT_LAST_CHAR1 || name_1[0] == SORT_LAST_CHAR2);
+	sort_last_2 = name_2 && (name_2[0] == SORT_LAST_CHAR1 || name_2[0] == SORT_LAST_CHAR2);
 
 	if (sort_last_1 && !sort_last_2) {
 		compare = +1;
 	} else if (!sort_last_1 && sort_last_2) {
 		compare = -1;
-	} else {
+	} else if (name_1 == NULL || name_2 == NULL) {
+        if (name_1 && !name_2)
+            compare = +1;
+        else if (!name_1 && name_2)
+            compare = -1;
+    } else {
 		key_1 = nemo_file_peek_display_name_collation_key (file_1);
 		key_2 = nemo_file_peek_display_name_collation_key (file_2);
-		compare = strcmp (key_1, key_2);
+		compare = g_strcmp0 (key_1, key_2);
 	}
 
 	return compare;
