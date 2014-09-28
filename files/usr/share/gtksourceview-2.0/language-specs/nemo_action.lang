@@ -87,6 +87,7 @@
       <keyword>Quote</keyword>
       <keyword>Dependencies</keyword>
       <keyword>Conditions</keyword>
+      <keyword>EscapeSpaces</keyword>
     </context>
 
     <context id="non-standard-key" style-ref="key">

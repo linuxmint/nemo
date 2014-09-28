@@ -4,6 +4,8 @@ clean:
 
 distclean:
 
+check:
+
 install:
 	cd ../data && ./merge_action_strings && cd ../files && find -mindepth 1 -maxdepth 1 -type d -exec cp -R {} $(DESTDIR)/ \;
 
