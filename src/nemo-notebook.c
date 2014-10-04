@@ -49,7 +49,7 @@ static int  nemo_notebook_insert_page	 (GtkNotebook *notebook,
 static void nemo_notebook_remove	 (GtkContainer *container,
 					  GtkWidget *tab_widget);
 
-static const GtkTargetEntry url_drag_types[] = 
+static const GtkTargetEntry url_drag_types[] =
 {
 	{ NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
 	{ NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
@@ -135,8 +135,10 @@ is_in_notebook_window (NemoNotebook *notebook,
 	return nb_at_pointer == notebook;
 }
 
-static gint
-find_tab_num_at_pos (NemoNotebook *notebook, gint abs_x, gint abs_y)
+gint
+nemo_notebook_find_tab_num_at_pos (NemoNotebook *notebook,
+				   gint 	 abs_x,
+				   gint 	 abs_y)
 {
 	GtkPositionType tab_pos;
 	int page_num = 0;
@@ -198,44 +200,15 @@ find_tab_num_at_pos (NemoNotebook *notebook, gint abs_x, gint abs_y)
 	return AFTER_ALL_TABS;
 }
 
-static gboolean
-button_press_cb (NemoNotebook *notebook,
-		 GdkEventButton *event,
-		 gpointer data)
-{
-	int tab_clicked;
-
-	tab_clicked = find_tab_num_at_pos (
-		notebook, event->x_root, event->y_root);
-
-	if (event->type == GDK_BUTTON_PRESS &&
-	    (event->button == 2 || event->button == 3) &&
-		(event->state & gtk_accelerator_get_default_mod_mask ()) == 0) {
-		if (tab_clicked == -1) {
-			/* Consume event so that we don't pop up the context menu for 
-			 * events with event->button == 2 when the mouse if not over a tab 
-			 * label.
-			 */
-			return TRUE;
-		}
-
-		/* Switch to the page the mouse is over, but don't consume the 
-		 * event. */
-		gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), tab_clicked);
-	}
-
-	return FALSE;
-}
-
-gboolean ctrlPressed = FALSE;
+static gboolean ctrl_key_is_down = FALSE;
 
 /* user_data = if this is a callback for a keydown (else a keyup) */
 static gboolean
 control_key_checker_cb(NemoNotebook *notebook, GdkEventKey *event, gpointer user_data)
 {
 	if (event->keyval == GDK_KEY_Control_L || event->keyval == GDK_KEY_Control_R)
-		ctrlPressed = user_data ? TRUE : FALSE;
-	
+		ctrl_key_is_down = user_data ? TRUE : FALSE;
+
 	return FALSE;
 }
 
@@ -245,21 +218,21 @@ notebook_tab_shortcut_cb(NemoNotebook *notebook, GtkDirectionType direction, gpo
 	/* the "focus" event is fired if tab/shift+tab is pressed, so we only
 	 * need to check if ctrl is pressed down here.
 	 */
-	if (ctrlPressed)
+	if (ctrl_key_is_down)
 	{
 		/* change the selected tab. work out if we need to do any wrap-around */
 		int last    = gtk_notebook_get_n_pages (GTK_NOTEBOOK(user_data)) - 1;
 		int current = gtk_notebook_get_current_page (GTK_NOTEBOOK(user_data));
 		int next;
-		
+
 		if (direction)
 			next = (current == 0 ? last : current - 1);
 		else
 			next = (current == last ? 0 : current + 1);
-		
+
 		gtk_notebook_set_current_page (GTK_NOTEBOOK(user_data), next);
 	}
-	
+
 	return TRUE;
 }
 
@@ -270,13 +243,10 @@ nemo_notebook_init (NemoNotebook *notebook)
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
 	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), FALSE);
 
-	g_signal_connect (notebook, "button-press-event",
-			  G_CALLBACK(button_press_cb), NULL);
-
 	/* Make it so that pressing ctrl+tab/ctrl+shift+tab switches the currently
 	 * focused tab.
 	 */
-	/* Gtk internally gobbles up tab/shift+tab keyboard events for widget 
+	/* Gtk internally gobbles up tab/shift+tab keyboard events for widget
 	 * focus switching but we can override this with a little trickery.
 	 */
 	g_signal_connect (notebook, "focus",
@@ -288,7 +258,7 @@ nemo_notebook_init (NemoNotebook *notebook)
 
 	/* Set up drag-and-drop target */
 	/* TODO this would be used for opening a new tab.
-	 * It will only work properly as soon as GtkNotebook 
+	 * It will only work properly as soon as GtkNotebook
 	 * supports to find out whether a particular point
 	 * is on a tab button or not.
 	 */
@@ -310,7 +280,7 @@ nemo_notebook_sync_loading (NemoNotebook *notebook,
 	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
 	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
 
-	tab_label = gtk_notebook_get_tab_label (GTK_NOTEBOOK (notebook), 
+	tab_label = gtk_notebook_get_tab_label (GTK_NOTEBOOK (notebook),
 						GTK_WIDGET (slot));
 	g_return_if_fail (GTK_IS_WIDGET (tab_label));
 
@@ -505,41 +475,38 @@ nemo_notebook_remove (GtkContainer *container,
 }
 
 void
-nemo_notebook_reorder_current_child_relative (NemoNotebook *notebook,
-						  int offset)
+nemo_notebook_reorder_child_relative (NemoNotebook *notebook,
+				      int    	    page_num,
+				      int 	    offset)
 {
 	GtkNotebook *gnotebook;
-	GtkWidget *child;
-	int page;
+	GtkWidget *page;
 
 	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
-
-	if (!nemo_notebook_can_reorder_current_child_relative (notebook, offset)) {
+	g_return_if_fail (page_num != -1);
+	if (!nemo_notebook_can_reorder_child_relative (
+		notebook, page_num, offset)) {
 		return;
 	}
 
 	gnotebook = GTK_NOTEBOOK (notebook);
-
-	page = gtk_notebook_get_current_page (gnotebook);
-	child = gtk_notebook_get_nth_page (gnotebook, page);
-	gtk_notebook_reorder_child (gnotebook, child, page + offset);
+	page = gtk_notebook_get_nth_page (gnotebook, page_num);
+	g_return_if_fail (page != NULL);
+	gtk_notebook_reorder_child (gnotebook, page, page_num + offset);
 }
 
 static gboolean
 nemo_notebook_is_valid_relative_position (NemoNotebook *notebook,
-					      int offset)
+					  int		page_num,
+					  int 		offset)
 {
 	GtkNotebook *gnotebook;
-	int page;
 	int n_pages;
 
 	gnotebook = GTK_NOTEBOOK (notebook);
-
-	page = gtk_notebook_get_current_page (gnotebook);
 	n_pages = gtk_notebook_get_n_pages (gnotebook) - 1;
-	if (page < 0 ||
-	    (offset < 0 && page < -offset) ||
-	    (offset > 0 && page > n_pages - offset)) {
+	if (page_num < 0 || (offset < 0 && page_num < -offset) ||
+	    (offset > 0 && page_num > n_pages - offset)) {
 		return FALSE;
 	}
 
@@ -547,12 +514,27 @@ nemo_notebook_is_valid_relative_position (NemoNotebook *notebook,
 }
 
 gboolean
-nemo_notebook_can_reorder_current_child_relative (NemoNotebook *notebook,
-						      int offset)
+nemo_notebook_can_reorder_child_relative (NemoNotebook *notebook,
+					  int		page_num,
+					  int 		offset)
 {
 	g_return_val_if_fail (NEMO_IS_NOTEBOOK (notebook), FALSE);
 
-	return nemo_notebook_is_valid_relative_position (notebook, offset);
+	return nemo_notebook_is_valid_relative_position (
+		notebook, page_num, offset);
+}
+
+gboolean
+nemo_notebook_can_set_current_page_relative (NemoNotebook *notebook,
+						 int offset)
+{
+	int page_num;
+
+	g_return_val_if_fail (NEMO_IS_NOTEBOOK (notebook), FALSE);
+
+	page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (notebook));
+	return nemo_notebook_is_valid_relative_position (
+		notebook, page_num, offset);
 }
 
 void
