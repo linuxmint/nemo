@@ -1,3 +1,9 @@
+nemo (2.3.0) unstable; urgency=medium
+
+  * 2.3.0
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 27 Jun 2014 14:44:35 +0100
+
 nemo (2.2.3) qiana; urgency=medium
 
   * Merging debian/patches
