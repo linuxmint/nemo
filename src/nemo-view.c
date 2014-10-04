@@ -351,6 +351,7 @@ static gboolean file_list_all_are_folders                      (GList *file_list
 
 static void unschedule_pop_up_location_context_menu (NemoView *view);
 static void disconnect_bookmark_signals (NemoView *view);
+static void run_action_callback (NemoAction *action, gpointer callback_data);
 
 G_DEFINE_TYPE (NemoView, nemo_view, GTK_TYPE_SCROLLED_WINDOW);
 #define parent_class nemo_view_parent_class
@@ -2926,6 +2927,12 @@ nemo_view_init (NemoView *view)
 }
 
 static void
+disconnect_action_activate (NemoAction *action, NemoView *view)
+{
+    g_signal_handlers_disconnect_by_func (action, run_action_callback, view);
+}
+
+static void
 real_unmerge_menus (NemoView *view)
 {
 	GtkUIManager *ui_manager;
@@ -2953,6 +2960,16 @@ real_unmerge_menus (NemoView *view)
 	nemo_ui_unmerge_ui (ui_manager,
 				&view->details->templates_merge_id,
 				&view->details->templates_action_group);
+
+    if (view->details->actions_action_group) {
+        GList *action_list;
+
+        action_list = gtk_action_group_list_actions (view->details->actions_action_group);
+        g_list_foreach (action_list, (GFunc) disconnect_action_activate, view);
+
+        g_list_free (action_list);
+    }
+
     nemo_ui_unmerge_ui (ui_manager,
                 &view->details->actions_merge_id,
                 &view->details->actions_action_group);
