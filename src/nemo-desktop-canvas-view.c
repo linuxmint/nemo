@@ -102,27 +102,29 @@ canvas_container_set_workarea (NemoCanvasContainer *canvas_container,
 			     int                    n_items)
 {
 	int left, right, top, bottom;
+	int screen_width, screen_height;
 	int i;
-	GdkRectangle geometry;
+    int ui_scale;
 
 	left = right = top = bottom = 0;
-	gdk_screen_get_monitor_geometry (screen, gdk_screen_get_primary_monitor (screen), &geometry);
 
-	for (i = 0; i < n_items; i += 4) {
-		GdkRectangle workarea;
+	screen_width  = gdk_screen_get_width (screen);
+	screen_height = gdk_screen_get_height (screen);
 
-		workarea.x = workareas[i];
-		workarea.y = workareas[i + 1];
-		workarea.width = workareas[i + 2];
-		workarea.height = workareas[i + 3];
+    ui_scale = gtk_widget_get_scale_factor (GTK_WIDGET (canvas_container));
 
-		if (!gdk_rectangle_intersect (&geometry, &workarea, &workarea))
-			continue;
+    for (i = 0; i < n_items; i += 4) {
+        int x      = workareas [i] / ui_scale;
+        int y      = workareas [i + 1] / ui_scale;
+        int width  = workareas [i + 2] / ui_scale;
+        int height = workareas [i + 3] / ui_scale;
+        if ((x + width) > screen_width || (y + height) > screen_height)
+            continue;
 
-		left   = MAX (left, workarea.x);
-		right  = MAX (right, (geometry.x + geometry.width) - (workarea.x + workarea.width));
-		top    = MAX (top, workarea.y);
-		bottom = MAX (bottom, (geometry.y + geometry.height) - (workarea.y + workarea.height));
+		left   = MAX (left, x);
+		right  = MAX (right, screen_width - width - x);
+		top    = MAX (top, y);
+		bottom = MAX (bottom, screen_height - height - y);
 	}
 
 	nemo_canvas_container_set_margins (canvas_container,
@@ -135,11 +137,13 @@ net_workarea_changed (NemoDesktopCanvasView *canvas_view,
 {
 	long *nworkareas = NULL;
 	long *workareas = NULL;
-	GdkAtom type_returned;
+    Atom type_returned;
 	int format_returned;
-	int length_returned;
-	NemoCanvasContainer *canvas_container;
+    unsigned long length_returned;
+    unsigned long length_after_returned;
+    NemoCanvasContainer *canvas_container;
 	GdkScreen *screen;
+    GdkDisplay *display = gdk_window_get_display (window);
 
 	g_return_if_fail (NEMO_IS_DESKTOP_CANVAS_VIEW (canvas_view));
 
@@ -150,59 +154,55 @@ net_workarea_changed (NemoDesktopCanvasView *canvas_view,
 	 * elements in the workareas array describing
 	 * x,y,width,height) */
 	gdk_error_trap_push ();
-	if (!gdk_property_get (window,
-			       gdk_atom_intern ("_NET_NUMBER_OF_DESKTOPS", FALSE),
-			       gdk_x11_xatom_to_atom (XA_CARDINAL),
-			       0, 4, FALSE,
-			       &type_returned,
-			       &format_returned,
-			       &length_returned,
-			       (guchar **) &nworkareas)) {
+    if (XGetWindowProperty (gdk_x11_display_get_xdisplay (display),
+                            gdk_x11_window_get_xid (window),
+                            gdk_x11_atom_to_xatom (gdk_atom_intern ("_NET_NUMBER_OF_DESKTOPS", FALSE)),
+                            0, 4, False,
+                            XA_CARDINAL,
+                            &type_returned,
+                            &format_returned,
+                            &length_returned,
+                            &length_after_returned,
+                            (guchar **) &nworkareas
+                            ) != Success) {
 		g_warning("Can not calculate _NET_NUMBER_OF_DESKTOPS");
 	}
+
 	if (gdk_error_trap_pop()
 	    || nworkareas == NULL
-	    || type_returned != gdk_x11_xatom_to_atom (XA_CARDINAL)
+        || type_returned != XA_CARDINAL
 	    || format_returned != 32)
 		g_warning("Can not calculate _NET_NUMBER_OF_DESKTOPS");
-	
-	/* Note : gdk_property_get() is broken (API documents admit
-	 * this).  As a length argument, it expects the number of
-	 * _bytes_ of data you require.  Internally, gdk_property_get
-	 * converts that value to a count of 32 bit (4 byte) elements.
-	 * However, the length returned is in bytes, but is calculated
-	 * via the count of returned elements * sizeof(long).  This
-	 * means on a 64 bit system, the number of bytes you have to
-	 * request does not correspond to the number of bytes you get
-	 * back, and is the reason for the workaround below.
-	 */ 
+
 	gdk_error_trap_push ();
+
 	if (nworkareas == NULL || (*nworkareas < 1) 
-	    || !gdk_property_get (window,
-				  gdk_atom_intern ("_NET_WORKAREA", FALSE),
-				  gdk_x11_xatom_to_atom (XA_CARDINAL),
-				  0, ((*nworkareas) * 4 * 4), FALSE,
-				  &type_returned,
-				  &format_returned,
-				  &length_returned,
-				  (guchar **) &workareas)) {
+        || XGetWindowProperty (gdk_x11_display_get_xdisplay (display),
+                               gdk_x11_window_get_xid (window),
+                               gdk_x11_atom_to_xatom (gdk_atom_intern ("_NET_WORKAREA", FALSE)),
+                               0, ((*nworkareas) * 4 * 4), False,
+                               XA_CARDINAL,
+                               &type_returned,
+                               &format_returned,
+                               &length_returned,
+                               &length_after_returned,
+                               (guchar **) &workareas
+                               ) != Success) {
 		g_warning("Can not get _NET_WORKAREA");
 		workareas = NULL;
 	}
 
-	if (gdk_error_trap_pop ()
-	    || workareas == NULL
-	    || type_returned != gdk_x11_xatom_to_atom (XA_CARDINAL)
-	    || ((*nworkareas) * 4 * sizeof(long)) != length_returned
-	    || format_returned != 32) {
-		g_warning("Can not determine workarea, guessing at layout");
-		nemo_canvas_container_set_margins (canvas_container,
-						     0, 0, 0, 0);
+    if (gdk_error_trap_pop ()
+        || workareas == NULL
+        || type_returned != XA_CARDINAL
+        || ((*nworkareas) * 4 != length_returned)
+        || format_returned != 32) {
+        g_warning("Can not determine workarea, guessing at layout");
+        nemo_canvas_container_set_margins (canvas_container, 0, 0, 0, 0);
 	} else {
 		screen = gdk_window_get_screen (window);
 
-		canvas_container_set_workarea
-			(canvas_container, screen, workareas, length_returned / sizeof (long));
+		canvas_container_set_workarea (canvas_container, screen, workareas, length_returned);
 	}
 
 	if (nworkareas != NULL)
