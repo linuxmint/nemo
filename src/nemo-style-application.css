@@ -1,8 +1,0 @@
-.breadcrumbs-no-displacement {
-    -GtkButton-child-displacement-x: 0;
-    -GtkButton-child-displacement-y: 0;
-}
-
-.nemo-big-arrow {
-    -GtkArrow-arrow-scaling: 1.0;
-}
