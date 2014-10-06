@@ -104,7 +104,4 @@ void nemo_get_x_content_types_for_mount_async (GMount *mount,
 						   GCancellable *cancellable,
 						   gpointer user_data);
 
-GIcon * nemo_special_directory_get_icon (GUserDirectory directory);
-GIcon * nemo_special_directory_get_symbolic_icon (GUserDirectory directory);
-
 #endif /* NEMO_FILE_UTILITIES_H */

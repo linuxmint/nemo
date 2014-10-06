@@ -26,7 +26,6 @@
 #include "nemo-file-utilities.h"
 
 #include "nemo-global-preferences.h"
-#include "nemo-icon-names.h"
 #include "nemo-lib-self-check-functions.h"
 #include "nemo-metadata.h"
 #include "nemo-file.h"
@@ -979,44 +978,6 @@ have_program_in_path (const char *name)
 	result = (path != NULL);
 	g_free (path);
 	return result;
-}
-
-static GIcon *
-special_directory_get_icon (GUserDirectory directory,
-                gboolean symbolic)
-{
-
-#define ICON_CASE(x)                             \
-    case G_USER_DIRECTORY_ ## x:                     \
-        return (symbolic) ? g_themed_icon_new (NEMO_ICON_FOLDER_ ## x) : g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER_ ## x);
-
-    switch (directory) {
-
-        ICON_CASE (DOCUMENTS);
-        ICON_CASE (DOWNLOAD);
-        ICON_CASE (MUSIC);
-        ICON_CASE (PICTURES);
-        ICON_CASE (PUBLIC_SHARE);
-        ICON_CASE (TEMPLATES);
-        ICON_CASE (VIDEOS);
-
-    default:
-        return (symbolic) ? g_themed_icon_new (NEMO_ICON_FOLDER) : g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER);
-    }
-
-#undef ICON_CASE
-}
-
-GIcon *
-nemo_special_directory_get_symbolic_icon (GUserDirectory directory)
-{
-    return special_directory_get_icon (directory, TRUE);
-}
-
-GIcon *
-nemo_special_directory_get_icon (GUserDirectory directory)
-{
-    return special_directory_get_icon (directory, FALSE);
 }
 
 gboolean

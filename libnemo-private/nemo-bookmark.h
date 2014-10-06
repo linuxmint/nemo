@@ -65,24 +65,24 @@ typedef struct NemoBookmarkClass NemoBookmarkClass;
 
 GType                 nemo_bookmark_get_type               (void);
 NemoBookmark *    nemo_bookmark_new                    (GFile *location,
-                                                                const char *custom_name);
+                                                                const char *custom_name,
+                                                                GIcon *icon);
+NemoBookmark *    nemo_bookmark_copy                   (NemoBookmark      *bookmark);
 const char *          nemo_bookmark_get_name               (NemoBookmark      *bookmark);
 GFile *               nemo_bookmark_get_location           (NemoBookmark      *bookmark);
 char *                nemo_bookmark_get_uri                (NemoBookmark      *bookmark);
 GIcon *               nemo_bookmark_get_icon               (NemoBookmark      *bookmark);
-GIcon *               nemo_bookmark_get_symbolic_icon      (NemoBookmark      *bookmark);
-gboolean              nemo_bookmark_get_exists             (NemoBookmark      *bookmark);
-gboolean              nemo_bookmark_get_xdg_type           (NemoBookmark      *bookmark,
-                                GUserDirectory        *directory);
-gboolean              nemo_bookmark_get_is_builtin         (NemoBookmark      *bookmark);
-gboolean          nemo_bookmark_get_has_custom_name    (NemoBookmark      *bookmark);
+gboolean	      nemo_bookmark_get_has_custom_name    (NemoBookmark      *bookmark);		
 void                  nemo_bookmark_set_custom_name        (NemoBookmark      *bookmark,
-                                const char            *new_name);
+								const char            *new_name);		
+gboolean              nemo_bookmark_uri_known_not_to_exist (NemoBookmark      *bookmark);
 int                   nemo_bookmark_compare_with           (gconstpointer          a,
-                                gconstpointer          b);
+								gconstpointer          b);
+int                   nemo_bookmark_compare_uris           (gconstpointer          a,
+								gconstpointer          b);
 
 void                  nemo_bookmark_set_scroll_pos         (NemoBookmark      *bookmark,
-                                const char            *uri);
+								const char            *uri);
 char *                nemo_bookmark_get_scroll_pos         (NemoBookmark      *bookmark);
 
 
