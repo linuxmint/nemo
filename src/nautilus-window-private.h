@@ -82,7 +82,7 @@ struct NautilusWindowDetails
 
 #define NAUTILUS_WINDOW_MIN_WIDTH		200
 #define NAUTILUS_WINDOW_MIN_HEIGHT		200
-#define NAUTILUS_WINDOW_DEFAULT_WIDTH		855
+#define NAUTILUS_WINDOW_DEFAULT_WIDTH		890
 #define NAUTILUS_WINDOW_DEFAULT_HEIGHT		550
 
 typedef void (*NautilusBookmarkFailedCallback) (NautilusWindow *window,
