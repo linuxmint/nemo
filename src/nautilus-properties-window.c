@@ -1288,6 +1288,7 @@ attach_label (GtkGrid *grid,
 
 	if (ellipsize_text) {
 		gtk_widget_set_hexpand (label_field, TRUE);
+		gtk_label_set_max_width_chars (GTK_LABEL (label_field), 24);
 	}
 
 	if (sibling != NULL) {
