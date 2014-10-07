@@ -647,6 +647,14 @@ recent_is_supported (void)
    return FALSE;
 }
 
+static GIcon *
+get_gicon (const gchar *uri)
+{
+    NemoFile *file = nemo_file_get_by_uri (uri);
+
+    return nemo_file_get_gicon (file, NEMO_FILE_ICON_FLAGS_NONE);
+}
+
 static void
 update_places (NemoPlacesSidebar *sidebar)
 {
@@ -703,7 +711,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
     /* home folder */
     mount_uri = nemo_get_home_directory_uri ();
-    icon = g_themed_icon_new (NEMO_ICON_HOME);
+    icon = get_gicon (mount_uri);
     full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
     tooltip = g_strdup_printf (_("Open your personal folder\n%s"), tooltip_info);
     g_free (tooltip_info);
@@ -723,7 +731,7 @@ update_places (NemoPlacesSidebar *sidebar)
         /* desktop */
         desktop_path = nemo_get_desktop_directory ();
         mount_uri = g_filename_to_uri (desktop_path, NULL, NULL);
-        icon = g_themed_icon_new (NEMO_ICON_DESKTOP);
+        icon = get_gicon (mount_uri);
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                                SECTION_COMPUTER,
                                _("Desktop"), icon,

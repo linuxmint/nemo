@@ -454,7 +454,10 @@ GFile *                 nemo_file_get_activation_location           (NemoFile   
 char *                  nemo_file_get_drop_target_uri               (NemoFile                   *file);
 
 GIcon *                 nemo_file_get_gicon                         (NemoFile                   *file,
-									 NemoFileIconFlags           flags);
+                                                                     NemoFileIconFlags           flags);
+GIcon *                 nemo_file_get_emblemed_icon                 (NemoFile                   *file,
+                                                                     NemoFileIconFlags           flags);
+
 NemoIconInfo *      nemo_file_get_icon                          (NemoFile                   *file,
 									 int                             size,
                                      int                             scale,

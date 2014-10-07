@@ -104,7 +104,7 @@ nemo_bookmark_update_icon (NemoBookmark *bookmark)
 					  NEMO_FILE_ATTRIBUTES_FOR_ICON)) {
 		DEBUG ("%s: set new icon", nemo_bookmark_get_name (bookmark));
 
-		new_icon = nemo_file_get_gicon (bookmark->details->file, 0);
+		new_icon = nemo_file_get_emblemed_icon (bookmark->details->file, 0);
 		g_object_set (bookmark,
 			      "icon", new_icon,
 			      NULL);

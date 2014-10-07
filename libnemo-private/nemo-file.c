@@ -4194,6 +4194,45 @@ nemo_file_get_gicon (NemoFile *file,
 	return g_themed_icon_new ("text-x-generic");
 }
 
+GIcon *
+nemo_file_get_emblemed_icon (NemoFile *file,
+                             NemoFileIconFlags flags)
+{
+    GIcon *gicon, *emblem_icon, *emblemed_icon;
+    GEmblem *emblem;
+    GList *emblem_icons, *l;
+    char *emblems_to_ignore[3];
+    int i;
+
+    gicon = nemo_file_get_gicon (file, flags);
+
+    i = 0;
+    emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
+    emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
+    emblems_to_ignore[i++] = NULL;
+
+    emblem = NULL;
+    emblem_icons = nemo_file_get_emblem_icons (file,
+    emblems_to_ignore);
+
+    emblemed_icon = g_emblemed_icon_new (gicon, NULL);
+    g_object_unref (gicon);
+
+    /* pick only the first emblem we can render for the tree view */
+    for (l = emblem_icons; l != NULL; l = l->next) {
+        emblem_icon = l->data;
+        if (nemo_icon_theme_can_render (G_THEMED_ICON (emblem_icon))) {
+            emblem = g_emblem_new (emblem_icon);
+            g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon), emblem);
+            g_object_unref (emblem);
+        }
+    }
+
+    g_list_free_full (emblem_icons, g_object_unref);
+
+    return emblemed_icon;
+}
+
 static GIcon *
 get_default_file_icon (NemoFileIconFlags flags)
 {
