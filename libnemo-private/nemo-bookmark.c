@@ -586,11 +586,11 @@ nemo_bookmark_get_uri (NemoBookmark *bookmark)
 }
 
 void
-nemo_bookmark_set_visited (NemoBookmark *bookmark)
+nemo_bookmark_set_visited (NemoBookmark *bookmark, gboolean visited)
 {
     g_return_if_fail (NEMO_IS_BOOKMARK (bookmark));
 
-    bookmark->details->visited = TRUE;
+    bookmark->details->visited = visited;
 
     nemo_bookmark_connect_file (bookmark);
 }

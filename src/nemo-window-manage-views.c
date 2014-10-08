@@ -117,14 +117,17 @@ set_displayed_location (NemoWindowSlot *slot, GFile *location)
                 g_object_unref (bookmark_location);
         }
         
-        if (recreate) {
-                /* We've changed locations, must recreate bookmark for current location. */
-		g_clear_object (&slot->last_location_bookmark);
+    if (recreate) {
+        /* We've changed locations, must recreate bookmark for current location. */
+        g_clear_object (&slot->last_location_bookmark);
 
-		slot->last_location_bookmark = slot->current_location_bookmark;
-		slot->current_location_bookmark = (location == NULL) ? NULL
-                        : nemo_bookmark_new (location, NULL, NULL);
+        slot->last_location_bookmark = slot->current_location_bookmark;
+        slot->current_location_bookmark = (location == NULL) ?
+                            NULL : nemo_bookmark_new (location, NULL, NULL);
+        if (slot->current_location_bookmark != NULL) {
+            nemo_bookmark_set_visited (slot->current_location_bookmark, TRUE);
         }
+    }
 }
 
 static void
@@ -1364,7 +1367,7 @@ found_mount_cb (GObject *source_object,
 static void
 set_visited (NemoBookmark *bookmark)
 {
-    nemo_bookmark_set_visited (bookmark);
+    nemo_bookmark_set_visited (bookmark, TRUE);
 }
 
 /* Handle the changes for the NemoWindow itself. */
