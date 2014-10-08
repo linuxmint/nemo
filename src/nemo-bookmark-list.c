@@ -450,6 +450,28 @@ nemo_bookmark_list_insert_item (NemoBookmarkList *bookmarks,
 	nemo_bookmark_list_save_file (bookmarks);
 }
 
+GList *
+nemo_bookmark_list_get_for_uri (NemoBookmarkList   *bookmarks,
+                                      const char   *uri)
+{
+    g_return_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks));
+
+    GList *iter;
+    GList *results = NULL;
+    NemoBookmark *bookmark;
+
+    for (iter = bookmarks->list; iter != NULL; iter = iter->next) {
+        bookmark = iter->data;
+        gchar *bm_uri = nemo_bookmark_get_uri (bookmark);
+        if (g_strcmp0 (uri, bm_uri) == 0) {
+            results = g_list_append (results, bookmark);
+        }
+        g_free (bm_uri);
+    }
+
+    return results;
+}
+
 /**
  * nemo_bookmark_list_item_at:
  * 
@@ -709,21 +731,23 @@ nemo_bookmark_list_save_file (NemoBookmarkList *bookmarks)
 	}
 }
 
+static NemoBookmarkList *list = NULL;
+
 /**
- * nemo_bookmark_list_new:
+ * nemo_bookmark_list_get_default:
  * 
- * Create a new bookmark_list, with contents read from disk.
+ * Retrieves the bookmark list singleton, with contents read from disk.
  * 
- * Return value: A pointer to the new widget.
+ * Return value: A pointer to the object
  **/
 NemoBookmarkList *
-nemo_bookmark_list_new (void)
+nemo_bookmark_list_get_default (void)
 {
-	NemoBookmarkList *list;
+    if (list == NULL) {
+        list = NEMO_BOOKMARK_LIST (g_object_new (NEMO_TYPE_BOOKMARK_LIST, NULL));
+    }
 
-	list = NEMO_BOOKMARK_LIST (g_object_new (NEMO_TYPE_BOOKMARK_LIST, NULL));
-
-	return list;
+    return list;
 }
 
 /**
