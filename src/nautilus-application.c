@@ -844,15 +844,17 @@ nautilus_application_handle_file_args (NautilusApplication *self,
 
 	g_variant_dict_lookup (options, G_OPTION_REMAINING, "^a&s", &remaining);
 
-	if (remaining == NULL) {
-		return -1;
-	}
-
 	/* Convert args to GFiles */
 	file_array = g_ptr_array_new_full (0, g_object_unref);
 
-	for (idx = 0; remaining[idx] != NULL; idx++) {
-		file = g_file_new_for_commandline_arg (remaining[idx]);
+	if (remaining) {
+		for (idx = 0; remaining[idx] != NULL; idx++) {
+			file = g_file_new_for_commandline_arg (remaining[idx]);
+			g_ptr_array_add (file_array, file);
+		}
+	} else if (!self->priv->no_default_window &&
+            !g_variant_dict_contains (options, "select")) {
+		file = g_file_new_for_path (g_get_home_dir ());
 		g_ptr_array_add (file_array, file);
 	}
 
