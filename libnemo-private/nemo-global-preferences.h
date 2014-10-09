@@ -115,6 +115,8 @@ typedef enum
 #define NEMO_PREFERENCES_SHOW_BOOKMARKS_IN_TO_MENUS "show-bookmarks-in-to-menus"
 #define NEMO_PREFERENCES_SHOW_PLACES_IN_TO_MENUS "show-places-in-to-menus"
 
+#define NEMO_PREFERENCES_RECENT_ENABLED "remember-recent-files"
+
 enum
 {
 	NEMO_DEFAULT_FOLDER_VIEWER_ICON_VIEW,
@@ -240,6 +242,7 @@ GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
 GSettings *gnome_media_handling_preferences;
 GSettings *gnome_terminal_preferences;
+GSettings *cinnamon_privacy_preferences;
 
 G_END_DECLS
 

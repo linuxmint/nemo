@@ -635,16 +635,19 @@ home_on_different_fs (const gchar *home_uri)
 static gboolean
 recent_is_supported (void)
 {
-   const char * const *supported;
-   int i;
+    if (!g_settings_get_boolean (cinnamon_privacy_preferences, NEMO_PREFERENCES_RECENT_ENABLED))
+        return FALSE;
 
-   supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
-   for (i = 0; supported[i] != NULL; i++) {
+    const char * const *supported;
+    int i;
+
+    supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
+    for (i = 0; supported[i] != NULL; i++) {
        if (strcmp ("recent", supported[i]) == 0) {
            return TRUE;
        }
-   }
-   return FALSE;
+    }
+    return FALSE;
 }
 
 static GIcon *
@@ -4036,6 +4039,10 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 				  G_CALLBACK(desktop_setting_changed_callback),
 				  sidebar);
 
+    g_signal_connect_swapped (cinnamon_privacy_preferences, "changed::" NEMO_PREFERENCES_RECENT_ENABLED,
+                  G_CALLBACK(desktop_setting_changed_callback),
+                  sidebar);
+
 	g_signal_connect_object (nemo_trash_monitor_get (),
 				 "trash_state_changed",
 				 G_CALLBACK (trash_state_changed_cb),
@@ -4086,6 +4093,10 @@ nemo_places_sidebar_dispose (GObject *object)
 	g_signal_handlers_disconnect_by_func (gnome_background_preferences,
 					      desktop_setting_changed_callback,
 					      sidebar);
+
+    g_signal_handlers_disconnect_by_func (cinnamon_privacy_preferences,
+                          desktop_setting_changed_callback,
+                          sidebar);
 
 	if (sidebar->volume_monitor != NULL) {
 		g_signal_handlers_disconnect_by_func (sidebar->volume_monitor, 
