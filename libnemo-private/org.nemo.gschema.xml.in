@@ -484,6 +484,11 @@
       <_summary>Width of the side pane</_summary>
       <_description>The default width of the side pane in new windows.</_description>
     </key>
+    <key name="sidebar-bookmark-breakpoint" type="i">
+      <default>-1</default>
+      <_summary>Index of the bookmark list to jump to the dedicated sidebar bookmark section</_summary>
+      <_description>This is an internal setting for the sidebar that tracks the index in the bookmark list that separates bookmarks in the Computer section from bookmarks in the Bookmark section.</_description>
+    </key>
     <key name="start-with-toolbar" type="b">
       <default>true</default>
       <_summary>Show toolbar in new windows</_summary>
@@ -513,6 +518,11 @@
       <default>true</default>
       <_summary>Expand My Computer section in places sidebar</_summary>
       <_description>View state storage for My Computer in places sidebar</_description>
+    </key>
+    <key name="bookmarks-expanded" type="b">
+      <default>true</default>
+      <_summary>Expand Bookmark section in places sidebar</_summary>
+      <_description>View state storage for Bookmarks in places sidebar</_description>
     </key>
     <key name="devices-expanded" type="b">
       <default>true</default>

@@ -95,6 +95,7 @@ typedef enum
 #define NEMO_WINDOW_STATE_MAXIMIZED				"maximized"
 #define NEMO_WINDOW_STATE_SIDEBAR_WIDTH			"sidebar-width"
 #define NEMO_WINDOW_STATE_MY_COMPUTER_EXPANDED  "my-computer-expanded"
+#define NEMO_WINDOW_STATE_BOOKMARKS_EXPANDED    "bookmarks-expanded"
 #define NEMO_WINDOW_STATE_DEVICES_EXPANDED      "devices-expanded"
 #define NEMO_WINDOW_STATE_NETWORK_EXPANDED      "network-expanded"
 
@@ -116,6 +117,8 @@ typedef enum
 #define NEMO_PREFERENCES_SHOW_PLACES_IN_TO_MENUS "show-places-in-to-menus"
 
 #define NEMO_PREFERENCES_RECENT_ENABLED "remember-recent-files"
+
+#define NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT "sidebar-bookmark-breakpoint"
 
 enum
 {
