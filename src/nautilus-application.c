@@ -852,10 +852,12 @@ nautilus_application_handle_file_args (NautilusApplication *self,
 			file = g_file_new_for_commandline_arg (remaining[idx]);
 			g_ptr_array_add (file_array, file);
 		}
-	} else if (!self->priv->no_default_window &&
-            !g_variant_dict_contains (options, "select")) {
+	} else if (g_variant_dict_contains (options, "new-window")) {
 		file = g_file_new_for_path (g_get_home_dir ());
 		g_ptr_array_add (file_array, file);
+	} else {
+		/* No options or options that glib already manages */
+		return -1;
 	}
 
 	len = file_array->len;
