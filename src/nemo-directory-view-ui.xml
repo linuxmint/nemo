@@ -16,6 +16,7 @@
 		</placeholder>
 		<placeholder name="Open Placeholder">
 			<menuitem name="Open" action="Open"/>
+            <menuitem name="OpenEdit" action="OpenEdit"/>
 			<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
 			<menuitem name="OpenAlternate" action="OpenAlternate"/>
 			<placeholder name="Applications Placeholder">
@@ -152,6 +153,7 @@
 <popup name="selection">
 	<placeholder name="Open Placeholder">
 		<menuitem name="Open" action="Open"/>
+        <menuitem name="OpenEdit" action="OpenEdit"/>
 		<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
 		<menuitem name="OpenAlternate" action="OpenAlternate"/>
 		<separator name="applications separator"/>
