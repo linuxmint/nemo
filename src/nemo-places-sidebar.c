@@ -69,12 +69,22 @@
 #define EJECT_COLUMN_WIDTH 22
 #define DRAG_EXPAND_CATEGORY_DELAY 500
 
+enum
+{
+    PROP_BOOKMARK_BREAKPOINT = 1,
+    NUM_PROPERTIES
+};
+
+static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
+
 typedef struct {
 	GtkScrolledWindow  parent;
 	GtkTreeView        *tree_view;
 	GtkCellRenderer    *eject_icon_cell_renderer;
 	char 	           *uri;
 	GtkTreeStore       *store;
+    GtkTreeModel       *store_filter;
+
 	NemoWindow *window;
 	NemoBookmarkList *bookmarks;
 	GVolumeMonitor *volume_monitor;
@@ -90,6 +100,7 @@ typedef struct {
 	gboolean  drag_data_received;
 	int       drag_data_info;
 	gboolean  drop_occured;
+    gboolean  in_drag;
 
 	GtkWidget *popup_menu;
 	GtkWidget *popup_menu_open_in_new_tab_item;
@@ -121,6 +132,7 @@ typedef struct {
 	guint bookmarks_changed_id;
 
     gboolean my_computer_expanded;
+    gboolean bookmarks_expanded;
     gboolean devices_expanded;
     gboolean network_expanded;
 
@@ -133,6 +145,8 @@ typedef struct {
      * of new bookmarks */
     gchar *top_bookend_uri;
     gchar *bottom_bookend_uri;
+
+    gint bookmark_breakpoint;
 
     guint expand_timeout_source;
 
@@ -190,6 +204,7 @@ typedef enum {
 
 typedef enum {
     SECTION_COMPUTER,
+    SECTION_XDG_BOOKMARKS,
     SECTION_BOOKMARKS,
 	SECTION_DEVICES,
 	SECTION_NETWORK,
@@ -325,31 +340,14 @@ should_show_desktop (void)
 static gboolean
 is_built_in_bookmark (NemoFile *file)
 {
-	gboolean built_in;
-	// gint idx;
-
 	if (nemo_file_is_home (file)) {
 		return TRUE;
 	}
 
-	if (nemo_file_is_desktop_directory (file) && !should_show_desktop ()) {
-		return FALSE;
-	}
+    if (nemo_file_is_desktop_directory (file) && should_show_desktop ())
+        return TRUE;
 
-	built_in = FALSE;
-
-	// for (idx = 0; idx < G_USER_N_DIRECTORIES; idx++) {
-	// 	/* PUBLIC_SHARE and TEMPLATES are not in our built-in list */
-	// 	if (nemo_file_is_user_special_directory (file, idx)) {
-	// 		if (idx != G_USER_DIRECTORY_PUBLIC_SHARE &&  idx != G_USER_DIRECTORY_TEMPLATES) {
-	// 			built_in = TRUE;
-	// 		}
-
-	// 		break;
-	// 	}
-	// }
-
-	return built_in;
+	return FALSE;
 }
 
 static GtkTreeIter
@@ -364,6 +362,7 @@ add_heading (NemoPlacesSidebar *sidebar,
 			    PLACES_SIDEBAR_COLUMN_ROW_TYPE, PLACES_HEADING,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,
 			    PLACES_SIDEBAR_COLUMN_HEADING_TEXT, title,
+                PLACES_SIDEBAR_COLUMN_INDEX, -1,
 			    PLACES_SIDEBAR_COLUMN_EJECT, FALSE,
 			    PLACES_SIDEBAR_COLUMN_NO_EJECT, TRUE,
 			    -1);
@@ -501,6 +500,11 @@ restore_expand_state_foreach (GtkTreeModel *model,
                 gtk_tree_view_expand_to_path (sidebar->tree_view, path);
             else
                 gtk_tree_view_collapse_row (sidebar->tree_view, path);
+        } else if (section_type == SECTION_BOOKMARKS) {
+            if (sidebar->bookmarks_expanded)
+                gtk_tree_view_expand_to_path (sidebar->tree_view, path);
+            else
+                gtk_tree_view_collapse_row (sidebar->tree_view, path);
         } else if (section_type == SECTION_DEVICES) {
             if (sidebar->devices_expanded)
                 gtk_tree_view_expand_to_path (sidebar->tree_view, path);
@@ -530,6 +534,9 @@ static void expand_or_collapse_category (NemoPlacesSidebar *sidebar,
     switch (section_type) {
         case SECTION_COMPUTER:
             sidebar->my_computer_expanded = expand;
+            break;
+        case SECTION_BOOKMARKS:
+            sidebar->bookmarks_expanded = expand;
             break;
         case SECTION_DEVICES:
             sidebar->devices_expanded = expand;
@@ -635,16 +642,27 @@ home_on_different_fs (const gchar *home_uri)
 static gboolean
 recent_is_supported (void)
 {
-   const char * const *supported;
-   int i;
+    if (!g_settings_get_boolean (cinnamon_privacy_preferences, NEMO_PREFERENCES_RECENT_ENABLED))
+        return FALSE;
 
-   supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
-   for (i = 0; supported[i] != NULL; i++) {
+    const char * const *supported;
+    int i;
+
+    supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
+    for (i = 0; supported[i] != NULL; i++) {
        if (strcmp ("recent", supported[i]) == 0) {
            return TRUE;
        }
-   }
-   return FALSE;
+    }
+    return FALSE;
+}
+
+static GIcon *
+get_gicon (const gchar *uri)
+{
+    NemoFile *file = nemo_file_get_by_uri (uri);
+
+    return nemo_file_get_gicon (file, NEMO_FILE_ICON_FLAGS_NONE);
 }
 
 static void
@@ -661,7 +679,7 @@ update_places (NemoPlacesSidebar *sidebar)
 	GDrive *drive;
 	GList *volumes;
 	GVolume *volume;
-	int bookmark_count, index;
+	int bookmark_count, bookmark_index;
 	char *location, *mount_uri, *name, *desktop_path, *last_uri, *identifier;
 	const gchar *bookmark_name;
 	GIcon *icon;
@@ -703,7 +721,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
     /* home folder */
     mount_uri = nemo_get_home_directory_uri ();
-    icon = g_themed_icon_new (NEMO_ICON_HOME);
+    icon = get_gicon (mount_uri);
     full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
     tooltip = g_strdup_printf (_("Open your personal folder\n%s"), tooltip_info);
     g_free (tooltip_info);
@@ -723,7 +741,7 @@ update_places (NemoPlacesSidebar *sidebar)
         /* desktop */
         desktop_path = nemo_get_desktop_directory ();
         mount_uri = g_filename_to_uri (desktop_path, NULL, NULL);
-        icon = g_themed_icon_new (NEMO_ICON_DESKTOP);
+        icon = get_gicon (mount_uri);
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                                SECTION_COMPUTER,
                                _("Desktop"), icon,
@@ -739,39 +757,38 @@ update_places (NemoPlacesSidebar *sidebar)
 
     /* add bookmarks */
     bookmark_count = nemo_bookmark_list_length (sidebar->bookmarks);
-    for (index = 0; index < bookmark_count; ++index) {
-        bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
-        root = nemo_bookmark_get_location (bookmark);
+    /* in certain situations (i.e. removed a bookmark), the breakpoint is smaller than
+     * the number of bookmarks - make sure to fix this before iterating through a list of them
+     */
+    g_object_set (sidebar,
+                  "bookmark-breakpoint", MIN (bookmark_count, sidebar->bookmark_breakpoint),
+                  NULL);
 
-        if (!nemo_bookmark_get_exists (bookmark) && g_file_is_native (root)) {
-            g_object_unref (root);
-            continue;
-        }
+    if (sidebar->bookmark_breakpoint > 0) {
+        for (bookmark_index = 0; bookmark_index < sidebar->bookmark_breakpoint; ++bookmark_index) {
+            bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
 
-        file = nemo_file_get (root);
+            root = nemo_bookmark_get_location (bookmark);
+            file = nemo_file_get (root);
 
-        if (is_built_in_bookmark (file)) {
-            g_object_unref (root);
             nemo_file_unref (file);
-            continue;
+
+            bookmark_name = nemo_bookmark_get_name (bookmark);
+            icon = nemo_bookmark_get_icon (bookmark);
+            mount_uri = nemo_bookmark_get_uri (bookmark);
+            tooltip = g_file_get_parse_name (root);
+
+            cat_iter = add_place (sidebar, PLACES_BOOKMARK,
+                                   SECTION_XDG_BOOKMARKS,
+                                   bookmark_name, icon, mount_uri,
+                                   NULL, NULL, NULL, bookmark_index,
+                                   tooltip, 0, FALSE,
+                                   cat_iter);
+            g_object_unref (root);
+            g_object_unref (icon);
+            g_free (mount_uri);
+            g_free (tooltip);
         }
-        nemo_file_unref (file);
-
-        bookmark_name = nemo_bookmark_get_name (bookmark);
-        icon = nemo_bookmark_get_icon (bookmark);
-        mount_uri = nemo_bookmark_get_uri (bookmark);
-        tooltip = g_file_get_parse_name (root);
-
-        cat_iter = add_place (sidebar, PLACES_BOOKMARK,
-                               SECTION_BOOKMARKS,
-                               bookmark_name, icon, mount_uri,
-                               NULL, NULL, NULL, index,
-                               tooltip, 0, FALSE,
-                               cat_iter);
-        g_object_unref (root);
-        g_object_unref (icon);
-        g_free (mount_uri);
-        g_free (tooltip);
     }
 
     if (recent_is_supported ()) {
@@ -783,6 +800,7 @@ update_places (NemoPlacesSidebar *sidebar)
                               NULL, NULL, NULL, 0,
                               _("Recent files"), 0, FALSE, cat_iter);
         g_object_unref (icon);
+        sidebar->bottom_bookend_uri = g_strdup (mount_uri);
     }
 
     /* file system root */
@@ -801,7 +819,8 @@ update_places (NemoPlacesSidebar *sidebar)
     g_object_unref (icon);
     g_free (tooltip);
 
-    sidebar->bottom_bookend_uri = g_strdup (mount_uri);
+    if (!recent_is_supported())
+        sidebar->bottom_bookend_uri = g_strdup (mount_uri);
 
     mount_uri = "trash:///"; /* No need to strdup */
     icon = nemo_trash_monitor_get_icon ();
@@ -812,6 +831,36 @@ update_places (NemoPlacesSidebar *sidebar)
                            _("Open the trash"), 0, FALSE,
                            cat_iter);
     g_object_unref (icon);
+
+    cat_iter = add_heading (sidebar, SECTION_BOOKMARKS,
+                                    _("Bookmarks"));
+
+    if (bookmark_index < bookmark_count) {
+        for (bookmark_index; bookmark_index < bookmark_count; ++bookmark_index) {
+            bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
+
+            root = nemo_bookmark_get_location (bookmark);
+            file = nemo_file_get (root);
+
+            nemo_file_unref (file);
+
+            bookmark_name = nemo_bookmark_get_name (bookmark);
+            icon = nemo_bookmark_get_icon (bookmark);
+            mount_uri = nemo_bookmark_get_uri (bookmark);
+            tooltip = g_file_get_parse_name (root);
+
+            cat_iter = add_place (sidebar, PLACES_BOOKMARK,
+                                   SECTION_BOOKMARKS,
+                                   bookmark_name, icon, mount_uri,
+                                   NULL, NULL, NULL, bookmark_index,
+                                   tooltip, 0, FALSE,
+                                   cat_iter);
+            g_object_unref (root);
+            g_object_unref (icon);
+            g_free (mount_uri);
+            g_free (tooltip);
+        }
+    }
 
     /* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
     mounts = g_volume_monitor_get_mounts (volume_monitor);
@@ -1272,15 +1321,15 @@ loading_uri_callback (NemoWindow *window,
         /* set selection if any place matches location */
         selection = gtk_tree_view_get_selection (sidebar->tree_view);
         gtk_tree_selection_unselect_all (selection);
-        valid_cat = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (sidebar->store),
+        valid_cat = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (sidebar->store_filter),
                                                     &iter_cat);
 
         while (valid_cat) {
-            valid_child = gtk_tree_model_iter_children (GTK_TREE_MODEL (sidebar->store),
+            valid_child = gtk_tree_model_iter_children (GTK_TREE_MODEL (sidebar->store_filter),
                                                         &iter_child,
                                                         &iter_cat);
             while (valid_child) {
-                gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter_child, 
+                gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter_child, 
                                	    PLACES_SIDEBAR_COLUMN_URI, &uri,
                                     -1);
                 if (uri != NULL) {
@@ -1292,13 +1341,13 @@ loading_uri_callback (NemoWindow *window,
                     }
                     g_free (uri);
                 }
-                valid_child = gtk_tree_model_iter_next (GTK_TREE_MODEL (sidebar->store),
+                valid_child = gtk_tree_model_iter_next (GTK_TREE_MODEL (sidebar->store_filter),
                                                         &iter_child);
             }
             if (found) {
                 break;
             }
-            valid_cat = gtk_tree_model_iter_next (GTK_TREE_MODEL (sidebar->store),
+            valid_cat = gtk_tree_model_iter_next (GTK_TREE_MODEL (sidebar->store_filter),
 							                         &iter_cat);
 		}
     }
@@ -1357,6 +1406,8 @@ cat_is_expanded (NemoPlacesSidebar *sidebar,
     switch (section_type) {
         case SECTION_COMPUTER:
             return sidebar->my_computer_expanded;
+        case SECTION_BOOKMARKS:
+            return sidebar->bookmarks_expanded;
         case SECTION_DEVICES:
             return sidebar->devices_expanded;
         case SECTION_NETWORK:
@@ -1394,9 +1445,11 @@ get_drag_type (NemoPlacesSidebar *sidebar,
         return GTK_TREE_VIEW_DROP_BEFORE;
     } 
 
-    if (section_type == SECTION_BOOKMARKS && zone == POSITION_UPPER) {
+    if ((section_type == SECTION_XDG_BOOKMARKS || section_type == SECTION_BOOKMARKS)
+        && zone == POSITION_UPPER) {
         return GTK_TREE_VIEW_DROP_BEFORE;
-    } else if (section_type == SECTION_BOOKMARKS && zone == POSITION_LOWER) {
+    } else if ((section_type == SECTION_XDG_BOOKMARKS || section_type == SECTION_BOOKMARKS)
+        && zone == POSITION_LOWER) {
         return GTK_TREE_VIEW_DROP_AFTER;
     } else {
         /* or else you want to drag items INTO the existing bookmarks */
@@ -1458,12 +1511,19 @@ compute_drop_position (GtkTreeView *tree_view,
 		*path = NULL;
 		return FALSE;
 	} else if (place_type == PLACES_HEADING) {
-        gtk_tree_path_free (*path);
-        *path = NULL;
-        return FALSE;
+        if (section_type == SECTION_BOOKMARKS &&
+            nemo_bookmark_list_length (sidebar->bookmarks) == sidebar->bookmark_breakpoint) {
+            *pos = GTK_TREE_VIEW_DROP_AFTER;
+            return TRUE;
+        } else {
+            gtk_tree_path_free (*path);
+            *path = NULL;
+            return FALSE;
+        }
     }
 
-	if (section_type != SECTION_BOOKMARKS &&
+	if (section_type != SECTION_XDG_BOOKMARKS &&
+        section_type != SECTION_BOOKMARKS &&
 	    sidebar->drag_data_received &&
 	    sidebar->drag_data_info == GTK_TREE_MODEL_ROW) {
 		/* don't allow dropping bookmarks into non-bookmark areas */
@@ -1474,6 +1534,11 @@ compute_drop_position (GtkTreeView *tree_view,
 		return FALSE;
 	}
 
+    if (g_strcmp0 (drop_target_uri, "recent:///") == 0) {
+        gtk_tree_path_free (*path);
+        *path = NULL;
+        return FALSE;
+    }
 
     GdkRectangle rect;
     GtkTreeViewColumn *col;
@@ -1572,16 +1637,24 @@ drag_motion_callback (GtkTreeView *tree_view,
 	char *uri;
 	gboolean res;
 
+    action = 0;
+
 	if (!sidebar->drag_data_received) {
 		if (!get_drag_data (tree_view, context, time)) {
 			return FALSE;
 		}
 	}
 
+    if (!sidebar->in_drag) {
+        sidebar->in_drag = TRUE;
+        gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (sidebar->store_filter));
+    }
+
 	path = NULL;
 	res = compute_drop_position (tree_view, x, y, &path, &pos, sidebar);
 
 	if (!res) {
+        gtk_tree_view_set_drag_dest_row (tree_view, NULL, GTK_TREE_VIEW_DROP_BEFORE);
 		goto out;
 	}
 
@@ -1599,9 +1672,9 @@ drag_motion_callback (GtkTreeView *tree_view,
 		if (sidebar->drag_list == NULL) {
 			action = 0;
 		} else {
-			gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store),
+			gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store_filter),
 						 &iter, path);
-			gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store),
+			gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter),
 					    &iter,
 					    PLACES_SIDEBAR_COLUMN_URI, &uri,
 					    -1);
@@ -1643,11 +1716,27 @@ drag_leave_callback (GtkTreeView *tree_view,
 	g_signal_stop_emission_by_name (tree_view, "drag-leave");
 }
 
+static void
+increment_breakpoint (NemoPlacesSidebar *sidebar)
+{
+    g_object_set (sidebar,
+                  "bookmark-breakpoint", sidebar->bookmark_breakpoint + 1,
+                  NULL);
+}
+
+static void
+decrement_breakpoint (NemoPlacesSidebar *sidebar)
+{
+    g_object_set (sidebar,
+                  "bookmark-breakpoint", sidebar->bookmark_breakpoint - 1,
+                  NULL);
+}
+
 /* Parses a "text/uri-list" string and inserts its URIs as bookmarks */
 static void
 bookmarks_drop_uris (NemoPlacesSidebar *sidebar,
-		     GtkSelectionData      *selection_data,
-		     int                    position)
+                     GtkSelectionData  *selection_data,
+                                  int   position)
 {
 	NemoBookmark *bookmark;
 	NemoFile *file;
@@ -1673,9 +1762,11 @@ bookmarks_drop_uris (NemoPlacesSidebar *sidebar,
 		location = g_file_new_for_uri (uri);
 		nemo_file_unref (file);
 
-		bookmark = nemo_bookmark_new (location, NULL);
+		bookmark = nemo_bookmark_new (location, NULL, NULL);
 
 		if (!nemo_bookmark_list_contains (sidebar->bookmarks, bookmark)) {
+            if (position < sidebar->bookmark_breakpoint)
+                increment_breakpoint (sidebar);
 			nemo_bookmark_list_insert_item (sidebar->bookmarks, bookmark, position++);
 		}
 
@@ -1739,13 +1830,28 @@ get_selected_iter (NemoPlacesSidebar *sidebar,
 	return gtk_tree_selection_get_selected (selection, NULL, iter);
 }
 
+static void
+update_bookmark_breakpoint (NemoPlacesSidebar *sidebar,
+                                  SectionType  old_type,
+                                  SectionType  new_type)
+{
+    if (old_type != new_type) {
+        if (new_type == SECTION_XDG_BOOKMARKS)
+            increment_breakpoint (sidebar);
+        else if (new_type == SECTION_BOOKMARKS)
+            decrement_breakpoint (sidebar);
+    }
+}
+
 /* Reorders the selected bookmark to the specified position */
 static void
 reorder_bookmarks (NemoPlacesSidebar *sidebar,
-		   int                   new_position)
+                                 int  new_position,
+                         SectionType  new_section_type)
 {
 	GtkTreeIter iter;
 	PlaceType type; 
+    SectionType old_section_type;
 	int old_position;
 
 	/* Get the selected path */
@@ -1753,8 +1859,9 @@ reorder_bookmarks (NemoPlacesSidebar *sidebar,
 		return;
 	}
 
-	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 			    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &type,
+                PLACES_SIDEBAR_COLUMN_SECTION_TYPE, &old_section_type,
 			    PLACES_SIDEBAR_COLUMN_INDEX, &old_position,
 			    -1);
 
@@ -1764,8 +1871,26 @@ reorder_bookmarks (NemoPlacesSidebar *sidebar,
 		return;
 	}
 
+    update_bookmark_breakpoint (sidebar, old_section_type, new_section_type);
+
 	nemo_bookmark_list_move_item (sidebar->bookmarks, old_position,
 					  new_position);
+
+    if (old_position == new_position)
+        update_places (sidebar);
+}
+
+static gboolean
+idle_hide_bookmarks (gpointer user_data)
+{
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (user_data);
+
+    if (sidebar->in_drag) {
+        sidebar->in_drag = FALSE;
+        gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (sidebar->store_filter));
+    }
+
+    return FALSE;
 }
 
 static void
@@ -1820,7 +1945,6 @@ drag_data_received_callback (GtkWidget *widget,
 	if (tree_pos == GTK_TREE_VIEW_DROP_BEFORE ||
 	    tree_pos == GTK_TREE_VIEW_DROP_AFTER) {
 		model = gtk_tree_view_get_model (tree_view);
-
 		if (!gtk_tree_model_get_iter (model, &iter, tree_path)) {
 			goto out;
 		}
@@ -1833,9 +1957,13 @@ drag_data_received_callback (GtkWidget *widget,
 
         if (section_type == SECTION_COMPUTER && tree_pos == GTK_TREE_VIEW_DROP_BEFORE) {
             position = nemo_bookmark_list_length(sidebar->bookmarks);
-        }
-
-        if (tree_pos == GTK_TREE_VIEW_DROP_AFTER && section_type == SECTION_BOOKMARKS) {
+        } else if (section_type == SECTION_BOOKMARKS && position == -1) {
+            /* Check for (temporarily) visible Bookmarks heading, only drop-reactive when
+             * it has no children, so we can assume that (bookmark_breakpoint == bookmark_count)
+             */
+            position = nemo_bookmark_list_length (sidebar->bookmarks);
+        } else if (tree_pos == GTK_TREE_VIEW_DROP_AFTER &&
+                   (section_type == SECTION_XDG_BOOKMARKS || section_type == SECTION_BOOKMARKS)) {
             position++;
         }
 
@@ -1845,7 +1973,7 @@ drag_data_received_callback (GtkWidget *widget,
 			success = TRUE;
 			break;
 		case GTK_TREE_MODEL_ROW:
-			reorder_bookmarks (sidebar, position);
+			reorder_bookmarks (sidebar, position, section_type);
 			success = TRUE;
 			break;
 		default:
@@ -1899,8 +2027,9 @@ out:
 	sidebar->drop_occured = FALSE;
 	free_drag_data (sidebar);
 	gtk_drag_finish (context, success, FALSE, time);
-
 	gtk_tree_path_free (tree_path);
+
+    g_timeout_add (250, (GSourceFunc) idle_hide_bookmarks, sidebar);
 }
 
 static gboolean
@@ -2044,7 +2173,7 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 	}
 
 	if (get_selected_iter (sidebar, &iter)) {
-		gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+		gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 				    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &type,
 				    PLACES_SIDEBAR_COLUMN_DRIVE, &drive,
 				    PLACES_SIDEBAR_COLUMN_VOLUME, &volume,
@@ -2366,7 +2495,7 @@ add_bookmark (NemoPlacesSidebar *sidebar)
 		}
 
 		location = g_file_new_for_uri (uri);
-		bookmark = nemo_bookmark_new (location, NULL);
+		bookmark = nemo_bookmark_new (location, NULL, NULL);
 
 		if (!nemo_bookmark_list_contains (sidebar->bookmarks, bookmark)) {
 			nemo_bookmark_list_append (sidebar->bookmarks, bookmark);
@@ -2397,7 +2526,7 @@ rename_selected_bookmark (NemoPlacesSidebar *sidebar)
 	PlaceType type;
 	
 	if (get_selected_iter (sidebar, &iter)) {
-		gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+		gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 				    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &type,
 				    -1);
 
@@ -2405,7 +2534,7 @@ rename_selected_bookmark (NemoPlacesSidebar *sidebar)
 			return;
 		}
 
-		path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store), &iter);
+		path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store_filter), &iter);
 		column = gtk_tree_view_get_column (GTK_TREE_VIEW (sidebar->tree_view), 2);
 		renderers = gtk_cell_layout_get_cells (GTK_CELL_LAYOUT (column));
 		cell = g_list_nth_data (renderers, 5);
@@ -2436,7 +2565,7 @@ remove_selected_bookmarks (NemoPlacesSidebar *sidebar)
 		return;
 	}
 	
-	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 			    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &type,
 			    -1);
 
@@ -2444,7 +2573,7 @@ remove_selected_bookmarks (NemoPlacesSidebar *sidebar)
 		return;
 	}
 
-	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 			    PLACES_SIDEBAR_COLUMN_INDEX, &index,
 			    -1);
 
@@ -2469,7 +2598,7 @@ mount_shortcut_cb (GtkMenuItem           *item,
 		return;
 	}
 
-	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 			    PLACES_SIDEBAR_COLUMN_VOLUME, &volume,
 			    -1);
 
@@ -2551,7 +2680,7 @@ do_unmount_selection (NemoPlacesSidebar *sidebar)
 		return;
 	}
 
-	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 			    PLACES_SIDEBAR_COLUMN_MOUNT, &mount,
 			    -1);
 
@@ -2686,7 +2815,7 @@ eject_shortcut_cb (GtkMenuItem           *item,
 		return;
 	}
 
-	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 			    PLACES_SIDEBAR_COLUMN_MOUNT, &mount,
 			    PLACES_SIDEBAR_COLUMN_VOLUME, &volume,
 			    PLACES_SIDEBAR_COLUMN_DRIVE, &drive,
@@ -2707,7 +2836,7 @@ eject_or_unmount_bookmark (NemoPlacesSidebar *sidebar,
 	GDrive *drive;
 	gboolean ret;
 
-	model = GTK_TREE_MODEL (sidebar->store);
+	model = GTK_TREE_MODEL (sidebar->store_filter);
 
 	if (!path) {
 		return FALSE;
@@ -2755,7 +2884,7 @@ eject_or_unmount_selection (NemoPlacesSidebar *sidebar)
 		return FALSE;
 	}
 
-	path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store), &iter);
+	path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store_filter), &iter);
 	if (path == NULL) {
 		return FALSE;
 	}
@@ -2802,7 +2931,7 @@ rescan_shortcut_cb (GtkMenuItem           *item,
 		return;
 	}
 
-	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 			    PLACES_SIDEBAR_COLUMN_DRIVE, &drive,
 			    -1);
 
@@ -2847,7 +2976,7 @@ start_shortcut_cb (GtkMenuItem           *item,
 		return;
 	}
 
-	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 			    PLACES_SIDEBAR_COLUMN_DRIVE, &drive,
 			    -1);
 
@@ -2902,7 +3031,7 @@ stop_shortcut_cb (GtkMenuItem           *item,
 		return;
 	}
 
-	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 			    PLACES_SIDEBAR_COLUMN_DRIVE, &drive,
 			    -1);
 
@@ -2927,7 +3056,7 @@ find_prev_or_next_row (NemoPlacesSidebar *sidebar,
 		       GtkTreeIter *iter,
 		       gboolean go_up)
 {
-	GtkTreeModel *model = GTK_TREE_MODEL (sidebar->store);
+	GtkTreeModel *model = GTK_TREE_MODEL (sidebar->store_filter);
 	gboolean res;
 	int place_type;
 
@@ -3018,11 +3147,11 @@ nemo_places_sidebar_focus (GtkWidget *widget,
 
 	res = get_selected_iter (sidebar, &iter);
 	if (!res) {
-		gtk_tree_model_get_iter_first (GTK_TREE_MODEL (sidebar->store), &iter);
-        gtk_tree_model_iter_children (GTK_TREE_MODEL (sidebar->store), &child_iter, &iter);
+		gtk_tree_model_get_iter_first (GTK_TREE_MODEL (sidebar->store_filter), &iter);
+        gtk_tree_model_iter_children (GTK_TREE_MODEL (sidebar->store_filter), &child_iter, &iter);
 		res = find_next_row (sidebar, &child_iter);
 		if (res) {
-			path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store), &iter);
+			path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store_filter), &iter);
 			gtk_tree_view_set_cursor (sidebar->tree_view, path, NULL, FALSE);
 			gtk_tree_path_free (path);
 		}
@@ -3059,7 +3188,7 @@ bookmarks_key_press_event_cb (GtkWidget             *widget,
           flags = NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW;
       }
 
-      open_selected_bookmark (sidebar, GTK_TREE_MODEL (sidebar->store),
+      open_selected_bookmark (sidebar, GTK_TREE_MODEL (sidebar->store_filter),
 			      &selected_iter, flags);
       return TRUE;
   }
@@ -3071,7 +3200,7 @@ bookmarks_key_press_event_cb (GtkWidget             *widget,
 
   if (event->keyval == GDK_KEY_Up) {
       if (find_prev_row (sidebar, &selected_iter)) {
-	      path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store), &selected_iter);
+	      path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store_filter), &selected_iter);
 	      gtk_tree_view_set_cursor (sidebar->tree_view, path, NULL, FALSE);
 	      gtk_tree_path_free (path);
       }
@@ -3080,7 +3209,7 @@ bookmarks_key_press_event_cb (GtkWidget             *widget,
 
   if (event->keyval == GDK_KEY_Down) {
       if (find_next_row (sidebar, &selected_iter)) {
-	      path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store), &selected_iter);
+	      path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store_filter), &selected_iter);
 	      gtk_tree_view_set_cursor (sidebar->tree_view, path, NULL, FALSE);
 	      gtk_tree_path_free (path);
       }
@@ -3112,7 +3241,7 @@ action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
     NemoPlacesSidebar *sidebar = payload->sidebar;
 
     if (get_selected_iter (sidebar, &iter)) {
-        gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+        gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
                     PLACES_SIDEBAR_COLUMN_URI, &uri,
                     -1);
     }
@@ -3389,7 +3518,7 @@ static void
 update_eject_buttons (NemoPlacesSidebar *sidebar,
 		      GtkTreePath 	    *path)
 {
-	GtkTreeIter iter;
+	GtkTreeIter iter, store_iter;
 	gboolean icon_visible, path_same;
 
 	icon_visible = TRUE;
@@ -3409,11 +3538,11 @@ update_eject_buttons (NemoPlacesSidebar *sidebar,
 	}
 
 	if (path) {
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store),
+		gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store_filter),
 					 &iter,
 					 path);
 
-		gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store),
+		gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter),
 				    &iter,
 				    PLACES_SIDEBAR_COLUMN_EJECT, &icon_visible,
 				    -1);
@@ -3424,14 +3553,18 @@ update_eject_buttons (NemoPlacesSidebar *sidebar,
 		 * an eject button area.
 		 */
 		if (sidebar->eject_highlight_path) {
-			gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store),
+			gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store_filter),
 						 &iter,
 						 sidebar->eject_highlight_path);
 
-			gtk_tree_store_set (sidebar->store,
-					    &iter,
-					    PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, FALSE),
-					    -1);
+            gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (sidebar->store_filter),
+                                                              &store_iter,
+                                                              &iter);
+
+            gtk_tree_store_set (sidebar->store,
+                                &store_iter,
+                                PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, FALSE),
+                                -1);
 
 			gtk_tree_path_free (sidebar->eject_highlight_path);
 			sidebar->eject_highlight_path = NULL;
@@ -3446,13 +3579,18 @@ update_eject_buttons (NemoPlacesSidebar *sidebar,
 		/* add highlighting to the selected path, as the icon is visible and
 		 * we're hovering it.
 		 */
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store),
+		gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store_filter),
 					 &iter,
 					 path);
-		gtk_tree_store_set (sidebar->store,
-				    &iter,
-				    PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, TRUE),
-				    -1);
+
+        gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (sidebar->store_filter),
+                                                          &store_iter,
+                                                          &iter);
+
+        gtk_tree_store_set (sidebar->store,
+                            &store_iter,
+                            PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, TRUE),
+                            -1);
 
 		sidebar->eject_highlight_path = gtk_tree_path_copy (path);
 	}
@@ -3561,6 +3699,9 @@ update_expanded_state (GtkTreeView *tree_view,
     if (type == SECTION_COMPUTER) {
         sidebar->my_computer_expanded = expanded;
         g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_MY_COMPUTER_EXPANDED, expanded);
+    } else if (type == SECTION_BOOKMARKS) {
+        sidebar->bookmarks_expanded = expanded;
+        g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_BOOKMARKS_EXPANDED, expanded);
     } else if (type == SECTION_DEVICES) {
         sidebar->devices_expanded = expanded;
         g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_DEVICES_EXPANDED, expanded);
@@ -3617,6 +3758,8 @@ row_activated_cb (GtkTreeView       *tree_view,
     if (place_type == PLACES_HEADING) {
         if (section_type == SECTION_COMPUTER) {
             sidebar->my_computer_expanded = !sidebar->my_computer_expanded;
+        } else if (section_type == SECTION_BOOKMARKS) {
+            sidebar->bookmarks_expanded = !sidebar->bookmarks_expanded;
         } else if (section_type == SECTION_DEVICES) {
             sidebar->devices_expanded = !sidebar->devices_expanded;
         } else if (section_type == SECTION_NETWORK) {
@@ -3640,8 +3783,8 @@ bookmarks_edited (GtkCellRenderer       *cell,
 	g_object_set (cell, "editable", FALSE, NULL);
 	
 	path = gtk_tree_path_new_from_string (path_string);
-	gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store), &iter, path);
-	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+	gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store_filter), &iter, path);
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 		            PLACES_SIDEBAR_COLUMN_INDEX, &index,
 		            -1);
 	gtk_tree_path_free (path);
@@ -3771,48 +3914,31 @@ heading_cell_renderer_func (GtkTreeViewColumn *column,
 	}
 }
 
-static gint
-places_sidebar_sort_func (GtkTreeModel *model,
-			  GtkTreeIter *iter_a,
-			  GtkTreeIter *iter_b,
-			  gpointer user_data)
+static gboolean
+row_visibility_function (GtkTreeModel *model,
+                         GtkTreeIter  *iter,
+                         gpointer      data)
 {
-	SectionType section_type_a, section_type_b;
-	PlaceType place_type_a, place_type_b;
-	gint retval = 0;
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (data);
 
-	gtk_tree_model_get (model, iter_a,
-			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, &section_type_a,
-			    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &place_type_a,
-			    -1);
-	gtk_tree_model_get (model, iter_b,
-			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, &section_type_b,
-			    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &place_type_b,
-			    -1);
+    SectionType section_type;
+    PlaceType type;
 
-	/* fall back to the default order if we're not in the
-	 * XDG part of the computer section.
-	 */
-	if ((section_type_a == section_type_b) &&
-	    (section_type_a == SECTION_COMPUTER) &&
-	    (place_type_a == place_type_b) &&
-	    (place_type_a == PLACES_XDG_DIR)) {
-		gchar *name_a, *name_b;
+    gtk_tree_model_get (model, iter,
+                        PLACES_SIDEBAR_COLUMN_SECTION_TYPE, &section_type,
+                        PLACES_SIDEBAR_COLUMN_ROW_TYPE, &type,
+                        -1);
 
-		gtk_tree_model_get (model, iter_a,
-				    PLACES_SIDEBAR_COLUMN_NAME, &name_a,
-				    -1);
-		gtk_tree_model_get (model, iter_b,
-				    PLACES_SIDEBAR_COLUMN_NAME, &name_b,
-				    -1);
+    if (type != PLACES_HEADING || section_type != SECTION_BOOKMARKS)
+        return TRUE;
 
-		retval = g_utf8_collate (name_a, name_b);
+    if (sidebar->in_drag)
+        return TRUE;
 
-		g_free (name_a);
-		g_free (name_b);
-	}
+    if (nemo_bookmark_list_length (sidebar->bookmarks) > sidebar->bookmark_breakpoint)
+        return TRUE;
 
-	return retval;
+    return FALSE;
 }
 
 static void
@@ -3827,10 +3953,14 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
     sidebar->action_items = NULL;
 
+    sidebar->in_drag = FALSE;
+
 	sidebar->volume_monitor = g_volume_monitor_get ();
 
     sidebar->my_computer_expanded = g_settings_get_boolean (nemo_window_state,
                                                             NEMO_WINDOW_STATE_MY_COMPUTER_EXPANDED);
+    sidebar->bookmarks_expanded = g_settings_get_boolean (nemo_window_state,
+                                                             NEMO_WINDOW_STATE_BOOKMARKS_EXPANDED);
     sidebar->devices_expanded = g_settings_get_boolean (nemo_window_state,
                                                         NEMO_WINDOW_STATE_DEVICES_EXPANDED);
     sidebar->network_expanded = g_settings_get_boolean (nemo_window_state,
@@ -3968,14 +4098,17 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	sidebar->store = nemo_shortcuts_model_new (sidebar);
 	gtk_tree_view_set_tooltip_column (tree_view, PLACES_SIDEBAR_COLUMN_TOOLTIP);
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (sidebar->store),
-					      PLACES_SIDEBAR_COLUMN_NAME,
-					      GTK_SORT_ASCENDING);
-	gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (sidebar->store),
-					 PLACES_SIDEBAR_COLUMN_NAME,
-					 places_sidebar_sort_func,
-					 sidebar, NULL);
+                                          GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID,
+                                          GTK_SORT_ASCENDING);
 
-	gtk_tree_view_set_model (tree_view, GTK_TREE_MODEL (sidebar->store));
+    sidebar->store_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (sidebar->store), NULL);
+
+    gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (sidebar->store_filter),
+                                            (GtkTreeModelFilterVisibleFunc) row_visibility_function,
+                                            sidebar, NULL);
+
+    gtk_tree_view_set_model (tree_view, GTK_TREE_MODEL (sidebar->store_filter));
+
 	gtk_container_add (GTK_CONTAINER (sidebar), GTK_WIDGET (tree_view));
 	gtk_widget_show (GTK_WIDGET (tree_view));
 
@@ -4038,6 +4171,10 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 				  G_CALLBACK(desktop_setting_changed_callback),
 				  sidebar);
 
+    g_signal_connect_swapped (cinnamon_privacy_preferences, "changed::" NEMO_PREFERENCES_RECENT_ENABLED,
+                  G_CALLBACK(desktop_setting_changed_callback),
+                  sidebar);
+
 	g_signal_connect_object (nemo_trash_monitor_get (),
 				 "trash_state_changed",
 				 G_CALLBACK (trash_state_changed_cb),
@@ -4072,7 +4209,6 @@ nemo_places_sidebar_dispose (GObject *object)
 	}
 
 	g_clear_object (&sidebar->store);
-	g_clear_object (&sidebar->bookmarks);
 
     g_clear_object (&sidebar->action_manager);
 
@@ -4089,6 +4225,13 @@ nemo_places_sidebar_dispose (GObject *object)
 	g_signal_handlers_disconnect_by_func (gnome_background_preferences,
 					      desktop_setting_changed_callback,
 					      sidebar);
+
+    g_signal_handlers_disconnect_by_func (cinnamon_privacy_preferences,
+                          desktop_setting_changed_callback,
+                          sidebar);
+
+    g_settings_unbind (sidebar,
+                       g_param_spec_get_name (properties[PROP_BOOKMARK_BREAKPOINT]));
 
 	if (sidebar->volume_monitor != NULL) {
 		g_signal_handlers_disconnect_by_func (sidebar->volume_monitor, 
@@ -4117,15 +4260,68 @@ nemo_places_sidebar_dispose (GObject *object)
 }
 
 static void
+nemo_places_sidebar_get_property (GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec)
+{
+    NemoPlacesSidebar *sidebar;
+
+    sidebar = NEMO_PLACES_SIDEBAR (object);
+
+    switch (prop_id) {
+        case PROP_BOOKMARK_BREAKPOINT:
+            g_value_set_int (value, sidebar->bookmark_breakpoint);
+            break;
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+            break;
+    }
+}
+
+static void
+nemo_places_sidebar_set_property (GObject         *object,
+                                  guint            prop_id,
+                                  const GValue    *value,
+                                  GParamSpec      *pspec)
+{
+    NemoPlacesSidebar *sidebar;
+  
+    sidebar = NEMO_PLACES_SIDEBAR (object);
+
+    switch (prop_id)  {
+        case PROP_BOOKMARK_BREAKPOINT:
+            sidebar->bookmark_breakpoint = g_value_get_int (value);
+            break;
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+            break;
+    }
+}
+
+static void
 nemo_places_sidebar_class_init (NemoPlacesSidebarClass *class)
 {
+    GObjectClass *oclass = G_OBJECT_CLASS (class);
     GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
-	G_OBJECT_CLASS (class)->dispose = nemo_places_sidebar_dispose;
+
+    oclass->dispose = nemo_places_sidebar_dispose;
+    oclass->set_property = nemo_places_sidebar_set_property;
+    oclass->get_property = nemo_places_sidebar_get_property;
 
 	widget_class->style_set = nemo_places_sidebar_style_set;
 	widget_class->focus = nemo_places_sidebar_focus;
 
- 
+    properties[PROP_BOOKMARK_BREAKPOINT] =
+        g_param_spec_int ("bookmark-breakpoint",
+                          "Bookmark breakpoint",
+                          "Where the break in the bookmark list is",
+                          -1,
+                          G_MAXINT,
+                          -1,
+                          G_PARAM_READWRITE);
+
+    g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
 
 static void
@@ -4133,13 +4329,26 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 					   NemoWindow *window)
 {
 	NemoWindowSlot *slot;
+    gint breakpoint;
 
 	sidebar->window = window;
 
 	slot = nemo_window_get_active_slot (window);
 
-	sidebar->bookmarks = nemo_bookmark_list_new ();
+	sidebar->bookmarks = nemo_bookmark_list_get_default ();
 	sidebar->uri = nemo_window_slot_get_current_uri (slot);
+
+    breakpoint = g_settings_get_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT);
+
+    if (breakpoint < 0) {     // Default gsettings value is -1 (which translates to 'not previously set')
+        breakpoint = nemo_bookmark_list_length (sidebar->bookmarks);
+        g_settings_set_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT, breakpoint);
+    }
+
+    sidebar->bookmark_breakpoint = breakpoint;
+    g_settings_bind (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT,
+                     sidebar, g_param_spec_get_name (properties[PROP_BOOKMARK_BREAKPOINT]),
+                     G_SETTINGS_BIND_SET);
 
 	sidebar->bookmarks_changed_id =
 		g_signal_connect_swapped (sidebar->bookmarks, "changed",
@@ -4217,7 +4426,8 @@ nemo_shortcuts_model_row_draggable (GtkTreeDragSource *drag_source,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, &section_type,
 			    -1);
 
-	if (place_type != PLACES_HEADING && section_type == SECTION_BOOKMARKS)
+	if (place_type != PLACES_HEADING &&
+        (section_type == SECTION_XDG_BOOKMARKS || section_type == SECTION_BOOKMARKS))
 		return TRUE;
 
 	return FALSE;

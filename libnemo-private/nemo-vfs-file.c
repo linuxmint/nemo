@@ -345,7 +345,22 @@ vfs_file_get_date (NemoFile *file,
 static char *
 vfs_file_get_where_string (NemoFile *file)
 {
-	return nemo_file_get_parent_uri_for_display (file);
+    GFile *activation_location;
+    NemoFile *location;
+    char *where_string;
+
+    if (!nemo_file_is_in_recent (file)) {
+        location = nemo_file_ref (file);
+    } else {
+        activation_location = nemo_file_get_activation_location (file);
+        location = nemo_file_get (activation_location);
+        g_object_unref (activation_location);
+    }
+
+    where_string = nemo_file_get_parent_uri_for_display (location);
+
+    nemo_file_unref (location);
+    return where_string;
 }
 
 static void

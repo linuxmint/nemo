@@ -1679,6 +1679,69 @@
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkBox" id="vbox100">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">6</property>
+                            <child>
+                              <object class="GtkLabel" id="label100">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Window and Tab Titles&lt;/b&gt;</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkAlignment" id="alignment100">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="left_padding">12</property>
+                                <child>
+                                  <object class="GtkBox" id="vbox101">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">6</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_full_path_in_title_bars_checkbutton">
+                                        <property name="label" translatable="yes">Show the full p_ath in the title bar and tab bars</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkBox" id="vbox12">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -1753,69 +1816,6 @@
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">False</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkBox" id="vbox100">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">6</property>
-                            <child>
-                              <object class="GtkLabel" id="label100">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Window and Tab Titles&lt;/b&gt;</property>
-                                <property name="use_markup">True</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkAlignment" id="alignment100">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="left_padding">12</property>
-                                <child>
-                                  <object class="GtkBox" id="vbox101">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="orientation">vertical</property>
-                                    <property name="spacing">6</property>
-                                    <child>
-                                      <object class="GtkCheckButton" id="show_full_path_in_title_bars_checkbutton">
-                                        <property name="label" translatable="yes">Show the full p_ath in the title bar and tab bars</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="use_underline">True</property>
-                                        <property name="xalign">0</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
                             <property name="position">2</property>
                           </packing>
                         </child>
@@ -2679,13 +2679,14 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                     <property name="orientation">vertical</property>
                                     <property name="spacing">6</property>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_up_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show up icon</property>
+                                      <object class="GtkCheckButton" id="show_previous_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show previous button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0</property>
+                                        <property name="yalign">0.43999999761581421</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -2695,8 +2696,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_reload_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show refresh icon</property>
+                                      <object class="GtkCheckButton" id="show_next_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show next button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2711,8 +2712,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_home_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show home icon</property>
+                                      <object class="GtkCheckButton" id="show_up_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show up button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2727,8 +2728,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_computer_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show computer icon</property>
+                                      <object class="GtkCheckButton" id="show_reload_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show refresh button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2743,8 +2744,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_edit_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show location entry/breadcrumbs toggle button.</property>
+                                      <object class="GtkCheckButton" id="show_computer_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show computer button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2759,8 +2760,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_new_folder_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show new folder icon</property>
+                                      <object class="GtkCheckButton" id="show_home_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show home button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2775,8 +2776,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_open_in_terminal_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show open in terminal icon</property>
+                                      <object class="GtkCheckButton" id="show_edit_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show location entry/breadcrumbs toggle button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2791,8 +2792,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_search_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show search icon</property>
+                                      <object class="GtkCheckButton" id="show_open_in_terminal_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show open in terminal button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2804,6 +2805,86 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
                                         <property name="position">7</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_new_folder_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show new folder button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">8</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_search_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show search button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">9</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_icon_view_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show icon view button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">10</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_list_view_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show list view button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">11</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_compact_view_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show compact view button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">12</property>
                                       </packing>
                                     </child>
                                   </object>

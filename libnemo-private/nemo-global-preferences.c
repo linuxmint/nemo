@@ -114,6 +114,7 @@ nemo_global_preferences_init (void)
 		gnome_background_preferences = g_settings_new("org.cinnamon.desktop.background");
 		gnome_media_handling_preferences = g_settings_new("org.cinnamon.desktop.media-handling");
 		gnome_terminal_preferences = g_settings_new("org.cinnamon.desktop.default-applications.terminal");
+		cinnamon_privacy_preferences = g_settings_new("org.cinnamon.desktop.privacy");
 	} else {
 		/* Gnome and Unity */ 		
 		gnome_lockdown_preferences = g_settings_new("org.gnome.desktop.lockdown");

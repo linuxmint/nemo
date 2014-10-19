@@ -269,7 +269,7 @@ activate_bookmark_in_menu_item (GtkAction *action, gpointer user_data)
 
         holder = (BookmarkHolder *)user_data;
 
-	if (!nemo_bookmark_get_exists (holder->bookmark)) {
+	if (!nemo_bookmark_uri_get_exists (holder->bookmark)) {
 		holder->failed_callback (holder->window, holder->bookmark);
 	} else {
 	        location = nemo_bookmark_get_location (holder->bookmark);
@@ -361,7 +361,7 @@ update_bookmarks (NemoWindow *window)
 	g_assert (window->details->bookmarks_action_group == NULL);
 
 	if (window->details->bookmark_list == NULL) {
-		window->details->bookmark_list = nemo_bookmark_list_new ();
+		window->details->bookmark_list = nemo_bookmark_list_get_default ();
 	}
 
 	bookmarks = window->details->bookmark_list;
@@ -383,7 +383,7 @@ update_bookmarks (NemoWindow *window)
 	for (index = 0; index < bookmark_count; ++index) {
 		bookmark = nemo_bookmark_list_item_at (bookmarks, index);
 
-		if (!nemo_bookmark_get_exists (bookmark)) {
+		if (!nemo_bookmark_uri_get_exists (bookmark)) {
 			continue;
 		}
 

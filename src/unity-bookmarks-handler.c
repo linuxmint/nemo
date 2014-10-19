@@ -102,7 +102,7 @@ unity_bookmarks_handler_update_bookmarks () {
 
 		bookmark = nemo_bookmark_list_item_at (bookmarks, index);
 
-		if (!nemo_bookmark_get_exists (bookmark)) {
+		if (!nemo_bookmark_uri_get_exists (bookmark)) {
 			continue;
 		}
 
@@ -134,7 +134,7 @@ unity_bookmarks_handler_initialize ()
 {
 	unity_quicklist_handler = unity_quicklist_handler_get_singleton ();
 	// get the singleton
-	bookmarks = nemo_bookmark_list_new ();
+	bookmarks = nemo_bookmark_list_get_default ();
 	unity_bookmarks_handler_refresh_bookmarks ();
 
     /* Recreate dynamic part of menu if bookmark list changes */
