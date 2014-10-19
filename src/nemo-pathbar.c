@@ -622,7 +622,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         gint slider_space;
         reached_end = FALSE;
         slider_space = 2 * path_bar->slider_width;
-		largest_width -= slider_space;
+        largest_width -= slider_space;
 
         if (path_bar->first_scrolled_button) {
             first_button = path_bar->first_scrolled_button;
@@ -631,15 +631,15 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         }
 
         need_sliders = TRUE;
-            /* To see how much space we have, and how many buttons we can display.
-            * We start at the first button, count forward until hit the new
-            * button, then count backwards.
-            */
-            /* Count down the path chain towards the end. */
+        /* To see how much space we have, and how many buttons we can display.
+         * We start at the first button, count forward until hit the new
+         * button, then count backwards.
+         */
+        /* Count down the path chain towards the end. */
         gtk_widget_get_preferred_size (BUTTON_DATA (first_button->data)->button,
                                                 NULL, &child_requisition);
-		button_count = 1;
-		width = child_requisition.width;
+        button_count = 1;
+        width = child_requisition.width;
         list = first_button->prev;
         while (list && !reached_end) {
             if (list == path_bar->fake_root) {
@@ -651,18 +651,21 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
             if (width + child_requisition.width + slider_space > allocation->width) {
                 reached_end = TRUE;
                 if (button_count == 1) {
-                    /* Display two Buttons if they fit with shrinked */
+                    /* Display two Buttons if they fit shrinked */
                     gtk_widget_get_preferred_size (child, &child_requisition_min, NULL);
                     width_min = child_requisition_min.width;
                     gtk_widget_get_preferred_size (BUTTON_DATA (first_button->data)->button, &child_requisition_min, NULL);
-                    width_min += child_requisition_min.width;
+                    width_min += child_requisition_min.width;  
                     if (width_min <= largest_width) {
                         button_count++;
                         largest_width /= 2;
-                        if (child_requisition.width < largest_width) {
+                        if (width < largest_width) {
                             /* unused space for second button */
+                            largest_width += largest_width - width;
+                        } else if (child_requisition.width < largest_width) {
+                            /* unused space for first button */
                             largest_width += largest_width - child_requisition.width;
-			            }
+                        }
                     }
                 }
             } else {
@@ -671,8 +674,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
             list = list->prev;
         }
 
-                    /* Finally, we walk up, seeing how many of the previous buttons we can add*/
-
+        /* Finally, we walk up, seeing how many of the previous buttons we can add */
         while (first_button->next && ! reached_end) {
             if (first_button == path_bar->fake_root) {
                 break;
@@ -687,14 +689,17 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
             	    width_min = child_requisition_min.width;
             	    gtk_widget_get_preferred_size (BUTTON_DATA (first_button->data)->button, &child_requisition_min, NULL);
             	    width_min += child_requisition_min.width;           
-            	    if (width <= largest_width) {
-                        /* Display two Buttons in any case */
+            	    if (width_min <= largest_width) {
+                        // Two shinked buttons fit 
                         first_button = first_button->next;
                         button_count++;
                         largest_width /= 2;
                         if (width < largest_width) {
-                           /* unused space for second button */
-                           largest_width += largest_width - width;
+                            /* unused space for second button */
+                            largest_width += largest_width - width;
+                        } else if (child_requisition.width < largest_width) {
+                            /* unused space for first button */
+                            largest_width += largest_width - child_requisition.width;
                         }
             	    }
                 } 
@@ -734,7 +739,8 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         if (direction == GTK_TEXT_DIR_RTL) {
             child_allocation.x -= child_allocation.width;
         }
-            /* Check to see if we've don't have any more space to allocate buttons */
+        
+        /* Check to see if we've don't have any more space to allocate buttons */
         if (need_sliders && direction == GTK_TEXT_DIR_RTL) {
             if (child_allocation.x - path_bar->slider_width < allocation->x) {
                 break;
@@ -2107,3 +2113,4 @@ nemo_path_bar_get_path_for_button (NemoPathBar *path_bar,
 
     return NULL;
 }
+
