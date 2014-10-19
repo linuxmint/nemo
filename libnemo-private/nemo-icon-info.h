@@ -54,13 +54,17 @@ typedef struct _NemoIconInfoClass NemoIconInfoClass;
 
 GType    nemo_icon_info_get_type (void) G_GNUC_CONST;
 
-NemoIconInfo *    nemo_icon_info_new_for_pixbuf               (GdkPixbuf         *pixbuf);
+NemoIconInfo *    nemo_icon_info_new_for_pixbuf               (GdkPixbuf         *pixbuf,
+                                                               int                scale);
 NemoIconInfo *    nemo_icon_info_lookup                       (GIcon             *icon,
-								       int                size);
+                                                               int                size,
+                                                               int                scale);
 NemoIconInfo *    nemo_icon_info_lookup_from_name             (const char        *name,
-								       int                size);
+                                                               int                size,
+                                                               int                scale);
 NemoIconInfo *    nemo_icon_info_lookup_from_path             (const char        *path,
-								       int                size);
+                                                               int                size,
+                                                               int                scale);
 gboolean              nemo_icon_info_is_fallback                  (NemoIconInfo  *icon);
 GdkPixbuf *           nemo_icon_info_get_pixbuf                   (NemoIconInfo  *icon);
 GdkPixbuf *           nemo_icon_info_get_pixbuf_nodefault         (NemoIconInfo  *icon);

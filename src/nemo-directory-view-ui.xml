@@ -177,6 +177,7 @@
 		<menuitem name="Cut" action="Cut"/>
 		<menuitem name="Copy" action="Copy"/>
 		<menuitem name="Paste Files Into" action="Paste Files Into"/>
+        <menuitem name="Duplicate" action="Duplicate"/>
 	</placeholder>
 	<separator name="File actions separator"/>
 	<placeholder name="File Actions">
@@ -207,6 +208,7 @@
 	<menuitem name="OpenInTerminal" action="OpenInTerminal"/>
 	<menuitem name="OpenAsRoot" action="OpenAsRoot"/>
     <menuitem name="FollowSymbolicLink" action="FollowSymbolicLink"/>
+    <menuitem name="OpenContainingFolder" action="OpenContainingFolder"/>
 	<separator name="Dangerous separator"/>
 	<placeholder name="Dangerous File Actions">
 		<menuitem name="Trash" action="Trash"/>

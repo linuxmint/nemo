@@ -4,7 +4,7 @@ Name=Create a new l_auncher here...
 
 Comment=Create a new launcher in this folder
 
-Exec=cinnamon-desktop-editor -mnemo-launcher -d%P
+Exec=cinnamon-desktop-editor -mnemo-launcher -d"%P"
 
 Selection=None
 

@@ -216,6 +216,7 @@ gboolean           nemo_directory_are_all_files_seen       (NemoDirectory       
 gboolean           nemo_directory_is_local                 (NemoDirectory         *directory);
 
 gboolean           nemo_directory_is_in_trash              (NemoDirectory         *directory);
+gboolean           nemo_directory_is_in_recent             (NemoDirectory         *directory);
 
 /* Return false if directory contains anything besides a Nemo metafile.
  * Only valid if directory is monitored. Used by the Trash monitor.

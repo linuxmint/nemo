@@ -579,7 +579,8 @@ nemo_link_get_link_info_given_file_contents (const char  *file_contents,
 	*is_foreign = FALSE;
 	only_show_in = g_key_file_get_string_list (key_file, MAIN_GROUP,
 						   "OnlyShowIn", NULL, NULL);
-	if (session && only_show_in && !string_array_contains (only_show_in, session)) {
+	if (session && only_show_in && !(string_array_contains (only_show_in, session) ||
+                                     string_array_contains (only_show_in, "GNOME"))) {
 		*is_foreign = TRUE;
 	}
 	g_strfreev (only_show_in);

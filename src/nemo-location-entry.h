@@ -63,6 +63,7 @@ void       nemo_location_entry_set_special_text     (NemoLocationEntry *entry,
 							 const char            *special_text);
 void       nemo_location_entry_set_secondary_action (NemoLocationEntry *entry,
 							 NemoLocationEntryAction secondary_action);
+NemoLocationEntryAction nemo_location_entry_get_secondary_action (NemoLocationEntry *entry);
 void       nemo_location_entry_update_current_location (NemoLocationEntry *entry,
 							    const char *path);
 

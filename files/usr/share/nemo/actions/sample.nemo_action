@@ -1,13 +1,16 @@
 [Nemo Action]
 
-###################################
+#############################################
 #### DEBUGGING:
 ####
 #### Run Nemo with the environment
 #### variable NEMO_ACTION_VERBOSE
 #### set to get useful log output
 #### for debugging your actions
-###################################
+####
+#### i.e.    $ nemo --quit
+####         $ NEMO_ACTION_VERBOSE=1 nemo
+#############################################
 
 # Whether this action is active.  For troubleshooting.
 # Optional - if this field is omitted, the action will be active
@@ -45,7 +48,7 @@ Icon-Name=folder
 # What type selection: [s]ingle, [m]ultiple, any, notnone, none (background click), or
 # a number representing how many files must be selected to display.
 # ****** REQUIRED *******
-Selection=s
+Selection=m
 
 # What extensions to display on - this is an array, end with a semicolon
 # Single entry options, ending in a semicolon:
@@ -70,7 +73,7 @@ Extensions=any;
 # Quote type to use (if any) - enclose paths/urls with quotes.  Optional - defaults
 # to no quotes.  
 # Can be:  single, double, backtick
-#Quote=none
+#Quote=double
 
 # Dependencies - program executables required for this action to work.  Nemo will
 # Search in the path for these program(s) and not display the action if any are missing.
@@ -87,3 +90,10 @@ Extensions=any;
 
 #Conditions=desktop;
 
+# Escape Spaces - set to true to escape spaces in filenames and uris ($U, $F, $P, $D)
+#
+# Sometimes this may be preferred to getting raw filenames that must be enclosed in
+# quotes.
+#
+# Optional - by default this is false
+EscapeSpaces=true

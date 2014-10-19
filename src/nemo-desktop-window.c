@@ -162,6 +162,7 @@ nemo_desktop_window_new (GdkScreen *screen)
 
 	width_request = gdk_screen_get_width (screen);
 	height_request = gdk_screen_get_height (screen);
+    GdkRGBA transparent = {0, 0, 0, 0};
 
 	window = g_object_new (NEMO_TYPE_DESKTOP_WINDOW,
 			       "disable-chrome", TRUE,
@@ -179,6 +180,7 @@ nemo_desktop_window_new (GdkScreen *screen)
 	 * Note that nemo_desktop_window_init is too early to do this.
 	 */
 	nemo_desktop_window_update_directory (window);
+    gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
 
 	return window;
 }
@@ -291,7 +293,8 @@ static NemoIconInfo *
 real_get_icon (NemoWindow *window,
 	       NemoWindowSlot *slot)
 {
-	return nemo_icon_info_lookup_from_name (NEMO_ICON_DESKTOP, 48);
+	return nemo_icon_info_lookup_from_name (NEMO_ICON_DESKTOP, 48,
+                                            gtk_widget_get_scale_factor (GTK_WIDGET (window)));
 }
 
 static void

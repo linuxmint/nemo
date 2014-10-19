@@ -110,7 +110,59 @@ struct _NemoApplicationPriv {
 
 	gboolean no_desktop;
 	gchar *geometry;
+
+    NotifyNotification *unmount_notify;
 };
+
+void
+nemo_application_notify_unmount_done (NemoApplication *application,
+                                                  const gchar *message)
+{
+    if (application->priv->unmount_notify) {
+        notify_notification_close (application->priv->unmount_notify, NULL);
+        g_clear_object (&application->priv->unmount_notify);
+    }
+
+    if (message != NULL) {
+        NotifyNotification *unplug;
+        gchar **strings;
+
+        strings = g_strsplit (message, "\n", 0);
+        unplug = notify_notification_new (strings[0], strings[1],
+                                          "media-removable");
+
+        notify_notification_show (unplug, NULL);
+        g_object_unref (unplug);
+        g_strfreev (strings);
+    }
+}
+
+void
+nemo_application_notify_unmount_show (NemoApplication *application,
+                                          const gchar *message)
+{
+    gchar **strings;
+
+    strings = g_strsplit (message, "\n", 0);
+
+    if (!application->priv->unmount_notify) {
+        application->priv->unmount_notify =
+                        notify_notification_new (strings[0], strings[1],
+                                                 "media-removable");
+
+        notify_notification_set_hint (application->priv->unmount_notify,
+                                      "transient", g_variant_new_boolean (TRUE));
+        notify_notification_set_urgency (application->priv->unmount_notify,
+                                         NOTIFY_URGENCY_CRITICAL);
+    } else {
+        notify_notification_update (application->priv->unmount_notify,
+                                    strings[0], strings[1],
+                                    "media-removable");
+    }
+
+    notify_notification_show (application->priv->unmount_notify, NULL);
+    g_strfreev (strings);
+}
 
 static gboolean
 check_required_directories (NemoApplication *application)
@@ -986,25 +1038,6 @@ nemo_application_add_app_css_provider (void)
 
 out_a:
   g_object_unref (provider);
-
-  provider = gtk_css_provider_new ();
-
-  if (!css_provider_load_from_resource (provider, "/org/nemo/nemo-style-application.css", &error))
-    {
-      g_warning ("Failed to load application css file: %s", error->message);
-      if (error->message != NULL)
-        g_error_free (error);
-      goto out_b;
-    }
-
-    screen = gdk_screen_get_default ();
-
-  gtk_style_context_add_provider_for_screen (screen,
-      GTK_STYLE_PROVIDER (provider),
-      GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-out_b:
-  g_object_unref (provider);
 }
 
 static void
@@ -1226,6 +1259,8 @@ nemo_application_quit_mainloop (GApplication *app)
 
 	nemo_icon_info_clear_caches ();
  	nemo_application_save_accel_map (NULL);
+
+    nemo_application_notify_unmount_done (NEMO_APPLICATION (app), NULL);
 
 	G_APPLICATION_CLASS (nemo_application_parent_class)->quit_mainloop (app);
 }

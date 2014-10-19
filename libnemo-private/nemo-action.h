@@ -98,6 +98,7 @@ struct _NemoAction {
     GList *dbus;
     gboolean dbus_satisfied;
     gboolean escape_underscores;
+    gboolean escape_space;
 };
 
 struct _NemoActionClass {

@@ -1,3 +1,57 @@
+nemo (2.3.0) unstable; urgency=medium
+
+  * 2.3.0
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 27 Jun 2014 14:44:35 +0100
+
+nemo (2.2.3) qiana; urgency=medium
+
+  * Merging debian/patches
+  * Show unmount progress notifications when ejecting a drive
+  * Fix #627 - crash when unmounting archives.  This is a temporary fix - pull request coming for permanent fix.
+  * places-sidebar: render eject icon correctly in hidpi
+  * Open-with dialog: Bugfix (Fixes #631) and a few improvements
+  * nemo-links: add desktop file hack for desktop session names.
+  * Fix sample nemo action to work with filenames with spaces.
+  * Really fix the sample action
+  * Clean up orphaned gtk bookmarks at startup.
+  * Revert "Clean up orphaned gtk bookmarks at startup."
+  * nemo-actions: Add flag to escape spaces in file paths.
+  * Use GtkRevealer for search bar.
+  * nemo-file: compare_by_display_name - handle null strings gracefully.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 27 Jun 2014 14:43:10 +0100
+
+nemo (2.2.2) qiana; urgency=medium
+
+  * 2.2.2
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 21 May 2014 12:36:20 +0100
+
+nemo (2.2.1) qiana; urgency=medium
+
+  * 2.2.1
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 01 May 2014 14:35:34 +0100
+
+nemo (2.2.0) qiana; urgency=medium
+
+  * 2.2.0
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 12 Apr 2014 15:50:14 +0100
+
+nemo (2.0.8) petra; urgency=low
+
+  * 2.0.8
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 25 Nov 2013 18:37:31 +0000
+
+nemo (2.0.7) petra; urgency=low
+
+  * 2.0.7
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 23 Nov 2013 13:39:58 +0000
+
 nemo (2.0.6) petra; urgency=low
 
   * 2.0.6

@@ -47,6 +47,8 @@ gboolean eel_istr_has_prefix               (const char    *target,
 
 /* Escape function for '_' character. */
 char *   eel_str_double_underscores        (const char    *str);
+/* Escape function for spaces */
+char *   eel_str_escape_spaces             (const char    *str);
 
 /* Capitalize a string */
 char *   eel_str_capitalize                (const char    *str);
