@@ -411,5 +411,6 @@ void              nemo_view_pop_up_location_context_menu (NemoView    *view,
 							      const char      *location);
 void              nemo_view_grab_focus                 (NemoView      *view);
 void              nemo_view_update_menus               (NemoView      *view);
+void              nemo_view_new_folder                 (NemoView      *view);
 
 #endif /* NEMO_VIEW_H */

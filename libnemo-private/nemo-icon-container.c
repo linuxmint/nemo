@@ -4287,6 +4287,17 @@ button_press_event (GtkWidget *widget,
     	}
 
 	if (clicked_on_icon) {
+		NemoIcon *icon;//current icon which was clicked on
+		EelDRect icon_rect;//stores dimensions of the icon part
+		double eventX;//where did click event happened for x
+		double eventY;//where did click event happened for y
+		/* when icon is in renaming mode and user clicks on the image part of icon renaming should get closed */
+		icon = get_first_selected_icon (container);//this function gets the clicked icon
+		icon_rect = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
+		eel_canvas_window_to_world (EEL_CANVAS (container), event->x, event->y, &eventX, &eventY);
+		if (eventX > icon_rect.x0 && eventX < icon_rect.x1 && eventY > icon_rect.y0 && eventY < icon_rect.y1 && icon == get_icon_being_renamed (container)){
+			end_renaming_mode (container,TRUE);
+		}
 		return TRUE;
 	}
 
@@ -8367,7 +8378,13 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 		start_offset = 0;
 		end_offset = -1;
 	} else {
-		eel_filename_get_rename_region (editable_text, &start_offset, &end_offset);
+		/* if it is a directory it should select all of the text regardless of select_all option */
+		if (nemo_file_is_directory (icon->data)){
+			start_offset = 0;
+			end_offset = -1;
+		}else{
+			eel_filename_get_rename_region (editable_text, &start_offset, &end_offset);
+		}
 	}
 
 	gtk_widget_show (details->rename_widget);
@@ -8501,13 +8518,8 @@ nemo_icon_container_set_is_desktop (NemoIconContainer *container,
 	if (is_desktop) {
 		GtkStyleContext *context;
 
-		context = gtk_widget_get_style_context (GTK_WIDGET (container));		
-		if (gtk_style_context_has_class (context, "nemo-desktop")) {
-			gtk_style_context_add_class (context, "nemo-desktop");
-		}
-		else {
-			gtk_style_context_add_class (context, "nautilus-desktop");
-		}				
+		context = gtk_widget_get_style_context (GTK_WIDGET (container));
+		gtk_style_context_add_class (context, "nemo-desktop");
 	}
 }
 

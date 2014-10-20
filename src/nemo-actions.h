@@ -145,5 +145,6 @@
 
 #define NEMO_ACTION_OPEN_IN_TERMINAL "OpenInTerminal"
 #define NEMO_ACTION_FOLLOW_SYMLINK "FollowSymbolicLink"
+#define NEMO_ACTION_OPEN_CONTAINING_FOLDER "OpenContainingFolder"
 
 #endif /* NEMO_ACTIONS_H */

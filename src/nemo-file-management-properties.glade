@@ -1,6 +1,249 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.16.1 -->
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
+  <requires lib="gtk+" version="3.0"/>
+  <object class="GtkListStore" id="model1">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Icon View</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">List View</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Compact View</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model10">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Always</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Local Files Only</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Never</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model11">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Decimal</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Decimal (long format)</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Binary</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Binary (long format)</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model2">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">By Name</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By Size</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By Type</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By Detailed Type</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By Modification Date</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By Access Date</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">By Trashed Date</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model3">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">33%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">50%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">66%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">100%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">150%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">200%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">400%</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model4">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">33%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">50%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">66%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">100%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">150%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">200%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">400%</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model5">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">33%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">50%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">66%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">100%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">150%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">200%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">400%</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model6">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Always</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Local Files Only</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Never</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model7">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Always</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Local Files Only</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Never</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model8">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">100 KB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">500 KB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">1 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">3 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">5 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">10 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">100 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">1 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">2 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">4 GB</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkDialog" id="file_management_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -1138,7 +1381,6 @@
                                             <property name="hexpand">True</property>
                                             <property name="invisible_char">●</property>
                                             <property name="shadow_type">out</property>
-                                            <property name="invisible_char_set">True</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -1268,8 +1510,6 @@
                                           <object class="GtkComboBoxText" id="captions_0_combobox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="entry_text_column">0</property>
-                                            <property name="id_column">1</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -1304,8 +1544,6 @@
                                           <object class="GtkComboBoxText" id="captions_1_combobox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="entry_text_column">0</property>
-                                            <property name="id_column">1</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -1339,8 +1577,6 @@
                                           <object class="GtkComboBoxText" id="captions_2_combobox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="entry_text_column">0</property>
-                                            <property name="id_column">1</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -1419,8 +1655,6 @@
                                       <object class="GtkComboBoxText" id="date_format_combobox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="entry_text_column">0</property>
-                                        <property name="id_column">1</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -2445,13 +2679,14 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                     <property name="orientation">vertical</property>
                                     <property name="spacing">6</property>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_up_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show up icon</property>
+                                      <object class="GtkCheckButton" id="show_previous_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show previous button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0</property>
+                                        <property name="yalign">0.43999999761581421</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -2461,8 +2696,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_reload_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show refresh icon</property>
+                                      <object class="GtkCheckButton" id="show_next_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show next button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2477,8 +2712,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_edit_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show location entry/breadcrumbs toggle button.</property>
+                                      <object class="GtkCheckButton" id="show_up_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show up button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2493,8 +2728,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_home_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show home icon</property>
+                                      <object class="GtkCheckButton" id="show_reload_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show refresh button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2510,7 +2745,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="show_computer_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show computer icon</property>
+                                        <property name="label" translatable="yes">Show computer button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2525,8 +2760,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_search_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show search icon</property>
+                                      <object class="GtkCheckButton" id="show_home_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show home button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2541,8 +2776,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="show_label_search_icon_toolbar_checkbutton">
-                                        <property name="label" translatable="yes">Show label on search icon (need to restart nemo)</property>
+                                      <object class="GtkCheckButton" id="show_edit_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show location entry/breadcrumbs toggle button</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2554,6 +2789,102 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
                                         <property name="position">6</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_open_in_terminal_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show open in terminal button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">7</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_new_folder_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show new folder button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">8</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_search_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show search button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">9</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_icon_view_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show icon view button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">10</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_list_view_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show list view button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">11</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="show_compact_view_icon_toolbar_checkbutton">
+                                        <property name="label" translatable="yes">Show compact view button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">12</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -2605,248 +2936,6 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
       <action-widget response="-11">helpbutton1</action-widget>
       <action-widget response="-7">closebutton1</action-widget>
     </action-widgets>
-  </object>
-  <object class="GtkListStore" id="model1">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Icon View</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">List View</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Compact View</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model10">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Always</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Local Files Only</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Never</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model11">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Decimal</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Decimal (long format)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Binary</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Binary (long format)</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model2">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">By Name</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">By Size</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">By Type</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">By Detailed Type</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">By Modification Date</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">By Access Date</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">By Trashed Date</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model3">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">33%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">50%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">66%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">100%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">150%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">200%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">400%</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model4">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">33%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">50%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">66%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">100%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">150%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">200%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">400%</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model5">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">33%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">50%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">66%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">100%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">150%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">200%</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">400%</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model6">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Always</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Local Files Only</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Never</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model7">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Always</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Local Files Only</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Never</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model8">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">100 KB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">500 KB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">1 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">3 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">5 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">10 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">100 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">1 GB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">2 GB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">4 GB</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="model9">
     <columns>

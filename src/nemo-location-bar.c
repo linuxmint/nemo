@@ -51,13 +51,7 @@
 #define NEMO_DND_URI_LIST_TYPE 	  "text/uri-list"
 #define NEMO_DND_TEXT_PLAIN_TYPE 	  "text/plain"
 
-static const char untranslated_location_label[] = N_("Location:");
-static const char untranslated_go_to_label[] = N_("Go To:");
-#define LOCATION_LABEL _(untranslated_location_label)
-#define GO_TO_LABEL _(untranslated_go_to_label)
-
 struct NemoLocationBarDetails {
-	GtkLabel *label;
 	NemoEntry *entry;
 	
 	char *last_location;
@@ -257,48 +251,14 @@ drag_data_get_callback (GtkWidget *widget,
 	g_free (entry_text);
 }
 
-/* routine that determines the usize for the label widget as larger
-   then the size of the largest string and then sets it to that so
-   that we don't have localization problems. see
-   gtk_label_finalize_lines in gtklabel.c (line 618) for the code that
-   we are imitating here. */
-
-static void
-style_set_handler (GtkWidget *widget, GtkStyle *previous_style)
-{
-	PangoLayout *layout;
-	int width, width2;
-	int xpad;
-
-	layout = gtk_label_get_layout (GTK_LABEL(widget));
-
-	layout = pango_layout_copy (layout);
-
-	pango_layout_set_text (layout, LOCATION_LABEL, -1);
-	pango_layout_get_pixel_size (layout, &width, NULL);
-	
-	pango_layout_set_text (layout, GO_TO_LABEL, -1);
-	pango_layout_get_pixel_size (layout, &width2, NULL);
-	width = MAX (width, width2);
-
-	gtk_misc_get_padding (GTK_MISC (widget),
-			      &xpad, NULL);
-
-	width += 2 * xpad;
-
-	gtk_widget_set_size_request (widget, width, -1);
-
-	g_object_unref (layout);
-}
-
 static gboolean
-label_button_pressed_callback (GtkWidget             *widget,
+button_pressed_callback (GtkWidget             *widget,
 			       GdkEventButton        *event)
 {
 	NemoWindow *window;
 	NemoWindowSlot *slot;
 	NemoView *view;
-	GtkWidget *label;
+	NemoLocationEntry *entry;
 
 	if (event->button != 3) {
 		return FALSE;
@@ -307,22 +267,65 @@ label_button_pressed_callback (GtkWidget             *widget,
 	window = nemo_location_bar_get_window (gtk_widget_get_parent (widget));
 	slot = nemo_window_get_active_slot (window);
 	view = slot->content_view;
-	label = gtk_bin_get_child (GTK_BIN (widget));
-	/* only pop-up if the URI in the entry matches the displayed location */
-	if (view == NULL ||
-	    strcmp (gtk_label_get_text (GTK_LABEL (label)), LOCATION_LABEL)) {
-		return FALSE;
-	}
+	entry = NEMO_LOCATION_ENTRY (gtk_bin_get_child (GTK_BIN (widget)));
+
+    if (view == NULL ||
+        nemo_location_entry_get_secondary_action (entry) == NEMO_LOCATION_ENTRY_ACTION_GOTO) {
+        return FALSE;
+    }
 
 	nemo_view_pop_up_location_context_menu (view, event, NULL);
 
 	return FALSE;
 }
 
+/**
+ * nemo_location_bar_update_icon
+ *
+ * if the text in the entry matches the uri, set the label to "location", otherwise use "goto"
+ *
+ **/
+static void
+nemo_location_bar_update_icon (NemoLocationBar *bar)
+{
+       const char *current_text;
+       GFile *location;
+       GFile *last_location;
+       
+       if (bar->details->last_location == NULL){
+               nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry), 
+                                                             NEMO_LOCATION_ENTRY_ACTION_GOTO);
+               return;
+       }
+
+       current_text = gtk_entry_get_text (GTK_ENTRY (bar->details->entry));
+       location = g_file_parse_name (current_text);
+       last_location = g_file_parse_name (bar->details->last_location);
+       
+       if (g_file_equal (last_location, location)) {
+               nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry), 
+                                                             NEMO_LOCATION_ENTRY_ACTION_CLEAR);
+       } else {                 
+               nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry), 
+                                                             NEMO_LOCATION_ENTRY_ACTION_GOTO);
+       }
+
+       g_object_unref (location);
+       g_object_unref (last_location);
+}
+
+static void
+editable_changed_callback (GtkEntry *entry,
+                          gpointer user_data)
+{
+       nemo_location_bar_update_icon (NEMO_LOCATION_BAR (user_data));
+}
+
 static void
 editable_activate_callback (GtkEntry *entry,
 			    gpointer user_data)
 {
+    nemo_location_bar_update_icon (NEMO_LOCATION_BAR (user_data));
 	NemoLocationBar *self = user_data;
 	const char *entry_text;
 
@@ -330,51 +333,6 @@ editable_activate_callback (GtkEntry *entry,
 	if (entry_text != NULL && *entry_text != '\0') {
 		emit_location_changed (self);
 	}
-}
-
-/**
- * nemo_location_bar_update_label
- *
- * if the text in the entry matches the uri, set the label to "location", otherwise use "goto"
- *
- **/
-static void
-nemo_location_bar_update_label (NemoLocationBar *bar)
-{
-	const char *current_text;
-	GFile *location;
-	GFile *last_location;
-	
-	if (bar->details->last_location == NULL){
-		gtk_label_set_text (GTK_LABEL (bar->details->label), GO_TO_LABEL);
-		nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry), 
-							      NEMO_LOCATION_ENTRY_ACTION_GOTO);
-		return;
-	}
-
-	current_text = gtk_entry_get_text (GTK_ENTRY (bar->details->entry));
-	location = g_file_parse_name (current_text);
-	last_location = g_file_parse_name (bar->details->last_location);
-	
-	if (g_file_equal (last_location, location)) {
-		gtk_label_set_text (GTK_LABEL (bar->details->label), LOCATION_LABEL);
-		nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry), 
-							      NEMO_LOCATION_ENTRY_ACTION_CLEAR);
-	} else {		 
-		gtk_label_set_text (GTK_LABEL (bar->details->label), GO_TO_LABEL);
-		nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry), 
-							      NEMO_LOCATION_ENTRY_ACTION_GOTO);
-	}
-
-	g_object_unref (location);
-	g_object_unref (last_location);
-}
-
-static void
-editable_changed_callback (GtkEntry *entry,
-			   gpointer user_data)
-{
-	nemo_location_bar_update_label (NEMO_LOCATION_BAR (user_data));
 }
 
 void
@@ -453,7 +411,6 @@ nemo_location_bar_class_init (NemoLocationBarClass *klass)
 static void
 nemo_location_bar_init (NemoLocationBar *bar)
 {
-	GtkWidget *label;
 	GtkWidget *entry;
 	GtkWidget *event_box;
 
@@ -463,34 +420,25 @@ nemo_location_bar_init (NemoLocationBar *bar)
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (bar),
 					GTK_ORIENTATION_HORIZONTAL);
 
-	event_box = gtk_event_box_new ();
-	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box), FALSE);
-	
-	gtk_container_set_border_width (GTK_CONTAINER (event_box), 4);
-	label = gtk_label_new (LOCATION_LABEL);
-	gtk_container_add   (GTK_CONTAINER (event_box), label);
-	gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_RIGHT);
-	gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
-	g_signal_connect (label, "style_set", 
-			  G_CALLBACK (style_set_handler), NULL);
 
-	gtk_box_pack_start (GTK_BOX (bar), event_box, FALSE, TRUE, 4);
+    event_box = gtk_event_box_new ();
+    gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box), FALSE);
+    gtk_container_set_border_width (GTK_CONTAINER (event_box), 4);
 
 	entry = nemo_location_entry_new ();
 	
 	g_signal_connect_object (entry, "activate",
 				 G_CALLBACK (editable_activate_callback), bar, G_CONNECT_AFTER);
-	g_signal_connect_object (entry, "changed",
-				 G_CALLBACK (editable_changed_callback), bar, 0);
+    g_signal_connect_object (entry, "changed",
+                             G_CALLBACK (editable_changed_callback), bar, 0);
 
-	gtk_box_pack_start (GTK_BOX (bar), entry, TRUE, TRUE, 0);
+    gtk_container_add (GTK_CONTAINER (event_box), entry);
 
-	eel_accessibility_set_up_label_widget_relation (label, entry);
-
+	gtk_box_pack_start (GTK_BOX (bar), event_box, TRUE, TRUE, 4);
 
 	/* Label context menu */
 	g_signal_connect (event_box, "button-press-event",
-			  G_CALLBACK (label_button_pressed_callback), NULL);
+			  G_CALLBACK (button_pressed_callback), NULL);
 
 	/* Drag source */
 	gtk_drag_source_set (GTK_WIDGET (event_box), 
@@ -508,7 +456,6 @@ nemo_location_bar_init (NemoLocationBar *bar)
 	g_signal_connect (bar, "drag_data_received",
 			  G_CALLBACK (drag_data_received_callback), NULL);
 
-	bar->details->label = GTK_LABEL (label);
 	bar->details->entry = NEMO_ENTRY (entry);	
 
 	gtk_widget_show_all (GTK_WIDGET (bar));
@@ -555,7 +502,7 @@ nemo_location_bar_set_location (NemoLocationBar *bar,
 		bar->details->last_location = g_strdup (location);
 	}
 
-	nemo_location_bar_update_label (bar);
+    nemo_location_bar_update_icon (bar);
 }
 
 NemoEntry *

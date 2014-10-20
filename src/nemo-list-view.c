@@ -177,6 +177,14 @@ static const char * default_trash_columns_order[] = {
 	"name", "size", "type", "trashed_on", "trash_orig_path", NULL
 };
 
+static const char * default_recent_visible_columns[] = {
+    "name", "size", "type", "date_accessed", NULL
+};
+
+static const char * default_recent_columns_order[] = {
+    "name", "size", "type", "date_accessed", NULL
+};
+
 static const gchar*
 get_default_sort_order (NemoFile *file, gboolean *reversed)
 {
@@ -475,13 +483,13 @@ stop_drag_check (NemoListView *view)
 	view->details->drag_button = 0;
 }
 
-static GdkPixbuf *
-get_drag_pixbuf (NemoListView *view)
+static cairo_surface_t *
+get_drag_surface (NemoListView *view)
 {
 	GtkTreeModel *model;
 	GtkTreePath *path;
 	GtkTreeIter iter;
-	GdkPixbuf *ret;
+	cairo_surface_t *ret;
 	GdkRectangle cell_area;
 	
 	ret = NULL;
@@ -514,14 +522,13 @@ drag_begin_callback (GtkWidget *widget,
 		     NemoListView *view)
 {
 	GList *ref_list;
-	GdkPixbuf *pixbuf;
 
-	pixbuf = get_drag_pixbuf (view);
-	if (pixbuf) {
-		gtk_drag_set_icon_pixbuf (context,
-					  pixbuf,
-					  0, 0);
-		g_object_unref (pixbuf);
+    cairo_surface_t *surface;
+
+    surface = get_drag_surface (view);
+    if (surface) {
+        gtk_drag_set_icon_surface (context, surface);
+        cairo_surface_destroy (surface);
 	} else {
 		gtk_drag_set_icon_default (context);
 	}
@@ -1891,6 +1898,13 @@ focus_in_event_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_
 	return FALSE;
 }
 
+static gint
+get_icon_scale_callback (NemoListModel *model,
+                         NemoListView  *view)
+{
+   return gtk_widget_get_scale_factor (GTK_WIDGET (view->details->tree_view));
+}
+
 static void
 create_and_set_up_tree_view (NemoListView *view)
 {
@@ -1901,12 +1915,15 @@ create_and_set_up_tree_view (NemoListView *view)
 	GList *nemo_columns;
 	GList *l;
 	gchar **default_column_order, **default_visible_columns;
-	
+
 	view->details->tree_view = GTK_TREE_VIEW (gtk_tree_view_new ());
 	view->details->columns = g_hash_table_new_full (g_str_hash, 
 							g_str_equal,
 							(GDestroyNotify) g_free,
 							(GDestroyNotify) g_object_unref);
+
+    gtk_scrollable_set_hscroll_policy (GTK_SCROLLABLE (view->details->tree_view), GTK_SCROLL_NATURAL);
+
 	gtk_tree_view_set_enable_search (view->details->tree_view, TRUE);
 
 	/* Don't handle backspace key. It's used to open the parent folder. */
@@ -1984,6 +2001,9 @@ create_and_set_up_tree_view (NemoListView *view)
 	g_signal_connect_object (view->details->model, "subdirectory_unloaded",
 				 G_CALLBACK (subdirectory_unloaded_callback), view, 0);
 
+    g_signal_connect_object (view->details->model, "get-icon-scale",
+                 G_CALLBACK (get_icon_scale_callback), view, 0);
+
 	gtk_tree_selection_set_mode (gtk_tree_view_get_selection (view->details->tree_view), GTK_SELECTION_MULTIPLE);
 	gtk_tree_view_set_rules_hint (view->details->tree_view, TRUE);
 
@@ -2027,6 +2047,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_title (view->details->file_name_column, _("Name"));
 			gtk_tree_view_column_set_resizable (view->details->file_name_column, TRUE);
             gtk_tree_view_column_set_min_width (view->details->file_name_column, 125);
+            gtk_tree_view_column_set_sizing (view->details->file_name_column, GTK_TREE_VIEW_COLUMN_FIXED);
             gtk_tree_view_column_set_reorderable (view->details->file_name_column, TRUE);
 
             gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
@@ -2034,14 +2055,14 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
 			gtk_tree_view_column_set_attributes (view->details->file_name_column,
 							     cell,
-							     "pixbuf", NEMO_LIST_MODEL_SMALLEST_ICON_COLUMN,
+							     "surface", NEMO_LIST_MODEL_SMALLEST_ICON_COLUMN,
 							     NULL);
 			
 			cell = gtk_cell_renderer_text_new ();
 			view->details->file_name_cell = (GtkCellRendererText *)cell;
             g_object_set (cell,
-                          "ellipsize", PANGO_ELLIPSIZE_END,
                           "xpad", 5,
+                          "ellipsize", PANGO_ELLIPSIZE_END,
                           NULL);
 			g_signal_connect (cell, "edited", G_CALLBACK (cell_renderer_edited), view);
 			g_signal_connect (cell, "editing-canceled", G_CALLBACK (cell_renderer_editing_canceled), view);
@@ -2063,6 +2084,8 @@ create_and_set_up_tree_view (NemoListView *view)
 									   cell,
 									   "text", column_num,
 									   NULL);
+            gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
+            gtk_tree_view_column_set_min_width (column, 10);
             g_object_ref_sink (column);
 			gtk_tree_view_column_set_sort_column_id (column, column_num);
 			g_hash_table_insert (view->details->columns, 
@@ -2072,6 +2095,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_resizable (column, TRUE);
             gtk_tree_view_column_set_visible (column, TRUE);
             gtk_tree_view_column_set_reorderable (column, TRUE);
+            gtk_tree_view_column_set_expand (column, TRUE);
 		}
 		g_free (name);
 		g_free (label);
@@ -2121,6 +2145,10 @@ get_default_visible_columns (NemoListView *list_view)
 
     if (nemo_file_is_in_trash (file)) {
         return g_strdupv ((gchar **) default_trash_visible_columns);
+    }
+
+    if (nemo_file_is_in_recent (file)) {
+        return g_strdupv ((gchar **) default_recent_visible_columns);
     }
 
     directory = nemo_view_get_model (NEMO_VIEW (list_view));
@@ -2181,6 +2209,10 @@ get_default_column_order (NemoListView *list_view)
 
     if (nemo_file_is_in_trash (file)) {
         return g_strdupv ((gchar **) default_trash_columns_order);
+    }
+
+    if (nemo_file_is_in_recent (file)) {
+        return g_strdupv ((gchar **) default_recent_columns_order);
     }
 
     directory = nemo_view_get_model (NEMO_VIEW (list_view));
@@ -3006,7 +3038,7 @@ nemo_list_view_set_zoom_level (NemoListView *view,
 	column = nemo_list_model_get_column_id_from_zoom_level (new_level);
 	gtk_tree_view_column_set_attributes (view->details->file_name_column,
 					     GTK_CELL_RENDERER (view->details->pixbuf_cell),
-					     "pixbuf", column,
+					     "surface", column,
 					     NULL);
 
 	/* Scale text. */
@@ -3612,6 +3644,9 @@ nemo_list_view_supports_uri (const char *uri,
 	if (g_str_has_prefix (uri, "trash:")) {
 		return TRUE;
 	}
+    if (g_str_has_prefix (uri, "recent:")) {
+        return TRUE;
+    }
 	if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
 		return TRUE;
 	}

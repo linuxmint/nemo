@@ -784,7 +784,7 @@ nemo_window_finalize (GObject *object)
 	nemo_window_finalize_menus (window);
 
 	g_clear_object (&window->details->nav_state);
-	g_clear_object (&window->details->bookmark_list);
+
 	g_clear_object (&window->details->ui_manager);
 
 	g_free (window->details->sidebar_id);
@@ -2073,6 +2073,7 @@ real_get_icon (NemoWindow *window,
                NemoWindowSlot *slot)
 {
         return nemo_file_get_icon (slot->viewed_file, 48,
+                       gtk_widget_get_scale_factor (GTK_WIDGET (window)),
 				       NEMO_FILE_ICON_FLAGS_IGNORE_VISITING |
 				       NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON);
 }
@@ -2241,7 +2242,6 @@ nemo_window_split_view_on (NemoWindow *window)
 void
 nemo_window_split_view_off (NemoWindow *window)
 {
-	gboolean show_label_search_icon_toolbar;
 	NemoWindowPane *pane, *active_pane;
 	GList *l, *next;
 
@@ -2261,9 +2261,6 @@ nemo_window_split_view_off (NemoWindow *window)
 					      active_pane->action_group);
 
 	nemo_window_update_show_hide_menu_items (window);
-
-	show_label_search_icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR);
-	window_set_search_action_text (window, show_label_search_icon_toolbar);
 }
 
 gboolean

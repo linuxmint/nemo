@@ -36,12 +36,14 @@
 #include <libnemo-private/nemo-file-attributes.h>
 #include <libnemo-private/nemo-file.h>
 
+#include <cairo-gobject.h>
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <string.h>
 
 enum {
   ROW_LOADED,
+  GET_ICON_SCALE,
   LAST_SIGNAL
 };
 
@@ -65,8 +67,8 @@ struct TreeNode {
 	char *display_name;
 	GIcon *icon;
 	GMount *mount;
-	GdkPixbuf *closed_pixbuf;
-	GdkPixbuf *open_pixbuf;
+	GIcon *closed_icon;
+	GIcon *open_icon;
 
 	FMTreeModelRoot *root;
 
@@ -77,6 +79,7 @@ struct TreeNode {
 	/* part of the node used only for directories */
 	int dummy_child_ref_count;
 	int all_children_ref_count;
+    guint icon_scale;
 	
 	NemoDirectory *directory;
 	guint done_loading_id;
@@ -109,7 +112,7 @@ struct FMTreeModelRoot {
 
 	/* separate hash table for each root node needed */
 	GHashTable *file_to_node_map;
-	
+	guint icon_scale;
 	TreeNode *root_node;
 };
 
@@ -135,6 +138,21 @@ fm_tree_model_get_flags (GtkTreeModel *tree_model)
 	return GTK_TREE_MODEL_ITERS_PERSIST;
 }
 
+static gint
+fm_tree_model_get_icon_scale (GtkTreeModel *model)
+{
+    gint retval = -1;
+
+    g_signal_emit (model, tree_model_signals[GET_ICON_SCALE], 0,
+               &retval);
+
+    if (retval == -1) {
+        retval = gdk_screen_get_monitor_scale_factor (gdk_screen_get_default (), 0);
+    }
+
+    return retval;
+}
+
 static void
 object_unref_if_not_NULL (gpointer object)
 {
@@ -152,6 +170,7 @@ tree_model_root_new (FMTreeModel *model)
 	root = g_new0 (FMTreeModelRoot, 1);
 	root->model = model;
 	root->file_to_node_map = g_hash_table_new (NULL, NULL);
+    root->icon_scale = fm_tree_model_get_icon_scale (GTK_TREE_MODEL (model));
 
 	return root;
 }
@@ -164,6 +183,7 @@ tree_node_new (NemoFile *file, FMTreeModelRoot *root)
 	node = g_new0 (TreeNode, 1);
 	node->file = nemo_file_ref (file);
 	node->root = root;
+    node->icon_scale = root->icon_scale;
 	return node;
 }
 
@@ -209,8 +229,8 @@ tree_node_destroy (FMTreeModel *model, TreeNode *node)
 	g_object_unref (node->file);
 	g_free (node->display_name);
 	object_unref_if_not_NULL (node->icon);
-	object_unref_if_not_NULL (node->closed_pixbuf);
-	object_unref_if_not_NULL (node->open_pixbuf);
+	object_unref_if_not_NULL (node->closed_icon);
+	object_unref_if_not_NULL (node->open_icon);
 
 	g_assert (node->done_loading_id == 0);
 	g_assert (node->files_added_id == 0);
@@ -244,40 +264,20 @@ tree_node_parent (TreeNode *node, TreeNode *parent)
 	parent->first_child = node;
 }
 
-static GdkPixbuf *
-get_menu_icon (GIcon *icon)
-{
-	NemoIconInfo *info;
-	GdkPixbuf *pixbuf;
-	int size;
-
-	size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
-	
-	info = nemo_icon_info_lookup (icon, size);
-	pixbuf = nemo_icon_info_get_pixbuf_nodefault_at_size (info, size);
-	g_object_unref (info);
-	
-	return pixbuf;
-}
-
-static GdkPixbuf *
+static GIcon *
 get_menu_icon_for_file (TreeNode *node,
                         NemoFile *file,
-			NemoFileIconFlags flags)
+                        NemoFileIconFlags flags)
 {
-	NemoIconInfo *info;
 	GIcon *gicon, *emblem_icon, *emblemed_icon;
 	GEmblem *emblem;
-	GdkPixbuf *pixbuf, *retval;
-	gboolean highlight;
 	int size;
-	FMTreeModel *model;
 	GList *emblem_icons, *l;
 	char *emblems_to_ignore[3];
 	int i;
 
 	size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
-	gicon = G_ICON (nemo_file_get_icon_pixbuf (file, size, TRUE, flags));
+	gicon = G_ICON (nemo_file_get_icon_pixbuf (file, size, TRUE, node->icon_scale, flags));
 
 	i = 0;
 	emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
@@ -311,69 +311,49 @@ get_menu_icon_for_file (TreeNode *node,
 
 	g_list_free_full (emblem_icons, g_object_unref);
 
-	info = nemo_icon_info_lookup (gicon, size);
-	retval = nemo_icon_info_get_pixbuf_nodefault_at_size (info, size);
-	model = node->root->model;
-
-	g_object_unref (gicon);
-
-	highlight = (g_list_find_custom (model->details->highlighted_files,
-	                                 file, (GCompareFunc) nemo_file_compare_location) != NULL);
-
-	if (highlight) {
-		pixbuf = eel_create_spotlight_pixbuf (retval);
-
-		if (pixbuf != NULL) {
-			g_object_unref (retval);
-			retval = pixbuf;
-		}
-	}
-
-	g_object_unref (info);
-
-	return retval;
+    return gicon;
 }
 
-static GdkPixbuf *
-tree_node_get_pixbuf (TreeNode *node,
-		      NemoFileIconFlags flags)
+static GIcon *
+tree_node_get_icon (TreeNode *node,
+                    NemoFileIconFlags flags)
 {
 	if (node->parent == NULL) {
-		return get_menu_icon (node->icon);
+		return node->icon;
 	}
 	return get_menu_icon_for_file (node, node->file, flags);
 }
 
 static gboolean
-tree_node_update_pixbuf (TreeNode *node,
-			 GdkPixbuf **pixbuf_storage,
-			 NemoFileIconFlags flags)
+tree_node_update_icon (TreeNode *node,
+                       GIcon **icon_storage,
+                       NemoFileIconFlags flags)
 {
-	GdkPixbuf *pixbuf;
+    GIcon *icon;
 
-	if (*pixbuf_storage == NULL) {
+    if (*icon_storage == NULL) {
 		return FALSE;
 	}
-	pixbuf = tree_node_get_pixbuf (node, flags);
-	if (pixbuf == *pixbuf_storage) {
-		g_object_unref (pixbuf);
+    icon = tree_node_get_icon (node, flags);
+    if (icon == *icon_storage) {
+        g_object_unref (icon);
 		return FALSE;
 	}
-	g_object_unref (*pixbuf_storage);
-	*pixbuf_storage = pixbuf;
+    g_object_unref (*icon_storage);
+	*icon_storage = icon;
 	return TRUE;
 }
 
 static gboolean
-tree_node_update_closed_pixbuf (TreeNode *node)
+tree_node_update_closed_icon (TreeNode *node)
 {
-	return tree_node_update_pixbuf (node, &node->closed_pixbuf, 0);
+	return tree_node_update_icon (node, &node->closed_icon, 0);
 }
 
 static gboolean
-tree_node_update_open_pixbuf (TreeNode *node)
+tree_node_update_open_icon (TreeNode *node)
 {
-	return tree_node_update_pixbuf (node, &node->open_pixbuf, NEMO_FILE_ICON_FLAGS_FOR_OPEN_FOLDER);
+	return tree_node_update_icon (node, &node->open_icon, NEMO_FILE_ICON_FLAGS_FOR_OPEN_FOLDER);
 }
 
 static gboolean
@@ -398,22 +378,22 @@ tree_node_update_display_name (TreeNode *node)
 	return TRUE;
 }
 
-static GdkPixbuf *
-tree_node_get_closed_pixbuf (TreeNode *node)
+static GIcon *
+tree_node_get_closed_icon (TreeNode *node)
 {
-	if (node->closed_pixbuf == NULL) {
-		node->closed_pixbuf = tree_node_get_pixbuf (node, 0);
+	if (node->closed_icon == NULL) {
+		node->closed_icon = tree_node_get_icon (node, 0);
 	}
-	return node->closed_pixbuf;
+	return node->closed_icon;
 }
 
-static GdkPixbuf *
-tree_node_get_open_pixbuf (TreeNode *node)
+static GIcon *
+tree_node_get_open_icon (TreeNode *node)
 {
-	if (node->open_pixbuf == NULL) {
-		node->open_pixbuf = tree_node_get_pixbuf (node, NEMO_FILE_ICON_FLAGS_FOR_OPEN_FOLDER);
+	if (node->open_icon == NULL) {
+		node->open_icon = tree_node_get_icon (node, NEMO_FILE_ICON_FLAGS_FOR_OPEN_FOLDER);
 	}
-	return node->open_pixbuf;
+	return node->open_icon;
 }
 
 static const char *
@@ -670,23 +650,13 @@ report_node_inserted (FMTreeModel *model, TreeNode *node)
 	}
 
     gboolean add_child = FALSE;
-    gboolean has_subdirs;
 
 	if (node->directory != NULL) {
         gint count;
-        if (!model->details->show_only_directories &&
-            nemo_file_get_directory_item_count (node->file, &count, NULL)) {
+        if (nemo_file_get_directory_item_count (node->file, &count, NULL)) {
             add_child = count > 0 || node->parent == NULL;
         } else {
-            if (node->parent == NULL) {
-                add_child = TRUE;
-            } else if (nemo_dir_has_children_now (nemo_file_get_location (node->file),
-                                                  &has_subdirs)) {
-                if (model->details->show_only_directories)
-                    add_child = has_subdirs;
-                else
-                    add_child = FALSE;
-            }
+            add_child = TRUE;
         }
     }
 
@@ -847,8 +817,8 @@ update_node_without_reporting (FMTreeModel *model, TreeNode *node)
 	}
 
 	changed |= tree_node_update_display_name (node);
-	changed |= tree_node_update_closed_pixbuf (node);
-	changed |= tree_node_update_open_pixbuf (node);
+	changed |= tree_node_update_closed_icon (node);
+    changed |= tree_node_update_open_icon (node);
 
 	return changed;
 }
@@ -1136,10 +1106,10 @@ fm_tree_model_get_column_type (GtkTreeModel *model, int index)
 	switch (index) {
 	case FM_TREE_MODEL_DISPLAY_NAME_COLUMN:
 		return G_TYPE_STRING;
-	case FM_TREE_MODEL_CLOSED_PIXBUF_COLUMN:
-		return GDK_TYPE_PIXBUF;
-	case FM_TREE_MODEL_OPEN_PIXBUF_COLUMN:
-		return GDK_TYPE_PIXBUF;
+	case FM_TREE_MODEL_CLOSED_ICON_COLUMN:
+		return G_TYPE_ICON;
+	case FM_TREE_MODEL_OPEN_ICON_COLUMN:
+		return G_TYPE_ICON;
 	case FM_TREE_MODEL_FONT_STYLE_COLUMN:
 		return PANGO_TYPE_STYLE;
 	default:
@@ -1273,13 +1243,13 @@ fm_tree_model_get_value (GtkTreeModel *model, GtkTreeIter *iter, int column, GVa
 			g_value_set_string (value, tree_node_get_display_name (node));
 		}
 		break;
-	case FM_TREE_MODEL_CLOSED_PIXBUF_COLUMN:
-		g_value_init (value, GDK_TYPE_PIXBUF);
-		g_value_set_object (value, node == NULL ? NULL : tree_node_get_closed_pixbuf (node));
-		break;
-	case FM_TREE_MODEL_OPEN_PIXBUF_COLUMN:
-		g_value_init (value, GDK_TYPE_PIXBUF);
-		g_value_set_object (value, node == NULL ? NULL : tree_node_get_open_pixbuf (node));
+	case FM_TREE_MODEL_CLOSED_ICON_COLUMN:
+        g_value_init (value, G_TYPE_ICON);
+        g_value_set_object (value, node == NULL ? NULL : tree_node_get_closed_icon (node));
+        break;
+    case FM_TREE_MODEL_OPEN_ICON_COLUMN:
+        g_value_init (value, G_TYPE_ICON);
+        g_value_set_object (value, node == NULL ? NULL : tree_node_get_open_icon (node));
 		break;
 	case FM_TREE_MODEL_FONT_STYLE_COLUMN:
 		g_value_init (value, PANGO_TYPE_STYLE);
@@ -1909,6 +1879,14 @@ fm_tree_model_class_init (FMTreeModelClass *class)
                       g_cclosure_marshal_VOID__BOXED,
                       G_TYPE_NONE, 1,
                       GTK_TYPE_TREE_ITER);
+
+    tree_model_signals[GET_ICON_SCALE] =
+         g_signal_new ("get-icon-scale",
+                       FM_TYPE_TREE_MODEL,
+                       G_SIGNAL_RUN_FIRST | G_SIGNAL_RUN_LAST,
+                       0, NULL, NULL,
+                       NULL,
+                       G_TYPE_INT, 0);
 }
 
 static void
@@ -1929,5 +1907,4 @@ fm_tree_model_tree_model_init (GtkTreeModelIface *iface)
 	iface->ref_node = fm_tree_model_ref_node;
 	iface->unref_node = fm_tree_model_unref_node;
 }
-
 

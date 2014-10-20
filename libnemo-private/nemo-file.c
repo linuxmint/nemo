@@ -1275,7 +1275,7 @@ nemo_file_unmount (NemoFile                   *file,
 		data->file = nemo_file_ref (file);
 		data->callback = callback;
 		data->callback_data = callback_data;
-		nemo_file_operations_unmount_mount_full (NULL, file->details->mount, FALSE, TRUE, unmount_done, data);
+		nemo_file_operations_unmount_mount_full (NULL, file->details->mount, NULL, FALSE, TRUE, unmount_done, data);
 	} else if (callback) {
 		callback (file, NULL, NULL, callback_data);
 	}
@@ -1309,7 +1309,7 @@ nemo_file_eject (NemoFile                   *file,
 		data->file = nemo_file_ref (file);
 		data->callback = callback;
 		data->callback_data = callback_data;
-		nemo_file_operations_unmount_mount_full (NULL, file->details->mount, TRUE, TRUE, unmount_done, data);
+		nemo_file_operations_unmount_mount_full (NULL, file->details->mount, NULL, TRUE, TRUE, unmount_done, data);
 	} else if (callback) {
 		callback (file, NULL, NULL, callback_data);
 	}
@@ -2889,17 +2889,22 @@ compare_by_display_name (NemoFile *file_1, NemoFile *file_2)
 	name_1 = nemo_file_peek_display_name (file_1);
 	name_2 = nemo_file_peek_display_name (file_2);
 
-	sort_last_1 = name_1[0] == SORT_LAST_CHAR1 || name_1[0] == SORT_LAST_CHAR2;
-	sort_last_2 = name_2[0] == SORT_LAST_CHAR1 || name_2[0] == SORT_LAST_CHAR2;
+	sort_last_1 = name_1 && (name_1[0] == SORT_LAST_CHAR1 || name_1[0] == SORT_LAST_CHAR2);
+	sort_last_2 = name_2 && (name_2[0] == SORT_LAST_CHAR1 || name_2[0] == SORT_LAST_CHAR2);
 
 	if (sort_last_1 && !sort_last_2) {
 		compare = +1;
 	} else if (!sort_last_1 && sort_last_2) {
 		compare = -1;
-	} else {
+	} else if (name_1 == NULL || name_2 == NULL) {
+        if (name_1 && !name_2)
+            compare = +1;
+        else if (!name_1 && name_2)
+            compare = -1;
+    } else {
 		key_1 = nemo_file_peek_display_name_collation_key (file_1);
 		key_2 = nemo_file_peek_display_name_collation_key (file_2);
-		compare = strcmp (key_1, key_2);
+		compare = g_strcmp0 (key_1, key_2);
 	}
 
 	return compare;
@@ -4189,6 +4194,45 @@ nemo_file_get_gicon (NemoFile *file,
 	return g_themed_icon_new ("text-x-generic");
 }
 
+GIcon *
+nemo_file_get_emblemed_icon (NemoFile *file,
+                             NemoFileIconFlags flags)
+{
+    GIcon *gicon, *emblem_icon, *emblemed_icon;
+    GEmblem *emblem;
+    GList *emblem_icons, *l;
+    char *emblems_to_ignore[3];
+    int i;
+
+    gicon = nemo_file_get_gicon (file, flags);
+
+    i = 0;
+    emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
+    emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
+    emblems_to_ignore[i++] = NULL;
+
+    emblem = NULL;
+    emblem_icons = nemo_file_get_emblem_icons (file,
+    emblems_to_ignore);
+
+    emblemed_icon = g_emblemed_icon_new (gicon, NULL);
+    g_object_unref (gicon);
+
+    /* pick only the first emblem we can render for the tree view */
+    for (l = emblem_icons; l != NULL; l = l->next) {
+        emblem_icon = l->data;
+        if (nemo_icon_theme_can_render (G_THEMED_ICON (emblem_icon))) {
+            emblem = g_emblem_new (emblem_icon);
+            g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon), emblem);
+            g_object_unref (emblem);
+        }
+    }
+
+    g_list_free_full (emblem_icons, g_object_unref);
+
+    return emblemed_icon;
+}
+
 static GIcon *
 get_default_file_icon (NemoFileIconFlags flags)
 {
@@ -4209,6 +4253,7 @@ get_default_file_icon (NemoFileIconFlags flags)
 NemoIconInfo *
 nemo_file_get_icon (NemoFile *file,
 			int size,
+            int scale,
 			NemoFileIconFlags flags)
 {
 	NemoIconInfo *icon;
@@ -4221,8 +4266,8 @@ nemo_file_get_icon (NemoFile *file,
 	}
 	
 	gicon = get_custom_icon (file);
-	if (gicon) {
-		icon = nemo_icon_info_lookup (gicon, size);
+	if (gicon != NULL) {
+		icon = nemo_icon_info_lookup (gicon, size, scale);
 		g_object_unref (gicon);
 		return icon;
 	}
@@ -4231,9 +4276,9 @@ nemo_file_get_icon (NemoFile *file,
 	       flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE);
 	
 	if (flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
-		modified_size = size;
+		modified_size = size * scale;
 	} else {
-		modified_size = size * cached_thumbnail_size / NEMO_ICON_SIZE_STANDARD;
+		modified_size = size * scale * cached_thumbnail_size / NEMO_ICON_SIZE_STANDARD;
 		DEBUG ("Modifying icon size to %d, as our cached thumbnail size is %d",
 		       modified_size, cached_thumbnail_size);
 	}
@@ -4242,7 +4287,7 @@ nemo_file_get_icon (NemoFile *file,
 	    nemo_file_should_show_thumbnail (file)) {
 		if (file->details->thumbnail) {
 			int w, h, s;
-			double scale;
+			double thumb_scale;
 
 			raw_pixbuf = g_object_ref (file->details->thumbnail);
 
@@ -4252,23 +4297,23 @@ nemo_file_get_icon (NemoFile *file,
 			s = MAX (w, h);			
 			/* Don't scale up small thumbnails in the standard view */
 			if (s <= cached_thumbnail_size) {
-				scale = (double)size / NEMO_ICON_SIZE_STANDARD;
+				thumb_scale = (double)size / NEMO_ICON_SIZE_STANDARD;
 			}
 			else {
-				scale = (double)modified_size / s;
+				thumb_scale = (double)modified_size / s;
 			}
 			/* Make sure that icons don't get smaller than NEMO_ICON_SIZE_SMALLEST */
-			if (s*scale <= NEMO_ICON_SIZE_SMALLEST) {
-				scale = (double) NEMO_ICON_SIZE_SMALLEST / s;
+			if (s*thumb_scale <= NEMO_ICON_SIZE_SMALLEST) {
+				thumb_scale = (double) NEMO_ICON_SIZE_SMALLEST / s;
 			}
 
 			scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
-								 MAX (w * scale, 1),
-								 MAX (h * scale, 1),
+								 MAX (w * thumb_scale, 1),
+								 MAX (h * thumb_scale, 1),
 								 GDK_INTERP_BILINEAR);
 
 			/* We don't want frames around small icons */
-			if (!gdk_pixbuf_get_has_alpha(raw_pixbuf) || s >= 128) {
+			if (!gdk_pixbuf_get_has_alpha(raw_pixbuf) || s >= 128 * scale) {
 				nemo_thumbnail_frame_image (&scaled_pixbuf);
 			}
 			g_object_unref (raw_pixbuf);
@@ -4277,7 +4322,7 @@ nemo_file_get_icon (NemoFile *file,
 			   image instead. We don't want to compare to exactly 100%,
 			   since the zoom level 150% gives thumbnails at 144, which is
 			   ok to scale up from 128. */
-			if (modified_size > 128*1.25 &&
+			if (modified_size > 128 * 1.25 * scale &&
 			    !file->details->thumbnail_wants_original &&
 			    nemo_can_thumbnail_internally (file)) {
 				/* Invalidate if we resize upward */
@@ -4286,9 +4331,9 @@ nemo_file_get_icon (NemoFile *file,
 			}
 
 			DEBUG ("Returning thumbnailed image, at size %d %d",
-			       (int) (w * scale), (int) (h * scale));
+			       (int) (w * thumb_scale), (int) (h * thumb_scale));
 			
-			icon = nemo_icon_info_new_for_pixbuf (scaled_pixbuf);
+			icon = nemo_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
 			g_object_unref (scaled_pixbuf);
 			return icon;
 		} else if (file->details->thumbnail_path == NULL &&
@@ -4309,15 +4354,15 @@ nemo_file_get_icon (NemoFile *file,
 		gicon = nemo_file_get_gicon (file, flags);
 	
 	if (gicon) {
-		icon = nemo_icon_info_lookup (gicon, size);
+		icon = nemo_icon_info_lookup (gicon, size, scale);
 		if (nemo_icon_info_is_fallback (icon)) {
 			g_object_unref (icon);
-			icon = nemo_icon_info_lookup (get_default_file_icon (flags), size);
+			icon = nemo_icon_info_lookup (get_default_file_icon (flags), size, scale);
 		}
 		g_object_unref (gicon);
 		return icon;
 	} else {
-		return nemo_icon_info_lookup (get_default_file_icon (flags), size);
+		return nemo_icon_info_lookup (get_default_file_icon (flags), size, scale);
 	}
 }
 
@@ -4325,12 +4370,13 @@ GdkPixbuf *
 nemo_file_get_icon_pixbuf (NemoFile *file,
 			       int size,
 			       gboolean force_size,
+                   int scale,
 			       NemoFileIconFlags flags)
 {
 	NemoIconInfo *info;
 	GdkPixbuf *pixbuf;
 
-	info = nemo_file_get_icon (file, size, flags);
+	info = nemo_file_get_icon (file, size, scale, flags);
 	if (force_size) {
 		pixbuf =  nemo_icon_info_get_pixbuf_at_size (info, size);
 	} else {
@@ -7060,6 +7106,23 @@ nemo_file_is_in_trash (NemoFile *file)
 	return nemo_directory_is_in_trash (file->details->directory);
 }
 
+/**
+ * nemo_file_is_in_recent
+ * 
+ * Check if this file is a file in Recent.
+ * @file: NemoFile representing the file in question.
+ * 
+ * Returns: TRUE if @file is in Recent.
+ * 
+ **/
+gboolean
+nemo_file_is_in_recent (NemoFile *file)
+{
+   g_assert (NEMO_IS_FILE (file));
+
+   return nemo_directory_is_in_recent (file->details->directory);
+}
+
 GError *
 nemo_file_get_file_info_error (NemoFile *file)
 {
@@ -7823,17 +7886,21 @@ nemo_file_list_from_uris (GList *uri_list)
 
 static gboolean
 get_attributes_for_default_sort_type (NemoFile *file,
+                      gboolean *is_recent,
 				      gboolean *is_download,
 				      gboolean *is_trash)
 {
-	gboolean is_download_dir, is_desktop_dir, is_trash_dir, retval;
+	gboolean is_recent_dir, is_download_dir, is_desktop_dir, is_trash_dir, retval;
 
+    *is_recent = FALSE;
 	*is_download = FALSE;
 	*is_trash = FALSE;
 	retval = FALSE;
 
 	/* special handling for certain directories */
 	if (file && nemo_file_is_directory (file)) {
+        is_recent_dir =
+            nemo_file_is_in_recent (file);
 		is_download_dir =
 			nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_DOWNLOAD);
 		is_desktop_dir =
@@ -7847,7 +7914,10 @@ get_attributes_for_default_sort_type (NemoFile *file,
 		} else if (is_trash_dir) {
 			*is_trash = TRUE;
 			retval = TRUE;
-		}
+		} else if (is_recent_dir) {
+            *is_recent = TRUE;
+            retval = TRUE;
+        }
 	}
 
 	return retval;
@@ -7858,15 +7928,18 @@ nemo_file_get_default_sort_type (NemoFile *file,
 				     gboolean *reversed)
 {
 	NemoFileSortType retval;
-	gboolean is_download, is_trash, res;
+	gboolean is_recent, is_download, is_trash, res;
 
 	retval = NEMO_FILE_SORT_NONE;
-	is_download = is_trash = FALSE;
-	res = get_attributes_for_default_sort_type (file, &is_download, &is_trash);
+
+    is_recent = is_download = is_trash = FALSE;
+    res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash);
 
 	if (res) {
-		if (is_download) {
-			retval = NEMO_FILE_SORT_BY_MTIME;
+        if (is_recent) {
+			retval = NEMO_FILE_SORT_BY_ATIME;
+        } else if (is_download) {
+            retval = NEMO_FILE_SORT_BY_MTIME;
 		} else if (is_trash) {
 			retval = NEMO_FILE_SORT_BY_TRASHED_TIME;
 		}
@@ -7884,14 +7957,14 @@ nemo_file_get_default_sort_attribute (NemoFile *file,
 					  gboolean *reversed)
 {
 	const gchar *retval;
-	gboolean is_download, is_trash, res;
+	gboolean is_recent, is_download, is_trash, res;
 
 	retval = NULL;
 	is_download = is_trash = FALSE;
-	res = get_attributes_for_default_sort_type (file, &is_download, &is_trash);
+	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash);
 
 	if (res) {
-		if (is_download) {
+        if (is_recent || is_download) {
 			retval = g_quark_to_string (attribute_date_modified_q);
 		} else if (is_trash) {
 			retval = g_quark_to_string (attribute_trashed_on_q);

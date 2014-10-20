@@ -60,7 +60,7 @@ struct NemoBookmarkListClass {
 };
 
 GType                   nemo_bookmark_list_get_type            (void);
-NemoBookmarkList *  nemo_bookmark_list_new                 (void);
+NemoBookmarkList *  nemo_bookmark_list_get_default                 (void);
 void                    nemo_bookmark_list_append              (NemoBookmarkList   *bookmarks,
 								    NemoBookmark *bookmark);
 gboolean                nemo_bookmark_list_contains            (NemoBookmarkList   *bookmarks,
@@ -72,6 +72,8 @@ void                    nemo_bookmark_list_delete_items_with_uri (NemoBookmarkLi
 void                    nemo_bookmark_list_insert_item         (NemoBookmarkList   *bookmarks,
 								    NemoBookmark *bookmark,
 								    guint                   index);
+GList *                 nemo_bookmark_list_get_for_uri         (NemoBookmarkList   *bookmarks,
+                                                                const char *uri);
 guint                   nemo_bookmark_list_length              (NemoBookmarkList   *bookmarks);
 NemoBookmark *      nemo_bookmark_list_item_at             (NemoBookmarkList   *bookmarks,
 								    guint                   index);

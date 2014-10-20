@@ -33,6 +33,8 @@ static void     nemo_action_manager_class_init (NemoActionManagerClass *klass);
 
 static void     nemo_action_manager_constructed (GObject *object);
 
+static void     nemo_action_manager_dispose (GObject *gobject);
+
 static void     nemo_action_manager_finalize (GObject *gobject);
 
 static gpointer parent_class;
@@ -274,6 +276,7 @@ nemo_action_manager_class_init (NemoActionManagerClass *klass)
     GObjectClass         *object_class = G_OBJECT_CLASS(klass);
     parent_class           = g_type_class_peek_parent (klass);
     object_class->finalize = nemo_action_manager_finalize;
+    object_class->dispose = nemo_action_manager_dispose;
     object_class->constructed = nemo_action_manager_constructed;
 
     signals[CHANGED] =
@@ -306,13 +309,29 @@ nemo_action_manager_new (void)
 }
 
 static void
+nemo_action_manager_dispose (GObject *object)
+{
+    NemoActionManager *action_manager = NEMO_ACTION_MANAGER (object);
+
+    if (action_manager->actions_directory_list != NULL) {
+        GList *node, *copy;
+        copy = nemo_directory_list_copy (action_manager->actions_directory_list);
+
+        for (node = copy; node != NULL; node = node->next) {
+            remove_directory_from_actions_directory_list (action_manager, node->data);
+        }
+        g_list_free (action_manager->actions_directory_list);
+        action_manager->actions_directory_list = NULL;
+        nemo_directory_list_free (copy);
+    }
+
+    G_OBJECT_CLASS (parent_class)->dispose (object);
+}
+
+static void
 nemo_action_manager_finalize (GObject *object)
 {
     NemoActionManager *action_manager = NEMO_ACTION_MANAGER (object);
-    GList *node;
-    for (node = action_manager->actions_directory_list; node != NULL; node = node->next) {
-        remove_directory_from_actions_directory_list (action_manager, node->data);
-    }
 
     g_list_free_full (action_manager->actions, g_object_unref);
 

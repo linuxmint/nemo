@@ -68,6 +68,7 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	GIcon *emblemed_icon;
 	GEmblem *emblem;
 	GList *emblem_icons, *l;
+    gint scale;
 
 	file = (NemoFile *) data;
 
@@ -105,7 +106,8 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 						       emblems_to_ignore);
 	g_strfreev (emblems_to_ignore);
 
-	icon_info = nemo_file_get_icon (file, size, flags);
+    scale = gtk_widget_get_scale_factor (GTK_WIDGET (icon_view));
+	icon_info = nemo_file_get_icon (file, size, scale, flags);
 
 	/* apply emblems */
 	if (emblem_icons != NULL) {
@@ -124,8 +126,8 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
         if (s < size)
             size = s;
 
-        bad_ratio = nemo_icon_get_emblem_size_for_icon_size (size) > w ||
-                    nemo_icon_get_emblem_size_for_icon_size (size) > h;
+        bad_ratio = nemo_icon_get_emblem_size_for_icon_size (size) * scale > w ||
+                    nemo_icon_get_emblem_size_for_icon_size (size) * scale > h;
 
         if (bad_ratio)
             goto skip_emblem; /* Would prefer to not use goto, but
@@ -146,7 +148,7 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 		}
 
 		g_clear_object (&icon_info);
-		icon_info = nemo_icon_info_lookup (emblemed_icon, size);
+		icon_info = nemo_icon_info_lookup (emblemed_icon, size, scale);
         g_object_unref (emblemed_icon);
 
 skip_emblem:
