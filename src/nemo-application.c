@@ -623,7 +623,7 @@ mount_removed_callback (GVolumeMonitor *monitor,
 
 		if (slot != force_no_close_slot) {
             if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CLOSE_DEVICE_VIEW_ON_EJECT))
-                nemo_window_pane_slot_close (slot->pane, slot);
+                nemo_window_pane_close_slot (slot->pane, slot);
             else
                 nemo_window_slot_go_home (slot, FALSE);
 		} else {
