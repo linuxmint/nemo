@@ -579,7 +579,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
 
     /* No path is set so we don't have to allocate anything. */
     if (path_bar->button_list == NULL) {
-            return;
+        return;
     }
     direction = gtk_widget_get_direction (widget);
 
@@ -594,7 +594,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         width += child_requisition.width;
 
         if (list == path_bar->fake_root) {
-			width += path_bar->slider_width;
+            width += path_bar->slider_width;
             break;
         }
     }
@@ -763,11 +763,19 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         needs_reorder |= gtk_widget_get_child_visible (child) == TRUE;
         gtk_widget_set_child_visible (child, FALSE);
         list = list->prev;
-    }
+    } 
+    
+    if (BUTTON_DATA (pathbar_root_button->data)->fake_root) {
+        path_bar->fake_root = pathbar_root_button; 
+    } 
+	
     for (list = pathbar_root_button->next; list; list = list->next) {
         child = BUTTON_DATA (list->data)->button;
         needs_reorder |= gtk_widget_get_child_visible (child) == TRUE;
         gtk_widget_set_child_visible (child, FALSE);
+        if (BUTTON_DATA (list->data)->fake_root) {
+            path_bar->fake_root = list; 
+        } 
     }
 
     if (need_sliders || path_bar->fake_root) {
@@ -798,7 +806,9 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         nemo_path_bar_update_slider_buttons (path_bar);
     } else {
         needs_reorder |= gtk_widget_get_child_visible (path_bar->up_slider_button) == TRUE;
-        gtk_widget_set_child_visible (path_bar->down_slider_button, FALSE);
+        gtk_widget_set_child_visible (path_bar->down_slider_button, FALSE); 
+	/* Reset Scrolling to have the left most folder in focus when resizing again */ 	
+	path_bar->scrolled_root_button = NULL;
     }
 
     if (needs_reorder) {
@@ -1165,7 +1175,9 @@ nemo_path_bar_scroll_down (NemoPathBar *path_bar)
         }
     }
 
-    if (down_button == NULL) {
+    if (down_button == NULL || down_button == path_bar->button_list) {
+	/* No Button visible or we scroll back to curren folder reset scrolling */  
+	path_bar->scrolled_root_button = NULL; 
         return;
     }
   
