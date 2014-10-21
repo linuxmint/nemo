@@ -40,6 +40,9 @@ enum {
 	PROP_SENSITIVE,
 	PROP_PRIORITY,
 	PROP_MENU,
+    PROP_WIDGET_A,
+    PROP_WIDGET_B,
+    PROP_SEPARATOR,
 	LAST_PROP
 };
 
@@ -51,6 +54,9 @@ struct _NemoMenuItemDetails {
 	NemoMenu *menu;
 	gboolean sensitive;
 	gboolean priority;
+    GtkWidget *widget_a;
+    GtkWidget *widget_b;
+    gboolean separator;
 };
 
 static guint signals[LAST_SIGNAL];
@@ -91,6 +97,62 @@ nemo_menu_item_new (const char *name,
 }
 
 /**
+ * nemo_menu_item_new_widget:
+ * @name: the identifier for the menu item
+ * @widget_a: the custom #GtkWidget to use for widget-a
+ * @widget_b: the custom #GtkWidget to use for widget-b
+ *
+ * Creates a new widget-based menu item that can be added to the toolbar or to a contextual menu.
+ *
+ * Returns: a newly created #NemoMenuItem that will pass widgets to an eventual NemoWidgetAction
+ */
+NemoMenuItem *
+nemo_menu_item_new_widget (const char *name,
+                           GtkWidget  *widget_a,
+                           GtkWidget  *widget_b)
+{
+    NemoMenuItem *item;
+
+    g_return_val_if_fail (name != NULL, NULL);
+    g_return_val_if_fail (widget_a != NULL, NULL);
+
+    item = g_object_new (NEMO_TYPE_MENU_ITEM, 
+                 "name", name,
+                 "widget-a", widget_a,
+                 "widget-b", widget_b,
+                 "label", NULL,
+                 "tip", NULL,
+                 "icon", NULL,
+                 NULL);
+
+    return item;
+}
+
+/**
+ * nemo_menu_item_new_separator:
+ * @name: the identifier for the menu item
+ *
+ * Creates a new menu item that represents a menu separator.
+ * 
+ * Returns: a newly created #NemoMenuItem
+ */
+NemoMenuItem *
+nemo_menu_item_new_separator (const char *name)
+{
+    NemoMenuItem *item;
+
+    g_return_val_if_fail (name != NULL, NULL);
+
+    item = g_object_new (NEMO_TYPE_MENU_ITEM, 
+                 "name", name,
+                 "separator", TRUE,
+                 NULL);
+
+    return item;
+}
+
+
+/**
  * nemo_menu_item_activate:
  * @item: pointer to a #NemoMenuItem
  *
@@ -114,6 +176,34 @@ nemo_menu_item_set_submenu (NemoMenuItem *item, NemoMenu *menu)
 {
 	g_object_set (item, "menu", menu, NULL);
 }
+
+/**
+ * nemo_menu_item_set_widget_a:
+ * @item: pointer to a #NemoMenuItem
+ * @widget: pointer to a #GtkWidget use in place of text
+ *
+ * Sets the custom widget A for this #NemoMenuItem
+ */
+void
+nemo_menu_item_set_widget_a (NemoMenuItem *item, GtkWidget *widget)
+{
+    g_object_set (item, "widget-a", widget, NULL);
+}
+
+
+/**
+ * nemo_menu_item_set_widget_b:
+ * @item: pointer to a #NemoMenuItem
+ * @widget: pointer to a #GtkWidget use in place of text
+ *
+ * Sets the custom widget B for this #NemoMenuItem
+ */
+void
+nemo_menu_item_set_widget_b (NemoMenuItem *item, GtkWidget *widget)
+{
+    g_object_set (item, "widget-b", widget, NULL);
+}
+
 
 static void
 nemo_menu_item_get_property (GObject *object,
@@ -147,6 +237,15 @@ nemo_menu_item_get_property (GObject *object,
 	case PROP_MENU :
 		g_value_set_object (value, item->details->menu);
 		break;
+    case PROP_WIDGET_A :
+        g_value_set_object (value, item->details->widget_a);
+        break;
+    case PROP_WIDGET_B :
+        g_value_set_object (value, item->details->widget_b);
+        break;
+    case PROP_SEPARATOR:
+        g_value_set_boolean (value, item->details->separator);
+        break;
 	default :
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -199,6 +298,24 @@ nemo_menu_item_set_property (GObject *object,
 		item->details->menu = g_object_ref (g_value_get_object (value));
 		g_object_notify (object, "menu");
 		break;
+    case PROP_WIDGET_A:
+        if (item->details->widget_a) {
+            g_object_unref (item->details->widget_a);
+        }
+        item->details->widget_a = g_object_ref (g_value_get_object (value));
+        g_object_notify (object, "widget-a");
+        break;
+    case PROP_WIDGET_B:
+        if (item->details->widget_b) {
+            g_object_unref (item->details->widget_b);
+        }
+        item->details->widget_b = g_object_ref (g_value_get_object (value));
+        g_object_notify (object, "widget-b");
+        break;
+    case PROP_SEPARATOR:
+        item->details->separator = g_value_get_boolean (value);
+        g_object_notify (object, "separator");
+        break;
 	default :
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -220,6 +337,14 @@ nemo_menu_item_finalize (GObject *object)
 		g_object_unref (item->details->menu);
 	}
 
+    if (item->details->widget_a) {
+        g_object_unref (item->details->widget_a);
+    }
+
+    if (item->details->widget_b) {
+        g_object_unref (item->details->widget_b);
+    }
+
 	g_free (item->details);
 
 	G_OBJECT_CLASS (parent_class)->finalize (object);
@@ -231,6 +356,9 @@ nemo_menu_item_instance_init (NemoMenuItem *item)
 	item->details = g_new0 (NemoMenuItemDetails, 1);
 	item->details->sensitive = TRUE;
 	item->details->menu = NULL;
+    item->details->widget_a = NULL;
+    item->details->widget_b = NULL;
+    item->details->separator = FALSE;
 }
 
 static void
@@ -302,6 +430,29 @@ nemo_menu_item_class_init (NemoMenuItemClass *class)
 							       "The menu belonging to this item. May be null.",
 							       NEMO_TYPE_MENU,
 							       G_PARAM_READWRITE));
+    g_object_class_install_property (G_OBJECT_CLASS (class),
+                     PROP_WIDGET_A,
+                     g_param_spec_object ("widget-a",
+                                   "Widget A",
+                                   "The custom widget to use in place of text",
+                                   GTK_TYPE_WIDGET,
+                                   G_PARAM_READWRITE));
+
+    g_object_class_install_property (G_OBJECT_CLASS (class),
+                     PROP_WIDGET_B,
+                     g_param_spec_object ("widget-b",
+                                   "Widget B",
+                                   "The custom widget to use in place of text",
+                                   GTK_TYPE_WIDGET,
+                                   G_PARAM_READWRITE));
+
+    g_object_class_install_property (G_OBJECT_CLASS (class),
+                     PROP_SEPARATOR,
+                     g_param_spec_boolean ("separator",
+                                   "Separator",
+                                   "Is a separator",
+                                   FALSE,
+                                   G_PARAM_READWRITE));
 }
 
 GType 

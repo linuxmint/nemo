@@ -182,6 +182,8 @@ libnemo_private_la_SOURCES = \
 	nemo-signaller.c \
 	nemo-query.c \
 	nemo-query.h \
+    nemo-separator-action.c \
+    nemo-separator-action.h \
 	nemo-thumbnails.c \
 	nemo-thumbnails.h \
 	nemo-trash-monitor.c \
@@ -194,6 +196,10 @@ libnemo_private_la_SOURCES = \
 	nemo-vfs-directory.h \
 	nemo-vfs-file.c \
 	nemo-vfs-file.h \
+    nemo-widget-action.c \
+    nemo-widget-action.h \
+    nemo-widget-menu-item.c \
+    nemo-widget-menu-item.h \
 	nemo-file-undo-operations.c \
 	nemo-file-undo-operations.h \
 	nemo-file-undo-manager.c \

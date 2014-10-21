@@ -88,6 +88,8 @@
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-file-undo-manager.h>
 #include <libnemo-private/nemo-action.h>
+#include <libnemo-private/nemo-widget-action.h>
+#include <libnemo-private/nemo-separator-action.h>
 #include <libnemo-private/nemo-action-manager.h>
 #include <libnemo-private/nemo-mime-application-chooser.h>
 
@@ -5601,8 +5603,10 @@ add_extension_action_for_files (NemoView *view,
     GtkAction *ret = NULL;
 	char *name, *label, *tip, *icon;
 	gboolean sensitive, priority;
+    gboolean separator;
 	GtkAction *action;
 	GdkPixbuf *pixbuf;
+    GtkWidget *widget_a, *widget_b;
 	ExtensionActionCallbackData *data;
 	
 	g_object_get (G_OBJECT (item), 
@@ -5610,20 +5614,28 @@ add_extension_action_for_files (NemoView *view,
 		      "tip", &tip, "icon", &icon,
 		      "sensitive", &sensitive,
 		      "priority", &priority,
+              "widget-a", &widget_a,
+              "widget-b", &widget_b,
+              "separator", &separator,
 		      NULL);
 
-	action = gtk_action_new (name,
-				 label,
-				 tip,
-				 NULL);
-
-	if (icon != NULL) {
-		pixbuf = nemo_ui_get_menu_icon (icon, GTK_WIDGET (view));
-		if (pixbuf != NULL) {
-			gtk_action_set_gicon (action, G_ICON (pixbuf));
-			g_object_unref (pixbuf);
-		}
-	}
+    if (widget_a == NULL && !separator) {
+        action = gtk_action_new (name,
+                                 label,
+                                 tip,
+                                 NULL);
+        if (icon != NULL) {
+            pixbuf = nemo_ui_get_menu_icon (icon, GTK_WIDGET (view));
+            if (pixbuf != NULL) {
+                gtk_action_set_gicon (action, G_ICON (pixbuf));
+                g_object_unref (pixbuf);
+            }
+        }
+    } else if (separator) {
+        action = nemo_separator_action_new (name);
+    } else {
+        action = nemo_widget_action_new (name, widget_a, widget_b);
+    }
 
 	gtk_action_set_sensitive (action, sensitive);
 	g_object_set (action, "is-important", priority, NULL);
@@ -5677,15 +5689,22 @@ add_extension_menu_items (NemoView *view,
 		g_object_get (item, "menu", &menu, NULL);
 		
 		action = add_extension_action_for_files (view, item, files);
-		
+
         if (action) {
+            GtkUIManagerItemType item_type;
+
+            if (G_OBJECT_TYPE (action) == NEMO_TYPE_SEPARATOR_ACTION)
+                item_type = GTK_UI_MANAGER_SEPARATOR;
+            else {
+                item_type = (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM; 
+            }
     		path = g_build_path ("/", NEMO_VIEW_POPUP_PATH_EXTENSION_ACTIONS, subdirectory, NULL);
     		gtk_ui_manager_add_ui (ui_manager,
     				       view->details->extensions_menu_merge_id,
     				       path,
     				       gtk_action_get_name (action),
     				       gtk_action_get_name (action),
-    				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
+    				       item_type,
     				       FALSE);
     		g_free (path);
 
@@ -5695,7 +5714,7 @@ add_extension_menu_items (NemoView *view,
     				       path,
     				       gtk_action_get_name (action),
     				       gtk_action_get_name (action),
-    				       (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM,
+                           item_type,
     				       FALSE);
     		g_free (path);
 
