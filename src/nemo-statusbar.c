@@ -281,12 +281,8 @@ static void
 nemo_status_bar_class_init (NemoStatusBarClass *status_bar_class)
 {
     GObjectClass *oclass;
-    GtkWidgetClass *wclass;
-    GtkBoxClass *container_class;
 
     oclass = G_OBJECT_CLASS (status_bar_class);
-    wclass = GTK_WIDGET_CLASS (status_bar_class);
-    container_class = (GtkBoxClass *) status_bar_class;
 
     oclass->set_property = nemo_status_bar_set_property;
     oclass->get_property = nemo_status_bar_get_property;

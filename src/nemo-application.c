@@ -623,7 +623,7 @@ mount_removed_callback (GVolumeMonitor *monitor,
 
 		if (slot != force_no_close_slot) {
             if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CLOSE_DEVICE_VIEW_ON_EJECT))
-                nemo_window_pane_slot_close (slot->pane, slot);
+                nemo_window_pane_close_slot (slot->pane, slot);
             else
                 nemo_window_slot_go_home (slot, FALSE);
 		} else {
@@ -1141,8 +1141,7 @@ menu_state_changed_callback (NemoApplication *self)
                                          GTK_DIALOG_MODAL,
                                          GTK_MESSAGE_INFO,
                                          GTK_BUTTONS_OK,
-                                         _("Nemo's main menu is now hidden"),
-                                         NULL);
+                                         _("Nemo's main menu is now hidden"));
 
         gchar *secondary;
         secondary = g_strdup_printf (_("You have chosen to hide the main menu.  You can get it back temporarily by:\n\n"
