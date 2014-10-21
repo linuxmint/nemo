@@ -27,6 +27,7 @@
 #define NEMO_MENU_H
 
 #include <glib-object.h>
+#include <gtk/gtk.h>
 #include "nemo-extension-types.h"
 
 
@@ -98,6 +99,16 @@ NemoMenuItem *nemo_menu_item_new           (const char       *name,
 						    const char       *tip,
 						    const char       *icon);
 
+NemoMenuItem *nemo_menu_item_new_widget (const char *name,
+                                         GtkWidget  *widget_a,
+                                         GtkWidget  *widget_b);
+
+NemoMenuItem *nemo_menu_item_new_separator (const char *name);
+
+void nemo_menu_item_set_widget_a (NemoMenuItem *item, GtkWidget *widget);
+void nemo_menu_item_set_widget_b (NemoMenuItem *item, GtkWidget *widget);
+
+
 void              nemo_menu_item_activate      (NemoMenuItem *item);
 void              nemo_menu_item_set_submenu   (NemoMenuItem *item,
 						    NemoMenu     *menu);
@@ -110,6 +121,7 @@ void              nemo_menu_item_set_submenu   (NemoMenuItem *item,
  *   priority (boolean)   - used for toolbar items, whether to show priority
  *                          text.
  *   menu (NemoMenu)  - The menu belonging to this item. May be null.
+ *   widget (GtkWidget) - The optional widget to use in place of a normal menu entr
  */
 
 G_END_DECLS

@@ -76,6 +76,8 @@ typedef enum
 #define NEMO_PREFERENCES_NEW_TAB_POSITION			"tabs-open-position"
 
 #define NEMO_PREFERENCES_SHOW_LOCATION_ENTRY		"show-location-entry"
+#define NEMO_PREFERENCES_SHOW_PREVIOUS_ICON_TOOLBAR     "show-previous-icon-toolbar"
+#define NEMO_PREFERENCES_SHOW_NEXT_ICON_TOOLBAR     "show-next-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_UP_ICON_TOOLBAR		"show-up-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR		"show-edit-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_RELOAD_ICON_TOOLBAR		"show-reload-icon-toolbar"
@@ -83,7 +85,10 @@ typedef enum
 #define NEMO_PREFERENCES_SHOW_COMPUTER_ICON_TOOLBAR		"show-computer-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR		"show-search-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR   "show-new-folder-icon-toolbar"
-#define NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR	"show-label-search-icon-toolbar"
+#define NEMO_PREFERENCES_SHOW_OPEN_IN_TERMINAL_TOOLBAR   "show-open-in-terminal-toolbar"
+#define NEMO_PREFERENCES_SHOW_ICON_VIEW_ICON_TOOLBAR   "show-icon-view-icon-toolbar"
+#define NEMO_PREFERENCES_SHOW_LIST_VIEW_ICON_TOOLBAR   "show-list-view-icon-toolbar"
+#define NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR   "show-compact-view-icon-toolbar"
 
 /* Which views should be displayed for new windows */
 #define NEMO_WINDOW_STATE_START_WITH_STATUS_BAR		"start-with-status-bar"
@@ -95,6 +100,7 @@ typedef enum
 #define NEMO_WINDOW_STATE_MAXIMIZED				"maximized"
 #define NEMO_WINDOW_STATE_SIDEBAR_WIDTH			"sidebar-width"
 #define NEMO_WINDOW_STATE_MY_COMPUTER_EXPANDED  "my-computer-expanded"
+#define NEMO_WINDOW_STATE_BOOKMARKS_EXPANDED    "bookmarks-expanded"
 #define NEMO_WINDOW_STATE_DEVICES_EXPANDED      "devices-expanded"
 #define NEMO_WINDOW_STATE_NETWORK_EXPANDED      "network-expanded"
 
@@ -114,6 +120,10 @@ typedef enum
 #define NEMO_PREFERENCES_IGNORE_VIEW_METADATA "ignore-view-metadata"
 #define NEMO_PREFERENCES_SHOW_BOOKMARKS_IN_TO_MENUS "show-bookmarks-in-to-menus"
 #define NEMO_PREFERENCES_SHOW_PLACES_IN_TO_MENUS "show-places-in-to-menus"
+
+#define NEMO_PREFERENCES_RECENT_ENABLED "remember-recent-files"
+
+#define NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT "sidebar-bookmark-breakpoint"
 
 enum
 {
@@ -240,6 +250,7 @@ GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
 GSettings *gnome_media_handling_preferences;
 GSettings *gnome_terminal_preferences;
+GSettings *cinnamon_privacy_preferences;
 
 G_END_DECLS
 

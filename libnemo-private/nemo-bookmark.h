@@ -75,7 +75,9 @@ GIcon *               nemo_bookmark_get_icon               (NemoBookmark      *b
 gboolean	      nemo_bookmark_get_has_custom_name    (NemoBookmark      *bookmark);		
 void                  nemo_bookmark_set_custom_name        (NemoBookmark      *bookmark,
 								const char            *new_name);		
-gboolean              nemo_bookmark_uri_known_not_to_exist (NemoBookmark      *bookmark);
+gboolean              nemo_bookmark_uri_get_exists         (NemoBookmark      *bookmark);
+void                  nemo_bookmark_set_visited            (NemoBookmark      *bookmark,
+                                                                gboolean       visited);
 int                   nemo_bookmark_compare_with           (gconstpointer          a,
 								gconstpointer          b);
 int                   nemo_bookmark_compare_uris           (gconstpointer          a,

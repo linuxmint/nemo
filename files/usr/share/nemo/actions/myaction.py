@@ -1,4 +1,4 @@
-#! /usr/bin/python -OOt
+#! /usr/bin/python2 -OOt
 
 import sys
 

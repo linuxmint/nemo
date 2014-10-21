@@ -90,13 +90,23 @@
       <_summary>Show the location entry by default</_summary>
       <_description>If set to true, then Nemo browser windows will show a textual input entry for the location toolbar.</_description>
     </key>
-    <key type="b" name="show-up-icon-toolbar">
+    <key type="b" name="show-previous-icon-toolbar">
       <default>true</default>
+      <summary>Show Previous button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
+    <key type="b" name="show-next-icon-toolbar">
+      <default>true</default>
+      <summary>Show Next button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
+    <key type="b" name="show-up-icon-toolbar">
+      <default>false</default>
       <summary>Show Up button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-reload-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show refresh button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
@@ -106,12 +116,12 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-home-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show Home button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-computer-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show Computer button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
@@ -121,14 +131,29 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-new-folder-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show new folder button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
-    <key type="b" name="show-label-search-icon-toolbar">
+    <key type="b" name="show-open-in-terminal-toolbar">
       <default>false</default>
-      <summary>Show the Search button label in nemo toolbar</summary>
-      <description>If set to true, then Nemo browser windows will show the Search label button.</description>
+      <summary>Show open in terminal in the nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
+    <key type="b" name="show-icon-view-icon-toolbar">
+      <default>true</default>
+      <summary>Show Icon View button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
+    <key type="b" name="show-list-view-icon-toolbar">
+      <default>true</default>
+      <summary>Show List View button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
+    <key type="b" name="show-compact-view-icon-toolbar">
+      <default>true</default>
+      <summary>Show Compact View button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key name="confirm-trash" type="b">
       <default>true</default>
@@ -484,6 +509,11 @@
       <_summary>Width of the side pane</_summary>
       <_description>The default width of the side pane in new windows.</_description>
     </key>
+    <key name="sidebar-bookmark-breakpoint" type="i">
+      <default>-1</default>
+      <_summary>Index of the bookmark list to jump to the dedicated sidebar bookmark section</_summary>
+      <_description>This is an internal setting for the sidebar that tracks the index in the bookmark list that separates bookmarks in the Computer section from bookmarks in the Bookmark section.</_description>
+    </key>
     <key name="start-with-toolbar" type="b">
       <default>true</default>
       <_summary>Show toolbar in new windows</_summary>
@@ -513,6 +543,11 @@
       <default>true</default>
       <_summary>Expand My Computer section in places sidebar</_summary>
       <_description>View state storage for My Computer in places sidebar</_description>
+    </key>
+    <key name="bookmarks-expanded" type="b">
+      <default>true</default>
+      <_summary>Expand Bookmark section in places sidebar</_summary>
+      <_description>View state storage for Bookmarks in places sidebar</_description>
     </key>
     <key name="devices-expanded" type="b">
       <default>true</default>

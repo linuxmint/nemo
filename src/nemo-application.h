@@ -81,4 +81,10 @@ void nemo_application_open_location (NemoApplication *application,
 
 void nemo_application_close_all_windows (NemoApplication *self);
 
+void nemo_application_notify_unmount_show (NemoApplication *application,
+                                               const gchar *message);
+
+void nemo_application_notify_unmount_done (NemoApplication *application,
+                                               const gchar *message);
+
 #endif /* __NEMO_APPLICATION_H__ */

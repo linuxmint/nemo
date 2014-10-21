@@ -358,17 +358,23 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 {
 	NemoIconInfo *icon, *new_icon;
 	GList *l;
+    gint icon_scale;
 	
 	icon = NULL;
+    icon_scale = gtk_widget_get_scale_factor (GTK_WIDGET (window->details->notebook));
 	for (l = window->details->original_files; l != NULL; l = l->next) {
 		NemoFile *file;
 		
 		file = NEMO_FILE (l->data);
 		
 		if (!icon) {
-			icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS | NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
+			icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, icon_scale,
+                                       NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
+                                       NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
 		} else {
-			new_icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS | NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
+			new_icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, icon_scale,
+                                           NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
+                                           NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
 			if (!new_icon || new_icon != icon) {
 				g_object_unref (icon);
 				g_object_unref (new_icon);
@@ -380,7 +386,7 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 	}
 
 	if (!icon) {
-		icon = nemo_icon_info_lookup_from_name ("text-x-generic", NEMO_ICON_SIZE_STANDARD);
+		icon = nemo_icon_info_lookup_from_name ("text-x-generic", NEMO_ICON_SIZE_STANDARD, icon_scale);
 	}
 
 	if (icon_name != NULL) {
@@ -396,14 +402,12 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 
 
 static void
-update_properties_window_icon (GtkImage *image)
+update_properties_window_icon (NemoPropertiesWindow *window)
 {
-	NemoPropertiesWindow *window;
 	GdkPixbuf *pixbuf;
+    cairo_surface_t *surface;
 	char *name;
 
-	window = g_object_get_data (G_OBJECT (image), "properties_window");
-	
 	get_image_for_properties_window (window, &name, &pixbuf);
 
 	if (name != NULL) {
@@ -412,10 +416,13 @@ update_properties_window_icon (GtkImage *image)
 		gtk_window_set_icon (GTK_WINDOW (window), pixbuf);
 	}
 
-	gtk_image_set_from_pixbuf (image, pixbuf);
+    surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, gtk_widget_get_scale_factor (GTK_WIDGET (window)),
+                                                    gtk_widget_get_window (GTK_WIDGET (window)));
+    gtk_image_set_from_surface (GTK_IMAGE (window->details->icon_image), surface);
 
 	g_free (name);
 	g_object_unref (pixbuf);
+    cairo_surface_destroy (surface);
 }
 
 /* utility to test if a uri refers to a local image */
@@ -515,11 +522,11 @@ create_image_widget (NemoPropertiesWindow *window,
 {
  	GtkWidget *button;
 	GtkWidget *image;
-	GdkPixbuf *pixbuf;
-	
-	get_image_for_properties_window (window, NULL, &pixbuf);
 
 	image = gtk_image_new ();
+    window->details->icon_image = image;
+
+    update_properties_window_icon (window);
 	gtk_widget_show (image);
 
 	button = NULL;
@@ -539,13 +546,6 @@ create_image_widget (NemoPropertiesWindow *window,
 				  G_CALLBACK (select_image_button_callback), window);
 	}
 
-	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
-
-	g_object_unref (pixbuf);
-
-	g_object_set_data (G_OBJECT (image), "properties_window", window);
-
-	window->details->icon_image = image;
 	window->details->icon_button = button;
 
 	return button != NULL ? button : image;
@@ -994,7 +994,7 @@ properties_window_update (NemoPropertiesWindow *window,
 
 	if (dirty_original) {
 		update_properties_window_title (window);
-		update_properties_window_icon (GTK_IMAGE (window->details->icon_image));
+		update_properties_window_icon (window);
 
 		update_name_field (window);
 
@@ -2429,6 +2429,19 @@ is_burn_directory (NemoFile *file)
 }
 
 static gboolean
+is_recent_directory (NemoFile *file)
+{
+   char *file_uri;
+   gboolean result;
+
+   file_uri = nemo_file_get_uri (file);
+   result = strcmp (file_uri, "recent:///") == 0;
+   g_free (file_uri);
+
+   return result;
+}
+
+static gboolean
 should_show_custom_icon_buttons (NemoPropertiesWindow *window) 
 {
 	if (is_multi_file_window (window)) {
@@ -2493,6 +2506,17 @@ should_show_link_target (NemoPropertiesWindow *window)
 }
 
 static gboolean
+location_show_original (NemoPropertiesWindow *window)
+{
+   NemoFile *file;
+
+   /* there is no way a recent item will be mixed with
+      other items so just pick the first file to check */
+   file = NEMO_FILE (g_list_nth_data (window->details->original_files, 0));
+   return (file != NULL && !nemo_file_is_in_recent (file));
+}
+
+static gboolean
 should_show_free_space (NemoPropertiesWindow *window)
 {
 
@@ -2500,6 +2524,7 @@ should_show_free_space (NemoPropertiesWindow *window)
 	    && (is_merged_trash_directory (get_target_file (window)) ||
 		is_computer_directory (get_target_file (window)) ||
 		is_network_directory (get_target_file (window)) ||
+        is_recent_directory (get_target_file (window)) ||
 		is_burn_directory (get_target_file (window)))) {
 		return FALSE;
 	}
@@ -3121,7 +3146,7 @@ create_basic_page (NemoPropertiesWindow *window)
 		append_title_and_ellipsizing_value (window, grid, _("Location:"), 
 						    "where",
 						    INCONSISTENT_STATE_STRING,
-						    TRUE);
+                            location_show_original (window));
 		
 		append_title_and_ellipsizing_value (window, grid, 
 						    _("Volume:"), 
@@ -4613,7 +4638,8 @@ should_show_permissions (NemoPropertiesWindow *window)
 	 */
 	if (!is_multi_file_window (window)
 	    && (is_merged_trash_directory (file) ||
-		is_computer_directory (file))) {
+            is_recent_directory (file) ||
+            is_computer_directory (file))) {
 		return FALSE;
 	}
 

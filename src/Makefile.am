@@ -4,6 +4,7 @@ bin_PROGRAMS=					\
 	nemo				\
 	nemo-autorun-software		\
 	nemo-connect-server			\
+    nemo-open-with \
 	$(NULL)
 
 libexec_PROGRAMS=				\
@@ -57,7 +58,6 @@ UI_FILES = \
 	nemo-bookmarks-window.glade		\
 	nemo-file-management-properties.glade	\
 	nemo-icon-view-ui.xml		\
-	nemo-toolbar-ui.xml			\
 	nemo-directory-view-ui.xml		\
 	nemo-desktop-icon-view-ui.xml	\
 	nemo-shell-ui.xml			\
@@ -206,6 +206,10 @@ nemo_connect_server_SOURCES= \
 	nemo-connect-server-operation.c     \
 	nemo-connect-server-operation.h     \
 	$(NULL)
+
+nemo_open_with_SOURCES = \
+    nemo-open-with-main.c \
+    $(NULL)
 
 nemo_convert_metadata_SOURCES= \
 	nemo-convert-metadata.c	\
