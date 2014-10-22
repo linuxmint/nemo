@@ -235,6 +235,8 @@ static void bookmarks_check_popup_sensitivity          (NemoPlacesSidebar *sideb
 
 static void add_action_popup_items                     (NemoPlacesSidebar *sidebar);
 
+static void update_places                              (NemoPlacesSidebar *sidebar);
+
 /* Identifiers for target types */
 enum {
   GTK_TREE_MODEL_ROW,
@@ -274,6 +276,46 @@ G_DEFINE_TYPE_WITH_CODE (NemoShortcutsModel, _nemo_shortcuts_model, GTK_TYPE_TRE
 static GtkTreeStore *nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar);
 
 G_DEFINE_TYPE (NemoPlacesSidebar, nemo_places_sidebar, GTK_TYPE_SCROLLED_WINDOW);
+
+static void
+breakpoint_changed_cb (NemoPlacesSidebar *sidebar)
+{
+    sidebar->bookmark_breakpoint = g_settings_get_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT);
+    update_places (sidebar);
+}
+
+static void
+set_bookmark_breakpoint (NemoPlacesSidebar *sidebar, gint new_val)
+{
+    g_signal_handlers_block_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
+
+    sidebar->bookmark_breakpoint = new_val;
+    g_settings_set_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT, new_val);
+
+    g_signal_handlers_unblock_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
+}
+
+static void
+increment_bookmark_breakpoint (NemoPlacesSidebar *sidebar)
+{
+    g_signal_handlers_block_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
+
+    sidebar->bookmark_breakpoint ++;
+    g_settings_set_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT, sidebar->bookmark_breakpoint);
+
+    g_signal_handlers_unblock_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
+}
+
+static void
+decrement_bookmark_breakpoint (NemoPlacesSidebar *sidebar)
+{
+    g_signal_handlers_block_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
+
+    sidebar->bookmark_breakpoint --;
+    g_settings_set_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT, sidebar->bookmark_breakpoint);
+
+    g_signal_handlers_unblock_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
+}
 
 static cairo_surface_t *
 get_eject_icon (NemoPlacesSidebar *sidebar,
@@ -763,6 +805,11 @@ update_places (NemoPlacesSidebar *sidebar)
     g_object_set (sidebar,
                   "bookmark-breakpoint", MIN (bookmark_count, sidebar->bookmark_breakpoint),
                   NULL);
+
+    if (bookmark_count < sidebar->bookmark_breakpoint) {
+        sidebar->bookmark_breakpoint = bookmark_count;
+        set_bookmark_breakpoint (sidebar, bookmark_count);
+    }
 
     if (sidebar->bookmark_breakpoint > 0) {
         for (bookmark_index = 0; bookmark_index < sidebar->bookmark_breakpoint; ++bookmark_index) {
@@ -1716,22 +1763,6 @@ drag_leave_callback (GtkTreeView *tree_view,
 	g_signal_stop_emission_by_name (tree_view, "drag-leave");
 }
 
-static void
-increment_breakpoint (NemoPlacesSidebar *sidebar)
-{
-    g_object_set (sidebar,
-                  "bookmark-breakpoint", sidebar->bookmark_breakpoint + 1,
-                  NULL);
-}
-
-static void
-decrement_breakpoint (NemoPlacesSidebar *sidebar)
-{
-    g_object_set (sidebar,
-                  "bookmark-breakpoint", sidebar->bookmark_breakpoint - 1,
-                  NULL);
-}
-
 /* Parses a "text/uri-list" string and inserts its URIs as bookmarks */
 static void
 bookmarks_drop_uris (NemoPlacesSidebar *sidebar,
@@ -1766,7 +1797,7 @@ bookmarks_drop_uris (NemoPlacesSidebar *sidebar,
 
 		if (!nemo_bookmark_list_contains (sidebar->bookmarks, bookmark)) {
             if (position < sidebar->bookmark_breakpoint)
-                increment_breakpoint (sidebar);
+                increment_bookmark_breakpoint (sidebar);
 			nemo_bookmark_list_insert_item (sidebar->bookmarks, bookmark, position++);
 		}
 
@@ -1837,9 +1868,9 @@ update_bookmark_breakpoint (NemoPlacesSidebar *sidebar,
 {
     if (old_type != new_type) {
         if (new_type == SECTION_XDG_BOOKMARKS)
-            increment_breakpoint (sidebar);
+            increment_bookmark_breakpoint (sidebar);
         else if (new_type == SECTION_BOOKMARKS)
-            decrement_breakpoint (sidebar);
+            decrement_bookmark_breakpoint (sidebar);
     }
 }
 
@@ -4214,6 +4245,10 @@ nemo_places_sidebar_dispose (GObject *object)
 
 	eel_remove_weak_pointer (&(sidebar->go_to_after_mount_slot));
 
+    g_signal_handlers_disconnect_by_func (nemo_window_state,
+                                          breakpoint_changed_cb,
+                                          sidebar);
+
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
 					      desktop_setting_changed_callback,
 					      sidebar);
@@ -4229,9 +4264,6 @@ nemo_places_sidebar_dispose (GObject *object)
     g_signal_handlers_disconnect_by_func (cinnamon_privacy_preferences,
                           desktop_setting_changed_callback,
                           sidebar);
-
-    g_settings_unbind (sidebar,
-                       g_param_spec_get_name (properties[PROP_BOOKMARK_BREAKPOINT]));
 
 	if (sidebar->volume_monitor != NULL) {
 		g_signal_handlers_disconnect_by_func (sidebar->volume_monitor, 
@@ -4346,9 +4378,8 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
     }
 
     sidebar->bookmark_breakpoint = breakpoint;
-    g_settings_bind (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT,
-                     sidebar, g_param_spec_get_name (properties[PROP_BOOKMARK_BREAKPOINT]),
-                     G_SETTINGS_BIND_SET);
+    g_signal_connect_swapped (nemo_window_state, "changed::" NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT,
+                              G_CALLBACK (breakpoint_changed_cb), sidebar);
 
 	sidebar->bookmarks_changed_id =
 		g_signal_connect_swapped (sidebar->bookmarks, "changed",
