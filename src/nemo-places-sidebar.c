@@ -1329,12 +1329,16 @@ static gboolean
 clicked_eject_button (NemoPlacesSidebar *sidebar,
 		      GtkTreePath **path)
 {
-	GdkEvent *event = gtk_get_current_event ();
-	GdkEventButton *button_event = (GdkEventButton *) event;
+	GdkEvent *event;
+       
+	event = gtk_get_current_event ();
 
-	if ((event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) &&
-	     over_eject_button (sidebar, button_event->x, button_event->y, path)) {
-		return TRUE;
+	if (event) {
+		GdkEventButton *button_event = (GdkEventButton *) event;
+		if ((event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) &&
+		    over_eject_button (sidebar, button_event->x, button_event->y, path)) {
+			return TRUE;
+		}
 	}
 
 	return FALSE;
