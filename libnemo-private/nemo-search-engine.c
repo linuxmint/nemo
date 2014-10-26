@@ -37,7 +37,7 @@ enum {
 	LAST_SIGNAL
 }; 
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 G_DEFINE_ABSTRACT_TYPE (NemoSearchEngine, nemo_search_engine,
 			G_TYPE_OBJECT);

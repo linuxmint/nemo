@@ -268,7 +268,7 @@ typedef struct {
 	gboolean tight;
 } PlacementGrid;
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 static void
 tooltip_prefs_changed_callback (NemoIconContainer *container)
