@@ -69,14 +69,6 @@
 #define EJECT_COLUMN_WIDTH 22
 #define DRAG_EXPAND_CATEGORY_DELAY 500
 
-enum
-{
-    PROP_BOOKMARK_BREAKPOINT = 1,
-    NUM_PROPERTIES
-};
-
-static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
-
 typedef struct {
 	GtkScrolledWindow  parent;
 	GtkTreeView        *tree_view;
@@ -282,17 +274,6 @@ breakpoint_changed_cb (NemoPlacesSidebar *sidebar)
 {
     sidebar->bookmark_breakpoint = g_settings_get_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT);
     update_places (sidebar);
-}
-
-static void
-set_bookmark_breakpoint (NemoPlacesSidebar *sidebar, gint new_val)
-{
-    g_signal_handlers_block_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
-
-    sidebar->bookmark_breakpoint = new_val;
-    g_settings_set_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT, new_val);
-
-    g_signal_handlers_unblock_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
 }
 
 static void
@@ -802,40 +783,34 @@ update_places (NemoPlacesSidebar *sidebar)
     /* in certain situations (i.e. removed a bookmark), the breakpoint is smaller than
      * the number of bookmarks - make sure to fix this before iterating through a list of them
      */
-    g_object_set (sidebar,
-                  "bookmark-breakpoint", MIN (bookmark_count, sidebar->bookmark_breakpoint),
-                  NULL);
-
-    if (bookmark_count < sidebar->bookmark_breakpoint) {
+    if (sidebar->bookmark_breakpoint < 0 ||
+        sidebar->bookmark_breakpoint > bookmark_count) {
         sidebar->bookmark_breakpoint = bookmark_count;
-        set_bookmark_breakpoint (sidebar, bookmark_count);
     }
 
-    if (sidebar->bookmark_breakpoint > 0) {
-        for (bookmark_index = 0; bookmark_index < sidebar->bookmark_breakpoint; ++bookmark_index) {
-            bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
+    for (bookmark_index = 0; bookmark_index < sidebar->bookmark_breakpoint; ++bookmark_index) {
+        bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
 
-            root = nemo_bookmark_get_location (bookmark);
-            file = nemo_file_get (root);
+        root = nemo_bookmark_get_location (bookmark);
+        file = nemo_file_get (root);
 
-            nemo_file_unref (file);
+        nemo_file_unref (file);
 
-            bookmark_name = nemo_bookmark_get_name (bookmark);
-            icon = nemo_bookmark_get_icon (bookmark);
-            mount_uri = nemo_bookmark_get_uri (bookmark);
-            tooltip = g_file_get_parse_name (root);
+        bookmark_name = nemo_bookmark_get_name (bookmark);
+        icon = nemo_bookmark_get_icon (bookmark);
+        mount_uri = nemo_bookmark_get_uri (bookmark);
+        tooltip = g_file_get_parse_name (root);
 
-            cat_iter = add_place (sidebar, PLACES_BOOKMARK,
-                                   SECTION_XDG_BOOKMARKS,
-                                   bookmark_name, icon, mount_uri,
-                                   NULL, NULL, NULL, bookmark_index,
-                                   tooltip, 0, FALSE,
-                                   cat_iter);
-            g_object_unref (root);
-            g_object_unref (icon);
-            g_free (mount_uri);
-            g_free (tooltip);
-        }
+        cat_iter = add_place (sidebar, PLACES_BOOKMARK,
+                               SECTION_XDG_BOOKMARKS,
+                               bookmark_name, icon, mount_uri,
+                               NULL, NULL, NULL, bookmark_index,
+                               tooltip, 0, FALSE,
+                               cat_iter);
+        g_object_unref (root);
+        g_object_unref (icon);
+        g_free (mount_uri);
+        g_free (tooltip);
     }
 
     if (recent_is_supported ()) {
@@ -1329,12 +1304,16 @@ static gboolean
 clicked_eject_button (NemoPlacesSidebar *sidebar,
 		      GtkTreePath **path)
 {
-	GdkEvent *event = gtk_get_current_event ();
-	GdkEventButton *button_event = (GdkEventButton *) event;
+	GdkEvent *event;
+       
+	event = gtk_get_current_event ();
 
-	if ((event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) &&
-	     over_eject_button (sidebar, button_event->x, button_event->y, path)) {
-		return TRUE;
+	if (event) {
+		GdkEventButton *button_event = (GdkEventButton *) event;
+		if ((event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) &&
+		    over_eject_button (sidebar, button_event->x, button_event->y, path)) {
+			return TRUE;
+		}
 	}
 
 	return FALSE;
@@ -4292,68 +4271,15 @@ nemo_places_sidebar_dispose (GObject *object)
 }
 
 static void
-nemo_places_sidebar_get_property (GObject    *object,
-                                  guint       prop_id,
-                                  GValue     *value,
-                                  GParamSpec *pspec)
-{
-    NemoPlacesSidebar *sidebar;
-
-    sidebar = NEMO_PLACES_SIDEBAR (object);
-
-    switch (prop_id) {
-        case PROP_BOOKMARK_BREAKPOINT:
-            g_value_set_int (value, sidebar->bookmark_breakpoint);
-            break;
-        default:
-            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-            break;
-    }
-}
-
-static void
-nemo_places_sidebar_set_property (GObject         *object,
-                                  guint            prop_id,
-                                  const GValue    *value,
-                                  GParamSpec      *pspec)
-{
-    NemoPlacesSidebar *sidebar;
-  
-    sidebar = NEMO_PLACES_SIDEBAR (object);
-
-    switch (prop_id)  {
-        case PROP_BOOKMARK_BREAKPOINT:
-            sidebar->bookmark_breakpoint = g_value_get_int (value);
-            break;
-        default:
-            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-            break;
-    }
-}
-
-static void
 nemo_places_sidebar_class_init (NemoPlacesSidebarClass *class)
 {
     GObjectClass *oclass = G_OBJECT_CLASS (class);
     GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
 
     oclass->dispose = nemo_places_sidebar_dispose;
-    oclass->set_property = nemo_places_sidebar_set_property;
-    oclass->get_property = nemo_places_sidebar_get_property;
 
 	widget_class->style_set = nemo_places_sidebar_style_set;
 	widget_class->focus = nemo_places_sidebar_focus;
-
-    properties[PROP_BOOKMARK_BREAKPOINT] =
-        g_param_spec_int ("bookmark-breakpoint",
-                          "Bookmark breakpoint",
-                          "Where the break in the bookmark list is",
-                          -1,
-                          G_MAXINT,
-                          -1,
-                          G_PARAM_READWRITE);
-
-    g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
 
 static void
@@ -4429,7 +4355,7 @@ nemo_places_sidebar_new (NemoWindow *window)
 {
 	NemoPlacesSidebar *sidebar;
 	
-	sidebar = g_object_new (nemo_places_sidebar_get_type (), NULL);
+	sidebar = g_object_new (NEMO_TYPE_PLACES_SIDEBAR, NULL);
 	nemo_places_sidebar_set_parent_window (sidebar, window);
 
 	return GTK_WIDGET (sidebar);
