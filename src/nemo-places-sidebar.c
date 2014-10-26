@@ -69,14 +69,6 @@
 #define EJECT_COLUMN_WIDTH 22
 #define DRAG_EXPAND_CATEGORY_DELAY 500
 
-enum
-{
-    PROP_BOOKMARK_BREAKPOINT = 1,
-    NUM_PROPERTIES
-};
-
-static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
-
 typedef struct {
 	GtkScrolledWindow  parent;
 	GtkTreeView        *tree_view;
@@ -802,10 +794,6 @@ update_places (NemoPlacesSidebar *sidebar)
     /* in certain situations (i.e. removed a bookmark), the breakpoint is smaller than
      * the number of bookmarks - make sure to fix this before iterating through a list of them
      */
-    g_object_set (sidebar,
-                  "bookmark-breakpoint", MIN (bookmark_count, sidebar->bookmark_breakpoint),
-                  NULL);
-
     if (bookmark_count < sidebar->bookmark_breakpoint) {
         sidebar->bookmark_breakpoint = bookmark_count;
         set_bookmark_breakpoint (sidebar, bookmark_count);
@@ -4296,68 +4284,15 @@ nemo_places_sidebar_dispose (GObject *object)
 }
 
 static void
-nemo_places_sidebar_get_property (GObject    *object,
-                                  guint       prop_id,
-                                  GValue     *value,
-                                  GParamSpec *pspec)
-{
-    NemoPlacesSidebar *sidebar;
-
-    sidebar = NEMO_PLACES_SIDEBAR (object);
-
-    switch (prop_id) {
-        case PROP_BOOKMARK_BREAKPOINT:
-            g_value_set_int (value, sidebar->bookmark_breakpoint);
-            break;
-        default:
-            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-            break;
-    }
-}
-
-static void
-nemo_places_sidebar_set_property (GObject         *object,
-                                  guint            prop_id,
-                                  const GValue    *value,
-                                  GParamSpec      *pspec)
-{
-    NemoPlacesSidebar *sidebar;
-  
-    sidebar = NEMO_PLACES_SIDEBAR (object);
-
-    switch (prop_id)  {
-        case PROP_BOOKMARK_BREAKPOINT:
-            sidebar->bookmark_breakpoint = g_value_get_int (value);
-            break;
-        default:
-            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-            break;
-    }
-}
-
-static void
 nemo_places_sidebar_class_init (NemoPlacesSidebarClass *class)
 {
     GObjectClass *oclass = G_OBJECT_CLASS (class);
     GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
 
     oclass->dispose = nemo_places_sidebar_dispose;
-    oclass->set_property = nemo_places_sidebar_set_property;
-    oclass->get_property = nemo_places_sidebar_get_property;
 
 	widget_class->style_set = nemo_places_sidebar_style_set;
 	widget_class->focus = nemo_places_sidebar_focus;
-
-    properties[PROP_BOOKMARK_BREAKPOINT] =
-        g_param_spec_int ("bookmark-breakpoint",
-                          "Bookmark breakpoint",
-                          "Where the break in the bookmark list is",
-                          -1,
-                          G_MAXINT,
-                          -1,
-                          G_PARAM_READWRITE);
-
-    g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
 
 static void
@@ -4433,7 +4368,7 @@ nemo_places_sidebar_new (NemoWindow *window)
 {
 	NemoPlacesSidebar *sidebar;
 	
-	sidebar = g_object_new (nemo_places_sidebar_get_type (), NULL);
+	sidebar = g_object_new (NEMO_TYPE_PLACES_SIDEBAR, NULL);
 	nemo_places_sidebar_set_parent_window (sidebar, window);
 
 	return GTK_WIDGET (sidebar);
