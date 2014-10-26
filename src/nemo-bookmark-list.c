@@ -104,12 +104,6 @@ nemo_bookmark_list_get_file (void)
                                  NULL);
     file = g_file_new_for_path (filename);
 
-    if (!g_file_query_exists (file, NULL)) {
-        g_object_unref (file);
-        g_free(filename);
-        return nemo_bookmark_list_get_legacy_file ();
-    }
-
     g_free (filename);
 
     return file;
@@ -559,6 +553,10 @@ load_file_async (NemoBookmarkList *self,
 	GFile *file;
 
 	file = nemo_bookmark_list_get_file ();
+	if (!g_file_query_exists (file, NULL)) {
+		g_object_unref (file);
+		file = nemo_bookmark_list_get_legacy_file ();
+	}
 
 	/* Wipe out old list. */
 	clear (self);
@@ -605,8 +603,8 @@ save_file_async (NemoBookmarkList *bookmarks,
 	GFile *file;
 	GList *l;
 	GString *bookmark_string;
-    GFile *parent;
-    char *path;
+	GFile *parent;
+	char *path;
 
 	/* temporarily disable bookmark file monitoring when writing file */
 	if (bookmarks->monitor != NULL) {
@@ -615,6 +613,9 @@ save_file_async (NemoBookmarkList *bookmarks,
 	}
 
 	file = nemo_bookmark_list_get_file ();
+	/* FIXME: `bookmark_string` is currently leaked as `g_string_free()` is
+	 * 	  never called.
+	 */
 	bookmark_string = g_string_new (NULL);
 
 	for (l = bookmarks->list; l; l = l->next) {
@@ -642,11 +643,11 @@ save_file_async (NemoBookmarkList *bookmarks,
 	/* keep the bookmark list alive */
 	g_object_ref (bookmarks);
 
-    parent = g_file_get_parent (file);
-    path = g_file_get_path (parent);
-    g_mkdir_with_parents (path, 0700);
-    g_free (path);
-    g_object_unref (parent);
+	parent = g_file_get_parent (file);
+	path = g_file_get_path (parent);
+	g_mkdir_with_parents (path, 0700);
+	g_free (path);
+	g_object_unref (parent);
 
 	g_file_replace_contents_async (file, bookmark_string->str,
 				       bookmark_string->len, NULL,
