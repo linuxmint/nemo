@@ -277,17 +277,6 @@ breakpoint_changed_cb (NemoPlacesSidebar *sidebar)
 }
 
 static void
-set_bookmark_breakpoint (NemoPlacesSidebar *sidebar, gint new_val)
-{
-    g_signal_handlers_block_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
-
-    sidebar->bookmark_breakpoint = new_val;
-    g_settings_set_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT, new_val);
-
-    g_signal_handlers_unblock_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
-}
-
-static void
 increment_bookmark_breakpoint (NemoPlacesSidebar *sidebar)
 {
     g_signal_handlers_block_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
@@ -794,36 +783,34 @@ update_places (NemoPlacesSidebar *sidebar)
     /* in certain situations (i.e. removed a bookmark), the breakpoint is smaller than
      * the number of bookmarks - make sure to fix this before iterating through a list of them
      */
-    if (bookmark_count < sidebar->bookmark_breakpoint) {
+    if (sidebar->bookmark_breakpoint < 0 ||
+        sidebar->bookmark_breakpoint > bookmark_count) {
         sidebar->bookmark_breakpoint = bookmark_count;
-        set_bookmark_breakpoint (sidebar, bookmark_count);
     }
 
-    if (sidebar->bookmark_breakpoint > 0) {
-        for (bookmark_index = 0; bookmark_index < sidebar->bookmark_breakpoint; ++bookmark_index) {
-            bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
+    for (bookmark_index = 0; bookmark_index < sidebar->bookmark_breakpoint; ++bookmark_index) {
+        bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
 
-            root = nemo_bookmark_get_location (bookmark);
-            file = nemo_file_get (root);
+        root = nemo_bookmark_get_location (bookmark);
+        file = nemo_file_get (root);
 
-            nemo_file_unref (file);
+        nemo_file_unref (file);
 
-            bookmark_name = nemo_bookmark_get_name (bookmark);
-            icon = nemo_bookmark_get_icon (bookmark);
-            mount_uri = nemo_bookmark_get_uri (bookmark);
-            tooltip = g_file_get_parse_name (root);
+        bookmark_name = nemo_bookmark_get_name (bookmark);
+        icon = nemo_bookmark_get_icon (bookmark);
+        mount_uri = nemo_bookmark_get_uri (bookmark);
+        tooltip = g_file_get_parse_name (root);
 
-            cat_iter = add_place (sidebar, PLACES_BOOKMARK,
-                                   SECTION_XDG_BOOKMARKS,
-                                   bookmark_name, icon, mount_uri,
-                                   NULL, NULL, NULL, bookmark_index,
-                                   tooltip, 0, FALSE,
-                                   cat_iter);
-            g_object_unref (root);
-            g_object_unref (icon);
-            g_free (mount_uri);
-            g_free (tooltip);
-        }
+        cat_iter = add_place (sidebar, PLACES_BOOKMARK,
+                               SECTION_XDG_BOOKMARKS,
+                               bookmark_name, icon, mount_uri,
+                               NULL, NULL, NULL, bookmark_index,
+                               tooltip, 0, FALSE,
+                               cat_iter);
+        g_object_unref (root);
+        g_object_unref (icon);
+        g_free (mount_uri);
+        g_free (tooltip);
     }
 
     if (recent_is_supported ()) {
