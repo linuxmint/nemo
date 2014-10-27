@@ -208,8 +208,11 @@ nemo_desktop_item_properties_exec_drag_data_received (GtkWidget *widget, GdkDrag
 
 	file = nemo_file_get_by_uri (uris[0]);
 
-	g_return_if_fail (file != NULL);
-	
+	if (file == NULL) {
+		g_strfreev (uris);
+		return;
+	}
+
 	uri = nemo_file_get_uri (file);
 	if (nemo_file_is_mime_type (file, "application/x-desktop")) {
 		key_file = _g_key_file_new_from_uri (uri, G_KEY_FILE_NONE, NULL);
