@@ -1376,8 +1376,14 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
                         break;
                     }
                 } else {
-                    if (g_str_has_suffix (filename, g_ascii_strdown (extensions[i], -1))) {
+                    gchar *str = g_ascii_strdown (extensions[i], -1));
+                    if (g_str_has_suffix (filename, str) {
                         found_match = TRUE;
+                    }
+
+                    g_free (str);
+
+                    if (found_match) {
                         break;
                     }
                 }
