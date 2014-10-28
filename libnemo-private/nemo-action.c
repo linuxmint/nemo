@@ -314,6 +314,8 @@ setup_dbus_condition (NemoAction *action, const gchar *condition)
                                        on_dbus_disappeared,
                                        cond,
                                        NULL);
+
+    g_strfreev (split);
 }
 
 static void
