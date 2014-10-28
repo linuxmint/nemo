@@ -206,6 +206,8 @@ nemo_view_handle_netscape_url_drop (NemoView  *view,
 		eel_show_warning_dialog (_("Drag and drop is not supported."),
 					 _("An invalid drag type was used."),
                                          GET_ANCESTOR (view));
+		g_object_unref (f);
+		g_strfreev (bits);
 		return;
 	}
 

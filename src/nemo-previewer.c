@@ -153,11 +153,6 @@ nemo_previewer_call_show_file (NemoPreviewer *self,
                                    guint xid,
 				   gboolean close_if_already_visible)
 {
-  GVariant *variant;
-
-  variant = g_variant_new ("(sib)",
-                           uri, xid, close_if_already_visible);
-
   if (self->priv->connection == NULL) {
     g_printerr ("No DBus connection available");
     return;
@@ -168,7 +163,8 @@ nemo_previewer_call_show_file (NemoPreviewer *self,
                           PREVIEWER_DBUS_PATH,
                           PREVIEWER_DBUS_IFACE,
                           "ShowFile",
-                          variant,
+                          g_variant_new ("(sib)",
+                            uri, xid, close_if_already_visible),
                           NULL,
                           G_DBUS_CALL_FLAGS_NONE,
                           -1,

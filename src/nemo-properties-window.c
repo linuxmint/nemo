@@ -2975,7 +2975,9 @@ create_pie_widget (NemoPropertiesWindow *window)
 	if (info) {
 		fs_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
 		if (fs_type != NULL) {
-			gtk_label_set_text (GTK_LABEL (fstype_label), g_strconcat (_("Filesystem type:"), " ", fs_type, NULL));
+			gchar *str = g_strconcat (_("Filesystem type:"), " ", fs_type, NULL);
+			gtk_label_set_text (GTK_LABEL (fstype_label), str);
+			g_free (str);
 		}
 		
 		g_object_unref (info);

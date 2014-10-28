@@ -1903,6 +1903,7 @@ align_icons (NemoIconContainer *container)
 	grid = placement_grid_new (container, TRUE);
 
 	if (!grid) {
+		g_list_free (unplaced_icons);
 		return;
 	}
 

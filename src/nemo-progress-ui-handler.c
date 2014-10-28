@@ -252,7 +252,9 @@ progress_info_changed_cb (NemoProgressInfo *info,
         }
         if (progress > 0) {
             int iprogress = progress * 100;
-            gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), g_strdup_printf (_("%d%% %s"), iprogress, nemo_progress_info_get_status(first_info)));
+            gchar *str = g_strdup_printf (_("%d%% %s"), iprogress, nemo_progress_info_get_status(first_info));
+            gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), str);
+            g_free (str);
             self->priv->active_percent = iprogress;
             progress_ui_handler_update_status_icon (self);
         }
