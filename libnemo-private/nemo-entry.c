@@ -46,7 +46,7 @@ enum {
 	SELECTION_CHANGED,
 	LAST_SIGNAL
 };
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 static void nemo_entry_editable_init (GtkEditableInterface *iface);
 

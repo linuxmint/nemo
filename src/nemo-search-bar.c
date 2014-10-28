@@ -41,7 +41,7 @@ enum {
        LAST_SIGNAL
 }; 
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 G_DEFINE_TYPE (NemoSearchBar, nemo_search_bar, GTK_TYPE_BOX);
 

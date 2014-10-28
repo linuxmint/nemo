@@ -45,7 +45,7 @@ enum {
 	LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 static NemoTrashMonitor *nemo_trash_monitor = NULL;
 
 G_DEFINE_TYPE(NemoTrashMonitor, nemo_trash_monitor, G_TYPE_OBJECT)

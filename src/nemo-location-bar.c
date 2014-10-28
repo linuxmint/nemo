@@ -72,7 +72,7 @@ enum {
 	LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 static const GtkTargetEntry drag_types [] = {
 	{ NEMO_DND_URI_LIST_TYPE,   0, NEMO_DND_URI_LIST },
