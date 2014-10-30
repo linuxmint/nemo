@@ -12,3 +12,5 @@ Extensions=any;
 
 Conditions=desktop;dbus org.Cinnamon;gsettings org.cinnamon number-workspaces i gt 1;
 
+Active=false
+

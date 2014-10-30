@@ -12,3 +12,5 @@ Extensions=any;
 
 Conditions=desktop;dbus org.Cinnamon;
 
+Active=false
+
