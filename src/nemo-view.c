@@ -7013,6 +7013,7 @@ open_as_root (const gchar *path)
     argv[3] = NULL;
     g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
                   NULL, NULL, NULL, NULL);
+    g_free (argv[2]);
 }
 
 static void
