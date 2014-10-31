@@ -57,7 +57,7 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
                    [the gettext translation domain])
 
 AM_GLIB_GNU_GETTEXT
-LOCALE_DIR=/usr/share/cinnamon/locale
+LOCALE_DIR=/usr/share/locale
 AC_SUBST(LOCALE_DIR)
 
 AC_DEFINE_UNQUOTED(LOCALEDIR, "$LOCALE_DIR", [path for translations])
