@@ -101,7 +101,7 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-up-icon-toolbar">
-      <default>false</default>
+      <default>true</default>
       <summary>Show Up button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
