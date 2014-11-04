@@ -72,6 +72,8 @@ void                    nemo_bookmark_list_delete_items_with_uri (NemoBookmarkLi
 void                    nemo_bookmark_list_insert_item         (NemoBookmarkList   *bookmarks,
 								    NemoBookmark *bookmark,
 								    guint                   index);
+GList *                 nemo_bookmark_list_get_for_uri         (NemoBookmarkList   *bookmarks,
+                                                                const char *uri);
 guint                   nemo_bookmark_list_length              (NemoBookmarkList   *bookmarks);
 NemoBookmark *      nemo_bookmark_list_item_at             (NemoBookmarkList   *bookmarks,
 								    guint                   index);
