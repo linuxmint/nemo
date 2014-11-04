@@ -50,6 +50,10 @@ struct _NemoToolbarPriv {
     GtkWidget *new_folder_button;
     GtkWidget *search_button;
 
+    GtkToolItem *refresh_box;
+    GtkToolItem *location_box;
+    GtkToolItem *tools_box;
+
 	GtkWidget *path_bar;
 	GtkWidget *location_entry;
     GtkWidget *root_bar;
@@ -145,6 +149,31 @@ toolbar_update_appearance (NemoToolbar *self)
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR);
     if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
+
+    if (gtk_widget_get_visible(self->priv->home_button) == FALSE && 
+        gtk_widget_get_visible(self->priv->computer_button) == FALSE)
+    {
+        gtk_widget_hide(GTK_WIDGET (self->priv->location_box));
+    } else {
+        gtk_widget_show(GTK_WIDGET (self->priv->location_box));
+    }
+
+    if (gtk_widget_get_visible(self->priv->refresh_button) == FALSE) 
+    {
+        gtk_widget_hide(GTK_WIDGET (self->priv->refresh_box));
+    } else {
+        gtk_widget_show(GTK_WIDGET (self->priv->refresh_box));
+    }
+
+    if (gtk_widget_get_visible(self->priv->search_button) == FALSE &&
+        gtk_widget_get_visible(self->priv->new_folder_button) == FALSE && 
+        gtk_widget_get_visible(self->priv->open_terminal_button) == FALSE &&
+        gtk_widget_get_visible(self->priv->toggle_location_button) == FALSE)
+    {
+        gtk_widget_hide(GTK_WIDGET (self->priv->tools_box));
+    } else {
+        gtk_widget_show(GTK_WIDGET (self->priv->tools_box));
+    }
 }
 
 static void
@@ -241,21 +270,21 @@ nemo_toolbar_constructed (GObject *obj)
     gtk_widget_set_margin_right (GTK_WIDGET (tool_box), 6);
 
     /* Refresh */
-    tool_box = gtk_tool_item_new ();
+    self->priv->refresh_box = gtk_tool_item_new ();
     box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
     self->priv->refresh_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_RELOAD);
     gtk_container_add (GTK_CONTAINER (box), self->priv->refresh_button);
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
 
-    gtk_container_add (GTK_CONTAINER (tool_box), GTK_WIDGET (box));
-    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
+    gtk_container_add (GTK_CONTAINER (self->priv->refresh_box), GTK_WIDGET (box));
+    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (self->priv->refresh_box));
 
-    gtk_widget_show_all (GTK_WIDGET (tool_box));
-    gtk_widget_set_margin_right (GTK_WIDGET (tool_box), 6);
+    gtk_widget_show_all (GTK_WIDGET (self->priv->refresh_box));
+    gtk_widget_set_margin_right (GTK_WIDGET (self->priv->refresh_box), 6);
 
     /* Home/Computer */
-    tool_box = gtk_tool_item_new ();
+    self->priv->location_box = gtk_tool_item_new ();
     box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
     self->priv->home_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_HOME);
@@ -267,11 +296,11 @@ nemo_toolbar_constructed (GObject *obj)
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
 
-    gtk_container_add (GTK_CONTAINER (tool_box), GTK_WIDGET (box));
-    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
+    gtk_container_add (GTK_CONTAINER (self->priv->location_box), GTK_WIDGET (box));
+    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (self->priv->location_box));
 
-    gtk_widget_show_all (GTK_WIDGET (tool_box));
-    gtk_widget_set_margin_right (GTK_WIDGET (tool_box), 6);
+    gtk_widget_show_all (GTK_WIDGET (self->priv->location_box));
+    gtk_widget_set_margin_right (GTK_WIDGET (self->priv->location_box), 6);
 
     /* Regular Path Bar */
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
@@ -291,7 +320,7 @@ nemo_toolbar_constructed (GObject *obj)
     gtk_widget_show (GTK_WIDGET (tool_box));
 
     /* Search/Open in Terminal/New Folder/Toggle Location */
-    tool_box = gtk_tool_item_new ();
+    self->priv->tools_box = gtk_tool_item_new ();
     box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
     self->priv->toggle_location_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_TOGGLE_LOCATION);
@@ -309,11 +338,11 @@ nemo_toolbar_constructed (GObject *obj)
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
 
-    gtk_container_add (GTK_CONTAINER (tool_box), GTK_WIDGET (box));
-    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
+    gtk_container_add (GTK_CONTAINER (self->priv->tools_box), GTK_WIDGET (box));
+    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (self->priv->tools_box));
 
-    gtk_widget_show_all (GTK_WIDGET (tool_box));
-    gtk_widget_set_margin_left (GTK_WIDGET (tool_box), 6);
+    gtk_widget_show_all (GTK_WIDGET (self->priv->tools_box));
+    gtk_widget_set_margin_left (GTK_WIDGET (self->priv->tools_box), 6);
 
     setup_root_info_bar (self);
 
