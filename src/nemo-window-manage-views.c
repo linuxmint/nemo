@@ -136,8 +136,11 @@ set_displayed_file (NemoWindowSlot *slot, NemoFile *file)
 		} else {
 			slot->current_location_bookmark = nemo_bookmark_new (new_location, display_name);
 		}
-		g_free (display_name);
+        if (slot->current_location_bookmark != NULL) {
+            nemo_bookmark_set_visited (slot->current_location_bookmark, TRUE);
         }
+		g_free (display_name);
+	}
 
 	g_clear_object (&new_location);
 }
@@ -1427,6 +1430,12 @@ found_mount_cb (GObject *source_object,
 	g_free (data);
 }
 
+static void
+set_visited (NemoBookmark *bookmark)
+{
+    nemo_bookmark_set_visited (bookmark, TRUE);
+}
+
 /* Handle the changes for the NemoWindow itself. */
 static void
 update_for_new_location (NemoWindowSlot *slot)
@@ -1438,6 +1447,9 @@ update_for_new_location (NemoWindowSlot *slot)
 	NemoDirectory *directory;
 	gboolean location_really_changed;
 	FindMountData *data;
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+    NemoBookmarkList *bm_list = nemo_application_get_bookmarks (app);
+    GList *matching_bookmarks;
 
 	window = nemo_window_slot_get_window (slot);
     pane = nemo_window_slot_get_pane (slot);
@@ -1446,6 +1458,13 @@ update_for_new_location (NemoWindowSlot *slot)
 
 	file = nemo_file_get (new_location);
 	set_displayed_file (slot, file);
+
+    gchar *uri = g_file_get_uri (new_location);
+    matching_bookmarks = nemo_bookmark_list_get_for_uri (bm_list, uri);
+    g_free (uri);
+
+    g_list_foreach (matching_bookmarks, (GFunc) set_visited, NULL);
+    g_list_free (matching_bookmarks);
 
 	update_history (slot, slot->location_change_type, new_location);
 

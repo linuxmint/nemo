@@ -68,7 +68,8 @@ struct NemoBookmarkDetails
 	GIcon *icon;
 	GIcon *symbolic_icon;
 	NemoFile *file;
-	
+    gboolean visited;
+
 	char *scroll_file;
 };
 
@@ -97,7 +98,7 @@ nemo_bookmark_update_icon (NemoBookmark *bookmark)
 		return;
 	}
 
-	if (!nemo_file_is_local (bookmark->details->file)) {
+	if (!nemo_file_is_local (bookmark->details->file) && !bookmark->details->visited) {
 		/* never update icons for remote bookmarks */
 		return;
 	}
@@ -107,7 +108,7 @@ nemo_bookmark_update_icon (NemoBookmark *bookmark)
 					  NEMO_FILE_ATTRIBUTES_FOR_ICON)) {
 		DEBUG ("%s: set new icon", nemo_bookmark_get_name (bookmark));
 
-		new_icon = nemo_file_get_gicon (bookmark->details->file, 0);
+		new_icon = nemo_file_get_emblemed_icon (bookmark->details->file, 0);
 		g_object_set (bookmark,
 			      "icon", new_icon,
 			      NULL);
@@ -136,55 +137,6 @@ bookmark_set_name_from_ready_file (NemoBookmark *self,
 	}
 
 	g_free (display_name);
-}
-
-static void
-bookmark_file_changed_callback (NemoFile *file,
-				NemoBookmark *bookmark)
-{
-	GFile *location;
-
-	g_assert (file == bookmark->details->file);
-
-	DEBUG ("%s: file changed", nemo_bookmark_get_name (bookmark));
-
-	location = nemo_file_get_location (file);
-
-	if (!g_file_equal (bookmark->details->location, location) &&
-	    !nemo_file_is_in_trash (file)) {
-		DEBUG ("%s: file got moved", nemo_bookmark_get_name (bookmark));
-
-		g_object_unref (bookmark->details->location);
-		bookmark->details->location = g_object_ref (location);
-
-		g_object_notify_by_pspec (G_OBJECT (bookmark), properties[PROP_LOCATION]);
-		g_signal_emit (bookmark, signals[CONTENTS_CHANGED], 0);
-	}
-
-	g_object_unref (location);
-
-	if (nemo_file_is_gone (file) ||
-	    nemo_file_is_in_trash (file)) {
-		/* The file we were monitoring has been trashed, deleted,
-		 * or moved in a way that we didn't notice. We should make 
-		 * a spanking new NemoFile object for this 
-		 * location so if a new file appears in this place 
-		 * we will notice. However, we can't immediately do so
-		 * because creating a new NemoFile directly as a result
-		 * of noticing a file goes away may trigger i/o on that file
-		 * again, noticeing it is gone, leading to a loop.
-		 * So, the new NemoFile is created when the bookmark
-		 * is used again. However, this is not really a problem, as
-		 * we don't want to change the icon or anything about the
-		 * bookmark just because its not there anymore.
-		 */
-		DEBUG ("%s: trashed", nemo_bookmark_get_name (bookmark));
-		bookmark->details->location_gone = TRUE;
-		nemo_bookmark_disconnect_file (bookmark);
-	} else {
-		bookmark->details->location_gone = FALSE;
-		bookmark_set_name_from_ready_file (bookmark, file);
-	}
 }
 
 static void
@@ -287,6 +239,57 @@ nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark)
 }
 
 static void
+bookmark_file_changed_callback (NemoFile *file,
+				NemoBookmark *bookmark)
+{
+	GFile *location;
+
+	g_assert (file == bookmark->details->file);
+
+	DEBUG ("%s: file changed", nemo_bookmark_get_name (bookmark));
+
+	location = nemo_file_get_location (file);
+
+	if (!g_file_equal (bookmark->details->location, location) &&
+	    !nemo_file_is_in_trash (file)) {
+		DEBUG ("%s: file got moved", nemo_bookmark_get_name (bookmark));
+
+		g_object_unref (bookmark->details->location);
+		bookmark->details->location = g_object_ref (location);
+
+		g_object_notify_by_pspec (G_OBJECT (bookmark), properties[PROP_LOCATION]);
+		g_signal_emit (bookmark, signals[CONTENTS_CHANGED], 0);
+	}
+
+	g_object_unref (location);
+
+	if (nemo_file_is_gone (file) ||
+	    nemo_file_is_in_trash (file)) {
+		/* The file we were monitoring has been trashed, deleted,
+		 * or moved in a way that we didn't notice. We should make 
+		 * a spanking new NemoFile object for this 
+		 * location so if a new file appears in this place 
+		 * we will notice. However, we can't immediately do so
+		 * because creating a new NemoFile directly as a result
+		 * of noticing a file goes away may trigger i/o on that file
+		 * again, noticeing it is gone, leading to a loop.
+		 * So, the new NemoFile is created when the bookmark
+		 * is used again. However, this is not really a problem, as
+		 * we don't want to change the icon or anything about the
+		 * bookmark just because its not there anymore.
+		 */
+		DEBUG ("%s: trashed", nemo_bookmark_get_name (bookmark));
+		bookmark->details->location_gone = TRUE;
+		nemo_bookmark_disconnect_file (bookmark);
+        nemo_bookmark_set_icon_to_default (bookmark);
+        bookmark->details->visited = FALSE;
+	} else {
+		bookmark->details->location_gone = FALSE;
+		bookmark_set_name_from_ready_file (bookmark, file);
+	}
+}
+
+static void
 nemo_bookmark_disconnect_file (NemoBookmark *bookmark)
 {
 	if (bookmark->details->file != NULL) {
@@ -309,7 +312,7 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
 		return;
 	}
 
-	if (nemo_bookmark_uri_get_exists (bookmark)) {
+	if (nemo_bookmark_uri_get_exists (bookmark) || bookmark->details->visited) {
         DEBUG ("%s: creating file", nemo_bookmark_get_name (bookmark));
 
 		bookmark->details->file = nemo_file_get (bookmark->details->location);
@@ -506,6 +509,8 @@ nemo_bookmark_init (NemoBookmark *bookmark)
 {
 	bookmark->details = G_TYPE_INSTANCE_GET_PRIVATE (bookmark, NEMO_TYPE_BOOKMARK,
 							 NemoBookmarkDetails);
+
+    bookmark->details->visited = FALSE;
 }
 
 const gchar *
@@ -681,6 +686,16 @@ nemo_bookmark_get_uri (NemoBookmark *bookmark)
 	uri = g_file_get_uri (file);
 	g_object_unref (file);
 	return uri;
+}
+
+void
+nemo_bookmark_set_visited (NemoBookmark *bookmark, gboolean visited)
+{
+    g_return_if_fail (NEMO_IS_BOOKMARK (bookmark));
+
+    bookmark->details->visited = visited;
+
+    nemo_bookmark_connect_file (bookmark);
 }
 
 NemoBookmark *
