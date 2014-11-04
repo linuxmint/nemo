@@ -258,7 +258,7 @@ static gboolean
 is_built_in_bookmark (NemoFile *file)
 {
 	gboolean built_in;
-	// gint idx;
+	gint idx;
 
 	if (nemo_file_is_home (file)) {
 		return TRUE;
@@ -271,16 +271,16 @@ is_built_in_bookmark (NemoFile *file)
 
 	built_in = FALSE;
 
-	// for (idx = 0; idx < G_USER_N_DIRECTORIES; idx++) {
-	// 	/* PUBLIC_SHARE and TEMPLATES are not in our built-in list */
-	// 	if (nemo_file_is_user_special_directory (file, idx)) {
-	// 		if (idx != G_USER_DIRECTORY_PUBLIC_SHARE &&  idx != G_USER_DIRECTORY_TEMPLATES) {
-	// 			built_in = TRUE;
-	// 		}
+	for (idx = 0; idx < G_USER_N_DIRECTORIES; idx++) {
+		/* PUBLIC_SHARE and TEMPLATES are not in our built-in list */
+		if (nemo_file_is_user_special_directory (file, idx)) {
+			if (idx != G_USER_DIRECTORY_PUBLIC_SHARE &&  idx != G_USER_DIRECTORY_TEMPLATES) {
+				built_in = TRUE;
+			}
 
-	// 		break;
-	// 	}
-	// }
+			break;
+		}
+	}
 
 	return built_in;
 }
@@ -680,20 +680,20 @@ update_places (NemoPlacesSidebar *sidebar)
     bookmark_count = nemo_bookmark_list_length (sidebar->bookmarks);
     for (index = 0; index < bookmark_count; ++index) {
         bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
-        root = nemo_bookmark_get_location (bookmark);
 
-        if (!nemo_bookmark_get_exists (bookmark) && g_file_is_native (root)) {
-            g_object_unref (root);
+        if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
             continue;
         }
 
+        root = nemo_bookmark_get_location (bookmark);
         file = nemo_file_get (root);
 
-        if (is_built_in_bookmark (file)) {
-            g_object_unref (root);
-            nemo_file_unref (file);
-            continue;
-        }
+        //if (is_built_in_bookmark (file)) {
+        //  g_object_unref (root);
+        //  nemo_file_unref (file);
+        //  continue;
+        //}
+
         nemo_file_unref (file);
 
         bookmark_name = nemo_bookmark_get_name (bookmark);

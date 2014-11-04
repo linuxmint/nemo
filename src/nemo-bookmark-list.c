@@ -258,7 +258,7 @@ nemo_bookmark_list_append (NemoBookmarkList *bookmarks,
 	g_return_if_fail (NEMO_IS_BOOKMARK (bookmark));
 
 	insert_bookmark_internal (bookmarks, 
-				  g_object_ref (bookmark), 
+				  nemo_bookmark_copy (bookmark), 
 				  -1);
 
 	nemo_bookmark_list_save_file (bookmarks);
@@ -398,7 +398,7 @@ nemo_bookmark_list_insert_item (NemoBookmarkList *bookmarks,
 	g_return_if_fail (index <= g_list_length (bookmarks->list));
 
 	insert_bookmark_internal (bookmarks,
-				  g_object_ref (new_bookmark), 
+				  nemo_bookmark_copy (new_bookmark), 
 				  index);
 
 	nemo_bookmark_list_save_file (bookmarks);
@@ -492,19 +492,20 @@ op_processed_cb (NemoBookmarkList *self)
 
 static void
 load_callback (GObject *source,
-           GAsyncResult *res,
-           gpointer user_data)
+	       GAsyncResult *res,
+	       gpointer user_data)
 {
 	NemoBookmarkList *self = NEMO_BOOKMARK_LIST (source);
 	gchar *contents;
 	char **lines;
 	int i;
 
-    contents = g_simple_async_result_get_op_res_gpointer (G_SIMPLE_ASYNC_RESULT (res));
+	contents = g_simple_async_result_get_op_res_gpointer (G_SIMPLE_ASYNC_RESULT (res));
 
 	if (contents == NULL) {
 		return;
 	}
+
 	lines = g_strsplit (contents, "\n", -1);
 	for (i = 0; lines[i]; i++) {
 		/* Ignore empty or invalid lines that cannot be parsed properly */
@@ -541,9 +542,6 @@ load_io_thread (GSimpleAsyncResult *result,
 	GError *error = NULL;
 
 	file = nemo_bookmark_list_get_file ();
-    if (!g_file_query_exists (file, NULL)) {
-        file = nemo_bookmark_list_get_legacy_file ();
-    }
 
 	g_file_load_contents (file, NULL, &contents, NULL, NULL, &error);
 	g_object_unref (file);
@@ -675,9 +673,9 @@ save_file_async (NemoBookmarkList *self)
 static void
 process_next_op (NemoBookmarkList *bookmarks)
 {
-    gint op;
+	gint op;
 
-    op = GPOINTER_TO_INT (g_queue_peek_tail (bookmarks->pending_ops));
+	op = GPOINTER_TO_INT (g_queue_peek_tail (bookmarks->pending_ops));
 
 	if (op == LOAD_JOB) {
 		load_file_async (bookmarks);
