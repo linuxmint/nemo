@@ -257,7 +257,7 @@ nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark)
 		symbolic_icon = get_native_icon (bookmark, TRUE);
 		icon = get_native_icon (bookmark, FALSE);
 	} else {
-		uri = nemo_bookmark_get_uri (bookmark);
+		uri = g_file_get_uri (bookmark->details->location);
 		if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
 			symbolic_icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH);
 			icon = g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER_SAVED_SEARCH);
@@ -268,7 +268,7 @@ nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark)
 		g_free (uri);
 	}
 
-	if (nemo_bookmark_uri_known_not_to_exist (bookmark)) {
+	if (!nemo_bookmark_uri_get_exists (bookmark)) {
 		DEBUG ("%s: file does not exist, add emblem", nemo_bookmark_get_name (bookmark));
 
 		apply_warning_emblem (&icon, FALSE);
@@ -309,14 +309,15 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
 		return;
 	}
 
-	if (!nemo_bookmark_uri_known_not_to_exist (bookmark)) {
-		DEBUG ("%s: creating file", nemo_bookmark_get_name (bookmark));
+	if (nemo_bookmark_uri_get_exists (bookmark)) {
+        DEBUG ("%s: creating file", nemo_bookmark_get_name (bookmark));
 
 		bookmark->details->file = nemo_file_get (bookmark->details->location);
-		if (!nemo_file_is_gone (bookmark->details->file)) {
-            g_signal_connect_object (bookmark->details->file, "changed",
-                         G_CALLBACK (bookmark_file_changed_callback), bookmark, 0);
-		}
+
+        g_assert (!nemo_file_is_gone (bookmark->details->file));
+
+        g_signal_connect_object (bookmark->details->file, "changed",
+                                 G_CALLBACK (bookmark_file_changed_callback), bookmark, 0);
 	}
 
 	/* Set icon based on available information. */
@@ -750,7 +751,7 @@ nemo_bookmark_menu_item_new (NemoBookmark *bookmark)
 }
 
 gboolean
-nemo_bookmark_uri_known_not_to_exist (NemoBookmark *bookmark)
+nemo_bookmark_uri_get_exists (NemoBookmark *bookmark)
 {
 	char *path_name;
 	gboolean exists;
@@ -769,7 +770,7 @@ nemo_bookmark_uri_known_not_to_exist (NemoBookmark *bookmark)
 	exists = g_file_test (path_name, G_FILE_TEST_EXISTS);
 	g_free (path_name);
 
-	return !exists;
+	return exists;
 }
 
 void
