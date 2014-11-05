@@ -910,7 +910,7 @@ nemo_window_close_pane (NemoWindow *window,
 	while (pane->slots != NULL) {
 		NemoWindowSlot *slot = pane->slots->data;
 
-		nemo_window_pane_close_slot (pane, slot, TRUE);
+		nemo_window_pane_remove_slot_unsafe (pane, slot);
 	}
 
 	/* If the pane was active, set it to NULL. The caller is responsible

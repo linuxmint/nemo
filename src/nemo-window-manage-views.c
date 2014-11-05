@@ -999,7 +999,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 			/* We're missing a previous location (if opened location
 			 * in a new tab) so close it and return */
 			if (slot->location == NULL) {
-				nemo_window_pane_slot_close (pane, slot);
+				nemo_window_pane_close_slot (pane, slot);
 			} else {
 				/* We disconnected this, so we need to re-connect it */
 				viewed_file = nemo_file_get (slot->location);
