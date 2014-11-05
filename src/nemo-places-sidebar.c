@@ -4193,10 +4193,11 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 				  G_CALLBACK(desktop_setting_changed_callback),
 				  sidebar);
 
-    g_signal_connect_swapped (cinnamon_privacy_preferences, "changed::" NEMO_PREFERENCES_RECENT_ENABLED,
+	if (!g_strcmp0(g_getenv("DESKTOP_SESSION"), "cinnamon")) {
+        g_signal_connect_swapped (cinnamon_privacy_preferences, "changed::" NEMO_PREFERENCES_RECENT_ENABLED,
                   G_CALLBACK(desktop_setting_changed_callback),
                   sidebar);
-
+    }
 	g_signal_connect_object (nemo_trash_monitor_get (),
 				 "trash_state_changed",
 				 G_CALLBACK (trash_state_changed_cb),
@@ -4252,9 +4253,11 @@ nemo_places_sidebar_dispose (GObject *object)
 					      desktop_setting_changed_callback,
 					      sidebar);
 
-    g_signal_handlers_disconnect_by_func (cinnamon_privacy_preferences,
-                          desktop_setting_changed_callback,
-                          sidebar);
+	if (!g_strcmp0(g_getenv("DESKTOP_SESSION"), "cinnamon")) {
+		g_signal_handlers_disconnect_by_func (cinnamon_privacy_preferences,
+							  desktop_setting_changed_callback,
+							  sidebar);
+	}
 
 	if (sidebar->volume_monitor != NULL) {
 		g_signal_handlers_disconnect_by_func (sidebar->volume_monitor, 
