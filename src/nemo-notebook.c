@@ -207,7 +207,7 @@ static gboolean
 control_key_checker_cb(NemoNotebook *notebook, GdkEventKey *event, gpointer user_data)
 {
 	if (event->keyval == GDK_KEY_Control_L || event->keyval == GDK_KEY_Control_R)
-		ctrl_key_is_down = user_data ? TRUE : FALSE;
+		ctrl_key_is_down = GPOINTER_TO_INT (user_data);
 
 	return FALSE;
 }
@@ -252,9 +252,9 @@ nemo_notebook_init (NemoNotebook *notebook)
 	g_signal_connect (notebook, "focus",
 			  G_CALLBACK(notebook_tab_shortcut_cb), (gpointer)notebook);
 	g_signal_connect (notebook, "key-press-event",
-			  G_CALLBACK(control_key_checker_cb), (gpointer)TRUE);
+			  G_CALLBACK(control_key_checker_cb), GINT_TO_POINTER (TRUE));
 	g_signal_connect (notebook, "key-release-event",
-			  G_CALLBACK(control_key_checker_cb), (gpointer)FALSE);
+			  G_CALLBACK(control_key_checker_cb), GINT_TO_POINTER (FALSE));
 
 	/* Set up drag-and-drop target */
 	/* TODO this would be used for opening a new tab.
