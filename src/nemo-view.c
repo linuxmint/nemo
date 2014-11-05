@@ -7553,6 +7553,32 @@ action_follow_symlink_callback (GtkAction *action,
 }
 
 static void
+action_open_containing_folder_callback (GtkAction *action,
+                                        gpointer callback_data)
+{
+    NemoView *view;
+    GList *selection;
+    NemoFile *item;
+    GFile *activation_location;
+    NemoFile *activation_file;
+    NemoFile *location;
+
+    view = NEMO_VIEW (callback_data);
+    selection = nemo_view_get_selection (view);
+
+    item = NEMO_FILE (selection->data);
+    activation_location = nemo_file_get_activation_location (item);
+    activation_file = nemo_file_get (activation_location);
+    location = nemo_file_get_parent (activation_file);
+
+    nemo_view_activate_file (view, location, 0);
+
+    nemo_file_unref (location);
+    nemo_file_unref (activation_file);
+    g_object_unref (activation_location);
+}
+
+static void
 action_open_in_terminal_callback(GtkAction *action,
 				  gpointer callback_data)
 {
@@ -8435,6 +8461,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Follow link to original file"), "",
   /* tooltip */                  N_("Navigate to the original file that this symbolic link points to"),
                  G_CALLBACK (action_follow_symlink_callback) },
+ /* name, stock id */         { NEMO_ACTION_OPEN_CONTAINING_FOLDER, GTK_STOCK_JUMP_TO,
+  /* label, accelerator */       N_("Open containing folder"), "",
+  /* tooltip */                  N_("Navigate to the folder that the selected item is stored in"),
+                 G_CALLBACK (action_open_containing_folder_callback) },
   /* name, stock id */         { NEMO_ACTION_OTHER_APPLICATION1, NULL,
   /* label, accelerator */       N_("Other _Application..."), NULL,
   /* tooltip */                  N_("Choose another application with which to open the selected item"),
@@ -9759,6 +9789,7 @@ real_update_menus (NemoView *view)
 	gboolean show_open_in_new_tab;
 	gboolean can_open;
 	gboolean show_app;
+    gboolean showing_search;
 	gboolean show_save_search;
 	gboolean save_search_sensitive;
 	gboolean show_save_search_as;
@@ -10062,11 +10093,12 @@ real_update_menus (NemoView *view)
 	gtk_action_set_sensitive (action, !nemo_trash_monitor_is_empty ());
 	gtk_action_set_visible (action, should_show_empty_trash (view));
 
+    showing_search = view->details->model && NEMO_IS_SEARCH_DIRECTORY (view->details->model);
+
 	show_save_search = FALSE;
 	save_search_sensitive = FALSE;
 	show_save_search_as = FALSE;
-	if (view->details->model &&
-	    NEMO_IS_SEARCH_DIRECTORY (view->details->model)) {
+	if (showing_search) {
 		NemoSearchDirectory *search;
 
 		search = NEMO_SEARCH_DIRECTORY (view->details->model);
@@ -10187,6 +10219,13 @@ real_update_menus (NemoView *view)
     gtk_action_set_visible (action,
                             selection_count == 1 &&
                             nemo_file_is_symbolic_link (selection->data));
+
+    action = gtk_action_group_get_action (view->details->dir_action_group,
+                                          NEMO_ACTION_OPEN_CONTAINING_FOLDER);
+
+    gtk_action_set_visible (action,
+                            selection_count == 1 &&
+                            (selection_contains_recent || showing_search));
 
     nemo_file_list_free (selection);
 }
