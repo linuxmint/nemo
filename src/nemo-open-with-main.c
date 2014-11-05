@@ -95,7 +95,7 @@ main (int argc, char *argv[])
 	textdomain (GETTEXT_PACKAGE);
 
 	error = NULL;
-	/* Translators: This is the --help description for the connect to server app,
+	/* Translators: This is the --help description for the open-with app,
 	   the initial newlines are between the command line arg and the description */
 	context = g_option_context_new (N_("\n\nShow an open-with dialog given a uri, "
                                        "to allow the user to change the default mimetype handler."));
