@@ -102,13 +102,7 @@ nemo_bookmark_list_get_file (void)
 				     NULL);
 	file = g_file_new_for_path (filename);
 
-    if (!g_file_query_exists (file, NULL)) {
-        g_object_unref (file);
-        g_free(filename);
-        return nemo_bookmark_list_get_legacy_file ();
-    }
-
-	g_free (filename);
+    g_free (filename);
 
 	return file;
 }
@@ -564,6 +558,10 @@ load_io_thread (GSimpleAsyncResult *result,
 	GError *error = NULL;
 
 	file = nemo_bookmark_list_get_file ();
+	if (!g_file_query_exists (file, NULL)) {
+		g_object_unref (file);
+		file = nemo_bookmark_list_get_legacy_file ();
+	}
 
 	g_file_load_contents (file, NULL, &contents, NULL, NULL, &error);
 	g_object_unref (file);
