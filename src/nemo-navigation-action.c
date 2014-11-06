@@ -233,38 +233,20 @@ tool_button_release_cb (GtkButton *button,
         return FALSE;
 }
 
-static GtkWidget *
-get_actual_button (GtkToolButton *tool_button)
-{
-	GList *children;
-	GtkWidget *button;
-
-	g_return_val_if_fail (GTK_IS_TOOL_BUTTON (tool_button), NULL);
-
-	children = gtk_container_get_children (GTK_CONTAINER (tool_button));
-	button = GTK_WIDGET (children->data);
-
-	g_list_free (children);
-
-	return button;
-}
-
 static void
 connect_proxy (GtkAction *action,
                GtkWidget *proxy)
 {
-        GtkToolButton *tool;
-        GtkWidget *button;
+    GtkWidget *button;
 
-	if (GTK_IS_TOOL_BUTTON (proxy)) {
-                tool = GTK_TOOL_BUTTON (proxy);
-                button = get_actual_button (tool);
+	if (GTK_IS_BUTTON (proxy)) {
+        button = GTK_BUTTON (proxy);
 
-                g_signal_connect (button, "button-press-event",
-                                  G_CALLBACK (tool_button_press_cb), action);
-                g_signal_connect (button, "button-release-event",
-                                  G_CALLBACK (tool_button_release_cb), action);
-        }
+        g_signal_connect (button, "button-press-event",
+                          G_CALLBACK (tool_button_press_cb), action);
+        g_signal_connect (button, "button-release-event",
+                          G_CALLBACK (tool_button_release_cb), action);
+    }
 
 	(* GTK_ACTION_CLASS (nemo_navigation_action_parent_class)->connect_proxy) (action, proxy);
 }
@@ -273,20 +255,18 @@ static void
 disconnect_proxy (GtkAction *action,
                   GtkWidget *proxy)
 {
-        GtkToolButton *tool;
-        GtkWidget *button;
+    GtkWidget *button;
 
-	if (GTK_IS_TOOL_BUTTON (proxy)) {
-                tool = GTK_TOOL_BUTTON (proxy);
-                button = get_actual_button (tool);
+	if (GTK_IS_BUTTON (proxy)) {
+        button = GTK_BUTTON (proxy);
 
-                /* remove any possible timeout going on */
-                unschedule_menu_popup_timeout (NEMO_NAVIGATION_ACTION (action));
+        /* remove any possible timeout going on */
+        unschedule_menu_popup_timeout (NEMO_NAVIGATION_ACTION (action));
 
 		g_signal_handlers_disconnect_by_func (button,
-                                                      G_CALLBACK (tool_button_press_cb), action);
+                                              G_CALLBACK (tool_button_press_cb), action);
 		g_signal_handlers_disconnect_by_func (button,
-                                                      G_CALLBACK (tool_button_release_cb), action);
+                                              G_CALLBACK (tool_button_release_cb), action);
 	}
 
 	(* GTK_ACTION_CLASS (nemo_navigation_action_parent_class)->disconnect_proxy) (action, proxy);
