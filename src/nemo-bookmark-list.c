@@ -149,7 +149,7 @@ stop_monitoring_one (gpointer data, gpointer user_data)
 }
 
 static void
-clear (NemoBookmarkList *bookmarks)
+clear_bookmarks (NemoBookmarkList *bookmarks)
 {
 	g_list_foreach (bookmarks->list, stop_monitoring_one, bookmarks);
 	g_list_free_full (bookmarks->list, g_object_unref);
@@ -166,7 +166,7 @@ do_finalize (GObject *object)
 
 	g_queue_free (NEMO_BOOKMARK_LIST (object)->pending_ops);
 
-	clear (NEMO_BOOKMARK_LIST (object));
+	clear_bookmarks (NEMO_BOOKMARK_LIST (object));
 
 	G_OBJECT_CLASS (nemo_bookmark_list_parent_class)->finalize (object);
 }
@@ -582,7 +582,7 @@ load_file_async (NemoBookmarkList *self)
 	GSimpleAsyncResult *result;
 
 	/* Wipe out old list. */
-	clear (self);
+	clear_bookmarks (self);
 
 	result = g_simple_async_result_new (G_OBJECT (self), 
 					    load_callback, NULL, NULL);
