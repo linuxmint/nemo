@@ -314,6 +314,8 @@ setup_dbus_condition (NemoAction *action, const gchar *condition)
                                        on_dbus_disappeared,
                                        cond,
                                        NULL);
+
+    g_strfreev (split);
 }
 
 static void
@@ -323,7 +325,7 @@ strip_custom_modifier (const gchar *raw, gboolean *custom, gchar **out)
         gchar **split = g_strsplit_set (raw, "<>", 3);
         *out = g_strdup (split[1]);
         *custom = TRUE;
-        g_free (split);
+        g_strfreev (split);
     } else {
         *out = g_strdup (raw);
         *custom = FALSE;
@@ -514,12 +516,16 @@ nemo_action_new (const gchar *name,
 
     g_key_file_load_from_file (key_file, path, G_KEY_FILE_NONE, NULL);
 
-    if (!g_key_file_has_group (key_file, ACTION_FILE_GROUP))
+    if (!g_key_file_has_group (key_file, ACTION_FILE_GROUP)) {
+        g_key_file_free (key_file);
         return NULL;
+    }
 
     if (g_key_file_has_key (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL)) {
-        if (!g_key_file_get_boolean (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL))
+        if (!g_key_file_get_boolean (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL)) {
+            g_key_file_free (key_file);
             return NULL;
+        }
     }
 
     gchar *orig_label = g_key_file_get_locale_string (key_file,
@@ -1372,8 +1378,14 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
                         break;
                     }
                 } else {
-                    if (g_str_has_suffix (filename, g_ascii_strdown (extensions[i], -1))) {
+                    gchar *str = g_ascii_strdown (extensions[i], -1);
+                    if (g_str_has_suffix (filename, str)) {
                         found_match = TRUE;
+                    }
+
+                    g_free (str);
+
+                    if (found_match) {
                         break;
                     }
                 }

@@ -101,7 +101,7 @@ static void eel_canvas_item_class_init     (EelCanvasItemClass *klass);
 static void eel_canvas_item_init           (EelCanvasItem      *item);
 static int  emit_event                       (EelCanvas *canvas, GdkEvent *event);
 
-static guint item_signals[ITEM_LAST_SIGNAL];
+static guint item_signals[ITEM_LAST_SIGNAL] = { 0 };
 
 static GObjectClass *item_parent_class;
 
@@ -1765,7 +1765,7 @@ static AtkObject *eel_canvas_get_accessible (GtkWidget       *widget);
 
 static GtkLayoutClass *canvas_parent_class;
 
-static guint canvas_signals[LAST_SIGNAL];
+static guint canvas_signals[LAST_SIGNAL] = { 0 };
 
 /**
  * eel_canvas_get_type:

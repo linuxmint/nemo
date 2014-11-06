@@ -57,7 +57,7 @@ enum {
 #define ELLIPSISED_MENU_ITEM_MIN_CHARS  32
 
 static GParamSpec* properties[NUM_PROPERTIES] = { NULL };
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 struct NemoBookmarkDetails
 {

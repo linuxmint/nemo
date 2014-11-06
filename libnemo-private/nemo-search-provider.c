@@ -30,8 +30,7 @@ enum {
        LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL];
-
+static guint signals[LAST_SIGNAL] = { 0 };
 static void nemo_search_provider_base_init (gpointer g_iface);
 
 GType
