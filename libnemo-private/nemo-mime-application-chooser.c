@@ -236,7 +236,7 @@ static gboolean
 validate_entry (GtkEntry *entry, const gchar *str)
 {
     gint argcp = 0;
-    gchar **argvp;
+    gchar **argvp = NULL;
     gboolean ret = FALSE;
     if (g_shell_parse_argv (str, &argcp, &argvp, NULL)) {
         if (argcp > 0) {
@@ -251,9 +251,8 @@ validate_entry (GtkEntry *entry, const gchar *str)
             }
             g_free (path_exec);
         }
+        g_strfreev (argvp);
     }
-
-    g_strfreev (argvp);
 
     if (ret) {
         gtk_entry_set_icon_from_icon_name (entry,
