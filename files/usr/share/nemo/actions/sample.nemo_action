@@ -86,6 +86,7 @@ Extensions=any;
 #     "desktop" current (parent) folder is desktop
 #     "removable" target (first selection) is removable
 #     "gsettings <schema> <boolean key>"  is true
+#     "gsettings <schema> <key> <key-type> <[eq|ne|gt|lt]> <value>"
 #     "dbus <name>" exists
 
 #Conditions=desktop;
