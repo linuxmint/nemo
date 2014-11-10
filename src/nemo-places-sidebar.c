@@ -546,7 +546,7 @@ restore_expand_state_foreach (GtkTreeModel *model,
 static void
 restore_expand_state (NemoPlacesSidebar *sidebar)
 {
-    gtk_tree_model_foreach (GTK_TREE_MODEL (sidebar->store),
+    gtk_tree_model_foreach (GTK_TREE_MODEL (sidebar->store_filter),
                 restore_expand_state_foreach, sidebar);
 }
 
@@ -587,7 +587,7 @@ sidebar_update_restore_selection (NemoPlacesSidebar *sidebar,
 	data.sidebar = sidebar;
 	data.path = NULL;
 
-	gtk_tree_model_foreach (GTK_TREE_MODEL (sidebar->store),
+	gtk_tree_model_foreach (GTK_TREE_MODEL (sidebar->store_filter),
 				restore_selection_foreach, &data);
 
 	if (data.path != NULL) {
