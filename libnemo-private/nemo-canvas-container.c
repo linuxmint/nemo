@@ -8334,6 +8334,7 @@ nemo_canvas_container_start_renaming_selected_item (NemoCanvasContainer *contain
 	pango_font_description_free (desc);
 	
 	icon_rect = nemo_canvas_item_get_icon_rectangle (icon->item);
+    text_rect = nemo_canvas_item_get_text_rectangle (icon->item, TRUE);
 
 	if (nemo_canvas_container_is_layout_vertical (container) &&
 	    container->details->label_position == NEMO_CANVAS_LABEL_POSITION_BESIDE) {
