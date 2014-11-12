@@ -1,3 +1,9 @@
+Major changes in 3.14.1:
+* Fix regression with --new-window option (Lubomir Rintel)
+* Use mount name if available for file operations progress report
+* Set max-width for value labels in properties (Lars Uebernickel)
+* Increase default window width (Michael Catanzaro)
+
 Changes in 3.14.0:
 * Translation updates
 
