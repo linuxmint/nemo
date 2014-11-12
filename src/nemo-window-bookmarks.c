@@ -274,9 +274,8 @@ activate_bookmark_in_menu_item (GtkAction *action, gpointer user_data)
 	} else {
 	        location = nemo_bookmark_get_location (holder->bookmark);
 		slot = nemo_window_get_active_slot (holder->window);
-	        nemo_window_slot_go_to (slot, 
-					    location, 
-					    nemo_event_should_open_in_new_tab ());
+	        nemo_window_slot_open_location (slot, location, 
+						    nemo_event_get_window_open_flags ());
 	        g_object_unref (location);
         }
 }

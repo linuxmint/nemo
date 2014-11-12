@@ -97,9 +97,8 @@ typedef struct {
         void   (* close) (NemoWindow *window);
 
         /* Signals used only for keybindings */
-        gboolean (* go_up)  (NemoWindow *window,
-                             gboolean close);
-	void     (* reload) (NemoWindow *window);
+        void   (* go_up)  (NemoWindow *window);
+	void   (* reload) (NemoWindow *window);
 } NemoWindowClass;
 
 struct NemoWindow {
@@ -109,6 +108,7 @@ struct NemoWindow {
 };
 
 GType            nemo_window_get_type             (void);
+NemoWindow * nemo_window_new                  (GdkScreen         *screen);
 void             nemo_window_close                (NemoWindow    *window);
 
 void             nemo_window_connect_content_view (NemoWindow    *window,
@@ -150,7 +150,7 @@ void     nemo_window_show_sidebar         (NemoWindow *window);
 void     nemo_window_back_or_forward      (NemoWindow *window,
                                                gboolean        back,
                                                guint           distance,
-                                               gboolean        new_tab);
+                                               NemoWindowOpenFlags flags);
 void     nemo_window_split_view_on        (NemoWindow *window);
 void     nemo_window_split_view_off       (NemoWindow *window);
 gboolean nemo_window_split_view_showing   (NemoWindow *window);
@@ -183,5 +183,7 @@ gint         nemo_window_get_ignore_meta_sort_direction (NemoWindow *window);
 void         nemo_window_set_ignore_meta_sort_direction (NemoWindow *window, gint direction);
 gint         nemo_window_get_ignore_meta_tighter_layout (NemoWindow *window);
 void         nemo_window_set_ignore_meta_tighter_layout (NemoWindow *window, gint tighter);
+
+NemoWindowOpenFlags nemo_event_get_window_open_flags   (void);
 
 #endif
