@@ -64,7 +64,7 @@ enum {
 	LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 G_DEFINE_TYPE (NemoMergedDirectory, nemo_merged_directory,
 	       NEMO_TYPE_DIRECTORY);

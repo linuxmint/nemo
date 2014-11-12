@@ -1,3 +1,27 @@
+nemo (2.4.2) rebecca; urgency=medium
+
+  * icon-container: Fix regression when renaming files in certain views -
+  * Revert "places sidebar: set cells to a fixed height, seems to prevent residual"
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 11 Nov 2014 22:35:46 +0100
+
+nemo (2.4.1) rebecca; urgency=medium
+
+  * Show UP button by default in the toolbar
+  * Re-enabled the right click context menu on nemo toolbar navigation buttons
+  * Recent files: show same open-with entries as normal folders
+  * Sidebar: Fix expander state
+  * Sidebar: workaround for icon render issue.  Don't allow the tree view to be unrestrained vertically.
+  * Places sidebar: set cells to a fixed height, seems to prevent residual render issues
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 11 Nov 2014 11:07:57 +0100
+
+nemo (2.4.0) rebecca; urgency=medium
+
+  * 2.4.0
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 31 Oct 2014 16:23:56 +0100
+
 nemo (2.3.0) unstable; urgency=medium
 
   * 2.3.0

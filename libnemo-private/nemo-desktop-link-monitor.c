@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*-
 
-   nemo-desktop-link-monitor.c: singleton thatn manages the links
+   nemo-desktop-link-monitor.c: singleton that manages the links
     
    Copyright (C) 2003 Red Hat, Inc.
   
@@ -48,10 +48,6 @@ struct NemoDesktopLinkMonitorDetails {
 	NemoDesktopLink *trash_link;
 	NemoDesktopLink *network_link;
 
-	gulong mount_id;
-	gulong unmount_id;
-	gulong changed_id;
-	
 	GList *mount_links;
 };
 
@@ -441,15 +437,12 @@ nemo_desktop_link_monitor_init (NemoDesktopLinkMonitor *monitor)
 				  G_CALLBACK (desktop_volumes_visible_changed),
 				  monitor);
 
-	monitor->details->mount_id =
-		g_signal_connect_object (monitor->details->volume_monitor, "mount_added",
-					 G_CALLBACK (mount_added_callback), monitor, 0);
-	monitor->details->unmount_id =
-		g_signal_connect_object (monitor->details->volume_monitor, "mount_removed",
-					 G_CALLBACK (mount_removed_callback), monitor, 0);
-	monitor->details->changed_id =
-		g_signal_connect_object (monitor->details->volume_monitor, "mount_changed",
-					 G_CALLBACK (mount_changed_callback), monitor, 0);
+	g_signal_connect_object (monitor->details->volume_monitor, "mount_added",
+				 G_CALLBACK (mount_added_callback), monitor, 0);
+	g_signal_connect_object (monitor->details->volume_monitor, "mount_removed",
+				 G_CALLBACK (mount_removed_callback), monitor, 0);
+	g_signal_connect_object (monitor->details->volume_monitor, "mount_changed",
+				 G_CALLBACK (mount_changed_callback), monitor, 0);
 
 }
 
@@ -511,16 +504,6 @@ desktop_link_monitor_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
 					      desktop_volumes_visible_changed,
 					      monitor);
-
-	if (monitor->details->mount_id != 0) {
-		g_source_remove (monitor->details->mount_id);
-	}
-	if (monitor->details->unmount_id != 0) {
-		g_source_remove (monitor->details->unmount_id);
-	}
-	if (monitor->details->changed_id != 0) {
-		g_source_remove (monitor->details->changed_id);
-	}
 
 	G_OBJECT_CLASS (nemo_desktop_link_monitor_parent_class)->finalize (object);
 }

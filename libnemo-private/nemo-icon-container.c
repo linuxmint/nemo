@@ -268,7 +268,7 @@ typedef struct {
 	gboolean tight;
 } PlacementGrid;
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 static void
 tooltip_prefs_changed_callback (NemoIconContainer *container)
@@ -1903,6 +1903,7 @@ align_icons (NemoIconContainer *container)
 	grid = placement_grid_new (container, TRUE);
 
 	if (!grid) {
+		g_list_free (unplaced_icons);
 		return;
 	}
 
@@ -8343,7 +8344,7 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 	pango_font_description_free (desc);
 	
 	icon_rect = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
-	text_rect = nemo_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
+    text_rect = nemo_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
 
 	if (nemo_icon_container_is_layout_vertical (container) &&
 	    container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {

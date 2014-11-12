@@ -1,0 +1,16 @@
+[Nemo Action]
+
+Name=Manage workspaces (Expo)
+
+Comment=Open Expo to add, remove, or organize workspaces
+
+Exec=sh -c 'dbus-send --dest=org.Cinnamon --print-reply /org/Cinnamon org.Cinnamon.ShowExpo >/dev/null'
+
+Selection=None
+
+Extensions=any;
+
+Conditions=desktop;dbus org.Cinnamon;
+
+Active=false
+

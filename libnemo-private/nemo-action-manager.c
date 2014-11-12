@@ -50,7 +50,7 @@ enum {
     LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 static void
 actions_added_or_changed_callback (NemoDirectory *directory,

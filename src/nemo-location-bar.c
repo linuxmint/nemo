@@ -72,7 +72,7 @@ enum {
 	LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 static const GtkTargetEntry drag_types [] = {
 	{ NEMO_DND_URI_LIST_TYPE,   0, NEMO_DND_URI_LIST },
@@ -159,6 +159,7 @@ drag_data_received_callback (GtkWidget *widget,
 
 	if (names == NULL || *names == NULL) {
 		g_warning ("No D&D URI's");
+		g_strfreev (names);
 		gtk_drag_finish (context, FALSE, FALSE, time);
 		return;
 	}
@@ -194,6 +195,7 @@ drag_data_received_callback (GtkWidget *widget,
 		g_free (detail);
 		
 		if (!new_windows_for_extras) {
+			g_strfreev (names);
 			gtk_drag_finish (context, FALSE, FALSE, time);
 			return;
 		}

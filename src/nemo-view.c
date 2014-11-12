@@ -40,10 +40,13 @@
 #include "nemo-properties-window.h"
 #include "nemo-bookmark-list.h"
 
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+#include <glib.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <gio/gio.h>
@@ -169,7 +172,7 @@ enum {
 	NUM_PROPERTIES
 };
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 static GdkAtom copied_files_atom;
@@ -707,7 +710,8 @@ nemo_view_restore_default_zoom_level (NemoView *view)
 	NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->restore_default_zoom_level (view);
 }
 
-NemoZoomLevel
+/*
+static NemoZoomLevel
 nemo_view_get_default_zoom_level (NemoView *view)
 {
     g_return_if_fail (NEMO_IS_VIEW (view));
@@ -718,6 +722,7 @@ nemo_view_get_default_zoom_level (NemoView *view)
 
     NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->get_default_zoom_level (view);
 }
+*/
 
 const char *
 nemo_view_get_view_id (NemoView *view)
@@ -4920,8 +4925,6 @@ setup_bookmark_action(      char *action_name,
 {
 
     GtkAction *action;
-    GtkWidget *menuitem;
-    gchar *full_path;
     action = gtk_action_new (action_name,
              bookmark_name,
              NULL,
@@ -4950,10 +4953,6 @@ setup_bookmark_action(      char *action_name,
                             GTK_UI_MANAGER_MENUITEM,
                             FALSE);
 
-    full_path = g_strdup_printf ("%s/%s", path, action_name);
-    menuitem = gtk_ui_manager_get_widget(ui_manager, full_path);
-
-    g_free (full_path);
     g_free (action_name);
 }
 
@@ -5065,14 +5064,12 @@ reset_move_copy_to_menu (NemoView *view)
 {
     NemoBookmark *bookmark;
     NemoFile *file;
-    int num_applications;
     int bookmark_count, index;
     GtkUIManager *ui_manager;
     GFile *root;
     const gchar *bookmark_name;
     GIcon *icon;
     char *mount_uri;
-    num_applications = 0;
 
     ui_manager = nemo_window_get_ui_manager (view->details->window);
 
@@ -7021,6 +7018,7 @@ open_as_root (const gchar *path)
     argv[3] = NULL;
     g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
                   NULL, NULL, NULL, NULL);
+    g_free (argv[2]);
 }
 
 static void

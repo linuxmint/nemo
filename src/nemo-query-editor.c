@@ -83,7 +83,7 @@ enum {
 	LAST_SIGNAL
 }; 
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 static void entry_activate_cb (GtkWidget *entry, NemoQueryEditor *editor);
 static void entry_changed_cb  (GtkWidget *entry, NemoQueryEditor *editor);

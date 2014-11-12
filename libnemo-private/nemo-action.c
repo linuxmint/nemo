@@ -314,6 +314,8 @@ setup_dbus_condition (NemoAction *action, const gchar *condition)
                                        on_dbus_disappeared,
                                        cond,
                                        NULL);
+
+    g_strfreev (split);
 }
 
 static void
@@ -323,7 +325,7 @@ strip_custom_modifier (const gchar *raw, gboolean *custom, gchar **out)
         gchar **split = g_strsplit_set (raw, "<>", 3);
         *out = g_strdup (split[1]);
         *custom = TRUE;
-        g_free (split);
+        g_strfreev (split);
     } else {
         *out = g_strdup (raw);
         *custom = FALSE;
@@ -514,12 +516,16 @@ nemo_action_new (const gchar *name,
 
     g_key_file_load_from_file (key_file, path, G_KEY_FILE_NONE, NULL);
 
-    if (!g_key_file_has_group (key_file, ACTION_FILE_GROUP))
+    if (!g_key_file_has_group (key_file, ACTION_FILE_GROUP)) {
+        g_key_file_free (key_file);
         return NULL;
+    }
 
     if (g_key_file_has_key (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL)) {
-        if (!g_key_file_get_boolean (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL))
+        if (!g_key_file_get_boolean (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL)) {
+            g_key_file_free (key_file);
             return NULL;
+        }
     }
 
     gchar *orig_label = g_key_file_get_locale_string (key_file,
@@ -965,6 +971,8 @@ default_parent_display_name:
                 goto default_parent_path;
             }
             break;
+        default:
+            break; 
     }
 
     gchar *ret = str->str;
@@ -1131,7 +1139,7 @@ nemo_action_get_label (NemoAction *action, GList *selection, NemoFile *parent)
     const gchar *orig_label = nemo_action_get_orig_label (action);
 
     if (orig_label == NULL)
-        return;
+        return NULL;
 
     action->escape_underscores = TRUE;
 
@@ -1154,7 +1162,7 @@ nemo_action_get_tt (NemoAction *action, GList *selection, NemoFile *parent)
     const gchar *orig_tt = nemo_action_get_orig_tt (action);
 
     if (orig_tt == NULL)
-        return;
+        return NULL;
 
     action->escape_underscores = FALSE;
 
@@ -1197,14 +1205,52 @@ nemo_action_get_dbus_satisfied (NemoAction *action)
     return action->dbus_satisfied;
 }
 
+#define EQUALS "eq"
+#define NOT_EQUALS "ne"
+#define LESS_THAN "lt"
+#define GREATER_THAN "gt"
+
+enum
+{
+    GSETTINGS_SCHEMA_INDEX = 1,
+    GSETTINGS_KEY_INDEX = 2,
+    GSETTINGS_TYPE_INDEX = 3,
+    GSETTINGS_OP_INDEX = 4,
+    GSETTINGS_VAL_INDEX = 5,
+};
+
+static gboolean
+operator_is_valid (const gchar *op_string)
+{
+    return (g_strcmp0 (op_string, EQUALS) == 0 ||
+            g_strcmp0 (op_string, NOT_EQUALS) == 0 ||
+            g_strcmp0 (op_string, LESS_THAN) == 0 ||
+            g_strcmp0 (op_string, GREATER_THAN) == 0);
+}
+
+static gboolean
+try_vector (const gchar *op, gint vector)
+{
+    if (g_strcmp0 (op, EQUALS) == 0) {
+        return (vector == 0);
+    } else if (g_strcmp0 (op, NOT_EQUALS) == 0) {
+        return (vector != 0);
+    } else if (g_strcmp0 (op, LESS_THAN) == 0) {
+        return (vector < 0);
+    } else if (g_strcmp0 (op, GREATER_THAN) == 0) {
+        return (vector > 0);
+    }
+}
 
 static gboolean
 check_gsettings_condition (NemoAction *action, const gchar *condition)
 {
 
-    gchar **split = g_strsplit (condition, " ", 3);
+    gchar **split = g_strsplit (condition, " ", 6);
+    gint len = g_strv_length (split);
 
-    if (g_strv_length (split) != 3) {
+    if (len != 6 && 
+        len != 3) {
         g_strfreev (split);
         return FALSE;
     }
@@ -1214,22 +1260,58 @@ check_gsettings_condition (NemoAction *action, const gchar *condition)
         return FALSE;
     }
 
+    if (len == 6 &&
+        (!g_variant_type_string_is_valid (split[GSETTINGS_TYPE_INDEX]) || 
+         !operator_is_valid (split[GSETTINGS_OP_INDEX]))) {
+        g_printerr ("Nemo Action: Either gsettings variant type (%s) or operator (%s) is invalid.\n",
+                    split[GSETTINGS_TYPE_INDEX], split[GSETTINGS_OP_INDEX]);
+        g_strfreev (split);
+        return FALSE;
+    }
+
     GSettingsSchemaSource *schema_source;
+    gboolean ret = FALSE;
+    const GVariantType *target_type;
+
+    if (len == 3) {
+        target_type = G_VARIANT_TYPE_BOOLEAN;
+    } else {
+        target_type = G_VARIANT_TYPE (split[GSETTINGS_TYPE_INDEX]);
+    }
 
     schema_source = g_settings_schema_source_get_default();
 
-    if (g_settings_schema_source_lookup (schema_source, split[1], TRUE)) {
-        GSettings *s = g_settings_new (split[1]);
+    if (g_settings_schema_source_lookup (schema_source, split[GSETTINGS_SCHEMA_INDEX], TRUE)) {
+        GSettings *s = g_settings_new (split[GSETTINGS_SCHEMA_INDEX]);
         gchar **keys = g_settings_list_keys (s);
-        gboolean ret = FALSE;
         gint i;
         for (i = 0; i < g_strv_length (keys); i++) {
-            if (g_strcmp0 (keys[i], split[2]) == 0) {
-                GVariant *var = g_settings_get_value (s, split[2]);
-                const GVariantType *type = g_variant_get_type (var);
-                if (g_variant_type_equal (type, G_VARIANT_TYPE_BOOLEAN))
-                    ret = g_variant_get_boolean (var);
-                g_variant_unref (var);
+            if (len == 3) {
+                if (g_strcmp0 (keys[i], split[GSETTINGS_KEY_INDEX]) == 0) {
+                    GVariant *setting_var = g_settings_get_value (s, split[GSETTINGS_KEY_INDEX]);
+                    const GVariantType *setting_type = g_variant_get_type (setting_var);
+                    if (g_variant_type_equal (setting_type, target_type))
+                        ret = g_variant_get_boolean (setting_var);
+                    g_variant_unref (setting_var);
+                }
+            } else {
+                if (g_strcmp0 (keys[i], split[GSETTINGS_KEY_INDEX]) == 0) {
+                    GVariant *setting_var = g_settings_get_value (s, split[GSETTINGS_KEY_INDEX]);
+                    const GVariantType *setting_type = g_variant_get_type (setting_var);
+                    if (g_variant_type_equal (setting_type, target_type)) {
+                        GVariant *target_var = g_variant_parse (target_type,
+                                                                split[GSETTINGS_VAL_INDEX],
+                                                                NULL, NULL, NULL);
+                        if (target_var != NULL) {
+                            gint vector = g_variant_compare (setting_var, target_var);
+                            ret = try_vector (split[GSETTINGS_OP_INDEX], vector);
+                            g_variant_unref (target_var);
+                        } else {
+                            g_printerr ("Nemo Action: gsettings value could not be parsed into a valid GVariant\n");
+                        }
+                    }
+                    g_variant_unref (setting_var);
+                }
             }
         }
         g_strfreev (keys);
@@ -1280,7 +1362,6 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
                 if (g_strcmp0 (name, "x-nemo-desktop") != 0)
                     condition_type_show = FALSE;
                 g_free (name);
-                break;
             } else if (g_strcmp0 (condition, "removable") == 0) {
                 gboolean is_removable = FALSE;
                 if (g_list_length (selection) > 0) {
@@ -1297,8 +1378,6 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
                 condition_type_show = is_removable;
             } else if (g_str_has_prefix (condition, "gsettings")) {
                 condition_type_show = check_gsettings_condition (action, condition);
-                if (!condition_type_show)
-                    break;
             }
             if (!condition_type_show)
                 break;
@@ -1370,8 +1449,14 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
                         break;
                     }
                 } else {
-                    if (g_str_has_suffix (filename, g_ascii_strdown (extensions[i], -1))) {
+                    gchar *str = g_ascii_strdown (extensions[i], -1);
+                    if (g_str_has_suffix (filename, str)) {
                         found_match = TRUE;
+                    }
+
+                    g_free (str);
+
+                    if (found_match) {
                         break;
                     }
                 }

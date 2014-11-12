@@ -27,6 +27,7 @@
 #include "nemo-mime-actions.h"
 
 #include "nemo-window-slot.h"
+#include "nemo-error-reporting.h"
 
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-stock-dialogs.h>
@@ -314,7 +315,7 @@ file_has_local_path (NemoFile *file)
 	
 	/* Don't only check _is_native, because we want to support
 	   using the fuse path */
-	location = nemo_file_get_location (file);
+	location = nemo_file_get_activation_location (file);
 	if (g_file_is_native (location)) {
 		res = TRUE;
 	} else {

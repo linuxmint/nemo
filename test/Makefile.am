@@ -9,7 +9,6 @@ INCLUDES =\
 	$(ZEITGEIST_CFLAGS) \
 	-DVERSION="\"$(VERSION)\"" \
 	-DNEMO_DATADIR=\""$(datadir)/nemo"\" \
-	-DLOCALEDIR=\""$(prefix)/${DATADIRNAME}/cinnamon/locale"\"	\
 	$(NULL)
 
 LDADD =\

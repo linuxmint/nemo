@@ -44,6 +44,7 @@
 #include "nemo-location-bar.h"
 #include "nemo-icon-view.h"
 #include "nemo-list-view.h"
+#include "nemo-toolbar.h"
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 #include <glib/gi18n.h>
@@ -82,7 +83,7 @@ action_close_window_slot_callback (GtkAction *action,
 	window = NEMO_WINDOW (user_data);
 	slot = nemo_window_get_active_slot (window);
 
-	nemo_window_pane_slot_close (slot->pane, slot);
+	nemo_window_pane_close_slot (slot->pane, slot);
 }
 
 static void
@@ -793,7 +794,7 @@ toggle_location_entry_setting (NemoWindow     *window,
     GtkActionGroup *action_group;
 
 
-    current_view = nemo_toolbar_get_show_location_entry (pane->tool_bar);
+    current_view = nemo_toolbar_get_show_location_entry (NEMO_TOOLBAR (pane->tool_bar));
     temp_toolbar_visible = pane->temporary_navigation_bar;
     default_toolbar_visible = g_settings_get_boolean (nemo_window_state,
                                                       NEMO_WINDOW_STATE_START_WITH_TOOLBAR);
@@ -802,7 +803,7 @@ toggle_location_entry_setting (NemoWindow     *window,
     grab_focus_only = from_accel_or_menu && (pane->last_focus_widget == NULL || !already_has_focus) && current_view;
 
     if ((temp_toolbar_visible || default_toolbar_visible) && !grab_focus_only) {
-        nemo_toolbar_set_show_location_entry (pane->tool_bar, !current_view);
+        nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), !current_view);
         g_settings_set_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY, !current_view);
 
         action_group = pane->toolbar_action_group;
@@ -1126,20 +1127,20 @@ static const GtkActionEntry main_entries[] = {
   /* tooltip */                  N_("Display Nemo help"),
                                  G_CALLBACK (action_nemo_manual_callback) },
   /** name, stock id          { "NemoHelpSearch", NULL,
-  /* label, accelerator        N_("Search for files"), NULL,
-  /* tooltip                   N_("Locate files based on file name and type. Save your searches for later use."),
+     label, accelerator        N_("Search for files"), NULL,
+     tooltip                   N_("Locate files based on file name and type. Save your searches for later use."),
                                  G_CALLBACK (action_nemo_manual_callback) },
-  /* name, stock id          { "NemoHelpSort", NULL,
-  /* label, accelerator        N_("Sort files and folders"), NULL,
-  /* tooltip                   N_("Arrange files by name, size, type, or when they were changed."),
+     name, stock id          { "NemoHelpSort", NULL,
+     label, accelerator        N_("Sort files and folders"), NULL,
+     tooltip                   N_("Arrange files by name, size, type, or when they were changed."),
                                  G_CALLBACK (action_nemo_manual_callback) },
-  /* name, stock id          { "NemoHelpLost", NULL,
-  /* label, accelerator        N_("Find a lost file"), NULL,
-  /* tooltip                   N_("Follow these tips if you can't find a file you created or downloaded."),
+     name, stock id          { "NemoHelpLost", NULL,
+     label, accelerator        N_("Find a lost file"), NULL,
+     tooltip                   N_("Follow these tips if you can't find a file you created or downloaded."),
                                  G_CALLBACK (action_nemo_manual_callback) },
-  /* name, stock id          { "NemoHelpShare", NULL,
-  /* label, accelerator        N_("Share and transfer files"), NULL,
-  /* tooltip                   N_("Easily transfer files to your contacts and devices from the file manager."),
+     name, stock id          { "NemoHelpShare", NULL,
+     label, accelerator        N_("Share and transfer files"), NULL,
+     tooltip                   N_("Easily transfer files to your contacts and devices from the file manager."),
                                  G_CALLBACK (action_nemo_manual_callback) }, **/
   /* name, stock id */         { "About Nemo", GTK_STOCK_ABOUT,
   /* label, accelerator */       N_("_About"), NULL,

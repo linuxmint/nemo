@@ -291,6 +291,7 @@ nemo_query_parse_xml (char *xml, gsize xml_len)
 
 	ctx = g_markup_parse_context_new (&parser, 0, &info, NULL);
 	g_markup_parse_context_parse (ctx, xml, xml_len, NULL);
+	g_markup_parse_context_free (ctx);
 
 	if (info.error) {
 		g_object_unref (info.query);
