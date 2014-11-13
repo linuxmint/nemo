@@ -30,6 +30,7 @@
 #include "eel-graphic-effects.h"
 #include "eel-glib-extensions.h"
 
+#include <math.h>
 #include <string.h>
 
 /* shared utility to create a new pixbuf from the passed-in one */
@@ -104,63 +105,6 @@ eel_create_spotlight_pixbuf (GdkPixbuf* src)
 	return dest;
 }
 
-
-/* the following routine was stolen from the panel to darken a pixbuf, by manipulating the saturation */
-
-/* saturation is 0-255, darken is 0-255 */
-
-GdkPixbuf *
-eel_create_darkened_pixbuf (GdkPixbuf *src, int saturation, int darken)
-{
-	gint i, j;
-	gint width, height, src_row_stride, dest_row_stride;
-	gboolean has_alpha;
-	guchar *target_pixels, *original_pixels;
-	guchar *pixsrc, *pixdest;
-	guchar intensity;
-	guchar alpha;
-	guchar negalpha;
-	guchar r, g, b;
-	GdkPixbuf *dest;
-
-	g_return_val_if_fail (gdk_pixbuf_get_colorspace (src) == GDK_COLORSPACE_RGB, NULL);
-	g_return_val_if_fail ((!gdk_pixbuf_get_has_alpha (src)
-			       && gdk_pixbuf_get_n_channels (src) == 3)
-			      || (gdk_pixbuf_get_has_alpha (src)
-				  && gdk_pixbuf_get_n_channels (src) == 4), NULL);
-	g_return_val_if_fail (gdk_pixbuf_get_bits_per_sample (src) == 8, NULL);
-
-	dest = create_new_pixbuf (src);
-
-	has_alpha = gdk_pixbuf_get_has_alpha (src);
-	width = gdk_pixbuf_get_width (src);
-	height = gdk_pixbuf_get_height (src);
-	dest_row_stride = gdk_pixbuf_get_rowstride (dest);
-	src_row_stride = gdk_pixbuf_get_rowstride (src);
-	target_pixels = gdk_pixbuf_get_pixels (dest);
-	original_pixels = gdk_pixbuf_get_pixels (src);
-
-	for (i = 0; i < height; i++) {
-		pixdest = target_pixels + i * dest_row_stride;
-		pixsrc = original_pixels + i * src_row_stride;
-		for (j = 0; j < width; j++) {
-			r = *pixsrc++;
-			g = *pixsrc++;
-			b = *pixsrc++;
-			intensity = (r * 77 + g * 150 + b * 28) >> 8;
-			negalpha = ((255 - saturation) * darken) >> 8;
-			alpha = (saturation * darken) >> 8;
-			*pixdest++ = (negalpha * intensity + alpha * r) >> 8;
-			*pixdest++ = (negalpha * intensity + alpha * g) >> 8;
-			*pixdest++ = (negalpha * intensity + alpha * b) >> 8;
-			if (has_alpha) {
-				*pixdest++ = *pixsrc++;
-			}
-		}
-	}
-	return dest;
-}
-
 /* this routine colorizes the passed-in pixbuf by multiplying each pixel with the passed in color */
 
 GdkPixbuf *
@@ -183,9 +127,9 @@ eel_create_colorized_pixbuf (GdkPixbuf *src,
 				  && gdk_pixbuf_get_n_channels (src) == 4), NULL);
 	g_return_val_if_fail (gdk_pixbuf_get_bits_per_sample (src) == 8, NULL);
 
-	red_value = eel_round (color->red * 255);
-	green_value = eel_round (color->green * 255);
-	blue_value = eel_round (color->blue * 255);	
+	red_value = (gint) floor (color->red * 255);
+	green_value = (gint) floor (color->green * 255);
+	blue_value = (gint) floor (color->blue * 255);	
 
 	dest = create_new_pixbuf (src);
 	
@@ -245,7 +189,7 @@ draw_frame_column (GdkPixbuf *frame_image, int target_height, int source_height,
 	}
 }
 
-GdkPixbuf *
+static GdkPixbuf *
 eel_stretch_frame_image (GdkPixbuf *frame_image, int left_offset, int top_offset, int right_offset, int bottom_offset,
 			 int dest_width, int dest_height, gboolean fill_flag)
 {

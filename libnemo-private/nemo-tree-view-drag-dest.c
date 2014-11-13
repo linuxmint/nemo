@@ -34,7 +34,6 @@
 
 #include "nemo-file-dnd.h"
 #include "nemo-file-changes-queue.h"
-#include "nemo-icon-dnd.h"
 #include "nemo-link.h"
 
 #include <gtk/gtk.h>
@@ -369,14 +368,19 @@ get_drop_target_uri_for_path (NemoTreeViewDragDest *dest,
 			      GtkTreePath *path)
 {
 	NemoFile *file;
-	char *target;
+	char *target = NULL;
+	gboolean can;
 
 	file = file_for_path (dest, path);
 	if (file == NULL) {
 		return NULL;
 	}
-	
-	target = nemo_file_get_drop_target_uri (file);
+	can = nemo_drag_can_accept_info (file,
+					     dest->details->drag_type,
+					     dest->details->drag_list);
+	if (can) {
+		target = nemo_file_get_drop_target_uri (file);
+	}
 	nemo_file_unref (file);
 	
 	return target;
@@ -396,56 +400,36 @@ get_drop_action (NemoTreeViewDragDest *dest,
 		return 0;
 	}
 
+	drop_target = get_drop_target_uri_for_path (dest, path);
+	if (drop_target == NULL) {
+		return 0;
+	}
+
+	action = 0;
 	switch (dest->details->drag_type) {
 	case NEMO_ICON_DND_GNOME_ICON_LIST :
-		drop_target = get_drop_target_uri_for_path (dest, path);
-		
-		if (!drop_target) {
-			return 0;
-		}
-
 		nemo_drag_default_drop_action_for_icons
 			(context,
 			 drop_target,
 			 dest->details->drag_list,
 			 &action);
-
-		g_free (drop_target);
-		
-		return action;
-		
+		break;
 	case NEMO_ICON_DND_NETSCAPE_URL:
-		drop_target = get_drop_target_uri_for_path (dest, path);
-
-		if (drop_target == NULL) {
-			return 0;
-		}
-
 		action = nemo_drag_default_drop_action_for_netscape_url (context);
-
-		g_free (drop_target);
-
-		return action;
-		
+		break;
 	case NEMO_ICON_DND_URI_LIST :
-		drop_target = get_drop_target_uri_for_path (dest, path);
-
-		if (drop_target == NULL) {
-			return 0;
-		}
-
-		g_free (drop_target);
-
-		return gdk_drag_context_get_suggested_action (context);
-
+		action = gdk_drag_context_get_suggested_action (context);
+		break;
 	case NEMO_ICON_DND_TEXT:
 	case NEMO_ICON_DND_RAW:
 	case NEMO_ICON_DND_XDNDDIRECTSAVE:
-		return GDK_ACTION_COPY;
-
+		action = GDK_ACTION_COPY;
+		break;
 	}
 
-	return 0;
+	g_free (drop_target);
+
+	return action;
 }
 
 static gboolean
@@ -470,7 +454,11 @@ drag_motion_callback (GtkWidget *widget,
 
 	gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (widget),
 					   x, y, &path, &pos);
-	
+	if (pos == GTK_TREE_VIEW_DROP_BEFORE ||
+	    pos == GTK_TREE_VIEW_DROP_AFTER) {
+		gtk_tree_path_free (path);
+		path = NULL;
+	}
 
 	if (!dest->details->have_drag_data) {
 		res = get_drag_data (dest, context, time);
@@ -561,13 +549,18 @@ drag_leave_callback (GtkWidget *widget,
 static char *
 get_drop_target_uri_at_pos (NemoTreeViewDragDest *dest, int x, int y)
 {
-	char *drop_target;
+	char *drop_target = NULL;
 	GtkTreePath *path;
 	GtkTreePath *drop_path;
 	GtkTreeViewDropPosition pos;
 
-	gtk_tree_view_get_dest_row_at_pos (dest->details->tree_view, x, y, 
+	gtk_tree_view_get_dest_row_at_pos (dest->details->tree_view, x, y,
 					   &path, &pos);
+	if (pos == GTK_TREE_VIEW_DROP_BEFORE ||
+	    pos == GTK_TREE_VIEW_DROP_AFTER) {
+		gtk_tree_path_free (path);
+		path = NULL;
+	}
 
 	drop_path = get_drop_path (dest, path);
 
@@ -611,7 +604,7 @@ receive_uris (NemoTreeViewDragDest *dest,
 
 	/* We only want to copy external uris */
 	if (dest->details->drag_type == NEMO_ICON_DND_URI_LIST) {
-		action = GDK_ACTION_COPY;
+		real_action = GDK_ACTION_COPY;
 	}
 
 	if (real_action > 0) {
@@ -684,7 +677,7 @@ receive_dropped_text (NemoTreeViewDragDest *dest,
 		      int x, int y)
 {
 	char *drop_target;
-	char *text;
+	guchar *text;
 
 	if (!dest->details->drag_data) {
 		return;
@@ -800,7 +793,7 @@ drag_data_received_callback (GtkWidget *widget,
 			     gpointer data)
 {
 	NemoTreeViewDragDest *dest;
-	const char *tmp;
+	const gchar *tmp;
 	int length;
 	gboolean success, finished;
 	
@@ -839,7 +832,7 @@ drag_data_received_callback (GtkWidget *widget,
 			break;
 		case NEMO_ICON_DND_RAW:
 			length = gtk_selection_data_get_length (selection_data);
-			tmp = gtk_selection_data_get_data (selection_data);
+			tmp = (const gchar *) gtk_selection_data_get_data (selection_data);
 			receive_dropped_raw (dest, tmp, length, context, x, y);
 			success = TRUE;
 			break;
@@ -888,7 +881,7 @@ get_direct_save_filename (GdkDragContext *context)
 		return NULL;
 	}
 
-	return prop_text;
+	return (gchar *) prop_text;
 }
 
 static gboolean

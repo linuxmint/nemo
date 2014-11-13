@@ -140,19 +140,19 @@ autorun (GMount *mount)
         if (path_to_spawn != NULL && cwd_for_program != NULL) {
                 if (chdir (cwd_for_program) == 0)  {
                         execl (path_to_spawn, path_to_spawn, program_parameter, NULL);
-			error_string = g_strdup_printf (_("Error starting autorun program: %s"), strerror (errno));
+			error_string = g_strdup_printf (_("Unable to start the program:\n%s"), strerror (errno));
 			goto out;
                 }
-                error_string = g_strdup_printf (_("Error starting autorun program: %s"), strerror (errno));
+                error_string = g_strdup_printf (_("Unable to start the program:\n%s"), strerror (errno));
 		goto out;
         }
-	error_string = g_strdup_printf (_("Cannot find the autorun program"));
+	error_string = g_strdup_printf (_("Unable to locate the program"));
 
 out:
         if (program_to_spawn != NULL) {
                 g_object_unref (program_to_spawn);
 	}
-        if(program_parameter_file != NULL) {
+        if (program_parameter_file != NULL) {
                 g_object_unref (program_parameter_file);
         }
 	if (root != NULL) {
@@ -168,8 +168,13 @@ out:
 							     0,
 							     GTK_MESSAGE_ERROR,
 							     GTK_BUTTONS_OK,
-							     _("<big><b>Error autorunning software</b></big>"));
+							     _("Oops! There was a problem running this software."));
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", error_string);
+		/* This is required because we don't show dialogs in the
+		   window picker and if the window pops under another window
+		   there is no way to get it back. */
+		gtk_window_set_keep_above (GTK_WINDOW (dialog), TRUE);
+
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 		g_free (error_string);
@@ -190,17 +195,20 @@ present_autorun_for_software_dialog (GMount *mount)
 
 	mount_name = g_mount_get_name (mount);
 
-	dialog = gtk_message_dialog_new_with_markup (NULL, /* TODO: parent window? */
-						     0,
-						     GTK_MESSAGE_OTHER,
-						     GTK_BUTTONS_CANCEL,
-						     _("<big><b>This medium contains software intended to be automatically started. Would you like to run it?</b></big>"));
+	dialog = gtk_message_dialog_new (NULL, /* TODO: parent window? */
+					 0,
+					 GTK_MESSAGE_OTHER,
+					 GTK_BUTTONS_CANCEL,
+					 _("“%s” contains software intended to be automatically started. Would you like to run it?"),
+					 mount_name);
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-						  _("The software will run directly from the medium \"%s\". "
-						    "You should never run software that you don't trust.\n"
-						    "\n"
-						    "If in doubt, press Cancel."),
-                                                  mount_name);
+						  "%s",
+						  _("If you don't trust this location or aren't sure, press Cancel."));
+
+	/* This is required because we don't show dialogs in the
+	   window picker and if the window pops under another window
+	   there is no way to get it back. */
+	gtk_window_set_keep_above (GTK_WINDOW (dialog), TRUE);
 
 	/* TODO: in a star trek future add support for verifying
 	 * software on media (e.g. if it has a certificate, check it
@@ -218,7 +226,6 @@ present_autorun_for_software_dialog (GMount *mount)
 
 	gtk_message_dialog_set_image (GTK_MESSAGE_DIALOG (dialog), image);
 
-	gtk_window_set_title (GTK_WINDOW (dialog), mount_name);
 	gtk_window_set_icon (GTK_WINDOW (dialog), pixbuf);
 
 	data = g_new0 (AutorunSoftwareDialogData, 1);
@@ -252,6 +259,7 @@ main (int argc, char *argv[])
         GVolumeMonitor *monitor;
         GFile *file;
         GMount *mount;
+	GError *error;
 
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -260,23 +268,29 @@ main (int argc, char *argv[])
 	gtk_init (&argc, &argv);
 
         if (argc != 2) {
+		g_print ("Usage: %s mount-uri\n", argv[0]);
                 goto out;
 	}
 
         /* instantiate monitor so we get the "unmounted" signal properly */
         monitor = g_volume_monitor_get ();
         if (monitor == NULL) {
+		g_warning ("Unable to connect to the volume monitor");
                 goto out;
 	}
 
         file = g_file_new_for_commandline_arg (argv[1]);
         if (file == NULL) {
 		g_object_unref (monitor);
+		g_warning ("Unable to parse mount URI");
                 goto out;
 	}
 
-        mount = g_file_find_enclosing_mount (file, NULL, NULL);
+	error = NULL;
+        mount = g_file_find_enclosing_mount (file, NULL, &error);
         if (mount == NULL) {
+		g_warning ("Unable to find device for URI: %s", error->message);
+		g_clear_error (&error);
 		g_object_unref (file);
 		g_object_unref (monitor);
                 goto out;

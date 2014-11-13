@@ -29,3 +29,5 @@ EGG_TREE_DND_DIR = $(srcdir)/../../../libegg/libegg/treeviewutils
 
 regenerate-built-sources:
 	EGGFILES="$(EGG_TREE_DND_FILES)" EGGDIR="$(EGG_TREE_DND_DIR)" $(srcdir)/update-from-egg.sh
+
+-include $(top_srcdir)/git.mk

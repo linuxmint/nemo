@@ -57,22 +57,6 @@ enum
 	PROP_WINDOW
 };
 
-static gboolean
-should_open_in_new_tab (void)
-{
-	/* FIXME this is duplicated */
-	GdkEvent *event;
-
-	event = gtk_get_current_event ();
-	if (event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) {
-		return event->button.button == 2;
-	}
-
-	gdk_event_free (event);
-
-	return FALSE;
-}
-
 static void
 activate_back_or_forward_menu_item (GtkMenuItem *menu_item, 
 				    NemoWindow *window,
@@ -84,7 +68,7 @@ activate_back_or_forward_menu_item (GtkMenuItem *menu_item,
 
 	index = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (menu_item), "user_data"));
 
-	nemo_window_back_or_forward (window, back, index, should_open_in_new_tab ());
+	nemo_window_back_or_forward (window, back, index, nemo_event_get_window_open_flags ());
 }
 
 static void
@@ -237,7 +221,7 @@ static void
 connect_proxy (GtkAction *action,
                GtkWidget *proxy)
 {
-    GtkWidget *button;
+    GtkButton *button;
 
 	if (GTK_IS_BUTTON (proxy)) {
         button = GTK_BUTTON (proxy);
@@ -255,7 +239,7 @@ static void
 disconnect_proxy (GtkAction *action,
                   GtkWidget *proxy)
 {
-    GtkWidget *button;
+    GtkButton *button;
 
 	if (GTK_IS_BUTTON (proxy)) {
         button = GTK_BUTTON (proxy);

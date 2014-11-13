@@ -484,7 +484,7 @@ file_read_callback (GObject      *object,
 
 #ifdef HAVE_EXIF
 		exif_still_loading = exif_loader_write (page->details->exifldr,
-				  		        page->details->buffer,
+				  		        (guchar *) page->details->buffer,
 				  			count_read);
 #else
 		exif_still_loading = 0;
@@ -492,7 +492,7 @@ file_read_callback (GObject      *object,
 
 		if (page->details->pixbuf_still_loading) {
 			if (!gdk_pixbuf_loader_write (page->details->loader,
-					      	      page->details->buffer,
+					      	      (const guchar *) page->details->buffer,
 					      	      count_read,
 					      	      NULL)) {
 				page->details->pixbuf_still_loading = FALSE;
@@ -570,7 +570,7 @@ file_open_callback (GObject      *object,
 
 	file = G_FILE (object);
 	uri = g_file_get_uri (file);
-	
+
 	error = NULL;
 	stream = g_file_read_finish (file, res, &error);
 	if (stream) {
@@ -653,7 +653,7 @@ load_location (NemoImagePropertiesPage *page,
 	data = g_new0 (FileOpenData, 1);
 	data->page = page;
 	data->info = info;
-	
+
 	g_file_read_async (file,
 			   0,
 			   page->details->cancellable,
@@ -680,7 +680,7 @@ static void
 nemo_image_properties_page_init (NemoImagePropertiesPage *page)
 {
 	GtkWidget *sw;
-	
+
 	page->details = G_TYPE_INSTANCE_GET_PRIVATE (page,
 						     NEMO_TYPE_IMAGE_PROPERTIES_PAGE,
 						     NemoImagePropertiesPageDetails);
@@ -694,8 +694,8 @@ nemo_image_properties_page_init (NemoImagePropertiesPage *page)
 	gtk_container_set_border_width (GTK_CONTAINER (sw), 0);
 	gtk_widget_set_vexpand (GTK_WIDGET (sw), TRUE);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
-	                                GTK_POLICY_NEVER,
-	                                GTK_POLICY_AUTOMATIC);
+					GTK_POLICY_NEVER,
+					GTK_POLICY_AUTOMATIC);
 	gtk_box_pack_start (GTK_BOX (page), sw, FALSE, TRUE, 2);
 
 	page->details->grid = gtk_grid_new ();

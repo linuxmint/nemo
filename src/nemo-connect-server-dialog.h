@@ -56,24 +56,9 @@ struct _NemoConnectServerDialogClass {
 
 GType nemo_connect_server_dialog_get_type (void);
 
-GtkWidget* nemo_connect_server_dialog_new (NemoWindow *window);
-
-void nemo_connect_server_dialog_display_location_async (NemoConnectServerDialog *self,
-							    GFile *location,
-							    GAsyncReadyCallback callback,
-							    gpointer user_data);
-gboolean nemo_connect_server_dialog_display_location_finish (NemoConnectServerDialog *self,
-								 GAsyncResult *result,
-								 GError **error);
-
-void nemo_connect_server_dialog_fill_details_async (NemoConnectServerDialog *self,
-							GMountOperation *operation,
-							const gchar *default_user,
-							const gchar *default_domain,
-							GAskPasswordFlags flags,
-							GAsyncReadyCallback callback,
-							gpointer user_data);
-gboolean nemo_connect_server_dialog_fill_details_finish (NemoConnectServerDialog *self,
-							     GAsyncResult *result);
+GtkWidget * nemo_connect_server_dialog_new             (NemoWindow *window);
+GFile *     nemo_connect_server_dialog_get_location    (NemoConnectServerDialog *dialog);
+void        nemo_connect_server_dialog_set_show_browse (NemoConnectServerDialog *dialog,
+							    gboolean                     show);
 
 #endif /* NEMO_CONNECT_SERVER_DIALOG_H */

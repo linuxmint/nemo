@@ -90,51 +90,72 @@ nemo_trash_monitor_class_init (NemoTrashMonitorClass *klass)
 }
 
 static void
-update_info_cb (GObject *source_object,
-		GAsyncResult *res,
-		gpointer user_data)
+update_icon (NemoTrashMonitor *trash_monitor)
 {
-	NemoTrashMonitor *trash_monitor;
-	GFileInfo *info;
-	GIcon *icon;
-	const char * const *names;
-	gboolean empty;
-	int i;
+	g_clear_object (&trash_monitor->details->icon);
 
-	trash_monitor = NEMO_TRASH_MONITOR (user_data);
+	if (trash_monitor->details->empty) {
+		trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_TRASH);
+	} else {
+		trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_TRASH_FULL);
+	}
+}
+
+static void
+update_empty_info (NemoTrashMonitor *trash_monitor,
+		   gboolean is_empty)
+{
+	if (trash_monitor->details->empty == is_empty) {
+		return;
+	}
 	
-	info = g_file_query_info_finish (G_FILE (source_object),
-					 res, NULL);
+	trash_monitor->details->empty = is_empty;
+	update_icon (trash_monitor);
 
-	if (info != NULL) {
-		icon = g_file_info_get_icon (info);
+	/* trash got empty or full, notify everyone who cares */
+	g_signal_emit (trash_monitor,
+		       signals[TRASH_STATE_CHANGED], 0,
+		       trash_monitor->details->empty);
+}
 
-		if (icon) {
-			g_object_unref (trash_monitor->details->icon);
-			trash_monitor->details->icon = g_object_ref (icon);
-			empty = TRUE;
-			if (G_IS_THEMED_ICON (icon)) {
-				names = g_themed_icon_get_names (G_THEMED_ICON (icon));
-				for (i = 0; names[i] != NULL; i++) {
-					if (strcmp (names[i], NEMO_ICON_TRASH_FULL) == 0) {
-						empty = FALSE;
-						break;
-					}
-				}
-			}
-			if (trash_monitor->details->empty != empty) {
-				trash_monitor->details->empty = empty;
+static void
+enumerate_next_files_cb (GObject *source,
+			 GAsyncResult *res,
+			 gpointer user_data)
+{
+	NemoTrashMonitor *trash_monitor = user_data;
+	GList *infos;
 
-				/* trash got empty or full, notify everyone who cares */
-				g_signal_emit (trash_monitor, 
-					       signals[TRASH_STATE_CHANGED], 0,
-					       trash_monitor->details->empty);
-			}
-		}
-		g_object_unref (info);
+	infos = g_file_enumerator_next_files_finish (G_FILE_ENUMERATOR (source), res, NULL);
+	if (!infos) {
+		update_empty_info (trash_monitor, TRUE);
+	} else {
+		update_empty_info (trash_monitor, FALSE);
+		g_list_free_full (infos, g_object_unref);
 	}
 
 	g_object_unref (trash_monitor);
+}
+
+static void
+enumerate_children_cb (GObject *source,
+		       GAsyncResult *res,
+		       gpointer user_data)
+{
+	GFileEnumerator *enumerator;
+	NemoTrashMonitor *trash_monitor = user_data;
+
+	enumerator = g_file_enumerate_children_finish (G_FILE (source), res, NULL);
+	if (!enumerator) {
+		update_empty_info (trash_monitor, TRUE);
+		g_object_unref (trash_monitor);
+		return;
+	}
+
+	g_file_enumerator_next_files_async (enumerator, 1,
+					    G_PRIORITY_DEFAULT, NULL,
+					    enumerate_next_files_cb, trash_monitor);
+	g_object_unref (enumerator);
 }
 
 static void
@@ -143,11 +164,11 @@ schedule_update_info (NemoTrashMonitor *trash_monitor)
 	GFile *location;
 
 	location = g_file_new_for_uri ("trash:///");
-
-	g_file_query_info_async (location,
-				 G_FILE_ATTRIBUTE_STANDARD_ICON,
-				 0, 0, NULL,
-				 update_info_cb, g_object_ref (trash_monitor));
+	g_file_enumerate_children_async (location,
+					 G_FILE_ATTRIBUTE_STANDARD_TYPE,
+					 G_FILE_QUERY_INFO_NONE,
+					 G_PRIORITY_DEFAULT, NULL,
+					 enumerate_children_cb, g_object_ref (trash_monitor));
 	
 	g_object_unref (location);
 }
@@ -176,7 +197,7 @@ nemo_trash_monitor_init (NemoTrashMonitor *trash_monitor)
 							      NemoTrashMonitorDetails);
 
 	trash_monitor->details->empty = TRUE;
-	trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_TRASH);
+	update_icon (trash_monitor);
 
 	location = g_file_new_for_uri ("trash:///");
 

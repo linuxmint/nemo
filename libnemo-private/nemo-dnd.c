@@ -239,7 +239,7 @@ nemo_drag_build_selection_list (GtkSelectionData *data)
 
 		/* 2: Decode geometry information.  */
 
-		item->got_icon_position = sscanf (p, "%d:%d:%d:%d%*s",
+		item->got_icon_position = sscanf ((const gchar *) p, "%d:%d:%d:%d%*s",
 						  &item->icon_x, &item->icon_y,
 						  &item->icon_width, &item->icon_height) == 4;
 		if (!item->got_icon_position) {
@@ -574,80 +574,6 @@ add_one_gnome_icon (const char *uri, int x, int y, int w, int h,
 				uri, x, y, w, h);
 }
 
-/*
- * Cf. #48423
- */
-#ifdef THIS_WAS_REALLY_BROKEN
-static gboolean
-is_path_that_gnome_uri_list_extract_filenames_can_parse (const char *path)
-{
-	if (path == NULL || path [0] == '\0') {
-		return FALSE;
-	}
-
-	/* It strips leading and trailing spaces. So it can't handle
-	 * file names with leading and trailing spaces.
-	 */
-	if (g_ascii_isspace (path [0])) {
-		return FALSE;
-	}
-	if (g_ascii_isspace (path [strlen (path) - 1])) {
-		return FALSE;
-	}
-
-	/* # works as a comment delimiter, and \r and \n are used to
-	 * separate the lines, so it can't handle file names with any
-	 * of these.
-	 */
-	if (strchr (path, '#') != NULL
-	    || strchr (path, '\r') != NULL
-	    || strchr (path, '\n') != NULL) {
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-/* Encode a "text/plain" selection; this is a broken URL -- just
- * "file:" with a path after it (no escaping or anything). We are
- * trying to make the old gnome_uri_list_extract_filenames function
- * happy, so this is coded to its idiosyncrasises.
- */
-static void
-add_one_compatible_uri (const char *uri, int x, int y, int w, int h, gpointer data)
-{
-	GString *result;
-	char *local_path;
-	
-	result = (GString *) data;
-
-	/* For URLs that do not have a file: scheme, there's no harm
-	 * in passing the real URL. But for URLs that do have a file:
-	 * scheme, we have to send a URL that will work with the old
-	 * gnome-libs function or nothing will be able to understand
-	 * it.
-	 */
-	if (!eel_istr_has_prefix (uri, "file:")) {
-		g_string_append (result, uri);
-		g_string_append (result, "\r\n");
-	} else {
-		local_path = g_filename_from_uri (uri, NULL, NULL);
-
-		/* Check for characters that confuse the old
-		 * gnome_uri_list_extract_filenames implementation, and just leave
-		 * out any paths with those in them.
-		 */
-		if (is_path_that_gnome_uri_list_extract_filenames_can_parse (local_path)) {
-			g_string_append (result, "file:");
-			g_string_append (result, local_path);
-			g_string_append (result, "\r\n");
-		}
-
-		g_free (local_path);
-	}
-}
-#endif
-
 static void
 add_one_uri (const char *uri, int x, int y, int w, int h, gpointer data)
 {
@@ -690,7 +616,7 @@ nemo_drag_drag_data_get (GtkWidget *widget,
 	
 	gtk_selection_data_set (selection_data,
 				gtk_selection_data_get_target (selection_data),
-				8, result->str, result->len);
+				8, (guchar *) result->str, result->len);
 	g_string_free (result, TRUE);
 
 	return TRUE;
@@ -911,7 +837,7 @@ nemo_drag_autoscroll_start (NemoDragInfo *drag_info,
 	if (nemo_drag_autoscroll_in_scroll_region (widget)) {
 		if (drag_info->auto_scroll_timeout_id == 0) {
 			drag_info->waiting_to_autoscroll = TRUE;
-			drag_info->start_auto_scroll_in = eel_get_system_time() 
+			drag_info->start_auto_scroll_in = g_get_monotonic_time () 
 				+ AUTOSCROLL_INITIAL_DELAY;
 			
 			drag_info->auto_scroll_timeout_id = g_timeout_add

@@ -95,9 +95,11 @@ main (int argc, char *argv[])
 	xmp_init();
 #endif
 
-	/* Run the nemo application. */
-	application = nemo_application_get_singleton ();
-
+	/* Run the nautilus application. */
+	application = g_object_new (NEMO_TYPE_APPLICATION,
+				    "application-id", "org.gnome.NemoApplication",
+				    "flags", G_APPLICATION_HANDLES_OPEN,
+				    NULL);
 	retval = g_application_run (G_APPLICATION (application),
 				    argc, argv);
 

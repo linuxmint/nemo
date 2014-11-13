@@ -7,6 +7,7 @@
 	<menu action="File">
 		<placeholder name="New Items Placeholder">
 			<menuitem name="New Folder" action="New Folder"/>
+			<menuitem name="New Folder with Selection" action="New Folder with Selection"/>
 			<menu action="New Documents">
 			         <menuitem name="No Templates" action="No Templates"/>
 				 <placeholder name="New Documents Placeholder"/>
@@ -150,6 +151,10 @@
 
 </popup>
 <popup name="selection">
+        <placeholder name="New Object Items">
+	        <menuitem name="New Folder with Selection" action="New Folder with Selection"/>
+		<separator name="new folder with selection separator"/>
+	</placeholder>
 	<placeholder name="Open Placeholder">
 		<menuitem name="Open" action="Open"/>
 		<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
@@ -216,7 +221,7 @@
 		<menuitem name="Restore From Trash" action="Restore From Trash"/>
 	</placeholder>
 	<separator name="Appearance separator"/>
-	<placeholder name="Icon Appearance Items">
+	<placeholder name="Canvas Appearance Items">
 	</placeholder>
 	<separator name="Extension actions separator"/>
 	<placeholder name="Extension Actions"/>
@@ -228,10 +233,9 @@
 		 <menuitem name="Start Volume" action="Start Volume"/>
 		 <menuitem name="Stop Volume" action="Stop Volume"/>
 		 <menuitem name="Poll" action="Poll"/>
-        </placeholder>
-        <menuitem name="Connect To Server Link" action="Connect To Server Link"/>
-        <separator name="Properties Separator"/>
-        <menuitem name="Properties" action="Properties"/>
+    </placeholder>
+    <separator name="Properties Separator"/>
+    <menuitem name="Properties" action="Properties"/>
 </popup>
 <popup name="location">
 	<placeholder name="Open Placeholder">

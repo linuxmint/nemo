@@ -27,9 +27,14 @@
 
 #include <glib-object.h>
 
+typedef struct NemoWindowPane NemoWindowPane;
+typedef struct NemoWindowPaneClass NemoWindowPaneClass;
+
 #include "nemo-window.h"
 
 #include <libnemo-private/nemo-icon-info.h>
+
+
 
 #define NEMO_TYPE_WINDOW_PANE	 (nemo_window_pane_get_type())
 #define NEMO_WINDOW_PANE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), NEMO_TYPE_WINDOW_PANE, NemoWindowPaneClass))
@@ -38,7 +43,7 @@
 #define NEMO_IS_WINDOW_PANE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), NEMO_TYPE_WINDOW_PANE))
 #define NEMO_WINDOW_PANE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), NEMO_TYPE_WINDOW_PANE, NemoWindowPaneClass))
 
-struct _NemoWindowPaneClass {
+struct NemoWindowPaneClass {
 	GtkBoxClass parent_class;
 };
 
@@ -51,7 +56,7 @@ struct _NemoWindowPaneClass {
  *
  * A navigation window may have one or more panes.
  */
-struct _NemoWindowPane {
+struct NemoWindowPane {
 	GtkBox parent;
 
 	/* hosting window */
@@ -63,7 +68,7 @@ struct _NemoWindowPane {
 	NemoWindowSlot *active_slot;
 
 	/* location bar */
-	GtkWidget *location_bar;
+	GtkWidget *location_entry;
 	GtkWidget *path_bar;
 	GtkWidget *search_bar;
 	GtkWidget *tool_bar;
@@ -86,23 +91,24 @@ GType nemo_window_pane_get_type (void);
 
 NemoWindowPane *nemo_window_pane_new (NemoWindow *window);
 
-NemoWindowSlot *nemo_window_pane_open_slot (NemoWindowPane *pane,
-					    NemoWindowOpenSlotFlags flags);
+NemoWindowSlot *nemo_window_pane_open_slot  (NemoWindowPane *pane,
+						     NemoWindowOpenSlotFlags flags);
 /* This removes the slot from the given pane but does not close the pane and/or
  * window as well if there are no more slots left afterwards. This
  * functionality is provided by `nemo_window_pane_close_slot' below.
  */
-void nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
-					  NemoWindowSlot *slot);
+void  nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
+						     NemoWindowSlot *slot);
 
 void nemo_window_pane_sync_location_widgets (NemoWindowPane *pane);
-void nemo_window_pane_sync_search_widgets  (NemoWindowPane *pane);
+void nemo_window_pane_set_search_action_active (NemoWindowPane *pane, gboolean active);
+void nemo_window_pane_sync_search_widgets (NemoWindowPane *pane);
 void nemo_window_pane_set_active (NemoWindowPane *pane, gboolean is_active);
 void nemo_window_pane_close_slot (NemoWindowPane *pane, NemoWindowSlot *slot);
 GtkActionGroup * nemo_window_pane_get_toolbar_action_group (NemoWindowPane   *pane);
 void nemo_window_pane_grab_focus (NemoWindowPane *pane);
 
 /* bars */
-void     nemo_window_pane_ensure_location_bar (NemoWindowPane *pane);
+void     nemo_window_pane_ensure_location_entry (NemoWindowPane *pane);
 
 #endif /* NEMO_WINDOW_PANE_H */

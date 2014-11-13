@@ -9,6 +9,7 @@ bin_PROGRAMS=					\
 
 libexec_PROGRAMS=				\
 	nemo-convert-metadata		\
+	nemo-shell-search-provider		\
 	$(NULL)
 
 INCLUDES =							\
@@ -17,7 +18,8 @@ INCLUDES =							\
 	-I$(top_builddir)/libnemo-private 			\
 	$(BASE_CFLAGS) 						\
 	$(COMMON_CFLAGS)					\
-	$(NEMO_CFLAGS)					\
+	$(NEMO_CFLAGS)						\
+	$(DESKTOP_CFLAGS)					\
 	$(WARNING_CFLAGS)					\
 	$(EXIF_CFLAGS)						\
 	$(EXEMPI_CFLAGS)                                        \
@@ -31,6 +33,7 @@ INCLUDES =							\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
 	-DVERSION="\"$(VERSION)\"" 				\
 	$(DISABLE_DEPRECATED_CFLAGS)                            \
+	$(UNITY_CFLAGS)                            \
 	$(NULL)
 
 LDADD =\
@@ -38,14 +41,19 @@ LDADD =\
 	$(BASE_LIBS) \
 	$(COMMON_LIBS) \
 	$(NEMO_LIBS) \
+	$(DESKTOP_LIBS) \
 	$(CORE_LIBS) \
 	$(EXIF_LIBS) \
 	$(EXEMPI_LIBS) \
 	$(POPT_LIBS) \
+	$(UNITY_LIBS) \
 	$(NULL)
 
-dbus_built_sources = nemo-freedesktop-generated.c nemo-freedesktop-generated.h
-$(dbus_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-dbus-interfaces.xml
+dbus_freedesktop_built_sources =			\
+	nemo-freedesktop-generated.c		\
+	nemo-freedesktop-generated.h
+
+$(dbus_freedesktop_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-dbus-interfaces.xml
 	gdbus-codegen									\
 		--interface-prefix org.freedesktop.					\
 		--c-namespace NemoFreedesktop					\
@@ -57,10 +65,14 @@ $(dbus_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-dbus-interfac
 UI_FILES = \
 	nemo-bookmarks-window.glade		\
 	nemo-file-management-properties.glade	\
-	nemo-icon-view-ui.xml		\
+	nemo-canvas-view-ui.xml		\
+	nemo-desktop-canvas-view-ui.xml	\
 	nemo-directory-view-ui.xml		\
-	nemo-desktop-icon-view-ui.xml	\
 	nemo-shell-ui.xml			\
+	$(NULL)
+
+headers =					\
+	nemo-special-location-bar.h		\
 	$(NULL)
 
 nemo-resources.c: nemo.gresource.xml $(UI_FILES)
@@ -69,11 +81,51 @@ nemo-resources.c: nemo.gresource.xml $(UI_FILES)
 nemo-resources.h: nemo.gresource.xml
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-header --c-name nemo $(srcdir)/nemo.gresource.xml
 
+nemo-enum-types.h: stamp-nemo-enum-types.h
+	$(AM_V_GEN)true
 
-BUILT_SOURCES = \
-	$(dbus_built_sources) \
+stamp-nemo-enum-types.h: $(headers) Makefile
+	$(AM_V_GEN)(cd $(srcdir) \
+	&& glib-mkenums \
+			--fhead "#ifndef __NEMO_ENUM_TYPES_H__\n" \
+			--fhead "#define __NEMO_ENUM_TYPES_H__ 1\n\n" \
+			--fhead "#include <glib-object.h>\n\n" \
+			--fhead "G_BEGIN_DECLS\n\n" \
+			--ftail "G_END_DECLS\n\n" \
+			--ftail "#endif /* __NEMO_ENUM_TYPES_H__ */\n" \
+			--fprod "#include \"@filename@\"\n" \
+			--eprod "#define @ENUMPREFIX@_TYPE_@ENUMSHORT@ @enum_name@_get_type()\n" \
+			--eprod "GType @enum_name@_get_type (void);\n" \
+		$(headers) ) > xgen-gth \
+	&& (cmp -s xgen-gth nemo-enum-type.h || cp xgen-gth nemo-enum-types.h) \
+	&& rm -f xgen-gth \
+	&& echo timestamp > $(@F)
+
+nemo-enum-types.c: $(headers) Makefile
+	$(AM_V_GEN)(cd $(srcdir) \
+	&& glib-mkenums \
+			--fhead "#include <config.h>\n" \
+			--fhead "#include <glib-object.h>\n" \
+			--fhead "#include \"nemo-enum-types.h\"\n\n" \
+			--fprod "\n/* enumerations from \"@filename@\" */" \
+			--vhead "static const G@Type@Value _@enum_name@_values[] = {" \
+			--vprod "  { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
+			--vtail "  { 0, NULL, NULL }\n};\n\n" \
+			--vtail "GType\n@enum_name@_get_type (void)\n{\n" \
+			--vtail "  static GType type = 0;\n\n" \
+			--vtail "  if (!type)\n" \
+			--vtail "    type = g_@type@_register_static (\"@EnumName@\", _@enum_name@_values);\n\n" \
+			--vtail "  return type;\n}\n\n" \
+		$(headers) ) > xgen-gtc \
+	&& cp xgen-gtc $(@F) \
+	&& rm -f xgen-gtc
+
+nemo_built_sources = \
+	$(dbus_freedesktop_built_sources) \
 	nemo-resources.c \
 	nemo-resources.h \
+	nemo-enum-types.h \
+	nemo-enum-types.c \
 	$(NULL)
 
 nemo_SOURCES = \
@@ -84,13 +136,14 @@ nemo_SOURCES = \
 	nemo-bookmark-list.h		\
 	nemo-bookmarks-window.c		\
 	nemo-bookmarks-window.h		\
+	nemo-canvas-view.c			\
+	nemo-canvas-view.h			\
+	nemo-canvas-view-container.c		\
+	nemo-canvas-view-container.h		\
 	nemo-connect-server-dialog.c	\
 	nemo-connect-server-dialog.h	\
-	nemo-connect-server-dialog-nonmain.c \
-	nemo-connect-server-operation.c	\
-	nemo-connect-server-operation.h	\
-	nemo-desktop-icon-view.c		\
-	nemo-desktop-icon-view.h		\
+	nemo-desktop-canvas-view.c		\
+	nemo-desktop-canvas-view.h		\
 	nemo-desktop-item-properties.c	\
 	nemo-desktop-item-properties.h	\
 	nemo-desktop-window.c		\
@@ -103,10 +156,6 @@ nemo_SOURCES = \
 	nemo-floating-bar.h			\
 	nemo-freedesktop-dbus.c		\
 	nemo-freedesktop-dbus.h		\
-	nemo-icon-view.c			\
-	nemo-icon-view.h			\
-	nemo-icon-view-container.c		\
-	nemo-icon-view-container.h		\
 	nemo-image-properties-page.c	\
 	nemo-image-properties-page.h	\
 	nemo-list-model.c			\
@@ -114,8 +163,6 @@ nemo_SOURCES = \
 	nemo-list-view-private.h 		\
 	nemo-list-view.c			\
 	nemo-list-view.h 			\
-	nemo-location-bar.c         	\
-	nemo-location-bar.h			\
 	nemo-location-entry.c               \
 	nemo-location-entry.h               \
 	nemo-main.c 			\
@@ -141,10 +188,10 @@ nemo_SOURCES = \
 	nemo-properties-window.h		\
 	nemo-query-editor.c			\
 	nemo-query-editor.h			\
-	nemo-search-bar.c			\
-	nemo-search-bar.h			\
 	nemo-self-check-functions.c 	\
 	nemo-self-check-functions.h 	\
+	nemo-special-location-bar.c		\
+	nemo-special-location-bar.h		\
     nemo-statusbar.c    \
     nemo-statusbar.h    \
 	nemo-toolbar.c			\
@@ -176,13 +223,23 @@ nemo_SOURCES = \
 	nemo-window-slot-dnd.h		\
 	nemo-window.c			\
 	nemo-window.h			\
-	nemo-window-types.h			\
 	nemo-x-content-bar.c		\
 	nemo-x-content-bar.h		\
 	$(NULL)
 
+UNITY_SOURCES = \
+	unity-quicklist-handler.c	\
+	unity-quicklist-handler.h	\
+	unity-bookmarks-handler.c	\
+	unity-bookmarks-handler.h	\
+	$(NULL)
+
+if HAVE_UNITY
+nemo_SOURCES += $(UNITY_SOURCES)
+endif
+
 nodist_nemo_SOURCES = \
-	$(BUILT_SOURCES) \
+	$(nemo_built_sources) \
 	$(NULL)
 
 EMPTY_VIEW_SOURCES = \
@@ -198,13 +255,9 @@ nemo_autorun_software_SOURCES= 			\
 	$(NULL)
 
 nemo_connect_server_SOURCES= \
-	nemo-bookmark-list.c		\
-	nemo-bookmark-list.h		\
-	nemo-connect-server-dialog.c	\
-	nemo-connect-server-dialog.h	\
-	nemo-connect-server-dialog-main.c	\
-	nemo-connect-server-operation.c     \
-	nemo-connect-server-operation.h     \
+	nemo-connect-server-dialog.c        \
+	nemo-connect-server-dialog.h        \
+	nemo-connect-server.c		\
 	$(NULL)
 
 nemo_open_with_SOURCES = \
@@ -213,6 +266,33 @@ nemo_open_with_SOURCES = \
 
 nemo_convert_metadata_SOURCES= \
 	nemo-convert-metadata.c	\
+	$(NULL)
+
+dbus_shell_search_provider_built_sources =		\
+	nemo-shell-search-provider-generated.c	\
+	nemo-shell-search-provider-generated.h
+
+$(dbus_shell_search_provider_built_sources) : Makefile.am $(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml
+	gdbus-codegen									\
+		--interface-prefix org.gnome.						\
+		--c-namespace Nemo							\
+		--generate-c-code nemo-shell-search-provider-generated		\
+		$(top_srcdir)/data/shell-search-provider-dbus-interfaces.xml		\
+		$(NULL)
+
+nemo_shell_search_provider_SOURCES = 		\
+	nemo-bookmark-list.h			\
+	nemo-bookmark-list.c			\
+	nemo-shell-search-provider.c		\
+	$(NULL)
+
+nodist_nemo_shell_search_provider_SOURCES =		\
+	$(dbus_shell_search_provider_built_sources)	\
+	$(NULL)
+
+BUILT_SOURCES = 					\
+	$(nemo_built_sources) 			\
+	$(dbus_shell_search_provider_built_sources) 	\
 	$(NULL)
 
 polkitdir = $(datadir)/polkit-1/actions
@@ -228,6 +308,7 @@ TESTS=check-nemo
 CLEANFILES = \
 	$(BUILT_SOURCES)			\
 	$(server_DATA)				\
+	stamp-nemo-enum-types.h		\
 	$(NULL)
 
 EXTRA_DIST =					\
@@ -240,3 +321,5 @@ EXTRA_DIST =					\
 
 dist-hook:
 	cd $(distdir); rm -f $(CLEANFILES)
+
+-include $(top_srcdir)/git.mk

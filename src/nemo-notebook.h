@@ -29,6 +29,11 @@
 
 #include <glib.h>
 #include <gtk/gtk.h>
+
+typedef struct _NemoNotebookClass	NemoNotebookClass;
+typedef struct _NemoNotebook	NemoNotebook;
+typedef struct _NemoNotebookPrivate	NemoNotebookPrivate;
+
 #include "nemo-window-slot.h"
 
 G_BEGIN_DECLS
@@ -39,9 +44,6 @@ G_BEGIN_DECLS
 #define NEMO_IS_NOTEBOOK(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), NEMO_TYPE_NOTEBOOK))
 #define NEMO_IS_NOTEBOOK_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), NEMO_TYPE_NOTEBOOK))
 #define NEMO_NOTEBOOK_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), NEMO_TYPE_NOTEBOOK, NemoNotebookClass))
-
-typedef struct _NemoNotebookClass	NemoNotebookClass;
-typedef struct _NemoNotebook		NemoNotebook;
 
 struct _NemoNotebook
 {
@@ -67,11 +69,6 @@ gint		nemo_notebook_find_tab_num_at_pos (NemoNotebook *nb,
 						   gint 	 abs_x,
 						   gint 	 abs_y);
 	
-void		nemo_notebook_set_show_tabs	(NemoNotebook *nb,
-						 gboolean show_tabs);
-
-void		nemo_notebook_set_dnd_enabled (NemoNotebook *nb,
-						   gboolean enabled);
 void		nemo_notebook_sync_tab_label (NemoNotebook *nb,
 						  NemoWindowSlot *slot);
 void		nemo_notebook_sync_loading   (NemoNotebook *nb,
@@ -88,6 +85,8 @@ gboolean        nemo_notebook_can_reorder_child_relative (NemoNotebook *notebook
 							  int 	    	offset);
 gboolean        nemo_notebook_can_set_current_page_relative (NemoNotebook *notebook,
 								 int offset);
+void            nemo_notebook_prev_page (NemoNotebook *notebook);
+void            nemo_notebook_next_page (NemoNotebook *notebook);
 
 G_END_DECLS
 

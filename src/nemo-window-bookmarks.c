@@ -33,7 +33,7 @@
 #include "nemo-bookmarks-window.h"
 #include "nemo-window-bookmarks.h"
 #include "nemo-window-private.h"
-#include <libnemo-private/nemo-undo-manager.h>
+#include "nemo-application.h"
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <eel/eel-debug.h>
 #include <eel/eel-stock-dialogs.h>
@@ -43,8 +43,6 @@
 
 #define MENU_ITEM_MAX_WIDTH_CHARS 32
 #define MENU_PATH_BOOKMARKS_PLACEHOLDER	 "/MenuBar/Other Menus/Bookmarks/Bookmarks Placeholder"
-
-static GtkWindow *bookmarks_window = NULL;
 
 static void refresh_bookmarks_menu (NemoWindow *window);
 
@@ -98,72 +96,6 @@ show_bogus_bookmark_window (NemoWindow *window,
 	g_object_unref (location);
 	g_free (uri_for_display);
 	g_free (detail);
-}
-
-static GtkWindow *
-get_or_create_bookmarks_window (NemoWindow *window)
-{
-	GObject *undo_manager_source;
-
-	undo_manager_source = G_OBJECT (window);
-
-	if (bookmarks_window == NULL) {
-		bookmarks_window = create_bookmarks_window (window->details->bookmark_list,
-		                                            undo_manager_source);
-	} else {
-		edit_bookmarks_dialog_set_signals (undo_manager_source);
-	}
-
-	return bookmarks_window;
-}
-
-/**
- * nemo_bookmarks_exiting:
- * 
- * Last chance to save state before app exits.
- * Called when application exits; don't call from anywhere else.
- **/
-void
-nemo_bookmarks_exiting (void)
-{
-	if (bookmarks_window != NULL) {
-		nemo_bookmarks_window_save_geometry (bookmarks_window);
-		gtk_widget_destroy (GTK_WIDGET (bookmarks_window));
-	}
-}
-
-/**
- * add_bookmark_for_current_location
- * 
- * Add a bookmark for the displayed location to the bookmarks menu.
- * Does nothing if there's already a bookmark for the displayed location.
- */
-void
-nemo_window_add_bookmark_for_current_location (NemoWindow *window)
-{
-	NemoBookmark *bookmark;
-	NemoWindowSlot *slot;
-	NemoBookmarkList *list;
-
-	slot = nemo_window_get_active_slot (window);
-	bookmark = slot->current_location_bookmark;
-	list = window->details->bookmark_list;
-
-	if (!nemo_bookmark_list_contains (list, bookmark)) {
-		nemo_bookmark_list_append (list, bookmark); 
-	}
-}
-
-void
-nemo_window_edit_bookmarks (NemoWindow *window)
-{
-	GtkWindow *dialog;
-
-	dialog = get_or_create_bookmarks_window (window);
-
-	gtk_window_set_screen (
-		dialog, gtk_window_get_screen (GTK_WINDOW (window)));
-        gtk_window_present (dialog);
 }
 
 static void
@@ -274,14 +206,13 @@ activate_bookmark_in_menu_item (GtkAction *action, gpointer user_data)
 	} else {
 	        location = nemo_bookmark_get_location (holder->bookmark);
 		slot = nemo_window_get_active_slot (holder->window);
-	        nemo_window_slot_go_to (slot, 
-					    location, 
-					    nemo_event_should_open_in_new_tab ());
+	        nemo_window_slot_open_location (slot, location, 
+						    nemo_event_get_window_open_flags ());
 	        g_object_unref (location);
         }
 }
 
-void
+static void
 nemo_menus_append_bookmark_to_menu (NemoWindow *window, 
 					NemoBookmark *bookmark, 
 					const char *parent_path,
@@ -361,7 +292,8 @@ update_bookmarks (NemoWindow *window)
 	g_assert (window->details->bookmarks_action_group == NULL);
 
 	if (window->details->bookmark_list == NULL) {
-		window->details->bookmark_list = nemo_bookmark_list_get_default ();
+		NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+		window->details->bookmark_list = nemo_application_get_bookmarks (app);
 	}
 
 	bookmarks = window->details->bookmark_list;
