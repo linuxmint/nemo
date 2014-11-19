@@ -83,7 +83,6 @@ struct _NautilusApplicationPriv {
 	NautilusFreedesktopDBus *fdb_manager;
 
 	gboolean desktop_override;
-	gboolean no_default_window;
 
 	NotifyNotification *unmount_notify;
 
@@ -931,9 +930,14 @@ nautilus_application_handle_local_options (GApplication *application,
 		self->priv->desktop_override = TRUE;
 		g_action_group_activate_action (G_ACTION_GROUP (application),
 						"close-desktop", NULL);
+	}  else if (g_variant_dict_contains (options, "no-default-window")) {
+		/* We want to avoid trigering the activate signal; so no window is created.
+		 * GApplication doesn't call activate if we return a value >= 0.
+		 * Use EXIT_SUCCESS since is >= 0. */
+		retval = EXIT_SUCCESS;
+		goto out;
 	}
 
-	self->priv->no_default_window = g_variant_dict_contains (options, "no-default-window");
 	retval = nautilus_application_handle_file_args (self, options);
 
  out:
@@ -949,10 +953,6 @@ nautilus_application_activate (GApplication *app)
 	GFile **files;
 
 	DEBUG ("Calling activate");
-
-	if (self->priv->no_default_window) {
-		return;
-	}
 
 	files = g_malloc0 (2 * sizeof (GFile *));
 	files[0] = g_file_new_for_path (g_get_home_dir ());
