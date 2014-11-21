@@ -1248,7 +1248,9 @@ nemo_application_startup (GApplication *app)
 	 * if there are problems.
 	 */
 	check_required_directories (self);
-	init_desktop (self);
+
+    if (geteuid() != 0)
+        init_desktop (self);
 }
 
 static void
