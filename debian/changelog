@@ -1,3 +1,9 @@
+nemo (2.4.3) rebecca; urgency=medium
+
+  * Never allow root nemo to manage the desktop.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 22 Nov 2014 17:17:30 +0100
+
 nemo (2.4.2) rebecca; urgency=medium
 
   * icon-container: Fix regression when renaming files in certain views -
