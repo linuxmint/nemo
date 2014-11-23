@@ -373,5 +373,11 @@ nemo_status_bar_sync_zoom_widgets (NemoStatusBar *bar)
 
     NemoZoomLevel zoom_level = nemo_view_get_zoom_level (NEMO_VIEW (view));
 
+    g_signal_handlers_block_by_func (GTK_RANGE (bar->zoom_slider), on_slider_scroll_event, bar);
+    g_signal_handlers_block_by_func (GTK_RANGE (bar->zoom_slider), on_slider_changed_cb, bar);
+
     gtk_range_set_value (GTK_RANGE (bar->zoom_slider), (double) zoom_level);
+
+    g_signal_handlers_unblock_by_func (GTK_RANGE (bar->zoom_slider), on_slider_scroll_event, bar);
+    g_signal_handlers_unblock_by_func (GTK_RANGE (bar->zoom_slider), on_slider_changed_cb, bar);
 }
