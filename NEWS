@@ -1,3 +1,7 @@
+Major changes in 3.14.2:
+* Fix new window activation with desktop icons enabled
+* Translation updates
+
 Major changes in 3.14.1:
 * Fix regression with --new-window option (Lubomir Rintel)
 * Use mount name if available for file operations progress report
