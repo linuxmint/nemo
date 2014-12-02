@@ -108,7 +108,8 @@ nemo_global_preferences_init (void)
 	nemo_compact_view_preferences = g_settings_new("org.nemo.compact-view");
 	nemo_desktop_preferences = g_settings_new("org.nemo.desktop");
 	nemo_tree_sidebar_preferences = g_settings_new("org.nemo.sidebar-panels.tree");
-	if (!g_strcmp0(g_getenv("DESKTOP_SESSION"), "cinnamon")) {
+    if (!g_strcmp0(g_getenv("DESKTOP_SESSION"), "cinnamon") ||
+        !g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "X-Cinnamon")) { 	
 		/* Cinnamon */		
 		gnome_lockdown_preferences = g_settings_new("org.cinnamon.desktop.lockdown");
 		gnome_background_preferences = g_settings_new("org.cinnamon.desktop.background");

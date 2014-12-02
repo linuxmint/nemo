@@ -665,8 +665,11 @@ home_on_different_fs (const gchar *home_uri)
 static gboolean
 recent_is_supported (void)
 {
-    if (!g_settings_get_boolean (cinnamon_privacy_preferences, NEMO_PREFERENCES_RECENT_ENABLED))
-        return FALSE;
+    if (!g_strcmp0(g_getenv("DESKTOP_SESSION"), "cinnamon") ||
+        !g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "X-Cinnamon")) { 	
+        if (!g_settings_get_boolean (cinnamon_privacy_preferences, NEMO_PREFERENCES_RECENT_ENABLED))
+            return FALSE;
+    }
 
     const char * const *supported;
     int i;
