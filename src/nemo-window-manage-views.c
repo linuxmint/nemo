@@ -32,7 +32,6 @@
 #include "nemo-application.h"
 #include "nemo-floating-bar.h"
 #include "nemo-location-bar.h"
-#include "nemo-search-bar.h"
 #include "nemo-pathbar.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
@@ -1106,6 +1105,23 @@ nemo_window_emit_location_change (NemoWindow *window,
 	g_free (uri);
 }
 
+static void
+nemo_window_slot_emit_location_change (NemoWindowSlot *slot,
+					   GFile *from,
+					   GFile *to)
+{
+	char *from_uri = NULL;
+	char *to_uri = NULL;
+
+	if (from != NULL)
+		from_uri = g_file_get_uri (from);
+	if (to != NULL)
+		to_uri = g_file_get_uri (to);
+	g_signal_emit_by_name (slot, "location-changed", from_uri, to_uri);
+	g_free (to_uri);
+	g_free (from_uri);
+}
+
 /* reports location change to window's "loading-uri" clients, i.e.
  * sidebar panels [used when switching tabs]. It will emit the pending
  * location, or the existing location if none is pending.
@@ -1415,7 +1431,9 @@ update_for_new_location (NemoWindowSlot *slot)
 	location_really_changed =
 		slot->location == NULL ||
 		!g_file_equal (slot->location, new_location);
-		
+
+	nemo_window_slot_emit_location_change (slot, slot->location, new_location);
+
         /* Set the new location. */
 	g_clear_object (&slot->location);
 	slot->location = new_location;
@@ -1449,8 +1467,6 @@ update_for_new_location (NemoWindowSlot *slot)
 		nemo_window_slot_remove_extra_location_widgets (slot);
 		
 		directory = nemo_directory_get (slot->location);
-
-		nemo_window_slot_update_query_editor (slot);
 
 		if (nemo_directory_is_in_trash (directory)) {
 			nemo_window_slot_show_trash_bar (slot);
