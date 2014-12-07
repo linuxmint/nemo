@@ -993,25 +993,33 @@ action_tabs_next_callback (GtkAction *action,
 }
 
 static void
+reorder_tab (NemoWindowPane *pane, int offset)
+{
+	int page_num;
+
+	g_return_if_fail (pane != NULL);
+
+	page_num = gtk_notebook_get_current_page (
+		GTK_NOTEBOOK (pane->notebook));
+	g_return_if_fail (page_num != -1);
+	nemo_notebook_reorder_child_relative (
+		NEMO_NOTEBOOK (pane->notebook), page_num, offset);
+}
+
+static void
 action_tabs_move_left_callback (GtkAction *action,
 				gpointer user_data)
 {
-	NemoWindowPane *pane;
 	NemoWindow *window = user_data;
-
-	pane = nemo_window_get_active_pane (window);
-	nemo_notebook_reorder_current_child_relative (NEMO_NOTEBOOK (pane->notebook), -1);
+	reorder_tab (nemo_window_get_active_pane (window), -1);
 }
 
 static void
 action_tabs_move_right_callback (GtkAction *action,
 				 gpointer user_data)
 {
-	NemoWindowPane *pane;
 	NemoWindow *window = user_data;
-
-	pane = nemo_window_get_active_pane (window);
-	nemo_notebook_reorder_current_child_relative (NEMO_NOTEBOOK (pane->notebook), 1);
+	reorder_tab (nemo_window_get_active_pane (window), 1);
 }
 
 static void
