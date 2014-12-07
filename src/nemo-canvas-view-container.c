@@ -67,7 +67,7 @@ nemo_canvas_view_container_get_icon_images (NemoCanvasContainer *container,
 	GIcon *emblemed_icon;
 	GEmblem *emblem;
 	GList *emblem_icons, *l;
-    gint scale;
+	gint scale;
 
 	file = (NemoFile *) data;
 

@@ -354,13 +354,13 @@ action_nemo_manual_callback (GtkAction *action,
 		helpprefix = "gnome-help";
 
 	if (g_str_equal (name, "NemoHelpSearch")) {
-		 helpuri = g_strconcat ("help:", helpprefix, "/files-search", NULL);
+		helpuri = g_strconcat ("help:", helpprefix, "/files-search", NULL);
 	} else if (g_str_equal (name,"NemoHelpSort")) {
 		helpuri = g_strconcat ("help:", helpprefix, "/files-sort", NULL);
 	} else if (g_str_equal (name, "NemoHelpLost")) {
 		helpuri = g_strconcat ("help:", helpprefix, "/files-lost", NULL);
 	} else if (g_str_equal (name, "NemoHelpShare")) {
-		 helpuri = g_strconcat ("help:", helpprefix, "/files-share", NULL);
+		helpuri = g_strconcat ("help:", helpprefix, "/files-share", NULL);
 	} else {
 		helpuri = g_strconcat ("help:", helpprefix, "/files", NULL);
 	}

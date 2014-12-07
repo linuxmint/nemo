@@ -1093,9 +1093,9 @@ fm_tree_model_get_column_type (GtkTreeModel *model, int index)
 	switch (index) {
 	case FM_TREE_MODEL_DISPLAY_NAME_COLUMN:
 		return G_TYPE_STRING;
-	case FM_TREE_MODEL_CLOSED_ICON_COLUMN:
+	case FM_TREE_MODEL_CLOSED_SURFACE_COLUMN:
 		return G_TYPE_ICON;
-	case FM_TREE_MODEL_OPEN_ICON_COLUMN:
+	case FM_TREE_MODEL_OPEN_SURFACE_COLUMN:
 		return G_TYPE_ICON;
 	case FM_TREE_MODEL_FONT_STYLE_COLUMN:
 		return PANGO_TYPE_STYLE;
@@ -1230,11 +1230,11 @@ fm_tree_model_get_value (GtkTreeModel *model, GtkTreeIter *iter, int column, GVa
 			g_value_set_string (value, tree_node_get_display_name (node));
 		}
 		break;
-	case FM_TREE_MODEL_CLOSED_ICON_COLUMN:
+	case FM_TREE_MODEL_CLOSED_SURFACE_COLUMN:
         g_value_init (value, G_TYPE_ICON);
         g_value_set_object (value, node == NULL ? NULL : tree_node_get_closed_icon (node));
         break;
-    case FM_TREE_MODEL_OPEN_ICON_COLUMN:
+    case FM_TREE_MODEL_OPEN_SURFACE_COLUMN:
         g_value_init (value, G_TYPE_ICON);
         g_value_set_object (value, node == NULL ? NULL : tree_node_get_open_icon (node));
 		break;

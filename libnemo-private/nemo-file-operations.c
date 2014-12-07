@@ -71,6 +71,10 @@
 #include <zeitgeist.h>
 #endif
 
+#ifdef BUILD_ZEITGEIST
+#include <zeitgeist.h>
+#endif
+
 /* TODO: TESTING!!! */
 
 typedef enum {
