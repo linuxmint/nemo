@@ -92,6 +92,7 @@ struct NemoWindowSlot {
 	gboolean allow_stop;
 
 	NemoQueryEditor *query_editor;
+	GtkWidget *query_editor_revealer;
 	gulong qe_changed_id;
 	gulong qe_cancel_id;
 
