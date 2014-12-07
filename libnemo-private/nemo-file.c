@@ -8010,7 +8010,9 @@ nemo_file_get_default_sort_type (NemoFile *file,
 	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash, &is_search);
 
 	if (res) {
-		if (is_recent || is_download) {
+		if (is_recent) {
+			retval = NEMO_FILE_SORT_BY_ATIME;
+		} else if (is_download) {
 			retval = NEMO_FILE_SORT_BY_MTIME;
 		} else if (is_trash) {
 			retval = NEMO_FILE_SORT_BY_TRASHED_TIME;

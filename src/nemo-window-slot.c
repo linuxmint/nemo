@@ -2931,9 +2931,17 @@ nemo_window_slot_go_up (NemoWindowSlot *slot,
 			    NemoWindowOpenFlags flags)
 {
 	GFile *parent;
+	NemoDirectory *directory;
+	NemoWindow *window;
 
 	if (slot->details->location == NULL) {
 		return;
+	}
+
+	directory = nemo_directory_get (slot->details->location);
+	if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
+		window = nemo_window_slot_get_window (slot);
+		nemo_window_back_or_forward (window, TRUE, 0, 0);
 	}
 
 	parent = g_file_get_parent (slot->details->location);

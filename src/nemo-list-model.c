@@ -1018,7 +1018,11 @@ nemo_list_model_is_empty (NemoListModel *model)
 guint
 nemo_list_model_get_length (NemoListModel *model)
 {
-	return g_sequence_get_length (model->details->files);
+	if (model) {
+		return g_sequence_get_length (model->details->files);
+	} else {
+		return 0;
+	}
 }
 
 static void
