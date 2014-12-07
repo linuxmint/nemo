@@ -1278,10 +1278,14 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
         for (j = 0; j < condition_count; j++) {
             condition = conditions[j];
             if (g_strcmp0 (condition, "desktop") == 0) {
-                gchar *scheme = nemo_file_get_uri_scheme (parent);
-           	if (g_strcmp0 (scheme, "x-nemo-desktop") != 0)
-                    condition_type_show = FALSE;
-                g_free (scheme);
+            	if (parent) {
+					gchar *scheme = nemo_file_get_uri_scheme (parent);
+					if (g_strcmp0 (scheme, "x-nemo-desktop") != 0)
+						condition_type_show = FALSE;
+					g_free (scheme);
+            	} else {
+            		condition_type_show = FALSE;
+            	}
                 break;
             } else if (g_strcmp0 (condition, "removable") == 0) {
                 gboolean is_removable = FALSE;

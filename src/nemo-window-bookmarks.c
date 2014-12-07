@@ -195,20 +195,20 @@ static void
 activate_bookmark_in_menu_item (GtkAction *action, gpointer user_data)
 {
 	NemoWindowSlot *slot;
-        BookmarkHolder *holder;
-        GFile *location;
+	BookmarkHolder *holder;
+	GFile *location;
 
-        holder = (BookmarkHolder *)user_data;
+	holder = (BookmarkHolder *)user_data;
 
-        if (!nemo_bookmark_get_exists (holder->bookmark)) {
+	if (!nemo_bookmark_get_exists (holder->bookmark)) {
 		holder->failed_callback (holder->window, holder->bookmark);
 	} else {
-	        location = nemo_bookmark_get_location (holder->bookmark);
+		location = nemo_bookmark_get_location (holder->bookmark);
 		slot = nemo_window_get_active_slot (holder->window);
-	        nemo_window_slot_open_location (slot, location, 
+		nemo_window_slot_open_location (slot, location, 
 						    nemo_event_get_window_open_flags ());
-	        g_object_unref (location);
-        }
+		g_object_unref (location);
+	}
 }
 
 static void

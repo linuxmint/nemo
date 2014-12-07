@@ -647,7 +647,7 @@ update_places (NemoPlacesSidebar *sidebar)
         if (!nemo_bookmark_get_exists (bookmark) && g_file_is_native (root)) {
             g_object_unref (root);
             continue;
-	}
+		}
 
         bookmark_name = nemo_bookmark_get_name (bookmark);
         icon = nemo_bookmark_get_icon (bookmark);

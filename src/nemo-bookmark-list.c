@@ -479,8 +479,8 @@ op_processed_cb (NemoBookmarkList *self)
 
 static void
 load_callback (GObject *source,
-	       GAsyncResult *res,
-	       gpointer user_data)
+           GAsyncResult *res,
+           gpointer user_data)
 {
 	NemoBookmarkList *self = NEMO_BOOKMARK_LIST (source);
 	gchar *contents;
@@ -493,7 +493,6 @@ load_callback (GObject *source,
 		op_processed_cb (self);
 		return;
 	}
-
 	lines = g_strsplit (contents, "\n", -1);
 	for (i = 0; lines[i]; i++) {
 		/* Ignore empty or invalid lines that cannot be parsed properly */
@@ -530,6 +529,9 @@ load_io_thread (GSimpleAsyncResult *result,
 	GError *error = NULL;
 
 	file = nemo_bookmark_list_get_file ();
+    if (!g_file_query_exists (file, NULL)) {
+        file = nemo_bookmark_list_get_legacy_file ();
+    }
 
 	g_file_load_contents (file, NULL, &contents, NULL, NULL, &error);
 	g_object_unref (file);
