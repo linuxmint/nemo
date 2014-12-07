@@ -4,3 +4,5 @@ data/nemo-autorun-software.desktop.in
 data/nemo-computer.desktop.in
 data/nemo-connect-server.desktop.in
 data/nemo.desktop.in
+data/nemo-browser.desktop.in
+debian
