@@ -1683,7 +1683,7 @@ eel_editable_label_unrealize (GtkWidget *widget)
       gdk_window_destroy (label->text_area);
       label->text_area = NULL;
     }
-  
+
   (* GTK_WIDGET_CLASS (eel_editable_label_parent_class)->unrealize) (widget);
 }
 
@@ -3039,8 +3039,7 @@ popup_position_func (GtkMenu   *menu,
 
   gdk_window_get_origin (label->text_area, x, y);
 
-  /*gtk_widget_size_request (label->popup_menu, &req);*/
-  gtk_widget_get_requisition (widget, &req);
+  gtk_widget_get_preferred_size (widget, &req, NULL);
   gtk_widget_get_allocation (widget, &allocation);
   
   *x += allocation.width / 2;
