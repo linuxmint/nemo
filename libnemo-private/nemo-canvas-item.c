@@ -472,7 +472,12 @@ nemo_canvas_item_get_drag_surface (NemoCanvasItem *item)
 
 	gtk_style_context_save (context);
 		
-        gtk_style_context_add_class (context, "nemo-canvas-item");
+	if (gtk_style_context_has_class (context, "nemo-canvas-item")) {
+		gtk_style_context_add_class (context, "nemo-canvas-item");
+	}
+	else {
+		gtk_style_context_add_class (context, "nautilus-canvas-item");
+	}
 
 	/* Assume we're updated so canvas item data is right */
 
@@ -1483,8 +1488,12 @@ nemo_canvas_item_draw (EelCanvasItem *item,
 
 	context = gtk_widget_get_style_context (GTK_WIDGET (container));
 	gtk_style_context_save (context);		
-
-	gtk_style_context_add_class (context, "nemo-canvas-item");
+	if (gtk_style_context_has_class (context, "nemo-canvas-item")) {
+		gtk_style_context_add_class (context, "nemo-canvas-item");
+	}
+	else {
+		gtk_style_context_add_class (context, "nautilus-canvas-item");
+	}
 
 	icon_rect = canvas_item->details->icon_rect;
 	temp_surface = map_surface (canvas_item);

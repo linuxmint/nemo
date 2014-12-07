@@ -412,21 +412,23 @@ nemo_floating_bar_add_action (NemoFloatingBar *self,
 {
 	GtkWidget *w, *button;
 
-	w = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_MENU);
-	gtk_widget_show (w);
+	if (!self->priv->is_interactive ) {
+		w = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_MENU);
+		gtk_widget_show (w);
 
-	button = gtk_button_new ();
-	gtk_button_set_image (GTK_BUTTON (button), w);
-	gtk_box_pack_end (GTK_BOX (self), button, FALSE, FALSE, 0);
-	gtk_widget_show (button);
+		button = gtk_button_new ();
+		gtk_button_set_image (GTK_BUTTON (button), w);
+		gtk_box_pack_end (GTK_BOX (self), button, FALSE, FALSE, 0);
+		gtk_widget_show (button);
 
-	g_object_set_data (G_OBJECT (button), "action-id",
-			   GINT_TO_POINTER (action_id));
+		g_object_set_data (G_OBJECT (button), "action-id",
+				   GINT_TO_POINTER (action_id));
 
-	g_signal_connect (button, "clicked",
-			  G_CALLBACK (action_button_clicked_cb), self);
+		g_signal_connect (button, "clicked",
+				  G_CALLBACK (action_button_clicked_cb), self);
 
-	self->priv->is_interactive = TRUE;
+		self->priv->is_interactive = TRUE;
+	}
 }
 
 void
