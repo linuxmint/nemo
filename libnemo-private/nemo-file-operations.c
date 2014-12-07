@@ -2451,7 +2451,6 @@ nemo_file_operations_unmount_mount_full (GtkWindow                      *parent_
 			if (callback) {
 				callback (callback_data);
 			}
-
 			unmount_data_free (data);
 			return;
 		}

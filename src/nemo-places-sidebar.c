@@ -60,6 +60,8 @@
 #include "nemo-window.h"
 #include "nemo-window-slot.h"
 
+#include <libnotify/notify.h>
+
 #define DEBUG_FLAG NEMO_DEBUG_PLACES
 #include <libnemo-private/nemo-debug.h>
 
@@ -114,6 +116,8 @@ typedef struct {
 	gboolean mounting;
 	NemoWindowSlot *go_to_after_mount_slot;
 	NemoWindowOpenFlags go_to_after_mount_flags;
+
+    NotifyNotification *unmount_notify;
 
 	guint bookmarks_changed_id;
 	guint switch_location_timer;
@@ -2569,7 +2573,6 @@ get_unmount_operation (NemoPlacesSidebar *sidebar)
 	return mount_op;
 }
 
-
 static void
 do_unmount (GMount *mount,
 	    NemoPlacesSidebar *sidebar)
@@ -4061,6 +4064,7 @@ nemo_places_sidebar_dispose (GObject *object)
 	sidebar->uri = NULL;
 
 	free_drag_data (sidebar);
+    g_clear_object (&sidebar->unmount_notify);
 
 	if (sidebar->bookmarks_changed_id != 0) {
 		g_signal_handler_disconnect (sidebar->bookmarks,
