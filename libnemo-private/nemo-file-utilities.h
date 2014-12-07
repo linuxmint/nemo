@@ -99,5 +99,7 @@ void nemo_get_x_content_types_for_mount_async (GMount *mount,
 						   gpointer user_data);
 
 gboolean nemo_file_selection_equal (GList *selection_a, GList *selection_b);
+GIcon * nemo_special_directory_get_icon (GUserDirectory directory);
+GIcon * nemo_special_directory_get_symbolic_icon (GUserDirectory directory);
 
 #endif /* NEMO_FILE_UTILITIES_H */

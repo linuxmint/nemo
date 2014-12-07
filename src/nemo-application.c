@@ -1678,8 +1678,10 @@ nemo_application_window_added (GtkApplication *app,
 	/* chain to parent */
 	GTK_APPLICATION_CLASS (nemo_application_parent_class)->window_added (app, window);
 
-	g_signal_connect (window, "slot-added", G_CALLBACK (on_slot_added), app);
-	g_signal_connect (window, "slot-removed", G_CALLBACK (on_slot_removed), app);
+	if (!NEMO_IS_BOOKMARKS_WINDOW (window)) {
+		g_signal_connect (window, "slot-added", G_CALLBACK (on_slot_added), app);
+		g_signal_connect (window, "slot-removed", G_CALLBACK (on_slot_removed), app);
+	}
 }
 
 static void

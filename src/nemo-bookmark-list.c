@@ -596,8 +596,8 @@ op_processed_cb (NemoBookmarkList *self)
 
 static void
 load_callback (GObject *source,
-	       GAsyncResult *res,
-	       gpointer user_data)
+           GAsyncResult *res,
+           gpointer user_data)
 {
 	NemoBookmarkList *self = NEMO_BOOKMARK_LIST (source);
 	gchar *contents;
@@ -610,7 +610,6 @@ load_callback (GObject *source,
 		op_processed_cb (self);
 		return;
 	}
-
 	lines = g_strsplit (contents, "\n", -1);
 	for (i = 0; lines[i]; i++) {
 		/* Ignore empty or invalid lines that cannot be parsed properly */
