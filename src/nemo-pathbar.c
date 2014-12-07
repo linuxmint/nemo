@@ -796,10 +796,6 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     if (needs_reorder) {
         child_ordering_changed (path_bar);
     }
-
-	if (needs_reorder) {
-		child_ordering_changed (path_bar);
-	}
 }
 
 static void
@@ -1367,25 +1363,25 @@ nemo_path_bar_clear_buttons (NemoPathBar *path_bar)
 
 static void
 button_clicked_cb (GtkWidget *button,
-		   gpointer   data)
+           gpointer   data)
 {
-        ButtonData *button_data;
-        NemoPathBar *path_bar;
-        GList *button_list;
+    ButtonData *button_data;
+    NemoPathBar *path_bar;
+    GList *button_list;
 
-        button_data = BUTTON_DATA (data);
-        if (button_data->ignore_changes) {
-                return;
-	}
+    button_data = BUTTON_DATA (data);
+    if (button_data->ignore_changes) {
+        return;
+    }
 
-        path_bar = NEMO_PATH_BAR (gtk_widget_get_parent (button));
+    path_bar = NEMO_PATH_BAR (gtk_widget_get_parent (button));
 
-        button_list = g_list_find (path_bar->priv->button_list, button_data);
-        g_assert (button_list != NULL);
+    button_list = g_list_find (path_bar->priv->button_list, button_data);     
+    g_assert (button_list != NULL);
 
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
 
-        g_signal_emit (path_bar, path_bar_signals [PATH_CLICKED], 0, button_data->path);
+    g_signal_emit (path_bar, path_bar_signals [PATH_CLICKED], 0, button_data->path);
 }
 
 static gboolean
