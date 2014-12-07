@@ -15,7 +15,8 @@ INCLUDES =							\
 	-I$(top_builddir)/libnemo-private 			\
 	$(BASE_CFLAGS) 						\
 	$(COMMON_CFLAGS)					\
-	$(NEMO_CFLAGS)					\
+	$(NEMO_CFLAGS)						\
+	$(DESKTOP_CFLAGS)					\
 	$(WARNING_CFLAGS)					\
 	$(EXIF_CFLAGS)						\
 	$(EXEMPI_CFLAGS)                                        \
@@ -29,6 +30,7 @@ INCLUDES =							\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
 	-DVERSION="\"$(VERSION)\"" 				\
 	$(DISABLE_DEPRECATED) 		                        \
+	$(UNITY_CFLAGS)                            \
 	$(NULL)
 
 LDADD =\
@@ -36,10 +38,12 @@ LDADD =\
 	$(BASE_LIBS) \
 	$(COMMON_LIBS) \
 	$(NEMO_LIBS) \
+	$(DESKTOP_LIBS) \
 	$(CORE_LIBS) \
 	$(EXIF_LIBS) \
 	$(EXEMPI_LIBS) \
 	$(POPT_LIBS) \
+	$(UNITY_LIBS) \
 	$(NULL)
 
 dbus_freedesktop_built_sources =			\
@@ -224,6 +228,17 @@ nemo_SOURCES = \
 	nemo-x-content-bar.c		\
 	nemo-x-content-bar.h		\
 	$(NULL)
+
+UNITY_SOURCES = \
+	unity-quicklist-handler.c	\
+	unity-quicklist-handler.h	\
+	unity-bookmarks-handler.c	\
+	unity-bookmarks-handler.h	\
+	$(NULL)
+
+if HAVE_UNITY
+nemo_SOURCES += $(UNITY_SOURCES)
+endif
 
 nodist_nemo_SOURCES = \
 	$(nemo_built_sources) \

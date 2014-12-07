@@ -578,7 +578,7 @@ result_list_attributes_ready_cb (GList    *file_list,
       g_free (gicon_str);
       g_object_unref (gicon);
     } else {
-      pix = nemo_file_get_icon_pixbuf (file, 128, TRUE,
+      pix = nemo_file_get_icon_pixbuf (file, 128, TRUE, 1,
                                            NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS);
 
       g_variant_builder_add (&meta, "{sv}",

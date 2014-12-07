@@ -100,6 +100,4 @@ void nemo_get_x_content_types_for_mount_async (GMount *mount,
 
 gboolean nemo_file_selection_equal (GList *selection_a, GList *selection_b);
 
-gboolean nemo_dir_has_children_now (GFile *dir, gboolean *has_subdirs);
-
 #endif /* NEMO_FILE_UTILITIES_H */

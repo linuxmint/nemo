@@ -34,10 +34,11 @@ void        nemo_ui_prepare_merge_ui           (GtkUIManager      *ui_manager,
 						    const char        *name,
 						    guint             *merge_id,
 						    GtkActionGroup   **action_group);
-GtkAction * nemo_action_from_menu_item         (NemoMenuItem  *item);
+GtkAction * nemo_action_from_menu_item         (NemoMenuItem  *item,
+                                                GtkWidget     *parent_widget);
 
-GdkPixbuf * nemo_ui_get_menu_icon              (const char        *icon_name);
-
+GdkPixbuf * nemo_ui_get_menu_icon              (const char        *icon_name,
+                                                GtkWidget         *parent_widget);
 char * nemo_escape_action_name                 (const char        *action_name,
 						    const char        *prefix);
 void   nemo_ui_frame_image                     (GdkPixbuf        **pixbuf);

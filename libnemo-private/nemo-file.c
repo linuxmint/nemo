@@ -90,6 +90,11 @@
 #define DEBUG_REF_PRINTF printf
 #endif
 
+#ifdef BUILD_ZEITGEIST
+#include <zeitgeist.h>
+#define ZEITGEIST_NEMO_ACTOR "application://nemo.desktop"
+#endif // BUILD_ZEITGEIST
+
 /* Files that start with these characters sort after files that don't. */
 #define SORT_LAST_CHAR1 '.'
 #define SORT_LAST_CHAR2 '#'
@@ -1759,6 +1764,31 @@ rename_get_info_callback (GObject *source_object,
 		g_free (old_name);
 		
 		new_uri = nemo_file_get_uri (op->file);
+
+#ifdef BUILD_ZEITGEIST		
+		// Send event to Zeitgeist
+		ZeitgeistLog *log = zeitgeist_log_get_default ();
+		gchar *origin = g_path_get_dirname (new_uri);
+		ZeitgeistSubject *subject = zeitgeist_subject_new_full (
+			old_uri,
+			NULL, // subject interpretation - auto-guess
+			NULL, // subject manifestation - auto-guess
+			g_file_info_get_content_type (new_info), // const char*
+			origin,
+			new_name,
+			NULL // storage - auto-guess
+		);
+		zeitgeist_subject_set_current_uri (subject, new_uri);
+		g_free (origin);
+		// FIXME: zeitgeist_subject_set_current_uri ();
+		ZeitgeistEvent *event = zeitgeist_event_new_full (
+			ZEITGEIST_ZG_MOVE_EVENT,
+			ZEITGEIST_ZG_USER_ACTIVITY,
+			ZEITGEIST_NEMO_ACTOR,
+			subject, NULL);
+		zeitgeist_log_insert_events_no_reply (log, event, NULL);
+#endif // BUILD_ZEITGEIST
+
 		nemo_directory_moved (old_uri, new_uri);
 		g_free (new_uri);
 		g_free (old_uri);
@@ -4284,6 +4314,7 @@ nemo_file_get_thumbnail_path (NemoFile *file)
 NemoIconInfo *
 nemo_file_get_icon (NemoFile *file,
 			int size,
+            int scale,
 			NemoFileIconFlags flags)
 {
 	NemoIconInfo *icon;
@@ -4301,7 +4332,7 @@ nemo_file_get_icon (NemoFile *file,
 	}
 
 	if (gicon != NULL) {
-		icon = nemo_icon_info_lookup (gicon, size);
+		icon = nemo_icon_info_lookup (gicon, size, scale);
 		g_object_unref (gicon);
 
 		return icon;
@@ -4311,9 +4342,9 @@ nemo_file_get_icon (NemoFile *file,
 	       flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE);
 	
 	if (flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
-		modified_size = size;
+		modified_size = size * scale;
 	} else {
-		modified_size = size * cached_thumbnail_size / NEMO_ICON_SIZE_STANDARD;
+		modified_size = size * scale * cached_thumbnail_size / NEMO_ICON_SIZE_STANDARD;
 		DEBUG ("Modifying icon size to %d, as our cached thumbnail size is %d",
 		       modified_size, cached_thumbnail_size);
 	}
@@ -4322,7 +4353,7 @@ nemo_file_get_icon (NemoFile *file,
 	    nemo_file_should_show_thumbnail (file)) {
 		if (file->details->thumbnail) {
 			int w, h, s;
-			double scale;
+			double thumb_scale;
 
 			raw_pixbuf = g_object_ref (file->details->thumbnail);
 
@@ -4332,23 +4363,23 @@ nemo_file_get_icon (NemoFile *file,
 			s = MAX (w, h);			
 			/* Don't scale up small thumbnails in the standard view */
 			if (s <= cached_thumbnail_size) {
-				scale = (double)size / NEMO_ICON_SIZE_STANDARD;
+				thumb_scale = (double)size / NEMO_ICON_SIZE_STANDARD;
 			}
 			else {
-				scale = (double)modified_size / s;
+				thumb_scale = (double)modified_size / s;
 			}
 			/* Make sure that icons don't get smaller than NEMO_ICON_SIZE_SMALLEST */
-			if (s*scale <= NEMO_ICON_SIZE_SMALLEST) {
-				scale = (double) NEMO_ICON_SIZE_SMALLEST / s;
+			if (s*thumb_scale <= NEMO_ICON_SIZE_SMALLEST) {
+				thumb_scale = (double) NEMO_ICON_SIZE_SMALLEST / s;
 			}
 
 			scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
-								 MAX (w * scale, 1),
-								 MAX (h * scale, 1),
+								 MAX (w * thumb_scale, 1),
+								 MAX (h * thumb_scale, 1),
 								 GDK_INTERP_BILINEAR);
 
 			/* We don't want frames around small icons */
-			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128) {
+			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
 				nemo_ui_frame_image (&scaled_pixbuf);
 			}
 
@@ -4358,7 +4389,7 @@ nemo_file_get_icon (NemoFile *file,
 			   image instead. We don't want to compare to exactly 100%,
 			   since the zoom level 150% gives thumbnails at 144, which is
 			   ok to scale up from 128. */
-			if (modified_size > 128*1.25 &&
+			if (modified_size > 128 * 1.25 * scale &&
 			    !file->details->thumbnail_wants_original &&
 			    nemo_can_thumbnail_internally (file)) {
 				/* Invalidate if we resize upward */
@@ -4367,9 +4398,9 @@ nemo_file_get_icon (NemoFile *file,
 			}
 
 			DEBUG ("Returning thumbnailed image, at size %d %d",
-			       (int) (w * scale), (int) (h * scale));
+			       (int) (w * thumb_scale), (int) (h * thumb_scale));
 			
-			icon = nemo_icon_info_new_for_pixbuf (scaled_pixbuf);
+			icon = nemo_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
 			g_object_unref (scaled_pixbuf);
 			return icon;
 		} else if (file->details->thumbnail_path == NULL &&
@@ -4390,15 +4421,15 @@ nemo_file_get_icon (NemoFile *file,
 		gicon = nemo_file_get_gicon (file, flags);
 	
 	if (gicon) {
-		icon = nemo_icon_info_lookup (gicon, size);
+		icon = nemo_icon_info_lookup (gicon, size, scale);
 		if (nemo_icon_info_is_fallback (icon)) {
 			g_object_unref (icon);
-			icon = nemo_icon_info_lookup (get_default_file_icon (flags), size);
+			icon = nemo_icon_info_lookup (get_default_file_icon (flags), size, scale);
 		}
 		g_object_unref (gicon);
 		return icon;
 	} else {
-		return nemo_icon_info_lookup (get_default_file_icon (flags), size);
+		return nemo_icon_info_lookup (get_default_file_icon (flags), size, scale);
 	}
 }
 
@@ -4406,12 +4437,13 @@ GdkPixbuf *
 nemo_file_get_icon_pixbuf (NemoFile *file,
 			       int size,
 			       gboolean force_size,
+                   int scale,
 			       NemoFileIconFlags flags)
 {
 	NemoIconInfo *info;
 	GdkPixbuf *pixbuf;
 
-	info = nemo_file_get_icon (file, size, flags);
+	info = nemo_file_get_icon (file, size, scale, flags);
 	if (force_size) {
 		pixbuf =  nemo_icon_info_get_pixbuf_at_size (info, size);
 	} else {

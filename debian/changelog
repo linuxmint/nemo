@@ -1,3 +1,15 @@
+nemo (2.2.1) qiana; urgency=medium
+
+  * 2.2.1
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 01 May 2014 14:35:34 +0100
+
+nemo (2.2.0) qiana; urgency=medium
+
+  * 2.2.0
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 12 Apr 2014 15:50:14 +0100
+
 nemo (2.0.8) petra; urgency=low
 
   * 2.0.8

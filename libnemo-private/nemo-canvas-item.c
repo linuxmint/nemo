@@ -76,7 +76,7 @@ struct NemoCanvasItemDetails {
 	/* The image, text, font. */
 	double x, y;
 	GdkPixbuf *pixbuf;
-	GdkPixbuf *rendered_pixbuf;
+    cairo_surface_t *rendered_surface;
 	char *editable_text;		/* Text that can be modified by a renaming function */
 	char *additional_text;		/* Text that cannot be modifed, such as file size, etc. */
 	GdkPoint *attach_points;
@@ -225,9 +225,9 @@ nemo_canvas_item_finalize (GObject *object)
 	g_free (details->additional_text);
 	g_free (details->attach_points);
 	
-	if (details->rendered_pixbuf != NULL) {
-		g_object_unref (details->rendered_pixbuf);
-	}
+    if (details->rendered_surface != NULL) {
+        cairo_surface_destroy (details->rendered_surface);
+    }
 
 	if (details->editable_text_layout != NULL) {
 		g_object_unref (details->editable_text_layout);
@@ -430,17 +430,40 @@ nemo_canvas_item_get_property (GObject        *object,
 	}
 }
 
+static void
+get_scaled_icon_size (NemoCanvasItem *item,
+             gint *width,
+             gint *height)
+{
+   EelCanvas *canvas;
+   GdkPixbuf *pixbuf = NULL;
+   gint scale;
+
+   if (item != NULL) {
+       canvas = EEL_CANVAS_ITEM (item)->canvas;
+       scale = gtk_widget_get_scale_factor (GTK_WIDGET (canvas));
+       pixbuf = item->details->pixbuf;
+   }
+
+   if (width)
+       *width = (pixbuf == NULL) ? 0 : (gdk_pixbuf_get_width (pixbuf) / scale);
+   if (height)
+       *height = (pixbuf == NULL) ? 0 : (gdk_pixbuf_get_height (pixbuf) / scale);
+}
+
 cairo_surface_t *
 nemo_canvas_item_get_drag_surface (NemoCanvasItem *item)
 {
 	cairo_surface_t *surface;
 	EelCanvas *canvas;
 	int width, height;
+    int pix_width, pix_height;
 	int item_offset_x, item_offset_y;
 	EelIRect icon_rect;
 	double item_x, item_y;
 	cairo_t *cr;
 	GtkStyleContext *context;
+    cairo_surface_t *drag_surface;
 	
 	g_return_val_if_fail (NEMO_IS_CANVAS_ITEM (item), NULL);
 
@@ -449,12 +472,7 @@ nemo_canvas_item_get_drag_surface (NemoCanvasItem *item)
 
 	gtk_style_context_save (context);
 		
-	if (gtk_style_context_has_class (context, "nemo-canvas-item")) {
-		gtk_style_context_add_class (context, "nemo-canvas-item");
-	}
-	else {
-		gtk_style_context_add_class (context, "nautilus-canvas-item");
-	}
+        gtk_style_context_add_class (context, "nemo-canvas-item");
 
 	/* Assume we're updated so canvas item data is right */
 
@@ -471,18 +489,25 @@ nemo_canvas_item_get_drag_surface (NemoCanvasItem *item)
 	width = EEL_CANVAS_ITEM (item)->x2 - EEL_CANVAS_ITEM (item)->x1;
 	height = EEL_CANVAS_ITEM (item)->y2 - EEL_CANVAS_ITEM (item)->y1;
 
-        surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
-					      width, height);
+        surface = gdk_window_create_similar_surface (gtk_widget_get_window (GTK_WIDGET (canvas)),
+                                                     CAIRO_CONTENT_COLOR_ALPHA,
+                                                     width, height);
 
 	cr = cairo_create (surface);
 
-	gtk_render_icon (context, cr, item->details->pixbuf,
-			 item_offset_x, item_offset_y);
+    drag_surface = gdk_cairo_surface_create_from_pixbuf (item->details->pixbuf,
+                                                         gtk_widget_get_scale_factor (GTK_WIDGET (canvas)),
+                                                         gtk_widget_get_window (GTK_WIDGET (canvas)));
+    gtk_render_icon_surface (context, cr, drag_surface,
+                            item_offset_x, item_offset_y);
+    cairo_surface_destroy (drag_surface);
+
+    get_scaled_icon_size (item, &pix_width, &pix_height);
 
 	icon_rect.x0 = item_offset_x;
 	icon_rect.y0 = item_offset_y;
-	icon_rect.x1 = item_offset_x + gdk_pixbuf_get_width (item->details->pixbuf);
-	icon_rect.y1 = item_offset_y + gdk_pixbuf_get_height (item->details->pixbuf);
+	icon_rect.x1 = item_offset_x + pix_width;
+	icon_rect.y1 = item_offset_y + pix_height;
 
 	draw_embedded_text (item, cr,
 			    item_offset_x, item_offset_y);
@@ -514,10 +539,10 @@ nemo_canvas_item_set_image (NemoCanvasItem *item,
 	if (details->pixbuf != NULL) {
 		g_object_unref (details->pixbuf);
 	}
-	if (details->rendered_pixbuf != NULL) {
-		g_object_unref (details->rendered_pixbuf);
-		details->rendered_pixbuf = NULL;
-	}
+    if (details->rendered_surface != NULL) {
+        cairo_surface_destroy (details->rendered_surface);
+        details->rendered_surface = NULL;
+    }
 
 	details->pixbuf = image;
 			
@@ -1303,13 +1328,14 @@ draw_pixbuf (GdkPixbuf *pixbuf,
 }
 
 /* shared code to highlight or dim the passed-in pixbuf */
-static GdkPixbuf *
-real_map_pixbuf (NemoCanvasItem *canvas_item)
+static cairo_surface_t *
+real_map_surface (NemoCanvasItem *canvas_item)
 {
 	EelCanvas *canvas;
 	GdkPixbuf *temp_pixbuf, *old_pixbuf;
 	GtkStyleContext *style;
 	GdkRGBA color;
+    cairo_surface_t *surface;
 	
 	temp_pixbuf = canvas_item->details->pixbuf;
 	canvas = EEL_CANVAS_ITEM(canvas_item)->canvas;
@@ -1339,33 +1365,38 @@ real_map_pixbuf (NemoCanvasItem *canvas_item)
 
 		g_object_unref (old_pixbuf);
 	}
-	
-	return temp_pixbuf;
+
+    surface = gdk_cairo_surface_create_from_pixbuf (temp_pixbuf,
+                                                    gtk_widget_get_scale_factor (GTK_WIDGET (canvas)),
+                                                    gtk_widget_get_window (GTK_WIDGET (canvas)));
+    g_object_unref (temp_pixbuf);
+
+    return surface;
 }
 
-static GdkPixbuf *
-map_pixbuf (NemoCanvasItem *canvas_item)
+static cairo_surface_t *
+map_surface (NemoCanvasItem *canvas_item)
 {
-	if (!(canvas_item->details->rendered_pixbuf != NULL
+	if (!(canvas_item->details->rendered_surface != NULL
 	      && canvas_item->details->rendered_is_prelit == canvas_item->details->is_prelit
 	      && canvas_item->details->rendered_is_highlighted_for_selection == canvas_item->details->is_highlighted_for_selection
 	      && canvas_item->details->rendered_is_highlighted_for_drop == canvas_item->details->is_highlighted_for_drop
 	      && canvas_item->details->rendered_is_highlighted_for_clipboard == canvas_item->details->is_highlighted_for_clipboard
 	      && (canvas_item->details->is_highlighted_for_selection && canvas_item->details->rendered_is_focused == gtk_widget_has_focus (GTK_WIDGET (EEL_CANVAS_ITEM (canvas_item)->canvas))))) {
-		if (canvas_item->details->rendered_pixbuf != NULL) {
-			g_object_unref (canvas_item->details->rendered_pixbuf);
+		if (canvas_item->details->rendered_surface != NULL) {
+            cairo_surface_destroy (canvas_item->details->rendered_surface);
 		}
-		canvas_item->details->rendered_pixbuf = real_map_pixbuf (canvas_item);
+        canvas_item->details->rendered_surface = real_map_surface (canvas_item);
 		canvas_item->details->rendered_is_prelit = canvas_item->details->is_prelit;
 		canvas_item->details->rendered_is_highlighted_for_selection = canvas_item->details->is_highlighted_for_selection;
 		canvas_item->details->rendered_is_highlighted_for_drop = canvas_item->details->is_highlighted_for_drop;
-	        canvas_item->details->rendered_is_highlighted_for_clipboard = canvas_item->details->is_highlighted_for_clipboard;
+		canvas_item->details->rendered_is_highlighted_for_clipboard = canvas_item->details->is_highlighted_for_clipboard;
 		canvas_item->details->rendered_is_focused = gtk_widget_has_focus (GTK_WIDGET (EEL_CANVAS_ITEM (canvas_item)->canvas));
 	}
 
-	g_object_ref (canvas_item->details->rendered_pixbuf);
+	cairo_surface_reference (canvas_item->details->rendered_surface);
 
-	return canvas_item->details->rendered_pixbuf;
+	return canvas_item->details->rendered_surface;
 }
 
 static void
@@ -1378,6 +1409,7 @@ draw_embedded_text (NemoCanvasItem *item,
 	PangoFontDescription *desc;
 	GtkWidget *widget;
 	GtkStyleContext *style_context;
+    guint scale;
 
 	if (item->details->embedded_text == NULL ||
 	    item->details->embedded_text_rect.width == 0 ||
@@ -1409,16 +1441,18 @@ draw_embedded_text (NemoCanvasItem *item,
 
 	cairo_save (cr);
 
+    scale = gtk_widget_get_scale_factor (widget);
+
 	cairo_rectangle (cr,
-			 x + item->details->embedded_text_rect.x,
-			 y + item->details->embedded_text_rect.y,
-			 item->details->embedded_text_rect.width,
-			 item->details->embedded_text_rect.height);
+			 x + item->details->embedded_text_rect.x / scale,
+			 y + item->details->embedded_text_rect.y / scale,
+			 item->details->embedded_text_rect.width / scale,
+			 item->details->embedded_text_rect.height / scale);
 	cairo_clip (cr);
 
 	gtk_render_layout (style_context, cr,
-			   x + item->details->embedded_text_rect.x,
-			   y + item->details->embedded_text_rect.y,
+			   x + item->details->embedded_text_rect.x / scale,
+			   y + item->details->embedded_text_rect.y / scale,
 			   layout);
 
 	gtk_style_context_restore (style_context);
@@ -1435,7 +1469,7 @@ nemo_canvas_item_draw (EelCanvasItem *item,
 	NemoCanvasItem *canvas_item;
 	NemoCanvasItemDetails *details;
 	EelIRect icon_rect;
-	GdkPixbuf *temp_pixbuf;
+    cairo_surface_t *temp_surface;
 	GtkStyleContext *context;
 
 	container = NEMO_CANVAS_CONTAINER (item->canvas);
@@ -1457,12 +1491,12 @@ nemo_canvas_item_draw (EelCanvasItem *item,
 	}
 
 	icon_rect = canvas_item->details->icon_rect;
-	temp_pixbuf = map_pixbuf (canvas_item);
+	temp_surface = map_surface (canvas_item);
 
-	gtk_render_icon (context, cr,
-			 temp_pixbuf,
-			 icon_rect.x0, icon_rect.y0);
-	g_object_unref (temp_pixbuf);
+    gtk_render_icon_surface (context, cr,
+                             temp_surface,
+                             icon_rect.x0, icon_rect.y0);
+    cairo_surface_destroy (temp_surface);
 
 	draw_embedded_text (canvas_item, cr, icon_rect.x0, icon_rect.y0);
 	
@@ -1786,6 +1820,7 @@ nemo_canvas_item_ensure_bounds_up_to_date (NemoCanvasItem *canvas_item)
 	EelIRect total_rect, total_rect_for_layout, total_rect_for_entire_text;
 	EelCanvasItem *item;
 	double pixels_per_unit;
+    gint width, height;
 	
 	details = canvas_item->details;
 	item = EEL_CANVAS_ITEM (canvas_item);
@@ -1800,18 +1835,14 @@ nemo_canvas_item_ensure_bounds_up_to_date (NemoCanvasItem *canvas_item)
 		icon_rect.y0 = 0;
 		icon_rect_raw.x0 = 0;
 		icon_rect_raw.y0 = 0;
-		if (details->pixbuf == NULL) {
-			icon_rect.x1 = icon_rect.x0;
-			icon_rect.y1 = icon_rect.y0;
-			icon_rect_raw.x1 = icon_rect_raw.x0;
-			icon_rect_raw.y1 = icon_rect_raw.y0;
-		} else {
-			icon_rect_raw.x1 = icon_rect_raw.x0 + gdk_pixbuf_get_width (details->pixbuf);
-			icon_rect_raw.y1 = icon_rect_raw.y0 + gdk_pixbuf_get_height (details->pixbuf);
-			icon_rect.x1 = icon_rect_raw.x1 / pixels_per_unit;
-			icon_rect.y1 = icon_rect_raw.y1 / pixels_per_unit;
-		}
-		
+
+        get_scaled_icon_size (canvas_item, &width, &height);
+
+        icon_rect_raw.x1 = icon_rect_raw.x0 + width;
+        icon_rect_raw.y1 = icon_rect_raw.y0 + height;
+        icon_rect.x1 = icon_rect_raw.x1 / pixels_per_unit;
+        icon_rect.y1 = icon_rect_raw.y1 / pixels_per_unit;
+
 		/* Compute text rectangle. */
 		text_rect = compute_text_rectangle (canvas_item, icon_rect, FALSE, BOUNDS_USAGE_FOR_DISPLAY);
 		text_rect_for_layout = compute_text_rectangle (canvas_item, icon_rect, FALSE, BOUNDS_USAGE_FOR_LAYOUT);
@@ -1835,18 +1866,17 @@ nemo_canvas_item_get_icon_rectangle (const NemoCanvasItem *item)
 {
 	EelDRect rectangle;
 	double pixels_per_unit;
-	GdkPixbuf *pixbuf;
+    gint width, height;
 	
 	g_return_val_if_fail (NEMO_IS_CANVAS_ITEM (item), eel_drect_empty);
 
 	rectangle.x0 = item->details->x;
 	rectangle.y0 = item->details->y;
-	
-	pixbuf = item->details->pixbuf;
-	
+
 	pixels_per_unit = EEL_CANVAS_ITEM (item)->canvas->pixels_per_unit;
-	rectangle.x1 = rectangle.x0 + (pixbuf == NULL ? 0 : gdk_pixbuf_get_width (pixbuf)) / pixels_per_unit;
-	rectangle.y1 = rectangle.y0 + (pixbuf == NULL ? 0 : gdk_pixbuf_get_height (pixbuf)) / pixels_per_unit;
+    get_scaled_icon_size (NEMO_CANVAS_ITEM (item), &width, &height);
+    rectangle.x1 = rectangle.x0 + width / pixels_per_unit;
+    rectangle.y1 = rectangle.y0 + height / pixels_per_unit;
 
 	eel_canvas_item_i2w (EEL_CANVAS_ITEM (item),
 			     &rectangle.x0,
@@ -1867,18 +1897,17 @@ nemo_canvas_item_get_text_rectangle (NemoCanvasItem *item,
 	EelIRect text_rectangle;
 	EelDRect ret;
 	double pixels_per_unit;
-	GdkPixbuf *pixbuf;
+    gint width, height;
 	
 	g_return_val_if_fail (NEMO_IS_CANVAS_ITEM (item), eel_drect_empty);
 
 	icon_rectangle.x0 = item->details->x;
 	icon_rectangle.y0 = item->details->y;
-	
-	pixbuf = item->details->pixbuf;
-	
+
 	pixels_per_unit = EEL_CANVAS_ITEM (item)->canvas->pixels_per_unit;
-	icon_rectangle.x1 = icon_rectangle.x0 + (pixbuf == NULL ? 0 : gdk_pixbuf_get_width (pixbuf)) / pixels_per_unit;
-	icon_rectangle.y1 = icon_rectangle.y0 + (pixbuf == NULL ? 0 : gdk_pixbuf_get_height (pixbuf)) / pixels_per_unit;
+    get_scaled_icon_size (item, &width, &height);
+    icon_rectangle.x1 = icon_rectangle.x0 + width / pixels_per_unit;
+    icon_rectangle.y1 = icon_rectangle.y0 + height / pixels_per_unit;
 
 	measure_label_text (item);
 
@@ -1906,7 +1935,7 @@ static void
 get_icon_rectangle (NemoCanvasItem *item,
 		      EelIRect *rect)
 {
-	GdkPixbuf *pixbuf;
+    gint width, height;
 
 	g_assert (NEMO_IS_CANVAS_ITEM (item));
 	g_assert (rect != NULL);
@@ -1917,10 +1946,10 @@ get_icon_rectangle (NemoCanvasItem *item,
 			&rect->x0,
 			&rect->y0);
 	
-	pixbuf = item->details->pixbuf;
+    get_scaled_icon_size (item, &width, &height);
 	
-	rect->x1 = rect->x0 + (pixbuf == NULL ? 0 : gdk_pixbuf_get_width (pixbuf));
-	rect->y1 = rect->y0 + (pixbuf == NULL ? 0 : gdk_pixbuf_get_height (pixbuf));
+	rect->x1 = rect->x0 + width;
+    rect->y1 = rect->y0 + height;
 }
 
 void
@@ -2480,12 +2509,7 @@ nemo_canvas_item_accessible_get_image_size
 
 	item = NEMO_CANVAS_ITEM (atk_gobject_accessible_get_object (ATK_GOBJECT_ACCESSIBLE (image)));
 
-	if (!item || !item->details->pixbuf) {
-		*width = *height = 0;
-	} else {
-		*width = gdk_pixbuf_get_width (item->details->pixbuf);
-		*height = gdk_pixbuf_get_height (item->details->pixbuf);
-	}
+    get_scaled_icon_size (item, width, height);
 }
 
 static void
@@ -2565,7 +2589,7 @@ nemo_canvas_item_accessible_get_offset_at_point (AtkText	 *text,
 	char *canvas_text;
 	gboolean have_editable;
 	gboolean have_additional;
-	gint text_offset;
+	gint text_offset, height;
 
 	atk_component_get_extents (ATK_COMPONENT (text), &real_x, &real_y,
                                    &real_width, &real_height, coords);
@@ -2576,7 +2600,8 @@ nemo_canvas_item_accessible_get_offset_at_point (AtkText	 *text,
 	item = NEMO_CANVAS_ITEM (atk_gobject_accessible_get_object (ATK_GOBJECT_ACCESSIBLE (text)));
 
 	if (item->details->pixbuf) {
-		y -= gdk_pixbuf_get_height (item->details->pixbuf);
+        get_scaled_icon_size (item, NULL, &height);
+        y -= height;
 	}
 	have_editable = item->details->editable_text != NULL &&
 			item->details->editable_text[0] != '\0';
@@ -2672,13 +2697,14 @@ nemo_canvas_item_accessible_get_character_extents (AtkText	   *text,
 	PangoRectangle rect;
 	PangoRectangle rect0;
 	gboolean have_editable;
-	gint text_offset;
+	gint text_offset, pix_height;
 
 	atk_component_get_position (ATK_COMPONENT (text), &pos_x, &pos_y, coords);
 	item = NEMO_CANVAS_ITEM (atk_gobject_accessible_get_object (ATK_GOBJECT_ACCESSIBLE (text)));
 
 	if (item->details->pixbuf) {
-		pos_y += gdk_pixbuf_get_height (item->details->pixbuf);
+		get_scaled_icon_size (item, NULL, &pix_height);
+        pos_y += pix_height;
 	}
 
 	have_editable = item->details->editable_text != NULL &&

@@ -93,3 +93,5 @@ src/nemo-window-pane.c
 src/nemo-window-private.h
 src/nemo-window-slot.c
 src/nemo-x-content-bar.c
+src/unity-quicklist-handler.h
+
