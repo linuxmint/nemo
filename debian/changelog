@@ -1,3 +1,21 @@
+nemo (2.2.3) qiana; urgency=medium
+
+  * Merging debian/patches
+  * Show unmount progress notifications when ejecting a drive
+  * Fix #627 - crash when unmounting archives.  This is a temporary fix - pull request coming for permanent fix.
+  * places-sidebar: render eject icon correctly in hidpi
+  * Open-with dialog: Bugfix (Fixes #631) and a few improvements
+  * nemo-links: add desktop file hack for desktop session names.
+  * Fix sample nemo action to work with filenames with spaces.
+  * Really fix the sample action
+  * Clean up orphaned gtk bookmarks at startup.
+  * Revert "Clean up orphaned gtk bookmarks at startup."
+  * nemo-actions: Add flag to escape spaces in file paths.
+  * Use GtkRevealer for search bar.
+  * nemo-file: compare_by_display_name - handle null strings gracefully.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 27 Jun 2014 14:43:10 +0100
+
 nemo (2.2.2) qiana; urgency=medium
 
   * 2.2.2
