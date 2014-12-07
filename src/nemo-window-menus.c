@@ -688,15 +688,17 @@ connect_proxy_cb (GtkActionGroup *action_group,
                   GtkWidget *proxy,
                   NemoWindow *window)
 {
-	GtkLabel *label;
+    GtkWidget *label;
 
 	if (!GTK_IS_MENU_ITEM (proxy))
 		return;
 
-	label = GTK_LABEL (gtk_bin_get_child (GTK_BIN (proxy)));
+    label = gtk_bin_get_child (GTK_BIN (proxy));
 
-	gtk_label_set_ellipsize (label, PANGO_ELLIPSIZE_END);
-	gtk_label_set_max_width_chars (label, MENU_ITEM_MAX_WIDTH_CHARS);
+    if (GTK_IS_LABEL (label)) {
+       gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+       gtk_label_set_max_width_chars (GTK_LABEL (label), MENU_ITEM_MAX_WIDTH_CHARS);
+    }
 
 	g_signal_connect (proxy, "select",
 			  G_CALLBACK (menu_item_select_cb), window);

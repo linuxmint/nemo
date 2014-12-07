@@ -34,6 +34,7 @@ libnemo_extension_include_HEADERS=		\
 	nemo-property-page-provider.h       \
 	nemo-property-page.h                \
 	nemo-menu.h                         \
+	nemo-simple-button.h                \
 	$(NULL)
 
 libnemo_extension_la_SOURCES=			\
@@ -50,6 +51,7 @@ libnemo_extension_la_SOURCES=			\
 	nemo-property-page-provider.c               \
 	nemo-property-page.c                        \
 	nemo-menu.c                                 \
+	nemo-simple-button.c                        \
 	$(NULL)
 
 pkgconfigdir=$(libdir)/pkgconfig
@@ -61,7 +63,7 @@ EXTRA_DIST = \
 
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =
-INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) --warn-all
 INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
 if HAVE_INTROSPECTION
