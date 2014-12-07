@@ -7506,9 +7506,25 @@ action_follow_symlink_callback (GtkAction *action,
     selection = nemo_view_get_selection (view);
     if (nemo_file_is_symbolic_link (selection->data)) {
         gchar *uri = nemo_file_get_symbolic_link_target_uri (selection->data);
+        gchar *view_uri = nemo_view_get_uri (view);
         GFile *location = g_file_new_for_uri (uri);
+        GFile *parent = g_file_get_parent (location);
+        GFile *current = g_file_new_for_uri (view_uri);
+
+        if (g_file_equal (current, parent)) {
+            nemo_view_scroll_to_file (view, uri);
+            GList *l = NULL;
+            l = g_list_append (l, nemo_file_get_existing (location));
+            nemo_view_set_selection (view, l);
+        } else {
+            nemo_window_slot_open_location (view->details->slot, location, 0);
+        }
+
         g_free (uri);
-	    nemo_window_slot_open_location (view->details->slot, location, 0);
+        g_free (view_uri);
+        g_object_unref (location);
+        g_object_unref (parent);
+        g_object_unref (current);
     }
     nemo_file_list_free (selection);
 }

@@ -167,7 +167,7 @@ enum {
 	PLACES_SIDEBAR_COLUMN_VOLUME,
 	PLACES_SIDEBAR_COLUMN_MOUNT,
 	PLACES_SIDEBAR_COLUMN_NAME,
-	PLACES_SIDEBAR_COLUMN_GICON,
+	PLACES_SIDEBAR_COLUMN_ICON,
 	PLACES_SIDEBAR_COLUMN_INDEX,
 	PLACES_SIDEBAR_COLUMN_EJECT,
 	PLACES_SIDEBAR_COLUMN_NO_EJECT,
@@ -330,7 +330,7 @@ add_place (NemoPlacesSidebar *sidebar,
 
 	gtk_tree_store_append (sidebar->store, &iter, &cat_iter);
 	gtk_tree_store_set (sidebar->store, &iter,
-			    PLACES_SIDEBAR_COLUMN_GICON, icon,
+			    PLACES_SIDEBAR_COLUMN_ICON, icon,
 			    PLACES_SIDEBAR_COLUMN_NAME, name,
 			    PLACES_SIDEBAR_COLUMN_URI, uri,
 			    PLACES_SIDEBAR_COLUMN_DRIVE, drive,
@@ -3904,7 +3904,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	g_object_set (cell, "follow-state", TRUE, NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (col, cell,
-					     "gicon", PLACES_SIDEBAR_COLUMN_GICON,
+					     "gicon", PLACES_SIDEBAR_COLUMN_ICON,
 					     NULL);
 	gtk_tree_view_column_set_cell_data_func (col, cell,
 						 icon_cell_renderer_func,
