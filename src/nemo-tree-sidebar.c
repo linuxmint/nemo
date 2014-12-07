@@ -1410,7 +1410,7 @@ icon_data_func (GtkTreeViewColumn *tree_column,
                   NULL);
 
     gtk_tree_model_get (tree_model, iter,
-                        expanded ? FM_TREE_MODEL_OPEN_SURFACE_COLUMN : FM_TREE_MODEL_CLOSED_SURFACE_COLUMN,
+                        expanded ? FM_TREE_MODEL_OPEN_ICON_COLUMN : FM_TREE_MODEL_CLOSED_ICON_COLUMN,
                         &icon,
                         -1);
 
