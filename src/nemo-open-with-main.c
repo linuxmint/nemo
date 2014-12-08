@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 
-/* nemo-connect-server-main.c - Start the "Connect to Server" dialog.
+/* nemo-open-with-main.c - Start the "Open with" dialog.
  * Nemo
  *
  * Copyright (C) 2005 Vincent Untz
