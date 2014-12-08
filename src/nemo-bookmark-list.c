@@ -381,6 +381,28 @@ nemo_bookmark_list_insert_item (NemoBookmarkList *bookmarks,
 	nemo_bookmark_list_save_file (bookmarks);
 }
 
+GList *
+nemo_bookmark_list_get_for_uri (NemoBookmarkList   *bookmarks,
+                                      const char   *uri)
+{
+    g_return_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks));
+
+    GList *iter;
+    GList *results = NULL;
+    NemoBookmark *bookmark;
+
+    for (iter = bookmarks->list; iter != NULL; iter = iter->next) {
+        bookmark = iter->data;
+        gchar *bm_uri = nemo_bookmark_get_uri (bookmark);
+        if (g_strcmp0 (uri, bm_uri) == 0) {
+            results = g_list_append (results, bookmark);
+        }
+        g_free (bm_uri);
+    }
+
+    return results;
+}
+
 /**
  * nemo_bookmark_list_item_at:
  * 
