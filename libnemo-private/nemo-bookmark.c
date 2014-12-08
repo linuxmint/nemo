@@ -17,7 +17,8 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with the Gnome Library; see the file COPYING.LIB.  If not,
- * see <http://www.gnu.org/licenses/>.
+ * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
+ * Boston, MA 02110-1335, USA.
  *
  * Authors: John Sullivan <sullivan@eazel.com>
  *          Cosimo Cecchi <cosimoc@redhat.com>
@@ -214,12 +215,81 @@ nemo_bookmark_get_xdg_type (NemoBookmark *bookmark,
 		*directory = dir;
 	}
 
-    return match;
+	return match;
+}
+
+static GIcon *
+get_native_icon (NemoBookmark *bookmark,
+		 gboolean symbolic)
+{
+	GUserDirectory xdg_type;
+	GIcon *icon = NULL;
+
+	if (bookmark->details->file == NULL) {
+		goto out;
+	}
+
+	if (!nemo_bookmark_get_xdg_type (bookmark, &xdg_type)) {
+		goto out;
+	}
+
+	if (xdg_type < G_USER_N_DIRECTORIES) {
+		if (symbolic) {
+			icon = nemo_special_directory_get_symbolic_icon (xdg_type);
+		} else {
+			icon = nemo_special_directory_get_icon (xdg_type);
+		}
+	}
+
+ out:
+	if (icon == NULL) {
+		if (symbolic) {
+			icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER);
+		} else {
+			icon = g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER);
+		}
+	}
+
+	return icon;
 }
 
 static void
-nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark);
+nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark)
+{
+	GIcon *icon, *symbolic_icon;
+	char *uri;
 
+	if (g_file_is_native (bookmark->details->location)) {
+		symbolic_icon = get_native_icon (bookmark, TRUE);
+		icon = get_native_icon (bookmark, FALSE);
+		if (!bookmark->details->exists) {
+			DEBUG ("%s: file does not exist, add emblem", nemo_bookmark_get_name (bookmark));
+
+			apply_warning_emblem (&icon, FALSE);
+			apply_warning_emblem (&symbolic_icon, TRUE);
+		}
+	} else {
+		uri = g_file_get_uri (bookmark->details->location);
+		if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
+			symbolic_icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH);
+			icon = g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER_SAVED_SEARCH);
+		} else {
+			symbolic_icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_REMOTE);
+			icon = g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER_REMOTE);
+		}
+		g_free (uri);
+	}
+
+	DEBUG ("%s: setting icon to default", nemo_bookmark_get_name (bookmark));
+
+	g_object_set (bookmark,
+		      "icon", icon,
+		      "symbolic-icon", symbolic_icon,
+		      NULL);
+
+	g_object_unref (icon);
+	g_object_unref (symbolic_icon);
+}
 
 static void
 bookmark_file_changed_callback (NemoFile *file,
@@ -265,82 +335,8 @@ bookmark_file_changed_callback (NemoFile *file,
 		nemo_bookmark_disconnect_file (bookmark);
         nemo_bookmark_set_icon_to_default (bookmark);
 	} else {
-		nemo_bookmark_update_icon (bookmark);
 		bookmark_set_name_from_ready_file (bookmark, file);
 	}
-}
-
-static GIcon *
-get_native_icon (NemoBookmark *bookmark,
-         gboolean symbolic)
-{
-    GUserDirectory xdg_type;
-    GIcon *icon = NULL;
-
-    if (bookmark->details->file == NULL) {
-        goto out;
-    }
-
-    if (!nemo_bookmark_get_xdg_type (bookmark, &xdg_type)) {
-        goto out;
-    }
-
-    if (xdg_type < G_USER_N_DIRECTORIES) {
-        if (symbolic) {
-            icon = nemo_special_directory_get_symbolic_icon (xdg_type);
-        } else {
-            icon = nemo_special_directory_get_icon (xdg_type);
-        }
-    }
-
- out:
-    if (icon == NULL) {
-        if (symbolic) {
-            icon = g_themed_icon_new (NEMO_ICON_FOLDER);
-        } else {
-            icon = g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER);
-        }
-    }
-
-    return icon;
-}
-
-static void
-nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark)
-{
-    GIcon *icon, *symbolic_icon;
-    char *uri;
-
-    if (g_file_is_native (bookmark->details->location)) {
-        symbolic_icon = get_native_icon (bookmark, TRUE);
-        icon = get_native_icon (bookmark, FALSE);
-        if (!bookmark->details->exists) {
-            DEBUG ("%s: file does not exist, add emblem", nemo_bookmark_get_name (bookmark));
-
-            apply_warning_emblem (&icon, FALSE);
-            apply_warning_emblem (&symbolic_icon, TRUE);
-        }
-    } else {
-        uri = nemo_bookmark_get_uri (bookmark);
-        if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
-            symbolic_icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH);
-            icon = g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER_SAVED_SEARCH);
-        } else {
-            symbolic_icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_REMOTE);
-            icon = g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER_REMOTE);
-        }
-        g_free (uri);
-    }
-
-    DEBUG ("%s: setting icon to default", nemo_bookmark_get_name (bookmark));
-
-    g_object_set (bookmark,
-              "icon", icon,
-              "symbolic-icon", symbolic_icon,
-              NULL);
-
-    g_object_unref (icon);
-    g_object_unref (symbolic_icon);
 }
 
 static void
