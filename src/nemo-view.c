@@ -2530,7 +2530,7 @@ update_undo_actions (NemoView *view)
 	NemoFileUndoManagerState undo_state;
 	GtkAction *action;
 	const gchar *label, *tooltip;
-	gboolean available, is_undo;
+	gboolean available;
 	gboolean undo_active, redo_active;
 	gchar *undo_label, *undo_description, *redo_label, *redo_description;
 
@@ -2544,9 +2544,7 @@ update_undo_actions (NemoView *view)
 
 	if (info != NULL && 
 	    (undo_state > NEMO_FILE_UNDO_MANAGER_STATE_NONE)) {
-		is_undo = (undo_state == NEMO_FILE_UNDO_MANAGER_STATE_UNDO);
-
-		if (is_undo) {
+		if (undo_state == NEMO_FILE_UNDO_MANAGER_STATE_UNDO) {
 			undo_active = TRUE;
 		} else {
 			redo_active = TRUE;
