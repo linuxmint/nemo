@@ -1416,9 +1416,6 @@ lay_down_icons_horizontal (NemoIconContainer *container,
 			}
 		
 		lay_down_one_line (container, line_start, NULL, y, max_height_above, positions, TRUE);
-		
-		/* Advance to next line. */
-		y += max_height_below + ICON_PAD_BOTTOM;
 	}
 
 	g_array_free (positions, TRUE);

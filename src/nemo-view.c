@@ -2536,7 +2536,6 @@ update_undo_actions (NemoView *view)
 
 	undo_label = undo_description = redo_label = redo_description = NULL;
 
-	is_undo = FALSE;
 	undo_active = FALSE;
 	redo_active = FALSE;
 
@@ -4762,8 +4761,6 @@ reset_open_with_menu (NemoView *view, GList *selection)
 				      "OpenWithGroup",
 				      &view->details->open_with_merge_id,
 				      &view->details->open_with_action_group);
-	
-	num_applications = 0;
 
 	other_applications_visible = (selection != NULL);
 	filter_default = (selection != NULL);
@@ -8033,7 +8030,6 @@ nemo_view_init_show_hidden_files (NemoView *view)
 		return;
 	}
 
-	show_hidden_changed = FALSE;
 	mode = nemo_window_get_hidden_files_mode (view->details->window);
 
     if (mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE) {

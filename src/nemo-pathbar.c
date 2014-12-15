@@ -2016,7 +2016,7 @@ nemo_path_bar_update_path (NemoPathBar *path_bar,
     fake_root = NULL;
     result = TRUE;
     first_directory = TRUE;
-    last_directory = FALSE;
+    last_directory;
     new_buttons = NULL;
     current_button_data = NULL;
 

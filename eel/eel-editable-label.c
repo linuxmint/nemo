@@ -2575,7 +2575,7 @@ eel_editable_label_move_line (EelEditableLabel *label,
 			      gint      count)
 {
   int n_lines, i;
-  int x;
+  int x=0;
   PangoLayoutLine *line;
   int index;
   
