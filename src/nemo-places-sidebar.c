@@ -585,11 +585,10 @@ home_on_different_fs (const gchar *home_uri)
 static gboolean
 recent_is_supported (void)
 {
-    if (!g_strcmp0(g_getenv("DESKTOP_SESSION"), "cinnamon") ||
-        !g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "X-Cinnamon")) { 	
-        if (!g_settings_get_boolean (cinnamon_privacy_preferences, NEMO_PREFERENCES_RECENT_ENABLED))
-            return FALSE;
-    }
+	if (cinnamon_privacy_preferences) {
+		if (!g_settings_get_boolean (cinnamon_privacy_preferences, NEMO_PREFERENCES_RECENT_ENABLED))
+			return FALSE;
+	}
 
 	const char * const *supported;
 	int i;
@@ -4293,10 +4292,10 @@ nemo_places_sidebar_dispose (GObject *object)
 					      desktop_setting_changed_callback,
 					      sidebar);
 
-	if (!g_strcmp0(g_getenv("DESKTOP_SESSION"), "cinnamon")) {
+	if (cinnamon_privacy_preferences) {
 		g_signal_handlers_disconnect_by_func (cinnamon_privacy_preferences,
-							  desktop_setting_changed_callback,
-							  sidebar);
+                          desktop_setting_changed_callback,
+                          sidebar);
 	}
 
 	if (sidebar->volume_monitor != NULL) {
