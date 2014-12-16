@@ -4041,7 +4041,6 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
 	/* headings */
 	cell = gtk_cell_renderer_text_new ();
-    gtk_cell_renderer_set_fixed_size (cell, -1, NEMO_ICON_SIZE_SMALLER);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (col, cell,
 					     "text", PLACES_SIDEBAR_COLUMN_HEADING_TEXT,
