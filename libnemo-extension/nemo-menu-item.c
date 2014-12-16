@@ -59,7 +59,7 @@ struct _NemoMenuItemDetails {
     gboolean separator;
 };
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 static GObjectClass *parent_class = NULL;
 

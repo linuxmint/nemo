@@ -54,7 +54,7 @@ struct NemoClipboardMonitorDetails {
 	NemoClipboardInfo *info;
 };
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 static GdkAtom copied_files_atom;
 
 G_DEFINE_TYPE (NemoClipboardMonitor, nemo_clipboard_monitor, G_TYPE_OBJECT);

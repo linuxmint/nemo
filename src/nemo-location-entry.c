@@ -88,7 +88,7 @@ enum {
 	LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 G_DEFINE_TYPE (NemoLocationEntry, nemo_location_entry, NEMO_TYPE_ENTRY);
 

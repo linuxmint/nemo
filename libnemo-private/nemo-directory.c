@@ -54,7 +54,7 @@ enum {
 	NUM_PROPERTIES
 };
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 static GHashTable *directories;

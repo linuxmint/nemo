@@ -265,7 +265,7 @@ typedef struct {
 	gboolean tight;
 } PlacementGrid;
 
-static guint signals[LAST_SIGNAL];
+static guint signals[LAST_SIGNAL] = { 0 };
 
 static void
 tooltip_prefs_changed_callback (NemoCanvasContainer *container)
@@ -1884,6 +1884,7 @@ align_icons (NemoCanvasContainer *container)
 	grid = placement_grid_new (container, TRUE);
 
 	if (!grid) {
+		g_list_free (unplaced_icons);
 		return;
 	}
 
