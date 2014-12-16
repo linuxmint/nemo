@@ -279,7 +279,7 @@ get_nice_name (const gchar *entry)
     gchar *exec_path;
     gchar *ret = NULL;
     gint argcp = 0;
-    gchar **argvp;
+    gchar **argvp = NULL;
 
     if (g_shell_parse_argv (entry, &argcp, &argvp, NULL)) {
         if (argcp > 0) {
@@ -288,9 +288,9 @@ get_nice_name (const gchar *entry)
             ret = g_file_get_basename (file);
             g_object_unref (file);
         }
+        g_strfreev (argvp);
     }
 
-    g_strfreev (argvp);
     return ret;
 }
 

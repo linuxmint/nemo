@@ -5020,7 +5020,6 @@ setup_bookmark_action(      char *action_name,
 {
 
     GtkAction *action;
-    gchar *full_path;
     action = gtk_action_new (action_name,
              bookmark_name,
              NULL,
@@ -5049,9 +5048,6 @@ setup_bookmark_action(      char *action_name,
                             GTK_UI_MANAGER_MENUITEM,
                             FALSE);
 
-    full_path = g_strdup_printf ("%s/%s", path, action_name);
-
-    g_free (full_path);
     g_free (action_name);
 }
 
@@ -7438,6 +7434,7 @@ open_as_root (const gchar *path)
     argv[3] = NULL;
     g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
                   NULL, NULL, NULL, NULL);
+    g_free (argv[2]);
 }
 
 static void
