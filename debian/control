@@ -130,7 +130,7 @@ Description: libraries for nemo components - gir bindings
 Package: nemo-data
 Architecture: all
 Depends: ${misc:Depends},
-         python2.7
+         python
 Suggests: nemo
 Description: data files for nemo
  Nemo is the official file manager and graphical shell for the
