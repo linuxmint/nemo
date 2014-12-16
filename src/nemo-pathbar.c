@@ -708,11 +708,6 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
 
 
         child_allocation.width = MIN (child_requisition.width, largest_width);
-        if (button_count == 2 && child_requisition.width < largest_width) { 
-            /* unused space for second button */            
-            largest_width += largest_width - child_requisition.width;
-        }
-
         if (direction == GTK_TEXT_DIR_RTL) {
             child_allocation.x -= child_allocation.width;
         }
