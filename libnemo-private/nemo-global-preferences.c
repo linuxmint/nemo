@@ -117,12 +117,14 @@ nemo_global_preferences_init (void)
 		gnome_background_preferences = g_settings_new("org.cinnamon.desktop.background");
 		gnome_media_handling_preferences = g_settings_new("org.cinnamon.desktop.media-handling");
 		gnome_terminal_preferences = g_settings_new("org.cinnamon.desktop.default-applications.terminal");
-	} else {
+	    cinnamon_privacy_preferences = g_settings_new("org.cinnamon.desktop.privacy");
+    } else {
 		/* Gnome and Unity */ 		
 		gnome_lockdown_preferences = g_settings_new("org.gnome.desktop.lockdown");
 		gnome_background_preferences = g_settings_new("org.gnome.desktop.background");
 		gnome_media_handling_preferences = g_settings_new("org.gnome.desktop.media-handling");
 		gnome_terminal_preferences = g_settings_new("org.gnome.desktop.default-applications.terminal");
+		cinnamon_privacy_preferences = NULL;
 	}
 
     ignore_view_metadata = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_IGNORE_VIEW_METADATA);
