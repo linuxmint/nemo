@@ -42,8 +42,7 @@ Depends: ${shlibs:Depends},
          gvfs (>= 1.3.2),
          libglib2.0-data,
          cinnamon-desktop-data,
-         cinnamon-translations,
-         cinnamon
+         cinnamon-translations
 Recommends: eject,
             librsvg2-common,
             gvfs-backends,

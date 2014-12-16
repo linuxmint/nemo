@@ -23,7 +23,7 @@ dnl Interface break is not allowed.
 m4_define(nemo_extension_current,  5)
 m4_define(nemo_extension_revision, 0)
 
-AC_INIT(nemo, 2.3.0, https://github.com/linuxmint/nemo)
+AC_INIT(nemo, 2.4.0, https://github.com/linuxmint/nemo)
 
 dnl ===========================================================================
 
@@ -64,7 +64,7 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
                    [the gettext translation domain])
 
 AM_GLIB_GNU_GETTEXT
-LOCALE_DIR=/usr/share/cinnamon/locale
+LOCALE_DIR=/usr/share/locale
 AC_SUBST(LOCALE_DIR)
 
 AC_DEFINE_UNQUOTED(LOCALEDIR, "$LOCALE_DIR", [path for translations])
