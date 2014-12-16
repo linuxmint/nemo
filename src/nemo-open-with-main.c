@@ -56,6 +56,7 @@ app_chooser_dialog_response_cb (GtkDialog *dialog,
                 gint response_id,
                 gpointer user_data)
 {
+
     GAppInfo *info;
     const GList *files;
 
