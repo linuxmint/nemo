@@ -1110,10 +1110,10 @@ nemo_path_bar_class_init (NemoPathBarClass *path_bar_class)
         G_OBJECT_CLASS_TYPE (path_bar_class),
         G_SIGNAL_RUN_FIRST,
         G_STRUCT_OFFSET (NemoPathBarClass, path_event),
-        NULL, NULL,
-        g_cclosure_marshal_VOID__OBJECT,
-        G_TYPE_NONE, 1,
-        G_TYPE_FILE);
+        NULL, NULL, NULL,
+        G_TYPE_NONE, 2,
+        G_TYPE_FILE,
+		GDK_TYPE_EVENT);
 
      gtk_container_class_handle_border_width (container_class);
      g_type_class_add_private (path_bar_class, sizeof (NemoPathBarDetails));

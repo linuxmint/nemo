@@ -462,7 +462,7 @@ restore_expand_state_foreach (GtkTreeModel *model,
 static void
 restore_expand_state (NemoPlacesSidebar *sidebar)
 {
-    gtk_tree_model_foreach (GTK_TREE_MODEL (sidebar->store),
+    gtk_tree_model_foreach (GTK_TREE_MODEL (sidebar->store_filter),
                 restore_expand_state_foreach, sidebar);
 }
 
@@ -503,7 +503,7 @@ sidebar_update_restore_selection (NemoPlacesSidebar *sidebar,
 	data.sidebar = sidebar;
 	data.path = NULL;
 
-	gtk_tree_model_foreach (GTK_TREE_MODEL (sidebar->store),
+	gtk_tree_model_foreach (GTK_TREE_MODEL (sidebar->store_filter),
 				restore_selection_foreach, &data);
 
 	if (data.path != NULL) {
@@ -4041,6 +4041,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
 	/* headings */
 	cell = gtk_cell_renderer_text_new ();
+    gtk_cell_renderer_set_fixed_size (cell, -1, NEMO_ICON_SIZE_SMALLER);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (col, cell,
 					     "text", PLACES_SIDEBAR_COLUMN_HEADING_TEXT,
@@ -4159,7 +4160,19 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
     gtk_tree_view_set_model (tree_view, GTK_TREE_MODEL (sidebar->store_filter));
 
-	gtk_container_add (GTK_CONTAINER (sidebar), GTK_WIDGET (tree_view));
+    GtkWidget *stupid = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+    gtk_widget_set_visible (stupid, TRUE);
+    gtk_box_pack_start (GTK_BOX (stupid), GTK_WIDGET (tree_view), TRUE, TRUE, 0);
+
+    GtkWidget *filler = gtk_drawing_area_new ();
+    gtk_widget_set_visible (filler, TRUE);
+    gtk_box_pack_start (GTK_BOX (stupid), GTK_WIDGET (filler), TRUE, TRUE, 0);
+
+    GtkStyleContext *context = gtk_widget_get_style_context (filler);
+    gtk_style_context_add_class (context, "view");
+
+	gtk_container_add (GTK_CONTAINER (sidebar), GTK_WIDGET (stupid));
+
 	gtk_widget_show (GTK_WIDGET (tree_view));
 
 	gtk_widget_show (GTK_WIDGET (sidebar));
