@@ -1951,7 +1951,7 @@ eel_canvas_accessible_initialize (AtkObject *obj,
 
 static gint
 eel_canvas_accessible_get_n_children (AtkObject* obj)
-{;
+{
 	GtkWidget *widget;
 	EelCanvas *canvas;
 	EelCanvasGroup *root_group;
