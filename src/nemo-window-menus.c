@@ -1631,11 +1631,7 @@ nemo_window_initialize_menus (NemoWindow *window)
 void
 nemo_window_finalize_menus (NemoWindow *window)
 {
-	NemoTrashMonitor *monitor;
-
-	monitor = nemo_trash_monitor_get ();
-
-	g_signal_handlers_disconnect_by_func (monitor,
+	g_signal_handlers_disconnect_by_func (nemo_trash_monitor_get(),
 					      trash_state_changed_cb, window);
 }
 
