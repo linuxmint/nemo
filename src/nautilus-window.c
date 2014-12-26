@@ -1531,6 +1531,18 @@ nautilus_window_get_property (GObject *object,
 	}
 }
 
+static gint
+sort_slots_active_last (NautilusWindowSlot *a, NautilusWindowSlot *b, NautilusWindow *window)
+{
+	if (window->details->active_slot == a) {
+		return 1;
+	}
+	if (window->details->active_slot == b) {
+		return -1;
+	}
+	return 0;
+}
+
 static void
 destroy_slots_foreach (gpointer data,
 		       gpointer user_data)
@@ -1557,6 +1569,11 @@ nautilus_window_destroy (GtkWidget *object)
 
 	/* close all slots safely */
 	slots_copy = g_list_copy (window->details->slots);
+	if (window->details->active_slot != NULL) {
+		/* Make sure active slot is last one to be closed, to avoid default activation
+		 * of others slots when closing the active one, see bug #741952  */
+		slots_copy = g_list_sort_with_data (slots_copy, (GCompareFunc) sort_slots_active_last, window);
+	}
 	g_list_foreach (slots_copy, (GFunc) destroy_slots_foreach, window);
 	g_list_free (slots_copy);
 
