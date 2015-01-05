@@ -111,14 +111,15 @@ nemo_global_preferences_init (void)
         gtk_filechooser_preferences = g_settings_new_with_path ("org.gtk.Settings.FileChooser",
                                                                 "/org/gtk/settings/file-chooser/");
 	nemo_tree_sidebar_preferences = g_settings_new("org.nemo.sidebar-panels.tree");
-	if (!g_strcmp0(g_getenv("DESKTOP_SESSION"), "cinnamon")) {
+	if (!g_strcmp0(g_getenv("DESKTOP_SESSION"), "cinnamon") ||
+	    !g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "X-Cinnamon")) { 	
 		/* Cinnamon */		
 		gnome_lockdown_preferences = g_settings_new("org.cinnamon.desktop.lockdown");
 		gnome_background_preferences = g_settings_new("org.cinnamon.desktop.background");
 		gnome_media_handling_preferences = g_settings_new("org.cinnamon.desktop.media-handling");
 		gnome_terminal_preferences = g_settings_new("org.cinnamon.desktop.default-applications.terminal");
-	    cinnamon_privacy_preferences = g_settings_new("org.cinnamon.desktop.privacy");
-    } else {
+		cinnamon_privacy_preferences = g_settings_new("org.cinnamon.desktop.privacy");
+	} else {
 		/* Gnome and Unity */ 		
 		gnome_lockdown_preferences = g_settings_new("org.gnome.desktop.lockdown");
 		gnome_background_preferences = g_settings_new("org.gnome.desktop.background");
