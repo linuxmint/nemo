@@ -23,7 +23,7 @@ dnl Interface break is not allowed.
 m4_define(nemo_extension_current,  5)
 m4_define(nemo_extension_revision, 0)
 
-AC_INIT(nemo, 2.4.2, https://github.com/linuxmint/nemo)
+AC_INIT(nemo, 2.4.2-daschuer2, https://github.com/daschuer/nemo)
 
 dnl ===========================================================================
 
@@ -381,6 +381,7 @@ CFLAGS="$CFLAGS -Werror=unused-function -Werror=unused-variable -O3"
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
+data/icons/Makefile
 data/nemo.desktop.in
 data/nemo-autorun-software.desktop.in
 data/nemo-connect-server.desktop.in

@@ -20,8 +20,6 @@ EXTRA_DIST=					\
 	COPYING.LIB				\
 	COPYING.EXTENSIONS			\
 	COPYING-DOCS				\
-	HACKING					\
-	MAINTAINERS				\
 	intltool-extract.in			\
 	intltool-merge.in			\
 	intltool-update.in			\
