@@ -1313,4 +1313,3 @@ nemo_application_get_singleton (void)
 			     "flags", G_APPLICATION_HANDLES_OPEN,
 			     NULL);
 }
-
