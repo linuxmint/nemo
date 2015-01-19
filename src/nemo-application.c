@@ -1522,7 +1522,8 @@ nemo_application_startup (GApplication *app)
 	 * if there are problems.
 	 */
 	check_required_directories (self);
-	init_desktop (self);
+    if (geteuid() != 0)
+		init_desktop (self);
 
 #ifdef HAVE_UNITY
 	unity_bookmarks_handler_initialize ();

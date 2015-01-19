@@ -190,7 +190,7 @@ nemo_status_bar_constructed (GObject *object)
 
     context = gtk_widget_get_style_context (GTK_WIDGET (bar));
     gtk_style_context_add_class (context, GTK_STYLE_CLASS_TOOLBAR);
-    gtk_container_set_border_width (GTK_CONTAINER (bar), 1);
+    gtk_container_set_border_width (GTK_CONTAINER (bar), 2);
 
     GtkWidget *button, *icon;
 
@@ -236,6 +236,8 @@ nemo_status_bar_constructed (GObject *object)
                       G_CALLBACK (action_show_sidebar_callback), bar);
 
     gtk_box_pack_start (GTK_BOX (bar), statusbar, TRUE, TRUE, 10);
+    gtk_widget_set_margin_top (GTK_WIDGET (statusbar), 0);
+    gtk_widget_set_margin_bottom (GTK_WIDGET (statusbar), 0);
 
     GtkWidget *zoom_slider = gtk_scale_new_with_range (GTK_ORIENTATION_HORIZONTAL,
                                                        (gdouble) NEMO_ZOOM_LEVEL_SMALLEST,
@@ -373,5 +375,11 @@ nemo_status_bar_sync_zoom_widgets (NemoStatusBar *bar)
 
     NemoZoomLevel zoom_level = nemo_view_get_zoom_level (NEMO_VIEW (view));
 
+    g_signal_handlers_block_by_func (GTK_RANGE (bar->zoom_slider), on_slider_scroll_event, bar);
+    g_signal_handlers_block_by_func (GTK_RANGE (bar->zoom_slider), on_slider_changed_cb, bar);
+
     gtk_range_set_value (GTK_RANGE (bar->zoom_slider), (double) zoom_level);
+
+    g_signal_handlers_unblock_by_func (GTK_RANGE (bar->zoom_slider), on_slider_scroll_event, bar);
+    g_signal_handlers_unblock_by_func (GTK_RANGE (bar->zoom_slider), on_slider_changed_cb, bar);
 }
