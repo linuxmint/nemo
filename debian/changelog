@@ -1,3 +1,9 @@
+nemo (2.5.1) unstable; urgency=medium
+
+  * 2.5.x
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 19 Jan 2015 16:55:00 +0100
+
 nemo (2.4.4) rebecca; urgency=medium
 
   * list-view: Don't reset zoom level when syncing statusbar zoom widget state.
