@@ -1,3 +1,9 @@
+nemo (2.4.5) betsy; urgency=medium
+
+  * Fixed the growing size of the nemo statusbar in each new version of gtk
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 20 Jan 2015 13:10:06 +0100
+
 nemo (2.4.4) rebecca; urgency=medium
 
   * list-view: Don't reset zoom level when syncing statusbar zoom widget state.
