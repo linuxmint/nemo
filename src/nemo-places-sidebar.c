@@ -2587,7 +2587,10 @@ remove_selected_bookmarks (NemoPlacesSidebar *sidebar)
 			    PLACES_SIDEBAR_COLUMN_INDEX, &index,
 			    -1);
 
-	nemo_bookmark_list_delete_item_at (sidebar->bookmarks, index);
+    if (index < sidebar->bookmark_breakpoint)
+       decrement_bookmark_breakpoint (sidebar);
+
+    nemo_bookmark_list_delete_item_at (sidebar->bookmarks, index);
 }
 
 static void

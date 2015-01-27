@@ -7545,6 +7545,15 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
         string = add_line (string, nice, TRUE);
         g_free (tmp);
         g_free (nice);
+
+        if (nemo_file_is_symbolic_link (file)) {
+            tmp = nemo_file_get_symbolic_link_target_path (file);
+            const gchar *existing_i18n = _("Link target:");
+            nice = g_strdup_printf ("%s %s", existing_i18n, tmp);
+            string = add_line (string, nice, TRUE);
+            g_free (tmp);
+            g_free (nice);
+        }
     }
 
     ret = string->str;
