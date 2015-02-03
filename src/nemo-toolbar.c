@@ -66,6 +66,7 @@ struct _NemoToolbarPriv {
 	GtkWidget *search_bar;
 	GtkWidget *search_bar_revealer;
     GtkWidget *root_bar;
+    GtkWidget *stack;
 
 	gboolean show_main_bar;
 	gboolean show_location_entry;
@@ -111,10 +112,11 @@ toolbar_update_appearance (NemoToolbar *self)
 	gtk_widget_set_visible (GTK_WIDGET(self->priv->toolbar),
 				self->priv->show_main_bar);
 
-	gtk_widget_set_visible (self->priv->location_bar,
-				show_location_entry);
-	gtk_widget_set_visible (self->priv->path_bar,
-				!show_location_entry);
+    if (show_location_entry) {
+        gtk_stack_set_visible_child_name (GTK_STACK (self->priv->stack), "location_bar");
+    } else {
+        gtk_stack_set_visible_child_name (GTK_STACK (self->priv->stack), "path_bar");
+    }
 
 	gtk_revealer_set_reveal_child (GTK_REVEALER (self->priv->search_bar_revealer),
 				                   self->priv->show_search_bar);
@@ -358,16 +360,22 @@ nemo_toolbar_constructed (GObject *obj)
     gtk_widget_show_all (GTK_WIDGET (self->priv->location_box));
     gtk_widget_set_margin_right (GTK_WIDGET (self->priv->location_box), 6);
 
+    /* Container to hold the location and pathbars */
+    self->priv->stack = gtk_stack_new();
+    gtk_stack_set_transition_type (GTK_STACK (self->priv->stack), GTK_STACK_TRANSITION_TYPE_CROSSFADE);
+    gtk_stack_set_transition_duration (GTK_STACK (self->priv->stack), 150);
+
     /* Regular Path Bar */
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_widget_show (hbox);
+    gtk_box_pack_start (GTK_BOX (hbox), GTK_CONTAINER (self->priv->stack), TRUE, TRUE, 0);
 
     self->priv->path_bar = g_object_new (NEMO_TYPE_PATH_BAR, NULL);
-    gtk_box_pack_start (GTK_BOX (hbox), self->priv->path_bar, TRUE, TRUE, 0);
+    gtk_stack_add_named(GTK_STACK (self->priv->stack), GTK_WIDGET (self->priv->path_bar), "path_bar");
     
     /* Entry-Like Location Bar */
     self->priv->location_bar = nemo_location_bar_new ();
-    gtk_box_pack_start (GTK_BOX (hbox), self->priv->location_bar, TRUE, TRUE, 0);
+    gtk_stack_add_named(GTK_STACK (self->priv->stack), GTK_WIDGET (self->priv->location_bar), "location_bar");
+    gtk_widget_show_all (hbox);
 
     tool_box = gtk_tool_item_new ();
     gtk_tool_item_set_expand (tool_box, TRUE);
