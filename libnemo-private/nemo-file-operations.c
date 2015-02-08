@@ -5362,7 +5362,7 @@ link_file (CopyMoveJob *job,
 		if (not_local) {
 			secondary = f (_("Symbolic links only supported for local files"));
 			details = NULL;
-		} else if (IS_IO_ERROR (error, NOT_SUPPORTED)) {
+		} else if (error != NULL && IS_IO_ERROR (error, NOT_SUPPORTED)) {
 			secondary = f (_("The target doesn't support symbolic links."));
 			details = NULL;
 		} else {

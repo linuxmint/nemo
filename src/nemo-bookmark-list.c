@@ -448,7 +448,7 @@ GList *
 nemo_bookmark_list_get_for_uri (NemoBookmarkList   *bookmarks,
                                       const char   *uri)
 {
-    g_return_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks));
+    g_return_val_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks), NULL);
 
     GList *iter;
     GList *results = NULL;
