@@ -242,6 +242,9 @@
       <row>
         <col id="0" translatable="yes">4 GB</col>
       </row>
+      <row>
+        <col id="0" translatable="yes">8 GB</col>
+      </row>
     </data>
   </object>
   <object class="GtkDialog" id="file_management_dialog">
