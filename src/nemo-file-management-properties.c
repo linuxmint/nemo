@@ -189,7 +189,8 @@ static const guint64 thumbnail_limit_values[] = {
 	104857600,
 	1073741824,
 	2147483648U,
-	4294967295U
+	4294967295U,
+	8589934592U
 };
 
 static const char * const icon_captions_components[] = {

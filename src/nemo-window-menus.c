@@ -1413,7 +1413,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
     gtk_action_group_add_action (action_group, GTK_ACTION (action));
     g_signal_connect (action, "activate",
                       G_CALLBACK (action_open_terminal_callback), window);
-    gtk_action_set_icon_name (GTK_ACTION (action), "terminal"); //TODO: we should probably get some sort of sybolic-ish icon to match the others
+    gtk_action_set_icon_name (GTK_ACTION (action), "utilities-terminal-symbolic");
     g_object_unref (action);
 
 

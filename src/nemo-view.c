@@ -4687,6 +4687,12 @@ menu_item_show_image (GtkUIManager *ui_manager,
 {
 	char *path;
 	GtkWidget *menuitem;
+    gboolean show = FALSE;
+
+    g_object_get (gtk_settings_get_default (), "gtk-menu-images", &show, NULL);
+
+    if (!show)
+        return;
 
 	path = g_strdup_printf ("%s/%s", parent_path, action_name);
 	menuitem = gtk_ui_manager_get_widget (ui_manager,
@@ -4712,11 +4718,9 @@ add_application_to_open_with_menu (NemoView *view,
 	char *label;
 	char *action_name;
 	char *escaped_app;
-	char *path;
 	GtkAction *action;
 	GIcon *app_icon;
 	GtkUIManager *ui_manager;
-	GtkWidget *menuitem;
 
 	launch_parameters = application_launch_parameters_new 
 		(application, files, view);
@@ -4757,8 +4761,9 @@ add_application_to_open_with_menu (NemoView *view,
 	gtk_action_group_add_action (view->details->open_with_action_group,
 				     action);
 	g_object_unref (action);
-	
-	gtk_ui_manager_add_ui (nemo_view_get_ui_manager (view),
+
+	ui_manager = nemo_view_get_ui_manager (view);
+	gtk_ui_manager_add_ui (ui_manager,
 			       view->details->open_with_merge_id,
 			       menu_placeholder,
 			       action_name,
@@ -4766,14 +4771,8 @@ add_application_to_open_with_menu (NemoView *view,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
 
-	path = g_strdup_printf ("%s/%s", menu_placeholder, action_name);
-	menuitem = gtk_ui_manager_get_widget (
-	                      nemo_view_get_ui_manager (view),
-					      path);
-	gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
-	g_free (path);
+	menu_item_show_image (ui_manager, menu_placeholder, action_name);
 
-	ui_manager = nemo_view_get_ui_manager (view);
 	gtk_ui_manager_add_ui (ui_manager,
 			       view->details->open_with_merge_id,
 			       popup_placeholder,
@@ -8695,23 +8694,18 @@ static const GtkActionEntry directory_view_entries[] = {
 
 static void
 connect_proxy (NemoView *view,
-	       GtkAction *action,
-	       GtkWidget *proxy,
-	       GtkActionGroup *action_group)
+               GtkAction *action,
+               GtkWidget *proxy,
+               GtkActionGroup *action_group)
 {
-	GdkPixbuf *pixbuf;
-	GtkWidget *image;
+    if (strcmp (gtk_action_get_name (action), NEMO_ACTION_NEW_EMPTY_DOCUMENT) == 0 &&
+        GTK_IS_IMAGE_MENU_ITEM (proxy)) {
 
-	if (strcmp (gtk_action_get_name (action), NEMO_ACTION_NEW_EMPTY_DOCUMENT) == 0 &&
-	    GTK_IS_IMAGE_MENU_ITEM (proxy)) {
-		pixbuf = nemo_ui_get_menu_icon ("text-x-generic", GTK_WIDGET (view));
-		if (pixbuf != NULL) {
-			image = gtk_image_new_from_pixbuf (pixbuf);
-			gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), image);
+        GtkWidget *image;
 
-			g_object_unref (pixbuf);
-		}
-	}
+        image = gtk_image_new_from_icon_name ("text-x-generic", GTK_ICON_SIZE_MENU);
+        gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), image);
+    }
 }
 
 static void

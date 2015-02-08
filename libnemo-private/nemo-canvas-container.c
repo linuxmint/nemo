@@ -8906,7 +8906,6 @@ nemo_canvas_container_accessible_add_selection (AtkSelection *accessible,
 {
 	GtkWidget *widget;
 	NemoCanvasContainer *container;
-	GList *l;
 	GList *selection;
 	NemoCanvasIcon *icon;
 
@@ -8915,12 +8914,10 @@ nemo_canvas_container_accessible_add_selection (AtkSelection *accessible,
 		return FALSE;
 	}
 
-        container = NEMO_CANVAS_CONTAINER (widget);
+	container = NEMO_CANVAS_CONTAINER (widget);
 	
-	l = g_list_nth (container->details->icons, i);
-	if (l) {
-		icon = l->data;
-		
+	icon = g_list_nth_data (container->details->icons, i);
+	if (icon) {
 		selection = nemo_canvas_container_get_selection (container);
 		selection = g_list_prepend (selection, 
 					    icon->data);
@@ -8957,16 +8954,13 @@ nemo_canvas_container_accessible_ref_selection (AtkSelection *accessible,
 {
 	NemoCanvasContainerAccessiblePrivate *priv;
 	AtkObject *atk_object;
-	GList *item;
 	NemoCanvasIcon *icon;
 
 	nemo_canvas_container_accessible_update_selection (ATK_OBJECT (accessible));
 	priv = GET_ACCESSIBLE_PRIV (accessible);
 
-	item = (g_list_nth (priv->selection, i));
-
-	if (item) {
-		icon = item->data;
+	icon = g_list_nth_data (priv->selection, i);
+	if (icon) {
 		atk_object = atk_gobject_accessible_for_object (G_OBJECT (icon->item));
 		if (atk_object) {
 			g_object_ref (atk_object);
@@ -8996,7 +8990,6 @@ nemo_canvas_container_accessible_is_child_selected (AtkSelection *accessible,
 							int i)
 {
 	NemoCanvasContainer *container;
-	GList *l;
 	NemoCanvasIcon *icon;
 	GtkWidget *widget;
 
@@ -9007,12 +9000,8 @@ nemo_canvas_container_accessible_is_child_selected (AtkSelection *accessible,
 
         container = NEMO_CANVAS_CONTAINER (widget);
 
-	l = g_list_nth (container->details->icons, i);
-	if (l) {
-		icon = l->data;
-		return icon->is_selected;
-	}
-	return FALSE;
+	icon = g_list_nth_data (container->details->icons, i);
+	return icon ? icon->is_selected : FALSE;
 }
 
 static gboolean
@@ -9021,7 +9010,6 @@ nemo_canvas_container_accessible_remove_selection (AtkSelection *accessible,
 {
 	NemoCanvasContainerAccessiblePrivate *priv;
 	NemoCanvasContainer *container;
-	GList *l;
 	GList *selection;
 	NemoCanvasIcon *icon;
 	GtkWidget *widget;
@@ -9031,14 +9019,12 @@ nemo_canvas_container_accessible_remove_selection (AtkSelection *accessible,
 		return FALSE;
 	}
 
-        container = NEMO_CANVAS_CONTAINER (widget);
+	container = NEMO_CANVAS_CONTAINER (widget);
 	nemo_canvas_container_accessible_update_selection (ATK_OBJECT (accessible));
 
 	priv = GET_ACCESSIBLE_PRIV (accessible);
-	l = g_list_nth (priv->selection, i);
-	if (l) {
-		icon = l->data;
-		
+	icon = g_list_nth_data (priv->selection, i);
+	if (icon) {
 		selection = nemo_canvas_container_get_selection (container);
 		selection = g_list_remove (selection, icon->data);
 		nemo_canvas_container_set_selection (container, selection);
@@ -9129,7 +9115,6 @@ nemo_canvas_container_accessible_ref_child (AtkObject *accessible, int i)
 {
         AtkObject *atk_object;
         NemoCanvasContainer *container;
-        GList *item;
         NemoCanvasIcon *icon;
 	GtkWidget *widget;
         
@@ -9140,11 +9125,8 @@ nemo_canvas_container_accessible_ref_child (AtkObject *accessible, int i)
 
         container = NEMO_CANVAS_CONTAINER (widget);
         
-        item = (g_list_nth (container->details->icons, i));
-        
-        if (item) {
-                icon = item->data;
-                
+        icon = g_list_nth_data (container->details->icons, i);
+        if (icon) {
                 atk_object = atk_gobject_accessible_for_object (G_OBJECT (icon->item));
                 g_object_ref (atk_object);
 
