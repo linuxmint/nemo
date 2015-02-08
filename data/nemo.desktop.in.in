@@ -287,12 +287,10 @@ X-GNOME-Bugzilla-Bugzilla=GNOME
 X-GNOME-Bugzilla-Product=nemo
 X-GNOME-Bugzilla-Component=general
 X-GNOME-Bugzilla-Version=@VERSION@
-<<<<<<< HEAD
 X-GNOME-UsesNotifications=true
-=======
 Actions=Window;
 X-Unity-IconBackgroundColor=#af4853
->>>>>>> 79bf0edbbc3631700f542deb1b78e411094c4b7f
+
 
 [Desktop Action Window]
 _Name=Open a New Window
