@@ -4564,9 +4564,7 @@ add_submenu (GtkUIManager *ui_manager,
 						 NULL,
 						 NULL);
 			if (pixbuf != NULL) {
-				g_object_set_data_full (G_OBJECT (action), "menu-icon",
-							g_object_ref (pixbuf),
-							g_object_unref);
+				gtk_action_set_gicon (action, G_ICON (pixbuf));
 			}
 			
 			g_object_set (action, "hide-if-empty", FALSE, NULL);
@@ -4591,6 +4589,30 @@ add_submenu (GtkUIManager *ui_manager,
 }
 
 static void
+menu_item_show_image (GtkUIManager *ui_manager,
+		      const char   *parent_path,
+		      const char   *action_name)
+{
+	char *path;
+	GtkWidget *menuitem;
+    gboolean show = FALSE;
+
+    g_object_get (gtk_settings_get_default (), "gtk-menu-images", &show, NULL);
+
+    if (!show)
+        return;
+
+	path = g_strdup_printf ("%s/%s", parent_path, action_name);
+	menuitem = gtk_ui_manager_get_widget (ui_manager,
+					      path);
+	if (menuitem != NULL) {
+		gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem),
+							   TRUE);
+	}
+	g_free (path);
+}
+
+static void
 add_application_to_open_with_menu (NemoView *view,
 				   GAppInfo *application, 
 				   GList *files,
@@ -4604,10 +4626,9 @@ add_application_to_open_with_menu (NemoView *view,
 	char *label;
 	char *action_name;
 	char *escaped_app;
-	char *path;
 	GtkAction *action;
 	GIcon *app_icon;
-	GtkWidget *menuitem;
+	GtkUIManager *ui_manager;
 
 	launch_parameters = application_launch_parameters_new 
 		(application, files, view);
@@ -4648,8 +4669,9 @@ add_application_to_open_with_menu (NemoView *view,
 	gtk_action_group_add_action (view->details->open_with_action_group,
 				     action);
 	g_object_unref (action);
-	
-	gtk_ui_manager_add_ui (nemo_window_get_ui_manager (view->details->window),
+
+	ui_manager = nemo_window_get_ui_manager (view->details->window);
+	gtk_ui_manager_add_ui (ui_manager,
 			       view->details->open_with_merge_id,
 			       menu_placeholder,
 			       action_name,
@@ -4657,14 +4679,9 @@ add_application_to_open_with_menu (NemoView *view,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
 
-	path = g_strdup_printf ("%s/%s", menu_placeholder, action_name);
-	menuitem = gtk_ui_manager_get_widget (
-					      nemo_window_get_ui_manager (view->details->window),
-					      path);
-	gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
-	g_free (path);
+	menu_item_show_image (ui_manager, menu_placeholder, action_name);
 
-	gtk_ui_manager_add_ui (nemo_window_get_ui_manager (view->details->window),
+	gtk_ui_manager_add_ui (ui_manager,
 			       view->details->open_with_merge_id,
 			       popup_placeholder,
 			       action_name,
@@ -4672,13 +4689,8 @@ add_application_to_open_with_menu (NemoView *view,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
 
-	path = g_strdup_printf ("%s/%s", popup_placeholder, action_name);
-	menuitem = gtk_ui_manager_get_widget (
-					      nemo_window_get_ui_manager (view->details->window),
-					      path);
-	gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
+	menu_item_show_image (ui_manager, popup_placeholder, action_name);
 
-	g_free (path);
 	g_free (action_name);
 	g_free (label);
 	g_free (tip);
@@ -5954,9 +5966,8 @@ add_script_to_scripts_menus (NemoView *directory_view,
 
 	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	if (pixbuf != NULL) {
-		g_object_set_data_full (G_OBJECT (action), "menu-icon",
-					pixbuf,
-					g_object_unref);
+		gtk_action_set_gicon (action, G_ICON (pixbuf));
+		g_object_unref (pixbuf);
 	}
 
 	g_signal_connect_data (action, "activate",
@@ -5991,6 +6002,10 @@ add_script_to_scripts_menus (NemoView *directory_view,
 			       action_name,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
+
+	menu_item_show_image (ui_manager, menu_path, action_name);
+	menu_item_show_image (ui_manager, popup_path, action_name);
+	menu_item_show_image (ui_manager, popup_bg_path, action_name);
 
 	g_free (name);
 	g_free (uri);
@@ -6333,9 +6348,8 @@ add_template_to_templates_menus (NemoView *directory_view,
 	
 	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	if (pixbuf != NULL) {
-		g_object_set_data_full (G_OBJECT (action), "menu-icon",
-					pixbuf,
-					g_object_unref);
+		gtk_action_set_gicon (action, G_ICON (pixbuf));
+		g_object_unref (pixbuf);
 	}
 
 	g_signal_connect_data (action, "activate",
@@ -6364,7 +6378,10 @@ add_template_to_templates_menus (NemoView *directory_view,
 			       action_name,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
-	
+
+	menu_item_show_image (ui_manager, menu_path, action_name);
+	menu_item_show_image (ui_manager, popup_bg_path, action_name);
+
 	g_free (escaped_label);
 	g_free (name);
 	g_free (tip);
