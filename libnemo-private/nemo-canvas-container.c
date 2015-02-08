@@ -9063,7 +9063,7 @@ nemo_canvas_container_accessible_add_selection (AtkSelection *accessible,
 		return FALSE;
 	}
 
-        container = NEMO_CANVAS_CONTAINER (widget);
+	container = NEMO_CANVAS_CONTAINER (widget);
 	
 	icon = g_list_nth_data (container->details->icons, i);
 	if (icon) {
