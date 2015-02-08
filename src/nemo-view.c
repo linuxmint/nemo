@@ -4598,6 +4598,12 @@ menu_item_show_image (GtkUIManager *ui_manager,
 {
 	char *path;
 	GtkWidget *menuitem;
+    gboolean show = FALSE;
+
+    g_object_get (gtk_settings_get_default (), "gtk-menu-images", &show, NULL);
+
+    if (!show)
+        return;
 
 	path = g_strdup_printf ("%s/%s", parent_path, action_name);
 	menuitem = gtk_ui_manager_get_widget (ui_manager,
