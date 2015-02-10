@@ -1,0 +1,10 @@
+rm debian/control 
+cp debian/control.trusty debian/control
+dpkg-buildpackage -S -sa -rfakeroot
+
+
+rm debian/control 
+cp debian/control.trusty_cinnamon debian/control
+dpkg-buildpackage -S -sa -rfakeroot
+cp debian/control.trusty debian/control
+
