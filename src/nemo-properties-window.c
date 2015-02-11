@@ -223,7 +223,8 @@ static void name_field_activate                   (NemoEntry *name_field,
 						   gpointer callback_data);
 static GtkLabel *attach_ellipsizing_value_label   (GtkGrid *grid,
 						   GtkWidget *sibling,
-						   const char *initial_text);
+						   const char *initial_text, 
+						   PangoEllipsizeMode ellipsize_mode);
 						   
 static GtkWidget* create_pie_widget 		  (NemoPropertiesWindow *window);
 
@@ -577,7 +578,8 @@ set_name_field (NemoPropertiesWindow *window,
 			window->details->name_field = GTK_WIDGET 
 				(attach_ellipsizing_value_label (window->details->basic_grid,
 								 GTK_WIDGET (window->details->name_label),
-								 name));
+								 name, 
+								 PANGO_ELLIPSIZE_END));
 		} else {
 			window->details->name_field = nemo_entry_new ();
 			gtk_entry_set_text (GTK_ENTRY (window->details->name_field), name);
@@ -1236,27 +1238,24 @@ attach_value_label (GtkGrid *grid,
 static GtkLabel *
 attach_ellipsizing_value_label (GtkGrid *grid,
 				GtkWidget *sibling,
-				const char *initial_text)
+				const char *initial_text, 
+				PangoEllipsizeMode ellipsize_mode)
 {
-	return attach_label (grid, sibling, initial_text, PANGO_ELLIPSIZE_END, TRUE, FALSE);
+	return attach_label (grid, sibling, initial_text, ellipsize_mode, TRUE, FALSE);
 }
 
 static GtkWidget*
-attach_value_field_internal (NemoPropertiesWindow *window,
-			     GtkGrid *grid,
-			     GtkWidget *sibling,
-			     const char *file_attribute_name,
-			     const char *inconsistent_string,
-			     gboolean show_original,
-			     gboolean ellipsize_text)
+attach_value_field_ellipsizing (NemoPropertiesWindow *window,
+				GtkGrid *grid,
+				GtkWidget *sibling,
+				const char *file_attribute_name,
+				const char *inconsistent_string,
+				gboolean show_original,
+				PangoEllipsizeMode ellipsize_mode)
 {
 	GtkLabel *value_field;
 
-	if (ellipsize_text) {
-		value_field = attach_ellipsizing_value_label (grid, sibling, "");
-	} else {
-		value_field = attach_value_label (grid, sibling, "");
-	}
+	value_field = attach_ellipsizing_value_label (grid, sibling, "", ellipsize_mode);
 
   	/* Stash a copy of the file attribute name in this field for the callback's sake. */
 	g_object_set_data_full (G_OBJECT (value_field), "file_attribute",
@@ -1280,28 +1279,12 @@ attach_value_field (NemoPropertiesWindow *window,
 		    const char *inconsistent_string,
 		    gboolean show_original)
 {
-	return attach_value_field_internal (window, 
-					    grid, sibling,
-					    file_attribute_name, 
-					    inconsistent_string,
-					    show_original,
-					    FALSE);
-}
-
-static GtkWidget*
-attach_ellipsizing_value_field (NemoPropertiesWindow *window,
-				GtkGrid *grid,
-				GtkWidget *sibling,
-		    		const char *file_attribute_name,
-				const char *inconsistent_string,
-				gboolean show_original)
-{
-	return attach_value_field_internal (window,
-					    grid, sibling, 
-					    file_attribute_name, 
-					    inconsistent_string, 
-					    show_original,
-					    TRUE);
+	return attach_value_field_ellipsizing (window, 
+					       grid, sibling,
+					       file_attribute_name, 
+					       inconsistent_string,
+					       show_original,
+					       PANGO_ELLIPSIZE_NONE);
 }
 
 static void
@@ -2266,11 +2249,12 @@ append_title_and_ellipsizing_value (NemoPropertiesWindow *window,
 	GtkWidget *value;
 
 	title_label = attach_title_field (grid, title);
-	value = attach_ellipsizing_value_field (window, grid,
+	value = attach_value_field_ellipsizing (window, grid,
 						GTK_WIDGET (title_label),
 						file_attribute_name,
 						inconsistent_state,
-						show_original);
+						show_original,
+						PANGO_ELLIPSIZE_END);
 	gtk_label_set_mnemonic_widget (title_label, value);
 }
 
