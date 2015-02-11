@@ -1,3 +1,10 @@
+nemo (2.5.1-daschuer6) trusty; urgency=low
+  
+  * Improved diplay of lon paths in property window
+  * Follow symlinks when searching 
+ 
+ -- Daniel Schürmann <daschuer@gmx.de>  Wed, 11 Feb 2015 21:22:10 +0100
+
 nemo (2.5.1-daschuer5) trusty; urgency=low
   
   * Version 5, based on nemo 2.5.1
