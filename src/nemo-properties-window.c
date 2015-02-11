@@ -1260,16 +1260,16 @@ static GtkLabel *
 attach_label (GtkGrid *grid,
 	      GtkWidget *sibling,
 	      const char *initial_text,
-	      gboolean ellipsize_text,
+	      PangoEllipsizeMode ellipsize_mode,
 	      gboolean selectable,
 	      gboolean mnemonic)
 {
 	GtkWidget *label_field;
 
-	if (ellipsize_text) {
+	if (ellipsize_mode != PANGO_ELLIPSIZE_NONE) {
 		label_field = gtk_label_new (initial_text);
                 gtk_label_set_ellipsize (GTK_LABEL (label_field),
-					 PANGO_ELLIPSIZE_END);
+					 ellipsize_mode);
 	} else if (mnemonic) {
 		label_field = gtk_label_new_with_mnemonic (initial_text);
 	} else {
@@ -1283,7 +1283,7 @@ attach_label (GtkGrid *grid,
 	gtk_misc_set_alignment (GTK_MISC (label_field), 0, 0.5);
 	gtk_widget_show (label_field);
 
-	if (ellipsize_text) {
+	if (ellipsize_mode != PANGO_ELLIPSIZE_NONE) {
 		gtk_widget_set_hexpand (label_field, TRUE);
 	}
 
@@ -1302,7 +1302,7 @@ attach_value_label (GtkGrid *grid,
 		    GtkWidget *sibling,
 		    const char *initial_text)
 {
-	return attach_label (grid, sibling, initial_text, FALSE, TRUE, FALSE);
+	return attach_label (grid, sibling, initial_text, PANGO_ELLIPSIZE_NONE, TRUE, FALSE);
 }
 
 static GtkLabel *
@@ -1310,7 +1310,7 @@ attach_ellipsizing_value_label (GtkGrid *grid,
 				GtkWidget *sibling,
 				const char *initial_text)
 {
-	return attach_label (grid, sibling, initial_text, TRUE, TRUE, FALSE);
+	return attach_label (grid, sibling, initial_text, PANGO_ELLIPSIZE_END, TRUE, FALSE);
 }
 
 static GtkWidget*
@@ -2283,7 +2283,7 @@ static GtkLabel *
 attach_title_field (GtkGrid *grid,
 		    const char *title)
 {
-	return attach_label (grid, NULL, title, FALSE, FALSE, TRUE);
+	return attach_label (grid, NULL, title, PANGO_ELLIPSIZE_NONE, FALSE, TRUE);
 }		      
 
 #define INCONSISTENT_STATE_STRING \
