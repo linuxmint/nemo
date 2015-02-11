@@ -217,7 +217,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 						:
 						STD_ATTRIBUTES
 						,
-						G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+						0 /* G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS */,
 						data->cancellable, NULL);
 	
 	if (enumerator == NULL) {
