@@ -1170,6 +1170,8 @@ value_field_update_internal (GtkLabel *label,
 	}
 
 	gtk_label_set_text (label, attribute_value);
+	gtk_widget_set_tooltip_text (GTK_WIDGET (label),
+				     attribute_value);
 	g_free (attribute_value);
 }
 
