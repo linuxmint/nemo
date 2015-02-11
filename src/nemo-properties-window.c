@@ -2297,7 +2297,8 @@ append_title_and_ellipsizing_value (NemoPropertiesWindow *window,
 				    const char *title,
 				    const char *file_attribute_name,
 				    const char *inconsistent_state,
-				    gboolean show_original)
+				    gboolean show_original, 
+				    PangoEllipsizeMode ellipsize_mode)
 {
 	GtkLabel *title_label;
 	GtkWidget *value;
@@ -2308,7 +2309,7 @@ append_title_and_ellipsizing_value (NemoPropertiesWindow *window,
 						file_attribute_name,
 						inconsistent_state,
 						show_original,
-						PANGO_ELLIPSIZE_END);
+						ellipsize_mode);
 	gtk_label_set_mnemonic_widget (title_label, value);
 }
 
@@ -3275,7 +3276,8 @@ create_basic_page (NemoPropertiesWindow *window)
 						    _("Type:"), 
 						    "detailed_type",
 						    INCONSISTENT_STATE_STRING,
-						    FALSE);
+						    FALSE,
+						    PANGO_ELLIPSIZE_END);
 	}
 
 	if (should_show_link_target (window)) {
@@ -3283,7 +3285,8 @@ create_basic_page (NemoPropertiesWindow *window)
 						    _("Link target:"), 
 						    "link_target",
 						    INCONSISTENT_STATE_STRING,
-						    FALSE);
+						    FALSE,
+						    PANGO_ELLIPSIZE_MIDDLE);
 	}
 
 	if (is_multi_file_window (window) ||
@@ -3302,7 +3305,8 @@ create_basic_page (NemoPropertiesWindow *window)
 		append_title_and_ellipsizing_value (window, grid, _("Location:"),
 						    "where",
 						    INCONSISTENT_STATE_STRING,
-						    location_show_original (window));
+						    location_show_original (window), 
+						    PANGO_ELLIPSIZE_MIDDLE);
 	}
 
 	if (should_show_volume_info (window)) {
@@ -3310,7 +3314,8 @@ create_basic_page (NemoPropertiesWindow *window)
 						    _("Volume:"),
 						    "volume",
 						    INCONSISTENT_STATE_STRING,
-						    FALSE);
+						    FALSE,
+						    PANGO_ELLIPSIZE_END);
 	}
 
 	if (should_show_accessed_date (window)) {
