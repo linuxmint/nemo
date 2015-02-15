@@ -121,8 +121,8 @@ unity_quicklist_handler_init (UnityQuicklistHandler *self)
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, UNITY_TYPE_QUICKLIST_HANDLER,
 	                                          UnityQuicklistHandlerPriv);
 
-	unity_quicklist_handler_launcher_entry_add (self, "nautilus.desktop");
-	unity_quicklist_handler_launcher_entry_add (self, "nautilus-home.desktop");
+	unity_quicklist_handler_launcher_entry_add (self, "nemo.desktop");
+	unity_quicklist_handler_launcher_entry_add (self, "nemo-home.desktop");
 	g_return_if_fail (g_list_length (self->priv->launcher_entries) != 0);
 }
 
