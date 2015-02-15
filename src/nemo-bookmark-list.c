@@ -321,6 +321,8 @@ nemo_bookmark_list_delete_item_at (NemoBookmarkList *bookmarks,
 	g_return_if_fail (index < g_list_length (bookmarks->list));
 
 	doomed = g_list_nth (bookmarks->list, index);
+	g_return_if_fail (doomed != NULL);
+
 	bookmarks->list = g_list_remove_link (bookmarks->list, doomed);
 
 	g_assert (NEMO_IS_BOOKMARK (doomed->data));
@@ -351,6 +353,8 @@ nemo_bookmark_list_move_item (NemoBookmarkList *bookmarks,
 	}
 
 	bookmark_item = g_list_nth (bookmarks->list, index);
+	g_return_if_fail (bookmark_item != NULL);
+
 	bookmarks->list = g_list_remove_link (bookmarks->list,
 					      bookmark_item);
 
@@ -448,7 +452,7 @@ GList *
 nemo_bookmark_list_get_for_uri (NemoBookmarkList   *bookmarks,
                                       const char   *uri)
 {
-    g_return_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks));
+    g_return_val_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks), NULL);
 
     GList *iter;
     GList *results = NULL;

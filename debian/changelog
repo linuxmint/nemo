@@ -1,3 +1,21 @@
+nemo (2.5.1) unstable; urgency=medium
+
+  * 2.5.x
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 19 Jan 2015 16:55:00 +0100
+
+nemo (2.4.4) rebecca; urgency=medium
+
+  * list-view: Don't reset zoom level when syncing statusbar zoom widget state.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 24 Nov 2014 09:11:57 +0100
+
+nemo (2.4.3) rebecca; urgency=medium
+
+  * Never allow root nemo to manage the desktop.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 22 Nov 2014 17:17:30 +0100
+
 nemo (2.4.2) rebecca; urgency=medium
 
   * icon-container: Fix regression when renaming files in certain views -

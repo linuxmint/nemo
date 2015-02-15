@@ -606,7 +606,7 @@ connect_dialog_connect_to_server (NemoConnectServerDialog *dialog)
 	uri = g_strdup_printf ("%s://%s%s%s%s%s%s",
 			       meth->scheme,
 			       (user != NULL) ? user : "",
-			       (user[0] != 0) ? "@" : "",
+			       (user != NULL && user[0] != 0) ? "@" : "",
 			       server,
 			       (port_str != NULL) ? ":" : "",
 			       (port_str != NULL) ? port_str : "",

@@ -4572,9 +4572,7 @@ add_submenu (GtkUIManager *ui_manager,
 						 NULL,
 						 NULL);
 			if (pixbuf != NULL) {
-				g_object_set_data_full (G_OBJECT (action), "menu-icon",
-							g_object_ref (pixbuf),
-							g_object_unref);
+				gtk_action_set_gicon (action, G_ICON (pixbuf));
 			}
 			
 			g_object_set (action, "hide-if-empty", FALSE, NULL);
@@ -4599,6 +4597,30 @@ add_submenu (GtkUIManager *ui_manager,
 }
 
 static void
+menu_item_show_image (GtkUIManager *ui_manager,
+		      const char   *parent_path,
+		      const char   *action_name)
+{
+	char *path;
+	GtkWidget *menuitem;
+    gboolean show = FALSE;
+
+    g_object_get (gtk_settings_get_default (), "gtk-menu-images", &show, NULL);
+
+    if (!show)
+        return;
+
+	path = g_strdup_printf ("%s/%s", parent_path, action_name);
+	menuitem = gtk_ui_manager_get_widget (ui_manager,
+					      path);
+	if (menuitem != NULL) {
+		gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem),
+							   TRUE);
+	}
+	g_free (path);
+}
+
+static void
 add_application_to_open_with_menu (NemoView *view,
 				   GAppInfo *application, 
 				   GList *files,
@@ -4612,10 +4634,9 @@ add_application_to_open_with_menu (NemoView *view,
 	char *label;
 	char *action_name;
 	char *escaped_app;
-	char *path;
 	GtkAction *action;
 	GIcon *app_icon;
-	GtkWidget *menuitem;
+	GtkUIManager *ui_manager;
 
 	launch_parameters = application_launch_parameters_new 
 		(application, files, view);
@@ -4656,8 +4677,9 @@ add_application_to_open_with_menu (NemoView *view,
 	gtk_action_group_add_action (view->details->open_with_action_group,
 				     action);
 	g_object_unref (action);
-	
-	gtk_ui_manager_add_ui (nemo_window_get_ui_manager (view->details->window),
+
+	ui_manager = nemo_window_get_ui_manager (view->details->window);
+	gtk_ui_manager_add_ui (ui_manager,
 			       view->details->open_with_merge_id,
 			       menu_placeholder,
 			       action_name,
@@ -4665,14 +4687,9 @@ add_application_to_open_with_menu (NemoView *view,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
 
-	path = g_strdup_printf ("%s/%s", menu_placeholder, action_name);
-	menuitem = gtk_ui_manager_get_widget (
-					      nemo_window_get_ui_manager (view->details->window),
-					      path);
-	gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
-	g_free (path);
+	menu_item_show_image (ui_manager, menu_placeholder, action_name);
 
-	gtk_ui_manager_add_ui (nemo_window_get_ui_manager (view->details->window),
+	gtk_ui_manager_add_ui (ui_manager,
 			       view->details->open_with_merge_id,
 			       popup_placeholder,
 			       action_name,
@@ -4680,13 +4697,8 @@ add_application_to_open_with_menu (NemoView *view,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
 
-	path = g_strdup_printf ("%s/%s", popup_placeholder, action_name);
-	menuitem = gtk_ui_manager_get_widget (
-					      nemo_window_get_ui_manager (view->details->window),
-					      path);
-	gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
+	menu_item_show_image (ui_manager, popup_placeholder, action_name);
 
-	g_free (path);
 	g_free (action_name);
 	g_free (label);
 	g_free (tip);
@@ -5964,9 +5976,8 @@ add_script_to_scripts_menus (NemoView *directory_view,
 
 	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	if (pixbuf != NULL) {
-		g_object_set_data_full (G_OBJECT (action), "menu-icon",
-					pixbuf,
-					g_object_unref);
+		gtk_action_set_gicon (action, G_ICON (pixbuf));
+		g_object_unref (pixbuf);
 	}
 
 	g_signal_connect_data (action, "activate",
@@ -6001,6 +6012,10 @@ add_script_to_scripts_menus (NemoView *directory_view,
 			       action_name,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
+
+	menu_item_show_image (ui_manager, menu_path, action_name);
+	menu_item_show_image (ui_manager, popup_path, action_name);
+	menu_item_show_image (ui_manager, popup_bg_path, action_name);
 
 	g_free (name);
 	g_free (uri);
@@ -6343,9 +6358,8 @@ add_template_to_templates_menus (NemoView *directory_view,
 	
 	pixbuf = get_menu_icon_for_file (file, GTK_WIDGET (directory_view));
 	if (pixbuf != NULL) {
-		g_object_set_data_full (G_OBJECT (action), "menu-icon",
-					pixbuf,
-					g_object_unref);
+		gtk_action_set_gicon (action, G_ICON (pixbuf));
+		g_object_unref (pixbuf);
 	}
 
 	g_signal_connect_data (action, "activate",
@@ -6374,7 +6388,10 @@ add_template_to_templates_menus (NemoView *directory_view,
 			       action_name,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
-	
+
+	menu_item_show_image (ui_manager, menu_path, action_name);
+	menu_item_show_image (ui_manager, popup_bg_path, action_name);
+
 	g_free (escaped_label);
 	g_free (name);
 	g_free (tip);
@@ -8367,23 +8384,18 @@ static const GtkActionEntry directory_view_entries[] = {
 
 static void
 connect_proxy (NemoView *view,
-	       GtkAction *action,
-	       GtkWidget *proxy,
-	       GtkActionGroup *action_group)
+               GtkAction *action,
+               GtkWidget *proxy,
+               GtkActionGroup *action_group)
 {
-	GdkPixbuf *pixbuf;
-	GtkWidget *image;
+    if (strcmp (gtk_action_get_name (action), NEMO_ACTION_NEW_EMPTY_DOCUMENT) == 0 &&
+        GTK_IS_IMAGE_MENU_ITEM (proxy)) {
 
-	if (strcmp (gtk_action_get_name (action), NEMO_ACTION_NEW_EMPTY_DOCUMENT) == 0 &&
-	    GTK_IS_IMAGE_MENU_ITEM (proxy)) {
-		pixbuf = nemo_ui_get_menu_icon ("text-x-generic", GTK_WIDGET (view));
-		if (pixbuf != NULL) {
-			image = gtk_image_new_from_pixbuf (pixbuf);
-			gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), image);
+        GtkWidget *image;
 
-			g_object_unref (pixbuf);
-		}
-	}
+        image = gtk_image_new_from_icon_name ("text-x-generic", GTK_ICON_SIZE_MENU);
+        gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), image);
+    }
 }
 
 static void
@@ -9483,7 +9495,7 @@ real_update_menus (NemoView *view)
 					  nemo_view_can_rename_file (view, selection->data));
 	}
 
-    gtk_action_set_visible (action, !selection_contains_recent);
+    gtk_action_set_visible (action, !selection_contains_recent && !selection_contains_special_link);
 
     gboolean no_selection_or_one_dir = ((selection_count == 1 && selection_contains_directory) ||
                                         selection_count == 0);
