@@ -291,6 +291,6 @@ X-Unity-IconBackgroundColor=#af4853
 
 [Desktop Action Window]
 _Name=Open a New Window
-Exec=nemo
+Exec=nemo --new-window
 OnlyShowIn=Unity;
 
