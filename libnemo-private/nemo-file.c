@@ -4483,26 +4483,6 @@ nemo_file_get_trash_original_file_parent_as_string (NemoFile *file)
 	return NULL;
 }
 
-/*
- * Note to localizers: You can look at man strftime
- * for details on the format, but you should only use
- * the specifiers from the C standard, not extensions.
- * These include "%" followed by one of
- * "aAbBcdHIjmMpSUwWxXyYZ". There are two extensions
- * in the Nemo version of strftime that can be
- * used (and match GNU extensions). Putting a "-"
- * between the "%" and any numeric directive will turn
- * off zero padding, and putting a "_" there will use
- * space padding instead of zero padding.
- */
-#define TODAY_TIME_FORMAT_24 N_("%R")
-#define TODAY_TIME_FORMAT N_("%-I:%M %P")
-#define THIS_MONTH_TIME_FORMAT N_("%b %-e")
-#define THIS_YEAR_TIME_FORMAT N_("%b %-e")
-#define ANYTIME_TIME_FORMAT N_("%b %-d %Y")
-#define FULL_FORMAT N_("%a, %b %e %Y %I:%M:%S %p")
-#define FULL_FORMAT_24 N_("%a, %b %e %Y %T")
-
 /**
  * nemo_file_get_date_as_string:
  * 
@@ -4514,59 +4494,86 @@ nemo_file_get_trash_original_file_parent_as_string (NemoFile *file)
  * 
  **/
 static char *
-nemo_file_get_date_as_string (NemoFile *file, NemoDateType date_type, gboolean compact)
+nemo_file_get_date_as_string (NemoFile     *file,
+                              NemoDateType  date_type,
+                              gboolean      full_date)
 {
 	time_t file_time_raw;
-	const char *format;
-	char *result = NULL;
-	int date_format_pref;
-	GDateTime *date_time, *today;
-	int y, m, d;
-	int y_now, m_now, d_now;
+  	GDateTime *file_date, *now;
+	gint daysAgo;
 	gboolean use_24;
+	gchar *format;
+	gchar *result;
+	gchar *result_with_ratio;
+    int date_format_pref;
 
-	if (!nemo_file_get_date (file, date_type, &file_time_raw)) {
+  	if (!nemo_file_get_date (file, date_type, &file_time_raw))
 		return NULL;
-	}
 
-	date_time = g_date_time_new_from_unix_local (file_time_raw);
+  	file_date = g_date_time_new_from_unix_local (file_time_raw);
 	date_format_pref = g_settings_get_enum (nemo_preferences,
 						NEMO_PREFERENCES_DATE_FORMAT);
 
 	if (date_format_pref == NEMO_DATE_FORMAT_LOCALE) {
-		result = g_date_time_format (date_time, "%c");
+		result = g_date_time_format (file_date, "%c");
 		goto out;
 	} else if (date_format_pref == NEMO_DATE_FORMAT_ISO) {
-		result = g_date_time_format (date_time, "%Y-%m-%d %H:%M:%S");
+		result = g_date_time_format (file_date, "%Y-%m-%d %H:%M:%S");
 		goto out;
 	}
+  	file_date = g_date_time_new_from_unix_local (file_time_raw);
+	if (!full_date) {
+		now = g_date_time_new_now_local ();
 
-	g_date_time_get_ymd (date_time, &y, &m, &d);
+		daysAgo = g_date_time_difference (now, file_date) / (24 * 60 * 60 * 1000 * 1000L);
 
-	today = g_date_time_new_now_local ();
-	g_date_time_get_ymd (today, &y_now, &m_now, &d_now);
-	g_date_time_unref (today);
+		use_24 = g_settings_get_boolean (cinnamon_interface_preferences, "clock-use-24h");
 
-	use_24 = g_settings_get_boolean (cinnamon_interface_preferences, "clock-use-24h");
-
-	if (!compact) {
-		format = use_24 ? FULL_FORMAT_24 : FULL_FORMAT;
-	} else if (y == y_now && m == m_now && d == d_now) {
-		format = use_24 ? TODAY_TIME_FORMAT_24 : TODAY_TIME_FORMAT;
-	} else if (y == y_now && m == m_now) {
-		format = THIS_MONTH_TIME_FORMAT;
-	} else if (y == y_now) {
-		format = THIS_YEAR_TIME_FORMAT;
+		// Show only the time if date is on today
+		if (daysAgo < 1) {
+			if (use_24) {
+				/* Translators: Time in 24h format */
+				format = N_("%H:%M");
+			} else {
+				/* Translators: Time in 12h format */
+				format = N_("%l:%M %p");
+			}
+		}
+		// Show the word "Yesterday" and time if date is on yesterday
+		else if (daysAgo < 2) {
+			// xgettext:no-c-format
+			format = N_("Yesterday");
+		}
+		// Show a week day and time if date is in the last week
+		else if (daysAgo < 7) {
+			// xgettext:no-c-format
+			format = N_("%a");
+		} else if (g_date_time_get_year (file_date) == g_date_time_get_year (now)) {
+			/* Translators: this is the day of the month plus the short
+			 * month name i.e. "3 Feb" */
+			// xgettext:no-c-format
+			format = N_("%-e %b");
+		} else {
+			/* Translators: this is the day of the month followed by the short
+			 * month name followed by the year i.e. "3 Feb 2015" */
+			// xgettext:no-c-format
+			format = N_("%-e %b %Y");
+		}
 	} else {
-		format = ANYTIME_TIME_FORMAT;
+		format = N_("%c");
 	}
 
-	result = g_date_time_format (date_time, _(format));
+	result = g_date_time_format (file_date, format);
 
  out:
-	g_date_time_unref (date_time);
+	g_date_time_unref (file_date);
 
-	return result;
+	/* Replace ":" with ratio. Replacement is done afterward because g_date_time_format
+	 * may fail with utf8 chars in some locales */
+	result_with_ratio = eel_str_replace_substring (result, ":", "∶");
+ 	g_free (result);
+
+        return  result_with_ratio;
 }
 
 static NemoSpeedTradeoffValue show_directory_item_count;
@@ -6038,32 +6045,32 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
 	if (attribute_q == attribute_date_modified_q) {
 		return nemo_file_get_date_as_string (file, 
 							 NEMO_DATE_TYPE_MODIFIED,
-							 TRUE);
+							 FALSE);
 	}
 	if (attribute_q == attribute_date_modified_full_q) {
 		return nemo_file_get_date_as_string (file, 
 							 NEMO_DATE_TYPE_MODIFIED,
-							 FALSE);
+							 TRUE);
 	}
 	if (attribute_q == attribute_date_changed_q) {
 		return nemo_file_get_date_as_string (file, 
 							 NEMO_DATE_TYPE_CHANGED,
-							 TRUE);
+							 FALSE);
 	}
 	if (attribute_q == attribute_date_changed_full_q) {
 		return nemo_file_get_date_as_string (file, 
 							 NEMO_DATE_TYPE_CHANGED,
-							 FALSE);
+							 TRUE);
 	}
 	if (attribute_q == attribute_date_accessed_q) {
 		return nemo_file_get_date_as_string (file,
 							 NEMO_DATE_TYPE_ACCESSED,
-							 TRUE);
+							 FALSE);
 	}
 	if (attribute_q == attribute_date_accessed_full_q) {
 		return nemo_file_get_date_as_string (file,
 							 NEMO_DATE_TYPE_ACCESSED,
-							 FALSE);
+							 TRUE);
 	}
 	if (attribute_q == attribute_trashed_on_q) {
 		return nemo_file_get_date_as_string (file,
