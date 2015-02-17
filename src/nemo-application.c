@@ -318,15 +318,18 @@ selection_get_cb (GtkWidget          *widget,
 }
 
 static GtkWidget *
-get_desktop_manager_selection (GdkDisplay *display)
+get_desktop_manager_selection (GdkScreen *screen)
 {
 	char selection_name[32];
 	GdkAtom selection_atom;
 	Window selection_owner;
+	GdkDisplay *display;
 	GtkWidget *selection_widget;
 
-	g_snprintf (selection_name, sizeof (selection_name), "_NET_DESKTOP_MANAGER_S0");
+	g_snprintf (selection_name, sizeof (selection_name),
+		    "_NET_DESKTOP_MANAGER_S%d", gdk_screen_get_number (screen));
 	selection_atom = gdk_atom_intern (selection_name, FALSE);
+	display = gdk_screen_get_display (screen);
 
 	selection_owner = XGetSelectionOwner (GDK_DISPLAY_XDISPLAY (display),
 					      gdk_x11_atom_to_xatom_for_display (display, 
@@ -335,7 +338,7 @@ get_desktop_manager_selection (GdkDisplay *display)
 		return NULL;
 	}
 	
-	selection_widget = gtk_invisible_new_for_screen (gdk_display_get_default_screen (display));
+	selection_widget = gtk_invisible_new_for_screen (screen);
 	/* We need this for gdk_x11_get_server_time() */
 	gtk_widget_add_events (selection_widget, GDK_PROPERTY_CHANGE_MASK);
 
@@ -377,18 +380,17 @@ selection_clear_event_cb (GtkWidget	        *widget,
 static void
 nemo_application_create_desktop_windows (NemoApplication *application)
 {
-	GdkDisplay *display;
+	GdkScreen *screen;
 	NemoDesktopWindow *window;
 	GtkWidget *selection_widget;
 
-	display = gdk_display_get_default ();
+	screen = gdk_screen_get_default ();
 
-	DEBUG ("Creating a desktop window for screen");
+	DEBUG ("Creating desktop window");
 		
-	selection_widget = get_desktop_manager_selection (display);
+	selection_widget = get_desktop_manager_selection (screen);
 	if (selection_widget != NULL) {
-		window = nemo_desktop_window_new (GTK_APPLICATION (application),
-                              gdk_display_get_default_screen (display));
+		window = nemo_desktop_window_new (GTK_APPLICATION (application), screen);
 
 		g_signal_connect (selection_widget, "selection-clear-event",
 				  G_CALLBACK (selection_clear_event_cb), window);
@@ -1210,20 +1212,17 @@ nemo_application_open_desktop (NemoApplication *application)
 	/* Initialize the desktop link monitor singleton */
 	nemo_desktop_link_monitor_get ();
 
-	if (nemo_application_desktop_windows == NULL) {
-		nemo_application_create_desktop_windows (application);
-	}
+	nemo_application_create_desktop_windows (application);
 }
 
 static void
 nemo_application_close_desktop (void)
 {
-	if (nemo_application_desktop_windows != NULL) {
-		g_list_foreach (nemo_application_desktop_windows,
-				(GFunc) gtk_widget_destroy, NULL);
-		g_list_free (nemo_application_desktop_windows);
-		nemo_application_desktop_windows = NULL;
-	}
+	g_list_foreach (nemo_application_desktop_windows,
+			(GFunc) gtk_widget_destroy, NULL);
+	g_list_free (nemo_application_desktop_windows);
+	nemo_application_desktop_windows = NULL;
+
 	nemo_desktop_link_monitor_shutdown ();
 }
 
