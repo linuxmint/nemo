@@ -3161,7 +3161,7 @@ format_shortcut_cb (GtkMenuItem           *item,
 		return;
 	}
 
-	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store), &iter,
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
 			    PLACES_SIDEBAR_COLUMN_VOLUME, &volume,
 			    -1);
 
