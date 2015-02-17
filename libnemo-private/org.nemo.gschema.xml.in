@@ -165,6 +165,16 @@
       <_summary>Whether to enable immediate deletion</_summary>
       <_description>If set to true, then Nemo will have a feature allowing you to delete a file immediately and in-place, instead of moving it  to the trash. This feature can be dangerous, so use caution.</_description>
     </key>
+    <key name="enabled-menu-items" type="i">
+      <default>1111111</default>
+      <_summary>A 32bit flag of entries in the context menu for an item</_summary>
+      <_description>Only the first 7 bits are read ("Open With", "Duplicate", "Make Link", "Copy to", "Move To", "Trash", "Delete"), set 0 to disable, and 1 to enable</_description>
+    </key>
+    <key name="enabled-menu-empty" type="i">
+      <default>0</default>
+      <_summary>A list of the entries enabled when clicking on empty</_summary>
+      <_description>Which entries are enabled in the context menu when right clicking on an empty spot</_description>
+    </key>
     <key name="swap-trash-delete" type="b">
       <default>false</default>
       <_summary>Whether to swap the hotkeys for Trash and Delete</_summary>

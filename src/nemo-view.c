@@ -2722,6 +2722,9 @@ nemo_view_init (NemoView *view)
 
 	gtk_widget_show (GTK_WIDGET (view));
 
+    g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS,
+				  G_CALLBACK (schedule_update_menus_callback), view);
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_ENABLE_DELETE,
 				  G_CALLBACK (schedule_update_menus_callback), view);
@@ -8104,7 +8107,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open in New _Tab"), "<control><shift>o",
   /* tooltip */                  N_("Open each selected item in a new tab"),
 				 G_CALLBACK (action_open_new_tab_callback) },
-  /* name, stock id */         { NEMO_ACTION_OPEN_IN_TERMINAL, "utilities-terminal",
+  /* name, stock id */         { NEMO_ACTION_OPEN_IN_TERMINAL, "utilities-terminal-symbolic",
   /* label, accelerator */       N_("Open in Terminal"), "",
   /* tooltip */                  N_("Open terminal in the selected folder"),
 				 G_CALLBACK (action_open_in_terminal_callback) },
@@ -9269,6 +9272,7 @@ real_update_location_menu (NemoView *view)
 	gboolean show_separate_delete_command;
 	gboolean show_open_in_new_tab;
 	gboolean show_open_alternate;
+    gint context_items_flag;
 	GList l;
 	char *label;
 	char *tip;
@@ -9345,10 +9349,12 @@ real_update_location_menu (NemoView *view)
 		label = _("Mo_ve to Trash");
 		tip = _("Move the open folder to the Trash");
 		show_separate_delete_command = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ENABLE_DELETE);
+        context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
 	}
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_LOCATION_TRASH);
+    
 	g_object_set (action,
 		      "label", label,
 		      "tooltip", tip,
@@ -9361,14 +9367,17 @@ real_update_location_menu (NemoView *view)
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_LOCATION_DELETE);
-	gtk_action_set_visible (action, show_separate_delete_command);
-	if (show_separate_delete_command) {
+	if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DELETE) {
+        gtk_action_set_visible (action, TRUE);
 		gtk_action_set_sensitive (action, can_delete_file);
 		g_object_set (action,
 			      "icon-name", NEMO_ICON_DELETE,
 			      "sensitive", can_delete_file,
 			      NULL);
 	}
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_LOCATION_RESTORE_FROM_TRASH);
@@ -9431,6 +9440,7 @@ real_update_menus (NemoView *view)
 {
 	GList *selection, *l;
 	gint selection_count;
+    gint context_items_flag;
 	const char *tip, *label;
 	char *label_with_underscore;
 	gboolean selection_contains_special_link;
@@ -9644,8 +9654,9 @@ real_update_menus (NemoView *view)
 		label = _("Mo_ve to Trash");
 		tip = _("Move each selected item to the Trash");
 		show_separate_delete_command = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ENABLE_DELETE);
+        context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
 	}
-	
+
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_TRASH);
 	g_object_set (action,
@@ -9658,7 +9669,6 @@ real_update_menus (NemoView *view)
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_DELETE);
-	gtk_action_set_visible (action, show_separate_delete_command);
 
     if (selection_contains_recent) {
         label = _("Remo_ve from Recent");
@@ -9668,13 +9678,17 @@ real_update_menus (NemoView *view)
         tip = _("Delete each selected item, without moving to the Trash");
     }
 
-	if (show_separate_delete_command) {
+	if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DELETE) {
+        gtk_action_set_visible (action, TRUE);
 		g_object_set (action,
 			      "label", label,
                   "tooltip", tip,
 			      "icon-name", NEMO_ICON_DELETE,
 			      NULL);
 	}
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 	gtk_action_set_sensitive (action, can_delete_files);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
