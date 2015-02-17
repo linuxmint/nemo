@@ -9658,19 +9658,20 @@ real_update_menus (NemoView *view)
 
     action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_TRASH);
     
-	if (all_selected_items_in_trash (view)) {
-		label = _("_Delete Permanently");
-		tip = _("Delete all selected items permanently");
-	} else {
-		label = _("Mo_ve to Trash");
-		tip = _("Move each selected item to the Trash");
+    if (all_selected_items_in_trash (view)) {
+        label = _("_Delete Permanently");
+        tip = _("Delete all selected items permanently");
+    }
+    else {
+        label = _("Mo_ve to Trash");
+        tip = _("Move each selected item to the Trash");
         
-	}
+    }
     gtk_action_set_sensitive (action, can_delete_files);
     
         //If trash should be enabled in the menu and what icon/label/tooltip it should use based on context
         //Also if the item that is being right clicked is in the trash, always show delete permanently, we don't want to hide this
-	if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_TRASH) || all_selected_items_in_trash (view)) {
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_TRASH) || all_selected_items_in_trash (view)) {
         gtk_action_set_visible (action, TRUE);
         g_object_set (action,
                 "label", label,
@@ -9685,12 +9686,13 @@ real_update_menus (NemoView *view)
 
     /* Delete context item */
 
-	action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_DELETE);
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_DELETE);
 
     if (selection_contains_recent) {
         label = _("Remo_ve from Recent");
         tip = _("Remove each selected item from the recently used list");
-    } else {
+    } 
+    else {
         label = _("_Delete");
         tip = _("Delete each selected item, without moving to the Trash");
     }
@@ -9698,27 +9700,25 @@ real_update_menus (NemoView *view)
     
         //If delete should be enabled in the menu and what icon/label it should use based on context
         //We are hiding this from trash items as not to show two entries for delete
-	if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DELETE) && !all_selected_items_in_trash (view)) {
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DELETE) && !all_selected_items_in_trash (view)) {
         gtk_action_set_visible (action, TRUE);
-		g_object_set (action,
-			      "label", label,
-                  "tooltip", tip,
-			      "icon-name", NEMO_ICON_DELETE,
-			      NULL);
-	}
+        g_object_set (action,
+                "label", label,
+                "tooltip", tip,
+                "icon-name", NEMO_ICON_DELETE,
+                NULL);
+    }
     else {
         gtk_action_set_visible (action, FALSE);
     }
     
     /* Restore from Trash context item */
-    //We always show this in the trash as we don't want to hide this
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_RESTORE_FROM_TRASH);
-	update_restore_from_trash_action (action, selection, FALSE);
+    //This does not get disabled!
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_RESTORE_FROM_TRASH);
+    update_restore_from_trash_action (action, selection, FALSE);
     
-	/* Duplicate context item */
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_DUPLICATE);
+    /* Duplicate context item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_DUPLICATE);
                               
     if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DUPLICATE) && !selection_contains_recent && can_duplicate_files) {
         gtk_action_set_visible (action, TRUE);
@@ -9727,18 +9727,25 @@ real_update_menus (NemoView *view)
         gtk_action_set_visible (action, FALSE);
     }
     
+    /* Make Link context item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_CREATE_LINK);
+                          
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_LINK) && !selection_contains_recent && can_link_files) {
+        gtk_action_set_visible (action, TRUE);
+        g_object_set (action, "label", ngettext (
+                "Ma_ke Link",
+                "Ma_ke Links",
+                selection_count),
+                NULL);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+
+    /* Properties context item */
+    //This does not get disabled!
     
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_CREATE_LINK);
-	gtk_action_set_sensitive (action, can_link_files);
-    gtk_action_set_visible (action, !selection_contains_recent);
-	g_object_set (action, "label",
-		      ngettext ("Ma_ke Link",
-			      	"Ma_ke Links",
-				selection_count),
-		      NULL);
-	
-	show_properties = (!NEMO_IS_DESKTOP_ICON_VIEW (view) || selection_count > 0);
+    show_properties = (!NEMO_IS_DESKTOP_ICON_VIEW (view) || selection_count > 0);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PROPERTIES);
@@ -9758,6 +9765,9 @@ real_update_menus (NemoView *view)
 
 	gtk_action_set_sensitive (action, show_properties);
 
+    /* More context items */
+    //These does not get disabled!
+    
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_EMPTY_TRASH);
 	g_object_set (action,

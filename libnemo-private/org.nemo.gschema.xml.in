@@ -155,15 +155,20 @@
       <summary>Show Compact View button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
+    <key name="enable-delete" type="b">
+      <default>true</default>
+      <_summary>Whether to enable immediate deletion</_summary>
+      <_description>If set to true, then Nemo will have a feature allowing you to delete a file immediately and in-place, instead of moving it  to the trash. This feature can be dangerous, so use caution.</_description>
+    </key>
     <key name="confirm-trash" type="b">
       <default>true</default>
       <_summary>Whether to ask for confirmation when deleting files, or emptying Trash</_summary>
       <_description>If set to true, then Nemo will ask for confirmation when  you attempt to delete files, or empty the Trash.</_description>
     </key>
     <key name="enabled-menu-items" type="i">
-      <default>1111111</default>
+      <default>011111101</default>
       <_summary>A binary flag of entries in the right click menu of an item</_summary>
-      <_description>7 bits are read ("Open With", "Duplicate", "Make Link", "Copy to", "Move To", "Trash", "Delete"), set 0 to disable, and 1 to enable from left to right, e.g if you want only "Delete" and "Open With" enabled you would enter 1000001, "Delete" being the first 1, and "Open With" the last</_description>
+      <_description>9 bits are read ("Open With", "Duplicate", "Make Link", "Copy to", "Move To", "Trash", "Delete", "Open in Terminal", "Open as Root"), set "0" to disable, and "1" to enable from left to right, e.g if you want only "Delete" and "Open With" enabled you would enter "001000001", "Delete" being the third "1", and "Open With" the last "1"</_description>
     </key>
     <key name="enabled-menu-empty" type="i">
       <default>0</default>
