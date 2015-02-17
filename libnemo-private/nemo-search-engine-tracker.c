@@ -85,12 +85,12 @@ check_pending_hits (NemoSearchEngineTracker *tracker,
 		hits = g_list_prepend (hits, hit);
 	}
 
-	nemo_search_provider_hits_added (NAUTILUS_SEARCH_PROVIDER (tracker), hits);
+	nemo_search_provider_hits_added (NEMO_SEARCH_PROVIDER (tracker), hits);
 	g_list_free_full (hits, g_object_unref);
 }
 
 static void
-search_finished (NautilusSearchEngineTracker *tracker,
+search_finished (NemoSearchEngineTracker *tracker,
 		 GError *error)
 {
 	if (error == NULL) {
@@ -103,9 +103,9 @@ search_finished (NautilusSearchEngineTracker *tracker,
 	tracker->details->query_pending = FALSE;
 
 	if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-		nautilus_search_provider_error (NAUTILUS_SEARCH_PROVIDER (tracker), error->message);
+		nemo_search_provider_error (NEMO_SEARCH_PROVIDER (tracker), error->message);
 	} else {
-		nautilus_search_provider_finished (NAUTILUS_SEARCH_PROVIDER (tracker));
+		nemo_search_provider_finished (NEMO_SEARCH_PROVIDER (tracker));
 	}
 
 	g_object_unref (tracker);
@@ -220,7 +220,7 @@ query_callback (GObject      *object,
 static gboolean
 search_finished_idle (gpointer user_data)
 {
-	NautilusSearchEngineTracker *tracker = user_data;
+	NemoSearchEngineTracker *tracker = user_data;
 
 	search_finished (tracker, NULL);
 
