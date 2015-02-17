@@ -102,9 +102,6 @@ struct NemoCanvasViewDetails
 
 	GtkActionGroup *canvas_action_group;
 	guint canvas_merge_id;
-	
-	gboolean filter_by_screen;
-	int num_screens;
 
 	gboolean compact;
 
@@ -443,36 +440,6 @@ nemo_canvas_view_clear (NemoView *view)
 	g_slist_free (file_list);
 }
 
-static gboolean
-should_show_file_on_screen (NemoView *view, NemoFile *file)
-{
-	char *screen_string;
-	int screen_num;
-	NemoCanvasView *canvas_view;
-	GdkScreen *screen;
-
-	canvas_view = NEMO_CANVAS_VIEW (view);
-
-	if (!nemo_view_should_show_file (view, file)) {
-		return FALSE;
-	}
-	
-	/* Get the screen for this canvas from the metadata. */
-	screen_string = nemo_file_get_metadata
-		(file, NEMO_METADATA_KEY_SCREEN, "0");
-	screen_num = atoi (screen_string);
-	g_free (screen_string);
-	screen = gtk_widget_get_screen (GTK_WIDGET (view));
-
-	if (screen_num != gdk_screen_get_number (screen) &&
-	    (screen_num < canvas_view->details->num_screens ||
-	     gdk_screen_get_number (screen) > 0)) {
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
 static void
 nemo_canvas_view_remove_file (NemoView *view, NemoFile *file, NemoDirectory *directory)
 {
@@ -518,11 +485,6 @@ nemo_canvas_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *direct
 	canvas_view = NEMO_CANVAS_VIEW (view);
 	canvas_container = get_canvas_container (canvas_view);
 
-	if (canvas_view->details->filter_by_screen &&
-	    !should_show_file_on_screen (view, file)) {
-		return;
-	}
-
 	/* Reset scroll region for the first canvas added when loading a directory. */
 	if (nemo_view_get_loading (view) && nemo_canvas_container_is_empty (canvas_container)) {
 		nemo_canvas_container_reset_scroll_region (canvas_container);
@@ -544,21 +506,9 @@ nemo_canvas_view_file_changed (NemoView *view, NemoFile *file, NemoDirectory *di
 	g_return_if_fail (view != NULL);
 	canvas_view = NEMO_CANVAS_VIEW (view);
 
-	if (!canvas_view->details->filter_by_screen) {
-		nemo_canvas_container_request_update
-			(get_canvas_container (canvas_view),
-			 NEMO_CANVAS_ICON_DATA (file));
-		return;
-	}
-	
-	if (!should_show_file_on_screen (view, file)) {
-		nemo_canvas_view_remove_file (view, file, directory);
-	} else {
-
-		nemo_canvas_container_request_update
-			(get_canvas_container (canvas_view),
-			 NEMO_CANVAS_ICON_DATA (file));
-	}
+	nemo_canvas_container_request_update
+		(get_canvas_container (canvas_view),
+		 NEMO_CANVAS_ICON_DATA (file));
 }
 
 static gboolean
@@ -1771,54 +1721,6 @@ compare_files (NemoView   *canvas_view,
 	return nemo_canvas_view_compare_files ((NemoCanvasView *)canvas_view, a, b);
 }
 
-
-void
-nemo_canvas_view_filter_by_screen (NemoCanvasView *canvas_view,
-				     gboolean filter)
-{
-	canvas_view->details->filter_by_screen = filter;
-	canvas_view->details->num_screens = gdk_display_get_n_screens (gtk_widget_get_display (GTK_WIDGET (canvas_view)));
-}
-
-static void
-nemo_canvas_view_screen_changed (GtkWidget *widget,
-				   GdkScreen *previous_screen)
-{
-	NemoView *view;
-	GList *files, *l;
-	NemoFile *file;
-	NemoDirectory *directory;
-	NemoCanvasContainer *canvas_container;
-
-	if (GTK_WIDGET_CLASS (nemo_canvas_view_parent_class)->screen_changed) {
-		GTK_WIDGET_CLASS (nemo_canvas_view_parent_class)->screen_changed (widget, previous_screen);
-	}
-
-	view = NEMO_VIEW (widget);
-	if (NEMO_CANVAS_VIEW (view)->details->filter_by_screen) {
-		canvas_container = get_canvas_container (NEMO_CANVAS_VIEW (view));
-
-		directory = nemo_view_get_model (view);
-		files = nemo_directory_get_file_list (directory);
-
-		for (l = files; l != NULL; l = l->next) {
-			file = l->data;
-			
-			if (!should_show_file_on_screen (view, file)) {
-				nemo_canvas_view_remove_file (view, file, directory);
-			} else {
-				if (nemo_canvas_container_add (canvas_container,
-								 NEMO_CANVAS_ICON_DATA (file))) {
-					nemo_file_ref (file);
-				}
-			}
-		}
-		
-		nemo_file_list_unref (files);
-		g_list_free (files);
-	}
-}
-
 static gboolean
 nemo_canvas_view_scroll_event (GtkWidget *widget,
 			   GdkEventScroll *scroll_event)
@@ -2597,7 +2499,6 @@ nemo_canvas_view_class_init (NemoCanvasViewClass *klass)
 	oclass->finalize = nemo_canvas_view_finalize;
 
 	GTK_WIDGET_CLASS (klass)->destroy = nemo_canvas_view_destroy;
-	GTK_WIDGET_CLASS (klass)->screen_changed = nemo_canvas_view_screen_changed;
 	GTK_WIDGET_CLASS (klass)->scroll_event = nemo_canvas_view_scroll_event;
 	
 	nemo_view_class->add_file = nemo_canvas_view_add_file;
@@ -2693,7 +2594,6 @@ nemo_canvas_view_init (NemoCanvasView *canvas_view)
 
 	canvas_view->details = g_new0 (NemoCanvasViewDetails, 1);
 	canvas_view->details->sort = &sort_criteria[0];
-	canvas_view->details->filter_by_screen = FALSE;
 
 	canvas_container = create_canvas_container (canvas_view);
 
