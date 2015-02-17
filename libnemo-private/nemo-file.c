@@ -4585,41 +4585,41 @@ nemo_file_get_date_as_string (NemoFile       *file,
 			}
 		} else if (g_date_time_get_year (file_date) == g_date_time_get_year (now)) {
 			if (date_format == NEMO_DATE_FORMAT_REGULAR) {
-				/* Translators: this is the day of the month plus the short
-				 * month name i.e. "3 Feb" */
+				/* Translators: this is the day of the month followed
+				 * by the abbreviated month name i.e. "3 Feb" */
 				// xgettext:no-c-format
 				format = N_("%-e %b");
 			} else {
 				if (use_24) {
 					/* Translators: this is the day of the month followed
-					 * by the day number followed by a time in
+					 * by the abbreviated month name followed by a time in
 					 * 24h format i.e. "3 Feb 23:04" */
 					// xgettext:no-c-format
 					format = N_("%-e %b %H:%M");
 				} else {
 					/* Translators: this is the day of the month followed
-					 * by the day number followed by a time in
-					 * 12h format i.e. "3 Feb 9:04 PM" */
+					 * by the abbreviated month name followed by a time in
+					 * 12h format i.e. "3 Feb 9:04" */
 					// xgettext:no-c-format
 					format = N_("%-e %b %l:%M %p");
 				}
 			}
 		} else {
 			if (date_format == NEMO_DATE_FORMAT_REGULAR) {
-				/* Translators: this is the day of the month followed by the short
+				/* Translators: this is the day of the month followed by the abbreviated
 				 * month name followed by the year i.e. "3 Feb 2015" */
 				// xgettext:no-c-format
 				format = N_("%-e %b %Y");
 			} else {
 				if (use_24) {
 					/* Translators: this is the day number followed
-					 * by the month name followed by the year followed
+					 * by the abbreviated month name followed by the year followed
 					 * by a time in 24h format i.e. "3 Feb 2015 23:04" */
 					// xgettext:no-c-format
 					format = N_("%-e %b %Y %H:%M");
 				} else {
 					/* Translators: this is the day number followed
-					 * by the month name followed by the year followed
+					 * by the abbreviated month name followed by the year followed
 					 * by a time in 12h format i.e. "3 Feb 2015 9:04 PM" */
 					// xgettext:no-c-format
 					format = N_("%-e %b %Y %l:%M %p");
