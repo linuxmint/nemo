@@ -525,6 +525,8 @@ nemo_view_reset_to_defaults (NemoView *view)
         } else {
                 nemo_window_set_hidden_files_mode (window, NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE);
         }
+
+        NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->reset_to_defaults (view);
 }
 
 static gboolean
