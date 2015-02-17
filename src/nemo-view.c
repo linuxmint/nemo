@@ -2723,11 +2723,8 @@ nemo_view_init (NemoView *view)
 	gtk_widget_show (GTK_WIDGET (view));
 
     g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS,
-				  G_CALLBACK (schedule_update_menus_callback), view);
-	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_ENABLE_DELETE,
-				  G_CALLBACK (schedule_update_menus_callback), view);
+                  "changed::" NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS,
+                  G_CALLBACK (schedule_update_menus_callback), view);
     g_signal_connect_swapped (nemo_preferences,
                   "changed::" NEMO_PREFERENCES_SWAP_TRASH_DELETE,
                   G_CALLBACK (swap_delete_keybinding_changed_callback), view);
@@ -9260,6 +9257,7 @@ real_update_paste_menu (NemoView *view,
 				       view);
 }
 
+/* Breadcrumb context menu */
 static void
 real_update_location_menu (NemoView *view)
 {
@@ -9269,13 +9267,14 @@ real_update_location_menu (NemoView *view)
 	gboolean is_desktop_or_home_dir;
     gboolean is_recent;
 	gboolean can_delete_file, show_delete;
-	gboolean show_separate_delete_command;
 	gboolean show_open_in_new_tab;
 	gboolean show_open_alternate;
     gint context_items_flag;
 	GList l;
 	char *label;
 	char *tip;
+    
+    context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
 
 	show_open_in_new_tab = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
 	show_open_alternate = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
@@ -9334,47 +9333,55 @@ real_update_location_menu (NemoView *view)
 
     gtk_action_set_visible (action, !is_recent);
 
-	show_delete = TRUE;
+    /* "Trash" context item */
 
-	if (file != NULL &&
-	    nemo_file_is_in_trash (file)) {
-		if (nemo_file_is_self_owned (file)) {
-			show_delete = FALSE;
-		}
+    show_delete = TRUE;
 
-		label = _("_Delete Permanently");
-		tip = _("Delete the open folder permanently");
-		show_separate_delete_command = FALSE;
-	} else {
-		label = _("Mo_ve to Trash");
-		tip = _("Move the open folder to the Trash");
-		show_separate_delete_command = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ENABLE_DELETE);
-        context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
-	}
+    if (file != NULL && nemo_file_is_in_trash (file)) {
+        
+        if (nemo_file_is_self_owned (file)) {
+            show_delete = FALSE;
+        }
+        label = _("_Delete Permanently");
+        tip = _("Delete the open folder permanently");        
+    } 
+    else {
+        label = _("Mo_ve to Trash");
+        tip = _("Move the open folder to the Trash");
+    }
 
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_LOCATION_TRASH);
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_LOCATION_TRASH);
     
-	g_object_set (action,
-		      "label", label,
-		      "tooltip", tip,
-		      "icon-name", (file != NULL &&
-				    nemo_file_is_in_trash (file)) ?
-		      NEMO_ICON_DELETE : NEMO_ICON_TRASH_FULL,
-		      NULL);
-	gtk_action_set_sensitive (action, can_delete_file);
-	gtk_action_set_visible (action, show_delete);
+        //If trash should be enabled in the menu and what icon/label/tooltip it should use based on context
+    if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_TRASH) {
+        if (show_delete) {
+            gtk_action_set_visible (action, TRUE);
+        }
+        g_object_set (action,
+                "label", label,
+                "tooltip", tip,
+                "icon-name", (file != NULL && nemo_file_is_in_trash (file)) ? NEMO_ICON_DELETE : NEMO_ICON_TRASH_FULL, NULL);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+                
+    gtk_action_set_sensitive (action, can_delete_file);
+    
+    /* "Delete" context item */
 
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_LOCATION_DELETE);
-	if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DELETE) {
-        gtk_action_set_visible (action, TRUE);
-		gtk_action_set_sensitive (action, can_delete_file);
-		g_object_set (action,
-			      "icon-name", NEMO_ICON_DELETE,
-			      "sensitive", can_delete_file,
-			      NULL);
-	}
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_LOCATION_DELETE);
+        //If delete should be enabled in the menu and what icon/sensitivity it should use based on context
+    if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DELETE) {
+        if (show_delete) {
+            gtk_action_set_visible (action, TRUE);
+        }
+        gtk_action_set_sensitive (action, can_delete_file);
+        g_object_set (action,
+                "icon-name", NEMO_ICON_DELETE,
+                "sensitive", can_delete_file,
+                NULL);
+    }
     else {
         gtk_action_set_visible (action, FALSE);
     }
@@ -9452,7 +9459,6 @@ real_update_menus (NemoView *view)
 	gboolean can_copy_files;
 	gboolean can_link_files;
 	gboolean can_duplicate_files;
-	gboolean show_separate_delete_command;
 	gboolean show_open_alternate;
 	gboolean show_open_in_new_tab;
 	gboolean can_open;
@@ -9645,30 +9651,41 @@ real_update_menus (NemoView *view)
 	reset_open_with_menu (view, selection);
 	reset_extension_actions_menu (view, selection);
     reset_move_copy_to_menu (view);
+    
+    context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
 
+    /* Trash context item */
+
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_TRASH);
+    
 	if (all_selected_items_in_trash (view)) {
 		label = _("_Delete Permanently");
 		tip = _("Delete all selected items permanently");
-		show_separate_delete_command = FALSE;
 	} else {
 		label = _("Mo_ve to Trash");
 		tip = _("Move each selected item to the Trash");
-		show_separate_delete_command = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ENABLE_DELETE);
-        context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
+        
 	}
+    gtk_action_set_sensitive (action, can_delete_files);
+    
+        //If trash should be enabled in the menu and what icon/label/tooltip it should use based on context
+        //Also if the item that is being right clicked is in the trash, always show delete permanently, we don't want to hide this
+	if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_TRASH) || all_selected_items_in_trash (view)) {
+        gtk_action_set_visible (action, TRUE);
+        g_object_set (action,
+                "label", label,
+                "tooltip", tip,
+                "icon-name", all_selected_items_in_trash (view) ?
+                NEMO_ICON_DELETE : NEMO_ICON_TRASH_FULL,
+                NULL);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_TRASH);
-	g_object_set (action,
-		      "label", label,
-		      "tooltip", tip,
-		      "icon-name", all_selected_items_in_trash (view) ?
-		      NEMO_ICON_DELETE : NEMO_ICON_TRASH_FULL,
-		      NULL);
-	gtk_action_set_sensitive (action, can_delete_files);
+    /* Delete context item */
 
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_DELETE);
+	action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_DELETE);
 
     if (selection_contains_recent) {
         label = _("Remo_ve from Recent");
@@ -9677,8 +9694,11 @@ real_update_menus (NemoView *view)
         label = _("_Delete");
         tip = _("Delete each selected item, without moving to the Trash");
     }
-
-	if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DELETE) {
+    gtk_action_set_sensitive (action, can_delete_files);
+    
+        //If delete should be enabled in the menu and what icon/label it should use based on context
+        //We are hiding this from trash items as not to show two entries for delete
+	if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DELETE) && !all_selected_items_in_trash (view)) {
         gtk_action_set_visible (action, TRUE);
 		g_object_set (action,
 			      "label", label,
@@ -9689,17 +9709,25 @@ real_update_menus (NemoView *view)
     else {
         gtk_action_set_visible (action, FALSE);
     }
-	gtk_action_set_sensitive (action, can_delete_files);
-
+    
+    /* Restore from Trash context item */
+    //We always show this in the trash as we don't want to hide this
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_RESTORE_FROM_TRASH);
 	update_restore_from_trash_action (action, selection, FALSE);
-	
+    
+	/* Duplicate context item */
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_DUPLICATE);
-	gtk_action_set_sensitive (action, can_duplicate_files);
-    gtk_action_set_visible (action, !selection_contains_recent);
-
+                              
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DUPLICATE) && !selection_contains_recent && can_duplicate_files) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+    
+    
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_CREATE_LINK);
 	gtk_action_set_sensitive (action, can_link_files);

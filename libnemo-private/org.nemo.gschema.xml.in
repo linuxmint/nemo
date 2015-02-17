@@ -160,15 +160,10 @@
       <_summary>Whether to ask for confirmation when deleting files, or emptying Trash</_summary>
       <_description>If set to true, then Nemo will ask for confirmation when  you attempt to delete files, or empty the Trash.</_description>
     </key>
-    <key name="enable-delete" type="b">
-      <default>true</default>
-      <_summary>Whether to enable immediate deletion</_summary>
-      <_description>If set to true, then Nemo will have a feature allowing you to delete a file immediately and in-place, instead of moving it  to the trash. This feature can be dangerous, so use caution.</_description>
-    </key>
     <key name="enabled-menu-items" type="i">
       <default>1111111</default>
-      <_summary>A 32bit flag of entries in the context menu for an item</_summary>
-      <_description>Only the first 7 bits are read ("Open With", "Duplicate", "Make Link", "Copy to", "Move To", "Trash", "Delete"), set 0 to disable, and 1 to enable</_description>
+      <_summary>A binary flag of entries in the right click menu of an item</_summary>
+      <_description>7 bits are read ("Open With", "Duplicate", "Make Link", "Copy to", "Move To", "Trash", "Delete"), set 0 to disable, and 1 to enable from left to right, e.g if you want only "Delete" and "Open With" enabled you would enter 1000001, "Delete" being the first 1, and "Open With" the last</_description>
     </key>
     <key name="enabled-menu-empty" type="i">
       <default>0</default>
