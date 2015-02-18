@@ -8675,7 +8675,7 @@ static const GtkActionEntry directory_view_entries[] = {
  /* tooltip */                   N_("Undo the last action"),
                                  G_CALLBACK (action_undo_callback) },
  /* name, stock id */	       { NEMO_ACTION_REDO, GTK_STOCK_REDO,
- /* label, accelerator */        N_("_Redo"), "<control>Y",
+ /* label, accelerator */        N_("_Redo"), "<shift><control>Z",
  /* tooltip */                   N_("Redo the last undone action"),
                                  G_CALLBACK (action_redo_callback) },
   /*
