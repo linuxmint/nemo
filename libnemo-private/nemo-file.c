@@ -4507,7 +4507,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
 {
 	time_t file_time_raw;
   	GDateTime *file_date, *now;
-	gint daysAgo;
+	gint days_ago;
 	gboolean use_24;
 	gchar *format;
 	gchar *result;
@@ -4532,12 +4532,12 @@ nemo_file_get_date_as_string (NemoFile       *file,
 	if (date_format != NEMO_DATE_FORMAT_FULL) {
 		now = g_date_time_new_now_local ();
 
-		daysAgo = g_date_time_difference (now, file_date) / (24 * 60 * 60 * 1000 * 1000L);
+		days_ago = g_date_time_difference (now, file_date) / (24 * 60 * 60 * 1000 * 1000L);
 
 		use_24 = g_settings_get_boolean (cinnamon_interface_preferences, "clock-use-24h");
 
 		// Show only the time if date is on today
-		if (daysAgo < 1) {
+		if (days_ago < 1) {
 			if (use_24) {
 				/* Translators: Time in 24h format */
 				format = N_("%H:%M");
@@ -4547,7 +4547,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
 			}
 		}
 		// Show the word "Yesterday" and time if date is on yesterday
-		else if (daysAgo < 2) {
+		else if (days_ago < 2) {
 			if (date_format == NEMO_DATE_FORMAT_REGULAR) {
 				// xgettext:no-c-format
 				format = N_("Yesterday");
@@ -4566,7 +4566,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
 			}
 		}
 		// Show a week day and time if date is in the last week
-		else if (daysAgo < 7) {
+		else if (days_ago < 7) {
 			if (date_format == NEMO_DATE_FORMAT_REGULAR) {
 				// xgettext:no-c-format
 				format = N_("%a");
