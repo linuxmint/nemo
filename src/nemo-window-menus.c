@@ -821,6 +821,13 @@ action_toggle_location_entry_callback (GtkToggleAction *action,
     toggle_location_entry_setting(window, pane, FALSE);
 }
 
+void nemo_window_show_location_entry (NemoWindow *window) {
+	NemoWindowPane *pane;
+
+    pane = nemo_window_get_active_pane (window);
+    toggle_location_entry_setting(window, pane, TRUE);
+}
+
 static void
 action_menu_edit_location_callback (GtkAction *action,
 				gpointer user_data)

@@ -295,16 +295,16 @@ nemo_window_sync_allow_stop (NemoWindow *window,
 
 static void
 nemo_window_prompt_for_location (NemoWindow *window,
-				     GFile          *location)
+				 const char *initial)
 {	
 	NemoWindowPane *pane;
 
 	g_return_if_fail (NEMO_IS_WINDOW (window));
+	GFile *location = g_file_parse_name (initial);
 	g_return_if_fail (G_IS_FILE (location));
 
+	nemo_window_show_location_entry(window);
 	pane = window->details->active_pane;
-	nemo_window_pane_ensure_location_entry (pane);
-
 	nemo_location_entry_set_location (NEMO_LOCATION_ENTRY (pane->location_entry),
 	                          location);
 }

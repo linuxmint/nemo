@@ -102,7 +102,7 @@ struct NemoWindowClass {
         NemoIconInfo * (* get_icon) (NemoWindow *window,
                                          NemoWindowSlot *slot);
 
-        void   (* prompt_for_location) (NemoWindow *window, GFile *location);
+        void   (* prompt_for_location) (NemoWindow *window, const char *initial);
         void   (* close) (NemoWindow *window);
 
         /* Signals used only for keybindings */
