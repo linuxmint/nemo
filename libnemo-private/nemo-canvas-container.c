@@ -26,6 +26,8 @@
 */
 
 #include <config.h>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
 #include <math.h>
 #include "nemo-canvas-container.h"
 
@@ -2623,6 +2625,79 @@ rubberband_timeout_callback (gpointer data)
 }
 
 static void
+get_rubber_color (NemoCanvasContainer *container,
+                  GdkRGBA *bgcolor,
+                  GdkRGBA *bordercolor)
+{
+	Atom         real_type;
+	gint         result = -1;
+	gint         real_format;
+	gulong       items_read = 0;
+	gulong       items_left = 0;
+	gchar       *colors;
+	Atom         representative_colors_atom;
+	Display     *display;
+
+	if (nemo_canvas_container_get_is_desktop (container)) {
+		representative_colors_atom = gdk_x11_get_xatom_by_name ("_GNOME_BACKGROUND_REPRESENTATIVE_COLORS");
+		display = gdk_x11_display_get_xdisplay (gdk_display_get_default ());
+
+		gdk_error_trap_push ();
+		result = XGetWindowProperty (display,
+		                             GDK_ROOT_WINDOW (),
+		                             representative_colors_atom,
+		                             0L,
+		                             G_MAXLONG,
+		                             False,
+		                             XA_STRING,
+		                             &real_type,
+		                             &real_format,
+		                             &items_read,
+		                             &items_left,
+		                             (guchar **) &colors);
+		gdk_error_trap_pop_ignored ();
+	}
+
+	if (result == Success && items_read) {
+		/* by treating the result as a nul-terminated string, we
+		 * select the first colour in the list.
+		 */
+		GdkRGBA read;
+		gdouble shade;
+
+		gdk_rgba_parse (&read, colors);
+		XFree (colors);
+
+		/* Border
+		 *
+		 * We shade darker colours to be slightly lighter and
+		 * lighter ones to be slightly darker.
+		 */
+		shade = read.green < 0.5 ? 1.1 : 0.9;
+		bordercolor->red = read.red * shade;
+		bordercolor->green = read.green * shade;
+		bordercolor->blue = read.blue * shade;
+		bordercolor->alpha = 1.0;
+
+		/* Background */
+		*bgcolor = read;
+		bgcolor->alpha = 0.6;
+	} else {
+		/* Fallback to the style context if we can't get the Atom */
+		GtkStyleContext *context;
+
+		context = gtk_widget_get_style_context (GTK_WIDGET (container));
+		gtk_style_context_save (context);
+		gtk_style_context_add_class (context, GTK_STYLE_CLASS_RUBBERBAND);
+
+		gtk_style_context_get_background_color (context, GTK_STATE_FLAG_NORMAL, bgcolor);
+		gtk_style_context_get_border_color (context, GTK_STATE_FLAG_NORMAL, bordercolor);
+
+		gtk_style_context_restore (context);
+	}
+}
+
+static void
 start_rubberbanding (NemoCanvasContainer *container,
 		     GdkEventButton *event)
 {
@@ -2632,7 +2707,6 @@ start_rubberbanding (NemoCanvasContainer *container,
 	GdkRGBA bg_color, border_color;
 	GList *p;
 	NemoCanvasIcon *icon;
-	GtkStyleContext *context;
 
 	details = container->details;
 	band_info = &details->rubberband_info;
@@ -2649,14 +2723,7 @@ start_rubberbanding (NemoCanvasContainer *container,
 		(EEL_CANVAS (container), event->x, event->y,
 		 &band_info->start_x, &band_info->start_y);
 
-	context = gtk_widget_get_style_context (GTK_WIDGET (container));
-	gtk_style_context_save (context);
-	gtk_style_context_add_class (context, GTK_STYLE_CLASS_RUBBERBAND);
-
-	gtk_style_context_get_background_color (context, GTK_STATE_FLAG_NORMAL, &bg_color);
-	gtk_style_context_get_border_color (context, GTK_STATE_FLAG_NORMAL, &border_color);
-
-	gtk_style_context_restore (context);
+	get_rubber_color (container, &bg_color, &border_color);
 
 	band_info->selection_rectangle = eel_canvas_item_new
 		(eel_canvas_root
