@@ -4626,6 +4626,8 @@ nemo_file_get_date_as_string (NemoFile       *file,
 				}
 			}
 		}
+
+		g_date_time_unref (now);
 	} else {
 		format = N_("%c");
 	}
