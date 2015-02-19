@@ -140,7 +140,7 @@ file_list_ready_cb (GList *files,
 	if (dest_is_dir) {
 		if (source_is_dir) {
 			primary_text = g_strdup_printf
-				(_("Merge folder \"%s\"?"),
+				(_("Merge folder “%s”?"),
 				 dest_name);
 
 			message_extra = 
@@ -149,43 +149,43 @@ file_list_ready_cb (GList *files,
 
 			if (src_mtime > dest_mtime) {
 				message = g_strdup_printf (
-					_("An older folder with the same name already exists in \"%s\"."),
+					_("An older folder with the same name already exists in “%s”."),
 					dest_dir_name);
 			} else if (src_mtime < dest_mtime) {
 				message = g_strdup_printf (
-					_("A newer folder with the same name already exists in \"%s\"."),
+					_("A newer folder with the same name already exists in “%s”."),
 					dest_dir_name);
 			} else {
 				message = g_strdup_printf (
-					_("Another folder with the same name already exists in \"%s\"."),
+					_("Another folder with the same name already exists in “%s”."),
 					dest_dir_name);
 			}
 		} else {
 			message_extra =
 				_("Replacing it will remove all files in the folder.");
 			primary_text = g_strdup_printf
-				(_("Replace folder \"%s\"?"), dest_name);
+				(_("Replace folder “%s”?"), dest_name);
 			message = g_strdup_printf
-				(_("A folder with the same name already exists in \"%s\"."),
+				(_("A folder with the same name already exists in “%s”."),
 				 dest_dir_name);
 		}
 	} else {
 		primary_text = g_strdup_printf
-			(_("Replace file \"%s\"?"), dest_name);
+			(_("Replace file “%s”?"), dest_name);
 
 		message_extra = _("Replacing it will overwrite its content.");
 
 		if (src_mtime > dest_mtime) {
 			message = g_strdup_printf (
-				_("An older file with the same name already exists in \"%s\"."),
+				_("An older file with the same name already exists in “%s”."),
 				dest_dir_name);
 		} else if (src_mtime < dest_mtime) {
 			message = g_strdup_printf (
-				_("A newer file with the same name already exists in \"%s\"."),
+				_("A newer file with the same name already exists in “%s”."),
 				dest_dir_name);
 		} else {
 			message = g_strdup_printf (
-				_("Another file with the same name already exists in \"%s\"."),
+				_("Another file with the same name already exists in “%s”."),
 				dest_dir_name);
 		}
 	}
@@ -254,13 +254,13 @@ file_list_ready_cb (GList *files,
 
 	str = g_string_new (NULL);
 	g_string_append_printf (str, "<b>%s</b>\n", _("Original file"));
-	g_string_append_printf (str, "<i>%s</i> %s\n", _("Size:"), size);
+	g_string_append_printf (str, "%s %s\n", _("Size:"), size);
 
 	if (should_show_type) {
-		g_string_append_printf (str, "<i>%s</i> %s\n", _("Type:"), type);
+		g_string_append_printf (str, "%s %s\n", _("Type:"), type);
 	}
 
-	g_string_append_printf (str, "<i>%s</i> %s", _("Last modified:"), date);
+	g_string_append_printf (str, "%s %s", _("Last modified:"), date);
 
 	label_text = str->str;
 	gtk_label_set_markup (GTK_LABEL (label),
@@ -285,13 +285,13 @@ file_list_ready_cb (GList *files,
 	}
 
 	g_string_append_printf (str, "<b>%s</b>\n", _("Replace with"));
-	g_string_append_printf (str, "<i>%s</i> %s\n", _("Size:"), size);
+	g_string_append_printf (str, "%s %s\n", _("Size:"), size);
 
 	if (should_show_type) {
-		g_string_append_printf (str, "<i>%s</i> %s\n", _("Type:"), type);
+		g_string_append_printf (str, "%s %s\n", _("Type:"), type);
 	}
 
-	g_string_append_printf (str, "<i>%s</i> %s", _("Last modified:"), date);
+	g_string_append_printf (str, "%s %s", _("Last modified:"), date);
 	label_text = g_string_free (str, FALSE);
 
 	gtk_label_set_markup (GTK_LABEL (label),

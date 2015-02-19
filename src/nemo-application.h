@@ -28,11 +28,10 @@
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 
-#include <libnemo-private/nemo-undo-manager.h>
-
+#include "nemo-bookmark-list.h"
 #include "nemo-window.h"
 
-#define NEMO_DESKTOP_ICON_VIEW_IID	"OAFIID:Nemo_File_Manager_Desktop_Icon_View"
+#define NEMO_DESKTOP_CANVAS_VIEW_IID	"OAFIID:Nemo_File_Manager_Desktop_Canvas_View"
 
 #define NEMO_TYPE_APPLICATION nemo_application_get_type()
 #define NEMO_APPLICATION(obj) \
@@ -46,17 +45,10 @@
 #define NEMO_APPLICATION_GET_CLASS(obj) \
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_APPLICATION, NemoApplicationClass))
 
-#ifndef NEMO_SPATIAL_WINDOW_DEFINED
-#define NEMO_SPATIAL_WINDOW_DEFINED
-typedef struct _NemoSpatialWindow NemoSpatialWindow;
-#endif
-
 typedef struct _NemoApplicationPriv NemoApplicationPriv;
 
 typedef struct {
 	GtkApplication parent;
-
-	NemoUndoManager *undo_manager;
 
 	NemoApplicationPriv *priv;
 } NemoApplication;
@@ -67,9 +59,9 @@ typedef struct {
 
 GType nemo_application_get_type (void);
 
-NemoApplication *nemo_application_get_singleton (void);
-
 void nemo_application_quit (NemoApplication *self);
+
+NemoApplication * nemo_application_new (void);
 
 NemoWindow *     nemo_application_create_window (NemoApplication *application,
 							 GdkScreen           *screen);
@@ -81,10 +73,21 @@ void nemo_application_open_location (NemoApplication *application,
 
 void nemo_application_close_all_windows (NemoApplication *self);
 
+#if GLIB_CHECK_VERSION (2,34,0)
 void nemo_application_notify_unmount_show (NemoApplication *application,
-                                               const gchar *message);
+					       const gchar *message);
 
 void nemo_application_notify_unmount_done (NemoApplication *application,
-                                               const gchar *message);
+					       const gchar *message);
+#endif // GLIB_CHECK_VERSION (2,34,0)
+
+NemoBookmarkList *
+     nemo_application_get_bookmarks  (NemoApplication *application);
+void nemo_application_edit_bookmarks (NemoApplication *application,
+					  NemoWindow      *window);
+
+GtkWidget * 
+nemo_application_connect_server (NemoApplication *application,
+                     NemoWindow      *window);
 
 #endif /* __NEMO_APPLICATION_H__ */

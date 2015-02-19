@@ -6,6 +6,7 @@ INCLUDES =\
 	$(COMMON_CFLAGS) \
 	$(NEMO_CFLAGS) \
 	$(WARNING_CFLAGS) \
+	$(ZEITGEIST_CFLAGS) \
 	-DVERSION="\"$(VERSION)\"" \
 	-DNEMO_DATADIR=\""$(datadir)/nemo"\" \
 	$(NULL)
@@ -30,6 +31,14 @@ test_nemo_search_engine_SOURCES = test-nemo-search-engine.c
 
 test_nemo_directory_async_SOURCES = test-nemo-directory-async.c
 
+if ENABLE_ZEITGEIST
+noinst_PROGRAMS += test-nemo-zeitgeist
+test_nemo_zeitgeist_SOURCES = test-nemo-zeitgeist.c
+test_nemo_zeitgeist_LDCONFIG = $(ZEITGEIST_LIBS)
+endif
+
 EXTRA_DIST = \
 	test.h \
 	$(NULL)
+
+-include $(top_srcdir)/git.mk

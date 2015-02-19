@@ -47,6 +47,7 @@ enum {
 	COLUMN_VISIBLE,
 	COLUMN_LABEL,
 	COLUMN_NAME,
+	COLUMN_SENSITIVE,
 	NUM_COLUMNS
 };
 
@@ -108,7 +109,7 @@ nemo_column_chooser_class_init (NemoColumnChooserClass *chooser_class)
 		 G_TYPE_NONE, 0);
 
 	signals[USE_DEFAULT] = g_signal_new
-		("use_default",
+		("use-default",
 		 G_TYPE_FROM_CLASS (chooser_class),
 		 G_SIGNAL_RUN_LAST,
 		 G_STRUCT_OFFSET (NemoColumnChooserClass,
@@ -232,7 +233,8 @@ add_tree_view (NemoColumnChooser *chooser)
 	store = gtk_list_store_new (NUM_COLUMNS,
 				    G_TYPE_BOOLEAN,
 				    G_TYPE_STRING,
-				    G_TYPE_STRING);
+				    G_TYPE_STRING,
+				    G_TYPE_BOOLEAN);
 
 	gtk_tree_view_set_model (GTK_TREE_VIEW (view), 
 				 GTK_TREE_MODEL (store));
@@ -251,16 +253,18 @@ add_tree_view (NemoColumnChooser *chooser)
 
 	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
 						     -1, NULL,
-						     cell, 
+						     cell,
 						     "active", COLUMN_VISIBLE,
+						     "sensitive", COLUMN_SENSITIVE,
 						     NULL);
 
 	cell = gtk_cell_renderer_text_new ();
 
 	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
 						     -1, NULL,
-						     cell, 
+						     cell,
 						     "text", COLUMN_LABEL,
+						     "sensitive", COLUMN_SENSITIVE,
 						     NULL);
 
 	chooser->details->view = GTK_TREE_VIEW (view);
@@ -413,18 +417,26 @@ populate_tree (NemoColumnChooser *chooser)
 		NemoColumn *column;
 		char *name;
 		char *label;
-		
+		gboolean visible = FALSE;
+		gboolean sensitive = TRUE;
+
 		column = NEMO_COLUMN (l->data);
-		
-		g_object_get (G_OBJECT (column), 
-			      "name", &name, "label", &label, 
+
+		g_object_get (G_OBJECT (column),
+			      "name", &name, "label", &label,
 			      NULL);
+
+		if (strcmp (name, "name") == 0) {
+			visible = TRUE;
+			sensitive = FALSE;
+		}
 
 		gtk_list_store_append (chooser->details->store, &iter);
 		gtk_list_store_set (chooser->details->store, &iter,
-				    COLUMN_VISIBLE, FALSE,
+				    COLUMN_VISIBLE, visible,
 				    COLUMN_LABEL, label,
 				    COLUMN_NAME, name,
+				    COLUMN_SENSITIVE, sensitive,
 				    -1);
 
 		g_free (name);
@@ -443,7 +455,7 @@ nemo_column_chooser_constructed (GObject *object)
 
 	populate_tree (chooser);
 
-	g_signal_connect (chooser->details->store, "row_deleted", 
+	g_signal_connect (chooser->details->store, "row-deleted", 
 			  G_CALLBACK (row_deleted_callback), chooser);
 }
 
@@ -471,6 +483,8 @@ set_visible_columns (NemoColumnChooser *chooser,
 	int i;
 
 	visible_columns_hash = g_hash_table_new (g_str_hash, g_str_equal);
+	/* always show the name column */
+	g_hash_table_insert (visible_columns_hash, "name", "name");
 	for (i = 0; visible_columns[i] != NULL; ++i) {
 		g_hash_table_insert (visible_columns_hash,
 				     visible_columns[i],
@@ -522,6 +536,8 @@ get_column_names (NemoColumnChooser *chooser, gboolean only_visible)
 			if (!only_visible || visible) {
 				/* give ownership to the array */
 				g_ptr_array_add (ret, name);
+			} else {
+				g_free (name);
 			}
 
 		} while (gtk_tree_model_iter_next (GTK_TREE_MODEL (chooser->details->store), &iter));

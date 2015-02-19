@@ -37,7 +37,7 @@ enum {
 
 static NemoProgressInfoManager *singleton = NULL;
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static guint signals[LAST_SIGNAL] = { 0 };
 
 G_DEFINE_TYPE (NemoProgressInfoManager, nemo_progress_info_manager,
                G_TYPE_OBJECT);

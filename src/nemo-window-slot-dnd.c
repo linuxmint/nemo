@@ -26,6 +26,7 @@
 
 #include <config.h>
 
+#include "nemo-notebook.h"
 #include "nemo-view-dnd.h"
 #include "nemo-window-slot-dnd.h"
 
@@ -44,7 +45,100 @@ typedef struct {
 
   NemoFile *target_file;
   NemoWindowSlot *target_slot;
+  GtkWidget *widget;
+
+  gboolean is_notebook;
+  guint switch_location_timer;
 } NemoDragSlotProxyInfo;
+
+static void
+switch_tab (NemoDragSlotProxyInfo *drag_info)
+{
+  GtkWidget *notebook, *slot;
+  gint idx, n_pages;
+
+  if (drag_info->target_slot == NULL) {
+    return;
+  }
+
+  notebook = gtk_widget_get_ancestor (GTK_WIDGET (drag_info->target_slot), NEMO_TYPE_NOTEBOOK);
+  n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
+
+  for (idx = 0; idx < n_pages; idx++)
+    {
+      slot = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), idx);
+      if (NEMO_WINDOW_SLOT (slot) == drag_info->target_slot)
+        {
+          gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), idx);
+          break;
+        }
+    }
+}
+
+static void
+switch_location (NemoDragSlotProxyInfo *drag_info)
+{
+  GFile *location;
+  NemoWindowSlot *target_slot;
+  GtkWidget *window;
+
+  if (drag_info->target_file == NULL) {
+    return;
+  }
+
+  window = gtk_widget_get_toplevel (drag_info->widget);
+  g_assert (NEMO_IS_WINDOW (window));
+
+  target_slot = nemo_window_get_active_slot (NEMO_WINDOW (window));
+
+  location = nemo_file_get_location (drag_info->target_file);
+  nemo_window_slot_open_location (target_slot, location, 0);
+  g_object_unref (location);
+}
+
+static gboolean
+slot_proxy_switch_location_timer (gpointer user_data)
+{
+  NemoDragSlotProxyInfo *drag_info = user_data;
+
+  drag_info->switch_location_timer = 0;
+
+  if (drag_info->is_notebook)
+    switch_tab (drag_info);
+  else
+    switch_location (drag_info);
+
+  return FALSE;
+}
+
+static void
+slot_proxy_check_switch_location_timer (NemoDragSlotProxyInfo *drag_info,
+                                        GtkWidget *widget)
+{
+  GtkSettings *settings;
+  guint timeout;
+
+  if (drag_info->switch_location_timer)
+    return;
+
+  settings = gtk_widget_get_settings (widget);
+  g_object_get (settings, "gtk-timeout-expand", &timeout, NULL);
+
+  drag_info->switch_location_timer =
+    gdk_threads_add_timeout (timeout,
+                             slot_proxy_switch_location_timer,
+                             drag_info);
+}
+
+static void
+slot_proxy_remove_switch_location_timer (NemoDragSlotProxyInfo *drag_info)
+{
+  if (drag_info->switch_location_timer != 0)
+    {
+      g_source_remove (drag_info->switch_location_timer);
+      drag_info->switch_location_timer = 0;
+    }
+}
 
 static gboolean
 slot_proxy_drag_motion (GtkWidget          *widget,
@@ -97,6 +191,18 @@ slot_proxy_drag_motion (GtkWidget          *widget,
     }
   }
 
+  if (target_uri != NULL) {
+    NemoFile *file;
+    gboolean can;
+    file = nemo_file_get_existing_by_uri (target_uri);
+    can = nemo_file_can_write (file);
+    g_object_unref (file);
+    if (!can) {
+      action = 0;
+      goto out;
+    }
+  }
+
   if (drag_info->have_data &&
       drag_info->have_valid_data) {
     if (drag_info->info == NEMO_ICON_DND_GNOME_ICON_LIST) {
@@ -115,8 +221,10 @@ slot_proxy_drag_motion (GtkWidget          *widget,
  out:
   if (action != 0) {
     gtk_drag_highlight (widget);
+    slot_proxy_check_switch_location_timer (drag_info, widget);
   } else {
     gtk_drag_unhighlight (widget);
+    slot_proxy_remove_switch_location_timer (drag_info);
   }
 
   gdk_drag_status (context, action, time);
@@ -138,6 +246,8 @@ drag_info_free (gpointer user_data)
 static void
 drag_info_clear (NemoDragSlotProxyInfo *drag_info)
 {
+  slot_proxy_remove_switch_location_timer (drag_info);
+
   if (!drag_info->have_data) {
     goto out;
   }
@@ -335,11 +445,15 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
   g_object_set_data_full (G_OBJECT (widget), "drag-slot-proxy-data", drag_info,
                           drag_info_free);
 
+  drag_info->is_notebook = (g_object_get_data (G_OBJECT (widget), "nemo-notebook-tab") != NULL);
+
   if (target_file != NULL)
     drag_info->target_file = g_object_ref (target_file);
 
   if (target_slot != NULL)
     drag_info->target_slot = g_object_ref (target_slot);
+
+  drag_info->widget = widget;
 
   gtk_drag_dest_set (widget, 0,
                      NULL, 0,

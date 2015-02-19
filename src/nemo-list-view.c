@@ -41,7 +41,6 @@
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
-#include <libegg/eggtreemultidnd.h>
 #include <glib/gi18n.h>
 #include <glib-object.h>
 #include <libnemo-extension/nemo-column-provider.h>
@@ -53,7 +52,6 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <libnemo-private/nemo-global-preferences.h>
-#include <libnemo-private/nemo-icon-dnd.h>
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-module.h>
 #include <libnemo-private/nemo-tree-view-drag-dest.h>
@@ -61,6 +59,14 @@
 
 #define DEBUG_FLAG NEMO_DEBUG_LIST_VIEW
 #include <libnemo-private/nemo-debug.h>
+
+/* DnD-related information. */
+typedef struct {
+	/* cache of selected URIs, representing items being dragged */
+	GList *selection_cache;
+	/* strong reference to the source list view */
+	NemoListView *source_view;
+} NemoListViewDndInfo;
 
 struct NemoListViewDetails {
 	GtkTreeView *tree_view;
@@ -109,9 +115,12 @@ struct NemoListViewDetails {
 
 	GQuark last_sort_attr;
 
-    gboolean tooltip_flags;
-    gboolean show_tooltips;
+	gboolean tooltip_flags;
+	gboolean show_tooltips;
+
+	NemoListViewDndInfo drag_info;
 };
+
 
 struct SelectionForeachData {
 	GList *list;
@@ -126,7 +135,7 @@ struct SelectionForeachData {
 #define LIST_VIEW_MINIMUM_ROW_HEIGHT	28
 
 /* We wait two seconds after row is collapsed to unload the subdirectory */
-#define COLLAPSE_TO_UNLOAD_DELAY 2 
+#define COLLAPSE_TO_UNLOAD_DELAY 2
 
 /* Wait for the rename to end when activating a file being renamed */
 #define WAIT_FOR_RENAME_ON_ACTIVATE 200
@@ -140,8 +149,6 @@ static GList *nemo_list_view_get_selection_for_file_transfer (NemoView   *view);
 static void   nemo_list_view_set_zoom_level                  (NemoListView        *view,
 								  NemoZoomLevel  new_level,
 								  gboolean           always_set_level);
-static void   nemo_list_view_scale_font_size                 (NemoListView        *view,
-								  NemoZoomLevel  new_level);
 static void   nemo_list_view_scroll_to_file                  (NemoListView        *view,
 								  NemoFile      *file);
 static void   nemo_list_view_rename_callback                 (NemoFile      *file,
@@ -319,15 +326,10 @@ activate_selected_items_alternate (NemoListView *view,
 
 	flags = 0;
 
-	if (g_settings_get_boolean (nemo_preferences,
-				    NEMO_PREFERENCES_ALWAYS_USE_BROWSER)) {
-		if (open_in_tab) {
-			flags |= NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
-		} else {
-			flags |= NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW;
-		}
+	if (open_in_tab) {
+		flags |= NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
 	} else {
-		flags |= NEMO_WINDOW_OPEN_FLAG_CLOSE_BEHIND;
+		flags |= NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW;
 	}
 
 	if (file != NULL) {
@@ -404,7 +406,6 @@ drag_data_get_callback (GtkWidget *widget,
 {
 	GtkTreeView *tree_view;
 	GtkTreeModel *model;
-	GList *ref_list;
 
 	tree_view = GTK_TREE_VIEW (widget);
   
@@ -414,67 +415,12 @@ drag_data_get_callback (GtkWidget *widget,
 		return;
 	}
 
-	ref_list = g_object_get_data (G_OBJECT (context), "drag-info");
-
-	if (ref_list == NULL) {
+	NemoListViewDndInfo *drag_info = g_object_get_data (G_OBJECT (context), "drag-info");
+	if (drag_info->selection_cache == NULL) {
 		return;
 	}
 
-	if (EGG_IS_TREE_MULTI_DRAG_SOURCE (model)) {
-		egg_tree_multi_drag_source_drag_data_get (EGG_TREE_MULTI_DRAG_SOURCE (model),
-							  ref_list,
-							  selection_data);
-	}
-}
-
-static void
-filtered_selection_foreach (GtkTreeModel *model,
-			    GtkTreePath *path,
-			    GtkTreeIter *iter,
-			    gpointer data)
-{
-	struct SelectionForeachData *selection_data;
-	GtkTreeIter parent;
-	GtkTreeIter child;
-	
-	selection_data = data;
-
-	/* If the parent folder is also selected, don't include this file in the
-	 * file operation, since that would copy it to the toplevel target instead
-	 * of keeping it as a child of the copied folder
-	 */
-	child = *iter;
-	while (gtk_tree_model_iter_parent (model, &parent, &child)) {
-		if (gtk_tree_selection_iter_is_selected (selection_data->selection,
-							 &parent)) {
-			return;
-		}
-		child = parent;
-	}
-	
-	selection_data->list = g_list_prepend (selection_data->list, 
-					       gtk_tree_row_reference_new (model, path));
-}
-
-static GList *
-get_filtered_selection_refs (GtkTreeView *tree_view)
-{
-	struct SelectionForeachData selection_data;
-
-	selection_data.list = NULL;
-	selection_data.selection = gtk_tree_view_get_selection (tree_view);
-	
-	gtk_tree_selection_selected_foreach (selection_data.selection, 
-					     filtered_selection_foreach, 
-					     &selection_data);
-	return g_list_reverse (selection_data.list);
-}
-
-static void
-ref_list_free (GList *ref_list)
-{
-	g_list_foreach (ref_list, (GFunc) gtk_tree_row_reference_free, NULL);
-	g_list_free (ref_list);
+	nemo_drag_drag_data_get_from_cache (drag_info->selection_cache, context, selection_data, info, time);
 }
 
 static void
@@ -516,13 +462,85 @@ get_drag_surface (NemoListView *view)
 	return ret;
 }
 
+/* iteration glue struct */
+typedef struct {
+	NemoListView *view;
+	NemoDragEachSelectedItemDataGet iteratee;
+	gpointer iteratee_data;
+} ListGetDataBinderContext;
+
+static void
+item_get_data_binder (GtkTreeModel *model,
+		      GtkTreePath *path,
+		      GtkTreeIter *iter,
+		      gpointer data)
+{
+	ListGetDataBinderContext *context = data;
+	NemoFile *file;
+	GtkTreeView *treeview;
+	GtkTreeViewColumn *column;
+	GdkRectangle cell_area;
+	int drag_begin_y  = 0;
+	char *uri;
+
+	treeview = nemo_list_model_get_drag_view (context->view->details->model,
+						      NULL,
+						      &drag_begin_y);
+	column = gtk_tree_view_get_column (treeview, 0);
+
+	file = nemo_list_model_file_for_path (NEMO_LIST_MODEL (model), path);
+	if (file == NULL) {
+		return;
+	}
+
+	gtk_tree_view_get_cell_area (treeview,
+				     path,
+				     column,
+				     &cell_area);
+
+	uri = nemo_file_get_activation_uri (file);
+	nemo_file_unref (file);
+
+	/* pass the uri, mouse-relative x/y and icon width/height */
+	context->iteratee (uri,
+			   0,
+			   cell_area.y - drag_begin_y,
+			   cell_area.width,
+			   cell_area.height,
+			   context->iteratee_data);
+
+	g_free (uri);
+}
+
+static void
+each_item_get_data_binder (NemoDragEachSelectedItemDataGet iteratee,
+			   gpointer iterator_context,
+			   gpointer data)
+{
+	NemoListView *view = NEMO_LIST_VIEW (iterator_context);
+	ListGetDataBinderContext context;
+	GtkTreeSelection *selection;
+
+	context.view = view;
+	context.iteratee = iteratee;
+	context.iteratee_data = data;
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view->details->tree_view));
+	gtk_tree_selection_selected_foreach (selection, item_get_data_binder, &context);
+}
+
+static void
+destroy_drag_info (NemoListViewDndInfo* drag_info)
+{
+	nemo_drag_destroy_selection_list (drag_info->selection_cache);
+	g_object_unref(drag_info->source_view);
+}
+
 static void
 drag_begin_callback (GtkWidget *widget,
 		     GdkDragContext *context,
 		     NemoListView *view)
 {
-	GList *ref_list;
-
     cairo_surface_t *surface;
 
     surface = get_drag_surface (view);
@@ -535,12 +553,16 @@ drag_begin_callback (GtkWidget *widget,
 
 	stop_drag_check (view);
 	view->details->drag_started = TRUE;
-	
-	ref_list = get_filtered_selection_refs (GTK_TREE_VIEW (widget));
+
+	view->details->drag_info.selection_cache = nemo_drag_create_selection_cache (view,
+								each_item_get_data_binder);
+
+	view->details->drag_info.source_view = g_object_ref(view);
+
 	g_object_set_data_full (G_OBJECT (context),
 				"drag-info",
-				ref_list,
-				(GDestroyNotify)ref_list_free);
+				&view->details->drag_info,
+				(GDestroyNotify)destroy_drag_info);
 }
 
 static gboolean
@@ -745,7 +767,7 @@ columns_reordered_callback (AtkObject *atk,
     list = g_list_reverse (list);
 
     if (nemo_global_preferences_get_ignore_view_metadata ())
-        nemo_window_set_ignore_meta_column_order (nemo_view_get_nemo_window (NEMO_VIEW (view)), list);
+        nemo_window_set_ignore_meta_column_order (nemo_view_get_window (NEMO_VIEW (view)), list);
     else
         nemo_file_set_metadata_list (file,
                                      NEMO_METADATA_KEY_LIST_VIEW_COLUMN_ORDER,
@@ -762,7 +784,6 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	NemoListView *view;
 	GtkTreeView *tree_view;
 	GtkTreePath *path;
-	gboolean call_parent;
 	GtkTreeSelection *selection;
 	GtkWidgetClass *tree_view_class;
 	gint64 current_time;
@@ -770,7 +791,8 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	static int click_count = 0;
 	int double_click_time;
 	int expander_size, horizontal_separator;
-	gboolean on_expander;
+	gboolean call_parent, on_expander;
+	gboolean is_simple_click, path_selected;
 	gboolean blank_click;
 
 	view = NEMO_LIST_VIEW (callback_data);
@@ -804,7 +826,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 		      NULL);
 
 	/* Determine click count */
-	current_time = eel_get_system_time ();
+	current_time = g_get_monotonic_time ();
 	if (current_time - last_click_time < double_click_time * 1000) {
 		click_count++;
 	} else {
@@ -820,157 +842,23 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	}
 
 	view->details->ignore_button_release = FALSE;
+	is_simple_click = ((event->button == 1 || event->button == 2) && (event->type == GDK_BUTTON_PRESS));
 
-	call_parent = TRUE;
-	if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y,
-					   &path, NULL, NULL, NULL)) {
-		gtk_widget_style_get (widget,
-				      "expander-size", &expander_size,
-				      "horizontal-separator", &horizontal_separator,
-				      NULL);
-		/* TODO we should not hardcode this extra padding. It is
-		 * EXPANDER_EXTRA_PADDING from GtkTreeView.
-		 */
-		expander_size += 4;
-		on_expander = (event->x <= horizontal_separator / 2 +
-			       gtk_tree_path_get_depth (path) * expander_size);
-
-		/* Keep track of path of last click so double clicks only happen
-		 * on the same item */
-		if ((event->button == 1 || event->button == 2)  && 
-		    event->type == GDK_BUTTON_PRESS) {
+	/* No item at this position */
+	if (!gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y,
+					    &path, NULL, NULL, NULL)) {
+		if (is_simple_click) {
+#if GLIB_CHECK_VERSION (2, 34, 0)
+			g_clear_pointer (&view->details->double_click_path[1], gtk_tree_path_free);
+#else
 			if (view->details->double_click_path[1]) {
 				gtk_tree_path_free (view->details->double_click_path[1]);
 			}
-			view->details->double_click_path[1] = view->details->double_click_path[0];
-			view->details->double_click_path[0] = gtk_tree_path_copy (path);
-		}
-		if (event->type == GDK_2BUTTON_PRESS) {
-			/* Double clicking does not trigger a D&D action. */
-			view->details->drag_button = 0;
-			if (view->details->double_click_path[1] &&
-			    gtk_tree_path_compare (view->details->double_click_path[0], view->details->double_click_path[1]) == 0 &&
-			    !on_expander) {
-				/* NOTE: Activation can actually destroy the view if we're switching */
-				if (!button_event_modifies_selection (event)) {
-					if ((event->button == 1 || event->button == 3)) {
-						activate_selected_items (view);
-					} else if (event->button == 2) {
-						activate_selected_items_alternate (view, NULL, TRUE);
-					}
-				} else if (event->button == 1 &&
-					   (event->state & GDK_SHIFT_MASK) != 0) {
-					NemoFile *file;
-					file = nemo_list_model_file_for_path (view->details->model, path);
-					if (file != NULL) {
-						activate_selected_items_alternate (view, file, TRUE);
-						nemo_file_unref (file);
-					}
-				}
-			} else {
-				tree_view_class->button_press_event (widget, event);
-			}
-		} else {
-	
-			/* We're going to filter out some situations where
-			 * we can't let the default code run because all
-			 * but one row would be would be deselected. We don't
-			 * want that; we want the right click menu or single
-			 * click to apply to everything that's currently selected. */
-			
-			if (event->button == 3) {
-				blank_click = 
-					(!gtk_tree_selection_path_is_selected (selection, path) &&
-					 gtk_tree_view_is_blank_at_pos (tree_view, event->x, event->y, NULL, NULL, NULL, NULL));
-			}
-
-			if (event->button == 3 && 
-			    (blank_click || gtk_tree_selection_path_is_selected (selection, path))) {
-				call_parent = FALSE;
-			} 
-			
-			if ((event->button == 1 || event->button == 2) &&
-			    ((event->state & GDK_CONTROL_MASK) != 0 ||
-			     (event->state & GDK_SHIFT_MASK) == 0)) {			
-				view->details->row_selected_on_button_down = gtk_tree_selection_path_is_selected (selection, path);
-				if (view->details->row_selected_on_button_down) {
-					call_parent = on_expander;
-					view->details->ignore_button_release = call_parent;
-				} else if ((event->state & GDK_CONTROL_MASK) != 0) {
-					GList *selected_rows;
-					GList *l;
-
-					call_parent = FALSE;
-					if ((event->state & GDK_SHIFT_MASK) != 0) {
-						GtkTreePath *cursor;
-						gtk_tree_view_get_cursor (tree_view, &cursor, NULL);
-						if (cursor != NULL) {
-							gtk_tree_selection_select_range (selection, cursor, path);
-						} else {
-							gtk_tree_selection_select_path (selection, path);
-						}
-					} else {
-						gtk_tree_selection_select_path (selection, path);
-					}
-					selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
-
-					/* This unselects everything */
-					gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
-
-					/* So select it again */
-					l = selected_rows;
-					while (l != NULL) {
-						GtkTreePath *p = l->data;
-						l = l->next;
-						gtk_tree_selection_select_path (selection, p);
-						gtk_tree_path_free (p);
-					}
-					g_list_free (selected_rows);
-				} else {
-					view->details->ignore_button_release = on_expander;
-				}
-			}
-		
-			if (call_parent) {
-				g_signal_handlers_block_by_func (tree_view,
-								 row_activated_callback,
-								 view);
-
-				tree_view_class->button_press_event (widget, event);
-
-				g_signal_handlers_unblock_by_func (tree_view,
-								   row_activated_callback,
-								   view);
-			} else if (gtk_tree_selection_path_is_selected (selection, path)) {
-				gtk_widget_grab_focus (widget);
-			}
-			
-			if ((event->button == 1 || event->button == 2) &&
-			    event->type == GDK_BUTTON_PRESS) {
-				view->details->drag_started = FALSE;
-				view->details->drag_button = event->button;
-				view->details->drag_x = event->x;
-				view->details->drag_y = event->y;
-			}
-			
-			if (event->button == 3) {
-				if (blank_click) {
-					gtk_tree_selection_unselect_all (selection);
-				}
-				do_popup_menu (widget, view, event);
-			}
-		}
-
-		gtk_tree_path_free (path);
-	} else {
-		if ((event->button == 1 || event->button == 2)  && 
-		    event->type == GDK_BUTTON_PRESS) {
-			if (view->details->double_click_path[1]) {
-				gtk_tree_path_free (view->details->double_click_path[1]);
-			}
+#endif
 			view->details->double_click_path[1] = view->details->double_click_path[0];
 			view->details->double_click_path[0] = NULL;
 		}
+
 		/* Deselect if people click outside any row. It's OK to
 		   let default code run; it won't reselect anything. */
 		gtk_tree_selection_unselect_all (gtk_tree_view_get_selection (tree_view));
@@ -979,8 +867,158 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 		if (event->button == 3) {
 			do_popup_menu (widget, view, event);
 		}
+
+		return TRUE;
 	}
+
+	call_parent = TRUE;
+	path_selected = gtk_tree_selection_path_is_selected (selection, path);
+
+	gtk_widget_style_get (widget,
+			      "expander-size", &expander_size,
+			      "horizontal-separator", &horizontal_separator,
+			      NULL);
+	/* TODO we should not hardcode this extra padding. It is
+	 * EXPANDER_EXTRA_PADDING from GtkTreeView.
+	 */
+	expander_size += 4;
+	on_expander = (event->x <= horizontal_separator / 2 +
+		       gtk_tree_path_get_depth (path) * expander_size);
+
+	/* Keep track of path of last click so double clicks only happen
+	 * on the same item */
+	if (is_simple_click) {
+#if GLIB_CHECK_VERSION (2, 34, 0)
+		g_clear_pointer (&view->details->double_click_path[1], gtk_tree_path_free);
+#else
+		if (view->details->double_click_path[1]) {
+			gtk_tree_path_free (view->details->double_click_path[1]);
+		}
+#endif
+		view->details->double_click_path[1] = view->details->double_click_path[0];
+		view->details->double_click_path[0] = NULL;
+	}
+
+	if (event->type == GDK_2BUTTON_PRESS) {
+		/* Double clicking does not trigger a D&D action. */
+		view->details->drag_button = 0;
+
+		/* NOTE: Activation can actually destroy the view if we're switching */
+		if (!on_expander &&
+		    view->details->double_click_path[1] &&
+		    gtk_tree_path_compare (view->details->double_click_path[0], view->details->double_click_path[1]) == 0) {
+			if (!button_event_modifies_selection (event)) {
+				if ((event->button == 1 || event->button == 3)) {
+					activate_selected_items (view);
+				} else if (event->button == 2) {
+					activate_selected_items_alternate (view, NULL, TRUE);
+				}
+			} else if (event->button == 1 &&
+				   (event->state & GDK_SHIFT_MASK) != 0) {
+				NemoFile *file;
+				file = nemo_list_model_file_for_path (view->details->model, path);
+				if (file != NULL) {
+					activate_selected_items_alternate (view, file, TRUE);
+					nemo_file_unref (file);
+				}
+			}
+		} else {
+			if ((event->button == 1 || event->button == 3)) {
+				activate_selected_items (view);
+			} else if (event->button == 2) {
+				activate_selected_items_alternate (view, NULL, TRUE);
+			}
+		}
+	} else {
+		/* We're going to filter out some situations where
+		 * we can't let the default code run because all
+		 * but one row would be would be deselected. We don't
+		 * want that; we want the right click menu or single
+		 * click to apply to everything that's currently selected.
+		 */
+		if (event->button == 3) {
+			blank_click = 
+				(!path_selected &&
+				 gtk_tree_view_is_blank_at_pos (tree_view, event->x, event->y, NULL, NULL, NULL, NULL));
+
+		        if (blank_click || gtk_tree_selection_path_is_selected (selection, path)) {
+			        call_parent = FALSE;
+		        }
+                }
+
+		if ((event->button == 1 || event->button == 2) &&
+		    ((event->state & GDK_CONTROL_MASK) != 0 ||
+		     (event->state & GDK_SHIFT_MASK) == 0)) {
+			view->details->row_selected_on_button_down = path_selected;
+
+			if (view->details->row_selected_on_button_down) {
+				call_parent = on_expander;
+				view->details->ignore_button_release = call_parent;
+			} else if ((event->state & GDK_CONTROL_MASK) != 0) {
+				GList *selected_rows;
+				GList *l;
+
+				call_parent = FALSE;
+				if ((event->state & GDK_SHIFT_MASK) != 0) {
+					GtkTreePath *cursor;
+					gtk_tree_view_get_cursor (tree_view, &cursor, NULL);
+					if (cursor != NULL) {
+						gtk_tree_selection_select_range (selection, cursor, path);
+					} else {
+						gtk_tree_selection_select_path (selection, path);
+					}
+				} else {
+					gtk_tree_selection_select_path (selection, path);
+				}
+				selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
+
+				/* This unselects everything */
+				gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+
+				/* So select it again */
+				l = selected_rows;
+				while (l != NULL) {
+					GtkTreePath *p = l->data;
+					l = l->next;
+					gtk_tree_selection_select_path (selection, p);
+					gtk_tree_path_free (p);
+				}
+				g_list_free (selected_rows);
+			} else {
+				view->details->ignore_button_release = on_expander;
+			}
+		}
 	
+		if (call_parent) {
+			g_signal_handlers_block_by_func (tree_view,
+							 row_activated_callback,
+							 view);
+			tree_view_class->button_press_event (widget, event);
+			g_signal_handlers_unblock_by_func (tree_view,
+							   row_activated_callback,
+							   view);
+		} else if (path_selected) {
+			gtk_widget_grab_focus (widget);
+		}
+
+		if ((event->button == 1 || event->button == 2) &&
+		    event->type == GDK_BUTTON_PRESS) {
+			view->details->drag_started = FALSE;
+			view->details->drag_button = event->button;
+			view->details->drag_x = event->x;
+			view->details->drag_y = event->y;
+		}
+
+		if (event->button == 3) {
+			if (blank_click) {
+				gtk_tree_selection_unselect_all (selection);
+			}
+			do_popup_menu (widget, view, event);
+		}
+	}
+
+	gtk_tree_path_free (path);
+
 	/* We chained to the default handler in this method, so never
 	 * let the default handler run */ 
 	return TRUE;
@@ -1080,9 +1118,10 @@ unload_file_timeout (gpointer data)
 			}
 			gtk_tree_path_free (path);
 		}
-	}
 
-	eel_remove_weak_pointer (&unload_data->view);
+		g_object_remove_weak_pointer (G_OBJECT (unload_data->view),
+					      (gpointer *) &unload_data->view);
+	}
 	
 	if (unload_data->directory) {
 		nemo_directory_unref (unload_data->directory);
@@ -1127,7 +1166,8 @@ row_collapsed_callback (GtkTreeView *treeview, GtkTreeIter *iter, GtkTreePath *p
 	unload_data->file = file;
 	unload_data->directory = directory;
 
-	eel_add_weak_pointer (&unload_data->view);
+	g_object_add_weak_pointer (G_OBJECT (unload_data->view),
+				   (gpointer *) &unload_data->view);
 	
 	g_timeout_add_seconds (COLLAPSE_TO_UNLOAD_DELAY,
 			       unload_file_timeout,
@@ -1311,7 +1351,7 @@ sort_column_changed_callback (GtkTreeSortable *sortable,
 	default_sort_attr = nemo_list_model_get_attribute_from_sort_column_id (view->details->model, default_sort_column_id);
 
     if (nemo_global_preferences_get_ignore_view_metadata ())
-        nemo_window_set_ignore_meta_sort_column (nemo_view_get_nemo_window (NEMO_VIEW (view)),
+        nemo_window_set_ignore_meta_sort_column (nemo_view_get_window (NEMO_VIEW (view)),
                                                  g_quark_to_string (sort_attr));
     else
         nemo_file_set_metadata (file, NEMO_METADATA_KEY_LIST_VIEW_SORT_COLUMN,
@@ -1342,7 +1382,7 @@ sort_column_changed_callback (GtkTreeSortable *sortable,
 	}
 
     if (nemo_global_preferences_get_ignore_view_metadata ()) {
-        nemo_window_set_ignore_meta_sort_direction (nemo_view_get_nemo_window (NEMO_VIEW (view)),
+        nemo_window_set_ignore_meta_sort_direction (nemo_view_get_window (NEMO_VIEW (view)),
                                                     reversed ? SORT_DESCENDING : SORT_ASCENDING);
     } else {
         reversed_attr = (reversed ? "true" : "false");
@@ -1573,7 +1613,7 @@ column_header_menu_toggled (GtkCheckMenuItem *menu_item,
 	list = g_list_reverse (list);
 
     if (nemo_global_preferences_get_ignore_view_metadata ())
-        nemo_window_set_ignore_meta_visible_columns (nemo_view_get_nemo_window (NEMO_VIEW (list_view)), list);
+        nemo_window_set_ignore_meta_visible_columns (nemo_view_get_window (NEMO_VIEW (list_view)), list);
     else
         nemo_file_set_metadata_list (file,
                                      NEMO_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS,
@@ -1611,7 +1651,7 @@ column_header_menu_use_default (GtkMenuItem *menu_item,
                                      list_view);
 
     if (nemo_global_preferences_get_ignore_view_metadata ()) {
-        NemoWindow *window = nemo_view_get_nemo_window (NEMO_VIEW (list_view));
+        NemoWindow *window = nemo_view_get_window (NEMO_VIEW (list_view));
         nemo_window_set_ignore_meta_visible_columns (window, NULL);
         nemo_window_set_ignore_meta_column_order (window, NULL);
     } else {
@@ -1786,10 +1826,14 @@ apply_columns_settings (NemoListView *list_view,
 						      g_str_equal,
 						      (GDestroyNotify) g_free,
 						      (GDestroyNotify) g_free);
-	for (i = 0; visible_columns[i] != NULL; ++i) {
-		g_hash_table_insert (visible_columns_hash,
-				     g_ascii_strdown (visible_columns[i], -1),
-				     g_ascii_strdown (visible_columns[i], -1));
+	/* always show name column */
+	g_hash_table_insert (visible_columns_hash, g_strdup ("name"), g_strdup ("name"));
+	if (visible_columns != NULL) {
+		for (i = 0; visible_columns[i] != NULL; ++i) {
+			g_hash_table_insert (visible_columns_hash,
+					     g_ascii_strdown (visible_columns[i], -1),
+					     g_ascii_strdown (visible_columns[i], -1));
+		}
 	}
 
 	for (l = all_columns; l != NULL; l = l->next) {
@@ -1934,24 +1978,24 @@ create_and_set_up_tree_view (NemoListView *view)
 		nemo_tree_view_drag_dest_new (view->details->tree_view);
 
 	g_signal_connect_object (view->details->drag_dest,
-				 "get_root_uri",
+				 "get-root-uri",
 				 G_CALLBACK (get_root_uri_callback),
 				 view, 0);
 	g_signal_connect_object (view->details->drag_dest,
-				 "get_file_for_path",
+				 "get-file-for-path",
 				 G_CALLBACK (get_file_for_path_callback),
 				 view, 0);
 	g_signal_connect_object (view->details->drag_dest,
-				 "move_copy_items",
+				 "move-copy-items",
 				 G_CALLBACK (move_copy_items_callback),
 				 view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_netscape_url",
+	g_signal_connect_object (view->details->drag_dest, "handle-netscape-url",
 				 G_CALLBACK (list_view_handle_netscape_url), view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_uri_list",
+	g_signal_connect_object (view->details->drag_dest, "handle-uri-list",
 				 G_CALLBACK (list_view_handle_uri_list), view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_text",
+	g_signal_connect_object (view->details->drag_dest, "handle-text",
 				 G_CALLBACK (list_view_handle_text), view, 0);
-	g_signal_connect_object (view->details->drag_dest, "handle_raw",
+	g_signal_connect_object (view->details->drag_dest, "handle-raw",
 				 G_CALLBACK (list_view_handle_raw), view, 0);
 
 	g_signal_connect_object (gtk_tree_view_get_selection (view->details->tree_view),
@@ -1961,32 +2005,32 @@ create_and_set_up_tree_view (NemoListView *view)
     g_signal_connect_object (GTK_WIDGET (view->details->tree_view), "query-tooltip",
                              G_CALLBACK (query_tooltip_callback), view, 0);
 
-	g_signal_connect_object (view->details->tree_view, "drag_begin",
+	g_signal_connect_object (view->details->tree_view, "drag-begin",
 				 G_CALLBACK (drag_begin_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "drag_data_get",
+	g_signal_connect_object (view->details->tree_view, "drag-data-get",
 				 G_CALLBACK (drag_data_get_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "motion_notify_event",
+	g_signal_connect_object (view->details->tree_view, "motion-notify-event",
 				 G_CALLBACK (motion_notify_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "enter_notify_event",
+	g_signal_connect_object (view->details->tree_view, "enter-notify-event",
 				 G_CALLBACK (enter_notify_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "leave_notify_event",
+	g_signal_connect_object (view->details->tree_view, "leave-notify-event",
 				 G_CALLBACK (leave_notify_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "button_press_event",
+	g_signal_connect_object (view->details->tree_view, "button-press-event",
 				 G_CALLBACK (button_press_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "button_release_event",
+	g_signal_connect_object (view->details->tree_view, "button-release-event",
 				 G_CALLBACK (button_release_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "key_press_event",
+	g_signal_connect_object (view->details->tree_view, "key-press-event",
 				 G_CALLBACK (key_press_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "popup_menu",
+	g_signal_connect_object (view->details->tree_view, "popup-menu",
                                  G_CALLBACK (popup_menu_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "row_expanded",
+	g_signal_connect_object (view->details->tree_view, "row-expanded",
                                  G_CALLBACK (row_expanded_callback), view, 0);
-	g_signal_connect_object (view->details->tree_view, "row_collapsed",
+	g_signal_connect_object (view->details->tree_view, "row-collapsed",
                                  G_CALLBACK (row_collapsed_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "row-activated",
                                  G_CALLBACK (row_activated_callback), view, 0);
 	
-    	g_signal_connect_object (view->details->tree_view, "focus_in_event",
+    	g_signal_connect_object (view->details->tree_view, "focus-in-event",
 				 G_CALLBACK(focus_in_event_callback), view, 0);
 
 	view->details->model = g_object_new (NEMO_TYPE_LIST_MODEL, NULL);
@@ -1995,10 +2039,10 @@ create_and_set_up_tree_view (NemoListView *view)
 	nemo_list_model_set_drag_view (NEMO_LIST_MODEL (view->details->model),
 				     view->details->tree_view,  0, 0);
 
-	g_signal_connect_object (view->details->model, "sort_column_changed",
+	g_signal_connect_object (view->details->model, "sort-column-changed",
 				 G_CALLBACK (sort_column_changed_callback), view, 0);
 	
-	g_signal_connect_object (view->details->model, "subdirectory_unloaded",
+	g_signal_connect_object (view->details->model, "subdirectory-unloaded",
 				 G_CALLBACK (subdirectory_unloaded_callback), view, 0);
 
     g_signal_connect_object (view->details->model, "get-icon-scale",
@@ -2015,13 +2059,16 @@ create_and_set_up_tree_view (NemoListView *view)
 		char *name;
 		char *label;
 		float xalign;
+		GtkSortType sort_order;
 
 		nemo_column = NEMO_COLUMN (l->data);
 
 		g_object_get (nemo_column, 
 			      "name", &name, 
 			      "label", &label,
-			      "xalign", &xalign, NULL);
+			      "xalign", &xalign,
+			      "default-sort-order", &sort_order,
+			      NULL);
 
 		column_num = nemo_list_model_add_column (view->details->model,
 						       nemo_column);
@@ -2034,7 +2081,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			view->details->pixbuf_cell = (GtkCellRendererPixbuf *)cell;
 			
 			view->details->file_name_column = gtk_tree_view_column_new ();
-            g_object_ref_sink (view->details->file_name_column);
+			g_object_ref_sink (view->details->file_name_column);
 			view->details->file_name_column_num = column_num;
 			
 			g_hash_table_insert (view->details->columns,
@@ -2050,20 +2097,22 @@ create_and_set_up_tree_view (NemoListView *view)
             gtk_tree_view_column_set_sizing (view->details->file_name_column, GTK_TREE_VIEW_COLUMN_FIXED);
             gtk_tree_view_column_set_reorderable (view->details->file_name_column, TRUE);
 
-            gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
+			gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
 
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
 			gtk_tree_view_column_set_attributes (view->details->file_name_column,
 							     cell,
-							     "surface", NEMO_LIST_MODEL_SMALLEST_ICON_COLUMN,
+							     "surface", nemo_list_model_get_column_id_from_zoom_level (view->details->zoom_level),
 							     NULL);
 			
 			cell = gtk_cell_renderer_text_new ();
 			view->details->file_name_cell = (GtkCellRendererText *)cell;
-            g_object_set (cell,
-                          "xpad", 5,
-                          "ellipsize", PANGO_ELLIPSIZE_END,
-                          NULL);
+			g_object_set (cell,
+				      "ellipsize", PANGO_ELLIPSIZE_END,
+				      "single-paragraph-mode", TRUE,
+				      "xpad", 5,
+				      NULL);
+
 			g_signal_connect (cell, "edited", G_CALLBACK (cell_renderer_edited), view);
 			g_signal_connect (cell, "editing-canceled", G_CALLBACK (cell_renderer_editing_canceled), view);
 			g_signal_connect (cell, "editing-started", G_CALLBACK (cell_renderer_editing_started_cb), view);
@@ -2072,30 +2121,28 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_cell_data_func (view->details->file_name_column, cell,
 								 (GtkTreeCellDataFunc) filename_cell_data_func,
 								 view, NULL);
-		} else {		
+		} else {
 			cell = gtk_cell_renderer_text_new ();
-            g_object_set (cell,
-                          "xalign", xalign,
-                          "xpad", 5,
-                          NULL);
+			g_object_set (cell,
+				      "xalign", xalign,
+				      "xpad", 5,
+				      NULL);
 			view->details->cells = g_list_append (view->details->cells,
 							      cell);
 			column = gtk_tree_view_column_new_with_attributes (label,
 									   cell,
 									   "text", column_num,
 									   NULL);
-            gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
-            gtk_tree_view_column_set_min_width (column, 10);
-            g_object_ref_sink (column);
+			g_object_ref_sink (column);
 			gtk_tree_view_column_set_sort_column_id (column, column_num);
 			g_hash_table_insert (view->details->columns, 
 					     g_strdup (name), 
 					     column);
 
 			gtk_tree_view_column_set_resizable (column, TRUE);
-            gtk_tree_view_column_set_visible (column, TRUE);
-            gtk_tree_view_column_set_reorderable (column, TRUE);
-            gtk_tree_view_column_set_expand (column, TRUE);
+			gtk_tree_view_column_set_visible (column, TRUE);
+			gtk_tree_view_column_set_reorderable (column, TRUE);
+			gtk_tree_view_column_set_sort_order (column, sort_order);
 		}
 		g_free (name);
 		g_free (label);
@@ -2172,7 +2219,7 @@ get_visible_columns (NemoListView *list_view)
 	file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
 
     if (nemo_global_preferences_get_ignore_view_metadata ()) {
-        visible_columns = nemo_window_get_ignore_meta_visible_columns (nemo_view_get_nemo_window (NEMO_VIEW (list_view)));
+        visible_columns = nemo_window_get_ignore_meta_visible_columns (nemo_view_get_window (NEMO_VIEW (list_view)));
     } else {
         visible_columns = nemo_file_get_metadata_list (file,
                                                    NEMO_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS);
@@ -2236,7 +2283,7 @@ get_column_order (NemoListView *list_view)
 	file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
 
     if (nemo_global_preferences_get_ignore_view_metadata ()) {
-        column_order = nemo_window_get_ignore_meta_column_order (nemo_view_get_nemo_window (NEMO_VIEW (list_view)));
+        column_order = nemo_window_get_ignore_meta_column_order (nemo_view_get_window (NEMO_VIEW (list_view)));
     } else {
         column_order = nemo_file_get_metadata_list (file,
                                                     NEMO_METADATA_KEY_LIST_VIEW_COLUMN_ORDER);
@@ -2290,7 +2337,7 @@ set_sort_order_from_metadata_and_preferences (NemoListView *list_view)
 	file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
 
     if (nemo_global_preferences_get_ignore_view_metadata ())
-        sort_attribute = g_strdup (nemo_window_get_ignore_meta_sort_column (nemo_view_get_nemo_window (NEMO_VIEW (list_view))));
+        sort_attribute = g_strdup (nemo_window_get_ignore_meta_sort_column (nemo_view_get_window (NEMO_VIEW (list_view))));
     else
         sort_attribute = nemo_file_get_metadata (file,
                                                  NEMO_METADATA_KEY_LIST_VIEW_SORT_COLUMN,
@@ -2308,7 +2355,7 @@ set_sort_order_from_metadata_and_preferences (NemoListView *list_view)
 	}
 
     if (nemo_global_preferences_get_ignore_view_metadata ()) {
-        gint dir = nemo_window_get_ignore_meta_sort_direction (nemo_view_get_nemo_window (NEMO_VIEW (list_view)));
+        gint dir = nemo_window_get_ignore_meta_sort_direction (nemo_view_get_window (NEMO_VIEW (list_view)));
         sort_reversed = dir > SORT_NULL ? dir == SORT_DESCENDING : default_sort_reversed;
     } else {
         sort_reversed = nemo_file_get_boolean_metadata (file,
@@ -2354,7 +2401,7 @@ set_zoom_level_from_metadata_and_preferences (NemoListView *list_view)
 	if (nemo_view_supports_zooming (NEMO_VIEW (list_view))) {
 		file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
         if (nemo_global_preferences_get_ignore_view_metadata ()) {
-            gint ignore_level = nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (list_view)));
+            gint ignore_level = nemo_window_get_ignore_meta_zoom_level (nemo_view_get_window (NEMO_VIEW (list_view)));
             level = ignore_level > -1 ? ignore_level : get_default_zoom_level ();
         } else {
             level = nemo_file_get_integer_metadata (file,
@@ -2400,6 +2447,8 @@ stop_cell_editing (NemoListView *list_view)
 	    GTK_IS_CELL_EDITABLE (list_view->details->editable_widget)) {
 		gtk_cell_editable_editing_done (list_view->details->editable_widget);
 	}
+
+	g_clear_object (&list_view->details->renaming_file);
 }
 
 static void
@@ -2608,7 +2657,6 @@ nemo_list_view_get_backing_uri (NemoView *view)
 		tree_selection_has_common_parent (selection, &is_common, &is_root);
 
 		if (is_common && !is_root) {
-
 			paths = gtk_tree_selection_get_selected_rows (selection, NULL);
 			path = (GtkTreePath *) paths->data;
 
@@ -2617,8 +2665,7 @@ nemo_list_view_get_backing_uri (NemoView *view)
 			uri = nemo_file_get_parent_uri (file);
 			nemo_file_unref (file);
 
-			g_list_foreach (paths, (GFunc) gtk_tree_path_free, NULL);
-			g_list_free (paths);
+			g_list_free_full (paths, (GDestroyNotify) gtk_tree_path_free);
 		}
 	}
 
@@ -2872,6 +2919,19 @@ nemo_list_view_select_all (NemoView *view)
 }
 
 static void
+nemo_list_view_select_first (NemoView *view)
+{
+	GtkTreeSelection *selection;
+	GtkTreeIter iter;
+
+	if (!gtk_tree_model_get_iter_first (GTK_TREE_MODEL (NEMO_LIST_VIEW (view)->details->model), &iter)) {
+		return;
+	}
+	selection = gtk_tree_view_get_selection (NEMO_LIST_VIEW (view)->details->tree_view);
+	gtk_tree_selection_select_iter (selection, &iter);
+}
+
+static void
 nemo_list_view_merge_menus (NemoView *view)
 {
   NemoListView *list_view;
@@ -2943,7 +3003,7 @@ nemo_list_view_reset_to_defaults (NemoView *view)
                                      NEMO_LIST_VIEW (view));
 
     if (nemo_global_preferences_get_ignore_view_metadata ()) {
-        NemoWindow *window = nemo_view_get_nemo_window (NEMO_VIEW (view));
+        NemoWindow *window = nemo_view_get_window (NEMO_VIEW (view));
         nemo_window_set_ignore_meta_sort_column (window, NULL);
         nemo_window_set_ignore_meta_sort_direction (window, SORT_NULL);
         nemo_window_set_ignore_meta_zoom_level (window, NEMO_ZOOM_LEVEL_NULL);
@@ -2969,41 +3029,6 @@ nemo_list_view_reset_to_defaults (NemoView *view)
 }
 
 static void
-nemo_list_view_scale_font_size (NemoListView *view, 
-				    NemoZoomLevel new_level)
-{
-	GList *l;
-	static gboolean first_time = TRUE;
-	static double pango_scale[7];
-	int medium;
-	int i;
-
-	g_return_if_fail (new_level >= NEMO_ZOOM_LEVEL_SMALLEST &&
-			  new_level <= NEMO_ZOOM_LEVEL_LARGEST);
-
-	if (first_time) {
-		first_time = FALSE;
-		medium = NEMO_ZOOM_LEVEL_SMALLER;
-		pango_scale[medium] = PANGO_SCALE_MEDIUM;
-		for (i = medium; i > NEMO_ZOOM_LEVEL_SMALLEST; i--) {
-			pango_scale[i - 1] = (1 / 1.2) * pango_scale[i];
-		}
-		for (i = medium; i < NEMO_ZOOM_LEVEL_LARGEST; i++) {
-			pango_scale[i + 1] = 1.2 * pango_scale[i];
-		}
-	}
-					 
-	g_object_set (G_OBJECT (view->details->file_name_cell),
-		      "scale", pango_scale[new_level],
-		      NULL);
-	for (l = view->details->cells; l != NULL; l = l->next) {
-		g_object_set (G_OBJECT (l->data),
-			      "scale", pango_scale[new_level],
-			      NULL);
-	}
-}
-
-static void
 nemo_list_view_set_zoom_level (NemoListView *view,
 				   NemoZoomLevel new_level,
 				   gboolean always_emit)
@@ -3017,16 +3042,16 @@ nemo_list_view_set_zoom_level (NemoListView *view,
 
 	if (view->details->zoom_level == new_level) {
 		if (always_emit) {
-			g_signal_emit_by_name (NEMO_VIEW(view), "zoom_level_changed");
+			g_signal_emit_by_name (NEMO_VIEW(view), "zoom-level-changed");
 		}
 		return;
 	}
 
 	view->details->zoom_level = new_level;
-	g_signal_emit_by_name (NEMO_VIEW(view), "zoom_level_changed");
+	g_signal_emit_by_name (NEMO_VIEW(view), "zoom-level-changed");
 
     if (nemo_global_preferences_get_ignore_view_metadata ())
-        nemo_window_set_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (view)), new_level);
+        nemo_window_set_ignore_meta_zoom_level (nemo_view_get_window (NEMO_VIEW (view)), new_level);
     else
         nemo_file_set_integer_metadata
             (nemo_view_get_directory_as_file (NEMO_VIEW (view)), 
@@ -3040,9 +3065,6 @@ nemo_list_view_set_zoom_level (NemoListView *view,
 					     GTK_CELL_RENDERER (view->details->pixbuf_cell),
 					     "surface", column,
 					     NULL);
-
-	/* Scale text. */
-	nemo_list_view_scale_font_size (view, new_level);
 
 	/* Make all rows the same size. */
 	icon_size = nemo_get_list_icon_size_for_zoom_level (new_level);
@@ -3181,13 +3203,13 @@ nemo_list_view_start_renaming_file (NemoView *view,
 
 	/* set cursor also triggers editing-started, where we save the editable widget */
 	if (list_view->details->editable_widget != NULL) {
-        int start_offset = 0;
-        int end_offset = -1;
+		int start_offset = 0;
+		int end_offset = -1;
 
-        if (!select_all) {
-            eel_filename_get_rename_region (list_view->details->original_name,
-                           &start_offset, &end_offset);
-        }
+		if (!select_all) {
+			eel_filename_get_rename_region (list_view->details->original_name,
+							&start_offset, &end_offset);
+		}
 
 		gtk_editable_select_region (GTK_EDITABLE (list_view->details->editable_widget),
 					    start_offset, end_offset);
@@ -3536,6 +3558,7 @@ nemo_list_view_class_init (NemoListViewClass *class)
     nemo_view_class->get_default_zoom_level = nemo_list_view_get_default_zoom_level;
 	nemo_view_class->reveal_selection = nemo_list_view_reveal_selection;
 	nemo_view_class->select_all = nemo_list_view_select_all;
+	nemo_view_class->select_first = nemo_list_view_select_first;
 	nemo_view_class->set_selection = nemo_list_view_set_selection;
 	nemo_view_class->invert_selection = nemo_list_view_invert_selection;
 	nemo_view_class->compare_files = nemo_list_view_compare_files;
@@ -3554,6 +3577,9 @@ static void
 nemo_list_view_init (NemoListView *list_view)
 {
 	list_view->details = g_new0 (NemoListViewDetails, 1);
+
+	/* ensure that the zoom level is always set before settings up the tree view columns */
+	list_view->details->zoom_level = get_default_zoom_level ();
 
 	create_and_set_up_tree_view (list_view);
 
@@ -3609,13 +3635,10 @@ nemo_list_view_init (NemoListView *list_view)
 
 	nemo_list_view_sort_directories_first_changed (NEMO_VIEW (list_view));
 
-	/* ensure that the zoom level is always set in begin_loading */
-	list_view->details->zoom_level = NEMO_ZOOM_LEVEL_SMALLEST - 1;
-
 	list_view->details->hover_path = NULL;
 	list_view->details->clipboard_handler_id =
 		g_signal_connect (nemo_clipboard_monitor_get (),
-		                  "clipboard_info",
+		                  "clipboard-info",
 		                  G_CALLBACK (list_view_notify_clipboard_info), list_view);
 }
 

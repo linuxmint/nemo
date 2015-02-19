@@ -58,11 +58,17 @@ struct _NemoFloatingBarClass {
 /* GObject */
 GType       nemo_floating_bar_get_type  (void);
 
-GtkWidget * nemo_floating_bar_new              (const gchar *label,
+GtkWidget * nemo_floating_bar_new              (const gchar *primary_label,
+						    const gchar *details_label,
 						    gboolean show_spinner);
 
-void        nemo_floating_bar_set_label        (NemoFloatingBar *self,
+void       nemo_floating_bar_set_primary_label (NemoFloatingBar *self,
 						    const gchar *label);
+void       nemo_floating_bar_set_details_label (NemoFloatingBar *self,
+						    const gchar *label);
+void        nemo_floating_bar_set_labels        (NemoFloatingBar *self,
+						     const gchar *primary,
+						     const gchar *detail);
 void        nemo_floating_bar_set_show_spinner (NemoFloatingBar *self,
 						    gboolean show_spinner);
 

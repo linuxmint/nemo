@@ -73,33 +73,3 @@ eel_gdk_parse_geometry (const char *string, int *x_return, int *y_return,
 
 	return gdk_flags;
 }
-
-#define CLAMP_COLOR(v) (t = (v), CLAMP (t, 0, 1))
-#define SATURATE(v) ((1.0 - saturation) * intensity + saturation * (v))
-
-void
-eel_make_color_inactive (GdkRGBA *color)
-{
-	double intensity, saturation;
-	gdouble t;
-
-	saturation = 0.7;
-	intensity = color->red * 0.30 + color->green * 0.59 + color->blue * 0.11;
-	color->red = SATURATE (color->red);
-	color->green = SATURATE (color->green);
-	color->blue = SATURATE (color->blue);
-
-	if (intensity > 0.5) {
-		color->red *= 0.9;
-		color->green *= 0.9;
-		color->blue *= 0.9;
-	} else {
-		color->red *= 1.25;
-		color->green *= 1.25;
-		color->blue *= 1.25;
-	}
-
-	color->red = CLAMP_COLOR (color->red);
-	color->green = CLAMP_COLOR (color->green);
-	color->blue = CLAMP_COLOR (color->blue);
-}

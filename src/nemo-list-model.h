@@ -114,6 +114,9 @@ void              nemo_list_model_set_drag_view (NemoListModel *model,
 						     GtkTreeView *view,
 						     int begin_x, 
 						     int begin_y);
+GtkTreeView *     nemo_list_model_get_drag_view (NemoListModel *model,
+						     int *drag_begin_x,
+						     int *drag_begin_y);
 
 GtkTargetList *   nemo_list_model_get_drag_target_list (void);
 

@@ -26,6 +26,7 @@
 #include "nemo-file-utilities.h"
 
 #include "nemo-global-preferences.h"
+#include "nemo-icon-names.h"
 #include "nemo-lib-self-check-functions.h"
 #include "nemo-metadata.h"
 #include "nemo-file.h"
@@ -51,30 +52,240 @@
 static void update_xdg_dir_cache (void);
 static void schedule_user_dirs_changed (void);
 static void desktop_dir_changed (void);
-static GFile *nemo_find_file_insensitive_next (GFile *parent, const gchar *name);
+
+
+/* Allowed characters outside alphanumeric for unreserved. */
+#define G_URI_OTHER_UNRESERVED "-._~"
+
+/* This or something equivalent will eventually go into glib/guri.h */
+gboolean
+nemo_uri_parse (const char  *uri,
+		    char       **host,
+		    guint16     *port,
+		    char       **userinfo)
+{
+  char *tmp_str;
+  const char *start, *p;
+  char c;
+
+  g_return_val_if_fail (uri != NULL, FALSE);
+
+  if (host)
+    *host = NULL;
+
+  if (port)
+    *port = 0;
+
+  if (userinfo)
+    *userinfo = NULL;
+
+  /* From RFC 3986 Decodes:
+   * URI          = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+   * hier-part    = "//" authority path-abempty
+   * path-abempty = *( "/" segment )
+   * authority    = [ userinfo "@" ] host [ ":" port ]
+   */
+
+  /* Check we have a valid scheme */
+  tmp_str = g_uri_parse_scheme (uri);
+
+  if (tmp_str == NULL)
+    return FALSE;
+
+  g_free (tmp_str);
+
+  /* Decode hier-part:
+   *  hier-part   = "//" authority path-abempty
+   */
+  p = uri;
+  start = strstr (p, "//");
+
+  if (start == NULL)
+    return FALSE;
+
+  start += 2;
+
+  if (strchr (start, '@') != NULL)
+    {
+      /* Decode userinfo:
+       * userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
+       * unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+       * pct-encoded   = "%" HEXDIG HEXDIG
+       */
+      p = start;
+      while (1)
+	{
+	  c = *p++;
+
+	  if (c == '@')
+	    break;
+
+	  /* pct-encoded */
+	  if (c == '%')
+	    {
+	      if (!(g_ascii_isxdigit (p[0]) ||
+		    g_ascii_isxdigit (p[1])))
+		return FALSE;
+
+	      p++;
+
+	      continue;
+	    }
+
+	  /* unreserved /  sub-delims / : */
+	  if (!(g_ascii_isalnum (c) ||
+		strchr (G_URI_OTHER_UNRESERVED, c) ||
+		strchr (G_URI_RESERVED_CHARS_SUBCOMPONENT_DELIMITERS, c) ||
+		c == ':'))
+	    return FALSE;
+	}
+
+      if (userinfo)
+	*userinfo = g_strndup (start, p - start - 1);
+
+      start = p;
+    }
+  else
+    {
+      p = start;
+    }
+
+
+  /* decode host:
+   * host          = IP-literal / IPv4address / reg-name
+   * reg-name      = *( unreserved / pct-encoded / sub-delims )
+   */
+
+  /* If IPv6 or IPvFuture */
+  if (*p == '[')
+    {
+      start++;
+      p++;
+      while (1)
+	{
+	  c = *p++;
+
+	  if (c == ']')
+	    break;
+
+	  /* unreserved /  sub-delims */
+	  if (!(g_ascii_isalnum (c) ||
+		strchr (G_URI_OTHER_UNRESERVED, c) ||
+		strchr (G_URI_RESERVED_CHARS_SUBCOMPONENT_DELIMITERS, c) ||
+		c == ':' ||
+		c == '.'))
+	    goto error;
+	}
+    }
+  else
+    {
+      while (1)
+	{
+	  c = *p++;
+
+	  if (c == ':' ||
+	      c == '/' ||
+	      c == '?' ||
+	      c == '#' ||
+	      c == '\0')
+	    break;
+
+	  /* pct-encoded */
+	  if (c == '%')
+	    {
+	      if (!(g_ascii_isxdigit (p[0]) ||
+		    g_ascii_isxdigit (p[1])))
+		goto error;
+
+	      p++;
+
+	      continue;
+	    }
+
+	  /* unreserved /  sub-delims */
+	  if (!(g_ascii_isalnum (c) ||
+		strchr (G_URI_OTHER_UNRESERVED, c) ||
+		strchr (G_URI_RESERVED_CHARS_SUBCOMPONENT_DELIMITERS, c)))
+	    goto error;
+	}
+    }
+
+  if (host)
+    *host = g_uri_unescape_segment (start, p - 1, NULL);
+
+  if (c == ':')
+    {
+      /* Decode pot:
+       *  port          = *DIGIT
+       */
+      guint tmp = 0;
+
+      while (1)
+	{
+	  c = *p++;
+
+	  if (c == '/' ||
+	      c == '?' ||
+	      c == '#' ||
+	      c == '\0')
+	    break;
+
+	  if (!g_ascii_isdigit (c))
+	    goto error;
+
+	  tmp = (tmp * 10) + (c - '0');
+
+	  if (tmp > 65535)
+	    goto error;
+	}
+      if (port)
+	*port = (guint16) tmp;
+    }
+
+  return TRUE;
+
+error:
+  if (host && *host)
+    {
+      g_free (*host);
+      *host = NULL;
+    }
+
+  if (userinfo && *userinfo)
+    {
+      g_free (*userinfo);
+      *userinfo = NULL;
+    }
+
+  return FALSE;
+}
 
 char *
 nemo_compute_title_for_location (GFile *location)
 {
 	NemoFile *file;
 	char *title;
-    char *builder;
+	char *builder;
 	/* TODO-gio: This doesn't really work all that great if the
 	   info about the file isn't known atm... */
+
+	if (!location) {
+		return g_strdup (_("(none)"));
+	}
 
 	if (nemo_is_home_directory (location)) {
 		return g_strdup (_("Home"));
 	}
 	
 	builder = NULL;
-	if (location) {
-		file = nemo_file_get (location);
-		builder = nemo_file_get_description (file);
-		if (builder == NULL) {
-			builder = nemo_file_get_display_name (file);
-		}
-		nemo_file_unref (file);
+
+	file = nemo_file_get (location);
+	builder = nemo_file_get_description (file);
+	if (builder == NULL) {
+		builder = nemo_file_get_display_name (file);
 	}
+	nemo_file_unref (file);
+
 
 	if (builder == NULL) {
 		builder = g_file_get_basename (location);
@@ -135,20 +346,25 @@ nemo_get_user_directory (void)
  * Get the path for the filename containing nemo accelerator map.
  * The filename need not exist.
  *
- * Return value: the filename path, or NULL if the home directory could not be found
+ * Return value: the filename path
  **/
 char *
 nemo_get_accel_map_file (void)
 {
-	const gchar *override;
+	return g_build_filename (g_get_user_config_dir (), "nemo", "accels", NULL);
+}
 
-	override = g_getenv ("GNOME22_USER_DIR");
-
-	if (override) {
-		return g_build_filename (override, "accels/nemo", NULL);
-	} else {
-		return g_build_filename (g_get_home_dir (), ".gnome2/accels/nemo", NULL);
-	}
+/**
+ * nemo_get_scripts_directory_path:
+ *
+ * Get the path for the directory containing nemo scripts.
+ *
+ * Return value: the directory path containing nemo scripts
+ **/
+char *
+nemo_get_scripts_directory_path (void)
+{
+	return g_build_filename (g_get_user_data_dir (), "nemo", "scripts", NULL);
 }
 
 typedef struct {
@@ -324,7 +540,7 @@ static gboolean
 emit_user_dirs_changed_idle (gpointer data)
 {
 	g_signal_emit_by_name (nemo_signaller_get_current (),
-			       "user_dirs_changed");
+			       "user-dirs-changed");
 	user_dirs_changed_tag = 0;
 	return FALSE;
 }
@@ -450,11 +666,7 @@ nemo_get_xdg_dir (const char *type)
 static char *
 get_desktop_path (void)
 {
-	if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR)) {
-		return g_strdup (g_get_home_dir());
-	} else {
-		return nemo_get_xdg_dir ("DESKTOP");
-	}
+	return nemo_get_xdg_dir ("DESKTOP");
 }
 
 /**
@@ -472,17 +684,15 @@ nemo_get_desktop_directory (void)
 	desktop_directory = get_desktop_path ();
 
 	/* Don't try to create a home directory */
-	if (!g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR)) {
-		if (!g_file_test (desktop_directory, G_FILE_TEST_EXISTS)) {
-			g_mkdir (desktop_directory, DEFAULT_DESKTOP_DIRECTORY_MODE);
-			/* FIXME bugzilla.gnome.org 41286: 
-			 * How should we handle the case where this mkdir fails? 
-			 * Note that nemo_application_startup will refuse to launch if this 
-			 * directory doesn't get created, so that case is OK. But the directory 
-			 * could be deleted after Nemo was launched, and perhaps
-			 * there is some bad side-effect of not handling that case.
-			 */
-		}
+	if (!g_file_test (desktop_directory, G_FILE_TEST_EXISTS)) {
+		g_mkdir (desktop_directory, DEFAULT_DESKTOP_DIRECTORY_MODE);
+		/* FIXME bugzilla.gnome.org 41286: 
+		 * How should we handle the case where this mkdir fails? 
+		 * Note that nemo_application_startup will refuse to launch if this 
+		 * directory doesn't get created, so that case is OK. But the directory 
+		 * could be deleted after Nemo was launched, and perhaps
+		 * there is some bad side-effect of not handling that case.
+		 */
 	}
 
 	return desktop_directory;
@@ -501,7 +711,6 @@ nemo_get_desktop_location (void)
 	return res;
 }
 
-
 /**
  * nemo_get_desktop_directory_uri:
  * 
@@ -516,19 +725,6 @@ nemo_get_desktop_directory_uri (void)
 	char *desktop_uri;
 	
 	desktop_path = nemo_get_desktop_directory ();
-	desktop_uri = g_filename_to_uri (desktop_path, NULL, NULL);
-	g_free (desktop_path);
-
-	return desktop_uri;
-}
-
-char *
-nemo_get_desktop_directory_uri_no_create (void)
-{
-	char *desktop_path;
-	char *desktop_uri;
-	
-	desktop_path = get_desktop_path ();
 	desktop_uri = g_filename_to_uri (desktop_path, NULL, NULL);
 	g_free (desktop_path);
 
@@ -603,7 +799,6 @@ nemo_get_searches_directory (void)
 static GFile *desktop_dir = NULL;
 static GFile *desktop_dir_dir = NULL;
 static char *desktop_dir_filename = NULL;
-static gboolean desktop_dir_changed_callback_installed = FALSE;
 
 
 static void
@@ -619,12 +814,6 @@ desktop_dir_changed (void)
 	desktop_dir = NULL;
 	desktop_dir_dir = NULL;
 	desktop_dir_filename = NULL;
-}
-
-static void
-desktop_dir_changed_callback (gpointer callback_data)
-{
-	desktop_dir_changed ();
 }
 
 static void
@@ -692,13 +881,6 @@ nemo_is_desktop_directory_file (GFile *dir,
 				    const char *file)
 {
 
-	if (!desktop_dir_changed_callback_installed) {
-		g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-					  G_CALLBACK(desktop_dir_changed_callback),
-					  NULL);
-		desktop_dir_changed_callback_installed = TRUE;
-	}
-
 	if (desktop_dir == NULL) {
 		update_desktop_dir ();
 	}
@@ -711,13 +893,6 @@ gboolean
 nemo_is_desktop_directory (GFile *dir)
 {
 
-	if (!desktop_dir_changed_callback_installed) {
-		g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-					  G_CALLBACK(desktop_dir_changed_callback),
-					  NULL);
-		desktop_dir_changed_callback_installed = TRUE;
-	}
-
 	if (desktop_dir == NULL) {
 		update_desktop_dir ();
 	}
@@ -725,43 +900,46 @@ nemo_is_desktop_directory (GFile *dir)
 	return g_file_equal (dir, desktop_dir);
 }
 
-
-/**
- * nemo_get_gmc_desktop_directory:
- * 
- * Get the path for the directory containing the legacy gmc desktop.
- *
- * Return value: the directory path.
- **/
-char *
-nemo_get_gmc_desktop_directory (void)
+GMount *
+nemo_get_mounted_mount_for_root (GFile *location)
 {
-	return g_build_filename (g_get_home_dir (), LEGACY_DESKTOP_DIRECTORY_NAME, NULL);
-}
+	GVolumeMonitor *volume_monitor;
+	GList *mounts;
+	GList *l;
+	GMount *mount;
+	GMount *result = NULL;
+	GFile *root = NULL;
+	GFile *default_location = NULL;
 
-char *
-nemo_get_data_file_path (const char *partial_path)
-{
-	char *path;
-	char *user_directory;
+	volume_monitor = g_volume_monitor_get ();
+	mounts = g_volume_monitor_get_mounts (volume_monitor);
 
-	/* first try the user's home directory */
-	user_directory = nemo_get_user_directory ();
-	path = g_build_filename (user_directory, partial_path, NULL);
-	g_free (user_directory);
-	if (g_file_test (path, G_FILE_TEST_EXISTS)) {
-		return path;
+	for (l = mounts; l != NULL; l = l->next) {
+		mount = l->data;
+
+		if (g_mount_is_shadowed (mount)) {
+			continue;
+		}
+
+		root = g_mount_get_root (mount);
+		if (g_file_equal (location, root)) {
+			result = g_object_ref (mount);
+			break;
+		}
+
+		default_location = g_mount_get_default_location (mount);
+		if (!g_file_equal (default_location, root) &&
+		    g_file_equal (location, default_location)) {
+			result = g_object_ref (mount);
+			break;
+		}
 	}
-	g_free (path);
-	
-	/* next try the shared directory */
-	path = g_build_filename (NEMO_DATADIR, partial_path, NULL);
-	if (g_file_test (path, G_FILE_TEST_EXISTS)) {
-		return path;
-	}
-	g_free (path);
 
-	return NULL;
+	g_clear_object (&root);
+	g_clear_object (&default_location);
+	g_list_free_full (mounts, g_object_unref);
+
+	return result;
 }
 
 char *
@@ -812,26 +990,6 @@ nemo_ensure_unique_file_name (const char *directory_uri,
 	return res;
 }
 
-char *
-nemo_unique_temporary_file_name (void)
-{
-	const char *prefix = "/tmp/nemo-temp-file";
-	char *file_name;
-	int fd;
-
-	file_name = g_strdup_printf ("%sXXXXXX", prefix);
-
-	fd = g_mkstemp (file_name); 
-	if (fd == -1) {
-		g_free (file_name);
-		file_name = NULL;
-	} else {
-		close (fd);
-	}
-	
-	return file_name;
-}
-
 GFile *
 nemo_find_existing_uri_in_hierarchy (GFile *location)
 {
@@ -845,8 +1003,8 @@ nemo_find_existing_uri_in_hierarchy (GFile *location)
 		info = g_file_query_info (location,
 					  G_FILE_ATTRIBUTE_STANDARD_NAME,
 					  0, NULL, NULL);
-		g_object_unref (info);
 		if (info != NULL) {
+			g_object_unref (info);
 			return location;
 		}
 		tmp = location;
@@ -857,127 +1015,54 @@ nemo_find_existing_uri_in_hierarchy (GFile *location)
 	return location;
 }
 
-/**
- * nemo_find_file_insensitive
- * 
- * Attempt to find a file case-insentively. If the path can be found, the
- * returned file maps directly to it. Otherwise, a file using the
- * originally-cased path is returned. This function performs might perform
- * I/O.
- * 
- * Return value: a #GFile to a child specified by @name.
- **/
-GFile *
-nemo_find_file_insensitive (GFile *parent, const gchar *name)
-{
-	gchar **split_path;
-	gchar *component;
-	GFile *file, *next;
-	gint i;
-	
-	split_path = g_strsplit (name, G_DIR_SEPARATOR_S, -1);
-	
-	file = g_object_ref (parent);
-	
-	for (i = 0; (component = split_path[i]) != NULL; i++) {
-		if (!(next = nemo_find_file_insensitive_next (file,
-		                                                  component))) {
-			/* File does not exist */
-			g_object_unref (file);
-			file = NULL;
-			break;
-		}
-		g_object_unref (file);
-		file = next;
-	}
-	g_strfreev (split_path);
-	
-	if (file) {
-		return file;
-	}
-	return g_file_get_child (parent, name);
-}
-
-static GFile *
-nemo_find_file_insensitive_next (GFile *parent, const gchar *name)
-{
-	GFileEnumerator *children;
-	GFileInfo *info;
-	gboolean use_utf8, found;
-	char *filename, *case_folded_name, *utf8_collation_key, *ascii_collation_key, *child_key;
-	GFile *file;
-	const char *child_name, *compare_key;
-
-	/* First check the given version */
-	file = g_file_get_child (parent, name);
-	if (g_file_query_exists (file, NULL)) {
-		return file;
-	}
-	g_object_unref (file);
-	
-	ascii_collation_key = g_ascii_strdown (name, -1);
-	use_utf8 = g_utf8_validate (name, -1, NULL);
-	utf8_collation_key = NULL;	
-	if (use_utf8) {
-		case_folded_name = g_utf8_casefold (name, -1);
-		utf8_collation_key = g_utf8_collate_key (case_folded_name, -1);
-		g_free (case_folded_name);
-	}
-
-	/* Enumerate and compare insensitive */
-	filename = NULL;
-	children = g_file_enumerate_children (parent,
-	                                      G_FILE_ATTRIBUTE_STANDARD_NAME,
-	                                      0, NULL, NULL);
-	if (children != NULL) {
-		while ((info = g_file_enumerator_next_file (children, NULL, NULL))) {
-			child_name = g_file_info_get_name (info);
-			
-			if (use_utf8 && g_utf8_validate (child_name, -1, NULL)) {
-				gchar *case_folded;
-				
-				case_folded = g_utf8_casefold (child_name, -1);
-				child_key = g_utf8_collate_key (case_folded, -1);
-				g_free (case_folded);
-				compare_key = utf8_collation_key;
-			} else {
-				child_key = g_ascii_strdown (child_name, -1);
-				compare_key = ascii_collation_key;
-			}
-			
-			found = strcmp (child_key, compare_key) == 0;
-			g_free (child_key);
-			if (found) {
-				filename = g_strdup (child_name);
-				break;
-			}
-		}
-		g_file_enumerator_close (children, NULL, NULL);
-		g_object_unref (children);
-	}
-	
-	g_free (ascii_collation_key);
-	g_free (utf8_collation_key);
-	
-	if (filename) {
-		file = g_file_get_child (parent, filename);
-		g_free (filename);
-		return file;
-	}
-	
-	return NULL;
-}
-
 static gboolean
 have_program_in_path (const char *name)
 {
-	char *path;
-	gboolean result;
+        gchar *path;
+        gboolean result;
 
-	path = g_find_program_in_path (name);
-	result = (path != NULL);
-	g_free (path);
-	return result;
+        path = g_find_program_in_path (name);
+        result = (path != NULL);
+        g_free (path);
+        return result;
+}
+
+static GIcon *
+special_directory_get_icon (GUserDirectory directory,
+			    gboolean symbolic)
+{
+
+#define ICON_CASE(x)							 \
+	case G_USER_DIRECTORY_ ## x:					 \
+		return (symbolic) ? g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_ ## x) : g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER_ ## x);
+
+	switch (directory) {
+
+		ICON_CASE (DOCUMENTS);
+		ICON_CASE (DOWNLOAD);
+		ICON_CASE (MUSIC);
+		ICON_CASE (PICTURES);
+		ICON_CASE (PUBLIC_SHARE);
+		ICON_CASE (TEMPLATES);
+		ICON_CASE (VIDEOS);
+
+	default:
+		return (symbolic) ? g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER) : g_themed_icon_new (NEMO_ICON_FULLCOLOR_FOLDER);
+	}
+
+#undef ICON_CASE
+}
+
+GIcon *
+nemo_special_directory_get_symbolic_icon (GUserDirectory directory)
+{
+	return special_directory_get_icon (directory, TRUE);
+}
+
+GIcon *
+nemo_special_directory_get_icon (GUserDirectory directory)
+{
+	return special_directory_get_icon (directory, FALSE);
 }
 
 gboolean
@@ -994,135 +1079,6 @@ nemo_is_file_roller_installed (void)
 	}
 
 	return installed > 0 ? TRUE : FALSE;
-}
-
-#define GSM_NAME  "org.gnome.SessionManager"
-#define GSM_PATH "/org/gnome/SessionManager"
-#define GSM_INTERFACE "org.gnome.SessionManager"
-
-/* The following values come from
- * http://www.gnome.org/~mccann/gnome-session/docs/gnome-session.html#org.gnome.SessionManager.Inhibit 
- */
-#define INHIBIT_LOGOUT (1U)
-#define INHIBIT_SUSPEND (4U)
-
-static GDBusConnection *
-get_dbus_connection (void)
-{
-	static GDBusConnection *conn = NULL;
-
-	if (conn == NULL) {
-		GError *error = NULL;
-
-	        conn = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
-
-		if (conn == NULL) {
-	                g_warning ("Could not connect to session bus: %s", error->message);
-			g_error_free (error);
-		}
-	}
-
-	return conn;
-}
-
-/**
- * nemo_inhibit_power_manager:
- * @message: a human readable message for the reason why power management
- *       is being suspended.
- *
- * Inhibits the power manager from logging out or suspending the machine
- * (e.g. whenever Nemo is doing file operations).
- *
- * Returns: an integer cookie, which must be passed to
- *    nemo_uninhibit_power_manager() to resume
- *    normal power management.
- */
-int
-nemo_inhibit_power_manager (const char *message)
-{
-	GDBusConnection *connection;
-	GVariant *result;
-	GError *error = NULL;
-	guint cookie = 0;
-
-	g_return_val_if_fail (message != NULL, -1);
-
-        connection = get_dbus_connection ();
-
-        if (connection == NULL) {
-                return -1;
-        }
-
-	result = g_dbus_connection_call_sync (connection,
-					      GSM_NAME,
-					      GSM_PATH,
-					      GSM_INTERFACE,
-					      "Inhibit",
-					      g_variant_new ("(susu)",
-							     "Nemo",
-							     (guint) 0,
-							     message,
-							     (guint) (INHIBIT_LOGOUT | INHIBIT_SUSPEND)),
-					      G_VARIANT_TYPE ("(u)"),
-					      G_DBUS_CALL_FLAGS_NO_AUTO_START,
-					      -1,
-					      NULL,
-					      &error);
-
-	if (error != NULL) {
-		g_warning ("Could not inhibit power management: %s", error->message);
-		g_error_free (error);
-		return -1;
-	}
-
-	g_variant_get (result, "(u)", &cookie);
-	g_variant_unref (result);
-
-	return (int) cookie;
-}
-
-/**
- * nemo_uninhibit_power_manager:
- * @cookie: the cookie value returned by nemo_inhibit_power_manager()
- *
- * Uninhibits power management. This function must be called after the task
- * which inhibited power management has finished, or the system will not
- * return to normal power management.
- */
-void
-nemo_uninhibit_power_manager (gint cookie)
-{
-	GDBusConnection *connection;
-	GVariant *result;
-	GError *error = NULL;
-
-	g_return_if_fail (cookie > 0);
-
-	connection = get_dbus_connection ();
-
-	if (connection == NULL) {
-		return;
-	}
-
-	result = g_dbus_connection_call_sync (connection,
-					      GSM_NAME,
-					      GSM_PATH,
-					      GSM_INTERFACE,
-					      "Uninhibit",
-					      g_variant_new ("(u)", (guint) cookie),
-					      NULL,
-					      G_DBUS_CALL_FLAGS_NO_AUTO_START,
-					      -1,
-					      NULL,
-					      &error);
-
-	if (result == NULL) {
-		g_warning ("Could not uninhibit power management: %s", error->message);
-		g_error_free (error);
-		return;
-	}
-
-	g_variant_unref (result);
 }
 
 /* Returns TRUE if the file is in XDG_DATA_DIRS or
@@ -1162,7 +1118,7 @@ nemo_is_in_system_dir (GFile *file)
 		g_free (gnome2);
 	}
 	g_free (path);
-	
+
 	return res;
 }
 
@@ -1207,13 +1163,8 @@ nemo_trashed_files_get_original_directories (GList *files,
 			*unhandled_files = g_list_append (*unhandled_files, nemo_file_ref (file));
 		}
 
-		if (original_file != NULL) {
-			nemo_file_unref (original_file);
-		}
-
-		if (original_dir != NULL) {
-			nemo_file_unref (original_dir);
-		}
+		nemo_file_unref (original_file);
+		nemo_file_unref (original_dir);
 	}
 
 	return directories;
@@ -1235,15 +1186,94 @@ locations_from_file_list (GList *file_list)
 	return g_list_reverse (ret);
 }
 
+#if GLIB_CHECK_VERSION(2,36,0)
+typedef struct {
+	GHashTable *original_dirs_hash;
+	GtkWindow  *parent_window;
+} RestoreFilesData;
+
+static void
+ensure_dirs_task_ready_cb (GObject *_source,
+			   GAsyncResult *res,
+			   gpointer user_data)
+{
+	NemoFile *original_dir;
+	GFile *original_dir_location;
+	GList *original_dirs, *files, *locations, *l;
+	RestoreFilesData *data = user_data;
+
+	original_dirs = g_hash_table_get_keys (data->original_dirs_hash);
+	for (l = original_dirs; l != NULL; l = l->next) {
+		original_dir = NEMO_FILE (l->data);
+		original_dir_location = nemo_file_get_location (original_dir);
+
+		files = g_hash_table_lookup (data->original_dirs_hash, original_dir);
+		locations = locations_from_file_list (files);
+
+		nemo_file_operations_move
+			(locations, NULL,
+			 original_dir_location,
+			 data->parent_window,
+			 NULL, NULL);
+
+		g_list_free_full (locations, g_object_unref);
+		g_object_unref (original_dir_location);
+	}
+
+	g_list_free (original_dirs);
+
+	g_hash_table_unref (data->original_dirs_hash);
+	g_slice_free (RestoreFilesData, data);
+}
+
+static void
+ensure_dirs_task_thread_func (GTask *task,
+			      gpointer source,
+			      gpointer task_data,
+			      GCancellable *cancellable)
+{
+	RestoreFilesData *data = task_data;
+	NemoFile *original_dir;
+	GFile *original_dir_location;
+	GList *original_dirs, *l;
+
+	original_dirs = g_hash_table_get_keys (data->original_dirs_hash);
+	for (l = original_dirs; l != NULL; l = l->next) {
+		original_dir = NEMO_FILE (l->data);
+		original_dir_location = nemo_file_get_location (original_dir);
+
+		g_file_make_directory_with_parents (original_dir_location, cancellable, NULL);
+		g_object_unref (original_dir_location);
+	}
+
+	g_task_return_pointer (task, NULL, NULL);
+}
+
+static void
+restore_files_ensure_parent_directories (GHashTable *original_dirs_hash,
+					 GtkWindow  *parent_window)
+{
+	RestoreFilesData *data;
+	GTask *ensure_dirs_task;
+
+	data = g_slice_new0 (RestoreFilesData);
+	data->parent_window = parent_window;
+	data->original_dirs_hash = g_hash_table_ref (original_dirs_hash);
+
+	ensure_dirs_task = g_task_new (NULL, NULL, ensure_dirs_task_ready_cb, data);
+	g_task_set_task_data (ensure_dirs_task, data, NULL);
+	g_task_run_in_thread (ensure_dirs_task, ensure_dirs_task_thread_func);
+	g_object_unref (ensure_dirs_task);
+}
+#endif // GLIB_CHECK_VERSION(2,36,0)
+
 void
 nemo_restore_files_from_trash (GList *files,
 				   GtkWindow *parent_window)
 {
-	NemoFile *file, *original_dir;
+	NemoFile *file;
 	GHashTable *original_dirs_hash;
-	GList *original_dirs, *unhandled_files;
-	GFile *original_dir_location;
-	GList *locations, *l;
+	GList *unhandled_files, *l;
 	char *message, *file_name;
 
 	original_dirs_hash = nemo_trashed_files_get_original_directories (files, &unhandled_files);
@@ -1251,7 +1281,7 @@ nemo_restore_files_from_trash (GList *files,
 	for (l = unhandled_files; l != NULL; l = l->next) {
 		file = NEMO_FILE (l->data);
 		file_name = nemo_file_get_display_name (file);
-		message = g_strdup_printf (_("Could not determine original location of \"%s\" "), file_name);
+		message = g_strdup_printf (_("Could not determine original location of “%s” "), file_name);
 		g_free (file_name);
 
 		eel_show_warning_dialog (message,
@@ -1261,13 +1291,17 @@ nemo_restore_files_from_trash (GList *files,
 	}
 
 	if (original_dirs_hash != NULL) {
-		original_dirs = g_hash_table_get_keys (original_dirs_hash);
+#if GLIB_CHECK_VERSION(2,36,0)
+		restore_files_ensure_parent_directories (original_dirs_hash, parent_window);
+		g_hash_table_unref (original_dirs_hash);
+#else
+		GList *original_dirs = g_hash_table_get_keys (original_dirs_hash);
 		for (l = original_dirs; l != NULL; l = l->next) {
-			original_dir = NEMO_FILE (l->data);
-			original_dir_location = nemo_file_get_location (original_dir);
+			NemoFile *original_dir = NEMO_FILE (l->data);
+			GFile *original_dir_location = nemo_file_get_location (original_dir);
 
 			files = g_hash_table_lookup (original_dirs_hash, original_dir);
-			locations = locations_from_file_list (files);
+			GList *locations = locations_from_file_list (files);
 
 			nemo_file_operations_move
 				(locations, NULL, 
@@ -1281,6 +1315,7 @@ nemo_restore_files_from_trash (GList *files,
 
 		g_list_free (original_dirs);
 		g_hash_table_destroy (original_dirs_hash);
+#endif 
 	}
 
 	nemo_file_list_unref (unhandled_files);
@@ -1364,6 +1399,48 @@ nemo_get_cached_x_content_types_for_mount (GMount *mount)
 	}
 
 	return NULL;
+}
+
+gboolean
+nemo_file_selection_equal (GList *selection_a,
+			       GList *selection_b)
+{
+	GList *al, *bl;
+	gboolean selection_matches;
+
+	if (selection_a == NULL || selection_b == NULL) {
+		return (selection_a == selection_b);
+	}
+
+	if (g_list_length (selection_a) != g_list_length (selection_b)) {
+		return FALSE;
+	}
+
+	selection_matches = TRUE;
+
+	for (al = selection_a; al; al = al->next) {
+		GFile *a_location = nemo_file_get_location (NEMO_FILE (al->data));
+		gboolean found = FALSE;
+
+		for (bl = selection_b; bl; bl = bl->next) {
+			GFile *b_location = nemo_file_get_location (NEMO_FILE (bl->data));
+			found = g_file_equal (b_location, a_location);
+			g_object_unref (b_location);
+
+			if (found) {
+				break;
+			}
+		}
+
+		selection_matches = found;
+		g_object_unref (a_location);
+
+		if (!selection_matches) {
+			break;
+		}
+	}
+
+	return selection_matches;
 }
 
 #if !defined (NEMO_OMIT_SELF_CHECK)

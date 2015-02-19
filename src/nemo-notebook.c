@@ -29,11 +29,11 @@
 #include "nemo-notebook.h"
 
 #include "nemo-window.h"
-#include "nemo-window-manage-views.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
 #include "nemo-window-slot-dnd.h"
 
+#include <eel/eel-vfs-extensions.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
 #include <gtk/gtk.h>
@@ -41,8 +41,6 @@
 #define AFTER_ALL_TABS -1
 #define NOT_IN_APP_WINDOWS -2
 
-static void nemo_notebook_init		 (NemoNotebook *notebook);
-static void nemo_notebook_class_init	 (NemoNotebookClass *klass);
 static int  nemo_notebook_insert_page	 (GtkNotebook *notebook,
 					  GtkWidget *child,
 					  GtkWidget *tab_label,
@@ -277,7 +275,7 @@ nemo_notebook_sync_loading (NemoNotebook *notebook,
 				NemoWindowSlot *slot)
 {
 	GtkWidget *tab_label, *spinner, *icon;
-	gboolean active;
+	gboolean active, allow_stop;
 
 	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
 	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
@@ -292,11 +290,13 @@ nemo_notebook_sync_loading (NemoNotebook *notebook,
 
 	active = FALSE;
 	g_object_get (spinner, "active", &active, NULL);
-	if (active == slot->allow_stop)	{
+	allow_stop = nemo_window_slot_get_allow_stop (slot);
+
+	if (active == allow_stop) {
 		return;
 	}
 
-	if (slot->allow_stop) {
+	if (allow_stop) {
 		gtk_widget_hide (icon);
 		gtk_widget_show (spinner);
 		gtk_spinner_start (GTK_SPINNER (spinner));
@@ -313,6 +313,8 @@ nemo_notebook_sync_tab_label (NemoNotebook *notebook,
 {
 	GtkWidget *hbox, *label;
 	char *location_name;
+	GFile *location;
+	const gchar *title_name;
 
 	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
 	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
@@ -323,14 +325,20 @@ nemo_notebook_sync_tab_label (NemoNotebook *notebook,
 	label = GTK_WIDGET (g_object_get_data (G_OBJECT (hbox), "label"));
 	g_return_if_fail (GTK_IS_WIDGET (label));
 
-	gtk_label_set_text (GTK_LABEL (label), slot->title);
+	gtk_label_set_text (GTK_LABEL (label), nemo_window_slot_get_title (slot));
+	location = nemo_window_slot_get_location (slot);
 
-	if (slot->location != NULL) {
+	if (location != NULL) {
 		/* Set the tooltip on the label's parent (the tab label hbox),
 		 * so it covers all of the tab label.
 		 */
-		location_name = g_file_get_parse_name (slot->location);
-		gtk_widget_set_tooltip_text (gtk_widget_get_parent (label), location_name);
+		location_name = g_file_get_parse_name (location);
+		title_name = nemo_window_slot_get_title (slot);
+		if (g_str_has_prefix (location_name, EEL_SEARCH_URI)) {
+			gtk_widget_set_tooltip_text (gtk_widget_get_parent (label), title_name);
+		} else {
+			gtk_widget_set_tooltip_text (gtk_widget_get_parent (label), location_name);
+		}
 		g_free (location_name);
 	} else {
 		gtk_widget_set_tooltip_text (gtk_widget_get_parent (label), NULL);
@@ -397,6 +405,7 @@ build_tab_label (NemoNotebook *nb, NemoWindowSlot *slot)
 	gtk_box_pack_start (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
 	gtk_widget_show (close_button);
 
+	g_object_set_data (G_OBJECT (hbox), "nemo-notebook-tab", GINT_TO_POINTER (1));
 	nemo_drag_slot_proxy_init (hbox, NULL, slot);
 
 	g_object_set_data (G_OBJECT (hbox), "label", label);
@@ -457,16 +466,8 @@ nemo_notebook_add_tab (NemoNotebook *notebook,
 	nemo_notebook_sync_tab_label (notebook, slot);
 	nemo_notebook_sync_loading (notebook, slot);
 
-
-	/* FIXME gtk bug! */
-	/* FIXME: this should be fixed in gtk 2.12; check & remove this! */
-	/* The signal handler may have reordered the tabs */
-	position = gtk_notebook_page_num (gnotebook, GTK_WIDGET (slot));
-
-	if (jump_to)
-	{
+	if (jump_to) {
 		gtk_notebook_set_current_page (gnotebook, position);
-
 	}
 
 	return position;
@@ -503,26 +504,6 @@ nemo_notebook_reorder_child_relative (NemoNotebook *notebook,
 	page = gtk_notebook_get_nth_page (gnotebook, page_num);
 	g_return_if_fail (page != NULL);
 	gtk_notebook_reorder_child (gnotebook, page, page_num + offset);
-}
-
-void
-nemo_notebook_set_current_page_relative (NemoNotebook *notebook,
-					     int offset)
-{
-	GtkNotebook *gnotebook;
-	int page;
-
-	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
-
-	if (!nemo_notebook_can_set_current_page_relative (notebook, offset)) {
-		return;
-	}
-
-	gnotebook = GTK_NOTEBOOK (notebook);
-
-	page = gtk_notebook_get_current_page (gnotebook);
-	gtk_notebook_set_current_page (gnotebook, page + offset);
-
 }
 
 static gboolean
@@ -567,3 +548,49 @@ nemo_notebook_can_set_current_page_relative (NemoNotebook *notebook,
 		notebook, page_num, offset);
 }
 
+void
+nemo_notebook_next_page (NemoNotebook *notebook)
+{
+	gint current_page, n_pages;
+
+	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
+
+	current_page = gtk_notebook_get_current_page (GTK_NOTEBOOK (notebook));
+	n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
+
+	if (current_page < n_pages - 1)
+		gtk_notebook_next_page (GTK_NOTEBOOK (notebook));
+	else {
+		gboolean  wrap_around;
+
+		g_object_get (gtk_widget_get_settings (GTK_WIDGET (notebook)),
+			      "gtk-keynav-wrap-around", &wrap_around,
+			      NULL);
+
+		if (wrap_around)
+			gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), 0);
+	}
+}
+
+void
+nemo_notebook_prev_page (NemoNotebook *notebook)
+{
+	gint current_page;
+
+	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
+
+	current_page = gtk_notebook_get_current_page (GTK_NOTEBOOK (notebook));
+
+	if (current_page > 0)
+		gtk_notebook_prev_page (GTK_NOTEBOOK (notebook));
+	else {
+		gboolean  wrap_around;
+
+		g_object_get (gtk_widget_get_settings (GTK_WIDGET (notebook)),
+			      "gtk-keynav-wrap-around", &wrap_around,
+			      NULL);
+
+		if (wrap_around)
+			gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), -1);
+	}
+}
