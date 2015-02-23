@@ -11,7 +11,7 @@ libexec_PROGRAMS=				\
 	nemo-convert-metadata		\
 	$(NULL)
 
-INCLUDES =							\
+AM_CPPFLAGS =							\
 	-I$(top_srcdir) 					\
 	-I$(top_builddir)/libnemo-private 			\
 	$(BASE_CFLAGS) 						\

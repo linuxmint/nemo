@@ -2,7 +2,7 @@ NULL=
 
 noinst_LTLIBRARIES=libeel-2.la
 
-INCLUDES =						\
+AM_CPPFLAGS =						\
 	-DG_LOG_DOMAIN=\"Eel\"				\
 	-I$(top_srcdir)					\
 	-I$(top_builddir)				\
