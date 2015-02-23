@@ -2358,9 +2358,6 @@ get_visible_columns (NemoListView *list_view)
 {
 	NemoFile *file;
 	GList *visible_columns;
-	char **ret;
-
-	ret = NULL;
 
 	file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
 
@@ -2381,12 +2378,9 @@ get_visible_columns (NemoListView *list_view)
 		}
 		g_ptr_array_add (res, NULL);
 
-		ret = (char **) g_ptr_array_free (res, FALSE);
 		g_list_free (visible_columns);
-	}
 
-	if (ret != NULL) {
-		return ret;
+		return (char **) g_ptr_array_free (res, FALSE);
 	}
 
 	return get_default_visible_columns (list_view);
@@ -2422,9 +2416,6 @@ get_column_order (NemoListView *list_view)
 {
 	NemoFile *file;
 	GList *column_order;
-	char **ret;
-
-	ret = NULL;
 
 	file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
 
@@ -2445,12 +2436,9 @@ get_column_order (NemoListView *list_view)
 		}
 		g_ptr_array_add (res, NULL);
 
-		ret = (char **) g_ptr_array_free (res, FALSE);
 		g_list_free (column_order);
-	}
 
-	if (ret != NULL) {
-		return ret;
+		return (char **) g_ptr_array_free (res, FALSE);
 	}
 
 	return get_default_column_order (list_view);
