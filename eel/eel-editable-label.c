@@ -3068,7 +3068,7 @@ popup_targets_received (GtkClipboard     *clipboard,
 			GtkSelectionData *data,
 			gpointer          user_data)
 {
-  GtkWidget *menuitem, *submenu;
+  GtkWidget *menuitem;
   gboolean have_selection;
   gboolean clipboard_contains_text;
   PopupInfo *info;
@@ -3110,17 +3110,7 @@ popup_targets_received (GtkClipboard     *clipboard,
       menuitem = gtk_separator_menu_item_new ();
       gtk_widget_show (menuitem);
       gtk_menu_shell_append (GTK_MENU_SHELL (label->popup_menu), menuitem);
-      
-      menuitem = gtk_menu_item_new_with_label (_("Input Methods"));
-      gtk_widget_show (menuitem);
-      submenu = gtk_menu_new ();
-      gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), submenu);
-      
-      gtk_menu_shell_append (GTK_MENU_SHELL (label->popup_menu), menuitem);
   
-      gtk_im_multicontext_append_menuitems (GTK_IM_MULTICONTEXT (label->im_context),
-					    GTK_MENU_SHELL (submenu));
-
       g_signal_emit (label,
 		     signals[POPULATE_POPUP], 0,
 		     label->popup_menu);

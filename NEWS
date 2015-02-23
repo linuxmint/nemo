@@ -1,3 +1,14 @@
+Nemo merged with changes in Nautilus 3.9.3:
+
+Changes:
+* Shade rubberbands on the desktop using the wallpaper color (Ted Gould)
+* Enter location bar upon entering "~" (Garrett Regier)
+* Use Shift+Ctrl+Z, not Ctrl+Y, for Redo (Adam Dingle)
+* Remove multicontext menu items from editable entries
+
+Revert:
+* Port to GtkPlacesSidebar (Federico Mena Quintero)
+
 Nemo merged with changes in Nautilus 3.8.2:
 
 Changes:
