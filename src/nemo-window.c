@@ -2149,6 +2149,9 @@ nemo_window_class_init (NemoWindowClass *class)
 				      "go-up", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_F5, 0,
 				      "reload", 0);
+	gtk_binding_entry_add_signal (binding_set, GDK_KEY_asciitilde, 0,
+				      "prompt-for-location", 1,
+				      G_TYPE_STRING, "~");
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_slash, 0,
 				      "prompt-for-location", 1,
 				      G_TYPE_STRING, "/");
