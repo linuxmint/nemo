@@ -123,7 +123,9 @@ nemo_query_editor_handle_event (NemoQueryEditor *editor,
 	}
 
 	/* never handle these events */
-	if (event->keyval == GDK_KEY_slash || event->keyval == GDK_KEY_Delete) {
+	if (event->keyval == GDK_KEY_slash ||
+	    event->keyval != GDK_KEY_KP_Divide ||
+	    event->keyval == GDK_KEY_Delete) {
 		return FALSE;
 	}
 
