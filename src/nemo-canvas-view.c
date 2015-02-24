@@ -148,6 +148,11 @@ static const SortCriterion sort_criteria[] = {
 		"Sort by Modification Date"
 	},
 	{
+		NEMO_FILE_SORT_BY_ATIME,
+		"access date",
+		"Sort by Access Date"
+	},
+	{
 		NEMO_FILE_SORT_BY_TRASHED_TIME,
 		"trashed",
 		NEMO_ACTION_SORT_TRASH_TIME
@@ -657,7 +662,7 @@ get_default_sort_order (NemoFile *file, gboolean *reversed)
 		}
 
 		retval = CLAMP (default_sort_order, NEMO_FILE_SORT_BY_DISPLAY_NAME,
-				NEMO_FILE_SORT_BY_MTIME);
+				NEMO_FILE_SORT_BY_ATIME);
 	}
 
 	return retval;
@@ -1380,6 +1385,10 @@ static const GtkRadioActionEntry arrange_radio_entries[] = {
     N_("By Modification _Date"), NULL,
     N_("Keep icons sorted by modification date in rows"),
     NEMO_FILE_SORT_BY_MTIME },
+  { "Sort by Access Date", NULL,
+    N_("By _Access Date"), NULL,
+    N_("Keep icons sorted by access date in rows"),
+    NEMO_FILE_SORT_BY_ATIME },
   { NEMO_ACTION_SORT_TRASH_TIME, NULL,
     N_("By T_rash Time"), NULL,
     N_("Keep icons sorted by trash time in rows"),
