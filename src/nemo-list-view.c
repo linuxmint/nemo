@@ -1929,6 +1929,49 @@ filename_cell_data_func (GtkTreeViewColumn *column,
 		      NULL);
 }
 
+static void
+where_cell_data_func (GtkTreeViewColumn *column,
+                      GtkCellRenderer   *renderer,
+                      GtkTreeModel      *model,
+                      GtkTreeIter       *iter,
+                      NemoListView  *view)
+{
+	NemoDirectory *directory;
+	NemoQuery *query;
+	NemoFile *file;
+	GFile *location, *file_location;
+	char *location_uri, *relative, *relative_utf8;
+
+	directory = nemo_view_get_model (NEMO_VIEW (view));
+	if (!NEMO_IS_SEARCH_DIRECTORY (directory)) {
+		return;
+	}
+
+	query = nemo_search_directory_get_query (NEMO_SEARCH_DIRECTORY (directory));
+	location_uri = nemo_query_get_location (query);
+	location = g_file_new_for_uri (location_uri);
+
+	gtk_tree_model_get (model, iter,
+	                    NEMO_LIST_MODEL_FILE_COLUMN, &file,
+	                    -1);
+	file_location = nemo_file_get_location (file);
+
+	relative = g_file_get_relative_path (location, file_location);
+	relative_utf8 = g_filename_display_name (relative);
+
+	g_object_set (G_OBJECT (renderer),
+	              "text", relative_utf8,
+	              NULL);
+
+	g_free (relative_utf8);
+	g_free (relative);
+	g_object_unref (file_location);
+	nemo_file_unref (file);
+	g_object_unref (location);
+	g_free (location_uri);
+	g_object_unref (query);
+}
+
 static gboolean
 focus_in_event_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
 {
@@ -2143,6 +2186,12 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_visible (column, TRUE);
 			gtk_tree_view_column_set_reorderable (column, TRUE);
 			gtk_tree_view_column_set_sort_order (column, sort_order);
+
+			if (!strcmp (name, "where")) {
+				gtk_tree_view_column_set_cell_data_func (column, cell,
+				                                         (GtkTreeCellDataFunc) where_cell_data_func,
+				                                         view, NULL);
+			}
 		}
 		g_free (name);
 		g_free (label);
