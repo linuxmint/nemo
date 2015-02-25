@@ -146,7 +146,7 @@ validate_uri (NemoConnectServerDialog *dialog,
 			g_set_error_literal (error,
 					     G_IO_ERROR,
 					     G_IO_ERROR_NOT_SUPPORTED,
-					     _("Don't recognize this file server type."));
+					     _("This file server type is not recognized."));
 		}
 		g_free (scheme);
 	} else {
