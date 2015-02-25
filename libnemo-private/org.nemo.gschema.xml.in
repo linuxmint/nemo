@@ -166,14 +166,9 @@
       <_description>If set to true, then Nemo will ask for confirmation when  you attempt to delete files, or empty the Trash.</_description>
     </key>
     <key name="enabled-menu-items" type="i">
-      <default>011111101</default>
-      <_summary>A binary flag of entries in the right click menu of an item</_summary>
-      <_description>9 bits are read ("Open With", "Duplicate", "Make Link", "Copy to", "Move To", "Trash", "Delete", "Open in Terminal", "Open as Root"), set "0" to disable, and "1" to enable from left to right, e.g if you want only "Delete" and "Open With" enabled you would enter "001000001", "Delete" being the third "1", and "Open With" the last "1"</_description>
-    </key>
-    <key name="enabled-menu-empty" type="i">
-      <default>0</default>
-      <_summary>A list of the entries enabled when clicking on empty</_summary>
-      <_description>Which entries are enabled in the context menu when right clicking on an empty spot</_description>
+      <default>262143</default>
+      <_summary>An int flag for the entries enabled in the right click menu</_summary>
+      <_description>18 bits are read ("Show Hidden Files", "Normal Zoom", "Zoom Out", "Zoom In", "New Folder", "Arrange Items", "New Document", "Open in New Window", "Open as Root", "Open in Terminal", "Open in New Tab" "Delete", "Trash", "Move To", "Copy to", "Make Link", "Duplicate", "Rename") in decimal form converted from a binary integer (111111111111111111)</_description>
     </key>
     <key name="swap-trash-delete" type="b">
       <default>false</default>

@@ -1548,6 +1548,7 @@ nemo_window_initialize_menus (NemoWindow *window)
 	GtkUIManager *ui_manager;
 	GtkAction *action;
 	gint i;
+    gint context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
 
 	if (window->details->ui_manager == NULL){
         window->details->ui_manager = gtk_ui_manager_new ();
@@ -1578,7 +1579,14 @@ nemo_window_initialize_menus (NemoWindow *window)
   	action = gtk_action_group_get_action (action_group, NEMO_ACTION_EDIT_LOCATION);
   	g_object_set (action, "short_label", _("_Location"), NULL);
 
-	action = gtk_action_group_get_action (action_group, NEMO_ACTION_SHOW_HIDDEN_FILES);
+    action = gtk_action_group_get_action (action_group, NEMO_ACTION_SHOW_HIDDEN_FILES);
+                              
+    if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_HIDDEN) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 	g_signal_handlers_block_by_func (action, action_show_hidden_files_callback, window);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
 				      g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));

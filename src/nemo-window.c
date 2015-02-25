@@ -1594,6 +1594,8 @@ nemo_window_sync_zoom_widgets (NemoWindow *window)
 	gboolean supports_zooming;
 	gboolean can_zoom, can_zoom_in, can_zoom_out;
 	NemoZoomLevel zoom_level;
+    gint context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
+
 
 	slot = nemo_window_get_active_slot (window);
 	view = slot->content_view;
@@ -1616,20 +1618,35 @@ nemo_window_sync_zoom_widgets (NemoWindow *window)
 
 	action_group = nemo_window_get_main_action_group (window);
 
-	action = gtk_action_group_get_action (action_group,
-					      NEMO_ACTION_ZOOM_IN);
-	gtk_action_set_visible (action, supports_zooming);
-	gtk_action_set_sensitive (action, can_zoom_in);
-	
-	action = gtk_action_group_get_action (action_group,
-					      NEMO_ACTION_ZOOM_OUT);
-	gtk_action_set_visible (action, supports_zooming);
-	gtk_action_set_sensitive (action, can_zoom_out);
+    /* Zoom in context item */
+    action = gtk_action_group_get_action (action_group, NEMO_ACTION_ZOOM_IN);
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_ZOOM_IN) && supports_zooming) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+    gtk_action_set_sensitive (action, can_zoom_in);
+    
+    /* Zoom out context item */
+    action = gtk_action_group_get_action (action_group, NEMO_ACTION_ZOOM_OUT);
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_ZOOM_OUT) && supports_zooming) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+    gtk_action_set_sensitive (action, can_zoom_out);
 
-	action = gtk_action_group_get_action (action_group,
-					      NEMO_ACTION_ZOOM_NORMAL);
-	gtk_action_set_visible (action, supports_zooming);
-	gtk_action_set_sensitive (action, can_zoom);
+    /* Zoom Normal context item */
+    action = gtk_action_group_get_action (action_group, NEMO_ACTION_ZOOM_NORMAL);
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_ZOOM_NORM) && supports_zooming) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+    gtk_action_set_sensitive (action, can_zoom);
 
     nemo_status_bar_sync_zoom_widgets (NEMO_STATUS_BAR (window->details->nemo_status_bar));
 }
