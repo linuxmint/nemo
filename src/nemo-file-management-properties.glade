@@ -267,21 +267,6 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="helpbutton1">
-                <property name="label">gtk-help</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="receives_default">False</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkButton" id="closebutton1">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
@@ -3167,7 +3152,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                       <object class="GtkBox" id="vbox45">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="orientation">vertical</property>
+                                        <property name="halign">start</property>
                                         <child>
                                           <object class="GtkBox" id="vbox46">
                                             <property name="visible">True</property>
@@ -3186,30 +3171,34 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="halign">start</property>
+                                                    <property name="valign">start</property>
                                                     <property name="label_xalign">0</property>
                                                     <property name="shadow_type">in</property>
                                                     <child>
                                                       <object class="GtkAlignment" id="alignment23">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
-                                                        <property name="left_padding">12</property>
-                                                        <property name="right_padding">12</property>
                                                         <child>
                                                           <object class="GtkBox" id="vbox47">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
                                                             <property name="orientation">vertical</property>
+                                                            <property name="spacing">4</property>
                                                             <child>
                                                             <object class="GtkBox" id="box3">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_top">4</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="new_folder_toggle">
-                                                            <property name="label" translatable="yes">
-</property>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle12">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
                                                             <property name="xalign">0</property>
                                                             <property name="draw_indicator">True</property>
                                                             </object>
@@ -3223,7 +3212,9 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <object class="GtkImage" id="image_1">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
                                                             <property name="icon_name">folder-new</property>
+                                                            <property name="icon_size">1</property>
                                                             </object>
                                                             <packing>
                                                             <property name="expand">False</property>
@@ -3236,6 +3227,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">13</property>
                                                             <property name="label" translatable="yes">Create New Folder</property>
                                                             </object>
                                                             <packing>
@@ -3255,13 +3248,14 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <object class="GtkBox" id="box4">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="new_document_toggle">
-                                                            <property name="label" translatable="yes">
-</property>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle11">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
                                                             <property name="xalign">0</property>
                                                             <property name="draw_indicator">True</property>
                                                             </object>
@@ -3275,7 +3269,9 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <object class="GtkImage" id="image_2">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
                                                             <property name="stock">gtk-new</property>
+                                                            <property name="icon_size">1</property>
                                                             </object>
                                                             <packing>
                                                             <property name="expand">False</property>
@@ -3288,6 +3284,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">13</property>
                                                             <property name="label" translatable="yes">Create New Document</property>
                                                             </object>
                                                             <packing>
@@ -3300,6 +3298,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <object class="GtkArrow" id="arrow1">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
                                                             </object>
                                                             <packing>
                                                             <property name="expand">False</property>
@@ -3316,16 +3315,156 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             </packing>
                                                             </child>
                                                             <child>
-                                                            <object class="GtkBox" id="box5">
+                                                            <object class="GtkSeparator" id="separator18">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="arrange_toggle">
-                                                            <property name="label" translatable="yes">
-</property>
+                                                            <object class="GtkBox" id="box7">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle10">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkImage" id="image_3">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="icon_name">utilities-terminal</property>
+                                                            <property name="icon_size">1</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_5">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">13</property>
+                                                            <property name="label" translatable="yes">Open in Terminal</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">3</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkBox" id="box8">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle9">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkImage" id="image_4">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="stock">gtk-dialog-authentication</property>
+                                                            <property name="icon_size">1</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_6">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">13</property>
+                                                            <property name="label" translatable="yes">Open as Root</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">4</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkSeparator" id="separator17">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">5</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkBox" id="box5">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle5">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
                                                             <property name="xalign">0</property>
                                                             <property name="draw_indicator">True</property>
                                                             </object>
@@ -3340,7 +3479,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="halign">start</property>
-                                                            <property name="margin_left">23</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">29</property>
                                                             <property name="label" translatable="yes">Arrange Items</property>
                                                             </object>
                                                             <packing>
@@ -3353,6 +3493,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <object class="GtkArrow" id="arrow2">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
                                                             </object>
                                                             <packing>
                                                             <property name="expand">False</property>
@@ -3365,31 +3506,66 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <packing>
                                                             <property name="expand">False</property>
                                                             <property name="fill">True</property>
-                                                            <property name="position">2</property>
+                                                            <property name="position">6</property>
                                                             </packing>
                                                             </child>
                                                             <child>
-                                                            <object class="GtkSeparator" id="separator17">
+                                                            <object class="GtkBox" id="box9">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle6">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
                                                             </object>
                                                             <packing>
                                                             <property name="expand">False</property>
                                                             <property name="fill">True</property>
-                                                            <property name="position">3</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_7">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">29</property>
+                                                            <property name="label" translatable="yes">Organize by Name</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">7</property>
                                                             </packing>
                                                             </child>
                                                             <child>
                                                             <object class="GtkBox" id="box6">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="hidden toggle">
-                                                            <property name="label" translatable="yes">
-</property>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle7">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
                                                             <property name="xalign">0</property>
                                                             <property name="draw_indicator">True</property>
                                                             </object>
@@ -3404,60 +3580,9 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="halign">start</property>
-                                                            <property name="margin_left">23</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">29</property>
                                                             <property name="label" translatable="yes">Show Hidden Files</property>
-                                                            </object>
-                                                            <packing>
-                                                            <property name="expand">False</property>
-                                                            <property name="fill">True</property>
-                                                            <property name="position">1</property>
-                                                            </packing>
-                                                            </child>
-                                                            </object>
-                                                            <packing>
-                                                            <property name="expand">False</property>
-                                                            <property name="fill">True</property>
-                                                            <property name="position">4</property>
-                                                            </packing>
-                                                            </child>
-                                                            <child>
-                                                            <object class="GtkBox" id="box7">
-                                                            <property name="visible">True</property>
-                                                            <property name="can_focus">False</property>
-                                                            <child>
-                                                            <object class="GtkCheckButton" id="zoom_in_toggle">
-                                                            <property name="label" translatable="yes">
-</property>
-                                                            <property name="visible">True</property>
-                                                            <property name="can_focus">True</property>
-                                                            <property name="receives_default">False</property>
-                                                            <property name="xalign">0</property>
-                                                            <property name="draw_indicator">True</property>
-                                                            </object>
-                                                            <packing>
-                                                            <property name="expand">False</property>
-                                                            <property name="fill">True</property>
-                                                            <property name="position">0</property>
-                                                            </packing>
-                                                            </child>
-                                                            <child>
-                                                            <object class="GtkImage" id="image_3">
-                                                            <property name="visible">True</property>
-                                                            <property name="can_focus">False</property>
-                                                            <property name="stock">gtk-zoom-in</property>
-                                                            </object>
-                                                            <packing>
-                                                            <property name="expand">False</property>
-                                                            <property name="fill">True</property>
-                                                            <property name="position">1</property>
-                                                            </packing>
-                                                            </child>
-                                                            <child>
-                                                            <object class="GtkLabel" id="label_5">
-                                                            <property name="visible">True</property>
-                                                            <property name="can_focus">False</property>
-                                                            <property name="halign">start</property>
-                                                            <property name="label" translatable="yes">Zoom In</property>
                                                             </object>
                                                             <packing>
                                                             <property name="expand">False</property>
@@ -3469,20 +3594,34 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <packing>
                                                             <property name="expand">False</property>
                                                             <property name="fill">True</property>
-                                                            <property name="position">5</property>
+                                                            <property name="position">8</property>
                                                             </packing>
                                                             </child>
                                                             <child>
-                                                            <object class="GtkBox" id="box9">
+                                                            <object class="GtkSeparator" id="separator19">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">9</property>
+                                                            </packing>
+                                                            </child>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="zoom_out_toggle">
-                                                            <property name="label" translatable="yes">
-</property>
+                                                            <object class="GtkBox" id="box10">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_right">12</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle8">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
                                                             <property name="xalign">0</property>
                                                             <property name="draw_indicator">True</property>
                                                             </object>
@@ -3496,7 +3635,9 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <object class="GtkImage" id="image_5">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
-                                                            <property name="stock">gtk-zoom-out</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="stock">gtk-zoom-in</property>
+                                                            <property name="icon_size">1</property>
                                                             </object>
                                                             <packing>
                                                             <property name="expand">False</property>
@@ -3505,11 +3646,13 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             </packing>
                                                             </child>
                                                             <child>
-                                                            <object class="GtkLabel" id="label_7">
+                                                            <object class="GtkLabel" id="label_8">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="halign">start</property>
-                                                            <property name="label" translatable="yes">Zoom Out</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">13</property>
+                                                            <property name="label" translatable="yes">Zoom In/Out/Normal Size</property>
                                                             </object>
                                                             <packing>
                                                             <property name="expand">False</property>
@@ -3521,78 +3664,8 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <packing>
                                                             <property name="expand">False</property>
                                                             <property name="fill">True</property>
-                                                            <property name="position">6</property>
+                                                            <property name="position">10</property>
                                                             </packing>
-                                                            </child>
-                                                            <child>
-                                                            <object class="GtkBox" id="box8">
-                                                            <property name="visible">True</property>
-                                                            <property name="can_focus">False</property>
-                                                            <child>
-                                                            <object class="GtkCheckButton" id="normal_zoom_toggle">
-                                                            <property name="label" translatable="yes">
-</property>
-                                                            <property name="visible">True</property>
-                                                            <property name="can_focus">True</property>
-                                                            <property name="receives_default">False</property>
-                                                            <property name="xalign">0</property>
-                                                            <property name="draw_indicator">True</property>
-                                                            </object>
-                                                            <packing>
-                                                            <property name="expand">False</property>
-                                                            <property name="fill">True</property>
-                                                            <property name="position">0</property>
-                                                            </packing>
-                                                            </child>
-                                                            <child>
-                                                            <object class="GtkImage" id="image_4">
-                                                            <property name="visible">True</property>
-                                                            <property name="can_focus">False</property>
-                                                            <property name="icon_name">zoom-original</property>
-                                                            </object>
-                                                            <packing>
-                                                            <property name="expand">False</property>
-                                                            <property name="fill">True</property>
-                                                            <property name="position">1</property>
-                                                            </packing>
-                                                            </child>
-                                                            <child>
-                                                            <object class="GtkLabel" id="label_6">
-                                                            <property name="visible">True</property>
-                                                            <property name="can_focus">False</property>
-                                                            <property name="halign">start</property>
-                                                            <property name="label" translatable="yes">Normal Size</property>
-                                                            </object>
-                                                            <packing>
-                                                            <property name="expand">False</property>
-                                                            <property name="fill">True</property>
-                                                            <property name="position">2</property>
-                                                            </packing>
-                                                            </child>
-                                                            </object>
-                                                            <packing>
-                                                            <property name="expand">False</property>
-                                                            <property name="fill">True</property>
-                                                            <property name="position">7</property>
-                                                            </packing>
-                                                            </child>
-                                                            <child>
-                                                            <placeholder/>
-                                                            </child>
-                                                            <child>
-                                                            <placeholder/>
-                                                            </child>
-                                                            <child>
-                                                            <placeholder/>
-                                                            </child>
-                                                            <child>
-                                                            <placeholder/>
-                                                            </child>
-                                                            <child>
-                                                            <placeholder/>
-                                                            </child>
-                                                            <child>
-                                                            <placeholder/>
                                                             </child>
                                                           </object>
                                                         </child>
@@ -3610,43 +3683,61 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                 <property name="position">0</property>
                                               </packing>
                                             </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox" id="vbox48">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="border_width">6</property>
+                                            <property name="spacing">6</property>
                                             <child>
-                                              <object class="GtkAlignment" id="alignment25">
+                                              <object class="GtkAlignment" id="alignment24">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
+                                                <property name="halign">start</property>
+                                                <property name="left_padding">40</property>
                                                 <child>
-                                                  <object class="GtkAlignment" id="alignment26">
+                                                  <object class="GtkFrame" id="frame2">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">start</property>
+                                                    <property name="label_xalign">0</property>
+                                                    <property name="shadow_type">in</property>
                                                     <child>
-                                                      <object class="GtkBox" id="vbox48">
+                                                      <object class="GtkAlignment" id="alignment25">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
-                                                        <property name="orientation">vertical</property>
                                                         <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <object class="GtkBox" id="box10">
+                                                          <object class="GtkBox" id="vbox49">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="orientation">vertical</property>
+                                                            <property name="spacing">4</property>
                                                             <child>
-                                                            <object class="GtkLabel" id="label_8">
+                                                            <object class="GtkBox" id="box11">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="halign">start</property>
-                                                            <property name="margin_top">105</property>
-                                                            <property name="label" translatable="yes">&lt;i&gt;Note: You will need to logout for these to take effect&lt;/i&gt;</property>
-                                                            <property name="use_markup">True</property>
-                                                            <style>
-                                                            <class name="dim-label"/>
-                                                            </style>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_top">4</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
                                                             </object>
                                                             <packing>
                                                             <property name="expand">False</property>
@@ -3654,44 +3745,473 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="position">0</property>
                                                             </packing>
                                                             </child>
-                                                          </object>
-                                                          <packing>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_9">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">center</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">29</property>
+                                                            <property name="label" translatable="yes">Open in New Tab</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkBox" id="box12">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_right">30</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_window_toggle">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_10">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">center</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">29</property>
+                                                            <property name="label" translatable="yes">Open in New Window</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkSeparator" id="separator20">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkBox" id="box13">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="duplicate_toggle">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_11">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">center</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">29</property>
+                                                            <property name="label" translatable="yes">Duplicate</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
                                                             <property name="expand">False</property>
                                                             <property name="fill">True</property>
                                                             <property name="position">3</property>
-                                                          </packing>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkSeparator" id="separator21">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">4</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkBox" id="box14">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle1">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_12">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">center</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">29</property>
+                                                            <property name="label" translatable="yes">Make Link</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">5</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkBox" id="box15">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">baseline</property>
+                                                            <property name="valign">start</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle2">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_13">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">center</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">29</property>
+                                                            <property name="label" translatable="yes">Rename...</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">6</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkBox" id="box16">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle3">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_14">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">29</property>
+                                                            <property name="label" translatable="yes">Copy To</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkArrow" id="arrow3">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="pack_type">end</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">7</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkBox" id="box17">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle4">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_15">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">29</property>
+                                                            <property name="label" translatable="yes">Move to</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkArrow" id="arrow4">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="pack_type">end</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">8</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkSeparator" id="separator22">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">9</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkBox" id="box18">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle13">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkImage" id="image_6">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="icon_name">user-trash-full</property>
+                                                            <property name="icon_size">1</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_16">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">13</property>
+                                                            <property name="label" translatable="yes">Move to Trash</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">10</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkBox" id="box19">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="open_new_tab_toggle14">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="xalign">0</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkImage" id="image_7">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="stock">gtk-delete</property>
+                                                            <property name="icon_size">1</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel" id="label_17">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin_left">13</property>
+                                                            <property name="label" translatable="yes">Delete</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">11</property>
+                                                            </packing>
+                                                            </child>
+                                                          </object>
                                                         </child>
                                                       </object>
+                                                    </child>
+                                                    <child type="label_item">
+                                                      <placeholder/>
                                                     </child>
                                                   </object>
                                                 </child>
@@ -3699,14 +4219,14 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                               <packing>
                                                 <property name="expand">False</property>
                                                 <property name="fill">True</property>
-                                                <property name="position">1</property>
+                                                <property name="position">0</property>
                                               </packing>
                                             </child>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">5</property>
+                                            <property name="position">1</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -3762,7 +4282,6 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-11">helpbutton1</action-widget>
       <action-widget response="-7">closebutton1</action-widget>
     </action-widgets>
   </object>

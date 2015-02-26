@@ -53,7 +53,6 @@ enum {
     NEMO_CONTEXT_ITEM_ENABLED_ZOOM_OUT =     (1<<15),  //32768   Done Needs to be restarted to take effect
     NEMO_CONTEXT_ITEM_ENABLED_ZOOM_NORM =    (1<<16),  //65536   Done Needs to be restarted to take effect
     NEMO_CONTEXT_ITEM_ENABLED_HIDDEN =       (1<<17),  //131072  Done Needs to be restarted to take effect
-    
 };
 
 /* Trash options */
