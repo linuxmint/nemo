@@ -31,6 +31,7 @@
 #include "nemo-file-attributes.h"
 #include "nemo-file-private.h"
 #include "nemo-file-utilities.h"
+#include "nemo-keyfile-metadata.h"
 #include <eel/eel-glib-extensions.h>
 #include "nemo-search-directory.h"
 #include <gtk/gtk.h>
@@ -38,7 +39,7 @@
 #include <string.h>
 
 struct NemoSearchDirectoryFileDetails {
-	NemoSearchDirectory *search_directory;
+	gchar *metadata_filename;
 };
 
 G_DEFINE_TYPE(NemoSearchDirectoryFile, nemo_search_directory_file, NEMO_TYPE_FILE);
@@ -164,6 +165,32 @@ search_directory_file_get_where_string (NemoFile *file)
 	return g_strdup (_("Search"));
 }
 
+static void
+search_directory_file_set_metadata (NemoFile *file,
+                                    const char *key,
+                                    const char *value)
+{
+	NemoSearchDirectoryFile *search_file;
+
+	search_file = NEMO_SEARCH_DIRECTORY_FILE (file);
+	nemo_keyfile_metadata_set_string (file,
+	                                      search_file->details->metadata_filename,
+	                                      "directory", key, value);
+}
+
+static void
+search_directory_file_set_metadata_as_list (NemoFile *file,
+                                            const char *key,
+                                            char **value)
+{
+	NemoSearchDirectoryFile *search_file;
+
+	search_file = NEMO_SEARCH_DIRECTORY_FILE (file);
+	nemo_keyfile_metadata_set_stringv (file,
+	                                       search_file->details->metadata_filename,
+	                                       "directory", key, (const gchar **) value);
+}
+
 void
 nemo_search_directory_file_update_display_name (NemoSearchDirectoryFile *search_file)
 {
@@ -202,8 +229,19 @@ static void
 nemo_search_directory_file_init (NemoSearchDirectoryFile *search_file)
 {
 	NemoFile *file;
+	gchar *xdg_dir;
 
 	file = NEMO_FILE (search_file);
+
+	search_file->details = G_TYPE_INSTANCE_GET_PRIVATE (search_file,
+	                                                    NEMO_TYPE_SEARCH_DIRECTORY_FILE,
+	                                                    NemoSearchDirectoryFileDetails);
+
+	xdg_dir = nemo_get_user_directory ();
+	search_file->details->metadata_filename = g_build_filename (xdg_dir,
+	                                                            "search-metadata",
+	                                                            NULL);
+	g_free (xdg_dir);
 
 	file->details->got_file_info = TRUE;
 	file->details->mime_type = eel_ref_str_get_unique ("x-directory/normal");
@@ -225,11 +263,27 @@ nemo_search_directory_file_init (NemoSearchDirectoryFile *search_file)
 }
 
 static void
+nemo_search_directory_file_finalize (GObject *object)
+{
+	NemoSearchDirectoryFile *search_file;
+
+	search_file = NEMO_SEARCH_DIRECTORY_FILE (object);
+
+	g_free (search_file->details->metadata_filename);
+
+	G_OBJECT_CLASS (nemo_search_directory_file_parent_class)->finalize (object);
+}
+
+static void
 nemo_search_directory_file_class_init (NemoSearchDirectoryFileClass *klass)
 {
+	GObjectClass *object_class;
 	NemoFileClass *file_class;
 
+	object_class = G_OBJECT_CLASS (klass);
 	file_class = NEMO_FILE_CLASS (klass);
+
+	object_class->finalize = nemo_search_directory_file_finalize;
 
 	file_class->default_file_type = G_FILE_TYPE_DIRECTORY;
 
@@ -241,4 +295,8 @@ nemo_search_directory_file_class_init (NemoSearchDirectoryFileClass *klass)
 	file_class->get_item_count = search_directory_file_get_item_count;
 	file_class->get_deep_counts = search_directory_file_get_deep_counts;
 	file_class->get_where_string = search_directory_file_get_where_string;
+	file_class->set_metadata = search_directory_file_set_metadata;
+	file_class->set_metadata_as_list = search_directory_file_set_metadata_as_list;
+
+	g_type_class_add_private (object_class, sizeof(NemoSearchDirectoryFileDetails));
 }

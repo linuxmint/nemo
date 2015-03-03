@@ -26,17 +26,8 @@
 
 #include "nemo-desktop-metadata.h"
 
-#include "nemo-directory-notify.h"
-#include "nemo-file-private.h"
 #include "nemo-file-utilities.h"
-
-#include <glib/gstdio.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-static guint save_in_idle_source_id = 0;
+#include "nemo-keyfile-metadata.h"
 
 static gchar *
 get_keyfile_path (void)
@@ -47,94 +38,8 @@ get_keyfile_path (void)
 	retval = g_build_filename (xdg_dir, "desktop-metadata", NULL);
 
 	g_free (xdg_dir);
-	
-	return retval;
-}
-
-static gboolean
-save_in_idle_cb (gpointer data)
-{
-	GKeyFile *keyfile = data;
-	gchar *contents, *filename;
-	gsize length;
-	GError *error = NULL;
-
-	save_in_idle_source_id = 0;
-
-	contents = g_key_file_to_data (keyfile, &length, NULL);
-	filename = get_keyfile_path ();
-
-	if (contents != NULL) {
-		g_file_set_contents (filename,
-				     contents, length,
-				     &error);
-		g_free (contents);
-	}
-
-	if (error != NULL) {
-		g_warning ("Couldn't save the desktop metadata keyfile to disk: %s",
-			   error->message);
-		g_error_free (error);
-	}
-
-	g_free (filename);
-
-	return FALSE;
-}
-
-static void
-save_in_idle (GKeyFile *keyfile)
-{
-	if (save_in_idle_source_id != 0) {
-		g_source_remove (save_in_idle_source_id);
-	}
-
-	save_in_idle_source_id = g_idle_add (save_in_idle_cb, keyfile);
-}
-
-static GKeyFile *
-load_metadata_keyfile (void)
-{
-  	GKeyFile *retval;
-	GError *error = NULL;
-	gchar *filename;
-
-	retval = g_key_file_new ();
-	filename = get_keyfile_path ();
-
-	g_key_file_load_from_file (retval,
-				   filename,
-				   G_KEY_FILE_NONE,
-				   &error);
-
-	if (error != NULL) {
-		if (!g_error_matches (error,
-				      G_FILE_ERROR,
-				      G_FILE_ERROR_NOENT)) {
-			g_print ("Unable to open the desktop metadata keyfile: %s\n",
-				 error->message);
-		}
-
-		g_error_free (error);
-	}
-
-	g_free (filename);
 
 	return retval;
-}
-
-static GKeyFile *
-get_keyfile (void)
-{
-	static gboolean keyfile_loaded = FALSE;
-	static GKeyFile *keyfile = NULL;
-
-	if (!keyfile_loaded) {
-		keyfile = load_metadata_keyfile ();
-		keyfile_loaded = TRUE;
-	}
-
-	return keyfile;
 }
 
 void
@@ -143,23 +48,15 @@ nemo_desktop_set_metadata_string (NemoFile *file,
                                       const gchar *key,
                                       const gchar *string)
 {
-	GKeyFile *keyfile;
+	gchar *keyfile_filename;
 
-	keyfile = get_keyfile ();
+	keyfile_filename = get_keyfile_path ();
 
-	g_key_file_set_string (keyfile,
-			       name,
-			       key,
-			       string);
+	nemo_keyfile_metadata_set_string (file, keyfile_filename,
+	                                      name, key, string);
 
-	save_in_idle (keyfile);
-
-	if (nemo_desktop_update_metadata_from_keyfile (file, name)) {
-		nemo_file_changed (file);
-	}	
+	g_free (keyfile_filename);
 }
-
-#define STRV_TERMINATOR "@x-nemo-desktop-metadata-term@"
 
 void
 nemo_desktop_set_metadata_stringv (NemoFile *file,
@@ -167,126 +64,29 @@ nemo_desktop_set_metadata_stringv (NemoFile *file,
                                        const char *key,
                                        const char * const *stringv)
 {
-	GKeyFile *keyfile;
-	guint length;
-	gchar **actual_stringv = NULL;
-	gboolean free_strv = FALSE;
+	gchar *keyfile_filename;
 
-	keyfile = get_keyfile ();
+	keyfile_filename = get_keyfile_path ();
 
-	/* if we would be setting a single-length strv, append a fake
-	 * terminator to the array, to be able to differentiate it later from
-	 * the single string case
-	 */
-	length = g_strv_length ((gchar **) stringv);
+	nemo_keyfile_metadata_set_stringv (file, keyfile_filename,
+	                                       name, key, stringv);
 
-	if (length == 1) {
-		actual_stringv = g_malloc0 (3 * sizeof (gchar *));
-		actual_stringv[0] = (gchar *) stringv[0];
-		actual_stringv[1] = STRV_TERMINATOR;
-		actual_stringv[2] = NULL;
-
-		length = 2;
-		free_strv = TRUE;
-	} else {
-		actual_stringv = (gchar **) stringv;
-	}
-
-	g_key_file_set_string_list (keyfile,
-				    name,
-				    key,
-				    (const gchar **) actual_stringv,
-				    length);
-
-	save_in_idle (keyfile);
-
-	if (nemo_desktop_update_metadata_from_keyfile (file, name)) {
-		nemo_file_changed (file);
-	}
-
-	if (free_strv) {
-		g_free (actual_stringv);
-	}
+	g_free (keyfile_filename);
 }
 
 gboolean
 nemo_desktop_update_metadata_from_keyfile (NemoFile *file,
 					       const gchar *name)
 {
-	gchar **keys, **values;
-	const gchar *actual_values[2];
-	const gchar *key, *value;
-	gchar *gio_key;
-	gsize length, values_length;
-	GKeyFile *keyfile;
-	GFileInfo *info;
-	gint idx;
-	gboolean res;
+	gchar *keyfile_filename;
+	gboolean result;
 
-	keyfile = get_keyfile ();
+	keyfile_filename = get_keyfile_path ();
 
-	keys = g_key_file_get_keys (keyfile,
-				    name,
-				    &length,
-				    NULL);
+	result = nemo_keyfile_metadata_update_from_keyfile (file,
+	                                                        keyfile_filename,
+	                                                        name);
 
-	if (keys == NULL) {
-		return FALSE;
-	}
-
-	info = g_file_info_new ();
-
-	for (idx = 0; idx < length; idx++) {
-		key = keys[idx];
-		values = g_key_file_get_string_list (keyfile,
-						     name,
-						     key,
-						     &values_length,
-						     NULL);
-
-		gio_key = g_strconcat ("metadata::", key, NULL);
-
-		if (values_length < 1) {
-			continue;
-		} else if (values_length == 1) {
-			g_file_info_set_attribute_string (info,
-							  gio_key,
-							  values[0]);
-		} else if (values_length == 2) {
-			/* deal with the fact that single-length strv are stored
-			 * with an additional terminator in the keyfile string, to differentiate
-			 * them from the regular string case.
-			 */
-			value = values[1];
-
-			if (g_strcmp0 (value, STRV_TERMINATOR) == 0) {
-				/* if the 2nd value is the terminator, remove it */
-				actual_values[0] = values[0];
-				actual_values[1] = NULL;
-
-				g_file_info_set_attribute_stringv (info,
-								   gio_key,
-								   (gchar **) actual_values);
-			} else {
-				/* otherwise, set it as a regular strv */
-				g_file_info_set_attribute_stringv (info,
-								   gio_key,
-								   values);
-			}
-		} else {
-			g_file_info_set_attribute_stringv (info,
-							   gio_key,
-							   values);
-		}
-
-		g_free (gio_key);
-		g_strfreev (values);
-	}
-
-	res = nemo_file_update_metadata_from_info (file, info);
-
-	g_strfreev (keys);
-	g_object_unref (info);
-
-	return res;
+	g_free (keyfile_filename);
+	return result;
 }
