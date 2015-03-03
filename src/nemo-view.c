@@ -2430,6 +2430,20 @@ swap_delete_keybinding_changed_callback (gpointer callback_data)
     }
 }
 
+static void
+show_hidden_files_changed_callback (gpointer callback_data)
+{
+	NemoView *view = NEMO_VIEW (callback_data);
+
+	gboolean show_hidden =
+	    g_settings_get_boolean (gtk_filechooser_preferences, NEMO_PREFERENCES_SHOW_HIDDEN);
+
+	NemoWindow *window = nemo_view_get_window (view);
+	nemo_window_set_hidden_files_mode(window, show_hidden ?
+	    NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE :
+        NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE);
+}
+
 static gboolean
 set_up_scripts_directory_global (void)
 {
@@ -2876,6 +2890,9 @@ nemo_view_init (NemoView *view)
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST, 
 				  G_CALLBACK (sort_directories_first_changed_callback), view);
+	g_signal_connect_swapped (gtk_filechooser_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_HIDDEN,
+				  G_CALLBACK (show_hidden_files_changed_callback), view);
 	g_signal_connect_swapped (gnome_lockdown_preferences,
 				  "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
 				  G_CALLBACK (schedule_update_menus), view);
@@ -3079,6 +3096,8 @@ nemo_view_finalize (GObject *object)
                           click_to_rename_changed_callback, view);
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
 					      sort_directories_first_changed_callback, view);
+	g_signal_handlers_disconnect_by_func (gtk_filechooser_preferences,
+					      show_hidden_files_changed_callback, view);
 	g_signal_handlers_disconnect_by_func (nemo_window_state,
 					      nemo_view_display_selection_info, view);
 
