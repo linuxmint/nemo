@@ -1,15 +1,15 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 /*
- * Nautilus
+ * Nemo
  *
  * Copyright (C) 2011 Red Hat, Inc.
  *
- * Nautilus is free software; you can redistribute it and/or
+ * Nemo is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
  *
- * Nautilus is distributed in the hope that it will be useful,
+ * Nemo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
@@ -22,27 +22,27 @@
  * Authors: Cosimo Cecchi <cosimoc@redhat.com>
  */
 
-#ifndef __NAUTILUS_KEYFILE_METADATA_H__
-#define __NAUTILUS_KEYFILE_METADATA_H__
+#ifndef __NEMO_KEYFILE_METADATA_H__
+#define __NEMO_KEYFILE_METADATA_H__
 
 #include <glib.h>
 
-#include <libnautilus-private/nautilus-file.h>
+#include <libnemo-private/nemo-file.h>
 
-void nautilus_keyfile_metadata_set_string (NautilusFile *file,
+void nemo_keyfile_metadata_set_string (NemoFile *file,
                                            const char *keyfile_filename,
                                            const gchar *name,
                                            const gchar *key,
                                            const gchar *string);
 
-void nautilus_keyfile_metadata_set_stringv (NautilusFile *file,
+void nemo_keyfile_metadata_set_stringv (NemoFile *file,
                                             const char *keyfile_filename,
                                             const char *name,
                                             const char *key,
                                             const char * const *stringv);
 
-gboolean nautilus_keyfile_metadata_update_from_keyfile (NautilusFile *file,
+gboolean nemo_keyfile_metadata_update_from_keyfile (NemoFile *file,
                                                         const char *keyfile_filename,
                                                         const gchar *name);
 
-#endif /* __NAUTILUS_KEYFILE_METADATA_H__ */
+#endif /* __NEMO_KEYFILE_METADATA_H__ */

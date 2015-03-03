@@ -1,15 +1,15 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 /*
- * Nautilus
+ * Nemo
  *
  * Copyright (C) 2011 Red Hat, Inc.
  *
- * Nautilus is free software; you can redistribute it and/or
+ * Nemo is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
  *
- * Nautilus is distributed in the hope that it will be useful,
+ * Nemo is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
@@ -24,11 +24,11 @@
 
 #include <config.h>
 
-#include "nautilus-keyfile-metadata.h"
+#include "nemo-keyfile-metadata.h"
 
-#include "nautilus-directory-notify.h"
-#include "nautilus-file-private.h"
-#include "nautilus-file-utilities.h"
+#include "nemo-directory-notify.h"
+#include "nemo-file-private.h"
+#include "nemo-file-utilities.h"
 
 #include <glib/gstdio.h>
 
@@ -161,7 +161,7 @@ save_in_idle (const char *keyfile_filename)
 }
 
 void
-nautilus_keyfile_metadata_set_string (NautilusFile *file,
+nemo_keyfile_metadata_set_string (NemoFile *file,
                                       const char *keyfile_filename,
                                       const gchar *name,
                                       const gchar *key,
@@ -178,15 +178,15 @@ nautilus_keyfile_metadata_set_string (NautilusFile *file,
 
 	save_in_idle (keyfile_filename);
 
-	if (nautilus_keyfile_metadata_update_from_keyfile (file, keyfile_filename, name)) {
-		nautilus_file_changed (file);
+	if (nemo_keyfile_metadata_update_from_keyfile (file, keyfile_filename, name)) {
+		nemo_file_changed (file);
 	}
 }
 
-#define STRV_TERMINATOR "@x-nautilus-desktop-metadata-term@"
+#define STRV_TERMINATOR "@x-nemo-desktop-metadata-term@"
 
 void
-nautilus_keyfile_metadata_set_stringv (NautilusFile *file,
+nemo_keyfile_metadata_set_stringv (NemoFile *file,
                                        const char *keyfile_filename,
                                        const char *name,
                                        const char *key,
@@ -225,8 +225,8 @@ nautilus_keyfile_metadata_set_stringv (NautilusFile *file,
 
 	save_in_idle (keyfile_filename);
 
-	if (nautilus_keyfile_metadata_update_from_keyfile (file, keyfile_filename, name)) {
-		nautilus_file_changed (file);
+	if (nemo_keyfile_metadata_update_from_keyfile (file, keyfile_filename, name)) {
+		nemo_file_changed (file);
 	}
 
 	if (free_strv) {
@@ -235,7 +235,7 @@ nautilus_keyfile_metadata_set_stringv (NautilusFile *file,
 }
 
 gboolean
-nautilus_keyfile_metadata_update_from_keyfile (NautilusFile *file,
+nemo_keyfile_metadata_update_from_keyfile (NemoFile *file,
                                                const char *keyfile_filename,
                                                const gchar *name)
 {
@@ -309,7 +309,7 @@ nautilus_keyfile_metadata_update_from_keyfile (NautilusFile *file,
 		g_strfreev (values);
 	}
 
-	res = nautilus_file_update_metadata_from_info (file, info);
+	res = nemo_file_update_metadata_from_info (file, info);
 
 	g_strfreev (keys);
 	g_object_unref (info);
