@@ -1789,8 +1789,10 @@ void
 nemo_window_set_hidden_files_mode (NemoWindow *window,
 				       NemoWindowShowHiddenFilesMode  mode)
 {
+	if (window->details->show_hidden_files_mode == mode) {
+		return;
+	}
 	window->details->show_hidden_files_mode = mode;
-
 	g_settings_set_boolean (gtk_filechooser_preferences, NEMO_PREFERENCES_SHOW_HIDDEN,
                             mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE);
 	g_signal_emit_by_name (window, "hidden_files_mode_changed");
