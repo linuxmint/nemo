@@ -2071,47 +2071,131 @@ filename_cell_data_func (GtkTreeViewColumn *column,
 }
 
 static void
+location_cell_data_func (GtkTreeViewColumn *column,
+                         GtkCellRenderer   *renderer,
+                         GtkTreeModel      *model,
+                         GtkTreeIter       *iter,
+                         NemoListView  *view,
+                         gboolean           show_trash_orig)
+{
+	NemoDirectory *directory;
+	GFile *home_location;
+	NemoFile *file;
+	GFile *dir_location;
+	GFile *base_location;
+	gchar *where = NULL;
+
+	directory = nemo_view_get_model (NEMO_VIEW (view));
+
+	home_location = g_file_new_for_path (g_get_home_dir ());
+
+	gtk_tree_model_get (model, iter,
+	                    NEMO_LIST_MODEL_FILE_COLUMN, &file,
+	                    -1);
+
+	/* The file might be NULL if we just toggled an expander
+	 * and we're still loading the subdirectory.
+	 */
+	if (file == NULL) {
+		return;
+	}
+
+	if (show_trash_orig && nemo_file_is_in_trash (file)) {
+		NemoFile *orig_file;
+
+		orig_file = nemo_file_get_trash_original_file (file);
+
+		if (orig_file != NULL) {
+			nemo_file_unref (file);
+			file = orig_file;
+		}
+	}
+
+	if (!nemo_file_is_in_recent (file)) {
+		dir_location = nemo_file_get_parent_location (file);
+	} else {
+		GFile *activation_location;
+
+		activation_location = nemo_file_get_activation_location (file);
+		dir_location = g_file_get_parent (activation_location);
+
+		g_object_unref (activation_location);
+	}
+
+	if (!NEMO_IS_SEARCH_DIRECTORY (directory)) {
+		base_location = g_object_ref (home_location);
+	} else {
+		NemoQuery *query;
+		gchar *base_uri;
+		NemoFile *base;
+
+		query = nemo_search_directory_get_query (NEMO_SEARCH_DIRECTORY (directory));
+		base_uri = nemo_query_get_location (query);
+		base = nemo_file_get_by_uri (base_uri);
+
+		if (!nemo_file_is_in_recent (base)) {
+			base_location = nemo_file_get_location (base);
+		} else {
+			base_location = g_object_ref (home_location);
+		}
+
+		nemo_file_unref (base);
+		g_free (base_uri);
+		g_object_unref (query);
+	}
+
+	if (g_file_equal (home_location, dir_location)) {
+		where = g_strdup (_("Home"));
+	} else if (g_file_equal (base_location, dir_location)) {
+		/* Only occurs when search result is
+		 * a direct child of the base location
+		 */
+		where = g_strdup ("");
+	} else if (g_file_has_prefix (dir_location, base_location)) {
+		gchar *relative_path;
+
+		relative_path = g_file_get_relative_path (base_location,
+		                                          dir_location);
+		where = g_filename_display_name (relative_path);
+
+		g_free (relative_path);
+	}
+
+	if (where != NULL) {
+		g_object_set (G_OBJECT (renderer),
+		              "text", where,
+		              NULL);
+
+		g_free (where);
+	}
+
+	g_object_unref (base_location);
+	g_object_unref (dir_location);
+	nemo_file_unref (file);
+	g_object_unref (home_location);
+}
+
+
+static void
 where_cell_data_func (GtkTreeViewColumn *column,
                       GtkCellRenderer   *renderer,
                       GtkTreeModel      *model,
                       GtkTreeIter       *iter,
                       NemoListView  *view)
 {
-	NemoDirectory *directory;
-	NemoQuery *query;
-	NemoFile *file;
-	GFile *location, *file_location;
-	char *location_uri, *relative, *relative_utf8;
-
-	directory = nemo_view_get_model (NEMO_VIEW (view));
-	if (!NEMO_IS_SEARCH_DIRECTORY (directory)) {
-		return;
-	}
-
-	query = nemo_search_directory_get_query (NEMO_SEARCH_DIRECTORY (directory));
-	location_uri = nemo_query_get_location (query);
-	location = g_file_new_for_uri (location_uri);
-
-	gtk_tree_model_get (model, iter,
-	                    NEMO_LIST_MODEL_FILE_COLUMN, &file,
-	                    -1);
-	file_location = nemo_file_get_location (file);
-
-	relative = g_file_get_relative_path (location, file_location);
-	relative_utf8 = g_filename_display_name (relative);
-
-	g_object_set (G_OBJECT (renderer),
-	              "text", relative_utf8,
-	              NULL);
-
-	g_free (relative_utf8);
-	g_free (relative);
-	g_object_unref (file_location);
-	nemo_file_unref (file);
-	g_object_unref (location);
-	g_free (location_uri);
-	g_object_unref (query);
+	location_cell_data_func (column, renderer, model, iter, view, FALSE);
 }
+
+static void
+trash_orig_path_cell_data_func (GtkTreeViewColumn *column,
+                                GtkCellRenderer   *renderer,
+                                GtkTreeModel      *model,
+                                GtkTreeIter       *iter,
+                                NemoListView  *view)
+{
+	location_cell_data_func (column, renderer, model, iter, view, TRUE);
+}
+
 
 static gboolean
 focus_in_event_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
@@ -2331,6 +2415,10 @@ create_and_set_up_tree_view (NemoListView *view)
 			if (!strcmp (name, "where")) {
 				gtk_tree_view_column_set_cell_data_func (column, cell,
 				                                         (GtkTreeCellDataFunc) where_cell_data_func,
+				                                         view, NULL);
+			} else if (!strcmp (name, "trash_orig_path")) {
+				gtk_tree_view_column_set_cell_data_func (column, cell,
+				                                         (GtkTreeCellDataFunc) trash_orig_path_cell_data_func,
 				                                         view, NULL);
 			}
 		}
