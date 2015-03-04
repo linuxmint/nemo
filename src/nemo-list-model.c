@@ -40,7 +40,7 @@
 
 enum {
 	SUBDIRECTORY_UNLOADED,
-    GET_ICON_SCALE,
+	GET_ICON_SCALE,
 	LAST_SIGNAL
 };
 
@@ -242,16 +242,16 @@ nemo_list_model_get_path (GtkTreeModel *tree_model, GtkTreeIter *iter)
 static gint
 nemo_list_model_get_icon_scale (NemoListModel *model)
 {
-   gint retval = -1;
+	gint retval = -1;
 
-   g_signal_emit (model, list_model_signals[GET_ICON_SCALE], 0,
-              &retval);
+	g_signal_emit (model, list_model_signals[GET_ICON_SCALE], 0,
+		       &retval);
 
-   if (retval == -1) {
-       retval = gdk_screen_get_monitor_scale_factor (gdk_screen_get_default (), 0);
-   }
+	if (retval == -1) {
+		retval = gdk_screen_get_monitor_scale_factor (gdk_screen_get_default (), 0);
+	}
 
-   return retval;
+	return retval;
 }
 
 static void
@@ -269,7 +269,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 	int icon_size, icon_scale;
 	NemoZoomLevel zoom_level;
 	NemoFileIconFlags flags;
-    cairo_surface_t *surface;
+	cairo_surface_t *surface;
 	
 	model = (NemoListModel *)tree_model;
 
@@ -302,7 +302,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 		if (file != NULL) {
 			zoom_level = nemo_list_model_get_zoom_level_from_column_id (column);
 			icon_size = nemo_get_list_icon_size_for_zoom_level (zoom_level);
-            icon_scale = nemo_list_model_get_icon_scale (model);
+			icon_scale = nemo_list_model_get_icon_scale (model);
 
 			flags = NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
 				NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE |
@@ -379,8 +379,8 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 				}
 			}
 
-            surface = gdk_cairo_surface_create_from_pixbuf (icon, icon_scale, NULL);
-            g_value_take_boxed (value, surface);
+			surface = gdk_cairo_surface_create_from_pixbuf (icon, icon_scale, NULL);
+			g_value_take_boxed (value, surface);
 			g_object_unref (icon);
 		}
 		break;

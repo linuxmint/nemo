@@ -4353,7 +4353,7 @@ nemo_file_get_thumbnail_path (NemoFile *file)
 NemoIconInfo *
 nemo_file_get_icon (NemoFile *file,
 			int size,
-            int scale,
+			int scale,
 			NemoFileIconFlags flags)
 {
 	NemoIconInfo *icon;
@@ -4476,7 +4476,7 @@ GdkPixbuf *
 nemo_file_get_icon_pixbuf (NemoFile *file,
 			       int size,
 			       gboolean force_size,
-                   int scale,
+			       int scale,
 			       NemoFileIconFlags flags)
 {
 	NemoIconInfo *info;
