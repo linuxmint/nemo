@@ -4526,7 +4526,7 @@ GdkPixbuf *
 nemo_file_get_icon_pixbuf (NemoFile *file,
 			       int size,
 			       gboolean force_size,
-                   int scale,
+			       int scale,
 			       NemoFileIconFlags flags)
 {
 	NemoIconInfo *info;
