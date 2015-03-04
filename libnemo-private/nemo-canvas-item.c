@@ -463,7 +463,7 @@ nemo_canvas_item_get_drag_surface (NemoCanvasItem *item)
 	double item_x, item_y;
 	cairo_t *cr;
 	GtkStyleContext *context;
-    cairo_surface_t *drag_surface;
+	cairo_surface_t *drag_surface;
 	
 	g_return_val_if_fail (NEMO_IS_CANVAS_ITEM (item), NULL);
 
@@ -494,18 +494,18 @@ nemo_canvas_item_get_drag_surface (NemoCanvasItem *item)
 	width = EEL_CANVAS_ITEM (item)->x2 - EEL_CANVAS_ITEM (item)->x1;
 	height = EEL_CANVAS_ITEM (item)->y2 - EEL_CANVAS_ITEM (item)->y1;
 
-        surface = gdk_window_create_similar_surface (gtk_widget_get_window (GTK_WIDGET (canvas)),
-                                                     CAIRO_CONTENT_COLOR_ALPHA,
-                                                     width, height);
+	surface = gdk_window_create_similar_surface (gtk_widget_get_window (GTK_WIDGET (canvas)),
+	                                             CAIRO_CONTENT_COLOR_ALPHA,
+	                                             width, height);
 
 	cr = cairo_create (surface);
 
-    drag_surface = gdk_cairo_surface_create_from_pixbuf (item->details->pixbuf,
-                                                         gtk_widget_get_scale_factor (GTK_WIDGET (canvas)),
-                                                         gtk_widget_get_window (GTK_WIDGET (canvas)));
-    gtk_render_icon_surface (context, cr, drag_surface,
-                            item_offset_x, item_offset_y);
-    cairo_surface_destroy (drag_surface);
+	drag_surface = gdk_cairo_surface_create_from_pixbuf (item->details->pixbuf,
+							     gtk_widget_get_scale_factor (GTK_WIDGET (canvas)),
+							     gtk_widget_get_window (GTK_WIDGET (canvas)));
+	gtk_render_icon_surface (context, cr, drag_surface,
+				 item_offset_x, item_offset_y);
+	cairo_surface_destroy (drag_surface);
 
 	get_scaled_icon_size (item, &pix_width, &pix_height);
 
