@@ -41,6 +41,7 @@ typedef struct {
     GList *selection_list;
     GList *uri_list;
     char *netscape_url;
+    GtkSelectionData *selection_data;
   } data;
 
   NemoFile *target_file;
@@ -79,6 +80,7 @@ static void
 switch_location (NemoDragSlotProxyInfo *drag_info)
 {
   GFile *location;
+  GFile *current_location;
   NemoWindowSlot *target_slot;
   GtkWidget *window;
 
@@ -91,8 +93,11 @@ switch_location (NemoDragSlotProxyInfo *drag_info)
 
   target_slot = nemo_window_get_active_slot (NEMO_WINDOW (window));
 
+  current_location = nemo_window_slot_get_location (target_slot);
   location = nemo_file_get_location (drag_info->target_file);
-  nemo_window_slot_open_location (target_slot, location, 0);
+  if (! (current_location != NULL && g_file_equal (location, current_location))) {
+	nemo_window_slot_open_location (target_slot, location, 0);
+  }
   g_object_unref (location);
 }
 
@@ -154,10 +159,14 @@ slot_proxy_drag_motion (GtkWidget          *widget,
   GdkAtom target;
   int action;
   char *target_uri;
+  gboolean valid_text_drag;
+  gboolean valid_xds_drag;
 
   drag_info = user_data;
 
   action = 0;
+  valid_text_drag = FALSE;
+  valid_xds_drag = FALSE;
 
   if (gtk_drag_get_source_widget (context) == widget) {
     goto out;
@@ -213,13 +222,18 @@ slot_proxy_drag_motion (GtkWidget          *widget,
       action = nemo_drag_default_drop_action_for_uri_list (context, target_uri);
     } else if (drag_info->info == NEMO_ICON_DND_NETSCAPE_URL) {
       action = nemo_drag_default_drop_action_for_netscape_url (context);
+    } else if (drag_info->info == NEMO_ICON_DND_TEXT) {
+      valid_text_drag = TRUE;
+    } else if (drag_info->info == NEMO_ICON_DND_XDNDDIRECTSAVE ||
+               drag_info->info == NEMO_ICON_DND_RAW) {
+      valid_xds_drag = TRUE;
     }
   }
 
   g_free (target_uri);
 
  out:
-  if (action != 0) {
+  if (action != 0 || valid_text_drag || valid_xds_drag) {
     gtk_drag_highlight (widget);
     slot_proxy_check_switch_location_timer (drag_info, widget);
   } else {
@@ -258,6 +272,12 @@ drag_info_clear (NemoDragSlotProxyInfo *drag_info)
     g_list_free (drag_info->data.uri_list);
   } else if (drag_info->info == NEMO_ICON_DND_NETSCAPE_URL) {
     g_free (drag_info->data.netscape_url);
+  } else if (drag_info->info == NEMO_ICON_DND_TEXT ||
+             drag_info->info == NEMO_ICON_DND_XDNDDIRECTSAVE ||
+             drag_info->info == NEMO_ICON_DND_RAW) {
+    if (drag_info->data.selection_data != NULL) {
+      gtk_selection_data_free (drag_info->data.selection_data);
+    }
   }
 
  out:
@@ -418,6 +438,11 @@ slot_proxy_drag_data_received (GtkWidget          *widget,
     drag_info->data.netscape_url = g_strdup ((char *) gtk_selection_data_get_data (data));
 
     drag_info->have_valid_data = drag_info->data.netscape_url != NULL;
+  } else if (info == NEMO_ICON_DND_TEXT ||
+             info == NEMO_ICON_DND_XDNDDIRECTSAVE ||
+             info == NEMO_ICON_DND_RAW) {
+    drag_info->data.selection_data = gtk_selection_data_copy (data);
+    drag_info->have_valid_data = drag_info->data.selection_data != NULL;
   }
 
   if (drag_info->drop_occured) {
@@ -434,7 +459,9 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
 
   const GtkTargetEntry targets[] = {
     { NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
-    { NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL }
+    { NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL },
+    { NEMO_ICON_DND_XDNDDIRECTSAVE_TYPE, 0, NEMO_ICON_DND_XDNDDIRECTSAVE }, /* XDS Protocol Type */
+    { NEMO_ICON_DND_RAW_TYPE, 0, NEMO_ICON_DND_RAW }
   };
   GtkTargetList *target_list;
 
@@ -464,6 +491,7 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
 
   target_list = gtk_target_list_new (targets, G_N_ELEMENTS (targets));
   gtk_target_list_add_uri_targets (target_list, NEMO_ICON_DND_URI_LIST);
+  gtk_target_list_add_text_targets (target_list, NEMO_ICON_DND_TEXT);
   gtk_drag_dest_set_target_list (widget, target_list);
   gtk_target_list_unref (target_list);
 
