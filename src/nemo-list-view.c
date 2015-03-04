@@ -541,12 +541,12 @@ drag_begin_callback (GtkWidget *widget,
 		     GdkDragContext *context,
 		     NemoListView *view)
 {
-    cairo_surface_t *surface;
+	cairo_surface_t *surface;
 
-    surface = get_drag_surface (view);
-    if (surface) {
-        gtk_drag_set_icon_surface (context, surface);
-        cairo_surface_destroy (surface);
+	surface = get_drag_surface (view);
+	if (surface) {
+		gtk_drag_set_icon_surface (context, surface);
+		cairo_surface_destroy (surface);
 	} else {
 		gtk_drag_set_icon_default (context);
 	}
@@ -1002,7 +1002,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 		}
 
 		if ((event->button == 1 || event->button == 2) &&
-		    event->type == GDK_BUTTON_PRESS) {
+		    event->type == GDK_BUTTON_PRESS && !on_expander) {
 			view->details->drag_started = FALSE;
 			view->details->drag_button = event->button;
 			view->details->drag_x = event->x;
