@@ -698,7 +698,7 @@ nemo_connect_server_dialog_init (NemoConnectServerDialog *dialog)
 	dialog->details->browse_button = button;
 
 	gtk_dialog_add_button (GTK_DIALOG (dialog),
-			       GTK_STOCK_CANCEL,
+			       _("_Cancel"),
 			       GTK_RESPONSE_CANCEL);
 	gtk_dialog_add_button (GTK_DIALOG (dialog),
 			       _("C_onnect"),

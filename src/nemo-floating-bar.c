@@ -407,13 +407,13 @@ nemo_floating_bar_new (const gchar *primary_label,
 
 void
 nemo_floating_bar_add_action (NemoFloatingBar *self,
-				  const gchar *stock_id,
+				  const gchar *icon_name,
 				  gint action_id)
 {
 	GtkWidget *w, *button;
 
 	if (!self->priv->is_interactive ) {
-		w = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_MENU);
+		w = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU);
 		gtk_widget_show (w);
 
 		button = gtk_button_new ();

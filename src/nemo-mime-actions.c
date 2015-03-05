@@ -679,11 +679,11 @@ report_broken_symbolic_link (GtkWindow *parent_window, NemoFile *file)
 	
 	if (!can_trash) {
 		eel_run_simple_dialog (GTK_WIDGET (parent_window), FALSE, GTK_MESSAGE_WARNING,
-				       prompt, detail, GTK_STOCK_CANCEL, NULL);
+				       prompt, detail, _("_Cancel"), NULL);
 		goto out;
 	}
 
-	dialog = eel_show_yes_no_dialog (prompt, detail, _("Mo_ve to Trash"), GTK_STOCK_CANCEL,
+	dialog = eel_show_yes_no_dialog (prompt, detail, _("Mo_ve to Trash"), _("_Cancel"),
 					 parent_window);
 
 	gtk_dialog_set_default_response (dialog, GTK_RESPONSE_CANCEL);
@@ -754,7 +754,7 @@ get_executable_text_file_action (GtkWindow *parent_window, NemoFile *file)
 					     _("Run in _Terminal"), RESPONSE_RUN_IN_TERMINAL,
      					     _("_Display"), RESPONSE_DISPLAY,
 					     parent_window);
-	gtk_dialog_add_button (dialog, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+	gtk_dialog_add_button (dialog, _("_Cancel"), GTK_RESPONSE_CANCEL);
 	gtk_dialog_add_button (dialog, _("_Run"), RESPONSE_RUN);
 	gtk_dialog_set_default_response (dialog, GTK_RESPONSE_CANCEL);
 	gtk_widget_show (GTK_WIDGET (dialog));
@@ -1097,7 +1097,7 @@ confirm_multiple_windows (GtkWindow *parent_window,
 						   "This will open %d separate windows.", count), count);
 	}
 	dialog = eel_show_yes_no_dialog (prompt, detail, 
-					 GTK_STOCK_OK, GTK_STOCK_CANCEL,
+					 _("_OK"), _("_Cancel"),
 					 parent_window);
 	g_free (detail);
 
@@ -1379,7 +1379,7 @@ activate_desktop_file (ActivateParameters *parameters,
 		}
 
 		gtk_dialog_add_button (GTK_DIALOG (dialog),
-				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+				       _("_Cancel"), GTK_RESPONSE_CANCEL);
 		gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
 
 		g_signal_connect (dialog, "response",
@@ -1603,7 +1603,7 @@ activate_files (ActivateParameters *parameters)
 		detail = g_strdup_printf (ngettext ("This will open %d separate application.",
 						    "This will open %d separate applications.", num_apps), num_apps);
 		dialog = eel_show_yes_no_dialog (prompt, detail,
-						 GTK_STOCK_OK, GTK_STOCK_CANCEL,
+						 _("_OK"), _("_Cancel"),
 						 parameters->parent_window);
 		g_free (detail);
 

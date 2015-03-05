@@ -153,7 +153,7 @@ apply_warning_emblem (GIcon **base,
 	if (symbolic) {
 		warning = g_themed_icon_new ("dialog-warning-symbolic");
 	} else {
-		warning = g_themed_icon_new (GTK_STOCK_DIALOG_WARNING);
+		warning = g_themed_icon_new ("dialog-warning");
 	}
 
 	emblem = g_emblem_new (warning);
