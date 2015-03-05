@@ -3360,16 +3360,16 @@ get_max_name_length (GFile *file_dir)
 #define FAT_FORBIDDEN_CHARACTERS "/:;*?\"<>"
 
 static gboolean
-str_replace (char *str,
-	     const char *chars_to_replace,
-	     char replacement)
+fat_str_replace (char *str,
+		 char replacement)
 {
 	gboolean success;
 	int i;
 
 	success = FALSE;
 	for (i = 0; str[i] != '\0'; i++) {
-		if (strchr (chars_to_replace, str[i])) {
+		if (strchr (FAT_FORBIDDEN_CHARACTERS, str[i]) ||
+		    str[i] < 32) {
 			success = TRUE;
 			str[i] = replacement;
 		}
@@ -3390,7 +3390,7 @@ make_file_name_valid_for_dest_fs (char *filename,
 			gboolean ret;
 			int i, old_len;
 
-			ret = str_replace (filename, FAT_FORBIDDEN_CHARACTERS, '_');
+			ret = fat_str_replace (filename, '_');
 
 			old_len = strlen (filename);
 			for (i = 0; i < old_len; i++) {
