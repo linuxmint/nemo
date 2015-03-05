@@ -73,7 +73,7 @@ void        nemo_floating_bar_set_show_spinner (NemoFloatingBar *self,
 						    gboolean show_spinner);
 
 void        nemo_floating_bar_add_action       (NemoFloatingBar *self,
-						    const gchar *stock_id,
+						    const gchar *icon_name,
 						    gint action_id);
 void        nemo_floating_bar_cleanup_actions  (NemoFloatingBar *self);
 
