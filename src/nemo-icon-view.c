@@ -1487,8 +1487,7 @@ nemo_icon_view_merge_menus (NemoView *view)
 	NemoIconView *icon_view;
 	GtkUIManager *ui_manager;
 	GtkActionGroup *action_group;
-	GtkAction *action;
-	
+
         g_assert (NEMO_IS_ICON_VIEW (view));
 
 	NEMO_VIEW_CLASS (nemo_icon_view_parent_class)->merge_menus (view);
@@ -1518,15 +1517,6 @@ nemo_icon_view_merge_menus (NemoView *view)
 
 	icon_view->details->icon_merge_id =
 		gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-icon-view-ui.xml", NULL);
-
-	/* Do one-time state-setting here; context-dependent state-setting
-	 * is done in update_menus.
-	 */
-	if (!nemo_icon_view_supports_auto_layout (icon_view)) {
-		action = gtk_action_group_get_action (action_group,
-						      NEMO_ACTION_ARRANGE_ITEMS);
-		gtk_action_set_visible (action, FALSE);
-	}
 
 	if (nemo_icon_view_supports_scaling (icon_view)) {
 		gtk_ui_manager_add_ui (ui_manager,
@@ -1574,6 +1564,8 @@ nemo_icon_view_update_menus (NemoView *view)
 	GtkAction *action;
         NemoIconContainer *icon_container;
 	gboolean editable;
+    
+    gint context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
 
         icon_view = NEMO_ICON_VIEW (view);
 
@@ -1605,6 +1597,22 @@ nemo_icon_view_update_menus (NemoView *view)
 
 	gtk_action_set_visible (action,
 				nemo_icon_view_supports_scaling (icon_view));
+             
+    action = gtk_action_group_get_action (icon_view->details->icon_action_group, NEMO_ACTION_CLEAN_UP);
+    if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_CLEAN_UP) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+                
+    action = gtk_action_group_get_action (icon_view->details->icon_action_group, NEMO_ACTION_ARRANGE_ITEMS);
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_ARRANGE) && nemo_icon_view_supports_auto_layout (icon_view)) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
 	editable = nemo_view_is_editable (view);
 	action = gtk_action_group_get_action (icon_view->details->icon_action_group,
@@ -2791,6 +2799,9 @@ nemo_icon_view_init (NemoIconView *icon_view)
 				  "changed::" NEMO_PREFERENCES_COMPACT_VIEW_ALL_COLUMNS_SAME_WIDTH,
 				  G_CALLBACK (all_columns_same_width_changed_callback),
 				  icon_view);
+    g_signal_connect_swapped (nemo_compact_view_preferences,
+                  "changed::" NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS,
+                  G_CALLBACK (update_layout_menus), icon_view);
 
 	g_signal_connect_object (get_icon_container (icon_view), "handle_netscape_url",
 				 G_CALLBACK (icon_view_handle_netscape_url), icon_view, 0);

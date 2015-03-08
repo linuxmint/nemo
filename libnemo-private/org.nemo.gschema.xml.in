@@ -155,15 +155,20 @@
       <summary>Show Compact View button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
+    <key name="enable-delete" type="b">
+      <default>true</default>
+      <_summary>Whether to enable immediate deletion</_summary>
+      <_description>If set to true, then Nemo will have a feature allowing you to delete a file immediately and in-place, instead of moving it  to the trash. This feature can be dangerous, so use caution.</_description>
+    </key>
     <key name="confirm-trash" type="b">
       <default>true</default>
       <_summary>Whether to ask for confirmation when deleting files, or emptying Trash</_summary>
       <_description>If set to true, then Nemo will ask for confirmation when  you attempt to delete files, or empty the Trash.</_description>
     </key>
-    <key name="enable-delete" type="b">
-      <default>true</default>
-      <_summary>Whether to enable immediate deletion</_summary>
-      <_description>If set to true, then Nemo will have a feature allowing you to delete a file immediately and in-place, instead of moving it  to the trash. This feature can be dangerous, so use caution.</_description>
+    <key name="enabled-menu-items" type="i">
+      <default>131071</default>
+      <_summary>An int flag for the entries enabled in the right click menu</_summary>
+      <_description>17 bits are read ("Organize" "Show Hidden Files", "Zoom Items", "New Folder", "Arrange Items", "New Document", "Open in New Window", "Open as Root", "Open in Terminal", "Open in New Tab" "Delete", "Trash", "Move To", "Copy to", "Make Link", "Duplicate", "Rename") in decimal form converted from a binary integer (111111111111111111)</_description>
     </key>
     <key name="swap-trash-delete" type="b">
       <default>false</default>

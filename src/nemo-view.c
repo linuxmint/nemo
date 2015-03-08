@@ -2722,9 +2722,9 @@ nemo_view_init (NemoView *view)
 
 	gtk_widget_show (GTK_WIDGET (view));
 
-	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_ENABLE_DELETE,
-				  G_CALLBACK (schedule_update_menus_callback), view);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS,
+                  G_CALLBACK (schedule_update_menus_callback), view);
     g_signal_connect_swapped (nemo_preferences,
                   "changed::" NEMO_PREFERENCES_SWAP_TRASH_DELETE,
                   G_CALLBACK (swap_delete_keybinding_changed_callback), view);
@@ -8548,7 +8548,7 @@ clipboard_targets_received (GtkClipboard     *clipboard,
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PASTE_FILES_INTO);
-	gtk_action_set_sensitive (action,
+	gtk_action_set_visible (action,
 	                          can_paste && count == 1 &&
 	                          can_paste_into_file (NEMO_FILE (selection->data)));
 
@@ -8557,7 +8557,7 @@ clipboard_targets_received (GtkClipboard     *clipboard,
 	g_object_set_data (G_OBJECT (action),
 			   "can-paste-according-to-clipboard",
 			   GINT_TO_POINTER (can_paste));
-	gtk_action_set_sensitive (action,
+	gtk_action_set_visible (action,
 				  GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
 								      "can-paste-according-to-clipboard")) &&
 				  GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
@@ -9257,6 +9257,7 @@ real_update_paste_menu (NemoView *view,
 				       view);
 }
 
+/* Breadcrumb context menu */
 static void
 real_update_location_menu (NemoView *view)
 {
@@ -9266,12 +9267,14 @@ real_update_location_menu (NemoView *view)
 	gboolean is_desktop_or_home_dir;
     gboolean is_recent;
 	gboolean can_delete_file, show_delete;
-	gboolean show_separate_delete_command;
 	gboolean show_open_in_new_tab;
 	gboolean show_open_alternate;
+    gint context_items_flag;
 	GList l;
 	char *label;
 	char *tip;
+    
+    context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
 
 	show_open_in_new_tab = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
 	show_open_alternate = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
@@ -9330,45 +9333,58 @@ real_update_location_menu (NemoView *view)
 
     gtk_action_set_visible (action, !is_recent);
 
-	show_delete = TRUE;
+    /* "Trash" context item */
 
-	if (file != NULL &&
-	    nemo_file_is_in_trash (file)) {
-		if (nemo_file_is_self_owned (file)) {
-			show_delete = FALSE;
-		}
+    show_delete = TRUE;
 
-		label = _("_Delete Permanently");
-		tip = _("Delete the open folder permanently");
-		show_separate_delete_command = FALSE;
-	} else {
-		label = _("Mo_ve to Trash");
-		tip = _("Move the open folder to the Trash");
-		show_separate_delete_command = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ENABLE_DELETE);
-	}
+    if (file != NULL && nemo_file_is_in_trash (file)) {
+        
+        if (nemo_file_is_self_owned (file)) {
+            show_delete = FALSE;
+        }
+        label = _("_Delete Permanently");
+        tip = _("Delete the open folder permanently");        
+    } 
+    else {
+        label = _("Mo_ve to Trash");
+        tip = _("Move the open folder to the Trash");
+    }
 
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_LOCATION_TRASH);
-	g_object_set (action,
-		      "label", label,
-		      "tooltip", tip,
-		      "icon-name", (file != NULL &&
-				    nemo_file_is_in_trash (file)) ?
-		      NEMO_ICON_DELETE : NEMO_ICON_TRASH_FULL,
-		      NULL);
-	gtk_action_set_sensitive (action, can_delete_file);
-	gtk_action_set_visible (action, show_delete);
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_LOCATION_TRASH);
+    
+        //If trash should be enabled in the menu and what icon/label/tooltip it should use based on context
+    if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_TRASH) {
+        if (show_delete) {
+            gtk_action_set_visible (action, TRUE);
+        }
+        g_object_set (action,
+                "label", label,
+                "tooltip", tip,
+                "icon-name", (file != NULL && nemo_file_is_in_trash (file)) ? NEMO_ICON_DELETE : NEMO_ICON_TRASH_FULL, NULL);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+                
+    gtk_action_set_sensitive (action, can_delete_file);
+    
+    /* "Delete" context item */
 
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_LOCATION_DELETE);
-	gtk_action_set_visible (action, show_separate_delete_command);
-	if (show_separate_delete_command) {
-		gtk_action_set_sensitive (action, can_delete_file);
-		g_object_set (action,
-			      "icon-name", NEMO_ICON_DELETE,
-			      "sensitive", can_delete_file,
-			      NULL);
-	}
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_LOCATION_DELETE);
+        //If delete should be enabled in the menu and what icon/sensitivity it should use based on context
+    if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DELETE) {
+        if (show_delete) {
+            gtk_action_set_visible (action, TRUE);
+        }
+        gtk_action_set_sensitive (action, can_delete_file);
+        g_object_set (action,
+                "icon-name", NEMO_ICON_DELETE,
+                "sensitive", can_delete_file,
+                NULL);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_LOCATION_RESTORE_FROM_TRASH);
@@ -9431,6 +9447,7 @@ real_update_menus (NemoView *view)
 {
 	GList *selection, *l;
 	gint selection_count;
+    gint context_items_flag;
 	const char *tip, *label;
 	char *label_with_underscore;
 	gboolean selection_contains_special_link;
@@ -9442,7 +9459,6 @@ real_update_menus (NemoView *view)
 	gboolean can_copy_files;
 	gboolean can_link_files;
 	gboolean can_duplicate_files;
-	gboolean show_separate_delete_command;
 	gboolean show_open_alternate;
 	gboolean show_open_in_new_tab;
 	gboolean can_open;
@@ -9461,6 +9477,7 @@ real_update_menus (NemoView *view)
 
 	selection = nemo_view_get_selection (view);
 	selection_count = g_list_length (selection);
+    context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
 
 	selection_contains_special_link = special_link_in_selection (view);
 	selection_contains_desktop_or_home_dir = desktop_or_home_dir_in_selection (view);
@@ -9477,38 +9494,57 @@ real_update_menus (NemoView *view)
 
 	can_duplicate_files = can_create_files && can_copy_files;
 	can_link_files = can_create_files && can_copy_files;
-	
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_RENAME);
-	/* rename sensitivity depending on selection */
-	if (selection_count > 1) {
-		/* If multiple files are selected, sensitivity depends on whether a bulk renamer is registered. */
-		gtk_action_set_sensitive (action, have_bulk_rename_tool ());
-	} else {
-		gtk_action_set_sensitive (action,
-					  selection_count == 1 &&
-					  nemo_view_can_rename_file (view, selection->data));
-	}
 
-    gtk_action_set_visible (action, !selection_contains_recent && !selection_contains_special_link);
+    /* Rename context item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_RENAME);
+    /* rename sensitivity depending on selection */
+    if (selection_count > 1) {
+        /* If multiple files are selected, sensitivity depends on whether a bulk renamer is registered. */
+        gtk_action_set_sensitive (action, have_bulk_rename_tool ());
+    } else {
+        gtk_action_set_sensitive (action, selection_count == 1 && nemo_view_can_rename_file (view, selection->data));
+    }
+
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_RENAME) && (!selection_contains_recent && !selection_contains_special_link)) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
     gboolean no_selection_or_one_dir = ((selection_count == 1 && selection_contains_directory) ||
                                         selection_count == 0);
 
+    /* Open as Root context item */
     gboolean show_open_as_root = (geteuid() != 0) && no_selection_or_one_dir;
 
-    action = gtk_action_group_get_action (view->details->dir_action_group,
-                                         NEMO_ACTION_OPEN_AS_ROOT);
-    gtk_action_set_visible (action, show_open_as_root);
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_OPEN_AS_ROOT);
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_ROOT) && show_open_as_root) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
-    action = gtk_action_group_get_action (view->details->dir_action_group,
-                                         NEMO_ACTION_OPEN_IN_TERMINAL);
-    gtk_action_set_visible (action, no_selection_or_one_dir);
-
+    /* Open in Terminal context item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_OPEN_IN_TERMINAL);
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_TERMINAL) && no_selection_or_one_dir) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+    
+    /* New Folder context item */
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_NEW_FOLDER);
 	gtk_action_set_sensitive (action, can_create_files);
-    gtk_action_set_visible (action, !selection_contains_recent);
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_NEW_FOLDER) && !selection_contains_recent) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_OPEN);
@@ -9591,11 +9627,16 @@ real_update_menus (NemoView *view)
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER) &&
 		!NEMO_IS_DESKTOP_ICON_VIEW (view);
 
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_OPEN_ALTERNATE);
+    /* Open in New Window context item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_OPEN_ALTERNATE);
 
-	gtk_action_set_sensitive (action,  selection_count != 0);
-	gtk_action_set_visible (action, show_open_alternate);
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_OPEN_WINDOW) && show_open_alternate) {
+        gtk_action_set_sensitive (action,  selection_count != 0);
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
 	if (selection_count == 0 || selection_count == 1) {
 		label_with_underscore = g_strdup (_("Open in New _Window"));
@@ -9612,10 +9653,17 @@ real_update_menus (NemoView *view)
 	g_free (label_with_underscore);
 
 	show_open_in_new_tab = show_open_alternate;
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_OPEN_IN_NEW_TAB);
-	gtk_action_set_sensitive (action, selection_count != 0);
-	gtk_action_set_visible (action, show_open_in_new_tab);
+    
+    /* Open in New Tab Context Item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_OPEN_IN_NEW_TAB);
+    
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_OPEN_TAB) && show_open_in_new_tab) {
+        gtk_action_set_sensitive (action, selection_count != 0);
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
 	if (selection_count == 0 || selection_count == 1) {
 		label_with_underscore = g_strdup (_("Open in New _Tab"));
@@ -9636,67 +9684,90 @@ real_update_menus (NemoView *view)
 	reset_extension_actions_menu (view, selection);
     reset_move_copy_to_menu (view);
 
-	if (all_selected_items_in_trash (view)) {
-		label = _("_Delete Permanently");
-		tip = _("Delete all selected items permanently");
-		show_separate_delete_command = FALSE;
-	} else {
-		label = _("Mo_ve to Trash");
-		tip = _("Move each selected item to the Trash");
-		show_separate_delete_command = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ENABLE_DELETE);
-	}
-	
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_TRASH);
-	g_object_set (action,
-		      "label", label,
-		      "tooltip", tip,
-		      "icon-name", all_selected_items_in_trash (view) ?
-		      NEMO_ICON_DELETE : NEMO_ICON_TRASH_FULL,
-		      NULL);
-	gtk_action_set_sensitive (action, can_delete_files);
+    /* Trash context item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_TRASH);
+    
+    if (all_selected_items_in_trash (view)) {
+        label = _("_Delete Permanently");
+        tip = _("Delete all selected items permanently");
+    }
+    else {
+        label = _("Mo_ve to Trash");
+        tip = _("Move each selected item to the Trash");
+        
+    }
+    gtk_action_set_sensitive (action, can_delete_files);
+    
+        //If the item that is being right clicked is in the trash, always show delete permanently, we don't want to hide this
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_TRASH) || all_selected_items_in_trash (view)) {
+        gtk_action_set_visible (action, TRUE);
+        g_object_set (action,
+                "label", label,
+                "tooltip", tip,
+                "icon-name", all_selected_items_in_trash (view) ?
+                NEMO_ICON_DELETE : NEMO_ICON_TRASH_FULL,
+                NULL);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_DELETE);
-	gtk_action_set_visible (action, show_separate_delete_command);
+    /* Delete context item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_DELETE);
 
     if (selection_contains_recent) {
         label = _("Remo_ve from Recent");
         tip = _("Remove each selected item from the recently used list");
-    } else {
+    } 
+    else {
         label = _("_Delete");
         tip = _("Delete each selected item, without moving to the Trash");
     }
+    gtk_action_set_sensitive (action, can_delete_files);
+    
+        //If delete should be enabled in the menu and what icon/label it should use based on context
+        //We are hiding this from trash items as not to show two entries for delete
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DELETE) && !all_selected_items_in_trash (view)) {
+        gtk_action_set_visible (action, TRUE);
+        g_object_set (action,
+                "label", label,
+                "tooltip", tip,
+                "icon-name", NEMO_ICON_DELETE,
+                NULL);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+    
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_RESTORE_FROM_TRASH);
+    update_restore_from_trash_action (action, selection, FALSE);
+    
+    /* Duplicate context item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_DUPLICATE);
+                              
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_DUPLICATE) && !selection_contains_recent && can_duplicate_files) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+    
+    /* Make Link context item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_CREATE_LINK);
+                          
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_LINK) && !selection_contains_recent && can_link_files) {
+        gtk_action_set_visible (action, TRUE);
+        g_object_set (action, "label", ngettext (
+                "Ma_ke Link",
+                "Ma_ke Links",
+                selection_count),
+                NULL);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
-	if (show_separate_delete_command) {
-		g_object_set (action,
-			      "label", label,
-                  "tooltip", tip,
-			      "icon-name", NEMO_ICON_DELETE,
-			      NULL);
-	}
-	gtk_action_set_sensitive (action, can_delete_files);
-
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_RESTORE_FROM_TRASH);
-	update_restore_from_trash_action (action, selection, FALSE);
-	
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_DUPLICATE);
-	gtk_action_set_sensitive (action, can_duplicate_files);
-    gtk_action_set_visible (action, !selection_contains_recent);
-
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_CREATE_LINK);
-	gtk_action_set_sensitive (action, can_link_files);
-    gtk_action_set_visible (action, !selection_contains_recent);
-	g_object_set (action, "label",
-		      ngettext ("Ma_ke Link",
-			      	"Ma_ke Links",
-				selection_count),
-		      NULL);
-	
-	show_properties = (!NEMO_IS_DESKTOP_ICON_VIEW (view) || selection_count > 0);
+    show_properties = (!NEMO_IS_DESKTOP_ICON_VIEW (view) || selection_count > 0);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PROPERTIES);
@@ -9715,7 +9786,7 @@ real_update_menus (NemoView *view)
 					      NEMO_ACTION_PROPERTIES_ACCEL);
 
 	gtk_action_set_sensitive (action, show_properties);
-
+    
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_EMPTY_TRASH);
 	g_object_set (action,
@@ -9780,10 +9851,16 @@ real_update_menus (NemoView *view)
 		update_scripts_menu (view);
 	}
 
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_NEW_DOCUMENTS);
-	gtk_action_set_sensitive (action, can_create_files);
-    gtk_action_set_visible (action, !selection_contains_recent);
+    /* New Document context menu item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_NEW_DOCUMENTS);
+    
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_NEW_DOC) && !selection_contains_recent) {
+        gtk_action_set_sensitive (action, can_create_files);
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
 	if (can_create_files && view->details->templates_invalid) {
 		update_templates_menu (view);
@@ -9827,14 +9904,27 @@ real_update_menus (NemoView *view)
 					      NEMO_ACTION_MOVE_TO_DESKTOP);
 	gtk_action_set_sensitive (action, can_delete_files);
 	gtk_action_set_visible (action, show_desktop_target && !selection_contains_recent);
+    
 
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      "CopyToMenu");
-	gtk_action_set_sensitive (action, can_copy_files);
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      "MoveToMenu");
-	gtk_action_set_sensitive (action, can_delete_files);
-    gtk_action_set_visible (action, !selection_contains_recent);
+    /* Copy To context item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, "CopyToMenu");
+    if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_COPY_TO) {
+        gtk_action_set_sensitive (action, can_copy_files);
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+
+    /* Move To context item */
+    action = gtk_action_group_get_action (view->details->dir_action_group, "MoveToMenu");
+    if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_MOVE_TO) && !selection_contains_recent) {
+        gtk_action_set_sensitive (action, can_delete_files);
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                           NEMO_ACTION_FOLLOW_SYMLINK);

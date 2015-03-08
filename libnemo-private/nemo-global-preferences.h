@@ -31,6 +31,29 @@
 
 G_BEGIN_DECLS
 
+/* Context Menu */
+#define NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS     "enabled-menu-items"
+enum {
+    NEMO_CONTEXT_ITEM_ENABLED_NONE =             0 ,
+    NEMO_CONTEXT_ITEM_ENABLED_RENAME =       (1<<0),   //1       Done
+    NEMO_CONTEXT_ITEM_ENABLED_DUPLICATE =    (1<<1),   //2       Done
+    NEMO_CONTEXT_ITEM_ENABLED_LINK =         (1<<2),   //4       Done
+    NEMO_CONTEXT_ITEM_ENABLED_COPY_TO =      (1<<3),   //8       Done
+    NEMO_CONTEXT_ITEM_ENABLED_MOVE_TO =      (1<<4),   //16      Done
+    NEMO_CONTEXT_ITEM_ENABLED_TRASH =        (1<<5),   //32      Done
+    NEMO_CONTEXT_ITEM_ENABLED_DELETE =       (1<<6),   //64      Done
+    NEMO_CONTEXT_ITEM_ENABLED_TERMINAL =     (1<<7),   //128     Done
+    NEMO_CONTEXT_ITEM_ENABLED_ROOT =         (1<<8),   //256     Done
+    NEMO_CONTEXT_ITEM_ENABLED_OPEN_TAB =     (1<<9),   //512     Done
+    NEMO_CONTEXT_ITEM_ENABLED_OPEN_WINDOW =  (1<<10),  //1024    Done
+    NEMO_CONTEXT_ITEM_ENABLED_NEW_DOC =      (1<<11),  //2048    Done
+    NEMO_CONTEXT_ITEM_ENABLED_ARRANGE =      (1<<12),  //4096    Done
+    NEMO_CONTEXT_ITEM_ENABLED_NEW_FOLDER =   (1<<13),  //8192    Done
+    NEMO_CONTEXT_ITEM_ENABLED_ZOOMS =        (1<<14),  //16384   Done Needs to be restarted to take effect
+    NEMO_CONTEXT_ITEM_ENABLED_HIDDEN =       (1<<15),  //131072  Done Needs to be restarted to take effect
+    NEMO_CONTEXT_ITEM_ENABLED_CLEAN_UP =     (1<<16),  //262144  Done
+};
+
 /* Trash options */
 #define NEMO_PREFERENCES_CONFIRM_TRASH			"confirm-trash"
 #define NEMO_PREFERENCES_ENABLE_DELETE			"enable-delete"

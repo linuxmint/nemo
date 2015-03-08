@@ -1118,22 +1118,6 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("_All Topics"), "F1",
   /* tooltip */                  N_("Display Nemo help"),
                                  G_CALLBACK (action_nemo_manual_callback) },
-  /** name, stock id          { "NemoHelpSearch", NULL,
-     label, accelerator        N_("Search for files"), NULL,
-     tooltip                   N_("Locate files based on file name and type. Save your searches for later use."),
-                                 G_CALLBACK (action_nemo_manual_callback) },
-     name, stock id          { "NemoHelpSort", NULL,
-     label, accelerator        N_("Sort files and folders"), NULL,
-     tooltip                   N_("Arrange files by name, size, type, or when they were changed."),
-                                 G_CALLBACK (action_nemo_manual_callback) },
-     name, stock id          { "NemoHelpLost", NULL,
-     label, accelerator        N_("Find a lost file"), NULL,
-     tooltip                   N_("Follow these tips if you can't find a file you created or downloaded."),
-                                 G_CALLBACK (action_nemo_manual_callback) },
-     name, stock id          { "NemoHelpShare", NULL,
-     label, accelerator        N_("Share and transfer files"), NULL,
-     tooltip                   N_("Easily transfer files to your contacts and devices from the file manager."),
-                                 G_CALLBACK (action_nemo_manual_callback) }, **/
   /* name, stock id */         { "About Nemo", GTK_STOCK_ABOUT,
   /* label, accelerator */       N_("_About"), NULL,
   /* tooltip */                  N_("Display credits for the creators of Nemo"),
@@ -1548,6 +1532,7 @@ nemo_window_initialize_menus (NemoWindow *window)
 	GtkUIManager *ui_manager;
 	GtkAction *action;
 	gint i;
+    gint context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
 
 	if (window->details->ui_manager == NULL){
         window->details->ui_manager = gtk_ui_manager_new ();
@@ -1578,7 +1563,14 @@ nemo_window_initialize_menus (NemoWindow *window)
   	action = gtk_action_group_get_action (action_group, NEMO_ACTION_EDIT_LOCATION);
   	g_object_set (action, "short_label", _("_Location"), NULL);
 
-	action = gtk_action_group_get_action (action_group, NEMO_ACTION_SHOW_HIDDEN_FILES);
+    action = gtk_action_group_get_action (action_group, NEMO_ACTION_SHOW_HIDDEN_FILES);
+    if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_HIDDEN) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
+    
 	g_signal_handlers_block_by_func (action, action_show_hidden_files_callback, window);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
 				      g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
