@@ -267,6 +267,21 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
+              <object class="GtkButton" id="helpbutton1">
+                <property name="label">gtk-help</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="closebutton1">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
@@ -3193,7 +3208,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="valign">start</property>
                                                             <property name="margin_top">4</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle12">
+                                                            <object class="GtkCheckButton" id="new_folder_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -3250,7 +3265,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle11">
+                                                            <object class="GtkCheckButton" id="new_doc_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -3333,7 +3348,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle10">
+                                                            <object class="GtkCheckButton" id="terminal_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -3391,7 +3406,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle9">
+                                                            <object class="GtkCheckButton" id="root_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -3459,7 +3474,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle5">
+                                                            <object class="GtkCheckButton" id="arrange_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -3516,7 +3531,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle6">
+                                                            <object class="GtkCheckButton" id="organize_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -3560,7 +3575,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle7">
+                                                            <object class="GtkCheckButton" id="show_hidden_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -3616,7 +3631,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="valign">start</property>
                                                             <property name="margin_right">12</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle8">
+                                                            <object class="GtkCheckButton" id="zooms_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -3730,7 +3745,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="valign">start</property>
                                                             <property name="margin_top">4</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle">
+                                                            <object class="GtkCheckButton" id="new_tab_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -3886,7 +3901,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle1">
+                                                            <object class="GtkCheckButton" id="make_link_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -3930,7 +3945,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="halign">baseline</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle2">
+                                                            <object class="GtkCheckButton" id="rename_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -3973,7 +3988,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle3">
+                                                            <object class="GtkCheckButton" id="copy_to_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -4029,7 +4044,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle4">
+                                                            <object class="GtkCheckButton" id="move_to_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -4097,7 +4112,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle13">
+                                                            <object class="GtkCheckButton" id="trash_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -4155,7 +4170,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">start</property>
                                                             <child>
-                                                            <object class="GtkCheckButton" id="open_new_tab_toggle14">
+                                                            <object class="GtkCheckButton" id="delete_toggle">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -4282,6 +4297,7 @@ Select additional information to display in the tooltip:&lt;/i&gt;</property>
       </object>
     </child>
     <action-widgets>
+      <action-widget response="-11">helpbutton1</action-widget>
       <action-widget response="-7">closebutton1</action-widget>
     </action-widgets>
   </object>

@@ -49,10 +49,9 @@ enum {
     NEMO_CONTEXT_ITEM_ENABLED_NEW_DOC =      (1<<11),  //2048    Done
     NEMO_CONTEXT_ITEM_ENABLED_ARRANGE =      (1<<12),  //4096    Done
     NEMO_CONTEXT_ITEM_ENABLED_NEW_FOLDER =   (1<<13),  //8192    Done
-    NEMO_CONTEXT_ITEM_ENABLED_ZOOM_IN =      (1<<14),  //16384   Done Needs to be restarted to take effect
-    NEMO_CONTEXT_ITEM_ENABLED_ZOOM_OUT =     (1<<15),  //32768   Done Needs to be restarted to take effect
-    NEMO_CONTEXT_ITEM_ENABLED_ZOOM_NORM =    (1<<16),  //65536   Done Needs to be restarted to take effect
-    NEMO_CONTEXT_ITEM_ENABLED_HIDDEN =       (1<<17),  //131072  Done Needs to be restarted to take effect
+    NEMO_CONTEXT_ITEM_ENABLED_ZOOMS =        (1<<14),  //16384   Done Needs to be restarted to take effect
+    NEMO_CONTEXT_ITEM_ENABLED_HIDDEN =       (1<<15),  //131072  Done Needs to be restarted to take effect
+    NEMO_CONTEXT_ITEM_ENABLED_CLEAN_UP =     (1<<16),  //262144  Done
 };
 
 /* Trash options */

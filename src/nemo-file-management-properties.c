@@ -99,6 +99,25 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_ACCESS_DATE_WIDGET "tt_show_created_date_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_FULL_PATH_WIDGET "tt_show_full_path_checkbutton"
 
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_NEW_FOLDER_WIDGET "new_folder_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_NEW_DOC_WIDGET "new_doc_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_TERMINAL_WIDGET "terminal_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_ROOT_WIDGET    "root_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_ARRANGE_WIDGET "arrange_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_ORGANIZE_WIDGET "organize_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_SHOW_HIDDEN_WIDGET "show_hidden_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_ZOOMS_WIDGET "zooms_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_NEW_TAB_WIDGET "new_tab_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_NEW_WINDOW_WIDGET "open_new_window_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_DUPLICATE_WIDGET "duplicate_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_LINK_WIDGET "make_link_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_RENAME_WIDGET "rename_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_COPY_TO_WIDGET "copy_to_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_MOVE_TO_WIDGET "move_to_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_TRASH_WIDGET "trash_toggle"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_DELETE_WIDGET "delete_toggle"
+
+
 /* int enums */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET "preview_image_size_combobox"
 
@@ -572,6 +591,41 @@ nemo_file_management_properties_dialog_setup_list_column_page (GtkBuilder *build
 	gtk_box_pack_start (GTK_BOX (box), chooser, TRUE, TRUE, 0);
 }
 
+
+static void
+context_menu_enabled_init (GtkToggleButton *check_box, gpointer user_data)
+{
+    gint context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
+    gint item_flag = user_data;
+    gboolean widget_enabled = gtk_toggle_button_get_active (check_box);
+    gboolean gsetting_enabled = (context_items_flag & item_flag);
+        
+    if (!widget_enabled && gsetting_enabled) {
+        gtk_toggle_button_set_active (check_box, TRUE);
+    }
+    else if (widget_enabled && !gsetting_enabled)
+    {
+        gtk_toggle_button_set_active (check_box, FALSE);
+    }
+}
+
+static void
+context_menu_enabled_switcher (GtkToggleButton *check_box, gpointer user_data)
+{
+    gint context_items_flag = g_settings_get_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS);
+    gint item_flag = user_data;
+    gboolean widget_enabled = gtk_toggle_button_get_active (check_box);
+    gboolean gsetting_enabled = (context_items_flag & item_flag);
+    
+    if (widget_enabled && !gsetting_enabled) {
+        g_settings_set_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS, (context_items_flag | item_flag));
+    }
+    else if (!widget_enabled && gsetting_enabled)
+    {
+        g_settings_set_int(nemo_preferences, NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS, (context_items_flag & ~item_flag));
+    }
+}
+
 static void
 bind_builder_bool (GtkBuilder *builder,
 		   GSettings *settings,
@@ -764,6 +818,18 @@ bind_builder_radio (GtkBuilder *builder,
 }
 
 static void
+bind_builder_context_menu_flag (GtkBuilder *builder,
+		   const char *widget_name,
+		   const char *prefs)
+{
+    g_signal_connect (gtk_builder_get_object (builder, widget_name), "realize",
+        G_CALLBACK (context_menu_enabled_init), prefs);
+    
+    g_signal_connect (gtk_builder_get_object (builder, widget_name), "toggled",
+        G_CALLBACK (context_menu_enabled_switcher), prefs);
+}
+
+static void
 setup_tooltip_items (GtkBuilder *builder)
 {
     gboolean enabled = FALSE;
@@ -813,6 +879,8 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 
 
 	/* nemo patch */
+    
+    /* Toolbar Config */
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_PREVIOUS_ICON_TOOLBAR_WIDGET,
 			   NEMO_PREFERENCES_SHOW_PREVIOUS_ICON_TOOLBAR);
@@ -849,9 +917,46 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
     bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LIST_VIEW_ICON_TOOLBAR_WIDGET,
 			   NEMO_PREFERENCES_SHOW_LIST_VIEW_ICON_TOOLBAR);
-    bind_builder_bool (builder, nemo_preferences,
-			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPACT_VIEW_ICON_TOOLBAR_WIDGET,
-			   NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR);
+    bind_builder_bool (builder, nemo_preferences, NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPACT_VIEW_ICON_TOOLBAR_WIDGET, 
+        NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR);
+
+    /*Context Menu Config */
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_NEW_FOLDER_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_NEW_FOLDER);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_NEW_DOC_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_NEW_DOC);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_TERMINAL_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_TERMINAL);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_ROOT_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_ROOT);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_ARRANGE_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_ARRANGE);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_ORGANIZE_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_CLEAN_UP);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_SHOW_HIDDEN_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_HIDDEN);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_ZOOMS_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_ZOOMS);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_NEW_TAB_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_OPEN_TAB);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_NEW_WINDOW_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_OPEN_WINDOW);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_DUPLICATE_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_DUPLICATE);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_LINK_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_LINK);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_RENAME_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_RENAME);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_COPY_TO_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_COPY_TO);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_MOVE_TO_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_MOVE_TO);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_TRASH_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_TRASH);
+    bind_builder_context_menu_flag (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_MENU_DELETE_WIDGET, 
+        NEMO_CONTEXT_ITEM_ENABLED_DELETE);
+
+    
 	/* setup preferences */
     bind_builder_bool (builder, nemo_icon_view_preferences,
         NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_LAYOUT_WIDGET,

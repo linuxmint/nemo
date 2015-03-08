@@ -1597,6 +1597,14 @@ nemo_icon_view_update_menus (NemoView *view)
 
 	gtk_action_set_visible (action,
 				nemo_icon_view_supports_scaling (icon_view));
+             
+    action = gtk_action_group_get_action (icon_view->details->icon_action_group, NEMO_ACTION_CLEAN_UP);
+    if (context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_CLEAN_UP) {
+        gtk_action_set_visible (action, TRUE);
+    }
+    else {
+        gtk_action_set_visible (action, FALSE);
+    }
                 
     action = gtk_action_group_get_action (icon_view->details->icon_action_group, NEMO_ACTION_ARRANGE_ITEMS);
     if ((context_items_flag & NEMO_CONTEXT_ITEM_ENABLED_ARRANGE) && nemo_icon_view_supports_auto_layout (icon_view)) {
@@ -2791,6 +2799,9 @@ nemo_icon_view_init (NemoIconView *icon_view)
 				  "changed::" NEMO_PREFERENCES_COMPACT_VIEW_ALL_COLUMNS_SAME_WIDTH,
 				  G_CALLBACK (all_columns_same_width_changed_callback),
 				  icon_view);
+    g_signal_connect_swapped (nemo_compact_view_preferences,
+                  "changed::" NEMO_PREFERENCES_RIGHT_CLICK_ENABLED_ITEMS,
+                  G_CALLBACK (update_layout_menus), icon_view);
 
 	g_signal_connect_object (get_icon_container (icon_view), "handle_netscape_url",
 				 G_CALLBACK (icon_view_handle_netscape_url), icon_view, 0);

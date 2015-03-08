@@ -166,9 +166,9 @@
       <_description>If set to true, then Nemo will ask for confirmation when  you attempt to delete files, or empty the Trash.</_description>
     </key>
     <key name="enabled-menu-items" type="i">
-      <default>262143</default>
+      <default>131071</default>
       <_summary>An int flag for the entries enabled in the right click menu</_summary>
-      <_description>18 bits are read ("Show Hidden Files", "Normal Zoom", "Zoom Out", "Zoom In", "New Folder", "Arrange Items", "New Document", "Open in New Window", "Open as Root", "Open in Terminal", "Open in New Tab" "Delete", "Trash", "Move To", "Copy to", "Make Link", "Duplicate", "Rename") in decimal form converted from a binary integer (111111111111111111)</_description>
+      <_description>17 bits are read ("Organize" "Show Hidden Files", "Zoom Items", "New Folder", "Arrange Items", "New Document", "Open in New Window", "Open as Root", "Open in Terminal", "Open in New Tab" "Delete", "Trash", "Move To", "Copy to", "Make Link", "Duplicate", "Rename") in decimal form converted from a binary integer (111111111111111111)</_description>
     </key>
     <key name="swap-trash-delete" type="b">
       <default>false</default>
