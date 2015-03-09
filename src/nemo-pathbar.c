@@ -1388,6 +1388,7 @@ button_event_cb (GtkWidget *button,
         ButtonData *button_data;
         NemoPathBar *path_bar;
         GList *button_list;
+	gboolean retval;
 
         button_data = BUTTON_DATA (data);
         path_bar = NEMO_PATH_BAR (gtk_widget_get_parent (button));
@@ -1406,9 +1407,9 @@ button_event_cb (GtkWidget *button,
         button_list = g_list_find (path_bar->priv->button_list, button_data);
         g_assert (button_list != NULL);
 
-        g_signal_emit (path_bar, path_bar_signals [PATH_EVENT], 0, button_data->path, event);
+        g_signal_emit (path_bar, path_bar_signals [PATH_EVENT], 0, button_data->path, event, &retval);
 
-	return FALSE;
+	return retval;
 }
 
 static void
