@@ -121,7 +121,7 @@ struct NemoWindowDetails
 
 #define NEMO_WINDOW_MIN_WIDTH		200
 #define NEMO_WINDOW_MIN_HEIGHT		200
-#define NEMO_WINDOW_DEFAULT_WIDTH		840
+#define NEMO_WINDOW_DEFAULT_WIDTH		855
 #define NEMO_WINDOW_DEFAULT_HEIGHT		550
 
 typedef void (*NemoBookmarkFailedCallback) (NemoWindow *window,
