@@ -1,3 +1,4 @@
+/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 /* nemo-pathbar.h
  *
  * This library is free software; you can redistribute it and/or
@@ -48,7 +49,7 @@ struct _NemoPathBarClass
 
   	void (* path_clicked)   (NemoPathBar  *path_bar,
 				 GFile             *location);
-        void (* path_event)     (NemoPathBar  *path_bar,
+        gboolean (* path_event)     (NemoPathBar  *path_bar,
                                  GdkEventButton   *event,
                                  GFile            *location);
 };
