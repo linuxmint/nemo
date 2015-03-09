@@ -109,6 +109,8 @@ nemo_desktop_window_init (NemoDesktopWindow *window)
 	 */
 	gtk_window_set_resizable (GTK_WINDOW (window),
 				  FALSE);
+	gtk_window_set_decorated (GTK_WINDOW (window),
+				  FALSE);
 
 	g_object_set_data (G_OBJECT (window), "is_desktop_window", 
 			   GINT_TO_POINTER (1));
