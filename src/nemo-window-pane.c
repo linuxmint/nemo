@@ -306,6 +306,8 @@ path_bar_path_event_callback (NemoPathBar *path_bar,
 			g_free (uri);
 		}
 		return TRUE;
+	} else if (event->button == 2) {
+		return TRUE;
 	}
 	return FALSE;
 }
