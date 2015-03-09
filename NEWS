@@ -1,3 +1,15 @@
+Nemo merged with changes in Nautilus 3.9.91:
+
+Changes:
+* Don't present redundant options for operations on single
+  files (William Kunkel)
+* Fix desktop window for newer GTK+ client side decorations
+  (Christian Hergert, Matthias Clasen)
+* Fix double menu when right clicking on the pathbar (Stefano Facchini)
+
+Revert:
+* Fix headerbar appearance with latest GTK+ (Yosef or Boczko)
+
 Nemo merged with changes in Nautilus 3.9.90:
 
 Changes:
