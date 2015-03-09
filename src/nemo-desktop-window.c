@@ -155,7 +155,7 @@ nemo_desktop_window_new (GtkApplication *application,
 	 * Note that nemo_desktop_window_init is too early to do this.
 	 */
 	nemo_desktop_window_update_directory (window);
-    gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
+	gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
 
 	return window;
 }
