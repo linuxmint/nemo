@@ -55,6 +55,7 @@ static GtkWidget	    *name_field = NULL;
 static int		     name_field_changed_signal_id;
 static GtkWidget	    *remove_button = NULL;
 static GtkWidget            *jump_button = NULL;
+static GtkWidget            *sort_button = NULL;
 static gboolean		     text_changed = FALSE;
 static gboolean		     name_text_changed = FALSE;
 static GtkWidget	    *uri_field = NULL;
@@ -65,6 +66,7 @@ static int                   row_activated_signal_id;
 static int                   button_pressed_signal_id;
 static int                   key_pressed_signal_id;
 static int                   jump_button_signal_id;
+static int                   sort_button_signal_id;
 
 /* forward declarations */
 static guint    get_selected_row                            (void);
@@ -78,6 +80,8 @@ static void     on_name_field_changed                       (GtkEditable        
 static void     on_remove_button_clicked                    (GtkButton            *button,
 							     gpointer              user_data);
 static void     on_jump_button_clicked                      (GtkButton            *button,
+							     gpointer              user_data);
+static void     on_sort_button_clicked                      (GtkButton            *button,
 							     gpointer              user_data);
 static void	on_row_changed				    (GtkListStore	  *store,
 							     GtkTreePath	  *path,
@@ -225,11 +229,16 @@ edit_bookmarks_dialog_reset_signals (gpointer data,
 {
 	g_signal_handler_disconnect (jump_button,
 				     jump_button_signal_id);
+	g_signal_handler_disconnect (sort_button,
+				     sort_button_signal_id);
 	g_signal_handler_disconnect (bookmark_list_widget,
 				     row_activated_signal_id);
 	jump_button_signal_id =
 		g_signal_connect (jump_button, "clicked",
 				  G_CALLBACK (on_jump_button_clicked), NULL);
+	sort_button_signal_id =
+		g_signal_connect (sort_button, "clicked",
+				  G_CALLBACK (on_sort_button_clicked), NULL);
 	row_activated_signal_id =
 		g_signal_connect (bookmark_list_widget, "row_activated",
 				  G_CALLBACK (on_row_activated), NULL);
@@ -265,6 +274,7 @@ create_bookmarks_window (NemoBookmarkList *list, GObject *undo_manager_source)
 	bookmark_list_widget = (GtkTreeView *)gtk_builder_get_object (builder, "bookmark_tree_view");
 	remove_button = (GtkWidget *)gtk_builder_get_object (builder, "bookmark_delete_button");
 	jump_button = (GtkWidget *)gtk_builder_get_object (builder, "bookmark_jump_button");
+	sort_button = (GtkWidget *)gtk_builder_get_object (builder, "bookmark_sort_button");
 
 	set_up_close_accelerator (window);
 	nemo_undo_share_undo_manager (G_OBJECT (window), undo_manager_source);
@@ -384,6 +394,9 @@ create_bookmarks_window (NemoBookmarkList *list, GObject *undo_manager_source)
 	jump_button_signal_id = 
 		g_signal_connect (jump_button, "clicked",
 				  G_CALLBACK (on_jump_button_clicked), undo_manager_source);
+	sort_button_signal_id =
+		g_signal_connect (sort_button, "clicked",
+				  G_CALLBACK (on_sort_button_clicked), NULL);
 
 	gtk_tree_selection_set_mode (bookmark_selection, GTK_SELECTION_BROWSE);
 	
@@ -401,12 +414,17 @@ edit_bookmarks_dialog_set_signals (GObject *undo_manager_source)
 
 	g_signal_handler_disconnect (jump_button,
 				     jump_button_signal_id);
+	g_signal_handler_disconnect (sort_button,
+				     sort_button_signal_id);
 	g_signal_handler_disconnect (bookmark_list_widget,
 				     row_activated_signal_id);
 
 	jump_button_signal_id =
 		g_signal_connect (jump_button, "clicked",
 				  G_CALLBACK (on_jump_button_clicked), undo_manager_source);
+	sort_button_signal_id =
+		g_signal_connect (sort_button, "clicked",
+				  G_CALLBACK (on_sort_button_clicked), NULL);
 	row_activated_signal_id =
 		g_signal_connect (bookmark_list_widget, "row_activated",
 				  G_CALLBACK (on_row_activated), undo_manager_source);
@@ -572,6 +590,15 @@ on_jump_button_clicked (GtkButton *button,
 
 	screen = gtk_widget_get_screen (GTK_WIDGET (button));
 	open_selected_bookmark (user_data, screen);
+}
+
+static void
+on_sort_button_clicked (GtkButton *button,
+                        gpointer   user_data)
+{
+    g_assert (NEMO_IS_BOOKMARK_LIST (bookmarks));
+
+    nemo_bookmark_list_sort_ascending (bookmarks);
 }
 
 static void
@@ -755,7 +782,8 @@ on_selection_changed (GtkTreeSelection *treeselection,
 	
 	/* Set the sensitivity of widgets that require a selection */
 	gtk_widget_set_sensitive (remove_button, selected != NULL);
-        gtk_widget_set_sensitive (jump_button, selected != NULL);
+    gtk_widget_set_sensitive (jump_button, selected != NULL);
+    gtk_widget_set_sensitive (sort_button, selected != NULL);
 	gtk_widget_set_sensitive (name_field, selected != NULL);
 	gtk_widget_set_sensitive (uri_field, selected != NULL);
 
