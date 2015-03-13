@@ -502,6 +502,8 @@ search_engine_hits_added (NemoSearchEngine *engine, GList *hits,
 	file = nemo_directory_get_corresponding_file (NEMO_DIRECTORY (search));
 	nemo_file_emit_changed (file);
 	nemo_file_unref (file);
+	
+	search_engine_finished (engine,search);
 }
 
 static void
@@ -568,6 +570,10 @@ search_engine_error (NemoSearchEngine *engine, const char *error_message, NemoSe
 static void
 search_engine_finished (NemoSearchEngine *engine, NemoSearchDirectory *search)
 {
+	if(search->details->search_finished){
+		return;
+		   }
+
 	search->details->search_finished = TRUE;
 
 	nemo_directory_emit_done_loading (NEMO_DIRECTORY (search));
