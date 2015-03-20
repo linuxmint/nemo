@@ -8373,23 +8373,18 @@ static const GtkActionEntry directory_view_entries[] = {
 
 static void
 connect_proxy (NemoView *view,
-	       GtkAction *action,
-	       GtkWidget *proxy,
-	       GtkActionGroup *action_group)
+               GtkAction *action,
+               GtkWidget *proxy,
+               GtkActionGroup *action_group)
 {
-	GdkPixbuf *pixbuf;
-	GtkWidget *image;
+    if (strcmp (gtk_action_get_name (action), NEMO_ACTION_NEW_EMPTY_DOCUMENT) == 0 &&
+        GTK_IS_IMAGE_MENU_ITEM (proxy)) {
 
-	if (strcmp (gtk_action_get_name (action), NEMO_ACTION_NEW_EMPTY_DOCUMENT) == 0 &&
-	    GTK_IS_IMAGE_MENU_ITEM (proxy)) {
-		pixbuf = nemo_ui_get_menu_icon ("text-x-generic", GTK_WIDGET (view));
-		if (pixbuf != NULL) {
-			image = gtk_image_new_from_pixbuf (pixbuf);
-			gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), image);
+        GtkWidget *image;
 
-			g_object_unref (pixbuf);
-		}
-	}
+        image = gtk_image_new_from_icon_name ("text-x-generic", GTK_ICON_SIZE_MENU);
+        gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), image);
+    }
 }
 
 static void
