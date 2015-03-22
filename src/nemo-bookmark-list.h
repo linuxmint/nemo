@@ -81,6 +81,7 @@ NemoBookmark *      nemo_bookmark_list_item_with_location  (NemoBookmarkList *bo
 void                    nemo_bookmark_list_move_item           (NemoBookmarkList *bookmarks,
 								    guint                 index,
 								    guint                 destination);
+void                    nemo_bookmark_list_sort_ascending           (NemoBookmarkList *bookmarks);
 gboolean                nemo_bookmark_list_can_bookmark_location (NemoBookmarkList *list,
 								      GFile                *location);
 
