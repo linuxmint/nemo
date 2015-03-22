@@ -1,6 +1,12 @@
+nemo (2.5.1-daschuer7) trusty; urgency=low
+  
+  * Merged wit Nautilus 3.10 
+ 
+ -- Daniel Schürmann <daschuer@gmx.de>  Sun, 22 Mar 2015 22:52:00 +0100
+
 nemo (2.5.1-daschuer6) trusty; urgency=low
   
-  * Improved diplay of lon paths in property window
+  * Improved diplay of long paths in property window
   * Follow symlinks when searching 
  
  -- Daniel Schürmann <daschuer@gmx.de>  Wed, 11 Feb 2015 21:22:10 +0100
