@@ -2304,24 +2304,15 @@ static gboolean
 set_up_scripts_directory_global (void)
 {
 	char *scripts_directory_path;
-	const char *override;
 
 	if (scripts_directory_uri != NULL) {
 		return TRUE;
 	}
 
-	override = g_getenv ("GNOME22_USER_DIR");
-
-	if (override) {
-		scripts_directory_path = g_build_filename (override,
-							   "nemo-scripts",
-							   NULL);
-	} else {
-		scripts_directory_path = g_build_filename (g_get_home_dir (),
-							   ".gnome2",
-							   "nemo-scripts",
-							   NULL);
-	}
+    scripts_directory_path = g_build_filename (g_get_user_data_dir (),
+                                               "nemo",
+                                               "scripts",
+                                               NULL);
 
 	if (g_mkdir_with_parents (scripts_directory_path, 0755) == 0) {
 		scripts_directory_uri = g_filename_to_uri (scripts_directory_path, NULL, NULL);
@@ -2496,6 +2487,12 @@ static void slot_changed_pane (NemoWindowSlot *slot,
 		"hidden-files-mode-changed", G_CALLBACK (hidden_files_mode_changed),
 		view, 0);
 	hidden_files_mode_changed (view->details->window, view);
+}
+
+static void
+plugin_prefs_changed (GSettings *settings, gchar *key, gpointer user_data)
+{
+    scripts_added_or_changed_callback (NULL, NULL, user_data);
 }
 
 void
@@ -2752,6 +2749,10 @@ nemo_view_init (NemoView *view)
 	manager = nemo_file_undo_manager_get ();
 	g_signal_connect_object (manager, "undo-changed",
 				 G_CALLBACK (undo_manager_changed_cb), view, 0);				  
+
+    g_signal_connect (nemo_plugin_preferences,
+                      "changed::" NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS,
+                      G_CALLBACK (plugin_prefs_changed), view);
 
 	/* Accessibility */
 	atk_object = gtk_widget_get_accessible (GTK_WIDGET (view));
@@ -6101,7 +6102,8 @@ update_directory_in_scripts_menu (NemoView *view, NemoDirectory *directory)
 	for (node = file_list; node != NULL; node = node->next) {
 		file = node->data;
 
-		if (nemo_file_is_launchable (file)) {
+		if (nemo_file_is_launchable (file) &&
+            nemo_global_preferences_should_load_plugin (nemo_file_peek_name (file), NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS)) {
 			add_script_to_scripts_menus (view, file, menu_path, popup_path, popup_bg_path);
 			any_scripts = TRUE;
 		} else if (nemo_file_is_directory (file)) {
@@ -6589,28 +6591,7 @@ action_open_scripts_folder_callback (GtkAction *action,
 	view = NEMO_VIEW (callback_data);
 	nemo_window_slot_go_to (view->details->slot, location, FALSE);
 
-	eel_show_info_dialog_with_details 
-		(_("All executable files in this folder will appear in the "
-		   "Scripts menu."),
-		 _("Choosing a script from the menu will run "
-		   "that script with any selected items as input."), 
-		 _("All executable files in this folder will appear in the "
-		   "Scripts menu. Choosing a script from the menu will run "
-		   "that script.\n\n"
-		   "When executed from a local folder, scripts will be passed "
-		   "the selected file names. When executed from a remote folder "
-		   "(e.g. a folder showing web or ftp content), scripts will "
-		   "be passed no parameters.\n\n"
-		   "In all cases, the following environment variables will be "
-		   "set by Nemo, which the scripts may use:\n\n"
-		   "NEMO_SCRIPT_SELECTED_FILE_PATHS: newline-delimited paths for selected files (only if local)\n\n"
-		   "NEMO_SCRIPT_SELECTED_URIS: newline-delimited URIs for selected files\n\n"
-		   "NEMO_SCRIPT_CURRENT_URI: URI for current location\n\n"
-		   "NEMO_SCRIPT_WINDOW_GEOMETRY: position and size of current window\n\n"
-		   "NEMO_SCRIPT_NEXT_PANE_SELECTED_FILE_PATHS: newline-delimited paths for selected files in the inactive pane of a split-view window (only if local)\n\n"
-		   "NEMO_SCRIPT_NEXT_PANE_SELECTED_URIS: newline-delimited URIs for selected files in the inactive pane of a split-view window\n\n"
-		   "NEMO_SCRIPT_NEXT_PANE_CURRENT_URI: URI for current location in the inactive pane of a split-view window"),
-		 nemo_view_get_containing_window (view));
+    eel_show_script_folder_popup_dialog (nemo_view_get_containing_window (view));
 }
 
 static GtkMenu *
@@ -8440,8 +8421,7 @@ real_merge_menus (NemoView *view)
 				      directory_view_entries, G_N_ELEMENTS (directory_view_entries),
 				      view);
 
-	/* Translators: %s is a directory */
-	tooltip = g_strdup_printf (_("Run or manage scripts from %s"), "~/.gnome2/nemo-scripts");
+	tooltip = g_strdup_printf (_("Run scripts"));
 	/* Create a script action here specially because its tooltip is dynamic */
 	action = gtk_action_new ("Scripts", _("_Scripts"), tooltip, NULL);
 	gtk_action_group_add_action (action_group, action);

@@ -88,4 +88,8 @@ GtkDialog *eel_create_info_dialog             (const char        *primary_text,
 					       const char        *secondary_text,
 					       GtkWindow         *parent);
 
+GtkDialog *eel_show_script_folder_popup_dialog (GtkWindow *parent);
+GtkDialog *eel_show_action_folder_popup_dialog (GtkWindow *parent);
+
+
 #endif /* EEL_STOCK_DIALOGS_H */

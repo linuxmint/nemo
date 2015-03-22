@@ -50,6 +50,7 @@
 		<separator/>
 		<placeholder name="Extension Actions"/>
 		<separator/>
+        <menuitem name="Plugins" action="NemoPluginManager"/>
 		<menuitem name="Preferences" action="Preferences"/>
 	</menu>
 	<menu action="View">

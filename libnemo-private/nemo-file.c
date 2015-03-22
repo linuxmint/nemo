@@ -3769,6 +3769,12 @@ nemo_file_get_edit_name (NemoFile *file)
 	return g_strdup (res);
 }
 
+const char *
+nemo_file_peek_name (NemoFile *file)
+{
+    return file->details->name;
+}
+
 char *
 nemo_file_get_name (NemoFile *file)
 {

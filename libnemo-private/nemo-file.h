@@ -176,6 +176,8 @@ gboolean                nemo_file_contains_text                     (NemoFile   
 char *                  nemo_file_get_display_name                  (NemoFile                   *file);
 char *                  nemo_file_get_edit_name                     (NemoFile                   *file);
 char *                  nemo_file_get_name                          (NemoFile                   *file);
+const char *            nemo_file_peek_name                         (NemoFile                   *file);
+
 GFile *                 nemo_file_get_location                      (NemoFile                   *file);
 char *			 nemo_file_get_description			 (NemoFile			 *file);
 char *                  nemo_file_get_uri                           (NemoFile                   *file);

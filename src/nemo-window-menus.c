@@ -45,6 +45,8 @@
 #include "nemo-icon-view.h"
 #include "nemo-list-view.h"
 #include "nemo-toolbar.h"
+#include "nemo-plugin-manager.h"
+
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 #include <glib/gi18n.h>
@@ -282,6 +284,13 @@ action_preferences_callback (GtkAction *action,
 	window = GTK_WINDOW (user_data);
 
 	nemo_file_management_properties_dialog_show (window);
+}
+
+static void
+action_plugins_callback (GtkAction *action, 
+                         gpointer user_data)
+{
+    nemo_plugin_manager_show (NEMO_WINDOW (user_data));
 }
 
 static void
@@ -1102,6 +1111,10 @@ static const GtkActionEntry main_entries[] = {
                                  N_("Prefere_nces"),               
                                  NULL, N_("Edit Nemo preferences"),
                                  G_CALLBACK (action_preferences_callback) },
+                               { NEMO_ACTION_PLUGIN_MANAGER, NULL,
+                                 N_("Plugins"),               
+                                 "<alt>p", N_("Manage extensions, actions and scripts"),
+                                 G_CALLBACK (action_plugins_callback) },
 #ifdef TEXT_CHANGE_UNDO
   /* name, stock id, label */  { "Undo", NULL, N_("_Undo"),
                                  "<control>Z", N_("Undo the last text change"),

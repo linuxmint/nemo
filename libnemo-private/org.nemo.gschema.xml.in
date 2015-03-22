@@ -573,4 +573,22 @@
       <_description>The side pane view to show in newly opened windows.</_description>
     </key>
   </schema>
+
+  <schema id="org.nemo.plugins" path="/org/nemo/plugins/" gettext-domain="nemo">
+    <key name="disabled-extensions" type="as">
+      <default>[]</default>
+      <_summary>List of extensions -not- to load.</_summary>
+      <_description>List of extension names you do -not- want to load.  This maintains the behavior of an installed extension being enabled by default.</_description>
+    </key>
+    <key name="disabled-actions" type="as">
+      <default>[]</default>
+      <_summary>List of NemoActions -not- to load.</_summary>
+      <_description>List of action files you do -not- want loaded.  This maintains the behavior of an installed action being enabled by default.</_description>
+    </key>
+    <key name="disabled-scripts" type="as">
+      <default>[]</default>
+      <_summary>List of scripts -not- to load.</_summary>
+      <_description>List of script files you do -not- want loaded.  This maintains the behavior of an installed script being enabled by default.</_description>
+    </key>
+  </schema>
 </schemalist>
