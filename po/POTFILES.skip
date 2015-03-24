@@ -4,3 +4,7 @@ data/nautilus-autorun-software.desktop.in
 data/nautilus-computer.desktop.in
 data/nautilus-connect-server.desktop.in
 data/org.gnome.Nautilus.desktop.in
+sub/data/nautilus-autorun-software.desktop.in
+sub/data/nautilus-computer.desktop.in
+sub/data/nautilus-connect-server.desktop.in
+sub/data/org.gnome.Nautilus.desktop.in
