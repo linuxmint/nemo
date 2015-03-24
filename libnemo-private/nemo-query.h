@@ -45,12 +45,14 @@ typedef struct {
 } NemoQueryClass;
 
 GType          nemo_query_get_type (void);
-gboolean       nemo_query_enabled  (void);
 
 NemoQuery* nemo_query_new      (void);
 
 char *         nemo_query_get_text           (NemoQuery *query);
 void           nemo_query_set_text           (NemoQuery *query, const char *text);
+
+gboolean       nemo_query_get_show_hidden_files (NemoQuery *query);
+void           nemo_query_set_show_hidden_files (NemoQuery *query, gboolean show_hidden);
 
 char *         nemo_query_get_location       (NemoQuery *query);
 void           nemo_query_set_location       (NemoQuery *query, const char *uri);
@@ -58,6 +60,8 @@ void           nemo_query_set_location       (NemoQuery *query, const char *uri)
 GList *        nemo_query_get_mime_types     (NemoQuery *query);
 void           nemo_query_set_mime_types     (NemoQuery *query, GList *mime_types);
 void           nemo_query_add_mime_type      (NemoQuery *query, const char *mime_type);
+
+gdouble        nemo_query_matches_string     (NemoQuery *query, const gchar *string);
 
 char *         nemo_query_to_readable_string (NemoQuery *query);
 NemoQuery *nemo_query_load               (char *file);

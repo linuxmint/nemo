@@ -34,9 +34,30 @@
 #include <libnemo-private/nemo-bookmark.h>
 #include <libnemo-private/nemo-search-directory.h>
 
+typedef struct NemoWindow NemoWindow;
+typedef struct NemoWindowClass NemoWindowClass;
+typedef struct NemoWindowDetails NemoWindowDetails;
+
+typedef enum {
+        NEMO_WINDOW_OPEN_FLAG_CLOSE_BEHIND = 1 << 0,
+        NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW = 1 << 1,
+        NEMO_WINDOW_OPEN_FLAG_NEW_TAB = 1 << 2,
+        NEMO_WINDOW_OPEN_FLAG_USE_DEFAULT_LOCATION = 1 << 3
+} NemoWindowOpenFlags;
+
+typedef enum {
+	NEMO_WINDOW_OPEN_SLOT_NONE = 0,
+	NEMO_WINDOW_OPEN_SLOT_APPEND = 1
+}  NemoWindowOpenSlotFlags;
+
+typedef gboolean (* NemoWindowGoToCallback) (NemoWindow *window,
+                                                 GFile *location,
+                                                 GError *error,
+                                                 gpointer user_data);
+
 #include "nemo-navigation-state.h"
 #include "nemo-view.h"
-#include "nemo-window-types.h"
+#include "nemo-window-slot.h"
 
 #define NEMO_TYPE_WINDOW nemo_window_get_type()
 #define NEMO_WINDOW(obj) \
@@ -55,17 +76,6 @@ typedef enum {
         NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE
 } NemoWindowShowHiddenFilesMode;
 
-typedef enum {
-        NEMO_WINDOW_NOT_SHOWN,
-        NEMO_WINDOW_POSITION_SET,
-        NEMO_WINDOW_SHOULD_SHOW
-} NemoWindowShowState;
-
-typedef enum {
-	NEMO_WINDOW_OPEN_SLOT_NONE = 0,
-	NEMO_WINDOW_OPEN_SLOT_APPEND = 1
-}  NemoWindowOpenSlotFlags;
-
 enum {
     SORT_NULL = -1,
     SORT_ASCENDING = 0,
@@ -81,15 +91,14 @@ enum {
 #define NEMO_WINDOW_SIDEBAR_PLACES "places"
 #define NEMO_WINDOW_SIDEBAR_TREE "tree"
 
-typedef struct NemoWindowDetails NemoWindowDetails;
-
-typedef struct {
-        GtkWindowClass parent_spot;
+struct NemoWindowClass {
+        GtkApplicationWindowClass parent_spot;
 
 	/* Function pointers for overriding, without corresponding signals */
 
         void   (* sync_title) (NemoWindow *window,
 			       NemoWindowSlot *slot);
+        void   (* sync_view_as_menus) (NemoWindow *window);
         NemoIconInfo * (* get_icon) (NemoWindow *window,
                                          NemoWindowSlot *slot);
 
@@ -97,18 +106,18 @@ typedef struct {
         void   (* close) (NemoWindow *window);
 
         /* Signals used only for keybindings */
-        gboolean (* go_up)  (NemoWindow *window,
-                             gboolean close);
-	void     (* reload) (NemoWindow *window);
-} NemoWindowClass;
+        void   (* go_up)  (NemoWindow *window);
+	void   (* reload) (NemoWindow *window);
+};
 
 struct NemoWindow {
-        GtkWindow parent_object;
+        GtkApplicationWindow parent_object;
         
         NemoWindowDetails *details;
 };
 
 GType            nemo_window_get_type             (void);
+NemoWindow *     nemo_window_new                  (GdkScreen         *screen);
 void             nemo_window_close                (NemoWindow    *window);
 
 void             nemo_window_connect_content_view (NemoWindow    *window,
@@ -142,15 +151,19 @@ void                 nemo_window_report_load_underway  (NemoWindow *window,
 void                 nemo_window_view_visible          (NemoWindow *window,
                                                             NemoView *view);
 NemoWindowSlot * nemo_window_get_active_slot       (NemoWindow *window);
+GList *              nemo_window_get_panes             (NemoWindow *window);
+NemoWindowSlot * nemo_window_get_active_slot       (NemoWindow *window);
 void                 nemo_window_push_status           (NemoWindow *window,
                                                             const char *text);
+GtkWidget *          nemo_window_ensure_location_entry   (NemoWindow *window);
+void                 nemo_window_grab_focus            (NemoWindow *window);
 
 void     nemo_window_hide_sidebar         (NemoWindow *window);
 void     nemo_window_show_sidebar         (NemoWindow *window);
 void     nemo_window_back_or_forward      (NemoWindow *window,
                                                gboolean        back,
                                                guint           distance,
-                                               gboolean        new_tab);
+                                               NemoWindowOpenFlags flags);
 void     nemo_window_split_view_on        (NemoWindow *window);
 void     nemo_window_split_view_off       (NemoWindow *window);
 gboolean nemo_window_split_view_showing   (NemoWindow *window);
@@ -183,5 +196,10 @@ gint         nemo_window_get_ignore_meta_sort_direction (NemoWindow *window);
 void         nemo_window_set_ignore_meta_sort_direction (NemoWindow *window, gint direction);
 gint         nemo_window_get_ignore_meta_tighter_layout (NemoWindow *window);
 void         nemo_window_set_ignore_meta_tighter_layout (NemoWindow *window, gint tighter);
+
+NemoWindowOpenFlags nemo_event_get_window_open_flags   (void);
+
+void nemo_window_slot_added (NemoWindow *window,  NemoWindowSlot *slot);
+void nemo_window_slot_removed (NemoWindow *window,  NemoWindowSlot *slot);
 
 #endif

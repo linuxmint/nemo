@@ -31,7 +31,6 @@
 
 #include "nemo-view-dnd.h"
 
-#include "nemo-desktop-icon-view.h"
 #include "nemo-view.h"
 
 #include <eel/eel-stock-dialogs.h>
@@ -212,13 +211,13 @@ nemo_view_handle_netscape_url_drop (NemoView  *view,
 	}
 
 	if (action == GDK_ACTION_LINK) {
-		if (eel_str_is_empty (title)) {
+		if (g_strcmp0 (title, NULL) == 0) {
 			link_name = g_file_get_basename (f);
 		} else {
 			link_name = g_strdup (title);
 		}
 
-		if (!eel_str_is_empty (link_name)) {
+		if (g_strcmp0 (link_name, NULL) != 0) {
 			NetscapeUrlDropLink *data;
 
 			data = g_slice_new0 (NetscapeUrlDropLink);
@@ -341,6 +340,64 @@ nemo_view_handle_uri_list_drop (NemoView  *view,
 	g_free (container_uri);
 }
 
+#define MAX_LEN_FILENAME 128
+#define MIN_LEN_FILENAME 10
+
+static char *
+get_drop_filename (const char *text)
+{
+	char *filename;
+	char trimmed[MAX_LEN_FILENAME];
+	int i;
+	int last_word = -1;
+	int last_sentence = -1;
+	int last_nonspace = -1;
+	int num_attrs;
+	PangoLogAttr *attrs;
+	gchar *current_char;
+
+	num_attrs = MIN (g_utf8_strlen (text, -1), MAX_LEN_FILENAME) + 1;
+	attrs = g_new (PangoLogAttr, num_attrs);
+	g_utf8_strncpy (trimmed, text, num_attrs - 1);
+	pango_get_log_attrs (trimmed, -1, -1, pango_language_get_default (), attrs, num_attrs);
+
+	/* since the end of the text will always match a word boundary don't include it */
+	for (i = 0; (i < num_attrs - 1); i++) {
+		if (!attrs[i].is_white)
+			last_nonspace = i;
+		if (attrs[i].is_sentence_end)
+			last_sentence = last_nonspace;
+		if (attrs[i].is_word_boundary)
+			last_word = last_nonspace;
+	}
+	g_free (attrs);
+
+	if (last_sentence > 0)
+		i = last_sentence;
+	else
+		i = last_word;
+
+	if (i > MIN_LEN_FILENAME) {
+		char basename[MAX_LEN_FILENAME];
+		g_utf8_strncpy (basename, trimmed, i);
+		filename = g_strdup_printf ("%s.txt", basename);
+	} else {
+		/* Translator: This is the filename used for when you dnd text to a directory */
+		filename = g_strdup (_("Dropped Text.txt"));
+	}
+
+	/* Remove any invalid characters */
+	for (current_char = filename;
+	     *current_char;
+	     current_char = g_utf8_next_char (current_char)) {
+		if ( G_IS_DIR_SEPARATOR ( g_utf8_get_char (current_char))) {
+			*current_char = '-';
+		}
+	}
+
+	return filename;
+}
+
 void
 nemo_view_handle_text_drop (NemoView  *view,
                                 const char    *text,
@@ -352,6 +409,7 @@ nemo_view_handle_text_drop (NemoView  *view,
 	int length;
 	char *container_uri;
 	GdkPoint pos;
+	char *filename;
 
 	if (text == NULL) {
 		return;
@@ -371,12 +429,16 @@ nemo_view_handle_text_drop (NemoView  *view,
 	pos.y = y;
 	view_widget_to_file_operation_position (view, &pos);
 
-	nemo_view_new_file_with_initial_contents (
-		view, target_uri != NULL ? target_uri : container_uri,
-		/* Translator: This is the filename used for when you dnd text to a directory */
-		_("dropped text.txt"),
-		text, length, &pos);
+	/* try to get text to use as a filename */
+	filename = get_drop_filename (text);
 
+	nemo_view_new_file_with_initial_contents (view,
+						      target_uri != NULL ? target_uri : container_uri,
+						      filename,
+						      text,
+						      length,
+						      &pos);
+	g_free (filename);
 	g_free (container_uri);
 }
 
@@ -462,4 +524,22 @@ nemo_view_drop_proxy_received_uris (NemoView *view,
 				       action, 0, 0);
 
 	g_free (container_uri);
+}
+
+void
+nemo_view_handle_hover (NemoView *view,
+			    const char   *target_uri)
+{
+	NemoWindowSlot *slot;
+	GFile *location;
+	GFile *current_location;
+
+	slot = nemo_view_get_nemo_window_slot (view);
+
+	location = g_file_new_for_uri (target_uri);
+	current_location = nemo_window_slot_get_location (slot);
+	if (! (current_location != NULL && g_file_equal(location, current_location))) {
+		nemo_window_slot_open_location (slot, location, 0);
+	}
+	g_object_unref (location);
 }

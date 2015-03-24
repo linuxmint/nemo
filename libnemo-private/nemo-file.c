@@ -43,10 +43,10 @@
 #include "nemo-search-directory.h"
 #include "nemo-search-directory-file.h"
 #include "nemo-thumbnails.h"
+#include "nemo-ui-utilities.h"
 #include "nemo-vfs-file.h"
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
-#include "nemo-saved-search-file.h"
 #include <eel/eel-debug.h>
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-gtk-extensions.h>
@@ -90,6 +90,11 @@
 #define DEBUG_REF_PRINTF printf
 #endif
 
+#ifdef BUILD_ZEITGEIST
+#include <zeitgeist.h>
+#define ZEITGEIST_NEMO_ACTOR "application://nemo.desktop"
+#endif // BUILD_ZEITGEIST
+
 /* Files that start with these characters sort after files that don't. */
 #define SORT_LAST_CHAR1 '.'
 #define SORT_LAST_CHAR2 '#'
@@ -117,10 +122,16 @@ static guint signals[LAST_SIGNAL] = { 0 };
 
 static GHashTable *symbolic_links;
 
+static guint64 cached_thumbnail_limit;
+int cached_thumbnail_size;
+static NemoSpeedTradeoffValue show_file_thumbs;
+
+static NemoSpeedTradeoffValue show_directory_item_count;
+
 static GQuark attribute_name_q,
 	attribute_size_q,
 	attribute_type_q,
-    attribute_detailed_type_q,
+	attribute_detailed_type_q,
 	attribute_modification_date_q,
 	attribute_date_modified_q,
 	attribute_accessed_date_q,
@@ -132,6 +143,7 @@ static GQuark attribute_name_q,
 	attribute_deep_directory_count_q,
 	attribute_deep_total_count_q,
 	attribute_date_changed_q,
+	attribute_search_relevance_q,
 	attribute_trashed_on_q,
 	attribute_trash_orig_path_q,
 	attribute_date_permissions_q,
@@ -147,7 +159,10 @@ static GQuark attribute_name_q,
 	attribute_free_space_q;
 
 static void     nemo_file_info_iface_init                (NemoFileInfoIface *iface);
-
+static char *   nemo_file_get_owner_as_string            (NemoFile          *file,
+							      gboolean               include_real_name);
+static char *   nemo_file_get_type_as_string             (NemoFile          *file);
+static char *   nemo_file_get_detailed_type_as_string    (NemoFile          *file);
 static gboolean update_info_and_name                         (NemoFile          *file,
 							      GFileInfo             *info);
 static const char * nemo_file_peek_display_name (NemoFile *file);
@@ -520,8 +535,6 @@ nemo_file_new_from_filename (NemoDirectory *directory,
 			 * that references a file like this. (See #349840) */
 			file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
 		}
-	} else if (g_str_has_suffix (filename, NEMO_SAVED_SEARCH_EXTENSION)) {
-		file = NEMO_FILE (g_object_new (NEMO_TYPE_SAVED_SEARCH_FILE, NULL));
 	} else {
 		file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
 	}
@@ -547,7 +560,7 @@ modify_link_hash_table (NemoFile *file,
 	GList **list_ptr;
 
 	/* Check if there is a symlink name. If none, we are OK. */
-	if (file->details->symlink_name == NULL) {
+	if (file->details->symlink_name == NULL || !nemo_file_is_symbolic_link (file)) {
 		return;
 	}
 
@@ -624,20 +637,11 @@ nemo_file_new_from_info (NemoDirectory *directory,
 			     GFileInfo *info)
 {
 	NemoFile *file;
-	const char *mime_type;
 
 	g_return_val_if_fail (NEMO_IS_DIRECTORY (directory), NULL);
 	g_return_val_if_fail (info != NULL, NULL);
 
-	mime_type = g_file_info_get_content_type (info);
-	if (mime_type &&
-	    strcmp (mime_type, NEMO_SAVED_SEARCH_MIMETYPE) == 0) {
-		g_file_info_set_file_type (info, G_FILE_TYPE_DIRECTORY);
-		file = NEMO_FILE (g_object_new (NEMO_TYPE_SAVED_SEARCH_FILE, NULL));
-	} else {
-		file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
-	}
-
+	file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
 	file->details->directory = nemo_directory_ref (directory);
 
 	update_info_and_name (file, info);
@@ -736,11 +740,13 @@ NemoFile *
 nemo_file_get_by_uri (const char *uri)
 {
 	GFile *location;
-	NemoFile *file;
+	NemoFile *file = NULL;
 	
 	location = g_file_new_for_uri (uri);
-	file = nemo_file_get_internal (location, TRUE);
-	g_object_unref (location);
+	if (location) {
+		file = nemo_file_get_internal (location, TRUE);
+		g_object_unref (location);
+	}
 	
 	return file;
 }
@@ -1187,8 +1193,6 @@ nemo_file_get_start_stop_type (NemoFile *file)
 	GDrive *drive;
 
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
-
-	ret = G_DRIVE_START_STOP_TYPE_UNKNOWN;
 
 	ret = file->details->start_stop_type;
 	if (ret != G_DRIVE_START_STOP_TYPE_UNKNOWN)
@@ -1684,13 +1688,16 @@ nemo_file_operation_free (NemoFileOperation *op)
 
 	if (op->undo_info != NULL) {
 		nemo_file_undo_manager_set_action (op->undo_info);
+		g_object_unref (op->undo_info);
 	}
 
 	g_free (op);
 }
 
 void
-nemo_file_operation_complete (NemoFileOperation *op, GFile *result_file, GError *error)
+nemo_file_operation_complete (NemoFileOperation *op,
+				  GFile *result_file,
+				  GError *error)
 {
 	/* Claim that something changed even if the operation failed.
 	 * This makes it easier for some clients who see the "reverting"
@@ -1701,6 +1708,11 @@ nemo_file_operation_complete (NemoFileOperation *op, GFile *result_file, GError 
 	if (op->callback) {
 		(* op->callback) (op->file, result_file, error, op->callback_data);
 	}
+
+	if (error != NULL) {
+		g_clear_object (&op->undo_info);
+	}
+
 	nemo_file_operation_free (op);
 }
 
@@ -1752,6 +1764,31 @@ rename_get_info_callback (GObject *source_object,
 		g_free (old_name);
 		
 		new_uri = nemo_file_get_uri (op->file);
+
+#ifdef BUILD_ZEITGEIST		
+		// Send event to Zeitgeist
+		ZeitgeistLog *log = zeitgeist_log_get_default ();
+		gchar *origin = g_path_get_dirname (new_uri);
+		ZeitgeistSubject *subject = zeitgeist_subject_new_full (
+			old_uri,
+			NULL, // subject interpretation - auto-guess
+			NULL, // subject manifestation - auto-guess
+			g_file_info_get_content_type (new_info), // const char*
+			origin,
+			new_name,
+			NULL // storage - auto-guess
+		);
+		zeitgeist_subject_set_current_uri (subject, new_uri);
+		g_free (origin);
+		// FIXME: zeitgeist_subject_set_current_uri ();
+		ZeitgeistEvent *event = zeitgeist_event_new_full (
+			ZEITGEIST_ZG_MOVE_EVENT,
+			ZEITGEIST_ZG_USER_ACTIVITY,
+			ZEITGEIST_NEMO_ACTOR,
+			subject, NULL);
+		zeitgeist_log_insert_events_no_reply (log, event, NULL);
+#endif // BUILD_ZEITGEIST
+
 		nemo_directory_moved (old_uri, new_uri);
 		g_free (new_uri);
 		g_free (old_uri);
@@ -2163,7 +2200,12 @@ update_info_internal (NemoFile *file,
 						  g_file_info_get_display_name (info),
 						  g_file_info_get_edit_name (info),
 						  FALSE);
-	
+
+	mime_type = g_file_info_get_content_type (info);
+	if (g_strcmp0 (mime_type, NEMO_SAVED_SEARCH_MIMETYPE) == 0) {
+		g_file_info_set_file_type (info, G_FILE_TYPE_DIRECTORY);
+	}
+
 	file_type = g_file_info_get_file_type (info);
 	if (file->details->type != file_type) {
 		changed = TRUE;
@@ -2737,7 +2779,6 @@ get_time (NemoFile *file,
 		return UNKNOWN;
 	}
 
-	time = 0;
 	switch (type) {
 	case NEMO_DATE_TYPE_MODIFIED:
 		time = file->details->mtime;
@@ -2897,11 +2938,14 @@ compare_by_display_name (NemoFile *file_1, NemoFile *file_2)
 	} else if (!sort_last_1 && sort_last_2) {
 		compare = -1;
 	} else if (name_1 == NULL || name_2 == NULL) {
-        if (name_1 && !name_2)
-            compare = +1;
-        else if (!name_1 && name_2)
-            compare = -1;
-    } else {
+		if (name_1 && !name_2) {
+			compare = +1;
+		} else if (!name_1 && name_2) {
+			compare = -1;
+		} else { // both Null
+			compare = 0;
+		}
+	} else {
 		key_1 = nemo_file_peek_display_name_collation_key (file_1);
 		key_2 = nemo_file_peek_display_name_collation_key (file_2);
 		compare = g_strcmp0 (key_1, key_2);
@@ -2953,12 +2997,6 @@ prepend_automatic_keywords (NemoFile *file,
 
 	parent = nemo_file_get_parent (file);
 
-#ifdef TRASH_IS_FAST_ENOUGH
-	if (nemo_file_is_in_trash (file)) {
-		names = g_list_prepend
-			(names, g_strdup (NEMO_FILE_EMBLEM_NAME_TRASH));
-	}
-#endif
 	if (file_has_note (file)) {
 		names = g_list_prepend
 			(names, g_strdup (NEMO_FILE_EMBLEM_NAME_NOTE));
@@ -3044,6 +3082,35 @@ compare_by_type (NemoFile *file_1, NemoFile *file_2, gboolean detailed)
 	g_free (type_string_2);
 
 	return result;
+}
+
+static Knowledge
+get_search_relevance (NemoFile *file,
+		      gdouble      *relevance_out)
+{
+	/* we're only called in search directories, and in that
+	 * case, the relevance is always known (or zero).
+	 */
+	*relevance_out = file->details->search_relevance;
+	return KNOWN;
+}
+
+static int
+compare_by_search_relevance (NemoFile *file_1, NemoFile *file_2)
+{
+	gdouble r_1, r_2;
+
+	get_search_relevance (file_1, &r_1);
+	get_search_relevance (file_2, &r_2);
+
+	if (r_1 < r_2) {
+		return -1;
+	}
+	if (r_1 > r_2) {
+		return +1;
+	}
+
+	return 0;
 }
 
 static int
@@ -3208,6 +3275,15 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 				result = compare_by_full_path (file_1, file_2);
 			}
 			break;
+		case NEMO_FILE_SORT_BY_SEARCH_RELEVANCE:
+			result = compare_by_search_relevance (file_1, file_2);
+			if (result == 0) {
+				result = compare_by_full_path (file_1, file_2);
+
+				/* ensure alphabetical order for files of the same relevance */
+				reversed = FALSE;
+			}
+			break;
 		default:
 			g_return_val_if_reached (0);
 		}
@@ -3269,6 +3345,11 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
         } else if (attribute == attribute_trashed_on_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_TRASHED_TIME,
+						       directories_first,
+						       reversed);
+        } else if (attribute == attribute_search_relevance_q) {
+		return nemo_file_compare_for_sort (file_1, file_2,
+						       NEMO_FILE_SORT_BY_SEARCH_RELEVANCE,
 						       directories_first,
 						       reversed);
 	}
@@ -3344,19 +3425,11 @@ nemo_file_is_hidden_file (NemoFile *file)
 	return file->details->is_hidden;
 }
 
-static gboolean
-is_file_hidden (NemoFile *file)
-{
-	return file->details->directory->details->hidden_file_hash != NULL &&
-		g_hash_table_lookup (file->details->directory->details->hidden_file_hash,
-				     eel_ref_str_peek (file->details->name)) != NULL;
-	
-}
-
 /**
  * nemo_file_should_show:
  * @file: the file to check.
  * @show_hidden: whether we want to show hidden files or not.
+ * @show_foreign: whether we want to show foreign files or not
  * 
  * Determines if a #NemoFile should be shown. Note that when browsing
  * a trash directory, this function will always return %TRUE. 
@@ -3371,10 +3444,17 @@ nemo_file_should_show (NemoFile *file,
 	/* Never hide any files in trash. */
 	if (nemo_file_is_in_trash (file)) {
 		return TRUE;
-	} else {
-		return (show_hidden || (!nemo_file_is_hidden_file (file) && !is_file_hidden (file))) &&
-			(show_foreign || !(nemo_file_is_in_desktop (file) && nemo_file_is_foreign_link (file)));
 	}
+
+	if (!show_hidden && nemo_file_is_hidden_file (file)) {
+		return FALSE;
+	}
+
+	if (!show_foreign && nemo_file_is_foreign_link (file)) {
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 gboolean
@@ -3398,6 +3478,19 @@ nemo_file_is_in_desktop (NemoFile *file)
 		return nemo_is_desktop_directory (file->details->directory->details->location);
 	}
 	return FALSE;
+}
+
+gboolean
+nemo_file_is_in_search (NemoFile *file)
+{
+	char *uri;
+	gboolean ret;
+
+	uri = nemo_file_get_uri (file);
+	ret = eel_uri_is_search (uri);
+	g_free (uri);
+
+	return ret;
 }
 
 static gboolean
@@ -3955,6 +4048,18 @@ get_custom_icon_metadata_name (NemoFile *file)
 }
 
 static GIcon *
+get_link_icon (NemoFile *file)
+{
+	GIcon *icon = NULL;
+
+	if (file->details->got_link_info && file->details->custom_icon != NULL) {
+		icon = g_object_ref (file->details->custom_icon);
+	}
+
+	return icon;
+}
+
+static GIcon *
 get_custom_icon (NemoFile *file)
 {
 	char *custom_icon_uri, *custom_icon_name;
@@ -3987,18 +4092,9 @@ get_custom_icon (NemoFile *file)
 			g_free (custom_icon_name);
 		}
 	}
- 
-	if (icon == NULL && file->details->got_link_info && file->details->custom_icon != NULL) {
-		icon = g_object_ref (file->details->custom_icon);
- 	}
- 
+
 	return icon;
 }
-
-
-static guint64 cached_thumbnail_limit;
-int cached_thumbnail_size;
-static int show_image_thumbs;
 
 GFilesystemPreviewType
 nemo_file_get_filesystem_use_preview (NemoFile *file)
@@ -4038,13 +4134,13 @@ nemo_file_should_show_thumbnail (NemoFile *file)
 		return FALSE;
 	}
 
-	if (show_image_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
+	if (show_file_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
 		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
 			return FALSE;
 		} else {
 			return TRUE;
 		}
-	} else if (show_image_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
+	} else if (show_file_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
 		return FALSE;
 	} else {
 		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
@@ -4087,6 +4183,12 @@ nemo_file_get_gicon (NemoFile *file,
 	}
 
 	icon = get_custom_icon (file);
+
+	if (icon != NULL) {
+		return icon;
+	}
+
+	icon = get_link_icon (file);
 
 	if (icon != NULL) {
 		return icon;
@@ -4201,19 +4303,11 @@ nemo_file_get_emblemed_icon (NemoFile *file,
     GIcon *gicon, *emblem_icon, *emblemed_icon;
     GEmblem *emblem;
     GList *emblem_icons, *l;
-    char *emblems_to_ignore[3];
-    int i;
 
     gicon = nemo_file_get_gicon (file, flags);
 
-    i = 0;
-    emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
-    emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
-    emblems_to_ignore[i++] = NULL;
-
     emblem = NULL;
-    emblem_icons = nemo_file_get_emblem_icons (file,
-    emblems_to_ignore);
+    emblem_icons = nemo_file_get_emblem_icons (file);
 
     emblemed_icon = g_emblemed_icon_new (gicon, NULL);
     g_object_unref (gicon);
@@ -4250,10 +4344,16 @@ get_default_file_icon (NemoFileIconFlags flags)
 	}
 }
 
+char *
+nemo_file_get_thumbnail_path (NemoFile *file)
+{
+	return g_strdup (file->details->thumbnail_path);
+}
+
 NemoIconInfo *
 nemo_file_get_icon (NemoFile *file,
 			int size,
-            int scale,
+			int scale,
 			NemoFileIconFlags flags)
 {
 	NemoIconInfo *icon;
@@ -4264,11 +4364,16 @@ nemo_file_get_icon (NemoFile *file,
 	if (file == NULL) {
 		return NULL;
 	}
-	
+
 	gicon = get_custom_icon (file);
+	if (gicon == NULL) {
+		gicon = get_link_icon (file);
+	}
+
 	if (gicon != NULL) {
 		icon = nemo_icon_info_lookup (gicon, size, scale);
 		g_object_unref (gicon);
+
 		return icon;
 	}
 
@@ -4313,9 +4418,10 @@ nemo_file_get_icon (NemoFile *file,
 								 GDK_INTERP_BILINEAR);
 
 			/* We don't want frames around small icons */
-			if (!gdk_pixbuf_get_has_alpha(raw_pixbuf) || s >= 128 * scale) {
-				nemo_thumbnail_frame_image (&scaled_pixbuf);
+			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
+				nemo_ui_frame_image (&scaled_pixbuf);
 			}
+
 			g_object_unref (raw_pixbuf);
 
 			/* Don't scale up if more than 25%, then read the original
@@ -4370,7 +4476,7 @@ GdkPixbuf *
 nemo_file_get_icon_pixbuf (NemoFile *file,
 			       int size,
 			       gboolean force_size,
-                   int scale,
+			       int scale,
 			       NemoFileIconFlags flags)
 {
 	NemoIconInfo *info;
@@ -4512,42 +4618,35 @@ nemo_file_fit_date_as_string (NemoFile *file,
 				  void *measure_context)
 {
 	time_t file_time_raw;
-	struct tm *file_time;
 	const char **formats;
 	const char *width_template;
 	const char *format;
 	char *date_string;
-	char *result;
-	GDate *today;
-	GDate *file_date;
-	guint32 file_date_age;
+	gchar *result = NULL;
 	int i, date_format_pref;
+	GDateTime *date_time, *today;
+	GTimeSpan file_date_age;
 
 	if (!nemo_file_get_date (file, date_type, &file_time_raw)) {
 		return NULL;
 	}
 
-	file_time = localtime (&file_time_raw);
+	date_time = g_date_time_new_from_unix_local (file_time_raw);
 	date_format_pref = g_settings_get_enum (nemo_preferences,
 						NEMO_PREFERENCES_DATE_FORMAT);
 
 	if (date_format_pref == NEMO_DATE_FORMAT_LOCALE) {
-		return eel_strdup_strftime ("%c", file_time);
+		result = g_date_time_format (date_time, "%c");
+		goto out;
 	} else if (date_format_pref == NEMO_DATE_FORMAT_ISO) {
-		return eel_strdup_strftime ("%Y-%m-%d %H:%M:%S", file_time);
+		result = g_date_time_format (date_time, "%Y-%m-%d %H:%M:%S");
+		goto out;
 	}
-	
-	file_date = eel_g_date_new_tm (file_time);
-	
-	today = g_date_new ();
-	g_date_set_time_t (today, time (NULL));
 
-	/* Overflow results in a large number; fine for our purposes. */
-	file_date_age = (g_date_get_julian (today) -
-			 g_date_get_julian (file_date));
+	today = g_date_time_new_now_local ();
+	file_date_age = g_date_time_difference (today, date_time);
 
-	g_date_free (file_date);
-	g_date_free (today);
+	g_date_time_unref (today);
 
 	/* Format varies depending on how old the date is. This minimizes
 	 * the length (and thus clutter & complication) of typical dates
@@ -4557,12 +4656,10 @@ nemo_file_fit_date_as_string (NemoFile *file,
 	 * internationalization's sake.
 	 */
 
-	if (file_date_age == 0)	{
+	if (file_date_age < G_TIME_SPAN_DAY) {
 		formats = TODAY_TIME_FORMATS;
-	} else if (file_date_age == 1) {
+	} else if (file_date_age < 2 * G_TIME_SPAN_DAY) {
 		formats = YESTERDAY_TIME_FORMATS;
-	} else if (file_date_age < 7) {
-		formats = CURRENT_WEEK_TIME_FORMATS;
 	} else {
 		formats = CURRENT_WEEK_TIME_FORMATS;
 	}
@@ -4584,15 +4681,17 @@ nemo_file_fit_date_as_string (NemoFile *file,
 			 * shortest format
 			 */
 			
-			date_string = eel_strdup_strftime (format, file_time);
+			date_string = g_date_time_format (date_time, _(format));
 
 			if (truncate_callback == NULL) {
-				return date_string;
+				result = date_string;
+				break;
 			}
 			
 			result = (* truncate_callback) (date_string, width, measure_context);
 			g_free (date_string);
-			return result;
+
+			break;
 		}
 		
 		format = _(formats [i + 1]);
@@ -4607,9 +4706,14 @@ nemo_file_fit_date_as_string (NemoFile *file,
 			break;
 		}
 	}
-	
-	return eel_strdup_strftime (format, file_time);
 
+	if (result == NULL) {
+		result = g_date_time_format (date_time, format);
+	}
+
+ out:
+	g_date_time_unref (date_time);
+	return result;
 }
 
 /**
@@ -4676,15 +4780,6 @@ nemo_file_get_date_as_string (NemoFile *file, NemoDateType date_type)
 {
 	return nemo_file_fit_date_as_string (file, date_type,
 		0, NULL, NULL, NULL);
-}
-
-static NemoSpeedTradeoffValue show_directory_item_count;
-static NemoSpeedTradeoffValue show_text_in_icons;
-
-static void
-show_text_in_icons_changed_callback (gpointer callback_data)
-{
-	show_text_in_icons = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_TEXT_IN_ICONS);
 }
 
 static void
@@ -4775,31 +4870,17 @@ nemo_file_should_show_type (NemoFile *file)
 gboolean
 nemo_file_should_get_top_left_text (NemoFile *file)
 {
-	static gboolean show_text_in_icons_callback_added = FALSE;
-	
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
-	/* Add the callback once for the life of our process */
-	if (!show_text_in_icons_callback_added) {
-		g_signal_connect_swapped (nemo_preferences,
-					  "changed::" NEMO_PREFERENCES_SHOW_TEXT_IN_ICONS,
-					  G_CALLBACK (show_text_in_icons_changed_callback),
-					  NULL);
-		show_text_in_icons_callback_added = TRUE;
-
-		/* Peek for the first time */
-		show_text_in_icons_changed_callback (NULL);
-	}
-	
-	if (show_text_in_icons == NEMO_SPEED_TRADEOFF_ALWAYS) {
+	if (show_file_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
 		return TRUE;
 	}
 	
-	if (show_text_in_icons == NEMO_SPEED_TRADEOFF_NEVER) {
+	if (show_file_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
 		return FALSE;
 	}
 
-	return get_speed_tradeoff_preference_for_file (file, show_text_in_icons);
+	return get_speed_tradeoff_preference_for_file (file, show_file_thumbs);
 }
 
 /**
@@ -5055,6 +5136,12 @@ nemo_file_set_attributes (NemoFile *file,
 	g_object_unref (location);
 }
 
+void
+nemo_file_set_search_relevance (NemoFile *file,
+				    gdouble       relevance)
+{
+	file->details->search_relevance = relevance;
+}
 
 /**
  * nemo_file_can_get_permissions:
@@ -5271,7 +5358,7 @@ get_real_name (const char *name, const char *gecos)
 	}
 
 
-	if (eel_str_is_empty (real_name)
+	if (g_strcmp0 (real_name, NULL) == 0
 	    || g_strcmp0 (name, real_name) == 0
 	    || g_strcmp0 (capitalized_login_name, real_name) == 0) {
 		g_free (real_name);
@@ -5528,7 +5615,7 @@ nemo_get_user_names (void)
 
 	endpwent ();
 
-	return eel_g_str_list_alphabetize (list);
+	return g_list_sort (list, (GCompareFunc) g_utf8_collate);
 }
 
 /**
@@ -5631,7 +5718,7 @@ nemo_get_group_names_for_user (void)
 		list = g_list_prepend (list, g_strdup (group->gr_name));
 	}
 
-	return eel_g_str_list_alphabetize (list);
+	return g_list_sort (list, (GCompareFunc) g_utf8_collate);
 }
 
 /**
@@ -5654,7 +5741,7 @@ nemo_get_all_group_names (void)
 	
 	endgrent ();
 	
-	return eel_g_str_list_alphabetize (list);
+	return g_list_sort (list, (GCompareFunc) g_utf8_collate);
 }
 
 /**
@@ -5874,15 +5961,16 @@ nemo_file_get_owner_as_string (NemoFile *file, gboolean include_real_name)
 		return NULL;
 	}
 
-	if (file->details->owner_real == NULL) {
+	if (file->details->uid == getuid ()) {
+		/* Translators: "Me" is used to indicate the file is owned by me (the current user) */
+		user_name = g_strdup (_("Me"));
+	} else if (file->details->owner_real == NULL) {
 		user_name = g_strdup (eel_ref_str_peek (file->details->owner));
 	} else if (file->details->owner == NULL) {
 		user_name = g_strdup (eel_ref_str_peek (file->details->owner_real));
 	} else if (include_real_name &&
 		   strcmp (eel_ref_str_peek (file->details->owner), eel_ref_str_peek (file->details->owner_real)) != 0) {
-		user_name = g_strdup_printf ("%s - %s",
-					     eel_ref_str_peek (file->details->owner),
-					     eel_ref_str_peek (file->details->owner_real));
+		user_name = g_strdup (eel_ref_str_peek (file->details->owner_real));
 	} else {
 		user_name = g_strdup (eel_ref_str_peek (file->details->owner));
 	}
@@ -6135,9 +6223,10 @@ nemo_file_get_deep_directory_count_as_string (NemoFile *file)
  * @file: NemoFile representing the file in question.
  * @attribute_name: The name of the desired attribute. The currently supported
  * set includes "name", "type", "detailed_type", "mime_type", "size", "deep_size", "deep_directory_count",
- * "deep_file_count", "deep_total_count", "date_modified", "date_changed", "date_accessed", 
- * "date_permissions", "owner", "group", "permissions", "octal_permissions", "uri", "where",
- * "link_target", "volume", "free_space", "selinux_context", "trashed_on", "trashed_orig_path"
+ * "deep_file_count", "deep_total_count", "date_modified", "date_changed", "date_accessed",
+ * "date_permissions", "date_modified_full", "date_changed_full", "date_accessed_full",
+ * "date_permissions_full", "owner", "group", "permissions", "octal_permissions", "uri", "where",
+ * "link_target", "volume", "free_space", "selinux_context", "trashed_on", "trashed_on_full", "trashed_orig_path"
  * 
  * Returns: Newly allocated string ready to display to the user, or NULL
  * if the value is unknown or @attribute_name is not supported.
@@ -6154,9 +6243,9 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
 	if (attribute_q == attribute_type_q) {
 		return nemo_file_get_type_as_string (file);
 	}
-    if (attribute_q == attribute_detailed_type_q) {
-        return nemo_file_get_detailed_type_as_string (file);
-    }
+	if (attribute_q == attribute_detailed_type_q) {
+		return nemo_file_get_detailed_type_as_string (file);
+	}
 	if (attribute_q == attribute_mime_type_q) {
 		return nemo_file_get_mime_type (file);
 	}
@@ -6316,11 +6405,11 @@ nemo_file_get_string_attribute_with_default_q (NemoFile *file, GQuark attribute_
 		}
 		return g_strdup ("...");
 	}
-    if (attribute_q == attribute_type_q
-        || attribute_q == attribute_detailed_type_q
-        || attribute_q == attribute_mime_type_q) {
-        return g_strdup (_("Unknown"));
-    }
+	if (attribute_q == attribute_type_q
+	    || attribute_q == attribute_detailed_type_q
+	    || attribute_q == attribute_mime_type_q) {
+		return g_strdup (_("Unknown"));
+	}
 	if (attribute_q == attribute_trashed_on_q) {
 		/* If n/a */
 		return g_strdup ("");
@@ -6362,21 +6451,21 @@ struct {
         const char *icon_name;
         const char *display_name;
 } mime_type_map[] = {
-    { "application-x-executable", N_("Program") },
-    { "audio-x-generic", N_("Audio") },
-    { "font-x-generic", N_("Font") },
-    { "image-x-generic", N_("Image") },
-    { "package-x-generic", N_("Archive") },
-    { "text-html", N_("Markup") },
-    { "text-x-generic", N_("Text") },
-    { "text-x-generic-template", N_("Text") },
-    { "text-x-script", N_("Program") },
-    { "video-x-generic", N_("Video") },
-    { "x-office-address-book", N_("Contacts") },
-    { "x-office-calendar", N_("Calendar") },
-    { "x-office-document", N_("Document") },
-    { "x-office-presentation", N_("Presentation") },
-    { "x-office-spreadsheet", N_("Spreadsheet") },
+	{ "application-x-executable", N_("Program") },
+	{ "audio-x-generic", N_("Audio") },
+	{ "font-x-generic", N_("Font") },
+	{ "image-x-generic", N_("Image") },
+	{ "package-x-generic", N_("Archive") },
+	{ "text-html", N_("Markup") },
+	{ "text-x-generic", N_("Text") },
+	{ "text-x-generic-template", N_("Text") },
+	{ "text-x-script", N_("Program") },
+	{ "video-x-generic", N_("Video") },
+	{ "x-office-address-book", N_("Contacts") },
+	{ "x-office-calendar", N_("Calendar") },
+	{ "x-office-document", N_("Document") },
+	{ "x-office-presentation", N_("Presentation") },
+	{ "x-office-spreadsheet", N_("Spreadsheet") },
 };
 
 /* FIXME: remove this ifdef once we no longer need support for < 2.34 glib */
@@ -6386,28 +6475,28 @@ struct {
 static char *
 get_basic_type_for_mime_type (const char *mime_type)
 {
-    char *icon_name;
-    char *basic_type = NULL;
+	char *icon_name;
+	char *basic_type = NULL;
 
-    icon_name = g_content_type_get_generic_icon_name (mime_type);
-    if (icon_name != NULL) {
-        int i;
+	icon_name = g_content_type_get_generic_icon_name (mime_type);
+	if (icon_name != NULL) {
+		int i;
 
-        for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
-            if (strcmp (mime_type_map[i].icon_name, icon_name) == 0) {
-                basic_type = g_strdup (gettext (mime_type_map[i].display_name));
-                break;
-            }
+		for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
+			if (strcmp (mime_type_map[i].icon_name, icon_name) == 0) {
+				basic_type = g_strdup (gettext (mime_type_map[i].display_name));
+				break;
+			}
+		}
         }
-    }
 
-    if (basic_type == NULL) {
-        basic_type = g_strdup (_("Unknown"));
-    }
+	if (basic_type == NULL) {
+		basic_type = g_strdup (_("Unknown"));
+	}
 
-    g_free (icon_name);
+	g_free (icon_name);
 
-    return basic_type;
+	return basic_type;
 }
 
 #else
@@ -6415,79 +6504,78 @@ get_basic_type_for_mime_type (const char *mime_type)
 static char *
 get_basic_type_for_mime_type (const char *mime_type)
 {
-    char *basic_type = NULL;
+	char *basic_type = NULL;
 
-    GIcon *icon;
-    icon = g_content_type_get_icon (mime_type);
-    const gchar * const *icon_names = g_themed_icon_get_names (G_THEMED_ICON (icon));
+	GIcon *icon;
+	icon = g_content_type_get_icon (mime_type);
+	const gchar * const *icon_names = g_themed_icon_get_names (G_THEMED_ICON (icon));
 
-    if (icon_names != NULL) {
-        int i, j;
-        for (j = 0; j < g_strv_length ((gchar **) icon_names); j++) {
-            for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
-                if (strcmp (mime_type_map[i].icon_name, icon_names[j]) == 0) {
-                    basic_type = g_strdup (gettext (mime_type_map[i].display_name));
-                    break;
-                }
-            }
-            if (basic_type != NULL)
-                break;
-        }
-    }
+	if (icon_names != NULL) {
+		int i, j;
+		for (j = 0; j < g_strv_length ((gchar **) icon_names); j++) {
+			for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
+				if (strcmp (mime_type_map[i].icon_name, icon_names[j]) == 0) {
+					basic_type = g_strdup (gettext (mime_type_map[i].display_name));
+					break;
+				}
+			}
+			if (basic_type != NULL)
+				break;
+		}
+    	}
 
-    if (basic_type == NULL) {
-        basic_type = g_strdup (_("Unknown"));
-    }
+	if (basic_type == NULL) {
+		basic_type = g_strdup (_("Unknown"));
+	}
 
-    g_object_unref (icon);
+	g_object_unref (icon);
 
-    return basic_type;
+	return basic_type;
 }
 
 #endif
 
 static char *
 get_description (NemoFile     *file,
-                 gboolean      detailed)
+		gboolean      detailed)
 {
-    const char *mime_type;
+	const char *mime_type;
 
-    g_assert (NEMO_IS_FILE (file));
+	g_assert (NEMO_IS_FILE (file));
 
-    mime_type = eel_ref_str_peek (file->details->mime_type);
+	mime_type = eel_ref_str_peek (file->details->mime_type);
+	if (mime_type == NULL) {
+		return NULL;
+	}
 
-    if (mime_type == NULL) {
-        return NULL;
-    }
+	if (g_content_type_is_unknown (mime_type)) {
+		if (nemo_file_is_executable (file)) {
+			return g_strdup (_("Program"));
+		}
+		return g_strdup (_("Binary"));
+	}
 
-    if (g_content_type_is_unknown (mime_type)) {
-        if (nemo_file_is_executable (file)) {
-            return g_strdup (_("Program"));
-        }
-        return g_strdup (_("Binary"));
-    }
+	if (strcmp (mime_type, "inode/directory") == 0) {
+		return g_strdup (_("Folder"));
+	}
 
-    if (strcmp (mime_type, "inode/directory") == 0) {
-        return g_strdup (_("Folder"));
-     }
+	if (detailed) {
+		char *description;
 
-    if (detailed) {
-        char *description;
+		description = g_content_type_get_description (mime_type);
+		if (description != NULL) {
+			return description;
+		}
+	} else {
+		char *category;
 
-        description = g_content_type_get_description (mime_type);
-        if (description != NULL) {
-            return description;
-        }
-    } else {
-        char *category;
+		category = get_basic_type_for_mime_type (mime_type);
+		if (category != NULL) {
+			return category;
+		}
+	}
 
-        category = get_basic_type_for_mime_type (mime_type);
-        if (category != NULL) {
-            return category;
-        }
-    }
-
-    return g_strdup (mime_type);
+	return g_strdup (mime_type);
 }
 
 /* Takes ownership of string */
@@ -6499,7 +6587,7 @@ update_description_for_link (NemoFile *file, char *string)
 	if (nemo_file_is_symbolic_link (file)) {
 		g_assert (!nemo_file_is_broken_symbolic_link (file));
 		if (string == NULL) {
-			return g_strdup (_("link"));
+			return g_strdup (_("Link"));
 		}
 		/* Note to localizers: convert file type string for file 
 		 * (e.g. "folder", "plain text") to file type for symbolic link 
@@ -6513,7 +6601,7 @@ update_description_for_link (NemoFile *file, char *string)
 	return string;
 }
 
-char *
+static char *
 nemo_file_get_type_as_string (NemoFile *file)
 {
 	if (file == NULL) {
@@ -6521,21 +6609,21 @@ nemo_file_get_type_as_string (NemoFile *file)
 	}
 
 	if (nemo_file_is_broken_symbolic_link (file)) {
-		return g_strdup (_("link (broken)"));
-    }
-
-    return update_description_for_link (file, get_description (file, FALSE));
+		return g_strdup (_("Link (broken)"));
+	}
+	
+	return update_description_for_link (file, get_description (file, FALSE));
 }
 
-char *
+static char *
 nemo_file_get_detailed_type_as_string (NemoFile *file)
 {
-    if (file == NULL) {
-        return NULL;
-    }
+	if (file == NULL) {
+		return NULL;
+	}
 
-    if (nemo_file_is_broken_symbolic_link (file)) {
-        return g_strdup (_("link (broken)"));
+	if (nemo_file_is_broken_symbolic_link (file)) {
+		return g_strdup (_("Link (broken)"));
 	}
 	
 	return update_description_for_link (file, get_description (file, TRUE));
@@ -6606,6 +6694,21 @@ nemo_file_is_mime_type (NemoFile *file, const char *mime_type)
 				    mime_type);
 }
 
+char *
+nemo_file_get_extension (NemoFile *file)
+{
+	char *name;
+	char *extension = NULL;
+
+	name = nemo_file_get_name (file);
+	if (name != NULL) {
+		extension = g_strdup (eel_filename_get_extension_offset (name));
+		g_free (name);
+	}
+
+	return extension;
+}
+
 gboolean
 nemo_file_is_launchable (NemoFile *file)
 {
@@ -6624,79 +6727,6 @@ nemo_file_is_launchable (NemoFile *file)
 		!nemo_file_is_directory (file);
 }
 
-
-/**
- * nemo_file_get_emblem_icons
- * 
- * Return the list of names of emblems that this file should display,
- * in canonical order.
- * @file: NemoFile representing the file in question.
- * 
- * Returns: A list of emblem names.
- * 
- **/
-GList *
-nemo_file_get_emblem_icons (NemoFile *file,
-				char **exclude)
-{
-	GList *keywords, *l;
-	GList *icons;
-	char *icon_names[2];
-	char *keyword;
-	int i;
-	GIcon *icon;
-	
-	if (file == NULL) {
-		return NULL;
-	}
-	
-	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
-
-	keywords = nemo_file_get_keywords (file);
-	keywords = prepend_automatic_keywords (file, keywords);
-
-	icons = NULL;
-	for (l = keywords; l != NULL; l = l->next) {
-		keyword = l->data;
-		
-#ifdef TRASH_IS_FAST_ENOUGH
-		if (strcmp (keyword, NEMO_FILE_EMBLEM_NAME_TRASH) == 0) {
-			char *uri;
-			gboolean file_is_trash;
-			/* Leave out the trash emblem for the trash itself, since
-			 * putting a trash emblem on a trash icon is gilding the
-			 * lily.
-			 */
-			uri = nemo_file_get_uri (file);
-			file_is_trash = strcmp (uri, EEL_TRASH_URI) == 0;
-			g_free (uri);
-			if (file_is_trash) {
-				continue;
-			}
-		}
-#endif
-		if (exclude) {
-			for (i = 0; exclude[i] != NULL; i++) {
-				if (strcmp (exclude[i], keyword) == 0) {
-					continue;
-				}
-			}
-		}
-		
-
-		icon_names[0] = g_strconcat ("emblem-", keyword, NULL);
-		icon_names[1] = keyword;
-		icon = g_themed_icon_new_from_names (icon_names, 2);
-		g_free (icon_names[0]);
-
-		icons = g_list_prepend (icons, icon);
-	}
-
-	g_list_free_full (keywords, g_free);
-	
-	return icons;
-}
-
 static GList *
 sort_keyword_list_and_remove_duplicates (GList *keywords)
 {
@@ -6704,7 +6734,7 @@ sort_keyword_list_and_remove_duplicates (GList *keywords)
 	GList *duplicate_link;
 	
 	if (keywords != NULL) {
-		keywords = eel_g_str_list_alphabetize (keywords);
+		keywords = g_list_sort (keywords, (GCompareFunc) g_utf8_collate);
 
 		p = keywords;
 		while (p->next != NULL) {
@@ -6730,7 +6760,7 @@ sort_keyword_list_and_remove_duplicates (GList *keywords)
  * Returns: A list of keywords.
  * 
  **/
-GList *
+static GList *
 nemo_file_get_keywords (NemoFile *file)
 {
 	GList *keywords;
@@ -6746,6 +6776,70 @@ nemo_file_get_keywords (NemoFile *file)
 	keywords = g_list_concat (keywords, nemo_file_get_metadata_list (file, NEMO_METADATA_KEY_EMBLEMS));
 
 	return sort_keyword_list_and_remove_duplicates (keywords);
+}
+
+/**
+ * nemo_file_get_emblem_icons
+ * 
+ * Return the list of names of emblems that this file should display,
+ * in canonical order.
+ * @file: NemoFile representing the file in question.
+ * 
+ * Returns: A list of emblem names.
+ * 
+ **/
+GList *
+nemo_file_get_emblem_icons (NemoFile *file)
+{
+	NemoFile *parent_file;
+	GList *keywords, *l;
+	GList *icons;
+	char *icon_names[2];
+	char *exclude[3];
+	char *keyword;
+	GIcon *icon;
+	int i;
+	
+	if (file == NULL) {
+		return NULL;
+	}
+	
+	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
+
+	i = 0;
+	parent_file = nemo_file_get_parent (file);
+	exclude[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
+	if (parent_file) {
+		if (!nemo_file_can_write (parent_file)) {
+			exclude[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
+		}
+		nemo_file_unref (parent_file);
+	}
+	exclude[i++] = NULL;
+
+	keywords = nemo_file_get_keywords (file);
+	keywords = prepend_automatic_keywords (file, keywords);
+
+	icons = NULL;
+	for (l = keywords; l != NULL; l = l->next) {
+		keyword = l->data;
+		for (i = 0; exclude[i] != NULL; i++) {
+			if (strcmp (exclude[i], keyword) == 0) {
+				continue;
+			}
+		}
+
+		icon_names[0] = g_strconcat ("emblem-", keyword, NULL);
+		icon_names[1] = keyword;
+		icon = g_themed_icon_new_from_names (icon_names, 2);
+		g_free (icon_names[0]);
+
+		icons = g_list_prepend (icons, icon);
+	}
+
+	g_list_free_full (keywords, g_free);
+	
+	return icons;
 }
 
 /**
@@ -7118,9 +7212,26 @@ nemo_file_is_in_trash (NemoFile *file)
 gboolean
 nemo_file_is_in_recent (NemoFile *file)
 {
-   g_assert (NEMO_IS_FILE (file));
+	g_assert (NEMO_IS_FILE (file));
 
-   return nemo_directory_is_in_recent (file->details->directory);
+	return nemo_directory_is_in_recent (file->details->directory);
+}
+
+/**
+ * nemo_file_is_in_network
+ * 
+ * Check if this file is a file in Network.
+ * @file: NemoFile representing the file in question.
+ * 
+ * Returns: TRUE if @file is in Network.
+ * 
+ **/
+gboolean
+nemo_file_is_in_network (NemoFile *file)
+{
+	g_assert (NEMO_IS_FILE (file));
+
+	return nemo_directory_is_in_network (file->details->directory);
 }
 
 GError *
@@ -7248,17 +7359,13 @@ nemo_file_get_trash_original_file (NemoFile *file)
 {
 	GFile *location;
 	NemoFile *original_file;
-	char *filename;
 
 	original_file = NULL;
 
 	if (file->details->trash_orig_path != NULL) {
-		/* file name is stored in URL encoding */
-		filename = g_uri_unescape_string (file->details->trash_orig_path, "");
-		location = g_file_new_for_path (filename);
+		location = g_file_new_for_path (file->details->trash_orig_path);
 		original_file = nemo_file_get (location);
-		g_object_unref (G_OBJECT (location));
-		g_free (filename);
+		g_object_unref (location);
 	}
 
 	return original_file;
@@ -7895,27 +8002,31 @@ nemo_file_list_from_uris (GList *uri_list)
 
 static gboolean
 get_attributes_for_default_sort_type (NemoFile *file,
-                      gboolean *is_recent,
+				      gboolean *is_recent,
 				      gboolean *is_download,
-				      gboolean *is_trash)
+				      gboolean *is_trash,
+				      gboolean *is_search)
 {
-	gboolean is_recent_dir, is_download_dir, is_desktop_dir, is_trash_dir, retval;
+	gboolean is_recent_dir, is_download_dir, is_desktop_dir, is_trash_dir, is_search_dir, retval;
 
-    *is_recent = FALSE;
+	*is_recent = FALSE;
 	*is_download = FALSE;
 	*is_trash = FALSE;
+	*is_search = FALSE;
 	retval = FALSE;
 
 	/* special handling for certain directories */
 	if (file && nemo_file_is_directory (file)) {
-        is_recent_dir =
-            nemo_file_is_in_recent (file);
+		is_recent_dir =
+			nemo_file_is_in_recent (file);
 		is_download_dir =
 			nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_DOWNLOAD);
 		is_desktop_dir =
 			nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_DESKTOP);
 		is_trash_dir =
 			nemo_file_is_in_trash (file);
+		is_search_dir =
+			nemo_file_is_in_search (file);
 
 		if (is_download_dir && !is_desktop_dir) {
 			*is_download = TRUE;
@@ -7924,9 +8035,12 @@ get_attributes_for_default_sort_type (NemoFile *file,
 			*is_trash = TRUE;
 			retval = TRUE;
 		} else if (is_recent_dir) {
-            *is_recent = TRUE;
-            retval = TRUE;
-        }
+			*is_recent = TRUE;
+			retval = TRUE;
+		} else if (is_search_dir) {
+			*is_search = TRUE;
+			retval = TRUE;
+		}
 	}
 
 	return retval;
@@ -7937,20 +8051,21 @@ nemo_file_get_default_sort_type (NemoFile *file,
 				     gboolean *reversed)
 {
 	NemoFileSortType retval;
-	gboolean is_recent, is_download, is_trash, res;
+	gboolean is_recent, is_download, is_trash, is_search, res;
 
 	retval = NEMO_FILE_SORT_NONE;
-
-    is_recent = is_download = is_trash = FALSE;
-    res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash);
+	is_recent = is_download = is_trash = is_search = FALSE;
+	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash, &is_search);
 
 	if (res) {
-        if (is_recent) {
+		if (is_recent) {
 			retval = NEMO_FILE_SORT_BY_ATIME;
-        } else if (is_download) {
-            retval = NEMO_FILE_SORT_BY_MTIME;
+		} else if (is_download) {
+			retval = NEMO_FILE_SORT_BY_MTIME;
 		} else if (is_trash) {
 			retval = NEMO_FILE_SORT_BY_TRASHED_TIME;
+		} else if (is_search) {
+			retval = NEMO_FILE_SORT_BY_SEARCH_RELEVANCE;
 		}
 
 		if (reversed != NULL) {
@@ -7966,17 +8081,19 @@ nemo_file_get_default_sort_attribute (NemoFile *file,
 					  gboolean *reversed)
 {
 	const gchar *retval;
-	gboolean is_recent, is_download, is_trash, res;
+	gboolean is_recent, is_download, is_trash, is_search, res;
 
 	retval = NULL;
-	is_download = is_trash = FALSE;
-	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash);
+	is_download = is_trash = is_search = FALSE;
+	res = get_attributes_for_default_sort_type (file, &is_recent, &is_download, &is_trash, &is_search);
 
 	if (res) {
-        if (is_recent || is_download) {
+		if (is_recent || is_download) {
 			retval = g_quark_to_string (attribute_date_modified_q);
 		} else if (is_trash) {
 			retval = g_quark_to_string (attribute_trashed_on_q);
+		} else if (is_search) {
+			retval = g_quark_to_string (attribute_search_relevance_q);
 		}
 
 		if (reversed != NULL) {
@@ -8257,7 +8374,7 @@ static void
 thumbnail_limit_changed_callback (gpointer user_data)
 {
 	g_settings_get (nemo_preferences,
-			NEMO_PREFERENCES_IMAGE_FILE_THUMBNAIL_LIMIT,
+			NEMO_PREFERENCES_FILE_THUMBNAIL_LIMIT,
 			"t", &cached_thumbnail_limit);
 
 	/* Tell the world that icons might have changed. We could invent a narrower-scope
@@ -8270,8 +8387,8 @@ thumbnail_limit_changed_callback (gpointer user_data)
 static void
 thumbnail_size_changed_callback (gpointer user_data)
 {
-	cached_thumbnail_size = g_settings_get_int (nemo_icon_view_preferences,
-						    NEMO_PREFERENCES_ICON_VIEW_THUMBNAIL_SIZE);
+	cached_thumbnail_size = g_settings_get_int (nemo_canvas_view_preferences,
+						    NEMO_PREFERENCES_CANVAS_VIEW_THUMBNAIL_SIZE);
 
 	/* Tell the world that icons might have changed. We could invent a narrower-scope
 	 * signal to mean only "thumbnails might have changed" if this ends up being slow
@@ -8283,7 +8400,7 @@ thumbnail_size_changed_callback (gpointer user_data)
 static void
 show_thumbnails_changed_callback (gpointer user_data)
 {
-	show_image_thumbs = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS);
+	show_file_thumbs = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_FILE_THUMBNAILS);
 
 	/* Tell the world that icons might have changed. We could invent a narrower-scope
 	 * signal to mean only "thumbnails might have changed" if this ends up being slow
@@ -8342,7 +8459,7 @@ nemo_file_class_init (NemoFileClass *class)
 	attribute_name_q = g_quark_from_static_string ("name");
 	attribute_size_q = g_quark_from_static_string ("size");
 	attribute_type_q = g_quark_from_static_string ("type");
-    attribute_detailed_type_q = g_quark_from_static_string ("detailed_type");
+	attribute_detailed_type_q = g_quark_from_static_string ("detailed_type");
 	attribute_modification_date_q = g_quark_from_static_string ("modification_date");
 	attribute_date_modified_q = g_quark_from_static_string ("date_modified");
 	attribute_accessed_date_q = g_quark_from_static_string ("accessed_date");
@@ -8354,6 +8471,7 @@ nemo_file_class_init (NemoFileClass *class)
 	attribute_deep_directory_count_q = g_quark_from_static_string ("deep_directory_count");
 	attribute_deep_total_count_q = g_quark_from_static_string ("deep_total_count");
 	attribute_date_changed_q = g_quark_from_static_string ("date_changed");
+	attribute_search_relevance_q = g_quark_from_static_string ("search_relevance");
 	attribute_trashed_on_q = g_quark_from_static_string ("trashed_on");
 	attribute_trash_orig_path_q = g_quark_from_static_string ("trash_orig_path");
 	attribute_date_permissions_q = g_quark_from_static_string ("date_permissions");
@@ -8384,7 +8502,7 @@ nemo_file_class_init (NemoFileClass *class)
 		              G_TYPE_NONE, 0);
 
 	signals[UPDATED_DEEP_COUNT_IN_PROGRESS] =
-		g_signal_new ("updated_deep_count_in_progress",
+		g_signal_new ("updated-deep-count-in-progress",
 		              G_TYPE_FROM_CLASS (class),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoFileClass, updated_deep_count_in_progress),
@@ -8396,17 +8514,17 @@ nemo_file_class_init (NemoFileClass *class)
 
 	thumbnail_limit_changed_callback (NULL);
 	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_IMAGE_FILE_THUMBNAIL_LIMIT,
+				  "changed::" NEMO_PREFERENCES_FILE_THUMBNAIL_LIMIT,
 				  G_CALLBACK (thumbnail_limit_changed_callback),
 				  NULL);
 	thumbnail_size_changed_callback (NULL);
 	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_ICON_VIEW_THUMBNAIL_SIZE,
+				  "changed::" NEMO_PREFERENCES_CANVAS_VIEW_THUMBNAIL_SIZE,
 				  G_CALLBACK (thumbnail_size_changed_callback),
 				  NULL);
 	show_thumbnails_changed_callback (NULL);
 	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
+				  "changed::" NEMO_PREFERENCES_SHOW_FILE_THUMBNAILS,
 				  G_CALLBACK (show_thumbnails_changed_callback),
 				  NULL);
 
@@ -8417,7 +8535,7 @@ nemo_file_class_init (NemoFileClass *class)
 				 NULL, 0);
 
 	g_signal_connect (nemo_signaller_get_current (),
-			  "mime_data_changed",
+			  "mime-data-changed",
 			  G_CALLBACK (mime_type_data_changed_callback),
 			  NULL);
 }
@@ -8577,7 +8695,6 @@ nemo_self_check_file (void)
 	EEL_CHECK_STRING_RESULT (nemo_file_get_name (file_1), "home");
 	nemo_file_unref (file_1);
 
-#if 0
 	/* ALEX: I removed this, because it was breaking distchecks.
 	 * It used to work, but when canonical uris changed from
 	 * foo: to foo:/// it broke. I don't expect it to matter
@@ -8585,10 +8702,9 @@ nemo_self_check_file (void)
 	file_1 = nemo_file_get_by_uri (":");
 	EEL_CHECK_STRING_RESULT (nemo_file_get_name (file_1), ":");
 	nemo_file_unref (file_1);
-#endif
 
 	file_1 = nemo_file_get_by_uri ("eazel:");
-	EEL_CHECK_STRING_RESULT (nemo_file_get_name (file_1), "eazel");
+	EEL_CHECK_STRING_RESULT (nemo_file_get_name (file_1), "eazel:///");
 	nemo_file_unref (file_1);
 
 	/* sorting */

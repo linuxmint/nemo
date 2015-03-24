@@ -140,7 +140,7 @@ sanity_check_window_dimensions (guint *width, guint *height)
  * @width: width of window in pixels
  * @height: height of window in pixels
  */
-void
+static void
 eel_gtk_window_set_initial_geometry (GtkWindow *window, 
 					  EelGdkGeometryFlags geometry_flags,
 					  int left,
@@ -315,83 +315,6 @@ eel_gtk_menu_insert_separator (GtkMenu *menu, int index)
 	gtk_menu_shell_insert (GTK_MENU_SHELL (menu), menu_item, index);
 
 	return GTK_MENU_ITEM (menu_item);
-}
-
-/**
- * eel_gtk_label_make_bold.
- *
- * Switches the font of label to a bold equivalent.
- * @label: The label.
- **/
-void
-eel_gtk_label_make_bold (GtkLabel *label)
-{
-	PangoFontDescription *font_desc;
-
-	font_desc = pango_font_description_new ();
-
-	pango_font_description_set_weight (font_desc,
-					   PANGO_WEIGHT_BOLD);
-
-	/* This will only affect the weight of the font, the rest is
-	 * from the current state of the widget, which comes from the
-	 * theme or user prefs, since the font desc only has the
-	 * weight flag turned on.
-	 */
-	gtk_widget_override_font (GTK_WIDGET (label), font_desc);
-
-	pango_font_description_free (font_desc);
-}
-
-static gboolean 
-tree_view_button_press_callback (GtkWidget *tree_view,
-				 GdkEventButton *event,
-				 gpointer data)
-{
-	GtkTreePath *path;
-	GtkTreeViewColumn *column;
-
-	if (event->button == 1 && event->type == GDK_BUTTON_PRESS) {
-		if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (tree_view),
-						   event->x, event->y,
-						   &path,
-						   &column,
-						   NULL, 
-						   NULL)) {
-			gtk_tree_view_row_activated
-				(GTK_TREE_VIEW (tree_view), path, column);
-			gtk_tree_path_free (path);
-		}
-	}
-
-	return FALSE;
-}
-
-void
-eel_gtk_tree_view_set_activate_on_single_click (GtkTreeView *tree_view,
-						gboolean should_activate)
-{
-	guint button_press_id;
-
-	button_press_id = GPOINTER_TO_UINT 
-		(g_object_get_data (G_OBJECT (tree_view), 
-				    "eel-tree-view-activate"));
-
-	if (button_press_id && !should_activate) {
-		g_signal_handler_disconnect (tree_view, button_press_id);
-		g_object_set_data (G_OBJECT (tree_view), 
-				   "eel-tree-view-activate", 
-				   NULL);
-	} else if (!button_press_id && should_activate) {
-		button_press_id = g_signal_connect 
-			(tree_view,
-			 "button_press_event",
-			 G_CALLBACK  (tree_view_button_press_callback),
-			 NULL);
-		g_object_set_data (G_OBJECT (tree_view), 
-				   "eel-tree-view-activate", 
-				   GUINT_TO_POINTER (button_press_id));
-	}
 }
 
 void

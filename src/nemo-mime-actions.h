@@ -41,6 +41,7 @@ GList *                nemo_mime_get_applications_for_files           (GList    
 
 gboolean               nemo_mime_file_opens_in_view                   (NemoFile            *file);
 gboolean               nemo_mime_file_opens_in_external_app           (NemoFile            *file);
+gboolean               nemo_mime_file_launches                        (NemoFile            *file);
 void                   nemo_mime_activate_files                       (GtkWindow               *parent_window,
 									   NemoWindowSlot      *slot,
 									   GList                   *files,

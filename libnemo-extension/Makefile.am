@@ -4,12 +4,12 @@ include $(top_srcdir)/Makefile.shared
 
 lib_LTLIBRARIES=libnemo-extension.la
 
-INCLUDES=\
+AM_CPPFLAGS=\
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
 	$(BASE_CFLAGS) \
 	$(WARNING_CFLAGS) \
-	$(DISABLE_DEPRECATED_CFLAGS) \
+	$(DISABLE_DEPRECATED) \
 	-DDATADIR=\""$(datadir)"\" \
 	$(NULL)
 
@@ -88,3 +88,5 @@ typelibs_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelibs_DATA)
 endif
+
+-include $(top_srcdir)/git.mk

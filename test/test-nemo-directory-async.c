@@ -6,16 +6,6 @@
 
 void *client1, *client2;
 
-#if 0
-static gboolean
-quit_cb (gpointer data)
-{
-	gtk_main_quit ();
-
-	return FALSE;
-}
-#endif
-
 static void
 files_added (NemoDirectory *directory,
 	     GList *added_files)
@@ -51,51 +41,47 @@ files_changed (NemoDirectory *directory,
 		 g_list_length (changed_files));
 }
 
-static gboolean
-force_reload (NemoDirectory *directory)
-{
-	g_print ("forcing reload!\n");
-
-	nemo_directory_force_reload (directory);
-
-	return FALSE;
-}
-
 static void
 done_loading (NemoDirectory *directory)
 {
-	static int i = 0;
-
 	g_print ("done loading\n");
-
-	if (i == 0) {
-		g_timeout_add (5000, (GSourceFunc)force_reload, directory);
-		i++;
-	} else {
-	}
+	gtk_main_quit ();
 }
 
 int
 main (int argc, char **argv)
 {
 	NemoDirectory *directory;
-	NemoQuery *query;
+	NemoFileAttributes attributes;
+	const char *uri;
+
 	client1 = g_new0 (int, 1);
 	client2 = g_new0 (int, 1);
 
 	gtk_init (&argc, &argv);
 
-	query = nemo_query_new ();
-	nemo_query_set_text (query, "richard hult");
-	directory = nemo_directory_get_by_uri ("x-nemo-search://0/");
-	nemo_search_directory_set_query (NEMO_SEARCH_DIRECTORY (directory), query);
-	g_object_unref (query);
+	if (argv[1] == NULL) {
+		uri = "file:///tmp";
+	} else {
+		uri = argv[1];
+	}
+	g_print ("loading %s", uri);
+	directory = nemo_directory_get_by_uri (uri);
 
 	g_signal_connect (directory, "files-added", G_CALLBACK (files_added), NULL);
 	g_signal_connect (directory, "files-changed", G_CALLBACK (files_changed), NULL);
 	g_signal_connect (directory, "done-loading", G_CALLBACK (done_loading), NULL);
+
+	attributes =
+		NEMO_FILE_ATTRIBUTES_FOR_ICON |
+		NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT |
+		NEMO_FILE_ATTRIBUTE_INFO |
+		NEMO_FILE_ATTRIBUTE_LINK_INFO |
+		NEMO_FILE_ATTRIBUTE_MOUNT |
+		NEMO_FILE_ATTRIBUTE_EXTENSION_INFO;
+
 	nemo_directory_file_monitor_add (directory, client1, TRUE,
-					     NEMO_FILE_ATTRIBUTE_INFO,
+                                             attributes,
 					     NULL, NULL);
 
 

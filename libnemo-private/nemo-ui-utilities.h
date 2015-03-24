@@ -37,9 +37,10 @@ void        nemo_ui_prepare_merge_ui           (GtkUIManager      *ui_manager,
 GtkAction * nemo_action_from_menu_item         (NemoMenuItem  *item,
                                                 GtkWidget     *parent_widget);
 
-gboolean  nemo_event_should_open_in_new_tab   (void);
-
 GdkPixbuf * nemo_ui_get_menu_icon              (const char        *icon_name,
                                                 GtkWidget         *parent_widget);
+char * nemo_escape_action_name                 (const char        *action_name,
+						    const char        *prefix);
+void   nemo_ui_frame_image                     (GdkPixbuf        **pixbuf);
 
 #endif /* NEMO_UI_UTILITIES_H */

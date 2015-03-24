@@ -54,6 +54,8 @@ typedef struct {
 GType   nemo_desktop_link_monitor_get_type (void);
 
 NemoDesktopLinkMonitor *   nemo_desktop_link_monitor_get (void);
+void nemo_desktop_link_monitor_shutdown (void);
+
 void nemo_desktop_link_monitor_delete_link (NemoDesktopLinkMonitor *monitor,
 						NemoDesktopLink *link,
 						GtkWidget *parent_view);

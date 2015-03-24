@@ -52,6 +52,8 @@ struct _NemoProgressInfo
 	char *status;
 	char *details;
 	double progress;
+	double current;
+	double total;
 	gboolean activity_mode;
 	gboolean started;
 	gboolean finished;
@@ -231,6 +233,42 @@ nemo_progress_info_get_progress (NemoProgressInfo *info)
 	G_UNLOCK (progress_info);
 	
 	return res;
+}
+
+double
+nemo_progress_info_get_current (NemoProgressInfo *info)
+{
+	double current;
+
+	G_LOCK (progress_info);
+
+	if (info->activity_mode) {
+		current = 0.0;
+	} else {
+		current = info->current;
+	}
+
+	G_UNLOCK (progress_info);
+
+	return current;
+}
+
+double
+nemo_progress_info_get_total (NemoProgressInfo *info)
+{
+	double total;
+
+	G_LOCK (progress_info);
+
+	if (info->activity_mode) {
+		total = -1.0;
+	} else {
+		total = info->total;
+	}
+
+	G_UNLOCK (progress_info);
+
+	return total;
 }
 
 void
@@ -566,6 +604,8 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 	    ) {
 		info->activity_mode = FALSE;
 		info->progress = current_percent;
+		info->current = current;
+		info->total = total;
 		info->progress_at_idle = TRUE;
 		queue_idle (info, FALSE);
 	}

@@ -24,8 +24,6 @@
 #ifndef NEMO_SEARCH_ENGINE_SIMPLE_H
 #define NEMO_SEARCH_ENGINE_SIMPLE_H
 
-#include <libnemo-private/nemo-search-engine.h>
-
 #define NEMO_TYPE_SEARCH_ENGINE_SIMPLE		(nemo_search_engine_simple_get_type ())
 #define NEMO_SEARCH_ENGINE_SIMPLE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_SEARCH_ENGINE_SIMPLE, NemoSearchEngineSimple))
 #define NEMO_SEARCH_ENGINE_SIMPLE_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_SEARCH_ENGINE_SIMPLE, NemoSearchEngineSimpleClass))
@@ -36,16 +34,16 @@
 typedef struct NemoSearchEngineSimpleDetails NemoSearchEngineSimpleDetails;
 
 typedef struct NemoSearchEngineSimple {
-	NemoSearchEngine parent;
+	GObject parent;
 	NemoSearchEngineSimpleDetails *details;
 } NemoSearchEngineSimple;
 
 typedef struct {
-	NemoSearchEngineClass parent_class;
+	GObjectClass parent_class;
 } NemoSearchEngineSimpleClass;
 
 GType          nemo_search_engine_simple_get_type  (void);
 
-NemoSearchEngine* nemo_search_engine_simple_new       (void);
+NemoSearchEngineSimple* nemo_search_engine_simple_new       (void);
 
 #endif /* NEMO_SEARCH_ENGINE_SIMPLE_H */

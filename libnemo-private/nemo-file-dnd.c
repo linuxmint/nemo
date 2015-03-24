@@ -35,14 +35,14 @@
 static gboolean
 nemo_drag_can_accept_files (NemoFile *drop_target_item)
 {
-	NemoDirectory *directory;
-
 	if (nemo_file_is_directory (drop_target_item)) {
+		NemoDirectory *directory;
 		gboolean res;
 
 		/* target is a directory, accept if editable */
 		directory = nemo_directory_get_for_file (drop_target_item);
-		res = nemo_directory_is_editable (directory);
+		res = nemo_directory_is_editable (directory) &&
+			nemo_file_can_write (drop_target_item);
 		nemo_directory_unref (directory);
 		return res;
 	}

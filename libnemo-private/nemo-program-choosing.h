@@ -34,7 +34,7 @@ typedef void (*NemoApplicationChoiceCallback) (GAppInfo                      *ap
 						   gpointer			  callback_data);
 
 void nemo_launch_application                 (GAppInfo                          *application,
-						  GList                             *files,
+						  const GList                      *files,
 						  GtkWindow                         *parent_window);
 void nemo_launch_application_by_uri          (GAppInfo                          *application,
 						  GList                             *uris,

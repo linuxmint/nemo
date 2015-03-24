@@ -47,6 +47,7 @@ enum {
 	COLUMN_VISIBLE,
 	COLUMN_LABEL,
 	COLUMN_NAME,
+	COLUMN_SENSITIVE,
 	NUM_COLUMNS
 };
 
@@ -108,7 +109,7 @@ nemo_column_chooser_class_init (NemoColumnChooserClass *chooser_class)
 		 G_TYPE_NONE, 0);
 
 	signals[USE_DEFAULT] = g_signal_new
-		("use_default",
+		("use-default",
 		 G_TYPE_FROM_CLASS (chooser_class),
 		 G_SIGNAL_RUN_LAST,
 		 G_STRUCT_OFFSET (NemoColumnChooserClass,
@@ -181,26 +182,41 @@ list_changed (NemoColumnChooser *chooser)
 }
 
 static void
-visible_toggled_callback (GtkCellRendererToggle *cell, 
-			  char *path_string,
-			  gpointer user_data)
+toggle_path (NemoColumnChooser *chooser,
+             GtkTreePath *path)
 {
-	NemoColumnChooser *chooser;
-	GtkTreePath *path;
 	GtkTreeIter iter;
 	gboolean visible;
 	
-	chooser = NEMO_COLUMN_CHOOSER (user_data);
-
-	path = gtk_tree_path_new_from_string (path_string);
-	gtk_tree_model_get_iter (GTK_TREE_MODEL (chooser->details->store), 
+	gtk_tree_model_get_iter (GTK_TREE_MODEL (chooser->details->store),
 				 &iter, path);
 	gtk_tree_model_get (GTK_TREE_MODEL (chooser->details->store),
 			    &iter, COLUMN_VISIBLE, &visible, -1);
 	gtk_list_store_set (chooser->details->store,
 			    &iter, COLUMN_VISIBLE, !visible, -1);
-	gtk_tree_path_free (path);
 	list_changed (chooser);
+}
+
+
+static void
+visible_toggled_callback (GtkCellRendererToggle *cell,
+			  char *path_string,
+			  gpointer user_data)
+{
+	GtkTreePath *path;
+	
+	path = gtk_tree_path_new_from_string (path_string);
+	toggle_path (NEMO_COLUMN_CHOOSER (user_data), path);
+	gtk_tree_path_free (path);
+}
+
+static void
+view_row_activated_callback (GtkTreeView *tree_view,
+                             GtkTreePath *path,
+                             GtkTreeViewColumn *column,
+                             gpointer user_data)
+{
+	toggle_path (NEMO_COLUMN_CHOOSER (user_data), path);
 }
 
 static void
@@ -232,14 +248,18 @@ add_tree_view (NemoColumnChooser *chooser)
 	store = gtk_list_store_new (NUM_COLUMNS,
 				    G_TYPE_BOOLEAN,
 				    G_TYPE_STRING,
-				    G_TYPE_STRING);
+				    G_TYPE_STRING,
+				    G_TYPE_BOOLEAN);
 
 	gtk_tree_view_set_model (GTK_TREE_VIEW (view), 
 				 GTK_TREE_MODEL (store));
 	g_object_unref (store);
 
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (view), TRUE);
-	
+
+	g_signal_connect (view, "row-activated",
+	                  G_CALLBACK (view_row_activated_callback), chooser);
+
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
 	g_signal_connect (selection, "changed", 
 			  G_CALLBACK (selection_changed_callback), chooser);
@@ -251,16 +271,18 @@ add_tree_view (NemoColumnChooser *chooser)
 
 	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
 						     -1, NULL,
-						     cell, 
+						     cell,
 						     "active", COLUMN_VISIBLE,
+						     "sensitive", COLUMN_SENSITIVE,
 						     NULL);
 
 	cell = gtk_cell_renderer_text_new ();
 
 	gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
 						     -1, NULL,
-						     cell, 
+						     cell,
 						     "text", COLUMN_LABEL,
+						     "sensitive", COLUMN_SENSITIVE,
 						     NULL);
 
 	chooser->details->view = GTK_TREE_VIEW (view);
@@ -341,20 +363,6 @@ use_default_clicked_callback (GtkWidget *button, gpointer user_data)
 		       signals[USE_DEFAULT], 0);
 }
 
-static GtkWidget *
-button_new_with_mnemonic (const gchar *stockid, const gchar *str)
-{
-	GtkWidget *image;
-	GtkWidget *button;
-	
-	button = gtk_button_new_with_mnemonic (str);
-	image = gtk_image_new_from_stock (stockid, GTK_ICON_SIZE_BUTTON);
-	
-	gtk_button_set_image (GTK_BUTTON (button), image);
-
-	return button;
-}
-
 static void
 add_buttons (NemoColumnChooser *chooser)
 {
@@ -364,8 +372,7 @@ add_buttons (NemoColumnChooser *chooser)
 	box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 8);
 	gtk_widget_show (box);
 	
-	chooser->details->move_up_button = button_new_with_mnemonic (GTK_STOCK_GO_UP,
-								     _("Move _Up"));
+	chooser->details->move_up_button = gtk_button_new_with_mnemonic (_("Move _Up"));
 	g_signal_connect (chooser->details->move_up_button, 
 			  "clicked",  G_CALLBACK (move_up_clicked_callback),
 			  chooser);
@@ -374,8 +381,7 @@ add_buttons (NemoColumnChooser *chooser)
 	gtk_box_pack_start (GTK_BOX (box), chooser->details->move_up_button,
 			    FALSE, FALSE, 0);
 
-	chooser->details->move_down_button = button_new_with_mnemonic (GTK_STOCK_GO_DOWN,
-								       _("Move Dow_n"));
+	chooser->details->move_down_button = gtk_button_new_with_mnemonic (_("Move Dow_n"));
 	g_signal_connect (chooser->details->move_down_button, 
 			  "clicked",  G_CALLBACK (move_down_clicked_callback),
 			  chooser);
@@ -413,18 +419,26 @@ populate_tree (NemoColumnChooser *chooser)
 		NemoColumn *column;
 		char *name;
 		char *label;
-		
+		gboolean visible = FALSE;
+		gboolean sensitive = TRUE;
+
 		column = NEMO_COLUMN (l->data);
-		
-		g_object_get (G_OBJECT (column), 
-			      "name", &name, "label", &label, 
+
+		g_object_get (G_OBJECT (column),
+			      "name", &name, "label", &label,
 			      NULL);
+
+		if (strcmp (name, "name") == 0) {
+			visible = TRUE;
+			sensitive = FALSE;
+		}
 
 		gtk_list_store_append (chooser->details->store, &iter);
 		gtk_list_store_set (chooser->details->store, &iter,
-				    COLUMN_VISIBLE, FALSE,
+				    COLUMN_VISIBLE, visible,
 				    COLUMN_LABEL, label,
 				    COLUMN_NAME, name,
+				    COLUMN_SENSITIVE, sensitive,
 				    -1);
 
 		g_free (name);
@@ -443,7 +457,7 @@ nemo_column_chooser_constructed (GObject *object)
 
 	populate_tree (chooser);
 
-	g_signal_connect (chooser->details->store, "row_deleted", 
+	g_signal_connect (chooser->details->store, "row-deleted", 
 			  G_CALLBACK (row_deleted_callback), chooser);
 }
 
@@ -471,6 +485,8 @@ set_visible_columns (NemoColumnChooser *chooser,
 	int i;
 
 	visible_columns_hash = g_hash_table_new (g_str_hash, g_str_equal);
+	/* always show the name column */
+	g_hash_table_insert (visible_columns_hash, "name", "name");
 	for (i = 0; visible_columns[i] != NULL; ++i) {
 		g_hash_table_insert (visible_columns_hash,
 				     visible_columns[i],
@@ -522,6 +538,8 @@ get_column_names (NemoColumnChooser *chooser, gboolean only_visible)
 			if (!only_visible || visible) {
 				/* give ownership to the array */
 				g_ptr_array_add (ret, name);
+			} else {
+				g_free (name);
 			}
 
 		} while (gtk_tree_model_iter_next (GTK_TREE_MODEL (chooser->details->store), &iter));

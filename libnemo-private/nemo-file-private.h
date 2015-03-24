@@ -224,6 +224,8 @@ struct NemoFileDetails
 
 	time_t trash_time; /* 0 is unknown */
 
+	gdouble search_relevance;
+
 	guint64 free_space; /* (guint)-1 for unknown */
 	time_t free_space_read; /* The time free_space was updated, or 0 for never */
 };

@@ -55,12 +55,10 @@ G_DEFINE_TYPE (NemoDesktopLinkMonitor, nemo_desktop_link_monitor, G_TYPE_OBJECT)
 
 static NemoDesktopLinkMonitor *the_link_monitor = NULL;
 
-static void
-destroy_desktop_link_monitor (void)
+void
+nemo_desktop_link_monitor_shutdown (void)
 {
-	if (the_link_monitor != NULL) {
-		g_object_unref (the_link_monitor);
-	}
+	g_clear_object (&the_link_monitor);
 }
 
 NemoDesktopLinkMonitor *
@@ -68,7 +66,7 @@ nemo_desktop_link_monitor_get (void)
 {
 	if (the_link_monitor == NULL) {
 		g_object_new (NEMO_TYPE_DESKTOP_LINK_MONITOR, NULL);
-		eel_debug_call_at_shutdown (destroy_desktop_link_monitor);
+		eel_debug_call_at_shutdown (nemo_desktop_link_monitor_shutdown);
 	}
 	return the_link_monitor;
 }
@@ -85,7 +83,7 @@ volume_delete_dialog (GtkWidget *parent_view,
 
 	if (mount != NULL) {
 		display_name = nemo_desktop_link_get_display_name (link);
-		dialog_str = g_strdup_printf (_("You cannot move the volume \"%s\" to the trash."),
+		dialog_str = g_strdup_printf (_("You cannot move the volume “%s” to the trash."),
 					      display_name);
 		g_free (display_name);
 
@@ -95,18 +93,18 @@ volume_delete_dialog (GtkWidget *parent_view,
 				 FALSE,
 				 GTK_MESSAGE_ERROR,
 				 dialog_str,
-				 _("If you want to eject the volume, please use \"Eject\" in the "
+				 _("If you want to eject the volume, please use Eject in the "
 				   "popup menu of the volume."),
-				 GTK_STOCK_OK, NULL);
+				 _("_OK"), NULL);
 		} else {
 			eel_run_simple_dialog
 				(parent_view, 
 				 FALSE,
 				 GTK_MESSAGE_ERROR,
 				 dialog_str,
-				 _("If you want to unmount the volume, please use \"Unmount Volume\" in the "
+				 _("If you want to unmount the volume, please use Unmount Volume in the "
 				   "popup menu of the volume."),
-				 GTK_STOCK_OK, NULL);
+				 _("_OK"), NULL);
 		}
 
 		g_object_unref (mount);

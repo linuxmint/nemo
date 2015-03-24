@@ -1,0 +1,18 @@
+[Nemo Action]
+
+Name=Change Desktop _Background
+
+Comment=Change Desktop _Background
+
+Exec=unity-control-center appearance
+
+Selection=None
+
+Icon-Name=cs-backgrounds
+
+Extensions=any;
+
+Dependencies=unity-control-center;unity-settings-daemon;
+
+Conditions=desktop;dbus com.canonical.Unity;
+

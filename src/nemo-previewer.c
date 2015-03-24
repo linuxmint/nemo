@@ -21,6 +21,8 @@
  *
  */
 
+#include "config.h"
+
 #include "nemo-previewer.h"
 
 #define DEBUG_FLAG NEMO_DEBUG_PREVIEWER

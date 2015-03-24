@@ -33,15 +33,13 @@
  * Callers in Nemo normally get the UI manager from
  * nemo_window_get_ui_manager. */
 /* The shares selection changes argument should be set to true if the
- * widget uses the signal "selection_changed" to tell others about
+ * widget uses the signal "selection-changed" to tell others about
  * text selection changes.  The NemoEntry widget
  * is currently the only editable in nemo that shares selection
  * changes. */
 void nemo_clipboard_set_up_editable            (GtkEditable        *target,
 						    GtkUIManager       *ui_manager,
 						    gboolean            shares_selection_changes);
-void nemo_clipboard_set_up_text_view           (GtkTextView        *target,
-						    GtkUIManager       *ui_manager);
 void nemo_clipboard_clear_if_colliding_uris    (GtkWidget          *widget,
 						    const GList        *item_uris,
 						    GdkAtom             copied_files_atom);

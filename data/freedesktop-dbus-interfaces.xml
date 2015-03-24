@@ -32,5 +32,6 @@
       <arg type='as' name='URIs' direction='in'/>
       <arg type='s' name='StartupId' direction='in'/>
     </method>
+    <property name="OpenLocations" type="as" access="read"/>
   </interface>
 </node>
