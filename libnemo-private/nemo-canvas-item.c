@@ -824,7 +824,6 @@ prepare_pango_layout_for_draw (NemoCanvasItem *item,
 	if (IS_COMPACT_VIEW (container)) {
 		pango_layout_set_height (layout, -1);
 	} else if (needs_highlight ||
-		   details->is_prelit ||
 		   details->is_highlighted_as_keyboard_focus ||
 		   details->entire_text ||
 		   container->details->label_position == NEMO_CANVAS_LABEL_POSITION_BESIDE) {
