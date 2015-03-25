@@ -1,5 +1,11 @@
+Nemo merged with changes in Nautilus  3.11.3:
+* Don't perform deep counts on regular files (Ross Lagerwall)
+* Fix overlapping filenames on hover in canvas view (Manuel Bachmann)
+* Use search bar style for the query editor (William Jon McCann)
+* Support building against Tracker 0.18 (Dominique Leuenberger)
+
 Nemo merged with changes in Nautilus  3.11.2:
-- Improve tab labels (William Jon McCann)
+* Improve tab labels (William Jon McCann)
 
 Nemo merged with changes in Nautilus  3.10.1:
 Changes:
