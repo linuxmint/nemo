@@ -451,7 +451,7 @@
     <key name="font" type="s">
       <default l10n="messages" context="desktop-font">''</default>
       <_summary>Desktop font</_summary>
-      <_description>The font _description used for the icons on the desktop.</_description>
+      <_description>The font description used for the icons on the desktop.</_description>
     </key>
     <key name="show-desktop-icons" type="b">
       <default>true</default>
