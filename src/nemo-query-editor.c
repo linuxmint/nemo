@@ -853,6 +853,8 @@ nemo_query_editor_add_row (NemoQueryEditor *editor,
 
 	/* create the toolbar and the box container for its contents */
 	row->toolbar = gtk_toolbar_new ();
+	gtk_style_context_add_class (gtk_widget_get_style_context (row->toolbar),
+				     "search-bar");
 	gtk_box_pack_start (GTK_BOX (editor), row->toolbar, TRUE, TRUE, 0);
 
 	item = gtk_tool_item_new ();
@@ -933,7 +935,7 @@ setup_widgets (NemoQueryEditor *editor)
 	/* create the toolbar and the box container for its contents */
 	toolbar = gtk_toolbar_new ();
 	gtk_style_context_add_class (gtk_widget_get_style_context (toolbar),
-				     GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
+				     "search-bar");
 	gtk_box_pack_start (GTK_BOX (editor), toolbar, TRUE, TRUE, 0);
 
 	item = gtk_tool_item_new ();

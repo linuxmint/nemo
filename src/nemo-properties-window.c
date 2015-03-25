@@ -2339,7 +2339,9 @@ append_directory_contents_fields (NemoPropertiesWindow *window,
 		NemoFile *file;
 
 		file = NEMO_FILE (l->data);
-		start_deep_count_for_file (window, file);
+		if (nemo_file_is_directory (file)) {
+			start_deep_count_for_file (window, file);
+		}
 	}
 
 	/* Fill in the initial value. */
