@@ -370,7 +370,7 @@ build_tab_label (NemoNotebook *nb, NemoWindowSlot *slot)
 	 * equal amount of space around the label */
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
 	gtk_widget_show (hbox);
-	gtk_widget_set_halign (hbox, GTK_ALIGN_CENTER);
+	gtk_widget_set_halign (hbox, GTK_ALIGN_START);
 	gtk_box_pack_start (GTK_BOX (box), hbox, TRUE, TRUE, 0);
 
 	/* setup load feedback */
