@@ -16,7 +16,7 @@ autostart_in_files = nemo-autostart.desktop.in
 autostart_DATA = $(autostart_in_files:.desktop.in=.desktop)
 
 appdatadir = $(datadir)/appdata
-appdata_in_files = nautilus.appdata.xml.in
+appdata_in_files = nemo.appdata.xml.in
 appdata_DATA = $(appdata_in_files:.xml.in=.xml)
 @INTLTOOL_XML_RULE@
 
