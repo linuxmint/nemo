@@ -15,6 +15,11 @@ autostartdir     = $(datadir)/applications
 autostart_in_files = nemo-autostart.desktop.in
 autostart_DATA = $(autostart_in_files:.desktop.in=.desktop)
 
+appdatadir = $(datadir)/appdata
+appdata_in_files = nautilus.appdata.xml.in
+appdata_DATA = $(appdata_in_files:.xml.in=.xml)
+@INTLTOOL_XML_RULE@
+
 @INTLTOOL_DESKTOP_RULE@
 
 mimedir = $(datadir)/mime/packages
@@ -57,12 +62,14 @@ EXTRA_DIST = $(nemodata_DATA) 	\
 	$(service_in_files)		\
 	$(autostart_in_files)		\
 	$(searchprovider_DATA)		\
+	$(appdata_in_files)		\
 	$(NULL)
 
 CLEANFILES = $(xml_files)	\
 	$(desktop_DATA)		\
 	$(service_DATA)		\
 	$(autostart_DATA)	\
+	$(appdata_DATA)		\
 	$(NULL)
 
 SUBDIRS = \
