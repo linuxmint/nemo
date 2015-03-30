@@ -319,15 +319,14 @@ AC_ARG_ENABLE(tracker,
 
 build_tracker=no
 if test "x$enable_tracker" != "xno"; then
-  PKG_CHECK_MODULES(TRACKER, tracker-sparql-0.18, 
-                 [build_tracker=yes],
-				 [PKG_CHECK_MODULES(TRACKER, tracker-sparql-0.16,
-				     			[build_tracker=yes],
-								[PKG_CHECK_MODULES(TRACKER, tracker-sparql-0.14,
-											   [build_tracker=yes],
-										                   [build_tracker=no])])])
-  if test "x$build_tracker" = "xyes"; then
-    AC_DEFINE(ENABLE_TRACKER, 1, [Define to enable Tracker support])
+  if $PKG_CONFIG --exists tracker-sparql-1.0; then
+    PKG_CHECK_MODULES(TRACKER, tracker-sparql-1.0)
+  else 
+    if $PKG_CONFIG --exists tracker-sparql-0.18; then
+      PKG_CHECK_MODULES(TRACKER, tracker-sparql-0.18)
+    else
+      PKG_CHECK_MODULES(TRACKER, tracker-sparql-0.16)
+    fi
   fi
 fi
 
