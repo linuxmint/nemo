@@ -654,19 +654,24 @@ void
 nemo_location_entry_set_secondary_action (NemoLocationEntry *entry,
 					      NemoLocationEntryAction secondary_action)
 {
+	gboolean rtl;
+
 	if (entry->details->secondary_action == secondary_action) {
 		return;
 	}
+
+	rtl = gtk_widget_get_direction (GTK_WIDGET (entry)) == GTK_TEXT_DIR_RTL;
+
 	switch (secondary_action) {
 	case NEMO_LOCATION_ENTRY_ACTION_CLEAR:
 		gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry), 
 						   GTK_ENTRY_ICON_SECONDARY,
-						   "edit-clear");
+						   rtl ? "edit-clear-rtl-symbolic" : "edit-clear-symbolic");
 		break;
 	case NEMO_LOCATION_ENTRY_ACTION_GOTO:
 		gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry),
 						   GTK_ENTRY_ICON_SECONDARY,
-						   "go-next");
+						   rtl ? "go-next-rtl" : "go-next");
 		break;
 	default:
 		g_assert_not_reached ();
