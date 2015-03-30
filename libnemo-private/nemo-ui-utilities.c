@@ -176,12 +176,7 @@ nautilus_get_thumbnail_frame (void)
 	static GdkPixbuf *thumbnail_frame = NULL;
 
 	if (thumbnail_frame == NULL) {
-		GInputStream *stream = g_resources_open_stream
-			("/org/gnome/nautilus/icons/thumbnail_frame.png", 0, NULL);
-		if (stream != NULL) {
-			thumbnail_frame = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
-			g_object_unref (stream);
-		}
+		thumbnail_frame = gdk_pixbuf_new_from_resource ("/org/gnome/nemo/icons/thumbnail_frame.png", NULL);
 	}
 
 	return thumbnail_frame;
@@ -214,4 +209,53 @@ nemo_ui_frame_image (GdkPixbuf **pixbuf)
 	g_object_unref (*pixbuf);
 
 	*pixbuf = pixbuf_with_frame;
+}
+
+static GdkPixbuf *filmholes_left = NULL;
+static GdkPixbuf *filmholes_right = NULL;
+
+static gboolean
+ensure_filmholes (void)
+{
+	if (filmholes_left == NULL) {
+		filmholes_left = gdk_pixbuf_new_from_resource ("/org/gnome/nemo/icons/filmholes.png", NULL);
+	}
+	if (filmholes_right == NULL &&
+	    filmholes_left != NULL) {
+		filmholes_right = gdk_pixbuf_flip (filmholes_left, FALSE);
+	}
+
+	return (filmholes_left && filmholes_right);
+}
+
+void
+nautilus_ui_frame_video (GdkPixbuf **pixbuf)
+{
+	int width, height;
+	int holes_width, holes_height;
+	int i;
+
+	if (!ensure_filmholes ())
+		return;
+
+	width = gdk_pixbuf_get_width (*pixbuf);
+	height = gdk_pixbuf_get_height (*pixbuf);
+	holes_width = gdk_pixbuf_get_width (filmholes_left);
+	holes_height = gdk_pixbuf_get_height (filmholes_left);
+
+	for (i = 0; i < height; i += holes_height) {
+		gdk_pixbuf_composite (filmholes_left, *pixbuf, 0, i,
+				      MIN (width, holes_width),
+				      MIN (height - i, holes_height),
+				      0, i, 1, 1, GDK_INTERP_NEAREST, 255);
+	}
+
+	for (i = 0; i < height; i += holes_height) {
+		gdk_pixbuf_composite (filmholes_right, *pixbuf,
+				      width - holes_width, i,
+				      MIN (width, holes_width),
+				      MIN (height - i, holes_height),
+				      width - holes_width, i,
+				      1, 1, GDK_INTERP_NEAREST, 255);
+	}
 }

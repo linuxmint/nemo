@@ -41,5 +41,6 @@ GdkPixbuf * nemo_ui_get_menu_icon              (const char        *icon_name,
 char * nemo_escape_action_name                 (const char        *action_name,
 						    const char        *prefix);
 void   nemo_ui_frame_image                     (GdkPixbuf        **pixbuf);
+void   nemo_ui_frame_video                     (GdkPixbuf        **pixbuf);
 
 #endif /* NEMO_UI_UTILITIES_H */

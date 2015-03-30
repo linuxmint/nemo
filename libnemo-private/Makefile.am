@@ -190,6 +190,7 @@ libnemo_private_la_SOURCES = \
 	nemo-tree-view-drag-dest.h \
 	nemo-ui-utilities.c \
 	nemo-ui-utilities.h \
+	nemo-video-mime-types.h \
 	nemo-vfs-directory.c \
 	nemo-vfs-directory.h \
 	nemo-vfs-file.c \
