@@ -74,8 +74,6 @@
 /* dock items */
 #define NEMO_MENU_PATH_SHORT_LIST_PLACEHOLDER  	"/MenuBar/View/View Choices/Short List"
 
-#define MAX_TITLE_LENGTH 180
-
 /* Forward and back buttons on the mouse */
 static gboolean mouse_extra_buttons = TRUE;
 static int mouse_forward_button = 9;
