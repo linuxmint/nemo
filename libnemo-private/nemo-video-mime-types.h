@@ -1,5 +1,5 @@
 /* generated with mime-type-include.sh in the totem module, don't edit or 
-   commit in the nautilus module without filing a bug against totem */
+   commit in the nemo module without filing a bug against totem */
 static const char *video_mime_types[] = {
 "application/mxf",
 "application/ogg",

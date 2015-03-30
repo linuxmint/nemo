@@ -171,7 +171,7 @@ nemo_escape_action_name (const char *action_name,
 }
 
 static GdkPixbuf *
-nautilus_get_thumbnail_frame (void)
+nemo_get_thumbnail_frame (void)
 {
 	static GdkPixbuf *thumbnail_frame = NULL;
 
@@ -193,7 +193,7 @@ nemo_ui_frame_image (GdkPixbuf **pixbuf)
 	GdkPixbuf *pixbuf_with_frame, *frame;
 	int left_offset, top_offset, right_offset, bottom_offset;
 
-	frame = nautilus_get_thumbnail_frame ();
+	frame = nemo_get_thumbnail_frame ();
 	if (frame == NULL) {
 		return;
 	}
@@ -229,7 +229,7 @@ ensure_filmholes (void)
 }
 
 void
-nautilus_ui_frame_video (GdkPixbuf **pixbuf)
+nemo_ui_frame_video (GdkPixbuf **pixbuf)
 {
 	int width, height;
 	int holes_width, holes_height;
