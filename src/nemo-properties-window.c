@@ -5719,7 +5719,11 @@ custom_icon_file_chooser_response_cb (GtkDialog *dialog,
 
 	case GTK_RESPONSE_OK:
 		uri = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (dialog));
-		set_icon (uri, window);
+		if (uri != NULL) {
+			set_icon (uri, window);
+		} else {
+			reset_icon (window);
+		}
 		g_free (uri);
 		break;
 
