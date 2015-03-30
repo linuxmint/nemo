@@ -10,6 +10,7 @@
     <file>nemo-shell-ui.xml</file>
     <file>nemo-statusbar-ui.xml</file>
     <file alias="icons/thumbnail_frame.png">../icons/thumbnail_frame.png</file>
+    <file alias="icons/filmholes.png">../icons/filmholes.png</file>
     <file alias="icons/knob.png">../icons/knob.png</file>
     <file>nemo-style-fallback.css</file>
   </gresource>

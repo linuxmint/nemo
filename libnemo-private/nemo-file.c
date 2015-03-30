@@ -42,6 +42,7 @@
 #include "nemo-search-directory-file.h"
 #include "nemo-thumbnails.h"
 #include "nemo-ui-utilities.h"
+#include "nemo-video-mime-types.h"
 #include "nemo-vfs-file.h"
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
@@ -4156,6 +4157,24 @@ nemo_file_should_show_thumbnail (NemoFile *file)
 	return FALSE;
 }
 
+static gboolean
+nemo_is_video_file (NemoFile *file)
+{
+	const char *mime_type;
+	guint i;
+
+	mime_type = eel_ref_str_peek (file->details->mime_type);
+	if (mime_type == NULL)
+		return FALSE;
+
+	for (i = 0; video_mime_types[i] != NULL; i++) {
+		if (g_content_type_equals (video_mime_types[i], mime_type))
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 static void
 prepend_icon_name (const char *name,
 		   GThemedIcon *icon)
@@ -4417,7 +4436,10 @@ nemo_file_get_icon (NemoFile *file,
 
 			/* We don't want frames around small icons */
 			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
-				nemo_ui_frame_image (&scaled_pixbuf);
+				if (nemo_is_video_file (file))
+					nemo_ui_frame_video (&scaled_pixbuf);
+				else
+					nemo_ui_frame_image (&scaled_pixbuf);
 			}
 
 			g_object_unref (raw_pixbuf);
