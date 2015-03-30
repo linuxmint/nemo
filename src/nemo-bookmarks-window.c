@@ -86,7 +86,6 @@ struct NemoBookmarksWindowPrivate {
 	gulong name_changed_id;
 	gulong uri_changed_id;
 	gboolean text_changed;
-	gboolean name_text_changed;
 
 	GtkWidget *remove_button;
 	GtkWidget *up_button;
@@ -231,7 +230,6 @@ on_selection_changed (GtkTreeSelection *treeselection,
 	g_signal_handler_unblock (self->priv->uri_field, self->priv->uri_changed_id);
 
 	self->priv->text_changed = FALSE;
-	self->priv->name_text_changed = FALSE;
 
 	g_free (entry_text);
 }
@@ -375,7 +373,6 @@ on_name_field_changed (GtkEditable *editable,
 			    -1);
 
 	self->priv->text_changed = TRUE;
-	self->priv->name_text_changed = TRUE;
 }
 
 static void
@@ -518,8 +515,8 @@ update_bookmark_from_text (NemoBookmarksWindow *self)
 		(gtk_entry_get_text (GTK_ENTRY (self->priv->uri_field)));
 
 	bookmark = nemo_bookmark_new (location,
-					  self->priv->name_text_changed ?
-					  gtk_entry_get_text (GTK_ENTRY (self->priv->name_field)) : NULL);
+					  gtk_entry_get_text (GTK_ENTRY (self->priv->name_field)));
+
 	g_object_unref (location);
 
 	selected_row = get_selected_row (self);
