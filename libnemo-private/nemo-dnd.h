@@ -58,13 +58,6 @@ typedef enum {
 	NEMO_ICON_DND_ROOTWINDOW_DROP
 } NemoIconDndTargetType;
 
-typedef enum {
-	NEMO_DND_ACTION_FIRST = GDK_ACTION_ASK << 1,
-	NEMO_DND_ACTION_SET_AS_BACKGROUND = NEMO_DND_ACTION_FIRST << 0,
-	NEMO_DND_ACTION_SET_AS_FOLDER_BACKGROUND = NEMO_DND_ACTION_FIRST << 1,
-	NEMO_DND_ACTION_SET_AS_GLOBAL_BACKGROUND = NEMO_DND_ACTION_FIRST << 2
-} NemoDndAction;
-
 /* drag&drop-related information. */
 typedef struct {
 	GtkTargetList *target_list;
