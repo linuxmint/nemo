@@ -102,8 +102,13 @@ typedef enum {
 
 /* Emblems sometimes displayed for NemoFiles. Do not localize. */ 
 #define NEMO_FILE_EMBLEM_NAME_SYMBOLIC_LINK "symbolic-link"
-#define NEMO_FILE_EMBLEM_NAME_CANT_READ "noread"
-#define NEMO_FILE_EMBLEM_NAME_CANT_WRITE "nowrite"
+#if GTK_CHECK_VERSION(3,12,0)
+  #define NAUTILUS_FILE_EMBLEM_NAME_CANT_READ "unreadable"
+  #define NAUTILUS_FILE_EMBLEM_NAME_CANT_WRITE "readonly"
+#else
+  #define NEMO_FILE_EMBLEM_NAME_CANT_READ "noread"
+  #define NEMO_FILE_EMBLEM_NAME_CANT_WRITE "nowrite"
+#endif 
 #define NEMO_FILE_EMBLEM_NAME_TRASH "trash"
 #define NEMO_FILE_EMBLEM_NAME_NOTE "note"
 
