@@ -1739,7 +1739,7 @@ report_delete_progress (CommonJob *job,
 					   seconds_count_format_time_units (remaining_time)),
 				 remaining_time);
 
-		details = g_strconcat (files_left_s, "\xE2\x80\x94", time_left_s, NULL);
+		details = g_strconcat (files_left_s, " \xE2\x80\x94 ", time_left_s, NULL);
 		nemo_progress_info_take_details (job->progress, details);
 
 		g_free (time_left_s);
