@@ -98,6 +98,7 @@ static GList *nemo_application_desktop_windows;
 static gboolean save_of_accel_map_requested = FALSE;
 
 static void     desktop_changed_callback          (gpointer                  user_data);
+static void     nemo_application_open_desktop (NemoApplication *application);
 
 G_DEFINE_TYPE (NemoApplication, nemo_application, GTK_TYPE_APPLICATION);
 
@@ -767,20 +768,24 @@ nemo_application_connect_server (NemoApplication *application,
 static void
 nemo_application_init (NemoApplication *application)
 {
-	GSimpleAction *action;
+	GSimpleAction *action_quit;
+	GSimpleAction *action_force_desktop; 
 
 	application->priv =
 		G_TYPE_INSTANCE_GET_PRIVATE (application, NEMO_TYPE_APPLICATION,
 					     NemoApplicationPriv);
 
-	action = g_simple_action_new ("quit", NULL);
-
-        g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action));
-
-	g_signal_connect_swapped (action, "activate",
+	action_quit = g_simple_action_new ("quit", NULL);
+    g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action_quit));
+	g_signal_connect_swapped (action_quit, "activate",
 				  G_CALLBACK (nemo_application_quit), application);
+	g_object_unref (action_quit);
 
-	g_object_unref (action);
+    action_force_desktop = g_simple_action_new ("force-desktop", NULL);
+    g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action_force_desktop));
+	g_signal_connect_swapped (action_force_desktop, "activate",
+				  G_CALLBACK (nemo_application_open_desktop), application);
+    g_object_unref (action_force_desktop);
 }
 
 static void
@@ -1046,6 +1051,13 @@ nemo_application_local_command_line (GApplication *application,
 		g_action_group_activate_action (G_ACTION_GROUP (application),
 						"quit", NULL);
 		goto out;
+	}
+
+	if (self->priv->force_desktop) {
+		DEBUG ("Forcing desktop, as requested");
+		g_action_group_activate_action (G_ACTION_GROUP (application),
+						"force-desktop", NULL);
+                /* fall through */
 	}
 
 	GFile **files;
