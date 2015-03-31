@@ -1040,7 +1040,7 @@ nemo_canvas_container_receive_dropped_icons (NemoCanvasContainer *container,
 		}
 		real_action = nemo_drag_drop_action_ask (GTK_WIDGET (container), action);
 	}
-
+	
 	if (real_action > 0) {
 		eel_canvas_window_to_world (EEL_CANVAS (container),
 					    x + gtk_adjustment_get_value (gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (container))),
