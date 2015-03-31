@@ -555,7 +555,7 @@ nemo_window_slot_constructed (GObject *object)
 					GTK_ORIENTATION_VERTICAL);
 	gtk_widget_show (GTK_WIDGET (slot));
 
-	extras_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
+	extras_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	slot->details->extra_location_widgets = extras_vbox;
 	gtk_box_pack_start (GTK_BOX (slot), extras_vbox, FALSE, FALSE, 0);
 	gtk_widget_show (extras_vbox);
@@ -984,9 +984,9 @@ nemo_window_slot_set_location (NemoWindowSlot *slot,
 
 	if (slot == nemo_window_get_active_slot (slot->details->pane->window)) {
 		nemo_window_pane_sync_location_widgets (slot->details->pane);
-		nemo_window_slot_update_title (slot);
 	}
 
+	nemo_window_slot_update_title (slot);
 	nemo_window_slot_emit_location_change (slot, old_location, location);
 
 	if (old_location) {
