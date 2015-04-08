@@ -2194,9 +2194,7 @@ nemo_window_slot_update_for_new_location (NemoWindowSlot *slot)
 	NemoWindowPane *pane;
 	GFile *new_location, *old_location;
 	NemoFile *file;
-	NemoDirectory *directory;
 	gboolean location_really_changed;
-	FindMountData *data;
 
 	window = nemo_window_slot_get_window (slot);
 	pane = nemo_window_slot_get_pane (slot);
@@ -2233,56 +2231,6 @@ nemo_window_slot_update_for_new_location (NemoWindowSlot *slot)
 
 		/* Load menus from nemo extensions for this location */
 		nemo_window_load_extension_menus (window);
-	}
-
-	if (location_really_changed) {
-		nemo_window_slot_remove_extra_location_widgets (slot);
-
-		directory = nemo_directory_get (new_location);
-
-		if (nemo_directory_is_in_trash (directory)) {
-			nemo_window_slot_show_trash_bar (slot);
-		} else {
-			GFile *scripts_file;
-			char *scripts_path = nemo_get_scripts_directory_path ();
-			scripts_file = g_file_new_for_path (scripts_path);
-			GFile *actions_file;
-			gchar *actions_path = nemo_action_manager_get_user_directory_path ();
-			actions_file = g_file_new_for_path (actions_path);
-			g_free (scripts_path);
-			if (nemo_should_use_templates_directory () &&
-			    nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
-				nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_TEMPLATES);
-			} else if (g_file_equal (slot->details->location, scripts_file)) {
-				nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_SCRIPTS);
-			} else if (g_file_equal (new_location, actions_file)) {
-				nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_ACTIONS);
-			}
-			g_object_unref (scripts_file);
-			g_object_unref (actions_file);
-		}
-
-		/* need the mount to determine if we should put up the x-content cluebar */
-		if (slot->details->find_mount_cancellable != NULL) {
-			g_cancellable_cancel (slot->details->find_mount_cancellable);
-			slot->details->find_mount_cancellable = NULL;
-		}
-
-		data = g_new (FindMountData, 1);
-		data->slot = slot;
-		data->cancellable = g_cancellable_new ();
-		data->mount = NULL;
-
-		slot->details->find_mount_cancellable = data->cancellable;
-		g_file_find_enclosing_mount_async (new_location,
-						   G_PRIORITY_DEFAULT,
-						   data->cancellable,
-						   found_mount_cb,
-						   data);
-
-		nemo_directory_unref (directory);
-
-		slot_add_extension_extra_widgets (slot);
 	}
 
 	nemo_window_slot_update_title (slot);
@@ -2407,6 +2355,71 @@ view_begin_loading_cb (NemoView *view,
 }
 
 static void
+nemo_window_slot_setup_extra_location_widgets (NemoWindowSlot *slot)
+{
+	GFile *location;
+	FindMountData *data;
+	NemoDirectory *directory;
+
+	location = nemo_window_slot_get_current_location (slot);
+
+	if (location == NULL) {
+		return;
+	}
+
+	directory = nemo_directory_get (location);
+
+	if (nemo_directory_is_in_trash (directory)) {
+		nemo_window_slot_show_trash_bar (slot);
+	} else {
+		NemoFile *file;
+		GFile *scripts_file;
+		char *scripts_path = nemo_get_scripts_directory_path ();
+		scripts_file = g_file_new_for_path (scripts_path);
+		GFile *actions_file;
+		gchar *actions_path = nemo_action_manager_get_user_directory_path ();
+		actions_file = g_file_new_for_path (actions_path);
+		g_free (scripts_path);
+
+		file = nemo_file_get (location);
+
+		if (nemo_should_use_templates_directory () &&
+		    nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
+			nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_TEMPLATES);
+		} else if (g_file_equal (location, scripts_file)) {
+			nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_SCRIPTS);
+		} else if (g_file_equal (location, actions_file)) {
+			nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_ACTIONS);
+		}
+		g_object_unref (scripts_file);
+		g_object_unref (actions_file);
+		nemo_file_unref (file);
+	}
+
+	/* need the mount to determine if we should put up the x-content cluebar */
+	if (slot->details->find_mount_cancellable != NULL) {
+		g_cancellable_cancel (slot->details->find_mount_cancellable);
+		slot->details->find_mount_cancellable = NULL;
+	}
+
+	data = g_new (FindMountData, 1);
+	data->slot = slot;
+	data->cancellable = g_cancellable_new ();
+	data->mount = NULL;
+
+	slot->details->find_mount_cancellable = data->cancellable;
+	g_file_find_enclosing_mount_async (location,
+					   G_PRIORITY_DEFAULT,
+					   data->cancellable,
+					   found_mount_cb,
+					   data);
+
+	nemo_directory_unref (directory);
+
+	slot_add_extension_extra_widgets (slot);
+}
+
+static void
 nemo_window_slot_connect_new_content_view (NemoWindowSlot *slot)
 {
 	if (slot->details->content_view != NULL) {
@@ -2471,8 +2484,14 @@ location_has_really_changed (NemoWindowSlot *slot)
 
 	window = nemo_window_slot_get_window (slot);
 
-	/* Switch to the new content view. */
+	/* Switch to the new content view.
+	 * Destroy the extra location widgets first, since they might hold
+	 * a pointer to the old view, which will possibly be destroyed inside
+	 * nautilus_window_slot_switch_new_content_view().
+	 */
+	nemo_window_slot_remove_extra_location_widgets (slot);
 	nemo_window_slot_switch_new_content_view (slot);
+	nemo_window_slot_setup_extra_location_widgets (slot);
 
 	if (slot->details->pending_location != NULL) {
 		/* Tell the window we are finished. */
