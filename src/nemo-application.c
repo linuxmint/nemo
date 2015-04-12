@@ -398,28 +398,22 @@ nemo_application_create_desktop_windows (NemoApplication *application)
 void
 nemo_application_close_all_windows (NemoApplication *self)
 {
-	GList *list_copy;
 	GList *l;
 	
-	list_copy = g_list_copy (gtk_application_get_windows (GTK_APPLICATION (self)));
-	for (l = list_copy; l != NULL; l = l->next) {
-		NemoWindow *window;
-		
-		window = NEMO_WINDOW (l->data);
-		nemo_window_close (window);
-	}
-	g_list_free (list_copy);
+	for (l = gtk_application_get_windows (GTK_APPLICATION (self)); l; l = l->next) {
+		if (NEMO_IS_WINDOW (l->data))
+			nemo_window_close (NEMO_WINDOW (l->data));
+	}	
 }
 
 static gboolean
 another_navigation_window_already_showing (NemoApplication *application,
 					   NemoWindow *the_window)
 {
-	GList *list, *item;
+	GList *l;
 	
-	list = gtk_application_get_windows (GTK_APPLICATION (application));
-	for (item = list; item != NULL; item = item->next) {
-		if (item->data != the_window) {
+	for (l = gtk_application_get_windows (GTK_APPLICATION (application)); l; l = l->next) {
+		if (NEMO_IS_WINDOW (l->data) && l->data != the_window) {
 			return TRUE;
 		}
 	}
@@ -486,14 +480,11 @@ get_window_slot_for_location (NemoApplication *application, GFile *location)
 	}
 
 	for (l = gtk_application_get_windows (GTK_APPLICATION (application)); l; l = l->next) {
-		NemoWindow *win = NEMO_WINDOW (l->data);
-
-		if (NEMO_IS_DESKTOP_WINDOW (win))
+		if (!NEMO_IS_WINDOW (l->data) || NEMO_IS_DESKTOP_WINDOW (l->data))
 			continue;
 
-
 		GList *p;
-		GList *panes = nemo_window_get_panes (win);
+		GList *panes = nemo_window_get_panes (NEMO_WINDOW (l->data));
 		for (p = panes; p != NULL; p = p->next) {
 			NemoWindowPane *pane = NEMO_WINDOW_PANE (p->data);
 			for (sl = pane->slots; sl; sl = sl->next) {
@@ -1563,14 +1554,11 @@ update_dbus_opened_locations (NemoApplication *app)
 	g_return_if_fail (NEMO_IS_APPLICATION (app));
 
 	for (l = gtk_application_get_windows (GTK_APPLICATION (app)); l; l = l->next) {
-		NemoWindow *win = NEMO_WINDOW (l->data);
-
-		if (NEMO_IS_DESKTOP_WINDOW (win)) {
+		if (!NEMO_IS_WINDOW (l->data) || NEMO_IS_DESKTOP_WINDOW (l->data))
 			continue;
-		}
 
 		GList *p;
-		GList *panes = nemo_window_get_panes (win);
+		GList *panes = nemo_window_get_panes (NEMO_WINDOW (l->data));
 		for (p = panes; p != NULL; p = p->next) {
 			NemoWindowPane *pane = NEMO_WINDOW_PANE (p->data);
 			for (sl = pane->slots; sl; sl = sl->next) {
@@ -1656,12 +1644,14 @@ nemo_application_window_removed (GtkApplication *app,
 				     GtkWindow *window)
 {
 	NemoPreviewer *previewer;
+	GList *l;
 
 	/* chain to parent */
 	GTK_APPLICATION_CLASS (nemo_application_parent_class)->window_removed (app, window);
 
 	/* if this was the last window, close the previewer */
-	if (g_list_length (gtk_application_get_windows (app)) == 0) {
+	for (l = gtk_application_get_windows (GTK_APPLICATION (app)); l && !NEMO_IS_WINDOW (l->data); l = l->next);
+	if (!l) {
 		previewer = nemo_previewer_get_singleton ();
 		nemo_previewer_call_close (previewer);
 	}
