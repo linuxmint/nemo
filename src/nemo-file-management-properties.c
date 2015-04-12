@@ -524,6 +524,19 @@ bind_builder_bool (GtkBuilder *builder,
 			 "active", G_SETTINGS_BIND_DEFAULT);
 }
 
+#if GTK_CHECK_VERSION(3, 12, 0)
+static void
+bind_builder_bool_oneway (GtkBuilder *builder,
+			  GSettings *settings,
+			  const char *widget_name,
+			  const char *prefs)
+{
+	g_settings_bind (settings, prefs,
+			 gtk_builder_get_object (builder, widget_name),
+			 "active", G_SETTINGS_BIND_SET);
+}
+#endif
+
 static void
 bind_builder_bool_inverted (GtkBuilder *builder,
 			    GSettings *settings,
@@ -774,6 +787,15 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 							       3);
 	create_date_format_menu (builder);
 
+	/* setup preferences */
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
+			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
+#if GTK_CHECK_VERSION(3, 12, 0)
+	bind_builder_bool_oneway (builder, gtk_filechooser_preferences,
+				  NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
+			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
+#endif
 
 	/* nemo patch */
 	bind_builder_bool (builder, nemo_preferences,
