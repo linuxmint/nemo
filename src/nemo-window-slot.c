@@ -2493,12 +2493,16 @@ location_has_really_changed (NemoWindowSlot *slot)
 	 */
 	nemo_window_slot_remove_extra_location_widgets (slot);
 	nemo_window_slot_switch_new_content_view (slot);
-	nemo_window_slot_setup_extra_location_widgets (slot);
 
 	if (slot->details->pending_location != NULL) {
 		/* Tell the window we are finished. */
 		nemo_window_slot_update_for_new_location (slot);
 	}
+
+	/* Now that we finished switching to the new location,
+	 * add back the extra location widgets.
+	 */
+	nemo_window_slot_setup_extra_location_widgets (slot);
 
 	location_copy = NULL;
 	if (slot->details->location != NULL) {
