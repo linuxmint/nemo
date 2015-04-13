@@ -1,3 +1,9 @@
+nemo (2.5.1-daschuer8) trusty; urgency=low
+  
+  * Merged wit Nautilus 3.12 
+ 
+ -- Daniel Schürmann <daschuer@gmx.de>  Mon, 13 Apr 2015 19:49:00 +0100
+
 nemo (2.5.1-daschuer7) trusty; urgency=low
   
   * Merged wit Nautilus 3.10 
