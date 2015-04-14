@@ -23,7 +23,7 @@ dnl Interface break is not allowed.
 m4_define(nemo_extension_current,  5)
 m4_define(nemo_extension_revision, 0)
 
-AC_INIT(nemo, 2.5.1-daschuer8 https://github.com/daschuer/nemo)
+AC_INIT(nemo, 2.5.1-daschuer9 https://github.com/daschuer/nemo)
 
 dnl ===========================================================================
 
@@ -319,14 +319,17 @@ AC_ARG_ENABLE(tracker,
 
 build_tracker=no
 if test "x$enable_tracker" != "xno"; then
-  if $PKG_CONFIG --exists tracker-sparql-1.0; then
-    PKG_CHECK_MODULES(TRACKER, tracker-sparql-1.0)
-  else 
-    if $PKG_CONFIG --exists tracker-sparql-0.18; then
-      PKG_CHECK_MODULES(TRACKER, tracker-sparql-0.18)
-    else
-      PKG_CHECK_MODULES(TRACKER, tracker-sparql-0.16)
-    fi
+  PKG_CHECK_MODULES(TRACKER, tracker-sparql-1.0, 
+	  [build_tracker=yes],
+	  [PKG_CHECK_MODULES(TRACKER, tracker-sparql-0.18, 
+		  [build_tracker=yes],
+		  [PKG_CHECK_MODULES(TRACKER, tracker-sparql-0.16,
+			  [build_tracker=yes],
+			  [PKG_CHECK_MODULES(TRACKER, tracker-sparql-0.14,
+				  [build_tracker=yes],
+				  [build_tracker=no])])])])
+  if test "x$build_tracker" = "xyes"; then
+    AC_DEFINE(ENABLE_TRACKER, 1, [Define to enable Tracker support])
   fi
 fi
 
