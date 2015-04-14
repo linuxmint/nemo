@@ -1,3 +1,9 @@
+nemo (2.5.1-daschuer9) trusty; urgency=low
+  
+  * fix conditional Tracker support  
+ 
+ -- Daniel Schürmann <daschuer@gmx.de>  Tue, 14 Apr 2015 21:35:00 +0100
+
 nemo (2.5.1-daschuer8) trusty; urgency=low
   
   * Merged wit Nautilus 3.12 
