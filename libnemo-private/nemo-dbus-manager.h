@@ -27,7 +27,10 @@
 #include <glib-object.h>
 #include <gio/gio.h>
 
-void nemo_dbus_manager_start (GApplication *application);
-void nemo_dbus_manager_stop (void);
+typedef struct _NemoDBusManager NemoDBusManager;
+typedef struct _NemoDBusManagerClass NemoDBusManagerClass;
+
+GType nemo_dbus_manager_get_type (void);
+NemoDBusManager * nemo_dbus_manager_new (void);
 
 #endif /* __NEMO_DBUS_MANAGER_H__ */

@@ -22,13 +22,13 @@ mime_DATA = $(xml_files)
 servicedir = $(datadir)/dbus-1/services
 service_DATA = $(service_in_files:.service.in=.service)
 service_in_files = 				\
-	org.freedesktop.NemoFileManager1.service.in	\
+	org.nemo.freedesktop.FileManager1.service.in	\
 	org.Nemo.service.in
 
 org.Nemo.service: org.Nemo.service.in Makefile
 	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
 
-org.freedesktop.NemoFileManager1.service: org.freedesktop.NemoFileManager1.service.in Makefile
+org.nemo.freedesktop.FileManager1.service: org.nemo.freedesktop.FileManager1.service.in Makefile
 	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
 
 nemodatadir = $(datadir)/nemo

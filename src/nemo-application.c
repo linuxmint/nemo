@@ -107,6 +107,8 @@ G_DEFINE_TYPE (NemoApplication, nemo_application, GTK_TYPE_APPLICATION);
 struct _NemoApplicationPriv {
 	GVolumeMonitor *volume_monitor;
 	NemoProgressUIHandler *progress_handler;
+	NemoDBusManager *dbus_manager;
+	NemoFreedesktopDBus *fdb_manager;
 
 	gboolean no_desktop;
 	gchar *geometry;
@@ -780,8 +782,9 @@ nemo_application_finalize (GObject *object)
 
 	g_free (application->priv->geometry);
 
-	nemo_dbus_manager_stop ();
-	nemo_freedesktop_dbus_stop ();
+	g_clear_object (&application->priv->dbus_manager);
+	g_clear_object (&application->priv->fdb_manager);
+
 	notify_uninit ();
 
         G_OBJECT_CLASS (nemo_application_parent_class)->finalize (object);
@@ -847,6 +850,9 @@ nemo_application_quit (NemoApplication *self)
 
 	windows = gtk_application_get_windows (GTK_APPLICATION (app));
 	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
+
+    /* we have been asked to force quit */
+    g_application_quit (G_APPLICATION (self));
 }
 
 static gboolean
@@ -1201,8 +1207,8 @@ nemo_application_startup (GApplication *app)
 	self->undo_manager = nemo_undo_manager_new ();
 
 	/* create DBus manager */
-	nemo_dbus_manager_start (app);
-	nemo_freedesktop_dbus_start (self);
+	self->priv->dbus_manager = nemo_dbus_manager_new ();
+	self->priv->fdb_manager = nemo_freedesktop_dbus_new ();
 
 	/* initialize preferences and create the global GSettings objects */
 	nemo_global_preferences_init ();
@@ -1309,7 +1315,8 @@ NemoApplication *
 nemo_application_get_singleton (void)
 {
 	return g_object_new (NEMO_TYPE_APPLICATION,
-			     "application-id", "org.NemoApplication",
-			     "flags", G_APPLICATION_HANDLES_OPEN,
-			     NULL);
+                         "application-id", "org.Nemo",
+                         "flags", G_APPLICATION_HANDLES_OPEN,
+                         "inactivity-timeout", 12000,
+                         NULL);
 }

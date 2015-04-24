@@ -21,6 +21,7 @@
 
 #include <config.h>
 
+#include "nemo-application.h"
 #include "nemo-freedesktop-dbus.h"
 #include "nemo-freedesktop-generated.h"
 
@@ -32,51 +33,36 @@
 
 #include <gio/gio.h>
 
-
-typedef struct _NemoFreedesktopDBus NemoFreedesktopDBus;
-typedef struct _NemoFreedesktopDBusClass NemoFreedesktopDBusClass;
-
 struct _NemoFreedesktopDBus {
 	GObject parent;
-
-	/* Parent application */
-	NemoApplication *application;
 
 	/* Id from g_dbus_own_name() */
 	guint owner_id;
 
 	/* DBus paraphernalia */
-	GDBusConnection *connection;
 	GDBusObjectManagerServer *object_manager;
 
 	/* Our DBus implementation skeleton */
-	NemoFreedesktopNemoFileManager1 *skeleton;
+	NemoFreedesktopFileManager1 *skeleton;
 };
 
 struct _NemoFreedesktopDBusClass {
 	GObjectClass parent_class;
 };
 
-enum {
-	PROP_APPLICATION = 1
-};
-
-#define SERVICE_TIMEOUT 5
-
-static GType nemo_freedesktop_dbus_get_type (void) G_GNUC_CONST;
 G_DEFINE_TYPE (NemoFreedesktopDBus, nemo_freedesktop_dbus, G_TYPE_OBJECT);
 
-static NemoFreedesktopDBus *singleton = NULL;
-
 static gboolean
-skeleton_handle_show_items_cb (NemoFreedesktopNemoFileManager1 *object,
+skeleton_handle_show_items_cb (NemoFreedesktopFileManager1 *object,
 			       GDBusMethodInvocation *invocation,
 			       const gchar *const *uris,
 			       const gchar *startup_id,
 			       gpointer data)
 {
-	NemoFreedesktopDBus *fdb = data;
+        NemoApplication *application;
 	int i;
+
+        application = NEMO_APPLICATION (g_application_get_default ());
 
 	for (i = 0; uris[i] != NULL; i++) {
 		GFile *file;
@@ -86,45 +72,47 @@ skeleton_handle_show_items_cb (NemoFreedesktopNemoFileManager1 *object,
 		parent = g_file_get_parent (file);
 
 		if (parent != NULL) {
-			nemo_application_open_location (fdb->application, parent, file, startup_id);
+			nemo_application_open_location (application, parent, file, startup_id);
 			g_object_unref (parent);
 		} else {
-			nemo_application_open_location (fdb->application, file, NULL, startup_id);
+			nemo_application_open_location (application, file, NULL, startup_id);
 		}
 
 		g_object_unref (file);
 	}
 
-	nemo_freedesktop_nemo_file_manager1_complete_show_items (object, invocation);
+	nemo_freedesktop_file_manager1_complete_show_items (object, invocation);
 	return TRUE;
 }
 
 static gboolean
-skeleton_handle_show_folders_cb (NemoFreedesktopNemoFileManager1 *object,
+skeleton_handle_show_folders_cb (NemoFreedesktopFileManager1 *object,
 				 GDBusMethodInvocation *invocation,
 				 const gchar *const *uris,
 				 const gchar *startup_id,
 				 gpointer data)
 {
-	NemoFreedesktopDBus *fdb = data;
+        NemoApplication *application;
 	int i;
+
+        application = NEMO_APPLICATION (g_application_get_default ());
 
 	for (i = 0; uris[i] != NULL; i++) {
 		GFile *file;
 
 		file = g_file_new_for_uri (uris[i]);
 
-		nemo_application_open_location (fdb->application, file, NULL, startup_id);
+		nemo_application_open_location (application, file, NULL, startup_id);
 
 		g_object_unref (file);
 	}
 
-	nemo_freedesktop_nemo_file_manager1_complete_show_folders (object, invocation);
+	nemo_freedesktop_file_manager1_complete_show_folders (object, invocation);
 	return TRUE;
 }
 
 static gboolean
-skeleton_handle_show_item_properties_cb (NemoFreedesktopNemoFileManager1 *object,
+skeleton_handle_show_item_properties_cb (NemoFreedesktopFileManager1 *object,
 					 GDBusMethodInvocation *invocation,
 					 const gchar *const *uris,
 					 const gchar *startup_id,
@@ -145,23 +133,8 @@ skeleton_handle_show_item_properties_cb (NemoFreedesktopNemoFileManager1 *object
 
 	nemo_file_list_free (files);
 
-	nemo_freedesktop_nemo_file_manager1_complete_show_item_properties (object, invocation);
+	nemo_freedesktop_file_manager1_complete_show_item_properties (object, invocation);
 	return TRUE;
-}
-
-static gboolean
-service_timeout_cb (gpointer data)
-{
-	NemoFreedesktopDBus *fdb = data;
-
-	DEBUG ("Reached the DBus service timeout");
-
-	/* just unconditionally release here, as if an operation has been
-	 * called, its progress handler will hold it alive for all the task duration.
-	 */
-	g_application_release (G_APPLICATION (fdb->application));
-
-	return FALSE;
 }
 
 static void
@@ -173,10 +146,9 @@ bus_acquired_cb (GDBusConnection *conn,
 
 	DEBUG ("Bus acquired at %s", name);
 
-	fdb->connection = g_object_ref (conn);
-	fdb->object_manager = g_dbus_object_manager_server_new ("/org/freedesktop/NemoFileManager1");
+	fdb->object_manager = g_dbus_object_manager_server_new ("/org/freedesktop/FileManager1");
 
-	fdb->skeleton = nemo_freedesktop_nemo_file_manager1_skeleton_new ();
+	fdb->skeleton = nemo_freedesktop_file_manager1_skeleton_new ();
 
 	g_signal_connect (fdb->skeleton, "handle-show-items",
 			  G_CALLBACK (skeleton_handle_show_items_cb), fdb);
@@ -185,11 +157,9 @@ bus_acquired_cb (GDBusConnection *conn,
 	g_signal_connect (fdb->skeleton, "handle-show-item-properties",
 			  G_CALLBACK (skeleton_handle_show_item_properties_cb), fdb);
 
-	g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (fdb->skeleton), fdb->connection, "/org/freedesktop/NemoFileManager1", NULL);
+	g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (fdb->skeleton), conn, "/org/freedesktop/FileManager1", NULL);
 
-	g_dbus_object_manager_server_set_connection (fdb->object_manager, fdb->connection);
-
-	g_timeout_add_seconds (SERVICE_TIMEOUT, service_timeout_cb, fdb);
+	g_dbus_object_manager_server_set_connection (fdb->object_manager, conn);
 }
 
 static void
@@ -225,23 +195,23 @@ nemo_freedesktop_dbus_dispose (GObject *object)
 	}
 
 	g_clear_object (&fdb->object_manager);
-	g_clear_object (&fdb->connection);
-	fdb->application = NULL;
 
 	G_OBJECT_CLASS (nemo_freedesktop_dbus_parent_class)->dispose (object);
 }
 
 static void
-nemo_freedesktop_dbus_constructed (GObject *object)
+nemo_freedesktop_dbus_class_init (NemoFreedesktopDBusClass *klass)
 {
-	NemoFreedesktopDBus *fdb = (NemoFreedesktopDBus *) object;
+	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-	G_OBJECT_CLASS (nemo_freedesktop_dbus_parent_class)->constructed (object);
+	object_class->dispose = nemo_freedesktop_dbus_dispose;
+}
 
-	g_application_hold (G_APPLICATION (fdb->application));
-
+static void
+nemo_freedesktop_dbus_init (NemoFreedesktopDBus *fdb)
+{
 	fdb->owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
-					"org.freedesktop.NemoFileManager1",
+					"org.freedesktop.FileManager1",
 					G_BUS_NAME_OWNER_FLAGS_NONE,
 					bus_acquired_cb,
 					name_acquired_cb,
@@ -250,67 +220,19 @@ nemo_freedesktop_dbus_constructed (GObject *object)
 					NULL);
 }
 
-static void
-nemo_freedesktop_dbus_set_property (GObject *object,
-					guint property_id,
-					const GValue *value,
-					GParamSpec *pspec)
-{
-	NemoFreedesktopDBus *fdb = (NemoFreedesktopDBus *) object;
-
-	switch (property_id) {
-	case PROP_APPLICATION:
-		fdb->application = g_value_get_object (value);
-		break;
-
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-		break;
-	}
-}
-
-
-static void
-nemo_freedesktop_dbus_class_init (NemoFreedesktopDBusClass *klass)
-{
-	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-
-	object_class->dispose		= nemo_freedesktop_dbus_dispose;
-	object_class->constructed	= nemo_freedesktop_dbus_constructed;
-	object_class->set_property	= nemo_freedesktop_dbus_set_property;
-
-	g_object_class_install_property (object_class,
-					 PROP_APPLICATION,
-					 g_param_spec_object ("application",
-							      "NemoApplication instance",
-							      "The owning NemoApplication instance",
-							      NEMO_TYPE_APPLICATION,
-							      G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
-
-}
-
-static void
-nemo_freedesktop_dbus_init (NemoFreedesktopDBus *fdb)
-{
-	/* nothing */
-}
-
-/* Tries to own the org.freedesktop.NemoFileManager1 service name */
 void
-nemo_freedesktop_dbus_start (NemoApplication *app)
+nemo_freedesktop_dbus_set_open_locations (NemoFreedesktopDBus *fdb,
+					      const gchar **locations)
+{
+	g_return_if_fail (NEMO_IS_FREEDESKTOP_DBUS (fdb));
+
+	nemo_freedesktop_file_manager1_set_open_locations (fdb->skeleton, locations);
+}
+
+/* Tries to own the org.freedesktop.FileManager1 service name */
+NemoFreedesktopDBus *
+nemo_freedesktop_dbus_new (void)
 {	
-	if (singleton != NULL) {
-		return;
-	}
-
-	singleton = g_object_new (nemo_freedesktop_dbus_get_type (),
-				  "application", app,
-				  NULL);
-}
-
-/* Releases the org.freedesktop.NemoFileManager1 service name */
-void
-nemo_freedesktop_dbus_stop (void)
-{
-	g_clear_object (&singleton);
+	return g_object_new (nemo_freedesktop_dbus_get_type (),
+                             NULL);
 }
