@@ -680,7 +680,7 @@ search_provider_bus_acquired_cb (GDBusConnection *connection,
 {
   NemoShellSearchProvider *self = user_data;
 
-  self->object_manager = g_dbus_object_manager_server_new ("/org/gnome/Nemo/SearchProvider");
+  self->object_manager = g_dbus_object_manager_server_new ("/org/Nemo/SearchProvider");
   self->skeleton = nemo_shell_search_provider2_skeleton_new ();
 
   g_signal_connect (self->skeleton, "handle-get-initial-result-set",
