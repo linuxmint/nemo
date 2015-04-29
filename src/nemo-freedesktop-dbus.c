@@ -42,7 +42,7 @@ struct _NemoFreedesktopDBus {
 	GDBusObjectManagerServer *object_manager;
 
 	/* Our DBus implementation skeleton */
-	NemoFreedesktopNemoFileManager1 *skeleton;
+	NemoFreedesktopFileManager1 *skeleton;
 };
 
 struct _NemoFreedesktopDBusClass {
@@ -52,7 +52,7 @@ struct _NemoFreedesktopDBusClass {
 G_DEFINE_TYPE (NemoFreedesktopDBus, nemo_freedesktop_dbus, G_TYPE_OBJECT);
 
 static gboolean
-skeleton_handle_show_items_cb (NemoFreedesktopNemoFileManager1 *object,
+skeleton_handle_show_items_cb (NemoFreedesktopFileManager1 *object,
 			       GDBusMethodInvocation *invocation,
 			       const gchar *const *uris,
 			       const gchar *startup_id,
@@ -80,12 +80,12 @@ skeleton_handle_show_items_cb (NemoFreedesktopNemoFileManager1 *object,
 		g_object_unref (file);
 	}
 
-	nemo_freedesktop_nemo_file_manager1_complete_show_items (object, invocation);
+	nemo_freedesktop_file_manager1_complete_show_items (object, invocation);
 	return TRUE;
 }
 
 static gboolean
-skeleton_handle_show_folders_cb (NemoFreedesktopNemoFileManager1 *object,
+skeleton_handle_show_folders_cb (NemoFreedesktopFileManager1 *object,
 				 GDBusMethodInvocation *invocation,
 				 const gchar *const *uris,
 				 const gchar *startup_id,
@@ -106,12 +106,12 @@ skeleton_handle_show_folders_cb (NemoFreedesktopNemoFileManager1 *object,
 		g_object_unref (file);
 	}
 
-	nemo_freedesktop_nemo_file_manager1_complete_show_folders (object, invocation);
+	nemo_freedesktop_file_manager1_complete_show_folders (object, invocation);
 	return TRUE;
 }
 
 static gboolean
-skeleton_handle_show_item_properties_cb (NemoFreedesktopNemoFileManager1 *object,
+skeleton_handle_show_item_properties_cb (NemoFreedesktopFileManager1 *object,
 					 GDBusMethodInvocation *invocation,
 					 const gchar *const *uris,
 					 const gchar *startup_id,
@@ -132,7 +132,7 @@ skeleton_handle_show_item_properties_cb (NemoFreedesktopNemoFileManager1 *object
 
 	nemo_file_list_free (files);
 
-	nemo_freedesktop_nemo_file_manager1_complete_show_item_properties (object, invocation);
+	nemo_freedesktop_file_manager1_complete_show_item_properties (object, invocation);
 	return TRUE;
 }
 
@@ -147,7 +147,7 @@ bus_acquired_cb (GDBusConnection *conn,
 
 	fdb->object_manager = g_dbus_object_manager_server_new (NEMO_FDO_DBUS_PATH);
 
-	fdb->skeleton = nemo_freedesktop_nemo_file_manager1_skeleton_new ();
+	fdb->skeleton = nemo_freedesktop_file_manager1_skeleton_new ();
 
 	g_signal_connect (fdb->skeleton, "handle-show-items",
 			  G_CALLBACK (skeleton_handle_show_items_cb), fdb);
@@ -224,11 +224,10 @@ nemo_freedesktop_dbus_set_open_locations (NemoFreedesktopDBus *fdb,
 					      const gchar **locations)
 {
 	g_return_if_fail (NEMO_IS_FREEDESKTOP_DBUS (fdb));
-
-	nemo_freedesktop_nemo_file_manager1_set_open_locations (fdb->skeleton, locations);
+	nemo_freedesktop_file_manager1_set_open_locations (fdb->skeleton, locations);
 }
 
-/* Tries to own the org.freedesktop.NemoFileManager1 service name */
+/* Tries to own the org.freedesktop.FileManager1 service name */
 NemoFreedesktopDBus *
 nemo_freedesktop_dbus_new (void)
 {	

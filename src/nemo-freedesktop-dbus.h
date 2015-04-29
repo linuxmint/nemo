@@ -30,15 +30,15 @@
 
 #define NEMO_TYPE_FREEDESKTOP_DBUS nemo_freedesktop_dbus_get_type()
 #define NEMO_FREEDESKTOP_DBUS(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_FREEDESKTOP_DBUS, NautilusFreedesktopDBus))
+  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_FREEDESKTOP_DBUS, NemoFreedesktopDBus))
 #define NEMO_FREEDESKTOP_DBUS_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_FREEDESKTOP_DBUS, NautilusFreedesktopDBusClass))
+  (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_FREEDESKTOP_DBUS, NemoFreedesktopDBusClass))
 #define NEMO_IS_FREEDESKTOP_DBUS(obj) \
   (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_FREEDESKTOP_DBUS))
 #define NEMO_IS_FREEDESKTOP_DBUS_CLASS(klass) \
   (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_FREEDESKTOP_DBUS))
 #define NEMO_FREEDESKTOP_DBUS_GET_CLASS(obj) \
-  (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_FREEDESKTOP_DBUS, NautilusFreedesktopDBusClass))
+  (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_FREEDESKTOP_DBUS, NemoFreedesktopDBusClass))
 
 typedef struct _NemoFreedesktopDBus NemoFreedesktopDBus;
 typedef struct _NemoFreedesktopDBusClass NemoFreedesktopDBusClass;

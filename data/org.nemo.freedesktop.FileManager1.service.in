@@ -1,3 +1,3 @@
 [D-BUS Service]
-Name=org.freedesktop.NemoFileManager1
+Name=org.freedesktop.FileManager1
 Exec=@bindir@/nemo --no-default-window

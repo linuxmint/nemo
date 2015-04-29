@@ -981,12 +981,10 @@ nemo_window_slot_set_location (NemoWindowSlot *slot,
 	GFile *old_location = slot->details->location;
 	slot->details->location = g_object_ref (location);
 
-	if (slot->details->location &&
-	    g_file_equal (location, slot->details->location)) {
-              	if (old_location) {
-	        	g_object_unref (old_location);
-	        }		
-                return;
+	if (old_location &&
+	    g_file_equal (location, old_location)) {
+		g_object_unref (old_location);
+		return;
 	}
 
 	if (slot == nemo_window_get_active_slot (slot->details->pane->window)) {
@@ -1005,7 +1003,7 @@ static void
 viewed_file_changed_callback (NemoFile *file,
                               NemoWindowSlot *slot)
 {
-        GFile *new_location;
+	GFile *new_location;
 	gboolean is_in_trash, was_in_trash;
 
         g_assert (NEMO_IS_FILE (file));
@@ -1054,10 +1052,10 @@ viewed_file_changed_callback (NemoFile *file,
 			g_object_unref (location);
                 }
 	} else {
-                new_location = nemo_file_get_location (file);
+		new_location = nemo_file_get_location (file);
 		nemo_window_slot_set_location (slot, new_location);
 		g_object_unref (new_location);
-        }
+	}
 }
 
 static void

@@ -141,7 +141,7 @@ nemo_dbus_manager_init (NemoDBusManager *self)
   connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
 #endif
 
-  self->object_manager = g_dbus_object_manager_server_new ("/org/gnome/Nemo");
+  self->object_manager = g_dbus_object_manager_server_new ("/org/Nemo");
   self->file_operations = nemo_dbus_file_operations_skeleton_new ();
 
   g_signal_connect (self->file_operations,
@@ -158,7 +158,7 @@ nemo_dbus_manager_init (NemoDBusManager *self)
 		    self);
 
   g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->file_operations), connection,
-				    "/org/gnome/Nemo", NULL);
+				    "/org/Nemo", NULL);
 
   g_dbus_object_manager_server_set_connection (self->object_manager, connection);
 }

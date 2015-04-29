@@ -17,7 +17,7 @@
  Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
 -->
 <node name="/" xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
-  <interface name='org.freedesktop.NemoFileManager1'>
+  <interface name='org.freedesktop.FileManager1'>
     <method name='ShowFolders'>
       <arg type='as' name='URIs' direction='in'/>
       <arg type='s' name='StartupId' direction='in'/>

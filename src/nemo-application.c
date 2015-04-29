@@ -1687,7 +1687,7 @@ NemoApplication *
 nemo_application_new (void)
 {
 	return g_object_new (NEMO_TYPE_APPLICATION,
-			     "application-id", "org.gnome.NemoApplication",
+			     "application-id", "org.Nemo",
 			     "flags", G_APPLICATION_HANDLES_OPEN,
 			     "inactivity-timeout", 12000,
 			     "register-session", TRUE,
