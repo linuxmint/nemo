@@ -299,10 +299,9 @@ nemo_window_prompt_for_location (NemoWindow *window,
 
 	g_return_if_fail (NEMO_IS_WINDOW (window));
 
-	pane = window->details->active_pane;
-	nemo_window_pane_ensure_location_bar (pane);
-
 	if (initial) {
+		nemo_window_show_location_entry(window);
+		pane = window->details->active_pane;
 		nemo_location_bar_set_location (NEMO_LOCATION_BAR (pane->location_bar),
 						    initial);
 	}
@@ -2184,6 +2183,12 @@ nemo_window_class_init (NemoWindowClass *class)
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_slash, 0,
 				      "prompt-for-location", 1,
 				      G_TYPE_STRING, "/");
+	gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Divide, 0,
+				      "prompt-for-location", 1,
+				      G_TYPE_STRING, "/");
+	gtk_binding_entry_add_signal (binding_set, GDK_KEY_asciitilde, 0,
+				      "prompt-for-location", 1,
+				      G_TYPE_STRING, "~");
 
 	class->reload = nemo_window_reload;
 	class->go_up = nemo_window_go_up_signal;

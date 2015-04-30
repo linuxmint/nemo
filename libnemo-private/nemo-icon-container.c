@@ -5496,7 +5496,9 @@ key_press_event (GtkWidget *widget,
 	 * start the typeahead find capabilities.
 	 * Copied from NemoIconContainer */
 	if (!handled &&
-	    event->keyval != GDK_KEY_slash /* don't steal slash key event, used for "go to" */ &&
+		event->keyval != GDK_KEY_asciitilde &&
+		event->keyval != GDK_KEY_KP_Divide &&
+	    event->keyval != GDK_KEY_slash /* don't steal slash key events, used for "go to" */ &&
 	    event->keyval != GDK_KEY_BackSpace &&
 	    event->keyval != GDK_KEY_Delete) {
 		GdkEvent *new_event;
