@@ -2058,7 +2058,6 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
 
 	status = NEMO_REQUEST_DONE;
-	file_status = NEMO_REQUEST_NOT_STARTED;
 	total_count = window->details->total_count;
 	total_size = window->details->total_size;
     total_hidden = window->details->hidden_count;
@@ -4177,9 +4176,7 @@ create_simple_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 					   !has_directory);
 	}
 
-	append_blank_slim_row (page_grid);
-
-	group_label = attach_title_field (page_grid, _("Others"));
+	append_blank_slim_row (page_grid);;
 	
 	if (has_directory) {
 		add_permissions_combo_box (window, page_grid,

@@ -2530,13 +2530,12 @@ update_undo_actions (NemoView *view)
 	NemoFileUndoManagerState undo_state;
 	GtkAction *action;
 	const gchar *label, *tooltip;
-	gboolean available, is_undo;
+	gboolean available;
 	gboolean undo_active, redo_active;
 	gchar *undo_label, *undo_description, *redo_label, *redo_description;
 
 	undo_label = undo_description = redo_label = redo_description = NULL;
 
-	is_undo = FALSE;
 	undo_active = FALSE;
 	redo_active = FALSE;
 
@@ -2545,9 +2544,7 @@ update_undo_actions (NemoView *view)
 
 	if (info != NULL && 
 	    (undo_state > NEMO_FILE_UNDO_MANAGER_STATE_NONE)) {
-		is_undo = (undo_state == NEMO_FILE_UNDO_MANAGER_STATE_UNDO);
-
-		if (is_undo) {
+		if (undo_state == NEMO_FILE_UNDO_MANAGER_STATE_UNDO) {
 			undo_active = TRUE;
 		} else {
 			redo_active = TRUE;
@@ -4774,8 +4771,6 @@ reset_open_with_menu (NemoView *view, GList *selection)
 				      "OpenWithGroup",
 				      &view->details->open_with_merge_id,
 				      &view->details->open_with_action_group);
-	
-	num_applications = 0;
 
 	other_applications_visible = (selection != NULL);
 	filter_default = (selection != NULL);
@@ -8050,7 +8045,6 @@ nemo_view_init_show_hidden_files (NemoView *view)
 		return;
 	}
 
-	show_hidden_changed = FALSE;
 	mode = nemo_window_get_hidden_files_mode (view->details->window);
 
     if (mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE) {

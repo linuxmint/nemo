@@ -61,11 +61,13 @@ content_bar_response_cb (GtkInfoBar *infobar,
 			 gpointer user_data)
 {
 	GAppInfo *default_app;
-	NemoXContentBar *bar = user_data;
+	NemoXContentBar *bar;
 
 	if (response_id != CONTENT_BAR_RESPONSE_APP) {
 		return;
 	}
+
+	bar = user_data;
 
 	if (bar->priv->x_content_type == NULL ||
 	    bar->priv->mount == NULL)
@@ -193,9 +195,7 @@ nemo_x_content_bar_get_property (GObject    *object,
 				     GValue     *value,
 				     GParamSpec *pspec)
 {
-	NemoXContentBar *bar;
-
-	bar = NEMO_X_CONTENT_BAR (object);
+	NemoXContentBar *bar = NEMO_X_CONTENT_BAR (object);
 
 	switch (prop_id) {
 	case PROP_MOUNT:

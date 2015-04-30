@@ -1188,8 +1188,6 @@ nemo_file_get_start_stop_type (NemoFile *file)
 
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
-	ret = G_DRIVE_START_STOP_TYPE_UNKNOWN;
-
 	ret = file->details->start_stop_type;
 	if (ret != G_DRIVE_START_STOP_TYPE_UNKNOWN)
 		goto out;
@@ -2884,7 +2882,7 @@ compare_by_display_name (NemoFile *file_1, NemoFile *file_2)
 	const char *name_1, *name_2;
 	const char *key_1, *key_2;
 	gboolean sort_last_1, sort_last_2;
-	int compare;
+	int compare=0;
 
 	name_1 = nemo_file_peek_display_name (file_1);
 	name_2 = nemo_file_peek_display_name (file_2);
@@ -4020,15 +4018,9 @@ nemo_file_get_filesystem_use_preview (NemoFile *file)
 gboolean
 nemo_file_should_show_thumbnail (NemoFile *file)
 {
-	const char *mime_type;
 	GFilesystemPreviewType use_preview;
 
 	use_preview = nemo_file_get_filesystem_use_preview (file);
-
-	mime_type = eel_ref_str_peek (file->details->mime_type);
-	if (mime_type == NULL) {
-		mime_type = "application/octet-stream";
-	}
 
 	/* If the thumbnail has already been created, don't care about the size
 	 * of the original file.
