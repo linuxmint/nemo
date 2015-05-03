@@ -241,7 +241,7 @@ on_open_folder_clicked (GtkWidget *button, NemoScriptConfigWidget *widget)
     nemo_window_slot_go_to (slot, location, FALSE);
     gtk_window_present (GTK_WINDOW (widget->view_window));
 
-    eel_show_action_folder_popup_dialog (GTK_WINDOW (widget->view_window));
+    eel_show_script_folder_popup_dialog (GTK_WINDOW (widget->view_window));
 }
 
 static void
