@@ -128,7 +128,7 @@ nemo_plugin_manager_show (NemoWindow *parent)
     GtkWindow *window = NULL;
     window = GTK_WINDOW (gtk_window_new (GTK_WINDOW_TOPLEVEL));
 
-    gtk_window_set_title (window, _("Nemo Plugin Manager"));
+    gtk_window_set_title (window, _("Plugins"));
     gtk_window_set_icon_name (window, "preferences-system");
 
     gtk_window_set_default_size (window, 640, 480);
