@@ -13,5 +13,6 @@
     <file alias="icons/filmholes.png">../icons/filmholes.png</file>
     <file alias="icons/knob.png">../icons/knob.png</file>
     <file>nemo-style-fallback.css</file>
+    <file>nemo-style-application.css</file>
   </gresource>
 </gresources>

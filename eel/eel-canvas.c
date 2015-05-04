@@ -1667,6 +1667,10 @@ group_add (EelCanvasGroup *group, EelCanvasItem *item)
 {
 	g_object_ref_sink (item);
 
+/* FIXME: relatively inefficient way to add to the list, appending to the list causes it to be read from the top each time. 
+ 	prepend, followed by a reverse if necessary is the recommended approach.  However as this list append is a number of
+  	levels of call down, correcting it is not as easy as it could be */
+
 	if (!group->item_list) {
 		group->item_list = g_list_append (group->item_list, item);
 		group->item_list_end = group->item_list;
@@ -1831,12 +1835,9 @@ static void
 eel_canvas_accessible_adjustment_changed (GtkAdjustment *adjustment,
 					  gpointer       data)
 {
-	AtkObject *atk_obj;
-
 	/* The scrollbars have changed */
-	atk_obj = ATK_OBJECT (data);
 
-	g_signal_emit_by_name (atk_obj, "visible-data-changed");
+	g_signal_emit_by_name (ATK_OBJECT (data), "visible_data_changed");
 }
 
 static void
@@ -1851,8 +1852,7 @@ static gboolean
 accessible_focus_cb (GtkWidget     *widget,
 		     GdkEventFocus *event)
 {
-	AtkObject* accessible = gtk_widget_get_accessible (widget);
-	atk_object_notify_state_change (accessible, ATK_STATE_FOCUSED, event->in);
+	atk_object_notify_state_change ((AtkObject *)gtk_widget_get_accessible (widget), ATK_STATE_FOCUSED, event->in);
 
 	return FALSE;
 }
@@ -1951,13 +1951,11 @@ eel_canvas_accessible_initialize (AtkObject *obj,
 static gint
 eel_canvas_accessible_get_n_children (AtkObject* obj)
 {
- 	GtkAccessible *accessible;
 	GtkWidget *widget;
 	EelCanvas *canvas;
 	EelCanvasGroup *root_group;
 
-	accessible = GTK_ACCESSIBLE (obj);
-	widget = gtk_accessible_get_widget (accessible);
+	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (obj));
 
 	if (widget == NULL) {
 		return 0;
@@ -1976,7 +1974,6 @@ static AtkObject*
 eel_canvas_accessible_ref_child (AtkObject *obj,
                                  gint       i)
 {
-	GtkAccessible *accessible;
 	GtkWidget *widget;
 	EelCanvas *canvas;
 	EelCanvasGroup *root_group;
@@ -1987,8 +1984,7 @@ eel_canvas_accessible_ref_child (AtkObject *obj,
         	return NULL;
 	}
 
-	accessible = GTK_ACCESSIBLE (obj);
-	widget = gtk_accessible_get_widget (accessible);
+	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (obj));
 
 	if (widget == NULL) {
 		return NULL;
@@ -2115,10 +2111,7 @@ eel_canvas_accessible_ref_state_set (AtkObject *accessible)
 		}
 
 		if (gtk_widget_has_focus (widget)) {
-			AtkObject *focus_obj;
-
-			focus_obj = g_object_get_data (G_OBJECT (accessible), "gail-focus-object");
-			if (focus_obj == NULL) {
+			if (g_object_get_data (G_OBJECT (accessible), "gail-focus-object") == NULL) {
 				atk_state_set_add_state (state_set, ATK_STATE_FOCUSED);
 			}
 		}
@@ -2266,13 +2259,9 @@ eel_canvas_accessible_factory_get_accessible_type (void)
 static AtkObject*
 eel_canvas_accessible_factory_create_accessible (GObject *obj)
 {
-	AtkObject *accessible;
-
 	g_return_val_if_fail (G_IS_OBJECT (obj), NULL);
 
-	accessible = eel_canvas_accessible_create (obj);
-
-	return accessible;
+	return eel_canvas_accessible_create (obj);
 }
 
 static void
@@ -2303,7 +2292,6 @@ eel_canvas_accessible_factory_get_type (void)
 					       "EelCanvasAccessibilityFactory",
 					       &tinfo, 0);
 	}
-
 	return type;
 }
 
@@ -3002,13 +2990,13 @@ eel_canvas_button (GtkWidget *widget, GdkEventButton *event)
 	g_return_val_if_fail (EEL_IS_CANVAS (widget), FALSE);
 	g_return_val_if_fail (event != NULL, FALSE);
 
-	retval = FALSE;
-
-	canvas = EEL_CANVAS (widget);
-
 	/* Don't handle extra mouse button events */
 	if (event->button > 5)
 		return FALSE;
+
+	retval = FALSE;
+
+	canvas = EEL_CANVAS (widget);
 
 	/*
 	 * dispatch normally regardless of the event's window if an item has
@@ -3207,7 +3195,7 @@ eel_cairo_get_clip_region (cairo_t *cr)
 static gboolean
 eel_canvas_draw (GtkWidget *widget, cairo_t *cr)
 {
-	EelCanvas *canvas = EEL_CANVAS (widget);
+	EelCanvas *canvas;
         GdkWindow *bin_window;
         cairo_region_t *region;
 
@@ -3233,6 +3221,7 @@ eel_canvas_draw (GtkWidget *widget, cairo_t *cr)
 	g_print ("Draw\n");
 #endif
 	/* If there are any outstanding items that need updating, do them now */
+	canvas = EEL_CANVAS (widget);
 	if (canvas->idle_id) {
 		g_source_remove (canvas->idle_id);
 		canvas->idle_id = 0;
@@ -3390,7 +3379,6 @@ eel_canvas_set_scroll_region (EelCanvas *canvas, double x1, double y1, double x2
 {
 	double wxofs, wyofs;
 	int xofs, yofs;
-	GtkAdjustment *vadjustment, *hadjustment;
 
 	g_return_if_fail (EEL_IS_CANVAS (canvas));
 
@@ -3403,12 +3391,10 @@ eel_canvas_set_scroll_region (EelCanvas *canvas, double x1, double y1, double x2
 	 * Set the new scrolling region.  If possible, do not move the visible contents of the
 	 * canvas.
 	 */
-	hadjustment = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (canvas));
-	vadjustment = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (canvas));
 
 	eel_canvas_c2w (canvas,
-			  gtk_adjustment_get_value (hadjustment) + canvas->zoom_xofs,
-			  gtk_adjustment_get_value (vadjustment) + canvas->zoom_yofs,
+			  gtk_adjustment_get_value (gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (canvas))) + canvas->zoom_xofs,
+			  gtk_adjustment_get_value (gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (canvas))) + canvas->zoom_yofs,
 			  /*canvas->zoom_xofs,
 			  canvas->zoom_yofs,*/
 			  &wxofs, &wyofs);
@@ -3463,18 +3449,13 @@ void
 eel_canvas_set_center_scroll_region (EelCanvas *canvas,
 				     gboolean center_scroll_region)
 {
-	GtkAdjustment *vadjustment, *hadjustment;
-
 	g_return_if_fail (EEL_IS_CANVAS (canvas));
 
 	canvas->center_scroll_region = center_scroll_region != 0;
 
-	hadjustment = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (&canvas->layout));
-	vadjustment = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (&canvas->layout));
-
 	scroll_to (canvas,
-		   gtk_adjustment_get_value (hadjustment),
-		   gtk_adjustment_get_value (vadjustment));
+		   gtk_adjustment_get_value (gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (&canvas->layout))),
+		   gtk_adjustment_get_value (gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (&canvas->layout))));
 }
 
 
@@ -3599,18 +3580,13 @@ eel_canvas_scroll_to (EelCanvas *canvas, int cx, int cy)
 void
 eel_canvas_get_scroll_offsets (EelCanvas *canvas, int *cx, int *cy)
 {
-	GtkAdjustment *vadjustment, *hadjustment;
-
 	g_return_if_fail (EEL_IS_CANVAS (canvas));
 
-	hadjustment = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (canvas));
-	vadjustment = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (canvas));
-
 	if (cx)
-		*cx = gtk_adjustment_get_value (hadjustment);
+		*cx = gtk_adjustment_get_value (gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (canvas)));
 
 	if (cy)
-		*cy = gtk_adjustment_get_value (vadjustment);
+		*cy = gtk_adjustment_get_value (gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (canvas)));
 }
 
 /**
@@ -3870,14 +3846,12 @@ boolean_handled_accumulator (GSignalInvocationHint *ihint,
 			     const GValue          *handler_return,
 			     gpointer               dummy)
 {
-	gboolean continue_emission;
 	gboolean signal_handled;
 	
 	signal_handled = g_value_get_boolean (handler_return);
 	g_value_set_boolean (return_accu, signal_handled);
-	continue_emission = !signal_handled;
 	
-	return continue_emission;
+	return !signal_handled;
 }
 
 static guint
@@ -3962,7 +3936,6 @@ eel_canvas_item_accessible_get_extents (AtkComponent *component,
                                         gint		*height,
                                         AtkCoordType coord_type)
 {
- 	AtkGObjectAccessible *atk_gobj;
 	GObject *obj;
 	EelCanvasItem *item;
 	gint window_x, window_y;
@@ -3971,8 +3944,7 @@ eel_canvas_item_accessible_get_extents (AtkComponent *component,
 	GdkWindow *window;
 	GtkWidget *canvas;
 
-	atk_gobj = ATK_GOBJECT_ACCESSIBLE (component);
-	obj = atk_gobject_accessible_get_object (atk_gobj);
+	obj = atk_gobject_accessible_get_object (ATK_GOBJECT_ACCESSIBLE (component));
 
 	if (obj == NULL) {
 		/* item is defunct */
@@ -4011,12 +3983,10 @@ eel_canvas_item_accessible_get_extents (AtkComponent *component,
 static gint
 eel_canvas_item_accessible_get_mdi_zorder (AtkComponent *component)
 {
-	AtkGObjectAccessible *atk_gobj;
 	GObject *g_obj;
 	EelCanvasItem *item;
 
-	atk_gobj = ATK_GOBJECT_ACCESSIBLE (component);
-	g_obj = atk_gobject_accessible_get_object (atk_gobj);
+	g_obj = atk_gobject_accessible_get_object (ATK_GOBJECT_ACCESSIBLE (component));
 	if (g_obj == NULL) {
 		/* Object is defunct */
 		return -1;
@@ -4034,13 +4004,11 @@ eel_canvas_item_accessible_get_mdi_zorder (AtkComponent *component)
 static gboolean
 eel_canvas_item_accessible_grab_focus (AtkComponent *component)
 {
- 	AtkGObjectAccessible *atk_gobj;
 	GObject *obj;
 	EelCanvasItem *item;
 	GtkWidget *toplevel;
 
-	atk_gobj = ATK_GOBJECT_ACCESSIBLE (component);
-	obj = atk_gobject_accessible_get_object (atk_gobj);
+	obj = atk_gobject_accessible_get_object (ATK_GOBJECT_ACCESSIBLE (component));
 
 	item = EEL_CANVAS_ITEM (obj);
 	if (item == NULL) {
@@ -4097,14 +4065,12 @@ eel_canvas_item_accessible_initialize (AtkObject *obj, gpointer data)
 static AtkStateSet*
 eel_canvas_item_accessible_ref_state_set (AtkObject *accessible)
 {
- 	AtkGObjectAccessible *atk_gobj;
 	GObject *obj;
  	EelCanvasItem *item;
 	AtkStateSet *state_set;
 
 	state_set = ATK_OBJECT_CLASS (accessible_item_parent_class)->ref_state_set (accessible);
-	atk_gobj = ATK_GOBJECT_ACCESSIBLE (accessible);
-	obj = atk_gobject_accessible_get_object (atk_gobj);
+	obj = atk_gobject_accessible_get_object (ATK_GOBJECT_ACCESSIBLE (accessible));
 
 	item = EEL_CANVAS_ITEM (obj);
 	if (item == NULL) {

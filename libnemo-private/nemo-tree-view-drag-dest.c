@@ -599,11 +599,6 @@ receive_uris (NemoTreeViewDragDest *dest,
 			(GTK_WIDGET (dest->details->tree_view), action);
 	}
 
-	/* We only want to copy external uris */
-	if (dest->details->drag_type == NEMO_ICON_DND_URI_LIST) {
-		real_action = GDK_ACTION_COPY;
-	}
-
 	if (real_action > 0) {
 		if (!nemo_drag_uris_local (drop_target, source_uris)
 			|| real_action != GDK_ACTION_MOVE) {

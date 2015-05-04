@@ -299,9 +299,7 @@ nemo_x_content_bar_get_property (GObject    *object,
 				     GValue     *value,
 				     GParamSpec *pspec)
 {
-	NemoXContentBar *bar;
-
-	bar = NEMO_X_CONTENT_BAR (object);
+	NemoXContentBar *bar = NEMO_X_CONTENT_BAR (object);
 
 	switch (prop_id) {
 	case PROP_MOUNT:

@@ -41,6 +41,8 @@
 #include "nemo-canvas-view.h"
 #include "nemo-list-view.h"
 #include "nemo-toolbar.h"
+#include "nemo-plugin-manager.h"
+
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 #include <glib/gi18n.h>
@@ -271,6 +273,13 @@ action_preferences_callback (GtkAction *action,
 	window = GTK_WINDOW (user_data);
 
 	nemo_file_management_properties_dialog_show (window);
+}
+
+static void
+action_plugins_callback (GtkAction *action, 
+                         gpointer user_data)
+{
+    nemo_plugin_manager_show (NEMO_WINDOW (user_data));
 }
 
 static void
@@ -1102,6 +1111,10 @@ static const GtkActionEntry main_entries[] = {
                                  N_("Prefere_nces"),               
                                  NULL, N_("Edit Nemo preferences"),
                                  G_CALLBACK (action_preferences_callback) },
+                               { NEMO_ACTION_PLUGIN_MANAGER, NULL,
+                                 N_("Plugins"),               
+                                 "<alt>p", N_("Manage extensions, actions and scripts"),
+                                 G_CALLBACK (action_plugins_callback) },
 #ifdef TEXT_CHANGE_UNDO
   /* name, stock id, label */  { "Undo", NULL, N_("_Undo"),
                                  "<control>Z", N_("Undo the last text change"),
@@ -1300,7 +1313,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
 			       "name", NEMO_ACTION_BACK,
 			       "label", _("_Back"),
-			       "icon_name", "go-previous",
+			       "icon_name", "go-previous-symbolic",
 			       "tooltip", _("Go to the previous visited location"),
 			       "arrow-tooltip", _("Back history"),
 			       "window", window,
@@ -1316,7 +1329,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
 			       "name", NEMO_ACTION_FORWARD,
 			       "label", _("_Forward"),
-			       "icon_name", "go-next",
+			       "icon_name", "go-next-symbolic",
 			       "tooltip", _("Go to the next visited location"),
 			       "arrow-tooltip", _("Forward history"),
 			       "window", window,
@@ -1335,7 +1348,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_UP,
    			       "label", _("_Up"),
-   			       "icon_name", "go-up",
+   			       "icon_name", "go-up-symbolic",
    			       "tooltip", _("Go to parent folder"),
    			       "arrow-tooltip", _("Forward history"),
    			       "window", window,
@@ -1350,7 +1363,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_RELOAD,
    			       "label", _("_Reload"),
-   			       "icon_name", "view-refresh",
+   			       "icon_name", "view-refresh-symbolic",
    			       "tooltip", _("Reload the current location"),
    			       "window", window,
    			       "direction", NEMO_NAVIGATION_DIRECTION_RELOAD,
@@ -1364,7 +1377,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_HOME,
    			       "label", _("_Home"),
-   			       "icon_name", "go-home",
+   			       "icon_name", "go-home-symbolic",
    			       "tooltip", _("Go to home directory"),
    			       "window", window,
    			       "direction", NEMO_NAVIGATION_DIRECTION_HOME,
@@ -1409,7 +1422,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
     gtk_action_group_add_action (action_group, GTK_ACTION (action));
     g_signal_connect (action, "activate",
                       G_CALLBACK (action_new_folder_callback), window);
-    gtk_action_set_icon_name (GTK_ACTION (action), "folder-new");
+    gtk_action_set_icon_name (GTK_ACTION (action), "folder-symbolic");
     g_object_unref (action);
     
     action = GTK_ACTION (gtk_action_new (NEMO_ACTION_OPEN_IN_TERMINAL,
@@ -1463,7 +1476,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
  				NULL));
  
   	gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "edit-find");
+    gtk_action_set_icon_name (GTK_ACTION (action), "edit-find-symbolic");
   
   	g_object_unref (action);
 
@@ -1635,11 +1648,7 @@ nemo_window_initialize_menus (NemoWindow *window)
 void
 nemo_window_finalize_menus (NemoWindow *window)
 {
-	NemoTrashMonitor *monitor;
-
-	monitor = nemo_trash_monitor_get ();
-
-	g_signal_handlers_disconnect_by_func (monitor,
+	g_signal_handlers_disconnect_by_func (nemo_trash_monitor_get(),
 					      trash_state_changed_cb, window);
 }
 

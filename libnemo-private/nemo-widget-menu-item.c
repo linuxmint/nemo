@@ -248,12 +248,9 @@ nemo_widget_menu_item_update (GtkActivatable *activatable,
                             const gchar    *property_name)
 {
   NemoWidgetMenuItem *widget_menu_item;
-  gboolean   use_appearance;
   widget_menu_item = NEMO_WIDGET_MENU_ITEM (activatable);
 
-  use_appearance = gtk_activatable_get_use_action_appearance (activatable);
-
-  if (!use_appearance)
+  if (!gtk_activatable_get_use_action_appearance (activatable))
     return;
 
   if (strcmp (property_name, "widget-a") == 0)
@@ -268,7 +265,6 @@ nemo_widget_menu_item_sync_action_properties (GtkActivatable *activatable,
 {
   NemoWidgetMenuItem *widget_menu_item;
   GtkWidget *widget;
-  gboolean   use_appearance;
 
   widget_menu_item = NEMO_WIDGET_MENU_ITEM (activatable);
 
@@ -276,9 +272,7 @@ nemo_widget_menu_item_sync_action_properties (GtkActivatable *activatable,
   if (!action)
     return;
 
-  use_appearance = gtk_activatable_get_use_action_appearance (activatable);
-
-  if (!use_appearance)
+  if (!gtk_activatable_get_use_action_appearance (activatable))
     return;
 
   widget = nemo_widget_menu_item_get_child_widget (widget_menu_item);

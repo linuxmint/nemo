@@ -152,18 +152,15 @@ slot_proxy_drag_motion (GtkWidget          *widget,
 			unsigned int        time,
 			gpointer            user_data)
 {
-  NemoDragSlotProxyInfo *drag_info;
+  NemoDragSlotProxyInfo *drag_info = user_data;
   NemoWindowSlot *target_slot;
   GtkWidget *window;
   GdkAtom target;
-  int action;
+  int action = 0;
   char *target_uri;
   gboolean valid_text_drag;
   gboolean valid_xds_drag;
 
-  drag_info = user_data;
-
-  action = 0;
   valid_text_drag = FALSE;
   valid_xds_drag = FALSE;
 
@@ -292,13 +289,9 @@ slot_proxy_drag_leave (GtkWidget          *widget,
 		       unsigned int        time,
 		       gpointer            user_data)
 {
-    NemoDragSlotProxyInfo *drag_info;
-
-    drag_info = user_data;
-
     gtk_drag_unhighlight (widget);
 
-    drag_info_clear (drag_info);
+    drag_info_clear ((NemoDragSlotProxyInfo *)user_data);
 }
 
 static gboolean

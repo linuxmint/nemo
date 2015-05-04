@@ -42,6 +42,7 @@ GSettings *nemo_compact_view_preferences;
 GSettings *nemo_desktop_preferences;
 GSettings *nemo_tree_sidebar_preferences;
 GSettings *nemo_window_state;
+GSettings *nemo_plugin_preferences;
 GSettings *gtk_filechooser_preferences;
 GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
@@ -95,6 +96,23 @@ nemo_global_preferences_get_tooltip_flags (void)
     return flags;
 }
 
+gboolean
+nemo_global_preferences_should_load_plugin (const gchar *name, const gchar *key)
+{
+    gchar **disabled_list = g_settings_get_strv (nemo_plugin_preferences, key);
+
+    gboolean ret = TRUE;
+    gint i = 0;
+
+    for (i = 0; i < g_strv_length (disabled_list); i++) {
+        if (g_strcmp0 (disabled_list[i], name) == 0)
+            ret = FALSE;
+    }
+
+    g_strfreev (disabled_list);
+    return ret;
+}
+
 static void
 ignore_view_metadata_cb (GSettings *settings,
                          gchar *key,
@@ -124,6 +142,7 @@ nemo_global_preferences_init (void)
         gtk_filechooser_preferences = g_settings_new_with_path ("org.gtk.Settings.FileChooser",
                                                                 "/org/gtk/settings/file-chooser/");
 	nemo_tree_sidebar_preferences = g_settings_new("org.nemo.sidebar-panels.tree");
+    nemo_plugin_preferences = g_settings_new("org.nemo.plugins");
 	if (!g_strcmp0(g_getenv("DESKTOP_SESSION"), "cinnamon") ||
 	    !g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "X-Cinnamon")) { 	
 		/* Cinnamon */		

@@ -1171,7 +1171,7 @@ nemo_view_activate_files (NemoView *view,
 	g_free (path);
 }
 
-static void
+void
 nemo_view_activate_file (NemoView *view,
 			     NemoFile *file,
 			     NemoWindowOpenFlags flags)
@@ -2421,62 +2421,16 @@ show_hidden_files_changed_callback (gpointer callback_data)
 static gboolean
 set_up_scripts_directory_global (void)
 {
-	char *old_scripts_directory_path;
 	char *scripts_directory_path;
-	const char *override;
 
 	if (scripts_directory_uri != NULL) {
 		return TRUE;
 	}
 
-	scripts_directory_path = nemo_get_scripts_directory_path ();
-
-	override = g_getenv ("GNOME22_USER_DIR");
-
-	if (override) {
-		old_scripts_directory_path = g_build_filename (override,
-							       "nemo-scripts",
-							       NULL);
-	} else {
-		old_scripts_directory_path = g_build_filename (g_get_home_dir (),
-							       ".gnome2",
-							       "nemo-scripts",
-							       NULL);
-	}
-
-	if (g_file_test (old_scripts_directory_path, G_FILE_TEST_IS_DIR)
-	    && !g_file_test (scripts_directory_path, G_FILE_TEST_EXISTS)) {
-		char *updated;
-		const char *message;
-
-		/* test if we already attempted to migrate first */
-		updated = g_build_filename (old_scripts_directory_path, "DEPRECATED-DIRECTORY", NULL);
-		message = _("Nemo deprecated this directory and tried migrating "
-			    "this configuration to ~/.local/share/nautilus");
-		if (!g_file_test (updated, G_FILE_TEST_EXISTS)) {
-			char *parent_dir;
-
-			parent_dir = g_path_get_dirname (scripts_directory_path);
-			if (g_mkdir_with_parents (parent_dir, 0700) == 0) {
-				int fd, res;
-
-				/* rename() works fine if the destination directory is
-				 * empty.
-				 */
-				res = g_rename (old_scripts_directory_path, scripts_directory_path);
-				if (res == -1) {
-					fd = g_creat (updated, 0600);
-					if (fd != -1) {
-						res = write (fd, message, strlen (message));
-						close (fd);
-					}
-				}
-			}
-			g_free (parent_dir);
-		}
-
-		g_free (updated);
-	}
+    scripts_directory_path = g_build_filename (g_get_user_data_dir (),
+                                               "nemo",
+                                               "scripts",
+                                               NULL);
 
 	if (g_mkdir_with_parents (scripts_directory_path, 0700) == 0) {
 		scripts_directory_uri = g_filename_to_uri (scripts_directory_path, NULL, NULL);
@@ -2484,7 +2438,6 @@ set_up_scripts_directory_global (void)
 	}
 
 	g_free (scripts_directory_path);
-	g_free (old_scripts_directory_path);
 
 	return (scripts_directory_uri != NULL) ? TRUE : FALSE;
 }
@@ -2659,6 +2612,12 @@ static void slot_changed_pane (NemoWindowSlot *slot,
 	*/
 }
 
+static void
+plugin_prefs_changed (GSettings *settings, gchar *key, gpointer user_data)
+{
+    scripts_added_or_changed_callback (NULL, NULL, user_data);
+}
+
 void
 nemo_view_grab_focus (NemoView *view)
 {
@@ -2691,7 +2650,7 @@ update_undo_actions (NemoView *view)
 	NemoFileUndoManagerState undo_state;
 	GtkAction *action;
 	const gchar *label, *tooltip;
-	gboolean available, is_undo;
+	gboolean available;
 	gboolean undo_active, redo_active;
 	gchar *undo_label, *undo_description, *redo_label, *redo_description;
 
@@ -2705,9 +2664,7 @@ update_undo_actions (NemoView *view)
 
 	if (info != NULL && 
 	    (undo_state > NEMO_FILE_UNDO_MANAGER_STATE_NONE)) {
-		is_undo = (undo_state == NEMO_FILE_UNDO_MANAGER_STATE_UNDO);
-
-		if (is_undo) {
+		if (undo_state == NEMO_FILE_UNDO_MANAGER_STATE_UNDO) {
 			undo_active = TRUE;
 		} else {
 			redo_active = TRUE;
@@ -2920,6 +2877,10 @@ nemo_view_init (NemoView *view)
 
 	g_signal_connect_object (nemo_file_undo_manager_get (), "undo-changed",
 				 G_CALLBACK (undo_manager_changed_cb), view, 0);				  
+
+    g_signal_connect (nemo_plugin_preferences,
+                      "changed::" NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS,
+                      G_CALLBACK (plugin_prefs_changed), view);
 
 	/* Accessibility */
 	atk_object = gtk_widget_get_accessible (GTK_WIDGET (view));
@@ -6201,7 +6162,8 @@ update_directory_in_scripts_menu (NemoView *view, NemoDirectory *directory)
 	for (node = file_list; node != NULL; node = node->next) {
 		file = node->data;
 
-		if (nemo_file_is_launchable (file)) {
+		if (nemo_file_is_launchable (file) &&
+            nemo_global_preferences_should_load_plugin (nemo_file_peek_name (file), NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS)) {
 			add_script_to_scripts_menus (view, file, menu_path, popup_path, popup_bg_path);
 			any_scripts = TRUE;
 		} else if (nemo_file_is_directory (file)) {
@@ -6673,22 +6635,6 @@ update_templates_menu (NemoView *view)
         view->details->templates_present = any_templates;
 
 	g_free (templates_directory_uri);
-}
-
-
-static void
-action_open_scripts_folder_callback (GtkAction *action, 
-				     gpointer callback_data)
-{      
-	NemoView *view;
-	static GFile *location = NULL;
-
-	if (location == NULL) {
-		location = g_file_new_for_uri (scripts_directory_uri);
-	}
-
-	view = NEMO_VIEW (callback_data);
-	nemo_window_slot_open_location (view->details->slot, location, 0);
 }
 
 static GtkMenu *
@@ -8456,11 +8402,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open With Other _Application…"), NULL,
   /* tooltip */                  N_("Choose another application with which to open the selected item"),
 				 G_CALLBACK (action_other_application_callback) },
-  /* name, stock id */         { NEMO_ACTION_OPEN_SCRIPTS_FOLDER, NULL,
-  /* label, accelerator */       N_("_Open Scripts Folder"), NULL,
-  /* tooltip */                 N_("Show the folder containing the scripts that appear in this menu"),
-				 G_CALLBACK (action_open_scripts_folder_callback) },
-  /* name, stock id */         { NEMO_ACTION_EMPTY_TRASH, NULL,
+  /* name, stock id */         { "Empty Trash", NULL,
   /* label, accelerator */       N_("E_mpty Trash"), NULL,
   /* tooltip */                  N_("Delete all items in the Trash"),
 				 G_CALLBACK (action_empty_trash_callback) },
@@ -8769,8 +8711,7 @@ real_merge_menus (NemoView *view)
 				      directory_view_entries, G_N_ELEMENTS (directory_view_entries),
 				      view);
 
-	/* Translators: %s is a directory */
-	tooltip = g_strdup_printf (_("Run or manage scripts from %s"), "~/.gnome2/nemo-scripts");
+	tooltip = g_strdup_printf (_("Run scripts"));
 	/* Create a script action here specially because its tooltip is dynamic */
 	action = gtk_action_new ("Scripts", _("_Scripts"), tooltip, NULL);
 	gtk_action_group_add_action (action_group, action);
