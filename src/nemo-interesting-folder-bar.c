@@ -121,7 +121,7 @@ nemo_interesting_folder_bar_constructed (GObject *obj)
 
     switch (bar->priv->type) {
         case TYPE_ACTIONS_FOLDER:
-            label = gtk_label_new (_("Actions: Action files can be added this folder to show up in the menu."));
+            label = gtk_label_new (_("Actions: Action files can be added to this folder and will appear in the menu."));
             w = gtk_info_bar_add_button (GTK_INFO_BAR (bar),
                                          _("More info"),
                                          INTERESTING_FOLDER_BAR_ACTION_OPEN_DOC);
@@ -140,6 +140,7 @@ nemo_interesting_folder_bar_constructed (GObject *obj)
             break;
     }
 
+    gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
     gtk_style_context_add_class (gtk_widget_get_style_context (label),
                      "nemo-cluebar-label");
     gtk_widget_show (label);
