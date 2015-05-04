@@ -74,7 +74,7 @@ get_button_for_row (GtkWidget *row)
     return ret;
 }
 
-static gboolean
+static void
 on_row_activated (GtkWidget *box, GtkWidget *row, GtkWidget *widget)
 {
     GtkWidget *button = get_button_for_row (row);
