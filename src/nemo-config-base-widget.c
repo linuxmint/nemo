@@ -48,7 +48,6 @@ nemo_config_base_widget_init (NemoConfigBaseWidget *self)
 
     w = gtk_scrolled_window_new (NULL, NULL);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-    gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (w), GTK_SHADOW_IN);
     gtk_box_pack_start (GTK_BOX (box), w, TRUE, TRUE, 0);
 
     self->listbox = gtk_list_box_new ();
