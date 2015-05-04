@@ -1835,12 +1835,9 @@ static void
 eel_canvas_accessible_adjustment_changed (GtkAdjustment *adjustment,
 					  gpointer       data)
 {
-	AtkObject *atk_obj;
-
 	/* The scrollbars have changed */
-	atk_obj = ATK_OBJECT (data);
 
-	g_signal_emit_by_name (atk_obj, "visible-data-changed");
+	g_signal_emit_by_name (ATK_OBJECT (data), "visible_data_changed");
 }
 
 static void

@@ -131,7 +131,7 @@ on_check_toggled(GtkWidget *button, ExtensionProxy *proxy)
 static void
 detect_extensions (NemoExtensionConfigWidget *widget)
 {
-    gchar *out = NULL;
+	gchar *out = NULL;
 
     if (g_spawn_command_line_sync (LIBEXECDIR "/nemo-extensions-list",
                                    &out,
