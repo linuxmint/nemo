@@ -12,7 +12,6 @@
 #include <glib/gi18n.h>
 
 #include "nemo-config-base-widget.h"
-#include "nemo-window-private.h"
 
 G_BEGIN_DECLS
 
@@ -31,7 +30,6 @@ struct _NemoExtensionConfigWidget
 {
   NemoConfigBaseWidget parent;
   GtkWidget *restart_button;
-  NemoWindow *view_window;
 
   GList *current_extensions;
   GList *initial_extension_ids;

@@ -13,7 +13,6 @@
 #include "nemo-script-config-widget.h"
 #include "nemo-extension-config-widget.h"
 
-
 G_BEGIN_DECLS
 
 #define NEMO_TYPE_PLUGIN_MANAGER (nemo_plugin_manager_get_type())
@@ -45,7 +44,7 @@ struct _NemoPluginManagerClass
 GType nemo_plugin_manager_get_type (void);
 
 NemoPluginManager       *nemo_plugin_manager_new                   (void);
-void                     nemo_plugin_manager_show                  (NemoWindow *parent);
+void                     nemo_plugin_manager_show                  (void);
 GtkWidget               *nemo_plugin_manager_get_grid              (NemoPluginManager *manager);
 GtkWidget               *nemo_plugin_manager_get_action_widget     (NemoPluginManager *manager);
 GtkWidget               *nemo_plugin_manager_get_script_widget     (NemoPluginManager *manager);

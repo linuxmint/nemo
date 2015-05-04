@@ -32,6 +32,7 @@
 #include <libnemo-extension/nemo-name-and-desc-provider.h>
 
 #include <stdlib.h>
+#include <glib/gprintf.h>
 
 static GList *module_objects = NULL;
 
