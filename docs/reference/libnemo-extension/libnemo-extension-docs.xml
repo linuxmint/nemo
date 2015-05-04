@@ -24,6 +24,7 @@
       <xi:include href="xml/nemo-location-widget-provider.xml" />
       <xi:include href="xml/nemo-menu-provider.xml" />
       <xi:include href="xml/nemo-menu.xml" />
+      <xi:include href="xml/nemo-name-and-desc-provider.xml" />
       <xi:include href="xml/nemo-property-page-provider.xml" />
       <xi:include href="xml/nemo-property-page.xml" />
     </chapter>

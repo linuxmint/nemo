@@ -108,7 +108,7 @@ populate_from_directory (const gchar *path)
     }
 }
 
-GList *
+static GList *
 module_get_extensions_for_type (GType type)
 {
     GList *l;
