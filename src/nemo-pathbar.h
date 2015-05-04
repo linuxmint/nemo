@@ -58,7 +58,7 @@ struct _NemoPathBar
 	gpointer current_button_data;
 
 	GList *button_list;
-	GList *first_scrolled_button;
+	GList *scrolled_root_button;
 	GList *fake_root;
 	GtkWidget *up_slider_button;
 	GtkWidget *down_slider_button;
