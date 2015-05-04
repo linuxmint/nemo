@@ -1164,7 +1164,7 @@ nemo_view_activate_files (NemoView *view,
 	g_free (path);
 }
 
-static void
+void
 nemo_view_activate_file (NemoView *view,
 			     NemoFile *file,
 			     NemoWindowOpenFlags flags)
@@ -6576,24 +6576,6 @@ update_templates_menu (NemoView *view)
 	g_free (templates_directory_uri);
 }
 
-
-static void
-action_open_scripts_folder_callback (GtkAction *action, 
-				     gpointer callback_data)
-{      
-	NemoView *view;
-	static GFile *location = NULL;
-
-	if (location == NULL) {
-		location = g_file_new_for_uri (scripts_directory_uri);
-	}
-
-	view = NEMO_VIEW (callback_data);
-	nemo_window_slot_go_to (view->details->slot, location, FALSE);
-
-    eel_show_script_folder_popup_dialog (nemo_view_get_containing_window (view));
-}
-
 static GtkMenu *
 create_popup_menu (NemoView *view, const char *popup_path)
 {
@@ -8104,10 +8086,6 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open With Other _Application..."), NULL,
   /* tooltip */                  N_("Choose another application with which to open the selected item"),
 				 G_CALLBACK (action_other_application_callback) },
-  /* name, stock id */         { "Open Scripts Folder", NULL,
-  /* label, accelerator */       N_("_Open Scripts Folder"), NULL,
-  /* tooltip */                 N_("Show the folder containing the scripts that appear in this menu"),
-				 G_CALLBACK (action_open_scripts_folder_callback) },
   /* name, stock id */         { "Empty Trash", NULL,
   /* label, accelerator */       N_("E_mpty Trash"), NULL,
   /* tooltip */                  N_("Delete all items in the Trash"),

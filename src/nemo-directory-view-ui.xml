@@ -30,8 +30,6 @@
 			</placeholder>
 			<menu action="Scripts">
 				 <placeholder name="Scripts Placeholder"/>
-				 <separator name="After Scripts"/>
-				 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 			</menu>
             <separator name="Before Actions"/>
             <placeholder name="ActionsPlaceholder"/>
@@ -118,8 +116,6 @@
 			</menu>
                 	<menu action="Scripts">
 			 	<placeholder name="Scripts Placeholder"/>
-			 	<separator name="After Scripts"/>
-			 	<menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 			</menu>
             <separator name="Before Actions"/>
             <placeholder name="ActionsPlaceholder"/>
@@ -165,8 +161,6 @@
 		</placeholder>
 		<menu action="Scripts">
 			 <placeholder name="Scripts Placeholder"/>
-			 <separator name="After Scripts"/>
-			 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 		</menu>
         <separator name="Before Actions"/>
         <placeholder name="ActionsPlaceholder"/>

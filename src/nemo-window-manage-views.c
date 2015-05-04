@@ -1302,6 +1302,18 @@ nemo_window_slot_show_trash_bar (NemoWindowSlot *slot)
 	nemo_window_slot_add_extra_location_widget (slot, bar);
 }
 
+static void
+maybe_show_interesting_folder_bar (NemoWindowSlot *slot)
+{
+    GtkWidget *bar = nemo_interesting_folder_bar_new_for_location (nemo_window_slot_get_current_view(slot),
+                                                                   slot->location);
+
+    if (bar) {
+        gtk_widget_show (bar);
+        nemo_window_slot_add_extra_location_widget (slot, bar);
+    }
+}
+
 typedef struct {
 	NemoWindowSlot *slot;
 	GCancellable *cancellable;
@@ -1441,6 +1453,8 @@ update_for_new_location (NemoWindowSlot *slot)
 		if (nemo_directory_is_in_trash (directory)) {
 			nemo_window_slot_show_trash_bar (slot);
 		}
+
+        maybe_show_interesting_folder_bar (slot);
 
 		/* need the mount to determine if we should put up the x-content cluebar */
 		if (slot->find_mount_cancellable != NULL) {

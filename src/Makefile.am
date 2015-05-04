@@ -116,6 +116,8 @@ nemo_SOURCES = \
 	nemo-icon-view-container.h		\
 	nemo-image-properties-page.c	\
 	nemo-image-properties-page.h	\
+    nemo-interesting-folder-bar.c  \
+    nemo-interesting-folder-bar.h  \
 	nemo-list-model.c			\
 	nemo-list-model.h			\
 	nemo-list-view-private.h 		\

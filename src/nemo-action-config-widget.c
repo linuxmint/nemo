@@ -7,6 +7,8 @@
 #include <config.h>
 #include "nemo-action-config-widget.h"
 #include "nemo-window-slot.h"
+#include "nemo-view.h"
+#include "nemo-file.h"
 #include <glib.h>
 
 G_DEFINE_TYPE (NemoActionConfigWidget, nemo_action_config_widget, NEMO_TYPE_CONFIG_BASE_WIDGET);
@@ -325,10 +327,13 @@ on_open_folder_clicked (GtkWidget *button, NemoActionConfigWidget *widget)
     path = g_build_filename (g_get_user_data_dir (), "nemo", "actions", NULL);
     GFile *location = g_file_new_for_path (path);
 
-    nemo_window_slot_go_to (slot, location, FALSE);
-    gtk_window_present (GTK_WINDOW (widget->view_window));
+    NemoFile *file = nemo_file_get (location);
+    nemo_view_activate_file (nemo_window_slot_get_current_view (slot),
+                             file,
+                             NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW);
 
-    eel_show_action_folder_popup_dialog (GTK_WINDOW (widget->view_window));
+    g_free (path);
+    g_object_unref (location);
 }
 
 static void
