@@ -38,6 +38,7 @@ struct NemoSearchBarDetails {
 enum {
        ACTIVATE,
        CANCEL,
+       ADVANCED,
        LAST_SIGNAL
 }; 
 
@@ -98,6 +99,15 @@ nemo_search_bar_class_init (NemoSearchBarClass *class)
 			      g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 
+	signals[ADVANCED] =
+		g_signal_new ("advanced",
+			      G_TYPE_FROM_CLASS (class),
+			      G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (NemoSearchBarClass, advanced),
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE, 0);
+
 	binding_set = gtk_binding_set_by_class (class);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "cancel", 0);
 
@@ -124,6 +134,13 @@ entry_icon_release_cb (GtkEntry *entry,
 }
 
 static void
+action_advanced_search_cb (GtkButton *advanced, NemoSearchBar *bar)
+{  
+	g_signal_emit (bar, signals[ADVANCED], 0);
+}
+
+
+static void
 entry_activate_cb (GtkWidget *entry, NemoSearchBar *bar)
 {
        if (entry_has_text (bar) && !bar->details->entry_borrowed) {
@@ -136,6 +153,8 @@ nemo_search_bar_init (NemoSearchBar *bar)
 {
 	GtkWidget *label;
 	GtkWidget *align;
+	GtkWidget *advanced;
+	gint exit_status;
 
 	bar->details =
 		G_TYPE_INSTANCE_GET_PRIVATE (bar, NEMO_TYPE_SEARCH_BAR,
@@ -165,6 +184,21 @@ nemo_search_bar_init (NemoSearchBar *bar)
 					   GTK_ENTRY_ICON_SECONDARY,
 					   "edit-find");
 	gtk_container_add (GTK_CONTAINER (align), bar->details->entry);
+
+
+	g_spawn_command_line_sync("which gnome-search-tool", NULL, NULL, &exit_status, NULL); 
+	if (exit_status == 0) {
+		// gnome-search-tool in at path 
+		advanced = gtk_button_new_with_label (_("advanced"));
+		gtk_widget_show (advanced);
+		// icon = gtk_image_new_from_icon_name ("sidebar-hide-symbolic", size);
+		// gtk_button_set_image (GTK_BUTTON (advanced), icon);
+		gtk_widget_set_tooltip_text (GTK_WIDGET (advanced), _("Open advanced search"));
+		gtk_box_pack_start (GTK_BOX (bar), advanced, FALSE, FALSE, 6);
+		g_signal_connect (GTK_BUTTON (advanced), "clicked",
+				  G_CALLBACK (action_advanced_search_cb), bar);
+	}
+	
 
 	g_signal_connect (bar->details->entry, "activate",
 			  G_CALLBACK (entry_activate_cb), bar);

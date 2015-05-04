@@ -219,6 +219,34 @@ search_bar_activate_callback (NemoSearchBar *bar,
 }
 
 static void
+search_bar_advanced_callback (NemoSearchBar *bar,
+			      NemoWindowPane *pane)
+{
+	GFile *location;
+	char *path; 
+	const gchar *query_text;
+	gchar *advanced_command; 
+	GError *p_error = NULL; 
+
+	location = nemo_window_slot_get_location (pane->active_slot);	
+	path = g_file_get_path (location); 
+	query_text = gtk_entry_get_text (GTK_ENTRY (nemo_search_bar_get_entry (
+		NEMO_SEARCH_BAR (pane->search_bar))));
+
+	advanced_command = g_strconcat ("gnome-search-tool --named=\"", query_text, 
+		"\" --path=\"", path, "\" --contains=", NULL);
+	// empty --contains= is to display the advanced options by default 
+	g_debug("calling >%s<", advanced_command); 
+	if (!g_spawn_command_line_async (advanced_command, &p_error)) {
+		g_warning("calling >%s< failed: %s", advanced_command, p_error->message); 
+	}
+	g_free (path); 
+	g_free (advanced_command); 
+	g_object_unref(location); 
+}
+
+
+static void
 nemo_window_pane_hide_temporary_bars (NemoWindowPane *pane)
 {
 	NemoWindowSlot *slot;
@@ -998,6 +1026,8 @@ nemo_window_pane_constructed (GObject *obj)
 
 	g_signal_connect_object (pane->search_bar, "activate",
 				 G_CALLBACK (search_bar_activate_callback), pane, 0);
+	g_signal_connect_object (pane->search_bar, "advanced",
+				 G_CALLBACK (search_bar_advanced_callback), pane, 0);
 	g_signal_connect_object (pane->search_bar, "cancel",
 				 G_CALLBACK (search_bar_cancel_callback), pane, 0);
 	g_signal_connect_object (nemo_search_bar_get_entry (NEMO_SEARCH_BAR (pane->search_bar)), "focus-in-event",
