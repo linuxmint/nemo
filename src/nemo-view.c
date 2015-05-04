@@ -3032,6 +3032,8 @@ nemo_view_destroy (GtkWidget *object)
 	/* We don't own the slot, so no unref */
 	view->details->slot = NULL;
 
+    g_signal_handlers_disconnect_by_func (nemo_plugin_preferences, G_CALLBACK (plugin_prefs_changed), view);
+
 	GTK_WIDGET_CLASS (nemo_view_parent_class)->destroy (object);
 }
 

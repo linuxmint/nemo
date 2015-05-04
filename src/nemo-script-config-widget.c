@@ -6,7 +6,7 @@
 
 #include <config.h>
 #include "nemo-script-config-widget.h"
-#include "nemo-window-slot.h"
+#include "nemo-application.h"
 #include "nemo-view.h"
 #include "nemo-file.h"
 
@@ -43,13 +43,12 @@ get_button_for_row (GtkWidget *row)
     return ret;
 }
 
-static gboolean
+static void
 on_row_activated (GtkWidget *box, GtkWidget *row, GtkWidget *widget)
 {
     GtkWidget *button = get_button_for_row (row);
 
     gtk_button_clicked (GTK_BUTTON (button));
-    return FALSE;
 }
 
 static void
@@ -235,16 +234,14 @@ on_disable_clicked (GtkWidget *button, NemoScriptConfigWidget *widget)
 static void
 on_open_folder_clicked (GtkWidget *button, NemoScriptConfigWidget *widget)
 {
-    NemoWindowSlot *slot = nemo_window_get_active_slot (widget->view_window);
-
     gchar *path = NULL;
     path = g_build_filename (g_get_user_data_dir (), "nemo", "scripts", NULL);
     GFile *location = g_file_new_for_path (path);
 
-    NemoFile *file = nemo_file_get (location);
-    nemo_view_activate_file (nemo_window_slot_get_current_view (slot),
-                             file,
-                             NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW);
+    nemo_application_open_location (NEMO_APPLICATION (g_application_get_default ()),
+                                    location,
+                                    NULL,
+                                    "nemo");
 
     g_free (path);
     g_object_unref (location);

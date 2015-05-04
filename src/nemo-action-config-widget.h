@@ -11,7 +11,6 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#include "nemo-window-private.h"
 #include "nemo-config-base-widget.h"
 
 G_BEGIN_DECLS
@@ -33,7 +32,6 @@ struct _NemoActionConfigWidget
 
   GList *actions;
   GSettings *settings;
-  NemoWindow *view_window;
 
   GList *dir_monitors;
   gulong bl_handler;

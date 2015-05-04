@@ -113,14 +113,9 @@ clear_singleton (void)
 }
 
 void
-nemo_plugin_manager_show (NemoWindow *parent)
+nemo_plugin_manager_show (void)
 {
     if (plugin_manager) {
-        NemoPluginManager *pm = NEMO_PLUGIN_MANAGER (gtk_bin_get_child (GTK_BIN (plugin_manager)));
-
-        NEMO_ACTION_CONFIG_WIDGET (pm->action_widget)->view_window = parent;
-        NEMO_SCRIPT_CONFIG_WIDGET (pm->script_widget)->view_window = parent;
-
         gtk_window_present (plugin_manager);
         return;
     }
@@ -135,16 +130,7 @@ nemo_plugin_manager_show (NemoWindow *parent)
 
     NemoPluginManager *pm = nemo_plugin_manager_new ();
 
-    /* Can't use transient property and destroy_with_parent, we don't want
-     * the plugins window to be forced to stay on top of the calling Nemo window,
-     * but we do want it to go away if that window is closed.
-     */
-    g_signal_connect_object (parent, "destroy", G_CALLBACK (gtk_widget_destroy), window, G_CONNECT_SWAPPED);
     g_signal_connect_object (window, "destroy", G_CALLBACK (clear_singleton), NULL, G_CONNECT_SWAPPED);
-
-    NEMO_ACTION_CONFIG_WIDGET (pm->action_widget)->view_window = parent;
-    NEMO_SCRIPT_CONFIG_WIDGET (pm->script_widget)->view_window = parent;
-    NEMO_EXTENSION_CONFIG_WIDGET (pm->extension_widget)->view_window = parent;
 
     plugin_manager = g_object_ref (window);
 

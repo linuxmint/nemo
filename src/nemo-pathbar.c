@@ -61,6 +61,16 @@ static guint path_bar_signals [LAST_SIGNAL] = { 0 };
 #define NEMO_PATH_BAR_ICON_SIZE 16
 #define NEMO_PATH_BAR_BUTTON_MAX_WIDTH 250
 
+/*
+ * Content of pathbar->button_list:
+ *       <- next                      previous ->
+ * ---------------------------------------------------------------------
+ * | /   |   home  |   user      | downloads    | folder   | sub folder
+ * ---------------------------------------------------------------------
+ *  last             fake_root                              button_list
+ *                                scrolled_root_button
+ */
+
 typedef struct {
     GtkWidget *button;
     ButtonType type;
@@ -101,7 +111,7 @@ struct _NemoPathBarDetails {
 	gpointer current_button_data;
 
 	GList *button_list;
-	GList *first_scrolled_button;
+	GList *scrolled_root_button;
 	GList *fake_root;
 	GtkWidget *up_slider_button;
 	GtkWidget *down_slider_button;
@@ -422,27 +432,12 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
         gtk_widget_get_preferred_width (button_data->button, &child_min, &child_nat);
         gtk_widget_get_preferred_height (button_data->button, &child_height, NULL);
         height = MAX (height, child_height);
-
-        if (button_data->type == NORMAL_BUTTON) {
-            /* Use 2*Height as button width because of ellipsized label.  */
-            child_min = MAX (child_min, child_height * 2);
-            child_nat = MAX (child_min, child_height * 2);
-        }
-
         *minimum = MAX (*minimum, child_min);
 		*natural = *natural + child_nat;
     }
-
-    /* Add space for slider, if we have more than one path */
-    /* Theoretically, the slider could be bigger than the other button.  But we're
-     * not going to worry about that now.
-     */
     path_bar->priv->slider_width = MIN (height * 2 / 3 + 5, height);
-
-    if (path_bar->priv->button_list && path_bar->priv->button_list->next != NULL) {
-        *minimum += path_bar->priv->slider_width * 2;
-        *natural += path_bar->priv->slider_width * 2;
-    }
+    *minimum += path_bar->priv->slider_width * 2;
+    *natural += path_bar->priv->slider_width * 2;
 }
 
 static void
@@ -472,18 +467,19 @@ static void
 nemo_path_bar_update_slider_buttons (NemoPathBar *path_bar)
 {
     if (path_bar->priv->button_list) {
-                    
         GtkWidget *button;
 
         button = BUTTON_DATA (path_bar->priv->button_list->data)->button;
         if (gtk_widget_get_child_visible (button)) {
             gtk_widget_set_sensitive (path_bar->priv->down_slider_button, FALSE);
+            nemo_path_bar_stop_scrolling (path_bar); 
         } else {
             gtk_widget_set_sensitive (path_bar->priv->down_slider_button, TRUE);
         }
         button = BUTTON_DATA (g_list_last (path_bar->priv->button_list)->data)->button;
         if (gtk_widget_get_child_visible (button)) {
             gtk_widget_set_sensitive (path_bar->priv->up_slider_button, FALSE);
+            nemo_path_bar_stop_scrolling (path_bar);
         } else {
             gtk_widget_set_sensitive (path_bar->priv->up_slider_button, TRUE);
         }
@@ -534,7 +530,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     NemoPathBar *path_bar;
     GtkTextDirection direction;
     GtkAllocation child_allocation;
-    GList *list, *first_button;
+    GList *list, *pathbar_root_button;
     gint width;
     gint width_min;
     gint largest_width;
@@ -565,15 +561,9 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     }
     direction = gtk_widget_get_direction (widget);
 
-    /* First, we check to see if we need the scrollbars. */
-    if (path_bar->priv->fake_root) {
-        width = path_bar->priv->slider_width;
-    } else {
-        width = 0;
-    }
     gtk_widget_get_preferred_size (BUTTON_DATA (path_bar->priv->button_list->data)->button,
                        NULL, &child_requisition);
-    width += child_requisition.width;
+    width = child_requisition.width;
 
     for (list = path_bar->priv->button_list->next; list; list = list->next) {
         child = BUTTON_DATA (list->data)->button;
@@ -582,6 +572,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         width += child_requisition.width;
 
         if (list == path_bar->priv->fake_root) {
+            width += path_bar->priv->slider_width;
             break;
         }
     }
@@ -590,34 +581,38 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
 
     if (width <= allocation->width) {
         if (path_bar->priv->fake_root) {
-            first_button = path_bar->priv->fake_root;
+            pathbar_root_button = path_bar->priv->fake_root;
         } else {
-            first_button = g_list_last (path_bar->priv->button_list);
+            pathbar_root_button = g_list_last (path_bar->priv->button_list);
         }
     } else {
         gboolean reached_end;
         gint slider_space;
         reached_end = FALSE;
+		need_sliders = TRUE;
         slider_space = 2 * path_bar->priv->slider_width;
         largest_width -= slider_space;
 
-        if (path_bar->priv->first_scrolled_button) {
-            first_button = path_bar->priv->first_scrolled_button;
-        } else {
-            first_button = path_bar->priv->button_list;
-        }
-
-        need_sliders = TRUE;
         /* To see how much space we have, and how many buttons we can display.
          * We start at the first button, count forward until hit the new
          * button, then count backwards.
          */
+
+        /* First assume, we can only display one button */
+        if (path_bar->priv->scrolled_root_button) {
+            pathbar_root_button = path_bar->priv->scrolled_root_button;
+        } else {
+            pathbar_root_button = path_bar->priv->button_list;
+        }
+
         /* Count down the path chain towards the end. */
-        gtk_widget_get_preferred_size (BUTTON_DATA (first_button->data)->button,
-                                                NULL, &child_requisition);
+        gtk_widget_get_preferred_size (BUTTON_DATA (pathbar_root_button->data)->button,
+                                       NULL, &child_requisition);
         button_count = 1;
-		width = child_requisition.width;
-        list = first_button->prev;
+        width = child_requisition.width;
+
+        /* Count down the path chain towards the end. */
+        list = pathbar_root_button->prev;
         while (list && !reached_end) {
             if (list == path_bar->priv->fake_root) {
                 break;
@@ -631,7 +626,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
                     /* Display two Buttons if they fit shrinked */
                     gtk_widget_get_preferred_size (child, &child_requisition_min, NULL);
                     width_min = child_requisition_min.width;
-                    gtk_widget_get_preferred_size (BUTTON_DATA (first_button->data)->button, &child_requisition_min, NULL);
+                    gtk_widget_get_preferred_size (BUTTON_DATA (pathbar_root_button->data)->button, &child_requisition_min, NULL);
                     width_min += child_requisition_min.width;  
                     if (width_min <= largest_width) {
                         button_count++;
@@ -651,12 +646,12 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
             list = list->prev;
         }
 
-        /* Finally, we walk up, seeing how many of the previous buttons we can add */
-        while (first_button->next && ! reached_end) {
-            if (first_button == path_bar->priv->fake_root) {
+        /* Finally, we walk up, seeing how many of the previous buttons we can add*/
+        while (pathbar_root_button->next && ! reached_end) {
+            if (pathbar_root_button == path_bar->priv->fake_root) {
                 break;
             }
-            child = BUTTON_DATA (first_button->next->data)->button;
+            child = BUTTON_DATA (pathbar_root_button->next->data)->button;
             gtk_widget_get_preferred_size (child, NULL, &child_requisition);
 
             if (width + child_requisition.width + slider_space > allocation->width) {
@@ -664,11 +659,11 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
                 if (button_count == 1) {
             	    gtk_widget_get_preferred_size (child, &child_requisition_min, NULL);
             	    width_min = child_requisition_min.width;
-            	    gtk_widget_get_preferred_size (BUTTON_DATA (first_button->data)->button, &child_requisition_min, NULL);
+            	    gtk_widget_get_preferred_size (BUTTON_DATA (pathbar_root_button->data)->button, &child_requisition_min, NULL);
             	    width_min += child_requisition_min.width;           
             	    if (width_min <= largest_width) {
                         // Two shinked buttons fit 
-                        first_button = first_button->next;
+                        pathbar_root_button = pathbar_root_button->next;
                         button_count++;
                         largest_width /= 2;
                         if (width < largest_width) {
@@ -682,7 +677,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
                 } 
             } else {
                 width += child_requisition.width;
-                first_button = first_button->next;
+                pathbar_root_button = pathbar_root_button->next;
                 button_count++; 
             }
         }
@@ -695,18 +690,18 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     if (direction == GTK_TEXT_DIR_RTL) {
         child_allocation.x = allocation->x + allocation->width;
         if (need_sliders || path_bar->priv->fake_root) {
-            child_allocation.x -= (path_bar->priv->slider_width);
+            child_allocation.x -= path_bar->priv->slider_width;
             up_slider_offset = allocation->width - path_bar->priv->slider_width;
         }
     } else {
-            child_allocation.x = allocation->x;
-            if (need_sliders || path_bar->priv->fake_root) {
-                up_slider_offset = 0;
-                child_allocation.x += (path_bar->priv->slider_width);
-            }
+        child_allocation.x = allocation->x;
+        if (need_sliders || path_bar->priv->fake_root) {
+            up_slider_offset = 0;
+            child_allocation.x += path_bar->priv->slider_width;
+        }
     }
 
-    for (list = first_button; list; list = list->prev) {
+    for (list = pathbar_root_button; list; list = list->prev) {
         child = BUTTON_DATA (list->data)->button;
         gtk_widget_get_preferred_size (child,
                                         NULL, &child_requisition);
@@ -716,8 +711,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         if (direction == GTK_TEXT_DIR_RTL) {
             child_allocation.x -= child_allocation.width;
         }
-        
-        /* Check to see if we've don't have any more space to allocate buttons */
+    	/* Check to see if we've don't have any more space to allocate buttons */
         if (need_sliders && direction == GTK_TEXT_DIR_RTL) {
             if (child_allocation.x - path_bar->priv->slider_width < allocation->x) {
                 break;
@@ -747,11 +741,19 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         needs_reorder |= gtk_widget_get_child_visible (child) == TRUE;
         gtk_widget_set_child_visible (child, FALSE);
         list = list->prev;
-    }
-    for (list = first_button->next; list; list = list->next) {
+    } 
+    
+    if (BUTTON_DATA (pathbar_root_button->data)->fake_root) {
+        path_bar->priv->fake_root = pathbar_root_button;
+    } 
+	
+    for (list = pathbar_root_button->next; list; list = list->next) {
         child = BUTTON_DATA (list->data)->button;
         needs_reorder |= gtk_widget_get_child_visible (child) == TRUE;
         gtk_widget_set_child_visible (child, FALSE);
+        if (BUTTON_DATA (list->data)->fake_root) {
+            path_bar->priv->fake_root = list;
+        } 
     }
 
     if (need_sliders || path_bar->priv->fake_root) {
@@ -782,7 +784,9 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         nemo_path_bar_update_slider_buttons (path_bar);
     } else {
         needs_reorder |= gtk_widget_get_child_visible (path_bar->priv->up_slider_button) == TRUE;
-        gtk_widget_set_child_visible (path_bar->priv->down_slider_button, FALSE);
+        gtk_widget_set_child_visible (path_bar->priv->down_slider_button, FALSE); 
+		/* Reset Scrolling to have the left most folder in focus when resizing again */ 	
+		path_bar->priv->scrolled_root_button = NULL;
     }
 
     if (needs_reorder) {
@@ -1127,22 +1131,23 @@ nemo_path_bar_scroll_down (NemoPathBar *path_bar)
     gint space_available;
     gint space_needed;
     GtkTextDirection direction;
-    GtkAllocation allocation, button_allocation, slider_allocation;
+    GtkAllocation allocation, down_button_allocation, up_button_allocation,
+                  slider_allocation;
 
     down_button = NULL;
     up_button = NULL;
 
     if (path_bar->priv->ignore_click) {
-            path_bar->priv->ignore_click = FALSE;
-            return;   
+        path_bar->priv->ignore_click = FALSE;
+        return;   
     }
 
     gtk_widget_queue_resize (GTK_WIDGET (path_bar));
 
     direction = gtk_widget_get_direction (GTK_WIDGET (path_bar));
 
-    /* We find the button at the 'down' end that we have to make */
-    /* visible */
+    /* We find the button at the 'down' end, the non visible subfolder of
+     * a visible folder, that we have to make visible */
     for (list = path_bar->priv->button_list; list; list = list->next) {
         if (list->next && gtk_widget_get_child_visible (BUTTON_DATA (list->next->data)->button)) {
             down_button = list;
@@ -1150,11 +1155,13 @@ nemo_path_bar_scroll_down (NemoPathBar *path_bar)
         }
     }
 
-    if (down_button == NULL) {
+    if (down_button == NULL || down_button == path_bar->priv->button_list) {
+        /* No Button visible or we scroll back to curren folder reset scrolling */  
+        path_bar->priv->scrolled_root_button = NULL;
         return;
     }
   
-        /* Find the last visible button on the 'up' end */
+    /* Find the last visible button on the 'up' end */
     for (list = g_list_last (path_bar->priv->button_list); list; list = list->prev) {
         if (gtk_widget_get_child_visible (BUTTON_DATA (list->data)->button)) {
             up_button = list;
@@ -1162,11 +1169,11 @@ nemo_path_bar_scroll_down (NemoPathBar *path_bar)
         }
     }
 
-    gtk_widget_get_allocation (BUTTON_DATA (down_button->data)->button, &button_allocation);
+    gtk_widget_get_allocation (BUTTON_DATA (down_button->data)->button, &down_button_allocation);
     gtk_widget_get_allocation (GTK_WIDGET (path_bar), &allocation);
     gtk_widget_get_allocation (path_bar->priv->down_slider_button, &slider_allocation);
 
-    space_needed = button_allocation.width;
+    space_needed = down_button_allocation.width;
     if (direction == GTK_TEXT_DIR_RTL) {
         space_available = slider_allocation.x - allocation.x;
     } else {
@@ -1174,14 +1181,14 @@ nemo_path_bar_scroll_down (NemoPathBar *path_bar)
     }
 
     /* We have space_available extra space that's not being used.  We
-    * need space_needed space to make the button fit.  So we walk down
-    * from the end, removing buttons until we get all the space we
-    * need. */
-    gtk_widget_get_allocation (BUTTON_DATA (up_button->data)->button, &button_allocation);
-    while ((space_available < space_needed) && (up_button != NULL)) {
-        space_available += button_allocation.width;
+     * need space_needed space to make the button fit.  So we walk down
+     * from the end, removing buttons until we get all the space we
+     * need */
+    while ((space_available < space_needed) && (up_button != down_button)) {
+        gtk_widget_get_allocation (BUTTON_DATA (up_button->data)->button, &up_button_allocation);
+        space_available += up_button_allocation.width;
         up_button = up_button->prev;
-        path_bar->priv->first_scrolled_button = up_button;
+        path_bar->priv->scrolled_root_button = up_button;
     }
 }
 
@@ -1191,18 +1198,19 @@ nemo_path_bar_scroll_up (NemoPathBar *path_bar)
     GList *list;
 
     if (path_bar->priv->ignore_click) {
-            path_bar->priv->ignore_click = FALSE;
-            return;   
+        path_bar->priv->ignore_click = FALSE;
+        return;   
     }
 
     gtk_widget_queue_resize (GTK_WIDGET (path_bar));
 
+    /* scroll in parent folder direction */
     for (list = g_list_last (path_bar->priv->button_list); list; list = list->prev) {
         if (list->prev && gtk_widget_get_child_visible (BUTTON_DATA (list->prev->data)->button)) {
             if (list->prev == path_bar->priv->fake_root) {
                 path_bar->priv->fake_root = NULL;
             }
-            path_bar->priv->first_scrolled_button = list;
+            path_bar->priv->scrolled_root_button = list;
             return;
         }
     }
@@ -1216,13 +1224,12 @@ nemo_path_bar_scroll_timeout (NemoPathBar *path_bar)
     if (path_bar->priv->timer) {
         if (gtk_widget_has_focus (path_bar->priv->up_slider_button)) {
             nemo_path_bar_scroll_up (path_bar);
-        } else {
-            if (gtk_widget_has_focus (path_bar->priv->down_slider_button)) {
-                nemo_path_bar_scroll_down (path_bar);
-            }
+        } else if (gtk_widget_has_focus (path_bar->priv->down_slider_button)) {
+            nemo_path_bar_scroll_down (path_bar);
         }
         if (path_bar->priv->need_timer) {
             path_bar->priv->need_timer = FALSE;
+            g_source_remove (path_bar->priv->timer);
 
             path_bar->priv->timer = g_timeout_add (SCROLL_TIMEOUT,
                                    (GSourceFunc)nemo_path_bar_scroll_timeout,
@@ -1240,9 +1247,9 @@ static void
 nemo_path_bar_stop_scrolling (NemoPathBar *path_bar)
 {
     if (path_bar->priv->timer) {
-            g_source_remove (path_bar->priv->timer);
-            path_bar->priv->timer = 0;
-            path_bar->priv->need_timer = FALSE;
+        g_source_remove (path_bar->priv->timer);
+        path_bar->priv->timer = 0;
+        path_bar->priv->need_timer = FALSE;
     }
 }
 
@@ -1263,10 +1270,8 @@ nemo_path_bar_slider_button_press (GtkWidget       *widget,
 
     if (widget == path_bar->priv->up_slider_button) {
         nemo_path_bar_scroll_up (path_bar);
-    } else {
-        if (widget == path_bar->priv->down_slider_button) {
-                       nemo_path_bar_scroll_down (path_bar);
-        }
+    } else if (widget == path_bar->priv->down_slider_button) {
+        nemo_path_bar_scroll_down (path_bar);
     }
 
     if (!path_bar->priv->timer) {
@@ -1348,7 +1353,7 @@ nemo_path_bar_clear_buttons (NemoPathBar *path_bar)
     while (path_bar->priv->button_list != NULL) {
         gtk_container_remove (GTK_CONTAINER (path_bar), BUTTON_DATA (path_bar->priv->button_list->data)->button);
     }
-    path_bar->priv->first_scrolled_button = NULL;
+    path_bar->priv->scrolled_root_button = NULL;
     path_bar->priv->fake_root = NULL;
 }
 
@@ -1933,7 +1938,7 @@ nemo_path_bar_check_parent_path (NemoPathBar *path_bar,
         }
 
         if (!gtk_widget_get_child_visible (BUTTON_DATA (current_path->data)->button)) {
-            path_bar->priv->first_scrolled_button = current_path;
+            path_bar->priv->scrolled_root_button = current_path;
             gtk_widget_queue_resize (GTK_WIDGET (path_bar));
         }
         return TRUE;

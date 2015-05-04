@@ -6,7 +6,7 @@
 
 #include <config.h>
 #include "nemo-extension-config-widget.h"
-#include "nemo-window-slot.h"
+#include "nemo-application.h"
 
 #include <glib.h>
 
@@ -74,13 +74,12 @@ get_button_for_row (GtkWidget *row)
     return ret;
 }
 
-static gboolean
+static void
 on_row_activated (GtkWidget *box, GtkWidget *row, GtkWidget *widget)
 {
     GtkWidget *button = get_button_for_row (row);
 
     gtk_button_clicked (GTK_BUTTON (button));
-    return FALSE;
 }
 
 static void
@@ -141,7 +140,7 @@ detect_extensions (NemoExtensionConfigWidget *widget)
             g_free (out);
 
             int i;
-            for (i = 0; i < (int)g_strv_length (lines) - 1; i++) {
+            for (i = 0; i < g_strv_length (lines); i++) {
                 if (g_str_has_prefix (lines[i], LINE_PREFIX)) {
                     ExtensionProxy *p = g_slice_new0 (ExtensionProxy);
 
@@ -287,18 +286,13 @@ on_disable_clicked (GtkWidget *button, NemoExtensionConfigWidget *widget)
 static void
 on_restart_clicked (GtkWidget *button, NemoExtensionConfigWidget *widget)
 {
-    NemoWindowSlot *slot = nemo_window_get_active_slot (widget->view_window);
+    /* TODO: We should be able to get existing window locations and geometry out of
+     * gtk_application_get_windows() and restore them with the proper window geometry
+     * and locations opened when restarting... dual pane, multiple tabs will probably
+     * not be possible or exceedingly tedious, but we can cover the default view in
+     * each window. */
 
-    gchar *path = NULL;
-    GFile *location = nemo_window_slot_get_location (slot);
-
-    path = g_file_get_path (location);
-    gchar *cmd = g_strdup_printf ("sh -c \"nemo --quit && sleep 1 && nemo %s\"", path);
-    g_object_unref (location);
-    g_free (path);
-
-    g_spawn_command_line_async (cmd, NULL);
-    g_free (cmd);
+    g_spawn_command_line_async ("sh -c \"nemo --quit && sleep 1 && nemo\"", NULL);
 }
 
 static void

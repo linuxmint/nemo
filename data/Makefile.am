@@ -28,7 +28,7 @@ mime_DATA = $(xml_files)
 servicedir = $(datadir)/dbus-1/services
 service_DATA = $(service_in_files:.service.in=.service)
 service_in_files = 				\
-	org.freedesktop.FileManager1.service.in	\
+	org.nemo.freedesktop.FileManager1.service.in	\
 	org.Nemo.service.in		\
 	org.Nemo.SearchProvider.service.in
 

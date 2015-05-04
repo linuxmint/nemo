@@ -279,7 +279,7 @@ static void
 action_plugins_callback (GtkAction *action, 
                          gpointer user_data)
 {
-    nemo_plugin_manager_show (NEMO_WINDOW (user_data));
+    nemo_plugin_manager_show ();
 }
 
 static void
