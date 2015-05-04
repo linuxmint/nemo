@@ -2904,6 +2904,8 @@ nemo_view_destroy (GtkWidget *object)
 		view->details->directory_as_file = NULL;
 	}
 
+    g_signal_handlers_disconnect_by_func (nemo_plugin_preferences, G_CALLBACK (plugin_prefs_changed), view);
+
 	GTK_WIDGET_CLASS (nemo_view_parent_class)->destroy (object);
 }
 

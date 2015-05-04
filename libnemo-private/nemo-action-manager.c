@@ -336,6 +336,8 @@ nemo_action_manager_dispose (GObject *object)
         nemo_directory_list_free (copy);
     }
 
+    g_signal_handlers_disconnect_by_func (nemo_plugin_preferences, G_CALLBACK (plugin_prefs_changed), action_manager);
+
     G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
