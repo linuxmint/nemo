@@ -51,7 +51,7 @@ AC_PROG_MAKE_SET
 LT_PREREQ([2.2])
 LT_INIT([disable-static])
 
-AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+PKG_PROG_PKG_CONFIG
 
 AC_CHECK_LIB(m, floor)
 
