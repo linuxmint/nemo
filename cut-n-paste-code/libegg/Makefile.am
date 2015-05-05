@@ -2,7 +2,7 @@ NULL=
 
 noinst_LTLIBRARIES = libegg.la
 
-INCLUDES = $(BASE_CFLAGS)
+AM_CPPFLAGS = $(BASE_CFLAGS)
 
 EGG_TREE_DND_FILES = 		\
 	eggtreemultidnd.c	\
