@@ -5,10 +5,11 @@ CONFIGURE_EXTRA_FLAGS = --libexecdir=/usr/lib/nemo \
 			--enable-gtk-doc
 
 export LDFLAGS+=-Wl,-z,defs -Wl,-O1 -Wl,--as-needed
+export V=1
 
 
 %:
-	dh $@ --parallel --with autoreconf
+	dh $@ --parallel --with autoreconf,gir
 
 override_dh_autoreconf:
 	NOCONFIGURE=yes dh_autoreconf --as-needed -- ./autogen.sh
