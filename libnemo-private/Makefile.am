@@ -2,7 +2,7 @@ include $(top_srcdir)/Makefile.shared
 
 noinst_LTLIBRARIES=libnemo-private.la
 
-INCLUDES = 						\
+AM_CPPFLAGS = 						\
 	-I$(top_srcdir) 				\
 	-I$(top_builddir) 				\
 	-I$(top_srcdir)/cut-n-paste-code		\
