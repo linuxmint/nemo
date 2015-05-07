@@ -30,7 +30,7 @@ Build-Depends: debhelper (>= 8),
                cinnamon-translations,
                python-gi
 Homepage: http://www.github.com/linuxmint/nemo/
-Standards-Version: 3.9.2
+Standards-Version: 3.9.5
 
 Package: nemo
 Architecture: any
