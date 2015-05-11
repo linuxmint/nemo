@@ -45,6 +45,9 @@ struct _NemoProgressUIHandlerPriv {
 
 	GtkWidget *progress_window;
 	GtkWidget *window_vbox;
+
+    GtkWidget *list;
+
 	guint active_infos;
     guint active_percent;
 	GList *infos;
@@ -53,9 +56,12 @@ struct _NemoProgressUIHandlerPriv {
     gboolean should_show_status_icon;
 };
 
-G_DEFINE_TYPE (NemoProgressUIHandler, nemo_progress_ui_handler, G_TYPE_OBJECT);
+typedef struct {
+    NemoProgressUIHandler *handler;
+    NemoProgressInfoWidget *widget;
+} InfoChangedData;
 
-#define ACTION_DETAILS "details"
+G_DEFINE_TYPE (NemoProgressUIHandler, nemo_progress_ui_handler, G_TYPE_OBJECT);
 
 static gboolean
 status_icon_button_release_cb (GtkStatusIcon *icon,
@@ -139,9 +145,85 @@ progress_window_delete_event (GtkWidget *widget,
 }
 
 static void
+ensure_first_separator_hidden (NemoProgressUIHandler *self)
+{
+    GList *l = gtk_container_get_children (GTK_CONTAINER (self->priv->list));
+
+    if (l == NULL)
+        return;
+
+    NemoProgressInfoWidgetPriv *priv = NEMO_PROGRESS_INFO_WIDGET (l->data)->priv;
+
+    gtk_widget_hide (GTK_WIDGET (priv->separator));
+
+    g_list_free (l);
+}
+
+static void
+reorder_before_pending_jobs (NemoProgressUIHandler *self, NemoProgressInfoWidget *widget)
+{
+    gint last_running = -1;
+    gint current_index = 0;
+    gint widget_index = 0;
+    GList *iter;
+    GList *l = gtk_container_get_children (GTK_CONTAINER (self->priv->list));
+
+    if (l == NULL)
+        return;
+
+    for (iter = l; iter != NULL; iter = iter->next) {
+        NemoProgressInfoWidgetPriv *priv = NEMO_PROGRESS_INFO_WIDGET (iter->data)->priv;
+
+        if (nemo_progress_info_get_is_started (priv->info) && (iter->data != widget))
+            last_running = current_index;
+
+        if (iter->data == widget)
+            widget_index = current_index; 
+
+        current_index++;
+    }
+
+    g_list_free (l);
+
+    if (last_running == widget_index)
+        return;
+
+    gtk_box_reorder_child (GTK_BOX (self->priv->list), GTK_WIDGET (widget), last_running + 1);
+}
+
+static void
+on_info_started (NemoProgressInfo *info, InfoChangedData *payload) {
+    NemoProgressUIHandler *handler = payload->handler;
+    NemoProgressInfoWidget *widget = payload->widget;
+    NemoProgressInfoWidgetPriv *priv = widget->priv;
+
+    gtk_stack_set_visible_child_name (GTK_STACK (priv->stack), "running");
+
+    reorder_before_pending_jobs (handler, widget);
+}
+
+static void
+on_info_finished (NemoProgressInfo *info, InfoChangedData *payload)
+{
+    NemoProgressInfoWidget *widget = payload->widget;
+
+    nemo_progress_info_widget_unreveal (widget);
+
+    gtk_widget_destroy (GTK_WIDGET (widget));
+
+    ensure_first_separator_hidden (payload->handler);
+
+    g_slice_free (InfoChangedData, payload);
+}
+
+static void
 progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 {
-	GtkWidget *vbox, *progress_window;
+    NemoProgressUIHandlerPriv *priv = NEMO_PROGRESS_UI_HANDLER (self)->priv;
+
+    GtkWidget *main_box, *progress_window;
+    GtkWidget *w, *frame;
+    GtkStyleContext *c;
 
 	if (self->priv->progress_window != NULL) {
 		return;
@@ -162,12 +244,31 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 	gtk_window_set_icon_name (GTK_WINDOW (progress_window),
 				"system-run");
 
-	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-	gtk_box_set_spacing (GTK_BOX (vbox), 5);
+	main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+	gtk_box_set_spacing (GTK_BOX (main_box), 0);
 	gtk_container_add (GTK_CONTAINER (progress_window),
-			   vbox);
-	self->priv->window_vbox = vbox;
-	gtk_widget_show (vbox);
+                       main_box);
+	self->priv->window_vbox = main_box;
+
+    frame = gtk_frame_new (NULL);
+    gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
+
+    c = gtk_widget_get_style_context (frame);
+    gtk_style_context_add_class (c, "view");
+
+    w = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+    priv->list = w;
+    gtk_container_add (GTK_CONTAINER (frame), w);
+
+    g_object_set (priv->list,
+                  "margin-left", 5,
+                  "margin-right", 5,
+                  "margin-top", 5,
+                  "margin-bottom", 5,
+                  NULL);
+
+    gtk_box_pack_start (GTK_BOX (main_box), frame, FALSE, FALSE, 0);
+    gtk_widget_show_all (main_box);
 
 	g_signal_connect (progress_window,
 			  "delete-event",
@@ -179,20 +280,35 @@ progress_ui_handler_add_to_window (NemoProgressUIHandler *self,
 				   NemoProgressInfo *info)
 {
 	GtkWidget *progress;
-    GtkWidget *sep;
 
 	progress = nemo_progress_info_widget_new (info);
+    NemoProgressInfoWidgetPriv *priv = NEMO_PROGRESS_INFO_WIDGET (progress)->priv;
+
 	progress_ui_handler_ensure_window (self);
 
-    sep = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+    if (!gtk_widget_get_visible (self->priv->progress_window))
+        gtk_window_present (GTK_WINDOW (self->priv->progress_window));
 
-    gtk_box_pack_start (GTK_BOX (self->priv->window_vbox), sep, FALSE, FALSE, 0);
+    gboolean started = nemo_progress_info_get_is_started (info);
 
-	gtk_box_pack_start (GTK_BOX (self->priv->window_vbox),
-			    progress,
-			    FALSE, FALSE, 6);
+    gtk_stack_set_visible_child_name (GTK_STACK (priv->stack), started ? "running" : "pending");
 
-	gtk_widget_show (progress);	
+    gtk_box_pack_start (GTK_BOX (self->priv->list), progress, FALSE, FALSE, 0);
+    gtk_widget_show (progress);
+
+    if (self->priv->active_infos == 1)
+        gtk_widget_hide (priv->separator);
+
+    nemo_progress_info_widget_reveal (NEMO_PROGRESS_INFO_WIDGET (progress));
+
+    InfoChangedData *payload = g_slice_new0 (InfoChangedData);
+    payload->handler = self;
+    payload->widget = NEMO_PROGRESS_INFO_WIDGET (progress);
+
+    g_signal_connect (info, "started", G_CALLBACK (on_info_started), payload);
+    g_signal_connect (info, "finished", G_CALLBACK (on_info_finished), payload);
+
+    ensure_first_separator_hidden (self);
 }
 
 static void
@@ -281,7 +397,6 @@ handle_new_progress_info (NemoProgressUIHandler *self,
 	if (self->priv->active_infos == 1) {
 		/* this is the only active operation, present the window */
 		progress_ui_handler_add_to_window (self, info);
-		gtk_window_present (GTK_WINDOW (self->priv->progress_window));
 		gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), nemo_progress_info_get_details(info));
 		gtk_window_set_icon_name (GTK_WINDOW (self->priv->progress_window), "system-run");			     
 	} else {
@@ -374,9 +489,8 @@ new_progress_info_cb (NemoProgressInfoManager *manager,
 		      NemoProgressInfo *info,
 		      NemoProgressUIHandler *self)
 {
-        g_printerr ("running %s\n", G_STRFUNC);
-	g_signal_connect (info, "queued",
-			  G_CALLBACK (progress_info_queued_cb), self);
+    g_signal_connect (info, "queued",
+                      G_CALLBACK (progress_info_queued_cb), self);
 }
 
 static void

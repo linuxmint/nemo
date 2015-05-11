@@ -120,7 +120,7 @@ nemo_progress_info_manager_new (void)
 void
 nemo_progress_info_manager_add_new_info (NemoProgressInfoManager *self,
 					     NemoProgressInfo *info)
-{    g_printerr ("running %s\n", G_STRFUNC);
+{
 	if (g_list_find (self->priv->progress_infos, info) != NULL) {
 		g_warning ("Adding two times the same progress info object to the manager");
 		return;

@@ -52,6 +52,7 @@ struct _NemoProgressInfo
 	
 	char *status;
 	char *details;
+    char *initial_details;
 	double progress;
 	gboolean activity_mode;
 	gboolean started;
@@ -87,6 +88,7 @@ nemo_progress_info_finalize (GObject *object)
 
 	g_free (info->status);
 	g_free (info->details);
+    g_free (info->initial_details);
 	g_object_unref (info->cancellable);
 	
 	if (G_OBJECT_CLASS (nemo_progress_info_parent_class)->finalize) {
@@ -184,7 +186,6 @@ nemo_progress_info_init (NemoProgressInfo *info)
 NemoProgressInfo *
 nemo_progress_info_new (void)
 {
-    g_printerr ("running %s\n", G_STRFUNC);
 	NemoProgressInfo *info;
 	
 	info = g_object_new (NEMO_TYPE_PROGRESS_INFO, NULL);
@@ -226,6 +227,24 @@ nemo_progress_info_get_details (NemoProgressInfo *info)
 	G_UNLOCK (progress_info);
 
 	return res;
+}
+
+char *
+nemo_progress_info_get_initial_details (NemoProgressInfo *info)
+{
+    char *res;
+    
+    G_LOCK (progress_info);
+    
+    if (info->initial_details) {
+        res = g_strdup (info->initial_details);
+    } else {
+        res = g_strdup (_("Preparing"));
+    }
+    
+    G_UNLOCK (progress_info);
+
+    return res;
 }
 
 double
@@ -363,7 +382,6 @@ idle_callback (gpointer data)
 	G_UNLOCK (progress_info);
 	
 	if (start_at_idle) {
-        g_printerr ("EMITTING>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 		g_signal_emit (info,
 			       signals[STARTED],
 			       0);
@@ -463,7 +481,6 @@ nemo_progress_info_resume (NemoProgressInfo *info)
 void
 nemo_progress_info_start (NemoProgressInfo *info)
 {
-        g_printerr ("running %s\n", G_STRFUNC);
 	G_LOCK (progress_info);
 	
 	if (!info->started) {
@@ -562,6 +579,23 @@ nemo_progress_info_set_details (NemoProgressInfo *info,
 	}
   
 	G_UNLOCK (progress_info);
+}
+
+void
+nemo_progress_info_set_initial_details (NemoProgressInfo *info,
+                                    const char           *initial_details)
+{
+    G_LOCK (progress_info);
+    
+    if (g_strcmp0 (info->initial_details, initial_details) != 0) {
+        g_free (info->initial_details);
+        info->initial_details = g_strdup (initial_details);
+        
+        info->changed_at_idle = TRUE;
+        queue_idle (info, FALSE);
+    }
+  
+    G_UNLOCK (progress_info);
 }
 
 void
