@@ -4,7 +4,7 @@ include $(top_srcdir)/Makefile.shared
 
 lib_LTLIBRARIES=libnemo-extension.la
 
-INCLUDES=\
+AM_CPPFLAGS =\
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
 	$(BASE_CFLAGS) \
