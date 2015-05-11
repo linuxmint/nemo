@@ -8422,8 +8422,13 @@ real_merge_menus (NemoView *view)
 	gtk_ui_manager_insert_action_group (ui_manager, action_group, -1);
 	g_object_unref (action_group); /* owned by ui manager */
 
-	view->details->dir_merge_id = gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-directory-view-ui.xml", NULL);
-	
+	if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS)) {
+		view->details->dir_merge_id = gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-directory-view-ui.xml", NULL);
+	}
+	else {
+		view->details->dir_merge_id = gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-directory-view-ui-light.xml", NULL);
+	}
+
 	view->details->scripts_invalid = TRUE;
 	view->details->templates_invalid = TRUE;
     view->details->actions_invalid = TRUE;
@@ -9635,8 +9640,7 @@ real_update_menus (NemoView *view)
 					      NEMO_ACTION_RESTORE_FROM_TRASH);
 	update_restore_from_trash_action (action, selection, FALSE);
 	
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_DUPLICATE);
+	action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_DUPLICATE);
 	gtk_action_set_sensitive (action, can_duplicate_files);
     gtk_action_set_visible (action, !selection_contains_recent);
 
