@@ -223,7 +223,6 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 
     GtkWidget *main_box, *progress_window;
     GtkWidget *w, *frame;
-    GtkStyleContext *c;
 
 	if (self->priv->progress_window != NULL) {
 		return;
@@ -245,16 +244,12 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 				"system-run");
 
 	main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-	gtk_box_set_spacing (GTK_BOX (main_box), 0);
 	gtk_container_add (GTK_CONTAINER (progress_window),
                        main_box);
 	self->priv->window_vbox = main_box;
 
     frame = gtk_frame_new (NULL);
-    gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
-
-    c = gtk_widget_get_style_context (frame);
-    gtk_style_context_add_class (c, "view");
+    gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_NONE);
 
     w = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
     priv->list = w;

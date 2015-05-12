@@ -98,7 +98,6 @@ static void
 nemo_progress_info_widget_constructed (GObject *obj)
 {
 	GtkWidget *label, *progress_bar, *hbox, *button, *view, *bb, *revealer_box;
-    GtkStyleContext *c;
 	NemoProgressInfoWidget *self = NEMO_PROGRESS_INFO_WIDGET (obj);
     NemoProgressInfoWidgetPriv *priv = NEMO_PROGRESS_INFO_WIDGET (obj)->priv;
 
@@ -132,7 +131,20 @@ nemo_progress_info_widget_constructed (GObject *obj)
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start (GTK_BOX (view), hbox, TRUE, TRUE, 0);
 
-    label = gtk_label_new (nemo_progress_info_get_initial_details (self->priv->info));
+    gchar *initial_details = nemo_progress_info_get_initial_details (self->priv->info);
+    gchar *markup = g_markup_printf_escaped ("<span size='small'>%s</span>", initial_details);
+
+    label = gtk_label_new (NULL);
+    gtk_label_set_markup (GTK_LABEL (label), markup);
+
+    g_free (initial_details);
+    g_free (markup);
+
+    gtk_widget_set_size_request (label, 300, -1);
+    gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+    gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
+    gtk_label_set_max_width_chars (GTK_LABEL (label), 60);
+    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
     gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 2);
     priv->pre_info = label;
 
@@ -142,15 +154,13 @@ nemo_progress_info_widget_constructed (GObject *obj)
     gtk_box_pack_end (GTK_BOX (hbox), bb, FALSE, FALSE, 0);
 
     button = gtk_button_new_from_icon_name (START_ICON, GTK_ICON_SIZE_BUTTON);
-    c = gtk_widget_get_style_context (button);
-    gtk_style_context_add_class (c, GTK_STYLE_CLASS_FLAT);
+    gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
 
     gtk_container_add(GTK_CONTAINER (bb), button);
     g_signal_connect (button, "clicked", G_CALLBACK (start_clicked), self);
 
     button = gtk_button_new_from_icon_name (STOP_ICON, GTK_ICON_SIZE_BUTTON);
-    c = gtk_widget_get_style_context (button);
-    gtk_style_context_add_class (c, GTK_STYLE_CLASS_FLAT);
+    gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
 
     gtk_container_add (GTK_CONTAINER (bb), button);
     g_signal_connect (button, "clicked", G_CALLBACK (cancel_clicked), self);
@@ -163,10 +173,11 @@ nemo_progress_info_widget_constructed (GObject *obj)
     gtk_stack_add_named (GTK_STACK (priv->stack), view, "running");
 
 	label = gtk_label_new ("status");
-	gtk_widget_set_size_request (label, 500, -1);
+    gtk_widget_set_size_request (label, 300, -1);
 	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
 	gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
-	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    gtk_label_set_max_width_chars (GTK_LABEL (label), 60);
+    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
 	gtk_box_pack_start (GTK_BOX (view),
 			    label,
 			    TRUE, FALSE,
@@ -179,7 +190,7 @@ nemo_progress_info_widget_constructed (GObject *obj)
 	progress_bar = gtk_progress_bar_new ();
 	priv->progress_bar = progress_bar;
 	gtk_progress_bar_set_pulse_step (GTK_PROGRESS_BAR (progress_bar), 0.05);
-    gtk_widget_set_valign (progress_bar, GTK_ALIGN_START);
+    gtk_widget_set_valign (progress_bar, GTK_ALIGN_CENTER);
 	gtk_box_pack_start(GTK_BOX (hbox),
 			   progress_bar,
 			   TRUE, TRUE,
@@ -190,15 +201,13 @@ nemo_progress_info_widget_constructed (GObject *obj)
     gtk_box_pack_end (GTK_BOX (hbox), bb, FALSE, FALSE, 0);
 
     button = gtk_button_new_from_icon_name (START_ICON, GTK_ICON_SIZE_BUTTON);
-    c = gtk_widget_get_style_context (button);
-    gtk_style_context_add_class (c, GTK_STYLE_CLASS_FLAT);
+    gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
 
     gtk_container_add(GTK_CONTAINER (bb), button);
     gtk_widget_set_sensitive (button, FALSE);
 
 	button = gtk_button_new_from_icon_name (STOP_ICON, GTK_ICON_SIZE_BUTTON);
-    c = gtk_widget_get_style_context (button);
-    gtk_style_context_add_class (c, GTK_STYLE_CLASS_FLAT);
+    gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
 
     gtk_container_add (GTK_CONTAINER (bb), button);
     g_signal_connect (button, "clicked", G_CALLBACK (cancel_clicked), self);
