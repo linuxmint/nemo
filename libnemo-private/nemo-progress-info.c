@@ -582,17 +582,19 @@ nemo_progress_info_set_details (NemoProgressInfo *info,
 }
 
 void
-nemo_progress_info_set_initial_details (NemoProgressInfo *info,
-                                    const char           *initial_details)
+nemo_progress_info_take_initial_details (NemoProgressInfo *info,
+                                                     char *initial_details)
 {
     G_LOCK (progress_info);
     
     if (g_strcmp0 (info->initial_details, initial_details) != 0) {
         g_free (info->initial_details);
-        info->initial_details = g_strdup (initial_details);
+        info->initial_details = initial_details;
         
         info->changed_at_idle = TRUE;
         queue_idle (info, FALSE);
+    } else {
+        g_free (initial_details);
     }
   
     G_UNLOCK (progress_info);

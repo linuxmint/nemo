@@ -1,26 +1,23 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+
 /*
- * Nemo
- *
- * Copyright (C) 2011 Red Hat, Inc.
- *
- * Nemo is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the
- * License, or (at your option) any later version.
- *
- * Nemo is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public
- * License along with this program; see the file COPYING.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
- *
- * Author: Cosimo Cecchi <cosimoc@redhat.com>
- */
+   nemo-job-queue.c - file operation queue
+
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License as
+   published by the Free Software Foundation; either version 2 of the
+   License, or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public
+   License along with this program; if not, write to the
+   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
+   Boston, MA 02110-1335, USA.
+*/
 
 #include <config.h>
 
@@ -148,6 +145,8 @@ job_finished_cb (NemoJobQueue *self,
     nemo_job_queue_start_next_job (self);
 }
 
+static void start_job (NemoJobQueue *self, Job *job);
+
 NemoJobQueue *
 nemo_job_queue_get (void)
 {
@@ -159,7 +158,8 @@ nemo_job_queue_add_new_job (NemoJobQueue *self,
                             GIOSchedulerJobFunc job_func,
                             gpointer user_data,
                             GCancellable *cancellable,
-                            NemoProgressInfo *info)
+                            NemoProgressInfo *info,
+                            gboolean skip_queue)
 {
 	if (g_list_find_custom (self->priv->queued_jobs, user_data, (GCompareFunc) compare_job_data_func) != NULL) {
 		g_warning ("Adding the same file job object to the job queue");
@@ -180,7 +180,10 @@ nemo_job_queue_add_new_job (NemoJobQueue *self,
 	g_signal_connect_swapped (info, "finished",
                               G_CALLBACK (job_finished_cb), self);
 
-    nemo_job_queue_start_next_job (self);
+    if (skip_queue)
+        start_job (self, new_job);
+    else
+        nemo_job_queue_start_next_job (self);
 
 	g_signal_emit (self, signals[NEW_JOB], 0, NULL);
 }

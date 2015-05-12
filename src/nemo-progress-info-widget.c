@@ -132,10 +132,7 @@ nemo_progress_info_widget_constructed (GObject *obj)
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start (GTK_BOX (view), hbox, TRUE, TRUE, 0);
 
-    label = gtk_label_new (_("Queued operation: "));
-    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 2);
-
-    label = gtk_label_new ("pre-info");
+    label = gtk_label_new (nemo_progress_info_get_initial_details (self->priv->info));
     gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 2);
     priv->pre_info = label;
 
