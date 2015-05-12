@@ -228,75 +228,6 @@ nemo_file_management_properties_size_group_create (GtkBuilder *builder,
 }
 
 static void
-preferences_show_help (GtkWindow *parent,
-		       char const *helpfile,
-		       char const *sect_id)
-{
-	GError *error = NULL;
-	GtkWidget *dialog;
-	char *help_string;
-
-	g_assert (helpfile != NULL);
-	g_assert (sect_id != NULL);
-
-	help_string = g_strdup_printf ("help:%s/%s", helpfile, sect_id);
-
-	gtk_show_uri (gtk_window_get_screen (parent),
-		      help_string, gtk_get_current_event_time (),
-		      &error);
-	g_free (help_string);
-
-	if (error) {
-		dialog = gtk_message_dialog_new (GTK_WINDOW (parent),
-						 GTK_DIALOG_DESTROY_WITH_PARENT,
-						 GTK_MESSAGE_ERROR,
-						 GTK_BUTTONS_OK,
-						 _("There was an error displaying help: \n%s"),
-						 error->message);
-
-		g_signal_connect (G_OBJECT (dialog),
-				  "response", G_CALLBACK (gtk_widget_destroy),
-				  NULL);
-		gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
-		gtk_widget_show (dialog);
-		g_error_free (error);
-	}
-}
-
-
-static void
-nemo_file_management_properties_dialog_response_cb (GtkDialog *parent,
-							int response_id,
-							GtkBuilder *builder)
-{
-	char *section;
-
-	if (response_id == GTK_RESPONSE_HELP) {
-		switch (gtk_notebook_get_current_page (GTK_NOTEBOOK (gtk_builder_get_object (builder, "notebook1")))) {
-		default:
-		case 0:
-			section = "nemo-views";
-			break;
-		case 1:
-			section = "nemo-behavior";
-			break;
-		case 2:
-			section = "nemo-display";
-			break;
-		case 3:
-			section = "nemo-list";
-			break;
-		case 4:
-			section = "nemo-preview";
-			break;
-		}
-		preferences_show_help (GTK_WINDOW (parent), "gnome-help", section);
-	} else if (response_id == GTK_RESPONSE_CLOSE) {
-		gtk_widget_destroy (GTK_WIDGET (parent));
-	}
-}
-
-static void
 columns_changed_callback (NemoColumnChooser *chooser,
 			  gpointer callback_data)
 {
@@ -1022,11 +953,6 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 
 	/* UI callbacks */
 	dialog = GTK_WIDGET (gtk_builder_get_object (builder, "file_management_dialog"));
-	g_signal_connect_data (dialog, "response",
-			       G_CALLBACK (nemo_file_management_properties_dialog_response_cb),
-			       g_object_ref (builder),
-			       (GClosureNotify)g_object_unref,
-			       0);
 	g_signal_connect (dialog, "delete-event",
 			  G_CALLBACK (gtk_widget_destroy), NULL);
 
