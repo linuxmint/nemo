@@ -920,6 +920,48 @@ f (const char *format, ...) {
 }
 
 static void
+get_best_name (GFile *file, gchar **name)
+{
+    gchar *out;
+
+    if (g_file_is_native (file)) {
+        gchar *path = g_file_get_path (file);
+
+        if (g_str_has_prefix (path, g_get_home_dir ())) {
+            GString *str = g_string_new (path);
+            str = g_string_erase (str, 0, strlen (g_get_home_dir ()));
+            str = g_string_prepend (str, "~");
+
+            out = g_string_free (str, FALSE);
+        } else {
+            out = g_strdup (path);
+        }
+
+        g_free (path);
+    } else {
+        out = g_file_get_basename (file);
+    }
+
+    *name = out;
+}
+
+static void
+get_parent_name (GFile *file, gchar **name)
+{
+    GFile *parent = g_file_get_parent (file);
+
+    if (!parent)
+        return;
+
+    gchar *get = NULL;
+    get_best_name (parent, &get);
+
+    g_object_unref (parent);
+
+    *name = get;
+}
+
+static void
 generate_initial_job_details (NemoProgressInfo *info,
                               OpKind            kind,
                               GList            *files,
@@ -929,13 +971,16 @@ generate_initial_job_details (NemoProgressInfo *info,
     gchar *dest_name = NULL;
     gchar *src_name = NULL;
 
+    if (destination != NULL)
+        get_best_name (destination, &dest_name);
+
+    if (files != NULL)
+        get_parent_name (files->data, &src_name);
+
     switch (kind) {
         case OP_KIND_COPY:
             g_return_if_fail (files != NULL);
             g_return_if_fail (destination != NULL);
-
-            dest_name = g_file_get_path (destination);
-            src_name = g_file_get_path (files->data);
 
             s = f (ngettext("Waiting to copy %'d file from '%s' to '%s'",
                             "Waiting to copy %'d files from '%s' to '%s'",
@@ -946,9 +991,6 @@ generate_initial_job_details (NemoProgressInfo *info,
             g_return_if_fail (files != NULL);
             g_return_if_fail (destination != NULL);
 
-            dest_name = g_file_get_path (destination);
-            src_name = g_file_get_path (files->data);
-
             s = f (ngettext("Waiting to move %'d file from '%s' to '%s'",
                             "Waiting to move %'d files from '%s' to '%s'",
                             g_list_length (files)),
@@ -957,8 +999,6 @@ generate_initial_job_details (NemoProgressInfo *info,
         case OP_KIND_DELETE:
             g_return_if_fail (files != NULL);
 
-            src_name = g_file_get_path (files->data);
-
             s = f (ngettext("Waiting to permanently delete %'d file from '%s'",
                             "Waiting to permanently delete %'d files from '%s'",
                             g_list_length (files)),
@@ -966,8 +1006,6 @@ generate_initial_job_details (NemoProgressInfo *info,
             break;
         case OP_KIND_TRASH:
             g_return_if_fail (files != NULL);
-
-            src_name = g_file_get_path (files->data);
 
             s = f (ngettext("Waiting to trash %'d file in '%s'",
                             "Waiting to trash %'d files in '%s'",
@@ -981,8 +1019,6 @@ generate_initial_job_details (NemoProgressInfo *info,
             g_return_if_fail (files != NULL);
             g_return_if_fail (destination != NULL);
 
-            dest_name = g_file_get_path (destination);
-
             s = f (ngettext("Waiting to duplicate %'d file in '%s'",
                             "Waiting to duplicate %'d files in '%s'",
                             g_list_length (files)),
@@ -991,16 +1027,11 @@ generate_initial_job_details (NemoProgressInfo *info,
         case OP_KIND_PERMISSIONS:
             g_return_if_fail (destination != NULL);
 
-            dest_name = g_file_get_path (destination);
-
             s = f (_("Waiting to change permissions of files in '%s'"), dest_name);
             break;
         case OP_KIND_LINK:
             g_return_if_fail (files != NULL);
             g_return_if_fail (destination != NULL);
-
-            dest_name = g_file_get_path (destination);
-            src_name = g_file_get_path (files->data);
 
             s = f (ngettext("Waiting to link %'d file from '%s' to '%s'",
                             "Waiting to link %'d files from '%s' to '%s'",
