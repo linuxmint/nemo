@@ -205,6 +205,7 @@ on_info_started (NemoProgressInfo *info, InfoChangedData *payload) {
 static void
 on_info_finished (NemoProgressInfo *info, InfoChangedData *payload)
 {
+    NemoProgressUIHandler *handler = payload->handler;
     NemoProgressInfoWidget *widget = payload->widget;
 
     nemo_progress_info_widget_unreveal (widget);
@@ -212,6 +213,10 @@ on_info_finished (NemoProgressInfo *info, InfoChangedData *payload)
     gtk_widget_destroy (GTK_WIDGET (widget));
 
     ensure_first_separator_hidden (payload->handler);
+
+    gint width;
+    gtk_window_get_size (GTK_WINDOW (handler->priv->progress_window), &width, NULL);
+    gtk_window_resize (GTK_WINDOW (handler->priv->progress_window), width, 1);
 
     g_slice_free (InfoChangedData, payload);
 }
@@ -230,10 +235,9 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 	
 	progress_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	self->priv->progress_window = progress_window;
-	gtk_window_set_resizable (GTK_WINDOW (progress_window),
-				  FALSE);
-	gtk_container_set_border_width (GTK_CONTAINER (progress_window), 10);
- 
+
+    gtk_window_set_default_size (GTK_WINDOW (progress_window), 400, -1);
+
 	gtk_window_set_title (GTK_WINDOW (progress_window),
 			      _("File Operations"));
 	gtk_window_set_wmclass (GTK_WINDOW (progress_window),
@@ -243,7 +247,7 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 	gtk_window_set_icon_name (GTK_WINDOW (progress_window),
 				"system-run");
 
-	main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+	main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
 	gtk_container_add (GTK_CONTAINER (progress_window),
                        main_box);
 	self->priv->window_vbox = main_box;
