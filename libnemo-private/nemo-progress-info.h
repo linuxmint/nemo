@@ -56,6 +56,7 @@ GList *       nemo_get_all_progress_info (void);
 
 char *        nemo_progress_info_get_status      (NemoProgressInfo *info);
 char *        nemo_progress_info_get_details     (NemoProgressInfo *info);
+char *        nemo_progress_info_get_initial_details (NemoProgressInfo *info);
 double        nemo_progress_info_get_progress    (NemoProgressInfo *info);
 GCancellable *nemo_progress_info_get_cancellable (NemoProgressInfo *info);
 void          nemo_progress_info_cancel          (NemoProgressInfo *info);
@@ -63,6 +64,7 @@ gboolean      nemo_progress_info_get_is_started  (NemoProgressInfo *info);
 gboolean      nemo_progress_info_get_is_finished (NemoProgressInfo *info);
 gboolean      nemo_progress_info_get_is_paused   (NemoProgressInfo *info);
 
+void          nemo_progress_info_queue           (NemoProgressInfo *info);
 void          nemo_progress_info_start           (NemoProgressInfo *info);
 void          nemo_progress_info_finish          (NemoProgressInfo *info);
 void          nemo_progress_info_pause           (NemoProgressInfo *info);
@@ -73,6 +75,8 @@ void          nemo_progress_info_take_status     (NemoProgressInfo *info,
 						      char                 *status);
 void          nemo_progress_info_set_details     (NemoProgressInfo *info,
 						      const char           *details);
+void          nemo_progress_info_set_initial_details (NemoProgressInfo *info,
+                              const char           *initial_details);
 void          nemo_progress_info_take_details    (NemoProgressInfo *info,
 						      char                 *details);
 void          nemo_progress_info_set_progress    (NemoProgressInfo *info,

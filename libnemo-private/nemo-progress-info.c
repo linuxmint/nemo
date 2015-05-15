@@ -33,6 +33,7 @@
 
 enum {
   CHANGED,
+  QUEUED,
   PROGRESS_CHANGED,
   STARTED,
   FINISHED,
@@ -51,11 +52,13 @@ struct _NemoProgressInfo
 	
 	char *status;
 	char *details;
+    char *initial_details;
 	double progress;
 	gboolean activity_mode;
 	gboolean started;
 	gboolean finished;
 	gboolean paused;
+    gboolean queued;
 	
 	GSource *idle_source;
 	gboolean source_is_now;
@@ -64,6 +67,7 @@ struct _NemoProgressInfo
 	gboolean finish_at_idle;
 	gboolean changed_at_idle;
 	gboolean progress_at_idle;
+    gboolean queue_at_idle;
 };
 
 struct _NemoProgressInfoClass
@@ -84,6 +88,7 @@ nemo_progress_info_finalize (GObject *object)
 
 	g_free (info->status);
 	g_free (info->details);
+    g_free (info->initial_details);
 	g_object_unref (info->cancellable);
 	
 	if (G_OBJECT_CLASS (nemo_progress_info_parent_class)->finalize) {
@@ -128,6 +133,15 @@ nemo_progress_info_class_init (NemoProgressInfoClass *klass)
 			      g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 	
+    signals[QUEUED] =
+        g_signal_new ("queued",
+                  NEMO_TYPE_PROGRESS_INFO,
+                  G_SIGNAL_RUN_LAST,
+                  0,
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
+
 	signals[PROGRESS_CHANGED] =
 		g_signal_new ("progress-changed",
 			      NEMO_TYPE_PROGRESS_INFO,
@@ -213,6 +227,24 @@ nemo_progress_info_get_details (NemoProgressInfo *info)
 	G_UNLOCK (progress_info);
 
 	return res;
+}
+
+char *
+nemo_progress_info_get_initial_details (NemoProgressInfo *info)
+{
+    char *res;
+    
+    G_LOCK (progress_info);
+    
+    if (info->initial_details) {
+        res = g_strdup (info->initial_details);
+    } else {
+        res = g_strdup (_("Preparing"));
+    }
+    
+    G_UNLOCK (progress_info);
+
+    return res;
 }
 
 double
@@ -307,6 +339,7 @@ idle_callback (gpointer data)
 	gboolean finish_at_idle;
 	gboolean changed_at_idle;
 	gboolean progress_at_idle;
+    gboolean queue_at_idle;
 	GSource *source;
 
 	source = g_main_current_source ();
@@ -338,11 +371,13 @@ idle_callback (gpointer data)
 	finish_at_idle = info->finish_at_idle;
 	changed_at_idle = info->changed_at_idle;
 	progress_at_idle = info->progress_at_idle;
+    queue_at_idle = info->queue_at_idle;
 	
 	info->start_at_idle = FALSE;
 	info->finish_at_idle = FALSE;
 	info->changed_at_idle = FALSE;
 	info->progress_at_idle = FALSE;
+    info->queue_at_idle = FALSE;
 	
 	G_UNLOCK (progress_info);
 	
@@ -370,6 +405,12 @@ idle_callback (gpointer data)
 			       0);
 	}
 	
+    if (queue_at_idle) {
+        g_signal_emit (info,
+                   signals[QUEUED],
+                   0);
+    }
+
 	g_object_unref (info);
 	
 	return FALSE;
@@ -396,6 +437,21 @@ queue_idle (NemoProgressInfo *info, gboolean now)
 		g_source_set_callback (info->idle_source, idle_callback, info, NULL);
 		g_source_attach (info->idle_source, NULL);
 	}
+}
+
+void
+nemo_progress_info_queue (NemoProgressInfo *info)
+{
+    G_LOCK (progress_info);
+    
+    if (!info->queued) {
+        info->queued = TRUE;
+        
+        info->queue_at_idle = TRUE;
+        queue_idle (info, TRUE);
+    }
+    
+    G_UNLOCK (progress_info);
 }
 
 void
@@ -523,6 +579,25 @@ nemo_progress_info_set_details (NemoProgressInfo *info,
 	}
   
 	G_UNLOCK (progress_info);
+}
+
+void
+nemo_progress_info_take_initial_details (NemoProgressInfo *info,
+                                                     char *initial_details)
+{
+    G_LOCK (progress_info);
+    
+    if (g_strcmp0 (info->initial_details, initial_details) != 0) {
+        g_free (info->initial_details);
+        info->initial_details = initial_details;
+        
+        info->changed_at_idle = TRUE;
+        queue_idle (info, FALSE);
+    } else {
+        g_free (initial_details);
+    }
+  
+    G_UNLOCK (progress_info);
 }
 
 void
