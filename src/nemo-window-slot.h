@@ -72,6 +72,7 @@ struct NemoWindowSlot {
 
 	GtkWidget *view_overlay;
 	GtkWidget *floating_bar;
+    GtkWidget *cache_bar;
 
 	guint set_status_timeout_id;
 	guint loading_timeout_id;
@@ -191,5 +192,7 @@ gboolean nemo_window_slot_should_close_with_mount (NemoWindowSlot *slot,
 
 void nemo_window_slot_clear_forward_list (NemoWindowSlot *slot);
 void nemo_window_slot_clear_back_list    (NemoWindowSlot *slot);
+
+void nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot);
 
 #endif /* NEMO_WINDOW_SLOT_H */

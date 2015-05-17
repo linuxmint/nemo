@@ -39,6 +39,8 @@
 #include "nemo-trash-bar.h"
 #include "nemo-view-factory.h"
 #include "nemo-x-content-bar.h"
+#include "nemo-interesting-folder-bar.h"
+#include "nemo-thumbnail-problem-bar.h"
 #include <eel/eel-accessibility.h>
 #include <eel/eel-debug.h>
 #include <eel/eel-glib-extensions.h>
@@ -1456,6 +1458,8 @@ update_for_new_location (NemoWindowSlot *slot)
 
         maybe_show_interesting_folder_bar (slot);
 
+        nemo_window_slot_check_bad_cache_bar (slot);
+
 		/* need the mount to determine if we should put up the x-content cluebar */
 		if (slot->find_mount_cancellable != NULL) {
 			g_cancellable_cancel (slot->find_mount_cancellable);
@@ -1882,4 +1886,28 @@ nemo_window_slot_reload (NemoWindowSlot *slot)
         g_free (current_pos);
 	g_object_unref (location);
 	g_list_free_full (selection, g_object_unref);
+}
+
+void
+nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot)
+{
+    if (NEMO_IS_DESKTOP_WINDOW (nemo_window_slot_get_window (slot)))
+        return;
+
+    if (nemo_application_get_cache_bad (nemo_application_get_singleton ())) {
+        if (slot->cache_bar != NULL) {
+            gtk_widget_show (slot->cache_bar);
+        } else {
+            GtkWidget *bad_bar = nemo_thumbnail_problem_bar_new (nemo_window_slot_get_current_view (slot));
+            if (bad_bar) {
+                gtk_widget_show (bad_bar);
+                nemo_window_slot_add_extra_location_widget (slot, bad_bar);
+                slot->cache_bar = bad_bar;
+            }
+        }
+    } else {
+        if (slot->cache_bar != NULL) {
+            gtk_widget_hide (slot->cache_bar);
+        }
+    }
 }

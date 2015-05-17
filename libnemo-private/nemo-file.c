@@ -67,6 +67,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #ifdef HAVE_SELINUX
 #include <selinux/selinux.h>
@@ -2105,6 +2106,17 @@ update_links_if_target (NemoFile *target_file)
 }
 
 static gboolean
+access_ok (const gchar *path)
+{
+    if (g_access (path, R_OK|W_OK) != 0) {
+        if (errno != ENOENT)
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
+static gboolean
 update_info_internal (NemoFile *file,
 		      GFileInfo *info,
 		      gboolean update_name)
@@ -2146,6 +2158,8 @@ update_info_internal (NemoFile *file,
 	}
 
 	file->details->file_info_is_up_to_date = TRUE;
+
+    file->details->thumbnail_access_problem = FALSE;
 
 	/* FIXME bugzilla.gnome.org 42044: Need to let links that
 	 * point to the old name know that the file has been renamed.
@@ -2435,10 +2449,16 @@ update_info_internal (NemoFile *file,
 	}
 
 	thumbnail_path =  g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
+
 	if (g_strcmp0 (file->details->thumbnail_path, thumbnail_path) != 0) {
 		changed = TRUE;
 		g_free (file->details->thumbnail_path);
-		file->details->thumbnail_path = g_strdup (thumbnail_path);
+        if (!access_ok (thumbnail_path)) {
+            file->details->thumbnail_access_problem = TRUE;
+            file->details->thumbnail_path = NULL;
+        } else {
+            file->details->thumbnail_path = g_strdup (thumbnail_path);
+        }
 	}
 
 	thumbnailing_failed =  g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_THUMBNAILING_FAILED);
@@ -4024,6 +4044,11 @@ nemo_file_get_filesystem_use_preview (NemoFile *file)
 	return use_preview;
 }
 
+/* This check can be simpler for checking a single file - 
+   if we're running as root, permissions were already fixed at startup.
+   Besides, you'd only have ownership/permission issues with viewing the
+   thumbnail as a normal user */
+
 gboolean
 nemo_file_should_show_thumbnail (NemoFile *file)
 {
@@ -4038,6 +4063,9 @@ nemo_file_should_show_thumbnail (NemoFile *file)
 	    nemo_file_get_size (file) > cached_thumbnail_limit) {
 		return FALSE;
 	}
+
+    if (file->details->thumbnail_access_problem)
+        return FALSE;
 
 	if (show_image_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
 		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
@@ -7575,6 +7603,12 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
     g_string_free (string, FALSE);
 
     return ret;
+}
+
+gboolean
+nemo_file_has_thumbnail_access_problem   (NemoFile *file)
+{
+    return file->details->thumbnail_access_problem;
 }
 
 static void

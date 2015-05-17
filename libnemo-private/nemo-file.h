@@ -502,6 +502,8 @@ char *   nemo_file_get_date_as_string             (NemoFile *file, NemoDateType 
 
 gchar *  nemo_file_construct_tooltip              (NemoFile *file, NemoFileTooltipFlags flags);
 
+gboolean nemo_file_has_thumbnail_access_problem   (NemoFile *file);
+
 /* Debugging */
 void                    nemo_file_dump                              (NemoFile                   *file);
 

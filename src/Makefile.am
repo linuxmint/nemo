@@ -161,6 +161,8 @@ nemo_SOURCES = \
 	nemo-self-check-functions.h 	\
     nemo-statusbar.c    \
     nemo-statusbar.h    \
+    nemo-thumbnail-problem-bar.c  \
+    nemo-thumbnail-problem-bar.h  \
 	nemo-toolbar.c			\
 	nemo-toolbar.h			\
 	nemo-tree-sidebar.c			\

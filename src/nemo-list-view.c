@@ -28,6 +28,7 @@
 #include <config.h>
 #include "nemo-list-view.h"
 
+#include "nemo-application.h"
 #include "nemo-list-model.h"
 #include "nemo-error-reporting.h"
 #include "nemo-view-dnd.h"
@@ -2130,6 +2131,11 @@ static void
 nemo_list_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *directory)
 {
 	NemoListModel *model;
+
+    if (nemo_file_has_thumbnail_access_problem (file)) {
+        nemo_application_set_cache_flag (nemo_application_get_singleton ());
+        nemo_window_slot_check_bad_cache_bar (nemo_view_get_nemo_window_slot (view));
+    }
 
 	model = NEMO_LIST_VIEW (view)->details->model;
 	nemo_list_model_add_file (model, file, directory);
