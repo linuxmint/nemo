@@ -69,10 +69,6 @@
 #include <zeitgeist.h>
 #endif
 
-#ifdef BUILD_ZEITGEIST
-#include <zeitgeist.h>
-#endif
-
 /* TODO: TESTING!!! */
 
 typedef enum {
@@ -1275,7 +1271,7 @@ static gboolean
 can_delete_without_confirm (GFile *file)
 {
 	if (g_file_has_uri_scheme (file, "burn") ||
-		g_file_has_uri_scheme (file, "recent") ||
+	    g_file_has_uri_scheme (file, "recent") ||
 	    g_file_has_uri_scheme (file, "x-nemo-desktop")) {
 		return TRUE;
 	}

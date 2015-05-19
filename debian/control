@@ -28,11 +28,12 @@ Build-Depends: debhelper (>= 8),
                libglib2.0-doc,
                libgtk-3-doc,
                python-polib,
+               cinnamon-translations,
                python-gi,
                libunity-dev (>= 5.0.0),
                libzeitgeist-dev
 Homepage: https://github.com/daschuer/nemo
-Standards-Version: 3.9.2
+Standards-Version: 3.9.5
 
 Package: nemo
 Architecture: any
@@ -133,7 +134,7 @@ Description: libraries for nemo components - gir bindings
 Package: nemo-data
 Architecture: all
 Depends: ${misc:Depends},
-         python
+         python2.7
 Suggests: nemo
 Description: data files for nemo
  Nemo is the official file manager and graphical shell for the
