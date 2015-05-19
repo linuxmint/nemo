@@ -228,6 +228,16 @@ nemo_file_management_properties_size_group_create (GtkBuilder *builder,
 }
 
 static void
+nemo_file_management_properties_dialog_response_cb (GtkDialog *parent,
+							int response_id,
+							GtkBuilder *builder)
+{
+    if (response_id == GTK_RESPONSE_CLOSE) {
+        gtk_widget_destroy (GTK_WIDGET (parent));
+    }
+}
+
+static void
 columns_changed_callback (NemoColumnChooser *chooser,
 			  gpointer callback_data)
 {
@@ -953,6 +963,11 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 
 	/* UI callbacks */
 	dialog = GTK_WIDGET (gtk_builder_get_object (builder, "file_management_dialog"));
+	g_signal_connect_data (dialog, "response",
+			       G_CALLBACK (nemo_file_management_properties_dialog_response_cb),
+			       g_object_ref (builder),
+			       (GClosureNotify)g_object_unref,
+			       0);
 	g_signal_connect (dialog, "delete-event",
 			  G_CALLBACK (gtk_widget_destroy), NULL);
 
