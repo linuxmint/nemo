@@ -145,6 +145,7 @@ nemo_progress_info_widget_constructed (GObject *obj)
     gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
     gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
     gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    gtk_label_set_max_width_chars (GTK_LABEL (label), 50);
     gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 2);
     priv->pre_info = label;
 
@@ -180,6 +181,7 @@ nemo_progress_info_widget_constructed (GObject *obj)
 	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
 	gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
     gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    gtk_label_set_max_width_chars (GTK_LABEL (label), 40);
 	gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, FALSE, 2);
 	priv->status = label;
 
@@ -191,6 +193,8 @@ nemo_progress_info_widget_constructed (GObject *obj)
     label = gtk_label_new ("details");
     gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
     gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+    gtk_label_set_max_width_chars (GTK_LABEL (label), 50);
+
     gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, FALSE, 2);
     priv->details = label;
 
