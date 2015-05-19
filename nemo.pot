@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-19 10:05-0400\n"
+"POT-Creation-Date: 2015-05-19 17:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5451,57 +5451,57 @@ msgstr ""
 msgid "Toolbar"
 msgstr ""
 
-#: data/action_i18n_strings.py:7
-msgid "Set as Wallpaper..."
-msgstr ""
-
-#: data/action_i18n_strings.py:8
-msgid "Set the selected image as your desktop wallpaper"
-msgstr ""
-
-#: data/action_i18n_strings.py:9 data/action_i18n_strings.py:10
+#: data/action_i18n_strings.py:7 data/action_i18n_strings.py:8
 msgid "Change Desktop _Background"
 msgstr ""
 
-#: data/action_i18n_strings.py:11
-msgid "Create a new l_auncher here..."
-msgstr ""
-
-#: data/action_i18n_strings.py:12
-msgid "Create a new launcher in this folder"
-msgstr ""
-
-#: data/action_i18n_strings.py:13
-msgid "Remove workspace"
-msgstr ""
-
-#: data/action_i18n_strings.py:14
-msgid "Remove the currently active workspace"
-msgstr ""
-
-#: data/action_i18n_strings.py:15
-msgid "Manage workspaces (Expo)"
-msgstr ""
-
-#: data/action_i18n_strings.py:16
-msgid "Open Expo to add, remove, or organize workspaces"
-msgstr ""
-
-#: data/action_i18n_strings.py:17
+#: data/action_i18n_strings.py:9
 msgid "Mount archive"
 msgstr ""
 
-#: data/action_i18n_strings.py:18
+#: data/action_i18n_strings.py:10
 #, python-format
 msgid "Mount %f to browse its contents"
 msgstr ""
 
-#: data/action_i18n_strings.py:19
+#: data/action_i18n_strings.py:11
+msgid "Manage workspaces (Expo)"
+msgstr ""
+
+#: data/action_i18n_strings.py:12
+msgid "Open Expo to add, remove, or organize workspaces"
+msgstr ""
+
+#: data/action_i18n_strings.py:13
 msgid "Jump to new workspace"
 msgstr ""
 
-#: data/action_i18n_strings.py:20
+#: data/action_i18n_strings.py:14
 msgid "Create a new workspace and activate it"
+msgstr ""
+
+#: data/action_i18n_strings.py:15
+msgid "Create a new l_auncher here..."
+msgstr ""
+
+#: data/action_i18n_strings.py:16
+msgid "Create a new launcher in this folder"
+msgstr ""
+
+#: data/action_i18n_strings.py:17
+msgid "Set as Wallpaper..."
+msgstr ""
+
+#: data/action_i18n_strings.py:18
+msgid "Set the selected image as your desktop wallpaper"
+msgstr ""
+
+#: data/action_i18n_strings.py:19
+msgid "Remove workspace"
+msgstr ""
+
+#: data/action_i18n_strings.py:20
+msgid "Remove the currently active workspace"
 msgstr ""
 
 #: data/action_i18n_strings.py:21 data/action_i18n_strings.py:22
