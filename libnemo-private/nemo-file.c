@@ -813,6 +813,10 @@ finalize (GObject *object)
 	if (file->details->thumbnail) {
 		g_object_unref (file->details->thumbnail);
 	}
+	if (file->details->scaled_thumbnail) {
+		g_object_unref (file->details->scaled_thumbnail);
+	}
+
 	if (file->details->mount) {
 		g_signal_handlers_disconnect_by_func (file->details->mount, file_mount_unmounted, file);
 		g_object_unref (file->details->mount);
@@ -4428,18 +4432,25 @@ nemo_file_get_icon (NemoFile *file,
 				thumb_scale = (double) NEMO_ICON_SIZE_SMALLEST / s;
 			}
 
-			scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
-								 MAX (w * thumb_scale, 1),
-								 MAX (h * thumb_scale, 1),
-								 GDK_INTERP_BILINEAR);
-
-			/* We don't want frames around small icons */
-			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
+            if (file->details->thumbnail_scale == thumb_scale &&
+                file->details->scaled_thumbnail != NULL) {
+                scaled_pixbuf = file->details->scaled_thumbnail;
+            } else {
+                scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
+                                     MAX (w * thumb_scale, 1),
+                                     MAX (h * thumb_scale, 1),
+                                     GDK_INTERP_BILINEAR);
+                /* We don't want frames around small icons */
+                if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
 				if (nemo_is_video_file (file))
 					nemo_ui_frame_video (&scaled_pixbuf);
 				else
 					nemo_ui_frame_image (&scaled_pixbuf);
-			}
+                }
+                g_clear_object (&file->details->scaled_thumbnail);
+                file->details->scaled_thumbnail = scaled_pixbuf;
+                file->details->thumbnail_scale = thumb_scale;
+            }
 
 			g_object_unref (raw_pixbuf);
 
@@ -4458,9 +4469,7 @@ nemo_file_get_icon (NemoFile *file,
 			DEBUG ("Returning thumbnailed image, at size %d %d",
 			       (int) (w * thumb_scale), (int) (h * thumb_scale));
 			
-			icon = nemo_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
-			g_object_unref (scaled_pixbuf);
-			return icon;
+			return nemo_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
 		} else if (file->details->thumbnail_path == NULL &&
 			   file->details->can_read &&				
 			   !file->details->is_thumbnailing &&

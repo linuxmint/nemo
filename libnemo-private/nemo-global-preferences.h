@@ -119,6 +119,8 @@ typedef enum
 
 #define NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT "sidebar-bookmark-breakpoint"
 
+#define NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS	"context-menus-show-all-actions"
+
 enum
 {
 	NEMO_DEFAULT_FOLDER_VIEWER_ICON_VIEW,

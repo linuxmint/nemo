@@ -7,7 +7,6 @@
 	<menu action="File">
 		<placeholder name="New Items Placeholder">
 			<menuitem name="New Folder" action="New Folder"/>
-			<menuitem name="New Folder with Selection" action="New Folder with Selection"/>
 			<menu action="New Documents">
 			         <menuitem name="No Templates" action="No Templates"/>
 				 <placeholder name="New Documents Placeholder"/>
@@ -126,7 +125,6 @@
         <menuitem name="OpenAsRoot" action="OpenAsRoot"/>
 		<separator name="View items separator"/>
 		<placeholder name="View Items"/>
-			<menuitem name="Show Hidden Files" action="Show Hidden Files"/>
 		<separator name="Clipboard separator"/>
 		<placeholder name="File Clipboard Actions">
 			<menuitem name="Paste" action="Paste"/>
@@ -147,10 +145,6 @@
 
 </popup>
 <popup name="selection">
-        <placeholder name="New Object Items">
-	        <menuitem name="New Folder with Selection" action="New Folder with Selection"/>
-		<separator name="new folder with selection separator"/>
-	</placeholder>
 	<placeholder name="Open Placeholder">
 		<menuitem name="Open" action="Open"/>
 		<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
@@ -179,29 +173,7 @@
 	</placeholder>
 	<separator name="File actions separator"/>
 	<placeholder name="File Actions">
-		<menuitem name="Duplicate" action="Duplicate"/>
-		<menuitem name="Create Link" action="Create Link"/>
 		<menuitem name="Rename" action="Rename"/>
-		<menu action="CopyToMenu">
-			<menuitem name="Copy to next pane" action="Copy to next pane"/>
-			<menuitem name="Copy to Home" action="Copy to Home"/>
-			<menuitem name="Copy to Desktop" action="Copy to Desktop"/>
-			<placeholder name="BookmarkCopyToPlaceHolder"/>
-            <separator/>
-            <placeholder name="PlacesCopyToPlaceHolder"/>
-            <separator/>
-            <menuitem name="Browse for copy to" action="BrowseCopyTo"/>
-		</menu>
-		<menu action="MoveToMenu">
-			<menuitem name="Move to next pane" action="Move to next pane"/>
-			<menuitem name="Copy to Home" action="Move to Home"/>
-			<menuitem name="Copy to Desktop" action="Move to Desktop"/>
-			<placeholder name="BookmarkMoveToPlaceHolder"/>
-            <separator/>
-            <placeholder name="PlacesMoveToPlaceHolder"/>
-            <separator/>
-            <menuitem name="Browse for move to" action="BrowseMoveTo"/>
-		</menu>
 	</placeholder>
 	<separator name="Advanced separator"/>
 	<menuitem name="OpenInTerminal" action="OpenInTerminal"/>
@@ -215,7 +187,7 @@
 		<menuitem name="Restore From Trash" action="Restore From Trash"/>
 	</placeholder>
 	<separator name="Appearance separator"/>
-	<placeholder name="Canvas Appearance Items">
+	<placeholder name="Icon Appearance Items">
 	</placeholder>
 	<separator name="Extension actions separator"/>
 	<placeholder name="Extension Actions"/>
@@ -227,9 +199,7 @@
 		 <menuitem name="Start Volume" action="Start Volume"/>
 		 <menuitem name="Stop Volume" action="Stop Volume"/>
 		 <menuitem name="Poll" action="Poll"/>
-    </placeholder>
-    <separator name="Properties Separator"/>
-    <menuitem name="Properties" action="Properties"/>
+	</placeholder>
 </popup>
 <popup name="location">
 	<placeholder name="Open Placeholder">

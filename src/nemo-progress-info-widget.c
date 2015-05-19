@@ -23,32 +23,23 @@
  */
 
 #include <config.h>
+#include <glib/gi18n.h>
 
 #include "nemo-progress-info-widget.h"
-
-struct _NemoProgressInfoWidgetPriv {
-	NemoProgressInfo *info;
-
-	GtkWidget *status; /* GtkLabel */
-	GtkWidget *details; /* GtkLabel */
-	GtkWidget *progress_bar;
-};
+#include "nemo-job-queue.h"
 
 enum {
 	PROP_INFO = 1,
 	NUM_PROPERTIES
 };
 
+#define START_ICON "media-playback-start-symbolic"
+#define STOP_ICON "media-playback-stop-symbolic"
+
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL };
 
 G_DEFINE_TYPE (NemoProgressInfoWidget, nemo_progress_info_widget,
                GTK_TYPE_BOX);
-
-static void
-info_finished (NemoProgressInfoWidget *self)
-{
-	gtk_widget_destroy (GTK_WIDGET (self));
-}
 
 static void
 update_data (NemoProgressInfoWidget *self)
@@ -85,82 +76,149 @@ cancel_clicked (GtkWidget *button,
 		NemoProgressInfoWidget *self)
 {
 	nemo_progress_info_cancel (self->priv->info);
+
+    NemoJobQueue *queue = nemo_job_queue_get ();
+    nemo_job_queue_start_job_by_info (queue, self->priv->info);
+
 	gtk_widget_set_sensitive (button, FALSE);
+}
+
+static void
+start_clicked (GtkWidget *button,
+               NemoProgressInfoWidget *self)
+{
+    NemoJobQueue *queue = nemo_job_queue_get ();
+    nemo_job_queue_start_job_by_info (queue, self->priv->info);
 }
 
 static void
 nemo_progress_info_widget_constructed (GObject *obj)
 {
-	GtkWidget *label, *progress_bar, *hbox, *box, *button, *image;
+	GtkWidget *label, *progress_bar, *hbox, *vbox, *button, *view, *bb, *revealer_box;
 	NemoProgressInfoWidget *self = NEMO_PROGRESS_INFO_WIDGET (obj);
+    NemoProgressInfoWidgetPriv *priv = NEMO_PROGRESS_INFO_WIDGET (obj)->priv;
 
 	G_OBJECT_CLASS (nemo_progress_info_widget_parent_class)->constructed (obj);
 
+    priv->revealer = gtk_revealer_new ();
+    gtk_revealer_set_transition_type (GTK_REVEALER (priv->revealer), GTK_REVEALER_TRANSITION_TYPE_SLIDE_DOWN);
+    gtk_revealer_set_transition_duration (GTK_REVEALER (priv->revealer), 200);
+
+    gtk_container_add (GTK_CONTAINER (self), priv->revealer);
+
+    revealer_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+    gtk_container_add (GTK_CONTAINER (priv->revealer), revealer_box);
+
+    priv->separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+    gtk_box_pack_start (GTK_BOX (revealer_box), priv->separator, FALSE, FALSE, 5);
+
+    priv->stack = gtk_stack_new ();
+    gtk_stack_set_transition_type (GTK_STACK (priv->stack), GTK_STACK_TRANSITION_TYPE_CROSSFADE);
+    gtk_stack_set_transition_duration (GTK_STACK (priv->stack), 200);
+    gtk_box_pack_start (GTK_BOX (revealer_box), priv->stack, FALSE, FALSE, 0);
+
+    gtk_widget_show_all (priv->revealer);
+
+    /* contruct the initial stack page (job just queued, minimal info and
+     * start & cancel buttons) */
+
+    view = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+    gtk_stack_add_named (GTK_STACK (priv->stack), view, "pending");
+
+    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start (GTK_BOX (view), hbox, TRUE, TRUE, 0);
+
+    vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
+    gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
+
+    gchar *initial_details = nemo_progress_info_get_initial_details (self->priv->info);
+    gchar *markup = g_markup_printf_escaped ("<span size='small'>%s</span>", initial_details);
+
+    label = gtk_label_new (NULL);
+    gtk_label_set_markup (GTK_LABEL (label), markup);
+
+    g_free (initial_details);
+    g_free (markup);
+
+    gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+    gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
+    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    gtk_label_set_max_width_chars (GTK_LABEL (label), 50);
+    gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 2);
+    priv->pre_info = label;
+
+    bb = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_widget_set_halign (bb, GTK_ALIGN_START);
+    gtk_widget_set_valign (bb, GTK_ALIGN_CENTER);
+    gtk_box_pack_end (GTK_BOX (hbox), bb, FALSE, FALSE, 0);
+
+    button = gtk_button_new_from_icon_name (START_ICON, GTK_ICON_SIZE_BUTTON);
+    gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
+    gtk_box_pack_start (GTK_BOX (bb), button, FALSE, FALSE, 2);
+    g_signal_connect (button, "clicked", G_CALLBACK (start_clicked), self);
+
+    button = gtk_button_new_from_icon_name (STOP_ICON, GTK_ICON_SIZE_BUTTON);
+    gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
+    gtk_box_pack_start (GTK_BOX (bb), button, FALSE, FALSE, 2);
+    g_signal_connect (button, "clicked", G_CALLBACK (cancel_clicked), self);
+
+    gtk_widget_show_all (view);
+
+    /* construct normal in-progress stack page */
+
+    view = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+    gtk_stack_add_named (GTK_STACK (priv->stack), view, "running");
+
+    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start (GTK_BOX (view), hbox, TRUE, TRUE, 0);
+
+    vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
+    gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
+
 	label = gtk_label_new ("status");
-	gtk_widget_set_size_request (label, 500, -1);
 	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
 	gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
-	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
-	gtk_box_pack_start (GTK_BOX (self),
-			    label,
-			    TRUE, FALSE,
-			    0);
-	self->priv->status = label;
-
-	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 10);
+    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    gtk_label_set_max_width_chars (GTK_LABEL (label), 40);
+	gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, FALSE, 2);
+	priv->status = label;
 
 	progress_bar = gtk_progress_bar_new ();
-	self->priv->progress_bar = progress_bar;
+	priv->progress_bar = progress_bar;
 	gtk_progress_bar_set_pulse_step (GTK_PROGRESS_BAR (progress_bar), 0.05);
-	box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-	gtk_box_pack_start(GTK_BOX (box),
-			   progress_bar,
-			   TRUE, FALSE,
-			   0);
-	gtk_box_pack_start(GTK_BOX (hbox),
-			   box,
-			   TRUE, TRUE,
-			   0);
 
-	image = gtk_image_new_from_icon_name ("gtk-cancel",
-					      GTK_ICON_SIZE_BUTTON);
-	button = gtk_button_new ();
-	gtk_container_add (GTK_CONTAINER (button), image);
-	gtk_box_pack_start (GTK_BOX (hbox),
-			    button,
-			    FALSE,FALSE,
-			    0);
-	g_signal_connect (button, "clicked",
-			  G_CALLBACK (cancel_clicked), self);
+	gtk_box_pack_start(GTK_BOX (vbox), progress_bar, TRUE, FALSE, 2);
 
-	gtk_box_pack_start (GTK_BOX (self),
-			    hbox,
-			    FALSE,FALSE,
-			    0);
+    label = gtk_label_new ("details");
+    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+    gtk_label_set_max_width_chars (GTK_LABEL (label), 50);
 
-	label = gtk_label_new ("details");
-	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
-	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
-	gtk_box_pack_start (GTK_BOX (self),
-			    label,
-			    TRUE, FALSE,
-			    0);
-	self->priv->details = label;
-	
-	gtk_widget_show_all (GTK_WIDGET (self));
+    gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, FALSE, 2);
+    priv->details = label;
+
+    bb = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_widget_set_halign (bb, GTK_ALIGN_START);
+    gtk_widget_set_valign (bb, GTK_ALIGN_CENTER);
+    gtk_box_pack_end (GTK_BOX (hbox), bb, FALSE, FALSE, 0);
+
+    button = gtk_button_new_from_icon_name (START_ICON, GTK_ICON_SIZE_BUTTON);
+    gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
+    gtk_widget_set_sensitive (button, FALSE);
+    gtk_box_pack_start (GTK_BOX (bb), button, FALSE, FALSE, 2);
+
+	button = gtk_button_new_from_icon_name (STOP_ICON, GTK_ICON_SIZE_BUTTON);
+    gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
+    gtk_box_pack_start (GTK_BOX (bb), button, FALSE, FALSE, 2);
+    g_signal_connect (button, "clicked", G_CALLBACK (cancel_clicked), self);
+
+    gtk_widget_show_all (view);
 
 	update_data (self);
 	update_progress (self);
 
-	g_signal_connect_swapped (self->priv->info,
-				  "changed",
-				  G_CALLBACK (update_data), self);
-	g_signal_connect_swapped (self->priv->info,
-				  "progress-changed",
-				  G_CALLBACK (update_progress), self);
-	g_signal_connect_swapped (self->priv->info,
-				  "finished",
-				  G_CALLBACK (info_finished), self);
+    g_signal_connect_swapped (priv->info, "changed", G_CALLBACK (update_data), self);
+    g_signal_connect_swapped (priv->info, "progress-changed", G_CALLBACK (update_progress), self);
 }
 
 static void
@@ -232,4 +290,16 @@ nemo_progress_info_widget_new (NemoProgressInfo *info)
 			     "homogeneous", FALSE,
 			     "spacing", 5,
 			     NULL);
+}
+
+void
+nemo_progress_info_widget_reveal (NemoProgressInfoWidget *widget)
+{
+    gtk_revealer_set_reveal_child (GTK_REVEALER (widget->priv->revealer), TRUE);
+}
+
+void
+nemo_progress_info_widget_unreveal (NemoProgressInfoWidget *widget)
+{
+    gtk_revealer_set_reveal_child (GTK_REVEALER (widget->priv->revealer), FALSE);
 }

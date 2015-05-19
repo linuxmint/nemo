@@ -134,6 +134,8 @@ libnemo_private_la_SOURCES = \
 	nemo-icon-names.h \
 	nemo-keyfile-metadata.c \
 	nemo-keyfile-metadata.h \
+    nemo-job-queue.c \
+    nemo-job-queue.h \
 	nemo-lib-self-check-functions.c \
 	nemo-lib-self-check-functions.h \
 	nemo-link.c \

@@ -102,6 +102,9 @@ struct NemoFileDetails
 	GdkPixbuf *thumbnail;
 	time_t thumbnail_mtime;
 
+    GdkPixbuf *scaled_thumbnail;
+    double thumbnail_scale;
+
 	GList *mime_list; /* If this is a directory, the list of MIME types in it. */
 	char *top_left_text;
 

@@ -290,6 +290,11 @@
       <_summary>Whether to list places in the Move To/Copy To menus</_summary>
       <_description>If set to true, places will be listed in the MoveTo/CopyTo menus</_description>
     </key>
+    <key name="context-menus-show-all-actions" type="b">
+      <default>false</default>
+      <_summary>Whether to show all available actions in context menus</_summary>
+      <_description>If set to true, all actions are visible. Otherwise nemo shows a simplified version of what is present in the menubar.</_description>
+    </key>
     <key name="tooltips-on-desktop" type="b">
       <default>false</default>
       <_summary>Show tooltips for desktop items</_summary>
