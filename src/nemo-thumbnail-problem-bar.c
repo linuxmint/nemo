@@ -66,6 +66,7 @@ thumbnail_problem_bar_response_cb (GtkInfoBar *infobar,
             break;
         case DISMISS:
             nemo_application_clear_cache_flag (nemo_application_get_singleton ());
+            nemo_application_ignore_cache_problem (nemo_application_get_singleton ());
             gtk_widget_hide (GTK_WIDGET (infobar));
             break;
         default:

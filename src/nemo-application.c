@@ -120,6 +120,7 @@ struct _NemoApplicationPriv {
 	gchar *geometry;
 
     gboolean cache_problem;
+    gboolean ignore_cache_problem;
 
     NotifyNotification *unmount_notify;
 };
@@ -1279,6 +1280,7 @@ nemo_application_startup (GApplication *app)
 	check_required_directories (self);
 
     self->priv->cache_problem = FALSE;
+    self->priv->ignore_cache_problem = FALSE;
 
     /* silently do a full check of the cache and fix if running as root.
      * If running as a normal user, do a quick check, and we'll notify the
@@ -1381,3 +1383,14 @@ nemo_application_set_cache_flag (NemoApplication *application)
     application->priv->cache_problem = TRUE;
 }
 
+void
+nemo_application_ignore_cache_problem (NemoApplication *application)
+{
+    application->priv->ignore_cache_problem = TRUE;
+}
+
+gboolean
+nemo_application_get_cache_problem_ignored (NemoApplication *application)
+{
+    return application->priv->ignore_cache_problem;
+}

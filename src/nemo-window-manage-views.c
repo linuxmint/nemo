@@ -1894,7 +1894,8 @@ nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot)
     if (NEMO_IS_DESKTOP_WINDOW (nemo_window_slot_get_window (slot)))
         return;
 
-    if (nemo_application_get_cache_bad (nemo_application_get_singleton ())) {
+    if (nemo_application_get_cache_bad (nemo_application_get_singleton ()) &&
+        !nemo_application_get_cache_problem_ignored (nemo_application_get_singleton ())) {
         if (slot->cache_bar != NULL) {
             gtk_widget_show (slot->cache_bar);
         } else {
