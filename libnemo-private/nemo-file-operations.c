@@ -982,35 +982,35 @@ generate_initial_job_details (NemoProgressInfo *info,
             g_return_if_fail (files != NULL);
             g_return_if_fail (destination != NULL);
 
-            s = f (ngettext("Waiting to copy %'d file from '%s' to '%s'",
-                            "Waiting to copy %'d files from '%s' to '%s'",
+            s = f (ngettext("Waiting to copy a file from '%1$s' to '%2$s'",
+                            "Waiting to copy files from '%1$s' to '%2$s'",
                             g_list_length (files)),
-                            g_list_length (files), src_name, dest_name);
+                            src_name, dest_name);
             break;
         case OP_KIND_MOVE:
             g_return_if_fail (files != NULL);
             g_return_if_fail (destination != NULL);
 
-            s = f (ngettext("Waiting to move %'d file from '%s' to '%s'",
-                            "Waiting to move %'d files from '%s' to '%s'",
+            s = f (ngettext("Waiting to move a file from '%1$s' to '%2$s'",
+                            "Waiting to move files from '%1$s' to '%2$s'",
                             g_list_length (files)),
-                            g_list_length (files), src_name, dest_name);
+                            src_name, dest_name);
             break;
         case OP_KIND_DELETE:
             g_return_if_fail (files != NULL);
 
-            s = f (ngettext("Waiting to permanently delete %'d file from '%s'",
-                            "Waiting to permanently delete %'d files from '%s'",
+            s = f (ngettext("Waiting to permanently delete a file from '%s'",
+                            "Waiting to permanently delete files from '%s'",
                             g_list_length (files)),
-                            g_list_length (files), src_name);
+                            src_name);
             break;
         case OP_KIND_TRASH:
             g_return_if_fail (files != NULL);
 
-            s = f (ngettext("Waiting to trash %'d file in '%s'",
-                            "Waiting to trash %'d files in '%s'",
+            s = f (ngettext("Waiting to trash a file in '%s'",
+                            "Waiting to trash files in '%s'",
                             g_list_length (files)),
-                            g_list_length (files), src_name);
+                            src_name);
             break;
         case OP_KIND_EMPTY_TRASH:
             s = f (_("Waiting to empty the trash"));
@@ -1019,10 +1019,10 @@ generate_initial_job_details (NemoProgressInfo *info,
             g_return_if_fail (files != NULL);
             g_return_if_fail (destination != NULL);
 
-            s = f (ngettext("Waiting to duplicate %'d file in '%s'",
-                            "Waiting to duplicate %'d files in '%s'",
+            s = f (ngettext("Waiting to duplicate a file in '%s'",
+                            "Waiting to duplicate files in '%s'",
                             g_list_length (files)),
-                            g_list_length (files), dest_name);
+                            dest_name);
             break;
         case OP_KIND_PERMISSIONS:
             g_return_if_fail (destination != NULL);
@@ -1033,10 +1033,10 @@ generate_initial_job_details (NemoProgressInfo *info,
             g_return_if_fail (files != NULL);
             g_return_if_fail (destination != NULL);
 
-            s = f (ngettext("Waiting to link %'d file from '%s' to '%s'",
-                            "Waiting to link %'d files from '%s' to '%s'",
+            s = f (ngettext("Waiting to link a file from '%1$s' to '%2$s'",
+                            "Waiting to link files from '%1$s' to '%2$s'",
                             g_list_length (files)),
-                            g_list_length (files), src_name, dest_name);
+                            src_name, dest_name);
             break;
         default:
             break;

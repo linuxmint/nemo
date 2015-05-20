@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-20 10:46+0200\n"
+"POT-Creation-Date: 2015-05-20 12:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3833,29 +3833,29 @@ msgstr ""
 
 #: libnemo-private/nemo-file-operations.c:985
 #, c-format
-msgid "Waiting to copy %'d file from '%s' to '%s'"
-msgid_plural "Waiting to copy %'d files from '%s' to '%s'"
+msgid "Waiting to copy a file from '%1$s' to '%2$s'"
+msgid_plural "Waiting to copy files from '%1$s' to '%2$s'"
 msgstr[0] ""
 msgstr[1] ""
 
 #: libnemo-private/nemo-file-operations.c:994
 #, c-format
-msgid "Waiting to move %'d file from '%s' to '%s'"
-msgid_plural "Waiting to move %'d files from '%s' to '%s'"
+msgid "Waiting to move a file from '%1$s' to '%2$s'"
+msgid_plural "Waiting to move files from '%1$s' to '%2$s'"
 msgstr[0] ""
 msgstr[1] ""
 
 #: libnemo-private/nemo-file-operations.c:1002
 #, c-format
-msgid "Waiting to permanently delete %'d file from '%s'"
-msgid_plural "Waiting to permanently delete %'d files from '%s'"
+msgid "Waiting to permanently delete a file from '%s'"
+msgid_plural "Waiting to permanently delete files from '%s'"
 msgstr[0] ""
 msgstr[1] ""
 
 #: libnemo-private/nemo-file-operations.c:1010
 #, c-format
-msgid "Waiting to trash %'d file in '%s'"
-msgid_plural "Waiting to trash %'d files in '%s'"
+msgid "Waiting to trash a file in '%s'"
+msgid_plural "Waiting to trash files in '%s'"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -3865,8 +3865,8 @@ msgstr ""
 
 #: libnemo-private/nemo-file-operations.c:1022
 #, c-format
-msgid "Waiting to duplicate %'d file in '%s'"
-msgid_plural "Waiting to duplicate %'d files in '%s'"
+msgid "Waiting to duplicate a file in '%s'"
+msgid_plural "Waiting to duplicate files in '%s'"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -3877,8 +3877,8 @@ msgstr ""
 
 #: libnemo-private/nemo-file-operations.c:1036
 #, c-format
-msgid "Waiting to link %'d file from '%s' to '%s'"
-msgid_plural "Waiting to link %'d files from '%s' to '%s'"
+msgid "Waiting to link a file from '%1$s' to '%2$s'"
+msgid_plural "Waiting to link files from '%1$s' to '%2$s'"
 msgstr[0] ""
 msgstr[1] ""
 
