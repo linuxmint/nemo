@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+TYPELIBDIR=$(shell pkg-config gobject-introspection-1.0 --variable libdir | sed -e 's/.//')
+
 CONFIGURE_EXTRA_FLAGS = --libexecdir=/usr/lib/nemo \
                         --disable-update-mimedb \
 			--enable-gtk-doc
@@ -20,6 +22,10 @@ override_dh_auto_test:
 
 override_dh_strip:
 	dh_strip --dbg-package=nemo-dbg
+
+override_dh_install:
+	sed 's@TYPELIBDIR@${TYPELIBDIR}@' debian/gir1.2-nemo-3.0.install.in > debian/gir1.2-nemo-3.0.install
+	dh_install --list-missing
 
 override_dh_makeshlibs:
 	dh_makeshlibs -Xusr/lib/nemo/extensions-3.0/
