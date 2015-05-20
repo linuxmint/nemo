@@ -1,3 +1,9 @@
+nemo (2.6.1) rafaela; urgency=medium
+
+  * Packaging: Fixed hardcoded gir typelib path
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 20 May 2015 09:26:24 +0200
+
 nemo (2.6.0) rafaela; urgency=medium
 
   * 2.6.0 
