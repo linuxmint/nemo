@@ -262,7 +262,7 @@ validate_entry (GtkEntry *entry, const gchar *str)
                                            "ok");
         gtk_entry_set_icon_tooltip_text (entry,
                                          GTK_ENTRY_ICON_SECONDARY,
-                                         _("Valid"));
+                                         _("Valid executable."));
     } else {
         gtk_entry_set_icon_from_icon_name (entry,
                                            GTK_ENTRY_ICON_SECONDARY,
