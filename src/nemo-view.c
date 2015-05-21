@@ -4594,16 +4594,20 @@ add_submenu (GtkUIManager *ui_manager,
 static void
 menu_item_show_image (GtkUIManager *ui_manager,
 		      const char   *parent_path,
-		      const char   *action_name)
+		      const char   *action_name,
+                gboolean    ignore_gtk_pref)
 {
 	char *path;
 	GtkWidget *menuitem;
-    gboolean show = FALSE;
 
-    g_object_get (gtk_settings_get_default (), "gtk-menu-images", &show, NULL);
+    if (!ignore_gtk_pref) {
+        gboolean show;
 
-    if (!show)
-        return;
+        g_object_get (gtk_settings_get_default (), "gtk-menu-images", &show, NULL);
+
+        if (!show)
+            return;
+    }
 
 	path = g_strdup_printf ("%s/%s", parent_path, action_name);
 	menuitem = gtk_ui_manager_get_widget (ui_manager,
@@ -4682,7 +4686,7 @@ add_application_to_open_with_menu (NemoView *view,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
 
-	menu_item_show_image (ui_manager, menu_placeholder, action_name);
+	menu_item_show_image (ui_manager, menu_placeholder, action_name, TRUE);
 
 	gtk_ui_manager_add_ui (ui_manager,
 			       view->details->open_with_merge_id,
@@ -4692,7 +4696,7 @@ add_application_to_open_with_menu (NemoView *view,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
 
-	menu_item_show_image (ui_manager, popup_placeholder, action_name);
+	menu_item_show_image (ui_manager, popup_placeholder, action_name, TRUE);
 
 	g_free (action_name);
 	g_free (label);
@@ -6006,9 +6010,9 @@ add_script_to_scripts_menus (NemoView *directory_view,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
 
-	menu_item_show_image (ui_manager, menu_path, action_name);
-	menu_item_show_image (ui_manager, popup_path, action_name);
-	menu_item_show_image (ui_manager, popup_bg_path, action_name);
+	menu_item_show_image (ui_manager, menu_path, action_name, FALSE);
+	menu_item_show_image (ui_manager, popup_path, action_name, FALSE);
+	menu_item_show_image (ui_manager, popup_bg_path, action_name, FALSE);
 
 	g_free (name);
 	g_free (uri);
@@ -6383,8 +6387,8 @@ add_template_to_templates_menus (NemoView *directory_view,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
 
-	menu_item_show_image (ui_manager, menu_path, action_name);
-	menu_item_show_image (ui_manager, popup_bg_path, action_name);
+	menu_item_show_image (ui_manager, menu_path, action_name, TRUE);
+	menu_item_show_image (ui_manager, popup_bg_path, action_name, TRUE);
 
 	g_free (escaped_label);
 	g_free (name);
@@ -8345,6 +8349,7 @@ connect_proxy (NemoView *view,
 
         image = gtk_image_new_from_icon_name ("text-x-generic", GTK_ICON_SIZE_MENU);
         gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), image);
+        gtk_action_set_always_show_image (action, TRUE);
     }
 }
 
