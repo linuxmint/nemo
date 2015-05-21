@@ -1,3 +1,17 @@
+nemo (2.6.2) rafaela; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Gettext fix: Due to genre/plural, in many languages, adjectives are not translatable on their own. They need to relate to a noun.
+  * Gettext: Simplified msgids in file operation queue to make them easier to translate
+  * Updated pot
+
+  [ Michael Webster ]
+  * Adapt Nemo to deal with problem situations with the user thumbnail cache: - Added --fix-cache command line option (must be run as root) - Added quick check at startup to detect major problems and disable thumbnailing   until fixed. - Individual thumbnailed files are checked on the fly for permission issues. - When a problem is detected, an infobar appears, offering to fix the problem, or   ignore it.
+  * Have 'dismiss' last for Nemo's lifespan.
+  * thumbnails: Remove an orphan comment from previous commits, fix wording of the --fix-cache command-line option.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 21 May 2015 11:06:16 +0200
+
 nemo (2.6.1) rafaela; urgency=medium
 
   * Packaging: Fixed hardcoded gir typelib path
