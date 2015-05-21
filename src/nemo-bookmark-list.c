@@ -31,6 +31,8 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-icon-names.h>
+#define GNOME_DESKTOP_USE_UNSTABLE_API
+#include <libcinnamon-desktop/gnome-desktop-utils.h>
 
 #include <gio/gio.h>
 #include <string.h>
@@ -618,6 +620,19 @@ save_file_finish (NemoBookmarkList *bookmarks,
 			   error->message);
 		g_error_free (error);
 	}
+
+    if (geteuid () == 0) {
+        struct passwd *pwent;
+        pwent = gnome_desktop_get_session_user_pwent ();
+
+        gchar *bookmarks_path = g_file_get_path (G_FILE (source));
+
+        if (g_strcmp0 (pwent->pw_dir, g_get_home_dir ()) == 0) {
+            G_GNUC_UNUSED int res;
+
+            res = chown (bookmarks_path, pwent->pw_uid, pwent->pw_gid);
+        }
+    }
 
 	file = nemo_bookmark_list_get_file ();
 
