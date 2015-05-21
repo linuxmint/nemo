@@ -290,19 +290,24 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="stack-box">
+          <object class="GtkToolbar" id="toolbar1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkStackSwitcher" id="stack-switcher">
-                <property name="halign">center</property>
+              <object class="GtkToolItem" id="toolbutton1">
                 <property name="visible">True</property>
-                <property name="stack">stack1</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkStackSwitcher" id="stack-switcher">
+                    <property name="halign">center</property>
+                    <property name="visible">True</property>
+                    <property name="stack">stack1</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="homogeneous">True</property>
               </packing>
             </child>
           </object>
@@ -310,7 +315,6 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">0</property>
-            <property name="padding">4</property>
           </packing>
         </child>
         <child>
