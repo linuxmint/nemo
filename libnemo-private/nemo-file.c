@@ -4044,11 +4044,6 @@ nemo_file_get_filesystem_use_preview (NemoFile *file)
 	return use_preview;
 }
 
-/* This check can be simpler for checking a single file - 
-   if we're running as root, permissions were already fixed at startup.
-   Besides, you'd only have ownership/permission issues with viewing the
-   thumbnail as a normal user */
-
 gboolean
 nemo_file_should_show_thumbnail (NemoFile *file)
 {
