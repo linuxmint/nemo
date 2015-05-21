@@ -1,3 +1,11 @@
+nemo (2.6.3) rafaela; urgency=medium
+
+  [ leigh123linux ]
+  * update cinnamon-desktop min version
+  * bump it again
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 21 May 2015 12:44:03 +0200
+
 nemo (2.6.2) rafaela; urgency=medium
 
   [ Clement Lefebvre ]
