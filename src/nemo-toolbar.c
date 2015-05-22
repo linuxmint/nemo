@@ -367,7 +367,7 @@ nemo_toolbar_constructed (GObject *obj)
 
     /* Regular Path Bar */
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_box_pack_start (GTK_BOX (hbox), GTK_CONTAINER (self->priv->stack), TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (self->priv->stack), TRUE, TRUE, 0);
 
     self->priv->path_bar = g_object_new (NEMO_TYPE_PATH_BAR, NULL);
     gtk_stack_add_named(GTK_STACK (self->priv->stack), GTK_WIDGET (self->priv->path_bar), "path_bar");
