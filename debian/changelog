@@ -1,3 +1,15 @@
+nemo (2.6.4) rafaela; urgency=medium
+
+  [ Michael Webster ]
+  * menus: Always show icons in Open With and Templates submenus.
+  * nemo-bookmark-list: make sure to keep the bookmarks file writable by the user (and not just root) when running nemo as root.
+  * fix build warning, fix prototype name.
+
+  [ leigh123linux ]
+  * Update version for cinnamon-desktop build dep
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 25 May 2015 10:40:14 +0200
+
 nemo (2.6.3) rafaela; urgency=medium
 
   [ leigh123linux ]
