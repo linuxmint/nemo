@@ -1357,6 +1357,7 @@ nemo_application_get_singleton (void)
                          "application-id", "org.Nemo",
                          "flags", G_APPLICATION_HANDLES_OPEN,
                          "inactivity-timeout", 12000,
+                         "register-session", TRUE,
                          NULL);
 }
 
