@@ -41,6 +41,7 @@ Depends: ${shlibs:Depends},
          desktop-file-utils (>= 0.7),
          gvfs (>= 1.3.2),
          libglib2.0-data,
+         libcinnamon-desktop4 (>= 2.6.1),
          cinnamon-desktop-data,
          cinnamon-translations
 Recommends: eject,
