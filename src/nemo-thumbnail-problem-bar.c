@@ -101,7 +101,8 @@ nemo_thumbnail_problem_bar_constructed (GObject *obj)
 
     NemoThumbnailProblemBar *bar = NEMO_THUMBNAIL_PROBLEM_BAR (obj);
 
-    GtkWidget *content_area, *action_area, *w;
+    GtkWidget *content_area, *action_area;
+    G_GNUC_UNUSED GtkWidget *w;
     GtkWidget *label;
 
     content_area = gtk_info_bar_get_content_area (GTK_INFO_BAR (bar));
@@ -111,6 +112,8 @@ nemo_thumbnail_problem_bar_constructed (GObject *obj)
                                     GTK_ORIENTATION_HORIZONTAL);
 
     label = gtk_label_new (_("A problem has been detected with your thumbnail cache.  Fixing it will require administrative privileges."));
+
+    /* w is useless - this method creates the widget and adds/refs it to the info bar at the same time */
     w = gtk_info_bar_add_button (GTK_INFO_BAR (bar),
                                  _("Fix now"),
                                  FIX_CACHE);
