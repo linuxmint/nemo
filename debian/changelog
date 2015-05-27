@@ -1,3 +1,14 @@
+nemo (2.6.5) rafaela; urgency=medium
+
+  [ leigh123linux ]
+  * add runtime requirement for libcinnamon-desktop4
+
+  [ mtwebster ]
+  * Fix a couple build warnings
+  * nemo-application: register with org.gnome.SessionManager - this should fix the race condition where c-s-d dies before nemo does, causing all of our icons to revert to fallbacks briefly.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 27 May 2015 10:25:57 +0200
+
 nemo (2.6.4) rafaela; urgency=medium
 
   [ Michael Webster ]
