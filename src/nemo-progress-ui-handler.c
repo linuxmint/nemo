@@ -105,7 +105,7 @@ get_icon_name_from_percent (guint pct)
     else
         rounded = pct + (10 - ones);
 
-    icon_name = g_strdup_printf ("progress-%d-symbolic", rounded);
+    icon_name = g_strdup_printf ("progress-%d", rounded);
 
     return icon_name;
 }
