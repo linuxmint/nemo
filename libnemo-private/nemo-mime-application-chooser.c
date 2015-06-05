@@ -55,12 +55,15 @@ struct _NemoMimeApplicationChooserDetails {
     GtkWidget *file_button;
     GAppInfo *custom_info;
     GtkWidget *custom_entry;
+
+    GtkWidget *dialog_ok;
 };
 
 enum {
 	PROP_CONTENT_TYPE = 1,
 	PROP_URI,
 	PROP_FILES,
+    PROP_DIALOG_OK,
 	NUM_PROPERTIES
 };
 
@@ -221,6 +224,8 @@ application_selected_cb (GtkAppChooserWidget *widget,
 	NemoMimeApplicationChooser *chooser = user_data;
 	GAppInfo *default_app;
 
+    gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
+
 	default_app = g_app_info_get_default_for_type (chooser->details->content_type, FALSE);
 	gtk_widget_set_sensitive (chooser->details->set_as_default_button,
 				  !g_app_info_equal (info, default_app));
@@ -228,10 +233,24 @@ application_selected_cb (GtkAppChooserWidget *widget,
 	gtk_widget_set_sensitive (chooser->details->add_button,
 				  app_info_can_add (info, chooser->details->content_type));
 
-    gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
     gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser->details->file_button), "");
 
+    if (chooser->details->dialog_ok)
+        gtk_widget_set_sensitive (chooser->details->dialog_ok, TRUE);
+
 	g_object_unref (default_app);
+}
+
+static void
+application_activated_cb (GtkAppChooserWidget *widget,
+                                     GAppInfo *info,
+                                     gpointer  user_data)
+{
+    NemoMimeApplicationChooser *chooser = user_data;
+
+    if (chooser->details->dialog_ok) {
+        gtk_window_activate_default (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (widget))));
+    }
 }
 
 static gboolean
@@ -325,6 +344,8 @@ custom_entry_changed_cb (GtkEditable *entry, gpointer user_data)
         }
         chooser->details->custom_info = info;
 
+        if (chooser->details->dialog_ok)
+            gtk_widget_set_sensitive (chooser->details->dialog_ok, TRUE);
     } else {
         if (chooser->details->custom_info != NULL) {
             g_object_unref (chooser->details->custom_info);
@@ -342,6 +363,9 @@ custom_entry_changed_cb (GtkEditable *entry, gpointer user_data)
         
         gtk_widget_set_sensitive (chooser->details->set_as_default_button, FALSE);
         gtk_widget_set_sensitive (chooser->details->add_button, FALSE);
+
+        if (chooser->details->dialog_ok)
+            gtk_widget_set_sensitive (chooser->details->dialog_ok, FALSE);
     }
 }
 
@@ -355,6 +379,8 @@ custom_app_set_cb (GtkFileChooserButton *button,
     gchar *escaped = eel_str_escape_spaces (unescaped);
 
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), escaped);
+    gtk_widget_grab_focus (chooser->details->custom_entry);
+    gtk_editable_set_position (GTK_EDITABLE (chooser->details->custom_entry), -1);
 
     g_free (unescaped);
     g_free (escaped);
@@ -453,7 +479,7 @@ exec_filter_func (const GtkFileFilterInfo *info, gpointer data)
 static void
 nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 {
-	GtkWidget *box, *button;
+	GtkWidget *box, *button, *w;
 	GAppInfo *info;
 
 	gtk_container_set_border_width (GTK_CONTAINER (chooser), 8);
@@ -485,6 +511,9 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 	g_signal_connect (chooser->details->open_with_widget, "populate-popup",
 			  G_CALLBACK (populate_popup_cb),
 			  chooser);
+    g_signal_connect (chooser->details->open_with_widget, "application-activated",
+              G_CALLBACK (application_activated_cb),
+              chooser);
 
     gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
                           TRUE);
@@ -506,6 +535,7 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
     GtkWidget *entry = gtk_entry_new ();
     gtk_box_pack_start (GTK_BOX (custom_box), entry, TRUE, TRUE, 0);
     gtk_entry_set_placeholder_text (GTK_ENTRY (entry), _("Enter a custom command..."));
+    gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
 
     g_signal_connect (entry, "changed",
                       G_CALLBACK (custom_entry_changed_cb),
@@ -514,6 +544,22 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
     chooser->details->custom_entry = entry;
 
     button = gtk_file_chooser_button_new (_("Custom application"), GTK_FILE_CHOOSER_ACTION_OPEN);
+
+    /* FIXME: I shouldn't do this, but this is the simplest way for 2.6 at this point to remove the
+       useless (and misleading) label and image in the file picker button - when a program is selected,
+       it dumps the path into the custom entry box, we don't need to show anything in the button.
+
+       These names are valid in GTK 3.10, .12, .14, .16 and master.
+
+       This should be replaced by a simple icon-only button that creates a GtkFileChooserDialog when
+       clicked.  A lot more changes involved there, postpone for 2.8
+     */
+
+    w = GTK_WIDGET (gtk_widget_get_template_child (button, GTK_TYPE_FILE_CHOOSER_BUTTON, "label"));
+    gtk_widget_hide (w);
+    w = GTK_WIDGET (gtk_widget_get_template_child (button, GTK_TYPE_FILE_CHOOSER_BUTTON, "image"));
+    gtk_widget_hide (w);
+
     g_signal_connect (button, "file-set",
                       G_CALLBACK (custom_app_set_cb),
                       chooser);
@@ -572,6 +618,8 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 					 info, chooser);
 		g_object_unref (info);
 	}
+
+    gtk_widget_grab_focus (chooser->details->custom_entry);
 }
 
 static void
@@ -649,6 +697,9 @@ nemo_mime_application_chooser_set_property (GObject *object,
 	case PROP_URI:
 		chooser->details->uri = g_value_dup_string (value);
 		break;
+    case PROP_DIALOG_OK:
+        chooser->details->dialog_ok = g_value_get_object (value);
+        break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 		break;
@@ -684,6 +735,13 @@ nemo_mime_application_chooser_class_init (NemoMimeApplicationChooserClass *class
 						       G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY |
 						       G_PARAM_STATIC_STRINGS);
 
+    properties[PROP_DIALOG_OK] = g_param_spec_object ("ok-button",
+                               "Dialog OK button",
+                               "Dialog OK button",
+                               GTK_TYPE_WIDGET,
+                               G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY |
+                               G_PARAM_STATIC_STRINGS);
+
 	g_object_class_install_properties (gobject_class, NUM_PROPERTIES, properties);
 
 	g_type_class_add_private (class, sizeof (NemoMimeApplicationChooserDetails));
@@ -691,8 +749,9 @@ nemo_mime_application_chooser_class_init (NemoMimeApplicationChooserClass *class
 
 GtkWidget *
 nemo_mime_application_chooser_new (const char *uri,
-				       GList *files,
-				       const char *mime_type)
+                                        GList *files,
+                                   const char *mime_type,
+                                    GtkWidget *ok_button)
 {
 	GtkWidget *chooser;
 
@@ -700,6 +759,7 @@ nemo_mime_application_chooser_new (const char *uri,
 				"uri", uri,
 				"files", files,
 				"content-type", mime_type,
+                "ok-button", ok_button,
 				NULL);
 
 	return chooser;

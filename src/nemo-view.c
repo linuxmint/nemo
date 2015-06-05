@@ -1302,6 +1302,7 @@ choose_program (NemoView *view,
 		NemoFile *file)
 {
 	GtkWidget *dialog;
+    GtkWidget *ok_button;
 
     char *mime_type;
     char *uri = NULL;
@@ -1318,12 +1319,14 @@ choose_program (NemoView *view,
                           GTK_DIALOG_DESTROY_WITH_PARENT,
                           GTK_STOCK_CANCEL,
                           GTK_RESPONSE_CANCEL,
-                          GTK_STOCK_OK,
-                          GTK_RESPONSE_OK,
                           NULL);
+    ok_button = gtk_dialog_add_button (GTK_DIALOG (dialog),
+                                       GTK_STOCK_OK,
+                                       GTK_RESPONSE_OK);
 
+    gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 
-    GtkWidget *chooser = nemo_mime_application_chooser_new (uri, uris, mime_type);
+    GtkWidget *chooser = nemo_mime_application_chooser_new (uri, uris, mime_type, ok_button);
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
