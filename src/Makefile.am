@@ -31,6 +31,7 @@ AM_CPPFLAGS =							\
 	-DPREFIX=\""$(prefix)"\" 				\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
 	-DVERSION="\"$(VERSION)\"" 				\
+    -DNEMO_EXTENSIONDIR=\""$(libdir)/nemo/extensions-3.0"\" \
 	$(DISABLE_DEPRECATED_CFLAGS)                            \
 	$(NULL)
 

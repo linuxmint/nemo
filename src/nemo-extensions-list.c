@@ -129,11 +129,7 @@ module_get_extensions_for_type (GType type)
 int
 main (int argc, char *argv[])
 {
-    gchar *path = NULL;
-
-    path = g_build_filename ("/", "usr", "lib", "nemo", "extensions-3.0", NULL);
-    populate_from_directory (path);
-    g_clear_pointer (&path, g_free);
+    populate_from_directory (NEMO_EXTENSIONDIR);
 
     GList *nd_providers;
     GList *l;
