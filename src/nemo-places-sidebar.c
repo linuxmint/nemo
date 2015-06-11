@@ -904,6 +904,11 @@ update_places (NemoPlacesSidebar *sidebar)
         if (!g_file_is_native (root)) {
             gboolean really_network = TRUE;
             gchar *path = g_file_get_path (root);
+            if (!path) {
+                network_mounts = g_list_prepend (network_mounts, mount);
+                g_object_unref (root);
+                continue;
+            }
             gchar *escaped1 = g_uri_unescape_string (path, "");
             gchar *escaped2 = g_uri_unescape_string (escaped1, "");
             gchar *ptr = g_strrstr (escaped2, "file://");
