@@ -1,3 +1,14 @@
+nemo (2.6.6) rafaela; urgency=medium
+
+  [ Michael Webster ]
+  * Switch from .svg to .png format for the file operation tray icon. Scalable/symbolic isn't supported in gtk 3.12(+?)
+  * open-with dialog: Fix focus and user interaction issues - - Focus defaults to the custom entry box - Enter key (or double-clicking in the list) will now 'OK' the dialog,   and open the file with either the selected program, or the custom   command. - The ok button now greys out if there is an invalid custom entry - Removed misleading program-picker button label and image.
+  * preferences: tweak style a bit to match c-s
+  * nemo-extensions-list: Don't hardcode lib path
+  * nemo-view, nemo-sidebar: quiet warnings when looking for network locations
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 14 Jun 2015 12:42:06 +0200
+
 nemo (2.6.5) rafaela; urgency=medium
 
   [ leigh123linux ]
