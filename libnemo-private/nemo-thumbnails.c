@@ -580,7 +580,7 @@ gboolean
 nemo_thumbnail_factory_check_status (void)
 {
 #ifdef GNOME_BUILD 
-    return FALSE; // TRUE; 
+    return TRUE; 
 #else 
     return gnome_desktop_thumbnail_cache_check_permissions (get_thumbnail_factory (), TRUE);
 #endif
