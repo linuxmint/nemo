@@ -67,7 +67,6 @@ struct NemoBookmarkDetails
 	GIcon *icon;
 	GIcon *symbolic_icon;
 	NemoFile *file;
-    gboolean visited;
 
 	char *scroll_file;
 

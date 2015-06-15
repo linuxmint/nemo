@@ -575,3 +575,13 @@ thumbnail_thread_start (gpointer data)
 				 g_strdup (info->image_uri), NULL);
 	}
 }
+
+gboolean
+nemo_thumbnail_factory_check_status (void)
+{
+#ifdef GNOME_BUILD 
+    return FALSE; // TRUE; 
+#else 
+    return gnome_desktop_thumbnail_cache_check_permissions (get_thumbnail_factory (), TRUE);
+#endif
+}

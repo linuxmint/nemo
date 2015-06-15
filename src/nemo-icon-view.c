@@ -541,6 +541,11 @@ nemo_icon_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *director
 		return;
 	}
 
+    if (nemo_file_has_thumbnail_access_problem (file)) {
+        nemo_application_set_cache_flag (nemo_application_get_singleton ());
+        nemo_window_slot_check_bad_cache_bar (nemo_view_get_nemo_window_slot (view));
+    }
+
 	/* Reset scroll region for the first icon added when loading a directory. */
 	if (nemo_view_get_loading (view) && nemo_icon_container_is_empty (icon_container)) {
 		nemo_icon_container_reset_scroll_region (icon_container);

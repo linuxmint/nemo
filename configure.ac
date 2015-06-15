@@ -3,7 +3,7 @@ AC_PREREQ(2.54)
 dnl ===========================================================================
 
 m4_define(glib_minver,                 2.32.4)
-m4_define(cinnamon_desktop_minver,     1.0.0)
+m4_define(cinnamon_desktop_minver,     2.6.1)
 m4_define(gnome_desktop_minver,        3.0.0)
 m4_define(pango_minver,                1.28.3)
 m4_define(gtk_minver,                  3.3.17)
@@ -23,7 +23,7 @@ dnl Interface break is not allowed.
 m4_define(nemo_extension_current,  5)
 m4_define(nemo_extension_revision, 0)
 
-AC_INIT(nemo, 2.6.1-daschuer10 https://github.com/daschuer/nemo)
+AC_INIT(nemo, 2.6.3-daschuer10 https://github.com/daschuer/nemo)
 
 dnl ===========================================================================
 

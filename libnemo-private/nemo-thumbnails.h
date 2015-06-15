@@ -37,5 +37,6 @@ gboolean   nemo_thumbnail_is_mimetype_limited_by_size
 void       nemo_thumbnail_remove_from_queue     (const char   *file_uri);
 void       nemo_thumbnail_prioritize            (const char   *file_uri);
 
+gboolean   nemo_thumbnail_factory_check_status          (void);
 
 #endif /* NEMO_THUMBNAILS_H */

@@ -22,6 +22,7 @@
 #include <gtk/gtk.h>
 
 #include "nemo-interesting-folder-bar.h"
+#include "nemo-application.h"
 
 #include "nemo-view.h"
 #include <libnemo-private/nemo-file-operations.h>
@@ -40,7 +41,7 @@ enum {
 
 enum {
     INTERESTING_FOLDER_BAR_ACTION_OPEN_DOC = 1,
-	INTERESTING_FOLDER_BAR_SCRIPT_OPEN_DOC
+    INTERESTING_FOLDER_BAR_SCRIPT_OPEN_DOC
 };
 
 struct NemoInterestingFolderBarPrivate

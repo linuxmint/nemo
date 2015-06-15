@@ -63,13 +63,16 @@
 #include <libnemo-private/nemo-signaller.h>
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <libnemo-extension/nemo-menu-provider.h>
+#include <libnemo-private/nemo-thumbnails.c>
 
 #define DEBUG_FLAG NEMO_DEBUG_APPLICATION
 #include <libnemo-private/nemo-debug.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <pwd.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <glib/gstdio.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
@@ -81,6 +84,14 @@
 
 #ifdef HAVE_UNITY
 #include "src/unity-bookmarks-handler.h"
+#endif
+
+#define GNOME_DESKTOP_USE_UNSTABLE_API
+
+#ifdef GNOME_BUILD
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
+#else
+#include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
 #endif
 
 /* Keep window from shrinking down ridiculously small; numbers are somewhat arbitrary */
@@ -110,6 +121,9 @@ struct _NemoApplicationPriv {
 	gboolean no_desktop;
 	gboolean force_desktop;
 	gchar *geometry;
+
+    gboolean cache_problem;
+    gboolean ignore_cache_problem;
 
 #if GLIB_CHECK_VERSION (2,34,0)
 	NotifyNotification *unmount_notify;
@@ -948,6 +962,9 @@ nemo_application_local_command_line (GApplication *application,
 	gboolean open_new_window = FALSE;
 	gboolean no_default_window = FALSE;
 	gboolean select_uris = FALSE;
+#ifndef GNOME_BUILD
+    gboolean fix_cache = FALSE;
+#endif
 	gchar **remaining = NULL;
 	NemoApplication *self = NEMO_APPLICATION (application);
 
@@ -971,6 +988,10 @@ nemo_application_local_command_line (GApplication *application,
 		  N_("Never manage the desktop (ignore the GSettings preference)."), NULL },
 		{ "force-desktop", '\0', 0, G_OPTION_ARG_NONE, &self->priv->force_desktop,
 		  N_("Always manage the desktop (ignore the GSettings preference)."), NULL },
+#ifndef GNOME_BUILD
+        { "fix-cache", '\0', 0, G_OPTION_ARG_NONE, &fix_cache,
+          N_("Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root"), NULL },
+#endif
 		{ "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
 		  N_("Quit Nemo."), NULL },
 		{ "select", 's', 0, G_OPTION_ARG_NONE, &select_uris,
@@ -1019,6 +1040,21 @@ nemo_application_local_command_line (GApplication *application,
 		do_perform_self_checks (exit_status);
 		goto out;
 	}
+
+#ifndef GNOME_BUILD
+    if (fix_cache) {
+        if (geteuid () != 0) {
+            g_printerr ("The --fix-cache option must be run with sudo or as the root user.\n");
+        } else {
+
+
+            gnome_desktop_thumbnail_cache_fix_permissions ();
+            g_print ("User thumbnail cache successfully repaired.\n");
+        }
+
+        goto out;
+    }
+#endif
 
 	DEBUG ("Parsing local command line: open_new_window %d, no_default_window %d, "
 	       "quit %d, self checks %d, no_desktop %d, show_desktop %d",
@@ -1458,19 +1494,6 @@ menu_state_changed_callback (NemoApplication *self)
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 static void
 nemo_application_startup (GApplication *app)
 {
@@ -1537,6 +1560,23 @@ nemo_application_startup (GApplication *app)
 	 * if there are problems.
 	 */
 	check_required_directories (self);
+
+    self->priv->cache_problem = FALSE;
+    self->priv->ignore_cache_problem = FALSE;
+
+#ifndef GNOME_BUILD
+    /* silently do a full check of the cache and fix if running as root.
+     * If running as a normal user, do a quick check, and we'll notify the
+     * user later if there's a problem via an infobar */
+    if (geteuid () == 0) {
+        if (!gnome_desktop_thumbnail_cache_check_permissions (NULL, FALSE))
+            gnome_desktop_thumbnail_cache_fix_permissions ();
+    } else {
+        if (!gnome_desktop_thumbnail_cache_check_permissions (NULL, TRUE))
+            self->priv->cache_problem = TRUE;
+    }
+#endif
+
     if (geteuid() != 0)
 		init_desktop (self);
 
@@ -1711,4 +1751,40 @@ nemo_application_new (void)
 			     "inactivity-timeout", 12000,
 			     "register-session", TRUE,
 			     NULL);
+}
+
+void
+nemo_application_check_thumbnail_cache (NemoApplication *application)
+{
+    application->priv->cache_problem = !nemo_thumbnail_factory_check_status ();
+}
+
+gboolean
+nemo_application_get_cache_bad (NemoApplication *application)
+{
+    return application->priv->cache_problem;
+}
+
+void
+nemo_application_clear_cache_flag (NemoApplication *application)
+{
+    application->priv->cache_problem = FALSE;
+}
+
+void
+nemo_application_set_cache_flag (NemoApplication *application)
+{
+    application->priv->cache_problem = TRUE;
+}
+
+void
+nemo_application_ignore_cache_problem (NemoApplication *application)
+{
+    application->priv->ignore_cache_problem = TRUE;
+}
+
+gboolean
+nemo_application_get_cache_problem_ignored (NemoApplication *application)
+{
+    return application->priv->ignore_cache_problem;
 }

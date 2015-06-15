@@ -143,4 +143,6 @@ void           nemo_window_slot_make_hosting_pane_active (NemoWindowSlot *slot);
 void nemo_window_slot_clear_forward_list (NemoWindowSlot *slot);
 void nemo_window_slot_clear_back_list    (NemoWindowSlot *slot);
 
+void nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot);
+
 #endif /* NEMO_WINDOW_SLOT_H */
