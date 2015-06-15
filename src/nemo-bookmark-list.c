@@ -707,6 +707,21 @@ save_io_thread (GSimpleAsyncResult *result,
 	GFile *parent, *file;
 	GError *error = NULL;
 
+#ifndef GNOME_BUILD
+    if (geteuid () == 0) {
+        struct passwd *pwent;
+        pwent = gnome_desktop_get_session_user_pwent ();
+
+        gchar *bookmarks_path = g_file_get_path (G_FILE (source));
+
+        if (g_strcmp0 (pwent->pw_dir, g_get_home_dir ()) == 0) {
+            G_GNUC_UNUSED int res;
+
+            res = chown (bookmarks_path, pwent->pw_uid, pwent->pw_gid);
+        }
+    }
+#endif
+
 	file = nemo_bookmark_list_get_file ();
 	parent = g_file_get_parent (file);
 	path = g_file_get_path (parent);
