@@ -37,6 +37,7 @@
 #include "nemo-window-private.h"
 #include "nemo-x-content-bar.h"
 #include "nemo-metadata.h"
+#include "nemo-interesting-folder-bar.h"
 
 #include <glib/gi18n.h>
 #include <eel/eel-stock-dialogs.h>
@@ -497,6 +498,7 @@ remove_all_extra_location_widgets (GtkWidget *widget,
 	}
 
 	nemo_directory_unref (directory);
+    slot->details->cache_bar = NULL;
 }
 
 void
@@ -568,6 +570,8 @@ nemo_window_slot_constructed (GObject *object)
 	slot->details->extra_location_widgets = extras_vbox;
 	gtk_box_pack_start (GTK_BOX (slot), extras_vbox, FALSE, FALSE, 0);
 	gtk_widget_show (extras_vbox);
+
+    slot->details->cache_bar = NULL;
 
 	slot->details->query_editor = NEMO_QUERY_EDITOR (nemo_query_editor_new ());
 	slot->details->query_editor_revealer = gtk_revealer_new ();
@@ -1906,7 +1910,7 @@ nemo_window_slot_update_bookmark (NemoWindowSlot *slot, NemoFile *file)
 		bookmark_location = nemo_bookmark_get_location (slot->details->current_location_bookmark);
 		recreate = !g_file_equal (bookmark_location, new_location);
 		g_object_unref (bookmark_location);
-        }
+	}
 
 	if (recreate) {
 		char *display_name = NULL;
@@ -1918,7 +1922,7 @@ nemo_window_slot_update_bookmark (NemoWindowSlot *slot, NemoFile *file)
 		display_name = nemo_file_get_display_name (file);
 		slot->details->current_location_bookmark = nemo_bookmark_new (new_location, display_name);
 		g_free (display_name);
-        }
+	}
 
 	g_object_unref (new_location);
 }
@@ -2355,6 +2359,18 @@ view_begin_loading_cb (NemoView *view,
 }
 
 static void
+maybe_show_interesting_folder_bar (NemoWindowSlot *slot)
+{
+    GtkWidget *bar = nemo_interesting_folder_bar_new_for_location (nemo_window_slot_get_current_view(slot),
+                                                                   slot->details->location);
+
+    if (bar) {
+        gtk_widget_show (bar);
+        nemo_window_slot_add_extra_location_widget (slot, bar);
+    }
+}
+
+static void
 nemo_window_slot_setup_extra_location_widgets (NemoWindowSlot *slot)
 {
 	GFile *location;
@@ -2395,6 +2411,8 @@ nemo_window_slot_setup_extra_location_widgets (NemoWindowSlot *slot)
 		g_object_unref (actions_file);
 		nemo_file_unref (file);
 	}
+
+	maybe_show_interesting_folder_bar (slot);
 
 	/* need the mount to determine if we should put up the x-content cluebar */
 	if (slot->details->find_mount_cancellable != NULL) {

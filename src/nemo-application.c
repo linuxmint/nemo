@@ -64,6 +64,7 @@
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <libnemo-private/nemo-thumbnails.h>
 #include <libnemo-extension/nemo-menu-provider.h>
+#include <libnemo-private/nemo-thumbnails.c>
 
 #define DEBUG_FLAG NEMO_DEBUG_APPLICATION
 #include <libnemo-private/nemo-debug.h>
