@@ -53,6 +53,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SIZE_PREFIXES_WIDGET "size_prefixes_combobox"
 
 /* bool preferences */
+#define NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN "quick_renames_with_pause_in_between"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET "sort_folders_first_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_LAYOUT_WIDGET "compact_layout_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_LABELS_BESIDE_ICONS_WIDGET "labels_beside_icons_checkbutton"
@@ -64,6 +65,8 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_OPEN_NEW_WINDOW_WIDGET "new_window_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TREE_VIEW_FOLDERS_WIDGET "treeview_folders_checkbutton"
 
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_PREVIOUS_ICON_TOOLBAR_WIDGET "show_previous_icon_toolbar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_NEXT_ICON_TOOLBAR_WIDGET "show_next_icon_toolbar_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_UP_ICON_TOOLBAR_WIDGET "show_up_icon_toolbar_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_RELOAD_ICON_TOOLBAR_WIDGET "show_reload_icon_toolbar_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_EDIT_ICON_TOOLBAR_WIDGET "show_edit_icon_toolbar_checkbutton"
@@ -71,7 +74,11 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPUTER_ICON_TOOLBAR_WIDGET "show_computer_icon_toolbar_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_SEARCH_ICON_TOOLBAR_WIDGET "show_search_icon_toolbar_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_NEW_FOLDER_ICON_TOOLBAR_WIDGET "show_new_folder_icon_toolbar_checkbutton"
-#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LABEL_SEARCH_ICON_TOOLBAR_WIDGET "show_label_search_icon_toolbar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_OPEN_IN_TERMINAL_ICON_TOOLBAR_WIDGET "show_open_in_terminal_icon_toolbar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_ICON_VIEW_ICON_TOOLBAR_WIDGET "show_icon_view_icon_toolbar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LIST_VIEW_ICON_TOOLBAR_WIDGET "show_list_view_icon_toolbar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPACT_VIEW_ICON_TOOLBAR_WIDGET "show_compact_view_icon_toolbar_checkbutton"
+
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_FULL_PATH_IN_TITLE_BARS_WIDGET "show_full_path_in_title_bars_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_CLOSE_DEVICE_VIEW_ON_EJECT_WIDGET "close_device_view_on_eject_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_AUTOMOUNT_MEDIA_WIDGET "media_automount_checkbutton"
@@ -92,6 +99,8 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_MOD_DATE_WIDGET "tt_show_modified_date_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_ACCESS_DATE_WIDGET "tt_show_created_date_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_FULL_PATH_WIDGET "tt_show_full_path_checkbutton"
+
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS_WIDGET "context_menus_show_all_actions_checkbutton"
 
 /* int enums */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET "preview_image_size_combobox"
@@ -185,7 +194,8 @@ static const guint64 thumbnail_limit_values[] = {
 	104857600,
 	1073741824,
 	2147483648U,
-	4294967295U
+	4294967295U,
+	8589934592U
 };
 
 static const char * const icon_captions_components[] = {
@@ -219,72 +229,13 @@ nemo_file_management_properties_size_group_create (GtkBuilder *builder,
 }
 
 static void
-preferences_show_help (GtkWindow *parent,
-		       char const *helpfile,
-		       char const *sect_id)
-{
-	GError *error = NULL;
-	GtkWidget *dialog;
-	char *help_string;
-
-	g_assert (helpfile != NULL);
-	g_assert (sect_id != NULL);
-
-	help_string = g_strdup_printf ("help:%s/%s", helpfile, sect_id);
-
-	gtk_show_uri (gtk_window_get_screen (parent),
-		      help_string, gtk_get_current_event_time (),
-		      &error);
-	g_free (help_string);
-
-	if (error) {
-		dialog = gtk_message_dialog_new (GTK_WINDOW (parent),
-						 GTK_DIALOG_DESTROY_WITH_PARENT,
-						 GTK_MESSAGE_ERROR,
-						 GTK_BUTTONS_OK,
-						 _("There was an error displaying help: \n%s"),
-						 error->message);
-
-		g_signal_connect (G_OBJECT (dialog),
-				  "response", G_CALLBACK (gtk_widget_destroy),
-				  NULL);
-		gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
-		gtk_widget_show (dialog);
-		g_error_free (error);
-	}
-}
-
-
-static void
 nemo_file_management_properties_dialog_response_cb (GtkDialog *parent,
 							int response_id,
 							GtkBuilder *builder)
 {
-	char *section;
-
-	if (response_id == GTK_RESPONSE_HELP) {
-		switch (gtk_notebook_get_current_page (GTK_NOTEBOOK (gtk_builder_get_object (builder, "notebook1")))) {
-		default:
-		case 0:
-			section = "nemo-views";
-			break;
-		case 1:
-			section = "nemo-behavior";
-			break;
-		case 2:
-			section = "nemo-display";
-			break;
-		case 3:
-			section = "nemo-list";
-			break;
-		case 4:
-			section = "nemo-preview";
-			break;
-		}
-		preferences_show_help (GTK_WINDOW (parent), "gnome-help", section);
-	} else if (response_id == GTK_RESPONSE_CLOSE) {
-		gtk_widget_destroy (GTK_WIDGET (parent));
-	}
+    if (response_id == GTK_RESPONSE_CLOSE) {
+        gtk_widget_destroy (GTK_WIDGET (parent));
+    }
 }
 
 static void
@@ -787,6 +738,29 @@ connect_tooltip_items (GtkBuilder *builder)
 
 }
 
+/* When single click radio button is selected, checkbox for quick renames should get unselected and disable to avoid annoying features */
+static void
+setup_quick_renames (GtkBuilder *builder)
+{
+	gboolean enabled = FALSE;
+	enabled = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (W (click_behavior_components[1])));
+	if(enabled==FALSE){
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(W (NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN)), FALSE);
+	}
+	gtk_widget_set_sensitive (GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN)), enabled);
+}
+
+static void
+connect_quick_renames (GtkBuilder *builder)
+{
+	GtkRadioButton *w;
+	w=GTK_RADIO_BUTTON(W(click_behavior_components[0]));
+ 		g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_quick_renames), builder);
+
+	w=GTK_RADIO_BUTTON(W(click_behavior_components[1]));
+		g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_quick_renames), builder);
+}
+
 static  void
 nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *window)
 {
@@ -807,6 +781,12 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 
 	/* nemo patch */
 	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_PREVIOUS_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_PREVIOUS_ICON_TOOLBAR);
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_NEXT_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_NEXT_ICON_TOOLBAR);
+	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_UP_ICON_TOOLBAR_WIDGET,
 			   NEMO_PREFERENCES_SHOW_UP_ICON_TOOLBAR);
 	bind_builder_bool (builder, nemo_preferences,
@@ -824,16 +804,25 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_SEARCH_ICON_TOOLBAR_WIDGET,
 			   NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR);
-	bind_builder_bool (builder, nemo_preferences,
-			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LABEL_SEARCH_ICON_TOOLBAR_WIDGET,
-			   NEMO_PREFERENCES_SHOW_LABEL_SEARCH_ICON_TOOLBAR);
     bind_builder_bool (builder, nemo_preferences,
-               NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_NEW_FOLDER_ICON_TOOLBAR_WIDGET,
-               NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR);
+        NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_NEW_FOLDER_ICON_TOOLBAR_WIDGET,
+        NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR);
+    bind_builder_bool (builder, nemo_preferences,
+        NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_OPEN_IN_TERMINAL_ICON_TOOLBAR_WIDGET,
+        NEMO_PREFERENCES_SHOW_OPEN_IN_TERMINAL_TOOLBAR);
+    bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_ICON_VIEW_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_ICON_VIEW_ICON_TOOLBAR);
+    bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LIST_VIEW_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_LIST_VIEW_ICON_TOOLBAR);
+    bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPACT_VIEW_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR);
 	/* setup preferences */
     bind_builder_bool (builder, nemo_icon_view_preferences,
-                NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_LAYOUT_WIDGET,
-                NEMO_PREFERENCES_ICON_VIEW_DEFAULT_USE_TIGHTER_LAYOUT);
+        NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_LAYOUT_WIDGET,
+        NEMO_PREFERENCES_ICON_VIEW_DEFAULT_USE_TIGHTER_LAYOUT);
 	bind_builder_bool (builder, nemo_icon_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_LABELS_BESIDE_ICONS_WIDGET,
 			   NEMO_PREFERENCES_ICON_VIEW_LABELS_BESIDE_ICONS);
@@ -843,9 +832,15 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
 			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
+	bind_builder_bool(builder, nemo_preferences,
+			    NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN,
+			    NEMO_PREFERENCES_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN);
 	bind_builder_bool_inverted (builder, nemo_preferences,
 				    NEMO_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET,
 				    NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
+	bind_builder_bool (builder, nemo_preferences,
+				    NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS_WIDGET,
+				    NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS);
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET,
 			   NEMO_PREFERENCES_CONFIRM_TRASH);
@@ -989,6 +984,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 
     setup_tooltip_items (builder);
     connect_tooltip_items (builder);
+
+    /* to make checkbox for quickrenames get disabled when single click is selected */ 
+    setup_quick_renames(builder);
+    connect_quick_renames(builder);
 
 	nemo_file_management_properties_dialog_setup_icon_caption_page (builder);
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);

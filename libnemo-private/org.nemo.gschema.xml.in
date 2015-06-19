@@ -85,10 +85,25 @@
       <_summary>Enables the classic Nemo behavior, where all windows are browsers</_summary>
       <_description>If set to true, then all Nemo windows will be browser windows. This is how Nemo used to behave before version 2.6, and some people prefer this behavior.</_description>
     </key>
+    <key name="quick-renames-with-pause-in-between" type="b">
+      <default>false</default>
+      <_summary>Enables renaming of icons by two times clicking with pause between clicks</_summary>
+      <_description>If set to true, then icons in all Nemo windows will be able to get renamed quickly. Users should click two times on icons with a pause time more than double-click time of their system.</_description>
+    </key>
     <key name="show-location-entry" type="b">
       <default>false</default>
       <_summary>Show the location entry by default</_summary>
       <_description>If set to true, then Nemo browser windows will show a textual input entry for the location toolbar.</_description>
+    </key>
+    <key type="b" name="show-previous-icon-toolbar">
+      <default>true</default>
+      <summary>Show Previous button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
+    <key type="b" name="show-next-icon-toolbar">
+      <default>true</default>
+      <summary>Show Next button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-up-icon-toolbar">
       <default>true</default>
@@ -96,7 +111,7 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-reload-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show refresh button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
@@ -106,12 +121,12 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-home-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show Home button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-computer-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show Computer button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
@@ -121,14 +136,29 @@
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-new-folder-icon-toolbar">
-      <default>true</default>
+      <default>false</default>
       <summary>Show new folder button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
-    <key type="b" name="show-label-search-icon-toolbar">
+    <key type="b" name="show-open-in-terminal-toolbar">
       <default>false</default>
-      <summary>Show the Search button label in nemo toolbar</summary>
-      <description>If set to true, then Nemo browser windows will show the Search label button.</description>
+      <summary>Show open in terminal in the nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
+    <key type="b" name="show-icon-view-icon-toolbar">
+      <default>true</default>
+      <summary>Show Icon View button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
+    <key type="b" name="show-list-view-icon-toolbar">
+      <default>true</default>
+      <summary>Show List View button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
+    <key type="b" name="show-compact-view-icon-toolbar">
+      <default>true</default>
+      <summary>Show Compact View button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key name="confirm-trash" type="b">
       <default>true</default>
@@ -280,6 +310,11 @@
       <default>true</default>
       <_summary>Whether to list places in the Move To/Copy To menus</_summary>
       <_description>If set to true, places will be listed in the MoveTo/CopyTo menus</_description>
+    </key>
+    <key name="context-menus-show-all-actions" type="b">
+      <default>false</default>
+      <_summary>Whether to show all available actions in context menus</_summary>
+      <_description>If set to true, all actions are visible. Otherwise nemo shows a simplified version of what is present in the menubar.</_description>
     </key>
     <key name="tooltips-on-desktop" type="b">
       <default>false</default>
@@ -484,6 +519,11 @@
       <_summary>Width of the side pane</_summary>
       <_description>The default width of the side pane in new windows.</_description>
     </key>
+    <key name="sidebar-bookmark-breakpoint" type="i">
+      <default>-1</default>
+      <_summary>Index of the bookmark list to jump to the dedicated sidebar bookmark section</_summary>
+      <_description>This is an internal setting for the sidebar that tracks the index in the bookmark list that separates bookmarks in the Computer section from bookmarks in the Bookmark section.</_description>
+    </key>
     <key name="start-with-toolbar" type="b">
       <default>true</default>
       <_summary>Show toolbar in new windows</_summary>
@@ -514,6 +554,11 @@
       <_summary>Expand My Computer section in places sidebar</_summary>
       <_description>View state storage for My Computer in places sidebar</_description>
     </key>
+    <key name="bookmarks-expanded" type="b">
+      <default>true</default>
+      <_summary>Expand Bookmark section in places sidebar</_summary>
+      <_description>View state storage for Bookmarks in places sidebar</_description>
+    </key>
     <key name="devices-expanded" type="b">
       <default>true</default>
       <_summary>Expand Devices section in places sidebar</_summary>
@@ -536,6 +581,24 @@
       <default>'places'</default>
       <_summary>Side pane view</_summary>
       <_description>The side pane view to show in newly opened windows.</_description>
+    </key>
+  </schema>
+
+  <schema id="org.nemo.plugins" path="/org/nemo/plugins/" gettext-domain="nemo">
+    <key name="disabled-extensions" type="as">
+      <default>[]</default>
+      <_summary>List of extensions -not- to load.</_summary>
+      <_description>List of extension names you do -not- want to load.  This maintains the behavior of an installed extension being enabled by default.</_description>
+    </key>
+    <key name="disabled-actions" type="as">
+      <default>[]</default>
+      <_summary>List of NemoActions -not- to load.</_summary>
+      <_description>List of action files you do -not- want loaded.  This maintains the behavior of an installed action being enabled by default.</_description>
+    </key>
+    <key name="disabled-scripts" type="as">
+      <default>[]</default>
+      <_summary>List of scripts -not- to load.</_summary>
+      <_description>List of script files you do -not- want loaded.  This maintains the behavior of an installed script being enabled by default.</_description>
     </key>
   </schema>
 </schemalist>
