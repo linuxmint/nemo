@@ -1,3 +1,10 @@
+nemo (2.6.7) rafaela; urgency=medium
+
+  [ Michael Webster ]
+  * progress window: simplify slightly, have info widgets manage themselves more, to prevent having a race condition at certain stages of the file operation.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 22 Jun 2015 23:35:49 +0200
+
 nemo (2.6.6) rafaela; urgency=medium
 
   [ Michael Webster ]
