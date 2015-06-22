@@ -5106,7 +5106,7 @@ create_open_with_page (NemoPropertiesWindow *window)
 		}
 	}
 
-	vbox = nemo_mime_application_chooser_new (files, mime_type);
+	vbox = nemo_mime_application_chooser_new (files, mime_type, NULL);
 
 	gtk_widget_show (vbox);
 	g_free (mime_type);

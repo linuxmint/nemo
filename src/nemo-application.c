@@ -62,6 +62,7 @@
 #include <libnemo-private/nemo-profile.h>
 #include <libnemo-private/nemo-signaller.h>
 #include <libnemo-private/nemo-ui-utilities.h>
+#include <libnemo-private/nemo-thumbnails.h>
 #include <libnemo-extension/nemo-menu-provider.h>
 #include <libnemo-private/nemo-thumbnails.c>
 
@@ -1746,11 +1747,11 @@ NemoApplication *
 nemo_application_new (void)
 {
 	return g_object_new (NEMO_TYPE_APPLICATION,
-			     "application-id", "org.Nemo",
-			     "flags", G_APPLICATION_HANDLES_OPEN,
-			     "inactivity-timeout", 12000,
-			     "register-session", TRUE,
-			     NULL);
+                         "application-id", "org.Nemo",
+                         "flags", G_APPLICATION_HANDLES_OPEN,
+                         "inactivity-timeout", 12000,
+                         "register-session", TRUE,
+                         NULL);
 }
 
 void

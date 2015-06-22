@@ -47,7 +47,8 @@ struct _NemoMimeApplicationChooserClass {
 
 GType      nemo_mime_application_chooser_get_type (void);
 GtkWidget * nemo_mime_application_chooser_new (GList *files,
-						   const char *mime_type);
+                                               const char *mime_type,
+                                                GtkWidget *ok_button);
 GAppInfo  *nemo_mime_application_chooser_get_info (NemoMimeApplicationChooser *chooser);
 const GList *nemo_mime_application_chooser_get_files (NemoMimeApplicationChooser *chooser);
 

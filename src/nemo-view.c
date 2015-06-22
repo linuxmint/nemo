@@ -1298,8 +1298,8 @@ choose_program (NemoView *view,
 		NemoFile *file)
 {
 	GtkWidget *dialog;
+    GtkWidget *ok_button;
     char *mime_type;
-    GList files;
 
 	g_assert (NEMO_IS_VIEW (view));
 	g_assert (NEMO_IS_FILE (file));
@@ -1311,14 +1311,18 @@ choose_program (NemoView *view,
                           GTK_DIALOG_DESTROY_WITH_PARENT,
                           GTK_STOCK_CANCEL,
                           GTK_RESPONSE_CANCEL,
-                          GTK_STOCK_OK,
-                          GTK_RESPONSE_OK,
                           NULL);
+    ok_button = gtk_dialog_add_button (GTK_DIALOG (dialog),
+                                       GTK_STOCK_OK,
+                                       GTK_RESPONSE_OK);
 
+    gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+
+    GList files;    
     files.next = NULL;
     files.prev = NULL;
-    files.data = file;
-    GtkWidget *chooser = nemo_mime_application_chooser_new (&files, mime_type);
+    files.data = file;    
+    GtkWidget *chooser = nemo_mime_application_chooser_new (&files, mime_type, ok_button);
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
@@ -5219,6 +5223,11 @@ reset_move_copy_to_menu (NemoView *view)
             if (!g_file_is_native (root)) {
                 gboolean really_network = TRUE;
                 gchar *path = g_file_get_path (root);
+                if (!path) {
+                    network_mounts = g_list_prepend (network_mounts, mount);
+                    g_object_unref (root);
+                    continue;
+                }
                 gchar *escaped1 = g_uri_unescape_string (path, "");
                 gchar *escaped2 = g_uri_unescape_string (escaped1, "");
                 gchar *ptr = g_strrstr (escaped2, "file://");

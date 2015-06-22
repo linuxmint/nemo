@@ -249,7 +249,6 @@
   </object>
   <object class="GtkDialog" id="file_management_dialog">
     <property name="can_focus">False</property>
-    <property name="border_width">5</property>
     <property name="title" translatable="yes">File Management Preferences</property>
     <property name="window_position">center</property>
     <property name="default_width">800</property>
@@ -258,6 +257,7 @@
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
+        <property name="border_width">0</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
@@ -293,10 +293,17 @@
           <object class="GtkToolbar" id="toolbar1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <style>
+              <class name="primary-toolbar"/>
+            </style>
+            <property name="toolbar_style">icons</property>
             <child>
               <object class="GtkToolItem" id="toolbutton1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <style>
+                  <class name="raised"/>
+                </style>
                 <child>
                   <object class="GtkStackSwitcher" id="stack-switcher">
                     <property name="halign">center</property>
@@ -321,6 +328,9 @@
           <object class="GtkFrame" id="stack-frame">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
+            <property name="margin_top">5</property>
             <style>
               <class name="view"/>
             </style>
