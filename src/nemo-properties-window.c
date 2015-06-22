@@ -4938,8 +4938,8 @@ should_show_permissions (NemoPropertiesWindow *window)
 	 */
 	if (!is_multi_file_window (window)
 	    && (is_merged_trash_directory (file) ||
-            is_recent_directory (file) ||
-            is_computer_directory (file))) {
+		is_recent_directory (file) ||
+		is_computer_directory (file))) {
 		return FALSE;
 	}
 
