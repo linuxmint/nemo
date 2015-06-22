@@ -72,6 +72,17 @@ update_progress (NemoProgressInfoWidget *self)
 }
 
 static void
+on_info_started (NemoProgressInfoWidget *self) {
+    gtk_stack_set_visible_child_name (GTK_STACK (self->priv->stack), "running");
+}
+
+static void
+on_info_finished (NemoProgressInfoWidget *self)
+{
+    gtk_widget_destroy (GTK_WIDGET (self));
+}
+
+static void
 cancel_clicked (GtkWidget *button,
 		NemoProgressInfoWidget *self)
 {
@@ -94,30 +105,24 @@ start_clicked (GtkWidget *button,
 static void
 nemo_progress_info_widget_constructed (GObject *obj)
 {
-	GtkWidget *label, *progress_bar, *hbox, *vbox, *button, *view, *bb, *revealer_box;
+	GtkWidget *label, *progress_bar, *hbox, *vbox, *button, *view, *bb, *main_box;
 	NemoProgressInfoWidget *self = NEMO_PROGRESS_INFO_WIDGET (obj);
     NemoProgressInfoWidgetPriv *priv = NEMO_PROGRESS_INFO_WIDGET (obj)->priv;
 
 	G_OBJECT_CLASS (nemo_progress_info_widget_parent_class)->constructed (obj);
 
-    priv->revealer = gtk_revealer_new ();
-    gtk_revealer_set_transition_type (GTK_REVEALER (priv->revealer), GTK_REVEALER_TRANSITION_TYPE_SLIDE_DOWN);
-    gtk_revealer_set_transition_duration (GTK_REVEALER (priv->revealer), 200);
-
-    gtk_container_add (GTK_CONTAINER (self), priv->revealer);
-
-    revealer_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-    gtk_container_add (GTK_CONTAINER (priv->revealer), revealer_box);
+    main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+    gtk_container_add (GTK_CONTAINER (self), main_box);
 
     priv->separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
-    gtk_box_pack_start (GTK_BOX (revealer_box), priv->separator, FALSE, FALSE, 5);
+    gtk_box_pack_start (GTK_BOX (main_box), priv->separator, FALSE, FALSE, 5);
 
     priv->stack = gtk_stack_new ();
     gtk_stack_set_transition_type (GTK_STACK (priv->stack), GTK_STACK_TRANSITION_TYPE_CROSSFADE);
     gtk_stack_set_transition_duration (GTK_STACK (priv->stack), 200);
-    gtk_box_pack_start (GTK_BOX (revealer_box), priv->stack, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (main_box), priv->stack, FALSE, FALSE, 0);
 
-    gtk_widget_show_all (priv->revealer);
+    gtk_widget_show_all (main_box);
 
     /* contruct the initial stack page (job just queued, minimal info and
      * start & cancel buttons) */
@@ -186,7 +191,6 @@ nemo_progress_info_widget_constructed (GObject *obj)
 	progress_bar = gtk_progress_bar_new ();
 	priv->progress_bar = progress_bar;
 	gtk_progress_bar_set_pulse_step (GTK_PROGRESS_BAR (progress_bar), 0.05);
-
 	gtk_box_pack_start(GTK_BOX (vbox), progress_bar, TRUE, FALSE, 2);
 
     label = gtk_label_new ("details");
@@ -219,6 +223,12 @@ nemo_progress_info_widget_constructed (GObject *obj)
 
     g_signal_connect_swapped (priv->info, "changed", G_CALLBACK (update_data), self);
     g_signal_connect_swapped (priv->info, "progress-changed", G_CALLBACK (update_progress), self);
+
+    gboolean started = nemo_progress_info_get_is_started (self->priv->info);
+    gtk_stack_set_visible_child_name (GTK_STACK (self->priv->stack), started ? "running" : "pending");
+    g_signal_connect_swapped (priv->info, "started", G_CALLBACK (on_info_started), self);
+
+    g_signal_connect_swapped (priv->info, "finished", G_CALLBACK (on_info_finished), self);
 }
 
 static void
@@ -290,16 +300,4 @@ nemo_progress_info_widget_new (NemoProgressInfo *info)
 			     "homogeneous", FALSE,
 			     "spacing", 5,
 			     NULL);
-}
-
-void
-nemo_progress_info_widget_reveal (NemoProgressInfoWidget *widget)
-{
-    gtk_revealer_set_reveal_child (GTK_REVEALER (widget->priv->revealer), TRUE);
-}
-
-void
-nemo_progress_info_widget_unreveal (NemoProgressInfoWidget *widget)
-{
-    gtk_revealer_set_reveal_child (GTK_REVEALER (widget->priv->revealer), FALSE);
 }

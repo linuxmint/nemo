@@ -57,7 +57,6 @@ typedef struct {
 struct _NemoProgressInfoWidgetPriv {
     NemoProgressInfo *info;
 
-    GtkWidget *revealer;
     GtkWidget *stack;
     GtkWidget *separator;
 
@@ -72,8 +71,5 @@ struct _NemoProgressInfoWidgetPriv {
 GType nemo_progress_info_widget_get_type (void);
 
 GtkWidget * nemo_progress_info_widget_new (NemoProgressInfo *info);
-
-void nemo_progress_info_widget_reveal (NemoProgressInfoWidget *widget);
-void nemo_progress_info_widget_unreveal (NemoProgressInfoWidget *widget);
 
 #endif /* __NEMO_PROGRESS_INFO_WIDGET_H__ */
