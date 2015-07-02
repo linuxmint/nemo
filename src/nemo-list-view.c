@@ -197,6 +197,7 @@ get_default_sort_order (NemoFile *file, gboolean *reversed)
 		"name",
 		"size",
 		"type",
+		"detailed_type",
 		"date_modified",
 		"date_accessed",
 		"trashed_on",
