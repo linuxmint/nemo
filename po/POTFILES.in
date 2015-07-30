@@ -45,7 +45,6 @@ libnemo-private/nemo-query.c
 libnemo-private/nemo-search-directory-file.c
 libnemo-private/nemo-search-engine.c
 libnemo-private/nemo-tree-view-drag-dest.c
-libnemo-private/nemo-undo-signal-handlers.c
 libnemo-private/nemo-vfs-file.c
 libnemo-private/org.nemo.gschema.xml.in
 src/nemo-application.c
@@ -66,9 +65,6 @@ src/nemo-directory-view-ui.xml
 src/nemo-error-reporting.c
 src/nemo-file-management-properties.c
 [type: gettext/glade]src/nemo-file-management-properties.glade
-src/nemo-canvas-view.c
-src/nemo-canvas-view-container.c
-src/nemo-icon-view-ui.xml
 src/nemo-image-properties-page.c
 src/nemo-list-model.c
 src/nemo-list-view.c
