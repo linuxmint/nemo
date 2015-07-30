@@ -444,10 +444,10 @@ ext_strings_func (NemoFileUndoInfo *info,
 		}
 	} else if (op_type == NEMO_FILE_UNDO_OP_CREATE_LINK) {
 		if (count > 1) {
-			*undo_description = g_strdup_printf (ngettext ("Delete links to %d item",
+			*undo_description = g_strdup_printf (ngettext ("Delete link to %d item",
 								       "Delete links to %d items", count),
 							     count);
-			*redo_description = g_strdup_printf (ngettext ("Create links to %d item",
+			*redo_description = g_strdup_printf (ngettext ("Create link to %d item",
 								       "Create links to %d items", count),
 							     count);
 		} else {
