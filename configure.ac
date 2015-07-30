@@ -57,17 +57,16 @@ AC_CHECK_LIB(m, floor)
 
 dnl ==========================================================================
 
-GETTEXT_PACKAGE=nemo
-
+GETTEXT_PACKAGE=nemo_daschuer
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
                    [the gettext translation domain])
 
 AM_GLIB_GNU_GETTEXT
-LOCALE_DIR=/usr/share/locale
-AC_SUBST(LOCALE_DIR)
+AC_SUBST(GETTEXT_PACKAGE)
 
-AC_DEFINE_UNQUOTED(LOCALEDIR, "$LOCALE_DIR", [path for translations])
+AM_GLIB_GNU_GETTEXT
+GLIB_DEFINE_LOCALEDIR(LOCALEDIR)
 
 GLIB_GSETTINGS
 
