@@ -1,3 +1,16 @@
+nemo (2.6.7-daschuer10) trusty; urgency=low
+  
+  * fixed compiling for Cinnamon 
+ 
+ -- Daniel Schürmann <daschuer@gmx.de>  Tue, 4 Aug 2015 22:18:00 +0100
+
+nemo (2.6.7-daschuer10) trusty; urgency=low
+  
+  * Merged with nemo 2.6.7
+  * Added translations 
+ 
+ -- Daniel Schürmann <daschuer@gmx.de>  Tue, 4 Aug 2015 20:47:00 +0100
+
 nemo (2.5.1-daschuer9) trusty; urgency=low
   
   * fix conditional Tracker support  
