@@ -45,7 +45,6 @@ Depends: ${shlibs:Depends},
          libglib2.0-data,
          gsettings-desktop-schemas (>= 3.4.0),
          cinnamon-desktop-data,
-         cinnamon-translations,
          cinnamon
 Recommends: eject,
             librsvg2-common,

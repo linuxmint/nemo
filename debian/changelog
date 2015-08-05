@@ -1,3 +1,10 @@
+nemo (2.6.7.12-daschuer) trusty; urgency=low
+  
+  * remove cinnamon-translations from dependency
+  * change versioning to be newer than upstream
+ 
+ -- Daniel Schürmann <daschuer@gmx.de>  Tue, 5 Aug 2015 21:12:00 +0100
+
 nemo (2.6.7-daschuer11) trusty; urgency=low
   
   * fixed compiling for Cinnamon 
