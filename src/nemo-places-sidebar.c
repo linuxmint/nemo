@@ -1556,7 +1556,8 @@ compute_drop_position (GtkTreeView *tree_view,
 	if (section_type != SECTION_XDG_BOOKMARKS &&
         section_type != SECTION_BOOKMARKS &&
 	    sidebar->drag_data_received &&
-	    sidebar->drag_data_info == GTK_TREE_MODEL_ROW) {
+	    sidebar->drag_data_info == GTK_TREE_MODEL_ROW &&
+        g_strcmp0 (drop_target_uri, sidebar->top_bookend_uri) != 0) {
 		/* don't allow dropping bookmarks into non-bookmark areas */
 
 		gtk_tree_path_free (*path);
@@ -1751,7 +1752,8 @@ drag_leave_callback (GtkTreeView *tree_view,
 static void
 bookmarks_drop_uris (NemoPlacesSidebar *sidebar,
                      GtkSelectionData  *selection_data,
-                                  int   position)
+                                  int   position,
+                          SectionType   section_type)
 {
 	NemoBookmark *bookmark;
 	NemoFile *file;
@@ -1780,8 +1782,11 @@ bookmarks_drop_uris (NemoPlacesSidebar *sidebar,
 		bookmark = nemo_bookmark_new (location, NULL, NULL);
 
 		if (!nemo_bookmark_list_contains (sidebar->bookmarks, bookmark)) {
-            if (position < sidebar->bookmark_breakpoint)
+            if (position < sidebar->bookmark_breakpoint ||
+                (position == sidebar->bookmark_breakpoint && (section_type == SECTION_XDG_BOOKMARKS ||
+                                                              section_type == SECTION_COMPUTER))) {
                 increment_bookmark_breakpoint (sidebar);
+            }
 			nemo_bookmark_list_insert_item (sidebar->bookmarks, bookmark, position++);
 		}
 
@@ -1851,10 +1856,10 @@ update_bookmark_breakpoint (NemoPlacesSidebar *sidebar,
                                   SectionType  new_type)
 {
     if (old_type != new_type) {
-        if (new_type == SECTION_XDG_BOOKMARKS)
-            increment_bookmark_breakpoint (sidebar);
-        else if (new_type == SECTION_BOOKMARKS)
+        if (old_type == SECTION_XDG_BOOKMARKS && new_type != SECTION_COMPUTER)
             decrement_bookmark_breakpoint (sidebar);
+        else if (old_type == SECTION_BOOKMARKS)
+            increment_bookmark_breakpoint (sidebar);
     }
 }
 
@@ -1984,7 +1989,7 @@ drag_data_received_callback (GtkWidget *widget,
 
 		switch (info) {
 		case TEXT_URI_LIST:
-			bookmarks_drop_uris (sidebar, selection_data, position);
+			bookmarks_drop_uris (sidebar, selection_data, position, section_type);
 			success = TRUE;
 			break;
 		case GTK_TREE_MODEL_ROW:
