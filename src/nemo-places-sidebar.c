@@ -1502,7 +1502,7 @@ compute_drop_position (GtkTreeView *tree_view,
 	GtkTreeIter iter;
 	PlaceType place_type;
 	SectionType section_type;
-    gchar *drop_target_uri;
+    gchar *drop_target_uri = NULL;
 
 	if (!gtk_tree_view_get_dest_row_at_pos (tree_view,
 						x, y,
@@ -1519,9 +1519,7 @@ compute_drop_position (GtkTreeView *tree_view,
 			    -1);
 	if (!cat_is_expanded (sidebar, section_type) && place_type == PLACES_HEADING) {
         if (sidebar->expand_timeout_source > 0) {
-            gtk_tree_path_free (*path);
-            *path = NULL;
-            return FALSE;
+            goto fail;
         }
         CategoryExpandPayload *payload;
         GtkTreeViewColumn *col;
@@ -1538,18 +1536,15 @@ compute_drop_position (GtkTreeView *tree_view,
                                                              (GSourceFunc) maybe_expand_category,
                                                              payload,
                                                              (GDestroyNotify) g_free);
-		gtk_tree_path_free (*path);
-		*path = NULL;
-		return FALSE;
+        goto fail;
 	} else if (place_type == PLACES_HEADING) {
         if (section_type == SECTION_BOOKMARKS &&
             nemo_bookmark_list_length (sidebar->bookmarks) == sidebar->bookmark_breakpoint) {
             *pos = GTK_TREE_VIEW_DROP_AFTER;
+            g_free (drop_target_uri);
             return TRUE;
         } else {
-            gtk_tree_path_free (*path);
-            *path = NULL;
-            return FALSE;
+            goto fail;
         }
     }
 
@@ -1560,16 +1555,11 @@ compute_drop_position (GtkTreeView *tree_view,
         g_strcmp0 (drop_target_uri, sidebar->top_bookend_uri) != 0) {
 		/* don't allow dropping bookmarks into non-bookmark areas */
 
-		gtk_tree_path_free (*path);
-		*path = NULL;
-
-		return FALSE;
+        goto fail;
 	}
 
     if (g_strcmp0 (drop_target_uri, "recent:///") == 0) {
-        gtk_tree_path_free (*path);
-        *path = NULL;
-        return FALSE;
+        goto fail;
     }
 
     GdkRectangle rect;
@@ -1590,6 +1580,12 @@ compute_drop_position (GtkTreeView *tree_view,
 	}
 
 	return TRUE;
+
+fail:
+    g_free (drop_target_uri);
+    gtk_tree_path_free (*path);
+    *path = NULL;
+    return FALSE;
 }
 
 static gboolean
