@@ -96,7 +96,7 @@ Description: libraries for nemo components - runtime version
  Nemo is the official file manager and graphical shell for the
  Cinnamon desktop.
  .
- This package contains a few runtime libraries needed by nemo' extensions.
+ This package contains a few runtime libraries needed by nemo's extensions.
 
 Package: libnemo-extension-dev
 Architecture: any
