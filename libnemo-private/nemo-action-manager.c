@@ -142,7 +142,7 @@ static void
 set_up_actions_directories (NemoActionManager *action_manager)
 {
 
-    gchar *sys_path = g_build_filename (NEMO_DATADIR, "actions", NULL);
+    gchar *sys_path = nemo_action_manager_get_sys_directory_path ();
     gchar *sys_uri = g_filename_to_uri (sys_path, NULL, NULL);
 
     gchar *user_path = nemo_action_manager_get_user_directory_path ();
@@ -362,4 +362,10 @@ gchar *
 nemo_action_manager_get_user_directory_path (void)
 {
     return g_build_filename (g_get_user_data_dir (), "nemo", "actions", NULL);
+}
+
+gchar *
+nemo_action_manager_get_sys_directory_path (void)
+{
+    return g_build_filename (NEMO_DATADIR, "actions", NULL);
 }

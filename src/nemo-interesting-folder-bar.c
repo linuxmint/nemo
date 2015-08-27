@@ -29,6 +29,7 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-trash-monitor.h>
+#include <libnemo-private/nemo-action-manager.h>
 
 #define NEMO_INTERESTING_FOLDER_BAR_GET_PRIVATE(o)\
 	(G_TYPE_INSTANCE_GET_PRIVATE ((o), NEMO_TYPE_INTERESTING_FOLDER_BAR, NemoInterestingFolderBarPrivate))
@@ -209,7 +210,7 @@ nemo_interesting_folder_bar_new_for_location (NemoView *view, GFile *location)
     gchar *path = NULL;
     GFile *tmp_loc = NULL;
 
-    path = g_build_filename (g_get_user_data_dir (), "nemo", "actions", NULL);
+    path = nemo_action_manager_get_user_directory_path ();
     tmp_loc = g_file_new_for_path (path);
 
     if (g_file_equal (location, tmp_loc)) {
@@ -220,7 +221,7 @@ nemo_interesting_folder_bar_new_for_location (NemoView *view, GFile *location)
     g_free (path);
     g_object_unref (tmp_loc);
 
-    path = g_build_filename (g_get_user_data_dir (), "nemo", "scripts", NULL);
+    path = nemo_get_scripts_directory_path ();
     tmp_loc = g_file_new_for_path (path);
 
     if (g_file_equal (location, tmp_loc))
