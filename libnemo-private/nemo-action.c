@@ -1241,6 +1241,7 @@ try_vector (const gchar *op, gint vector)
     } else if (g_strcmp0 (op, GREATER_THAN) == 0) {
         return (vector > 0);
     }
+    return FALSE;
 }
 
 static gboolean
