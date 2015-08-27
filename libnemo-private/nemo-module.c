@@ -212,7 +212,15 @@ nemo_module_setup (void)
 	if (!initialized) {
 		initialized = TRUE;
 		
-		load_module_dir (NEMO_EXTENSIONDIR);
+		if (g_file_test(NEMO_EXTENSIONDIR, G_FILE_TEST_EXISTS)) {
+			load_module_dir (NEMO_EXTENSIONDIR);
+	    } else {
+	        gchar *path = NULL;
+
+	        path = g_build_filename ("/", "usr", "lib", "nemo", "extensions-3.0", NULL);
+	        load_module_dir  (path);
+	        g_clear_pointer (&path, g_free);
+	    }
 
 		eel_debug_call_at_shutdown (free_module_objects);
 	}

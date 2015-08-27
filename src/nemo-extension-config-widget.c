@@ -194,7 +194,7 @@ refresh_widget (NemoExtensionConfigWidget *widget)
         GtkWidget *empty_label = gtk_label_new (NULL);
         gchar *markup = NULL;
 
-        markup = g_strdup_printf ("<i>%s</i>", _("No extensions found"));
+        markup = g_strdup_printf ("<i>%s " NEMO_EXTENSIONDIR "</i>", _("No extensions found in"));
 
         gtk_label_set_markup (GTK_LABEL (empty_label), markup);
         g_free (markup);
