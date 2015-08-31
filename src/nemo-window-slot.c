@@ -2389,26 +2389,12 @@ nemo_window_slot_setup_extra_location_widgets (NemoWindowSlot *slot)
 		nemo_window_slot_show_trash_bar (slot);
 	} else {
 		NemoFile *file;
-		GFile *scripts_file;
-		char *scripts_path = nemo_get_scripts_directory_path ();
-		scripts_file = g_file_new_for_path (scripts_path);
-		GFile *actions_file;
-		gchar *actions_path = nemo_action_manager_get_user_directory_path ();
-		actions_file = g_file_new_for_path (actions_path);
-		g_free (scripts_path);
-
 		file = nemo_file_get (location);
 
 		if (nemo_should_use_templates_directory () &&
 		    nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
 			nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_TEMPLATES);
-		} else if (g_file_equal (location, scripts_file)) {
-			nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_SCRIPTS);
-		} else if (g_file_equal (location, actions_file)) {
-			nemo_window_slot_show_special_location_bar (slot, NEMO_SPECIAL_LOCATION_ACTIONS);
 		}
-		g_object_unref (scripts_file);
-		g_object_unref (actions_file);
 		nemo_file_unref (file);
 	}
 
