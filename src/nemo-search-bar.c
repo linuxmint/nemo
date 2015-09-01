@@ -151,7 +151,7 @@ nemo_search_bar_init (NemoSearchBar *bar)
 	gtk_box_pack_start (GTK_BOX (bar), label, FALSE, FALSE, 0);
 
 	g_object_set (label,
-		      "margin-left", 6,
+		      "margin-start", 6,
 		      NULL);
 
 	align = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);

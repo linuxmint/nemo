@@ -224,8 +224,8 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
     gtk_container_add (GTK_CONTAINER (frame), w);
 
     g_object_set (priv->list,
-                  "margin-left", 5,
-                  "margin-right", 5,
+                  "margin-start", 5,
+                  "margin-end", 5,
                   "margin-top", 5,
                   "margin-bottom", 5,
                   NULL);
