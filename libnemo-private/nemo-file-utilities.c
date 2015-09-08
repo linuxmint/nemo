@@ -151,6 +151,19 @@ nemo_get_accel_map_file (void)
 	}
 }
 
+/**
+ * nemo_get_scripts_directory_path:
+ *
+ * Get the path for the directory containing nemo scripts.
+ *
+ * Return value: the directory path containing nemo scripts
+ **/
+char *
+nemo_get_scripts_directory_path (void)
+{
+	return g_build_filename (g_get_user_data_dir (), "nemo", "scripts", NULL);
+}
+
 typedef struct {
 	char *type;
 	char *path;

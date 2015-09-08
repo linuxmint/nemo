@@ -2312,10 +2312,7 @@ set_up_scripts_directory_global (void)
 		return TRUE;
 	}
 
-    scripts_directory_path = g_build_filename (g_get_user_data_dir (),
-                                               "nemo",
-                                               "scripts",
-                                               NULL);
+	scripts_directory_path = nemo_get_scripts_directory_path ();
 
 	if (g_mkdir_with_parents (scripts_directory_path, 0755) == 0) {
 		scripts_directory_uri = g_filename_to_uri (scripts_directory_path, NULL, NULL);
