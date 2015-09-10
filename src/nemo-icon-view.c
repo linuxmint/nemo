@@ -107,7 +107,6 @@ struct NemoIconViewDetails
 	guint icon_merge_id;
 	
 	gboolean filter_by_screen;
-	int num_screens;
 
 	gboolean compact;
 
@@ -481,29 +480,13 @@ nemo_icon_view_clear (NemoView *view)
 static gboolean
 should_show_file_on_screen (NemoView *view, NemoFile *file)
 {
-	char *screen_string;
-	int screen_num;
 	NemoIconView *icon_view;
-	GdkScreen *screen;
 
 	icon_view = NEMO_ICON_VIEW (view);
 
 	if (!nemo_view_should_show_file (view, file)) {
 		return FALSE;
-	}
-	
-	/* Get the screen for this icon from the metadata. */
-	screen_string = nemo_file_get_metadata
-		(file, NEMO_METADATA_KEY_SCREEN, "0");
-	screen_num = atoi (screen_string);
-	g_free (screen_string);
-	screen = gtk_widget_get_screen (GTK_WIDGET (view));
-
-	if (screen_num != gdk_screen_get_number (screen) &&
-	    (screen_num < icon_view->details->num_screens ||
-	     gdk_screen_get_number (screen) > 0)) {
-		return FALSE;
-	}
+	}	
 
 	return TRUE;
 }
@@ -557,6 +540,11 @@ nemo_icon_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *director
 	    !should_show_file_on_screen (view, file)) {
 		return;
 	}
+
+    if (nemo_file_has_thumbnail_access_problem (file)) {
+        nemo_application_set_cache_flag (nemo_application_get_singleton ());
+        nemo_window_slot_check_bad_cache_bar (nemo_view_get_nemo_window_slot (view));
+    }
 
 	/* Reset scroll region for the first icon added when loading a directory. */
 	if (nemo_view_get_loading (view) && nemo_icon_container_is_empty (icon_container)) {
@@ -1860,7 +1848,6 @@ nemo_icon_view_filter_by_screen (NemoIconView *icon_view,
 				     gboolean filter)
 {
 	icon_view->details->filter_by_screen = filter;
-	icon_view->details->num_screens = gdk_display_get_n_screens (gtk_widget_get_display (GTK_WIDGET (icon_view)));
 }
 
 static void

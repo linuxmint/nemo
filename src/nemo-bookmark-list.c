@@ -31,6 +31,8 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-icon-names.h>
+#define GNOME_DESKTOP_USE_UNSTABLE_API
+#include <libcinnamon-desktop/gnome-desktop-utils.h>
 
 #include <gio/gio.h>
 #include <string.h>
@@ -321,6 +323,8 @@ nemo_bookmark_list_delete_item_at (NemoBookmarkList *bookmarks,
 	g_return_if_fail (index < g_list_length (bookmarks->list));
 
 	doomed = g_list_nth (bookmarks->list, index);
+	g_return_if_fail (doomed != NULL);
+
 	bookmarks->list = g_list_remove_link (bookmarks->list, doomed);
 
 	g_assert (NEMO_IS_BOOKMARK (doomed->data));
@@ -351,6 +355,8 @@ nemo_bookmark_list_move_item (NemoBookmarkList *bookmarks,
 	}
 
 	bookmark_item = g_list_nth (bookmarks->list, index);
+	g_return_if_fail (bookmark_item != NULL);
+
 	bookmarks->list = g_list_remove_link (bookmarks->list,
 					      bookmark_item);
 
@@ -365,6 +371,36 @@ nemo_bookmark_list_move_item (NemoBookmarkList *bookmarks,
 	}
 
 	nemo_bookmark_list_save_file (bookmarks);
+}
+
+static gint
+nemo_bookmark_list_compare_func (gconstpointer a, gconstpointer b)
+{
+    g_assert (NEMO_IS_BOOKMARK (a));
+    g_assert (NEMO_IS_BOOKMARK (b));
+
+    return g_utf8_collate (nemo_bookmark_get_name (NEMO_BOOKMARK (a)),
+                           nemo_bookmark_get_name (NEMO_BOOKMARK (b)));
+}
+
+/**
+ * nemo_bookmark_list_sort_ascending:
+ *
+ * Sort bookmarks in ascending order.
+ * @bookmarks: the list of bookmarks.
+ **/
+void
+nemo_bookmark_list_sort_ascending (NemoBookmarkList *bookmarks)
+{
+    g_assert (NEMO_IS_BOOKMARK_LIST (bookmarks));
+
+    bookmarks->list = g_list_sort (
+        bookmarks->list, (GCompareFunc)nemo_bookmark_list_compare_func);
+
+    /* Save bookmarks to file. This will also inform widgets about the changes
+     * we just made to the list.
+     */
+    nemo_bookmark_list_save_file (bookmarks);
 }
 
 /**
@@ -448,7 +484,7 @@ GList *
 nemo_bookmark_list_get_for_uri (NemoBookmarkList   *bookmarks,
                                       const char   *uri)
 {
-    g_return_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks));
+    g_return_val_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks), NULL);
 
     GList *iter;
     GList *results = NULL;
@@ -584,6 +620,19 @@ save_file_finish (NemoBookmarkList *bookmarks,
 			   error->message);
 		g_error_free (error);
 	}
+
+    if (geteuid () == 0) {
+        struct passwd *pwent;
+        pwent = gnome_desktop_get_session_user_pwent ();
+
+        gchar *bookmarks_path = g_file_get_path (G_FILE (source));
+
+        if (g_strcmp0 (pwent->pw_dir, g_get_home_dir ()) == 0) {
+            G_GNUC_UNUSED int res;
+
+            res = chown (bookmarks_path, pwent->pw_uid, pwent->pw_gid);
+        }
+    }
 
 	file = nemo_bookmark_list_get_file ();
 

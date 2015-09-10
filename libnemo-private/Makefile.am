@@ -2,7 +2,7 @@ include $(top_srcdir)/Makefile.shared
 
 noinst_LTLIBRARIES=libnemo-private.la
 
-INCLUDES = 						\
+AM_CPPFLAGS = 						\
 	-I$(top_srcdir) 				\
 	-I$(top_builddir) 				\
 	-I$(top_srcdir)/cut-n-paste-code		\
@@ -132,6 +132,8 @@ libnemo_private_la_SOURCES = \
 	nemo-icon-info.c \
 	nemo-icon-info.h \
 	nemo-icon-names.h \
+    nemo-job-queue.c \
+    nemo-job-queue.h \
 	nemo-lib-self-check-functions.c \
 	nemo-lib-self-check-functions.h \
 	nemo-link.c \

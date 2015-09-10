@@ -33,50 +33,23 @@
 
 #include <gio/gio.h>
 
-typedef struct _NemoDBusManager NemoDBusManager;
-typedef struct _NemoDBusManagerClass NemoDBusManagerClass;
-
 struct _NemoDBusManager {
   GObject parent;
 
-  GDBusConnection *connection;
-  GApplication *application;
-
   GDBusObjectManagerServer *object_manager;
   NemoDBusFileOperations *file_operations;
-
-  guint owner_id;
 };
 
 struct _NemoDBusManagerClass {
   GObjectClass parent_class;
 };
 
-enum {
-  PROP_APPLICATION = 1,
-  NUM_PROPERTIES
-};
-
-#define SERVICE_TIMEOUT 5
-
-static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
-
-static GType nemo_dbus_manager_get_type (void) G_GNUC_CONST;
 G_DEFINE_TYPE (NemoDBusManager, nemo_dbus_manager, G_TYPE_OBJECT);
-
-static NemoDBusManager *singleton = NULL;
 
 static void
 nemo_dbus_manager_dispose (GObject *object)
 {
   NemoDBusManager *self = (NemoDBusManager *) object;
-
-  /* Unown before unregistering so we're not registred in a partial state */
-  if (self->owner_id != 0)
-    {
-      g_bus_unown_name (self->owner_id);
-      self->owner_id = 0;
-    }
 
   if (self->file_operations) {
     g_dbus_interface_skeleton_unexport (G_DBUS_INTERFACE_SKELETON (self->file_operations));
@@ -89,24 +62,7 @@ nemo_dbus_manager_dispose (GObject *object)
     self->object_manager = NULL;
   }
 
-  g_clear_object (&self->connection);
-
   G_OBJECT_CLASS (nemo_dbus_manager_parent_class)->dispose (object);
-}
-
-static gboolean
-service_timeout_handler (gpointer user_data)
-{
-  NemoDBusManager *self = user_data;
-
-  DEBUG ("Reached the DBus service timeout");
-
-  /* just unconditionally release here, as if an operation has been
-   * called, its progress handler will hold it alive for all the task duration.
-   */
-  g_application_release (self->application);
-
-  return FALSE;
 }
 
 static gboolean
@@ -177,18 +133,13 @@ handle_empty_trash (NemoDBusFileOperations *object,
 }
 
 static void
-bus_acquired_handler_cb (GDBusConnection *conn,
-                         const gchar *name,
-                         gpointer user_data)
+nemo_dbus_manager_init (NemoDBusManager *self)
 {
-  NemoDBusManager *self = user_data;
+  GDBusConnection *connection;
 
-  DEBUG ("Bus acquired at %s", name);
-
-  self->connection = g_object_ref (conn);
+  connection = g_application_get_dbus_connection (g_application_get_default ());
 
   self->object_manager = g_dbus_object_manager_server_new ("/org/Nemo");
-
   self->file_operations = nemo_dbus_file_operations_skeleton_new ();
 
   g_signal_connect (self->file_operations,
@@ -204,72 +155,10 @@ bus_acquired_handler_cb (GDBusConnection *conn,
 		    G_CALLBACK (handle_empty_trash),
 		    self);
 
-  g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->file_operations), self->connection,
+  g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->file_operations), connection,
 				    "/org/Nemo", NULL);
 
-  g_dbus_object_manager_server_set_connection (self->object_manager, self->connection);
-
-  g_timeout_add_seconds (SERVICE_TIMEOUT, service_timeout_handler, self);
-}
-
-static void
-on_name_lost (GDBusConnection *connection,
-	      const gchar     *name,
-	      gpointer         user_data)
-{
-  DEBUG ("Lost (or failed to acquire) the name %s on the session message bus\n", name);
-}
-
-static void
-on_name_acquired (GDBusConnection *connection,
-		  const gchar     *name,
-		  gpointer         user_data)
-{
-  DEBUG ("Acquired the name %s on the session message bus\n", name);
-}
-
-static void
-nemo_dbus_manager_init (NemoDBusManager *self)
-{
-  /* do nothing */
-}
-
-static void
-nemo_dbus_manager_set_property (GObject *object,
-                                    guint property_id,
-                                    const GValue *value,
-                                    GParamSpec *pspec)
-{
-  NemoDBusManager *self = (NemoDBusManager *) (object);
-
-  switch (property_id)
-    {
-    case PROP_APPLICATION:
-      self->application = g_value_get_object (value);
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-    }
-}
-
-static void
-nemo_dbus_manager_constructed (GObject *object)
-{
-  NemoDBusManager *self = (NemoDBusManager *) (object);
-
-  G_OBJECT_CLASS (nemo_dbus_manager_parent_class)->constructed (object);
-
-  g_application_hold (self->application);
-
-  self->owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
-				   "org.Nemo",
-				   G_BUS_NAME_OWNER_FLAGS_NONE,
-				   bus_acquired_handler_cb,
-				   on_name_acquired,
-				   on_name_lost,
-				   self,
-				   NULL);
+  g_dbus_object_manager_server_set_connection (self->object_manager, connection);
 }
 
 static void
@@ -278,30 +167,11 @@ nemo_dbus_manager_class_init (NemoDBusManagerClass *klass)
   GObjectClass *oclass = G_OBJECT_CLASS (klass);
 
   oclass->dispose = nemo_dbus_manager_dispose;
-  oclass->constructed = nemo_dbus_manager_constructed;
-  oclass->set_property = nemo_dbus_manager_set_property;
-
-  properties[PROP_APPLICATION] =
-    g_param_spec_object ("application",
-                         "GApplication instance",
-                         "The owning GApplication instance",
-                         G_TYPE_APPLICATION,
-                         G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY |
-                         G_PARAM_STATIC_STRINGS);
-
-  g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
 
-void
-nemo_dbus_manager_start (GApplication *application)
+NemoDBusManager *
+nemo_dbus_manager_new (void)
 {
-  singleton = g_object_new (nemo_dbus_manager_get_type (),
-                            "application", application,
-                            NULL);
-}
-
-void
-nemo_dbus_manager_stop (void)
-{
-  g_clear_object (&singleton);
+  return g_object_new (nemo_dbus_manager_get_type (),
+                       NULL);
 }

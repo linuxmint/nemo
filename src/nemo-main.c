@@ -98,6 +98,11 @@ main (int argc, char *argv[])
 	/* Run the nemo application. */
 	application = nemo_application_get_singleton ();
 
+    /* hold indefinitely if we're asked to persist */
+    if (g_getenv ("NEMO_PERSIST") != NULL) {
+        g_application_hold (G_APPLICATION (application));
+    }
+
 	retval = g_application_run (G_APPLICATION (application),
 				    argc, argv);
 

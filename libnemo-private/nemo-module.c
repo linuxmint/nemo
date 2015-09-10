@@ -24,54 +24,13 @@
 
 #include <config.h>
 #include "nemo-module.h"
+#include <libnemo-private/nemo-global-preferences.h>
 
 #include <eel/eel-debug.h>
-#include <gmodule.h>
-
-#define NEMO_TYPE_MODULE    	(nemo_module_get_type ())
-#define NEMO_MODULE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_MODULE, NemoModule))
-#define NEMO_MODULE_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_MODULE, NemoModule))
-#define NEMO_IS_MODULE(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_MODULE))
-#define NEMO_IS_MODULE_CLASS(klass)	(G_TYPE_CLASS_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_MODULE))
-
-typedef struct _NemoModule        NemoModule;
-typedef struct _NemoModuleClass   NemoModuleClass;
-
-struct _NemoModule {
-	GTypeModule parent;
-
-	GModule *library;
-
-	char *path;
-
-	void (*initialize) (GTypeModule  *module);
-	void (*shutdown)   (void);
-
-	void (*list_types) (const GType **types,
-			    int          *num_types);
-
-};
-
-struct _NemoModuleClass {
-	GTypeModuleClass parent;	
-};
 
 static GList *module_objects = NULL;
 
-static GType nemo_module_get_type (void);
-
 G_DEFINE_TYPE (NemoModule, nemo_module, G_TYPE_TYPE_MODULE);
-
-static gboolean
-module_pulls_in_orbit (GModule *module)
-{
-	gpointer symbol;
-	gboolean res;
-
-	res = g_module_symbol (module, "ORBit_realloc_tcval", &symbol);
-
-	return res;
-}
 
 static gboolean
 nemo_module_load (GTypeModule *gmodule)
@@ -86,16 +45,6 @@ nemo_module_load (GTypeModule *gmodule)
 		g_warning ("%s", g_module_error ());
 		return FALSE;
 	}
-
-	/* ORBit installs atexit() handlers, which would get unloaded together
-	 * with the module now that the main process doesn't depend on GConf anymore,
-	 * causing nemo to sefgault at exit.
-	 * If we detect that an extension would pull in ORBit, we make the
-	 * module resident to prevent that.
-	 */
-        if (module_pulls_in_orbit (module->library)) {
-		g_module_make_resident (module->library);
-        }
 
 	if (!g_module_symbol (module->library,
 			      "nemo_module_initialize",
@@ -165,6 +114,23 @@ module_object_weak_notify (gpointer user_data, GObject *object)
 	module_objects = g_list_remove (module_objects, object);
 }
 
+static gboolean
+module_is_selected (GType type)
+{
+    gchar **disabled_list = g_settings_get_strv (nemo_plugin_preferences, NEMO_PLUGIN_PREFERENCES_DISABLED_EXTENSIONS);
+
+    gboolean ret = TRUE;
+    gint i = 0;
+
+    for (i = 0; i < g_strv_length (disabled_list); i++) {
+        if (g_strcmp0 (disabled_list[i], g_type_name (type)) == 0)
+            ret = FALSE;
+    }
+
+    g_strfreev (disabled_list);
+    return ret;
+}
+
 static void
 add_module_objects (NemoModule *module)
 {
@@ -178,26 +144,26 @@ add_module_objects (NemoModule *module)
 		if (types[i] == 0) { /* Work around broken extensions */
 			break;
 		}
-		nemo_module_add_type (types[i]);
-	}
+        if (module_is_selected (types[i])) {
+            nemo_module_add_type (types[i]);
+        }
+    }
 }
 
-static NemoModule *
+static void
 nemo_module_load_file (const char *filename)
 {
-	NemoModule *module;
-	
-	module = g_object_new (NEMO_TYPE_MODULE, NULL);
-	module->path = g_strdup (filename);
-	
-	if (g_type_module_use (G_TYPE_MODULE (module))) {
-		add_module_objects (module);
-		g_type_module_unuse (G_TYPE_MODULE (module));
-		return module;
-	} else {
-		g_object_unref (module);
-		return NULL;
-	}
+	NemoModule *module = NULL;
+
+    module = g_object_new (NEMO_TYPE_MODULE, NULL);
+    module->path = g_strdup (filename);
+
+    if (g_type_module_use (G_TYPE_MODULE (module))) {
+        add_module_objects (module);
+        g_type_module_unuse (G_TYPE_MODULE (module));
+    } else {
+        g_object_unref (module);
+    }
 }
 
 static void
@@ -217,7 +183,7 @@ load_module_dir (const char *dirname)
 				filename = g_build_filename (dirname, 
 							     name, 
 							     NULL);
-				nemo_module_load_file (filename);
+                nemo_module_load_file (filename);
 				g_free (filename);
 			}
 		}

@@ -82,6 +82,23 @@ nemo_global_preferences_get_tooltip_flags (void)
     return flags;
 }
 
+gboolean
+nemo_global_preferences_should_load_plugin (const gchar *name, const gchar *key)
+{
+    gchar **disabled_list = g_settings_get_strv (nemo_plugin_preferences, key);
+
+    gboolean ret = TRUE;
+    gint i = 0;
+
+    for (i = 0; i < g_strv_length (disabled_list); i++) {
+        if (g_strcmp0 (disabled_list[i], name) == 0)
+            ret = FALSE;
+    }
+
+    g_strfreev (disabled_list);
+    return ret;
+}
+
 static void
 ignore_view_metadata_cb (GSettings *settings,
                          gchar *key,
@@ -108,6 +125,7 @@ nemo_global_preferences_init (void)
 	nemo_compact_view_preferences = g_settings_new("org.nemo.compact-view");
 	nemo_desktop_preferences = g_settings_new("org.nemo.desktop");
 	nemo_tree_sidebar_preferences = g_settings_new("org.nemo.sidebar-panels.tree");
+    nemo_plugin_preferences = g_settings_new("org.nemo.plugins");
 	gnome_lockdown_preferences = g_settings_new("org.cinnamon.desktop.lockdown");
 	gnome_background_preferences = g_settings_new("org.cinnamon.desktop.background");
 	gnome_media_handling_preferences = g_settings_new("org.cinnamon.desktop.media-handling");

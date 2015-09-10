@@ -9,9 +9,10 @@ bin_PROGRAMS=					\
 
 libexec_PROGRAMS=				\
 	nemo-convert-metadata		\
+    nemo-extensions-list \
 	$(NULL)
 
-INCLUDES =							\
+AM_CPPFLAGS =							\
 	-I$(top_srcdir) 					\
 	-I$(top_srcdir)/cut-n-paste-code			\
 	-I$(top_builddir)/libnemo-private 			\
@@ -30,6 +31,7 @@ INCLUDES =							\
 	-DPREFIX=\""$(prefix)"\" 				\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 			\
 	-DVERSION="\"$(VERSION)\"" 				\
+    -DNEMO_EXTENSIONDIR=\""$(libdir)/nemo/extensions-3.0"\" \
 	$(DISABLE_DEPRECATED_CFLAGS)                            \
 	$(NULL)
 
@@ -59,6 +61,7 @@ UI_FILES = \
 	nemo-file-management-properties.glade	\
 	nemo-icon-view-ui.xml		\
 	nemo-directory-view-ui.xml		\
+	nemo-directory-view-ui-light.xml		\
 	nemo-desktop-icon-view-ui.xml	\
 	nemo-shell-ui.xml			\
 	$(NULL)
@@ -78,12 +81,16 @@ BUILT_SOURCES = \
 
 nemo_SOURCES = \
 	nemo-actions.h			\
+    nemo-action-config-widget.c         \
+    nemo-action-config-widget.h         \
 	nemo-application.c			\
 	nemo-application.h			\
 	nemo-bookmark-list.c		\
 	nemo-bookmark-list.h		\
 	nemo-bookmarks-window.c		\
 	nemo-bookmarks-window.h		\
+    nemo-config-base-widget.c           \
+    nemo-config-base-widget.h           \
 	nemo-connect-server-dialog.c	\
 	nemo-connect-server-dialog.h	\
 	nemo-connect-server-dialog-nonmain.c \
@@ -97,6 +104,8 @@ nemo_SOURCES = \
 	nemo-desktop-window.h		\
 	nemo-error-reporting.c		\
 	nemo-error-reporting.h		\
+    nemo-extension-config-widget.c      \
+    nemo-extension-config-widget.h      \
 	nemo-file-management-properties.c	\
 	nemo-file-management-properties.h	\
 	nemo-floating-bar.c			\
@@ -109,6 +118,8 @@ nemo_SOURCES = \
 	nemo-icon-view-container.h		\
 	nemo-image-properties-page.c	\
 	nemo-image-properties-page.h	\
+    nemo-interesting-folder-bar.c  \
+    nemo-interesting-folder-bar.h  \
 	nemo-list-model.c			\
 	nemo-list-model.h			\
 	nemo-list-view-private.h 		\
@@ -131,6 +142,8 @@ nemo_SOURCES = \
 	nemo-pathbar.h			\
 	nemo-places-sidebar.c		\
 	nemo-places-sidebar.h		\
+    nemo-plugin-manager.c        \
+    nemo-plugin-manager.h        \
 	nemo-previewer.c			\
 	nemo-previewer.h			\
 	nemo-progress-info-widget.c		\
@@ -141,10 +154,14 @@ nemo_SOURCES = \
 	nemo-properties-window.h		\
 	nemo-query-editor.c			\
 	nemo-query-editor.h			\
+    nemo-script-config-widget.c         \
+    nemo-script-config-widget.h         \
 	nemo-self-check-functions.c 	\
 	nemo-self-check-functions.h 	\
     nemo-statusbar.c    \
     nemo-statusbar.h    \
+    nemo-thumbnail-problem-bar.c  \
+    nemo-thumbnail-problem-bar.h  \
 	nemo-toolbar.c			\
 	nemo-toolbar.h			\
 	nemo-tree-sidebar.c			\
@@ -212,6 +229,10 @@ nemo_open_with_SOURCES = \
 nemo_convert_metadata_SOURCES= \
 	nemo-convert-metadata.c	\
 	$(NULL)
+
+nemo_extensions_list_SOURCES= \
+    nemo-extensions-list.c \
+    $(NULL)
 
 polkitdir = $(datadir)/polkit-1/actions
 polkit_in_files = org.nemo.root.policy.in

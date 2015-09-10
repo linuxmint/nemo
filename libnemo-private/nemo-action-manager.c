@@ -20,6 +20,7 @@
 #include "nemo-action-manager.h"
 #include "nemo-directory.h"
 #include "nemo-action.h"
+#include <libnemo-private/nemo-global-preferences.h>
 #include "nemo-file-utilities.h"
 
 
@@ -53,9 +54,9 @@ enum {
 static guint signals[LAST_SIGNAL] = { 0 };
 
 static void
-actions_added_or_changed_callback (NemoDirectory *directory,
-                                   GList         *files,
-                                   gpointer       callback_data)
+actions_added_or_changed (NemoDirectory *directory,
+                          GList         *files,
+                          gpointer       callback_data)
 {
     NemoActionManager *action_manager;
 
@@ -64,6 +65,12 @@ actions_added_or_changed_callback (NemoDirectory *directory,
     action_manager->action_list_dirty = TRUE;
 
     set_up_actions (action_manager);
+}
+
+static void
+plugin_prefs_changed (GSettings *settings, gchar *key, gpointer user_data)
+{
+    actions_added_or_changed (NULL, NULL, user_data);
 }
 
 static void
@@ -118,7 +125,7 @@ add_directory_to_actions_directory_list (NemoActionManager *action_manager,
 {
     add_directory_to_directory_list (action_manager, directory,
                                      &action_manager->actions_directory_list,
-                                     G_CALLBACK (actions_added_or_changed_callback));
+                                     G_CALLBACK (actions_added_or_changed));
 }
 
 static void
@@ -127,7 +134,7 @@ remove_directory_from_actions_directory_list (NemoActionManager *action_manager,
 {
     remove_directory_from_directory_list (action_manager, directory,
                                           &action_manager->actions_directory_list,
-                                          G_CALLBACK (actions_added_or_changed_callback));
+                                          G_CALLBACK (actions_added_or_changed));
 }
 
 static void
@@ -250,7 +257,8 @@ set_up_actions (NemoActionManager *action_manager)
         file_list = nemo_directory_get_file_list (directory);
         for (node = file_list; node != NULL; node = node->next) {
             file = node->data;
-            if (!g_str_has_suffix (nemo_file_get_name (file), ".nemo_action"))
+            if (!g_str_has_suffix (nemo_file_peek_name (file), ".nemo_action") ||
+                !nemo_global_preferences_should_load_plugin (nemo_file_peek_name (file), NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS))
                 continue;
             add_action_to_action_list (action_manager, file);
         }
@@ -297,8 +305,11 @@ nemo_action_manager_constructed (GObject *object)
     NemoActionManager *action_manager = NEMO_ACTION_MANAGER (object);
 
     set_up_actions_directories (action_manager);
-
     set_up_actions (action_manager);
+
+    g_signal_connect (nemo_plugin_preferences,
+                      "changed::" NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
+                      G_CALLBACK (plugin_prefs_changed), action_manager);
 
 }
 
@@ -324,6 +335,8 @@ nemo_action_manager_dispose (GObject *object)
         action_manager->actions_directory_list = NULL;
         nemo_directory_list_free (copy);
     }
+
+    g_signal_handlers_disconnect_by_func (nemo_plugin_preferences, G_CALLBACK (plugin_prefs_changed), action_manager);
 
     G_OBJECT_CLASS (parent_class)->dispose (object);
 }

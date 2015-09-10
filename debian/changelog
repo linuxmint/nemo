@@ -1,3 +1,96 @@
+nemo (2.6.7) rafaela; urgency=medium
+
+  [ Michael Webster ]
+  * progress window: simplify slightly, have info widgets manage themselves more, to prevent having a race condition at certain stages of the file operation.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 22 Jun 2015 23:35:49 +0200
+
+nemo (2.6.6) rafaela; urgency=medium
+
+  [ Michael Webster ]
+  * Switch from .svg to .png format for the file operation tray icon. Scalable/symbolic isn't supported in gtk 3.12(+?)
+  * open-with dialog: Fix focus and user interaction issues - - Focus defaults to the custom entry box - Enter key (or double-clicking in the list) will now 'OK' the dialog,   and open the file with either the selected program, or the custom   command. - The ok button now greys out if there is an invalid custom entry - Removed misleading program-picker button label and image.
+  * preferences: tweak style a bit to match c-s
+  * nemo-extensions-list: Don't hardcode lib path
+  * nemo-view, nemo-sidebar: quiet warnings when looking for network locations
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 14 Jun 2015 12:42:06 +0200
+
+nemo (2.6.5) rafaela; urgency=medium
+
+  [ leigh123linux ]
+  * add runtime requirement for libcinnamon-desktop4
+
+  [ mtwebster ]
+  * Fix a couple build warnings
+  * nemo-application: register with org.gnome.SessionManager - this should fix the race condition where c-s-d dies before nemo does, causing all of our icons to revert to fallbacks briefly.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 27 May 2015 10:25:57 +0200
+
+nemo (2.6.4) rafaela; urgency=medium
+
+  [ Michael Webster ]
+  * menus: Always show icons in Open With and Templates submenus.
+  * nemo-bookmark-list: make sure to keep the bookmarks file writable by the user (and not just root) when running nemo as root.
+  * fix build warning, fix prototype name.
+
+  [ leigh123linux ]
+  * Update version for cinnamon-desktop build dep
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 25 May 2015 10:40:14 +0200
+
+nemo (2.6.3) rafaela; urgency=medium
+
+  [ leigh123linux ]
+  * update cinnamon-desktop min version
+  * bump it again
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 21 May 2015 12:44:03 +0200
+
+nemo (2.6.2) rafaela; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Gettext fix: Due to genre/plural, in many languages, adjectives are not translatable on their own. They need to relate to a noun.
+  * Gettext: Simplified msgids in file operation queue to make them easier to translate
+  * Updated pot
+
+  [ Michael Webster ]
+  * Adapt Nemo to deal with problem situations with the user thumbnail cache: - Added --fix-cache command line option (must be run as root) - Added quick check at startup to detect major problems and disable thumbnailing   until fixed. - Individual thumbnailed files are checked on the fly for permission issues. - When a problem is detected, an infobar appears, offering to fix the problem, or   ignore it.
+  * Have 'dismiss' last for Nemo's lifespan.
+  * thumbnails: Remove an orphan comment from previous commits, fix wording of the --fix-cache command-line option.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 21 May 2015 11:06:16 +0200
+
+nemo (2.6.1) rafaela; urgency=medium
+
+  * Packaging: Fixed hardcoded gir typelib path
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 20 May 2015 09:26:24 +0200
+
+nemo (2.6.0) rafaela; urgency=medium
+
+  * 2.6.0 
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 19 May 2015 17:34:50 +0200
+
+nemo (2.5.1) unstable; urgency=medium
+
+  * 2.5.x
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 19 Jan 2015 16:55:00 +0100
+
+nemo (2.4.4) rebecca; urgency=medium
+
+  * list-view: Don't reset zoom level when syncing statusbar zoom widget state.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 24 Nov 2014 09:11:57 +0100
+
+nemo (2.4.3) rebecca; urgency=medium
+
+  * Never allow root nemo to manage the desktop.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 22 Nov 2014 17:17:30 +0100
+
 nemo (2.4.2) rebecca; urgency=medium
 
   * icon-container: Fix regression when renaming files in certain views -

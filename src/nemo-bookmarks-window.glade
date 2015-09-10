@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.16.0 on Thu Oct 31 10:45:38 2013 -->
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkDialog" id="bookmarks_dialog">
@@ -19,7 +20,7 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="helpbutton1">
+              <object class="GtkButton" id="bookmark_help_button">
                 <property name="label">gtk-help</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -34,6 +35,20 @@
               </packing>
             </child>
             <child>
+              <object class="GtkButton" id="bookmark_sort_button">
+                <property name="label">gtk-sort-ascending</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="bookmark_jump_button">
                 <property name="label">gtk-jump-to</property>
                 <property name="visible">True</property>
@@ -45,7 +60,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -60,11 +75,11 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="bookmark_close_button">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -75,7 +90,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>
@@ -337,10 +352,10 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-11">helpbutton1</action-widget>
+      <action-widget response="-11">bookmark_help_button</action-widget>
       <action-widget response="-10">bookmark_jump_button</action-widget>
       <action-widget response="-2">bookmark_delete_button</action-widget>
-      <action-widget response="-7">button2</action-widget>
+      <action-widget response="-7">bookmark_close_button</action-widget>
     </action-widgets>
   </object>
 </interface>

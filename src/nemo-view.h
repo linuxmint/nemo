@@ -328,6 +328,9 @@ void                nemo_view_activate_files                   (NemoView        
 								    GList                  *files,
 								    NemoWindowOpenFlags flags,
 								    gboolean                confirm_multiple);
+void                nemo_view_activate_file (NemoView *view,
+                                             NemoFile *file,
+                                             NemoWindowOpenFlags flags);
 void                nemo_view_preview_files                    (NemoView        *view,
 								    GList               *files,
 								    GArray              *locations);

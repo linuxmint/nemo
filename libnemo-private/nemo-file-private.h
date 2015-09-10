@@ -101,10 +101,12 @@ struct NemoFileDetails
 	GIcon *icon;
 	
 	char *thumbnail_path;
+    eel_boolean_bit thumbnail_access_problem : 1;
 	GdkPixbuf *thumbnail;
 	time_t thumbnail_mtime;
 
-    guint thumbnail_try_count;
+    GdkPixbuf *scaled_thumbnail;
+    double thumbnail_scale;
 
 	GList *mime_list; /* If this is a directory, the list of MIME types in it. */
 	char *top_left_text;

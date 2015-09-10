@@ -23,9 +23,26 @@
 #ifndef __NEMO_FREEDESKTOP_DBUS_H__
 #define __NEMO_FREEDESKTOP_DBUS_H__
 
-#include "nemo-application.h"
+#include <glib-object.h>
 
-void nemo_freedesktop_dbus_start (NemoApplication *app);
-void nemo_freedesktop_dbus_stop (void);
+#define NEMO_TYPE_FREEDESKTOP_DBUS nemo_freedesktop_dbus_get_type()
+#define NEMO_FREEDESKTOP_DBUS(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_FREEDESKTOP_DBUS, NemoFreedesktopDBus))
+#define NEMO_FREEDESKTOP_DBUS_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_FREEDESKTOP_DBUS, NemoFreedesktopDBusClass))
+#define NEMO_IS_FREEDESKTOP_DBUS(obj) \
+  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_FREEDESKTOP_DBUS))
+#define NEMO_IS_FREEDESKTOP_DBUS_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_FREEDESKTOP_DBUS))
+#define NEMO_FREEDESKTOP_DBUS_GET_CLASS(obj) \
+  (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_FREEDESKTOP_DBUS, NemoFreedesktopDBusClass))
+
+typedef struct _NemoFreedesktopDBus NemoFreedesktopDBus;
+typedef struct _NemoFreedesktopDBusClass NemoFreedesktopDBusClass;
+
+GType nemo_freedesktop_dbus_get_type (void);
+NemoFreedesktopDBus * nemo_freedesktop_dbus_new (void);
+
+void nemo_freedesktop_dbus_set_open_locations (NemoFreedesktopDBus *fdb, const gchar **locations);
 
 #endif /* __NEMO_FREEDESKTOP_DBUS_H__ */

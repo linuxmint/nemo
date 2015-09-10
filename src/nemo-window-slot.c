@@ -275,6 +275,8 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 	gtk_box_pack_start (GTK_BOX (slot), extras_vbox, FALSE, FALSE, 0);
 	gtk_widget_show (extras_vbox);
 
+    slot->cache_bar = NULL;
+
 	slot->view_overlay = gtk_overlay_new ();
 	gtk_widget_add_events (slot->view_overlay,
 			       GDK_ENTER_NOTIFY_MASK |
@@ -700,6 +702,7 @@ remove_all_extra_location_widgets (GtkWidget *widget,
 	}
 
 	nemo_directory_unref (directory);
+	slot->cache_bar = NULL;
 }
 
 void
