@@ -409,22 +409,6 @@ nemo_application_close_all_windows (NemoApplication *self)
 	g_list_free (list_copy);
 }
 
-static gboolean
-another_navigation_window_already_showing (NemoApplication *application,
-					   NemoWindow *the_window)
-{
-	GList *list, *item;
-	
-	list = gtk_application_get_windows (GTK_APPLICATION (application));
-	for (item = list; item != NULL; item = item->next) {
-		if (item->data != the_window) {
-			return TRUE;
-		}
-	}
-	
-	return FALSE;
-}
-
 NemoWindow *
 nemo_application_create_window (NemoApplication *application,
 				    GdkScreen           *screen)
@@ -460,7 +444,7 @@ nemo_application_create_window (NemoApplication *application,
 			 geometry_string,
 			 NEMO_WINDOW_MIN_WIDTH,
 			 NEMO_WINDOW_MIN_HEIGHT,
-			 another_navigation_window_already_showing (application, window));
+			 TRUE);
 	}
 	g_free (geometry_string);
 
