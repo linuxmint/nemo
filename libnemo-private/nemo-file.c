@@ -67,6 +67,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #ifdef HAVE_SELINUX
 #include <selinux/selinux.h>
@@ -439,7 +440,6 @@ nemo_file_clear_info (NemoFile *file)
 	g_free (file->details->thumbnail_path);
 	file->details->thumbnail_path = NULL;
 	file->details->thumbnailing_failed = FALSE;
-    file->details->thumbnail_try_count = 0;
 	
 	file->details->is_launcher = FALSE;
 	file->details->is_foreign_link = FALSE;
@@ -691,7 +691,7 @@ nemo_file_get_internal (GFile *location, gboolean create)
 	/* Ref or create the file. */
 	if (file != NULL) {
 		nemo_file_ref (file);
-	} else if (create) {
+	} else if (create && directory != NULL) {
 		file = nemo_file_new_from_filename (directory, basename, self_owned);
 		if (self_owned) {
 			g_assert (directory->details->as_file == NULL);
@@ -809,6 +809,10 @@ finalize (GObject *object)
 	if (file->details->thumbnail) {
 		g_object_unref (file->details->thumbnail);
 	}
+	if (file->details->scaled_thumbnail) {
+		g_object_unref (file->details->scaled_thumbnail);
+	}
+
 	if (file->details->mount) {
 		g_signal_handlers_disconnect_by_func (file->details->mount, file_mount_unmounted, file);
 		g_object_unref (file->details->mount);
@@ -1187,8 +1191,6 @@ nemo_file_get_start_stop_type (NemoFile *file)
 	GDrive *drive;
 
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
-
-	ret = G_DRIVE_START_STOP_TYPE_UNKNOWN;
 
 	ret = file->details->start_stop_type;
 	if (ret != G_DRIVE_START_STOP_TYPE_UNKNOWN)
@@ -2104,6 +2106,17 @@ update_links_if_target (NemoFile *target_file)
 }
 
 static gboolean
+access_ok (const gchar *path)
+{
+    if (g_access (path, R_OK|W_OK) != 0) {
+        if (errno != ENOENT)
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
+static gboolean
 update_info_internal (NemoFile *file,
 		      GFileInfo *info,
 		      gboolean update_name)
@@ -2145,6 +2158,8 @@ update_info_internal (NemoFile *file,
 	}
 
 	file->details->file_info_is_up_to_date = TRUE;
+
+    file->details->thumbnail_access_problem = FALSE;
 
 	/* FIXME bugzilla.gnome.org 42044: Need to let links that
 	 * point to the old name know that the file has been renamed.
@@ -2434,10 +2449,16 @@ update_info_internal (NemoFile *file,
 	}
 
 	thumbnail_path =  g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
+
 	if (g_strcmp0 (file->details->thumbnail_path, thumbnail_path) != 0) {
 		changed = TRUE;
 		g_free (file->details->thumbnail_path);
-		file->details->thumbnail_path = g_strdup (thumbnail_path);
+        if (!access_ok (thumbnail_path)) {
+            file->details->thumbnail_access_problem = TRUE;
+            file->details->thumbnail_path = NULL;
+        } else {
+            file->details->thumbnail_path = g_strdup (thumbnail_path);
+        }
 	}
 
 	thumbnailing_failed =  g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_THUMBNAILING_FAILED);
@@ -2884,7 +2905,7 @@ compare_by_display_name (NemoFile *file_1, NemoFile *file_2)
 	const char *name_1, *name_2;
 	const char *key_1, *key_2;
 	gboolean sort_last_1, sort_last_2;
-	int compare;
+	int compare=0;
 
 	name_1 = nemo_file_peek_display_name (file_1);
 	name_2 = nemo_file_peek_display_name (file_2);
@@ -3771,6 +3792,12 @@ nemo_file_get_edit_name (NemoFile *file)
 	return g_strdup (res);
 }
 
+const char *
+nemo_file_peek_name (NemoFile *file)
+{
+    return file->details->name;
+}
+
 char *
 nemo_file_get_name (NemoFile *file)
 {
@@ -4020,15 +4047,9 @@ nemo_file_get_filesystem_use_preview (NemoFile *file)
 gboolean
 nemo_file_should_show_thumbnail (NemoFile *file)
 {
-	const char *mime_type;
 	GFilesystemPreviewType use_preview;
 
 	use_preview = nemo_file_get_filesystem_use_preview (file);
-
-	mime_type = eel_ref_str_peek (file->details->mime_type);
-	if (mime_type == NULL) {
-		mime_type = "application/octet-stream";
-	}
 
 	/* If the thumbnail has already been created, don't care about the size
 	 * of the original file.
@@ -4037,6 +4058,9 @@ nemo_file_should_show_thumbnail (NemoFile *file)
 	    nemo_file_get_size (file) > cached_thumbnail_limit) {
 		return FALSE;
 	}
+
+    if (file->details->thumbnail_access_problem)
+        return FALSE;
 
 	if (show_image_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
 		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
@@ -4307,15 +4331,23 @@ nemo_file_get_icon (NemoFile *file,
 				thumb_scale = (double) NEMO_ICON_SIZE_SMALLEST / s;
 			}
 
-			scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
-								 MAX (w * thumb_scale, 1),
-								 MAX (h * thumb_scale, 1),
-								 GDK_INTERP_BILINEAR);
+            if (file->details->thumbnail_scale == thumb_scale &&
+                file->details->scaled_thumbnail != NULL) {
+                scaled_pixbuf = file->details->scaled_thumbnail;
+            } else {
+                scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
+                                     MAX (w * thumb_scale, 1),
+                                     MAX (h * thumb_scale, 1),
+                                     GDK_INTERP_BILINEAR);
+                /* We don't want frames around small icons */
+                if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
+                    nemo_thumbnail_frame_image (&scaled_pixbuf);
+                }
+                g_clear_object (&file->details->scaled_thumbnail);
+                file->details->scaled_thumbnail = scaled_pixbuf;
+                file->details->thumbnail_scale = thumb_scale;
+            }
 
-			/* We don't want frames around small icons */
-			if (!gdk_pixbuf_get_has_alpha(raw_pixbuf) || s >= 128 * scale) {
-				nemo_thumbnail_frame_image (&scaled_pixbuf);
-			}
 			g_object_unref (raw_pixbuf);
 
 			/* Don't scale up if more than 25%, then read the original
@@ -4333,14 +4365,11 @@ nemo_file_get_icon (NemoFile *file,
 			DEBUG ("Returning thumbnailed image, at size %d %d",
 			       (int) (w * thumb_scale), (int) (h * thumb_scale));
 			
-			icon = nemo_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
-			g_object_unref (scaled_pixbuf);
-			return icon;
+			return nemo_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
 		} else if (file->details->thumbnail_path == NULL &&
 			   file->details->can_read &&				
 			   !file->details->is_thumbnailing &&
-			   !file->details->thumbnailing_failed &&
-               file->details->thumbnail_try_count < MAX_THUMBNAIL_TRIES) {
+			   !file->details->thumbnailing_failed) {
 			if (nemo_can_thumbnail (file)) {
 				nemo_create_thumbnail (file);
 			}
@@ -7553,6 +7582,15 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
         string = add_line (string, nice, TRUE);
         g_free (tmp);
         g_free (nice);
+
+        if (nemo_file_is_symbolic_link (file)) {
+            tmp = nemo_file_get_symbolic_link_target_path (file);
+            const gchar *existing_i18n = _("Link target:");
+            nice = g_strdup_printf ("%s %s", existing_i18n, tmp);
+            string = add_line (string, nice, TRUE);
+            g_free (tmp);
+            g_free (nice);
+        }
     }
 
     ret = string->str;
@@ -7560,6 +7598,12 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
     g_string_free (string, FALSE);
 
     return ret;
+}
+
+gboolean
+nemo_file_has_thumbnail_access_problem   (NemoFile *file)
+{
+    return file->details->thumbnail_access_problem;
 }
 
 static void
@@ -7707,14 +7751,6 @@ nemo_file_set_is_thumbnailing (NemoFile *file,
 	file->details->is_thumbnailing = is_thumbnailing;
 }
 
-void
-nemo_file_increment_thumbnail_try_count (NemoFile *file)
-{
-    g_return_if_fail (NEMO_IS_FILE (file));
-
-    file->details->thumbnail_try_count++;
-}
-
 /**
  * nemo_file_invalidate_attributes
  * 
@@ -7760,7 +7796,6 @@ void
 nemo_file_invalidate_all_attributes (NemoFile *file)
 {
 	NemoFileAttributes all_attributes;
-    file->details->thumbnail_try_count = 0;
 	all_attributes = nemo_file_get_all_attributes ();
 	nemo_file_invalidate_attributes (file, all_attributes);
 }

@@ -3763,6 +3763,11 @@ thumbnail_done (NemoDirectory *directory,
 		g_object_unref (file->details->thumbnail);
 		file->details->thumbnail = NULL;
 	}
+	if (file->details->scaled_thumbnail) {
+		g_object_unref (file->details->scaled_thumbnail);
+		file->details->scaled_thumbnail = NULL;
+	}
+
 	if (pixbuf) {
 		if (tried_original) {
 			thumb_mtime = file->details->mtime;

@@ -76,5 +76,6 @@ void       nemo_thumbnail_remove_from_queue     (const char   *file_uri);
 void       nemo_thumbnail_remove_all_from_queue (void);
 void       nemo_thumbnail_prioritize            (const char   *file_uri);
 
+gboolean   nemo_thumbnail_factory_check_status          (void);
 
 #endif /* NEMO_THUMBNAILS_H */

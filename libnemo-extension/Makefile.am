@@ -4,12 +4,13 @@ include $(top_srcdir)/Makefile.shared
 
 lib_LTLIBRARIES=libnemo-extension.la
 
-INCLUDES=\
+AM_CPPFLAGS =\
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
 	$(BASE_CFLAGS) \
 	$(WARNING_CFLAGS) \
 	$(DISABLE_DEPRECATED_CFLAGS) \
+    -DLIBEXECDIR=\""$(libexecdir)"\" \
 	-DDATADIR=\""$(datadir)"\" \
 	$(NULL)
 
@@ -18,7 +19,8 @@ libnemo_extension_la_LDFLAGS=\
 	-no-undefined \
 	$(NULL)
 
-libnemo_extension_la_LIBADD = $(BASE_LIBS)
+libnemo_extension_la_LIBADD = $(BASE_LIBS) \
+    $(top_builddir)/eel/libeel-2.la
 
 libnemo_extension_includedir=$(includedir)/nemo/libnemo-extension
 
@@ -31,6 +33,7 @@ libnemo_extension_include_HEADERS=		\
 	nemo-location-widget-provider.h     \
 	nemo-menu-item.h                    \
 	nemo-menu-provider.h                \
+    nemo-name-and-desc-provider.h       \
 	nemo-property-page-provider.h       \
 	nemo-property-page.h                \
 	nemo-menu.h                         \
@@ -48,6 +51,7 @@ libnemo_extension_la_SOURCES=			\
 	nemo-location-widget-provider.c             \
 	nemo-menu-item.c                            \
 	nemo-menu-provider.c                        \
+    nemo-name-and-desc-provider.c               \
 	nemo-property-page-provider.c               \
 	nemo-property-page.c                        \
 	nemo-menu.c                                 \

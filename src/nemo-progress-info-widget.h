@@ -56,6 +56,20 @@ typedef struct {
 	GtkBoxClass parent_class;
 } NemoProgressInfoWidgetClass;
 
+struct _NemoProgressInfoWidgetPriv {
+    NemoProgressInfo *info;
+
+    GtkWidget *stack;
+    GtkWidget *separator;
+
+    /* pre-start page */
+    GtkWidget *pre_info; /* GtkLabel */
+
+    GtkWidget *status; /* GtkLabel */
+    GtkWidget *details; /* GtkLabel */
+    GtkWidget *progress_bar;
+};
+
 GType nemo_progress_info_widget_get_type (void);
 
 GtkWidget * nemo_progress_info_widget_new (NemoProgressInfo *info);

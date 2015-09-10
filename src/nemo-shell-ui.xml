@@ -50,6 +50,7 @@
 		<separator/>
 		<placeholder name="Extension Actions"/>
 		<separator/>
+        <menuitem name="Plugins" action="NemoPluginManager"/>
 		<menuitem name="Preferences" action="Preferences"/>
 	</menu>
 	<menu action="View">
@@ -127,12 +128,6 @@
 		<placeholder name="New Object Items"/>
 		<separator/>
 	       <placeholder name="Extension Actions"/>
-	</placeholder>
-        <separator/>
-	<placeholder name="Zoom Items">
-		<menuitem name="Zoom In" action="Zoom In"/>
-		<menuitem name="Zoom Out" action="Zoom Out"/>
-		<menuitem name="Zoom Normal" action="Zoom Normal"/>
 	</placeholder>
         <separator/>
 	<placeholder name="After Zoom Items"/>

@@ -3,7 +3,7 @@ AC_PREREQ(2.54)
 dnl ===========================================================================
 
 m4_define(glib_minver,                 2.31.9)
-m4_define(cinnamon_desktop_minver,     1.0.0)
+m4_define(cinnamon_desktop_minver,     2.6.1)
 m4_define(pango_minver,                1.28.3)
 m4_define(gtk_minver,                  3.3.17)
 m4_define(xml_minver,                  2.7.8)
@@ -18,7 +18,7 @@ dnl Interface break is not allowed.
 m4_define(nemo_extension_current,  5)
 m4_define(nemo_extension_revision, 0)
 
-AC_INIT(nemo, 2.4.2, https://github.com/linuxmint/nemo)
+AC_INIT(nemo, 2.6.7, https://github.com/linuxmint/nemo)
 
 dnl ===========================================================================
 
@@ -44,7 +44,7 @@ AC_PROG_MAKE_SET
 AM_DISABLE_STATIC
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
-AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+PKG_PROG_PKG_CONFIG
 
 AC_CHECK_LIB(m, floor)
 

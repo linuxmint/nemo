@@ -299,10 +299,9 @@ nemo_window_prompt_for_location (NemoWindow *window,
 
 	g_return_if_fail (NEMO_IS_WINDOW (window));
 
-	pane = window->details->active_pane;
-	nemo_window_pane_ensure_location_bar (pane);
-
 	if (initial) {
+		nemo_window_show_location_entry(window);
+		pane = window->details->active_pane;
 		nemo_location_bar_set_location (NEMO_LOCATION_BAR (pane->location_bar),
 						    initial);
 	}
@@ -1607,7 +1606,6 @@ nemo_window_sync_zoom_widgets (NemoWindow *window)
 		can_zoom_in = can_zoom && nemo_view_can_zoom_in (view);
 		can_zoom_out = can_zoom && nemo_view_can_zoom_out (view);
 	} else {
-		zoom_level = NEMO_ZOOM_LEVEL_STANDARD;
 		supports_zooming = FALSE;
 		can_zoom = FALSE;
 		can_zoom_in = FALSE;
@@ -1984,7 +1982,6 @@ nemo_window_button_press_event (GtkWidget *widget,
 	NemoWindow *window;
 	gboolean handled;
 
-	handled = FALSE;
 	window = NEMO_WINDOW (widget);
 
 	if (mouse_extra_buttons && (event->button == mouse_back_button)) {
@@ -2186,6 +2183,12 @@ nemo_window_class_init (NemoWindowClass *class)
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_slash, 0,
 				      "prompt-for-location", 1,
 				      G_TYPE_STRING, "/");
+	gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Divide, 0,
+				      "prompt-for-location", 1,
+				      G_TYPE_STRING, "/");
+	gtk_binding_entry_add_signal (binding_set, GDK_KEY_asciitilde, 0,
+				      "prompt-for-location", 1,
+				      G_TYPE_STRING, "~");
 
 	class->reload = nemo_window_reload;
 	class->go_up = nemo_window_go_up_signal;

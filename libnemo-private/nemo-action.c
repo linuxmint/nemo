@@ -253,7 +253,7 @@ recalc_dbus_conditions (NemoAction *action)
     gboolean cumul_found = TRUE;
 
     for (l = action->dbus; l != NULL; l = l->next) {
-        c = l->data;
+        c = (DBusCondition *) l->data;
         if (!c->exists) {
             cumul_found = FALSE;
             break;
@@ -624,6 +624,7 @@ nemo_action_finalize (GObject *object)
 
     if (action->dbus) {
         g_list_free_full (action->dbus, (GDestroyNotify) dbus_condition_free);
+        action->dbus = NULL;
     }
 
     G_OBJECT_CLASS (parent_class)->finalize (object);
@@ -1342,8 +1343,6 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
     gboolean selection_type_show = FALSE;
     gboolean extension_type_show = TRUE;
     gboolean condition_type_show = TRUE;
-
-    recalc_dbus_conditions (action);
 
     if (!nemo_action_get_dbus_satisfied (action))
         goto out;

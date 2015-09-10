@@ -30,8 +30,6 @@
 			</placeholder>
 			<menu action="Scripts">
 				 <placeholder name="Scripts Placeholder"/>
-				 <separator name="After Scripts"/>
-				 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 			</menu>
             <separator name="Before Actions"/>
             <placeholder name="ActionsPlaceholder"/>
@@ -118,8 +116,6 @@
 			</menu>
                 	<menu action="Scripts">
 			 	<placeholder name="Scripts Placeholder"/>
-			 	<separator name="After Scripts"/>
-			 	<menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 			</menu>
             <separator name="Before Actions"/>
             <placeholder name="ActionsPlaceholder"/>
@@ -129,7 +125,7 @@
         <menuitem name="OpenAsRoot" action="OpenAsRoot"/>
 		<separator name="View items separator"/>
 		<placeholder name="View Items"/>
-        <menuitem name="Show Hidden Files" action="Show Hidden Files"/>
+			<menuitem name="Show Hidden Files" action="Show Hidden Files"/>
 		<separator name="Clipboard separator"/>
 		<placeholder name="File Clipboard Actions">
 			<menuitem name="Paste" action="Paste"/>
@@ -166,8 +162,6 @@
 		</placeholder>
 		<menu action="Scripts">
 			 <placeholder name="Scripts Placeholder"/>
-			 <separator name="After Scripts"/>
-			 <menuitem name="Open Scripts Folder" action="Open Scripts Folder"/>
 		</menu>
         <separator name="Before Actions"/>
         <placeholder name="ActionsPlaceholder"/>

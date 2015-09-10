@@ -306,6 +306,11 @@
       <_summary>Whether to list places in the Move To/Copy To menus</_summary>
       <_description>If set to true, places will be listed in the MoveTo/CopyTo menus</_description>
     </key>
+    <key name="context-menus-show-all-actions" type="b">
+      <default>false</default>
+      <_summary>Whether to show all available actions in context menus</_summary>
+      <_description>If set to true, all actions are visible. Otherwise nemo shows a simplified version of what is present in the menubar.</_description>
+    </key>
     <key name="tooltips-on-desktop" type="b">
       <default>false</default>
       <_summary>Show tooltips for desktop items</_summary>
@@ -571,6 +576,24 @@
       <default>'places'</default>
       <_summary>Side pane view</_summary>
       <_description>The side pane view to show in newly opened windows.</_description>
+    </key>
+  </schema>
+
+  <schema id="org.nemo.plugins" path="/org/nemo/plugins/" gettext-domain="nemo">
+    <key name="disabled-extensions" type="as">
+      <default>[]</default>
+      <_summary>List of extensions -not- to load.</_summary>
+      <_description>List of extension names you do -not- want to load.  This maintains the behavior of an installed extension being enabled by default.</_description>
+    </key>
+    <key name="disabled-actions" type="as">
+      <default>[]</default>
+      <_summary>List of NemoActions -not- to load.</_summary>
+      <_description>List of action files you do -not- want loaded.  This maintains the behavior of an installed action being enabled by default.</_description>
+    </key>
+    <key name="disabled-scripts" type="as">
+      <default>[]</default>
+      <_summary>List of scripts -not- to load.</_summary>
+      <_description>List of script files you do -not- want loaded.  This maintains the behavior of an installed script being enabled by default.</_description>
     </key>
   </schema>
 </schemalist>
