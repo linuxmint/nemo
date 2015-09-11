@@ -10,16 +10,13 @@
 #include "nemo-view.h"
 #include "nemo-file.h"
 #include <glib.h>
+#include <libnemo-private/nemo-action-manager.h>
+#include <libnemo-private/nemo-action.h>
 #include "nemo-global-preferences.h"
 
 G_DEFINE_TYPE (NemoActionConfigWidget, nemo_action_config_widget, NEMO_TYPE_CONFIG_BASE_WIDGET);
 
 
-#define ACTION_FILE_GROUP "Nemo Action"
-#define KEY_ACTIVE "Active"
-#define KEY_NAME "Name"
-#define KEY_ICON_NAME "Icon-Name"
-#define KEY_STOCK_ID "Stock-Id"
 
 typedef struct {
     NemoActionConfigWidget *widget;
