@@ -2,7 +2,7 @@
 
 Name=Change Desktop _Background
 
-Comment=Change Desktop _Background
+Comment=Change the Cinnamon desktop background
 
 Exec=cinnamon-settings backgrounds
 

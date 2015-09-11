@@ -2,13 +2,13 @@
 
 Name=Change Desktop _Background
 
-Comment=Change Desktop _Background
+Comment=Change the Gnome desktop background
 
 Exec=gnome-control-center background
 
 Selection=None
 
-Icon-Name=cs-backgrounds
+Icon-Name=gnome-settings-background
 
 Extensions=any;
 
