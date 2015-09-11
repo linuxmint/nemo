@@ -2,13 +2,13 @@
 
 Name=Change Desktop _Background
 
-Comment=Change Desktop _Background
+Comment=Change the Unity desktop background.
 
 Exec=unity-control-center appearance
 
 Selection=None
 
-Icon-Name=cs-backgrounds
+Icon-Name=gnome-settings-background
 
 Extensions=any;
 
