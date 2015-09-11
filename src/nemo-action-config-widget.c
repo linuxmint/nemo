@@ -10,10 +10,10 @@
 #include "nemo-view.h"
 #include "nemo-file.h"
 #include <glib.h>
+#include "nemo-global-preferences.h"
 
 G_DEFINE_TYPE (NemoActionConfigWidget, nemo_action_config_widget, NEMO_TYPE_CONFIG_BASE_WIDGET);
 
-#define BLACKLIST_KEY "disabled-actions"
 
 #define ACTION_FILE_GROUP "Nemo Action"
 #define KEY_ACTIVE "Active"
@@ -67,7 +67,7 @@ on_check_toggled(GtkWidget *button, ActionProxy *proxy)
 {
     gboolean enabled = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
 
-    gchar **blacklist = g_settings_get_strv (proxy->widget->settings, BLACKLIST_KEY);
+    gchar **blacklist = g_settings_get_strv (nemo_plugin_preferences, NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS);
 
     GPtrArray *new_list = g_ptr_array_new ();
 
@@ -91,9 +91,11 @@ on_check_toggled(GtkWidget *button, ActionProxy *proxy)
 
     gchar **new_list_ptr = (char **) g_ptr_array_free (new_list, FALSE);
 
-    g_signal_handler_block (proxy->widget->settings, proxy->widget->bl_handler);
-    g_settings_set_strv (proxy->widget->settings, BLACKLIST_KEY, (const gchar * const *) new_list_ptr);
-    g_signal_handler_unblock (proxy->widget->settings, proxy->widget->bl_handler);
+    g_signal_handler_block (nemo_plugin_preferences, proxy->widget->bl_handler);
+    g_settings_set_strv (nemo_plugin_preferences,
+    		             NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
+						 (const gchar * const *) new_list_ptr);
+    g_signal_handler_unblock (nemo_plugin_preferences, proxy->widget->bl_handler);
 
     g_strfreev (blacklist);
     g_strfreev (new_list_ptr);
@@ -234,7 +236,8 @@ refresh_widget (NemoActionConfigWidget *widget)
         gtk_widget_set_sensitive (GTK_WIDGET (NEMO_CONFIG_BASE_WIDGET (widget)->listbox), FALSE);
     } else {
         GList *l;
-        gchar **blacklist = g_settings_get_strv (widget->settings, BLACKLIST_KEY);
+        gchar **blacklist = g_settings_get_strv (nemo_plugin_preferences,
+        		                                 NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS);
 
         for (l = widget->actions; l != NULL; l=l->next) {
             ActionProxy *proxy = l->data;
@@ -297,7 +300,9 @@ on_settings_changed (GSettings *settings, gchar *key, gpointer user_data)
 static void
 on_enable_clicked (GtkWidget *button, NemoActionConfigWidget *widget)
 {
-    g_settings_set_strv (widget->settings, BLACKLIST_KEY, NULL);
+    g_settings_set_strv (nemo_plugin_preferences,
+    		             NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
+						 NULL);
 }
 
 static void
@@ -313,7 +318,9 @@ on_disable_clicked (GtkWidget *button, NemoActionConfigWidget *widget)
     g_ptr_array_add (new_list, NULL);
 
     gchar **new_list_ptr = (char **) g_ptr_array_free (new_list, FALSE);
-    g_settings_set_strv (widget->settings, BLACKLIST_KEY, (const gchar * const *) new_list_ptr);
+    g_settings_set_strv (nemo_plugin_preferences,
+    		             NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
+						 (const gchar * const *) new_list_ptr);
 
     g_strfreev (new_list_ptr);
 }
@@ -398,8 +405,7 @@ nemo_action_config_widget_finalize (GObject *object)
 
     g_list_free (widget->dir_monitors);
 
-    g_signal_handler_disconnect (widget->settings, widget->bl_handler);
-    g_clear_object (&widget->settings);
+    g_signal_handler_disconnect (nemo_plugin_preferences, widget->bl_handler);
 
     G_OBJECT_CLASS (nemo_action_config_widget_parent_class)->finalize (object);
 }
@@ -418,8 +424,8 @@ nemo_action_config_widget_init (NemoActionConfigWidget *self)
 {
     self->actions = NULL;
 
-    self->settings = g_settings_new ("org.nemo.plugins");
-    self->bl_handler = g_signal_connect (self->settings, "changed::" BLACKLIST_KEY,
+    self->bl_handler = g_signal_connect (nemo_plugin_preferences, 
+                                         "changed::" NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
                                          G_CALLBACK (on_settings_changed), self);
 
     GtkWidget *label = nemo_config_base_widget_get_label (NEMO_CONFIG_BASE_WIDGET (self));

@@ -31,7 +31,6 @@ struct _NemoActionConfigWidget
   NemoConfigBaseWidget parent;
 
   GList *actions;
-  GSettings *settings;
 
   GList *dir_monitors;
   gulong bl_handler;
