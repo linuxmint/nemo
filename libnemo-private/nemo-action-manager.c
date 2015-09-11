@@ -367,5 +367,10 @@ nemo_action_manager_get_user_directory_path (void)
 gchar *
 nemo_action_manager_get_sys_directory_path (void)
 {
-    return g_build_filename (NEMO_DATADIR, "actions", NULL);
+	gchar *path = g_build_filename (NEMO_DATADIR, "actions", NULL);
+	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+		g_clear_pointer (&path, g_free);
+		path = g_build_filename ("/", "usr", "share", "nemo", "actions", NULL);
+ 	}
+	return path;
 }
