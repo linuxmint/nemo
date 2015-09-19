@@ -97,15 +97,12 @@ struct MethodInfo {
 
 /* A collection of flags for MethodInfo.flags */
 enum {
-	DEFAULT_METHOD = (1 << 0),
-	
-	/* Widgets to display in connect_dialog_setup_for_type */
-	SHOW_SHARE     = (1 << 1),
-	SHOW_PORT      = (1 << 2),
-	SHOW_USER      = (1 << 3),
-	SHOW_DOMAIN    = (1 << 4),
-	
-	IS_ANONYMOUS   = (1 << 5)
+    /* Widgets to display in connect_dialog_setup_for_type */
+    SHOW_SHARE     = (1 << 0),
+    SHOW_PORT      = (1 << 1),
+    SHOW_USER      = (1 << 2),
+    SHOW_DOMAIN    = (1 << 3),
+    IS_ANONYMOUS   = (1 << 4)
 };
 
 /* Remember to fill in descriptions below */
@@ -113,7 +110,7 @@ static struct MethodInfo methods[] = {
 	/* FIXME: we need to alias ssh to sftp */
 	{ "sftp",  SHOW_PORT | SHOW_USER, 22 },
 	{ "ftp",  SHOW_PORT | SHOW_USER, 21 },
-	{ "ftp",  DEFAULT_METHOD | IS_ANONYMOUS | SHOW_PORT, 21 },
+	{ "ftp",  IS_ANONYMOUS | SHOW_PORT, 21 },
 	{ "smb",  SHOW_SHARE | SHOW_USER | SHOW_DOMAIN, 0 },
 	{ "dav",  SHOW_PORT | SHOW_USER, 80 },
 	/* FIXME: hrm, shouldn't it work? */
@@ -766,6 +763,10 @@ connect_dialog_setup_for_type (NemoConnectServerDialog *dialog)
 	g_assert (index < G_N_ELEMENTS (methods) && index >= 0);
 	meth = &(methods[index]);
 
+    if (g_settings_get_int (nemo_preferences, NEMO_PREFERENCES_LAST_SERVER_CONNECT_METHOD) != index) {
+        g_settings_set_int (nemo_preferences, NEMO_PREFERENCES_LAST_SERVER_CONNECT_METHOD, index);
+    }
+
 	g_object_set (dialog->details->share_entry,
 		      "visible",
 		      (meth->flags & SHOW_SHARE) != 0,
@@ -932,6 +933,8 @@ nemo_connect_server_dialog_init (NemoConnectServerDialog *dialog)
 	gtk_size_group_add_widget (dialog->details->contents_size_group, dialog->details->type_combo);
 	gtk_label_set_mnemonic_widget (GTK_LABEL (label), dialog->details->type_combo);
 
+    gint last = g_settings_get_int (nemo_preferences, NEMO_PREFERENCES_LAST_SERVER_CONNECT_METHOD);
+
 	/* each row contains: method index, textual description */
 	store = gtk_list_store_new (2, G_TYPE_INT, G_TYPE_STRING);
 	gtk_combo_box_set_model (GTK_COMBO_BOX (combo), GTK_TREE_MODEL (store));
@@ -971,10 +974,9 @@ nemo_connect_server_dialog_init (NemoConnectServerDialog *dialog)
 				    1, get_method_description (&(methods[i])),
 				    -1);
 
-
-		if (methods[i].flags & DEFAULT_METHOD) {
-			gtk_combo_box_set_active_iter (GTK_COMBO_BOX (combo), &iter);
-		}
+        if (i == last) {
+            gtk_combo_box_set_active_iter (GTK_COMBO_BOX (combo), &iter);
+        }
 	}
 
 	if (gtk_combo_box_get_active (GTK_COMBO_BOX (combo)) < 0) {

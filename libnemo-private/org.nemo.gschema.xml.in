@@ -351,6 +351,10 @@
       <_summary>Don't show the explainer message when turning off the main menu</_summary>
       <_description>If true, you will no longer recieve a popup explaining how to reactivate the main menu once you've hidden it</_description>
     </key>
+    <key name="last-server-connect-method" type="i">
+      <default>2</default>
+      <_summary>Last server connect method used</_summary>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">
