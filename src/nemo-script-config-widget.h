@@ -31,7 +31,6 @@ struct _NemoScriptConfigWidget
   NemoConfigBaseWidget parent;
 
   GList *scripts;
-  GSettings *settings;
 
   GList *dir_monitors;
   gulong bl_handler;

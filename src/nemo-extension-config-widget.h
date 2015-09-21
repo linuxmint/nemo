@@ -33,7 +33,6 @@ struct _NemoExtensionConfigWidget
 
   GList *current_extensions;
   GList *initial_extension_ids;
-  GSettings *settings;
 
   gulong bl_handler;
 };

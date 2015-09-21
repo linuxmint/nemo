@@ -48,23 +48,6 @@ static void     nemo_action_finalize (GObject *gobject);
 
 static gpointer parent_class;
 
-#define ACTION_FILE_GROUP "Nemo Action"
-
-#define KEY_ACTIVE "Active"
-#define KEY_NAME "Name"
-#define KEY_COMMENT "Comment"
-#define KEY_EXEC "Exec"
-#define KEY_ICON_NAME "Icon-Name"
-#define KEY_STOCK_ID "Stock-Id"
-#define KEY_SELECTION "Selection"
-#define KEY_EXTENSIONS "Extensions"
-#define KEY_MIME_TYPES "Mimetypes"
-#define KEY_SEPARATOR "Separator"
-#define KEY_QUOTE_TYPE "Quote"
-#define KEY_DEPENDENCIES "Dependencies"
-#define KEY_CONDITIONS "Conditions"
-#define KEY_WHITESPACE "EscapeSpaces"
-
 enum 
 {
   PROP_0,
