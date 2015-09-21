@@ -565,7 +565,7 @@ connect_dialog_connect_to_server (NemoConnectServerDialog *dialog)
 	/* domain */
 	domain = gtk_editable_get_chars (GTK_EDITABLE (dialog->details->domain_entry), 0, -1);
 			
-	if (strlen (domain) != 0) {
+	if (strlen (domain) != 0 && strcmp(meth->scheme, "smb")) {
 		t = user;
 
 		user = g_strconcat (domain , ";" , t, NULL);
